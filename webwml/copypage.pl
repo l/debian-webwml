@@ -30,7 +30,7 @@ elsif (open CONF, "<language.conf")
 }
 else
 {
-	die "Language not defined in DWW_LANG or language.conf\n";
+	die "Language not defined in DWWW_LANG or language.conf\n";
 }
 
 # Check usage.
