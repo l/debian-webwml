@@ -4,7 +4,7 @@
 
 WMLBASE=../..
 CUR_DIR=security/audit
-SUBS=
+SUBS=examples
 
 GETTEXTFILES += others.mo
 
