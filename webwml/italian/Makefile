@@ -18,7 +18,7 @@ include $(WMLBASE)/Make.dep.templ
 # Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(wildcard News/1999/1999*.wml) $(wildcard $(ENGLISHSRCDIR)/News/1999/1999*.wml) \
-		$(wildcard security/1999/1999*.wml) $(wildcard $(ENGLISHSRCDIR)/security/1999/1999*.wml) \
+		$(wildcard security/2000/2000*.wml) $(wildcard $(ENGLISHSRCDIR)/security/2000/2000*.wml) \
 		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
 	$(WML) index.wml
 
