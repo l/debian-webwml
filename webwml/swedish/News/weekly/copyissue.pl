@@ -105,7 +105,7 @@ while (<SRC>)
 	elsif ($_ eq "<b>Welcome</b> to Debian Weekly News, a newsletter for the Debian community.\n")
 	{
 		# Translate intro
-		$_ = "<b>Välkommen</b> till Debian Weekly News, ett nyhetsbrev för Debiananvändare.\n";
+		$_ = "<b>Välkommen</b> till Debian Weekly News, ett nyhetsbrev för Debianfolk.\n";
 	}
 
 	unless ($insertedrevision || /^#/)
