@@ -54,7 +54,7 @@ foreach $l (<ADV>) {
   if ($l =~ /^(CVE (names?|ids?|references?)?|CERT advisor(y|ies))\s*: (.+)/i) {
     push @dbids, $4;
   }
-  if ($l =~ /^Bugtraq Id\s*: (.+)/i) {
+  if ($l =~ /^Bugtraq Ids?\s*: (.+)/i) {
       for $id (split (/ /, $1)) {
 	  push @dbids, "BID".$id;
       }
