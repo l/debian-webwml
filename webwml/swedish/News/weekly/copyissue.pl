@@ -5,8 +5,8 @@
 # adds the translation-check header to it. It will also create the
 # destination directory if necessary.
 
-# Written in 2000-2003 by Peter Karlsson <peter@softwolves.pp.se>
-# © Copyright 2000-2003 Software in the public interest, Inc.
+# Written in 2000-2004 by Peter Karlsson <peter@softwolves.pp.se>
+# © Copyright 2000-2004 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -86,7 +86,7 @@ $insertedrevision = 0;
 
 while (<SRC>)
 {
-	next if /\$Id/;
+	next if /\$Id/i;
 
 	if ($_ eq "<b>Welcome</b> to Debian Weekly News, a newsletter for the Debian developer\n")
 	{
@@ -155,6 +155,32 @@ while (<SRC>)
 			$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong>\n";
 			$_ .= "Följande paket har nyligen lagts till det instabila Debianarkivet eller innehåller\n";
 			$_ .= "viktiga uppdateringar.</p>\n";
+        }
+        elsif ($next eq "added to the unstable Debian archive <a\n")
+        {
+        	$_ .= $next;
+        	$next = <SRC>;
+        	if ($next eq "href=\"http://packages.debian.org/unstable/newpkg_main\">recently</a> or contain\n")
+        	{
+        		$_ .= $next;
+        		$next = <SRC>;
+        		if ($next eq "important updates.</p>\n")
+        		{
+					$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong>\n";
+					$_ .= "Följande paket har\n";
+					$_ .= "<a href=\"http://packages.debian.org/unstable/newpkg_main\">nyligen</a>\n";
+					$_ .= "lagts till det instabila Debianarkivet eller innehåller viktiga uppdateringar.\n";
+					$_ .= "</p>\n";
+				}
+				else
+				{
+					$_ .= $next;
+				}
+			}
+			else
+			{
+				$_ .= $next;
+			}
         }
 		else
 		{
