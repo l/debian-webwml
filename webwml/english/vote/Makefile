@@ -4,7 +4,7 @@
 
 WMLBASE=..
 CUR_DIR=vote
-SUBS=1999 2000
+SUBS=1999 2000 2001
 
 include $(WMLBASE)/Make.lang
 
