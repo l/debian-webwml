@@ -16,3 +16,6 @@ include $(WMLBASE)/Make.dep.templ
 
 # Do Not modify the following line
 
+a-releer.es.html a-revisar.es.html a-traducir.es.html \
+en-curso.es.html no-disponible.es.html www-a-revisar.es.html \
+www-ok.es.html www-nok.es.html www.es.html : ltcp.pl current_status.pl documents-bd.pl
