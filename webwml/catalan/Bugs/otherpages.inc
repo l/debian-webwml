@@ -9,7 +9,7 @@
   <li><a href="server-control">Informació pels desenvolupadors de com usar la
       interfície de correu pel control dels errors.</a>
   <li><a href="server-refcard">Targeta de referéncia pel servidor de correu.</a>
-  <li><a href="server-request">Requerint informes d'errror per correu.</a>
+  <li><a href="server-request">Demanant informes d'error per correu.</a>
 #  <li><a href="db/ix/full.html">Full list of outstanding and recent bug
 #      reports.</a>
 #  <li><a href="db/ix/packages.html">Packages with bug reports.</a>
