@@ -52,21 +52,21 @@
 </define-tag>
 
 <define-tag inddpcvs whitespace=delete>
-  <set-var name=<match <attributes-extract name %attributes /> "name=" action=delete /> />
+<exit message="Josip, check that manuals.defs does what you expect" />
+  <preserve name index langs formats path loc txt version />
+  <set-var %attributes />
   <if <get-var name /> "" <exit message="you must pass a name to the inddpcvs tag" /> />
+  #   Default values
+  <defvar index index />
+  <if <get-var langs />
+      <set-var add-lang-ext=true />
+      <group <set-var langs=en /><set-var add-lang-ext= /> />
+  />
+  <defvar formats html />
+  <defvar path "manuals/<get-var name />" />
 
-  <set-var index=<match <attributes-extract index %attributes /> "index=" action=delete /> />
-  <if <get-var index /> "" <set-var index="index" /> />
-
-  <set-var langs=<subst-in-string <match <attributes-extract langs %attributes /> "langs=" action=delete /> " " "\n" /> />
-
-  <set-var formats=<subst-in-string <match <attributes-extract formats %attributes /> "formats=" action=delete /> " " "\n" /> />
-  <if <get-var formats /> "" <set-var formats="html" /> />
-
-  <set-var path=<match <attributes-extract path %attributes /> "path=" action=delete /> />
-  <if <get-var path /> "" <set-var path="manuals/<get-var name>" /> />
-
-<exit message="the stuff in manuals.defs is entirely broken by the latest changes and Joy can't see the logic. Deeeeeenissss! :)" />
+  <subst-in-var langs " " "\n" />
+  <subst-in-var formats " " "\n" />
 
   <p><gettext domain="doc">Latest version in development:</gettext>
   <br>
@@ -78,55 +78,34 @@
     $xy =~ s/-\w+$//; # for pt-br and such
     print $trans{$CUR_ISO_LANG}{$langs_per_code{$xy}};
     :>
-    <if <get-var version-<get-var name />-<get-var lang /> />
-      &nbsp;<gettext domain="doc">(version <get-var version-<get-var name />-<get-var lang /> />)</gettext>
-    />
+    <set-var version=<get-var version-<get-var name />-<get-var lang /> /> />
+    <when <get-var version />>
+      &nbsp;<gettext domain="doc">(version <get-var version />)</gettext>
+    </when>
     :
     <foreach format formats>
       &nbsp;
-      [<noexpand "<a" /> href=<get-var path />/
-      <if <match <get-var format /> "(pdf|ps)" action=report />
-        "<get-var name />.<get-var format />><upcase <get-var format /> />"
+      <if <get-var add-lang-ext />
+        <set-var loc="<get-var name />.<get-var lang />.<get-var format />" />
+        <set-var loc="<get-var name />.<get-var format />" />
       />
-      <if <match <get-var format /> "html" action=report />
-        "<get-var index />.html>HTML"
-      />
-      <if <match <get-var format /> "txt" action=report />
-        "<get-var name />.txt><gettext domain="doc">plain text</gettext>"
-      />
+      <when <match <get-var format /> "(pdf|ps|html)" action=report />>
+        <set-var txt=<upcase <get-var format /> /> />
+      </when>
+      <when <match <get-var format /> "txt" action=report />>
+        <set-var txt=<gettext domain="doc">plain text</gettext> />
+      </when>
+      [<a href="<get-var path />/<get-var loc />"><get-var txt /></a>]
 #      <if <match <get-var format /> "(html|txt|pdf|ps)" action=report /> ""
 #        <exit message="you must pass a valid format to the inddpcvs tag" />
 #      />
-      </a>]
     </foreach>
     <br>
   </foreach>
 
-  <if <get-var langs /> "" "
-    <:= $trans{$CUR_ISO_LANG}{'english'} :>
-    :
-    <foreach format formats>
-      &nbsp;
-      [<noexpand "<a" /> href=<get-var path />/
-      <if <match <get-var format /> "(pdf|ps)" action=report />
-        "<get-var name />.<get-var format />><upcase <get-var format /> />"
-      />
-      <if <match <get-var format /> "html" action=report />
-        "<get-var index />.html>HTML"
-      />
-      <if <match <get-var format /> "txt" action=report />
-        "<get-var name />.txt><gettext domain="doc">plain text</gettext>"
-      />
-#      <if <match <get-var format /> "(html|txt|pdf|ps)" action=report /> ""
-#        <exit message="you must pass a valid format to the inddpcvs tag" />
-#      />
-      </a>]
-    </foreach>
-    <br>
-  " />
-
   <br>
   <gettext domain="doc">Use <a href="cvs">CVS</a> to download the SGML source text.</gettext>
+  <restore name index langs formats path loc txt version />
 </define-tag>
 
 <define-tag inbfdcvs>
@@ -152,19 +131,21 @@ and just press enter when you are asked for a password. To check out the sources
 </define-tag>
 
 <define-tag released whitespace=delete>
-  <set-var name=<match <attributes-extract name %attributes /> "name=" action=delete /> />
-  <if <get-var name /> "" <exit message="you must pass a name to the released tag" /> />
+<exit message="Josip, check that manuals.defs does what you expect" />
+  <preserve name index langs formats path loc txt version />
+  <set-var %attributes />
+  <if <get-var name /> "" <exit message="you must pass a name to the inddpcvs tag" /> />
+  #   Default values
+  <defvar index index />
+  <if <get-var langs />
+      <set-var add-lang-ext=true />
+      <group <set-var langs=en /><set-var add-lang-ext= /> />
+  />
+  <defvar formats html />
+  <defvar path "<get-var name />" />
 
-  <set-var index=<match <attributes-extract index %attributes /> "index=" action=delete /> />
-  <if <get-var index /> "" <set-var index="index" /> />
-
-  <set-var langs=<subst-in-string <match <attributes-extract langs %attributes /> "langs=" action=delete /> " " "\n" /> />
-
-  <set-var formats=<subst-in-string <match <attributes-extract formats %attributes /> "formats=" action=delete /> " " "\n" /> />
-  <if <get-var formats /> "" <set-var formats="html" /> />
-
-  <set-var path=<match <attributes-extract path %attributes /> "path=" action=delete /> />
-  <if <get-var path /> "" <set-var path="manuals/<get-var name>" /> />
+  <subst-in-var langs " " "\n" />
+  <subst-in-var formats " " "\n" />
 
   <gettext domain="doc">Released version:</gettext>
   <br>
@@ -176,49 +157,29 @@ and just press enter when you are asked for a password. To check out the sources
     $xy =~ s/-\w+$//; # for pt-br and such
     print $trans{$CUR_ISO_LANG}{$langs_per_code{$xy}};
     :>
-    <if <get-var version-<get-var name />-<get-var lang /> />
-      &nbsp;<gettext domain="doc">(version <get-var version-<get-var name />-<get-var lang /> />)</gettext>
-    />
+    <set-var version=<get-var version-<get-var name />-<get-var lang /> /> />
+    <when <get-var version />>
+      &nbsp;<gettext domain="doc">(version <get-var version />)</gettext>
+    </when>
     :
     <foreach format formats>
       &nbsp;
-      [<noexpand "<a" /> href=<get-var path />/
-      <if <match <get-var format /> "(pdf|ps)" action=report />
-        "<get-var name />.<get-var format />><upcase <get-var format /> />"
+      <if <get-var add-lang-ext />
+        <set-var loc=<get-var name />.<get-var lang />.<get-var format /> />
+        <set-var loc=<get-var name />.<get-var format /> />
       />
-      <if <match <get-var format /> "html" action=report />
-        "<get-var index />.html>HTML"
-      />
-      <if <match <get-var format /> "txt" action=report />
-        "<get-var name />.txt><gettext domain="doc">plain text</gettext>"
-      />
+      <when <match <get-var format /> "(pdf|ps|html)" action=report />>
+        <set-var txt=<upcase <get-var format /> /> />
+      </when>
+      <when <match <get-var format /> "txt" action=report />>
+        <set-var txt=<gettext domain="doc">plain text</gettext> />
+      </when>
+      [<a href="<get-var path />/<get-var loc />"><get-var txt /></a>]
 #      <if <match <get-var format /> "(html|txt|pdf|ps)" action=report /> ""
 #        <exit message="you must pass a valid format to the inddpcvs tag" />
 #      />
-      </a>]
     </foreach>
     <br>
   </foreach>
-
-  <if <get-var langs /> "" "
-    <:= $trans{$CUR_ISO_LANG}{'english'} :>:
-    <foreach format formats>
-      &nbsp;
-      [<noexpand "<a" /> href=<get-var path />/
-      <if <match <get-var format /> "(pdf|ps)" action=report />
-         "<get-var name />.<get-var format />><upcase <get-var format /> />"
-      />
-      <if <match <get-var format /> "html" action=report />
-         "<get-var index />.html>HTML"
-      />
-      <if <match <get-var format /> "txt" action=report />
-         "<get-var name />.txt><gettext domain="doc">plain text</gettext>"
-      />
-#      <ifneq "<match <get-var format /> "(html|txt|pdf|ps)" action=report />" "true"
-#            <exit message="you must pass a valid format to the released tag, not <get-var format />" />
-#      />
-      </a>]
-    </foreach>
-    <br>
-  " />
+  <restore name index langs formats path loc txt version />
 </define-tag>
