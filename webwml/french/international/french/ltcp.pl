@@ -40,7 +40,7 @@ $from = 'english';
 $to = 'french'; # And this would be better used in the command line
 $from_abr = 'en';
 $to_abr = 'fr' ;
-$CVSWEB = 'http://cvs.debian.org/webwml' ; 
+$CVSWEB = 'http://cvs.debian.org/' ; 
 $DDPWEB = 'http://www.debian.org/~elphick/manuals.html' ;
 # The place were translation documents are kept while working on them
 $TRANSWEB = 'http://www.debian.org/international/french/translations';
@@ -122,6 +122,14 @@ $types = {
 'DDP' => {
 	'url'			=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
 					"$DDPWEB/$k/" },
+	'cvs_url'		=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
+					"$CVSWEB/ddp/manuals.sgml/$k/?cvsroot=debian-doc" },
+	'translation_url'	=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
+					"$TRANSWEB/$k.fr.html/" },
+	'translation_source_name'=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
+					"$k.fr.sgml" },
+	'translation_source_url'=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
+					"$TRANSWEB/$k.fr.sgml" },
 },
 
 };
@@ -233,18 +241,18 @@ sub update_db_format {
 
 while (($k, $t) = each %$translations) {
 	
-	if (uc $t->{'type'} eq 'DDP' && $k) {
-		if ($t->{'status'} != 0
-			&& $t->{'status'} != 1
-			&& $t->{'status'} != 2) {
-			$t->{'translation_url'} = 
-				$TRANSWEB . '/' . $k . $to_abr.'.html/'
-				if (!$t->{'translation_url'});
-			$t->{'translation_cvs_url'} = 
-				$TRANSWEB . '/' . $k . $to_abr. '.sgml'
-				if (!$t->{'translation_cvs_url'});
-		}
-	}
+	#if (uc $t->{'type'} eq 'DDP' && $k) {
+	#	if ($t->{'status'} != 0
+	#		&& $t->{'status'} != 1
+	#		&& $t->{'status'} != 2) {
+	#		$t->{'translation_url'} = 
+	#			$TRANSWEB . '/' . $k . $to_abr.'.html/'
+	#			if (!$t->{'translation_url'});
+	#		$t->{'translation_cvs_url'} = 
+	#			$TRANSWEB . '/' . $k . $to_abr. '.sgml'
+	#			if (!$t->{'translation_cvs_url'});
+	#	}
+	#}
 
 	next unless ($k);
 
