@@ -22,11 +22,15 @@ faq.$(LANGUAGE).html: faq.wml \
   $(ENGLISHSRCDIR)/security/faq.inc $(GETTEXTDEP)
 
 ifndef SUBLANG
-DSARDF := dsa.$(LANGUAGE).rdf
-DESTDSARDF := $(HTMLDIR)/$(DSARDF)
+DSARDF     := dsa.$(LANGUAGE).rdf
+DSALONGRDF := dsa-long.$(LANGUAGE).rdf
+DESTDSARDF     := $(HTMLDIR)/$(DSARDF)
+DESTDSALONGRDF := $(HTMLDIR)/$(DSALONGRDF)
 else
-DSARDF := $(sort $(foreach i,$(SUBLANG),$(subst dsa,dsa.$(LANGUAGE)-$(i),dsa.rdf)))
-DESTDSARDF := $(patsubst %.rdf,$(HTMLDIR)/%.rdf,$(DSARDF))
+DSARDF     := $(sort $(foreach i,$(SUBLANG),$(subst dsa,dsa.$(LANGUAGE)-$(i),dsa.rdf)))
+DSALONGRDF := $(sort $(foreach i,$(SUBLANG),$(subst dsa-long,dsa-long.$(LANGUAGE)-$(i),dsa-long.rdf)))
+DESTDSARDF     := $(patsubst %.rdf,$(HTMLDIR)/%.rdf,$(DSARDF))
+DESTDSALONGRDF := $(patsubst %.rdf,$(HTMLDIR)/%.rdf,$(DSALONGRDF))
 endif
 
 $(DSARDF): $(ENGLISHDIR)/security/dsa.rdf.in \
@@ -53,14 +57,43 @@ else
             $(ENGLISHDIR)/security/dsa.rdf.in
 endif
 
-all:: $(DSARDF)
+$(DSALONGRDF): $(ENGLISHDIR)/security/dsa-long.rdf.in \
+  $(wildcard $(CUR_YEAR)/dsa-*.wml) \
+  $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.wml) \
+  $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.data) \
+  $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/security_tags.wml $(GETTEXTDEP)
+ifeq "$(LANGUAGE)" "zh"
+	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:dsa-long.zh-$$1.rdf,g') \
+          $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
+            $(ENGLISHDIR)/security/dsa-long.rdf.in
+	@echo -n " * Converting: [zh_CN.GB2312], "
+	@$(B5TOGB) < dsa-long.zh-cn.rdf.tmp > dsa-long.zh-cn.rdf
+	@rm -f dsa-long.zh-cn.rdf.tmp
+	@$(TOCN) dsa-long.zh-cn.rdf
+	@echo -n "[zh_HK.Big5], "
+	@mv -f dsa-long.zh-hk.rdf.tmp dsa-long.zh-hk.rdf
+	@$(TOHK) dsa-long.zh-hk.rdf
+	@echo "[zh_TW.Big5]."
+	@mv -f dsa-long.zh-tw.rdf.tmp dsa-long.zh-tw.rdf
+	@$(TOTW) dsa-long.zh-tw.rdf
+else
+	$(WML) $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
+            $(ENGLISHDIR)/security/dsa-long.rdf.in
+endif
 
-install:: $(DESTDSARDF)
+all:: $(DSARDF) $(DSALONGRDF)
+
+install:: $(DESTDSARDF) $(DESTDSALONGRDF)
 
 $(DESTDSARDF): $(HTMLDIR)/%: %
 	install -m 664 -p $< $(HTMLDIR)
 ifeq "$(LANGUAGE)" "en"
 	ln -sf dsa.en.rdf $(HTMLDIR)/dsa.rdf
+endif
+$(DESTDSALONGRDF): $(HTMLDIR)/%: %
+	install -m 664 -p $< $(HTMLDIR)
+ifeq "$(LANGUAGE)" "en"
+	ln -sf dsa-long.en.rdf $(HTMLDIR)/dsa-long.rdf
 endif
 
 ifeq "$(LANGUAGE)" "en"
