@@ -4,8 +4,9 @@
 
 WMLBASE=.
 CUR_DIR=
-SUBS=Bugs MailingLists News Pics SPI consultants devel distrib doc events intro \
-international logos mirror misc partners ports releases security vote y2k
+SUBS=Bugs MailingLists News Pics SPI consultants devel distrib doc events \
+intro international logos mirror misc partners ports releases searchtmpl \
+security vote y2k
 
 include $(WMLBASE)/Make.lang
 
@@ -17,4 +18,3 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
 		$(ENGLISHSRCDIR)/releases/info
 	$(WML) index.wml
-
