@@ -232,6 +232,27 @@ sub get_stats_templates {
                         $none .= "<li>".$pkg."</li>\n";
                         next;
                 }
+                if ($data->has_errors($pkg)) {
+                        $tmpl_errors->{$pkg} = { noorig => [], master => [], fuzzy => [], mismatch => [], };
+                        my $found = 0;
+                        foreach (@{$data->errors($pkg)}) {
+                                next unless s/debconf: //;
+                                if (m/([^:]+):(\d+): original-fields-removed-in-translated-templates/) {
+                                        push(@{$tmpl_errors->{$pkg}->{noorig}}, "$1:$2");
+                                        $found = 1;
+                                } elsif (m/([^:]+):(\d+): translated-fields-in-master-templates/) {
+                                        push(@{$tmpl_errors->{$pkg}->{master}}, "$1:$2");
+                                        $found = 1;
+                                } elsif (m/([^:]+):(\d+): fuzzy-fields-in-templates/) {
+                                        push(@{$tmpl_errors->{$pkg}->{fuzzy}}, "$1:$2");
+                                        $found = 1;
+                                } elsif (m/([^:]+):(\d+): lang-mismatch-in-translated-templates/) {
+                                        push(@{$tmpl_errors->{$pkg}->{mismatch}}, "$1:$2");
+                                        $found = 1;
+                                }
+                        }
+                        delete $tmpl_errors->{$pkg} unless $found;
+                }
                 my $list = {};
                 foreach (@td_langs) {
                         $list{uc $_} = 0;
@@ -256,8 +277,15 @@ sub get_stats_templates {
 		        my $str = '';
                         $str .= "<tr bgcolor=\"".
                               get_color(percent_stat($stat)).
-                              "\"><td>".$pkg."</td>".
-                              "<td>".show_stat($stat)."</td><td><a href=\"";
+                              "\"><td>";
+		        if (defined $tmpl_errors->{$pkg}) {
+			    $str .= "<a href=errors-by-pkg#P$pkg>!</a>&nbsp;";
+			} else {
+			    $str .= "&nbsp;&nbsp;";
+			}
+		        $str .= $pkg."</td>".
+                              "<td>".show_stat($stat);
+		        $str .= "</td><td><a href=\"";
                         $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "templates/unstable/";
                         $str .= $data->pooldir($pkg)."/$link_trans.gz\">$template</a></td><td>";
                         if ($link_orig ne '') {
@@ -287,30 +315,12 @@ sub get_stats_templates {
                         my $count = 1;
                         foreach (@untranslated) {
                                 $count ++;
-                                $excl{$l} .= "<a href=\"".($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root)."templates/unstable/".$data->pooldir($pkg)."/".$_.".gz\">[".$count."]</a>";
+                                $excl{$l} .= "[<a href=\"".($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root)."templates/unstable/".$data->pooldir($pkg)."/".$_.".gz\">".$count."</a>]";
                         }
+		        if (defined $tmpl_errors->{$pkg}) {
+			    $excl{$l} .= " (<a href=errors-by-pkg#P$pkg>!</a>)";
+			}
                         $excl{$l} .= ", ";
-                }
-                if ($data->has_errors($pkg)) {
-                        $tmpl_errors->{$pkg} = { noorig => [], master => [], fuzzy => [], mismatch => [], };
-                        my $found = 0;
-                        foreach (@{$data->errors($pkg)}) {
-                                next unless s/debconf: //;
-                                if (m/([^:]+):(\d+): original-fields-removed-in-translated-templates/) {
-                                        push(@{$tmpl_errors->{$pkg}->{noorig}}, "$1:$2");
-                                        $found = 1;
-                                } elsif (m/([^:]+):(\d+): translated-fields-in-master-templates/) {
-                                        push(@{$tmpl_errors->{$pkg}->{master}}, "$1:$2");
-                                        $found = 1;
-                                } elsif (m/([^:]+):(\d+): fuzzy-fields-in-templates/) {
-                                        push(@{$tmpl_errors->{$pkg}->{fuzzy}}, "$1:$2");
-                                        $found = 1;
-                                } elsif (m/([^:]+):(\d+): lang-mismatch-in-translated-templates/) {
-                                        push(@{$tmpl_errors->{$pkg}->{mismatch}}, "$1:$2");
-                                        $found = 1;
-                                }
-                        }
-                        delete $tmpl_errors->{$pkg} unless $found;
                 }
         }
         foreach $lang (@td_langs) {
@@ -344,7 +354,10 @@ sub get_stats_templates {
                 $maint = $data->maintainer($pkg);
                 $maint =~ s/\s*<.*>//;
                 $maint =~ s/&/&amp;/g;
-                print GEN "<li><a name=\"P$pkg\">$pkg</a> ".$data->version($pkg)." [$maint]\n";
+	        my $anchor_maint = lc $maint;
+                $anchor_maint =~ s/[^a-z0-9]/_/g;
+
+                print GEN "<li><a name=\"P$pkg\">$pkg</a> ".$data->version($pkg)." [<a href=errors-by-maint#M$anchor_maint>$maint</a>]\n";
                 my $errors_pkg = "<ul>\n";
                 if (@{$tmpl_errors->{$pkg}->{master}}) {
                         $errors_pkg .= "<li><a href=\"errors#master\">translated-fields-in-master-templates</a><br>\n".${$tmpl_errors->{$pkg}->{master}}[0]."</li>\n";
