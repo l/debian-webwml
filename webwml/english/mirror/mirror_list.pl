@@ -258,12 +258,15 @@ END
 	print "<a href=\"http://www.debian.org/mirror/submit\">" if $html;
 	print "                     http://www.debian.org/mirror/submit";
 	print "</a>. " if $html;
-	print "\n";
+	print "<br>\n";
 
-	print "To contact the maintainer of this page, write to ";
-	print "<a href=\"mailto:mirrors\@debian.org\">" if $html;
-	print "mirrors\@debian.org";
-	print "</a>.<br>" if $html;
+	print <<END;
+Everything else you want to know about Debian mirrors:
+END
+	print "<a href=\"http://www.debian.org/mirror/\">" if $html;
+	print "                        http://www.debian.org/mirror/";
+	print "</a>. " if $html;
+	print "<br>\n";
 }
 
 sub primary_mirrors {
@@ -426,11 +429,11 @@ of material available are listed, along with the access method for each type.
 <dt><strong>Non-US packages</strong>
 	<dd>A pool for Debian packages that can't be distributed in the US
 	due to software patents or use of encryption.
-<dt><strong>WWW pages</strong>
-	<dd>The Debian web pages.
 <dt><strong>CD Images</strong>
 	<dd>Official Debian CD Images. See
-	<a href="http://cdimage.debian.org/">http://cdimage.debian.org/</a> for details.
+	<a href="http://www.debian.org/CD/">http://www.debian.org/CD/</a> for details.
+<dt><strong>WWW pages</strong>
+	<dd>The Debian web pages.
 </dl>
 
 <p>The following access methods are possible:
@@ -466,8 +469,8 @@ END
 <a href="http://www.debian.org/mirror/mirrors_full">
 http://www.debian.org/mirror/mirrors_full</a>.
 <br>
-To contact the maintainer of this page, write to 
-<a href="mailto:mirrors\@debian.org">mirrors\@debian.org</a>.
+Everything else you want to know about Debian mirrors:
+<a href="http://www.debian.org/mirror/">http://www.debian.org/mirror/</a>.
 <br>
 END
 }
@@ -590,7 +593,9 @@ _END_
 
 The authoritative copy of this list can always be found at:
                  http://ftp.debian.org/debian/README.non-US
-To contact the maintainer of this page, write to mirrors\@debian.org
+
+Everything else you want to know about Debian mirrors:
+                        http://www.debian.org/mirror/
 END
 # that should be http://non-us.debian.org/debian-non-US/README.non-US
 # but the FTP admins still haven't made it happen, sigh
