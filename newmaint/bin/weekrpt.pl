@@ -254,16 +254,16 @@ sub get_warn_maintainers($)
 sub get_err_maintainers($)
 {
     my ($dbh) = @_;
-    my ($firstname, $surname, $email, $apply_date);
+    my ($firstname, $surname, $email, $apply_date, \$manager);
     my $sth;
-    my $sql = "SELECT forename, surname, email, apply_date from applicant where age( 'now'::date, apply_date) > '6 weeks' AND advocate_ok is NULL AND (advocate_date IS NULL OR age('now'::date, advocate_date) > '1 weeks') ORDER BY surname";
+    my $sql = "SELECT forename, surname, email, apply_date, manager from applicant where age( 'now'::date, apply_date) > '6 weeks' AND advocate_ok is NULL AND (advocate_date IS NULL OR age('now'::date, advocate_date) > '1 weeks') ORDER BY surname";
 
     print "\nThe following applicants will be deleted as they have been waiting in the\n";
     print "the queue for longer than 6 weeks with no advocate:\n";
 
     $sth = $dbh->prepare($sql);
     $sth->execute();
-    $sth->bind_columns(\$firstname, \$surname, \$email, \$apply_date);
+    $sth->bind_columns(\$firstname, \$surname, \$email, \$apply_date, \$manager);
     while($sth->fetch()) {
         print "$firstname $surname <$email>\n";
         if ($main::enable_email != 0) {
@@ -271,6 +271,11 @@ sub get_err_maintainers($)
             my $sql1 = "DELETE FROM applicant WHERE email = '$email'";
             $sth1 = $dbh->prepare($sql1);
             $sth1->execute();
+            # log this removal
+            my $fullname = $firstname . " " . $surname;
+            my $sql2 = "INSERT INTO log (who, manager, action, name, email) VALUES ('auto', '$manager', 'REMOVE', '$fullname', '$email')";
+            $sth2 = $dbh->prepare($sql2);
+            $sth2->execute();
         }
     }
     print "Email will ";
