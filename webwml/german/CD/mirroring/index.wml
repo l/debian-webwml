@@ -1,75 +1,133 @@
 #use wml::debian::cdimage title="Wie man einen Spiegel für Debian-CD-Images einrichtet" BARETITLE=true
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.8"
+#use wml::debian::translation-check translation="1.11"
 # $Id$
 # Translator: Gerfried Fuchs <alfie@debian.org> 2002-01-20
 
 <p>Um einen Spiegel für Debian-CD-Images einzurichten, benötigen Sie einen Linux
 oder Unix-ähnlichen Rechner mit einer permanenten, verlässlichen Anbindung ans
-Internet.</p>
-
-<p>Die CD-Image-Spiegel beherbergen üblicherweise die jigdo-Schablonen, und
-einige beherbergen auch vorerstellte komplette Images. Die Schablonen werden
-gewöhnlich mit rsync von <a href="../jigdo-cd/#which">einem der offiziellen
-Orte</a> aktualisiert, und die kompletten Images werden mittels
-<kbd>jigdo-mirror</kbd> aktualisiert.</p>
+Internet. Debian-CD-Spiegel führen <tt>.iso</tt>-Images für CDs und DVDs
+in verschiedenen Größen, Dateien für
+<a href="http://atterer.net/jigdo/">jigdo</a> (<tt>.jigdo</tt> und
+<tt>.template</tt>),
+<a href="http://bitconjurer.org/BitTorrent/">BitTorrent</a>-Dateien
+(<tt>.torrent</tt>) und MD5-Checksums der Images (<tt>MD5SUMS*</tt>).</p>
 
 <toc-display/>
 
 <hr>
+#______________________________________________________________________
 
-<toc-add-entry name="httpftp">Warum FTP und HTTP <strong>nicht</strong> passend sind</toc-add-entry>
+<toc-add-entry name="master">Hauptquellseite</toc-add-entry>
 
-<p>Sie sollten <em>nicht</em> FTP oder HTTP verwenden, um die Images zu
-beziehen. Diese Transfer-Methoden haben eine hohe Fehlerquote wegen der
-enormen Größe der Dateien.</p>
+<p>Es gibt zwei Stellen zum Spiegeln, eine für Stable-Images und eine
+für Beta-/Unstable-/Testing-Images. Die URLs der Hauptquellseite sehen
+Sie unten &ndash; erwägen Sie jedoch <strong>bitte</strong>, von einem
+anderen nahe gelegenen Spiegel aus zu spiegeln (Spiegelliste:
+<a href="../http-ftp/">HTTP/FTP</a>, <a href="rsync-mirrors">rsync</a>),
+falls möglich. Der Zugriff auf die Hauptquellseite wird um eine neue
+Veröffentlichung herum möglicherweise beschränkt werden.</p>
 
-<p>Außerdem, falls sich das Image nur leicht ändert
-(wie im Fall eines Sub-Releases), werden die gesamten Daten erneut
-heruntergeladen. Das belegt unsere Computer und Netzwerk-Verbindungen mit
-hoher Last.</p>
+<p>Beachten Sie außerdem, dass eine <strong>gewaltige</strong> Menge
+Daten in diesen Verzeichnissen gespeichert ist &ndash; lesen Sie den
+<a href="#exclude">unten folgenden Abschnitt</a> hinsichtlich Details
+darüber, wie man die Größe durch das Ausschließen bestimmter
+Verzeichnisse verringern kann.</p>
 
+<ul>
 
-<toc-add-entry name="download">Über rsync herunterladen</toc-add-entry>
+  <li>Stable-Images (aktualisiert für jedes Stable-Release):<br>
 
-<p>Aus oben genannten Gründen verwenden wir das <a href="http://rsync.samba.org/">\
-<tt>rsync</tt></a>-Programm, das im Wesentlichen ein entferntes Binär-Patchen
-durchführt. Mit <tt>rsync</tt> werden Sub-Release-Images sehr effizient
-aktualisiert, da nur die geänderten Teile über das Netzwerk transferiert
-werden müssen, die unveränderten Teile werden vom alten Image kopiert.</p>
+    <a href="http://cdimage.debian.org/debian-cd/"
+    ><tt>http://cdimage.debian.org/debian-cd/</tt></a><br>
 
-<p>Für Sites, die nur Debian-CD-Images beherbergen wollen (und nicht
-irgendwelche anderen Debian-Spiegel), und die keinen nahen/schnellen Debian
-(<kbd>debian/</kbd>) Spiegel haben, empfehlen wir die Verwendung von
-<kbd>rsync</kbd> in einem täglichen cron-Job.</p>
+    <a href="ftp://cdimage.debian.org/debian-cd/"
+    ><tt>ftp://cdimage.debian.org/debian-cd/</tt></a><br>
 
-<p>Sie können von jeder der Sites in <a href="rsync-mirrors">dieser
-Spiegel-Liste</a> spiegeln.</p>
+    <tt>rsync://cdimage.debian.org/debian-cd/</tt>
+
+  </li>
+
+  <li>Beta-/Unstable-/Testing-Images (wöchentliche Aktualisierung der
+  Abschnitte):<br>
+
+    <a href="http://cdimage.debian.org/pub/cdimage-testing/"
+    ><tt>http://cdimage.debian.org/pub/cdimage-testing/</tt></a><br>
+
+    <a href="ftp://cdimage.debian.org/pub/cdimage-testing/"
+    ><tt>ftp://cdimage.debian.org/pub/cdimage-testing/</tt></a><br>
+
+    <tt>rsync://cdimage.debian.org/cdimage-testing/</tt>
+
+  </li>
+
+</ul>
+#______________________________________________________________________
+
+<toc-add-entry name="httpftp">Vom Spiegeln mittels HTTP/FTP wird
+abgeraten</toc-add-entry>
+
+<p>Sie sollten FTP oder HTTP nicht zum Aktualisieren Ihres Spiegels
+verwenden. Diese Transfermethoden weisen aufgrund der enormen Größe
+der Dateien eine hohe Fehlerwahrscheinlichkeit auf.</p>
+
+<p>Des weiteren beinhalten HTTP und FTP keinerlei Konsistenzkontrollen
+der heruntergeladenen Daten; es ist wahrscheinlicher, dass abgebrochene
+Downloads oder Datenverfall unbemerkt bleiben.</p>
+#______________________________________________________________________
+
+<toc-add-entry name="rsync">Spiegeln mittels rsync ist akzeptabel</toc-add-entry>
+
+<p>Das <a href="http://rsync.samba.org/"><kbd>rsync</kbd></a>-Programm
+ist eine gute Lösung zum Spiegeln. Es ist weniger effizient als andere,
+unten genannte Debian-spezifische Spiegellösungen, aber es mag in der
+Einrichtung einfacher sein. Des weiteren stellt es sicher, dass alle
+Dateien korrekt übertragen wurden und Metadaten (z.B. Zeitstempel)
+genau wie die Dateien selbst synchron gehalten werden.</p>
+
+<p>Beachten Sie den Abschnitt <a href="#exclude">Dateien vom Spiegeln
+ausschließen</a> hinsichtlich Beispielen für <kbd>--include</kbd>- und
+<kbd>--exclude</kbd>-Optionen. Die <a href="rsync-mirrors">Liste der
+rsync-Spiegel</a> ist auf einer separaten Liste verfügbar.</p>
 
 <p>Verwenden Sie zumindest die Optionen <strong><kbd>--times --links
---hard-links --block-size=8192</kbd></strong>. Das wird die Änderungszeit,
+--hard-links --partial --block-size=8192</kbd></strong>. Das wird die Änderungszeit,
 symbolische und harte Links erhalten, und eine Block-Größe von 8192 Bytes
 verwenden (am effizientesten für CD-Images). Wenn die Änderungszeit und die
 Größe die gleichen sind, lässt <kbd>rsync</kbd> die Datei in Ruhe, daher ist
-<tt>--times</tt> wirklich verpflichtend.</p>
+<kbd>--times</kbd> wirklich verpflichtend.</p>
+#______________________________________________________________________
 
+<toc-add-entry name="jigdolite">Vom Spiegeln mittels jigdo-lite wird
+abgeraten</toc-add-entry>
 
-<toc-add-entry name="jigdomirror">Images mit jigdo-mirror generieren</toc-add-entry>
+<p>Neuere Versionen des
+<a href="http://atterer.net/jigdo/"><kbd>jigdo-lite</kbd></a>-Programms
+unterstützen Stapelherunterladen mehrerer Images. Dennoch empfehlen,
+<kbd>jigdo-lite</kbd> nicht zum Erstellen von Debian-CD-Spiegeln zu
+verwenden &ndash; nutzen Sie stattdessen <kbd>jigdo-mirror</kbd>.</p>
+#______________________________________________________________________
+
+<toc-add-entry name="jigdomirror">Spiegeln mittels jigdo-mirror wird
+empfohlen</toc-add-entry>
+
+<p>Eigentlich bedeutet dies: Spiegeln Sie die <tt>.iso</tt>-Dateien
+mittels <a href="http://atterer.net/jigdo/"><kbd>jigdo-mirror</kbd></a>,
+dann (falls Sie auch andere Dateitypen spiegeln wollen, z.B.
+<tt>.jigdo</tt>- und <tt>.template</tt>-Dateien) führen Sie rsync über
+das Verzeichnis aus um den Rest zu holen. Die Skripte auf
+<a href="http://www.acc.umu.se/~maswan/debian-push/cdimage/">dieser Seite</a>
+helfen Ihnen vielleicht beim Einrichten.</p>
 
 <p>Viele Leute betreuen auch »reguläre« Debian-Spiegel (<kbd>debian/</kbd>),
 oder haben einen solchen Spiegel in der Nähe. Dies bedeutet, dass sie bereits
-die .debs haben, die in den CD-Images enthalten sind. Die offensichtliche
+die <tt>.debs</tt> haben, die in den CD-Images enthalten sind. Die offensichtliche
 Frage ist &ndash; wieso können wir diese gleichen Dateien in den CD-Images nicht
 verwenden?</p>
 
 <p><kbd>jigdo-mirror</kbd> ist ein Programm, das es einem erlaubt, ein
 Debian-CD-Image unter Verwendung der Dateien eines »normalen« Spiegels
 zuzüglich ein paar zusätzlicher jigdo-Schablonen-Dateien zu erstellen.</p>
-
-<p>Beachten Sie, dass <kbd>jigdo-mirror</kbd> in jigdo 0.6.8 enthalten ist,
-aber diese Version nicht mit Debian 3.0 (»Woody«) vertrieben wird. Dies
-bedeutet lediglich, dass Sie sie sich separat besorgen müssen, es gibt zur
-Zeit keine Probleme damit, die neue Version auf »Woody« zu verwenden.</p>
 
 <p>Zu allererst benötigen Sie die jigdo-Schablonen-Dateien. Diese können von den
 meisten offiziellen Sites bezogen werden, aber die zwei primären Orte
@@ -108,107 +166,120 @@ Ausgaben produzieren und wahrscheinlich einige Zeit brauchen, daher schlagen
 wir vor, dass Sie Schritte durchführen, damit umzugehen (es in screen
 aufrufen, die Ausgabe in eine Datei umleiten, usw.).</p>
 
+#______________________________________________________________________
 
-<toc-add-entry name="pik">Images mit dem Pseudo-Image Kit und debcdmirror erstellen</toc-add-entry>
+<toc-add-entry name="pushmirror">Wie man ein Push-Spiegel wird</toc-add-entry>
 
-<p><tt>rsync</tt> alleine lädt immer noch alles herunter für »alle neuen«
-Releases, da diese Images praktisch keine unveränderten Teile enthalten.
-Jedoch können wir mit dem Pseudo-Image-Kit ein »Pseudo«-CD-Image aus den Daten
-erstellen, die bereits auf dem nächsten Debian-FTP-Spiegel verfügbar sind &ndash;
-eventuell auf Ihrer lokalen Festplatte. Dann kann <tt>rsync</tt> diese
-»Pseudo-Images« binär zu den offiziellen patchen. Und selbst für die meisten
-Sub-Release-Images ist das effizienter als das alte Image zu patchen.</p>
+<p>Sobald neue Images verfügbar sind, kann die Hauptquellseite eine
+Nachricht an seine Spiegel senden und sie veranlassen, sofort eine
+Aktualisierung durchzuführen. Auf diesem Weg werden neue Daten während
+der nächsten täglichen Aktualisierung eher »gedrückt« (»pushed«) denn
+von den Spiegeln »gezogen« (»pulled«), was zu einer schnelleren
+Verbreitung von neuen Image-Veröffentlichungen führt.</p>
 
-<p><strong>Die Informationen in diesem Abschnitt könnten veraltet sein! Es
-wird empfohlen, dass Sie entweder reines rsync verwenden, oder jigdo-mirror
-ausprobieren.</strong></p>
+<p>Falls Sie Ihren Spiegel Teil dieses Aktualisierungssystems sein
+lassen wollen, schauen Sie auf
+<a href="http://www.acc.umu.se/~maswan/debian-push/cdimage/">diese Seite</a>.</p>
+#______________________________________________________________________
 
-<p>Das Pseudo-Image-Kit ist hauptsächlich dafür entworfen, nur eines oder
-wenige Images herunterzuladen, wie es die meisten Leute tun. Es gibt auch das
-<tt>debcdmirror</tt>-Skript, das das Spiegeln <em>wirklich</em> einfach macht,
-da es das Pseudo-Image-Kit und <tt>rsync</tt> verwendet, um Ihren Spiegel
-aktuell zu halten &ndash; einschließlich des automatischen Prüfens der
-MD5-Prüfsumme für jedes heruntergeladene Image. Mit <tt>debcdmirror</tt> können
-Sie auch exakt spezifizieren, was Sie spiegeln wollen.</p>
+<toc-add-entry name="exclude">Dateien vom Spiegeln ausschließen</toc-add-entry>
 
-<p>Die händische Verwendung des Pseudo-Image-Kits (vielleicht mit
-<tt>rsync</tt>, um Unterreleases zu aktualisieren) bedeutet viel Arbeit und
-viele Probleme, daher empfehlen wir es nicht.</p>
+<p>Um den Umfang des von einem Debian-CD-Spiegel benötigten Datenplatzes
+zu verringern können Sie gewisse Dateien vom Spiegeln ausschließen.
+Die folgenden Anweisungen beinhalten Befehlszeilenoptionen für
+<kbd>rsync</kbd>, können aber helfen, wenn ein anderes Werkzeug zum
+Spiegeln verwendet wird. Bei <kbd>rsync</kbd> werden die <kbd>--include</kbd>-
+und <kbd>--exclude</kbd>-Optionen in der Reihenfolge ihres Auftretens
+beachtet, und die erste Option, deren Dateimuster passt, bestimmt, ob
+eine Datei aus- oder eingeschlossen wird.</p>
 
-<p>Stattdessen sollten Sie das <tt>debcdmirror</tt>-Skript verwenden (das
-»intern« das Pseudo-Image-Kit und <tt>rsync</tt> verwendet) (täglicher
-Cron-Job).</p>
+<ul>
 
-<p>Die neueste Version des
-<a href="http://cdimage.debian.org/~costar/pseudo-image-kit/">\
-Pseudo-Image-Kits</a> und des
-<a href="http://cdimage.debian.org/~costar/debcdmirror/">\
-<tt>debcdmirror</tt></a>-Skripts sind auf der Homepage ihres Autors
-erhältlich. Lesen Sie die READMEs in beiden Paketen für umfassende
-Informationen über die Prozeduren.</p>
+  <li><strong>Quellcode ausschließen:</strong>
+  <kbd>--exclude=source/</kbd><br>
 
-<p><strong>Beachten Sie:</strong></p>
+  Dies wird verhindern, dass Quellcode enthaltende Images gespiegelt
+  werden. Beachten Sie, dass einige Leute es für unangebracht halten,
+  Binärdateien eines GPL-lizenzierten Programms auf einem Server
+  anzubieten, ohne auch den Quellcode der Programme <em>auf demselben
+  Server</em> anzubieten.</li>
 
-<p>Für das <tt>debcdmirror</tt>-Skript müssen Sie einen <tt>rsync</tt>-Spiegel
-verwenden, der eine »<tt>ls-lR</tt>«-Datei bietet. Adressen gibt es auf der
-<a href="rsync-mirrors">rsync-Spiegel-Liste</a>.</p>
+  <li><strong>Volle Images ausschließen:</strong>
+  <kbd>--include='*businesscard*.iso' --include='*netinst*.iso'
+  --exclude='*.iso'</kbd><br>
 
-<p>Falls Sie nicht einen lokalen <a href="$(HOME)/mirror/">»regulären«
-Debian-FTP-Spiegel</a> haben, prüfen Sie die
-<a href="$(HOME)/mirror/list">Liste der Spiegel-Sites</a>.</p>
+  Schließt sämtliche vollen CD-/DVD-Image-Sätze für alle Architekturen
+  aus, <em>aber</em> spiegelt die Images in business-card-Größe und die
+  net-install-<tt>.iso</tt>-Images. Wir empfehlen es, immer diese
+  kleinen Images zu spiegeln: Im Verhältnis zu ihrer Größe sind sie
+  extrem nützlich!</li>
 
-<p><tt>debcdmirror</tt> benötigt <tt>bash</tt> Version 2 oder höher. Dies ist
-auf einem modernem Debian-System kein Problem. Falls
-nötig können Sie diese an einem Platz installieren, der nicht dem Standard
-entspricht, aber vergessen Sie dann nicht, den Pfad zur <tt>bash</tt> in der
-ersten Zeile des Skripts anzupassen.</p>
+  <li><strong>Volle Images für nicht-i386-Architekturen ausschließen:</strong>
+  <kbd>--include='*businesscard*.iso' --include='*netinst*.iso'
+  --include='i386/**.iso' --exclude='*.iso'</kbd><br>
 
+  Wie oben, aber schließe alle CD-/DVD-Images für die i386-Architektur
+  <em>doch</em> ein.</li>
 
-<toc-add-entry name="test">Test-Images</toc-add-entry>
+  <li><strong>Volle Images ausschließen, ausgenommen die i386-CDs 1 bis
+  3:</strong>
+  <kbd>--include='*netinst*.iso' --include='i386/**-[1-3].iso'
+  --exclude='*.iso'</kbd><br>
 
-<p>Die »<tt><i>codename</i>_test</tt>«-Verzeichnisse enthalten Images, die hart
-verlinkt mit denen in den versionisierten (z.B. <tt>2.2_r4</tt>)
-Verzeichnissen sind. Der Name des versionisierten Verzeichnisses wird sich
-zwischen den (Sub-)Releases ändern, aber die Namen in den »<tt>test</tt>«-Verzeichnissen
-werden die gleichen bleiben.</p>
+  Der volle Satz an i386-Images mag immer noch zu viel Platz beanspruchen,
+  wenn Sie auch die DVD- und doppellagige DVD-Images einschließen.
+  Dies schließt alle <tt>.iso</tt>-Images mit Ausnahme der
+  net-install-Images und der ersten drei i386-CDs aus.</li>
 
-<p>Daher, falls Sie nur
-<tt>rsync</tt> verwenden, ist die einzige Möglichkeit für rsync die
-Sub-Releases ordentlich zu aktualisieren, sowohl die versionisierten als auch
-die entsprechenden »<tt>test</tt>«-Verzeichnisse zu spiegeln <em>und</em> die
-<tt>--hard-links</tt>-Option zu verwenden. [Sie sollten <em>nicht</em> die
-»<tt>test</tt>«-Verzeichnisse bei <tt>debcdmirror</tt> einbeziehen, da
-<tt>debcdmirror</tt> diese Dinge anders und effizienter handhabt.]</p>
+  <li><strong>Alle Architekturen außer i386 ausschließen:</strong>
+  <kbd>--exclude=alpha/ --exclude=arm/ --exclude=hppa/ --exclude=hurd/
+  --exclude=ia64/ --exclude=m68k/ --exclude=mips/ --exclude=mipsel/
+  --exclude=powerpc/ --exclude=s390/ --exclude=sh/
+  --exclude=sparc/</kbd><br>
 
+  Schließt nur den vollen Satz Dateien für i386 ein, aber nicht irgendwelche
+  <tt>.jigdo</tt>-, <tt>.iso</tt>- etc. Dateien für andere Architekturen.</li>
 
-<toc-add-entry name="ls-lR">ls-lR-Dateien</toc-add-entry>
+</ul>
+#______________________________________________________________________
 
-<p>Die <tt>ls-lR</tt>-Datei beschreibt die Verzeichnis-Struktur des Spiegels,
-auf dem sie liegt. Spiegeln Sie <strong>nicht</strong> die <tt>ls-lR</tt>-Datei;
-entweder erstellen Sie sie selbst (mit dem verfügbaren
-»<tt>Makels-lR</tt>« jede Stunde über <tt>cron</tt>) oder haben Sie einfach
-keine <tt>ls-lR</tt>-Datei. [<tt>debcdmirror</tt> wird automatisch ein lokales
-<tt>ls-lR</tt> erstellen, nach dem Spiegeln.]</p>
+<toc-add-entry name="names">Namenskonventionen und Platzbedarf für
+<tt>.iso</tt>-Images</toc-add-entry>
 
+<p>Die verschiedenen Varianten der <tt>.iso</tt>-Images sind anhand
+ihres Namens unterscheidbar, was Ihnen erlaubt, die zu spiegelnden
+Image-Typen zu beschränken:</p>
 
-<toc-add-entry name="serve">Die Dateien anbieten</toc-add-entry>
+<ul>
 
-<p>Wenn Sie das CD-Image, das Sie spiegeln wollen (i386 und Source-CDs sind
-die beliebtesten), erworben haben, sollten Sie das <tt>rsync</tt>-Server-Programm
-laufen lassen. Das wird Ihren Rechner nicht mit einer hohen
-Last überfordern, und wird viel weniger Netzwerk-Verkehr als ein
-FTP/HTTP-Dienst benötigen.</p>
+  <li><strong><tt>*-businesscard.iso</tt></strong>: Ein Image für jede
+  der <a href="/ports/#released">unterstützten Architekturen</a>,
+  50&nbsp;MB</li>
 
-<p>Anleitungen, wie man dieses aufsetzt, finden sich im README des
-Pseudo-Image-Kit. Kurz gesagt, fügen Sie <kbd>rsync --daemon</kbd> zu ihrer
-<i>inetd</i>-Konfiguration hinzu, und stellen Sie die
-<kbd>rsyncd.conf</kbd>-Datei ein, wie Sie es wünschen. Wir empfehlen, den
-Zugriff auf eine Handvoll Verbindungen pro IP-Adresse zu beschränken, und
-höchstens eine zweistellige Anzahl insgesamt.</p>
+  <li><strong><tt>*-netinst.iso</tt></strong>: Ein Image für jede
+  Architektur, 110&nbsp;MB</li>
 
-# TODO: include more stuff here rather than depending on pik, with examples
+  <li><strong><tt>*-dvd.iso</tt></strong> (einlagige DVDs):
+  Mehrfache Images nur für i386, jedes bis zu 4482&nbsp;MB groß. Für
+  Sarge beträgt die zusammengenommene Größe der i386-Images ungefähr
+  9000&nbsp;MB.</li>
 
-<toc-add-entry name="register">Den Spiegel für unsere Listen registrieren</toc-add-entry>
+  <li><strong><tt>*-dldvd.iso</tt></strong> (doppellagige DVDs): Wie
+  oben, die individuellen Images sind aber bis zu 8106&nbsp;MB groß.
+  Für Sarge sind keine <tt>.iso</tt>-Images verfügbar, nur
+  jigdo-Dateien.</li>
+
+  <li><strong><tt>*.iso</tt></strong>: Alle übrigen
+  <tt>.iso</tt>-Dateien, auf die keines der obigen Muster zutrifft,
+  sind CD-Images. Es gibt mehrere Images für jede Architektur, jedes
+  bis zu 650&nbsp;MB groß. Die zusammengenommene Größe aller Images
+  und Architekturen entspricht der <a href="/mirror/size">Größe
+  eines vollen Debian-Spiegels</a> (derzeit 100&nbsp;GB).</li>
+
+</ul>
+#______________________________________________________________________
+
+<toc-add-entry name="register">Den Spiegel registrieren</toc-add-entry>
 
 <p>Um ihren CD-Image-Spiegel für eine größere Anzahl von Personen nützlich zu
 machen, können Sie ihn für unsere Spiegel-Liste wie
