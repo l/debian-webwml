@@ -1,143 +1,167 @@
 <define-tag flags whitespace=delete>
 	[EN:Flags::]
+	[FI:Liput::]
 	[DA:Flag::]
 	[HR:Oznake::]
 	[SV:Flaggor::]
 </define-tag>
 <define-tag active_bugs whitespace=delete>
 	[EN:active bugs:]
+	[FI:aktiiviset viat:]
 	[DA:aktive fejl:]
 	[HR:aktivni bugovi:]
 	[SV:aktiva fel:]
 </define-tag>
 <define-tag archived_bugs whitespace=delete>
 	[EN:archived bugs:]
+	[FI:arkistoidut viat:]
 	[DA:arkiverede fejl:]
 	[HR:arhivirani bugovi:]
 	[SV:arkiverade fel:]
 </define-tag>
 <define-tag no_status whitespace=delete>
 	[EN:no ordering by status or severity:]
+	[FI:ei järjestystä tilan tai vakavuuden perusteella:]
 	[DA:ingen sortering på status/alvorlighedsgrad:]
 	[HR:bez slaganja po stanju ni severityu:]
 	[SV:ingen sortering på status/allvarlighetsgrad:]
 </define-tag>
 <define-tag reverse_order whitespace=delete>
 	[EN:Reverse order of: :]
+	[FI:Käänteinen järjestys::]
 	[DA:Omvendt rækkefølge af: :]
 	[HR:Obrnut redoslijed za: :]
 	[SV:Omvänd ordning för: :]
 </define-tag>
 <define-tag status whitespace=delete>
 	[EN:status:]
+	[FI:tila:]
 	[DA:status:]
 	[HR:stanje:]
 	[SV:status:]
 </define-tag>
 <define-tag severities whitespace=delete>
 	[EN:severities:]
+	[FI:vakavuudet:]
 	[DA:alvorlighedsgrader:]
 	[HR:severityi:]
 	[SV:allvarlighetsgrader:]
 </define-tag>
 <define-tag bugs whitespace=delete>
 	[EN:bugs:]
+	[FI:viat:]
 	[DA:fejl:]
 	[HR:bugovi:]
 	[SV:fel:]
 </define-tag>
 <define-tag status_include whitespace=delete>
 	[EN:Include status: :]
+	[FI:Sisällytä tila: :]
 	[DA:Status indeholder: :]
 	[HR:Ukljuèi stanje: :]
 	[SV:Inkludera status: :]
 </define-tag>
 <define-tag status_exclude whitespace=delete>
 	[EN:Exclude status: :]
+	[FI:Poista tila: :]
 	[DA:Status indeholder ikke: :]
 	[HR:Iskljuèi stanje: :]
 	[SV:Exkludera status: :]
 </define-tag>
 <define-tag severity_include whitespace=delete>
 	[EN:Include severity: :]
+	[FI:Sisällytä vakavuus: :]
 	[DA:Alvorlighedsgrad indeholder: :]
 	[HR:Ukljuèen severity: :]
 	[SV:Inkludera allvarlighetsgrader: :]
 </define-tag>
 <define-tag severity_exclude whitespace=delete>
 	[EN:Exclude severity: :]
+	[FI:Poista vakavuus: :]
 	[DA:Alvorlighedsgrad indeholder ikke: :]
 	[HR:Iskljuèen severity: :]
 	[SV:Exkludera allvarlighetsgrader: :]
 </define-tag>
 <define-tag open whitespace=delete>
 	[EN:open:]
+	[FI:avoin:]
 	[DA:åben:]
 	[HR:otvoreni:]
 	[SV:öppet:]
 </define-tag>
 <define-tag forwarded whitespace=delete>
 	[EN:forwarded:]
+	[FI:siirretty eteenpäin:]
 	[DA:videresendt:]
 	[HR:proslijeðeni:]
 	[SV:vidaresänt:]
 </define-tag>
 <define-tag pending whitespace=delete>
 	[EN:pending:]
+	[FI:ratkaisematon:]
 	[DA:i gang:]
 	[HR:u radu:]
 	[SV:på gång:]
 </define-tag>
 <define-tag fixed whitespace=delete>
 	[EN:fixed:]
+	[FI:korjattu:]
 	[DA:rettet:]
 	[HR:rije¹eni:]
 	[SV:rättat:]
 </define-tag>
 <define-tag done whitespace=delete>
 	[EN:done:]
+	[FI:valmis:]
 	[DA:færdig:]
 	[HR:gotovi:]
 	[SV:klart:]
 </define-tag>
 <define-tag critical whitespace=delete>
 	[EN:critical:]
+	[FI:kriittinen:]
 	[DA:kritisk:]
 	[HR:kritièni:]
 	[SV:kritiskt:]
 </define-tag>
 <define-tag grave whitespace=delete>
 	[EN:grave:]
+	[FI:haudanvakava:]
 	[DA:graverende:]
 	[HR:te¹ki:]
 	[SV:gravt:]
 </define-tag>
 <define-tag serious whitespace=delete>
 	[EN:serious:]
+	[FI:vakava:]
 	[DA:alvorlig:]
 	[HR:ozbiljni:]
 	[SV:allvarligt:]
 </define-tag>
 <define-tag important whitespace=delete>
 	[EN:important:]
+	[FI:tärkeä:]
 	[DA:vigtig:]
 	[HR:va¾ni:]
 	[SV:viktigt:]
 </define-tag>
 <define-tag normal whitespace=delete>
 	[EN:normal:]
+	[FI:normaali:]
 	[DA:normal:]
 	[HR:normalni:]
 	[SV:normalt:]
 </define-tag>
 <define-tag minor whitespace=delete>
 	[EN:minor:]
+	[FI:vähäpätöinen:]
 	[DA:mindre:]
 	[HR:maleni:]
 	[SV:mindre:]
 </define-tag>
 <define-tag wishlist whitespace=delete>
 	[EN:wishlist:]
+	[FI:toive:]
 	[DA:ønskeliste:]
 	[HR:¾elje:]
 	[SV:önskelista:]
