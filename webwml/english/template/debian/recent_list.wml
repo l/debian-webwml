@@ -69,6 +69,8 @@ sub get_recent_list {
 	@files = sort {$b cmp $a} @files;
 	closedir DIR;
 
+#	print STDERR "files: " . join " ", @files;
+#	print STDERR "year=$year number=$number eng_dir=$eng_dir format=$format match=$match";
 	$count = 0;
 	grab_titles($year, $number, $eng_dir, $format, $match);
 
@@ -120,6 +122,9 @@ sub grab_titles {
 			elsif ($line =~ /^<define-tag description>(.*)<\/define-tag>$/) {
 				$desc = qq/$1/;
 			}
+			elsif ($line =~ /^<define-tag status>(.*)<\/define-tag>$/) {
+				$status = qq/$1/;
+			}
 			if ($title && $date && $desc) {
 				$date = newsdate($date);
 				$str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong> - $elemfoot$desc<br>\n";
@@ -128,6 +133,15 @@ sub grab_titles {
 			elsif ($title && $date) {
 				$date = newsdate($date);
 				$str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong><br>\n";
+			}
+			elsif ($title && $status) {
+				$str1 = "$elemhead<a href=\"$year/$base\">$title</a> &mdash; ";
+				 if ( $status eq "P" ) { $str1 .= "proposed"; }
+				 elsif ( $status eq "D" ) { $str1 .= "discussed"; }
+				 elsif ( $status eq "V" ) { $str1 .= "voted on"; }
+				 elsif ( $status eq "F" ) { $str1 .= "finished"; }
+				 else { $str1 .= "other"; }
+				$str1 .= "<br>\n";
 			}
 		}
 		</protect>
