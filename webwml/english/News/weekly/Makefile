@@ -42,7 +42,7 @@ endif
 # When building the html files we have to change into the right directory
 # so wml gets all the relative links right.
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
-	                   $(TEMPLDIR)/weeklynews/header.wml
+	                   $(TEMPLDIR)/weeklynews/header.wml $(GETTEXTDEP)
 ifneq "$(LANGUAGE)" "ja"
 	cd $(@D) && $(WML) $(notdir $(<))
 else
@@ -52,7 +52,7 @@ endif
 # Special case for Chinese
 %.zh-cn.html %.zh-hk.html %.zh-tw.html : %.wml \
 			   $(TEMPLDIR)/weeklynews/footer.wml \
-			   $(TEMPLDIR)/weeklynews/header.wml \
+			   $(TEMPLDIR)/weeklynews/header.wml $(GETTEXTDEP) \
 			   $(TOCN) $(TOHK) $(TOTW)
 	cd $(@D) && $(WML) $(notdir $(<))
 
@@ -142,7 +142,7 @@ index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/*/index.wml) \
       $(ENGLISHSRCDIR)/$(CUR_DIR)/CURRENT-ISSUE-IS \
       $(TEMPLDIR)/weeklynews/header.wml \
       $(TEMPLDIR)/weeklynews/index.wml \
-      $(TEMPLDIR)/weeklynews/footer.wml
+      $(TEMPLDIR)/weeklynews/footer.wml $(GETTEXTDEP)
 
 # Special case for Chinese
 index.zh-cn.html index.zh-hk.html index.zh-tw.html: index.wml \
@@ -151,7 +151,7 @@ index.zh-cn.html index.zh-hk.html index.zh-tw.html: index.wml \
       $(ENGLISHSRCDIR)/$(CUR_DIR)/CURRENT-ISSUE-IS \
       $(TEMPLDIR)/weeklynews/header.wml \
       $(TEMPLDIR)/weeklynews/index.wml \
-      $(TEMPLDIR)/weeklynews/footer.wml
+      $(TEMPLDIR)/weeklynews/footer.wml $(GETTEXTDEP)
 
 # per-year indices need to be rebuilt, too.
 # this code works around a small bug in make's $(wildcard) function, too
@@ -160,7 +160,7 @@ index.zh-cn.html index.zh-hk.html index.zh-tw.html: index.wml \
         $(wildcard $(ENGLISHSRCDIR)/News/weekly/$*/*/index.wml) \
         $(TEMPLDIR)/weeklynews/header.wml \
         $(TEMPLDIR)/weeklynews/index.wml \
-        $(TEMPLDIR)/weeklynews/footer.wml
+        $(TEMPLDIR)/weeklynews/footer.wml $(GETTEXTDEP)
 
 # again special cases for Chinese, ugh
 ifeq "$(LANGUAGE)" "zh"
@@ -170,7 +170,7 @@ ifeq "$(LANGUAGE)" "zh"
 	$(wildcard $(ENGLISHSRCDIR)/News/weekly/$*/*/index.wml) \
 	$(TEMPLDIR)/weeklynews/header.wml \
 	$(TEMPLDIR)/weeklynews/index.wml \
-	$(TEMPLDIR)/weeklynews/footer.wml
+	$(TEMPLDIR)/weeklynews/footer.wml $(GETTEXTDEP)
 endif
 
 # Generate the mail for posting to debian-news. Requires the web page already
