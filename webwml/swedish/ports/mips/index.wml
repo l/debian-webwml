@@ -1,5 +1,5 @@
 #use wml::debian::template title="MIPS-anpassning" NOHEADER="yes"
-#use wml::debian::translation-check translation="1.83"
+#use wml::debian::translation-check translation="1.84"
 #include "$(ENGLISHDIR)/ports/mips/menu.inc"
 
 <h1>debian-mips och debian-mipsel</h1>
@@ -16,11 +16,26 @@ oftast inte går att välja i programvaran behöver vi båda arkitekturerna.
 SGI-maskiner (SGI Indy och Indigo2) kör
 <a href="http://www.foldoc.org/foldoc/foldoc.cgi?query=big-endian">
 &rdquo;big endian&rdquo;</a>, vilket är debian-mips.
-Digital Decstation-maskiner kör
+Digital Decstation- och Cobalt Cube/RaQ-maskiner kör
 <a href="http://www.foldoc.org/foldoc/foldoc.cgi?query=little-endian">
-&rdquo;little endian&rdquo;</a> (debian-mipsel).</p>
+&rdquo;little endian&rdquo;</a> (debian-mipsel).
+BCM91250A, alias SWARM, kan köra båda lägena, vilket kan väljas med en
+omkopplare på kortet.
+</p>
 
 <h2>Kända problem</h2>
+<ul>
+	<li>O2 R10000 stöds INTE.</li>
+	<li>O2 R5000 - EXPERIMENTELLT, skakig
+	<span lang=en>framebuffer</span>.</li>
+	<li>Indigo 2 R8000/R10000 stöds inte.</li>
+	<li>Indigo 2 <span lang=en>framebuffer</span>, förutom XL, stöds inte.</li>
+	<li>Challenge S extra Ethernet/SCSI stöds inte (GIO64-enheter).</li>
+	<li>EISA-socklar på Indigo 2 stöds inte.</li>
+</ul>
+
+<h2>Kända problem (lösta)</h2>
+
 <ul>
 	<li>Ingen fungerande X-tangentbordsuppsättning för XFree 4 på
 	Decstationer</li>
@@ -29,49 +44,14 @@ Digital Decstation-maskiner kör
 	som att <code>export LD_BIND_NOW=1</code> löser problemet.</li>
 	<li>R4600 v1.7 fungerar inte med aktuell CVS.
 	Slumpmässiga hängningar.</li>
-	<li>O2 R10000 stöds INTE.</li>
-	<li>O2 R5000 - EXPERIMENTELLT utan
-	<span lang=en>framebuffer</span>.</li>
-	<li>Indigo 2 R8000/R10000 stöds inte.</li>
-	<li>Indigo 2 <span lang=en>framebuffer</span> stöds inte.</li>
-	<li>Challenge S extra Ethernet/SCSI stöds inte (GIO64-enheter).</li>
-	<li>EISA-socklar på Indigo 2 stöds inte.</li>
 	<li>R3000-Decstation kraschar med nuvarande cvs-kärna.</li>
-</ul>
-
-<h2>Kända problem (lösta)</h2>
-
-<ul>
 	<li>Tidig krasch på Indigo 2 om <span lang=en>framebuffer/newport</span>
 	aktiveras.</li>
-        <li>XFree XShm är trasigt &ndash; punktgrafikbilder
-        förstörs. - En patch som löser problemet skickades till
-        linux-mips@oss.  Väntar på att den skall komma in i cvs. </li>
-	<li>Systemanropet sleep återvänder ibland inte &ndash; Strace
-	visar en 22 års väntan &ndash; Verkar ha att göra med
-	librt/fpu - Har inte sett detta på några månader.  Verkar vara
-	fixat med kärna 2.4.17 / glibc 2.2.5-3.</li>
-	<li>update-menus får ett SIGBUS-fel &ndash; Verkar bero på c++
-	exception-hantering - Länkar statisk f.n., vilket verkar lösa
-	problemet.</li>
-	<li>Startdisketterna version 3.0.22 som förmodligen kommer att
-	släppas med woody har fel namn på kärnan i volym-huvudet.
-	Namnet är &rdquo;linux.bi&rdquo;, inte bara &rdquo;linux&rdquo;
-	&ndash; försök med att använda &rdquo;arcboot&rdquo;,
-	vilket är nästa generations starthanterare
-	för SGI-maskiner, men se upp: du måste installera en modern
-	kärnavbildning som innehåller en ELF-kärna.
-	Woody kommer släppas med 3.0.23.</li>
 </ul>    
 
 <h2>Tillgängliga maskiner</h2>
 
 <ul>
-<li>pongo.verwaltung.uni-mainz.de.<br> En SGI Indy &ndash; R4000SC med
-256 Mbyte RAM.
-	<br>
-	<email martin@uni-mainz.de>
-
 	<li>remake.rfc822.org<br>
 	En Masquerade Pro donerad av Lasat.
 	En little endian R5000 på 250 MHz som kör debian-mipsel samt är
@@ -128,18 +108,23 @@ Debian/Mips</p>
     <li>cobalt-22@devel.alal.com - Anpassa 2.2/2.4 till Cobalt Qube/RaQ.<br>
     <a href="http://devel.alal.com/mailman/listinfo/cobalt-22">
     http://devel.alal.com/mailman/listinfo/cobalt-22</a>
+
+    <li>linux-mips@devel.alal.com - Utveckling av kärnan för Linux/Mips och
+    Linux/Mipsel.
+    Prenumerera genom att sända e-post till <email ecartis@linux-mips.org>
+    med &rdquo;subscribe linux-mips&rdquo;.
 </ul>
 
 <h2>Länkar</h2>
 
 <dl>
-  <dt>Decstation Linux &ndash; Sidor speciellt för Decstationanvändare
-      &ndash; något gammal
-    <dd><a href="http://decstation.unix-ag.org/">decstation.unix-ag.org</a>
+  <dt>Kärnutveckling för Linux/MIPS &ndash; Massor av information om MIPS
+    <dd><a href="http://www.linux-mips.org/">linux-mips.org</a>
   <dt>Mikroprocessortillverkare
     <dd><a href="http://www.mips.com/">www.mips.com</a>
-  <dt>Linux/Mips-sidor hos SGI
-    <dd><a href="http://oss.sgi.com/mips/">oss.sgi.com/mips</a>
+  <dt>Decstation Linux &ndash; Sidor speciellt för Decstationanvändare
+      &ndash; gammal
+    <dd><a href="http://decstation.unix-ag.org/">decstation.unix-ag.org</a>
   <dt>&rdquo;Little endian&rdquo;-MIPS-RPM-paketlager av Karsten Merker
     <dd><a href="ftp://bolug.uni-bonn.de/mips/">bolug.uni-bonn.de/mips/</a>
   <dt>Maciej W. Rozycki:s paketlager
@@ -150,7 +135,7 @@ Debian/Mips</p>
     <dd><a href="http://www.netbsd.org/Ports/cobalt/faq.html">http://www.netbsd.org/Ports/cobalt/faq.html</a>
   <dt>Linux-Mips-korskompilering
     <dd><a href="http://foobazco.org/~wesolows/mips-cross.html">http://foobazco.org/~wesolows/mips-cross.html</a>
-  <dt>Installation av Debian/Mips
+  <dt>Installation av Debian/Mips på Indy
     <dd><a href="http://www.linux-debian.de/howto/debian-mips-woody-install.html">\
       http://www.linux-debian.de/howto/debian-mips-woody-install.html</a>
   <dt>GNU/Linux på Philips Nino
