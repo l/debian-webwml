@@ -1,0 +1,105 @@
+#use wml::debian::template title="Debian GNU/Hurd --- Installation" NOHEADER="yes"
+#use wml::debian::translation-check translation="1.19"
+#include "$(ENGLISHDIR)/ports/hurd/menu.inc"
+
+<h1>Debian GNU/Hurd</h1>
+
+<h2>Installation</h2>
+
+<h3>Hardware</h3>
+
+<p>Kig i <a href="http://www.urbanophile.com/arenn/hacking/hurd/hurd-hardware.html">\
+Hardware-kompabilitetsguiden</a> for at finde ud af hvilken hardware som er 
+understøttet under Hurd.</p>
+
+<h3>Software</h3>
+
+<p><a href="http://www.gnu.org/software/hurd/install.html">Hurds 
+installationsguide</a></p>
+
+<p>Der er to måder at installere et Debian GNU/Hurd-system på. Den første måde
+gør det muligt at installere direkte fra Debian-pakkerne, men kræver 
+<code>dpkg</code>, Debians pakkehåndteringsprogram. Det kan være besværligt 
+hvis du bruger en anden Linux-distribution end Debian, eller hvis du slet ikke
+kører Linux. Derfor er der en anden metode, der bruger en forberedt 
+<code>tar</code>-arkivfil. Efter den er installeret, kan du opdatere dit system
+til den nyeste version af 'native' Debian-pakker. Begge metoder er beskrevet 
+mere deltaljeret nedenfor.</p>
+
+<h4>Fælles forberedelser</h4>
+
+<p>For at påbegynde installationen, oprettes Hurd-partitionen med 
+<code>mke2fs -O sparse_super -o hurd /dev/PARTITION</code>, hvor 
+<code>PARTITION</code> er den partition på harddisken, som du ønsker at bruge
+til Hurd. Bemærk at størrelsen på partitionen ikke for tiden ikke må overstige 
+omkring en 1 gigebyte, på grund af kendte begrænsninger i Hurd.</p>
+
+<p>Montér (mount) dernæst dine partitioner et sikkert sted. Jeg bruger 
+<code>/gnu</code> som monteringspunkt, mest fordi dette er vores stanard til
+krydskompilering. Ethvert andet sted kan også bruges, foruden at gøre det til
+et disk-aftryk indeni en fil (loop mount). Herfra forudsætter jeg at du bruger 
+<code>/gnu</code>. Hvis du ønsker at bruge noget andet, skal du ændre 
+kommandoerne tilsvarende.</p>
+
+<h4>To alternativer</h4>
+
+<h5>Installation ved hjælp af Debian-pakker</h5>
+
+<p>For at installere Debian GNU/Hurd er du nødt til at hente 
+Debian-programpakker og mine installationsscripts. Hent først disse scripts:
+
+<ul>
+  <li><a href="extra-files/cross-install"><code>cross-install</code></a> -
+      Installering af en bunke pakker fra Linux</li>
+  <li><a href="extra-files/native-install"><code>native-install</code></a> -
+      Konfigurering af det nye system</li>
+  <li><a href="extra-files/dpkg-hurd"><code>dpkg-hurd</code></a> - Brug dpkg
+      på Hurd-partitionen fra Linux</li>
+</ul>
+
+<p>Hvis du ikke har Debian, skal du også bruge en udgave af <code>dpkg</code> 
+til dit system.</p>
+
+<p>Sidst, men ikke mindst, kræves Debian-pakkerne. Der kan findet på ethvert
+<a href="../../distrib/ftplist">Debian-ftp-filspejl</a>, i kataloget
+<code>debian/dists/unstable/main/binary-hurd-i386/</code>.
+Du skal bruge et bestemt sæt, som er angivet øverst i scriptet
+<code>dpkg-hurd</code>. Nyere udgaver af <code>cross-install</code> tilbyder en
+automatisk overførselsfunktion, for at gøre det nemmere for dig. Denne mulighed
+kræver en netværksforbindelse og værktøjet <code>wget</code>. Ellers kan du 
+manuelt hente pakkerne og gemme dem i det samme katalog, eller fordele dem i 
+underkataloger på samme måde som de er organiseret på ftp-stedet.</p>
+
+<p><code>cd</code> nu ind i kataloget hvor du opbevarer dine scripts og 
+Debian-pakker. Hvis du bruger et enkelt katalog, skal det indeholde alle 
+filerne. Hvis du bruger ftp-organiseringen til pakkerne, forvis dig om at 
+script-filerne er i det øverste katalog, så du kan finde pakkerne i 
+<code>base/</code> mv.  Kør <code>./cross-install /gnu</code>. Hvis alt går 
+godt, vil pakkerne blive installeret og nogle rettelser til blive tilføjet for
+at rette kende problemer. Fortsæt nu med at <a href="#reboot">genstarte 
+systemet</a>.</p>
+
+<h5>Installering ved hjælp af <code>tar</code>-arkivfilen</h5>
+
+<p>Nogle gange overfører jeg øjebliksbilleder af det aktuelle grundsystem til
+<code><a href="ftp://alpha.gnu.org/pub/gnu/hurd/contrib/marcus/">\
+ftp://alpha.gnu.org/pub/gnu/hurd/contrib/marcus/</a></code>
+Disse filer navngives <code>gnu-YYYYMMDD.tar.gz</code>, hvor 
+<code>YYYYMMDD</code> er datoen på øjebliksbilledet. Filerne kan bruges til at
+installere Hurd, også selvom du ikke har en fungerende udgave af 
+pakkehåndteringsprogrammet <code>dpkg</code> til rådighed.</p>
+
+<p>Hent tar-filen med de nyeste dato. Det er den eneste fil du har brug for,
+for at få at fungerende system (bortset fra GRUB). <code>cd /gnu</code> for at
+gå til roden på Hurd-partitionen. Udpak nu tar-file med kommandoen 
+<code>tar --same-owner -xpzf /somewhere/gnu-YYYYMMDD.tar.gz</code> med 
+angivelse af den rigtige sti og dato.</p>
+
+<h4><a name="reboot">Genstart systemet</a></h4>
+
+<p>Genstart nu systemet og brug GRUB til at starte fra Hurd-partitionen. Jeg 
+vil her ikke give detaljerede oplysninger om GRUB og metoder til navngivning af 
+partitioner, det er dækket i vejledningen til GRUB.</p>
+
+<p>Efter at have genstartet, skal du kun køre <tt>./native-install</tt> for at
+afslutte installationen. God fornøjelse!</p>
