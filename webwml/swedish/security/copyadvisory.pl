@@ -105,6 +105,12 @@ while (<SRC>)
 	s/for the current stable/för den nuvarande stabila/;
 	s/for the unstable distribution/för den instabila utgåvan/;
 	s/for the unstable/för den instabila/;
+	s/current stable distribution/nuvarande stabila utgåvan/;
+	s/unstable distribution/instabila utgåvan/;
+	s/The old stable distribution/Den gamla stabila utgåvan/;
+	s/^stable distribution/stabila utgåvan/;
+	s/^unstable distribution/instabila utgåvan/;
+	s/does(?: not|n't) contain a(?:ny)? ([^ ]) package/innehåller inte något $1-paket/;
 	s/distribution (\(potato|woody|sarge\))/utgåvan $1/;
 	s/privilege escalation/utökning av privilegier/;
 	s/cross site/serveröverskridande/;
