@@ -16,22 +16,3 @@ install:: $(MISC_FILES)
 cleandest::
 	-rm -f $(HTMLDEST)/{$(MISC_FILES)}
 
-
-# Do Not modify the following line
-index.$(LANGUAGE).html: card.ps.gz
-
-card.ps.gz: card.ps
-	gzip  -c card.ps >card.ps.gz
-
-card.ps:  card.dvi
-	dvips card.dvi -o card.ps
-
-card.dvi: card.tex bottle.eps
-	latex card.tex
-
-# there only needs to be one version of the following so
-# the non-english directories shouldn't try to install them
-ifeq ($(LANGUAGE),en)
-$(HTMLDIR)/card.tex: card.tex
-	install -m 664 -p card.tex $(HTMLDIR)
-endif
