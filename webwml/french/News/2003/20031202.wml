@@ -18,9 +18,9 @@ réouvrir l'archive de sécurité et confirmer que la mise à jour de stable
 (3.0r2) n'a pas été compromise.</p>
 
 <p>Si le projet avait anticipé d'être compromis au moment même de
-l'implémentation de la mise à jour de stable, les personnes impliquées
+la publication de la mise à jour de stable, les personnes impliquées
 l'auraient différée. Cependant, les paquets mis à jour étaient déjà
-installées dans l'archive stable et sur les serveurs de miroir au moment
+installées dans l'archive stable et sur les miroirs au moment
 où les intrusions ont été découvertes, il n'était donc plus possible de
 la retarder.</p>
 
@@ -29,7 +29,7 @@ utilisées pour vérifier les paquets et garantir que les archives
 n'avaient pas été touchées par l'intrus&nbsp;:</p>
 
 <ul>
-<li> des listes stockées à l'extérieur des sommes MD5 accumulées sur les
+<li> des listes, stockées à l'extérieur, de sommes MD5 accumulées sur les
    dernières semaines sur des machines non compromises
 <li> des fichiers .changes signés numériquement des archives externes de
    debian-devel-changes sur des machines non compromises
@@ -92,14 +92,14 @@ changé.</p>
 
 <p>Des investigations plus poussées ont révélé que la cause de ces deux
 problèmes étaient le rootkit SucKIT (1.3b). Il inclut un renifleur de
-mot de passe et des capacités d'évasion de détection (i.e. des outils
+mots de passe et des capacités d'évasion de détection (i.e. des outils
 pour cacher des processus et des fichiers) installés directement dans le
 noyau, ce qui a, à son tour, causé les oopses remarqués.</p>
 
 
 <h3>Analyse détaillée de l'attaque</h3>
 
-<p>Le mercredi 9&nbsp;novembre, vers approximativement 17h&nbsp;GMT, un
+<p>Le mercredi 19&nbsp;novembre, vers approximativement 17h&nbsp;GMT, un
 mot de passe reniflé a été utilisé pour se connecter sur un compte de
 développeur non privilégié sur l'hôte klecker (.debian.org). L'attaquant
 a ensuite récupéré le code source par HTTP pour un exploit de noyau local
@@ -169,10 +169,10 @@ investigation par l'administrateur du service concerné.</p>
 
 <p>Cependant, sur klecker, cela a été retardé à cause d'une maintenance
 prévue afin que l'archive de sécurité puisse être remise en ligne plutôt
-que les autres service. À ce moment, nous n'avions également pas d'accès
-console à klecker, la récupération a donc du se dérouler à distance.
+que les autres services. À ce moment, nous n'avions également pas d'accès
+console à klecker, la récupération a donc dû se dérouler à distance.
 Après qu'une image disque a été faite par connexion en console série
-vers une machine locale sur une connexion réseau par pare-feu, le
+vers une machine locale sur une connexion réseau protégée par un pare-feu, le
 rootkit a été supprimé, le noyau échangé et renforcé, les binaires
 vérifiés deux fois et l'archive de sécurité vérifiée par rapport à
 plusieurs sources externes différentes. Cette machine sera réinstallée
@@ -181,7 +181,7 @@ dans les prochaines semaines.</p>
 <p>Comme précaution de sécurité, tous les comptes des développeurs ont
 été désactivés dans LDAP et les clés SSH supprimés sur les machines les
 plus importantes pour qu'aucune nouvelle machine ne puisse être
-compromise. Cela a cependant vraiment désactivé tous les travaux publics
+compromise. Cela a cependant totalement désactivé tous les travaux publics
 Debian impliquant des envois de fichiers et des accès aux dépôts
 CVS.</p>
 
@@ -251,9 +251,9 @@ article 0x07 («&nbsp;modifier le noyau Linux à la volée sans LKM&nbsp;»
 par sd &amp; devik). C'est un rootkit complètement fonctionnel qui est
 chargé par /dev/kmem, i.e. il n'a pas besoin d'un noyau avec la gestion
 des modules de noyau chargeables. Il fournit un shell de connexion à
-rebours d'accès à distance protégé par mot de passe initié par un mot de
-passe maquillé (outrepassant la plupart des configurations de pare-feu)
-et il peut dissimuler des processus, des fichiers et des connexion.</p>
+rebours d'accès à distance protégé par mot de passe initié par un paquet
+frauduleux (outrepassant la plupart des configurations de pare-feu)
+et il peut dissimuler des processus, des fichiers et des connexions.</p>
 
 <p>Habituellement, SucKIT est lancé par /sbin/init lors du démarrage du
 système, se duplique pour s'installer dans le noyau, installe une porte
@@ -266,7 +266,7 @@ partir du parent (avec le pid 1). Toutes les exécutions suivantes de
 
 <p>Burneye est un moyen d'assombrir («&nbsp;obfuscate&nbsp;») des
 binaires ELF sur la plate-forme UNIX présenté dans l'édition&nbsp;58 de
-Phrack, article 0x05 («&nbsp;Renforcer le format ELF&nbsp; cryptage
+Phrack, article 0x05 («&nbsp;Renforcer le format ELF&nbsp;: cryptage de
 binaire sur la plate-forme UNIX&nbsp;», par grugq &amp; scut). En
 utilisant des outils comme Burneye de TESO, un attaquant peut modifier
 un programme exécutable pour crypter son but réel, le cachant des
