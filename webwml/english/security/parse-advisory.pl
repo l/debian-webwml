@@ -36,13 +36,14 @@ foreach $l (<ADV>) {
   $mi++ if ($l =~ /^Debian-specific:/);
 
   $f++ if ($l =~ /^  Source archives:/);
-  $f = 0 if ($l =~ /^  These files will be moved/);
+  $f = 0 if ($l =~ /^  These (files|packages) will be moved/);
   $files .= $l if ($f);
 }
 close ADV;
 
 $files =~ s/      MD5 checksum: \w{32}\n//sg;
 $files =~ s/  Source archives:/<dt>Source:/sg;
+$files =~ s/  Architecture/<dt>Architecture/sg;
 $files =~ s/  ([\w ]+) architecture:/<dt>$1:/sg;
 $files =~ s/    (http:\S+)/  <dd><fileurl $1>/sg;
 
