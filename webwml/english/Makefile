@@ -8,13 +8,20 @@ SUBS=Bugs MailingLists News Pics banners chinese consultants devel distrib \
 doc events intro international logos mirror misc partners ports releases \
 searchtmpl security vote y2k
 
+ifneq "$(wildcard om_svenska/Makefile)" ""
+SUBS += om_svenska
+endif
+
 include $(WMLBASE)/Make.lang
 
 
-ifeq "$(LANGUAGE)" "en"
-sitemap.$(LANGUAGE).html: $(ENGLISHDIR)/sitemap.wml
-	make -C MailingLists subscribe.$(LANGUAGE).html unsubscribe.$(LANGUAGE).html
-else
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
+		$(wildcard News/$(CUR_YEAR)/[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/[0-9]*.wml) \
+		$(wildcard security/$(CUR_YEAR)/dsa-[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-[0-9]*.wml) \
+		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
+		$(ENGLISHSRCDIR)/releases/info sitemap.$(LANGUAGE).html
+	$(WML) index.wml
+
 sitemap.$(LANGUAGE).html: $(ENGLISHDIR)/sitemap.wml
 	make -C MailingLists subscribe.$(LANGUAGE).html unsubscribe.$(LANGUAGE).html
 ifeq "$(LANGUAGE)" "zh"
@@ -38,19 +45,13 @@ ifeq "$(LANGUAGE)" "ja"
             ../english/sitemap.wml \
               -D CUR_LANG=Japanese -D CUR_ISO_LANG=ja -D CHARSET=iso-2022-jp
 else
-	$(shell sed $(WML) | sed s/index/sitemap/) \
+	$(shell echo $(WML) | sed s/index/sitemap/) \
           $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml \
             $(shell egrep '^-D (CUR_|CHAR)' .wmlrc)
 endif
 endif
-endif
 
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
-		$(wildcard News/$(CUR_YEAR)/[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/[0-9]*.wml) \
-		$(wildcard security/$(CUR_YEAR)/dsa-[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-[0-9]*.wml) \
-		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
-		$(ENGLISHSRCDIR)/releases/info sitemap.$(LANGUAGE).html
-	$(WML) index.wml
+all:: sitemap.$(LANGUAGE).html
 
 install::
 	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
