@@ -264,7 +264,7 @@ foreach $lang (@search_in) {
 
     $percent_a{$lang} = int ($wml{$lang}/$nfiles * 100);
     $percent_t{$lang} = int ($translated{$lang}/$nfiles * 100);
-    $percent_o{$lang} = 100 - $percent_t{$lang};
+    $percent_o{$lang} = int ($outdated{$lang}/$nfiles * 100);
     $percent_u{$lang} = 100 - $percent_a{$lang};
 
     if (open (HTML, ">$config{'htmldir'}/$l.html")) {
