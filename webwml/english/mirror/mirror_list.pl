@@ -527,7 +527,8 @@ _END_
 		foreach $id (@{ $countries{$country} }) {
 		  $hasmirrors++ if (defined $mirror{$id}{method}{'nonus-ftp'} || defined $mirror{$id}{method}{'nonus-http'});
 		}
-		if ($hasmirrors) { print "\n$country:\n"; } else { next; }
+		($countryplain = $country) =~ s/^.. //;
+		if ($hasmirrors) { print "\n$countryplain:\n"; } else { next; }
 		foreach $id (@{ $countries{$country} }) {
 		  if (defined $mirror{$id}{method}{'nonus-ftp'}) {
 		    print "  ftp://$id$mirror{$id}{method}{'nonus-ftp'}";
