@@ -66,7 +66,7 @@ ALLPKG: foreach $entry ($mesg->entries) {
     my $bugid = @{$entry->get('bugid')}[0];
     # If a bug is merged with another, then only consider the youngest
     # bug and throw the others away.  This will weed out duplicates.
-    foreach $merged (@mergedwith) {
+    foreach $merged (@{$entry->get('mergedwith')}) {
         next ALLPKG if int($merged) < int($bugid);
     }
     $age{$bugid} = ($curdate - str2time(@{$entry->get('date')}[0]))/86400;    
