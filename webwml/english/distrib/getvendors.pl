@@ -50,8 +50,8 @@ while ( @row = $sth->fetchrow_array ) {
     while ($vsth->fetch) {
         print "<vendorentry>\n";
         print "    <vendor $name>\n";
-        print "    <URL $url>\n";
-        print "    <URLdeb $urldeb>\n";
+        print "    <URL \"$url\">\n";
+        print "    <URLdeb \"$urldeb\">\n";
         if ($contribution) {
           print "    <contribution yes>\n";
         } else {
