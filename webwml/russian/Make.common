@@ -14,14 +14,25 @@ ENGLISHSRCDIR=$(WMLBASE)/../english
 WMLFILES := $(wildcard *.wml)
 HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
 HTMLDESTFILES := $(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE).html,$(WMLFILES))
+# all the binary file types should be added below.
 JPGSOURCE := $(wildcard *.jpg)
 JPGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(JPGSOURCE))
 GIFSOURCE := $(wildcard *.gif)
 GIFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(GIFSOURCE))
 PNGSOURCE := $(wildcard *.png)
 PNGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PNGSOURCE))
-IMGFILES := $(JPGSOURCE) $(GIFSOURCE) $(PNGSOURCE)
-IMGDESTFILES := $(JPGDESTFILES) $(GIFDESTFILES) $(PNGDESTFILES)
+PSSOURCE := $(wildcard *.ps.gz)
+PSDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PSSOURCE))
+EPSSOURCE := $(wildcard *.png)
+EPSDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(EPSSOURCE))
+PDFSOURCE := $(wildcard *.png)
+PDFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PDFSOURCE))
+FIGSOURCE := $(wildcard *.fig)
+FIGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(FIGSOURCE))
+XCFSOURCE := $(wildcard *.xcf.gz)
+XCFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(XCFSOURCE))
+IMGFILES := $(JPGSOURCE) $(GIFSOURCE) $(PNGSOURCE) $(PSSOURCE) $(EPSSOURCE) $(PDFSOURCE) $(FIGSOURCE) $(XCFSOURCE)
+IMGDESTFILES := $(JPGDESTFILES) $(GIFDESTFILES) $(PNGDESTFILES) $(PSDESTFILES) $(EPSDESTFILES) $(PDFDESTFILES) $(FIGDESTFILES) $(XCFDESTFILES)
 
 all:: $(HTMLFILES)
 	@for i in $(SUBS) ''; do \
@@ -58,7 +69,6 @@ cleandest::
 $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
 	@echo copying $(@F) to $(HTMLDIR)
 	-@cp $(@F) $(HTMLDIR)
-#	@sed -e 's/; charset=koi8-r/;/' <$(@F) >$(HTMLDIR)/$(@F)
 ifeq ($(LANGUAGE),en)
 	@echo making a link $(@D)/$(*F).html -\> $(@F)
 	-@ln -f -s $(@F) $(@D)/$(*F).html

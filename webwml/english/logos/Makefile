@@ -14,33 +14,4 @@ include $(WMLBASE)/Make.common
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
 
-FIGSOURCE := $(wildcard *.fig)
-FIGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(FIGSOURCE))
-XCFSOURCE := $(wildcard *.xcf.gz)
-XCFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(XCFSOURCE))
-PSSOURCE := $(wildcard *.ps.gz)
-PSDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PSSOURCE))
-EPSSOURCE := $(wildcard *.eps)
-EPSDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(EPSSOURCE))
-PDFSOURCE := $(wildcard *.pdf)
-PDFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PDFSOURCE))
-
-install:: $(FIGDESTFILES) $(XCFDESTFILES) $(EPSDESTFILES) $(PDFDESTFILES)
-
-$(FIGDESTFILES): $(FIGSOURCE)
-	cp $(@F) $(HTMLDIR)
-
-$(XCFDESTFILES): $(XCFSOURCE)
-	cp $(@F) $(HTMLDIR)
-
-$(PSDESTFILES): $(PSSOURCE)
-	cp $(@F) $(HTMLDIR)
-
-$(EPSDESTFILES): $(EPSSOURCE)
-	cp $(@F) $(HTMLDIR)
-
-$(PDFDESTFILES): $(PDFSOURCE)
-	cp $(@F) $(HTMLDIR)
-
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml ../../english/logos/index.data
-
