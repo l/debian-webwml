@@ -65,9 +65,9 @@ register
        [PF_STRING, "fontsize", "font size", "14"], 
        [PF_STRING, "fonttype", "font type (bold, medium etc)", "bold"], 
        [PF_COLOR, "fontcolor", "Font color", [255,255,255]] ,
-       [PF_COLOR, "bgcolor", "Background color", [0,0,132]] 
+       [PF_COLOR, "bgcolor", "Background color", [0,0,132]],
        [PF_STRING, "fontregistry", "font registry (iso8859 etc)", "*"], 
-       [PF_STRING, "fonttype", "font encoding (1 etc)", "*"], 
+       [PF_STRING, "fonttype", "font encoding (1 etc)", "*"]
       ], 
       \&debian_button; 
    
