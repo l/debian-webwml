@@ -65,6 +65,7 @@
 # the command "cvs status filename".
 
 # TODO: 
+# get the revisions from $lang/intl/$lang so diffing works
 # need to quote dirnames?
 # use a file to bind a file to a translator?
 
