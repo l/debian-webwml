@@ -51,7 +51,7 @@ $translations = [
 	'status'		=> 'en cours de traduction',
 	'since'			=> '16/02/1999',
 	'translation_name'	=> 'Histoire du projet Debian',
-	'translation_maintainer'=> ['Jerome Rousselot <jerome.rousselot@mail.dotcom.fr>'],
+	'translation_maintainer'=> ['Jerome Rousselot <r.jerome@francemel.com>'],
 	'translation_version'	=> '1.2',
 },
 
@@ -136,22 +136,60 @@ $translations = [
 #},
 
 {
-	'type'			=> 'DDP',
-	'key'			=> '',
+	'type'			=> 'boot',
+	'key'			=> 'install',
 	'name'			=> 'Debian Installation Manual',
-	'version'		=> '2.0',
-	'url'			=> '',
-	'source_url'		=> '',
+	'version'		=> '2.1',
+	'url'			=> 'http://www.debian.org/releases/slink/i386/install.en.html',
+	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/install.sgml',
 	'package'		=> 'boot-floppies',
-	'status'		=> 'en cours de révision',
-	'since'			=> '10/02/1999',
+	'status'		=> 'traduction à jour',
+	'since'			=> '16/03/1999',
 	'translation_name'	=> 'Manuel d\'installation de Debian',
 	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
-	'translation_version'	=> '2.0',
-	'translation_url'	=> 'http://www.debian.org/~clebars/docs-2.0/install.fr.html',
-	'translation_source_url'=> 'http://www.debian.org/~clebars/docs-2.0/install.fr.sgml',
-	'translation_package'	=> 'doc-debian-fr',
-	'last_translated'	=> '27/07/1998',
+	'translation_version'	=> '2.1',
+	'translation_url'	=> 'http://www.debian.org/~clebars/docs-2.1/install.html/install.html',
+	'translation_source_url'=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/Attic/install.fr.sgml',
+	'translation_package'	=> 'boot-floppies',
+	'last_translated'	=> '16/03/1999',
+},
+
+{
+	'type'			=> 'boot',
+	'key'			=> 'dselect-beginner',
+	'name'			=> 'Dselect beginner guide',
+	'version'		=> '2.1',
+	'url'			=> 'http://www.debian.org/releases/slink/i386/dselect-beginner.en.html',
+	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/dselect-beginner.sgml',
+	'package'		=> 'boot-floppies',
+	'status'		=> 'traduction à jour',
+	'since'			=> '22/03/1999',
+	'translation_name'	=> 'Guide de dselect pour les débutants',
+	'translation_maintainer'=> ['Laurent Picouleau <lcrpic@a2points.com>'],
+	'translation_version'	=> '2.1',
+	'translation_url'	=> 'http://www.debian.org/~clebars/docs-2.1/dselect-beginner.html/dselect-beginner.html',
+	'translation_source_url'=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/Attic/dselect-beginner.fr.sgml',
+	'translation_package'	=> 'boot-floppies',
+	'last_translated'	=> '22/003/1999',
+},
+
+{
+	'type'			=> 'boot',
+	'key'			=> 'release-notes',
+	'name'			=> 'Release Notes',
+	'version'		=> '2.1',
+	'url'			=> 'http://www.debian.org/releases/slink/i386/release-notes/',
+	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/release-notes.sgml',
+	'package'		=> 'boot-floppies',
+	'status'		=> 'à traduire',
+	'since'			=> '',
+	'translation_name'	=> 'Notes sur la version',
+	'translation_maintainer'=> [],
+	'translation_version'	=> '',
+	'translation_url'	=> '',
+	'translation_source_url'=> '',
+	'translation_package'	=> 'boot-floppies',
+	'last_translated'	=> '',
 },
 
 {
@@ -181,10 +219,9 @@ $translations = [
 	'url'			=> 'http://www.fr.debian.org/doc/debian-policy/',
 	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-policy/debian-policy/policy.sgml',
 	'package'		=> 'debian-policy',
-	'status'		=> 'à relire',
-	'since'			=> '30/11/1998',
+	'status'		=> 'en cours de révision',
+	'since'			=> '6/04/1999',
 	'translation_name'	=> 'Manuel des normes Debian',
-	'translation_sub_name'	=> 'parties 4 et 5',
 	'translation_maintainer'=> ['David Rocher <davroc@hplb.hpl.hp.com>'],
 	'translation_version'	=> '2.5.0.0',
 	'translation_url'	=> 'http://savage.iut-blagnac.fr/projets/developpement/policy.fr/policy.fr.html/',
@@ -332,31 +369,8 @@ $translations = [
 {
 	'type'			=> '',
 	'key'			=> '',
-	'name'			=> 'Dselect beginner guide',
-	'sub_name'		=> '',
-	'author'		=> '',
-	'version'		=> '',
-	'url'			=> 'ftp://ftp.us.debian.org/debian/stable/disks-i386/current/dselect.beginner.6.txt',
-	'source_url'		=> '',
-	'package'		=> '',
-	'status'		=> 'à relire',
-	'since'			=> '',
-	'translation_name'	=> 'Dselect : le guide du débutant',
-	'translation_sub_name'	=> '',
-	'translation_maintainer'=> ['Laurent Picouleau <lcrpic@a2points.com>'],
-	'translation_version'	=> '',
-	'translation_url'	=> '',
-	'translation_source_url'=> '',
-	'translation_package'	=> 'doc-debian-fr',
-	'last_translated'	=> '',
-},
-
-{
-	'type'			=> '',
-	'key'			=> '',
 	'name'			=> 'libc5-libc6-Mini-HOWTO',
 	'sub_name'		=> '',
-	'author'		=> '',
 	'version'		=> '',
 	'url'			=> 'http://www.gate.net/~storm/FAQ/libc5-libc6-Mini-HOWTO.html',
 	'source_url'		=> 'http://www.gate.net/~storm/FAQ/libc5-libc6-Mini-HOWTO.sgml',
@@ -438,8 +452,10 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'related_links',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'traduction à jour',
+	'since'			=> '17/04/1999',
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+	'last_translated'	=> '17/04/1999',
 },
 
 {
@@ -509,8 +525,10 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'News/index',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'traduction à jour',
+	'since'			=> '17/04/1999',
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+	'since'			=> '17/04/1999',
 },
 
 {
@@ -530,25 +548,31 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'MailingLists/debian-announce',
-	'status'		=> 'en cours de traduction',
+	'status'		=> 'à relire',
 	'since'			=> '20/08/1998',
 	'translation_maintainer'=> ['Frederic Peters <fpeters@multimania.com>'],
+	'translation_source_url'=> 'http://www.multimania.com/fpeters/debian/debian-announce.fr',
+	'last_translated'	=> '25/03/1999',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'MailingLists/subscribe',
-	'status'		=> 'en cours de traduction',
+	'status'		=> 'à relire',
 	'since'			=> '20/08/1998',
 	'translation_maintainer'=> ['Frederic Peters <fpeters@multimania.com>'],
+	'translation_source_url'=> 'http://www.multimania.com/fpeters/debian/subscribe.fr',
+	'last_translated'	=> '25/03/1999',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'MailingLists/unsubscribe',
-	'status'		=> 'en cours de traduction',
+	'status'		=> 'à relire',
 	'since'			=> '20/08/1998',
 	'translation_maintainer'=> ['Frederic Peters <fpeters@multimania.com>'],
+	'translation_source_url'=> 'http://www.multimania.com/fpeters/debian/unsubscribe.fr',
+	'last_translated'	=> '25/03/1999',
 },
 
 {
@@ -657,8 +681,10 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'distrib/index',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'traduction à jour',
+	'since'			=> '17/04/1999',
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+	'last_translated'	=> '17/04/1999',
 },
 
 {
@@ -678,15 +704,19 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'doc/index',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'traduction à jour',
+	'since'			=> '17/04/1999',
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+	'last_translated'	=> '19/03/1999',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'events/index',
-	'status'		=> 'à traduire',
-	'since'			=> '16/12/1998',
+	'status'		=> 'traduction à jour',
+	'since'			=> '17/04/1999',
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+	'last_translated'	=> '17/04/1999',
 },
 
 {
@@ -727,8 +757,10 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'intro/free',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'traduction à jour',
+	'since'			=> '17/04/1999',
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+	'last_translated'	=> '22/03/1999',
 },
 
 {
@@ -786,8 +818,10 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'security/index',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'traduction à jour',
+	'since'			=> '17/04/1999',
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+	'last_translated'	=> '17/04/1999',
 },
 
 {
