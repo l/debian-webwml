@@ -208,6 +208,7 @@ sub package_pages_walker {
 	    return;
 	}
 
+	
 	my @all_archs = ( @{$env->{archs}}, 'all' );
 
 	#
@@ -353,6 +354,10 @@ sub package_pages_walker {
 	    $package_page .= gettext( "<h2 style=\"color: red\">Experimental package</h2>\n".
 				      "<p>Warning: This package is from the <font color=\"red\">experimental</font> distribution. That means it is likely unstable or buggy, and it may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.</p>".
 				      "<p>Users of experimental packages are encouraged to contact the package maintainers directly in case of problems.</p>" );
+	}
+	if ($archive eq "debian-installer") {
+	    $package_page .= gettext( "<h2 style=\"color: red\">debian-installer udeb package</h2>\n".
+				      "<p>Warning: This package is intended for the use in building <a href=\"http://www.debian.org/devel/debian-installer\">debian-installer</a> images only. Do not install it on a normal Debian system.</p>" );
 	}
 	$package_page .= "<h2><em>$short_desc</em></h2>\n";
 
@@ -581,6 +586,7 @@ sub write_all_package {
 
 	my %si = ();
 	my $experimental_note = gettext( "<p>Warning: The <font color=\"red\">experimental</font> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.</p>\n" );
+	my $installer_note = gettext( "<p>Warning: These packages are intended for the use in building <a href=\"http://www.debian.org/devel/debian-installer/\">debian-installer</a> images only. Do not install them on a normal Debian system.</p>");
 
 	foreach ( keys %$sections ) {
 	    my $title = sprintf( gettext ( "Software Packages in \"%s\", %s section" ), 
@@ -588,6 +594,9 @@ sub write_all_package {
 	    $si{$_} = header( $title, '..', '..', $lang );
 	    if ($distro eq "experimental") {
 		$si{$_} .= $experimental_note;
+	    }
+	    if ($_ eq 'debian-installer') {
+		$si{$_} .= $installer_note;
 	    }
 	    $si{$_} .= "<dl>\n";
 	}
