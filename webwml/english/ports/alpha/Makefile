@@ -8,12 +8,4 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-
-install:: $(HTMLDIR)/postgresql-noopt.diff.gz
-
-ifeq ($(LANGUAGE),en)
-$(HTMLDIR)/postgresql-noopt.diff.gz: postgresql-noopt.diff.gz
-	install -m 664 -p postgresql-noopt.diff.gz $(HTMLDIR)
-endif
-
 $(HTMLFILES): $(ENGLISHSRCDIR)/ports/alpha/menu.inc $(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml
