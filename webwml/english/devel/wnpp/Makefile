@@ -18,7 +18,7 @@ DATADIR = $(ENGLISHSRCDIR)/$(CUR_DIR)
 
 ifeq "$(LANGUAGE)" "en"
 $(DATADIR)/wnpp.data:
-	$(WML) $(DATADIR)/wnpp.pl
+	$(WML) -W7,-Squotes $(DATADIR)/wnpp.pl
 endif
 
 .PHONY: $(DATADIR)/wnpp.data
