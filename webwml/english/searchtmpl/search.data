@@ -1,0 +1,207 @@
+#include "../../english/searchtmpl/search.def"
+
+<!--variables
+#DBAddr  pgsql://udm:udm@localhost/udmsearch/
+DBType pgsql
+DBName udmsearch
+DBUser udmsearch
+DBMode  crc-multi
+#IspellMode db
+
+TrackQuery no
+Clones no
+-->
+
+<!--top-->
+$(title=Search)
+#use wml::debian::basic SUMMARY="$(SUMMARY)"
+#use wml::debian::languages
+#use wml::debian::language_names
+
+<: if ("$(NOHEADER)" eq "") {
+	print "<H1>$(title)</H1>\n";
+	}
+:>
+
+{#mainbody#}
+
+<ifeq "$(NOHOMELINK)" ""
+      "<HR>
+<P><returnline>">
+<ifeq "$(NOLANGUAGES)" "" "<:= languages() :>">
+
+{#mainbody#:
+#use wml::des::typography
+<P>At long last we have a search engine for the Debian website.  Currently
+it does not support dual-byte languages but we are working on a solution
+for this soon.
+<BR>
+<center>
+
+<FORM METHOD=GET ACTION="$A">
+<table bgcolor=#eeeee0 order=1 width=100%>
+<tr><td>
+<BR>
+<INPUT TYPE="hidden" NAME="ps" VALUE="10">
+<searchfor>
+<INPUT TYPE="text" NAME="q" SIZE=50 VALUE="$Q">
+<INPUT TYPE="submit" VALUE="Search!"><BR>
+
+<resultsperpage>
+<SELECT NAME="ps">
+<OPTION VALUE="10" SELECTED="$ps">10
+<OPTION VALUE="20" SELECTED="$ps">20
+<OPTION VALUE="50" SELECTED="$ps">50
+</SELECT>
+
+<outputformat>
+<SELECT NAME="o">
+<OPTION VALUE="0" SELECTED="$o"><outputlong>
+<OPTION VALUE="1" SELECTED="$o"><outputshort>
+<OPTION VALUE="2" SELECTED="$o"><outputurl>
+</SELECT>
+
+<defaultquerytype>
+<SELECT NAME="m">
+<OPTION VALUE="and" SELECTED="$m"><allwords>
+<OPTION VALUE="or" SELECTED="$m"><anywords>
+</SELECT>
+
+<br>
+
+
+<searchthrough>
+<SELECT NAME="ul">
+<OPTION VALUE=""            SELECTED="$ul"><entiresite>
+<OPTION VALUE="http://www.debian.org/about/"    SELECTED="$ul"><aboutdebian>
+<OPTION VALUE="http://www.debian.org/News/"    SELECTED="$ul"><news>
+<OPTION VALUE="http://www.debian.org/distrib/"    SELECTED="$ul"><distribution>
+<OPTION VALUE="http://www.debian.org/support/"    SELECTED="$ul"><support>
+<OPTION VALUE="http://www.debian.org/devel/"    SELECTED="$ul"><develcorner>
+</SELECT>
+
+<language>
+<SELECT NAME="lang">
+<OPTION VALUE=""	SELECTED="$lang"><anylanguage>
+<OPTION VALUE="en"	SELECTED="$lang"><:= $trans{$CUR_ISO_LANG}{english} :>
+<OPTION VALUE="fi"	SELECTED="$lang"><:= $trans{$CUR_ISO_LANG}{finnish} :>
+<OPTION VALUE="es"	SELECTED="$lang"><:= $trans{$CUR_ISO_LANG}{spanish} :>
+<OPTION VALUE="it"	SELECTED="$lang"><:= $trans{$CUR_ISO_LANG}{italian} :>
+<OPTION VALUE="fr"	SELECTED="$lang"><:= $trans{$CUR_ISO_LANG}{french} :>
+<OPTION VALUE="de"	SELECTED="$lang"><:= $trans{$CUR_ISO_LANG}{german} :>
+<OPTION VALUE="hr"	SELECTED="$lang"><:= $trans{$CUR_ISO_LANG}{croatian} :>
+<OPTION VALUE="ja"	SELECTED="$lang"><:= $trans{$CUR_ISO_LANG}{japanese} :>
+<OPTION VALUE="zh"	SELECTED="$lang"><:= $trans{$CUR_ISO_LANG}{german} :>
+<OPTION VALUE="sv"	SELECTED="$lang"><:= $trans{$CUR_ISO_LANG}{swedish} :>
+<OPTION VALUE="no"	SELECTED="$lang"><:= $trans{$CUR_ISO_LANG}{dutch} :>
+<OPTION VALUE="ro"	SELECTED="$lang"><:= $trans{$CUR_ISO_LANG}{dutch} :>
+<OPTION VALUE="ru"	SELECTED="$lang"><:= $trans{$CUR_ISO_LANG}{russian} :>
+<OPTION VALUE="pl"	SELECTED="$lang"><:= $trans{$CUR_ISO_LANG}{polish} :>
+</SELECT>
+
+
+</td></tr>
+
+
+</table>
+</form>
+</center>
+<!--/top-->
+
+
+
+<!--restop-->
+<searchresults>
+<small>$W</small><HR>
+<displaydocs>
+<!--/restop-->
+<!--res-->
+<DL><DT>
+<b>$DN.</b> <a href="$DU" TARGET="_blank"><b>$DT</b></a> [<b>$DR</b>]<DD>
+$DX...<BR>
+<UL>
+<li><A HREF="$DU" >$DU</A> ($DC) $DM, $DS bytes
+$CL
+</UL>
+</DL>
+<!--/res-->
+
+<!--ftpres-->
+<DL><DT>
+<b>$DN.</b> <a href="$DU" ><b>$DT</b></a> [<b>$DR</b>]<DD>
+<UL>
+<li><A HREF="$DU" >$DU</A> ($DC) $DM, $DS bytes
+$CL
+</UL>
+</DL>
+<!--/ftpres-->
+
+<!--resbot-->
+<HR>
+<CENTER>
+$V
+</CENTER>
+<!--/resbot-->
+
+<!--clone-->
+<li><A HREF="$DU" >$DU</A> ($DC) $DM
+<!--/clone-->
+
+<!--navigator-->
+<TABLE BORDER=0><TR>$NL $NB $NR</TR></TABLE>
+<!--/navigator-->
+
+<!--navleft-->
+<TD><A HREF="$NH">Prev</A></TD>
+<!--/navleft-->
+
+<!--navleft_nop-->
+<TD><FONT COLOR="#707070">Prev</FONT></TD>
+<!--/navleft_nop-->
+
+<!--navbar1-->
+<TD><A HREF="$NH">$NP</A></TD>
+<!--/navbar1-->
+
+<!--navbar0-->
+<TD>$NP</TD>
+<!--/navbar0-->
+
+<!--navright-->
+<TD><A HREF="$NH">Next</TD>
+<!--/navright-->
+
+<!--navright_nop-->
+<TD><FONT COLOR="#707070">Next</FONT></TD>
+<!--/navright_nop-->
+
+
+<!--notfound-->
+<searchresults>
+<small>$W</small><HR>
+<CENTER>
+<noresults>
+</CENTER>
+<HR>
+<!--/notfound-->
+
+<!--error-->
+<CENTER>
+<FONT COLOR="#FF0000"><error-occured></FONT>
+<P><B>$E</B>
+</CENTER>
+<!--/error-->
+
+<!--noquery-->
+<FONT COLOR=red><nowords></FONT>
+<!--/noquery-->
+
+
+
+<!--bottom-->
+<HR>
+<font size="-1">
+<poweredby>
+<a href="http://search.mnoGo.ru/">UdmSearch</a></font><br>
+#use wml::debian::footer
+<!--/bottom-->

@@ -9,4 +9,5 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 
-search.$(LANGUAGE).html: search.wml
+search.$(LANGUAGE).html: search.wml $(ENGLISHSRCDIR)/searchtmpl/search.data \
+  $(ENGLISHSRCDIR)/searchtmpl/search.def
