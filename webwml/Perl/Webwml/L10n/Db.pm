@@ -54,7 +54,9 @@ sub new {
                 date    => 0,
                 #   Fields below are written into file in the same order
                 #   Package must always be the first field
-                scalar  => [qw(Package Version Section Priority Maintainer PoolDir Type Upstream)],
+                #   Switch is used temporarily to detect packages which
+                #   depend on debconf and did not switch to using po-debconf.
+                scalar  => [qw(Package Version Section Priority Maintainer PoolDir Type Upstream Switch)],
                 array1  => [qw(Errors Catgets Gettext)],
                 array2  => [qw(NLS PO TEMPLATES PODEBCONF MENU DESKTOP MAN)],
         };
@@ -148,6 +150,7 @@ Read database from a given file.  Returns 1 on success and otherwise 0.
 sub read {
         my $self = shift;
         my $file  = shift;
+        my $check  = shift || 1;
 
         if ($file =~ m/\.gz$/) {
                 open (DB,"gzip -dc $file |") || return 0;
@@ -181,13 +184,13 @@ sub read {
 
                 foreach (@{$self->{scalar}}) {
                         if ($desc =~ m/^$_: (.*)$/m) {
-                                $entry->{$_} = $1;
-                        } elsif ($_ eq 'Package') {
-                                warn "Parse error when reading $file: missing \`$_' field\n";
-                                next MAIN;
-                        } else {
-                                warn "Parse error when reading $file: Package ".$entry->{Package}.": missing \`$_' field\n";
-                                delete $self->{data}->{$entry->{Package}};
+                                if ($_ eq 'Package' && defined $self->{data}->{$1}) {
+                                        $entry = $self->{data}->{$1};
+                                } else {
+                                        $entry->{$_} = $1;
+                                }
+                        } elsif ($check && $_ ne 'Switch') {
+                                warn "Parse error when reading $file: Package ".(defined($entry->{Package}) ? $entry->{Package} : "<unknown>").": missing \`$_' field\n";
                                 next MAIN;
                         }
                 }
@@ -302,6 +305,19 @@ sub get_date {
         my $self = shift;
         return $self->{date};
 }
+
+=item set_date
+
+Sets the date of generation
+
+=cut
+
+sub set_date {
+            my $self = shift;
+            my $date = shift;
+            $self->{date} = $date;
+}
+
 
 =back
 
