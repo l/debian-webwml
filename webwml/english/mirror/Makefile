@@ -13,7 +13,7 @@ include $(WMLBASE)/Make.common
 
 MFILES := ftpsync ftpsync.conf websync websync.conf \
 	identity.pub.master.ftp identity.pub.master.web \
-	anonftpsync anonwebsync \
+	anonftpsync anonwebsync Mirrors.masterlist \
 	ftpsync-non-US ftpsync-non-US.conf identity.pub.non-US.ftp
 MIRROR_FILES := $(patsubst %,$(HTMLDIR)/%,$(MFILES))
 
@@ -50,4 +50,6 @@ $(HTMLDIR)/anonftpsync: anonftpsync
 	cp anonftpsync $(HTMLDIR)
 $(HTMLDIR)/anonwebsync: anonwebsync
 	cp anonwebsync $(HTMLDIR)
+$(HTMLDIR)/Mirrors.masterlist: Mirrors.masterlist
+	cp Mirrors.masterlist $(HTMLDIR)
 endif
