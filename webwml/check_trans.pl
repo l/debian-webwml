@@ -145,6 +145,8 @@ else
 $from = 'english';
 $to = shift || $defaultlanguage;
 
+$langfrom=$from;
+
 # Remove slash from end
 $to =~ s%/$%%;
 
@@ -514,9 +516,13 @@ sub check_file {
 	    
 	if ($opt_d) {
 		STDOUT->flush;
-		system("cvs -z3 log -r'$logoldr:$revision' '$oldname'") if $showlog;
+		$cvsline = "cvs -z3 log -r'$logoldr:$revision' '$oldname'";
+		warn "Running $cvsline\n" if (($opt_v) && ($showlog));
+		system($cvsline) if $showlog;
 		STDOUT->flush if $showlog;
-		system("cvs -z3 diff -u -r '$oldr' -r '$revision' '$oldname'");
+		$cvsline = "cvs -z3 diff -u -r '$oldr' -r '$revision' '$oldname'";
+		warn "Running $cvsline\n" if $opt_v;
+		system($cvsline);
 		STDOUT->flush;
 	} 
 }
