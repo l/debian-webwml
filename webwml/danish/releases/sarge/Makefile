@@ -1,4 +1,4 @@
-# This Makefile should need no changes from webwml/english/releases/woody/Makefile
+# This Makefile should need no changes from webwml/english/releases/sarge/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
@@ -7,5 +7,4 @@ CUR_DIR=releases/sarge
 SUBS=
 
 include $(WMLBASE)/Make.lang
-
 
