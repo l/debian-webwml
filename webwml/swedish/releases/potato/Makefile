@@ -1,18 +1,8 @@
-# This Makefile should need no changes from webwml/english/releases/potato/Makefile
-# Please send a message to debian-www if you need to modify anything
+# This Makefile should need no changes from
+# webwml/english/releases/potato/Makefile, so we can just include the
+# English version here.
+#
+# If something in it needs modification, send a message to debian-www
 # so the problem can be fixed.
 
-WMLBASE=../..
-CUR_DIR=releases/potato
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
-SUBS=
-
-include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
-
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
-
-index.$(LANGUAGE).html: ../../../english/releases/slink/formats_and_architectures.wmh \
-			$(TEMPLDIR)/languages.wml $(TEMPLDIR)/install_manual.wml
+include ../../../english/releases/potato/Makefile
