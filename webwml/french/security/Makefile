@@ -18,7 +18,7 @@ ifndef SUBLANG
 DSARDF := dsa.$(LANGUAGE).rdf
 DESTDSARDF := $(HTMLDIR)/$(DSARDF)
 else
-DSARDF := $(sort $(foreach i,$(SUBLANG),$(subst dsa,dsa.$(LANGUAGE)-$(i),dsa.rdf)))
+DSARDF := $(sort $(foreach i,$(SUBLANG),$(patsubst %.wml,%.$(LANGUAGE)-$(i).rdf,dsa.rdf)))
 DESTDSARDF := $(patsubst %.rdf,$(HTMLDIR)/%.rdf,$(DSARDF))
 endif
 
@@ -28,7 +28,7 @@ $(DSARDF): $(ENGLISHDIR)/security/dsa.rdf.in \
   $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.data) \
   $(TEMPLDIR)/recent_list.wml
 ifeq "$(LANGUAGE)" "zh"
-	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:dsa.zh-$$1.rdf,g') \
+	$(subst :.zh,:dsa.zh,$(WML)) \
           $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
             $(ENGLISHDIR)/security/dsa.rdf.in
 	@echo -n " * Converting: [zh_CN.GB2312], "
