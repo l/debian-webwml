@@ -26,7 +26,7 @@ volatile_ftpsite=http://volatile.debian.net/debian-volatile
 
 # Architectures
 #
-polangs="de"
+polangs="de nl"
 ddtplangs="de cs da eo es fi fr hu it ja nl pl pt_BR pt_PT ru sk sv_SE uk"
 parts="main contrib non-free"
 dists="stable testing unstable"

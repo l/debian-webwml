@@ -16,7 +16,7 @@ use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin";
 
 use Getopt::Long;
-use Locale::gettext;
+use Generated::Strings qw( string_lang gettext dgettext );
 use Pod::Usage;
 use POSIX;
 
@@ -93,10 +93,6 @@ $quiet &&= ! $verbose;
 my $files = Packages::OutputFiles->init();
 $files->load_file_list( $md5_file );
 
-bindtextdomain ( "pdo", $locale_dir );
-bindtextdomain ( "sections", $locale_dir );
-textdomain( "pdo" );
-
 my $num_sections = 0;
 open SECTIONS, "<", $sections_file or die "E: couldn't open $sections_file: $!";
 while (<SECTIONS>) {
@@ -118,15 +114,7 @@ my @langs = split /\s+/, $languages;
 foreach my $lang ( @langs ) {
     my $locale = get_locale($lang);
     print "processing language $lang (locale $locale)\n" if $verbose;
-    setlocale ( LC_ALL, $locale )
-	or do { warn "W: couldn't set locale $locale, using default\n" unless $quiet;
-		setlocale( LC_ALL, get_locale() ) 
-		    or do {
-			warn "W: couldn't set default locale either\n" unless $quiet;
-			next if ($lang ne 'en');
-			setlocale( LC_ALL, "C" );
-		};
-	    };
+    string_lang( $lang );
     my $title = sprintf( gettext( "Software Packages in \"%s\"" ), 
 			 $distribution );
     my $index_page = header( title => $title,

@@ -70,7 +70,7 @@ sub print_deps {
 	    } else {
 		$res .= "</dl></li>\n<li>";
 	    }
-	    $res .= "<span class=\"hidecss\">[$dep_type{$type}] </span><dl><dt>";
+	    $res .= "<dl><dt><img class=\"hidecss\" src=\"/Pics/$dep_type{$type}.gif\" alt=\"[$dep_type{$type}]\"> ";
 	}
 
 	foreach my $rel_alt ( @$rel ) {
@@ -128,7 +128,7 @@ sub print_src_deps {
     foreach my $dep ( @{$pkg->{versions}{$version}{$type}} ) {
         $found = 1;
 	my @res_pkgs;
-	$res .= "<li><span class=\"hidecss\">[$dep_type{$type}] </span><dl><dt>";
+	$res .= "<li><dl><dt><img class=\"hidecss\" src=\"/Pics/$dep_type{$type}.gif\" alt=\"[$dep_type{$type}]\"> ";
 	foreach my $or_dep ( @$dep ) {
 	    my $p_name = $or_dep->[0];
 	    my $p = $env->{db}->get_pkg( $p_name );

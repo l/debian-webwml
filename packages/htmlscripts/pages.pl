@@ -149,7 +149,7 @@ sub package_pages_walker {
 	my $long_desc = encode_entities( $env->{db}->get_long_desc( $d->{desc_md5},
 								    $lang ), "<>&\"" );
 	
-	$long_desc =~ s,((ftp|http|https)://[\S~-]+?/?)((\&gt\;)?[)]?[']?[.\,]?(\s|$)),<a href=\"$1\">$1</a>$3,go; # syntax highlighting -> '];
+	$long_desc =~ s,((ftp|http|https)://[\S~-]+?/?)((\&gt\;)?[)]?[']?[:.\,]?(\s|$)),<a href=\"$1\">$1</a>$3,go; # syntax highlighting -> '];
 	$long_desc =~ s/\A //o;
 	$long_desc =~ s/\n /\n/sgo;
 	$long_desc =~ s/\n.\n/\n<p>\n/go;
@@ -228,7 +228,7 @@ sub package_pages_walker {
 	$package_page .= "\n<tr><th></th>\n";
 	foreach my $a ( @all_archs ) {
 	    if ( exists $versions{a2v}{$a} ) {
-		$package_page .=  "<td align=\"center\"><form action=\"$DL_URL\" method=\"post\">\n<p>";
+		$package_page .=  "<td align=\"center\"><form action=\"$DL_URL\" method=\"post\">\n<div>";
 		$package_page .=  "<input type=\"hidden\" name=\"file\" value=\"$filenames{a2f}->{$a}\">\n";
 		$package_page .=  "<input type=\"hidden\" name=\"md5sum\" value=\"$file_md5s{a2f}->{$a}\">\n";
 		$package_page .=  "<input type=\"hidden\" name=\"arch\" value=\"$a\">\n";
@@ -252,7 +252,7 @@ sub package_pages_walker {
 		if ( $env->{distribution} ne "experimental" ) {
 		    $package_page .= "<br>".sprintf( "[<a href=\"%s\">".gettext( "list of files" )."</a>]\n", "$FILELIST_URL$encodedpack&amp;version=$env->{distribution}&amp;arch=$a", $name );
 		}
-		$package_page .= "</form>\n";
+		$package_page .= "</div></form>\n";
 		$package_page .= "</td>\n";
 	    }
 	}
@@ -328,11 +328,11 @@ sub package_pages_walker {
 	    $data_sheet .= ds_item(gettext( "Maintainer" ),
 				   "<a href=\"$DDPO_URL".
 				   uri_escape($maint_email).
-				   "\">".encode_entities($maint_name)."</a>" );
+				   "\">".encode_entities($maint_name, '&<>')."</a>" );
 	    if (@uploaders) {
 		my @uploaders_str;
 		foreach (@uploaders) {
-		    push @uploaders_str, "<a href=\"$DDPO_URL".uri_escape($_->[1])."\">".encode_entities($_->[0])."</a>";
+		    push @uploaders_str, "<a href=\"$DDPO_URL".uri_escape($_->[1])."\">".encode_entities($_->[0], '&<>')."</a>";
 		}
 		$data_sheet .= ds_item(gettext( "Uploaders" ),
 				       join( ", ", @uploaders_str ));
@@ -774,7 +774,7 @@ sub write_all_package {
 	# Complete list (txt)
 	my $all_pkg_txt = sprintf( gettext( "All Debian Packages in \"%s\"" )."\n\n", $distro );
 	$all_pkg_txt .=  gettext( "Last Modified: " ). "LAST_MODIFIED_DATE\n".
-	    gettext( "Copyright (C) 1997-2004 SPI;\nSee <URL:http://www.debian.org/license> for the license terms.\n\n" );
+	    gettext( "Copyright (C) 1997-2005 SPI;\nSee <URL:http://www.debian.org/license> for the license terms.\n\n" );
 	$all_pkg_txt .= $all_pkg_txt_l{$lang}; 
 	
 	$filename = "$dest_dir/allpackages.$lang.txt.gz";
@@ -794,6 +794,7 @@ sub write_src_index {
     my $title = sprintf( gettext ( "Source Packages in \"%s\"" ), 
 			 $distro, $_ );
     $source_index = header( title => $title,
+			    title_keywords => "debian, $distro, source",
 			    desc => encode_entities( $title, '"' ),
                             lang => $lang,
 			    print_title_below => 1 );

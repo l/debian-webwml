@@ -28,7 +28,6 @@ use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin";
 
 use Getopt::Long;
-use Locale::gettext;
 use File::Basename;
 use POSIX;
 use DB_File;
@@ -36,7 +35,7 @@ use XML::RSS;
 
 use Packages::HTML;
 use Packages::I18N::Locale;
-use Generated::Strings qw( gettext );
+use Generated::Strings qw( string_lang gettext );
 
 my %config = (
 	      'old' => undef,
@@ -126,34 +125,32 @@ my @langs = split /\s+/, $config{langs};
 foreach my $lang ( @langs ) {
     my $locale = get_locale($lang);
     print "processing language $lang (locale $locale)\n" if $config{verbose};
-    setlocale ( LC_ALL, $locale )
-	or do { warn "W: couldn't set locale $locale, using default\n" unless $config{quiet};
-		setlocale( LC_ALL, get_locale() ) 
-		    or do {
-			warn "W: couldn't set default locale either\n" unless $config{quiet};
-			next if ($lang ne 'en');
-			setlocale( LC_ALL, "C" );
-		};
-	    };
+    string_lang($lang);
+
     my $title = sprintf( gettext( "New Packages in \"%s\"" ), 
 			 $config{component} );
-    my $page = header( title => $title, lang => $lang,
+    my $page = header( title => $title,
+		       title_keywords => "debian, unstable, new packages, $config{component}",
+		       meta => "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS\" href=\"newpkg_$config{component}.$lang.rdf\">",
+		       lang => $lang,
 		       print_title_below => 1 );
     my ( $rss_link, $rss_description, $rss_date );
     if ($config{component} eq 'main') {
 	$page .= "<p>"
-	    . gettext ( "The following packages were added to the unstable Debian archive during the last 7 days." )
-	    . "</p>";
+	    . gettext ( "The following packages were added to the unstable Debian archive during the last 7 days." )."</p>"
+	    . "<p>".sprintf( gettext ( "This information is also available as an <a href=\"newpkg_%s.%s.rdf\">RSS feed</a>." ), 'main', $lang )
+	    ." <a href=\"newpkg_main.$lang.rdf\"><img src=\"http://planet.debian.org/rss10.png\" alt=\"[RSS 1.0 Feed]\"></a></p>";
 	$rss_description = gettext ( "Packages that were added to the unstable Debian archive during the last 7 days." );
     } else {
 	$page .= "<p>"
-	    . sprintf ( gettext ( "The following packages were added to the \"%s\" component next to the Debian archive during the last 7 days." ), $config{component} )
-	    . "</p>";
+	    . sprintf ( gettext ( "The following packages were added to the \"%s\" component next to the Debian archive during the last 7 days." ), $config{component} )."</p>"
+	    . "<p>".sprintf( gettext ( "This information is also available as an <a href=\"newpkg_%s.%s.rdf\">RSS feed</a>." ), $config{component}, $lang )
+	    ." <a href=\"newpkg_$config{component}.$lang.rdf\"><img src=\"http://planet.debian.org/rss10.png\" alt=\"[RSS 1.0 Feed]\"></a></p>";
 	$rss_description = sprintf( gettext ( "Packages that were added to the \"%s\" component next to the unstable Debian archive during the last 7 days." ),  $config{component} );
     }
     $page .= "\n<ul>\n";
 
-    my @months = ("Dummy", "January","February", "March", "April",
+    my @months = ("January","February", "March", "April",
 	       "May", "June", "July", "August", "September",
 	       "October", "November", "December");
     # ($date_sec,$date_min,$date_hour,$date_mday,$date_mon,$date_year,$date_wday,$date_isdst)
@@ -172,7 +169,7 @@ foreach my $lang ( @langs ) {
 		  dc => {
 		      date       => $rss_time,
 		      publisher  => 'debian-www@lists.debian.org',
-		      rights     => 'Copyright 2004, SPI Inc.',
+		      rights     => 'Copyright 2005, SPI Inc.',
 		      language   => $lang,
 		  },
 		  syn => {
@@ -219,4 +216,7 @@ foreach my $lang ( @langs ) {
     $page =~ s/LAST_MODIFIED_DATE/$now_time/g;
     print FILEH $page;
     close FILEH;
+
+    print "Write to $config{output}.$lang.rdf\n" if $config{verbose};
+    $rss->save("$config{output}.$lang.rdf");
 }

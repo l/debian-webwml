@@ -389,7 +389,9 @@ unless ($search_on_sources) {
 		    print "<br>Binary packages: ";
 		    my @bp_links;
 		    foreach my $bp (@{$binaries{$pkg}{$ver}}) {
-			my $sect = find_section($bp, $ver, $part{$pkg}{$ver}{source}||'main');
+			my $sect = find_section($bp, $ver, $part{$pkg}{$ver}{source}||'main') || '';
+			$sect =~ s,^(non-free|contrib)/,,;
+			$sect =~ s,^non-US.*$,non-US,,;
 			my $bp_link;
 			if ($sect) {
 			    $bp_link = sprintf "<a href=\"$ROOT/%s/%s/%s\">%s</a>", $ver, $sect, uri_escape( $bp ),  $bp;
@@ -462,7 +464,7 @@ sub multipageheader {
 	
 	$index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $no_results)." | ".nextlink($input,\%params, $no_results);
 	
-	print "<center>$index_line</center>";
+	print "<p style=\"text-align:center\">$index_line</p>";
     }
 
     if ($no_results > 100) {
