@@ -1,13 +1,16 @@
 
 Q. What to do with those <lang>/po directories?
-A. Read more informations about commands below in gettext documentation.
-   When running 'make' in english/ directory, templates.pot is generated.
-   This file contains all the translatable strings found in
+A. If you are not familiar with PO files, please read gettext
+   documentation.  When running 'make' in english/po/ directory, templates.pot
+   is generated.  This file contains all the translatable strings found in
    english/template/debian/*.wml files.
 
-   Running 'make' in other directories gives:
-       msgfmt --statistics -o templates.mo templates.<xx>.po
-   where <xx> is the language code.
+   Running 'make' in other */po/ directories gives:
+       msgmerge -q templates.<xx>.po ../../english/po/templates.pot |\
+           msgfmt --use-fuzzy --statistics -o templates.mo -
+   where <xx> is the language code.  If templates.mo file differs from
+   webwml/locale/<xx>/LC_MESSAGES/templates.mo, then the latter is
+   replaced by the former.
 
    When a translator wants to work on a PO file, he runs 'make update-po'
    which executes:
@@ -15,9 +18,6 @@ A. Read more informations about commands below in gettext documentation.
               -o templates.<xx>.po.new && \
               mv templates.<xx>.po.new templates.<xx>.po
        
-   Last, 'make install' copy templates.mo files under
-     webwml/locale/<xx>/LC_MESSAGES/templates.mo
-
 Q. It doesn't work, what happens?
 A. No idea, but ask on <debian-www@lists.debian.org>.  Note that your
    language must have been enabled in /etc/locale.gen, otherwise
