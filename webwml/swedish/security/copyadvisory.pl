@@ -105,10 +105,14 @@ while (<SRC>)
 	s/this problem has been fixed$/har detta problem rättats/;
 	s/this problem has(?: been)?$/har detta problem/;
 	s/This problem has been fixed/Detta problem har rättats/;
+	s/this problem is fixed in/rättas detta problem i/;
+	s/this problem is fixed/rättas detta problem/;
 	s/These problems have been fixed/Dessa problem har rättats/;
 	s/these problems have been fixed in/har dessa problem rättats i/;
 	s/these problems have been fixed$/har dessa problem rättats/;
 	s/these problems have(?: been)?$/har dessa problem/;
+	s/these problem are fixed in/rättas dessa problem i/;
+	s/these problem are fixed/rättas dessa problem/;
 	s/(?:been )?fixed in version/rättats i version/;
 	s/\bin version\b/i version/;
 	s/of the Debian package/av Debianpaketet/;
@@ -132,8 +136,8 @@ while (<SRC>)
 	s/cross site/serveröverskridande/;
 	s/\bis not affected/påverkas inte/;
 	s/does not contain ([[:word:]]*) packages?/innehåller inte $1-paket/;
-	s/does not contain any ([[:word:]]*) packages/innehåller inte några $1-paket/;
-	s/does not contain any ([[:word:]]*) package/innehåller inte något $1-paket/;
+	s/does not contain a(?:ny)? ([[:word:]]*) packages/innehåller inte några $1-paket/;
+	s/does not contain a(?:ny)? ([[:word:]]*) package/innehåller inte något $1-paket/;
 	s/this problem will be fixed soon/kommer detta problem rättas inom kort/;
 	s/\(potato\)/(Potato)/;
 	s/\(woody\)/(Woody)/;
