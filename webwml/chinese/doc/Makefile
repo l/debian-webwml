@@ -8,6 +8,8 @@ SUBS	:=# remove subdirectories that you don't want built from this variable
 include $(WMLBASE)/Make.lang
 
 
+books.$(LANGUAGE).html: books.wml $(ENGLISHSRCDIR)/doc/books.def \
+  $(TEMPLDIR)/countries.wml $(TEMPLDIR)/language_names.wml $(TEMPLDIR)/url.wml
 ddp.$(LANGUAGE).html: ddp.wml $(TEMPLDIR)/ddp.wml
 	$(WML) -Dmlmonth=$(shell date '+%y%m') $(<F)
 todo.$(LANGUAGE).html: todo.wml $(TEMPLDIR)/ddp.wml
