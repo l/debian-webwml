@@ -75,5 +75,5 @@ open WML, ">$wml";
 print WML "<define-tag description>$desc</define-tag>\n";
 print WML "<define-tag moreinfo>$moreinfo</define-tag>\n";
 print WML "\n# do not modify the following line\n";
-print WML "#include \"\$(ENGLISHDIR)/security/2001/dsa-049.data\"\n";
+print WML "#include \"\$(ENGLISHDIR)/security/2001/$data\"\n";
 close WML;
