@@ -11,8 +11,14 @@
 
 # $Id$
 
+use File::Path;
+
 # Get configuration
-if (open CONF, "<language.conf")
+if (exists $ENV{DWWW_LANG}) 
+{
+     $language = $ENV{DWWW_LANG};
+} 
+elsif (open CONF, "<language.conf")
 {
 	$language = <CONF>;
 	chomp $language;
@@ -90,11 +96,13 @@ sub copy
 	unless (-d $dstdir)
 	{
 		print "Destination directory $dstdir does not exist,\n";
-		print "creating and copying	$dstmake\n";
 
-		mkdir $dstdir, 0755
+		mkpath([$dstdir],0,0755)
 			or die "Could not create $dstdir: $!\n";
-		system "cp $srcmake $dstmake";
+		if ( -e $srcmake ) {
+		     print "creating and copying	$dstmake\n";
+		     system "cp $srcmake $dstmake";
+		}
 	}
 
 	# Check if title translation exists, if so - load it
