@@ -527,7 +527,7 @@ sub get_text_lines {
   # print " stop : $stop \n";
 
   for $line_num ($start..$stop) {
-    $text .= $lines->[$line_num];
+    $text .= $lines->[$line_num] || '';
   }
 
   return $text;
@@ -548,14 +548,14 @@ sub display_full_diff_info {
 
   for $elem (@$diff_parts) {
 
-    my $diff_start = $elem->{'diff_line'};
-    my $diff_count = $elem->{'diff_count'};
+    my $diff_start = $elem->{'diff_line'} || 0;
+    my $diff_count = $elem->{'diff_count'} || 0;
     my $diff_stop = $diff_start + $diff_count;
     
     $text .= get_text_lines($diff_lines, $diff_start, $diff_stop) . "\n"; 
 
-    my $trans_start = $elem->{'before'};
-    my $trans_stop = $elem->{'after'};
+    my $trans_start = $elem->{'before'} || 0;
+    my $trans_stop = $elem->{'after'} || 0;
     my $trans_count = $trans_stop - $trans_start;
 
     $text .= "--> $trans_start,$trans_count <--\n";
