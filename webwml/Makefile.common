@@ -28,26 +28,18 @@ HTMLFILES = $(sort $(foreach i,$(SUBLANG),\
 HTMLDESTFILES = $(sort $(foreach i,$(SUBLANG),\
 	$(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE)-$(i).html,$(WMLFILES))))
 endif
+
 JPGSOURCE := $(wildcard *.jpg)
-JPGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(JPGSOURCE))
 GIFSOURCE := $(wildcard *.gif)
-GIFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(GIFSOURCE))
 PNGSOURCE := $(wildcard *.png)
-PNGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PNGSOURCE))
 PSSOURCE := $(wildcard *.ps.gz)
-PSDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PSSOURCE))
 EPSSOURCE := $(wildcard *.eps)
-EPSDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(EPSSOURCE))
 PDFSOURCE := $(wildcard *.pdf)
-PDFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PDFSOURCE))
 FIGSOURCE := $(wildcard *.fig)
-FIGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(FIGSOURCE))
 XCFSOURCE := $(wildcard *.xcf.gz)
-XCFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(XCFSOURCE))
 CSSSOURCE := $(wildcard *.css)
-CSSDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(CSSSOURCE))
 IMGFILES := $(JPGSOURCE) $(GIFSOURCE) $(PNGSOURCE) $(PSSOURCE) $(EPSSOURCE) $(PDFSOURCE) $(FIGSOURCE) $(XCFSOURCE) $(CSSSOURCE)
-IMGDESTFILES := $(JPGDESTFILES) $(GIFDESTFILES) $(PNGDESTFILES) $(PSDESTFILES) $(EPSDESTFILES) $(PDFDESTFILES) $(FIGDESTFILES) $(XCFDESTFILES) $(CSSDESTFILES)
+IMGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(IMGFILES))
 
 existing-SUBS := $(shell for dir in $(wildcard $(SUBS)) ''; do test -d $$dir && echo $$dir; done)
 existing-SUBS-install := $(addsuffix -install,$(existing-SUBS))
@@ -116,10 +108,10 @@ ifeq ($(LANGUAGE),en)
 endif
 endif
 
-$(IMGDESTFILES): $(IMGFILES)
-	install -m 664 -p $(@F) $(HTMLDIR)
+$(IMGDESTFILES): $(HTMLDIR)/%: %
+	install -m 664 -p $< $(HTMLDIR)
 ifeq "$(LANGUAGE)" "en"
-	[ -f "$(HTMLDIR)/$(basename $(basename $(@F)))$(suffix $(@F))" ] || ln -s $(@F) $(HTMLDIR)/$(basename $(basename $(@F)))$(suffix $(@F))
+	[ -f "$(HTMLDIR)/$(basename $(basename $<))$(suffix $<)" ] || ln -s $< $(HTMLDIR)/$(basename $(basename $<))$(suffix $<)
 endif
 
 # template dependencies
