@@ -23,6 +23,10 @@ SITEMAP = $(sort $(foreach i,$(SUBLANG),\
 HTMLMAP = $(patsubst %.html,$(HTMLDIR)/%.html,$(SITEMAP))
 endif
 
+ifeq "$(LANGUAGE)" "en"
+IMGDESTFILES += favicon.ico
+endif
+
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(wildcard News/$(CUR_YEAR)/[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/[0-9]*.wml) \
 		$(wildcard security/$(CUR_YEAR)/dsa-[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-[0-9]*.wml) \
