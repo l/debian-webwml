@@ -19,6 +19,9 @@ localedir=${topdir}/locale
 #
 localdir=/org/ftp.debian.org/ftp
 
+# path to private ftp directory
+ftproot=/org/ftp.root
+
 ftpsite=http://ftp.debian.org/debian
 nonus_ftpsite=http://ftp.uk.debian.org/debian-non-US
 security_ftpsite=http://security.debian.org/debian-security
