@@ -42,7 +42,7 @@ require Exporter;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw($VERSION @ISA @EXPORT);
-$VERSION      = '1.00';
+$VERSION      = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
 @ISA          = qw(Exporter);
 @EXPORT       = qw(&code2language &language2code
                    &all_language_codes &all_language_names );
@@ -196,19 +196,29 @@ In the current implementation, all data is read in when the
 module is loaded, and then held in memory.
 A lazy implementation would be more memory friendly.
 
+=item *
+
+Currently just supports the two letter language codes -
+there are also three-letter codes, and numbers.
+Would these be of any use to anyone?
+
 =back
 
 =head1 SEE ALSO
 
 =over 4
 
-=item Locale::Country
+=item Country
 
 ISO two letter codes for identification of country (ISO 3166).
 
 =item ISO 639:1988 (E/F)
 
 Code for the representation of names of languages.
+
+=item http://lcweb.loc.gov/standards/iso639-2/langhome.html
+
+Home page for ISO 639-2
 
 =back
 
@@ -219,7 +229,7 @@ Neil Bowers E<lt>neilb@cre.canon.co.ukE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 1997 Canon Research Centre Europe (CRE).
+Copyright (c) 1997-2000 Canon Research Centre Europe (CRE).
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
@@ -251,6 +261,7 @@ modify it under the same terms as Perl itself.
 __DATA__
 aa:Afar
 ab:Abkhazian
+ae:Avestan
 af:Afrikaans
 am:Amharic
 ar:Arabic
@@ -259,22 +270,27 @@ ay:Aymara
 az:Azerbaijani
 
 ba:Bashkir
-be:Byelorussian
+be:Belarusian
 bg:Bulgarian
 bh:Bihari
 bi:Bislama
-bn:Bengali; Bangla
+bn:Bengali
 bo:Tibetan
 br:Breton
+bs:Bosnian
 
 ca:Catalan
+ce:Chechen
+ch:Chamorro
 co:Corsican
 cs:Czech
+cu:Church Slavic
+cv:Chuvash
 cy:Welsh
 
 da:Danish
 de:German
-dz:Bhutani
+dz:Dzongkha
 
 el:Greek
 en:English
@@ -285,52 +301,61 @@ eu:Basque
 
 fa:Persian
 fi:Finnish
-fj:Fiji
+fj:Fijian
 fo:Faeroese
 fr:French
 fy:Frisian
 
 ga:Irish
-gd:Scots Gaelic
-gl:Galician
+gd:Gaelic (Scots)
+gl:Gallegan
 gn:Guarani
 gu:Gujarati
+gv:Manx
 
 ha:Hausa
+he:Hebrew
 hi:Hindi
+ho:Hiri Motu
 hr:Croatian
 hu:Hungarian
 hy:Armenian
+hz:Herero
 
 ia:Interlingua
+id:Indonesian
 ie:Interlingue
-ik:Inupiak
-in:Indonesian
+ik:Inupiaq
 is:Icelandic
 it:Italian
-iw:Hebrew
+iu:Inuktitut
 
 ja:Japanese
-ji:Yiddish
 jw:Javanese
 
 ka:Georgian
+ki:Kikuyu
+kj:Kuanyama
 kk:Kazakh
-kl:Greenlandic
-km:Cambodian
+kl:Kalaallisut
+km:Khmer
 kn:Kannada
 ko:Korean
 ks:Kashmiri
 ku:Kurdish
+kv:Komi
+kw:Cornish
 ky:Kirghiz
 
 la:Latin
+lb:Letzeburgesch
 ln:Lingala
-lo:Laothian
+lo:Lao
 lt:Lithuanian
-lv:Latvian, Lettish
+lv:Latvian
 
 mg:Malagasy
+mh:Marshall
 mi:Maori
 mk:Macedonian
 ml:Malayalam
@@ -342,32 +367,42 @@ mt:Maltese
 my:Burmese
 
 na:Nauru
+nb:Norwegian Bokmål
+nd:Ndebele, North
 ne:Nepali
+ng:Ndonga
 nl:Dutch
+nn:Norwegian Nynorsk
 no:Norwegian
+nr:Ndebele, South
+nv:Navajo
+ny:Chichewa; Nyanja
 
-oc:Occitan
-om:(Afan) Oromo
+oc:Occitan (post 1500)
+om:Oromo
 or:Oriya
+os:Ossetian; Ossetic
 
-pa:Punjabi
+pa:Panjabi
+pi:Pali
 pl:Polish
-ps:Pashto, Pushto
+ps:Pushto
 pt:Portuguese
 
 qu:Quechua
 
 rm:Rhaeto-Romance
-rn:Kirundi
+rn:Rundi
 ro:Romanian
 ru:Russian
 rw:Kinyarwanda
 
 sa:Sanskrit
+sc:Sardinian
 sd:Sindhi
-sg:Sangro
-sh:Serbo-Croatian
-si:Singhalese
+se:Sami
+sg:Sango
+si:Sinhalese
 sk:Slovak
 sl:Slovenian
 sm:Samoan
@@ -375,38 +410,41 @@ sn:Shona
 so:Somali
 sq:Albanian
 sr:Serbian
-ss:Siswati
-st:Sesotho
+ss:Swati
+st:Sotho
 su:Sundanese
 sv:Swedish
 sw:Swahili
 
 ta:Tamil
-te:Tegulu
+te:Telugu
 tg:Tajik
 th:Thai
 ti:Tigrinya
 tk:Turkmen
 tl:Tagalog
-tn:Setswana
+tn:Tswana
 to:Tonga
 tr:Turkish
 ts:Tsonga
 tt:Tatar
 tw:Twi
 
+ug:Uighur
 uk:Ukrainian
 ur:Urdu
 uz:Uzbek
 
 vi:Vietnamese
-vo:Volapuk
+vo:Volapük
 
 wo:Wolof
 
 xh:Xhosa
 
+yi:Yiddish
 yo:Yoruba
 
+za:Zhuang
 zh:Chinese
 zu:Zulu

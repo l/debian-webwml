@@ -31,21 +31,20 @@ my $dpkglibdir="/usr/lib/dpkg";
 # XXX include /usr/lib/perl5/Locale/Language.pm
 use lib 'scripts';
 use Language;
-# XXX include /usr/lib/perl5/Locale/Language.pm
+use Country;
 
 push (@INC, $dpkglibdir);
 require 'controllib.pl';
 
 #
 # sub is_lang(code) : returns true iff code is a valide code of language
-# 
+#   nb: it could be of form ll_CC with CC country code
 sub is_lang {
     my $code = shift;
-    if (defined code2language($code)) {
-	return 1;
-    } else {
-	return 0;
+    if ($code =~ /^(..)_(..)$/) {
+	return (defined(code2language($1)) && defined(code2country($2)));
     }
+    return defined code2language($code);
 }
 
 sub clear_data {
@@ -671,4 +670,28 @@ sub parse_dpkg_control  {
     }
     
     return @data;
+}
+
+sub l10n_add {
+    my $stat1 = shift;
+    my $stat2 = shift;
+    $stat1 = "0t0f0u" unless (defined($stat1));
+    $stat2 = "0t0f0u" unless (defined($stat2));
+
+    my $t = "0";
+    my $u = "0";
+    my $f = "0";
+    my $res;
+
+    if ($stat1 =~ /([0-9]*)t/) {  $t+=$1;  }
+    if ($stat1 =~ /([0-9]*)u/) {  $u+=$1;  }
+    if ($stat1 =~ /([0-9]*)f/) {  $f+=$1;  }
+
+    if ($stat2 =~ /([0-9]*)t/) {  $t+=$1;  }
+    if ($stat2 =~ /([0-9]*)u/) {  $u+=$1;  }
+    if ($stat2 =~ /([0-9]*)f/) {  $f+=$1;  }
+
+    $res ="$t t$f f$u u";
+    $res =~ s/ //g;
+    return $res;
 }
