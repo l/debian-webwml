@@ -21,7 +21,8 @@ index.$(LANGUAGE).html: index.wml $(wildcard dls-*.wml) \
 
 bydate.$(LANGUAGE).html: bydate.wml $(wildcard dls-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/dls-*.data) \
-  $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml \
+  $(TEMPLDIR)/legal_tags.wml $(GETTEXTDEP)
 	$(WML) $(<F)
 
 byname.$(LANGUAGE).html: byname.wml $(wildcard dls-*.wml) \
