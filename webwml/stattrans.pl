@@ -77,8 +77,8 @@ $altcvs->options(
 $max_versions = 5;
 $min_versions = 1;
 
-$border_head = "<table width=95% align=center border=0 cellpadding=0 cellspacing=0><tr bgcolor=#000000><td>"
-              ."<table width=100% border=0 cellpadding=0 cellspacing=1><tr bgcolor=#ffffff><td>";
+$border_head = "<table width=\"95%\" align=\"center\" border=0 cellpadding=0 cellspacing=0><tr bgcolor=\"#000000\"><td>"
+              ."<table width=\"100%\" border=0 cellpadding=0 cellspacing=1><tr bgcolor=\"#ffffff\"><td>";
 $border_foot = "</td></tr></table></td></tr></table>";
 
 
@@ -252,7 +252,7 @@ foreach $lang (@search_in) {
 			$o_body .= sprintf "<td>%s</td>", $transversion{"$lang/$file"};
 			$o_body .= sprintf "<td>%s</td>", $version{"$orig/$file"};
 			$o_body .= sprintf "<td>%s</td>", $msg;
-			$o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/$orig/%s.wml.diff\?r1=%s\&r2=%s\&cvsroot=webwml\&diff_format=%s\">%s -> %s</a></td>", $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $config{'difftype'}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+			$o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/$orig/%s.wml.diff\?r1=%s\&amp;r2=%s\&amp;cvsroot=webwml\&amp;diff_format=%s\">%s -> %s</a></td>", $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $config{'difftype'}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
 			$o_body .= "</tr>\n";
     			$outdated{$lang}++;
 		# Up-to-date translations
@@ -287,19 +287,19 @@ foreach $lang (@search_in) {
     $percent_u{$lang} = 100 - $percent_a{$lang};
 
     if (open (HTML, ">$config{'htmldir'}/$l.html")) {
-	printf HTML "<html><head><title>%s: %s</title></head><body bgcolor=#ffffff>\n", $config{'title'}, ucfirst $lang;
+	printf HTML "<html><head><title>%s: %s</title></head><body bgcolor=\"#ffffff\">\n", $config{'title'}, ucfirst $lang;
 
 	$color = get_color ($percent_a{$lang});
 
-	printf HTML "<table width=100%% cellpadding=2 cellspacing=0 bgcolor=%s>\n", $color;
+	printf HTML "<table width=\"100%%\" cellpadding=2 cellspacing=0 bgcolor=\"%s\">\n", $color;
 
-	printf HTML "<tr><td colspan=4><h1 align=center>%s: %s</h1></td></tr>", $config{'title'}, ucfirst $lang;
+	printf HTML "<tr><td colspan=4><h1 align=\"center\">%s: %s</h1></td></tr>", $config{'title'}, ucfirst $lang;
 
 	print HTML "<tr>\n";
-	printf HTML "<td align=center width=25%%><b>%d files (%d%%) translated</b></td>", $wml{$lang}, $percent_a{$lang};
-	printf HTML "<td align=center width=25%%><b>%d files (%d%%) up to date</b></td>", $translated{$lang}, $percent_t{$lang};
-	printf HTML "<td align=center width=25%%><b>%d files (%d%%) outdated</b></td>", $outdated{$lang}, $percent_o{$lang};
-	printf HTML "<td align=center width=25%%><b>%d files (%d%%) not translated</b></td>", $untranslated{$lang}, $percent_u{$lang};
+	printf HTML "<td align=\"center\" width=\"25%%\"><b>%d files (%d%%) translated</b></td>", $wml{$lang}, $percent_a{$lang};
+	printf HTML "<td align=\"center\" width=\"25%%\"><b>%d files (%d%%) up to date</b></td>", $translated{$lang}, $percent_t{$lang};
+	printf HTML "<td align=\"center\" width=\"25%%\"><b>%d files (%d%%) outdated</b></td>", $outdated{$lang}, $percent_o{$lang};
+	printf HTML "<td align=\"center\" width=\"25%%\"><b>%d files (%d%%) not translated</b></td>", $untranslated{$lang}, $percent_u{$lang};
 	print HTML "</tr>\n";
 	print HTML "</table>\n";
 
@@ -326,7 +326,6 @@ foreach $lang (@search_in) {
 	    print HTML $t_body;
 	}
 
-	print HTML "</table>\n";
 	print HTML "<hr><address>Compiled at $date</address>\n";
 	print HTML "</body></html>";
 	close (HTML);
@@ -340,11 +339,11 @@ print "Creating index.html... " if ($config{'verbose'});
 open (HTML, ">$config{'htmldir'}/index.html")
     || die "Can't open $config{'htmldir'}/index.html";
 
-printf HTML "<html>\n<head><title>%s</title></head>\n<body bgcolor=#ffffff>\n", $config{'title'};
-printf HTML "<h1 align=center>%s</h1>\n", $config{'title'};
+printf HTML "<html>\n<head><title>%s</title></head>\n<body bgcolor=\"#ffffff\">\n", $config{'title'};
+printf HTML "<h1 align=\"center\">%s</h1>\n", $config{'title'};
 
 print HTML $border_head;
-print HTML "<table width=100% border=0 bgcolor=\"#cdc9c9\">\n";
+print HTML "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
 print HTML "<tr><th>Language</th><th>Translations</th><th>Up to date</th><th>Outdated</th><th>Not translated</th></tr>\n";
 foreach $lang (@search_in) {
     $l = $langs{$lang};
@@ -363,11 +362,11 @@ foreach $lang (@search_in) {
     printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $untranslated{$lang}, $percent_u{$lang};
     print HTML "</tr>\n",
 }
-print HTML $border_foot;
 print HTML "</table>\n";
+print HTML $border_foot;
 
 print HTML $border_head;
-print HTML "<table width=100% border=0 bgcolor=\"#cdc9c9\">\n";
+print HTML "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
 print HTML "<tr><th>Language</th><th>File</th><th>Up to date</th><th>Fuzzy</th><th>Untranslated</th><th>Total</th></tr>\n";
 foreach $lang (@search_in) {
     next if $lang eq 'english';
@@ -396,10 +395,10 @@ foreach $lang (@search_in) {
         print HTML "</tr>\n";
     }
 }
-print HTML $border_foot;
 print HTML "</table>\n";
+print HTML $border_foot;
 
-print HTML "<p><hr noshade size=1 width=100%>\n";
+print HTML "<p><hr noshade size=1 width=\"100%\">\n";
 print HTML "<p>Created with <a href=\"http://cvs.debian.org/webwml/stattrans.pl?cvsroot=webwml\">webwml-stattrans</a> at $date\n";
 print HTML "</body></html>\n";
 close (HTML);
