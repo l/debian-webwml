@@ -1,29 +1,34 @@
 #!/usr/bin/perl -w
 
-# transmonitor-check -- l10n checker script. it does :
-# - greps the archives against catgets and gettext
-# - search all *.po files and nls catalogs files 
-#     (it's a catalog iff first_line =~ /\$set[0-9 ]*\#/)
-# - for po files, try to guess the language from the name, and the l10n with msgfmt
-# - try to guess the organisation of this stuff. It could be :
-#    - standard gnu (po dir, Makefile.in.in file and POTFILES.in in it)
-#    - standard nls (nls dir hopefully, with all catalogs in it)
-#    - full (dir "en" containing po files or "nls" dir or "LC_MESSAGES" dir)
-#      (and hopefully man pages and info pages)
-
-# DEPENDS:
-# - package liblocales-perl from potato
-
-# TODO :
-# - check that all languages have the same number of msgs
-#   (problem: multibinaries source package=> multiple po dirs)
-# - stat the catalogs for catgets
-
-# Copyright (C) 1999-2001 by Martin Quinson. Distributed under GPL
-
-my $dpkglibdir="/usr/lib/dpkg";
+# transmonitor-check -- l10n checker script
+#
+# This script parses Debian source packages and extract l10n stuff
+#
+# This script is a heavily stripped down version of transmonitor-check
+# (originally written by Martin Quinson), which has been rewritten to
+# improve its modularity.  Missing features will be put back later.
+# This is a work in progress, and this file will be renamed into
+# transmonitor-check when it is fully usable; in the meantime do
+# not use it unless you really know what you are doing.
+#
+# Copyright (C) 1999-2001 Martin Quinson.
+# Copyright (C)      2001 Denis Barbier
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
 
 use strict;
+use File::Path;
+use Getopt::Long;
+
+use lib ($0 =~ m|(.*)/|, $1 or ".") ."/../../../../Perl";
+use Locale::Language;
+use Locale::Country;
+use Webwml::L10n::Db;
+use Local::Inside::DebSrc;
+use Webwml::L10n::Debconf;
 
 my $progname= $0; $progname= $& if $progname =~ m,[^/]+$,;
 
@@ -31,33 +36,30 @@ $ENV{'LC_ALL'} = 'C'; # reset locale definition
 $SIG{'INT'} = \&interrupted;
 $SIG{'QUIT'} = \&interrupted;
 sub interrupted {
-    $SIG{$_[0]} = 'DEFAULT';
-    print "$progname: Interrupted.\n";
-    exit -1;
+        $SIG{$_[0]} = 'DEFAULT';
+        print "$progname: Interrupted.\n";
+        exit -1;
 }
 
 
-my %data; #the hash were we put all the infos
-            # $data{$pkg_name}=("version","section","priority","type","stats"=>(<code lang>=>stats),"err"=>@errors,"warn"=>@warnings)
 #######################################
 #  Global Variables
 #######################################
-my $TRANSMONITOR_VERSION = "0.6"; #External Version Number
+my $TRANSMONITOR_VERSION = "2.0"; #External Version Number
 my $BANNER = "Translation Monitor v$TRANSMONITOR_VERSION"; # Version Banner - text form
-my $TMP_DIR="/tmp/transmonitor";
-my $DB_FILE="../data/transmonitor";
+my $TMP_DIR = "/tmp/transmonitor";
+my $DB_FILE = "../data/transmonitor";
+my $FROM_FILE = "";
 my $TRANSMONITOR_ROOT = "./";
 my $SYN_FILE = "../data/synonyms";
-my $PO_ROOT="../po";
-my $TEMPLATES_ROOT="../templates";
-my $MENU_ROOT="../menu";
-my $action_remove = 0;
-my $action_check = 0;
+my $PO_ROOT = "../po";
+my $TEMPLATES_ROOT = "../templates";
+my $MENU_ROOT ="../menu";
 my $verbose = 0;
 my @debug;
 my $force = 0; # if true, rescan package even if already in db
-my $force_material =0;# if true, rescan package containing material even if already in db
-my $careful=0; # if true, save the db after each package
+my $force_material = 0;# if true, rescan package containing material even if already in db
+my $careful = 0; # if true, save the db after each package
 
 my @pkg_list; #were we put the list of packages we are required to test
 my @pkg_errors; # were we put the name of packages with which we had an error
@@ -76,17 +78,14 @@ my @ftp_errors; # were we put the name of packages with which we had an error
 # Display Command Syntax
 # Options: -h|--help
 sub syntax_msg {
-    my $msg = shift;
-    if (defined $msg) {
-	print "$progname: $msg\n";
-    } else {
-	print "$BANNER\n";
-    }
-    print 
+        my $msg = shift;
+        if (defined $msg) {
+                print STDERR "$progname: $msg\n";
+        } else {
+                print STDERR "$BANNER\n";
+        }
+        print
 "Syntax: $0 [action] [options] [--] [package|path to the dist]+
-Action: 
-    -R, --remove              remove the database
-    -C, --check               check packages (default action)
 General options:
     -h, --help                display short help text
     -v, --verbose             verbose messages
@@ -98,899 +97,651 @@ Behaviour options:
     -f, --force               force the check of packages, even if they are in db
     --force-material          force the check of packages containing any material
 Configuration options:
-    -L, --libpath=dir         Append directory dir to the list of directories 
-                              (\@INC) searched for include files.
-    --db=DB_FILE              use DB_FILE as database file 
+    -F, --files-from=FILE     reads dsc filenames from FILE
+    --db=DB_FILE              use DB_FILE as database file
                                 (instead of $DB_FILE)
     --tmp=TMP_DIR             use TMP_DIR as temp dir
                                 (instead of $TMP_DIR)
                                 (warning, the script do 'rm -rf' on this dir!)
-    --po=PO_ROOT              where to store the po files 
+    --po=PO_ROOT              where to store the po files
                                 (instead of $PO_ROOT)
     --templates=DIR           where to store the debconf templates files
                                 (instead of $TEMPLATES_ROOT)
     --menu=DIR                where to store the menu files
                                 (instead of $MENU_ROOT)
-    --root=ROOTDIR            search the libs in ROOTDIR 
+    --root=ROOTDIR            search the libs in ROOTDIR
                                 (instead of $TRANSMONITOR_ROOT)
     --syn=SYN_FILE            use SYN_FILE as file of synonyms
                                 (instead of $SYN_FILE)
                                 (if no path specified, searched in ROOTDIR)
 ";
-    if (defined $msg) {
-	exit 1;
-    } else {
-	exit 0;
-    }
+        if (defined $msg) {
+                exit 1;
+        } else {
+                exit 0;
+        }
 }
 
 # Display Version Banner
 # Options: -V|--version, --print-version
 sub banner {
-  if ($_[0] eq 'print-version') {
-    print "$TRANSMONITOR_VERSION\n";
-  } else {
-    print "$BANNER\n";
-  }
-  exit 0;
-}
-
-# Add a dir to the @INC
-sub add_dir {
-    my $arg=shift; # dunno why perl give me this too...
-    my $dir=shift;
-    push (@INC, $dir);
+        if ($_[0] eq 'print-version') {
+                print STDERR "$TRANSMONITOR_VERSION\n";
+        } else {
+                print STDERR "$BANNER\n";
+        }
+        exit 0;
 }
 
 # Hash used to process commandline options
-my %opthash = (# ------------------ actions
-	       "remove|R" => \$action_remove,
-	       "check|C" => \$action_check,
-	       
-	       # ------------------ general options
-	       "help|h" => \&syntax_msg,
-	       "version|V" => \&banner,
-	       "print-version" => \&banner,
-	       
-	       "verbose|v" => \$verbose,
-	       "debug|d" => \@debug,     # Count the -d flags
-	       
-	       # ------------------ behaviour options
-	       "careful" => \$careful,
-	       "force|f" => \$force,
-	       "force-material" => \$force_material,
-	       
-	       # ------------------ configuration options
-	       "libpath=s" => \&add_dir,
-	       "L=s" => \&add_dir,
-	       "db=s" => \$DB_FILE,
-	       "tmp=s" => \$TMP_DIR,
-	       "root=s" => \$TRANSMONITOR_ROOT,
-	       "syn=s" => \$SYN_FILE,
-	       "po=s" => \$PO_ROOT,
-	       "templates=s" => \$TEMPLATES_ROOT,
-	       "menu=s" => \$MENU_ROOT
+my %opthash = (
+        # ------------------ general options
+        "help|h" => \&syntax_msg,
+        "version|V" => \&banner,
+        "print-version" => \&banner,
 
-	    );
+        "verbose|v" => \$verbose,
+        "debug|d" => \@debug,     # Count the -d flags
+
+        # ------------------ behaviour options
+        "careful" => \$careful,
+        "force|f" => \$force,
+        "force-material" => \$force_material,
+
+        # ------------------ configuration options
+        "files-from=s" => \$FROM_FILE,
+        "db=s" => \$DB_FILE,
+        "tmp=s" => \$TMP_DIR,
+        "root=s" => \$TRANSMONITOR_ROOT,
+        "syn=s" => \$SYN_FILE,
+        "po=s" => \$PO_ROOT,
+        "templates=s" => \$TEMPLATES_ROOT,
+        "menu=s" => \$MENU_ROOT
+);
 
 # init commandline parser
 Getopt::Long::config('bundling', 'no_getopt_compat', 'no_auto_abbrev');
 
 # process commandline options
-GetOptions(%opthash)
+Getopt::Long::GetOptions(%opthash)
     or syntax_msg("error parsing options");
 
-# Make the includes now that we have parsed all -L options
-use File::Path; # to make rm -Rf
-use Getopt::Long; #to parse the args
-require Net::FTP; # to get some files per ftp
-
-push (@INC, $dpkglibdir);
-require 'controllib.pl';
-
 #-----------------------------------------------------------------------------
-#                        The main program                                     
+#                        The main program
 #-----------------------------------------------------------------------------
-my %synonym; #devellopers can't spell sections and priorities...
-my $ftp="";#the root of ftp
-my $tosave=0; #do we have to save the db?
+my %synonym;  # developers can't spell sections and priorities...
+my $savedb=0; # do we have to save the database?
+
 ###
-### initialisation
+### Initialization
 ###
-(@ARGV > 0) or &syntax_msg("Nothing to do !");
+my @args = ();
+if ($FROM_FILE ne '') {
+        if ($FROM_FILE eq '-') {
+                @args = <STDIN>;
+        } else {
+                open(FROM, "< $FROM_FILE")
+                        || die "Unable to read from $FROM_FILE\n";
+                @args = <FROM>;
+                close(FROM);
+        }
+}
+push (@args, @ARGV) or syntax_msg("Nothing to do !");
+
 push (@INC, $TRANSMONITOR_ROOT);
-require "utils.pl"; # my librarie
 init_synonym();
 
-my $arg;
-my $cwd;
-chop($cwd = `pwd`);
-$DB_FILE = "$cwd/$DB_FILE" unless ($DB_FILE =~ m,^/,);
-$TMP_DIR = "$cwd/$TMP_DIR" unless ($TMP_DIR =~ m,^/,);
-$PO_ROOT = "$cwd/$PO_ROOT" unless ($PO_ROOT =~ m,^/,);
-$TEMPLATES_ROOT = "$cwd/$TEMPLATES_ROOT" unless ($TEMPLATES_ROOT =~ m,^/,);
-$MENU_ROOT = "$cwd/$MENU_ROOT" unless ($MENU_ROOT =~ m,^/,);
-$TRANSMONITOR_ROOT = "$cwd/$TRANSMONITOR_ROOT" unless ($TRANSMONITOR_ROOT =~ m,^/,);
-$SYN_FILE = "$TRANSMONITOR_ROOT/$SYN_FILE" unless ($SYN_FILE=~ m,^/,);
+my $data = Webwml::L10n::Db->new();
+$data->read($DB_FILE);
+my $date = $data->get_date();
 
-my ($succeded,$date,$result) = read_data ($DB_FILE);
-if ($succeded) {
-    %data=%{$result};
-} else {
-    &warn("Can't find the datafile '$DB_FILE'. Creating a new one.\n");
-    %data=();
+# read args to search package files
+foreach my $arg (@args) {
+        chomp $arg;
+        if (-f $arg) {
+                $arg =~ /\.dsc$/
+                        || die "bad package file name $arg (not a .dsc file)";
+                push @pkg_list, $arg;
+        } elsif (-d _) {
+                # dir ? let's do a `find -name "*.dsc"` on it!
+                open (LIST,"find $arg -name \"*.dsc\" -type f|")
+                        || die "Can't run find: $!";
+                while (<LIST>) {
+                        push @pkg_list, $_;
+                }
+                close LIST;
+        } else {
+                die "bad argument $arg (neither a .dsc file nor a directory nor a ftp path)";
+        }
 }
 
-# read the args to search pck files
-while ($arg = shift @ARGV) {
-    # $arg contains absolute dir spec?
-    if ($arg =~ m,^ftp:/([^/]*)/(.*)$,) {
-	push @ftp_list,$arg;
-    } else {
-	unless ($arg =~ m,^/,) { $arg = "$cwd/$arg"; }
-	if (-f $arg) { # file ?
-	    # error if not a .dsc file
-	    unless ($arg =~ /\.dsc$/){
-		die "bad package file name $arg (not a .dsc file)";
-	    }
-	    push @pkg_list,$arg;
-	} elsif (-d $arg) { # dir ? let's do a `find -name "*.dsc"` on it!
-	    open LIST,"find $arg -name \"*.dsc\" -type f|" || 
-		die "Can't run find : $!";
-	    while ($arg=<LIST>) {
-		push @pkg_list,$arg;
-	    }
-	    close LIST;
-	} else {
-	    die "bad argument $arg (neither a .dsc file nor a directory nor a ftp path)";
-	}
-    }
-}
-
-# 
-# the main loop for local packages
+#
+# main loop
 #
 my $dsc; # the path to the dsc file
 my $pkg; # the package name
 my $ver; # the package version
-my $res; # result of unpack
+my $deb; # instance of Local::Inside::DebSrc
 my @errors_pkg; # packages for which we had a problem
 
-PKG: while ($dsc = shift @pkg_list){
-    ###
-    ### read the name and the version 
-    ###
-    $pkg = "";
-    $ver = "";
-    open (DESC,$dsc) || die "can't read the desc in file $dsc";
-    while (<DESC>) {
-	if (/^Source: (.*)$/) {
-	    $pkg = $1;
-	} elsif ((/^Version: (.*)$/)&&($ver eq "")) {
-	    $ver = $1;
-	}
-    }
-    close DESC;
-    if ($pkg eq "") {
-	&warn ("can't read the package name from the desc file $dsc");
-	push @errors_pkg, $pkg;
-	next PKG;
-    } elsif ($ver eq "") {
-	&warn ("can't read the package version from the desc file $dsc");
-	push @errors_pkg, $pkg;
-	next PKG;
-    }
+PKG: while ($dsc = shift @pkg_list) {
+        ###
+        ### read the name and the version
+        ###
+        $pkg = "";
+        $ver = "";
+        unless (open (DESC, $dsc)) {
+                warn "Can't read file $dsc, skipped\n";
+                next PKG;
+        }
+        while (<DESC>) {
+                if (m/^Source: (.*)$/) {
+                        $pkg = $1;
+                } elsif (m/^Version: (.*)$/ && $ver eq "") {
+                        $ver = $1;
+                }
+        }
+        close DESC;
+        if ($pkg eq "") {
+                warn "Can't read the package name from the desc file $dsc\n";
+                push @errors_pkg, $pkg;
+                next PKG;
+        } elsif ($ver eq "") {
+                warn "Can't read the package version from the desc file $dsc\n";
+                push @errors_pkg, $pkg;
+                next PKG;
+        }
 
-    ###
-    ### if the package is already in the data, skip it (unless force specified)
-    if (defined ($data{$pkg})) {
-	system ("dpkg","--compare-versions","$data{$pkg}{'version'}","\>","$ver");
-	if ((!$force)&&($?==0)&&($data{$pkg}{'version'} ne "")
-	       && !( ($force_material) &&
-	          (defined($data{$pkg}{'nls'})||defined($data{$pkg}{"po"})||defined($data{$pkg}{"templates"})))) {
-	    print "Package $pkg already in version $data{$pkg}{'version'} in the database. Skip this version $ver !\n" if ($verbose || ($data{$pkg}{'version'} ne "$ver"));
-	    next PKG;
-	} else {
-	    #erase the entry of this package (it's an older version)
-	    $data{$pkg}=();
-	    foreach my $dir (("$PO_ROOT/$pkg","$TEMPLATES_ROOT/$pkg","$MENU_ROOT/$pkg")) {
-		if (-e $dir) {
-		  File::Path::rmtree($dir) 
-		      or &error ("Can't erase the dir '$dir': $!");
-		}
-	    }
-	}
-    } else {
-	foreach my $dir (("$PO_ROOT/$pkg","$TEMPLATES_ROOT/$pkg","$MENU_ROOT/$pkg")) {
-	    if (-e $dir) {
-	      File::Path::rmtree($dir) 
-		  or &error ("Can't erase the dir '$dir': $!");
-	    }
-	}
-    }
-    $tosave=1;#ok, we've done something, we have to save the db
+        ###
+        ### if the package is already in the data, skip it
+        ### (unless force specified)
+        if ($data->has_package($pkg)) {
+                system ("dpkg","--compare-versions", $data->version($pkg), "\>", $ver);
+                if ((!$force) && $?==0 && $data->version($pkg) ne ""
+                        && !( $force_material &&
+                                ($data->has_nls($pkg)
+                                        || $data->has_po($pkg)
+                                        || $data->has_templates($pkg)))) {
+                        print STDERR "Package $pkg $ver (skipped)\n"
+                                if ($verbose || ($data->version($pkg) ne $ver));
+                        next PKG;
+                } else {
+                        #   Erase this entry (it's an older version)
+                        $data->clear_pkg($pkg);
+                        foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT)) {
+                                File::Path::rmtree($_."/_tmp")
+                                        if -e $_."/_tmp";
+                        }
+                }
+        } else {
+                foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT)) {
+                        File::Path::rmtree($_."/_tmp") if -e $_."/_tmp";
+                }
+        }
+        $savedb = 1; #ok, we've done something, we have to save the db
+        print STDERR "Package $pkg $ver (processing)\n" if $verbose;
 
-    ###
-    ### unpack it
-    ###
-    $res = unpack_pkg($dsc,$pkg,$ver);
-    if ($res) { # badly unpacked
-	push @errors_pkg, $pkg;
-	next PKG; 
-    }
-
-    check_pkg($pkg,$ver);
-    chdir ($cwd) || die "can't return to the origine dir!"; 
-    if ($careful) {
-	write_data("$DB_FILE",\%data);
-    } else {
-	$tosave=1; #ok, we've done something, we have to save the db
-    }   
+        ###
+        ### unpack it
+        ###
+        $deb = parse_tarball($dsc, $pkg, $ver);
+        if ($deb) {
+                check_pkg($pkg, $deb);
+                if ($careful) {
+                        $data->write($DB_FILE);
+                } else {
+                        #  Ok, we've done something, we have to save the db
+                        $savedb = 1;
+                }
+        }
 }
 
-##
-## main loop for ftp sites
-##
-my $username ="anonymous";
-my $password = "mquinson\@ens-lyon.fr";
-my %sources;
- FTP: while ($arg = shift @ftp_list){
-   FTPTRY: #We will come back here each time we can't switch to ascii 
-           # (I suppose we've got a timeout on the ftp)
-     print "\n# $arg\n";
-     $arg =~ m,^ftp:/([^/]*)/([^/]*)/(.*)$,;
-     my $ftpsite = $1;
-     my $ftpdir = "$2/$3";
-     my $ftp_root = $2; ; # contains "debian" or "debian-non-US"
-
-     print "Connecting to $ftpsite ...";flush STDOUT;
-     $ftp = Net::FTP->new($ftpsite);
-     if (!($ftp && $ftp->ok)) { 
-	 print " failed\n";
-	 push @ftp_errors,$arg;
-	 print "Unable to connect to $ftpsite; skipping site\n";
-	 next FTP;
-     }
-     if (! $ftp->login ($username, $password)) { 
-	 print " failed\n";
-	 print $ftp->message() . "\n";
-	 print "Unable to log in as $username; skipping site\n"; 
-	 push @ftp_errors,$arg;
-	 next FTP;
-     }
-     if (! $ftp->binary ()) { 
-	 print " failed\n"; 
-	 print $ftp->message() . "\n";
-	 print "Unable to set transfer mode to binary; skipping site\n"; 
-	 push @ftp_errors,$arg;
-	 next FTP;
-     }
-     if (! $ftp->cwd ($ftpdir)) { 
-	 print " failed\n"; 
-	 print $ftp->message() . "\n";
-	 print "Unable to change directory to '$ftpdir'; skipping site\n"; 
-	 push @ftp_errors,$arg;
-	 next FTP;
-     }
-     if (! $ftp->get("Sources.gz")) {
-	 print " failed\n"; 
-	 print $ftp->message() . "\n";
-	 print "Unable to get the Sources.gz file; skipping site\n"; 
-	 push @ftp_errors,$arg;
-	 next FTP;
-     }
-     if (qx,rm -f Sources, || qx,gunzip -d Sources.gz,) {
-	 print " failed\n"; 
-	 print "Unable to unpack the Sources.gz file; skipping site\n"; 
-	 push @ftp_errors,$arg;
-	 next FTP;
-     }
-     ($succeded,$result) = read_sources ("Sources");
-     if ($succeded) {
-	 print " done\n";
-	 %sources=%{$result};
-     } else {
-	 print " failed\n";
-	 print "Unable to parse the Sources.gz file; skipping site\n"; 
-	 push @ftp_errors,$arg;
-	 next FTP;
-     }
-     if (! $ftp->cwd ("/")) { 
-	 print " failed\n"; 
-	 print $ftp->message() . "\n";
-	 print "Unable to change directory to '/'; skipping site\n"; 
-	 push @ftp_errors,$arg;
-	 next FTP;
-     }
-     #
-     # Loop on all packages of this site
-     #
-   FTPPKG: foreach $pkg (keys %sources) {
-       if (! defined $sources{$pkg}{'version'}) {
-	   print "Package $pkg has no version entry... Skipping\n";
-	   next FTPPKG;
-       }
-       if (defined ($data{$pkg}) && defined($data{$pkg}{'version'})) {
-	   system ("dpkg","--compare-versions","$data{$pkg}{'version'}","\>",$sources{$pkg}{'version'});
-	   if ((!$force)&&($?==0)&&($data{$pkg}{'version'} ne "")
-	       && !($force_material &&
-	          (defined($data{$pkg}{'nls'})||defined($data{$pkg}{"po"})||defined($data{$pkg}{"templates"})))) {
-	       print "Package $pkg already in version $data{$pkg}{'version'} in the database. Skip this version $sources{$pkg}{'version'} !\n" if ($verbose || ($data{$pkg}{'version'} ne "$sources{$pkg}{'version'}"));
-	       next FTPPKG;
-	   } else {
-	       #erase the entry of this package (it's an older version)
-	       $data{$pkg}=();
-	       foreach my $dir (("$PO_ROOT/$pkg","$TEMPLATES_ROOT/$pkg","$MENU_ROOT/$pkg")) {
-		   if (-e $dir) {
-		     File::Path::rmtree($dir) 
-			 or &error ("Can't erase the tmp dir '$dir': $!");
-		   }
-	       }
-	   }
-       } else {
-	   foreach my $dir (("$PO_ROOT/$pkg","$TEMPLATES_ROOT/$pkg","$MENU_ROOT/$pkg")) {
-	       if (-e $dir) {
-		 File::Path::rmtree($dir) 
-		     or &error ("Can't erase the tmp dir '$dir': $!");
-	       }
-	   }
-       }
-       
-       #
-       # Download it and unpack
-       #
-       print "  Checking $pkg v$sources{$pkg}{'version'} ...";flush STDOUT;
-       $sources{$pkg}{"directory"} = $ftp_root.'/'.$sources{$pkg}{"directory"};
-       $res = ftp_unpack_pkg($pkg,\%{$sources{$pkg}});
-       if ($res==2) { #can't switch to ascii.
-	   goto FTPTRY;
-       }
-       if ($res) { # badly unpacked (other reason or maximal retry count reached)
-	   print " failed\n";
-	   chdir ($cwd) || die "can't return to the origine dir!";
-	   next FTPPKG; 
-       }
-       
-       
-       check_pkg($pkg,$sources{$pkg}{"version"});
-       chdir ($cwd) || die "can't return to the origine dir!";
-       if ($careful) {
-	   write_data("$DB_FILE",\%data);
-       } else {
-	   $tosave=1; #ok, we've done something, we have to save the db
-       }   
-       print " done\n";
-   }
-}
-
-#dump_data(\%data);
-write_data ("$DB_FILE",\%data) if $tosave;
+$data->write($DB_FILE) if $savedb;
 # print with which packages we had problems
 if (@errors_pkg > 0) {
-    print "Some errors where encountred during the check of this packages\n";
-    while ($pkg = shift @errors_pkg) {
-	print "    $pkg\n";
-    }
+        print STDERR "Some errors where encountred during the check of this packages\n";
+        while ($pkg = shift @errors_pkg) {
+                print STDERR "    $pkg\n";
+        }
 }
-    
+
 
 ##############################################################################
 #                           The subs                                         #
 ##############################################################################
 
+sub store_disk_po {
+        my $pkg = shift;
+        my $filename = shift;
+
+        my $dirname  = $filename;
+        $dirname  =~ s#/+[^/]*$##;
+        $filename =~ s#.*/##g;
+        $filename =~ s#:#\%3a#g;
+        return $dirname.'/'.$pkg.'_'.$data->version($pkg).'_'.$filename;
+}
+
+sub store_disk_menu {
+        my $pkg = shift;
+        my $filename = shift;
+
+        $filename =~ s#.*debian/##;
+        $filename =~ s#/#_#g;
+        $filename =~ s#:#\%3a#g;
+        return $pkg.'_'.$data->version($pkg).'_'.$filename;
+}
+
+sub store_disk_templates {
+        my $pkg = shift;
+        my $filename = shift;
+
+        $filename =~ s#/#_#g;
+        $filename =~ s#:#\%3a#g;
+        return $pkg.'_'.$data->version($pkg).'_'.$filename;
+}
+
 ###
 ### subs
 ###
-sub unpack_pkg{
-    my $path = shift;
-    my $pkg = shift;
-    my $version = shift;
-    # make tmp dir
-    if (-e $TMP_DIR) {
-      File::Path::rmtree($TMP_DIR) 
-	  or &error ("Can't erase the tmp dir '$TMP_DIR': $!");
-    }
-    mkdir($TMP_DIR,0777) 
-	or &error ("Can't create tmp dir '$TMP_DIR': $!");
-    chdir ($TMP_DIR) 
-	or &error ("Can't cd to tmp dir '$TMP_DIR' : $!");
+sub parse_tarball {
+        my $path    = shift;
+        my $pkg     = shift;
+        my $version = shift;
+        my $patch = '';
 
-    #extract
-    my @lines=qx,dpkg-source -x $path 2>&1 1>/dev/null,;
-    if ($?) {
-	&warn ("Error while unpacking");
-	$data{$pkg}{"version"}=$version;
-	add_part($pkg,"errors","Error of dpkg-source: can't unpack the source\n".join("\n ",@lines));
-	return 1;
-    }
+        $data->package($pkg, $pkg);
+        $data->version($pkg, $version);
+        $data->upstream($pkg, "debian");
 
-    # Checks if there is a debian package or not
-    open DSC,"$path" || die "Can't read the dsc file to see if it's a debian package or not";
-    $data{$pkg}{"upstream"}="debian";
-    while (<DSC>) {
-	next unless m,^Files:,;
-	while (<DSC>) {
-	    #chomp;
-	    last unless m,^ [^ ]* [^ ]* ([^ ]*),;
-	    if ($1 =~ m,\.diff\.gz$,) {
-		$data{$pkg}{"upstream"}="other";
-	    }
-	}
-    }
-    close DSC;
-    my $ver=$version;
-    # the format of the version in debian packages is :
-    #  <epoch>:<version>-<packaging version>
-    # The directory create by dpkg-source is of the format :
-    #  <version>
-    # so, we have to clean up a bit
-    $ver =~ s/(.*)-.*/$1/; 
-    $ver =~ s/^.*:(.*)$/$1/;
-    chdir ("$TMP_DIR/$pkg-$ver") 
-	or &error ("can't cd to the unpacked directory '$TMP_DIR/$pkg-$ver'");
-    return 0;
-}
-sub ftp_unpack_pkg{
-#    my $ftp = shift; We use the global ftp declared upper, because I 
-#    dunno how to pass object to a function
-    my $pkgname=shift;
-    my $pkgref = shift;
-    my %pkg= %{$pkgref};
-    my $nb;
-    my $filename;
+        #   Determine how many characters of each files are read and cached
+        #   when parsing the tar archive
+        #
+        #   Files cannot be stored on their definitive location,
+        #   since we do not know yet the package section, this
+        #   information is read from debian/control.
+        #   So they are stored in a temporary area, and moved away
+        #   as soon as possible.
+        #
+        my $match = sub {
+                my $file = shift;
+                return 80  if $file =~ m#(^|/)nls/#;
+                return -1 if $file eq 'debian/control';
+                return ":$PO_ROOT/_tmp/".store_disk_po($pkg, $file)
+                        if $file =~ m#\.po$#;
+                return ":$MENU_ROOT/_tmp/".store_disk_menu($pkg, $file)
+                        if $file =~ m#(^|/)debian/[^/]*menu[^/]*$#;
+                return ":$TEMPLATES_ROOT/_tmp/".store_disk_templates($pkg, $file)
+                        if $file =~ m#(^|/)debian/([^/]+\.)?templates(\.|$)#;
+                return -1 if $file =~ m#(^|/)debian/[^/]*doc-base[^/]*$#;
 
-    # make tmp dir
-    if (-e $TMP_DIR) {
-      File::Path::rmtree($TMP_DIR) 
-	  or &error ("Can't erase the tmp dir '$TMP_DIR': $!");
-    }
-    mkdir($TMP_DIR,0777) 
-	or &error ("Can't create tmp dir '$TMP_DIR': $!");
-    chdir ($TMP_DIR) 
-	or &error ("Can't cd to tmp dir '$TMP_DIR' : $!");
+                return 0;
+        };
+        my $deb = Local::Inside::DebSrc->new($path,
+                parse_dft   => $match,
+                patch_parse_dft => -1,
+                maxmem      => 300000000,
+                debug       => 0,
+                patch_debug => 0,
+        );
+        unless ($deb) {
+                $data->clear_pkg($pkg);
+                warn "Package $pkg skipped because some file could not be retrieved\n";
+                return undef;
+        }
 
-    #download (and check one the way the upstream)
-    # upstream=debian by default
-    # upstream=other if there is a .diff.gz
-    my $dscfile;
-    $data{$pkgname}{'upstream'}="debian";
-    for ($nb=0;$nb<@{$pkg{"files"}};$nb++) {
-	$filename = $pkg{"directory"}.'/';
+        $data->upstream($pkg, "other")
+                if $deb->get_diff_name() ne '';
+        $data->upstream($pkg, "dbs")
+                if $deb->file_matches("^debian/patches/");
 
-	my @array = split (/ /,$pkg{"files"}[$nb]);
-	$filename .= $array[2];
-	if ($array[2] =~ m,\.dsc$,) {
-	    $dscfile = $array[2];
-	    unless ($ftp->type('A')) {
-		print "Can't change ftp to type ascii\n";
-		print $ftp->message() . "\n";
-		return 2;
-	    }
-	} else {
-	    $ftp->binary();
-	}
-	if (! $ftp->get($filename,$array[2])) {
-	    print "Unable to get the file $filename\n"; 
-	    print $ftp->message() . "\n";
-	    return 1;
-	}
-	if ($array[2] =~ m,\.diff\.gz$,) {
-	    $data{$pkgname}{"upstream"}="other";
-	}
-    }
-    print " [dl'ed]";flush STDOUT;
+        #####[ search the section and priority]#################################
+        #
+        # (a LOT of packages place spaces here, or upper case, or even typos)
+        #
+        #####
+        my $section  = "";
+        my $priority = "";
+        my $pooldir  = "main/";
+        my $control  = "debian/control";
 
-    #extract
-    my @lines=qx,dpkg-source -x $dscfile 2>&1 1>/dev/null,;
-    if ($?) {
-	&warn ("Error while unpacking");
-	$data{$pkgname}{"version"}=$pkg{"version"};
-	add_part($pkgname,"errors","Error of dpkg-source: can't unpack the source:\n".join("\n ",@lines));
-	return 1;
-    }
-    my $ver=$pkg{"version"};
-    # the format of the version in debian packages is :
-    #  <epoch>:<version>-<packaging version>
-    # The directory create by dpkg-source is of the format :
-    #  <version>
-    # so, we have to clean up a bit
-    $ver =~ s/(.*)-.*/$1/; 
-    $ver =~ s/^.*:(.*)$/$1/;
-    chdir ("$TMP_DIR/$pkgname-$ver") 
-	or &error ("can't cd to the unpacked directory '$TMP_DIR/$pkgname-$ver'");
-    print " [unpacked]";flush STDOUT;
-    return 0;
-}
+        unless ($deb->file_exists($control)) {
+                #    The debian/ directory may be a link, search for
+                #    debian/control elsewhere
+                my @list = $deb->file_matches('/debian/control$');
+                if (@list) {
+                        $control = $list[0];
+                } else {
+                        $data->clear_pkg($pkg);
+                        warn("Error: can't find debian/control; skipping package $pkg.");
+                        return undef;
+                }
+        }
+        $_ = $deb->file_content($control);
+        if (m/^Section: ([^\n]*)/m) {
+                $section = $1;
+                $section =~ s/\s//g;
+        }
+        if (m/^Priority: ([^\n]*)/m) {
+                $priority = $1;
+                $priority =~ s/\s//g;
+        }
+        if (defined($synonym{$section})) {
+                $section  = $synonym{$section};
+                if ($section =~ m#^(non-US/(contrib|non-free))#) {
+                        $pooldir = $section."/";
+                } elsif ($section =~ m#^non-US#) {
+                        $pooldir = "non-US/main/";
+                } elsif ($section =~ m#^(contrib|non-free)/#) {
+                        $pooldir = $1."/";
+                }
+        } else {
+                $data->add_errors($pkg,"'$section' is not a valid section\n");
+                if ($section =~ m#^non-US/(contrib|non-free)#i) {
+                        $section = "non-US/$1";
+                        $pooldir = $section."/";
+                } elsif ($section =~ m#^non-US#i) {
+                        $section = "non-US";
+                        $pooldir = "non-US/main/";
+                } elsif ($section =~ m#^(contrib|non-free)/#) {
+                        $section = $1;
+                        $pooldir = $section."/";
+                } else {
+                        $section  = "unknown";
+                }
+        }
+        if (defined($synonym{$priority})) {
+                $priority = $synonym{$priority};
+        } else {
+                $data->add_errors($pkg,"'$priority' is not a valid priority\n");
+                $priority = "unknown";
+        }
+        if ($pkg =~ m/^(lib.)/) {
+                $pooldir .= $1;
+        } elsif ($pkg =~ m/^(.)/) {
+                $pooldir .= $1;
+        }
 
-sub check_pkg{
-    my $pkg = shift;
-    my $version = shift;
+        #   Move files to their definitive location
+        foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT)) {
+                File::Path::rmtree($_."/".$pooldir."/".$pkg);
+                if (-d $_."/_tmp") {
+                        File::Path::mkpath($_."/".$pooldir, 0, 0755);
+                        qx(mv $_/_tmp $_/$pooldir/$pkg);
+                }
+        }
 
-    $data{$pkg}{'version'}=$version;
+        $data->section ($pkg, $section);
+        $data->priority($pkg, $priority);
+        $data->pooldir ($pkg, $pooldir."/".$pkg);
 
-    #####[ search the section and priority]####################################
-    #
-    # (a LOT of packages place spaces here, or upper case, or even typos)
-    #
-    #####
-    my $section ="";
-    my $priority="";
-    unless (-e "debian/control" && open CTRL,"debian/control") {
-	&warn ("Error: Can't find debian/control; skipping the package $pkg.");
-	return;
-    }
-    while (<CTRL>) {
-	if ((/^Section: (.*)$/)&&(!defined ($data{$pkg}{'section'}) || $data{$pkg}{'section'} eq "")) {
-	    $section = lc $1;
-	    $section =~ s/ //g;
-	} elsif ((/^Priority: (.*)$/)&&(!defined ($data{$pkg}{'priority'}) || $data{$pkg}{'priority'} eq "")) {
-	    $priority=lc $1;
-	    $priority =~ s/ //g;
-	}
-    }
-    close CTRL;
-    if (!defined($synonym{$section})) {
-	add_part($pkg,"errors","'$section' is not a valid section\n");
-	$section = "unknown";
-	$priority = "unknown";
-    } elsif (!defined($synonym{$priority})) {
-	add_part($pkg,"errors","'$priority' is not a valid priority\n");
-	$section = "unknown";
-	$priority = "unknown";
-    } else { 
-	$section = $synonym{$section};
-	$priority = $synonym{$priority};
-    }
-    $data{$pkg}{'section'} = $section;
-    $data{$pkg}{'priority'} = $priority;
-
-    #####[ Check the type of organization ]#####################################
-    #
-    # try to guess the organisation of this stuff. It could be :
-    #   - standard gnu (po dir, Makefile.in.in file and POTFILES.in in it)
-    #   - standard nls (nls dir hopefully, with all catalogs in it)
-    #   - full (dir "en" containing po files or "nls" dir or "LC_MESSAGES" dir)
-    #     (and hopefully man pages and info pages)
-    #####
-    my $type_org="";
-    my $addtype=sub{ 
-	my ($arg) = shift;
-	if ($type_org eq "") {
-	    $type_org=$arg;
-	} else {
-	    $type_org="$type_org|$arg";
-	}
-    };
-    # check if it's a standard nls package (nls dir)
-    open LIST,"find -name \"nls\" -type d |" || die "Can't run find : $!";
-    &$addtype("nls") if <LIST>;
-    close LIST;
-    
-    # Check if it's a standard gnu install (po dir, Makefile.in.in file and POTFILES.in in it)
-    open LIST,"find -name \"po\" -type d|" || die "Can't run find : $!";
-    while ($a = <LIST>) {
-	chop ($a);
-	&$addtype("gnu") if (-e "$a/Makefile.in.in" && -e "$a/POTFILES.in");
-	#FIXME: we could regenerate the po file in this case
-    }
-    close LIST;
-    
-    # check if it's a full i18n package
-    open LIST,"find -name \"en\" -type d|" || die "Can't run find : $!";
-    while (<LIST>) {
-	chop;
-	open LIST2,"find $_ -name \"*.po\" -type f -o -name \"nls\" -type d -o -name \"LC_MESSAGES\" -type d|" 
-	    || die "Can't run find : $!";
-	&$addtype("full") if (<LIST2>);
-	close LIST2 || die;
-    }
-    close LIST;
-    $type_org="?" if ($type_org eq "");
-    $data{$pkg}{"type"} = $type_org;
-
-
-    #####[ Search and handel material ]########################################
-    #
-    # search all *.po files, nls catalogs files and debconf templates
-    #  (it's a catalog iff first_line =~ /\$set[0-9 ]*\#/)
-    #####    
-    #search nls catalogs
-    my ($nb);
-    my(@nls_files);
-    open LIST,"find ./ -type f|" || die "Can't run find : $!";
-    my $line;
-    while (<LIST>) {
-	chop;
-	if (defined($data{$pkg}{'nls'})) {
-	    $nb=@{$data{$pkg}{'nls'}};
-	} else {
-	    $nb=0;
-	}
-	open FILE,$_ || die ("can't open file $_ to check if it's a nls catalog : $!");
-	$line = <FILE>;
-	if ((defined $line)&&($line =~ /\$set[0-9 ]*\#/)) { #if FILE is empty, $line is undef
-	    $_ =~ s,^./(.*),$1, ;
-	    $data{$pkg}{'nls'}[$nb]=$_;
-	}
-	close FILE;
-    }
-    close LIST;
-    
-    ##
-    ## Search *.po files. 
-    ##
-    my @pofiles;
-    open LIST,"find ./ -name \"*.po\" -type f|" || die "Can't run find : $!";
-    while (<LIST>) {
-	chop;
-	$_ =~ s,^./(.*),$1, ;
-	$pofiles[scalar @pofiles]=$_;
-    }
-    close LIST;
-    ##
-    ## for po files, try to guess the language from the name, 
-    ##      and the l10n with msgfmt
-    ##
-    my $file; # the po file name in the package
-    my $filename; #the po file name to be archived
-    my $lang=""; # the identified code language
-    my $bad_lang=""; #this could be a language, but this is not a valid language
-    my $f; #nb of fuzzy msg
-    my $u; #nb of untranslated msg
-    my $t; #nb of translated msg
-    my $this_stat = ""; #stats for this file
-    my $err_msg =""; # err msg of the statistic external command (ie, msgfmt or debconf-stats)
-    my $regexp_for_lang_code = "(([a-zA-Z]{2})([-_][a-zA-Z]{2})?(@[^\.]*)?)(\.[^\.]*)?";
-
-#    print "PO: @pofiles\n";
-   POFILE: foreach $file (@pofiles) {
-#	print "Test file $file\n";
-      File::Path::mkpath(File::Basename::dirname("$PO_ROOT/$pkg/$file"));
-	$filename = "${pkg}_$data{$pkg}{'version'}/$file";
-	$filename =~ s,/,_,g;
-	$filename = File::Basename::dirname("$file")."/".$filename;
-	my $filename_http = $filename; #To transfer files with ":" in their name over http, the file
-	$filename_http =~ s,:,\%3a,;#on the server must have the ":", but the URL must be fixed.
-
-	if (system("gzip -c9 $file > $PO_ROOT/$pkg/$filename.gz")){
-	    warn "Can't gunzip $file to $PO_ROOT/$pkg/$filename.gz : $!";
-	}
-	$this_stat="";
-	$lang ="";
-	if ($lang eq "" && $file=~ /\/$regexp_for_lang_code\.po$/){
-	    $bad_lang =$1;
-#	   print("Rule 0 match ($1)\n");
-	    if (is_lang($bad_lang)) {
-		$lang = $bad_lang;
-		$bad_lang = "";
-	    }
-	}
-	if ($lang eq "" && $file=~ /\/po\/$regexp_for_lang_code\.po$/){
-	    $bad_lang =$1;
-#	   print("Rule 1 match ($1)\n");
-	    if (is_lang($bad_lang)) {
-		$lang = $bad_lang;
-		$bad_lang = "";
-	    }
-	}
-	if ($lang eq "" && $file=~ /\/$regexp_for_lang_code\// && $1 ne "po"){
-	    $bad_lang =$1;
-#	   print("Rule 2 match ($1)\n");
-	    if (is_lang($bad_lang)) {
-		$lang = $bad_lang;
-		$bad_lang = "";
-	    }
-	}
-	# The next rule is for kde-i18n and other such packages
-	if ($lang eq "" && $file =~ m,^$regexp_for_lang_code/messages,) {
-	    $bad_lang = $1;
-#	   print("Rule 3 match ($1)\n");
-	    if (is_lang($bad_lang)) {
-		$lang = $bad_lang;
-		$bad_lang = "";
-	    }
-	}
-	if ($lang ne "") {
-	    # stats the file
-	    ($this_stat,$err_msg)=
-		read_stats("msgfmt --statistics -o /dev/null $file 2>&1 1>/dev/null");
-#	    print("($this_stat,$err_msg)\n");
-            if ($err_msg) {
-		add_part($pkg,"errors","Error of msgfmt --statistics ".$file."\n".$err_msg);
-	    } 
-	    if ($this_stat ne "0t0f0u") {
-		$data{$pkg}{"stats"}{$lang}=l10n_add($data{$pkg}{"stats"}{$lang},$this_stat);
-	    }
-	} else { # no valid lang found
-	    next POFILE if $file =~ m,messages.po$,;
-	    if ($bad_lang eq "") { 
-		add_part($pkg,"errors","can't guess the language of $file");
-	    } else {
-		add_part($pkg,"errors","$bad_lang is not a language code (in $file)");
-	    }
-	}
-	# Add this file to the data
-	$data{$pkg}{"po"}[@{$data{$pkg}{"po"}}] = "$file:".normalize_lang($lang).":$this_stat:".$filename_http;
-    }
-
-    search_templates($pkg);
-    search_menu($pkg);
-}
-#----[ add_part ]---------------------------------------------------------------
-# simple function to add an error or a warning to a package
-sub add_part  {
-    my $pkg=shift;
-    my $type=shift;
-    my $msg=shift;
-    if (($type ne "errors")&&($type ne "warnings")) {
-	&internerr ("Can't add a msg to the unknown category '$type' of pkg $pkg.
-The message was $msg\n");
-    }
-    $data{$pkg}{$type}[@{$data{$pkg}{$type}}] = $msg;
+        return $deb;
 }
 
-#----[ search_templates ]-------------------------------------------------------
-# handle debconf templates
-sub search_templates {
-    my $pkg = shift;
+sub check_pkg {
+        my $pkg = shift;
+        my $deb = shift;
 
-    ###
-    ### For debconf templates, do the same thing than for po files
-    ###
-    # search directories containing debconf templates, and the debconf templates
-    my %dirs;
-    open LIST,"find debian/ -name \"templates\" -o -name \"templates*\"|" || die "Can't run find : $!";
-    while (<LIST>) {
-	chop;
-	$_ =~ s,^./(.*),$1, ;
-	$dirs{File::Basename::dirname($_)} = 1;
-    }
-    close LIST;
-    # stat templates in each dir
-    foreach my $dir (keys %dirs) {
-      File::Path::mkpath(File::Basename::dirname("$TEMPLATES_ROOT/$pkg/$dir"));
-	qx,cp $dir/templates $dir/dtc-tmp,;
-	open LIST,"ls $dir/templates.* 2>/dev/null|" || die "can't run ls: $!";
-	my $file;
-	while ($file=<LIST>) {
-	    chop($file);
-	    my @lines = qx,debconf-mergetemplate $file $dir/dtc-tmp 2>&1 1>$dir/dtc-tmp2 && mv $dir/dtc-tmp2 $dir/dtc-tmp,;
-	    if ($?){
-		add_part($pkg,"errors",
-			 "Error of debconf-mergetemplate for file $file\n".join("\n ",@lines));
-	    }
-	}
+        #####[ Check the type of organization ]#################################
+        #
+        # try to guess the organisation of this stuff. It could be :
+        #   - standard gnu (po dir, Makefile.in.in file and POTFILES.in in it)
+        #   - standard nls (nls dir hopefully, with all catalogs in it)
+        #   - full         (dir "en" containing po files or "nls" dir or
+        #                   "LC_MESSAGES" dir)
+        #     (and hopefully man pages and info pages)
+        #####
+        my $type_org = "";
+        my $addtype = sub {
+                my $arg = shift;
+                if ($type_org eq "") {
+                        $type_org = $arg;
+                } else {
+                        $type_org = "$type_org|$arg";
+                }
+        };
 
-	# store the full template
-	my $filename = "${pkg}_$data{$pkg}{'version'}/$dir/templates";
-	$filename =~ s,:,\%3a,;
-	$filename =~ s,/,_,g;
-	if (system("if [ -e $dir/dtc-tmp ] ; then gzip -c9 $dir/dtc-tmp > $TEMPLATES_ROOT/$pkg/$filename.gz; else echo '$dir/dtc-tmp was not created. I guess it was no debconf template there'; exit 1; fi")){
-	    warn "Can't gunzip $dir/templates to $TEMPLATES_ROOT/$pkg/$filename.gz : $!\n";
-	}
-	# Add this file to the data
-	$data{$pkg}{"templates"}[@{$data{$pkg}{"templates"}}] = "templates:en".'::'."$filename";
+        &$addtype("nls")  if $deb->file_matches("(?:^|/)nls/");
 
-	# For each lang
-	my @lines = qx,debconf-getlang --stats $dir/templates* 2>&1,;
-	foreach my $line (@lines) {
-	    unless (($line =~ /untranslated/)||($line =~ /translated/)||($line =~ /fuzzy/)) {
-		add_part($pkg,"errors",
-			 "Error of debconf-getlang in directory ".$dir."\n".join('\n ',@lines));
-		last;
-	    }
-	    $line =~ m,^([^:]*): (.*)$,;
-	    my $lang=$1;
-	    my $stats=parse_stats($2);
-	    # Store the templates
-	    my $filename = "${pkg}_$data{$pkg}{'version'}/$dir/templates.$lang";
-	    $filename =~ s,:,\%3a,;
-	    $filename =~ s,/,_,g;
-	    
-	    # FIXME: this is a hack because debconf-getlang fails if given
-	    #   -getlang $lang templates templates.*
-	    # So we have to get the right template. But it's hard to find the good lower/upper case combination.
-	    # That's why I use the -iname facility of find.
-	    if (system("debconf-getlang $lang $dir/templates `find $dir -iname \"templates.$lang\"`|gzip -c9 - > $TEMPLATES_ROOT/$pkg/$filename.gz")){
-		warn "Can't gunzip $dir/templates.$lang to $TEMPLATES_ROOT/$pkg/$filename.gz : $!\n";
-	    }
-	    unless (is_lang($lang)) {
-		add_part($pkg,"errors","$lang is not a language code (in templates of directory $dir)");
-	    }
-	    # Add this file to the data
-	    $data{$pkg}{"templates"}[@{$data{$pkg}{"templates"}}] = "templates.$lang:".normalize_lang($lang).":$stats:$filename.gz";
-	}    
+        &$addtype("gnu")  if $deb->file_matches("(?:^|/)po/Makefile.in.in\$")
+                          && $deb->file_matches("(?:^|/)po/POTFILES.in\$");
 
-    }
+        &$addtype("full") if $deb->file_matches("(?:^|/)en/.*\\.po\\b")
+                          && $deb->file_matches("(?:^|/)en/.*/nls/")
+                          && $deb->file_matches("(?:^|/)en/(?:.*/)?LC_MESSAGES/");
+
+        $type_org="?" if ($type_org eq "");
+        $data->type($pkg, $type_org);
+
+        search_nls($pkg);
+        search_po($pkg);
+        search_menu($pkg);
+        search_docbase($pkg);
+        search_templates($pkg);
+}
+
+#----[ search_nls ]-------------------------------------------------------------
+sub search_nls {
+        my $pkg = shift;
+        my $line;
+
+        $data->nls($pkg, ());
+        foreach ($deb->file_matches("(?:^|/)nls/")) {
+                $line = $deb->file_content($_, 80);
+                $data->add_nls($pkg, $_) if $line =~ m/^\$set[\s\d]+#/s;
+        }
+
+}
+
+#----[ search_po ]--------------------------------------------------------------
+sub search_po {
+        my $pkg = shift;
+
+        my @pofiles = $deb->file_matches("\\.po\$");
+
+        ##
+        ## for po files, try to guess the language from the name,
+        ##      and the l10n with msgfmt
+        ##
+        my $file; # the po file name in the package
+        my $filename; #the po file name to be archived
+        my $lang=""; # the identified code language
+        my $bad_lang=""; #this could be a language, but this is not a valid language
+        my $this_stat = ""; #stats for this file
+        my $err_msg =""; # err msg of the statistic external command (ie, msgfmt or debconf-stats)
+        my $regexp_for_lang_code = '(([a-zA-Z]{2})([-_][a-zA-Z]{2})?(@[^./]*)?)(\.[^./]+)?';
+
+        POFILE: foreach $file (@pofiles) {
+                $filename = store_disk_po($pkg, $file);
+
+                my $PO_DIR = $PO_ROOT."/".$data->pooldir($pkg);
+
+                $this_stat = "";
+                $lang = "";
+                if ($lang eq "" && $file=~ m,(?:_|\b)$regexp_for_lang_code\.po$,o) {
+                        $bad_lang =$1;
+                        if (is_lang($bad_lang)) {
+                                $lang = $bad_lang;
+                                $bad_lang = "";
+                        }
+                }
+                # The next rule is for kde-i18n and other such packages
+                if ($lang eq "" && $file =~ m,(?:^|/)$regexp_for_lang_code/(messages|LC_MESSAGES)/,) {
+                        $bad_lang = $1;
+                        if (is_lang($bad_lang)) {
+                                $lang = $bad_lang;
+                                $bad_lang = "";
+                        }
+                }
+                if ($lang ne "") {
+                        # stats the file
+                        ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$filename 2>&1 1>/dev/null");
+                        if ($err_msg ne '') {
+                                $err_msg =~ s,\Q$PO_DIR/$filename\E,$file,g;
+                                $data->add_errors($pkg, "gettext: ".$err_msg);
+                        }
+                } else { # no valid lang found
+                        next POFILE if $file =~ m,messages.po$,;
+                        if ($bad_lang eq "") {
+                                $data->add_errors($pkg, "gettext: $file: can't guess language");
+                        } else {
+                                $data->add_errors($pkg, "gettext: $file: $bad_lang not a language code");
+                        }
+                }
+                # Add this file to the data
+                $data->add_po($pkg, $file, normalize_lang($lang), $this_stat, $filename);
+                if (system("gzip -9 $PO_DIR/$filename")) {
+                        warn "Can't gzip $PO_DIR/$filename: $!";
+                }
+        }
+        print STDERR "MEM: ".$deb->get_max_memory()."\n" if $verbose;
 }
 
 #----[ search_menu ]-----------------------------------------------------------
 sub search_menu {
-    my $pkg = shift;
+        my $pkg = shift;
+        my $filename;
 
-    ###
-    ### Search the menu files and store them (do not anything else)
-    ###
-    open LIST,"find -name \"debian\" -type d|" || die "can't run find: $!";
-    while (my $dirname=<LIST>) {
-	chomp($dirname);
-	my $cwd=`pwd`;chomp($cwd);
-	die "Can't cd to $dirname (was in $cwd): $!" unless chdir($dirname);
-	# search for menu files
-	open LIST2,"ls *menu* 2>/dev/null|" || die "can't run ls: $!";
-	while (<LIST2>) {
-	  File::Path::mkpath("$MENU_ROOT/$pkg");
-	    chomp;
-	    my $filename="$dirname/$_";
-	    $filename =~ s,^\.*,,;
-	    $filename =~ s,^/*,,;
-	    $filename =~ s,^debian/,,;
-	    $filename =~ s,:,\%3a,;
-	    $filename =~ s,/,_,g;
-	    if (system("gzip -c9 $_ > $MENU_ROOT/$pkg/$filename.gz")){
-		warn "Can't gunzip $_ to $MENU_ROOT/$pkg/$filename.gz : $!\n";
-	    }
-	    $data{$pkg}{"menu"}[@{$data{$pkg}{"menu"}}] = "$filename.gz";
-	}
-
-	# search for doc-base files, since doc-base generate menu files for dwww
-	open LIST2,"ls *doc-base* 2>/dev/null|" || die "can't run ls: $!";
-	while (my $docbase=<LIST2>) {
-	  File::Path::mkpath("$MENU_ROOT/$pkg");
-	    chomp($docbase);
-	    open DOCBASE,"$docbase" || die "can't open $docbase: $!";
-	    my $id=undef;
-	    while (<DOCBASE>) {
-		next unless m,^Document:,;
-		s/^Document:\s*(\S*)\s*$/$1/;
-		$id = $_;
-	    }
-	    close(DOCBASE);
-	    next unless $id;
-	    my $filename="$dirname".'/doc-base-'."$id";
-	    $filename =~ s,^\.*,,;
-	    $filename =~ s,^/*,,;
-	    $filename =~ s,^debian/,,;
-	    $filename =~ s,:,\%3a,;
-	    $filename =~ s,/,_,g;
-	    if (system("gzip -c9 $docbase > $MENU_ROOT/$pkg/$filename.gz")){
-		warn "Can't gunzip $docbase to $MENU_ROOT/$pkg/$filename.gz : $!\n";
-	    }
-	    $data{$pkg}{"menu"}[scalar @{$data{$pkg}{"menu"}}] = "$filename.gz";
-	}
-#	for (my $i=0; $i<scalar @{$data{$pkg}{"menu"}} ; $i++) {
-#	    printf "data{%s}{\"menu\"}[%d]=%s\n",
-#	    $pkg,$i,$data{$pkg}{"menu"}[$i];
-#	}
-	chdir ($cwd)|| die "can't return to $cwd after searching for menu files";
-    }
+        my @menufiles = $deb->file_matches("(^|/)debian/[^/]*menu[^/]*\$");
+        foreach my $file (@menufiles) {
+                # Add this file to the data
+                $filename = store_disk_menu($pkg, $file);
+                $data->add_menu($pkg, $file, $filename.".gz");
+                if (system("gzip -9 $MENU_ROOT/".$data->pooldir($pkg)."/$filename")){
+                        warn "Can't gzip $MENU_ROOT/".$data->pooldir($pkg)."/$filename: $!\n";
+                }
+        }
 }
 
+#----[ search_docbase ]---------------------------------------------------------
+sub search_docbase {
+        my $pkg = shift;
+        my ($dirname, $filename);
+
+        my @docbasefiles = $deb->file_matches("(^|/)debian/[^/]*doc-base[^/]*\$");
+
+        foreach my $file (@docbasefiles) {
+                $_ = $deb->file_content($file);
+                next unless m/^Document:\s*(\S*)\s*$/m;
+                $filename = 'doc-base-' . $1;
+                $dirname  = $file;
+                $dirname  =~ s#/+[^/]*$##;
+                $filename = $dirname . '/' . $filename;
+                $filename =~ s,^.*debian/,,;
+                $filename =~ s/:/\%3a/g;
+                $filename =~ s,/,_,g;
+                File::Path::mkpath($MENU_ROOT."/".$data->pooldir($pkg), 0, 0755);
+                unless (open (DOCBASE, "> $MENU_ROOT/".$data->pooldir($pkg)."/$filename")) {
+                        warn "Unable to write to $MENU_ROOT/".$data->pooldir($pkg)."/$filename\n";
+                        next;
+                }
+                print DOCBASE;
+                close DOCBASE;
+                $data->add_menu($pkg, $file, $filename.".gz");
+                if (system("gzip -9 $MENU_ROOT/".$data->pooldir($pkg)."/$filename")) {
+                        warn "Can't gzip $MENU_ROOT/".$data->pooldir($pkg)."/$filename: $!\n";
+                }
+        }
+}
+
+#----[ search_templates ]------------------------------------------------------
+sub search_templates {
+        my $pkg = shift;
+        my ($filename, $tmpl, %tmpl_stats, $this_stat, @list, @list2);
+
+        my @debconffiles = $deb->file_matches("(^|/)debian/([^/]+\\.)?templates\$");
+        $tmpl = Webwml::L10n::Debconf->new();
+        foreach my $file (@debconffiles) {
+                #   All translations in a single file
+                next if $deb->file_matches($file."\\.");
+
+                # Add this file to data
+                $filename = store_disk_templates($pkg, $file);
+                my $storedfile = $TEMPLATES_ROOT."/".$data->pooldir($pkg)."/$filename";
+
+                #  Trap warnings from Webwml::L10n::Debconf and reword them
+                {
+                        local $SIG{__WARN__} = sub {
+                                my $msg = $_[0];
+                                $msg =~ s,^\Q$storedfile\E,debconf: $file,;
+                                $data->add_errors($pkg, $msg);
+                        };
+                        eval { $tmpl->read_compact($storedfile) };
+                }
+                %tmpl_stats = $tmpl->stats();
+                #  Add information about English template
+                $data->add_templates($pkg, $file, '_', $tmpl->count().'t0f0u', $filename);
+                foreach (keys %tmpl_stats) {
+                        $this_stat = $tmpl_stats{$_}->[0].'t'.$tmpl_stats{$_}->[1].'f'.$tmpl_stats{$_}->[2].'u';
+                        $data->add_templates($pkg, $file, normalize_lang($_), $this_stat, $filename);
+                }
+                if (system("gzip -9 $storedfile")){
+                        warn "Can't gzip $storedfile: $!\n";
+                }
+        }
+        foreach my $file (@debconffiles) {
+                #   Translations are put in separate files
+                @list = $deb->file_matches($file."\\.");
+                next unless @list;
+
+                $filename = store_disk_templates($pkg, $file);
+
+                @list2 = ();
+                my %storedfile = ();
+                my %origfile = ();
+                foreach (@list) {
+                        my $relfile = $TEMPLATES_ROOT."/".$data->pooldir($pkg)."/".store_disk_templates($pkg, $_);
+                        $storedfile{$relfile} = store_disk_templates($pkg, $_);
+                        $origfile{$relfile} = $_;
+                        push (@list2, $relfile);
+                }
+                #  Trap warnings from Webwml::L10n::Debconf and reword them
+                {
+                        local $SIG{__WARN__} = sub {
+                                my $msg = $_[0];
+                                my $disk = $TEMPLATES_ROOT."/".$data->pooldir($pkg)."/$filename";
+                                $msg =~ s,^\Q$disk\E,debconf: $file,;
+                                $data->add_errors($pkg, $msg);
+                        };
+                        eval { $tmpl->read_dispatched($TEMPLATES_ROOT."/".$data->pooldir($pkg)."/".$filename, @list2) };
+                }
+                %tmpl_stats = $tmpl->stats();
+                #  Add information about English template
+                $data->add_templates($pkg, $file, '_', $tmpl->count().'t0f0u', $filename);
+                foreach (keys %tmpl_stats) {
+                        $this_stat = $tmpl_stats{$_}->[0].'t'.$tmpl_stats{$_}->[1].'f'.$tmpl_stats{$_}->[2].'u';
+                        $data->add_templates($pkg, $origfile{$tmpl->filename($_)}, normalize_lang($_), $this_stat, $storedfile{$tmpl->filename($_)}, $filename);
+                        if (system("gzip -9 $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$storedfile{$tmpl->filename($_)})) {
+                                warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$storedfile{$tmpl->filename($_)}.": $!\n";
+                        }
+                }
+                if (system("gzip -9 $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename)) {
+                        warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename.": $!\n";
+                }
+        }
+}
 
 #----[ normalize_lang ]--------------------------------------------------------
 sub normalize_lang {
-    my $lang = shift;
-    if ($lang =~ m,^(..)_(..)$,) {
-	return lc($1).'_'.uc($2);
-    } elsif ($lang =~ m,^(..)$,) {
-	return lc($1);
-    }
-    return $lang;
+        my $lang = shift;
+        if ($lang =~ m,^(..)[-_](..)$,) {
+                return lc($1).'_'.uc($2);
+        } elsif ($lang =~ m,^(..)$,) {
+                return lc($1);
+        }
+        return $lang;
 }
 
 #----[ parse_stats ]------------------------------------------------------------
-# do "5 translated templates, 1 fuzzy translations" -> "5t1f0u"
+# transform "5 translated templates, 1 fuzzy translations" -> "5t1f0u"
 sub parse_stats {
-    my $line=shift;
-    my $returned_stats="";
+        my $line = shift;
+        my $returned_stats = "";
 
-    $returned_stats.=($line =~ /([0-9]*) translated/   ? "$1 t" : "0t");
-    $returned_stats.=($line =~ /([0-9]*) fuzzy/        ? "$1 f" : "0f");
-    $returned_stats.=($line =~ /([0-9]*) untranslated/ ? "$1 u" : "0u");
-    #(output with space because perl understand $tt as a new var)
-    $returned_stats=~ s/ //g;
+        $returned_stats .= ($line =~ /(\d+) translated/   ? $1 : "0")."t";
+        $returned_stats .= ($line =~ /(\d+) fuzzy/        ? $1 : "0")."f";
+        $returned_stats .= ($line =~ /(\d+) untranslated/ ? $1 : "0")."u";
 
-    return $returned_stats;
+        return $returned_stats;
 }
 
 #----[ read_stats ]-------------------------------------------------------------
@@ -1000,51 +751,60 @@ sub parse_stats {
 # ret1 = stats line
 # ret2 = "" or error msg got
 sub read_stats {
-    my $cmd = shift;
+        my $cmd = shift;
 
-    my ($found)=0;   #true if the output seems to be an output of no err
-    my @lines;   #to read the output
-    my ($line);  #to read the output
-    my $returned_err="";
-    my $returned_stats="0t0f0u";
+        my ($found) = 0;   #true if output seems to be correct
+        my $returned_err = "";
+        my $returned_stats = "0t0f0u";
 
-    # reads the new stats
-    @lines = qx,$cmd,;
-    $line = $lines[0];
-    chop ($line);
-    return ("0t0f0u","Something weird append (no output)\n") unless defined($line);
-    # if msgfmt didn't output something like 'bla translated,bla fuzzy', it's an error or a warning
-    foreach $line (@lines) {
-        if (($line =~ /untranslated/)||($line =~ /translated/)||($line =~ /fuzzy/)) {
-  	    $returned_stats=parse_stats($line);
-        } else {
-            $returned_err .= $line;
+        # reads the new stats
+        my @lines = qx,$cmd,;
+        return ("0t0f0u","Something weird append (no output)\n")
+                unless $#lines >= 0;
+
+        foreach (@lines) {
+                if (m/translated|fuzzy/) {
+                        $returned_stats = parse_stats($_);
+                } else {
+                        $returned_err .= $_;
+                }
         }
-    }
-    return ($returned_stats,$returned_err);
+        return ($returned_stats,$returned_err);
 }
 
-#----[ init_synonym ]--------------------------------------------------------------
+#----[ init_synonym ]-----------------------------------------------------------
 # Read the synonym file
 sub init_synonym {
-    my $right;
-    my $wrong;
+        my $right;
+        my $wrong;
 
-    open DATA,"$SYN_FILE" 
-	or &error ("can't read $SYN_FILE");
-    while (<DATA>) {
-        next unless /\S/;
-	next if /^\#/;
-        chop;
-	if (m,:,) {
-	    ($wrong, $right) = split(/:/, $_, 2);
-	} else {
-	    $wrong=$right=$_;
-	}
-        $synonym{$wrong} = $right;
-    }
-    close DATA;
+        open (DATA,"< $SYN_FILE")
+                || die ("Can't read $SYN_FILE");
+        while (<DATA>) {
+                next unless /\S/;
+                next if /^\#/;
+                chop;
+                if (m/:/) {
+                        ($wrong, $right) = split(/:/, $_, 2);
+                } else {
+                        $wrong = $right = $_;
+                }
+                $synonym{$wrong} = $right;
+        }
+        close (DATA);
 }
 
-0;
+# sub is_lang(code) : returns true iff code is a valide code of language
+sub is_lang {
+        my $code = shift;
+        $code =~ s/\@.*$//;
+        #   Accept these codes
+        return 1 if $code eq 'du-NL' || $code eq 'no_NY' || $code eq 'cz' || $code eq 'dk' || $code eq 'sp' || $code eq 'wa';
+        if ($code =~ /^(..)[-_](..)$/) {
+                return (defined(code2language($1)) && defined(code2country($2)));
+        }
+        return defined code2language($code);
+}
+
+1;
 
