@@ -1,0 +1,100 @@
+#use wml::debian::template title="Cómo Trabajar con las Páginas Web de Debian"
+#use wml::debian::translation-check translation="1.4"
+
+<h2>Añadir Nuevas Páginas</h2>
+
+<p>Añadir nuevas páginas a Debian es bastante fácil. Todo el trabajo para
+hacer correctamente la cabecera y pie de página se hace con WML. Todo lo que
+usted necesita hacer es incluir una línea como la siguiente al principio de
+cada fichero nuevo:
+
+<pre><protect>
+#use wml::debian::template title="TÍTULO DE LA PÁGINA" 
+</protect></pre>
+
+<p>seguido del cuerpo. Todas las páginas usan la plantilla
+<code>wml::debian::template</code> a no ser que usen una especial creada solamente
+para esa sección, por ejemplo, los apartados de noticias o seguridad.
+
+<p>Las plantillas que tenemos le permiten definir ciertas variables que
+afectarán a las páginas creadas. Ésto debería evitar el tener que crear
+diferentes plantillas para cada situación y permitir que las mejoras sean
+más sencillas de implementar. Las variables que actualmente están disponibles junto
+con su propósito son:
+<dl>
+<dt>BARETITLE="true"
+	<dd>Borra la parte "Debian GNU/Linux --" que usualmente se encuentra antes de
+        todas las marcas &lt;title&gt;.
+<dt>NOHEADER="true"
+	<dd>Borrar la cabecera inicial de la página. Por supuesto, puede incluirse una cabecera
+        personalizada en el cuerpo.
+<dt>NOHOMELINK="true"
+	<dd>Borra el enlace de vuelta a la página principal de Debian, que normalmente
+        se añade al final de la página.
+<dt>NOLANGUAGES="true"
+	<dd>Borra los enlaces de las versiones en otros idiomas que normalmente
+        se añade al final de la página.
+<dt>GEN_TIME="true"
+	<dd>Configura la fecha de los ficheros resultantes con la marca de tiempo de los
+        ficheros generados, en vez de la marca de tiempo del fichero fuente.
+<dt>NOCOPYRIGHT="true"
+	<dd>Borra la nota de copyright del final de la página.
+</dl>
+
+<p>Tenga en cuenta que puede usar cualquier cadena de caracteres como el valor
+de estas variables,  "true", "yes", "foo", da igual.
+
+<p>Un ejemplo del uso de ésto se encuentra en las páginas de las migraciones (ports), que tienen
+sus propias cabeceras. <code>ports/arm/index.wml</code> usa:
+
+<pre><protect>
+#use wml::debian::template title="ARM Port" NOHEADER="yes"
+</protect></pre>
+
+<p>Si usted desea hacer algo que no puede hacer usando las plantillas existentes,
+considere primero extender alguna de ellas. Si no es posible extender una de ellas
+de una forma compatible con las versiones anteriores, intente hacer que la
+plantilla existente sea un subconjunto de la nueva plantilla, de forma que
+las páginas puedan convertirse a ésta en la siguiente actualización principal
+(esperemos que nunca más de 6 meses).
+
+<p>Si usted crea una página que es generada por un script o tiene
+poco texto, considere el uso de un filtro de secciones de idioma dentro de wml para
+facilitar la tarea de mantener actualizadas las traducciones. Un buen ejemplo
+de ésto se encuentra en <kbd>distrib/vendors.wml</kbd>. Pueden añadirse nuevos
+vendedores a ésta página y ésta adición se generará automáticamente en cada idioma.
+<kbd>vendors.wml</kbd> incluye <kbd>vendors.CD</kbd> que contiene la lista actual
+de vendedores. Éste fichero, a su vez, incluye <kbd>distrib/vendors.CD.def</kbd>
+que contiene las definiciones de todas las frases de <kbd>vendors.CD</kbd>.
+
+<p>Los traductores simplemente necesitan añadir las traducciones donde
+están las secciones de idioma, por ejemplo
+<pre><protect>
+	[EN:Country:]
+	[ES:Pa-is:]
+	[DE:Land:]
+</protect></pre>
+
+<h2>Añadir un nuevo directorio</h2>
+
+<p>Nota: <strong>no</strong> cree un directorio con el nombre
+<code>install</code>. Ésto confunde a make y las páginas en ese directorio
+no se actualizarán automáticamente.
+
+<p>Seguidamente se encuentra un ejemplo comentado de cómo añadir un nuevo directorio al servidor web.
+<pre>
+   mkdir foo
+   cvs add foo
+   cd foo
+   cp ../intro/Makefile .
+   cvs add Makefile
+</pre>
+
+<p>Edite el fichero Makefile en el directorio padre y añada el directorio que acaba
+de crear en la variable <code>SUBS</code>. Ésto añadirá el directorio a la construcción
+cuando ejecute make.
+
+<p>Finalmente, envíe todos los cambios recién hechos al repositorio con
+<pre>
+  cvs commit Makefile foo
+</pre>

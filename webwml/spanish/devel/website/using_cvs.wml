@@ -1,0 +1,119 @@
+#use wml::debian::template title="Uso del CVS"
+#use wml::debian::translation-check translation="1.3"
+
+<p>CVS es un programa para ayudar en la gestión de varias personas que
+trabajan simultáneamente en el mismo material. Cada usuario crea una copia
+local del repositorio principal. Las copias locales pueden residir en la
+misma máquina, o a lo largo del mundo. Los usuarios pueden entonces, modificar
+la copia local como deseen y cuando el material modificado está listo, enviar
+los cambios de vuelta al repositorio principal.
+
+<p>CVS no le permitirá que envíe un fichero si la copia del repositorio
+principal ha sido modificada desde la última actualización que usted realizó.
+Ésto no suele ser un problema, ya que usted todavía puede actualizar su copia
+local. Si las modificaciones eran de diferentes partes que las que usted trabajo,
+los cambios se fusionan silenciosamente. Si los cambios afectan al mismo área
+en la que usted estuvo trabajando, le avisará que hay un conflicto y que necesita
+editar el fichero para corregir el problema antes de enviarlo.
+
+<P>En lo que sigue usaremos un acceso anónimo como ejemplo. Si usted tiene
+acceso a otra cuenta que le da permisos de escritura en el repositorio, entonces
+debería usar esa cuenta. Si está planeando hacer cambios, debería conseguir una
+cuenta antes de empezar, ya que los usuarios anónimos no pueden enviar cambios.
+
+<p>Si usted es un desarrollador de Debian, lea la sección sobre 
+<a href="#cvsfordevelopers">Acceso al CVS para desarrolladores de Debian</a>.
+
+<p>Para empezar a usar CVS, primero ha de <code>entrar</code> (login) en el servidor CVS
+
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml login
+</pre>
+
+<p>(simplemente presione enter para la clave)
+
+<P>Para bajarse una copia de ficheros wml a su máquina loca, necesita usar
+
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/&lt;lang&gt;
+</pre>
+
+<p>donde <code>&lt;lang&gt;</code> es el idioma que quiere. Probablemente quiera la versión
+inglesa a parte del idioma en el que trabaja. Si solo necesita un subconjunto de las
+páginas, puede bajarse solamente lo que necesite, por ejemplo
+
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/english/doc
+</pre>
+
+<p>Si ha recibido un usuario y clave, insérterla en vez de anonymous
+
+<pre>
+   cvs -d :pserver:username@cvs.debian.org:/cvs/webwml checkout webwml/english/doc
+</pre>
+
+<P>Desde ahora, no necesitará usar la parte <code>'-d :pserver:...'</code>
+Cada pocos días deseará hacer
+
+<pre>
+   cvs update -d
+</pre>
+
+<p>para actualizar cualquier fichero del repositorio que haya cambiado. La
+opción de actualización <code>-d</code> añadirá cualquier nuevo directorio automáticamente.
+Puede que quiera crear un fichero <code>~/.cvsrc</code>, de forma que no tenga que teclear
+cada vez las mismas opciones. Por ejemplo, puede contener:
+
+<pre>
+cvs -z9
+update -d -P
+diff -u
+</pre>
+
+<P>Lo siguiente es para aquellos que tienen permisos de escritura en el repositorio.
+Cuando termine con una página, puede enviar sus cambios al repositorio usando
+
+<pre>
+   cvs commit &lt;file&gt;.wml
+</pre>
+
+<p>o
+
+<pre>
+   cvs commit &lt;dir&gt;    (para enviar todos los cambios en &lt;dir&gt;)
+</pre>
+
+<p>o
+
+<pre>
+   cvs commit          (para enviar todos los cambios desde el directorio actual y subdirectorios)
+</pre>
+
+<P>Si es la primera persona en traducir una página, necesita hacer
+
+<pre>
+   cvs add &lt;file&gt;.wml
+</pre>
+
+<p>antes de enviarla. Tenga en cuenta que <code>cvs add</code> no es recursivo, por lo que
+necesitará añadir un directorio antes de añadir su contenido.
+
+<P>Para más información sobre CVS, use <code>info cvs</code>.
+
+<H3><a name="cvsfordevelopers">Acceso al CVS para desarrolladores de Debian</a></H3>
+
+<P>Dado que los desarrolladores de Debian ya disponen de una cuenta en cvs.debian.org, pueden
+usar un mecanismo más seguro para acceder al repositorio CVS. Es preferible éste método
+al de 'pserver' dado anteriormente.
+
+<p>Necesita escribir a webmaster@debian.org y preguntar por acceso al CVS. Una vez
+ha sido añadido al grupo, simplemente configure la variable de ambiente CVS_RSH con ssh
+('<code>export CVS_RSH=ssh</code>' en su <code>~/.bashrc</code>) y
+saque ficheros del repositorio usando lo siguiente:
+
+<pre>
+   cvs -d :ext:<var>account_name</var>@cvs.debian.org:/cvs/webwml checkout webwml/english/
+</pre>
+
+<p>Una vez se haya bajado el repositorio, cualquier otra cosa funciona de la misma
+forma que la sección anterior.
