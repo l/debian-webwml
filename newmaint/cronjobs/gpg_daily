@@ -1,0 +1,14 @@
+#!/bin/sh
+# this script is run each day from ~tbm's crontab.
+# 2 0 * * * /org/nm.debian/org/cronjobs/gpg_daily
+set -e
+
+umask 002
+cd /org/nm.debian.org/bin
+
+# Remove expired entries
+./gpg_expire_places
+
+# Show changed entries
+./gpg_show_changed | mailx -s -s "[GPG-Coord] Changed entries" gpg-coord@nm.debian.org
+
