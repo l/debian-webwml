@@ -1,7 +1,7 @@
 #use wml::debian::template title="Configuración de una réplica del archivo de Debian"
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/woody/release.data"
-#use wml::debian::translation-check translation="1.33"
+#use wml::debian::translation-check translation="1.37"
 
 <toc-display/>
 
@@ -13,6 +13,44 @@ mediante nuestro <A href="submit">sencillo formulario web</A>.
 
 <p>Cualquier problema o consulta puede enviarlo a
 <email mirrors@debian.org>.</p>
+
+<toc-add-entry name="what">Qué replicar</toc-add-entry>
+
+<p>La <a href="./">página principal de réplicas</a> lista los archivos
+disponibles de los cuales replicar.
+<br>
+Los usuarios buscarán el archivo debian/ para instalar Debian mediante
+red, hacer CDs (con jigdo), y para actualizar sistemas ya instalados.
+Aquellos interesados en los pocos paquetes con problemas no disponibles
+para replicar desde los Estados Unidos, deberían buscar debian-non-US/.
+<br>
+El archivo debian/ es muy grande, mientras que el debian-non-US/ es
+comparativamente pequeño. Por favor, lea la página de
+<a href="size">tamaño de la réplica</a> si desea información más
+precisa.</p>
+
+<p>Nota: el archivo debian-non-US/ <strong>no</strong> es un superconjunto
+del archivo debian/, sino un añadido opcional.</p>
+
+<p>debian-cd es un archivo que no es idéntico en todos los servidores
+réplica. En algunos sitios contiene plantillas jigdo para crear imágenes
+de CD (usados en combinación con ficheros de debian/), algunos contienen
+imágenes de CD preparadas, y otros sitios contienen ambos.
+<br>
+Por favor, lea la página sobre <a href="$(HOME)/CD/mirroring/">convertirse
+en una réplica de imágenes</a> si quieres más información al respecto.</p>
+
+<p>debian-archive/ contiene el verdadero <em>archivo</em>, las versiones
+antiguas y obsoletas de Debian. Generalmente será interesante sólo para un
+pequeño segmento de usuarios.</p>
+
+<p>Los archivos debian-security contienen actualizaciones de seguridad
+publicadas por el equipo de seguridad de Debian. Suena interesante para
+todo el mundo, pero como las actualizaciones de seguridad son esporádicas,
+habría que replicarlos a menudo para estar al día (o usar
+<a href="push_mirroring">una réplica push</a>) de manera que no lo
+recomiendo. Debian hace un gran esfuerzo para mantener la alta
+disponibilidad de security.debian.org</p>
 
 <toc-add-entry name="wherefrom">De dónde replicar</toc-add-entry>
 
@@ -105,15 +143,16 @@ sencillamente, <strong>no</strong> es cierto.
 es seguro, y cómo configurar un servidor `push', por favor lea <a
 href="push_mirroring">la explicación completa</a>.
 
-<h3>FTP anónimo usando 'mirror'</h3>
+<h3>FTP anónimo</h3>
 
-<p>El FTP anónimo fue el método estándar de replicado durante mucho
-tiempo. Por tanto, el programa 'mirror' funciona bien con el archivo de
-Debian. Como posiblemente haya adivinad, 'mirror' está disponible como
-paquete de Debian. Si ha instalado el paquete de Debian, hay un script de
-ejemplo para replicar el archivo ftp en
-/etc/mirror/packages/ftp.debian.org .
+<p>El FTP anónimo fue el método estándar de réplica durante mucho tiempo,
+pero ha quedado obsoleto en favor de rsync.</p>
 
+<p>Si no puede usar rsync por alguna razón perentoria, puede serle útil el
+programa "<a href="http://packages.debian.org/mirror">mirror</a>". Tenga
+en mente que depende los ficheros ls-lR que le evitan mantener una réplica
+adecuada de la traza que hay en el subdirectorio <kbd>project/trace/</kbd>
+en las réplicas de Debian.</p>
 
 <toc-add-entry name="partial">Réplicas parciales</toc-add-entry>
 
@@ -124,11 +163,9 @@ Si quiere excluir algo, debería excuir arquitecturas.</p>
 <p>Con <a href="anonftpsync">anonftpsync</a>, puede hacer esto editando la
 variable EXCLUDE. También puede usar scripts escritos específicamente, como
 <a href="http://packages.debian.org/unstable/net/debmirror.html">debmirror</a>
-(de Joey Hess and Joerg Wendland) o
-<a href="http://people.debian.org/~absurd/absurd_debmirror/">absurd_debmirror</a>
-(dy Stephan Suerken). Si cree que debería añadírseles algo, contacte por favor
-con los autores (la información de contacto debería venir en los propios
-scripts).
+(de Joey Hess and Joerg Wendland). Si cree que debería añadírseles algo,
+contacte por favor con los autores (la información de contacto debería venir
+en los propios scripts).
 
 <p>Le aconsejamos encarecidamente que no excluya <tt>project</tt>,
 <tt>doc</tt> ni otros subdirectorios. Normalmente, su tamaño es pequeño
@@ -165,7 +202,7 @@ del directorio donde usted almacena la réplica:</p>
 
 <pre>
 &lt;directory /org/ftp.debian.org/ftp&gt;
-   Options +Indexes +FollowSymlinksIfOwnerMatch
+   Options +Indexes +SymlinksIfOwnerMatch
    IndexOptions NameWidth=* +SuppressDescription
    DirectoryIndex .
 &lt;/directory&gt;
