@@ -1,0 +1,115 @@
+#use wml::debian::cdimage title="Om at blive et filspejl af Debian-cd-aftryk" BARETITLE=true
+#use wml::debian::translation-check translation="1.3"
+
+<p>For at blive et filspejl af Debian-cd-aftryk skal du bruge en Linux- eller
+UNIX-lignende maskine. Der er flere måder at hente og gøre aftrykkene 
+tilgængelige på, afhængigt af hvad du har af muligheder</p>
+
+<p>Du skal <em>ikke</em> bruge FTP eller HTTP for at hente aftrykkene. Disse
+overførselsmetoder har en høj risiko for fejl på grund af filernes enorme 
+størrelser. Desuden, hvis aftrykkene kun ændrer sig ganske lidt (som det er 
+tilfældet med mellemudgivelser), blive alle data hentet igen. Dette belaster
+vore computere og netværksforbindelser meget.</p>
+
+<p>Af disse grunde bruger vi programmet <a href="http://rsync.samba.org/">\
+<tt>rsync</tt></a>, som som grundlæggende udfører binære fjern-ændringer
+(patching).  Med <tt>rsync</tt> bliver aftryk af mellemudgivelser opdateret 
+meget effektivt, da kun de ændrede dele overføres over netværket; de uændrede
+dele kopieres fra det gamle aftryk.</p>
+
+<p><tt>rsync</tt> alene henter stadig udgivelser som er "helt nye", da sådanne
+aftryk stort set ikke indeholder uændrede dele. Men med pseudoaftryksværktøjet
+("pseudo image kit") kan vi oprette "pesudo"-cd-aftryk ud fra data som allerede
+er tilgængelige på det nærmeste af Debians ftp-filspejle - måske på din egen
+lokale harddisk. <tt>rsync</tt> kan så binært ændre disse "pseudo-aftryk" til
+de officielle aftryk. Selv for de fleste aftryk af mellemudgivelser har dette
+vist sig at være mere effektivt end at ændre the gamle aftryk.</p>
+
+<p>pseudoaftryksværktøjet er primært lavet med henblik på at hente kun et eller
+nogle få aftryk, som de fleste gør det. Der er også scriptet 
+<tt>debcdmirror</tt> som gør filspejl <em>særdeles</em> nemt fordi det 
+automatisk bruger pseudoaftryksværktøjet og <tt>rsync</tt> til at holde dit 
+filspejl ajour - sågar automatisk MD5-kontrol af alle hentede aftryk.  Med 
+<tt>debcdmirror</tt> kan du også angive præcis hvad du ønske at filspejle.</p>
+
+<p>Så vi har følgende muligheder for at hente aftrykkene og holde dem 
+ajour:</p>
+
+<ul>
+
+  <li>Ved hjælp af FTP eller HTTP: Dette bør du <em>ikke</em> gøre.</li>
+
+  <li>Ved kun at bruge <tt>rsync</tt> (daglig cron-job): Dette er kun at 
+  foretrække på ftpsteder som ikke har et nært/hurtigt FTP-filspejl.</li>
+
+  <li>Ved at bruge pseudoaftryksværktøjet manuelt (måske sammen med 
+  <tt>rsync</tt> til at opdatere mellemudgivelser). En masse arbejde og mange
+  problemer.</li>
+
+  <li>Ved at bruge scriptet <tt>debcdmirror</tt> (som "internt" bruger 
+  pseudoaftryksværktøjet, Pseudo Image Kit, og <tt>rsync</tt>) (dagligt 
+  cron-job). <strong>Dette</strong> er hvad du bør gøre! :-)</li>
+
+</ul>
+
+<p>Den seneste version af 
+<a href="http://cdimage.debian.org/~costar/pseudo-image-kit/">\
+pseudoaftryksværktøjet</a> og scriptet
+<a href="http://cdimage.debian.org/~costar/debcdmirror/"><tt>debcdmirror</tt></a>
+er tilgængelige fra forfatterens hjemmeside. Læs README-filer i begge pakker
+for udførlige oplysninger om hvordan man gør.</p>
+
+<p><strong>Bemærkninger:</strong>
+
+<p>I forbindelse med scriptet <tt>debcdmirror</tt> skal du vælge et 
+<tt>rsync</tt>-filspejl som har en "<tt>ls-lR</tt>"-fil. Du kan finde adresser
+på <a href="rsync-mirrors">listen over rsync-filspejle</a>. Officielle 
+offentlige filspejle har lov til at rsync'e direkte fra hovedserveren, 
+cdimage.debian.org; du skal formentlig bruge en adgangskode til den, spørg
+<a href="mailto:phil@hands.com">dens administrator</a> på engelsk.</p>
+
+<p>Hvis du ikke har et lokalt <a href="$(HOME)/mirror/">"regulært" 
+Debian-filspejl</a>, kig i <a href="$(HOME)/distrib/ftplist" >list over 
+FTP-steder</a>.</p>
+
+<p><tt>debcdmirror</tt> kræver <tt>bash</tt> version 2 eller højere. Om
+nødvendigt kan du installere programmet i et ikke-standardsted, men så skal du
+huske at opdatere stien til <tt>bash</tt> i scriptets første linie.</p>
+
+<p>Hvis du kun bruger <tt>rsync</tt>, skal du i hvert fald anvende parametrene
+<b><tt>--times --links --hard-links --block-size=8192</tt></b>. Dette vil 
+bevare ændringstidpunktet, symlinks og hardlinks, og anvende en blokstørrelse
+på 8192 bytes (den mest effektive for cd-aftryk). Når ændringstidspunktet og
+størrelsen er den samme, gør <tt>rsync</tt> ikke noget ved filen, så 
+<tt>--times</tt> er egentlig obligatorisk.</p>
+
+<p>Kataloget "<tt><i>kodenavn</i>_test</tt>" indeholder aftryk som er 
+'hard-linked' til versionerede katalognavne (for eksempel <tt>2.2_r4</tt>). 
+Versionerede katalognavne ændrer sig fra (mellem)udgivelse til 
+(mellem)udgivelse, men navnene i "<tt>test</tt>"-katalogerne forbliver de 
+samme. I situationen kun-<tt>rsync</tt>, med spejling af både de versionerede
+kataloger og det passende "<tt>test</tt>"-katalog, <em>og</em> anvendelse af
+parameteret <tt>--hard-links</tt> er den eneste korrekte måde at opdatere 
+mellemudgivelser på. [Du bør <em>ikke</em> inkludere "<tt>test</tt>"-kataloger
+med <tt>debcdmirror</tt>, fordi <tt>debcdmirror</tt> håndterer det på en anden
+og mere effektiv måde.]</p>
+
+<p>Filen <tt>ls-lR</tt> beskriver katalogstrukturen på det filspejl den 
+befinder sig på. Spejl <strong>ikke</strong> <tt>ls-lR</tt>-filen; enten skal
+du lave en selv (ved hjælp af den medfølgende "<tt>Makels-lR</tt>", hver time
+via <tt>cron</tt>) eller ved slet ikke at have en <tt>ls-lR</tt>-fil.
+[<tt>debcdmirror</tt> opretter automatisk en lokal <tt>ls-lR</tt> efter at have 
+fortaget en filspejling.]</p>
+
+<p>Når du har anskaffet dig de cd-aftryk, som du ønsker at spejle (i386- og 
+kildekode-cd'er er de mest populære), bør du køre serverprogrammet 
+<tt>rsync</tt>. Dette vil ikke belaste din maskine ret meget, og vil resultere
+langt mindre netværkstrafik end FTP-/HTTP-tjenesterne. Vejledning i at opsætte
+dette befinder sig i pseudoaftryksværktøjets README-fil.</p>
+
+<p>Hvis du ikke har problemer med mange gigabyte netværkstrafik hver dag, vil
+vi selvfølgelig være meget glade for et ekstra FTP-/HTTP-filspejl.  Vi vil være
+tilfredse med hvad du kan tilbyde. Giv venligst
+<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;debian-cd&#64;lists.debian.org">\
+debian-cd&#64;lists.debian.org</a> besked om (på engelsk) at du har et 
+filspejl, så vi kan opdatere de respektive sider. På forhånd tak!</p>
