@@ -291,7 +291,7 @@ sub write_mailing_lists_subscribe
 	print OUT <<"EOF";
 #use wml::debian::template title="Mailing List Subscription"
 
-<!-- This page is generated automatically by a script -->
+<!-- This page is generated automatically by the mklist script, do not edit -->
 
 EOF
 	@lines = split(/\n/,$list{''}->{'Introduction'});
@@ -313,7 +313,7 @@ EOF
 
 	foreach $section (@sections) {
 		@lists = ();
-			foreach $l (keys(%list)) {
+		foreach $l (keys(%list)) {
 			next if (!$l || ($list{$l}->{'Section'} ne $section));
 			next if (! exists $list{$l}->{'Description'});
 			# next if (exists $list{$l}->{'Websubscribe'} && $list{$l}->{'Websubscribe'} eq "no");
@@ -337,8 +337,9 @@ EOF
 				else {
 					printf OUT "<DT><INPUT TYPE=\"checkbox\" NAME=\"subscribe\" VALUE=\"%s\">\n", $slist;
 				}
-				printf OUT "	<STRONG>%s</STRONG>", $slist;
+				printf OUT "	<STRONG><a name=\"%s\">%s</a></STRONG>", $slist, $slist;
 
+				$list{$l}->{'Description'} =~ s/&/&amp;/g;
 				$list{$l}->{'Description'} =~ s/>/&gt;/g;
 				$list{$l}->{'Description'} =~ s/</&lt;/g;
 				$list{$l}->{'Description'} =~ s,(http://[\w.\-~/]*),<a href="$1">$1</a>,g;
@@ -352,7 +353,7 @@ EOF
 					printf OUT "<DD>No description given\n";
 				}
 				&print_multiline_html("	",\@lines);
-				printf OUT "<BR>Moderated: <em>%s</em>&#160;&#160;&#160;&#160;\n", $list{$l}->{'Moderated'};
+				printf OUT "<BR>Moderated: <em>%s</em>&nbsp;&nbsp;&nbsp;&nbsp;\n", $list{$l}->{'Moderated'};
 				printf OUT "	Subscription: <em>%s</em>\n", $list{$l}->{'Subscription'};
 
 				if (exists $list{$l}->{'Digest'}) {
@@ -429,14 +430,16 @@ EOF
 			print OUT "\n<tr>\n";
 		    }
 		    printf OUT "\t<td><input type=\"checkbox\" name=\"unsubscribe\" ".
-                               "value=\"%s\">\n\t<strong>%s</strong><br>\n", $slist, $slist;
+                               "value=\"%s\">\n\t<strong><a name=\"%s\">%s</a></strong>".
+                               "<br>\n", $slist, $slist, $slist;
 		    if (exists $list{$l}->{'Digest'}) {
 			$slist = $list{$l}->{'Digest'}; $slist =~ s/@.*//;
 			if (! ($count++ % 3) ) {
 			    print OUT "\n<tr>\n";
 			}
 			printf OUT "\t<td><input type=\"checkbox\" name=\"unsubscribe\" ".
-			           "value=\"%s\">\n\t<strong>%s</strong><br>\n", $slist, $slist;
+			           "value=\"%s\">\n\t<strong><a name=\"%s\">%s</a></strong>".
+			           "<br>\n", $slist, $slist, $slist;
 		    }
 		    print OUT "\n";
 		}
