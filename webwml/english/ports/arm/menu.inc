@@ -1,17 +1,21 @@
 #use wml::debian::submenu
 
+# Please keep slices sorted alphabetically so it's easier to detect
+# languages in them (except english ones).
+
 <menu-item basename="../index">
+[EN:Ports:]
 [AR:Ports:]
 [DA:Ports:]
 [DE:Ports:]
 [EL:Ports:]
-[EN:Ports:]
 [EO:Ports:]
 [ES:Migraciones:]
 [FI:Ports:]
 [FR:Ports:]
 [HR:Ports:]
 [HU:Ports:]
+[IT:Ports:]
 [JA:Ports:]
 [KO:Ports:]
 [NL:Ports:]
@@ -26,17 +30,18 @@
 </menu-item>
 
 <menu-item basename="index">
+[EN:Debian for ARM:]
 [AR:Debian for ARM:]
 [DA:Debian for ARM:]
 [DE:Debian für ARM:]
 [EL:Debian for ARM:]
-[EN:Debian for ARM:]
 [EO:Debian for ARM:]
 [ES:Debian para ARM:]
 [FI:Debian for ARM:]
 [FR:Debian for ARM:]
 [HR:Debian for ARM:]
 [HU:Debian for ARM:]
+[IT:Debian for ARM:]
 [JA:Debian for ARM:]
 [KO:Debian for ARM:]
 [NL:Debian for ARM:]
@@ -51,17 +56,18 @@
 </menu-item>
 
 <menu-item basename="softwaremap">
+[EN:Software Map:]
 [AR:Software Map:]
 [DA:Software Map:]
 [DE:Software-Verzeichnis:]
 [EL:Software Map:]
-[EN:Software Map:]
 [EO:Software Map:]
 [ES:Catálogo de Software:]
 [FI:Software Map:]
 [FR:Software Map:]
 [HR:Software Map:]
 [HU:Software Map:]
+[IT:Software Map:]
 [JA:Software Map:]
 [KO:Software Map:]
 [NL:Software Map:]

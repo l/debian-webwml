@@ -1,14 +1,14 @@
 #use wml::debian::submenu
 
 # Please keep slices sorted alphabetically so it's easier to detect
-# languages in them.
+# languages in them (except english ones).
 
 <menu-item basename="../index">
+[EN:Ports:]
 [AR:Ports:]
 [DA:Ports:]
 [DE:Ports:]
 [EL:Ports:]
-[EN:Ports:]
 [EO:Ports:]
 [ES:Migraciones:]
 [FI:Ports:]
@@ -30,11 +30,11 @@
 </menu-item>
 
 <menu-item basename="index">
+[EN:Debian for PowerPC:]
 [AR:Debian for PowerPC:]
 [DA:Debian for PowerPC:]
 [DE:Debian für PowerPC:]
 [EL:Debian for PowerPC:]
-[EN:Debian for PowerPC:]
 [EO:Debian for PowerPC:]
 [ES:Debian para PowerPC:]
 [FI:Debian for PowerPC:]
@@ -56,11 +56,11 @@
 </menu-item>
 
 <menu-item basename="news">
+[EN:News:]
 [AR:News:]
 [DA:Nyheder:]
 [DE:Neues:]
 [EL:News:]
-[EN:News:]
 [EO:News:]
 [ES:Noticias:]
 [FI:News:]
@@ -82,11 +82,11 @@
 </menu-item>
 
 <menu-item basename="devel">
+[EN:Development:]
 [AR:Development:]
 [DA:Udvikling:]
 [DE:Entwicklung:]
 [EL:Development:]
-[EN:Development:]
 [EO:Development:]
 [ES:Desarrollo:]
 [FI:Development:]
@@ -108,11 +108,11 @@
 </menu-item>
 
 <menu-item basename="docu">
+[EN:Documentation:]
 [AR:Documentation:]
 [DA:Dokumentation:]
 [DE:Dokumentation:]
 [EL:Documentation:]
-[EN:Documentation:]
 [EO:Documentation:]
 [ES:Documentación:]
 [FI:Documentation:]
@@ -134,11 +134,11 @@
 </menu-item>
 
 <menu-item basename="supply">
+[EN:Supply:]
 [AR:Supply:]
 [DA:Supply:]
 [DE:Bezugsquellen:]
 [EL:Supply:]
-[EN:Supply:]
 [EO:Supply:]
 [ES:Suministro:]
 [FI:Supply:]
@@ -160,11 +160,11 @@
 </menu-item>
 
 <menu-item basename="inst/install">
+[EN:Installation:]
 [AR:Installation:]
 [DA:Installation:]
 [DE:Installation:]
 [EL:Installation:]
-[EN:Installation:]
 [EO:Installation:]
 [ES:Instalación:]
 [FI:Installation:]
