@@ -1,0 +1,90 @@
+#use wml::debian::cdimage title="Downloading Debian CD images with jigdo" BARETITLE=true
+
+<p>Jigsaw Download, or short <a href="http://atterer.net/jigdo/">jigdo</a>,
+is intended to be the main way of distributing Debian CD images in the
+future. Currently, the system works, but is not yet very comfortable to use
+because the download manager application is not finished. <em>At the moment,
+you need a Linux/Unix system to use jigdo.</em></p>
+
+<p><strong>Why is jigdo better than a direct download?</strong> Because it
+is faster! For various reasons, there are far fewer mirrors for CD images
+than there are for the "normal" Debian archive. Consequently, if you
+download from a CD image mirror, that mirror will not only be further away
+from you, it will also be overloaded, especially just after a release.</p>
+
+<p>Of course, a "normal" Debian mirror does not carry any CD images, so how
+can jigdo download them there? jigdo achieves this by downloading
+individually all the files that are on the CD. In the next step, all these
+files are assembled in one big file which (if the moon is full and you have
+been standing on one leg while chanting ancient and almost-forgotten
+incantations) is an exact copy of the CD image. However, all this happens
+behind the scenes - all that <em>you</em> need to do is tell the download
+tool the location of a "<tt>.jigdo</tt>" file to process.</p>
+
+<p><strong>What steps are necessary to download an image with
+jigdo?</strong></p>
+
+<ul>
+
+  <li>
+    <p>Download a package containing the <tt>jigdo-lite</tt> script and
+    <tt>jigdo-file</tt> program:</p>
+
+    <ul>
+      <li>Debian Linux:
+      <a href="http://atterer.net/debian/dists/unstable/jigdo/binary-i386/jigdo-file_0.6.1_i386.deb">\
+      0.6.1 package for i386</a>. If you want automatic upgrades via apt,
+      see the <a href="http://atterer.net/jigdo/">jigdo homepage</a> for a
+      line to add to your <tt>/etc/apt/sources.list</tt>.</li>
+
+#      <li>Other Linux distributions: <a href="">tar.gz archive for
+#      i386</a>, contains binaries and documentation</li>
+
+      <li>Other Linux/Unix systems:
+      <a href="http://atterer.net/jigdo/jigdo-0.6.1.tar.gz">Source code for
+      0.6.1</a>. Unpack, then execute
+      "<tt>./configure&nbsp;&amp;&amp;&nbsp;make&nbsp;bindist</tt>" to
+      create a tar.gz archive with binaries and documentation.</li>
+    </ul>
+
+  </li>
+
+  <li>Run the <tt>jigdo-lite</tt> script. It will ask for the URL
+  of a "<tt>.jigdo</tt>" file to process. (You can also supply
+  that URL on the command line if you like.)</li>
+
+  <li>Go to the <a href="http://cdimage.debian.org/~atterer/jigdo/">Debian
+  CD jigdo site</a>, pick what you want to download and enter the URL of
+  that "<tt>.jigdo</tt>" file.</li>
+
+  <li>Follow the instructions printed by the script. If all goes well, the
+  script finishes by calculating a checksum of the generated image and
+  telling you that the checksum matches that of the original image.</li>
+
+</ul>
+
+<p>jigdo is capable of "upgrading" an older version of a CD image to the
+supplied image - in this case, only what has changed will be downloaded.
+Also, people running their own local Debian mirror can supply a "file:" URL
+when asked for the mirror URI.</p>
+
+<p>If you want to have a look at the prototype of the GUI download
+application or some experimental binaries for Windows, see the
+<a href="http://atterer.net/jigdo/">jigdo homepage</a>. Volunteers willing
+to help with jigdo development are always welcome!</p>
+
+<hr>
+
+<p><strong>Aargh! The script fails with an error - have I downloaded all
+those MBs in vain?!</strong></p>
+
+<p>Of course this Should Not Happen(tm), but for various reasons you may end
+up in a state where a large "<tt>.iso.tmp</tt>" file has already been
+generated and <tt>jigdo-lite</tt> appears to have problems, telling you
+repeatedly to try restarting the download. At the moment, the only solution
+that does <em>not</em> involve downloading all the data again is to revert
+to <tt><a href="http://rsync.samba.org/">rsync</a></tt>. Rename
+<tt>jigdo-lite</tt>'s temporary file to remove the "<tt>.tmp</tt>"
+extension, then use one of the
+<a href="../mirroring/rsync-mirrors.html">rsync mirrors</a> to retrieve the
+missing parts of the image.</p>
