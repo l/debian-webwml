@@ -28,6 +28,9 @@ use Time::Local;
 	es => [ 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
          'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic' ],
 );
+%dateform = (
+	hr => '"%s, %2d. %s 19%s., %02d:%02d:%02d %s", $wday, $mday, $mon, $year, $hour, $min, $sec, "UTC"',
+);
 
 sub ctime {
 	my ($time, $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst);
@@ -41,8 +44,12 @@ sub ctime {
 		$time = timelocal($6, $5, $4, $1, $2-1, $3);
 	}
 	($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = gmtime($time);
-	$str = sprintf("%s, %s %2d %02d:%02d:%02d %s 19%s",
-		$dow{$CUR_ISO_LANG}[$wday], $moy{$CUR_ISO_LANG}[$mon], $mday, $hour, $min, $sec, "UTC", $year);
+	$wday = $dow{$CUR_ISO_LANG}[$wday];
+	$mon = $moy{$CUR_ISO_LANG}[$mon];
+	$str = defined($dateform{$CUR_ISO_LANG}) ? 
+		eval("sprintf($dateform{$CUR_ISO_LANG})") :
+		sprintf("%s, %s %2d %02d:%02d:%02d %s 19%s",
+			$wday, $mon, $mday, $hour, $min, $sec, "UTC", $year);
 	return $str;
 }
 </perl>
