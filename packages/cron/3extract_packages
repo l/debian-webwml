@@ -23,6 +23,7 @@ do
 		test -d ${flatdir}/${dist}/${part} || mkdir -p ${flatdir}/${dist}/${part}
 		$bindir/flatten-db \
 		    --db ${part}/binary-${arch}/Packages.gz \
+		    --descr ${flatdir}/${dist}/${part}/Description-${arch}.us \
 		    --output ${flatdir}/${dist}/${part}/Packages-${arch}.us
 	    fi
        done
@@ -46,9 +47,19 @@ do
 		test -d ${flatdir}/${dist}/${part} || mkdir -p ${flatdir}/${dist}/${part}
 		$bindir/flatten-db \
 		    --db ${part}/binary-${arch}/Packages.gz \
+		    --descr ${flatdir}/${dist}/${part}/Description-${arch}.non-US \
 		    --output ${flatdir}/${dist}/${part}/Packages-${arch}.non-US
 	    fi
        done
     done
    cd ${archivedir}
+done
+
+for dist in ${dists}
+do
+    for part in ${parts}
+    do
+	sort ${flatdir}/${dist}/${part}/Description-*.{us,non-US} \
+	    | uniq > ${flatdir}/${dist}/${part}/Description
+    done
 done
