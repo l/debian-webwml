@@ -9,4 +9,6 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 
-organization.$(LANGUAGE).html: organization.wml $(ENGLISHSRCDIR)/intro/organization.data $(ENGLISHSRCDIR)/intro/organization.tags
+organization.$(LANGUAGE).html: organization.wml \
+  $(ENGLISHSRCDIR)/intro/organization.data \
+  $(ENGLISHSRCDIR)/intro/organization.tags

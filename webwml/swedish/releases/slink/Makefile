@@ -1,4 +1,4 @@
-# This Makefile should need no changes from webwml/english/2.0/Makefile
+# This Makefile should need no changes from webwml/english/releases/slink/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 

@@ -1,4 +1,4 @@
-# This Makefile should need no changes from webwml/english/devel/mirror/Makefile
+# This Makefile should need no changes from webwml/english/mirror/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
@@ -8,41 +8,42 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-
 # there only needs to be one version of the following so
 # the non-english directories shouldn't try to install them
-ifeq ($(LANGUAGE),en)
-MFILES := ftpsync ftpsync.conf websync websync.conf \
-	identity.pub.master.ftp identity.pub.master.web \
-	anonftpsync anonwebsync \
-	ftpsync-non-US ftpsync-non-US.conf identity.pub.non-US.ftp
-MIRROR_FILES := $(patsubst %,$(HTMLDIR)/%,$(MFILES))
+ifeq "$(LANGUAGE)" "en"
 
-install:: $(MIRROR_FILES)
+# Note: the masterlist file is kept private since it contains e-mail addresses
+mirrorstuff := ftpsync ftpsync.conf websync websync.conf \
+	identity.pub.master.ftp identity.pub.master.web \
+	anonftpsync \
+	ftpsync-non-US ftpsync-non-US.conf identity.pub.non-US.ftp
+destmirrorstuff := $(patsubst %,$(HTMLDIR)/%,$(mirrorstuff))
+
+install:: $(destmirrorstuff)
+
+$(destmirrorstuff): $(mirrorstuff)
+	install -m 664 -p $(@F) $(HTMLDIR)
 
 cleandest::
-	-rm -f $(HTMLDEST)/{$(MIRROR_FILES)}
+	rm -f $(destmirrorstuff)
 
-$(HTMLDIR)/ftpsync: ftpsync
-	cp ftpsync $(HTMLDIR)
-$(HTMLDIR)/ftpsync.conf: ftpsync.conf
-	cp ftpsync.conf $(HTMLDIR)
-$(HTMLDIR)/ftpsync-non-US: ftpsync-non-US
-	cp ftpsync-non-US $(HTMLDIR)
-$(HTMLDIR)/ftpsync-non-US.conf: ftpsync-non-US.conf
-	cp ftpsync-non-US.conf $(HTMLDIR)
-$(HTMLDIR)/websync: websync
-	cp websync $(HTMLDIR)
-$(HTMLDIR)/websync.conf: websync.conf
-	cp websync.conf $(HTMLDIR)
-$(HTMLDIR)/identity.pub.master.ftp: identity.pub.master.ftp
-	cp identity.pub.master.ftp $(HTMLDIR)
-$(HTMLDIR)/identity.pub.non-US.ftp: identity.pub.non-US.ftp
-	cp identity.pub.non-US.ftp $(HTMLDIR)
-$(HTMLDIR)/identity.pub.master.web: identity.pub.master.web
-	cp identity.pub.master.web $(HTMLDIR)
-$(HTMLDIR)/anonftpsync: anonftpsync
-	cp anonftpsync $(HTMLDIR)
-$(HTMLDIR)/anonwebsync: anonwebsync
-	cp anonwebsync $(HTMLDIR)
+.PHONY: text html
+text: mirror_list.pl Mirrors.masterlist
+	@./mirror_list.pl -m Mirrors.masterlist -t text
+html: mirror_list.pl Mirrors.masterlist
+	@./mirror_list.pl -m Mirrors.masterlist -t html
+full: mirror_list.pl Mirrors.masterlist
+	@./mirror_list.pl -m Mirrors.masterlist -t methods
+nonus: mirror_list.pl Mirrors.masterlist
+	@./mirror_list.pl -m Mirrors.masterlist -t nonus
+
+$(ENGLISHSRCDIR)/mirror/webmirrors.data: webmirrors.data
+webmirrors.data: Mirrors.masterlist
+	echo -e "#use wml::debian::countries\n<define-tag webmirrors>\n<ul>" > $@
+	for i in `grep-dctrl -n -F Site -s Site -r 'www\...\.debian.org' Mirrors.masterlist | sort`; do \
+          xy=`echo $$i | sed -e s/^www.// -e s/.debian.org$$// | tr a-z A-Z`; \
+	  echo -e "<li><a href=\"http://$${i}`grep-dctrl -n -F Site -s WWW-http -X $$i Mirrors.masterlist`\"><$${xy}c></a>" >> $@; \
+	done
+	echo -e "</ul>\n</define-tag>" >> $@
+
 endif
