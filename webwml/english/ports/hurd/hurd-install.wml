@@ -13,6 +13,7 @@ of effort.
 "The Hurd Installation Guide"</a>. Many thanks to Neal for his contribution.
 </p>
 
+
 <h2> 1. Overview </h2>
 
 <p>
@@ -54,6 +55,7 @@ possible. If there are errors, they are most certainly the author's. Please
 report them, along with any other suggestions or criticisms, to him; all are
 gladly accepted.
 </p>
+
 
 <h2> 2. Real Estate or Finding A Home </h2>
 
@@ -104,14 +106,13 @@ To create a filesystem, use <CODE>mke2fs</CODE> and pass it <SAMP>`-o hurd'
 instance, assuming the parition is <TT>`/dev/hda2'</TT>:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre> # mke2fs -o hurd /dev/hda2
 </pre></td></tr></table>
-</p>
+
 
 <h2> 3. The Boot Loader </h2>
 
-<P>
+<p>
 The bootloader of the GNU system is Grub, the GRand Unified Boot loader,
 and it is its main purpose to boot the GNU system core (Mach and the Hurd).
 Any boot loader that supports the multiboot standard, though, may be used to
@@ -137,13 +138,13 @@ is a normal <CODE>configure</CODE>, <CODE>make</CODE> and <CODE>make install
 sufficient to dump it to a floppy disk to get a working Grub, for example:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre> # dd if=grub-boot-image of=/dev/fd0
-</pre></td></tr></table></p>
+</pre></td></tr></table>
 
 <p>
 You can always install Grub onto your hard drive at a later date.
 </p>
+
 
 <h2> 4. Cross Install </h2>
 
@@ -160,11 +161,11 @@ is <TT>`/gnu'</TT> and archive is in current user's home directory, the
 following is required:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre> # mount -t ext2 /dev/hda2 /gnu
  # cd /gnu
  # tar --same-owner -xvzpf ~/gnu.tar.gz
-</pre></td></tr></table></p>
+</pre></td></tr></table>
+
 
 <h2> 5. Booting GNU/Hurd </h2>
 
@@ -193,12 +194,9 @@ Grub searches on each filesystem for the specified file and prints where it was
 found. For example, to search for the kernel, <TT>`/boot/gnumach.gz'</TT>:
 </p>
 
-<p>
-
 <table><tr><td>&nbsp;</td><td class=example><pre>  grub&#62; find /boot/gnumach.gz
    (hd0,0)
 </pre></td></tr></table>
-</p>
 
 <p>
 Here, Grub is indicates that <TT>`/boot/gnumach.gz'</TT> is on
@@ -233,11 +231,9 @@ Assuming that the first drive (i.e. <TT>`(hd0)'</TT>) is the master on the
 secondary controller, we would have:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre>  grub&#62; kernel (hd0,0)/boot/gnumach.gz root=device:hd2s1 -s
    [Multiboot-elf, ...]
 </pre></td></tr></table>
-</p>
 
 <p>
 Next, the root filesystem server and the <CODE>exec</CODE> server must be
@@ -250,7 +246,6 @@ line. Also be sure to differentiate <KBD>{</KBD> and <KBD>}</KBD> from <KBD>
 (</KBD> and <KBD>)</KBD>.
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre>  grub&#62; module (hd0,0)/hurd/ext2fs.static \
    --multiboot-command-line=${kernel-command-line} \
    --host-priv-port=${host-port} \
@@ -260,8 +255,9 @@ line. Also be sure to differentiate <KBD>{</KBD> and <KBD>}</KBD> from <KBD>
     [Multiboot-module  0x1c4000, 0x2cfe6a bytes]
   grub&#62; module (hd0,0)/lib/ld.so.1 /hurd/exec $(exec-task=task-create)
     [Multiboot-module  0x494000, 0x27afe bytes]
-</pre></td></tr></table></P><P>
+</pre></td></tr></table>
 
+<p>
 Once the Hurd is running, process can be automated by adding the appropriate
 commands to Grub's <TT>`/boot/grub/menu.lst'</TT> configuration file.
 </p>
@@ -270,9 +266,8 @@ commands to Grub's <TT>`/boot/grub/menu.lst'</TT> configuration file.
 GNU/Hurd can be now booted:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre>grub&#62; boot
-</pre></td></tr></table></p>
+</pre></td></tr></table>
 
 <p>
 Sit back and watch the messages. This is actually more important than most
@@ -298,7 +293,7 @@ If this does not help, explore the resources listed at the end of this
 document. Finally, ask on the appropriate mailing list.
 </p>
 
-<p>
+
 <h2> 6. Native Install </h2>
 
 <p>
@@ -306,9 +301,8 @@ Once you are presented with a shell prompt, and any time that the Hurd is in
 single user mode, it is necessary to set the terminal type:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre> # export TERM=mach
-</pre></td></tr></table></P>
+</pre></td></tr></table>
 
 <p>
 Be warned that <KBD>CONTROL-C</KBD> and family will not work in single user
@@ -320,9 +314,8 @@ We can now run the <CODE>native-install</CODE> script. This will configure the
 packages and set up several important translators:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre> # ./native-install
-</pre></td></tr></table></p>
+</pre></td></tr></table>
 
 <p>
 Before the script terminates, it will indicate that it needs to be run a second
@@ -330,23 +323,22 @@ time. Follow its instructions and reboot using the <CODE>reboot</CODE> command.
 Again, go into single user mode and run <CODE>./native-install</CODE>.
 </p>
 
-<p>
+
 <h2> 7. Configuration </h2>
 
-<p>
-<h3> 7.1 The Network </h3>
-</p>
 
+<h3> 7.1 The Network </h3>
+
+<p>
 To configure the network, the pfinet translator must be configured. This is
 done using the <CODE>settrans</CODE> command to attach a translator to a given
 filesystem node. When programs access the node by, for example sending an RPC,
 the operating system will transparently start the server to handle the request.
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre> # settrans -fgap /servers/socket/2 /hurd/pfinet -i eth0 \
    -a a.b.c.d -g e.f.g.h -m i.j.k.l
-</pre></td></tr></table></p>
+</pre></td></tr></table>
 
 <p>
 Here, <CODE>settrans</CODE> is passed several options. The first two,
@@ -366,9 +358,8 @@ gateway and <SAMP>`-m'</SAMP> is the network mask.
 Be sure to add name servers to your <TT>`/etc/resolv.conf'</TT> file:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre>  nameserver 192.168.1.1
-</pre></td></tr></table></p>
+</pre></td></tr></table>
 
 <p>
 To test the configuration, <CODE>ping -c2 gateway</CODE>. The
@@ -387,16 +378,15 @@ Help on <CODE>settrans</CODE> can be obtained by passing it the
 invoking it from the command line with the same argument, e.g.:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre> # /hurd/pfinet --help
-</pre></td></tr></table></p>
+</pre></td></tr></table>
 
 <p>
 As there can be a lot of output, consider piping this through a pager such as
 <CODE>less</CODE>.
 </p>
 
-<p>
+
 <h3> 7.2 Other File Systems </h3>
 
 <p>
@@ -412,22 +402,19 @@ the only editor installed by the the base distribution.
 Here is an example <TT>`/etc/fstab'</TT> file:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre># &#60;file system&#62; &#60;mount point&#62;   &#60;type&#62;  &#60;options&#62;  &#60;dump&#62;  &#60;pass&#62;
 /dev/hd2s1      /               ext2    rw         0       1
 /dev/hd2s2      /home           ext2    rw         0       2
 /dev/hd2s3      none            swap    sw         0       0
 </pre></td></tr></table>
-</p>
 
 <p>
 Remember to create any devices using the <CODE>MAKEDEV</CODE> command:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre> # cd /dev
  # ./MAKEDEV hd2s1 hd2s2 hd2s3
-</pre></td></tr></table></p>
+</pre></td></tr></table>
 
 <p>
 To mount an nfs filesystem, <CODE>/hurd/nfs</CODE> translator is used. When
@@ -439,20 +426,20 @@ connections originating from a non-reserved port, add the
 <TT>`192.168.1.2'</TT>:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre>  /home  192.168.1.2(rw,insecure)
-</pre></td></tr></table></p>
+</pre></td></tr></table>
 
 <p>
 To mount this from a GNU box and assuming that nfs server's ip address is
 <TT>`192.168.1.1'</TT>:
 </p>
 
-<p><table><tr><td>&nbsp;</td><td class=example><pre># settrans -cgap /mount/point /hurd/nfs 192.168.1.1:/home
-</pre></td></tr></table></p>
+<table><tr><td>&nbsp;</td><td class=example><pre># settrans -cgap /mount/point /hurd/nfs 192.168.1.1:/home
+</pre></td></tr></table>
 
-<p>
+
 <h3> 7.3 Rebooting </h3>
+
 <p>
 Finally, reboot into multiuser mode, i.e. in the same way single user mode was
 brought up minus the <SAMP>`-s'</SAMP> option when loading the kernel. For
@@ -463,10 +450,10 @@ details, refer to See section 5. Booting GNU/Hurd.
 Happy Hacking!
 </p>
 
-<p>
+
 <h2> 8. Final Words </h2>
 
-<p>
+
 <h3> 8.1 The Grub Menu </h3>
 
 <p>
@@ -475,7 +462,7 @@ Having to always load the kernel by hand can be very tedious. Edit the
 become much quicker and easier.
 </p>
 
-<p>
+
 <h3> 8.2 Adding Devices </h3>
 
 <p>
@@ -483,7 +470,7 @@ By default, only a few devices are created in the <TT>`/dev'</TT> directory.
 Use the <CODE>MAKEDEV</CODE> script to create any needed device nodes.
 </p>
 
-<p>
+
 <h3> 8.3 Installing More Packages </h3>
 <p>
 There are several ways to add packages. Downloading and using
@@ -492,11 +479,11 @@ is to use <CODE>apt-get</CODE>. Edit <TT>`/etc/apt/sources.list'</TT> and
 add the following two entries:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre>deb ftp://alpha.gnu.org/gnu/hurd/debian unstable main
 deb http://ftp.debian.org/debian unstable main
-</pre></td></tr></table></P><P>
+</pre></td></tr></table>
 
+<p>
 <url "ftp://alpha.gnu.org"> contains packages that have hacks or patches that
 have not yet been integrated upstream. There are no mirror sites. To use a
 local Debian mirror, visit <url "http://www.debian.org/distrib/ftplist">.
@@ -509,7 +496,7 @@ GNU system. The easiest way to do this is to use apt off-line. Refer to
 <TT>`/usr/share/doc/apt/offline'</TT> for detailed instructions.
 </p>
 
-<p>
+
 <h3> 8.4 XFree86 </h3>
 
 <p>
@@ -521,21 +508,17 @@ require a kernel module should work.
 First, set up the keyboard translator:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre> # cd /dev
  # ./MAKEDEV kbd
 </pre></td></tr></table>
-</p>
 
 <p>
 And then the mouse translator. For a serial port mouse, run the following
 replace <TT>`com0'</TT> with the appropriate communication port:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre> # settrans /dev/mouse /hurd/mouse --device=com0 --protocol=microsoft
 </pre></td></tr></table>
-</p>
 
 <p>
 Make sure that <TT>`/dev/com0'</TT> actually exists. If it does not, create it
@@ -546,9 +529,8 @@ using <CODE>MAKEDEV</CODE> in the usual fashion.
 PS/2 so not require a device node. It is simple a matter of:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre> # settrans /dev/mouse /hurd/mouse --protocol=ps/2
-</pre></td></tr></table></p>
+</pre></td></tr></table>
 
 <p>
 Other mice can be used; run <TT>`/hurd/mouse'</TT> with the
@@ -566,12 +548,11 @@ the configuration file will need to be tweaked. Change the pointer section to
 read:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre>Section "Pointer"
   Protocol "osmouse"
   Device "/dev/mouse"
 EndSection
-</pre></td></tr></table></p>
+</pre></td></tr></table>
 
 <p>
 <SAMP>`Emulate3Buttons'</SAMP> may be optionally added. Nothing else will
@@ -584,10 +565,8 @@ default library search path, it is necessary to add the following to either
 <TT>`/etc/profile'</TT> or each user's <TT>`.profile'</TT>:
 </p>
 
-<p>
 <table><tr><td>&nbsp;</td><td class=example><pre>export LD_LIBRARY_PATH=/X11R6/lib:$LD_LIBRARY_PATH
 </pre></td></tr></table>
-</p>
 
 <p>
 Finally, run <CODE>startx</CODE>.
@@ -602,7 +581,7 @@ Debian menus. Although a <CODE>pthreads</CODE> implementation exists not all
 pthread packages have been ported: do not expect Gnome and KDE to work.
 </p>
 
-<p>
+
 <h3> 8.5 Virtual Terminals </h3>
 
 <p>
