@@ -40,6 +40,7 @@ while (<MAINTAINERS>) {
         my $maint = $2;
         $maint =~ s/</&lt;/;
         $maint =~ s/>/&gt;/;
+	$maint =~ s/\xc3\xb8/&oslash;/;
         $maintainer{$pack} = $maint;
     }
 }
