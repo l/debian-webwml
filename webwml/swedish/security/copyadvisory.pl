@@ -68,12 +68,21 @@ $insertedrevision = 0;
 
 while (<SRC>)
 {
-	unless ($insertedrevision || /^#/)
+	if (/^#use wml::debian::security/)
 	{
+		print DST $_;
 		print DST qq'#use wml::debian::translation-check translation="$revision"\n';
 		$insertedrevision = 1;
 	}
-	print DST $_;
+	else
+	{
+		print DST $_;
+	}
+}
+
+unless ($insertedrevision)
+{
+	print DST qq'#use wml::debian::translation-check translation="$revision"\n';
 }
 
 close SRC;
