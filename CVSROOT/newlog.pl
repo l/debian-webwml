@@ -40,12 +40,14 @@ $STATE_ADDED   = 2;
 $STATE_REMOVED = 3;
 $STATE_LOG     = 4;
 
-$LAST_FILE     = "/cvs/webwml/CVSROOT/tmp/#cvs.lastdir";
+$TMP_DIR       = "/cvs/webwml/CVSROOT/tmp";
 
-$CHANGED_FILE  = "/cvs/webwml/CVSROOT/tmp/#cvs.files.changed";
-$ADDED_FILE    = "/cvs/webwml/CVSROOT/tmp/#cvs.files.added";
-$REMOVED_FILE  = "/cvs/webwml/CVSROOT/tmp/#cvs.files.removed";
-$LOG_FILE      = "/cvs/webwml/CVSROOT/tmp/#cvs.files.log";
+$LAST_FILE     = "$TMP_DIR/#cvs.lastdir";
+$CHANGED_FILE  = "$TMP_DIR/#cvs.files.changed";
+$ADDED_FILE    = "$TMP_DIR/#cvs.files.added";
+$REMOVED_FILE  = "$TMP_DIR/#cvs.files.removed";
+$LOG_FILE      = "$TMP_DIR/#cvs.files.log";
+
 
 $FILE_PREFIX   = "#cvs.files";
 
@@ -57,7 +59,7 @@ sub cleanup_tmpfiles {
     local($wd, @files);
 
     $wd = `pwd`;
-    chdir("/cvs/webwml/CVSROOT/tmp") || die("Can't chdir('/cvs/webwml/CVSROOT/tmp')\n");
+    chdir("$TMP_DIR") || die("Can't chdir('$TMP_DIR')\n");
     opendir(DIR, ".");
     push(@files, grep(/^$FILE_PREFIX\..*\.$id$/, readdir(DIR)));
     closedir(DIR);
@@ -334,7 +336,7 @@ while (<STDIN>) {
     if (/^Log Message/)    { $state = $STATE_LOG;     next; }
     if (/^Revision\/Branch/) { /^[^:]+:\s*(.*)/; $branch = $+; next; }
 
-    s/^[ \t\n]+//;		# delete leading whitespace
+    s/^[ \t\n]+// if ($state != $STATE_LOG);		# delete leading whitespace
     s/[ \t\n]+$//;		# delete trailing whitespace
     
     if ($state == $STATE_CHANGED) { push(@changed_files, split); }
@@ -417,7 +419,7 @@ if ($debug) {
 # Check whether this is the last directory.  If not, quit.
 #
 if ($debug) {
-    print STDERR "Checking current dir against last dir.\n";
+    print STDERR "Checking current dir against last dir ($LAST_FILE.$id).\n";
 }
 $_ = &read_line("$LAST_FILE.$id");
 
@@ -485,7 +487,7 @@ for ($i = 0; ; $i++) {
 	if ($debug) {
 	    print STDERR "main: pre-sort changed_files = ", join(":", @changed_files), ".\n";
 	}
-	sort(@changed_files);
+	@changed_files = sort(@changed_files);
 	if ($debug) {
 	    print STDERR "main: post-sort changed_files = ", join(":", @changed_files), ".\n";
 	}
