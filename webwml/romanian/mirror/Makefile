@@ -57,3 +57,5 @@ $(ENGLISHDIR)/mirror/sponsors.list: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
 	./mirror_list.pl -m Mirrors.masterlist -t sponsors > $@
 endif
+
+.DELETE_ON_ERROR:
