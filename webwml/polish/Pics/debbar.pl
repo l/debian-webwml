@@ -18,7 +18,7 @@ sub debian_button {
 
 	$image = gimp_image_new(80, $height, RGB);
 	$layer = gimp_layer_new($image, 80, $height, RGBA_IMAGE, "Button", 100, NORMAL_MODE);
-	$text = gimp_text($image, $layer, 9, 3, $words, 0, 0, "15", PIXELS, "*", "Lucida", "bold", "r", "*", "*", "*", "*");
+	$text = gimp_text($image, $layer, 9, 3, $words, 0, 0, "14", PIXELS, "*", "Lucida", "bold", "r", "*", "*", "*", "2");
 	
 
 	$width = gimp_drawable_width($text);
