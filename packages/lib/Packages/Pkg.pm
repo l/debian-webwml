@@ -204,9 +204,12 @@ sub add_version {
 
     # we do not save the description, only the md5sum
     # the db is responsible for saving the description
-    if ( exists $data->{description} ) {
+    if ( $data->{description} ) {
 	$data->{'description-md5'} =
 	    Digest::MD5::md5_hex( $data->{description} );
+    } else {
+    	$self->_warn( "add_version:$name: no description found\n" );
+	$data->{'description-md5'} = "";
     }
     delete $data->{description};
 
