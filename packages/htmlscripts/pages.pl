@@ -369,7 +369,7 @@ sub package_pages_walker {
 	if ( $dep_list ) {
 	    $package_page .= sprintf( gettext( "\n<h2>Other packages related to %s:</h2>\n" ), $name );
 	    if ($env->{distribution} eq "experimental") {
-		$package_page .= gettext( "<p>Note that the \"<font color=\"red\">experimental</font>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable\">unstable</a>\" distribution.</p>" );
+		$package_page .= gettext( "<p>Note that the \"<font color=\"red\">experimental</font>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution.</p>" );
 	    }
 
 	    $package_page .= "<center><table border=\"1\"><tr>\n";
