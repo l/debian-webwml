@@ -4,9 +4,9 @@
 
 WMLBASE=.
 CUR_DIR=
-SUBS=Bugs MailingLists News Pics SPI consultants devel distrib doc events \
-international intro logos mirror misc partners ports releases security vote \
-y2k om_svenska
+SUBS=Bugs MailingLists News Pics SPI consultants devel distrib doc events intro \
+international logos mirror misc partners ports releases security vote y2k \
+chinese searchtmpl om_svenska
 
 include $(WMLBASE)/Make.lang
 
