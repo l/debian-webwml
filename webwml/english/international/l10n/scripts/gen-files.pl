@@ -359,7 +359,8 @@ sub get_stats_podebconf {
                                 '/unstable/'.$data->pooldir($pkg).
                                 "/$link.gz\">$pofile</a>]";
                 }
-                $orig .= "<li>$pkg".$addorig."</li>\n" if $addorig;
+                $orig .= "<li><a name=\"$pkg\">$pkg</a>$addorig</li>\n"
+                        if $addorig;
 
                 my $addtotal = 0;
                 foreach $line (@{$data->podebconf($pkg)}) {
@@ -391,7 +392,7 @@ sub get_stats_podebconf {
                         my $l = uc($lang) || 'UNKNOWN';
                         next if $list{$l};
                         $excl{$l}  = '' unless defined($excl{$l});
-                        $excl{$l} .= $pkg.", ";
+                        $excl{$l} .= "<a href=\"pot#$pkg\">$pkg</a>, ";
                 }
         }
         foreach $lang (@pd_langs) {
