@@ -130,7 +130,8 @@ sub parse_params {
     }
 
     if ($USE_PAGED_MODE) {
-        $cgi->delete( "page", "number" );
+        $cgi->delete( "page" );
+        $cgi->delete( "number" );
     }
 
     return %params_ret;
