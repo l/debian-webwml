@@ -80,6 +80,7 @@ $translations = {
 
 'faq' => {
 	'type'			=> 'DDP',
+	'author'		=> 'Josip Rodin',
 	'name'			=> 'Debian GNU/Linux FAQ',
 	'url'			=> 'http://www.debian.org/~elphick/ddp/manuals.html/faq/',
 	'cvs-url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/faq/?cvsroot=debian-doc',
