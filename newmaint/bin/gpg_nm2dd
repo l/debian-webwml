@@ -80,7 +80,10 @@ def offer_signatures(db, email):
 to_move = parse_args()
 db = pg.connect(Cnf["MyDB"])
 for email in to_move:
-    offer_signatures(db, email)
+    if gpg_utils.find_email(db, email):
+        offer_signatures(db, email)
+    else:
+        print "No user with the email address %s" % email
 
 # vim:set ts=4:
 # vim:set expandtab:
