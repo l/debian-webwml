@@ -162,8 +162,12 @@ if (exists $ENV{DWWW_LANG})
 }
 elsif (open CONF, "<language.conf")
 {
-	$defaultlanguage = <CONF>;
-	chomp $defaultlanguage;
+        while (<CONF>)
+	{
+	        next if /^#/;
+	        $defaultlanguage = <CONF>;
+		chomp $defaultlanguage;
+	}
 	close CONF;
 }
 
