@@ -31,9 +31,9 @@ $have_Text_Iconv = 0 if $@;
 use lib ($0 =~ m|(.*)/|, $1 or ".") ."/../../../../Perl";
 use Locale::Language;
 use Locale::Country;
-use Webwml::L10n::Db;
+use Debian::L10n::Db;
 use Local::Inside::DebSrc;
-use Webwml::L10n::Debconf;
+use Debian::L10n::Debconf;
 
 my $progname= $0; $progname= $& if $progname =~ m,[^/]+$,;
 
@@ -210,11 +210,11 @@ push (@args, @ARGV) or syntax_msg("Nothing to do !");
 push (@INC, $TRANSMONITOR_ROOT);
 init_synonym();
 
-my $data = Webwml::L10n::Db->new();
+my $data = Debian::L10n::Db->new();
 $data->read($DB_FILE);
 my $date = $data->get_date();
 
-my $mandata = Webwml::L10n::Db->new();
+my $mandata = Debian::L10n::Db->new();
 $mandata->read($MANDB_FILE);
 
 # read args to search package files
@@ -800,7 +800,7 @@ sub search_templates {
         my ($filename, $tmpl, %tmpl_stats, $this_stat, @list, @list2);
 
         my @debconffiles = $deb->file_matches("(^|/)(debian/)?([^/]+\\.)?templates\$");
-        $tmpl = Webwml::L10n::Debconf->new();
+        $tmpl = Debian::L10n::Debconf->new();
         foreach my $file (@debconffiles) {
                 #   All translations in a single file
                 next if $deb->file_matches("^".$file."\\...(_..)?\$");
@@ -810,7 +810,7 @@ sub search_templates {
                 $filename = store_disk_templates($pkg, $file);
                 my $storedfile = $TEMPLATES_ROOT."/".$data->pooldir($pkg)."/$filename";
 
-                #  Trap warnings from Webwml::L10n::Debconf and reword them
+                #  Trap warnings from Debian::L10n::Debconf and reword them
                 {
                         local $SIG{__WARN__} = sub {
                                 my $msg = $_[0];
@@ -862,7 +862,7 @@ sub search_templates {
                         $origfile{$relfile} = $_;
                         push (@list2, $relfile);
                 }
-                #  Trap warnings from Webwml::L10n::Debconf and reword them
+                #  Trap warnings from Debian::L10n::Debconf and reword them
                 {
                         local $SIG{__WARN__} = sub {
                                 my $msg = $_[0];
