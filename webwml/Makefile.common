@@ -132,7 +132,7 @@ endif
 #    want it updated, it cannot be automatically performed.
 $(LOCALEDIR)/templates.mo:
 	$(MAKE) -C $(WMLBASE)/po install
-	
+
 $(OTHERDESTFILES): $(HTMLDIR)/%: %
 	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
 	install -m 664 -p $< $(HTMLDIR)
@@ -145,33 +145,57 @@ endif
 $(TEMPLDIR)/%.wml:
 	touch $@
 
-$(TEMPLDIR)/common_translation.wml: $(TEMPLDIR)/common_tags.wml
-$(TEMPLDIR)/common_tags.wml: $(TEMPLDIR)/language_names.wml
 $(TEMPLDIR)/basic.wml: $(TEMPLDIR)/common_translation.wml \
-  $(TEMPLDIR)/common_tags.wml $(TEMPLDIR)/header.wml $(TEMPLDIR)/navbar.wml
+  $(TEMPLDIR)/common_tags.wml $(TEMPLDIR)/header.wml \
+  $(TEMPLDIR)/navbar.wml $(TEMPLDIR)/footer.wml
 $(TEMPLDIR)/cdimage.wml: $(TEMPLDIR)/common_translation.wml \
   $(TEMPLDIR)/common_tags.wml $(TEMPLDIR)/languages.wml \
   $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/header.wml $(TEMPLDIR)/footer.wml
-$(TEMPLDIR)/footer.wml: $(TEMPLDIR)/ctime.wml
-$(TEMPLDIR)/languages.wml: $(TEMPLDIR)/language_names.wml
-$(TEMPLDIR)/mainpage.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/mirrors.wml \
-  $(TEMPLDIR)/languages.wml $(TEMPLDIR)/footer.wml $(TEMPLDIR)/links.tags.wml \
-  $(ENGLISHSRCDIR)/Pics/blue-upperleft.png $(ENGLISHSRCDIR)/Pics/blue-upperright.png \
-  $(ENGLISHSRCDIR)/Pics/blue-lowerleft.png $(ENGLISHSRCDIR)/Pics/blue-lowerright.png
-$(TEMPLDIR)/mirrors.wml: $(TEMPLDIR)/countries.wml
-$(TEMPLDIR)/template.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml \
-  $(TEMPLDIR)/footer.wml
-$(TEMPLDIR)/news.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/footer.wml \
-  $(TEMPLDIR)/languages.wml $(TEMPLDIR)/common_translation.wml \
-  $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/common_tags.wml
-$(TEMPLDIR)/consultant.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml \
-  $(TEMPLDIR)/footer.wml
-$(TEMPLDIR)/event.wml: $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml \
-  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/events_common.wml
-$(TEMPLDIR)/past_event.wml: $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml \
-  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/events_common.wml
+$(TEMPLDIR)/common_tags.wml: $(TEMPLDIR)/language_names.wml
+$(TEMPLDIR)/common_translation.wml: $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/consultant.wml: $(TEMPLDIR)/common_tags.wml \
+  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml
+$(TEMPLDIR)/countries.wml: $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/ctime.wml: $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/ddp.wml: $(TEMPLDIR)/basic.wml \
+  $(TEMPLDIR)/common_translation.wml $(TEMPLDIR)/languages.wml
+$(TEMPLDIR)/events_common.wml: $(TEMPLDIR)/common_translation.wml
+$(TEMPLDIR)/event.wml: $(TEMPLDIR)/events_common.wml \
+  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml
+$(TEMPLDIR)/fixes_link.wml: $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/footer.wml: $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/header.wml: $(TEMPLDIR)/common_translation.wml
+$(TEMPLDIR)/language_names.wml: $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/languages.wml: $(TEMPLDIR)/common_tags.wml \
+  $(TEMPLDIR)/language_names.wml
+$(TEMPLDIR)/links.tags.wml: $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/mainpage.wml: $(TEMPLDIR)/common_translation.wml \
+  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/links.tags.wml \
+  $(TEMPLDIR)/languages.wml
+$(TEMPLDIR)/mirrors.wml: $(TEMPLDIR)/countries.wml \
+  $(TEMPLDIR)/languages.wml $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/navbar.wml: $(TEMPLDIR)/common_translation.wml \
+  $(TEMPLDIR)/mirrors.wml
+$(TEMPLDIR)/news.wml: $(TEMPLDIR)/common_translation.wml \
+  $(TEMPLDIR)/common_tags.wml $(TEMPLDIR)/languages.wml \
+  $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/basic.wml
+$(TEMPLDIR)/past_event.wml: $(TEMPLDIR)/events_common.wml \
+  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml
 $(TEMPLDIR)/recent_list.wml: $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/release.wml: $(TEMPLDIR)/languages.wml
+$(TEMPLDIR)/security_tags.wml: $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/security.wml: $(TEMPLDIR)/common_translation.wml \
+  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/fixes_link.wml $(TEMPLDIR)/languages.wml \
+  $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/security_tags.wml
+$(TEMPLDIR)/template.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml
+$(TEMPLDIR)/todoitem.wml: $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/url.wml: $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/votebar.wml: $(TEMPLDIR)/languages.wml $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/weeklynews/footer.wml: $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/weeklynews/header.wml: $(TEMPLDIR)/common_tags.wml \
+  $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/template.wml
 
+#  Pics
 ifneq "$(wildcard $(WMLBASE)/Pics/sitemap.$(LANGUAGE).gif)" ""
 sitemapimage := $(WMLBASE)/Pics/sitemap.$(LANGUAGE).gif
 else
@@ -183,45 +207,8 @@ else
 gettingimage := $(ENGLISHDIR)/Pics/getting.en.gif
 endif
 
-ifndef SUBLANG
-$(TEMPLDIR)/navbar.wml: $(TEMPLDIR)/common_translation.wml $(TEMPLDIR)/mirrors.wml \
-  $(ENGLISHSRCDIR)/Pics/debian.jpg $(ENGLISHSRCDIR)/logos/openlogo-nd-50.png \
-  $(ENGLISHSRCDIR)/Pics/red-upperleft.png $(ENGLISHSRCDIR)/Pics/red-upperright.png \
-  $(ENGLISHSRCDIR)/Pics/red-lowerleft.png $(ENGLISHSRCDIR)/Pics/red-lowerright.png \
-  $(WMLBASE)/Pics/about.$(LANGUAGE).gif \
-  $(WMLBASE)/Pics/news.$(LANGUAGE).gif \
-  $(gettingimage) \
-  $(WMLBASE)/Pics/support.$(LANGUAGE).gif \
-  $(WMLBASE)/Pics/devel.$(LANGUAGE).gif \
-  $(sitemapimage) \
-  $(WMLBASE)/Pics/search.$(LANGUAGE).gif
-else
-$(TEMPLDIR)/navbar.wml: $(TEMPLDIR)/common_translation.wml \
-  $(ENGLISHSRCDIR)/Pics/debian.jpg $(ENGLISHSRCDIR)/logos/openlogo-nd-50.png \
-  $(ENGLISHSRCDIR)/Pics/red-upperleft.png $(ENGLISHSRCDIR)/Pics/red-upperright.png \
-  $(ENGLISHSRCDIR)/Pics/red-lowerleft.png $(ENGLISHSRCDIR)/Pics/red-lowerright.png \
-  $(foreach i,$(SUBLANG),$(WMLBASE)/Pics/about.$(LANGUAGE)-$(i).gif) \
-  $(foreach i,$(SUBLANG),$(WMLBASE)/Pics/news.$(LANGUAGE)-$(i).gif) \
-  $(foreach i,$(SUBLANG),$(WMLBASE)/Pics/support.$(LANGUAGE)-$(i).gif) \
-  $(foreach i,$(SUBLANG),$(WMLBASE)/Pics/devel.$(LANGUAGE)-$(i).gif) \
-  $(foreach i,$(SUBLANG),$(WMLBASE)/Pics/search.$(LANGUAGE)-$(i).gif)
-endif
-$(TEMPLDIR)/security.wml: $(TEMPLDIR)/common_translation.wml \
-  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/fixes_link.wml $(TEMPLDIR)/languages.wml \
-  $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/footer.wml $(TEMPLDIR)/security_tags.wml
-$(TEMPLDIR)/security_tags.wml: $(TEMPLDIR)/common_tags.wml
-$(TEMPLDIR)/ddp.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml \
-  $(TEMPLDIR)/footer.wml
-$(TEMPLDIR)/votebar.wml: $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml \
-  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/common_translation.wml \
-  $(ENGLISHSRCDIR)/Pics/blue-upperleft.png $(ENGLISHSRCDIR)/Pics/blue-upperright.png \
-  $(ENGLISHSRCDIR)/Pics/blue-lowerleft.png $(ENGLISHSRCDIR)/Pics/blue-lowerright.png
-$(TEMPLDIR)/weeklynews/header.wml: $(TEMPLDIR)/ctime.wml \
-  $(TEMPLDIR)/template.wml $(TEMPLDIR)/links.tags.wml
-$(TEMPLDIR)/cdimage.wml: $(TEMPLDIR)/common_translation.wml \
-  $(TEMPLDIR)/common_tags.wml $(TEMPLDIR)/languages.wml \
-  $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/header.wml $(TEMPLDIR)/footer.wml \
-  $(ENGLISHDIR)/Pics/debian.jpg $(ENGLISHSRCDIR)/logos/openlogo-nd-50.png \
+$(TEMPLDIR)/cdimage.wml: $(ENGLISHDIR)/Pics/debian.jpg \
+  $(ENGLISHSRCDIR)/logos/openlogo-nd-50.png \
   $(ENGLISHDIR)/CD/pictures/menubar-tl.png \
   $(ENGLISHDIR)/CD/pictures/menubar-tr.png \
   $(ENGLISHDIR)/CD/pictures/menubar-bl.png \
@@ -234,6 +221,42 @@ $(TEMPLDIR)/cdimage.wml: $(TEMPLDIR)/common_translation.wml \
 #  $(WMLBASE)/CD/pictures/menu-misc.$(LANGUAGE).png \
 #  $(WMLBASE)/CD/pictures/menu-netinst.$(LANGUAGE).png \
 #  $(WMLBASE)/CD/pictures/menu-pik.$(LANGUAGE).png
+
+$(TEMPLDIR)/mainpage.wml: $(ENGLISHSRCDIR)/Pics/blue-upperleft.png \
+  $(ENGLISHSRCDIR)/Pics/blue-upperright.png \
+  $(ENGLISHSRCDIR)/Pics/blue-lowerleft.png \
+  $(ENGLISHSRCDIR)/Pics/blue-lowerright.png
+$(TEMPLDIR)/navbar.wml: $(ENGLISHSRCDIR)/Pics/debian.jpg \
+  $(ENGLISHSRCDIR)/logos/openlogo-nd-50.png \
+  $(ENGLISHSRCDIR)/Pics/red-upperleft.png \
+  $(ENGLISHSRCDIR)/Pics/red-upperright.png \
+  $(ENGLISHSRCDIR)/Pics/red-lowerleft.png \
+  $(ENGLISHSRCDIR)/Pics/red-lowerright.png
+
+ifndef SUBLANG
+$(TEMPLDIR)/navbar.wml: \
+  $(WMLBASE)/Pics/about.$(LANGUAGE).gif \
+  $(WMLBASE)/Pics/news.$(LANGUAGE).gif \
+  $(gettingimage) \
+  $(WMLBASE)/Pics/support.$(LANGUAGE).gif \
+  $(WMLBASE)/Pics/devel.$(LANGUAGE).gif \
+  $(sitemapimage) \
+  $(WMLBASE)/Pics/search.$(LANGUAGE).gif
+else
+$(TEMPLDIR)/navbar.wml: \
+  $(foreach i,$(SUBLANG),$(WMLBASE)/Pics/about.$(LANGUAGE)-$(i).gif) \
+  $(foreach i,$(SUBLANG),$(WMLBASE)/Pics/news.$(LANGUAGE)-$(i).gif) \
+  $(foreach i,$(SUBLANG),$(WMLBASE)/Pics/support.$(LANGUAGE)-$(i).gif) \
+  $(foreach i,$(SUBLANG),$(WMLBASE)/Pics/devel.$(LANGUAGE)-$(i).gif) \
+  $(foreach i,$(SUBLANG),$(WMLBASE)/Pics/search.$(LANGUAGE)-$(i).gif)
+endif
+$(TEMPLDIR)/todoitem.wml: $(ENGLISHSRCDIR)/Pics/star-grn.gif \
+  $(ENGLISHSRCDIR)/Pics/star-yel.gif \
+  $(ENGLISHSRCDIR)/Pics/star-red.gif
+$(TEMPLDIR)/votebar.wml: $(ENGLISHSRCDIR)/Pics/blue-upperleft.png \
+  $(ENGLISHSRCDIR)/Pics/blue-upperright.png \
+  $(ENGLISHSRCDIR)/Pics/blue-lowerleft.png \
+  $(ENGLISHSRCDIR)/Pics/blue-lowerright.png
 
 .SUFFIXES: 
 .PHONY: all $(existing-SUBS) install $(existing-SUBS-install)
