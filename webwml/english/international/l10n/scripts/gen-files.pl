@@ -8,19 +8,21 @@ use lib ($0 =~ m|(.*)/|, $1 or ".") ."/../../../../Perl";
 
 use Webwml::L10n::Db;
 
-use vars qw($opt_h $opt_l $opt_P $opt_T $opt_L);
+use vars qw($opt_h $opt_l $opt_D $opt_P $opt_T $opt_L);
 
 sub usage {
-        print "Usage:  gen-files.pl [--l10ndir=DIR] [--po] [--templates] [--langs]\n";
+        print "Usage:  gen-files.pl [--l10ndir=DIR] [--po] [--templates] [--podebconf] [--langs]\n";
         exit($_[0]);
 }
 
-$opt_h = $opt_P = $opt_T = $opt_L = 0;
+$opt_h = $opt_D = $opt_P = $opt_T = $opt_L = 0;
 $opt_l = '.';
 
+Getopt::Long::Configure("no_ignore_case");
 if (not Getopt::Long::GetOptions(qw(
         h|help
         l|l10ndir=s
+        D|podebconf
         P|po
         T|templates
         L|langs
@@ -42,6 +44,7 @@ my $rootnonus = 'http://nonus.debian.org/~barbier/l10n/material/';
 my $langfile = $opt_l.'/data/langs';
 
 my @po_langs = ();
+my @pd_langs = ();
 my @td_langs = ();
 
 my @main    = ();
@@ -172,13 +175,13 @@ sub get_stats_templates {
                 foreach $line (@{$data->templates($pkg)}) {
                         ($template, $lang, $stat, $link_trans, $link_orig) = @{$line};
                         $link_orig ||= '';
+                        $link_trans =~ s/:/\%3a/g;
+                        $link_orig  =~ s/:/\%3a/g;
                         if ($lang eq '_') {
                                 push(@untranslated, $link_trans);
                                 next;
                         }
 
-                        $link_trans =~ s/:/\%3a/g;
-                        $link_orig  =~ s/:/\%3a/g;
                         $lang = uc($lang) || 'UNKNOWN';
                         $list{$lang} = 1;
                         $incl{$lang}  = '' unless defined($incl{$lang});
@@ -327,12 +330,110 @@ sub process_templates {
         close (GEN);
 }
 
+sub get_stats_podebconf {
+        my ($section, $packages) = @_;
+        my ($pkg, $line, $lang, %list);
+
+        my %incl  = ();
+        my %excl  = ();
+        my $none  = '';
+        foreach $pkg (sort @{$packages}) {
+                unless ($data->has_podebconf($pkg)) {
+                        $none .= "<li>".$pkg."</li>\n";
+                        next;
+                }
+                my $list = {};
+                foreach (@pd_langs) {
+                        $list{uc $_}  = 0;
+                }
+                my $addincl = '';
+                foreach $line (@{$data->podebconf($pkg)}) {
+                        my ($pofile, $lang, $stat, $link) = @{$line};
+                        last unless $lang eq '_';
+
+                        $pofile =~ s#^debian/##;
+                        $link =~ s/:/\%3a/g;
+                        $addincl .= " [<a href=\"".($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root);
+                        $addincl .= ($pofile eq 'templates.pot' ? 'po' : 'templates');
+                        $addincl .= '/unstable/'.$data->pooldir($pkg)."/$link.gz\">$pofile</a>]";
+                }
+                foreach $line (@{$data->podebconf($pkg)}) {
+                        my ($pofile, $lang, $stat, $link) = @{$line};
+                        next if $lang eq '_';
+
+                        $pofile =~ s#^debian/po/##;
+                        $link =~ s/:/\%3a/g;
+                        $lang = uc($lang) || 'UNKNOWN';
+                        $list{$lang} = 1;
+                        $incl{$lang}  = '' unless defined($incl{$lang});
+                        $incl{$lang} .= "<tr bgcolor=\"".
+                              get_color(percent_stat($stat)).
+                              "\"><td>".$pkg."</td>".
+                              "<td>".percent_stat($stat).
+                              " (".show_stat($stat).")</td><td><a href=\"";
+                        $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
+                        $incl{$lang} .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>".
+                              "<td>$addincl</td></tr>\n";
+                        if ($stat =~ m/(\d+)t/) {
+                                $score{$lang} += $1;
+                        }
+                }
+                foreach $lang (@pd_langs) {
+                        my $l = uc($lang) || 'UNKNOWN';
+                        next if $list{$l};
+                        $excl{$l}  = '' unless defined($excl{$l});
+                        $excl{$l} .= $pkg.", ";
+                }
+        }
+        foreach $lang (@pd_langs) {
+                next unless defined $incl{uc $lang};
+                open (GEN, "> $opt_l/po-debconf/gen/$section-$lang.inc")
+                        || die "Unable to write into $opt_l/po-debconf/gen/$section-$lang.inc";
+                print GEN $incl{uc $lang};
+                close (GEN);
+        }
+        foreach $lang (@pd_langs) {
+                next unless defined $excl{uc $lang};
+                $excl{uc $lang} =~ s/, $//s;
+                open (GEN, "> $opt_l/po-debconf/gen/$section-$lang.exc")
+                        || die "Unable to write into $opt_l/po-debconf/gen/$section-$lang.exc";
+                print GEN "<p>\n".$excl{uc $lang}."</p>\n";
+                close (GEN);
+        }
+        open (GEN, "> $opt_l/po-debconf/gen/$section.exc")
+                || die "Unable to write into $opt_l/po-debconf/gen/$section.exc";
+        print GEN "<ul>\n".$none."</ul>\n" if $none ne '';
+        close (GEN);
+}
+
+sub process_podebconf {
+        -d "$opt_l/po-debconf/gen" || File::Path::mkpath("$opt_l/po-debconf/gen", 0, 0775);
+
+        foreach (@pd_langs) {
+                $score{uc $_} = 0;
+        }
+
+        get_stats_podebconf('main', \@main);
+        get_stats_podebconf('contrib', \@contrib);
+        get_stats_podebconf('non-free', \@nonfree);
+
+        open (GEN, "> $opt_l/po-debconf/gen/rank.inc")
+                || die "Unable to write into $opt_l/po-debconf/gen/rank.inc";
+        print GEN "<dl>\n";
+        foreach my $lang (sort {$score{uc $b} <=> $score{uc $a}} @pd_langs) {
+                print GEN "<dt><a href=\"$lang\">$lang</a> ".$score{uc $lang}."</dt>\n";
+                print GEN "<dd><language-name $lang /></dd>\n";
+        }
+        print GEN "</dl>\n";
+}
+
 sub process_langs {
         my $store = shift;
 
         my $langs = {
                 po              => {},
                 templates       => {},
+                podebconf       => {},
                 all             => {},
         };
 
@@ -354,9 +455,18 @@ sub process_langs {
                                 $langs->{all}->{$lang} = 1;
                         }
                 }
+                if ($data->has_podebconf($pkg)) {
+                        foreach $line (@{$data->podebconf($pkg)}) {
+                                ($file, $lang) = @{$line};
+                                next unless $lang ne '' && $lang ne '_';
+                                $langs->{podebconf}->{$lang} = 1;
+                                $langs->{all}->{$lang} = 1;
+                        }
+                }
         }
         @po_langs = keys %{$langs->{po}};
         @td_langs = keys %{$langs->{templates}};
+        @pd_langs = keys %{$langs->{podebconf}};
         return unless $store;
 
         open (GEN, "> $opt_l/data/langs")
@@ -418,5 +528,6 @@ close (GEN);
 process_langs($opt_L);
 process_po()        if $opt_P;
 process_templates() if $opt_T;
+process_podebconf() if $opt_D;
 
 1;
