@@ -63,7 +63,7 @@ sub init_translators {
 	    mailsubject => '',
 	    mailbody    => '',
 	},
-	unmantained        => {
+	unmaintained        => {
 	    email       => 'debian-l10n-portuguese@lists.debian.org',
 	    summary     => 2,
 	    mailsubject => '[webwml] Páginas desatualizadas sem mantenedor',
