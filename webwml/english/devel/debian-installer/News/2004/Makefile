@@ -9,8 +9,8 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 # Do Not modify the following line
-index.$(LANGUAGE).html: index.wml $(wildcard 1997*.wml) \
-                        $(wildcard 1997*.title) \
+index.$(LANGUAGE).html: index.wml $(wildcard 2004*.wml) \
+                        $(wildcard 2004*.title) \
                         $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml \
                         $(GETTEXTDEP)
 	$(WML) index.wml
