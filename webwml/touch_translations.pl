@@ -24,16 +24,18 @@
 # This should contain all languages
 %langs = (
 	"ar" => "arabic",
+	"ca" => "catalan",
 	"zh" => "chinese",
 	"hr" => "croatian",
+	"cs" => "czech",
 	"da" => "danish",
 	"nl" => "dutch",
-	"el" => "hellas",
 	"en" => "english",
 	"eo" => "esperanto",
 	"fi" => "finnish",
 	"fr" => "french",
 	"de" => "german",
+	"el" => "hellas",
 	"hu" => "hungarian",
 	"it" => "italian",
 	"ja" => "japanese",
@@ -43,6 +45,7 @@
 	"pt" => "portuguese",
 	"ro" => "romanian",
 	"ru" => "russian",
+	"sk" => "slovak",
 	"es" => "spanish",
 	"sv" => "swedish",
 	"tr" => "turkish");
