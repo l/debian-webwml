@@ -1,7 +1,7 @@
 $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
 	$(WML) $(EPILOG) $(<F)
 
-$(HTMLDIR)/%.gif : %.gif
+$(HTMLDIR)/%.jpg : %.jpg
 	@cp $< $@
 
 # template dependencies

@@ -13,7 +13,6 @@ ENGLISHSRCDIR=$(BASE)/../english
 include $(BASE)/Make.lang
 
 all: $(HTMLFILES) $(JPGDEST)
-	echo $(JPGDEST)
 
 include $(BASE)/Make.templ.inc
 
