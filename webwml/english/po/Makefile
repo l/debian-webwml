@@ -21,7 +21,7 @@ langs_FILES     = $(TEMPLDIR)/language_names.wml
 organization_FILES = $(ENGLISHDIR)/intro/organization.data
 ports_FILES     = $(ENGLISHDIR)/ports/menu.defs \
   $(ENGLISHDIR)/ports/mips/cpu.data \
-  $(wildcard $(ENGLISHDIR)/ports/*/menu.inc) \
+  $(shell export LC_COLLATE=C; echo $(ENGLISHDIR)/ports/*/menu.inc) \
   $(ENGLISHDIR)/misc/laptops/menu.inc
 search_FILES    = $(ENGLISHDIR)/searchtmpl/search.def
 security_FILES  = $(TEMPLDIR)/security.wml \
