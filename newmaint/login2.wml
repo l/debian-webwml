@@ -1,0 +1,55 @@
+<?
+  include("config.inc");
+  include("common.inc");
+
+session_start();
+session_name("DebianNM");
+session_unregister("s_username");
+session_unregister("s_isam");
+?>
+<HTML>
+<BODY bgcolor="#ffffff">
+<?
+function check_user($myuser) {
+  if (! ($db = open_db())) {
+    return FALSE;
+  }
+  $sql = "SELECT * FROM applicant WHERE email='$myuser'";
+  if (! ($query = pg_exec($db, $sql))) {
+    echo "Problem with interrogating database: ", pg_ErrorMessage($db), "<BR>\n";
+    return FALSE;
+  }
+  if (pg_NumRows($query) == 1) {
+    return TRUE;
+  }
+  return FALSE;
+}
+?>
+<?
+#=============main()
+  if ($username == "") {
+?>
+No username supplied, please click the back button and enter in a username.
+<?
+  session_destroy();
+  } else {
+   if (check_user($username)) {
+     $s_username = $username;
+     $s_ismanager = FALSE;
+     session_register("s_username");
+#     session_register("s_ismanager");
+
+# Have to put this here due to annoying wml bug
+   echo "<META http-equiv=\"refresh\" content=\"0;URL=main.php?";?><?=SID?><? echo "\">"; 
+?>
+Logged in ok, click <A href="main.php?<?=SID?>">here</A> to continue if the
+refresh doesn't do it itself.
+<? 
+    } else {
+?>
+I cannot find you in the database.
+<?
+   }
+} ?>
+</BODY>
+</HTML>

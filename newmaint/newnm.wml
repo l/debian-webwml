@@ -1,0 +1,123 @@
+<?
+  include("config.inc");
+  include("common.inc");
+
+  function email_user($db, $forename, $surname, $email,$adate) {
+    $body = "Hello $forename $surname,\n";
+    $body .= "Thank you for your interest in becoming a Debian\n";
+    $body .= "Developer.  Your name and email address has been\n";
+    $body .= "entered into the new maintainer database (nm.debian.org)\n";
+    $body .= "\n";
+    $body .= "This email address was entered into the Debian New Maintainer\n";
+    $body .= "website from IP address ". getenv(REMOTE_ADDR) . ", if you did not\n";
+    $body .= "apply on that website, then email new-maintainer@debian.org\n";
+    $body .= "asking to be removed.\n";
+    $body .= "\n";
+    $body .= "It may take a while until a Application Manager (AM)\n";
+    $body .= "contacts you regarding your application, as there\n";
+    $body .= "are many applicants in the database.\n";
+    $body .= "\n";
+    $body .= "In the meanwhile, please review the membership\n";
+    $body .= "information on http://www.debian.org/devel/join/  and\n";
+    $body .= "http://www.debian.org/devel/join/newmaint  You do\n";
+    $body .= "not need to send any additional information at this\n";
+    $body .= "time.\n";
+    $body .= "\n";
+    $body .= "Please be patient, we are working the list of\n";
+    $body .= "applicants as quickly as we can.\n";
+
+    $headers = "From: new-maintainer@debian.org\nReply-To: new-maintainer@debian.org\nX-Mailer: PHP/" . phpversion();
+    mail($email, "New Debian Maintainer: $email", $body, $headers);
+    return TRUE;
+  }
+
+  function check_user($db, $myuser) {
+      $sql = "SELECT * FROM applicant WHERE email='$myuser'";
+      if (! ($query = pg_exec($db, $sql))) {
+	echo "Problem with interrogating database: ", pg_ErrorMessage($db), "<BR>\n";
+	return FALSE;
+      }
+      if (pg_NumRows($query) == 1) {
+	echo "This email address already exists<BR>\n";
+	return FALSE;
+      }
+      return TRUE;
+  }
+  function register_user($db, $forename, $surname, $email, $adate)
+  {
+    $sql = "INSERT INTO applicant (forename, surname, email, apply_date) VALUES ('$forename', '$surname', '$email', '$adate')";
+
+  if (! ($result = pg_exec($db, $sql))) {
+    echo "Problem with interrogating database: ", pg_ErrorMessage($db), "<BR>\n";
+    return FALSE;
+  }
+  if (($tuples = pg_CmdTuples($result)) != 1) {
+    echo "Only one row should be effected but $tuples rows were<BR>\n";
+    return FALSE;
+  }
+  return TRUE;
+} 
+?>
+#use wml::nmpage title="Debian New Maintainer Application"
+<H1>New Maintainer Application</H1>
+<?
+  if ($what == "new") { 
+    if ( ($db = open_db())) {
+
+    $forename = trim(strip_tags($forename));
+    $surname = trim(strip_tags($surname));
+    $email = trim(strip_tags($email));
+    $adate = strftime('%Y-%m-%d');
+
+			if ($forename == "" || $surname == "" || $email == "") {
+	?>
+	You have not filled in all the fields in the form.
+	<?
+			} else { # fields are there
+				if (!check_user($db, $email)) {
+	?>
+	<P>There is something wrong with the database, or this email address is already
+	registered.  Registration failed.
+	<?
+				} else { #user is ok
+					if (!register_user($db, $forename, $surname, $email,$adate)) {
+	?>
+	<P>Problem with registering you into the database for some reason, try again
+	later.
+	<?
+				 } else { #register ok
+					 echo "<P>Registration is ok!!  Your application date is $adate\n";
+					 email_user($db, $forename, $surname, $email,$adate);
+				 } #register ok
+			 } #user ok
+		 } # fields ok
+	 } # db open
+ } else { #not called  yet
+?>
+<P>Thankyou for your interest in Debian, if you would like to be put into
+the new maintainer list then enter in the information below.  Before you
+apply, you should have a look at the <A href="http://www.debian.org/devel/join/nm-checklist">Applicant's Checklist</A>
+ to see what the Application Manager is looking for.  It is a great help if
+you can be ready with the information that the checklist asks for
+<STRONG>before</STRONG> you apply.
+<P>There is a large backlog of applicants which means it may take some time
+to get you through the system. To assist applicants coming behind you, 
+please try to be prompt in replying to your application manager.  If, at the
+moment, outside life is busy and you cannot reply in a timely fashion, then
+perhaps you should hold off applying until the workload abates.
+<P>Finally remember all Application Managers, Front Desk members and
+Developer Accounts Managers are all Debian volunteers with things outside
+of new maintainer processing to take up their time.  We are trying to 
+be quick, but it helps if you are patient.
+<P>&nbsp;&nbsp;<B>-- Debian New Maintainer Committee</B>
+<HR>
+<FORM method="post" action="newnm.php">
+<INPUT type="hidden" name="what" value="new">
+<TABLE>
+<TR><TD>First Name:</TD><TD><INPUT name="forename" type=text>
+<TR><TD>Surname:</TD><TD><INPUT name="surname" type=text>
+<TR><TD>Email Address:</TD><TD><INPUT name="email" type=text>
+<TR><TD>&nbsp;</TD><TD><INPUT type="submit" value="Apply!"></TD></TR>
+</TABLE>
+</FORM>
+<? } # not called yet ?>

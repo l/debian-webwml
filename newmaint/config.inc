@@ -1,0 +1,4 @@
+<?
+  $DBName="newmaint";
+  $DBUser="csmall";
+?>

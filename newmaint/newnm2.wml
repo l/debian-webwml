@@ -1,0 +1,63 @@
+<?
+  include("config.inc");
+  include("common.inc");
+
+function check_user($db, $myuser) {
+  $sql = "SELECT * FROM applicant WHERE email='$myuser'";
+  if (! ($query = pg_exec($db, $sql))) {
+    echo "Problem with interrogating database: ", pg_ErrorMessage($db), "<BR>\n";
+    return FALSE;
+  }
+  if (pg_NumRows($query) == 1) {
+    echo "This email address already exists<BR>\n";
+    return FALSE;
+  }
+  return TRUE;
+}
+  function register_user($db, $forename, $surname, $email, $adate)
+  {
+    $sql = "INSERT INTO applicant (forename, surname, email, apply_date) VALUES ('$forename', '$surname', '$email', '$adate')";
+
+  if (! ($result = pg_exec($db, $sql))) {
+    echo "Problem with interrogating database: ", pg_ErrorMessage($db), "<BR>\n";
+    return FALSE;
+  }
+  if (($tuples = pg_CmdTuples($result)) != 1) {
+    echo "Only one row should be effected but $tuples rows were<BR>\n";
+    return FALSE;
+  }
+  return TRUE;
+} 
+?>
+#use wml::nmpage title="Debian New Maintainer Application"
+<?
+#=============main()
+# Strip all the input
+  $forename = strip_tags($forename);
+  $surname = strip_tags($surname);
+  $email = strip_tags($email);
+  $adate = strftime('%Y-%m-%d');
+
+  if ($forename == "" || $surname == "" || $email == "") {
+?>
+You have not filled in all the fields in the form.
+<?
+  } else {
+    if ( ($db = open_db())) {
+      if (!check_user($db, $email)) {
+?>
+<P>There is something wrong with the database, or this email address is already
+registered.  Registration failed.
+<?
+    } else {
+      if (!register_user($db, $forename, $surname, $email,$adate)) {
+?>
+<P>Problem with registering you into the database for some reason, try again
+later.
+<?
+     } else {
+       echo "<P>Registration is ok!!  Your application date is $adate\n";
+  } }
+  } #db ok
+  } 
+?>

@@ -1,0 +1,171 @@
+<?
+  include("config.inc");
+  include("common.inc");
+?>
+#use wml::nmpage title="Debian New Maintainer"
+<?
+  function print_days($db, $startdate, $stopdate)
+  {
+    $where = " WHERE " . $stopdate . " IS NOT NULL AND age('now'::date, " . $stopdate . ") < '2 months' AND " . $stopdate . " > " . $startdate;
+
+    #
+    # Mode - the most "popular" number
+    $sql = "SELECT (date_part('epoch', age(" . $stopdate . "," . $startdate . "))/86400)::int, count(*) AS entries FROM applicant " . $where;
+    $sql .= " GROUP BY age(" . $stopdate . "::date," . $startdate . "::date)";
+    $sql .= " ORDER BY entries DESC LIMIT 1";
+    if (! ($query = pg_exec($db, $sql))) {
+          echo "<TD colspan=\"2\">Problem with query: ",
+	  pg_ErrorMessage($db), "</TD>\n";
+	  return;
+    }
+    if (pg_NumRows($query) > 0) {
+      $row = pg_Fetch_Row($query, 0);
+      print "<TD>" .  $row[0] . "</TD>";
+    } else {
+      print "<TD>??</TD>";
+    }
+
+
+    #
+    # First we get the median
+    $sql = "SELECT count(*) FROM applicant " . $where;
+    if (! ($query = pg_exec($db, $sql))) {
+      echo "<TD colspan=\"2\">Problem with query: ", 
+         pg_ErrorMessage($db), "</TD>\n";
+      return;
+    }
+    $row = pg_Fetch_Row($query, 0);
+    $medcount= intval($row[0]/2);
+    $sql = "SELECT (date_part('epoch', age(" . $stopdate . "," . $startdate . "))/86400)::int FROM applicant " . $where;
+    $sql .= " ORDER by age(" . $stopdate . "," . $startdate . ")";
+    $sql .= " LIMIT 1 OFFSET " . $medcount;
+    if (! ($query = pg_exec($db, $sql))) {
+          echo "<TD colspan=\"2\">Problem with query: ",
+	  pg_ErrorMessage($db), "</TD>\n";
+	  return;
+    }
+    if (pg_NumRows($query) > 0) {
+      $row = pg_Fetch_Row($query, 0);
+      print "<TD>" .  $row[0] . "</TD>";
+    } else {
+      print "<TD>??</TD>";
+    }
+
+
+    $sql = "SELECT avg(date_part('epoch', age(" . $stopdate . "," . $startdate .  "))/86400)::int, max(date_part('epoch', age(" . $stopdate . "," . $startdate .  "))/86400)::int from applicant " . $where;
+    if (! ($query = pg_exec($db, $sql))) {
+      echo "<TD colspan=\"2\">Problem with query: ", 
+         pg_ErrorMessage($db), "</TD>\n";
+      return;
+    }
+    if (pg_NumRows($query) > 0) {
+      $row = pg_Fetch_Row($query, 0);
+      echo "<TD>", $row[0], "</TD><TD>", $row[1], "</TD>";
+    } else {
+      echo "<TD>??</TD><TD>??</TD>";
+    }
+  }
+
+  function print_stat($db, $desc, $sql,$startdate,$stopdate)
+  {
+    if (! ($query = pg_exec($db, $sql))) {
+      echo "<TR><TD colspan=\"2\">Problem with query: ", 
+         pg_ErrorMessage($db), "</TD></TR>\n";
+      return;
+    }
+    if (pg_NumRows($query) > 0) {
+      $row = pg_Fetch_Row($query, 0);
+      echo "<TR><TD>$desc</TD><TD>", $row[0], "</TD>";
+    } else {
+      echo "<TR><TD>$desc</TD><TD>??</TD>";
+    }
+    if ($startdate == '' || $startdate == '') {
+      echo "<TD><SMALL>N/A</SMALL></TD><TD><SMALL>N/A</SMALL></TD><TD><SMALL>N/A</SMALL></TD><TD><SMALL>N/A</SMALL></TD>";
+    } else {
+      print_days($db,$startdate,$stopdate);
+    }
+    "</TR>\n";
+  }
+   
+#
+# Print stats prints a summary list of statistics about the new
+# maintainers, as can be assumed from its name it prints them to
+# the page.
+function print_stats() {
+  if (! ($db = open_db())) {
+    return;
+  }
+  echo "<TABLE border=\"1\" summary=\"\">\n";
+  echo "<TR valign=\"b\"><TD> </TD><TH>Count</TH><TH>Mode<BR>Days</TH><TH>Median<BR>Days</TH><TH>Average<BR>Days</TH><TH>Maximum<BR>Days</TH></TR>\n";
+  
+  #
+  # This is all applicants we know about
+  print_stat($db, "Awaiting AM assignment",
+      "SELECT count(*) from applicant where manager_date IS NULL", "apply_date", "manager_date");
+  print_stat($db, "Waiting for AM to confirm",
+      "SELECT count(*) from applicant WHERE manager_date IS NOT NULL AND am_confirm_date IS NULL", "manager_date", "am_confirm_date");
+  print_stat($db, "Initial AM contact",
+      "SELECT count(*) FROM applicant WHERE am_confirm_date IS NOT NULL AND am_contact IS NULL", "am_confirm_date", "am_contact");
+  print_stat($db, "Processing Applicant",
+      "SELECT count(*) FROM applicant WHERE am_contact IS NOT NULL AND ( decision IS NULL OR application_ok = 'f')", "am_contact", "decision");
+  print_stat($db, "Awaiting DAM Approval",
+      "SELECT count(*) FROM applicant WHERE approved = 't' AND ( application_ok = 't' OR application_ok IS NULL) AND newmaint IS NULL" ,"decision", "newmaint");
+  print_stat($db, "New Maintainers processed",
+      "SELECT count(*) FROM applicant WHERE da_approved = 't' ", 'apply_date', 'newmaint');
+  print_stat($db, "Total Applicants in Database", 
+      "SELECT count(*) from applicant" ,'', '');
+  print_stat($db, "On hold at AM stage",
+      "SELECT count(*) FROM applicant WHERE approved = 'f' " , '', ''); 
+  print_stat($db, "On hold at DAM stage",
+      "SELECT count(*) FROM applicant WHERE approved = 't' AND da_approved = 'f' ", '', ''); 
+  print_stat($db, "Application Managers",
+      "SELECT count(*) FROM manager WHERE max_applicants > 0", '', '');
+  echo "</TABLE>\n";
+  pg_Close($db);
+}
+?>
+<H1>Debian New Maintainer Status</H1>
+<P>This system is used to display or update the status of New Maintainers
+going through the application system.  For more information about the
+process itself, look at the
+<A href="http://www.debian.org/devel/join/newmaint">New Maintainers' Corner</A> on our main site.
+<BR>
+<H3>Aggregate Statistics</H3>
+<P>To give you some idea of the size of the application process and where,
+as a whole, applicants are in the system we have provided some overall
+statistics.  The waiting times are taken from data for the last two months and
+are incremental for each stage except for the 'New Maintainers Processed'
+line which is the total time from application to becoming a new maintainer.
+If you want to know more, visit the <A href="stats.php">What do these statistics mean</A> page.
+<CENTER>
+<?
+print_stats();
+?>
+</CENTER>
+<H3>Applicant Login</H3>
+If you think you are in the New Maintainer system, enter in the
+email address you used to apply for it.<BR>
+<CENTER>
+<FORM method="post" action="nmstatus.php">
+<INPUT name="email" type=text>&nbsp;&nbsp;
+<INPUT type="submit" value="Login">
+</FORM>
+</CENTER>
+<BR>If you don't know what email address you registered with, you can go to
+<A href="nmlist.php">the list of applicants</A>.
+<HR>
+<H3>Application Manager Login</H3>
+<CENTER>
+<FORM method="post" action="amlogin2.php">
+<TABLE>
+<TR><TD><B>Login:</B></TD><TD> <INPUT name="username" type=text>@debian.org</TD></TR>
+<TR><TD><B>Password:</B></TD><TD> <INPUT name="passwd" type="password"></TD></TR>
+<TR><TD> </TD><TD><INPUT type="submit" value="Login"></TD></TR>
+</TABLE>
+</FORM>
+</CENTER>
+<BR>
+<H3>Who are we?</H3>
+<P>We are a group of Debian maintainers who have volunteered to assist the 
+Debian Account Managers in processing new applicants to be Debian maintainers
+you can find out who these people are <A href="whoisam.php">here</A>.
