@@ -3,6 +3,7 @@ all:
 	- $(MAKE) -C croatian install
 	- $(MAKE) -C danish install
 	- $(MAKE) -C english install
+	- $(MAKE) -C esperanto install
 	- $(MAKE) -C finnish install
 	- $(MAKE) -C french install
 	- $(MAKE) -C german install
@@ -14,4 +15,5 @@ all:
 	- $(MAKE) -C portuguese install
 	- $(MAKE) -C spanish install
 	- $(MAKE) -C swedish install
+	- $(MAKE) -C turkish install
 
