@@ -46,6 +46,7 @@ use warnings;
 
 use CGI qw( -oldstyle_urls );
 use POSIX;
+use HTML::Entities;
 
 use Deb::Versions;
 use Exporter;
@@ -174,8 +175,8 @@ sub indexline {
         if ($i == $page) {
             $index_line .= $i;
         } else {
-            $index_line .= "<a href=\"".$cgi->self_url.
-                "&page=$i&number=$res_per_page\">".
+            $index_line .= "<a href=\"".encode_entities($cgi->self_url).
+                "&amp;page=$i&amp;number=$res_per_page\">".
                 "$i</a>";
         }
 	if ($i < $numpages) {
@@ -198,8 +199,8 @@ sub nextlink {
         return "&gt;&gt;";
     }
 
-    return "<a href=\"".$cgi->self_url.
-        "&page=$page&number=$res_per_page\">&gt;&gt;</a>";
+    return "<a href=\"".encode_entities($cgi->self_url).
+        "&amp;page=$page&amp;number=$res_per_page\">&gt;&gt;</a>";
 }
 
 sub prevlink {
@@ -215,8 +216,8 @@ sub prevlink {
     my $res_per_page = $params->{values}{number}{final}
     || DEFAULT_RES_PER_PAGE;
 
-    return "<a href=\"".$cgi->self_url.
-        "&page=$page&number=$res_per_page\">&lt;&lt;</a>";
+    return "<a href=\"".encode_entities($cgi->self_url).
+        "&amp;page=$page&amp;number=$res_per_page\">&lt;&lt;</a>";
 }
 
 sub resperpagelink {
@@ -229,8 +230,8 @@ sub resperpagelink {
 	$page = ceil(start( $params ) / $res_per_page);
     }
 
-    return "<a href=\"".$cgi->self_url.
-        "&page=$page&number=$res_per_page\">$res_per_page</a>";
+    return "<a href=\"".encode_entities($cgi->self_url).
+        "&amp;page=$page&amp;number=$res_per_page\">$res_per_page</a>";
 }
 
 
