@@ -1,0 +1,207 @@
+#use wml::debian::ddp title="Acceso CVS al DDP"
+#use wml::debian:translation-check translation="1.9"
+
+<p>El Proyecto de Documentación de Debian almacena sus páginas web y gran
+parte de sus manuales en el servidor CVS de Debian, en <b>cvs.debian.org</b>.
+
+<p>Únicamente los miembros del Proyecto de Documentacion de Debian pueden
+actualizar los ficheros del servidor. El resto sólo puede descargar estos
+ficheros.
+
+<p>Usted puede utilizar <a href="http://cvs.debian.org/ddp/manuals.sgml/?cvsroot=debian-doc">CVSWeb</a>
+para localizar cada fichero por separado y ver los cambios que se produzcan.
+
+<p>En caso de querer descargar un manual completo, es mejor utilizar
+directamente el servidor CVS. Para ello será necesario tener instalado el
+paquete <tt>cvs</tt> en su máquina.
+
+<h2>Conectándose anónimamente (solo-lectura) al servidor CVS</h2>
+
+<p> Para conectarse, introduzca la orden
+
+<p style="margin-left: 2em">
+  <code>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/debian-doc login</code>
+</p>
+
+<p>y pulse intro cuando se le pida una contraseña.
+
+<p>Una vez conectado, podrá utilizar las órdenes habituales de CVS
+(consulte las páginas <em>info</em> de CVS) para obtener copias de ficheros,
+pero no podrá hacer cambios y enviarlos.
+
+<p>Para bajar los ficheros la primera vez, cree un directorio para
+guardarlo todo e introdúzcase en él. Dentro de este directorio, se crearán dos
+nuevos directorios, <strong>CVS</strong> y <strong>ddp</strong>.
+
+<p>Utilice la siguiente orden para bajar todos los ficheros:
+
+<p style="margin-left: 2em">
+  <code>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/debian-doc -z3
+checkout ddp/manuals.sgml</code>
+</p>
+
+<p>Esto creará el arbol de directorios y lo llenará.
+
+<p>Para actualizar su copia local con los cambios que haya hecho otra gente,
+introdúzcase en el directorio <strong>ddp/manuals.sgml</strong> y ejecute la
+orden:
+
+<p style="margin-left: 2em">
+  <code>cvs -z3 update -d -P</code>
+</p>
+
+<p>Una vez haya terminado la sesión con CVS, puede utilizar la siguiente
+orden para cerrar la conexión con el servidor:
+
+<p style="margin-left: 2em">
+  <code>cvs logout</code>
+</p>
+
+<h2>Conectándose al servidor CVS, con privilegios de escritura</h2>
+
+<p>Antes de acceder al servidor CVS con este método debe tener
+permisos de escritura en el servidor. Por favor, lea cómo
+<a href="#obtaining">solicitar</a> permiso de actualización si no lo tiene.
+
+<p>Para conectarse, introduzca la siguiente orden:
+
+<p style="margin-left: 2em">
+  <code>cvs -d :pserver:userid@cvs.debian.org:/cvs/debian-doc login</code>
+</p>
+
+<p>e introduzca la contraseña que haya acordado con el coordinador de la
+documentación. En la orden anterior, reemplace <i>userid</i> por su
+identificador de usuario en el servidor de contraseñas del CVS. Este no
+tiene por que ser el mismo que su identificador de usuario en
+<b>cvs.debian.org</b>, si es que tiene uno.
+
+<p>Una vez conectado, podrá utilizar las órdenes habituales de CVS (consulte las páginas
+<em>info</em> de CVS) para obtener copias de ficheros, pero no podrá hacer cambios y
+enviarlos.
+
+<p>Para bajar los ficheros la primera vez, cree un directorio para
+guardarlo todo e introdúzcase en él. Dentro de este directorio, se crearán dos
+nuevos directorios, <strong>CVS</strong> y <strong>ddp</strong>.
+
+<p>Utilice la siguiente orden para bajar todos los ficheros:
+
+<p style="margin-left: 2em">
+  <code>cvs -d :pserver:userid@cvs.debian.org:/cvs/debian-doc -z3 checkout
+ddp/manuals.sgml</code>
+</p>
+
+<p>Esto creará el arbol de directorios y lo llenará.
+
+<p>Para actualizar su copia local con los cambios que haya hecho otra gente,
+introdúzcase en el directorio <strong>ddp/manuals.sgml</strong> y ejecute la
+orden:
+
+<p style="margin-left: 2em">
+  <code>cvs -z3 update -d -P</code>
+</p>
+
+<p>Una vez haya terminado la sesión con CVS, puede utilizar la siguiente
+orden para cerrar la conexión con el servidor:
+
+<p style="margin-left: 2em">
+  <code>cvs logout</code>
+</p>
+
+<h2>Conectándose al servidor CVS, con privilegios de actualización,
+utilizando SSH</h2>
+
+<p>Este método está disponible únicamente para los desrrolladores de Debian
+y es preferible a la utilización de pserver descrito arriba. Si usted acaba
+de convertirse en desarrollador, por favor póngase en contacto con el
+coordinador de la documentación para eliminar su cuenta de pserver.
+
+<p>Para conectarse con ssh, en primer lugar hay que decírselo a CVS con:
+
+<p style="margin-left: 2em">
+  <code>export CVS_RSH=ssh</code>
+</p>
+
+<p>A continuación cree un directorio para guardarlo todo e introdúzcase en
+él. Entonces introduzca la orden:
+
+<p style="margin-left: 2em">
+  <code>cvs -d :ext:<i>userid</i>@cvs.debian.org:/cvs/debian-doc -z3
+checkout <i>module</i></code>
+</p>
+
+<p>En esta orden, cambie <i>userid</i> por su identificador en el servidor CVS.
+Será el mismo que su identificador en <b>cvs.debian.org</b>, si tiene uno.
+Reemplace <i>module</i> por el nombre del módulo del que quiera hacer una
+copia, que normalmente será <tt>ddp/manuals.sgml</tt>. Entonces se le pedirá
+su contraseña. No confunda ésta con la de su propia máquina.
+
+<p>Se crearán dos directorios en el directorio actual, <strong>CVS</strong> y
+<strong>ddp</strong>. CVS creará de manera recursiva cualquier módulo
+(directorio) que usted haya pedido y lo rellenará con los ficheros
+correspondientes.
+
+<p>Ahora podrá utilizar las órdenes habituales de CVS (consulte las páginas
+<em>info</em> de CVS) para obtener copias y enviar ficheros.
+
+<p>Para actualizar su copia local con los cambios que haya hecho otra gente,
+introdúzcase en el directorio <strong>ddp/manuals.sgml</strong> y ejecute la
+orden:
+
+<p style="margin-left: 2em">
+  <code>cvs -z3 update -d -P</code>
+</p>
+
+<a name="obtaining">
+<h2>Consiguiendo privilegios de actualización.</h2>
+</a>
+
+<p>Cualquiera que desee participar en la redacción de los manuales puede
+conseguir privilegios de actualización.
+
+<p>Para conseguir privilegios de actualización, envie una solicitud al
+<a href="mailto:aph@debian.org">Coordinador de Documentación</a>, indicando
+el nombre de usuario que desea utilizar y proporcionando una contraseña
+cifrada, generada con
+
+<p style="margin-left: 2em">
+  <code>makepasswd --crypt --clear=<i>su_contraseña</i></code>
+</p>
+
+<p>(<tt>makepasswd</tt> es un paquete de Debian.)
+
+<p>Si usted no facilita ninguna contraseña, se le asignará una, pero ésta será
+difícil de memorizar. Para cambiar la contraseña, envie un correo al
+Coordinador, incluyendo su nueva contraseña cifrada.
+
+<hr>
+
+<h1>Organización de los ficheros</h1>
+
+<p>El siguiente gráfico muestra la estructura del árbol de directorios del
+CVS:
+
+<p><img src="dirtree.jpg" align="middle" alt="DDP CVS directory tree">
+
+<p>Por favor, observe que el sitio web DDP se encuentra en el módulo webml
+del repositorio CVS de Debian, para su integración con el resto de páginas
+web de Debian.
+
+<hr>
+
+<h1>Sistema de actualización automático</h1>
+
+<p>Las páginas del texto del manual se generan por una tarea de cron
+ejecutada en www.debian.org cada día a las 7:00, 15:00 y 23:00 (hora del
+Pacífico).
+
+<p>El script realiza un <kbd>cvs update -d -P</kbd>, y entonces un 
+<kbd>make -C manuals.sgml clean publish</kbd>, ambos en el directorio
+<code>ddp</code>.
+
+<p>El fichero makefile está configurado para reconstruir cada subdirectorio
+(que contenga documentación mantenida), y para instalar los ficheros de cada
+subdirectorio en el subdirectorio <code>doc/manuals/</code> del sitio web.
+Los archivos makefile de cada subdirectorio se obtienen a partir de 
+<code>ddp/manuals.sgml/standard.makefile</code>.
+
+# <!-- Created: Mon Jul  6 19:58:09 BST 1998 -->
