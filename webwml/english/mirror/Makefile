@@ -8,6 +8,10 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+
+webmirror.$(LANGUAGE).html: webmirror.wml $(TEMPLDIR)/template.wml \
+  $(ENGLISHSRCDIR)/mirror/webmirrors.data
+
 # there only needs to be one version of the following so
 # the non-english directories shouldn't try to install them
 ifeq "$(LANGUAGE)" "en"
