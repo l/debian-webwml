@@ -147,7 +147,7 @@ sub secondary_mirrors {
 		}
 		# then list the unofficial sites
 		foreach my $site (@{ $countries{$country} }) {
-			next if ($site =~ /^(gluck|raff|ftp\d?(?:\.wa)?\...)\.debian\.org$/);
+			next if ($site =~ /^(saens|gluck|raff|ftp\d?(?:\.wa)?\...)\.debian\.org$/);
 			next unless (defined $mirror{$site}{method}{'archive-ftp'} || defined $mirror{$site}{method}{'archive-http'});
 			$tmp = "%-$longest{site}s ";
 			printf $tmp, $site;
@@ -636,7 +636,7 @@ sub full_listing {
 		}
 		# then list the unofficial sites
 		foreach $site (@{ $countries{$country} }) {
-			next if ($site =~ /^(gluck|raff|ftp\d?(?:\.wa)?\...)\.debian\.org$/);
+			next if ($site =~ /^(saens|gluck|raff|ftp\d?(?:\.wa)?\...)\.debian\.org$/);
 			print "Site: $site";
 			if (exists $mirror{$site}{'aliases'}) {
 				print ", ".join(", ", @{ $mirror{$site}{'aliases'} });
