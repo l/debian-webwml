@@ -44,17 +44,26 @@ sub init_translators {
 			    'file'      => 0,
 			    'compress'  => 'none'
 			    },
-				'list' => {
-				    # this is a special name containing the default addressee
-				    'email'     => 'debian-l10n-portuguese@lists.debian.org',
-				    'missing'   => 1,
-				    'summary'   => 2,
-				    'logs'      => 0,
+				'Philipe Gaspar' => {
+				    'email' => 'kr0n@uol.com.br',
+				    'summary' => 3,
+				    'logs'      => 3,
 				    'diff'      => 0,
 				    'tdiff'     => 0,
 				    'file'      => 0,
 				    'compress'  => 'none'
-				    }
+				    },
+					'list' => {
+					    # this is a special name containing the default addressee
+					    'email'     => 'debian-l10n-portuguese@lists.debian.org',
+					    'missing'   => 1,
+					    'summary'   => 2,
+					    'logs'      => 0,
+					    'diff'      => 0,
+					    'tdiff'     => 0,
+					    'file'      => 0,
+					    'compress'  => 'none'
+					    }
     };
     return $translators;
 }
