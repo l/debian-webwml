@@ -67,6 +67,63 @@ l10n.wml           /
 team-po.wml       |
 team-templates.wml|
 
+=============
+= Data flow = (How does it works ?)
+============= 
+
+* How is the DB refreshed ?
+
+First, I have a crontab on my machine to refresh the DB. It automatically
+runs the following script each night.
+
+>>>>>>>>>>>>>>>>>> BEGIN OF SCRIPT
+#! /bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+L10N_HOME=/home/mquinson/src/DEBIAN/webwml/english/international/l10n
+if [ ! -x $L10N_HOME/scripts/transmonitor-check ] ; then
+  echo "Script does not exist";
+  exit 1;
+fi
+cd $L10N_HOME/scripts || exit 1
+for d in unstable ; do #stable testing unstable ; do
+  ./transmonitor-check \
+      ftp:/ftp.fr.debian.org/debian/dists/$d/main/source\
+      ftp:/ftp.fr.debian.org/debian/dists/$d/contrib/source\
+      ftp:/ftp.fr.debian.org/debian/dists/$d/non-free/source\
+      \
+      ftp:/ftp.fr.debian.org/debian-non-US/dists/$d/non-US/main/source\
+      ftp:/ftp.fr.debian.org/debian-non-US/dists/$d/non-US/contrib/source\
+      ftp:/ftp.fr.debian.org/debian-non-US/dists/$d/non-US/non-free/source\
+      \
+      \
+      --careful --db=../data/$d \
+      --po=../material/po/$d --templates=../material/templates/$d --menu=../material/menu\
+      $@ \
+      \
+      || exit 1; 
+done;
+cd ../data || exit 1;
+echo "COMMIT ! Cross the fingers !";
+#cvs commit -m "New DB (automatic commit)" unstable;
+cd ..
+for mat in po templates ; do
+  echo "Syncronise $mat";
+  rsync -R -r --stats --delete -e ssh material/$mat/unstable/ info:/home/mquinson/public_html/debian/;
+done;
+<<<<<<<<<<<<<<<< END OF SCRIPT
+
+As you can see, this script runs the transmonitor-check script with the good
+options, commit the new DB trought CVS, and rsync the material (po,
+templates and menu) to the machine on which I have a ~/public_html.
+
+
+* How are the pages rebuilded ?
+
+I changed the makefile in the CVS so that all pages depends on the DB. So,
+when I commit a new version, the pages are rebuilded at the next automatic
+build.
+
+
 ========================================
 = What to do to translate this pages ? =
 ========================================
