@@ -283,8 +283,8 @@ sub get_recent_list {
   @files = reverse @files if ($eng_dir =~ m,/events/\d{4}$,);
   closedir DIR;
 
-#  print STDERR "files: " . join " ", @files; print STDERR "\n";
-#  print STDERR "year=$year number=$number eng_dir=$eng_dir format=$format match=$match\n";
+#  warn "files: " . join " ", @files; warn "\n";
+#  warn "year=$year number=$number eng_dir=$eng_dir format=$format match=$match\n";
   $count = 0;
   $str .= grab_titles($year, $number, $eng_dir, $format, $match);
 
@@ -322,7 +322,7 @@ my $is_events = 0;
 foreach $file (@files) {
   ($trans_title = $file) =~ s/wml/title/;
   $count++;
-  open FILE, "$year/$file" or open FILE, "$year/$trans_title" or open FILE, "$eng_dir/$year/$file" or print STDERR "couldn't open $eng_dir/$year/$file: $!\n";
+  open FILE, "$year/$file" or open FILE, "$year/$trans_title" or open FILE, "$eng_dir/$year/$file" or warn "couldn't open $eng_dir/$year/$file: $!\n";
   $base = $1 if ($file =~ /($match).wml/);
   my $event = '';
   if ($WML_SRC_DIRNAME =~ /events/) { # shouldn't waste time if it's not events
@@ -338,7 +338,7 @@ foreach $file (@files) {
 </protect>
     seek FILE, 0, SEEK_SET;
   }
-#  print STDERR (stat FILE)[7]; print STDERR "\n";
+#  warn (stat FILE)[7]; warn "\n";
   $title = ''; $date = ''; $rdate = ''; $desc = ''; $status = ''; $where = '';
 <protect pass=2>
   foreach $line (<FILE>) {
@@ -354,7 +354,7 @@ foreach $file (@files) {
       last;
     }
     elsif ($desc) { # for security/
-      open DATAFILE, "$eng_dir/$year/$base.data" or print STDERR "couldn't open $eng_dir/$year/$base.data: $!\n";
+      open DATAFILE, "$eng_dir/$year/$base.data" or warn "couldn't open $eng_dir/$year/$base.data: $!\n";
 <protect pass=2>
       foreach $l (<DATAFILE>) {
            if ($l =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) { $title = qq/$1/; }
@@ -362,7 +362,7 @@ foreach $file (@files) {
       }
 </protect>
       close DATAFILE;
-#      print STDERR "title: $title rdate: $rdate\n";
+#      warn "title: $title rdate: $rdate\n";
       $rdate = newsdate($rdate);
       $title =~ s/(DSA-\d{3})-\d{1}/$1/; # strip off the revision in the DSA number
       if ($format =~ rdf) {
@@ -429,7 +429,7 @@ sub rdf_item_list {
   my ($year, $number, $eng_dir, $match) = @_;
   my $count = 0;
 
-  opendir DIR, "$eng_dir/$year" or warn "couldn't open dir $eng_dir/$year\n";
+  opendir DIR, "$eng_dir/$year";
   @files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
   @files = sort {$b cmp $a} @files;
   @files = reverse @files if ($eng_dir =~ /\/events\/\d{4}$/);
