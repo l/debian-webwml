@@ -616,7 +616,7 @@ $translations = {
 'devel/index' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '17/05/1999',
+	'since'			=> '13/08/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '17/05/1999',
 },
