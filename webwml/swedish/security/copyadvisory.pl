@@ -155,6 +155,7 @@ while (<SRC>)
 	s/\(sarge\)/(Sarge)/;
 	s/\(sid\)/(Sid)/;
 	s/Refer to Debian (<.*>)?bug #([0-9]+)</Se Debians $1felrapport $2</;
+	s/of the Debian Security Audit Project/från Debians säkerhetsgranskningsprojekt/;
 
 	print DST $_;
 }
