@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 
 open(TRANS, 'cd ../../.. && ./check_trans.pl -v french 2>&1 |');
-print "\$automatic = {\n";
+print "\$translations = {\n";
 
 $line = <TRANS>;
 while (chop($line)) {
@@ -11,10 +11,14 @@ while (chop($line)) {
         };
         ($doc, $rev) = ($1, $2);
         $doc =~ s/,$//;
-        $doc =~ s/\.wml$//;
+        $doc =~ s/\.wml$// || do {
+                $line = <TRANS> || last;
+                redo;
+        };
         $doc =~ s#^french/##;
         print "'$doc' => {\n";
-        print "\t'original_revision' => '$rev',\n";
+        print "\t'type' => 'Web',\n";
+        print "\t'revision' => '$rev',\n";
         $status = 1;
 
         while ($line = <TRANS> and $line !~ m/Checking/) {
