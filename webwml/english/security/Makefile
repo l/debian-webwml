@@ -21,6 +21,21 @@ faq.$(LANGUAGE).html: faq.wml \
   $(ENGLISHSRCDIR)/security/faq.wml \
   $(ENGLISHSRCDIR)/security/faq.inc $(GETTEXTDEP)
 
+# Make-ref-table does not (yet) support i18n
+ifeq "$(LANGUAGE)" "en"
+crossreferences.$(LANGUAGE).html: $(TEMPLDIR)/template.wml $(TEMPLDIR)/securityreferences.wml crossreferences.wml
+	$(WML) $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
+		$(ENGLISHDIR)/security/crossreferences.wml
+
+crossreferences.wml: make-ref-table.pl \
+	$(wildcard $(ENGLISHSRCDIR)/security/*/*.data) 
+	perl make-ref-table.pl -a -p >crossreferences.wml	
+
+all:: crossreferences.$(LANGUAGE).html
+intall:: $(HTMLDIR)/crossreferences.$(LANGUAGE).html
+endif
+
+
 ifndef SUBLANG
 DSARDF     := dsa.$(LANGUAGE).rdf
 DSALONGRDF := dsa-long.$(LANGUAGE).rdf
@@ -83,7 +98,7 @@ endif
 
 all:: $(DSARDF) $(DSALONGRDF)
 
-install:: $(DESTDSARDF) $(DESTDSALONGRDF)
+install:: $(DESTDSARDF) $(DESTDSALONGRDF) 
 
 $(DESTDSARDF): $(HTMLDIR)/%: %
 	install -m 664 -p $< $(HTMLDIR)

@@ -6,48 +6,12 @@
 #use wml::debian::languages
 #use wml::debian::ctime
 #use wml::debian::security_tags
+#use wml::debian::securityreferences
 
 <define-tag vulnerability>
 	<ifeq "<isvulnerable/>" "yes" "<font color="#FF0000"><yes></font>">
 	<ifeq "<isvulnerable/>" "no" "<font color="#00FF00"><no></font>">
 </define-tag>
-
-<perl>
-sub security_references {
- 	my $refstr = shift(@_);
-	my $str = "";
-	my $bid = "";
-	my $cve = "";
-	foreach $ref (split(' ',$refstr)) { 
-		if ( $ref =~ /BID(\d+)/i ) {
-			my $id = $1;
-			$bid .= ", " if $bid ne "";
-			$bid .= "<a href=\"http://online.securityfocus.com/bid/".$id."\"><bugtraqid> ".$id."</a>"; 
-		}
-		if ( $ref =~ /((CVE|CAN)-[\d-]+)/i ) {
-			my $id = $1;
-			$cve .= ", " if $cve ne "";
-			$cve .= "<a href=\"http://cve.mitre.org/cgi-bin/cvename.cgi?name=".$id."\">".$id."</a>";
-		}
-		if ( $ref =~ /(CA-[\d-]+)/i ) {
-			my $id = $1;
-			$cert .= ", " if $cert ne "";
-			$cert .= "<a href=\"http://www.cert.org/advisories/".$id.".html\">".$id."</a>";
-		}
-		if ( $ref =~ /VU#(\d+)/i ) {
-			my $id = $1;
-			$cert .= ", " if $cert ne "";
-			$cert .= "<a href=\"http://www.kb.cert.org/vuls/id/".$id."\">VU#".$id."</a>";
-		}
-
-	}
-	$str .= "<bugtraq> $bid.<br>"  if $bid ne "";
-	$str .= "<cve> $cve.<br>"  if $cve ne "";
-	$str .= "<cert> $cert.<br>"  if $cert ne "";
-	$str = "<nosecref>" if $str eq "";
-	return $str;
-}
-</perl>
 
 <define-tag secreferences>
   <:= security_references("<secrefs>") :>
