@@ -13,30 +13,37 @@ include $(WMLBASE)/Make.lang
 include pics.conf
 
 debbar.pl := $(ENGLISHDIR)/Pics/debbar.pl
+debbar := $(debbar.pl)
 ifneq "$(FONTFACE)" ""
-debbar.pl += -fontface $(FONTFACE)
+debbar += -fontface $(FONTFACE)
 endif
 ifneq "$(FONTSIZE)" ""
-debbar.pl += -fontsize $(FONTSIZE)
+debbar += -fontsize $(FONTSIZE)
 endif
 ifneq "$(FONTTYPE)" ""
-debbar.pl += -fonttype $(FONTTYPE)
+debbar += -fonttype $(FONTTYPE)
+endif
+ifneq "$(FONTREGISTRY)" ""
+debbar += -fontregistry $(FONTREGISTRY)
+endif
+ifneq "$(FONTENCODING)" ""
+debbar += -fontencoding $(FONTENCODING)
 endif
 
 about.$(LANGUAGE).gif: $(debbar.pl)
-	$(debbar.pl) -words $(ABOUT_TEXT) -o $@
+	$(debbar) -words $(ABOUT_TEXT) -o $@
 devel.$(LANGUAGE).gif: $(debbar.pl)
-	$(debbar.pl) -words $(DEVEL_TEXT) -o $@
+	$(debbar) -words $(DEVEL_TEXT) -o $@
 distrib.$(LANGUAGE).gif: $(debbar.pl)
-	$(debbar.pl) -words $(DISTRIB_TEXT) -o $@
+	$(debbar) -words $(DISTRIB_TEXT) -o $@
 news.$(LANGUAGE).gif: $(debbar.pl)
-	$(debbar.pl) -words $(NEWS_TEXT) -o $@
+	$(debbar) -words $(NEWS_TEXT) -o $@
 search.$(LANGUAGE).gif: $(debbar.pl)
-	$(debbar.pl) -words $(SEARCH_TEXT) -o $@
+	$(debbar) -words $(SEARCH_TEXT) -o $@
 sitemap.$(LANGUAGE).gif: $(debbar.pl)
-	$(debbar.pl) -words $(SITEMAP_TEXT) -o $@
+	$(debbar) -words $(SITEMAP_TEXT) -o $@
 support.$(LANGUAGE).gif: $(debbar.pl)
-	$(debbar.pl) -words $(SUPPORT_TEXT) -o $@
+	$(debbar) -words $(SUPPORT_TEXT) -o $@
 
 pics: about.$(LANGUAGE).gif devel.$(LANGUAGE).gif distrib.$(LANGUAGE).gif \
   news.$(LANGUAGE).gif search.$(LANGUAGE).gif sitemap.$(LANGUAGE).gif \
