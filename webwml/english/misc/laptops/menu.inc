@@ -13,7 +13,7 @@
    [EO:Debian for Laptops:]
    [ES:Debian para portátiles:]
    [FI:Debian for Laptops:]
-   [FR:Debian for Laptops:]
+   [FR:Debian pour portables:]
    [HR:Debian for Laptops:]
    [HU:Debian for Laptops:]
    [IT:Debian per Laptops:]

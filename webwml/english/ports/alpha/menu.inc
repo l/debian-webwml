@@ -13,7 +13,7 @@
    [EO:Debian for Alpha:]
    [ES:Debian para Alpha:]
    [FI:Debian for Alpha:]
-   [FR:Debian for Alpha:]
+   [FR:Debian pour Alpha:]
    [HR:Debian for Alpha:]
    [HU:Debian for Alpha:]
    [IT:Debian per Alpha:]

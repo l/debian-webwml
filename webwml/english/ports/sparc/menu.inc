@@ -13,7 +13,7 @@
    [EO:Debian for Sparc:]
    [ES:Debian para Sparc:]
    [FI:Debian for Sparc:]
-   [FR:Debian for Sparc:]
+   [FR:Debian pour Sparc:]
    [HR:Debian for Sparc:]
    [HU:Debian for Sparc:]
    [IT:Debian per Sparc:]

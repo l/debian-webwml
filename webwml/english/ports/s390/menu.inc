@@ -13,7 +13,7 @@
    [EO:Debian for S/390:]
    [ES:Debian para S/390:]
    [FI:Debian for S/390:]
-   [FR:Debian for S/390:]
+   [FR:Debian pour S/390:]
    [HR:Debian for S/390:]
    [HU:Debian for S/390:]
    [IT:Debian per S/390:]

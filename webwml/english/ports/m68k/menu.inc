@@ -13,7 +13,7 @@
    [EO:Debian for Motorola 680x0:]
    [ES:Debian para Motorola 680x0:]
    [FI:Debian for Motorola 680x0:]
-   [FR:Debian for Motorola 680x0:]
+   [FR:Debian pour Motorola 680x0:]
    [HR:Debian for Motorola 680x0:]
    [HU:Debian for Motorola 680x0:]
    [IT:Debian per Motorola 680x0:]

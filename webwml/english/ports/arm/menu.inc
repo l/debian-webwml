@@ -13,7 +13,7 @@
    [EO:Debian for ARM:]
    [ES:Debian para ARM:]
    [FI:Debian for ARM:]
-   [FR:Debian for ARM:]
+   [FR:Debian pour ARM:]
    [HR:Debian for ARM:]
    [HU:Debian for ARM:]
    [IT:Debian per ARM:]
