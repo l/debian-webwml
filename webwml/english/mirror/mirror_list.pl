@@ -597,8 +597,8 @@ sub full_listing {
 		foreach my $country (sort keys %countries) {
 			(my $XY = $country) =~ s/^([[:upper:]]+) .+$/$1/;
 			(my $con = $country) =~ s/^[[:upper:]]+ (.+)$/$1/;
-			print " <a href=\"#$XY\">$con</a>";
-			print "<br>" unless ($counter++ % 8);
+			print " [<a href=\"#$XY\">$con</a>]";
+			print "<br>" unless ($counter++ % 6);
 	        }
 		print "\n<hr noshade size=\"1\">\n";
 	}
