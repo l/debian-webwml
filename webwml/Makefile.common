@@ -30,7 +30,7 @@ HTMLDESTFILES = $(sort $(foreach i,$(SUBLANG),\
 endif
 
 OTHERFILES := $(wildcard *.ps.gz *.eps *.pdf *.css)
-OTHERFILES += $(wildcard *.jpg *.gif *.png *.fig *.xcf.gz *.ppm)
+OTHERFILES += $(wildcard *.jpg *.jpeg *.gif *.png *.fig *.xcf.gz *.ppm)
 OTHERDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(OTHERFILES))
 
 existing-SUBS := $(shell for dir in $(wildcard $(SUBS)) ''; do test -d $$dir && echo $$dir; done)
@@ -77,16 +77,22 @@ endif
 
 # the rule for every wml file
 ifndef NOGENERICDEP
+ifneq "$(findstring /CD/images/,$(CURDIR))" ""
 %.$(LANGUAGE).html : %.wml $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml $(HTMLDEP)
 	$(WML) $(<F)
+else
+%.$(LANGUAGE).html : %.wml $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
+  $(TEMPLDIR)/cdimage.wml $(HTMLDEP)
+	$(WML) $(<F)
+endif
 ifeq "$(LANGUAGE)" "en"
 ifeq "$(findstring /international/,$(CURDIR)/)" ""
-	$(WMLBASE)/../touch_translations.pl $(CURDIR)/$(<F) $(LANGUAGE)
+	-$(WMLBASE)/../touch_translations.pl $(CURDIR)/$(<F) $(LANGUAGE)
 endif
 endif
 ifneq "$(findstring /international/,$(CURDIR)/)" ""
-	$(WMLBASE)/../touch_translations.pl $(CURDIR)/$(<F) $(LANGUAGE)
+	-$(WMLBASE)/../touch_translations.pl $(CURDIR)/$(<F) $(LANGUAGE)
 endif
 endif
 
