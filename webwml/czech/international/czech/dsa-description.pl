@@ -26,6 +26,12 @@ s{<define-tag description>([^<]*)unsanitised input([^<]*)</define-tag>}
 s{<define-tag description>([^<]*)buffer overflows([^<]*)</define-tag>}
 {<define-tag description>${1}pøeteèení bufferu${2}</define-tag>}g;
 
+s{<define-tag description>([^<]*)buffer overflow([^<]*)</define-tag>}
+{<define-tag description>${1}pøeteèení bufferu${2}</define-tag>}g;
+
+s{<define-tag description>([^<]*)insecure temporary files([^<]*)</define-tag>}
+{<define-tag description>${1}nespolehlivé doèasné soubory${2}</define-tag>}g;
+
 s{<define-tag description>([^<]*)insecure temporary file([^<]*)</define-tag>}
 {<define-tag description>${1}nespolehlivý doèasný soubor${2}</define-tag>}g;
 
@@ -57,12 +63,27 @@ s{A vulnerability has been discovered in}
 s{discoverd multiple vulnerabilities in}
 {objevil mnohonásobné zranitelnosti v}g;
 
+s{An (\w+) security researcher}
+{Bezpeènostní výzkumný pracovník ${1}}g;
+
+s{The Common Vulnerabilities and Exposures project}
+{Projekt Common Vulnerabilities and Exposures}g;
+
+s{identifies the following problems}
+{zjistil následující problémy}g;
+
 #
 # More info about programs
 #
 
 s{a picture viewer for X11 with a thumbnail-based selector}
 {programu pro prohlí¾ení obrázkù pro X11 s výbìrem z miniatur}g;
+
+s{the portable document format \(PDF\) suite}
+{sestavì portable document format (PDF)}g;
+
+s{the popular scripting language}
+{populárním skriptovacím jazyce}g;
 
 #
 # remote exploitation
@@ -99,6 +120,9 @@ s{<p>We recommend that you upgrade your (\w+) package immediately.</p>}
 
 s{<p>We recommend that you upgrade your (\w+) package.</p>}
 {<p>Doporuèujeme vám aktualizovat vá¹ balíèek ${1}.</p>}g;
+
+s{<p>We recommend that you upgrade your (\w+) packages.</p>}
+{<p>Doporuèujeme vám aktualizovat va¹e ${1} balíèky.</p>}g;
 
 #
 # Cleaning
