@@ -98,7 +98,7 @@ sub package_index_walker {
 	}
 
 
-	$str = "<dt><a href=\"$fl/$sl/$name\">".
+	$str = "<dt><a href=\"$name\">".
 	    "$name</a> $v_str";
 	$txt_str = "$name $v_str";
 	if ( $archive && ( $archive ne 'main' ) ) {
