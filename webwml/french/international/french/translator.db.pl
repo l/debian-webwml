@@ -49,6 +49,15 @@ sub init_translators {
                         file        => 3,
                         compress    => 'none'
                 },
+		'Frédéric Bothamy' => {
+                        email       => 'fbothamy@mail.dotcom.fr',
+                        summary     => 1,
+                        logs        => 0,
+                        diff        => 1,
+                        tdiff       => 1,
+                        file        => 1,
+                        compress    => 'none'
+                },
                 'Norbert Bottlaender-Prier' => {
                         email       => 'norbert@globenet.org',
                         summary     => 1,
