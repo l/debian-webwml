@@ -1,29 +1,44 @@
 #use wml::debian::template title="Debian ``testing'' distribution" BARETITLE=true
 
 <p>For basic, user-oriented information about the testing distribution,
-please see <a href="$(DOC)/FAQ/ch-ftparchives#s-testing">the FAQ</a>.</p>
+please see <a href="$(DOC)/FAQ/ch-ftparchives#s-testing">the Debian FAQ</a>.</p>
 
 <p>This page primarily covers the aspects of "testing" important to Debian
 developers.</p>
 
-<p>The documentation includes:
+<p>The "testing" distribution is an automatically generated distribution.
+It is generated from the "unstable" distribution by a set of scripts which
+attempt to move over packages which are reasonably likely to lack important
+bugs. They do so in a way that ensures that dependencies of other packages
+in testing are always satisfiable.</p>
 
-<ul>
-  <li>Jules Bean's <a href="http://people.debian.org/~jules/testingfaq.html">testing FAQ</a>
-      which explains some of the cryptic information here.
-      <br>
-      There was a <a href="http://lists.debian.org/debian-devel/2001/debian-devel-200112/msg00610.html">thread
-      on -devel</a> about the FAQ which has some more information that at
-      the time of writing hasn't been incorporated properly.
-  </li>
-  <li>An older
-      <a href="http://lists.debian.org/debian-devel-0008/msg00906.html">explanation
-      email</a>, which is outdated since James implemented the package pool,
-      but you might like to read it anyway.
-  </li>
-</ul>
+<p>A (particular version of a) package will move into testing when it
+satisfies all of the following criteria:</p>
 
-<p>The update script creates two output files:
+<ol>
+  <li>It must have been in unstable for 10, 5 or 2 days, depending on the
+  urgency of the upload;</li>
+
+  <li>It must be compiled on (at least) every architecture which the
+  corresponding version in "testing" was compiled on;</li>
+
+  <li>It must have fewer release-critical bugs than, or the same number as,
+  the version currently in "testing";</li>
+
+  <li>All of its dependencies must <em>either</em> be satisfiable by
+  packages already in "testing", <em>or</em> be satisfiable by the group
+  of packages which are going to be installed at the same time;</li>
+
+  <li>The operation of installing the package into "testing" must not break
+  any packages currently in "testing". (<a href="#faq">See below</a> for
+  more information.)</li>
+</ol>
+
+<p>A package which satisfies the first four of the above is said to be a
+<q>Valid Candidate</q>.</p>
+
+<p>The update script shows when each package might move from "unstable" into
+"testing". The output is twofold:</p>
 
 <ul>
   <li>The <a href="http://ftp-master.debian.org/testing/update_excuses.html">\
@@ -35,6 +50,62 @@ developers.</p>
       [<a href="http://ftp-master.debian.org/testing/update_output.txt.gz">gzipped</a>]
   </li>
 </ul>
+
+<h2><a name="faq">Frequently Asked/Answered Questions</a></h2>
+
+<h3><q>How could installing a package into "testing" possibly break other
+packages?</q></h3>
+
+<p>The structure of the distribution archives is such that they can only
+contain one version of a package; a package is defined by its name. So, when
+the source package <tt>acmefoo</tt> is installed into "testing", along with
+its binary packages <tt>acme-foo-bin</tt>, <tt>acme-bar-bin</tt>,
+<tt>libacme-foo1</tt> and <tt>libacme-foo-dev</tt>, the old version will be
+removed.</p>
+
+<p>However, the old version may have provided a binary package with an old
+soname of a library, such as <tt>libacme-foo0</tt>. Removing the old
+<tt>acmefoo</tt> will remove <tt>libacme-foo0</tt>, which will break any
+packages which depend on it.</p>
+
+<p>Evidently, this mainly affects packages which provide changing sets of
+binary packages in different versions (in turn, mainly libraries). However,
+it will also affect packages upon which versioned dependencies have been
+declared of the ==, &lt;= or &lt;&lt; varieties.</p>
+
+<h3><q>I still don't understand! The "testing" scripts say that this
+package is a valid candidate, but it still hasn't gone into
+"testing".</q></h3>
+
+<p>This tends to happen when in some way, directly or indirectly, installing
+the package will break some other package.</p>
+
+<p>Remember to consider your package's dependencies. Suppose your package
+depends on libtool, or libltdl<var>X</var>. Your package won't go into
+"testing" until the right version of libtool is ready to go in with it.</p>
+
+<p>In turn, that won't happen until installing libtool doesn't break things
+already in "testing". In other words, until all other packages which depend
+on libltdl<var>Y</var> (where <var>Y</var> is the earlier version) have been
+recompiled, and all their release critical bugs are gone, etc, none of these
+packages will enter "testing".</p>
+
+<h3><q>Are there any exceptions? I'm sure <tt>acmefoo</tt> has just made
+it into "testing" despite not satisfying all of the requirements.</q></h3>
+
+<p>The release manager can override the above in two ways.
+They can decide that the breakage caused by the installation of a new
+library will make things better rather than worse, and let it go in along
+with its flotilla of dependents.</p>
+
+<p>They can also manually remove packages from "testing" that would be
+broken, so that new stuff can be installed.</p>
+
+<p><i>Jules Bean initially assembled the frequently asked questions and
+answers.</i></p>
+# Created: Sat Dec  8 12:44:29 GMT 2001
+
+<h2>Additional information</h2>
 
 <p>The scripts also detect bugs that can be described as
 horribly-severe-shouldn't-be-here-in-the-first-place.
@@ -55,6 +126,20 @@ that are out of date for
 <a href="http://ftp-master.debian.org/testing/testing_outdate.txt">testing</a>,
 <a href="http://ftp-master.debian.org/testing/stable_outdate.txt">stable</a> and
 <a href="http://ftp-master.debian.org/testing/unstable_outdate.txt">unstable</a>.</p>
+
+<p>Other documentation includes:</p>
+
+<ul>
+  <li>An older
+      <a href="http://lists.debian.org/debian-devel-0008/msg00906.html">explanation
+      email</a>, which is outdated since James implemented the package pool,
+      but you might like to read it anyway.
+  </li>
+  <li>There was a <a href="http://lists.debian.org/debian-devel/2001/debian-devel-200112/msg00610.html">thread
+      on -devel</a> about the FAQ which has some more information that at
+      the time of writing hasn't been incorporated properly.
+  </li>
+</ul>
 
 <p>The testing code is available via anonymous CVS from
 <a href="http://cvs.debian.org/testing/?cvsroot=dak">cvs.debian.org</a>.
