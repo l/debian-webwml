@@ -257,8 +257,8 @@ serve you best.
 END
 	print "<p>" if $html;
 	print "The authoritative copy of the following list can always be found at:\n";
-	print "<a href=\"http://ftp.debian.org/debian/README.mirrors.html\">" if $html;
-	print "                 http://ftp.debian.org/debian/README.mirrors.html";
+	print "<a href=\"http://www.debian.org/mirror/list\">" if $html;
+	print "                      http://www.debian.org/mirror/list";
 	print "</a>.<br>" if $html;
 	print "\n";
 
@@ -562,8 +562,8 @@ END
 	print <<END;
 
 <p>The authoritative copy of the following list can always be found at:
-<a href="http://www.debian.org/mirror/mirrors_full">
-http://www.debian.org/mirror/mirrors_full</a>.
+<a href="http://www.debian.org/mirror/list-full">
+http://www.debian.org/mirror/list-full</a>.
 <br>
 Everything else you want to know about Debian mirrors:
 <a href="http://www.debian.org/mirror/">http://www.debian.org/mirror/</a>.
@@ -700,12 +700,11 @@ END
 	print <<END;
 The authoritative copy of the following mirror list can always be found at:
 END
-	print "<a href=\"http://non-us.debian.org/debian-non-US/README.non-US\">" if $html;
+	print "<a href=\"http://www.debian.org/mirror/list-non-US\">" if $html;
 	print <<END;
-            http://non-us.debian.org/debian-non-US/README.non-US
+                  http://www.debian.org/mirror/list-non-US
 END
 	print "</a>" if $html;
-# to do: change to .html
 
 	print "<p>" if $html;
 	print <<END;
