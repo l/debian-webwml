@@ -36,7 +36,7 @@ templates_FILES = $(addprefix $(TEMPLDIR)/, \
   ddp.wml events_common.wml fixes_link.wml footer.wml languages.wml \
   links.tags.wml mirrors.wml news.wml recent_list.wml security_tags.wml \
   todoitem.wml translation-check.wml url.wml votebar.wml \
-  weeklynews/footer.wml)
+  weeklynews/footer.wml) $(ENGLISHDIR)/devel/website/tc.data
 
 POTFILES = $(addprefix $(ENGLISHDIR)/po/,$(addsuffix .pot,$(DOMAINS)))
 MOFILES = $(addsuffix .mo,$(DOMAINS))
@@ -51,37 +51,37 @@ all install:: $(POTFILES) install-mo
 endif
 
 $(ENGLISHDIR)/po/templates.pot: # $(templates_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl $(templates_FILES) > $@
+	$(ENGLISHDIR)/po/wmlxgettext.pl templates $(templates_FILES) > $@
 
 $(ENGLISHDIR)/po/bugs.pot: # $(bugs_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl $(bugs_FILES) > $@
+	$(ENGLISHDIR)/po/wmlxgettext.pl bugs $(bugs_FILES) > $@
 
 $(ENGLISHDIR)/po/countries.pot: # $(countries_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl $(countries_FILES) > $@
+	$(ENGLISHDIR)/po/wmlxgettext.pl countries $(countries_FILES) > $@
 
 $(ENGLISHDIR)/po/doc.pot: # $(doc_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl $(doc_FILES) > $@
+	$(ENGLISHDIR)/po/wmlxgettext.pl doc $(doc_FILES) > $@
 
 $(ENGLISHDIR)/po/l10n.pot: # $(l10n_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl $(l10n_FILES) > $@
+	$(ENGLISHDIR)/po/wmlxgettext.pl l10n $(l10n_FILES) > $@
 
 $(ENGLISHDIR)/po/langs.pot: # $(langs_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl $(langs_FILES) > $@
+	$(ENGLISHDIR)/po/wmlxgettext.pl langs $(langs_FILES) > $@
 
 $(ENGLISHDIR)/po/organization.pot: # $(organization_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl $(organization_FILES) > $@
+	$(ENGLISHDIR)/po/wmlxgettext.pl organization $(organization_FILES) > $@
 
 $(ENGLISHDIR)/po/ports.pot: # $(ports_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl $(ports_FILES) > $@
+	$(ENGLISHDIR)/po/wmlxgettext.pl ports $(ports_FILES) > $@
 
 $(ENGLISHDIR)/po/search.pot: # $(search_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl $(search_FILES) > $@
+	$(ENGLISHDIR)/po/wmlxgettext.pl search $(search_FILES) > $@
 
 $(ENGLISHDIR)/po/vendors.pot: # $(vendors_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl $(vendors_FILES) > $@
+	$(ENGLISHDIR)/po/wmlxgettext.pl vendors $(vendors_FILES) > $@
 
 $(ENGLISHDIR)/po/others.pot: # $(others_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl $(others_FILES) > $@
+	$(ENGLISHDIR)/po/wmlxgettext.pl others $(others_FILES) > $@
 
 %.mo: %.$(LANGUAGE).po $(ENGLISHDIR)/po/%.pot
 	msgmerge -q $*.$(LANGUAGE).po $(ENGLISHDIR)/po/$*.pot |\

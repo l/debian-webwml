@@ -8,6 +8,8 @@ use vars qw($opt_p);
 my $messages = {};
 my @msgids = ();
 
+my $domain = shift @ARGV;
+
 sub escape {
         my $text = shift;
         $text =~ s/\\/\\\\/g;
@@ -42,10 +44,15 @@ sub processFile {
         #  Remove comments if they contain <gettext> or </gettext>
         $text =~ s/^[ \t]*#.*<\/?gettext\b//mg;
         $lineno = 1;
-        while ($text =~ m{\G(.*?)(<gettext\b[^>]*>)(.*?)</gettext>}gs) {
-                $msgid = escape($3);
+        while ($text =~ m{\G(.*?)(<gettext\b(?:\s+domain="([^"]+)")?[^>]*>)(.*?)</gettext>}gs) { # " -- to fix vim syntax hilighting :)
+                $msgid = escape($4);
                 $lineno += countNewline ($1.$2);
-                $nextlineno = countNewline ($3);;
+                $nextlineno = countNewline ($4);;
+                my $dom = ($3) ? $3 : 'templates';
+                if ($domain ne $dom) {
+                   $lineno += $nextlineno;
+                   next;  # wrong domain
+                }
                 $comment = '';
                 if ($1 =~ m/(((^|\n)[ \t]*#.*)+)\n?[^\n]*$/) {
                         $comment = $1;
