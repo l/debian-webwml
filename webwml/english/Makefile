@@ -30,7 +30,8 @@ all: $(HTMLFILES) $(JPGDEST)
 include $(BASE)/Make.templ.inc
 
 # Do Not modify the following line
-$(HTMLDIR)/index.html.$(LANGUAGE): index.wml \
-          $(wildcard News/1998/1998*.wml) $(TEMPLDIR)/mainpage.wml \
-          $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
+$(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(TEMPLDIR)/mainpage.wml \
+		$(wildcard News/1998/1998*.wml) $(wildcard $(ENGLISHSRCDIR)/News/1998/1998*.wml) \
+		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
 	$(WML) index.wml
+
