@@ -1,7 +1,7 @@
 <!doctype debiandoc system [
 <!-- include version information so we don't have to hard code it
      within the document -->
-<!--entity % versiondata SYSTEM "version.ent"> %versiondata; -->
+<!--entity % versiondata SYSTEM "version.ent"> &versiondata; -->
 ]>
 <debiandoc>
   <!--
@@ -17,7 +17,7 @@
   Christoph Lameter contributed the "Web Standard"
   The debian-policy mailing list has taken responsibility for the
   contents of this document since September 1998, with the package
-  maintainers responsible for packaging adminstrivia only.
+  maintainers responsible for packaging administrivia only.
   -->
   
   <book>
@@ -36,15 +36,15 @@
 	<email>bweaver@debian.org</email>
       </author>
       <author>
-	<name>La liste de diffusion « Debian Policy »</name>
+	<name>La liste de diffusion « Debian Policy&nbsp;»</name>
 	<email>debian-policy@lists.debian.org</email>
       </author>
-      <version>version 3.2.1.1, 28 novembre 2000</version>
+      <version>version 3.5.0.0 du 17/02/2001</version>
 
       <abstract>
 	Ce manuel est la charte de la distribution Debian
-GNU-Linux. On y aborde la structure et le contenu d'une archive Debian,
-quelques questions sur la conception du système d'exploitation,
+GNU-Linux. Sont abordés la structure et le contenu d'une archive Debian,
+certaines questions sur la conception du système d'exploitation,
 ainsi que les exigences techniques que chaque paquet doit satisfaire afin
 d'être inclus dans la distribution. Le paquet «&nbsp;debian-policy&nbsp;» 
 quant à lui est maintenu par un groupe de responsables sans pouvoirs 
@@ -76,8 +76,8 @@ rédactionnels, dont voici la liste actuelle :
 	</copyrightsummary>
 	<p>
 	  Ce manuel est un logiciel libre ; il peut être redistribué 
-et/ou  modifié selon les termes de la «&nbsp;GNU General Public License&nbsp; », telle que publiée par la «&nbsp;Free Software Foundation&nbsp;» ; version 2 
-ou toute version suivante (au choix).
+et/ou  modifié selon les termes de la «&nbsp;GNU General Public License&nbsp;&nbsp;», telle que publiée par la «&nbsp;Free Software Foundation&nbsp;» ; version 2 
+ou toute version supérieure.
 	</p>
 
 	<p>
@@ -88,9 +88,9 @@ Consultez la «&nbsp;GNU General Public License&nbsp;» pour plus de détails.
 	</p>
 
 	<p>
-	  Une copie de la « GNU General Public License » est disponible à
+Une copie de la «&nbsp;GNU General Public License&nbsp;» est disponible à
 <tt>/usr/share/common-licences/GPL</tt> dans la distribution Debian GNU-Linux
-	  ou sur le World Wide Web à
+ou sur le World Wide Web à 
 <url id="http://www.gnu.org/copyleft/gpl.html" name="&urlname">.
 Vous pouvez également l'obtenir en écrivant à la
 Free Software Foundation, Inc., 59 Temple Place - Suite 330,
@@ -107,12 +107,46 @@ Boston, MA 02111-1307, USA.
 	<heading>Les objectifs de ce manuel</heading>
 	<p>
 	  Ce manuel est la charte de la distribution 
-Debian GNU-Linux. On y aborde la structure et le contenu d'une archive 
-Debian, quelques questions sur la conception du système d'exploitation,
+Debian GNU-Linux. Sont abordés la structure et le contenu d'une archive 
+Debian, certaines questions sur la conception du système d'exploitation,
 ainsi que les exigences techniques que chaque paquet doit satisfaire afin
 d'être inclus dans la distribution.
 	  </p>
 	
+<p>
+Ce manuel décrit aussi la politique debian pour ce qui concerne la création 
+des paquets. Ce n'est pas un cours sur la construction des paquets et il ne
+décrit pas complètement le comportement du système de gestion des paquets. 
+Plutôt, il essaye de définir l'interface à ce système que les développeurs 
+doivent connaître<footnote><p>
+D'une manière informelle, l'intégration de «&nbsp;matériel&nbsp;» se fait 
+selon les critères suivants :
+<taglist>
+<tag>Interfaces standards</tag>
+<item> <p>
+Le «&nbsp;matériel&nbsp;» présenté est une interface au système de gestion de 
+paquet dont l'utilisation est obligatoire ; un nombre significatif de paquets
+l'utilise et elle ne sera pas modifiée sans une étude sérieuse. Les
+responsables de paquet peuvent donc compter sur la stabilité de cette 
+interface et les auteurs du système de gestion des paquets doivent assurer
+la compatibilité avec les définitions de ces interfaces. (le format des 
+fichiers «&nbsp;control&nbsp;» et «&nbsp;changelog&nbsp;» est un exemple.)
+</p>
+               </item>
+               <tag>Convention choisie</tag>
+               <item>
+                 <p>
+Quand on a besoin, pour des raisons d'inter-opérabilité, de faire un choix
+parmi un certain nombre de possibilités techniquement valides. Le numéro
+de version est un exemple.
+</p></item></taglist>
+Veuillez noter que ces critères ne s'excluent pas mutuellement ; une convention
+choisie devient souvent une interface standard.
+	    </p>
+	  </footnote>.
+<p>
+Veuillez remarquer que les notes de ce manuel ne font pas partie de la Charte
+et sont purement instructives.</p>
 <p>
 Les mots <em>must</em>, <em>should</em>, <em>may</em> et les adjectifs
 <em>required</em>, <em>recommended</em> et <em>optional</em> servent à
@@ -120,16 +154,16 @@ distinguer la signification des diverses directives contenues dans cette
 charte. La distribution Debian ne considérera généralement pas comme
 acceptables les paquets qui ne se conforment pas aux directives dénotées par
 <em>must</em> (ou <em>required</em>)<footnote><p>
-En français, nous employons le verbe « devoir » et ses déclinaisons.
+En français, nous employons le verbe «&nbsp;devoir&nbsp;» et ses déclinaisons.
 </footnote>. Une non conformité à une directive
 dénotée par <em>should</em> (ou <em>recommended</em>) sera en général
-considérée comme un bogue, mais cela ne rendra pas nécessairement le
-paquet indistribuable<footnote><p>
+considérée comme un bogue, mais cela n'empêchera pas nécessairement la
+distribution du paquet.<footnote><p>
 En français, nous employons le futur de l'indicatif et jamais le verbe
-« devoir ».</footnote>.
- Les directives dénotées par <em>may</em> (ou
-<em>optional</em>) sont véritablement facultatives et sont laissées à
-l'appréciation du responsable de paquet.
+«&nbsp;devoir&nbsp;».</footnote>.
+Les directives dénotées par <em>may</em> (ou <em>optional</em>) sont 
+véritablement facultatives et sont laissées à l'appréciation du responsable 
+de paquet.
 </p>
 <p>
 Ce classement est en gros équivalent à celui des bogues : <em>important</em>
@@ -138,19 +172,7 @@ Ce classement est en gros équivalent à celui des bogues : <em>important</em>
 <em>recommended</em>) et <em>wishlist</em> (pour les éléments 
 <em>optional</em>)<footnote><p>voir aussi le RFC 2119.</footnote>.
 </p>
-<p>
-	  Ce manuel <em>ne décrit pas</em> les mécanismes techniques
-liés à la création, l'installation ou la suppression des paquets. On peut
-touver ces informations dans le <em>Manuel des paquets Debian</em> et dans 
-le <em>Manuel d'administration système Debian</em>. Veuillez noter que les
-notes en bas des pages de cette charte ne font pas partie de la politique
-Debian : elles sont simplement instructives.
-	  </p>
-	<p>
-	  Ce document suppose une certaine familiarité avec ces deux autres
-manuels. Malheureusement, le <em>Manuel d'administration système Debian</em>
-n'existe pas encore.
-	</p>
+
 	<p>
 	  La plupart des informations de ce manuel seront également utiles
 pour la création de paquets qu'on distribuera d'une autre façon
@@ -178,7 +200,7 @@ paquet <tt>debian-policy</tt>.
 	<heading>Avis et critiques</heading>
 
 	<p>
-	  Comme le système Debian GNU-Linux est en constante évolution, ce
+	  Le système Debian GNU-Linux est en constante évolution et ce
 manuel change avec le temps.
 	</p>
 	<p>
@@ -194,11 +216,19 @@ ou envoyer un rapport de bogue concernant le paquet <tt>debian-policy</tt>.
 <sect>
 <heading>À propos de la traduction</heading>
 <p>
-Serge Stinckwich et David Rocher ont initié cette traduction et ils furent 
-rejoints par Christophe Le Bars, Benjamin Drieu, Laurent Pelecq, Christophe 
-Mertz, Olivier Ripoll, Georges Mariano, Hugues Marilleau,
-Michel Court et les relecteurs de la liste de diffusion debian-l10n-french,
-<email>debian-l10n-french@lists.debian.org</email>.
+Depuis la version 3.5.0.0, la charte Debian regroupe les textes 
+<em>Debian Policy Manual</em> et <em>Debian Packaging Manual</em>.</p>
+<p>
+Serge Stinckwich et David Rocher ont initié la traduction du 
+<em>Debian Policy Manual</em> et ils furent rejoints par Christophe Le Bars, 
+Benjamin Drieu, Laurent Pelecq, Christophe Mertz, Olivier Ripoll, 
+Georges Mariano, Hugues Marilleau, Michel Court et les relecteurs de la liste 
+de diffusion <em>debian-l10n-french</em>, 
+<email>debian-l10n-french@lists.debian.org</email>.</p>
+<p>
+David Curé et Christian Jacolot ont traduit la version première du 
+<em>Debian Packaging Manual</em>.</p>
+<p>
 Si vous voulez faire part de vos commentaires, suggestions ou critiques,
 vous pouvez envoyer un mél à Philippe Batailler <email>
 pbatailler@teaser.fr</email>.
@@ -209,9 +239,9 @@ pbatailler@teaser.fr</email>.
       <heading>L'archive Debian</heading>
       <p>
 	Le système Debian GNU/Linux est maintenu et distribué sous la forme
-d'un ensemble de <em>paquets</em>. Comme ils sont très nombreux
-(plus de 2600), ils sont répartis en plusieurs <em>sections</em>
-et <em>priorités</em> de manière à simplifier leur traitement.
+d'un ensemble de <em>paquets</em>. Très nombreux (plus de 5000), ces paquets
+sont répartis en plusieurs <em>sections</em> et <em>priorités</em> de manière 
+à simplifier leur traitement.
       </p>
       <p>
 	Le projet Debian s'efforce de construire un système
@@ -248,7 +278,7 @@ logiciels ;</p>
 	    </item>
 	    <item>
 		<p>nous voulons faciliter la production des cédéroms
- de notre système sans craindre la violation de licences, ou de restrictions
+ de notre système sans craindre de violation de licences, ou de restrictions
  d'importation/exportation ou de toutes autres lois.
 		</p>
 	    </item>
@@ -268,7 +298,7 @@ définition du logiciel «&nbsp;libre&nbsp;».
 		La licence d'un composant Debian ne doit pas empêcher quiconque
  de vendre ou de donner ce logiciel en tant qu'élément d'une distribution
  logicielle qui regroupe des programmes de différentes sources. La licence
- ne doit pas demander le paiement de droits ou autres redevances
+ ne doit pas demander le paiement de droits ou de redevances
  pour une telle vente.
 	      </p>
 	    </item>
@@ -367,81 +397,108 @@ comme <em>libres</em>.
 	</p>
       </sect1>
       <sect1>
-	<heading>La section « main »</heading>
+	<heading>La section «&nbsp;main&nbsp;»</heading>
 	<p>
-	  Tous les paquets dans « main » doivent se conformer aux <em>DFSG</em>
+	  Tous les paquets dans «&nbsp;main&nbsp;» doivent se conformer aux <em>DFSG</em>
 («&nbsp;Debian Free Software Guidelines&nbsp;» -- Les directives Debian pour 
 le logiciel libre).
 	</p>
 
 	<p>
-	  De plus, les paquets dans « main »
+	  De plus, les paquets dans «&nbsp;main&nbsp;»
 	  <list compact="compact">
 	    <item>
 	      <p>
 ne doivent pas demander un paquet extérieur à «&nbsp;main&nbsp;»
 pour leur compilation ou leur exécution (ainsi les paquets ne doivent pas 
-déclarer de relation « Depends » ou « Recommends » avec un paquet 
-qui n'est pas contenu dans « main ») ;
+déclarer de relation «&nbsp;Depends&nbsp;», «&nbsp;Recommends&nbsp;» ou «&nbsp;Build-Depends&nbsp;» avec 
+un paquet qui n'est pas contenu dans «&nbsp;main&nbsp;») ;
 	      </p>
 	    </item>
 	    <item>
 	      <p>
-		ne seront pas si bogués que nous refusions de les 
+		ne doivent pas être tellement bogués que nous refusions de les 
 soutenir ;
 	      </p>
 	    </item>
 	    <item>
 	      <p>
-		se conformeront à toutes les règles énoncées 
+		doivent se conformer à toutes les règles énoncées 
 dans ce manuel.
 	      </p>
 	    </item>
 	  </list>
 	</p>
-      </sect1>
+<p>
+De la même manière, les paquets dans «&nbsp;non-US/main&nbsp;»
+<list compact="compact">
+
+<item>
+<p>
+ne doivent pas demander un paquet extérieur à «&nbsp;main «&nbsp;ou à 
+«&nbsp;non-US/main&nbsp;» pour leur compilation ou exécution ;
+		</p>
+	      </item>
+<item>
+<p>
+ne doivent pas être tellement bogués que nous refusions de les soutenir ;
+              </p>
+            </item>
+            <item>
+              <p>
+<item>
+              <p>
+doivent se conformer à toutes les règles énoncées dans ce manuel.
+              </p>
+            </item>
+          </list>
+        </p>
+	</sect1>
+
       <sect1>
-	<heading>La section « contrib »</heading>
+	<heading>La section «&nbsp;contrib&nbsp;»</heading>
 	<p>
-	 Tous les paquets dans « contrib » doivent se conformer aux « DFSG ».
+	 Tous les paquets dans «&nbsp;contrib&nbsp;»  et  «&nbsp;non-US/contrib&nbsp;» doivent 
+se conformer aux «&nbsp;DFSG&nbsp;».
 	</p>
 
 	<p>
-	  Voici des exemples de paquets qu'on peut inclure dans la section
-« contrib » :
+	  Voici des exemples de paquets qu'on peut inclure dans les sections
+«&nbsp;contrib&nbsp;» ou «&nbsp;non-US/contrib&nbsp;» :
 	  <list compact="compact">
 	    <item>
 	      <p>
 		des paquets libres qui demandent pour leur compilation ou 
-leur exécution des paquets appartenant aux sections « contrib », « non-free » 
-ou « non-US », ou des paquets qui ne sont pas contenus dans notre archive ;
+leur exécution des paquets appartenant aux sections «&nbsp;contrib&nbsp;», «&nbsp;non-free&nbsp;» 
+ou des paquets qui ne sont pas contenus dans notre archive ;
 	      </p>
 	    </item>
 	    <item>
 	      <p>
-des paquets « wrapper », et d'autres accessoires libres pour des programmes 
-non libres.
+des paquets «&nbsp;wrapper&nbsp;», et des accessoires libres pour des 
+programmes non libres.
 	      </p>
 	    </item>
 	  </list>
 	</p>
       </sect1>
       <sect1>
-	<heading>La section « non-free »</heading>
+	<heading>Les sections «&nbsp;non-free&nbsp;» et «&nbsp;non-US/non-free&nbsp;»</heading>
 	<p>
-	  La section « non-free » contient les paquets qui ne se conforment 
-pas aux «&nbsp;DFSG&nbsp;».
-		<p>
-	Tous les paquets de la section « non-free » doivent être distribuables
-électroniquement à travers les frontières internationales.
-	</p>
+On doit placer dans les sections «&nbsp;non-free&nbsp;» et «&nbsp;non-US/non-free&nbsp;» les 
+paquets	qui ne se conforment pas aux «&nbsp;DFSG&nbsp;», ou bien les paquets dont la 
+distribution est rendue problématique par des brevets ou des questions
+légales.
+	  </p>
       </sect1>
       <sect1>
-	<heading>Le serveur « non-us »</heading>
+	<heading>Les sections  «&nbsp;non-US&nbsp;»</heading>
 	<p>
 	  Certains programmes qui contiennent du code source utilisant
-la cryptographie doivent être déposés sur le serveur « non-us » à cause 
-des limitations US. à l'exportation.
+la cryptographie doivent être déposés sur le serveur «&nbsp;non-US&nbsp;» à cause 
+des limitations US à l'exportation. De tels programmes doivent être
+distribués dans les sections «&nbsp;non-US&nbsp;» appropriées : «&nbsp;non-US/main&nbsp;»,
+«&nbsp;non-US/contrib&nbsp;» ou «&nbsp;non-US/non-free&nbsp;».
 </p>
 	<p>
 	  Ceci ne s'applique qu'aux paquets qui contiennent du code source
@@ -456,8 +513,8 @@ s'il peut fonctionner sans le programme ou la bibliothèque cryptographique.
 	<p>
 Tous les paquets doivent être accompagnés d'une copie <em>verbatim</em>
 de leur copyright et de leur licence dans le fichier
-	  <tt>/usr/share/doc/&lt;package-name&gt;/copyright</tt> (voir <ref
-	  id="copyrightfile"> pour les détails).</p>
+	  <tt>/usr/share/doc/&lt;nom-de-paquet&gt;/copyright</tt> (voir <ref
+	  id="copyrightfile"> pour des précisions).</p>
 	<p>
 	  Nous nous réservons le droit d'empêcher l'inclusion de fichiers 
 dans nos archives si
@@ -488,7 +545,7 @@ du projet Debian.
 
 	<p>
 	  Les programmes dont les auteurs encouragent l'utilisateur à faire des
-dons conviennent très bien à la section « main », sauf si les auteurs
+dons conviennent très bien à la section «&nbsp;main&nbsp;», sauf si les auteurs
 affirment que ne pas faire de don est immoral, non-éthique, illégal 
 ou quelque chose de similaire ; dans ce cas, ces programmes 
 doivent être placés dans la section «&nbsp;non-free&nbsp;».
@@ -523,8 +580,8 @@ de diffusion <tt>debian-legal</tt>.
 	<p>
 	 Dans le doute, envoyez un courrier électronique à
 <email>debian-legal@lists.debian.org</email>. Soyez prêt à nous donner
-le copyright complet. Les logiciels couverts par la « GPL », les logiciels
-du domaine public et les copyrights de type « BSD » sont sûrs ; méfiez vous
+le copyright complet. Les logiciels couverts par la «&nbsp;GPL&nbsp;», les logiciels
+du domaine public et les copyrights de type «&nbsp;BSD&nbsp;» sont sûrs ; méfiez vous
 d'expressions comme «&nbsp;utilisation commerciale interdite&nbsp;»
 et «&nbsp;distribution limitée&nbsp;».
 </p>
@@ -607,7 +664,7 @@ et un sous-ensemble raisonnable de «&nbsp;TeX&nbsp;» et «&nbsp;LaTeX&nbsp;»
 	    <tag><tt>optional</tt></tag>
 	    <item>
 	      <p>		
-(En un sens, est optionnel ce qui n'est pas obligatoire, mais
+(En un sens, est facultatif ce qui n'est pas obligatoire, mais
 ici «&nbsp;optional&nbsp;» ne doit pas être compris ainsi.) Ce sont tous les
 logiciels qu'on pourrait raisonnablement vouloir installer quand on ne les
 connaît pas et qu'on a pas d'exigences particulières. Cela constitue un 
@@ -667,17 +724,17 @@ inclus dans le <em>fichier de contrôle</em> du paquet.
 	  <heading>Le responsable d'un paquet</heading>
 	    
 	  <p>
-	    Chaque paquet aura un seul responsable à un instant donné.
-Cette personne est responsable du fait que la licence du logiciel du
-paquet suit les règles de la distribution à laquelle il appartient.
+	    Chaque paquet doit avoir un responsable (quelqu'un ou 
+un groupe de personnes, qu'on peut joindre à une adresse électronique, telle
+que, par exemple, une liste de diffusion). Le responsable assure que la 
+licence du logiciel du paquet suit les règles de la distribution à laquelle 
+il appartient.
 </p>
 	  <p>
-Le responsable doit être indiqué dans le champ de
-contrôle <tt>Maintainer</tt> avec son nom correct et une adresse
-électronique valide. Quand une personne s'occupe de plusieurs paquets,
-elle essaiera d'éviter d'avoir différents noms ou adresses dans les champs 
-<tt>Maintainer</tt> des différents
-paquets.
+Le responsable doit être indiqué dans le champ <tt>Maintainer</tt> avec son 
+nom correct et une adresse électronique valide. Quand une personne s'occupe 
+de plusieurs paquets, elle essaiera d'éviter d'avoir différents noms ou 
+adresses dans les champs <tt>Maintainer</tt> des différents paquets.
 </p>
 	    
 	  <p>
@@ -703,9 +760,9 @@ pour décider d'installer ou non le paquet. La description ne reprendra pas
 simplement le baratin publicitaire du programme.
 Les instructions de configuration ou d'utilisation du paquet ne
 doivent pas en faire partie -- c'est le rôle des scripts d'installation,
-des pages de man, des fichiers infos, etc. -- et
-les notices de copyright et autres écrits administratifs non plus --
-c'est le rôle des fichiers de copyright.
+des pages de man, des fichiers infos, etc. -- non plus que les notices de 
+copyright et autres écrits administratifs  -- c'est le rôle des fichiers de 
+copyright.
 </p>
 	</sect1>
 	    
@@ -725,7 +782,7 @@ dynamiquement lié d'un paquet.
 	    
 	  <p>
 Il n'est pas nécessaire d'indiquer les dépendances d'un paquet envers
-des paquets marqués comme <tt>Essential</tt> (voir ci-dessous), et on ne doit 
+des paquets étiquetés <tt>Essential</tt> (voir ci-dessous), et on ne doit 
 pas le faire, à moins que ce ne soit une dépendance pour une version
 précise de tel paquet. 
 </p>
@@ -806,7 +863,7 @@ n'ait abouti à un consensus sur le sujet.
 	  <p>
 Certains paquets sont marqués <tt>essential</tt>. (Ils ont
 <tt>Essential: yes</tt> dans leur champ de contrôle.)
-Cet indicateur est utilisé pour les paquets qui sont <tt>indispensables</tt> à
+Cet indicateur est utilisé pour les paquets qui sont indispensables à
 un système.
 </p>
 	    
@@ -849,57 +906,22 @@ utiliser l'option <tt>--quiet</tt> de <prgn>install-info</prgn>.
 </p>
 	    
 	  <p>
-Les paquets essaieront de minimiser le nombre de questions
-posées et s'assureront que chaque question ne sera posée qu'une
-seule fois. Cela signifie que les paquets doivent
-essayer d'utiliser les fichiers de configuration partagés (comme
-<tt>/etc/papersize</tt> ou <tt>/etc/nntpserver</tt>),
-plutôt que de redemander, chacun, le même morceau d'information.
+Les scripts d'installation doivent détecter toute erreur qui se produit et
+doivent arrêter immédiatement l'installation en cours.
 </p>
 	    
-	  <p>
-Cela signifie aussi qu'une  mise à jour ne reposera pas les mêmes
-questions, sauf si l'utilisateur a utilisé <tt>dpkg --purge</tt> pour
-supprimer la configuration du paquet. Les réponses aux questions de
-configuration seront enregistrées dans un emplacement approprié
-de <tt>/etc</tt> afin que l'utilisateur puisse les modifier.
-De plus, la manière de faire ces modifications sera documentée.
-</p>
-	    
-	  <p>
-Si un paquet doit donner une information importante à l'utilisateur
-(comme «&nbsp;ne pas exécuter directement ce programme, vous devez d'abord
-modifier les fichiers de configuration suivants sinon votre système
-émettra des messages mal formatés&nbsp;»), il affichera ce message
-dans le script de post-installation (script <prgn>postinst</prgn>).
-Il demandera ensuite à l'utilisateur de taper sur la touche
-«&nbsp;retour-chariot&nbsp;» quand il a pris connaissance du message. Les 
-messages de copyright et les instructions d'utilisation ne sont pas considérés
-comme des messages vitaux. Ils doivent apparaître respectivement
-dans <tt>/usr/share/doc/<var>package</var>/copyright</tt> et dans la
-documentation en ligne, où tous les utilisateurs peuvent les consulter.
-</p>
-	    
-	  <p>
- Presque toujours, seul le script de post-installation doit poser les
-questions nécessaires ; et il doit empêcher, par une condition quelconque,
-qu'elles soient posées en cas d'échec de l'installation d'un paquet  ou s'il
-est appelé avec <tt>abort-upgrade</tt>, <tt>abort-remove</tt> ou
-<tt>abort-deconfigure</tt>.</p>
-	    
-<p> Le script d'installation détectera toute erreur qui se produit et
-arrêtera immédiatement l'installation.</p>
 	  <p>
 On remarquera que la section <ref id="scripts">, s'applique généralement
 aussi aux scripts des responsables de paquet.
 </p>
-	    
-	  <p>
-On ne doit pas utiliser <prgn>dpkg-divert</prgn> sur un fichier appartenant à 
+
+<p>
+On n'utilisera pas <prgn>dpkg-divert</prgn> sur un fichier appartenant à 
 un autre paquet sans consulter au préalable le responsable du paquet en 
 question.
 </p>
-	  <p>
+
+<p>
 Tous les paquets qui donnent une valeur au nom «&nbsp;partagé&nbsp;» d'une 
 commande (en général, c'est un nom de fichier), utiliseront en général
 <prgn>update-alternatives</prgn>, de manière à rendre possible leur
@@ -911,6 +933,90 @@ versions antérieures d'un paquet qui n'utilisait pas
 <prgn>update-alternatives</prgn> -- c'est une exception à la règle
 habituelle qui l'interdit.)
 </p>
+
+<sect2>
+<heading>Poser des questions avec les scripts du responsable</heading>
+
+<p>
+Les scripts du responsable de paquet peuvent interroger l'utilisateur quand
+c'est utile. On peut interroger «&nbsp;à la main&nbsp;» ou bien par
+l'intermédiaire d'un programme, tel que <prgn>debconf</prgn>, qui se
+conforme aux règles Debian de gestion de la configuration, version 2 ou
+supérieure. (Ces règles se trouvent dans le fichier 
+<file>debconf_specification</file>  du paquet <package>debian-policy</package>.) 
+On peut aussi trouver ce fichier sur le site FTP 
+<ftpsite>ftp.debian.org</ftpsite> dans 
+<ftppath>/debian/doc/package-developer/debconf_specification.txt.gz</ftppath>
+ou sur un miroir local<footnote>
+<p>
+2.5% des paquets Debian 
+[<url id="http://kitenet.net/programs/debconf/stats/">] utilisent
+debconf pour interroger l'utilisateur au moment de l'installation ; ce
+nombre augmente quotidiennement. Les avantages de debconf sont expliqués
+rapidement sur
+<url id="http://kitenet.net/doc/debconf-doc/introduction.html"> : configuration
+préalable (en particulier), installation non-interactive, élimination des
+questions redondantes, cohérence de l'interface utilisateur, etc.
+		</p>
+<p>
+Le nombre croissant de paquet utilisant debconf, l'existence d'une
+implémentation naissante d'un second système Debian de gestion de la
+configuration (<package>cdebconf</package>) et la stabilisation des
+protocoles utilisés nous invitent finalement à les mentionner dans la
+charte.
+		</p>
+	      </footnote>.
+	    </p>
+
+<p>
+Les paquets qui utilisent les règles Debian de gestion de la configuration
+peuvent contenir un script supplémentaire <file>config</file> et un fichier
+<file>templates</file> dans leur archive de contrôle. le script
+<prgn>config</prgn> peut être lancé avant le script <prgn>preinst</prgn> et
+avant que le paquet soit dépaqueté ou bien avant que ses dépendances et
+pré-dépendances soient satisfaites, de manière qu'il fonctionne en utilisant
+seulement les outils présents dans les paquets <em>Essential</em> <footnote>
+<p>
+Debconf ou tout autre outil qui met en oeuvre les règles Debian de gestion
+de la configuration est aussi installé, et toutes les dépendances concernant
+des versions sont satisfaites avant le commencement de la configuration 
+préalable.
+		</p>
+	      </footnote>.
+	    </p>
+	    
+<p>
+Les paquets essaieront de minimiser le nombre de questions
+posées et s'assureront que chaque question ne sera posée qu'une
+seule fois. Cela signifie que les paquets doivent
+essayer d'utiliser les fichiers de configuration partagés (comme
+<tt>/etc/papersize</tt> ou <tt>/etc/news/server</tt>) et les variables
+partagées de debconf,
+plutôt que de redemander, chacun, la même information.
+</p>
+	  
+	  <p>
+Quand un paquet doit donner une information importante à l'utilisateur
+(comme : «&nbsp;ne pas exécuter directement ce programme, vous devez d'abord
+modifier les fichiers de configuration suivants sinon votre système
+émettra des messages mal formatés&nbsp;»), il affichera ce message
+dans le script <prgn>config</prgn> ou dans le script <prgn>postinst</prgn>).
+Il demandera ensuite à l'utilisateur de taper sur la touche
+«&nbsp;retour-chariot&nbsp;» quand il a pris connaissance du message. Les 
+messages de copyright et les instructions d'utilisation ne sont pas considérés
+comme des messages vitaux. Ils doivent apparaître respectivement
+dans <tt>/usr/share/doc/<var>package</var>/copyright</tt> et dans la
+documentation en ligne, où tous les utilisateurs peuvent les consulter.
+</p>
+	    
+	  <p>
+Presque toujours, seuls les scripts <prgn>config</prgn> et 
+<prgn>postinst</prgn> poseront les questions nécessaires ; Quand on utilise
+le script <prgn>postinst</prgn>, il doit empêcher, par une condition 
+quelconque, qu'elles soient posées en cas d'échec de l'installation d'un 
+paquet ou s'il est appelé avec <tt>abort-upgrade</tt>, <tt>abort-remove</tt> ou
+<tt>abort-deconfigure</tt>.</p>
+
 	</sect1>
       </sect>
       <sect>
@@ -980,7 +1086,7 @@ du paquet source et vous le diffuserez.
  
            <p>
 Les paquets source préciseront les paquets binaires qui doivent être 
-installés et ceux qui ne doivent pas l'être, pour que l'installation 
+installés et ceux qui ne doivent pas l'être, pour que leur construction 
 réussisse.
 Si l'on doit, par exemple, compiler un paquet avec tel compilateur particulier,
 une dépendance de compilation sera déclarée envers ce paquet.
@@ -989,12 +1095,39 @@ une dépendance de compilation sera déclarée envers ce paquet.
            <p>
 Pour un très petit nombre de paquets , ceux dont on a toujours besoin pour 
 compiler, lier et insérer dans un paquet debian un programme classique écrit 
-en C ou C++ comme «&nbsp;Hello world!&nbsp;», il n'est pas nécessaire de déclarer 
-explicitement des relations de dépendance. Ces paquets, sur lesquels
-on peut trouver des renseignements dans la
-liste <tt>/usr/share/doc/build-essential/list</tt> (contenue dans le
-paquet <tt>build-essential</tt>), sont marqués <em>build-essential</em>.
-           </p>
+en C ou C++ comme «&nbsp;Hello world!&nbsp;», il n'est pas nécessaire de 
+déclarer explicitement des relations de dépendance. Ces paquets, sur lesquels
+on peut trouver des renseignements dans la liste 
+<tt>/usr/share/doc/build-essential/list</tt> (contenue dans le
+paquet <tt>build-essential</tt>), sont marqués <em>build-essential</em>
+<footnote>
+<p>
+Le raisonnement : 
+<list>
+<item>
+<p>
+On peut ainsi maintenir une liste distincte de la Charte (une liste nécessite 
+moins de contrôle que la Charte) ;
+		    </p>
+		  </item>
+<item>
+<p>
+Un paquet distinct permet l'installation des paquets <tt>build-essential</tt>
+sur une machine, et permet aussi que d'autres paquets (pensez aux paquets
+«&nbsp;task&nbsp;») installent les paquets <tt>build-essential</tt> à travers une
+relation de dépendance ;
+		    </p>
+		  </item>
+<item>
+<p>
+Un paquet distinct permet de séparer les rapports de bogues le concernant du 
+processus de gestion de la charte qui utilise le «&nbsp;BTS&nbsp;»(système de suivi des 
+bogues).
+		    </p>
+		  </item>
+		</list></p>
+	    </footnote>.
+</p>
  
            <p>
 La liste des dépendances de compilation ne contiendra que les paquets
@@ -1064,12 +1197,6 @@ nouvelle entrée dans le «&nbsp;changelog&nbsp;».
 </p>
 	    
 	  <p>
-Une copie du fichier qui est installé dans
-<tt>/usr/share/doc/<var>package</var>/copyright</tt> sera mise dans
-<tt>debian/copyright</tt>.
-</p>
-	    
-	  <p>
 Dans les paquets définitifs, vous ne devez utiliser, 
 pour <tt>debian/changelog</tt>, qu'un format supporté par la version la plus 
 récente de <prgn>dpkg</prgn>. Si votre format n'est pas supporté par 
@@ -1126,7 +1253,2208 @@ Les paquets Debian doivent inclurent
 </sect>
 </chapt>
 
-    <chapt><heading>Le système d'exploitation</heading>
+<chapt id="controlfields"><heading>Les fichiers de contrôle et leurs
+champs</heading>
+<p>
+Beaucoup d'outils du système de gestion des paquets manipulent les données de
+la même façon : ils utilisent des fichiers de contrôle.
+Les paquets source et binaire possèdent des données de contrôle comme par
+exemple les fichiers <tt>.changes</tt> qui contrôlent l'installation des
+fichiers téléchargés ; et les bases de données internes à <tt>dpkg</tt> 
+utilisent aussi des fichiers.
+<sect id="controles-1">La syntaxe des fichiers de contrôle
+<p>
+Un fichier consiste en un ou plusieurs paragraphes comportant des champs. Ces
+paragraphes sont séparés par des lignes blanches. Certains fichiers de
+contrôle n'autorisent qu'un seul paragraphe ; d'autres plusieurs, et dans ce
+cas, chaque paragraphe fait souvent référence à un paquet différent.
+	</p>
+<p>
+Chaque paragraphe est une série de champs et de valeurs ; chaque champ
+est constitué d'un nom, suivi par deux-points et la valeur. Il se
+termine à la fin de la ligne. Les espaces horizontaux (espaces et
+tabulations) peuvent apparaître avant la valeur et après, mais là, ils sont
+ignorés ; par convention, il y a un espace après les deux-points.
+</p>
+<p>
+Sauf indications contraires, une seule ligne de données est
+autorisée et les espaces ne sont pas significatifs dans le corps du
+champ. Les espaces ne doivent jamais apparaître dans les noms (de
+paquets, d'architectures, de fichiers, etc), dans les numéros de version
+ou entre les éléments de relations de version à plusieurs caractères.
+	</p>
+<p>
+Les lignes vides ou les lignes contenant seulement des espaces ou des
+tabulations ne sont pas autorisées à l'intérieur des valeurs de champ ou
+entre les champs - ce qui signifierait un nouveau paragraphe.
+	</p>
+<p>
+Il est important de noter que plusieurs champs sont facultatifs
+pour ce qui concerne <tt>dpkg</> et ses outils associés ; néammoins ils
+doivent apparaître dans chaque paquet Debian, et leur omission peut
+entraîner des problèmes. [] 
+	</p>
+      </sect>
+<sect><heading>La liste des champs</heading>
+<p>
+Cette liste n'est pas supposée être complète. Seuls sont mentionnés ici
+les champs pour lesquels existent une règle.
+	</p>
+<p>
+<sect1 id="f-Package"><heading><tt>Package</tt>
+          </heading>
+
+<p>
+Le nom du paquet binaire. Les noms de paquet sont constitués de
+caractères alphanumériques et des caractères <tt>+</tt>, <tt>-</tt>, <tt>.</tt>
+(plus, moins, point).
+	  </p>
+
+	  <p>	    
+Ils doivent contenir au moins deux caractères et commencer par un caractère
+alphanumérique. Il est fortement recommandé de les écrire en minuscule
+à moins que le paquet que l'on construit ou auquel on se réfère ( par exemple,
+dans d'autres champs) n'utilise déjà des majuscules.
+</p>
+	</sect1>
+	
+	<sect1 id="f-Version"><heading><tt>Version</tt></heading>
+
+	  <p>	    
+Ce champ donne le numéro de version des paquets source ou binaire - voir
+<ref id="versions">.
+	  </p>
+
+	</sect1>
+
+	<sect1
+	       id="f-Standards-Version"><heading><tt>Standards-Version</tt>
+	  </heading>
+
+	  <p>	    
+Ce champ donne la plus récente version des normes ( la charte Debian et les
+textes associés) à la quelle se conforme le paquet. Il est mis à jour
+manuellement quand on modifie le paquet source pour le rendre conforme
+à des normes plus récentes ; on peut parfois se servir de ce champ pour
+signaler qu'un paquet a besoin d'entretien.
+  </p>
+
+	  <p>	    
+Son format est le même que celui d'un numéro de version sauf que les
+numéros d'époque ou de révision Debian ne sont pas autorisés. Voyez
+<ref id="versions">.</p>
+
+	</sect1>
+	
+	
+	<sect1 id="f-Distribution"><heading><tt>Les distributions</tt>
+	  </heading>
+
+	  <p>	    
+Dans un fichier <tt>.changes</> ou affiché par l'analyse d'un changelog,
+ce champ contient le ou les noms (séparés par des espaces) de la ou les
+distributions dans laquelle cette version du paquet a été ou sera
+installée. Les noms de distribution suivent les règles des noms de
+paquets (voir <ref id="f-Package">).
+	  </p>
+
+	  <p>	    
+	    <footnote>
+Actuellement, les valeurs pour les distributions sont :
+		<taglist>
+		  <tag><em>stable</em></tag>
+		  <item>
+		    <p> 
+C'est l'édition d'une version à jour de Debian GNU-Linux.
+Une fois que la distribution est <em>stable</>, seule la
+correction d'erreurs majeures est autorisée. Quand cette distribution est
+modifiée, son numéro d'édition est incrémenté (par exemple : 1.2r1 devient 
+1.2r2 puis 1.2r3 etc.).
+		    </p>
+		  </item>
+		  
+		  <tag><em>unstable</em></tag>
+		  <item>
+		    <p>
+Cette valeur de distribution fait référence au côté 
+«&nbsp;développement&nbsp;» de l'arbre Debian des distributions. Les nouveaux
+paquets, de nouvelles sources pour les paquets et la correction d'erreur
+vont dans le répertoire <em>unstable</>. C'est prendre des risques que d'
+utiliser cette distribution.
+		    </p>
+		  </item>
+
+		  <tag><em>frozen</em></tag>
+		  <item>
+		    <p>
+De temps en temps, la distribution <em>unstable</em> entre dans un état 
+dit de «&nbsp;gel du code&nbsp;» qui anticipe la version <em>stable</>. Pendant cette 
+période de test, seules les corrections d'erreurs existantes ou nouvellement
+découvertes sont autorisées.
+		    </p>
+		  </item>
+		  
+		  <tag><em>experimental</em></tag>
+	  <item>
+	    <p>
+Les paquets qui possèdent cette valeur de distribution sont considérés par
+leur responsable comme représentant un grand risque. Souvent, ce sont des
+paquets en béta-test ou en cours de développement, provenant de sources
+variées que les responsables veulent faire tester, mais ce ne sont pas des 
+paquets qui peuvent être inclus dans d'autres répertoires de l'arbre Debian 
+des distributions. À utiliser à ses risques et périls.
+		    </p>
+		  </item>
+		</taglist>
+
+Chaque distribution comporte des sections. Actuellement ces sections sont :
+
+		
+		<taglist>
+		  <tag><em>contrib</em></tag>
+		  <item>
+		    <p>
+Les paquets de cette section ne respectent pas les critères pour être
+inclus dans la distribution principale de Debian, tels qu'ils sont définis
+dans la charte Debian ; néammoins ils sont libres, selon les «&nbsp;DFSG&nbsp;».
+</p>
+		  </item>
+		  
+		  <tag><em>non-free</em></tag>
+		  <item>
+		    <p>
+les paquets de la section <em>non-free</> ne respectent pas les critères du
+logiciel libre tels qu'ils sont définis par les «&nbsp;DFSG&nbsp;». Encore une fois,
+utilisez à bon escient cette section.
+</p>
+		  </item>
+		  
+		</taglist> 
+On listera <em>toutes</> les distributions dans lesquelles le paquet sera
+installé. Sauf circonstances inhabituelles, les installations vers 
+<em>stable</> iront aussi dans <em>frozen</em> (si elle existe) et dans 
+<em>unstable</>. De même, les installations dans <em>frozen</> iront aussi dans
+<em>unstable</>.
+	    </footnote>
+	  </p>
+	</sect1>
+	      </sect>
+    </chapt>
+<chapt id="versions"><heading>La numérotation des versions</heading>
+
+<p>
+Chaque paquet possède un numéro de version, dans le champ <tt>Version</> de 
+son fichier de contrôle.
+</p>
+<p>
+Le système de gestion des paquets impose un ordre aux numéros de version : 
+il peut ainsi connaître quel type de mise à niveau est en cours et les
+applications qui lui servent d'interface peuvent dire si un paquet disponible 
+est plus récent que celui installé sur le système. La partie la plus 
+significative (du moins en ce qui concerne la comparaison) du format des 
+numéros de version se trouve au début.
+      </p>
+<p>
+
+Le format des numéros de version est le suivant :
+<tt>&lsqb<var>epoch</var><tt>:</tt>&rsqb;<var>version-source</var>&lsqb;<tt>-</tt><var>révision-debian</var>&rsqb;.</tt>
+      </p>
+<p>
+Les trois composants sont :
+
+<taglist>
+
+<tag><var>epoch</var></tag>
+<item>
+<p>
+C'est simplement un entier non signé (souvent petit). Il peut être
+omis et dans ce cas il est égal à 0. S'il est omis, le champ
+<var>version-source</var> ne peut pas contenir un «&nbsp;:&nbsp;».
+</p>
+<p>
+Il sert à permettre les erreurs dans les numéros des vieilles 
+versions d'un paquet, et aussi à abandonner les précédentes structures de 
+numérotation concernant les versions d'un paquet.
+</p>
+	  </item>
+
+<tag><var>version-source</var></tag>
+<item>
+<p>
+C'est la partie principale du champ. C'est d'habitude le numéro de
+la version originale du paquet à partir duquel le fichier <tt>.deb</>
+a été crée, si c'est possible. Généralement, ce champ est dans le même
+format que celui spécifié par le ou les auteurs originaux ; cependant, il 
+peut être reformaté pour s'adapter au format et aux méthodes de comparaison
+du sytème de gestion des paquets.
+	    </p>
+<p>
+Les méthodes de comparaison du sytème de gestion des paquets en ce qui
+concerne la partie <var>version-source</var> sont décrites  ci-dessous. 
+Cette partie est obligatoire.
+	    </p>
+<p>
+La partie <var>version-source</var> ne peut contenir que des
+caractères alphanumériques et les caractères <tt>.</tt>, <tt>+</tt>,
+<tt>-</tt> <tt>:</tt> (point, plus, trait d'union et deux-points) ; elle 
+commencera par un chiffre. S'il n'y a pas de partie <var>révision-debian</var>
+alors le trait d'union «&nbsp;-&nbsp;» n'est pas autorisé. S'il n'y a pas de
+partie <var>epoch</var> alors les «&nbsp;:&nbsp;» ne sont pas autorisés.
+	    </p>
+	  </item>
+
+<tag> <var>révision-debian</var></tag>
+<item>
+<p>
+Cette partie du champ représente le numéro de version des modifications 
+opérées sur le paquet pour en faire un paquet Debian. Elle est dans le
+même format que la partie <var>version-source</var> et les méthodes de
+comparaison sont les mêmes.
+	  </p>
+<p>
+Cette partie est facultative. Si elle manque, la partie
+<var>version-source</var> ne peut contenir de trait d'union «&nbsp;-&nbsp;». 
+On utilise cette partie quand un morceau de code a été écrit spécialement pour
+obtenir un paquet binaire Debian. Il n'y a qu'une seule débianisation de
+ce paquet et aucune indication de révision n'est nécessaire.
+</p>
+
+<p>
+Par convention, la partie <var>révision-debian</var> est remis à 1 à chaque
+fois que la partie <var>version-originale</var> est incrémentée.
+</p>
+
+<p>
+Le système de gestion de paquet sépare les parties 
+<var>version-originale</var> et <var>révision-debian</var> au dernier trait 
+d'union de la chaîne. Dans une comparaison, l'absence de la partie
+<em>révision-debian</> est détectée plus tôt que sa présence (néanmoins 
+la partie <var>révision-debian</var> est la partie la
+moins significative du numéro de version).
+</p>
+
+<p>
+La partie <var>révision-debian</var> peut contenir seulement des caractères
+alphanumériques et les caractères <tt>+</tt> et <tt>.</tt> (plus et point).
+	    </p>
+	  </item>
+</taglist>
+
+
+Le système de gestion des paquets compare les parties 
+<var>version-source</var> et <var>révision-debian</var> en utilisant le même 
+algorithme.
+      </p>
+
+<p>
+Les chaînes sont comparées de gauche à droite.
+      </p>
+
+<p>
+Pour chaque chaîne, une partie initiale composée uniquement de
+lettres est déterminée. Ces deux parties (l'une peut être vide) sont comparées
+lexicalement. Si une différence est trouvée, elle est retournée. La
+comparaison lexicale est une comparaison qui utilise des valeurs ASCII 
+modifiées de manière à ce que toutes les lettres soient classées avant les 
+chiffres et les caractères de ponctuation.
+      </p>
+
+<p>
+Ensuite, pour ce qui reste de cette chaîne, une partie initiale composée
+uniquement de chiffre est déterminée. La valeur numérique de ces deux
+parties est comparée, la différence est retournée comme résultat de la
+comparaison. Dans ce but, une chaîne vide (qui peut seulement
+apparaître à la fin de l'une ou des deux chaînes que l'on compare)
+compte pour zéro.
+      </p>
+
+<p>
+Ces deux phases sont répétées (en enlevant du début de la chaîne les
+caractères et les chiffres) jusqu'à ce qu'une différence soit trouvée ou
+que les deux chaînes soient terminées.
+      </p>
+
+<p>
+Le but de la partie <var>epoch</var> est de permettre des erreurs dans
+numérotation de version, et de s'arranger avec les situations où la
+numérotation de version change. Il <em>ne sert pas</em> à corriger les
+numéros de version contenant des chaînes de caractères que le système de
+gestion des paquets ne peut pas interpréter (tel que <tt>ALPHA</tt> ou 
+<tt>pre-</tt>) ou une numérotation bâtarde (l'auteur de ce manuel a 
+entendu parler d'un paquet dont les versions allaient ainsi : <tt>1.1.1.2</>, 
+<tt>1.3</>, <tt>1</>, <tt>2.1</>, <tt>2.2</>, <tt>2</> et ainsi de suite).
+      </p>
+
+<p>
+Quand la numérotation d'un paquet pose problème, elle sera convertie en un 
+format utilisable dans le champ <tt>Version</tt>.
+      </p>
+
+   <sect>
+<heading>La numérotation des versions fondée sur des dates</heading>
+
+<p>
+En règle générale, les paquets Debian utiliseront les mêmes numéros de 
+version que les sources.</p>
+
+<p>
+Cependant, la numérotation des sources est parfois fondée sur une date (par
+exemple, un instantané d'une version de développement) ; le système de 
+gestion des paquets ne peut pas manipuler cette numérotation sans les
+<em>epochs</em>. Et <prgn>Dpkg</prgn> par exemple considère que
+«&nbsp;96May01&nbsp;» est plus grand que «&nbsp;96Dec24&nbsp;».</p>
+
+<p>
+Pour éviter l'utilisation d'<em>epochs</em> à chaque nouvelle version source,
+on emploiera dans de tels cas le format suivant : «&nbsp;19960501&nbsp;», «&nbsp;19961224&nbsp;».
+Le (la) responsable de paquet décidera d'embêter ou non le responsable des
+sources avec une demande de modification de la numérotation de ses versions. 
+	</p>
+
+<p>
+Il faut noter que d'autres formats fondés sur les dates et qui sont 
+correctement analysés par le système de gestion des paquets <em> ne doivent
+pas</em> être modifiés.
+	</p>
+
+<p>
+Les paquets «&nbsp;Debian pure souche&nbsp;» (c.-a-d. écrits spécialement pour debian) 
+dont les numéros de version comprennent des dates utiliseront toujours le
+format suivant : «&nbsp;YYYYMMDD&nbsp;».
+	</p>
+      </sect>
+    </chapt>
+
+<chapt id="miscellaneous"><heading>Considérations sur la construction de paquet</heading>
+<sect id="timestamps"><heading>Timbres à date</heading>
+
+<p>
+Les responsables de paquets sont invités à préserver, autant que possible, 
+les dates de modification des fichiers sources d'un paquet. Même si c'est
+facultatif, c'est toujours une bonne idée <footnote>
+<p>
+Le raisonnement est que la connaissance de l'âge d'un fichier apporte 
+certaines informations ; par exemple, on peut reconnaître l'ancienneté de telle
+documentation en regardant la date de modification. Et donc il serait bon de 
+préserver les dates de modifications des fichiers sources.</p>
+	  </footnote>.
+</p>
+      </sect>
+<sect id="debianrules"><heading><tt>debian/rules</tt> - Le principal script
+          de construction</heading>
+
+<p>
+Ce fichier doit être un <em>makefile</em> exécutable et doit contenir des 
+règles permettant la compilation du paquet et la construction de paquet(s)
+binaire(s) à partir des sources.
+	</p>
+
+<p>
+Il doit commencer par la ligne <tt>#!/usr/bin/make -f</tt>,
+afin de pouvoir être appelé directement sans passer par <prgn>make</prgn>.
+	</p>
+
+<p>
+Puisqu'un script <tt>debian/rules</tt> interactif ne peut pas compiler un
+paquet automatiquement et empêche une reproduction de ce paquet binaire par 
+d'autres personnes, toutes les <strong>cibles exigées</strong> DOIVENT être
+non-interactives. Au minimum, les cibles exigées sont celles qu'appelle
+<prgn>dpkg-buildpackage</prgn>, à savoir, <em>clean</em>, <em>binary</em>,
+<em>binary-arch</em> et <em>build</em>. Il s'en suit qu'une cible dont
+dépendent ces cibles, doit être aussi non-interactive.
+	</p>
+<p>
+Les cibles nécessaires sont :
+
+<taglist>
+<tag><tt>build</tt></tag>
+<item>
+<p>
+Configuration non interactive et compilation du paquet. Quand un paquet
+possède une routine interactive de configuration préalable à la construction, 
+le paquet source débianisé sera construit après cette opération afin 
+qu'il puisse être construit sans ré-exécuter cette configuration.
+	      </p>
+
+<p>
+Pour certains paquets, notamment ceux où la même arborescence source est 
+compilée différemment pour obtenir des paquets binaires différents, la cible 
+<tt>build</> n'a aucun sens. Pour ces paquets, il suffit de prévoir deux 
+cibles ou plus (<tt>build-a</tt>, <tt>build-b</tt>, ...) pour chaque manière 
+de construire le paquet et une cible <tt>build</tt> qui ne produit rien. La 
+cible <tt>binary</tt> s'occupera de construire le paquet pour chaque cas 
+possible et de créer le paquet binaire correspondant à chacun d'eux.
+	      </p>
+
+<p>
+La cible <prgn>build</prgn> ne doit pas effectuer d'actions qui exigent les 
+privilèges de root.
+	      </p>
+
+<p>
+La cible <prgn>build</prgn> peut avoir besoin d'exécuter d'abord la 
+cible <prgn>clean</prgn>. Voir ci-dessous.
+	      </p>
+
+<p>
+Quand un paquet possède une routine de configuration qui prend du temps, ou 
+quand le <em>makefile</em> est pauvrement conçu, ou quand <prgn>build</prgn> 
+a d'abord besoin d'exécuter <prgn>clean</prgn>, il est alors intéressant 
+d'exécuter <tt>touch build</tt> quand le processus de construction est 
+terminé. On s'assure ainsi que si <tt>debian/rules build</tt> est lancé à
+nouveau, il ne reconstruira pas le programme complet.
+	      </p>
+
+	    </item>
+<tag><tt>binary</tt>, <tt>binary-arch</tt>, <tt>binary-indep</tt></tag>
+<item>
+<p>
+La cible <prgn>binary</prgn> doit être tout ce qui est nécessaire à 
+l'utilisateur pour construire le paquet binaire. Toutes ces cibles doivent
+être non-interactives. Cette cible a deux parties : <prgn>binary-arch</prgn>
+construit les fichiers de sortie des paquets qui sont spécifiques à une 
+architecture particulière, et <prgn>binary-indep</prgn> construit les 
+fichiers qui ne le sont pas.
+	      </p>
+
+<p>
+<prgn>binary</prgn> peut être (et c'est communément le cas) une cible sans 
+commande, qui dépend simplement de <prgn>binary-arch</prgn> et de 
+<prgn>binary-indep</prgn>.
+	      </p>
+
+<p>
+Les deux cibles <prgn>binary-*</prgn> dépendront de la cible 
+<prgn>build</prgn>, ci-dessus, afin que le paquet soit
+construit s'il ne l'a pas déjà été. Elle créera ensuite les paquets binaires
+pertinents en utilisant <prgn>dpkg-gencontrol</prgn> pour créer leurs fichiers
+de contrôle et <prgn>dpkg-deb</prgn> pour construire les binaires et les 
+placer dans le répertoire parent du répertoire.
+	      </p>
+
+<p>
+Si l'une des deux cibles <prgn>binary-*</prgn> n'a rien à faire (ce sera 
+toujours le cas si le source crée un seul paquet binaire, qu'il soit 
+dépendant de l'architecture ou pas), elle doit tout de même exister,
+et doit toujours se dérouler correctement.
+	      </p>
+
+<p>
+La cible <prgn>binary</prgn> doit être invoquée avec les privilèges de root.
+	      </p>
+	    </item>
+<tag><tt>clean</tt></tag>
+            <item>
+
+<p>
+Cette cible doit nettoyer les effets obtenus par les cibles
+<prgn>build</prgn> et <prgn>binary</prgn>, mais elle doit laisser les 
+fichiers de sortie crées par la cible <prgn>binary</prgn> dans le répertoire 
+parent. Cette cible ne doit pas être interactive.
+	      </p>
+
+<p>
+Si un fichier <prgn>build</prgn> est crée par <prgn>touch</prgn> à la fin
+de la cible <prgn>build</prgn>, comme suggéré ci-dessus, c'est la première 
+chose qui sera effacée par la règle <prgn>clean</prgn>, afin que si on 
+exécute de nouveau <prgn>build</prgn> après une interruption, 
+<prgn>clean</prgn> ne pense pas que tout est déjà fait.
+	      </p>
+
+<p>
+La cible <prgn>clean</prgn> peut avoir besoin d'être invoquée par root, si 
+<prgn>binary</prgn> a été invoqué depuis le dernier <prgn>clean</prgn>, ou 
+si <prgn>build</prgn> a été invoqué par root (étant donné que 
+<prgn>build</prgn> peut créer des répertoires par exemple).
+	      </p>
+	    </item>
+<tag><tt>get-orig-source</tt> (facultatif)</tag>
+<item>
+<p>
+Cette cible va chercher la plus récente version du paquet original dans un 
+site d'archive autorisé (par FTP ou WWW, par exemple), s'occupe des 
+arrangements nécessaires pour le mettre sous la forme d'un fichier tar (une 
+archive source) décrite ci-dessus, et le laisse dans le répertoire en cours.
+	      </p>
+<p>
+Cette cible peut être invoquée dans n'importe quel répertoire et s'occupera
+de supprimer tous ses fichiers temporaires. 
+	      </p>
+<p>
+Elle est facultative mais la proposer, quand c'est possible, est une bonne 
+idée.
+	      </p>
+	    </item>
+	  </taglist>
+<p>
+Les cibles <prgn>build</prgn>, <prgn>binary</prgn> et <prgn>clean</prgn> 
+doivent être invoquées avec un répertoire appartenant au répertoire de plus
+haut niveau du paquet.
+	</p>
+<p>
+Des cibles supplémentaires peuvent exister dans <tt>debian/rules</tt>, soit
+comme des interfaces publiées ou non documentées soit pour l'utilisation 
+interne du paquet.
+	</p>
+<p>
+Ce sont les variables de <prgn>make</prgn> à travers 
+<prgn>dpkg-architecture</prgn> qui déterminent l'architecture <em>sur</em> 
+laquelle et <em>pour</em> laquelle on construit. On peut obtenir, aussi bien
+pour la machine sur laquelle on construit que pour la machine pour laquelle
+on construit, la chaîne indiquant l'architecture Debian et la chaîne
+indiquant l'architecture à la façon <em>GNU</em>. Voici une liste des
+variables de <prgn>make</prgn> acceptées :
+<list compact="compact">
+            <item>
+              <p><tt>DEB_*_ARCH</tt> (L'architecture Debian)</p>
+</item>
+            <item>
+              <p><tt>DEB_*_GNU_TYPE</tt> (L'architecture indiquée à la
+                façon <em>GNU</em>)</p>
+            </item>
+            <item>
+              <p><tt>DEB_*_GNU_CPU</tt> (La partie CPU de  DEB_*_GNU_TYPE)</p>
+            </item>
+            <item>
+<p><tt>DEB_*_GNU_SYSTEM</tt> (La partie système de DEB_*_GNU_TYPE)</p>
+          </list>
+        </p>
+<p>
+où «&nbsp;*&nbsp;» représente <tt>BUILD</tt> pour une indication de la 
+machine <em>sur</em>
+laquelle on construit, ou bien <tt>HOST</tt> pour une indication de la machine
+<em>pour</em> laquelle on construit.
+	</p>
+<p>
+On peut assurer une compatibilité ascendante dans le fichier <em>rules</em>
+en fixant par défaut les bonnes variables à des valeurs adéquates ;
+veuillez consulter la documentation de <prgn>dpkg-architecture</prgn>
+pour des précisions.
+	</p>
+<p>
+Il est important de comprendre que la chaîne <tt>DEB_*_ARCH</tt> détermine
+seulement l'architecture Debian sur ou pour laquelle on construit. On
+ne l'utilisera pas pour avoir des renseignements sur le CPU ou le
+Système ; les variables GNU sont là pour ça.
+	</p>
+      </sect>
+    <sect id="dpkgchangelog"><heading><tt>debian/changelog</tt>
+        </heading>
+
+<p>
+Ce fichier enregistre les modifications apportées aux éléments Debian
+d'un paquet
+<footnote>Bien que rien n'empêche un auteur qui est aussi le responsable 
+Debian d'utiliser ce fichier pour tous les changements, il faudra modifier
+son nom si les responsables Debian et les auteurs deviennent différents.
+</footnote>.
+	</p>
+
+<p>
+
+Son format spécial permet aux outils de construction de paquets
+de découvrir quelle version du paquet est en train de se construire
+et de trouver des informations spécifiques à cette version.
+	</p>
+
+<p>
+
+Le format ressemble à une suite d'entrées :
+
+<example>
+   <var>paquet</var> (<var>version</var>) <var>distributions(s)</var> ; urgency=<var>urgence</var>
+         * <var>détails des modifications</var>
+            <var>plus de détails</var>
+         * <var>encore plus de détails</var>
+
+     -- <var>nom du responsable et adresse électronique</var> <var>date</var>
+</example>
+	</p>
+
+<p>
+<var>paquet</var> et <var>version</var> représentent le nom du paquet source
+et le numéro de version.
+	</p>
+
+<p>
+<var>distribution(s)</var> liste les distributions dans lesquelles cette 
+version sera installée. C'est copié dans le champ <tt>Distributions</> du 
+fichier <tt>.changes</tt>.
+Voyez <ref id="f-Distribution">.
+	</p>
+
+<p>
+<var>urgency</var> est la valeur pour le champ <tt>Urgency</tt>
+du fichier <tt>.changes</> pour le chargement.
+Une <var>urgency</var> ne peut pas contenir de virgules ; les virgules sont 
+utilisées pour séparer les couples 
+<tt><var>mot-clé</var>=<var>valeur</var></tt> dans le format du fichier
+d'enregistrement de <tt>dpkg</> (bien qu'il n'y ait pour
+l'instant qu'un seul <var>mot-clé</var> utile : <tt>urgency</>).
+	</p>
+
+<p>
+Les détails sur les modifications peuvent n'être qu'une suite de lignes 
+commençant par au moins deux espaces, mais par convention, on commence
+une modification par une étoile «&nbsp;*&nbsp;» suivie d'un espace ; les lignes de 
+continuation sont indentées pour les amener en face du texte de la ligne 
+précédente. On peut séparer si l'on veut les groupes de modifications
+par des lignes vides.
+	</p>
+
+<p>
+Le nom du responsable et son adresse électronique <em>ne sont pas</em>
+nécessairement les mêmes que ceux du responsable habituel du paquet. Ils 
+doivent correspondre à la personne qui s'est occupée de <em>cette</em> version.
+Les informations seront copiées dans le fichier <tt>.changes</tt>,
+et plus tard, utilisées pour envoyer un acquittement quand
+le chargement aura été installé.<p>
+
+La date doit être dans le format RFC822
+<footnote>produite par le programme <prgn/822-date/</footnote>;
+elle doit inclure le nom du fuseau horaire (timezone) spécifié
+sous forme de chiffre, et en option le nom du fuseau ou son abréviation.<p>
+
+La première ligne de «&nbsp;titre&nbsp;» avec le nom du paquet commencera
+sur la marge de gauche, la ligne de «&nbsp;fin&nbsp;» avec les renseignements sur
+le responsable et la date, doit être précédée par exactement
+un espace. Les éléments responsable et date doivent être
+séparés exactement par deux espaces.
+	</p>
+
+<p>
+<sect1><heading>Comment définir des formats alternatifs pour le fichier
+<tt>changelog</>
+<p>
+
+Il est possible d'utiliser un format différent de celui proposé,
+en fournissant un analyseur pour le format qu'on veut utiliser.
+	  </p>
+<p>
+Un analyseur de changelog ne doit pas être interactif.
+	  </p>
+	</sect1>
+      </sect>
+<sect id="srcsubstvars"><heading><tt>debian/substvars</tt>
+          et le remplacement de variables</heading>
+
+<p>
+Quand <prgn/dpkg-gencontrol/, <prgn/dpkg-genchanges/ et
+<prgn/dpkg-source/ créent des fichiers de contrôle, avant d'écrire des 
+variable sur la sortie, ils procèdent à leur remplacement. Les
+substitutions de variable sont de la forme 
+<tt>${<var>variable-nom</var>}</tt>.
+Le fichier facultatif <tt>debian/substvars</tt> contient les remplacements de 
+variable à utiliser. On peut aussi fixer directement les variables dans le 
+fichier <tt>debian/rules</> en utilisant l'option <tt>-V</> des commandes de 
+paquetage des sources ; de même certaines variables prédéfinies sont 
+disponibles.
+	</p>
+
+<p>
+Ce fichier est habituellement crée et modifié dynamiquement par les cibles
+de <tt>debian/rules</tt>, et dans ce cas, il doit être supprimé par la cible
+<prgn>clean</prgn>.
+	</p>
+
+<p>
+Voyez <manref name="dpkg-source" section="1"> pour plus de détails sur les
+remplacements de variables source, et sur le format de
+<tt>debian/substvars</tt>.
+	</p>
+      </sect>
+
+<sect id="debianfiles"><heading><tt>debian/files</tt></heading>
+
+<p>
+Ce fichier n'est pas un fichier permanent de l'arborescence source ; il est
+utilisé pendant la construction des paquets pour enregistrer quels
+fichiers sont en train d'être crées. <prgn>dpkg-genchanges</prgn>
+l'utilise quand il crée un fichier <tt>.changes</tt>.
+	</p>
+<p>
+Ce fichier ne doit pas exister dans le paquet source qu'on propose, et il 
+doit être supprimé par la règle <tt>clean</> (ainsi que n'importe quel fichier 
+temporaire ou de sauvegarde tel que <tt>files.new</tt>
+<footnote><tt>file.news</> est utilisé
+temporairement par <prgn>dpkg-gencontrol</prgn> et
+<prgn>dpkg-distaddfile</prgn> ; ils écrivent une nouvelle version
+de <tt>files</> avant de le renommer, pour éviter de laisser
+une copie corrompue, si une erreur se produit.</footnote>).
+Il peut aussi être sage, pour garantir un nouveau départ, de l'enlever ou
+de le vider au début de la cible <tt>binary</tt>.
+	</p>
+
+<p>
+À partir du fichier de contrôle qu'il crée, <prgn>dpkg-gencontrol</prgn> 
+ajoute une entrée dans ce fichier pour le fichier <tt>.deb</tt> crée par 
+<prgn>dpkg-deb</prgn> ; et ainsi pour la plupart des paquets, il n'y a rien
+d'autre à faire que de supprimer ce fichier dans la cible <prgn>clean</prgn>.
+	</p>
+
+<p>
+Si un chargement de paquet inclut des fichiers autres que ceux du paquet
+source ou des paquets binaires dont les fichiers de contrôle ont été crées par
+<prgn>dpkg-gencontrol</prgn>, ces fichiers seront placés dans le
+répertoire parent du répertoire racine du paquet et 
+<prgn>dpkg-distaddfile</prgn> sera appelé pour ajouter ces fichiers à la liste
+<tt>debian/files</tt>.
+	</p>
+      </sect>
+
+<sect id="restrictions"><heading>Restrictions sur les objets dans les paquets source</heading>
+
+<p>
+Un paquet source ne peut pas contenir des liens «&nbsp;en dur&nbsp;»<footnote>
+<p>On ne les détecte pas encore pendant la phase de construction du paquet
+source, mais seulement pendant la phase d'extraction.</p>
+	  </footnote><footnote>
+<p>
+À l'avenir, les liens «&nbsp;en dur&nbsp;» pourraient être autorisés d'une manière ou
+d'une autre, mais cela demandera beaucoup de travail.
+	    </p>
+	  </footnote>,
+des fichiers spéciaux pour les <em>device</em>, des <em>sockets</em> ou des fichiers
+<em>setuid</em> ou <em>setgid</em><footnote>
+<p>
+Les répertoires <em>setgid</em> sont autorisés.
+	    </p>
+	  </footnote>.
+	</p>
+      </sect>
+<sect id="descriptions"><heading>La description des paquets - le champ
+          <tt>Description</tt></heading>
+<p>
+La description d'un programme est faite pour permettre à l'utilisateur qui
+n'a jamais entendu parler de ce programme auparavant de savoir s'il veut
+l'installer. Elle donnera des informations sur les conflits et
+dépendances significatives entre ce paquet et les autres, afin que
+l'utilisateur sache pourquoi ces conflits et dépendances ont été
+déclarés.
+	</p>
+
+<sect1><heading>Remarques sur la rédaction des descriptions</heading>
+
+<p>
+La ligne de résumé sera brève, certainement moins de 80 caractères.
+	  </p>
+
+<p>
+Ne mettez pas le nom du paquet dans la ligne de résumé. Le logiciel
+sait déjà l'afficher, et ce n'est pas nécessaire de l'indiquer. N'oubliez pas
+que dans beaucoup de cas, l'utilisateur ne peut lire que la ligne de résumé : 
+il faut donc la rendre aussi instructive que possible.
+	  </p>
+
+<p>
+N' essayez pas de poursuivre la ligne du résumé dans la description étendue. 
+Cela ne fonctionnera pas correctement quand la description complète est 
+affichée et cela n'aura aucun sens quand  seul le résumé (la ligne de
+résumé) est disponible.
+	  </p>
+<p>
+La description étendue décrira ce que fait le paquet, et comment il
+se relie au reste du système (en termes, par exemple, de sous-systèmes,
+de partie de ...).
+	  </p>
+<p>
+Le champ description doit être compréhensible pour tout le monde, y compris
+ceux qui n'ont aucune idée sur ce que fait le paquet<footnote>
+<p>
+Le commentaire, qui est fourni par un programme dans ses fichiers
+d'annonces et/ou fichiers <tt>README</tt>, est rarement approprié pour une
+utilisation dans une description. Il est habituellement conçu pour les
+gens qui connaissent déjà le paquet...
+	      </p>
+	    </footnote>.
+	  </p>
+
+<p>
+Mettez les informations importantes d'abord, à la fois dans le résumé et 
+dans la description étendue. Quelques fois, seule la première partie du
+résumé ou de la description sera affichée. On peut supposer qu'il y a
+normalement une manière de voir l'ensemble de la description étendue.
+	  </p>
+
+<p>
+Quand on le souhaite,on peut inclure des informations sur les dépendances 
+ou sur d'autres choses dans la description étendue.
+	  </p>
+
+<p>
+N'utilisez pas le caractère de tabulation, son effet est imprévisible.
+	  </p>
+	</sect1>
+      </sect>
+    </chapt>
+
+<chapt id="maintainerscripts"><heading>Les scripts du responsable de paquet
+        et la procédure d'installation</heading>
+<sect><heading>Introduction aux scripts du responsable de paquet</heading>
+
+<p>
+Il est possible de fournir des scripts qui seront exécutés
+par le système de gestion de paquet lors d'une installation, d'une mise à 
+jour ou d'une suppression du paquet.
+	</p>
+
+<p>
+Ces scripts seront les fichiers <tt>preinst</tt>, <tt>postinst</tt>, 
+<tt>prerm</tt> et <tt>postrm</tt> de la zone de contrôle du paquet. Ils
+doivent être des fichiers exécutables corrects ; quand ce sont des scripts 
+(ce qui est recommandé), ils doivent commencer par la convention habituelle 
+<tt>#!</tt>. Ils seront lisibles et exécutables par tout le monde mais ils
+ne pourront pas être modifiés.
+	</p> 
+
+<p>
+Le système de gestion de paquet teste le code de sortie de ces scripts. Il 
+est important que ce code soit différent de zéro quand il y a une erreur ;
+le système de gestion de paquet peut alors s'interrompre. Pour les
+scripts shell, cela signifie qu'on doit <em>presque toujours</em>
+utiliser <tt>set -e</tt> (et c'est généralement vrai pour tout script shell).
+Bien sûr, il est aussi important que ce code ne soit pas différent de zéro 
+quand tout s'est bien passé.
+	</p>
+
+<p>
+
+Il est nécessaire pour les procédures de gestion des erreurs que les
+scripts soient idempotents ;  c.-a-d., le même script doit pouvoir être
+appelé plusieurs fois dans la même situation sans provoquer de
+problèmes. Si le premier appel échoue, ou s'arrête au milieu du chemin
+pour une raison ou une autre, le second appel fera,s'il y en a, les choses
+qui n'ont pas été faites la première fois et se terminera normalement.
+	</p>
+
+<p>
+Quand un paquet est mis à jour, une combinaison des scripts du vieux et
+du nouveau paquet est appelée dans presque toutes les autres étapes de
+la procédure de mise à jour. Il faut faire attention  quand les scripts 
+se compliquent et il faut vérifier leurs arguments.
+	</p>
+
+<p>
+D'une manière générale, le script <prgn>preinst</prgn> est appelé avant d'installer
+(une version particulière d') un paquet, et le script <tt>postinst</tt>
+après ; le script <tt>prerm</tt> avant d'effacer (une version de) un paquet
+et <tt>postrm</tt> après.
+	</p>
+
+<p>
+On ne doit pas normalement préfixer le chemin des programmes appelés par les 
+scripts. Avant le début de l'installation, le système de
+gestion de paquet vérifie que les programmes <prgn>ldconfig</prgn>, 
+<prgn>start-stop-daemon</prgn>, <prgn>install-info</prgn> et 
+<prgn>update-rc.d</prgn> peuvent être trouvés via la
+variable d'environnement <tt>PATH</tt>. Ces programmes, et n'importe quel
+autre programme qu'on s'attend à trouver dans le <tt>PATH</>, seront
+donc appelés sans nom de chemin absolu.
+Les scripts du responsable ne doivent pas non plus réinitialiser la variable
+<tt>PATH</tt>, bien qu'ils puissent choisir de la modifier en ajoutant
+au début ou à la fin un répertoire spécifique à un paquet.
+Ces considérations s'appliquent vraiment à tous les scripts shell.
+	</p>
+      </sect>
+
+<sect>
+        <heading>L'idempotence des scripts du responsable</heading>
+<p>
+Il est très important de rendre les scripts du responsable idempotents
+<footnote>
+<p>
+C'est à dire, qu'ils s'exécutent normalement ou qu'ils échouent, l'appel
+suivant ne les fait pas exploser : ils s'assurent simplement que tout est
+en ordre.
+	    </p>
+	  </footnote>. Quand une erreur arrive -- l'utilisateur interrompt
+<prgn>dpkg</prgn> ou bien quelque chose d'imprévu se passe -- il ne faut pas 
+laisser un paquet défectueux à l'utilisateur.
+	</p>
+      </sect>
+<sect>
+        <heading>Les terminaux de contrôle et les scripts du responsable</heading>
+
+<p>
+Les scripts du responsable sont assurés de s'exécuter avec un terminal de 
+contrôle et de pouvoir interagir avec l'utilisateur. Quand ils ont besoin de
+demander un mot de passe, d'intervenir en plein écran ... c'est à partir de et
+vers <tt>/dev/tty</tt> qu'ils le feront, puisque <prgn>dpkg</prgn> redirige
+à un moment ou un autre les sorties et entrées standards des scripts de 
+manière à enregistrer le processus d'installation. De même les scripts Perl, 
+ces scripts pouvant rediriger leur sortie standard dans un tube à des fins 
+d'enregistrement, utiliseront un mode de sortie sans buffer
+en déclarant <tt>$|=1</tt> de manière à ce que la sortie soit affichée
+immédiatement plutôt que d'être mise dans un buffer.
+	</p>
+<p>
+Chaque script retournera un code de sortie égal à zéro en cas de succès et
+un code différent de zéro en cas d'échec.
+	</p>
+      </sect>
+
+<sect id="mscriptsinstact"><heading>Résumé des façons d'appeler les scripts du 
+responsable</heading>
+<p>
+
+<list compact="compact">
+<item> 
+<p><var>preinst-du-nouveau-paquet</var> <tt>install</tt></p>
+	    </item>
+<item> 
+<p><var>preinst-du-nouveau-paquet</var> <tt>install</tt> <var>vieille-version</var>
+	      </p>
+	    </item>
+<item> 
+<var>preinst-du-nouveau-paquet</var> <tt>upgrade</tt> <var>vieille-version</var></p>
+	    </item>
+<item> <var>preinst-de-l'ancien-paquet</var> <tt>abort-upgrade</tt> 
+<var>nouvelle-version</var></p>
+	    </item>
+</list>
+
+<list compact="compact">
+<item> 
+<p><var>postinst</var> <tt>configure</tt> <var>version-la-plus-récemment-configurée</var></p>
+	    </item>
+<item> <var>postinst-de-l'ancien-paquet</var> <tt>abort-upgrade</tt> 
+<var>nouvelle-version</var></p>
+	    </item>
+<item> <var>postinst-du-paquet-conflictuel</var> <tt>abort-remove in-favour</tt>
+<var>paquet nouvelle-version</var></p>
+	    </item>
+<item> <var>postinst-du-paquet-déconfiguré</var> <tt>abort-deconfigure in-favour</tt>
+<var>paquet-dont-installation-a-échoué version</var> <tt>removing</tt> 
+<var>paquet-conflictuel</var> <var>version</var></p>
+	    </item>
+	  </list>
+<p>
+<list compact="compact">
+<item>
+<p> <var>prerm</var> <tt>remove</tt></p>
+	    </item>
+<item>
+<p> <var>prerm-de-l'ancien-paquet</var> <tt>upgrade</tt> <var>nouvelle-version</var></p>
+	    </item>
+<item>
+<var>prerm-du-nouveau-paquet</var> <tt>failed-upgrade</tt> <var>nouvelle-version</var>
+</p>
+	    </item>
+<item> 
+<p><var>prerm-du paquet-conflictuel</var> <tt>remove</tt><tt>in-favour</tt> 
+<var>paquet</var> <var>nouvelle-version</var></p>
+	    </item>
+<item>
+<p><var>postrm-du-paquet-déconfiguré</> <tt>deconfigure in-favour</tt>
+<var>paquet-installé version</var> <tt>removing</tt> 
+<var>paquet-conflictuel version</var></p>
+	    </item>
+</list>
+
+<list compact="compact">
+<item>
+<p><var>postrm</var> <tt>remove</tt></p>
+	    </item>
+<item>
+<p><var>postrm</var> <tt>purge</tt></p>
+	    </item>
+
+<item>
+<p><var>postrm-de-l'ancien-paquet</var> <tt>upgrade</tt> <var>nouvelle-version</var></p>
+	    </item>
+<item>
+<p><var>postrm-du-nouveau-paquet</var> <tt>failed-upgrade</tt> <var>vieille-version</var>
+	      </p>
+	    </item>
+<item>
+<p> <var>postrm-du-nouveau-paquet</var> <tt>abort-install</tt></p>
+	    </item>
+<item>
+<p><var>postrm-du-nouveau-paquet</var> <tt>abort-install</tt> <var>vieille-version</var>
+	      </p>
+	    </item>
+<item>
+<p><var>postrm-du-nouveau-paquet</var> <tt>abort-upgrade</tt> <var>vieille-version</var>
+	      </p>
+	    </item>
+<item>
+<p><var>postrm-du-paquet-disparu</var> <tt>disappear</tt> <var>remplaçant</var> 
+<var>version-du-remplaçant</var></p>
+	    </item>
+</list>
+	</p>
+
+<sect id="unpackphase">Précisions sur la phase de dépaquetage lors d'une
+installation ou d'une mise à jour
+<p>
+
+La procédure d'installation ou de mise à jour -- remplacement, 
+effacement --  (c'est à dire quand on exécute <tt>dpkg --unpack</tt>, ou bien 
+l'étape <em>unpack</em> de <tt>dpkg --install</tt>) est la suivante. Dans 
+chaque cas, si une erreur se produit, les actions sont généralement 
+«&nbsp;rembobinées&nbsp;» -- ce qui signifie que les scripts du responsable sont 
+exécutés avec des arguments différents dans l'ordre inverse. Ce sont les 
+appels «&nbsp;correction d'erreur&nbsp;» listés ci-dessous.
+
+<enumlist>
+<item>
+<p>
+     <enumlist>
+     <item>
+<p>
+Si une version du paquet est déjà installée, appel
+	   <example>
+		<var>prerm-de-l'ancien-paquet</var> upgrade <var>nouvelle-version</var>
+	   </example>
+
+     <item>Si cela donne une erreur (c'est à dire un code de sortie
+différent de zéro), dpkg essaye à la place :
+	   <example>
+	<var>prerm-du-nouveau-paquet</var> failed-upgrade <var>vieille-version</var>
+	   </example>
+	  Correction d'erreur, dans les deux cas ci-dessus :
+	   <example>
+<var>postinst-de l'ancien-paquet</var> abort-upgrade <var>nouvelle-version</var>
+	   </example>
+</p>
+		  </item>
+     </enumlist>
+</p>
+	    </item>
+
+<item>
+<p>
+Si un paquet conflictuel est enlevé en même temps :
+     <enumlist>
+   
+     <item>
+<p>
+Quand un paquet dépend de ce paquet conflictuel et si l'option
+ <tt>--auto-deconfigure</> est spécifiée, appel pour chaque paquet :
+	<example>
+	<var>prerm-du-paquet-déconfiguré</var> deconfigure in-favour
+	<var>paquet-à-installer</var> <var>version</var>
+	removing <var>paquet-conflictuel</var> <var>version</var>
+        </example>
+
+	Correction d'erreurs :
+	<example>
+	<var>postinst-du- paquet-déconfiguré</var> abort-deconfigure in-favour
+	<var>paquet-dont-l'installation-a-échouée</var> <var>version</var>
+	removing <var>paquet-conflictuel</var> <var>version</var>
+        </example>
+	Les paquets déconfigurés sont indiqués comme nécessitant une
+configuration, afin que si l'option <tt>--install</> est utilisée, ils 
+soient, si possible, de nouveau configurés.
+		    </p>
+
+		  </item>
+<item>
+<p>
+Pour préparer l'effacement du paquet conflictuel, appel:
+	<example>
+	<var>prerm-du-paquet-conflictuel</var> remove in-favour
+	 <var>paquet</var> <var>nouvelle-version</var>
+	</example>
+	Correction d'erreurs :
+	<example>
+	<var>postinst-du-paquet-conflictuel</var> abort-remove in-favour
+	 <var>paquet</var> <var>nouvelle-version</var>
+        </example>
+		    </p>
+		  </item>
+		</enumlist>
+	      </p>
+	    </item>
+
+<item>
+     <p>
+<enumlist>
+     <item>
+<p>
+Si le paquet est mis à jour, appel :
+	<example>
+	<var>preinst-du-nouveau-paquet</var> upgrade <var>vieille-version</var>
+        </example>
+		    </p>
+		  </item>
+<item>
+Autrement si le paquet a des fichiers de configuration d'une
+          version précédemment installée (c'est à dire, il ne reste
+	  plus du paquet que les fichiers de configuration) :
+	<example>
+	<var>preinst-du-nouveau-paquet</var> install <var>vieille-version</var>
+	</example>
+		    </p>
+     <item>
+<p>
+Autrement (c'est à dire, le paquet a été complètement
+effacé) :
+	<example>
+	<var>preinst-du-nouveau-paquet</var> install
+	</example>
+
+	Les corrections d'erreurs, respectivement :
+	<example>
+<var>postrm-du-nouveau-paquet</var> abort-upgrade <var>vieille-version</var>
+<var>postrm-du-nouveau-paquet</var> abort-install <var>vieille-version</var>
+<var>postrm-du-nouveau-paquet</var> abort-install
+	</example>
+		    </p>
+		  </item>
+		</enumlist>
+	      </p>
+	    </item>
+<item>
+Les fichiers du nouveau paquet sont dépaquetés, remplacant ceux qui
+peuvent déjà être sur le système, par exemple, les fichiers appartenant à la
+vieille version du même paquet ou ceux d'un autre paquet (les sauvegardes des
+vieux fichiers sont laissées, et si quelque chose se passe mal, le système de 
+gestion des paquets, dans sa partie «&nbsp;correction d'erreurs&nbsp;» essayera de les 
+remettre en place).
+	      </p>
+<p>
+C'est une erreur pour un paquet de contenir des fichiers qui sont sur le
+système dans un autre paquet, à moins que <tt>Replaces</> soit utilisé
+(voir <ref id="replaces">). Pour l'instant l'option <tt>--force-overwrite</tt>
+est disponible, la dégradant en un avertissement, mais cela peut ne pas 
+être toujours le cas.
+	      </p>
+<p>
+C'est une erreur plus grave pour un paquet de contenir un simple
+fichier ou autre chose qu'un répertoire quand un autre paquet a un
+répertoire (à moins que <tt>Replaces</tt> ne soit utilisé).
+Cette erreur peut être évitée si c'est l'effet recherché, en utilisant
+<tt>--force-overwrite-dir</>, mais ce n'est pas à conseiller.
+	      </p>
+<p>
+Les paquets qui remplacent mutuellement leurs fichiers ont une démarche qui,
+bien que déterministe, est difficile à comprendre pour
+un administrateur système. Cela peut aisément conduire à des programmes 
+«&nbsp;absent&nbsp;» quand, par exemple, un paquet est installé qui remplace tel fichier
+d'un autre paquet, et puis ce paquet est effacé de nouveau<footnote>Une 
+partie du problème vient certainement d'une erreur de <tt>dpkg</>.</footnote>.
+	      </p>
+<p>
+Un répertoire ne sera jamais remplacé par un lien symbolique vers un
+répertoire et vice versa ; à la place, l'état existant (lien symbolique
+ou non) est conservé et <tt>dpkg</tt> suivra les liens s'il y en a.
+	      </p>
+	    </item>
+
+<item>
+<p>   <enumlist>
+   <item>
+Si le paquet est mis à jour, appel :
+	<example>
+<var>postrm-de l'ancien-paquet</var> upgrade <var>nouvelle-version</var>
+	</example></p>
+		  </item>
+
+   <item>
+<p>Si cela échoue, <prgn>dpkg</prgn> essaye :
+	<example>
+<var>postrm-du-nouveau-paquet</var> failed-upgrade <var>vieille-version</var>
+	</example>
+	Les corrections d'erreur, dans les deux cas :
+	<example>
+<var>preinst-de-l'ancien-paquet</var> abort-upgrade <var>nouvelle-version</var>
+	</example>
+		    </p>
+		  </item>
+		</enumlist>
+<p>
+	C'est le point de non retour - Quand <prgn>dpkg</prgn> atteint ce 
+point, 	il ne revient pas en arrière si une erreur se produit. Le paquet
+reste dans très mauvais état et demande une réinstallation qui réussisse pour
+remettre tout en place ; mais cela arrive quand <prgn>dpkg</prgn> commence à 
+faire des choses irréversibles.
+	      </p>
+	    </item>
+	
+<item>
+Tous les fichiers de la version précédente du paquet qui ne sont pas dans la
+nouvelle sont effacés.
+	      </p>
+	    </item>
+<item>
+La nouvelle liste de fichiers remplace la précédente.
+	      </p>
+	    </item>
+
+<item>
+Les nouveaux scripts du responsable remplacent les anciens.
+	      </p>
+	    </item>
+
+<item>
+Les paquets dont tous les fichiers ont été remplacés pendant
+l'installation, et qui ne sont pas nécessaires pour les dépendances,
+sont considérés comme effacés. Pour ces paquets :
+	<enumlist>
+	<item>
+<p>
+<prgn>dpkg</prgn> appelle:
+	      <example>
+             <var>postrm-du-paquet-effacé</var> disappear 
+<var>remplacant</var> <var>version-du-remplacant</var>
+	      </example>
+		    </p>
+		  </item>
+
+	<item>
+<p>Les scripts du responsable de paquet sont effacés.
+		    </p>
+		  </item>
+
+	<item>
+Le paquet est inscrit dans la base de données des statuts
+comme étant dans un état correct, à savoir non installé (ses 
+<em>conffiles</em> sont ignorés et non pas supprimés par <prgn>dpkg</prgn>).
+Il faut remarquer que <prgn>dpkg</prgn> n'appelle pas le script prerm du paquet
+effacé, car il ne sait pas à l'avance que le paquet va disparaître.
+		    </p>
+		  </item>
+	</enumlist>
+	      </p>
+	    </item>
+<item>
+<p>
+Les fichiers du paquet à installer qui sont aussi répertoriés par d'autres 
+paquets sont enlevés des listes de ces paquets (ce qui
+lobotomisera la liste de fichiers du paquet «&nbsp;conflictuel&nbsp;», s'il y en a
+un).
+	      </p>
+	    </item>
+
+<item>
+<p>
+Les fichiers de sauvegarde faits pendant la phase précédente d'installation
+sont effacés.
+	      </p>
+	    </item>
+
+<item>
+Le statut du nouveau paquet est correct et enregistré comme
+«&nbsp;dépaqueté&nbsp;». C'est un autre point de non retour - si l'effacement d'un
+paquet conflictuel échoue, on ne «&nbsp;rembobine&nbsp;» pas le reste de
+l'installation ; le paquet conflictuel est laissé dans un état 
+«&nbsp;enlevé à moitié&nbsp;».
+	      </p>
+	    </item>
+
+<item>
+Au cas où existe un paquet conflictuel, on procède aux actions
+d'effacement (décrites ci-dessus), en commençant par l'effacement des
+fichiers du paquet conflictuel (les fichiers qui sont aussi dans le
+paquet installé ont déjà été effacés de la liste des fichiers du paquet
+conflictuel et ne sont pas enlevés maintenant).
+	      </p>
+	    </item>
+          </enumlist>
+	</p>
+      </sect>
+<sect><heading>Précisions sur la configuration</heading>
+
+<p>
+Quand on configure un paquet ( avec <tt>dpkg --install</tt>, ou avec 
+<tt>--configure</tt>), on met à jour d'abord les <em>conffiles</em> et
+ensuite on appelle :
+<example>
+<var>postinst</var> configure <var>version-la-plus-récemment-configurée</var>
+</example>
+	</p>
+<p>
+On n'essaye pas de «&nbsp;rembobiner&nbsp;» après une erreur pendant la
+configuration.
+	</p>
+<p>
+S'il n'existe pas de «&nbsp;version-la-plus-récemment-configurée&nbsp;», <tt>dpkg</tt> 
+passe un argument nul ; les vieilles versions de <tt>dpkg</tt> peuvent passer
+dans ce cas <tt>&lt;unknow&gt;</tt> (avec les signes supérieur et inférieur). 
+Et les plus vieilles versions ne passent pas de second argument du tout et 
+dans n'importe quelle circonstance.
+	</p>
+      </sect>
+
+<sect><heading>Précisions sur la phase de suppression sans et/ou avec 
+suppression des fichiers de configuration</heading>
+
+<p>
+<enumlist>
+
+<item>
+<p>
+<example>
+<var>prerm</var> remove
+		</example>
+	      </p>
+	    </item>
+<item> 
+Les fichiers du paquet sont effacés (sauf les <em>conffiles</em>).
+	      </p>
+	    </item>
+
+<item>
+<p>
+<example>
+<var>postrm</var> remove
+		</example>
+	      </p>
+	    </item>
+
+<item> 
+<p>Tous les scripts du responsable sont effacés sauf <em>postrm</em>.
+	      </p>
+<p>
+Si on n'effaçe pas le paquet, la procédure s'arrête là. Il faut remarquer que
+les paquets qui n'ont pas de <em>postrm</em> ni de <em>conffiles</em> sont 
+automatiquement purgés pendant l'effacement, comme il n'y pas de différence, 
+sauf pour le statut de <prgn>dpkg</prgn>.
+	      </p>
+	    </item>
+
+
+<item>
+Les <em>conffiles</em> et les fichiers de sauvegarde (<tt>~</tt>-fichier,
+<tt>#*#</tt>fichiers, <tt>%</tt>-fichiers, <tt>.dpkg-{old, new, tmp}</tt>, 
+etc.) sont effacés.
+	      </p>
+	    </item>
+
+<item>
+<example>
+<var>postrm</var> purge
+		</example>
+	      </p>
+	    </item>
+
+<item>
+La liste des fichiers du paquet est effacée.
+	      </p>
+	    </item>
+</enumlist>
+
+Aucune tentative n'est faite pour «&nbsp;rembobiner&nbsp;» après une erreur durant la
+phase de suppression.</p>
+      </sect>
+    </chapt>
+
+<chapt id="relationships"><heading>La déclaration de relation entre les paquets</heading>
+
+<p>
+Les paquets peuvent déclarer dans leur fichier <em>control</em> qu'ils ont
+certaines relations avec d'autres paquets - par exemple, qu'ils ne
+peuvent pas être installés en même temps que tel paquet,
+et/ou qu'ils dépendent de la présence de tel autre, ou bien qu'ils doivent
+remplacer les fichiers de certains s'ils sont présents.
+      </p>
+<p>
+On se sert pour cela des champs du fichier <em>control</em> :
+<tt>Depends</tt>, <tt>Recommends</tt>, <tt>Sugggests</tt>, <tt>Enhances</tt>, 
+<tt>Conflicts</tt>, <tt>Provides</tt> et <tt>Replaces</tt>.
+      </p>
+    
+<p>
+Les paquets sources peuvent déclarer des relations avec des paquets
+binaires : par exemple, ils ont besoin que tel paquet soit présent ou
+absent au moment de leur construction.
+      </p>
+<p>
+On se sert pour cela des champs du fichier <em>control</em> :
+<tt>Build-Depends</tt>, <tt>Build-Depends-Indep</tt>, 
+<tt>Build-Conflicts</tt>,et <tt>Build-Conflicts-Indep</tt>.
+      </p>
+
+<sect id="depsyntax">La syntaxe des champs de relation</heading>
+
+<p>
+Ces champs ont tous la même syntaxe. Ce sont des listes de
+noms de paquets séparés par des virgules.
+	</p>
+
+<p>
+Dans les champs <tt>Depends</tt>, <tt>Recommends</tt>, <tt>Suggests</tt>, 
+<tt>Pre-Depends</tt>, <tt>Build-Depends</tt> et <tt>Build-Depends-Indep</tt> 
+(les champs qui déclarent les dépendances d'un paquet envers d'autres 
+paquets), ces noms peuvent aussi être des listes de noms de paquets 
+alternatifs, séparés par des symboles barre verticale «&nbsp;|&nbsp;» (symbole du tube 
+de communication).
+	</p>
+
+<p>
+Tous les champs sauf <tt>Provides</tt> peuvent restreindre leur
+application à des versions particulières de chaque paquet nommé. C'est
+indiqué entre parenthèses après chaque nom de paquet; les
+parenthèses contiendront une des relations de la liste ci-dessous,
+suivie par un numéro de version, dans le format décrit dans
+<ref id="versions">.
+	</p>
+
+<p>
+Les relations autorisées sont : <tt>&lt;&lt;</tt>, <tt>&lt;=</tt>,
+<tt>=</tt>, <tt>&gt;=</tt> et <tt>&gt;&gt;</tt>pour
+strictement avant, avant ou égal, égal, après ou égal, strictement
+après, respectivement. Les formes <tt>&lt;</tt> et <tt>&gt;</tt> ont été 
+utilisées pour signifier avant/après ou égal, plutôt que strictement 
+avant/après, ainsi ils ne doivent pas apparaître dans les nouveaux paquets 
+(bien que <prgn>dpkg</prgn> les accepte encore).
+	</p>
+
+<p>
+Les espaces peuvent apparaître n'importe où dans la spécification de
+version, et doivent apparaître là où c'est nécessaire pour supprimer
+toute ambiguïté ; autrement ils ne sont pas significatifs. Pour
+la cohérence et dans le cas de futures modifications de <prgn>dpkg</prgn>, 
+il est recommandé de mettre un seul espace après une relation de version
+et avant un numéro de version ; il est aussi convenu de mettre un espace
+après chaque virgule, de chaque côté d'une barre verticale, et avant
+chaque parenthèse ouvrante.
+	</p>
+
+<p>
+Par exemple :
+<example>
+Package: metamail
+Version: 2.7-3
+Depends: libc5 (>= 5.2.18-4), mime-support, csh | tcsh
+</example>
+	</p>
+
+<p>
+On peut limiter à un ensemble d'architectures tous les champs qui précisent 
+des relations pour la compilation 
+(<tt>Build-Depends</tt>, <tt>Build-Depends-Indep</tt>, <tt>Build-Conflicts</tt>
+et<tt>Build-Conflicts-Indep</tt>). On se sert de crochets après chaque nom
+de paquet et l'indication facultative de la version. Les crochets enferment
+un liste d'architectures acceptées par Debian séparées par un espace. Un
+point d'exclamation peut être ajouté à chaque nom. Quand l'architecture de
+la machine hôte n'est pas présente dans la liste et qu'il n'y a pas de
+point d'exclamation, ou bien quand elle est dans la liste et préfixée par un 
+point d'exclamation, le paquet et l'indication de la version associée sont
+complètement ignorés pour ce qui concerne la définition du système de
+relation.
+	</p>
+<p>
+Par exemple :
+<example>
+            Source: glibc
+            Build-Depends-Indep: texinfo
+            Build-Depends: kernel-headers-2.2.10 [!hurd-i386],
+            hurd-dev [hurd-i386], gnumach-dev [hurd-i386]
+          </example>
+        </p>
+      </sect>
+
+<sect>
+        <heading>Les dépendances pour les paquets binaires - <tt>Depends</tt>,
+          <tt>Recommends</tt>, <tt>Suggests</tt>, <tt>Enhances</tt>,
+ <tt>Pre-Depends</tt>
+        </heading>
+
+<p>
+Ces cinq champs sont utilisés pour déclarer une relation de dépendance d'un
+paquet envers un autre paquet. Ils apparaissent dans le fichier 
+<em>control</em> du paquet dépendant.
+	</p>
+
+<p>
+Tous ces champs, sauf <tt>Pre-Depends</tt> et <tt>Conflicts</tt> 
+(voir ci-dessous) prennent effet <em>seulement</em> lors de la configuration 
+du paquet. Ils n'empêchent pas qu'un paquet soit sur le système dans un état 
+«&nbsp;non configuré&nbsp;» alors que ses dépendances ne sont pas
+satisfaites ; il est aussi possible de remplacer un paquet correctement 
+installé et dont les dépendances sont satisfaites  par une version différente
+dont les dépendances ne sont pas et ne peuvent pas être satisfaites ;
+quand c'est le cas, le paquet dépendant est laissé «&nbsp;non configuré&nbsp;» (étant
+donnée que les tentatives pour le configurer donnent des erreurs) et
+il ne fonctionne pas correctement.
+	</p>
+
+<p>
+Pour cette raison, lors d'une installation, les paquets sont généralement
+tous installés d'abord et tous configurés ensuite ; cela permet que les
+dernières versions des paquets ayant des dépendances sur les dernières
+versions d'autres paquets voient leurs dépendances satisfaites.
+	</p>
+
+<p>
+Ainsi le champ <tt>Depends</tt> autorise les responsables de paquet à imposer 
+un ordre sur la manière de configurer les paquets.
+	</p>
+
+
+<p>
+<taglist>
+<tag><tt>Depends</tt></tag>
+<item>
+<p>
+Ce champ déclare une dépendance absolue.
+	    </p>
+<p>
+Le champ <tt>Depends</> sera utilisé quand le paquet dépendant a besoin,
+pour fonctionner d'une manière intéressante, de tel paquet.
+	    </p>
+	  </item>
+
+<tag><tt>Recommends</tt></tag>
+<item>
+ce champ déclare une dépendance forte, mais pas absolue.
+<p>
+Le champ <tt>Recommends</tt> listera les paquets qu'on trouve habituellement 
+avec ce paquet dans toute installation standard.
+	    </p>
+	  </item>
+
+<tag><tt>Suggests</tt></tag>
+<item>
+<p>
+On se sert de ce champ pour déclarer qu'un paquet serait plus utile avec
+un ou plusieurs autres paquets. On indique au système de gestion de
+paquet et à l'utilisateur que les paquets listés sont liés au paquet et
+qu'ils peuvent peut-être augmenter son utilité, mais qu'une installation 
+sans ces paquets est parfaitement concevable.
+	    </p>
+	  </item>
+
+<tag><tt>Enhances</tt></tag>
+<item>
+<p>
+Ce champ ressemble au champ <tt>Suggests</tt> mais il marche en sens inverse. 
+On s'en sert pour déclarer qu'un paquet améliore l'efficacité de tel
+autre paquet.
+	      </p>
+	    </item>
+<tag><tt>Pre-Depends</tt></tag>
+<item>
+Ce champ ressemble au champ <tt>Depends</tt>, sauf qu'il force aussi
+<prgn>dpkg</prgn> à terminer l'installation des paquets qu'il liste avant 
+même de démarrer l'installation du paquet qui déclare ces pré-dépendances.
+	    </p>
+
+<p>
+Le champ <tt>Pre-Depends</tt> sera utilisé avec modération, et de
+préférence seulement pour les paquets dont une mise à jour ou une installation
+prématurée entraverait la capacité du système à continuer
+les mises à jour en cours.
+	    </p>
+
+<p>
+Quand le paquet déclarant une relation de <tt>Pre-Dépendance</tt> est 
+configuré, cette relation sera considérée comme satisfaite seulement si le 
+paquet dépendant a bien été configuré, comme si une relation 
+<tt>Depends</tt> ordinaire avait seulement été utilisée.
+	    </p>
+
+<p>
+Cependant, quand on installe un paquet déclarant une relation de 
+pré-dépendance, cette relation peut être satisfaite même si le paquet 
+demandé est seulement dépaqueté ou reste «&nbsp;à moitié configuré&nbsp;», pourvu
+qu'il ait été déjà correctement configuré au moins une fois (et pas effacé ou
+partiellement effacé depuis). Dans ce cas, les deux versions
+celle précédemment configurée et celle actuellement dépaqueté ou dans un état
+«à moitié configuré&nbsp;» doivent satisfaire toute clause de version 
+contenue dans le champ <tt>Pre-Depends</tt>.
+	    </p>
+	  </item>
+	</taglist>
+	</p>
+
+<p>
+Pour choisir un niveau de dépendance, on mesurera l'importance du paquet
+demandé pour les fonctionnalités du paquet qui déclare la dépendance. Certains
+paquets sont composés d'éléments plus ou moins importants. Un tel paquet
+listera dans le champ <tt>Depends</tt> le ou les paquets qui sont nécessaires 
+aux éléments les plus importants. Les demandes des autres éléments peuvent
+être mentionnés comme des Suggestions ou des Recommandations, selon
+l'importance relative de ces éléments.
+	</p>
+
+<sect id="conflicts"><heading>Les paquets binaires alternatifs --
+          les champs <tt>Conflicts</tt> et <tt>Replaces</tt>
+        </heading>
+<p>
+Quand un paquet déclare un conflit avec un autre, <prgn>dpkg</prgn> refuse
+de les installer en même temps sur le système.
+	</p>
+<p>
+Si l'on veut installer l'un de ces paquets, l'autre doit d'abord être supprimé 
+-- si le paquet en cours d'installation est marqué comme remplaçant
+(voir <ref id="replaces">) le paquet sur le système, ou si celui-ci est 
+marqué comme «&nbsp;désélectionné&nbsp;», ou bien si les deux paquets sont marqués 
+<tt>Essential</tt>, alors <prgn>dpkg</prgn> enlève automatiquement le paquet 
+qui crée le conflit, ou bien arrête l'installation du nouveau paquet par une 
+erreur. Ce mécanisme ne fonctionne pas quand le paquet installé est marqué
+<tt>Essential</tt> et que le nouveau paquet ne l'est pas.
+	</p>
+
+<p>
+Un paquet ne provoque pas de conflit simplement parce que ses fichiers de
+configuration sont toujours installés; il doit être au moins dans l'état 
+«&nbsp;à moitié installé&nbsp;».
+	</p>
+
+<p>
+Une exception spéciale est faite pour les paquets qui déclarent un conflit
+avec leur propre nom de paquet, ou avec le paquet virtuel qu'ils
+fournissent (voir ci-dessous) : cela n'empêche pas leur installation,
+et cela autorise un paquet à déclarer un conflit avec les paquets qui 
+peuvent le remplacer. On utilise ce dispositif quand on veut 
+que le paquet en question soit le seul paquet à fournir un paquet virtuel.
+	</p>
+
+<p>
+Une entrée <tt>Conflicts</> ne devrait presque jamais avoir une clause de
+version indiquant une relation «&nbsp;avant&nbsp;». Cela empêcherait <prgn>dpkg</prgn> 
+de mettre à jour ou d'installer le paquet qui déclare un tel conflit jusqu'à 
+ce que la mise à jour ou l'effacement du paquet en conflit ait été terminé.
+	</p>
+      </sect>
+
+<sect id="virtual"><heading>Les paquets virtuels -- le champ <tt>Provides</tt></heading>
+
+<p>
+Aussi bien que des noms de paquets réels (concrets), les champs de
+relation <tt>Depends</tt>, <tt>Build-Depends</tt>, 
+<tt>Build-Depends-Indep</tt>, <tt>Recommends</tt>, <tt>Suggests</tt>, 
+<tt>Conflicts</tt>, <tt>Build-Conflicts</tt> et <tt>Build-Conflicts-Indep</tt> 
+peuvent mentionner des noms de paquets virtuels.
+	</p>
+
+<p>
+Un paquet virtuel est un paquet qui apparaît dans le champ
+<tt>Provides</tt> du fichier «&nbsp;control&nbsp;» d'un autre paquet. L'effet est
+le même que si le ou les paquets qui fournissent un paquet virtuel particulier 
+avaient été listés par leur nom partout où le nom du paquet virtuel
+apparaît.
+	</p>
+
+<p>
+Quand un paquet réel et un paquet virtuel ont le même nom, la
+dépendance peut être satisfaite (ou le conflit provoqué) soit par le
+paquet réel soit par n'importe quel paquet fournissant le paquet virtuel et 
+qui indique cette dépendance.
+Par exemple, en supposant que nous ayons :
+<example>
+Package: vm
+Depends: emacs
+</example>
+Et que quelqu'un d'autre sorte un paquet xemacs, il peut dire :
+<example>
+Package: xemacs
+Provides: emacs
+</example>
+
+Et tout fonctionnera entre temps (jusqu'à ce qu'un nom de paquet
+purement virtuel soit décidé et que les paquets <tt>emacs</tt> et <tt>vm</tt>
+soient modifiés pour l'utiliser).
+	</p>
+
+<p>
+Quand un numéro de version est attaché à une dépendance ou à un conflit,
+seuls les paquets réels seront examinés pour savoir si la relation est
+satisfaite (ou l'interdiction violée, pour un conflit) - on supposera
+qu'un paquet réel qui fournit un paquet virtuel n'a pas la «&nbsp;bonne&nbsp;»
+version. Ainsi, un champ <tt>Provides</tt> ne peut pas contenir de numéros
+de version, et le numéro de version du paquet concret qui fournit un
+paquet virtuel particulier n'est pas examiné quand on considère une
+dépendance envers ou un conflit avec le nom du paquet virtuel.
+	</p>
+
+<p>
+Il est probable que la possibilité d'indiquer un numéro de version pour 
+chaque paquet virtuel sera ajoutée dans une version prochaine de 
+<prgn>dpkg</prgn>. Cette caractéristique n'est pas encore présente et il vaut
+mieux s'en servir très peu souvent.
+	</p>
+
+<p>
+Quand on  veut spécifier quel paquet d'un ensemble de paquets réels
+sera celui qui satisfait par défaut une dépendance particulière envers
+un paquet virtuel, on listera le paquet réel alternatif
+avant le paquet virtuel.
+	</p>
+
+<p>
+
+<sect id="replaces"><heading>le champ <tt>Replaces</tt> -- overwriting
+          files and replacing packages
+        </heading>
+
+<p>
+ Le champ <tt>Replaces</tt> du fichier «&nbsp;control&nbsp;» a deux buts qui entrent en
+jeu dans des situations différentes.
+	</p>
+
+<p>
+Les paquets virtuels (voir <ref id="virtual">) ne sont
+pas pris en compte quand on examine le champ <tt>Replaces</tt> - les paquets
+déclarés comme étant remplacés doivent être mentionnés par leurs noms
+réels.
+	</p>
+
+
+<sect1><heading>Remplacer les fichiers appartenant à d'autres paquets</heading>
+
+<p>
+Tout d'abord, comme mentionné auparavant, qu'un paquet possède des fichiers 
+qui sont sur le système mais dans un autre paquet est généralement une erreur,
+bien qu'actuellement l'option <tt>--force-overwrite</tt> soit mise
+par défaut, déclassant l'erreur en avertissement.
+	  </p>
+
+<p>
+Si le paquet qui veut faire un remplacement déclare qu'il remplace le paquet
+qui contient le fichier à remplacer, <prgn>dpkg</prgn> procède au
+remplacement du fichier de l'ancien paquet par le nouveau. Ce fichier ne
+sera plus listé comme faisant partie de l'ancien paquet.
+	  </p>
+
+<p>
+Quand un paquet est ainsi complètement remplacé, de sorte que
+<prgn>dpkg</prgn> ne sait pas quels fichiers il contient encore, on 
+considère qu'il a disparu. Sur le système, il est marqué comme 
+«&nbsp;non sélectionné&nbsp;» (sélectionné pour l'effacement) et «&nbsp;non installé&nbsp;». 
+Tous les renseignements contenus dans les <em>conffiles</em> sont ignorés, vu
+que le paquet remplaçant les aura repris. Le script <tt>postrm</tt> du paquet 
+est exécuté pour permettre au paquet de faire le nettoyage final nécessaire.
+Voir <ref id="mscriptsinstact">.
+	  </p>
+
+<p>
+À l'avenir, <prgn>dpkg</prgn> laissera de côté les fichiers qui remplacent les 
+fichiers d'un autre paquet (ce paquet déclarant qu'il remplace celui qui est 
+en cours d'installation) de telle sorte qu'on puisse installer sans problème
+une version plus ancienne d'un paquet.
+	  </p>
+
+<p>
+Cet usage de <tt>Replaces</> prend seulement effet quand deux paquets sont
+-- au moins partiellement -- en même temps sur le système, et cela peut 
+seulement se produire s'ils ne sont pas en conflit, ou si le conflit a été 
+annulé.
+	  </p>
+	</sect1>
+
+<sect1><heading>Le remplacement total d'un paquet ; forcer sa suppression</heading>
+
+<p>
+Et deuxièmement, le champ <tt>Replaces</tt> permet au système de gestion des
+paquets de savoir quel paquet enlever quand il y a un conflit - voir
+<ref id="conflicts">. Cet usage prend seulement effet quand deux paquets sont 
+réellement en conflit, afin que les deux effets n'interfèrent pas l'un avec 
+l'autre.
+	  </p>
+	</sect1>
+      </sect>
+
+<sect><heading>Les relations entre les paquets binaires et les paquets source
+-- les champs <tt>Build-Depends</tt>, <tt>Build-Depends-Indep</tt>,
+          <tt>Build-Conflicts</tt>, <tt>Build-Conflicts-Indep</tt>
+        </heading>
+
+<p>
+Un paquet source peut déclarer une dépendance envers un paquet binaire (ou un
+conflit) en se servant des champs <tt>Build-Depends</tt>,
+<tt>Build-Depends-Indep</tt>, <tt>Build-Conflicts</tt> et 
+<tt>Build-Conflicts-Indep</tt> du fichier <em>control</em>. Le sens de ces
+déclarations est que les dépendances ou les conflits qu'elles définissent
+doivent être résolus (comme ça a été défini plus haut pour les paquets
+binaires) quand l'une des cibles de <tt>debian/rules</tt> à laquelle tel
+champ s'applique est appelé.
+
+<taglist>
+            <tag><tt>Build-Depends</tt>, <tt>Build-Conflicts</tt></tag>
+            <item>
+              <p>
+Les champs <tt>Build-Depends</tt> et <tt>Build-Conflicts</tt> s'appliquent aux
+cibles <tt>build</tt>, <tt>binary</tt>, <tt>binary-arch</tt>
+                et <tt>binary-indep</tt>.
+              </p>
+            </item>
+ <tag><tt>Build-Depends-Indep</tt>, <tt>Build-Conflicts-Indep</tt></\tag>
+            <item>
+              <p>
+Les champs <tt>Build-Depends-Indep</tt> et <tt>Build-Conflicts-Indep</tt> 
+s'appliquent aux cibles <tt>binary</tt> et <tt>binary-indep</tt>.
+              </p>
+            </item>
+          </taglist>
+	</p>
+      </sect>
+    </chapt>
+
+<chapt id="conffiles"><heading>L'utilisation des fichiers de configuration
+      </heading>
+
+
+<p>
+<prgn>dpkg</prgn> peut faire de la manipulation automatique sur les fichiers 
+de configuration des paquets.
+      </p>
+
+<p>
+Que cet automatisme soit correct dépend d'un certain nombre de facteurs,
+mais fondamentalement, il y a deux approches pour tout type de fichier de
+configuration.
+      </p>
+
+<p>
+Une méthode simple consiste à embarquer la meilleure configuration possible 
+dans un fichier et à utiliser le mécanisme des <em>conffiles</em> pour gérer 
+les mises à jour. C'est une bonne approche quand il est peu probable que 
+l'utilisateur veuille modifier le fichier (mais il faut que cela soit 
+possible sans perdre les modifications déjà faites), et quand la fréquence
+de mise à jour du paquet contenant une version modifiée du fichier est 
+peu élevée.
+      </p>
+
+<p>
+L'autre méthode consiste à construire entièrement le fichier de configuration 
+à partir du script <tt>postinst</tt>, et à prendre la responsabilité de 
+résoudre automatiquement les erreurs des versions précédentes du paquet. 
+C'est justifié quand le fichier est nécessairement différent sur chaque 
+système.
+      </p>
+    </chapt>
+
+<chapt id="sharedlibs"><heading>Les bibliothèques partagées</heading>
+
+<p>
+On doit construire les paquets qui contiennent des bibliothèques partagées 
+avec un peu de soin pour s'assurer que ces bibliothèques seront
+toujours disponibles. Et particulièrement, les paquets qui demandent des
+bibliothèques vitales, telle que la bibliothèque <em>libc</em>.
+      </p>
+
+<p>
+Tout d'abord, le paquet installera les bibliothèques partagés sous
+leurs vrais noms. Par exemple, le paquet <prgn>libgdbm1</prgn> installera 
+<tt>libgdbm.so.1.7.3</tt> en tant que <tt>/usr/lib/libgdbm.so.1.7.3</tt>. 
+Aucun script <em>prerm</em> ou <em>postrm</em>ne changera le nom de ces 
+fichiers ni ne créera de liens pour ces fichiers ; <prgn>dpkg</prgn> s'occupe
+des changements de nom et cela, sans troubler les programmes en fonctionnement.
+Essayer d'interférer avec ce système crée des problèmes.
+      </p>
+
+<p>
+Ensuite, le paquet comportera le lien symbolique que <prgn>ldconfig</prgn>
+doit créer pour les bibliothèques partagées. Par exemple, le paquet
+<prgn>libgdbm1</prgn> inclura un lien symbolique de
+<tt>/usr/lib/libgdbm.so.1.7.3</tt> vers <tt>libgdbm.so.1.7.3</tt>. C'est
+nécessaire pour que <prgn>ld.so</prgn> puisse trouver la bibliothèque entre le
+moment où <prgn>dpkg</prgn> l'installe et celui où <prgn>ldconfig</prgn> est 
+exécuté par le script <prgn>postinst</prgn>. De plus, de vieilles versions du
+système de gestion des paquets demande que la bibliothèque soit
+placée avant le lien qui pointe sur elle dans le fichier <tt>.deb</tt>. Ainsi,
+avant que <prgn>dpkg</prgn> n'installe le lien symbolique (en remplaçant le 
+lien précédent qui pointe sur une version plus ancienne de la bibliothèque), 
+la nouvelle bibliothèque est déjà en place. Malheureusement, ce ne fût pas 
+toujours possible puisque cela dépendait grandement du système de fichier. 
+Certains systèmes de fichiers (comme reiserfs) réordonne les fichiers de 
+sorte que l'ordre dans lequel on les crée n'importe pas. Avec la version 
+<tt>1.7.0</tt>, <prgn>dpkg</prgn> réordonne lui-même les fichiers lors de la 
+construction d'un paquet.
+      </p>
+
+<p>
+Troisièmement, le paquet de développement comportera un lien
+symbolique pour la bibliothèque partagée sans numéro de version. Par
+exemple, le paquet <prgn>libgdbm1-dev</prgn> inclura un lien
+symbolique de <tt>/usr/lib/libgdbm.so</tt> vers <tt>libgdbm.so.1.7.3</tt>.
+Ce lien symbolique est nécessaire à <prgn>ld</prgn> quand il compile les
+paquets ; il cherche en effet seulement <tt>libgdbm.so</tt> et 
+<tt>libgdbm.a</tt> pour, respectivement, une compilation dynamique ou une
+compilation statique.
+      </p>
+
+<p>
+Tout paquet qui installe des bibliothèques partagées dans un répertoire
+listé par <tt>/etc/ld.so.conf</tt> ou dans un répertoire des répertoires
+par défaut de <prgn>ld.so</prgn> (actuellement, il y a <tt>/usr/lib</tt>
+et <tt>/lib</tt>) doit appeler <prgn>ldconfig</prgn> dans son script 
+<prgn>postinst</prgn> si et seulement si le premier argument est «&nbsp;configure&nbsp;».
+Cependant, c'est important de ne pas appeler <prgn>ldconfig</prgn> dans les 
+scripts postrm ou preinst dans le cas où le paquet est mis à jour 
+(voir <ref id="unpackphase">) ; en effet <prgn>ldconfig</prgn> voit les
+noms temporaires que <prgn>dpkg</prgn> donne à ces fichiers lors de l'
+installation ; et il fait pointer les liens des bibliothèques partagées sur 
+ces noms, juste avant que <prgn>dpkg</prgn>, continuant l'installation, ne
+supprime les liens !
+      </p>
+
+    
+
+<sect id="shlibs"><heading>Le format du fichier <tt>shlibs</tt></heading>
+
+<p>
+Ce fichier est utilisé par <tt>dpkg-shlibdeps</> ; il est nécessaire quand
+un paquet fournit des bibliothèques partagées.
+<p>
+
+Chaque ligne est de la forme :
+<example>
+nom-bibliothèque version-ou-nomso dépendances ...
+</example>
+
+<em>nom-bibliothèque</em> est le nom de la bibliothèque partagée, par exemple
+<tt>libc5</tt>.
+<p>
+
+<em>version-ou-nomso</> est le <em>nom-so</em> de la bibliothèque -- c'est 
+à dire le nom qui doit coller exactement pour que la bibliothèque soit reconnue
+par <tt>ld.so</tt>. Généralement, c'est le numéro majeur de version de
+la bibliothèque.
+<p>
+
+<em>dépendances</> a la même syntaxe que le champ dépendance dans le
+fichier <em>control</em> d'un paquet binaire. Il donnera des renseignements
+sur les paquets nécessaires pour construire un paquet binaire à partir de
+la version de bibliothèque contenue dans le paquet.
+Voir <ref id="depsyntax">.
+	</p>
+
+<p>
+Par exemple, si le paquet <tt>foo</tt> contient <tt>libfoo.so.1.2.3</tt> où
+le nom-so de la bibliothèque est <tt>libfoo.so.1</tt>, et si la première 
+version du paquet qui contenait un numéro mineur valant au moins <tt>2.3</tt> 
+était égal à <em>1.2.3-1</em>, alors le <em>shlibs</> du paquet pourrait dire :
+<example>
+libfoo 1	foo (>= 1.2.3-1)
+</example>
+
+La dépendance envers une version spécifique est faite dans le but d'éviter 
+les avertissements de <tt>ld.so</> sur l'utilisation de bibliothèques 
+partagées plus anciennes avec des binaires plus récents.
+	</p>
+
+
+<sect><heading>Quelques informations techniques sur <tt>shlibs</tt></heading>
+
+<p>
+<sect1><heading><em>Qui</em> sont les fichiers <tt>shlibs</tt> ? </heading>
+
+<p>
+Le fichier <tt>debian/shlibs</tt> fournit une façon de vérifier les
+dépendances des bibliothèques partagées des paquets binaires.
+Ces fichiers sont faits pour rendre la vie des responsables de paquet 
+plus facile.
+	  </p>
+
+<p>
+Les autres fichiers <tt>shlibs</> qui existent sur un système Debian
+sont :
+<list>
+<item><tt>/etc/dpkg/shlibs.default</tt></p>
+	      </item>
+<item><tt>/etc/dpkg/shlibs.override</tt></p>
+	      </item>
+<item><tt>/var/lib/dpkg/info/*.shlibs</tt></p>
+	      </item>
+<item><tt>debian/shlibs.local</tt></p>
+	      </item>
+</list>
+
+Ces fichiers sont utilisés par <tt>dpkg-shlibdeps</> lors de la création d'un
+paquet binaire.
+	  </p>
+	</sect1>
+
+
+<sect1><heading>Comment <em>fonctionne</em> <tt>dpkg-shlibdeps</> ?</heading>
+
+<p>
+<prgn>dpkg-shlibdeps</prgn> détermine directement<footnote>
+<p>
+Actuellement, il appelle <prgn>ldd</prgn> pour faire ça, mais dans une
+prochaine version il appellera <prgn>objdump</prgn>. Cependant quelques
+changements sont nécessaires dans la manière de construire un paquet.
+	      </p>
+<p>
+Supposons le binaire <tt>foo</tt> qui utilise directement la bibliothèque
+<tt>libbar</tt> quand il est lié à cette bibliothèque. Les bibliothèques
+dont <tt>libbar</tt> a besoin sont liées indirectement à <tt>foo</tt>, et
+l'éditeur de liens dynamiques les charge automatiquement quand il charge
+<tt>libbar</tt>. Avec <prgn>ldd</prgn> on a une liste de toutes les
+bibliothèques, qu'elles soient utilisées directement ou indirectement ;
+avec <prgn>objdump</prgn> on a seulement les bibliothèques liées directement.
+Un paquet ne doit dépendre que des bibliothèques qui lui sont directement
+attachées, puisque les dépendances de ces bibliothèques amèneront
+automatiquement les autres bibliothèques.
+	      </p>
+<p>
+Cependant, ce changement signifie réellement un changement dans la façon de
+construire les paquets : actuellement,<prgn>dpkg-shlibdeps</prgn> fonctionne
+uniquement avec des binaires. mais puisque on va dépendre du fait que les
+bibliothèques déclarent les bibliothèques dont elles ont besoin, les paquets
+qui contiennent ces bibliothèques devront lancer <prgn>dpkg-shlibdeps</prgn>
+sur les bibliothèques.
+	      </p>
+<p>
+Cela nous aiderait beaucoup, par exemple, dans l'actuel gâchis lié aux
+multiples versions de la bibliothèque <em>mesa</em>. Avec le système
+<em>Ldd</em> chaque paquet qui utilise mesa doit ajouter une dépendance
+envers svgalib|svgalib-dummy pour gérer la variante mesa de glide. Avec
+le système <em>objdump</em> ce n'est plus nécessaire et cela aurait
+éviter beaucoup de travail à tout le monde.
+	      </p>
+<p>
+Un autre exemple : on pourrait mettre à jour libimlib avec une version
+qui accepte le nouveau format graphique <em>dgf</em>. En utilisant
+l'ancienne méthode <em>ldd</em>, chaque paquet qui se sert de libimlib
+devrait être recompilé pour qu'il dépende aussi de libdgf , sinon il ne
+marcherait pas à cause de symboles manquants. Mais, avec le nouveau
+système, les paquets qui se servent de libimlib peuvent dépendre
+simplement de libimlib qui possède elle-même la dépendance envers
+libgdh et ils n'auront pas besoin d'être mis à jour.
+	      </p>
+	    </footnote>
+les bibliothèques
+partagées, utilisées par les binaires compilés (et, dans une prochaine version
+de <prgn>dpkg-shlibdeps</prgn>, les bibliothèques) passés en paramètre sur sa
+ligne de commande.
+	      </p>
+
+<p>
+Pour chaque bibliothèque partagée, <tt>dpkg-shlibdeps</tt> a besoin de connaître :
+<list compact="compact">
+<item>le paquet contenant la bibliothèque, et
+<item>le numéro de version de la bibliothèque.
+</list>
+
+Il scrute le fichiers suivants dans cet ordre :
+<enumlist compact="compact">
+<item><p><tt>debian/shlibs.local</tt></p>
+	      </item>
+<item><p><tt>/etc/dpkg/shlibs.override</tt></p>
+	      </item>
+<item><p><tt>/var/lib/dpkg/info/*.shlibs</tt></p>
+	      </item>
+<item><p><tt>/etc/dpkg/shlibs.default</tt></p>
+	      </item>
+</enumlist>
+
+
+<sect1><heading><em>Qui</em> s'occupe de différents fichiers
+            <tt>shlibs</tt> ?
+          </heading>
+
+<p>
+<list compact="compact">
+<item>
+<p><tt>/etc/dpkg/shlibs.default</tt> - le responsable de dpkg</p>
+	      </item>
+<item>
+<p><tt>/var/lib/dpkg/info/<var>paquet</var>.shlibs</tt> - le
+responsable de chaque paquet</p>
+	      </item>
+<item>
+<p><tt>/etc/dpkg/shlibs.override</tt> - l'administrateur système local</p>
+	      </item>
+<item>
+<p><tt>debian/shlibs.local</tt> - le responsable du paquet</p>
+	      </item>
+</list>
+
+Le fichier <tt>shlibs.default</tt> est géré par <prgn>dpkg</prgn>. Les
+entrées dans <tt>shlibs.default</tt> qui sont fournies par <prgn>dpkg</prgn>,
+ne servent que provisoirement, le temps que les paquets de
+bibliothèque partagée aient tous leurs fichiers <tt>shlibs</>.
+	  </p>
+
+
+<sect1><heading><em>Comment</em> utiliser <prgn>dpkg-shlibdeps</prgn> et les fichiers <tt>shlibs</tt> ? </heading>
+
+<sect2><heading>Si le paquet ne fournit pas de bibliothèque partagée</heading>
+
+<p>
+Placer un appel à <prgn>dpkg-shlibs</prgn> dans le fichier
+<tt>debian/rules</tt>. Si le paquet contient seulement des binaires
+(aucun scripts) utiliser :
+<example>
+dpkg-shlibdeps debian/tmp/usr/bin/* debian/tmp/usr/sbin/*
+</example>
+
+Si <prgn>dpkg-shlibdeps</prgn> ne se plaint pas, c'est bon. Sinon, il faudra
+peut-être créer son propre fichier <tt>debian/shlibs.local</tt>.
+	    </p>
+	  </sect2>
+
+<sect2><heading>Si le paquet fournit une bibliothèque partagée</heading>
+
+<p>
+Créer un fichier <tt>debian/shlibs</tt> et laisser <tt>debian/rules</tt>
+l'installer dans la zone de contrôle :
+<example>
+install -m644 debian/shlibs debian/tmp/DEBIAN
+</example>
+
+Si le paquet contient des binaires supplémentaires, voir ci-dessus.
+	    </p>
+	  </sect2>
+	</sect1>
+
+<sect1><heading><em>Comment</em> écrire le fichier
+            <tt>debian/shlibs.local</tt> ?
+          </heading>
+
+<p>
+Ce fichier sert seulement <em>temporairement</>, quand les binaires 
+dépendent d'une bibliothèque qui ne fournit pas déjà son propre fichier
+<tt>/var/lib/dpkg/*.shlibs</tt>.
+	  </p>
+
+<p>
+Supposons qu'on crée un paquet binaire <tt>foo</>. Pendant la construction du 
+paquet, la sortie peut ressembler à cela : 
+<example>
+$ ldd foo
+libbar.so.1 => /usr/X11R6/lib/libbar.so.1.0
+libc.so.5 => /lib/libc.so.5.2.18
+libX11.so.6 => /usr/X11R6/lib/libX11.so.6.0
+</example>
+
+Et quand on exécute <prgn>dpkg-shlibdeps</prgn> :
+<example>
+$ dpkg-shlibdeps -o foo
+dpkg-shlibdeps: warning unable to find dependency information
+for shared library libbar
+(soname 1, path /usr/X11R6/lib/libbar.so.1.0, dependency field Depends)
+shlibs:Depends=elf-x11r6lib, libc5 (>= 5.2.18)
+</example>
+
+Le binaire <prgn>foo</prgn> dépend de la bibliothèque partagée 
+<tt>libbar</tt>, mais aucun paquet ne semble fournir un fichier 
+<tt>*.shlibs</tt> dans <tt>/var/lib/dpkg/info/</tt>. Déterminons le paquet 
+responsable :
+	  </p>
+<p>
+<example>
+$ dpkg -S /usr/X11R6/lib/libbar.so.1.0
+bar1: /usr/X11R6/lib/libbar.so.1.0
+$ dpkg -s bar1 | grep Version
+Version: 1.0-1
+</example>
+Ce qui nous indique que le paquet <tt>bar1</>, version 1.0-1, est celui
+qu'on utilise. Maintenant nous pouvons créer notre propre
+<tt>debian/shlibs.local</tt> pour corriger temporairement le problème 
+évoqué. Incluons la ligne suivante dans le fichier
+<tt>debian/shlibs.local</tt> :
+
+<example>
+libbar1 bar1 (>= 1.0-1)
+</example>
+
+Maintenant le paquet doit fonctionner. Dès que le responsable
+de <tt>libbar1</tt> fournit un fichier <tt>shlibs</tt>, on peut enlever le
+fichier <tt>debian/shlibs.local</tt>.
+	</sect1>
+      </sect>
+    </chapt>
+
+
+
+<chapt><heading>Le système d'exploitation</heading>
 	
       
       <sect>
@@ -1140,10 +3468,7 @@ Les paquets Debian doivent inclurent
 L'emplacement de tous les répertoires et fichiers installés
 doit être conforme au standard Linux sur la hiérarchie du système de fichier 
 (FHS). On peut trouver la plus récente version de ce document avec ce manuel 
-ou sur <url id="http://www.pathname.com/fhs/"><footnote>
-La distribution Debian donne actuellement une version préliminaire de la version
-2.1 du «&nbsp;FHS&nbsp;» parce que plusieurs détails significatifs ont changé entre
-la version actuelle 2.0 et la version à venir 2.1.</footnote>.
+ou sur <url id="http://www.pathname.com/fhs/">.
 Toute question relative à la manière de suivre ce standard
 peut-être posée dans la liste de diffusion
 <prgn>debian-devel</prgn> ou à Daniel Quinlan, le coordinateur
@@ -1172,9 +3497,9 @@ On notera que cela ne s'applique qu'aux répertoires <em>sous</em>
 <tt>/usr/local</tt> et non pas <em>dans</em> <tt>/usr/local</tt>. 
 Le répertoire <tt>/usr/local</tt> ne doit
 contenir lui-même que les répertoires listés dans le FHS,
-section 4.6. Cependant vous pouvez créer autant de répertoires que vous voulez
+section 4.5. Cependant vous pouvez créer autant de répertoires que vous voulez
 sous ces répertoires. Vous ne devez pas supprimer
-les répertoires listés à la section 4.6, même si vous les avez créés.
+les répertoires listés à la section 4.5, même si vous les avez créés.
 </p>
 	  <p>
 Comme <tt>/usr/local</tt> peut être monté en lecture seule depuis
@@ -1331,7 +3656,7 @@ ainsi des possibilités de développement.
 		
 	    <tag>65534:</tag>
 	    <item>
-	      <p>Utilisateur «&nbsp;<tt>nobody</tt>&nbsp;».</p></item>
+	      <p>Utilisateur «&nbsp;<tt>nobody</tt>&nbsp;».Le «&nbsp;gid>&nbsp;» correspondant renvoie au groupe «&nbsp;<tt>nogroup</tt>&nbsp;».</p></item>
 		
 		
 	    <tag>65535:</tag>
@@ -1361,10 +3686,11 @@ de <prgn>init</prgn> (son «&nbsp;niveau de fonctionnement&nbsp;») est modifié
           <p>
 Il y a au moins deux façons, différentes mais fonctionnellement équivalentes,
 de se servir de ces scripts. Pour rester simple, on décrit ici la méthode des
-liens symboliques. On ne doit cependant pas présumer que cette méthode est
-utilisée, et toute manipulation sur le comportement des différents niveaux 
-de fonctionnement doit être faite avec le programme <prgn>update-rc.d</prgn> 
-comme décrit plus bas, et non pas en  créant soi même les liens symboliques.
+liens symboliques. Les scripts du responsable ne doivent cependant pas 
+présumer que cette méthode est utilisée, et toute manipulation automatisée 
+sur le comportement des différents niveaux de fonctionnement doit être faite 
+avec le programme <prgn>update-rc.d</prgn> comme décrit plus bas, et non pas 
+en  créant ou en supprimant soi même les liens symboliques.
 Voyez la documentation du paquet <tt>file-rc</tt> pour des renseignements sur 
 la mise en oeuvre de l'autre méthode.
 </p>
@@ -1492,7 +3818,28 @@ du script, comme par exemple :
 	    <example>
   test -f <var>program-executed-later-in-script</var> || exit 0
 	    </example></p>
+<p>
+ Dans les scripts «&nbsp;<tt>init.d</tt>&nbsp;», il y a souvent des valeurs
+que l'administrateur voudra changer fréquemment. Modifier ces scripts qui
+sont souvent des <em>conffiles</em> demande que l'administrateur rajoute
+ses modifications à chaque mise à jour du paquet et à chaque modification
+des <em>conffiles</em>. Pour rendre la vie des administrateurs système moins
+dure, on ne placera pas de telles valeurs configurables directement dans le
+script mais plutôt dans un fichier <tt>/etc/default</tt> qui aura, de façon
+classique, le même préfixe que le script «&nbsp;<tt>init.d</tt>&nbsp;»,. Ce 
+fichier supplémentaire peut être lu quand le script démarre. Il doit contenir
+seulement les définitions des variables et des commentaires.
+	  </p>
+<p>
+Pour s'assurer que des valeurs vitales sont toujours définies et disponibles,
+le script «&nbsp;<tt>init.d</tt>&nbsp;», indiquera, avant de lire le fichier 
+<tt>/etc/default/</tt>, une valeur par défaut pour chaque variable du shell 
+dont il se sert. Et, puisque <tt>/etc/default/</tt> est souvent un
+<em>conffiles</em>, le script «&nbsp;<tt>init.d</tt>&nbsp;», doit se comporter
+raisonnablement et sans échec quand ce fichier est détruit.
+	  </p>
 	</sect1>
+
 	  
 	<sect1>
 	  <heading>La gestion des liens</heading>
@@ -1585,7 +3932,7 @@ en les traitant correctement dans les scripts du responsable de paquet
 (voir <ref id="config files">).
 (C'est important car nous voulons laisser à l'administrateur
 système la possibilité d'adapter ces scripts à son système local
--- par exemple, désactiver un service sans désinstaller le paquet,
+-- par exemple, désactiver un service sans dés-installer le paquet,
 ou  bien spécifier des options particulières sur la ligne de commande au
 démarrage d'un service -- tout en assurant que ses modifications ne seront
 pas perdues lors de la prochaine mise à jour du paquet.)
@@ -1607,7 +3954,9 @@ le signal <tt>HUP</tt> au serveur de nom (ce qui provoque
 le rechargement de sa configuration) ;
 de cette manière, l'utilisateur peut utiliser la commande
 <tt>/etc/init.d/bind reload</tt> pour recharger la configuration
-du serveur de noms.
+du serveur de noms. Ce script possède une valeur configurable qu'on
+peut utiliser pour passer des paramètres au programme named
+lors du lancement.
 </p>
 	    
 	  <p>
@@ -1618,11 +3967,18 @@ du serveur de noms.
 	      # &lt;rob@mars.org&gt;, edited by iwj and cs
 	      
 	      test -x /usr/sbin/named || exit 0
-	      
+
+	      # Source defaults file.
+              PARAMS=''
+              if [ -f /etc/default/bind ]; then
+                . /etc/default/bind
+              fi
+
 	      case "$1" in
 	      start)
 	      echo -n "Starting domain name service: named"
-	      start-stop-daemon --start --quiet --exec /usr/sbin/named
+	      start-stop-daemon --start --quiet --exec /usr/sbin/named \
+	                        -- $PARAMS
 	      echo "."
 	      ;;
 	      stop)
@@ -1635,7 +3991,8 @@ du serveur de noms.
 	      echo -n "Restarting domain name service: named"
 	      start-stop-daemon --stop --quiet  \
 	      --pidfile /var/run/named.pid --exec /usr/sbin/named
-	      start-stop-daemon --start --verbose --exec /usr/sbin/named
+	      start-stop-daemon --start --verbose --exec /usr/sbin/named \
+	                        -- $PARAMS
 	      echo "."
 	      ;;
 	      force-reload|reload)
@@ -1651,9 +4008,22 @@ du serveur de noms.
 	      esac
 	      
 	      exit 0
-	    </example></p>
+	    </example>
+</p>
 	    
 	  <p>
+Le fichier «&nbsp;<tt>/etc/default/bind</tt>&nbsp;» est un complément pour
+le script init ci-dessus ; il contient des paramètres configurables qu'
+utilise ce script.
+	  </p>
+<p>
+           <example>
+             # Specified parameters to pass to named. See named(8).
+              # You may uncomment the following line, and edit to taste.
+              #PARAMS="-u nobody"
+           </example>
+         </p>
+<p>
 Un autre exemple sur lequel baser
 les scripts de <tt>/etc/init.d</tt> se trouve dans
 <tt>/etc/init.d/skeleton</tt>.
@@ -1661,7 +4031,7 @@ les scripts de <tt>/etc/init.d</tt> se trouve dans
 	    
 	  <p>
 Si ce paquet se satisfait des valeurs par défaut
-de <prgn>update-rc.d</prgn>, en l'occurence un numéro
+de <prgn>update-rc.d</prgn>, en l'occurrence un numéro
 d'ordre d'exécution égal à 20 et l'exécution dans tous les niveaux
 de fonctionnement, il peut indiquer dans son script
 <tt>postinst</tt>:
@@ -1915,7 +4285,7 @@ prendre en compte les règles générales énoncées plus haut.
 
 	<p>
 Les rubriques d'un menu suivront la politique exposée dans le fichier
-<ftppath>/debian/doc/package-developer/menu-policy.txt</ftppath>
+<ftppath>/debian/doc/package-developer/menu-policy.txt.gz</ftppath>
 qu'on peut trouver sur <ftpsite>ftp.debian.org</ftpsite>
 ou un miroir local. Il est aussi dans le paquet <tt>debian-policy</tt>.
 	</p>
@@ -1952,7 +4322,7 @@ Les paquets qui proposent des solutions pour lire-afficher-jouer, composer,
 modifier ou imprimer les types «&nbsp;MIME&nbsp;» déclareront cette 
 capacité, et se conformeront ainsi à l'actuelle politique concernant
 «&nbsp;MIME&nbsp;», telle qu'elle est définie dans le fichier 
-<ftppath>/debian/doc/package-developer/mime_policy.txt</ftppath> ; fichier 
+<ftppath>/debian/doc/package-developer/mime-policy.txt.gz</ftppath> ; fichier 
 qu'on peut trouver sur <ftpsite>ftp.debian.org</ftpsite>
 ou sur un miroir local. Ce fichier est aussi dans le paquet <tt>debian-policy</tt>.	</p>
 
@@ -2224,24 +4594,35 @@ genre de compilation.
                 </item>
 <item>
                   <p>
-Beaucoup moins de temps CPU sera gaspillé par les « autobuilders&nbsp;»
+Beaucoup moins de temps CPU sera gaspillé par les «&nbsp;autobuilders&nbsp;»
 puisque ne pas avoir les informations de débogage (et donc ne pas avoir à
 les enlever) accélérera la vitesse de compilation. Cela saute une passe
 entière du compilateur.</p>
                 </item></list>
 </footnote>:
+
 <example>
              CFLAGS = -O2 -Wall
              INSTALL = install
+	      INSTALL_FILE    = $(INSTALL) -p    -o root -g root  -m  644
+	      INSTALL_PROGRAM = $(INSTALL) -p    -o root -g root  -m  755
+             INSTALL_SCRIPT  = $(INSTALL) -p    -o root -g root  -m  755
+              INSTALL_DIR     = $(INSTALL) -p -d -o root -g root  -m  755
+
 
              ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
                CFLAGS += -g
              endif
              ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
-               INSTALL += -s
+             INSTALL_PROGRAM += -s
              endif
-           </example></p>
+           </example>
 	  
+Veuillez remarquer que l'exemple ci-dessus est simplement instructif ; ce
+n'est pas une règle de la charte. il se peut que vous ayez à modifier cet
+exemple pour le faire fonctionner avec votre paquet.
+	</p>
+
 <p>
 C'est au responsable du paquet de décider des meilleures options
 de compilation. Certains binaires (comme ceux qui font des 
@@ -2531,7 +4912,7 @@ dans son arborescence.
 	  <p>
 Si un paquet a besoin d'un fichier de périphérique particulier
 qui n'est pas inclus dans le système de base, il doit
-appeler <prgn>makedev</prgn> dans le script <tt>postinst</tt>,
+appeler <prgn>MAKEDEV</prgn> dans le script <tt>postinst</tt>,
 après en avoir demandé l'autorisation à l'utilisateur.
 </p>
 	  <p>
@@ -2629,10 +5010,10 @@ ne la modifient pas pendant l'installation (ou à quelque autre moment).
 </p>
 <p>
 Pour faire que les changements locaux soient préservés correctement, nul
-paquet ne peut contenir des liens « en dur », ou en créer, vers des 
+paquet ne peut contenir des liens «&nbsp;en dur&nbsp;», ou en créer, vers des 
 «&nbsp;conffiles&nbsp;»<footnote><p>
-Argument : Il y a deux problèmes avec les liens « en dur ». Le premier, c'est
-que certains « éditeurs » casse le lien quand ils modifient l'un des fichiers,
+Argument : Il y a deux problèmes avec les liens «&nbsp;en dur&nbsp;». Le premier, c'est
+que certains «&nbsp;éditeurs&nbsp;» casse le lien quand ils modifient l'un des fichiers,
 et les deux fichiers peuvent devenir involontairement différents. Le second,
 c'est qu'il arrive que <prgn>dpkg</prgn> casse le lien pendant une mise à
 jour de <tt>conffile</tt>s.</p>
@@ -2678,8 +5059,9 @@ remplacer le fichier à chaque mise à jour du paquet.
 	<sect1>
 	  <heading>Le partage des fichiers de configuration </heading>
 	  <p>
-Les paquets qui ne sont pas en <em>conflit</em> ne doivent pas spécifier le 
-même fichier <tt>conffile</tt>.</p>
+On doit indiquer un <em>conflit</em> entre des paquets qui ont le même 
+fichier <tt>conffile</tt>.
+</p>
 
 	  <p>
 Les scripts d'un responsable de paquet ne doivent modifier le 
@@ -3042,11 +5424,15 @@ prend le pas sur la variable EDITOR. Et c'est ce que fait
 
 
 	<p>
-Comme le système Debian de base fournit déjà un éditeur et
-un pagineur, un paquet n'a pas besoin de dépendre d'un éditeur
-ou d'un pagineur, et il n'y a pas besoin de paquets virtuels pour cela.
+Un paquet n'a pas besoin de dépendre d'un éditeur
+ou d'un pagineur, et il n'y a pas besoin de paquets virtuels pour cela
+<footnote>
+<p>
+Le système Debian de base fournit déjà un éditeur et
+un pagineur</p>
+	  </footnote>.
 </p>
-	  
+
       <sect id="web-appl">
 	<heading>Serveurs et applications Web</heading>
 	  
@@ -3103,7 +5489,7 @@ des documents.
 	  
 	  
       <sect>
-	<heading>Les agents de transport des courriers électroniques</heading>
+	<heading>Le courrier : transport, délivrance et lecture des messages.</heading>
 	  
 	<p>
 Les paquets Debian qui traitent le courrier électronique, que ce soient les 
@@ -3174,7 +5560,7 @@ un fichier <tt>.forward</tt> à la place.
 </p>
 	<p>
 L'emplacement du programme <prgn>rmail</prgn> utilisé par UUCP pour
-les messages entrants sera <tt>/usr/sbin/rmail</tt>, conformément au FHS.
+les messages entrants sera <tt>/usr/sbin/rmail</tt>.
 De même le programme <prgn>rsmtp</prgn>, qui reçoit des lots SMTP via UUCP,
 sera placé dans <tt>/usr/sbin/rsmtp</tt> s'il est supporté.
 </p>
@@ -3208,7 +5594,7 @@ seulement par ce paquet. Par exemple dans cette situation, le paquet INN dit:
 	  
 	  
       <sect>
-	<heading>La configuration du système de « News »</heading>
+	<heading>La configuration du système de «&nbsp;News&nbsp;»</heading>
 	  
 	<p>
 Tous les fichiers de configuration relatifs aux serveurs et aux
@@ -3249,21 +5635,7 @@ sous «&nbsp;X&nbsp;», à moins que ces dépendances ne soient pour un paquet
 dont la priorité est «&nbsp;standard&nbsp;» ou une priorité supérieure ; dans
 ce cas les binaires spécifiques à «&nbsp;X&nbsp;» peuvent être mis dans un
 paquet distinct, ou bien des versions alternatives du paquet avec support de
-«&nbsp;X&nbsp;» peuvent être fournies <footnote><p>
-<strong>NOTE</strong> : la prochaine grande version du système X Window va 
-certainement bouleverser cela. Et c'est ce que les gens semblent vouloir. Des 
-paquets comme vim-tty seront licites s'ils obtiennent la priorité
-«&nbsp;standard&nbsp;». Et aussi tel client «&nbsp;X&nbsp;» dans 
-«&nbsp;mtools&nbsp;» pourra être mis dans un paquet avec une priorité
-«&nbsp;optional&nbsp;». Cela ouvre la voie pour un changement des priorités
-de «&nbsp;standard&nbsp;» à «&nbsp;optional&nbsp;» pour les paquets
-«&nbsp;xlib6g&nbsp;» et «&nbsp;xfree-common&nbsp;», <strong>si</strong> tous
-les paquets dépendant de «&nbsp;xlib6g&nbsp;» passent d'une priorité
-«&nbsp;standard&nbsp;» à une priorité «&nbsp;optional&nbsp;» (ou bien si
-les versions non liées avec «&nbsp;xlib&nbsp;» restent avec une priorité
-«&nbsp;standard&nbsp;»). Cela, cependant, reste l'affaire des responsables
-des paquets concernés et des responsables de l'archive et n'est pas
-exigé par cette charte.</footnote>. 
+«&nbsp;X&nbsp;» peuvent être fournies.
 </p>
 <p>
 <em>Les paquets qui fournissent un serveur «&nbsp;X&nbsp;» </em> et qui,
@@ -3278,10 +5650,12 @@ lequel apparaît dans la liste des paquets virtuels. En résumé, les serveurs
 «&nbsp;X&nbsp;» qui communiquent directement avec le matériel d'entrée et 
 d'affichage ou via un autre sous-système (p.ex. GGI) fourniront
 <tt>xserver</tt>. Des choses comme «&nbsp;Xvfb&nbsp;», «&nbsp;Xnest&nbsp;»
-et «&nbsp;Xprt&nbsp;» ne doivent pas le faire. <strong>NOTE</strong> : la 
-prochaine grande version du système X Window va certainement bouleverser cela.
-</footnote>
+et «&nbsp;Xprt&nbsp;» ne doivent pas le faire.
+	    </p>
+	  </footnote>.
+
 <p>
+
 <em>Les paquets qui fournissent un émulateur de terminal</em> pour le
 système X Window, émulateur qui offre un type de terminal avec une
 description «&nbsp;terminfo&nbsp;» fourni avec le paquet <tt>ncurses-base</tt>,
@@ -3326,7 +5700,7 @@ qui contient ce programme ou cette bibliothèque déclarera une dépendance
 envers le(s) paquet(s) contenant la(les) fonte(s) qu'il demande.</item>
            <item>
 Les fontes BDF seront converties en fontes PCF avec le programme
-<tt>bdftopcf</tt> (disponible dans le paquet <tt>xbase-clients</tt>),
+<tt>bdftopcf</tt> (disponible dans le paquet <tt>xutils</tt>),
 <tt>gzip</tt>ées, et placées dans un répertoire qui correspond à leur
 définition : 
 <list>
@@ -3397,13 +5771,13 @@ soit <tt>alias</tt>.</item>
             </item>
             <item>
 Les paquets doivent déclarer une dépendance envers le paquet 
-<tt>xbase-clients</tt> et lancer, dans les scripts de post-installation et 
+<tt>xutils</tt> et lancer, dans les scripts de post-installation et 
 de post-désinstallation du paquet, la commande <tt>mkfontdir</tt> pour
 chaque répertoire où est installée une fonte.</item>
             <item>
 Les paquets qui fournissent un ou plusieurs de ces fichiers 
 <tt>fonts.scale</tt> dont on vient de parler, doivent déclarer une dépendance
-de version pour <tt>xbase-clients (&gt;=3.3.3.1-5)</tt> et doivent
+de version pour <tt>xutils (&gt;=4.0.2)</tt> et doivent
 appeler <tt>update-fonts-scale</tt> pour chaque répertoire où est installée 
 une fonte <em>avant</em> d'appeler <tt>mkfontdir</tt> pour ce répertoire.
 On doit faire cet appel à la fois dans les scripts de post-installation et
@@ -3411,7 +5785,7 @@ ceux de post-désinstallation.</item>
             <item>
 Les paquets qui fournissent un ou plusieurs de ces fichiers
 <tt>fonts.alias</tt> dont on vient de parler, doivent déclarer une dépendance
-de version pour <tt>xbase-clients (&gt;=3.3.3.1-5)</tt> et doivent
+de version pour <tt>xutils (&gt;=4.0.2)</tt> et doivent
 appeler, dans les scripts de post-installation et ceux de post-désinstallation
 , <tt>update-fonts-alias</tt> pour chaque répertoire où est installée
 une fonte.</item>
@@ -3433,7 +5807,7 @@ On ne les déclarera pas comme des <em>conffile</em>s et on ne les
 traitera pas non plus comme des fichiers de configuration.
 Un fichier, dont le nom sera le même que celui du paquet et qui sera mis dans 
 le répertoire <tt>/etc/X11/Xresources/</tt>, pourra assurer la
-paramétrisation des ressources X d'un paquet ; il doit être déclarer
+paramétrage des ressources X d'un paquet ; il doit être déclarer
 comme <em>conffile</em>. <em>Important :</em> les paquets qui
 installent des fichiers dans le répertoire <tt>/etc/X11/Xresources/</tt> 
 <em>doivent</em> déclarer un conflit avec le paquet <tt>xbase 
@@ -3682,6 +6056,16 @@ dans <tt>/usr/share/doc/<var>package</var></tt> au sein des paquets binaires.
 Bien entendu, vous n'avez pas besoin de fournir les instructions
 de compilation et d'installation.
 </p>
+
+<p>
+Aucun programme ne renverra à des fichiers de <tt>/usr/share/doc</tt>, et
+l'administrateur système pourra les supprimer sans «&nbsp;planter&nbsp;»
+un programme. Tout fichier référencé par un programme et qui est utile
+en tant que documentation indépendante utile sera installé dans 
+<tt>/usr/share/&lt;package$gt;/</tt> et lié symboliquement avec
+<tt>/usr/share/doc/&lt;package$gt;/</tt>.
+	</p>
+
 </sect>
  
       <sect id="usrdoc">
@@ -3761,6 +6145,12 @@ quelles modifications ont été faites à ces fichiers dans la version Debian. Il
 nommera les auteurs originaux  et le(s) responsable(s) Debian 
 qui ont oeuvré à la création du paquet.
 </p>
+
+<p>
+Une copie du fichier installé dans 
+<tt>/usr/share/doc/<var>package</var>/copyright</tt> sera faite dans
+<tt>debian/copyright</tt>.</p>
+
 	<p>
 <tt>/usr/share/doc/<var>package-name</var></tt> peut être un lien symbolique 
 vers un répertoire de <tt>/usr/share/doc</tt> seulement si, de deux paquets 
