@@ -74,16 +74,21 @@ sub permute_as_matrix {
     my($ext, $arch, $lang, @cur_dir, $release);
     my $altcolor = 'white';
     my $ctr = 0;
+    my $check_if_file_exists = 0;
 
     @cur_dir = split('/', '$(WML_SRC_DIRNAME)');
     $release = pop @cur_dir;
+
+    %arches || die "%arches is not set\n";
+    %formats || die "%formats is not set\n";
 
     foreach $arch (keys %arches) {
 	$ctr++;
 	my $first = 1;
 
 	foreach $ext (keys %formats) {
-	    if (!-f "$(HTMLDIR)/releases/$release/$arch/$file.en.$ext") {
+	    if ($check_if_file_exists && 
+                ! -f "$(HTMLDIR)/releases/$release/$arch/$file.en.$ext") {
 	        next;
 	    }
 	    # alternate the row color
@@ -104,7 +109,8 @@ sub permute_as_matrix {
 	    print "  <td>";
 	    foreach $lang (@langs) {
 	        $file_version = "./$arch/$file." . $langs{$lang} . ".$ext";
-	        if (-f "$(HTMLDIR)/releases/$release/$file_version") {
+	        if (! $check_if_file_exists || 
+                    -f "$(HTMLDIR)/releases/$release/$file_version") {
 	            # all languages should be defined in %trans. Add missing entries 
 	            # in English if this is not the case
 	            print "<a href=\"$file_version\">" . $trans{$CUR_ISO_LANG}{$lang} . "</a> \n";
