@@ -5,7 +5,7 @@
 
 WMLBASE=../..
 CUR_DIR=devel/debian-med
-SUBS=News
+SUBS=News talks
 
 include $(WMLBASE)/Make.lang
 
