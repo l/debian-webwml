@@ -14,5 +14,5 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
 
 packaged.$(LANGUAGE).html: packaged.wml \
   $(ENGLISHSRCDIR)/devel/debian-jr/lists.tmpl \
-  $(ENGLISHSRCDIR)/devel/debian-jr/packaged.data \
-  $(ENGLISHSRCDIR)/devel/debian-jr/packaged-non-free.data
+  $(wildcard $(ENGLISHSRCDIR)/devel/debian-jr/packaged/*/*) \
+  $(wildcard $(ENGLISHSRCDIR)/devel/debian-jr/packaged-non-free/*/*)
