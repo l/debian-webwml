@@ -23,6 +23,7 @@ use strict;
 use File::Find;
 use File::Path;
 use Getopt::Long;
+use Text::Iconv;
 
 use lib ($0 =~ m|(.*)/|, $1 or ".") ."/../../../../Perl";
 use Locale::Language;
@@ -621,6 +622,21 @@ sub search_po {
         print STDERR "MEM: ".$deb->get_max_memory()."\n" if $verbose;
 }
 
+sub convert_to_unicode ($$) {
+        my $encoding = shift;
+        my $string = shift;
+        my $converter;
+        eval '$converter = Text::Iconv->new($encoding, "UTF-32BE")';
+        return $string if $@;
+        my $result = $converter->convert($string) or return $string;
+        my $ret = "";
+        while($result =~ m/(.)(.)(.)(.)/g) {
+                my $ucs = ord($1)*0x1000000 + ord($2)*0x10000 + ord($3)*0x100 + ord($4);
+                $ret .= ($ucs > 0x7e ? "&#$ucs;" : chr($ucs));
+        }
+        return $ret;
+}
+
 sub process_po_file {
         my $pkg = shift;
         my $file = shift;
@@ -693,6 +709,11 @@ sub process_po_file {
                         $langteam = $1 || '';
                         $langteam =~ s/!//g;
                         $langteam = '' if $langteam =~ m/<LL\@li.org>/;
+                }
+                if (m/^"Content-Type:.*charset=(.*)\\n"$/m) {
+                        my $encoding = $1;
+                        $lasttrans = convert_to_unicode($encoding, $lasttrans);
+                        $langteam = convert_to_unicode($encoding, $langteam);
                 }
         }
 
