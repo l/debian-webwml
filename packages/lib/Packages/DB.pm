@@ -269,13 +269,13 @@ Self explanatory.
 sub pkg_exists {
     my ( $self, $pkg ) = @_;
     
-    return (exists $self->{db}{$pkg} && defined $self->{db}{$pkg});
+    return (exists($self->{db}{$pkg}) && defined($self->{db}{$pkg}));
 }
 
 sub src_pkg_exists {
     my ( $self, $pkg ) = @_;
     
-    return (exists $self->{srcdb}{$pkg} && defined $self->{srcdb}{$pkg});
+    return (exists($self->{srcdb}{$pkg}) && defined($self->{srcdb}{$pkg}));
 }
 
 
@@ -453,6 +453,7 @@ sub get_desc {
     if ( @_ == 5 ) {
 	( $self, $pkg_name, $v_str, $arch, $lang ) = @_;
 	$pkg = $self->get_pkg( $pkg_name );
+	return undef unless $pkg;
 	$md5 = $pkg->{versions}->{$v_str}->{$arch}->{'description-md5'};
     } elsif ( @_ == 3 ) {
 	( $self, $md5, $lang ) = @_;
@@ -460,15 +461,15 @@ sub get_desc {
 	warn; #DEBUG
 	return undef;
     }
+    
+    return undef unless $md5;
 
     my $desc;
     if ( $lang && ( $lang ne 'en' ) 
 	 && exists( $self->{desc}->{$md5}->{"description-".lc( $lang )} ) ) {
-	$desc = 
-	    $self->{desc}->{$md5}->{"description-".lc( $lang )};
+	$desc = $self->{desc}->{$md5}->{"description-".lc( $lang )};
     } else {
-	$desc = 
-	    $self->{desc}->{$md5}->{description};
+	$desc = $self->{desc}->{$md5}->{description};
     }
     return $desc;
 }
@@ -569,7 +570,7 @@ sub merge_in {
 	    } else {
 		$new_pkg = $self->new_pkg( $entry->{package} );
 		my $tmp_pkg = $self->{db}->{$entry->{package}};
-		
+
 		$success = $tmp_pkg->add_version( $entry );
 		$self->{db}->{$entry->{package}} = $tmp_pkg;
 	    }
@@ -579,7 +580,7 @@ sub merge_in {
 		    foreach my $p ( split /\s*,\s*/o, $entry->{provides} ) {
 			$self->new_pkg( $p );
 			my $tmp_pkg = $self->{db}->{$p}; 
-			$tmp_pkg->add_provided_by( $entry->{package} );
+			$tmp_pkg->add_reverse_rel( "provides", $entry->{package}, $entry->{version}, $entry->{architecture} );
 			$self->{db}->{$p} = $tmp_pkg;
 		    }
 		}
@@ -592,7 +593,7 @@ sub merge_in {
 			    my $wv = ( $p =~ s/\s*\((.*)\)\s*//o );
 			    $self->new_pkg( $p );
 			    my $tmp_pkg = $self->{db}->{$p}; 
-			    $tmp_pkg->add_enhanced_by( $entry->{package},
+			    $tmp_pkg->add_reverse_rel( "enhances", $entry->{package}, $entry->{version}, $entry->{architecture},
 						       $wv ? $1 : undef );
 			    $self->{db}->{$p} = $tmp_pkg;
 			}
@@ -639,11 +640,17 @@ sub calculate_depends {
 	print "\r$num/$max_num" if $self->{config}->{verbose};
 	foreach my $v ( values %{$pkg->{versions}} ) {
 	    foreach my $a ( values %$v ) {
-		 $a->{depends} .= ", $a->{'pre-depends'}" if exists $a->{"pre-depends"};
+		if (exists $a->{"pre-depends"}) {
+		    if ($a->{depends}) {
+			$a->{depends} .= ", $a->{'pre-depends'}";
+		    } else {
+			$a->{depends} = $a->{'pre-depends'};
+		    }
+		}
 		foreach ( qw( depends pre-depends recommends 
 			      suggests conflicts enhances 
 			      provides ) ) {
-		    $a->{$_} = $self->process_dep_list( $p, $a->{$_} )
+		    $a->{$_} = $self->process_dep_list( $_, $p, $a->{version}, $a->{architecture}, $a->{$_} )
 			if exists $a->{$_};
 		}
 	    }
@@ -661,7 +668,7 @@ sub calculate_depends {
 	    foreach ( qw( build-depends build-depends-indep 
 			  build-conflicts build-conflicts-indep 
 			  binary ) ) {
-		$v->{$_} = $self->process_dep_list( $sp, $v->{$_} )
+		$v->{$_} = $self->process_dep_list( $_, $sp, $v->{version}, 'source', $v->{$_} )
 		    if exists $v->{$_};
 	    }
 	}
@@ -684,9 +691,7 @@ sub not_member {
 
 # internal function
 sub process_dep_list {
-    my $self = shift;
-    my $pkg = shift;
-    my $dep_list = shift;
+    my ( $self, $rel, $pkg, $version, $arch, $dep_list ) = @_;
 
     return $dep_list if ref $dep_list;
 #
@@ -696,23 +701,44 @@ sub process_dep_list {
     foreach(split(/\s*,\s*/, $dep_list)) {
 	my @final_dep_list = ();
 	foreach my $given_dep (split(/\s*\|\s*/)) {
+	    chomp( $given_dep );
 	    my $given_dep_strip = $given_dep;
-	    my ( $dep_op, $dep_ver, $dep_archs );
+	    my ( $dep_op, $dep_ver, $dep_archs, $dep_archs_rr );
 	    {
-		$given_dep_strip =~ s/\s*\(\s*(=|>=|<=|<<|>>)\s*(.*)\)\s*//o;
+		$given_dep_strip =~ s/\s*\(\s*(=|>=|<=|<<|>>|>|<)\s*(.*)\)\s*//o;
 		( $dep_op, $dep_ver ) = ( $1 || "", $2 || "");
+		if ( $dep_op eq '>' ) {
+		    $dep_op = '>>';
+		    warn "W: package $pkg still uses old style versioning (>) when referencing $given_dep_strip\n"
+			if $self->{config}{verbose};
+		} elsif ( $dep_op eq '<' ) {
+		    $dep_op = '<<';
+		    warn "W: package $pkg still uses old style versioning (<) when referencing $given_dep_strip\n"
+			if $self->{config}{verbose};
+		}
 	    }
 	    {
 		$given_dep_strip =~ s/\s*\[\s*(.*)\]\s*//o;
 		$dep_archs = $1 || "";
+		$dep_archs_rr = $dep_archs || "all";
 	    }
-	    if ($self->pkg_exists( $given_dep_strip ) ) {
-		push(@final_dep_list, [ $given_dep_strip, 
-					$dep_op, $dep_ver, $dep_archs ] ) 
-		    if not_member($given_dep_strip, @final_dep_list);
+	    if ( exists $self->{db}{$given_dep_strip} ) {
+#		my $p = $self->{db}{$given_dep_strip};
+		if ( not_member($given_dep_strip, @final_dep_list) ) {
+		    push(@final_dep_list, [ $given_dep_strip, 
+					    $dep_op, $dep_ver, $dep_archs ] );
+#		    $p->add_reverse_rel( $rel, $pkg, $version,
+#					 ($arch eq 'source') ? $dep_archs_rr : $arch,
+#					 "$dep_op $dep_ver" );
+#		    $self->{db}{$given_dep_strip} = $p;
+		}
 	    } else {
 		push(@final_dep_list, [ $given_dep_strip, $dep_op, 
 					$dep_ver, $dep_archs, "(NOT AVAILABLE)" ] );
+		warn "W:$pkg:$rel on $given_dep_strip unsatifiable\n"
+		    if $self->{config}{verbose}
+		&& ( ( $rel =~ /depends/o )
+		     || ( $rel eq 'recommends' ) );
 	    }
 	}
 	push @$res, [ @final_dep_list ];
@@ -852,7 +878,7 @@ of carriage return characters.
 
 =head1 COPYRIGHT
 
-Copyright 2003 Frank Lichtenheld <frank@lichtenheld.de>
+Copyright 2003, 2004 Frank Lichtenheld <frank@lichtenheld.de>
 
 This file is distributed under the terms of the GNU Public
 License, Version 2. See the source code for more details.

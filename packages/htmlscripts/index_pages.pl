@@ -23,6 +23,10 @@ sub package_index_walker {
 					       $env->{archs} );
 	my %sections = $pkg->get_arch_fields( 'section', 
 					      $env->{archs} );
+	my %priorities = $pkg->get_arch_fields( 'priority', 
+						$env->{archs} );
+	my %essential = $pkg->get_arch_fields( 'essential', 
+					       $env->{archs} );
 	my %archives = $pkg->get_arch_fields( 'archive', 
 					      $env->{archs} );
 	my %subdists = $pkg->get_arch_fields( 'subdistribution', 
@@ -32,9 +36,11 @@ sub package_index_walker {
 	my $short_desc_txt = conv_desc( $env->{lang}, $short_desc_orig );
 	my $short_desc = conv_desc( $env->{lang}, encode_entities( $short_desc_orig, "<>&\"" ) );
 
-	my ( $version, $section, $archive, $subdist );
+	my ( $version, $section, $priority, $essential, $archive, $subdist );
 	$version = ($pkg->get_version_list)[0];
 	$section = $sections{max_unique};
+	$priority = $priorities{max_unique} || "";
+	$essential = $essential{max_unique} || "";
 	$archive = $archives{max_unique}
 	    if exists $archives{max_unique};
 	$subdist = $subdists{max_unique}
@@ -71,6 +77,8 @@ sub package_index_walker {
 	${$env->{all_package}} .= $str;
 	${$env->{all_pkg_txt}} .= $txt_str;
 	$env->{si}->{$section} .= $sect_str if $section;
+	$env->{pi}->{$priority} .= $str if $priority;
+	${$env->{ei}} .= $str if $essential =~ /yes/i;
     }
 
 sub src_package_index_walker {

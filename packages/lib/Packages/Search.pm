@@ -44,8 +44,9 @@ package Packages::Search;
 use strict;
 use warnings;
 
-use CGI;
+use CGI qw( -oldstyle_urls );
 use POSIX;
+use HTML::Entities;
 
 use Deb::Versions;
 use Exporter;
@@ -145,6 +146,7 @@ sub start {
     my $res_per_page = $params->{values}{number}{final}
     || DEFAULT_RES_PER_PAGE;
 
+    return 1 if $res_per_page =~ /^all$/i;
     return $res_per_page * ($page - 1) + 1;
 }
 
@@ -153,11 +155,10 @@ sub end {
 
     my $page = $params->{values}{page}{final}
     || DEFAULT_PAGE;
-    $page++;
     my $res_per_page = $params->{values}{number}{final}
     || DEFAULT_RES_PER_PAGE;
 
-    return $page * $res_per_page + 1;
+    return $page * $res_per_page;
 }
 
 sub indexline {
@@ -174,8 +175,8 @@ sub indexline {
         if ($i == $page) {
             $index_line .= $i;
         } else {
-            $index_line .= "<a href=\"".$cgi->self_url.
-                "&page=$i&number=$res_per_page\">".
+            $index_line .= "<a href=\"".encode_entities($cgi->self_url).
+                "&amp;page=$i&amp;number=$res_per_page\">".
                 "$i</a>";
         }
 	if ($i < $numpages) {
@@ -198,8 +199,8 @@ sub nextlink {
         return "&gt;&gt;";
     }
 
-    return "<a href=\"".$cgi->self_url.
-        "&page=$page&number=$res_per_page\">&gt;&gt;</a>";
+    return "<a href=\"".encode_entities($cgi->self_url).
+        "&amp;page=$page&amp;number=$res_per_page\">&gt;&gt;</a>";
 }
 
 sub prevlink {
@@ -215,18 +216,22 @@ sub prevlink {
     my $res_per_page = $params->{values}{number}{final}
     || DEFAULT_RES_PER_PAGE;
 
-    return "<a href=\"".$cgi->self_url.
-        "&page=$page&number=$res_per_page\">&lt;&lt;</a>";
+    return "<a href=\"".encode_entities($cgi->self_url).
+        "&amp;page=$page&amp;number=$res_per_page\">&lt;&lt;</a>";
 }
 
 sub resperpagelink {
     my ($cgi, $params, $res_per_page ) = @_;
 
-    my $start = start( $params );
-    my $page = ($res_per_page =~ /^all$/i) ? 1 : ceil($start / $res_per_page);
+    my $page;
+    if ($res_per_page =~ /^all$/i) {
+	$page = 1;
+    } else {
+	$page = ceil(start( $params ) / $res_per_page);
+    }
 
-    return "<a href=\"".$cgi->self_url.
-        "&page=$page&number=$res_per_page\">$res_per_page</a>";
+    return "<a href=\"".encode_entities($cgi->self_url).
+        "&amp;page=$page&amp;number=$res_per_page\">$res_per_page</a>";
 }
 
 

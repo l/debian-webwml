@@ -32,12 +32,6 @@ my $input = new CGI;
 
 print $input->header;
 
-print Packages::HTML::header( title => 'Package Contents Search Results' ,
-			      lang => 'en',
-			      title_tag => 'Debian package contents search results',
-			      print_title_above => 1 );
-
-
 # If you want, just print out a list of all of the variables and exit.
 # print $input->dump;
 # exit;
@@ -66,6 +60,21 @@ my $searchmode = $params{values}{searchmode}{final};
 my $arch = $params{values}{arch}{final};
 my $page = $params{values}{page}{final};
 my $results_per_page = $params{values}{number}{final};
+
+my $keyword_enc = encode_entities $keyword;
+my $version_enc = encode_entities $version;
+my $arch_enc = encode_entities $arch;
+
+print Packages::HTML::header( title => 'Package Contents Search Results' ,
+			      lang => 'en',
+			      title_tag => 'Debian package contents search results',
+			      print_title_above => 1,
+			      print_search_field => 'contents',
+			      search_field_values => { 
+				  keyword => $keyword_enc,
+				  searchmode => $searchmode,
+			      },
+			      );
 
 
 # read the configuration
@@ -140,14 +149,10 @@ my $command = $grep." ".$file." ".$file_nonus;
 
 my @results = qx( $command );
 
-my $keyword_enc = encode_entities $keyword;
-my $version_enc = encode_entities $version;
-my $arch_enc = encode_entities $arch;
-
 if ($searchmode eq "filelist") {
-	print "<p>You have searched for the contents of <em>$keyword_enc</em> in <em>$version_enc</em>, architecture <em>$arch_enc</em>.</p>";
+	print "<p>You have searched for the contents of <em>$keyword_enc</em> in <em>$version_enc</em>, architecture <em>$arch_enc</em>.<br>";
 } else {
-	print "<p>You have searched for <em>$keyword_enc</em> in <em>$version_enc</em>, architecture <em>$arch_enc</em>.</p>";
+	print "<p>You have searched for <em>$keyword_enc</em> in <em>$version_enc</em>, architecture <em>$arch_enc</em>.<br>";
 }
 
 if (!@results) {
@@ -161,38 +166,46 @@ if (!@results) {
 }
 
 # multiple-page stuff written by doogie
+my $no_results = @results;
 my ($start, $end);
 if ($results_per_page =~ /^all$/i) {
 	$start = 1;
-	$end = @results;
-	$results_per_page = @results;
+	$end = $no_results;
+	$results_per_page = $no_results;
 } else {
 	$start = Packages::Search::start( \%params );
 	$end = Packages::Search::end( \%params );
+	if ($end > $no_results) { $end = $no_results; }
+}
+
+if ($searchmode eq "filelist") {
+    print "Package contains $no_results files, displaying files $start to $end.</p>";
+} else {
+    print "Found <em>$no_results</em> matching files/directories, displaying files/directories $start to $end.</p>";
 }
 
 my $number = 0;
 my %line;
 foreach (@results) {
    $number++;
-   if (($start <= $number) && ($number < $end)) {
+   if (($start <= $number) && ($number <= $end)) {
       $line{$number - $start} = $_;
    }
 }
 
 my $index_line;
-if (@results > $results_per_page) {
+if ($no_results > $results_per_page) {
 
-    $index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $number)." | ".nextlink($input,\%params, scalar @results);
+    $index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $no_results)." | ".nextlink($input,\%params, $no_results);
 
     print "<center>$index_line</center>";
 }
 
-if (@results > 100) {
+if ($no_results > 100) {
     print "<p>Results per page: ";
     my @resperpagelinks;
     for (50, 100, 200) {
-        if ($params{values}{number}{final} == $_) {
+        if ($results_per_page == $_) {
             push @resperpagelinks, $_;
         } else {
             push @resperpagelinks, resperpagelink($input,\%params,$_);
@@ -201,7 +214,7 @@ if (@results > 100) {
     if ($params{values}{number}{final} =~ /^all$/i) {
     	push @resperpagelinks, "all";
     } else {
-	push @resperpagelinks, resperpagelink($input, \%params,"all");
+	push @resperpagelinks, resperpagelink($input, \%params, "all");
     }
     print join( " | ", @resperpagelinks )."</p>";
 }
