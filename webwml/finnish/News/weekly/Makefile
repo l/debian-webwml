@@ -17,6 +17,8 @@ CUR_YEAR ?= $(shell date +%Y)
 WMLFILES=$(shell find . -type f -name \*.wml)
 HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
 HTMLDESTFILES := $(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE).html,$(WMLFILES))
+PNGFILES=$(shell find . -type f -name \*.png)
+PNGDESTFILES := $(patsubst %.png,$(HTMLDIR)/%.png,$(PNGFILES))
 all:: index.$(LANGUAGE).html $(HTMLFILES)
 
 # When building the html files we have to change into the right directory
@@ -25,7 +27,7 @@ all:: index.$(LANGUAGE).html $(HTMLFILES)
 	                   $(TEMPLDIR)/weeklynews/header.wml
 	cd $(@D) && $(WML) $(notdir $(<))
 
-install:: $(HTMLDESTFILES)
+install:: $(HTMLDESTFILES) $(PNGDESTFILES)
 	@# Set up current issue symlink. In case you're wondering, the only
 	@# reason I use ..../current/issue instead of ...../current is
 	@# so it will be 2 directories deep and all the relative symlinks
@@ -47,6 +49,13 @@ ifeq ($(LANGUAGE),en)
 	-@ln -f -s $(@F) $(@D)/$(*F).html
 endif
 
+# Handle images
+$(HTMLDIR)/%.png: %.png
+	test -d $(@D) || mkdir -p -m g+w $(@D)
+	@echo copying $(@F) to $(@D)
+	-@install -m 664 -p $(<) $(@D)
+
+
 # Have to add to the default clean rule to clean up all the html the
 # above target produces.
 clean::
@@ -56,6 +65,7 @@ clean::
 index.$(LANGUAGE).html: $(wildcard $(CUR_YEAR)/*/index.wml) \
       $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(CUR_YEAR)/*) \
       $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
+      $(TEMPLDIR)/weeklynews/header.wml \
       $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml \
       ../../../english/News/weekly/CURRENT-ISSUE-IS
 
