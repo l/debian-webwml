@@ -104,8 +104,15 @@ sub get_stats_po {
                         $list{uc $_}  = 0;
                 }
                 foreach $line (@{$data->po($pkg)}) {
-                        my ($pofile, $lang, $stat, $link) = @{$line};
+                        my ($pofile, $lang, $stat, $link,$translator,$team) = @{$line};
                         $link =~ s/:/\%3a/g;
+		        $translator ||= "";
+		        $team ||= "";
+		        $translator =~ s/<[^>]*>//;
+		        $team =~ s/</(/g;
+		        $team =~ s/>/)/g;
+		        $team =~ s/@/ at /g;
+		        $team =~ s/\./ dot /g;
                         if ($lang eq '_') {
 			    
 			        # FIXME: This wont work since the stats about the pot files are not in the DB
@@ -124,7 +131,8 @@ sub get_stats_po {
                               "\"><td>".$pkg."</td>".
                               "<td>".show_stat($stat)."</td><td><a href=\"";
                         $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
-                        $incl{$lang} .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>".
+                        $incl{$lang} .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>";
+		        $incl{$lang} .= "<td>$translator</td><td>$team</td>".
                               "</tr>\n";
                         if ($stat =~ m/(\d+)t/) {
                                 $score{$lang} += $1;
@@ -417,8 +425,16 @@ sub get_stats_podebconf {
 
                 my $addtotal = 0;
                 foreach $line (@{$data->podebconf($pkg)}) {
-                        my ($pofile, $lang, $stat, $link) = @{$line};
+                        my ($pofile, $lang, $stat, $link,$translator,$team) = @{$line};
                         next if $lang eq '_';
+		    
+		        $translator ||= "";
+		        $team ||= "";
+		        $translator =~ s/<[^>]*>//;
+		        $team =~ s/</(/g;
+		        $team =~ s/>/)/g;
+		        $team =~ s/@/ at /g;
+		        $team =~ s/\./ dot /g;
 
                         $pofile =~ s#^debian/po/##;
                         $link =~ s/:/\%3a/g;
@@ -430,7 +446,8 @@ sub get_stats_podebconf {
                               "\"><td>".$pkg."</td>".
                               "<td>".show_stat($stat)."</td><td><a href=\"";
                         $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
-                        $incl{$lang} .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>".
+                        $incl{$lang} .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>";
+		        $incl{$lang} .= "<td>$translator</td><td>$team</td>".
                               "</tr>\n";
                         if ($stat =~ m/^(\d+)t(\d+)f(\d+)u$/) {
                                 $score{$lang} += $1;
