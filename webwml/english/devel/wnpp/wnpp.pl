@@ -77,8 +77,6 @@ foreach $entry ($mesg->entries) {
 	}
     } elsif ($subject =~ m/^O:\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
         $orphaned{$bugid} = $1 . ($2?": ":"") . $2;
-    } elsif ($subject =~ m/^W:\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
-        $withdrawn{$bugid} = $1 . ($2?": ":"") . $2;
     } elsif ($subject =~ m/^ITA:(?:\s*(?:ITO|RFA|O|W):)?\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
         $ita{$bugid} = $1 . ($2?": ":"") . $2;
     } elsif ($subject =~ m/^ITP:(?:\s*RFP:)?\s*(.*)/) {
@@ -92,7 +90,7 @@ foreach $entry ($mesg->entries) {
 
 $ldap->unbind;
 
-my (@rfa_bypackage_html, @rfa_bymaint_html, @orphaned_html, @withdrawn_html);
+my (@rfa_bypackage_html, @rfa_bymaint_html, @orphaned_html);
 my (@being_adopted_html, @being_packaged_html, @requested_html);
 
 foreach (sort { $rfa{$a} cmp $rfa{$b} } keys %rfa) {
@@ -117,12 +115,6 @@ foreach (sort { $orphaned{$a} cmp $orphaned{$b} } keys %orphaned) {
     push @orphaned_html, "\n";
 }
 if ($#orphaned_html == -1) { @orphaned_html = ('<li>No orphaned packages') }
-
-foreach (sort { $withdrawn{$a} cmp $withdrawn{$b} } keys %withdrawn) {
-    push @withdrawn_html, "<li><a href=\"http://bugs.debian.org/$_\">$withdrawn{$_}</a>";
-    push @withdrawn_html, "\n";
-}
-if ($#withdrawn_html == -1) { @withdrawn_html = ('<li>No withdrawn packages') }
 
 foreach (sort { $ita{$a} cmp $ita{$b} } keys %ita) {
     push @being_adopted_html, 

@@ -11,7 +11,7 @@ include $(WMLBASE)/Make.lang
 
 WNPP_FILES := being_adopted.$(LANGUAGE).html being_packaged.$(LANGUAGE).html orphaned.$(LANGUAGE).html \
 	prospective.$(LANGUAGE).html requested.$(LANGUAGE).html rfa_bymaint.$(LANGUAGE).html \
-	rfa_bypackage.$(LANGUAGE).html withdrawn.$(LANGUAGE).html work_needing.$(LANGUAGE).html
+	rfa_bypackage.$(LANGUAGE).html work_needing.$(LANGUAGE).html
 
 $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
 	@echo copying $*.$(LANGUAGE).html to $(HTMLDIR)
