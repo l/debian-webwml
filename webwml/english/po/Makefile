@@ -12,8 +12,7 @@ LOCALEROOT = $(WMLBASE)/../locale
 TEMPLATE_FILES  = $(wildcard $(TEMPLDIR)/*.wml $(TEMPLDIR)/*/*.wml) $(TEMPLDIR)/countries.def
 TEMPLATE_POT    = $(ENGLISHDIR)/po/templates.pot
 
-SHOULD_BE_REPLACED_BY_ENGLISH_PORTS_WHEN_TESTING_IS_OVER = $(WMLBASE)/../po/ports
-PORTS_FILES     = $(SHOULD_BE_REPLACED_BY_ENGLISH_PORTS_WHEN_TESTING_IS_OVER)/menu.defs $(SHOULD_BE_REPLACED_BY_ENGLISH_PORTS_WHEN_TESTING_IS_OVER)/mips/cpu.data $(wildcard $(SHOULD_BE_REPLACED_BY_ENGLISH_PORTS_WHEN_TESTING_IS_OVER)/*/menu.inc)
+PORTS_FILES     = $(ENGLISHDIR)/ports/menu.defs $(ENGLISHDIR)/ports/mips/cpu.data $(wildcard $(ENGLISHDIR)/ports/*/menu.inc)
 PORTS_POT       = $(ENGLISHDIR)/po/ports.pot
 
 ifeq "$(LANGUAGE)" "en"
