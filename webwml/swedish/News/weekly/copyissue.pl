@@ -5,19 +5,26 @@
 # adds the translation-check header to it. It will also create the
 # destination directory if necessary.
 
-# Written in 2000-2002 by peter karlsson <peter@softwolves.pp.se>
+# Written in 2000-2002 by Peter Karlsson <peter@softwolves.pp.se>
 # © Copyright 2000-2002 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
 
+# Externals
+use Getopt::Std;
+use vars qw($opt_s);
+
 # Get command line
-($year, $issue) = @ARGV;
+if (getopts('s:'))
+{
+	($year, $issue) = @ARGV;
+}
 
 # Check usage.
 unless ($year && $issue)
 {
-	print "Usage: $0 year issue\n\n";
+	print "Usage: $0 [-s sourcefile] year issue\n\n";
 	print "Copies the issue from the English directory to the local one and adds\n";
 	print "the translation-check header\n";
 	exit;
@@ -26,38 +33,46 @@ unless ($year && $issue)
 # Create needed file and directory names
 $srcdir = "../../../english/News/weekly/$year/$issue";
 $srcfile= "$srcdir/index.wml";
+$srcfile= $opt_s if $opt_s;
 $cvsfile= "$srcdir/CVS/Entries";
 $yeardir= "./$year";
 $dstdir = "./$year/$issue";
 $dstfile= "$dstdir/index.wml";
 
 # Sanity checks
-die "Directory $srcdir does not exist\n" unless -d $srcdir;
+die "Directory $srcdir does not exist\n" unless $opt_s || -d $srcdir;
 die "File $srcfile does not exist\n"     unless -e $srcfile;
 die "File $dstfile already exists\n"     if     -e $dstfile;
 mkdir $yeardir, 0755                     unless -d $yeardir;
 mkdir $dstdir, 0755                      unless -d $dstdir;
 
-# Open the files
-open CVS, $cvsfile
-	or die "Could not read $cvsfile ($!)\n";
+# Retrieve the CVS version number
+if ($opt_s)
+{
+	$revision = '1.0';
+}
+else
+{
+	open CVS, $cvsfile
+		or die "Could not read $cvsfile ($!)\n";
 
+	while (<CVS>)
+	{
+		if (m[^/index\.wml/([0-9]*\.[0-9])*/]o)
+		{
+			$revision = $1;
+		}
+	}
+
+	close CVS;
+}
+
+# Open the files
 open SRC, $srcfile
 	or die "Could not read $srcfile ($!)\n";
 
 open DST, ">$dstfile"
 	or die "Could not create $dstfile ($!)\n";
-
-# Retrieve the CVS version number
-while (<CVS>)
-{
-	if (m[^/index\.wml/([0-9]*\.[0-9])*/]o)
-	{
-		$revision = $1;
-	}
-}
-
-close CVS;
 
 unless ($revision)
 {
