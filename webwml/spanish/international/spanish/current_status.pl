@@ -85,12 +85,29 @@ do 'documents-bd.pl';
 },
 
 	'faq' => {
-	'status'		=> 4,
-	'since'			=> '?',
+	'status'		=> 5,
+	'since'			=> '8 Jul 1999 12:25:56 +0200',
 	'translation_name'	=> 'FAQ de Debian GNU/Linux',
 	'translation_maintainer'=> ['Santiago Vila <sanvila@ctv.es>'],
 	'translation_package'	=> 'doc-debian-es'
 },
+	'constitution' => {
+	'status'		=> 1,
+	'since'			=> '?'
+},
+	'mailing-lists' => {
+	'status'		=> 1,
+	'since'			=> '?'
+},
+	'bug-reporting' => {
+	'status'		=> 1,
+	'since'			=> '?'
+},
+	'source-unpack' => {
+	'status'		=> 1,
+	'since'			=> '?'
+},
+
 
 
 	'tutorial' => {
