@@ -8,3 +8,4 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+$(HTMLFILES): otherpages.inc footer.inc
