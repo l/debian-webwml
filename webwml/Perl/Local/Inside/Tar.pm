@@ -442,7 +442,7 @@ sub _parse_cache {
         my $matchfiles = shift;
 
         my ($name, $offset, $numbytes, $maxlength, $block, $path);
-        my ($filesize, $fileoffset);
+        my ($filesize, $fileoffset, $text);
 
         $self->_debug("Checking in memory representation");
 
@@ -452,17 +452,34 @@ sub _parse_cache {
                 $path = '';
                 if ($maxlength =~ s/^://) {
                         $path = $maxlength;
+                        $fileoffset = $self->{data}->{files}->{$name}->{offset};
+                        $filesize   = $self->{data}->{files}->{$name}->{size};
+                        $maxlength  = $filesize;
                         unless (-r $path) {
+                                $maxlength  = $filesize;
+                                if ($self->{data}->{files}->{$name}->{patch}
+                                    || $self->{data}->{files}->{$name}->{read} < $maxlength) {
+                                        $self->_io_read($fileoffset - $self->{offset});
+                                        $text = $self->_io_read($maxlength, 1);
+                                        $self->{offset} = $fileoffset + $maxlength;
+                                } else {
+                                        $text = $self->{data}->{files}->{$name}->{data};
+                                }
+                                $self->{data}->{files}->{$name}->{patch} = 1
+                                        if defined $self->{patch}
+                                        && $self->{patch}->{data}->{files}->{$name};
+                                $text = $self->{patch}->apply_patch($name, $text)
+                                        if $self->{data}->{files}->{$name}->{patch};
                                 my $dir = File::Basename::dirname($path);
                                 File::Path::mkpath($dir, 0, 0755);
                                 open(DISK, "> ".$path)
                                         || warn "Unable to write to $path\n";
-                                print DISK $self->{data}->{files}->{$name}->{data};
+                                print DISK $text;
                                 close(DISK);
                                 $self->{data}->{files}->{$name}->{data} = '';
                                 $self->{data}->{files}->{$name}->{read} = 0;
-                                next;
                         }
+                        next;
                 } elsif ($maxlength !~ m/^-?[0-9]+$/) {
                         $maxlength = 0;
                 }
@@ -494,18 +511,8 @@ sub _parse_cache {
 
                 $self->_io_read($fileoffset - $self->{offset});
                 $self->{offset} = $fileoffset;
-                if ($path ne '') {
-                        my $dir = File::Basename::dirname($path);
-                        File::Path::mkpath($dir, 0, 0755);
-                        open(DISK, "> ".$path)
-                                || warn "Unable to write to $path\n";
-                        print DISK $self->_io_read($numbytes, $maxlength);
-                        close(DISK);
-                        $self->{data}->{files}->{$name}->{data} = '';
-                } else {
-                        $self->{data}->{files}->{$name}->{data} =
+                $self->{data}->{files}->{$name}->{data} =
                                 $self->_io_read($numbytes, $maxlength);
-                }
                 $self->{data}->{files}->{$name}->{read}  = $numbytes;
                 $self->{data}->{files}->{$name}->{patch} = 1
                         if defined $self->{patch}
