@@ -24,6 +24,10 @@ my @special_maintainer = (
 	"Dynamic DNS Tools and Services",
 	"Debian OpenOffice Team",
 	"Cdbs Hackers",
+	"Popularity Contest Developers",
+	"Debian XML/SGML Group",
+	"Grub-Devel",
+	"Debian S/390 Team",
 );
 
 
