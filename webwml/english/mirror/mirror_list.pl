@@ -916,7 +916,7 @@ END
 	exit;
 }
 
-open SRC, "<$mirror_source" ||
+open SRC, "<$mirror_source" or
   die "Error: problem opening mirror source file, $mirror_source\n"
      ."Use the -m option?\n";
 
