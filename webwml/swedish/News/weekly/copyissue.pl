@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 ($year, $issue) = @ARGV;
 
@@ -16,9 +16,9 @@ $cvsfile= "$srcdir/CVS/Entries";
 $dstdir = "./$year/$issue";
 $dstfile= "$dstdir/index.wml";
 
-die "Directory $srdir does not exist\n" unless -d $srcdir;
-die "File $srcfile does not exist\n"    unless -e $srcfile;
-mkdir $dstdir, 0755                     unless -d $dstdir;
+die "Directory $srcdir does not exist\n" unless -d $srcdir;
+die "File $srcfile does not exist\n"     unless -e $srcfile;
+mkdir $dstdir, 0755                      unless -d $dstdir;
 
 open CVS, $cvsfile
 	or die "Could not read $cvsfile ($!)\n";
@@ -62,6 +62,19 @@ while (<SRC>)
 		$date =~ s/December/december/;
 
 		s/PAGENAME=".*" SUMMARY/PAGENAME="$date" SUMMARY/;
+	}
+
+	if ($_ eq "<b>Welcome</b> to Debian Weekly News, a newsletter for the Debian developer\n")
+	{
+		$next = <SRC>;
+		if ($next eq "community.\n")
+		{
+			$_ = "<b>Välkommen</b> till Debian Weekly News, ett nyhetsbrev för Debianutvecklare.\n";
+		}
+		else
+		{
+			$_ .= $next;
+		}
 	}
 
 	unless ($insertedrevision || /^#/)
