@@ -87,7 +87,7 @@ sub init_translators {
 	    tdiff       => 0,
 	    file        => 0,
 	    frequency   => ['nunca', 'mensalmente', 'semanalmente', 'diariamente'],
-	    mailsubject => 'Páginas desatualizadas',
+	    mailsubject => '[wml] Páginas desatualizadas',
 	    mailbody    => 'portuguese/international/portuguese/mail_user.txt',
 	    compress    => 'none'
 	},
@@ -96,4 +96,3 @@ sub init_translators {
 }
 
 1;
-
