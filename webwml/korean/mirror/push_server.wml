@@ -1,0 +1,104 @@
+#use wml::debian::template title="Push Server 설정"
+
+<p>미러의 수가 많고 데비안 아카이브의 크기가 크기 때문에 모든 미러가
+데비안의 upstream 소스로 주 아카이브 싸이트를 사용하는 것은
+불가능하다. 부하(load)가 전세계에 걸쳐 분포되어 있는 많은 push
+mirror들에 배분된다면 좀 더 효과적일 것이다. 
+
+<p>Push server는 전체 데비안 아카이브를 미러하는 기계이며 주 싸이트의
+push mirror이면서 좋은 대역폭을 가지고 있다. push server를 설정하는
+것은 매우 간단하다.
+<ul>
+<li><kbd>rsync</kbd> 2.1.1 또는 그 이상을 설치한다.
+<li><kbd>rsyncd.conf</kbd>를 만들고 다음과 같은 내용을 추가한다.
+	<pre>
+uid = nobody
+gid = nogroup
+max connections = 25
+syslog facility = daemon
+socket options = SO_KEEPALIVE
+
+[ftp]
+  path = /debian/debian
+  comment = Debian FTP Archive (~5 GB)
+  auth users = list_of_authorized_accounts
+  read only = true
+  secrets file = /etc/rsyncd/debian.secrets
+[web.debian.org]
+  path = /debian2/web/debian.org
+  comment = Debian Web Site
+  auth users = list_of_authorized_accounts
+  read only = true
+  secrets file = /etc/rsyncd/debian.secrets
+	</pre>
+<li>push하려는 각 싸이트에 대해
+<kbd>/etc/rsyncd/debian.secrets</kbd>에 다음을 등록한다.
+	<pre>
+account1:a_password
+account2:another_password
+	</pre>
+<li>아마도 rsync 데몬을 inetd에서 시작해야 할 것이다. 다음을
+<kbd>/etc/services</kbd>에 추가하고
+	<pre>
+rsync           873/tcp
+	</pre>
+	다음을 <kbd>/etc/inetd.conf</kbd>에 추가한다.
+	<pre>
+rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daemon
+	</pre>
+	다음으로 inetd가 자신의 설정 파일을 다시 읽도록 HUP 신호를
+보내야 한다.
+<li>데비안을 미러하기 위해 사용할 새로운 ssh 열쇠를 만든다. -f 옵션을
+사용해서 원래 ssh 열쇠를 덮어쓰지 않도록 주의한다. 예:
+	<kbd>ssh-keygen -f ~/.ssh/&lt;filename&gt;</kbd>.
+</ul>
+
+<p>push mirroring하려는 싸이트에 대해 사용자 이름과 암호를
+<kbd>/etc/rsyncd/debian.secrets</kbd>를 추가하고 그리고 나서
+<kbd>/etc/rsyncd.conf</kbd>에 목록에 접근하기 위한 사용자 이름을
+추가할 필요가 있다.For each site you will be push mirroring, you need to add a username and
+password in <kbd>/etc/rsyncd/debian.secrets</kbd> and then add the username to the access list
+in <kbd>/etc/rsyncd.conf</kbd>. 
+To simplify things you may want to use the account name you are pushing to on the downstream
+mirror. 이제 downstream mirror에게 여러분의 기계의 아카이브에 접근할 수
+있도록 했다. 사용자 이름과 암호가 downstream 싸이트로 전송된다.
+
+<p>또한 downstream mirror에 연결하는 스크립트를 설정할 필요가
+있다. <kbd>runmirrors</kbd>라는 파일을 만든다.
+<blockquote><pre>
+#! /bin/sh
+
+HOME=/home/archvsync
+LOGNAME="archvsync"
+USER="archvsync"
+MAIL=
+PATH="/bin:/usr/bin"
+
+id
+
+cd $HOME
+
+./signal va.debian.org archvsync
+</pre></blockquote>
+그리고 <kbd>signal</kbd>이란 파일도 만든다.
+<blockquote><pre>
+\#! /bin/sh
+
+\# This script is called to signal the remote host that it is time to
+\# mirror the archive. This is done in the most secure way I can think of,
+\# a ssh trigger. The remote end has an entry for this key allowing it to
+\# run a single program - ftpsync.
+
+echo Signaling $1
+ssh  -o batchmode=yes -q -o user="$2" "$1" sleep 1
+</pre></blockquote>
+push하려는 각 싸이트에 대해 <kbd>runmirrors</kbd>에 다음 줄을 추가한다.
+<pre>
+./signal &lt;site&gt; &lt;username&gt;
+</pre>
+
+
+<p>마지막으로 <kbd>ftpsync</kbd>의 끝에 <kbd>runmirrors</kbd>를
+추가한다. 여러분의 싸이트가 upstream site로부터 미러링을 끝내자마자
+downstream을 push하기 시작할 것이다. 
+
