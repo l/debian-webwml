@@ -31,29 +31,20 @@ if (!@ARGV) {
   exit;
 }
 
-my $relhtmlbase = "../debian.org/";
-
 foreach my $file (@ARGV) {
   $file =~ s,^english/,,;
-  my $level = 0;
-  my $destfile = "";
-  my @parts = split '/', $file;
-  my $dir = pop @parts;
-  my $path = join '/', @parts;
-# system ("mkdir -p $relhtmlbase$path");
-  while ($dir) { $destfile .= "../"; $dir = pop @parts; }
-  $destfile .= $relhtmlbase . $file;
+  my $path = ""; my $filename;
+  if ($file =~ m,(.*)/([^/]+)$,) { $path = $1; $filename = $2; };
+  warn "$path $filename\n";
   foreach my $lang (@languages) {
-      next if ($lang eq "CVS");
       if ( -f "$lang/$file" ) {
          my $pid = fork;
          if ($pid) { # parent
             # do nothing
          }
          else {      # child
-	    $destfile =~ s/.wml$/.$langs{$lang}.html/;
             print "Making the " . ucfirst $lang . " copy:\n";
-            system("make -C $lang/$path $destfile"); # no need to handle make's errors
+            system("make -C $lang/$path -W $filename install SUBS="); # no need to handle make's errors
             exit 0;
          }
          waitpid($pid,0);
