@@ -160,9 +160,9 @@ if ($case =~ /^insensitive/) {
 }
 $grep .= "$searchkeyword";
 if ($searchmode eq "searchfiles") {
-  $grep .= '" "';
+  $grep .= "\"[ \t]\"";
 } elsif ($searchmode eq "searchfilesanddirs") {
-  $grep .= '"[/ ]"';
+  $grep .= "\"[/ \t]\"";
 } elsif ($searchmode eq "filelist") {
   $searchkeyword = lc $searchkeyword; # just in case
   $searchkeyword =~ s/\+/\\\\+/g;
