@@ -1,5 +1,5 @@
 #use wml::debian::template title="Översätta Debians webbsidor" BARETITLE=true
-#use wml::debian::translation-check translation="1.36"
+#use wml::debian::translation-check translation="1.42"
 
 <p>
 För att göra översättarnas jobb så enkelt som möjligt genereras sidorna
@@ -20,14 +20,18 @@ Vi använder WML för att skilja sidornas innehåll från de delar som är
 gemensamma för flera sidor, vilket medför att det är de specifka
 WML-källfilerna som måste redigeras och inte HTML-filerna.
 <a href="using_cvs">Använd CVS</a> för att hämta de aktuella källfilerna.
-Du behöver åtminstone hämta ut två kataloger: <tt>english/</tt> och
-<tt><var>&lt;språk&gt;</var>/</tt>.
+Du behöver åtminstone hämta ut två kataloger: <tt>webwml/english/</tt> och
+<tt><var>webwml/&lt;språk&gt;</var>/</tt>.
 </p>
 
 <p>För att översätta en enskild sida från engelska till ditt språk,
 måste .wml-filen översättas och läggas in i det andra språkets katalog.
 Den relativa sökvägen och filnamnet måste vara detsamma som i den engelska
 katalogen för att länkarna fortfarande skall fungera.
+</p>
+
+<h3>Översättningsrad</h3>
+<p>
 Det rekommenderas även starkt att översättaren lägger till en ytterligare
 rad i sidhuvudet efter det sista <code>#use</code>-kommandot
 för att beskriva exakt
@@ -38,11 +42,66 @@ Raden ser ut så här:
 </p>
 
 <p>
-Allt detta kan enkelt göras genom att använda skriptet <tt>copypage.pl</tt>
+Några översättargrupper använder också denna rad för att ange vem som är
+officiell översättare för varje enskild sida.
+Genom att göra så kan man få e-post automatiskt när den engelska sidan
+ändras och översättningen behöver àjourföras.
+För att göra det lägger du helt enkelt till ditt namn som ansvarig i slutet
+av <code>#use</code>-raden så att den ser ut så här:
+<kbd>#use wml::debian::translation-check translation="<var>x.y</var>"
+maintainer="<var>ditt namn</var>"</kbd>
+</p>
+
+<p>
+Du kan även behöva beskriva för roboten vem du är, hur ofta du vill ha
+automatiska brev och vad de ska innehåll.
+För detta kan du (eller låta översättningssamordnaren) redigera filen
+webwml/<var>språk</var>/international/<var>språk</var>/translator.db.pl
+i CVS:en.
+Syntaxen bör vara lättförståelig, och du kan använda filen från den franska
+översättargruppen om den inte redan finns för ditt språk.
+Roboten kan sända flera sorters information, och för varje sort kan du välja
+med vilken frekvens de skall sändas till dig.
+De olika sorternas information är:
+</p>
+
+<ul>
+ <li><b>summary</b>: en sammanfattning över vilka dokument som är föråldrade</li>
+ <li><b>log</b>: cvs-loggen mellan den översatta och aktuella versionen</li>
+ <li><b>diff</b>: cvs-&rdquo;diff&rdquo;</li>
+ <li><b>tdiff</b>: skriptet försöker ta reda på vilken del av den översatta
+     texten ändringen i det engelska originalet motsvarar</li>
+ <li><b>file</b> den aktuella versionen av filen som skall översättas</li>
+</ul>
+
+<p>
+För varje av ovanstående lägger du till ett av dessa värden:
+0 (aldrig), 1 (månatligen), 2 (varje vecka) eller 3 (dagligen).
+</p>
+
+<p>
+Ett exempel:
+</p>
+
+<pre>
+                'Martin Quinson' => {
+                        email       => 'martin.quinson@tuxfamily.org',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 0,
+                        file        => 0
+                },
+</pre>
+
+<p>
+Sidhuvudet kan enkelt skapas genom att använda skriptet <tt>copypage.pl</tt>
 i webwml-rotkatalogen.
 Skriptet kopierar sidan till rätt plats, skapar kataloger och makefiler om
 så behövs, och lägger in det sidhuvud som behövs automatiskt.
 </p>
+
+<h3>Bygga och publicera sidor</h3>
 
 <p>
 Eftersom vi använder
