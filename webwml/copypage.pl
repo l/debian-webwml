@@ -14,6 +14,13 @@
 
 use File::Path;
 
+# Declare variables only used in references to avoid warnings
+use vars qw(@iso_8859_2_compat  @iso_8859_3_compat  @iso_8859_4_compat
+            @iso_8859_5_compat  @iso_8859_6_compat  @iso_8859_7_compat
+            @iso_8859_8_compat  @iso_8859_9_compat  @iso_8859_10_compat
+            @iso_8859_13_compat @iso_8859_14_compat @iso_8859_15_compat
+            @iso_8859_16_compat);
+
 # Get configuration
 if (exists $ENV{DWWW_LANG}) 
 {
@@ -41,22 +48,8 @@ if ($#ARGV == -1)
 	print "and adds the translation-check header with the current revision.\n";
 	print "If the directory does not exist, it will be created, and the Makefile\n";
 	print "copied or created, depending on your language.conf setting.\n\n";
-	print "You can either keep or not keep the 'english/' part of the path.\n";
+	print "The 'english/' part of the input path is optional.\n";
 	exit;
-}
-
-# Check destination character encoding
-my $recode = 0;
-if (open WMLRC, "$language/.wmlrc")
-{
-	while (<WMLRC>)
-	{
-		if (s/^-D CHARSET=//)
-		{
-			$recode = 1 unless /^iso-8859-15?$/i;
-			last;
-		}
-	}
 }
 
 # Table of entities used when copying to non-latin1 encodings
@@ -79,13 +72,49 @@ if (open WMLRC, "$language/.wmlrc")
 	'&uuml;', '&yacute;', '&thorn;', '&yuml;'
 );
 
+# Compatibility tables for the iso-8859 series; 1 indicates that the
+# codepoint is the same as in iso-8859-1. Used to perform partial remaps
+# for these.
+@iso_8859_2_compat = (1,0,0,0,1,0,0,1,1,0,0,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1,0,1,0,1,0,1,1,0,0,0,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,1,0,0,1,0,1,0,1,0,1,1,0,0,0,0,1,1,0,1,1,0,0,1,0,1,1,0,0);
+@iso_8859_3_compat = (1,0,0,1,1,0,0,1,1,0,0,0,0,1,0,0,1,0,1,1,1,1,0,1,1,0,0,0,0,1,0,0,1,1,1,0,1,0,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,1,0,1,1,1,1,0,0,1,1,1,1,0,1,0,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,1,0,1,1,1,1,0,0,0);
+@iso_8859_4_compat = (1,0,0,0,1,0,0,1,1,0,0,0,0,1,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,1,0,1,0,1,1,0,0,0,0,0,1,1,1,1,1,0,1,1,1,0,0,1,0,1,1,1,1,1,1,0,0,1,0,1,0,1,1,0,0,0,0,0,1,1,1,1,1,0,1,1,1,0,0,0);
+@iso_8859_5_compat = (1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+@iso_8859_6_compat = (1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+@iso_8859_7_compat = (1,0,0,1,0,0,1,1,1,1,0,1,1,1,0,0,1,1,1,1,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+@iso_8859_8_compat = (1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+@iso_8859_9_compat = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1);
+@iso_8859_10_compat =(1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,1,0,1,0,1,1,1,1,0,0,1,1,1,1,0,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,0,0,1,0,1,0,1,1,1,1,0,0,1,1,1,1,0,1,0,1,1,1,1,1,0);
+@iso_8859_13_compat =(1,0,1,1,1,0,1,1,0,1,0,1,1,1,1,0,1,1,1,1,0,1,1,1,0,1,0,1,1,1,1,0,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,0,0,0,1,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,0,0,0,1,0,0,0);
+@iso_8859_14_compat =(1,0,0,1,0,0,0,1,0,1,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1);
+@iso_8859_15_compat =(1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+@iso_8859_16_compat =(1,0,0,0,0,0,0,1,0,1,0,1,0,1,0,0,1,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,0,1,0,0,1,1,1,1,0,0,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,0,1,0,0,1,1,1,1,0,0,1);
+
+# Check destination character encoding
+my $recode = 0;
+if (open WMLRC, "$language/.wmlrc")
+{
+	while (<WMLRC>)
+	{
+		if (s/^-D CHARSET=//)
+		{
+			$recode = 1 unless /^iso-8859-1$/i;
+			if ($recode && /^iso-8859-([0-9]+)$/)
+			{
+				my $compattablename = 'iso_8859_' . $1 . '_compat';
+				$compat = \@{$compattablename} if defined @{$compattablename};
+			}
+			last;
+		}
+	}
+}
+
 # Loop over command line
 foreach $page (@ARGV)
 {
 	# Check if valid source
 	if ($page =~ /wml$/)
 	{
-		&copy($page, $recode);
+		&copy($page, $recode, $compat);
 	}
 	else
 	{
@@ -98,6 +127,7 @@ sub copy
 {
 	my $page = shift;
 	my $recodelatin1 = shift;
+	my $compattable = shift;
 	print "Processing $page...\n";
 
 	# Remove english/ from path
@@ -215,9 +245,15 @@ sub copy
 		}
 		else
 		{
-			if ($recodelatin1)
+			if (defined $compattable)
 			{
-				# Recode any non-ASCII characters as entities
+				# Recode non-ASCII characters that are not identical to
+				# ISO 8859-1 into entitites
+				s/([\xA0-\xFF])/$$compattable[ord($1)-160]?$1:$entities[ord($1)-160]/ge;
+			}
+			elsif ($recodelatin1)
+			{
+				# Recode any non-ASCII characters into entities
 				s/([\xA0-\xFF])/$entities[ord($1)-160]/ge;
 			}
 
