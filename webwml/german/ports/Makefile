@@ -16,10 +16,10 @@ include $(BASE)/Make.lang
 # The '#' should be after the <tab> or the following lines won't
 # execute with some versions of make
 all: $(HTMLFILES) $(IMGDEST)
-	( cd sparc; $(MAKE) )
-	( cd alpha; $(MAKE) )
-	( cd arm; $(MAKE) )
-	( cd powerpc; $(MAKE) )
+	# ( cd sparc; $(MAKE) )
+	# ( cd alpha; $(MAKE) )
+	# ( cd arm; $(MAKE) )
+	# ( cd powerpc; $(MAKE) )
 
 include $(BASE)/Make.dep.templ    
 include $(BASE)/Make.dep.generic
