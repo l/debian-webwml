@@ -149,7 +149,11 @@ sub read {
         my $self = shift;
         my $file  = shift;
 
-        return 0 unless open (DB,"< $file");
+        if ($file =~ m/\.gz$/) {
+                open (DB,"gzip -dc $file |") || return 0;
+        } else {
+                open (DB,"< $file") || return 0;
+        }
 
         $self->{date} = <DB>;
         return 0 unless defined($self->{date});
@@ -227,8 +231,13 @@ sub write {
         my $file = shift;
         my ($text, $line);
 
-        open (DB,"> $file")
-                || die "Unable to write to $file\n";
+        if ($file =~ m/\.gz$/) {
+                open (DB,"| gzip -c > $file")
+                        || die "Unable to write to $file\n";
+        } else {
+                open (DB,"> $file")
+                        || die "Unable to write to $file\n";
+        }
 
         printf DB "%d-%02d-%02d\n\n", Time::localtime::localtime->year() + 1900, Time::localtime::localtime->mon() + 1, Time::localtime::localtime->mday;
         foreach my $pkg (sort keys %{$self->{data}}) {
@@ -254,7 +263,7 @@ sub write {
                 }
                 print DB "\n";
         }
-        close DB;
+        close (DB) || die "Unable to close $file\n";
 }
 
 =item list_packages
