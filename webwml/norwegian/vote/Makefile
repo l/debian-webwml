@@ -4,7 +4,7 @@
 
 WMLBASE=..
 CUR_DIR=vote
-SUBS=1999 2000 2001
+SUBS=1999 2000 2001 2002
 
 include $(WMLBASE)/Make.lang
 
@@ -21,3 +21,8 @@ howto_result.$(LANGUAGE).html: howto_result.wml \
   $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
 howto_vote.$(LANGUAGE).html: howto_vote.wml \
   $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
+
+ifeq "$(LANGUAGE)" "en"
+install::
+	cp -a proposal.template $(HTMLDIR)
+endif
