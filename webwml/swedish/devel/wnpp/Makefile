@@ -23,7 +23,6 @@ endif
 
 # There is no wnpp.en.html destination. This will be run every time,
 # which is what we want
-ifeq ($(LANGUAGE),en)
 wnpp.$(LANGUAGE).html: wnpp.wml
 	wml -q wnpp.wml
 
@@ -31,5 +30,12 @@ $(HTMLDIR)/wnpp.$(LANGUAGE).html: wnpp.$(LANGUAGE).html
 	@:
 
 install:: $(WNPP_FILES)
-	install $(WNPP_FILES) $(HTMLDIR)
-endif
+	install being_adopted.html $(HTMLDIR)/being_adopted.sv.html
+	install being_packaged.html $(HTMLDIR)/being_packaged.sv.html
+	install orphaned.html $(HTMLDIR)/orphaned.sv.html
+	install prospective.html $(HTMLDIR)/prospective.sv.html
+	install requested.html $(HTMLDIR)/requested.sv.html
+	install rfa_bymaint.html $(HTMLDIR)/rfa_bymaint.sv.html
+	install rfa_bypackage.html $(HTMLDIR)/rfa_bypackage.sv.html
+	install withdrawn.html $(HTMLDIR)/withdrawn.sv.html
+	install work_needing.html $(HTMLDIR)/work_needing.sv.html
