@@ -6,7 +6,7 @@ WMLBASE=..
 CUR_DIR=security
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
-SUBS=1997 1998 undated
+SUBS=1997 1998 1999 undated
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
