@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This script copies the file named on the command line to the translation
-# named in copypage.conf, and adds the translation-check header to it.
+# named in language.conf, and adds the translation-check header to it.
 # It also will create the destination directory if necessary, and copy the
 # Makefile from the source.
 
