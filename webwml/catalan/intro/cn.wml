@@ -1,5 +1,5 @@
 #use wml::debian::template title="El lloc web de Debian en diferents llengües" BARETITLE=true
-#use wml::debian::translation-check translation="1.32"
+#use wml::debian::translation-check translation="1.35"
 
 <P>És clar que no tothom utilitza la mateixa llengua. A mesura que la web
 creix, s'està fent més comú trobar pàgines que estan disponibles en
@@ -25,32 +25,94 @@ errònia des del lloc web de Debian. Primer, i prou comú, és un navegador
 mal configurat. Mireu la secció sobre <a href="#setting">establir la
 llengua preferida en un navegador</a> per a arreglar açò.</p>
 
-<p>El segon problema té a veure amb memòries cau trencades o mal configurades.
-Aquest és un problema creixent a mesura que més proveïdors d'Internet
-recurreixen a les memòries cau per decrementar el tràfic de la xarxa. Llegiu
-la <a href="#cache">nota sobre servidors de web amb memòria cau</a> encara 
-que penseu que no esteu utilitzant-ne un.</p>
+<p>La segona raó problema té a veure amb memòries cau trencades o mal
+configurades. Aquest és un problema creixent a mesura que més proveïdors
+d'Internet recurreixen a les memòries cau per decrementar el tràfic de la
+xarxa. Llegiu la <a href="#cache">nota sobre servidors de web amb memòria
+cau</a> encara que penseu que no esteu utilitzant-ne un.</p>
 
-<p>El tercer problema es que hi hagi un problema amb
+<p> La tercera raó es que hi hagi un problema amb
 <a href="http://www.debian.org/">www.debian.org</a>.
 En els últims dos anys, únicament un problema dels reportats sobre recepció
-de la llengua incorrecta era un problema per la nostra part. Per açò mateix,
+de la llengua incorrecta era un error per la nostra part. Per açò mateix,
 suggerim que investigueu les primeres dues fonts de problemes a fons abans de
 contactar-nos. Si trobeu que <a href="http://www.debian.org/">
 http://www.debian.org/</a> està funcionant, però un dels servidors rèplica
 no, informeu-nos del problema i ens posarem en contacte amb els mantenidors
 de la rèplica.</p>
 
-<p>Després de corregir qualsevol problema suggerim que esborreu la memòria cau
-(tant disc com memòria) del seu navegador abans d'intentar veure les pàgines
-una altra vegada. També suggerim que utilitzeu <a href="http://packages.debian.org/stable/web/lynx.html">lynx</a> per testejar-ho. És l'únic
-navegador que hem trovat que compleix al 100% les especificacions HTTP
-per negociació de continguts.</p>
+<p>Després de corregir qualsevol d'aquestos problemes suggerim que esborreu
+la memòria cau (tant disc com memòria) del seu navegador abans d'intentar
+veure les pàgines una altra vegada. També suggerim que utilitzeu
+<a href="http://packages.debian.org/stable/web/lynx.html">lynx</a> per
+testejar-ho. És l'únic navegador que hem trovat que compleix al 100% les
+especificacions HTTP per a negociació de continguts.</p>
+
+<h3>Quin valor li he d'assignar a la variable?</h3>
+
+<P>Ja que l'idioma original de les pàgines web de Debian és l'anglès i potser
+no tots els documents estan traduïts al vostre idioma preferit, és una bona
+idea definir la variable de forma que permeta l'anglès com a una opció de
+seguretat. Per exemple, si el vostre idioma natiu és el francès i esteu
+fent servir lynx, voldríeu la següent línia en el vostre <kbd> .lynxrc</kbd></p>
+
+<pre>
+preferred_language=fr; q=1.0, en; q=0.5
+</pre>
+
+<p>
+Açò diu al servidor que us agradaria rebre la versió francesa del document
+si està disponible o, en cas contrari, fer servir l'anglesa.</p>
+
+<p>Heu d'anar amb compte amb l'ús de les subcategories de llengües.
+L'ús de 'en-GB, fr', per exemple, no fa allò que la majoria de la gent espera
+(si no han llegit les especificacions HTTP).
+Un servidor que rep una petició d'un document amb l'idioma preferit
+'en-GB, fr' quan hi ha versions 'en' i 'fr' servirà la versió francesa.
+Solament servirà la versió anglesa abans de la francesa si hi ha una versió
+del fitxer amb l'extensió de llengua 'en-gb'.
+Per tant, cal que configureu el vostre navegador per a que envie
+'en-GB, en, fr' o simplement 'en, fr'.
+
+També funciona de la forma inversa, per exemple, un servidor pot enviar en-us
+quan s'ha demanat en.</p>
+
+<p><strong>Recomanem que no afegiu extensions de país a una llengua si no teniu
+molt bones raons</strong>. Si n'afegiu una, assegureu-vos d'incloure també la
+llengua sense l'extensió.</p>
+
+<p>Per a més informació quant a establir la variable preferred_language vegeu la
+<a href="http://httpd.apache.org/docs/content-negotiation.html"> documentació
+d'Apache sobre negociació de continguts</a>.</p>
+
+<h3><a name="cache">Problemes potencials amb servidors de proxy</a></h3>
+
+<p>Els servidors de proxy són essencialment servidors de web que no tenen
+continguts propis. Estan en mig dels usuaris i dels servidors web reals. La
+memòria cau s'apropia de les teves peticions de pàgines web i treu la pàgina.
+Després, et reenvia la pàgina però també fa una còpia local, per a peticions
+posteriors. Açò pot retallar el tràfic en la xarxa quan molts usuaris demanen
+la mateixa pàgina.</p>
+
+<p>Aquesta és una gran idea en la majoria dels casos, però falla quan la
+memòria cau té errors. Concretament, alguns servidors de proxy vells no entenen
+la negociació de continguts, així que fan copies d'una pàgina en una llengua,
+i tornen aquesta pàgina fins i tot si es demana una altra llengua mes tard. La
+única solució és actualitzar o canviar el software de memòria cau.</p>
+
+<p>Històricament, la gent sols podia utilitzar un proxy quan configurava
+el seu navegador per a utilitzar un. Aquest ja no és el cas. El teu
+proveïdor d'Internet pot estar redireccionant totes les peticions de
+HTTP mitjançant un proxy transparent. Si el proxy no utilitza
+correctament la negociació de continguts, els usuaris poden rebre còpies
+de pàgines en la llengua equivocada.  L'única manera d'arreglar açò és
+queixar-se al teu ISP per a que actualitzen o canvien el seu
+software.</p>
 
 <h3><a name="setting">Establir la llengua preferida en un navegador</a></h3>
 
-<p>Nota: la llista següent no està completa. Si teniu informació sobre la
-configuració de un navegador que no està llistat avall, si us plan envieu-la a
+<p>Si teniu informació sobre la configuració de un navegador que no està
+llistat avall, si us plan envieu-la a
 <a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>.</p>
 
 <p>Per tal d'establir la llengua per defecte en el vostre navegador
@@ -114,64 +176,3 @@ o fent servir el paquet custom (assumint la versió p4.0pre.14 de URL):
      Options (o) -&gt; Other Behavior -&gt; Accept-Language
 </pre>
 </DL>
-
-<H3>Quin valor li he d'assignar a la variable?</H3>
-
-<P>Ja que l'idioma original de les pàgines web de Debian és l'anglès i potser
-no tots els documents estan traduïts al vostre idioma preferit, és una bona
-idea definir la variable de forma que permeta l'anglès com a una opció de
-seguretat. Per exemple, si el vostre idioma natiu és el francès i esteu
-fent servir lynx, voldríeu la següent línia en el vostre <kbd> .lynxrc</kbd></p>
-
-<pre>
-preferred_language=fr; q=1.0, en; q=0.5
-</pre>
-
-<p>
-Açò diu al servidor que us agradaria rebre la versió francesa del document
-si està disponible o, en cas contrari, fer servir l'anglesa.</p>
-
-<p>Heu d'anar amb compte amb l'ús de les subcategories de llengües.
-L'ús de 'en-GB, fr', per exemple, no fa allò que la majoria de la gent espera
-(si no han llegit les especificacions HTTP).
-Un servidor que rep una petició d'un document amb l'idioma preferit
-'en-GB, fr' quan hi ha versions 'en' i 'fr' servirà la versió francesa.
-Solament servirà la versió anglesa abans de la francesa si hi ha una versió
-del fitxer amb l'extensió de llengua 'en-gb'.
-Per tant, cal que configureu el vostre navegador per a que envie
-'en-GB, en, fr' o simplement 'en, fr'.
-
-També funciona de la forma inversa, per exemple, un servidor pot enviar en-us
-quan s'ha demanat en.</p>
-
-<p><strong>Recomanem que no afegiu extensions de país a una llengua si no teniu
-molt bones raons</strong>. Si n'afegiu una, assegureu-vos d'incloure també la
-llengua sense l'extensió.</p>
-
-<p>Per a més informació quant a establir la variable preferred_language vegeu la
-<a href="http://httpd.apache.org/docs/content-negotiation.html"> documentació
-d'Apache sobre negociació de continguts</a>.</p>
-
-<h3><a name="cache">Problemes potencials amb servidors de proxy</a></h3>
-
-<p>Els servidors de proxy són essencialment servidors de web que no tenen
-continguts propis. Estan en mig dels usuaris i dels servidors web reals. La
-memòria cau s'apropia de les teves peticions de pàgines web i treu la pàgina.
-Després, et reenvia la pàgina però també fa una còpia local, per a peticions
-posteriors. Açò pot retallar el tràfic en la xarxa quan molts usuaris demanen
-la mateixa pàgina.</p>
-
-<p>Aquesta és una gran idea en la majoria dels casos, però falla quan la
-memòria cau té errors. Concretament, alguns servidors de proxy vells no entenen
-la negociació de continguts, així que fan copies d'una pàgina en una llengua,
-i tornen aquesta pàgina fins i tot si es demana una altra llengua mes tard. La
-única solució és actualitzar o canviar el software de memòria cau.</p>
-
-<p>Històricament, la gent sols podia utilitzar un proxy quan configurava
-el seu navegador per a utilitzar un. Aquest ja no és el cas. El teu
-proveïdor d'Internet pot estar redireccionant totes les peticions de
-HTTP mitjançant un proxy transparent. Si el proxy no utilitza
-correctament la negociació de continguts, els usuaris poden rebre còpies
-de pàgines en la llengua equivocada.  L'única manera d'arreglar açò és
-queixar-se al teu ISP per a que actualitzen o canvien el seu
-software.</p>
