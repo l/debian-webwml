@@ -7,6 +7,8 @@ YEAR=$(shell date +%Y)
 
 WMLBASE=../..
 CUR_DIR=News/weekly
+WMLSUB=wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG) \
+	--epilog="../../../../convert $(@F)"
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
@@ -26,16 +28,16 @@ all:: index.$(LANGUAGE).html $(HTMLFILES)
 # so wml gets all the relative links right.
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml
-	cd $(@D) && $(WML) $(notdir $(<)) -DWMLBASE=../../../.. \
+	cd $(@D) && $(WMLSUB) $(notdir $(<)) \
 		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
 
 install:: $(HTMLDESTFILES)
+ifeq ($(LANGUAGE),en)
 	# Set up current issue symlink. In case you're wondering, the only
 	# reason I use ..../current/issue instead of ...../current is
 	# so it will be 2 directories deep and all the relative symlinks
 	# will still work. Bleargh.
 	install -d $(HTMLDIR)/current
-ifeq ($(LANGUAGE),en)
 	-rm -f $(HTMLDIR)/current/issue
 	-ln -sf ../$(YEAR)/$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
 endif
@@ -44,7 +46,7 @@ endif
 # Make.common to allow installation of files into subdirectories.
 $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
 	install -d $(@D)
-	@echo copying $(<) $(@F) to $(@D)
+	@echo copying $(@F) to $(@D)
 	-@cp $(<) $(@D)
 ifeq ($(LANGUAGE),en)
 	@echo making a link $(@D)/$(*F).html -\> $(@F)
