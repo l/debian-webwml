@@ -21,11 +21,11 @@ tmpl.$(LANGUAGE).tmpl: tmpl.src $(ENGLISHDIR)/$(CUR_DIR)/../dtc.def
 
 todo.$(LANGUAGE).html: todo.wml $(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc
 	wml -o UNDEFu$(LANGUAGECAP):todo.$(LANGUAGE).html@g+w todo.wml
-	$(WMLBASE)/../touch_translations.pl $(CURDIR)/todo.$(LANGUAGE).html $(LANGUAGE)
+	$(WMLBASE)/../touch_translations.pl $(CURDIR)/todo.wml $(LANGUAGE)
 
 index.$(LANGUAGE).html: index.wml
 	wml -o UNDEFu$(LANGUAGECAP):index.$(LANGUAGE).html@g+w index.wml
-	$(WMLBASE)/../touch_translations.pl $(CURDIR)/index.$(LANGUAGE).html $(LANGUAGE)
+	$(WMLBASE)/../touch_translations.pl $(CURDIR)/index.wml $(LANGUAGE)
 
 $(HTML_TEMPLATES): tmpl.$(LANGUAGE).tmpl $(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc
 	langs='$(LANGS_TEMPLATES)'; for l in $$langs; do \
