@@ -1,3 +1,7 @@
+<define-tag flags whitespace=delete>
+	[EN:Flags::]
+	[SV:Flaggor::]
+</define-tag>
 <define-tag active_bugs whitespace=delete>
 	[EN:active bugs:]
 	[SV:aktiva fel:]
@@ -44,11 +48,11 @@
 </define-tag>
 <define-tag open whitespace=delete>
 	[EN:Open:]
-	[SV:Öppna:]
+	[SV:Öppet:]
 </define-tag>
 <define-tag forwarded whitespace=delete>
 	[EN:Forwarded:]
-	[SV:Vidaresända:]
+	[SV:Vidaresänt:]
 </define-tag>
 <define-tag pending whitespace=delete>
 	[EN:Pending:]
@@ -60,27 +64,27 @@
 </define-tag>
 <define-tag done whitespace=delete>
 	[EN:Done:]
-	[SV:Klara:]
+	[SV:Klart:]
 </define-tag>
 <define-tag critical whitespace=delete>
 	[EN:Critical:]
-	[SV:Kritiska:]
+	[SV:Kritiskt:]
 </define-tag>
 <define-tag grave whitespace=delete>
 	[EN:Grave:]
-	[SV:Grava:]
+	[SV:Gravt:]
 </define-tag>
 <define-tag serious whitespace=delete>
 	[EN:Serious:]
-	[SV:Allvarliga:]
+	[SV:Allvarligt:]
 </define-tag>
 <define-tag important whitespace=delete>
 	[EN:Important:]
-	[SV:Viktiga:]
+	[SV:Viktigt:]
 </define-tag>
 <define-tag normal whitespace=delete>
 	[EN:Normal:]
-	[SV:Normala:]
+	[SV:Normalt:]
 </define-tag>
 <define-tag minor whitespace=delete>
 	[EN:Minor:]
@@ -96,7 +100,7 @@
 </define-tag>
   <small>
   <ul>
-  <li>Flags:
+  <li><flags>
   <input type="radio" name="archive" value="no" checked> <active_bugs>
   <input type="radio" name="archive" value="yes"> <archived_bugs>
   <input type="checkbox" name="raw" value="yes"> <no_status>
@@ -116,7 +120,7 @@
   <input type="checkbox" name="pend-exc" value="pending-fixed"><pending>
   <input type="checkbox" name="pend-exc" value="fixed"><fixed>
   <input type="checkbox" name="pend-exc" value="done"><done>
-  <li>Severity Include:
+  <li><severity_include>
   <input type="checkbox" name="sev-inc" value="critical"><critical>
   <input type="checkbox" name="sev-inc" value="grave"><grave>
   <input type="checkbox" name="sev-inc" value="serious"><serious>
@@ -125,7 +129,7 @@
   <input type="checkbox" name="sev-inc" value="minor"><minor>
   <input type="checkbox" name="sev-inc" value="wishlist"><wishlist>
   <input type="checkbox" name="sev-inc" value="fixed"><fixed>
-  <li>Severity Exclude:
+  <li><severity_exclude>
   <input type="checkbox" name="sev-exc" value="critical"><critical>
   <input type="checkbox" name="sev-exc" value="grave"><grave>
   <input type="checkbox" name="sev-exc" value="serious"><serious>
