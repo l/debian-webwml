@@ -11,18 +11,6 @@
 
 # $Id$
 
-# Check usage.
-if ($#ARGV == -1)
-{
-	print "Usage: $0 page ...\n\n";
-	print "Copies the page from the english/ directory to the $language/ directory\n";
-	print "and adds the translation-check header\n";
-	print "If the directory does not exist, it will be created, and the Makefile\n";
-	print "copied.\n\n";
-	print "You can either keep or not keep the 'english/' part of the path.\n";
-	exit;
-}
-
 # Get configuration
 if (open CONF, "<language.conf")
 {
@@ -35,7 +23,19 @@ else
 	$language = 'swedish';
 }
 
-# Loop over commnad line
+# Check usage.
+if ($#ARGV == -1)
+{
+	print "Usage: $0 page ...\n\n";
+	print "Copies the page from the english/ directory to the $language/ directory\n";
+	print "and adds the translation-check header with the current revision.\n";
+	print "If the directory does not exist, it will be created, and the Makefile\n";
+	print "copied.\n\n";
+	print "You can either keep or not keep the 'english/' part of the path.\n";
+	exit;
+}
+
+# Loop over command line
 foreach $page (@ARGV)
 {
 	# Check if valid source
@@ -48,7 +48,6 @@ foreach $page (@ARGV)
 		print "$page does not seem to be a valid page.\n";
 	}
 }
-
 
 # Subroutine to copy a page
 sub copy
