@@ -24,7 +24,6 @@ sub init_translators {
 	    file      => 0,
 	    compress  => 'none'
 	    },
-		
 	'Carlos Laviola' => {
 	    email     => 'claviola@debian.org',
 	    summary   => 3,
@@ -34,9 +33,8 @@ sub init_translators {
 	    file      => 0,
 	    compress  => 'none'
 	    },
-			
-	'Eduardo Macan' => {
-	    email     => 'macan@debian.org',
+	'Philipe Gaspar' => {
+	    email     => 'philipegaspar@terra.com.br',
 	    summary   => 3,
 	    logs      => 3,
 	    diff      => 0,
@@ -44,8 +42,8 @@ sub init_translators {
 	    file      => 0,
 	    compress  => 'none'
 	    },
-	'Philipe Gaspar' => {
-	    email     => 'philipegaspar@terra.com.br',
+	'Eduardo Macan' => {
+	    email     => 'macan@debian.org',
 	    summary   => 3,
 	    logs      => 3,
 	    diff      => 0,
@@ -68,14 +66,14 @@ sub init_translators {
 	unmaintained        => {
 	    email       => 'debian-l10n-portuguese@lists.debian.org',
 	    summary     => 2,
-	    mailsubject => 'Outdated pages without maintainer',
+	    mailsubject => '[webwml] Páginas desatualizadas sem mantenedor',
 	    mailbody    => 'portuguese/international/portuguese/mail_unmaintained.txt',
 	},
 	maxdelta            => {
 	    email       => 'debian-l10n-portuguese@lists.debian.org',
 	    summary     => 2,
 	    maxdelta    => 5,
-	    mailsubject => '[Important] Outdated web pages',
+	    mailsubject => '[webwml: Importante] Páginas desatualizadas',
 	    mailbody    => 'portuguese/international/portuguese/mail_obsolete.txt',
 	},
 	# this is a special name containing the default values
@@ -89,7 +87,7 @@ sub init_translators {
 	    tdiff       => 0,
 	    file        => 0,
 	    frequency   => ['never', 'monthly', 'weekly', 'daily'],
-	    mailsubject => 'Outdated web pages',
+	    mailsubject => 'Páginas desatualizadas',
 	    mailbody    => 'portuguese/international/portuguese/mail_user.txt',
 	    compress    => 'none'
 	},
