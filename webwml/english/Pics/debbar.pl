@@ -1,8 +1,10 @@
 #!/usr/bin/perl -w
 #
-# Perl scripts to generate the Debian toolbar icons
-# This needs gimp 1.1 and gimp1.1-nonfree to work!!
+# Perl script to generate the Debian toolbar icons
 # By Craig Small <csmall@debian.org>
+#
+# This needs gimp1.1 plus gimp1.1-nonfree (because we're writing GIFs)
+# gimp1.2 and gimp1.2-nonfree will work, too.
 
 use Gimp qw( :auto ); 
 use Gimp::Fu; 
