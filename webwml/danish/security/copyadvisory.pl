@@ -4,8 +4,8 @@
 # the translation-check header to it. It also will create the
 # destination directory if necessary, and copy the Makefile from the source.
 
-# Written in 2000-2003 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2000-2003 Software in the public interest, Inc.
+# Written in 2000-2004 by Peter Karlsson <peterk@debian.org>
+# © Copyright 2000-2004 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -24,7 +24,7 @@ unless ($number)
 
 # Locate advisory
 $number = "dsa-" . $number if $number !~ /^dsa-/;
-$year = 2003;
+$year = 2004;
 YEAR: while (-d "../../english/security/$year")
 {
 	last YEAR if -e "../../english/security/$year/$number.wml";
@@ -81,8 +81,10 @@ while (<SRC>)
 	next if /\$Id/;
 
 	s/^(<p>)?A problem has been discovered in\b/$1Et problem er opdaget i/;
+	s/\bdiscovered a problem in\b/opdaget et problem i/;
 	s/We recommend that you upgrade your (.*) package immediately/Vi anbefaler at du omgående opgraderer din $1-pakke/;
 	s/We recommend that you upgrade your (.*) packages immediately/Vi anbefaler at du omgående opgraderer dine $1-pakker/;
+        s/We recommend that you upgrade your (.*) and (.*) packages/Vi anbefaler at du opgraderer dine $1- og $2-pakker/;	
 	s/We recommend that you upgrade your (.*) packages/Vi anbefaler at du opgraderer dine $1-pakker/;
 	s/We recommend that you upgrade your (.*) package/Vi anbefaler at du opgraderer din $1-pakke/;
 	s/We recommend that you update your (.*) package immediately/Vi anbefaler at du omgående opdaterer din $1-pakke/;
@@ -94,11 +96,14 @@ while (<SRC>)
 	s/format string vulnerability/formatstrengssårbarhed/;
 	s/format string vulnerabilities/formatstrengssårbarheder/;
 	s/insecure temporary files/usiker midlertidige filer/;
+	s/>insecure temporary file creation</>usikker oprettelse af fil</;
 	s/>local root exploit</>lokal root-udnyttelse</;
 	s/>remote root exploit</>fjern root-udnyttelse</;
 	s/>symlink attack</>symbolsk lænke-angreb</;
 	s/>remote exploit</>fjernangreb</;
+	s/>missing input sanitising</>manglende kontrol af inddata</;
 	s/Several vulnerabilities/Flere sårbarheder/;
+	s/several vulnerabilities/flere sårbarheder/;
 	s/>several</>flere</;
 	s/This has been fixed in version/Dette er rettet i version/;
 	s/this problem has been fixed in/er dette problem rettet i/;
@@ -113,6 +118,7 @@ while (<SRC>)
 	s/these problems have(?: been)?$/er disse problemer/;
 	s/these problem are fixed in/rettet disse problemer i/;
 	s/these problem are fixed/rettet disse problemer/;
+	s/these problems will be fixed soon/disse problemer vil snart blive rettet/;
 	s/(?:been )?fixed in version/rettet i version/;
 	s/\bin version\b/i version/;
 	s/of the Debian package/af Debian-pakken/;
@@ -121,8 +127,10 @@ while (<SRC>)
 	s/([Ff])or the old stable/I den gamle stabile/;
 	s/([Ff])or the current stable distribution/I den nuværende stabile distribution/;
 	s/([Ff])or the current stable/I den nuværende stabile/;
+	s/([Ff])or the Debian stable distribution/I Debians stabile distribution/;
 	s/([Ff])or the stable distribution/I den stabile distribution/;
 	s/([Ff])or the stable/I den stabile/;
+	s/([Ff])or the Debian unstable distribution/I Debians ustabile distribution/;
 	s/([Ff])or the unstable distribution/I den ustabile distribution/;
 	s/([Ff])or the unstable/I den ustabile/;
 	s/current stable distribution/nuværende stabile distribution/;
