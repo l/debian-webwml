@@ -214,6 +214,9 @@ print "Creating files: " if ($config{'verbose'});
 foreach $lang (sort (keys %langs)) {
     $l = $langs{$lang};
     print "$l.html " if ($config{'verbose'});
+    $l = "zh-cn" if ($l eq "zh"); # kludge
+
+    $t_body = $u_body = $o_body = "";
 
     foreach $file (@sorted_english) {
         next if ($file eq "");
@@ -222,6 +225,7 @@ foreach $lang (sort (keys %langs)) {
 	    	$t_body .= sprintf ("<a href=\"/%s.%s.html\">%s</a><br>\n",
     			  $file, $l, $file);
     		$translated{$lang}++;
+		next if ($lang eq "english");
 		# Outdated translations
 		$msg = check_translation ($version{"$lang/$file"}, $version{"english/$file"}, "$lang/$file");
 		if (length ($msg)) {
@@ -238,6 +242,10 @@ foreach $lang (sort (keys %langs)) {
 	}
     }
 
+# this is where we discard the files that the translation directory contains
+# but which don't exist in the English directory
+#   print "extra files: ".$wml{$lang}-$translated{$lang}."\n";
+    $wml{$lang} = $translated{$lang};
     $translated{$lang} = $translated{$lang} - $outdated{$lang};
 
     $percent_a{$lang} = $wml{$lang}/$wml{english} * 100;
@@ -259,7 +267,8 @@ foreach $lang (sort (keys %langs)) {
 	printf HTML "<td align=center width=25%%><b>%d files (%d%%) up to date</b></td>", $translated{$lang}, $percent_t{$lang};
 	printf HTML "<td align=center width=25%%><b>%d files (%d%%) outdated</b></td>", $outdated{$lang}, $percent_o{$lang};
 	printf HTML "<td align=center width=25%%><b>%d files (%d%%) not translated</b></td>", $untranslated{$lang}, $percent_u{$lang};
-	print HTML "</tr>\n</table>\n";
+	print HTML "</tr>\n";
+	print HTML "</table>\n";
 
 	print HTML "<p><a href=\"./\">Index</a><p>\n";
 	print HTML "<p><a href=\"../\">Working on the website</a><p>\n";
@@ -299,9 +308,10 @@ printf HTML "<h1 align=center>%s</h1>\n", $config{'title'};
 
 print HTML $border_head;
 print HTML "<table width=100% border=0 bgcolor=\"#cdc9c9\">\n";
-print HTML "<tr><th>Language</th><th>Files</th><th>Up to date</th><th>Outdated</th><th>Not translated</th></tr>\n";
+print HTML "<tr><th>Language</th><th>Translations</th><th>Up to date</th><th>Outdated</th><th>Not translated</th></tr>\n";
 foreach $lang (sort (keys %langs)) {
     $l = $langs{$lang};
+    $l = "zh-cn" if ($l eq "zh"); # kludge
 
     $color = get_color ($percent_a{$lang});
 
