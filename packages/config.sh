@@ -1,7 +1,7 @@
 # Configuration for packages.debian.org
 #
 
-topdir=/src/work/packages
+topdir=/org/packages.debian.org
 
 bindir=${topdir}/bin
 filesdir=${topdir}/files
