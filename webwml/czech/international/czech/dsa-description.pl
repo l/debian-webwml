@@ -79,18 +79,21 @@ s{identifies the following problems}
 s{a picture viewer for X11 with a thumbnail-based selector}
 {programu pro prohlí¾ení obrázkù pro X11 s výbìrem z miniatur}g;
 
-s{the portable document format \(PDF\) suite}
-{sestavì portable document format (PDF)}g;
+s{the ([pP])ortable ([dD])ocument ([fF])ormat \(PDF\) suite}
+{sestavì ${1}ortable ${2}ocument ${3}ormat (PDF)}g;
 
 s{the popular scripting language}
 {populárním skriptovacím jazyce}g;
 
 #
-# remote exploitation
+# other info
 #
 
 s{Remote exploitation of an integer overflow vulnerability could allow the execution of arbitrary code.}
 {Vzdálené vyu¾ití zranitelnosti celoèíselného pøeteèení dovoluje vykonání libovolného kódu.}g;
+
+s{A maliciously crafted (\w+) file could exploit this problem, leading to the execution of arbitrary code.}
+{Zlomyslnì vytvoøený ${1} soubor mù¾e vyu¾ít tento problém a&nbsp;spustit libovolný kód.}g;
 
 #
 # Fixed in packages
