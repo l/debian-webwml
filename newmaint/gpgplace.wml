@@ -40,6 +40,13 @@ You should not be here!</STRONG>
         $row = pg_Fetch_Array($result, 0);
         $who = $row["id"];
 
+        $now = strftime('%Y-%m-%d');
+        $sql = "UPDATE people SET last_update = '$now' WHERE id = '$who'";
+        if (! ($result = pg_exec($db, $sql))) {
+            echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+            return FALSE;
+        }
+
         if (! $id) {
             $sql = "INSERT INTO places (who, city, country) VALUES ($who, '$city', '$country')";
             if (! ($result = pg_exec($db, $sql))) {
