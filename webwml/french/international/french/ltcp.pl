@@ -101,6 +101,7 @@ sub dump_html {
 
         my ($status, $type) = @_;
         my ($k, $t);
+        my $found = 0;
 
         foreach $k (sort keys %$translations) {
                 $t = $translations->{$k} ;
@@ -120,53 +121,56 @@ sub dump_html {
                         $t->{'translation_url'} = $t->{'url'};
                 }
 
-                print "<LI>";
-                print "<A HREF=\"$t->{'translation_url'}\">" if $t->{'translation_url'};
-                print "<B><I>$t->{'translation_name'}</I> $t->{'translation_sub_name'}</B>";
+                print "<ul>\n" unless $found;
+                $found = 1;
+                print "<li>";
+                print "<a href=\"$t->{'translation_url'}\">" if $t->{'translation_url'};
+                print "<b><i>$t->{'translation_name'}</i> $t->{'translation_sub_name'}</b>";
                 print q{<ct-tag-nourl>} if !$t->{'translation_url'};
-                print "</A>" if $t->{'translation_url'};
+                print "</a>" if $t->{'translation_url'};
 #        print "<BLOCKQUOTE>";
-                print "<BR>".q{<ct-tag-source>}." : <A HREF=\"$t->{'translation_source_url'}\">$t->{'translation_source_name'}</A>"
+                print "<br />".q{<ct-tag-source/>}." : <a href=\"$t->{'translation_source_url'}\">$t->{'translation_source_name'}</a>"
                         if ($t->{'translation_source_url'} && uc $type ne 'DDP');
-                print " (<A HREF=\"$t->{'translation_cvs_url'}\">".q{<ct-tag-cvspage>}."</A>)"
+                print " (<a href=\"$t->{'translation_cvs_url'}\">".q{<ct-tag-cvspage/>}."</a>)"
                         if ($t->{'translation_cvs_url'} && uc $type ne 'DDP');
-                print "<BR>".q{<ct-tag-devel-url>}." : <A HREF=\"$t->{'translation_dev_url'}\">$t->{'translation_dev_url'}</A>"
+                print "<br />".q{<ct-tag-devel-url/>}." : <a href=\"$t->{'translation_dev_url'}\">$t->{'translation_dev_url'}</a>"
                         if ($t->{'translation_dev_url'} && uc $type ne 'DDP');
                 if ($t->{'translation_maintainer'}) {
-                        print "<BR>".q{<ct-tag-translation_maintainer>}." : " ;
+                        print "<br />".q{<ct-tag-translation_maintainer/>}." : " ;
                         my $line = '';
                         my $translator;
                         foreach $translator (@{$t->{'translation_maintainer'}}) {
                                 $translator =~ s/\s*(<.*)?$//;
                                 $line .= (defined $translators->{$translator} ?
-                                        " <A HREF=\"mailto:$translators->{$translator}->{email}\"><I>$translator</I></A> " :
-                                        " <I>$translator</I> ");
+                                        " <a href=\"mailto:$translators->{$translator}->{email}\"><i>$translator</i></a> " :
+                                        " <i>$translator</i> ");
                         }
                         print $line;
                 }
 
-                print "<BR>".q{<ct-tag-status>}.": $status[$t->{'status'}]";
-                print " ".q{<ct-tag-since>}." $t->{'since'}" if ($t->{'since'});
-                print "<BR>".q{<ct-tag-translation_revision>}.": $t->{'translation_revision'}" if ($t->{'translation_revision'});
-                print "<BR>".q{<ct-tag-base_revision>}." : $t->{'base_revision'}" if ($t->{'base_revision'});
-                print "<BR><A HREF=\"$t->{'diff'}\">".q{<ct-tag-diff>}."</A>" if ($t->{'diff'});
-                print "<BR>".q{<ct-tag-available>}." <A HREF=\"http://packages.debian.org/$t->{'translation_package'}\">$t->{'translation_package'}</A>" if ($t->{'translation_package'});
+                print "<br />".q{<ct-tag-status/>}.": $status[$t->{'status'}]";
+                print " ".q{<ct-tag-since/>}." $t->{'since'}" if ($t->{'since'});
+                print "<br />".q{<ct-tag-translation_revision/>}.": $t->{'translation_revision'}" if ($t->{'translation_revision'});
+                print "<br />".q{<ct-tag-base_revision/>}." : $t->{'base_revision'}" if ($t->{'base_revision'});
+                print "<br /><a href=\"$t->{'diff'}\">".q{<ct-tag-diff/>}."</a>" if ($t->{'diff'});
+                print "<br />".q{<ct-tag-available/>}." <a href=\"http://packages.debian.org/$t->{'translation_package'}\">$t->{'translation_package'}</a>" if ($t->{'translation_package'});
                 if ($t->{'translation_name'} !~ /original/) {
-                        print "<BR>".q{<ct-tag-originaldoc>}." : <A HREF=\"$t->{'url'}\"> <I>$t->{'name'}</I> $t->{'sub_name'}</A>";
+                        print "<br />".q{<ct-tag-originaldoc/>}." : <a href=\"$t->{'url'}\"> <i>$t->{'name'}</i> $t->{'sub_name'}</a>";
                 }
 
                 if ($t->{'revision'}) {
-                	print " ( ".q{<ct-tag-revision>}." $t->{'revision'} ";
+                	print " ( ".q{<ct-tag-revision/>}." $t->{'revision'} ";
 			print "-- ".$t->{'mtime'} if $t->{'mtime'};
                 	print " ) ";
                 }
-                print " ( ".q{<ct-tag-included>}." <A HREF=\"http://packages.debian.org/$t->{'package'}\">$t->{'package'}</A> ) " if ($t->{'package'});
-                print " ( <A HREF=\"$t->{'source_url'}\">".q{<ct-tag-Source>}."</A> ) " if ($t->{'source_url'} && $t->{'source_url'} ne '?'); # Why this? && uc $type ne "DDP");
-                print " ( <A HREF=\"$t->{'cvs_url'}\">".q{<ct-tag-CVSpage>}."</A> ) " if ($t->{'cvs_url'} && $t->{'cvs_url'} ne '?'); # Why this?  && uc $type ne "DDP");
-                print "<BR>".q{<ct-tag-lines>}." : $t->{'lines'} " if ($t->{'lines'});
+                print " ( ".q{<ct-tag-included/>}." <a href=\"http://packages.debian.org/$t->{'package'}\">$t->{'package'}</a> ) " if ($t->{'package'});
+                print " ( <a href=\"$t->{'source_url'}\">".q{<ct-tag-Source/>}."</a> ) " if ($t->{'source_url'} && $t->{'source_url'} ne '?'); # Why this? && uc $type ne "DDP");
+                print " ( <a href=\"$t->{'cvs_url'}\">".q{<ct-tag-CVSpage/>}."</a> ) " if ($t->{'cvs_url'} && $t->{'cvs_url'} ne '?'); # Why this?  && uc $type ne "DDP");
+                print "<br />".q{<ct-tag-lines/>}." : $t->{'lines'} " if ($t->{'lines'});
 
-                print "<P>&nbsp;\n";
+                print "<br /></li>\n";
         } # of the foreach
+        print "</ul>\n" if $found;
 }
 
 1;
