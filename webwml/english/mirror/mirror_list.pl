@@ -250,11 +250,13 @@ a primary or secondary site. The program
 	  print "a primary or secondary site. The program `netselect' can be used to\n";
 	}
 	print <<END;
-determine the fastest of a list of sites.
+determine the fastest of a list of sites. Note that geographic proximity
+often isn't the most important factor for determining which machine will
+serve you best.
 
 END
 	print "<p>" if $html;
-	print "The authoritative copy of this list can always be found at:\n";
+	print "The authoritative copy of the following list can always be found at:\n";
 	print "<a href=\"http://ftp.debian.org/debian/README.mirrors.html\">" if $html;
 	print "                 http://ftp.debian.org/debian/README.mirrors.html";
 	print "</a>.<br>" if $html;
@@ -491,11 +493,13 @@ END
 }
 
 sub header {
+	my $nonus = shift;
+	$nonus = "" unless $nonus;
 	print <<END;
 <html>
 
 <head>
-  <title>Debian worldwide mirror sites</title>
+  <title>Debian ${nonus}worldwide mirror sites</title>
 </head>
 
 <body>
@@ -557,7 +561,7 @@ END
 
 	print <<END;
 
-<p>The authoritative copy of this list can always be found at:
+<p>The authoritative copy of the following list can always be found at:
 <a href="http://www.debian.org/mirror/mirrors_full">
 http://www.debian.org/mirror/mirrors_full</a>.
 <br>
@@ -618,76 +622,157 @@ sub full_listing {
 }
 
 sub readmenonus {
-	print <<_END_;
+  if ($html) {
+	print "<h1 align=\"center\">Debian non-US packages</h1>\n\n";
+  } else {
+	print <<END;
 
                            Debian non-US packages
                            ----------------------
 
+END
+  }
+	print "<p>" if $html;
+	print <<END;
 United States laws place restrictions on the export of certain defense
 articles, which, unfortunately, includes some types of cryptographic software.
 PGP and SSH, among others, fall into this category.  It is legal however, to
 import such software into the US.
 
+END
+	print "<p>" if $html;
+	print <<END;
 To prevent anyone from taking unnecessary legal risks, some Debian
 packages are only available from a site in Leiden, The Netherlands.
 Available access methods are:
+END
+	print "<blockquote>\n" if $html;
+	print "<a href=\"ftp://non-us.debian.org/debian-non-US/\">" if $html;
+	print <<END;
 	ftp://non-us.debian.org/debian-non-US/
+END
+	print "</a><br>" if $html;
+	print "<a href=\"http://non-us.debian.org/debian-non-US/\">" if $html;
+	print <<END;
 	http://non-us.debian.org/debian-non-US/
+END
+	print "</a><br>" if $html;
+	print <<END;
 	rsync://non-us.debian.org/debian-non-US/  (limited)
 
+END
+	print "</blockquote>\n" if $html;
+	print "<p>" if $html;
+	print <<END;
 To use these packages with APT, you can add the following lines to your
 sources.list file:
 
+END
+	print "<pre>" if $html;
+	print <<END;
   deb http://non-us.debian.org/debian-non-US stable/non-US main contrib non-free
   deb-src http://non-us.debian.org/debian-non-US stable/non-US main contrib non-free
+END
+	print "</pre>" if $html;
+	print <<END;
 
 Read sources.list(5) on your Debian system for more information.
 
--------------------------------------------------------------------------------
+END
+  if ($html) {
+	print "<h2 align=\"center\">Debian non-US mirror sites</h2>\n";
+  } else {
+	print <<END;
+                         Debian non-US mirror sites
+                         --------------------------
 
+END
+  }
+	print "<p>" if $html;
+	print <<END;
 Mirrors of non-us.debian.org are normally located outside of the US.
 If they are located within the US they should be registered with the
-US government. This is the official list:
+US government.
 
-_END_
+END
+
+	print "<p>" if $html;
+	print <<END;
+The authoritative copy of the following mirror list can always be found at:
+END
+	print "<a href=\"http://non-us.debian.org/debian-non-US/README.non-US\">" if $html;
+	print <<END;
+            http://non-us.debian.org/debian-non-US/README.non-US
+END
+	print "</a>" if $html;
+# to do: change to .html
+
+	print "<p>" if $html;
+	print <<END;
+
+Everything else you want to know about Debian mirrors:
+END
+	print "<a href=\"http://www.debian.org/mirror/\">" if $html;
+	print <<END;
+                        http://www.debian.org/mirror/
+END
+	print "</a>" if $html;
+
 	my $hasmirrors = 0; my $nonuscount = 0;
 	foreach $country (sort keys %countries) {
-		$hasmirrors = 0;
-		foreach $id (@{ $countries{$country} }) {
-		  $hasmirrors++ if (defined $mirror{$id}{method}{'nonus-ftp'} || defined $mirror{$id}{method}{'nonus-http'});
-		}
-		($countryplain = $country) =~ s/^.. //;
-		if ($hasmirrors) { print "\n$countryplain:\n"; } else { next; }
-		foreach $id (@{ $countries{$country} }) {
-		  if (defined $mirror{$id}{method}{'nonus-ftp'}) {
-		    print "  ftp://$id$mirror{$id}{method}{'nonus-ftp'}";
-		    if (defined $mirror{$id}{method}{'nonus-http'}) {
-		      print "\n    http://$id$mirror{$id}{method}{'nonus-http'}";
-		    }
-		    print "\n\n";
-		    $nonuscount++;
-		  } elsif (defined $mirror{$id}{method}{'nonus-http'}) {
-		    print "  http://$id$mirror{$id}{method}{'nonus-http'}";
-		    print "\n\n";
-		    $nonuscount++;
-		  }
-		}
+	  $hasmirrors = 0;
+	  foreach $id (@{ $countries{$country} }) {
+	    $hasmirrors++ if (defined $mirror{$id}{method}{'nonus-ftp'} || defined $mirror{$id}{method}{'nonus-http'});
+	  }
+	  ($countryplain = $country) =~ s/^.. //;
+	  if ($hasmirrors) {
+	    print "\n";
+	    print $html ? "<h3>$countryplain</h3>" : "$countryplain:";
+	    print "\n";
+	  } else {
+	    next;
+	  }
+	  foreach $id (@{ $countries{$country} }) {
+	    if (defined $mirror{$id}{method}{'nonus-ftp'}) {
+	      print "<a href=\"ftp://$id$mirror{$id}{method}{'nonus-ftp'}\">" if $html;
+	      print "  ftp://$id$mirror{$id}{method}{'nonus-ftp'}";
+	      print "</a><br>\n" if $html;
+	      if (defined $mirror{$id}{method}{'nonus-http'}) {
+	        print "\n    ";
+	        print "<a href=\"http://$id$mirror{$id}{method}{'nonus-http'}\">" if $html;
+	        print "http://$id$mirror{$id}{method}{'nonus-http'}";
+	        print "</a>\n" if $html;
+	      }
+	      print "\n\n";
+	      print "<p>" if $html;
+	      $nonuscount++;
+	    } elsif (defined $mirror{$id}{method}{'nonus-http'}) {
+	      print "  ";
+	      print "<a href=\"http://$id$mirror{$id}{method}{'nonus-http'}\">" if $html;
+	      print "http://$id$mirror{$id}{method}{'nonus-http'}";
+	      print "</a>\n" if $html;
+	      print "\n\n";
+	      print "<p>" if $html;
+	      $nonuscount++;
+	    }
+	  }
 	}
-	print <<_END_;
+
+  if ($html) {
+	print <<END;
+<hr>
+<table border="0" width="100%"><tr>
+  <td align="left"><small>Last modified: $last_modify</small></td>
+  <td align="right"><small>Number of sites listed: $nonuscount</small></td>
+</tr></table>
+END
+  } else {
+	print <<END;
 
 -------------------------------------------------------------------------------
 Last modified: $last_modify             Number of sites listed: $nonuscount
-_END_
-	print <<END;
-
-The authoritative copy of this list can always be found at:
-                 http://ftp.debian.org/debian/README.non-US
-
-Everything else you want to know about Debian mirrors:
-                        http://www.debian.org/mirror/
 END
-# that should be http://non-us.debian.org/debian-non-US/README.non-US
-# but the FTP admins still haven't made it happen, sigh
+  }
 }
 
 sub footer_stuff() {
@@ -730,6 +815,7 @@ Usage: $0 -m|--mirror mirror_list_source [-t|--type type]
 	apt
 	methods
 	nonus
+	nonushtml
 	officialsponsors
 	sponsors
 	cdimages-httpftp
@@ -812,7 +898,14 @@ elsif ($output_type eq 'methods') {
 	trailer();
 }
 elsif ($output_type eq 'nonus') {
+	$html = 0;
 	readmenonus();
+}
+elsif ($output_type eq 'nonushtml') {
+	header("non-US ");
+	$html = 1;
+	readmenonus();
+	trailer();
 }
 elsif ($output_type eq 'officialsponsors') {
 	$html=1;
