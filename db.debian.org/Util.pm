@@ -2,13 +2,19 @@
 package Util;
 
 use strict;
-use Crypt::Blowfish;
 
 my $blocksize = 8; # A blowfish block is 8 bytes
 my $configfile = "/etc/userdir-ldap/userdir-ldap.conf";
-#my $configfile = "./userdir-ldap.conf";
+#my $configfile = "/home/randolph/projects/userdir-ldap/userdir-ldap.conf";
 
 my %config = &ReadConfigFile;
+
+my $hascryptix = 1;
+eval 'use Crypt::Blowfish';
+if ($@) {
+  $hascryptix = undef;
+  print "No cryptix\n";
+}
 
 sub CreateKey {
   my $keysize = shift;
@@ -47,8 +53,8 @@ sub Encrypt {
 
   $input .= " " x ($blocksize - (length($input) % $blocksize)) if (length($input % $blocksize));
 
-  for ($pos = 0; $pos < length($input); $pos += $blocksize) {
-    $output .= unpack("H16", $cipher->encrypt(substr($input, $pos, $blocksize)));
+  for ($pos = 0; $pos < length($input); $pos += $blocksize) {    
+    $output .= unpack("H16", $cipher->encrypt(substr($input, $pos, $blocksize))) if ($hascryptix);
   }
   return $output;
 }
@@ -64,7 +70,7 @@ sub Decrypt {
 
   for ($pos = 0; $pos < length($input); $pos += $blocksize*2) {
     $portion = pack("H16", substr($input, $pos, $blocksize*2));
-    $output .= $cipher->decrypt($portion);
+    $output .= $cipher->decrypt($portion) if ($hascryptix);
   }
     
   $output =~ s/ +$//;
@@ -258,7 +264,7 @@ sub ReadConfigFile {
       # Chop off any trailing comments
       s/#.*//;
       ($attr, $setting) = split(/=/, $_, 2);
-      $setting =~ s/"//g;
+      $setting =~ s/"//g; #"
       $setting =~ s/;$//;
       $attr =~ s/^ +//; $attr =~ s/ +$//;
       $setting =~ s/^ +//; $setting =~ s/ +$//;      
