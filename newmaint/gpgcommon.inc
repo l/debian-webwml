@@ -321,7 +321,7 @@
             $row = pg_Fetch_Array($query, $i);
             if ($row["country"] != $old_country) {
                 if ($old_who != "") {
-                    echo " </UL>\n\n";
+                    echo "</UL>\n";
                 }
                 if ($old_country != "") {
                     echo "</UL>\n\n";
@@ -329,6 +329,7 @@
                 echo "<H2>", $row["country"], " - ", $iso[$row["country"]], "</H2>";
                 echo "\n";
                 echo "<UL>\n";
+                $old_who = "";
             }
 
             if ($row["who"] != $old_who) {
@@ -345,7 +346,7 @@
             $old_country = $row["country"];
             $old_who = $row["who"];
         }
-        echo " </UL>\n";
+        echo "</UL>\n";
         echo "</UL>\n";
     }
 
