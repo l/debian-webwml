@@ -8,3 +8,7 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+vendors.$(LANGUAGE).html: vendors.wml $(TEMPLDIR)/countries.wml \
+  $(TEMPLDIR)/url.wml \
+  $(ENGLISHDIR)/CD/vendors/vendors.CD $(ENGLISHDIR)/CD/vendors/vendors.CD.def
+
