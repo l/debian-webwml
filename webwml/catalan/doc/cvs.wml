@@ -1,0 +1,204 @@
+#use wml::debian::ddp title="Accés al CVS del DDP"
+#use wml::debian::translation-check translation="1.11"
+
+<p>El Projecte de Documentació de Debian (DDP) emmagatzema les seves
+pàgines web i la majoria dels seus manuals de text en el servidor CVS
+de Debian en <b>cvs.debian.org</b>.
+
+<p>Sols els membres del Projecte de Documentació de Debian poden actualitzar
+els fitxers del servidor de CVS.  Els altres sols poden accedir-hi per a
+descarregar aquests fitxers.
+
+<p>Podeu usar el
+<a href="http://cvs.debian.org/ddp/manuals.sgml/?cvsroot=debian-doc">CVSWeb</a>
+per a accedir als fitxers individualment i veure els canvis.
+
+<p>Per a descarregar un manual sencer, l'accés directe al servidor de
+CVS és la millor opció.  Necessitareu el paquet <tt>cvs</tt> en la
+vostra màquina.
+
+<h2>Connectar anònimament (sols lectura) al servidor de CVS</h2>
+
+<p>Per a connectar-hi entreu aquest comandament:
+
+<p style="margin-left: 2em">
+  <code>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/debian-doc login</code>
+</p>
+
+<p>i premeu intro quan s'us demani la contrasenya.
+
+<p>Llavors podreu usar els comandaments habituals del CVS (veure les
+pàgines info per a CVS) per a obtindre els fitxers, però no podreu canviar-los
+com tampoc pujar-los.
+
+<p>Per a descarregar els fitxers per primera vegada, creeu un directori
+i entreu-hi. A dins d'aquest directori s'en crearan dos, el
+<strong>CVS</strong> i el <strong>ddp</strong>.
+
+<p>Useu aquest comandament per a descarregar-vos tots els fitxers:
+
+<p style="margin-left: 2em">
+  <code>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/debian-doc -z3 checkout ddp/manuals.sgml</code>
+</p>
+
+<p>Això crearà un arbre de directoris recursivament i l'omplirà.
+
+<p>Per a actualitzar la vostra còpia local amb qualsevol canvi fet
+pels demés, entreu al directori <strong>ddp/manuals.sgml</strong>
+i executeu el comandament:
+
+<p style="margin-left: 2em">
+  <code>cvs -z3 update -d -P</code>
+</p>
+
+<p>Una vegada que hagueu finalitzat una sessió de CVS remota, useu
+aquest comandament per a desconnectar-vos del servidor:
+
+<p style="margin-left: 2em">
+  <code>cvs logout</code>
+</p>
+
+<h2>Connectar al servidor de CVS, amb privilegis d'actualització</h2>
+
+<p>Abans d'accedir al servidor de CVS usant aquest mètode primer hi
+haureu de tindre accés d'escriptura.  Si us plau, primer llegiu com
+<a href="#obtaining">demanar</a> permisos d'actualització.
+
+<p>Per a connectar entreu aquest comandament:
+
+<p style="margin-left: 2em">
+  <code>cvs -d :pserver:usuari@cvs.debian.org:/cvs/debian-doc login</code>
+</p>
+
+<p>i entreu la contrasenya que heu negociat amb el coordinador de la
+documentació.  En l'anterior comandament, reemplaceu <i>usuari</i>
+amb el nom d'usuari en el servidor de contrasenyes del CVS.  Aquest no
+té perquè ser el mateix nom d'accés que en <b>cvs.debian.org</b>, si es
+que ja en teniu un.
+
+<p>Ara podreu usar els comandaments habituals del CVS (veure les
+pàgines info per a CVS) per a obtindre els fitxers i pujar-los.
+
+<p>Per a descarregar els fitxers per primera vegada, creeu un directori
+i entreu-hi.  A dins d'aquest directori s'en crearan dos, el
+<strong>CVS</strong> i el <strong>ddp</strong>.
+
+<p>Useu aquest comandament per a descarregar-vos tots els fitxers:
+
+<p style="margin-left: 2em">
+  <code>cvs -d :pserver:usuari@cvs.debian.org:/cvs/debian-doc -z3 checkout ddp/manuals.sgml</code>
+</p>
+
+<p>Això crearà un arbre de directoris recursivament i l'omplirà.
+
+<p>Per a actualitzar la vostra còpia local amb qualsevol canvi fet
+pels demés, entreu al directori <strong>ddp/manuals.sgml</strong>
+i executeu el comandament:
+
+<p style="margin-left: 2em">
+  <code>cvs -z3 update -d -P</code>
+</p>
+
+<p>Una vegada que hagueu finalitzat una sessió de CVS remota, useu
+aquest comandament per a desconnectar-vos del servidor:
+
+<p style="margin-left: 2em">
+  <code>cvs logout</code>
+</p>
+
+<h2>Connectant al servidor de CVS usant SSH amb privilegis d'actualització</h2>
+
+<p>Aquest mètode sols està disponible pels desenvolupadors de Debian
+i es preferible a l'us del pserver descrit anteriorment.  Si heu estat
+recentment registrat com a desenvolupador de Debian, si us plau
+notifiqueu-ho al coordinador de la documentació per a esborrar el seu
+compte al pserver.
+
+<p>Per a connectar-vos usant ssh, primer li ho heu de dir al CVS, amb:
+
+<p style="margin-left: 2em">
+  <code>export CVS_RSH=ssh</code>
+</p>
+
+<p>Llavors creeu un directori i entreu-hi, després introduïu aquest
+comandament:
+
+<p style="margin-left: 2em">
+  <code>cvs -d :ext:<i>usuari</i>@cvs.debian.org:/cvs/debian-doc -z3 checkout <i>mòdul</i></code>
+</p>
+
+<p>En l'anterior comandament, reemplaceu <i>usuari</i> amb el nom
+d'usuari en el servidor de CVS.  Aquest és el mateix nom d'accés que en
+<b>cvs.debian.org</b>, si es que en teniu un.  Reemplaceu <i>mòdul</i>
+amb el nom del mòdul que desitgeu descarregar, que normalment serà
+<tt>ddp/manuals.sgml</tt>.  Llavors s'us preguntarà per la contrasenya
+en el servidor de CVS.  No confongueu aquesta amb la de la vostra
+màquina.
+
+<p>A dins d'aquest directori s'en crearan dos, el <strong>CVS</strong> i
+el <strong>ddp</strong>.  El CVS crearà recursivament qualsevol mòdul
+(p.e. directoris) que hagueu requerit i els omplirà amb els fitxers.
+
+<p>Llavors podreu usar els comandaments habituals del CVS (veure les
+pàgines info per a CVS) per a obtindre els fitxers i pujar-los.
+
+<p>Per a actualitzar la vostra còpia local amb qualsevol canvi fet
+pels demés, entreu al directori <strong>ddp/manuals.sgml</strong>
+i executeu el comandament:
+
+<p style="margin-left: 2em">
+  <code>cvs -z3 update -d -P</code>
+</p>
+
+<h2><a name="obtaining">Obtinguent privilegis d'actualització</a></h2>
+
+<p>Els privilegis de càrrega estan disponibles per a qualsevol que
+desitgi participar en l'escriptura dels manuals.
+
+<p>Per a obtindre els privilegis de càrrega, envieu una petició al
+<a href="mailto:aph@debian.org">Coordinador de la Documentació</a>,
+indicant el nom d'usuari que desitgeu i aportant una contrasenya
+xifrada, generada amb
+
+<p style="margin-left: 2em">
+  <code>makepasswd --crypt --clear=<i>la_vostra_contrasenya</i></code>
+</p>
+
+<p>(<tt>makepasswd</tt> és un paquet de Debian.)
+
+<p>Si no aporteu una contrasenya, s'us en generarà una, però aquesta
+serà difícil de memoritzar.  Per a canvia la vostra contrasenya, envieu
+un altra correu al Coordinador, proveint-li amb una nova contrasenya
+xifrada.
+
+<hr>
+
+<h1>Organització dels fitxers</h1>
+
+<p>Aquesta figura mostra l'estructura del 'arbre de directoris del CVS:
+
+<p><img src="dirtree.jpg" align="middle" alt="DDP - Arbre de directoris del CVS">
+
+<p>Si us plau noteu que el lloc web del DDP es troba en un mòdul del
+repositori CVS de Debian, per a integrar-lo amb la resta de pàgines
+web de Debian.
+
+<hr>
+
+<h1>Sistema automàtic d'actualització</h1>
+
+<p>Les pàgines web publicades del text del manual són generades per
+una tasca del cron que s'executa en www.debian.org cada dia a les
+7:00, 15:00 i 23:00 (hora del Pacífic).
+
+<p>L'script fa un <kbd>cvs update -d -P</kbd> i després
+<kbd>make -C manuals.sgml clean publish</kbd>, ambdós en el
+directori <code>ddp</code>.
+
+<p>El makefile està configurat per a reconstruir cada subdirectori (que
+contingui documentació mantinguda) i per a instal·lar els fitxers en
+cada subdirectori de <code>doc/manuals/</code> del lloc web.  Els
+makefiles de cada subdirectori deriven del
+<code>ddp/manuals.sgml/standard.makefile</code>.
+
+# <!-- Created: Mon Jul  6 19:58:09 BST 1998 -->
