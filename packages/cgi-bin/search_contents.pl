@@ -79,7 +79,7 @@ close (C);
 
 my $cdir = $topdir . "/files/contents";
 my $file = "$cdir/$version/Contents-$arch";
-my $file_nonus = "$cdir/$version/non-US/Contents-$arch";
+my $file_nonus = "$cdir/$version/Contents-$arch.non-US";
 
 # The keyword needs to be modified for the actual search, but left alone
 # for future reference, so we create a different variable for searching
