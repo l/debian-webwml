@@ -59,7 +59,7 @@
 <define-menu-item name="why">
    [EN:Why:]
    [AR:Why:]
-   [DA:Why:]
+   [DA:Hvorfor:]
    [DE:Weshalb:]
    [EL:Why:]
    [EO:Why:]
@@ -85,7 +85,7 @@
 <define-menu-item name="people">
    [EN:People:]
    [AR:People:]
-   [DA:People:]
+   [DA:Folk:]
    [DE:Leute:]
    [EL:People:]
    [EO:People:]
