@@ -28,7 +28,7 @@ def help():
 Warn users who don't have any place entries
 
 Options:
-  -s, --no-mail             Don't send any mail
+  -e, --send-mail           Send mail
 """
     sys.exit(1)
 
@@ -40,7 +40,7 @@ def parse_args():
     apt_pkg.ReadConfigFileISC(Cnf, "gpg.conf")
 
     Arguments = [("h", "help", "NoPlaces::Options::Help"),
-                 ("s", "no-mail", "NoPlaces::Options::No-Mail")]
+                 ("e", "send-mail", "NoPlaces::Options::Send-Mail")]
 
     apt_pkg.ParseCommandLine(Cnf, Arguments, sys.argv)
 
@@ -64,7 +64,7 @@ def no_place(db, email):
         Subst["__TO__"] = email
         Subst["__FIRSTNAME__"] = "you"
     mail_message = utils.TemplateSubst(Subst, Cnf["Dir::Templates"]+"/gpg_no_places.complain")
-    if not Cnf["NoPlaces::Options::No-Mail"]:
+    if Cnf["NoPlaces::Options::Send-Mail"]:
         utils.send_mail(mail_message)
     else:
         print "Not sending the following the following message:"
