@@ -10,13 +10,5 @@ include $(WMLBASE)/Make.lang
 
 people.$(LANGUAGE).html: people.wml $(TEMPLDIR)/template.wml \
  $(ENGLISHSRCDIR)/devel/people.names
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/basic.wml $(TEMPLDIR)/develbar.wml
-
-# the WNPP files have to be forced to rebuild, because they're dynamic data
-work_needing.$(LANGUAGE).html prospective.$(LANGUAGE).html: FORCE
-rfa_bypackage.$(LANGUAGE).html rfa_bymaint.$(LANGUAGE).html: FORCE
-orphaned.$(LANGUAGE).html withdrawn.$(LANGUAGE).html: FORCE
-being_adopted.$(LANGUAGE).html: FORCE
-requested.$(LANGUAGE).html being_packaged.$(LANGUAGE).html: FORCE
-
-FORCE:
+index.$(LANGUAGE).html: index.wml \
+	$(ENGLISHSRCDIR)/devel/index.include $(TEMPLDIR)/template.wml
