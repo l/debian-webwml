@@ -714,7 +714,7 @@ sub process_dep_list {
 	    } else {
 		push(@final_dep_list, [ $given_dep_strip, $dep_op, 
 					$dep_ver, $dep_archs, "(NOT AVAILABLE)" ] );
-		warn "W: package $given_dep_strip is not avilable but references by $pkg->{name}"
+		warn "W: package $given_dep_strip is not avilable but references by $pkg"
 		    if $self->{config}{verbose};
 	    }
 	}
