@@ -16,23 +16,13 @@
   <foreach m file-contents>\
     <when <match <get-var m> "Site: www\\...\\.debian.org">>\
       <set-var n=<subst-in-string <get-var m> ".*Site: www\\.(..)\\.debian.org.*" "\\1">>\
-      '<get-var n>' => q{<group <group "<" <upcase <get-var n>> "c>">>},\
+      q{<group <group "<" <upcase <get-var n>> "c>">>} => '<get-var n>',\
     </when>\
   </foreach>
   );
-  #   Sort %mirrors according to translated names, as in
-  #   wml::debian::mirrors  (I switched key/val in %mirrors)
-  my $mirrors_lang = {};
-  foreach my $m (keys %mirrors) {
-      while ($mirrors{$m} =~ m/\[([A-Z_]+):(.*?):\]/g) {
-          $mirrors_lang->{$1}->{$2} = $m;
-      }
-  }
 
-  foreach my $l (keys %$mirrors_lang) {
-    foreach my $m (sort langcmp keys %{$mirrors_lang->{$l}}) {
-      <perl:print>[$l:<li><a href=\"http://www.$mirrors_lang->{$l}->{$m}.debian.org\">$m</a>\n:]</perl:print>
-    }
+  foreach my $m (sort langcmp keys %mirrors) {
+      <perl:print><li><a href=\"http://www.$mirrors{$m}.debian.org\">$m</a>\n</perl:print>
   }
 }
 </perl>

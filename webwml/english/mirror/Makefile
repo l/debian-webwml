@@ -10,17 +10,20 @@ include $(WMLBASE)/Make.lang
 
 
 submit.$(LANGUAGE).html: submit.wml $(ENGLISHDIR)/mirror/countries.data \
-  $(TEMPLDIR)/countries.wml
+  $(TEMPLDIR)/countries.wml $(GETTEXTDEP)
 webmirror.$(LANGUAGE).html: webmirror.wml $(TEMPLDIR)/template.wml \
-  $(ENGLISHSRCDIR)/mirror/webmirrors.data
+  $(ENGLISHSRCDIR)/mirror/webmirrors.data $(GETTEXTDEP)
 official_sponsors.$(LANGUAGE).html: official_sponsors.wml \
-  $(TEMPLDIR)/template.wml $(ENGLISHDIR)/mirror/official_sponsors.list
+  $(TEMPLDIR)/template.wml $(ENGLISHDIR)/mirror/official_sponsors.list \
+  $(GETTEXTDEP)
 sponsors.$(LANGUAGE).html: sponsors.wml \
-  $(TEMPLDIR)/template.wml $(ENGLISHDIR)/mirror/sponsors.list
+  $(TEMPLDIR)/template.wml $(ENGLISHDIR)/mirror/sponsors.list \
+  $(GETTEXTDEP)
 ftpmirror.$(LANGUAGE).html: ftpmirror.wml $(TEMPLDIR)/template.wml \
-  $(TEMPLDIR)/toc.wml
+  $(TEMPLDIR)/toc.wml $(GETTEXTDEP)
 official.$(LANGUAGE).html: official.wml $(TEMPLDIR)/template.wml \
-  $(ENGLISHDIR)/mirror/official.data $(TEMPLDIR)/countries.wml
+  $(ENGLISHDIR)/mirror/official.data $(TEMPLDIR)/countries.wml \
+  $(GETTEXTDEP)
 
 # there only needs to be one version of the following so
 # the non-english directories shouldn't try to install them
