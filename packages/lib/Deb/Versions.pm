@@ -2,7 +2,7 @@
 # Deb::Versions
 # $Id$
 #
-# Copyright 2003 Frank Lichtenheld <frank@lichtenheld.de>
+# Copyright 2003, 2004 Frank Lichtenheld <frank@lichtenheld.de>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ Deb::Versions - compare Versions of Debian packages
 =head1 DESCRIPTION
 
 This module allows you to compare version numbers like defined
-in the Debian policy, section 3.2 (L<SEE ALSO>).
+in the Debian policy, section 5.6.11 (L<SEE ALSO>).
 
 It provides two functions:
 
@@ -74,7 +74,7 @@ sub version_cmp {
     my ( $ver1, $ver2 ) = @_;
 
     my ( $e1, $e2, $u1, $u2, $d1, $d2 );
-    my $re = qr/^(?:(\d):)?(.*?)(?:-([\w+.]+))?$/;
+    my $re = qr/^(?:(\d+):)?([\w.+:~-]+?)(?:-([\w+.~]+))?$/;
     if ( $ver1 =~ $re ) {
 	( $e1, $u1, $d1 ) = ( $1, $2, $3 );
 	$e1 ||= 0;
@@ -94,17 +94,12 @@ sub version_cmp {
 
 #    warn "D: <$e1><$u1><$d1> <=> <$e2><$u2><$d2>\n";
 
-    if ( $e1 <=> $e2 ) {
-	return $e1 <=> $e2;
-    }
-
-    my $res = 0;
+    my $res = ($e1 <=> $e2);
+    return $res if $res;
     $res = _cmp_part ( $u1, $u2 );
     return $res if $res;
     $res = _cmp_part ( $d1, $d2 );
-    return $res if $res;
-
-    return 0;
+    return $res;
 }
 
 sub version_sort {
@@ -113,6 +108,7 @@ sub version_sort {
 
 sub _cmp_part {
     my ( $v1, $v2 ) = @_;
+    my $r;
 
     while ( $v1 && $v2 ) {
 	$v1 =~ s/^(\D*)//o;
@@ -120,7 +116,7 @@ sub _cmp_part {
 	$v2 =~ s/^(\D*)//o;
 	my $sp2 = $1;
 #	warn "$sp1 cmp $sp2 = "._lcmp( $sp1,$sp2)."\n";
-	if ( my $r = _lcmp( $sp1, $sp2 ) ) {
+	if ( $r = _lcmp( $sp1, $sp2 ) ) {
 	    return $r;
 	}
 	$v1 =~ s/^(\d*)//o;
@@ -128,14 +124,15 @@ sub _cmp_part {
 	$v2 =~ s/^(\d*)//o;
 	my $np2 = $1 || 0;
 #	warn "$np1 <=> $np2 = ".($np1 <=> $np2)."\n";
-	if ( $np1 <=> $np2 ) {
-	    return $np1 <=> $np2;
+	if ( $r = ($np1 <=> $np2) ) {
+	    return $r;
 	}
     }
     if ( $v1 || $v2 ) {
 	return $v1 ? 1 : -1;
     }
 
+    return 0;
 }
 
 sub _lcmp {
@@ -144,10 +141,12 @@ sub _lcmp {
     for ( my $i = 0; $i < length( $v1 ); $i++ ) {
 	my ( $n1, $n2 ) = ( ord( substr( $v1, $i, 1 ) ), 
 			    ord( substr( $v2, $i, 1 ) ) );
-	$n1 += 100 if $n1 < 65;
-	$n2 += 100 if $n2 < 65;
-	if ( $n1 <=> $n2 ) {
-	    return $n1 <=> $n2;
+	$n1 += 256 if $n1 < 65; # letters sort earlier than non-letters
+	$n1 = -1 if $n1 == 126; # '~' sorts earlier than everything else
+	$n2 += 256 if $n2 < 65;
+	$n2 = -1 if $n2 == 126;
+	if ( my $r = ($n1 <=> $n2) ) {
+	    return $r;
 	}
     }
     return length( $v1 ) <=> length( $v2 );
@@ -158,11 +157,11 @@ __END__
 
 =head1 COPYRIGHT
 
-Copyright 2003 Frank Lichtenheld <frank@lichtenheld.de>
+Copyright 2003, 2004 Frank Lichtenheld <frank@lichtenheld.de>
 
 This file is distributed under the terms of the GNU Public
 License, Version 2. See the source code for more details.
 
 =head1 SEE ALSO
 
-Debian policy <URL:http://www.de.debian.org/doc/debian-policy/>
+Debian policy <URL:http://www.debian.org/doc/debian-policy/>
