@@ -34,7 +34,7 @@
 
 use strict;
 
-package WML::Trans;
+package Local::WmlDiffTrans;
 
 ##############################
 # ignore_tag
