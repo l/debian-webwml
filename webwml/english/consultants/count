@@ -1,0 +1,53 @@
+#!/usr/bin/perl
+#
+# Count the number of Debian consultants
+#
+# Written by: Behan Webster <behanw@pobox.com>
+#
+
+$filename	= 'consultant.data';
+$comment	= '^# Consultant:\s*(.*)\s*$';
+
+# Read in file
+open( FILE, "<$filename" ) || die "$filename: $!\n";
+
+my $buffer = "";
+my $count = 0;
+my %country;
+
+# Count consultants/countries
+while ( <FILE> ) {
+	$buffer .= $_;
+	chomp;
+	if( /$comment/ ) {
+		$count++;
+		$country{$1}++;
+	}
+}
+@_ = keys %country;
+my $number = $#_ + 1;
+
+close( FILE );
+
+# Print results and modify file
+my $changes = $buffer;
+
+foreach ( sort keys %country ) {
+	printf "%-4d  %s\n", $country{$_}, $_;
+	$changes =~ s/(#$_.*?)\((\d+)\)/$1($country{$_})/s;
+}
+
+print "Number of consultants: $count\n";
+print "Number of countries:   $number\n";
+#$changes =~ s/(# Total.*?)\d+(.*?)\d+/$1$count$2$number/s;
+$changes =~ s|(total_consultant>)\d+(</define)|$1$count$2|s;
+$changes =~ s|(total_country>)\d+(</define)|$1$number$2|s;
+
+# Compare and replace
+if( $changes ne $buffer ) {
+	print "File has changed.  Updating '$filename'.\n";
+	rename $filename, "$filename.bak";
+	open( FILE, ">$filename" ) || die "$filename: $!\n";
+	print FILE $changes;
+	close( FILE );
+}
