@@ -34,10 +34,10 @@ foreach $l (<ADV>) {
       $i++
     }
   }
-  if ($l =~ /^Package        : (.+)/) {
+  if ($l =~ /^Package\s*: (.+)/) {
     $package = $1;
   }
-  if ($l =~ /^(Problem type  |Vulnerability ) : (.+)/) {
+  if ($l =~ /^(Problem type|Vulnerability)\s*: (.+)/) {
     $desc = $2;
   }
   $mi = 0 if ($l =~ /^wget url/);
