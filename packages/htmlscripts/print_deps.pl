@@ -21,13 +21,31 @@ sub dep_item {
 	$info = '';
     }
     if ($desc) {
-	$desc = "<br>$desc";
+	$desc = "</dt><dd>$desc</dd>";
     } else {
-	$desc = '';
+	$desc = '</dt>';
     }
 
     return "$link$name$post_link$info$desc";
-}
+} # end dep_item
+
+sub dep_item_ds {
+    my ( $link, $name, $info) = @_;
+    my $post_link = '';
+    if ($link) {
+        $link = "<a href=\"$link\">";
+        $post_link = '</a>';
+    } else {
+        $link = '';
+    }
+    if ($info) {
+        $info = " $info";
+    } else {
+        $info = '';
+    }
+    return "$link$name$post_link$info";
+} # end dep_item_ds
+
 
 sub print_deps {
     my ( $env, $lang, $pkg, $relations, $type) = @_;
@@ -44,15 +62,15 @@ sub print_deps {
 	my @res_pkgs = ();
 
 	if ($is_old_pkgs)  {
-	    $res .= "</p><p>";
+	    $res .= "<dt>";
 	} else {
 	    if ($first) {
 		$res .= "<li>";
 		$first = 0;
 	    } else {
-		$res .= "</p></li>\n<li>";
+		$res .= "</dl></li>\n<li>";
 	    }
-	    $res .= "<p><span class=\"hidecss\">[$dep_type{$type}] </span>";
+	    $res .= "<span class=\"hidecss\">[$dep_type{$type}] </span><dl><dt>";
 	}
 
 	foreach my $rel_alt ( @$rel ) {
@@ -91,16 +109,16 @@ sub print_deps {
 
 	}
 	
-	$res .= "\n".join( "</p><p>".gettext( "or" )." ", @res_pkgs )."\n";
+	$res .= "\n".join( "<dt>".gettext( "or " )." ", @res_pkgs )."\n";
     }
     if (@$relations) {
-	$res .= "</p></li>\n";
+	$res .= "</dl></li>\n";
 	$res .= "</ul>\n";
     } else {
 	$res = "";
     }
     return $res;
-}
+} # end print_deps
 
 sub print_src_deps {
     my ( $env, $lang, $pkg, $version, $type) = @_;
@@ -110,7 +128,7 @@ sub print_src_deps {
     foreach my $dep ( @{$pkg->{versions}{$version}{$type}} ) {
         $found = 1;
 	my @res_pkgs;
-	$res .= "<li><span class=\"hidecss\">[$dep_type{$type}] </span>";
+	$res .= "<li><span class=\"hidecss\">[$dep_type{$type}] </span><dl><dt>";
 	foreach my $or_dep ( @$dep ) {
 	    my $p_name = $or_dep->[0];
 	    my $p = $env->{db}->get_pkg( $p_name );
@@ -143,7 +161,7 @@ sub print_src_deps {
 		push @res_pkgs, dep_item( undef, $p_name, "$p_version$arch_str", $short_desc );
 	    }
 	}
-	$res .= "\n".join( "<br>\n".gettext( " or " )." ", @res_pkgs )."</li>\n";
+	$res .= "\n".join( "<dt>\n".gettext( "or" )." ", @res_pkgs )."</dl></li>\n";
     }
     if ($found) {
         $res .= "\n</ul>";
@@ -151,7 +169,7 @@ sub print_src_deps {
         $res = "";
     }
     return $res;
-}
+} # end print_src_deps
 
 sub print_deps_ds {
     my ( $env, $pkg, $relations, $type) = @_;
@@ -178,11 +196,13 @@ sub print_deps_ds {
 	    $pkg_version = "($pkg_version)" if $pkg_version;
 
 	    if ($available) {
-		push @res_pkgs, dep_item( "../$subsection/$p_name",
-					  $p_name, "$pkg_version$arch_str" );
+		push @res_pkgs, dep_item_ds( "../$subsection/$p_name",
+					     $p_name,
+					     "$pkg_version$arch_str" );
 	    } else {
-		push @res_pkgs, dep_item( undef,
-					  $p_name, "$pkg_version$arch_str" );
+		push @res_pkgs, dep_item_ds( undef,
+					     $p_name,
+					     "$pkg_version$arch_str" );
 	    }
 
 	}
@@ -193,7 +213,7 @@ sub print_deps_ds {
         $res .= ds_item($type, join( ", ", @res));
     }
     return $res;
-}
+} # end print_deps_ds
 
 #FIXME
 sub print_reverse_rel_ds {
@@ -245,7 +265,7 @@ sub print_reverse_rel_ds {
 	$res = "<li>Reverse $type: ".join( ", ", @res)."</li>\n";
     }
     return $res;
-}    
+} # end print_reverse_rel_ds
 
 
 sub compute_src_arch_str {
@@ -291,6 +311,6 @@ sub compute_src_arch_str {
     }
 
     return $arch_str;
-}
+} # end compute_src_arch_str
 
 1;
