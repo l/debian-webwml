@@ -172,6 +172,8 @@ sub get_stats_templates {
                 my ($template, $lang, $stat, $link_trans, $link_orig) = ();
                 foreach $line (@{$data->templates($pkg)}) {
                         ($template, $lang, $stat, $link_trans, $link_orig) = @{$line};
+                        next if $lang eq '_';
+
                         $link_orig ||= '';
 
                         $link_trans =~ s/:/\%3a/g;
@@ -268,7 +270,7 @@ sub process_langs {
                 if ($data->has_templates($pkg)) {
                         foreach $line (@{$data->templates($pkg)}) {
                                 ($file, $lang) = @{$line};
-                                next unless $lang ne '';
+                                next unless $lang ne '' && $lang ne '_';
                                 $langs->{templates}->{$lang} = 1;
                                 $langs->{all}->{$lang} = 1;
                         }
