@@ -1,13 +1,24 @@
 # Nothing in here should require any modification. If you feel you need to
 # modify something first send mail to debian-www explaining why.
 
+CUR_YEAR := $(shell date +%Y)
+
+ifeq "$(findstring SPI,$(CURDIR))" "SPI"
+SPI := true
+endif
+
+ifdef SPI
+RELHTMLBASE := ../../../debian.org/SPI
+RELTEMPLDIR := ../../english/SPI/template
+ENGLISHSRCDIR = $(WMLBASE)/../../english/SPI
+else
 RELHTMLBASE := ../../debian.org
 RELTEMPLDIR := ../english/template/debian
-CUR_YEAR := $(shell date +%Y)
+ENGLISHSRCDIR = $(WMLBASE)/../english
+endif
 
 HTMLDIR = $(WMLBASE)/$(RELHTMLBASE)/$(CUR_DIR)
 TEMPLDIR = $(WMLBASE)/$(RELTEMPLDIR)
-ENGLISHSRCDIR = $(WMLBASE)/../english
 
 LANGUAGECAP = $(shell echo $(LANGUAGE) | tr "a-z" "A-Z")
 WMLOPTIONS := -q -D CUR_YEAR=$(shell date +%Y)
@@ -17,21 +28,15 @@ WMLEPILOG :=
 WML = wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE)@g+w $(WMLPROLOG) $(WMLEPILOG)
 
 WMLFILES = $(wildcard *.wml)
+ifndef SUBLANG
 HTMLFILES = $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
 HTMLDESTFILES = $(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE).html,$(WMLFILES))
-
-# Redefine HTMLFILES and HTMLDESTFILES for SUBLANG like *.zh-cn.html
-# and *.zh-tw.html.  This is currently needed by the Chinese web pages
-# only.  I tried to define these in chinese/Make.lang, but it didn't work.
-# (foka, 2000-08-16)
-ifdef SUBLANG
+else
 HTMLFILES = $(sort $(foreach i,$(SUBLANG),\
 	$(patsubst %.wml,%.$(LANGUAGE)-$(i).html,$(WMLFILES))))
 HTMLDESTFILES = $(sort $(foreach i,$(SUBLANG),\
 	$(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE)-$(i).html,$(WMLFILES))))
 endif
-
-# all the binary file types should be added below.
 JPGSOURCE := $(wildcard *.jpg)
 JPGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(JPGSOURCE))
 GIFSOURCE := $(wildcard *.gif)
@@ -54,13 +59,15 @@ IMGFILES := $(JPGSOURCE) $(GIFSOURCE) $(PNGSOURCE) $(PSSOURCE) $(EPSSOURCE) $(PD
 IMGDESTFILES := $(JPGDESTFILES) $(GIFDESTFILES) $(PNGDESTFILES) $(PSDESTFILES) $(EPSDESTFILES) $(PDFDESTFILES) $(FIGDESTFILES) $(XCFDESTFILES) $(CSSSOURCE)
 
 existing-SUBS := $(shell for dir in $(wildcard $(SUBS)) ''; do test -d $$dir && echo $$dir; done)
+existing-SUBS-install := $(addsuffix -install,$(existing-SUBS))
+existing-SUBS-clean := $(addsuffix -clean,$(existing-SUBS))
+existing-SUBS-cleandest := $(addsuffix -cleandest,$(existing-SUBS))
 
+# rules
 all:: $(HTMLFILES) $(existing-SUBS)
 
 $(existing-SUBS):
 	$(MAKE) -C $@
-
-existing-SUBS-install := $(addsuffix -install,$(existing-SUBS))
 
 install::
 	test -d $(HTMLDIR) || mkdir -p $(HTMLDIR)
@@ -69,16 +76,12 @@ install:: $(HTMLDESTFILES) $(IMGDESTFILES) $(existing-SUBS-install)
 $(existing-SUBS-install):
 	$(MAKE) -C $(subst -install,,$@) install
 
-existing-SUBS-clean := $(addsuffix -clean,$(existing-SUBS))
-
 clean::
 	rm -f *.$(LANGUAGE).html
 clean:: $(existing-SUBS-clean)
 
 $(existing-SUBS-clean):
 	$(MAKE) -C $(subst -clean,,$@) clean
-
-existing-SUBS-cleandest := $(addsuffix -cleandest,$(existing-SUBS))
 
 cleandest::
 	rm -f $(HTMLDIR)/*.$(LANGUAGE).html
@@ -89,8 +92,13 @@ $(existing-SUBS-cleandest):
 
 # the rule for every wml file
 ifndef NOGENERICDEP
+ifdef SPI
+%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/template.wml
+	$(WML) $(<F)
+else
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
 	$(WML) $(<F)
+endif
 endif
 
 $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
@@ -98,13 +106,20 @@ $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
 	-@cp $(@F) $(HTMLDIR)
 ifeq ($(LANGUAGE),en)
 	@echo making a link $(@D)/$(*F).html -\> $(@F)
-	-@ln -f -s $(@F) $(@D)/$(*F).html
+	@ln -sf $(@F) $(@D)/$(*F).html
 endif
 
 $(IMGDESTFILES): $(IMGFILES)
 	cp $(@F) $(HTMLDIR)
 
 # template dependencies
+ifdef SPI
+$(TEMPLDIR)/template.wml: $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml
+	touch $(TEMPLDIR)/template.wml
+
+$(TEMPLDIR)/footer.wml: $(TEMPLDIR)/ctime.wml
+	touch $(TEMPLDIR)/footer.wml
+else
 $(TEMPLDIR)/basic.wml: $(TEMPLDIR)/navbar.wml
 	touch $(TEMPLDIR)/basic.wml
 
@@ -143,6 +158,7 @@ $(TEMPLDIR)/security.wml: $(TEMPLDIR)/common_translation.wml \
 $(TEMPLDIR)/ddp.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml \
 		$(TEMPLDIR)/footer.wml
 	touch $(TEMPLDIR)/ddp.wml
+endif
 
 .SUFFIXES: 
 .PHONY: all $(existing-SUBS) install $(existing-SUBS-install)
