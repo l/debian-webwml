@@ -4,7 +4,7 @@
 
 WMLBASE=../../..
 CUR_DIR=international/spanish/contrib
-SUBS=apt-guia-usuarios.html paqifaz-capturas
+SUBS=apt-guia-usuarios.html paqifaz-capturas presentacion
 
 include $(WMLBASE)/Make.lang
 
