@@ -1,39 +1,12 @@
 #use wml::debian::template title="Debian 2.1 (slink)發行情報"
+#use wml::debian::languages
+#use wml::debian::install_manual
+#include '$(ENGLISHDIR)/releases/slink/formats_and_architectures.wmh'
 
-<!--translation 1.20-->
+<!--translation 1.28-->
 
 <:
-# 體系結構列表
-%arches = ( i386   => 'Intel x86',
-	    m68k   => 'Motorola 680x0',
-	    sparc  => 'SPARC',
-	    alpha  => 'Alpha',
-	  );
-
-# 輸出格式的語言特殊名稱
-%formats = ( html => "HTML",
-	     pdf  => "PDF",
-	     txt  => "ASCII",
-           );
-
-$about_lang_setting = '如果你已設置了你的<a href="../../intro/cn">首選語言</a>，
-你應該自動獲得正確的譯本。';
-
-sub permute_file {
-    my($file, $name, @exts) = @_;
-    my($ext, $arch);
-
-    foreach $arch (keys %arches) {
-        print "<li> <a href=\"./$arch/$file\">" . $arches{$arch} . $name . "</a>";
-	if ( $#exts != -1 ) {
-	    foreach $ext (@exts) {
-	        print " (<a href=\"./$arch/$file.$ext\"><em>" . 
-			$formats{$ext} . "</em></a>)";
-	    }
-	}
-	print "\n";
-    }
-}
+$about_lang_setting = '如果你的瀏覽器的地方設定正確，你可以使用以上的連結來自動獲取合適的 HTML 版本 -- 請看 <A href=\"$base_url/intro/cn\"><setlang></A>。否則，請在下面的列表選擇對應的硬體結構，語言和格式。\n";
  :>
 
 <ul>
@@ -64,12 +37,24 @@ Debian 2.1，也就是“slink”,現在可以使用。
 版本附注裡也包含有從舊版本升級的用戶指南。
 
 <ul>
-<: &permute_file('release-notes/index', '發行附注'); :>
+<: &permute_as_list('release-notes/', '發行附註'); :>
 </ul>
 
-目前發行附注可用的語言版本有克羅地亞語，捷克語，英語，德語，日語,葡萄牙語和俄語。
-
 <: print $about_lang_setting; :>
+
+<center>
+<table border=2 cellspacing=0 cellpadding=3 bgcolor="#DDDDDD">
+<tr bgcolor="#44CCCC">
+  <th align="left"><strong>硬體結構</strong></th>
+  <th align="left"><strong>格式</strong></th>
+  <th align="left"><strong>語文</strong></th>
+</tr>
+<: &permute_as_matrix('release-notes/index', 'english', 'croatian', 'czech',
+                     'german', 'japanese', 'portuguese', 'russian');
+:>
+</table>
+</center>
+
 
 <p>
 
@@ -83,8 +68,24 @@ Debian 2.1，也就是“slink”,現在可以使用。
 
 安裝指南，附帶可下載的文件，根據系統結構的分類，如下:
 <ul>
-<: &permute_file('install', '安裝手冊'); :>
+<: &permute_as_list('install', '安裝手冊'); :>
 </ul>
+
+<: print $about_lang_setting; :>
+
+<center>
+<table border=2 cellspacing=0 cellpadding=3 bgcolor="#DDDDDD">
+<tr bgcolor="#44CCCC">
+  <th align="left"><strong>硬體結構</strong></th>
+  <th align="left"><strong>格式</strong></th>
+  <th align="left"><strong>語文</strong></th>
+</tr>
+<: &permute_as_matrix('install', 'english', 'croatian',  'czech',
+                     'finnish', 'french', 'german',
+                     'japanese', 'portuguese', 'russian', 'spanish');
+:>
+</table>
+</center>
 
 許多的工作已經使Debian安裝手冊很適合去支持non-i386發行版了。可是，有些結構\
 (特別是<:=$arches{'alpha'}:>)仍然需要工作 -- 查閱這份文檔以了解關於你可以怎\
@@ -98,10 +99,6 @@ Debian 2.1，也就是“slink”,現在可以使用。
 <a href="source/ChangeLog">變更記錄</a>.
 
 <p>
-
-安裝手冊可用的語言版本有克羅地亞語，捷克語，英語，芬蘭語，法語，德語，日語,葡萄牙語,俄語和西班牙語。
-
-<: print $about_lang_setting; :>
 
 
 
@@ -135,8 +132,20 @@ Linux 2.2.x核心，請查閱<a href="running-kernel-2.2">已知問題列表</a>。
 
 <p>
 
-發布過的Debian版本通常是沒有更新過的，除非是在有嚴重錯誤或安全問題的情況下。
-無論如何，為了使用者的方便，這兒列出了某些已更新過且已編譯的可用的包。
+發布過的Debian版本只會在有嚴重錯誤或安全問題的情況下更新。\
+無論如何，為了使用者的方便，這兒列出了一些由用戶和開發者製作\
+的已更新軟件，但請留意它們不是官方發行，因此不受 Debian 的\
+正式支援。
+
+
+<h3>國際化的起動磁碟</h3>
+
+<p>
+
+非正式葡萄牙語起動磁碟可從
+<a
+href="ftp://ftp2.escelsanet.com.br/debian/">ftp://ftp2.escelsanet.com.br/debian
+/</a> 得到。
 
 
 <h3>急救盤 (Rescue Floppy)</h3>
@@ -148,7 +157,15 @@ Linux 2.2.x核心，請查閱<a href="running-kernel-2.2">已知問題列表</a>。
 位熱心的用戶已完成了\
 一些實驗。在 <a href="ftp://kalle.csb.ki.se/pub/">ftp://kalle.csb.ki.se/pub/</a>
 有兩種可選擇的i386結構的急救盤。\
-在那裡也有用來替換的核心，你可以使用它們來簡單的替換掉引導盤上面的核心。
+在那裡也有用來替換的核心，你可以使用它們來簡單地替換掉引導盤上面的核心，\
+你需要驅動磁碟。
+
+<p>
+
+一套較新的為 Adaptec 用家而設之急救和驅動磁碟可在
+<a
+href="http://www.debian.org/~adric/aic7xxx/">http://www.debian.org/~adric/aic7x
+xx/</a> 找到。
 
 
 
@@ -165,15 +182,11 @@ slink不斷地將最新並穩定的軟件編譯成deb文件。檢驗<a href="gnome">Slink/Gnome
 
 <p>
 
-一個屬於potato裡的更新過的<tt>apt</tt>，現在已經有為 slink 而編譯的版本了。\
-下載這個位於<a href="http://netgod.net/x/apt_0.3.7slink0_i386.deb">
-http://netgod.net/x/apt_0.3.7slink0_i386.deb</a>的Debian軟件包。 
-
-<p>
-
-這個已更新版本的好處主要是它自己能夠處理從多張的CD-ROM的安裝。這使得
-<tt>dselect</tt>中的<tt>dpkg-multicd</tt>選項不必要了。
-
+一個已更新過的 <code>apt</code> 已經放入了 Debian 的 2.1r3。\
+這個已更新版本的好處主要是它自己能夠處理從多張CD-ROM的安裝。這使得
+<code>dselect</code> 中的 <code>dpkg-multicd</code> 選項不必要了。\
+但有可能你的 2.1 CD-ROM 裡的 <code>apt</code> 是較舊的，所以你\
+或許需要升級到現在 Slink 裡的那個。
 
 
 <h2><a name="acquiring">獲得 Debian 2.1</a></h2>
