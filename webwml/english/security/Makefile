@@ -28,6 +28,7 @@ crossreferences.$(LANGUAGE).html:: $(ENGLISHSRCDIR)/security/ref-table.inc \
 	$(ENGLISHDIR)/template/debian/securityreferences.wml 
 
 clean::
+	rm -f $(DSARDF) $(DSALONGRDF)
 	rm -f ref-table.inc
 
 ifndef SUBLANG
