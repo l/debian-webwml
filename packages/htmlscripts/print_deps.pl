@@ -208,6 +208,7 @@ sub print_deps_ds {
     @all_archs = sort keys %arch_deps;
 #    print Dumper( \%dep_pkgs, \%arch_deps );
     
+    my @res;
     if ( %dep_pkgs ) {
 	foreach my $dp ( sort keys %dep_pkgs ) {
 	    my $dp_v = $dp;
@@ -273,12 +274,12 @@ sub print_deps_ds {
 		}
 		$pkg_ix++;
 	    }
-	    $res .= ", ".join( gettext( " or " ), @res_pkgs );
+	    push @res, join( gettext( " or " ), @res_pkgs );
 	}
     }
     
-    if ($res) {
-	$res = "<tr><td>$type:</td><td>$res</td></tr>\n";
+    if (@res) {
+	$res = "<tr><td>$type:</td><td>".join( ", ", @res)."</td></tr>\n";
     }
     return $res;
 }
