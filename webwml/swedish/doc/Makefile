@@ -11,7 +11,6 @@ include $(WMLBASE)/Make.lang
 books.$(LANGUAGE).html: books.wml $(ENGLISHSRCDIR)/doc/books.def \
   $(TEMPLDIR)/countries.wml $(TEMPLDIR)/language_names.wml $(TEMPLDIR)/url.wml
 ddp.$(LANGUAGE).html: ddp.wml $(TEMPLDIR)/ddp.wml
-	$(WML) -Dmlmonth=$(shell date '+%y%m') $(<F)
 todo.$(LANGUAGE).html: todo.wml $(TEMPLDIR)/ddp.wml
 docpolicy.$(LANGUAGE).html: docpolicy.wml $(TEMPLDIR)/ddp.wml
 cvs.$(LANGUAGE).html: cvs.wml $(TEMPLDIR)/ddp.wml $(ENGLISHSRCDIR)/doc/dirtree.jpg
