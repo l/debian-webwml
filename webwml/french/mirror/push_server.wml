@@ -1,25 +1,12 @@
-#use wml::debian::template title="Mettre en place un Serveur Push"
+#use wml::debian::template title="Mettre en place un serveur « Push »"
 
-#use wml::debian::translation-check translation="1.4" translation_maintainer="Christian Couder <chcouder@club-internet.fr>"
+#use wml::debian::translation-check translation="1.5" translation_maintainer="Christian Couder <chcouder@club-internet.fr>"
 
+<p><small>(Pour plus d'information sur ce qu'est un serveur « Push », merci
+de lire
+<a href="push_mirroring">l'explication des miroirs « Push »</a>.)</small>
 
-<p>Etant donné le grand nombre de miroirs et la taille de l'archive Debian,
-il n'est pas possible pour tous les miroirs d'utiliser le site d'archive 
-principal comme serveur source pour Debian. Il est beaucoup plus efficace de 
-distribuer la charge sur un certain nombre de miroirs push répartis partout
-dans le monde.
-
-<p>Merci de noter que nous allons approcher des sites miroirs afin 
-afin qu'ils deviennent des serveurs push.
-Si votre site est TRES bien connecté (à la fois une bonne bande passante
-et une bonne connection aux dorsales majeures) et si vous souhaitez
-laisser d'autres sites mirorer à partir de votre site, vous pouvez nous 
-le faire savoir afin que nous envisagions un miroir push dans votre cas.
-
-<p>Les serveurs push sont des machines qui font un miroir de toute
-l'archive Debian, ce sont eux mêmes des miroirs push du site principal
-et ont une large bande passante.
-Mettre en place un serveur push est assez simple:
+<p>Mettre en place un serveur « Push » est assez simple :
 <ul>
   <li>installer <kbd>rsync</kbd> 2.1.1 ou plus.
   <li>créer <kbd>rsyncd.conf</kbd> et ajoutez y un contenu similaire au 
@@ -34,13 +21,13 @@ socket options = SO_KEEPALIVE
 
 [ftp]
   path = /org/ftp.debian.org/ftp
-  comment = Archive FTP Debian (~16 GO)
+  comment = Archive FTP Debian (~20 Go)
   auth users = compte_authorise1,compte_authorise2,compte_authoriseN
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
 [web.debian.org]
   path = /org/www.debian.org/debian.org
-  comment = Site Web Debian
+  comment = Site Web Debian (~400 Mo)
   auth users = compte_authorise1,compte_authorise2,compte_authoriseN
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
@@ -101,11 +88,10 @@ USER="archvsync"
 MAIL=
 PATH="/bin:/usr/bin"
 
-#id
-
 cd $HOME
 
 ./signal some.other.site archvsync
+./signal and.another.site othersiteaccount
 </pre>
 </protect>
 
