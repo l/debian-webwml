@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
-# (c) 1999 Debian and Randolph Chung. Licensed under the GPL. <tausq@debian.org>
+# $Id$
+# (c) 1999 Randolph Chung. Licensed under the GPL. <tausq@debian.org>
 
 use lib '.';
 use strict;
