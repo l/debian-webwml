@@ -4,9 +4,9 @@
 
 WMLBASE=.
 CUR_DIR=
-SUBS=Bugs MailingLists News Pics banners chinese consultants devel distrib \
-doc events intro international logos mirror misc partners ports releases \
-searchtmpl security vote y2k
+SUBS=Bugs CD MailingLists News Pics banners chinese consultants devel \
+distrib doc events intro international logos mirror misc partners ports \
+releases searchtmpl security vote y2k
 
 ifneq "$(wildcard om_svenska/Makefile)" ""
 SUBS += om_svenska
