@@ -14,6 +14,8 @@ tfiles=""
 cd ..
 cvs update .wmlrc
 cvs update Makefile.common
+cvs update check_trans.pl
+cvs update -d english/template
 
 cvs update -d $translation
 files=`find $translation -name '*' -print | grep -v CVS`
