@@ -46,7 +46,7 @@ while (<MAINTAINERS>) {
 }
 close MAINTAINERS;
 
-$ldap = Net::LDAP->new($server, 'port' => $port);
+$ldap = Net::LDAP->new($server, 'port' => $port) or die "Couldn't make connection to ldap server: $@";
 $ldap->bind;
 $mesg = $ldap->search('base' => $base,
                       'filter' => "(package=wnpp)",
