@@ -41,12 +41,15 @@ def process_line(line, site):
 
 goodlink = re.compile(r'(^\w[\w.-]+$|^.+/trace/[\w-]+[^/])');
 def check_site(hostname, loc):
+	siteprob = 0
 	mirror = 'http://' + hostname + loc + 'project/trace/'
 	try:
 		hostaddress = socket.gethostbyname(hostname)
 	except socket.error:
-		'Could not resolve host ', hostname
-		return
+		print 'Could not resolve host ' + hostname
+		if badfd:
+			badfd.write('Could not resolve host ' + hostname + '\n')
+		return 1
 	print mirror + ' (' + hostaddress + ')'
 	sys.stdout.flush()
 	try:
@@ -60,11 +63,17 @@ def check_site(hostname, loc):
 		errcode, errmsg, headers = h.getreply()
 		signal.alarm(0)
 	except (IOError, socket.error), arg:
-		print '  Error accessing site:', arg.args[0]
-		return
+		if badfd:
+			badfd.write(mirror + ' (' + hostaddress + ')' + '\n')
+			badfd.write('  Error accessing site: ' + str(arg.args[0]) + '\n')
+		print '  Error accessing site: ' + str(arg.args[0])
+		return 1
 	if errcode != 200:
+		if badfd:
+			badfd.write(mirror + ' (' + hostaddress + ')' + '\n')
+			badfd.write('  Error: site returned Error Code ' + str(errcode) + '\n')
 		print '  Error: site returned Error Code ' + str(errcode)
-		return
+		return 1
 	# site must be good so actually download it
 	current = urllib.urlopen(mirror)
 	parse = htmllib.HTMLParser(formatter.NullFormatter())
@@ -77,16 +86,22 @@ def check_site(hostname, loc):
 			urlparts = string.split(tmp, '/')
 			links.append(urlparts[-1])
 	if not links:
+		if badfd:
+			badfd.write(mirror + ' (' + hostaddress + ')' + '\n')
+			badfd.write('  Error with page: no useful links' + '\n')
 		print '  Error with page: no useful links'
-		return
+		return 1
 	urls = {}
 	for url in links:
 		fullurl = urlparse.urljoin(mirror, url)
 		try:
 			current = urllib.urlopen(fullurl)
 		except IOError, args:
-			print "  Error: ", args
-			return
+			if badfd:
+				badfd.write(mirror + ' (' + hostaddress + ')' + '\n')
+				badfd.write(' Error: ' + args + '\n')
+			print "  Error: " + args
+			return 1
 		# Fri Apr 20 17:43:33 UTC 2001
 		# %a  %b  %d %X       %Z  %Y
 		data = current.readline()[:-1]
@@ -104,18 +119,33 @@ def check_site(hostname, loc):
 			(hr, min, sec) = string.split(tim, ':')
 			epochtime = time.mktime((int(year), months[mon], int(dom), int(hr), int(min), int(sec), daysofweek[dow], 0, 0))
 		except:
+			if badfd:
+				badfd.write(mirror + ' (' + hostaddress + ')' + '\n')
+				badfd.write("  Error with file " + url + '\n')
+				badfd.write("  Data = " + data + '\n')
 			print "  Error with file " + url
 			print "  Data = " + data
-			return
+			return 1
 		if (epochtime - oodtime) < 0:
 			urls[epochtime] = out + ' (OUT OF DATE)'
+			siteprob = 1
 		else:
 			urls[epochtime] = out
 	tmp = urls.keys()
 	tmp.sort()
 	for times in tmp:
 		print urls[times]
+	if siteprob and badfd:
+		badfd.write(mirror + ' (' + hostaddress + ')' + '\n')
+		for times in tmp:
+			badfd.write(urls[times] + '\n')
 	sys.stdout.flush()
+	if badfd:
+		badfd.flush()
+	if siteprob:
+		return 1
+	else:
+		return 0
 
 ignored = re.compile('(http.us.debian.org|mirror.aarnet.edu.au|ibiblio.org|llug.sep.bnl.gov|ftp.wa.au.debian.org)')
 def ignored_site(site, currentsite):
@@ -136,13 +166,17 @@ def check(currentsite = ''):
 			process_line(line, site)
 			if not ignored_site(site['site'], currentsite):
 				if (site.has_key('site') and site.has_key('archive-http')) and (not currentsite or site['site'] == currentsite):
-					check_site(site['site'], site['archive-http'])
+					siteprob = check_site(site['site'], site['archive-http'])
 					if site.has_key('maintainer'):
-						print "  Maintainer: " + site['maintainer']
+						print '  Maintainer: ' + site['maintainer']
+						if badfd and siteprob:
+							badfd.write('  Maintainer: ' + site['maintainer'] + '\n')
 				if site.has_key('site') and site.has_key('nonus-http') and (not currentsite or site['site'] == currentsite):
-					check_site(site['site'], site['nonus-http'])
+					siteprob = check_site(site['site'], site['nonus-http'])
 					if site.has_key('maintainer'):
-						print "  Maintainer: " + site['maintainer']
+						print '  Maintainer: ' + site['maintainer']
+						if badfd and siteprob:
+							badfd.write('  Maintainer: ' + site['maintainer'] + '\n')
 			if site['site'] == currentsite:
 				return
 			site = {}
@@ -159,6 +193,7 @@ def check(currentsite = ''):
 		newline = mirrorlistfd.readline()
 	mirrorlistfd.close()
 
+badfd = open('mirrors_bad', 'w')
 mirrorlist = sys.argv.pop(1)
 if len(sys.argv) > 1:
 	while sys.argv:
@@ -166,3 +201,4 @@ if len(sys.argv) > 1:
 	sys.exit(1)
 else:
 	check()
+print 'Done'
