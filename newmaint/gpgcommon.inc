@@ -20,7 +20,7 @@
             return FALSE;
         }
 
-        $sql = "SELECT id, begin, finish, city, country FROM places WHERE who = '$id'";
+        $sql = "SELECT id, begin, finish, city, country FROM places WHERE who = '$id' ORDER BY begin, finish";
         if (! ($query = pg_exec($db, $sql))) {
             echo "Problem with query", pg_ErrorMessage($db), "<BR>";
             return FALSE;
