@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian GNU/Hurd --- Documentación" NOHEADER="yes"
-#use wml::debian::translation-check translation="1.11"
+#use wml::debian::translation-check translation="1.12"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
 
 <H1>Debian GNU/Hurd</h1>
@@ -11,10 +11,16 @@ un sistema operativo en desarrollo los encontrará en el segundo CD,
 dejando el primer CD relativamente limpio y consistente. Pero puede
 haber unos cuantos paquetes importantes en el segundo CD.</P>
 
+<H3>Nota importante para F3</H3>
+
+<P>Después de montar el CD la primera vez, ejecute
+<code>/cdrom/upgrade/initial.sh</code> para actualizar el tar de Hurd.
+
 <H3>Descarga.</H3>
 
-<P>Las imágenes ISO actuales son hurd-F2-Main.iso y hurd-F2-extra.iso,
-y estos son algunos de los sitios que tienen las imágenes actuales.</P>
+<P>Las imágenes ISO actuales son hurd-F3-Main.iso y hurd-F3-extra.iso,
+y estos son algunos de los sitios que normalmente tienen las imágenes
+actuales. Revise la versión antes de descargarlas.</P>
 
 <ul>
 <li>
@@ -30,8 +36,7 @@ y estos son algunos de los sitios que tienen las imágenes actuales.</P>
 </ul>
 
 <P>Una <a href="http://ftpsearch.lycos.com/?form=medium">búsqueda
-ftp</a> de hurd-F2 podría encontrar un sitio más cercano, pero
-compruebe que el sitio que ha elegido tiene las imágenes actuales.</P>
+ftp</a> de hurd-F3 podría encontrar un sitio más cercano.</P>
 
 <p> Las instrucciones para el quemado de CDs a partir de las imágenes
 se puede encontrar en <A
@@ -40,27 +45,28 @@ HREF="http://cdimage.debian.org/faq.html">http://cdimage.debian.org/faq.html</A>
 
 <H3>CD-ROMs</H3>
 
-<P>Mire en <A HREF="../../distrib/vendors"> para ver vendedores del
-Hurd en CD</A>. Busque <code>hurd</code> utilizando las capacidades de
-búsqueda de su navegador.</P>
+<P>Mire en <A HREF="../../distrib/vendors"> esta página para ver
+vendedores del CD del Hurd</A>. Busque <code>hurd</code> utilizando
+las capacidades de búsqueda de su navegador.</P>
 
 <H3>Cómo funciona el Disco de Instalación</H3>
 
-<P>Los CDs de intalación estándar de Debian GNU/Linux usan el método de
+<P>Los CDs de intalación de potato de Debian GNU/Linux usan el método de
 instalación cruzada para instalar el sistema base. Se crea en memoria 
 un dico RAM y se instala en él un sistema GNU/Linux mínimo. Este sistema
 mínimo se usa para particionar y formatear las unidades, y para preparar
 la máquina destino para la instalación principal. La fase crítica es
 desempaquetar el .tar que contiene los paquetes base esenciales en 
 las unidades del sistema destino. Entonces se vuelve a arrancar el 
-nuevo sistema usando los paquetes instalados en el disco duro. Luego, 
-se instalan y configuran los paquetes adicionales para crear el sistema
-deseado.</P>
+nuevo sistema usando los paquetes desempaquetados en el disco duro.
+Luego, se instalan y configuran los paquetes adicionales para crear el
+sistema deseado.</P>
 
 <P>Como el Hurd además usa el método de instalación cruzada, esto
 quiere decir que los guiones para construir los CDs de instalación de
 Hurd pudieron adaptarse a partir de los guiones de CDs y de arranque
-de Debian GNU/Linux.</P>
+de Debian GNU/Linux para que fuese el tar del Hurd y no el de Debian
+el que se desempaquetase.</P>
 
 <P>Instalar el Hurd usando un conjunto de cd-roms tiene varias ventajas.
 
@@ -277,7 +283,7 @@ Añada las particiones del disco duro, p. ej.,<br>
 
 <P>El Hurd utiliza el sistema de archivos ext2. "/CD1" es un punto de
 montaje sugerido para la partición que contiene los paquetes de
-hurd-F1-main. La swap se puede compartir con Linux.</P>
+hurd-F3-main. La swap se puede compartir con Linux.</P>
 					
 <li><em> Active la partición swap "swapon -a".</em>
 Compruebe que ha funcionado. Se recomienda EXTREMADAMENTE usar swap
@@ -287,42 +293,40 @@ con el Hurd.</P>
 <p>
 settrans -a /cdrom /hurd/isofs /dev/[Nombre de la unidad de Hurd]</P>
 	
-<li><em>Ejecute "dselect"</em>.
-<p>Elija como medio de acceso "Mounted filesystem".
-"/cdrom/dists/unstable" debería encontar el árbol de instalación
-Debian. Sólo el árbol ../main/binary-hurd-i386 contiene algún paquete,
-así que no se
-preocupe si dselect hace ruidos groseros porque contrib está vacío.
-contrib, non-US y non-free están incorporados en el sistema de
-ficheros binary-hurd-i386.</P>
+<li><em>Ejecute "/cdrom/upgrade/initial.sh"</em>.
+<p>Esto actualizará el tar de Hurd (baseHurd.tgz). Debido a que esta
+es una actualización bastante radical, sería bastante sabio que
+reiniciase cuando el proceso termine.</p>
 				
-<li><em>Lo siguiente, "Update" .</em>
-<p> Usando el menú "Select", deseleccione los paquetes tetex. Ejecute
-"install" y piense en otra cosa que hacer. El acceso a archivos es
-lento. La instalación debería realizarse limpiamente excepto por
-comentarios triviales al final.</P>
-</ol>
+<li><em>Configure el traductor para el CD-ROM de nuevo y ejecute
+"/cdrom/upgrade/second.sh".</em>
+<p>Esto instalará un buen número de paquetes (¿)útiles(?).</p>
+
+<li><em> Puede instalar más paquetes usando "apt" o "dselect".</em>
+<p>Si no se siente familiarizado con esas herramientas Debian, vea
+"man apt" y "man dselect".</p>
 
 <li><em>Desmontando el cdrom</em>
 <P>La unidad de cdrom necesita ser desmontada en dos pasos,<BR>
 <code>settrans -g /cdrom</code><BR>
 <code>settrans -g /dev/[Hurd drive name]</code><BR>
-Entonces se desbolqueará la bandeja de la unidad de cdrom.</P>
+Entonces se debería desbloquear la bandeja de la unidad de cdrom.</br>
+Si esto no funciona, un reinicio resolverá el problema. Descubrí que
+era necesario después de ejecutar <code>initial.sh</code> y
+<code>second.sh</code>.</p>
 
 <li><em>Copiando sus CD's a particiones</em>
-<p>Si copia sus CD's a particiones, no añada la partición que contenga
-el CD extra a su /etc/apt/sources.list ya que contiene paquetes que
-podrían romperle el sistema.</P>
+<p>Si copia sus CD's a particiones, no añada el directorio
+"dists-extra" que se encuentra en el CD extra a su
+/etc/apt/sources.list, ya que contiene paquetes que podrían romperle
+el sistema.</P>
+
+</ol>
 
 <P>Aquí es donde termina esta guía y comienza su exploración. Disfrute
 con el Hurd.</P>
 
 <P>Los comentarios acerca de los CDs son bienvenidos.<BR>
 Philip Charles, philipc@debian.org.
-
-
-
-
-
 
 
