@@ -172,9 +172,6 @@ sub canonical_names {
 		elsif ($maintainer =~ /Javier Fernandez-Sanguino Pen~a\s+<(.+)>/o) {
 			$lastname = 'Fernandez-Sanguino Pe&ntilde;a'; $firstname = 'Javier'; $email = $1;
 		}
-		elsif ($maintainer =~ /KELEMEN Peter <(.+)>/io) {
-			$lastname = 'Kelemen'; $firstname = 'Peter'; $email = $1;
-		}
 		elsif ($maintainer =~ /J\.H\.M\.? Dassen \(Ray\) <(.+)>/o) {
 			$lastname = 'Dassen'; $firstname = 'Ray J.H.M.'; $email = $1;
 		}
@@ -232,65 +229,17 @@ sub canonical_names {
 		elsif ($maintainer =~ /Chris(topher)? L\.? Cheney <(.+)>/) {
 			$lastname = 'Cheney'; $firstname = 'Christopher L.'; $email = $2;
 		}
-		elsif ($maintainer =~ /OHASHI Akira <(.+)>/) {
-			$lastname = 'Ohashi'; $firstname = 'Akira'; $email = $1;
-		}
-		elsif ($maintainer =~ /GOTO Masanori <(.+)>/) {
-			$lastname = 'Goto'; $firstname = 'Masanori'; $email = $1;
-		}
-		elsif ($maintainer =~ /SZALAY Attila <(.+)>/) {
-			$lastname = 'Szalay'; $firstname = 'Attila'; $email = $1;
-		}
 		elsif ($maintainer =~ /Sylvain LE GALL <(.+)>/) {
 			$lastname = 'Le Gall'; $firstname = 'Sylvain'; $email = $1;
-		}
-		elsif ($maintainer =~ /RISKO Gergely <(.+)>/) {
-			$lastname = 'Risko'; $firstname = 'Gergely'; $email = $1;
-		}
-		elsif ($maintainer =~ /PASZTOR Gyorgy <(.+)>/) {
-			$lastname = 'Pasztor'; $firstname = 'Gyorgy'; $email = $1;
-		}
-		elsif ($maintainer =~ /Atsushi KAMOSHIDA <(.+)>/) {
-			$lastname = 'Kamoshida'; $firstname = 'Atsushi'; $email = $1;
-		}
-		elsif ($maintainer =~ /Takao KAWAMURA <(.+)>/) {
-			$lastname = 'Kawamura'; $firstname = 'Takao'; $email = $1;
-		}
-		elsif ($maintainer =~ /Takuo KITAME <(.+)>/) {
-			$lastname = 'Kitame'; $firstname = 'Takuo'; $email = $1;
-		}
-		elsif ($maintainer =~ /Atsuhito KOHDA <(.+)>/) {
-			$lastname = 'Kohda'; $firstname = 'Atsuhito'; $email = $1;
-		}
-		elsif ($maintainer =~ /SEKIDO Koichi <(.+)>/) {
-			$lastname = 'Sekido'; $firstname = 'Koichi'; $email = $1;
-		}
-		elsif ($maintainer =~ /Tomohiro KUBOTA <(.+)>/) {
-			$lastname = 'Kubota'; $firstname = 'Tomohiro'; $email = $1;
 		}
 		elsif ($maintainer =~ /A Lee <(.+)>/) {
 			$lastname = 'Lee'; $firstname = 'Ho-seok'; $email = $1;
 		}
-		elsif ($maintainer =~ /Julien LEMOINE <(.+)>/) {
-			$lastname = 'Lemoine'; $firstname = 'Julien'; $email = $1;
-		}
-		elsif ($maintainer =~ /OHURA Makoto <(.+)>/) {
-			$lastname = 'Ohura'; $firstname = 'Makoto'; $email = $1;
-		}
-		elsif ($maintainer =~ /A Menucc1? <(.+)>/) {
-			$lastname = 'Menucci'; $firstname = 'Andrea'; $email = $1;
+		elsif ($maintainer =~ /A Mennucc1? <(.+)>/) {
+			$lastname = 'Mennucci'; $firstname = 'Andrea'; $email = $1;
 		}
 		elsif ($maintainer =~ /Abraham vd Merwe <(.+)>/) {
 			$lastname = 'van der Merwe'; $firstname = 'Abraham'; $email = $1;
-		}
-		elsif ($maintainer =~ /ISHIKAWA Mutsumi <(.+)>/) {
-			$lastname = 'Ishikawa'; $firstname = 'Mutsumi'; $email = $1;
-		}
-		elsif ($maintainer =~ /Shuichi OONO <(.+)>/) {
-			$lastname = 'Oono'; $firstname = 'Shuichi'; $email = $1;
-		}
-		elsif ($maintainer =~ /Susumu OSAWA <(.+)>/) {
-			$lastname = 'Osawa'; $firstname = 'Susumu'; $email = $1;
 		}
 		elsif ($maintainer =~ /Goedson Teixeira Paixao <(.+)>/) {
 			$lastname = 'Teixeira Paixao'; $firstname = 'Goedson'; $email = $1;
@@ -301,41 +250,20 @@ sub canonical_names {
 		elsif ($maintainer =~ /Manuel Estrada Sainz <(.+)>/) {
 			$lastname = 'Estrada Sainz'; $firstname = 'Manuel'; $email = $1;
 		}
-		elsif ($maintainer =~ /NOSHIRO Shigeo <(.+)>/) {
-			$lastname = 'Noshiro'; $firstname = 'Shigeo'; $email = $1;
-		}
 		elsif ($maintainer =~ /Roberto Suarez Soto <(.+)>/) {
 			$lastname = 'Suarez Soto'; $firstname = 'Roberto'; $email = $1;
 		}
 		elsif ($maintainer =~ /JP Sugarbroad <(.+)>/) {
 			$lastname = 'Sugarbroad'; $firstname = 'Jean-Philippe'; $email = $1;
 		}
-		elsif ($maintainer =~ /Tamas SZERB <(.+)>/) {
-			$lastname = 'Szerb'; $firstname = 'Tamas'; $email = $1;
-		}
-		elsif ($maintainer =~ /Akira TAGOH <(.+)>/) {
-			$lastname = 'Tagoh'; $firstname = 'Akira'; $email = $1;
-		}
-		elsif ($maintainer =~ /NOKUBI Takatsugu <(.+)>/) {
-			$lastname = 'Nokubi'; $firstname = 'Takatsugu'; $email = $1;
-		}
-		elsif ($maintainer =~ /UNO Takeshi <(.+)>/) {
-			$lastname = 'Uno'; $firstname = 'Takeshi'; $email = $1;
-		}
-		elsif ($maintainer =~ /Fumitoshi UKAI <(.+)>/) {
-			$lastname = 'Ukai'; $firstname = 'Fumitoshi'; $email = $1;
-		}
-		elsif ($maintainer =~ /ARAKI Yasuhiro <(.+)>/) {
-			$lastname = 'Araki'; $firstname = 'Yasuhiro'; $email = $1;
-		}
-		elsif ($maintainer =~ /Taku YASUI <(.+)>/) {
-			$lastname = 'Yasui'; $firstname = 'Taku'; $email = $1;
-		}
-		elsif ($maintainer =~ /(?:Hatta|HATTA) Shuzo <(.+)>/) {
+		elsif ($maintainer =~ /Hatta Shuzo <(.+)>/) {
 			$lastname = 'Hatta'; $firstname = 'Shuzo'; $email = $1;
 		}
 		elsif ($maintainer =~ /Oohara Yuuma <(.+)>/) {
 			$lastname = 'Oohara'; $firstname = 'Yuuma'; $email = $1;
+		}
+		elsif ($maintainer =~ /W\. Borgert <(.+)>/) {
+			$lastname = 'Borgert'; $firstname = 'Wolfgang'; $email = $1;
 		}
 
 #
@@ -344,6 +272,12 @@ sub canonical_names {
 # the latest insane regexp courtesy of Matt Kraai
 		elsif ($maintainer =~ /"?(.+?)\s+(([vV][ao]n )?(da |der? |Di |Le |Dal )?[\w~'&;#-]+),?\s*([IV]*|Jr\.?)"?(\s+\(.*\))?\s+<(.+)>\s*/o) {
 			($firstname,$lastname,$email) = ($1,$2,$7);
+			if (uc($firstname) eq $firstname) {
+				($firstname,$lastname) = ($lastname,ucfirst(lc($firstname)));
+			}
+			elsif (uc($lastname) eq $lastname) {
+				$lastname = ucfirst(lc($lastname));
+			}
 		}
 		# elsif ($maintainer =~ /"?([\w~'-]+?)\s+(.*?)\s*(([vV]an |Di |de |Le )?[\w~'-]+),?\s*[IV]*"?\s+<(.+)>\s*/o) {
 		#	($firstname,$middlename,$lastname,$email) = ($1,$2,$3,$5);
