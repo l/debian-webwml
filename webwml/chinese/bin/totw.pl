@@ -4,7 +4,7 @@ $0 =~ m|to(..)\.pl$|;
 my $sublang = $1;
 my $SUBLANG = uc($sublang);
 
-s|^(<HTML lang="zh)">|$1-$SUBLANG)">|;
+s|^(<HTML lang="zh)">|$1-$SUBLANG">|;
 s/(\.zh)(?=\.(?:gif|jpg|png))/$1-$sublang/g;
 s|^<A href=".*">(&#20013;&#25991;&nbsp;.+$SUBLANG.+)</A>(?=&nbsp;)|<B>$1</B>|;
 
