@@ -1,5 +1,5 @@
 #use wml::debian::ddp title="CVS för Debian Documentation Project"
-#use wml::debian::translation-check translation="1.20"
+#use wml::debian::translation-check translation="1.21"
 #use wml::debian::toc
 
 # <h1>CVS-åtkomst till DDP-dokument</h1>
@@ -83,13 +83,11 @@ uppdateringsprivilegier först.
 
 <p>För att ansluta ger du detta kommando:
 
-<p>To connect, enter this command:
-
 <p style="margin-left: 2em">
   <code>cvs -d :pserver:<var>användar-id</var>@cvs.debian.org:/cvs/debian-doc login</code>
 </p>
 
-<p>och ange det lösenord du förhandlat med dokumentationssamorndaren.
+<p>och ange det lösenord du förhandlat med dokumentationssamordnaren.
 I kommandot ovan ersätter du <var>användar-id</var> med ditt egen användar-id
 på cvs-lösenordsservern; det är inte nödvändigtvis samma som ditt
 användar-id på <b>cvs.debian.org</b>, om du har ett sådant.
@@ -128,7 +126,7 @@ att koppla ned från servern:
 
 <p>Denna metod kan endast användas av registrerade Debianutvecklar
 och föredras framför pserver-metoden ovan.
-Om du nyligen har registrerats som Debianutvecklar ber vi dig tala om
+Om du nyligen har registrerats som Debianutvecklare ber vi dig tala om
 detta för dokumentationssamordnaren så att ditt pserver-konto kan tas
 bort.
 
@@ -177,11 +175,61 @@ Vi ber normalt om att du sänt in några användbara patchar först.
 </p>
 
 <p>För att få uppdateringsprivilegier sänder du en förfrågan till
-<a href="mailto:aph@debian.org">dokumentationssamordnaren</a>, GPG-krypterat
-med <code>aph@debian.org</code>:s öppna Debiannyckel.
-I detta brev anger du det användar-id du önskar på pserver:n, ett
-alternativt användar-id om det första inte är tillgängligt, samt ett
-lösenord (klartext eller krypterad form går fint).
+<a href="mailto:debian-doc@lists.debian.org">sändlistan för dokumentation i
+Debian</a>.
+Förklara varför du behöver tillgång.
+Din förfrågan måste tillstyrkas av antingen dokumentationssamordnaren eller
+av en relevant medlem av Debians dokumentationsgrupp.
+När så skett ber du denne sända en (signerad) förfrågan till
+<a href="mailto:debian-admin@lists.debian.org">debian-admin</a>.
+</p>
+
+<p>
+Om du är Debianutvecklare kommer du, när du fått tillgång, läggas till
+gruppen <tt>cvs_doc</tt> på <tt>cvs.debian.org</tt> och därmed få tillgång
+till att uppdatera CVS:en.
+</p>
+
+<p>
+Om du inte är Debianutvecklare måste du när du får tillgång ange ett
+användar-id och ett lösenord.
+Användar-id:t får inte vara samma som ett befintligt Debiankonto (se
+<a href="http://db.debian.org">db.debian.org</a>).
+Lösenordet får inte sändas utan kryptering via e-post, även om cvs sänder det
+okrypterat över nätverket.
+</p>
+
+<p>
+Du kan använda <tt>makepasswd</tt> för att generera ditt lösenord; allt du
+behöver göra är att installera paketet och köra:
+</p>
+
+<pre>
+$ echo "HEMLIGT" |makepasswd --clearfrom=- --crypt
+</pre>
+
+<p>
+Ett annat enkelt sätt att kryptera ett lösenord är genom att använda ett
+enrads-Perlskript eftersom Perl redan är installerat på din Debian
+GNU/Linux-maskin:
+</p>
+
+<pre>
+$ perl -e "printf \"%s\n\", crypt ("HEMLIGT", join ('', ('.', '/', 0..9, 'A'.. 'Z', 'a'..'z')[rand (64), rand (64)]))"
+</pre>
+
+<p>
+Sänd resultatet, tillsammans med önskat användar-id, till
+<a href="joey@debian.org">Martin Schulze</a>.
+Kryptera hela brevet med
+<a href="http://db.debian.org/fetchkey.cgi?fingerprint=B53FE57BD0C1F689FCE25">hans
+GnuPG-nyckel</a>.
+</p>
+
+<p>
+För vidare information, läs hans
+<a href="http://people.debian.org/~joey/misc/webwml.html">noter</a>
+om proceduren.
 </p>
 
 <hr>
@@ -203,7 +251,7 @@ cvs-server, så att den kan integreras med resten av Debians webbsidor.
 som körs på www-master.debian.org varje dag någon gång efter 15:39
 stillahavstid.
 
-<p>Skrptet utför kommandot <kbd>cvs update -d -P</kbd> och sedan
+<p>Skriptet utför kommandot <kbd>cvs update -d -P</kbd> och sedan
 <kbd>Make -C manuals.sgml clean publish</kbd>, båda i
 <code>ddp</code>-katalogen.
 
@@ -214,7 +262,7 @@ webbplatsen.
 Underkatalogen makefiles bygger på
 <code>ddp/manuals.sgml/standard.makefile</code>.
 
-<p>Dokumentationsfilerna som genereras av uppdateringsskriptes finns under
+<p>Dokumentationsfilerna som genereras av uppdateringsskriptet finns under
 <a href="manuals/">http://www.debian.org/doc/manuals/</a>.
 </p>
 
