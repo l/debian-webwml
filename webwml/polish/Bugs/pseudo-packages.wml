@@ -16,6 +16,11 @@ my $file = "$(ENGLISHDIR)/Bugs/pseudo-packages.description";
 open I, "$file" or die "Can't open $file file: $!\n";
 while (<I>) { if (/^(\S+)\s+(.*)$/) { $pseudos{$1} = $2; } }
 close I;
+my $plfile = "$(ENGLISHDIR)/../polish/Bugs/pseudo-packages.translated-descriptions";
+if (open I, "$plfile") {
+	while (<I>) { if (/^(\S+)\s+(.*)$/) { $pseudos{$1} = $2 if exists $pseudos{$1}; } }
+	close I;
+}
 %pseudos || die "%pseudos is not set -- empty $file file?\n";
 foreach $a (sort keys %pseudos) {
   if ($a ne "spam" && $a ne "slink-cd") {
