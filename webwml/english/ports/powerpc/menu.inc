@@ -128,7 +128,7 @@
 <menu-item basename="supply">
 [AR:Supply:]
 [DA:Supply:]
-[DE:Versorgung:]
+[DE:Bezugsquellen:]
 [EL:Supply:]
 [EN:Supply:]
 [EO:Supply:]
