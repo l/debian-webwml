@@ -44,15 +44,15 @@ sub print_deps {
 	my @res_pkgs = ();
 
 	if ($is_old_pkgs)  {
-	    $res .= "<br>";
+	    $res .= "</p><p>";
 	} else {
 	    if ($first) {
 		$res .= "<li>";
 		$first = 0;
 	    } else {
-		$res .= "</li>\n<li>";
+		$res .= "</p></li>\n<li>";
 	    }
-	    $res .= "<span class=\"hidecss\">[$dep_type{$type}] </span>";
+	    $res .= "<p><span class=\"hidecss\">[$dep_type{$type}] </span>";
 	}
 
 	foreach my $rel_alt ( @$rel ) {
@@ -91,10 +91,10 @@ sub print_deps {
 
 	}
 	
-	$res .= "\n".join( "<br> ".gettext( " or " )." ", @res_pkgs )."\n";
+	$res .= "\n".join( "</p><p>".gettext( "or" )." ", @res_pkgs )."\n";
     }
     if (@$relations) {
-	$res .= "</li>\n";
+	$res .= "</p></li>\n";
 	$res .= "</ul>\n";
     } else {
 	$res = "";
