@@ -1,0 +1,119 @@
+#use wml::debian::template title="Einrichten eines Push-Spiegel"
+
+# Translator: Martin Schulze <joey@debian.org>
+
+<p>Aufgrund der Anzahl an Spiegeln und der Gr&ouml;&szlig;e des Debian-Archives
+ist es nicht m&ouml;glich, da&szlig; alle Spiegel den gleichen Haupt-Server als
+Quelle f&uuml;r ihr Archiv nutzen.  Es ist viel effizienter, wenn die Last
+auf eine Anzahl von Push-Spiegeln &uuml;ber den Globus verteilt wird.
+
+<p>Bitte beachten Sie, da&szlig; wir die Site-Betreiber ansprechen werden,
+ein Push-Server zu werden.  Wenn Ihr Server SEHR gut angebunden ist
+(sowohl sehr gute Bandbreite als auch angeschlossen an wichtige
+Backbones) und Sie willens sind, andere Server von Ihrem spiegeln zu
+lassen, m&ouml;chten Sie uns das vielleicht mitteilen, damit wir &uuml;berlegen
+k&ouml;nnen, Ihren Rechner als Push-Server zu verwenden.
+
+<p>Push-Server sollten Maschinen sein, die das gesamte Debian-Archiv
+spiegeln, selbst Push-Spiegel des Hauptarchivs sind und gute
+Bandbreite haben.
+<ul>
+<li>installieren Sie <kbd>rsync</kbd> 2.1.1 oder neuer
+<li>erzeugen Sie <kbd>rsyncd.conf</kbd> und f&uuml;gen folgendes hinzu:
+	<pre>
+uid = nobody
+gid = nogroup
+max connections = 25
+syslog facility = daemon
+socket options = SO_KEEPALIVE
+
+[ftp]
+  path = /debian/debian
+  comment = Debian FTP Archive (~5 GB)
+  auth users = list_of_authorized_accounts
+  read only = true
+  secrets file = /etc/rsyncd/debian.secrets
+[web.debian.org]
+  path = /debian2/web/debian.org
+  comment = Debian Web Site
+  auth users = list_of_authorized_accounts
+  read only = true
+  secrets file = /etc/rsyncd/debian.secrets
+	</pre>
+<li>F&uuml;r jeden Rechner, der Ihren spiegelt, wird ein Eintrag zu
+  <kbd>/etc/rsyncd/debian.secrets</kbd> hinzugef&uuml;gt:
+	<pre>
+account1:ein_Pa&szlig;wort
+account2:ein_anderes_Pa&szlig;wort
+	</pre>
+<li>Sie m&ouml;chten den rsync-Daemon wahrscheinlich via inetd starten.
+  Dazu f&uuml;gen Sie
+	<pre>
+rsync           873/tcp
+	</pre>
+	zu <kbd>/etc/services</kbd> hinzu und das folgende zu <kbd>/etc/inetd.conf</kbd>:
+	<pre>
+rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daemon
+	</pre>
+	Sie m&uuml;ssen dem inetd anschlie&szlig;end ein HUP-Signal schicken, um
+  ihm mitzuteilen, da&szlig; die Konfiguration neu eingelesen werden soll.
+<li>Erzeugen Sie einen neuen ssh-Schl&uuml;ssel f&uuml;r den Account, den Sie
+  f&uuml;r diesen Zweck verwenden.  Stellen Sie sicher, da&szlig; Sie nicht Ihren
+  originalen Schl&uuml;ssel &uuml;berschreiben, indem Sie die Option -f verwenden:
+	<kbd>ssh-keygen -f ~/.ssh/&lt;filename&gt;</kbd>.
+</ul>
+
+<p>F&uuml;r jeden Server, der von Ihrem spiegelt, m&uuml;ssen Sie einen
+Benutzernamen und ein Pa&szlig;wort in <kbd>/etc/rsyncd/debian.secrets</kbd>
+eintragen und anschlie&szlig;end den Benutzernamen zur Zugriffsliste
+in <kbd>/etc/rsyncd.conf</kbd> hinzuf&uuml;gen.
+Um die Dinge zu vereinfachen, k&ouml;nnen Sie den Benutzernamen auf dem
+Downstream-Server verwenden, dem Sie das Spiegeln signalisieren.  Sie
+haben dem Server nun Zugang zu Ihrem Archiv gegeben.  Der Benutzername
+und das Pa&szlig;wort werden dem Downstream-Server geschickt.
+
+# Caveat: This looks confusing to me, not sure if it's translated
+#         properly.  -Joey
+# To simplify things you may want to use the account name you are pushing to on the downstream
+# mirror. You have now given the downstream mirror access to the archive on your
+# machine. The username and password are sent to the downstream site.
+
+<p>Sie m&uuml;ssen noch das Skript einrichten, das die anderen Server
+benachrichtigt.  Erzeugen Sie die Dateien <kbd>runmirrors</kbd>:
+<blockquote><pre>
+#! /bin/sh
+
+HOME=/home/archvsync
+LOGNAME="archvsync"
+USER="archvsync"
+MAIL=
+PATH="/bin:/usr/bin"
+
+id
+
+cd $HOME
+
+./signal va.debian.org archvsync
+</pre></blockquote>
+und <kbd>signal</kbd>:
+<blockquote><pre>
+\#! /bin/sh
+
+\# This script is called to signal the remote host that it is time to
+\# mirror the archive. This is done in the most secure way I can think of,
+\# a ssh trigger. The remote end has an entry for this key allowing it to
+\# run a single program - ftpsync.
+
+echo Signaling $1
+ssh  -o batchmode=yes -q -o user="$2" "$1" sleep 1
+</pre></blockquote>
+F&uuml;r jeden von Ihnen versorgten Spiegel m&uuml;ssen Sie folgende Zeile in 
+<kbd>runmirrors</kbd> schreiben:
+<pre>
+./signal &lt;site&gt; &lt;username&gt;
+</pre>
+
+<p>Zum Schlu&szlig; f&uuml;gen Sie noch eine Zeile ans Ende von
+<kbd>ftpsync</kbd>, die <kbd>runmirrors</kbd> aufruft.  Sobald Ihr
+System das Debian-Archiv gespiegelt hat, wird es die anderen Server
+benachrichtigen.
