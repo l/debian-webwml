@@ -48,6 +48,8 @@ full: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t methods
 nonus: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t nonus
+nonushtml: mirror_list.pl Mirrors.masterlist
+	@./mirror_list.pl -m Mirrors.masterlist -t nonushtml
 
 $(ENGLISHDIR)/mirror/official_sponsors.list: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
