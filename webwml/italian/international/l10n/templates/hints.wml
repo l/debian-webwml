@@ -1,12 +1,12 @@
 #use wml::debian::template title="Suggerimenti sulla localizzazione dei modelli Debconf"
 #include "$(ENGLISHDIR)/international/l10n/templates/menu.inc"
-#use wml::debian::translation-check translation="1.8" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.9" maintainer="Luca Monducci"
 
 <h2>Introduzione</h2>
 
 <p>Per porter mantenere le traduzioni aggiornate un'applicazione
 internazionalizzata deve fornire ai traduttori un modo semplice per scoprire
-e aggiornare le traduzioni vecchie.</p>
+e aggiornare le traduzioni scadute.</p>
 
 <p>Un file con modelli Debconf è composto da campi e valori. I campi tradotti
 seguono un ben preciso schema di attribuzione dei nomi, per esempio
@@ -14,7 +14,7 @@ seguono un ben preciso schema di attribuzione dei nomi, per esempio
 <code>Description-es_ES</code> (o <code>Description-es_MX</code> o qualsiasi
 altra) viene controllata prima.</p>
 
-<p>Quindi per riconoscere le traduzioni vecchie si deve sapere quali sono le
+<p>Quindi per riconoscere le traduzioni scadute si deve sapere quali sono le
 stringhe della descrizione tradotte. Il metodo usato da Debconf è salvare solo
 i campi originali nel file con i modelli e mettere i campi tradotti insieme ai
 corrispondenti campi in inglese in un altro file chiamato
@@ -35,8 +35,8 @@ lingue</a> oppure dal link precedente ed eseguire</p>
 <pre>$ debconf-getlang xx templates &gt; templates.xx</pre>
 
 <p>per creare un file con i campi tradotti vuoti. Non cancellare i campi
-originali, sono necessari per tener traccia delle vecchie traduzioni! Quando
-si è finito controllare che tutte le stringhe tradotte eseguendo</p>
+originali, sono necessari per tener traccia delle traduzioni scadute! Quando
+si è finito controllare che tutte le stringhe siano tradotte eseguendo</p>
 
 <pre>$ debconf-getlang --stats templates templates.xx</pre>
 
@@ -45,9 +45,9 @@ si è finito controllare che tutte le stringhe tradotte eseguendo</p>
 
 <h2>Unione delle traduzioni</h2>
 
-<p>Poiché anche il manutentore ha letto questa pagina sa come semplificare il
-lavoro del traduttore: non deve unire i modelli ma deve salvare i file con i
-modelli tradotti nella directory <tt>debian</tt>.
+<p>Poiché anche i manutentori hanno letto questa pagina loro sanno come
+semplificare il lavoro di traduttori: non devono unire i modelli ma devono
+salvare i file con i modelli tradotti nella directory <tt>debian</tt>.
 
 <p>I file con i modelli tradotti sono uniti solo quando viene creato il
 pacchetto binario. Debhelper fa questa operazione automaticamente se si usa
@@ -58,27 +58,27 @@ aggiungere un comando simile a</p>
 	cd debian &amp;&amp; debconf-mergetemplate templates templates.* &gt; tmp/DEBIAN/templates
 </pre>
 
-<p>In questo modo tutto quello che il manutentore deve fare quando riceve un
+<p>In questo modo tutto quello che i manutentori devono fare quando ricevono un
 file con i modelli tradotti è salvarlo nel posto appropriato.</p>
 
 
 <h2>Aggiornamento delle traduzioni</h2>
 
 <p>Una volta che la traduzione iniziale è stata integrata può succedere che i
-modelli in inglese siano migliorati, le modifiche nei modelli originali devono
+modelli in inglese siano migliorati, quindi le modifiche nei modelli originali devono
 passare anche nelle traduzioni. <tt>debconf-getlang</tt> svolge nuovamente
 questo compito:</p>
 
 <pre>$ debconf-getlang xx templates templates.xx &gt; new.xx</pre>
 
 <p>appone l'etichetta <tt>-fuzzy</tt> ai campi vecchi e inserisce una riga
-vuota, poi il traduttore aggiorna <tt>new.xx</tt> sfruttando le vecchie
-traduzioni e controllare con</p>
+vuota, poi i traduttori aggiornano <tt>new.xx</tt> sfruttando le vecchie
+traduzioni e controllano con</p>
 
 <pre>$ debconf-getlang --stats templates new.xx</pre>
 
-<p>che tutte le stringhe siano tradotte. Infine rinomina <tt>new.xx</tt> in
-<tt>templates.xx</tt> e invia il file al manutentore che applica a questo
+<p>che tutte le stringhe siano tradotte. Infine rinominano <tt>new.xx</tt> in
+<tt>templates.xx</tt> e inviano il file al manutentore che applica a questo
 file lo stesso trattamento descritto nella sezione precedente.</p>
 
 
@@ -200,7 +200,8 @@ nuova versione del suo pacchetto.</p>
 l'incongruenza fra originale e traduzione è visibile su <a href="fr">\
 http://www.debian.org/intl/l10n/templates/fr</a> perché in questo pacchetto
 c'è una stringa è etichettata come <b>fuzzy</b>. Nei giorni seguenti uno dei
-traduttori francesi nota la stringa fuzzy e la vuole correggere, prima scarica
+traduttori francesi nota la stringa fuzzy e vuole mettere a posto la traduzione,
+per prima cosa scarica
 il nuovo file <code>debconf.templates</code> e poi esegue:</p>
 
 <pre>$ debconf-getlang --stats debconf.templates debconf.templates.fr 
@@ -278,4 +279,4 @@ Description-fr: Quelle interface utiliser pour configurer les paquets ?
 <p>Infine il traduttore rinomina il file temporaneo in
 <code>debconf.templates.fr</code> e lo invia al manutentore del pacchetto che
 sostituisce il precedente file <code>debian/debconf.templates.fr</code> con
-questo aggiornamento.</p>
+quello aggiornato.</p>
