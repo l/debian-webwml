@@ -16,6 +16,7 @@ use strict;
 use CGI;
 use POSIX;
 use URI::Escape;
+use HTML::Entities;
 
 use lib "../lib";
 
@@ -163,6 +164,26 @@ my $command = "find $fdir -name $file|xargs ".$grep;
 
 my @results = qx( $command );
 
+my $keyword_enc = encode_entities $keyword;
+my $version_enc = encode_entities $version_param;
+my $releases_enc = encode_entities $releases_param;
+my $arch_enc = encode_entities $arch_param;
+
+my $dist_wording = $version_param eq "all" ? "all distributions"
+    : "distribution <em>$version_enc</em>";
+my $section_wording = $releases_param eq 'all' ? "all sections"
+    : "section <em>$releases_enc</em>";
+my $arch_wording = $arch_param eq 'any' ? "all architectures"
+    : "architecture <em>$arch_enc</em>";
+if (($searchon eq "names") || ($searchon eq 'sourcenames')) {
+    my $source_wording = $search_on_sources ? "source " : "";
+    my $exact_wording = $exact ? "named" : "that names contain";
+    print "<p>You have searched for ${source_wording}packages $exact_wording <em>$keyword_enc</em> in $dist_wording, $section_wording, and $arch_wording.</p>";
+} else {
+    my $exact_wording = $exact ? "" : " (including subword matching)";
+    print "<p>You have searched for <em>$keyword_enc</em> in packages names and descriptions in $dist_wording, $section_wording, and $arch_wording$exact_wording.</p>";
+}
+
 if (!@results) {
   my $keyword_esc = uri_escape( $keyword );
   my $printed = 0;
@@ -172,7 +193,7 @@ if (!@results) {
 	  && ($releases_param eq 'all')) {
 	  print "<p><strong>Can't find that package.</strong></p>\n";
       } else {
-	  print "<p><strong>Can't find that package, at least not in that distribution ($version_param, section $releases_param)".( $search_on_sources ? "" : " and on that architecture ($arch_param)" ).".</strong></p>\n";
+	  print "<p><strong>Can't find that package, at least not in that distribution ".( $search_on_sources ? "" : " and on that architecture" ).".</strong></p>\n";
       }
 
     if ($exact) {
@@ -198,6 +219,8 @@ if (!@results) {
   &printfooter;
   exit
 }
+
+
 
 my (%pkgs, %sect, %part, %desc, %binaries);
 my (@colon, $package, $pkg_t, $section, $ver, $foo, $binaries);
