@@ -185,13 +185,15 @@ pop @relative_dir;
 $relative_dir = join '/', @relative_dir;
 
 # Read the original CVS/Entries file and extract version from it
-open (CVS_ENTRY,"<$parents/$original_dir/$relative_dir/CVS/Entries")
-	or die "Couldn't open $parents/$original_dir/$relative_dir/CVS/Entries: $!\n";
-while (<CVS_ENTRY>) {
+if (open (CVS_ENTRY,"<$parents/$original_dir/$relative_dir/CVS/Entries")) {
+    while (<CVS_ENTRY>) {
 	($version) = $_ =~ m,/\Q$file\E/([\d\.]*),;
 	last if $version;
+    }
+    close CVS_ENTRY;
+} else {
+    $version = "1.1";
 }
-close CVS_ENTRY;
 if ($version ne "")
 {
 	print ${file} . "'s original CVS revision is: $version\n"
