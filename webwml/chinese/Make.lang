@@ -1,6 +1,6 @@
 # The two-letter code for the language
 LANGUAGE := zh
-SUBLANG := cn tw
+SUBLANG := cn hk tw
 
 include $(WMLBASE)/../Makefile.common
 
@@ -16,6 +16,7 @@ U8TOGB = $(BIN)/u8togb
 # B5TOGB = ( cat - | $(B5TOU8) | $(U8TOGB) )
 B5TOGB = LD_LIBRARY_PATH=$(BIN) $(BIN)/autogb -i big5 -o gb
 TOCN = $(BIN)/tocn.pl
+TOHK = $(BIN)/tohk.pl
 TOTW = $(BIN)/totw.pl
 FIX_BIG5 = $(BIN)/fix_big5.pl
 
@@ -27,7 +28,8 @@ COMMONPICS = debian.jpg logo-50.jpg \
 
 COMMONPICS_ZH = $(addprefix $(WMLBASE)/Pics/,$(COMMONPICS))
 
-# Pure magic to cope with the co-existence of international/chinese -> zh
+# ZHMAGIC is obsolete!  Don't use it any more.
+# Old magic that coped with the co-existence of international/chinese -> zh
 ZHMAGIC = @if `echo $(HTMLDIR) | grep -q '^$(WMLBASE)/$(RELHTMLBASE)/international/chinese'`; then \
 		test -L $(WMLBASE)/$(RELHTMLBASE)/zh && rm -f $(WMLBASE)/$(RELHTMLBASE)/zh ; \
 		ZHDIR=`echo $(HTMLDIR) | sed -e 's%^\($(WMLBASE)/$(RELHTMLBASE)/\)international/chinese%\1zh%'` ; \
@@ -53,15 +55,6 @@ WMLOUTPUT = -o UNDEFuZH@uCN:$(*F).zh-cn.html.tmp@g+w \
 WMLPROLOG = --prolog=$(FIX_BIG5)
 WML = wml $(WMLOPTIONS) $(WMLOUTPUT) $(WMLPROLOG) $(WMLEPILOG)
 
-# These are the relevant WML and WMLOPTIONS definition for the old buggy WML.
-# Please DO NOT remove the following comments, in case they're needed again.
-# July 11, 2000
-#WMLOPTIONS += -p1-8
-#WML = ( wml $(WMLOPTIONS) $(WMLPROLOG) $(WMLEPILOG) \
-#	| /usr/lib/wml/exec/wml_p9_slice $(WMLOUTPUT) ) <
-#WMLEPILOG=--epilog='/usr/lib/wml/exec/wml_p9_slice $(WMLOUTPUT)'
-#WML=wml $(WMLOPTIONS) $(WMLPROLOG) $(WMLEPILOG)
-
 install::
 	@rm -f $(HTMLDIR)/*.imgdot-1x1-transp.gif
 
@@ -72,12 +65,17 @@ clean::
 cleandest::
 	rm -f $(HTMLDIR)/*.$(LANGUAGE)-??.html
 
+$(TOHK): $(TOTW)
+	ln -sf totw.pl $@
 
 # Is there anyway to combine the following two rules into one?
 $(HTMLDIR)/%.zh-cn.html: %.zh-cn.html
 	@echo copying $(@F) to $(HTMLDIR)
 	-@cp $(@F) $(HTMLDIR)
-	$(ZHMAGIC)
+
+$(HTMLDIR)/%.zh-hk.html: %.zh-hk.html
+	@echo copying $(@F) to $(HTMLDIR)
+	-@cp $(@F) $(HTMLDIR)
 
 $(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
 	@echo copying $(@F) to $(HTMLDIR)
@@ -87,12 +85,12 @@ $(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
 		echo "Making a link $(@D)/$(*F).html -> $(@F)"; \
 		ln -f -s $(@F) $(@D)/$(*F).html; \
 	fi
-	$(ZHMAGIC)
 
 ifndef NOGENERICDEP
-%.zh-cn.html %.zh-tw.html: %.wml \
+%.zh-cn.html %.zh-hk.html %.zh-tw.html: %.wml \
 		$(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
-		$(TOCN) $(TOTW) $(ZHTEMPLATE) $(HTMLDEP)
+		$(TOCN) $(TOHK) $(TOTW) $(ZHTEMPLATE) $(HTMLDEP) \
+		$(COMMONPICS_ZH)
 	$(WML) $(<F)
 #	# *.imgdot-1x1-transp.gif are evil!  Get rid of them!
 #	# Must set nullglob or else the following fails - foka, June 2000
@@ -108,6 +106,9 @@ ifndef NOGENERICDEP
 	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
 	@rm -f $*.zh-cn.html.tmp
 	@$(TOCN) $*.zh-cn.html
+	@echo -n "[zh_HK.Big5], "
+	@cp -f $*.zh-tw.html.tmp $*.zh-hk.html
+	@$(TOHK) $*.zh-hk.html
 	@echo "[zh_TW.Big5]."
 	@mv -f $*.zh-tw.html.tmp $*.zh-tw.html
 	@$(TOTW) $*.zh-tw.html

@@ -9,4 +9,7 @@ SUBS=Chinese
 include $(WMLBASE)/Make.lang
 
 
-index.$(LANGUAGE)-cn.html index.$(LANGUAGE)-tw.html: ../../english/international/index.data
+index.zh-cn.html index.zh-hk.html index.-tw.html: ../../english/international/index.data
+
+install::
+	test -L $(HTMLDIR)/zh || ln -sf Chinese $(HTMLDIR)/zh

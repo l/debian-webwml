@@ -20,18 +20,16 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 	$(WML) index.wml
 
 # Special case for Chinese
-index.zh-cn.html index.zh-tw.html: index.wml $(TEMPLDIR)/mainpage.wml \
+index.zh-cn.html index.zh-hk.html index.zh-tw.html: index.wml \
+		$(TEMPLDIR)/mainpage.wml \
 		$(wildcard News/2000/2000*.wml) $(wildcard News/2000/2000*.title) \
 		$(wildcard $(ENGLISHSRCDIR)/News/2000/2000*.wml) \
 		$(wildcard security/2000/2000*.wml) $(wildcard $(ENGLISHSRCDIR)/security/2000/2000*.wml) \
 		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
 		$(ENGLISHSRCDIR)/releases/info
 
-# the following lines are breaking the wml build. Explain why to debian-www
-# if you uncomment them
-# install::
-# 	test -L $(HTMLDIR)/zh && rm -f $(HTMLDIR)/zh
-# 	test -d $(HTMLDIR)/zh mkdir -p $(WMLBASE)/$(RELHTMLBASE)/zh
+install::
+	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
 
 clean::
 	find $(WMLBASE)/Pics -type l | xargs rm -f
