@@ -290,7 +290,7 @@ foreach $lang (@search_in) {
 	if ($o_body) {
 	    print HTML "<h3>Outdated translations:</h3>";
 	    print HTML "<table border=0 cellpadding=1 cellspacing=1>\n";
-	    print HTML "<tr><th>File</th><th>Translated</th><th>Original</th><th>Comment</th>";
+	    print HTML "<tr><th>File</th><th>Translated</th><th>Origin</th><th>Comment</th>";
 	    if ($opt_d eq "u") { print HTML "<th>Unified diff</th>"; }
 	    elsif ($opt_d eq "h") { print HTML "<th>Colored diff</th>"; }
 	    else { print HTML "<th>Diff</th>"; }
