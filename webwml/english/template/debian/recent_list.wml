@@ -4,7 +4,7 @@
 # If $number is zero then all the news items are shown.
 
 sub get_recent_list {
-  my ($year, $number, $eng_dir, $format) = @_;
+  my ($year, $number, $eng_dir, $format, $match) = @_;
 
   if ($format =~ order) {
     $listhead = '<OL>';
@@ -34,7 +34,7 @@ sub get_recent_list {
   $str=$listhead;
 
   opendir(DIR, "$eng_dir/$year");
-  @files = grep { /^\d+\w*.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
+  @files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
   @files = sort {$b cmp $a} @files;
   closedir DIR;
 
@@ -42,7 +42,7 @@ sub get_recent_list {
   foreach (@files) {
      $count++;
      open(FILE, "<$year/$_") || open(FILE, "<$eng_dir/$year/$_");
-     if (/(\d+\w*).wml/) {
+     if (/($match).wml/) {
         $base = $1;
      }
      $date = ''; $title = ''; $desc = '';
