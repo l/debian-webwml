@@ -102,6 +102,10 @@ sub new {
                 }
         }
         close(DSC);
+        if ($origtargz eq '') {
+                warn "No tarball\n";
+                return undef;
+        }
         my $self = $class->SUPER::new("$origtargz", @_);
         bless ($self, $class);
 
