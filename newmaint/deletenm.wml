@@ -11,10 +11,6 @@
     echo "SQL was: $sql<BR>\n";
     return FALSE;
   }
-  if (pg_numRows($query) < 1) {
-    echo "No applicant with email address $email<BR>";
-    return FALSE;
-  }
   return TRUE;
 }
 ?>
@@ -40,7 +36,9 @@ You should not be here!!</STRONG>
 <? if ($s_isfd == 't' && $email != "") { ?>
 <H3>Deleting Applicant</H3>
 <?
-    find_applicant($db, $email);
+    if (! find_applicant($db, $email)) {
+        return FALSE;
+    }
     if (delete_applicant($db, $email)) {
 ?>
 <P>Successfully deleted <? echo $email; ?> from the list of applicants.
