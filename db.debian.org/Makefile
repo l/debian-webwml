@@ -29,4 +29,6 @@ $(DESTHTMLFILES) $(DESTOTHERFILES): $(TARGETDIR)/%: %
 clean:
 	rm -f $(HTMLFILES)
 
+update.html :: domains.tab
+
 .SUFFIXES:
