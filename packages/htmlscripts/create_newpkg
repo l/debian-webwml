@@ -29,6 +29,7 @@ use lib "$FindBin::Bin";
 use Getopt::Long;
 use Locale::gettext;
 use POSIX;
+use DB_File;
 
 use Packages::HTML;
 use Packages::I18N::Locale;
@@ -37,6 +38,7 @@ my %config = (
 	      'old' => undef,
 	      'new' => undef,
 	      'descr' => undef,
+	      'sections' => undef,
 	      'langs' => 'en',
 	      'quiet' => undef,
 	      'output' => undef,
@@ -49,6 +51,7 @@ my %options = (
 	       'old=s' => \$config{old},
 	       'new=s' => \$config{new},
 	       'descriptions=s' => \$config{descr},
+	       'sections=s' => \$config{sections},
 	       'component=s' => \$config{component},
 	       'langs=s' => \$config{langs},
 	       'locales=s' => \$config{locales},
@@ -104,18 +107,21 @@ while (<DIFF>) {
 }
 close (DIFF);
 
-my %db;
+my %db = ( section => {}, description => {} );
 my @results;
-open (DESC, $config{descr}) or die "E: Couldn't open description file $config{descr},$!";
-while (<DESC>) {
-    @results = split (/\t/, $_, 3);
-    $db{$results[0]}{description} = $results[2];
+tie %{$db{description}}, 'DB_File', $config{descr}, O_RDONLY
+    or return "Error while loading descriptions database $config{descr}: $!";
+tie %{$db{section}}, 'DB_File', $config{sections}, O_RDONLY
+    or return "Error while loading sections database $config{sections}: $!";
 
-    $results[1] =~ s,^(non-free|contrib)/,,;
-    $results[1] =~ s,^non-US.*$,non-US,,;
-    $db{$results[0]}{section} = $results[1];
+sub norm_section {
+    my $section = shift;
+
+    $section =~ s,^(non-free|contrib)/,,;
+    $section =~  s,^non-US.*$,non-US,,;
+
+    return $section;
 }
-close (DESC);
 
 my @langs = split /\s+/, $config{langs};
 foreach my $lang ( @langs ) {
@@ -147,8 +153,8 @@ foreach my $lang ( @langs ) {
 
     foreach my $pkg (sort @newpkg) {
 	$page .= sprintf ("<li><a href=\"%s/%s\">%s</a>\n    -- %s",
-			  $db{$pkg}{section}, $pkg, $pkg,
-			  $db{$pkg}{description});
+			  norm_section($db{section}{$pkg}), $pkg, $pkg,
+			  $db{description}{$pkg});
     }
     $page .= "\n</ul>\n";
 
