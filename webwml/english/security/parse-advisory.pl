@@ -83,7 +83,7 @@ $files =~ s/\n\n$/\n/s;
 
 $files =~ s/      (Size\/)?MD5 checksum: (\s*\d+ )?\w{32}\n//sg;
 $files =~ s/  Source archives:/<dt><source>/sg;
-$files =~ s/  Architecture independent \w+:\n/<dt><arch-indep>\n/sg;
+$files =~ s/  Architecture.independent \w+:\n/<dt><arch-indep>\n/sg;
 $files =~ s/  (\w+) architecture \(([\w -()\/]+)\)/<dt>$1 ($2):/sg;
 $files =~ s/  ([\w -\/]+) architecture:/<dt>$1:/sg;
 $files =~ s/    (http:\S+)/  <dd><fileurl $1>/sg;
