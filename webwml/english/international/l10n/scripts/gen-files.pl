@@ -6,7 +6,7 @@ use Getopt::Long;
 
 use lib ($0 =~ m|(.*)/|, $1 or ".") ."/../../../../Perl";
 
-use Webwml::L10n::Db;
+use Debian::L10n::Db;
 
 use vars qw($opt_h $opt_l $opt_D $opt_P $opt_T $opt_L);
 
@@ -31,7 +31,7 @@ if (not Getopt::Long::GetOptions(qw(
 }
 usage(0) if $opt_h;
 
-my $data = Webwml::L10n::Db->new();
+my $data = Debian::L10n::Db->new();
 $data->read("$opt_l/data/unstable.gluck");
 my $date1 = $data->get_date();
 $data->read("$opt_l/data/unstable.non-US");

@@ -4,9 +4,9 @@
 #  in a file
 
 use lib ($0 =~ m|(.*)/|, $1 or ".") ."/../../../../Perl";
-use Webwml::L10n::Db;
+use Debian::L10n::Db;
 
-my $data = Webwml::L10n::Db->new();
+my $data = Debian::L10n::Db->new();
 
 foreach (@ARGV) {
         $data->read($_);
