@@ -18,7 +18,7 @@ official_sponsors.$(LANGUAGE).html: official_sponsors.wml \
   $(GETTEXTDEP)
 sponsors.$(LANGUAGE).html: sponsors.wml \
   $(TEMPLDIR)/template.wml $(ENGLISHDIR)/mirror/sponsors.list \
-  $(GETTEXTDEP)
+  $(TEMPLDIR)/countries.wml $(GETTEXTDEP)
 ftpmirror.$(LANGUAGE).html: ftpmirror.wml $(TEMPLDIR)/template.wml \
   $(TEMPLDIR)/toc.wml $(GETTEXTDEP)
 official.$(LANGUAGE).html: official.wml $(TEMPLDIR)/template.wml \
