@@ -130,6 +130,9 @@ sub getwmlfiles
 		$transversion{"english/$file"} ||= "1.1";
 	    }
 	}
+	if ($transcheck->maintainer()) {
+	    $maintainer{"$lang/$file"} = $transcheck->maintainer();
+	}
 	$count++;
     }
     close (FIND);
@@ -282,6 +285,7 @@ foreach $lang (@search_in) {
 			$o_body .= sprintf "<td>%s</td>", $version{"$orig/$file"};
 			$o_body .= sprintf "<td>%s</td>", $msg;
 			$o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/$orig/%s.wml.diff\?r1=%s\&amp;r2=%s\&amp;cvsroot=webwml\&amp;diff_format=%s\">%s -> %s</a></td>", $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $config{'difftype'}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+			$o_body .= sprintf "<td align=center>%s</td>", $maintainer{"$lang/$file"}||"?";
 			$o_body .= "</tr>\n";
     			$outdated{$lang}++;
 		# Up-to-date translations
@@ -360,6 +364,7 @@ foreach $lang (@search_in) {
 	    if ($opt_d eq "u") { print HTML "<th>Unified diff</th>"; }
 	    elsif ($opt_d eq "h") { print HTML "<th>Colored diff</th>"; }
 	    else { print HTML "<th>Diff</th>"; }
+	    print HTML "<th>Maintainer</th>";
 	    print HTML "</tr>\n";
 	    print HTML $o_body;
 	    print HTML "</table>\n";
