@@ -1,5 +1,5 @@
 #use wml::debian::template title="Usare il CVS"
-<!--translation 1.2-->
+<!--translation 1.3-->
 
 <p>CVS è un programma che aiuta molte persone che a lavorare sullo stesso
 materiale allo stesso tempo. Ogni utente si crea una copia locale
@@ -23,73 +23,105 @@ un account con i diritti di scrittura prima di continuare poiché l'account
 anonimo non permette la modifica.
 
 <p>Se sei uno sviluppatore Debian leggi la sezione
-<a href="#cvsfordevelopers">CVS Access for Debian Developers</a>
+<a href="#cvsfordevelopers">Accesso al CVS per gli sviluppatori</a>.
 
 <p>Per comiciare ad usare CVS devi prima effettuare il <code>login</code> sul
 server CVS
+
 <pre>
    cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml login
 </pre>
+
 (puoi semplicemente premere return quando ti sarà chiesta la password)
 
 <P>Per ottenere una copia dei file wml sulla tua macchina locale, devi fare
 così
+
 <pre>
    cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/&lt;lang&gt;
 </pre>
+
 dove <code>&lt;lang&gt;</code> è la lingua che tu vuoi. Molto probabilmente
 vorrai la lingua inglese oltre a quella sulla quale lavori.
 Se ti serve solo un sottoinsieme di pagine puoi scaricare solo quelle, vale a
 dire:
-<pre>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</pre>.
-oppure, se hai uno username/password, inserirli al posto dell'account anonimo:
-<pre>cvs -d :pserver:username@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</pre>.
+
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/english/doc
+</pre>.
+
+<p>oppure, se hai uno username/password, puoi inserirli al posto dell'account
+anonimo:
+
+<pre>
+   cvs -d :pserver:username@cvs.debian.org:/cvs/webwml checkout webwml/english/doc
+</pre>.
 
 <P>Da questo momento in poi non avrai bisogno di inserire la parte <code>'-d :pserver:...'</code>.
 Ogni due--tre giorni esegui il comando
+
 <pre>
    cvs update -d
 </pre>
-per avere la nuova versione dei file cambiati sull'originale. Il parametro
+
+<p>per avere la nuova versione dei file cambiati sull'originale. Il parametro
 <code>-d</code> permette di aggiungere le nuove directory automaticamente.
+Tu potresti voler creare un file <code>~/.cvsrc</code> in modo da non dover
+inserire le opzioni ogni volta. Per esempio potrebbe contenere:
+
+<pre>
+cvs -z9
+update -d -P
+diff -u
+</pre>
 
 <P>La parte seguente è per chi ha accesso in scrittura sull'originale.
 Quando hai finito con una pagina, puoi copiare le tue modifiche sull'originale
 tramite
+
 <pre>
    cvs commit &lt;file&gt;.wml
 </pre>
-o
+
+<p>o
+
 <pre>
    cvs commit &lt;dir&gt;   (per tutte le modifiche in &lt;dir&gt;)
 </pre>
-o
+
+<p>o
+
 <pre>
    cvs commit          (per tutte le modifiche dalla directory corrente in poi)
 </pre>
 
 <P>Se sei il primo che traduce una pagina devi anche eseguire
+
 <pre>
    cvs add &lt;file&gt;.wml
 </pre>
-prima che tu possa farne il commit. Nota che <code>cvs add</code> non è
+
+<p>prima che tu possa farne il commit. Nota che <code>cvs add</code> non è
 ricorsivo e quindi devi farlo per ogni singola directory che devi aggiungere e
 per il suo contenuto.
 
-<P>Per amggiorni informazioni su CVS, dai il comando <code>info cvs</code>.
+<P>Per maggiorni informazioni su CVS, dai il comando <code>info cvs</code>.
 
 <H3><a name="cvsfordevelopers">Accesso al CVS per gli sviluppatori</a></H3>
+
 <P>Poiché tutti gli sviluppatori Debian hanno già un account in
 cvs.debain.org, si può usare un meccanismo più sicuro per l'accesso
-all'originale. Questo metodo è da preferirsi al :pserver: descritto sopra.
-Dovresti scrivere a webmaster@debian.org chiedendo di avere accesso al CVS.
+all'originale. Questo metodo è da preferirsi al `pserver' descritto sopra.
+
+<p>Dovresti scrivere a webmaster@debian.org chiedendo di avere accesso al CVS.
 una volta che sei stato aggiunto al gruppo sarà sufficiente dare alla
-variabile CVS_RSH il valore ssh ('export CVS_RSH=ssh' nel tuo .bashrc) e
-scaricare la copia dell'originale tramite
+variabile CVS_RSH il valore ssh (<code>export CVS_RSH=ssh</code> nel tuo
+.bashrc) e scaricare la copia dell'originale tramite
+
 <pre>
-   cvs -d :ext:&lt;account_name&gt;@cvs.debian.org:/cvs/webwml checkout webwml/english/
+   cvs -d :ext:<var>account_name</var>@cvs.debian.org:/cvs/webwml checkout webwml/english/
 </pre>
 
-Una volta fatto questo fatto questo tutto il resto si può fare come descritto
+Una volta fatto questo tutto il resto si può fare come descritto
 sopra.
 
