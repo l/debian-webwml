@@ -17,6 +17,12 @@ my $skippedlinks=0;
 my $highlink=0;
 
 open (IN, "lynx -dump $url |");
+if ($url =~ m,\d\d\d\d/\d\d?/,) {
+     # This is a local URL - fix the output
+     $url =~ s,^\./,http://www.debian.org/News/weekly/,;
+     $url =~ s/index\.\w\w\.html$/index.html/;
+}
+
 while (<IN>) {
 	# We exit this loop once we hit the first divider bar,
 	# which indicates the end of the newsletter proper.
