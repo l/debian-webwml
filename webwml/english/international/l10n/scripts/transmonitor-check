@@ -50,6 +50,7 @@ my $TRANSMONITOR_ROOT = "./";
 my $SYN_FILE = "../data/synonyms";
 my $PO_ROOT="../po";
 my $TEMPLATES_ROOT="../templates";
+my $MENU_ROOT="../menu";
 my $action_remove = 0;
 my $action_check = 0;
 my $verbose = 0;
@@ -108,6 +109,8 @@ Configuration options:
                                 (instead of $PO_ROOT)
     --templates=DIR           where to store the debconf templates files
                                 (instead of $TEMPLATES_ROOT)
+    --menu=DIR                where to store the menu files
+                                (instead of $MENU_ROOT)
     --root=ROOTDIR            search the libs in ROOTDIR 
                                 (instead of $TRANSMONITOR_ROOT)
     --syn=SYN_FILE            use SYN_FILE as file of synonyms
@@ -165,7 +168,8 @@ my %opthash = (# ------------------ actions
 	       "root=s" => \$TRANSMONITOR_ROOT,
 	       "syn=s" => \$SYN_FILE,
 	       "po=s" => \$PO_ROOT,
-	       "templates=s" => \$TEMPLATES_ROOT
+	       "templates=s" => \$TEMPLATES_ROOT,
+	       "menu=s" => \$MENU_ROOT
 
 	    );
 
@@ -205,6 +209,7 @@ $DB_FILE = "$cwd/$DB_FILE" unless ($DB_FILE =~ m,^/,);
 $TMP_DIR = "$cwd/$TMP_DIR" unless ($TMP_DIR =~ m,^/,);
 $PO_ROOT = "$cwd/$PO_ROOT" unless ($PO_ROOT =~ m,^/,);
 $TEMPLATES_ROOT = "$cwd/$TEMPLATES_ROOT" unless ($TEMPLATES_ROOT =~ m,^/,);
+$MENU_ROOT = "$cwd/$MENU_ROOT" unless ($MENU_ROOT =~ m,^/,);
 $TRANSMONITOR_ROOT = "$cwd/$TRANSMONITOR_ROOT" unless ($TRANSMONITOR_ROOT =~ m,^/,);
 $SYN_FILE = "$TRANSMONITOR_ROOT/$SYN_FILE" unless ($SYN_FILE=~ m,^/,);
 
@@ -289,23 +294,19 @@ PKG: while ($dsc = shift @pkg_list){
 	} else {
 	    #erase the entry of this package (it's an older version)
 	    $data{$pkg}=();
-	    if (-e "$PO_ROOT/$pkg") {
-	      File::Path::rmtree("$PO_ROOT/$pkg") 
-		  or &error ("Can't erase the dir '$PO_ROOT/$pkg': $!");
-	    }
-	    if (-e "$TEMPLATES_ROOT/$pkg") {
-	      File::Path::rmtree("$TEMPLATES_ROOT/$pkg") 
-		  or &error ("Can't erase the dir '$TEMPLATES_ROOT/$pkg': $!");
+	    foreach my $dir (("$PO_ROOT/$pkg","$TEMPLATES_ROOT/$pkg","$MENU_ROOT/$pkg")) {
+		if (-e $dir) {
+		  File::Path::rmtree($dir) 
+		      or &error ("Can't erase the dir '$dir': $!");
+		}
 	    }
 	}
     } else {
-	if (-e "$PO_ROOT/$pkg") {
-	  File::Path::rmtree("$PO_ROOT/$pkg") 
-	      or &error ("Can't erase the tmp dir '$PO_ROOT/$pkg': $!");
-	}
-	if (-e "$TEMPLATES_ROOT/$pkg") {
-	  File::Path::rmtree("$TEMPLATES_ROOT/$pkg") 
-	      or &error ("Can't erase the dir '$TEMPLATES_ROOT/$pkg': $!");
+	foreach my $dir (("$PO_ROOT/$pkg","$TEMPLATES_ROOT/$pkg","$MENU_ROOT/$pkg")) {
+	    if (-e $dir) {
+	      File::Path::rmtree($dir) 
+		  or &error ("Can't erase the dir '$dir': $!");
+	    }
 	}
     }
     $tosave=1;#ok, we've done something, we have to save the db
@@ -420,15 +421,19 @@ my %sources;
 	   } else {
 	       #erase the entry of this package (it's an older version)
 	       $data{$pkg}=();
-	       if (-e "$PO_ROOT/$pkg") {
-		 File::Path::rmtree("$PO_ROOT/$pkg") 
-		     or &error ("Can't erase the tmp dir '$PO_ROOT/$pkg': $!");
+	       foreach my $dir (("$PO_ROOT/$pkg","$TEMPLATES_ROOT/$pkg","$MENU_ROOT/$pkg")) {
+		   if (-e $dir) {
+		     File::Path::rmtree($dir) 
+			 or &error ("Can't erase the tmp dir '$dir': $!");
+		   }
 	       }
 	   }
        } else {
-	   if (-e "$PO_ROOT/$pkg") {
-	     File::Path::rmtree("$PO_ROOT/$pkg") 
-		 or &error ("Can't erase the tmp dir '$PO_ROOT/$pkg': $!");
+	   foreach my $dir (("$PO_ROOT/$pkg","$TEMPLATES_ROOT/$pkg","$MENU_ROOT/$pkg")) {
+	       if (-e $dir) {
+		 File::Path::rmtree($dir) 
+		     or &error ("Can't erase the tmp dir '$dir': $!");
+	       }
 	   }
        }
        
@@ -499,6 +504,21 @@ sub unpack_pkg{
 	add_part($pkg,"errors","Error of dpkg-source: can't unpack the source\n".join("\n ",@lines));
 	return 1;
     }
+
+    # Checks if there is a debian package or not
+    open DSC,"$path" || die "Can't read the dsc file to see if it's a debian package or not";
+    $data{$pkg}{"upstream"}="debian";
+    while (<DSC>) {
+	next unless m,^Files:,;
+	while (<DSC>) {
+	    #chomp;
+	    last unless m,^ [^ ]* [^ ]* ([^ ]*),;
+	    if ($1 =~ m,\.diff\.gz$,) {
+		$data{$pkg}{"upstream"}="other";
+	    }
+	}
+    }
+    close DSC;
     my $ver=$version;
     # the format of the version in debian packages is :
     #  <epoch>:<version>-<packaging version>
@@ -530,8 +550,11 @@ sub ftp_unpack_pkg{
     chdir ($TMP_DIR) 
 	or &error ("Can't cd to tmp dir '$TMP_DIR' : $!");
 
-    #download
+    #download (and check one the way the upstream)
+    # upstream=debian by default
+    # upstream=other if there is a .diff.gz
     my $dscfile;
+    $data{$pkg}{"upstream"}="debian";
     for ($nb=0;$nb<@{$pkg{"files"}};$nb++) {
 	$filename = $pkg{"directory"}.'/';
 
@@ -551,6 +574,9 @@ sub ftp_unpack_pkg{
 	    print "Unable to get the file $filename\n"; 
 	    print $ftp->message() . "\n";
 	    return 1;
+	}
+	if ($array[2] =~ m,\.diff\.gz$,) {
+	    $data{$pkg}{"upstream"}="other";
 	}
     }
     print " [dl'ed]";flush STDOUT;
@@ -776,7 +802,7 @@ sub check_pkg{
     }
 
     search_templates($pkg);
-
+    search_menu($pkg);
 }
 #----[ add_part ]---------------------------------------------------------------
 # simple function to add an error or a warning to a package
@@ -849,7 +875,11 @@ sub search_templates {
 	    $filename =~ s,:,\%3a,;
 	    $filename =~ s,/,_,g;
 	    
-	    if (system("debconf-getlang $lang $dir/templates $dir/templates.*|gzip -c9 - > $TEMPLATES_ROOT/$pkg/$filename.gz")){
+	    # FIXME: this is a hack because debconf-getlang fails if given
+	    #   -getlang $lang templates templates.*
+	    # So we have to get the right template. But it's hard to find the good lower/upper case combination.
+	    # That's why I use the -iname facility of find.
+	    if (system("debconf-getlang $lang $dir/templates `find -iname \"$dir/templates.$lang\"`|gzip -c9 - > $TEMPLATES_ROOT/$pkg/$filename.gz")){
 		warn "Can't gunzip $dir/templates.$lang to $TEMPLATES_ROOT/$pkg/$filename.gz : $!\n";
 	    }
 	    unless (is_lang($lang)) {
@@ -861,6 +891,64 @@ sub search_templates {
 
     }
 }
+
+#----[ search_menu ]-----------------------------------------------------------
+sub search_menu {
+    my $pkg = shift;
+
+    ###
+    ### Search the menu files and store them (do not anything else)
+    ###
+  File::Path::mkpath("$MENU_ROOT/$pkg");
+    open LIST,"find -name \"debian\"|" || die "can't run find: $!";
+    while (my $dirname=<LIST>) {
+	chomp($dirname);
+	my $cwd=`pwd`;chomp($cwd);
+	die "Can't cd to $dirname: $!" unless chdir($dirname);
+	# search for menu files
+	open LIST2,"ls *menu* 2>/dev/null|" || die "can't run ls: $!";
+	while (<LIST2>) {
+	    chomp;
+	    my $filename="$dirname/$_";
+	    $filename =~ s,^\.*,,;
+	    $filename =~ s,^/*,,;
+	    $filename =~ s,^debian/,,;
+	    $filename =~ s,:,\%3a,;
+	    $filename =~ s,/,_,g;
+	    if (system("gzip -c9 $_ > $MENU_ROOT/$pkg/$filename.gz")){
+		warn "Can't gunzip $_ to $MENU_ROOT/$pkg/$filename.gz : $!\n";
+	    }
+	    $data{$pkg}{"menu"}[@{$data{$pkg}{"menu"}}] = "$filename.gz";
+	}
+
+	# search for doc-base files, since doc-base generate menu files for dwww
+	open LIST2,"ls *doc-base* 2>/dev/null|" || die "can't run ls: $!";
+	while (my $docbase=<LIST2>) {
+	    chomp($docbase);
+	    open DOCBASE,"$docbase" || die "can't open $docbase: $!";
+	    my $id=undef;
+	    while (<DOCBASE>) {
+		next unless m,^Document:,;
+		s/^Document:\s*(\S*)\s*$/$1/;
+		$id = $_;
+	    }
+	    close(DOCBASE);
+	    next unless $id;
+	    my $filename="$dirname".'/doc-base-'."$id";
+	    $filename =~ s,^\.*,,;
+	    $filename =~ s,^/*,,;
+	    $filename =~ s,^debian/,,;
+	    $filename =~ s,:,\%3a,;
+	    $filename =~ s,/,_,g;
+	    if (system("gzip -c9 $docbase > $MENU_ROOT/$pkg/$filename.gz")){
+		warn "Can't gunzip $docbase to $MENU_ROOT/$pkg/$filename.gz : $!\n";
+	    }
+	    $data{$pkg}{"menu"}[@{$data{$pkg}{"menu"}}] = "$filename.gz";
+	    chdir ($cwd)|| die "can't return to $cwd after searching for menu files";
+	}
+    }
+}
+
 
 #----[ normalize_lang ]--------------------------------------------------------
 sub normalize_lang {
