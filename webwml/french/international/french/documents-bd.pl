@@ -221,14 +221,13 @@ $translations = {
 	'package'		=> 'boot-floppies',
 },
 
-
-
 'policy' => {
 	'type'			=> 'DDP',
 	'name'			=> 'Debian Policy Manual',
 	'revision'		=> '3.5.6.0',
 	'url'			=> 'http://www.debian.org/doc/debian-policy/',
-	'cvs_url'		=> 'http://cvs.debian.org/debian-policy/policy.sgml?cvsroot=debian-policy',
+	'cvs_url'		=> 'http://cvs.debian.org/debian-policy/?cvsroot=debian-policy',
+	'source_url'		=> 'http://cvs.debian.org/debian-policy/policy.sgml?cvsroot=debian-policy',
 	'package'		=> 'debian-policy',
 },
 
