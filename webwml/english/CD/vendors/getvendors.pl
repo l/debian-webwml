@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 # this script is maintained by Craig Small <csmall@debian.org>.
 
 use strict;
@@ -22,7 +22,7 @@ my $header = "# vendors.CD - CD Vendor list
 my $footer = "\n</protect>\n";
 
 
-my $dbh = DBI->connect("dbi:Pg:dbname=debianwww", "csmall","", "");
+my $dbh = DBI->connect("dbi:Pg:dbname=debianwww", "csmall","");
 
 my $sth = $dbh->prepare("SELECT DISTINCT country FROM debiancd WHERE hidden = 'f'");
 
