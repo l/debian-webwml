@@ -1,5 +1,5 @@
 #use wml::debian::template title="Nøglesignering"
-#use wml::debian::translation-check translation="1.2"
+#use wml::debian::translation-check translation="1.4"
 
 <p>Da mange udviklere mødes på fagmesser og konferencer er det blevet en god 
 måde at få andre til at signere ens GnuPG-nøgle og forbedre 
@@ -7,7 +7,7 @@ pålidelighedsnetværket.  Specielt for folk der er nye i projektet, har
 nøglesignering og det at mødes med andre udviklere været meget interessant.</p>
 
 <p>Dette dokument vil hjælpe dig med at afholde en nøglesigneringssession.
-Man bør kun signere en nøgle under mindst to vilkår:
+Man bør kun signere en nøgle under mindst to vilkår:</p>
 
 <ol>
 
@@ -51,23 +51,64 @@ signere en forkert nøgle.</p>
 <li>Efter mødet skal du hente GnuPG-nøglen for at signere den.  Følgende kan 
     være en hjælp:
 
-<pre>
-       gpg --keyserver keyring.debian.org --recv-keys 0xDEADBEAF
-</pre></li>
+    <pre>
+      gpg --keyserver keyring.debian.org --recv-keys 0xDEADBEEF
+    </pre>
+
+    <p>Hvis personen hvis nøgle du ønsker at signere ikke er i Debians 
+    nøglering (keyring), udskift <code>keyring.debian.org</code> med en 
+    offentlig nøgleserver som <code>pgpkeys.pgp.net</code> (der på trods af 
+    navnet også opbevarer GnuPG-nøgle.)</p>
+
+    <p>Bemærk at vi kan bruge de sidste otte hexadecimale tal fra nøglen i 
+    denne og andre GnuPG-operationer. Det foranstillede <tt>0x</tt> er også 
+    valgfrit.</p>
+</li>
 
 <li>For at signere en nøgle skal du gå ind i edit-menuen med
+    <pre>
+      gpg --edit-key 0xDEADBEEF
+    </pre>
+</li>
 
-<pre>
-       gpg --edit-key 0xDEADBEAF
-</pre></li>
-
-<li>I GnuPG vælges alle UID'er der skal signeres med <code>uid n</code>.</li>
+<li>I GnuPG vælges alle uid'er der skal signeres med <code>uid n</code>, hvor
+    <code>n</code> er nummeret på uid'en der vises i menuen. Du kan også vælge
+    enter for at signere alle uid'erne.
+</li>
 
 <li>Skriv <code>sign</code> for at signere en nøgle.  Du vil se fingeraftrykket
     på nøglen; du skal sammenligne den med nøglen du fik fra vedkommende du 
     mødte.</li>
 
 <li>Afslut GnuPG med <code>quit</code></li>
+
+<li>For at kontrollere at du har signeret nøglen korrekt, kan du:
+    <pre>
+      gpg --list-sigs 0xDEADBEEF
+    </pre>
+    <p>Du bør se dit eget navn og fineraftryk (i kort form) som uddata.</p>
+</li>
+
+<li>Når du har sikret dig at alt gik godt, kan du indsende den signerede nøgle
+    til dens modtager ved at gøre følgende:
+    <pre>
+      gpg --export -a 0xDEADBEEF &gt; ennoegle.key
+    </pre>
+    <p>Valgmuligheden <code>-a</code> eksporterer nøglen i ASCII-format så den
+    kan sendes som e-mail uden at risiko for at den bliver ødelagt.</p>
+</li>
+
+<li>Hvis nogen signerer din nøgle på denne måde, kan du tilføje den til Debians
+    nøglering ved at gøre følgende:
+    <pre>
+      gpg --import mysigned.key
+      gpg --keyserver keyring.debian.org --send-keys <var>&lt;din nøgles id&gt;</var>
+    </pre>
+
+    <p>Det kan tage et stykke tid før vedligeholderne af nøgleringen opdaterer
+    din nøgle, så hav tålmodighed.  Du bør også overfør dine opdaterede nøgle
+    til de offentlige nøgle-servere.</p>
+</li>
 
 </ul>
 
