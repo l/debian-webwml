@@ -14,7 +14,7 @@ include $(BASE)/Make.lang
 
 all: $(HTMLFILES) $(IMGDEST)
 
-include $(BASE)/Make.dep.templ    
+#include $(BASE)/Make.dep.templ    
 
 # Do Not modify the following lines
 $(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(wildcard 1998*.wml) $(TEMPLDIR)/basic.wml $(TEMPLDIR)/recent_list.wml
