@@ -166,8 +166,8 @@ $translations_status = {
 
 
 'meta' => {
-        'status'                => 2,
-	'since'			=> '08/08/2000',
+        'status'                => 4,
+	'since'			=> '29/11/2000',
 	'translation_maintainer'=> ['Mickael Simon <simon.mickael@wanadoo.fr>'],
 },
 
