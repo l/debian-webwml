@@ -16,6 +16,7 @@ WNPP_FILES := being_adopted.$(LANGUAGE).html being_packaged.$(LANGUAGE).html orp
 endif
 
 $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
+	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
 	@echo copying $*.$(LANGUAGE).html to $(HTMLDIR)
 	-@install -m 664 -p $*.$(LANGUAGE).html $(HTMLDIR)
 ifeq ($(LANGUAGE),en)
