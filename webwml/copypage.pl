@@ -78,6 +78,9 @@ sub copy
 	my $srcmake = $srcdir . "Makefile";	# Name of source Makefile
 	my $dstmake = $dstdir . "Makefile";	# Name of destination Makefile
 
+	my $dsttitle = $dstfile;
+	$dsttitle =~ s/\.wml$/.title/;		# Name of possible title translation
+
 	# Sanity checks
 	die "Directory $srcdir does not exist\n" unless -d $srcdir;
 	die "File $srcfile does not exist\n"     unless -e $srcfile;
@@ -92,6 +95,27 @@ sub copy
 		mkdir $dstdir, 0755
 			or die "Could not create $dstdir: $!\n";
 		system "cp $srcmake $dstmake";
+	}
+
+	# Check if title translation exists, if so - load it
+	my $pagetitle;
+	if (-e $dsttitle)
+	{
+		open TTL, $dsttitle
+			or die "Could not read $dsttitle ($!)\n";
+
+		# Scan for title;
+		while (<TTL>)
+		{
+			$pagetitle = $_, last
+				if /^<define-tag pagetitle>/;
+		}
+
+		close TTL;
+	}
+	else
+	{
+		undef $dsttitle;
 	}
 
 	# Open the files
@@ -138,7 +162,14 @@ sub copy
 			print DST qq'#use wml::debian::translation-check translation="$revision"\n';
 			$insertedrevision = 1;
 		}
-		print DST $_;
+		if (defined $pagetitle && /^<define-tag pagetitle>/)
+		{
+			print DST $pagetitle;
+		}
+		else
+		{
+			print DST $_;
+		}
 
 		$isdefinetag = 0 if m'</define-tag>';
 		$ignorews = 0 if /^#/;
@@ -154,5 +185,7 @@ sub copy
 
 	# We're done
 	print "Copied $page, remember to edit $dstfile\n";
+	print "and to remove $dsttitle when finished\n"
+		if defined $dsttitle;
 }
 
