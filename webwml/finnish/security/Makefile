@@ -10,15 +10,12 @@ YEARS:=$(wildcard [12][0-9][0-9][0-9])
 SUBS=$(YEARS) undated
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
+CUR_YEAR ?= $(shell date +%Y)
 
 index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.wml) \
      $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/$(CUR_YEAR)*.wml) \
           $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml 
-
 
 # install keys.txt
 ifeq ($(LANGUAGE),en)

@@ -9,10 +9,6 @@ CUR_DIR=distrib
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
-
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 vendors.$(LANGUAGE).html: ../../english/distrib/vendors.CD \
 		../../english/distrib/vendors.CD.def $(TEMPLDIR)/countries.wml
