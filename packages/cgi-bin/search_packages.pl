@@ -189,6 +189,8 @@ foreach my $line (@results) {
     ($package, $section, $ver, $foo) = split (/ /, $colon[1].":".$colon[2], 4);
     $colon[0] =~ m,.*/([^/]+)/([^/]+)/Packages-([^\.]+)\.,; #$1=stable, $2=main, $3=alpha
 
+    $section =~ s,^(non-free|contrib)/,,;
+    $section =~ s,^non-US.*$,non-US,,;
     $pkgs{$package}{$1}{$ver}{$3} = 1;
     $sect{$package}{$1} = $section;
 }
