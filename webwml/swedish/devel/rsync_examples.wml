@@ -1,0 +1,45 @@
+#use wml::debian::template title="Exempel på hur rsync används"
+
+<P>Nedan finns exempelkod som speglar både webb- och ftp-platsen.
+Du måste modifiera maskinnamnet och de sökvägar som används för att passa
+för att passa dina inställningar.
+
+<P>Låsfilen är användbar om du kör det här via cron.
+Om speglingen av någon orsak skulle misslyckas kommer nästa försök att
+generera ett e-postmeddelande.
+Det gör att du kan spåra problemet, rätta till det och radera låsfilen,
+varefter speglingen kan fungera korrekt nästa gång det körs.
+<blockquote>
+<pre>
+#!/bin/bash
+set -e
+
+lockfile -r 1 rsync.master.lock || exit 23
+
+rsync -avz -e ssh --exclude .glbuild --delete &lt;machine&gt;:/web/debian.org/ debian.org
+rsync -avz -e ssh --delete &lt;machine&gt;:/web/debian.org-local/ debian.org-local
+
+echo FÄRDIG MED UPPDATERING AV WEBBEN. ÖVERGÅR NU TILL FTP.
+
+rsync -avz --delete -e ssh &lt;machine&gt;:/debian debian
+
+rm -f rsync.master.lock
+</pre>
+</blockquote>
+
+<H3>Hur du sätter upp ssh så att du slipper frågas efter lösenord:</H3>
+
+Skriptet ovan kommer att fråga dig efter ett lösenord om du inte har ställt
+in ssh på ett speciellt sätt.
+Skapa en nyckel med ssh-keygen som inte har något lösenord, tryck bara
+return när det frågar efter ett [1].
+Därefter lägger du till innehållet i ~/.ssh/identity.pub till
+~/.ssh/authorized_keys på spegeln (filen bör ha rättigheten 600).
+Det ska nu gå att logga in till spegeln med ssh utan att du blir efterfrågad
+om ett lösenord.
+
+<P>
+[1] Notera att om du sätter upp ssh med ett tomt lösenord så kan du ge en
+inkräktare fri åtkomst till webbplatsen du speglar om de har lyckats bryta
+sig in i din dator.
+Av den anledningen bör du aldrig göra så här från root-kontot.
