@@ -23,11 +23,6 @@ SITEMAP = $(sort $(foreach i,$(SUBLANG),\
 HTMLMAP = $(patsubst %.html,$(HTMLDIR)/%.html,$(SITEMAP))
 endif
 
-ifeq "$(LANGUAGE)" "en"
-IMGFILES += favicon.ico
-IMGDESTFILES += $(HTMLDIR)/favicon.ico
-endif
-
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(wildcard News/$(CUR_YEAR)/[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/[0-9]*.wml) \
 		$(wildcard security/$(CUR_YEAR)/dsa-[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-[0-9]*.wml) \
@@ -68,4 +63,8 @@ endif
 all:: $(SITEMAP)
 
 install:: $(HTMLMAP)
+ifeq "$(LANGUAGE)" "en"
+	test -f $(HTMLDIR)/favicon.ico || install -m 664 favicon.ico $(HTMLDIR)
 	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
+	test -L $(HTMLDIR)/mirrors || ln -sf mirror $(HTMLDIR)/mirrors
+endif

@@ -43,13 +43,4 @@ full: mirror_list.pl Mirrors.masterlist
 nonus: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t nonus
 
-$(ENGLISHSRCDIR)/mirror/webmirrors.data: webmirrors.data
-webmirrors.data: Mirrors.masterlist
-	echo -e "#use wml::debian::countries\n<define-tag webmirrors>\n<ul>" > $@
-	for i in `grep-dctrl -n -F Site -s Site -r 'www\...\.debian.org' Mirrors.masterlist | sort`; do \
-          xy=`echo $$i | sed -e s/^www.// -e s/.debian.org$$// | tr a-z A-Z`; \
-	  echo -e "<li><a href=\"http://$${i}`grep-dctrl -n -F Site -s WWW-http -X $$i Mirrors.masterlist`\"><$${xy}c></a>" >> $@; \
-	done
-	echo -e "</ul>\n</define-tag>" >> $@
-
 endif
