@@ -10,6 +10,6 @@ include $(WMLBASE)/Make.lang
 
 
 # unfortunately, I have to force this since it checks whether directories exist
-index.$(LANGUAGE).html: FORCE
+index.$(LANGUAGE).html: info
 
 FORCE:
