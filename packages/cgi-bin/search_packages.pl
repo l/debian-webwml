@@ -1,4 +1,4 @@
-#!/usr/bin/perl -wT
+#!/usr/bin/perl -w
 #
 # search_packages.pl -- CGI interface to the Packages files on packages.debian.org
 #
@@ -84,6 +84,23 @@ close (C);
 
 my $fdir = $topdir . "/files/flat/$version/$releases";
 my $file = "Packages-$arch.*";
+
+sub find_desc
+{
+    my $pkg = shift;
+    my $suite = shift;
+    my $part = shift;
+    my $desc = '';
+
+    $pkg =~ s/[.]/[.]/;
+
+    my $cmd = sprintf ("/bin/grep '^%s\t' %s/files/flat/%s/%s/Description",
+		      $pkg, $topdir, $suite, $part);
+
+    my @results = qx( $cmd );
+
+    return @results ? $results[0] : "";
+}
 
 # The keyword needs to be modified for the actual search, but left alone
 # for future reference, so we create a different variable for searching
@@ -191,12 +208,11 @@ foreach my $line (@results) {
     $section =~ s,^non-US.*$,non-US,,;
     $colon[0] =~ m,.*/([^/]+)/([^/]+)/Packages-([^\.]+)\.,; #$1=stable, $2=main, $3=alpha
 
-    my $suite = $1;
-    $pkgs{$package}{$suite}{$ver}{$3} = 1;
-    $sect{$package}{$suite} = $section;
+    $pkgs{$package}{$1}{$ver}{$3} = 1;
+    $sect{$package}{$1} = $section;
 
-    $foo =~ m/(.*)\t/;
-    $desc{$package}{$suite} = $1;
+    $desc{$package}{$1} = find_desc ($package, $1, $2) if (! exists $desc{$package}{$1});
+
 }
 
 foreach my $pkg (sort keys %pkgs) {
