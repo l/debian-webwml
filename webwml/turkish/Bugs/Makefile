@@ -9,12 +9,13 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 
-index.$(LANGUAGE).html: $(TEMPLDIR)/template.wml footer.inc
-Access.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc footer.inc
-Developer.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc footer.inc
-Reporting.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc footer.inc
-server-control.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc footer.inc
-server-refcard.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc footer.inc
-server-request.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc footer.inc
+index.$(LANGUAGE).html: $(TEMPLDIR)/template.wml $(ENGLISHDIR)/footer.inc \
+  $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
+Access.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc $(ENGLISHDIR)/footer.inc
+Developer.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc $(ENGLISHDIR)/footer.inc
+Reporting.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc $(ENGLISHDIR)/footer.inc
+server-control.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc $(ENGLISHDIR)/footer.inc
+server-refcard.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc $(ENGLISHDIR)/footer.inc
+server-request.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc $(ENGLISHDIR)/footer.inc
 pseudo-packages.$(LANGUAGE).html: $(ENGLISHDIR)/Bugs/pseudo-packages.description \
-  $(TEMPLDIR)/template.wml otherpages.inc footer.inc
+  $(TEMPLDIR)/template.wml otherpages.inc $(ENGLISHDIR)/footer.inc
