@@ -7,7 +7,7 @@
 	[FI:Valitse läheinen palvelin:]
 	[PT:Escolha um servidor próximo de você:]
 	[HR:Izaberite vama blizak poslu¾itelj:]
-	[FR:Sélectionnez un serveur<BR>proche de vous:]
+	[FR:Sélectionnez un serveur proche de vous:]
 	[NL:Kies een server dicht bij jou:]
 	[DE:W&auml;hlen Sie einen Server in Ihrer N&auml;he:]
 	[IT:Scegli il server più vicino:]
@@ -27,22 +27,18 @@
 # Don't change anything below this point.
 
 #use wml::debian::countries
-#use wml::sup::path
 
-<define-tag stuff>
-<ifneq "$(fpreal)" "yea" "<hrline><div align="right">">
+<define-tag mirrordroplist>
 <form method="GET" action="http://cgi.debian.org/cgi-bin/redirect.pl">
 <input type="hidden" name="page" value="%0">
-<if $(usefonts) "<font"><if "$(fontface)" " face="$(fontface)""><if $(fontcolor) " color="$(fontcolor)""><if $(usefonts) ">">
-<if $(small) "<small>">
+<if "$(usefonts)" "<font"><if "$(fontface)" " face="$(fontface)""><if "$(fontcolor)" " color="$(fontcolor)""><if "$(usefonts)" ">">
+<if "$(small)" "<small>">
 <selectserver>:
-<if $(small) "</small>">
-<if $(usefonts) "</font>">
+<if "$(small)" "</small>">
+<if "$(usefonts)" "</font>">
 <br>
-<if $(usefonts) "<font"><if "$(fontface)" " face="$(fontface)""><if $(usefonts) ">">
-<if $(small) "<small>">
 # note: the values for site don't have an ending slash on purpose, that's page
-<select name="site">
+<select name="site"<if "$(small)" " style=font-size:90%;">>
 	<option value="http://www.at.debian.org"><ATc></option>
 	<option value="http://www.au.debian.org"><AUc></option>
 # down	<option value="http://www.br.debian.org"><BRc></option>
@@ -66,24 +62,23 @@
 #  \/	<option value="http://www.us.debian.org"><USc></option>
 	<option value="http://www.debian.org" selected>www.debian.org</option>
 </select>
-<if $(small) "</small>">
-<if $(usefonts) "</font>">
-<input type="SUBMIT" value=" <go> ">
+<input type="SUBMIT" value=" <go> "<if "$(small)" " style=font-size:90%;">>
 <br>
 </form>
-<ifneq "$(fpreal)" "yea" "</div>">
 </define-tag>
 
+#use wml::sup::path
+
 <perl>
-unless ( ("$(WML_SRC_BASENAME)" eq "index") &&
-         ("" eq &relpath(&canonpath('$(WML_SRC_DIRNAME)/$(HOME)'), '$(WML_SRC_DIRNAME)')) &&
-         ("$(fpreal)" ne "yea")
-       )
-{
-  $path = &canonpath(&relpath(&canonpath('$(WML_SRC_DIRNAME)/$(HOME)'), '$(WML_SRC_DIRNAME)')."/".'$(WML_SRC_BASENAME)');
-  $path =~ s/index$//;
+  my $rootdir = &canonpath('$(WML_SRC_DIRNAME)/$(HOME)');
+#    print STDERR "rootdir = $rootdir\n";
+  my $curdir = &relpath($rootdir, '$(WML_SRC_DIRNAME)');
+#    print STDERR "curdir = $curdir\n";
+  my $file = "/".$curdir."/".'$(WML_SRC_BASENAME)';
+#    print STDERR "file = $file\n";
+  (my $path = &canonpath($file)) =~ s/index$//;
+#    print STDERR "path = $path\n";
   print <<END;
-<stuff $path>
+<mirrordroplist $path>
 END
-}
 </perl>
