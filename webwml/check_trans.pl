@@ -10,7 +10,7 @@
 # Copyright 2000 Martin Quinson <mquinson@ens-lyon.fr>
 
 # Invocation:
-#   check_trans.pl [-vqdlM] [-p pattern] [-s subtree]
+#   check_trans.pl [-vqdlM] [-C dir] [-p pattern] [-s subtree]
 #                  [-m email -n N] [-g] [-t outputtype]
 #                  [language]
 
@@ -88,7 +88,8 @@ my %translators;# the real hash
 
 # misc hardcoded things
 my $maintainer = "mquinson\@ens-lyon.fr"; # the default e-mail at which to bitch :-)
-my $ignorables = "/sitemap.wml "
+my $ignorables = " "
+		."/sitemap.wml "
 		."/MailingLists/subscribe.wml "
 		."/MailingLists/unsubscribe.wml "
 		."/international/l10n/data/countries.wml "
@@ -418,7 +419,7 @@ sub check_file {
         $docname =~ s#\.wml$##;
 	unless (-r $name) {
 		(my $iname = $name) =~ s/$to//;
-		if (index($ignorables, "$iname ") < 0) {
+		if (index($ignorables, " $iname ") < 0) {
 		  unless (($opt_q) || ($opt_Q)) {
                      if ($opt_t eq 'perl') {
   	               print "'$docname' => {\n\t'type' => 'Web',\n";
