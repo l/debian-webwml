@@ -536,9 +536,9 @@ sub readmenonus {
                       Debian GNU/Linux non-US packages
                       --------------------------------
 
-United States laws place restrictions on the export of defense articles,
-which, unfortunately, includes some types of cryptographic software.  PGP
-and ssh, among others, fall into this category.  It is legal however, to
+United States laws place restrictions on the export of certain defense
+articles, which, unfortunately, includes some types of cryptographic software.
+PGP and SSH, among others, fall into this category.  It is legal however, to
 import such software into the US.
 
 To prevent anyone from taking unnecessary legal risks, some Debian
@@ -558,7 +558,9 @@ Read sources.list(5) on your Debian system for more information.
 
 -------------------------------------------------------------------------------
 
-Mirrors of the above site (all of them outside of US) include:
+Mirrors of non-us.debian.org are normally located outside of the US.
+If they are located within the US they should be registered with the
+US government. This is the official list:
 
 _END_
 	my $hasmirrors = 0; my $nonuscount = 0;
