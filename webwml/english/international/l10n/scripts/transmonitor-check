@@ -282,8 +282,8 @@ PKG: while ($dsc = shift @pkg_list){
     if (defined ($data{$pkg})) {
 	system ("dpkg","--compare-versions","$data{$pkg}{'version'}","\>","$ver");
 	if ((!$force)&&($?==0)&&($data{$pkg}{'version'} ne "")
-	       &&( (!$force_material) &&
-	          !(defined($data{$pkg}{'nls'})||defined($data{$pkg}{"po"})||defined($data{$pkg}{"templates"})))) {
+	       && !( ($force_material) &&
+	          (defined($data{$pkg}{'nls'})||defined($data{$pkg}{"po"})||defined($data{$pkg}{"templates"})))) {
 	    print "Package $pkg already in version $data{$pkg}{'version'} in the database. Skip this version $ver !\n" if ($verbose || ($data{$pkg}{'version'} ne "$ver"));
 	    next PKG;
 	} else {
@@ -407,8 +407,8 @@ my %sources;
        if (defined ($data{$pkg})) {
 	   system ("dpkg","--compare-versions","$data{$pkg}{'version'}","\>",$sources{$pkg}{'version'});
 	   if ((!$force)&&($?==0)&&($data{$pkg}{'version'} ne "")
-	       &&(!$force_material &&
-	          !(defined($data{$pkg}{'nls'})||defined($data{$pkg}{"po"})||defined($data{$pkg}{"templates"})))) {
+	       && !($force_material &&
+	          (defined($data{$pkg}{'nls'})||defined($data{$pkg}{"po"})||defined($data{$pkg}{"templates"})))) {
 	       print "Package $pkg already in version $data{$pkg}{'version'} in the database. Skip this version $sources{$pkg}{'version'} !\n" if ($verbose || ($data{$pkg}{'version'} ne "$sources{$pkg}{'version'}"));
 	       next FTPPKG;
 	   } else {
