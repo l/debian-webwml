@@ -116,6 +116,8 @@ $types = {
 					"$CVSWEB/$to/$k.wml?rev=$t->{'translation_revision'}&cvsroot=webwml" },
 	'diff'			=> sub {my($t, $k, $f)=@_; return (!$t->{$f} || !$t->{'translation_revision'}) ? undef :
 					"$CVSWEB/$from/$k.wml$t->{$f}" },
+	'lines'			=> sub {my($t, $k, $f)=@_; my $file= $root."/".$from."/".$k.".wml"; my $line_string=`wc -l $file`; $line_string=~s/\Q$file\E//; return $line_string;},
+
 },
 
 'DDP' => {

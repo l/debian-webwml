@@ -81,7 +81,8 @@ $translations = {
 'faq' => {
 	'type'			=> 'DDP',
 	'name'			=> 'Debian GNU/Linux FAQ',
-	'cvs_url'		=> '?',
+	'url'			=> 'http://www.debian.org/~elphick/ddp/manuals.html/faq/',
+	'cvs-url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/faq/?cvsroot=debian-doc',
 	'package'		=> 'doc-debian',
 },
 
