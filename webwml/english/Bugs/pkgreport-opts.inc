@@ -122,13 +122,14 @@
 	[HR:Rije¹eni:]
 	[SV:Rättat:]
 </define-tag>
+
   <small>
   <ul>
   <li><flags>
   <input type="radio" name="archive" value="no" checked> <active_bugs>
   <input type="radio" name="archive" value="yes"> <archived_bugs>
   <input type="checkbox" name="raw" value="yes"> <no_status>
-  <li><reverse order>
+  <li><reverse_order>
   <input type="checkbox" name="pend-rev" value="yes"><status>
   <input type="checkbox" name="sev-rev" value="yes"><severities>
   <input type="checkbox" name="bug-rev" value="yes"><bugs>
