@@ -16,7 +16,8 @@ all: $(HTMLFILES) $(IMGDEST)
 
 include $(BASE)/Make.dep.templ    
 
-$(HTMLDIR)/index.html.$(LANGUAGE) : index.wml $(TEMPLDIR)/template.wml
+$(HTMLDIR)/index.html.$(LANGUAGE) : index.wml $(TEMPLDIR)/template.wml \
+		../../english/consultants/consultant.data
 	wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG) $(WMLEPILOG) $(<F)
 $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/consultant.wml
 	$(WML) $(<F)
