@@ -111,10 +111,12 @@ sub get_stats_po {
 		        $team ||= "";
 			#  Some translators forget the right angle bracket
 		        $translator =~ s/<[^>]*>?//;
+		        $translator =~ s/&/&amp;/g;
 		        $team =~ s/</(/g;
 		        $team =~ s/>/)/g;
 		        $team =~ s/@/ at /g;
 		        $team =~ s/\./ dot /g;
+		        $team =~ s/&/&amp;/g;
                         if ($lang eq '_') {
 			    
 			        # FIXME: This wont work since the stats about the pot files are not in the DB
