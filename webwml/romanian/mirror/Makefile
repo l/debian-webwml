@@ -19,6 +19,8 @@ sponsors.$(LANGUAGE).html: sponsors.wml \
   $(TEMPLDIR)/template.wml $(ENGLISHDIR)/mirror/sponsors.list
 ftpmirror.$(LANGUAGE).html: ftpmirror.wml $(TEMPLDIR)/template.wml \
   $(TEMPLDIR)/toc.wml
+official.$(LANGUAGE).html: official.wml $(TEMPLDIR)/template.wml \
+  $(ENGLISHDIR)/mirror/official.data $(TEMPLDIR)/countries.wml
 
 # there only needs to be one version of the following so
 # the non-english directories shouldn't try to install them
