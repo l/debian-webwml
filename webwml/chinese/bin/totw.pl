@@ -56,6 +56,7 @@ s/干ゅン/干郎/g;
 1 while (s/^((?:[\x00-\x7f]|[\x80-\xff].)*)硄筁/$1硓筁/);
 1 while (s/^((?:[\x00-\x7f]|[\x80-\xff].)*)糴盿/$1糴繵/);
 1 while (s/^((?:[\x00-\x7f]|[\x80-\xff].)*)盿糴/$1繵糴/);
+1 while (s/^((?:[\x00-\x7f]|[\x80-\xff].)*)穓/$1穓碝/);
 
 if ($sublang eq 'hk') {
     s/穨╰参/巨╰参/g;
