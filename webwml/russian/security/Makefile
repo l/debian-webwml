@@ -7,16 +7,16 @@ CUR_DIR=security
 # list any subdirectories in the following variable. If a listed directory
 # exists, it must contain a Makefile, or make gives an error
 YEARS:=$(wildcard [12][0-9][0-9][0-9])
-CUR_YEAR=2000
 SUBS=$(YEARS) undated
 
 include $(WMLBASE)/Make.lang
 
 
-index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.wml) \
-     $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/$(CUR_YEAR)*.wml) \
-          $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml 
+CUR_YEAR ?= $(shell date +%Y)
 
+index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/dsa-*.wml) \
+     $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.wml) \
+          $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml 
 
 # install keys.txt
 ifeq ($(LANGUAGE),en)
