@@ -1,75 +1,96 @@
 #use wml::debian::template title="Tipi di Mirror"
-#use wml::debian::translation-check translation="1.9"
+#use wml::debian::translation-check translation="1.12"
 
 <h3>Ci sono due tipi di mirror Debian, <em>ufficiali</em> e <em>non ufficiali</em></h3>
 
-<p>Chiunque può fare un mirror di Debian. Non c'è neppure bisogno del nostro
-permesso. Di certo alcuni sito che hanno una buona banda potrebbero aiutare
-Debian diventando mirror ufficiali.
-I mirror ufficiali ottengono un nome del tipo ftp.&lt;stato&gt;.debian.org
-o www.&lt;stato&gt;.debian.org (entrambi se sono sia mirror web che ftp.)
-Sono i siti più pubblicizzati w più usati; per molti diventano il modo in
-cui Debian si presenta. In cambio la tua società può mettere il logo
-nella pagian principale del mirror con un link alle pagine del proprio
-sito web.
+<h2>Mirror Debian non ufficiali</h2>
 
-<p>Se non sei interessato a diventare un mirror ufficiale, puoi creare il
-mirror <a href="ftpmirror">FTP</a> o <a href="webmirror">web</a> e poi
-<a href="submit">registrarlo</a>.
+Se non sei interessato a creare un mirror ufficiale, configura il tuo
+<a href="ftpmirror">FTP mirror</a> e <a href="submit">registralo</a>.
+Il sito sarà un mirror non ufficiale e verrà elencato come tale nel nostro
+<a href="../misc/README.mirrors">elenco dei mirror</a>.
 
-<p>Ecco cosa si richiede ad un mirrot ufficiale;
-<UL>
-<LI>Il sito deve essere affidabile e in funzione 24 ore al giorno. La macchina
-	non deve essere sovraccarica.
-<LI>Deve avere una qualità della connessione decente (relativamente a quanto
+<p>Nota che noi <strong>non</strong> abbiamo bisogno di nuovi mirro del sito
+web in questo momento (d'altro canto sono invece desiderabili mirror per
+l'archivio FTP.)
+
+<h2>Mirror Debian ufficiali</h2>
+
+<p>Alcuni siti con una buona banda amano aiutare attivanto un
+<em>mirror ufficiale</em>.
+I mirror ufficiali ottengono un indirizzo della forma
+ftp.&lt;nazione&gt;.debian.org.
+Questi sono meglio pubblicizzati e piuà utilizzati; per molti sono la facciata
+di Debian. La tua donazione sarà immediatamente segnalata nel nostro
+<a href="../donations">sito web</a>.
+
+<p>Per essere accettato come mirror ufficiale il tuo sito deve soddisfare i
+seguenti criteri:
+
+<p>
+<ul>
+    <li>Il sito deve essere affidabile e disponibile 24 ore al giorno.
+        La macchina non deve essere molto carica.
+    <LI>Deve avere una qualità della connessione decente (relativamente a quanto
 	si trova nella stessa nazione.) Larghezze di banda equivalenti almeno
         alle connessioni T1 sono preferite.
-<LI>Per mirror FTP: L'albero FTP Debian deve essere disponibile sotto il ramo
-        /debian (questo &egrave; fatto per motivi di consistenza tra i siti
-	&mdash; Puoi anche semplicemente usare un collegamento simbolico se
-	vuoi mantenere l'albero altrove.)
-	<br>
-	Dovrebbe essere copiato l'intero archivio FTP. Se ci sono limiti
-	di spazio puoi escludere i port non ancora rilasciati (dists/sid) e le
-	distribuzioni in via di sviluppo (dists/unstable), ma per favore
-	mantieni interamente la distribuzione stabile (dists/stable).
-<LI>Per i mirror FTP: L'archivio FTP dovrebbe essere accessibile anche via
-	HTTP (ftp://ftp.sito/debian/ dovrebbe essere accessibile anche come
-	http://ftp.sito/debian/). Stiamo chiedendo questo a tutti i siti
-	ufficiali perch&eacute; il protocollo HTTP/1.1 trasferisce i file in
-	maniera migliore dell'FTP.
-<LI>Per i mirror WWW: un server virtuale con un suo indirizzo IP privato.
-<LI>Per i mirror WWW: la negoziazione dei contenuti dovrebbe essere abilitata
-	nel server HTTP. Apache lo supporta abbastanza bene. Questo serve a
+    <li>Spazio disco sufficiente (e altro spazio per espansioni) -- vedi la
+       <a href="size">pagina delle dimensioni dei mirror</a>.
+    <li>Se crei un mirror dei pacchetti (cioè il sito FTP):
+    <ul type="disc">
+       <li>Tutto l'archivio FTP dovrebbe essere copiato, usando un metodo
+       che preservi le date dei file copiati (come rsync) in modo che
+       le date dei file (UTC) siano le stesse di ftp.debian.org.
+       <li>La gerarchia dei mirror deve essere disponibile sotto /debian (e
+       /debian-non-US se copi anche il sito non-US).
+       Dettaglio: per consistenza tra i siti &mdash; puoi anche
+       semplicemente inserire un collegamento simbolico e tenere il
+       mirror da un'altra parte.
+       <li>Il mirror dovrebbe essere disponibile tramite HTTP e rsync
+       (ftp://ftp.site/debian/ dovrebbe essere accessibile anche come
+       http://ftp.site/debian/ e rsync://ftp.site::debian/).
+       Dettaglio: tramite HTTP/1.1, i trasferimenti web hanno la potenzialità
+       di essere più efficienti di quelli FTP, quindi stiamo tentando di
+       muoverci in questa direzione. Dall'altra parte rsync è il metodo
+       preferito per effettuare la copia di mirror.
+       <li>Il mirror deve essere aggiornato almeno una volta al giorno e la data
+       dell'aggiornamento deve essere visibile tramite un file nella
+       sottodirectory project/trace/ del mirror.
+    </ul>
+    <li>Se stai copiando le pagine web (cioè il sito WEB):
+    <ul type="disc">
+       <li>Un server virtuale, con un suo indirizzo IP.
+       <li>La negoziazione dei contenuti deve essere abilitata nel server HTTP.
+	Apache lo supporta abbastanza bene. Questo serve a
 	ricevere le pagine web in varie lingue in maniera automatica (per
 	quelli che hanno configurato correttamente il loro browser.)
 	<br>
 	Vedi la sezione sulla <a href="webmirror#cn">negoziazione dei
 	contenuti</a>.
-<LI>Spazio disco richiesto (con possibilità di espansione):
-	<ul>
-	  <li>almeno 16 GB per mirror ftp (o molto meno, dipende da cosa si
-	    esclude)
-	  <li>almeno 40 MG per mirror WWW.
-	</ul>
-<LI>Il mirror deve essere aggiornato almeno una volta al giorno. Se possibile
-	attiva il "push-mirroring" dai siti Debian.
-</UL>
+       <li>il mirror deve essere aggiornato almeno due volte al giorno e la
+       data di ultimo aggiornamento deve essere visibile tamite un file
+       nella sottodirectory mirror/timestamps/ del mirror.
+    </ul>
+</ul>
 
-<P>Sottolineaiamo che queste sono solo linee guida. Se hai dubbi su qualcosa,
-manda un'e-mail a <A href="mailto:mirrors@debian.org">mirrors@debian.org</A>
-con le tue domande.
-
-<P>Nota per i mirror WWW: tutti i nostri script CGI sono eseguiti centralmente
-su cgi.debian.org, quindi non dovete proccuparvene.
+<P>Nota che queste sono solo delle linee guida, ma saremo molto contenti di
+accettare il tuo sito come sito ufficiale se le fossero rispettate.
+Se sei incerto su qualunque cosa
+<a href="mailto:mirrors@debian.org">chiedicela</a> in inglese.
 
 <P>I mirror ufficiali devono essere registrati esattamente come tutti gli
-altri mirror usando il <a href="submit">formulario di iscrizione tra i mirror</a>.
-Inoltre, l'indirizzo della macchine, accompagnato del nome e e-mail della
-persona che li gestisce deve essere mandato a
-<A href="mailto:mirrors@debian.org">mirrors@debian.org</A> con la richiesta
-di divenire un sito ufficiale in modo che i si possano configurare i DNS.
-Quando tutto sarà funzionante, il tuo sito verrà aggiunto alla pagina web.
+altri mirror utilizzando la <a href="submit">maschera di registrazione</a>.
+Inoltre una richiesta di registrazione come mirror ufficiale deve includere
+le informazioni esatte circa il consumo di banda e i limiti del sito, che
+devono essere inviati a
+<a href="mailto:mirrors@debian.org">mirrors@debian.org</a>. Dopo che la
+necessaria registrazione venga fatta nel DNS, si aggiungerà il sito
+all'eleco dei mirror e nella
+<a href="../donations">pagina web delle donazioni</a>. Inoltre aspettati
+un incremento del traffico una volta che ciò sia avvenuto.
+
+<P>Se possibile dovrebbe essere configurato un
+<a href="push_server">push-mirroring</a> del sito Debian.
 
 <P>Possono esistere molti siti ufficiali anche all'interno di uno stato.
 Nei grandi stati, come gli USA, e negli stati con più backbone che non sono
