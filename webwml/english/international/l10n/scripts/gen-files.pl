@@ -109,7 +109,8 @@ sub get_stats_po {
                         $link =~ s/:/\%3a/g;
 		        $translator ||= "";
 		        $team ||= "";
-		        $translator =~ s/<[^>]*>//;
+			#  Some translators forget the right angle bracket
+		        $translator =~ s/<[^>]*>?//;
 		        $team =~ s/</(/g;
 		        $team =~ s/>/)/g;
 		        $team =~ s/@/ at /g;
