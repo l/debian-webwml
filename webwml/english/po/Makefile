@@ -57,8 +57,9 @@ $(ENGLISHDIR)/po/vendors.pot: $(VENDORS_FILES)
 $(ENGLISHDIR)/po/others.pot: $(OTHERS_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(OTHERS_FILES) > $@
 
-%.mo: %.$(LANGUAGE).po
-	msgfmt --use-fuzzy --statistics -o $@ $*.$(LANGUAGE).po
+%.mo: %.$(LANGUAGE).po $(ENGLISHDIR)/po/%.pot
+	msgmerge -q $*.$(LANGUAGE).po $(ENGLISHDIR)/po/$*.pot |\
+            msgfmt --use-fuzzy --statistics -o $@ -
 
 init-po:
 	for d in $(DOMAINS); do \
