@@ -13,7 +13,11 @@ include $(WMLBASE)/Make.lang
 
 merchandise.$(LANGUAGE).html: merchandise.wml $(TEMPLDIR)/template.wml \
   $(TEMPLDIR)/url.wml $(ENGLISHSRCDIR)/misc/merchandise.data \
-  $(ENGLISHSRCDIR)/misc/merchandise.def $(GETTEXTDEP)
+	$(ENGLISHSRCDIR)/misc/merchandise.def $(GETTEXTDEP)
+
+hardware-wanted.$(LANGUAGE).html: hardware-wanted.wml $(TEMPLDIR)/template.wml \
+  $(TEMPLDIR)/url.wml $(ENGLISHSRCDIR)/misc/hardware-wanted.data \
+  $(ENGLISHSRCDIR)/misc/hardware.def $(GETTEXTDEP)
 
 ifeq "$(LANGUAGE)" "en"
 $(HTMLDIR)/bsd.license: bsd.license
