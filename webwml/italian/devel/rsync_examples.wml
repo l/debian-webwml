@@ -1,5 +1,7 @@
-#use wml::debian::template title="Esempio d'uso di rsync"
-<!--translation 1.3-->
+#use wml::debian::template title="Esempio d'uso di rsync e di come attivare ssh senza password"
+<!--translation 1.4-->
+
+<H3>Esempio di uso di rsync</H3>
 
 <P>Il seguente è un esempio che farà il mirror sia del sito web che
 	  del sito ftp. Si dovranno modificare il nome della macchina e le
@@ -11,17 +13,17 @@
 	  mail. Si può così scoprire dov'è il problema, analizzarlo,
 	  correggerlo, cancellare il lockfile e la prossima volta che lo
 	  si esegue il mirror funzionerà correttamente.
+
 <blockquote>
 <pre>
-#!/bin/bash
-set -e
+\#!/bin/bash -e
 
 lockfile -r 1 rsync.master.lock || exit 23
 
 rsync -avz -e ssh --exclude .glbuild --delete &lt;machine&gt;:/web/debian.org/ debian.org
 rsync -avz -e ssh --delete &lt;machine&gt;:/web/debian.org-local/ debian.org-local
 
-echo TERMINATO L'AGGIORNAMENTO WEB. ORA INIZIO CON FTP.
+echo Terminato l'aggiornamento web. Ora inizio con FTP.
 
 rsync -avz --delete -e ssh &lt;machine&gt;:/debian debian
 
@@ -29,20 +31,25 @@ rm -f rsync.master.lock
 </pre>
 </blockquote>
 
-<H3>Come configurare ssh in modo che non venga chiesta la password:</H3>
+<p>Lo script precedente chiederà una password fintantoché non si
+configura ssh come mostrato sotto.
 
-Lo script precedente chiederà una password fintantoché non si
-	configura ssh in un certo modo. Per prima cosa, quando si usa
-	ssh-keygen, si prema semplicemente Invio quando viene chiesta una
-	password [1]. Poi, si aggiunga il contenuto di ~/.ssh/identity.pub
-	a ~/.ssh/authorized_keys sul sito mirror (il mode del file
-	dovrebbe essere 600). 
-Ora si dovrebbe essere in grado di usare ssh per fare il login nel
-	sito mirror senza che venga chiesta una password.
+<H3><a name="paswordlessssh">Come configurare ssh in modo che non venga chiesta la password:</a></H3>
 
-<P>
-[1] Si noti che l'impostazione di ssh con una password vuota dà ad un
-	  intruso, una volta entrato nel tuo sito, libero acceso al sito
-	  di cui si fa il mirror. Per questa ragione, questa cosa non
-	  dovrebbe mai essere fatto come root.
+<p>Puoi creare una chiave RSA per  poter accedere al sito remoto dal tuo
+account, senza avere bisogno di inserire la password.
 
+<p>Nota che una volta che tutto ciò è configurato, se un estraneo si inserisce
+sul tuo account avrà accesso libero anche al sistema remoto. Per questo motivo
+è meglio che questo non sia fatto da <strong>mai</strong> root.
+
+<ul>
+  <li>Esegui <code>ssh-keygen</code> sulla tua macchina e premi return quando
+      ti è chiesta la password [1].
+  <li>Aggiungi il contenuto di <code>~/.ssh/identity.pub</code> dalla tua
+      macchina a <code>~/.ssh/authorized_keys</code> sul sito remoto (il file deve
+      avere modo 600.)
+</ul>
+
+<p>Dovresti adesso avere la possibilità di utilizzare ssh per collegarti al
+sistema remoto senza che ti sia richiesta la password.

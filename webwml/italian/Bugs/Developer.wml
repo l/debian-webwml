@@ -1,5 +1,5 @@
-#use wml::debian::template title="Debian bug tracking system" NOHEADER=yes WEBMASTER=bugs
-<!--translation 1.8-->
+#use wml::debian::template title="Debian bug tracking system" NOHEADER=yes
+<!--translation 1.14-->
 
 <h1><A name="developers">Informazioni sul sistema per la gestione delle anomalie a uso degli sviluppatori</A></h1>
 
@@ -43,31 +43,34 @@ una notifica del cambio di stato della segnalazione.</P>
 
 <H2>Messaggi di Followup</H2>
 
-<P>Se uno sviluppatore vuole rispondere alla segnalazione senza
-chiuderla può semplicemente rispondere al messaggio. Le risposte
-saranno inviate per default a
-<VAR>nnn</VAR><CODE>@bugs</CODE> e a chi ha fatto la segnalazione.
-Il sistema conserverà questo messaggio con il resto del log e lo
-invierà a <CODE>debian-bugs-dist</CODE>. L'anomalia non sarà
-considerata chiusa. Uno sviluppatore può inviare un messaggio
-a chi ha fatto la segnalazione usando l'indirizzo
-<VAR>nnn</VAR><CODE>-submitter@bugs</CODE>.</p>
+<P>Se uno sviluppatore vuole rispondere ad una segnalazione egli può
+semplicemente rispodere al messaggio (ma questo <b>non</b> marcherà l'anomalia
+come corretta.) La sua risposta sarà (se rispettano il campo Reply-To:
+dell'intestazione) inviata a <VAR>nnn</VAR><CODE>@bugs</CODE> e a chi ha
+inviato la segnalazione (sono due indirizzi diversi.) Il sistema del
+tracciamento delle segnalazioni  riceverà il messaggio a
+<VAR>nnn</VAR><CODE>@bugs</CODE>, lo passerà a chi mantiene il pacchetto, lo
+memorizzerà con tutti gil altri log per quella anomalia e lo invierà a
+<CODE>debian-bugs-dist</CODE>.</P>
+
+<P>Uno sviluppatore può inviare specificatamente un messaggio a chi ha fatto
+la segnalazione tramite l'indirizzo <VAR>nnn</VAR><CODE>-submitter@bugs</CODE>.</p>
 
 <P>Se voui spedire un messaggio followup che non consideri appropriato
 per <CODE>debian-bugs-dist</CODE> puoi spedirlo a
 <VAR>nnn</VAR><CODE>-quiet@bugs</CODE> o
-<VAR>nnn</VAR><CODE>-maintonly@bugs</CODE>, che lo archivieranno
-(senza mandarlo a alla lista) e lo invieranno solo al gestore
-del pacchetto.</P>
+<VAR>nnn</VAR><CODE>-maintonly@bugs</CODE>.
+I messaggi inviati a <VAR>nnn</VAR><CODE>-quiet@bugs</CODE> sono registrati
+nel sistema di tracciamento delle anomalie ma non sono inviati a nessuna
+persona o lista di messaggi. I messaggi inviati a
+<VAR>nnn</VAR><CODE>-maintonly@bugs</CODE> sono registrati e inviati anche al
+gestore del pacchetto in questione.</P>
 
 <P><EM>Non</EM> usare mai la possibilità `rispondi a tutti' o `followup'
 offerta dal programma di posta a meno che tu non intenda
-cambiare poi a mano la lista dei destinatari. In particolare non si
-deve mai spedire il messaggio a
-<VAR>nnn</VAR><CODE>@bugs.debian.org</CODE> e
-<CODE>submit@bugs.debian.org</CODE>, perché altrimenti il sistem
-creerà una seconda copia della segnalazione e la invierà a
-<CODE>debian-bugs-dist</CODE>.</P>
+cambiare poi a mano la lista dei destinatari.
+In particolare vedi di non spedire messaggi a
+<CODE>submit@bugs.debian.org</CODE>.</P>
 
 <H2><A name="severities">Livelli di gravità</A></H2>
 
@@ -108,6 +111,54 @@ inseribile nella versiona stabile della distribuzione.
 tenere la segnalazione aperta. Tutte le anomalie corrette da sviluppatori
 che non sono i gestori del pacchetta hanno il loro grado di gravità fixed.
 </DL>
+
+<H2><a name="tags">Tag per le segnalazioni</a></H2>
+ 
+<p>Ogni anomalia può avere zero o più insiemi di tag. Questi tag sono mostrati
+nella lista dei bug quando di guarda la pagina del package e quando si guarda
+al log completo.
+
+<p>I tag possono essere creati inserendo una linea <code>Tags</code> nello
+pseudo-header quando la segnalzione è inviata (vedi le
+<a href="Reporting#pseudoheader">istruzioni per inviare segnalazioni</a>),
+o usando il codice comando <code>tags</code> con il
+<a href="#requestserv">control request server</a>.
+
+<p>I tag attuali sono:
+
+<dl>
+
+<dt><code>patch</code>
+  <dd>Una <i>patch</i> o altra semplice procedura che sistema il problema è
+  presente nel log. Se la <i>patch</i> fornita non elimina in maniera completa
+  l'anomalia allora questo tag non dovrebbe essere utilizzato.
+
+<dt><code>wontfix</code>
+  <dd>Questa anomalia non sarà eliminata. Ad esempio perché ci sono più modi
+  per fare delle cose e il manutentore preferisce un modo che non presenta
+  l'anomalia. Oppure perché cambiando il comportamento si avrebbe altri effetti,
+  magari peggiori.
+
+<dt><code>moreinfo</code>
+  <dd>Questa nomalia non può essere affrontata perché le informazioni non sono
+  sufficienti. L'anomalia verrà ignorata a meno che chi l'ha segnalata non
+  fornisca ulteriori informazioni entro qualche mese. Questo è per segnalazioni
+  del tipo "non funziona." Cosa non funziona?
+
+<dt><code>unreproducible</code>
+  <dd>Questa anomalia non è riproducibile dal manutentore. È richiesta quindi
+  l'assistenza di altre persone per la diagnosi del problema.
+
+<dt><code>fixed</code>
+  <dd>Questa anomalia è stata risolta ma rimane qualcos'altro da terminare
+  prima di rilasciare una nuova versione del pacchetto.
+
+<dt><code>stable</code>
+  <dd>Questa anomalia è presente anche nella distribuzione stabile. Questo tag
+  è stato ideato unicamente per trovare quali siano le anomalie che colpiscono
+  la distribuzione stabile.
+
+</dl>
 
 <H2><A name="forward">Registrazione si segnalazione esterna a Debian</A></H2>
 
@@ -191,12 +242,6 @@ di prima. Questi messaggi vengono riinviati all'indirizzo
 nell'indirizzo - e senza numero di anomalia nell'oggetto saranno
 scartati mantenuti solo per alcune settimane.</P>
 
-<H2><A name="future">Sviluppi futuri</A></H2>
-
-<P>Prima o poi il campo <CODE>Package:</CODE> dell'intestazione
-secondaria diverrà obbligatorio - attualmente l'omissione
-produce un semplice messaggio.</P>
-
 <H2>Feature <CODE>X-Debian-PR: quiet</CODE> obsoleta</H2>
 
 <P>Una volta era possibile impedire al sistema di fare il
@@ -211,16 +256,6 @@ messaggio va indirizzato a <CODE>quiet</CODE> o
 
 <HR>
 
-<P>Altre pagine:
-<UL>
-<LI><A href="./">Come accedere al sistema per la gestion delle anomalie.</A>
-<LI><A href="Reporting">Istruzioni su come riportare una anomalia.</A>
-<LI><A href="Access">Come accedere ai log del sistema di tracciamento dei bug senza il WWW.</A>
-<LI><A href="server-refcard">Mailservers' reference card.</A>
-<LI><A href="db/ix/full.html">Lista completa delle anomalie non risolte e recenti.</A>
-<LI><A href="db/ix/packages.html">Pacchetti con anomalie riportate.</A>
-<LI><A href="db/ix/maintainers.html">Gestori dei pacchetti che presentano anomalie.</A>
-<LI><A href="../">Debian GNU/Linux home page.</A>
-</UL>
+#use "otherpages.inc"
 
-#use 'footer.inc'
+#use "footer.inc"
