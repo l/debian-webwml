@@ -129,7 +129,7 @@ MENU
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="$LANG">
 <head>
-<title>Debian GNU/Linux -- $title_tag</title>
+<title>Debian -- $title_tag</title>
 <link rev="made" href="mailto:webmaster\@debian.org">
 <meta http-equiv="Content-Type" content="text/html; charset=$charset">
 <meta name="Author" content="Debian Webmaster, webmaster\@debian.org">
