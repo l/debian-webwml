@@ -214,7 +214,8 @@ sub _read_dispatched {
                                 goto SKIP;
                         }
                         next unless defined $self->{orig}->{$tmpl};
-                        if ($_ eq $self->{orig}->{$tmpl}->{choices}) {
+                        if (defined($self->{orig}->{$tmpl}->{choices}) &&
+                            $_ eq $self->{orig}->{$tmpl}->{choices}) {
                                 $status = 'count';
                         } else {
                                 $status = 'fuzzy';
@@ -246,7 +247,8 @@ sub _read_dispatched {
                         $msg =~ s/^\s+//gm;
                         $msg =~ s/\s+$//gm;
                         $msg =~ tr/ \t\n/ /s;
-                        if ($msg eq $self->{orig}->{$tmpl}->{description}) {
+                        if (defined($self->{orig}->{$tmpl}->{description}) &&
+                            $msg eq $self->{orig}->{$tmpl}->{description}) {
                                 $status = 'count';
                         } else {
                                 $status = 'fuzzy';
