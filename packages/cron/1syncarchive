@@ -15,9 +15,12 @@ then
 	foo=\$arch_${dist//-/_}
 	for arch in `eval echo $foo`
 	do
-	    test -d us/${dist}/main/binary-${arch} || mkdir -p us/${dist}/main/binary-${arch}
-	    wget -q -N -O us/${dist}/main/binary-${arch}/Packages.gz \
-		${ftpsite}/dists/${dist}/main/binary-${arch}/Packages.gz
+	    for part in main contrib non-free
+	    do
+		test -d us/${dist}/${part}/binary-${arch} || mkdir -p us/${dist}/${part}/binary-${arch}
+		wget -q -N -O us/${dist}/${part}/binary-${arch}/Packages.gz \
+		    ${ftpsite}/dists/${dist}/${part}/binary-${arch}/Packages.gz
+	    done
 	    wget -q -N -O us/${dist}/Contents-${arch}.gz \
 		${ftpsite}/dists/${dist}/Contents-${arch}.gz
 	done
@@ -28,9 +31,12 @@ else
 	foo=\$arch_${dist//-/_}
 	for arch in `eval echo $foo`
 	do
-	    test -d us/${dist}/main/binary-${arch} || mkdir -p us/${dist}/main/binary-${arch}
-	    rsync ${localdir}/dists/${dist}/main/binary-${arch}/Packages.gz \
-		us/${dist}/main/binary-${arch}/Packages.gz
+	    for part in main contrib non-free
+	    do
+		test -d us/${dist}/${part}/binary-${arch} || mkdir -p us/${dist}/${part}/binary-${arch}
+		rsync ${localdir}/dists/${dist}/${part}/binary-${arch}/Packages.gz \
+		    us/${dist}/${part}/binary-${arch}/Packages.gz
+	    done
 	    rsync ${localdir}/dists/${dist}/Contents-${arch}.gz \
 		us/${dist}/Contents-${arch}.gz
 	done
@@ -44,9 +50,12 @@ do
     foo=\$arch_${dist//-/_}
     for arch in `eval echo $foo`
     do
-	test -d non-US/${dist}/main/binary-${arch} || mkdir -p non-US/${dist}/main/binary-${arch}
-	wget -q -N -O non-US/${dist}/main/binary-${arch}/Packages.gz \
-	    ${nonus_ftpsite}/dists/${dist}/main/binary-${arch}/Packages.gz
+	for part in main contrib non-free
+	do
+	    test -d non-US/${dist}/${part}/binary-${arch} || mkdir -p non-US/${dist}/${part}/binary-${arch}
+	    wget -q -N -O non-US/${dist}/${part}/binary-${arch}/Packages.gz \
+		${nonus_ftpsite}/dists/${dist}/${part}/binary-${arch}/Packages.gz
+	done
 	wget -q -N -O non-US/${dist}/Contents-${arch}.gz \
 	    ${nonus_ftpsite}/dists/${dist}/Contents-${arch}.gz
     done
