@@ -414,29 +414,42 @@ sub parse_tarball {
         }
         $_ = $deb->file_content($control);
         if (m/^Section: ([^\n]*)/m) {
-                $section = lc $1;
+                $section = $1;
                 $section =~ s/\s//g;
-                if ($section =~ m/^non-US/) {
-                        $pooldir = $section."/";
-                } elsif ($section =~ m#^(.*/)#) {
-                        $pooldir = $1;
-                }
         }
         if (m/^Priority: ([^\n]*)/m) {
-                $priority = lc $1;
+                $priority = $1;
                 $priority =~ s/\s//g;
         }
-        if (!defined($synonym{$section})) {
-                $data->add_errors($pkg,"'$section' is not a valid section\n");
-                $section  = "unknown";
-                $priority = "unknown";
-        } elsif (!defined($synonym{$priority})) {
-                $data->add_errors($pkg,"'$priority' is not a valid priority\n");
-                $section  = "unknown";
-                $priority = "unknown";
-        } else {
+        if (defined($synonym{$section})) {
                 $section  = $synonym{$section};
+                if ($section =~ m#^(non-US/(contrib|non-free))#) {
+                        $pooldir = $section."/";
+                } elsif ($section =~ m#^non-US#) {
+                        $pooldir = "non-US/main/";
+                } elsif ($section =~ m#^(contrib|non-free)/#) {
+                        $pooldir = $1."/";
+                }
+        } else {
+                $data->add_errors($pkg,"'$section' is not a valid section\n");
+                if ($section =~ m#^non-US/(contrib|non-free)#i) {
+                        $section = "non-US/$1";
+                        $pooldir = $section."/";
+                } elsif ($section =~ m#^non-US#i) {
+                        $section = "non-US";
+                        $pooldir = "non-US/main/";
+                } elsif ($section =~ m#^(contrib|non-free)/#) {
+                        $section = $1;
+                        $pooldir = $section."/";
+                } else {
+                        $section  = "unknown";
+                }
+        }
+        if (defined($synonym{$priority})) {
                 $priority = $synonym{$priority};
+        } else {
+                $data->add_errors($pkg,"'$priority' is not a valid priority\n");
+                $priority = "unknown";
         }
         if ($pkg =~ m/^(lib.)/) {
                 $pooldir .= $1;
@@ -548,7 +561,7 @@ sub search_po {
                         }
                 }
                 # The next rule is for kde-i18n and other such packages
-                if ($lang eq "" && $file =~ m,^$regexp_for_lang_code/messages,) {
+                if ($lang eq "" && $file =~ m,(?:^|/)$regexp_for_lang_code/(messages|LC_MESSAGES)/,) {
                         $bad_lang = $1;
                         if (is_lang($bad_lang)) {
                                 $lang = $bad_lang;
@@ -774,6 +787,7 @@ sub init_synonym {
 # sub is_lang(code) : returns true iff code is a valide code of language
 sub is_lang {
         my $code = shift;
+        $code =~ s/\@.*$//;
         #   Accept these codes
         return 1 if $code eq 'du-NL' || $code eq 'no_NY' || $code eq 'cz' || $code eq 'dk' || $code eq 'sp' || $code eq 'wa';
         if ($code =~ /^(..)[-_](..)$/) {
