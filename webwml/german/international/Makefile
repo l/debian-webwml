@@ -4,7 +4,7 @@
 
 WMLBASE=..
 CUR_DIR=international
-SUBS=Chinese Swedish Croatian spanish German Polish Danish l10n
+SUBS=Chinese Swedish Croatian spanish German Polish Danish
 
 include $(WMLBASE)/Make.lang
 
