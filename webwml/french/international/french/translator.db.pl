@@ -140,7 +140,7 @@ sub init_translators {
                         'compress'  => 'none'
                 },
                 'Martin Quinson' => {
-                        'email'     => 'mquinson@ens-lyon.fr',
+                        'email'     => 'martin.quinson@ens-lyon.fr',
                         'summary'   => 3,
                         'logs'      => 3,
                         'diff'      => 3,
