@@ -7,3 +7,7 @@ CUR_DIR=MailingLists
 SUBS=
 
 include $(WMLBASE)/Make.lang
+
+
+subscribe.$(LANGUAGE).html: subscribe.wml $(ENGLISHSRCDIR)/$(CUR_DIR)/mklist
+unsubscribe.$(LANGUAGE).html: unsubscribe.wml $(ENGLISHSRCDIR)/$(CUR_DIR)/mklist
