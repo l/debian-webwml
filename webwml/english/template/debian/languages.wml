@@ -1,20 +1,151 @@
 #use wml::sup::path
 <perl>
 
+# Add your language directory along with its ISO abbreviation here.
 # Do not translate the directory names
-#             Directory     Abbrev Language
-my %langs = ("english"  => ["en", "English"],
-             "danish"   => ["da", "Danish"],
-             "french"   => ["fr", "French"],
-             "german"   => ["de", "German"],
-             "italian"  => ["it", "Italian"],
-             "spanish"  => ["es", "Spanish"],
-             "korean"   => ["kr", "Korean"],
-             "japanese" => ["ja", "Japanese"],
-             "croatian" => ["hr", "Croatian"]);
+#            Directory   Abbrev
+my %langs = (english  => "en",
+             danish   => "da",
+             french   => "fr",
+             german   => "de",
+             italian  => "it",
+             spanish  => "es",
+             korean   => "kr",
+             japanese => "ja",
+             croatian => "hr",
+);
+
+# Add a new entry for your language. Also add the english name for your
+# country to the existing entries. Use the same word for the translation
+# and make a request on debian-www for people to add the translations
+# for your country name.
+my %trans = (
+	hr => {
+		croatian => "hrvatski",
+		english  => "engleski",
+		danish   => "danski",
+		french   => "francuski",
+		german   => "njemaèki",
+		italian  => "talijanski",
+		japanese => "japanski",
+		korean   => "korejski",
+		spanish  => "¹panjolski",
+	},
+	en => {
+		croatian => "Croatian",
+		english  => "English",
+		danish   => "Danish",
+		french   => "French",
+		german   => "German",
+		italian  => "Italian",
+		japanese => "Japanese",
+		korean   => "Korean",
+		spanish  => "Spanish",
+	},
+	da => {
+		croatian => "",
+		english  => "",
+		danish   => "",
+		french   => "",
+		german   => "",
+		italian  => "",
+		japanese => "",
+		korean   => "",
+		spanish  => "",
+	},
+	fr => {
+		croatian => "croatian",
+		english  => "anglais",
+		danish   => "Danois",
+		french   => "français",
+		german   => "allemand",
+		italian  => "italien",
+		japanese => "japonais",
+		korean   => "coréen",
+		spanish  => "espagnol",
+	},
+	de => {
+		croatian => "Croatian",
+		english  => "English",
+		danish   => "Danish",
+		french   => "French",
+		german   => "German",
+		italian  => "Italian",
+		japanese => "Japanese",
+		korean   => "Korean",
+		spanish  => "Spanish",
+	},
+	it => {
+		croatian => "croatian",
+		english  => "inglese",
+		danish   => "danish",
+		french   => "francese",
+		german   => "tedesco",
+		italian  => "italiano",
+		japanese => "giapponese",
+		korean   => "coreano",
+		spanish  => "spagnolo",
+	},
+	ja => {
+		croatian => "croatian",
+		english  => "±Ñ¸ì",
+		danish   => "¥ª¥é¥ó¥À¸ì",
+		french   => "¥Õ¥é¥ó¥¹¸ì",
+		german   => "¥É¥¤¥Ä¸ì",
+		italian  => "¥¤¥¿¥ê¥¢¸ì",
+		japanese => "ÆüËÜ¸ì",
+		korean   => "´Ú¹ñ¸ì",
+		spanish  => "¥¹¥Ú¥¤¥ó¸ì",
+	},
+	kr => {
+		croatian => "",
+		english  => "",
+		danish   => "",
+		french   => "",
+		german   => "",
+		italian  => "",
+		japanese => "",
+		korean   => "",
+		spanish  => "",
+	},
+	es => {
+		croatian => "",
+		english  => "",
+		danish   => "",
+		french   => "",
+		german   => "",
+		italian  => "",
+		japanese => "",
+		korean   => "",
+		spanish  => "",
+	},
+);
+	
+<define-tag langtext whitespace=delete>
+	[EN:This page is also available in the following languages:]
+	[HR:Ova stranica je takoðer dostupna na slijedeæim jezicima:]
+	[FR:Cette page est aussi disponible dans les langages suivants:]
+	[DE:This page is also available in the following languages:]
+	[IT:Questa pagina è disponibile anche nelle lingue seguenti:]
+	[JA:¤³¤Î¥Ú¡¼¥¸¤Ï°Ê²¼¤Î¸À¸ì¤Ç¤â¤´Í÷¤Ë¤Ê¤ì¤Þ¤¹:]
+	[PL:Ta strona jestrównie¿ dostêpna w nastêpuj±cych jêzykach:]
+	[ES:nEsta p&aacute;gina est&aacute; tambi&eacute;n disponible en los siguientes idiomas:]
+</define-tag>
+<define-tag setlang whitespace=delete>
+	[EN:How to set the default document language:]
+	[HR:Kako postaviti predodreðeni jezik dokumenata:]
+	[FR:Comment configurer le langage par défaut du document:]
+	[DE:How to set the default document language:]
+	[IT:Come configure il linguaggio predefinito per i documenti:]
+	[JA:¥Ç¥Õ¥©¥ë¥È¤Î¸À¸ì¤òÀßÄê¤¹¤ë¤Ë¤Ï:]
+	[PL:Jak ustawiæ domy¶lny jêzyk dokumentu:]
+	[ES:Como modificar el idioma por defecto de los documentos:]
+</define-tag>
+
+# DO NOT translate anything below here. If you feel something needs to be modified.
+# write to debian-www first.
 
 sub languages {
-  # my ($base_url, $file, $cur_lang) = @_;
   my $str = "";
 
   $base_url = "$(HOME)";
@@ -38,12 +169,11 @@ sub languages {
   }
   # printf STDERR join(', ', @used_langs);
   if (@used_langs) {
-     $str = "<hr>\nThis page is also available in the following languages:<BR>\n";
+     $str = "<hr>\n<langtext>:<BR>\n";
      foreach (@used_langs) {
-        $str .= "<a href=\"$file.html.$langs{$_}[0]\">$langs{$_}[1]</a>&nbsp;\n";
+        $str .= "<a href=\"$file.html.$langs{$_}\">$trans{$cur_lang}{$_}</a>&nbsp;\n";
      }
-     $str .= "\n<BR><a href=\"$base_url/intro/cn.html.en\">How to set the ".
-             "default document language</a>\n";
+     $str .= "\n<BR><a href=\"$base_url/intro/cn.html.en\"><setlang></a>\n";
   }
 
   return $str;
