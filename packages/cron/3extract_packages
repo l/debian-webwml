@@ -79,6 +79,26 @@ do
    cd ${archivedir}
 done
 
+# debian-installer
+#
+for dist in testing unstable
+do
+    test -d ${flatdir}/${dist} || mkdir -p ${flatdir}/${dist}
+    cd us/${dist}
+    foo=\$arch_${dist//-/_}
+    for arch in `eval echo $foo`
+    do
+      if [ -f main/debian-installer/binary-${arch}/Packages.gz ]
+	  then
+	  test -d ${flatdir}/${dist}/main || mkdir -p ${flatdir}/${dist}/main
+	  $bindir/flatten-db \
+	      --db main/debian-installer/binary-${arch}/Packages.gz \
+	      --descr ${flatdir}/${dist}/main/Description-${arch}.installer \
+	      --output ${flatdir}/${dist}/main/Packages-${arch}.installer
+      fi
+    done
+   cd ${archivedir}
+done
 
 for dist in ${dists}
 do
@@ -88,8 +108,13 @@ do
 	  sort ${flatdir}/${dist}/${part}/Description-*.{us,non-US,security} \
 	      | uniq > ${flatdir}/${dist}/${part}/Description
       else
-	  sort ${flatdir}/${dist}/${part}/Description-*.{us,non-US} \
-	      | uniq > ${flatdir}/${dist}/${part}/Description
+	  if [ "$part" = "main" ]; then
+	      sort ${flatdir}/${dist}/${part}/Description-*.{us,non-US,installer} \
+		  | uniq > ${flatdir}/${dist}/${part}/Description
+	  else
+	      sort ${flatdir}/${dist}/${part}/Description-*.{us,non-US} \
+		  | uniq > ${flatdir}/${dist}/${part}/Description
+	  fi
       fi
     done
 done
