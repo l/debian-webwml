@@ -321,7 +321,7 @@ foreach $lang (@search_in) {
 
 	$color = get_color ($percent_a{$lang});
 
-	print HTML "<a name='top'>\n";
+	print HTML "<a name=\"top\"></a>\n";
 	printf HTML "<table width=\"100%%\" cellpadding=2 cellspacing=0 bgcolor=\"%s\">\n", $color;
 
 	printf HTML "<tr><td colspan=4><h1 align=\"center\">%s: %s</h1></td></tr>", $config{'title'}, ucfirst $lang;
@@ -353,7 +353,7 @@ foreach $lang (@search_in) {
 	
 	# outputs the content
 	if ($o_body) {
-	    print HTML "<a name='#outdated'><h3>Outdated translations: <a href='#top'>(top)</a></h3>\n";
+	    print HTML "<h3><a name='#outdated'>Outdated translations</a>: <a href='#top'>(top)</a></h3>\n";
 	    print HTML "<table border=0 cellpadding=1 cellspacing=1>\n";
 	    print HTML "<tr><th>File</th><th>Translated</th><th>Origin</th><th>Comment</th>";
 	    if ($opt_d eq "u") { print HTML "<th>Unified diff</th>"; }
@@ -364,16 +364,16 @@ foreach $lang (@search_in) {
 	    print HTML "</table>\n";
 	}
 	if ($u_body) {
-	    print HTML "<a name='#untranslated'><h3>Pages not translated: <a href='#top'>(top)</a></h3>\n";
+	    print HTML "<h3><a name='#untranslated'>Pages not translated</a>: <a href='#top'>(top)</a></h3>\n";
 	    print HTML $u_body;
 	}
 	if ($t_body) {
-	    print HTML "<a name='#uptodate'><h3>Translations up to date: <a href='#top'>(top)</a></h3>\n";
+	    print HTML "<h3><a name='#uptodate'>Translations up to date</a>: <a href='#top'>(top)</a></h3>\n";
 	    print HTML $t_body;
 	}
 	# outputs the gettext stats
 	if ($lang ne 'english') {
-	    print HTML "<a name='gettext'><h3>Stats on gettext files: <a href='#top'>(top)</a></h3>\n";
+	    print HTML "<h3><a name='gettext'>Stats on gettext files</a>: <a href='#top'>(top)</a></h3>\n";
 #	    print HTML $border_head;
 	    print HTML "<table width=\"100%\" border=0>\n";
 	    print HTML "<tr><th>File</th><th>Up to date</th><th>Fuzzy</th><th>Untranslated</th><th>Total</th></tr>\n";
@@ -449,7 +449,7 @@ foreach $lang (@search_in) {
 print HTML "</table>\n";
 print HTML $border_foot;
 
-print HTML "<h2>Statistics about gettext files (remplacement of slices)</h2>\n";
+print HTML "<h2>Statistics about gettext files (replacement of slices)</h2>\n";
 print HTML $border_head;
 print HTML "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
 print HTML "<tr><th>Language</th><th>Up to date</th><th>Fuzzy</th><th>Untranslated</th><th>Total</th></tr>\n";
