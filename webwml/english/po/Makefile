@@ -37,6 +37,10 @@ ports.mo: ports.$(LANGUAGE).po
 	msgfmt --statistics -o $@ ports.$(LANGUAGE).po
 
 
+init-po:
+	cp $(TEMPLATE_POT) templates.$(LANGUAGE).po
+	cp $(PORTS_POT) ports.$(LANGUAGE).po
+
 update-po:
 	msgmerge templates.$(LANGUAGE).po $(TEMPLATE_POT) -o templates.$(LANGUAGE).po.new && mv templates.$(LANGUAGE).po.new templates.$(LANGUAGE).po
 	msgmerge ports.$(LANGUAGE).po $(PORTS_POT) -o ports.$(LANGUAGE).po.new && mv ports.$(LANGUAGE).po.new ports.$(LANGUAGE).po
