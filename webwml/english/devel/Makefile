@@ -6,7 +6,7 @@ WMLBASE=..
 CUR_DIR=devel
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
-SUBS=website debian-jr
+SUBS=website debian-jr join
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
