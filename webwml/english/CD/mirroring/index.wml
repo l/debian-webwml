@@ -1,53 +1,112 @@
 #use wml::debian::cdimage title="Becoming a mirror for Debian CD images" BARETITLE=true
 #use wml::debian::toc
 
-<p>To become a Debian CD Image mirror site, you need a Linux or Unix-like
-machine with a permanent, reliable connection to the Internet.</p>
-
-<p>The CD image mirrors usually carry the jigdo templates, and some
-also carry pre-built full images. The templates are commonly updated
-via rsync from <a href="../jigdo-cd/#which">one of the official
-locations</a>, and the full images are updated using
-<kbd>jigdo-mirror</kbd>.</p>
+<p>To become a Debian CD Image mirror site, you need a Linux or
+Unix-like machine with a permanent, reliable connection to the
+Internet. Debian CD mirrors hold <tt>.iso</tt> images for CDs and DVDs
+of various sizes, files for <a
+href="http://atterer.net/jigdo/">jigdo</a> (<tt>.jigdo</tt> and
+<tt>.template</tt>), <a
+href="http://bitconjurer.org/BitTorrent/">BitTorrent</a> files
+(<tt>.torrent</tt>) and MD5 checksums of the images
+(<tt>MD5SUMS*</tt>).</p>
 
 <toc-display/>
 
 <hr>
+#______________________________________________________________________
 
-<toc-add-entry name="httpftp">Why FTP and HTTP are <strong>not</strong> suitable</toc-add-entry>
+<toc-add-entry name="master">Master site</toc-add-entry>
 
-<p>You should <em>not</em> use FTP or HTTP to get the images. These transfer
-methods have a high failure probability because of the enormous size of the
+<p>There are two locations for mirroring, one for stable images and
+one for beta/unstable/testing images. The URLs of the master site are
+shown below - however, <strong>please</strong> consider mirroring from
+another nearby mirror (mirror lists: <a
+href="../http-ftp/">HTTP/FTP</a>, <a href="rsync-mirrors">rsync</a>)
+if possible. Access to the master site may be restricted around
+release time.</p>
+
+<p>Also be aware that a <strong>huge</strong> amount of data is stored
+in these directories - read the <a href="#exclude">section below</a>
+for details on how to cut down the size by excluding certain
 files.</p>
 
-<p>Moreover, if the images change only slightly (as is the case with
-subreleases), all of the data is downloaded again. This puts a high stress
-on our computers and network connections.</p>
+<ul>
 
-<toc-add-entry name="download">Downloading via rsync</toc-add-entry>
+  <li>Stable images (updated for each stable release):<br>
 
-<p>For reasons outlined above, we use the <a href="http://rsync.samba.org/">\
-<tt>rsync</tt></a> program that essentially performs remote binary patching.
-With <tt>rsync</tt>, subrelease images are updated very efficiently, as only
-the changed parts are transferred over the network; the unchanged parts are
-copied from the old image.</p>
+    <a href="http://cdimage.debian.org/debian-cd/"
+    ><tt>http://cdimage.debian.org/debian-cd/</tt></a><br>
 
-<p>For sites that wish to include only Debian CD images (and not any other
-Debian mirrors), and that don't have a nearby/fast Debian
-(<kbd>debian/</kbd>) mirror, we suggest using <kbd>rsync</kbd> in a daily
-cron job.</p>
+    <a href="ftp://cdimage.debian.org/debian-cd/"
+    ><tt>ftp://cdimage.debian.org/debian-cd/</tt></a><br>
 
-<p>You can mirror from any of the sites in <a href="rsync-mirrors">this
-mirror list</a>.</p>
+    <tt>rsync://cdimage.debian.org/debian-cd/</tt>
 
-<p>Use at least the options <strong><kbd>--times --links --hard-links
+  </li>
+
+  <li>Beta/unstable/testing images (most sections updated weekly):<br>
+
+    <a href="http://cdimage.debian.org/pub/cdimage-testing/"
+    ><tt>http://cdimage.debian.org/pub/cdimage-testing/</tt></a><br>
+
+    <a href="ftp://cdimage.debian.org/pub/cdimage-testing/"
+    ><tt>ftp://cdimage.debian.org/pub/cdimage-testing/</tt></a><br>
+
+    <tt>rsync://cdimage.debian.org/cdimage-testing/</tt>
+
+  </li>
+
+</ul>
+#______________________________________________________________________
+
+<toc-add-entry name="httpftp">Mirroring using HTTP/FTP is
+discouraged</toc-add-entry>
+
+<p>You should not use FTP or HTTP to update your mirror. These
+transfer methods have a high failure probability because of the
+enormous size of the files.</p>
+
+<p>Furthermore, HTTP and FTP do not include integrity checks of the
+downloaded data, it is more likely that aborted downloads or data
+corruption will go unnoticed.</p>
+#______________________________________________________________________
+
+<toc-add-entry name="rsync">Mirroring using rsync is
+acceptable</toc-add-entry>
+
+<p>The <a href="http://rsync.samba.org/"><kbd>rsync</kbd></a> program
+is a good solution for mirroring. It is less efficient than the other,
+Debian-specific mirroring solution below, but may be easier to set
+up. Furthermore, it ensures that all files are transferred correctly
+and that the metadata (e.g. timestamps) is kept in sync just like the
+file data.</p>
+
+<p>See the section <a href="#exclude">Excluding files from
+mirroring</a> for examples of <kbd>--include</kbd> and
+<kbd>--exclude</kbd> switches. The <a href="rsync-mirrors">list of
+rsync mirrors</a> is available on a separate page.</p>
+
+<p>Use at least the options <strong><kbd>--times --links --hard-links --partial
 --block-size=8192</kbd></strong>. This will preserve modification time,
 symlinks and hardlinks, and use a block size of 8192 bytes (most efficient
 for CD images). When modification time and size are the same,
-<kbd>rsync</kbd> will just leave the file alone, so <tt>--times</tt> is
+<kbd>rsync</kbd> will just leave the file alone, so <kbd>--times</kbd> is
 really obligatory.</p>
+#______________________________________________________________________
 
-<toc-add-entry name="jigdomirror">Generating images with jigdo-mirror</toc-add-entry>
+<toc-add-entry name="jigdolite">Mirroring using jigdo-lite is
+discouraged</toc-add-entry>
+
+<p>Recent versions of the <a
+href="http://atterer.net/jigdo/"><kbd>jigdo-lite</kbd></a> program
+support batch downloading of multiple images. However, we do not
+recommend to use <kbd>jigdo-lite</kbd> to create Debian CD mirrors -
+use <kbd>jigdo-mirror</kbd> instead.</p>
+#______________________________________________________________________
+
+<toc-add-entry name="jigdomirror">Mirroring using jigdo-mirror is
+recommended</toc-add-entry>
 
 <p>A lot of people maintain "regular" Debian mirrors (<kbd>debian/</kbd>),
 or just have such a mirror nearby. This means that they already have the
@@ -96,98 +155,119 @@ page or the source itself (it's a shell script with a lot of comments).</p>
 will do everything on its own. It will make a lot of output and probably
 take a while, so we suggest that you make steps to handle that (run it in
 screen, redirect the output into a file etc).</p>
+#______________________________________________________________________
 
-<toc-add-entry name="pik">Generating images with the pseudo-image kit and debcdmirror</toc-add-entry>
+<toc-add-entry name="pushmirror">How to become a push
+mirror</toc-add-entry>
 
-<p><tt>rsync</tt> alone still does full downloads for "all new" releases, as
-those images contain virtually no unchanged parts. However, with the
-pseudo-image kit we can create "pseudo" CD images from data that is available
-already on the nearest Debian FTP mirror - maybe on your own local hard
-disc. Then <tt>rsync</tt> can binary patch these "pseudo-images" to the
-official ones. And even for most subrelease images this is found to be more
-efficient than patching the old image.</p>
+<p>Whenever new images are available, the master site can send a
+message to its mirrors and make them start updating immediately. This
+way, the new data is "pushed" out rather than "pulled" by the mirrors
+during their next daily update, which leads to faster propagation of
+new image releases.</p>
 
-<p><strong>The information in this section may be outdated! It's recommended
-that you either use plain rsync or try out jigdo-mirror.</strong></p>
+<p>If you want your mirror to be part of this update system, have a
+look at <a href="http://www.acc.umu.se/~maswan/debian-push/cdimage/"
+>this page</a>.</p>
+#______________________________________________________________________
 
-<p>The pseudo image kit is designed mainly for downloading only one or a few
-images, like most people do. There is also the <tt>debcdmirror</tt> script
-which makes mirroring <em>really</em> easy because it automatically uses the
-pseudo image kit and <tt>rsync</tt> to keep your mirror up to date -- even
-to the point of automatically MD5-checksumming every downloaded image. With
-<tt>debcdmirror</tt>, you can also specify exactly what you want to
-mirror.</p>
+<toc-add-entry name="exclude">Excluding files from
+mirroring</toc-add-entry>
 
-<p>Manual use of the pseudo image kit (maybe with <tt>rsync</tt> to
-update subreleases) means lots of work and lots of trouble, so we don't
-recommend it.
+<p>To reduce the amount of storage required by your Debian CD mirror,
+you can exclude certain files from being mirrored. The following
+instructions include command line switches for <kbd>rsync</kbd>, but
+might help you even if you use a different tool for mirroring. With
+<kbd>rsync</kbd>, <kbd>--include</kbd> and <kbd>--exclude</kbd>
+switches are considered in order of appearance, and the first switch
+whose file pattern matches determines whether the file is excluded or
+included.</p>
 
-<p>Instead, you should use the <tt>debcdmirror</tt> script (which
-"internally" uses the Pseudo-Image Kit and <tt>rsync</tt>) (daily cron
-job).</p>
+<ul>
 
-<p>The latest version of the
-<a href="http://cdimage.debian.org/~costar/pseudo-image-kit/">pseudo
-image kit</a> and the
-<a href="http://cdimage.debian.org/~costar/debcdmirror/"><tt>debcdmirror</tt></a>
-script are available from their author's homepage. Read the READMEs in both
-packages for extensive information about the procedures.</p>
+  <li><strong>Exclude source code:</strong>
+  <kbd>--exclude=source/</kbd><br>
 
-<p><strong>Notes:</strong>
+  This will prevent images containing source code from being
+  mirrored. Note that some people consider it inappropriate to offer
+  binaries of GPL-licensed programs on a server without also offering
+  the programs' source code <em>on the same server</em>.</li>
 
-<p>For the <tt>debcdmirror</tt> script, you must choose an <tt>rsync</tt>
-mirror that offers an "<tt>ls-lR</tt>" file. Addresses are on the
-<a href="rsync-mirrors">rsync mirror list</a>.</p>
+  <li><strong>Exclude full images:</strong>
+  <kbd>--include='*businesscard*.iso' --include='*netinst*.iso'
+  --exclude='*.iso'</kbd><br>
 
-<p>If you do not have a local <a href="$(HOME)/mirror/">"regular" Debian
-FTP mirror</a>, check the <a href="$(HOME)/mirror/list">list of mirror
-sites</a>.</p>
+  Exclude all full CD/DVD image sets for all architectures,
+  <em>but</em> mirror the business-card-sized and net-install
+  <tt>.iso</tt> images. We recommend always to mirror these small
+  images: Relative to their size, they are extremely useful!</li>
 
-<p><tt>debcdmirror</tt> requires <tt>bash</tt> version 2 or higher. This
-isn't an issue on any modern Debian system. If necessary, you can install
-that in a non-default location, but then be sure to update the path to
-<tt>bash</tt> in the first line of the script.</p>
+  <li><strong>Exclude full images for non-i386 architectures:</strong>
+  <kbd>--include='*businesscard*.iso' --include='*netinst*.iso'
+  --include='i386/**.iso' --exclude='*.iso'</kbd><br>
 
-<toc-add-entry name="test">Test images</toc-add-entry>
+  As above, but <em>do</em> include all CD/DVD images for the i386
+  architecture.</li>
 
-<p>The "<tt><i>codename</i>_test</tt>" directories contain images that are
-hard-linked to the ones in the versioned (e.g. <tt>2.2_r4</tt>) directories.
-The versioned directory name will change between (sub)releases, but the
-names in the "<tt>test</tt>" directories will stay the same.</p>
+  <li><strong>Exclude full images, except for i386 CDs 1 to
+  3:</strong>
+  <kbd>--include='*netinst*.iso' --include='i386/**-[1-3].iso'
+  --exclude='*.iso'</kbd><br>
 
-<p>So, in the
-<tt>rsync</tt>-only situation, mirroring both the versioned and the
-appropriate "<tt>test</tt>" directories, <em>and</em> using the
-<tt>--hard-links</tt> option is the only way for rsync to update subreleases
-properly. [You should <em>not</em> include "<tt>test</tt>" directories with
-<tt>debcdmirror</tt>, because <tt>debcdmirror</tt> will handle things
-differently and more efficiently.]</p>
+  The full set of i386 images may still take too much space for you if
+  it includes DVD and dual-layer DVD images. This excludes all
+  <tt>.iso</tt> images except for the net-install images and the first
+  three i386 CDs.</li>
 
-<toc-add-entry name="ls-lR">ls-lR files</toc-add-entry>
+  <li><strong>Exclude all architectures except i386:</strong>
+  <kbd>--exclude=alpha/ --exclude=arm/ --exclude=hppa/ --exclude=hurd/
+  --exclude=ia64/ --exclude=m68k/ --exclude=mips/ --exclude=mipsel/
+  --exclude=powerpc/ --exclude=s390/ --exclude=sh/
+  --exclude=sparc/</kbd><br>
 
-<p>The <tt>ls-lR</tt> file describes the directory structure of the mirror
-it is on. <strong>Do not</strong> mirror the <tt>ls-lR</tt> file; either
-make one yourself (with the provided "<tt>Makels-lR</tt>", every hour via
-<tt>cron</tt>) or simply have no <tt>ls-lR</tt> file at all.
-[<tt>debcdmirror</tt> will create a local <tt>ls-lR</tt> automatically after
-mirroring.]</p>
+  Only include the full set of files for i386, do not include any
+  <tt>.jigdo</tt>, <tt>.iso</tt> etc files whatsoever for the other
+  architectures.</li>
 
-<toc-add-entry name="serve">Serving the files</toc-add-entry>
+</ul>
+#______________________________________________________________________
 
-<p>Once you have acquired the CD images you want to mirror (i386 and source
-CDs are most popular), you should run the <tt>rsync</tt> server program.
-This will not place a heavy load on your machine, and will generate much
-less network traffic than an FTP/HTTP service.</p>
+<toc-add-entry name="names">Naming conventions for <tt>.iso</tt>
+images</toc-add-entry>
 
-<p>Instructions for setting this up are in the README of the pseudo-image
-kit. In short, add <kbd>rsync --daemon</kbd> in your <i>inetd</i>
-configuration, and set up <kbd>rsyncd.conf</kbd> to your liking.
-We recommend limiting access to a handful connections per IP address,
-and a double-figure number total, at most.</p>
+<p>The diffent variants of <tt>.iso</tt> images are distinguishable by
+their names, allowing you to restrict the types of images you
+mirror:</p>
 
-# TODO: include more stuff here rather than depending on pik, with examples
+<ul>
 
-<toc-add-entry name="register">Registering the mirror in our lists</toc-add-entry>
+  <li><strong><tt>*-businesscard.iso</tt></strong>: One image for each
+  of the <a href="/ports/#released">supported architectures</a>,
+  50&nbsp;MB</li>
+
+  <li><strong><tt>*-netinst.iso</tt></strong>: One image for each
+  architecture, 110&nbsp;MB</li>
+
+  <li><strong><tt>*-dvd.iso</tt></strong> (single-layer DVDs):
+  Multiple images for each architecture, each up to 4482&nbsp;MB
+  large. The accumulated size for all images and architectures equals
+  the <a href="/mirror/size">size of a full Debian mirror</a>
+  (100&nbsp;GB as of this writing).</li>
+
+  <li><strong><tt>*-dldvd.iso</tt></strong> (dual-layer DVDs): As
+  above, except that individual images are up to 8106&nbsp;MB
+  large.</li>
+
+  <li><strong><tt>*.iso</tt></strong>: All remaining <tt>.iso</tt>
+  files which do not match one of the above patterns are CD
+  images. There are multiple images for each architecture, each up to
+  650&nbsp;MB large, totalling again the size of a full Debian
+  mirror.</li>
+
+</ul>
+#______________________________________________________________________
+
+<toc-add-entry name="register">Registering the mirror</toc-add-entry>
 
 <p>To make your CD image mirror useful to a wider audience,
 you can register it in our mirror list such as
