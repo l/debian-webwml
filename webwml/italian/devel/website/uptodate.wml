@@ -1,0 +1,56 @@
+#use wml::debian::template title="Mantenere le traduzioni aggiornate"
+<!--translation 1.2-->
+
+<P>Poiché le pagine web non sono statiche, è una buona idea quella di tenere
+traccia della versione che si è tradotta; e usare questa informazione per
+vedere quali pagine sono cambiate dall'ultima traduzione.
+Per aiutare in questo è disponibile lo script <code>check_trans.pl</code>
+nella directory webwml.
+
+<P>Lo script ha bisogno di trovare all'interno del file wml tradotto il
+riferimento alla versione della pagina originale.
+Questa informazione va inserita da qualche parte nel documento nella forma
+<code>&lt;!--translation <var>x.x</var>--&gt;</code> dove <var>x.x</var>
+è la versione dell'originale (inglese.)
+Questo testo deve essere scritto in una linea a sè, eventualmente la linea può
+cominciare con un commento wml (<code>#</code>) in modo che non sia aggiunta
+nella pagina HTML finale.
+
+<P>Se esegui il comando <code>check_trans.pl <var>lingua</var></code>
+(sostituendo a <var>lingua</var> il nome della directory che contiene le
+traduzioni, come "italian") otterrai un rapporto sule pagine che non sono
+ancora state tradotte (mostrato come "<code>Missing
+<var>filename</var></code>") e sulle pagine che si riferiscono ad una versione
+precedente (mostrato come "<code>NeedToUpdate <var>filename</var> to version
+<var>x.x</var></code>").
+
+<P>Se vuoi sapere esattamente quali differenze ci sono tra la nuova versione e
+quella usata per la traduzione, puoi eseguire il comando <code>check_trans.pl
+-d <var>lingua</var></code>.
+Nota che questo può impiegare un certo tempo poiché deve fare parecchi accessi
+al server CVS.
+
+<P>Se non vuoi che ti sia stampato il messaggio per le pagine mancanti per
+alcune directory (ad esempio, la directory delle news), puoi creare un file
+che si chiama <code>.transignore</code> nella directory dove si trovano i file
+da ignorare, elencando tutti i file che non intendi tradurre. Uno per linea.
+
+<H2>Proposta: verifica se la traduzione non è aggiornata</H2>
+<P>
+Attualmente alcune traduzioni nonvengono verificate per tempi molto lunghi
+mentre gli originali cambiano spesso. Quando, però, il server web deve
+restituire una pagina tradotta non va a verificare la versione e quindi
+può restituire pagine che non corrispondono più alla versione originale.
+</P>
+<P>C'è quindi una proposta che potrebbe essere in grado di cambiare lo stato
+corrente. C'è un file (<code>english/template/debian/translation-check</code>
+che implementa questa verifica, ma in maniera crudele. Questa proposta è stata
+fatta da Javier Fernández-Sanguino durante l'ultima settimana di agosto 1999,
+per avere maggiorni informazioni su questa proposta fate riferimento agli
+archivi della lista di messaggi.
+<P>
+Per usare il programma aggiungete la riga <code>#use
+wml::debian::translation-check translation="x.x"</code> dove <em>x.x</em> è la
+versione CVS del documento originale (Puoi trovare questo numero guardando il
+file CVS/Entries che ha il formato <code>/file_name/x.x/date//</code>, oppure
+eseguendo il comando <code>cvs status file_name</code> nella directory english.
