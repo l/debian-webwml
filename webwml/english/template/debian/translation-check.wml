@@ -32,7 +32,7 @@
 
 # This is the message that is displayed if the translation is aged.
 # (min_delta <= difference < max_delta)
-<define-tag translationaged whitespace=delete>
+<define-tag translationaged>
   [EN:<P><EM>Note:</EM> The original is newer than this translation.</P>:]
   [EL:<P><EM>Σημείωση:</EM> To αυθεντικό είναι νεώτερο απο αυτή τη μετάφραση.</P>:]
   [SV:<P><EM>Observera:</EM> Originalet δr nyare δn denna φversδttning.</P>:]
@@ -60,9 +60,7 @@
 
 # This is the message that is displayed if the translation is too old.
 # (difference >= max_delta)
-<define-tag translationoutofdate whitespace=delete>
-<perl>
-my $slices = q{
+<define-tag translationoutofdate>
   [EN:<P><STRONG>Warning! This translation is too out of date,
       please see the <A HREF="$link">original</A>.</STRONG></P>:]
   [AR:<P><STRONG>Warning! This translation is too out of date,
@@ -109,15 +107,11 @@ my $slices = q{
       please see the <A HREF="$link">original</A>.</STRONG></P>:]
   [ZH:<p><strong>ª`·N΅I¦ΉΊτ­¶¤¤¤εΔ¶¥»¤Σ¤[¨S¦³§σ·s¤F΅A\
       ½Π°ΡΎ\\<a href="$link">³Μ·s­μ­^¤ε¥»</a>΅C</strong></p>:]
-};
-<perl:var> =~ s/([^:][^ \]])\n/$1 \n/g;
-<perl:print:var>
-</perl>
 </define-tag>
 
 # This is the message that is displayed if the referenced original file
 # no longer exists.
-<define-tag originalgone whitespace=delete>
+<define-tag originalgone>
   [EN:<P><EM>Note:</EM> The original no longer exists.</P>:]
   [AR:<P><EM>Note:</EM> The original no longer exists.</P>:]
   [DA:<P><EM>Bemζrk:</EM> Originalen findes ikke lζngere.</P>:]
@@ -152,7 +146,7 @@ sub check_translation {
 # Input parameters:
 my ($translation, $file, $original, $mindelta, $maxdelta) = @_;
 
-my $parents, $level, $relative_dir;
+my $parents, $level, $relative_dir, $output;
 my @relative_dir = ();
 
 # This is the maximum difference between a translated
@@ -223,18 +217,27 @@ if ($version ne "")
 
 print "Comparing original $version to translation version $translation\n" if ($debug >= 1);
 
+$output = '';
 if ($version eq "")
 {
-	print qq(<originalgone>)
+	$output = qq(<originalgone>)
 }
 elsif ( $major_number != $major_translated_number ) {
-	print qq(<translationoutofdate>)
+	$output = qq(<translationoutofdate>)
 }
 elsif ( $last_number - $last_translated_number >= $max_versions ) {
-	print qq(<translationoutofdate>)
+	$output = qq(<translationoutofdate>)
 }
 elsif ( $last_number - $last_translated_number >= $min_versions ) {
-	print qq(<translationaged>)
+	$output = qq(<translationaged>)
+}
+# Remove extra whitespace
+if ($output ne "") {
+	$output =~ s/^ +//m;
+	$output =~ s/ +$//m;
+	$output =~ s/:\]\n\[/:\]\[/sg;
+	$output =~ s/\n/ /sg;
+	print $output;
 }
 }
 </perl>
