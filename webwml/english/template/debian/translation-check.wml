@@ -109,6 +109,34 @@
       please see the <A HREF="$link">original</A>.</STRONG></P>:]
 </define-tag>
 
+# This is the message that is displayed if the referenced original file
+# no longer exists.
+<define-tag originalgone whitespace=delete>
+  [EN:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [AR:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [DA:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [DE:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [EL:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [EO:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [ES:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [FI:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [FR:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [HR:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [HU:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [IT:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [JA:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [KO:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [NL:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [NO:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [PL:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [PT:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [RO:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [RU:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [TR:<P><EM>Note:</EM> The original no longer exists.</P>:]
+  [SV:<P><EM>Observera:</EM> Originalet existerar inte längre.</P>:]
+  [ZH:<P><EM>Note:</EM> The original no longer exists.</P>:]
+</define-tag>
+
 # DO NOT translate anything below here. --------------------------------------
 
 <perl>
@@ -160,25 +188,34 @@ while (<CVS_ENTRY>) {
 	last if $version;
 }
 close CVS_ENTRY;
-if ($version eq "") { die "It seems the original $file no longer exists."; }
-print ${file} . "'s original CVS revision is: $version\n" if ($debug >= 1);
+if ($version ne "")
+{
+	print ${file} . "'s original CVS revision is: $version\n"
+		if ($debug >= 1);
 
-@version_numbers = split /\./,$version;
-$major_number = @version_numbers[0];
-$last_number = pop @version_numbers;
-die "Invalid CVS revision for $file: $version\n" unless ($major_number =~ /\d+/ && $last_number =~ /\d+/);
+	@version_numbers = split /\./,$version;
+	$major_number = @version_numbers[0];
+	$last_number = pop @version_numbers;
+	die "Invalid CVS revision for $file: $version\n"
+		unless ($major_number =~ /\d+/ && $last_number =~ /\d+/);
 
-@translation_numbers = split /\./,$translation;
-$major_translated_number = @translation_numbers[0];
-$last_translated_number = pop @translation_numbers;
-die "Invalid translation revision for $file: $translation\n" unless ($major_translated_number =~ /\d+/ && $last_translated_number =~ /\d+/);
+	@translation_numbers = split /\./,$translation;
+	$major_translated_number = @translation_numbers[0];
+	$last_translated_number = pop @translation_numbers;
+	die "Invalid translation revision for $file: $translation\n"
+		unless ($major_translated_number =~ /\d+/ && $last_translated_number =~ /\d+/);
+}
 
 # Here we compare the original version with the translated one and print
 # a note for the user if their first or last numbers are too far apart
 
 print "Comparing original $version to translation version $translation\n" if ($debug >= 1);
 
-if ( $major_number != $major_translated_number ) {
+if ($version eq "")
+{
+	print qq(<originalgone>)
+}
+elsif ( $major_number != $major_translated_number ) {
 	print qq(<translationoutofdate>)
 }
 elsif ( $last_number - $last_translated_number >= $max_versions ) {
