@@ -238,8 +238,21 @@
         "ZM" => "Zambia",
         "ZW" => "Zimbabwe");
 
-    function print_place_compact($begin, $finish, $city, $state, $country, $url) {
+    function print_from_to($begin, $finish) {
+        if (! $begin && ! $finish) {
+            # don't show anything
+        } else if ($begin && ! $finish) {
+            echo ", starting from $begin";
+        } else if (! $begin && $finish) {
+            echo ", until $finish";
+        } else {
+            echo ", $begin to $finish";
+        }
+    }
+
+    function print_place_compact($prefix, $begin, $finish, $city, $state, $country, $url) {
         global $iso;
+        echo $prefix;
         if ($state) {
             echo "<b>$state</b>, ";
         }
@@ -253,18 +266,9 @@
             echo "$iso[$country]";
         }
         echo "<i>";
-        if (! $begin && ! $finish) {
-            # don't show anything
-        } else if ($begin && ! $finish) {
-            echo ", starting from $begin";
-        } else if (! $begin && $finish) {
-            echo ", until $finish";
-        } else {
-            echo ", $begin to $finish";
-        }
+        print_from_to($begin, $finish);
         echo "</i>";
     }
-
 
     function print_place_long($begin, $finish, $city, $state, $country, $url) {
         global $iso;
@@ -280,15 +284,7 @@
         if ($url) {
             echo "<kbd>$url</kbd>, ";
         }
-        if (! $begin && ! $finish) {
-            echo "always";
-        } else if ($begin && ! $finish) {
-            echo "starting from $begin";
-        } else if (! $begin && $finish) {
-            echo "until $finish";
-        } else {
-            echo "$begin to $finish";
-        }
+        print_from_to($begin, $finish);
     }
 
     function print_all_places($id, $modify) {
@@ -317,10 +313,13 @@
         echo "</UL>";
     }
 
-
-
     function show_by_country($db, $offer) {
         global $iso;
+        $shortlength = 3;   # the maximal length of a state to be displayed inline
+        $indent="";         # indentation of location where state not inline
+        for ($i=0; $i <= $shortlength; $i++) {
+            $indent .= "&nbsp;";
+        }
         $sql = "SELECT country, state, who, begin, finish, city, forename, surname, email, places.url, people.url as peopleurl, places.url as placesurl FROM places, people WHERE ";
         if ($offer) {
             $sql .= "offer is TRUE";
@@ -347,11 +346,17 @@
                 echo "\n";
                 $old_state = "";
             }
-
-              if ($row["state"] != $old_state) {
+            if ($row["state"] != $old_state) {
                 echo "<p>\n";
+                if (strlen($row["state"]) > $shortlength) {
+                    echo "<b>", $row["state"], ",</b><br>\n";
+                }
             }
-            print_place_compact($row["begin"], $row["finish"], $row["city"], $row["state"], $row["country"], $row["placesurl"]);
+            if (strlen($row["state"]) <= $shortlength) {
+                print_place_compact("",$row["begin"], $row["finish"], $row["city"], $row["state"], $row["country"], $row["placesurl"]);
+            } else {
+                print_place_compact($indent,$row["begin"], $row["finish"], $row["city"], "", $row["country"], $row["placesurl"]);
+            }
             echo ": ";
             if ($row["peopleurl"]) {
                 echo "<a href=\"", $row["peopleurl"], "\">", $row["forename"], " ", $row["surname"], "</a>";
@@ -367,4 +372,3 @@
     }
 
 ?>
-
