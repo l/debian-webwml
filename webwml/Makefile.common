@@ -1,0 +1,134 @@
+# Nothing in here should require any modification. If you feel you need to
+# modify something first send mail to debian-www explaining why.
+
+RELHTMLBASE := ../../debian.org
+RELTEMPLDIR := ../english/template/debian
+CUR_YEAR := $(shell date +%Y)
+
+HTMLDIR = $(WMLBASE)/$(RELHTMLBASE)/$(CUR_DIR)
+TEMPLDIR = $(WMLBASE)/$(RELTEMPLDIR)
+ENGLISHSRCDIR = $(WMLBASE)/../english
+
+LANGUAGECAP = $(shell echo $(LANGUAGE) | tr "a-z" "A-Z")
+WMLOPTIONS := -q -D CUR_YEAR=$(shell date +%Y)
+WMLOUTFILE = $(@F)
+WMLPROLOG :=
+WMLEPILOG :=
+WML = wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE)@g+w $(WMLPROLOG) $(WMLEPILOG)
+
+WMLFILES = $(wildcard *.wml)
+HTMLFILES = $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
+HTMLDESTFILES = $(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE).html,$(WMLFILES))
+
+# all the binary file types should be added below.
+JPGSOURCE := $(wildcard *.jpg)
+JPGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(JPGSOURCE))
+GIFSOURCE := $(wildcard *.gif)
+GIFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(GIFSOURCE))
+PNGSOURCE := $(wildcard *.png)
+PNGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PNGSOURCE))
+PSSOURCE := $(wildcard *.ps.gz)
+PSDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PSSOURCE))
+EPSSOURCE := $(wildcard *.eps)
+EPSDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(EPSSOURCE))
+PDFSOURCE := $(wildcard *.pdf)
+PDFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PDFSOURCE))
+FIGSOURCE := $(wildcard *.fig)
+FIGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(FIGSOURCE))
+XCFSOURCE := $(wildcard *.xcf.gz)
+XCFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(XCFSOURCE))
+IMGFILES := $(JPGSOURCE) $(GIFSOURCE) $(PNGSOURCE) $(PSSOURCE) $(EPSSOURCE) $(PDFSOURCE) $(FIGSOURCE) $(XCFSOURCE)
+IMGDESTFILES := $(JPGDESTFILES) $(GIFDESTFILES) $(PNGDESTFILES) $(PSDESTFILES) $(EPSDESTFILES) $(PDFDESTFILES) $(FIGDESTFILES) $(XCFDESTFILES)
+
+existing-SUBS := $(shell for dir in $(wildcard $(SUBS)) ''; do test -d $$dir && echo $$dir; done)
+
+all:: $(HTMLFILES) $(existing-SUBS)
+
+$(existing-SUBS):
+	$(MAKE) -C $@
+
+existing-SUBS-install := $(addsuffix -install,$(existing-SUBS))
+
+install::
+	test -d $(HTMLDIR) || mkdir -p $(HTMLDIR)
+install:: $(HTMLDESTFILES) $(IMGDESTFILES) $(existing-SUBS-install)
+
+$(existing-SUBS-install):
+	$(MAKE) -C $(subst -install,,$@) install
+
+existing-SUBS-clean := $(addsuffix -clean,$(existing-SUBS))
+
+clean::
+	rm -f *.$(LANGUAGE).html
+clean:: $(existing-SUBS-clean)
+
+$(existing-SUBS-clean):
+	$(MAKE) -C $(subst -clean,,$@) clean
+
+existing-SUBS-cleandest := $(addsuffix -cleandest,$(existing-SUBS))
+
+cleandest::
+	rm -f $(HTMLDIR)/*.$(LANGUAGE).html
+cleandest:: $(existing-SUBS-cleandest)
+
+$(existing-SUBS-cleandest):
+	$(MAKE) -C $(subst -cleandest,,$@) cleandest
+
+# the rule for every wml file
+%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
+	$(WML) $(<F)
+
+$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
+	@echo copying $(@F) to $(HTMLDIR)
+	-@cp $(@F) $(HTMLDIR)
+ifeq ($(LANGUAGE),en)
+	@echo making a link $(@D)/$(*F).html -\> $(@F)
+	-@ln -f -s $(@F) $(@D)/$(*F).html
+endif
+
+$(IMGDESTFILES): $(IMGFILES)
+	cp $(@F) $(HTMLDIR)
+
+# template dependencies
+$(TEMPLDIR)/basic.wml: $(TEMPLDIR)/navbar.wml
+	touch $(TEMPLDIR)/basic.wml
+
+$(TEMPLDIR)/footer.wml: $(TEMPLDIR)/ctime.wml
+	touch $(TEMPLDIR)/footer.wml
+
+$(TEMPLDIR)/menubar.wml: $(TEMPLDIR)/footer.wml
+	touch $(TEMPLDIR)/menubar.wml
+
+$(TEMPLDIR)/mainpage.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/menubar.wml
+	touch $(TEMPLDIR)/mainpage.wml
+
+$(TEMPLDIR)/template.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/footer.wml \
+		$(TEMPLDIR)/languages.wml 
+	touch $(TEMPLDIR)/template.wml
+
+$(TEMPLDIR)/news.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/footer.wml \
+		$(TEMPLDIR)/languages.wml 
+	touch $(TEMPLDIR)/news.wml
+
+$(TEMPLDIR)/consultant.wml: $(TEMPLDIR)/footer.wml
+	touch $(TEMPLDIR)/consultant.wml
+
+$(TEMPLDIR)/event.wml: $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml $(TEMPLDIR)/basic.wml
+	touch $(TEMPLDIR)/event.wml
+
+$(TEMPLDIR)/navbar.wml: $(ENGLISHSRCDIR)/Pics/banner.jpg $(ENGLISHSRCDIR)/Pics/logo-50.jpg
+	touch $(TEMPLDIR)/navbar.wml
+
+$(TEMPLDIR)/security.wml: $(TEMPLDIR)/common_translation.wml \
+		$(TEMPLDIR)/basic.wml $(TEMPLDIR)/fixes_link.wml \
+		$(TEMPLDIR)/languages.wml $(TEMPLDIR)/ctime.wml \
+		$(TEMPLDIR)/footer.wml
+	touch $(TEMPLDIR)/security.wml
+
+$(TEMPLDIR)/ddp.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml \
+		$(TEMPLDIR)/footer.wml
+	touch $(TEMPLDIR)/ddp.wml
+
+.SUFFIXES: 
+.PHONY: all $(existing-SUBS) install $(existing-SUBS-install)
+.PHONY: clean $(existing-SUBS-clean) cleandest $(existing-SUBS-cleandest)
