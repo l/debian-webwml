@@ -13,8 +13,7 @@ install::
 	install -m 664 -p apt-get-mini-COMO.html apt-get-mini-COMO.sgml \
 	 apt-guia-usuarios.sgml mitos-debian.html mitos-debian.sgml\
 	paqifaz.html paqifaz.sgml paqifaz.txt paquetes.html \
-	presentacion-debian.tex tabla-historia.txt \
-	euro-howto.txt $(HTMLDIR)
+	tabla-historia.txt euro-howto.txt $(HTMLDIR)
 
 
 cleandest::
