@@ -1,12 +1,9 @@
-# This Makefile should need no changes from webwml/english/doc/Makefile
-# Please send a message to debian-www if you need to modify anything
-# so the problem can be fixed.
+# This Makefile should need no changes from the equivalent copy under
+# webwml/english/
 
-WMLBASE=..
-CUR_DIR=doc
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
-SUBS=
+WMLBASE	:= ..
+CUR_DIR	:= $(subst $(shell cd $(WMLBASE); pwd -P)/,,$(shell pwd))
+SUBS	:=# remove subdirectories that you don't want built from this variable
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
@@ -14,11 +11,13 @@ include $(WMLBASE)/Make.common
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
 
-%-manuals.$(LANGUAGE).html: %-manuals.wml $(TEMPLDIR)/ddp.wml $(ENGLISHSRCDIR)/doc/manuals.defs
-	$(WML) $(<F)
-
-cvs.$(LANGUAGE).html: cvs.wml $(TEMPLDIR)/ddp.wml $(ENGLISHSRCDIR)/doc/dirtree.jpg
 ddp.$(LANGUAGE).html: ddp.wml $(TEMPLDIR)/ddp.wml
-docpolicy.$(LANGUAGE).html: docpolicy.wml $(TEMPLDIR)/ddp.wml
+	$(WML) -Dmlmonth=$(shell date '+%y%m') $(<F)
 todo.$(LANGUAGE).html: todo.wml $(TEMPLDIR)/ddp.wml
+docpolicy.$(LANGUAGE).html: docpolicy.wml $(TEMPLDIR)/ddp.wml
+cvs.$(LANGUAGE).html: cvs.wml $(TEMPLDIR)/ddp.wml $(ENGLISHSRCDIR)/doc/dirtree.jpg
 topics.$(LANGUAGE).html: topics.wml $(TEMPLDIR)/ddp.wml
+user-manuals.$(LANGUAGE).html: user-manuals.wml $(TEMPLDIR)/ddp.wml $(ENGLISHSRCDIR)/doc/manuals.defs
+admin-manuals.$(LANGUAGE).html: admin-manuals.wml $(TEMPLDIR)/ddp.wml $(ENGLISHSRCDIR)/doc/manuals.defs
+devel-manuals.$(LANGUAGE).html: devel-manuals.wml $(TEMPLDIR)/ddp.wml $(ENGLISHSRCDIR)/doc/manuals.defs
+misc-manuals.$(LANGUAGE).html: misc-manuals.wml $(TEMPLDIR)/ddp.wml $(ENGLISHSRCDIR)/doc/manuals.defs
