@@ -1,6 +1,7 @@
 #use wml::std::tags
 #use wml::debian::languages
 #use wml::debian::common_tags
+#use wml::debian::openrecode
 
 <define-tag needsponsors whitespace=delete>
   <gettext>Waiting&nbsp;for&nbsp;Sponsors</gettext>
@@ -69,13 +70,13 @@ foreach $year (@years) {
 
   foreach (@files) {
     $count++;
-    open(FILE, "<$path/$_") || open(FILE, "<$current_dir/$path/$_");
+    my $fh = openrecode("$path/$_", "$current_dir/$path/$_");
     if ( /(vote.*).wml/ ) {
       $base = $1;
     }
     $title = ''; $status = '';
 <protect pass=2>
-    foreach $line (<FILE>) {
+    foreach $line (<$fh>) {
       if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
         $title = $1;
       } elsif ($line =~ /^<define-tag status>(.*)<\/define-tag>$/) {
@@ -102,7 +103,7 @@ foreach $year (@years) {
     } else {
 	$unknown .= $str1;
     }
-    close FILE;
+    close $fh;
     if ($count eq $number) { last; }
   }
 }
