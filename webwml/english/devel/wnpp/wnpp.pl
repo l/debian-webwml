@@ -26,12 +26,11 @@ sub htmlsanit {
     %escape = ('<' => 'lt', '>' => 'gt', '&' => 'amp', '"' => 'quot');
     my $in = shift;
     my $out;
-    while ($in =~ m/[<>&"]/) {
-        $out.= $`. '&'. $escape{$&}. ';';
-        $in=$';
+    while ($in =~ m/^(.*?)([<>&"])(.*)/s) {
+        $out .= $1.'&'.$escape{$2}.';';
+        $in=$3;
     }
-    $out .= $in;
-    return $out;
+    return $out . $in;
 }
 
 # The maintainers flat database
@@ -41,8 +40,8 @@ $MAINTAINERS = "Maintainers" if ( $host ne "master.debian.org" );
 
 open MAINTAINERS or die "Can't find $MAINTAINERS file at $host: $!\n";
 while (<MAINTAINERS>) {
-    if (/^(\S+)\s+/) {
-    	$maintainer{$1} = $';
+    if (/^(\S+)\s+(.*)/) {
+    	$maintainer{$1} = $2;
     }
 }
 close MAINTAINERS;
@@ -64,23 +63,23 @@ foreach $entry ($mesg->entries) {
     chomp $subject;
     $subject = htmlsanit($subject);    
     # Make order out of chaos    
-    if ($subject =~ m/^(?:ITO|RFA):\s*(\S+)(?:\s+-+\s+)?/) {
-        $rfa{$bugid} = $1 . ($'?": ":"") . $';
+    if ($subject =~ m/^(?:ITO|RFA):\s*(\S+)(?:\s+-+\s+)?(.*)/) {
+        $rfa{$bugid} = $1 . ($2?": ":"") . $2;
 	if (defined($maintainer{$1})) {
 	    push @{$rfabymaint{$maintainer{$1}}}, $bugid;
 	} else {
 	    push @{$rfabymaint{"Unknown"}}, $bugid;
 	}
-    } elsif ($subject =~ m/^O:\s*(\S+)(?:\s+-+\s+)?/) {
-        $orphaned{$bugid} = $1 . ($'?": ":"") . $';
-    } elsif ($subject =~ m/^W:\s*(\S+)(?:\s+-+\s+)?/) {
-        $withdrawn{$bugid} = $1 . ($'?": ":"") . $';
-    } elsif ($subject =~ m/^ITA:(?:\s*(?:ITO|RFA|O|W):)?\s*(\S+)(?:\s+-+\s+)?/) {
-        $ita{$bugid} = $1 . ($'?": ":"") . $';
-    } elsif ($subject =~ m/^ITP:(?:\s*RFP:)?\s*/) {
-        $itp{$bugid} = join(": ", split(/\s+-+\s+/, $',2));
-    } elsif ($subject =~ m/^RFP:\s*/) {
-        $rfp{$bugid} = join(": ", split(/\s+-+\s+/, $',2)); 
+    } elsif ($subject =~ m/^O:\s*(\S+)(?:\s+-+\s+)?(.*)/) {
+        $orphaned{$bugid} = $1 . ($2?": ":"") . $2;
+    } elsif ($subject =~ m/^W:\s*(\S+)(?:\s+-+\s+)?(.*)/) {
+        $withdrawn{$bugid} = $1 . ($2?": ":"") . $2;
+    } elsif ($subject =~ m/^ITA:(?:\s*(?:ITO|RFA|O|W):)?\s*(\S+)(?:\s+-+\s+)?(.*)/) {
+        $ita{$bugid} = $1 . ($2?": ":"") . $2;
+    } elsif ($subject =~ m/^ITP:(?:\s*RFP:)?\s*(.*)/) {
+        $itp{$bugid} = join(": ", split(/\s+-+\s+/, $2,2));
+    } elsif ($subject =~ m/^RFP:\s*(.*)/) {
+        $rfp{$bugid} = join(": ", split(/\s+-+\s+/, $2,2)); 
     } else {
     	print STDERR "What is this ($bugid): $subject\n" if ( $host ne "master.debian.org" );
     }
