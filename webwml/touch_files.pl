@@ -23,8 +23,8 @@ sub obtain_files
     return unless -s "$config{'datadir'}/wmlfiles";
     if (open (IN, "diff -0 $config{'datadir'}/wmlfiles.old $config{'datadir'}/wmlfiles|")) {
 	while (<IN>) {
-	    next until (/^> \.\//);
-	    s/^> \.\///;
+	    next until (/^[<>] \.\//);
+	    s/^[<>] \.\///;
 	    chomp ();
 	    push (@list, $_);
 	}
@@ -41,8 +41,9 @@ unless (getopts('d')) {
 	print <<_END_;
 Usage: $0 [-d]
 
-This script finds new translations and touches the old translations so they
-rebuild and include a link to the new ones.
+This script finds new translations and translations that have been
+removed and touches the translations so they rebuild and include a
+link to the new ones and remove links to old ones.
 
   -d  Remove files, just not report.
 _END_
@@ -51,9 +52,9 @@ _END_
 
 make_listing ();
 
-@new_files = obtain_files ();
+@files = obtain_files ();
 
-foreach $file (@new_files) {
+foreach $file (@files) {
     @components = split (/\//, $file);
     shift @components;
     my $cmd = "touch */" . join '/', @components;
