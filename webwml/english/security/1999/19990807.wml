@@ -4,8 +4,20 @@
 <define-tag description>Incorrect permissions on xmonisdn</define-tag>
 <define-tag isvulnerable>no</define-tag>
 <define-tag fixed>yes</define-tag>
-<define-tag moreinfo>xmonisdn was incorrectly installed suid root. The current
-package assigns dialout group privilages instead.</define-tag>
+<define-tag moreinfo>Xmonisdn is an X applet that shows the status of the ISDN
+links. You can configure it to run two scripts when the left or right mouse
+button are clicked on it. Xmonisdn was installed setuid root so that the
+scripts could do things like add and delete the default route. However is that
+while the scripts were checked for owner root and not writeable by group or
+others the scripts are run via the system() library function, which spawns a
+shell to run it. This means that the scripts are open to attack via IFS and/or
+PATH manipulation.  
+<p>However, the setuid root isn't necessary anymore as the ISDN system now
+offers other ways of preventing dialouts besides by manipulating network
+routes.  This can be done by anyone who can access /dev/isdnctrl0 and
+/dev/isdninfo. On debian systems those are rw for group dialout, so if
+xmonisdn is run by someone in group dialout, they can execute the
+necessary isdnctrl commands.</define-tag>
 
 #use wml::debian::security
 
