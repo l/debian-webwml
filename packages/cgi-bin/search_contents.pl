@@ -13,6 +13,7 @@ require 5.001;
 use strict;
 use CGI;
 use POSIX;
+use URI::Escape;
 
 my $thisscript = "search_contents.pl";
 
@@ -145,9 +146,10 @@ my $numpages = ceil($number / $results_per_page);
 my $index_line = "";
 
 for (my $i = 1; $i <= $numpages; $i++) {
-	$index_line .= "<a href=\"$thisscript?page=$i&word=$keyword".
-                    "&version=$version&arch=$arch&case=$case".
-                    "&searchmode=$searchmode\">$i</a>\n";
+	my $url_keyword = uri_escape($keyword);
+	$index_line .= "<a href=\"$thisscript?page=$i&amp;word=$url_keyword".
+                    "&amp;version=$version&amp;arch=$arch&amp;case=$case".
+                    "&amp;searchmode=$searchmode\">$i</a>\n";
 	if ($i < $numpages) {
 	   $index_line .= " | ";
 	}
