@@ -90,6 +90,12 @@ print Packages::HTML::header( title => 'Package Search Results' ,
 			      search_field_values => { 
 				  keywords => $keyword_enc,
 				  searchon => $searchon,
+				  arch => $arch_enc,
+				  version => $version_enc,
+				  releases => $releases_enc,
+				  subword => $subword,
+				  exact => $exact,
+				  case => $case,
 				  },
 			      );
 
