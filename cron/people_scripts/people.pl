@@ -479,7 +479,7 @@ sub process_homepages {
 
   # get the stuff from the LDAP database
   # option -B required on potato, -P 2 -x on woody
-  foreach (`ldapsearch -P 2 -x -h db.debian.org -b dc=debian,dc=org uid=\* cn mn sn labeledurl`) {
+  foreach (`ldapsearch -P 2 -x -h db.debian.org -b dc=debian,dc=org uid=\* cn mn sn labeledURI`) {
     chop; $line = $_;
     if ($line =~ /^(dn: )?uid=(.+),.+$/) { $name = $2; }
     elsif ($line =~ /^cn(=|: )(.+)$/) { $ldap_cn = from_utf8_or_iso88591_to_sgml($2); }
@@ -496,7 +496,7 @@ sub process_homepages {
       }
 #      warn "had to decode: $worddata\n";
     }
-    elsif ($line =~ /^labeledurl(=|: )(.+)$/) {
+    elsif ($line =~ /^labeledURI(=|: )(.+)$/) {
 	$homepageurl = $2;
 	$homepageurl =~ s,^www,http://www,;
 	# warn $ldap_cn." ".$ldap_sn." ".$homepageurl."\n";
