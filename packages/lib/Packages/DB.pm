@@ -737,7 +737,7 @@ sub process_dep_list {
 					$dep_ver, $dep_archs, "(NOT AVAILABLE)" ] );
 		warn "W:$pkg:$rel on $given_dep_strip unsatifiable\n"
 		    if $self->{config}{verbose}
-		&& ( ( $rel =~ /depends/ )
+		&& ( ( $rel =~ /depends/o )
 		     || ( $rel eq 'recommends' ) );
 	    }
 	}
