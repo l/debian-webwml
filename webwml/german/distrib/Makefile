@@ -2,21 +2,18 @@
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
-BASE=..
+WMLBASE=..
 CUR_DIR=distrib
+# list any subdirectories in the following variable. Any directories listed
+# must exist or the make will not work
+SUBS=
 
-HTMLDIR=$(BASE)/../../debian.org/$(CUR_DIR)
-TEMPLDIR=$(BASE)/template/debian
-# Do Not modify the following line
-ENGLISHSRCDIR=$(BASE)/../english
+include $(WMLBASE)/Make.lang
+include $(WMLBASE)/Make.common
 
-include $(BASE)/Make.lang
+include $(WMLBASE)/Make.dep.templ    
+include $(WMLBASE)/Make.dep.generic
 
-all: $(HTMLFILES) $(IMGDEST)
-
-include $(BASE)/Make.dep.templ    
-include $(BASE)/Make.dep.generic
-
-$(HTMLDIR)/vendors.html.$(LANGUAGE): vendors.wml ../../english/distrib/vendors.CD \
+vendors.html.$(LANGUAGE): vendors.wml ../../english/distrib/vendors.CD \
 		../../english/distrib/vendors.CD.def $(TEMPLDIR)/template.wml
 	wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG) $(WMLEPILOG) $(<F)
