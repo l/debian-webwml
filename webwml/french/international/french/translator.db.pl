@@ -84,14 +84,6 @@ sub init_translators {
 	 'file'      => 0,
          'compress'  => 'none'
     },
-    'Frederic Pascal' => {
-         'email'     => 'frederic.pascal@maisel-gw.enst-bretagne.fr',
-         'summary'   => 2, 
-         'logs'      => 0, 
-         'diff'      => 0, 
-	 'file'      => 0,
-         'compress'  => 'none' 
-    },
     'Jerome Abela' => {
          'email'     => 'Jerome.Abela@solsoft.fr',
          'summary'   => 2, 
