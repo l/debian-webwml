@@ -13,6 +13,5 @@ include $(WMLBASE)/Make.lang
 index.$(LANGUAGE).html: index.wml $(wildcard 2000*.wml) \
                         $(wildcard 2000*.title)\
                         $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
-	$(WML) index.wml
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/news.wml
 	$(WML) $(<F)
