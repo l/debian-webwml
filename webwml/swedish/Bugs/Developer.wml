@@ -1,6 +1,6 @@
-#use wml::debian::template title="Debians felrapporteringssystem - utvecklarinformation" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.23"
-<h1><A name="developers">Utvecklarinformation om hur systemet används</A></h1>
+#use wml::debian::template title="Debians felrapporteringssystem &ndash; utvecklarinformation" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.29"
+<h1>Utvecklarinformation om hur systemet används</h1>
 
 <p>
 Det första som händer är att en användare skickar in en felrapport per
@@ -13,17 +13,55 @@ med en känd ansvarig, så skickas även en kopia till denne.
 
 <p>
 Ärenderaden kommer att få texten
-"<code>Bug#</code><var>nnn</var><code>:</code>" tillagd, och
+&rdquo;<code>Bug#</code><var>nnn</var><code>:</code>&rdquo; tillagd, och
 <code>Reply-To</code> sätts så att den inkluderar både felrapportens
 avsändare och <var>nnn</var><code>@bugs.debian.org</code>.
 </p>
 
-<h2>Stänga en felrapport</h2>
+<hrline>
+
+<ul>
+  <li><a href="#closing">Stänga en felrapport</a></li>
+  <li><a href="#followup">Uppföljningsmeddelanden</a></li>
+  <li><a href="#severities">Allvarlighetsgrader</a></li>
+  <li><a href="#tags">Tags for bug reports</a></li>
+  <li><a href="#forward">Ange att du har skickat vidare en felrapport</a></li>
+  <li><a href="#maintincorrect">Felaktigt angivna paketansvariga</a></li>
+  <li><a href="#requestserv">Nyöppna, flytta över och manipulera felrapporter</a></li>
+  <li><a href="#subjectscan">Mer eller mindre obsolet ärenderadavsökning</a></li>
+  <li><a href="#x-debian-pr">Föråldrad <code>X-Debian-PR: quiet</code>-funktion</a></li>
+</ul>
+
+<hrline>
+
+<h2 id="closing">Stänga en felrapport</h2>
 
 <p>
-En utvecklare som får en felrapport från hanteringssystemet, eller ser den
-på <code>debian-bugs-dist</code>, och tar hand om den ska använda
-svarsfunktionen i e-postläsaren och sedan redigera mottagarfältet så att det
+Felrapporter i Debian bör stängas när problemet är rättat.
+Problem i paket kan endast anses rättade när ett paket som innehåller
+felrättelsen kommer på plats i Debianarkivet.
+</p>
+
+<p>
+Normalt är de enda personer som har rätt att stänga en felrapport den som
+sände in felrapporten och den ansvarige för paketet mot vilket felet är
+insänt.
+Det finns undantag från denna regel, till exempel för paket som sänts in mot
+okända paket eller vissa generella pseudopaket.
+Om du är osäker, stäng inte felrapporter, utan be först om råd på sändlistan
+debian-devel.
+</p>
+
+<p>
+Felrapporter stängs genom att sända e-post till
+<var>nnn</var><code>-done@bugs.debian.org</code>.
+Meddelandekroppen måste innehålla en förklaring om hur felet rättades.
+</p>
+
+<p>
+Med de brev som kommer från felrapporteringssystemet är allt du behöver att
+göra för att stänga felet att skriva ett svar i ditt e-postläsarprogram och
+redigera mottagarfältet så att det
 står <var>nnn</var><code>-done@bugs.debian.org</code> istället för
 <var>nnn</var><code>@bugs</code>
 (<var>nnn</var><code>-close</code> finns även som alias för
@@ -31,12 +69,7 @@ står <var>nnn</var><code>-done@bugs.debian.org</code> istället för
 </p>
 
 <p>
-Felrapportens ursprungliga avsändare inkluderas i standardmottagarfältet,
-eftersom felrapporteringssystemet lade till det i <code>Reply-To</code>.
-</p>
-
-<p>
-"Done"-meddelanden vidaresänds automatiskt endast till sändlistan
+&rdquo;Done&rdquo;-meddelanden vidaresänds automatiskt endast till sändlistan
 <CODE>debian-bugs-closed</CODE>.
 Om övriga utvecklare kan tänkas vara intresserade kan det
 ibland vara värt besväret att inkludera sändlistan
@@ -49,14 +82,22 @@ rapporterade den, kommer att få en notifiering om rapportens status
 ändras.
 </p>
 
-<h2>Uppföljningsmeddelanden</h2>
+<h2 id="followup">Uppföljningsmeddelanden</h2>
 
 <p>
-Om en utvecklare vill svara på rapporten kan hen svara på meddelandet (det
-kommer <b>inte</b> markera rapporten som avhjälpt).
-Svaret kommer (som standard, om Reply-To:-raden respekteras) att skickas till
-<var>nnn</var><code>@bugs</code> och den som ursprungligen rapporterade
-felet (observera: detta är två skilda adresser).
+Felrapporteringssystemet kommer att inkludera avsändarens adress samt
+adressen till felrapporten (<var>nnn</var><code>@bugs</code>) i
+<code>Reply-To</code>-fältet när rapporten vidaresänds.
+Observera att detta är två olika adresser.
+</p>
+
+<p>
+Om en utvecklare vill svara på en felrapport räcker det att svara på brevet
+och följa vad <code>Reply-To</code> föreskriver.
+Detta kommer <b>inte</b> markera rapporten som avhjälpt.
+</p>
+
+<p>
 Felrapporteringssystemet kommer att ta emot svaret på
 <var>nnn</var><code>@bugs</code>, vidaresända det till den ansvarige för
 paketet, arkivera svaret tillsammans med övriga loggar för felrapporten och
@@ -88,15 +129,17 @@ Du bör definitivt se till att inte skicka uppföljningsmeddelanden till
 <code>submit@bugs.debian.org</code>.
 </p>
 
-<h2><A name="severities">Allvarlighetsgrad</A></h2>
+<h2 id="severities">Allvarlighetsgrader</h2>
 
 <p>
-Systemet lagrar en "allvarlighetsgrad" tillsammans med varje felrapport.
+Systemet lagrar en &rdquo;allvarlighetsgrad&rdquo;
+tillsammans med varje felrapport.
 Denna sätts som standard till <code>normal</code>, men kan ändras, antingen
-genom att skicka med en rad i ett "pseudo-brevhuvud" <code>Severity</code>
-när felet rapporteras (se <A href="Reporting#pseudoheader">instruktioner
+genom att skicka med en rad i ett &rdquo;pseudo-brevhuvud&rdquo;
+<code>Severity</code>
+när felet rapporteras (se <a href="Reporting#pseudoheader">instruktioner
 för att rapportera fel</A>), eller genom att använda
-<A href="#requestserv">kontrollserverns</A>
+<a href="#requestserv">kontrollserverns</A>
 <code>severity</code>-kommando.
 </p>
 
@@ -115,8 +158,10 @@ databortfall, eller introducerar ett säkerhetshål som ger åtkomst till
 konton hos dem som använder paketet.
 
 <dt><code>serious</code> (allvarligt)
-<dd>en svår överträdelse av Debianpolicy (dvs. den bryter mot ett "måste"-
-eller "krav"-direktiv), eller, enligt paketansvarige, gör paketet olämpligt
+<dd>en svår överträdelse av Debianpolicy
+(dvs. den bryter mot ett &rdquo;måste&rdquo;- eller
+&rdquo;krav&rdquo;-direktiv), eller, enligt paketansvarige,
+gör paketet olämpligt
 att släppas.
 
 <dt><code>important</code> (viktigt)
@@ -146,11 +191,20 @@ a
 <dd>för fel som är rättade, men som inte bör stängas än.
 Detta är ett undantag för fel rättade av andra Debianutvecklare än den
 som är ansvarig för paketet.
-Observera: <strong>märket</strong> "fixed" bör användas istället.
+Observera: <strong>märket</strong> &rdquo;fixed&rdquo; bör användas istället.
 
 </dl>
 
-<H2><a name="tags">Markeringar på felrapporter</a></H2>
+<p>
+Vissa allvarlighetsgrader anses vara
+<em><a href="http://bugs.debian.org/release-critical/">kritiska nog
+att stoppa utgivning</a></em> (&rdquo;release-critical&rdquo;), vilket
+betyder att felet kommer att påverka om paketet kan ges ut med den stabila
+utgåvan av Debian eller inte.
+För närvarande är dessa <strong lang=en>critical</strong>,
+<strong lang=en>grave</strong> samt <strong lang=en>serious</strong>.
+
+<h2><a name="tags">Markeringar på felrapporter</h2>
 
 <p>Varje felrapport kan vara märkt med noll eller flera av en given
 uppsättning markeringar.
@@ -185,8 +239,9 @@ eller genom att använda kommandot <code>tags</code> via
   avsändaren.
   Felrapporten kommer att stängas om avsändaren inte ger ytterligare
   information inom en försvarlig tid (några månader).
-  Detta är avsett för felrapporter på formen "Det fungerar inte" - vad är
-  det som inte fungerar?
+  Detta är avsett för felrapporter på formen
+  &rdquo;Det fungerar inte&rdquo;
+  &ndash; vad är det som inte fungerar?
 
 <dt><code>unreproducible</code> (ej reproducerbart)
   <dd>Detta fel kan inte reproduceras på ansvariges system.
@@ -198,7 +253,7 @@ eller genom att använda kommandot <code>tags</code> via
   insänd av någon annan än den som är ansvarig för paketet),
   men det är fortfarande ett problem som måste lösas.
   Denna märkning ersätter allvarlighetsgraden
-  <span lang=en>"fixed"</span>.
+  <span lang=en>&rdquo;fixed&rdquo;</span>.
 
 <dt><code>security</code> (säkerhet)
   <dd>Felet beskriver ett säkerhetsproblem i ett paket (t.ex felaktig
@@ -206,7 +261,7 @@ eller genom att använda kommandot <code>tags</code> via
   buffertspill som gör det möjligt att kontrollera systemet på sätt som
   inte borde finnas; tjänstevägranattacker som bör rättas, osv.).
   De flesta säkerhetsfel bör också få allvarlighetsgraden satt till
-  "critical" eller "grave".
+  &rdquo;critical&rdquo; eller &rdquo;grave&rdquo;.
 
 <dt><code>upstream</code> (uppströms)
   <dd>Detta fel berör uppströmsdelen av paketet.
@@ -227,10 +282,11 @@ att stoppa utgivningen, för vilka det är viktigt att veta vilka
 distributioner de påverkar så att paket kan rättas (eller tas bort)
 på rätt plats.
 
-<h2><A name="forward">Ange att du har skickat vidare en felrapport</A></h2>
+<h2 id="forward">Ange att du har skickat vidare en felrapport</h2>
 
 <p>
-När en utvecklare skickar vidare en felrapport till den som "uppströms"
+När en utvecklare skickar vidare en felrapport till den som
+&rdquo;uppströms&rdquo;
 tillverkar den källkod som Debianpaketet härstammar från bör notera detta i
 felrapporteringssystemet så här:
 </p>
@@ -258,20 +314,13 @@ som vidaresänd till adresserna i mottagarfältet på det brev det tar emot.
 <p>
 Du kan även manipulera 'forwarded to'-informationen genom att skicka
 meddelanden till
-<A href="server-control"><code>control@bugs.debian.org</code></A>.
+<a href="server-control"><code>control@bugs.debian.org</code></A>.
 </p>
 
-<h2>Sammanfattande postningar till <code>debian-bugs-reports</code></h2>
+<h2 id="maintincorrect">Felaktigt angivna paketansvariga</h2>
 
 <p>
-Varje fredag skickas en lista av ej avklarade felrapporter till
-<code>debian-bugs-reports</code>, sorterade efter felrapportens ålder,
-och varje tisdag skickas en lista över fel det har tagit för lång tid att
-få svar för, sorterad efter paketansvariga.
-</p>
-
-<p>
-<A name="maintincorrect">Om fel person anges som ansvarig för ett paket</A>
+Om fel person anges som ansvarig för ett paket
 är det vanligtvis för att den ansvarige nyligen har ändrats, och att den som
 tagit över ännu inte har skickat upp en ny version av paketet med ett ändrat
 <code>Maintainer</code>-kontrollfält.
@@ -281,8 +330,7 @@ en ny version av paketet inte förväntas skickas upp på ett tag.
 Kontakta <code>override-change@debian.org</code> för ändringar.
 </p>
 
-<h2><A name="requestserv">Nyöppna, flytta över och manipulera
-felrapporter</A></h2>
+<h2 id="requestserv">Nyöppna, flytta över och manipulera felrapporter</h2>
 
 <p>
 Det är möjligt att flytta över felrapporter till andra paket, att nyöppna
@@ -294,14 +342,14 @@ Detta görs genom att skicka e-post till
 </p>
 
 <p>
-<A href="server-control">Formatet på dessa kontrollmeddelanden</A> beskrivs
+<a href="server-control">Formatet på dessa kontrollmeddelanden</A> beskrivs
 i ett annat dokument på webben samt i filen
 <code>bug-maint-mailcontrol.txt</code>.
 En version i ren text kan fås genom att skicka ordet <code>help</code> till
 servern på adressen ovan.
 </p>
 
-<h2>Mer eller mindre obsolet ärenderadavsökning</h2>
+<h2 id="subjectscan">Mer eller mindre obsolet ärenderadavsökning</h2>
 
 <p>
 Meddelanden som kommer till <code>submit</code> eller <code>bugs</code> vars
@@ -326,7 +374,7 @@ utan något felrapportsnummer, och dessutom utan ett nummer i ärenderaden,
 arkiveras under 'skräp' och behålls i några veckor, men ignoreras i övrigt.
 </p>
 
-<h2>Föråldrad <code>X-Debian-PR: quiet</code>-funktion</h2>
+<h2 id="x-debian-pr">Föråldrad <code>X-Debian-PR: quiet</code>-funktion</h2>
 
 <p>
 Tidigare var det möjligt att undvika att felrapporteringssystemet
