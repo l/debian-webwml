@@ -27,6 +27,7 @@ unless ($year && $issue)
 $srcdir = "../../../english/News/weekly/$year/$issue";
 $srcfile= "$srcdir/index.wml";
 $cvsfile= "$srcdir/CVS/Entries";
+$yeardir= "./$year";
 $dstdir = "./$year/$issue";
 $dstfile= "$dstdir/index.wml";
 
@@ -34,6 +35,7 @@ $dstfile= "$dstdir/index.wml";
 die "Directory $srcdir does not exist\n" unless -d $srcdir;
 die "File $srcfile does not exist\n"     unless -e $srcfile;
 die "File $dstfile already exists\n"     if     -e $dstfile;
+mkdir $yeardir, 0755                     unless -d $yeardir;
 mkdir $dstdir, 0755                      unless -d $dstdir;
 
 # Open the files
