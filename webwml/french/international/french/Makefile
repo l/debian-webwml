@@ -8,9 +8,19 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-CTDOCFILES := a-relire.$(LANGUAGE).html a-reviser.$(LANGUAGE).html en-cours.$(LANGUAGE).html a-traduire.$(LANGUAGE).html non-disponible.$(LANGUAGE).html ok.$(LANGUAGE).html
+CTUNAVAILABLE           = unavailable
+CTUNTRANSLATED          = untranslated
+CTBEINGTRANSLATED       = beingtranslated
+CTOUTDATED              = outdated
+CTUPTODATE              = uptodate
+CTUNCHECKED             = unchecked
+CTBEINGREVISED          = beingrevised
+CTOBSOLETE              = obsolete
+CTUNKNOWN               = unknown
 
-CTWEBFILES := www-a-relire.$(LANGUAGE).html www-a-reviser.$(LANGUAGE).html www-en-cours.$(LANGUAGE).html www-a-traduire.$(LANGUAGE).html
+CTDOCFILES := doc-$(CTUNCHECKED).$(LANGUAGE).html doc-$(CTOUTDATED).$(LANGUAGE).html doc-$(CTBEINGREVISED).$(LANGUAGE).html doc-$(CTUNTRANSLATED).$(LANGUAGE).html doc-$(CTUNAVAILABLE).$(LANGUAGE).html doc-$(CTUPTODATE).$(LANGUAGE).html
+
+CTWEBFILES := www-$(CTUNCHECKED).$(LANGUAGE).html www-$(CTOUTDATED).$(LANGUAGE).html www-$(CTBEINGREVISED).$(LANGUAGE).html www-$(CTUNTRANSLATED).$(LANGUAGE).html
 
 GENFILES = $(CTDOCFILES) $(CTWEBFILES)
 GENDESTFILES = $(patsubst %.$(LANGUAGE).html,$(HTMLDIR)/%.$(LANGUAGE).html,$(GENFILES))
@@ -25,24 +35,27 @@ check_trans.status: FORCE
 	else \
 		mv check_trans.status.new check_trans.status; \
 	fi
+	-rm -f check_trans.status.new >/dev/null 2>&1
 
 FORCE:
 	@:
 
 $(CTDOCFILES): docpages.src documents-bd.pl doccurrent_status.pl
-	wml -o "(UNDEF+$(LANGUAGECAP)-CT_*)+CT_TRANS:a-traduire.$(LANGUAGE).html@g+w" \
-  -o "(UNDEF+$(LANGUAGECAP)-CT_*)+CT_OUT:a-reviser.$(LANGUAGE).html@g+w" \
-  -o "(UNDEF+$(LANGUAGECAP)-CT_*)+CT_CHECK:a-relire.$(LANGUAGE).html@g+w" \
-  -o "(UNDEF+$(LANGUAGECAP)-CT_*)+CT_WIP:en-cours.$(LANGUAGE).html@g+w" \
-  -o "(UNDEF+$(LANGUAGECAP)-CT_*)+CT_FUTURE:non-disponible.$(LANGUAGE).html@g+w" \
-  -o "(UNDEF+$(LANGUAGECAP)-CT_*)+CT_OK:ok.$(LANGUAGE).html@g+w" \
+	wml $(WMLOPTIONS) \
+  -o "(UNDEF+($(LANGUAGECAP)-CT_*))+(CT_TRANS@+$(LANGUAGECAP)nCT_TRANS):doc-$(CTUNTRANSLATED).$(LANGUAGE).html@g+w" \
+  -o "(UNDEF+($(LANGUAGECAP)-CT_*))+(CT_OUT@+$(LANGUAGECAP)nCT_OUT):doc-$(CTOUTDATED).$(LANGUAGE).html@g+w" \
+  -o "(UNDEF+($(LANGUAGECAP)-CT_*))+(CT_CHECK@+$(LANGUAGECAP)nCT_CHECK):doc-$(CTUNCHECKED).$(LANGUAGE).html@g+w" \
+  -o "(UNDEF+($(LANGUAGECAP)-CT_*))+(CT_WIP@+$(LANGUAGECAP)nCT_WIP):doc-$(CTBEINGREVISED).$(LANGUAGE).html@g+w" \
+  -o "(UNDEF+($(LANGUAGECAP)-CT_*))+(CT_FUTURE@+$(LANGUAGECAP)nCT_FUTURE):doc-$(CTUNAVAILABLE).$(LANGUAGE).html@g+w" \
+  -o "(UNDEF+($(LANGUAGECAP)-CT_*))+(CT_OK@+$(LANGUAGECAP)nCT_OK):doc-$(CTUPTODATE).$(LANGUAGE).html@g+w" \
   docpages.src
 
 $(CTWEBFILES): webpages.src webcurrent_status.pl check_trans.status
-	wml -o "(UNDEF+$(LANGUAGECAP)-CT_*)+CT_TRANS:www-a-traduire.$(LANGUAGE).html@g+w" \
-  -o "(UNDEF+$(LANGUAGECAP)-CT_*)+CT_OUT:www-a-reviser.$(LANGUAGE).html@g+w" \
-  -o "(UNDEF+$(LANGUAGECAP)-CT_*)+CT_CHECK:www-a-relire.$(LANGUAGE).html@g+w" \
-  -o "(UNDEF+$(LANGUAGECAP)-CT_*)+CT_WIP:www-en-cours.$(LANGUAGE).html@g+w" \
+	wml $(WMLOPTIONS) \
+  -o "(UNDEF+($(LANGUAGECAP)-CT_*))+(CT_TRANS@+$(LANGUAGECAP)nCT_TRANS):www-$(CTUNTRANSLATED).$(LANGUAGE).html@g+w" \
+  -o "(UNDEF+($(LANGUAGECAP)-CT_*))+(CT_OUT@+$(LANGUAGECAP)nCT_OUT):www-$(CTOUTDATED).$(LANGUAGE).html@g+w" \
+  -o "(UNDEF+($(LANGUAGECAP)-CT_*))+(CT_CHECK@+$(LANGUAGECAP)nCT_CHECK):www-$(CTUNCHECKED).$(LANGUAGE).html@g+w" \
+  -o "(UNDEF+($(LANGUAGECAP)-CT_*))+(CT_WIP@+$(LANGUAGECAP)nCT_WIP):www-$(CTBEINGREVISED).$(LANGUAGE).html@g+w" \
   webpages.src
 
 stats.$(LANGUAGE).html: documents-bd.pl doccurrent_status.pl webcurrent_status.pl check_trans.status
