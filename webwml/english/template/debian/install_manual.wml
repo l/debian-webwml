@@ -38,15 +38,21 @@ sub permute_as_list {
 #
 sub permute_as_matrix {
     my($file, @langs) = @_;
-    my($ext, $arch, $lang);
+    my($ext, $arch, $lang, @cur_dir, $release);
     my $altcolor = 'white';
     my $ctr = 0;
+
+    @cur_dir = split('/', '$(WML_SRC_DIRNAME)');
+    $release = pop @cur_dir;
 
     foreach $arch (keys %arches) {
 	$ctr++;
 	my $first = 1;
 
 	foreach $ext (keys %formats) {
+	    if (!-f "$(HTMLDIR)/releases/$release/$arch/$file.en.$ext") {
+	        next;
+	    }
 	    # alternate the row color
 	    if ( $ctr % 2 ) {
 		print "\n<tr>\n";
@@ -64,12 +70,12 @@ sub permute_as_matrix {
 	    # permute over languages
 	    print "  <td>";
 	    foreach $lang (@langs) {
-		print "<a href=\"./$arch/$file." . $langs{$lang} . ".$ext\">";
-		# sometimes the language name isn't properly defined yet
-		my $workaroundlang = $trans{$CUR_ISO_LANG}{$lang};
-		( $workaroundlang = $lang ) =~ s/^(.)/\U$1/
-		    unless $workaroundlang;
-		print $workaroundlang . "</a> \n";
+	        $file_version = "./$arch/$file." . $langs{$lang} . ".$ext";
+	        if (-f "$(HTMLDIR)/releases/$release/$file_version") {
+	            # all languages should be defined in %trans. Add missing entries 
+	            # in English if this is not the case
+	            print "<a href=\"$file_version\">" . $trans{$CUR_ISO_LANG}{$lang} . "</a> \n";
+	        }
 	    }
 	    print "  </td>";
 	    print "</tr>\n";
