@@ -25,6 +25,7 @@ my (%attrs, @attrorder, %summaryattrs, @summaryorder);
 	  'memory' => 'Memory',
 	  'disk' => 'Disk space',
 	  'bandwidth' => 'Bandwidth',
+	  'status' => 'Status',
 	  'notes' => 'Notes',
 	  'createtimestamp' => 'Entry created',
 	  'modifytimestamp' => 'Entry modified'
@@ -33,15 +34,17 @@ my (%attrs, @attrorder, %summaryattrs, @summaryorder);
 # This defines what fields are displayed, and in what order
 @attrorder = ('hostname', 'admin', 'architecture', 'distribution', 'access',
               'sponsor', 'sponsor-admin', 'location', 'machine', 'memory',
-	      'disk', 'bandwidth', 'notes', 'createtimestamp', 'modifytimestamp');
+	      'disk', 'bandwidth', 'status', 'notes', 'createtimestamp', 'modifytimestamp');
 
 # ditto for summary
 %summaryattrs = ('hostname' => 'Host name',
                  'host'     => 'just for a link',
                  'architecture' => 'Architecture',
+		 'distribution' => 'Distribution',
+		 'status' => 'Status',
 		 'access' => 'Access');
 		 
-@summaryorder = ('hostname', 'architecture', 'access');		 
+@summaryorder = ('hostname', 'architecture', 'distribution', 'status', 'access');		 
 
 # Global settings...
 my %config = &Util::ReadConfigFile;
@@ -65,7 +68,7 @@ $mesg = $ldap->search(base  => $config{hostbasedn}, filter => 'host=*');
 $mesg->code && &Util::HTMLError($mesg->error);
 $entries = $mesg->as_struct;
 
-foreach $dn (sort {$entries->{$a}->{host}->[0] <=> $entries->{$b}->{host}->[0]} keys(%$entries)) {
+foreach $dn (sort {$entries->{$a}->{host}->[0] cmp $entries->{$b}->{host}->[0]} keys(%$entries)) {
   $data = $entries->{$dn};
 
   my $thishost = $data->{host}->[0];
@@ -111,8 +114,10 @@ foreach $dn (sort {$entries->{$a}->{host}->[0] <=> $entries->{$b}->{host}->[0]} 
     $summary{$thishost}{$key} = $data->{$key}->[0];
   }
   
-  $summary{$thishost}{hostname} = sprintf("<a href=\"machines.cgi?host=%s\">%s</a>",
-                                          $summary{$thishost}{host}, $summary{$thishost}{hostname});
+  $summary{$thishost}{hostname} = undef;
+  foreach my $hostname (@{$data->{hostname}}) {
+    $summary{$thishost}{hostname} .= sprintf("%s<a href=\"machines.cgi?host=%s\">%s</a>", ($summary{$thishost}{hostname} ? ', ' : ''), $summary{$thishost}{host}, $hostname);
+  }
 }
 $ldap->unbind;
 
