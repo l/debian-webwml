@@ -136,6 +136,15 @@ sub init_translators {
                         file        => 2,
                         compress    => 'none'
                 },
+                'Arnaud Fontaine' => {
+                        email       => 'arnaud@andesi.org',
+                        summary     => 2,
+                        logs        => 2,
+                        diff        => 2,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
+		},
                 'Thomas Huriaux' => {
                         email       => 'thomas.huriaux@enst-bretagne.fr',
                         summary     => 3,
