@@ -1,4 +1,6 @@
 #use wml::debian::common_tags
+#use wml::debian::languages
+#include "$(ENGLISHDIR)/doc/version.defs"
 
 # shared tags for ddp manuals wmls
 <define-tag document>
@@ -49,15 +51,52 @@
 </tr>
 </define-tag>
 
-<define-tag inddpcvs>
-  <preserve doc />
-  <set-var doc=%0 />
-  <gettext domain="doc"><p>You can visit the current <a href="manuals/<get-var doc />/">development version</a> here, use <a href="cvs">CVS</a> to download the SGML source text.</gettext>
-  <restore doc />
+<define-tag inddpcvs whitespace=delete>
+  <set-var name=<match <attributes-extract name %attributes /> "name=" action=delete /> />
+  <ifeq "<get-var name />" "" <exit message="you must pass a name to the inddpcvs tag" /> />
+  <set-var index=<match <attributes-extract index %attributes /> "index=" action=delete /> />
+  <ifeq "<get-var index />" "" <set-var index="index" /> />
+  <set-var langs=<subst-in-string <match <attributes-extract langs %attributes /> "langs=" action=delete /> " " "\n" /> />
+  <ifeq "<get-var langs />" "" <set-var langs="en" /> />
+  <set-var formats=<subst-in-string <match <attributes-extract formats %attributes /> "formats=" action=delete /> " " "\n" /> />
+  <ifeq "<get-var formats />" "" <set-var formats="html" /> />
+  <set-var path=<match <attributes-extract path %attributes /> "path=" action=delete /> />
+  <ifeq "<get-var path />" "" <set-var path="manuals/<get-var name>" /> />
+
+  <p><gettext domain="doc">Latest version in development:</gettext>
+  <br>
+  <foreach lang langs>
+    <:
+    my %langs_per_code;
+    foreach (keys %langs) { $langs_per_code{$langs{$_}} = $_; };
+    my $xy = '<get-var lang />';
+    $xy =~ s/-\w+$//; # for pt-br and such
+    print $trans{$CUR_ISO_LANG}{$langs_per_code{$xy}};
+    :>
+    <if <get-var version-<get-var name />-<get-var lang /> />
+      &nbsp;<gettext domain="doc">(version <get-var version-<get-var name />-<get-var lang /> />)</gettext>
+    />
+    :
+    <foreach format formats>
+      &nbsp;
+      [<a href="<get-var path />/<get-var index />.<get-var lang />.<get-var format />">
+      <ifeq "<match <get-var format /> "(html|pdf|ps)" action=report />" "true"
+            "<upcase <get-var format /> />"
+            "<gettext domain="doc">plain text</gettext>"
+      />
+      </a>]
+    </foreach>
+    <br>
+  </foreach>
+
+  <br>
+  <gettext domain="doc">Use <a href="cvs">CVS</a> to download the SGML source text.</gettext>
 </define-tag>
 
 <define-tag inbfdcvs>
-  <gettext domain="doc">CVS sources working copy: set <code>CVSROOT</code> to <kbd>:ext:<var>userid</var>@cvs.debian.org:/cvs/debian-boot</kbd>, and check out the <kbd>boot-floppies/documentation</kbd> module.</gettext>
+  <p><gettext domain="doc">CVS sources working copy: set <code>CVSROOT</code>
+  to <kbd>:ext:<var>userid</var>@cvs.debian.org:/cvs/debian-boot</kbd>,
+  and check out the <kbd>boot-floppies/documentation</kbd> module.</gettext>
 </define-tag>
 
 <define-tag inpolcvs>
@@ -77,6 +116,40 @@ and just press enter when you are asked for a password. To check out the sources
 </define-tag>
 
 <define-tag released whitespace=delete>
-  <a href="%0"><gettext domain="doc">Released version</gettext></a>
+  <set-var name=<match <attributes-extract name %attributes /> "name=" action=delete /> />
+  <ifeq "<get-var name />" "" <exit message="you must pass a name to the released tag" /> />
+  <set-var index=<match <attributes-extract index %attributes /> "index=" action=delete /> />
+  <ifeq "<get-var index />" "" <set-var index="index" /> />
+  <set-var langs=<subst-in-string <match <attributes-extract langs %attributes /> "langs=" action=delete /> " " "\n" /> />
+  <ifeq "<get-var langs />" "" <set-var langs="en" /> />
+  <set-var formats=<subst-in-string <match <attributes-extract formats %attributes /> "formats=" action=delete /> " " "\n" /> />
+  <ifeq "<get-var formats />" "" <set-var formats="html" /> />
+  <set-var path=<match <attributes-extract path %attributes /> "path=" action=delete /> />
+  <ifeq "<get-var path />" "" <set-var path="manuals/<get-var name>" /> />
+
+  <gettext domain="doc">Released version:</gettext>
   <br>
+  <foreach lang langs>
+    <:
+    my %langs_per_code;
+    foreach (keys %langs) { $langs_per_code{$langs{$_}} = $_; };
+    my $xy = '<get-var lang />';
+    $xy =~ s/-\w+$//; # for pt-br and such
+    print $trans{$CUR_ISO_LANG}{$langs_per_code{$xy}};
+    :>
+    <if <get-var version-<get-var name />-<get-var lang /> />
+      &nbsp;<gettext domain="doc">(version <get-var version-<get-var name />-<get-var lang /> />)</gettext>
+    />
+    :
+    <foreach format formats>
+      &nbsp;
+      [<a href="<get-var path />/<get-var index />.<get-var lang />.<get-var format />">
+      <ifeq "<match <get-var format /> "(html|pdf|ps)" action=report />" "true"
+            "<upcase <get-var format /> />"
+            "<gettext domain="doc">plain text</gettext>"
+      />
+      </a>]
+    </foreach>
+    <br>
+  </foreach>
 </define-tag>
