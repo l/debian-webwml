@@ -5,17 +5,24 @@
 	@echo "Converting $< to $@ (zh_CN.GB2312)..."
 	@$(B5TOGB) < $< > $@
 #	ccf -bg $< $@
-	@perl -pi -e 's|^(<HTML lang="zh)">|$$1-CN">|;' \
+	perl -pi -e 's|^(<HTML lang="zh)">|$$1-CN">|;' \
 		-e 's|^(<META http-equiv=.*charset)=Big5">|$$1=GB2312">|;' \
 		-e 's/(\.zh)\.(gif|jpg|png)/$$1-cn.$$2/g;' \
 		-e 's|^<A href=".*">(ÖÐÎÄ&nbsp;\(GB\))</A>(&nbsp;)|$$1$$2|;' \
+		-e 's/Ó³ÉäÕ¾/¾µÏñÕ¾/g;' \
+		-e 's/Èí¼þÌ×¼þ/Èí¼þ°ü/g; s/Ì×¼þ/Èí¼þ°ü/g;' \
+		-e 's/ËÅ·þÆ÷/·þÎñÆ÷/g;' \
 		$@
 
 %.$(LANGUAGE)-tw.html: %.$(LANGUAGE).html
 	@echo "Converting $< to $@ (zh_TW.Big5)..."
 #	@$(U8TOB5) < $< > $@
-	cp -a $< $@
-	perl -pi -e 's|^(<HTML lang="zh)">|$$1-TW">|;' \
+	@cp -a $< $@
+	@perl -pi -e 's|^(<HTML lang="zh)">|$$1-TW">|;' \
 		-e 's/(\.zh)\.(gif|jpg|png)/$$1-tw.$$2/g;' \
 		-e 's|^<A href=".*">(¤¤¤å&nbsp;\(Big5\))</A>(&nbsp;)|$$1$$2|;' \
+		-e 's/¾Þ§@¨t²Î/§@·~¨t²Î/g;' \
+		-e 's/ªA°È¾¹/¦øªA¾¹/g;' \
+		-e 's/Ãè¹³¯¸/¬M®g¯¸/g;' \
+		-e 's/¥ú½L/¥úºÐ/g;' \
 		$@
