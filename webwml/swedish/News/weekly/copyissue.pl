@@ -5,8 +5,8 @@
 # adds the translation-check header to it. It will also create the
 # destination directory if necessary.
 
-# Written in 2000-2001 by peter karlsson <peter@softwolves.pp.se>
-# © Copyright 2000-2001 Software in the public interest, Inc.
+# Written in 2000-2002 by peter karlsson <peter@softwolves.pp.se>
+# © Copyright 2000-2002 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -106,6 +106,27 @@ while (<SRC>)
 				$next .= $next2;
 				$_ .= $next;
 			}
+		}
+		elsif ($next eq "updated packages were updated or added to the Debian archive recently.</p>\n")
+		{
+			$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong\n";
+			$_ .= "Följande nya eller uppdaterade paket har nyligen lagts till\n";
+			$_ .= "Debianarkivet.</p>\n";
+		}
+		else
+		{
+			$_ .= $next;
+		}
+	}
+	elsif ($_ eq "<p><strong>Security Updates.</strong> You know the drill, make sure\n")
+	{
+		# Translate security intro
+		$next = <SRC>;
+		if ($next eq "you update your systems if you have one of these packages installed.</p>\n")
+		{
+			$_ = "<p><strong>Säkerhetsuppdatering.</strong>\n";
+			$_ = "Du kan rutinen, se till att uppdatera ditt system om du har något av\n";
+			$_ = "dessa paket installerade.</p>\n";
 		}
 		else
 		{
