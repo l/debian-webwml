@@ -4,9 +4,9 @@
 
 WMLBASE=.
 CUR_DIR=
-SUBS=banners Bugs MailingLists News Pics consultants devel distrib doc events intro \
+SUBS=Bugs MailingLists News Pics consultants devel distrib doc events intro \
 international logos mirror misc partners ports releases security vote y2k \
-chinese searchtmpl
+chinese searchtmpl banners
 
 include $(WMLBASE)/Make.lang
 
