@@ -50,7 +50,7 @@ $(CTDOCFILES): docpages.src documents-bd.pl doccurrent_status.pl
   -o "(UNDEF+($(LANGUAGECAP)-CT_*))+(CT_OK@+$(LANGUAGECAP)nCT_OK):doc-$(CTUPTODATE).$(LANGUAGE).html@g+w" \
   docpages.src
 
-$(CTWEBFILES): webpages.src webcurrent_status.pl check_trans.status
+$(CTWEBFILES): webpages.src current_status.pl check_trans.status
 	wml $(WMLOPTIONS) \
   -o "(UNDEF+($(LANGUAGECAP)-CT_*))+(CT_TRANS@+$(LANGUAGECAP)nCT_TRANS):www-$(CTUNTRANSLATED).$(LANGUAGE).html@g+w" \
   -o "(UNDEF+($(LANGUAGECAP)-CT_*))+(CT_OUT@+$(LANGUAGECAP)nCT_OUT):www-$(CTOUTDATED).$(LANGUAGE).html@g+w" \
@@ -58,7 +58,7 @@ $(CTWEBFILES): webpages.src webcurrent_status.pl check_trans.status
   -o "(UNDEF+($(LANGUAGECAP)-CT_*))+(CT_WIP@+$(LANGUAGECAP)nCT_WIP):www-$(CTBEINGREVISED).$(LANGUAGE).html@g+w" \
   webpages.src
 
-stats.$(LANGUAGE).html: documents-bd.pl doccurrent_status.pl webcurrent_status.pl check_trans.status
+stats.$(LANGUAGE).html: documents-bd.pl doccurrent_status.pl current_status.pl check_trans.status
 
 # ask to install the debian-l10-french-faq files
 
