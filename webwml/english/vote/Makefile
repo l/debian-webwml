@@ -4,8 +4,6 @@
 
 WMLBASE=..
 CUR_DIR=vote
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=1999 2000
 
 include $(WMLBASE)/Make.lang

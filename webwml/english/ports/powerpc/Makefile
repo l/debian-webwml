@@ -4,8 +4,6 @@
 
 WMLBASE=../..
 CUR_DIR=ports/powerpc
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=inst pics
 
 include $(WMLBASE)/Make.lang

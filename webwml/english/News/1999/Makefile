@@ -4,8 +4,6 @@
 
 WMLBASE=../..
 CUR_DIR=News/1999
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=
 
 include $(WMLBASE)/Make.lang

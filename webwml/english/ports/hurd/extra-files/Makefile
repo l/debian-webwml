@@ -4,8 +4,6 @@
 
 WMLBASE=../../..
 CUR_DIR=ports/hurd/extra-files
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=
 
 RELHTMLBASE=../../debian.org

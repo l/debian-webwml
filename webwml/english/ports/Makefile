@@ -4,8 +4,6 @@
 
 WMLBASE=..
 CUR_DIR=ports
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=sparc alpha arm powerpc mips sparc64 beowulf laptops hurd hppa m68k
 
 include $(WMLBASE)/Make.lang
