@@ -515,11 +515,11 @@ sub package_pages_walker {
 	#
 	# write file
 	#
-	my $dirname = "$env->{dest_dir}/$fl";
+	my $dirname = "$env->{dest_dir}";
 	unless ( -d $dirname ) {
 	    mkdir $dirname or die "Can\'t create dir $dirname: $!";
 	}
-	$dirname .= "/$sl";
+	$dirname .= "/$section";
 	unless ( -d $dirname ) {
 	    mkdir $dirname or die "Can\'t create dir $dirname: $!";
 	}
@@ -620,7 +620,11 @@ sub write_all_package {
 	foreach ( keys %$sections ) {
 	    $si{$_} .= "</dl>\n";
 	    $si{$_} .= trailer( '..', $_, $lang, @$langs );
-	    my $filename = "$dest_dir/$_.$lang.html";
+	    my $dirname = "$dest_dir/$_";
+	    unless ( -d $dirname ) {
+		mkdir $dirname or die "Can\'t create dir $dirname: $!";
+	    }
+	    my $filename = "$dirname/index.$lang.html";
 	    if( file_changed( \%md5s, $filename, $si{$_} )) {
 		sysopen(FILEH, $filename, 
 			O_WRONLY | O_TRUNC | O_CREAT, 0664) 
