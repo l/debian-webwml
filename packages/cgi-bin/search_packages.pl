@@ -222,7 +222,7 @@ if (!@results) {
 
     if ($exact) {
 	$printed = 1;
-	print "<p>You have searched only for exact matches of the package name. You can try to search for <a href=\"?exact=0&amp;searchon=$searchon&amp;version=$version_param&amp;case=$case&amp;release=$releases_param&amp;keywords=$keyword_esc&amp;arch=$arch_param\">package names that contain your search string</a>.</p>";
+	print "<p>You have searched only for exact matches of the package name. You can try to search for <a href=\"$thisscript?exact=0&amp;searchon=$searchon&amp;version=$version_param&amp;case=$case&amp;release=$releases_param&amp;keywords=$keyword_esc&amp;arch=$arch_param\">package names that contain your search string</a>.</p>";
     }
   } else {
       if (($version_param eq 'all')
@@ -235,7 +235,7 @@ if (!@results) {
 
     unless ($subword) {
 	$printed = 1;
-        print "<p>You have searched only for words exactly matching your keywords. You can try to search <a href=\"?subword=1&amp;searchon=$searchon&amp;version=$version_param&amp;case=$case&amp;release=$releases_param&amp;keywords=$keyword_esc&amp;arch=$arch_param\">allowing subword matching</a>.</p>";
+        print "<p>You have searched only for words exactly matching your keywords. You can try to search <a href=\"$thisscript?subword=1&amp;searchon=$searchon&amp;version=$version_param&amp;case=$case&amp;release=$releases_param&amp;keywords=$keyword_esc&amp;arch=$arch_param\">allowing subword matching</a>.</p>";
     }
   }
   print "<p>".( $printed ? "Or you" : "You" )." can try a different search on the <a href=\"http://packages.debian.org/#search_packages\">Packages search page</a>.</p>";
@@ -307,7 +307,7 @@ unless ($search_on_sources) {
 		print "<br>Binary packages: ";
 		my @bp_links;
 		foreach my $bp (@{$binaries{$pkg}{$ver}}) {
-		    my $bp_link = sprintf "<a href=\"?exact=1&amp;searchon=names&amp;version=$ver&amp;keywords=%s\">%s</a>", uri_escape( $bp ),  $bp;
+		    my $bp_link = sprintf "<a href=\"$thisscript?exact=1&amp;searchon=names&amp;version=$ver&amp;keywords=%s\">%s</a>", uri_escape( $bp ),  $bp;
 		    push @bp_links, $bp_link;
 		}
 		print join( ", ", @bp_links );
