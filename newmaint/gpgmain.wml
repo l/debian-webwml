@@ -17,23 +17,22 @@ There's no session registered for you. Please relogin.
 
 <?
     if (($db = open_db())) {
-        
-	$sql = "SELECT id, forename, surname, email, offer, last_update FROM people WHERE email = '$s_username'";
-	if (! ($result = pg_exec($db, $sql))) {
-		echo "Problem with query", pg_ErrorMessage($db), "<BR>";
-		return FALSE;
-	}
+        $sql = "SELECT id, forename, surname, email, offer, last_update, url FROM people WHERE email = '$s_username'";
+        if (! ($result = pg_exec($db, $sql))) {
+            echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+           return FALSE;
+        }
 
-	if (pg_NumRows($result) != 1) {
-		echo "That e-mail address is wicked.";
-		return FALSE;
-	}
+        if (pg_NumRows($result) != 1) {
+            echo "That e-mail address is wicked.";
+            return FALSE;
+        }
 
-	$row = pg_Fetch_Array($result, 0);
-	$luser_error = "";
+        $row = pg_Fetch_Array($result, 0);
+        $luser_error = "";
 
-	if ($update) {
-		$email = $row["email"];
+        if ($update) {
+            $email = $row["email"];
 		#$forename =  # no filtering done
 		#$surname =  # no filtering done
 		$offer   = ($offer == "t") ? "t" : "f";
@@ -45,9 +44,9 @@ There's no session registered for you. Please relogin.
 		} else {
 			if ($passwd1 != "") {
 				$passwd = passwd_crypt($passwd1);
-				$sql = "UPDATE people SET forename = '$forename', surname = '$surname', email = '$email' , passwd = '$passwd', offer = '$offer', last_update = 'now' WHERE id=$id";
+				$sql = "UPDATE people SET forename = '$forename', surname = '$surname', email = '$email' , passwd = '$passwd', offer = '$offer', last_update = 'now', url = '$url' WHERE id=$id";
 			} else  {
-				$sql = "UPDATE people SET forename = '$forename', surname = '$surname', email = '$email' ,                     offer = '$offer', last_update = 'now' WHERE id=$id";
+				$sql = "UPDATE people SET forename = '$forename', surname = '$surname', email = '$email' ,                     offer = '$offer', last_update = 'now', url = '$url' WHERE id=$id";
 			};
 			
 			if (! ($result = pg_exec($db, $sql))) {
@@ -64,6 +63,7 @@ There's no session registered for you. Please relogin.
 		$forename = $row["forename"];
 		$surname = $row["surname"];
 		$id = $row["id"];
+		$url = $row["url"];
 		$offer   = ($row["offer"] == "t") ? "t" : "f";
 		$last_update = $row["last_update"];
 	};
@@ -81,6 +81,7 @@ if ($luser_error) {
 print_text('Forename:'   , 'forename'   , $forename   , 1);
 print_text('Surname:'    , 'surname'    , $surname    , 1);
 print_text('Email:'      , 'email'      , $email      , 0);
+print_text_size('URL:'   , 'url'        , $url        , 1, 40);
 print_text('Last update:', 'last_update', $last_update, 0);
 
 echo '<TR><TD colspan="2">Change password:</TD></TR>';

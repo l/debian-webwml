@@ -80,6 +80,16 @@
     }
     echo "</TD></TR>\n";
   }
+  function print_text_size($title, $name, $value, $editable, $size)
+  {
+    echo "<TR><TD width=\"200\"><B>$title</B> </TD><TD width=\"400\"> ";
+    if ($editable) {
+      echo "<INPUT type=\"text\" name=\"$name\" value=\"$value\" size=$size>";
+    } else {
+      echo "[ $value ]";
+    }
+    echo "</TD></TR>\n";
+  }
   function print_checkbox($title, $name, $value, $editable)
   {
     echo "<TR><TD width=\"200\"><B>$title</B> </TD><TD width=\"400\"> ";

@@ -25,6 +25,8 @@ You should not be here!</STRONG>
         return FALSE;
     }
 
+    # If you change this array, also change the info text about "State/Province"
+    $country_with_states = array("AU", "CA", "US");
 
     # user pressed submit
 
@@ -49,14 +51,22 @@ You should not be here!</STRONG>
         }
 
         if (! $id) {
-            $sql = "INSERT INTO places (who, city, country) VALUES ($who, '$city', '$country')";
+            if (in_array($country, $country_with_states)) {
+                $sql = "INSERT INTO places (who, city, country, state, url) VALUES ($who, '$city', '$country', '$state', '$url')";
+            } else {
+                $sql = "INSERT INTO places (who, city, country, url) VALUES ($who, '$city', '$country', '$url')";
+            }
             if (! ($result = pg_exec($db, $sql))) {
                 echo "Problem with query", pg_ErrorMessage($db), "<BR>";
                 return FALSE;
             }
             $oid = pg_getlastoid($result);
         } else {
-            $sql = "UPDATE places SET city = '$city', country = '$country' WHERE id = '$id'";
+            if (in_array($country, $country_with_states)) {
+                $sql = "UPDATE places SET city = '$city', country = '$country', state = '$state', url = '$url' WHERE id = '$id'";
+            } else {
+                $sql = "UPDATE places SET city = '$city', country = '$country', url = '$url' WHERE id = '$id'";
+            }
             if (! ($result = pg_exec($db, $sql))) {
                 echo "Problem with query", pg_ErrorMessage($db), "<BR>";
                 return FALSE;
@@ -148,7 +158,7 @@ You should not be here!</STRONG>
 
     # modify an entry (if $id exists), or add a new one)
     if ($id) {
-        $sql = "SELECT begin, finish, city, country FROM places WHERE id = '$id'";
+        $sql = "SELECT begin, finish, city, country, state, url FROM places WHERE id = '$id'";
         if (! ($result = pg_exec($db, $sql))) {
             echo "Problem with query", pg_ErrorMessage($db), "<BR>";
             return FALSE;
@@ -164,6 +174,8 @@ You should not be here!</STRONG>
         $finish = $row["finish"];
         $city = $row["city"];
         $country = $row["country"];
+        $state = $row["state"];
+        $url = $row["url"];
     } else {
         $begin = $finish = "";
         $city = $country = "";
@@ -244,9 +256,18 @@ function print_date($title, $name, $date) {
 ?>
 
 
-<TR><TD><B>City</B></TD><TD><INPUT name = "city" type = "text" maxlength="30" value="<? echo $city ?>"></TD>
- <TD>city and/or event (e.g. a computer conference)</TD></TR>
-<TR><TD><B>Country</B></TD>
+<TR>
+<TD><B>City</B></TD>
+<TD><INPUT name = "city" type = "text" maxlength="30" value="<? echo $city ?>"></TD>
+<TD>city and/or event (e.g. a conference)</TD>
+</TR>
+<TR>
+<TD><B>URL</B></TD>
+<TD><INPUT name = "url" type = "text" maxlength="100" size=50 value="<? echo $url ?>"></TD>
+<TD>URL (in case of a conference etc.)</TD>
+</TR>
+<TR>
+<TD><B>Country</B></TD>
 
 <?
     echo "<TD><SELECT name = \"country\">";
@@ -261,6 +282,9 @@ function print_date($title, $name, $date) {
     echo "</TR>";
     echo "\n";
 ?>
+
+<TR><TD><B>State/Province</B></TD><TD><INPUT name = "state" type = "text" maxlength="3" value="<? echo $state ?>"></TD>
+<TD>Australia/Canada/USA only - use 2-3 letter code</TD></TR>
 
 </TR>
 <TR><TD> </TD><TD><INPUT type="submit" value="Submit"></TD></TR>

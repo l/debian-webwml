@@ -238,18 +238,52 @@
         "ZM" => "Zambia",
         "ZW" => "Zimbabwe");
 
-    function print_place($begin, $finish, $city, $country) {
+    function print_place_compact($begin, $finish, $city, $state, $country, $url) {
         global $iso;
-        $country = $iso[$country];
+        if ($state) {
+            echo "<b>$state</b>, ";
+        }
         if ($city) {
-            echo "<LI>$city, $country: ";
+            if ($url) {
+                echo "<a href=\"$url\">$city</a>";
+            } else {
+                echo "$city";
+            }
         } else {
-            echo "<LI>$country: ";
+            echo "$iso[$country]";
+        }
+        echo "<i>";
+        if (! $begin && ! $finish) {
+            # don't show anything
+        } else if ($begin && ! $finish) {
+            echo ", starting from $begin";
+        } else if (! $begin && $finish) {
+            echo ", until $finish";
+        } else {
+            echo ", $begin to $finish";
+        }
+        echo "</i>";
+    }
+
+
+    function print_place_long($begin, $finish, $city, $state, $country, $url) {
+        global $iso;
+        if ($city) {
+            echo "$city, ";
+        }
+        if ($state) {
+            echo "<b>$state</b>, ";
+        }
+        if ($country) {
+            echo "<i>$iso[$country]</i>, ";
+        }
+        if ($url) {
+            echo "<kbd>$url</kbd>, ";
         }
         if (! $begin && ! $finish) {
             echo "always";
         } else if ($begin && ! $finish) {
-            echo "starting on $begin";
+            echo "starting from $begin";
         } else if (! $begin && $finish) {
             echo "until $finish";
         } else {
@@ -264,7 +298,7 @@
             return FALSE;
         }
 
-        $sql = "SELECT id, begin, finish, city, country FROM places WHERE who = '$id' ORDER BY begin, finish";
+        $sql = "SELECT id, begin, finish, city, state, country, url FROM places WHERE who = '$id' ORDER BY begin, finish";
         if (! ($query = pg_exec($db, $sql))) {
             echo "Problem with query", pg_ErrorMessage($db), "<BR>";
             return FALSE;
@@ -273,43 +307,27 @@
         $rows = pg_NumRows($query);
         for ($i = 0; $i < $rows; $i++) {
             $row = pg_Fetch_Array($query, $i);
-            print_place($row["begin"], $row["finish"], $row["city"], $row["country"]);
+            print_place_long($row["begin"], $row["finish"], $row["city"], $row["state"], $row["country"], $row["url"]);
             if ($modify) {
                 echo " <A HREF = \"gpgplace.php?id=", $row["id"], "\">[Modify]</A>";
                 echo " <A HREF = \"gpgplace.php?remove=1&id=", $row["id"], "\">[Remove]</A>";
+                echo "<br>\n";
             }
         }
         echo "</UL>";
     }
 
 
-    function print_people($db, $sql) {
-        if (! ($query = pg_exec($db, $sql))) {
-            echo "Problem with query", pg_ErrorMessage($db), "<BR>";
-            return FALSE;
-        }
-        $rows = pg_NumRows($query);
-        for ($i = 0; $i < $rows; $i++) {
-            $row = pg_Fetch_Array($query, $i);
-            echo "<LI>";
-            echo $row["forename"], " ", $row["surname"];
-            echo " &lt;", $row["email"], "&gt;";
-            echo "\n";
-
-            print_all_places($row["id"], FALSE);
-
-        }
-    }
 
     function show_by_country($db, $offer) {
         global $iso;
-        $sql = "SELECT country, who, begin, finish, city, forename, surname, email FROM places, people WHERE ";
+        $sql = "SELECT country, state, who, begin, finish, city, forename, surname, email, places.url, people.url as peopleurl, places.url as placesurl FROM places, people WHERE ";
         if ($offer) {
             $sql .= "offer is TRUE";
         } else {
             $sql .= "offer is FALSE";
         }
-        $sql .= " AND places.who = people.id ORDER BY country, UPPER(surname)";
+        $sql .= " AND places.who = people.id ORDER BY country, state, to_ascii(city), UPPER(surname)";
 
         if (! ($query = pg_exec($db, $sql))) {
             echo "Problem with query", pg_ErrorMessage($db), "<BR>";
@@ -317,38 +335,30 @@
         }
         $rows = pg_NumRows($query);
         $old_country = "";
-        $old_who = "";
         for ($i = 0; $i < $rows; $i++) {
             $row = pg_Fetch_Array($query, $i);
             if ($row["country"] != $old_country) {
-                if ($old_who != "") {
-                    echo "</UL>\n";
-                }
-                if ($old_country != "") {
-                    echo "</UL>\n\n";
-                }
                 echo "<H2>", $row["country"], " - ", $iso[$row["country"]], "</H2>";
                 echo "\n";
-                echo "<UL>\n";
-                $old_who = "";
+                $old_state = "";
             }
 
-            if ($row["who"] != $old_who) {
-                if ($old_who != "") {
-                    echo "</UL>\n"; # to close the last person's place UL
-                }
-                echo "<LI>", $row["forename"], " ", $row["surname"];
-                echo " &lt;", $row["email"], "&gt;";
-                echo "\n";
-                echo " <UL>"; # being of person's place UL
+              if ($row["state"] != $old_state) {
+                echo "<p>\n";
             }
-            print_place($row["begin"], $row["finish"], $row["city"], $row["country"]);
+            print_place_compact($row["begin"], $row["finish"], $row["city"], $row["state"], $row["country"], $row["placesurl"]);
+            echo ": ";
+            if ($row["peopleurl"]) {
+                echo "<a href=\"", $row["peopleurl"], "\">", $row["forename"], " ", $row["surname"], "</a>";
+            } else {
+                echo $row["forename"], " ", $row["surname"];
+            }
+            echo " &lt;", $row["email"], "&gt;";
+            echo "<br>\n";
 
             $old_country = $row["country"];
-            $old_who = $row["who"];
+            $old_state = $row["state"];
         }
-        echo "</UL>\n";
-        echo "</UL>\n";
     }
 
 ?>
