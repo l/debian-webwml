@@ -1,23 +1,9 @@
 #use wml::debian::template title="Debian 2.1 (slink) Release Information"
 #use wml::debian::languages
+#use wml::debian::install_manual
+#include 'formats_and_architectures.wmh'
 
 <:
-# list of architectures
-%arches = ( i386   => 'Intel x86',
-	    m68k   => 'Motorola 680x0',
-	    sparc  => 'SPARC',
-	    alpha  => 'Alpha',
-	  );
-
-# language specific name for output formats
-%formats = ( html => "HTML",
-	     pdf  => "PDF",
-	     txt  => "ASCII",
-           );
-
-# some languages aren't yet in debian/template files
-$langs{'russian'} = 'ru';
-$langs{'czech'} = 'cz';
 
 $about_lang_setting = "If you have set your browser's localization
 properly, you can use the above link to get the right HTML version
@@ -25,70 +11,8 @@ automatically -- see <A href=\"$base_url/intro/cn\"><setlang></A>.
 Otherwise, pick the exact architecture, language, and format you want
 from the table below.\n";
 
-#
-# emits an bunch of li (list items)
-#
-sub permute_as_list {
-    my($file, $name, @exts) = @_;
-    my($ext, $arch);
-
-    foreach $arch (keys %arches) {
-        print "<li> <a href=\"./$arch/$file\">$name for " . $arches{$arch} . "</a>";
-	if ( $#exts != -1 ) {
-	    foreach $ext (@exts) {
-	        print " (<a href=\"./$arch/$file.$ext\"><em>" . 
-			$formats{$ext} . "</em></a>)";
-	    }
-	}
-	print "\n";
-    }
-}
-
-#
-# emits an HTML table matrix:
-#   | arch | format | lang1, lang2, lang3 |
-#
-sub permute_as_matrix {
-    my($file, @langs) = @_;
-    my($ext, $arch, $lang);
-    my $altcolor = 'white';
-    my $ctr = 0;
-
-    foreach $arch (keys %arches) {
-	$ctr++;
-	my $first = 1;
-
-	foreach $ext (keys %formats) {
-	    # alternate the row color
-	    if ( $ctr % 2 ) {
-		print "\n<tr>\n";
-	    } else {
-		print "\n<tr bgcolor=\"$altcolor\">\n";
-	    }
-	    # only print the arch name on the first row
-	    if ( $first == 1 ) {
-		print "  <td align=\"left\"><a href=\"$arch/$file\">" . $arches{$arch} . "</a></td>\n";
-		$first = 0;
-	    } else {
-		print "  <td>&nbsp;</td>\n";
-	    }
-	    print "  <td align=\"left\">" . $formats{$ext} . "</td>\n";
-	    # permute over languages
-	    print "  <td>";
-	    foreach $lang (@langs) {
-		print "<a href=\"./$arch/$file." . $langs{$lang} . ".$ext\">";
-		# sometimes the language name isn't properly defined yet
-		my $workaroundlang = $trans{$CUR_ISO_LANG}{$lang};
-		( $workaroundlang = $lang ) =~ s/^(.)/\U$1/
-		    unless $workaroundlang;
-		print $workaroundlang . "</a> \n";
-	    }
-	    print "  </td>";
-	    print "</tr>\n";
-	    
-	}
-    }
-}
+# used to join "Install Manual _for_ i386", for instance
+$indirect_object_conjoiner = 'for';
 
  :>
 
