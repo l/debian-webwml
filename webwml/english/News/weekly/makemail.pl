@@ -57,6 +57,14 @@ while (<IN>) {
 		       if ( m/^\s*[^\* ]/ ) {
 			    s/^/  /;
 		       }
+	          } else {
+		       if (/^\s*\*.*$/) { 
+			    # New itemized list
+			    push @stories, $story if ($story);
+		  	    $story = "";
+			    # indent following lines
+			    $lastlinecontainsstar = 1;
+		       }
 		  }
 		  # line starts an item
 		  if ( m/^\s*\*/ ) {
@@ -111,15 +119,15 @@ while (<IN>) {
 }
 
 foreach $story (@stories) {
-     $story =~ m/\[(\d+)\]/s;
-     my $firstlink = $1;
-     $story =~ m/.*\[(\d+)\]/s;
-     my $lastlink = $1;
+     $story =~ m/\[(\d+)\]/s && { my $firstlink = $1 };
+     $story =~ m/.*\[(\d+)\]/s && { my $lastlink = $1 };
      if ($lastlink && $firstlink) {
 	 print $story, "\n";
 	 foreach $link (@links[$firstlink .. $lastlink]) {
 	     print $link;
 	 }
+     } else {
+	 print $story;
      }
      print "\n";
 }
