@@ -87,11 +87,15 @@ sub secrefs
     my $cert = cert_secref($refstr);
 
     $result .= $bid if (length ($bid));
-    $result .= ", " if $result ne "";
-    $result .= $cve if (length ($cve));
-    $result .= ", " if $result ne "";
-    $result .= $cert if (length ($cert));
 
+    if (length ($cve)) {
+	$result .= ", " if $result ne "";
+	$result .= $cve;
+    }
+    if (length ($cert)) {
+	$result .= ", " if $result ne "";
+	$result .= $cert;
+    }
     return $result;
 }
 
@@ -130,11 +134,15 @@ sub secrefs
     my $url;
     my @urls;
     my ($bid, $cve, $cert);
+<protect pass=2>
     foreach $id (sort keys %text) {
-	printf "<p><a name=\"%s\" href=\"%s\">%s</a>:\n", $id, $url, $id;
+        $url = secrefs($id);
+	$url =~ s/<a href/<a name=\"$id\" href/;
+	printf "<p>%s:\n", $url;
 	printf "%s\n", $text{$id};
 	printf "(%s)\n", secrefs($ref{$id}) if (exists $ref{$id});
 	print  "</p>\n\n";
     }
+</protect>
 :>
 </define-tag>
