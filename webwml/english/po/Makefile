@@ -9,13 +9,13 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates bugs doc l10n langs organization ports search vendors others
+DOMAINS = templates bugs countries doc l10n langs organization ports search vendors others
 
 POTFILES = $(addprefix $(ENGLISHDIR)/po/,$(addsuffix .pot,$(DOMAINS)))
 MOFILES = $(addsuffix .mo,$(DOMAINS))
 
-templates_FILES = $(wildcard $(TEMPLDIR)/*.wml $(TEMPLDIR)/*/*.wml)
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
+countries_FILES = $(TEMPLDIR)/countries.wml
 doc_FILES       = $(ENGLISHDIR)/doc/books.def $(ENGLISHDIR)/doc/manuals.defs
 l10n_FILES      = $(ENGLISHDIR)/international/l10n/dtc.def \
   $(ENGLISHDIR)/international/l10n/menu.def
@@ -32,6 +32,12 @@ others_FILES    = $(ENGLISHDIR)/News/press/press.tags \
   $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/logos/index.tags \
   $(ENGLISHDIR)/misc/laptops/menu.inc $(ENGLISHDIR)/misc/merchandise.def \
   $(ENGLISHDIR)/security/faq.inc $(ENGLISHDIR)/y2k/l10n.data
+templates_FILES = $(addprefix $(TEMPLDIR)/, \
+  cdimage.wml common_tags.wml common_translation.wml consultant.wml \
+  ddp.wml events_common.wml fixes_link.wml footer.wml languages.wml \
+  links.tags.wml mirrors.wml news.wml recent_list.wml security_tags.wml \
+  todoitem.wml translation-check.wml url.wml votebar.wml \
+  weeklynews/footer.wml)
 
 ifeq "$(LANGUAGE)" "en"
 all install:: $(POTFILES)
@@ -44,6 +50,9 @@ $(ENGLISHDIR)/po/templates.pot: $(templates_FILES)
 
 $(ENGLISHDIR)/po/bugs.pot: $(bugs_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl $(bugs_FILES) > $@
+
+$(ENGLISHDIR)/po/countries.pot: $(countries_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl $(countries_FILES) > $@
 
 $(ENGLISHDIR)/po/doc.pot: $(doc_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl $(doc_FILES) > $@
