@@ -1,4 +1,5 @@
 all:
+	- $(MAKE) -C arabic install
 	- $(MAKE) -C chinese install
 	- $(MAKE) -C croatian install
 	- $(MAKE) -C danish install
@@ -14,6 +15,7 @@ all:
 	- $(MAKE) -C norwegian install
 	- $(MAKE) -C polish install
 	- $(MAKE) -C portuguese install
+	- $(MAKE) -C romanian install
 	- $(MAKE) -C spanish install
 	- $(MAKE) -C swedish install
 	- $(MAKE) -C turkish install
