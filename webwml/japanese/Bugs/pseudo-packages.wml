@@ -1,0 +1,33 @@
+#use wml::debian::template title="Debian バグ追跡システム" NOHEADER="true"
+<!--original_revision: 1.3 :-->
+
+<H1>Debian バグ追跡システム 擬似パッケージ</H1>
+
+<p>このページでは、バグ報告の <code>Package:</code> 行に使用できる
+擬似パッケージの一覧を示します。
+
+<p><code>Package:</code> 行の指定方法の詳細は、
+<a href="Reporting">バグ報告の勧め(使用説明書)</a>を参照してください。
+
+<hrline>
+
+<:
+my $file = "pseudo-packages.description";
+my $host = `hostname -f`; chop $host;
+$file = "/org/www.debian.org/cron/scripts_daily/$file" if ($host eq "klecker.debian.org");
+open I, "$file" or die "Can't find $file file at $host: $!\n";
+while (<I>) { if (/^(\S+)\s+(.*)$/) { $pseudos{$1} = $2; } }
+close I;
+%pseudos || die "%pseudos is not set -- empty pseudo-packages.description file?\n";
+foreach $a (sort keys %pseudos) {
+  if ($a ne "dpkg-iwj" && $a ne "spam") {
+    print "<p><code>$a</code> &mdash; $pseudos{$a}\n";
+  }
+}
+:>
+
+<hrline>
+
+#use "otherpages.inc"
+
+#use "footer.inc"
