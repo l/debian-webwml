@@ -171,7 +171,7 @@ $where =~ s/([,;])/\\$1/g;
 
 # Convert dates into correct representation
 $startstring = sprintf("%04d%02d%02dT000000", split(/-/, $startdate));
-$endstring   = sprintf("%04d%02d%02dT235959", split(/-/, $enddate));
+$endstring   = sprintf("%04d%02d%02dT240000", split(/-/, $enddate));
 
 # Construct the canonic URL to this file
 $filebase = $wmlfile;
@@ -212,12 +212,16 @@ close ICS;
 exit 0;
 
 # Print a calendar line, chopping it up at 75 characters if necessary
+# Symbian devices have problems with the line splitting, they concatenate
+# the lines incorrectly (not removing the initial whitespace). Thus I
+# try to split at whitespace, if possible.
 sub calline
 {
 	my ($handle, $line) = @_;
 	while (length $line > 74)
 	{
-		$len = 74;
+		$len = rindex($line,' ',75);
+		$len = 74 if -1 == $len;
 		-- $len while substr($line, $len, 1) eq '\\';
 		print $handle substr($line, 0, $len), "\r\n ";
 		$line = substr($line, $len);
@@ -265,5 +269,31 @@ DTSTART:20030101T000000
 DTEND:20030103T000000
 SUMMARY:Debian Test Event
 PRIORITY:1
+END:VEVENT
+END:VCALENDAR
+
+-- DebConf 3 entry as exported from my P800 --
+* Note the missing whitespace at the start of continuation lines
+* Note 24:00 as end date
+BEGIN:VCALENDAR
+VERSION:1.0
+BEGIN:VEVENT
+UID:89
+SUMMARY:Debian Conference 3
+DESCRIPTION;ENCODING=QUOTED-PRINTABLE;CHARSET=UTF-8:=
+Debian=20Conference=203=20-=20Debconf=20=C3=A4r=20en=20konferens=20med,=
+=20f=C3=B6r=20och=20av=20Debianutvecklare.=20Ickeutvecklare=20f=C3=A5r=20=
+g=C3=A4rna=20bes=C3=B6ka,=20men=20=C3=A4r=20inte=20konferensens=20huvud=
+m=C3=A5lgrupp.=20
+DTSTART:20030718T000000
+DTEND:20030719T240000
+X-EPOCAGENDAENTRYTYPE:EVENT
+CLASS:PUBLIC
+LOCATION:Oslo, Norge
+DCREATED:20030412T000000
+LAST-MODIFIED:20030412T205100
+CATEGORIES:X-CONFERENCE
+PRIORITY:0
+STATUS:NEEDS ACTION
 END:VEVENT
 END:VCALENDAR
