@@ -80,21 +80,29 @@ while (<SRC>)
 {
 	next if /\$Id/;
 
-	s/<h4>Source:/<h4>Källkod:/;
-	s/<h4>Source archives:/<h4>Källkodsarkiv:/;
-	s/ architecture:</</;
-	s/<h4>Architech?ture-independent component:/<h4>Arkitekturoberoende arkiv:/;
+#	s/<h4>Source:/<h4>Källkod:/;
+#	s/<h4>Source archives:/<h4>Källkodsarkiv:/;
+#	s/ architecture:</</;
+#	s/<h4>Architech?ture-independent component:/<h4>Arkitekturoberoende arkiv:/;
 	s/We recommend that you upgrade your (.*) package immediately/Vi rekommenderar att ni uppgraderar ert $1-paket omedelbart/;
 	s/We recommend that you upgrade your (.*) packages immediately/Vi rekommenderar att ni uppgraderar era $1-paket omedelbart/;
 	s/We recommend that you upgrade your (.*) packages/Vi rekommenderar att ni uppgraderar era $1-paket/;
 	s/We recommend that you upgrade your (.*) package/Vi rekommenderar att ni uppgraderar ert $1-paket/;
 	s/buffer overflows?/buffertspill/;
 	s/format string vulnerability/formatsträngssårbarhet/;
+	s/insecure temporary files/osäkra temporära filer/;
 	s/This problem has been fixed/Detta problem har rättats/;
 	s/>local root exploit</>lokal rootattack</;
 	s/>remote root exploit</>fjärr-rootattack</;
 	s/>symlink attack</>attack mot symboliska länkar</;
 	s/>remote exploit</>fjärrattack</;
+	s/This has been fixed in version/Detta har rättats i version/;
+	s/of the Debian package/av Debianpaketet/;
+	s/upstream version/uppströmsversion/;
+	s/for the old stable/för den gamla stabila/;
+	s/for the current stable/för den nuvarande stabila/;
+	s/for the unstable/för den instabila/;
+
 	print DST $_;
 }
 
