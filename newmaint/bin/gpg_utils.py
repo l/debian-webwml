@@ -79,6 +79,9 @@ def get_firstname(db, email):
 def get_lastname(db, email):
     return get_name(db, email)[1]
 
+def get_fullname(db, email):
+    return "%s %s" % (get_firstname(db, email), get_lastname(db, email))
+
 def remove_place(db, place):
     db.query("DELETE FROM places WHERE id = %s" % place)
 
