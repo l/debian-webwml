@@ -1,13 +1,13 @@
-#use wml::debian::template title="Mettre en place un miroir FTP"
+#use wml::debian::template title="Mettre en place un miroir de l'archive Debian"
 #use wml::debian::toc
+#include "$(ENGLISHDIR)/releases/woody/release.data"
 
-#use wml::debian::translation-check translation="1.27" maintainer="Christian Couder"
+#use wml::debian::translation-check translation="1.30" maintainer="Christian Couder"
 
 
-<p>Faire tourner un miroir revient au même que le site soit <a
-href="official">officiel</a> ou non.
+<toc-display/>
 
-<p>Une fois qu'un miroir est mis en place il doit être 
+<p>Une fois qu'un miroir est mis en place, il doit être 
 <a href="submit">enregistré par Debian</a>
 de façon à être inclus dans la 
 <a href="list">liste des miroirs</a>.
@@ -15,12 +15,9 @@ Les inscriptions peuvent être faites en utilisant notre
 <A href="submit">simple formulaire web</a>.
 
 <p>Problèmes et questions peuvent être envoyés à 
-<A href="mailto:mirrors@debian.org">mirrors@debian.org</A>.
-</p>
+<email mirrors@debian.org>.</p>
 
-<toc-display/>
-
-<toc-add-entry name="wherefrom">De quoi faire un miroir ?</toc-add-entry>
+<toc-add-entry name="wherefrom">De quoi faire un miroir&nbsp;?</toc-add-entry>
 
 <p>Beaucoup de gens pensent que <code>ftp.debian.org</code> est
 l'emplacement canonique des paquets Debian et que faire un miroir de
@@ -29,24 +26,25 @@ ce site est ce qu'il y a de mieux. <strong>Ce n'est pas vrai</strong>.
 à jour à partir d'un serveur Debian interne.</p>
 
 <p>Tout serveur parmi ceux qui se trouvent dans la <a
-href="list-full">liste complète des miroirs</a> portant la marque 
-« <kbd>Type: Push-Primary</kbd> » est un bon candidat pour
+href="list-full">liste complète des miroirs</a> portant la marque
+«&nbsp;<kbd>Type: Push-Primary</kbd>&nbsp;» est un bon candidat pour
 la source d'un miroir.</p>
 
-<p>Pour vous, il n'y a pratiquement aucune différence entre un miroir
-fait à partir de <code>ftp.debian.org</code> et un miroir fait à
-partir d'un autre miroir <em>Push-Primary</em>. De plus, si beaucoup
-de gens utilisent <code>ftp.debian.org</code> (et malheureusement
-c'est le cas), cela gaspille la bande passante qui nous a été
-donnée.</p>
+<p>Il n'y a pas de différences significatives entre différents miroirs
+serveurs <em>Push-Primary</em> comme origine du miroir. De plus, si
+beaucoup de gens utilisent <code>ftp.debian.org</code> (et
+malheureusement c'est le cas), cela gaspille inutilement la bande
+passante que l'on nous donne.</p>
 
-<toc-add-entry name="methods">Méthodes pour faire un miroir</toc-add-entry>
+<toc-add-entry name="how">Comment faire un miroir</toc-add-entry>
 
-<p>La méthode recommandée pour faire tourner un miroir est d'utiliser rsync.
+<p>La méthode recommandée pour faire tourner un miroir est d'utiliser
+<a
+href="http://packages.debian.org/stable/net/rsync.html">rsync</a>.</p>
 
-<p>Note : bien que <kbd>wget</kbd> fonctionne correctement pour faire
-des miroirs de petits sites, il n'est pas aussi configurable que rsync
-ou mirror, donc il n'est pas recommandé pour ce travail.
+<p>Note&nbsp;: bien que <kbd>wget</kbd> fonctionne correctement pour faire
+des miroirs de petits sites, il n'est pas aussi configurable que
+rsync, donc il n'est pas recommandé pour ce travail.</p>
 
 <h3>rsync anonyme</h3>
 
@@ -54,24 +52,61 @@ ou mirror, donc il n'est pas recommandé pour ce travail.
 miroir de l'archive. Suivez les indications du script pour mettre en place 
 le miroir.
 
-<h3>rsync avec authentification, à partir d'un miroir « Push »</h3>
+<p>Voici des conseils pour ceux qui préfèrent d'autres façons de faire
+un miroir.
 
-<p>Les miroirs « Push » sont une forme de miroir, utilisant rsync, que nous 
+<ul>
+
+  <li>Lancez rsync avec au mois les options suivantes&nbsp;:
+  <kbd>--recursive --times --links --hard-links --delete</kbd>.
+
+  <li>Même si vous avez de la place disque supplémentaire, utilisez
+  l'option <kbd>--delete-after</kbd> pour éviter des problèmes de mise
+  à jour temporaire.
+
+  <li>Si vous n'avez pas assez d'espace disque pour faire un miroir de
+  toute l'archive, utilisez l'option <kbd>--exclude</kbd> pour exclure
+  certaines parties de l'archive. En général on enlève certaines
+  architectures qu'on ne veut pas&nbsp;; par exemple, ce qui suit
+  supprimerait <em>toutes</em> les architectures&nbsp;:
+      <br>
+<: 
+print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
+  foreach (sort keys %arches);
+:>
+      Voyez aussi la <a href="#partial">section concernant les miroirs
+      partiels</a>.
+
+  <li>Une fois que rsync a fini de mettre à jour le miroir, ajoutez
+  un fichier «&nbsp;timestamp&nbsp;» au sous-répertoire
+  <code>project/trace/</code> du miroir Debian ayant le nom de votre
+  serveur. Cela signifie lancer <kbd>date -u &gt;
+  .../debian/project/trace/<var>your.server</var></kbd>
+  une fois que votre rsync journalier est terminé&nbsp;; et <kbd>date -u
+  &gt; .../debian-non-US/project/trace/<var>your.server</var></kbd>
+  une fois que le rsync journalier de non-US est terminé, si vous
+  faites un miroir de debian-non-US.
+
+</ul>
+
+<h3>rsync avec authentification, à partir d'un miroir «&nbsp;Push&nbsp;»</h3>
+
+<p>Les miroirs «&nbsp;Push&nbsp;» sont une forme de miroir, utilisant rsync, que nous 
 avons développée afin de minimiser le temps que mettent les changements de 
-l'archive pour atteindre les miroirs. Les miroirs « Push » utilisent un 
+l'archive pour atteindre les miroirs. Les miroirs «&nbsp;Push&nbsp;» utilisent un 
 script déclencheur ssh pour indiquer au miroir client qu'il doit se mettre 
 à jour. 
 
-<p>Les miroirs « Push » sont nécessaires pour garder synchrones un
+<p>Les miroirs «&nbsp;Push&nbsp;» sont nécessaires pour garder synchrones un
 ensemble de serveurs (comme les serveurs dans des alias DNS en
 <i>round-robin</i>, par exemple <tt>ftp.us.debian.org</tt>), et nous
 les utilisons couramment pour nos miroirs de premier et deuxième
-niveau. Pour les miroirs « normaux », cette méthode demande beaucoup
+niveau. Pour les miroirs «&nbsp;normaux&nbsp;», cette méthode demande beaucoup
 d'effort de mise en place ce qui n'est en fait pas très rentable
 comparé à une tâche cron bien préparée.</p>
 
 <p>La méthode est assez sûre car ssh est configuré pour lancer une unique 
-commande. Ainsi le miroir se fait toujours par « Pull », il n'est donc 
+commande. Ainsi le miroir se fait toujours par «&nbsp;Pull&nbsp;», il n'est donc 
 <strong>pas</strong> possible de corrompre le contenu de l'archive 
 <i>via</i> un miroir push infiltré.
 Quelques administrateurs de miroirs ont montré une certaine hésitation à 
@@ -83,12 +118,12 @@ fonctionne, des raisons pour lesquelles elle est sûre et de la façon de
 la mettre en place, voyez <a href="push_mirroring">les explications
 complètes</a>.
 
-<h3>FTP anonyme en utilisant « mirror »</h3>
+<h3>FTP anonyme en utilisant «&nbsp;mirror&nbsp;»</h3>
 
 <p>FTP anonyme a été la méthode standard de création de miroir depuis
-longtemps. Pour cela, le programme « mirror » fonctionne correctement sur 
+longtemps. Pour cela, le programme «&nbsp;mirror&nbsp;» fonctionne correctement sur 
 l'archive Debian.
-Comme vous vous en doutez probablement, « mirror » est disponible en
+Comme vous vous en doutez probablement, «&nbsp;mirror&nbsp;» est disponible en
 paquet Debian.
 Si vous avez installé le paquet Debian, il y a un script d'exemple pour
 faire un miroir de l'archive ftp dans /etc/mirror/packages/ftp.debian.org.
@@ -115,28 +150,33 @@ eux-mêmes).
 <tt>doc/</tt> et les autres sous-répertoires. En général ceux-ci sont
 insignifiants en terme de taille mais utiles aux utilisateurs.</p>
 
-<toc-add-entry name="when">Quand rafraîchir les miroirs ?</toc-add-entry>
+<toc-add-entry name="when">Quand rafraîchir les miroirs&nbsp;?</toc-add-entry>
 
 <p>L'archive principale est mise à jour toutes les 24 heures.
 
-<p>Si votre site est un miroir « Push », alors vous n'avez pas à vous
-soucier de ce problème. Sinon, et si le site dont vous faites un miroir
-utilise rsync, alors vous devriez regarder dans <kbd>project/trace/</kbd>
-dans l'archive Debian du site pour y trouver un fichier ayant le nom du site.
-Ce fichier devrait contenir la date à laquelle le processus de miroir s'est
-terminé la dernière fois.
-Ajoutez-y un moment, par exemple une heure, et vous obtiendrez le moment 
-auquel lancer votre processus.
+<p>En général les miroirs commencent à se mettre à jour à partir de
+00:00 UTC, mais ce n'est pas une heure fixe. Nous recommandons de
+mettre à jour votre miroir chaque jour, plusieurs heures après cette
+heure&nbsp;; en fait, vous devriez regarder si le site à partir duquel vous
+faites votre miroir laisse un fichier «&nbsp;time stamp&nbsp;» dans son
+sous-répertoire <kbd>project/trace/</kbd>. Ce fichier aura le même nom
+que le site, et il contiendra l'heure de la fin de la dernière mise à
+jour du site. Ajoutez-y quelques heures (pour plus de sécurité) et
+vous obtiendrez le moment auquel lancer votre processus miroir.</p>
 
 <p>La meilleure façon de faire tourner le miroir automatiquement tous les 
 jours est d'utiliser cron. Voyez <kbd>man crontab</kbd> pour plus de détails.
- 
+
+<p>Notez que si votre site utilise un mécanisme «&nbsp;Push&nbsp;» pour lancer
+sa mise à jour, alors vous n'avez à vous soucier d'aucun de ces
+problème.</p>
+
 <toc-add-entry name="settings">Configuration supplémentaire recommandée</toc-add-entry>
 
 <p>Si vous voulez rendre le miroir Debian disponible par HTTP, merci de
 rajouter les options suivantes à votre configuration d'Apache (en
 supposant bien sûr que vous utilisez Apache) concernant l'indexation
-des répertoires :
+des répertoires&nbsp;:
 
 <pre>
 &lt;directory /org/ftp.debian.org/ftp&gt;
