@@ -78,7 +78,7 @@
 # 3) News/2002/index.wml
 # get_recent_list ('.', '0', '$(ENGLISHDIR)/News/2002', '', '\d+\w*')
 
-my ($listhead, $listfoot, $elemhead, $elemdate, $elemfoot, $elemrealfoot);
+my ($listhead, $listfoot, $elemhead, $elemdate, $elemfoot, $elememptyfoot, $elemrealfoot);
 my $is_events = 0;
 my $is_by_date = 0;
 
@@ -123,12 +123,14 @@ sub get_recent_list {
 	$listfoot = '</ol>';
 	$elemhead = '<li>';
 	$elemfoot = '- ';
+	$elememptyfoot = '</li>';
 	$elemrealfoot = '</li>';
     } elsif ($format =~ bullet) {
 	$listhead = '<ul>';
 	$listfoot = '</ul>';
 	$elemhead = '<li>';
 	$elemfoot = '- ';
+	$elememptyfoot = '</li>';
 	$elemrealfoot = '</li>';
     } elsif ($format =~ list) {
 	$listhead = '<dl>';
@@ -136,6 +138,7 @@ sub get_recent_list {
 	$listfoot = '</dl>';
 	$elemhead = '<dt>';
 	$elemfoot = '</dt><dd>';
+	$elememptyfoot = '</dt>';
 	$elemrealfoot = '</dd>';
     } elsif ($format =~ table) {
 	$listhead = '<table>';
@@ -143,12 +146,14 @@ sub get_recent_list {
 	$elemhead = '<tr><td>';
 	$elemdate = '</td><td>';
 	$elemfoot = '';
+	$elememptyfoot = '&nbsp;</td></tr>';
 	$elemrealfoot = '</td></tr>';
     } else {
 	$listhead = '';
 	$listfoot = '';
 	$elemhead = '';
 	$elemfoot = '- ';
+	$elememptyfoot = '';
 	$elemrealfoot = '';
     }
 </protect>
@@ -403,7 +408,7 @@ sub grab_titles {
 	    elsif ( $status eq "F" ) { $str1 .= "<finished/>"; }
 	    elsif ( $status eq "W" ) { $str1 .= "<withdrawn/>"; }
 	    else { $str1 .= "$status"; }
-	    $str1 .= "<br />$elemfoot$elemrealfoot\n";
+	    $str1 .= "<br />$elememptyfoot\n";
 	}
 
 	if (!$is_by_date || ($hdate eq "")) {
