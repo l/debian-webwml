@@ -1,6 +1,6 @@
 
-#  Disable ja ko zh since these langs do not build
-langs = ar ca da de el eo es fi fr hr hu id it nl no pl pt ro ru sv tr
+#  Disable ko: this lang does not build
+langs = ar ca da de el eo es fi fr hr hu id it ja nl no pl pt ro ru sv tr zh
 
 LOCALEROOT = $(CURDIR)/locale
 TEMPLDIR   = template/debian
