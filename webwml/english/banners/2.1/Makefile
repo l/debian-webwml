@@ -2,7 +2,7 @@
 # so the problem can be fixed.
 
 WMLBASE=../..
-CUR_DIR=2.1
+CUR_DIR=banners/2.1
 SUBS=
 
 include $(WMLBASE)/Make.lang
