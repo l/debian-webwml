@@ -182,10 +182,10 @@ $translations = [
 	'url'			=> 'http://www.debian.org/releases/slink/i386/release-notes/',
 	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/release-notes.sgml',
 	'package'		=> 'boot-floppies',
-	'status'		=> 'à traduire',
-	'since'			=> '',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '05/06/1999',
 	'translation_name'	=> 'Notes sur la version',
-	'translation_maintainer'=> [],
+	'translation_maintainer'=> ['mmenal <mmenal@francemel.com>'],
 	'translation_version'	=> '',
 	'translation_url'	=> '',
 	'translation_source_url'=> '',
@@ -818,8 +818,10 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'mirror/submit',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'à relire',
+	'since'			=> '02/06/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '02/06/1999',
 },
 
 {
