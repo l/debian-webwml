@@ -284,7 +284,6 @@ foreach $file (@files) {
     elsif ($line =~ /^<define-tag release_date>(.*)<\/define-tag>$/) { $date = qq/$1/; } # News
     elsif ($line =~ /^<define-tag where>(.*)<\/define-tag>$/) { $where = qq/$1/; }       # events
     elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) { $date = qq/$1/; }         # events
-    elsif ($line =~ /^<define-tag report_date>(.*)<\/define-tag>$/) { $rdate = qq/$1/; } # security
     elsif ($line =~ /^<define-tag description>(.*)<\/define-tag>$/) { $desc = qq/$1/; }  # security
     elsif ($line =~ /^<define-tag status>(.*)<\/define-tag>$/) { $status = qq/$1/; }     # vote
 </protect>
@@ -292,7 +291,16 @@ foreach $file (@files) {
       $str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong> $elemfoot$where<br>\n";
       last;
     }
-    elsif ($title && $rdate && $desc) { # for security/
+    elsif ($desc) { # for security/
+      open DATAFILE, "$eng_dir/$year/$base.data" or print STDERR "couldn't open $eng_dir/$year/$base.data: $!\n";
+      foreach $l (<DATAFILE>) {
+<protect pass=2>
+           if ($l =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) { $title = qq/$1/; }
+        elsif ($l =~ /^<define-tag report_date>(.*)<\/define-tag>$/) { $rdate = qq/$1/; }
+</protect>
+      }
+      close DATAFILE;
+#      print STDERR "title: $title rdate: $rdate\n";
       $rdate = newsdate($rdate);
       $title =~ s/(DSA-\d{3})-\d{1}/$1/; # strip off the revision in the DSA number
       $str1 = "$elemhead<tt>[$rdate]</tt> <strong><a href=\"$year/$base\">$title</a></strong> $elemfoot$desc<br>\n";
