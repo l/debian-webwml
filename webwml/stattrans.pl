@@ -262,9 +262,9 @@ foreach $lang (@search_in) {
     $wml{$lang} = $translated{$lang};
     $translated{$lang} = $translated{$lang} - $outdated{$lang};
 
-    $percent_a{$lang} = int ($wml{$lang}/$nfiles * 100);
-    $percent_t{$lang} = int ($translated{$lang}/$nfiles * 100);
-    $percent_o{$lang} = int ($outdated{$lang}/$nfiles * 100);
+    $percent_a{$lang} = int ($wml{$lang}/$nfiles * 100 + .5);
+    $percent_t{$lang} = int ($translated{$lang}/$nfiles * 100 + .5);
+    $percent_o{$lang} = 100 - $percent_t{$lang};
     $percent_u{$lang} = 100 - $percent_a{$lang};
 
     if (open (HTML, ">$config{'htmldir'}/$l.html")) {
