@@ -1,6 +1,6 @@
-#use wml::debian::template title="Debian GNU/Hurd -- Installazione" NOHEADER="yes"
+#use wml::debian::template title="Debian GNU/Hurd &ndash; Installazione" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.35" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.37" maintainer="Luca Monducci"
 
 <h1>Installazione di Debian GNU/Hurd</h1>
 
@@ -97,11 +97,12 @@ anche se un filesystem è in possesso di un particolare kernel, altri kernel
 possono continuare a usarlo ma potrebbero non essere capaci di usare certe
 estensioni.</p>
 
-<p>Per creare un filesystem usare <code>mke2fs</code> e passare <samp>-o
-hurd</samp> per indicare l'Hurd come proprietario del nuovo filesystem. Per
+<p>Per creare un filesystem usare <code>mke2fs</code> e passare <samp>-b 4096
+-o hurd</samp> per indicare l'Hurd come proprietario del nuovo filesystem. Per
 esempio, supponendo che la partizione sia <tt>/dev/hda2</tt>:
 
-<table><tr><td>&nbsp;</td><td class=example><pre> # mke2fs -o hurd /dev/hda2
+<table><tr><td>&nbsp;</td><td class=example><pre>
+\# mke2fs -o hurd /dev/hda2
 </pre></td></tr></table>
 
 
@@ -242,10 +243,6 @@ inserendo gli appropriati comandi nel file di configurzione di Grub
 
 <table><tr><td>&nbsp;</td><td class=example><pre>grub&#62; boot
 </pre></td></tr></table>
-
-<p>Mettetevi comodi e guardate i messaggi. Questo è molto più importante di
-quando possa sembrare: c'è un bug in GNU Mach per cui la pressione un tasto
-durante il processo di avvio genera un kernel panic.</p>
 
 <p>Se GNU/Hurd non si avvia potrebbe essere colpa di IRQ condivisi: GNU Mach
 non li gestisce molto bene. Si può verificare questa situazione guardando,
@@ -431,43 +428,51 @@ sito non ha dei mirror). Per usare un mirror locale Debian vedere
 <p>Se GNU Mach non riconosce la scheda di rete o si usa un modem, l'unico
 modo per aggiornare i pacchetti è scaricarli e poi trasferirli nel sistema
 GNU. Il modo più semplice per fare queste operazioni è usare apt fuori-linea.
-Vedere <tt>/usr/share/doc/apt/offline</tt> per le istruzioni dettagliate.</p>
+Vedere <tt>/usr/share/doc/apt-doc/offline.text.gz</tt> per le istruzioni
+dettagliate.</p>
 
 
-<h3>8.4 XFree86</h3>
+<h3>8.4 La console Hurd</h3>
+
+<p>Oltre alla console Mach già vista durante l'installazione, GNU Hurd ha
+una potente console in spazio-utente che fornisce terminali virtuali.
+Attualmente è necessario avviare manualmente la console Hurd con il seguente
+comando:</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+\# console -d vga -d pc_mouse --repeat=mouse -d pc_kbd --repeat=kbd -d generic_speaker -c /dev/cons /dev/vcs
+</pre></td></tr></table>
+
+<p>Nella console Hurd si può passare da iun terminale virtuale a un altro
+con <kbd>ALT+F1</kbd>, <kbd>ALT+F2</kbd> e così via.
+<kbd>ALT+CTRL+BACKSPACE</kbd> chiude la console Hurd causando il ripristino
+della console Mach da dove si può riaprire la console Hurd con il comando
+precedente.</p>
+
+
+<h3>8.5 XFree86</h3>
 
 <p>&Egrave; stato fatto il port di XFree86, tutte le schede video supportate
 che non richiedono un modulo del kernel dovrebbero funzionare.</p>
 
-<p>Per prima cosa impostare il traduttore per la tastiera:</p>
+<p>&Egrave; necessario essere nella console Hurd e ripetere l'installazione
+come indicato nella Sezione 8.4. Poiché XFree86 ha <code>/dev/kbd</code>
+come device per la tastiera cablato nel codice è necessario creare un link
+simbolico:</p>
 
-<table><tr><td>&nbsp;</td><td class=example><pre> # cd /dev
-\# ./MAKEDEV kbd
+<table><tr><td>&nbsp;</td><td class=example><pre>
+\# cd /dev
+\# ln -s cons/kbd kbd
+\# ln -s cons/mouse mouse
 </pre></td></tr></table>
 
-<p>e poi il traduttore per il mouse. Per mouse seriali eseguire il seguente
-comando sostituendo <tt>com0</tt> con la giusta porta di comunicazione:</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre> # settrans -cap /dev/mouse /hurd/mouse --device=com0 --protocol=microsoft
-</pre></td></tr></table>
-
-<p>Assicurarsi che <tt>/dev/com0</tt> esista. Se non esiste deve essere
-creato con il solito <code>MAKEDEV</code>.</p>
-
-<p>I mouse PS/2 non richiedono un device node, è sufficiente:</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre> # settrans -cap /dev/mouse /hurd/mouse --protocol=ps/2
-</pre></td></tr></table>
-
-<p>Si possono usare anche altri tipi di mouse; eseguire <tt>/hurd/mouse</tt>
-con l'opzione <samp>--help</samp> per i dettagli.</p>
-
-<p>Sono necessari parecchi pacchetti per X. x-window-core, rxvt e twm o fvwm
+<p>Sono necessari parecchi pacchetti per X. <code>x-window-core</code>,
+<code>rxvt</code> e <code>twm</code>, <code>fvwm</code> o <code>wmaker</code>
 sono un buon inizio.</p>
 
 <p>Si può usare debconf per configurare XFree86, comunque non è pronto per
-Hurd e il file di configurazione deve essere ritoccato. Modificare la sezione
-pointer che deve diventare:</p>
+Hurd e il file di configurazione deve essere ritoccato. Dopo la configurazione,
+modificare la sezione pointer che deve diventare:</p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>Section "Pointer"
   Protocol "osmouse"
@@ -475,8 +480,8 @@ pointer che deve diventare:</p>
 EndSection
 </pre></td></tr></table>
 
-<p><samp>Emulate3Buttons</samp> può essere aggiunto opzionalmente. Funziona
-senza altre modifiche.</p>
+<p><samp>Emulate3Buttons</samp> e <samp>ZAxisMapping</samp> devono essere
+entrambi disattivati.</p>
 
 <p>GNU/Hurd non usa ld.so.conf. Dato che <tt>/X11R6/lib</tt> non fa parte
 del path predefinito di ricerca delle librerie, è necessario aggiungere a
@@ -494,9 +499,3 @@ caricare le giuste librerie condivise) provare <code>rxvt</code>. Ancora non
 Debian. Sebbene esista l'implementazione di <code>pthreads</code> non è stato
 fatto il port di tutti i pacchetti pthread: non pensate che GNOME o KDE
 funzionino senza.</p>
-
-
-<h3>8.5 Terminali virtuali</h3>
-
-<p>GNU/Hurd non ha dei terminali virtuali sebbena siano in sviluppo, usare
-il pacchetto <code>screen</code> al loro posto.</p>
