@@ -1,5 +1,5 @@
 #use wml::debian::template title="エラッタ: slink における Linux 2.2.x の実行"
-<!--original_revision: 1.9 :-->
+<!--original_revision: 1.14 :-->
 
 <p>
 
@@ -12,7 +12,7 @@ slink リリースにおける 2.0.x Linux カーネル最新版の使用は
 公式にテストされ、問題のないことが確認されています。
 動作の確実な 2.0 シリーズのカーネルの採用は、
 Linux 2.2 リリースに先立って Debian がフリーズされたことや、
-カーネルのメジャーバージョンの変更が複雑な問題をもたらしかねいことから、
+カーネルのメジャーバージョンの変更が複雑な問題をもたらしかねないことから、
 決定されました。
 
 <p>
@@ -45,7 +45,7 @@ kernel-source-2.2.1</a> パッケージが、
 
 <p>
 
-こちらの一覧が不完全であることにはご注意ください。
+こちらの一覧は不完全かもしれません。ご注意ください。
 また、こちらの一覧にあげられていない他の問題を発見された場合は、
 www.debian.org にまでバグを報告してください。
 同様に問題のあるパッケージのバグ記録も確認し、
@@ -54,7 +54,7 @@ www.debian.org にまでバグを報告してください。
 <dl>
 	<dt><a href="http://packages.debian.org/sysutils">sysutils</a>
 	<dd>
-<tt>procinfo</tt> はセグメンテーションフォルトを引き起こします。
+<tt>procinfo</tt> は動作しないでしょう。
 こちらは、
 <a href="http://www.debian.org/Packages/unstable/utils/sysutils.html">
 開発版</a>にあるバージョンで修正されています。
@@ -71,17 +71,22 @@ netbase</a> パッケージには、
 が収録されています。
 <p>
 <tt>ifconfig</tt> はインターフェースのエイリアスを表示しません。
-また <tt>ipchains</tt> が常にパケットカウンタをクリアするとは限りません。
+また、環境によっては <tt>ipchains</tt> が
+何のエラーも発せずに、パケットカウンタのクリアに失敗するかもしれません。
 <tt>netbase</tt> の初期化スクリプトで設定されるルートによっては、
 無害ではありますが警告メッセージを表示します。
 <p>
 これらの問題点はすべて、
 <a href="http://www.debian.org/Packages/unstable/base/netbase.html">
 開発版</a> のバージョンでは解決されています。
+なお、Debian 2.1 用のコンパイル済みパッケージは、
+<a href="http://www.debian.org/~rcw/2.2/netbase/">こちら</a>
+でご利用いただけます。
+
 
 	<dt><a href="http://packages.debian.org/pcmcia-source">pcmcia-source</a>
 	<dd>
-slink に収録されているバージョンの <tt>pcmcia-source</tt> は、
+slink に収録されている <tt>pcmcia-source</tt> のバージョンは、
 2.2 カーネルでコンパイルできません。
 こちらは
 <a href="http://www.debian.org/Packages/unstable/admin/pcmcia-source.html">
@@ -110,26 +115,52 @@ slink に収録されているバージョン 2.0.1 は、
 ただこちらは、2.0 カーネルでは動作しません。
 (なお 開発版のバージョンには 2.0 用のカーネルパッチが収録されています。)
 
+	<dt><a href="http://packages.debian.org/netstd">netstd</a>
+	<dd>
+<tt>bootpc</tt> は、インターフェイスが設定済みでない限り、
+応答を受け付けません。こちらは、開発版にて独立した
+<a href="http://packages.debian.org/bootpc">bootpc パッケージ</a>
+で修正されています。
+
 	<dt><a href="http://packages.debian.org/lsof">lsof</a>
 	<dd>
-2.2 カーネル上で動作する <tt>lsof</tt> のバージョンは無いようです。
+<tt>lsof</tt> は再コンパイルしないと linux 2.2 上では動作しません。
+<a href="http://www.debian.org/Packages/unstable/utils/lsof-2.2.html">
+開発版</a> から利用できる lsof-2.2 パッケージにアップグレードしてください。
 
 	<dt><a href="http://packages.debian.org/acct">acct</a>
 	<dd>
-
 2.2 カーネルではアカウントに関する構造体が変更されています。
-おそらく新カーネルで動作するパッケージが、
-まもなく利用できるようになるでしょう。
+そのため、<tt>acct</tt> を Linux 2.2 で実行させる場合には、
+開発版に収録されているバージョンのパッケージが必要になります。
+(なお、こちらは 2.0 シリーズのカーネルでは利用できません。)
 
 	<dt><a href="http://packages.debian.org/isdnutils">isdnutils</a>
 	<dd>
 
 Debian に収録されている isdnutils の 3.0 以降は、
-カーネル 2.0.x および 2.1.x で動作するはずです。
+カーネル 2.0 および 2.1 シリーズで動作するはずです。
 ただ、このことは Debian にだけ当てはまることです。
 というのも、これに関して Debian
 のパッケージ開発者が特別な処置を行っているためです。
 他のディストリビューションでは、こううまくはいかないでしょう。
+
+	<dt><a href="http://packages.debian.org/diald">diald</a>
+	<dd>
+slink の <tt>diald</tt> パッケージは、
+Linux 2.2 上での動的ルート設定に問題があります。
+開発版で利用できるバージョンにアップグレードしてください。
+
+        <dt><a href="http://packages.debian.org/xosview">xosview</a>
+	<dd>
+<tt>xosview</tt> は Linux 2.2.2 以降で、
+エンドレスループを引き起こします。
+xosview の作者によって、その
+<a href="http://lore.ece.utexas.edu/~bgrayson/xosview.html">修正</a> 
+が行なわれましたが、
+それはまだ Debian には取り込まれていません。 
+<a href="http://www.debian.org/Bugs/db/33/33795.html">Bug#33795</a>
+をご覧ください。
 
 </dl>
 
