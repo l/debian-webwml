@@ -1,40 +1,18 @@
 #use wml::debian::template title="Debian 2.1 (slink) Utgaveinformasjon"
-#<!--translation 1.20-->
+#use wml::debian::languages
+#use wml::debian::install_manual
+#include 'formats_and_architectures.wmh'
+#<!--translation 1.26-->
 <!-- Oversatt til norsk av Tor Slettnes (tor@slett.net) -->
 
 <:
-# list of architectures
-%arches = ( i386   => 'Intel x86',
-	    m68k   => 'Motorola 680x0',
-	    sparc  => 'SPARC',
-	    alpha  => 'Alpha',
-	  );
 
-# language specific name for output formats
-%formats = ( html => "HTML",
-	     pdf  => "PDF",
-	     txt  => "ASCII",
-           );
+$about_lang_setting = "Om du har satt opp <a
+href="../../intro/cn">språkvalget</a> i nettleseren din, kan du bruke
+pekerne ovenfor til å hente den riktige HTML-versjonen automatisk --
+se <A href=\"$base_url/intro/cn\"><setlang></A>.  Ellers kan du velge
+arkitekturen, språket og formatet du ønsker fra tabellen nedenfor.\n";
 
-$about_lang_setting = 'Om du har satt ønsket <a
-href="../../intro/cn">språkvalg</a>, burde du fått den riktige
-versjonen automatisk.';
-
-sub permute_file {
-    my($file, $name, @exts) = @_;
-    my($ext, $arch);
-
-    foreach $arch (keys %arches) {
-        print "<li> <a href=\"./$arch/$file\">$name for " . $arches{$arch} . "</a>";
-	if ( $#exts != -1 ) {
-	    foreach $ext (@exts) {
-	        print " (<a href=\"./$arch/$file.$ext\"><em>" . 
-			$formats{$ext} . "</em></a>)";
-	    }
-	}
-	print "\n";
-    }
-}
  :>
 
 <ul>
@@ -66,13 +44,24 @@ arkitektur.  Utgavenotisene inneholder også bruksanvisninger for
 brukere som oppgraderer fra tidligere versjoner.
 
 <ul>
-<: &permute_file('release-notes/index', 'Utgavenotiser'); :>
+<: &permute_as_list('release-notes/', 'Utgavenotiser'); :>
 </ul>
 
-Utgavenotisene er tilgjengelig på engelsk, japansk, kroatisk,
-portugisisk, russisk, tjsekkisk, og tysk.
-
 <: print $about_lang_setting; :>
+
+<center>
+<table border=2 cellspacing=0 cellpadding=3 bgcolor="#DDDDDD"> 
+<tr bgcolor="#44CCCC">
+  <th align="left"><strong>Arkitektur</strong></th>
+  <th align="left"><strong>Format</strong></th>
+  <th align="left"><strong>Språk</strong></th>
+</tr>
+<: &permute_as_matrix('release-notes/index', 'english', 'croatian', 'czech',
+		      'german', 'japanese', 'portuguese', 'russian');
+:>
+</table>
+</center>
+
 
 <p>
 
@@ -87,8 +76,25 @@ to utgavene.
 Installasjons-instruksjoner, samt nedlastbare filer, er delt opp etter
 arkitektur:
 <ul>
-<: &permute_file('install', 'Installasjonsmanual'); :>
+<: &permute_as_list('install', 'Installasjonsmanual'); :>
 </ul>
+
+<: print $about_lang_setting; :>
+
+<center>
+<table border=2 cellspacing=0 cellpadding=3 bgcolor="#DDDDDD"> 
+<tr bgcolor="#44CCCC">
+  <th align="left"><strong>Arkitektur</strong></th>
+  <th align="left"><strong>Format</strong></th>
+  <th align="left"><strong>Språk</strong></th>
+</tr>
+<: &permute_as_matrix('install', 'english', 'croatian',  'czech', 
+		      'finnish', 'french', 'german', 
+		      'japanese', 'portuguese', 'russian', 'spanish');
+:>
+</table>
+</center>
+
 
 En stor innsats har blitt gjort i Debians installasjonsmanual for å
 støtte andre arkitekturer enn i386.  Likevel trenger noen arkitekturer
@@ -106,11 +112,6 @@ som lurer på hva som er nytt burde se på <a
 href="source/ChangeLog">Endringsloggen</a>.
 
 <p>
-
-Installasjonsmanualen er tilgjengelig på engelsk, finsk, fransk,
-japansk, kroatisk, portugisisk, russisk, spansk, tsjekkisk, og tysk.
-
-<: print $about_lang_setting; :>
 
 
 <h2><a name="errata">Feil og Trykkfeil</a></h2>
@@ -148,12 +149,17 @@ href="running-kernel-2.2">listen over kjente problemer</a>.
 
 <h2><a name="unofficial-updates">Uoffisielle oppdateringer</a></h2>
 
-<p>
+<p>Utgitte versjoner av Debian oppdateres bare i tilfelle av kritiske
+feil eller sikkerhetsreparasjoner.  Dog, for å gjøre det enklere for
+brukere, fins visse oppdaterte pakker som er gjort uoffisielt
+tilgjengelige av andre brukere og utviklere.  Slikt materiale er ikke
+offisielt støttet av Debian.</p>
 
-Utgitte Debian-versjoner er vanligvis ikke oppdatert, bortsett fra i
-tilfelle av kritiske feil eller sikkerhetsreparasjoner.  Dog, for
-å gjøre det enklere for brukere, fins visse oppdaterte pakker som er
-gjort tilgjengelige.
+
+<h3>Internasjonaliserte oppstarts-disketter</h3>
+
+<p>Uoffisielle oppstarts-disketter på portugisisk er tilgjengelig hos
+<a href="ftp://ftp2.escelsanet.com.br/debian/">ftp://ftp2.escelsanet.com.br/debian/</a>.</p>
 
 
 <h3>Rednings-diskett</h3>
@@ -167,7 +173,16 @@ sammen med mange brukere for å finne og løse problemene deres.  Det
 fins to alternative Rednings-disketter for i386-arkitekturen hos <a
 href="ftp://kalle.csb.ki.se/pub/">ftp://kalle.csb.ki.se/pub/</a>.
 Det fins også erstatninger for kjernen der, som du kan bruke til å
-bytte ut den nåværende kjernen på oppstarts-diskettene.
+bytte ut den nåværende kjernen på oppstarts-diskettene.  Du trenger
+driver-disketten fra den hoveddistribusjonen.
+
+<p>
+
+En konkurrerende og nyere sampling av Rednings- og Driver-disketter
+for Adaptec-brukere kan hentes fra <a
+href="http://www.debian.org/~adric/aic7xxx/">http://www.debian.org/~adric/aic7xxx/</a>.
+
+
 
 <h3>Gnome</h3>
 
