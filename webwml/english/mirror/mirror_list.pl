@@ -225,7 +225,6 @@ END
 	print <<END;
 Use the site closest to you for the fastest downloads possible whether it is
 END
-# add a link to http://people.debian.org/~md/mirrors-list.txt somewhere in here
 	if ($html) {
           print "
 a primary or secondary site. The program
