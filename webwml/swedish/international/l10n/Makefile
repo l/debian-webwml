@@ -21,6 +21,10 @@ ifneq "$(wildcard team-templates.wml)" ""
 HTML_TMPL := $(foreach lang,$(LANGS_TMPL),templates-$(lang).$(LANGUAGE).html)
 endif
 
+# the file data/langs gets rebuilt by a script, but let's have this just in case
+data/langs: data/unstable scripts/list-languages
+	scripts/list-languages data/unstable > data/langs
+
 all:: $(HTML_PO) $(HTML_TMPL)
 
 po-%.$(LANGUAGE).html:\

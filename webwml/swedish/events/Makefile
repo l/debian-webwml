@@ -5,7 +5,8 @@
 WMLBASE=..
 CUR_DIR=events
 YEARS=$(wildcard [12][0-9][0-9][0-9])
-SUBS=$(YEARS) weekly press materials
+SUBS=$(YEARS) weekly press
+# note: the materials/ subdirectory isn't in CVS.
 
 include $(WMLBASE)/Make.lang
 
