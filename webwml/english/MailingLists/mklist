@@ -45,53 +45,54 @@ $def_unsubscribe = "unsubscribe.wml";
 
 sub usage()
 {
-    printf "Maintain mailing lists  - Copyright (c) 1998 by Joey and Jay Treacy\n";
-    printf "Usage: $progname [options]\n";
-    printf "       -f cfg\t\t\tUse a different configuration file\n";
-    printf "       -t|--text [fname]\tCreate mailing-lists.txt\n";
-    printf "       -w|--web [fname]\t\tCreate mailing-lists.html (wmt format)\n";
-    printf "       -s|--subscribe [fname]\tCreate subscribe.wml\n";
-    printf "       -u|--unsubscribe [fname]\tCreate subscribe.wml\n";
+	printf "Maintain mailing lists  - Copyright (c) 1998 by Joey and Jay Treacy\n";
+	printf "Usage: $progname [options]\n";
+	printf "       -f cfg\t\t\tUse a different configuration file\n";
+	printf "       -t|--text [fname]\tCreate mailing-lists.txt\n";
+	printf "       -w|--web [fname]\t\tCreate mailing-lists.html (wmt format)\n";
+	printf "       -s|--subscribe [fname]\tCreate subscribe.wml\n";
+	printf "       -u|--unsubscribe [fname]\tCreate subscribe.wml\n";
 }
 
 sub fieldname
 {
-    my $field;
+	my $field;
 
-    foreach $field (@fieldlist,@specialist,@globlist,@sections) {
-	return $field if ($_[0] =~ /$field/i);
-    }
+	foreach $field (@fieldlist,@specialist,@globlist,@sections) {
+		return $field if ($_[0] =~ /$field/i);
+	}
 }
 
 sub read_config
 {
-    my $conf = shift;
-    my $field;
-    my $mylist = "";
+	my $conf = shift;
+	my $field;
+	my $mylist = "";
 
-    if (open(CONF, $conf)) {
-	%list = ();		# Reset global structure
-	while (<CONF>) {
-	    next if (/^\#/);
-	    next if (/^\s*$/);
+	if (open(CONF, $conf)) {
+		%list = ();		# Reset global structure
+		while (<CONF>) {
+			next if (/^\#/);
+			next if (/^\s*$/);
 
-	    # select multiline fields
-	    if (/^\s+/) {
-		s/^\s+//;
-		$list{$mylist}->{$field} .= $_;
-	    } else {
-		if (/^([a-z]+)\s*:\s*(.*)$/i) {
-		    $field = &fieldname($1);
-		    if ($field eq "List") {
-			$mylist = $2;
-		    } else {
-			$list{$mylist}->{$field} = $2;
-		    }
+			# select multiline fields
+			if (/^\s+/) {
+				s/^\s+//;
+				$list{$mylist}->{$field} .= $_;
+			} else {
+				if (/^([a-z]+)\s*:\s*(.*)$/i) {
+					$field = &fieldname($1);
+					if ($field eq "List") {
+						$mylist = $2;
+					}
+					else {
+						$list{$mylist}->{$field} = $2;
+					}
+				}
+			}
 		}
-	    }
-	}
 	close (CONF);
-    }
+	}
 }
 
 sub print_multiline_txt
@@ -132,64 +133,64 @@ sub print_multiline_html
 
 sub write_mailing_lists_txt
 {
-    my @lines;
-    my $amount;
-    my $space;
-    my $section;
-    my $field;
-    my @lists;
+	my @lines;
+	my $amount;
+	my $space;
+	my $section;
+	my $field;
+	my @lists;
 
-    if (open(OUT, ">$_[0]")) {
-#    if (open(OUT, ">-")) {
-	@lines = split(/\n/,$list{''}->{'Introduction'});
+	if (open(OUT, ">$_[0]")) {
+#	if (open(OUT, ">-")) {
+		@lines = split(/\n/,$list{''}->{'Introduction'});
 
-	$amount = (76 - length($lines[0])) / 2;
-	$space = " " x $amount;
-	printf OUT "%s%s\n%s", $space, $lines[0], $space;
-	$space = "=" x length($lines[0]);
-	printf OUT "%s\n\n", $space;
-	&print_multiline_txt("  ",\@lines);
+		$amount = (76 - length($lines[0])) / 2;
+		$space = " " x $amount;
+		printf OUT "%s%s\n%s", $space, $lines[0], $space;
+		$space = "=" x length($lines[0]);
+		printf OUT "%s\n\n", $space;
+		&print_multiline_txt("  ",\@lines);
 
-	@lines = split(/\n/,$list{''}->{'Subscription'});
-	$space = "-" x length($lines[0]);
-	printf OUT "\n%s\n%s\n\n", $lines[0], $space;
-	&print_multiline_txt("  ",\@lines);
+		@lines = split(/\n/,$list{''}->{'Subscription'});
+		$space = "-" x length($lines[0]);
+		printf OUT "\n%s\n%s\n\n", $lines[0], $space;
+		&print_multiline_txt("  ",\@lines);
 
-	foreach $section (@sections) {
-	    @lists = ();
-	    foreach $l (keys(%list)) {
-		next if (!$l || ($list{$l}->{'Section'} ne $section));
-		push(@lists, $l);
-	    }
+		foreach $section (@sections) {
+			@lists = ();
+			foreach $l (keys(%list)) {
+				next if (!$l || ($list{$l}->{'Section'} ne $section));
+				push(@lists, $l);
+			}
 
-	    if ($#lists > -1) {
-		if (exists $list{''}->{$section}) {
-		    @lines = split(/\n/,$list{''}->{$section});
-		    printf OUT "\n%s\n\n", $lines[0];
-		    &print_multiline_txt("  ",\@lines);
+			if ($#lists > -1) {
+				if (exists $list{''}->{$section}) {
+					@lines = split(/\n/,$list{''}->{$section});
+					printf OUT "\n%s\n\n", $lines[0];
+					&print_multiline_txt("  ",\@lines);
+				}
+
+				foreach $l (@lists) {
+					printf OUT "\n  %s\n\n", $l;
+					if (exists $list{$l}->{'Description'} and $list{$l}->{'Description'}) {
+						@lines = split(/\n/,$list{$l}->{'Description'});
+						printf OUT "      Description : %s\n", $lines[0];
+						&print_multiline_txt("                    ",\@lines);
+					}
+
+					foreach $field (@fieldlist) {
+						printf OUT "      %-12s: %s\n", $field, $list{$l}->{$field}
+						if (exists $list{$l}->{$field});
+					}
+				}
+			}
 		}
 
-		foreach $l (@lists) {
-		    printf OUT "\n  %s\n\n", $l;
-		    if (exists $list{$l}->{'Description'}) {
-			@lines = split(/\n/,$list{$l}->{'Description'});
-			printf OUT "      Description : %s\n", $lines[0];
-			&print_multiline_txt("                    ",\@lines);
-		    }
-
-		    foreach $field (@fieldlist) {
-			printf OUT "      %-12s: %s\n", $field, $list{$l}->{$field}
-			if (exists $list{$l}->{$field});
-		    }
-		}
-	    }
+		@lines = split(/\n/,$list{''}->{'Advertising'});
+		$space = "-" x length($lines[0]);
+		printf OUT "\n\n%s\n%s\n\n", $lines[0], $space;
+		&print_multiline_txt("  ",\@lines);
 	}
-
-	@lines = split(/\n/,$list{''}->{'Advertising'});
-	$space = "-" x length($lines[0]);
-	printf OUT "\n\n%s\n%s\n\n", $lines[0], $space;
-	&print_multiline_txt("  ",\@lines);
-    }
 
 }
 
@@ -277,23 +278,23 @@ EOF
 
 sub write_mailing_lists_subscribe
 {
-    my @lines;
-    my $amount;
-    my $space;
-    my $section;
-    my $field;
-    my @lists;
-    my $slist;
+	my @lines;
+	my $amount;
+	my $space;
+	my $section;
+	my $field;
+	my @lists;
+	my $slist;
 
-    if (open(OUT, ">$_[0]")) {
-#    if (open(OUT, ">-")) {
+	if (open(OUT, ">$_[0]")) {
+#	if (open(OUT, ">-")) {
 	print OUT <<"EOF";
 #use wml::debian::template title="Mailing List Subscription"
 
 <!-- This page is generated automatically by a script -->
 
 EOF
-        @lines = split(/\n/,$list{''}->{'Introduction'});
+	@lines = split(/\n/,$list{''}->{'Introduction'});
 
 	printf OUT "<h1>%s</h1>\n", $lines[0];
 	&print_multiline_html("  ",\@lines);
@@ -311,53 +312,58 @@ EOF
 	print OUT "Please select which lists you want to subscribe to:\n\n";
 
 	foreach $section (@sections) {
-	    @lists = ();
-	    foreach $l (keys(%list)) {
-		next if (!$l || ($list{$l}->{'Section'} ne $section));
-		next if (! exists $list{$l}->{'Description'});
-		# next if (exists $list{$l}->{'Websubscribe'} && $list{$l}->{'Websubscribe'} eq "no");
-		push(@lists, $l);
-	    }
-
-	    if ($#lists > -1) {
-		if (exists $list{''}->{$section}) {
-		    @lines = split(/\n/,$list{''}->{$section});
-		    printf OUT "\n<h3><a name=\"%s\">%s</a></h3>\n\n", $section, $lines[0];
-		    &print_multiline_html("  ",\@lines);
+		@lists = ();
+			foreach $l (keys(%list)) {
+			next if (!$l || ($list{$l}->{'Section'} ne $section));
+			next if (! exists $list{$l}->{'Description'});
+			# next if (exists $list{$l}->{'Websubscribe'} && $list{$l}->{'Websubscribe'} eq "no");
+			push(@lists, $l);
 		}
 
-		print OUT "<DL>\n";
+		if ($#lists > -1) {
+			if (exists $list{''}->{$section}) {
+				@lines = split(/\n/,$list{''}->{$section});
+				printf OUT "\n<h3><a name=\"%s\">%s</a></h3>\n\n", $section, $lines[0];
+				&print_multiline_html("  ",\@lines);
+			}
 
-		foreach $l (@lists) {
-		    $slist = $l; $slist =~ s/@.*//;
-		    if (exists $list{$l}->{'Websubscribe'} && $list{$l}->{'Websubscribe'} eq "no") {
-			printf OUT "<DT>\n";
-		    }
-		    else {
-			printf OUT "<DT><INPUT TYPE=\"checkbox\" NAME=\"subscribe\" VALUE=\"%s\">\n", $slist;
-		    }
-		    printf OUT "    <STRONG>%s</STRONG>", $slist;
+			print OUT "<DL>\n";
 
-		    $list{$l}->{'Description'} =~ s/>/&gt;/g;
-		    $list{$l}->{'Description'} =~ s/</&lt;/g;
-		    $list{$l}->{'Description'} =~ s,(http://[\w.\-~/]*),<a href="$1">$1</a>,g;
-		    $list{$l}->{'Description'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1</a>,g;
-		    $list{$l}->{'Description'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1</a>,g;
-		    @lines = split(/\n/,$list{$l}->{'Description'});
-		    printf OUT "<DD>%s\n", $lines[0];
-		    &print_multiline_html("    ",\@lines);
-		    printf OUT "<BR>Moderated: <em>%s</em>&#160;&#160;&#160;&#160;\n", $list{$l}->{'Moderated'};
-		    printf OUT "    Subscription: <em>%s</em>\n", $list{$l}->{'Subscription'};
+			foreach $l (@lists) {
+				$slist = $l; $slist =~ s/@.*//;
+				if (exists $list{$l}->{'Websubscribe'} && $list{$l}->{'Websubscribe'} eq "no") {
+					printf OUT "<DT>\n";
+				}
+				else {
+					printf OUT "<DT><INPUT TYPE=\"checkbox\" NAME=\"subscribe\" VALUE=\"%s\">\n", $slist;
+				}
+				printf OUT "	<STRONG>%s</STRONG>", $slist;
 
-		    if (exists $list{$l}->{'Digest'}) {
-			$slist = $list{$l}->{'Digest'}; $slist =~ s/@.*//;
-			printf OUT "    <BR><INPUT TYPE=\"checkbox\" NAME=\"subscribe\" VALUE=\"%s\">\n", $slist;
-			printf OUT "    <STRONG>%s</STRONG> is a read-only, digestified version.\n", $slist;
-		    }
-		    print OUT "\n";
+				$list{$l}->{'Description'} =~ s/>/&gt;/g;
+				$list{$l}->{'Description'} =~ s/</&lt;/g;
+				$list{$l}->{'Description'} =~ s,(http://[\w.\-~/]*),<a href="$1">$1</a>,g;
+				$list{$l}->{'Description'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1</a>,g;
+				$list{$l}->{'Description'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1</a>,g;
+				@lines = split(/\n/,$list{$l}->{'Description'});
+				if (@lines) {
+					printf OUT "<DD>%s\n", $lines[0];
+				}
+				else {
+					printf OUT "<DD>No description given\n";
+				}
+				&print_multiline_html("	",\@lines);
+				printf OUT "<BR>Moderated: <em>%s</em>&#160;&#160;&#160;&#160;\n", $list{$l}->{'Moderated'};
+				printf OUT "	Subscription: <em>%s</em>\n", $list{$l}->{'Subscription'};
+
+				if (exists $list{$l}->{'Digest'}) {
+					$slist = $list{$l}->{'Digest'}; $slist =~ s/@.*//;
+					printf OUT "	<BR><INPUT TYPE=\"checkbox\" NAME=\"subscribe\" VALUE=\"%s\">\n", $slist;
+					printf OUT "	<STRONG>%s</STRONG> is a read-only, digestified version.\n", $slist;
+				}
+				print OUT "\n";
+			}
+			print OUT "</DL>\n";
 		}
-		print OUT "</DL>\n";
-	    }
 	}
 	print OUT "<HR><STRONG>Your E-Mail address:</STRONG>\n";
 	print OUT "<BR><INPUT TYPE=\"text\" NAME=\"user_email\" SIZE=\"60\"><BR>\n";
@@ -367,21 +373,21 @@ EOF
 	@lines = split(/\n/,$list{''}->{'Advertising'});
 	printf OUT "\n\n<hr><h2>%s</h2>\n\n", $lines[0];
 	&print_multiline_html("  ",\@lines);
-    }
+	}
 }
 
 sub write_mailing_lists_unsubscribe
 {
-    my @lines;
-    my $amount;
-    my $space;
-    my $section;
-    my $field;
-    my @lists;
-    my $slist;
+	my @lines;
+	my $amount;
+	my $space;
+	my $section;
+	my $field;
+	my @lists;
+	my $slist;
 
-    if (open(OUT, ">$_[0]")) {
-	print OUT <<"EOF";
+	if (open(OUT, ">$_[0]")) {
+		print OUT <<"EOF";
 #use wml::debian::template title="Mailing List Unsubscription"
 
 <!-- This page is generated automatically by a script -->
