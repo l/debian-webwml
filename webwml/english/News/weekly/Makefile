@@ -9,7 +9,7 @@ CUR_DIR=News/weekly
 NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 CUR_YEAR ?= $(shell date +%Y)
-WMLOPTIONS += -DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
+#WMLOPTIONS += -DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
 
 # This Makefile will handle converting all .wml files in this directory
 # and all subdirectories to .html files. It does it this way so I don't need
