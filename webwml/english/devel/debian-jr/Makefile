@@ -8,4 +8,7 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-
+packaged.$(LANGUAGE).html: packaged.wml \
+  $(ENGLISHSRCDIR)/devel/debian-jr/lists.tmpl \
+  $(ENGLISHSRCDIR)/devel/debian-jr/packaged.data \
+  $(ENGLISHSRCDIR)/devel/debian-jr/packaged-non-free.data
