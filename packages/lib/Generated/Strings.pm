@@ -351,12 +351,12 @@ See <URL:http://www.debian.org/license> for the license terms.
                        'Libraries necessary for developers to write programs that use them.' => 'Bibliotheken, die von Entwickler benötigt werden, um Programme zu entwicklen, die sie benutzen.',
                        'Software Packages in "%s", essential packages' => 'Software-Pakete in »%s«, essentielle Pakete',
                        'Other OS\'s and file systems' => 'Andere Betriebs- und Dateisysteme',
-                       'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary.html#s-virtual_pkg">definition of virtual packages</a>.' => 'Warnung: Dieses Paket ist aus der <span class="pred">experimental</span>-Distribution. Dies bedeutet dass es höchstwahrscheinlich instabil oder fehlerhaft ist und sogar Datenverlust verursachen kann. Wenn Sie diese Warnung ignorieren und es dennoch installieren, so tun Sie dies auf eigenes Risiko.',
+                       'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary.html#s-virtual_pkg">definition of virtual packages</a>.' => 'Dies ist ein <em>virtuelles Paket</em>. Sehen Sie in die <a href="%s">Debian-Policy</a> für eine <a href="%sch-binary.html#s-virtual_pkg">Definition von virtuellen Paketen</a>.',
                        'Basic tools for scientific work' => 'Programme zum wissenschaftlichen Arbeiten.',
                        'Support' => 'Unterstützung',
                        'Romanian' => 'Rumänisch',
                        'Package: %s (%s)' => 'Paket: %s (%s)',
-                       'Copyright &copy; 1997-2005 <a href="http://www.spi-inc.org">SPI</a>; See <a href="%s/license">license terms</a>.' => 'Copyright &copy; 1997-2005 <a href="http://www.spi-inc.org">SPI</a>; See <a href="%s/license">license terms</a>.',
+                       'Copyright &copy; 1997-2005 <a href="http://www.spi-inc.org">SPI</a>; See <a href="%s/license">license terms</a>.' => 'Copyright &copy; 1997-2005 <a href="http://www.spi-inc.org">SPI</a>; <a href="%s/license">Lizenzbestimmungen</a>.',
                        'Software Packages in "%s", %s section' => 'Software-Pakete in »%s«, Sektion %s',
                        'View the <a href="%s">Debian changelog</a>' => 'Das <a href="%s">Debian-Changelog</a>',
                        'Editors' => 'Editoren',
@@ -371,7 +371,7 @@ See <URL:http://www.debian.org/license> for the license terms.
                        'Warning: These packages are intended for the use in building <a href="http://www.debian.org/devel/debian-installer/">debian-installer</a> images only. Do not install them on a normal Debian system.' => 'Warnung: Diese Pakete sind nur dazu gedacht, um <a href="http://www.debian.org/devel/debian-installer">debian-installer</a>-Images zu erzeugen. Installieren Sie sie nicht auf einem normalen Debian-System.',
                        'All Debian Packages in "%s"' => 'Alle Debian-Pakete in »%s«',
                        'Last Modified: ' => 'Zuletzt geändert: ',
-                       'This information is also available as an <a href="newpkg_%s.%s.rdf">RSS feed</a>.' => 'This information is also available as an <a href="newpkg_%s.%s.rdf">RSS feed</a>.',
+                       'This information is also available as an <a href="newpkg_%s.%s.rdf">RSS feed</a>.' => 'Diese Informationen sind auch als <a href="newpkg_%s.%s.rdf">RSS-Feed</a> verfügbar.',
                        'Web servers, browsers, proxies, download tools etc.' => 'Web-Server, Browser, Proxies, Download-Tools, usw.',
                        'Utilities' => 'Hilfsprogramme',
                        'Installed size:' => 'Größe (installiert):',
@@ -382,7 +382,7 @@ See <URL:http://www.debian.org/license> for the license terms.
                        'Russian' => 'Russisch',
                        'Software to access Usenet, to set up news servers, etc.' => 'Software, um auf das Usenet zuzugreifen, News-Server aufzusetzen, usw.',
                        'Norwegian' => 'Norwegisch',
-                       'Users of experimental packages are encouraged to contact the package maintainers directly in case of problems.' => 'Warnung: Dieses Paket ist nur dazu gedacht, um <a href="http://www.debian.org/devel/debian-installer">debian-installer</a>-Images zu erzeugen. Installieren Sie es nicht auf einem normalen Debian-System.',
+                       'Users of experimental packages are encouraged to contact the package maintainers directly in case of problems.' => 'Benutzer von experimentellen Paketen sollten direkt den Paketbetreuer im Falle von Problemen kontaktieren.',
                        'or' => 'oder',
                        'compact compressed textlist' => 'kompakte, gepackte Liste im Textformat',
                        'All packages' => 'Alle Pakete',
@@ -405,8 +405,8 @@ See <URL:http://www.debian.org/license> for the license terms.
                        'Copyright (C) 1997-2005 SPI;
 See <URL:http://www.debian.org/license> for the license terms.
 
-' => 'Copyright (C) 1997-2005 SPI;
-See <URL:http://www.debian.org/license> for the license terms.
+' => 'Copyright (c) 1997-2005 SPI;
+Unter <URL:http://www.debian.org/license> finden Sie die Lizenzbedingungen.
 
 ',
                        'Embedded software' => 'Embedded Software',
@@ -422,17 +422,17 @@ See <URL:http://www.debian.org/license> for the license terms.
                        'The following packages were added to the unstable Debian archive during the last 7 days.' => 'The following packages were added to the unstable Debian archive during the last 7 days.',
                        'Search' => 'Suche',
                        'Catalan' => 'Katalanisch',
-                       'Packages that were added to the "%s" component next to the unstable Debian archive during the last 7 days.' => 'Dies ist ein <em>virtuelles Paket</em>. Sehen Sie in die <a href="%s">Debian-Policy</a> für eine <a href="%sch-binary.html#s-virtual_pkg">Definition von virtuellen Paketen</a>.',
+                       'Packages that were added to the "%s" component next to the unstable Debian archive during the last 7 days.' => 'Packages that were added to the "%s" component next to the unstable Debian archive during the last 7 days.',
                        'More information on %s' => 'Weitere Informationen über %s',
                        'Software for ham radio.' => 'Software für Amateurfunker.',
                        'Newsgroups' => 'Newsgroups',
-                       'Note that the "<span class="pred">experimental</span>" distribution is not self-contained; missing dependencies are likely found in the "<a href="../../unstable/">unstable</a>" distribution.' => 'Note that the "<span class="pred">experimental</span>" distribution is not self-contained; missing dependencies are likely found in the "<a href="../../unstable/">unstable</a>" distribution.',
-                       'Warning: This package is from the <span class="pred">experimental</span> distribution. That means it is likely unstable or buggy, and it may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.' => 'Benutzer von experimentellen Paketen sollten direkt den Paketbetreuer im Falle von Problemen kontaktieren.',
+                       'Note that the "<span class="pred">experimental</span>" distribution is not self-contained; missing dependencies are likely found in the "<a href="../../unstable/">unstable</a>" distribution.' => 'Beachten Sie dass die »<span class="pred">experimental</span>«-Distribution nicht abgeschlossen ist; fehlende Abhängigkeiten werden mit großer Wahrscheinlichkeit in der »<a href="../../unstable/">unstable</a>«-Distribution gefunden.',
+                       'Warning: This package is from the <span class="pred">experimental</span> distribution. That means it is likely unstable or buggy, and it may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.' => 'Warnung: Dieses Paket ist aus der <span class="pred">experimental</span>-Distribution. Dies bedeutet dass es höchstwahrscheinlich instabil oder fehlerhaft ist und sogar Datenverlust verursachen kann. Wenn Sie diese Warnung ignorieren und es dennoch installieren, so tun Sie dies auf eigenes Risiko.',
                        'Dutch' => 'Holländisch',
                        'debian-installer udeb package' => 'debian-installer udeb-Paket',
                        'Command shells. Friendly user interfaces for beginners.' => 'Kommandoshells. Benutzerfreundliche Schnittstellen für Anfänger.',
                        'Documentation' => 'Dokumentation',
-                       'Warning: This package is intended for the use in building <a href="http://www.debian.org/devel/debian-installer">debian-installer</a> images only. Do not install it on a normal Debian system.' => 'Beachten Sie dass die »<span class="pred">experimental</span>«-Distribution nicht abgeschlossen ist; fehlende Abhängigkeiten werden mit großer Wahrscheinlichkeit in der »<a href="../../unstable/">unstable</a>«-Distribution gefunden.',
+                       'Warning: This package is intended for the use in building <a href="http://www.debian.org/devel/debian-installer">debian-installer</a> images only. Do not install it on a normal Debian system.' => 'Warnung: Dieses Paket ist nur dazu gedacht, um <a href="http://www.debian.org/devel/debian-installer">debian-installer</a>-Images zu erzeugen. Installieren Sie es nicht auf einem normalen Debian-System.',
                        'Sound' => 'Sound',
                        'Essential' => 'Essentiell',
                        'Italian' => 'Italienisch'
