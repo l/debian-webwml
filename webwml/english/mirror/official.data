@@ -1,0 +1,41 @@
+#use wml::debian::countries
+
+<define-tag officialarchivemirrors whitespace=delete>
+<ul>
+
+# this wondrous code courtesy of Denis Barbier
+
+#   Put file in an array
+<set-var file-contents=<include ../../english/mirror/Mirrors.masterlist verbatim=true>>
+
+<perl>
+{
+  my %mirrors = (
+  #   Read line by line and builds hash array
+  #      'xx' => '<XXc>'  where <XXc> is expanded
+  <foreach m file-contents>\
+    <when <match <get-var m> "Site: ftp\\...\\.debian.org">>\
+      <set-var n=<subst-in-string <get-var m> ".*Site: ftp\\.(..)\\.debian.org.*" "\\1">>\
+      '<get-var n>' => q{<group <group "<" <upcase <get-var n>> "c>">>},\
+    </when>\
+  </foreach>
+  );
+  #   Sort %mirrors according to translated names, as in
+  #   wml::debian::mirrors  (I switched key/val in %mirrors)
+  my $mirrors_lang = {};
+  foreach my $m (keys %mirrors) {
+      while ($mirrors{$m} =~ m/\[([A-Z_]+):(.*?):\]/g) {
+          $mirrors_lang->{$1}->{$2} = $m;
+      }
+  }
+
+  foreach my $l (keys %$mirrors_lang) {
+    foreach my $m (sort langcmp keys %{$mirrors_lang->{$l}}) {
+      <perl:print>[$l:<li><a href=\"http://ftp.$mirrors_lang->{$l}->{$m}.debian.org/debian/\">$m</a>\n:]</perl:print>
+    }
+  }
+}
+</perl>
+
+</ul>
+</define-tag>
