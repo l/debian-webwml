@@ -8,6 +8,7 @@
 
 # This is GPL'ed code.
 # Copyright 1998 Paolo Molaro <lupus@debian.org>.
+# Copyright 1999-2002 Peter Karlsson <peterk@debian.org>.
 # Copyright 2000,2001 Martin Quinson <mquinson@ens-lyon.fr>.
 
 # Invocation:
@@ -198,6 +199,8 @@ init_mails();
 
 print "\$translations = {\n" if $opt_t eq 'perl';
 
+# Check the files in the English directory
+
 $cvs->readinfo($from);
 foreach my $path (@{$cvs->dirs()}) {
 	my $tpath = $path;
@@ -211,15 +214,43 @@ foreach my $path (@{$cvs->dirs()}) {
 	}
 }
 
+my %checkedfile;
+
 foreach (sort @{$cvs->files()}) {
 	my ($path, $tpath);
 	$path = $_;
 	$tpath = $path;
 	$tpath =~ s/^$from/$to/o;
+    $checkedfile{$tpath} = 1; # Remember which files we found here
 	check_file($tpath,
 		$cvs->revision($path),
 		str2time($cvs->date($path)),
 		get_translators_from_db($tpath));
+}
+
+# Now check all the files in the translated directory as well, there may be
+# some files that are not available in the English version.
+
+$cvs->reset();
+$cvs->readinfo($to);
+foreach my $tpath (@{$cvs->dirs()})
+{
+    my $transignore = Webwml::TransIgnore->new($tpath);
+    next unless $transignore->found();
+    warn "Loading $tpath/.transignore\n" if $opt_v;
+    foreach (@{$transignore->local()})
+    {
+        s/^$to/$from/o;
+        $cvs->removefile($_);
+    }
+}
+
+foreach (sort @{$cvs->files()})
+{
+    my $tpath = $_;
+    next if defined $checkedfile{$tpath}; # Don't look at a file twice
+    warn "$tpath does not match anything in English\n" if $opt_v;
+    check_file($tpath, undef, undef, get_translators_from_db($tpath));
 }
 
 print "}; 1;\n" if $opt_t eq 'perl';
@@ -399,6 +430,7 @@ sub get_diff_txt {
 
 sub check_file {
 	my ($name, $revision, $mtime, $translator) = @_;
+    $revision ||= 'n/a';
 	my ($oldr, $oldname, $original);
 	warn "Checking $name, English revision $revision\n" if $opt_v;
         my $docname = $name;
@@ -454,20 +486,44 @@ sub check_file {
 	$translator =~ s/\s+$//;
 
 	my $str;
-	my $status = 8;
-	(my $numrev)  = $revision =~ m/^1\.(\d+)$/; $numrev ||= "0";
-	(my $numoldr) = $oldr =~ m/^1\.(\d+)$/; $numoldr ||= "0";
-	if (!$oldr) {
-	  $oldr = '1.0';
-	  $str = "Unknown status of $name (revision should be $revision)";
-	} elsif ($oldr eq $revision) {
-	  $status = 4;
-	} elsif ($numoldr > $numrev) {
-	  $str = "Broken revision number $oldr for $name, it should be $revision";
-	} else {
-	  $str = "NeedToUpdate $name from version $oldr to version $revision";
-	  $status = 3;
-	}
+	my $status = 8; # Unknown
+   	(my $numrev)  = $revision =~ m/^1\.(\d+)$/; $numrev ||= "0";
+   	(my $numoldr) = $oldr =~ m/^1\.(\d+)$/; $numoldr ||= "0";
+
+    if ($revision ne 'n/a')
+    {
+        # The original version of this file exists (English or otherwise)
+        # - compare the translated version number to the original
+    	if (!$oldr) {
+    	    $oldr = '1.0';
+    	    $str = "Unknown status of $name (revision should be $revision)";
+    	} elsif ($oldr eq $revision) {
+    	    $status = 4; # Up-to-date
+    	} elsif ($numoldr > $numrev) {
+    	    $str = "Broken revision number $oldr for $name, it should be $revision";
+    	} else {
+    	    $str = "NeedToUpdate $name from version $oldr to version $revision";
+    	    $status = 3; # Needs update
+    	}
+    }
+    else
+    {
+        # There is no English file matching this one.
+        if ($oldr eq '0')
+        {
+            # There is no translation-check header, so it must be the
+            # original version, and is thus always up-to-date.
+            $status = 4; # Up-to-date
+        }
+        else
+        {
+            # There is a translation-check header referencing an English
+            # version, which means that the English file has been removed.
+            $status = 7; # Obsolete
+            $str = "Obsolete $name";
+        }
+    }
+
 	$str .= " (maintainer: $translator)" if $translator;
 	if ($opt_t eq 'perl') {
   	  print "'$docname' => {\n\t'type' => 'Web',\n";
