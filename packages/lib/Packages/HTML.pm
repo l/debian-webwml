@@ -14,6 +14,8 @@ our @EXPORT = qw( header trailer file_changed time_stamp
 		  read_md5_hash write_md5_hash );
 
 our $HOME = "http://www.debian.org";
+our $SEARCH_PAGE = "http://packages.debian.org/";
+our $CGI_ROOT = "http://packages.debian.org/cgi-bin";
 our $CN_HELP_URL = "${HOME}/intro/cn";
 
 my %img_trans = ( pt_BR => "pt", pt_PT => "pt", sv_SE => "sv" );
@@ -61,7 +63,7 @@ sub header {
 	$checked_searchon{$values{searchon}} = "checked=\"checked\"";
 	$search_in_header = <<MENU;
 <div id="hpacketsearch">
-<form method="GET" action="http://packages.debian.org/cgi-bin/search_packages.pl">
+<form method="GET" action="$CGI_ROOT/search_packages.pl">
 <input type="hidden" name="version" value="$values{version}" />
 <input type="hidden" name="subword" value="$values{subword}" />
 <input type="hidden" name="exact" value="$values{exact}" />
@@ -70,7 +72,7 @@ sub header {
 <input type="hidden" name="case" value="$values{case}" />
 <input type="text" size="30" name="keywords" value="$values{keywords}" id="kw" />
 <input type="submit" value="Search">
-<span style="font-size: 60%"><a href="http://packages.debian.org/#search_packages">Full options</a></span>
+<span style="font-size: 60%"><a href="$SEARCH_PAGE#search_packages">Full options</a></span>
 <br>
 <div style="font-size: 80%">Search on:
 <input type="radio" name="searchon" value="names" id="onlynames" $checked_searchon{names}>
@@ -94,13 +96,13 @@ MENU
 	$checked_searchmode{$values{searchmode}} = "checked=\"checked\"";
 	$search_in_header = <<MENU;
 <div id="hpacketsearch">
-<form method="GET" action="http://packages.debian.org/cgi-bin/search_contents.pl">
+<form method="GET" action="$CGI_ROOT/search_contents.pl">
 <input type="hidden" name="version" value="$values{version}" />
 <input type="hidden" name="arch" value="$values{arch}" />
 <input type="hidden" name="case" value="$values{case}" />
 <input type="text" size="30" name="word" id="keyword" value="$values{keyword}">&nbsp;
 <input type="submit" value="Search">
-<span style="font-size: 60%"><a href="http://packages.debian.org/#search_contents">Full options</a></span>
+<span style="font-size: 60%"><a href="$SEARCH_PAGE#search_contents">Full options</a></span>
 <br>
 <div style="font-size: 80%">Display:
 <input type=radio name="searchmode" value="searchfiles" id="searchfiles" $checked_searchmode{searchfiles}>
