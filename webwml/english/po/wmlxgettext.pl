@@ -40,7 +40,7 @@ sub processFile {
         }
         $file =~ s{^$prefix}{$repl}o unless $prefix eq '__';
         #  Remove comments
-        $text =~ s/^[ \t]*#.*//g;
+        $text =~ s/^[ \t]*#.*//mg;
         $lineno = 1;
         while ($text =~ m{\G(.*?)(<gettext\b[^>]*>)(.*?)</gettext>}gs) {
                 $msgid = escape($3);
