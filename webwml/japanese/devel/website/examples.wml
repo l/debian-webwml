@@ -1,5 +1,5 @@
 #use wml::debian::template title="例"
-#use wml::debian::translation-check translation="1.5"
+#use wml::debian::translation-check translation="1.6"
 
 <H3>翻訳開始の例</H3>
 
@@ -11,8 +11,13 @@
    mkdir french
    cvs add french
    cd french
-   cp ../english/.wmlrc ../english/Make.* ../english/Makefile .
-   cvs add Make* .wmlrc
+   cp ../english/.wmlrc ../english/Make.* .
+   sed -e 's/german/french/' ../german/Makefile &gt; Makefile
+   mkdir po
+   cvs add Make* .wmlrc po
+   cp Makefile po
+   make -C po init-po
+   cvs add po/Makefile po/*.fr.po
 </pre>
 
 <p><tt>.wmlrc</tt> を編集して、以下のように変更します。
@@ -32,8 +37,9 @@
 ../Makefile.common を読んでください。おそらく他言語のものが参考になります。
 (中国語翻訳用など)
 
-<p>english/template/debian/*.wml を編集し、すべての &lt;define-tag ...&gt;
-エントリの翻訳を追加します。これはごく簡潔に記述してください。
+<p>french/po に移動し、PO ファイル中のエントリを翻訳してください。
+これはごく簡潔に記述してください。
+
 
 <p>翻訳を行なう各ディレクトリには常に Makefile をコピーするようにして
 ください。これは、.wml ファイルを HTML に変換するために
@@ -75,7 +81,7 @@
    mkdir intro
    cvs add intro
    cd intro
-   cp ../english/intro/Makefile .
+   cp ../Makefile .
 </pre>
 
 新しいディレクトリには Makefile を置き、CVS で commit されるように
