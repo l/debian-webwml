@@ -14,7 +14,7 @@
    [ES:Debian para Alpha:]
    [FI:Debian for Alpha:]
    [FR:Debian pour Alpha:]
-   [HR:Debian for Alpha:]
+   [HR:Debian za Alphu:]
    [HU:Debian for Alpha:]
    [IT:Debian per Alpha:]
    [JA:Debian for Alpha:]
