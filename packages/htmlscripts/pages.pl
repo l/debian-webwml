@@ -39,6 +39,24 @@ sub progress {
     print "\r".$p_counter++;
 }
 
+sub conv_desc {
+    my ( $lang, $text ) = shift;
+    
+    # we assume that all descriptions are in UTF-8 and convert them
+    # if necessary
+    my $cs = get_charset($lang);
+    if (($cs ne "UTF-8")
+	&& exists $converters{"UTF-82$cs"}) {
+	my $text_conv = $converters{"UTF-82$cs"}->convert($text);
+	if ($text_conv) {
+	    return $text_conv;
+	}
+	# ignore errors for the moment, not sure yet 
+	# how to provide usefull information here
+    }
+    return $text;
+}
+
 sub walk_db_packages ($\&;$) {
     my $db = shift;
     my $func = shift;
@@ -139,7 +157,7 @@ sub print_virt_pack {
 	    my $section = $sections{max_unique};
 	    my %desc_md5s = $p_pkg->get_arch_fields( 'description-md5', 
 						     $env->{archs} );
-	    my $short_desc = encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" );
+	    my $short_desc = conv_desc( $env->{lang}, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" ) );
 	    $package_page .= "<dt><a href=\"../$section/$p\">$p</a></dt>\n".
 		"\t<dd>$short_desc</dd>\n";
 	} else { die "$p"; } #FIXME
@@ -288,26 +306,9 @@ sub package_pages_walker {
 	$long_desc =~ s/\n /\n/sgo;
 	$long_desc =~ s/\n.\n/\n<p>\n/go;
 	$long_desc =~ s/(((\n|\A) [^\n]*)+)/\n<pre>$1\n<\/pre>/sgo;
-	
-	# we assume that all descriptions are in UTF-8 and convert them
-	# if necessary
-	my $cs = get_charset($env->{lang});
-	if (($cs ne "UTF-8")
-	    && exists $converters{"UTF-82$cs"}) {
-	    my $ld_tmp = $converters{"UTF-82$cs"}->convert($long_desc);
-	    my $sd_tmp = $converters{"UTF-82$cs"}->convert($short_desc);
-	    if ($ld_tmp && $sd_tmp) {
-		$long_desc = $ld_tmp;
-		$short_desc = $sd_tmp;
-	    } else {
-		if ($env->{opts}{verbose}) {
-		    warn "W: $name: error while converting description\n"; 
-		}
-		if ($env->{opts}{debug}) {
-		    warn "$short_desc\n$long_desc\n";
-		}
-	    }
-	}
+
+	$long_desc = conv_desc( $env->{lang}, $long_desc );
+	$short_desc = conv_desc( $env->{lang}, $short_desc );
 
 	#
 	# begin output
@@ -762,7 +763,7 @@ sub print_deps {
 			my $section = $sections{max_unique};
 			my %desc_md5s = $p->get_arch_fields( 'description-md5', 
 							     $env->{archs} );
-			my $short_desc = encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" );
+			my $short_desc = conv_desc( $env->{lang}, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" ) );
 			push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $pkg_version$arch_str</td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
 		    }
 		} elsif ( $is_old_dp ) {
