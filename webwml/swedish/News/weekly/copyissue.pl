@@ -120,21 +120,46 @@ while (<SRC>)
 			$_ .= $next;
 		}
 	}
-	elsif ($_ eq "<p><strong>Security Updates.</strong> You know the drill, make sure\n")
+	elsif ($_ eq "<p><strong>New or Noteworthy Packages.</strong> The following packages were\n")
 	{
-		# Translate security intro
+		# Translate new files intro; type B
 		$next = <SRC>;
-		if ($next eq "you update your systems if you have one of these packages installed.</p>\n")
+		if ($next eq "added to the Debian archive recently.</p>\n")
 		{
-			$_ = "<p><strong>Säkerhetsuppdatering.</strong>\n";
-			$_ = "Du kan rutinen, se till att uppdatera ditt system om du har något av\n";
-			$_ = "dessa paket installerade.</p>\n";
+			$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong>\n";
+			$_ .= "Följande paket har nyligen lagts till Debianarkivet.</p>\n";
 		}
 		else
 		{
 			$_ .= $next;
 		}
 	}
+	elsif ($_ eq "<p><strong>Security Updates.</strong> You know the drill, make sure\n" ||
+	       $_ eq "<p><strong>Security Updates.</strong> You know the drill, please make sure\n")
+	{
+		# Translate security intro
+		$next = <SRC>;
+		if ($next eq "you update your systems if you have one of these packages installed.</p>\n" ||
+		    $next eq "that you update your systems if you have any of these packages installed.</p>\n")
+		{
+			$_ =  "<p><strong>Säkerhetsuppdateringar.</strong>\n";
+			$_ .= "Ni kan rutinen, se till att uppdatera era system om ni har något av\n";
+			$_ .= "dessa paket installerade.</p>\n";
+		}
+		elsif ($next eq "that you update your systems if you have this package installed.</p>\n")
+		{
+			$_ =  "<p><strong>Säkerhetsuppdatering.</strong>\n";
+			$_ .= "Ni kan rutinen, se till att uppdatera era system om ni har detta paket\n";
+			$_ .= "installerat.</p>\n";
+		}
+		else
+		{
+			$_ .= $next;
+		}
+	}
+
+	s/(\s+)--(\s+)/$1&ndash;$2/g;
+	s/>Bug#([0-9])/>rapport $1/g;
 
 	unless ($insertedrevision || /^#/)
 	{
