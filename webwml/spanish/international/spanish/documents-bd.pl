@@ -85,6 +85,38 @@ $translations = {
 	'package'		=> 'doc-debian',
 },
 
+'constitution' => {
+	'type'			=> 'DDP',
+	'name'			=> 'Debian Constitution',
+	'cvs_url'		=> '?',
+	'package'		=> 'doc-debian',
+},
+
+'bug-log-access' => {
+	'type'			=> 'DDP',
+	'name'			=> 'Accessing bug reports in the tracking system logs',
+	'cvs_url'		=> '?',
+	'package'		=> 'doc-debian',
+},
+'mailing-lists' => {
+	'type'			=> 'DDP',
+	'name'			=> 'Introduction to the Debian mailing lists',
+	'cvs_url'		=> '?',
+	'package'		=> 'doc-debian',
+},
+'bug-reporting' => {
+	'type'			=> 'DDP',
+	'name'			=> 'How to report a bug in Debian',
+	'cvs_url'		=> '?',
+	'package'		=> 'doc-debian',
+},
+'source-unpack' => {
+	'type'			=> 'DDP',
+	'name'			=> 'How to unpack a Debian source package',
+	'cvs_url'		=> '?',
+	'package'		=> 'doc-debian',
+},
+
 #
 # Debian-user FAQ-O-MATIC ?
 # Linux Magazines ?
