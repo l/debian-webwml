@@ -173,7 +173,7 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Thomas Marteau' => {
-                        email       => 'marteaut@tuxfamily.org',
+                        email       => 'thomas@marteau.org',
                         summary     => 2,
                         logs        => 1,
                         diff        => 1,
