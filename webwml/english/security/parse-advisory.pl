@@ -66,7 +66,7 @@ foreach $l (<ADV>) {
     $desc = $2;
     $desc .= ' vulnerabilities' if $desc =~ /(several|multiple)\s*$/;
   }
-  if ($l =~ /^(Debian Bug)\s*: (.+)/i) {
+  if ($l =~ /^(Debian Bugs?)\s*: (.+)/i) {
       for $id (split (/,? /, $2)) {
 	  push @dbids, "Bug#".$id;
       }
@@ -114,8 +114,8 @@ $files =~ s/(- )?-+\n//g;
 $files =~ s/\n\n$/\n/s;
 
 $files =~ s/      (Size\/)?MD5 checksum: (\s*\d+ )?\w{32}\n//sg;
-$files =~ s/  Source archives:/<dt><source\/>/sg;
-$files =~ s/  Architecture.independent \w+:\n/<dt><arch-indep\/>\n/sg;
+$files =~ s/  Source archives:/<dt><source \/>/sg;
+$files =~ s/  Architecture.independent \w+:\n/<dt><arch-indep \/>\n/sg;
 $files =~ s/HP Precision architecture/HPPA architecture/gi;
 $files =~ s/  (\w+) architecture \(([\w -()\/]+)\)/<dt>$arch{$1}:/sg;
 $files =~ s/  ([\w -\/]+) architecture:/<dt>$1:/sg;
