@@ -9,6 +9,23 @@ my $current_issue=`cat CURRENT-ISSUE-IS`;
 chomp $current_issue;
 my $url=shift || "http://www.debian.org/News/weekly/$current_issue/";
 
+# Remove the multibyte stuff
+if ($url =~ "^http://") {
+	open(IN, "wget -q -O - $url|") or die "Can't open $url: $!\n";
+}
+else {
+	open(IN, $url) or die "Can't open $url: $!\n";
+}
+
+my $tmpfile = "/tmp/dwn.$$.html";
+open(OUT, ">$tmpfile") or die "Can't open $tmpfile: $!\n";
+
+while (<IN>) {$all .= $_}
+$all =~	s/\((&#\d{3,5};\s*)+\)//sg;
+print OUT $all;
+close (IN);
+close (OUT);
+
 my $divider=("-" x 75). "\n";
 
 my (@stories, @links);
@@ -25,7 +42,7 @@ my $highlink=0;
 # For beautifying
 my $lastlinecontainsstar=0;
 
-open (IN, "lynx -dump $url |");
+open (IN, "lynx -dump $tmpfile |") or die "Can't open $tmpfile: $!\n";
 if ($url =~ m,\d\d\d\d/\d\d?/,) {
      # This is a local URL - fix the output
      $url =~ s,^,http://www.debian.org/News/weekly/,;
@@ -36,7 +53,6 @@ while (<IN>) {
 	# We exit this loop once we hit the first divider bar,
 	# which indicates the end of the newsletter proper.
 	last if /____________/;
-
 	s/^\s\s\s//; # kill lynx's indent.
 
 	unless ($skip) {
@@ -131,3 +147,4 @@ foreach $story (@stories) {
      }
      print "\n";
 }
+system ("/bin/rm", "$tmpfile");
