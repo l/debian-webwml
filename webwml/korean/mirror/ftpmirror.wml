@@ -1,0 +1,82 @@
+#use wml::debian::template title="FTP 미러 셋업"
+
+<p>미러링은 공식, 비공식 싸이트 모두 동일하다. 미러를 설정한 후 <a
+href="../misc/README.mirrors">미러 리스트</a>에 포함시키기 위해 그
+미러를 반드시 <a href="submit">데비안에 등록해야 한다</a>. <A
+href="submit">간단한 웹 형식</a>을 사용해서 신청할 수 있다. 문제나
+질문이 있다면 <A
+href="mailto:mirrors@debian.org">mirrors@debian.org</A>로 메일을
+보내면 된다.
+
+<h3>Anonymous rsync</h3>
+The recommended method of mirroring is with rsync.
+
+<p>아카이브를 미러하기 위해 <a href="anonftpsync">이 스크립트</a>를
+사용할 수 있다. 미러링을 설정하기 위해 스크립트의 지시를
+따르라. '<kbd>Type: Push-*</kbd>'를 사용하는 <a
+href="mirrors_full">미러의 전체 목록</a>에 들어있는 싸이트들이
+미러하기에 좋을 것이다.
+
+<h3>Push Mirror</h3>
+Push mirroring is a form of mirroring using rsync that we have developed to minimize the
+time it takes for changes to the archive to reach mirrors. Push
+mirroring은 client mirror에게 갱신 시간을 알려주기 위해 ssh trigger를
+사용한다. ssh는 한가지 명령만을 실행하도록 설정하기 때문에 매우
+안전하다. 또 미러링은 여전히 '당기기(pull)' 때문에 위조된(forged) push
+mirror를 통해 아카이브의 내용을 변조(corrupt)하는 것은 불가능하다.
+
+<p>몇몇 미러 관리자는 이 도구가 그들의 기계를 침입에 대해 개방할 것
+같아 이 미러링 도구를 사용하는 것을 내키지 않아 한다. 이것은 사실이
+아니다. 이것의 작동 방법과 안전한 이유에 대한 좀 더 세부적인 설명은 <a
+href="explain">이 페이지</a>를 보라.
+
+<p>Push mirroring은 upstream, downstream mirror의 관리자가 반드시
+정보를 서로 교환해야 하기 때문에 설정에 좀 더 수고를 해야 한다. 이익은
+upstream mirror가 아카이브가 갱신된 후 즉시 미러 과정을
+초기화(initiate)한다는 것이다. 이것은 아카이브의 변화가 매우 빨리
+전달(propagate)될 수 있도록 한다.
+
+<p>root가 아닌 일반 사용자의 계정으로 설정하는 것이 가장
+좋다. upstream mirror가 준 공개 ssh 열쇠의 내용은
+<kbd>~<user>/.ssh/authorized_keys</kbd>에 놓여야 한다. 
+
+<p><a href="ftpsync">ftpsync</a>와 <a
+href="ftpsync.conf">ftpsync.conf</a> 파일이 필요할
+것이다. ftpsync.conf를 편집하고 upstream mirror가 제공한 정보를
+이용해서 지시를 따르라.
+
+<p>Push-Primary가 되고자 한다면 <a href="identity.pub.master.ftp">ftp
+아카이브를 위한 공개 ssh 열쇠</a>가 필요할 것이다.
+
+<p>non-US 아카이브를 push mirror하기 위해 <a
+href="ftpsync-non-US">ftpsync-non-US</a>와 <a
+href="ftpsync-non-US.conf">ftpsync-non-US.conf</a> 파일이 필요할
+것이다. 아카이브 모두를 미러하는 같은 계정을 사용하기 위해 파일은 서로
+다른 이름을 갖는다.
+non-US Push-Primary가 되고자 한다면 <a href="identity.pub.non-US.ftp">non-US
+ftp를 위한 공개 ssh 열쇠</a>가 필요할 것이다. 
+
+<h3>'미러'를 사용하는 Anonymous FTP</h3>
+<p>Anonymous FTP는 오랫동안 미러링의 표준 도구였다. 이것을 위해 '미러'
+프로그램이 데비안 아카이브에서 작동한다. '미러'는 데비안 패키지로
+이용할 수 있다. 데비안 패키지를 설치해보았다면
+/etc/mirror/packages/ftp.debian.org에 ftp 아카이브를 미러링하는 간단한
+스크립트가 있다.
+
+<h3>wget</h3>
+<kbd>wget</kbd>은 작은 싸이트 미러링에서 잘 동작하기는 하지만 mirror나
+rsync만큼 설정가능(configurable)하지 않아서 이 작업에 추천하지는
+않는다. 
+
+<h3>미러하는 때</h3>
+여러분의 기계가 push mirror되고 있다면 이 점에 대해 걱정할 필요가
+없다. 그렇지 않다면 미러하기로 선택한 싸이트는 rsync를 사용하고 미러
+싸이트의 데비안 아카이브에 있는 <kbd>project/trace/</kbd>에서 그
+싸이트의 이름이 있는 파일을 보아야 한다. 그 파일은 미러가 마지막으로
+끝난 시간을 포함하고 있을 것이다. 그 시간에 시간(예를 들어 1시간)을
+더한 후 미러하라.
+
+<p>미러가 매일 자동으로 동작하도록 하는 가장 쉬운 방법은 cron을
+사용하는 것이다. 자세한 내용은 <kbd>man crontab</kbd>을 보라.
+
+
