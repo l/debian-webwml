@@ -100,15 +100,7 @@ l10n-rank.$(LANGUAGE).html: ../../../english/international/l10n/scripts/init.pl\
 #l10n-lang-*.wml:l10n-lang.$(LANGUAGE).html l10n-lang.wml\
 #	../../../english/international/l10n/data/unstable
 
-# The following is not really correct, but it should work well enough.
-# The problem is that we don't know in advance what files will exist (the
-# list of variants is buried in the db), so we can't set up an explicit
-# dependency chain for the files. Instead we simply force the installation
-# (with every invocation) of all files with the correct form.
-# Feel free to fix this if you know how
 
-#This hack should not be needed anymore since l10n-lang.wml was splitted
-
-#install:: FORCE
-#	install -p -m664 $(wildcard l10n-lang-??.$(LANGUAGE).html) $(HTMLDIR)
-#FORCE:
+HTMLDEST_TEAMS = $(patsubst %,$(HTMLDIR)/%,$(HTML_PO))\
+                   $(patsubst %,$(HTMLDIR)/%,$(HTML_TMPL))
+install::$(HTMLDEST_TEAMS)
