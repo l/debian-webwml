@@ -1,0 +1,376 @@
+#use wml::debian::template title="Debians feilrapportssystem - sende feilmeldinger" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.27"
+<!--Oversatt til norsk av Tor Slettnes (tor@slett.net)-->
+
+    <h1>Hvordan melde fra om feil i Debian</h1>
+  
+    <h2>Viktige ting å merke <strong>før</strong> innsending</h2>
+
+    <p>
+      Vi ber om at du ikke sender flere ubeslektede feilrapporter -
+      særlig om de angår forskjellige pakker - i en enkelt
+      feilrapport.</p>
+
+    <p>
+      Du bør sjekke om feilen har allerede blitt rapportert av andre
+      før du sender den inn.  Listen av utestående feilrapporter er
+      tilgjengelig <a href="./">på nettsidene våre</a> og
+      <a href="Access">andre plasser</a> - se andre dokumenter for flere
+      detaljer.  Du kan legge kommentarer til en eksisterende
+      feilrapport ved å sende epost til
+      <var>&lt;feilnummer&gt;</var>@bugs.debian.org.</p>
+
+    <p>
+      Om du ikke kan finne ut i hvilken pakke problemet ligger, send en
+      melding til postlisten
+      <a href="mailto:debian-users@lists.debian.org">Debian-user</a>
+      og be om råd.  Om problemet ikke bare er beslektet med en eneste
+      pakke, men med en generell Debian-tjeneste, fins det flere
+      <a href="pseudo-packages">pseudo-pakker</a> eller til og med
+      <a href="../MailingLists/subscribe">postlister</a> som du  kan
+      bruke i stedet til å vise oss meldingen din.</p>
+
+    <p>
+      Om du vil sende en kopi av feilrapporten til flere mottakere
+      (f.eks. postlister), bør du ikke bruke vanlige e-post-felter,
+      men i stedet en <a href="#xcc">annen metode, beskrevet
+      nedenfor</a>.</p>
+
+
+    <h2>Sende feilmeldingen ved hjelp av et automatisk
+      rapporterings-verktøy</h2>
+
+    <p>
+      Vi har utviklet to programmer i Debian til å hjelpe til med
+      feilrapportering.  Disse heter
+      <code><a href="http://packages.debian.org/stable/utils/bug.html">bug</a></code>
+      og
+      <code><a href="http://packages.debian.org/stable/utils/reportbug.html">reportbug</a></code>.
+
+      Begge vil lede deg gjennom feilrapporterings-prosedyren skritt
+      for skritt, og ganske sikkert gjøre det lettere å sende
+      feilrapporter på denne måten.</p>
+
+
+    <h2>Sende feilrapporten via e-post</h2>
+
+    <p>
+      Send e-post til
+      <a href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></a>,
+      som beskrevet nedenfor.</p>
+
+    <p>
+      Som i alle andre meldinger bør du naturligvis bruke et presist,
+      beskrivende emnefelt i eposten din.  Emnet du gir blir brukt som
+      den opprinnelig tittelen på feilrapporten i systemet, så det er
+      viktig at det er informerende.</p>
+
+    <p>
+      Du må legge til et pseudo-brevhode i begynnelsen av kroppen til
+      meldingen.  Den første linjen av meldingskroppen skal lese:</p>
+
+<pre>
+Package: &lt;pakkenavn&gt;
+</pre>
+
+    <p>
+      Erstatt <code>&lt;pakkenavn&gt;</code> med navnet på pakken du vil
+      rapportere feil mot.</p>
+
+
+    <p>
+      Den andre linjen på meldingen skal si:
+
+<pre>
+Version: &lt;versjon&gt;
+</pre>
+
+    <p>
+      Erstatt <code>&lt;versjon&gt;</code> med versjonen av pakken.</p>
+    
+
+    <p>
+      Du må gi en korrekt <code>Package</code>-linje i pseudo-feltet
+      for at feilrapportssystemet skal levere meldingen til
+      vedlikeholderen av pakken.  Se på <a href="#findpkgver">dette
+      eksempelet</a> for informasjon om hvordan du kan finne denne
+      informasjonen. </p>
+
+    <p>
+      Pseudo-feltene skal starte helt i begynnelsen sine respektive
+      linjer.  Feilrapportssystemet forstår ikke MIME eller PGP-post,
+      og vil nok ikke finne fram pseuo-feltene i slik e-post.</p>
+
+    
+    <p>
+      Vi ber om at du inkluderer i meldingen din:
+
+      <ul>
+      <li>
+	Det <em>nøyaktige</em> og <em>fullstendinge</em> innholdet av
+	feilmeldinger som skrives ut eller logges.  Dette er svært
+	viktig.</li>
+
+      <li>
+	Nøyaktig hva du skrev inn eller gjorde for å se
+	problemet.</li>
+
+      <li>
+	En beskrivelse av den feilaktige oppførselen: Hva du
+	forventet, og hva du så.  En utskrift av en eksemplar-utføring
+	av programmet er en god måte å vise dette på.</li>
+
+      <li>
+	Et forslag på løsning, eller til og med en
+	«<span lang="en">patch</span>» (plaster-fil), om du har
+	en.</li>
+
+      <li>
+	Detaljer om oppsettet av programmet som har problemet.
+	Inkluder fullstendige konfigurasjonsfiler til programmet.</li>
+
+      <li>
+	Versjoner av andre pakker som problempakken er avhengig
+	av.</li>
+
+      <li>
+	Hvilken kjerne-versjon du bruker (utskriften av
+	<code>uname -a</code>), versjon av det dynamiske C-bibloteket
+	(skriv <code>ls -l /lib/libc.so.6</code> eller
+	<code>dpkg -s libc6 | grep ^Version</code>), og andre detaljer
+	om Debian-systemet ditt, om det er passende.  For eksempel, om
+	du har et problem med et Perl-script, bør du inkludere
+	versonen av `perl'-programmet på systemet ditt (skriv
+	<code>perl -v</code> eller <code>dpkg -s perl-5.005 | grep
+	  ^Version:</code>).</li>
+
+      <li>
+	Passende detaljer om maskinvaren din.  Om du melder om et
+	problem med et maskinvaregrensesnitt ("drivere" [sic]), ber vi
+	om at du angir <em>all</em> maskinvaren på systemet ditt,
+	siden problemer ofte skyldes IRQ- og I/O-sammenstøt.</li>
+
+    </ul>
+
+    <p>
+      Nevn alle detaljer som kan virke relevante - du har ikke særlig
+      stor sjanse for å gjøre rapporten for lang ved å inkludere for
+      mye informasjon.  Om de er korte nok, inkluder gjerne filer du
+      brukte, slik at problemet kan reproduseres.  (Pakk dem inn med
+      'uuencode' om de inneholder rare tegn osv.).</p>
+
+
+    <h2><a name="example">Eksempel</a></h2>
+
+    <p>
+      En feilrapport med alle feltene i brevhodet, vil kunne se
+      noenlunde slik ut:</p>
+
+<PRE>
+  To: submit@bugs.debian.org
+  From: diligent@testing.linux.org
+  Subject: Hello says `goodbye'
+
+  <A name="pseudoheader">Package: hello</A>
+  Version: 1.3-16
+
+  When I invoke `hello' without arguments from an ordinary shell
+  prompt it prints `goodbye', rather than the expected `hello, world'.
+  Here is a transcript:
+
+  $ hello
+  goodbye
+  $ /usr/bin/hello
+  goodbye
+  $
+
+  I suggest that the output string, in hello.c, be corrected.
+
+  I am using Debian GNU/Linux 2.2, kernel 2.2.17-pre-patch-13
+  and libc6 2.1.3-10.
+</PRE>
+
+
+    <h2>
+      <A name="xcc">
+	Sende kopier av feilrapporten til andre adresser</a></h2>
+
+    <p>
+      Av og til er det nødvendig å sende en kopi av en feilrapport til
+      andre plasser enn <code>debian-bugs-dist</code> og
+      vedlikeholderen av pakken, hvor de vanligvis sendes.</p>
+
+    <p>
+      Du kunne gjøre dette ved å bruke Cc:-feltet til å sende kopier
+      til andre adresser, men disse andre kopiene vil i så fall ikke
+      få feilrapportnummeret i <code>Reply-To</code>-feltet og i
+      <code>Subject</code>-feltet.  Når mottakerne svarer vil de
+      antakelig la <code>submit@bugs.debian.org</code> ligge igjen i
+      mottakerfeltet, og dermed blir svaret deres gjort om til en ny
+      feilrapport.  Dette leder til mange ekstra feilrapporter.</p>
+
+    <p>
+      Den <em>rette</em> måten å gjøre dette på er å bruke feltet
+      <code>X-Debbugs-CC</code>.  Legg til en slik linje i brevhodet
+      på meldingen din (ikke i pseudo-brevhodet med
+      <code>Package</code>-feltet):</p>
+
+    <pre>
+ X-Debbugs-CC: other-list@cosmic.edu
+    </pre>
+
+    <p>
+      Dette får feilrapportssystemet til å sende en kopi av rapporten
+      din til adressen(e) i <code>X-Debbugs-CC</code>-linjen, samt til
+      <code>debian-bugs-dist</code>.</p>
+
+    <p>
+      Dette kan være nyttig for å sende meldinger til
+      <code><span lang="en">quiet</span></code> - se nedenfor.</p>
+
+
+    <h2><a name="severities">Alvorlighetsgrader</a></h2>
+
+
+    <p>
+      Hvorvidt en rapport dreier seg om en særdeles alvorlig feil,
+      eller rett og slett er en forespørsel etter ny funksjonalitet,
+      kan angis som alvorlighetsgrad når du sender inn feilrapporten.
+      Imidlertid kreves ikke dette, og utviklerne vil sette en
+      passende alvorlighetsgrad på rapporten om du ikke gjør det.</p>
+
+    <p>
+      For å angi en alvorlighetsgrad, legg til et felt som følger
+      i pseudo-brevhodet:</p>
+
+    <pre>
+Severity: &lt;<var>alvorlighetsgrad</var>&gt;
+    </pre>
+
+    <p>
+      Erstatt &lt;<var>alvorlighetsgrad</var>&gt; med en av de
+      tilgjengelige gradene, som beskrevet i
+      <a href=""Developer#severities">utviklernes
+	dokumentasjon</a>.</p>
+
+
+    <h2>Ulike rapporteringsadresser (mindre feil eller
+      masserapportering)</h2>
+
+
+    <p>
+      I rapporter om små problemer, f.eks. skrivefeil i
+      dokumentasjonen eller et trivielt byggeproblem, sett
+      passende alvorlighetsgrad og send rapporten til
+      <code>maintonly@bugs</code> istedet for
+      <code>submit@bugs</code>.
+      <code>maintonly</code> videresender rapporten kun til
+      pakkeutvikleren, og ikke til feilrapportsystemets postliste.</p>
+
+    <p>
+      Om du sender mange feilrapporter samtidig, bør du særlig bruke
+      <code>maintonly@bugs</code> slik at du ikke skaper for mye
+      overflødig trafikk på postlistene.   Før du sender mange
+      lignende feilrapporter vil du kanskje også sende en oppsummering
+      til <code>debian-bugs-dist</code>.</p>
+
+    <p>
+      Om du ønsker å sende en feilrapport til feilrapportsystemet som
+      du allerede har sendt til pakkeutvikleren, kan du bruke
+      <code>quiet@bugs</code>. Feilrapporter sendt til
+      <code>quiet@bugs</code> blir ikke videresent noensteds, kun
+      arkivert.</p>
+
+    <p>
+      Om du rapporterer til disse forskjellige adressene, vil
+      feilrapportssysemet sette <code>Reply-To</code>-feltet av
+      videresendte meldinger slik at svarene blir behandlet på samme
+      måten som den orginale feilmeldingen.  Dette betyr f.eks. at
+      svar til meldinger sendt til <code>maintonly</code> går til
+      <var>nnn</var><code>-maintonly@bugs</code> i stedet for
+      <var>nnn</var><code>@bugs</code>, selvsagt medmindre man manuelt
+      endrer på dette.</p>
+
+
+
+    <h2>Feilrapporter mot ukjente pakker</h2>
+
+    <p>
+      Om feilrapportssystemet ikke finner ut hvem som vedlikeholder
+      den aktuelle pakken, blir rapporten videresendt til
+      <code>debian-bugs-dist</code>, selv om adressen
+      <code>maintonly</code> ble brukt.</p>
+
+    <p>
+      Når du sender meldinger til <code>maintonly@bugs</code> eller
+      <var>nnn</var><code>-maintonly@bugs</code>, må du passe på at
+      feilrapporten blir tildelt den riktige pakken, ved å bruke et
+      skikkelig <code>Package</code>-felt i begynnelsen av den
+      opprinnelige feilrapporten, eller ved å bruke
+      <a href="server-control"><code>control@bugs</code>-tjenesten</a>
+      til å (gjen)tildele rapporten på ordentlig vis om den ikke er
+      riktig allerede.</p>
+
+
+    <h2><a name="findpkgver">Bruke <code>dpkg</code> til å finne
+	pakke og versjon til rapporten</a></h2>
+
+    <p>
+      Om du er i ferd med å rapportere en feil på en kommando, kan du
+      finne ut hvilken pakke som inneholder denne ved å bruke
+      <code>dpkg --search</code>.  Du kan finne ut hvilken versjon av
+      pakken du har installert ved å bruke <code>dpkg --list</code>
+      eller <code>dpkg --status</code>.</p>
+
+
+<P>For eksempel:
+<pre>
+$ which apt-get
+/usr/bin/apt-get
+$ type apt-get
+apt-get is /usr/bin/apt-get
+$ dpkg --search /usr/bin/apt-get
+apt: /usr/bin/apt-get
+$ dpkg --list apt
+Desired=Unknown/Install/Remove/Purge/Hold
+| Status=Not/Installed/Config-files/Unpacked/Failed-config/Half-installed
+|/ Err?=(none)/Hold/Reinst-required/X=both-problems (Status,Err: uppercase=bad)
+||/ Name           Version        Description
++++-==============-==============-============================================
+ii  apt            0.3.19         Advanced front-end for dpkg
+$ dpkg --status apt
+Package: apt
+Status: install ok installed
+Priority: standard
+Section: base
+Installed-Size: 1391
+Maintainer: APT Development Team &lt;deity@lists.debian.org&gt;
+Version: 0.3.19
+Replaces: deity, libapt-pkg-doc (&lt;&lt; 0.3.7), libapt-pkg-dev (&lt;&lt; 0.3.7)
+Provides: libapt-pkg2.7
+Depends: libapt-pkg2.7, libc6 (&gt;= 2.1.2), libstdc++2.10
+Suggests: dpkg-dev
+Conflicts: deity
+Description: Advanced front-end for dpkg
+ This is Debian's next generation front-end for the dpkg package manager.
+ It provides the apt-get utility and APT dselect method that provides a
+ simpler, safer way to install and upgrade packages.
+ .
+ APT features complete installation ordering, multiple source capability
+ and several other unique features, see the Users Guide in
+ /usr/doc/apt/guide.text.gz
+
+</pre>
+
+<hr>
+
+#use "otherpages.inc"
+
+#use "$(ENGLISHDIR)/Bugs/footer.inc"
+
+# Local variables:
+# mode: sgml
+# sgml-indent-data:t
+# sgml-doctype:"../.doctype"
+# End:
+
