@@ -1,1 +1,5 @@
-include $(subst webwml/dutch,webwml/english,$(CURDIR))/Makefile
+WMLBASE=../..
+CUR_DIR=international/dutch
+SUBS=
+
+include $(WMLBASE)/Make.lang
