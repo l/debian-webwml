@@ -151,10 +151,10 @@ sub init_translators {
                 'Willy Picard' =>  {
                         email       => 'picard@kti.ae.poznan.pl',
                         summary     => 2,
-                        logs        => 0,
-                        diff        => 0,
+                        logs        => 2,
+                        diff        => 2,
                         tdiff       => 0,
-                        file        => 0,
+                        file        => 2,
                         compress    => 'none'
                 },
                 'Martin Quinson' => {
