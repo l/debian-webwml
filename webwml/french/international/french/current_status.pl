@@ -183,9 +183,9 @@ $translations_status = {
 },
 
 'policy' => {
-	'status'		=> '3',
-	'since'			=> '25/12/2000',
-	'translation_name'	=> 'Manuel des normes Debian',
+	'status'		=> '4',
+	'since'			=> '14/01/2001',
+	'translation_name'	=> 'La charte Debian',
 	'translation_maintainer'=> ['philippe batailler <pbatailler@teaser.fr>'],
 	'base_revision'		=> '3.2.1.1',
 	'translation_dev_url'   => 'http://www.teaser.fr/~pbatailler/',
