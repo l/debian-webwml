@@ -11,10 +11,11 @@ SUBS=$(YEARS) undated
 
 include $(WMLBASE)/Make.lang
 
+
 CUR_YEAR ?= $(shell date +%Y)
 
-index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.wml) \
-     $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/$(CUR_YEAR)*.wml) \
+index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/dsa-*.wml) \
+     $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.wml) \
           $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml 
 
 # install keys.txt
