@@ -3,7 +3,7 @@ CUR_DIR=News/1998
 
 HTMLDIR=$(BASE)/../../debian.org/$(CUR_DIR)
 TEMPLDIR=$(BASE)/template/debian
-GERMANSRCDIR=$(BASE)/../german
+ENGLISHSRCDIR=$(BASE)/../german
 
 include $(BASE)/Make.lang
 
