@@ -58,18 +58,18 @@ if (defined ($opt_a)) {
 parsedirs (".", "data", 2);
 
 $reference{mitre}{url}="http://cve.mitre.org/cve/refs/refmap/source-DEBIAN.html";
-$reference{mitre}{name}="Mitre CVE dictionary";
+$reference{mitre}{name}="<cveheader>";
 $reference{mitre}{perlre}="(CVE|CAN)";
 
-$reference{bid}{name}="Securityfocus Bugtraq database";
+$reference{bid}{name}="<bugtraqheader>";
 $reference{bid}{url}="http://online.securityfocus.com/bid";
 $reference{bid}{perlre}="BID";
 
-$reference{cert}{name}="CERT alerts";
+$reference{cert}{name}="<certalertheader>";
 $reference{cert}{url}="http://www.cert.org/advisories/";
 $reference{cert}{perlre}="CA-";
 
-$reference{certvu}{name}="CERT vulnerabilities";
+$reference{certvu}{name}="<certvulnheader>";
 $reference{certvu}{url}="http://www.kb.cert.org/vuls";
 $reference{certvu}{perlre}="VU";
 
