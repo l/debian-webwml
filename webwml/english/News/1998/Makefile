@@ -19,7 +19,7 @@ all: $(HTMLFILES) $(HTMLDIR)/19980928-apcmag-award-1998-08-26.jpg
 
 include $(BASE)/Make.templ.inc
 
-$(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(wildcard 1998*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_news.wml
+$(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(wildcard 1998*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_news.wml $(TEMPLDIR)/languages.wml
 
 $(HTMLDIR)/19980928-apcmag-award-1998-08-26.jpg : 19980928-apcmag-award-1998-08-26.jpg
 	cp 19980928-apcmag-award-1998-08-26.jpg $(HTMLDIR)/19980928-apcmag-award-1998-08-26.jpg
