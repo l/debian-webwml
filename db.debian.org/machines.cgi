@@ -80,6 +80,11 @@ foreach $dn (sort {$entries->{$a}->{host}->[0] cmp $entries->{$b}->{host}->[0]} 
     foreach $key (keys(%attrs)) {
       $output{$key} = $data->{$key}->[0];
     }
+  
+    $output{hostname} = undef;
+    foreach my $hostname (@{$data->{hostname}}) {
+      $output{hostname} .= sprintf("%s%s", ($output{hostname} ? ', ' : ''), $hostname);
+    }
 
     # Modified/created time. TODO: maybe add is the name of the creator/modifier
     $output{modifytimestamp} = &Util::FormatTimestamp($output{modifytimestamp});
@@ -116,7 +121,7 @@ foreach $dn (sort {$entries->{$a}->{host}->[0] cmp $entries->{$b}->{host}->[0]} 
   
   $summary{$thishost}{hostname} = undef;
   foreach my $hostname (@{$data->{hostname}}) {
-    $summary{$thishost}{hostname} .= sprintf("%s<a href=\"machines.cgi?host=%s\">%s</a>", ($summary{$thishost}{hostname} ? ', ' : ''), $summary{$thishost}{host}, $hostname);
+    $summary{$thishost}{hostname} .= sprintf("%s<a href=\"machines.cgi?host=%s\">%s</a>", ($summary{$thishost}{hostname} ? '<br>' : ''), $summary{$thishost}{host}, $hostname);
   }
 }
 $ldap->unbind;
