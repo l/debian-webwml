@@ -1,19 +1,15 @@
-BASE=../..
+# This Makefile should need no changes from webwml/english/ports/powerpc/Makefile
+# Please send a message to debian-www if you need to modify anything, so the
+# problem can be fixed.
+
+WMLBASE=../..
 CUR_DIR=ports/powerpc
+# list any subdirectories in the following variable. Any directories listed
+# must exist or the make will not work
+SUBS=
 
-HTMLDIR=$(BASE)/../../debian.org/$(CUR_DIR)
-TEMPLDIR=$(BASE)/template/debian
-ENGLISHSRCDIR=$(BASE)/../english
+include $(WMLBASE)/Make.lang
+include $(WMLBASE)/Make.common
 
-include $(BASE)/Make.lang
-
-WMLFILES := $(wildcard *.wml)
-HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
-
-# EPILOG=--epilog=weblint
-$(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
-	wml -q $(EPILOG) $(<F)
-
-all: $(HTMLFILES)
-
-include $(BASE)/Make.templ.inc
+include $(WMLBASE)/Make.dep.templ    
+include $(WMLBASE)/Make.dep.generic
