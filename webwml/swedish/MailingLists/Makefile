@@ -13,3 +13,9 @@ include $(WMLBASE)/Make.common
 
 include $(WMLBASE)/Make.dep.templ
 include $(WMLBASE)/Make.dep.generic
+
+subscribe.sv.html: subscribe.wml ../../english/MailingLists/subscribe.wml
+	$(WML) subscribe.wml
+
+unsubscribe.sv.html: unsubscribe.wml ../../english/MailingLists/unsubscribe.wml
+	$(WML) unsubscribe.wml
