@@ -13,7 +13,7 @@
    [EO:Debian for IA-64:]
    [ES:Debian para IA-64:]
    [FI:Debian for IA-64:]
-   [FR:Debian for IA-64:]
+   [FR:Debian pour IA-64:]
    [HR:Debian for IA-64:]
    [HU:Debian for IA-64:]
    [IT:Debian per IA-64:]

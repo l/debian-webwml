@@ -13,7 +13,7 @@
    [EO:Debian for MIPS:]
    [ES:Debian para MIPS:]
    [FI:Debian for MIPS:]
-   [FR:Debian for MIPS:]
+   [FR:Debian pour MIPS:]
    [HR:Debian for MIPS:]
    [HU:Debian for MIPS:]
    [IT:Debian per MIPS:]
