@@ -1,3 +1,9 @@
+$(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
+	$(WML) $(<F)
+
+$(HTMLDIR)/%.jpg : %.jpg
+	@cp $< $@
+
 # template dependencies
 
 template/debian/basic.wml: template/debian/navbar.wml
