@@ -17,7 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import os
+import os, pwd
 
 Error = 'Message Error';
 
@@ -51,5 +51,13 @@ def TemplateSubst(map, filename):
         template = template.replace(x,map[x]);
     file.close();
     return template;
+
+################################################################################
+
+# Returns the user name with a laughable attempt at rfc822 conformancy
+# (read: removing stray periods).
+def whoami():
+    return pwd.getpwuid(os.getuid())[4].split(',')[0].replace('.', '')
+
 
 # vim: ts=4:expandtab:shiftwidth=4:
