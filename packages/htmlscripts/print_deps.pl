@@ -204,8 +204,6 @@ sub print_deps_ds {
 		
 		if ( $pkg_ix > 0 ) { $arch_str = ""; }
 		
-		my $p = $env->{db}->get_pkg( $p_name );
-
 		my $pkg_version = "";
 		foreach my $a ( @all_archs ) {
 		    if ( exists( $arch_deps{$a}->{$dp} )
@@ -216,23 +214,8 @@ sub print_deps_ds {
 		    }
 		}
 
-		if ( $p ) {
-		    my $section;
-		    if ($p->is_virtual) {
-			$section = "virtual";
-		    } else {
-			my %sections = $p->get_arch_fields( 'section',
-							    $env->{archs} );
-			$section = $sections{max_unique} or warn "W: no section found for package ".$p->get_name()."\n";
-		    }
-# DEBUG
-		    unless(defined($section)&& defined($p_name)&& defined($pkg_version) && defined($arch_str)) {
-			print STDERR "E: $section&&$p_name&&$pkg_version&&$arch_str&&".$pkg->get_name()."\n";
-		    }
-		    push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $pkg_version$arch_str";
-		} else {
-		    push @res_pkgs, "$p_name $pkg_version$arch_str";
-		}
+		push @res_pkgs, compute_link( $env, $p_name )
+		    ." $pkg_version$arch_str";
 		$pkg_ix++;
 	    }
 	    push @res, join( gettext( " or " ), @res_pkgs );
@@ -256,7 +239,8 @@ sub print_reverse_rel_ds {
 	return "";
     }
 
-    my ( $save_p, $save_vs, $save_as ) = ( "", "", "" );
+    my ( $save_p, $save_as ) = ( "", "" );
+    my @save_vs = ();
     foreach my $r_p ( sort keys %{$pkg->{rr}{$lc_type}} ) {
 	foreach my $r_v ( version_sort keys %{$pkg->{rr}{$lc_type}{$r_p}} ) {
 	    my %arch_deps;
@@ -264,15 +248,25 @@ sub print_reverse_rel_ds {
 		$arch_deps{$r_a}{$r_p} =
 		    "@{$pkg->{rr}{$lc_type}{$r_p}{$r_v}{$r_a}}";
 	    }
+	    @all_archs = sort keys %arch_deps;
 	    my $arch_str = compute_arch_str( $r_p, $versions, \%arch_deps,
 					     \@all_archs );
 	    if ( ($r_p eq $save_p) && ($arch_str eq $save_as) ) {
-		$save_vs .= ", $r_v";
+		push @save_vs, $r_v;
 	    } else {
-		push @res, "$save_p ($save_vs)$save_as"
-		    if $save_p && $save_vs;
+		if ( $save_p ) {
+		    $save_p = compute_link( $env, $save_p );
+#		    if (@save_vs == keys %{$versions->{v2a}}) {
+#			push @res, "$save_p$save_as";
+#		    } else {
+		    push @res, "$save_p (".
+			join( ", ", version_sort @save_vs ).
+			")$save_as";
+#		    }
+		}
+
 		$save_p = $r_p;
-		$save_vs = $r_v;
+		@save_vs = ( $r_v );
 		$save_as = $arch_str;
 	    }
 	}
@@ -309,6 +303,27 @@ sub compute_arch_str {
 	}
     }
     return $arch_str;
+}
+
+sub compute_link {
+    my ( $env, $p_name ) = @_;
+
+    my $p = $env->{db}->get_pkg( $p_name );
+    if ($p) {
+	my $section;
+	if ($p->is_virtual) {
+	    $section = "virtual";
+	} else {
+	    my %sections = $p->get_arch_fields( 'section',
+						$env->{archs} );
+	    $section = $sections{max_unique}
+	    or warn "W: no section found for package ".
+		$p_name."\n";
+	}
+	$p_name = "<a href=\"../$section/$p_name\">$p_name</a>";
+    }
+
+    return $p_name;
 }
 
 1;
