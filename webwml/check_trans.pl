@@ -215,6 +215,7 @@ sub get_translators_from_db {
 
 sub init_mails {
     return unless $opt_m;
+    eval q{use MIME::Lite};
     foreach my $name (keys %translators) {
 	return if defined $translators{$name}{"msg"};
 	$translators{$name}{"msg"} = MIME::Lite->new(
