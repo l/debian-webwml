@@ -1,25 +1,41 @@
 #use wml::debian::countries
-<define-tag webmirrors>
+
+<define-tag webmirrors whitespace=delete>
 <ul>
-<li><a href="http://www.at.debian.org/"><ATc></a>
-<li><a href="http://www.au.debian.org/"><AUc></a>
-<li><a href="http://www.bg.debian.org/"><BGc></a>
-<li><a href="http://www.br.debian.org/"><BRc></a>
-<li><a href="http://www.cn.debian.org/"><CNc></a>
-<li><a href="http://www.de.debian.org/"><DEc></a>
-<li><a href="http://www.dk.debian.org/"><DKc></a>
-<li><a href="http://www.es.debian.org/"><ESc></a>
-<li><a href="http://www.fr.debian.org/"><FRc></a>
-<li><a href="http://www.hk.debian.org/"><HKc></a>
-<li><a href="http://www.id.debian.org/"><IDc></a>
-<li><a href="http://www.it.debian.org/"><ITc></a>
-<li><a href="http://www.jp.debian.org/"><JPc></a>
-<li><a href="http://www.kr.debian.org/"><KRc></a>
-<li><a href="http://www.nl.debian.org/"><NLc></a>
-<li><a href="http://www.pl.debian.org/"><PLc></a>
-<li><a href="http://www.ru.debian.org/"><RUc></a>
-<li><a href="http://www.tr.debian.org/"><TRc></a>
-<li><a href="http://www.uk.debian.org/"><UKc></a>
-<li><a href="http://www.za.debian.org/"><ZAc></a>
+
+# this wondrous code courtesy of Denis Barbier
+
+#   Put file in an array
+<set-var file-contents=<include Mirrors.masterlist verbatim=true>>
+
+<perl>
+{
+  my %mirrors = (
+  #   Read line by line and builds hash array
+  #      'xx' => '<XXc>'  where <XXc> is expanded
+  <foreach m file-contents>\
+    <when <match <get-var m> "Site: www\\...\\.debian.org">>\
+      <set-var n=<subst-in-string <get-var m> ".*Site: www\\.(..)\\.debian.org.*" "\\1">>\
+      '<get-var n>' => q{<group <group "<" <upcase <get-var n>> "c>">>},\
+    </when>\
+  </foreach>
+  );
+  #   Sort %mirrors according to translated names, as in
+  #   wml::debian::mirrors  (I switched key/val in %mirrors)
+  my $mirrors_lang = {};
+  foreach my $m (keys %mirrors) {
+      while ($mirrors{$m} =~ m/\[([A-Z_]+):(.*?):\]/g) {
+          $mirrors_lang->{$1}->{$2} = $m;
+      }
+  }
+
+  foreach my $l (keys %$mirrors_lang) {
+    foreach my $m (sort langcmp keys %{$mirrors_lang->{$l}}) {
+      <perl:print>[$l:<li><a href=\"http://www.$mirrors_lang->{$l}->{$m}.debian.org\">$m</a>\n:]</perl:print>
+    }
+  }
+}
+</perl>
+
 </ul>
 </define-tag>
