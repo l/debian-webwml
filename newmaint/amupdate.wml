@@ -1,0 +1,208 @@
+<?
+  session_start();
+  include("config.inc");
+  include("common.inc");
+
+  function email_manager($db, $login, $forename, $surname, $aemail) {
+    $sql = "SELECT * FROM manager WHERE login = '$login'";
+    if (! ($result = pg_exec($db, $sql))) {
+      echo "Problem with query: ", pg_ErrorMessage($db), "<BR>";
+      echo "SQL was: $sql <BR>\n";
+      return FALSE;
+    }
+    if (pg_NumRows($result) == 0) {
+      echo "Cannot find mananger in database.<BR>\n";
+      echo "SQL was: $sql <BR>\n";
+      return FALSE;
+    }
+    $row = pg_Fetch_Array($result, 0);
+    $body = "Hello " . $row["name"] . ",\n";
+    $body .= "This is an automatic message from the New Maintainer website found at\n";
+    $body .= "http://nm.debian.org/  The Front Desk has assigned a new applicant to you:\n";
+    $body .= "$forename $surname <" . $aemail . ">.  Please remember to visit the\n";
+    $body .= "website to inform the front desk wether or not you accept this applicant.\n\n";
+    $body .= "  - New Maintainer Website.\n";
+    $headers = "From: new-maintainer@debian.org\nReply-To: new-maintainer@debian.org\nX-Mailer: PHP/" . phpversion();
+    mail($row["email"], "New Debian Maintainer: $aemail", $body, $headers);
+    return TRUE;
+  }
+
+  function check_manager($db, $manager, $aemail)
+  {
+    $sql = "SELECT * FROM applicant WHERE email ='$aemail'";
+    if (! ($result = pg_exec($db, $sql))) {
+      echo "Problem with query: ", pg_ErrorMessage($db), "<BR>";
+      echo "SQL was: $sql <BR>\n";
+      return FALSE;
+    }
+    if (pg_NumRows($result) == 0) {
+      echo "Could not find applicant $aemail in the database.<BR>\n";
+      echo "SQL was: $sql <BR>\n";
+      return FALSE;
+    }
+    $row = pg_Fetch_Array($result, 0);
+    if (trim($row["manager"]) != $manager) {
+      if ($manager != "") {
+        echo "<P>Old manager was '", $row["manager"], "' new one is '$manager'. Emailling new manager.\n";
+        return (email_manager($db, $manager, $row['forename'], 
+	   $row['surname'],$aemail));
+      } else {
+        echo "<P>Old manager was '", $row["manager"], "' new one is blank.\n";
+	return TRUE;
+      }
+    }
+    return TRUE;
+  } #check manager
+
+  function find_manager($db, $login) {
+    $sql = "SELECT * FROM manager WHERE login = '$login'";
+    if (! ($result = pg_exec($db, $sql))) {
+      echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+      return TRUE;
+    }
+    if (pg_NumRows($result) == 0) {
+      return FALSE;
+    }
+    return TRUE;
+  }
+
+  function update_db($db, $sql) {
+  if (! ($result = pg_exec($db, $sql))) {
+    echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+    return -1;
+  }
+  if (($tuples = pg_CmdTuples($result)) != 1) {
+    echo "Only one row should be effected but $tuple rows were<BR>\n";
+  }
+  return $tuples;
+}
+  function get_text($name, $value)
+  {
+    if ($value == "" ) {
+      $str = $name . "= null";
+    } else {
+      $str = $name . "='" . trim(strip_tags($value)) . "'";
+    }
+    return $str;
+  }
+  function get_bool($name, $value)
+  {
+    if ($value == 't') 
+    {
+      $str = $name . "= true ";
+    } else if ($value == 'f') {
+      $str = $name . " = false ";
+    } else {
+      $str = $name . " = null ";
+    }
+    return $str;
+  }
+  function get_textarea($name, $value)
+  {
+    if ($value == "" ) {
+      $str = $name . "= null";
+    } else {
+      $str = $name . "='" . trim(strip_tags($value)) . "'";
+    }
+    return $str;
+  }
+?>
+#use wml::nmpage title="Debian New Maintainer - Applicant Status Update"
+<?  
+  if (!session_is_registered("s_username") || !session_is_registered("s_isam")) {
+?>
+<STRONG>
+You should not be here!!</STRONG>
+<? } else { 
+  session_register("s_username");
+  session_register("s_isfd");
+  session_register("s_isdam");
+
+
+?>
+<H1>Debian New Maintainer</H1><BR>
+<H3>Updating Applicant's status</H3>
+<?
+  # Check ze values, any bad things we abort
+  if ( ($db = open_db())) {
+  $errors = "";
+  if ($emailkey == "") { $errors .= "<LI><STRONG>Blank old email address, problem with script!</STRONG>"; }
+  if ($s_isdam == 't' || $s_isfd == 't') {
+    if ($email == "") { $errors .= "<LI>No new email address.\n"; }
+    if ($forename == "") { $errors .= "<LI>You must have a first name entered.\n"; }
+    if ($surname == "") { $errors .= "<LI>You must have a surname entered.\n"; }
+    if ($apply_date == "") { $errors .= "<LI>You must have a date of application.\n"; }
+    if ($manager != "" && $manager_date == "")
+      { $errors .= "<LI>A manager has been assigned but with no date.\n"; }
+    if ($manager == "" && $manager_date != "")
+      { $errors .= "<LI>A manager has not been assigned but there is a manager assigned date.\n"; }
+  }
+  if ($id_ok != "n" && $id_checked == "")
+    { $errors .= "<LI>ID has been checked but there is no date of checking.\n"; }
+  if ($id_ok == "n" && $id_checked != "")
+    { $errors .= "<LI>ID has not been checked but there is a date of checking.\n"; }
+  if ($pnp_ok != "n" && $pnp_checked == "")
+    { $errors .= "<LI>Policy and Procedures have been checked but there is no date of checking.\n"; }
+  if ($pnp_ok == "n" && $pnp_checked != "")
+    { $errors .= "<LI>Policy and Procedures have not been checked but there is a date of checking.\n"; }
+  if ($tns_ok != "n" && $tns_checked == "")
+    { $errors .= "<LI>Tasks and Skills have been checked but there is no date of checking.\n"; }
+  if ($tns_ok == "n" && $tns_checked != "")
+    { $errors .= "<LI>Tasks and Skills have not been checked but there is a date of checking.\n"; }
+  if ($approved != "n" && $decision == "")
+    { $errors .= "<LI>AM has approved applicant but there is not date.\n"; }
+  if ($approved == "n" && $decision != "")
+    { $errors .= "<LI>AM has not yet approved applicant but there is a date.\n"; }
+  if (($manager != "") && !(find_manager($db, $manager)))
+    { $errors .= "<LI>I cannot find Application Manager $manager in the database.\n"; }
+  # Possibly more checks later
+  if ($errors != "") 
+  {
+    echo "<P>There have been some problems with what you entered, please hit ",
+         "the back button and correct the following errors:",
+	 "<UL>$errors</UL>\n";
+  } else {
+    echo "<P>Submission has passed sanity checks.<BR>\n";
+    $sql = "UPDATE applicant SET ";
+    if ($s_isdam == 't' || $s_isfd == 't') {
+      $sql .= get_text("surname", $surname) .
+              ", " . get_text("email", $email) .
+              ", " . get_text("forename", $forename) .
+	      ", " . get_text("apply_date", $apply_date) .
+	      ", " . get_text("manager", $manager) .
+	      ", " . get_text("manager_date", $manager_date) . ", ";
+    } 
+    $sql .=  get_bool("am_confirm", $am_confirm) . 
+	   ", " . get_text("am_confirm_date", $am_confirm_date) .
+	   ", " . get_text("am_contact", $am_contact) .
+           ", " . get_bool("id_ok", $id_ok) .
+	   ", " . get_text("id_checked", $id_checked) .
+	   ", " . get_bool("pnp_ok", $pnp_ok) .
+	   ", " . get_text("pnp_checked", $pnp_checked) .
+	   ", " . get_bool("tns_ok", $tns_ok) .
+	   ", " . get_text("tns_checked", $tns_checked) .
+	   ", " . get_bool("approved", $approved) .
+	   ", " . get_text("decision", $decision) .
+	   ", " . get_textarea("man_comment", $man_comment) ;
+    if ($s_isdam == 't') {
+      $sql .= ", " . get_bool("application_ok", $application_ok) .
+              ", " . get_bool("da_phone_required", $da_phone_required) .
+              ", " . get_text("da_phone", $da_phone) .
+	      ", " . get_bool("da_approved", $da_approved) .
+	      ", " . get_text("newmaint", $newmaint) .
+	      ", " . get_textarea("da_comment", $da_comment) ;
+     }
+     $sql .= " WHERE email = '$emailkey'";
+           if ($s_isfd == 't') {
+	     if (!(check_manager($db, trim($manager), $email))) {
+	       echo "<P>Problem emailling manager.\n";
+	     }
+	   }
+	   if (($erows = update_db($db, $sql)) > 0)
+	   {
+	     echo "<P>$erows rows updated in database.<BR>\n";
+	   } 
+  }
+?>
+<? } #open database ?>
+<? } #session management ?>
