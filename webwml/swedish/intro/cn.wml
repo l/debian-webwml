@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debians webbplats på olika språk" BARETITLE="true"
-#use wml::debian::translation-check translation="1.40"
+#use wml::debian::translation-check translation="1.41"
 
 <p>Uppenbarligen använder inte alla i världen samma språk.
 När webben växer blir det mer och mer vanligt att hitta sidor som är
@@ -15,16 +15,16 @@ och vilka versioner av dokumentet som är tillgängliga.
 
 <ul>
 <li><a href="#fix">Vad du gör om Debianwebbsidan visas på fel språk</a>
-<li><a href="#cache">Möjliga problem med mellanservrar (proxy)</a>
-<li><a href="#setting">Ställa in förvalt språk i webbläsaren</a>
+<li><a href="#hotoset">Ställa in språkinställningen</a>
 </ul>
+
+<hr>
 
 <h2><a name="fix">Vad du gör om Debianwebbsidan visas på fel språk</a></h2>
 
 <p>
-Det finns tre skäl till att dokument tas emot i fel språk från Debians
-webbplats.
-Det första, och vanligaste, är en felinställd webbläsare.
+Det första, och vanligaste, skälet till varför ett dokument kommer på fel
+språk från Debians webbserver är en felinställd webbläsare.
 Se delen om att <a href="#setting">ställa in förvalt språk i webbläsaren</a>
 för information om hur du avhjälper det.
 </p>
@@ -57,64 +57,7 @@ för att testa.
 Det är den enda webbläsare vi vet som till 100% följer
 http-specifikationerna för innehållsförhandling.
 </p>
-
-<H3>Vad ska jag sätta variabeln till?</H3>
-
-<p>Eftersom grundspråket för Debians webbsidor är engelska, och
-kanske inte alla dokument har översatts till ditt föredragna språk,
-är det en bra idé att sätta din språkvalsvariabel att tillåta engelska
-som reserv.
-Exempelvis, om du har svenska som modersmål och använder Lynx,
-vill du antagligen ha följande rad i din <kbd>.lynxrc</kbd>
-</p>
-
-<pre>
-preferred_language=sv; q=1.0, en; q=0.5
-</pre>
-
-<p>
-Detta talar om för servern att du önskar den svenska versionen av
-dokumentet om den finns, annars den engelska.
-</p>
-
-# -- Recommendation to Scandinavian users
-<p>Eftersom Debians webbsidor även översatts till norska och danska, och
-de dokument som översatts till dessa språk kanske inte översatts till
-svenska, kan det vara en bra idé att lägga in norska och danska före
-engelska i ditt språkval. Exempel, i Lynx:
-</p>
-<pre>
-preferred_language=sv; q=1.0, no; q=0.9, da; q=0.8, en; q=0.5
-</pre>
-# --
-
-<p>Något du bör vara försiktig med är att använda underkategorier för
-språk.
-Att använda 'en-GB, sv', till exempel, gör inte vad de flesta tror att det gör
-(om de inte har läst http-specifikationen).
-En server som tar emot en förfrågan om ett dokument med språkvalet satt
-till 'en-GB, sv' där både 'en'- och 'sv'-versioner existerar
-kommer att sända den svenska versionen.
-Den kommer bara att sända ett engelskt dokument istället för ett svenskt om
-det finns en version av filen med en-gb som språkinställning.
-Därför bör du konfigurera din webbläsare att sända 'en-GB, en, sv',
-eller helt enkelt 'en, sv'.
-Det fungerar dock åt alla hållet, en server kan sända 'en-us' när 'en'
-efterfrågas.
-</p>
-
-<p><strong>Vi rekommenderar å det bestämdaste att du inte lägger till
-landstillval på ett språk om du inte har väldigt starka skäl</strong>.
-Om du lägger till ett sådant, se även till att du inkluderar språket utan
-tillvalet.
-</p>
-
-<p>För mer information om att sätta preferred_language-variabeln, se
-<a href="http://httpd.apache.org/docs/content-negotiation.html">Apaches
-dokumentation angående innehållsförhandling</a>.
-</p>
-
-<h2><a name="cache">Möjliga problem med mellanservrar (proxy)</a></h2>
+<h3><a name="cache">Möjliga problem med mellanservrar (proxy)</a></h3>
 
 <p>
 Mellanservrar (proxy) är i grund och botten
@@ -147,12 +90,74 @@ Det enda sättet du kan rätta detta är genom att klaga hos din
 Internetleverantör så att de uppgraderar eller ersätter sin programvara.
 </p>
 
-<h2><a name="setting">Ställa in förvalt språk i webbläsaren</a></h2>
+<h2><a name="howtoset">Ställa in språkinställningen</a></h2>
 
-<p>För att välja standardspråket i din webbläsare måste du sätta en
-variabel som skickas till webbservern.
-Hur detta görs beror på vilken webbläsare du använder.
+<p>
+Du bör ställa in de önskade språken så att de innehåller alla språk du
+talar, med det du helst önskar först.
+Det är lämpligt att lägga till engelska (&rdquo;en&rdquo;) som reserv
+(sist i listan) eftersom grundspråket för Debians webbsidor är engelska,
+och kanske inte alla dokument har översatts till det språk du föredrar.
 </p>
+
+<p>
+Till exempel, om du har svenska som modersmål bör du ställa in så att din
+språkinställning innehåller först svenska (med språkkoden
+&rdquo;<code>sv</code>&rdquo;), följd av engelska (med koden 
+&rdquo;<code>en</code>&rdquo;).
+# -- Recommendation to Scandinavian users
+Eftersom Debians webbsidor även översatts till norska och danska, och
+de dokument som översatts till dessa språk kanske inte översatts till
+svenska, kan det vara en bra idé att lägga in norska och danska före
+engelska i ditt språkval.
+Till exempel så här: &rdquo;sv, no, da, en&rdquo;.
+# --
+</p>
+
+<p>
+Se nedan för <a href="#setting">exakta instruktioner för hur du gör detta i
+specifika webbläsare</a>.
+</p>
+
+<p>
+Något du bör vara försiktig med är att använda underkategorier för språk.
+Att till exempel använda &rdquo;en-GB, sv&rdquo; kommer inte göra vad de
+flesta skulle tro (om de inte har läst http-specifikationen).
+</p>
+
+<p>
+<strong>Vi rekommenderar å det bestämdaste att du inte lägger till
+landstillval på ett språk om du inte har väldigt starka skäl</strong>.
+Om du lägger till ett sådant, se även till att du inkluderar språket utan
+tillvalet.
+</p>
+
+<p>
+Förklaring:
+En server som tar emot en förfrågan om ett dokument med språkvalet satt
+till &rdquo;en-GB, sv&rdquo; kommer inte sända den engelska versionen
+(&rdquo;en&rdquo;) före den svenska.
+Den kommer bara att sända ett engelska dokument istället för ett svenskt om
+det finns en version av filen med språken &rdquo;en-gb&rdquo;.
+</p>
+
+<p>
+Därför bör du konfigurera din webbläsare att sända
+&rdquo;en-GB, en, sv&rdquo;, eller helt enkelt &rdquo;en, sv&rdquo;.
+Det fungerar dock åt andra hållet, en server kan sända &rdquo;en-us&rdquo;
+när &rdquo;en&rdquo; efterfrågas.
+</p>
+
+<p>För mer information om att sätta preferred_language-variabeln, se
+<a href="http://httpd.apache.org/docs/content-negotiation.html">Apaches
+dokumentation angående innehållsförhandling</a>.
+</p>
+
+<h3><a name="setting">Ställa in önskat språk i webbläsare</a></h3>
+
+<p>För att välja standardspråket i din webbläsare måste du sätta en variabel
+som skickas till webbservern. Hur detta görs beror på vilken webbläsare du
+använder. </p>
 
 <dl compact>
 
