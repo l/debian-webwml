@@ -1,0 +1,59 @@
+#use wml::debian::template title="Example rsync usage, and how to set up passwordless ssh" NOHEADER=yes
+#use wml::debian::translation-check translation="1.5"
+
+<H3>rsync-Beispiel</H3>
+
+<p>Im folgenden finden Sie ein Beispiel, das den Web- und FTP-Server
+spiegeln wird.  Sie müssen den Rechnernamen und die angegebenen
+Verzeichnisse umbenennen, damit Sie Ihrer Umgebung entsprechen.
+
+<p>Die Lock-Datei ist sinnvoll, wenn Sie dieses in einem Cronjob
+aufrufen.  Falls das Spiegeln sich, wieso auch immer, nicht ordentlich
+beendet, erhalten Sie eine Mail, wenn der nächste Lauf versucht wird.
+Sie können herausfinden, wo das Problem liegt, es beheben, die
+Lock-Datei löschen und das Spiegeln wird beim nächsten Lauf wieder
+normal funktionieren.
+
+<protect>
+<pre>
+#!/bin/sh -e
+
+lockfile -r 1 rsync.master.lock || exit 23
+
+rsync -avz -e ssh --exclude sponsor.* --delete &lt;machine&gt;:/web/debian.org/ debian.org
+
+echo Finished updating web mirror. Working on FTP mirror now...
+
+rsync -avz --delete -e ssh &lt;machine&gt;:/debian debian
+
+rm -f rsync.master.lock
+</pre>
+</protect>
+
+<p>Das obige Skript wird Sie nach einem Paßwort fragen, wenn sie ssh
+nicht so aufgesetzt haben wie unten beschrieben.
+
+<H3><a name="paswordlessssh">Wie setzt man ssh auf, damit nicht nach
+einem Paßwort gefragt wird</a>:</H3>
+
+<p>Sie erzeugen einen RSA-Authentifizierungsschlüssel, um sich von
+Ihrem Account in einen entfernten einzuloggen, ohne das Paßwort tippen
+zu müssen.
+
+<p>Beachten Sie bitte, daß jemand freien Zugang zu dem Rechner erhält,
+von dem Sie spiegeln, wenn jemand in Ihr System einbricht.  Aus diesem
+Grund sollte es <strong>niemals</strong> von root aus gemacht werden.
+
+<ul>
+  <li>Rufen Sie <code>ssh-keygen</code> auf Ihrem Rechner auf und
+      geben Sie nur Enter ein, wenn Sie nach einem Paßwort gefragt
+      werden.
+  <li>Als nächstes fügen Sie den Inhalt von
+      <code>~/.ssh/identity.pub</code> von Ihrem Rechner zu der Datei
+      <code>~/.ssh/authorized_keys</code> auf dem Spiegel-Server hinzu
+      (die Datei muß die Berechtigungen 600 haben).
+</ul>
+
+<p>Sie sollten jetzt in der Lage sein, sich mit ssh in den
+Spiegelrechner einzuloggen ohne daß Sie nach einem Paßwort gefragt
+werden.
