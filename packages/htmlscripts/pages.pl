@@ -305,8 +305,8 @@ sub package_pages_walker {
 
 	    $package_page .= "<center><table border=\"1\"><tr>\n";
 	    $package_page .= "<td><font size=\"-1\"><img src=\"../../Pics/dep.gif\" ALT=\"[dep]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'depends' )."</font>".
-		"<td><font size=\"-1\"><img src=\"../../Pics/rec.gif\" ALT=\"[rec]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'recommended' )."</font>".
-		"<td><font size=\"-1\"><img src=\"../../Pics/sug.gif\" ALT=\"[sug]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'suggested' )."</font>";
+		"<td><font size=\"-1\"><img src=\"../../Pics/rec.gif\" ALT=\"[rec]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'recommends' )."</font>".
+		"<td><font size=\"-1\"><img src=\"../../Pics/sug.gif\" ALT=\"[sug]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'suggests' )."</font>";
 	    $package_page .= "</table></center>\n";
 	    $package_page .= "<table cellspacing=\"0\" cellpadding=\"2\">";
 	    $package_page .= $dep_list;
