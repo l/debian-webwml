@@ -25,6 +25,8 @@ use Packages::HTML ();
 
 my $thisscript = "search_packages.pl";
 my $HOME = "http://www.debian.org";
+my $ROOT = "";
+my $SEARCHPAGE = "http://packages.debian.org/";
 
 $ENV{PATH} = "/bin:/usr/bin";
 
@@ -227,7 +229,7 @@ unless ($search_on_sources) {
 		if ($part{$pkg}{$ver}{$versions[0]}) {
 			$part_str = "[<span style=\"color:red\">$part{$pkg}{$ver}{$versions[0]}</span>]";
 		}
-		printf "<li><a href=\"http://packages.debian.org/%s/%s/%s\">%s</a> (%s): %s   %s\n",
+		printf "<li><a href=\"$ROOT/%s/%s/%s\">%s</a> (%s): %s   %s\n",
 		$ver, $sect{$pkg}{$ver}{$versions[0]}, $pkg, $ver, $sect{$pkg}{$ver}{$versions[0]}, $desc{$pkg}{$ver}{$versions[0]}, $part_str;
 		
 		foreach my $v (@versions) {
@@ -266,7 +268,7 @@ unless ($search_on_sources) {
 		if ($part{$pkg}{$ver}{source}) {
 			$part_str = "[<span style=\"color:red\">$part{$pkg}{$ver}{source}</span>]";
 		}
-		printf "<li><a href=\"http://packages.debian.org/%s/source/%s\">%s</a> (%s): %s   %s", $ver, $pkg, $ver, $sect{$pkg}{$ver}{source}, $pkgs{$pkg}{$ver}, $part_str;
+		printf "<li><a href=\"$ROOT/%s/source/%s\">%s</a> (%s): %s   %s", $ver, $pkg, $ver, $sect{$pkg}{$ver}{source}, $pkgs{$pkg}{$ver}, $part_str;
 		
 		print "<br>Binary packages: ";
 		my @bp_links;
@@ -292,7 +294,7 @@ exit;
 sub printfooter {
 print <<END;
 
-<p align="right"><small><i><a href="http://packages.debian.org/">
+<p align="right"><small><i><a href="$SEARCHPAGE">
 Packages search page</a></i></small></p>
 END
 

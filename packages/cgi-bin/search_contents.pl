@@ -14,6 +14,7 @@ use strict;
 use CGI qw( -oldstyle_urls );
 use POSIX;
 use URI::Escape;
+use HTML::Entities;
 
 use lib "../lib";
 
@@ -139,6 +140,16 @@ my $command = $grep." ".$file." ".$file_nonus;
 
 my @results = qx( $command );
 
+my $keyword_enc = encode_entities $keyword;
+my $version_enc = encode_entities $version;
+my $arch_enc = encode_entities $arch;
+
+if ($searchmode eq "filelist") {
+	print "<p>You have searched for the contents of <em>$keyword_enc</em> in <em>$version_enc</em>, architecture <em>$arch_enc</em>.</p>";
+} else {
+	print "<p>You have searched for <em>$keyword_enc</em> in <em>$version_enc</em>, architecture <em>$arch_enc</em>.</p>";
+}
+
 if (!@results) {
   if ($searchmode eq "filelist") {
     print "Can't find that package, at least not in that distribution and on that architecture.\n";
@@ -150,9 +161,17 @@ if (!@results) {
 }
 
 # multiple-page stuff written by doogie
+my ($start, $end);
+if ($results_per_page =~ /^all$/i) {
+	$start = 1;
+	$end = @results;
+	$results_per_page = @results;
+} else {
+	$start = Packages::Search::start( \%params );
+	$end = Packages::Search::end( \%params );
+}
+
 my $number = 0;
-my $start = Packages::Search::start( \%params );
-my $end = Packages::Search::end( \%params );
 my %line;
 foreach (@results) {
    $number++;
@@ -167,7 +186,9 @@ if (@results > $results_per_page) {
     $index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $number)." | ".nextlink($input,\%params, scalar @results);
 
     print "<center>$index_line</center>";
+}
 
+if (@results > 100) {
     print "<p>Results per page: ";
     my @resperpagelinks;
     for (50, 100, 200) {
@@ -176,6 +197,11 @@ if (@results > $results_per_page) {
         } else {
             push @resperpagelinks, resperpagelink($input,\%params,$_);
         }
+    }
+    if ($params{values}{number}{final} =~ /^all$/i) {
+    	push @resperpagelinks, "all";
+    } else {
+	push @resperpagelinks, resperpagelink($input, \%params,"all");
     }
     print join( " | ", @resperpagelinks )."</p>";
 }
