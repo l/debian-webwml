@@ -9,7 +9,7 @@
 <META NAME="Language" CONTENT="English">
 <meta name="Author"    content="Debian Webmaster, webmaster@debian.org">
 <meta name="Generator" content="WML 1.6.8 (12-01-1999)">
-<meta name="Modified"  content="02-05-2000 21:52:52">
+<meta name="Modified"  content="09-05-2000 22:51:33">
 </HEAD>
 <BODY text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#800080" alink="#FF0000">
 <TABLE border="0" cellpadding="3" cellspacing="0" width="100%">
@@ -35,32 +35,74 @@
 <p>
 Emails to @debian.org now go through a LDAP distributed email system. This
 system uses the forwarding field in the LDAP directory to route mail without
-passing it through a users .forward/.qmail file on a single computer.
+passing it through a users .forward file on a single computer.
 Multiple machines participate in the forwarding to provide redudency.
 <p>
-The system is very simple, each of the forwarders inspects the ldap database
-to see if foo@debian.org has fowarding set to an address, if so the envelope
-address to is rewritten and the message redirected to that address.
+Each of the forwarders inspects the LDAP database
+to see if foo@debian.org has forwarding set to an address, if so the <i>envelope
+to address</i> is rewritten and the message redirected to the new address.
 Otherwise the message is relayed to master.debian.org for processing by the
-users .qmail files. If email forwarding is setup then .qmail files are
+users .forward files. If email forwarding is setup then .forward files are
 <b>NOT</b> considered. Extension addresses (foo-lists) are always routed
 directly to master for processing.
 <p>
 All machines also use the forwarding attribute as a default destination for
 email. If the user has a home directory and no .forward file the mail is
 forwarded rather than delivered to /var/spool/mail. This makes sure cron
-reports, bug responses and other unexpected emails are not lost.
+reports, bug responses and other unexpected emails are not misplaced.
 <p>
 The email forwarding can be easially reconfigured using GnuPG:
 <pre>
-echo "emailfoward: foo@bar.com" | gpg --clearsign | mail change@db.debian.org
+echo "emailforward: foo@bar.com" | gpg --clearsign | mail change@db.debian.org
 </pre>
-or by visiting <a href="https://db.debian.org/login.html">db.debian.org/</a>
+or by visiting <a href="https://db.debian.org/login.html">db.debian.org</a>
+<h2>procmail</h2>
+If you use procmail for your main mailbox, PLEASE, erase your .forward
+file and put a .procmailrc in its place instead. This feature has been
+supported on debian.org machines for a good while now, and will continue to be
+supported.
+<p>
+The correct way to invoke procmail for extension addresses is "|/usr/bin/procmail [options]"
+Ignore the IFS=".." stuff in the procmail man page.
+<h2>MailBox formats</h2>
+Emails can be saved to mailboxes or maildirs by using the correct lines in a
+.forward file:
+<p>
+Mailbox format files "/debian/home/foo/Mbox"
+<br>Maildir format files "/debian/home/foo/MDir/"
+<p>
+To deliver to /var/spool/mail/foo use a construct like '|/usr/bin/procmail
+-m /dev/null'. Putting the mailbox path will not work. You must use
+absolute paths for mailboxes, qmail-like ./ paths are not supported by
+Exim.
+<p>
+Also, 'Exim Filter' files are deliberately turned off.
+<h2>Delivey Environment</h2>
+Some environment variables are set per-message (not quoted! Carefull!)
+It is important to note that the environment variables dealing with
+addressing apply to the ENVELOPE address are are totally completely
+unrelated to the actual contents of the message:
+<p>
+'Standard' Env Variables:
+<ol>
+<li>EXTENSION (the 'foo' in .forward-foo)
+<li>LOGNAME,USER (your user name)
+<li>SENDER (envelope originator of message)
+</ol>
+<p>
+'Qmail' Env Variables:
+<ol>
+<li>EXT == EXTENSION
+<li>LOCAL = (the entire bit before the @)
+<li>RECIPIENT = (the entire envelope to)
+</ol>
+<p>
+Such that, <i>$RECIPIENT = $LOCAL-EXTENSION@&lt;something&gt;</i>.
 <HR>
 <P>Back to the <A href="http://www.debian.org/">Debian Project homepage</A>.
 <HR>
 <SMALL>You can contact us at <A href="mailto:admin@db.debian.org">admin@db.debian.org</A>.</SMALL><P>
-<SMALL>Last Modified: Wed, May 3 03:52:52 UTC 2000<BR>
+<SMALL>Last Modified: Wed, May 10 04:51:33 UTC 2000<BR>
 Copyright &copy; 1997-1999 <A href="http://www.spi-inc.org/">SPI</A>; See <A href="http://www.debian.org/license">license terms</A>
 	
 	 </SMALL>
