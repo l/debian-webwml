@@ -134,9 +134,13 @@ sub getwmlfiles
     die "$0: can't find $dir!\n" if (! -d "$dir");
     open (FIND, "$cmd|") || die "Can't read from $cmd";
     while (<FIND>) {
+ 	# XXX this list of exceptions needs to be maintained XXX
 	next if (/\/sitemap\.wml/);
 	next if (/\/template\//);
 	next if (/\/MailingLists\/(un)?subscribe\.wml/);
+	next if (/\/devel\/wnpp\/wnpp\.wml/);
+	next if (/\/international\/l10n\/data\/countries\.wml/);
+	next if (/\/international\/l10n\/scripts\/l10nheader\.wml/);
 	chomp;
 	$file = substr ($_, $cutfrom);
 	$file =~ s/\.wml$//;
