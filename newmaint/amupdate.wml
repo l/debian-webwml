@@ -27,6 +27,35 @@
     return TRUE;
   }
 
+  function email_manager_approved($db, $login, $forename, $surname, $aemail) {
+    $sql = "SELECT * FROM manager WHERE login = '$login'";
+    if (! ($result = pg_exec($db, $sql))) {
+      echo "Problem with query: ", pg_ErrorMessage($db), "<BR>";
+      echo "SQL was: $sql <BR>\n";
+      return FALSE;
+    }
+    if (pg_NumRows($result) == 0) {
+      echo "Cannot find mananger in database.<BR>\n";
+      echo "SQL was: $sql <BR>\n";
+      return FALSE;
+    }
+    $row = pg_Fetch_Array($result, 0);
+    $body = "Hello " . $row["name"] . ",\n\n";
+    $body .= "This is an automatic message from the New Maintainer website found at\n";
+    $body .= "http://nm.debian.org/  It seems that the DAM has approved your applicant\n";
+    $body .= "$forename $surname <" . $aemail . ">.  Please remember that nm.d.o is\n";
+    $body .= "not authoritative and this mail may be an error!  Make sure to use finger\n";
+    $body .= "on a .d.o host to check whether an account is really there (also\n";
+    $body .= "remember that LDAP info is only updated every 15 minutes).\n";
+    $body .= "\n";
+    $body .= "\n";
+    $body .= "Thanks for going through the NM process with $forename.\n";
+    $body .= "  - New Maintainer Website.\n";
+    $headers = "From: NM Front Desk <new-maintainer@debian.org>\nReply-To: $forename $surname <" . $aemail . ">\nX-Mailer: PHP/" . phpversion();
+    mail($row["email"], "New Debian Developer: $aemail", $body, $headers);
+    return TRUE;
+  }
+
   function check_manager($db, $manager, $aemail)
   {
     $sql = "SELECT * FROM applicant WHERE email ='$aemail'";
@@ -176,6 +205,24 @@ You should not be here!!</STRONG>
 	 "<UL>$errors</UL>\n";
   } else {
     echo "<P>Submission has passed sanity checks.<BR>\n";
+
+
+    if ($s_isdam == 't') {
+        $sql = "SELECT * FROM applicant WHERE email ='$emailkey'";
+        if (! ($result = pg_exec($db, $sql))) {
+          echo "Problem with query: ", pg_ErrorMessage($db), "<BR>";
+          echo "SQL was: $sql <BR>\n";
+          return FALSE;
+        }
+        if (pg_NumRows($result) == 0) {
+          echo "Could not find applicant $emailkey in the database.<BR>\n";
+          echo "SQL was: $sql <BR>\n";
+          return FALSE;
+        }
+        $row = pg_Fetch_Array($result, 0);
+        $old_da_approved = trim($row["da_approved"]);
+    }
+
     $sql = "UPDATE applicant SET ";
     if ($s_isdam == 't' || $s_isfd == 't') {
       $sql .= get_text("surname", $surname) .
@@ -218,6 +265,14 @@ You should not be here!!</STRONG>
 	   if (($erows = update_db($db, $sql)) > 0)
 	   {
 	     echo "<P>$erows rows updated in database.<BR>\n";
+             if ($s_isdam == 't') {
+                 if ($da_approved == 't' && $old_da_approved != 't') {
+                     $manager = trim($manager);
+                     echo "Applicant got approved, mailing manager $manager<p>";
+                     email_manager_approved($db, $manager, $forename,
+                         $surname, $emailkey);
+                 }
+             }
 	   } 
   }
 ?>
