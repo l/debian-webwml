@@ -1,0 +1,46 @@
+#use wml::debian::template title="Exemple d'utilisation de rsync"
+
+<!--translation 1.3-->
+
+<P>Ce qui suit est un exemple qui fera un miroir à la fois du site web et du site ftp.
+Vous devrez modifier le nom de la machine et les répertoires impliqués pour qu'ils
+conviennent à votre situation.
+
+<P>Le lockfile est utile si vous lancez ce miroir en utilisant cron. Si, pour une
+quelconque raison, le miroir n'est pas terminé, la prochaine fois que le miroir essayera
+de se lancer vous recevrez un courrier.
+Vous pourrez alors remonter à la source du problème, le corriger, et effacer le lockfile et
+le miroir fonctionera correctement la prochaine fois qu'il sera lancé.
+<blockquote>
+<pre>
+#!/bin/bash
+set -e
+
+lockfile -r 1 rsync.master.lock || exit 23
+
+rsync -avz -e ssh --exclude .glbuild --delete &lt;machine&gt;:/web/debian.org/ debian.org
+rsync -avz -e ssh --delete &lt;machine&gt;:/web/debian.org-local/ debian.org-local
+
+echo MISE A JOUR DU WEB TERMINEE. TRAVAIL FTP MAINTENANT.
+
+rsync -avz --delete -e ssh &lt;machine&gt;:/debian debian
+
+rm -f rsync.master.lock
+</pre>
+</blockquote>
+
+<H3>Comment configurer ssh de façon à ne pas avoir à entrer un mot de passe:</H3>
+
+Le script donné ci dessus vous demandera un mot de passe sauf si vous configurez
+ssh d'une certaine manière. Tout d'abord, quand vous utilisez ssh-keygen, tapez 
+simplement sur entrée quand on vous demande un mot de passe [1]. Ensuite, ajoutez
+le contenu de ~/.ssh/identity.pub à ~/.ssh/authorized_keys sur le site miroir 
+(le fichier devrez être en mode 600).
+Vous devriez alors pouvoir utiliser ssh pour vous logez sur le site miroir sans
+qu'onvous demande de mot de passe.
+
+<P>
+[1] Notez que configurer ssh avec un mot de passe vide donne à un intrus un accès
+libre au site dont vous faites un miroir une fois qu'il s'est introduit sur votre site.
+Pour cette raison, cela ne devrais jamais être fait sous root.
+

@@ -1,0 +1,91 @@
+#use wml::debian::template title="Configurer la Langue par Défaut"
+
+<!--translation 1.13-->
+
+<P>Note: cette page n'est pas complète. Si vous avez des informations
+sur la configuration des navigateurs qui ne sont pas présentes ci dessous,
+merci de les envoyer à
+<a href="mailto:webmaster@debian.org">webmaster@debian.org</a>.
+
+<P>Evidemment, toutes les personnes du monde n'utilisent pas la même langue.
+Comme le web grossit il devient de plus en plus courant de trouver des pages
+qui sont disponibles en plusieurs langues.
+C'est pourquoi un standard a été introduit, appelé négociation du contenu,
+qui permet à une personne de configurer la (les) langue(s) dans laquelle
+elle préfère recevoir des documents. La version du fichier que vous recevez
+en fait est négociée entre votre navigateur et le serveur; votre navigateur
+envoie ses préférences et le serveur décide quelle version doit vous être
+envoyée en se basant sur vos préférences, sur la façon dont votre navigateur
+est configuré et sur les versions du document disponibles.
+
+<P>Pour configurer la langue par défaut de votre navigateur vous devez modifier
+une variable qui est envoyée au serveur web. La manière de le faire dépend
+du navigateur que vous utilisez.
+
+<DL compact>
+<DT><strong>lynx</strong>
+<DD>Vous pouvez au choix éditer la variable <kbd>preferred_language</kbd> de votre
+<kbd>.lynxrc</kbd> ou la modifier en utilisant la commande 'O' dans lynx.
+<DT><strong>netscape 3.x</strong>
+<DD>Ajoutez
+<pre>
+     *httpAcceptLanguage: [preferred_language string]
+</pre>
+au fichier app-defaults de Netscape ou à <kbd>~/.Xresources</kbd>    
+<DT><strong>netscape 4.x</strong>
+<DD>Utilisez
+<pre>
+     Edit -> Preferences -> Navigator -> Languages
+</pre>
+Soyez bien certain de sélectionner la langue parmi les choix disponibles. Un certain
+nombre de gens ont rapporté avoir eu des problèmes parce qu'ils ont entré la langue à la
+main.
+<DT><strong>W3</strong> (navigateur web basé sur emacs)
+<DD>
+<pre>(setq url-mime-language-string  "preferred_language=fr; q=1.0, en; q=0.5")</pre>
+ou utilisez le paquet de spécialisation (en supposant une version p4.0pre.14 de URL):
+<pre>Hypermedia -> URL -> Mime -> Mime Language String...</pre>
+<DT><strong>IE</strong>
+<DD>
+<pre>
+     View -> Internet Options -> General/Languages
+</pre>
+<DT><strong>Opera</strong>
+<DD>???
+<DT><strong>iCab</strong>
+<DD>
+<pre>
+     Edit -> Preferences -> Browser -> Fonts,Languages
+</pre>
+</DL>
+
+<H3>Comment configurer la variable?</H3>
+
+<P>Comme la langue originale des pages web Debian est l'anglais et
+comme tous les documents ne sont pas forcément traduit dans votre
+langue préférée, c'est une bonne idée de configurer la variable de
+votre langue préférée de façon à accepter l'anglais en dernier recours.
+Par exemple, si votre langue natale est le français pour
+lynx, vous mettrez la ligne suivante dans votre <kbd>.lynxrc</kbd>
+<pre>
+preferred_language=fr; q=1.0, en; q=0.5
+</pre>
+Cela indiquera au serveur que vous voudriez la version française du
+document si elle est disponible, ou sinon celle en anglais.
+
+<p>Une chose pour laquelle vous devrez vous montrer prudent c'est
+l'utilisation de sous-catégories de langages.
+L'utilisation de 'en-GB, fr' ne fait pas ce que le plupart des gens qui
+n'ont pas lu les spécification http en attendent. 
+Un serveur qui reçoit cela pour un document qui a des versions .en et .fr 
+servira la version française. Il ne servira le document en anglais que si
+celui ci utilise .en-gb comme extension. C'est pourquoi, il vaut mieux dans
+ce cas configurer le navigateur pour envoyer 'en-GB, en, fr' ou simplement
+'en, fr' à la place. Cela fonctionne par contre dans l'autre sens,
+i.e. un serveur peut renvoyer en-us quand en est demandé.
+
+<P>Pour plus d'information sur la configuration de la variable
+preferred_language variable voyez la
+<a href="http://www.apache.org/docs/content-negotiation.html">documentation
+Apache sur la négociation de contenu</a>.
+
