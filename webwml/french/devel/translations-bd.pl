@@ -380,14 +380,14 @@ $translations = {
 	'type'			=> 'Web',
 	'status'		=> 'en cours de traduction',
 	'since'			=> '02/07/1999',
-	'translation_maintainer'=> ['Marant Jerome <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
 },
 
 'News/1998/index' => {
 	'type'			=> 'Web',
 	'status'		=> 'en cours de traduction',
 	'since'			=> '02/07/1999',
-	'translation_maintainer'=> ['Marant Jerome <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
 },
 
 'News/index' => {
@@ -399,9 +399,82 @@ $translations = {
 
 'News/1999/index' => {
 	'type'			=> 'Web',
-	'status'		=> 'en cours de traduction',
-	'since'			=> '02/07/1999',
-	'translation_maintainer'=> ['Marant Jerome <jerome_marant@hotmail.com>'],
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'News/1999/19990204' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'News/1999/19990212' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'News/1999/19990222' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'News/1999/19990225a' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'News/1999/19990225b' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'News/1999/19990302' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'News/1999/19990309' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'News/1999/19990330' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'News/1999/19990421a' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'last_translated'	=> '13/08/1999',
 },
 
 'News/weekly/index' => {
@@ -946,31 +1019,34 @@ $translations = {
 
 'releases/slink/running-kernel-2.2' => {
 	'type'			=> 'Web',
-	'status'		=> 'en cours de traduction',
-	'since'			=> '23/07/1999',
-	'translation_maintainer'=> ['Marant Jerome <jerome_marant@hotmail.com>'],
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'last_translated'	=> '13/08/1999',
 },
 
 'releases/potato/index' => {
 	'type'			=> 'Web',
-	'status'		=> 'en cours de traduction',
-	'since'			=> '23/07/1999',
-	'translation_maintainer'=> ['Marant Jerome <jerome_marant@hotmail.com>'],
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'last_translated'	=> '13/08/1999',
 },
 
 'releases/index' => {
 	'type'			=> 'Web',
-	'status'		=> 'en cours de traduction',
-	'since'			=> '23/07/1999',
-	'translation_maintainer'=> ['Marant Jerome <jerome_marant@hotmail.com>'],
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'last_translated'	=> '13/08/1999',
 },
 
 'search' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '25/07/1999',
-	'translation_maintainer'=> ['Marant Jerome <jerome_marant@hotmail.com>'],
-	'last_translated'	=> '25/07/1999',
+	'since'			=> '10/08/1999',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'last_translated'	=> '10/08/1999',
 },
 
 };
