@@ -4,7 +4,7 @@
 
 WMLBASE=../..
 CUR_DIR=international/l10n
-SUBS=po templates
+SUBS=po templates po-debconf
 
 include $(WMLBASE)/Make.lang
 
