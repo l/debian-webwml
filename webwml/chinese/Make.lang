@@ -26,6 +26,23 @@ COMMONPICS = debian.jpg logo-50.jpg \
 
 COMMONPICS_ZH = $(addprefix $(WMLBASE)/Pics/,$(COMMONPICS))
 
+# Pure magic to cope with the co-existence of international/chinese -> zh
+ZHMAGIC = @if `echo $(HTMLDIR) | grep -q '^$(WMLBASE)/$(RELHTMLBASE)/international/chinese'`; then \
+		test -L $(WMLBASE)/$(RELHTMLBASE)/zh && rm -f $(WMLBASE)/$(RELHTMLBASE)/zh ; \
+		ZHDIR=`echo $(HTMLDIR) | sed -e 's%^\($(WMLBASE)/$(RELHTMLBASE)/\)international/chinese%\1zh%'` ; \
+		ZHRELDIR=`echo $(WMLBASE) | sed -e 's%^\.\./%%'`/$(CUR_DIR) ; \
+		test -d $$ZHDIR || mkdir -p $$ZHDIR ; \
+		shopt -s nullglob ; \
+		for i in *.{css,gif,jpg,png}; do \
+			ln -sf $$ZHRELDIR/$$i $$ZHDIR/ ; \
+		done ; \
+		sed -e 's%="\.\./\.\./%="\.\.\1/%g' \
+		    -e 's%="\(index\...\.html"\)%="'$$ZHRELDIR'/\1%;' $(@F) \
+		    > $$ZHDIR/$(@F) ; \
+		echo "  and to $$ZHDIR" ; \
+	fi
+
+
 WMLOUTPUT = -o UNDEFuZH@uCN:$(*F).zh-cn.html.tmp@g+w \
 	-o UNDEFuZH@uTW:$(*F).zh-tw.html.tmp@g+w
 WMLPROLOG = --prolog=$(FIX_BIG5)
@@ -55,6 +72,8 @@ cleandest::
 $(HTMLDIR)/%.zh-cn.html: %.zh-cn.html
 	@echo copying $(@F) to $(HTMLDIR)
 	-@cp $(@F) $(HTMLDIR)
+	$(ZHMAGIC)
+
 $(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
 	@echo copying $(@F) to $(HTMLDIR)
 	-@cp $(@F) $(HTMLDIR)
@@ -63,6 +82,7 @@ $(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
 		echo "Making a link $(@D)/$(*F).html -> $(@F)"; \
 		ln -f -s $(@F) $(@D)/$(*F).html; \
 	fi
+	$(ZHMAGIC)
 
 ifndef NOGENERICDEP
 %.zh-cn.html %.zh-tw.html: %.wml \
@@ -93,8 +113,7 @@ endif
 $(WMLBASE)/template/debian-zh/template.tmpl: $(TEMPLDIR)/template.wml \
 		$(WMLBASE)/template/debian-zh/macros.tmpl \
 		$(WMLBASE)/template/debian-zh/navbar.tmpl \
-		$(WMLBASE)/template/debian-zh/debian/navbar.wml \
-		$(COMMONPICS_ZH)
+		$(WMLBASE)/template/debian-zh/debian/navbar.wml
 	touch $@
 
 $(COMMONPICS_ZH):

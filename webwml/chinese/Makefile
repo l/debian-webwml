@@ -28,7 +28,8 @@ index.zh-cn.html index.zh-tw.html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(ENGLISHSRCDIR)/releases/info
 
 install::
-	test -L $(HTMLDIR)/zh || ln -s international/chinese $(HTMLDIR)/zh
+	test -L $(HTMLDIR)/zh && rm -f $(HTMLDIR)/zh
+	test -d $(HTMLDIR)/zh mkdir -p $(WMLBASE)/$(RELHTMLBASE)/zh
 
 clean::
 	find $(WMLBASE)/Pics -type l | xargs rm -f
