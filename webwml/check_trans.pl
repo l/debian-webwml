@@ -10,8 +10,8 @@
 # Copyright 2000 Martin Quinson <mquinson@ens-lyon.fr>
 
 # Invocation:
-#   check_trans.pl [-vqdlM] [-p pattern] [-s subtree]
-#                  [-m email] [-g] [-n N]
+#   check_trans.pl [-vqdlM] [-C dir] [-p pattern] [-s subtree]
+#                  [-m email] [-g] [-n N] [-t outputtype]
 #                  [language]
 
 # It needs to be run from the top level webwml directory.
@@ -27,11 +27,13 @@
 # 	-v		enable verbose mode
 #	-q		just don't whine about missing files
 #	-Q		enable really quiet mode
+#	-C <dir>	go to <dir> directory before running this script
 #	-d		output CVS diffs
 #	-l		output CVS log messages
 #	-p <pattern>	include only files matching <pattern>,
 # 			default is *.html|*.wml
 #	-s <subtree>	check only that subtree
+#	-t <type>	choose output type  (default is `text')
 #	-M		display differences for all 'Makefile's
 
 # Options useful when sending mails:
@@ -71,6 +73,8 @@
 
 use Getopt::Std;
 use IO::Handle;
+use Date::Parse;
+
 # Well, uncommenting the next line implies to define the opt_blah with 'our'
 # in perl 5.6, which is not a valid keyword in older version. So, we can't
 # use strict for now, which is, IMHO, a bad thing. -- Martin
@@ -91,12 +95,13 @@ my %translators;# the real hash
 my @en; #english files
 my $showlog; # boolean
 my $maintainer = "mquinson\@ens-lyon.fr"; # the default e-mail to bitch at :-)
-my $ignorables = "/sitemap.wml "
+my $ignorables = " "
+		."/sitemap.wml "
 		."/MailingLists/subscribe.wml "
 		."/MailingLists/unsubscribe.wml "
 		."/international/l10n/data/countries.wml "
 		."/international/l10n/scripts/l10nheader.wml "
-		; # $ignorables must end with a space!
+		; # $ignorables must begin and end with a space!
 
 # options
 $opt_d = 0;
@@ -107,11 +112,13 @@ $opt_g = 0;
 $opt_m = undef;
 $opt_n = 5; # an invalid default
 $opt_M = 0;
+$opt_C = '.';
+$opt_t = 'text';
 $opt_v = 0;
 $opt_q = 0;
 $opt_Q = 0;
 
-unless (getopts('vgdqQm:s:p:ln:M'))
+unless (getopts('vgdqQC:m:s:t:p:ln:M'))
 {
 	open SELF, "<$0" or die "Unable to display help: $!\n";
 	HELP: while (<SELF>)
@@ -130,6 +137,9 @@ warn "Checking subtree $opt_s only\n" if (($opt_v) && ($opt_s));
 
 # include only files matching $filename
 my $filename = $opt_p || '(\.wml$)|(\.html$)';
+
+# Go to desired directory
+chdir($opt_C) || die "Cannot go to $opt_C\n";
 
 # language configuration
 my $defaultlanguage = 'italian';
@@ -177,29 +187,35 @@ $to = "$to/$opt_s";
 $showlog = $opt_l;
 
 init_mails();
+
+print "\$translations = {\n" if $opt_t eq 'perl';
+
 foreach (@en) {
 	next if $_ =~ "template/debian";
-	my ($path, $tpath, $d);
+	my ($path, $tpath);
 	$path = $_;
 	$path =~ s,CVS/Entries$,,;
 	$tpath = $path;
 	$tpath =~ s/^$from/$to/o;
-	my %d = %{load_entries($_)};
+	my $d = load_entries($_);
 	my $ignore = load_ignorelist($tpath);
-	foreach my $f (keys %{$d{"rev"}}) {
+	foreach my $f (keys %$d) {
 	    check_file("${tpath}$f", 
-		       $d{"rev"}->{$f},
+		       $d->{$f}->{'rev'},
+		       $d->{$f}->{'mtime'},
 		       get_translators_from_db("$tpath$f"))
 		unless $$ignore{"${tpath}$f"};
 	}
 }
 
+print "}; 1;\n" if $opt_t eq 'perl';
+
 send_mails();
 
 if ($opt_M)
 {
-	@makefile= split(/\n/, `find $from -name Makefile -print`);
-	foreach $makefile (@makefile) {
+	my @makefile= split(/\n/, `find $from -name Makefile -print`);
+	foreach my $makefile (@makefile) {
 		my $destination = $makefile;
 		$destination =~ s/^$from/$to/o;
 		if (-e $destination) {
@@ -349,19 +365,24 @@ sub send_mails {
 }
 
 sub load_entries {
-	my ($name) = shift;
-	my (%data);
-	warn "Loading $name\n" if $opt_v;
-	open(F, $name) || die $!;
+	my ($list) = shift;
+	my $data = {};
+	my ($name, $rev, $date);
+	warn "Loading $list\n" if $opt_v;
+	open(F, $list) || die $!;
 	while(<F>) {
 		next unless m,^/,;
-		if ( m,^/([^/]+)/([^/]+)/, ) {
-			my($name, $rev) =($1, $2);
-			$data{"rev"}->{$name} = $rev if $name =~ /$filename/o;
+		if (($name, $rev, $date) = (m,^/([^/]+)/([^/]+)/([^/]+)/,)) {
+			if ($name =~ /$filename/o) {
+				$data->{$name} = {
+				    rev     => $rev,
+				    mtime   => str2time($date),
+				};
+			}
 		}
 	}
 	close (F);
-	return \%data;
+	return $data;
 }
 
 sub load_ignorelist {
@@ -409,14 +430,26 @@ sub add_sub_part {
 
 
 sub check_file {
-	my ($name, $revision, $translator) = @_;
+	my ($name, $revision, $mtime, $translator) = @_;
 	my ($oldr, $oldname, $original);
 	warn "Checking $name, English revision $revision\n" if $opt_v;
+        my $docname = $name;
+        $docname =~ s#^$langto/##;
+        $docname =~ s#\.wml$##;
 	unless (-r $name) {
+                my $iname;
 		($iname = $name) =~ s/$to//;
-		if (index($ignorables, "$iname ") < 0) {
+		if (index($ignorables, " $iname ") < 0) {
 		  unless (($opt_q) || ($opt_Q)) {
-  		     print "Missing $name version $revision\n";
+                     if ($opt_t eq 'perl') {
+  	               print "'$docname' => {\n\t'type' => 'Web',\n";
+  	               print "\t'revision' => '$revision',\n";
+  	               print "\t'mtime' => '$mtime',\n";
+  	               print "\t'status' => 1,\n";
+  	               print "},\n";
+                     } else {
+  		       print "Missing $name version $revision\n";
+                     }
 		     add_part("list","missing","Missing $name version $revision\n");
 		  }
 		} else {
@@ -455,6 +488,7 @@ sub check_file {
 	close(F);
 
 	if ((!$oldr) && ($name =~ /$langto\/international\/$langto/)) {
+            my $ename;
 	    ($ename = $name) =~ s/$to/$from/;
 	    open FE, $ename || die $!;
 	    while (<FE>) {
@@ -473,24 +507,37 @@ sub check_file {
 	    close FE;
 	}
 
-	return if (defined($oldr) && ($oldr eq $revision));
-
-        $translator =~ s/^\s*(.*?)\s*/$1/;
+        $translator =~ s/^\s+//;
+        $translator =~ s/\s+$//;
 
 	my $str;
+	my $status = 8;
 	if (!$oldr) {
 	  $oldr = '1.1';
 	  $str = "Unknown status of $name (revision should be $revision)";
+	} elsif ($oldr eq $revision) {
+	  $status = 4;
 	} elsif ($oldr > $revision) {
 	  $str = "Broken revision number $oldr for $name, it should be $revision";
 	} else {
 	  $str = "NeedToUpdate $name from version $oldr to version $revision";
+	  $status = 3;
 	}
 	$str .= " (maintainer: $translator)" if $translator;
-	if ($str) {
+	if ($opt_t eq 'perl') {
+  	  print "'$docname' => {\n\t'type' => 'Web',\n";
+  	  print "\t'revision' => '$revision',\n";
+  	  print "\t'mtime' => '$mtime',\n";
+  	  print "\t'base_revision' => '$oldr',\n";
+  	  print "\t'translation_maintainer' => ['$translator'],\n" if $translator;
+  	  print "\t'status' => $status,\n";
+  	  print "},\n";
+	} elsif ($str && $oldr ne $revision) {
 	  $str .= "\n";
 	  print $str unless ($opt_Q);
 	}
+
+	return if (defined($oldr) && ($oldr eq $revision));
 
 	$oldname = $name;
 	$oldname =~ s/^$to/$from/;
@@ -512,7 +559,7 @@ sub check_file {
 	    
 	if ($opt_d) {
 		STDOUT->flush;
-		$cvsline = "cvs -z3 log -r'$logoldr:$revision' '$oldname'";
+		my $cvsline = "cvs -z3 log -r'$logoldr:$revision' '$oldname'";
 		warn "Running $cvsline\n" if (($opt_v) && ($showlog));
 		system($cvsline) if $showlog;
 		STDOUT->flush if $showlog;
