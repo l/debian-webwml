@@ -136,8 +136,6 @@ MENU
 $KEYWORDS_LINE
 $DESC_LINE
 <link href="$HOME/debian.css" rel="stylesheet" type="text/css">
-<style type="text/css" media="all">
-</style>
 </head>
 <body>
 <div id="header">
