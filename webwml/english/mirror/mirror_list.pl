@@ -253,9 +253,20 @@ a primary or secondary site. The program
 	  print "a primary or secondary site. The program `netselect' can be used to\n";
 	}
 	print <<END;
-determine the fastest of a list of sites. Note that geographic proximity
-often isn't the most important factor for determining which machine will
-serve you best.
+determine the site with the least latency; use a download program such as
+END
+	if ($html) {
+          print "
+<a href=\"http://packages.debian.org/stable/web/wget.html\">
+<em>wget</em></a> or
+<a href=\"http://packages.debian.org/stable/net/rsync.html\">
+<em>rsync</em></a> for determining the site with the most throughput.\n";
+	} else {
+	  print "`wget' or `rsync' for determining the site with the most throughput.\n";
+	}
+	print <<END;
+Note that geographic proximity often isn't the most important factor for
+determining which machine will serve you best.
 
 END
 	print "<p>" if $html;
