@@ -44,7 +44,7 @@ def find_email(db, email):
         return 1
 
 def get_owner(db, place):
-    q = db.query("SELECT email FROM people WHERE people.id = places.who AND places.id = %s" % place)
+    q = db.query("SELECT email FROM people, places WHERE people.id = places.who AND places.id = %s" % place)
     return q.getresult()[0][0]
 
 def get_name(db, email):
@@ -69,7 +69,7 @@ def get_lastname(db, email):
     return get_name(db, email)[1]
 
 def remove_place(db, place):
-    db.query("DELETE FROM place WHERE id = %s" % place)
+    db.query("DELETE FROM places WHERE id = %s" % place)
 
 
 # main
