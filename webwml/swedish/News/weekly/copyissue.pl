@@ -141,7 +141,8 @@ while (<SRC>)
 		}
 	}
 	elsif ($_ eq "<p><strong>Security Updates.</strong> You know the drill, make sure\n" ||
-	       $_ eq "<p><strong>Security Updates.</strong> You know the drill, please make sure\n")
+	       $_ eq "<p><strong>Security Updates.</strong> You know the drill, please make sure\n" ||
+	       $_ eq "<p><strong>Security Updates.</strong> You know the drill.  Please make sure\n")
 	{
 		# Translate security intro
 		$next = <SRC>;
