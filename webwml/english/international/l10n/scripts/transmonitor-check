@@ -12,7 +12,7 @@
 # not use it unless you really know what you are doing.
 #
 # Copyright (C) 1999-2001 Martin Quinson.
-# Copyright (C)      2001 Denis Barbier
+# Copyright (C) 2001-2002 Denis Barbier
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,12 +49,14 @@ my $TRANSMONITOR_VERSION = "2.0"; #External Version Number
 my $BANNER = "Translation Monitor v$TRANSMONITOR_VERSION"; # Version Banner - text form
 my $TMP_DIR = "/tmp/transmonitor";
 my $DB_FILE = "../data/transmonitor";
+my $MANDB_FILE = "../data/transmonitorman";
 my $FROM_FILE = "";
 my $TRANSMONITOR_ROOT = "./";
 my $SYN_FILE = "../data/synonyms";
 my $PO_ROOT = "../po";
 my $TEMPLATES_ROOT = "../templates";
 my $MENU_ROOT ="../menu";
+my $MAN_ROOT = "../man";
 my $verbose = 0;
 my @debug;
 my $force = 0; # if true, rescan package even if already in db
@@ -102,6 +104,8 @@ Configuration options:
     -F, --files-from=FILE     reads dsc filenames from FILE
     --db=DB_FILE              use DB_FILE as database file
                                 (instead of $DB_FILE)
+    --mandb=DB_FILE           use DB_FILE as database file for manpages
+                                (instead of $MANDB_FILE)
     --tmp=TMP_DIR             use TMP_DIR as temp dir
                                 (instead of $TMP_DIR)
                                 (warning, the script do 'rm -rf' on this dir!)
@@ -111,6 +115,8 @@ Configuration options:
                                 (instead of $TEMPLATES_ROOT)
     --menu=DIR                where to store the menu files
                                 (instead of $MENU_ROOT)
+    --man=DIR                 where to store the man files
+                                (instead of $MAN_ROOT)
     --root=ROOTDIR            search the libs in ROOTDIR
                                 (instead of $TRANSMONITOR_ROOT)
     --syn=SYN_FILE            use SYN_FILE as file of synonyms
@@ -154,11 +160,13 @@ my %opthash = (
         # ------------------ configuration options
         "files-from=s" => \$FROM_FILE,
         "db=s" => \$DB_FILE,
+        "mandb=s" => \$MANDB_FILE,
         "tmp=s" => \$TMP_DIR,
         "root=s" => \$TRANSMONITOR_ROOT,
         "syn=s" => \$SYN_FILE,
         "po=s" => \$PO_ROOT,
         "templates=s" => \$TEMPLATES_ROOT,
+        "man=s" => \$MAN_ROOT,
         "menu=s" => \$MENU_ROOT
 );
 
@@ -196,6 +204,9 @@ init_synonym();
 my $data = Webwml::L10n::Db->new();
 $data->read($DB_FILE);
 my $date = $data->get_date();
+
+my $mandata = Webwml::L10n::Db->new();
+$mandata->read($MANDB_FILE);
 
 # read args to search package files
 foreach my $arg (@args) {
@@ -274,20 +285,21 @@ PKG: while ($dsc = shift @pkg_list) {
                                 ($data->has_nls($pkg) ||
                                  $data->has_po($pkg) ||
                                  $data->has_templates($pkg) ||
-                                 $data->has_podebconf($pkg)))) {
+                                 $data->has_podebconf($pkg) ||
+               ($mandata->has_package($pkg) && $mandata->has_man($pkg))))) {
                         print STDERR "Package $pkg $ver (skipped)\n"
                                 if ($verbose || ($data->version($pkg) ne $ver));
                         next PKG;
                 } else {
                         #   Erase this entry (it's an older version)
                         $data->clear_pkg($pkg);
-                        foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT)) {
+                        foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT,$MAN_ROOT)) {
                                 File::Path::rmtree($_."/_tmp")
                                         if -e $_."/_tmp";
                         }
                 }
         } else {
-                foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT)) {
+                foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT,$MAN_ROOT)) {
                         File::Path::rmtree($_."/_tmp") if -e $_."/_tmp";
                 }
         }
@@ -307,7 +319,7 @@ if ($remove_unused) {
         foreach $pkg ($data->list_packages()) {
                 if ($data->maintainer($pkg) eq "") {
                         print STDERR "Package $pkg ".$data->version($pkg)." removed\n" if $verbose;
-                        foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT)) {
+                        foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT,$MAN_ROOT)) {
                                 File::Path::rmtree($_."/".$data->pooldir($pkg));
                         }
                         $data->clear_pkg($pkg);
@@ -359,6 +371,14 @@ sub store_disk_templates {
         return $pkg.'_'.$data->version($pkg).'_'.$filename;
 }
 
+sub store_disk_man {
+        my $pkg = shift;
+        my $filename = shift;
+
+        $filename =~ s#:#\%3a#g;
+        return $filename;
+}
+
 ###
 ### subs
 ###
@@ -392,6 +412,9 @@ sub parse_tarball {
                         if $file =~ m#(^|/)debian/[^/]*menu[^/]*$#;
                 return ":$TEMPLATES_ROOT/_tmp/".store_disk_templates($pkg, $file)
                         if $file =~ m#(^|/)debian/([^/]+\.)?templates(\...(_..)?)?$#; # && !(defined($3) && $3 eq '.in');
+                my $manpage = match_manpages($pkg, $file);
+                return ":$MAN_ROOT/_tmp/".store_disk_man($pkg, $manpage)
+                        if $manpage;
                 return -1 if $file =~ m#(^|/)debian/[^/]*doc-base[^/]*$#;
 
                 return 0;
@@ -482,7 +505,7 @@ sub parse_tarball {
         }
 
         #   Move files to their definitive location
-        foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT)) {
+        foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT,$MAN_ROOT)) {
                 File::Path::rmtree($_."/".$pooldir."/".$pkg);
                 if (-d $_."/_tmp") {
                         File::Path::mkpath($_."/".$pooldir, 0, 0755);
@@ -537,6 +560,19 @@ sub check_pkg {
         search_menu($pkg);
         search_docbase($pkg);
         search_podebconf($pkg) || search_templates($pkg);
+        search_man($pkg);
+}
+
+sub match_manpages {
+        my $pkg = shift;
+        my $file = shift;
+
+        return unless $mandata->has_package($pkg) && $mandata->has_man($pkg);
+        foreach my $line (@{$mandata->man($pkg)}) {
+                my ($man, $lang, $link) = @{$line};
+                return $lang.'_'.$man if $file eq $link;
+        }
+        return 0;
 }
 
 #----[ search_nls ]-------------------------------------------------------------
@@ -659,6 +695,22 @@ sub search_docbase {
                 $data->add_menu($pkg, $file, $filename.".gz");
                 if (system("gzip -9 $MENU_ROOT/".$data->pooldir($pkg)."/$filename")) {
                         warn "Can't gzip $MENU_ROOT/".$data->pooldir($pkg)."/$filename: $!\n";
+                }
+        }
+}
+
+#----[ search_man ]------------------------------------------------------------
+sub search_man {
+        my $pkg = shift;
+
+        return unless $mandata->has_package($pkg) && $mandata->has_man($pkg);
+
+        foreach my $line (@{$mandata->man($pkg)}) {
+                my ($man, $lang, $link) = @{$line};
+                my $filename = store_disk_man($pkg, $lang.'_'.$man);
+                $data->add_man($pkg, $man, $filename.".gz");
+                if (system("gzip -9 $MAN_ROOT/".$data->pooldir($pkg)."/$filename")){
+                        warn "Can't gzip $MAN_ROOT/".$data->pooldir($pkg)."/$filename: $!\n";
                 }
         }
 }
