@@ -60,8 +60,9 @@ do 'documents-bd.pl';
 'book-gtiau' => {
 	'status' 		=> 2,
 	'since'			=> '13/09/1999',
-	'translation_maintainer'=> ['Fabien Ninoles <fabien@Nightbird.TZoNE.ORG>'],
+	'translation_maintainer'=> ['Martin Quinson <mquinson@zeppelin-cb.de>'],
 	'translation_name'	=> 'Debian GNU/Linux: guide d\'installation et d\'utilisation',
+	'old_translators'	=> ['Fabien Ninoles <fabien@Nightbird.TZoNE.ORG>'],
 },
 
 
