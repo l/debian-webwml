@@ -13,8 +13,8 @@ DEBTEMPLATES := $(wildcard $(TEMPLDIR)/*.wml) \
 TARGETDIR := ../../web
 
 WMLFILES := $(wildcard *.wml)
-HTMLFILES := $(subst .wml,.html,$(shell grep -L \<\? $(WMLFILES)))
-PHPFILES := $(subst .wml,.php,$(shell grep -l \<\? $(WMLFILES)))
+HTMLFILES := $(subst .wml,.html,$(shell egrep -L '(<\?|::gpgpage)' $(WMLFILES)))
+PHPFILES := $(subst .wml,.php,$(shell egrep -l '(<\?|::gpgpage)' $(WMLFILES)))
 INCFILES := $(wildcard *.inc)
 DESTHTMLFILES := $(patsubst %,$(TARGETDIR)/%,$(HTMLFILES))
 DESTPHPFILES := $(patsubst %,$(TARGETDIR)/%,$(PHPFILES))
