@@ -17,6 +17,7 @@ ifeq "$(LANGUAGE)" "en"
 textfiles := vote_001.quorum.err vote_001.quorum.log vote_001.quorum.txt \
              vote_002.quorum.err vote_002.quorum.log vote_002.quorum.txt \
              vote_003.quorum.err vote_003.quorum.log vote_003.quorum.txt \
+             vote_004.quorum.err vote_004.quorum.log vote_004.quorum.txt \
              gr_non_free_results.txt      gr_non_free_tally.txt          \
              gr_non_free_vote.png         gr_non_free_vote_detailed.png  \
              gr_non_free_voters.txt                                      \
