@@ -6,6 +6,8 @@
 
 my $adv = $ARGV[0];
 
+$adv || die "you must specify a parameter (original advisory file)!\n";
+
 # i'm lame, so shoot me
 my %longmoy = (	en => [ 
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -50,7 +52,7 @@ close ADV;
 $moreinfo =~ s/\n\n$/\n/s;
 $files =~ s/\n\n$/\n/s;
 
-$files =~ s/      MD5 checksum: (\w{32})/    <small>$1<\/small>/sg;
+$files =~ s/      MD5 checksum: (\w{32})\n//sg;
 $files =~ s/  Source archives:/<dt><source>/s;
 $files =~ s/  Architecture.independent.\w+:\n/<dt><arch-indep>\n/s;
 $files =~ s/  ([\w ]+) architecture:/<dt>$1:/sg;
@@ -62,9 +64,9 @@ $pagetitle =~ s/\./ /;
 if ($adv =~ /(dsa-\d+)-\d+\./) {
   $wml = "$1.wml";
 }
-die "$wml already exists\!" if (-f $wml);
+die "$wml already exists!\n" if (-f $wml);
 ($data = $wml) =~ s/.wml/.data/;
-die "$data already exists\!" if (-f $data);
+die "$data already exists!\n" if (-f $data);
 
 open DATA, ">$data";
 print DATA "<define-tag pagetitle>$pagetitle</define-tag>\n";
@@ -73,7 +75,7 @@ print DATA "<define-tag packages>$package</define-tag>\n";
 print DATA "<define-tag isvulnerable>yes</define-tag>\n";
 print DATA "<define-tag fixed>yes</define-tag>\n";
 print DATA "\n#use wml::debian::security\n\n";
-print DATA "<h3>Debian GNU/Linux 2.2 (`potato')</h3>\n\n";
+print DATA "<h3>Debian GNU/Linux 2.2 (potato)</h3>\n\n";
 print DATA "<dl>\n$files</dl>\n";
 close DATA;
 
@@ -83,3 +85,7 @@ print WML "<define-tag moreinfo>$moreinfo</define-tag>\n";
 print WML "\n# do not modify the following line\n";
 print WML "#include \"\$(ENGLISHDIR)/security/2001/$data\"\n";
 close WML;
+
+print "Now edit $data and remove any English-specific stuff from it.\n";
+print "Also, go to http://lists.debian.org/debian-security-announce-".`date +%y`;
+print "find $dsa, then put a link to that page in $wml.\n";
