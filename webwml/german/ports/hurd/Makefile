@@ -4,7 +4,7 @@
 
 WMLBASE=../..
 CUR_DIR=ports/hurd
-SUBS=reference-manual extra-files
+SUBS=extra-files
 
 include $(WMLBASE)/Make.lang
 

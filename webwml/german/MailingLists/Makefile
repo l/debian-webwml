@@ -10,7 +10,10 @@ include $(WMLBASE)/Make.lang
 
 all:: subscribe.$(LANGUAGE).html unsubscribe.$(LANGUAGE).html
 clean::
-	rm -f subscribe.wml unsubscribe.wml
+	rm -f subscribe.wml unsubscribe.wml 
+ifeq "$(LANGUAGE)" "en"
+	rm -f lists.cfg
+endif
 install:: $(HTMLDIR)/subscribe.$(LANGUAGE).html $(HTMLDIR)/unsubscribe.$(LANGUAGE).html
 
 mklist := $(ENGLISHDIR)/$(CUR_DIR)/mklist
@@ -32,6 +35,8 @@ unsubscribe.wml: $(mklist) $(lists.cfg) $(descfiles) $(mklist).tags
 ifeq "$(LANGUAGE)" "en"
 mailing-lists.txt: $(mklist) $(lists.cfg) $(descfiles)
 	$(mklist) -f $(lists.cfg) -t
+$(lists.cfg):
+	wget -O lists.cfg http://murphy.debian.org/lists.cfg
 else
 mailing-lists.$(LANGUAGE).txt: $(mklist) $(lists.cfg) $(descfiles)
 	$(mklist) -f $(lists.cfg) -t && mv mailing-lists.txt mailing-lists.$(LANGUAGE).txt
