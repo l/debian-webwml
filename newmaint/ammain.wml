@@ -25,44 +25,7 @@
     }
   }
 
-
-  function print_applicants($db, $sql,$limit) {
-  if (! ($query = pg_exec($db, $sql))) {
-    echo "Problem with query", pg_ErrorMessage($db), "<BR>";
-    echo "SQL was: $sql<BR>\n";
-    return FALSE;
-  }
-  echo "<TABLE border=\"0\" summary=\"\">\n";
-  $rows = pg_NumRows($query);
-  if ($limit != 0 && $rows > $limit) { $rows = $limit; }
-  for ($i = 0 ;   $i < $rows ; $i++) {
-    $row = pg_Fetch_Array($query, $i);
-    echo "<TR>";
-    print_flag($row["advocate_ok"],"<TD><IMG src=\"/images/shake.png\" alt=\"V\"></TD>","<TD> </TD>");
-    print_flag($row["id_ok"],"<TD><IMG src=\"/images/mag.png\" alt=\"I\"></TD>","<TD> </TD>");
-    print_flag($row["pnp_ok"],"<TD><IMG src=\"/images/dfsg.png\" alt=\"P\"></TD>","<TD> </TD>");
-    print_flag($row["tns_ok"],"<TD><IMG src=\"/images/hammer.png\" alt=\"T\"></TD>","<TD> </TD>");
-    print_flag($row["approved"],"<TD><IMG src=\"/images/thumb.png\" alt=\"A\"></TD>","<TD> </TD>");
-    print_flag($row["da_approved"],"<TD><IMG src=\"/images/new.png\" alt=\"N\"></TD>","<TD> </TD>");
-    if ($row["approved"] == "f" || $row["da_approved"] == "f") {
-      echo "<TD><IMG src=\"/images/hold.png\" alt=\"H\"></TD>";
-    } else {
-      echo "<TD> </TD>";
-    }
-    echo "<TD><A href=\"amstatus.php?"; ?><?=SID?><?;
-    echo "&user=", urlencode($row["email"]), "\">",
-          $row["forename"], " ", $row["surname"], " &lt;",
-	  $row["email"], "&gt;</A></TD>",
-          "<TD> (", $row["manager"], ") </TD>";
-    if ($row["approved"] == "f") {
-        echo "<TD>(since ", $row["decision"], ")</TD>";
-    }
-    echo "</TR>\n";
-  }
-  echo "</TABLE>\n";
-
-  return TRUE;
-}?>
+?>
 #use wml::nmpage title="Debian New Maintainer - AM Main Page"
 <?
   
@@ -98,12 +61,12 @@ displayed here).<BR>
 <P>Applicants assigned to AM but AM has not confirmed:<BR>
 <? 
    $sql = "SELECT * from applicant WHERE manager IS NOT NULL AND am_confirm_date IS NULL ORDER BY apply_date";
-   print_applicants($db, $sql,0);
+   print_applicants($db, $sql, 0, 1);
 ?>
 <P>Applicants assigned to AM but AM has rejected assignment:<BR>
 <? 
    $sql = "SELECT * from applicant WHERE manager IS NOT NULL AND am_confirm = 'f' ORDER BY apply_date";
-   print_applicants($db, $sql,0);
+   print_applicants($db, $sql, 0, 1);
 ?>
 <? } #End of Front Desk ?>
 <? if ($s_isdam == 't') { ?>
@@ -113,26 +76,26 @@ and the FD but a DAM has not fully processed them yet (sorted by AM
 approval):<BR>
 <?
   $sql = "SELECT * from applicant WHERE manager IS NOT NULL AND approved = 't' AND decision IS NOT NULL AND application_ok = 't' AND ( da_approved IS NULL OR ( da_approved = 't' AND newmaint IS NULL )) ORDER BY decision, apply_date";
-   print_applicants($db, $sql,0);
+   print_applicants($db, $sql, 0, 1);
 ?>
 <P>The following applicants have been approved by the NM committee
 but the FD has not checked them yet (sorted by apply date):<BR>
 <?
   $sql = "SELECT * from applicant WHERE manager IS NOT NULL AND approved = 't' AND decision IS NOT NULL AND application_ok IS NULL AND ( da_approved IS NULL OR ( da_approved = 't' AND newmaint IS NULL )) ORDER BY apply_date, decision";
-   print_applicants($db, $sql,0);
+   print_applicants($db, $sql, 0, 1);
 ?>
 <P>These applications have been approved by the NM committee but for some
 reason the DAM has considered the application incomplete (sorted by apply
 date):<BR>
 <?
   $sql = "SELECT * from applicant WHERE manager IS NOT NULL AND approved = 't' AND decision IS NOT NULL AND application_ok = 'f' AND ( da_approved IS NULL OR ( da_approved = 't' AND newmaint IS NULL )) ORDER BY apply_date, decision";
-   print_applicants($db, $sql,0);
+   print_applicants($db, $sql, 0, 1);
 ?>
 <P>These are applications that have been put on hold at the DAM stage
 (sorted by apply date):<BR>
 <?
   $sql = "SELECT * from applicant WHERE manager IS NOT NULL AND approved = 't' AND decision IS NOT NULL AND da_approved = 'f' ORDER BY apply_date, decision";
-   print_applicants($db, $sql,0);
+   print_applicants($db, $sql, 0, 1);
 ?>
 <? } # DAM stuff ?>
 <H3>Application Manager</H3>
@@ -151,14 +114,14 @@ ordered by application date.<BR>
 their AM but they have not passed through the whole NM process yet.<BR>
 <?
   $sql = "SELECT * FROM applicant WHERE manager = '$s_username' AND am_confirm = 't' AND approved IS NULL ORDER BY apply_date";
-  print_applicants($db, $sql,0);
+  print_applicants($db, $sql, 0, 1);
 ?>
 <H5>Applicants needing re-processing</H5>
 <P>These applicants you have processed but the DAM believe the documentation is
 incomplete.  Check the DAM comments field for details:<BR>
 <?
   $sql = "SELECT * FROM applicant WHERE manager = '$s_username' AND am_confirm = 't' AND approved = 't' AND application_ok = 'f' ORDER BY apply_date";
-  print_applicants($db, $sql,0);
+  print_applicants($db, $sql, 0, 1);
 ?>
 
 <H5>Processed Applicants</H5>
@@ -166,14 +129,14 @@ incomplete.  Check the DAM comments field for details:<BR>
 historical or informational purposes.<BR>
 <?
   $sql = "SELECT * FROM applicant WHERE manager = '$s_username' AND am_confirm = 't' AND approved = 't' AND ( application_ok = 't' OR application_ok IS NULL) ORDER BY apply_date";
-  print_applicants($db, $sql,0);
+  print_applicants($db, $sql, 0, 1);
 ?>
 <H5>Applicants on Hold</H5>
 <P>Applicants who make it here have some issue with completing the process but
 are expected to be able to work around that soon.<BR>
 <?
   $sql = "SELECT * FROM applicant WHERE manager = '$s_username' AND approved = 'f' ORDER BY apply_date";
-  print_applicants($db, $sql,0);
+  print_applicants($db, $sql, 0, 1);
 ?>
 
 <H5>Rejected Applicants</H5>
@@ -181,7 +144,7 @@ are expected to be able to work around that soon.<BR>
 being their AM.<BR>
 <?
   $sql = "SELECT * FROM applicant WHERE manager = '$s_username' AND am_confirm = 'f' ORDER BY apply_date";
-  print_applicants($db, $sql,0);
+  print_applicants($db, $sql, 0, 1);
 ?>
 <H3>Key</H3>
 <UL>
