@@ -1,0 +1,80 @@
+#!/usr/bin/python
+
+# Move a user from looking for signatures to offering them.
+# This is useful when a NM applicant has been approved as a DD.
+# Copyright (C) 2002  Martin Michlmayr <tbm@cyrius.com>
+# $Id$
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+import pg, sys
+import utils, gpg_utils
+import apt_pkg
+
+def help():
+    print """Usage: gpg_nm2dd [OPTION] EMAIL...
+Move a user from looking for signatures to offering them
+
+Options:
+  -s, --no-mail             Don't send any mail
+"""
+    sys.exit(1)
+
+def parse_args():
+    global Cnf
+
+    apt_pkg.init()
+    Cnf = apt_pkg.newConfiguration()
+    apt_pkg.ReadConfigFileISC(Cnf, "gpg.conf")
+
+    Arguments = [("h", "help", "NM2DD::Options::Help"),
+                 ("s", "no-mail", "NM2DD::Options::No-Mail", "HasArg")]
+
+    to_move = apt_pkg.ParseCommandLine(Cnf, Arguments, sys.argv)
+
+    if Cnf["NM2DD::Options::Help"]:
+        help()
+    if not to_move: # not user given
+        print "No user given!"
+        help()
+    return to_move
+
+# Move a user from looking for signatures to offering them
+def offer_signatures(db, email):
+    print "Moving user %s to offering signatures..." % email
+    db.query("UPDATE people SET offer = 't' WHERE email = '%s'" % email)
+    if not Cnf["NM2DD::Options::No-Mail"]:
+        Subst = {}
+        Subst["__FROM__"] = "%s <%s>" % (Cnf["MyFromName"], Cnf["MyEmailAddress"])
+        Subst["__BCC__"] = "Bcc: %s" % Cnf["MyEmailAddress"]
+        Subst["__WHOAMI__"] = Cnf["MyAdminName"]
+        Subst["__MY_EMAIL__"] = Cnf["MyEmailAddress"]
+        Subst["__URL__"] = Cnf["MyURL"]
+        Subst["__TO__"] = email
+        mail_message = utils.TemplateSubst(Subst, Cnf["Dir::Templates"]+"/gpg_nm2dd.moved")
+        print mail_message
+
+
+# main
+
+to_move = parse_args()
+db = pg.connect(Cnf["MyDB"])
+for email in to_move:
+    offer_signatures(db, email)
+
+# vim:set ts=4:
+# vim:set expandtab:
+# vim:set shiftwidth=4:
