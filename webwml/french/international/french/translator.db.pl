@@ -103,6 +103,15 @@ sub init_translators {
                         'file'      => 0,
                         'compress'  => 'none'
                 },
+                'Pierre Machard' => {
+                        'email'     => 'pmachard@tuxfamily.org',
+                        'summary'   => 2,
+                        'logs'      => 2,
+                        'diff'      => 2,
+                        'tdiff'     => 0,
+                        'file'      => 0,
+                        'compress'  => 'none'
+                },
                 'Jérôme Marant' => {
                         'email'     => 'jerome.marant@free.fr',
                         'summary'   => 2,
