@@ -1,7 +1,7 @@
 #use wml::debian::template title="Debian BTS - información para el desarrollador" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.23"
+#use wml::debian::translation-check translation="1.32"
 
-<H1><A name="developers">Información para desarrolladores sobre cómo utilizar el sistema</A></H1>
+<H1>Información para desarrolladores sobre cómo utilizar el sistema</H1>
 
 <P>Primero, un usuario envía un informe sobre fallos en un mensaje de
 correo normal a <CODE>submit@bugs.debian.org</CODE>. Al informe se le
@@ -15,45 +15,75 @@ mantenedor conocido, éste último obtendrá también una copia.</P>
 <CODE>Reply-To</CODE> para que incluya tanto al remitente original del
 informe como a <VAR>nnn</VAR><CODE>@bugs.debian.org</CODE>.</P>
 
+<hrline>
 
-<H2>Cerrar informes de fallos</H2>
+<ul>
+  <li><a href="#closing">Cerrar informes de fallos</a></li>
+  <li><a href="#followup">Secuencias de Mensajes</a> (<I>FollowUp</I>)</li>
+  <li><a href="#severities">Niveles de gravedad</a></li>
+  <li><a href="#tags">Etiquetas para informes de fallos</a></li>
+  <li><a href="#forward">Registro de que se ha traspasado un informe de fallos</a></li>
+  <li><a href="#maintincorrect">Mantenedores de paquetes listados incorrectamente</a></li>
+  <li><a href="#requestserv">Reabrir, reasignar y manipular fallos</a></li>
+  <li><a href="#subjectscan">Características de análisis de asunto más o menos obsoletas</a></li>
+  <li><a href="#x-debian-pr">Característica obsoleta: <code>X-Debian-PR: quiet</code></a></li>
+</ul>
 
-<P>Un desarrollador que recibe un fallo del sistema de seguimiento, o lo
-ve en <CODE>debian-bugs-dist</CODE>, y se responsabiliza de él, debería
-darle a <I>Responder</I> en su lector de correo favorito, y editar el
+<hrline>
+
+
+<H2><a name="closing">Cerrar informes de fallos</a></H2>
+
+<p>Los informes de fallos de Debian deberían cerrarse cuando se corrige el
+problema. Los problemas de los paquetes sólo pueden ser considerados como
+cerrados una vez entra en el archivo de Debian un paquete que incluye la
+corrección del error.</p>
+
+<p>Normalmente, la única persona que tiene permiso para cerrar un informe
+es quien lo envió y el mantenedor del paquete sobre el cual está abierto
+el informe. Hay excepciones a esta regla. Por ejemplo, los informes
+abiertos sobre paquetes desconocidos o ciertos pseudo-paquetes genéricos.
+Si tiene dudas, no cierre el paquete; pida consejo primero en la lista de
+correo debian-devel.</p>
+
+<p>Los informes de fallo deberían cerrarse enviando un mensaje a
+<var>nnn</var><code>-done@bugs.debian.org</code>. El cuerpo del mensaje
+debe contener una explicación sobre el por qué de dicho cierre.</p>
+
+<p>Con los mensajes recibidos desde el sistema de seguimiento de fallos,
+todo lo que necesita hacer para cerrar el informe es responder (Reply)
+con su programa de correo y editar el campo <code>A</code> (<i>To</i>)
+para que diga
 campo <CODE>A</CODE> (<I>To</I>) para que indique
 <VAR>nnn</VAR><CODE>-done@bugs.debian.org</CODE> en lugar de
 <VAR>nnn</VAR><CODE>@bugs</CODE>
 (<VAR>nnn</VAR><CODE>-close</CODE> es un alias de
 <VAR>nnn</VAR><CODE>-done</CODE>).</P>
 
-<P>La dirección del informante original del fallo será incluida
-en el campo <CODE>A</CODE> por defecto, porque el sistema de fallos
-lo incluyó en la cabecera <CODE>Reply-To</CODE>.</P>
-
-<P>Se enviarán mensajes `Done' (<I>Hecho</I>) sólo a la lista de
-correo <CODE>debian-bugs-closed</CODE>. Si hay posibilidad de que
-los otros desarrolladores estén interesados, podría ser bueno
-incluir la lista de correo <CODE>debian-devel@lists.debian.org</CODE>.
-
-<P>La persona que cierra el fallo y la que envió el mensaje original
-recibirán una notificación indicando el cambio de estado del informe.</P>
+<p>La persona que cierra el informe y la que envió el mensaje original y
+la lista de correo <code>debian-bugs-closed</code> recibirán cada uno
+una notificación indicando el cambio de estado del informe. Además, quien
+envió el informe y la lista de correo recibirán también el contenido del
+mensaje enviado a <var>nnn</var><code>-done</code>.</p>
 
 
-<H2>Secuencias de Mensajes (<I>FollowUp</I>)</H2>
+<H2><a name="followup">Secuencias de Mensajes</a> (<I>FollowUp</I>)</H2>
 
-<P>Si un desarrollador desea responder a un informe de fallos, puede
-limitarse a responder al mensaje (lo cual <b>no</b> marcará el fallo como
-solucionado). Su respuesta irá (por defecto, si ha respetado la cabecera
-<I>Reply-To:</I>) a <VAR>nnn</VAR><CODE>@bugs</CODE>, y al informante del
-fallo (nota: son dos direcciones diferentes). El sistema de seguimiento de
-fallos recibirá el mensaje como <VAR>nnn</VAR><CODE>@bugs</CODE>, lo
-pasará al mantenedor del paquete, archivará la respuesta junto al resto de
-los registros de ese informe de fallos y la reenviará a
-<CODE>debian-bugs-dist</CODE>.</P>
+<p>El sistema de seguimiento de fallos incluirá la dirección de quien envía
+el mensaje y la del informe (<var>nnn</var><code>@bugs</code>) en la
+cabecera <code>Reply-To</code> al reenviar el informe de fallo. Fíjese que
+son dos direcciones distintas.</p>
+
+<p>Si un desarrollador desea responder a un informe de fallos, puede
+limitarse a responder al mensaje, respetando la cabecera
+<code>Reply-To</code>. Esto <strong>no</strong> cerrará el fallo.</p>
+El sistema de seguimiento de fallos recibirá el mensaje como
+<VAR>nnn</VAR><CODE>@bugs</CODE>, lo pasará al mantenedor del paquete,
+archivará la respuesta junto al resto de los registros de ese informe de
+fallos y la reenviará a <CODE>debian-bugs-dist</CODE>.</P>
 
 <P>Un desarrollador puede enviar un mensaje explícitamente al informador
-del fallo usando <VAR>nnn</VAR><CODE>-submitter@bugs</CODE>.</P>
+del fallo usando <var>nnn</var><code>-submitter@bugs</code>.</P>
 
 <P>Si desea enviar un mensaje de respuesta que no sea apropiado para
 <CODE>debian-bugs-dist</CODE> puede hacerlo enviándolo a
@@ -124,6 +154,14 @@ Es una excepción para fallos arreglados por un envío de una persona
 distinta al desarrollador (<I>non maintainer upload</I>). Nota: en su
 lugar debería usarse la <strong>etiqueta</strong> (<I>tag</I>) "fixed".
 </DL>
+
+<p>Algunos niveles de gravedad se consideran
+<em><a href="http://bugs.debian.org/release-critical/">críticos para
+la distribución</a></em> (<em>release-critical</em>), lo que indica que el
+fallo tendrá cierto impacto si se publica el paquete con la distribución
+estable de Debian. Actualmente, son <strong>critical</strong>,
+<strong>grave</strong> y <strong>serious</strong>.</p>
+
 
 <H2><a name="tags">Etiquetas para informes de fallos</a></H2>
 
@@ -211,6 +249,7 @@ crítical</I>), por lo vual es importante saber qué distribuciones están
 afectadas para asegurarse de que se producen correcciones
 (o eliminaciones) en el sitio adecuado.
 
+
 <H2><A name="forward">Registro de que se ha traspasado un informe de fallos</A></H2>
 
 <P>Cuando un desarrollador reenvía un informe de fallos al
@@ -238,18 +277,12 @@ relevante que ha sido reenviado a las direcciones indicadas en el campo
 a <A href="server-control"><CODE>control@bugs.debian.org</CODE></A>.</P>
 
 
-<H2>Envío de sumarios a <CODE>debian-bugs-reports</CODE></H2>
 
-<P>Cada viernes se envía a <CODE>debian-bugs-reports</CODE>, una lista de
-fallos pendientes (<I>outstanding</I>), ordenada por antigüedad del
-informe. Cada martes se envía una lista de informes de fallos que llevan
-sin ser contestados demasiado tiempo, ordenados por mantenedor del
-paquete.</P>
+<H2><a name="maintincorrect">Mantenedores de paquetes listados incorrectamente</a></H2>
 
-<P><A name="maintincorrect">\
-Si se lista por error al mantenedor de un paquete</A>, suele ser porque se
-ha cambiado recientemente de mantenedor, y el nuevo aún no ha enviado una
-versión actualizada del paquete con un cambio en el campo
+<p>Si se lista por error al mantenedor de un paquete</A>, suele ser porque
+se ha cambiado recientemente de mantenedor, y el nuevo aún no ha enviado
+una versión actualizada del paquete con un cambio en el campo
 <CODE>Maintainer</CODE> del fichero de control. Esto se arreglará en
 cuanto se envíe el paquete nuevo; al mantenedor de los archivos puede,
 alternativamente, sustituir el registro del mantenedor de un paquete de
@@ -274,7 +307,7 @@ texto sin formato enviando la palabra <CODE>help</CODE> al servidor
 indicado anteriormente.</P>
 
 
-<H2>Características de análisis de asunto más o menos obsoletas</H2>
+<H2><a name="subjectscan">Características de análisis de asunto más o menos obsoletas</a></H2>
 
 <P>Los mensaje que lleguen a <CODE>submit</CODE> o <CODE>bugs</CODE> y
 cuyo Asunto (<I>Subject</I>) comience por <CODE>Bug#</CODE><VAR>nnn</VAR>
@@ -295,7 +328,7 @@ correspondiente.</P>
 el número de fallo en el Asunto, serán almacenados en `junk' y mantenidos
 allí unas pocas semanas, siendo ignorados por lo demás.</P>
 
-<H2>Característica obsoleta: <CODE>X-Debian-PR: quiet</CODE></H2>
+<H2><a name="x-debian-pr">Característica obsoleta: <code>X-Debian-PR: quiet</code></a></H2>
 
 <P>Antes se podría evitar que el sistema de seguimiento de fallos
 reenviase a ningún lago los mensajes recibidos por
