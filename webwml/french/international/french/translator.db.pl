@@ -58,6 +58,15 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
+                'Nicolas Boullis' => {
+                        email       => 'Boullis.Nicolas@libertysurf.fr',
+                        summary     => 2,
+                        logs        => 2,
+                        diff        => 2,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
+                },
                 'Olivier Bounhoure' =>  {
                         email       => 'olivier.bounhoure@club-internet.fr',
                         summary     => 3,
@@ -166,20 +175,20 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
-                'Mickael Simon' =>  {
-                        email       => 'mickaelsimon@free.fr',
-                        summary     => 2,
-                        logs        => 0,
-                        diff        => 0,
-                        tdiff       => 0,
-                        file        => 0,
-                        compress    => 'none'
-                },
                 'Jérôme Schell' =>  {
                         email       => 'jschell@noos.fr',
                         summary     => 2,
                         logs        => 2,
                         diff        => 2,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
+                },
+                'Mickael Simon' =>  {
+                        email       => 'mickaelsimon@free.fr',
+                        summary     => 2,
+                        logs        => 0,
+                        diff        => 0,
                         tdiff       => 0,
                         file        => 0,
                         compress    => 'none'
