@@ -202,8 +202,7 @@ $translations_status = {
 	'base_revision' => '1.72',
 	'translation_package' => 'developers-reference',
 	'translation_url'       => 'http://www.debian.org/doc/manuals/developers-reference/index.fr.html',
-	'translation_cvs_url'   => 'http://cvs.debian.org/ddp/manuals.sgml/developers-reference/?cvsroot=debian-do
-+c',
+	'translation_cvs_url'   => 'http://cvs.debian.org/ddp/manuals.sgml/developers-reference/?cvsroot=debian-doc',
 	'translation_dev_url'   => 'http://www.fdn.org/~hulin/',
 	'old_translators'       => ['Alain Meessen <ameessen@ulb.ac.be>',
 	                            'Herve Floch <Herve.Floch@linux.eu.org>',
