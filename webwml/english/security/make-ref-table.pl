@@ -68,7 +68,7 @@ $reference{cert}{url}="http://www.cert.org/advisories/";
 $reference{cert}{perlre}="CA-";
 
 $reference{certvu}{name}="CERT vulnerabilities";
-$reference{certvu}{name}="http://www.kb.cert.org/vuls";
+$reference{certvu}{url}="http://www.kb.cert.org/vuls";
 $reference{certvu}{perlre}="VU";
 
 # We just print for the time being only CVE references
