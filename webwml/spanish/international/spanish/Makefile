@@ -6,6 +6,7 @@ SUBS=contrib
 
 include $(WMLBASE)/Make.lang
 
+ltcp.es.html:: ltcp.body
 
 # Do not modify the following line
 a-releer.es.html a-revisar.es.html a-traducir.es.html en-curso.es.html no-disponible.es.html ok.es.html:: documents-bd.pl 
