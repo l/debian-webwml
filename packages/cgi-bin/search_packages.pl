@@ -360,40 +360,65 @@ unless ($search_on_sources) {
 
     }
 
-    my ( $start, $end) = multipageheader( scalar keys %pkgs );
-    my $count = 0;
-
-    foreach my $pkg (sort keys %pkgs) {
-	$count++;
-	next if ($count < $start) or ($count > $end);
-	printf "<h3>Source package %s</h3>\n", $pkg;
-	print "<ul>\n";
-	foreach $ver (('stable','testing','unstable','experimental')) {
-	    if (exists $pkgs{$pkg}{$ver}) {
-		my $part_str = "";
-		if ($part{$pkg}{$ver}{source}) {
+    if ($format eq 'html') {
+	my ($start, $end) = multipageheader( scalar keys %pkgs );
+	my $count = 0;
+	
+	foreach my $pkg (sort keys %pkgs) {
+	    $count++;
+	    next if ($count < $start) or ($count > $end);
+	    printf "<h3>Source package %s</h3>\n", $pkg;
+	    print "<ul>\n";
+	    foreach $ver (('stable','testing','unstable','experimental')) {
+		if (exists $pkgs{$pkg}{$ver}) {
+		    my $part_str = "";
+		    if ($part{$pkg}{$ver}{source}) {
 			$part_str = "[<span style=\"color:red\">$part{$pkg}{$ver}{source}</span>]";
-		}
-		printf "<li><a href=\"$ROOT/%s/source/%s\">%s</a> (%s): %s   %s", $ver, $pkg, $ver, $sect{$pkg}{$ver}{source}, $pkgs{$pkg}{$ver}, $part_str;
-		
-		print "<br>Binary packages: ";
-		my @bp_links;
-		foreach my $bp (@{$binaries{$pkg}{$ver}}) {
-		    my $sect = find_section($bp, $ver, $part{$pkg}{$ver}{source}||'main');
-		    my $bp_link;
-		    if ($sect) {
-			$bp_link = sprintf "<a href=\"$ROOT/%s/%s/%s\">%s</a>", $ver, $sect, uri_escape( $bp ),  $bp;
-		    } else {
-			$bp_link = $bp;
 		    }
-		    push @bp_links, $bp_link;
+		    printf "<li><a href=\"$ROOT/%s/source/%s\">%s</a> (%s): %s   %s", $ver, $pkg, $ver, $sect{$pkg}{$ver}{source}, $pkgs{$pkg}{$ver}, $part_str;
+		    
+		    print "<br>Binary packages: ";
+		    my @bp_links;
+		    foreach my $bp (@{$binaries{$pkg}{$ver}}) {
+			my $sect = find_section($bp, $ver, $part{$pkg}{$ver}{source}||'main');
+			my $bp_link;
+			if ($sect) {
+			    $bp_link = sprintf "<a href=\"$ROOT/%s/%s/%s\">%s</a>", $ver, $sect, uri_escape( $bp ),  $bp;
+			} else {
+			    $bp_link = $bp;
+			}
+			push @bp_links, $bp_link;
+		    }
+		    print join( ", ", @bp_links );
+		    print "</li>\n";
 		}
-		print join( ", ", @bp_links );
-	    print "</li>\n";
+	    }
+	    print "</ul>\n";
 	}
+    } elsif ($format eq 'xml') {
+	require RDF::Simple::Serialiser;
+	my $rdf = new RDF::Simple::Serialiser;
+	$rdf->addns( debpkg => 'http://packages.debian.org/xml/01-debian-packages-rdf' );
+	my @triples;
+	foreach my $pkg (sort keys %pkgs) {
+	    foreach $ver (('stable','testing','unstable','experimental')) {
+		if (exists $pkgs{$pkg}{$ver}) {
+		    my $id = "$ROOT/$ver/source/$pkg";
+
+		    push @triples, [ $id, 'debpkg:package', $pkg ];
+		    push @triples, [ $id, 'debpkg:type', 'source' ];
+		    push @triples, [ $id, 'debpkg:section', $sect{$pkg}{$ver}{source} ];
+		    push @triples, [ $id, 'debpkg:version', $pkgs{$pkg}{$ver} ];
+		    push @triples, [ $id, 'debpkg:part', $part{$pkg}{$ver}{source} || 'main' ];
+		    
+		    foreach my $bp (@{$binaries{$pkg}{$ver}}) {
+			push @triples, [ $id, 'debpkg:binary', $bp ];
+		    }
+		}
+	    }
+	}
+	print $rdf->serialise(@triples);
     }
-    print "</ul>\n";
-}
 }
 
 if ($format eq 'html') {
