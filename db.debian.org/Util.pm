@@ -13,7 +13,6 @@ my $hascryptix = 1;
 eval 'use Crypt::Blowfish';
 if ($@) {
   $hascryptix = undef;
-  print "No cryptix\n";
 }
 
 sub CreateKey {
