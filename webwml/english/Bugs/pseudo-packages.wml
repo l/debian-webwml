@@ -12,14 +12,12 @@ details of how to specify a <code>Package:</code> line.
 
 <:
 my $file = "pseudo-packages.description";
-my $host = `hostname -f`; chop $host;
-$file = "/org/www.debian.org/cron/scripts_daily/$file" if ($host eq "klecker.debian.org");
-open I, "$file" or die "Can't find $file file at $host: $!\n";
+open I, "$file" or die "Can't open $file file: $!\n";
 while (<I>) { if (/^(\S+)\s+(.*)$/) { $pseudos{$1} = $2; } }
 close I;
-%pseudos || die "%pseudos is not set -- empty pseudo-packages.description file?\n";
+%pseudos || die "%pseudos is not set -- empty $file file?\n";
 foreach $a (sort keys %pseudos) {
-  if ($a ne "dpkg-iwj" && $a ne "spam" && $a ne "slink-cd") {
+  if ($a ne "spam" && $a ne "slink-cd") {
     print "<p><code>$a</code> &mdash; $pseudos{$a}\n";
   }
 }
