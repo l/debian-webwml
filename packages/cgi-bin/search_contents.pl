@@ -213,27 +213,29 @@ if ($no_results > 100) {
 }
 
 print <<END;
-<PRE>
-<STRONG>FILE                                                       PACKAGE</STRONG>
-</PRE>
-<HR>
-<PRE>
+<pre>
+<strong>FILE                                                       PACKAGE</strong>
+</pre>
+<hr>
+<pre>
 END
 
 for (my $i = 0; $i < $results_per_page; $i++) {
   if (defined($line{$i})) {
-    # fixing up some of the directory oddities
-    $line{$i} =~ s,non-US/main,non-US,;
-    $line{$i} =~ s,non-US/contrib,non-US,;
-    $line{$i} =~ s,non-US/non-free,non-US,;
-    $line{$i} =~ s,non-free/(.+)$,$1,;
-    $line{$i} =~ s,contrib/(.+)$,$1,;
+      # fixing up some of the directory oddities
+      $line{$i} =~ s,non-US/main,non-US,go;
     # make an HTML anchor to the file for the package
     my $list = '';
-    if ($line{$i} =~ /(\S*)\s*$/) {
+    if ($line{$i} =~ /(\S*)\s*$/o) {
       foreach my $p (split (/,/,$1)) {
-	$list .= "," if ($list);
-	$list .= sprintf ('<a href="http://packages.debian.org/%s/%s">%s</a>', $version, $p, $p);
+	  my $part = "";
+	  $part = "contrib" if $p =~ s,non-US/contrib,non-US,go;
+	  $part = "non-free" if $p =~ s,non-US/non-free,non-US,go;
+	  $part = "non-free" if $p =~ s,non-free/(.+)$,$1,g;
+	  $part = "contrib" if $p =~ s,contrib/(.+)$,$1,g;
+	  $list .= "," if ($list);
+	  $list .= "<a href=\"http://packages.debian.org/$version/$p\">$p</a>";
+	  $list .= " [<span style=\"color:red\">$part</span>]" if $part;
       }
       $line{$i} =~ s,(\S*\s*)$,$list,;
     }
@@ -242,8 +244,8 @@ for (my $i = 0; $i < $results_per_page; $i++) {
 }
 
 print <<END;
-</PRE>
-<HR>
+</pre>
+<hr class="hidecss">
 END
 print "<center>$index_line</center>" if $index_line;
 
@@ -254,6 +256,7 @@ exit;
 sub printfooter {
     my $stamp_file = shift;
 
+    print "</div>\n";
     if ($stamp_file) {
 	my $timestamp = time() - (-M $file) * 86_400;
 	my ($sec,$min,$hour,$mday,undef,$year) = gmtime($timestamp);
@@ -264,13 +267,13 @@ sub printfooter {
 	$time_str = sprintf( "$wday, $mday $month $year %02d:%02d:%02d +0000", 
 			     $hour, $min, $sec );
 
-	print "<p align=\"left\"><small><i>The used contents file was last updated $time_str</i></small></p>\n";
+	print "<p style=\"text-align:left;font-size:small;font-stlye:italic\">The used contents file was last updated $time_str</p>\n";
     }
 
     print <<END;
+<p style="text-align:right;font-size:small;font-stlye:italic"><a href="http://packages.debian.net/">Packages search page</a></p>
 
-<p align="right"><small><i><a href="http://packages.debian.org/">
-Packages search page</a></i></small></p>
+</div>
 END
 
     print $input->end_html;

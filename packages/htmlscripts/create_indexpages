@@ -129,27 +129,34 @@ foreach my $lang ( @langs ) {
 	    };
     my $title = sprintf( gettext( "Software Packages in \"%s\"" ), 
 			 $distribution );
-    my $index_page = header( title => $title, lang => $lang,
+    my $index_page = header( title => $title,
+			     title_keywords => "debian, $distribution",
+			     desc => sprintf( gettext( "List of sections in %s" ), $distribution ),
+			     lang => $lang,
 			     print_title_below => 1 );
     if ($experimental) {
-	$index_page .= "<p>".gettext( "Warning: The <font color=\"red\">experimental</font> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk." )."</p>";
+	$index_page .= note( gettext( "Warning: The <span class=\"pred\">experimental</span> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk." ) );
     }
-    $index_page .= "<table summary=\"\"><tr><td width=\"50%\" valign=\"top\"><dl>\n";
+    if ($num_sections) {
+	$index_page .= "<div id=\"lefthalfcol\">\n<dl>\n";
+    }
     my $i = 0;
     foreach my $s (sort keys %sections) {
 	if ($sections{$s}[2]) {
 	    $index_page .= "<dt><a href=\"$s/\">".dgettext( 'sections', $sections{$s}[0] )."</a></dt><dd>".dgettext( 'sections', $sections{$s}[1] )."</dd>\n";
 	    $i++;
 	    if ($i eq ceil($num_sections/2)) {
-		$index_page .= "</dl><td width=\"50%\" valign=\"top\"><dl>\n";
+		$index_page .= "</dl>\n</div> <!-- end lefthalfcol -->\n<div id=\"righthalfcol\">\n<dl>\n";
 	    }
 	}
     }
-    $index_page .= "</dl></table>\n";
-    $index_page .= "<center><a href=\"allpackages\" title=\"".
+    if ($num_sections) {
+	$index_page .= "</dl>\n</div> <!-- end righthalfcol -->\n";
+    }
+    $index_page .= "<p class=\"psmallcenter\"><a href=\"allpackages\" title=\"".
 	gettext( "List of all packages" ) ."\">".
-	gettext( "All packages" ) ."</a><br /><small>(<a href=\"allpackages.$lang.txt.gz\">".
-	gettext( "compact compressed textlist" )."</a>)</small></center>\n";
+	gettext( "All packages" ) ."</a><br>(<a href=\"allpackages.$lang.txt.gz\">".
+	gettext( "compact compressed textlist" )."</a>)</p>\n";
     $index_page .= trailer( '../..', 'index', $lang, @langs );
     my $dest_dir = "$html_root/$distribution";
     $files->update_file( "$dest_dir/index.$lang.html", $index_page);
