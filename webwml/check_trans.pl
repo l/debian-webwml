@@ -10,8 +10,8 @@
 # Copyright 2000 Martin Quinson <mquinson@ens-lyon.fr>
 
 # Invocation:
-#   check_trans.pl [-vqdlM] [-C dir] [-p pattern] [-s subtree]
-#                  [-m email] [-g] [-n N] [-t outputtype]
+#   check_trans.pl [-vqdlM] [-p pattern] [-s subtree]
+#                  [-m email -n N] [-g] [-t outputtype]
 #                  [language]
 
 # It needs to be run from the top level webwml directory.
@@ -71,52 +71,36 @@
 #     Without that option, it sends real mails to real addresses.
 #     MAKE SURE THE ADDRESSEES REALLY WANT TO GET THESE MAILS
 
+use strict;
 use Getopt::Std;
 use IO::Handle;
 use Date::Parse;
-
-# Well, uncommenting the next line implies to define the opt_blah with 'our'
-# in perl 5.6, which is not a valid keyword in older version. So, we can't
-# use strict for now, which is, IMHO, a bad thing. -- Martin
-# Let's wait for perl 5.6 to be in wider use
-#use strict;
 
 # TODO:
 # get the revisions from $lang/intl/$lang so diffing works
 # need to quote dirnames?
 # use a file to bind a file to a translator?
 
-# from db
+# global db variables
 my $translations_status;
 my $translators;# the ref resulting of require
 my %translators;# the real hash
 
-# misc
-my @en; #english files
-my $showlog; # boolean
-my $maintainer = "mquinson\@ens-lyon.fr"; # the default e-mail to bitch at :-)
-my $ignorables = " "
-		."/sitemap.wml "
+# misc hardcoded things
+my $maintainer = "mquinson\@ens-lyon.fr"; # the default e-mail at which to bitch :-)
+my $ignorables = "/sitemap.wml "
 		."/MailingLists/subscribe.wml "
 		."/MailingLists/unsubscribe.wml "
 		."/international/l10n/data/countries.wml "
 		."/international/l10n/scripts/l10nheader.wml "
 		; # $ignorables must begin and end with a space!
 
-# options
-$opt_d = 0;
-$opt_s = '';
-$opt_p = undef;
-$opt_l = 0;
-$opt_g = 0; 
-$opt_m = undef;
+# options (note: with perl 5.6, this could change to our())
+use vars qw($opt_M $opt_Q $opt_d $opt_g $opt_l $opt_m $opt_n $opt_p $opt_q $opt_s $opt_v);
 $opt_n = 5; # an invalid default
-$opt_M = 0;
+$opt_s = '';
 $opt_C = '.';
 $opt_t = 'text';
-$opt_v = 0;
-$opt_q = 0;
-$opt_Q = 0;
 
 unless (getopts('vgdqQC:m:s:t:p:ln:M'))
 {
@@ -131,6 +115,7 @@ unless (getopts('vgdqQC:m:s:t:p:ln:M'))
 	}
 	exit;
 }
+
 die "you can't have both verbose and quiet, doh!\n" if (($opt_v) && ($opt_Q));
 
 warn "Checking subtree $opt_s only\n" if (($opt_v) && ($opt_s));
@@ -182,16 +167,12 @@ if ($opt_m) {
 $from = "$from/$opt_s";
 $to = "$to/$opt_s";
 
-@en= split(/\n/, `find $from -name Entries -print`);
-
-$showlog = $opt_l;
-
 init_mails();
 
 print "\$translations = {\n" if $opt_t eq 'perl';
 
-foreach (@en) {
-	next if $_ =~ "template/debian";
+foreach (split(/\n/, `find $from -name Entries -print`)) {
+	next if $_ =~ "template/debian"; # hardcoded
 	my ($path, $tpath);
 	$path = $_;
 	$path =~ s,CVS/Entries$,,;
@@ -214,8 +195,7 @@ send_mails();
 
 if ($opt_M)
 {
-	my @makefile= split(/\n/, `find $from -name Makefile -print`);
-	foreach my $makefile (@makefile) {
+	foreach my $makefile (split(/\n/, `find $from -name Makefile -print`)) {
 		my $destination = $makefile;
 		$destination =~ s/^$from/$to/o;
 		if (-e $destination) {
@@ -437,9 +417,8 @@ sub check_file {
         $docname =~ s#^$langto/##;
         $docname =~ s#\.wml$##;
 	unless (-r $name) {
-                my $iname;
-		($iname = $name) =~ s/$to//;
-		if (index($ignorables, " $iname ") < 0) {
+		(my $iname = $name) =~ s/$to//;
+		if (index($ignorables, "$iname ") < 0) {
 		  unless (($opt_q) || ($opt_Q)) {
                      if ($opt_t eq 'perl') {
   	               print "'$docname' => {\n\t'type' => 'Web',\n";
@@ -487,9 +466,8 @@ sub check_file {
 	}
 	close(F);
 
-	if ((!$oldr) && ($name =~ /$langto\/international\/$langto/)) {
-            my $ename;
-	    ($ename = $name) =~ s/$to/$from/;
+	if ((!$oldr) && ($name =~ /$langto\/international\/$langto/i)) {
+	    (my $ename = $name) =~ s/$to/$from/;
 	    open FE, $ename || die $!;
 	    while (<FE>) {
 		if (/wml::debian::translation-check/) {
@@ -560,9 +538,9 @@ sub check_file {
 	if ($opt_d) {
 		STDOUT->flush;
 		my $cvsline = "cvs -z3 log -r'$logoldr:$revision' '$oldname'";
-		warn "Running $cvsline\n" if (($opt_v) && ($showlog));
-		system($cvsline) if $showlog;
-		STDOUT->flush if $showlog;
+		warn "Running $cvsline\n" if (($opt_v) && ($opt_l));
+		system($cvsline) if $opt_l;
+		STDOUT->flush if $opt_l;
 		$cvsline = "cvs -z3 diff -u -r '$oldr' -r '$revision' '$oldname'";
 		warn "Running $cvsline\n" if $opt_v;
 		system($cvsline);
