@@ -29,11 +29,15 @@ if ( !($action =~ m/^newer$/i)  && !($action =~ m/^nomatch$/i))
 }
 if ($ARGV[4]) { $nodir = $ARGV[4]; };
 
+#first update current branch, then the reference one
+printf "Updating from CVS repository **local branch**...\n";
+`cvs update`;
+
 chdir $rdir || die "*** No such root dir: $rdir\n";
 chomp($rdir = `pwd`);
 
 chdir $odir || die "*** No such dir: $rdir + $odir\n";
-printf "Updating from CVS repository...\n";
+printf "\nUpdating from CVS repository **reference branch**...\n";
 `cvs update`;
 
 chdir ".." || die "*** No such root dir: $rdir\n";
