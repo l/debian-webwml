@@ -387,9 +387,9 @@ sub package_pages_walker {
 		$package_page .=  "<input type=\"hidden\" name=\"file\" value=\"$filenames{a2f}->{$a}\">\n";
 		$package_page .=  "<input type=\"hidden\" name=\"md5sum\" value=\"$file_md5s{a2f}->{$a}\">\n";
 		$package_page .=  "<input type=\"hidden\" name=\"arch\" value=\"$a\">\n";
-		if ($env->{distribution} =~ /non-us/o) {
+		if ($subdist =~ /non-us/io) {
 		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"nonus\">\n";
-		} elsif ($env->{distribution} =~ /updates/o) {
+		} elsif ($subdist =~ /security/o) {
 		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"security\">\n";
 		} else {
 		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"main\">\n";
@@ -443,7 +443,7 @@ sub package_pages_walker {
 		my ($src_file_md5, $src_file_size, $src_file_name) = split( /\s+/, $_ );
 		if ( $subdist && ( $subdist =~ /non-US/o ) ) {
 		    $package_page .= "<a href=\"$env->{opts}->{nonus_site}/$source_dir/$src_file_name\">[";
-		} elsif ( $subdist && ( $subdist =~ /updates/o ) ) {
+		} elsif ( $subdist && ( $subdist =~ /security/o ) ) {
 		    $package_page .= "<a href=\"$env->{opts}->{security_site}/$source_dir/$src_file_name\">[";
 		} else {
 		    $package_page .= "<a href=\"$env->{opts}->{debian_site}/$source_dir/$src_file_name\">[";
