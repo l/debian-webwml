@@ -55,7 +55,7 @@ sub new {
                 #   Fields below are written into file in the same order
                 #   Package must always be the first field
                 scalar  => [qw(Package Version Section Priority PoolDir Type Upstream)],
-                array1  => [qw(Errors Warnings Catgets Gettext)],
+                array1  => [qw(Errors Catgets Gettext)],
                 array2  => [qw(NLS PO TEMPLATES MENU)],
         };
         $self->{methods} = {};
@@ -109,6 +109,9 @@ sub AUTOLOAD {
                 return defined($self->{data}->{$pkg}->{$field});
         } else {
                 if ($#_ == -1) {
+                        if ($self->{fields}->{$field} =~ m/@/) {
+                                return $self->{data}->{$pkg}->{$field} || [];
+                        }
                         return $self->{data}->{$pkg}->{$field};
                 }
                 if ($self->{fields}->{$field} eq '$') {
@@ -297,7 +300,7 @@ sub get_date {
 
 Data about packages can be classified within scalar values (C<package>,
 C<version>, C<section>, C<priority>, C<pooldir>, C<type>, C<upstream>),
-arrays (C<errors>, C<warnings>, C<catgets>, C<gettext>), and arrays of
+arrays (C<errors>, C<catgets>, C<gettext>), and arrays of
 arrays (C<nls>, C<po>, C<templates>, C<menu>).
 Each field has a method with the same name to get and set it, e.g.
 
