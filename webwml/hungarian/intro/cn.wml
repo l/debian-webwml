@@ -1,63 +1,119 @@
-#use wml::debian::template title="Többnyelvû oldalak"
-#use wml::debian::translation-check translation="1.29"
+#use wml::debian::template title="Többnyelvû oldalak" BARETITLE=true
+#use wml::debian::translation-check translation="1.35"
 
-# translated by Viktor Nagy <chaos@inf.elte.hu>
+# <!-- translated by Viktor Nagy <chaos@inf.elte.hu> -->
 
-<P>Nyilvánvaló, hogy a világon nem egy nyelvet beszél mindenki. A web
+<p>Nyilvánvaló, hogy nem egy nyelvet beszél mindenki a világon. A web
 növekedésével egyre természetesebb lesz, ha több nyelvû oldalakra lelünk.
-Ezért ismertetjük a szabványos tartalomegyeztetést, az ún. <I>content
-negotiation</I>-t, amely lehetõvé teszi, hogy a felhasználó beállítsa,
+Ezért ismertetjük a szabványos tartalomegyeztetést, az ún. content
+negotiationt, amely lehetõvé teszi, hogy a felhasználó beállítsa,
 milyen nyelv(ek)en szeretné olvasni a dokumentumokat. A ténylegesen lehívott
 oldal a böngészõ és a szerver közötti egyeztetés eredménye: a böngészõ
 elküldi a preferenciákat, a szerver pedig ezen preferenciák és a saját
 beállításai alapján, illetve attól függõen, hogy milyen verziók állnak a
-rendelkezésére, eldönti, hogy a dokumentum melyik verzióját küldje vissza.
+rendelkezésére, eldönti, hogy a dokumentum melyik verzióját küldje vissza.</p>
 
-<p>
 <ul>
 <li><a href="#fix">Mit csinálj, ha nem a kívánt nyelven jelenik meg az
 oldal?</a>
 <li><a href="#setting">Az alapértelmezett nyelv beállítása a böngészõben</a>
-<li><a href="#cache">Megjegyzés a webcache-szerverekhez</a>
+<li><a href="#cache">A proxyszerverek lehetséges problémái</a>
 </ul>
 
 <h3><a name="fix">Mit csinálj, ha nem a kívánt nyelven jelenik meg az   
 oldal?</a></h3>
 
-Három oka lehet annak, hogy egy dokumentum nem a megfelelõ nyelven töltõdik
+<p>Három oka lehet annak, hogy egy dokumentum nem a megfelelõ nyelven töltõdik
 le a Debian webhelyérõl. Az elsõ és legelterjedtebb a félrekonfigurált
 böngészõ. Lásd az <a href="#setting">alapértelmezett nyelv beállítása a
-böngészõben</a> részt.
+böngészõben</a> részt.</p>
 
 <p>Másodszor okozhatja a problémát egy leállt vagy félrekonfigurált
 webcache. Egyre növekszik ez a probléma, ahogy egyre több internetszolgáltató
 választja a hálózati forgalom csökkentésének eme módját. Olvasd el a <a
 href="#cache">webcache-szerverekhez fûzött megjegyzést</a>, akkor is, ha úgy
-gondolod, hogy nem használsz webcache-t.
+gondolod, hogy nem használsz webcache-t.</p>
 
 <p>A harmadik ok lehet a <a href="http://www.debian.org/">www.debian.org</a>
 hibája. Csupán egy probléma volt visszavezethetõ a mi oldalunkon elõforduló
-problémára a nem megfelelõ nyelvvel kapcsolatban az elmúlt két évben. Ezért
+hibára a nem megfelelõ nyelvvel kapcsolatban az elmúlt két évben. Ezért
 azt javasoljuk, hogy alaposan vizsgáld meg az elsõ két problémaforrást,
 mielõtt felvennéd velünk a kapcsolatot. Ha úgy találod, hogy a <a
 href="http://www.debian.org/">www.debian.org</a> mûködik, az egyik
 tükörszervere azonban nem, jelentsd nekünk, és mi értesítjük a szerver
-fenntartóját.
+fenntartóját.</p>
 
-<p>Miután minden problémát megoldottál, javasolt, hogy ürítsd ki a helyi
+<p>Miután minden problémát megoldottál, javasoljuk, hogy ürítsd ki a helyi
 géped cache-ét (a lemez- és memóriacache-t egyaránt) a böngészõdben, mielõtt
 újra megnéznéd az oldalakat. Javasoljuk továbbá <a href="http://packages.debian.org/stable/web/lynx.html">lynx</a> használatát a
 teszteléshez. Úgy találtuk, hogy ez az egyetlen böngészõ, amely teljesen
-megfelel a tartalomegyeztetés HTTP-specifikációjának.
+megfelel a tartalomegyeztetés HTTP-specifikációjának.</p>
+
+<H3>Mire állítsam a változót?</H3>
+
+<P>Mivel a Debian-oldalak eredeti nyelve az angol, és valószínûleg nem
+minden dokumentum van lefordítva az általad preferált nyelvre, érdemes az
+angolt tartaléknyelvnek beállítani. Például ha magyar anyanyelvû vagy, és
+lynxet használsz, ezt írd a <kbd>.lynxrc</kbd>-dbe:</p>
+
+<pre>
+preferred_language=hu; q=1.0, en; q=0.5
+</pre>
+
+<p>
+Ez közli a szerverrel, hogy magyarul szeretnéd olvasni a dokumentumot
+amennyiben létezik, egyébként pedig angolul.</p>
+
+<p>Óvatosan kell bánni a nyelvek alkategóriáival. Az "en-GB, fr" beállítás
+hatása például nem az, amit a többség elvárna (mármint akik nem olvasták a
+HTTP-specifikációt). Ugyanis, ha az "en" és az "fr" verzió is létezik, a
+szerver a franciát küldi. Akkor küldi csak az angol dokumentumot, ha létezik
+egy .en-gb nyelvkiterjesztésû verzió. Ezért a böngészõben "en-GB, en, fr"-re
+vagy csak "en, fr"-re kell állítani a nyelvet. Ez utóbbinál azonban a
+szerver az "en-us" verziójú dokumentumokat is elküldi.
+
+<p><strong>Nem javasoljuk a nyelv melletti országkiterjesztések használatát,
+hacsak nincs valami különleges okod rá.</strong> Ha mégis használod,
+ellenõrizd, hogy kiterjesztés nélkül is beállítottad-e a nyelvet!
+
+<P>A preferred_language változó beállításáról bõvebb információt az
+<a href="http://httpd.apache.org/docs/content-negotiation.html">Apache
+documentation on content negotiation</a> oldalon találsz.
+
+<h3><a name="cache">A proxyszerverek lehetséges problémái</a></h3>
+
+<p>A proxyszerverek alapvetõen egy webszerverek, amelyek nem rendelkeznek
+saját tartalommal, csupán a felhasználó és a valódi webszerver között
+ülnek.  Megkapják az oldallekérésed, és letöltik az oldalt. Ezután
+továbbítják neked, de készítenek róla maguknak egy másolatot a további
+lekérésekhez. Ez valóban csökkenti a hálózati forgalmat, amennyiben sokan
+kérik le ugyanazt az oldalt.
+
+<p>Ez legtöbbször jó ötletnek bizonyul, azonban hibás cache esetén nem mûködik.
+Sok proxyszerver nem ismeri a tartalomegyeztetést. Ez azt eredményezi, hogy
+eltárolja az oldalt egy adott nyelven, és a késõbbiekben akkor is
+továbbítja, ha másik nyelven kérték le. Az egyetlen megoldás a cache-elõ
+szoftver frissítése vagy cseréje.
+
+<p>A felhasználók régebben csak akkor használtak proxyt, ha azt
+beállították a böngészõjükben. Ma már nem ez a helyzet. Az
+internetszolgáltatód az összes HTTP-lekérést átirányíthatja egy
+transzparens proxyhoz. Ha nem kezeli megfelelõen a proxy a
+tartalomegyeztetést, elõfordulhat, hogy a felhasználók nem a megfelelõ
+nyelven kapják meg az oldalt. Az egyenlet módja a kijavításának, hogy
+reklamálj az ISP-dnél, hogy frissítsék vagy cseréljék le a
+szoftverüket.</p>
+
 
 <h3><a name="setting">Az alapértelmezett nyelv beállítása a böngészõben</a></h3>
 
-<p>Megjegyzés: az alábbi lista nem teljes. Ha van információd
-olyan böngészõ konfigurálásáról, amely hiányzik a listából, küldd el a <a
-href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a> címre.
+<p>Ha van információd olyan böngészõ konfigurálásáról, amely hiányzik a
+listából, küldd el a
+<a href="mailto:debian-www@lists.debian.org">
+debian-www@lists.debian.org</a>címre.</p>
 
-<P>Az alapértelmezett nyelv beállításához azt a változót kell beállítani, amit
-a böngészõ átad a szervernek. Hogy ez hogyan történik, az böngészõfüggõ.
+<p>Az alapértelmezett nyelv beállításához azt a változót kell beállítani, amit
+a böngészõ átad a szervernek. Hogy ez hogyan történik, az böngészõfüggõ.</p>
 
 <DL compact>
 <DT><strong>lynx</strong>
@@ -100,8 +156,14 @@ vagy a custom csomagot használva (p4.0pre.14-es verziójú URL-t feltételezve)
      Tools (vagy Extras) -&gt Internet Options -&gt Languages
 </pre>
 <DT><strong>Opera</strong>
-<DD>Windowson: File -&gt; Preferences -&gt; Languages
-<DD>Linuxon: File -&gt; Preferences -&gt; Document -&gt; Languages
+<DD>Windowson:
+<pre>
+     File -&gt; Preferences -&gt; Languages
+</pre>
+<DD>Linuxon:
+<pre>
+     File -&gt; Preferences -&gt; Document -&gt; Languages
+</pre>
 <DT><strong>iCab</strong>
 <DD>
 <pre>
@@ -114,52 +176,3 @@ vagy a custom csomagot használva (p4.0pre.14-es verziójú URL-t feltételezve)
 </pre>
 </DL>
 
-<H3>Mire állítsam a változót?</H3>
-
-<P>Mivel a Debian-oldalak eredeti nyelve az angol, és valószínûleg nem
-minden dokumentum van lefordítva az általad preferált nyelvre, érdemes az
-angolt tartaléknyelvnek beállítani. Például ha magyar anyanyelvû vagy, és
-lynxet használsz, ezt írd a <kbd>.lynxrc</kbd>-dbe:
-<pre>
-preferred_language=hu; q=1.0, en; q=0.5
-</pre>
-Ez közli a szerverrel, hogy magyarul szeretnéd olvasni a dokumentumot,
-amennyiben létezik, egyébként pedig angolul.
-
-<p>Óvatosan kell bánni a nyelvek alkategóriáival. Az "en-GB, fr" beállítás
-hatása például nem az, amit a többség elvárna (mármint akik nem olvasták a
-HTTP-specifikációt). Ugyanis, ha az "en" és az "fr" verzió is létezik, a
-szerver a franciát küldi. Akkor küldi csak az angol dokumentumot, ha létezik
-egy .en-gb nyelvkiterjesztésû verzió. Ezért a böngészõben "en-GB, en, fr"-re
-vagy csak "en, fr"-re kell állítani a nyelvet. Ez utóbbinál azonban a
-szerver az "en-us" verziójú dokumentumokat is elküldi.
-
-<p><strong>Nem javasoljuk a nyelv melletti országkiterjesztések használatát,
-hacsak nincs valami különleges okod rá</strong>. Ha mégis használod,
-ellenõrizd, hogy kiterjesztés nélkül is beállítottad-e a nyelvet!
-
-<P>A preferred_language változó beállításáról bõvebb információt az
-<a href="http://httpd.apache.org/docs/content-negotiation.html">Apache
-documentation on content negotiation</a> oldalon találsz.
-
-<h3><a name="cache">Megjegyzés a webcache-ekhez (proxykhoz)</a></h3>
-
-<p>Sokan egy cache szerveren keresztül töltik le a weboldalakat. Ez
-alapvetõen egy webszerver, amely nem rendelkezik saját tartalommal, csupán a
-felhasználó és a valódi webszerver között ül. A cache kapja az
-oldallekérést, letölti az oldalt, és készít róla magának egy másolatot. Ez
-valóban csökkenti a hálózati forgalmat, amennyiben sokan kérik le ugyanazt
-az oldalt. (Ezt a technikát proxyzásnak is hívjuk.)
-
-<p>Általában beválik ez a technika, azonban hibás cache esetén nem mûködik.
-Sok cache nem ismeri a tartalomegyeztetést. Ez azt eredményezi, hogy
-eltárolja az oldalt egy adott nyelven, és a késõbbiekben akkor is
-továbbítja, ha másik nyelven kérték le. Az egyetlen megoldás a cache
-szoftver frissítése vagy cseréje.
-
-<p>A felhasználók régebben csak akkor használtak proxyt, ha azt beállították
-a böngészõjükben. Ma már nem ez a helyzet. Az internetszolgáltatód az összes
-HTTP-lekérést átirányíthatja egy cache-hez. Ha nem kezeli a cache a
-tartalomegyeztetést, elõfordulhat, hogy a felhasználók nem a megfelelõ
-nyelven kapják meg az oldalt. (Ezt a technikát transzparens proxyzásnak is
-hívjuk.)
