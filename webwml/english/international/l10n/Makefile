@@ -4,7 +4,7 @@
 
 WMLBASE=../..
 CUR_DIR=international/l10n
-SUBS=
+SUBS=po
 
 include $(WMLBASE)/Make.lang
 
@@ -22,8 +22,8 @@ HTML_TMPL := $(foreach lang,$(LANGS_TMPL),templates-$(lang).$(LANGUAGE).html)
 endif
 
 # the file data/langs gets rebuilt by a script, but let's have this just in case
-data/langs: data/unstable scripts/list-languages
-	scripts/list-languages data/unstable > data/langs
+data/langs: data/unstable.ftp-master data/unstable.non-US scripts/list-languages.pl
+	./scripts/list-languages.pl data/unstable.ftp-master data/unstable.non-US > data/langs
 
 all:: $(HTML_PO) $(HTML_TMPL)
 
