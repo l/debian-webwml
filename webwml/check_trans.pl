@@ -12,6 +12,7 @@
 # Option:
 # 	-v	enable verbose mode
 #	-d	output diff 
+#	-q	don't whine about missing files
 
 # Translators need to embed in the files they translate a comment
 # in its own line with the revision of the file they translated such as:
@@ -30,7 +31,7 @@ use IO::Handle;
 $opt_d = 0;
 $opt_s = '';
 $opt_p = undef;
-getopts('vds:p:');
+getopts('vdqs:p:');
 
 warn "Checking subtree $opt_s only\n" if $opt_v;
 
@@ -51,6 +52,9 @@ else
 
 $from = 'english';
 $to = shift || $defaultlanguage;
+
+# Remove slash from end
+$to =~ s%/$%%;
 
 $from = "$from/$opt_s";
 $to = "$to/$opt_s";
@@ -74,7 +78,7 @@ foreach (@en) {
 sub load_entries {
 	my ($name) = shift;
 	my (%data);
-	warn "Loading $name\n" if $opt_v;
+	warn "Loading $name\n" if ($opt_v && !$opt_q);
 	open(F, $name) || die $!;
 	while(<F>) {
 		next unless m#^/#;
@@ -105,7 +109,7 @@ sub check_file {
 	my ($oldr, $oldname);
 	warn "Checking $name\n" if $opt_v;
 	unless (-r $name) {
-		print "Missing $name\n";
+		print "Missing $name\n" unless $opt_q;
 		return;
 	}
 	open(F, $name) || die $!;
