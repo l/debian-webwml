@@ -39,8 +39,8 @@ sub recurse
 	# Get parameter.
 	my $directory = shift;
 
-	# Don't try to do anything in the WNPP and l10n directories.
-	return 0 if $directory =~ /wnpp$/ or $directory =~ /l10n$/;
+	# Don't try to do anything in the WNPP, l10n or intl/french directories.
+	return 0 if $directory =~ /wnpp$/ or $directory =~ /l10n$/ or $directory =~ /ional/french$/;
 
 	# Load all entries for this directory.
 	opendir THISDIR, $directory
