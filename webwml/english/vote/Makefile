@@ -15,5 +15,5 @@ include $(WMLBASE)/Make.dep.templ
 include $(WMLBASE)/Make.dep.generic
 
 # Do Not modify the following line
-%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml $(TEMPLDIR)/languages.wml $(TEMPLDIR)/footer.wml
+%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml $(TEMPLDIR)/languages.wml $(TEMPLDIR)/footer.wml
 	$(WML) $(<F)
