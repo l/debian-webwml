@@ -257,9 +257,10 @@ my $nfiles = scalar @filenames;
 
 print "Creating files: " if ($config{'verbose'});
 foreach $lang (@search_in) {
-    $l = $langs{$lang};
+    my @processed_langs = ($langs{$lang});
+    @processed_langs = ("zh-cn", "zh-tw") if $langs{$lang} eq "zh";
+    foreach $l (@processed_langs) {
     print "$l.html " if ($config{'verbose'});
-    $l = "zh-cn" if ($l eq "zh"); # kludge
 
     $t_body = $u_body = $o_body = "";
 
@@ -431,6 +432,7 @@ foreach $lang (@search_in) {
 	print HTML "<hr><address>Compiled at $date</address>\n";
 	print HTML "</body></html>";
 	close (HTML);
+    }
     }
 }
 print "\n" if ($config{'verbose'});
