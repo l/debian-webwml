@@ -11,7 +11,7 @@ LANGUAGES-install := $(addsuffix -install,$(LANGUAGES))
 LANGUAGES-clean := $(addsuffix -clean,$(LANGUAGES))
 
 .SUFFIXES: 
-.PHONY: install all $(LANGUAGES) $(LANGUAGES-install)
+.PHONY: install all clean $(LANGUAGES) $(LANGUAGES-install)
 
 all: $(LANGUAGES)
 
