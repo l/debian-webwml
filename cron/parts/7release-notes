@@ -2,11 +2,15 @@
 
 . `dirname $0`/../common.sh
 
+notesdir=$webtopdir/release-notes
+
+date > $notesdir/build.log
+
 for release in woody sarge; do
-    echo "rebuilding the release notes for $release" >> $crondir/lessoften.log
-    (cd $webtopdir/release-notes/$release && cvs update -d -P) >> $crondir/lessoften.log 2>&1
-    make -C $webtopdir/release-notes/$release publish \
-	 PUBLISHDIR=$webtopdir/www/releases/$release >> $crondir/lessoften.log
+    echo "rebuilding the release notes for $release" >> $notesdir/build.log
+    (cd $notesdir/$release && cvs update -d -P) >> $notesdir/build.log 2>&1
+    make -C $notesdir/$release publish \
+	 PUBLISHDIR=$webtopdir/www/releases/$release >> $notesdir/build.log 2>&1
 done
 
 echo
