@@ -31,7 +31,7 @@ sub conv_desc {
 sub split_name_mail {
     my $string = shift;
     my ( $name, $email );
-    if ($string =~ /(.*)\s*<(.*)>/o) {
+    if ($string =~ /(.*?)\s*<(.*)>/o) {
 	$name =  $1;
 	$email = $2;
     } elsif ($string =~ /^[\w.-]*@[\w.-]*$/o) {

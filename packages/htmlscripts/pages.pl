@@ -434,7 +434,7 @@ sub package_pages_walker {
 				      "<a href=\"mailto:$maint_email\">$maint_name</a>" 
 				      );
 	} else {
-	    my $up_str = "<a href=\"mailto:$maint_email\">$maint_name</a> ";
+	    my $up_str = "<a href=\"mailto:$maint_email\">$maint_name</a>";
 	    my @uploaders_str;
 	    foreach (@uploaders) {
 		push @uploaders_str, "<a href=\"mailto:$_->[1]\">$_->[0]</a>";
