@@ -295,10 +295,6 @@ $translations_status = {
 
 # Traducteurs
 
-'News/index' => {
-	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
-},
-
 'News/1999/index' => {
 	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
@@ -353,10 +349,6 @@ $translations_status = {
 
 'license' => {
 	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
-},
-
-'related_links' => {
-	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
 },
 
 'social_contract' => {
@@ -419,10 +411,6 @@ $translations_status = {
 	'translation_maintainer'=> ['Severin Hatt <magloire@multimania.com>'],
 },
 
-'distrib/index' => {
-	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
-},
-
 'distrib/packages' => {
 	'translation_maintainer'=> ['Marilleau Hugues <marillea@wotan.iie.cnam.fr>'],
 },
@@ -439,14 +427,6 @@ $translations_status = {
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 },
 
-'doc/index' => {
-	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
-},
-
-'events/index' => {
-	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
-},
-
 'intro/about' => {
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 },
@@ -457,10 +437,6 @@ $translations_status = {
 
 'intro/cooperation' => {
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
-},
-
-'intro/free' => {
-	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
 },
 
 'international/index' => {
@@ -539,10 +515,6 @@ $translations_status = {
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 },
 
-'security/index' => {
-	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
-},
-
 'vote/index' => {
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 },
@@ -589,10 +561,6 @@ $translations_status = {
 
 'releases/hamm/errata' => {
 	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
-},
-
-'releases/slink/index' => {
-	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
 },
 
 'releases/slink/running-kernel-2.2' => {
