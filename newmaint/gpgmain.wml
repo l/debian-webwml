@@ -33,40 +33,39 @@ There's no session registered for you. Please relogin.
 
         if ($update) {
             $email = $row["email"];
-		#$forename =  # no filtering done
-		#$surname =  # no filtering done
-		$offer   = ($offer == "t") ? "t" : "f";
-		$id = $row["id"];
-		$last_update = $row["last_update"];
+            #$forename =  # no filtering done
+            #$surname =  # no filtering done
+            $offer   = ($offer == "t") ? "t" : "f";
+            $id = $row["id"];
+            $last_update = $row["last_update"];
 
-		if ($passwd1 != $passwd2) {
-			$luser_error = "Passwords do not match, please try again";
-		} else {
-			if ($passwd1 != "") {
-				$passwd = passwd_crypt($passwd1);
-				$sql = "UPDATE people SET forename = '$forename', surname = '$surname', email = '$email' , passwd = '$passwd', offer = '$offer', last_update = 'now', url = '$url' WHERE id=$id";
-			} else  {
-				$sql = "UPDATE people SET forename = '$forename', surname = '$surname', email = '$email' ,                     offer = '$offer', last_update = 'now', url = '$url' WHERE id=$id";
-			};
-			
-			if (! ($result = pg_exec($db, $sql))) {
-				$luser_error = "Some error updating the database.";
+            if ($passwd1 != $passwd2) {
+                $luser_error = "Passwords do not match, please try again";
+            } else {
+                if ($passwd1 != "") {
+                    $passwd = passwd_crypt($passwd1);
+                    $sql = "UPDATE people SET forename = '$forename', surname = '$surname', email = '$email' , passwd = '$passwd', offer = '$offer', last_update = 'now', url = '$url' WHERE id=$id";
+                } else  {
+                    $sql = "UPDATE people SET forename = '$forename', surname = '$surname', email = '$email' ,                     offer = '$offer', last_update = 'now', url = '$url' WHERE id=$id";
+                }
 
-				$email = $row["email"];
-				$forename = $row["forename"];
-				$surname = $row["surname"];
-				$id = $row["id"];
-			};
-		};
-	} else {
-		$email = $row["email"];
-		$forename = $row["forename"];
-		$surname = $row["surname"];
-		$id = $row["id"];
-		$url = $row["url"];
-		$offer   = ($row["offer"] == "t") ? "t" : "f";
-		$last_update = $row["last_update"];
-	};
+                if (! ($result = pg_exec($db, $sql))) {
+                    $luser_error = "Some error updating the database.";
+                    $email = $row["email"];
+                    $forename = $row["forename"];
+                    $surname = $row["surname"];
+                    $id = $row["id"];
+                }
+            }
+    } else {
+        $email = $row["email"];
+        $forename = $row["forename"];
+        $surname = $row["surname"];
+        $id = $row["id"];
+        $url = $row["url"];
+        $offer   = ($row["offer"] == "t") ? "t" : "f";
+        $last_update = $row["last_update"];
+    }
 
 ?>
 
@@ -76,8 +75,8 @@ There's no session registered for you. Please relogin.
 <TABLE>
 <?
 if ($luser_error) {
-	printf ('<TR><TD colspan="2"><FONT color="red">%s</FONT></TD></TR>', $luser_error);
-};
+    printf ('<TR><TD colspan="2"><FONT color="red">%s</FONT></TD></TR>', $luser_error);
+}
 print_text('Forename:'   , 'forename'   , $forename   , 1);
 print_text('Surname:'    , 'surname'    , $surname    , 1);
 print_text('Email:'      , 'email'      , $email      , 0);
@@ -107,9 +106,9 @@ print_checkbox('Offer to sign key:', 'offer', $offer, 1)
 <?
     } else {
 ?>
-	Could not open the Database. You'r out of luck. Pester someone to get it fixed.
+Could not open the Database. You'r out of luck. Pester someone to get it fixed.
 <?
-    }; #dbopen
-    }; #session_register
+    } #dbopen
+    } #session_register
 ?>
 
