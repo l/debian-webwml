@@ -129,6 +129,57 @@
 	[ZH:finished:]
 </define-tag>
 
+<define-tag future_events whitespace=delete>
+	[EN:Future events:]
+	[AR::]
+	[DA::]
+	[DE::]
+	[EL::]
+	[EO::]
+	[ES::]
+	[FI::]
+	[FR::]
+	[HR::]
+	[HU::]
+	[IT::]
+	[JA::]
+	[KO::]
+	[NL::]
+	[NO::]
+	[PL::]
+	[PT::]
+	[RO::]
+	[RU::]
+	[SV::]
+	[TR::]
+	[ZH::]
+</define-tag>
+<define-tag past_events whitespace=delete>
+	[EN:Past events:]
+	[AR::]
+	[DA::]
+	[DE::]
+	[EL::]
+	[EO::]
+	[ES::]
+	[FI::]
+	[FR::]
+	[HR::]
+	[HU::]
+	[IT::]
+	[JA::]
+	[KO::]
+	[NL::]
+	[NO::]
+	[PL::]
+	[PT::]
+	[RO::]
+	[RU::]
+	[SV::]
+	[TR::]
+	[ZH::]
+</define-tag>
+
 # DO NOT translate anything below here. If you feel something needs to be changed, write to
 # debian-www first
 
@@ -169,7 +220,7 @@ sub get_recent_list {
 		$elemfoot = '- ';
 	}
 
-	$str=$listhead;
+	my $str = $listhead;
 
 	opendir(DIR, "$eng_dir/$year");
 	@files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
@@ -180,7 +231,7 @@ sub get_recent_list {
 #	print STDERR "files: " . join " ", @files;
 #	print STDERR "year=$year number=$number eng_dir=$eng_dir format=$format match=$match";
 	$count = 0;
-	grab_titles($year, $number, $eng_dir, $format, $match);
+	$str .= grab_titles($year, $number, $eng_dir, $format, $match);
 
 	if ($count < $number && $number ne 0) {
 		@tmp = split('/', $year);
@@ -192,78 +243,97 @@ sub get_recent_list {
 			@files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
 			@files = sort {$b cmp $a} @files;
 			closedir DIR;
-			grab_titles($year, $number, $eng_dir, $format, $match);
+			$str .= grab_titles($year, $number, $eng_dir, $format, $match);
 		}
 	}
 	if ($count eq 0) {
 		$str .= "<noitemsforthisyear>\n";
 	}
 	$str .= $listfoot;
+	# these two lines are a dumb kludge, happens with events/
+	$str =~ s/$listhead(.+)\n$listhead/$1\n$listhead/;
+	$str =~ s/$listfoot\n$listfoot/$listfoot/;
 	return $str;
 }
 
 sub grab_titles {
-	my ($year, $number, $eng_dir, $format, $match) = @_;
-	foreach (@files) {
-		$trans_title = $_;
-		$trans_title =~ s/wml/title/;
-		$count++;
-		open(FILE, "<$year/$_") || open(FILE, "<$year/$trans_title") || open(FILE, "<$eng_dir/$year/$_") or printf stderr "ACK: can't open $year/$_\n";
-		if (/($match).wml/) {
-			$base = $1;
-		}
-		$date = ''; $title = ''; $desc = ''; $status = '';
-		<protect pass=2>
-		foreach $line (<FILE>) {
-			if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
-				$title = qq/$1/;
-			}
-			elsif ($line =~ /^<define-tag release_date>(.*)<\/define-tag>$/) {
-				$date = qq/$1/;
-			}
-			elsif ($line =~ /^<define-tag report_date>(.*)<\/define-tag>$/) {
-				$date = qq/$1/;
-			}
-			elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) {
-				$date = qq/$1/;
-			}
-			elsif ($line =~ /^<define-tag description>(.*)<\/define-tag>$/) {
-				$desc = qq/$1/;
-			}
-			elsif ($line =~ /^<define-tag status>(.*)<\/define-tag>$/) {
-				$status = qq/$1/;
-			}
-		</protect>
-			if ($title && $date && $desc) {
-				$date = newsdate($date);
-                                # strip off the dsa revision number. but *keep the dsa number*
-				$title =~ s/(DSA-\d{3})-\d{1}/$1/;
-				$str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong> $elemfoot$desc<br>\n";
-				last;
-			}
-			elsif ($title && $date) {
-				$date = newsdate($date);
-                                # strip off the dsa revision number. but *keep the dsa number*
-				$title =~ s/(DSA-\d{3})-\d{1}/$1/;
-				$str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong><br>\n";
-				last;
-			}
-			elsif ($title && $status) {
-				$str1 = "$elemhead<a href=\"$year/$base\">$title</a> &mdash; ";
-				 if ( $status eq "P" ) { $str1 .= "<proposed>"; }
-				 elsif ( $status eq "D" ) { $str1 .= "<discussed>"; }
-				 elsif ( $status eq "V" ) { $str1 .= "<votedon>"; }
-				 elsif ( $status eq "F" ) { $str1 .= "<finished>"; }
-				 else { $str1 .= "other"; }
-				$str1 .= "<br>\n";
-				last;
-			}
-		}
-		$str .= $str1;
-		close FILE;
-		if ($count eq $number) { last; }
-	}
-	return $str;
+my ($year, $number, $eng_dir, $format, $match) = @_;
+my $over = $current = $base = $str1 = $str = "";
+foreach $file (@files) {
+  ($trans_title = $file) =~ s/wml/title/;
+  $count++;
+  open FILE, "$year/$file" || open FILE, "$year/$trans_title" || open FILE, "$eng_dir/$year/$file" || warn "can't open any $year/$file\n";
+  $base = $1 if ($file =~ /($match).wml/);
+  my $event = '';
+  if ($WML_SRC_DIRNAME =~ /events/) { # shouldn't waste time if it's not events
+    foreach (<FILE>) {
+      if (/^#use wml::debian::past_event$/) {
+        $event = "past";
+      } elsif (/^#use wml::debian::event$/) {
+        $event = "current";
+      }
+    }
+    seek FILE, 0, SEEK_SET;
+  }
+  $title = ''; $date = ''; $rdate = ''; $desc = ''; $status = ''; $where = '';
+<protect pass=2>
+  foreach $line (<FILE>) {
+       if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) { $title = qq/$1/; }   # all
+    elsif ($line =~ /^<define-tag release_date>(.*)<\/define-tag>$/) { $date = qq/$1/; } # News
+    elsif ($line =~ /^<define-tag where>(.*)<\/define-tag>$/) { $where = qq/$1/; }       # events
+    elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) { $date = qq/$1/; }         # events
+    elsif ($line =~ /^<define-tag report_date>(.*)<\/define-tag>$/) { $rdate = qq/$1/; } # security
+    elsif ($line =~ /^<define-tag description>(.*)<\/define-tag>$/) { $desc = qq/$1/; }  # security
+    elsif ($line =~ /^<define-tag status>(.*)<\/define-tag>$/) { $status = qq/$1/; }     # vote
+</protect>
+    if ($title && $date && $where) { # for events/
+      $str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong> $elemfoot$where<br>\n";
+      last;
+    }
+    elsif ($title && $rdate && $desc) { # for security/
+      $rdate = newsdate($rdate);
+      $title =~ s/(DSA-\d{3})-\d{1}/$1/; # strip off the revision in the DSA number
+      $str1 = "$elemhead<tt>[$rdate]</tt> <strong><a href=\"$year/$base\">$title</a></strong> $elemfoot$desc<br>\n";
+      last;
+    }
+    elsif ($title && $date) { # for News/
+      $date = newsdate($date);
+      $str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong><br>\n";
+      last;
+    }
+    elsif ($title && $status) { # for vote/
+      $str1 = "$elemhead<a href=\"$year/$base\">$title</a> &mdash; ";
+         if ( $status eq "P" ) { $str1 .= "<proposed>"; }
+      elsif ( $status eq "D" ) { $str1 .= "<discussed>"; }
+      elsif ( $status eq "V" ) { $str1 .= "<votedon>"; }
+      elsif ( $status eq "F" ) { $str1 .= "<finished>"; }
+      else { $str1 .= "$status"; }
+      $str1 .= "<br>\n";
+      last;
+    }
+  } # for each line in file
+  close FILE;
+
+  if ($event ne "") { # this file was for an event
+       if ( $event eq "past" ) { $over .= $str1; }
+    elsif ( $event eq "current" ) { $current .= $str1;  }
+  } else {
+    $str .= $str1;
+  }
+  if ($count eq $number) { last; }
+} # for each file
+
+if ($WML_SRC_DIRNAME =~ /events/) {
+  $str = "";
+  if ($current) {
+    $str .= "<H2><future_events></H2>\n$listhead\n$current\n$listfoot\n";
+  }
+  if ($over) {
+    $str .= "<H2><past_events></H2>\n$listhead\n$over\n$listfoot\n";
+  }
+}
+
+return $str;
 }
 
 </perl>
