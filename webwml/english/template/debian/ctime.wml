@@ -110,15 +110,23 @@ sub ctime {
 	my ($time, $sec, $min, $hour, $mday, $monnr, $year, $wday, $yday, $isdst, $mon);
 	# The last modification time of inputfile in ISO dd-mm-yyyy hh:mm:ss format.
 	if (defined $(GEN_TIME)) {
-		$WML_GEN_ISOTIME =~ /(..)-(..)-(\d+) (..):(..):(..)/;
-		$time = timelocal($6, $5, $4, $1, $2-1, $3);
+		$WML_GEN_ISOTIME =~ /(\d+)-(..)-(\d+) (..):(..):(..)/;
+		if ($1 <= 31) { # for WML 1.x
+			$time = timelocal($6, $5, $4, $1, $2-1, $3);
+		} else { # for WML 2.x
+			$time = timelocal($6, $5, $4, $3, $2-1, $1);
+		}
 		# $lday=$1; $lmon=$2; $lyear=$3; $lhr=$4; $lmin=$5; $lsec=$6;
 		# if ($lyear > 19000) { $lyear = 1900+($lyear-19000); }
 		# $time = timelocal($lsec, $lmin, $lhr, $lday, $lmon-1, $lyear);
 	}
 	else {
-		$WML_SRC_ISOTIME =~ /(..)-(..)-(\d+) (..):(..):(..)/;
-		$time = timelocal($6, $5, $4, $1, $2-1, $3);
+		$WML_SRC_ISOTIME =~ /(\d+)-(..)-(\d+) (..):(..):(..)/;
+		if ($1 <= 31) { # for WML 1.x
+			$time = timelocal($6, $5, $4, $1, $2-1, $3);
+		} else { # for WML 2.x
+			$time = timelocal($6, $5, $4, $3, $2-1, $1);
+		}
 		# $lday=$1; $lmon=$2; $lyear=$3; $lhr=$4; $lmin=$5; $lsec=$6;
 		# if ($lyear > 19000) { $lyear = 1900+($lyear-19000); }
 		# $time = timelocal($lsec, $lmin, $lhr, $lday, $lmon-1, $lyear);
