@@ -187,14 +187,14 @@ for (my $i = 0; $i < $results_per_page; $i++) {
     $line{$i} =~ s,contrib/(.+)$,$1,;
     # hopefully this won't ruin (too m)any real file names
     $line{$i} =~ s,non-US/,non-us/,g;
-    # check if multiple packages own the file
-    if ($line{$i} !~ /(\S+,\S+)$/) {
-      # make an HTML anchor to the file for the package
-      $line{$i} =~ s,(\S*)$,<a href="http://packages.debian.org/$version/$1.html">$1</a>,;
-    } else {
-      # make an HTML anchor just to the file for the first package
-      # some real Perl hacker will have to fix this :) -- Joy
-      $line{$i} =~ s#,(\S[^,]+)$#,<a href="http://packages.debian.org/$version/$1.html">$1</a>#;
+    # make an HTML anchor to the file for the package
+    my $list = '';
+    if ($line{$i} =~ /(\S*)\s*$/) {
+      foreach my $p (split (/,/,$1)) {
+	$list .= "," if ($list);
+	$list .= sprintf ('<a href="http://packages.debian.org/%s/%s.html">%s</a>', $version, $p, $p);
+      }
+      $line{$i} =~ s,(\S*\s*)$,$list,;
     }
     print $line{$i} . "\n";
   }
