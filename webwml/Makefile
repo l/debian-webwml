@@ -1,4 +1,5 @@
 all:
+	- $(MAKE) -C chinese install
 	- $(MAKE) -C croatian install
 	- $(MAKE) -C danish install
 	- $(MAKE) -C english install
