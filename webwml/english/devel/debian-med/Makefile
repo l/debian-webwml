@@ -16,8 +16,6 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml $(GETTEXTDEP)\
   $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/News/[0-9]*/*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/talks/*.wml)
 
-#  $(wildcard ../../../german/devel/debian-med/News/[0-9]*/*.wml)
-
 #packaged.$(LANGUAGE).html: packaged.wml \
 #  $(ENGLISHSRCDIR)/devel/debian-med/packaged.tags \
 #  $(wildcard $(ENGLISHSRCDIR)/devel/debian-med/packaged/*/*) \
