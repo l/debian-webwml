@@ -143,6 +143,38 @@ print $slices;
 # Do NOT translate anything below this line. If you feel something needs
 # to be modified, first write to debian-www list.
 
+<define-tag copyrightyears whitespace=delete>
+<perl>
+$file = $WML_SRC_DIRNAME."/".$WML_SRC_FILENAME;
+if ($file =~ m,/(\d{4})/,) {
+  $first = $1;
+} else {
+  $first = "1997";
+}
+
+# the below code taken from ctime.wml:webwml_ctime
+if (defined $(GEN_TIME)) {
+  $timevar = $WML_GEN_ISOTIME;
+} else {
+  $timevar = $WML_SRC_ISOTIME;
+}
+$timevar =~ /^(\d+)-(..)-(\d+)/;
+if ($1 <= 31) { # for WML 1.x
+  $second = $3;
+} else { # for WML 2.x
+  $second = $1;
+}
+
+# warn "$first $second\n";
+
+if ($first eq $second) {
+  print $first;
+} else {
+  print $first."-".$second;
+}
+</perl>
+</define-tag>
+
 <when <string-eq "$(NOCOMMENTS)" "" />>
   <small><sendcomments/></small>
   <p>
@@ -151,6 +183,6 @@ print $slices;
 <lastmodified/>: <:= webwml_ctime () :>
 <when <string-eq "$(NOCOPYRIGHT)" "" />>
   <br />
-  <copyright/> &copy; 1997-2002 <a href="http://www.spi-inc.org/">SPI</a>; <seelicense/>
+  <copyright/> &copy; <copyrightyears/> <a href="http://www.spi-inc.org/">SPI</a>; <seelicense/>
 </when>
 </small>
