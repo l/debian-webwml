@@ -320,7 +320,7 @@
             $row = pg_Fetch_Array($query, $i);
             if ($row["country"] != $old_country) {
                 if ($old_country != "") {
-                    echo "</UL>\n";
+                    echo "</UL>\n\n";
                 }
                 echo "<H2>", $row["country"], " - ", $iso[$row["country"]], "</H2>";
                 echo "\n";
@@ -329,7 +329,8 @@
 
             echo "<LI>", $row["forename"], " ", $row["surname"];
             echo " &lt;", $row["email"], "&gt;";
-            echo "<UL>\n";
+            echo "\n";
+            echo " <UL>";
             print_place($row["begin"], $row["finish"], $row["city"], $row["country"]);
             echo "</UL>\n";
 
