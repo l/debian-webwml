@@ -187,8 +187,6 @@ sub package_pages_walker {
 	my ( $pkg, $env ) = @_;
 
 	my $name = $pkg->get_name;
-	my $fl = substr $name, 0, 1;
-	my $sl = substr $name, 0, 2;
 
 	if ( $pkg->is_virtual ) { 
 	    if ( $env->{lang} eq 'en' ) {
@@ -737,8 +735,6 @@ sub print_deps {
 		
 		if ( $pkg_ix > 0 ) { $arch_str = ""; }
 		
-		my $fl = substr $p_name, 0, 1;
-		my $sl = substr $p_name, 0, 2;
 		my $p = $env->{db}->get_pkg( $p_name );
 
 		my $pkg_version = "";
@@ -753,15 +749,21 @@ sub print_deps {
 
 		if ( $p ) {
 		    if ( $is_old_dp ) {
-			push @res_pkgs, "<a href=\"../../$fl/$sl/$p_name\">$p_name</a> $pkg_version$arch_str";
+			my %sections = $p->get_arch_fields( 'section',
+							    $env->{archs} );
+			my $section = $sections{max_unique};
+			push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $pkg_version$arch_str";
 		    } elsif ( $p->is_virtual ) {
 			my $short_desc = gettext( "Virtual package" );
-			push @res_pkgs, "<a href=\"../../$fl/$sl/$p_name\">$p_name</a> $pkg_version$arch_str</td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+			push @res_pkgs, "<a href=\"../virtual/$p_name\">$p_name</a> $pkg_version$arch_str</td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
 		    } else {
+			my %sections = $p->get_arch_fields( 'section',
+							    $env->{archs} );
+			my $section = $sections{max_unique};
 			my %desc_md5s = $p->get_arch_fields( 'description-md5', 
 							     $env->{archs} );
 			my $short_desc = encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" );
-			push @res_pkgs, "<a href=\"../../$fl/$sl/$p_name\">$p_name</a> $pkg_version$arch_str</td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+			push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $pkg_version$arch_str</td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
 		    }
 		} elsif ( $is_old_dp ) {
 		    push @res_pkgs, "$p_name $pkg_version$arch_str";
