@@ -1,0 +1,81 @@
+#use wml::debian::template title="Om at holde oversættelserne af webstedet ajour"
+#use wml::debian::translation-check translation="1.12"
+
+<p>Da websider ikke er statiske er det en god idé at holde styr på hvilken 
+version af det originale dokument en bestemt oversættelse refererer til, og at
+anvende denne oplysning til at kontrollere hvilke sider der er ændret siden
+den sidste oversættelse. Oplysningen skal placeres i toppen af dokumentet (men 
+under alle andre "use"-linier) på denne måde:</p>
+
+<pre>
+\#use wml::debian::translation-check translation="X.x"
+</pre>
+
+<p>hvor <var>X.x</var> er CVS' versionsnummer på det originale dokuemnt 
+(engelsk). Du kan finde dette nummer ved at kigge i CVS/Entries som er på 
+formen: <code>/filnavn/X.x/dato//</code>. Du kan også finde versionsnummeret 
+ved at køre <kbd>cvs status filnavn</kbd> i det engelske-kildekatalog. Hvis du 
+bruger scriptet <kbd>copypage.pl</kbd> i kataloget webwml vil linien automatisk 
+blive tilføjet.</p>
+
+<p>Det er også nyttigt fordi nogle oversættelser måske i længere tid ikke 
+bliver ført ajour, selvom originalen (på engelsk) bliver det. På grund af 
+indholdsforhandling vil folk som læser en oversættelse måske ikke være 
+opmærksom på dette, og kan risikere at gå glip af vigtige oplysninger tilføjet 
+i nyere udgaver af origianelen. Skabelonen til <code>translation-check</code> 
+indeholder kode til at kontrollere om din oversættelse er forældet, og vil
+tilføje en passende advarsel derom til brugeren.</p>
+
+<p>Desuden er der disse parametre, som kan vendes i <code>#use</code>-linien:</p>
+
+<dl>
+ <dt><code>original="<var>sprog</var>"</code></dt>
+ <dd>hvor <var>sprog</var> er det engelske navn på det sprog som du oversætter
+ fra, hvis det ikke er fra engelsk.
+ Navnet skal svare til kataloget på øverste niveau i CVS, og til navnet i 
+ skabelonen <code>languages.wml</code>.</dd>
+
+ <dt><code>mindelta="<var>nummer</var>"</code></dt>
+ <dd>definerer den maksimale forskel mellem CVS-revisioner før en oversættelse
+ betragtes som gammel.
+ Standardindstillingen er <var>1</var>.
+ For mindre vigtige siders vedkommende kan mindelta sættes til <var>2</var>, 
+ som betyder at siden først betragtes som gammel hvis der er foretaget to
+ ændringer til orignalen.</dd>
+
+ <dt><code>maxdelta="<var>nummer</var>"</code></dt>
+ <dd>definerer det maksimale forskel mellem CVS-revisioner før en oversættelse
+ betragtes som forældet.
+ Standardindstillingen er <var>5</var>.
+ For meget vigtige sider sættes maxdelta til en mindre værdi.
+ Værdien <var>1</var> betyder at enhver ændring gør oversættelsen forældet.</dd>
+</dl>
+
+<p>Ud fra disse oplysninger genereres en <a href="stats/">report</a>, som 
+opremser forældede oversættelser og sider som slet ikke er oversat. Dette er 
+<beregnet til at hjælpe oversætterne til at tiltrække nye hjælpere.</p>
+
+<p>Desuden er scriptet <kbd>check_trans.pl</kbd> tilgængeligt i kataloget 
+webwml/, det viser en rapport over sider som skal opdateres:</p>
+
+<pre>
+check_trans.pl <var>sprog</var>
+</pre>
+
+<P>hvor <var>sprog</var> er katalognavnet på din oversættelse, for eksempel 
+"danish" for den danske oversættelse.</p>
+
+<p>Sider der ikke er oversat vil blive vist som
+"<code>Missing <var>filnavn</var></code>", og sider som ikke er ført ajour i
+forhold til originalen vises som
+"<code>NeedToUpdate <var>filnavn</var> to version <var>x.y</var></code>".</p>
+
+<p>Ønsker du at se præcist hvad der er ændret, kan du se forskellene ved at 
+tilføje kommandolinieparameteret <kbd>-d</kbd> til ovennævnte kommando.
+Bemærk at det kan tage nogen tid, da det kan medføre flere tilgange til 
+CVS-serveren.</p>
+
+<p>Ønsker du at ignorere advarsler om manglende sider (for eksempel gamle
+nyhedssider), kan du oprette en vil ved navn <code>.transignore</code> i 
+kataloget som du ønsker at undertrykke advarslerne i, med angivelse af hver 
+enkelt fil du ikke har i sinde at oversætte, med et navn pr. linie.</p>
