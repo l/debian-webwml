@@ -1,0 +1,167 @@
+#use wml::debian::template title="Informações sobre as Páginas Disponíveis em Múltiplos Idiomas"
+#use wml::debian::translation-check translation="1.29"
+
+<P>Obviamente, nem todo mundo usa o mesmo idioma. Enquanto a web
+cresce, torna-se mais comum encontrar páginas que estão disponíveis
+em múltiplos idiomas. Um padrão foi, então, introduzido, chamado
+negociação de conteúdo, que permite a uma pessoa definir a língua
+na qual prefere receber os documentos. A versão atual entregue é
+negociada entre seu navegador e o servidor; seu navegador envia
+suas preferências e o servidor decide que versão enviar baseado nas
+suas preferência e que versões do documento estão disponíveis.
+
+<p><ul>
+<li><a href="#fix">O que Fazer se Uma Página do Debian Está na Língua Errada</a>
+<li><a href="#setting">Configurando o Idioma Preferencial em um Navegador</a>
+<li><a href="#cache">Uma Nota Sobre Servidores Web com Cache</a>
+</ul>
+
+<h3><a name="fix">O Que Fazer se Uma Página do Debian Está na Língua Errada</a></h3>
+
+<p>Há duas razões pelas quais um documento pode ser recebido no idioma 
+errado do site do Debian. A primeira, e mais comum, é um navegador 
+mal-configurado. Veja a seção sobre 
+<a href="#setting">configurar o idioma preferido em um navegador</a>
+para saber como consertar esse problema.
+
+<p>O segundo problema é com caches quebrados ou mal-configurados. Esse
+é um problema crescente quanto mais os ISPs vêem o caching como uma
+maneira de diminuir o tráfico de rede. Leia a 
+<a href="#cache">nota sobre servidores web com cache</a> mesmo se você
+não acha que usa um.
+
+<p>O terceiro problema é que há um problema com o 
+<a href="http://www.debian.org/">www.debian.org</a>.
+Apenas um problema com o recebimento de idioma errado relatado a nós nos
+últimos dois anos foi causado por um problema no nosso lado. Nós,
+assim, sugerimos que você investigue bem as duas principais fontes de
+problemas antes de contatar-nos. Se você descobrir que o
+ <a href="http://www.debian.org/">http://www.debian.org/</a>
+está funcionando mas um dos mirrors não, relate isso a nós e nós 
+contactaremos os mantenedores do mirror.
+
+<p>Depois de consertar qualquer problema, sugere-se que você limpe o
+cache local (de disco e memória) no seu navegador antes de tentar 
+vizualizar as páginas de novo. Também sugerimos que você use o lynx
+ao testar. Ele é o único navegador que sabemos que seguem 100% as
+especificações HTTP de negociação de conteúdo.
+
+<h3><a name="setting">Configurando o Idioma Preferencial em um Navegador</a></h3>
+
+<P>Nota: a lista a seguir não está completa. Se você tem informações sobre
+como configurar um navegador que não esteja listado abaixo, por favor 
+envie-nas para
+<a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>.
+
+<P>Para configurar um idioma padrão do seu navegador você tem de configurar
+uma variável que é passada para o servidor de web. Como isso é feito depende
+do navegador que você está usando.
+
+<DL compact>
+<DT><strong>lynx</strong>
+<DD>Você pode ou editar a variável <kbd>preferred_language</kbd> no seu
+<kbd>.lynxrc</kbd> ou configurá-lo usando o comando 'O' enquanto estiver
+dentro do lynx.
+<DT><strong>netscape 3.x</strong>
+<DD>Adicione
+<pre>
+     *httpAcceptLanguage: [idioma_preferido]
+</pre>
+ao app-defaults do Netscape ou ao <kbd>~/.Xresources</kbd>
+<DT><strong>netscape 4.x</strong>
+<DD>Use
+<pre>
+     Edit -&gt; Preferences -&gt; Navigator -&gt; Languages
+</pre>
+Assegure-se de selecionar o idioma a partir das escolhas. Algumas pessoas
+reportaram problemas porque digitaram o idioma na mão.
+<DT><strong>Mozilla</strong>
+<DD>
+<pre>
+     Edit -&gt; Preferences -&gt; Navigator -&gt; Languages
+</pre>
+<DT><strong>W3</strong> (navegador do emacsr)
+<DD>
+<pre>(setq url-mime-language-string  "preferred_language=fr; q=1.0, en; q=0.5")</pre>
+ou usar o pacote customizado (assumindo que a versão do URL seja p4.0pre.14):
+<pre>Hypermedia -&gt; URL -&gt; Mime -&gt; Mime Language String...</pre>
+<DT><strong>IE ??</strong>
+<DD>
+<pre>
+     Vizualizar -&gt; Opções de Internet -&gt; Geral/Idiomas
+</pre>
+<DT><strong>IE 5</strong>
+<DD>
+<pre>
+     Ferramentas (ou Extras) -&gt; Opções de Inernet -&gt; Idiomas
+</pre>
+<DT><strong>Opera</strong>
+<DD>Windows: File -&gt; Preferences -&gt; Languages
+<DD>Linux: File -&gt; Preferences -&gt; Document -&gt; Languages
+<DT><strong>iCab</strong>
+<DD>
+<pre>
+     Edit -&gt; Preferences -&gt; Browser -&gt; Fonts,Languages
+</pre>
+<DT><strong>W3M</strong>
+<DD>
+<pre>
+     Options (o) -&gt; Other Behavior -&gt; Accept-Language
+</pre>
+</DL>
+
+<H3>O que devo colocar na variável?</H3>
+
+<P>Já que o idioma original das páginas do Debian é o inglês e nem todos
+os documentos podem ser traduzidos, é uma boa idéia configurar sua 
+variável de idioma preferido para permitir o inglês como um "salva guarda".
+Por exemplo, se você é um falante nativo de francês usando o lynx,
+você vão querer a linha a seguir no seu <kbd>.lynxrc</kbd>
+<pre>
+preferred_language=fr; q=1.0, en; q=0.5
+</pre>
+Isso diz ao servidor que você quer a versão em francês do documento,
+se disponível, se não, usar a versão em inglês.
+
+<p>Uma coisa que você precisa cuidar é usar sub-categorias de idiomas.
+Usar 'en-GB, fr', por exemplo, não faz o que a maioria das pessoas 
+esperam (se elas não tiverem lido a especificação do HTTP). Um servidor
+que receve uma requesição para um documento com idioma preferencial de
+'en-GB, fr' e quando ambas as versões 'en' e 'fr' existem ele irá 
+enviar a em francês. Ele só irá servir a versão em inglês antes da
+em francês se houver uma versão do arquivo com 'en-gb' como extensão
+de idioma. Assim, você deve configurar seu navegador para enviar
+'en-GB', en,fr' ou simplesmente 'en, fr'. Isso funciona do outro 
+jeito, porém, por exemplo, um servidor pode retornar en-us quando
+en é solicitado.
+
+<p><strong>Nós recomendamos fortemente que você não adicione extensões de
+países a um idioma a menos que tenha boas razão</strong>. Se você adicionar,
+assegure-se de que você também inclua o idioma sem a extensão.
+
+<P>Para maiores informações sobre configurar o idioma preferido, veja
+<a href="http://httpd.apache.org/docs/content-negotiation.html">a documentação
+do Apache sobre negociação de conteúdo</a>.
+
+<h3><a name="cache">Uma Nota Sobre Servidores Web com Cache (também conhecidos
+como Proxies)</a></h3>
+
+<p>Muitas pessoas roteiam solicitações de web através de um cache. Ele é
+essencialmente um servidor web que não tem conteúdo próprio. Ele se situa
+entre os usuários e os servidores web reais. O cache pega as solicitações
+para páginas, pega a página e faz uma cópia local. Isso pode realmente
+diminuir o tráfico da rede quando muitos usuários solicitam a mesma página.
+(Essa técnica é também conhecida como proxy.)
+
+<p>Isso é umagrande idéia na maior parte do tempo, mas falha quando o
+cache é bugado. Em particular, muitos caches não entendem negociação de
+conteúdo. Isso resulta em caches de uma página em uma língua e o servimento
+dela, mesmo se uma língua diferente for solicitada depois. A única solução
+é atualizar ou substituir o software de cache.
+
+<p>Historicamente, as pessoas apenas usavam um cache quando configuravam
+seus navegadores para usar um. Não é mais o caso. Seu ISP pode estar
+redirecionando todas as solicitações HTTP através de um cache. Se o 
+cache não lida com negociação de conteúdo apropriadamente, então os
+usuários podem receber páginas no idioma errado. (Essa técnica é também
+conhecida como proxy transparente.)
