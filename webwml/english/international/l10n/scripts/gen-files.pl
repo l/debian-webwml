@@ -109,7 +109,7 @@ sub get_stats_po {
         foreach $lang (@po_langs) {
                 next unless defined $incl{uc $lang};
                 open (GEN, "> $opt_l/po/gen/$section-$lang.inc")
-                        || die "Unable to write into $section-$lang.inc";
+                        || die "Unable to write into $opt_l/po/gen/$section-$lang.inc";
                 print GEN $incl{uc $lang};
                 close (GEN);
         }
@@ -117,12 +117,12 @@ sub get_stats_po {
                 next unless defined $excl{uc $lang};
                 $excl{uc $lang} =~ s/, $//s;
                 open (GEN, "> $opt_l/po/gen/$section-$lang.exc")
-                        || die "Unable to write into $section-$lang.exc";
+                        || die "Unable to write into $opt_l/po/gen/$section-$lang.exc";
                 print GEN "<p>\n".$excl{uc $lang}."\n";
                 close (GEN);
         }
         open (GEN, "> $opt_l/po/gen/$section.exc")
-                || die "Unable to write into $section.exc";
+                || die "Unable to write into $opt_l/po/gen/$section.exc";
         print GEN "<ul>\n".$none."</ul>\n" if $none ne '';
         close (GEN);
 }
@@ -139,7 +139,7 @@ sub process_po {
         get_stats_po('non-free', \@nonfree);
 
         open (GEN, "> $opt_l/po/gen/rank.inc")
-                || die "Unable to write into po/gen/rank.inc";
+                || die "Unable to write into $opt_l/po/gen/rank.inc";
         print GEN "<dl>\n";
         foreach my $lang (sort {$score{uc $b} <=> $score{uc $a}} @po_langs) {
                 print GEN "<dt><a href=\"$lang\">$lang</a> ".$score{uc $lang}."\n";
@@ -204,21 +204,21 @@ sub get_stats_templates {
         }
         foreach $lang (@td_langs) {
                 next unless defined $incl{uc $lang};
-                open (GEN, "> gen/$section-$lang.inc")
-                        || die "Unable to write into $section-$lang.inc";
+                open (GEN, "> $opt_l/templates/gen/$section-$lang.inc")
+                        || die "Unable to write into $opt_l/templates/gen/$section-$lang.inc";
                 print GEN $incl{uc $lang};
                 close (GEN);
         }
         foreach $lang (@td_langs) {
                 next unless defined $excl{uc $lang};
                 $excl{uc $lang} =~ s/, $//s;
-                open (GEN, "> gen/$section-$lang.exc")
-                        || die "Unable to write into $section-$lang.exc";
+                open (GEN, "> $opt_l/templates/gen/$section-$lang.exc")
+                        || die "Unable to write into $opt_l/templates/gen/$section-$lang.exc";
                 print GEN "<p>\n".$excl{uc $lang}."</p>\n";
                 close (GEN);
         }
-        open (GEN, "> gen/$section.exc")
-                || die "Unable to write into $section.exc";
+        open (GEN, "> $opt_l/templates/gen/$section.exc")
+                || die "Unable to write into $opt_l/templates/gen/$section.exc";
         print GEN "<ul>\n".$none."</ul>\n" if $none ne '';
         close (GEN);
 }
@@ -235,7 +235,7 @@ sub process_templates {
         get_stats_templates('non-free', \@nonfree);
 
         open (GEN, "> $opt_l/templates/gen/rank.inc")
-                || die "Unable to write into templates/gen/rank.inc";
+                || die "Unable to write into $opt_l/templates/gen/rank.inc";
         print GEN "<dl>\n";
         foreach my $lang (sort {$score{uc $b} <=> $score{uc $a}} @td_langs) {
                 print GEN "<dt><a href=\"$lang\">$lang</a> ".$score{uc $lang}."\n";
@@ -278,7 +278,7 @@ sub process_langs {
         return unless $store;
 
         open (GEN, "> $opt_l/data/langs")
-                || die "Unable to write into data/langs";
+                || die "Unable to write into $opt_l/data/langs";
         foreach my $material (sort keys %$langs) {
                 print GEN "$material: ";
                 print GEN join(" ", sort keys %{$langs->{$material}});
@@ -320,7 +320,7 @@ sub get_color {
 }
 
 open (GEN, "> $opt_l/date.gen")
-        || die "Unable to write into date.gen";
+        || die "Unable to write into $opt_l/date.gen";
 print GEN <<"EOT";
 #  File automatically generated.  Do not edit!
 
