@@ -1,5 +1,5 @@
 #use wml::debian::cdimage title="Télécharger des images de cédérom Debian avec jigdo" BARETITLE=true
-#use wml::debian::translation-check translation="1.15" maintainer="Willy Picard"
+#use wml::debian::translation-check translation="1.18" maintainer="Willy Picard"
 
 <p>Jigsaw Download (NDT&nbsp;: «&nbsp;téléchargement puzzle&nbsp;»),
 ou en raccourci <a href="http://atterer.net/jigdo/">jigdo</a>,
@@ -12,7 +12,7 @@ des téléchargement n'est pas encore terminée.</p>
 direct&nbsp;?</strong> Parce qu'il est plus rapide&nbsp;! Pour des raisons
 diverses, il y a beaucoup moins de miroirs pour les images de cédérom
 que pour l'archive «&nbsp;normale&nbsp;» de Debian. De ce fait, si vous
-télechargez à partir d'un miroir d'images de cédérom, ce miroir sera
+téléchargez à partir d'un miroir d'images de cédérom, ce miroir sera
 non seulement plus éloigné de vous, mais également très chargé, en particulier
 après la publication d'une nouvelle version.</p>
 
@@ -30,8 +30,16 @@ l'emplacement du fichier «&nbsp;<tt>.jigdo</tt>&nbsp;» à utiliser.</p>
 <ul>
 
   <li>Les fichiers jigdo officiels pour la <a
-  href="http://cdimage.debian.org/~atterer/jigdo/">dernière version
-  «&nbsp;stable&nbsp;» sur cédérom&nbsp;;</a></li>
+  href="http://us.cdimage.debian.org/jigdo-area/current/jigdo/">dernière
+  version «&nbsp;stable&nbsp;» sur cédérom</a> (USA)&nbsp;;</li>
+
+  <li>Les fichiers jigdo officiels pour la <a
+  href="http://non-us.cdimage.debian.org/jigdo-area/current/jigdo/">dernière
+  version «&nbsp;stable&nbsp;» sur cédérom</a> (Europe) --&nbsp;<em>jidgo-lite
+  télécharge par défaut le fichier <tt>.template</tt> à partir des
+  USA même si vous utilisez cette adresse. Pour éviter cela, veuillez
+  télécharger manuellement le fichier <tt>.template</tt> dans le répertoire
+  courant avant de lancer jigdo-lite</em>&nbsp;;</li>
 
   <li>Les fichiers jigdo non officiels pour la <a
   href="ftp://ftp.fsn.hu/pub/CDROM-Images/debian-unofficial/woody/jigdo/">\
@@ -64,14 +72,16 @@ l'emplacement du fichier «&nbsp;<tt>.jigdo</tt>&nbsp;» à utiliser.</p>
 </ul>
 
 <p><strong>Quelles sont les étapes nécessaires au téléchargement d'une
-image avec jigdo&nbsp;?</strong> Si vous utilisez&nbsp;:</p>
+image avec jigdo&nbsp;?</strong>
 
 <ul>
 
-  <li>Téléchargez un paquet contenant <tt>jigdo-file</tt>. jigdo-file est
+  <li>Téléchargez un paquet contenant <tt>jigdo-lite</tt>. jigdo-lite est
   disponible sous divers formats à partir de la <a
-  href="http://atterer.net/jigdo/">page principale de jigdo</a>. Le paquet
-  contient également le script <tt>jigdo-lite</tt>&nbsp;;</li>
+  href="http://atterer.net/jigdo/">page principale de jigdo</a>.
+   <br><strong>Utilisateurs de Debian, veuillez mettre à jour jigdo et utiliser
+   une version au moins égale à 0.6.8</strong> -&nbsp;la version de Debian woody n'est
+   pas suffisante pour télécharger les dernières images&nbsp;!</li>
 
   <li>Exécutez le script <tt>jigdo-lite</tt>. Il vous demande l'URL du fichier
   «&nbsp;<tt>.jigdo</tt>&nbsp;» à utiliser. (Vous pouvez également préciser cet
@@ -87,10 +97,6 @@ image avec jigdo&nbsp;?</strong> Si vous utilisez&nbsp;:</p>
   originelle.</li>
 
 </ul>
-
-<p>Si vous êtes un utilisateur de Windows, veuillez consulter la page <a
-href="http://cdimage.debian.org/~costar/jigdo/">jigdo-easy</a> pour la marche
-à suivre concernant le téléchargement des images de cédérom Debian.</p>
 
 <p>Lorsque vous avez téléchargé les images et que vous les avez gravées sur
 un cédérom, veuillez jeter un coup d'½il aux <a
@@ -111,17 +117,30 @@ souhaitant aider sont toujours les bienvenus&nbsp;!</p>
 
 <hr>
 
-<p><strong>Comment faire pour que jigdo utilise mon mandataire (« proxy »)&nbsp;?</strong></p>
+<p><strong>Comment faire pour que jigdo utilise mon mandataire («&nbsp;proxy&nbsp;»)&nbsp;?</strong></p>
 
-<p>Quelque soit le mandataire utilisé, son adresse doit être précisée dans
-les variables d'environnement <tt>http_proxy</tt> et/ou <tt>ftp_proxy</tt>.
-Sous Linux, la meilleure manière de définir ces variables est d'ajouter
-au fichier <tt>.bashrc</tt> dans votre répertoire principal des lignes du type
-<tt>export&nbsp;http_proxy=http://myproxy:8088/</tt>.
-Lorsque vous utilisez jigdo-easy sous Windows, la solution la plus simple
-consiste à ajouter des lignes similaires au début du script 
-<tt>jigdo-easy.sh</tt>.</p>
+<p>Ouvrez le fichier <tt>~/.jigdo-lite</tt> (ou
+<tt>jigdo-lite-settings.txt</tt> pour la version Windows) dans un
+éditeur de texte et trouvez la ligne commençant par
+«&nbsp;wgetOpts&nbsp;». Les options suivantes peuvent être
+ajoutées à cette ligne&nbsp;:</p>
 
+<p><tt>-e ftp_proxy=http://<i>LOCAL-PROXY</i>:<i>PORT</i>/</tt>
+<br><tt>-e http_proxy=http://<i>LOCAL-PROXY</i>:<i>PORT</i>/</tt>
+<br><tt>--proxy-user=<i>UTILISATEUR</i></tt>
+<br><tt>--proxy-passwd=<i>MOT DE PASSE</i></tt></p>
+
+<p>Veuillez bien évidemment utiliser les valeurs correspondantes à votre
+mandataire. Les deux dernières options ne sont nécessaires que si votre
+mandataire impose une identification par mot de passe. Ces options
+doivent être ajoutées à la fin de la ligne commençant par 
+«&nbsp;wgetOpts&nbsp;» <em>avant</em> le caractère <tt>'</tt> terminant
+la ligne. Toutes les options doivent être sur une seule ligne.</p>
+
+<p>Sous Linux, vous pouvez également utiliser les variables d'environnement
+<tt>ftp_proxy</tt> et <tt>http_proxy</tt> en les définissant par exemple
+dans le fichier <tt>/etc/environment</tt> ou
+<tt>~/.bashrc</tt>.</p>
 
 <p><strong>Aargh&nbsp;! Le script a terminé son exécution par une erreur 
 -&nbsp;ai-je téléchargé tous ces MB en vain&nbsp;?!</strong></p>
@@ -174,7 +193,7 @@ ce cas&nbsp;:</p>
   de la version testing si votre téléchargement erroné était également un
   instantané de la version testing). Pour cela, entrez tout d'abord la
   commande suivant en tant que root dans le répertoire contenant le
-  fichier erroné&nbsp; <tt>mkdir&nbsp;mnt;
+  fichier erroné&nbsp;<tt>mkdir&nbsp;mnt;
   mount&nbsp;-t&nbsp;iso9660&nbsp;-o&nbsp;loop&nbsp;*.tmp&nbsp;mnt</tt>. 
   Démarrez ensuite un nouveau téléchargement à partir d'un autre
   répertoire, et entrez le chemin d'accès au répertoire <tt>mnt</tt>
