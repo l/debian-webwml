@@ -12,7 +12,7 @@ use Local::Cvsinfo;
 use Webwml::TransCheck;
 use Webwml::Langs;
 
-our ($opt_h, $opt_v, @opt_l, @opt_s);
+our ($opt_h, $opt_v, $opt_n, $opt_p, @opt_l, @opt_s);
 
 sub usage {
         print <<'EOT';
@@ -20,6 +20,8 @@ Usage: smart_change.pl [options] origfile
 Options:
   -h, --help         display this message
   -v, --verbose      run verbosely
+  -n, --no-bump      do not bump translation-check headers
+  -p, --previous     get previous CVS revision
   -l, --lang=STRING  process this language (may be used more than once)
   -s, --substitute=REGEXP
                      Perl regexp applied to source files
@@ -31,6 +33,8 @@ EOT
 if (not Getopt::Long::GetOptions(qw(
                 h|help
                 v|verbose
+                n|no-bump
+                p|previous
                 l|lang=s@
                 s|substitute=s@
 ))) {
@@ -67,6 +71,9 @@ my $cvs = Local::Cvsinfo->new();
 $cvs->options(matchfile => [ $file ]);
 $cvs->readinfo($path);
 my $origrev = $cvs->revision($argfile) || "1.0";
+if ($opt_p) {
+        $origrev =~ s/(\d+)$/($1 - 1)/e;
+}
 verbose("Original revision: $origrev");
 
 my $nextrev = $origrev;
@@ -89,7 +96,7 @@ foreach my $lang (@opt_l) {
         open (TRANS, "< $transfile");
         while (<TRANS>) {
                 $origtext .= $_;
-                if (m/^#use wml::debian::translation-check/ &&
+                if (m/^#use wml::debian::translation-check/ && !$opt_n &&
                     ($langrev eq $origrev || $langrev eq $nextrev)) {
                         #   Also check for $nextrev in case this script
                         #   is run several times
