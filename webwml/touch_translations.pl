@@ -35,7 +35,7 @@
 	"fi" => "finnish",
 	"fr" => "french",
 	"de" => "german",
-	"el" => "hellas",
+	"el" => "greek",
 	"hu" => "hungarian",
 	"it" => "italian",
 	"ja" => "japanese",
