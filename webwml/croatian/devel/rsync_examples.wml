@@ -1,4 +1,7 @@
-#use wml::debian::template title="Primjer upotrebe rsynca"
+#use wml::debian::template title="Primjer upotrebe rsynca, i kako podesiti ssh bez lozinki" NOHEADER=yes
+#use wml::debian::translation-check translation="1.4"
+
+<H3>Primjer upotrebe rsynca</H3>
 
 <P>Slijedi primjer koji æe mirrorati i WWW i FTP site. Morat æete
 promijeniti ime stroja i direktorije u pitanju ovisno o svojoj situaciji.
@@ -11,15 +14,13 @@ raditi pri sljedeæem pokretanju.
 
 <blockquote>
 <pre>
-#!/bin/bash
-set -e
+\#!/bin/sh -e
 
 lockfile -r 1 rsync.master.lock || exit 23
 
-rsync -avz -e ssh --exclude .glbuild --delete &lt;stroj&gt;:/web/debian.org/ debian.org
-rsync -avz -e ssh --delete &lt;stroj&gt;:/web/debian.org-local/ debian.org-local
+rsync -avz -e ssh --exclude sponsor.* --delete &lt;stroj&gt;:/web/debian.org/ debian.org
 
-echo ZAVR©IO S OSVJE®AVANJEM WWW-a. SADA PRELAZIM NA FTP.
+echo Zavr¹eno je osvje¾avanje WWW mirrora. Sada prelazimo na FTP mirror...
 
 rsync -avz --delete -e ssh &lt;stroj&gt;:/debian debian
 
@@ -27,18 +28,27 @@ rm -f rsync.master.lock
 </pre>
 </blockquote>
 
-<H3>Kako podesiti ssh da vas ne pita lozinku:</H3>
+<p>Gornja skripta æe vas pitati lozinku osim ako ne podesite ssh na naèin
+opisan dolje.
 
-Gornja skripta æe vas pitati lozinku osim ako ne podesite ssh na stanovit
-naèin. Prvo, kada koristite ssh-keygen, samo pritisnite return kada vas
-bude tra¾io lozinku [1]. Dalje, dodajte sadr¾aj datoteke ~/.ssh/identity.pub
-u ~/.ssh/authorized_keys na sustavu s kojeg mirrorate (ta datoteka mora
-imati dozvole 600).
-Tako biste trebali moæi koristiti ssh za logiranje na mirrorani sustav
+<H3><a name="paswordlessssh">Kako podesiti ssh da vas ne pita lozinku</a>:</H3>
+
+<p>Mo¾ete napraviti RSA kljuè za prepoznavanje kako bi se mogli ulogirati na
+udaljeno mjesto s va¹eg korisnièkog raèuna, bez potrebe da upisujete
+lozinku.
+
+<p>Primijetite da jednom kad ovo podesite, ako neki uljez provali u va¹
+korisnièki raèun/sustav, omoguæen mu je slobodan pristup sustavu kojeg
+mirrorate, takoðer! Zbog toga se ovo <strong>nikad</strong> ne bi smjelo
+raditi kao root.
+
+<ul>
+  <li>Pokrenite <code>ssh-keygen</code> na va¹em stroju, i samo pritisnite
+      enter kada vas bude pitao lozinku.
+  <li>Dalje, dodajte sadr¾aj datoteke <code>~/.ssh/identity.pub</code> s
+      va¹eg stroja u <code>~/.ssh/authorized_keys</code> na sustavu s kojeg
+      mirrorate (ta datoteka mora imati dozvole 600).
+</ul>
+
+<p>Tako biste trebali moæi koristiti ssh za logiranje na mirrorani sustav
 bez pitanja o lozinci.
-
-<P>
-[1] Primijetite da pode¹avanje ssh-a sa praznom lozinkom svakom uljezu koji
-provali u va¹ sustav omoguæava slobodan pristup sustavu kojeg mirrorate.
-Zato se to nikad ne bi smjelo raditi kao root.
-
