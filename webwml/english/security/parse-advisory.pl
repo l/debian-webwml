@@ -66,6 +66,11 @@ foreach $l (<ADV>) {
     $desc = $2;
     $desc .= ' vulnerabilities' if $desc =~ /(several|multiple)\s*$/;
   }
+  if ($l =~ /^(Debian Bug)\s*: (.+)/i) {
+      for $id (split (/,? /, $2)) {
+	  push @dbids, "Bug#".$id;
+      }
+  }
   if ($l =~ /^(CVE (names?|ids?|references?)?|CERT advisor(y|ies))\s*: (.+)/i) {
     push @dbids, join (" ", split (/,? /, $4));
   }
