@@ -66,15 +66,15 @@ sub printrefs {
 }
 
 sub parsefile {
-	my ($file) = @_ ;
-	print STDERR "Parsing DSA file $file\n" if $opt_v;
+	my ($file,$filename) = @_ ;
 # The filename gives us the DSA we are parsing
-	if ( $file =~ /dsa\-(\d+)/ || $file =~ /(\d+\w+)/ ) {
+	if ( $filename =~ /dsa\-(\d+)/ || $filename =~ /(\d+\w+)/ ) {
 		$dsa=$1;
 	} else {
 		print STDERR "File $file does not look like a proper DSA, not checking\n" if $opt_v;
 		return 1;
 	}
+	print STDERR "Parsing DSA $dsa from file $file\n" if $opt_v;
 
 	open (DATAFILE , $file) || die ("Cannot read $file: $!");
 	while ($line=<DATAFILE>) {
@@ -105,7 +105,7 @@ sub parsedirs {
 			parsedirs ( "${directory}/${file}", $postfix, $depth - 1 );
 		} 
 		if ( -r "${directory}/${file}" && $file =~ /$postfix/ && $file !~ /^[\.\#]/ ) {
-			parsefile($directory."/".$file);
+			parsefile($directory."/".$file,$file);
 		}
 	} # of the while
 	closedir $dir;
