@@ -576,7 +576,7 @@ sub full_listing {
 				print ", ".join(", ", @{ $mirror{$site}{'aliases'} });
 			}
 			print "\n";
-			die "undefined type for $mirror{$site}!\n" unless defined $mirror{$site}{'type'};
+			die "undefined type for $site!\n" unless defined $mirror{$site}{'type'};
 			print "Type: $mirror{$site}{'type'}\n";
 			foreach ( sort keys %{ $mirror{$site}{method} } ) {
 				my $display = $_;
