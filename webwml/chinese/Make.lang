@@ -90,19 +90,9 @@ $(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
 ifndef NOGENERICDEP
 %.zh-cn.html %.zh-hk.html %.zh-tw.html: %.wml \
 		$(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
-		$(TOCN) $(TOHK) $(TOTW) $(ZHTEMPLATE) $(HTMLDEP) \
+		$(TOCN) $(TOHK) $(TOTW) $(ZHTEMPLATE) $(GETTEXTDEP) \
 		$(COMMONPICS_ZH)
 	$(WML) $(<F)
-#	# *.imgdot-1x1-transp.gif are evil!  Get rid of them!
-#	# Must set nullglob or else the following fails - foka, June 2000
-	@shopt -s nullglob; \
-	for i in *.imgdot-1x1-transp.gif; do \
-	    rm -f $$i; \
-	    j=`basename $$i .imgdot-1x1-transp.gif` ; \
-	    for k in $$j.$(LANGUAGE)-??.html.tmp; do \
-		perl -pi -e "s|$$j\\.(?=imgdot-1x1-transp\\.gif)|$(WMLBASE)/Pics/|g" $$k; \
-	    done; \
-	done
 	@echo -n " * Converting: [zh_CN.GB2312], "
 	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
 	@rm -f $*.zh-cn.html.tmp

@@ -11,6 +11,11 @@ TEMPLDIR := $(ENGLISHDIR)/template/debian
 RELHTMLBASE := ../../www
 HTMLDIR = $(WMLBASE)/$(RELHTMLBASE)/$(CUR_DIR)
 
+LOCALEDIR := $(WMLBASE)/../locale/$(LANGUAGE)/LC_MESSAGES
+ifneq "$(LANGUAGE)" "en"
+GETTEXTDEP := $(LOCALEDIR)/templates.mo
+endif
+
 LANGUAGECAP = $(shell echo $(LANGUAGE) | tr "a-z" "A-Z")
 WMLOPTIONS := -q -D CUR_YEAR=$(CUR_YEAR)
 WMLOUTFILE = $(@F)
@@ -79,16 +84,16 @@ endif
 ifndef NOGENERICDEP
 ifeq "$(findstring /CD,$(CURDIR))" ""
 %.$(LANGUAGE).html : %.wml $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
-  $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml $(HTMLDEP)
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml $(GETTEXTDEP)
 	$(WML) $(<F)
 else
 ifeq "$(findstring /CD/vendors,$(CURDIR))" ""
 %.$(LANGUAGE).html : %.wml $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
-  $(TEMPLDIR)/cdimage.wml $(HTMLDEP)
+  $(TEMPLDIR)/cdimage.wml $(GETTEXTDEP)
 	$(WML) $(<F)
 else
 %.$(LANGUAGE).html : %.wml $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
-  $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml $(HTMLDEP)
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml $(GETTEXTDEP)
 	$(WML) $(<F)
 endif
 endif
