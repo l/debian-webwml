@@ -48,11 +48,14 @@ $translations = {
 #	'old_translators'	=> [],
 #},
 
-# ########################################################################################
+# By default
+#	'url'	=> 'http://www.debian.org/doc/manuals/$key/',
+
+# ##############################################################################
 #
 # GPL Books
 #
-# ########################################################################################
+# ##############################################################################
 
 'book-gtiau' => {
 	'status'		=> 0,
@@ -61,83 +64,11 @@ $translations = {
 	'url'			=> 'http://www.newriders.com/debian/html/noframes/',
 },
 
-# ########################################################################################
+# ##############################################################################
 #
 # Debian Documentation Project
 #
-# ########################################################################################
-
-'project-history' => {
-	'status'		=> 1,
-	'type'			=> 'DDP',
-	'name'			=> 'The Debian Project History',
-	'author'		=> 'Will Lowe',
-	'revision'		=> '1.1.1',
-	'lines'			=> 336,
-},
-
-'faq' => {
-	'status'		=> 0,
-	'type'			=> 'DDP',
-	'name'			=> 'Debian GNU/Linux FAQ',
-	'author'		=> 'Josip Rodin',
-	'package'		=> 'doc-debian',
-	'url'			=> 'http://www.debian.org/doc/manuals/debian-faq/',
-	'cvs_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/faq/?cvsroot=debian-doc',
-	'source_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/faq/debian-faq.sgml?cvsroot=debian-doc',
-},
-
-'constitution' => {
-	'status'		=> 0,
-	'type'			=> 'DDP',
-	'name'			=> 'Debian Constitution',
-	'url'			=> '#',
-	'cvs_url'		=> '?',
-	'package'		=> 'doc-debian',
-	'lines'			=> 603,
-},
-
-'bug-log-access' => {
-	'status'		=> 0,
-	'type'			=> 'DDP',
-	'name'			=> 'Accessing bug reports in the tracking system logs',
-	'url'			=> '#',
-	'cvs_url'		=> '?',
-	'package'		=> 'doc-debian',
-	'lines'			=> 24,
-},
-'mailing-lists' => {
-	'status'		=> 0,
-	'type'			=> 'DDP',
-	'name'			=> 'Introduction to the Debian mailing lists',
-	'url'			=> '#',
-	'cvs_url'		=> '?',
-	'package'		=> 'doc-debian',
-	'lines'			=> 906,
-},
-'bug-reporting' => {
-	'status'		=> 0,
-	'type'			=> 'DDP',
-	'name'			=> 'How to report a bug in Debian',
-	'url'			=> '#',
-	'cvs_url'		=> '?',
-	'package'		=> 'doc-debian',
-	'lines'			=> 202,
-},
-'source-unpack' => {
-	'status'		=> 0,
-	'type'			=> 'DDP',
-	'name'			=> 'How to unpack a Debian source package',
-	'url'			=> '#',
-	'cvs_url'		=> '?',
-	'package'		=> 'doc-debian',
-	'lines'			=> 33,
-},
-
-#
-# Debian-user FAQ-O-MATIC ?
-# Linux Magazines ?
-#
+# ##############################################################################
 
 'book-suggestions' => {
 	'status'		=> 1,
@@ -145,13 +76,23 @@ $translations = {
 	'name'			=> 'Debian GNU/Linux Book Suggestions',
 },
 
-'meta' => {
-	'status'		=> 1,
+'debian-bugs' => {
+	'status'		=> 0,
 	'type'			=> 'DDP',
-	'name'			=> 'Debian META Manual',
-	'author'		=> 'Ardo van Rangelrooij',
-	'lines'			=> 398,
-	'lines'			=> 407
+	'name'			=> 'Debian\'s Bug Tracking System',
+	'revision'		=> '0.2',
+	'package'		=> 'doc-debian',
+	'lines'			=> 900,
+	'url'			=> 'http://www.debian.org/doc/manuals/debian-bugs/',
+},
+
+'developers-reference' => {
+	'type'			=> 'DDP',
+	'name'			=> 'Debian Developer\'s Reference',
+	'revision'		=> '2.5.0',
+	'lines'			=> 1951,
+	'package'		=> 'developers-reference',
+	'url'			=> 'http://www.debian.org/doc/developers-reference/',
 },
 
 'dictionary' => {
@@ -161,26 +102,47 @@ $translations = {
 	'lines'			=> 346,
 },
 
-'tutorial' => {
+'faq' => {
 	'status'		=> 1,
 	'type'			=> 'DDP',
-	'name'			=> 'Debian Tutorial',
-	'revision'		=> '2.1',
-	'lines'			=>  6131,
-	'source_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/tutorial/debian-tutorial.sgml?cvsroot=debian-doc',
+	'name'			=> 'Debian GNU/Linux FAQ',
+	'author'		=> 'Josip Rodin',
+	'package'		=> 'doc-debian',
+	'url'			=> 'http://www.debian.org/doc/manuals/debian-faq/',
+	'cvs_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/faq/?cvsroot=debian-doc',
+	'source_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/faq/debian-faq.sgml?cvsroot=debian-doc',
 },
 
-'user' => {
-	'status'		=> 1,
+'intro-i18n' => {
 	'type'			=> 'DDP',
-	'name'			=> 'Debian User Reference Manual',
+	'name'			=> 'Introduction to internationalization',
+	'status'		=> 1,
+	'lines'			=> 1974,
 },
 
-'system-administrator' => {
+'java-faq' => {
+	'type'			=> 'DDP',
+	'name'			=> 'Debian Java FAQ',
+	'status'		=> 1,
+	'author'		=> 'Javier Fernández-Sanguino Peña',
+	'lines'			=> 1034,
+	'url'			=> 'http://www.debian.org/doc/manuals/debian-java-faq/',
+},
+
+'maint-guide' => {
+	'type'			=> 'DDP',
+	'name'			=> 'Debian New Maintainer\'s Guide',
+	'lines'			=> 1448,
+	'package'		=> 'maint-guide',
+	'url'			=> 'http://www.debian.org/doc/maint-guide/',
+},
+
+'meta' => {
 	'status'		=> 1,
 	'type'			=> 'DDP',
-	'name'			=> 'Debian GNU/Linux System Administrator\'s Manual',
-	'lines'			=> 2322,
+	'name'			=> 'Debian META Manual',
+	'author'		=> 'Ardo van Rangelrooij',
+	'lines'			=> 398,
 },
 
 'network-administrator' => {
@@ -190,36 +152,74 @@ $translations = {
 	'lines'			=> 2086,
 },
 
+'newbie-doc' => {
+	'status'		=> 0,
+	'type'			=> 'DDP',
+	'name'			=> 'Documentation for new users',
+	'lines'			=> 3803,
+	'url'                   => '?',
+},
+
+'programmer' => {
+	'type'			=> 'DDP',
+	'name'			=> 'Debian Packaging HOWTO',
+	'status'		=> 1,
+	'lines'			=> 368,
+},
+
+'project-history' => {
+	'status'		=> 1,
+	'type'			=> 'DDP',
+	'name'			=> 'The Debian Project History',
+	'author'		=> 'Will Lowe',
+	'revision'		=> '1.2.0',
+	'lines'			=> 624,
+},
+
+'securing-debian-howto' => {
+	'status'		=> 1,
+	'type'			=> 'DDP',
+	'name'			=> 'Securing Debian HOWTO',
+	'revision'		=> '1.5',
+	'lines'			=> 900,
+	'source_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/securing-howto/securing-debian-howto.sgml?cvsroot=debian-doc',
+	'cvs_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/securing-howto/?cvsroot=debian-doc',
+},
+
+'sgml-howto' => {
+	'status'		=> 1,
+	'type'			=> 'DDP',
+	'name'			=> 'The Debian SGML/XML HOWTO',
+},
+
+'system-administrator' => {
+	'status'		=> 1,
+	'type'			=> 'DDP',
+	'name'			=> 'Debian GNU/Linux System Administrator\'s Manual',
+	'lines'			=> 2322,
+},
+
+'tutorial' => {
+	'status'		=> 1,
+	'type'			=> 'DDP',
+	'name'			=> 'Debian Tutorial',
+	'revision'		=> '2.1',
+	'lines'			=>  6131,
+	'source_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/tutorial/debian-tutorial.sgml?cvsroot=debian-doc',
+	'cvs_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/tutorial/?cvsroot=debian-doc',
+},
+
+'user' => {
+	'status'		=> 1,
+	'type'			=> 'DDP',
+	'name'			=> 'Debian User Reference Manual',
+},
+
+# ##############################################################################
 #
-# Debian Tips?
+# Major Documents
 #
-
-'install' => {
-	'type'			=> 'boot',
-	'name'			=> 'Debian Installation Manual',
-	'revision'		=> '2.1',
-	'url'			=> 'http://www.debian.org/releases/slink/i386/install.en.html',
-	'cvs_url'		=> 'http://cvs.debian.org/boot-floppies/documentation/install.sgml?cvsroot=debian-boot',
-	'package'		=> 'boot-floppies',
-},
-
-'dselect-beginner' => {
-	'type'			=> 'boot',
-	'name'			=> 'Dselect beginner guide',
-	'revision'		=> '2.1',
-	'url'			=> 'http://www.debian.org/releases/slink/i386/dselect-beginner.en.html',
-	'cvs_url'		=> 'http://cvs.debian.org/boot-floppies/documentation/dselect-beginner.sgml?cvsroot=debian-boot',
-	'package'		=> 'boot-floppies',
-},
-
-'release-notes' => {
-	'type'			=> 'boot',
-	'name'			=> 'Release Notes',
-	'revision'		=> '2.1',
-	'url'			=> 'http://www.debian.org/releases/slink/i386/release-notes/',
-	'cvs_url'		=> 'http://cvs.debian.org/boot-floppies/documentation/release-notes.sgml?cvsroot=debian-boot',
-	'package'		=> 'boot-floppies',
-},
+# ##############################################################################
 
 'policy' => {
 	'type'			=> 'DDP',
@@ -240,19 +240,37 @@ $translations = {
 	'package'		=> 'debian-policy',
 },
 
-'developers-reference' => {
-	'type'			=> 'DDP',
-	'name'			=> 'Debian Developer\'s Reference',
-	'revision'		=> '2.5.0',
-	'lines'			=> 1951,
-	'package'		=> 'developers-reference',
+# ##############################################################################
+#
+# Debian Installation Documentation
+#
+# ##############################################################################
+
+'install' => {
+	'type'			=> 'boot',
+	'name'			=> 'Debian Installation Manual',
+	'revision'		=> '2.2',
+	'url'			=> 'http://www.debian.org/releases/potato/i386/install.en.html',
+	'cvs_url'		=> 'http://cvs.debian.org/boot-floppies/documentation/install.sgml?cvsroot=debian-boot',
+	'package'		=> 'boot-floppies',
 },
 
-'maint-guide' => {
-	'type'			=> 'DDP',
-	'name'			=> 'Debian New Maintainer\'s Guide',
-	'lines'			=> 1448,
-	'package'		=> 'maint-guide',
+'release-notes' => {
+	'type'			=> 'boot',
+	'name'			=> 'Release Notes',
+	'revision'		=> '2.2',
+	'url'			=> 'http://www.debian.org/releases/potato/i386/release-notes/',
+	'cvs_url'		=> 'http://cvs.debian.org/boot-floppies/documentation/release-notes.sgml?cvsroot=debian-boot',
+	'package'		=> 'boot-floppies',
+},
+
+'dselect-beginner' => {
+	'type'			=> 'boot',
+	'name'			=> 'Dselect beginner guide',
+	'revision'		=> '2.2',
+	'url'			=> 'http://www.debian.org/releases/potato/i386/dselect-beginner.en.html',
+	'cvs_url'		=> 'http://cvs.debian.org/boot-floppies/documentation/dselect-beginner.sgml?cvsroot=debian-boot',
+	'package'		=> 'boot-floppies',
 },
 
 'internals' => {
@@ -286,71 +304,13 @@ $translations = {
 	'status'		=> 7,
 },
 
-'programmer' => {
-	'type'			=> 'DDP',
-	'name'			=> 'Debian Packaging HOWTO',
-	'status'		=> 1,
-	'lines'			=> 368,
-},
-
-'intro-i18n' => {
-	'type'			=> 'DDP',
-	'name'			=> 'Introduction to internationalization',
-	'status'		=> 1,
-	'lines'			=> 1974,
-},
 
 
-'sgml-howto' => {
-	'type'			=> 'DDP',
-	'name'			=> 'The Debian SGML/XML HOWTO',
-	'status'		=> 1,
-},
-
-
-# How to get started on a new SGML-based manual
-# Debian Documentation Guidelines
-
-'markup' => {
-	'type'			=> 'DDP',
-	'name'			=> 'Debiandoc-SGML Markup Manual',
-	'revision'		=> '',
-	'package'		=> 'debiandoc-sgml',
-	'url'                   => 'http://www.debian.org/~elphick/ddp/manuals.html/debiandoc-sgml-doc/',
-},
-
-'debiandoc-startup' => {
-	'status'		=> 0,
-        'type'                  => 'DDP',
-        'name'                  => 'Debiandoc Starup',
-        'revision'              => '',
-        'url'                   => '?',
-},
-
-
-
-# ########################################################################################
+# ##############################################################################
 #
 # Misc
 #
-# ########################################################################################
-
-'newbie-doc' => {
-	'status'		=> 0,
-	'type'			=> 'DDP',
-	'name'			=> 'Documentation for new users',
-	'lines'			=> 3803,
-	'url'                   => '?',
-},
-
-'debian-bugs' => {
-	'status'		=> 0,
-	'type'			=> 'DDP',
-	'name'			=> 'Debian\'s Bug Tracking System',
-	'revision'		=> '0.2',
-	'package'		=> 'doc-debian',
-	'lines'			=> 900,
-},
+# ##############################################################################
 
 'libc5-libc6-Mini-HOWTO' => {
 	'type'			=> '',
@@ -361,13 +321,74 @@ $translations = {
 	'package'		=> '',
 }
 
-# ########################################################################################
-#
-# Web
-#
-# ########################################################################################
+# How to get started on a new SGML-based manual
+# Debian Documentation Guidelines
 
-# This should be automatically generated
+'markup' => {
+	'type'			=> 'DDP',
+	'name'			=> 'Debiandoc-SGML Markup Manual',
+	'revision'		=> '',
+	'package'		=> 'debiandoc-sgml-doc',
+	'url'                   => '?',
+},
+
+'debiandoc-startup' => {
+	'status'		=> 0,
+        'type'                  => 'DDP',
+        'name'                  => 'Debiandoc Starup',
+        'revision'              => '',
+        'url'                   => '?',
+},
+
+'constitution' => {
+	'status'		=> 0,
+	'type'			=> 'DDP',
+	'name'			=> 'Debian Constitution',
+	'url'			=> '#',
+	'cvs_url'		=> '?',
+	'package'		=> 'doc-debian',
+	'lines'			=> 603,
+},
+
+'bug-log-access' => {
+	'status'		=> 0,
+	'type'			=> 'DDP',
+	'name'			=> 'Accessing bug reports in the tracking system logs',
+	'url'			=> '#',
+	'cvs_url'		=> '?',
+	'package'		=> 'doc-debian',
+	'lines'			=> 24,
+},
+
+'mailing-lists' => {
+	'status'		=> 0,
+	'type'			=> 'DDP',
+	'name'			=> 'Introduction to the Debian mailing lists',
+	'url'			=> '#',
+	'cvs_url'		=> '?',
+	'package'		=> 'doc-debian',
+	'lines'			=> 906,
+},
+
+'bug-reporting' => {
+	'status'		=> 0,
+	'type'			=> 'DDP',
+	'name'			=> 'How to report a bug in Debian',
+	'url'			=> '#',
+	'cvs_url'		=> '?',
+	'package'		=> 'doc-debian',
+	'lines'			=> 202,
+},
+
+'source-unpack' => {
+	'status'		=> 0,
+	'type'			=> 'DDP',
+	'name'			=> 'How to unpack a Debian source package',
+	'url'			=> '#',
+	'cvs_url'		=> '?',
+	'package'		=> 'doc-debian',
+	'lines'			=> 33,
+},
 
 };
 

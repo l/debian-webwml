@@ -59,6 +59,7 @@ $translations_status = {
 	'translation_maintainer'=> ['Patrice Karatchentzeff <p.karatchentzeff@free.fr>' ],
 	'translation_name'	=> 'Debian GNU/Linux: guide d\'installation et d\'utilisation',
 	'translation_dev_url'   => 'http://cvs.debian.org/webwml/french/international/french/translations/debian-guide_fr-1.0.sgml?cvsroot=webwml',
+	'translation_package'	=> 'doc-debian-fr',
 	'old_translators'	=> [	'Martin Quinson <mquinson@zeppelin-cb.de>',
 					'Fabien Ninoles <fabien@Nightbird.TZoNE.ORG>'],
 },
@@ -78,6 +79,7 @@ $translations_status = {
 	'translation_url'	=> 'http://www.teaser.fr/~pbatailler/charte.html/',
 	'translation_dev_url'	=> 'http://www.teaser.fr/~pbatailler/',
 	'translation_source_url'	=> 'http://cvs.debian.org/webwml/french/international/french/translations/policy.fr.sgml?cvsroot=webwml',
+	'translation_package'	=> 'doc-debian-fr',
 	'old_translators'	=> ['Serge Stinckwich <serge@info.unicaen.fr>'],
 },
 
@@ -87,10 +89,11 @@ $translations_status = {
 	'base_revision'		=> '1.2',
 	'translation_name'	=> 'Histoire du projet Debian',
 	'translation_maintainer'=> ['Patrice Karatchentzeff <p.karatchentzeff@free.fr>'],
+	'translation_package'	=> 'doc-debian-fr',
 },
 
 'faq' => {
-	'status'		=> 1,
+	'status'		=> 3,
 	'since'			=> '28/05/2001',
 	'translation_name'	=> 'FAQ Debian GNU/Linux',
 	'old_translators'	=> [
@@ -99,7 +102,7 @@ $translations_status = {
 },
 
 'tutorial' => {
-	'status'		=> 1,
+	'status'		=> 7,
 	'since'			=> '28/05/2001',
 	'translation_name'	=> 'Tutorial Debian',
 	'old_translators'	=> ['Eric Jacoboni <jaco@titine.fr.eu.org>',
@@ -137,6 +140,7 @@ $translations_status = {
 	'translation_name'	=> 'Notes de publication',
 	'old_translators'       => ['mmenal <mmenal@ifrance.com>'],
 	'translation_package'	=> 'boot-floppies',
+	'translation_url'	=> 'http://www.debian.org/releases/stable/i386/release-notes/index.fr.html',
 },
 
 'maint-guide' => {
@@ -145,7 +149,7 @@ $translations_status = {
 	'translation_name'	=> 'Guide du nouveau responsable Debian',
 	'translation_maintainer'=> ['Frederic Dumont <frederic.dumont@freeworld.be>'],
 	'translation_url'	=> 'http://www.debian.org/doc/manuals/maint-guide/index.fr.html',
-	'translation_cvs_url'   => 'http://cvs.debian.org/ddp/manuals.sgml/maint-guide/maint-guide.fr.sgml?cvsroot=debian-doc',
+	'translation_cvs_url'   => 'http://cvs.debian.org/ddp/manuals.sgml/maint-guide/?cvsroot=debian-doc',
 	'last_translated'	=> '02/07/1998',
 },
 
@@ -184,7 +188,7 @@ $translations_status = {
 					'David Cure <cure@cnam.fr>', 
 					'Christian Jacolot <jacolot@ubolib.univ-brest.fr>',
 				],
-	'translation_package'	=> '',
+	'translation_package'	=> 'doc-debian-fr',
 },
 
 'developers-reference' => {
@@ -193,7 +197,7 @@ $translations_status = {
 	'translation_name'	=> 'Manuel de référence du développeur Debian',
 	'translation_maintainer'=> ['Antoine Hulin <antoine@origan.fdn.fr>'],
 	'base_revision'		=> '',
-	'translation_package'	=> 'developers-reference',
+	'translation_package'	=> 'doc-debian-fr',
 	'translation_url'	=> 'http://www.debian.org/doc/manuals/developers-reference/index.fr.html',
 	'old_translators'	=> ['Alain Meessen <ameessen@ulb.ac.be>',
 	                            'Herve Floch <Herve.Floch@linux.eu.org>',
@@ -205,6 +209,7 @@ $translations_status = {
 	'since'			=> 'O8/O1/2001',
 	'translation_name'	=> 'Manuel des mécanismes internes de dpkg',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'translation_package'	=> 'doc-debian-fr',
 	'base_revision'		=> '1.5',
 },
 
@@ -242,12 +247,12 @@ $translations_status = {
 	'translation_name'	=> 'libc5-libc6-Mini-HOWTO',
 	'translation_sub_name'	=> '',
 	'translation_maintainer'=> ['Philippe CAILLAUD <phil@penguin.infini.fr>'],
-	'translation_package'	=> '',
+	'translation_package'	=> 'doc-debian-fr',
 	'last_translated'	=> '10/08/1998',
 },
 };
 
-# Merges the $translation and the $translation_status database
+# Merges the $translation and the $translation_status databases
 foreach my $key (keys %{ $translations }) {
         print STDERR "(merge_db) Merging key $key\n" if $debug;
         foreach my $current (keys  %{ $translations_status->{$key} } ) {
