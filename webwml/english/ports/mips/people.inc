@@ -1,4 +1,4 @@
-<p><ul>
+<ul>
 <li> Ryan Murray, <email rmurray@debian.org><br>
 <li> Guido Guenther, <email guido.guenther@gmx.net><br>
 <li> Christoph Martin, <email martin@uni-mainz.de><br>
