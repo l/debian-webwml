@@ -6,7 +6,7 @@ $cur_lang = "$(CUR_LANG)";
 
 open(IN,"../data/langs")||open(IN,"$(ENGLISHDIR)/international/l10n/data/langs")||die ("Can't read the list of languages.\nThe makefile is still faulty.\nRun make data/langs manually and report the bug");
 
-print "<ul>\n";
+print "<blockquote>\n";
 foreach $line (<IN>){
     $line =~ m,^([^:]*):(.*)$,;
     foreach (split(/ /,$2)) {
@@ -40,7 +40,8 @@ foreach $lang (sort keys %{$mylangs{all}}) {
     }
     print "</tr>\n";
 }
-print "</table>";
+print "</table>\n";
+
+print "</blockquote>\n";
 
 :>
-
