@@ -677,7 +677,7 @@ sub process_dep_list {
 	    my $given_dep_strip = $given_dep;
 	    my ( $dep_op, $dep_ver );
 	    {
-		$given_dep_strip =~ s/\s*\((=|>=|<=|<<|>>)\s*(.*)\)\s*//o;
+		$given_dep_strip =~ s/\s*\(\s*(=|>=|<=|<<|>>)\s*(.*)\)\s*//o;
 		( $dep_op, $dep_ver ) = ( $1, $2 );
 	    }
 	    $given_dep_strip =~ s/\s*\[.*\]\s*//o;
