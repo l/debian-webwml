@@ -25,8 +25,9 @@ use Date::Parse;
 getopts('hv');
 if ( $opt_h ) {
 # Help!
-	print "usage: $0 [-vp] [-b|c|m]\n";
+	print "usage: $0 [-vh]\n";
 	print "\t-v\tverbose mode\n";
+	print "\t-h\tthis help\n";
 	exit 0;
 }
 
