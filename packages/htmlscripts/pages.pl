@@ -550,7 +550,7 @@ sub write_pages {
 		or do { warn "W: could not set locale, using default\n" unless $opts->{quiet};
 			setlocale( LC_ALL, get_locale() ) 
 			    or do {
-				# Don't skip this so the pages can benefit from DDTP at least
+				# Do not skip this so the pages can benefit from DDTP at least
 			    	warn "W: could not set locale, using C\n" unless $opts->{quiet};
 				setlocale( LC_ALL, "C" );
 			};
