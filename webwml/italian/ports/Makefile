@@ -1,4 +1,4 @@
-BASE=../..
+BASE=..
 CUR_DIR=ports/sparc
 
 HTMLDIR=$(BASE)/../../debian.org/$(CUR_DIR)
