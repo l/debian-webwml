@@ -4,7 +4,7 @@
 # the translation-check header to it. It also will create the
 # destination directory if necessary, and copy the Makefile from the source.
 
-# Written in 2000-2002 by peter karlsson <peter@softwolves.pp.se>
+# Written in 2000-2002 by peter karlsson <peterk@debian.org>
 # © Copyright 2000-2002 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
@@ -72,43 +72,30 @@ unless ($revision)
 	$revision = '1.1';
 }
 
-# Copy the file and insert the revision number
-$insertedrevision = 0;
+# Insert the revision number
+print DST qq'#use wml::debian::translation-check translation="$revision" mindelta="1"\n';
 
+# Copy the file
 while (<SRC>)
 {
 	next if /\$Id/;
 
-	if (/^#use wml::debian::security/)
-	{
-		print DST $_;
-		print DST qq'#use wml::debian::translation-check translation="$revision" mindelta="1"\n';
-		$insertedrevision = 1;
-	}
-	else
-	{
-		s/<h4>Source:/<h4>Källkod:/;
-        s/<h4>Source archives:/<h4>Källkodsarkiv:/;
-        s/ architecture:</</;
-		s/<h4>Architech?ture-independent component:/<h4>Arkitekturoberoende arkiv:/;
-		s/We recommend that you upgrade your (.*) package immediately/Vi rekommenderar att ni uppgraderar era $1-paket omedelbart/;
-		s/We recommend that you upgrade your (.*) packages immediately/Vi rekommenderar att ni uppgraderar ert $1-paket omedelbart/;
-		s/We recommend that you upgrade your (.*) packages/Vi rekommenderar att ni uppgraderar era $1-paket/;
-		s/We recommend that you upgrade your (.*) package/Vi rekommenderar att ni uppgraderar ert $1-paket/;
-		s/buffer overflows?/buffertspill/;
-		s/format string vulnerability/formatsträngssårbarhet/;
-		s/This problem has been fixed/Detta problem har rättats/;
-		s/>local root exploit</>lokal rootattack</;
-		s/>remote root exploit</>fjärr-rootattack</;
-		s/>symlink attack</>attack mot symboliska länkar</;
-		s/>remote exploit</>fjärrattack</;
-		print DST $_;
-	}
-}
-
-unless ($insertedrevision)
-{
-	print DST qq'#use wml::debian::translation-check translation="$revision" mindelta="1"\n';
+	s/<h4>Source:/<h4>Källkod:/;
+	s/<h4>Source archives:/<h4>Källkodsarkiv:/;
+	s/ architecture:</</;
+	s/<h4>Architech?ture-independent component:/<h4>Arkitekturoberoende arkiv:/;
+	s/We recommend that you upgrade your (.*) package immediately/Vi rekommenderar att ni uppgraderar era $1-paket omedelbart/;
+	s/We recommend that you upgrade your (.*) packages immediately/Vi rekommenderar att ni uppgraderar ert $1-paket omedelbart/;
+	s/We recommend that you upgrade your (.*) packages/Vi rekommenderar att ni uppgraderar era $1-paket/;
+	s/We recommend that you upgrade your (.*) package/Vi rekommenderar att ni uppgraderar ert $1-paket/;
+	s/buffer overflows?/buffertspill/;
+	s/format string vulnerability/formatsträngssårbarhet/;
+	s/This problem has been fixed/Detta problem har rättats/;
+	s/>local root exploit</>lokal rootattack</;
+	s/>remote root exploit</>fjärr-rootattack</;
+	s/>symlink attack</>attack mot symboliska länkar</;
+	s/>remote exploit</>fjärrattack</;
+	print DST $_;
 }
 
 close SRC;
