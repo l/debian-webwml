@@ -1,19 +1,16 @@
-#use wml::debian::template title="Pode¹avanje FTP mirrora"
+#use wml::debian::template title="Pode¹avanje mirrora Debian arhive"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.27"
+#include "$(ENGLISHDIR)/releases/woody/release.data"
+#use wml::debian::translation-check translation="1.29"
 
-<p>Mirroranje je jednako i za neslu¾bene i za <a href="official">slu¾bene</a>
-poslu¾itelje.
+<toc-display/>
 
 <p>Jednom pode¹en, mirror treba biti <a href="submit">registriran kod
 Debiana</a> da bismo ga ukljuèili u <a href="list">popis
 mirrora</a>. Predavanje informacija mo¾ete uèiniti preko
 <a href="submit">jednostavnog web formulara</a>.
 
-<p>Svi problemi i pitanja se trebaju uputiti na
-<a href="mailto:mirrors@debian.org">mirrors@debian.org</a>.</p>
-
-<toc-display/>
+<p>Sve probleme i pitanja mo¾ete poslati na <email mirrors@debian.org>.</p>
 
 <toc-add-entry name="wherefrom">Odakle mirrorati</toc-add-entry>
 
@@ -26,22 +23,54 @@ nekoliko poslu¾itelja koji se osvje¾avaju s internog Debian poslu¾itelja.</p>
 mirrora</a> koji imaju '<kbd>Type: Push-Primary</kbd>' oznaku bi trebao
 biti dobar izbor za mirroranje.</p>
 
-<p>Za vas nema praktièno nikakve razlike izmeðu mirroranja s tog
-poslu¾itelja i mirroranja s nekog drugog <em>Push-Primary</em> mirrora.
-S druge strane, ako puno ljudi koristi ftp.debian.org (a na¾alost, tako je),
-ovo bez veze tro¹i donirani <em>bandwidth</em>.</p>
+<p>Nema prave razlike izmeðu razlièitih <em>Push-Primary</em> mirror
+poslu¾itelja ¹to se tièe samog <i>mirroranja</i>. S druge strane, ako puno
+ljudi koristi ftp.debian.org (a na¾alost, tako je), ovo nepotrebno tro¹i
+donirani <i>bandwidth</i>.</p>
 
-<toc-add-entry name="methods">Metode mirroranja</toc-add-entry>
+<toc-add-entry name="how">Kako mirrorati</toc-add-entry>
 
-<p>Preporuèena metoda mirroranja jest rsync-om.
+<p>Preporuèena metoda mirroranja jest
+<a href="http://packages.debian.org/stable/net/rsync.html">rsync</a>.</p>
 
-<p>NB: iako <kbd>wget</kbd> dobro radi za mirroranje manjih poslu¾itelja,
-nije podesiv kao rsync ili 'mirror' pa ga ne preporuèujemo za ovaj posao.
+<p>Pa¾nja: iako <kbd>wget</kbd> dobro radi za mirroranje manjih
+poslu¾itelja, nije podesiv kao rsync pa ga ne preporuèujemo za ovaj
+posao.</p>
 
 <h3>Anonimni rsync</h3>
 
 <p>Mo¾ete koristiti <a href="anonftpsync">ovu skriptu</a> za mirroranje
 arhive. Pratite upute u skripti kako biste podesili mirroranje.
+
+<p>Evo nekoliko savjeta za one koji vi¹e vole razlièite naèine:</p>
+
+<ul>
+  <li>Pokreæite rsync s makar ovim opcijama: <kbd>--recursive --times
+      --links --hard-links --delete</kbd>.
+
+  <li>Ako imate dodatnog prostora na disku, koristite i opciju
+      <kbd>--delete-after</kbd> kako bi izbjegli neke od privremenih
+      problema pri osvje¾avanju mirrora.
+
+  <li>Ako nemate dovoljno prostora na disku za mirroranje svega, koristite
+      <kbd>--exclude</kbd> opciju kako bi iskljuèili dijelove arhive iz
+      mirroranja. Ovo obièno ukljuèuje razne arhitekture koje mo¾da ne
+      ¾elite; naprimjer, ovo bi iskljuèilo <em>sve</em> arhitekture:
+      <br>
+<: 
+print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
+  foreach (sort keys %arches);
+:>
+      Provjerite i <a href="#partial">poglavlje o parcijalnom mirroranju</a>.
+
+  <li>Nakon ¹to rsync zavr¹i s mirroranjem, dodajte datoteku sa vremenskim
+      peèatom u <code>project/trace/</code> poddirektorij Debian mirrora,
+      nazvanu prema imenu poslu¾itelja. To znaèi da trebate pokretati
+      <kbd>date -u &gt; .../debian/project/trace/<var>va¹.poslu¾itelj</var></kbd>
+      nakon ¹to se zavr¹i dnevni rsync; te
+      <kbd>date -u &gt; .../debian-non-US/project/trace/<var>va¹.poslu¾itelj</var></kbd>
+      nakon ¹to se zavr¹i dnevni non-US rsync, ako mirrorate debian-non-US.
+</ul>
 
 <h3>Rsync s identifikacijom, sa &quot;push&quot; mirrora</h3>
 
@@ -99,12 +128,16 @@ korisnicima.</p>
 
 <p>Glavna arhiva se obnavlja svaka 24 sata.
 
-<p>Ako va¹ poslu¾itelj biva mirroran push metodom, ne trebate brinuti o
-ovome. Ako ne, a server koji odaberete za mirroranje koristi rsync, tada
-biste trebali pogledati u <kbd>project/trace/</kbd> u Debian arhivi izvornog
-mirrora, datoteku s imenom tog poslu¾itelja. Datoteka bi trebala sadr¾avati
-vrijeme kada je mirroranje zadnji put zavr¹ilo. Na to vrijeme dodajte recimo
-1 sat, i tada mirrorajte.
+<p>Mirrori se obièno poèinju obnavljati oko 00:00 UTC, ali ovo nije fiksno
+vrijeme. Preporuèujemo mirroranje svaki dan, nekoliko sati poslije toga;
+zapravo, trebate provjeriti da li poslu¾itelj s kojeg mirrorate ostavlja
+peèat vremena u svom <kbd>project/trace/</kbd> poddirektoriju. Datoteka
+treba biti imenovana kao i poslu¾itelj, i sadr¾avati vrijeme zavr¹etka
+njihovog zadnjeg pokretanja procesa mirroranja. Dodajte par sati na to
+vrijeme (za svaku sigurnost) i onda mirrorajte.
+
+<p>Primijetite da ako va¹ poslu¾itelj biva potaknut <i>push</i> mehanizmom,
+ne trebate brinuti o ovome.</p>
 
 <p>Najlak¹i naèin da automatski pokrenete mirror svakog dana jest kori¹tenje
 cron-a. Pogledajte <kbd>man crontab</kbd> za detalje.
