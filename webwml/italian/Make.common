@@ -12,8 +12,8 @@ TEMPLDIR=$(WMLBASE)/$(RELTEMPLDIR)
 ENGLISHSRCDIR=$(WMLBASE)/../english
 
 WMLFILES := $(wildcard *.wml)
-HTMLFILES := $(patsubst %.wml,%.html.$(LANGUAGE),$(WMLFILES))
-HTMLDESTFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
+HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
+HTMLDESTFILES := $(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE).html,$(WMLFILES))
 JPGSOURCE := $(wildcard *.jpg)
 JPGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(JPGSOURCE))
 GIFSOURCE := $(wildcard *.gif)
@@ -38,7 +38,7 @@ install:: $(HTMLDESTFILES) $(IMGDESTFILES)
 	done
 
 clean::
-	-rm -f *.html.$(LANGUAGE)
+	-rm -f *.$(LANGUAGE).html
 	@for i in $(SUBS) ''; do \
 		if [ -d "$$i" ]; then \
 			$(MAKE) -C $$i clean; \
@@ -46,14 +46,14 @@ clean::
 	done
 
 cleandest::
-	-rm -f $(HTMLDIR)/*.html.$(LANGUAGE)
+	-rm -f $(HTMLDIR)/*.$(LANGUAGE).html
 	@for i in $(SUBS) ''; do \
 		if [ -d "$$i" ]; then \
 			$(MAKE) -C $$i clean; \
 		fi ; \
 	done
 
-$(HTMLDIR)/%.html.$(LANGUAGE): %.html.$(LANGUAGE)
+$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
 	@echo copying $(@F) to $(HTMLDIR)
 	-@cp $(@F) $(HTMLDIR)
 ifeq ($(LANGUAGE),en)
