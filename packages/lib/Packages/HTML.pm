@@ -15,8 +15,8 @@ our @ISA = qw( Exporter );
 our @EXPORT = qw( header trailer file_changed time_stamp
 		  read_md5_hash write_md5_hash );
 
-our $HOME = "http://www.debian.org/";
-our $CN_HELP_URL = "${HOME}intro/cn";
+our $HOME = "http://www.debian.org";
+our $CN_HELP_URL = "${HOME}/intro/cn";
 
 my %img_trans = ( pt_BR => "pt", pt_PT => "pt", sv_SE => "sv" );
 
@@ -144,7 +144,7 @@ sub trailer {
 	"</small>".
 	"<p><small>". gettext( "Last Modified: " ). "LAST_MODIFIED_DATE".
 	"<br>".
-	sprintf( gettext( "Copyright &copy; 1997-2003 <a href=\"http://www.spi-inc.org\">SPI</a>; See <a href=\"%s/license\">license terms</a>." ), $HOME )."<br>".
+	sprintf( gettext( "Copyright &copy; 1997-2003 <a href=\"http://www.spi-inc.org\">SPI</a>; See <a href=\"%s/license\">license terms</a>." ), "$HOME/" )."<br>".
 	gettext( "Debian is a registered trademark of Software in the Public Interest, Inc." ).
 	"</small>".
 	"</body>\n</html>";
