@@ -61,7 +61,7 @@ sub processFile {
                 }
                 push (@msgids, $msgid);
                 if (defined ($messages->{$msgid})) {
-                        print STDERR "Warning: msgid multiple defined:\n\t".
+                        print STDERR "wmlxgettext: Warning: msgid multiple defined:\n\t".
                                 $msgid."\n";
                 } else {
                         $messages->{$msgid} = [];
