@@ -15,6 +15,8 @@ webmirror.$(LANGUAGE).html: webmirror.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHSRCDIR)/mirror/webmirrors.data
 official_sponsors.$(LANGUAGE).html: official_sponsors.wml \
   $(TEMPLDIR)/template.wml $(ENGLISHDIR)/mirror/official_sponsors.list
+ftpmirror.$(LANGUAGE).html: ftpmirror.wml $(TEMPLDIR)/template.wml \
+  $(TEMPLDIR)/toc.wml
 
 # there only needs to be one version of the following so
 # the non-english directories shouldn't try to install them
