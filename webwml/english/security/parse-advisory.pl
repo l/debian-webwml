@@ -109,12 +109,12 @@ $files =~ s/(- )?-+\n//g;
 $files =~ s/\n\n$/\n/s;
 
 $files =~ s/      (Size\/)?MD5 checksum: (\s*\d+ )?\w{32}\n//sg;
-$files =~ s/  Source archives:/<dt><source>/sg;
-$files =~ s/  Architecture.independent \w+:\n/<dt><arch-indep>\n/sg;
+$files =~ s/  Source archives:/<dt><source\/>/sg;
+$files =~ s/  Architecture.independent \w+:\n/<dt><arch-indep\/>\n/sg;
 $files =~ s/HP Precision architecture/HPPA architecture/gi;
 $files =~ s/  (\w+) architecture \(([\w -()\/]+)\)/<dt>$arch{$1}:/sg;
 $files =~ s/  ([\w -\/]+) architecture:/<dt>$1:/sg;
-$files =~ s/    (http:\S+)/  <dd><fileurl $1>/sg;
+$files =~ s/    (http:\S+)/  <dd><fileurl $1 \/>/sg;
 $files =~ s,[\n]?Debian (GNU/Linux )?(\S+) (alias |\()([a-z]+)\)?,</dl>\n\n<h3>Debian GNU/Linux $2 ($4)</h3>\n\n<dl>,sg;
 
 my @f = ();
@@ -150,7 +150,7 @@ print DATA "<define-tag isvulnerable>yes</define-tag>\n";
 print DATA "<define-tag fixed>yes</define-tag>\n";
 print DATA "\n#use wml::debian::security\n\n";
 print DATA "$files\n\n</dl>\n";
-print DATA "\n<p><md5sums $mlURL>\n";
+print DATA "\n<p><md5sums $mlURL /></p>\n";
 close DATA;
 
 open WML, ">$wml";
