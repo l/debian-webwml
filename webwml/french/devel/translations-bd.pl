@@ -47,6 +47,22 @@ $translations = {
 
 # ########################################################################################
 #
+# Livres GPL
+#
+# ########################################################################################
+
+'book-gtiau' => {
+	'type'			=> 'none',
+	'name'			=> 'Debian GNU/Linux: Guide to Installation and Usage',
+	'url'			=> 'http://www.newriders.com/debian/html/noframes/',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '13/09/1999',
+	'translation_name'	=> 'Debian GNU/Linux: guide d\'installation et d\'utilisation',
+	'translation_maintainer'=> ['Fabien Ninoles <fabien@Nightbird.TZoNE.ORG>'],
+},
+
+# ########################################################################################
+#
 # Debian Documentation Project
 #
 # ########################################################################################
@@ -72,7 +88,7 @@ $translations = {
 	'translation_name'	=> 'FAQ Debian GNU/Linux',
 	'translation_maintainer'=> ['Philippe Caillaud <phil@penguin.infini.fr>'],
 	'ping'			=> '28/11/1998',
-	'base_revision'	=> '',
+	'base_revision'		=> '',
 	'translation_package'	=> '',
 	'old_translators'	=> ['Vincent Renardias <vincent@waw.com>'],
 },
@@ -113,7 +129,7 @@ $translations = {
 	'translation_sub_name'	=> '',
 	'translation_maintainer'=> ['Eric Jacoboni <jaco@titine.fr.eu.org>'],
 	'ping'			=> '',
-	'base_revision'	=> '',
+	'base_revision'		=> '',
 	'translation_package'	=> '',
 	'old_translators'	=> ['Loïc Martin <lomartin@dejanews.com>'],
 },
@@ -139,7 +155,7 @@ $translations = {
 	'since'			=> '16/03/1999',
 	'translation_name'	=> 'Manuel d\'installation de Debian',
 	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
-	'base_revision'	=> '2.1',
+	'base_revision'		=> '2.1',
 	'translation_url'	=> 'http://www.debian.org/~clebars/docs-2.1/install.html/install.html',
 	'translation_cvs_url'   => 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/Attic/install.fr.sgml',
 	'translation_package'	=> 'boot-floppies',
@@ -157,7 +173,7 @@ $translations = {
 	'since'			=> '22/03/1999',
 	'translation_name'	=> 'Guide de dselect pour les débutants',
 	'translation_maintainer'=> ['Laurent Picouleau <lcrpic@a2points.com>'],
-	'base_revision'	=> '2.1',
+	'base_revision'		=> '2.1',
 	'translation_url'	=> 'http://www.debian.org/~clebars/docs-2.1/dselect-beginner.html/dselect-beginner.html',
 	'translation_cvs_url'   => 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/Attic/dselect-beginner.fr.sgml',
 	'translation_package'	=> 'boot-floppies',
@@ -175,7 +191,7 @@ $translations = {
 	'since'			=> '05/06/1999',
 	'translation_name'	=> 'Notes sur la version',
 	'translation_maintainer'=> ['mmenal <mmenal@francemel.com>'],
-	'base_revision'	=> '',
+	'base_revision'		=> '',
 	'translation_url'	=> '',
 	'translation_cvs_url'   => '',
 	'translation_package'	=> 'boot-floppies',
@@ -210,7 +226,7 @@ $translations = {
 	'since'			=> '6/04/1999',
 	'translation_name'	=> 'Manuel des normes Debian',
 	'translation_maintainer'=> ['David Rocher <davroc@hplb.hpl.hp.com>'],
-	'base_revision'	=> '2.5.0.0',
+	'base_revision'		=> '2.5.0.0',
 	'translation_url'	=> 'http://savage.iut-blagnac.fr/projets/developpement/policy.fr/policy.fr.html/',
 	'translation_dev_url'   => 'http://savage.iut-blagnac.fr/projets/developpement/policy.fr/policy.fr.sgml',
 	'translation_package'	=> '',
@@ -233,7 +249,7 @@ $translations = {
 					'David Cure <cure@cnam.fr>', 
 					'Christian Jacolot <jacolot@ubolib.univ-brest.fr>',
 				],
-	'base_revision'	=> '',
+	'base_revision'		=> '',
 	'translation_package'	=> '',
 },
 
@@ -247,7 +263,7 @@ $translations = {
 	'since'			=> '01/07/1998',
 	'translation_name'	=> 'Guide de Référence du Développeur Debian',
 	'translation_maintainer'=> ['Laurent Picouleau <lcrpic@a2points.com>'],
-	'base_revision'	=> '0.1',
+	'base_revision'		=> '0.1',
 	'translation_package'	=> '',
 	'old_translators'	=> ['Herve Floch <Herve.Floch@linux.eu.org>'],
 },
@@ -275,7 +291,7 @@ $translations = {
 	'since'			=> '01/08/1998',
 	'translation_name'	=> '',
 	'translation_sub_name'	=> '',
-	'base_revision'	=> '',
+	'base_revision'		=> '',
 	'translation_package'	=> '',
 },
 
@@ -303,7 +319,7 @@ $translations = {
 	'since'			=> '25/09/1998',
 	'translation_name'	=> 'Introduction : Créer un paquet Debian',
 	'translation_maintainer'=> ['Frederic Dumont <frederic.dumont@gate71.be>'],
-	'base_revision'	=> '',
+	'base_revision'		=> '',
 	'translation_url'	=> 'http://www.debian.org/~clebars/f2dp/docs/debian_package_intro.html/book1.html',
 	'translation_dev_url'   => 'http://www.debian.org/~clebars/f2dp/docs/debian_package_intro.sgml',
 	'translation_package'	=> '',
@@ -326,7 +342,7 @@ $translations = {
 	'translation_name'	=> 'Manuel de Debiandoc-SGML',
 	'translation_sub_name'	=> '',
 	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
-	'base_revision'	=> '',
+	'base_revision'		=> '',
 	'translation_cvs_url'   => '',
 	'translation_package'	=> 'doc-debian-fr',
 	'last_translated'	=> '',
@@ -363,7 +379,7 @@ $translations = {
 	'translation_name'	=> 'libc5-libc6-Mini-HOWTO',
 	'translation_sub_name'	=> '',
 	'translation_maintainer'		=> ['Philippe CAILLAUD <phil@penguin.infini.fr>'],
-	'base_revision'	=> '',
+	'base_revision'		=> '',
 	'translation_url'	=> 'http://www.debian.org/~clebars/f2dp/docs/libc5-libc6-Mini-HOWTO.fr.html',
 	'translation_dev_url'   => 'http://www.debian.org/~clebars/f2dp/docs/libc5-libc6-Mini-HOWTO.fr.sgml',
 	'translation_package'	=> '',
@@ -585,7 +601,7 @@ $translations = {
 'devel/HOWTO_translate' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '17/05/1999',
+	'since'			=> '06/09/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '17/05/1999',
 },
@@ -701,20 +717,26 @@ $translations = {
 
 'distrib/vendors' => {
 	'type'			=> 'Web',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'à relire',
+	'since'			=> '20/09/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '03/09/1999',
 },
 
 'distrib/cdinfo' => {
 	'type'			=> 'Web',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'à relire',
+	'since'			=> '01/09/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '01/09/1999',
 },
 
 'distrib/books' => {
 	'type'			=> 'Web',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'à relire',
+	'since'			=> '06/09/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '01/09/1999',
 },
 
 'doc/index' => {
@@ -796,7 +818,7 @@ $translations = {
 'international/Finnish' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '13/08/1999',
+	'since'			=> '06/09/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '13/08/1999',
 },
@@ -812,7 +834,7 @@ $translations = {
 'international/German' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '13/08/1999',
+	'since'			=> '06/09/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '13/08/1999',
 },
@@ -836,7 +858,7 @@ $translations = {
 'international/Korean' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '13/08/1999',
+	'since'			=> '20/09/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '13/08/1999',
 },
@@ -852,7 +874,7 @@ $translations = {
 'international/Turkish' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '13/08/1999',
+	'since'			=> '20/09/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '13/08/1999',
 },
@@ -869,16 +891,18 @@ $translations = {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
 	'since'			=> '11/10/1998',
-	'base_revision'	=> '1.3',
+	'base_revision'		=> '1.3',
 	'translation_maintainer'=> ['"Philippe Paillé" <valvert@club-internet.fr>'],
 	'last_translated'	=> '11/10/1998',
 },
 
 'intro/organization' => {
 	'type'			=> 'Web',
-	'status'		=> 'en cours de traduction',
+	'status'		=> 'à relire',
+	'since'			=> '07/10/1999',
+	'base_revision'		=> '1.1',
 	'translation_maintainer'=> ['Marilleau Hugues <marillea@wotan.iie.cnam.fr>'],
-	'since'			=> '28/07/1999',
+	'last_translated'	=> '07/10/1999',
 },
 
 'logos/index' => {
@@ -1012,7 +1036,7 @@ $translations = {
 'Bugs/Access' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '08/08/1999',
+	'since'			=> '20/09/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '08/08/1999',
 },
@@ -1020,7 +1044,7 @@ $translations = {
 'Bugs/Developer' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '08/08/1999',
+	'since'			=> '20/09/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '08/08/1999',
 },
@@ -1028,7 +1052,7 @@ $translations = {
 'Bugs/Reporting' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '08/08/1999',
+	'since'			=> '20/09/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '08/08/1999',
 },
@@ -1036,7 +1060,7 @@ $translations = {
 'Bugs/index' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '02/08/1999',
+	'since'			=> '20/09/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '02/08/1999',
 },
@@ -1044,7 +1068,7 @@ $translations = {
 'Bugs/server-control' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '08/08/1999',
+	'since'			=> '20/09/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '08/08/1999',
 },
@@ -1052,7 +1076,7 @@ $translations = {
 'Bugs/server-refcard' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '08/08/1999',
+	'since'			=> '20/09/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '08/08/1999',
 },
@@ -1060,7 +1084,7 @@ $translations = {
 'Bugs/server-request' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '08/08/1999',
+	'since'			=> '20/09/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '08/08/1999',
 },

@@ -178,7 +178,7 @@ while (($k, $t) = each %$translations) {
 		
 		$t->{'diff'} = '';
 		$t->{'base_revision'} = '';
-		check_file($k, "$root/$from/international/French.wml", $t->{'translation_revision'});
+		check_file($k, "$root/$from/international/French.wml", $t->{'revision'});
 		$t->{'diff'} = "http://www.debian.org/cgi-bin/cvsweb/webwml/webwml/french/$k.wml$t->{$f}".$t->{'diff'} if ($t->{'diff'});
 	}
 }
