@@ -1,0 +1,212 @@
+#use wml::debian::weeklynews::header PAGENAME="Courriel"
+#use wml::debian::translation-check translation="1.3" maintainer="Thomas Huriaux"
+
+<a name="1"></a>
+
+<pre>
+De : Anthony Towns &lt;aj@azure.humbug.org.au&gt;
+Date : Mar. 15 août 2000 07 h 41 ' 42 " +1000
+À : debian-devel-announce@lists.debian.org
+Sujet : Potato est désormais stable
+
+Salut à tous,
+
+Bien, comme certains de vous l'auront remarqué :
+
+  ajt@auric:/org/ftp.debian.org/ftp/dists$ ls -l Debian2.2r0 stable   
+  lrwxrwxrwx    1 troup    debadmin        6 Aug 14 13:06 Debian2.2r0 -&gt; stable
+  lrwxrwxrwx    1 troup    debadmin        6 Aug 14 13:06 stable -&gt; potato
+
+Les images de cédérom et l'archive sont copiées sur des miroirs à peu près
+en même temps que j'écris ce message.
+
+Ainsi, vous pouvez vous attendre à recevoir bientôt l'annonce déjà préparée
+(le « moment officiel de la publication » est prévu à 00 h 00 GMT).
+
+Voici certaines choses qui ne feront pas partie de l'annonce « officielle ».
+Tout d'abord, les remerciements vont à toutes les personnes sans qui
+Potato n'aurait pu franchir ces dernières étapes :
+
+	* Branden Robinson, Ben Collins, Steve Gore, et Mike Renfro pour
+	  avoir cherché et corrigé certains problèmes de X jusqu'à une heure
+	  avant la fin ;
+
+	* Daniel Jacobowitz, pour avoir en quelque sorte transformé la
+	  gestion désordonnée de PowerPC en quelque chose de première
+	  classe, et d'avoir cherché et corrigé des problèmes jusqu'à
+	  55 minutes avant la fin ;
+
+	* Ben Collins et Steve Gore, pour avoir assuré que la gestion
+	  de Sparc dans Potato soit la meilleure possible, et avoir
+	  cherché et corrigé des problèmes jusqu'à 45 minutes avant la
+	  fin ;
+
+	* Martin Schulze, pour avoir éliminé quelques failles de sécurité
+	  vraiment au dernier moment ;
+
+	* Adam Di Carlo et Josip Rodin, pour avoir gardé nos notes de
+	  publications le plus à jour possible ;
+
+	* Phil Hands pour avoir fourni un ensemble de cédéroms complet
+	  et copié sur les miroirs quasiment aussi rapidement que le
+	  temps de dire « mon Dieu, cdimage.debian.org a encore
+	  planté ! » ;
+
+	* James Troup, qui a maintenu en permanence l'archive.
+
+En ne les ajoutant pas, cela doit sembler vraiment injuste à tous ceux
+qui ont aidé pour le développement, les tests, les corrections de bogues,
+les problèmes de documentation et autres, le support, et tout le travail
+réalisé ces derniers mois. Donc, merci à tout le monde !
+</pre>
+<a name="1.1"></a>
+<pre>
+Cela signifie donc que nous pouvons vraiment nous concentrer sur la prochaine
+publication : Woody.
+
+Enfin, après une fête semblable à celle prévue pour l'année après 1999.
+
+Une fois que nous arrivons à Woody, cependant, il y a deux choses qui
+sont particulièrement difficiles à faire. Comme toujours, nous devrions
+d'abord discuter pendant quelques semaines pour fixer nos « objectifs de
+publication » pour Woody, pour définir quelle direction nous voulons
+prendre (et ensuite se lancer et implémenter tout ce qui nous paraît
+justifié). De même, (et c'est ici que vous vous direz que j'ai lu
+trop de livre de gestion récemment [0]), je pense que c'est une bonne
+idée si nous faisons le point des choses qui n'ont pas fonctionné cette
+fois-ci et voir comment nous pouvons le corriger, et quelles choses
+ont été comme il fallait, de manière à les conserver.
+
+Donc, tout d'abord, voici un paquet d'idées des choses qui ont fonctionné
+ou pas (la suite plus technique sera sur debian-devel@lists.debian.org) :
+
+	* les Tasks sont bien, mais les métapaquets task-* le sont moins
+	  quand l'un des paquets inclus a un bogue critique pour la
+	  parution (si on retire le paquet, la totalité du métapaquet
+	  task casse) ;
+
+	* les disquettes de démarrages, les noyaux (et les modules) et
+	  les notes de publications sont très difficiles à être envoyés
+	  et installés ;
+
+	* déterminer quels bogues sont vraiments critiques pour la parution
+	  et corriger la gravité pour pouvoir savoir où nous dépensons
+	  du temps en trop ;
+
+	* arriver à installer les mises à jours de sécurité n'est pas
+	  suffisant, certaines ne sont pas compilées correctement, d'autres
+	  ne sont pas mises dans Incoming pour permettre à dinstall de
+	  les prendre en compte ;
+
+	* tester les mises à jour dans la version gelée n'est pas suffisant,
+	  les mises à jour sont envoyées dans Incoming, attendent un
+	  moment, sont ajoutées à la version gelée, puis nous découvrons
+	  qu'elles ont introduit autant de bogues critiques pour la
+	  parution qu'elles n'en résolvent, et nous répétons cela. La partie
+	  « attendent un moment » est particulièrement insuffisante, mais
+	  sans ça, ce n'est pas vraiment un gel ;
+
+	* les disquettes de démarrage ont eu besoin d'un temps énorme pour
+	  être dans un état utilisable : d'environ novembre 1999 à
+	  juin 2000 ;
+
+	* les scripts de l'équipe debian-cd semblent fonctionner
+	  parfaitement : la « synchronisation minimale avec rsync » pour
+	  mettre à jour les images entre le troisième cycle de tests et
+	  la publication semble fonctionner correctement, et le
+	  cédérom n° 1 non-US séparé me semble être une bonne idée ;
+
+	* les compilateurs automatiques gèrent *vraiment* bien la plupart
+	  des mises à jour. L'équipe en charge de la sécurité semble aussi
+	  avoir parfaitement réussi à obtenir la recompilation des mises
+	  à jour très rapidement sur toutes les architectures quand cela
+	  est nécessaire. Très impressionnant.
+
+Il y a probablement encore beaucoup de bonnes choses, le choix de
+celles ci-dessus a certainement été influencé par ce qu'il y avait de
+mauvais.
+
+En outre, voici comment je comprends les objectifs qui ont déjà commencé
+à être examinés (et qui travaille dessus, et où en parler). Les discussions
+techniques doivent avoir lieu sur debian-devel@lists.debian.org.
+
+	* Nouvelle distribution « de test »
+		Il s'agit du projet (presque terminé) qui nous permettra
+		de tester une distribution en la différant plutôt qu'en la
+		gelant : c'est-à-dire, une nouvelle distribution est insérée
+		entre la stable et l'instable, et elle sera régulièrement
+		et automatiquement mise à jour avec les nouveaux paquets
+		de l'instable quand ils auront été testés et ne contiendront
+		pas de nouveaux bogues critiques pour la parution.
+
+		(Anthony Towns ; debian-devel)
+
+	* Réécriture de dinstall / dépôts de paquets
+		Il y a beaucoup d'intérêt pour la mise à jour de dinstall
+		pour mieux gérer notre archive et les différentes nouvelles
+		idées que nous voulons inclure. Un nouveau format de l'archive
+		et un nouveau processus pour l'entrée des paquets dans
+		l'archive pour qu'il fasse partie de notre distribution
+		sont probablement inclus.
+
+		(Anthony Towns, Jason Gunthorpe, Richard Braakman, parmi
+		 d'autres ; debian-pool)
+		
+	* Intégration de debconf
+		Presque toute l'infrastructure de debconf est déjà écrite,
+		et est déjà utilisée en production avec Potato. Espérons que
+		cela soit fini et étendu pour gérer toutes les entrées et
+		sorties de l'installation.
+
+		(Joey Hess ; debian-devel / config@kitenet.net)
+
+	* Installation automatique
+		Avec l'intégration de debconf, espérons que nous serons
+		capables d'aller un peu plus loin et de gérer les
+		installations non interactives avec Woody.
+
+		(debian-devel / config@kitenet.net)
+
+	* Frontaux à Apt
+		Les remplaçants de dselect comme console-apt, gnome-apt et
+		aptitude devraient probablement devenir des standards.
+
+		(debian-devel)
+
+	* Support de l'IPv6
+		Un objectif rituel est d'avoir une gestion plus complète de
+		l'IPv6. Espérons que nous pourrons obtenir les différents
+		correctifs disponibles à différents endroits inclus dans
+		Woody.
+
+		(debian-ipv6)	
+
+	* Installation modulaire
+		Les disquettes de démarrage sont en train d'être redessinées,
+		de manière à être plus modulaire (et donc ne pas nécessiter
+		cinq images quand vous n'avez besoin que de quelques
+		mégaoctets pour une configuration particulière) et,
+		espérons-le, plus facilement gérables.
+
+		(Joey Hess ; debian-boot)
+
+Cela exclut toutes les améliorations habituelles propres aux paquets, bien
+sûr.
+
+Comme ébauche de guide, et en supposant que Woody est sur la bonne voie,
+nous pensons geler dans environ six mois, donc à la moitié de février
+environ. Veuillez noter que cela nécessitera, parmi d'autres choses, des
+disquettes de démarrage totalement opérationnelles pour toutes les
+architectures que nous publierons.
+
+C'est tout. Amusez-vous bien !
+
+--
+Anthony Towns &lt;ajt@debian.org&gt; (En tant que gestionnaire de publication),
+pour Richard Braakman &lt;dark@debian.org&gt; (gestionnaire de publication
+de Debian)
+
+[0] c'est-à-dire, un.
+</pre>
+
+#use wml::debian::weeklynews::footer translator="Thomas Huriaux"
