@@ -1,6 +1,6 @@
 #use wml::debian::template title="HOWTO traduire les pages Debian"
 
-<!--translation 1.32-->
+<!--translation 1.35-->
 
 <P>Merci d'aider à traduire les pages web Debian. Au lieu d'avoir
 plusieurs sites différents hébergeant des versions spécifiques dans
@@ -40,9 +40,14 @@ pages seront redistribuées à tous les sites web miroirs.
 <li>Portuguais: Eduardo Marcel Macan &lt;thecore@thecore.com.br&gt;
 <li>Chinois: Anthony Wong &lt;ypwong@debian.org&gt;
 <li>Finlandais: Antti-Juhani Kaijanaho &lt;gaia@iki.fi&gt;
-<li>Suédois: peter karlsson &lt;pk@mds.mdh.se&gt;
+<li>Suédois: peter karlsson &lt;peter@softwolves.pp.se&gt;
 <li>Norvégien: Tor Slettnes &lt;tor@slett.net&gt;
 <li>Koréen: Seongtae Yoo &lt;alloying@nownuri.net&gt;
+<li>Turc: Andreas Mueller &lt;amu@tr.debian.net&gt;
+<li>Esperanto: Eduardo Trapani &lt;etrapani@unesco.org.uy&gt;
+<li>Arabe: Shaheen &lt;hchahine@magic.fr&gt;
+<li>Hongrie: NAGY Viktor &lt;chaos@inf.elte.hu&gt;
+<li>Roumain: Aurelian Melinte &lt;amelinte@ALIS.COM&gt;
 </ul>
 Contactez les directement pour être impliqué dans un projet de
 traduction. Envoyez un courrier à <a href="mailto:webmaster@debian.org">webmaster@debian.org</a>
@@ -70,7 +75,7 @@ machine locale, vous devez utiliser
 <pre>
    cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/&lt;lang&gt;
 </pre>
-o &lt;lang&gt; est la langue que vous voulez. Vous allez probablement
+o? &lt;lang&gt; est la langue que vous voulez. Vous allez probablement
 vouloir la version anglaise en plus de la langue sur laquelle vous
 travaillez. Si vous avez seulement besoin d'un sous ensemble des
 pages vous pouvez prendre en "check out" seulement celles dont
@@ -144,7 +149,7 @@ commencer avec un signe '#' en wml.
 <P>A cause de la façon dont les serveurs web sont installés (en utilisant
 une négociation du contenu), vous ne devriez pas avoir à changer
 aucun des liens internes. Ecrivez à debian-www si vous pensez qu'un
-lien est incorrect avant de le modifier. Il y a des fois o vous voudrez
+lien est incorrect avant de le modifier. Il y a des fois o? vous voudrez
 peut être faire une modification dans le contenu que vous traduisez.
 Un exemple est la page support; vous voudrez probablement inclure
 un exemple de souscription à la liste de diffusion spécifique à la
@@ -161,6 +166,41 @@ traduction des pages aussi facile que possible.
 autres langages ne créeront pas de liens à votre page tant qu'elles ne
 sont pas régénérées.
 
+<H3>Maintenir les traductions à jour</H3>
+<P>Comme les pages web ne sont pas statiques, c'est une bonne idée de garder
+une trace de la version de l'original auquel une certaine traduction se réfère,
+et d'utiliser cette information pour trouver quelles pages ont été modifiées
+depuis la dernière traduction. Pour vous aider dans cette tâche, le script
+<code>check_trans.pl</code> est disponible dans le répertoire webwml.
+
+<P>Ce script se base sur le fait que les fichiers wml traduits contiennent
+de l'information sur la version qu'ils traduisent.
+Cette information doit être introduite quelque part dans le document sous la
+forme <code>&lt;!--translation <var>x.x</var>--&gt;</code> où
+<var>x.x</var> est la version de l'original (anglais). Cette chaîne de
+caractères doit être écrite sur sa propre ligne dans le fichier wml,
+préfixée optionnellement par un <code>#</code> (commentaire wml) pour qu'il
+ne soit pas ajouté aux fichiers HTML créés.
+
+<P>Si vous lancez <code>check_trans.pl <var>langue</var></code> (remplacez
+<var>langue</var> par le nom de répertoire qui contient votre
+traduction, comme "suedois") vous récupérerez un compte rendu indiquant
+les pages qui n'ont pas de traduction (indiquées par "<code>Missing
+<var>nomfichier</var></code>") et les pages qui ne sont pas à jour (indiquées
+par "<code>NeedToUpdate <var>nomfichier</var> to version
+<var>x.x</var></code>").
+
+<P>Si vous voulez voir les changements exacts, vous pouvez récupérer les
+différences en lançant <code>check_trans.pl -d <var>langue</var></code>.
+Merci de noter que ceci peut prendre un certain temps car cela peut nécessiter
+plusieurs accès au serveur CVS.
+
+<P>Si vous voulez ignorer les sorties indiquant les pages manquantes 
+(par exemple les pages d'anciennes nouvelles), vous pouvez créer un fichier
+appellé <code>.transignore</code> dans le répertoire où vous voulez supprimer
+les sorties non désirées, qui liste les fichiers que vous n'allez pas
+traduire, avec un nom par ligne.
+ 
 <H3>Ajouter de Nouveaux Répertoires</H3>
 <P>De la prudence est de mise quand on ajoute un nouveau répertoire
 au CVS. Si le nouveau répertoire est inscrit avec la variable SUBS
@@ -169,6 +209,26 @@ répertoire doit aussi contenir un Makefile. Sinon un 'make' générera
 des messages d'erreur. Vous n'avez pas besoin de vous occuper de
 répertoires inexistant inscrits avec une variable SUBS parce que
 make est assez intelligent pour les ignorer.
+
+<H3>Generer des images pour la barre de navigation</H3>
+<P>Ceci devrait être l'une des premières tâches faite de façon à ce qu'une
+fois que vous commencez à générer des pages les liens de la barre de navigation
+seront utilisables par les lecteurs non anglophones. Créez le répertoire Pics
+et copiez y les fichiers suivant depuis webwml/english/Pics: 
+<pre>
+   Makefile
+   makebuttons.sh
+   debbar.pl
+</pre>
+Traduisez les variables dans makebuttons.sh et suivez les instructions de ce
+fichier. Ceci repose sur le logiciel gimp qui connait un développement rapide, 
+c'est pourquoi le script échoue souvent. Envoyez un message à
+debian-www si vous rencontrez des problèmes.
+
+<P>Notez que si l'un des caractères utilisé dans la barre de navigation
+n'appartient pas au jeu de caractères iso8859-1, alors vous devrez soit changer
+de police pour l'une de votre jeu de caractères, soit éditer les images à la
+main.
 
 <H3>Comment le Serveur Sait Il Quel Fichier Servir</H3>
 <P>Vous aurez noté que les liens internes ne se terminent pas par .html.
@@ -314,4 +374,19 @@ Par exemple,
 Ne traduisez aucun autre texte de la page.
 
 </ul>
+
+<P>En ce qui concerne les nouvelles et les rapports concernant les problèmes de
+sécurité vous voudrez peut être traduire uniquement les titres, afin qu'ils
+apparaissent correctement dans les index. Pour faire cela, créez un fichier
+ayant le même nom que le fichier .wml original, mais avec l'extension
+<code>.title</code> à la place. Incluez simplement les marques de définition
+qui sont utilisées dans les index, i.e <em>pagetitle</em> et
+<em>release_date</em> pour les nouvelles, et <em>pagetitle</em>,
+<em>report_date</em> et <em>description</em> pour les rapports de sécurité.
+
+<P>Il n'y a pas besoin de traduire les dates des en-têtes des nouvelles
+ni des rapports de sécurité, elles sont automatiquement converties
+au format préferré du langage en utilisant le fichier <code>ctime.wml</code>
+dans le répertoire <code>english/template/debian</code>.
+ 
 
