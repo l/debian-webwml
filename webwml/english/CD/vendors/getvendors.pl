@@ -187,7 +187,7 @@ while ( @row = $sth->fetchrow_array ) {
             push @archs, "Hurd-<source>";
         }
         $tmpstr = join ' ; ',@archs;
-        print "$tmpstr</TD></TR>\n";
+        print "$tmpstr\n";
 
 
         print "</vendorentry>\n<hr>\n";
