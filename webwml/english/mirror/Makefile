@@ -2,39 +2,41 @@
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
-BASE=..
+WMLBASE=..
 CUR_DIR=mirror
+# list any subdirectories in the following variable. Any directories listed
+# must exist or the make will not work
+SUBS=
 
-HTMLDIR=$(BASE)/../../debian.org/$(CUR_DIR)
-TEMPLDIR=$(BASE)/template/debian
-# Do Not modify the following line
-ENGLISHSRCDIR=$(BASE)/../english
-
-include $(BASE)/Make.lang
+include $(WMLBASE)/Make.lang
+include $(WMLBASE)/Make.common
 
 MFILES := ftpsync ftpsync.conf websync websync.conf \
 	identity.pub.master.ftp identity.pub.master.web \
 	anonftpsync anonwebsync
 MIRROR_FILES := $(patsubst %,$(HTMLDIR)/%,$(MFILES))
 
-all: $(HTMLFILES) $(IMGDEST) $(MIRROR_FILES)
+install:: $(MIRROR_FILES)
 
-include $(BASE)/Make.dep.templ    
-include $(BASE)/Make.dep.generic
+cleandest::
+	-rm -f $(HTMLDEST)/{$(MIRROR_FILES)}
+
+include $(WMLBASE)/Make.dep.templ    
+include $(WMLBASE)/Make.dep.generic
 
 $(HTMLDIR)/ftpsync: ftpsync
-	cp ftpsync $(HTMLDIR)
+	cp -a ftpsync $(HTMLDIR)
 $(HTMLDIR)/ftpsync.conf: ftpsync.conf
-	cp ftpsync.conf $(HTMLDIR)
+	cp -a ftpsync.conf $(HTMLDIR)
 $(HTMLDIR)/websync: websync
-	cp websync $(HTMLDIR)
+	cp -a websync $(HTMLDIR)
 $(HTMLDIR)/websync.conf: websync.conf
-	cp websync.conf $(HTMLDIR)
+	cp -a websync.conf $(HTMLDIR)
 $(HTMLDIR)/identity.pub.master.ftp: identity.pub.master.ftp
-	cp identity.pub.master.ftp $(HTMLDIR)
+	cp -a identity.pub.master.ftp $(HTMLDIR)
 $(HTMLDIR)/identity.pub.master.web: identity.pub.master.web
-	cp identity.pub.master.web $(HTMLDIR)
+	cp -a identity.pub.master.web $(HTMLDIR)
 $(HTMLDIR)/anonftpsync: anonftpsync
-	cp anonftpsync $(HTMLDIR)
+	cp -a anonftpsync $(HTMLDIR)
 $(HTMLDIR)/anonwebsync: anonwebsync
-	cp anonwebsync $(HTMLDIR)
+	cp -a anonwebsync $(HTMLDIR)
