@@ -68,14 +68,23 @@ sub read_maintainer
 	/(\S+)\s+(.*)/;
 	$package=$1; $maintainer=$2;
 	if (! exists $maint{$package}) {
+	    printf "  EVAL (%s, \"%s\")\n", $package, $maintainer if ($opt_verbose > 2);
 	    foreach $maint (split(/,/,$maintainer)) {
-		$maint{$package} .= " " if (exists $maint{$package});
+		printf "  EVAL_PART (%s, \"%s\")\n", $package, $maint if ($opt_verbose > 2);
+
+		if (exists $maint{$package}) {
+		    $maint{$package} .= " ";
+		    printf "  EXPAND (%s)\n", $package if ($opt_verbose > 2);
+		}
 		if (/.*<(.*)>/) {
 		    $maint{$package} .= $1;
+		    printf "  ADD (%s, %s)\n", $package, $1 if ($opt_verbose > 2);
 		} elsif (/\s*(\S+)\s+\(.*\)/) {
 		    $maint{$package} .= $1;
+		    printf "  ADD (%s, %s)\n", $package, $1 if ($opt_verbose > 2);
 		} else {
 		    $maint{$package} .= $maint;
+		    printf "  ADD (%s, %s)\n", $package, $maint if ($opt_verbose > 2);
 		}
 	    }
 	    printf "  %s: %s\n", $package, $maint{$package} if ($opt_verbose > 1);
@@ -93,6 +102,8 @@ sub read_maintainer
 		    $maint{$pkgshort} = package_maintainer ($pkg, $1, $maint{$pkgshort});
 		}
 	    }
+	} else {
+	    printf STDERR "Skipping double $package\n";
 	}
     }
     close (F);
@@ -115,7 +126,12 @@ sub write_maintainer
 
 sub help
 {
-    print "Help not yet implemented.\n";
+    print "build-maintainerdb - Build the maintainer db for packages.debian.org.\n";
+    print "-d     debug, changes output file to ./maintainerdb\n";
+    print "-h     This help\n";
+    print "-v     Increase verbosity by 1\n";
+    print "-vv    Increase verbosity by 2\n";
+    print "-vvv   Increase verbosity by 3\n";
 }
 
 # 
