@@ -225,7 +225,7 @@ $translations_status = {
 	'status'		=> 2,
 	'since'			=> '30/03/2000',
 	'translation_name'	=> 'The Debian SGML/XML HOWTO',
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'markup' => {
@@ -279,7 +279,7 @@ $translations_status = {
 
 'News/1997/index' => {
 	'status'		=> '2',
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'News/1998/index' => {
@@ -310,43 +310,43 @@ $translations_status = {
 },
 
 'News/1999/index' => {
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'News/1999/19990204' => {
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'News/1999/19990212' => {
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'News/1999/19990222' => {
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'News/1999/19990225a' => {
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'News/1999/19990225b' => {
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'News/1999/19990302' => {
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'News/1999/19990309' => {
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'News/1999/19990330' => {
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'News/1999/19990421a' => {
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'contact' => {
@@ -606,19 +606,19 @@ $translations_status = {
 },
 
 'releases/slink/running-kernel-2.2' => {
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'releases/potato/index' => {
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'releases/index' => {
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'search' => {
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'ports/hurd/hurd-doc-translator' => {
