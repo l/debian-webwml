@@ -60,7 +60,7 @@
    [EN:Why:]
    [AR:Why:]
    [DA:Why:]
-   [DE:Why:]
+   [DE:Weshalb:]
    [EL:Why:]
    [EO:Why:]
    [ES:Why:]
@@ -82,9 +82,35 @@
    [ZH:Why:]
 </define-menu-item>
 
+<define-menu-item name="people">
+   [EN:People:]
+   [AR:People:]
+   [DA:People:]
+   [DE:Leute:]
+   [EL:People:]
+   [EO:People:]
+   [ES:People:]
+   [FI:People:]
+   [FR:People:]
+   [HR:People:]
+   [HU:People:]
+   [IT:People:]
+   [JA:People:]
+   [KO:People:]
+   [NL:People:]
+   [NO:People:]
+   [PL:People:]
+   [PT:People:]
+   [RO:People:]
+   [RU:People:]
+   [SV:People:]
+   [TR:People:]
+   [ZH:People:]
+</define-menu-item>
+
 <menu-item name="ports"         basename="../index">
 <menu-item name="netbsd-i386"   basename="index">
-#<menu-item name="netbsd-alpha"  basename="alpha">
-#<menu-item name="news"          basename="news">
+<menu-item name="netbsd-alpha"  basename="alpha">
+<menu-item name="news"          basename="news">
 <menu-item name="why"           basename="why">
-
+<menu-item name="people"	basename="people">
