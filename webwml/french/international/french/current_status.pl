@@ -65,26 +65,21 @@ do 'documents-bd.pl';
 	'old_translators'	=> ['Fabien Ninoles <fabien@Nightbird.TZoNE.ORG>'],
 },
 
-
 # ########################################################################################
 #
 # Debian Documentation Project
 #
 # ########################################################################################
 
-      'project-history' => {
+'project-history' => {
 	'status'		=> 5,
 	'since'			=> '03/05/1999',
+	'base_revision'		=> '1.2',
 	'translation_name'	=> 'Histoire du projet Debian',
 	'translation_maintainer'=> ['Jerome Rousselot <r.jerome@francemel.com>'],
 },
 
-	'user' => {
-	'status'		=> 1,
-	'since'			=> '?'
-},
-
-	'faq' => {
+'faq' => {
 	'status'		=> 2,
 	'since'			=> '21/07/1998',
 	'translation_name'	=> 'FAQ Debian GNU/Linux',
@@ -92,26 +87,8 @@ do 'documents-bd.pl';
 	'ping'			=> '28/11/1998',
 	'old_translators'	=> ['Vincent Renardias <vincent@waw.com>'],
 },
-	'constitution' => {
-	'status'		=> 1,
-	'since'			=> '?'
-},
-	'mailing-lists' => {
-	'status'		=> 1,
-	'since'			=> '?'
-},
-	'bug-reporting' => {
-	'status'		=> 1,
-	'since'			=> '?'
-},
-	'source-unpack' => {
-	'status'		=> 1,
-	'since'			=> '?'
-},
 
-
-
-	'tutorial' => {
+'tutorial' => {
 	'status'		=> 2,
 	'since'			=> '31/01/1999',
 	'translation_name'	=> 'Tutorial Debian',
@@ -119,33 +96,36 @@ do 'documents-bd.pl';
 	'old_translators'	=> ['Loïc Martin <lomartin@dejanews.com>'],
 },
 
+'user' => {
+	'status'		=> 1,
+	'since'			=> '?'
+},
 
-
-	'install' => {
+'install' => {
 	'status'		=> 3,
 	'since'			=> '13/03/2000',
 	'translation_name'	=> 'Manuel d\'installation de Debian',
 	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
 	'base_revision'		=> '2.1',
 	'translation_url'	=> 'http://www.debian.org/releases/stable/source/install.fr.sgml',
-	'translation_cvs_url'   => 'http://cvs.debian.org/debian-boot/boot-floppies/documentation/install.fr.sgml?cvsroot=debian-boot',
+	'translation_cvs_url'   => 'http://cvs.debian.org/boot-floppies/documentation/install.fr.sgml?cvsroot=debian-boot',
 	'translation_package'	=> 'boot-floppies',
 	'last_translated'	=> '16/03/1999'
 },
 
-	'dselect-beginner' => {
+'dselect-beginner' => {
 	'status'		=> 3,
 	'since'			=> '13/03/2000',
 	'translation_name'	=> 'Guide de dselect pour les débutants',
 	'translation_maintainer'=> ['Laurent Picouleau <lcrpic@a2points.com>'],
 	'base_revision'		=> '2.1',
 	'translation_url'	=> 'http://www.debian.org/releases/stable/source/dselect-beginner.fr.sgml',
-	'translation_cvs_url'   => 'http://cvs.debian.org/debian-boot/boot-floppies/documentation/dselect-beginner.fr.sgml?cvsroot=debian-boot',
+	'translation_cvs_url'   => 'http://cvs.debian.org/boot-floppies/documentation/dselect-beginner.fr.sgml?cvsroot=debian-boot',
 	'translation_package'	=> 'boot-floppies',
 	'last_translated'	=> '27/03/1999'
 },
 
-	'release-notes' => {
+'release-notes' => {
 	'status'		=> 2,
 	'since'			=> '05/06/1999',
 	'translation_name'	=> 'Notes sur la version',
@@ -153,45 +133,112 @@ do 'documents-bd.pl';
 	'translation_package'	=> 'boot-floppies',
 },
 
-
-
-	'maint-guide' => {
+'maint-guide' => {
 	'status'		=> 4,
 	'since'			=> '19/10/1999',
 	'translation_name'	=> 'Nouveau Guide du Responsable Debian',
 	'translation_maintainer'=> ['Frederic Dumont <Frederic.Dumont@gate71.be>'],
+	'translation_url'	=> 'http://www.info.fundp.ac.be/~fdumont/maint-guide_fr.html/index.html',
 	'translation_dev_url'   => 'http://www.info.fundp.ac.be/~fdumont/maint-guide_fr.sgml',
-	'translation_cvs_url'   => 'http://cvs.debian.org/ddp/manuals.sgml/maint-guide/maint-guide.es.sgml?cvsroot=debian-doc',
+	'translation_cvs_url'   => 'http://cvs.debian.org/ddp/manuals.sgml/maint-guide/maint-guide.fr.sgml?cvsroot=debian-doc',
 	'last_translated'	=> '02/07/1998',
 },
 
-	'programmer' => {
+'programmer' => {
 	'status'		=> 7,
 	'since'			=> '?',
 },
 	
-	'network-administrator' => {
+'network-administrator' => {
         'status'                => 1,
 	'since'			=> '13/03/2000',
 },
 
-	'system-administrator' => {
+'system-administrator' => {
         'status'                => 1,
 	'since'			=> '13/03/2000',
 },
 
-	'i18n' => {
-        'status'                => 1,
-	'since'			=> '13/03/2000',
-},
-
-
-	'meta' => {
+'intro-i18n' => {
         'status'                => 1,
 	'since'			=> '13/03/2000',
 },
 
 
+'meta' => {
+        'status'                => 1,
+	'since'			=> '13/03/2000',
+},
 
+'packaging-manual' => {
+	'translation_name'	=> 'Manuel des paquets Debian',
+	'status'		=> 'à relire',
+	'since'			=> '01/07/1998',
+	'translation_maintainer'=> [
+					'David Cure <cure@cnam.fr>', 
+					'Christian Jacolot <jacolot@ubolib.univ-brest.fr>',
+				],
+	'translation_package'	=> '',
+},
+
+'policy' => {
+	'status'		=> '6',
+	'since'			=> '6/04/1999',
+	'translation_name'	=> 'Manuel des normes Debian',
+	'translation_maintainer'=> ['David Rocher <davroc@hplb.hpl.hp.com>'],
+	'base_revision'		=> '2.5.0.0',
+	'translation_url'	=> 'http://savage.iut-blagnac.fr/projets/developpement/policy.fr/policy.fr.html/',
+	'translation_dev_url'   => 'http://savage.iut-blagnac.fr/projets/developpement/policy.fr/policy.fr.sgml',
+	'translation_package'	=> '',
+	'old_translators'	=> ['Serge Stinckwich <serge@info.unicaen.fr>'],
+},
+
+'developers-reference' => {
+	'status'		=> '5',
+	'since'			=> '01/07/1998',
+	'translation_name'	=> 'Guide de Référence du Développeur Debian',
+	'translation_maintainer'=> ['Laurent Picouleau <lcrpic@a2points.com>'],
+	'base_revision'		=> '0.1',
+	'translation_package'	=> '',
+	'old_translators'	=> ['Herve Floch <Herve.Floch@linux.eu.org>'],
+},
+
+'internals' => {
+	'status'		=> '3',
+	'since'			=> '19/10/1999',
+	'translation_name'	=> 'Le manuel de l\'intérieur de dpkg',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'base_revision'		=> '1.2',
+	'translation_package'	=> '',
+},
+
+'making-deb' => {
+	'status'		=> '4',
+	'since'			=> '25/09/1998',
+	'translation_name'	=> 'Introduction : Créer un paquet Debian',
+	'translation_maintainer'=> ['Frederic Dumont <frederic.dumont@gate71.be>'],
+	'last_translated'	=> '01/07/1998',
+},
+
+'markup' => {
+	'status'		=> '4',
+	'since'			=> '',
+	'translation_name'	=> 'Manuel de Debiandoc-SGML',
+	'translation_sub_name'	=> '',
+	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
+	'translation_cvs_url'   => '',
+	'translation_package'	=> 'doc-debian-fr',
+	'last_translated'	=> '',
+},
+
+'libc5-libc6-Mini-HOWTO' => {
+	'status'		=> '4',
+	'since'			=> '10/08/1998',
+	'translation_name'	=> 'libc5-libc6-Mini-HOWTO',
+	'translation_sub_name'	=> '',
+	'translation_maintainer'=> ['Philippe CAILLAUD <phil@penguin.infini.fr>'],
+	'translation_package'	=> '',
+	'last_translated'	=> '10/08/1998',
+},
 
 );
