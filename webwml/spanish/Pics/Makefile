@@ -19,8 +19,6 @@ devel.$(LANGUAGE).gif: $(debbar.pl)
 	$(debbar.pl) -words $(DEVEL_TEXT) -o $@
 distrib.$(LANGUAGE).gif: $(debbar.pl)
 	$(debbar.pl) -words $(DISTRIB_TEXT) -o $@
-home.$(LANGUAGE).gif: $(debbar.pl)
-	$(debbar.pl) -words $(HOME_TEXT) -o $@
 news.$(LANGUAGE).gif: $(debbar.pl)
 	$(debbar.pl) -words $(NEWS_TEXT) -o $@
 search.$(LANGUAGE).gif: $(debbar.pl)
@@ -31,5 +29,5 @@ support.$(LANGUAGE).gif: $(debbar.pl)
 	$(debbar.pl) -words $(SUPPORT_TEXT) -o $@
 
 pics: about.$(LANGUAGE).gif devel.$(LANGUAGE).gif distrib.$(LANGUAGE).gif \
-  home.$(LANGUAGE).gif news.$(LANGUAGE).gif search.$(LANGUAGE).gif \
-  sitemap.$(LANGUAGE).gif support.$(LANGUAGE).gif
+  news.$(LANGUAGE).gif search.$(LANGUAGE).gif sitemap.$(LANGUAGE).gif \
+  support.$(LANGUAGE).gif
