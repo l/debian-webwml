@@ -1,0 +1,730 @@
+<!doctype debiandoc system>
+  <!--
+  Debian GNU/Linux Policy Manual.
+  Copyright (C)1996,1997,1998 Ian Jackson and Christian Schwarz;
+  released under the terms of the GNU
+  General Public License, version 2 or (at your option) any later.
+  Initial version 1996, Ian Jackson, ijackson@gnu.ai.mit.edu
+  Revised November 27, 1996, David A. Morris, bweaver@debian.org 
+  New sections March 15, 1997, Christian Schwarz, schwarz@debian.org
+  Reworked/Restructured April-July 1997, Christian Schwarz, schwarz@debian.org
+  Maintainer since 1997, Christian Schwarz, schwarz@debian.org
+  Christoph Lameter contributed the "Web Standard"
+  The debian-policy mailing list has taken responsibility for the
+  contents of this document since September 1998, with the package
+  maintainers responsible for packagingn adminstrivia only.
+  -->
+  
+  <book>
+    <titlepag>
+      <title>Debian Policy Manual</title>
+      <author>
+        <name>Ian Jackson </name>
+        <email>ijackson@gnu.ai.mit.edu</email>
+      </author>
+      <author>
+        <name>Christian Schwarz</name> 
+        <email>schwarz@debian.org</email>
+      </author>
+      <author>
+        <name>revised: David A. Morris</name> 
+        <email>bweaver@debian.org</email>
+      </author>
+      <author>
+        <name>The Debian Policy mailing List</name>
+        <email>debian-policy@lists.debian.org</email>
+      </author>
+      <version>version </version>
+
+      <abstract>
+        This manual describes the policy requirements for the Debian
+        GNU/Linux distribution. This includes the structure and
+        contents of the Debian archive, several design issues of the
+        operating system, as well as technical requirements that each
+        package must satisfy to be included in the distribution.
+      </abstract>
+
+      <copyright>
+        <copyrightsummary>
+          Copyright &copy;1996,1997,1998 Ian Jackson
+          and Christian Schwarz.
+        </copyrightsummary>
+        <p>
+          This manual is free software; you may redistribute it and/or
+          modify it under the terms of the GNU General Public License
+          as published by the Free Software Foundation; either version
+          2, or (at your option) any later version.
+        </p>
+
+        <p>
+          This is distributed in the hope that it will be useful, but
+          <em>without any warranty</em>; without even the implied
+          warranty of merchantability or fitness for a particular
+          purpose.  See the GNU General Public License for more
+          details.
+          </p>
+        <p>
+          A copy of the GNU General Public License is available as
+          <tt>/usr/doc/copyright/GPL</tt> in the Debian GNU/Linux
+          distribution or on the World Wide Web at 
+          <url id="http://www.gnu.org/copyleft/gpl.html"
+          name="&urlname">. You can also obtain it by writing to the
+          Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+          Boston, MA 02111-1307, USA.
+        </p>
+      </copyright>
+    </titlepag>
+
+<chapt>
+<heading>Programmes personnalisé</heading>
+
+<sect id="arch-spec">
+<heading>Chaînes de spécification d'architecture</heading> 
+
+<p>
+Si un programme doit fournir une <em>chaîne de spécification 
+d'architecture</em> quelque part, le format suivant doit être utilisé:
+	<example>
+	  &lt;arch&gt;-linux
+	</example>
+où `&lt;arch&gt;' est l'une des valeurs suivantes: i386, alpha, arm,
+m68k, powerpc, sparc et `&lt;os&gt;' est l'une des valeurs suivantes:
+linux, gnu.  L'utilisation de <em>gnu</em> dans cette chaîne est
+réservé pour le système d'exploitation GNU/Hurd.
+</p>
+
+<p>
+Notez que nous n'utilisons pas `&lt;arch&gt;-debian-linux' dans la 
+chaîne `architecture-vendor-os' car cela rendrait nos programmes 
+incompatibles avec les autres distributions Linux. Notez aussi que
+nous n'utilisons pas `&lt;arch&gt;-unknown-linux', car le `unknown' 
+ne sonne pas très bien.
+<p>
+
+<sect>
+<heading>Daemons</heading>
+
+<p>
+Les fichiers de configuration <tt>/etc/services</tt>,
+<tt>/etc/protocols</tt> et <tt>/etc/rpc</tt> sont gérés par le paquet
+<prgn>netbase</prgn> et ne peuvent être modifiés par d'autres paquets.
+</p>
+
+<p>
+Si un paquet nécessite une nouvelle entrée dans l'un de ces fichiers,
+son responsable doit contacter celui du paquet <prgn>netbase</prgn>,
+qui ajoutera cette entrée et produira une nouvelle version du paquet
+<prgn>netbase</prgn>.
+</p>
+
+<p>
+Le fichier de configuration <tt>/etc/inetd.conf</tt> peut être 
+modifié par les scripts d'un paquet uniquement via le script 
+<prgn>update-inetd</prgn> ou le module Perl <prgn>DebianNet.pm</prgn>.
+</p>
+
+<p>
+Si un paquet veut installer une entrée à titre d'exemple dans
+<tt>/etc/inetd.conf</tt>, cette entrée doit être précédée par 
+exactement un caractère dièse (#). De telles lignes sont traitées
+comme des `commentaires utilisateur' par le script 
+<prgn>update-inetd</prgn> et ne seront pas modifiées ou activées 
+durant les mises à jour des paquets.
+</p>
+</sect>
+
+<sect>
+<heading>Éditeurs et pagers</heading>
+
+<p>
+Certains programmes offrent la possibilité d'exécuter un éditeur 
+ou un pager pour éditer ou visualiser un document texte. Comme 
+il existe beaucoup d'éditeurs et de pagers disponibles dans la
+distribution Debian, l'administrateur système et chaque 
+utilisateur doivent avoir la possibilité de choisir leur éditeur
+ou pager préféré.
+</p>
+
+<p>
+De plus, chaque programme devrait choisir un bon éditeur ou pager
+par défaut si aucun n'est sélectionné par l'utilisateur ou
+l'administrateur système.
+</p>
+
+<p>
+Ainsi, chaque programme qui exécute un éditeur ou un pager doit
+utilisé les variables d'environnement EDITOR ou PAGER pour déterminer 
+l'éditeur ou le pager que l'utilisateur souhaite employer. Si ces 
+variables ne sont pas définies, les programmes <tt>/usr/bin/editor</tt>
+et <tt>/usr/bin/pager</tt> doivent être utiliser respectivement.
+</p>
+
+<p>
+Ces deux fichiers sont gérés par `alternatives'. Tout paquet,
+fournissant un éditeur ou un pager, doit employé le script
+`update-alternatives' pour enregistrer ses programmes.
+</p>
+
+<p>
+S'il est très difficile d'adapter un programme pour qu'il emploie
+les variables EDITOR et PAGER, ce programme doit être configuré pour
+utiliser <tt>/usr/bin/sensible-editor</tt> et 
+<tt>/usr/bin/sensible-pager</tt> comme éditeur ou pager 
+respectivement. Ce sont deux scripts fournis par le système de base 
+Debian qui vérifient les variables EDITOR et PAGER, lancent les 
+programmes appropriés ou exécutent <tt>/usr/bin/editor</tt> et
+<tt>/usr/bin/pager</tt> automatiquement.
+</p>
+
+<p>
+Comme le système de base Debian fournit déjà un éditeur et
+un pager, il n'y a pas besoin pour un paquet de dépendre d'un
+éditeur ou d'un pager, ni pour un paquet de fournir de tels
+paquets virtuels.
+</p>
+</sect>
+
+<sect id="web-appl">
+<heading>Serveurs et applications Web</heading>
+
+<p>
+Cette section décrit les emplacements et les URL qui doivent être
+employées par tous les serveurs et applications Web dans un système
+Debian.
+</p>
+
+<p>
+<enumlist>
+<item>
+ <p>
+ Les fichiers exécutables cgi-bin sont installés dans le répertoire
+ <example>
+   /usr/lib/cgi-bin/&lt;cgi-bin-name&gt;
+ </example>
+ et peuvent être référencés comme suit
+ <example>
+   http://localhost/cgi-bin/&lt;cgi-bin-name&gt;
+ </example>
+ </p>
+</item>
+<item>
+ <p> Accès aux documents HTML </p>
+ <p>
+ Les documents HTML d'un paquet sont stockés dans /usr/doc/&lt;package&gt;
+ et peuvent être référencés par
+ <example>
+   http://localhost/doc/&lt;package&gt;/&lt;filename&gt;
+ </example>
+ </p>
+</item>
+<item>
+ <p> Racine des documents Web </p>
+ <p>
+ Les applications Web doivent éviter de stocker des fichiers
+ dans la racine des documents Web. A la place, utiliser le répertoire
+ <tt>/usr/doc/<var>package</var></tt> pour les documents et enregistrer 
+ l'application Web via le paquet menu. Si l'accès à la racine des 
+ documents Web est  inévitable alors utiliser
+ <example>
+   /var/www
+ </example>
+ comme racine des documents. Ce peut être juste un lien symbolique 
+ vers  l'emplacement où l'administrateur a mis la véritable racine 
+ des documents.
+ </p>
+</item>
+</enumlist>
+</p>
+</sect>
+
+<sect>
+<heading>Agents de transport de messages</heading>
+
+<p>
+Les paquets Debian qui traitent du courrier électronique, que 
+ce soient les agents utilisateurs (MUA: Mail User Agents) ou les 
+agents de transport (MTA: Mail Transport Agent), <em>doivent</em>  
+être compatibles avec les décisions de configuration suivantes.
+Le non respect de celles-ci peut entraîner la perte de messages, 
+rompre les lignes <tt>From:</tt> ainsi que d'autres dommages sérieux !
+</p>
+
+<p>
+La file d'attente du courrier est <tt>/var/spool/mail</tt> et 
+l'interface pour envoyer des courriers est <tt>/usr/sbin/sendmail</tt>
+(suivant le FSSTND). La file d'attente du courrier fait partie du 
+système de base et non du paquet MTA.
+</p>
+
+<p>
+Tous les MUA et MTA Debian doivent utiliser les fonctions 
+<tt>maillock</tt> et <tt>mailunlock</tt> fournies par le paquet 
+<tt>liblockfile</tt> pour vérouiller et dévérouiller les boites 
+aux lettres. Ces fonctions implémentent un mécanisme de vérouillage 
+NFS-safe. (les MUA et MTA  peuvent ne pas utiliser liblockfile à 
+condition d'employer un mécanisme <em>compatible</em> . 
+S'il vous plaît, comparer les mécanismes très attentivement !)
+</p>
+
+<p>
+Les boites aux lettres ont généralement les permissions 660
+<tt><var>user</var>.mail</tt> à moins que l'utilisateur en ai décidé
+autrement. Un MUA peut supprimer une boite aux lettres (sauf si elle 
+n'a pas les permissions standards). Dans ce cas, le MTA ou un autre 
+MUA doit la recréer si besoin. Les boites aux lettres doivent être 
+autorisées en écriture pour le groupe mail.
+</p>
+
+<p>
+Les permissions de la file d'attente du courrier sont 2775
+<tt>mail.mail</tt> et les MUA doivent être setgid mail pour effectuer 
+le vérouillage mentionné précédemment (et doivent évidemment 
+interdire l'accès aux boites aux lettres des autres utilisateurs 
+en employant ce privilège).
+</p>
+
+<p>
+<tt>/etc/aliases</tt> est le fichier source pour les alias du système 
+de messagerie (e.g. postmaster, usenet, etc.) -- c'est l'un des 
+fichiers que l'administrateur système et les scripts <tt>postinst</tt>
+peuvent éditer. Après avoir modifié <tt>/etc/aliases</tt>, le programme 
+ou l'administrateur doit appeler <prgn>newaliases</prgn>. Tous les 
+paquets MTA devraient contenir un programme <prgn>newaliases</prgn>, 
+même s'il ne fait rien, cependant les anciens paquets MTA ne le 
+faisaient pas donc les programmes ne devraient pas échouer si 
+<prgn>newaliases</prgn> ne peut être trouvé.
+</p>
+
+<p>
+La convention d'écriture <tt>forward to <var>address</var></tt>
+dans la boîte aux lettres elle-même n'est pas supportée. Utiliser 
+un fichier <tt>.forward</tt> à la place.
+</p>
+
+<p>
+L'emplacement pour le programme <prgn>rmail</prgn> utilisé par UUCP
+pour les messages entrants est <tt>/usr/sbin/rmail</tt>, suivant le 
+FSSTND. De même <prgn>rsmtp</prgn>, qui reçoit des lots SMTP via UUCP,
+est dans <tt>/usr/sbin/rsmtp</tt> s'il est supporté.
+</p>
+
+<p>
+Si vous devez connaître le nom à employer (par exemple) pour les
+messages (mail et news) sortants qui sont générés localement, 
+vous devriez utilisé le fichier <tt>/etc/mailname</tt>. Il contient
+la portion après le nom d'utilisateur et le signe <tt>@</tt> (at)
+des adresses électroniques des utilisateurs de la machine (suivi 
+par un retour à la ligne).
+</p>
+
+<p>
+Un paquet devrait vérifier l'éxistance de ce fichier. S'il existe,
+il devrait être employé sans commentaires (Le script de configuration
+d'un MTA peut vouloir interroger l'utilisateur même s'il trouve
+ce fichier). S'il n'existe pas, il devrait interrogé l'utilisateur
+pour une valeur et la stocker dans <tt>/etc/mailname</tt> ainsi que
+l'employer pour la configuration du paquet. Le message d'invite
+doit être explicite afin d'indiquer que ce nom ne sera pas utilisé
+uniquement par ce paquet. E.g. dans cette situation, le paquet INN dit:
+<example>
+   Please enter the `mail name' of your system. This is the hostname
+   portion of the address to be shown on outgoing news and mail messages.
+   The default is <var>syshostname</var>, your system's host name.
+   Mail name [`<var>syshostname</var>']:
+</example>
+où <var>syshostname</var> est la sortie de <tt>hostname --fqdn</tt>.
+</p>
+</sect>
+
+<sect>
+<heading>Configuration du système de News</heading>
+
+<p>
+Tous les fichiers de configurations relatifs aux serveurs et aux
+clients NNTP (news) doivent être placés dans <tt>/etc/news</tt>.
+</p>
+
+<p>
+Il y a certains points de configuration qui s'appliquent à
+l'ensemble des paquets clients et serveurs de news sur la
+machine. Ce sont:
+
+<taglist>
+<tag>/etc/news/organization</tag>
+<item>
+ <p>
+ Chaîne apparaissant dans le champ organization de l'en tête
+ de chaque messages postés par les clients NNTP de la machine.
+ </p>
+</item>
+<tag>/etc/news/server</tag>
+<item>
+ <p>
+ Contient le FQDN du serveur NNTP principal ou localhost
+ si la machine locale est un serveur NNTP.
+ </p>
+</item>
+</taglist>
+
+D'autres fichiers globaux peuvent être ajoutés s'ils sont requis
+pour la configuration inter-paquets de news.
+</p>
+</sect>
+
+<sect>
+<heading>Programmes pour le système X Window</heading>
+
+<p>
+Certains programmes peuvent être configurés avec ou sans support 
+pour X Window. Typiquement ces exécutables, lorsque configurés
+pour X, nécessitent les librairies partagées X pour fonctionner.
+</p>
+
+<p>
+De tels programmes devraient être configurés <em>avec</em>  le 
+support X et devraient déclarer une dépendance <tt>xlib6g</tt> 
+(pour les librairies X11R6). Les utilisateurs qui souhaitent 
+utiliser ces programmes, peuvent simplement installer le petit 
+paquet <tt>xlib6g</tt> et n'ont pas besoin d'installer tout X.
+</p>
+
+<p>
+Ne créer pas deux versions (une avec support X et l'autre sans) de 
+votre paquet.
+</p>
+
+<p>
+Les fichiers <em>Application defaults</em> doivent être installés dans 
+le répertoire <tt>/usr/X11R6/lib/X11/app-defaults/</tt>. Ils sont 
+considérés comme faisant partie du code du programme. Ainsi, ils ne 
+devraient pas être modifiés et ne doivent pas être marqués comme 
+<em>conffile</em>. Si l'administrateur système souhaite personnaliser 
+globalement une application X, le fichier <tt>/etc/X11/Xresources</tt> 
+devrait être utilisé.
+</p>
+
+<p>
+Si vous packagez un programme qui requièrent une librairie Motif non
+libre, il serait bien de fournir un paquet "foo-smotif" et un paquet 
+"foo-dmotif" contenant (concernant les librairies Motif) une version 
+liée statiquement et dynamiquement respectivement. Ainsi les 
+utilisateurs sans Motif pourront utiliser le paquet aussi, et les 
+utilisateurs avec Motif installé bénéficieront des avantages
+d'une version liée dynamiquement.
+</p>
+
+<p>
+Cependant si votre paquet fonctionne de manière fiable avec Lesstif, 
+vous devriez le packager avec Lesstif et non avec Motif.
+</p>
+
+<p>
+Noter que les paquets qui requièrent une librairie Motif non libre
+ne peuvent aller dans la section main. Cependant si votre paquet 
+est libre, il ira dans contrib sinon il sera placé dans non-free.
+</p>
+
+
+<sect>
+<heading>Programmes emacs lisp</heading>
+
+<p>
+SVP, consultez le `Debian Emacs Policy' (documenté dans
+<tt>debian-emacs-policy.gz</tt> du paquet <prgn>emacsen-common</prgn>)
+pour les détails concernant la création de paquets de programmes
+emacs lisp.
+</p>
+</sect>
+
+<sect>
+<heading>Jeux</heading>
+
+<p>
+les permissions sur /var/lib/games sont 755 <tt>root.root</tt>.
+</p>
+
+<p>
+Chaque jeu décide de ses propres règles de sécurité.
+</p>
+
+<p>
+Les jeux qui nécessitent des accès privilégiés et protégés à des
+fichiers de scores, sauvegardes de parties, etc.., doivent être
+set-<em>group</em> -id (mode 2755), avoir pour propriétaire 
+<tt>root.games</tt> et utiliser des fichiers et des répertoires avec 
+des permissions appropriées (770 <tt>root.games</tt> par exemple). 
+Ils <em>ne</em> doivent <em>pas</em> être set-<em>user</em> -id, 
+car cela entraîne des problèmes de sécurité. (Si un attaquant arrive 
+à corrompre un jeu set-user-id, il peut alors remplacer l'executable 
+d'autres jeux, forçant les autres joueurs de ces jeux à exécuter 
+un cheval de Troie. Avec un programme set-group-id game, l'attaquant 
+a accès uniquement aux données les moins importantes du jeu. S'il 
+voulait accéder aux comptes des autres joueurs, cela lui demandera 
+des efforts considérablement plus importants).
+</p>
+
+<p>
+Certains paquets, comme les programmes fortune cookie, sont configurés
+par leurs auteurs originaux pour s'installer avec leurs fichiers
+de données ou autres informations statiques non consultables en lecture,
+ils ne peuvent être accessibles que par les programmes set-id fournis.
+Ne faites pas ça dans un paquet Debian: n'importe qui peut télécharger
+le fichier <tt>.deb</tt> et y lire les données, ainsi il n'y a pas 
+d'avantages à avoir des fichiers non lisibles. Ne pas créer de fichiers 
+non accessibles en lecture implique aussi que vous n'avez pas à 
+construire des programmes set-id, ce qui réduit le risque de trous 
+de sécurité.
+</p>
+
+<p>
+Comme décrit dans le FSSTND, les binaires des jeux devraient être 
+installés dans le répertoire <tt>/usr/games</tt>. Cela s'applique 
+aussi aux jeux utilisant le système X Window. les pages de manuel 
+des jeux (X et non-X) devraient être installés dans 
+<tt>/usr/man/man6</tt>.
+</p>
+</sect>
+
+
+<chapt>
+<heading>Documentation</heading>
+
+<sect>
+<heading>Pages de manuel</heading>
+
+<p>
+Vous devez installer les pages de manuel au format source 
+<prgn>nroff</prgn>, à l'emplacement approprié sous <tt>/usr/man</tt>.
+Vous devez seulement utiliser les section 1 à 9 (voir le FSSTND pour 
+plus de détails). Vous <em>ne</em>  devez <em>pas</em>  installer de 
+pages préformatées `cat page'.
+</p>
+
+<p>
+Si aucune page de manuel n'est disponible pour un programme, un 
+utilitaire ou une fonction particulière et qu'un bug est reporté 
+sur debian-bugs, un lien symbolique de la page de manuel en question 
+vers la page de manuel <manref name="undocumented" section="7"> doit
+être fournit. Ce lien symbolique peut être créé à partir de
+<tt>debian/rules</tt> comme suit :
+<example>
+   ln -s ../man7/undocumented.7.gz \
+    debian/tmp/usr/man/man[1-9]/the_requested_manpage.[1-9].gz
+</example>
+Cette page de manuel indique que l'absence d'une page de manuel a déjà
+été signalée comme un bug, aussi vous avez seulement à le faire que si
+c'est le cas (vous pouvez le reporter vous-même si vous le souhaitez).
+Ne fermez pas le rapport du bug tant qu'une page de manuel adéquate 
+n'est pas disponible.
+</p>
+
+<p>
+Vous pouvez envoyer une requête concernant l'absence d'une page de manuel
+aux auteurs originaux, et marquer le bug comme transféré dans le système 
+Debian de traques des bugs. Cependant le projet GNU ne considère pas en
+général l'absence d'une page de manuel comme un bug, nous oui - s'ils vous
+répondent qu'ils ne le considèrent pas comme un bug, vous devez cependant 
+laisser le bug ouvert dans notre système Debian de traques des bugs.
+</p>
+
+<p>
+Les pages de manuel doivent être installées compressées via <tt>gzip -9</tt>.
+</p>
+
+<p>
+Si une page de manuel doit être accessible via différents noms, il est 
+préférable d'utiliser un lien symbolique plutôt que la fonctionnalité
+<tt>.so</tt>, mais il n'est pas nécessaire de bricoler les parties 
+incriminées dans les sources originaux pour changer les <tt>.so</tt> 
+en liens symboliques - à moins que ce soit trivial.
+Ne créez pas de lien physique dans les répertoires des pages de manuel
+et ne mettez pas de chemin absolu dans les directives <tt>.so</tt>. 
+Le nom du fichier dans le <tt>.so</tt> d'une page de manuel doit être 
+relatif à la racine des pages de manuel (usuellement <tt>/usr/man</tt>).
+</p>
+</sect>
+
+<sect>
+<heading>Documents Info</heading>
+
+<p>
+Les documents Info devraient être installés dans <tt>/usr/info</tt>. 
+Ils devraient être compressés avec <tt>gzip -9</tt>.
+</p>
+
+<p>
+Votre paquet doit appelé <prgn>install-info</prgn> pour mettre à jour 
+le fichier <tt>dir</tt> dans son script de post-installation :
+<example>
+   install-info --quiet --section Development Development \
+     /usr/info/foobar.info
+</example>
+</p>
+
+<p>
+C'est une bonne idée de spécifier une section pour l'emplacement de 
+votre programme ; cela se fait avec l'option <tt>--section</tt>. Pour 
+déterminer la section à utiliser, vous devriez consulter 
+<tt>/usr/info/dir</tt> sur votre système et choisir la plus adéquat 
+(ou créer une nouvelle section si aucunes des sections courantes ne 
+sont adaptées). Notez que l'option <tt>--section</tt> prends deux 
+arguments ; le premier est une expression régulière pour rechercher
+(insensible à la casse ;-) une section existante, le second est utilisé 
+lorsqu'une nouvelle section est à créer.
+</p>
+
+<p>
+Vous devez retirer les entrées dans le script de pré-désintallation :
+<example>
+   install-info --quiet --remove /usr/info/foobar.info
+</example>
+</p>
+
+<p>
+Si <prgn>install-info</prgn> ne peut trouvé une entrée description dans 
+le fichier Info, vous aurez à en fournir une. Voir 
+<manref name="install-info" section="8"> pour plus de détails.
+</p>
+</sect>
+
+<sect>
+<heading>Documentations additionnelles</heading>
+
+<p>
+Toute documentation additionnelle fournie avec le programme peut être 
+installée à la discrétion du responsable du paquet. Les documents texte 
+devraient être placés dans le répertoire <tt>/usr/doc/<var>package</var></tt>,
+où <var>package</var> est le nom du paquet et compressés avec 
+<tt>gzip -9</tt> à moins qu'ils soient petits.
+</p>
+
+<p>
+Si un paquet contient une large documentation que la majorité des 
+utilisateurs du paquet ne requièrent pas, vous devriez créer un paquet 
+sépare la contenant, ainsi elle ne prendra pas d'espace disque sur les 
+machines des utilisateurs ne la nécessitant pas ou ne voulant pas l'installer.
+</p>
+
+<p>
+Il est souvent une bonne idée de mettre les fichiers d'informations 
+textuelles (<tt>README</tt>, changelogs, et autres) provenant du paquet 
+source dans <tt>/usr/doc/<var>package</var></tt> au sien des paquets 
+binaires. Bien entendu, vous n'avez pas besoin de fournir les instructions 
+pour la création et l'installation du logiciel.
+</p>
+</sect>
+
+<sect>
+<heading>Formats de documentation préférés</heading>
+
+<p>
+L'unification de la documentation Debian se fait autour d'HTML.
+</p>
+
+<p>
+Si votre paquet fourni une vaste documentation dans un markup format
+qui puisse être convertible en d'autres formats, vous devriez si possible
+livrer la version HTML dans le paquet binaire, dans le répertoire
+<tt>/usr/doc/<var>package</var></tt> ou un de ces sous-repertoires.
+<footnote>
+ <p> 
+ Le raisonnement: La chose importante ici que les documents HTML 
+ devraient être disponible dans <em>certains</em>  paquets, et pas
+ nécessairement dans le paquet binaire principal.
+ </p>
+</footnote>
+</p>
+
+<p>
+D'autres formats comme PostScript peuvent être fournis en option.
+</p>
+</sect>
+
+<sect id="copyrightfile">
+<heading>Informations sur les Copyright</heading>
+
+<p>
+Chaque paquet doit être accompagné avec une copie textuelle de son 
+copyright ainsi que de sa licence de distribution dans le fichier
+<tt>/usr/doc/<var>package</var>/copyright</tt>. Ce fichier ne doit ni 
+être compressé ni être un lien symbolique.
+</p>
+
+<p>
+De plus, le fichier copyright doit préciser où les fichiers sources 
+originaux (s'ils existent) ont été obtenu et expliquer brièvement 
+quelles modifications ont été faite dans la version Debian du paquet 
+par rapport à l'original. IL doit indiquer les auteurs originaux du 
+paquet et le(s) responsable(s) Debian qui ont oeuvré à sa création.
+</p>
+
+<p>
+<tt>/usr/doc/<var>package</var></tt> peut être un lien symbolique vers un 
+répertoire de /usr/doc seulement si les deux paquets proviennent de la
+même source et que le premier paquet possède une relation "Depends" 
+avec le second. Ces règles sont importantes car les copyrights doivent
+être ectractible par des moyens automatiques.
+</p>
+
+<p>
+Les paquets distribués sous la licence UCB BSD, la licence Artistic, 
+la GNU GPL ou la GNU LGPL doivent faire référence aux fichiers
+<tt>/usr/doc/copyright/BSD</tt>, <tt>/usr/doc/copyright/Artistic</tt>,
+<tt>/usr/doc/copyright/GPL</tt> ou <tt>/usr/doc/copyright/LGPL</tt>. 
+</p>
+
+<p>
+N'utiliser pas le fichier copyright comme un fichier <tt>README</tt> 
+général. Si votre paquet a un tel fichier, il devrait être installé dans 
+<tt>/usr/doc/<var>package</var>/README</tt> ou <tt>README.Debian</tt> 
+ou une autre place appropriée.
+</p>
+</sect>
+
+<sect>
+<heading>Exemples</heading>
+
+<p>
+Tous les exemples (configuration, fichiers source, autres) doivent être
+installés dans un répertoire <tt>/usr/doc/<var>package</var>/examples</tt>.
+Ces fichiers ne doivent pas être utilisés par un quelconque programme
+-- ils sont ici pour le bénéfice de l'administrateur système et des 
+utilisateurs comme documentation seulement.
+</p>
+</sect>
+
+<sect id="instchangelog">
+<heading>Fichiers Changelog</heading>
+
+<p>
+Ces fichiers doivent contenir une copie du fichier <tt>debian/changelog</tt>
+de votre racine source Debian, et une copie du fichier changelog
+source s'il existe. Le fichier debian/changelog devrait être installé dans 
+<tt>/usr/doc/<var>package</var></tt> comme <tt>changelog.Debian.gz</tt>.
+Si le changelog source est un fichier texte, il doit être accessible à
+<tt>/usr/doc/<var>package</var>/changelog.gz</tt>. Si le changelog 
+source est un fichier HTML, il doit être accessible à
+<tt>/usr/doc/<var>package</var>/changelog.html.gz</tt>. Si le changelog
+source n'est pas déjà conforme à cette convention de nommage, alors
+cela doit être réalisé soit en supprimant ce fichier ou en ajoutant
+des liens symboliques, à la discrétion du responsable du paquet.
+</p>
+
+<p>
+Tout deux doivent être installés compressés par <tt>gzip -9</tt>, car 
+ils deviendront imposants avec le temps même s'ils débutent petit.
+</p>
+
+<p>
+Si un paquet a seulement un changelog qui est utilisé à la fois comme
+changelog Debian et source car il n'y a pas de responsable original
+séparé alors ce changelog devrait habituellement être installé sous
+<tt>/usr/doc/<var>package</var>/changelog.gz</tt>. S'il existe un 
+responsable principal mais pas de changelog source alors le changelog 
+Debian devrait être toujours appelé <tt>changelog.Debian.gz</tt>.
+</p>
+</sect>
+</chapt>
+
+</book>
+

@@ -1,0 +1,577 @@
+<!doctype texinfo system "texinfo.dtd" [
+<!entity % manuals-version-def system "manuals-version">
+%manuals-version-def;
+]>
+
+<!--translation 1.2-->
+
+<texinfo>
+
+<setfilename>internals.info</>
+
+<titlepage>
+<title>Le manuel de l'intérieur de dpkg</title>
+<author>Klee Dienes</author>
+<date>Version &manuals-version; (dpkg &dpkg-version;)</date>
+<abstract>
+Ce manuel décrit la structure interne du <code/dpkg/ système de gestion des 
+paquets.
+</abstract>
+</titlepage>
+
+<chapter>Copyright
+
+<p>
+Copyright &copy;1997 Klee Dienes <samp/&lt;klee@@mit.edu&gt;/.
+
+<p>
+Ce manuel est du logiciel libre; vous pouvez le redistribuer gratuitement
+et/ou le modifier sous les conditions de la GNU General Public License
+telle que publiée par la Free Software Foundation;
+soit version 2, soit (à votre convenance) n'importe quelle version suivante.
+
+<p>
+Ceci est distribué dans l'espoir d'être utile, mais
+<em>sans aucune garantie</em>; sans même la garantie implicite de
+commerciabilité ni de satisfaire à aucun objet. Voyez la GNU
+General Public License pour plus de détails.
+
+Vous devriez avoir reçu une copie de la GNU General Public License avec
+votre système Debian GNU/Linux, dans <file>/usr/share/common-licenses/GPL</>,
+ou avec le <code/dpkg/ paquet source en tant que fichier <file>COPYING</>.
+Sinon, écrivez à la Free Software Foundation, Inc., 675 Mass Ave,
+Cambridge, MA 02139, USA.
+
+</chapter>
+
+<chapter>Notes de Compilation
+
+<section>Automake
+
+<p>
+Ce chapitre a été écrit par Tom Lees &lt;tom&at;lpsg.demon.co.uk&gt le mardi 4 Mars
+1997 à 21:34:57 +0000, et comprend de conséquentes modifications faites par
+Klee Dienes &lt;klee&at;debian.org&gt;
+
+<p>
+Ce chapitre contient des notes générales à propos de la conversion à
+<code/automake/. Si vous avez l'intention de faire quoi que ce soit
+avec <code/dpkg/, vous devriez probablement lire tout ce fichier d'abord.
+Vous avez été prévenu.
+
+<p>
+La version courante d'automake utilisée est la version <code/automake-1.1n/,
+qui est pour l'instant une version beta. Elle possède plusieurs avantages
+significatifs sur la version stable, parmi lesquels:
+
+<itemize>
+<item>elle supporte emacs lisp correctement
+<item>elle supporte libtool correctement
+<item>elle contient l'utilitaire aclocal
+</itemize>
+
+<p>
+L'utilitaire <code/aclocal/ est un programme très utile qui construit
+automatiquement un fichier <file/aclocal.m4/ à partir du fichier <file/configure.in/
+de façon à inclure les macros appropriées.
+
+<p>
+<code/automake-1.1n/ peut être récupéré à partir de
+<file>ftp://ftp.cygnus.com/pub/tromey</file>
+
+<p>
+Ceci n'affecte rien d'autre que la recompilation des fichiers <file/Makefile.in/
+à partir des sources.
+
+<p>
+La principale différence notable est probablement le fait qu'au lieu d'utiliser
+des noms de fichiers propriétaires, il supporte maintenant <code/configure
+--sharedstatedir/, et <code/configure --localstatedir/. Pour indiquer ces options
+comme celles par défaut pour Debian, vous devriez utiliser <code>./configure
+--localstatedir=/etc --sharedstatedir=/var/lib</>.
+
+<p>
+J'ai aussi personnalisé les macros canonisatrices que l'on trouve dans
+<code/autoconf-2.12/ pour inclure l'ancienne façon de trouver l'<code/dpkg/
+``architecture'', i.e. pour qu'il soit un peu plus intelligent.
+Au lieu d'essayer de déterminer seulement l'architecture, je l'ai modifié
+pour qu'il utilise les types systèmes `host',
+`build', et `target'. Le type de CPU cible est vérifié vis à vis de
+archtable pour trouver l'architecture sur laquelle dpkg va tourner.
+
+<p>
+Il utilise <code/gcc --print-libgcc-file-name/ pour trouver 
+l'architecture de compilation si possible (utilisée ensuite
+pour déterminer le format ELF ou <code/a.out/), et il utilise aussi
+<code/dpkg --print-architecture/ si possible pour modifier
+le champs <samp/cpu/ avant de passer l'alias de la cible à
+config.sub. Si vous voulez spécifier l'architecture, vous devriez maintenant
+utiliser "--target=", plutôt que <code/--with-arch/, qui était essentiellement
+un hack de toute façon. Le vieux <code/--with-arch/ est toujours là, mais
+il est quelque peu moins fonctionnel.
+
+J'ai aussi déplacé les macros <code/DPKG_CACHED_/
+dans dpkg.m4 pour rendre configure.in un peu plus lisible.
+
+<p>
+J'ai aussi tout converti à libtool 0.7 (qu'on peut maintenant trouver dans
+la distribution Debian). Cela signifie essentiellement que tous les outils dpkg
+peuvent être compilés avec une librairie <samp/libdpkg/ partagée sans trop de
+difficultés (en fait, c'est l'option par défaut). Vous n'avez pas besoin d'installer
+libtool pour utiliser cette fonctionnalité (cela fonctionne comme autoconf), et
+de manière générale, cela ne devrait pas être souvent nécessaire.
+
+<p>
+Les nouvelles cibles <samp/dist/ construisent une distribution incluant
+tous les fichiers construits avec <code/debiandoc2html/, <code/debiandoc2ps/, etc.,
+qui sont inclus dans la distribution de façon à ce que les gens
+puissent construire <code/dpkg/ sans eux (particulièrement utile pour ceux
+qui font des portages).
+
+<p>
+Une cible <samp/make debian/ a été ajoutée, qui compile les fichiers
+Debian à partir d'un répertoire courant (cela fait un <samp/make dist/
+d'abord). Maintenant tout ce dont nous avons besoin c'est d'un 
+dpkg-source modifié de façon à ce que le fichier
+<file/dpkg-1.4.0.8.tar.gz/ de la distribution GNU puisse être utilisé
+comme une partie de la distribution Debian.
+Je travaille là dessus, mais cela ne marche pas très bien pour l'instant
+(vous le trouverez dans les exemples).
+
+<p>
+J'ai enlevé la cible <samp/make portable/ - elle ne fait rien d'utile.
+
+<p>
+J'ai ajouté les cibles <samp/make uninstall/ pour aider les utilisateurs
+non-Debian qui veulent simplement essayer certains paquets Debian,
+et les cibles "dist" sont aussi utile pour construire une "distribution"
+de l'outil dpkg. Notez que du fait que automake inclue automatiquement 
+les dépendances dans les Makefiles dans une distribution,
+si vous voulez modifier les fichiers C , il est conseillé de récupérer
+et d'installer automake, et ensuite de le relancer dans le répertoire de 
+base de la distribution de dpkg, de façon à ce que la génération automatique 
+des dépendances soit remis en marche, et de façon à ce que toute
+dépendance qui change soit prise en compte. Les cibles "make maintainer-clean"
+enlèveront tous les fichiers qui sont créés par les utilitaires suivants:
+
+<itemize>
+<item>automake
+<item>autoconf
+<item>aclocal
+<item>autoheader
+<item>gettextize
+<item>libtoolize
+</itemize>
+
+<p>
+Si vous voulez modifier n'importe lequel des sources, je recommande
+que vous fassiez ce qui suit d'abord (après avoir installé les utilitaires
+appropriés, bien sûr):-
+
+<itemize>
+<item>
+make maintainer-clean
+<item>
+aclocal
+<item>
+autoheader
+<item>
+autoconf
+<item>
+gettextize
+<item>
+libtoolize (ne laissez pas automake le lancer, car cela ferait
+qu'il n'inclurait pas les fichiers libtool dans les cibles dist) 
+<item>
+for i in COPYING INSTALL; do ln -s /usr/share/automake/$i .; done
+<item>
+automake
+</itemize>
+
+<p>
+J'ai aussi incorporé les patches fait à l'origine par Galen
+Hazelwood pour internationaliser dpkg en utilisant GNU gettext - voyez
+le fichier "NOTES.intl" pour plus d'information à propos de ceci.
+
+<p>
+Les autres modifications mineures sont:
+
+<itemize>
+<item>
+Le numéro de version est maintenant déterminé par debian/changelog, et non
+à partir du nom du répertoire.
+<item>
+La creation de version.h est maintenant gérée par le script configure, et non
+le Makefile.
+<item>
+include/dpkg.h est maintenant généré à partir de include/dpkg.h.in
+par un script sed, en insérant les définitions des répertoires
+appropriées - de façon à ce que maintenant cela supporte 
+le changement des répertoires dpkg (on peut installer dans /usr/local)
+<item>
+Les fichiers COPYING (1 petite modification mineure) et INSTALL ont 
+été mis à jour à partir de ceux distribués avec automake-1.1l
+<item>
+Du fait que la librairie partagée libdpkg est maintenant installée,
+j'ai aussi fait installer dpkg.h et dpkg-db.h dans /usr/include par
+include/Makefile par défaut
+</itemize>
+
+Questions:
+
+<itemize>
+<item>
+Dois je utiliser <samp/localstatedir/ et <samp/sharedstatedir/ à la 
+place de <samp/sysconfdir/ et <samp/datadir/?
+</itemize>
+
+</section>
+
+<section>Internationalisation
+
+<p>
+Cette section a été écrite par Galen Hazelwood. 
+
+<p>
+Dpkg est, pour le moins, généreux dans ses rapports d'erreur. La vaste
+majorité des chaînes de caractères produites sont des messages d'erreur
+d'une manière ou d'une autre.
+Et si vous pensez que vous vous êtes égarés dans le
+Ministère des Ministères Redondants, 
+vous auriez absolument raison. Beaucoup des messages d'erreurs
+dans dpkg.pot sont dupliqués et utilisés à différents points dans
+le programme.
+
+<p>
+Pour éviter de submerger complètement les traducteurs, j'ai pris des
+décisions arbitraires sur les sortes de chaînes de caractères à traduire.
+Toutes les chaînes envoyées à debug() sont laissées telles quelles,
+sur la base du fait qu'elles sont destinées au développeurs de dpkg,
+et non à l'ensemble du public. La plupart des messages d'erreur internes
+sont très cryptiques, et confondraient certainement les traducteurs
+qui les verraient simplement posés là dans le fichier dpkg.pot, et sont 
+donc aussi laissés tels quels.  (J'en ai quand même marqués quelques uns 
+parmi les plus verbeux pour traduction.)
+
+<p>
+Si d'autres ne sont pas d'accord avec moi à propos de la nécessité
+de traduire ces chaînes, c'est suffisamment facile de simplement 
+poursuivre et de les marquer plus tard.
+
+<p>
+J'ai ajouté le code de démarrage de gettext à la routine principale
+de dselect, ce qui était nécessaire car beaucoup des chaînes
+de lib sont traduites. Dselect est à part cela inchangé.
+
+<p>
+Modifications:
+
+<itemize>
+<item>
+Les fichiers dans intl et po ont été pris de gettext 0.10.26, grâce au 
+programme gettextize. J'ai altéré les makefiles pour enlever le symbole
+VERSION, qui est utilisé seulement dans les cibles que dpkg ne supporte pas.
+<item>
+aclocal.m4 a été récupéré dans le paquet textutils, configure.in a été
+altéré pour utiliser ces nouveaux tests, les symboles ont été ajoutés à 
+acconfig.h, et deux nouveaux répertoires ont été ajoutés dans Makefile.in.
+<item>
+Les Makefiles de dpkg, dpkg-deb, md5sum, split, et dselect cherchent
+maintenant des fichiers d'entête (headers) dans ../intl, et essayent 
+de lier avec toute librairie d'internationalisation que configure
+trouve. Ils définissent aussi maintenant LOCALEDIR dans CFLAGS.
+<item>
+include/dpkg.h a tous les éléments NLS nécessaires, et le seul fichier
+qui ne l'inclue pas (md5sum/md5sum.c) les a directement dedans.
+<item>
+La modification la plus profonde est due à un conflit entre xgettext
+et le style de codage de dpkg. Bien que xgettext comprenne la concaténation
+des chaînes constantes, il ne gère pas le cas où les symboles préprocesseur
+sont utilisés en même temps. Le code de dpkg utilise beaucoup cela, en
+particulier dans des cas comme celui là:
+<example>
+ohshite("error reading from " BACKEND " pipe");
+</example>
+où BACKEND est défini comme "dpkg-deb". Comme xgettext ne peut pas gérer
+cela, j'ai changé cette utilisation dans tous les cas pour quelque chose comme:
+<example>
+ohshite(_("error reading from dpkg-deb pipe");
+</example>
+Ce n'est pas très sympa pour Ian, je sais. Mais que puis je faire?
+</itemize>
+
+</section>
+
+</chapter>
+
+<chapter>L'intérieur du code
+
+<section>Définitions des structures
+
+<subsection>versionrevision
+<p>
+<example>
+struct versionrevision @{
+  unsigned long epoch;
+  char *version;
+  char *revision;
+@};  
+</example>
+
+<p>
+La structure <tt/versionrevision/ est utilisée pour gérer une spécification
+de version Debian.
+</subsection>
+
+</section>
+
+<section>Les fonctions
+
+<subsection>Les tables de traduction de l'analyse syntaxique
+<p>
+Chacune de ces tables est utilisée pour associer un ensemble de chaînes de
+caractères avec un ensemble correspondant d'entiers.
+
+Les tables courantes sont:
+
+<p>
+<example>
+const struct namevalue booleaninfos[];
+</example>
+
+<p>
+Associe des chaînes booléennes (<code/"yes"/,<code/"no"/) à leur
+valeurs binaires.
+
+<subsubsection><code/priorityinfos[]/
+
+<p>
+<example>
+const struct namevalue priorityinfos[];
+</example>
+
+<p>
+Associe les chaînes de priorité à des valeurs de type
+<code/enum pkgpriority/.  
+Les valeurs de priorité courantes sont:
+
+<table>
+<item><code/required/</item>
+nécessaire
+<item><code/important/</item>
+important
+<item><code/standard/</item>
+standard
+<item><code/recommended/</item>
+recommandé
+<item><code/optional/</item>
+optionnel
+<item><code/extra/</item>
+extra
+<item><code/contrib/</item>
+contribution
+<item><code/other/</item>
+autre
+<item><code/unknown/</item>
+inconnu
+<item><code/base/</item>
+Ce dernier code est obsolète, mais il est accepté comme alias de <code/required/.
+</table>
+</subsubsection>
+
+<subsubsection><code/statusinfos[]/
+
+<p>
+<example>
+const struct namevalue statusinfos[];
+</example>
+
+Associe une chaîne de statuts de paquets à des valeurs de type <code/enum ???/.
+
+Les chaînes de statuts de paquets sont:
+
+"not-installed" "unpacked" "half-configured" "installed"
+"half-installed" "config-files" "postinst-failed" "removal-failed"
+</subsubsection>
+
+<subsubsection><code/eflaginfos[]/
+
+<p>
+<example>
+const struct namevalue eflaginfos[];
+</example>
+</subsubsection>
+
+<subsubsection><code/wantinfos[]/
+
+<p>
+<example>
+const struct namevalue wantinfos[];
+</example>
+</subsubsection>
+
+<subsubsection><code/nicknames[]/
+
+<p>
+<example>
+const struct nickname nicknames[];
+</example>
+
+Associe des champs de contrôle obsolètes à leurs versions courantes.
+
+</subsubsection>
+
+</subsection>
+
+<subsection>Les fonctions d'analyse syntaxique
+<subsubsection><code/parseerr/
+<findex/parseerr()/
+
+<p>
+<example>
+void parseerr
+(FILE *file, const char *filename, int lno,
+ FILE *warnto, int *warncount, const struct pkginfo *pigp,
+ int warnonly, const char *fmt, ...);
+</example>
+
+Renvoie une erreur d'analyse syntaxique d'un flot de données de contrôle. 
+Cherche dans <var/file/ un statuts d'erreur, affiche un message
+d'erreur dans stderr et termine avec un statuts d'erreur si une erreur
+est présente dans le flot.
+Formate les arguments variables suivant la chaîne <code/printf/-style
+de <var/fmt/, en faisant précéder le résultat de <var/filename/,
+<var/lno/, et <var/pigp/ (si non NULL). Si <var/warnonly/ vaut 0,
+écrit le résultat dans stderr et termine avec un statuts d'erreur.
+Autrement, incrémente <var/warncount/ et termine normalement.
+</subsubsection>
+
+<subsubsection><code/illegal_packagename/
+<findex/illegal_packagename()/
+
+<p>
+<example>
+const char *illegal_packagename
+(const char *p, const char **ep) 
+</example>
+
+Vérifie le nom de paquet dans <var/p/ que la syntaxe est correcte. 
+Renvoie NULL en cas de succès, en faisant <var/*ep/ pointer après le
+dernier caractère du nom de paquet, incluant tout espace blanc éventuel
+(tel que défini par isspace()). En cas d'erreur, renvoie le message
+d'erreur comme un pointeur vers un buffer statique.
+</subsubsection>
+
+<subsubsection><code/informativeversion/
+<findex/informativeversion()/
+
+<p>
+<example>
+int informativeversion(const struct versionrevision *version)
+</example>
+
+<p>
+Renvoie true si et seulement si <code/versionrevision/ est non vide;
+autrement renvoie false.
+</subsubsection>
+
+<subsubsection><code/varbufversion/
+<findex/varbufversion()/
+
+<p>
+<example>
+void varbufversion
+(struct varbuf *vb,
+ const struct versionrevision *version,
+ enum versiondisplayepochwhen vdew);
+</example>
+
+Ecrit une version lisible par un humain de <var/version/ dans <var/vb/.
+Les valeurs possibles de <var/vdew/ sont:
+
+<table>
+<item><tt/vdew_never/</item>
+n'inclue jamais l'epoch
+<item><tt/vdew_nonambig/</item>
+inclue la chaîne epoch si non nul
+<item><tt/vdew_always/</item>
+inclue toujours la chaîne epoch
+</table>
+</subsubsection>
+
+<subsubsection><code/versiondescribe/
+<findex/versiondescribe()/
+
+<p>
+<example>
+const char *versiondescribe
+(const struct versionrevision *version,
+ enum versiondisplayepochwhen vdew);
+</example>
+
+<p>
+Renvoie une version lisible par un humain de <var/version/ comme un pointeur
+vers un buffer statique.  Si la structure de version est vide, renvoie
+<code/"&lt;none&gt;"/. Les buffers statiques sont alloués à partir d'un ensemble
+de 10 de la façon round-robin (ils seront réutilisés après 10 appels successifs
+à <code/versiondescribe/).
+</subsubsection>
+
+<subsubsection><code/parseversion/
+<findex/parseversion()/
+
+<p>
+<example>
+const char *parseversion
+(struct versionrevision *rversion, const char *string);
+</example>
+
+<p>
+Fait l'analyse syntaxique du contenu de <var/string/ dans <var/rversion/. Si
+cela réussi, renvoie NULL, sinon renvoie un pointeur vers une chaîne
+d'erreur statique.
+</subsubsection>
+
+<subsubsection><code/parsemustfield/
+<findex/parsemustfield()/
+
+<p>
+<example>
+void parsemustfield
+(FILE *file, const char *filename, int lno,
+ FILE *warnto, int *warncount,
+ const struct pkginfo *pigp, int warnonly,
+ char **value, const char *what);
+</example>
+</subsubsection>
+
+<subsubsection><code/skip_slash_dotslash/
+<findex/skip_slash_dotslash()/
+
+<p>
+<example>
+const char *skip_slash_dotslash (const char *p);
+</example>
+</subsubsection>
+
+<subsubsection><code/convert_string/
+<findex/convert_string()/
+
+<p>
+<example>
+static int convert_string
+(const char *filename, int lno, const char *what, int otherwise,
+ FILE *warnto, int *warncount, const struct pkginfo *pigp,
+ const char *startp, const struct namevalue *nvip,
+ const char **endpp) 
+</example>
+</subsubsection>
+
+</subsection>
+
+</section>
+
+<contents>
+<printindex name="fn">
+
+</texinfo>
