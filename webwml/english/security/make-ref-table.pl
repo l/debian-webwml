@@ -27,10 +27,11 @@ use Date::Parse;
 # -v verbose
 # -b bugtraq refs
 # -c CERT refs
+# -k CERT kb refs
 # -m mitre refs
 # -p pretty print mode (HTML)
 # -s sort | don't sort
-getopts('hpmcbv');
+getopts('hpmkcbv');
 if ( $opt_h ) {
 # Help!
 	print "usage: $0 [-vp] [-b|c|m]\n";
@@ -43,7 +44,7 @@ if ( $opt_h ) {
 }
 
 # Default is to print only Mitre's
-$opt_m = 1 if !defined ($opt_m) && ! defined($opt_c) && ! defined ($opt_b);
+$opt_m = 1 if !defined ($opt_m) && ! defined($opt_c) && ! defined ($opt_b) && ! defined ($opt_k);
 
 parsedirs (".", "data", 2);
 
@@ -52,6 +53,7 @@ printheader() if $opt_p;
 printrefs("Mitre CVE dictionary","(CVE|CAN)","http://cve.mitre.org/cve/refs/refmap/source-DEBIAN.html") if $opt_m;
 printrefs("Securityfocus Bugtraq database","BID","http://online.securityfocus.com/bid") if $opt_b;
 printrefs("CERT alerts","CA-","http://www.cert.org/advisories/") if $opt_c;
+printrefs("CERT vulnerabilities","VU","http://www.kb.cert.org/vuls") if $opt_k;
 printfooter() if $opt_p;
 
 # But we could also print all the keys like this:
