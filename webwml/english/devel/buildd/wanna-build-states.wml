@@ -13,7 +13,7 @@
 
 <h2>The wanna-build states</h2>
 <p>For every Debian-supported architecture, there's a wanna-build
-database installed on auric, with all packages and their current
+database installed on buildd.debian.org, with all packages and their current
 compilation state. There are 7 states: <em>needs-build</em>,
 <em>building</em>, <em>uploaded</em>, <em>dep-wait</em>,
 <em>failed</em>, <em>not-for-us</em>, and
@@ -30,7 +30,7 @@ compilation state. There are 7 states: <em>needs-build</em>,
 	autobuilder yet, but it will be (once one is available at a
 	time the specific package is near the top of the list). People
 	commonly say "a package is queued for rebuild" when they are
-	talking about a package in the "needs-build" state.<br>
+	talking about a package in the <em>needs-build</em> state.<br>
 	It may be interesting to note that the <em>needs-build</em>
 	queue is not a FIFO queue; rather, the ordering used is based
 	on the following criteria:
@@ -43,8 +43,9 @@ compilation state. There are 7 states: <em>needs-build</em>,
 	    built before packages with <em>extra</em> priority)
 	  </li>
 	  <li>The section a package is in. This ordering is based on what
-	    packages are deemed more important; e.g., section "games" is built
-	    after section "base", and section "libs" is built before "devel".
+	    packages are deemed more important; e.g., section <em>games<em> is
+	    built after section <em>base<em>, and section <em>libs<em> is built
+	    before <em>devel<em>.
 	  </li>
 	  <li>an asciibetical ordering on the package name.</li>
 	</ol>
@@ -68,9 +69,10 @@ compilation state. There are 7 states: <em>needs-build</em>,
 	autobuilder picks it from the top of the wanna-build queue
 	until the moment the autobuilder admin replies to the log. As
 	packages are not picked one by one, this means a package can
-	be (and usually is) marked 'building' before the build has
+	be (and usually is) marked <em>building<em> before the build has
 	actually started; however, as buildd builds packages in its
 	local queue on a FIFO basis, it should not take too long
+	anymore. Also, note that the state of a package is
 	anymore. Also, note that the state of a package is
 	<strong>not</strong> modified once the build is complete; only
 	when the autobuilder admin comes around to replying to the
@@ -98,7 +100,7 @@ compilation state. There are 7 states: <em>needs-build</em>,
 	needs-build once said dependencies are available.<br>
 	As such, in two specific cases it may happen that a package is
 	marked dep-wait forever; these are when a typing error
-	happened by specifying the dep-wait dependencies (so that the
+	happened by specifying the <em>dep-wait</em> dependencies (so that the
 	package is marked dep-wait on a package that does not and will
 	never exist) and when a build-time dependency is declared on a
 	package which is marked <em>not-for-us</em>, or which is in
@@ -132,7 +134,7 @@ compilation state. There are 7 states: <em>needs-build</em>,
       </dd>
       <dt><a name="not-for-us">not-for-us</a></dt>
       <dd>Certain specific packages are architecture-specific; for
-	instance, "lilo", an i386 boot loader, should not be rebuilt
+	instance, <tt>lilo<tt>, an i386 boot loader, should not be rebuilt
 	on alpha, m68k, or s390. However, <em>wanna-build</em> does
 	not look at the control file of a package when creating its
 	database; only at the packages' name and section, its urgency,
@@ -194,19 +196,18 @@ compilation state. There are 7 states: <em>needs-build</em>,
     <p>
       It is not possible to access the wanna-build database directly;
       this database is installed on ftp-master.debian.org, which is a
-      restricted host, and only buildd machines have an SSH key which
+      restricted host, and only autobuilders have an SSH key which
       allows them to access the wanna-build database of their
       architecture.  This has been the case even before ftp-master was
-      restricted; As the wanna-build does a database-level lock when
+      restricted; As wanna-build does a database-level lock when
       accessing, even reading, the data, you had to be in the right
       group (wb-&lt;arch&gt;) to be able to directly access a
-      wanna-build database
+      wanna-build database.
     </p>
     <p>That said, you can see what state a package is in by
       going to <a href="http://buildd.debian.org/stats/">the buildd
 	stats page</a>, except if it is in state <em>installed</em>
 	(well, not unless you don't mind spitting through the
-	multi-megabytes "&lt;arch&gt;-all.txt" files...).
 	Alternatively, there are some web pages available through
 	<a href="http://crest.debian.org/">crest.debian.org</a>, which
 	are based on parsing of the &lt;arch&gt;-all.txt files, and give
@@ -253,13 +254,13 @@ compilation state. There are 7 states: <em>needs-build</em>,
       <dt><a name="skipped">skipped</a></dt>
       <dd>In the time between the package was picked by the/an
 	autobuilder and marked <em><a
-	    href="#building">building</a></em>, a new version for this
-	package was uploaded, or a porter manually modified the
-	wanna-build state for another reason. When that is done, a
-	mail is sent to the autobuilder, which will mark the package
-	as not to be built; sbuild sees this, and will skip the build
-	(although a build log with this result is sent, describing the
-	fact that this happened).
+	    href="#building">building</a></em> and the build attempt, a new
+	    version for this package was uploaded, or a porter manually
+	    modified the wanna-build state for another reason. When that is
+	    done, a mail is sent to the autobuilder, which will mark the
+	    package as not to be built; sbuild sees this, and will skip the
+	    build (although a build log with this result is sent, describing
+	    the fact that this happened).
       </dd>
     </dl>
 
