@@ -1,11 +1,12 @@
 #!/usr/bin/perl -w
 
-# Usage: new_translation.pl <file1> <file2>...
+# Usage: make_all.pl <file1> <file2>...
 
 # 	This will update every version of <file?>, each of which should be
 #	the path to a .wml file (without the language directory).
 
-# Note: this script old functionality is replaced by touch_old_files.pl
+# Note: this script was previously known as new_translation.pl.
+# That functionality is replaced by touch_old_files.pl.
 
 require 5.001;
 use strict;
@@ -16,10 +17,7 @@ use Webwml::Langs;
 
 my $l = Webwml::Langs->new();
 my %langs = $l->name_iso();
-
-#print "$_ $langs{$_}\n" foreach (keys %langs); exit;
-
-my (@languages, @parts, $file, $filename, $lang, $path, $pid);
+my @languages = $l->names();
 
 if (!@ARGV) {
   open SELF, "<$0" or die "Unable to display help: $!\n";
@@ -33,14 +31,9 @@ if (!@ARGV) {
   exit;
 }
 
-opendir(DIR, ".") || die "can't open directory $!";
-@languages = grep { /^\w+$/ && -d $_ } readdir(DIR);
-closedir DIR;
-# print @languages;
-
 my $relhtmlbase = "../debian.org/";
 
-foreach $file (@ARGV) {
+foreach my $file (@ARGV) {
   $file =~ s,^english/,,;
   my $level = 0;
   my $destfile = "";
@@ -50,17 +43,17 @@ foreach $file (@ARGV) {
 # system ("mkdir -p $relhtmlbase$path");
   while ($dir) { $destfile .= "../"; $dir = pop @parts; }
   $destfile .= $relhtmlbase . $file;
-  foreach $lang (@languages) {
+  foreach my $lang (@languages) {
       next if ($lang eq "CVS");
       if ( -f "$lang/$file" ) {
-         $pid = fork;
+         my $pid = fork;
          if ($pid) { # parent
             # do nothing
          }
          else {      # child
 	    $destfile =~ s/.wml$/.$langs{$lang}.html/;
             print "Making the " . ucfirst $lang . " copy:\n";
-            system("make -C $lang/$path $destfile") == 0 or die "$!\n";
+            system("make -C $lang/$path $destfile"); # no need to handle make's errors
             exit 0;
          }
          waitpid($pid,0);
