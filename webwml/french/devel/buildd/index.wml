@@ -1,0 +1,188 @@
+#use wml::debian::template title="Réseau de serveurs d'empaquetage automatique" BARETITLE="true"
+#use wml::debian::translation-check translation="1.6" maintainer="Mohammed Adnène Trojette"
+
+<p>Le réseau de serveurs d'empaquetage automatique est un
+développement de Debian qui permet d'accélérer les empaquetages de
+paquet pour toutes les architectures que <a href="$(HOME)/ports/">Debian
+gère actuellement</a>. Ce réseau est constitué de plusieurs serveurs qui
+utilisent un programme empaqueté dédié appelé <em>buildd</em> afin de
+récupérer des paquets depuis l'archive Debian et les empaqueter pour
+l'architecture cible.</p>
+
+<h2>Pourquoi le réseau de serveurs d'empaquetage automatique est-il
+nécessaire&nbsp;?</h2>
+
+<p>La distribution Debian gère <a href="$(HOME)/ports/">pas mal
+d'architectures</a>, mais les responsables de paquets construisent
+habituellement des versions binaires pour une seule architecture (i386
+usuellement). Les développeurs pour les autres architectures doivent
+surveiller les nouvelles versions de paquets et les empaqueter à nouveau
+s'ils souhaitent rester à jour avec la distribution Intel.</p>
+
+<p>Quand le projet Debian/m68k (le premier portage non-Intel) a débuté,
+tout ceci était fait à la main&nbsp;: les développeurs surveillaient sur
+la liste de diffusion les envois de nouveaux paquets et les récupéraient
+pour les construire. Afin qu'aucun paquet ne soit construit deux
+fois, la coordination se faisait par des annonces sur la liste de
+diffusion. Évidemment, cette procédure mène à des erreurs et prend du
+temps. C'était, pourtant, la méthode habituelle pour maintenir les
+distributions non-i386 le plus longtemps possible.</p>
+
+<p>Le système d'empaquetage automatise la plupart de ces processus.
+Il consiste en une série de scripts (écrits en Perl et Python) qui
+ont évolué à travers les temps pour aider les porteurs dans diverses
+tâches. Ils ont finalement développé un système capable de maintenir
+quasi-automatiquement des distributions non-i386.
+
+<h2>Comment fonctionne le service d'empaquetage
+«&nbsp;buildd&nbsp;»&nbsp;?</h2>
+
+<p><em>Buildd</em> est le nom usuel que l'on donne aux programmes
+utilisés par le réseau de serveurs d'empaquetage automatique, mais il
+est en réalité constitué de différentes parties&nbsp;:
+
+<dl>
+
+<dt><A href="http://m68k.debian.org/buildd/getting.html">wanna-build</A></dt>
+<dd>
+un outil qui aide à la coordination du (ré)empaquetage de paquet à
+travers une base de données qui maintient une liste des paquets et de
+leurs statuts. Il y a une base de données centrale par architecture qui
+stocke les états, les versions et quelques autres informations sur les
+paquets.
+</dd>
+
+<dt><a href="http://m68k.debian.org/buildd/getting.html">buildd</a></dt>
+<dd>
+un démon qui vérifie périodiquement la base de données maintenue par
+<em>wanna-build</em> et appelle <em>sbuild</em> pour construire les
+paquets. Il garde trace des échecs et succès d'empaquetage, et envoie
+aussi les paquets dès que l'administrateur a pris connaissance du
+journal d'empaquetage.
+</dd>
+
+<dt><A href="http://packages.debian.org/sbuild">sbuild</A></dt>
+<dd>
+est responsable de la construction effective des paquets dans des
+«&nbsp;chroots&nbsp;». Il utilise principalement des outils standards
+de Debian écrits pour cette fonction, mais tient aussi compte des
+dépendances des sources et de quelques autres bizarreries mineures.
+</dd>
+
+<dt><a href="http://packages.debian.org/quinn-diff">quinn-diff</a></dt>
+<dd>
+Il alimente la base de données de <em>wanna-build</em> avec de
+nouveaux paquets. Il compare les versions disponibles d'un paquet
+pour deux architectures, et renvoie les différences (en comparant
+les fichiers <em>Sources</em> et <em>Package</em>). De plus
+amples informations sur <em>quinn-diff</em> sont disponibles <a
+href="http://buildd.debian.org/quinn-diff/">ici</a>.
+</dd>
+
+<dt>andrea</dt>
+<dd>
+Un outil qui génère automatiquement quelques dépendances sur les sources
+et fusionne ces données avec les dépendances ajoutées à la main.
+</dd>
+
+</dl>
+
+<p>Toutes ces parties <a href="operation">contribuent</a> ensemble à
+faire fonctionner le réseau de serveurs d'empaquetage.</p>
+
+<h2>Que doit faire un développeur Debian&nbsp;?</h2>
+
+<p>Dans les faits, le développeur Debian moyen n'a rien à faire
+explicitement pour utiliser le service d'empaquetage. À chaque fois
+qu'il envoie un paquet à l'archive (un binaire compilé pour une
+architecture donnée), celui-ci est ajouté à la base de données de toutes
+les architectures (dans l'état <em>Needs-Build</em>). Les serveurs
+d'empaquetage feront des requêtes à la base de données pour les paquets
+qui sont dans cet état, et prendront habituellement les paquets de
+cette liste. La liste est priorisée par précédent état de compilation,
+priorité, section et enfin nom de paquet.</p>
+
+<p>Si l'empaquetage réussit sur toutes les architectures, les
+responsables n'auront rien à faire. Tous les paquets binaires produits
+seront envoyés sur le site principal de l'architecture. Si l'empaquetage
+échoue, le paquet entrera dans un état spécial (<em>Failed</em> ou
+<em>Dep-Wait</em>, s'ils nécessitent des dépendances spécifiques qui ne
+sont pas disponibles). Les administrateurs des serveurs d'empaquetage
+automatique reliront les paquets dont l'empaquetage échoue et
+rapporteront cet échec au responsable, habituellement par l'ouverture
+d'un bogue dans le système de suivi des bogues.</p>
+
+<p>Parfois, un paquet met du temps à être empaqueté pour
+une architecture donnée et cela bloque sont entrée dans <a
+href="$(HOME)/devel/testing"><em>testing</em></a>. Malheureusement, le
+paquet devra attendre que le serveur le reprenne. Les administrateurs
+des serveurs d'empaquetage n'accepteront pas de demande d'accélération
+de l'empaquetage d'un paquet à partir du moment où la liste de priorité
+a déjà été établie. Un responsable peut toutefois accéder à une <a
+href="http://db.debian.org/machines.cgi">machine de développement
+Debian</a> et y empaqueter le paquet lui-même.</p>
+
+<p>Vous pouvez vérifier le statut des différentes
+tentatives d'empaquetage des paquets qui appartiennent à
+n'importe quel responsable donné en jetant un oeil aux <a
+href="http://buildd.debian.org/bymaint.php">journaux des services
+d'empaquetage</a>. Ces journaux sont aussi liés aux pages
+récapitulatives des responsables de paquets.</p>
+
+<p>Pour plus d'information sur les différents
+états que peut prendre un paquet, veuillez lire <a
+href="wanna-build-states"><em>wanna-build-states</em></a>.</p>
+
+<h2>Où puis-je trouver des informations additionnelles&nbsp;?</h2>
+
+<p>Bien entendu, la documentation et le code source disponibles pour
+ces différents outils sont le meilleur moyen de bien comprendre comment
+fonctionne le réseau d'empaqueteurs. Par ailleurs, la section
+<a href="$(HOME)/doc/manuals/developers-reference/ch-pkgs#s-porting">\
+Portage</a> de la <a href="$(HOME)/doc/manuals/developers-reference/">\
+Référence du développeur Debian</a> fournit des informations
+complémentaire sur la manière dont cela fonctionne
+et elle fournit aussi quelques infos sur les <a
+href="$(HOME)/doc/manuals/developers-reference/ap-tools#s-tools-builders">\
+empaqueteurs</a> et les <a
+href="$(HOME)/doc/manuals/developers-reference/ap-tools#s-tools-porting">\
+outils de portage</a> qui sont impliqués dans les processus
+d'installation et de maintenance du réseau de serveurs
+d'empaquetage.</p>
+
+<p>Quelques statistiques sur le réseau de serveurs d'empaquetage sont
+disponibles sur les <a href="http://buildd.debian.org/stats/">pages de
+statistiques des serveurs d'empaquetage</a>.</p>
+
+<h2>Comment puis-je mettre en place mon propre noeud
+d'empaquetage automatique&nbsp;?</h2>
+
+<p>Il peut y avoir plusieurs raisons pour qu'un développeur (ou qu'un
+utilisateur) veuille mettre en place et faire fonctionner un service
+d'empaquetage automatique&nbsp;:</p>
+
+<ul>
+<li>Afin de tester localement si les entrées <tt>Build-Depends</tt> du
+paquet sont correctement définies (i.e. en empaquetant le paquet dans
+l'environnement du serveur d'empaquetage automatique).</li>
+<li>Afin d'aider au développement d'un portage vers une architecture
+donnée (quand des serveurs d'empaquetage automatique sont
+nécessaires).</li>
+<li>Afin d'évaluer l'impact d'une optimisation de compilateur ou d'un
+patch donnés sur le réempaquetage d'un large panel de paquets.</li>
+<li>Afin de lancer des outils d'analyse des paquets pour débusquer des
+erreurs connues et qui doivent être lancés sur des paquets construits.
+Cela est même nécessaire lorsque l'on fait de l'analyse de code, par
+exemple lorsque on utilise <tt>dpatch</tt> pour proposer des solutions
+de contournement («&nbsp;work-around&nbsp;»).</li>
+</ul>
+
+<p>Vous pourrez lire plus d'information sur la méthode de mise en place
+d'un <a href="setting-up">serveur d'empaquetage automatique</a>.</p>
+
+<hrline/>
+
+<p><small>Cette introduction au réseau de serveurs d'empaquetage
+automatique a été écrite à partir d'extraits fournis par Roman Hodez,
+Christian T. Steigies, Wouter Verhelst, Andreas Barth, Francesco Paolo
+Lovergine et Javier Fern&aacute;ndez-Sanguino</small></p>
