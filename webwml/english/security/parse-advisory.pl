@@ -7,6 +7,7 @@
 # and makes wmls out of them
 # 
 # Copyright (C) 2001 Josip Rodin
+# Copyright (c) 2002 Josip Rodin, Martin Schulze
 # Licensed under the GNU General Public License version 2.
 
 my $adv = $ARGV[0];
@@ -89,6 +90,7 @@ $files =~ s/\n\n$/\n/s;
 $files =~ s/      (Size\/)?MD5 checksum: (\s*\d+ )?\w{32}\n//sg;
 $files =~ s/  Source archives:/<dt><source>/sg;
 $files =~ s/  Architecture.independent \w+:\n/<dt><arch-indep>\n/sg;
+$files =~ s/HP Precision architecture/HPPA architecture/gi;
 $files =~ s/  (\w+) architecture \(([\w -()\/]+)\)/<dt>$1 ($2):/sg;
 $files =~ s/  ([\w -\/]+) architecture:/<dt>$1:/sg;
 $files =~ s/    (http:\S+)/  <dd><fileurl $1>/sg;
