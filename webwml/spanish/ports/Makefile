@@ -9,3 +9,8 @@ SUBS=alpha arm beowulf hppa hurd i386 ia64 m68k mips powerpc sparc sparc64 s390
 
 include $(WMLBASE)/Make.lang
 
+
+ifeq "$(LANGUAGE)" "en"
+install::
+	test -L $(HTMLDIR)/mipsel || ln -sf mips $(HTMLDIR)/mipsel
+endif
