@@ -401,6 +401,23 @@ sub get_sorted_list {
 
 =pod
 
+=item C<get_sorted_srclist>
+
+Returns a list with all source package names, sorted with the default sorting
+sheme of the sort function.
+
+See perlfunc.
+
+=cut
+
+sub get_sorted_srclist {
+    my $self = shift;
+
+    return sort keys %{$self->{srcdb}};
+}
+
+=pod
+
 =item C<is_translated>
 
 Parameters: package name, package version, architecture, and language
@@ -675,19 +692,22 @@ sub process_dep_list {
 	my @final_dep_list = ();
 	foreach my $given_dep (split(/\s*\|\s*/)) {
 	    my $given_dep_strip = $given_dep;
-	    my ( $dep_op, $dep_ver );
+	    my ( $dep_op, $dep_ver, $dep_archs );
 	    {
 		$given_dep_strip =~ s/\s*\(\s*(=|>=|<=|<<|>>)\s*(.*)\)\s*//o;
-		( $dep_op, $dep_ver ) = ( $1, $2 );
+		( $dep_op, $dep_ver ) = ( $1 || "", $2 || "");
 	    }
-	    $given_dep_strip =~ s/\s*\[.*\]\s*//o;
+	    {
+		$given_dep_strip =~ s/\s*\[\s*(.*)\]\s*//o;
+		$dep_archs = $1 || "";
+	    }
 	    if ($self->pkg_exists( $given_dep_strip ) ) {
 		push(@final_dep_list, [ $given_dep_strip, 
-					$dep_op, $dep_ver ] ) 
+					$dep_op, $dep_ver, $dep_archs ] ) 
 		    if not_member($given_dep_strip, @final_dep_list);
 	    } else {
 		push(@final_dep_list, [ $given_dep_strip, $dep_op, 
-					$dep_ver, "(NOT AVAILABLE)" ] );
+					$dep_ver, $dep_archs, "(NOT AVAILABLE)" ] );
 	    }
 	}
 	push @$res, [ @final_dep_list ];

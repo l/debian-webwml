@@ -256,7 +256,7 @@ unless ($search_on_sources) {
 	print "<ul>\n";
 	foreach $ver (('stable','testing','unstable','experimental')) {
 	    if (exists $pkgs{$pkg}{$ver}) {
-		printf "<li>%s (%s): %s", $ver, $sect{$pkg}{$ver}{source}, $pkgs{$pkg}{$ver};
+		printf "<li><a href=\"http://packages.debian.org/%s/source/%s\">%s</a> (%s): %s", $ver, $pkg, $ver, $sect{$pkg}{$ver}{source}, $pkgs{$pkg}{$ver};
 		
 		print "<br>Binary packages: ";
 		my @bp_links;
