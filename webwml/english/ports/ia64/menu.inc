@@ -7,6 +7,7 @@
 <define-menu-item name="ia64">
    [EN:Debian for IA-64:]
    [AR:Debian for IA-64:]
+   [CA:Debian per a IA-64:]
    [DA:Debian til IA-64:]
    [DE:Debian für IA-64:]
    [EL:Debian for IA-64:]
