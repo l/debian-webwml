@@ -122,5 +122,5 @@ sub check_file {
 }
 
 foreach my $translator (sort {$karma{$b} <=> $karma{$a}} keys %karma) {
-    print "$translator have a web karma of ".$karma{$translator}.".\n";
+    print "$translator has a web karma of ".$karma{$translator}.".\n";
 }
