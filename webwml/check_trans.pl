@@ -413,7 +413,7 @@ sub add_sub_part {
 
 sub check_file {
 	my ($name, $revision, $translator) = @_;
-	my ($oldr, $oldname);
+	my ($oldr, $oldname, $original);
 	warn "Checking $name english revision $revision\n" if $opt_v;
 	unless (-r $name) {
 	        unless ($opt_q) {
@@ -428,20 +428,53 @@ sub check_file {
 	}
 	open(F, $name) || die $!;
 	while(<F>) {
-		if (/translation(\s+|=")([.0-9]*)("|\s*-->)/oi) {
-			warn "Found revision $2\n" if $opt_v;
-			$oldr = $2;
+		if (/wml::debian::translation-check/i) {
+			if (/translation="([^"]+)"/i) {
+				$oldr = $1;
+				warn "Found revision $oldr\n" if $opt_v;
+			}
+			if (/maintainer="([^"]+)"/i) {
+				$translator = $1;
+				warn "Translated by $translator\n" if $opt_v;
+			}
+			if (/original="([^"]+)"/i) {
+				$original = $1;
+				warn "Original is $original\n" if $opt_v;
+			}
+			last;
 		}
-		if (/wml::debian::translation-check.*?maintainer(\s+|=")(.*)("|\s*-->)/oi) {
-		    warn "Translated by $2\n" if $opt_v;
-		    $translator=$2 if ($translator eq "");
+		# the following old style cases should be removed eventually
+		if (/translation\s+([.0-9]*)\s*-->/oi) {
+			$oldr = $1;
+			warn "Found revision $oldr\n" if $opt_v;
 		}
 		if (/Translat(.*?): (.*)$/i) {
-		    warn "Translated by $2\n" if $opt_v;
 		    $translator=$2 if ($translator eq "");
+		    warn "Translated by $translator\n" if $opt_v;
 		}
+		last if (($oldr) && ($translator));
 	}
 	close(F);
+
+	if ((!$oldr) && ($name =~ /$langto\/international\/$langto/i)) {
+	    ($ename = $name) =~ s/$to/$from/;
+	    open FE, $ename || die $!;
+	    while (<FE>) {
+		if (/wml::debian::translation-check/i) {
+		    if (/translation="([^"]+)"/i) {
+			$oldr = $1;
+			warn "Found revision $1\n" if $opt_v;
+		    }
+		    if (/original="([^"]+)"/i) {
+			$original = $1;
+			warn "Original is $1\n" if $opt_v;
+		    }
+		    last;
+		}
+	    }
+	    close FE;
+	}
+
 	return if (defined($oldr) && ($oldr eq $revision));
 
         $translator =~ s/^\s*(.*?)\s*/$1/;
@@ -449,11 +482,7 @@ sub check_file {
 	my $str;
 	if (!$oldr) {
 	  $oldr = '1.1';
-	  if ($name !~ /$langto\/international\/$langto/i) {
-	    $str = "Unknown status of $name (revision should be $revision)";
-	  } else {
-	    warn "Ignoring $name\n" if $opt_v;
-	  }
+	  $str = "Unknown status of $name (revision should be $revision)";
 	} elsif ($oldr >> $revision) {
 	  $str = "Broken revision number $oldr for $name, it should be $revision";
 	} else {
