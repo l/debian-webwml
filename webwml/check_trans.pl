@@ -24,6 +24,7 @@
 # use a file to bind a file to a translator?
 
 use Getopt::Std;
+use IO::Handle;
 
 $opt_d = 0;
 $opt_s = '';
@@ -96,7 +97,9 @@ sub check_file {
 		$oldr ||= '1.1';
 		$oldname = $name;
 		$oldname =~ s/^$to/$from/;
+		STDOUT->flush;
 		system("cvs -z3 diff -u -r '$oldr' -r '$revision' '$oldname'");
+		STDOUT->flush;
 	} else {
 		print "NeedToUpdate $name to version $revision\n";
 	}
