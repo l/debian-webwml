@@ -1,14 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd --- Desarrollo" NOHEADER="yes"
-#use wml::debian::translation-check translation="1.17" 
-[ <a href="../">Arquitecturas</a> ]
-[ <a href="index">Debian GNU/Hurd</a> ]
-[ <a href="hurd-news">Noticias</a> ]
-[ <a href="hurd-install">Intalación</a> ]
-[ <a href="hurd-cd">CDes del Hurd</a> ]
-[ <a href="hurd-doc">Documentación</a> ]
-[ <a href="hurd-devel">Desarrollo</a> ]
-[ <a href="hurd-links">Enlaces</a> ]
-[ <a href="hurd-contact">Contacto</a> ]<p>
+#use wml::debian::translation-check translation="1.19" 
+#include "$(ENGLISHDIR)/ports/hurd/menu.inc"
 
 <h1>
 Debian GNU/Hurd</h1>
@@ -19,11 +11,12 @@ Boot Disks</h3>
 <p>
 Actualmente estamos investigando los distintos modos de arrancar un sistema
 Hurd mínimo y cómo crear floppies de arranque. En <code><a
-href="ftp://alpha.gnu.org/gnu/hurd/contrib/marcus/">ftp://alpha.gnu.org/gnu/hurd/contrib/marcus</a></code> hay disponible un disco de arranque provisional
-en el archivo <code>boot-YYYYMMDD</code>. Este disco contiene el Mach de GNU,
+href="ftp://alpha.gnu.org/gnu/hurd/contrib/marcus/">ftp://alpha.gnu.org/gnu/hurd/contrib/marcus</a></code>
+hay disponible un disco de arranque provisional en el fichero
+<code>boot-YYYYMMDD</code>. Este disco contiene el Mach de GNU,
 el servidor <code>ext2fs</code>, el enlazador <code>ld.so</code>, el
 programa de arranque <code>serverboot</code> y una copia de GRUB. Este 
-disco arranca y espera un disco raiz, que no está disponible todavía.</p>
+disco arranca y espera un disco raíz, que no está disponible todavía.</p>
 
 <h3>
 Adaptando Paquetes de Debian</h3>
@@ -39,15 +32,15 @@ paquete Debian. He aquí un curso acelerado para los muy perezosos:</p>
 Obtener el Código Fuente y Construir Paquetes</h3>
 <p>
 Para extraer el contenido de un paquete de fuentes de Debian se necesita
-el archivo
-<code>package_version.dsc</code> y los archivos listados en él. El 
-directorio de construcción Debian se construye con la orden
+el fichero
+<code>package_version.dsc</code> y los ficheros listados en él. El 
+directorio de compilación de Debian se construye con la orden
  <code>dpkg-source -x package_version.dsc</code></p>
 <p>
-La construcción de un paquete se lleva a en el nuevo directorio de
-construcción Debian 
+La construcción de un paquete se lleva a cabo en el nuevo directorio
+de construcción Debian 
 <code>package-version</code> con la orden <code>dpkg -B -rsudo
-"-mMyName &lt;MyEmail&gt;"</code>. En lugar de <code>-B</code> se puede
+"-mMiNombre &lt;MiCorreo&gt;"</code>. En lugar de <code>-B</code> se puede
 usar 
 <code>-b</code> si también quiere construir las partes del paquete que 
 son independientes de la arquitectura. Puede utilizar
@@ -57,7 +50,7 @@ como usuario root, puede hacerlo sin <code>-r</code>. Puede añadir
 <code>-uc</code> para evitar firmar el paquete con su clave pgp.</p>
 
 <h3>
-Coja Uno</h3>
+Escoja Uno</h3>
 <p>
 ¿En que paquetes se necesita trabajar? Bien, lo mejor que puedo
 hacer ahora es decir en qué paquetes no debería trabajar.</p>
@@ -71,7 +64,7 @@ más adelante, pero, al menos actualmente, se consideran inadaptables.</p>
 <p>
 <ul>
 <li>
-<code>base/update</code>, porque el Hurd no necesita un daemon
+<code>base/update</code>, porque el Hurd no necesita un demonio
 update (los sistemas de archivos se sincronizan ellos mismos). Para 
 cambiar el intervalo de sincronización, puede utilizar
  <code>fsysopts</code> para ajustar la opción <code>--sync</code>. 
@@ -98,12 +91,11 @@ muy específico del núcleo Linux. El Hurd, en su lugar, utiliza
 Linux).</li>
 <li>
 <code>base/procps</code>, porque este código es específico para el sistema
-de archivos proc de Linux
-filesystem.</li>
+de ficheros proc de Linux.</li>
 <li>
 <code>base/ppp</code> y <code>base/pppconfig</code>, porque el Hurd no 
 da ningún soporte para PPP (e incluso si lo tuviese, este paquete es 
-probablemente específico para Linux).</li>
+probablemente muy específico para Linux).</li>
 <li>
 <code>base/setserial</code>, porque es específico para el núcleo de Linux.
 Sin embargo, con la adaptación de los gestores de dispositivos de 
@@ -255,7 +247,7 @@ Paquetes Que Se Compilan Limpiamente Sin Cambios
 <code>aalib</code>,
 <code>db</code>,
 <code>dialog</code>,
-<code>gdbm</code> (but see bug#54401),
+<code>gdbm</code> (pero vea el fallo nº54401),
 <code>libaudiofile</code>,
 <code>libglib</code>,
 <code>libident</code>,
@@ -409,7 +401,7 @@ href="http://bugs.debian.org/48814">Bug#48814</a>.</li>
 <h4>
 Paquetes Para Los Que Ha Sido Necesario Una NMU De Fuentes</h4>
 <p>
-Currently empty.</p>
+Actualmente vacío.</p>
 
 <h4>
 Paquetes Que Requieren Algo De Programación</h4>
@@ -464,8 +456,8 @@ Si ve el error <code>Bad File Descriptor</code> cuando intenta leer
 un archivo (o acceder a él de algún modo), compruebe la llamada a
  <code>open()</code>. El segundo argumento es el método de acceso.
 Si tiene un número en lugar de uno de los símbolos definidos en los
-ficheros estándar de cabecera, el código es enredado y se debería
-arreglarlo o usar
+ficheros estándar de cabecera, el código es malo, y se debería
+arreglar o usar
 <code>O_RDONLY</code>, <code>O_WRONLY</code> o
 <code>O_RDWR</code>. Este error se ha observado en los paquetes
 <code>fortunes</code> y <code>mtools</code>, por ejemplo.</p></li>
@@ -477,7 +469,9 @@ con POSIX. Si no hay límite superior para la longitud de un camino, este
 símbolo no está definido en ningún archivo de cabecera. En su lugar, 
 necesita usar una implementación diferente que no dependa de la
 longitud de una cadena, o usar <code>sysconf()</code> para preguntar
-la longitud durante la ejecución. Si <code>sysconf()</code> devuelve <code>-1</code>, ha de usar <code>realloc()</code> para reservar de modo dinámico la memoria necesaria.</p></li>
+la longitud durante la ejecución. Si <code>sysconf()</code> devuelve
+<code>-1</code>, ha de usar <code>realloc()</code> para reservar de
+modo dinámico la memoria necesaria.</p></li>
 <li>
 <code>MAXHOSTNAMELEN</code>
 <p>
@@ -499,7 +493,7 @@ Si necesita incluir código específico para el Hurd utilizando
 En la 
 <em>mayoría</em> de las situaciones, es completamente innecesario y creará
 más problemas de los que puede resolver. Mejor pregunte en las listas
-de correo como hacerlo correctamente si no se le ocurre una solución
+de correo cómo hacerlo correctamente si no se le ocurre una solución
 mejor.</p></li>
 <li>
 <code>sys_errlist[]</code> vs. <code>strerror()</code>
@@ -527,7 +521,9 @@ no POSIX que no tienen <code>strerror()</code>, sólo
 <p>
 Hoy, dar soporte sólo a <code>strerror()</code> es mucho mejor que dar
 soporte sólo a
-<code>sys_errlist[]</code>. Lo mejor (desde el punto de vista de la portabilidad), sin embargo, es dar soporte a ambos. Para <code>configure.in</code>, necesitará:</p>
+<code>sys_errlist[]</code>. Lo mejor (desde el punto de vista de la
+portabilidad), sin embargo, es dar soporte a ambos. Para
+<code>configure.in</code>, necesitará:</p>
 <p>
 <code>AC_CHECK_FUNCS(strerror)</code></p>
 <p>
@@ -558,7 +554,7 @@ versión simplificada de lo que encontré ahí.) Por supuesto, los parches
 se deberían enviar a los mantenedores principales, esto es muy útil 
 incluso para sistemas en los que funciona <code>sys_errlist[]</code>.</blockquote>
 <li>
-Nombres De Archivo Que Terminan En `/'
+Nombres De Fichero Que Terminan En `/'
 <p>
 Son malvados si no existen y quiere darle un nombre así a un directorio.
 Por ejemplo, <code>mkdir foobar/</code> <em>no</em> funcionará en
