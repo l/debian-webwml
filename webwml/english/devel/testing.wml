@@ -27,8 +27,8 @@ satisfies all of the following criteria:</p>
   <li>It must have been in unstable for 10, 5 or 2 days, depending on the
   urgency of the upload;</li>
 
-  <li>It must be compiled on (at least) every architecture which the
-  corresponding version in "testing" was compiled on;</li>
+  <li>It must be compiled and up to date on all architectures it has
+  previously been compiled for in unstable;</li>
 
   <li>It must have fewer release-critical bugs than, or the same number as,
   the version currently in "testing" (<a href="#faq">see below</a> for
@@ -43,7 +43,7 @@ satisfies all of the following criteria:</p>
   more information.)</li>
 </ol>
 
-<p>A package which satisfies the first four of the above is said to be a
+<p>A package which satisfies the first three of the above is said to be a
 <q>Valid Candidate</q>.</p>
 
 <p>The update script shows when each package might move from "unstable" into
@@ -87,7 +87,7 @@ packages?</q></h3>
 contain one version of a package; a package is defined by its name. So, when
 the source package <tt>acmefoo</tt> is installed into "testing", along with
 its binary packages <tt>acme-foo-bin</tt>, <tt>acme-bar-bin</tt>,
-<tt>libacme-foo1</tt> and <tt>libacme-foo-dev</tt>, the old version will be
+<tt>libacme-foo1</tt> and <tt>libacme-foo-dev</tt>, the old version is
 removed.</p>
 
 <p>However, the old version may have provided a binary package with an old
@@ -117,17 +117,19 @@ on libltdl<var>Y</var> (where <var>Y</var> is the earlier version) have been
 recompiled, and all their release critical bugs are gone, etc, none of these
 packages will enter "testing".</p>
 
-<h3><q>Why is it sometimes hard to get Architecture: all packages into
-"testing"?</q></h3>
+<p>This is where the <a href="http://ftp-master.debian.org/testing/update_output.txt">\
+textual output</a>
+[<a href="http://ftp-master.debian.org/testing/update_output.txt.gz">gzipped</a>]
+is useful: it gives hints (albeit very terse ones) as to which packages
+break when a valid candidate is added to "testing".</p>
+
+<h3><q>Why is it sometimes hard to get <kbd>Architecture: all</kbd> packages
+into "testing"?</q></h3>
 
 <p>If the <kbd>Architecture: all</kbd> package is to be installed, it must
 be possible to satisfy its dependencies on <strong>all</strong>
 architectures. If it depends on certain packages which only compile on a
 limited set of Debian's architectures, then it can't do that.</p>
-
-<p>Your alternatives are either to make the package <kbd>Architecture: any</kbd>
-(which wastes archive space) or weaken the <kbd>Depends:</kbd> (if you think
-that is appropriate).</p>
 
 <p>However, for the time being, "testing" will ignore <kbd>Architecture:
 all</kbd> packages' installability on non-i386 architectures. ("It's a
@@ -146,6 +148,86 @@ it into "testing" despite not satisfying all of the requirements.</q></h3>
   <li>They can also manually remove packages from "testing" that would be
       broken, so that new stuff can be installed.</li>
 </ul>
+
+<h3><q>Can you provide a real, non-trivial example?</q></h3>
+
+<p>Here's one: when the source package <tt>apache</tt> is installed into
+"testing", along with its binary packages <tt>apache</tt>,
+<tt>apache-common</tt>, <tt>apache-dev</tt> and <tt>apache-doc</tt>, the
+old version is removed.</p>
+
+<p>However, all Apache module packages depend on <code>apache-common (&gt;=
+<var>something</var>), apache-common (&lt;&lt; <var>something</var>)</code>,
+so this change breaks all of those dependencies. Consequently, all Apache
+modules need to be recompiled against the new version of Apache in order
+for "testing" to be updated.</p>
+
+<p>Let's elaborate on this a bit further: after all of the modules have been
+updated in unstable to work with a new Apache, the "testing" scripts try
+<tt>apache-common</tt> and find out that it breaks all the Apache modules
+because they have <code>Depends: apache-common (&lt;&lt; <var>the current
+version</var>)</code>, and then try <tt>libapache-<var>foo</var></tt> to find
+out that it doesn't install because it has <code>Depends: apache-common (&gt;=
+<var>the new version</var>)</code>.</p>
+
+<p>However, later it'll apply a different logic (sometimes prompted by a
+manual intervention): it'll ignore the fact <tt>apache-common</tt> breaks
+stuff, and keep going with things that work; if it still doesn't work after
+we've done everything we can, too bad, but maybe it <strong>will</strong>
+work. Later it'll try all the random <tt>libapache-<var>foo</var></tt>
+packages and see that they indeed work.</p>
+
+<p>After everything's been tried, it checks how many packages have been
+broken, works out if that's better or worse than what there was originally
+and either accepts everything or forgets about it. You'll see this in
+<tt>update_output.txt</tt> on "<code>recur:</code>" lines.</p>
+
+<p>For example:</p>
+
+<pre>
+         recur: [<var>foo</var> <var>bar</var>] <var>baz</var>
+</pre>
+
+<p>basically says <q>having already found that <var>foo</var> and
+<var>bar</var> make things better, I'm now trying <var>baz</var>, even
+though that breaks things to see what happens</q>. The lines of
+<tt>update_output.txt</tt> that start with "<code>accepted</code>" indicate
+things that appear to make things better, and "<code>skipped</code>" lines make
+things worse.</p>
+
+<h3><q>The <tt>update_output.txt</tt> file is completely unreadable!</q></h3>
+
+<p>That is not a question. ;-)</p>
+
+<p>Let's take an example:</p>
+
+<pre>
+ skipped: cln (0) (150+4)
+     got: 167+0: a-40:a-33:h-49:i-45
+     * i386: ginac-cint, libginac-dev
+</pre>
+
+<p>This means that if <tt>cln</tt> goes into "testing", <tt>ginac-cint</tt>
+and <tt>libginac-dev</tt> become uninstallable in "testing" on i386.
+Note that the architectures are checked in alphabetical order and only the
+problems on the first architecture with problems are shown -- that's why
+the alpha architecture is shown so often.</p>
+
+<p>The "got" line includes the number of problems in "testing" on the
+different architectures (until the first architecture where a problem is
+found -- see above). The "i-45" means that if <tt>cln</tt> would go into
+"testing", there would be 45 uninstallable packages on i386. Some of the
+entries above and below <tt>cln</tt> show there were 43 uninstallable
+packages in "testing" on i386 at the time.</p>
+
+<p>The "skipped: cln (0) (150+4)" line means that there are still 150
+packages to go through after this package until this check of all packages
+is completed, and that 4 packages have been found already that won't be
+planned to be upgraded because they would break dependencies. The "(0)" is
+irrelevant, you can safely ignore it.</p>
+
+<p>Note that there are several checks of all packages in one "testing"
+script run.</p>
 
 <p><i>Jules Bean initially assembled the frequently asked questions and
 answers.</i></p>
@@ -173,19 +255,11 @@ that are out of date for
 <a href="http://ftp-master.debian.org/testing/stable_outdate.txt">stable</a> and
 <a href="http://ftp-master.debian.org/testing/unstable_outdate.txt">unstable</a>.</p>
 
-<p>Other documentation includes:</p>
-
-<ul>
-  <li>An older
-      <a href="http://lists.debian.org/debian-devel-0008/msg00906.html">explanation
-      email</a>, which is outdated since James implemented the package pool,
-      but you might like to read it anyway.
-  </li>
-  <li>There was a <a href="http://lists.debian.org/debian-devel/2001/debian-devel-200112/msg00610.html">thread
-      on -devel</a> about the FAQ which has some more information that at
-      the time of writing hasn't been incorporated properly.
-  </li>
-</ul>
+<p>You might be interested in reading an older
+<a href="http://lists.debian.org/debian-devel-0008/msg00906.html">explanation
+email</a>. Its only major flaw is that it doesn't take the package pool
+into account, because that was implemented by James Troup after it was
+written.</p>
 
 <p>The testing code is available via anonymous CVS from
 <a href="http://cvs.debian.org/testing/?cvsroot=dak">cvs.debian.org</a>.
