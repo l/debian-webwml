@@ -38,7 +38,7 @@ while ( @row = $sth->fetchrow_array ) {
     $sql .= "vendorcd,vcd_nonfree,vcd_nonus,vcd_contrib, ";
     $sql .= "nonuscd,develsscd,nonfreecd, contribcd,customcd, ";
     $sql .= "arch_alpha,arch_arm,arch_i386,arch_m68k,arch_powerpc,arch_sparc, ";
-    $sql ,= " arch_source, hurd_i386, hurd_source ";
+    $sql .= " arch_source, hurd_i386, hurd_source ";
     $sql .= "from debiancd WHERE country='$country' AND hidden = 'f' ORDER BY name";
     $vsth = $dbh->prepare($sql);
     $vrv = $vsth->execute();
@@ -47,7 +47,7 @@ while ( @row = $sth->fetchrow_array ) {
         \$vendorcd, \$vcd_nonfree, \$vcd_nonus, \$vcd_contrib, 
         \$nonuscd, \$develsscd, \$nonfreecd, \$contribcd, \$customcd,
         \$arch_alpha, \$arch_arm, \$arch_i386, \$arch_m68k, \$arch_powerpc,
-        \$arch_sparc, \$arch_source);
+        \$arch_sparc, \$arch_source, \$hurd_i386, \$hurd_source);
     while ($vsth->fetch) {
         print "<vendorentry>\n";
         print "    <vendor $name>\n";
