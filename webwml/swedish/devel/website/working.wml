@@ -1,32 +1,40 @@
 #use wml::debian::template title="Hur man arbetar på Debians webbsidor"
-#use wml::debian::translation-check translation="1.2"
+#use wml::debian::translation-check translation="1.3"
 
 <p>Debians webbsidor genereras på ett av tre sätt:
-Dokumentation speglas från
-<a href="http://www.debian.org/~elphick/ddp/">Debian Documentation Project (DDP)</a>,
-delar av webbplatsen genereras av skript (felrapporteringssidorna och
-sändlistearkivet är två bra exempel), och resten genereras med hjälp av wml.
+<ul>
+  <li>huvuddelen genereras med WML från cvs-trädet "webwml"
+  <li>dokumentationen genereras med DebianDoc-SGML från cvs-trädet
+      "debian-doc".
+  <li>delar av webbplatsen genereras av skript, t.ex
+      sändlisteprenumerationssidorna
+</ul>
 
+<p>
 De som inte känner till programmen kan läsa mer på de sidor vi har gjort för
 att hjälpa dig komma igång med att
 <ul>
-<li><a href="using_wml">använda wml</a>
-<li><a href="using_cvs">använda cvs</a>
+  <li><a href="using_wml">använda WML</a>
+  <li><a href="using_cvs">använda CVS</a>
 </ul>
 
-<h3>Lägga till nya sidor</h3>
+<h2>Lägga till nya sidor</h2>
+
 <p>Att lägga till nya sidor till Debian är rätt så enkelt, allt arbete med
 att få sidhuvud och -fot rätt görs med wml.
 Allt du behöver göra är att inkludera en rad ungefär som denna överst i den
 nya filen:
+
 <pre><protect>
 #use wml::debian::template title="SIDTITEL" 
 </protect></pre>
-följd av sidkroppen.
-Alla sidor bör använda mallen wml::debian::template, såvida de inte använder
+
+<p>följd av sidkroppen.
+Alla sidor bör använda mallen <code>wml::debian::template</code>,
+såvida de inte använder
 en specialmall för just den sektionen, t.ex nyhets- eller säkerhetssidorna.
 
-<p>Mallen, wml::debian::template, tillåter dig definiera vissa variabler som
+<p>Mallenarna vi har tillåter dig definiera vissa variabler som
 påverkar sidan som skapas, vilket bör minska nödvändigheten av att skapa
 olika mallar för varje situation, och gör det enklare att implementera
 förbättringar.
@@ -49,7 +57,7 @@ De variabler som för närvarande finns tillgängliga är:
 
 <p>Ett exempel på hur detta används finns på anpassningssidorna vilka
 har sina egna sidhuvuden.
-ports/arm/index.wml använder:
+<code>ports/arm/index.wml</code> använder:
 <pre><protect>
 #use wml::debian::template title="ARM Port" NOHEADER="yes"
 </protect></pre>
@@ -71,17 +79,21 @@ inkluderas i alla språkversioner automatiskt.
 den faktiska listan.
 Den filen inkluderar i sin tur <kbd>distrib/vendors.CD.def</kbd> som
 innehåller definitionen av alla fraser i <kbd>vendors.CD</kbd>.
+
+<p>
 Översättare behöver bara lägga till översättningar för varje "slice", t.ex
 
 <pre><protect>
-	[EN:Country:]\
-	[ES:Pa-is:]\
-	[DE:Land:]\
+	[EN:Country:]
+	[ES:Pa-is:]
+	[DE:Land:]
 </protect></pre>
 
-<h3>Lägga till nya kataloger</h3>
+<h2>Lägga till nya kataloger</h2>
 
-Skapa inte kataloger med namnet <code>install</code>, då detta ställer till
+<p>Observera:
+Skapa <strong>inte</strong> kataloger med namnet <code>install</code>,
+då detta ställer till
 problem med make vilka leder till att sidorna i den katalogen inte kommer
 att uppdateras automatiskt.
 
@@ -94,17 +106,13 @@ webbplatsen:
    cp ../intro/Makefile .
    cvs add Makefile
 </pre>
-Redigera Makefile.
-WMLBASE ska peka på den engelska startkatalogen, relativt den aktuella
-katalogen.
-CUR_DIR är var den aktuella katalogen finns relativt WMLBASE.
-Skriv sedan
-<pre>
-   cd ..
-</pre>
-och redigera Makefile:
-Lägg till katalogen du just skapat i SUBDIR-variabeln.
-Detta kommer att lägga till katalogen till byggcykeln när make körs.
 
-<p>Slutligen skriver du <code>cvs commit Makefile foo</code>
-för att lägga in alla ändringar du just gjort i CVS-trädet.
+<p>Redigera Makefile i moderkatalogen, och lägg till katalogen du just
+skapade i <code>SUBS</code>-variabeln,
+vilket kommer att lägga till katalogen till byggcykeln när make körs.
+
+<p>Slutligen lägger du in alla ändringar du just gjort i CVS-trädet genom
+att skriva
+<pre>
+  cvs commit Makefile foo
+</pre>
