@@ -154,7 +154,7 @@
       return ($stored_passwd == $crypted_passwd);
   }
 
-  function print_applicants($db, $sql, $limit = 0, $show_am = 0, $show_date = 0) {
+  function print_applicants($db, $sql, $limit = 0, $show_am = 0, $show_date = 0, $am = 0) {
   if (! ($query = pg_exec($db, $sql))) {
     echo "Problem with query", pg_ErrorMessage($db), "<BR>";
     return FALSE;
@@ -182,7 +182,13 @@
         } else {
             echo "<TD> </TD>";
         }
-        echo "<TD><A href=\"nmstatus.php?email=", urlencode($row["email"]), "\">",
+        echo "<TD>";
+        if ($am) {
+            echo "<A href=\"amstatus.php?"; ?><?=SID?><?;
+        } else {
+            echo "<A href=\"nmstatus.php?email=";
+        }
+        echo urlencode($row["email"]), "\">",
           $row["forename"], " ", $row["surname"], " &lt;",
           $row["email"], "&gt;</A></TD>\n";
         if ($show_am) {
