@@ -260,13 +260,13 @@ foreach $lang (sort (keys %langs)) {
     $percent_u{$lang} = $untranslated{$lang}/$wml{english} * 100;
 
     if (open (HTML, ">$config{'htmldir'}/$l.html")) {
-	printf HTML "<html><head><title>%s: %s</title></head><body bgcolor=#ffffff>\n", $config{'title'}, $lang;
+	printf HTML "<html><head><title>%s: %s</title></head><body bgcolor=#ffffff>\n", $config{'title'}, ucfirst $lang;
 
 	$color = get_color ($percent_a{$lang});
 
 	printf HTML "<table width=100%% cellpadding=2 cellspacing=0 bgcolor=%s>\n", $color;
 
-	printf HTML "<tr><td colspan=4><h1 align=center>%s: %s</h1></td></tr>", $config{'title'}, $lang;
+	printf HTML "<tr><td colspan=4><h1 align=center>%s: %s</h1></td></tr>", $config{'title'}, ucfirst $lang;
 
 	print HTML "<tr>\n";
 	printf HTML "<td align=center width=25%%><b>%d files (%d%%) translated</b></td>", $wml{$lang}, $percent_a{$lang};
@@ -326,7 +326,7 @@ foreach $lang (sort (keys %langs)) {
     $color = get_color ($percent_a{$lang});
 
     print HTML "<tr>";
-    printf HTML "<td><a href=\"%s.html\">%s</a> (%s)</td>", $l, $lang, $l;
+    printf HTML "<td><a href=\"%s.html\">%s</a> (%s)</td>", $l, ucfirst $lang, $l;
     printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color, $wml{$lang}, $percent_a{$lang};
     if ($l ne "en") {
       printf HTML "<td align=right>%d (%d%%)</td>", $translated{$lang}, $percent_t{$lang};
