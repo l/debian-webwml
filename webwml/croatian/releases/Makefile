@@ -9,7 +9,5 @@ SUBS=hamm slink potato woody
 include $(WMLBASE)/Make.lang
 
 
-# unfortunately, I have to force this since it checks whether directories exist
-index.$(LANGUAGE).html: FORCE
-
-FORCE:
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
+  $(ENGLISHSRCDIR)/$(CUR_DIR)/info
