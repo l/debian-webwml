@@ -24,7 +24,7 @@ all: $(HTMLFILES) $(JPGDEST)
 #	( cd doc; $(MAKE) )
 	( cd intro; $(MAKE) )
 #	( cd logos; $(MAKE) )
-#	( cd ports; $(MAKE) )
+	( cd ports; $(MAKE) )
 #	( cd security; $(MAKE) )
 
 include $(BASE)/Make.templ.inc
