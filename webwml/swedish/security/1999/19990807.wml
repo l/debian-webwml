@@ -1,12 +1,29 @@
-# <!--translation 1.1-->
+# <!--translation 1.2-->
 <define-tag pagetitle>isdnutils</define-tag>
 <define-tag report_date>1999-08-07</define-tag>
 <define-tag packages>isdnutils</define-tag>
 <define-tag description>Felaktiga rättigheter för xmonisdn</define-tag>
 <define-tag isvulnerable>no</define-tag>
 <define-tag fixed>yes</define-tag>
-<define-tag moreinfo>xmonisdn installerades felaktigt med setuid root.
-Det aktuella paktet ger istället dialout-grupprättigheter.</define-tag>
+<define-tag moreinfo>Xmonisdn är ett X-miniprogram som visar status för
+ISDN-uppkopplingar.
+Du kan konfigurera det att köra varsitt skript när den vänstra respektive dn
+högra musknappen klickas i dess fönster.
+Xmonisdn installerades setuid root, så att skripten kunde göra saker såsom att
+lägga till eller ta bort nätverksinställningar.
+Trots att skripten kontrollerades att root var ägare, och att
+inte gruppen eller övriga hade skrivbehörigheter, så kördes dem via
+biblioteksfunktionen system(), vilket startar ett nytt skal för att köra dem.
+Detta betyder att skripten var åtkomliga för attacker via IFS- eller
+PATH-manipulering.
+
+<p>Rootbehörighet är nu inte nödvändigt längre, eftersom ISDN nu tillåter andra
+sätt att förhindra utringningar än att manipulera nätverksinställningarna.
+Detta kan göras genom att vem som helst kan komma åt /dev/isdnctrl0 och
+/dev/isdninfo.
+På Debiansystem är dessa som standard läs- och skrivbara för gruppen dialout, så
+om xmonisdn körs som någon i gruppen dialout kan de exekvera de nödvändiga
+isdnctrl-kommandona.</define-tag>
 
 #use wml::debian::security
 
