@@ -1,26 +1,47 @@
 #use wml::debian::template title="Uso de WML"
-#use wml::debian::translation-check translation="1.9"
+#use wml::debian::translation-check translation="1.10"
 
-Se asume que usted tiene WML instalado en su ordenador. WML está
-disponible en un <a
-href="http://packages.debian.org/unstable/web/wml.html">paquete
+Se asume que usted tiene WML instalado en su ordenador.
+<p>WML significa "metalenguaje para sitios web". Esto significa que
+WMl toma como entrada ficheros .wml, procesa lo que hay dentro de ellos 
+(puedes ser cualquier cosa desde HTML básico a código Perl), y saca 
+lo que desea al fichero de salida, por ejemplo .html o .php.</p>
+
+<p>No es fácil apreder con la documentación de WML. Actualmente es
+bastante completa, pero hasta que empiece a entender como funciona (y es 
+bastante potente), es mejor aprender de ejemplos. Puede encontrar las plantillas
+usadas para el sitio de Debian útiles a este efecto. Éstas pueden 
+encontrarse en <code><a href="http://cvs.debian.org/webwml/english/template/debian/?cvsroot=webwml">\
+webwml/english/template/debian/</a></code>.</p>
+
+<p>Todo esto asume que ha instalado WML en su ordenador.
+WML está disponible en un <a
+href="http://packages.debian.org/wml">paquete
 Debian</a>.
 
-<p>Simplemente escriba <kbd>make</kbd> en webwml/&lt;lang&gt;. Si
-usted escribe <kbd>make install</kbd> entonces se colocarán los
-ficheros HTML en el directorio <kbd>../../debian.org/</kbd>.
+<h2>Editar fuentes WML</h2>
 
-<p>Los idiomas que usen más de un byte por carácter (multi-byte)
-pueden necesitar un pre o post procesado especial de los ficheros
-.wml para manejar correctamente el conjunto de caracteres. Ésto
-puede hacerse cambiando de forma adecuada las variables
-<kbd>WMLPROLOG</kbd> y <kbd>WMLEPILOG</kbd> en
-<kbd>webwml/&lt;lang&gt;/Make.lang</kbd>.
-Dependiendo de cómo funcione su programa <kbd>WMLEPILOG</kbd>, puede
-necesitar modificar el valor de <kbd>WMLOUTFILE</kbd>. Vea las
-traducciones del japonés o chino como ejemplo.
+<p>Todos los ficheros tendrán una o varias líneas iniciales de la forma
+<code>#use</code>. No debería cambiar o traducir su sintaxis, sólo las 
+cadenas entrecomilladas como las que hay después de <code>title=</code>, 
+que debería cambiar el elemento &lt;título&gt; en los ficheros de salida.</p>
 
-<h2>Uso de Perl en WML</h2>
+<p> A parte de las cabeceras, la mayor parte de nuestras páginas .wml contienen
+simplemente código HTML. Si encuentra etiquetas como &lt;define-tag&gt; o
+&lt;: ... :&gt;, sea cuidadoso, pues delimitan código que se procesa por una 
+de las pasadas especializadas de WML. Mire más abajo para conseguir más información
+sobre esto.</p>
+
+<h2>Building Debian web pages</h2>
+
+<p>Simplemente escriba <kbd>make</kbd> en webwml/&lt;lang&gt;. Hemos
+dispuesto ficheros "makefile" que llaman a <kbd>wml</kbd> con los 
+parámetros correctos.</p>
+
+<p>Si usted escribe <kbd>make install</kbd> entonces se colocarán los
+ficheros HTML en el directorio <kbd>../../www/</kbd>.</p>
+
+<h2>Características especiales de WML que empleamos</h2>
 
 <p>Una de las características de WML de las que hacemos un uso
 extensivo es el uso de Perl. Recuerde, éstas no son páginas dinámicas.
@@ -30,21 +51,21 @@ páginas es la creación de la lista de las últimas noticias para la
 página principal y la generación de los enlaces a las traducciones al
 final de la página.
 
-<p>La documentación de WML no es buena como sistema de aprendizaje.
-Realmente es bastante completa, pero hasta que usted comience a
-entender cómo funciona WML (y es bastante poderoso), es más fácil
-aprender con ejemplos. Puede que encuentre útiles los ficheros de
-plantillas que se usan para el servidor de Debian. Éstos pueden
-encontrarse en <code>english/template/debian/</code>.
+<p>Para reconstruir las plantillas de nuestro sitio web, es necesaria una
+versión &gt;= 2.0.6. Para reconstruir las plantillas gettext para traducciones
+se necesita mp4h &gt;= 1.3.0.</p>
 
-<h2>Versión requerida</h2>
+<h2>Cuestiones específicas de WML</h2>
+<p>Los idiomas que usen más de un byte por carácter (multi-byte)
+pueden necesitar un pre o post procesado especial de los ficheros
+.wml para manejar correctamente el conjunto de caracteres. Ésto
+puede hacerse cambiando de forma adecuada las variables
+<kbd>WMLPROLOG</kbd> y <kbd>WMLEPILOG</kbd> en
+<kbd>webwml/&lt;lang&gt;/Make.lang</kbd>.
+Dependiendo de cómo funcione su programa <kbd>WMLEPILOG</kbd>, puede
+necesitar modificar el valor de <kbd>WMLOUTFILE</kbd>.
+<br>
+Vea las traducciones del japonés o chino como ejemplo.
+</p>
 
-<p>Nuestro sitio web requiere <a
-href="http://packages.debian.org/unstable/web/wml.html">wml versión
-&gt;=2.0.6</a>.</p>
 
-<p>Esta versión no está incluída en la versión estable (potato). Para
-aquellos que no quieran cambiarse a las otras distribuciones y seguir
-con la estable, hay <a
-href="http://people.debian.org/~joey/webwml/debs/">paquetes migrados
-a potato disponibles</a>.</p>
