@@ -334,7 +334,7 @@
 
             if ($row["who"] != $old_who) {
                 if ($old_who != "") {
-                    echo " </UL>\n"; # to close the last person's place UL
+                    echo "</UL>\n"; # to close the last person's place UL
                 }
                 echo "<LI>", $row["forename"], " ", $row["surname"];
                 echo " &lt;", $row["email"], "&gt;";
