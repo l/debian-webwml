@@ -8,7 +8,7 @@
 # gimp --no-interface --no-data --batch '(extension-perl-server 0 0 0)' &
 #
 # TRANSLATORS, Edit the stuff in ""s
-LANG="hr"
+LANG="hr_HR"
 HOME_TEXT="Poèetak"
 ABOUT_TEXT="O Debianu"
 NEWS_TEXT="Novosti"
