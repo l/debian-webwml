@@ -144,6 +144,11 @@ sub copy
 		$ignorews = 0 if /^#/;
 	}
 
+	unless ($insertedrevision)
+	{
+		print DST qq'#use wml::debian::translation-check translation="$revision"\n';
+	}
+
 	close SRC;
 	close DST;
 
