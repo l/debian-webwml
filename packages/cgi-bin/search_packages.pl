@@ -81,9 +81,8 @@ while (<C>) {
 }
 close (C);
 
-my $fdir = $topdir . "/files/flat";
-my $file = "$fdir/$version/$releases/Packages-$arch.us";
-my $file_nonus = "$fdir/$version/$releases/Packages-$arch.non-US";
+my $fdir = $topdir . "/files/flat/$version/$releases";
+my $file = "Packages-$arch.*";
 
 # The keyword needs to be modified for the actual search, but left alone
 # for future reference, so we create a different variable for searching
@@ -96,11 +95,13 @@ if ($searchon eq 'names') {
 	$searchkeyword = "\"^[^ ]*".$searchkeyword."[^ ]* \"";
     }
 } else {
-    $searchkeyword = "\" " . $searchkeyword . " \"" if ($subword == 1);
+    if ($subword != 1) {
+	$searchkeyword = "\" ".$searchkeyword." \"";
+    }
 }
 
 # check if the Packages files are there
-my @files = glob ($file);
+my @files = glob ("$fdir/$file");
 if ($#files == -1) {
 # XXX has to be updated for post-woody
   if ($version eq "stable" and $arch =~ /^(hurd|sh)$/) {
@@ -165,7 +166,7 @@ if ($case =~ /^insensitive/) {
 $grep .= "$searchkeyword";
 
 
-my $command = $grep." ".$file." ".$file_nonus;
+my $command = "find $fdir -name $file|xargs ".$grep;
 # print "<br>".$command."<br>\n"; # just for debugging
 
 my @results = qx( $command );
@@ -181,22 +182,20 @@ if (!@results) {
 }
 
 my (%pkgs, %sect);
-my (@colon, $package, $section, $version, $foo);
+my (@colon, $package, $section, $ver, $foo);
 foreach my $line (@results) {
     @colon = split (/:/, $line);
-    ($package, $section, $version, $foo) = split (/ /, $colon[1], 4);
+    ($package, $section, $ver, $foo) = split (/ /, $colon[1], 4);
     $colon[0] =~ m,.*/([^/]+)/([^/]+)/Packages-([^\.]+)\.,; #$1=stable, $2=main, $3=alpha
 
-#    $colon[0] =~ m,.*/([^/]+)/Packages-([^-]+)-([^-]+)\.,; #$1=stable, $2=main, $3=alpha
-
-    $pkgs{$package}{$1}{$version}{$3} = 1;
+    $pkgs{$package}{$1}{$ver}{$3} = 1;
     $sect{$package}{$1} = $section;
 }
 
 foreach my $pkg (sort keys %pkgs) {
     printf "<h3>Package %s</h3>\n", $pkg;
     print "<ul>\n";
-    foreach my $ver (('stable','testing','unstable','experimental')) {
+    foreach $ver (('stable','testing','unstable','experimental')) {
 	if (exists $pkgs{$pkg}{$ver}) {
 	    printf "<li><a href=\"http://packages.debian.org/%s/%s/%s\">%s</a>\n",
 	    $ver, $sect{$pkg}{$ver}, $pkg, $ver;
