@@ -16,8 +16,19 @@ include $(WMLBASE)/Make.dep.generic
 
 FIGSOURCE := $(wildcard *.fig)
 FIGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(FIGSOURCE))
+XCFSOURCE := $(wildcard *.xcf.gz)
+XCFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(XCFSOURCE))
+PSSOURCE := $(wildcard *.ps.gz)
+PSDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PSSOURCE))
 
-install:: $(FIGDESTFILES)
+install:: $(FIGDESTFILES) $(XCFDESTFILES) $(PSDESTFILES)
 
 $(FIGDESTFILES): $(FIGSOURCE)
 	cp $(@F) $(HTMLDIR)
+
+$(XCFDESTFILES): $(XCFSOURCE)
+	cp $(@F) $(HTMLDIR)
+
+$(PSDESTFILES): $(PSSOURCE)
+	cp $(@F) $(HTMLDIR)
+
