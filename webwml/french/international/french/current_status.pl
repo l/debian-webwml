@@ -59,8 +59,7 @@ $translations_status = {
 	'since'			=> '13/09/1999',
 	'translation_maintainer'=> ['Patrice Karatchentzeff <pkarat@club-internet.fr>' ],
 	'translation_name'	=> 'Debian GNU/Linux: guide d\'installation et d\'utilisation',
-	'translation_url'	=> '',
-	'translation_dev_url'   => '',
+	'translation_dev_url'   => 'http://cvs.debian.org/webwml/french/international/french/translations/debian-guide_fr-1.0.sgml?cvsroot=webwml',
 	'old_translators'	=> [	'Martin Quinson <mquinson@zeppelin-cb.de>',
 					'Fabien Ninoles <fabien@Nightbird.TZoNE.ORG>'],
 },
@@ -72,11 +71,11 @@ $translations_status = {
 # ########################################################################################
 
 'project-history' => {
-	'status'		=> 5,
-	'since'			=> '03/05/1999',
+	'status'		=> 3,
+	'since'			=> '03/11/2000',
 	'base_revision'		=> '1.2',
 	'translation_name'	=> 'Histoire du projet Debian',
-	'translation_maintainer'=> ['Jerome Rousselot <r.jerome@francemel.com>'],
+	'translation_maintainer'=> ['Patrice Karatchentzeff <pkarat@club-internet.fr>'],
 },
 
 'faq' => {
