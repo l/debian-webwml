@@ -3,7 +3,7 @@
 # problem can be fixed.
 
 WMLBASE=../../..
-CUR_DIR=ports/powerpc/install
+CUR_DIR=ports/powerpc/pics
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
 SUBS=
