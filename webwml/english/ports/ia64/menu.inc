@@ -32,7 +32,7 @@
 <menu-item basename="index">
 [EN:Debian for IA-64:]
 [AR:Debian for IA-64:]
-[DA:Debian for IA-64:]
+[DA:Debian til IA-64:]
 [DE:Debian für IA-64:]
 [EL:Debian for IA-64:]
 [EO:Debian for IA-64:]

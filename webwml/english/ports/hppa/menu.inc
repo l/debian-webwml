@@ -32,7 +32,7 @@
 <menu-item basename="index">
 [EN:Debian for PA-RISC:]
 [AR:Debian for PA-RISC:]
-[DA:Debian for PA-RISC:]
+[DA:Debian til PA-RISC:]
 [DE:Debian für PA-RISC:]
 [EL:Debian for PA-RISC:]
 [EO:Debian for PA-RISC:]

@@ -32,7 +32,7 @@
 <menu-item basename="index">
 [EN:Debian for Sparc:]
 [AR:Debian for Sparc:]
-[DA:Debian for Sparc:]
+[DA:Debian til Sparc:]
 [DE:Debian für Sparc:]
 [EL:Debian for Sparc:]
 [EO:Debian for Sparc:]
