@@ -1,6 +1,7 @@
 <define-tag flags whitespace=delete>
 	[EN:Flags::]
 	[DA:Flag::]
+	[HR:Oznake::]
 	[SV:Flaggor::]
 </define-tag>
 <define-tag active_bugs whitespace=delete>
@@ -16,10 +17,10 @@
 	[SV:arkiverade fel:]
 </define-tag>
 <define-tag no_status whitespace=delete>
-	[EN:No status/severity ordering:]
-	[DA:Ingen sortering på status/alvorlighedsgrad:]
-	[HR:Bez slaganja po stanju/severityu:]
-	[SV:Ingen sortering på status/allvarlighetsgrad:]
+	[EN:no ordering by status or severity:]
+	[DA:ingen sortering på status/alvorlighedsgrad:]
+	[HR:bez slaganja po stanju ni severityu:]
+	[SV:ingen sortering på status/allvarlighetsgrad:]
 </define-tag>
 <define-tag reverse_order whitespace=delete>
 	[EN:Reverse order of: :]
@@ -36,116 +37,110 @@
 <define-tag severities whitespace=delete>
 	[EN:severities:]
 	[DA:alvorlighedsgrader:]
-	[HR:severityi:]
+	[HR:severitye:]
 	[SV:allvarlighetsgrader:]
 </define-tag>
 <define-tag bugs whitespace=delete>
 	[EN:bugs:]
 	[DA:fejl:]
-	[HR:bugovi:]
+	[HR:bugova:]
 	[SV:fel:]
 </define-tag>
 <define-tag status_include whitespace=delete>
-	[EN:Status Include: :]
+	[EN:Include status: :]
 	[DA:Status indeholder: :]
-	[HR:Ukljuèeno stanje:]
+	[HR:Ukljuèi stanje: :]
 	[SV:Inkludera status: :]
 </define-tag>
 <define-tag status_exclude whitespace=delete>
-	[EN:Status Exclude: :]
+	[EN:Exclude status: :]
 	[DA:Status indeholder ikke: :]
-	[HR:Iskljuèeno stanje:]
+	[HR:Iskljuèi stanje: :]
 	[SV:Exkludera status: :]
 </define-tag>
 <define-tag severity_include whitespace=delete>
-	[EN:Severity Include: :]
+	[EN:Include severity: :]
 	[DA:Alvorlighedsgrad indeholder: :]
-	[HR:Ukljuèen severity:]
+	[HR:Ukljuèen severity: :]
 	[SV:Inkludera allvarlighetsgrader: :]
 </define-tag>
 <define-tag severity_exclude whitespace=delete>
-	[EN:Severity Exclude: :]
+	[EN:Exclude severity: :]
 	[DA:Alvorlighedsgrad indeholder ikke: :]
-	[HR:Iskljuèen severity:]
+	[HR:Iskljuèen severity: :]
 	[SV:Exkludera allvarlighetsgrader: :]
 </define-tag>
 <define-tag open whitespace=delete>
-	[EN:Open:]
+	[EN:open:]
 	[DA:Åben:]
-	[HR:Otvoreni:]
-	[SV:Öppet:]
+	[HR:otvoreni:]
+	[SV:öppet:]
 </define-tag>
 <define-tag forwarded whitespace=delete>
-	[EN:Forwarded:]
-	[DA:Videresendt:]
-	[HR:Proslijeðeni:]
-	[SV:Vidaresänt:]
+	[EN:forwarded:]
+	[DA:videresendt:]
+	[HR:proslijeðeni:]
+	[SV:vidaresänt:]
 </define-tag>
 <define-tag pending whitespace=delete>
-	[EN:Pending:]
-	[DA:I gang:]
-	[HR:U radu:]
-	[SV:På gång:]
+	[EN:pending:]
+	[DA:i gang:]
+	[HR:u radu:]
+	[SV:på gång:]
 </define-tag>
 <define-tag fixed whitespace=delete>
-	[EN:Fixed:]
-	[DA:Rettet:]
-	[HR:Rije¹eni:]
-	[SV:Rättat:]
+	[EN:fixed:]
+	[DA:rettet:]
+	[HR:rije¹eni:]
+	[SV:rättat:]
 </define-tag>
 <define-tag done whitespace=delete>
-	[EN:Done:]
-	[DA:Færdig:]
-	[HR:Gotovi:]
-	[SV:Klart:]
+	[EN:done:]
+	[DA:færdig:]
+	[HR:gotovi:]
+	[SV:klart:]
 </define-tag>
 <define-tag critical whitespace=delete>
-	[EN:Critical:]
-	[DA:Kritisk:]
-	[HR:Kritièni:]
-	[SV:Kritiskt:]
+	[EN:critical:]
+	[DA:kritisk:]
+	[HR:kritièni:]
+	[SV:kritiskt:]
 </define-tag>
 <define-tag grave whitespace=delete>
-	[EN:Grave:]
-	[DA:Graverende:]
-	[HR:Te¹ki:]
-	[SV:Gravt:]
+	[EN:grave:]
+	[DA:graverende:]
+	[HR:te¹ki:]
+	[SV:gravt:]
 </define-tag>
 <define-tag serious whitespace=delete>
-	[EN:Serious:]
-	[DA:Alvorlig:]
-	[HR:Ozbiljni:]
-	[SV:Allvarligt:]
+	[EN:serious:]
+	[DA:alvorlig:]
+	[HR:ozbiljni:]
+	[SV:allvarligt:]
 </define-tag>
 <define-tag important whitespace=delete>
-	[EN:Important:]
-	[DA:Vigtig:]
-	[HR:Va¾ni:]
-	[SV:Viktigt:]
+	[EN:important:]
+	[DA:vigtig:]
+	[HR:va¾ni:]
+	[SV:viktigt:]
 </define-tag>
 <define-tag normal whitespace=delete>
-	[EN:Normal:]
-	[DA:Normal:]
-	[HR:Normalni:]
-	[SV:Normalt:]
+	[EN:normal:]
+	[DA:normal:]
+	[HR:normalni:]
+	[SV:normalt:]
 </define-tag>
 <define-tag minor whitespace=delete>
-	[EN:Minor:]
-	[DA:Mindre:]
-	[HR:Maleni:]
-	[SV:Mindre:]
+	[EN:minor:]
+	[DA:mindre:]
+	[HR:maleni:]
+	[SV:mindre:]
 </define-tag>
 <define-tag wishlist whitespace=delete>
-	[EN:Wishlist:]
+	[EN:wishlist:]
 	[DA:Ønskeliste:]
-	[HR:®elje:]
-	[SV:Önskelista:]
-</define-tag>
-<define-tag fixed whitespace=delete>
-	[EN:Fixed:]
-	[DA:Rettet:]
-	[HR:Rije¹eni:]
-	[SV:Rättat:]
+	[HR:¾elje:]
+	[SV:önskelista:]
 </define-tag>
 
   <small>
