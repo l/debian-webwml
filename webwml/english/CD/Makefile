@@ -19,7 +19,7 @@ endif
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml $(RELEASESDEP)
 	$(WML) $(<F) -I $(ENGLISHDIR)/CD/
 
-misc.$(LANGUAGE).html: misc.wml $(TEMPLDIR)/cdimage.wml
+misc.$(LANGUAGE).html: misc.wml $(TEMPLDIR)/cdimage.wml $(GETTEXTDEP)
 	$(WML) $(<F)
 
 install::
