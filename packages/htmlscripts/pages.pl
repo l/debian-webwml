@@ -29,6 +29,7 @@ my $SRC_BUG_URL = 'http://bugs.debian.org/src:';
 my $QA_URL = 'http://packages.qa.debian.org/';
 my $DL_URL = '/cgi-bin/download.pl';
 my $POLICY_URL = 'http://www.debian.org/doc/debian-policy/';
+my $DDPO_URL = 'http://qa.debian.org/developer.php?login=';
 
 my $files;
 
@@ -378,11 +379,12 @@ sub package_pages_walker {
 	$package_page .= "<small>".gettext( "Source Package:" );
 	$package_page .= " <a href=\"../source/$sourcepackage\">$sourcepackage</a>, ".gettext( "Download" ).":\n";
 
+	my @source_files;
 	if ( $src_pkg ) {
 	    my $sf = $src_pkg->{versions}->{$src_version}->{files};
 	    my $source_dir = $src_pkg->{versions}->{$src_version}->{directory};
 	    $sf =~ s/\A\s*//o; # remove leading spaces
-	    my @source_files = split( /\n\s*/, $sf );
+	    @source_files = split( /\n\s*/, $sf );
 	    foreach( @source_files ) {
 		my ($src_file_md5, $src_file_size, $src_file_name) = split( /\s+/, $_ );
 		if ($is_security) {
@@ -484,13 +486,24 @@ sub package_pages_walker {
 	    $data_sheet .= "<table><tbody>";
 	    $data_sheet .= "<tr><td>".gettext( "Version" ).":</td>\n".
 		"<td>$v_str</td></tr>";
+	    $data_sheet .= "<tr><td>".gettext( "Maintainer" ).":</td>\n"
+		."<td><a href=\"$DDPO_URL".uri_escape($maint_email)."\">$maint_name</a></td></tr>";
+	    if (@uploaders) {
+		$data_sheet .= "<tr><td>".gettext( "Uploaders" ).":</td>\n";
+		foreach (@uploaders) {
+		    $_ = "<a href=\"$DDPO_URL".uri_escape($_->[1])."\">$_->[0]</a>";
+		}
+		$data_sheet .= "<td>".join( ", ", @uploaders )."</td></tr>";
+	    }	    
 	    $data_sheet .= "<tr><td>".gettext( "Section" ).":</td>\n".
 		"<td>$section</td></tr>";
 	    $data_sheet .= "<tr><td>".gettext( "Priority" ).":</td>\n".
 		"<td>$priority</td></tr>";
 	    $data_sheet .= "<tr><td>".gettext( "Essential" ).":</td>\n".
-		"<td>".gettext("Yes")."</td></tr>"
+		"<td>".gettext("yes")."</td></tr>"
 		if $essential && ( $essential =~ /yes/i );
+	    $data_sheet .= "<tr><td>".gettext( "Source packages" ).":</td>\n"
+		."<td><a href=\"../source/$sourcepackage\">$sourcepackage</a></td></tr>";
 	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Depends' );
 	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Recommends' );
 	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Suggests' );

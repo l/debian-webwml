@@ -279,7 +279,7 @@ sub print_deps_ds {
     }
     
     if (@res) {
-	$res = "<tr><td>$type:</td><td>".join( ", ", @res)."</td></tr>\n";
+	$res = "<tr><td valign=\"top\">$type:</td><td>".join( ", ", @res)."</td></tr>\n";
     }
     return $res;
 }
