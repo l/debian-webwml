@@ -108,6 +108,7 @@ do 'documents-bd.pl';
 	'translation_name'	=> 'Manual de instalación de Debian',
 	'translation_maintainer'=> ['Enrique Zanardi <ezanardi@debian.org>'],
 	'base_revision'		=> '2.1',
+	'translation_url'	=> 'http://www.debian.org/releases/source/install.es.sgml',
 	'translation_cvs_url'   => 'http://cvs.debian.org/debian-boot/boot-floppies/documentation/install.es.sgml?cvsroot=debian-boot',
 	'translation_package'	=> 'boot-floppies',
 	'last_translated'	=> '16/03/1999'
@@ -118,11 +119,11 @@ do 'documents-bd.pl';
 #	'since'			=> '22/03/1999',
 	'translation_name'	=> 'Guía de dselect para principiantes',
 	'translation_maintainer'=> ['Enrique Zanardi <ezanardi@debian.org>'],
-#	'base_revision'		=> '2.1',
-#	'translation_url'	=> 'http://www.debian.org/~/docs-2.1/dselect-beginner.html/dselect-beginner.html',
+	'base_revision'		=> '2.1',
+	'translation_url'	=> 'http://www.debian.org/releases/stable/source/dselect-beginner.es.sgml',
 	'translation_cvs_url'   => 'http://cvs.debian.org/debian-boot/boot-floppies/documentation/dselect-beginner.es.sgml?cvsroot=debian-boot',
 	'translation_package'	=> 'boot-floppies'
-#	'last_translated'	=> '22/003/1999',
+	'last_translated'	=> '27/03/1999',
 },
 
 	'release-notes' => {
