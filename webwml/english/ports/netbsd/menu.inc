@@ -63,7 +63,7 @@
    [AR:Why:]
    [CA:Per què:]
    [DA:Hvorfor:]
-   [DE:Weshalb:]
+   [DE:Wieso:]
    [EL:Why:]
    [EO:Why:]
    [ES:Why:]
