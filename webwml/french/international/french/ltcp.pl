@@ -32,7 +32,7 @@ $types = {
 my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "$k.en.html" },
                 'url'           => sub {
 my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "http://www.debian.org/$k.en.html" },
-                'epoch'         => sub {
+                'mtime'         => sub {
 my($t, $k, $f) = @_; return undef if !$t->{$f}; my @tm = localtime($t->{$f}); return spokendate((1900+$tm[5]).'-'.$tm[4].'-'.$tm[3]) },
                 'cvs_url'       => sub {
 my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "$CVSWEB/webwml/$from/$k.wml?cvsroot=webwml" },
@@ -157,7 +157,7 @@ sub dump_html {
 
                 if ($t->{'revision'}) {
                 	print " ( ".q{<ct-tag-revision>}." $t->{'revision'} ";
-			print "-- ".$t->{'epoch'} if $t->{'epoch'};
+			print "-- ".$t->{'mtime'} if $t->{'mtime'};
                 	print " ) ";
                 }
                 print " ( ".q{<ct-tag-included>}." <A HREF=\"http://packages.debian.org/$t->{'package'}\">$t->{'package'}</A> ) " if ($t->{'package'});
