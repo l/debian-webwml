@@ -134,7 +134,7 @@ if (($searchon eq 'names') || ($searchon eq 'sourcenames')) {
     }
 } else {
     if ($subword != 1) {
-	$searchkeyword = "\"\\(^\\| \\)".$searchkeyword." \"";
+	$searchkeyword = "\"\\(^\\|\\b\\)".$searchkeyword."\\b\"";
     }
 }
 
