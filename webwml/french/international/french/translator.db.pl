@@ -119,7 +119,7 @@ sub init_translators {
          'compress'  => 'none' 
     },
     'Mickael Simon' =>  {
- 	 'email'     => 'simon.mickael@wanadoo.fr',
+ 	 'email'     => 'mickaelsimon@free.fr',
          'summary'   => 2, 
          'logs'      => 0, 
          'diff'      => 0, 
