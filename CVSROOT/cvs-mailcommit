@@ -26,6 +26,7 @@ $opt_xloop = '';
 $opt_cvs = '';
 $opt_from = '';
 $opt_diff = 0;
+$opt_maxlines = 400;
 @opt_mailto = ();
 while (@ARGV) {
     $arg = shift;
@@ -41,6 +42,8 @@ while (@ARGV) {
 	$opt_xloop = shift if (@ARGV);
     } elsif ($arg eq "--from") {
 	$opt_from = shift if (@ARGV);
+    } elsif ($arg eq "--maxlines") {
+	$opt_maxlines = shift if (@ARGV);
     } elsif ($arg eq "--cvs") {
 	if (@ARGV) {
 	    $tmp = shift;
@@ -60,7 +63,7 @@ exit 0 if (!@opt_mailto);
 $module_dir = shift(@cvs_arr);
 $dir .= "/" if ($dir);
 
-$login = $ENV{'CVS_USER'} || getlogin || (getpwuid($<))[0] || "nobody";
+$login = $ENV{'CVS_USER'} || $ENV{'LOGNAME'}|| getlogin || (getpwuid($<))[0] || "nobody";
 
 if (open (M, "|$sendmail -t")) {
 # if (open (M, ">-")) {
@@ -79,8 +82,13 @@ if (open (M, "|$sendmail -t")) {
 	    if ($oldver ne "NONE") {
 		# print "rcsdiff -r$oldver -r$newver -u $ENV{'CVSROOT'}/$module_dir/$file|\n";
 		if (open (R, "rcsdiff -r$oldver -r$newver -u $ENV{'CVSROOT'}/$module_dir/$file 2>/dev/null |")) {
-		    print M while (<R>);
+		    $lines = 0;
+		    while (<R>) {
+			$lines++;
+			print M if ($lines <= $opt_maxlines);
+		    }
 		    close (R);
+		    print M "\n[%d lines skipped]\n" $lines - $opt_maxlines if ($lines > $opt_maxlines);
 		}
 	    }
 	}
