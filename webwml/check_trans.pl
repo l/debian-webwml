@@ -437,7 +437,7 @@ sub check_file {
         $docname =~ s#^$langto/##;
         $docname =~ s#\.wml$##;
 	unless (-r $name) {
-		(my $iname = $name) =~ s/^$to\///;
+		(my $iname = $name) =~ s/^$to//o;
 		if (!$globtrans->is_global($iname)) {
 		  unless (($opt_q) || ($opt_Q)) {
                      if ($opt_t eq 'perl') {
