@@ -13,6 +13,6 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
   $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/News/[0-9]*/*.wml)
 
 packaged.$(LANGUAGE).html: packaged.wml \
-  $(ENGLISHSRCDIR)/devel/debian-jr/lists.tmpl \
+  $(ENGLISHSRCDIR)/devel/debian-jr/packaged.tags \
   $(wildcard $(ENGLISHSRCDIR)/devel/debian-jr/packaged/*/*) \
   $(wildcard $(ENGLISHSRCDIR)/devel/debian-jr/packaged-non-free/*/*)
