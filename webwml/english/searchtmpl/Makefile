@@ -16,7 +16,7 @@ search.$(LANGUAGE).html: search.wml $(ENGLISHSRCDIR)/searchtmpl/search.data \
   $(GETTEXTDEP)
 	$(WML) $<
 # XXX this likely doesn't work at all for SUBLANG-enabled languages!
-	c=`grep CHARSET ../.wmlrc | cut -d= -f2`; \
+	c=`grep -w CHARSET ../.wmlrc | cut -d= -f2`; \
           iconv -f $$c -t UTF-8 $@ | \
           perl -pe 's,^(\s*<meta http-equiv="Content-Type" content="text/html; charset=)\S+(">)$$,$$1UTF-8$$2,' > $@.new; \
           mv $@.new $@
