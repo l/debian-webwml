@@ -5,33 +5,42 @@
 # destination directory if necessary, and copy the Makefile from the source.
 
 # Written in 2000 by peter karlsson <peter@softwolves.pp.se>
-# © Copyright 2000 Software in the public interest, Inc.
+# © Copyright 2000-2001 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
 
 # Get command line
-$date = $ARGV[0];
+$number = $ARGV[0];
 
 # Check usage.
-unless ($date)
+unless ($number)
 {
-	print "Usage: $0 advisorydate\n\n";
+	print "Usage: $0 advisorynumber\n\n";
 	print "Copies the advisory from the English directory to the local one and adds\n";
 	print "the translation-check header\n";
 	exit;
 }
 
+# Locate advisory
+$number = "dsa-" . $number if $number !~ /^dsa-/;
+$year = 2001;
+YEAR: while (-d "../../english/security/$year")
+{
+	last YEAR if -e "../../english/security/$year/$number.wml";
+	$year ++;
+}
+
 # Create needed file and directory names
-$year = substr($date, 0, 4);
 $srcdir = "../../english/security/$year";
-$srcfile= "$srcdir/$date.wml";
+die "Unable to locate English version of advisory $number.\n"
+	if ! -d $srcdir;
+$srcfile= "$srcdir/$number.wml";
 $cvsfile= "$srcdir/CVS/Entries";
 $dstdir = "./$year";
-$dstfile= "$dstdir/$date.wml";
+$dstfile= "$dstdir/$number.wml";
 
 # Sanity checks
-die "Directory $srcdir does not exist\n" unless -d $srcdir;
 die "File $srcfile does not exist\n"     unless -e $srcfile;
 die "File $dstfile already exists\n"     if     -e $dstfile;
 mkdir $dstdir, 0755                      unless -d $dstdir;
@@ -49,7 +58,7 @@ open DST, ">$dstfile"
 # Retrieve the CVS version number
 while (<CVS>)
 {
-	if (m[^/$date\.wml/([0-9]*\.[0-9])*/]o)
+	if (m[^/$number\.wml/([0-9]*\.[0-9])*/]o)
 	{
 		$revision = $1;
 	}
@@ -79,7 +88,7 @@ while (<SRC>)
 		s/<h4>Source:/<h4>Källkod:/;
         s/<h4>Source archives:/<h4>Källkodsarkiv:/;
         s/ architecture:</</;
-		s/<h4>Architechture-independent component:/<h4>Arkitekturoberoende arkiv:/;
+		s/<h4>Architech?ture-independent component:/<h4>Arkitekturoberoende arkiv:/;
 		print DST $_;
 	}
 }
