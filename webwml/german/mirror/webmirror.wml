@@ -1,0 +1,204 @@
+#use wml::debian::template title="Einrichtung eines Spiegels der Debian-Webseiten"
+
+<p>Spiegeln ist gleich f&uuml;r offizielle und nicht offizielle Rechner.
+
+<p>Wenn ein Spiegel eingerichtet ist, solte er <a href="submit">bei
+Debian registriert</a> werden, um in die <a
+href="../misc/README.mirrors">Liste der Spiegel</a> aufgenommen zu
+werden.  Wenn Sie Fragen haben, schreiben Sie sie an <a
+href="mailto:mirrors@debian.org">mirrors@debian.org</a>.
+
+<H2>Methoden zum Spiegeln</H2>
+
+<h3>Anonymes rsync</h3>
+
+<p>Die bevorzugte Methode zum Spiegeln ist rsync.
+
+<p>Sie k&ouml;nnen <a href="anonwebsync">dieses Skript</a> verwenden, um
+das Archiv zu spiegeln.  Folgen Sie den Anleitungen in dem Programm,
+um den Spiegel einzurichten.  Rechner in der <a
+href="mirrors_full">Komplettliste der Spiegel</a>, bei denen
+'<kbd>Type: Push-*</kbd>' angegeben ist, sind eine gute Wahl zum
+Spiegeln.
+
+<p>Das Hauptarchiv wird alle acht Stunden neu zusammengestellt (exakte
+Zeiten siehe Datum auf den Timestamp-Dateien im Verzeichnis
+<code>/mirror/timestamps/</code> auf dem Webserver).
+# Sie sollten die Spiegel-Zeiten f&uuml;r ihren Rechner berechnen.
+
+<h3>Push-Spiegel</h3>
+
+<p>Push-Spiegeln ist eine Art mit rsync zu spiegeln, die wir
+entwickelt haben, um die Zeit zu minimieren, die es dauert, bis
+&Auml;nderungen auf der Website jeden Spiegel erreichen.  Push-Spiegeln
+verwendet einen SSH-Ausl&ouml;seimpuls, um dem neuen Spiegel zu
+signalisieren, da&szlig; jetzt gespiegelt werden soll.  Diese Methode ist
+ziemlich sicher, da SSH so konfiguriert ist, da&szlig; nur ein einziger
+Befehl ausgef&uuml;hrt wird.  Au&szlig;erdem l&auml;uft das eigentliche Spiegeln immer
+noch "ziehenderweise" ab, so da&szlig; es nicht m&ouml;glich ist, den Spiegel
+durch gef&auml;lschte Push-Spiegel zu besch&auml;digen.
+
+<p>Einige Spiegel-Verwalter haben aus Angst, das System f&uuml;r andere zu
+&ouml;ffnen, eine gewisse Abneigung gegen diese
+Spiegel-Methode gezeigt.  Das ist jedoch nicht der Fall.  Eine
+detailierte Beschreibung, wie diese Methode funktioniert und wieso sie
+sicher ist, lesen Sie <a href="explain">hier</a>.
+
+<p>Push-Spiegel erfordern etwas mehr Aufwand beim Einrichten, da die
+Verantwortlichen des h&ouml;her gelegenen und des neuen Spiegels
+Informationen miteinander austauschen m&uuml;ssen.  Der Vorteil besteht
+darin, da&szlig; der h&ouml;her gelegene Spiegel den Spiegel-Proze&szlig; initiiert,
+unmittelbar nachdem sein Archiv aktualisiert wurde.  Dadurch werden
+&Auml;nderungen im Archiv extrem schnell weitergegeben.
+
+<p>Es ist am besten, den Spiegel mit dem Account eines normalen Benutzers
+einzurichten anstatt als root.  Die Inhalte des &ouml;ffentlichen
+Schl&uuml;ssels, der vom h&ouml;her gelegenen Spiegel angegeben wird, sollte in
+<kbd>~&lt;user&gt;/.ssh/authorized_keys</kbd> gespeichert werden.
+
+<p>Die Dateien <a href="websync">websync</a> und <a
+href="websync.conf">websync.conf</a> werden dazu ben&ouml;tigt. Editieren
+Sie websync.conf und folgen Sie den Anleitungen in der Datei anhand
+der Informationen, die Sie vom h&ouml;her gelegenen Spiegel erhalten.
+
+<p>Wenn Sie ein Direkt-Push-Spiegel werden, ben&ouml;tigen Sie den <a
+href="identity.pub.master.web">&ouml;ffentlichen Schl&uuml;ssel f&uuml;r das Web</a>.
+
+<h3>Anonymes FTP mit 'mirror'</h3>
+
+<p>Es ist nicht ratsam, 'mirror' zum Spiegeln der Webseiten von Debian
+zu verwenden.  F&uuml;r gro&szlig;e Verzeichnisse ist der Speicherbedarf immens
+gro&szlig;.  Ein Spiegel-Verwalter schrieb uns, da&szlig; es bei ihm mit 96MB RAM
+funktioniert hat.  Andere mit weniger RAM fanden ihre Rechner mit
+gro&szlig;en Swap-Aktivit&auml;ten.
+
+<h3>wget</h3>
+
+<p>W&auml;hrend wget f&uuml;r das Spiegeln von kleinen Pr&auml;senzen funktioniert,
+ist es nicht so gut konfigurierbar wie mirror oder rsync und daher
+nicht empfohlen f&uuml;r diese Aufgabe.
+
+<H2>Bewerben des Sponsors f&uuml;r den Spiegel</H2>
+
+<p>Die Dateien <code>sponsor.html</code> und
+<code>sponsor_img.jpg</code> k&ouml;nnen und sollten durch entsprechende
+Dateien des Verantwortlichen ersetzt werden.  Sie sind zum Bewerben
+Ihrer Pr&auml;senz gedacht, damit Besucher wissen, wer der Sponsor ist.
+Die Originale befinden sich unter <code>sponsor.deb.html</code> und
+<code>sponsor.deb.jpg</code>, da der Rechner, den Sie spiegeln, die
+von Debian angebotenen Beispiele, durch eigene ersetzt haben mag. Die
+vorgeschlagene maximale Gr&ouml;&szlig;e f&uuml;r Ihr Logo betr&auml;gt 120x60 Pixel.
+
+<p>Da <a href="#cn">Content-Negotiation</a> f&uuml;r die Webseiten
+verwendet wird, um die bevorzugte Sprache zu ermitteln, k&ouml;nnen Sie
+<code>sponsor.html</code> sogar in verschiedenen Sprachen anbieten.
+Um das zu machen, erzeugen Sie einfach sponsor.&lt;sprache&gt;.html f&uuml;r
+jede &lt;sprache&gt;, die Sie unterst&uuml;tzen m&ouml;chten.
+
+<p>Stellen Sie sicher, da&szlig; die alle Dateien in die Ausschlu&szlig;liste
+(exclude) schreiben, die Sie beim Spiegeln nicht &uuml;berschreiben
+m&ouml;chten.
+
+<H2>Konfigurieren des Webservers</H2>
+
+<h3>Andere Webserver-&Auml;nderungen</h3>
+
+<p>Wenn auf Ihrer Maschine Debian l&auml;uft, wurde entschieden, gegen die
+Debian-Policy zu versto&szlig;en und <code>/doc</code> zu den Webseiten
+hinzuzuf&uuml;gen.  Daher sollten Sie die Zeile `<code>Alias /doc/
+/usr/doc/</code>' aus der Datei <code>/etc/apache/srm.conf</code>
+auskommentieren.
+
+<h3><a name="cn">Content-Negotiation</a></h3>
+
+<p>Content-Negotiation ist eine Methode, die den Browser mit dem
+Webserver die Art des Dokuments aushandeln l&auml;&szlig;t.  W&auml;hrend es eine
+Vielzahl Anwendungen f&uuml;r dieses gibt, ist die am weitesten verbreitete
+die Aushandlung, in welcher Sprache ein Dokument zur&uuml;ckgegeben werden
+soll.  Damit erlaubt es Debian, die Webseiten in mehreren Sprachen in
+einer (technisch gesehen) sehr eleganten Weise zur&uuml;ckzuliefern .
+
+<P>F&uuml;r diejenigen, die Apache verwenden, sind die &Auml;nderungen fast
+trivial.  F&uuml;gen Sie einfach einen Abschnitt wie den folgenden zu
+<kbd>/etc/apache/access.conf</kbd> hinzu (ersetzen Sie das
+Verzeichnis, das die Webseiten f&uuml;r <kbd>/debian/web</kbd> beinhaltet)
+und starten Sie den Server neu (dieses Beispiel funktioniert mit
+Apache 1.3 beta und sp&auml;teren Versionen):
+
+<pre>
+&lt;Directory /debian/web&gt;
+Options +Multiviews   
+&lt;/Directory&gt;
+</pre>
+
+<p>Zus&auml;tzlich m&uuml;ssen Sie sicherstellen, da&szlig; der Server alle Sprachen
+unterst&uuml;tzt, die von der Website unterst&uuml;tzt wird.  Dieses wird mit
+dem Tag <kbd>AddLanguage</kbd> erreicht.  Das folgende ist eine Liste
+der Sprachen, die bereits unterst&uuml;tzt werden - erwarten Sie weitere:
+
+<pre>
+AddLanguage en .en
+AddLanguage fr .fr
+AddLanguage de .de
+AddLanguage da .da
+AddLanguage it .it
+AddLanguage es .es
+AddLanguage ja .ja
+AddLanguage pl .pl
+AddLanguage ko .ko
+AddLanguage hr .hr
+AddLanguage pt .pt
+AddLanguage fi .fi
+AddLanguage zh-CN .zh-cn
+AddLanguage zh-TW .zh-tw
+AddLanguage cs .cs
+AddLanguage sv .sv
+AddLanguage no .no
+AddLanguage ru .ru
+AddLanguage tr .tr
+AddLanguage eo .eo
+AddLanguage ar .ar
+AddLanguage nl .nl
+AddLanguage hu .hu
+AddLanguage ro .ro
+</pre>
+
+<p>Aufgrund eines Fehers im Apache kann unter manchen Umst&auml;nden die
+falsche Sprache zur&uuml;ckgeliefert werden.  Daher w&auml;re es eine gute Idee,
+jede Sprache zur Option <kbd>LanguagePriority</kbd> hinzuzuf&uuml;gen,
+z.B. wie folgt:
+
+<pre>
+LanguagePriority en fr de it es ja pl hr da pt fi zh-cn zh-tw cs sv ko no ru tr eo ar nl hu ro
+</pre>
+
+<p>Um zu vermeiden, da&szlig; Dateien mit Content-Negotiation mit falschem
+Zeichensatz zur&uuml;ckgeliefert werden, stellen Sie bitte sicher, da&szlig; die
+Einstellung <code>AddDefaultCharSet</code> entweder auskommentiert
+oder auf `<code>Off</code>' gesetzt ist.
+
+<p>Um Index-Dateien richtig zur&uuml;ckzuliefern, werden Sie wahrscheinlich
+den Eintrag <code>DirectoryIndex</code> in
+<code>/etc/apache/srm.conf</code> &auml;ndern m&uuml;ssen. Das folgende sollte
+ausreichend sein:
+
+<pre>
+DirectoryIndex index index.html
+</pre>
+
+<h3>Umleitungen</h3>
+
+<p>Da einige Teile der Website anfingen zu gro&szlig; zu werden, um von den
+meisten Rechnern gespiegelt zu werden, haben wir sie von der
+Hauptseite getrennt.  Obwohl die meisten Links auf die neuen Adressen
+konvertiert sein sollten, bitten wir Sie, eine Umleitung auf einen
+anderen Rechner einzuf&uuml;gen, damit keine kaputten Links entstehen.
+Dieses wird durch folgenden Eintrag in <kbd>/etc/apache/srm.conf</kbd>
+erledigt:
+
+<pre>
+Redirect /Lists-Archives http://lists.debian.org/
+Redirect /search http://search.debian.org
+Redirect /Packages http://packages.debian.org
+Redirect /lintian http://lintian.debian.org
+</pre>
