@@ -173,7 +173,7 @@ do 'documents-bd.pl';
 	'since'			=> '13/04/1998',
         'translation_name'      => 'Cómo hacer paquetes Debian (nuevos desarrolladores)',
         'translation_maintainer'=> ['Javier Fernández-Sanguino Peña <jfs@computer.org>'],
-        'translation_dev_url'   => 'http://www.dat.etsit.upm.es/~jfs/debian/doc//'
+        'translation_dev_url'   => 'http://www.dat.etsit.upm.es/~jfs/debian/doc/'
 },
 	
 	'network-administrator' => {
