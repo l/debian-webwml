@@ -11,6 +11,9 @@ include $(BASE)/Make.lang
 $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
 	wml -q $(EPILOG) $(<F)
 
+WMLFILES := $(wildcard *.wml)
+HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
+
 all: $(HTMLFILES)
 
 include $(BASE)/Make.templ.inc
