@@ -34,3 +34,4 @@ $(HTMLDIR)/index.html.$(LANGUAGE): index.wml \
           $(wildcard News/1998/1998*.wml) $(TEMPLDIR)/mainpage.wml \
           $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
 	$(WML) index.wml
+	-rm -f $(@F)
