@@ -5,6 +5,8 @@ WMLBASE	:= ..
 CUR_DIR	:= $(subst $(shell cd $(WMLBASE); pwd -P)/,,$(shell pwd))
 SUBS	:=# remove subdirectories that you don't want built from this variable
 
+GETTEXTFILES += doc.mo
+
 include $(WMLBASE)/Make.lang
 
 
