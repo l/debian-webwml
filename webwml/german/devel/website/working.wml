@@ -1,6 +1,6 @@
 #use wml::debian::template title="Wie man an den Debian Web-Seiten arbeitet" BARETITLE=true
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.25"
+#use wml::debian::translation-check translation="1.28"
 # $Id$
 
 <toc-display/>
@@ -9,11 +9,11 @@
 
 <toc-add-entry name="general">Allgemeine Information</toc-add-entry>
 
-<h3>Resource-Anforderungen</h3>
+<h3>Ressource-Anforderungen</h3>
 
 <p>Wenn Sie an unserer Website arbeiten wollen, seien Sie bitte darauf
 vorbereitet, zumindest 60MB an Daten auf Ihrer Platte zu speichern. Dies
-reflektiert die aktuelle Seite des Source-Archivs. Wenn Sie (aus Versehen)
+reflektiert die aktuelle Größe des Source-Archivs. Wenn Sie (aus Versehen)
 alle Seiten neu bauen, werden sie zumindest doppelt so viel Platz benötigen.
 Wenn sie nur teilweise auschecken, benötigen Sie viel weniger Platz, z.B. 18
 MB für english/.</p>
@@ -100,10 +100,78 @@ den Schlamassel selbst sehen.</p>
 
 <p>Vermeiden Sie allgemein zufällige Formatierungsänderungen.
 Änderungen, die ältere Teile von Seiten XHTML/XML-kompatibel machen,
-sollten nicht gleichzeitig mit anderen Änderungen commitet werden.
+sollten nicht gleichzeitig mit anderen Änderungen committet werden.
 (Neue Seiten sollten natürlich von Anfang an richtig geschrieben 
 werden.)</p>
- 
+
+
+<h3>Aktualisieren Sie die Übersetzungen, wenn möglich</h3>
+
+<p>Einige Änderungen sind unabhängig von der verwendeten Sprache,
+z.B. Änderungen an URLs oder am eingebetteten Perl code. Das
+Berichtigen von Rechtschreibungsfehlern o.ä. fällt auch oft
+in diese Kategorie, weil es normalerweise keine Änderungen
+an den Übersetzungen erfordert ausser einer Aktualisierung
+des translation-check-Headers. Alle diese Änderungen kann
+man normalerweise durchführen, ohne die gesamten Sprachen zu
+kennen.</p>
+
+<p>Da dies z.T. sehr viele zu ändernde Übersetzungen sind, scheut man
+jedoch oft diese Arbeit und überläßt sie den Übersetzern, auch wenn
+man die Änderungen schneller hätte durchführen können als sie. Das
+kann sehr ärgerlich für die Übersetzer sein.</p>
+
+<p>Sie können aber das <code>smart_change.pl</code>-Skript aus dem
+Wurzelverzeichnis des CVS-Archivs verwenden, um diese Änderungen
+wesentlich einfacher anzuwenden.</p>
+
+<h4>Handhabung von smart_change.pl</h4>
+
+<pre>smart_change.pl [optionen] originaldatei</pre>
+
+<p>Es sind derzeit nur Dateien in <code>/english/</code> als
+<var>originaldatei</var> zugelassen. <code>smart_change.pl</code>
+akzeptiert die folgenden Argumente:
+
+<dl>
+      <dt><code>-s, --substitute=<var>REGEXP</var></code></dt>
+      <dd>Einen regulären Ausdruck in Perlsyntax angeben, der auf die
+	Dateien angewendet wird (dieses Argument kann mehr als einmal
+	angegeben werden).
+	<pre>
+	  Beispiel: ./smart_change.pl -s "s,http://alteurl/,http://neueurl/,g" english/index.wml
+	</pre>
+      </dd>
+
+      <dt><code>-l, --lang=<var>STRING</var></code></dt>
+      <dd>Diese Sprache verarbeiten (kann mehr als einmal angegeben
+	werden). Wenn keine Sprache angegeben wird, werden alle
+	verfügbaren verarbeitet.</dd>
+
+      <dt><code>-n, --no-bump</code></dt>
+      <dd>translation-check-Header nicht aktualisieren. 
+	Normalerweise wird die CVS-Revision von <var>originaldatei</var>
+	als Referenz verwendet. In allen aktuellen Übersetzungen
+	werden die translation-check-Header aktualisiert, in
+	veralteten nicht. Wenn diese Option angegeben wurde,
+	werden überhaupt keine Header verändert. Siehe auch
+	"Übersetzungen aktuell halten" für eine <a href="uptodate">\
+	  Erklärung zu translation-check-Headern</a>.
+      </dd>
+
+      <dt><code>-p, --previous</code></dt>
+      <dd>Vorherige CVS-Revision benutzen. Dies ist z.B. nützlich, wenn
+	die englische Datei schon comittet wurde und die
+	translation-check-Header mit der vorherigen Version verglichen
+	werden sollen.</dd>
+
+      <dt><code>-h, --help</code></dt>
+      <dd>Kurze Handhabungsinformationen anzeigen.</dd>
+      
+      <dt><code>-v, --verbose</code></dt>
+      <dd>Eine ausführliche Ausgabe erzeugen.</dd>
+</dl>
+
 
 <toc-add-entry name="links">Links</toc-add-entry>
 
@@ -146,7 +214,7 @@ generieren:</p>
   <dt><code>index.wml</code>:
       <dd>Der Text am oberen Ende der Distributor-Datei befindet sich in
       dieser Datei. Eine übersetzte Kopie davon sollte in jedem
-      Sprach-Verzeichnis plaziert werden.
+      Sprach-Verzeichnis platziert werden.
   <dt><code>vendors.CD.def</code>:
       <dd>Dies beinhaltet alle Text-Teile, die für jeden Distributor-Eintrag
       benötigt werden. Übersetzungen werden über
@@ -154,12 +222,12 @@ generieren:</p>
       hinzugefügt.
   <dt><code>vendors.CD</code>:
       <dd>Diese Datei beinhaltet die tatsächlichen Distributoren-Einträge, die
-      unabhängig von der Sprache sind, daher müssen die Übersätzer diese Datei
+      unabhängig von der Sprache sind, daher müssen die Übersetzer diese Datei
       nicht verändern.
 </dl>
 
 <p>Wenn eine der Personen hinter <email "cdvendors@debian.org"> einen neuen
-Distributor hinzufügt, tun sie dies in <code>debiancd.db</code>, konvertieren
+Distributor hinzufügt, tun Sie dies in <code>debiancd.db</code>, konvertieren
 es ins WML-Format als <code>vendors.CD</code> (dazu wird
 <code>getvendors.pl</code> verwendet), und lassen dann WML und die Makefiles
 ihre Magie spielen. Alle Übersetzungen werden unter Verwendung des vorhandenen
@@ -171,7 +239,7 @@ aktualisierte Übersetzung gratis! :-)</p>
 
 <p>Neue Seiten für Debian hinzuzufügen ist recht einfach. All die Arbeit, den
 Kopf und den Fuss der Seite richtig hinzubekommen, wird von WML erledigt.
-Alles, was ie tun müssen, ist eine Zeile wie die folgende am Anfang der neuen
+Alles, was Sie tun müssen, ist eine Zeile wie die folgende am Anfang der neuen
 Datei hinzuzufügen:</p>
 
 <pre><protect>
@@ -225,8 +293,8 @@ eigenen Kopf haben. <code>ports/arm/index.wml</code> verwendet:</p>
 <p>Wenn Sie etwas tun wollen, das nicht unter Verwendung der vorhandenen
 Vorlagen möglich ist, erwägen Sie zuerst, eine davon zu erweitern. Wenn es
 nicht möglich ist, eine in einer rückwärtskompatiblen Art zu erweitern,
-versuchen Sie die neue Vorlage eine Übermenge eines existierenden zu machen,
-damit die Seiten darauf mit der nächsten grossen Aktualisierung (hoffentlich
+versuchen Sie die neue Vorlage eine Übermenge einer existierenden zu machen,
+damit die Seiten darauf mit der nächsten großen Aktualisierung (hoffentlich
 niemals öfter als alle 6 Monate) umgestellt werden können.</p>
 
 <p>Wenn Sie eine Seite erstellen, die von einem Skript generiert wird oder
@@ -242,7 +310,7 @@ um die Aufgabe zu erleichtern, die Übersetzungen aktuell zu halten.</p>
 <code>install</code>. Dies verwirrt make und die Seiten in diesem Verzeichnis
 werden nicht automatisch aktualisiert.</p>
 
-<p>Unterhalb ist ein kommentiertes Beipiel, wie man ein neues Verzeichnis zur
+<p>Unterhalb ist ein kommentiertes Beispiel, wie man ein neues Verzeichnis zur
 Website hinzufügt.</p>
 
 <pre>
