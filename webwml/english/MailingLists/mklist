@@ -1,5 +1,7 @@
 #!/usr/bin/perl -w
 
+use strict;
+
 #   mklist - create some list documentation
 #   Copyright (c) 1998  Martin Schulze <joey@debian.org>
 #                 1998  James Treacy <treacy@debian.org>
@@ -18,30 +20,32 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111, USA.
 
-$progname = "mklist";
+my $progname = "mklist";
 
 # ----- Begin of Customisation
 #
 # -t | --text
-$def_mlists = "mailing-lists.txt";
+my $def_mlists = "mailing-lists.txt";
 #
 # -w | --web
-$def_weblists = $ENV{'HOME'} . "/lib/web/debian/mailing-lists.html";
+my $def_weblists = $ENV{'HOME'} . "/lib/web/debian/mailing-lists.html";
 #
 # -s | --subscribe
-$def_subscribe = "subscribe.wml";
+my $def_subscribe = "subscribe.wml";
 #
 # -u | --unsubscribe
-$def_unsubscribe = "unsubscribe.wml";
+my $def_unsubscribe = "unsubscribe.wml";
 #
 # ----- End of Customisation
 
-@fieldlist = ('Language','Digest','Moderated','Subscription');
-@specialist = ('Section','Description');
-@globlist = ('List','Introduction','Subscription','Advertising');
+my @fieldlist = ('Language','Digest','Moderated','Subscription');
+my @specialist = ('Section','Description');
+my @globlist = ('List','Introduction','Subscription','Advertising');
 
 # This refers to @grouptitle from master:/org/lists.debian.org/scripts/conf.pl
-@sections = ('user','devel','int','ports','bugs','misc','other','foreign');
+my @sections = ('user','devel','int','ports','bugs','misc','other','foreign');
+
+my %list;
 
 sub usage()
 {
@@ -56,9 +60,7 @@ sub usage()
 
 sub fieldname
 {
-	my $field;
-
-	foreach $field (@fieldlist,@specialist,@globlist,@sections,"Alias") {
+	foreach my $field (@fieldlist,@specialist,@globlist,@sections,"Alias") {
 		return $field if ($_[0] =~ /$field/i);
 	}
 }
@@ -69,54 +71,53 @@ sub read_config
 	my $field;
 	my $mylist = "";
 
-	if (open(CONF, $conf)) {
-		%list = ();		# Reset global structure
-		while (<CONF>) {
-			next if (/^\#/);
-			next if (/^\s*$/);
+	open CONF, $conf or die "can't open $conf: $!";
+	%list = ();		# Reset global structure
+	while (<CONF>) {
+		next if (/^\#/);
+		next if (/^\s*$/);
 
-			# select multiline fields
-			if (/^\s+/) {
-				s/^\s+//;
-				$list{$mylist}->{$field} .= $_;
-			} else {
-				if (/^([a-z]+)\s*:\s*(.*)$/i) {
-					$field = &fieldname($1);
-					if ($field eq "Alias") {
-						$mylist = $2;
-					}
-					elsif ($field eq "List") {
-						$mylist = $2;
-					}
-					else {
-						$list{$mylist}->{$field} = $2;
-					}
+		# select multiline fields
+		if (/^\s+/) {
+			s/^\s+//;
+			$list{$mylist}->{$field} .= $_;
+		} else {
+			if (/^([a-z]+)\s*:\s*(.*)$/i) {
+				$field = &fieldname($1);
+				if ($field eq "Alias") {
+					$mylist = $2;
+				}
+				elsif ($field eq "List") {
+					$mylist = $2;
+				}
+				else {
+					$list{$mylist}->{$field} = $2;
 				}
 			}
 		}
-	close (CONF);
 	}
+	close CONF;
 
-	foreach $l (keys %list) {
-	  ($shortname = $l) =~ s/@.*$//;
-	  $descfile = "desc/$list{$l}{Section}/$shortname";
+	foreach my $l (keys %list) {
+	  (my $shortname = $l) =~ s/@.*$//;
+	  my $descfile = "desc/$list{$l}{Section}/$shortname";
 	  $descfile = "../../english/MailingLists/$descfile" if (! -f $descfile);
 	  die "can't find $descfile: $!" if (! -f $descfile);
 	  if (not exists $list{$l}{Description} or !$list{$l}{Description}) {
 	    $list{$l}{Description} = `cat $descfile`;
 	  }
 	}
-	foreach $s (@sections) {
-	  $descfile = "desc/$s.heading";
+	foreach my $s (@sections) {
+	  my $descfile = "desc/$s.heading";
 	  $descfile = "../../english/MailingLists/$descfile" if (! -f $descfile);
 	  die "can't find $descfile: $!" if (! -f $descfile);
           if (not exists $list{''}{$s}) {
 	    $list{''}{$s} = `cat $descfile`;
 	  }
 	}
-	foreach $i (@globlist) {
+	foreach my $i (@globlist) {
 	  next if ($i eq "List");
-	  $descfile = "desc/" . lc $i;
+	  my $descfile = "desc/" . lc $i;
 	  $descfile = "../../english/MailingLists/$descfile" if (! -f $descfile);
 	  die "can't find $descfile: $!" if (! -f $descfile);
           if (not exists $list{''}{$i}) {
@@ -130,9 +131,8 @@ sub print_multiline_txt
     my $space = shift;
     my $lines = shift;
     my @lines = @$lines;
-    my $i;
 
-    $i=1;
+    my $i=1;
     while ($i <= $#lines) {
 	if ($lines[$i] eq ".") {
 	    print OUT "\n";
@@ -148,9 +148,8 @@ sub print_multiline_html
     my $space = shift;
     my $lines = shift;
     my @lines = @$lines;
-    my $i;
 
-    $i=1;
+    my $i=1;
     while ($i <= $#lines) {
 	if ($lines[$i] eq ".") {
 	    printf OUT "%s<p>\n", $space;
@@ -163,64 +162,56 @@ sub print_multiline_html
 
 sub write_mailing_lists_txt
 {
-	my @lines;
-	my $amount;
-	my $space;
-	my $section;
-	my $field;
-	my @lists;
+	open OUT, ">$_[0]" or die "can't open $_[0]: $!";
 
-	if (open(OUT, ">$_[0]")) {
-#	if (open(OUT, ">-")) {
-		@lines = split(/\n/,$list{''}->{'Introduction'});
+	my @lines = split(/\n/,$list{''}->{'Introduction'});
 
-		$amount = (76 - length($lines[0])) / 2;
-		$space = " " x $amount;
-		printf OUT "%s%s\n%s", $space, $lines[0], $space;
-		$space = "=" x length($lines[0]);
-		printf OUT "%s\n\n", $space;
-		&print_multiline_txt("  ",\@lines);
+	my $amount = (76 - length($lines[0])) / 2;
+	my $space = " " x $amount;
+	printf OUT "%s%s\n%s", $space, $lines[0], $space;
+	$space = "=" x length($lines[0]);
+	printf OUT "%s\n\n", $space;
+	&print_multiline_txt("  ",\@lines);
 
-		@lines = split(/\n/,$list{''}->{'Subscription'});
-		$space = "-" x length($lines[0]);
-		printf OUT "\n%s\n%s\n\n", $lines[0], $space;
-		&print_multiline_txt("  ",\@lines);
+	@lines = split(/\n/,$list{''}->{'Subscription'});
+	$space = "-" x length($lines[0]);
+	printf OUT "\n%s\n%s\n\n", $lines[0], $space;
+	&print_multiline_txt("  ",\@lines);
 
-		foreach $section (@sections) {
-			@lists = ();
-			foreach $l (keys(%list)) {
-				next if (!$l || ($list{$l}->{'Section'} ne $section));
-				push(@lists, $l);
-			}
-			@lists = sort @lists;
+	foreach my $section (@sections) {
+		my @lists = ();
+		foreach my $l (keys(%list)) {
+			next if (!$l || ($list{$l}->{'Section'} ne $section));
+			push(@lists, $l);
+		}
+		@lists = sort @lists;
 
-			if ($#lists > -1) {
-				if (exists $list{''}->{$section}) {
-					@lines = split(/\n/,$list{''}->{$section});
-					printf OUT "\n%s\n\n", $lines[0];
-					&print_multiline_txt("  ",\@lines);
-				}
+		if ($#lists > -1) {
+			die "can't find description of the section $section!\n" unless exists $list{''}->{$section};
+			my @lines = split(/\n/,$list{''}->{$section});
+			printf OUT "\n%s\n\n", $lines[0];
+			&print_multiline_txt("  ",\@lines);
 
-				foreach $l (@lists) {
-					printf OUT "\n  %s\n\n", $l;
-					die "$l has no description!\n" unless $list{$l}->{'Description'};
-					@lines = split(/\n/,$list{$l}->{'Description'});
-					printf OUT "      Description : %s\n", $lines[0];
-					&print_multiline_txt("                    ",\@lines);
+			foreach my $l (@lists) {
+				printf OUT "\n  %s\n\n", $l;
+				die "$l has no description!\n" unless $list{$l}->{'Description'};
+				@lines = split(/\n/,$list{$l}->{'Description'});
+				printf OUT "      Description : %s\n", $lines[0];
+				&print_multiline_txt("                    ",\@lines);
 
-					foreach $field (@fieldlist) {
-						printf OUT "      %-12s: %s\n", $field, $list{$l}->{$field}
-						if (exists $list{$l}->{$field});
-					}
+				foreach my $field (@fieldlist) {
+					printf OUT "      %-12s: %s\n", $field, $list{$l}->{$field}
+					if (exists $list{$l}->{$field});
 				}
 			}
 		}
-
-		@lines = split(/\n/,$list{''}->{'Advertising'});
-		$space = "-" x length($lines[0]);
-		printf OUT "\n\n%s\n%s\n\n", $lines[0], $space;
-		&print_multiline_txt("  ",\@lines);
 	}
+
+	@lines = split(/\n/,$list{''}->{'Advertising'});
+	$space = "-" x length($lines[0]);
+	printf OUT "\n\n%s\n%s\n\n", $lines[0], $space;
+	&print_multiline_txt("  ",\@lines);
+
 	print OUT "\n";
 	print OUT "-- \n";
 	print OUT "Online HTML version of this document is available at\n";
@@ -229,16 +220,9 @@ sub write_mailing_lists_txt
 
 sub write_mailing_lists_html
 {
-    my @lines;
-    my $amount;
-    my $space;
-    my $section;
-    my $field;
-    my @lists;
+    open OUT, ">$_[0]" or die "can't open $_[0]: $!";
 
-    if (open(OUT, ">$_[0]")) {
-#    if (open(OUT, ">-")) {
-	print OUT <<"EOF";
+    print OUT <<"EOF";
 wm::destination=~/public_html/Linux/Debian/master/mailing-lists.html
 wm::template=debian.wmt
 meta::description=Mailing lists served by Debian GNU/Linux, the universal operating system.
@@ -257,71 +241,61 @@ body::links=
 <p><br><p>
 <b>Sections</b><br>
 EOF
-        foreach $section (@sections) {
-	    printf OUT "&nbsp;<a href=\"#%s\">%s</a><br>\n", $section, $section;
-	}
-
-	print OUT "body::text=\n";
-	@lines = split(/\n/,$list{''}->{'Introduction'});
-
-	printf OUT "<h1>%s</h1>\n", $lines[0];
-	&print_multiline_html("  ",\@lines);
-
-	@lines = split(/\n/,$list{''}->{'Subscription'});
-	printf OUT "\n<h2>%s</h2>\n\n", $lines[0];
-	&print_multiline_html("  ",\@lines);
-
-	foreach $section (@sections) {
-	    @lists = ();
-	    foreach $l (keys(%list)) {
-		next if (!$l || ($list{$l}->{'Section'} ne $section));
-		die "$l has no description!\n" unless $list{$l}->{'Description'};
-		push(@lists, $l);
-	    }
-	    @lists = sort @lists;
-
-	    if ($#lists > -1) {
-		if (exists $list{''}->{$section}) {
-		    @lines = split(/\n/,$list{''}->{$section});
-		    printf OUT "\n<hr><h3><a name=\"%s\">%s</a></h3>\n\n", $section, $lines[0];
-		    &print_multiline_html("  ",\@lines);
-		}
-
-		foreach $l (@lists) {
-		    printf OUT "\n<p><b>%s</b><p>\n\n", $l;
-		    @lines = split(/\n/,$list{$l}->{'Description'});
-		    printf OUT "      Description :<br>\n<blockquote>\n  %s\n", $lines[0];
-		    &print_multiline_html("  ",\@lines);
-		    print  OUT "</blockquote>\n";
-
-		    foreach $field (@fieldlist) {
-			printf OUT "      %-12s: %s<br>\n", $field, $list{$l}->{$field}
-			if (exists $list{$l}->{$field});
-		    }
-		}
-	    }
-	}
-
-	@lines = split(/\n/,$list{''}->{'Advertising'});
-	printf OUT "\n\n<hr><h2>%s</h2>\n\n", $lines[0];
-	&print_multiline_html("  ",\@lines);
-
-	print OUT "\nbody::address=<address>&#169; automatically generated</address>\n";
+    foreach my $section (@sections) {
+	printf OUT "&nbsp;<a href=\"#%s\">%s</a><br>\n", $section, $section;
     }
+
+    print OUT "body::text=\n";
+
+    my @lines = split(/\n/,$list{''}->{'Introduction'});
+    printf OUT "<h1>%s</h1>\n", $lines[0];
+    &print_multiline_html("  ",\@lines);
+
+    @lines = split(/\n/,$list{''}->{'Subscription'});
+    printf OUT "\n<h2>%s</h2>\n\n", $lines[0];
+    &print_multiline_html("  ",\@lines);
+
+    foreach my $section (@sections) {
+        my @lists = ();
+        foreach my $l (keys(%list)) {
+	    next if (!$l || ($list{$l}->{'Section'} ne $section));
+	    die "$l has no description!\n" unless $list{$l}->{'Description'};
+	    push(@lists, $l);
+        }
+        @lists = sort @lists;
+
+        if ($#lists > -1) {
+	    die "can't find description of the section $section!\n" unless exists $list{''}->{$section};
+	    my @lines = split(/\n/,$list{''}->{$section});
+	    printf OUT "\n<hr><h3><a name=\"%s\">%s</a></h3>\n\n", $section, $lines[0];
+	    &print_multiline_html("  ",\@lines);
+
+	    foreach my $l (@lists) {
+	        printf OUT "\n<p><b>%s</b><p>\n\n", $l;
+	        my @lines = split(/\n/,$list{$l}->{'Description'});
+	        printf OUT "      Description :<br>\n<blockquote>\n  %s\n", $lines[0];
+	        &print_multiline_html("  ",\@lines);
+	        print  OUT "</blockquote>\n";
+
+	        foreach my $field (@fieldlist) {
+			printf OUT "      %-12s: %s<br>\n", $field, $list{$l}->{$field}
+				if (exists $list{$l}->{$field});
+	        }
+	    }
+        }
+    }
+
+    @lines = split(/\n/,$list{''}->{'Advertising'});
+    printf OUT "\n\n<hr><h2>%s</h2>\n\n", $lines[0];
+    &print_multiline_html("  ",\@lines);
+
+    print OUT "\nbody::address=<address>&#169; automatically generated</address>\n";
 }
 
 sub write_mailing_lists_subscribe
 {
-	my @lines;
-	my $amount;
-	my $space;
-	my $section;
-	my $field;
-	my @lists;
-	my $slist;
+	open OUT, ">$_[0]" or die "can't open $_[0]: $!";
 
-	if (open(OUT, ">$_[0]")) {
-#	if (open(OUT, ">-")) {
 	print OUT <<"EOF";
 #include "\$(ENGLISHDIR)/MailingLists/mklist.tags"
 #use wml::debian::template title="<subscribe_title>"
@@ -329,8 +303,7 @@ sub write_mailing_lists_subscribe
 <!-- This page is generated automatically by the mklist script, do not edit -->
 
 EOF
-#	@lines = split(/\n/,$list{''}->{'Introduction'});
-#
+#	my @lines = split(/\n/,$list{''}->{'Introduction'});
 #	printf OUT "<h1>%s</h1>\n", $lines[0];
 #	&print_multiline_html("  ",\@lines);
 
@@ -353,9 +326,9 @@ EOF
 <form method="post" action="http://cgi.debian.org/cgi-bin/subscribe.pl">
 END
 
-	foreach $section (@sections) {
-		@lists = ();
-		foreach $l (keys(%list)) {
+	foreach my $section (@sections) {
+		my @lists = ();
+		foreach my $l (keys(%list)) {
 			next if (!$l || ($list{$l}->{'Section'} ne $section));
 			die "$l has no description!\n" unless $list{$l}->{'Description'};
 			die "$l has no subscription policy!\n" unless $list{$l}->{'Subscription'};
@@ -366,16 +339,14 @@ END
 		@lists = sort @lists;
 
 		if ($#lists > -1) {
-			if (exists $list{''}->{$section}) {
-				@lines = split(/\n/,$list{''}->{$section});
-				printf OUT "\n<h3><a name=\"%s\">%s</a></h3>\n\n", $section, $lines[0];
-				&print_multiline_html("  ",\@lines);
-			}
+			die "can't find description of the section $section!\n" unless exists $list{''}->{$section};
+			my @lines = split(/\n/,$list{''}->{$section});
+			printf OUT "\n<h3><a name=\"%s\">%s</a></h3>\n\n", $section, $lines[0];
+			&print_multiline_html("  ",\@lines);
 
 			print OUT "<DL>\n";
-
-			foreach $l (@lists) {
-				$slist = $l; $slist =~ s/@.*//;
+			foreach my $l (@lists) {
+				my $slist = $l; $slist =~ s/@.*//;
 				printf OUT "<DT><INPUT TYPE=\"checkbox\" NAME=\"subscribe\" VALUE=\"%s\">\n", $slist;
 				printf OUT "	<STRONG><a name=\"%s\">%s</a></STRONG>", $slist, $slist;
 
@@ -385,7 +356,7 @@ END
 				$list{$l}->{'Description'} =~ s,(http://[\w.\-~/]*),<a href="$1">$1</a>,g;
 				$list{$l}->{'Description'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1</a>,g;
 				$list{$l}->{'Description'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1</a>,g;
-				@lines = split(/\n/,$list{$l}->{'Description'});
+				my @lines = split(/\n/,$list{$l}->{'Description'});
 				printf OUT "\n\n	<DD>%s\n", $lines[0];
 				&print_multiline_html("	",\@lines);
 				if ($list{$l}->{'Moderated'} eq "yes") {
@@ -417,21 +388,13 @@ END
 #	@lines = split(/\n/,$list{''}->{'Advertising'});
 #	printf OUT "\n\n<hr><h2>%s</h2>\n\n", $lines[0];
 #	&print_multiline_html("  ",\@lines);
-	}
 }
 
 sub write_mailing_lists_unsubscribe
 {
-	my @lines;
-	my $amount;
-	my $space;
-	my $section;
-	my $field;
-	my @lists;
-	my $slist;
+	open OUT, ">$_[0]" or die "can't open $_[0]: $!";
 
-	if (open(OUT, ">$_[0]")) {
-		print OUT <<"EOF";
+	print OUT <<"EOF";
 #include "\$(ENGLISHDIR)/MailingLists/mklist.tags"
 #use wml::debian::template title="<unsubscribe_title>"
 
@@ -443,7 +406,7 @@ EOF
 #	$list{''}->{'Subscription'} =~ s,(http://[\w.\-~/]*),<a href="$1">$1</a>,g;
 #	$list{''}->{'Subscription'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1</a>,g;
 #	$list{''}->{'Subscription'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1</a>,g;
-#	@lines = split(/\n/,$list{''}->{'Subscription'});
+#	my @lines = split(/\n/,$list{''}->{'Subscription'});
 #	printf OUT "\n<h2>%s</h2>\n\n", $lines[0];
 #	&print_multiline_html("  ",\@lines);
 
@@ -457,9 +420,9 @@ EOF
 <form method="post" action="http://cgi.debian.org/cgi-bin/subscribe.pl">
 END
 
-	foreach $section (@sections) {
-	    @lists = ();
-	    foreach $l (keys(%list)) {
+	foreach my $section (@sections) {
+	    my @lists = ();
+	    foreach my $l (keys(%list)) {
 		next if (!$l || ($list{$l}->{'Section'} ne $section));
 		next unless exists $list{$l}->{'Description'};
 		next unless exists $list{$l}->{'Moderated'}; # weeds out external lists
@@ -470,16 +433,15 @@ END
 	    @lists = sort @lists;
 
 	    if ($#lists > -1) {
-		if (exists $list{''}->{$section}) {
-		    @lines = split(/\n/,$list{''}->{$section});
-		    printf OUT "\n<h3><a name=\"%s\">%s</a></h3>\n\n", $section, $lines[0];
-		    # &print_multiline_html("  ",\@lines);
-		}
+		die "can't find description of the section $section!\n" unless exists $list{''}->{$section};
+		my @lines = split(/\n/,$list{''}->{$section});
+		printf OUT "\n<h3><a name=\"%s\">%s</a></h3>\n\n", $section, $lines[0];
+		# &print_multiline_html("  ",\@lines);
 
                 print OUT "<table summary=\"$lines[0]\">\n";
-                $count = 0;
-		foreach $l (@lists) {
-		    $slist = $l; $slist =~ s/@.*//;
+                my $count = 0;
+		foreach my $l (@lists) {
+		    my $slist = $l; $slist =~ s/@.*//;
 		    if (! ($count++ % 3) ) {
 			print OUT "\n</tr>\n" unless ($count < 3);
 			print OUT "\n<tr>\n";
@@ -513,7 +475,6 @@ END
 	print OUT <<END;
 <p><respect_ad_policy>
 END
-    }
 }
 
 # First check our arguments
@@ -522,12 +483,13 @@ if ($#ARGV == -1) {
     &usage();
     exit;
 }
-$opt_conf = "lists.cfg";
-@opt_files = ();
-$opt_mlists = "";
-$opt_weblists = "";
-$opt_subscribe = "";
-$i = 0;
+my $opt_conf = "lists.cfg";
+my @opt_files = ();
+my $opt_mlists = "";
+my $opt_weblists = "";
+my $opt_subscribe = "";
+my $opt_unsubscribe = "";
+my $i = 0;
 while ($i <= $#ARGV) {
     if ($ARGV[$i] eq "-h" || $ARGV[$i] eq "--help") {
         &usage();
