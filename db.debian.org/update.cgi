@@ -77,9 +77,6 @@ if (!($query->param('doupdate'))) {
   $data{staddress} = $entry->{postaladdress}->[0];
   $data{staddress} =~ s/\$/\n/;
   $data{countryname} = &Util::LookupCountry($data{c});
-  if ($data{labeledurl} !~ /^https?:\/\//i) {
-    &Util::HTMLError("Malformed URL entered");
-  }
   
   $data{email} = join(", ", @{$entry->{emailforward}});  
 
@@ -96,6 +93,10 @@ if (!($query->param('doupdate'))) {
 } else {
   # Actually update stuff...
   my ($newpassword, $newstaddress);
+  
+  if ($query->param('labeledurl') !~ /^https?:\/\//i) {
+    &Util::HTMLError("Your homepage URL is invalid");
+  }
   
   if ($query->param('newpass') && $query->param('newpassvrfy')) {
     if ($query->param('newpass') ne $query->param('newpassvrfy')) {
