@@ -7,7 +7,7 @@
 # Makefiles are not supported anymore for they bear too much space for errors.
 
 # Originally written 2000-02-26 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2000-2002 Software in the public interest, Inc.
+# © Copyright 2000-2003 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -245,15 +245,27 @@ sub copy
 		}
 		else
 		{
+			# Transform the string into a string that is fit for the encoding
+			# of the output language. We do that by first converting any
+			# SGML entities in the input stream into 8-bit ISO 8859-1
+			# encoding, and then convert extended characters (back) into
+			# entities if necessary for the target encoding.
+
+			# Decode
+			s/(&[^#;]+;)/&decodeentity($1)/ge;
+			s/&#(1[6-9][0-9]|2[0-4][0-9]|25[0-5]);/chr($1)/ge;
+
+			# Encode
 			if (defined $compattable)
 			{
-				# Recode non-ASCII characters that are not identical to
-				# ISO 8859-1 into entitites
+				# Output encoding is in part compatible with ISO 8859-1, only
+				# convert incompatible characters into entities.
 				s/([\xA0-\xFF])/$$compattable[ord($1)-160]?$1:$entities[ord($1)-160]/ge;
 			}
 			elsif ($recodelatin1)
 			{
-				# Recode any non-ASCII characters into entities
+				# Output encoding is incompatible with ISO 8859-1, convert all
+				# 8-bit characters into entities.
 				s/([\xA0-\xFF])/$entities[ord($1)-160]/ge;
 			}
 
@@ -273,4 +285,16 @@ sub copy
 	print "Copied $page, remember to edit $dstfile\n";
 	print "and to remove $dsttitle when finished\n"
 		if defined $dsttitle;
+}
+
+# Return the ISO-8859-1 character that corresponds to the given entity
+sub decodeentity
+{
+	my $ent = shift;
+	# Start at one to avoid decoding &nbsp;
+	for (my $i = 1; $i < $#entities; ++ $i)
+	{
+		return chr($i + 160) if $entities[$i] eq $ent;
+	}
+	return $ent;
 }
