@@ -36,8 +36,20 @@ warn "Checking subtree $opt_s only\n" if $opt_v;
 # include only files matching $filename
 $filename = $opt_p || '(\.wml$)|(\.html$)';
 
+# get configuration
+if (open CONF, "<language.conf")
+{
+	$defaultlanguage = <CONF>;
+	chomp $defaultlanguage;
+	close CONF;
+}
+else
+{
+	$defaultlanguage = 'italian';
+}
+
 $from = 'english';
-$to = shift || 'italian';
+$to = shift || $defaultlanguage;
 
 $from = "$from/$opt_s";
 $to = "$to/$opt_s";
