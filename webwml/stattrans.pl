@@ -15,25 +15,30 @@
 
 #   You should have received a copy of the GNU General Public License
 #   along with this program; if not, write to the Free Software
-#   Foundation, Inc.,59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 use POSIX qw(strftime);
+use Getopt::Std;
 
+$opt_h = "/org/www.debian.org/debian.org/devel/website/stats";
+$opt_w = "/org/www.debian.org/webwml";
+$opt_p = "*.wml";
+$opt_t = "Website Translation Statistics";
+$opt_v = 0;
+getopts('hwptv');
 %config = (
-	   'htmldir' => '/org/www.debian.org/debian.org/devel/website/stats', #fixme
-	   #'htmldir' => '/home/users/joey/public_html/webwml/', #fixme
-	   #'wmldir'  => '/home/project/Debian/CVS/webwml', #fixme
-	   'wmldir'  => '/org/www.debian.org/webwml', #fixme
-	   'wmlpat'  => '*.wml',
-	   'title'   => 'Website Translation Statistics',
-	   'verbose' => 0,
+	   'htmldir' => $opt_h,
+	   'wmldir'  => $opt_w,
+	   'wmlpat'  => $opt_p,
+	   'title'   => $opt_t,
+	   'verbose' => $opt_v,
 	   );
 
 $max_versions = 5;
 $min_versions = 1;
 
 # from english/template/debian/languages.wml
-# Needs to be synced frequently
+# TODO: Needs to be synced frequently or fixed so it's automatic
 my %langs = ( english    => "en",
               hellas     => "el",
               turkish    => "tr",
@@ -119,6 +124,7 @@ sub getwmlfiles
     my $count = 0;
     my $is_english = ($lang eq "english")?1:0;
     my $file, $v;
+    my $l = $langs{$lang};
 
     return if (! -d "$config{'wmldir'}/$lang");
     open (FIND, "$cmd|") || die "Can't read from $cmd";
@@ -129,7 +135,7 @@ sub getwmlfiles
 	chomp;
 	$file = substr ($_, $cutfrom);
 	$file =~ s/\.wml$//;
-	$wmlfiles{$langs{$lang}} .= " " . $file;
+	$wmlfiles{$l} .= " " . $file;
 	if ($is_english) {
 	    $version{"$lang/$file"} = get_cvs_version ("$config{'wmldir'}/$lang", "$file.wml");
 	} else {
@@ -138,8 +144,8 @@ sub getwmlfiles
 	$count++;
     }
     close (FIND);
-    $wmlfiles{$langs{$lang}} .= " ";
-    $wml{$langs{$lang}} = $count;
+    $wmlfiles{$l} .= " ";
+    $wml{$l} = $count;
 }	  
 
 sub get_color
@@ -196,7 +202,7 @@ getwmlfiles ('english');
 foreach $l (keys %langs) {
     next if ($l eq "english");
     print "$l " if ($config{'verbose'});
-    getwmlfiles ($l);    
+    getwmlfiles ($l);
 }
 print "\n" if ($config{'verbose'});
 
@@ -231,6 +237,9 @@ foreach $lang (sort (keys %langs)) {
     		$untranslated{$lang}++;
 	}
     }
+
+    $translated{$lang} = $translated{$lang} - $outdated{$lang};
+
     $percent_a{$l} = $wml{$l}/$wml{en} * 100;
     $percent_t{$l} = $translated{$lang}/$wml{en} * 100;
     $percent_o{$l} = $outdated{$lang}/$wml{en} * 100;
@@ -289,7 +298,7 @@ printf HTML "<h1 align=center>%s</h1>\n", $config{'title'};
 
 print HTML $border_head;
 print HTML "<table width=100% border=0 bgcolor=\"#cdc9c9\">\n";
-print HTML "<tr><th>Language</th><th>Translated</th><th>Up to date</th><th>Outdated</th><th>Not translated</th></tr>\n";
+print HTML "<tr><th>Language</th><th>Files</th><th>Up to date</th><th>Outdated</th><th>Not translated</th></tr>\n";
 foreach $lang (sort (keys %langs)) {
     $l = $langs{$lang};
 
@@ -298,9 +307,13 @@ foreach $lang (sort (keys %langs)) {
     print HTML "<tr>";
     printf HTML "<td><a href=\"%s.html\">%s</a> (%s)</td>", $l, $lang, $l;
     printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color, $wml{$l}, $percent_a{$l};
-    printf HTML "<td align=right>%d (%d%%)</td>", $translated{$lang}, $percent_t{$l};
-    printf HTML "<td align=right>%d (%d%%)</td>", $outdated{$lang}, $percent_o{$l};
-    printf HTML "<td align=right>%d (%d%%)</td>", $untranslated{$lang}, $percent_u{$l};
+    if ($l ne "en") {
+      printf HTML "<td align=right>%d (%d%%)</td>", $translated{$lang}, $percent_t{$l};
+      printf HTML "<td align=right>%d (%d%%)</td>", $outdated{$lang}, $percent_o{$l};
+      printf HTML "<td align=right>%d (%d%%)</td>", $untranslated{$lang}, $percent_u{$l};
+    } else {
+      print HTML "<td>-</td><td>-</td><td>-</td>";
+    }
     print HTML "</tr>\n",
 }
 
