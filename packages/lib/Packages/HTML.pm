@@ -88,10 +88,10 @@ NAVBEGIN
     $txt .= img( "$HOME/", "News/", "Pics/news.$img_lang.gif",
 		 gettext( "News" ), 
 		 hspace => 4, vspace => 7 );
-    $txt .= img( "$HOME/", "distrib", "Pics/getting.$img_lang.gif",
+    $txt .= img( "$HOME/", "distrib/", "Pics/getting.$img_lang.gif",
 		 gettext( "Getting&nbsp;Debian" ), 
 		 hspace => 4, vspace => 7 );
-    $txt .= img( "$HOME/", "support/", "Pics/support.$img_lang.gif",
+    $txt .= img( "$HOME/", "support", "Pics/support.$img_lang.gif",
 		 gettext( "Support" ), 
 		 hspace => 4, vspace => 7 );
     $txt .= img( "$HOME/", "devel/", "Pics/devel.$img_lang.gif",
