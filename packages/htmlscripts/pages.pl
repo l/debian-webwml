@@ -413,7 +413,7 @@ sub package_pages_walker {
 	    $package_page .= "<br><small>".sprintf( gettext( "View the <a href=\"%s\">Debian changelog</a>" ), "$CHANGELOG_URL/$source_dir/$src_basename/changelog" )."</small><br>\n";
 	    $package_page .= "<small>".sprintf( gettext( "View the <a href=\"%s\">copyright file</a>" ), "$COPYRIGHT_URL/$source_dir/$src_basename/$name.copyright" )."</small><br>\n";
 	}
-					    
+
 	#
 	# Maintainer and PTS
 	#
@@ -456,6 +456,45 @@ sub package_pages_walker {
 	# write file
 	#
 	$files->update_file( $filename, $package_page );
+
+	#
+	# create data sheet
+	#
+	if ($env->{lang} = "en") {
+
+	    my $data_sheet = header( title => "$name -- Data sheet",
+				     lang => "en",
+				     desc => $short_desc,
+				     keywords => "$env->{distribution}, $subdist_kw, $archive, $section, size:$size_kw $version" );	    
+	    $data_sheet .= "<div align=\"center\"><h1>$name";
+	    if ( $subdist ) {
+		$data_sheet .=  " [<font color=\"red\">$subdist</font>]\n";
+	    }
+	    if ( $archive && ( $archive ne 'main' ) ) {
+		$data_sheet .=  " [<font color=\"red\">$archive</font>]\n";
+	    }
+	    $data_sheet .= "</h1></div>\n";
+
+	    $data_sheet .= "<table><tbody>";
+	    $data_sheet .= "<tr><td>".gettext( "Version" )":</td>\n".
+		"<td>$v_str</td></tr>";
+	    $data_sheet .= "<tr><td>".gettext( "Section" )":</td>\n".
+		"<td>$section</td></tr>";
+	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Depends' );
+	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Recommends' );
+	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Suggests' );
+	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Conflicts' );
+	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Enhances' );
+
+	    $data_sheet .= "</tbody></table>";
+	    
+	    $data_sheet .= trailer( '../..', $name );
+
+	    $ds_filename = "$dirname/ds_$name.$env->{lang}.html";
+	    #
+	    # write file
+	    #
+	    $files->update_file( $ds_filename, $data_sheet );
     }
 
 sub src_package_pages_walker {

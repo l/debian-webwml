@@ -185,4 +185,102 @@ sub print_src_deps {
     return $res;
 }
 
+sub print_deps_ds {
+    my ( $env, $pkg, $versions, $type) = @_;
+    my $res = "";
+    my @all_archs = ( @{$env->{archs}}, 'all' );
+    my ( %dep_pkgs, %arch_deps );
+    foreach my $a ( @all_archs ) {
+	next unless ( exists $versions->{a2v}{$a}
+		      && exists $pkg->{versions}{$versions->{a2v}{$a}}{$a}{lc $type} );
+	my @a_deps = @{$pkg->{versions}{$versions->{a2v}{$a}}{$a}{lc $type}};
+	foreach my $d ( @a_deps ) {
+	    my ( @dep_str, $dep_str );
+	    foreach ( @$d ) {
+		$_->[1] ||= ""; $_->[2] ||= "";
+		push @dep_str, "$_->[0]($_->[1]$_->[2])";
+	    }
+	    $dep_str = join( "|", @dep_str );
+	    $dep_pkgs{$dep_str}++;
+	    $arch_deps{$a}->{$dep_str} = $d;
+	}
+    }
+    @all_archs = sort keys %arch_deps;
+#    print Dumper( \%dep_pkgs, \%arch_deps );
+    
+    if ( %dep_pkgs ) {
+	foreach my $dp ( sort keys %dep_pkgs ) {
+	    my $dp_v = $dp;
+	    $dp_v =~ s/\(.*?\)//g;
+	    my @pkgs = split /\|/, $dp;
+
+	    my ( @dependend_archs, @not_dependend_archs );
+	    my $arch_str;
+	    foreach my $a ( @all_archs ) {
+		if ( exists( $versions->{a2v}{$a} )
+		     && exists( $arch_deps{$a} ) ) {
+		    if ( exists $arch_deps{$a}->{$dp} ) {
+			push @dependend_archs, $a;
+		    } else {
+			push @not_dependend_archs, $a;
+		    }
+		}
+	    }
+	    if ( @dependend_archs == @all_archs ) {
+		$arch_str = "";
+	    } else {
+		if ( @dependend_archs > (@all_archs/2) ) {
+		    $arch_str = " [".gettext( "not" )." ".join( ", ", @not_dependend_archs)."]";
+		} else {
+		    $arch_str = " [".join( ", ", @dependend_archs)."]";
+		}
+	    }
+
+	    my @res_pkgs; my $pkg_ix = 0;
+	    foreach my $p_name ( @pkgs ) {
+		$p_name =~ s/\(.*\)$//o;
+		
+		if ( $pkg_ix > 0 ) { $arch_str = ""; }
+		
+		my $p = $env->{db}->get_pkg( $p_name );
+
+		my $pkg_version = "";
+		foreach my $a ( @all_archs ) {
+		    if ( exists( $arch_deps{$a}->{$dp} )
+			 && $arch_deps{$a}->{$dp}->[$pkg_ix]->[1] ) {
+			$pkg_version = "(".encode_entities( $arch_deps{$a}->{$dp}->[$pkg_ix]->[1] ).
+			    " $arch_deps{$a}->{$dp}->[$pkg_ix]->[2])";
+			last;
+		    }
+		}
+
+		if ( $p ) {
+		    my $section;
+		    if ($p->is_virtual) {
+			$section = "virtual";
+		    } else {
+			my %sections = $p->get_arch_fields( 'section',
+							    $env->{archs} );
+			$section = $sections{max_unique} or warn "W: no section found for package ".$p->get_name()."\n";
+		    }
+# DEBUG
+		    unless(defined($section)&& defined($p_name)&& defined($pkg_version) && defined($arch_str)) {
+			print STDERR "E: $section&&$p_name&&$pkg_version&&$arch_str&&".$pkg->get_name()."\n";
+		    }
+		    push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $pkg_version$arch_str";
+		} else {
+		    push @res_pkgs, "$p_name $pkg_version$arch_str";
+		}
+		$pkg_ix++;
+	    }
+	    $res .= ", ".join( gettext( " or " ), @res_pkgs );
+	}
+    }
+    
+    if ($res) {
+	$res = "<tr><td>$type:</td><td>$res</td></tr>\n";
+    }
+    return $res;
+}
+
 1;
