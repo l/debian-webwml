@@ -1,9 +1,12 @@
 #use wml::debian::submenu
 
+# Please keep slices sorted alphabetically so it's easier to detect
+# languages in them (except english ones).
+
 <menu-item basename="../index">
 [EN:Ports:]
 [AR:Ports:]
-[DA:Ports:]
+[DA:Tilpasninger:]
 [DE:Ports:]
 [EL:Ports:]
 [EO:Ports:]
@@ -38,7 +41,7 @@
 [FR:Debian for S/390:]
 [HR:Debian for S/390:]
 [HU:Debian for S/390:]
-[IT:Debian for S/390:]
+[IT:Debian per S/390:]
 [JA:Debian for S/390:]
 [KO:Debian for S/390:]
 [NL:Debian for S/390:]

@@ -6,7 +6,7 @@
 <menu-item basename="../index">
 [EN:Ports:]
 [AR:Ports:]
-[DA:Ports:]
+[DA:Tilpasninger:]
 [DE:Ports:]
 [EL:Ports:]
 [EO:Ports:]
@@ -47,7 +47,7 @@
 [NL:Debian for PowerPC:]
 [NO:Debian for PowerPC:]
 [PL:Debian for PowerPC:]
-[PT:Debian for PowerPC:]
+[PT:Debian para PowerPC:]
 [RO:Debian for PowerPC:]
 [RU:Debian for PowerPC:]
 [SV:Debian för PowerPC:]
