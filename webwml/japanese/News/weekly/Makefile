@@ -9,6 +9,9 @@ CUR_DIR=News/weekly
 NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 CUR_YEAR ?= $(shell date +%Y)
+ifeq ($(LANGUAGE),ja)
+ABS_DIR=$(shell pwd)
+endif
 #WMLOPTIONS += -DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
 
 ifeq ($(LANGUAGE),zh)
@@ -40,7 +43,11 @@ endif
 # so wml gets all the relative links right.
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml
+ifneq ($(LANGUAGE),ja)
 	cd $(@D) && $(WML) $(notdir $(<))
+else
+	cd $(@D) && $(subst ../../convert,$(ABS_DIR)/../../convert,$(WML)) $(notdir $(<))
+endif
 
 # Special case for Chinese
 %.zh-cn.html %.zh-hk.html %.zh-tw.html : %.wml \
@@ -116,14 +123,17 @@ $(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
 
-
 # Have to add to the default clean rule to clean up all the html the
 # above target produces.
 clean::
 ifeq ($(LANGUAGE),zh)
 	-find . -type f -name \*.$(LANGUAGE)-??.html | xargs rm -f
 else
+ifeq ($(LANGUAGE),ja)
+	-find . -type f -name \*.$(LANGUAGE).html.tmp | xargs rm -f
+else
 	-find . -type f -name \*.$(LANGUAGE).html | xargs rm -f
+endif
 endif
 
 # Need to rebuild the index when anything changes.
