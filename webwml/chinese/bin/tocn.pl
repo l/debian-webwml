@@ -3,7 +3,7 @@
 s|^(<HTML lang="zh)">|$1-CN">|;
 s|^(<META http-equiv=.*charset)=Big5">|$1=GB2312">|;
 s/(\.zh)(?=\.(?:gif|jpg|png))/$1-cn/g;
-s|^<A href=".*">(中文&nbsp;\(GB\))</A>(?=&nbsp;)|$1|;
+s|^<A href=".*">(&#20013;&#25991;&nbsp;.+CN.+)</A>(?=&nbsp;)|<B>$1</B>|;
 
 # 先把全部「著」字转为「着」……
 1 while (s/^((?:[\x00-\x7F]|[\x80-\xFF].)*)著/$1着/);
