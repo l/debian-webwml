@@ -6,7 +6,7 @@ WMLBASE=.
 CUR_DIR=
 SUBS=Bugs MailingLists News Pics banners chinese consultants devel distrib \
 doc events intro international logos mirror misc partners ports releases \
-searchtmpl security vote y2k
+searchtmpl security vote y2k om_svenska
 
 include $(WMLBASE)/Make.lang
 
