@@ -1,17 +1,21 @@
 #use wml::debian::submenu
 
+# Please keep slices sorted alphabetically so it's easier to detect
+# languages in them (except english ones).
+
 <menu-item basename="../index">
+[EN:Ports:]
 [AR:Ports:]
 [DA:Ports:]
 [DE:Ports:]
 [EL:Ports:]
-[EN:Ports:]
 [EO:Ports:]
 [ES:Migraciones:]
 [FI:Ports:]
 [FR:Ports:]
 [HR:Ports:]
 [HU:Ports:]
+[IT:Ports:]
 [JA:Ports:]
 [KO:Ports:]
 [NL:Ports:]
@@ -26,17 +30,18 @@
 </menu-item>
 
 <menu-item basename="index">
+[EN:Debian for Sparc:]
 [AR:Debian for Sparc:]
 [DA:Debian for Sparc:]
 [DE:Debian für Sparc:]
 [EL:Debian for Sparc:]
-[EN:Debian for Sparc:]
 [EO:Debian for Sparc:]
 [ES:Debian para Sparc:]
 [FI:Debian for Sparc:]
 [FR:Debian for Sparc:]
 [HR:Debian for Sparc:]
 [HU:Debian for Sparc:]
+[IT:Debian for Sparc:]
 [JA:Debian for Sparc:]
 [KO:Debian for Sparc:]
 [NL:Debian for Sparc:]
@@ -51,17 +56,18 @@
 </menu-item>
 
 <menu-item basename="credits">
+[EN:Credits:]
 [AR:Credits:]
 [DA:Credits:]
 [DE:Danksagung:]
 [EL:Credits:]
-[EN:Credits:]
 [EO:Credits:]
 [ES:Créditos:]
 [FI:Credits:]
 [FR:Credits:]
 [HR:Credits:]
 [HU:Credits:]
+[IT:Credits:]
 [JA:Credits:]
 [KO:Credits:]
 [NL:Credits:]
@@ -76,17 +82,18 @@
 </menu-item>
 
 <menu-item basename="porting">
+[EN:Documentation:]
 [AR:Documentation:]
 [DA:Dokumentation:]
 [DE:Dokumentation:]
 [EL:Documentation:]
-[EN:Documentation:]
 [EO:Documentation:]
 [ES:Documentación:]
 [FI:Documentation:]
 [FR:Documentation:]
 [HR:Documentation:]
 [HU:Documentation:]
+[IT:Documentation:]
 [JA:Documentation:]
 [KO:Documentation:]
 [NL:Documentation:]
@@ -101,17 +108,18 @@
 </menu-item>
 
 <menu-item basename="problems">
+[EN:Problems:]
 [AR:Problems:]
 [DA:Problemer:]
 [DE:Probleme:]
 [EL:Problems:]
-[EN:Problems:]
 [EO:Problems:]
 [ES:Problemas:]
 [FI:Problems:]
 [FR:Problems:]
 [HR:Problems:]
 [HU:Problems:]
+[IT:Problems:]
 [JA:Problems:]
 [KO:Problems:]
 [NL:Problems:]

@@ -1,17 +1,21 @@
 #use wml::debian::submenu
 
+# Please keep slices sorted alphabetically so it's easier to detect
+# languages in them (except english ones).
+
 <menu-item basename="../index">
+[EN:Ports:]
 [AR:Ports:]
 [DA:Ports:]
 [DE:Ports:]
 [EL:Ports:]
-[EN:Ports:]
 [EO:Ports:]
 [ES:Migraciones:]
 [FI:Ports:]
 [FR:Ports:]
 [HR:Ports:]
 [HU:Ports:]
+[IT:Ports:]
 [JA:Ports:]
 [KO:Ports:]
 [NL:Ports:]
@@ -26,17 +30,18 @@
 </menu-item>
 
 <menu-item basename="index">
+[EN:Debian for Beowulf:]
 [AR:Debian for Beowulf:]
 [DA:Debian for Beowulf:]
 [DE:Debian für Beowulf:]
 [EL:Debian for Beowulf:]
-[EN:Debian for Beowulf:]
 [EO:Debian for Beowulf:]
 [ES:Debian para Beowulf:]
 [FI:Debian for Beowulf:]
 [FR:Debian for Beowulf:]
 [HR:Debian for Beowulf:]
 [HU:Debian for Beowulf:]
+[IT:Debian for Beowulf:]
 [JA:Debian for Beowulf:]
 [KO:Debian for Beowulf:]
 [NL:Debian for Beowulf:]

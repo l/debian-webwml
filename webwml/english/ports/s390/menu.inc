@@ -1,17 +1,18 @@
 #use wml::debian::submenu
 
 <menu-item basename="../index">
+[EN:Ports:]
 [AR:Ports:]
 [DA:Ports:]
 [DE:Ports:]
 [EL:Ports:]
-[EN:Ports:]
 [EO:Ports:]
 [ES:Migraciones:]
 [FI:Ports:]
 [FR:Ports:]
 [HR:Ports:]
 [HU:Ports:]
+[IT:Ports:]
 [JA:Ports:]
 [KO:Ports:]
 [NL:Ports:]
@@ -26,17 +27,18 @@
 </menu-item>
 
 <menu-item basename="index">
+[EN:Debian for S/390:]
 [AR:Debian for S/390:]
 [DA:Debian for S/390:]
 [DE:Debian für S/390:]
 [EL:Debian for S/390:]
-[EN:Debian for S/390:]
 [EO:Debian for S/390:]
 [ES:Debian para S/390:]
 [FI:Debian for S/390:]
 [FR:Debian for S/390:]
 [HR:Debian for S/390:]
 [HU:Debian for S/390:]
+[IT:Debian for S/390:]
 [JA:Debian for S/390:]
 [KO:Debian for S/390:]
 [NL:Debian for S/390:]

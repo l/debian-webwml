@@ -1,17 +1,21 @@
 #use wml::debian::submenu
 
+# Please keep slices sorted alphabetically so it's easier to detect
+# languages in them (except english ones).
+
 <menu-item basename="../index">
+[EN:Ports:]
 [AR:Ports:]
 [DA:Ports:]
 [DE:Ports:]
 [EL:Ports:]
-[EN:Ports:]
 [EO:Ports:]
 [ES:Migraciones:]
 [FI:Ports:]
 [FR:Ports:]
 [HR:Ports:]
 [HU:Ports:]
+[IT:Ports:]
 [JA:Ports:]
 [KO:Ports:]
 [NL:Ports:]
@@ -26,17 +30,18 @@
 </menu-item>
 
 <menu-item basename="index">
+[EN:Debian for MIPS:]
 [AR:Debian for MIPS:]
 [DA:Debian for MIPS:]
 [DE:Debian für MIPS:]
 [EL:Debian for MIPS:]
-[EN:Debian for MIPS:]
 [EO:Debian for MIPS:]
 [ES:Debian para MIPS:]
 [FI:Debian for MIPS:]
 [FR:Debian for MIPS:]
 [HR:Debian for MIPS:]
 [HU:Debian for MIPS:]
+[IT:Debian for MIPS:]
 [JA:Debian for MIPS:]
 [KO:Debian for MIPS:]
 [NL:Debian for MIPS:]
@@ -51,17 +56,18 @@
 </menu-item>
 
 <menu-item basename="cpu">
+[EN:CPUs:]
 [AR:CPUs:]
 [DA:CPUs:]
 [DE:CPUs:]
 [EL:CPUs:]
-[EN:CPUs:]
 [EO:CPUs:]
 [ES:CPUs:]
 [FI:CPUs:]
 [FR:CPUs:]
 [HR:CPUs:]
 [HU:CPUs:]
+[IT:CPUs:]
 [JA:CPUs:]
 [KO:CPUs:]
 [NL:CPUs:]
@@ -76,17 +82,18 @@
 </menu-item>
 
 <menu-item basename="system">
+[EN:Systems:]
 [AR:Systems:]
 [DA:Systems:]
 [DE:Systeme:]
 [EL:Systems:]
-[EN:Systems:]
 [EO:Systems:]
 [ES:Sistemas:]
 [FI:Systems:]
 [FR:Systems:]
 [HR:Systems:]
 [HU:Systems:]
+[IT:Systems:]
 [JA:Systems:]
 [KO:Systems:]
 [NL:Systems:]

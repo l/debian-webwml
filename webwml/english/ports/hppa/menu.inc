@@ -1,17 +1,21 @@
 #use wml::debian::submenu
 
+# Please keep slices sorted alphabetically so it's easier to detect
+# languages in them (except english ones).
+
 <menu-item basename="../index">
+[EN:Ports:]
 [AR:Ports:]
 [DA:Ports:]
 [DE:Ports:]
 [EL:Ports:]
-[EN:Ports:]
 [EO:Ports:]
 [ES:Migraciones:]
 [FI:Ports:]
 [FR:Ports:]
 [HR:Ports:]
 [HU:Ports:]
+[IT:Ports:]
 [JA:Ports:]
 [KO:Ports:]
 [NL:Ports:]
@@ -26,17 +30,18 @@
 </menu-item>
 
 <menu-item basename="index">
+[EN:Debian for PA-RISC:]
 [AR:Debian for PA-RISC:]
 [DA:Debian for PA-RISC:]
 [DE:Debian für PA-RISC:]
 [EL:Debian for PA-RISC:]
-[EN:Debian for PA-RISC:]
 [EO:Debian for PA-RISC:]
 [ES:Debian para PA-RISC:]
 [FI:Debian for PA-RISC:]
 [FR:Debian for PA-RISC:]
 [HR:Debian for PA-RISC:]
 [HU:Debian for PA-RISC:]
+[IT:Debian for PA-RISC:]
 [JA:Debian for PA-RISC:]
 [KO:Debian for PA-RISC:]
 [NL:Debian for PA-RISC:]

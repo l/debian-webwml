@@ -1,14 +1,14 @@
 #use wml::debian::submenu
 
 # Please keep slices sorted alphabetically so it's easier to detect
-# languages in them.
+# languages in them (except english ones).
 
 <menu-item basename="../index">
+[EN:Ports:]
 [AR:Ports:]
 [DA:Ports:]
 [DE:Ports:]
 [EL:Ports:]
-[EN:Ports:]
 [EO:Ports:]
 [ES:Migraciones:]
 [FI:Ports:]
@@ -30,11 +30,11 @@
 </menu-item>
 
 <menu-item basename="index">
+[EN:Debian GNU/Hurd:]
 [AR:Debian GNU/Hurd:]
 [DA:Debian GNU/Hurd:]
 [DE:Debian GNU/Hurd:]
 [EL:Debian GNU/Hurd:]
-[EN:Debian GNU/Hurd:]
 [EO:Debian GNU/Hurd:]
 [ES:Debian GNU/Hurd:]
 [FI:Debian GNU/Hurd:]
@@ -56,11 +56,11 @@
 </menu-item>
 
 <menu-item basename="hurd-news">
+[EN:News:]
 [AR:News:]
 [DA:Nyheder:]
 [DE:Neues:]
 [EL:News:]
-[EN:News:]
 [EO:News:]
 [ES:Noticias:]
 [FI:News:]
@@ -82,11 +82,11 @@
 </menu-item>
 
 <menu-item basename="hurd-install">
+[EN:Installation:]
 [AR:Installation:]
 [DA:Installation:]
 [DE:Installation:]
 [EL:Installation:]
-[EN:Installation:]
 [EO:Installation:]
 [ES:Instalación:]
 [FI:Installation:]
@@ -108,11 +108,11 @@
 </menu-item>
 
 <menu-item basename="hurd-cd">
+[EN:Hurd-CDs:]
 [AR:Hurd-CDs:]
 [DA:Hurd-CDs:]
 [DE:Hurd-CDs:]
 [EL:Hurd-CDs:]
-[EN:Hurd-CDs:]
 [EO:Hurd-CDs:]
 [ES:CDs de Hurd:]
 [FI:Hurd-CDs:]
@@ -134,11 +134,11 @@
 </menu-item>
 
 <menu-item basename="hurd-doc">
+[EN:Documentation:]
 [AR:Documentation:]
 [DA:Documentation:]
 [DE:Dokumentation:]
 [EL:Documentation:]
-[EN:Documentation:]
 [EO:Documentation:]
 [ES:Documentación:]
 [FI:Documentation:]
@@ -160,11 +160,11 @@
 </menu-item>
 
 <menu-item basename="hurd-devel">
+[EN:Development:]
 [AR:Development:]
 [DA:Udvikling:]
 [DE:Entwicklung:]
 [EL:Development:]
-[EN:Development:]
 [EO:Development:]
 [ES:Desarrollo:]
 [FI:Development:]
@@ -186,11 +186,11 @@
 </menu-item>
 
 <menu-item basename="hurd-links">
+[EN:Links:]
 [AR:Links:]
 [DA:Links:]
 [DE:Links:]
 [EL:Links:]
-[EN:Links:]
 [EO:Links:]
 [ES:Enlaces:]
 [FI:Links:]
@@ -212,11 +212,11 @@
 </menu-item>
 
 <menu-item basename="hurd-contact">
+[EN:Contact:]
 [AR:Contact:]
 [DA:Kontakt:]
 [DE:Kontakt:]
 [EL:Contact:]
-[EN:Contact:]
 [EO:Contact:]
 [ES:Contactos:]
 [FI:Contact:]

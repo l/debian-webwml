@@ -1,17 +1,21 @@
 #use wml::debian::submenu
 
+# Please keep slices sorted alphabetically so it's easier to detect
+# languages in them (except english ones).
+
 <menu-item basename="../index">
+[EN:Ports:]
 [AR:Ports:]
 [DA:Ports:]
 [DE:Ports:]
 [EL:Ports:]
-[EN:Ports:]
 [EO:Ports:]
 [ES:Migraciones:]
 [FI:Ports:]
 [FR:Ports:]
 [HR:Ports:]
 [HU:Ports:]
+[IT:Ports:]
 [JA:Ports:]
 [KO:Ports:]
 [NL:Ports:]
@@ -26,17 +30,18 @@
 </menu-item>
 
 <menu-item basename="index">
+[EN:Debian for Laptops:]
 [AR:Debian for Laptops:]
 [DA:Debian for Laptops:]
 [DE:Debian für Laptops:]
 [EL:Debian for Laptops:]
-[EN:Debian for Laptops:]
 [EO:Debian for Laptops:]
 [ES:Debian para portátiles:]
 [FI:Debian for Laptops:]
 [FR:Debian for Laptops:]
 [HR:Debian for Laptops:]
 [HU:Debian for Laptops:]
+[IT:Debian for Laptops:]
 [JA:Debian for Laptops:]
 [KO:Debian for Laptops:]
 [NL:Debian for Laptops:]
