@@ -28,11 +28,11 @@ else
 # Check usage.
 unless ($page)
 {
-	print "Usage: $0 page\n";
+	print "Usage: $0 page\n\n";
 	print "Copies the page from the english/ directory to the $language/ directory\n";
 	print "and adds the  translation  string\n";
 	print "If the directory does not exist, it will be created, and the Makefile\n";
-	print "copied.\n";
+	print "copied.\n\n";
 	print "You can either keep or not keep the 'english/' part of the path.\n";
 	exit;
 }
@@ -70,6 +70,7 @@ $dstmake = $dstdir . "Makefile";			# Name of destination Makefile
 # Sanity checks
 die "Directory $srcdir does not exist\n" unless -d $srcdir;
 die "File $srcfile does not exist\n"     unless -e $srcfile;
+die "File $dstfile already exists\n"     if     -e $dstfile;
 
 # Check if destination exists, if not - create it
 unless (-d $dstdir)
