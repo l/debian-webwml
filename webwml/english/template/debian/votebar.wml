@@ -339,95 +339,81 @@
 
 <perl>
 sub get_issues_list {
-	my ( $path, $number, $current_dir ) = @_;
 
-	$str=""; $proposal=""; $discussion=""; $voting=""; $finished=""; $unknown="";
-	@years = (1999, 2000, 2001); # this is kinda weird
-	$count = 0;
+my ( $path, $number, $current_dir ) = @_;
+
+$str=""; $proposal=""; $discussion=""; $voting=""; $finished=""; $unknown="";
+@years = (1999, 2000, 2001); # this is kinda weird
+$count = 0;
 
 foreach $year (@years) {
-	$path = $year;
-	opendir(DIR, "$current_dir/$path");
-  	@files = grep { /^vote.*.wml$/ && -f "$current_dir/$path/$_" } readdir(DIR);
-  	@files = sort @files;
-  	closedir DIR;
 
+  $path = $year;
+  opendir(DIR, "$current_dir/$path");
+  @files = grep { /^vote.*.wml$/ && -f "$current_dir/$path/$_" } readdir(DIR);
+  @files = sort @files;
+  closedir DIR;
 
   foreach (@files) {
-     $count++;
-     open(FILE, "<$path/$_") || open(FILE, "<$current_dir/$path/$_");
-     if ( /(vote.*).wml/ ) {
-        $base = $1;
-     }
-     $title = ''; $status = '';
+    $count++;
+    open(FILE, "<$path/$_") || open(FILE, "<$current_dir/$path/$_");
+    if ( /(vote.*).wml/ ) {
+      $base = $1;
+    }
+    $title = ''; $status = '';
 <protect pass=2>
-     foreach $line (<FILE>) {
-        if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
-           $title = $1;
-        }
-        elsif ($line =~ /^<define-tag status>(.*)<\/define-tag>$/) {
-           $status = $1;
-        }
+    foreach $line (<FILE>) {
+      if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
+        $title = $1;
+      } elsif ($line =~ /^<define-tag status>(.*)<\/define-tag>$/) {
+        $status = $1;
+      }
 </protect>
-
-		if ( $title && $status ) {
-           $str1 = "&nbsp;<A HREF=\"$path/$base\">$title</A><BR>\n";
-		   last;
-		}
-		elsif ( $title ) {
-           $str1 = "&nbsp;<A HREF=\"$path/$base\">$title</A><BR>\n";
-		}
-     }
-	 if ( $status eq "P" )
-	 {
-	 	$proposal .= $str1;
-	 }
-	 elsif ( $status eq "D" )
-	 {
-	 	$discussion .= $str1;
-	 }
-	 elsif ( $status eq "V" )
-	 {
-	 	$voting .= $str1;
-	 }
-	 elsif ( $status eq "F" )
-	 {
-	 	$finished .= $str1;
-	 }
-	 else
-	 {
-	 	$unknown .= $str1;
-	 }
-     close FILE;
-     if ($count eq $number) { last; }
+      if ( $title && $status ) {
+         $str1 = "&nbsp;<A HREF=\"$path/$base\">$title</A><BR>\n";
+         last;
+      } elsif ( $title ) {
+         $str1 = "&nbsp;<A HREF=\"$path/$base\">$title</A><BR>\n";
+      }
+    }
+    if ( $status eq "P" ) {
+	$proposal .= $str1;
+    } elsif ( $status eq "D" ) {
+	$discussion .= $str1;
+    } elsif ( $status eq "V" ) {
+	$voting .= $str1;
+    } elsif ( $status eq "F" ) {
+	$finished .= $str1;
+    } else {
+	$unknown .= $str1;
+    }
+    close FILE;
+    if ($count eq $number) { last; }
   }
 }
 close DIR;
-	if ( $proposal ne "" ) 
-	{ 
-		$str .= '<P><fonts_sans-serif><B><needsponsors/></B></fonts_sans-serif><BR>';
-		$str .= "<SMALL>$proposal</SMALL></P>";
-	}
-	if ( $discussion ne "" ) 
-	{ 
-		$str .= '<P><fonts_sans-serif><B><indiscussion/></B></fonts_sans-serif><BR>';
-		$str .= "<SMALL>$discussion</SMALL></P>";
-	}
-	if ( $voting ne "" ) 
-	{ 
-		$str .= '<P><fonts_sans-serif><B><votingopen/></B></fonts_sans-serif><BR>';
-		$str .= "<SMALL>$voting</SMALL></P>";
-	}
-	if ( $finished ne "" ) 
-	{ 
-		$str .= '<P><fonts_sans-serif><B><decided/></B></fonts_sans-serif><BR>';
-		$str .= "<SMALL>$finished</SMALL></P>";
-	}
-	if ( $unknown ne "" ) 
-	{ 
-		$str .= '<P><fonts_sans-serif><B><other/></B></fonts_sans-serif><BR>';
-		$str .= "<SMALL>$unknown</SMALL></P>";
-	}
+
+if ( $proposal ne "" ) { 
+	$str .= '<P><fonts_sans-serif><B><needsponsors/></B></fonts_sans-serif><BR>';
+	$str .= "<SMALL>$proposal</SMALL></P>";
+}
+if ( $discussion ne "" ) { 
+	$str .= '<P><fonts_sans-serif><B><indiscussion/></B></fonts_sans-serif><BR>';
+	$str .= "<SMALL>$discussion</SMALL></P>";
+}
+if ( $voting ne "" ) { 
+	$str .= '<P><fonts_sans-serif><B><votingopen/></B></fonts_sans-serif><BR>';
+	$str .= "<SMALL>$voting</SMALL></P>";
+}
+if ( $finished ne "" ) { 
+	$str .= '<P><fonts_sans-serif><B><decided/></B></fonts_sans-serif><BR>';
+	$str .= "<SMALL>$finished</SMALL></P>";
+}
+if ( $unknown ne "" ) { 
+	$str .= '<P><fonts_sans-serif><B><other/></B></fonts_sans-serif><BR>';
+	$str .= "<SMALL>$unknown</SMALL></P>";
+}
+
 return $str;
 }
 </perl>
