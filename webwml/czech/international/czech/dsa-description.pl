@@ -53,6 +53,10 @@ s{<define-tag description>([^<]*)format string([^<]*)</define-tag>}
 s{<define-tag description>([^<]*)insufficient input validation([^<]*)</define-tag>}
 {<define-tag description>${1}nedostateèná kontrola vstupu${2}</define-tag>}g;
 
+s{<define-tag description>weak hostname and username validation</define-tag>}
+{<define-tag description>slabá kontrola jména poèítaèe a jména u¾ivatele</define-tag>}g;
+
+
 #
 # More info
 #
@@ -80,7 +84,7 @@ s{A vulnerability has been discovered in}
 s{discoverd multiple vulnerabilities in}
 {objevil mnohonásobné zranitelnosti v}g;
 
-s{An (\w+) security researcher}
+s{An ([\w-]+) security researcher}
 {Bezpeènostní výzkumný pracovník ${1}}g;
 
 s{The Common Vulnerabilities and Exposures project}
@@ -92,13 +96,13 @@ s{identifies the following problems}
 s{Multiple heap-based buffer overflows\.}
 {Mnohonásobná pøeteèení bufferu typu halda (heap).}g;
 
-s{No such code is present in (\w+)\.}
+s{No such code is present in ([\w-]+)\.}
 {Tento kód není obsa¾en v ${1}.}g;
 
 s{([Mm])ultiple integer overflows}
 {${1}nohonásobná celoèíselná pøeteèení}g;
 
-s{in (\w+) library}
+s{in ([\w-]+) library}
 {v knihovnì ${1}}g;
 
 #
@@ -149,7 +153,7 @@ s{an imaging library for X and X11}
 s{Remote exploitation of an integer overflow vulnerability could allow the execution of arbitrary code.}
 {Vzdálené vyu¾ití zranitelnosti celoèíselného pøeteèení dovoluje vykonání libovolného kódu.}g;
 
-s{A maliciously crafted (\w+) file could exploit this problem, leading to the execution of arbitrary code.}
+s{A maliciously crafted ([\w-]+) file could exploit this problem, leading to the execution of arbitrary code.}
 {Zlomyslnì vytvoøený ${1} soubor mù¾e vyu¾ít tento problém a&nbsp;spustit libovolný kód.}g;
 
 #
@@ -177,19 +181,31 @@ s{<p>This package is not present in the testing and unstable distributions.</p>}
 s{<p>The unstable distribution \(sid\) does not contain this package.</p>}
 {<p>Unstable distribuce (sid) neobsahuje tento balíèek.</p>}g;
 
+s{<p>The unstable distribution \(sid\) does not contain a ([\w-]+) package\.}
+{<p>Unstable distribuce (sid) neobsahuje balíèek ${1}.}g;
+
+s{In the unstable distribution \(sid\) this package does not exist anymore\.}
+{V&nbsp;unstable distribuci (sid) ji¾ tento balíèek neexistuje.}g;
+
+s{It has been replaced by ([\w-]+)\.}
+{Byl nahrazen balíèkem ${1}.}g;
 
 #
 # Upgrade it
 #
 
-s{<p>We recommend that you upgrade your (\w+) package immediately.</p>}
+s{<p>We recommend that you upgrade your ([\w-]+) package immediately.</p>}
 {<p>Doporuèujeme vám ihned aktualizovat vá¹ balíèek ${1}.</p>}g;
 
-s{<p>We recommend that you upgrade your (\w+) package.</p>}
+s{<p>We recommend that you upgrade your ([\w-]+) package.</p>}
 {<p>Doporuèujeme vám aktualizovat vá¹ balíèek ${1}.</p>}g;
 
-s{<p>We recommend that you upgrade your (\w+) packages.</p>}
+s{<p>We recommend that you upgrade your ([\w-]+) packages.</p>}
 {<p>Doporuèujeme vám aktualizovat va¹e ${1} balíèky.</p>}g;
+
+s{<p>We recommend that you upgrade your ([\w-]+) and ([\w-]+) packages.</p>}
+{<p>Doporuèujeme vám aktualizovat va¹e balíèky ${1} a ${2}.</p>}g;
+
 
 #
 # Cleaning
