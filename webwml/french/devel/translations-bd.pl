@@ -100,7 +100,7 @@ $translations = [
 
 {
 	'type'			=> 'DDP',
-	'key'			=> '',
+	'key'			=> 'tutorial',
 	'name'			=> 'Debian Tutorial',
 	'version'		=> '',
 	'url'			=> 'http://www.debian.org/~hp/tutorial/debian-tutorial.html',
@@ -127,14 +127,6 @@ $translations = [
 #
 # Debian Tips?
 #
-
-#{
-#	'type'			=> 'DDP',
-#	'key'			=> '',
-#	'name'			=> 'Debian Release Notes',
-#	'url'			=> 'http://happy.digitaldune.net/~astala/Release-notes-2.0.html/index.html',
-#	'status'		=> 'non-disponible',
-#},
 
 {
 	'type'			=> 'boot',
@@ -259,7 +251,7 @@ $translations = [
 	'version'		=> '2.5.0',
 	'url'			=> 'http://www.fr.debian.org/doc/packaging-manuals/developers-reference/',
 	'package'		=> 'developers-reference',
-	'status'		=> 'traduction à jour',
+	'status'		=> 'à réviser',
 	'since'			=> '01/07/1998',
 	'translation_name'	=> 'Guide de Référence du Développeur Debian',
 	'translation_maintainer'=> ['Laurent Picouleau <lcrpic@a2points.com>'],
@@ -270,9 +262,15 @@ $translations = [
 
 {
 	'type'			=> 'DDP',
-	'key'			=> '',
+	'key'			=> 'maint-guide',
 	'name'			=> 'Debian New Maintainer\'s Guide',
-	'status'		=> 'non-disponible',
+	'status'		=> 'à relire',
+	'since'			=> '02/07/1999',
+	'translation_maintainer'=> ['Frederic Dumont <Frederic.Dumont@gate71.be>'],
+	'translation_url'	=> 'http://www.info.fundp.ac.be/~fdumont/maint-guide_fr.html/index.html',
+	'translation_source_url'=> 'http://www.info.fundp.ac.be/~fdumont/maint-guide_fr.sgml',
+	'translation_package'	=> '',
+	'last_translated'	=> '02/07/1998',
 },
 
 {
@@ -328,7 +326,7 @@ $translations = [
 	'type'			=> 'DDP',
 	'key'			=> 'programmer',
 	'name'			=> 'Debian Packaging HOWTO',
-	'status'		=> 'non-disponible',
+	'status'		=> 'obsolète',
 },
 
 {
@@ -396,16 +394,18 @@ $translations = [
 
 {
 	'type'			=> 'Web',
-	'key'			=> 'News/1997/',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'key'			=> 'News/1997/index',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '02/07/1999',
+	'translation_maintainer'=> ['Marant Jerome <jerome_marant@hotmail.com>'],
 },
 
 {
 	'type'			=> 'Web',
-	'key'			=> 'News/1998/',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'key'			=> 'News/1998/index',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '02/07/1999',
+	'translation_maintainer'=> ['Marant Jerome <jerome_marant@hotmail.com>'],
 },
 
 {
@@ -414,14 +414,14 @@ $translations = [
 	'status'		=> 'traduction à jour',
 	'since'			=> '17/04/1999',
 	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
-	'since'			=> '17/04/1999',
 },
 
 {
 	'type'			=> 'Web',
-	'key'			=> 'News/1999/',
-	'status'		=> 'à traduire',
-	'since'			=> '01/01/1998',
+	'key'			=> 'News/1999/index',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '02/07/1999',
+	'translation_maintainer'=> ['Marant Jerome <jerome_marant@hotmail.com>'],
 },
 
 {
@@ -704,14 +704,14 @@ $translations = [
 
 {
 	'type'			=> 'Web',
-	'key'			=> 'events/1998/',
+	'key'			=> 'events/1998/index',
 	'status'		=> 'à traduire',
 	'since'			=> '16/12/1998',
 },
 
 {
 	'type'			=> 'Web',
-	'key'			=> 'events/1999/',
+	'key'			=> 'events/1999/index',
 	'status'		=> 'à traduire',
 	'since'			=> '16/12/1998',
 },
