@@ -8,6 +8,8 @@
 #
 
 translation=romanian
+efiles=""
+tfiles=""
 
 cd ..
 cvs update .wmlrc
@@ -20,10 +22,16 @@ do
   if [ -f $f ]; then
     ef=`echo $f | sed s/$translation/english/`
     echo "$f <=> $ef"
-    cvs update -d $f
-    cvs update -d $ef
+    efiles=$efiles" "$ef
+    tfiles=$tfiles" "$f
+    #cvs update -d $f
+    #cvs update -d $ef
   fi
 done
+#echo $tfiles
+#echo $efiles
+cvs update $tfiles
+cvs update $efiles
 
 # check which one is newer
 # do not know how to stat files in shell
