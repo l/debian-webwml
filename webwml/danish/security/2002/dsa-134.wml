@@ -1,0 +1,78 @@
+<define-tag description>fjernudnyttelse</define-tag>
+<define-tag moreinfo>
+<p>Theo de Raadt har annonceret at OpenBSD-teamet samarbejder med ISS om at 
+løse en fjernudnyttelse i OpenSSH (en fri implementering af Secure 
+Shell-protokollen). De nægter at komme med nærmere oplysninger om sårbarheden,
+men anbefaler at alle opgraderer til den seneste udgave, version 3.3.</p>
+
+<p>Denne version blev udgivet for tre dage siden og introducerede en ny 
+funktion til at reducere effekten af udnyttelser i netværkshåndteringskoden,
+kaldet "privilege separation", rettighedsseparation.  Desværre har denne 
+udgave nogle få, kendte problemer:</p>
+
+<ul>
+<li>komprimering virker ikke under alle styresystemer, da koden er afhængig af
+    specifikke mmap-funktioner,</li>
+
+<li>PAM-understøttelsen er ikke færdig og nogle få PAM-moduler virker måske
+    ikke,</li>
+
+<li>tastatur-interaktiv adgangstilladelse virker ikke med rettighedsseparation.
+    For Debian-brugeres vedkommende betyder det, at PAM-moduler som kræver
+    en PAM-konversationsfunktion (som OPIE-modulet) ikke virker.</li>
+</ul>
+
+<p>Den nye rettighedsseparation fra Niels Provos ændrer ssh til at bruge en 
+separat proces uden rettigheder til at håndtere det meste af arbejdet.  Dette
+betyder at sårbarheder i denne del af OpenSSH aldrig vil føre til en 
+kompromittering af root, men kun adgang til en separat konto som er begrænset
+til chroot.</p>
+
+<p>Theo gjorde tydeligt opmærksom på at denne nye version ikke fjerner 
+sårbarhed, men ved i stedet at anvende den nye kode til rettighedsseparation,
+begrænser det kun risikoen, da en angriber kun kan få adgang til en speciel
+konto som er begrænset til chroot.</p>
+
+<p>Da nærmere oplysninger om problemet ikke er blevet frigivet, var vi tvunget
+til at skifte til den nyeste udgave af OpenSSH-portable, version 3.3p1.</p>
+
+<p>Bemærk at vi ikke har haft tid nok til at foretage rigtig kvalitetssikring
+på disse pakker; de kan indeholde fejl eller ting kan uventet holde op med at
+fungere. Hvis du bemærk sådanne problemer (ud over dem vi har nævnt), så 
+indsend venligst en fejlrapport så vi kan undersøge problemet.</p>
+
+<p>Nogle bemærkninger om mulige problemer i forbindelse med denne 
+opgradering:</p>
+
+<ul>
+<li>Pakken introducerer en ny konto kaldet "sshd" som anvendes i koden til
+    rettighedsseparationen. Hvis der ikke findes en sshd-konto, vil pakken
+    forsøge at oprette en. Hvis kontoen allerede findes, vil den blive 
+    genbrugt. Hvis du ikke ønsker dette, er du nødt til manuelt at klare 
+    dette.</li>
+
+<li>(kun relevant vedrørende potato) Denne opdatering tilføjer en 
+    tilbageførelse SSL-bibliotekets version 0.9.6.  Dette betyder at du også 
+    skal opgradere SSL-pakken.</li>
+
+<li>(kun relevant vedrørende potato) Denne opdatering bruger som standard
+    version 2 af SSH-protokollen. Dette kan betyde at eksisternde opsætninger
+    holder op med at virke, hvis RSA-adgangskontrol anvendes. Du skal enten
+    tilføje -1 til ssh-kaldet for at fortsætte med at bruge SSH-protokolversion 
+    1 og dine eksisterende nøgler, eller oprette nye nøgler 
+    til SSH-protokolversion 2.
+2.</li>
+
+<li>Som standard er rettighedsseparation slået til, også selvom du ikke
+    eksplicit slår det til i <tt>/etc/ssh/sshd_config</tt>.</li>
+
+<li>Hvis ssh ikke virker hos dig, kan du prøve at slå komprimering fra.  Vi har
+    allerede tilføjet etn rettelse fra Solar Designer, som retter problemet i
+    forbindelse med Linux 2.2-kerner, men der kan være nogle få tilfælde hvor
+    dette ikke er nok.</li>
+</ul>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2002/dsa-134.data"
+#use wml::debian::translation-check translation="1.4"
