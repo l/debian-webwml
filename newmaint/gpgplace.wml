@@ -46,19 +46,60 @@ You should not be here!</STRONG>
                 echo "Problem with query", pg_ErrorMessage($db), "<BR>";
                 return FALSE;
             }
-            echo "Adding stuff ";
-            echo $result;
-            echo "<P>";
+            $oid = pg_getlastoid($result);
+        } else {
+            $sql = "UPDATE people SET city = '$city', country = '$country' WHERE id = '$id'";
+            if (! ($result = pg_exec($db, $sql))) {
+                echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+                return FALSE;
+            }
+
+            $sql = "SELECT oid FROM people WHERE id = '$id'";
+            if (! ($result = pg_exec($db, $sql))) {
+                echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+                return FALSE;
+            }
+            if (pg_NumRows($result) == 1) {
+                $row = pg_Fetch_Array($result, 0);
+                $oid = $row["oid"];
+            } else {
+               echo "Cannot find OID for ID."
+               return FALSE;
+            }
+
         }
 
-        echo "$city, $country";
-        echo "<P>";
-        echo "$begin_year, $begin_month, $begin_day";
-        echo "<P>";
-        echo "$end_year, $end_month, $end_day";
-        echo "<P>";
-        echo "$id";
-        echo "<P>";
+        if ($begin_year == "always") {
+            $begin = "";
+        } else {
+            $begin = sprint("%4d-%2d-%2d", $begin_year, $begin_month, $begin_day);
+        }
+
+        if ($begin) {
+            $sql = "UPDATE people SET begin = '$begin' WHERE oid = '$oid'";
+        } else {
+            $sql = "UPDATE people SET begin = NULL WHERE oid = '$oid'";
+        }
+        if (! ($result = pg_exec($db, $sql))) {
+            echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+            return FALSE;
+        }
+
+        if ($end_year == "always") {
+            $end = "";
+        } else {
+            $end = sprint("%4d-%2d-%2d", $end_year, $end_month, $end_day);
+        }
+
+        if ($end) {
+            $sql = "UPDATE people SET finish = '$end' WHERE oid = '$oid'";
+        } else {
+            $sql = "UPDATE people SET finish = NULL WHERE oid = '$oid'";
+        }
+        if (! ($result = pg_exec($db, $sql))) {
+            echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+            return FALSE;
+        }
 
         return TRUE;
     }
