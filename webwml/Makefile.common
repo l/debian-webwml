@@ -20,6 +20,17 @@ WMLFILES = $(wildcard *.wml)
 HTMLFILES = $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
 HTMLDESTFILES = $(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE).html,$(WMLFILES))
 
+# Redefine HTMLFILES and HTMLDESTFILES for SUBLANG like *.zh-cn.html
+# and *.zh-tw.html.  This is currently needed by the Chinese web pages
+# only.  I tried to define these in chinese/Make.lang, but it didn't work.
+# (foka, 2000-08-16)
+ifdef SUBLANG
+HTMLFILES = $(sort $(foreach i,$(SUBLANG),\
+	$(patsubst %.wml,%.$(LANGUAGE)-$(i).html,$(WMLFILES))))
+HTMLDESTFILES = $(sort $(foreach i,$(SUBLANG),\
+	$(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE)-$(i).html,$(WMLFILES))))
+endif
+
 # all the binary file types should be added below.
 JPGSOURCE := $(wildcard *.jpg)
 JPGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(JPGSOURCE))
@@ -37,8 +48,10 @@ FIGSOURCE := $(wildcard *.fig)
 FIGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(FIGSOURCE))
 XCFSOURCE := $(wildcard *.xcf.gz)
 XCFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(XCFSOURCE))
-IMGFILES := $(JPGSOURCE) $(GIFSOURCE) $(PNGSOURCE) $(PSSOURCE) $(EPSSOURCE) $(PDFSOURCE) $(FIGSOURCE) $(XCFSOURCE)
-IMGDESTFILES := $(JPGDESTFILES) $(GIFDESTFILES) $(PNGDESTFILES) $(PSDESTFILES) $(EPSDESTFILES) $(PDFDESTFILES) $(FIGDESTFILES) $(XCFDESTFILES)
+CSSSOURCE := $(wildcard *.css)
+CSSDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(CSSSOURCE))
+IMGFILES := $(JPGSOURCE) $(GIFSOURCE) $(PNGSOURCE) $(PSSOURCE) $(EPSSOURCE) $(PDFSOURCE) $(FIGSOURCE) $(XCFSOURCE) $(CSSSOURCE)
+IMGDESTFILES := $(JPGDESTFILES) $(GIFDESTFILES) $(PNGDESTFILES) $(PSDESTFILES) $(EPSDESTFILES) $(PDFDESTFILES) $(FIGDESTFILES) $(XCFDESTFILES) $(CSSSOURCE)
 
 existing-SUBS := $(shell for dir in $(wildcard $(SUBS)) ''; do test -d $$dir && echo $$dir; done)
 
