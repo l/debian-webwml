@@ -45,11 +45,11 @@ package Packages::DB;
 use strict;
 use warnings;
 
-use Packages::Parser;
 use Packages::Pkg;
 use Packages::SrcPkg;
 
 use Digest::MD5;
+use Parse::DebControl;
 use Data::Dumper;
 use MLDBM qw( DB_File Storable );
 use Fcntl;
@@ -135,12 +135,32 @@ sub read_file {
     my $file = shift;
     my $dbdata = shift || {};
     
-    print "D: read in file $file\n" if $self->{config}->{debug};
-    my $parser = Packages::Parser->init( file => $file,
-					 debug => $self->{config}->{debug},
-					 nowarn => $self->{config}->{nowarn} );
+    print "D: read_file: read in file $file\n" if $self->{config}{debug};
+    my $parser = Parse::DebControl->new();
+    my $data;
+    if ($self->{config}{debug}) {
+    	$parser->DEBUG();
+    }
 
-    $self->merge_in( $parser->get_all(), $dbdata );
+    unless ( -r $file ) {
+	warn "\nW: read_file: file $file doesn't exist\n"
+	    unless $self->{config}{nowarn};
+	return;
+    }
+    unless ( -z _ ) {
+	unless ( $data = $parser->parse_file( $file, 
+					      { discardCase => 1,
+						verbMultiLine => 1 } ) ) {
+	    warn "\nW: read_file: parser failed for file $file\n"
+		unless $self->{config}{nowarn};
+	    return;
+	}
+    } else {
+	warn "\nW: init: file $file is empty\n" 
+	    unless $self->{config}{nowarn};
+    }
+
+    $self->merge_in( $data, $dbdata );
 }
 
 =pod
