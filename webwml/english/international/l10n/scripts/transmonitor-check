@@ -23,7 +23,10 @@ use strict;
 use File::Find;
 use File::Path;
 use Getopt::Long;
-use Text::Iconv;
+
+my $have_Text_Iconv = 1;
+eval 'use Text::Iconv';
+$have_Text_Iconv = 0 if $@;
 
 use lib ($0 =~ m|(.*)/|, $1 or ".") ."/../../../../Perl";
 use Locale::Language;
@@ -625,10 +628,14 @@ sub search_po {
 sub convert_to_unicode ($$) {
         my $encoding = shift;
         my $string = shift;
+        my $qstring = $string;
+        #  If conversion fails, non-ASCII characters are replaced by ?
+        $qstring =~ s/[\x80-\xff]/?/g;
+        return $qstring unless $have_Text_Iconv;
         my $converter;
         eval '$converter = Text::Iconv->new($encoding, "UTF-32BE")';
-        return $string if $@;
-        my $result = $converter->convert($string) or return $string;
+        return $qstring if $@;
+        my $result = $converter->convert($string) or return $qstring;
         my $ret = "";
         while($result =~ m/(.)(.)(.)(.)/g) {
                 my $ucs = ord($1)*0x1000000 + ord($2)*0x10000 + ord($3)*0x100 + ord($4);
