@@ -1,5 +1,5 @@
 #use wml::debian::template title="Oversættelse af Debians websider" BARETITLE=true
-#use wml::debian::translation-check translation="1.34"
+#use wml::debian::translation-check translation="1.35"
 
 <p>For at gøre oversætternes arbejde så let som muligt, genereres siderne lidt
 anderledes end mange af dem du måske er vant til. Websiderne genereres faktisk
@@ -11,25 +11,57 @@ Der er separate kataloger til hvert sprog.</p>
 så se <a href="#completenew">afsnittet om at starte på en ny 
 oversættelse</a>.</p>
 
-<h2>Oversættelse af individuelle sider</h2>
+<h2><a name="singlepages">Oversættelse af individuelle sider</a></h2>
 
-<p>Oversæt ikke HTML-sider. Vi anvender WML-kildekodefiler, indholdet og 
-fælles elementer opbevares særskilt. Hvis du vil hjælpe til med en bestemt 
-oversættelse, så <a href="using_cvs">anvend CVS</a> til at overføre den 
-aktuelle kildekode.  Du skal overføres mindst to kataloger, <tt>english/</tt> 
-og <tt>&lt;sprog&gt;/</tt>.</p>
+<p>Vi bruger WML to adskillelse af en sides specifikke indhold og de elementer
+som er fælles for mange sider.  Dette betyder at man skal redigere visse 
+WML-filer fremfor HTML-sider.  Se <a href="using_cvs">anvend CVS</a> til at 
+overføre den aktuelle kildekode.  Du skal overføres mindst to kataloger, 
+<tt>english/</tt> og <tt><var>&lt;sprog&gt;</var>/</tt>.</p>
 
-<p>For at oversætte en enkelt side fra engelsk til dit sprog, skal du kopiere
-den originale .wml-fil fra <tt>english/foo/bar</tt> til 
-<tt>&lt;sprog&gt;/foo/bar</tt>.  Tilføj
-<kbd>#use wml::debian::translation-check translation="x.y"</kbd> efter den
-sidste #use-kommando (se <a href="uptodate">om translation-check</a>).
-Du kan også bruge scriptet <tt>copypage.pl</tt> i webwml-rodkataloget til 
-automatisk at kopiere og tilføje den nødvendige linie.
-Når det er gjort, oversættes hele siden og sendes til 
-<a href="translation_coordinators">en eller anden</a> med skriveadgang til 
-cvs-arkivet.  Du skulle kunne teste siden ved at udføre kommadoen
-<tt>make file.&lt;lang&gt;.html</tt>.</p>
+<p>For at oversætte en enkelt side fra engelsk til dit sprog, skal den 
+originale .wml-fil oversættes og placeres i det andet sprogs katalog.  Den 
+relative sti og navn skal være det samme som i english-kataloget så linkene 
+stadig vil virke.  Det anbefales også kraftigt at oversætteren tilføjer 
+yderligere en linie til headerne efter den sidste #use-kommando, for at 
+registrere det nøjagtige versionsnummer på den originale fil, som blev oversat,
+så vil <a href="uptodate">opdateringer være nemmere</a>).  Linien ser således
+ud: 
+<kbd>#use wml::debian::translation-check translation="<var>x.y</var>"</kbd></p>
+
+<p>Alt dette klares nemt ved at bruge bruge scriptet <tt>copypage.pl</tt> i 
+webwml-rodkataloget.  Scriptet kopierer siden til dens rette placering, 
+opretter kataloger og makefiler om nødvendigt, og tilføjer automatisk den 
+påkrævede linie til headeren.</p>
+
+<p>Når du har kørt for eksempel <kbd>./copypage.pl <var>fil</var>.wml</kbd>,
+oversættes den originale tekst i filen.  Kommentarer i filen angiver hvorvidt
+der er ting som ikke skal oversættes; respekter dem.  Foretag ingen unødvendige
+ændringer af formatteringen; hvis noget skal rettes, skal det formentlig også
+rettes i originalen.</p>
+
+<p>Du vi anvender <a href="content_negotiation">indholdsforhandling</a>
+("content negotiation"), hedder HTML-filerne ikke <tt><var>fil</var>.html</tt>,
+men <tt><var>fil</var>.<var>&lt;sprog&gt;</var>.html</tt>, hvor 
+<var>&lt;sprog&gt;</var> er to-bogstaverskoden for sproget, jævnfør 
+<a href="http://ftp.ics.uci.edu/pub/ietf/http/related/iso639.txt">ISO 639</a>
+(for eksempel <tt>da</tt> for dansk).</p>
+ 
+<p>Du kan genereres HTML-filer fra WML ved at køre 
+<kbd>make <var>file</var>.<var>&lt;sprog&gt;</var>.html</kbd>.  
+Hvis det fungerer, kontroller da om syntaksen er helt korrekt med 
+<kbd>weblint <var>file</var>.<var>&lt;sprog&gt;</var>.html</kbd>.</p>
+
+<p>Websiderne genereres fra CVS på serveren www-master, og denne proces er 
+stort set sikret mod fejl.  Hvis du overfører en ødelagt fil til din 
+oversættelses øverste niveau (for eksempel index.wml på det øverste niveau), 
+vil det stoppe genereringsprocessen og forhindre alle andre opdateringer af
+webstedet.  Vær særligt omhyggelig med disse filer.</p>
+
+<p>Når en side er klar til brug, kan du overføre den til CVS.  Hvis du har
+rettigheder til selv at gøre det, køres <kbd>cvs commit</kbd>; hvis ikke sendes
+den til <a href="translation_coordinators">en eller anden med skriveadgang til
+repository'et</a>.</p>
 
 <h2><a name="completenew">Begynde på en ny oversættelse</a></h2>
 
@@ -116,42 +148,15 @@ spørg på postlisten debian-www før du commit'er til CVS.</p>
 <p>Du bør <a href="navbar_images">oversætte teksten til billederne</a> i 
 den røde navigationsbjælke.</p>
 
-<p>Kommentarer i filerne vil angive om der er ting som ikke skal oversættes; 
-respektér dem.</p>
-
 <p>Bemærk: hvis du opdager at det er nødvendigt at foretage andre ændringer, 
 så send en e-mail på engelsk til debian-www, hvor du forklarer hvad du har 
 ændret og hvorfor, således at problemet kan blive afhjulpet.</p>
 
-<p>Når skabelonsskelettet er færdigt, kan du begynde med at oversætte 
-forsiden.</p>
+<p>Når skabelonskelettet er færdigt, kan du begynde med at oversætte forsiden 
+og de andre .wml-filer.  For en liste over filer som først bør oversættes, se 
+<a href="translation_hints">siden med tips</a>.  Oversæt *.wml-filerne som 
+beskrevet <a href="#singlepages">øverst på denne side</a>.</p>
 
-<p>Du kan ignorere underkataologer anført i SUBS-variabelen i en Makefile, 
-selvom de ikke eksisterer i oversættelseskataloget. Når du oversætter et
-underkatalog, så forvis dig om at det optræder i SUBS-variablen i Makefilen
-i det overordnede katalog, ellers vil det ikke blive opbygget.</p>
-
-<p>Du kan nu begynde at oversætte *.wml-filer. For en liste over filer som 
-først bør oversættes, se <a href="translation_hints">siden med tips</a>.</p>
-
-<p>Kopiér hver enkelt fil fra ../english/, oversæt den, test den med 
-<tt>make file.&lt;sprog&gt;.html</tt> (og <tt>weblint file.wml</tt>), og når du 
-er færdig, så "commit" den <a href="using_cvs">til CVS</a>.  Sørg for at din 
-oversættelse kan behandles, hvis den ikke kan det, kan den måske risikere at 
-stoppe opbygningen af hele webstedet.</p>
-
-# XXX replace with copypage.pl use
-
-<p>Når du kopierer filer, skal du ikke kopiere CVS-kataloger eller filene i 
-dem fra kataloget english/, ind i dit eget katalog.  Hvis du ved en fejl gør 
-det, og senere commit'er oversættelser, vil CVS opdatere de engelske filer med 
-dine oversættelser, hvilket vil forvirre/irritere mange mennesker.</p>
-
-<p>Da vi bruger <a href="content_negotiation">indholdsforhandling</a> ("content 
-negotiation") vil HTML-filer ikke komme til at hedde <tt>file.html</tt>, men 
-<tt>file.&lt;sprog&gt;.html</tt>, hvor <tt>&lt;sprog&gt;</tt> er sprogets 
-kode på to bogstaver, jævnfør ISO 639 (for eksempel <tt>da</tt>
-for dansk).</p>
 
 <h3>Resten af historien</h3>
 
@@ -160,13 +165,13 @@ Bagefter bør du læse følgende dokumenter som giver mere detaljerede
 oplysninger og flere nyttige oplysninger.</p>
 
 <ul>
-<li>Et antal <a href="examples">eksempler</a> er tilgængelige, for at give dig
+  <li>Et antal <a href="examples">eksempler</a> er tilgængelige, for at give dig
     et bedre indtryk af hvordan man kommer i gang.</li>
-<li>Et antal ofte stillede spørgsmål besvares og der gives nyttige tips på 
+  <li>Et antal ofte stillede spørgsmål besvares og der gives nyttige tips på 
     siden med <a href="translation_hints">tips til oversættelser</a>.</li>
-<li>Vi har anordninger til at hjælpe med at <a href="uptodate">holde 
+  <li>Vi har anordninger til at hjælpe med at <a href="uptodate">holde 
     oversættelserne ajour</a>.</li>
-<li>Se <a href="stats/">statistiksiden</a> for en sammenligning af hvordan din 
+  <li>Se <a href="stats/">statistiksiden</a> for en sammenligning af hvordan din 
     oversættelse klarer sig i forhold til de andre, målt på antallet af 
     oversatte filer.</li>
 </ul>
