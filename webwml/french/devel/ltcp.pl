@@ -23,11 +23,12 @@ do 'translations-bd.pl';
 
 sub dump_html {
 
-        my ($status) = @_;
+        my ($status, $ddp) = @_;
 
 foreach $translation (@$translations) {
 	
 	next if ($translation->{'status'} ne $status);
+	next if ($ddp eq 'yes' && $translation->{'type'} ne 'DDP');
 
 	if ($translation->{'type'} eq 'DDP' && $translation->{'key'}) {
 		$translation->{'url'} = 
@@ -96,11 +97,11 @@ __EOHTML__
 	my $translation_source_url_base = $translation->{'translation_source_url'};
 	$translation_source_url_base =~ s/.*\/([^\/]+)$/$1/;
 	print "<BR>Source : <A HREF=\"$translation->{'translation_source_url'}\">$translation_source_url_base</A>"
-		if ($translation->{'translation_source_url'});
-	if ($translation->{'translators'}) {
-		print "<BR>Traducteur(s) : " ;
+		if ($translation->{'translation_source_url'} && $ddp ne 'yes');
+	if ($translation->{'translation_maintainer'}) {
+		print "<BR>Responsable(s) de la traduction : " ;
 		$line = '';
-		foreach $translator (@{$translation->{'translators'}}) {
+		foreach $translator (@{$translation->{'translation_maintainer'}}) {
 			$translator =~ /([^\<]+)\s\<(.*)\>/;
 			$line .= " <A HREF=\"mailto:$2\"><I>$1</I></A> et";
 		}
@@ -123,7 +124,7 @@ __EOHTML__
 
 	print " ( version $translation->{'version'} ) " if ($translation->{'version'});
 	print " ( inclus dans le paquet $translation->{'package'} ) " if ($translation->{'package'});
-	print " ( <A HREF=\"$translation->{'source_url'}\">source</A> ) " if ($translation->{'source_url'} && $translation->{'source_url'} ne '?');
+	print " ( <A HREF=\"$translation->{'source_url'}\">source</A> ) " if ($translation->{'source_url'} && $translation->{'source_url'} ne '?' && $ddp ne 'yes');
 	print "</BLOCKQUOTE><P>&nbsp;";
 
 }
