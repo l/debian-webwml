@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-##  Copyright (C) 2001  Denis Barbier <barbier@debian.org>
+##  Copyright (C) 2001-2002  Denis Barbier <barbier@debian.org>
 ##
 ##  This program is free software; you can redistribute it and/or modify
 ##  it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ sub new {
                 #   Package must always be the first field
                 scalar  => [qw(Package Version Section Priority Maintainer PoolDir Type Upstream)],
                 array1  => [qw(Errors Catgets Gettext)],
-                array2  => [qw(NLS PO TEMPLATES MENU)],
+                array2  => [qw(NLS PO TEMPLATES PODEBCONF MENU DESKTOP)],
         };
         $self->{methods} = {};
         foreach (@{$self->{scalar}}) {
@@ -301,7 +301,7 @@ sub get_date {
 Data about packages can be classified within scalar values (C<package>,
 C<version>, C<section>, C<priority>, C<maintainer>, C<pooldir>, C<type>,
 C<upstream>), arrays (C<errors>, C<catgets>, C<gettext>), and arrays of
-arrays (C<nls>, C<po>, C<templates>, C<menu>).
+arrays (C<nls>, C<po>, C<templates>, C<podebconf>, C<menu> and C<desktop>).
 Each field has a method with the same name to get and set it, e.g.
 
    $section = $l10n_db->section($pkg);
@@ -322,7 +322,7 @@ arrays or arrays of arrays.
 
 =head1 AUTHOR
 
-Copyright (C) 2001  Denis Barbier <barbier@debian.org>
+Copyright (C) 2001-2002  Denis Barbier <barbier@debian.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
