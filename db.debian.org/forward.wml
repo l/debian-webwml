@@ -1,0 +1,29 @@
+#use wml::debian::template title="Email Forwarding"
+<p>
+Emails to @debian.org now go through a LDAP distributed email system. This
+system uses the forwarding field in the LDAP directory to route mail without
+passing it through a users .forward/.qmail file on a single computer.
+Multiple machines participate in the forwarding to provide redudency.
+
+<p>
+The system is very simple, each of the forwarders inspects the ldap database
+to see if foo@debian.org has fowarding set to an address, if so the envelope
+address to is rewritten and the message redirected to that address.
+Otherwise the message is relayed to master.debian.org for processing by the
+users .qmail files. If email forwarding is setup then .qmail files are
+<b>NOT</b> considered. Extension addresses (foo-lists) are always routed
+directly to master for processing.
+
+<p>
+All machines also use the forwarding attribute as a default destination for
+email. If the user has a home directory and no .forward file the mail is
+forwarded rather than delivered to /var/spool/mail. This makes sure cron
+reports, bug responses and other unexpected emails are not lost.
+
+<p>
+The email forwarding can be easially reconfigured using GnuPG:
+<pre>
+echo "emailfoward: foo@bar.com" | gpg --clearsign | mail change@db.debian.org
+</pre>
+or by visiting <a href="https://db.debian.org/login.html">db.debian.org/</a>
+

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML lang="en">
 <HEAD>
-<TITLE>Debian GNU/Linux -- debian.org Developers LDAP Login</TITLE>
+<TITLE>Debian GNU/Linux -- Email Forwarding</TITLE>
 <LINK REV="made" HREF="mailto:webmaster@debian.org">
 <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <META NAME="Description" CONTENT="Debian GNU/Linux is a free distribution of the GNU/Linux operating system. It is maintained and updated through the work of many users who volunteer their time and effort.">
@@ -9,7 +9,7 @@
 <META NAME="Language" CONTENT="English">
 <meta name="Author"    content="Debian Webmaster, webmaster@debian.org">
 <meta name="Generator" content="WML 1.6.8 (12-01-1999)">
-<meta name="Modified"  content="02-05-2000 21:55:08">
+<meta name="Modified"  content="02-05-2000 21:52:52">
 </HEAD>
 <BODY text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#800080" alink="#FF0000">
 <TABLE border="0" cellpadding="3" cellspacing="0" width="100%">
@@ -31,32 +31,36 @@
 </TD>
 </TR>
 </TABLE>
-<H1>debian.org Developers LDAP Login</H1>
-<br><br><div align="center">
-<form method="post" action="login.cgi">
-<table border="5" cellspacing="0" cellpadding="3" width="70%" bgcolor="#DDDDDD">
-<tr><th colspan="2" bgcolor="#44CCCC" align="center"><font size="+2">Authentication Required</font></th></tr>
-<tr><td colspan="2" align="center"><br><br>If you are not a developer, please <a href="search.cgi">return to the main search page</a>, otherwise, enter your Debian user ID and password below<br>
-You can also access the pages <a href="https://db.debian.org/">securely</a><br></td></tr>
-<tr><td align="right"><b>login:</b></td><td><input size="10" name="username">@debian.org</td></tr>
-<tr><td align="right"><b>Password:</b></td><td><input size="20" name="password" type="password"></td></tr>
-<tr><td colspan="2" align="center">
-<input type="submit" name="search" value="Full Search">&nbsp;&nbsp;&nbsp;
-<input type="submit" name="update" value="Update my info">
-</td></tr></table>
-</div>
-</form>
-<hr>
-<div align="center">
-<p><a href="machines.cgi">Debian development machines</a>
-<br><a href="password.html">Lost or forgotten password instructions</a>
-</p>
-</div>
+<H1>Email Forwarding</H1>
+<p>
+Emails to @debian.org now go through a LDAP distributed email system. This
+system uses the forwarding field in the LDAP directory to route mail without
+passing it through a users .forward/.qmail file on a single computer.
+Multiple machines participate in the forwarding to provide redudency.
+<p>
+The system is very simple, each of the forwarders inspects the ldap database
+to see if foo@debian.org has fowarding set to an address, if so the envelope
+address to is rewritten and the message redirected to that address.
+Otherwise the message is relayed to master.debian.org for processing by the
+users .qmail files. If email forwarding is setup then .qmail files are
+<b>NOT</b> considered. Extension addresses (foo-lists) are always routed
+directly to master for processing.
+<p>
+All machines also use the forwarding attribute as a default destination for
+email. If the user has a home directory and no .forward file the mail is
+forwarded rather than delivered to /var/spool/mail. This makes sure cron
+reports, bug responses and other unexpected emails are not lost.
+<p>
+The email forwarding can be easially reconfigured using GnuPG:
+<pre>
+echo "emailfoward: foo@bar.com" | gpg --clearsign | mail change@db.debian.org
+</pre>
+or by visiting <a href="https://db.debian.org/login.html">db.debian.org/</a>
 <HR>
 <P>Back to the <A href="http://www.debian.org/">Debian Project homepage</A>.
 <HR>
 <SMALL>You can contact us at <A href="mailto:admin@db.debian.org">admin@db.debian.org</A>.</SMALL><P>
-<SMALL>Last Modified: Wed, May 3 03:55:08 UTC 2000<BR>
+<SMALL>Last Modified: Wed, May 3 03:52:52 UTC 2000<BR>
 Copyright &copy; 1997-1999 <A href="http://www.spi-inc.org/">SPI</A>; See <A href="http://www.debian.org/license">license terms</A>
 	
 	 </SMALL>
