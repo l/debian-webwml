@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+# $Id$
+# (c) 1999 Randolph Chung. Licensed under the GPL. <tausq@debian.org>
+
 use strict;
 use CGI;
 use Util;
