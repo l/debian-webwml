@@ -8,10 +8,6 @@ SUBS=Bugs CD MailingLists News Pics banners chinese consultants devel \
 distrib doc events intro international legal logos mirror misc partners \
 ports releases searchtmpl security users vote y2k
 
-ifneq "$(wildcard om_svenska/Makefile)" ""
-SUBS += om_svenska
-endif
-
 all install:: install-locale
 
 include $(WMLBASE)/Make.lang
