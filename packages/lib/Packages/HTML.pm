@@ -74,6 +74,7 @@ sub header {
 <label for="onlynames">Package names only</label>&nbsp;&nbsp;
 <input type="radio" name="searchon" value="all" id="descs" $checked_searchon{all}>
 <label for="descs">Descriptions</label>
+<br>
 <input type="radio" name="searchon" value="sourcenames" id="src" $checked_searchon{sourcenames}>
 <label for="src">Source package names</label>
 </div>
@@ -98,13 +99,14 @@ MENU
 <br>
 <div style="font-size: 80%">Display:
 <input type=radio name="searchmode" value="searchfiles" id="searchfiles" $checked_searchmode{searchfiles}>
-  <label for="searchfiles">files</label>
+<label for="searchfiles">files</label>
 <input type=radio name="searchmode" value="searchfilesanddirs" id="searchfilesanddirs" $checked_searchmode{searchfilesanddirs}>
-  <label for="searchfilesanddirs">files &amp; directories</label>
+<label for="searchfilesanddirs">files &amp; directories</label>
+<br>
 <input type=radio name="searchmode" value="searchword" id="searchword" $checked_searchmode{searchword}>
-  <label for="searchword">subword matching</label>
+<label for="searchword">subword matching</label>
 <input type=radio name="searchmode" value="filelist" id="filelist" $checked_searchmode{filelist}>
-  <label for="filelist">content list</label>
+<label for="filelist">content list</label>
 </div>
 </form>
 </td>
@@ -119,7 +121,7 @@ MENU
     my $img_lang = $img_trans{$LANG} || $LANG;
     my $charset = get_charset($LANG);
     my $txt = <<HEAD;
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html lang="$LANG">
 <head>
 <title>Debian GNU/Linux -- $title_tag</title>
