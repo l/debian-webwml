@@ -7,7 +7,7 @@ CUR_DIR=
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
 SUBS=MailingLists News SPI consultants devel distrib doc events intro \
-logos mirror ports releases security Pics vote y2k
+logos mirror ports releases security Pics vote y2k Bugs
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
