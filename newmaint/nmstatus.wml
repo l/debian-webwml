@@ -2,24 +2,6 @@
   include("config.inc");
   include("common.inc");
 
-  function find_applicant($email) {
-  global $row, $query;
-  # start looking at stuff
-  if (! ($db = open_db())) {
-    return FALSE;
-  }
-  $sql = "SELECT * from applicant WHERE email='$email'";
-  if (! ($query = pg_exec($db, $sql))) {
-    echo "Problem with query", pg_ErrorMessage($db), "<BR>";
-    return FALSE;
-  }
-  if ( pg_numRows($query) < 1) {
-    echo "Could not find $email in the database.  You can find a full list of applicants <A href=\"nmlist.php\">here</A>.<BR>";
-    return FALSE;
-  }
-  $row = pg_Fetch_Array($query, 0);
-  return TRUE;
-}
   function print_textarea($title, $name, $value, $editable)
   {
     if ($editable) {
@@ -45,8 +27,12 @@
 ?>
 #use wml::nmpage title="Debian New Maintainer - Applicant Status"
 <?
+  if (! ($db = open_db())) {
+    echo "<P>Cannot open SQL database</P>";
+    return FALSE;
+  }
   $email = trim(strip_tags($email));
-  if (find_applicant($email)) {
+  if (find_applicant($db, $email)) {
     $whattodo = "";
 ?>
 <H1>Status Page for applicant: <? echo $row["forename"], " ", $row["surname"], " &lt;", $row["email"], "&gt;"; ?> </H1><BR>
