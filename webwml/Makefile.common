@@ -29,20 +29,9 @@ HTMLDESTFILES = $(sort $(foreach i,$(SUBLANG),\
 	$(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE)-$(i).html,$(WMLFILES))))
 endif
 
-JPGSOURCE := $(wildcard *.jpg)
-GIFSOURCE := $(wildcard *.gif)
-PNGSOURCE := $(wildcard *.png)
-PSSOURCE := $(wildcard *.ps.gz)
-EPSSOURCE := $(wildcard *.eps)
-PDFSOURCE := $(wildcard *.pdf)
-FIGSOURCE := $(wildcard *.fig)
-XCFSOURCE := $(wildcard *.xcf.gz)
-CSSSOURCE := $(wildcard *.css)
-CSSDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(CSSSOURCE))
-PPMSOURCE := $(wildcard *.ppm)
-PPMDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PPMSOURCE))
-IMGFILES := $(JPGSOURCE) $(GIFSOURCE) $(PNGSOURCE) $(PSSOURCE) $(EPSSOURCE) $(PDFSOURCE) $(FIGSOURCE) $(XCFSOURCE) $(CSSSOURCE) $(PPMSOURCE)
-IMGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(IMGFILES))
+OTHERFILES := $(wildcard *.ps.gz *.eps *.pdf *.css)
+OTHERFILES += $(wildcard *.jpg *.gif *.png *.fig *.xcf.gz *.ppm)
+OTHERDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(OTHERFILES))
 
 existing-SUBS := $(shell for dir in $(wildcard $(SUBS)) ''; do test -d $$dir && echo $$dir; done)
 existing-SUBS-install := $(addsuffix -install,$(existing-SUBS))
@@ -55,7 +44,7 @@ all:: $(HTMLFILES) $(existing-SUBS)
 $(existing-SUBS):
 	-$(MAKE) -C $@
 
-install:: $(HTMLDESTFILES) $(IMGDESTFILES) $(existing-SUBS-install)
+install:: $(HTMLDESTFILES) $(OTHERDESTFILES) $(existing-SUBS-install)
 
 $(existing-SUBS-install):
 	-$(MAKE) -C $(subst -install,,$@) install
@@ -112,10 +101,11 @@ ifeq ($(LANGUAGE),en)
 endif
 endif
 
-$(IMGDESTFILES): $(HTMLDIR)/%: %
+$(OTHERDESTFILES): $(HTMLDIR)/%: %
 	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
 	install -m 664 -p $< $(HTMLDIR)
 ifeq "$(LANGUAGE)" "en"
+# probably doesn't work for *.gz files, FIXME
 	[ -f "$(HTMLDIR)/$(basename $(basename $<))$(suffix $<)" ] || ln -s $< $(HTMLDIR)/$(basename $(basename $<))$(suffix $<)
 endif
 
