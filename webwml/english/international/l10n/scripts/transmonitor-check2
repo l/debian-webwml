@@ -19,8 +19,6 @@
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 
-my $dpkglibdir="/usr/lib/dpkg";
-
 use strict;
 use File::Path;
 use Getopt::Long;
@@ -28,8 +26,8 @@ use Getopt::Long;
 use lib ($0 =~ m|(.*)/|, $1 or ".") ."/../../../../Perl";
 use Local::Inside::DebSrc;
 use Webwml::L10n::Db;
-
-require 'utils.pl';
+use Locale::Language;
+use Locale::Country;
 
 my $progname= $0; $progname= $& if $progname =~ m,[^/]+$,;
 
@@ -175,9 +173,6 @@ Getopt::Long::config('bundling', 'no_getopt_compat', 'no_auto_abbrev');
 Getopt::Long::GetOptions(%opthash)
     or syntax_msg("error parsing options");
 
-push (@INC, $dpkglibdir);
-require 'controllib.pl';
-
 #-----------------------------------------------------------------------------
 #                        The main program
 #-----------------------------------------------------------------------------
@@ -192,24 +187,13 @@ my $savedb=0; # do we have to save the database?
 push (@INC, $TRANSMONITOR_ROOT);
 init_synonym();
 
-my $arg;
-my $cwd;
-chop($cwd = `pwd`);
-$DB_FILE = "$cwd/$DB_FILE" unless ($DB_FILE =~ m,^/,);
-$TMP_DIR = "$cwd/$TMP_DIR" unless ($TMP_DIR =~ m,^/,);
-$PO_ROOT = "$cwd/$PO_ROOT" unless ($PO_ROOT =~ m,^/,);
-$TEMPLATES_ROOT = "$cwd/$TEMPLATES_ROOT" unless ($TEMPLATES_ROOT =~ m,^/,);
-$MENU_ROOT = "$cwd/$MENU_ROOT" unless ($MENU_ROOT =~ m,^/,);
-$TRANSMONITOR_ROOT = "$cwd/$TRANSMONITOR_ROOT" unless ($TRANSMONITOR_ROOT =~ m,^/,);
-$SYN_FILE = "$TRANSMONITOR_ROOT/$SYN_FILE" unless ($SYN_FILE=~ m,^/,);
-
 my $data = Webwml::L10n::Db->new();
 $data->read($DB_FILE);
 my $date = $data->get_date();
 
+my $arg;
 # read args to search package files
 while ($arg = shift @ARGV) {
-        $arg = "$cwd/$arg" unless $arg =~ m,^/,;
         if (-f $arg) {
                 $arg =~ /\.dsc$/
                         || die "bad package file name $arg (not a .dsc file)";
@@ -242,7 +226,10 @@ PKG: while ($dsc = shift @pkg_list) {
         ###
         $pkg = "";
         $ver = "";
-        open (DESC,$dsc) || die "can't read file $dsc";
+        unless (open (DESC, $dsc)) {
+                warn "Can't read file $dsc, skipped\n";
+                next PKG;
+        }
         while (<DESC>) {
                 if (m/^Source: (.*)$/) {
                         $pkg = $1;
@@ -252,11 +239,11 @@ PKG: while ($dsc = shift @pkg_list) {
         }
         close DESC;
         if ($pkg eq "") {
-                warn ("can't read the package name from the desc file $dsc");
+                warn "Can't read the package name from the desc file $dsc\n";
                 push @errors_pkg, $pkg;
                 next PKG;
         } elsif ($ver eq "") {
-                warn ("can't read the package version from the desc file $dsc");
+                warn "Can't read the package version from the desc file $dsc\n";
                 push @errors_pkg, $pkg;
                 next PKG;
         }
@@ -271,18 +258,20 @@ PKG: while ($dsc = shift @pkg_list) {
                                 ($data->has_nls($pkg)
                                         || $data->has_po($pkg)
                                         || $data->has_templates($pkg)))) {
-                        print "Package $pkg $ver (skipped)\n" if ($verbose || ($data->version($pkg) ne $ver));
+                        print "Package $pkg $ver (skipped)\n"
+                                if ($verbose || ($data->version($pkg) ne $ver));
                         next PKG;
                 } else {
-                        #erase the entry of this package (it's an older version)
+                        #   Erase this entry (it's an older version)
                         $data->clear($pkg);
-                        foreach my $dir (("$PO_ROOT/$pkg","$TEMPLATES_ROOT/$pkg","$MENU_ROOT/$pkg")) {
-                                File::Path::rmtree($dir) if -e $dir;
+                        foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT)) {
+                                File::Path::rmtree($_."/".$pkg)
+                                        if -e $_."/".$pkg;
                         }
                 }
         } else {
-                foreach my $dir (("$PO_ROOT/$pkg","$TEMPLATES_ROOT/$pkg","$MENU_ROOT/$pkg")) {
-                        File::Path::rmtree($dir) if -e $dir;
+                foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT)) {
+                        File::Path::rmtree($_."/".$pkg) if -e $_."/".$pkg;
                 }
         }
         $savedb = 1; #ok, we've done something, we have to save the db
@@ -291,9 +280,8 @@ PKG: while ($dsc = shift @pkg_list) {
         ###
         ### unpack it
         ###
-        $deb = parse_tarball($dsc,$pkg,$ver);
-        check_pkg($pkg,$deb);
-        chdir ($cwd) || die "can't return to the origine dir!";
+        $deb = parse_tarball($dsc, $pkg, $ver);
+        check_pkg($pkg, $deb);
         if ($careful) {
                 $data->write($DB_FILE);
         } else {
@@ -315,6 +303,26 @@ if (@errors_pkg > 0) {
 #                           The subs                                         #
 ##############################################################################
 
+sub store_disk_po {
+        my $pkg = shift;
+        my $filename = shift;
+
+        my $dirname  = $filename;
+        $dirname  =~ s#/+[^/]*$##;
+        $filename =~ s#/#_#g;
+        return $dirname.'/'.$pkg.'_'.$data->version($pkg).'_'.$filename;
+}
+
+sub store_disk_menu {
+        my $pkg = shift;
+        my $filename = shift;
+
+        $filename =~ s#.*debian/##;
+        $filename =~ s#/#_#g;
+        $filename =~ s#:#\%3a#g;
+        return $filename;
+}
+
 ###
 ### subs
 ###
@@ -335,15 +343,11 @@ sub parse_tarball {
                 return 80  if $file =~ m#(^|/)nls/#;
                 return -1 if $file eq 'debian/control';
                 return -1 if $file =~ m#^debian/.*templates#;
-                if ($file =~ m#\.po$#) {
-                        my $filename = $file;
-                        $filename =~ s#/#_#g;
-                        my $dirname = $file;
-                        $dirname =~ s#/+[^/]*$##;
-                        return ":$PO_ROOT/$pkg/$dirname/${pkg}_${version}_$filename";
-                }
-                return -1 if $file =~ m#^debian/.*menu#;
-                return -1 if $file =~ m#doc-base#;
+                return ":$PO_ROOT/$pkg/".store_disk_po($pkg, $file)
+                        if $file =~ m#\.po$#;
+                return ":$MENU_ROOT/$pkg/".store_disk_menu($pkg, $file)
+                        if $file =~ m#(^|/)debian/[^/]*menu[^/]*$#;
+                return -1 if $file =~ m#(^|/)debian/[^/]*doc-base[^/]*$#;
 
                 return 0;
         };
@@ -352,6 +356,7 @@ sub parse_tarball {
                 patch_parse_dft => -1,
                 maxmem      => 300000000,
                 debug       => 0,
+                patch_debug => 0,
         );
         $data->upstream($pkg, "other")
                 if $deb->get_diff_name() ne '';
@@ -370,13 +375,21 @@ sub check_pkg {
         #####
         my $section  = "";
         my $priority = "";
+        my $control  = "debian/control";
 
-        unless ($deb->file_exists('debian/control')) {
-                $deb->clear($pkg);
-                warn("Error: can't find debian/control; skipping package $pkg.");
-                return;
+        unless ($deb->file_exists($control)) {
+                #    The debian/ directory may be a link, search for
+                #    debian/control elsewhere
+                my @list = $deb->file_matches('/debian/control$');
+                if (@list) {
+                        $control = $list[0];
+                } else {
+                        $deb->clear($pkg);
+                        warn("Error: can't find debian/control; skipping package $pkg.");
+                        return;
+                }
         }
-        $_ = $deb->file_content('debian/control');
+        $_ = $deb->file_content($control);
         if (m/^Section: ([^\n]*)/m) {
                 $section = lc $1;
                 $section =~ s/\s//g;
@@ -436,18 +449,30 @@ sub check_pkg {
         # search all *.po files, nls catalogs files and debconf templates
         #  (it's a catalog iff first_line =~ /\$set[0-9 ]*\#/)
         #####
-        #search nls catalogs
+
+        search_nls($pkg);
+        search_po($pkg);
+        search_menu($pkg);
+        search_docbase($pkg);
+}
+
+#----[ search_nls ]-------------------------------------------------------------
+sub search_nls {
+        my $pkg = shift;
+        my $line;
 
         $data->nls($pkg, ());
-        my $line;
         foreach ($deb->file_matches("(?:^|/)nls/")) {
                 $line = $deb->file_content($_, 80);
                 $data->add_nls($pkg, $_) if $line =~ m/^\$set[\s\d]+#/s;
         }
 
-        ##
-        ## Search *.po files.
-        ##
+}
+
+#----[ search_po ]--------------------------------------------------------------
+sub search_po {
+        my $pkg = shift;
+
         my @pofiles = $deb->file_matches("\\.po\$");
 
         ##
@@ -456,7 +481,6 @@ sub check_pkg {
         ##
         my $file; # the po file name in the package
         my $filename; #the po file name to be archived
-        my $dirname; #the directory of original po file
         my $lang=""; # the identified code language
         my $bad_lang=""; #this could be a language, but this is not a valid language
         my $this_stat = ""; #stats for this file
@@ -464,11 +488,8 @@ sub check_pkg {
         my $regexp_for_lang_code = "(([a-zA-Z]{2})([-_][a-zA-Z]{2})?(@[^.]*)?)(\.[^.]*)?";
 
         POFILE: foreach $file (@pofiles) {
-                $dirname = $file;
-                $dirname =~ s#/+[^/]*$##;
-                $filename = "${pkg}_".$data->version($pkg)."/$file";
-                $filename =~ s,/,_,g;
-                $filename = $dirname."/".$filename;
+                $filename = store_disk_po($pkg, $file);
+
                 #  To transfer files with ":" in their name over http, the file
                 #  on the server must have the ":", but the URL must be fixed.
                 my $filename_http = $filename;
@@ -513,6 +534,7 @@ sub check_pkg {
                         # stats the file
                         ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_ROOT/$pkg/$filename 2>&1 1>/dev/null");
                         $data->add_errors($pkg,"Error of msgfmt --statistics $PO_ROOT/$pkg/$file\n".$err_msg) if $err_msg;
+                        $data->add_errors($pkg,"Error of msgfmt --statistics $PO_ROOT/$pkg/$file\n".$err_msg) if $err_msg;
 
                         $data->add_stats($pkg, $lang, $this_stat)
                                 if $this_stat ne "0t0f0u";
@@ -527,10 +549,57 @@ sub check_pkg {
                 # Add this file to the data
                 $data->add_po($pkg, "$file:".normalize_lang($lang).":$this_stat:".$filename_http);
                 if (system("gzip -9 $PO_ROOT/$pkg/$filename")) {
-                        warn "Can't gzip $file to $PO_ROOT/$pkg/$filename.gz : $!";
+                        warn "Can't gzip $PO_ROOT/$pkg/$filename: $!";
                 }
         }
-        print "MEM: ".$deb->get_max_memory()."\n";
+        print "MEM: ".$deb->get_max_memory()."\n" if $verbose;
+}
+
+#----[ search_menu ]-----------------------------------------------------------
+sub search_menu {
+        my $pkg = shift;
+        my $filename;
+
+        my @menufiles = $deb->file_matches("(^|/)debian/[^/]*menu[^/]*\$");
+        foreach my $file (@menufiles) {
+                # Add this file to the data
+                $filename = store_disk_menu($pkg, $file);
+                $data->add_menu($pkg, $filename.".gz");
+                if (system("gzip -9 $MENU_ROOT/$pkg/$filename")){
+                        warn "Can't gzip $MENU_ROOT/$pkg/$filename: $!\n";
+                }
+        }
+}
+
+#----[ search_docbase ]---------------------------------------------------------
+sub search_docbase {
+        my $pkg = shift;
+        my ($dirname, $filename);
+
+        my @docbasefiles = $deb->file_matches("(^|/)debian/[^/]*doc-base[^/]*\$");
+
+        foreach my $file (@docbasefiles) {
+                $_ = $deb->file_content($file);
+                next unless m/^Document:\s*(\S*)\s*$/m;
+                $filename = 'doc-base-' . $1;
+                $dirname  = $file;
+                $dirname  =~ s#/+[^/]*$##;
+                $filename = $dirname . '/' . $filename;
+                $filename =~ s,^.*debian/,,;
+                $filename =~ s,:,\%3a,;
+                $filename =~ s,/,_,g;
+                File::Path::mkpath($MENU_ROOT."/".$pkg, 0, 0755);
+                unless (open (DOCBASE, "> $MENU_ROOT/$pkg/$filename")) {
+                        warn "Unable to write to $MENU_ROOT/$pkg/$filename\n";
+                        next;
+                }
+                print DOCBASE;
+                close DOCBASE;
+                $data->add_menu($pkg, $filename.".gz");
+                if (system("gzip -9 $MENU_ROOT/$pkg/$filename")) {
+                        warn "Can't gzip $MENU_ROOT/$pkg/$filename: $!\n";
+                }
+        }
 }
 
 #----[ normalize_lang ]--------------------------------------------------------
@@ -605,6 +674,15 @@ sub init_synonym {
                 $synonym{$wrong} = $right;
         }
         close (DATA);
+}
+
+# sub is_lang(code) : returns true iff code is a valide code of language
+sub is_lang {
+        my $code = shift;
+        if ($code =~ /^(..)[-_](..)$/) {
+                return (defined(code2language($1)) && defined(code2country($2)));
+        }
+        return defined code2language($code);
 }
 
 1;
