@@ -18,6 +18,5 @@
 <menu-item name="hurd-cd"       basename="hurd-cd">
 <menu-item name="doc"           basename="hurd-doc">
 <menu-item name="devel"         basename="hurd-devel">
-<menu-item name="links"         basename="hurd-links">
 <menu-item name="contact"       basename="hurd-contact">
 
