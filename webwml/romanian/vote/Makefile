@@ -12,6 +12,6 @@ include $(WMLBASE)/Make.lang
 
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
 	$(WML) $(<F)
-index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/*.wml) \
-  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/$(CUR_YEAR)/*.wml) \
+index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/vote_*.wml) \
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/$(CUR_YEAR)/vote_*.wml) \
   $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
