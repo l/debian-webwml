@@ -5,8 +5,8 @@
 ##########
 my $DISTRIB="unstable";
 my $DB_FILE="$(ENGLISHDIR)/international/l10n/data/$DISTRIB";
-my $PO_ROOT="http://www.ens-lyon.fr/~mquinson/debian/material/po/$DISTRIB";
-my $TEMPLATES_ROOT="http://www.ens-lyon.fr/~mquinson/debian/material/templates/$DISTRIB";
+my $PO_ROOT="http://ftp-master.debian.org/~barbier/l10n/material/po/$DISTRIB";
+my $TEMPLATES_ROOT="http://ftp-master.debian.org/~barbier/l10n/material/templates/$DISTRIB";
 
 ##########
 # Init
