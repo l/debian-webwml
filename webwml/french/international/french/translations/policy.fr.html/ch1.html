@@ -1,0 +1,278 @@
+<html><head>
+<title>Debian Policy Manual - Programmes personnalisé</title>
+<link rev=made href="mailto:ijackson@gnu.ai.mit.edu">
+</head><body>
+<h1>
+Debian Policy Manual - chapitre 1<br>
+Programmes personnalisé
+</h1>
+<hr>
+<h2><A name="s-arch-spec">
+1.1 Chaînes de spécification d'architecture
+</A></h2>
+Si un programme doit fournir une <em>chaîne de spécification 
+d'architecture</em> quelque part, le format suivant doit être utilisé:
+	<pre>	  &lt;arch&gt;-linux
+	</pre>
+où `&lt;arch&gt;' est l'une des valeurs suivantes: i386, alpha, arm,
+m68k, powerpc, sparc et `&lt;os&gt;' est l'une des valeurs suivantes:
+linux, gnu.  L'utilisation de <em>gnu</em> dans cette chaîne est
+réservé pour le système d'exploitation GNU/Hurd.<P>
+Notez que nous n'utilisons pas `&lt;arch&gt;-debian-linux' dans la 
+chaîne `architecture-vendor-os' car cela rendrait nos programmes 
+incompatibles avec les autres distributions Linux. Notez aussi que
+nous n'utilisons pas `&lt;arch&gt;-unknown-linux', car le `unknown' 
+ne sonne pas très bien.<P>
+<hr>
+<h2><A name="s1.2">
+1.2 Daemons
+</A></h2>
+Les fichiers de configuration <samp>/etc/services</samp>,
+<samp>/etc/protocols</samp> et <samp>/etc/rpc</samp> sont gérés par le paquet
+<code>netbase</code> et ne peuvent être modifiés par d'autres paquets.<P>
+Si un paquet nécessite une nouvelle entrée dans l'un de ces fichiers,
+son responsable doit contacter celui du paquet <code>netbase</code>,
+qui ajoutera cette entrée et produira une nouvelle version du paquet
+<code>netbase</code>.<P>
+Le fichier de configuration <samp>/etc/inetd.conf</samp> peut être 
+modifié par les scripts d'un paquet uniquement via le script 
+<code>update-inetd</code> ou le module Perl <code>DebianNet.pm</code>.<P>
+Si un paquet veut installer une entrée à titre d'exemple dans
+<samp>/etc/inetd.conf</samp>, cette entrée doit être précédée par 
+exactement un caractère dièse (#). De telles lignes sont traitées
+comme des `commentaires utilisateur' par le script 
+<code>update-inetd</code> et ne seront pas modifiées ou activées 
+durant les mises à jour des paquets.<hr>
+<h2><A name="s1.3">
+1.3 Éditeurs et pagers
+</A></h2>
+Certains programmes offrent la possibilité d'exécuter un éditeur 
+ou un pager pour éditer ou visualiser un document texte. Comme 
+il existe beaucoup d'éditeurs et de pagers disponibles dans la
+distribution Debian, l'administrateur système et chaque 
+utilisateur doivent avoir la possibilité de choisir leur éditeur
+ou pager préféré.<P>
+De plus, chaque programme devrait choisir un bon éditeur ou pager
+par défaut si aucun n'est sélectionné par l'utilisateur ou
+l'administrateur système.<P>
+Ainsi, chaque programme qui exécute un éditeur ou un pager doit
+utilisé les variables d'environnement EDITOR ou PAGER pour déterminer 
+l'éditeur ou le pager que l'utilisateur souhaite employer. Si ces 
+variables ne sont pas définies, les programmes <samp>/usr/bin/editor</samp>
+et <samp>/usr/bin/pager</samp> doivent être utiliser respectivement.<P>
+Ces deux fichiers sont gérés par `alternatives'. Tout paquet,
+fournissant un éditeur ou un pager, doit employé le script
+`update-alternatives' pour enregistrer ses programmes.<P>
+S'il est très difficile d'adapter un programme pour qu'il emploie
+les variables EDITOR et PAGER, ce programme doit être configuré pour
+utiliser <samp>/usr/bin/sensible-editor</samp> et 
+<samp>/usr/bin/sensible-pager</samp> comme éditeur ou pager 
+respectivement. Ce sont deux scripts fournis par le système de base 
+Debian qui vérifient les variables EDITOR et PAGER, lancent les 
+programmes appropriés ou exécutent <samp>/usr/bin/editor</samp> et
+<samp>/usr/bin/pager</samp> automatiquement.<P>
+Comme le système de base Debian fournit déjà un éditeur et
+un pager, il n'y a pas besoin pour un paquet de dépendre d'un
+éditeur ou d'un pager, ni pour un paquet de fournir de tels
+paquets virtuels.<hr>
+<h2><A name="s-web-appl">
+1.4 Serveurs et applications Web
+</A></h2>
+Cette section décrit les emplacements et les URL qui doivent être
+employées par tous les serveurs et applications Web dans un système
+Debian.<P>
+<ol>
+<li> Les fichiers exécutables cgi-bin sont installés dans le répertoire
+ <pre>   /usr/lib/cgi-bin/&lt;cgi-bin-name&gt;
+ </pre>
+ et peuvent être référencés comme suit
+ <pre>   http://localhost/cgi-bin/&lt;cgi-bin-name&gt;
+ </pre>
+ <p><li> Accès aux documents HTML <P>
+ Les documents HTML d'un paquet sont stockés dans /usr/doc/&lt;package&gt;
+ et peuvent être référencés par
+ <pre>   http://localhost/doc/&lt;package&gt;/&lt;filename&gt;
+ </pre>
+ <p><li> Racine des documents Web <P>
+ Les applications Web doivent éviter de stocker des fichiers
+ dans la racine des documents Web. A la place, utiliser le répertoire
+ <samp>/usr/doc/</code><var>package</var><code></samp> pour les documents et enregistrer 
+ l'application Web via le paquet menu. Si l'accès à la racine des 
+ documents Web est  inévitable alors utiliser
+ <pre>   /var/www
+ </pre>
+ comme racine des documents. Ce peut être juste un lien symbolique 
+ vers  l'emplacement où l'administrateur a mis la véritable racine 
+ des documents.
+ <p></ol>
+<hr>
+<h2><A name="s1.5">
+1.5 Agents de transport de messages
+</A></h2>
+Les paquets Debian qui traitent du courrier électronique, que 
+ce soient les agents utilisateurs (MUA: Mail User Agents) ou les 
+agents de transport (MTA: Mail Transport Agent), <em>doivent</em>  
+être compatibles avec les décisions de configuration suivantes.
+Le non respect de celles-ci peut entraîner la perte de messages, 
+rompre les lignes <samp>From:</samp> ainsi que d'autres dommages sérieux !<P>
+La file d'attente du courrier est <samp>/var/spool/mail</samp> et 
+l'interface pour envoyer des courriers est <samp>/usr/sbin/sendmail</samp>
+(suivant le FSSTND). La file d'attente du courrier fait partie du 
+système de base et non du paquet MTA.<P>
+Tous les MUA et MTA Debian doivent utiliser les fonctions 
+<samp>maillock</samp> et <samp>mailunlock</samp> fournies par le paquet 
+<samp>liblockfile</samp> pour vérouiller et dévérouiller les boites 
+aux lettres. Ces fonctions implémentent un mécanisme de vérouillage 
+NFS-safe. (les MUA et MTA  peuvent ne pas utiliser liblockfile à 
+condition d'employer un mécanisme <em>compatible</em> . 
+S'il vous plaît, comparer les mécanismes très attentivement !)<P>
+Les boites aux lettres ont généralement les permissions 660
+<samp></code><var>user</var><code>.mail</samp> à moins que l'utilisateur en ai décidé
+autrement. Un MUA peut supprimer une boite aux lettres (sauf si elle 
+n'a pas les permissions standards). Dans ce cas, le MTA ou un autre 
+MUA doit la recréer si besoin. Les boites aux lettres doivent être 
+autorisées en écriture pour le groupe mail.<P>
+Les permissions de la file d'attente du courrier sont 2775
+<samp>mail.mail</samp> et les MUA doivent être setgid mail pour effectuer 
+le vérouillage mentionné précédemment (et doivent évidemment 
+interdire l'accès aux boites aux lettres des autres utilisateurs 
+en employant ce privilège).<P>
+<samp>/etc/aliases</samp> est le fichier source pour les alias du système 
+de messagerie (e.g. postmaster, usenet, etc.) -- c'est l'un des 
+fichiers que l'administrateur système et les scripts <samp>postinst</samp>
+peuvent éditer. Après avoir modifié <samp>/etc/aliases</samp>, le programme 
+ou l'administrateur doit appeler <code>newaliases</code>. Tous les 
+paquets MTA devraient contenir un programme <code>newaliases</code>, 
+même s'il ne fait rien, cependant les anciens paquets MTA ne le 
+faisaient pas donc les programmes ne devraient pas échouer si 
+<code>newaliases</code> ne peut être trouvé.<P>
+La convention d'écriture <samp>forward to </code><var>address</var><code></samp>
+dans la boîte aux lettres elle-même n'est pas supportée. Utiliser 
+un fichier <samp>.forward</samp> à la place.<P>
+L'emplacement pour le programme <code>rmail</code> utilisé par UUCP
+pour les messages entrants est <samp>/usr/sbin/rmail</samp>, suivant le 
+FSSTND. De même <code>rsmtp</code>, qui reçoit des lots SMTP via UUCP,
+est dans <samp>/usr/sbin/rsmtp</samp> s'il est supporté.<P>
+Si vous devez connaître le nom à employer (par exemple) pour les
+messages (mail et news) sortants qui sont générés localement, 
+vous devriez utilisé le fichier <samp>/etc/mailname</samp>. Il contient
+la portion après le nom d'utilisateur et le signe <samp>@</samp> (at)
+des adresses électroniques des utilisateurs de la machine (suivi 
+par un retour à la ligne).<P>
+Un paquet devrait vérifier l'éxistance de ce fichier. S'il existe,
+il devrait être employé sans commentaires (Le script de configuration
+d'un MTA peut vouloir interroger l'utilisateur même s'il trouve
+ce fichier). S'il n'existe pas, il devrait interrogé l'utilisateur
+pour une valeur et la stocker dans <samp>/etc/mailname</samp> ainsi que
+l'employer pour la configuration du paquet. Le message d'invite
+doit être explicite afin d'indiquer que ce nom ne sera pas utilisé
+uniquement par ce paquet. E.g. dans cette situation, le paquet INN dit:
+<pre>   Please enter the `mail name' of your system. This is the hostname
+   portion of the address to be shown on outgoing news and mail messages.
+   The default is <var>syshostname</var>, your system's host name.
+   Mail name [`<var>syshostname</var>']:</pre>
+où <var>syshostname</var> est la sortie de <samp>hostname --fqdn</samp>.<hr>
+<h2><A name="s1.6">
+1.6 Configuration du système de News
+</A></h2>
+Tous les fichiers de configurations relatifs aux serveurs et aux
+clients NNTP (news) doivent être placés dans <samp>/etc/news</samp>.<P>
+Il y a certains points de configuration qui s'appliquent à
+l'ensemble des paquets clients et serveurs de news sur la
+machine. Ce sont:
+
+<dl>
+<dt>/etc/news/organization<dd> Chaîne apparaissant dans le champ organization de l'en tête
+ de chaque messages postés par les clients NNTP de la machine.
+ <p><dt>/etc/news/server<dd> Contient le FQDN du serveur NNTP principal ou localhost
+ si la machine locale est un serveur NNTP.
+ <p></dl>
+
+
+D'autres fichiers globaux peuvent être ajoutés s'ils sont requis
+pour la configuration inter-paquets de news.<hr>
+<h2><A name="s1.7">
+1.7 Programmes pour le système X Window
+</A></h2>
+Certains programmes peuvent être configurés avec ou sans support 
+pour X Window. Typiquement ces exécutables, lorsque configurés
+pour X, nécessitent les librairies partagées X pour fonctionner.<P>
+De tels programmes devraient être configurés <em>avec</em>  le 
+support X et devraient déclarer une dépendance <samp>xlib6g</samp> 
+(pour les librairies X11R6). Les utilisateurs qui souhaitent 
+utiliser ces programmes, peuvent simplement installer le petit 
+paquet <samp>xlib6g</samp> et n'ont pas besoin d'installer tout X.<P>
+Ne créer pas deux versions (une avec support X et l'autre sans) de 
+votre paquet.<P>
+Les fichiers <em>Application defaults</em> doivent être installés dans 
+le répertoire <samp>/usr/X11R6/lib/X11/app-defaults/</samp>. Ils sont 
+considérés comme faisant partie du code du programme. Ainsi, ils ne 
+devraient pas être modifiés et ne doivent pas être marqués comme 
+<em>conffile</em>. Si l'administrateur système souhaite personnaliser 
+globalement une application X, le fichier <samp>/etc/X11/Xresources</samp> 
+devrait être utilisé.<P>
+Si vous packagez un programme qui requièrent une librairie Motif non
+libre, il serait bien de fournir un paquet &quot;foo-smotif&quot; et un paquet 
+&quot;foo-dmotif&quot; contenant (concernant les librairies Motif) une version 
+liée statiquement et dynamiquement respectivement. Ainsi les 
+utilisateurs sans Motif pourront utiliser le paquet aussi, et les 
+utilisateurs avec Motif installé bénéficieront des avantages
+d'une version liée dynamiquement.<P>
+Cependant si votre paquet fonctionne de manière fiable avec Lesstif, 
+vous devriez le packager avec Lesstif et non avec Motif.<P>
+Noter que les paquets qui requièrent une librairie Motif non libre
+ne peuvent aller dans la section main. Cependant si votre paquet 
+est libre, il ira dans contrib sinon il sera placé dans non-free.<hr>
+<h2><A name="s1.8">
+1.8 Programmes emacs lisp
+</A></h2>
+SVP, consultez le `Debian Emacs Policy' (documenté dans
+<samp>debian-emacs-policy.gz</samp> du paquet <code>emacsen-common</code>)
+pour les détails concernant la création de paquets de programmes
+emacs lisp.<hr>
+<h2><A name="s1.9">
+1.9 Jeux
+</A></h2>
+les permissions sur /var/lib/games sont 755 <samp>root.root</samp>.<P>
+Chaque jeu décide de ses propres règles de sécurité.<P>
+Les jeux qui nécessitent des accès privilégiés et protégés à des
+fichiers de scores, sauvegardes de parties, etc.., doivent être
+set-<em>group</em> -id (mode 2755), avoir pour propriétaire 
+<samp>root.games</samp> et utiliser des fichiers et des répertoires avec 
+des permissions appropriées (770 <samp>root.games</samp> par exemple). 
+Ils <em>ne</em> doivent <em>pas</em> être set-<em>user</em> -id, 
+car cela entraîne des problèmes de sécurité. (Si un attaquant arrive 
+à corrompre un jeu set-user-id, il peut alors remplacer l'executable 
+d'autres jeux, forçant les autres joueurs de ces jeux à exécuter 
+un cheval de Troie. Avec un programme set-group-id game, l'attaquant 
+a accès uniquement aux données les moins importantes du jeu. S'il 
+voulait accéder aux comptes des autres joueurs, cela lui demandera 
+des efforts considérablement plus importants).<P>
+Certains paquets, comme les programmes fortune cookie, sont configurés
+par leurs auteurs originaux pour s'installer avec leurs fichiers
+de données ou autres informations statiques non consultables en lecture,
+ils ne peuvent être accessibles que par les programmes set-id fournis.
+Ne faites pas ça dans un paquet Debian: n'importe qui peut télécharger
+le fichier <samp>.deb</samp> et y lire les données, ainsi il n'y a pas 
+d'avantages à avoir des fichiers non lisibles. Ne pas créer de fichiers 
+non accessibles en lecture implique aussi que vous n'avez pas à 
+construire des programmes set-id, ce qui réduit le risque de trous 
+de sécurité.<P>
+Comme décrit dans le FSSTND, les binaires des jeux devraient être 
+installés dans le répertoire <samp>/usr/games</samp>. Cela s'applique 
+aussi aux jeux utilisant le système X Window. les pages de manuel 
+des jeux (X et non-X) devraient être installés dans 
+<samp>/usr/man/man6</samp>.<hr>
+Debian Policy Manual
+- <A href="index.html#copyright">          Copyright ©1996,1997,1998 Ian Jackson
+          and Christian Schwarz.
+        </A>
+<br>
+<A href="index.html#toc">Table des mati&egrave;res</A>; <A href="index.html#abstract">r&eacute;sum&eacute;</A>; <A href="ch2.html">suivant</A>.
+<br>
+<address>version <br>
+Ian Jackson <A href="mailto:ijackson@gnu.ai.mit.edu">ijackson@gnu.ai.mit.edu</A><br>
+Christian Schwarz <A href="mailto:schwarz@debian.org">schwarz@debian.org</A><br>
+revised: David A. Morris <A href="mailto:bweaver@debian.org">bweaver@debian.org</A><br>
+The Debian Policy mailing List <A href="mailto:debian-policy@lists.debian.org">debian-policy@lists.debian.org</A></address>
+</body></html>

@@ -1,0 +1,164 @@
+<html><head>
+<title>Debian Policy Manual - Documentation</title>
+<link rev=made href="mailto:ijackson@gnu.ai.mit.edu">
+</head><body>
+<h1>
+Debian Policy Manual - chapitre 2<br>
+Documentation
+</h1>
+<hr>
+<h2><A name="s2.1">
+2.1 Pages de manuel
+</A></h2>
+Vous devez installer les pages de manuel au format source 
+<code>nroff</code>, à l'emplacement approprié sous <samp>/usr/man</samp>.
+Vous devez seulement utiliser les section 1 à 9 (voir le FSSTND pour 
+plus de détails). Vous <em>ne</em>  devez <em>pas</em>  installer de 
+pages préformatées `cat page'.<P>
+Si aucune page de manuel n'est disponible pour un programme, un 
+utilitaire ou une fonction particulière et qu'un bug est reporté 
+sur debian-bugs, un lien symbolique de la page de manuel en question 
+vers la page de manuel <code>7()</code> doit
+être fournit. Ce lien symbolique peut être créé à partir de
+<samp>debian/rules</samp> comme suit :
+<pre>   ln -s ../man7/undocumented.7.gz \
+    debian/tmp/usr/man/man[1-9]/the_requested_manpage.[1-9].gz</pre>
+Cette page de manuel indique que l'absence d'une page de manuel a déjà
+été signalée comme un bug, aussi vous avez seulement à le faire que si
+c'est le cas (vous pouvez le reporter vous-même si vous le souhaitez).
+Ne fermez pas le rapport du bug tant qu'une page de manuel adéquate 
+n'est pas disponible.<P>
+Vous pouvez envoyer une requête concernant l'absence d'une page de manuel
+aux auteurs originaux, et marquer le bug comme transféré dans le système 
+Debian de traques des bugs. Cependant le projet GNU ne considère pas en
+général l'absence d'une page de manuel comme un bug, nous oui - s'ils vous
+répondent qu'ils ne le considèrent pas comme un bug, vous devez cependant 
+laisser le bug ouvert dans notre système Debian de traques des bugs.<P>
+Les pages de manuel doivent être installées compressées via <samp>gzip -9</samp>.<P>
+Si une page de manuel doit être accessible via différents noms, il est 
+préférable d'utiliser un lien symbolique plutôt que la fonctionnalité
+<samp>.so</samp>, mais il n'est pas nécessaire de bricoler les parties 
+incriminées dans les sources originaux pour changer les <samp>.so</samp> 
+en liens symboliques - à moins que ce soit trivial.
+Ne créez pas de lien physique dans les répertoires des pages de manuel
+et ne mettez pas de chemin absolu dans les directives <samp>.so</samp>. 
+Le nom du fichier dans le <samp>.so</samp> d'une page de manuel doit être 
+relatif à la racine des pages de manuel (usuellement <samp>/usr/man</samp>).<hr>
+<h2><A name="s2.2">
+2.2 Documents Info
+</A></h2>
+Les documents Info devraient être installés dans <samp>/usr/info</samp>. 
+Ils devraient être compressés avec <samp>gzip -9</samp>.<P>
+Votre paquet doit appelé <code>install-info</code> pour mettre à jour 
+le fichier <samp>dir</samp> dans son script de post-installation :
+<pre>   install-info --quiet --section Development Development \
+     /usr/info/foobar.info</pre><P>
+C'est une bonne idée de spécifier une section pour l'emplacement de 
+votre programme ; cela se fait avec l'option <samp>--section</samp>. Pour 
+déterminer la section à utiliser, vous devriez consulter 
+<samp>/usr/info/dir</samp> sur votre système et choisir la plus adéquat 
+(ou créer une nouvelle section si aucunes des sections courantes ne 
+sont adaptées). Notez que l'option <samp>--section</samp> prends deux 
+arguments ; le premier est une expression régulière pour rechercher
+(insensible à la casse ;-) une section existante, le second est utilisé 
+lorsqu'une nouvelle section est à créer.<P>
+Vous devez retirer les entrées dans le script de pré-désintallation :
+<pre>   install-info --quiet --remove /usr/info/foobar.info</pre><P>
+Si <code>install-info</code> ne peut trouvé une entrée description dans 
+le fichier Info, vous aurez à en fournir une. Voir 
+<code>8()</code> pour plus de détails.<hr>
+<h2><A name="s2.3">
+2.3 Documentations additionnelles
+</A></h2>
+Toute documentation additionnelle fournie avec le programme peut être 
+installée à la discrétion du responsable du paquet. Les documents texte 
+devraient être placés dans le répertoire <samp>/usr/doc/</code><var>package</var><code></samp>,
+où <var>package</var> est le nom du paquet et compressés avec 
+<samp>gzip -9</samp> à moins qu'ils soient petits.<P>
+Si un paquet contient une large documentation que la majorité des 
+utilisateurs du paquet ne requièrent pas, vous devriez créer un paquet 
+sépare la contenant, ainsi elle ne prendra pas d'espace disque sur les 
+machines des utilisateurs ne la nécessitant pas ou ne voulant pas l'installer.<P>
+Il est souvent une bonne idée de mettre les fichiers d'informations 
+textuelles (<samp>README</samp>, changelogs, et autres) provenant du paquet 
+source dans <samp>/usr/doc/</code><var>package</var><code></samp> au sien des paquets 
+binaires. Bien entendu, vous n'avez pas besoin de fournir les instructions 
+pour la création et l'installation du logiciel.<hr>
+<h2><A name="s2.4">
+2.4 Formats de documentation préférés
+</A></h2>
+L'unification de la documentation Debian se fait autour d'HTML.<P>
+Si votre paquet fourni une vaste documentation dans un markup format
+qui puisse être convertible en d'autres formats, vous devriez si possible
+livrer la version HTML dans le paquet binaire, dans le répertoire
+<samp>/usr/doc/</code><var>package</var><code></samp> ou un de ces sous-repertoires.
+<A href="footnotes.html#1" name="fr1">[1]</A><P>
+D'autres formats comme PostScript peuvent être fournis en option.<hr>
+<h2><A name="s-copyrightfile">
+2.5 Informations sur les Copyright
+</A></h2>
+Chaque paquet doit être accompagné avec une copie textuelle de son 
+copyright ainsi que de sa licence de distribution dans le fichier
+<samp>/usr/doc/</code><var>package</var><code>/copyright</samp>. Ce fichier ne doit ni 
+être compressé ni être un lien symbolique.<P>
+De plus, le fichier copyright doit préciser où les fichiers sources 
+originaux (s'ils existent) ont été obtenu et expliquer brièvement 
+quelles modifications ont été faite dans la version Debian du paquet 
+par rapport à l'original. IL doit indiquer les auteurs originaux du 
+paquet et le(s) responsable(s) Debian qui ont oeuvré à sa création.<P>
+<samp>/usr/doc/</code><var>package</var><code></samp> peut être un lien symbolique vers un 
+répertoire de /usr/doc seulement si les deux paquets proviennent de la
+même source et que le premier paquet possède une relation &quot;Depends&quot; 
+avec le second. Ces règles sont importantes car les copyrights doivent
+être ectractible par des moyens automatiques.<P>
+Les paquets distribués sous la licence UCB BSD, la licence Artistic, 
+la GNU GPL ou la GNU LGPL doivent faire référence aux fichiers
+<samp>/usr/doc/copyright/BSD</samp>, <samp>/usr/doc/copyright/Artistic</samp>,
+<samp>/usr/doc/copyright/GPL</samp> ou <samp>/usr/doc/copyright/LGPL</samp>. <P>
+N'utiliser pas le fichier copyright comme un fichier <samp>README</samp> 
+général. Si votre paquet a un tel fichier, il devrait être installé dans 
+<samp>/usr/doc/</code><var>package</var><code>/README</samp> ou <samp>README.Debian</samp> 
+ou une autre place appropriée.<hr>
+<h2><A name="s2.6">
+2.6 Exemples
+</A></h2>
+Tous les exemples (configuration, fichiers source, autres) doivent être
+installés dans un répertoire <samp>/usr/doc/</code><var>package</var><code>/examples</samp>.
+Ces fichiers ne doivent pas être utilisés par un quelconque programme
+-- ils sont ici pour le bénéfice de l'administrateur système et des 
+utilisateurs comme documentation seulement.<hr>
+<h2><A name="s-instchangelog">
+2.7 Fichiers Changelog
+</A></h2>
+Ces fichiers doivent contenir une copie du fichier <samp>debian/changelog</samp>
+de votre racine source Debian, et une copie du fichier changelog
+source s'il existe. Le fichier debian/changelog devrait être installé dans 
+<samp>/usr/doc/</code><var>package</var><code></samp> comme <samp>changelog.Debian.gz</samp>.
+Si le changelog source est un fichier texte, il doit être accessible à
+<samp>/usr/doc/</code><var>package</var><code>/changelog.gz</samp>. Si le changelog 
+source est un fichier HTML, il doit être accessible à
+<samp>/usr/doc/</code><var>package</var><code>/changelog.html.gz</samp>. Si le changelog
+source n'est pas déjà conforme à cette convention de nommage, alors
+cela doit être réalisé soit en supprimant ce fichier ou en ajoutant
+des liens symboliques, à la discrétion du responsable du paquet.<P>
+Tout deux doivent être installés compressés par <samp>gzip -9</samp>, car 
+ils deviendront imposants avec le temps même s'ils débutent petit.<P>
+Si un paquet a seulement un changelog qui est utilisé à la fois comme
+changelog Debian et source car il n'y a pas de responsable original
+séparé alors ce changelog devrait habituellement être installé sous
+<samp>/usr/doc/</code><var>package</var><code>/changelog.gz</samp>. S'il existe un 
+responsable principal mais pas de changelog source alors le changelog 
+Debian devrait être toujours appelé <samp>changelog.Debian.gz</samp>.<hr>
+Debian Policy Manual
+- <A href="index.html#copyright">          Copyright ©1996,1997,1998 Ian Jackson
+          and Christian Schwarz.
+        </A>
+<br>
+<A href="index.html#toc">Table des mati&egrave;res</A>; <A href="index.html#abstract">r&eacute;sum&eacute;</A>; <A href="ch1.html">pr&eacute;c&eacute;dent</A>.
+<br>
+<address>version <br>
+Ian Jackson <A href="mailto:ijackson@gnu.ai.mit.edu">ijackson@gnu.ai.mit.edu</A><br>
+Christian Schwarz <A href="mailto:schwarz@debian.org">schwarz@debian.org</A><br>
+revised: David A. Morris <A href="mailto:bweaver@debian.org">bweaver@debian.org</A><br>
+The Debian Policy mailing List <A href="mailto:debian-policy@lists.debian.org">debian-policy@lists.debian.org</A></address>
+</body></html>
