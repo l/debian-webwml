@@ -1,5 +1,5 @@
 #use wml::debian::template title="Prevoðenje Debian web stranica" BARETITLE=true
-#use wml::debian::translation-check translation="1.34"
+#use wml::debian::translation-check translation="1.35"
 
 <P>Da bi posao prevoditelja napravili ¹to lak¹im, stranice se generiraju
 malo drugaèije od onoga na ¹to su mnogi navikli. Web stranice se zapravo
@@ -11,25 +11,60 @@ odvojeni direktoriji za svaki jezik.
 molimo pogledajte <a href="#completenew">poglavlje o zapoèinjanju novog
 prijevoda</a>.
 
-<h3>Prevoðenje individualnih stranica</h3>
+<h3><a name="singlepages">Prevoðenje individualnih stranica</a></h3>
 
-<p>Molimo nemojte prevoditi HTML stranice. Mi koristimo WML izvorne datoteke
-pa se sadr¾aj i zajednièki elementi dr¾e odvojeno. Ako ¾elite pomoæi s nekim
-prijevodom, molimo <a href="using_cvs">koristite CVS</a> kako bi do¹li do
+<p>Mi koristimo WML kako bi odijelili sadr¾aj specifièan nekoj stranici od
+elemenata zajednièkih u vi¹e stranica. To znaèi da se treba ureðivati
+stanovite WML izvorne datoteke umjesto HTML datoteka. Molimo
+<a href="using_cvs">koristite CVS</a> kako bi do¹li do
 trenutnih izvornika. Trebate izvaditi makar dva direktorija:
-<tt>english/</tt> i <tt>&lt;jezik&gt;/</tt>.
+<tt>english/</tt> i <tt><var>&lt;jezik&gt;</var>/</tt>.</p>
 
-<p>Kako bi preveli jednu stranicu s engleskog na va¹ jezik, kopirajte
-originalnu .wml datoteku iz <tt>english/foo/bar</tt> u
-<tt>&lt;jezik&gt;/foo/bar</tt>. Dodajte
-<kbd>#use wml::debian::translation-check translation="x.y"</kbd> nakon
-zadnjeg #use retka (vidi <a href="uptodate">o translation-checku</a>).
-Mo¾ete koristiti i <tt>copypage.pl</tt> skriptu iz korijenskog webwml
-direktorija da iskopirate stranicu i automatski dodate to zaglavlje. Nakon
-¹to ovo napravite, prevedite cijelu tu stranicu i po¹aljite je
-<a href="translation_coordinators">nekome</a> tko ima pristup za pisanje po
-repositoryu. Trebali bi moæi testirati stranicu tako da pokrenete <tt>make
-file.&lt;jezik&gt;.html</tt>.
+<p>Kako bi preveli jednu stranicu s engleskog na va¹ jezik, originalnu .wml
+datoteku treba prevesti i staviti unutar direktorija drugog jezika.
+Relativna staza i ime datoteke moraju biti isti kao i u engleskom
+direktoriju kako bi veze (linkovi) nastavili raditi.
+Takoðer se toplo preporuèa da prevoditelj doda jo¹ i dodatan redak meðu
+zaglavlja nakon zadnje #use naredbe u kojem æe zabilje¾iti toènu reviziju
+originalne datoteke koja je prevedena, kako bi
+<a href="uptodate">osvje¾avanje bilo lak¹e</a>.
+Taj redak izgleda ovako:
+<kbd>#use wml::debian::translation-check translation="<var>x.y</var>"</kbd>
+
+<p>Sve ovo se mo¾e postiæi jednostavno, koristeæi <tt>copypage.pl</tt>
+skriptu iz korijenskog webwml direktorija. Skripta æe kopirati stranicu na
+pravo mjesto, napraviti direktorije i makefileove prema potrebi, i
+automatski dodati potrebno zaglavlje.</p>
+
+<p>Nakon ¹to ste pokrenuli npr. <kbd>./copypage.pl <var>ne¹to</var>.wml</kbd>,
+prevedite originalni tekst unutar datoteke. Komentari u datotekama æe vam
+ukazati na stvari koje ne treba prevoditi; po¹tujte ih. Nemojte raditi
+nepotrebne promjene u oblikovanju; ako se ne¹to treba popraviti, vjerojatno
+se treba ispraviti u originalnoj datoteci.</p>
+
+<p>Buduæi da koristimo <a href="content_negotiation">pregovaranje sadr¾aja</a>,
+HTML datoteke se ne zovu <tt><var>datoteka</var>.html</tt> nego
+<tt><var>datoteka</var>.<var>&lt;jezik&gt;</var>.html</tt>, gdje je
+<var>&lt;jezik&gt;</var> dvoslovni kod jezika, prema
+<a href="http://ftp.ics.uci.edu/pub/ietf/http/related/iso639.txt">ISO 639</a>
+(npr. <tt>fr</tt> za francuski).</p>
+
+<p>HTML iz WML-a mo¾ete napraviti tako da pokrenete
+<kbd>make <var>datoteka</var>.<var>&lt;jezik&gt;</var>.html</kbd>.
+Ako to radi, provjerite je li sintaksa sasvim ispravna sa
+<kbd>weblint <var>datoteka</var>.<var>&lt;jezik&gt;</var>.html</kbd>.</p>
+
+<p>Web stranice æe se ponovo izraditi iz CVS-a na www-master poslu¾itelju,
+a ovaj proces je veæinom otporan na gre¹ke. Ipak, ako u CVS po¹aljete
+pokvarenu datoteku a koja je u najvi¹em direktoriju va¹eg prijevoda
+(npr. najvi¹a index.wml datoteka), to æe pokvariti proces izrade stranica i
+odgoditi ostale izmjene na web stranicama. Molimo obratite posebnu pozornost
+na ove datoteke.</p>
+
+<p>Jednom kad je stranica spremna, mo¾ete je poslati u CVS. Ako imate
+ovlasti sami ovo napraviti, pokrenite <kbd>cvs commit</kbd>; ako ne,
+po¹aljite je <a href="translation_coordinators">nekome tko ima
+pristup za pisanje po repositoryu</a>.</p>
 
 <h2><a name="completenew">Poèetak novog prijevoda</a></h2>
 
@@ -118,42 +153,15 @@ mailing listi prije nego ¹to po¹aljete datoteke u CVS.</p>
 <p>Trebate <a href="navbar_images">prevesti i rijeèi na slikama</a> u
 crvenoj navigacijskoj traci.</p>
 
-<p>Komentari u datotekama æe vam pokazati ako postoje stvari koje ne trebaju
-biti prevedene; po¹tujte ih.
-
 <p>Pa¾nja: ako naðete mjesto gdje trebate napraviti neke druge promjene,
 po¹aljite e-mail na debian-www listu i recite ¹to ste i gdje promijenili,
 tako da mo¾emo ispraviti problem.
 
 <p>Nakon ¹to zavr¹ite skelet predlo¾aka, mo¾ete poèeti s prevoðenjem poèetne
-stranice.</p>
-
-<p>Mo¾ete ignorirati poddirektorije popisane u SUBS varijabli Makefile
-datoteka èak i ako oni ne postoje u direktoriju prijevoda. Kad prevedete
-poddirektorij, provjerite da je spomenut u SUBS varijabli Makefile datoteke
-u roditeljskom direktoriju, inaèe se neæe obraðivati.
-
-<p>Sad mo¾ete poèeti prevoditi *.wml datoteke. Za popis datoteka koje
-trebaju biti prevedene prve, pogledajte <a href="translation_hints">stranicu
-s natuknicama</a>.</p>
-
-<p>Kopirajte svaku datoteku iz ../english/, prevedite je, testirajte s
-<tt>make datoteka.&lt;jezik&gt;.html</tt> (i <tt>weblint datoteka.wml</tt>),
-i kad zavr¹ite, po¹aljite je <a href="using_cvs">u CVS</a>. Molimo
-provjerite da se va¹ prijevod mo¾e izraditi (s make), jer ako se ne mo¾e, to
-bi moglo pokvariti proces izrade svih ostalih web stranica.
-
-# XXX replace with copypage.pl use
-
-<p>Kada budete kopirali datoteke, nemojte kopirati CVS direktorije ili
-datoteke u njima iz english/ direktorija u va¹. Ako to nehotice uèinite i
-kasnije po¹aljete promjene u CVS, cvs æe osvje¾iti engleske datoteke va¹im
-prijevodima, ¹to æe zbuniti/uznemiriti puno ljudi.
-
-<p>Buduæi da koristimo <a href="content_negotiation">pregovaranje sadr¾aja</a>,
-HTML datoteke se ne zovu <tt>datoteka.html</tt> nego
-<tt>datoteka.&lt;jezik&gt;.html</tt>, gdje je <tt>&lt;jezik&gt;</tt>
-dvoslovni kod jezika, prema ISO 639 (npr. <tt>fr</tt> za francuski).
+stranice i ostalih *.wml datoteka. Za popis datoteka koje trebaju biti
+prevedene prve, pogledajte <a href="translation_hints">stranicu s
+natuknicama</a>. *.wml stranice prevodite kako je opisano
+<a href="#singlepages">na vrhu ove stranice</a>.</p>
 
 <h3>Ostatak prièe</h3>
 
