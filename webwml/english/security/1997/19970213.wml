@@ -1,52 +1,11 @@
-#!wml -o ../../../../debian.org/security/1997/%BASE.html.en
 <define-tag pagetitle>nlspath</define-tag>
 <define-tag report_date>13 Feb 1997</define-tag>
 <define-tag packages></define-tag>
 <define-tag description>NLSPATH buffer overflow</define-tag>
 <define-tag isvulnerable>yes</define-tag>
-<define-tag fixed>Debian 1.2 and up.</define-tag>
-#use wml::debian::basic title="Debian GNU/Linux &mdash; <pagetitle>"
+<define-tag fixed>yes</define-tag>
+<define-tag moreinfo></define-tag>
+
 #use wml::debian::security
 
-<blockquote>
-<b>Date: 	Thu, 13 Feb 1997 23:08:13 -0500</b> <br>
-<b>From: solar@IDEAL.RU</b> <p>
-
-Hi! <p>
-
-I'm sorry if the information I'm going to tell about was already known, but
-I hope it wasn't... <p>
-
-I just occasionally found a vulnerability in Linux libc (actually, some of
-the versions seem not to be vulnerable; my Slackware 3.1 box was though).
-Unfortunately, I have no time for a real investigation right now, but here's
-the exploit anyway. Note that the shellcode is a bit different from the
-usual one: <p>
-<ul>
-<li> it does setuid(geteuid()) by itself;
-<li> easier to modify (no more fixed offsets in shellcode, and the shell name
-can be changed, too -- the length is not fixed);
-<li> the NULL pointer itself is passed in %edx to the execve syscall, not the
-pointer to NULL (it seems like a mistake in the Aleph One's article); this
-doesn't seem to affect anything though.
-</ul>
-
-It might be possible to exploit this hole remotely, if using a patched telnet
-client which would allow exporting large environment variable values. The
-overflow would happen at /bin/login startup then (somewhat like the famous
-LD_PRELOAD exploit, but an overflow). I'm not sure of that though, there might
-be some restrictions on environment variables in telnetd. <p>
-
-As for the fix, well, this is a hard one -- would require re-compiling libc,
-and statically linked binaries. To protect yourself against remote attacks,
-you could for example change the variable name to something different, with
-a hex editor (like /usr/bin/bpe), in /lib/libc.so.5, and ensure the exploit
-stopped working. Of course, this is only a temporary fix. <p>
-
-Patchs removed do to age.
-</blockquote>
-
-<:= languages ("$(HOME)", "security", "$(WML_SRC_BASENAME)", "$(CUR_LANG)") :>
-
-<HR>
-#use wml::debian::footer
+<:= fixes_link( 'bo',  '', '', '', '' ) :>

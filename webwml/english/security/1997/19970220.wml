@@ -1,55 +1,11 @@
-#!wml -o ../../../../debian.org/security/1997/%BASE.html.en
 <define-tag pagetitle>screen</define-tag>
 <define-tag report_date>20 Feb 1997</define-tag>
 <define-tag packages>screen</define-tag>
 <define-tag description>The "screen" program overflows when copying the gcos field.</define-tag>
-<define-tag vulnerable>The overflow exists, but screen surrenders root privilages before the code is executed.</define-tag>
+<define-tag isvulnerable>no</define-tag>
 <define-tag fixed></define-tag>
-#use wml::debian::basic title="Debian GNU/Linux &mdash; <pagetitle>"
+<define-tag moreinfo></define-tag>
+
 #use wml::debian::security
 
-<blockquote>
-<b>Date: 	Thu, 20 Feb 1997 21:23:31 -0500</b> <br>
-<b>From: Khelbin &lt;khelbin@connix.com&gt;</b> <p>
-
-Screen 3.07.02, when setuid root (as it usually is), is possibly to a
-buffer overflow at least on certain platforms.  I havn't read through all
-the source but just looking quickly I noticed that attacher.c does the
-following: <p>
-
-<pre>
-      struct passwd ppp;
-      char fullname[100];
-
-      strcpy(fullname, ppp->pw_gecos);
-</pre>
-
-I was able to whip up a quick exploit but it failed to work here on BSDI
-1.1 because chpass/chfn will not except certain characters.  Thus, reading
-in shellcode into the Ful Name field produced an error message of "Illegal
-Character found in the Full Name field,  re-edit [y]?" or something
-similar. <p>
-
-Any OS or version of chfn/chpass which does not check for 'illegal
-characters' or the length of the info being put into the field (BSDI 1.1
-did not check length, only for illegal characters) may be vulnerable (i
-didn't check if it had given up suid root privs yet, i was going to do
-that by overflowing it with my shellcode string). <p>
-
-If anyone can check on different platforms and get back to me, I'd be
-interested.  What I was doing was just putting my shellcode string into an
-ENV variable (with the NOPs and ret address back to the NOPs) and echoing
-the ENV variable to a file.  Then just read in that file when yer in
-chpass/chfn as the new gecos info. <p>
-
-I really didn't take much time in looking through the code and found a
-possible problem so I'm sure there's more.  Screen is a pretty big program
-for being suid root and that old advice of not running programs you don't
-need, especially suid ones, is always true. <p>
-
-</blockquote>
-
-<:= languages ("$(HOME)", "security", "$(WML_SRC_BASENAME)", "$(CUR_LANG)") :>
-
-<HR>
-#use wml::debian::footer
+<:= fixes_link( 'not',  '', '', '', '' ) :>

@@ -1,72 +1,11 @@
-#!wml -o ../../../../debian.org/security/1997/%BASE.html.en
 <define-tag pagetitle>sendmail</define-tag>
 <define-tag report_date>25 Mar 1997</define-tag>
 <define-tag packages>sendmail</define-tag>
 <define-tag description>sendmail 8.8.5 follows hardlinks when writing /var/tmp/dead.letter</define-tag>
 <define-tag isvulnerable>yes</define-tag>
-<define-tag fixed></define-tag>
-#use wml::debian::basic title="Debian GNU/Linux &mdash; <pagetitle>"
+<define-tag fixed>yes</define-tag>
+<define-tag moreinfo></define-tag>
+
 #use wml::debian::security
 
-<blockquote>
-<b>Date: 	Tue, 25 Mar 1997 09:57:47 +0100</b> <br>
-<b>From: Claude Scarpelli &lt;claude@INFOBIOGEN.FR&gt;</b> <p>
-
-<pre>
-In a mail dated Mar 24, bygranz@RS6000.CMP.ILSTU.EDU (Gonzo Granzeau) wrote:
-> Jeffrey Moyer once rambled this:
-> > On Sat, 22 Mar 1997 C0WZ1LL4@NETSPACE.ORG wrote:
-> >
-> > > Hello fellow mongoloids
-> > > Try this:
-> > > Make hard link of /etc/passwd to /var/tmp/dead.letter
-> > > Telnet to port 25, send mail from some bad email address to some
-> > > unreacheable hoost.
-> > > Watch your message get appended to passwd.
-> > > ie:
-> > > cowzilla::0:0:c0wz1ll4 0wns u:/:/bin/sh
->
-> okay, just want to point out some things about this exploit...
-> this won't work on big boxes that are partitioned cause you can only do a
-> hard link on the same file system.  another point is that any box that has
-> a 'MAILER-DAEMON' defined will get any mail that gets sent there instead of it
-</pre>
-
-Sometimes, sendmail can't send mail to MAILER-DAEMON. In these case,
-the message is stored in /var/tmp/dead.letter. <p>
-
-I have seen it appear in the following configuration :
-
-<ol>
-<li> sendmail on the best MX host is configured to refuse mail bigger
-   than x bytes.
-
-<li> sendmail on a lower priority MX host is configured as a null client
-   (FEATURE(nullclient)), but without the size limit.
-
-<li> a big mail (bigger than x bytes) arrives on the host where sendmail
-   is configured as a null client (the low priority MX host). <p>
-
-<b>Here is what happens then:</b>
-
-<li> the null client tries to pass the mail to the best MX, which refuse
-   it (bigger than x bytes)
-
-<li> So the null client tries to bounce back the mail to the
-   originator. Since  it is a null client, it sends the mail to the
-   best MX host.
-
-<li> But the best MX host refuses the mail (bigger than x bytes). So the
-   null client tries to send a notification to MAILER-DAEMON. Since it
-   is a null client, it sends this mail to the best MX host, which
-   refuse it (bigger than x bytes). This a case where sendmail will
-   write to /var/tmp/dead.letter.
-</ol>
-
-It may exist other ways for sendmail to write in /var/tmp/dead.letter.
-</blockquote>
-
-<:= languages ("$(HOME)", "security", "$(WML_SRC_BASENAME)", "$(CUR_LANG)") :>
-
-<HR>
-#use wml::debian::footer
+<:= fixes_link( 'bo',  'All', '', 'sendmail', 'none' ) :>
