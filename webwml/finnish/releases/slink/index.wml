@@ -1,40 +1,17 @@
 # Translated by Antti-Juhani Kaijanaho (ajk) on 1999-04-26
-# Updated to match r1.16 of the English original on 1999-07-31 by ajk
+# Updated to match r1.29 of the English original on 1999-10-06 by ajk
 #use wml::debian::template title="Debian 2.1 (slink) julkaisutiedot"
-
+#use wml::debian::languages
+#use wml::debian::install_manual
+#include '$(ENGLISHDIR)/releases/slink/formats_and_architectures.wmh'
 <:
-# list of architectures
-%arches = ( i386   => 'Intel x86',
-	    m68k   => 'Motorola 680x0',
-	    sparc  => 'SPARC',
-	    alpha  => 'Alpha',
-	  );
 
-# language specific name for output formats
-%formats = ( html => "HTML",
-	     pdf  => "PDF",
-	     txt  => "pelkkä teksti",
-           );
+$about_lang_setting = "Jos selaimesi kieliasetukset ovat kunnossa,
+vie ylläoleva linkki oikeaan HTML-versioon automaattisesti -- ks.
+<A href=\"$base_url/intro/cn\"><setlang></A>.  Muussa tapauksessa
+valitse haluamasi tarkka laitearkkitehtuuri, kieli ja tiedostomuoto
+allaolevasta taulukosta.\n";
 
-$about_lang_setting = 'Jos olet määrittänyt
-<a href="../../intro/cn">suosikkikielesi</a>,
-sinun pitäisi saada oikea versio automaattisesti.';
-
-sub permute_file {
-    my($file, $name, @exts) = @_;
-    my($ext, $arch);
-
-    foreach $arch (keys %arches) {
-        print "<li> <a href=\"./$arch/$file\">$name, " . $arches{$arch} . "</a>";
-	if ( $#exts != -1 ) {
-	    foreach $ext (@exts) {
-	        print " (<a href=\"./$arch/$file.$ext\"><em>" . 
-			$formats{$ext} . "</em></a>)";
-	    }
-	}
-	print "\n";
-    }
-}
  :>
 
 <ul>
@@ -68,11 +45,24 @@ käyttäjille, jotka päivittävät konettaan aiemmasta Debianin
 versiosta.
 
 <ul>
-<: &permute_file('release-notes/index', 'Julkistusmuistio'); :>
+<: &permute_as_list('release-notes/', 'Julkistusmuistio'); :>
 </ul>
 
-Julkistusmuistio on saatavilla kroaatiksi, tsekiksi, englanniksi,
-saksaksi, venäjäksi ja japaniksi.  <: print $about_lang_setting; :>
+<: print $about_lang_setting; :>
+
+<center>
+<table border=2 cellspacing=0 cellpadding=3 bgcolor="#DDDDDD"> 
+<tr bgcolor="#44CCCC">
+  <th align="left"><strong>Laitearkkitehtuuri</strong></th>
+  <th align="left"><strong>Tiedostomuoto</strong></th>
+  <th align="left"><strong>Kielet</strong></th>
+</tr>
+<: &permute_as_matrix('release-notes/index', 'english', 'croatian', 'czech',
+                     'german', 'japanese', 'portuguese', 'russian');
+:>
+</table>
+</center>
+
 
 <p>
 
@@ -90,8 +80,24 @@ Asennusohjeet haettavine tiedostoineen ovat saatavilla kullekin
 laitearkkitehtuurille erikseen:
 
 <ul>
-<: &permute_file('install', 'Asennusopas'); :>
+<: &permute_as_list('install', 'Asennusopas'); :>
 </ul>
+<: print $about_lang_setting; :>
+
+<center>
+<table border=2 cellspacing=0 cellpadding=3 bgcolor="#DDDDDD"> 
+<tr bgcolor="#44CCCC">
+  <th align="left"><strong>Arkkitehtuuri</strong></th>
+  <th align="left"><strong>Tiedostomuoto</strong></th>
+  <th align="left"><strong>Kielet</strong></th>
+</tr>
+<: &permute_as_matrix('install', 'english', 'croatian',  'czech', 
+                      'finnish', 'french', 'german', 
+                      'japanese', 'portuguese', 'russian', 'spanish');
+:>
+</table>
+</center>
+
 
 Olemme yrittäneet tehdä tuen muille kuin x86-arkkitehtuureille
 mahdollisimman hyväksi.  Silti jotkin arkkitehtuurit (erityisesti
@@ -108,9 +114,6 @@ lukijat, jotka miettivät, mikä on uutta, tutustukoot oppaan <a
 href="source/ChangeLog">muutoskirjauksiin</a>.
 
 <p>
-
-Asennusopas on saatavilla kroaatiksi, tsekiksi, englanniksi, saksaksi,
-suomeksi, ranskaksi, venäjäksi ja japaniksi.  <: print $about_lang_setting; :>
 
 
 <h2>Errata</h2>
@@ -151,33 +154,53 @@ href="running-kernel-2.2">tunnettujen ongelmien luetteloon</a>.
 <p>
 
 Debianin julkistettuja versioita päivitetään yleensä vain kriittisten
-ongelmien tai tietoturva-asioiden vuoksi.  Joitakin päivitettyjä
-paketteja on kuitenkin saatavilla käyttäjien iloksi.
+ongelmien tai tietoturva-asioiden vuoksi.  Joistakin ohjelmista on
+silti saatavissa epävirallisia päivitysversioita, joita tekevät sekä
+muut käyttäjät että kehittäjät.  Tässä esitetylle materiaalille ei ole
+virallista tukea.
 
+<h3>Kansainväliset asennuslevykkeet</h3>
+
+Epäviralliset portugalinkieliset asennuslevykkeet ovat saatavissa
+osoitteesta <a
+href="ftp://ftp2.escelsanet.com.br/debian/">ftp://ftp2.escelsanet.com.br/debian/</a>
+
+<h3>Pelastuslevykkeet</h3>
+
+<p>
+Adaptec 2940 SCSI-korttien ja muiden aic7xxx-chipsettiä käyttävien
+SCSI-ohjaimien käyttäjät joutunevat pulaan tavallisilla
+asennulevyillä.  Erään avuliaan käyttäjä kokeelliset levykkeet ovat
+auttaneet monia.  Kaksi erilaista Rescue Floppy -vaihtoehtoa
+i386-arkkitehtuurille on osoitteessa <a
+href="ftp://kalle.csb.ki.se/pub/">ftp://kalle.csb.ki.se/pub/</a>.
+Samassa paikassa on myös korvaavia kerneleitä, joilla olemassaolevien
+asennuslevyjen kernelit voidaan korvata.  Näiden lisäksi tarvitaan
+tavalliset Drivers Floppy -levykkeet.
+
+<p>
+Kilpaileva, uudempi asennuslevysetti Adaptec-käyttäjille on
+osoitteessa <a
++href="http://www.debian.org/~adric/aic7xxx/">http://www.debian.org/~adric/aic7x
+xx/</a>.
 
 <h2>Gnome</h2>
 
 <p>
-Gnome on tärkeä ohjelmakokoelma, joten monet haluavat siitä uusimmat
-versiot heti.  Siksi osa kehittäjistä kokosi uusimmat vakaat
-ohjelmat Slinkiä varten dep-paketeiksi.  Lisää tietoa on
-<a href="gnome">Slink/Gnome-sivulla</a>.
+Jos haluat käyttää uusinta Gnomea slink-järjestelmässä, lue <a
+href="http://www.gnome.org/start/getting_debian.shtml">GNOME:n
+Debian-päivityksestä</a>
 
 <h3>Apt</h3>
 
-<p>
 
-Potaton <tt>apt</tt>in päivitetty versio on saatavilla myös
-Slink-järjestelmille.  Debian-paketti on osoitteessa
-<a
-href="http://netgod.net/x/apt_0.3.7slink0_i386.deb">
-http://netgod.net/x/apt_0.3.7slink0_i386.deb</a>
-
-<p>
-
-Tämän päivitysversion tärkein hyöty on siinä, että se tukee asennusta
-usealta rompulta.  Näin <tt>dselect</tt>in
-<tt>dpkg-multicd</tt>-hankintatapa on tarpeeton.
+Päivitetty versio <code>apt</code>-ohjelmasta on mukana Debianissa
+alkaen päivityspaketista 2.1r3.  Tämän päivitysversion tärkein hyöty
+on siinä, että se tukee asennusta usealta rompulta.  Näin
+<tt>dselect</tt>in <tt>dpkg-multicd</tt>-hankintatapa on tarpeeton.
+Debian 2.1 -romput kuitenkin saattavat sisältää vanhan
+<code>apt</code>in, joten voi olla järkevää päivittää nyt Slinkissä
+olevan version avulla.
 
 <h2><a name="acquiring">Debian 2.1:n saaminen</a></h2>
 
