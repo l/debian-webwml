@@ -1,5 +1,8 @@
 require 5.006;
 
+use strict;
+use warnings;
+
 use POSIX;
 use HTML::Entities;
 use Compress::Zlib;
@@ -8,15 +11,11 @@ use URI::Escape;
 use Text::Iconv;
 Text::Iconv->raise_error(0); # do not throw exeptions
 
-use Packages::Iterator;
 use Packages::HTML;
 use Packages::I18N::Locale;
 use Deb::Versions;
 
 require( 'sections.pl' );
-
-use strict;
-use warnings;
 
 my $CHANGELOG_URL = 'http://people.debian.org/~noel/changelogs';
 my $CHANGELOG_UPSTREAM_URL = 'http://packages.debian.org/cgi-bin/get-changelog-upstream?package=';
@@ -40,25 +39,17 @@ sub progress {
     print "\r".$p_counter++;
 }
 
-sub examine_sections_walker {
-    my $pkg = shift;
+sub walk_db_packages ($\&;$) {
+    my $db = shift;
+    my $func = shift;
     my $env = shift;
-    
-    progress() if $env->{opts}{progress};
-    if ( $pkg->is_virtual ) { return; }
-    
-    my %sections = $pkg->get_arch_fields( 'section', 
-					  $env->{archs} );
-    my $section = $sections{max_unique};
-    if ( ! $section ) {
-	print Dumper( $pkg );
-	exit;
-    }      
-    if ( ! exists $env->{sections}->{$section} ) {
-	warn "W: ".$pkg->get_name." undefined section $section found\n";
-	return;
+
+    my @pkg_list = $db->get_sorted_list();
+
+    foreach (@pkg_list) {
+	my $p = $db->get_pkg( $_ );
+	&$func( $p, $env );
     }
-    $env->{sections}->{$section}[2]++;
 }
 
 sub package_index_walker {
@@ -173,7 +164,7 @@ sub print_virt_pack {
     #
     my $now_time = time_stamp();
     my $filename = "$dirname/$name.$env->{lang}.html";
-    if ( file_changed( $filename, $package_page ) ) {
+    if ( file_changed( \%md5s, $filename, $package_page ) ) {
 	sysopen(FILEH_VPACK, $filename, 
 		O_WRONLY | O_TRUNC | O_CREAT, 0664) 
 	    || die "Can\'t open file $filename: $!";
@@ -365,10 +356,9 @@ sub package_pages_walker {
 	#
 	# display dependencies
 	#
-	my $dep_list = print_deps_josip2( $env, $pkg, \%versions, 'depends' );
-#	$dep_list .= print_deps( $env, $pkg, \%versions, 'depends' );
-	$dep_list .= print_deps_josip2( $env, $pkg, \%versions, 'recommends' );
-	$dep_list .= print_deps_josip2( $env, $pkg, \%versions, 'suggests' );
+	my $dep_list = print_deps( $env, $pkg, \%versions, 'depends' );
+	$dep_list .= print_deps( $env, $pkg, \%versions, 'recommends' );
+	$dep_list .= print_deps( $env, $pkg, \%versions, 'suggests' );
 
 	if ( $dep_list ) {
 	    $package_page .= sprintf( gettext( "\n<h2>Other packages related to %s:</h2>\n" ), $name );
@@ -382,10 +372,6 @@ sub package_pages_walker {
 		"<td><font size=\"-1\"><img src=\"../../../Pics/sug.gif\" ALT=\"[sug]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'suggested' )."</font>";
 	    $package_page .= "</table></center>\n";
 	    $package_page .= "<table cellspacing=\"0\" cellpadding=\"2\">";
-#	    $package_page .= "<table cellspacing=\"2\" cellpadding=\"2\"><tr>".
-#		"<th colspan=\"2\">".gettext( 'package' )."</th>\n".
-#		"<th>".gettext( 'version' )."</th>\n".
-#		"<th>".gettext( 'architectures' )."</th></tr>\n";
 	    $package_page .= $dep_list;
 	    $package_page .= "</table>";
 	}
@@ -540,7 +526,7 @@ sub package_pages_walker {
 	
 	my $now_time = time_stamp();
 	my $filename = "$dirname/$name.$env->{lang}.html";
-	if ( file_changed( $filename, $package_page ) ) {
+	if ( file_changed( \%md5s, $filename, $package_page ) ) {
 	    sysopen(FILEH_PACK, $filename, 
 		    O_WRONLY | O_TRUNC | O_CREAT, 0664) 
 		|| die "Can\'t open file $filename: $!";
@@ -576,25 +562,12 @@ sub write_pages {
 		    };
 	    print "writing distribution indices\n" unless $opts->{quiet};
 	    $p_counter = 0;
-	    if ( $l ne 'en' ) {
-#		my $num_trans = $db->get_stats_val( 'num_translated', $l );
-#		if ( ( $num_trans/$num_descs ) < 0.1 ) {
-#		    print "skipping, there are to few translations ".
-#			"($num_trans/$num_descs)\n";
-#		    
-#		} else {
-		    write_all_package( $db, \%sections, $archs, 
-				       $dest_dir, $dist, $l, $opts, $langs );
-#		}
-	    } else {
-		write_all_package( $db, \%sections, $archs, 
-				   $dest_dir, $dist, $l, $opts, $langs );
-	    }
+	    write_all_package( $db, \%sections, $archs, 
+			       $dest_dir, $dist, $l, $opts, $langs );
 	    print "\n" if $opts->{progress};
 	    print "writing pages for individual packages\n" unless $opts->{quiet};
 	    $p_counter = 0;
 	    walk_db_packages( $db, &package_pages_walker,
-			      { distribution => $dist },
 			      { db => $db, lang => $l,
 				all_langs => $langs,
 				dest_dir => $dest_dir,
@@ -636,7 +609,6 @@ sub write_all_package {
 	    gettext( "Copyright (c) 1997-2003 SPI;\nSee <URL:http://www.debian.org/license> for the license terms.\n\n" );
 
 	walk_db_packages( $db, &package_index_walker, 
-			  { distribution => $distro },
 			  { all_package => \$all_package, db => $db,
 			    all_pkg_txt => \$all_pkg_txt, opts => $opts,
 			    lang => $lang, si => \%si, archs => $archs } );
@@ -686,250 +658,6 @@ sub write_all_package {
 }
 
 sub print_deps {
-    my ( $env, $pkg, $versions, $type) = @_;
-    my $res = "";
-    my @all_archs = ( @{$env->{archs}}, 'all' );
-    my %dep_type = ('depends' => 'dep', 'recommends' => 'rec', 
-		    'suggests' => 'sug');
-    my ( %dep_pkgs, %arch_deps );
-    foreach my $a ( @all_archs ) {
-	next unless ( exists $versions->{a2v}->{$a}
-		      && exists $pkg->{versions}->{$versions->{a2v}->{$a}}->{$a}->{$type} );
-	my @a_deps = @{$pkg->{versions}->{$versions->{a2v}->{$a}}->{$a}->{$type}};
-	foreach my $d ( @a_deps ) {
-	    my ( @dep_str, $dep_str );
-	    foreach ( @$d ) {
-		push @dep_str, $_->[0];
-	    }
-	    $dep_str = join( "|", @dep_str );
-	    $dep_pkgs{$dep_str}++;
-	    $arch_deps{$a}->{$dep_str} = $d;
-	}
-    }
-#    print Dumper( \%dep_pkgs, \%arch_deps );
-    
-    my %eq_archs;
-    foreach my $a ( @all_archs ) {
-	foreach my $a2 ( @all_archs ) {
-	    if ( ( $a ne $a2) 
-		 && ( Dumper( $arch_deps{$a} ) eq Dumper( $arch_deps{$a2} ) ) ) {
-		push @{$eq_archs{$a}}, $a2;
-		delete $arch_deps{$a2};
-	    }
-	}
-    }
-
-    if ( %dep_pkgs ) {
-	$res .= "<h4>$type</h4>\n";
-	$res .= "<table border=\"1\"><tr>".
-	    "<th colspan=\"2\">".gettext( 'package' )."</th>\n";
-	foreach my $a ( @all_archs ) {
-	    if ( exists( $versions->{a2v}->{$a} )
-		 && exists( $arch_deps{$a} ) ) {
-		if ( exists( $eq_archs{$a} )
-		     && ( @{$eq_archs{$a}} eq ( @{$env->{archs}} - 1 ) ) ) {
-		    $res .= "<th>any";
-		} elsif ( exists $eq_archs{$a} ) { 
-		    $res .= "<th>$a, ".join( ", ", @{$eq_archs{$a}} );
-		} else {
-		    $res .= "<th>$a";
-		}
-		$res .= "</th>";
-	    }
-	}
-	$res .= "</tr>";
-	foreach my $dp ( sort keys %dep_pkgs ) {
-	    $res .= "<tr><td width=\"20\" valign=\"top\"><img src=\"../../../Pics/$dep_type{$type}.gif\"". 
-		" alt=\"[$dep_type{$type}]\" width=\"16\" height=\"16\"></td><td>";
-	    my @pkgs = split /\|/, $dp;
-	    
-	    my @res_pkgs;
-	    foreach my $p_name ( @pkgs ) {
-#	    warn "$p_name\n";
-		my $fl = substr $p_name, 0, 1;
-		my $sl = substr $p_name, 0, 2;
-		my $p = $env->{db}->get_pkg( $p_name );
-		if ( $p ) {
-		    if ( $p->is_virtual ) {
-			my $short_desc = gettext( "Virtual package" );
-			push @res_pkgs, "<a href=\"../../$fl/$sl/$p_name\">$p_name</a></td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
-		    } else {
-			my %desc_md5s = $p->get_arch_fields( 'description-md5', 
-							     $env->{archs} );
-			my $short_desc = encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" );
-			push @res_pkgs, "<a href=\"../../$fl/$sl/$p_name\">$p_name</a></td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
-		    }
-		} else {
-		    my $short_desc = gettext( "Package not available" );
-		    push @res_pkgs, "$p_name</td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
-		}
-#	    warn "$short_desc\n";
-	    }
-	    $res .= "<table><tr><td>".join( "</td></tr><tr><td> ".gettext( " or " )." ", @res_pkgs )."</td></tr></table>";
-	    $res .= "</td>";
-
-	    foreach my $a ( @all_archs ) {
-		if ( exists( $versions->{a2v}->{$a} )
-		     && exists( $arch_deps{$a} ) ) {
-		    if ( exists $arch_deps{$a}->{$dp} ) {
-			my @res_vers;
-			foreach my $i ( 0 .. $#pkgs ) {
-			    if ( $arch_deps{$a}->{$dp}->[$i]->[1] ) {
-				push @res_vers, "<tr><td>".
-				    encode_entities( $arch_deps{$a}->{$dp}->[$i]->[1] ).
-				    " $arch_deps{$a}->{$dp}->[$i]->[2]</td></tr><tr><td>&nbsp;</td></tr>";
-			    } else {
-				push @res_vers, "<tr><td>".gettext( "any version" )."</td></tr><tr><td>&nbsp;</td></tr>";
-			    }
-			}
-			$res .= "<td><table><tr><td>".join( "", @res_vers )."</table></td>";
-		    } else {
-			$res .= "<td align=\"center\">--</td>";
-		    }
-		}
-	    }
-	    $res .= "</tr>\n";
-	}
-	$res .= "</table>\n";
-    }
-    
-    return $res;
-}
-
-sub print_deps_josip {
-    my ( $env, $pkg, $versions, $type) = @_;
-    my $res = "";
-    my @all_archs = ( @{$env->{archs}}, 'all' );
-    my %dep_type = ('depends' => 'dep', 'recommends' => 'rec', 
-		    'suggests' => 'sug');
-    my ( %dep_pkgs, %arch_deps );
-    foreach my $a ( @all_archs ) {
-	next unless ( exists $versions->{a2v}->{$a}
-		      && exists $pkg->{versions}->{$versions->{a2v}->{$a}}->{$a}->{$type} );
-	my @a_deps = @{$pkg->{versions}->{$versions->{a2v}->{$a}}->{$a}->{$type}};
-	foreach my $d ( @a_deps ) {
-	    my ( @dep_str, $dep_str );
-	    foreach ( @$d ) {
-		$_->[1] ||= ""; $_->[2] ||= "";
-		push @dep_str, "$_->[0]($_->[1]$_->[2])";
-	    }
-	    $dep_str = join( "|", @dep_str );
-	    $dep_pkgs{$dep_str}++;
-	    $arch_deps{$a}->{$dep_str} = $d;
-	}
-    }
-    @all_archs = sort keys %arch_deps;
-#    print Dumper( \%dep_pkgs, \%arch_deps );
-    
-    if ( %dep_pkgs ) {
-#	$res .= "<h4>$type</h4>\n";
-	my $old_dp = "";
-	my $is_old_dp = 0;
-	foreach my $dp ( sort keys %dep_pkgs ) {
-	    my $dp_v = $dp;
-	    $dp_v =~ s/\(.*?\)//g;
-	    my @pkgs = split /\|/, $dp;
-
-	    if ( $dp_v eq $old_dp ) {
-		$res .= "<tr><td></td><td>";
-		$is_old_dp = 1;
-		foreach ( @pkgs ) {
-		    s/\(.*\)$//o;
-		}
-	    } else {
-		$old_dp = $dp_v;
-		$is_old_dp = 0;
-	    
-		$res .= "<tr><td width=\"20\" valign=\"top\"><img src=\"../../../Pics/$dep_type{$type}.gif\"". 
-		    " alt=\"[$dep_type{$type}]\" width=\"16\" height=\"16\"></td><td>";
-	    }
-	    
-	    my @res_pkgs; my $pkg_ix = 0;
-	    foreach my $p_name ( @pkgs ) {
-#	    warn "before: $p_name\n";
-		$p_name =~ s/\(.*\)$//o;
-#	    warn "after: $p_name\n";
-		
-		my $fl = substr $p_name, 0, 1;
-		my $sl = substr $p_name, 0, 2;
-		my $p = $env->{db}->get_pkg( $p_name );
-
-		my $pkg_version = "";
-		foreach my $a ( @all_archs ) {
-		    if ( exists( $arch_deps{$a}->{$dp} )
-			 && $arch_deps{$a}->{$dp}->[$pkg_ix]->[1] ) {
-			$pkg_version = "(".encode_entities( $arch_deps{$a}->{$dp}->[$pkg_ix]->[1] ).
-			    " $arch_deps{$a}->{$dp}->[$pkg_ix]->[2])";
-			last;
-		    }
-		}
-
-		if ( $p ) {
-		    if ( $is_old_dp ) {
-			push @res_pkgs, "<a href=\"../../$fl/$sl/$p_name\">$p_name</a> $pkg_version";
-		    } elsif ( $p->is_virtual ) {
-			my $short_desc = gettext( "Virtual package" );
-			push @res_pkgs, "<a href=\"../../$fl/$sl/$p_name\">$p_name</a> $pkg_version</td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
-		    } else {
-			my %desc_md5s = $p->get_arch_fields( 'description-md5', 
-							     $env->{archs} );
-			my $short_desc = encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" );
-			push @res_pkgs, "<a href=\"../../$fl/$sl/$p_name\">$p_name</a> $pkg_version</td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
-		    }
-		} elsif ( $is_old_dp ) {
-		    push @res_pkgs, "$p_name $pkg_version";
-		} else {
-		    my $short_desc = gettext( "Package not available" );
-		    push @res_pkgs, "$p_name $pkg_version</td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
-		}
-		$pkg_ix++;
-#	    warn "$short_desc\n";
-	    }
-	    $res .= "<table><tr><td>".join( "</td></tr><tr><td> ".gettext( " or " )." ", @res_pkgs )."</td></tr></table>";
-	    $res .= "</td>";
-	    
-#	    my $ver_printed = 0;
-	    my ( @dependend_archs, @not_dependend_archs );
-	    foreach my $a ( @all_archs ) {
-		if ( exists( $versions->{a2v}->{$a} )
-		     && exists( $arch_deps{$a} ) ) {
-		    if ( exists $arch_deps{$a}->{$dp} ) {
-#			unless ( $ver_printed ) {
-#			    my @res_vers;
-#			    foreach my $i ( 0 .. $#pkgs ) {
-#				if ( $arch_deps{$a}->{$dp}->[$i]->[1] ) {
-#				    push @res_vers, "<tr><td>".
-#					encode_entities( $arch_deps{$a}->{$dp}->[$i]->[1] ).
-#					" $arch_deps{$a}->{$dp}->[$i]->[2]</td></tr><tr><td>&nbsp;</td></tr>";
-#				} else {
-#				    push @res_vers, "<tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>";
-#				}
-#			    }
-#			    $res .= "<td><table><tr><td>".join( "", @res_vers )."</table></td>";
-#			    $ver_printed = 1;
-#			}
-			push @dependend_archs, $a;
-		    } else {
-			push @not_dependend_archs, $a;
-		    }
-		}
-	    }
-	    if ( @dependend_archs == @all_archs ) {
-		$res .= "<td align=\"center\"></td></tr>\n";
-	    } else {
-		if ( @dependend_archs > (@all_archs/2) ) {
-		    $res .= "<td align=\"center\">not ".join( ", ", @not_dependend_archs)."</td></tr>\n";
-		} else {
-		    $res .= "<td align=\"center\">only ".join( ", ", @dependend_archs)."</td></tr>\n";
-		}
-	    }
-	}
-    }
-    
-    return $res;
-}
-
-sub print_deps_josip2 {
     my ( $env, $pkg, $versions, $type) = @_;
     my $res = "";
     my @all_archs = ( @{$env->{archs}}, 'all' );
