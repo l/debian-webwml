@@ -144,10 +144,10 @@ my $globtrans = Webwml::TransIgnore->new(".");
 
 # language configuration
 my $defaultlanguage = 'italian';
-if (exists $ENV{DWWW_LANG}) 
+if (exists $ENV{DWWW_LANG})
 {
 	$defaultlanguage = $ENV{DWWW_LANG};
-} 
+}
 elsif (open CONF, "<language.conf")
 {
 	$defaultlanguage = <CONF>;
@@ -161,7 +161,7 @@ $to =~ s%/$%%; # Remove slash from the end
 
 my $langto = $to;
 $langto =~ s,^([^/]*).*$,$1,;
-if (-e "./$langto/international/$langto/current_status.pl" && 
+if (-e "./$langto/international/$langto/current_status.pl" &&
     -e "./$langto/international/$langto/translator.db.pl") {
     print "READ PAGES DB: $langto/international/$langto/current_status.pl\n"
        if $opt_v;
@@ -346,7 +346,7 @@ sub send_mails {
 	             Filename => 'Missing_summary',
 		     Data     => $translators{$name}{"part_missing"})
 	    if defined($translators{$name}{"part_missing"});
-	foreach my $part (qw (file logs diff tdiff)) { 
+	foreach my $part (qw (file logs diff tdiff)) {
 	    if (defined($translators{$name}{"part_$part"})) {
 		foreach my $file (sort keys %{$translators{$name}{"part_$part"}}) {
 		    $translators{$name}{"msg"}->attach(
@@ -366,14 +366,14 @@ sub send_mails {
 	    $translators{$name}{"msg"}->send;
 	} else {
 	    print "didn't send mail to $name: nothing to say to him\n" unless $opt_Q;
-	}   
+	}
     }
 }
 
 sub add_part {
     my $name = shift;
     my $part = shift;
-    my $txt = shift; 
+    my $txt = shift;
     $name =~ s,<.*?>,,;
     $name =~ s,^ *(.*?) *$,$1,;
     if (verify_send($name,$part)) {
@@ -538,7 +538,8 @@ sub check_file {
 	  print $str unless ($opt_Q);
 	}
 
-	return if (defined($oldr) && ($oldr eq $revision));
+    # Return if we're up-to-date or the original is missing
+	return if (defined($oldr) && ($oldr eq $revision || $revision eq 'n/a'));
 
 	$oldname = $name;
 	$oldname =~ s/^$to/$from/;
@@ -574,7 +575,7 @@ sub check_file {
                         join("",qx(cat $name)));
             }
 	}
-	    
+
 	if ($opt_d) {
 		STDOUT->flush;
 		my $cvsline = "cvs -z3 log -r'$logoldr:$revision' '$oldname'";
@@ -585,7 +586,7 @@ sub check_file {
 		warn "Running $cvsline\n" if $opt_v;
 		system($cvsline);
 		STDOUT->flush;
-	} 
+	}
 
 	if ($opt_T) {
 	    print get_diff_txt("$oldr", "$revision", "$oldname", "$name")."\n";
