@@ -1,14 +1,15 @@
+#use wml::std::tags
+
 <perl>
 sub get_event_list {
-	my ( $path, $number, $current_dir ) = @_;
+  my ( $path, $number, $current_dir ) = @_;
 
+  $str=""; $over=""; $current=""; $unknown="";
 
-	$str=""; $over=""; $current=""; $unknown="";
-
-	opendir(DIR, "$current_dir/$path");
-  	@files = grep { /^\d+.*.wml$/ && -f "$current_dir/$path/$_" } readdir(DIR);
-  	@files = sort @files;
-  	closedir DIR;
+  opendir DIR, "$current_dir/$path" || die "Can't open $current_dir/$path: $!";
+  @files = grep { /^\d+.*.wml$/ && -f "$current_dir/$path/$_" } readdir DIR;
+  @files = sort @files;
+  closedir DIR;
 
   $count = 0;
   foreach (@files) {
@@ -18,7 +19,7 @@ sub get_event_list {
         $base = $1;
      }
      $title = ''; $when = ''; $where = ''; $desc = ''; $past = '';
-     <protect pass=2>
+<protect pass=2>
      foreach $line (<FILE>) {
         if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
            $title = $1;
@@ -39,46 +40,49 @@ sub get_event_list {
            $desc = $1;
         }
 
-		if ($title && $when && $where) {
-           $str1 = "<TR><TD width=120><TT>[$when]</TT></TD><TD><STRONG><A HREF=\"$path/$base\">$title</A></STRONG> ($where)</TD></TR>\n";
-		}
-		elsif ($title && $when) {
-           $str1 = "<TR><TD width=120><TT>[$when]</TT></TD><TD><STRONG><A HREF=\"$path/$base\">$title</A></STRONG></TD></TR>\n";
-		}
+	if ($title && $when && $where) {
+           $str1 = "
+<TR>\n
+  <TD><TT>[$when]</TT></TD>\n
+  <TD><STRONG><A HREF=\"$path/$base\">$title</A></STRONG> ($where)</TD>\n
+</TR>\n
+";
+	}
+	elsif ($title && $when) {
+           $str1 = "
+<TR>\n
+  <TD><TT>[$when]</TT></TD>\n
+  <TD><STRONG><A HREF=\"$path/$base\">$title</A></STRONG></TD>\n
+</TR>\n
+";
+	}
 
-		if ($past && $title && $when && $where ) {
-			last;
-		}
+	last if ($past && $title && $when && $where);
      }
-     </protect>
-	 if ( $past eq "yes" )
-	 {
-	 	$over .= $str1;
-	 }
-	 elsif ( $past eq "no" )
-	 {
-	 	$current .= $str1;
-	 }
-	 else
-	 {
-	 	$unknown .= $str1;
-	 }
+</protect>
+     if ( $past eq "yes" ) {   $over .= $str1;     }
+     elsif ( $past eq "no" ) { $current .= $str1;  }
+     else {                    $unknown .= $str1;  }
      close FILE;
-     if ($count eq $number) { last; }
+     last if ($count eq $number);
   }
-if ( $over eq "" && $current eq "" && $unknown eq "" )
-{
-	$str = "$path - [<none_word>]<BR>";
+  if ( $over eq "" && $current eq "" && $unknown eq "" ) {
+     $str = "$path - [<none_word>]<BR>\n";
+  } else {
+     $str = "";
+     if ( $current ) {
+       $str .= "<H3>$path <event_word></H3>\n<TABLE>\n$current\n</TABLE>\n";
+     }
+     if ( $over ) {
+       $str .= "<A HREF=\"$path/\">$path - <past_words></A> &nbsp; ";
+     }
+     if ( $unknown ) {
+       $str .= "<H3>$path Unknown (this indicates a bug)</H3>\n<TABLE>\n$unknown\n</TABLE>\n";
+     }
+  }
+  return $str;
 }
-else
-{
-	$str = "";
-	if ( $current ne "" ) { $str .= "<H3>$path <event_word></H3><TABLE>$current</TABLE>"; }
-	if ( $over ne "" ) { $str .= "<A HREF=\"./$path/\">$path - <past_words></A><BR>"; }
-	if ( $unknown ne "" ) { $str .= "<H3>$path Unknown (indicates bug)</H3><TABLE>$unknown</TABLE>"; }
-}
-return $str;
-}
+
 
 # get_past_event_list
 # This finds out if the given year (or any years if none are given) has any
@@ -87,7 +91,6 @@ return $str;
 # Sun Aug  1 18:11:02 EDT 1999
 # Added.  Code is mostly stolen from get_event_list();
 # - blackie@sfcc.net
-
 
 sub get_past_event_list {
 my $str = '';
@@ -116,8 +119,8 @@ if ($path eq '') {
 }
 
 foreach $path (@paths) {
-  opendir(DIR, "$current_dir/$path") || last;
-  @files = grep { /^\d+.*.wml$/ && -f "$current_dir/$path/$_" } readdir(DIR);
+  opendir DIR, "$current_dir/$path" || die "Can't open $current_dir/$path: $!";
+  @files = grep { /^\d+.*.wml$/ && -f "$current_dir/$path/$_" } readdir DIR;
   @files = sort @files;
   closedir DIR;
   foreach (@files) {
@@ -133,8 +136,8 @@ foreach $path (@paths) {
        }
     }
     if ($past eq 'yes') {
-    $str .= "<A HREF=\"./$path/\">$path - <past_words></A><BR>"; 
-    last;
+      $str .= "<A HREF=\"$path/\">$path - <past_words></A> &nbsp; ";
+      last;
     }
   close FILE;
   }
@@ -177,53 +180,63 @@ if ($path eq '') {
 }
 
 foreach $path (@paths) {
-my $events = '';
-my @files = ();
-opendir(DIR, "$current_dir/$path") || last;
-@files = grep { /^\d+.*.wml$/ && -f "$current_dir/$path/$_" } readdir(DIR);
-@files = sort @files;
-if ($monthorder eq 'decfirst') {
-  @files =  reverse @files;
-}
+  my $events = '';
+  my @files = ();
+  opendir DIR, "$current_dir/$path" || die "Can't open $current_dir/$path: $!";
+  @files = grep { /^\d+.*.wml$/ && -f "$current_dir/$path/$_" } readdir DIR;
+  @files = sort @files;
+  if ($monthorder eq 'decfirst') {
+    @files =  reverse @files;
+  }
 
-closedir DIR;
-foreach (@files) {
-open(FILE, "<$path/$_") || open(FILE, "<$current_dir/$path/$_");
+  closedir DIR;
+  foreach (@files) {
+  open(FILE, "<$path/$_") || open(FILE, "<$current_dir/$path/$_");
   if ( /(\d+.*).wml/ ) {
      $base = $1;
   }
-my $title = ''; my $when = ''; my $where = ''; my $desc = ''; my $past = '';
-  foreach $line (<FILE>) {     
-     <protect pass=2>
-     if ($line =~ /^#use wml::debian::past_event$/) {
-         $past = 'yes';
-         last;
-     }
-     if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
-         $title = $1;
-     }
-     elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) {
-        $when = $1;
-     }
-     elsif ($line =~ /^<define-tag where>(.*)<\/define-tag>$/) {
-        $where = $1;
-     }
-     elsif ($line =~ /^<define-tag desc>(.*)<\/define-tag>$/) {
-        $desc = $1;
-     }
-     </protect>
+  my $title = ''; my $when = ''; my $where = ''; my $desc = ''; my $past = '';
+  foreach $line (<FILE>) {
+<protect pass=2>
+    if ($line =~ /^#use wml::debian::past_event$/) {
+        $past = 'yes';
+        last;
+    }
+    if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
+        $title = $1;
+    }
+    elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) {
+       $when = $1;
+    }
+    elsif ($line =~ /^<define-tag where>(.*)<\/define-tag>$/) {
+       $where = $1;
+    }
+    elsif ($line =~ /^<define-tag desc>(.*)<\/define-tag>$/) {
+       $desc = $1;
+    }
+</protect>
   }
-if ($past ne 'yes') {
-   if ($title && $when && $where) {
-      $events .= "<TR><TD width=120><TT>[$when]</TT></TD><TD><STRONG> <A HREF=\"$path/$base\">$title</A></STRONG> ($where)</TD></TR>\n";
-   }
-   elsif ($title && $when) {
-      $events .= "<TR><TD width=120><TT>[$when]</TT></TD><TD><STRONG> <A HREF=\"$path/$base\">$title</A></STRONG></TD></TR>\n";   
-   }
-}
-close FILE;
-}
-$str .= "<H3>$path <event_word></H3><TABLE>$events</TABLE>";
+  if ($past ne 'yes') {
+     if ($title && $when && $where) {
+        $events .= "
+<TR>\n
+  <TD><TT>[$when]</TT></TD>\n
+  <TD><STRONG> <A HREF=\"$path/$base\">$title</A></STRONG> ($where)</TD>\n
+</TR>\n
+";
+     }
+     elsif ($title && $when) {
+        $events .= "
+<TR>\n
+  <TD><TT>[$when]</TT></TD>\n
+  <TD><STRONG> <A HREF=\"$path/$base\">$title</A></STRONG></TD>\n
+</TR>\n
+";
+     }
+  }
+  close FILE;
+  }
+  $str .= "<H3>$path <event_word></H3>\n<TABLE>\n$events\n</TABLE>\n";
 }
 
 return $str;
