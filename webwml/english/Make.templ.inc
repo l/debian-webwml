@@ -1,3 +1,9 @@
+$(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
+	$(WML) $(EPILOG) $(<F)
+
+$(HTMLDIR)/%.gif : %.gif
+	@cp $< $@
+
 # template dependencies
 
 template/debian/basic.wml: template/debian/navbar.wml

@@ -1,23 +1,28 @@
+# This Makefile should need no changes from webwml/english/News/Makefile
+# Please send a message to debian-www if you need to modify anything
+# so the problem can be fixed.
+
 BASE=..
 CUR_DIR=News
 
 HTMLDIR=$(BASE)/../../debian.org/$(CUR_DIR)
 TEMPLDIR=$(BASE)/template/debian
+# Do Not modify the following line
 ENGLISHSRCDIR=$(BASE)/../english
 
 include $(BASE)/Make.lang
 
-# EPILOG=--epilog=weblint
-$(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
-	wml -q $(EPILOG) $(<F)
-
-WMLFILES := $(wildcard *.wml)
-HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
-
-all: $(HTMLFILES)
+# Comment out any lines for which the directory doesn't exist.
+# The '#' should be after the <tab> or the following lines won't
+# execute with some versions of make
+all: $(HTMLFILES) $(JPGDEST)
 	( cd 1998 ; $(MAKE) )
 	( cd 1997 ; $(MAKE) )
 
 include $(BASE)/Make.templ.inc
 
-$(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(wildcard 1997/1997*.wml) $(wildcard 1998/1998*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_news.wml $(TEMPLDIR)/languages.wml
+# Do Not modify the following line
+$(HTMLDIR)/index.html.$(LANGUAGE): index.wml \
+     $(wildcard 1998/1998*.wml) \
+     $(wildcard $(ENGLISHSRCDIR)/News/1998/1998*.wml) \
+     $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_news.wml $(TEMPLDIR)/languages.wml
