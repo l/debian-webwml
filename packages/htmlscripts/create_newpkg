@@ -88,8 +88,8 @@ if (! defined $config{output}) {
 }
 
 my $fname = '';
-if ($config{output} =~ m,/([^/]+),) {
-    $fname = $1;
+if ($config{output} =~ m,/[^/]+,) {
+    $fname = basename $config{output};
 } else {
     printf STDERR "Need an output filename base.\n";
     exit 1;
@@ -164,8 +164,7 @@ foreach my $lang ( @langs ) {
 			    $date[1] );
 
     my $rss = new XML::RSS (version => '1.0');
-    $rss_link = "http://packages.debian.org/unstable/"
-	.basename($config{output});
+    $rss_link = "http://packages.debian.org/unstable/$fname";
     $rss->channel(
 		  title        => "New Debian Packages",
 		  link         => $rss_link,
@@ -202,7 +201,7 @@ foreach my $lang ( @langs ) {
 	$clist .= $config{component} eq $c ? $c : sprintf ("<a href=\"newpkg_%s\">%s</a>", $c, $c);
     }
 
-    $page .= '<p><a href="allpackages" title="'.
+    $page .= '<p class="psmallcenter"><a href="allpackages" title="'.
 	gettext( "List of all packages" ) ."\">".
 	gettext( "All packages" ) ."</a><br>(<a href=\"allpackages.$lang.txt.gz\">".
 	gettext( "compact compressed textlist" )."</a>)<br>".
