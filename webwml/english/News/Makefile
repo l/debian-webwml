@@ -19,7 +19,8 @@ all: $(HTMLFILES) $(JPGDEST)
 	( cd 1998 ; $(MAKE) )
 	( cd 1997 ; $(MAKE) )
 
-include $(BASE)/Make.templ.inc
+include $(BASE)/Make.dep.generic
+include $(BASE)/Make.dep.templ
 
 # Do Not modify the following line
 $(HTMLDIR)/index.html.$(LANGUAGE): index.wml \

@@ -28,7 +28,8 @@ all: $(HTMLFILES) $(JPGDEST)
 	( cd security; $(MAKE) )
 	( cd events; $(MAKE) )
 
-include $(BASE)/Make.templ.inc
+include $(BASE)/Make.dep.generic
+include $(BASE)/Make.dep.templ
 
 # Do Not modify the following line
 $(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(TEMPLDIR)/mainpage.wml \

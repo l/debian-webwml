@@ -19,7 +19,8 @@ MIRROR_FILES := $(patsubst %,$(HTMLDIR)/%,$(MFILES))
 
 all: $(HTMLFILES) $(JPGDEST) $(MIRROR_FILES)
 
-include $(BASE)/Make.templ.inc
+include $(BASE)/Make.dep.templ    
+include $(BASE)/Make.dep.generic
 
 $(HTMLDIR)/ftpsync: ftpsync
 	cp ftpsync $(HTMLDIR)

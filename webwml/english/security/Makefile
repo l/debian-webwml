@@ -17,5 +17,5 @@ all: $(HTMLFILES) $(JPGDEST)
 	( cd 1997 ; $(MAKE) )
 	( cd 1998 ; $(MAKE) )
 
-include $(BASE)/Make.templ.inc
-
+include $(BASE)/Make.dep.templ    
+include $(BASE)/Make.dep.generic

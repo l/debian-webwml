@@ -14,9 +14,11 @@ include $(BASE)/Make.lang
 
 all: $(HTMLFILES)
 
-#include $(BASE)/Make.templ.inc
+include $(BASE)/Make.dep.templ    
 
 # Do Not modify the following line
 $(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(wildcard 1997*.wml) $(TEMPLDIR)/basic.wml $(TEMPLDIR)/recent_list.wml
+	$(WML) index.wml
 
 $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/basic.wml $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml $(TEMPLDIR)/security.wml $(TEMPLDIR)/fixes_link.wml
+	$(WML) $(<F)
