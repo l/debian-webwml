@@ -108,6 +108,14 @@ sub init_translators {
 	 'file'      => 0,
          'compress'  => 'none' 
     },
+    'Mickael Simon' =>  {
+ 	 'email'     => 'simon.mickael@wanadoo.fr',
+         'summary'   => 2, 
+         'logs'      => 0, 
+         'diff'      => 0, 
+	 'file'      => 0,
+         'compress'  => 'none' 
+    },
     'list' => { # this is a special name containing the default addressee
          'email'      => 'debian-l10n-french@lists.debian.org',
          'missing'    => 1, 
