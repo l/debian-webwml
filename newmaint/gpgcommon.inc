@@ -42,5 +42,24 @@
         echo "</UL>";
     }
 
+
+    function print_people($db, $sql) {
+        if (! ($query = pg_exec($db, $sql))) {
+            echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+            return FALSE;
+        }
+        $rows = pg_NumRows($query);
+        for ($i = 0; $i < $rows; $i++) {
+            $row = pg_Fetch_Array($query, $i);
+            echo "<H2>";
+            echo $row["forename"], " ", $row["surname"];
+            echo " &lt;", $row["email"], "&gt;";
+            echo "</H2>\n";
+
+            print_all_places($row["id"], FALSE);
+
+        }
+    }
+
 ?>
 
