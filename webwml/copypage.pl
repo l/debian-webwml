@@ -108,7 +108,7 @@ sub copy
 	my $revision;
 	while (<CVS>)
 	{
-		if (m[^/$filename/([0-9]*\.[0-9]*)/]o)
+		if (m[^/$filename/([0-9]*\.[0-9]*)/])
 		{
 			$revision = $1;
 		}
