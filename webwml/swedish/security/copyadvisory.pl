@@ -80,6 +80,7 @@ while (<SRC>)
 {
 	next if /\$Id/;
 
+    s/^(<p>)?A problem has been discovered in\b/$1Ett problem har upptäckts i/;
 	s/We recommend that you upgrade your (.*) package immediately/Vi rekommenderar att ni uppgraderar ert $1-paket omedelbart/;
 	s/We recommend that you upgrade your (.*) packages immediately/Vi rekommenderar att ni uppgraderar era $1-paket omedelbart/;
 	s/We recommend that you upgrade your (.*) packages/Vi rekommenderar att ni uppgraderar era $1-paket/;
@@ -89,22 +90,26 @@ while (<SRC>)
 	s/format string vulnerability/formatsträngssårbarhet/;
 	s/format string vulnerabilities/formatsträngssårbarheter/;
 	s/insecure temporary files/osäkra temporära filer/;
-	s/This problem has been fixed/Detta problem har rättats/;
-	s/These problems have been fixed/Dessa problem har rättats/;
-	s/\bin version\b/i version/;
 	s/>local root exploit</>lokal rootattack</;
 	s/>remote root exploit</>fjärr-rootattack</;
 	s/>symlink attack</>attack mot symboliska länkar</;
 	s/>remote exploit</>fjärrattack</;
 	s/This has been fixed in version/Detta har rättats i version/;
+    s/this problem has been fixed in/har detta problem rättats i/;
+    s/this problem has been fixed$/har detta problem rättats/;
+    s/this problem has(?: been)?$/har detta problem/;
+	s/This problem has been fixed/Detta problem har rättats/;
+	s/These problems have been fixed/Dessa problem har rättats/;
+    s/(?:been )?fixed in version/rättats i version/;
+	s/\bin version\b/i version/;
 	s/of the Debian package/av Debianpaketet/;
 	s/upstream version/uppströmsversion/;
-	s/for the old stable distribution/för den gamla stabila utgåvan/;
-	s/for the old stable/för den gamla stabila/;
-	s/for the current stable distribution/för den nuvarande stabila utgåvan/;
-	s/for the current stable/för den nuvarande stabila/;
-	s/for the unstable distribution/för den instabila utgåvan/;
-	s/for the unstable/för den instabila/;
+	s/([Ff])or the old stable distribution/$1ör den gamla stabila utgåvan/;
+	s/([Ff])or the old stable/$1ör den gamla stabila/;
+	s/([Ff])or the current stable distribution/$1ör den nuvarande stabila utgåvan/;
+	s/([Ff])or the current stable/$1ör den nuvarande stabila/;
+	s/([Ff])or the unstable distribution/$1ör den instabila utgåvan/;
+	s/([Ff])or the unstable/$1ör den instabila/;
 	s/current stable distribution/nuvarande stabila utgåvan/;
 	s/unstable distribution/instabila utgåvan/;
 	s/The old stable distribution/Den gamla stabila utgåvan/;
