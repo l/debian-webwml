@@ -1,65 +1,106 @@
 #use wml::debian::template title="Traducción de Páginas"
-#use wml::debian::translation-check translation="1.5"
+#use wml::debian::translation-check translation="1.12"
 
 <P>Para hacer el trabajo de los traductores tan fácil como sea posible, las
 páginas se generan de forma algo diferente a como muchos de ustedes
 están acostumbrados. Las páginas web se actualizan realmente usando fuentes
-que están escritas con <a href="http://www.engelschall.com/sw/wml/"><tt>wml</tt></a>.
+que están escritas con
+<a href="http://www.engelschall.com/sw/wml/"><tt>wml</tt></a>.
 Hay diferentes directorios para cada idioma.
 
-<h3>Introducción</h3>
+<p>Si piensa comenzar una nueva traducción del servidor web de Debian,
+por favor salte para <a href="#overview">introducción</a>.
 
-<p>Para empezar una nueva traducción, alguien ha de editar primero los ficheros
-de plantillas wml en <tt>english/template/debian/*.wml</tt> y añadir 
-secciones para su idioma. La página acerca del <a href="using_wml">uso de wml</a>
-contiene información sobre las secciones de idioma, que puede encontrar de ayuda al traducir los
-ficheros de las plantillas.
+<h3>Traducción de páginas individuales</h3>
+
+<p>Por favor no traduzca los ficheros HTML ya que eso no nos ayudará.
+Debido a que usamos WML para el mantenimiento y creación de las páginas web,
+el contenido y los elementos generales se almacenan por separado. Si quiere
+ayudar con una traducción en particular, copie por favor en su disco la
+versión mas reciente de la fuente de las páginas web,
+<a href="using_cvs">usando CVS</a>. Tendrá que
+bajarse por lo menos los directorios <tt>english/</tt> y
+<tt>&lt;su-idioma&gt;/</tt>.
+
+<p>Para traducir una página individual del inglés a su idioma, copie el
+fichero original .wml de <tt>english/foo/bar</tt> para
+<tt>&lt;su-idioma&gt;/foo/bar</tt>. Adicione #use
+wml::debian::translation-check después del último comando #use que exista.
+Lea por favor los detalles sobre <a href="uptodate">translation-check</a>.
+Podrá querer utilizar también el script <tt>copypage.pl</tt> en el directorio
+raíz webwml para copiar la página que quiere y adicionar el encabezado
+automáticamente. Después de haber hecho esto, traduzca la página completa
+y envíesela a <a href="translation_coordinators">alguien</a> con autorización
+para escribir en el repositorio CVS. Debería poder chequear la página usando
+el comando <tt>make +fichero.&lt;idioma&gt;.html</tt> (Nota del traductor: en
+español "idioma" se substituye por "es").
+
+<h3><a name="overview">Introducción - Comienzo de una nueva traducción</a></h3>
+
+<p>Para empezar una nueva traducción, alguien ha de editar primero los
+ficheros de plantillas wml en <tt>english/template/debian/*.wml</tt> (y los
+ficheros de menú en <tt>english/ports/menu.inc</tt>, si las páginas de port
+van a ser traducidas más tarde) añadiendo secciones para su idioma. La página
+acerca del <a href="using_wml">uso de wml</a> contiene información sobre las
+secciones de idioma, que puede encontrar de ayuda al traducir los ficheros de
+las plantillas.
 
 <p>Lo siguiente que hay que hacer es crear un nuevo directorio para la
-traducción, y copiar los ficheros <tt>Make*</tt> y <tt>.wmlrc</tt> del directorio
-english/ al directorio de la nueva traducción.
+traducción, y copiar los ficheros <tt>Make*</tt> y <tt>.wmlrc</tt> del
+directorio english/ al directorio de la nueva traducción.
 
-<p>Los ficheros Makefile han sido diseñados para que casi nada necesite
-ser modificado cuando se copien al directorio de un nuevo idioma en la preparación
+<p>Los ficheros Makefile han sido diseñados para que casi nada necesite ser
+modificado cuando se copien al directorio de un nuevo idioma en la preparación
 de la traducción.
 
 <p>Las siguientes son las únicas modificaciones que pueden anticiparse:
 
 <ol>
-  <li>La variables LANGUAGE ha de cambiarse en el fichero webwml/&lt;language&gt;/Make.lang.
+  <li>La variable LANGUAGE ha de cambiarse en el fichero
+  webwml/&lt;su-idioma&gt;/Make.lang.
 
-  <li>Las variables CUR_LANG, CUR_ISO_LANG y CHARSET han de cambiarse en el fichero
-      webwml/&lt;language&gt;/.wmlrc.
+  <li>Las variables CUR_LANG, CUR_ISO_LANG y CHARSET han de cambiarse en el
+  fichero
+      webwml/&lt;su-idioma&gt;/.wmlrc.
 
-  <li>Algunos idiomas pueden necesitar un procesamiento adicional para manejar el
-      conjunto de caracteres. Ésto puede hacerse usando las opciones
-      --prolog y --epilog de wml. Utilice las variables
-      WMLPROLOG y WMLEPILOG de Make.lang para hacerlo.
+  <li>Algunos idiomas pueden necesitar un procesamiento adicional para manejar
+   el conjunto de caracteres. Ésto puede hacerse usando las opciones --prolog
+   y --epilog de wml. Utilice las variables WMLPROLOG y WMLEPILOG de Make.lang
+   para hacerlo.
 </ol>
 
-<p>Si en un fichero hay apartados que no han de traducirse encontrará comentarios
-que lo indicarán, respételos.
+<p>Si en un fichero hay apartados que no han de traducirse encontrará
+comentarios que lo indicarán; respételos.
 
-<p>Nota: si encuentra que necesita hacer cualquier otro cambio, envíe un correo a
-debian-www diciendo que necesita cambiar y por qué, para que el problema pueda
-se corregido.
+<p>Nota: si encuentra que necesita hacer cualquier otro cambio, envíe un
+mensaje de correo a debian-www diciendo qué necesita cambiar y por qué, para
+que el problema pueda se corregido.
 
 <p>Puede ignorar los subdirectorios listados en la variable SUBS de un fichero
 Makefile, incluso si no existen en el directorio de traducción. Cuando usted
-traduzca un subdirectorio, asegúrese de que está mencionado en la variable SUBS del
-Makefile en su directorio padre, o no conseguirá que sea construido.
+traduzca un subdirectorio, asegúrese de que está mencionado en la variable
+SUBS del Makefile en su directorio padre, o no conseguirá que sea construido.
 
 <p>Ahora puede empezar a traducir ficheros *.wml. Copie cada fichero desde
-../english/, tradúzcalo, pruébelo con <tt>make fichero.&lt;lang&gt;.html</tt> (y <tt>weblint
-fichero.wml</tt>), y cuando haya terminado, envíelo <a href="using_cvs">al
-CVS</a>. Dado que nosotros usamos la <a href="../intro/cn">negociación de contenido</a>
-los ficheros HTML no se nombran <tt>ficheros.html</tt> sino
-<tt>fichero.&lt;lang&gt;.html</tt> donde <tt>&lt;lang&gt;</tt> es el
-código de dos letras del idioma, de acuerdo con la ISO 639 (por ejemplo <tt>fr</tt>
-para el francés).
+../english/, tradúzcalo, pruébelo con <tt>make fichero.&lt;lang&gt;.html</tt>
+(y <tt>weblint fichero.wml</tt>), y cuando haya terminado, envíelo <a
+href="using_cvs">al CVS</a>. Por favor asegúrese de que su traducción puede
+ser usada para generar páginas html, porque de otra forma el proceso de
+construcción de todo el "site" puede fallar.
+
+<p>Cuando copie ficheros del directorio english/, no copie en su directorio
+los directorios CVS, o los ficheros dentro de él. Si lo hace accidentalmente e
+introduce sus alteraciones más tarde, cvs substituirá los ficheros en inglés
+con sus traducciones, lo cual confundirá e irritará a muchos.
+
+<p>Dado que usamos <a href="../intro/cn">negociación de contenido</a> los
+ficheros HTML no se nombran <tt>fichero.html</tt> sino
+<tt>fichero.&lt;idioma&gt;.html</tt> donde <tt>&lt;idioma&gt;</tt> es el
+código de dos letras del idioma, de acuerdo con la norma ISO 639 (por ejemplo
+<tt>es</tt> para el español).
 
 <p>Nota: cuando se traduce una página por primera vez, los otros idiomas no
-crearán enlaces a su página hasta que son regenerados.
+crearán enlaces a su página hasta que no sean regenerados.
 
 <h3>El resto de la historia</h3>
 
@@ -68,18 +109,23 @@ A continuación hay un número de enlaces que le explicarán los pasos anteriores
 con más detalle y le proveerán con información de ayuda adicional.
 
 <ul>
-<li>Le proveemos con un número de <a href="examples">ejemplos</a> para darle una
+<li>Algunos <a href="examples">ejemplos</a> para darle una
     idea más clara de como puede empezar.
-<li>Respondemos a un número de cuestiones comunes y le proveemos con consejos
-    de ayuda en la página <a href="translation_hints">consejos de traducción</a>.
-<li>Para dar a sus páginas un toque competitivo, mire 
-    <a href="navbar_images">traduzca las imágenes de la barra de navegación</a>.
-<li>La mayoría de las traducciones usan el programa <a href="uptodate">check_trans</a>
-    para ayudar a mantener actualizada la traducción.
-<li><a href="http://people.debian.org/~joey/webwml/">Estadísticas de la Traducción del Sitio Web</a> contiene un informe público acerca de todas las traducciones.
+<li>Respuestas a alguna preguntas comunes con consejos
+    de ayuda, en la página <a href="translation_hints">consejos de
+    traducción</a>.
+<li>Para dar a sus páginas un toque profesional, consulte 
+    <a href="navbar_images">traducción de las imágenes de la barra de
+    navegación</a>.
+<li>La mayoría de las traducciones usan el programa
+       <a href="uptodate">check_trans</a> para ayudar a mantener actualizada
+       la traducción.
+<li><a href="http://people.debian.org/~joey/webwml/">Estadísticas de la
+       Traducción del Sitio Web</a>; contiene un informe público acerca de
+       todas las traducciones.
 </ul>
 
-<P>Esperamos que encuentre que el trabajo que hemos hecho haga que la traducción de las
-páginas sea tan sencilla como sea posible. Como ya hemos mencionado, si tiene
-alguna cuestión, puede preguntarla en la lista de correo
+<P>Esperamos que encuentre que el trabajo que hemos hecho haga que la
+traducción de las páginas sea tan sencilla como sea posible. Como ya hemos
+mencionado, si tiene alguna cuestión, puede preguntarla en la lista de correo
 <a href="mailto:debian-www@lists.debian.org">debian-www</a>.
