@@ -8,16 +8,21 @@ LANGUAGES := english chinese croatian danish dutch esperanto finnish \
 # arabic
 
 LANGUAGES-install := $(addsuffix -install,$(LANGUAGES))
+LANGUAGES-clean:= $(addsuffix -clean,$(LANGUAGES))
 
 .SUFFIXES: 
 .PHONY: install all $(LANGUAGES) $(LANGUAGES-install)
 
 install: $(LANGUAGES-install)
+clean: $(LANGUAGES-clean)
 
 all: $(LANGUAGES)
 
 $(LANGUAGES-install):
 	$(MAKE) -C $(subst -install,,$@) install
+
+$(LANGUAGES-clean):
+	$(MAKE) -C $(subst -clean,,$@) clean
 
 $(LANGUAGES):
 	$(MAKE) -C $@
