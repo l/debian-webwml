@@ -1,4 +1,4 @@
-# This Makefile should need no change from webwml/english/ports/hppa/Makefile
+# This Makefile should need no change from webwml/english/ports/ia64/Makefile
 # Please send a message to debian-www if you need to modify anything, so the
 # problem can be fixed.
 
