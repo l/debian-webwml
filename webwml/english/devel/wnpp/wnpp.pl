@@ -98,6 +98,7 @@ foreach (sort { $rfa{$a} cmp $rfa{$b} } keys %rfa) {
     push @rfa_bypackage_html, "\n<li><a href=\"http://bugs.debian.org/$_\">$rfa{$_}</a>";
     push @rfa_bypackage_html, "\n";
 }
+if ($rfa_bypackage_html == 0) { @rfa_bypackage_html = ('<li>No requests for adoption') }
 
 foreach $maint (sort keys %rfabymaint) {
     push @rfa_bymaint_html, "<li>$maint";
@@ -108,16 +109,19 @@ foreach $maint (sort keys %rfabymaint) {
     push @rfa_bymaint_html, "</ul>";
     push @rfa_bymaint_html, "\n";
 }
+if ($rfa_bymaint_html == 0) { @rfa_bymaint_html = ('<li>No requests for adoption') }
 
 foreach (sort { $orphaned{$a} cmp $orphaned{$b} } keys %orphaned) {
     push @orphaned_html, "<li><a href=\"http://bugs.debian.org/$_\">$orphaned{$_}</a>";
     push @orphaned_html, "\n";
 }
+if ($orphaned_html == 0) { @orphaned_html = ('<li>No orphaned packages') }
 
 foreach (sort { $withdrawn{$a} cmp $withdrawn{$b} } keys %withdrawn) {
     push @withdrawn_html, "<li><a href=\"http://bugs.debian.org/$_\">$withdrawn{$_}</a>";
     push @withdrawn_html, "\n";
 }
+if ($withdrawn_html == 0) { @withdrawn_html = ('<li>No withdrawn packages') }
 
 foreach (sort { $ita{$a} cmp $ita{$b} } keys %ita) {
     push @being_adopted_html, 
@@ -128,6 +132,7 @@ foreach (sort { $ita{$a} cmp $ita{$b} } keys %ita) {
          "$age{$_} days in adoption\n";
     push @being_adopted_html, "\n";
 }
+if ($being_adopted_html == 0) { @being_adopted_html = ('<li>No packages waiting to be adopted') }
 
 foreach (sort { $itp{$a} cmp $itp{$b} } keys %itp) {
     push @being_packaged_html, 
@@ -138,6 +143,7 @@ foreach (sort { $itp{$a} cmp $itp{$b} } keys %itp) {
          "$age{$_} days in preparation\n";
     push @being_packaged_html, "\n";
 }
+if ($being_packaged_html == 0) { @being_packaged_html = ('<li>No packages waiting to be packaged') }
 
 foreach (sort { $rfp{$a} cmp $rfp{$b} } keys %rfp) {
     push @requested_html, 
@@ -147,5 +153,6 @@ foreach (sort { $rfp{$a} cmp $rfp{$b} } keys %rfp) {
     else { push @requested_html, "requested $age{$_} days ago.\n" };
     push @requested_html, "\n";
 }
+if ($requested_html == 0) { @requested_html = ('<li>No Requested packages') }
 
 </perl>
