@@ -1,7 +1,13 @@
 <:
 my $file = "$(ENGLISHDIR)/Bugs/pseudo-packages.description";
+my %pseudos = ();
 open I, "$file" or die "Can't open $file file: $!\n";
-while (<I>) { if (/^(\S+)\s+(.*)$/) { my ($foo) = $2; $pseudos{$1} = $foo =~ s/&/&amp;/g; } }
+while (<I>) {
+  if (/^(\S+)\s+(.+)$/) {
+    my $foo = $2;
+    ($pseudos{$1} = $foo) =~ s/&/&amp;/g;
+  }
+}
 close I;
 %pseudos || die "%pseudos is not set -- empty $file file?\n";
 foreach $a (sort keys %pseudos) {
