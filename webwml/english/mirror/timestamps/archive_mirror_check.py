@@ -95,6 +95,8 @@ while 1:
 		if site.has_key('site') and site.has_key('archive-http') and official.search(site['site']):
 			mirror = 'http://' + site['site'] + site['archive-http'] + 'project/trace/'
 			check_site(mirror, site['archive-http'] + 'project/')
+			if site.has_key('maintainer'):
+				print "  Maintainer: " + site['maintainer']
 		site = {}
 		sitenotempty = 0
 	elif cont_line.match(newline):
