@@ -5,16 +5,20 @@
 WMLBASE=.
 CUR_DIR=
 SUBS=Bugs MailingLists News Pics consultants devel distrib doc events intro \
-international logos mirror misc partners ports releases security vote y2k
+international logos mirror misc partners ports releases security vote y2k \
+chinese searchtmpl
 
 include $(WMLBASE)/Make.lang
 
+CUR_YEAR ?= $(shell date +%Y)
 
 # Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
-		$(wildcard News/2000/2000*.wml) $(wildcard $(ENGLISHSRCDIR)/News/2000/2000*.wml) \
-		$(wildcard security/2000/2000*.wml) $(wildcard $(ENGLISHSRCDIR)/security/2000/2000*.wml) \
+		$(wildcard News/$(CUR_YEAR)/[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/[0-9]*.wml) \
+		$(wildcard security/$(CUR_YEAR)/dsa-[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-[0-9]*.wml) \
 		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
 		$(ENGLISHSRCDIR)/releases/info
 	$(WML) index.wml
 
+install::
+	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
