@@ -1,5 +1,5 @@
 # translation-check version="1.1"
-<p>Andere Seiten der Fehlerdatenbank:
+<p>Weitere Seiten der Fehlerdatenbank:
 
 <ul>
   <li><a href="./">Hauptseite der Fehlerdatenbank.</a>
