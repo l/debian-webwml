@@ -507,16 +507,16 @@ sub get_stats_podebconf {
                         $str .= "<tr bgcolor=\"".
                               get_color(percent_stat($stat)).
 		              "\"><td>";
+                        if ($stat =~ m/^(\d+)t(\d+)f(\d+)u$/) {
+                                $score{$lang} += $1;
+                                $str .= '*' if $curtotal != ($1 + $2 + $3);
+                        }
 		        $str .= (percent_stat($stat) eq "100%" ? $pkg : "<a href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>");
 		        $str .= "</td><td>".show_stat($stat)."</td><td><a href=\"";
                         $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/$opt_d/";
                         $str .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>";
 		        $str .= "<td>$translator</td>".
                               "</tr>\n";
-                        if ($stat =~ m/^(\d+)t(\d+)f(\d+)u$/) {
-                                $score{$lang} += $1
-                                        if $curtotal == ($1 + $2 + $3);
-                        }
 		    	if (percent_stat($stat) eq "100%") {
                            $done{$lang}  = '' unless defined($done{$lang});
 			   $done{$lang} .= $str;
