@@ -143,7 +143,7 @@ my $altcvs = $cvs->new();
 my $globtrans = Webwml::TransIgnore->new(".");
 
 # language configuration
-my $defaultlanguage = 'italian';
+my $defaultlanguage = '';
 if (exists $ENV{DWWW_LANG})
 {
 	$defaultlanguage = $ENV{DWWW_LANG};
@@ -158,6 +158,11 @@ elsif (open CONF, "<language.conf")
 my $from = 'english';
 my $to = shift || $defaultlanguage;
 $to =~ s%/$%%; # Remove slash from the end
+
+if ($to eq '')
+{
+	die "Language not defined in DWW_LANG, language.conf or on command line\n";
+}
 
 my $langto = $to;
 $langto =~ s,^([^/]*).*$,$1,;
@@ -262,9 +267,26 @@ if ($opt_M) {
 		my $destination = $makefile;
 		$destination =~ s/^$from/$to/o;
 		if (-e $destination) {
-			STDOUT->flush;
-			system("diff -u $destination $makefile");
-			STDOUT->flush;
+            # First check if the destination makefile simply includes the english
+            # version
+            my $includes = 0;
+            if (open MK, "<$destination")
+            {
+                my $firstline = <MK>;
+                close MK;
+                $includes = 1 if $firstline =~ m'^include.*subst webwml/.*,webwml/english,.*CURDIR.*Makefile';
+            }
+            else
+            {
+                warn "Cannot read $from: $!\n";
+            }
+            unless ($includes)
+            {
+                # Otherwise show any differences
+                STDOUT->flush;
+                system("diff -u $destination $makefile");
+                STDOUT->flush;
+            }
 		}
 	}
 }
