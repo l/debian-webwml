@@ -13,7 +13,7 @@
    [EO:Debian for PA-RISC:]
    [ES:Debian para PA-RISC:]
    [FI:Debian for PA-RISC:]
-   [FR:Debian for PA-RISC:]
+   [FR:Debian pour PA-RISC:]
    [HR:Debian for PA-RISC:]
    [HU:Debian for PA-RISC:]
    [IT:Debian per PA-RISC:]
