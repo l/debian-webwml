@@ -37,12 +37,7 @@ install:: $(HTMLDESTFILES)
 ifeq ($(LANGUAGE),en)
 	@install -d $(HTMLDIR)/current
 	@rm -f $(HTMLDIR)/current/issue
-	@# Detect year boundries and keep the link working.
-	@if [ -d "../$(YEAR)/$(shell cat CURRENT-ISSUE-IS)" ]; then \
-		ln -sf ../$(YEAR)/$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue ; \
-	else \
-		ln -sf ../$(shell expr $(YEAR) - 1)/$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue ; \
-	fi
+	@ln -sf ../$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
 endif
 
 # This is used by the install rule, and I had to hack on it, overriding
