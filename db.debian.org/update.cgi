@@ -107,7 +107,7 @@ if (!($query->param('doupdate'))) {
     # create a md5 crypted password
     $newpassword = '{crypt}'.crypt($query->param('newpass'), &Util::CreateCryptSalt(1));
     
-    LDAPUpdate($ldap, $editdn, 'userPassword', $newpassword);
+    &Util::LDAPUpdate($ldap, $editdn, 'userPassword', $newpassword);
     &Util::UpdateAuthToken($authtoken, $query->param('newpass'));
   }  
 
@@ -118,21 +118,21 @@ if (!($query->param('doupdate'))) {
   ($lat, $long) = &Util::CheckLatLong($query->param('latitude'), 
                                       $query->param('longitude'));
   
-  LDAPUpdate($ldap, $editdn, 'postalAddress', $newstaddress);
-  LDAPUpdate($ldap, $editdn, 'l', $query->param('l'));
-  LDAPUpdate($ldap, $editdn, 'latitude', $lat);
-  LDAPUpdate($ldap, $editdn, 'longitude', $long);
-  LDAPUpdate($ldap, $editdn, 'c', $query->param('country'));
-  LDAPUpdate($ldap, $editdn, 'postalcode', $query->param('postalcode'));
-  LDAPUpdate($ldap, $editdn, 'telephoneNumber', $query->param('telephonenumber'));
-  LDAPUpdate($ldap, $editdn, 'facsimileTelephoneNumber', $query->param('facsimiletelephonenumber'));
-  LDAPUpdate($ldap, $editdn, 'loginShell', $query->param('loginshell'));
-  LDAPUpdate($ldap, $editdn, 'emailForward', $query->param('email'));
-  LDAPUpdate($ldap, $editdn, 'privatesub', $query->param('privatesub'));
-  LDAPUpdate($ldap, $editdn, 'ircNick', $query->param('ircnick'));
-  LDAPUpdate($ldap, $editdn, 'icquin', $query->param('icquin'));
-  LDAPUpdate($ldap, $editdn, 'labeledUrl', $query->param('labeledurl'));
-  LDAPUpdate($ldap, $editdn, 'onvacation', $query->param('onvacation'));
+  &Util::LDAPUpdate($ldap, $editdn, 'postalAddress', $newstaddress);
+  &Util::LDAPUpdate($ldap, $editdn, 'l', $query->param('l'));
+  &Util::LDAPUpdate($ldap, $editdn, 'latitude', $lat);
+  &Util::LDAPUpdate($ldap, $editdn, 'longitude', $long);
+  &Util::LDAPUpdate($ldap, $editdn, 'c', $query->param('country'));
+  &Util::LDAPUpdate($ldap, $editdn, 'postalcode', $query->param('postalcode'));
+  &Util::LDAPUpdate($ldap, $editdn, 'telephoneNumber', $query->param('telephonenumber'));
+  &Util::LDAPUpdate($ldap, $editdn, 'facsimileTelephoneNumber', $query->param('facsimiletelephonenumber'));
+  &Util::LDAPUpdate($ldap, $editdn, 'loginShell', $query->param('loginshell'));
+  &Util::LDAPUpdate($ldap, $editdn, 'emailForward', $query->param('email'));
+  &Util::LDAPUpdate($ldap, $editdn, 'privatesub', $query->param('privatesub'));
+  &Util::LDAPUpdate($ldap, $editdn, 'ircNick', $query->param('ircnick'));
+  &Util::LDAPUpdate($ldap, $editdn, 'icquin', $query->param('icquin'));
+  &Util::LDAPUpdate($ldap, $editdn, 'labeledUrl', $query->param('labeledurl'));
+  &Util::LDAPUpdate($ldap, $editdn, 'onvacation', $query->param('onvacation'));
 
   # when we are done, reload the page with the updated details.
   my $url = "$proto://$ENV{SERVER_NAME}/$config{webupdateurl}?id=$id&authtoken=$authtoken&editdn=";
@@ -142,18 +142,3 @@ if (!($query->param('doupdate'))) {
 
 $ldap->unbind;
 
-sub LDAPUpdate {
-  my $ldap = shift;
-  my $dn = shift;
-  my $attr = shift;
-  my $val = shift;
-  my $mesg;
-  
-  if (!$val) {
-    $mesg = $ldap->modify($dn, delete => { $attr => [] });
-  } else {
-    $val = [ $val ] if (!ref($val));
-    $mesg = $ldap->modify($dn, replace => { $attr => $val });
-    $mesg->code && &Util::HTMLError("error updating $attr: ".$mesg->error);
-  }
-}
