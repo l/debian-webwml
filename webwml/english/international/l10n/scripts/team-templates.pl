@@ -58,7 +58,7 @@ if (defined ($team) && $team ne "") {
     }
     print $header."</table>";
 } else {
-    open(IN,"../data/langs")||open(IN,"data/langs")||die ("Can't read the list of languages.\nThe Makefile is still faulty.\nRun make data/langs manually and report the bug\n");
+    open(IN,"../data/langs")||open(IN,"$(ENGLISHDIR)/international/l10n/data/langs")||die ("Can't read the list of languages.\nThe Makefile is still faulty.\nRun make data/langs manually and report the bug\n");
     foreach $line (<IN>){
 	next unless $line =~ m,^templates:,;
 	$line =~ m,^([^:]*):(.*)$,;

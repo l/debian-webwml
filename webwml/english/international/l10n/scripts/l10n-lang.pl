@@ -4,10 +4,7 @@
 <:
 $cur_lang = "$(CUR_LANG)";
 
-
-
-
-open(IN,"../data/langs")||open(IN,"data/langs")||die ("Can't read the list of languages.\nThe makefile is still faulty.\nRun make data/langs manually and report the bug");
+open(IN,"../data/langs")||open(IN,"$(ENGLISHDIR)/international/l10n/data/langs")||die ("Can't read the list of languages.\nThe makefile is still faulty.\nRun make data/langs manually and report the bug");
 
 print "<ul>\n";
 foreach $line (<IN>){
