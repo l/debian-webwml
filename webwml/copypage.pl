@@ -159,7 +159,11 @@ sub copy
 	# Sanity checks
 	die "Directory $srcdir does not exist\n" unless -d $srcdir;
 	die "File $srcfile does not exist\n"     unless -e $srcfile;
-	die "File $dstfile already exists\n"     if     -e $dstfile;
+	if (-e $dstfile)
+	{
+		warn "File $dstfile already exists\n";
+		return;
+	}
 
 	# Check if destination exists, if not - create it
 	unless (-d $dstdir)
