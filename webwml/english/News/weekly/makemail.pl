@@ -2,6 +2,9 @@
 # Generates debian weekly news in text format, suitable for mailing to
 # debian-news, of the current issue that is on the web site. Or, if you
 # pass an url as the first parameter, will use the issue there instead.
+
+use locale;
+
 my $current_issue=`cat CURRENT-ISSUE-IS`;
 chomp $current_issue;
 my $url=shift || "http://www.debian.org/News/weekly/$current_issue/";
@@ -36,10 +39,6 @@ while (<IN>) {
 		# Fix up links.
 		s/\[(\d+)\]/$highlink=$1; "[".($1 - $skippedlinks)."]"/eg;
 
-		# Put the [42] behind the word linked.  Footnotes are always 
-		# after, not before
-		s/\[(\d+)\]([-\w]+)/${2}[$1]/g;
-	
 		print $_;
 
 	}
