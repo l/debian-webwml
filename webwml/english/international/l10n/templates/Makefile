@@ -43,3 +43,5 @@ clean::
 	-rm -rf gen
 	-rm -f tmpl.$(LANGUAGE).tmpl
 
+install:: $(patsubst %,$(HTMLDIR)/%,$(HTML_TEMPLATES))
+
