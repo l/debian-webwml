@@ -75,12 +75,12 @@ sub print_virt_pack {
     $package_page .= "[&nbsp;".gettext( "Distribution:" )." <a title=\"".gettext( "Overview over this distribution" )."\" href=\"../\">$env->{distribution}</a>&nbsp;]\n";
     $package_page .= "[&nbsp;".gettext( "Section:" )." <a title=\"".gettext( "All packages in this section" )."\" href=\"../virtual/\">virtual</a>&nbsp;]\n";
 
-    $package_page .= sprintf( gettext( "<h1>Virtual Package: %s</h1>" ), 
+    $package_page .= sprintf( "<h1>".gettext( "Virtual Package: %s" )."</h1>", 
 			      $name );
 
-    $package_page .= gettext( "<p>This is a <em>virtual package</em>. See the <a href=\"$POLICY_URL\">Debian policy</a> for a <a href=\"${POLICY_URL}ch-binary.html#s-virtual_pkg\">definition of virtual packages</a>.</p>\n" );
+    $package_page .= "<p>".gettext( "This is a <em>virtual package</em>. See the <a href=\"$POLICY_URL\">Debian policy</a> for a <a href=\"${POLICY_URL}ch-binary.html#s-virtual_pkg\">definition of virtual packages</a>." )."</p>\n";
 
-    $package_page .= sprintf( gettext( "<h2>Packages providing %s:</h2>" ),
+    $package_page .= sprintf( "<h2>".gettext( "Packages providing %s:" )."</h2>",
 			      $name );
     $package_page .= "<dl>\n";
     foreach my $p ( @{$pkg->{provided_by}} ) {
@@ -244,7 +244,7 @@ sub package_pages_walker {
 	$package_page .= "[&nbsp;".gettext( "Distribution:" )." <a title=\"".gettext( "Overview over this distribution" )."\" href=\"../\">$env->{distribution}</a>&nbsp;]\n";
 	$package_page .= "[&nbsp;".gettext( "Section:" )." <a title=\"".gettext( "All packages in this section" )."\" href=\"../$section/\">$section</a>&nbsp;]\n";
 
-	$package_page .= sprintf( gettext( "<h1>Package: %s (%s)" ),
+	$package_page .= sprintf( "<h1>".gettext( "Package: %s (%s)" ),
 				  $name, $v_str );
 
 	my ( $is_security, $is_nonus ) = ( 0, 0 );
@@ -268,13 +268,15 @@ sub package_pages_walker {
 	    unless $unique_version;
 
 	if ($env->{distribution} eq "experimental") {
-	    $package_page .= gettext( "<h2 style=\"color: red\">Experimental package</h2>\n".
-				      "<p>Warning: This package is from the <font color=\"red\">experimental</font> distribution. That means it is likely unstable or buggy, and it may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.</p>".
-				      "<p>Users of experimental packages are encouraged to contact the package maintainers directly in case of problems.</p>" );
+	    $package_page .= "<h2 style=\"color: red\">".
+		gettext( "Experimental package")."</h2>\n<p>".
+		gettext( "Warning: This package is from the <font color=\"red\">experimental</font> distribution. That means it is likely unstable or buggy, and it may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.")."</p><p>".
+		gettext( "Users of experimental packages are encouraged to contact the package maintainers directly in case of problems." )."</p>";
 	}
 	if ($archive eq "debian-installer") {
-	    $package_page .= gettext( "<h2 style=\"color: red\">debian-installer udeb package</h2>\n".
-				      "<p>Warning: This package is intended for the use in building <a href=\"http://www.debian.org/devel/debian-installer\">debian-installer</a> images only. Do not install it on a normal Debian system.</p>" );
+	    $package_page .= "<h2 style=\"color: red\">".
+		gettext( "debian-installer udeb package")."</h2>\n<p>".
+		gettext( "Warning: This package is intended for the use in building <a href=\"http://www.debian.org/devel/debian-installer\">debian-installer</a> images only. Do not install it on a normal Debian system." )."</p>";
 	}
 	$package_page .= "<h2><em>$short_desc</em></h2>\n";
 
@@ -288,9 +290,9 @@ sub package_pages_walker {
 	$dep_list .= print_deps( $env, $pkg, \%versions, 'suggests' );
 
 	if ( $dep_list ) {
-	    $package_page .= sprintf( gettext( "\n<h2>Other packages related to %s:</h2>\n" ), $name );
+	    $package_page .= sprintf( "\n<h2>".gettext( "Other packages related to %s:" )."</h2>\n", $name );
 	    if ($env->{distribution} eq "experimental") {
-		$package_page .= gettext( "<p>Note that the \"<font color=\"red\">experimental</font>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution.</p>" );
+		$package_page .= "<p>".gettext( "Note that the \"<font color=\"red\">experimental</font>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution." )."</p>";
 	    }
 
 	    $package_page .= "<center><table border=\"1\"><tr>\n";
@@ -307,7 +309,7 @@ sub package_pages_walker {
 	# Download package
 	#
 	my $encodedpack = uri_escape( $name );
-	$package_page .= sprintf( gettext( "<h2>Download %s</h2>\n" ),
+	$package_page .= sprintf( "<h2>".gettext( "Download %s\n" )."</h2>",
 				  $name ) ;
 	$package_page .= "<table border=\"0\" summary=\"\">\n";
 	$package_page .= "\n<tr><td></td>\n";
@@ -326,7 +328,7 @@ sub package_pages_walker {
 		}
 		$package_page .=  "<input type=\"submit\" value=\" $a \">\n";
 		if ( $env->{distribution} ne "experimental" ) {
-		    $package_page .= "<br>".sprintf( gettext( "<small>[<a href=\"%s\">list of files</a></small>]\n" ), "$FILELIST_URL$encodedpack&amp;version=$env->{distribution}&amp;arch=$a", $name );
+		    $package_page .= "<br>".sprintf( "<small>[<a href=\"%s\">".gettext( "list of files" )."</a></small>]\n", "$FILELIST_URL$encodedpack&amp;version=$env->{distribution}&amp;arch=$a", $name );
 		}
 		$package_page .= "</form>\n";
 		$package_page .= "</td>\n";
@@ -355,9 +357,9 @@ sub package_pages_walker {
 	#
 	# more information
 	#
-	$package_page .= sprintf( gettext( "<h2>More information on %s</h2>" ), $name );
+	$package_page .= sprintf( "<h2>".gettext( "More information on %s" )."</h2>", $name );
 	
-	$package_page .= sprintf( gettext( "<small>Check for <a href=\"%s\">bug reports</a> about %s</small><br>\n" ), $BUG_URL.$name, $name );
+	$package_page .= sprintf( "<small>".gettext( "Check for <a href=\"%s\">bug reports</a> about %s." )."</small><br>\n", $BUG_URL.$name, $name );
 	
 	#
 	# Source package download
@@ -428,9 +430,9 @@ sub package_pages_walker {
 	    $package_page .= "<p><small>$up_str</small>\n";
 	}
 
-	$package_page .= sprintf( gettext( "<small>See the <a href=\"%s\">developer information for %s</a>.</small>\n" ), $QA_URL.$sourcepackage, $name );
+	$package_page .= sprintf( "<small>".gettext( "See the <a href=\"%s\">developer information for %s</a>." )."</small>\n", $QA_URL.$sourcepackage, $name );
 	
-	$package_page .= sprintf( gettext( "<p><small>Search for <a href=\"%s\">other versions of %s</a></small>\n" ), $SEARCH_URL.$encodedpack, $name );
+	$package_page .= sprintf( "<p><small>".gettext( "Search for <a href=\"%s\">other versions of %s</a>" )."</small>\n", $SEARCH_URL.$encodedpack, $name );
 
 	#
 	# Trailer
@@ -497,7 +499,7 @@ sub src_package_pages_walker {
     $package_page .= "[&nbsp;".gettext( "Distribution:" )." <a title=\"".gettext( "Overview over this distribution" )."\" href=\"../\">$env->{distribution}</a>&nbsp;]\n";
 #	$package_page .= "[&nbsp;".gettext( "Section:" )." <a title=\"".gettext( "All packages in this section" )."\" href=\"../$section/\">$section</a>&nbsp;]\n";
     
-    $package_page .= sprintf( gettext( "<h1>Source package: %s (%s)" ),
+    $package_page .= sprintf( "<h1>".gettext( "Source package: %s (%s)" ),
 			      $name, $v_str );
     
     my ( $is_security, $is_nonus ) = ( 0, 0 );
@@ -518,13 +520,15 @@ sub src_package_pages_walker {
     $package_page .= "</h1>\n";
 
     if ($env->{distribution} eq "experimental") {
-	$package_page .= gettext( "<h2 style=\"color: red\">Experimental package</h2>\n".
-				  "<p>Warning: This package is from the <font color=\"red\">experimental</font> distribution. That means it is likely unstable or buggy, and it may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.</p>".
-				  "<p>Users of experimental packages are encouraged to contact the package maintainers directly in case of problems.</p>" );
+	$package_page .= "<h2 style=\"color: red\">".
+	    gettext( "Experimental package")."</h2>\n<p>".
+	    gettext( "Warning: This package is from the <font color=\"red\">experimental</font> distribution. That means it is likely unstable or buggy, and it may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.")."</p><p>".
+	    gettext( "Users of experimental packages are encouraged to contact the package maintainers directly in case of problems." )."</p>";
     }
     if ($archive eq "debian-installer") {
-	$package_page .= gettext( "<h2 style=\"color: red\">debian-installer udeb package</h2>\n".
-				  "<p>Warning: This package is intended for the use in building <a href=\"http://www.debian.org/devel/debian-installer\">debian-installer</a> images only. Do not install it on a normal Debian system.</p>" );
+	$package_page .= "<h2 style=\"color: red\">".
+	    gettext( "debian-installer udeb package")."</h2>\n<p>".
+	    gettext( "Warning: This package is intended for the use in building <a href=\"http://www.debian.org/devel/debian-installer\">debian-installer</a> images only. Do not install it on a normal Debian system." )."</p>";
     }
 
     my @bin_list;
@@ -532,13 +536,20 @@ sub src_package_pages_walker {
 	my $p_name = $bp->[0][0];
 	my $p = $env->{db}->get_pkg( $p_name );
 	if ($p) {
-	    my %sections = $p->get_arch_fields( 'section',
-						$env->{archs} );
-	    my $section = $sections{max_unique};
-	    my %desc_md5s = $p->get_arch_fields( 'description-md5', 
-						 $env->{archs} );
-	    my $short_desc = conv_desc( $env->{lang}, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" ) );
-	    push @bin_list, "<tr><td><a href=\"../$section/$p_name\">$p_name</a></td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc</td></tr>";
+	    # there are actually packages that list packages
+	    # in their Binary field that are never built but
+	    # exist as virtual packages -- no commment...
+	    if ($p->is_virtual) {
+		push @bin_list, "<tr><td><a href=\"../virtual/$p_name\">$p_name</a></td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;".gettext("Virtual package")."</td></tr>";
+	    } else {
+		my %sections = $p->get_arch_fields( 'section',
+						    $env->{archs} );
+		my $section = $sections{max_unique} || "";
+		my %desc_md5s = $p->get_arch_fields( 'description-md5', 
+						     $env->{archs} );
+		my $short_desc = conv_desc( $env->{lang}, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" ) );
+		push @bin_list, "<tr><td><a href=\"../$section/$p_name\">$p_name</a></td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc</td></tr>";
+	    }
 	}
     }
     if (@bin_list) {
@@ -555,9 +566,9 @@ sub src_package_pages_walker {
     $dep_list .= print_src_deps( $env, $pkg, $v_str, 'build-depends-indep' );
 
     if ( $dep_list ) {
-	$package_page .= sprintf( gettext( "\n<h2>Other packages related to %s:</h2>\n" ), $name );
+	$package_page .= sprintf( "\n<h2>".gettext( "Other packages related to %s:" )."</h2>\n", $name );
 	if ($env->{distribution} eq "experimental") {
-	    $package_page .= gettext( "<p>Note that the \"<font color=\"red\">experimental</font>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution.</p>" );
+	    $package_page .= "<p>".gettext( "Note that the \"<font color=\"red\">experimental</font>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution." )."</p>";
 	}
 
 	$package_page .= "<center><table border=\"1\"><tr>\n";
@@ -573,7 +584,7 @@ sub src_package_pages_walker {
     # Source package download
     #
     my $encodedpack = uri_escape( $name );
-    $package_page .= sprintf( gettext( "<h2>Download %s</h2>\n" ),
+    $package_page .= sprintf( "<h2>".gettext( "Download %s" )."</h2>\n",
 			      $name ) ;
     
     my $sf = $v_pkg->{files};
@@ -603,9 +614,9 @@ sub src_package_pages_walker {
     #
     # more information
     #
-    $package_page .= sprintf( gettext( "<h2>More information on %s</h2>" ), $name );
+    $package_page .= sprintf( "<h2>".gettext( "More information on %s" )."</h2>", $name );
     
-    $package_page .= sprintf( gettext( "<small>Check for <a href=\"%s\">bug reports</a> about %s</small><br>\n" ), $SRC_BUG_URL.$name, $name );
+    $package_page .= sprintf( "<small>".gettext( "Check for <a href=\"%s\">bug reports</a> about %s" )."</small><br>\n", $SRC_BUG_URL.$name, $name );
     
     #
     # Changelog and copyright
@@ -641,9 +652,9 @@ sub src_package_pages_walker {
 	$package_page .= "<p><small>$up_str</small>\n";
     }
 
-    $package_page .= sprintf( gettext( "<small>See the <a href=\"%s\">developer information for %s</a>.</small>\n" ), $QA_URL.$name, $name );
+    $package_page .= sprintf( "<small>".gettext( "See the <a href=\"%s\">developer information for %s</a>." )."</small>\n", $QA_URL.$name, $name );
     
-    $package_page .= sprintf( gettext( "<p><small>Search for <a href=\"%s\">other versions of %s</a></small>\n" ), $SRC_SEARCH_URL.$encodedpack, $name );
+    $package_page .= sprintf( "<p><small>".gettext( "Search for <a href=\"%s\">other versions of %s</a>" )."</small>\n", $SRC_SEARCH_URL.$encodedpack, $name );
 
     #
     # Trailer
@@ -725,8 +736,8 @@ sub write_all_package {
 	     $distro, $lang, $opts, $langs ) = @_;
 
 	my %si = ();
-	my $experimental_note = gettext( "<p>Warning: The <font color=\"red\">experimental</font> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.</p>\n" );
-	my $installer_note = gettext( "<p>Warning: These packages are intended for the use in building <a href=\"http://www.debian.org/devel/debian-installer/\">debian-installer</a> images only. Do not install them on a normal Debian system.</p>");
+	my $experimental_note = "<p>".gettext( "Warning: The <font color=\"red\">experimental</font> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk." )."</p>\n";
+	my $installer_note = "<p>".gettext( "Warning: These packages are intended for the use in building <a href=\"http://www.debian.org/devel/debian-installer/\">debian-installer</a> images only. Do not install them on a normal Debian system.")."</p>";
 
 	foreach ( keys %$sections ) {
 	    my $title = sprintf( gettext ( "Software Packages in \"%s\", %s section" ), 
@@ -742,7 +753,7 @@ sub write_all_package {
 	    $si{$_} .= "<dl>\n";
 	}
 
-	my $all_title = sprintf( gettext( "All Debian Packages in &ldquo;%s&rdquo;" ),
+	my $all_title = sprintf( gettext( "All Debian Packages in \"%s\"" ),
 				 $distro );
 	my $all_package = header( title => $all_title, lang => $lang,
 				  print_title_below => 1 );
@@ -751,7 +762,7 @@ sub write_all_package {
 	}
 	$all_package .= "<dl>\n";
 
-	my $all_pkg_txt = sprintf( gettext( "All Debian Packages in \"%s\"\n\n" ), $distro );
+	my $all_pkg_txt = sprintf( gettext( "All Debian Packages in \"%s\"" )."\n\n", $distro );
 	$all_pkg_txt .=  gettext( "Last Modified: " ). "LAST_MODIFIED_DATE\n".
 	    gettext( "Copyright (c) 1997-2003 SPI;\nSee <URL:http://www.debian.org/license> for the license terms.\n\n" );
 
@@ -781,7 +792,7 @@ sub write_src_index {
     my ( $db, $dest_dir, $distro, $lang, $opts, $langs ) = @_;
     
     my $source_index;
-    my $experimental_note = gettext( "<p>Warning: The <font color=\"red\">experimental</font> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.</p>\n" );
+    my $experimental_note = "<p>".gettext( "Warning: The <font color=\"red\">experimental</font> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk." )."</p>\n";
     
     my $title = sprintf( gettext ( "Source Packages in \"%s\"" ), 
 			 $distro, $_ );
