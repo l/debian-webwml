@@ -9,6 +9,3 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 
-# Do Not modify the following line
-people.$(LANGUAGE).html: people.wml $(TEMPLDIR)/template.wml $(ENGLISHSRCDIR)/devel/people.names
-
