@@ -15,7 +15,7 @@ include $(WMLBASE)/Make.lang
 
 $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
 	@echo copying $*.$(LANGUAGE).html to $(HTMLDIR)
-	-@cp $*.$(LANGUAGE).html $(HTMLDIR)
+	-@install -m 664 -p $*.$(LANGUAGE).html $(HTMLDIR)
 ifeq ($(LANGUAGE),en)
 	@echo making a link $(HTMLDIR)/$*.html -\> $*.$(LANGUAGE).html
 	@ln -sf $*.$(LANGUAGE).html $(HTMLDIR)/$*.html
