@@ -558,7 +558,10 @@ sub write_pages {
 	    setlocale ( LC_ALL, $locale )
 		or do { warn "W: could not set locale, using default\n" unless $opts->{quiet};
 			setlocale( LC_ALL, get_locale() ) 
-			    or next; 
+			    or do {
+			    	warn "W: could not set locale, using C\n" unless $opts->{quiet};
+				setlocale( LC_ALL, "C" );
+			};
 		    };
 	    print "writing distribution indices\n" unless $opts->{quiet};
 	    $p_counter = 0;
