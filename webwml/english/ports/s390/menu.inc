@@ -1,6 +1,51 @@
-[ <a href="../">Ports</a> ]
+#use wml::debian::submenu
 
-[ <ifneq <get-var WML_SRC_BASENAME> "index"
-  "<a href="index">Debian for S/390</a>"
-  "<b>Debian for S/390</b>"
-> ]
+<menu-item basename="../index">
+[AR:Ports:]
+[DA:Ports:]
+[DE:Ports:]
+[EL:Ports:]
+[EN:Ports:]
+[EO:Ports:]
+[ES:Ports:]
+[FI:Ports:]
+[FR:Ports:]
+[HR:Ports:]
+[HU:Ports:]
+[JA:Ports:]
+[KO:Ports:]
+[NL:Ports:]
+[NO:Ports:]
+[PL:Ports:]
+[PT:Ports:]
+[RO:Ports:]
+[RU:Ports:]
+[SV:Ports:]
+[TR:Ports:]
+[ZH:Ports:]
+</menu-item>
+
+<menu-item basename="index">
+[AR:Debian for S/390:]
+[DA:Debian for S/390:]
+[DE:Debian für S/390:]
+[EL:Debian for S/390:]
+[EN:Debian for S/390:]
+[EO:Debian for S/390:]
+[ES:Debian for S/390:]
+[FI:Debian for S/390:]
+[FR:Debian for S/390:]
+[HR:Debian for S/390:]
+[HU:Debian for S/390:]
+[JA:Debian for S/390:]
+[KO:Debian for S/390:]
+[NL:Debian for S/390:]
+[NO:Debian for S/390:]
+[PL:Debian for S/390:]
+[PT:Debian for S/390:]
+[RO:Debian for S/390:]
+[RU:Debian for S/390:]
+[SV:Debian for S/390:]
+[TR:Debian for S/390:]
+[ZH:Debian for S/390:]
+</menu-item>

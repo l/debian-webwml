@@ -8,5 +8,4 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-
-index.$(LANGUAGE).html: index.wml menu.inc $(TEMPLDIR)/template.wml
+$(HTMLFILES): menu.inc $(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml

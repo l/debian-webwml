@@ -1,41 +1,226 @@
-[ <a href="../">Ports</a> ]
+#use wml::debian::submenu
 
-[ <ifneq <get-var WML_SRC_BASENAME> "index"
-  "<a href="index">Debian GNU/Hurd</a>"
-  "<b>Debian GNU/Hurd</b>"
-> ]
+<menu-item basename="../index">
+[AR:Ports:]
+[DA:Ports:]
+[DE:Ports:]
+[EL:Ports:]
+[EN:Ports:]
+[EO:Ports:]
+[ES:Ports:]
+[FI:Ports:]
+[FR:Ports:]
+[HR:Ports:]
+[HU:Ports:]
+[JA:Ports:]
+[KO:Ports:]
+[NL:Ports:]
+[NO:Ports:]
+[PL:Ports:]
+[PT:Ports:]
+[RO:Ports:]
+[RU:Ports:]
+[SV:Ports:]
+[TR:Ports:]
+[ZH:Ports:]
+</menu-item>
 
-[ <ifneq <get-var WML_SRC_BASENAME> "hurd-news"
-  "<a href="hurd-news">News</a>"
-  "<b>News</b>"
-> ]
+<menu-item basename="index">
+[AR:Debian GNU/Hurd:]
+[DA:Debian GNU/Hurd:]
+[DE:Debian GNU/Hurd:]
+[EL:Debian GNU/Hurd:]
+[EN:Debian GNU/Hurd:]
+[EO:Debian GNU/Hurd:]
+[ES:Debian GNU/Hurd:]
+[FI:Debian GNU/Hurd:]
+[FR:Debian GNU/Hurd:]
+[HR:Debian GNU/Hurd:]
+[HU:Debian GNU/Hurd:]
+[JA:Debian GNU/Hurd:]
+[KO:Debian GNU/Hurd:]
+[NL:Debian GNU/Hurd:]
+[NO:Debian GNU/Hurd:]
+[PL:Debian GNU/Hurd:]
+[PT:Debian GNU/Hurd:]
+[RO:Debian GNU/Hurd:]
+[RU:Debian GNU/Hurd:]
+[SV:Debian GNU/Hurd:]
+[TR:Debian GNU/Hurd:]
+[ZH:Debian GNU/Hurd:]
+</menu-item>
 
-[ <ifneq <get-var WML_SRC_BASENAME> "hurd-install"
-  "<a href="hurd-install">Installation</a>"
-  "<b>Installation</b>"
-> ]
+<menu-item basename="hurd-news">
+[AR:News:]
+[DA:News:]
+[DE:Neues:]
+[EL:News:]
+[EN:News:]
+[EO:News:]
+[ES:News:]
+[FI:News:]
+[FR:News:]
+[HR:News:]
+[HU:News:]
+[JA:News:]
+[KO:News:]
+[NL:News:]
+[NO:News:]
+[PL:News:]
+[PT:News:]
+[RO:News:]
+[RU:News:]
+[SV:News:]
+[TR:News:]
+[ZH:News:]
+</menu-item>
 
-[ <ifneq <get-var WML_SRC_BASENAME> "hurd-cd"
-  "<a href="hurd-cd">Hurd-CDs</a>"
-  "<b>Hurd-CDs</b>"
-> ]
+<menu-item basename="hurd-install">
+[AR:Installation:]
+[DA:Installation:]
+[DE:Installation:]
+[EL:Installation:]
+[EN:Installation:]
+[EO:Installation:]
+[ES:Installation:]
+[FI:Installation:]
+[FR:Installation:]
+[HR:Installation:]
+[HU:Installation:]
+[JA:Installation:]
+[KO:Installation:]
+[NL:Installation:]
+[NO:Installation:]
+[PL:Installation:]
+[PT:Installation:]
+[RO:Installation:]
+[RU:Installation:]
+[SV:Installation:]
+[TR:Installation:]
+[ZH:Installation:]
+</menu-item>
 
-[ <ifneq <get-var WML_SRC_BASENAME> "hurd-doc"
-  "<a href="hurd-doc">Documentation</a>"
-  "<b>Documentation</b>"
-> ]
+<menu-item basename="hurd-cd">
+[AR:Hurd-CDs:]
+[DA:Hurd-CDs:]
+[DE:Hurd-CDs:]
+[EL:Hurd-CDs:]
+[EN:Hurd-CDs:]
+[EO:Hurd-CDs:]
+[ES:Hurd-CDs:]
+[FI:Hurd-CDs:]
+[FR:Hurd-CDs:]
+[HR:Hurd-CDs:]
+[HU:Hurd-CDs:]
+[JA:Hurd-CDs:]
+[KO:Hurd-CDs:]
+[NL:Hurd-CDs:]
+[NO:Hurd-CDs:]
+[PL:Hurd-CDs:]
+[PT:Hurd-CDs:]
+[RO:Hurd-CDs:]
+[RU:Hurd-CDs:]
+[SV:Hurd-CDs:]
+[TR:Hurd-CDs:]
+[ZH:Hurd-CDs:]
+</menu-item>
 
-[ <ifneq <get-var WML_SRC_BASENAME> "hurd-devel"
-  "<a href="hurd-devel">Development</a>"
-  "<b>Development</b>"
-> ]
+<menu-item basename="hurd-doc">
+[AR:Documentation:]
+[DA:Documentation:]
+[DE:Dokumentation:]
+[EL:Documentation:]
+[EN:Documentation:]
+[EO:Documentation:]
+[ES:Documentation:]
+[FI:Documentation:]
+[FR:Documentation:]
+[HR:Documentation:]
+[HU:Documentation:]
+[JA:Documentation:]
+[KO:Documentation:]
+[NL:Documentation:]
+[NO:Documentation:]
+[PL:Documentation:]
+[PT:Documentation:]
+[RO:Documentation:]
+[RU:Documentation:]
+[SV:Documentation:]
+[TR:Documentation:]
+[ZH:Documentation:]
+</menu-item>
 
-[ <ifneq <get-var WML_SRC_BASENAME> "hurd-links"
-  "<a href="hurd-links">Links</a>"
-  "<b>Links</b>"
-> ]
+<menu-item basename="hurd-devel">
+[AR:Development:]
+[DA:Development:]
+[DE:Entwicklung:]
+[EL:Development:]
+[EN:Development:]
+[EO:Development:]
+[ES:Development:]
+[FI:Development:]
+[FR:Development:]
+[HR:Development:]
+[HU:Development:]
+[JA:Development:]
+[KO:Development:]
+[NL:Development:]
+[NO:Development:]
+[PL:Development:]
+[PT:Development:]
+[RO:Development:]
+[RU:Development:]
+[SV:Development:]
+[TR:Development:]
+[ZH:Development:]
+</menu-item>
 
-[ <ifneq <get-var WML_SRC_BASENAME> "hurd-contact"
-  "<a href="hurd-contact">Contact</a>"
-  "<b>Contact</b>"
-> ]
+<menu-item basename="hurd-links">
+[AR:Links:]
+[DA:Links:]
+[DE:Links:]
+[EL:Links:]
+[EN:Links:]
+[EO:Links:]
+[ES:Links:]
+[FI:Links:]
+[FR:Links:]
+[HR:Links:]
+[HU:Links:]
+[JA:Links:]
+[KO:Links:]
+[NL:Links:]
+[NO:Links:]
+[PL:Links:]
+[PT:Links:]
+[RO:Links:]
+[RU:Links:]
+[SV:Links:]
+[TR:Links:]
+[ZH:Links:]
+</menu-item>
+
+<menu-item basename="hurd-contact">
+[AR:Contact:]
+[DA:Contact:]
+[DE:Kontakt:]
+[EL:Contact:]
+[EN:Contact:]
+[EO:Contact:]
+[ES:Contact:]
+[FI:Contact:]
+[FR:Contact:]
+[HR:Contact:]
+[HU:Contact:]
+[JA:Contact:]
+[KO:Contact:]
+[NL:Contact:]
+[NO:Contact:]
+[PL:Contact:]
+[PT:Contact:]
+[RO:Contact:]
+[RU:Contact:]
+[SV:Contact:]
+[TR:Contact:]
+[ZH:Contact:]
+</menu-item>

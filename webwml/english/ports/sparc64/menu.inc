@@ -1,6 +1,52 @@
-[ <a href="../">Ports</a> ]
+#use wml::debian::submenu
 
-[ <ifneq <get-var WML_SRC_BASENAME> "index"
-  "<a href="index">Debian SPARC 64</a>"
-  "<b>Debian SPARC 64</b>"
-> ]
+<menu-item basename="../index">
+[AR:Ports:]
+[DA:Ports:]
+[DE:Ports:]
+[EL:Ports:]
+[EN:Ports:]
+[EO:Ports:]
+[ES:Ports:]
+[FI:Ports:]
+[FR:Ports:]
+[HR:Ports:]
+[HU:Ports:]
+[JA:Ports:]
+[KO:Ports:]
+[NL:Ports:]
+[NO:Ports:]
+[PL:Ports:]
+[PT:Ports:]
+[RO:Ports:]
+[RU:Ports:]
+[SV:Ports:]
+[TR:Ports:]
+[ZH:Ports:]
+</menu-item>
+
+<menu-item basename="index">
+[AR:Debian for Sparc64:]
+[DA:Debian for Sparc64:]
+[DE:Debian für Sparc64:]
+[EL:Debian for Sparc64:]
+[EN:Debian for Sparc64:]
+[EO:Debian for Sparc64:]
+[ES:Debian for Sparc64:]
+[FI:Debian for Sparc64:]
+[FR:Debian for Sparc64:]
+[HR:Debian for Sparc64:]
+[HU:Debian for Sparc64:]
+[JA:Debian for Sparc64:]
+[KO:Debian for Sparc64:]
+[NL:Debian for Sparc64:]
+[NO:Debian for Sparc64:]
+[PL:Debian for Sparc64:]
+[PT:Debian for Sparc64:]
+[RO:Debian for Sparc64:]
+[RU:Debian for Sparc64:]
+[SV:Debian for Sparc64:]
+[TR:Debian for Sparc64:]
+[ZH:Debian for Sparc64:]
+</menu-item>
+

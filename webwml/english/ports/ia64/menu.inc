@@ -1,6 +1,51 @@
-[ <a href="../">Ports</a> ]
+#use wml::debian::submenu
 
-[ <ifneq <get-var WML_SRC_BASENAME> "index"
-  "<a href="index">Debian for IA-64</a>"
-  "<b>Debian for IA-64</b>"
-> ]
+<menu-item basename="../index">
+[AR:Ports:]
+[DA:Ports:]
+[DE:Ports:]
+[EL:Ports:]
+[EN:Ports:]
+[EO:Ports:]
+[ES:Ports:]
+[FI:Ports:]
+[FR:Ports:]
+[HR:Ports:]
+[HU:Ports:]
+[JA:Ports:]
+[KO:Ports:]
+[NL:Ports:]
+[NO:Ports:]
+[PL:Ports:]
+[PT:Ports:]
+[RO:Ports:]
+[RU:Ports:]
+[SV:Ports:]
+[TR:Ports:]
+[ZH:Ports:]
+</menu-item>
+
+<menu-item basename="index">
+[AR:Debian for IA-64:]
+[DA:Debian for IA-64:]
+[DE:Debian für IA-64:]
+[EL:Debian for IA-64:]
+[EN:Debian for IA-64:]
+[EO:Debian for IA-64:]
+[ES:Debian for IA-64:]
+[FI:Debian for IA-64:]
+[FR:Debian for IA-64:]
+[HR:Debian for IA-64:]
+[HU:Debian for IA-64:]
+[JA:Debian for IA-64:]
+[KO:Debian for IA-64:]
+[NL:Debian for IA-64:]
+[NO:Debian for IA-64:]
+[PL:Debian for IA-64:]
+[PT:Debian for IA-64:]
+[RO:Debian for IA-64:]
+[RU:Debian for IA-64:]
+[SV:Debian for IA-64:]
+[TR:Debian for IA-64:]
+[ZH:Debian for IA-64:]
+</menu-item>

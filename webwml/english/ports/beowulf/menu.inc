@@ -1,6 +1,51 @@
-[ <a href="../">Ports</a> ]
+#use wml::debian::submenu
 
-[ <ifneq <get-var WML_SRC_BASENAME> "index"
-  "<a href="index">Debian-Beowulf</a>"
-  "<b>Debian-Beowulf</b>"
-> ]
+<menu-item basename="../index">
+[AR:Ports:]
+[DA:Ports:]
+[DE:Ports:]
+[EL:Ports:]
+[EN:Ports:]
+[EO:Ports:]
+[ES:Ports:]
+[FI:Ports:]
+[FR:Ports:]
+[HR:Ports:]
+[HU:Ports:]
+[JA:Ports:]
+[KO:Ports:]
+[NL:Ports:]
+[NO:Ports:]
+[PL:Ports:]
+[PT:Ports:]
+[RO:Ports:]
+[RU:Ports:]
+[SV:Ports:]
+[TR:Ports:]
+[ZH:Ports:]
+</menu-item>
+
+<menu-item basename="index">
+[AR:Debian for Beowulf:]
+[DA:Debian for Beowulf:]
+[DE:Debian für Beowulf:]
+[EL:Debian for Beowulf:]
+[EN:Debian for Beowulf:]
+[EO:Debian for Beowulf:]
+[ES:Debian for Beowulf:]
+[FI:Debian for Beowulf:]
+[FR:Debian for Beowulf:]
+[HR:Debian for Beowulf:]
+[HU:Debian for Beowulf:]
+[JA:Debian for Beowulf:]
+[KO:Debian for Beowulf:]
+[NL:Debian for Beowulf:]
+[NO:Debian for Beowulf:]
+[PL:Debian for Beowulf:]
+[PT:Debian for Beowulf:]
+[RO:Debian for Beowulf:]
+[RU:Debian for Beowulf:]
+[SV:Debian for Beowulf:]
+[TR:Debian for Beowulf:]
+[ZH:Debian for Beowulf:]
+</menu-item>

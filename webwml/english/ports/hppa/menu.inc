@@ -1,5 +1,51 @@
-[ <a href="../">Ports</a> ]
-[ <ifneq <get-var WML_SRC_BASENAME> "index"
-  "<a href="index">Debian for PA-RISC</a>"
-  "<b>Debian for PA-RISC</b>"
-> ]
+#use wml::debian::submenu
+
+<menu-item basename="../index">
+[AR:Ports:]
+[DA:Ports:]
+[DE:Ports:]
+[EL:Ports:]
+[EN:Ports:]
+[EO:Ports:]
+[ES:Ports:]
+[FI:Ports:]
+[FR:Ports:]
+[HR:Ports:]
+[HU:Ports:]
+[JA:Ports:]
+[KO:Ports:]
+[NL:Ports:]
+[NO:Ports:]
+[PL:Ports:]
+[PT:Ports:]
+[RO:Ports:]
+[RU:Ports:]
+[SV:Ports:]
+[TR:Ports:]
+[ZH:Ports:]
+</menu-item>
+
+<menu-item basename="index">
+[AR:Debian for PA-RISC:]
+[DA:Debian for PA-RISC:]
+[DE:Debian für PA-RISC:]
+[EL:Debian for PA-RISC:]
+[EN:Debian for PA-RISC:]
+[EO:Debian for PA-RISC:]
+[ES:Debian for PA-RISC:]
+[FI:Debian for PA-RISC:]
+[FR:Debian for PA-RISC:]
+[HR:Debian for PA-RISC:]
+[HU:Debian for PA-RISC:]
+[JA:Debian for PA-RISC:]
+[KO:Debian for PA-RISC:]
+[NL:Debian for PA-RISC:]
+[NO:Debian for PA-RISC:]
+[PL:Debian for PA-RISC:]
+[PT:Debian for PA-RISC:]
+[RO:Debian for PA-RISC:]
+[RU:Debian for PA-RISC:]
+[SV:Debian for PA-RISC:]
+[TR:Debian for PA-RISC:]
+[ZH:Debian for PA-RISC:]
+</menu-item>
