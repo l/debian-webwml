@@ -1,0 +1,101 @@
+#use wml::debian::template title="Richtlinien für Paket-Prioritäten im Bezug auf Sicherheitsüberprüfungen"
+#use wml::debian::recent_list
+#use wml::debian::translation-check translation="1.19"
+# $Id$
+# Translator: Michael Ablassmeier <abi@grinser.de> 2005-01-13
+
+
+<p>Eine der ersten Hürden die sich stellt, wenn man eine Sicherheitsüberprüfung
+der Debian Distribution durchführen will, ist, zu entscheiden welches Paket für
+eine Untersuchung in Frage kommt.</p>
+
+<p>Im Optimalfall sollten alle Pakete überprüft werden. Aufgrund der immensen
+Grösse des Archives ist es aber vonnöten Prioritäten zu setzen.</p>
+
+<p>Einige wenige Rahmenbedingungen die ein Paket für eine Überprüfung in Frage
+kommen lassen sind: </p>
+
+<ol>
+<li>Pakete die ausführbare Dateien unter Verwendung der setuid- oder
+setgid-Rechte installieren.</li>
+
+<li>Pakete die einen Netzwerkbasierten Service anbietet.</li>
+
+<li>Pakete die CGI/PHP Skripte beinhalten, welche per Fernzugriff abrufbar
+sind.</li>
+
+<li>Pakete die zeitgesteuerte Skripte (cronjobs) beinhalten, die oftmals
+als "root"-User ausgeführt werden.</li>
+
+</ol>
+
+<p>Vielgenutzen Paketen sollte generell eine höhere Priorität zugesprochen
+werden, da ein Problem in diesen eine grössere Anzahl von Benutzern betreffen
+würde.</p> 
+
+<p>Der <a href="http://popcon.debian.org/">Debian-Popularitäts-Wettbewerb</a>
+enthält einen Überblick über die populärsten Pakete unter den Teilnehmern.</p>
+
+<p>Für detailierte Informationen werfen sie einen Blick auf die <a
+href="http://popcon.debian.org/by_vote">nach Stimmen sortierte Paketliste</a>.
+Diese Liste enthält die am Wettberwerb teilnehmenden Pakete sortiert nach ihren
+erhaltenen Stimmen.</p>
+
+<p>Ist ein Paket sicherheitskritisch, insbesondere wenn es die oben genannten
+Kriterien erfüllt und wird dazu noch häufig verwendet, ist es <i>definitiv</i>
+ein guter Kandidat um einer Sicherheitsüberprüfung unterzogen zu werden.</p>
+
+<h2><tt>setuid</tt> und <tt>setgid</tt> Dateien</h2>
+
+<p>Mit <tt>setuid</tt> und <tt>setgid</tt> versehene Dateien sind generell
+Kandidaten für eine Sicherheitsüberprüfung, da ein kompromittieren dieser
+Rechte einem lokalen Benutzer Zugang zu Berechtigungen verschaffen könnte, die
+er im Normalfall nicht hätte.</p>
+
+<p>Um diese Suche zu vereinfachen existiert eine durchsuchbare Liste aller mit
+setuid und setgid Rechten versehenen Dateien, die in der derzeitigen stabilen
+Version enthalten sind:</p>
+
+<ul>
+
+<li><a href="http://shellcode.org/Setuid/">Durchsuchbare setuid/setgid
+Liste</a></li>
+
+</ul>
+
+<p>Wenn es darum geht die entsprechenden Dateien auszuwählen, ist es wichtig zu
+beachten dass einige mehr und andere weniger sicherheitskritisch sind. Mit
+setuid(root) versehene Binärdateien sollten anderen gegenüber (z.B. mit
+setgid(games) oder setgid(bugs) versehenen) bevorzugt werden.</p>
+
+<h2>Netzwerk-Server</h2>
+
+<p>Netzwerk-Servern gilt es ebenfalls viel Beachtung zu schenken, wenn es darum
+geht eine Sicherheitsüberprüfung vorzunehmen. Eine Sicherheitslücke kann hier
+dazu führen, daß Systeme durch Fernzugriff kompromittiert werden können.</p>
+
+<p>Kompromittierungen aufgrund von Fernzugriffen sind in der Regel
+verhängnisvoller als lokale.</p>
+
+<h2>Online-Skripte</h2>
+
+<p>Online-Skripte - insbesondere CGI-Skripte - bewegen sich in der selben
+Klasse wie Netzwerk-Server. Selbst wenn der eingesetzte Webserver keine
+Sicherheitslücken aufweist, ist sicherzustellen dass auch die von ihm
+bereitgestellten Skripte sicher sind.</p>
+
+<p>Ein Fehler in einem Skript, das über ein Netzwerk abrufbar ist, ist
+minderstens genauso gefährlich wie ein Server der auf Verbindungen wartet -
+beide können zur kompromittierung eines Systems führen.</p>
+
+<h2>Zeitgesteuerte Prozesse und System-Service</h2>
+
+<p>Auch wenn es wenige dieser Art gibt, ist es dennoch wichtig einen Blick auf
+die in Paketen enthaltenen automatisierten Skripte und dergleichen zu
+werfen.</p>
+
+<p>Viele unterstützende Prozesse werden per Voreinstellung als root ausgeführt,
+wie zum Beispiel die Rotation von Logfiles.</p>
+
+<p>Erfolgreiches Ausnutzen einer Symlink-Attacke kann zu einer lokalen
+Kompromittierung führen.</p>
