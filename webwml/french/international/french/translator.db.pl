@@ -112,6 +112,15 @@ sub init_translators {
                         'file'      => 0,
                         'compress'  => 'none'
                 },
+                'Thomas Marteau' => {
+                        'email'     => 'marteaut@esiee.fr',
+                        'summary'   => 2,
+                        'logs'      => 1,
+                        'diff'      => 1,
+                        'tdiff'     => 0,
+                        'file'      => 0,
+                        'compress'  => 'none'
+                },
                 'Antoine Martin' => {
                         'email'     => 'amartin@atos-group.com',
                         'summary'   => 2,
