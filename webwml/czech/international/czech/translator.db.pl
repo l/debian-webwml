@@ -30,11 +30,11 @@ sub init_translators {
         my $translators = {
                 'Juraj Kubelka' => {
                         email       => 'Juraj.Kubelka@email.cz',
-                        summary     => 2,
-                        logs        => 2,
-                        diff        => 2,
-                        tdiff       => 2,
-                        file        => 2,
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 3,
+                        file        => 0,
                         compress    => 'none'
                 },
                 'Vitezslav Kotrla' => {
