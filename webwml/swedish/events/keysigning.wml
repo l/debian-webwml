@@ -1,5 +1,5 @@
 #use wml::debian::template title="Nyckelsignering"
-#use wml::debian::translation-check translation="1.2"
+#use wml::debian::translation-check translation="1.4"
 
 <p>Eftersom många utvecklare träffas på mässor eller konferenser har de blivit
 ett trevligt sätt att få andra att signera sina GnuPG-nycklar och förbättra
@@ -55,18 +55,32 @@ Efter mötet måste du hämta GnuPG-nyckeln för att signera den.
 Följande kan vara till hjälp:
 
 <pre>
-       gpg --keyserver keyring.debian.org --recv-keys 0xDEADBEAF
+       gpg --keyserver keyring.debian.org --recv-keys 0xDEADBEEF
 </pre>
+
+<p>
+Om personen vars nyckel du vill signera inte finns i Debians nyckelring
+ersätter du <code>keyring.debian.org</code> med en allmän nyckelserver,
+såsom <code>pgpkeys.pgp.net</code> (vilken, trots namnet, även lagrar
+GnuPG-nycklar).
+</p>
+
+<p>
+Observera att du kan använda de sista åtta hexadecimala siffrorna för
+nyckeln med detta kommando och i andra GnuPG-funktioner.
+<tt>0x</tt> framför talet är också frivilligt.</p>
 
 <li>
 För att signera nyckeln, gå in i redigeringsmenyn med
 
 <pre>
-       gpg --edit-key 0xDEADBEAF
+       gpg --edit-key 0xDEADBEEF
 </pre>
 
 <li>
-I GnuPG väljer du alla användar-id som skall signeras med <code>uid n</code>.
+I GnuPG väljer du alla användar-id som skall signeras med <code>uid n</code>,
+där <code>n</code> är numret på det användar-id som visas i menyn.
+Du kan även välja att signera alla användar-id.
 
 <li>
 För att signera en nyckel skriver du <code>sign</code>.
@@ -75,6 +89,49 @@ med vad du fick från personen du mötte.
 
 <li>
 Avsluta GnuPG med <code>quit</code>
+
+<li>
+För att verifiera att du har signerat nyckeln korrekt kan du köra:
+
+<pre>
+        gpg --list-sigs 0xDEADBEEF
+</pre>
+
+<p>
+Du skall nu se ditt namn och fingeravtryck (i sammanfattad form) i utdatat.
+</p>
+</li>
+
+<li>
+När du har säkerställt att allt fungerade somd et skulle kan du sända den
+signerade nyckeln till sin mottagare genom att köra:
+
+<pre>
+        gpg --export -a 0xDEADBEEF &gt; någons.key
+</pre>
+
+<p>
+Flaggan <code>-a</code> exporterar nyckeln i ASCII-format så att den kan
+sändas per e-post utan att riskera att förstöras.
+</p>
+</li>
+
+<li>
+Om någon signerar din nyckel på detta sätt kan du lägga till den till
+Debians nyckelring genom att köra:
+
+<pre>
+        gpg --import mysigned.key
+        gpg --keyserver keyring.debian.org --send-keys <var>&lt;ditt nyckel-id&gt;</var>
+</pre>
+
+<p>
+Det kan ta ett tag för nyckelansvariga att uppdatera din nyckel, så hav
+tålamod.
+Du kan även sända in din uppdaterade nyckel till de allmänna
+nyckelservrarna.
+</p>
+</li>
 
 </ul>
 
