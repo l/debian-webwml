@@ -40,8 +40,8 @@ about.$(LANGUAGE).gif:
 	$(debbar) -words $(ABOUT_TEXT) -o $(CURDIR)/$@
 devel.$(LANGUAGE).gif:
 	$(debbar) -words $(DEVEL_TEXT) -o $(CURDIR)/$@
-distrib.$(LANGUAGE).gif:
-	$(debbar) -words $(DISTRIB_TEXT) -o $(CURDIR)/$@
+getting.$(LANGUAGE).gif:
+	$(debbar) -words $(GETTING_TEXT) -o $(CURDIR)/$@
 news.$(LANGUAGE).gif:
 	$(debbar) -words $(NEWS_TEXT) -o $(CURDIR)/$@
 search.$(LANGUAGE).gif:
@@ -51,6 +51,6 @@ sitemap.$(LANGUAGE).gif:
 support.$(LANGUAGE).gif:
 	$(debbar) -words $(SUPPORT_TEXT) -o $(CURDIR)/$@
 
-pics: about.$(LANGUAGE).gif devel.$(LANGUAGE).gif distrib.$(LANGUAGE).gif \
+pics: about.$(LANGUAGE).gif devel.$(LANGUAGE).gif getting.$(LANGUAGE).gif \
   news.$(LANGUAGE).gif search.$(LANGUAGE).gif sitemap.$(LANGUAGE).gif \
   support.$(LANGUAGE).gif
