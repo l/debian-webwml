@@ -25,6 +25,7 @@ security_ftpsite=http://security.debian.org/debian-security
 # Architectures
 #
 polangs="de"
+ddtplangs="de cs da eo es fi fr hu it ja nl pl pt_BR pt_PT ru sk sv_SE uk"
 parts="main contrib non-free"
 dists="stable testing unstable"
 arch_stable="alpha arm hppa i386 ia64 m68k mips mipsel powerpc s390 sparc"
