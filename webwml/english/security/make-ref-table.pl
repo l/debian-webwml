@@ -33,6 +33,7 @@ use Date::Parse;
 # -m mitre refs
 # -p pretty print mode (HTML)
 # -s sort | don't sort
+# -f print full page (header and footer)
 getopts('hpmkcbva');
 if ( $opt_h ) {
 # Help!
@@ -73,10 +74,10 @@ $reference{certvu}{url}="http://www.kb.cert.org/vuls";
 $reference{certvu}{perlre}="VU";
 
 # We just print for the time being only CVE references
-printheader() if $opt_p;
+printheader() if $opt_p && $opt_f;
 # Table with information
 printrefs();
-printfooter() if $opt_p;
+printfooter() if $opt_p && $opt_f;
 
 #printrefs($reference{mitre}{name},$reference{mitre}{perlre},$reference{mitre}{url}) if $opt_m;
 #printrefs($reference{bid}{name},$reference{bid}{perlre},$reference{bid}{url}) if $opt_b;

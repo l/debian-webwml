@@ -4,7 +4,7 @@
 
 WMLBASE=..
 CUR_DIR=security
-SUBS=undated $(wildcard [12][0-9][0-9][0-9])
+#SUBS=undated $(wildcard [12][0-9][0-9][0-9])
 
 GETTEXTFILES += others.mo
 
@@ -21,9 +21,14 @@ faq.$(LANGUAGE).html: faq.wml \
   $(ENGLISHSRCDIR)/security/faq.wml \
   $(ENGLISHSRCDIR)/security/faq.inc $(GETTEXTDEP)
 
-crossreferences.wml:: $(wildcard $(ENGLISHSRCDIR)/security/*/*.data) 
+ref-table.inc: make-ref-table.pl $(wildcard $(ENGLISHSRCDIR)/security/*/*.data) 
+	perl make-ref-table.pl -p -a >ref-table.inc
 
+crossreferences.$(LANGUAGE).html:: ref-table.inc \
+	$(ENGLISHDIR)/template/debian/securityreferences.wml 
 
+clean::
+	rm -f ref-table.inc
 
 ifndef SUBLANG
 DSARDF     := dsa.$(LANGUAGE).rdf
