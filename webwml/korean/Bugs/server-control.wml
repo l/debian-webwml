@@ -1,5 +1,5 @@
 #use wml::debian::template title="데비안 BTS - 컨트롤 서버" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.20"
+#use wml::debian::translation-check translation="1.23"
 
 <h1>버그 컨트롤과 처리 메일 서버에 대한 소개</h1>
 
@@ -100,6 +100,30 @@ bug #<var>bugnumber</var>가 <var>package</var>에 속한 버그라고 기록합니다.
 <A href="Developer#severities">그 의미</A>에 관해서 버그 시스템의
 일반 개발자 문서를 참조하기 바랍니다. 
 
+<dt><code>clone</code> <var>bugnumber</var> [ <var>new IDs</var> ]
+
+  <dd>clone 컨트롤 명령어는 버그 보고를 버그 보고를 복제할 수 있게
+합니다. 한 보고가 실제로 여러 개의 서로 다른 버그가 생긴 것을 나타낼 때
+유용합니다. "<var>New IDs</var>" are negative numbers,
+  separated by spaces, which may be used in subsequent control commands to
+  refer to the newly duplicated bugs. 새로운 보고가 각각의 새 ID에
+의해 생성됩니다.
+
+  <p>사용 예:</p>
+
+  <pre>
+        clone 12345 -1 -2
+        reassign -1 foo
+        retitle -1 foo: foo sucks
+        reassign -2 bar
+        retitle -2 bar: bar sucks when used with foo
+        severity -2 wishlist
+        clone 123456 -2
+        reassign -2 foo
+        retitle -2 foo: foo sucks
+        merge -1 -2
+  </pre>
+
 <dt><code>merge</code> <var>bugnumber</var> <var>bugnumber</var> ...
 <dd>
 
@@ -170,7 +194,7 @@ bug #<var>bugnumber</var>가 <var>package</var>에 속한 버그라고 기록합니다.
 보내는 게 아닌) 그 알림 메일에는 버그를 종료하는 이유가 적혀 있지
 <strong>않습니다</strong>. 보고를 종료하는 사람은, 별도의 메일을
 보내서 버그를 보고한 사람이 왜 종료되는지 알 수 있도록 해야 합니다.
-
+The use of this command is therefore deprecated.
 </dl>
 
 <hr>
