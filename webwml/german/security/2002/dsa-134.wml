@@ -1,51 +1,68 @@
 <define-tag description>Entfernte Ausnutzbarkeit</define-tag>
 <define-tag moreinfo>
-<p>Theo de Raadt kündigte an, dass das OpenBSD-Team gemeinsam mit ISS daran
-arbeitet, um eine entfernte Ausnutzbarkeit in OpenSSH (einer freien
-Implementierung des Secure SHell Protokolls) zu beheben. Sie weigern sich,
-Details über die Verwundbarkeit zur Verfügung zu stellen sondern raten den
-Benutzern, auf das neueste Release zu aktualisieren, Version 3.3.</p>
+<p>ISS X-Force veröffentlichte ein Gutachten über ein OpenSSH "Entfernte
+Challenge-Verwundbarkeit". Unglücklicherwiese ar das Gutachten in einigen
+Punkten falsch, was zu einer weitreichenden Verwirrung über den Einfluss
+dieser Verwundbarkeit führte. Keine Version von OpenSSH in Debian ist von dem
+SKEY und BSD_AUTH Authentifizierungsmethoden betroffen, wie sie in dem
+ISS-Gutachten beschrieben werden. Jedoch beinhaltet Debian OpenSSH-Server mit
+PAM-Unterstützung, die den späteren Gutachten des OpenSSH-Teams als verwundbar
+beschrieben wird. (Diese ausnutzbare Fähigkeit ist die Authentifizierung
+mittels PAM über den interaktiven Tastaturmechanismus [kbdint].) Diese
+Verwundbarkeit betrifft OpenSSH-Versionen 2.3.1 bis 3.3. Zur Zeit ist kein
+Exploit für die PAM/kbdint-Verwundbarkeit bekannt, jedoch sind die Details
+öffentlich bekannt. All diese Verwundbarkeiten wurden in OpenSSH 3.4
+behoben.</p>
 
-<p>Diese Version wurde am 22. Juni 2002 veröffentlicht und aktivierte
-standardmäßig eine Methode names Privilegienteilung ein, um die Auswirkungen
-von Ausnutzbarkeiten im Netzwerkbehandlungs-Code zu minimieren.
-Unglücklicherweise hat dieses Release einige bekannte Probleme:</p>
+<p>Zusätzlich zu den Sicherheitsbehebungen, die oben angeführt sind,
+unterstützen unsere OpenSSH-Pakete ab Version 3.3 die neue
+Privilegteilungs-Fähigkeit von Niels Provos, die ssh dahingehend ändert, einen
+getrennten unpriviligierten Prozess für die meiste Arbeit zu verwenden.
+Verwundbarkeiten im nicht priviligierten Account werden auf eine leere chroot
+eingeschränkt, anstelle zu einer direkten root-Beeinträchtigung zu führen.
+Privilegteilung sollte es helfen, das Risiko durch zukünftigen
+OpenSSH-Beeinträchtigungen zu mildern.</p>
 
-<ul>
-<li>Kompression funktioniert nicht auf allen Betriebssystemen, da sich der
-    Code auf spezielle mmap-Fähigkeiten verläßt.</li>
+<p>Debian 2.2 (potato) wurde mit einem auf OpenSSH 1.2.3 basierendem ssh-Paket
+ausgeliefert, und ist von den Verwundbarkeiten in diesem Gutachten nicht
+betroffen. Benutzer, die immer noch ein ssh-Paket Version 1.2.3 verwenden,
+müssen nicht sofort auf OpenSSH 3.4 aktualisieren. Benutzer, die auf die
+OpenSSH-Version 3.3 Pakete aktualisiert haben, die mit früheren Versionen von
+DSA-134 veröffentlicht wurden, sollten auf die neuen Version 3.4
+OpenSSH-Pakete aktualisieren, da die Version 3.3 Pakete verwundbar sind. Wir
+empfehlen Benutzern, die OpenSSH 1.2.3 verwenden, eine Umstellung auf OpenSSH
+3.4 zu erwägen, um den Vorteil der Privilegteilungs-Möglichkeit zu nutzen.
+(Jedoch nochmals, uns ist keine spezielle Verwundbarkeit in OpenSSH 1.2.3
+bekannt. Bitte lesen Sie sorgfältig die Vorsichtsmaßnahmen, die unterhalb
+aufgeführt sind, bevor Sie von OpenSSH 1.2.3 aktualisieren.) Wir empfehlen,
+dass alle Benutzer, die eine zurückportierte Version von OpenSSH Version 2.0
+oder größer auf potato verwenden, auf OpenSSH 3.4 aktualisieren.</p>
 
-<li>Die PAM-Unterstützung wurde nicht abgeschlossen und könnte einige
-    PAM-Module unbrauchbar machen.</li>
+<p>Die aktuelle Pre-Release Version von Debian (woody) beinhaltet ein OpenSSH
+Version 3.0.2p1 Paket (ssh), das für das oben beschriebene PAM/kbdint-Problem
+anfällig ist. Wir empfehlen den Benutzern, auf OpenSSH 3.4 zu aktualisieren
+und Privilegteilung zu aktivieren. Bitte lesen sie die Release-Bemerkungen
+unterhalb sorgfältig durch, bevor Sie aktualisieren. An aktualisierten Paketen
+für ssh-krb5 (ein OpenSSH-Paket, das Kerberos-Authentifizierung unterstützt)
+wird im Augenblick noch gearbeitet. Benutzer, die ihre OpenSSH-Pakete zur Zeit
+nicht aktualisieren können, möchten eventuell um die bekannten
+Verwundbarkeiten herumarbeiten, indem sie die verwundbaren Fähigkeiten
+abschalten: Vergewissern Sie sich, dass die folgenden Zeilen kein
+Kommentarzeichen vorangestellt haben und in ihrer /etc/ssh/sshd_config
+vorhanden sind, und starten ssh neu</p>
 
-<li>Interaktive Tastaturauthentifizierung funktioniert nicht mit
-    Privilegienteilung. Am meisten bemerkbar für Debian-Benutzer macht dies
-    PAM-Module unbrauchbar, die eine PAM-Konversationsfunktion benötigen (wie
-    das OPIE-Modul).</li>
-</ul>
+<pre>
+  PAMAuthenticationViaKbdInt no
+  ChallengeResponseAuthentication no
+</pre>
 
-<p>Die neue Privilegteilungs-Unterstützung von Niels Provos ändert ssh
-dahingehend, dass ein eigener nicht-priviligierter Prozess die meiste Arbeit
-erledigt. Dies bedeutet, dass jegliche Verwundbarkeit in diesem Teil von
-OpenSSH niemals zu einer root-Beeinträchtigung führt, sondern nur den Zugriff
-auf einen getrennten Account ermöglicht, der auf eine chroot-Umgebung
-beschränkt ist.</p>
+<p>Es sollte keine anderen PAMAuthenticationViaKbdInt oder
+ChallengeResponseAuthentication Einträge in sshd_config vorhanden sein.</p>
 
-<p>Theo stellte eindeutig klar, dass diese neue Version die Verwundbarkeit
-nicht behebt. Stattdessen wird durch den neuen Privilegteilungs-Code nur die
-Verwundbarkeit gemildert, da ein Angreifer nur Zugriff auf diesen
-nicht-priviligierten Account erlangt, der auf eine chroot-Umgebung beschränkt
-ist.</p>
-
-<p>Da die Details des Problems nicht veröffentlicht wurden, ist die einzig
-bekannte Methode, um das Risiko der berichteten Verwundbarkeit zu mildern, der
-Umstieg auf das neueste tragbare Release von OpenSSH, Version 3.3p1.</p>
-
-<p>Bitte beachten Sie, dass wir nicht die Zeit hatten, ordnungsgemäße
-Qualitätssicherung für diese Pakete durchzuführen; sie könnten Fehler
-beinhalten oder andere Dinge unerwarteterweise beeinflussen. Wenn Sie ein
-solches Problem bemerken (neben denen, die in diesem Gutachten erwähnt sind),
-schreiben Sie bitte einen Fehlerbericht, damit wir dem nachgehen können.</p>
+<p>Das beendet den Verwundbarkeitsabschnitt dieses Gutachten. Folgend finden
+Sie die Release-Bemerkungen zum OpenSSH 3.4 Paket und die
+Privilegteilungs-Fähigkeiten. URLs für die OpenSSH 3.4 Pakete stehen am
+Ende.</p>
 
 <p>Einige Notizen zu möglichen Fragen, die mit dieser Aktualisierung
 zusammenhängen:</p>
@@ -58,11 +75,13 @@ zusammenhängen:</p>
     passiert, müssen Sie dies manuell ändern.</li>
 
 <li>(Nur für potato relevant) Diese Aktualisierung führt ein zurückportierte
-    Version 0.9.6c der SSL-Bibliothek ein. Das bedeutet, dass Sie das ssl-Paket
-    ebenfalls aktualisieren müssen.</li>
+    Version 0.9.6c der SSL-Bibliothek ein. Das bedeutet, dass Sie das
+    libssl0.9.6 Paket ebenfalls aktualisieren müssen.</li>
 
 <li>(Nur für potato relevant) Diese Aktualisierung verwendet standardmäßig die
-    Version 2 des SSH-Protokolls. Das kann vorhandene Einrichtungen unwirksam
+    Version 2 des SSH-Protokolls (selbst wenn sie dazu konfiguriert ist,
+    Version 1 des SSH-Protokolls zu unterstützen). Das kann vorhandene
+    Einrichtungen unwirksam
     machen, bei denen RSA-Authentifizierung verwendet wurde. Sie müssen
     entweder
     <ul>
@@ -76,41 +95,40 @@ zusammenhängen:</p>
 </li>
 
 <li>sshd hat standardmäßig Privilegienteilung aktiviert, selbst wenn Sie es
-    nicht explizit in <tt>/etc/ssh/sshd_config</tt> aktivieren. Nochmals:
-    Ausser wenn Sie "<kbd>UsePrivilegeSeperation no</kbd>" in Ihrer
-    sshd_config stehen
-    haben, werden Sie die Privilegienteilung mit diesem Paket verwenden.</li>
+    nicht explizit in <tt>/etc/ssh/sshd_config</tt> aktivieren.</li>
 
-<li>Wenn ssh für Sie nicht funktioniert, können Sie versuchen, die
-    Komprimierung abzudrehen. Wir haben einen Patch von Solar Designer
-    inkludiert, der das Problem mit Linux 2.2 Kernel beheben sollte, aber es
-    dürfte einige wenige Fälle geben, bei denen dies nicht ausreicht.</li>
+<li>ssh unterstützt nicht länger das Zurückfallen auf rsh.</li>
 
 <li>(Nur für potato relevant) Privilegienteilung funktioniert im Augenblick
     nicht mit Linux 2.0 Kerneln.</li>
 
-<li>Wenn Sie Gründe haben, weswegen Sie Privilegienteilung nicht verwenden
-    können (zum Beispiel, weil Sie einen 2.0er Kernel verwenden) aber bereits
-    das openssh 3.3p1 Paket installiert haben, können Sie auf das vorherige
-    Verhalten zurückkehren, indem Sie "UsePrivilegeSeperation no" in Ihre
-    /etc/ssh/sshd_config Datei einfügen. <strong>Beachten Sie, dass dies die
-    Privilegienteilung deaktiviert und Sie verwundbar für das
-    Sicherheitsproblem macht, das in diesem Gutachten beschrieben wird, und
-    sollte nur als Notmaßnahme erachtet werden.</strong></li>
+<li>Privilegienteilung funktioniert im Augenblick mit PAM-Authentifizierung
+    über den KeyboardInteraktive-Mechanismus nicht.</li>
+
+<li>Privilegienteilung verursacht, dass einige PAM-Module nicht funktionieren,
+    die erwarten, mit root-Privilegien zu laufen.</li>
+
+<li>Wenn Sie Gründe haben, aus denen Sie Privilegienteilung im Augenblick
+    wegen den oben genannten Gründen nicht verwenden können, können Sie es
+    abschalten, indem Sie "UsePrivilegeSeperation no" in Ihre
+    /etc/ssh/sshd_config Datei einfügen.</li>
 </ul>
 
-<p>Einige Dinge von früheren openssh 3.3p1 Paketen, die mit diesem Gutachten
+<p>Einige Dinge von früheren OpenSSH 3.3p1 Paketen, die mit diesem Gutachten
 korrigiert wurden (kein komplettes changelog):</p>
 
 <ul>
 <li>(Nur für potato relevant) Die Installationsfrage, "do you want to allow
-    protocol 2 only" steht nicht länge standardmäßig auf "yes". Benutzer, die
+    protocol 2 only" steht nicht länge standardmäßig auf "yes" für potato.
+    Benutzer, die
     diese Frage mit ``yes'' beantwortet haben und ebenfalls gewählt haben,
     dass ihre sshd_config Datei neu generiert werden soll, haben entdeckt,
     dass Sie sich nicht mehr auf ihren Server über das Protokoll 1 verbinden
     konnten. 1. Lesen Sie <tt>/usr/doc/ssh/README.Debian</tt> für eine
     Anleitung, wie Sie Protokoll 1 aufdrehen können, falls Sie sich in dieser
-    Situation befinden.</li>
+    Situation befinden. Da der Standardwert im potato-Paket nun "no" ist,
+    sollte dies kein Problem für Leute sein, die in Zukunft von Version 1.2.3
+    aktualisieren.</li>
 
 <li>(Nur für potato relevant) Das ssh-Paket hat keinen Konflikt mehr mit
     rsh-server, auch stellt es keine rsh-Alternative mehr zur Verfügung.</li>
@@ -122,15 +140,13 @@ korrigiert wurden (kein komplettes changelog):</p>
 <p>Wir wollen nochmals drauf hinweisen, dass wir es bedauern, weniger
 getestete Pakete mit größeren Änderungen als üblicherweise verbreiten müssen;
 wegen der potentiellen Dringlichkeit und nicht-spezifischen Natur der
-Bedrohung entschieden wir uns, dass unsere Benutzer am Besten so rasch wie
+ursprünglichen Bedrohung entschieden wir uns, dass unsere Benutzer am
+Besten so rasch wie
 möglich mit Paketen zur Bewertung gedient ist. Wir werden zusätzliche
 Informationen senden, wenn wir Sie erhalten, und weiter an den ausstehenden
 Problemen arbeiten.</p>
-
-<p>Bitte beachten Sie, dass die Pakete für die m68k-Architektur für woody noch
-nicht verfügbar sind.</p>
 </define-tag>
 
 # do not modify the following line
 #include "$(ENGLISHDIR)/security/2002/dsa-134.data"
-#use wml::debian::translation-check translation="1.10"
+#use wml::debian::translation-check translation="1.11"
