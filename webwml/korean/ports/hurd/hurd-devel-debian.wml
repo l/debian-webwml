@@ -64,80 +64,275 @@ without the <code>-r</code> if you build as user root. 자신의 pgp
 </p>
 
 <h4>
-Packages That Won't Be Ported</h4>
+포팅될 필요가 없는 패키지</h4>
 <p>
-이들 몇몇 패키지에 대한 설명을 아래에서 발견할 것이다.</p>
+아래에 각 패키지 별로 그 이유를 설명하였다.</p>
 <p>
-<code>base/update</code>,
-<code>base/makedev</code></p>
+<ul>
+<li>
+<code>base/update</code>, because the Hurd does not need an update
+daemon (the filesystems sync themselves). To change to sync interval,
+you can use <code>fsysopts</code> to adjust the <code>--sync</code>
+option. You can set different sync intervals for each file system!</p>
+To do this manully, use the <a
+href="hurd-doc-utils#syncfs"><code>syncfs</code> utility</a>.</li>
+<li>
+<code>base/makedev</code>, because the Hurd comes with its own version
+of this script. The Debian source package only contains a Linux
+specific version.</li>
+<li>
+<code>base/ld.so</code>, because the Hurd does use the linker that
+ships with the GNU C library.</li>
+<li>
+<code>base/modconf</code> and <code>base/modutils</code>, because
+modules are a concept specific to Linux.</li>
+<li>
+<code>base/netbase</code>, because the remaining stuff that is there
+is highly specific to the Linux kernel. The Hurd uses
+<code>inetutils</code> instead.</li>
+<li>
+<code>base/pcmcia-cs</code>, because the Hurd does not have any PCMCIA
+support (and even if it had, this package is probably Linux specific).</li>
+<li>
+<code>base/procps</code>, because this code is specific to the Linux proc
+filesystem.</li>
+<li>
+<code>base/ppp</code> and <code>base/pppconfig</code>, because the
+Hurd does not have any PPP support (and even if it had, this package
+is probably Linux specific).</li>
+<li>
+<code>base/setserial</code>, because it is specific to the Linux
+kernel. However, with the port of Linux char drivers to GNU Mach, we
+might be able to use it.</li></p>
 
 <h4>수정 없이 깨끗하게 컴파일한 패키지들</h4>
- <code>base</code> 섹션에 있는 대부분의 패키지,
-<code>libs/aalib</code>,
+<p>
+<ul>Section
+<li><code>admin</code>:
+<code>anacron</code>,
+<code>at</code>,
+<code>cruft</code>,
+<code>logrotate</code>,
+<code>sudo</code>.</li>
+
+<li><code>base</code>:
+<code>ae</code>,
+<code>bash</code>,
+<code>debianutils</code>,
+<code>diff</code>,
+<code>e2fsprogs</code>,
+<code>elvis-tiny</code>,
+<code>fileutils</code>,
+<code>findutils</code>,
+<code>glibc</code>,
+<code>gnumach</code>,
+<code>grep</code>,
+<code>grub</code>,
+
+de>gzip</code>,
+<code>hostname</code>,
+<code>hurd</code>,
+<code>libwrap0</code>,
+<code>mawk</code>,
+<code>ncurses</code>,
+<code>sed</code>,
+<code>shadow</code>,
+<code>shellutils</code>,
+<code>tar</code>,
+<code>textutils</code>.</li>
+
+<li><code>comm</code>:
+<code>minicom</code>.</li>
+
+<li><code>devel</code>:
+<code>bison</code>,
+<code>blas</code>,
+<code>byacc</code>,
+<code>cook</code>,
+<code>crashme</code>,
+<code>cutils</code>,
+<code>cvs</code>,
+<code>diffstat</code>,
+<code>flex</code>,
+<code>gettext</code>,
+<code>global</code>,
+<code>hello</code>,
+<code>hello-debhelper</code>,
+<code>indent</code>,
+<code>make</code>,
+<code>mig</code>,
+<code>nasm</code>,
+<code>perl-byacc</code>,
+<code>rcs</code>.</li>
+
+<li><code>doc</code>:
+<code>man-db</code>,
+<code>pinfo</code>,
+<code>texinfo</code>.</li>
+
+<li><code>editors</code>:
+<code>ed</code>,
+<code>jed</code>,
+<code>joe</code> (but doesn't work quite right),
+<code>nvi</code>,
+<code>vim</code>.</li>
+
+<li><code>games</code>:
 <code>games/an</code>,
-<code>math/bc</code>,
-<code>devel/bison</code>,
-<code>utils/bzip2</code>,
-<code>utils/cpio</code>,
-<code>utils/cracklib</code>,
-<code>devel/cvs</code>,
-<code>libs/db</code>,
-<code>devel/diffstat</code>,
-<code>editors/ed</code>,
-<code>mail/exim</code>,
-<code>mail/fetchmail</code>,
-<code>utils/file</code>,
-<code>devel/flex</code>,
-<code>text/groff</code>,
-<code>text/gs</code>,
-<code>net/inetutils</code>,
-<code>utils/iselect</code>,
-<code>text/jade</code>,
-<code>editors/jed</code>,
-<code>editors/joe</code> (아주 잘 동작하지는 않는다),
-<code>text/less</code>,
-<code>net/lftp</code> (아주 잘 동작하지는 않는다),
-<code>libs/libglib</code>,
-<code>libs/libident</code>,
-<code>libs/libpaperg</code>,
-<code>libs/libpng</code>,
-<code>web/lynx</code>,
-<code>devel/make</code>,
-<code>text/most</code>,
-<code>comm/minicom</code>,
-<code>mail/mpack</code>,
-<code>net/ncftp</code>,
-<code>net/netcat</code> (reported by Andres),
-<code>text/par</code>
-<code>libs/pcre2</code>,
-<code>doc/pinfo</code>,
-<code>mail/procmail</code>,
-<code>text/psutils</code>,
-<code>text/recode</code>,
-<code>utils/sharutils</code>,
-<code>libs/svgalib-dummy</code>,
-<code>libs/tk8.0</code>,
-<code>web/wget</code>.
+<code>empire-leaf</code>,
+<code>fortune-mod</code>,
+<code>gnugo</code>,
+<code>typespeed</code>,
+<code>xbat</code>,
+<code>xjewel</code>,
+<code>xjokes</code>,
+<code>xjump</code>,
+<code>xmountains</code>,
+<code>xoj</code>,
+<code>xroach</code>,
+<code>xzip</code>.</li>
+
+<li><code>graphics</code>:
+<code>ean13</code>,
+<code>giftrans</code>.</li>
+
+<li><code>interpreters</code>:
+<code>gawk</code>,
+<code>m4</code>,
+<code>perl</code>,
+<code>pforth</code>,
+<code>python</code>.</li>
+
+<li><code>libs</code>:
+<code>aalib</code>,
+<code>db</code>,
+<code>dialog</code>,
+<code>gdbm</code> (but see bug),
+<code>libaudiofile</code>,
+<code>libglib</code>,
+<code>libident</code>,
+<code>libiodbc2</code>,
+<code>libjpeg62</code>,
+<code>libpng</code>,
+<code>pcre</code>,
+<code>popt</code>,
+<code>slang1</code>,
+<code>svgalib-dummy</code>,
+<code>tk8.0</code>,
+<code>zlib</code>.</li>
+
+<li><code>mail</code>:
+<code>exim</code>,
+<code>fetchmail</code>,
+<code>mimedecode</code>,
+<code>mpack</code>,
+<code>mutt</code>,
+<code>procmail</code>.</li>
+
+<li><code>math</code>:
+<code>bc</code>,
+<code>g2</code>,
+<code>oleo</code>,
+<code>spline</code>,
+<code>wzip</code>.</li>
+
+<li><code>misc</code>:
+<code>birthday</code>,
+<code>dbview</code>,
+<code>megahal</code>,
+<code>otp</code>.</li>
+
+<li><code>net</code>:
+<code>inetutils</code>,
+<code>ircii</code>,
+<code>lftp</code> (but doesn't work quite right),
+<code>lurkftp</code>,
+<code>ncftp</code>,
+<code>netcat</code> (reported by Andres),
+<code>whois</code>.</li>
+
+<li><code>otherosfs</code>:
+<code>mtools</code>.</li>
+
+<li><code>sound</code>:
+<code>mp3info</code>,
+<code>sox</code>.</li>
+
+<li><code>tex</code>:
+<code>dvidvi</code>,
+<code>tetex</code>,
+<code>untex</code>.</li>
+
+<li><code>text</code>:
+<code>c2ps</code>,
+<code>diction</code>,
+<code>enscript</code>,
+<code>figlet</code>,
+<code>groff</code>,
+<code>gs</code>,
+<code>jade</code>,
+<code>less</code>,
+<code>most</code>,
+<code>par</code>
+<code>psutils</code>,
+<code>ptx</code>,
+<code>recode</code>,
+<code>sgml-tools</code>,
+<code>since</code>,
+<code>slice</code>,
+<code>word2x</code>.</li>
+
+<li><code>utils</code>:
+<code>binstats</code>,
+<code>buffer</code>,
+<code>bzip2</code>,
+<code>cpio</code>,
+<code>cracklib</code>,
+<code>file</code>,
+<code>hex</code>,
+<code>hextype</code>,
+<code>iselect</code>,
+<code>patch</code>,
+<code>pgrep</code>,
+<code>sharutils</code>,
+<code>symlinks</code>.</li>
+
+<li><code>web</code>:
+<code>analog</code>,
+<code>lynx</code>,
+<code>wget</code>.
+
+<li><code>x11</code>:
+<code>bclock</code>,
+<code>unclutter</code>,
+<code>xfishtank</code>,
+<code>xpm4g</code>.</li>
+</ul>
 
 <h4>BTS에서 한번 패치한 후 깨끗하게 컴파일한 패키지들</h4>
-<code>games/fortune-mod</code>  <a
-href="http://bugs.debian.org/37091">Bug#37091</a>을 보라,
-<code>libs/libpaperg</code>  <a
-href="http://bugs.debian.org/39036">Bug#39036</a>을 보라,
-<code>doc/man-db</code>  <a
-href="http://bugs.debian.org/39039">Bug#39039</a>를 보라,
-<code>otherosfs/mtools</code>  <a
-href="http://bugs.debian.org/37757">Bug#37757</a>을 보라,
-<code>interpreters/gawk</code>  <a
-href="http://bugs.debian.org/40309">Bug#40309</a>를 보라,
-<code>mail/mutt</code>  <a
-href="http://bugs.debian.org/43956">Bug#43956</a>를 보라.
+<p>
+<ul>
+<li>
+<code>libs/libpaperg</code> see <a
+href="http://bugs.debian.org/39036">Bug#39036</a>,</li>
+<li>
+<code>base/tcp-wrappers</code> see <a
+href="http://bugs.debian.org/44408">Bug#44408</a>,</li>
+<li>
+<code>web/boa</code> see <a
+href="http://bugs.debian.org/45508">Bug#45508</a>.</li>
+<li>
+<code>base/dpkg-mountable</code> see <a
+href="http://bugs.debian.org/44381">Bug#44381</a>.</li>
+<li>
+<code>base/slang1</code> see <a
+href="http://bugs.debian.org/48814">Bug#48814</a>.</li>
+</ul></p>
+
 
 <h4>소스 NMU가 필요했던 패키지들</h4>
 <p>
-<code>base/shellutils</code>,
-<code>base/shadow</code>  <a
-href="http://bugs.debian.org/42480">Bug#42480</a>를 보라.
+현재 없음.
 </p>
 
 <h4>해킹이 약간 필요한 패키지들</h4>
@@ -153,7 +348,6 @@ href="http://bugs.debian.org/42480">Bug#42480</a>를 보라.
 <p><code>base</code> 섹션에 있는 몇몇 패키지들,
 <code>devel/egcs</code> (대부분 해결함),
 <code>devel/gdb</code> (Mark Kettenis의 패치),
-<code>interpreters/perl</code> (perl 5.005 대부분 끝남),
 <code>web/apache</code> (easy, see <a href="http://bugs.debian.org/38328">Bug#38328</a>
 and implement use of <code>dpkg-architecture</code> in <code>debian/rules</code>),
 <code>admin/apt</code> (<code>archtable</code> mess, some building issues),
@@ -162,15 +356,12 @@ and implement use of <code>dpkg-architecture</code> in <code>debian/rules</code>
 <code>bsdmainutils</code>와 <code>bsdutils</code> (
 <code>util-linux</code>에 의해 폐기됨 (Jeff Bailey is working on it?)),
 <code>admin/cron</code> (<code>MAXPATHLEN</code>, Robert Stepanek is working on it),
-<code>editors/emacs</code> (<code>dpkg-architecture</code> 지원),
+<code>editors/emacs20</code> (<code>dpkg-architecture</code> 지원),
 <code>gdbm</code>,
-<code>libs/libc0.2</code> (가끔 CVS로부터 패치),
-<code>libs/liblockfile</code> (유해한),
+<code>libs/liblockfile</code> (harmful)
 <code>mail/mailx</code> (<code>NOFILE</code>, <code>MAXPATHLEN</code>,
  <code>MAXHOSTNAMLEN</code>, 헤더 파일들),
-<code>mail/mutt</code>,
-<code>text/sgml-tools</code> (<code>sgml2txt</code> 깨짐... 또는 펄),
-<code>libs/slang</code>,
+
 <code>tex/tetex</code> (includes ncurses man pages, klibtool issue).
 </p>
 <p>
@@ -187,30 +378,16 @@ and implement use of <code>dpkg-architecture</code> in <code>debian/rules</code>
 <p>내가 여러분 또는 몇몇 정보를 갱신하는 것을 잊었다면 
 <a href="hurd-contact">나에게 알려주기 바란다!</a>.</p>
 
-<h3>특별한 패키지에 대한 다른 정보</h3>
-<h4>base/update</h4>
-<p>
- update 패키지는 필요하지 않다. 파일 시스템은 translator에 의해
-관리되고 주기적으로 동기화(sync)하기 때문이다. 동기화 간격을 바꾸기
-위해 <code>fsysopts</code>를 <code>--sync</code> 옵션을 덧붙여서
-사용할 수 있다. 각각의 파일 시스템에 서로 다른 동기화 간격을 설정할
-수도 있다!
-</p>
-To do this manully, use the <a href="hurd-doc-utils#syncfs"><code>syncfs</code>
-utility</a>.</p>
-<p>
-이것은 update 패키지는 오직 Debian
-GNU/Linux에서만 흥미 있는 패키지라는 것을 뜻하며 포트되지 않을 것이다.
-</p>
-
 <h3>일반적인 포팅의 문제들(Issues)</h3>
+<p>
 부적당한 포터블 소프트웨어를 허드에서 컴파일할 때 만나게 될 일반적인
 비호환성 목록이다.
-</P>
-<P>
-<UL>
-<LI><code>Bad File Descriptor</code>
-<P>
+</p>
+<p>
+<ul>
+<li>
+<code>Bad File Descriptor</code>
+<p>
 파일로부터 읽으려고 할 때(또는 파일에 접근할 때) <code>Bad File
 Descriptor</code> 에러가 나온다면 <code>open()</code> invocation를
 점검하라. 두번째 인수가 접근 도구(access method)이다. 표준 헤더
