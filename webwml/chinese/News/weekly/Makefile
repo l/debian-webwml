@@ -36,7 +36,7 @@ endif
 ifneq ($(LANGUAGE),zh)
 all:: index.$(LANGUAGE).html $(HTMLFILES)
 else
-all:: index.zh-cn.html index.zh-tw.html $(HTMLFILES)
+all:: index.zh-cn.html index.zh-hk.html index.zh-tw.html $(HTMLFILES)
 endif
 
 # When building the html files we have to change into the right directory
@@ -46,9 +46,10 @@ endif
 	cd $(@D) && $(WML) $(notdir $(<))
 
 # Special case for Chinese
-%.zh-cn.html %.zh-tw.html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
-	                   $(TEMPLDIR)/weeklynews/header.wml \
-			   $(TOCN) $(TOTW)
+%.zh-cn.html %.zh-hk.html %.zh-tw.html : %.wml \
+			   $(TEMPLDIR)/weeklynews/footer.wml \
+			   $(TEMPLDIR)/weeklynews/header.wml \
+			   $(TOCN) $(TOHK) $(TOTW)
 	cd $(@D) && $(WML) $(notdir $(<))
 
 # *.imgdot-1x1-transp.gif are evil!  Get rid of them!
@@ -67,6 +68,10 @@ endif
 	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
 	@rm -f $*.zh-cn.html.tmp
 	@$(TOCN) $*.zh-cn.html
+
+	@echo -n "[zh_HK.Big5], "
+	@cp -f $*.zh-tw.html.tmp $*.zh-hk.html
+	@$(TOHK) $*.zh-hk.html
 
 	@echo "[zh_TW.Big5]."
 	@mv -f $*.zh-tw.html.tmp $*.zh-tw.html
@@ -99,6 +104,10 @@ $(HTMLDIR)/%.zh-cn.html: %.zh-cn.html
 	test -d $(@D) || install -d $(@D)
 	@echo copying $(@F) to $(@D)
 	-@cp $(<) $(@D)
+$(HTMLDIR)/%.zh-hk.html: %.zh-hk.html
+	test -d $(@D) || install -d $(@D)
+	@echo copying $(@F) to $(@D)
+	-@cp $(<) $(@D)
 $(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
 	test -d $(@D) || install -d $(@D)
 	@echo copying $(@F) to $(@D)
@@ -119,7 +128,8 @@ index.$(LANGUAGE).html: $(wildcard $(CUR_YEAR)/*/index.wml) \
       ../../../english/News/weekly/CURRENT-ISSUE-IS
 
 # Special case for Chinese
-index.zh-cn.html index.zh-tw.html: $(wildcard $(CUR_YEAR)/*/index.wml) \
+index.zh-cn.html index.zh-hk.html index.zh-tw.html: \
+      $(wildcard $(CUR_YEAR)/*/index.wml) \
       $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(CUR_YEAR)/*) \
       $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
       $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml \
