@@ -1,23 +1,24 @@
-#include "../../english/international/l10n/dtc.def"
-<PERL>
-#include "../../english/international/l10n/scripts/init.pl"
-#include "../../english/international/l10n/scripts/ranking.pl"
+#include "../../../english/international/l10n/dtc.def"
+#include "../../../english/international/l10n/scripts/init.pl"
+#include "../../../english/international/l10n/scripts/ranking.pl"
 
+<table border=1 cellpadding=0 cellspacing=0>
+
+<:
 ###
 ### Makes the big table
 ###
-print "<table border=1>";
 my $str;	
 #my $nb_i18n; #total number of i18n'ed packages
 my $header; # header of the table
 my $since_header=0;
 
-my $header = "<tr><td><package><td><orgAbrev>";
+my $header = "<tr><td><package></td><td><orgAbrev></td>";
 foreach $lang (sort keys %l10nlangs) {
-    $header .= "<td>$lang";
+    $header .= "<td>$lang</td>";
 }
 $header .= "\n";
-$header =~ s/<td/<td BGCOLOR="#ddddd5" align=center/g; # change background and center
+$header =~ s/<(td)/<$1 BGCOLOR="#ddddd5" align=center/g; # change background and center
 print $header;
 ## output the list of packages
 score_init();
@@ -47,7 +48,8 @@ foreach $pkg (sort keys %data) {
 	}
     }
 }
-print $header;
+print $header if ($since_header > 0);
+
 # output the average l10n of each language
 $str = "<tr><td colspan=2 align=center><AVG>";
 foreach $lang (sort keys %l10nlangs) {
@@ -102,5 +104,7 @@ sub score_output {
 ###
 ### End of the file
 ###
-</PERL>
-</table><br><br>
+:>
+
+</table>
+<br><br>

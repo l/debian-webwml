@@ -1,15 +1,23 @@
 <!-- to translate the names of the languages, you have to modify 
-    "../../english/template/debian/language_names.wml", which is done for this purpose -->
-#include "../../english/template/debian/language_names.wml"
-#include "../../english/international/l10n/dtc.def"
-<PERL>
-#include "../../english/international/l10n/scripts/init.pl"
-#include "../../english/international/l10n/scripts/ranking.pl"
+    "../../english/template/debian/language_names.wml",
+    which is done for this purpose -->
 
+#include "../../../english/template/debian/language_names.wml"
+#include "../../../english/international/l10n/dtc.def"
+#include "../../../english/international/l10n/scripts/init.pl"
+#include "../../../english/international/l10n/scripts/ranking.pl"
+
+<table border=1>
+<tr>
+  <td bgcolor="#ddddd5" align=center><Rank></td>
+  <td bgcolor="#ddddd5" align=center><Language></td>
+  <td bgcolor="#ddddd5" align=center><Score></td>
+  <td bgcolor="#ddddd5" align=center><nbpkg></td>
+  <td bgcolor="#ddddd5" align=center><avgl10n></td>
+</tr>
+
+<:
 $cur_lang = "$(CUR_LANG)";
-$header = "<tr><td><Rank><td><Language><td><Score><td><nbpkg><td><avgl10n>\n";
-$header =~ s/<td/<td bgcolor="#ddddd5" align=center/g;
-print "<table border=1>".$header;
 my @langs;
 my $rank = 0;
 my $score;
@@ -32,7 +40,7 @@ foreach $score (sort {$b <=> $a} keys %scores) {
 	    $str = "<tr><td>$rank";
 	    $exaequo = 1;
 	}
-	$str .= "<td>";
+	$str .= "</td><td>";
 	if (defined  $trans{language2code($cur_lang)}{lc(code2language($lang))}) {
 	    $str .= ucfirst($trans{language2code($cur_lang)}{lc(code2language($lang))});
 	} else {
@@ -40,14 +48,11 @@ foreach $score (sort {$b <=> $a} keys %scores) {
 	}
 	$str .= "<td>$score<td>$nb_per_lang{$lang}<td>";
 	$str .= l10n_output($average{$lang})."\n";
-	$str =~ s/<td/<td align=center/g;
+	$str =~ s/<(td)/<$1 align=center/g;
 	print $str;
     }
 }
-print $header."</table>\n";
+:>
 
-</PERL>
-
-
-
+</table>
 

@@ -1,6 +1,7 @@
-#include "../../english/international/l10n/dtc.def"
-<PERL>
-#include "../../english/international/l10n/scripts/init.pl"
+#include "../../../english/international/l10n/dtc.def"
+#include "../../../english/international/l10n/scripts/init.pl"
+
+<:
 my $nb; #counter
 my @strs; #all strings of a <error|warning>
 my $line; #one string of above
@@ -35,4 +36,4 @@ foreach $pkg (sort keys %data) {
     }
     print "</ul>\n";
 }
-</PERL>
+:>

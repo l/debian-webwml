@@ -1,3 +1,5 @@
+
+<:
 ##
 ## Some initialisations and functions for the pages which want to make some ranking
 ## ie, the l10n and the l10n-rank pages
@@ -5,7 +7,6 @@
 my %average; # to store the average l10n of each language
 my %scores; # to store the score of each language
 my %nb_per_lang; # to store the nb of l10n packages per language
-
 
 sub html_header {
     my $res;
@@ -48,11 +49,11 @@ sub l10n_output {
 	return "--";
     }
     if ($percent == 100) {
-	return "<font color=green>100\%</font>";
+	return "<font color=\"green\">100\%</font>";
     } if ($percent >=50) {
-	return "<font color=orange>$percent\%</font>";
+	return "<font color=\"orange\">$percent\%</font>";
     } 
-    return "<font color=red>$percent\%</font>";
+    return "<font color=\"red\">$percent\%</font>";
 }
 
 sub score_output {
@@ -107,3 +108,4 @@ sub score_init {
     }
 }
 
+:>
