@@ -88,7 +88,7 @@
 [DE:Status:]
 [EL:Status:]
 [EO:Status:]
-[ES:Status:]
+[ES:Estado:]
 [FI:Status:]
 [FR:Status:]
 [HR:Status:]

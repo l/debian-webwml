@@ -88,7 +88,7 @@
 [DE:Portierung:]
 [EL:Porting:]
 [EO:Porting:]
-[ES:Porting:]
+[ES:Migración:]
 [FI:Porting:]
 [FR:Porting:]
 [HR:Porting:]
