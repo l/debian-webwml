@@ -432,12 +432,15 @@ BEGINCONTENT
 sub trailer {
     my ($ROOT, $NAME, $LANG, @USED_LANGS) = @_;
     my $txt = "</div> <!-- end inner -->\n<div id=\"footer\">\n";
-    $txt .= languages( $NAME, $LANG, @USED_LANGS );
+    my $langs = languages( $NAME, $LANG, @USED_LANGS );
+    my $bl_class = $langs ? ' class="bordertop"' : "";
     $txt .=
-	"\n\n<hr class=\"hidecss\">" .
+	$langs.
+	"\n<hr class=\"hidecss\">\n" .
+	"<p$bl_class>".
 	sprintf( gettext( "Back to: <a href=\"%s/\">Debian Project homepage</a> || <a href=\"%s/\">Packages search page</a>" ), $HOME, $ROOT ).
-	"\n<hr class=\"hidecss\">\n".
-	"<div id=\"fineprint\"><p>".
+	"</p>\n<hr class=\"hidecss\">\n".
+	"<div id=\"fineprint\" class=\"bordertop\"><p>".
 	sprintf( gettext( "To report a problem with the web site, e-mail <a href=\"mailto:%s\">%s</a>. For other contact information, see the Debian <a href=\"%s/contact\">contact page</a>." ), $CONTACT_MAIL, $CONTACT_MAIL, $HOME).
 	"</p>\n".
 	"<p>". gettext( "Last Modified: " ). "LAST_MODIFIED_DATE".
