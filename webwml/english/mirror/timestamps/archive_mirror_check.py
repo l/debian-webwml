@@ -29,6 +29,7 @@ def process_line(line):
 def check_site(url, uplink):
 	#mirror = 'http://' + site + '/mirror/timestamps/'
 	print mirror
+	sys.stdout.flush()
 	try:
 		parts = urlparse.urlparse(mirror)
 		h = httplib.HTTP(parts[1])
@@ -52,8 +53,11 @@ def check_site(url, uplink):
 	links = parse.anchorlist
 	# typical list is
 	# ['?N=D', '?M=A', '?S=A', '?D=A', '/mirror/', 'klecker.debian.org']
-	while links[0] != uplink:
+	while links and links[0] != uplink:
 		links.pop(0)
+	if not links:
+		print '  Problem with page'
+		return
 	links.pop(0)
 	urls = {}
 	for url in parse.anchorlist:
@@ -82,6 +86,7 @@ def check_site(url, uplink):
 	tmp.sort()
 	for times in tmp:
 		print urls[times]
+	sys.stdout.flush()
 
 site = {}
 sitenotempty = 0
@@ -92,7 +97,8 @@ while 1:
 	if (newline == '\n' or newline == '') and sitenotempty:
 		process_line(line)
 		# print " site = " + site + " and archhttp = " + archhttp
-		if site.has_key('site') and site.has_key('archive-http') and official.search(site['site']):
+		if site.has_key('site') and site.has_key('archive-http'):
+			# and official.search(site['site']):
 			mirror = 'http://' + site['site'] + site['archive-http'] + 'project/trace/'
 			check_site(mirror, site['archive-http'] + 'project/')
 			if site.has_key('maintainer'):
