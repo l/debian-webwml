@@ -434,11 +434,12 @@ sub package_pages_walker {
 				      );
 	} else {
 	    my $up_str = "<a href=\"mailto:$maint_email\">$maint_name</a> ";
+	    my @uploaders_str;
 	    foreach (@uploaders) {
-		$_ = "<a href=\"mailto:$_->[1]\">$_->[0]</a>";
+		push @uploaders_str, "<a href=\"mailto:$_->[1]\">$_->[0]</a>";
 	    }
-	    my $last_up = pop @uploaders;
-	    $up_str .= ", ".join ", ", @uploaders if @uploaders;
+	    my $last_up = pop @uploaders_str;
+	    $up_str .= ", ".join ", ", @uploaders_str if @uploaders_str;
 	    $up_str .= sprintf( gettext( " and %s are responsible for this Debian package." ), $last_up );
 	    $package_page .= "<p><small>$up_str</small>\n";
 	}
@@ -490,10 +491,11 @@ sub package_pages_walker {
 		."<td><a href=\"$DDPO_URL".uri_escape($maint_email)."\">$maint_name</a></td></tr>";
 	    if (@uploaders) {
 		$data_sheet .= "<tr><td>".gettext( "Uploaders" ).":</td>\n";
+		my @uploaders_str;
 		foreach (@uploaders) {
-		    $_ = "<a href=\"$DDPO_URL".uri_escape($_->[1])."\">$_->[0]</a>";
+		    push @uploaders_str, "<a href=\"$DDPO_URL".uri_escape($_->[1])."\">$_->[0]</a>";
 		}
-		$data_sheet .= "<td>".join( ", ", @uploaders )."</td></tr>";
+		$data_sheet .= "<td>".join( ", ", @uploaders_str )."</td></tr>";
 	    }	    
 	    $data_sheet .= "<tr><td>".gettext( "Section" ).":</td>\n".
 		"<td>$section</td></tr>";
