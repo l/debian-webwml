@@ -140,7 +140,6 @@ sub getwmlfiles
 	next if (/\/sitemap\.wml/);
 	next if (/\/template\//);
 	next if (/\/MailingLists\/(un)?subscribe\.wml/);
-	next if (/\/devel\/wnpp\/wnpp\.wml/);
 	next if (/\/international\/l10n\/scripts\/l10nheader\.wml/);
 	chomp;
 	$file = substr ($_, $cutfrom);
@@ -242,15 +241,22 @@ foreach $lang (@search_in) {
         next if ($file eq "");
 	# Translated pages
 	if (index ($wmlfiles{$lang}, " $file ") >= 0) {
-	    	$t_body .= sprintf ("<a href=\"/%s.%s.html\">%s</a><br>\n",
-    			  $file, $l, $file);
+		if ($file =~ /\/devel\/wnpp\/wnpp\.wml/) {
+			$t_body .= sprintf "%s<br>\n", $file;
+		} else {
+		    	$t_body .= sprintf "<a href=\"/%s.%s.html\">%s</a><br>\n", $file, $l, $file;
+		}
     		$translated{$lang}++;
 		next if ($lang eq "english");
 		# Outdated translations
 		$msg = check_translation ($version{"$lang/$file"}, $version{"english/$file"}, "$lang/$file");
 		if (length ($msg)) {
 			$o_body .= "<tr>";
-		    	$o_body .= sprintf "<td><a href=\"/%s.%s.html\">%s</a></td>", $file, $l, $file;
+			if ($file =~ /\/devel\/wnpp\/wnpp\.wml/) {
+				$o_body .= sprintf "<td>%s</td>", $file;
+			} else {
+				$o_body .= sprintf "<td><a href=\"/%s.%s.html\">%s</a></td>", $file, $l, $file;
+			}
 			$o_body .= sprintf "<td>%s</td>", $version{"$lang/$file"};
 			$o_body .= sprintf "<td>%s</td>", $version{"english/$file"};
 			$o_body .= sprintf "<td>%s</td>", $msg;
@@ -261,7 +267,11 @@ foreach $lang (@search_in) {
 	}
 	# Untranslated pages
 	else {
-	    	$u_body .= sprintf ("<a href=\"/%s\">%s</a><br>", $file, $file);
+		if ($file =~ /\/devel\/wnpp\/wnpp\.wml/) {
+			$u_body .= sprintf "%s<br>\n", $file;
+		} else {
+		    	$u_body .= sprintf "<a href=\"/%s\">%s</a><br>\n", $file, $file;
+		}
     		$untranslated{$lang}++;
 	}
     }
