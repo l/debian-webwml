@@ -1,74 +1,83 @@
 #use wml::debian::template title="Debian BTS - informar de los fallos" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.17"
+#use wml::debian::translation-check translation="1.24"
 
 <h1>Cómo informar de un fallo en Debian</h1>
+
+<h2>Cosas importantes a hacer <strong>antes</storng> de enviarlo</h2>
+
+<p>Por favor, no avise de varios fallos que no estén relacionados entre
+sí en un único informe.</P>
+
+<P>Debería comprobar si otra persona ha enviado ya el mismo informa de
+fallo antes de decidirse a enviarlo. Tiene a su disposición listas de los
+fallos pendientes aún no arreglados <A href="./">en la World Wide Web</A>
+y <A href="Access">en otros sitios</A> (vea otros documentos si desea
+más detalle).</P>
+
+<P>Si no puede determinar qué paquete contiene el problema, haga el favor
+de enviar un mensaje a la <a href="mailto:debian-user@lists.debian.org">
+lista de correo de usuarios de Debian</a> pidiendo ayuda. Si el problema
+no se refiere a un paquete, sino a algún servicio general de Debian,
+existen varios <a href="pseudo-packages">pseudopaquetes</a> o incluso
+<a href="../MailingLists/subscribe">listas de correo</a> que puede usar
+para indicarnos el fallo.
+
+<P>Por favor, use <a href="#xcc">un método diferente</a> para enviar el
+informe de fallo a varios destinatarios (tales como listas de correo),
+que no sean las cabeceras normales del mensaje.
+
+<h2>Envío del informe mediante una herramienta automática</h2>
+
+<p>Hay dos programas que hemos desarrollado en Debian para ayudar a la
+hora de informar sobre fallos, llamados
+<code><a href="http://packages.debian.org/stable/utils/bug.html">bug</a></code>
+y
+<code><a href="http://packages.debian.org/stable/utils/bug.html">bug</a></code>.
+Ambos le guiarán paso a paso en el proceso de enviar un informe de fallo,
+de manera que probablemente le facilite la tarea.
+
+<h2>Envío del informe mediante correo electrónico</h2>
 
 <P>Envíe un mensaje a
 <A href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></A>,
 tal como se describe más adelante.</P>
 
-<p>Por favor, no informe de varios fallos que no estén relacionados entre
-sí en un solo mensaje (especialmente si se refieren a diferentes
-paquetes). Además, procure no enviar mensajes con el informe de fallos a
-ninguna lista de correo o a destinatarios que no sean
-<code>submit@bugs</code> (si desea ver detalles de cómo hacerlo
-correctamente, lea <A href="#xcc">aquí</A>).</P>
-
-<P>Hay disponibles listas de los fallos pendientes aún no arreglados
-<A href="./">en la World Wide Web</A> y <A href="Access">en otros
-sitios</A> (vea otros documentos si desea más detalle.</P>
-
-<P>Necesita poner una pseudocabecera al principio del cuerpo del mensaje,
-con los renglones <code>Package:</code> y <code>Version:</code> indicando
-el nombre y versión del paquete que contiene el fallo. (Los campos de la
-pseudocabecera deberían comenzar en la primera línea del mensaje. El
-sistema de fallos no comprende correctamente partes MIME o PGP por el
-momento y puede que no reconozca la pseudocabecera en tales mensajes.)
-Puede conseguir los datos de la cabecera usando
-<code>dpkg --search</code> y <code>dpkg --list</code>; vea
-<code>dpkg --help</code>.
-
-<em>Lea más adelante <A href="#details">otros requerimientos</A></em>.</P>
-
-<P>Se pueden indicar algunos pseudopaquetes en el renglón de
-<code>Package</code> al informar de un fallo en algo que no sea un
-verdadero paquete software de Debian.
-Hay <A HREF="pseudo-packages">una lista</A> en las páginas web de
-fallos.</P>
+<P>Por supuesto, como con cualquier otro mensaje, debería incluir un
+<code>Asunto</code> descriptivo y claro en la cabecera de su mensaje. Este
+asunto que proporciona será usado como título del informe inicial de fallo
+en la página de seguimiento de fallos, de manera que, ¡intente que sea
+informativo!</P>
 
 
-<h2><A name="example">Ejemplo</A></h2>
+<P>Necesita escribir una pseudocabecera al principio del mensaje. Esto
+significa que las primeras líneas del mensaje deberían decir:
 
-<P>Un informe de fallos, con la cabecera del mensaje, tiene este aspecto:
+<pre>
+Package: &lt;algo&gt;
+</pre>
 
-<PRE>
-  To: submit@bugs.debian.org
-  From: diligente@prueba.linux.org
-  Subject: Hello tells `goodbye'
+<P>Cambie <code>&lt;algo&gt;</code> por el nombre del paquete que contenga
+el fallo.
 
-  <A name="pseudoheader">Package: hello</A>
-  Version: 1.3-16
+<P>La segunda línea del mensaje debería decir:
 
-  When I invoke `hello' without arguments from an ordinary shell
-  prompt it prints `goodbye', rather than the expected `hello, world'.
-  Here is a transcript:
+<pre>
+Version: &lt;algo&gt;
+</pre>
 
-  $ hello
-  goodbye
-  $ /usr/bin/hello
-  goodbye
-  $
+<P>Cambie <code>&lt;algo&gt;</code> por la versión del paquete.
 
-  I suggest that the output string, in hello.c, be corrected.
+<P>Debe proporcionar una línea <code>Package</code> correcta en la
+pseudocabecera para que el sistema de seguimiento de fallos envíe un
+mensaje al mantenedor del paquete. Vea <a href="#findpkgver">este
+ejemplo</a> si desea averiguar la forma de conseguir esta información.
 
-  I am using Debian GNU/Linux 2.2, kernel 2.2.17-pre-patch-13
-  and libc6 2.1.3-10.
-</PRE>
+<P>Debería colocar los campos de la pseudocabecera al principio de sus
+respectivas líneas (sin dejar espacios en blanco antes). El sistema de
+fallos no comprende actualmente mensajes MIME o PGP, y puede ser que
+falle a la hora de reconocer las pseudocabeceras en dichos mensajes.
 
-<strong>Nota:</strong> Se ha dejado en el inglés original, puesto que éste
-será el idioma en el que se envíen los informes de fallos.
-
-<h2><A name="details">Por favor, incluya en si informe:</A></h2>
+Por favor, incluya en su mensaje:
 
 <ul>
 <li>El texto <em>exacto</em> y <em>completo</em> de cualquier mensaje de
@@ -101,11 +110,36 @@ incluya en su informe cualquier fichero que esté usando para reproducir el
 problema (codificándolos con uuencode si contienen caracteres extraños,
 etc).</P>
 
-<P>Por supuesto, como en cualquier otro mensaje, puede incluir un
-<code>Subject</code> (Asunto) claro y descriptivo en la cabecera principal
-de su mensaje. El <I>subject</I> que indique será utilizado como el título
-inicial para el fallo en el sistema de seguimiento, ¡de manera que intente
-que sea informativo!</P>
+<h2><A name="example">Ejemplo</A></h2>
+
+<P>Un informe de fallos, con la cabecera del mensaje, tiene este aspecto:
+
+<PRE>
+  To: submit@bugs.debian.org
+  From: diligente@prueba.linux.org
+  Subject: Hello tells `goodbye'
+
+  <A name="pseudoheader">Package: hello</A>
+  Version: 1.3-16
+
+  When I invoke `hello' without arguments from an ordinary shell
+  prompt it prints `goodbye', rather than the expected `hello, world'.
+  Here is a transcript:
+
+  $ hello
+  goodbye
+  $ /usr/bin/hello
+  goodbye
+  $
+
+  I suggest that the output string, in hello.c, be corrected.
+
+  I am using Debian GNU/Linux 2.2, kernel 2.2.17-pre-patch-13
+  and libc6 2.1.3-10.
+</PRE>
+
+<strong>Nota:</strong> Se ha dejado en el inglés original, puesto que éste
+será el idioma en el que se envíen los informes de fallos.
 
 <h2><A name="xcc">Enviar copias de un informe de fallos a otra dirección</A></h2>
 
@@ -143,30 +177,46 @@ del fallo al informarlo. No es algo obligatorio, y los desarrolladores
 asignarán el nivel de importancia adecuado a su informe si usted no lo
 hace.</P>
 
-<P>Para asignar un nivel de importancia ponga una línea
-<code>Severity: <var>importancia</var></code> en la pseudocabecera, junto
-con <code>Package</code> y <code>Version</code>. El niveles disponibles
-están descritos en la
+<P>Para asignar un nivel de importancia ponga una línea como ésta en la
+pseudocabecera:
+
+<pre>
+Severity: &lt;<var>importancia</var>&gt;
+</pre>
+
+<P>Sustituya &lt;<var>importancia</var>&gt; por uno de los niveles
+disponibles, que están descritos en la
 <A href="Developer#severities">documentación del desarrollador</A>.</P>
 
-
-<h2>No enviar a la lista de correo informes de fallos sin importancia</h2>
+<h2>Diferentes direcciones de envío (informes menores o en masa)</h2>
 
 <P>Si un informe trata de un fallo menor (por ejemplo, una errata en la
-documentación o cualquier otro problema trivial), o si está enviando
-varios mensajes a la vez, envíelos a <code>maintonly@bugs</code> o
-<code>quiet@bugs</code>. <code>maintonly</code> enviará el informe a el
-mantenedor del paquete (siempre que haya indicado correctamente
-<code>Package</code> en la pseudocabecera y se conozca al mantenedor), y
-<code>quiet</code> no lo enviará a ningún lado, y se limitará a archivarlo
-como fallo (útil para, por ejemplo, enviar muchos fallos similares y que
-se publique sólo un sumario con todos ellos).</P>
+documentación o cualquier otro problema trivial), ajuste por favor el
+nivel de severidad de forma apropiada y envíelo a
+<code>maintonly@bugs</code> en lugar de a <code>submit@bugs</code>.
+<code>maintonly</code> sólo enviará el informe a el mantenedor del
+paquete, sin mandar copia a las listas de correo del BTS.
 
-<P>Si hace esto, el sistema de fallos construirá el <code>Reply-To</code>
-de cualquier mensaje reenviado de manera que las respuestas sean
-procesadas por defecto de la misma manera que el informe original.</P>
+<P>Si está enviando varios errores a la vez, definitivamente debería
+usar <code>maintonly@bugs</code>, de manera que no cause mucho tráfico
+redundante en las listas de correo del BTS. Quizá desee enviar también
+un mensaje a <code>debian-bugs-dist</code> con un resumen si va a
+enviar varios fallos asociados entre sí.
 
-<h3>Informe de fallos sobre paquetes desconocidos</h3>
+<P>Si desea informar en el sistema de seguimiento sobre un fallo que
+ya ha sido enviado al mantenedor, puede usar <code>quiet@bugs</code>.
+Los mensajes enviados a través de <code>quiet@bugs</code> no son
+redirigidos a ninguna parte; sólo quedan archivados.
+
+<P>Cuando use diferentes direcciones de envío, el sistema de seguimiento
+establecerá el <code>Reply-To</code> de cualquier mensaje reenviado de
+manera que las repuestas serán procesadas por defecto de la misma manera
+que el mensaje original. Esto significa que, por ejemplo, las respuestas
+a <code>maintonly</code> irán a <var>nnn</var><code>-maintonly@bugs</code>
+en lugar de a <var>nnn</var><code>@bugs</code>, a menos por supuesto que
+cambie esto de forma manual.
+
+<h2>Informe de fallos sobre paquetes desconocidos</h2>
 
 <P>Si el sistema de seguimiento de fallos no conoce al mantenedor del
 paquete, reenviará el informe a <code>debian-bugs-dist</code> incluso si
@@ -180,8 +230,8 @@ informe, o usando <A href="server-control">el servicio
 <code>control@bugs</code></A> para (re)asignar el informe apropiadamente
 si no lo estaba ya.</P>
 
-<h2>Usar <code>dpkg</code> para averiguar el paquete y la versión a usar
-en el informe</h2>
+<h2><a name="findpkgver">Uso de <code>dpkg</code> para averiguar el
+paquete y la versión a usar en el informe</a></h2>
 
 <P>Si está enviando en fallo en una orden, puede encontrar qué paquete la
 instaló usando <code>dpkg --search</code>. Puede averiguar la versión del
