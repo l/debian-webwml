@@ -89,14 +89,14 @@ $files =~ s/  ([\w -\/]+) architecture:/<dt>$1:/sg;
 $files =~ s/    (http:\S+)/  <dd><fileurl $1>/sg;
 $files =~ s,Debian (GNU/Linux )?(\S+) (alias |\()([a-z]+)\)?,</dl>\n\n<h3>Debian GNU/Linux $2 ($4)</h3>\n\n<dl>,sg;
 
-($pagetitle = $adv) =~ s/dsa/DSA/;
-$pagetitle =~ s/\./ /;
+$year = (localtime())[5] + 1900;
 
-if ($adv =~ /(dsa-\d+)-\d+\./) {
-  $wml = "$1.wml";
-}
+$adv =~ /.*dsa[- ](\d+)-(\d+)\.(.*)/;
+$wml = "$year/dsa-$1.wml";
+$data = "$year/dsa-$1.data";
+$pagetitle = "DSA-$1-$2 $3";
+
 die "$wml already exists!\n" if (-f $wml);
-($data = $wml) =~ s/.wml/.data/;
 die "$data already exists!\n" if (-f $data);
 
 $files =~ s,^</dl>\n\n,,;
