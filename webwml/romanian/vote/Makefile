@@ -4,13 +4,13 @@
 
 WMLBASE=..
 CUR_DIR=vote
-SUBS=1999 2000
+SUBS=1999 2000 2001
 
 include $(WMLBASE)/Make.lang
 
 
-index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/vote_*.wml) \
-  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/$(CUR_YEAR)/vote_*.wml) \
+index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*/vote_*.wml) \
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/[0-9]*/vote_*.wml) \
   $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
 
 howto_follow.$(LANGUAGE).html: howto_follow.wml \
