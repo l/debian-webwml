@@ -27,5 +27,5 @@ all: $(HTMLFILES)
 
 include $(BASE)/Make.templ.inc
 
-$(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(TEMPLDIR)/mainpage.wml $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_news.wml $(TEMPLDIR)/languages.wml
+$(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(TEMPLDIR)/mainpage.wml $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
 	wml -q index.wml
