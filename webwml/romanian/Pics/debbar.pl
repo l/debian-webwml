@@ -1,8 +1,9 @@
 #!/usr/bin/perl -w
 #
-# Perl scripts to generate the Debian toolbar icons
-# This needs gimp 1.1 and gimp1.1-nonfree to work!!
+# Perl script to generate the Debian toolbar icons
 # By Craig Small <csmall@debian.org>
+#
+# See webwml/english/Pics/README for more information.
 
 use Gimp qw( :auto ); 
 use Gimp::Fu; 
@@ -18,7 +19,7 @@ sub debian_button {
 
 	$image = gimp_image_new(80, $height, RGB);
 	$layer = gimp_layer_new($image, 80, $height, RGBA_IMAGE, "Button", 100, NORMAL_MODE);
-	$text = gimp_text($image, $layer, 9, 3, $words, 0, 0, "15", PIXELS, "*", "Lucida", "bold", "r", "*", "*", "*", "*");
+	$text = gimp_text($image, $layer, 9, 3, $words, 0, 0, "14", PIXELS, "*", "Aplos", "bold", "r", "*", "*", "*", "*");
 	
 
 	$width = gimp_drawable_width($text);
@@ -40,6 +41,8 @@ sub debian_button {
 	gimp_selection_none($image);
 
 	gimp_floating_sel_anchor($text);
+
+	gimp_palette_set_background("#df0451");
 
 	gimp_convert_indexed($image, 0, 0, 8, 0, 0, "");
 
