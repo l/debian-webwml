@@ -42,7 +42,22 @@ my $root = 'http://ftp-master.debian.org/~barbier/l10n/material/';
 my $rootnonus = 'http://nonus.debian.org/~barbier/l10n/material/';
 
 my $langfile = $opt_l.'/data/langs';
-
+#   These packages use a RFC1766 naming convention for language codes
+#   which makes output page look ugly.  Do not display them until a
+#   better solution is found
+#   This list is defined in list-languages.pl and gen-files.pl
+my %skip_po = (
+        abiword         => 1,
+        squirrelmail    => 1,
+        #   Horde related packages
+        horde2          => 1,
+        imp3            => 1,
+        kronolith       => 1,
+        mnemo           => 1,
+        nag             => 1,
+        'sork-passwd'   => 1,
+        turba           => 1,
+);
 my @po_langs = ();
 my @pd_langs = ();
 my @td_langs = ();
@@ -82,6 +97,7 @@ sub get_stats_po {
                         $none .= "<li>".$pkg."</li>\n";
                         next;
                 }
+                next if defined $skip_po{$pkg};
                 my $list = {};
                 foreach (@po_langs) {
                         $list{uc $_}  = 0;
@@ -462,7 +478,7 @@ sub process_langs {
 
         my ($pkg, $line, $file, $lang);
         foreach $pkg ($data->list_packages()) {
-                if ($data->has_po($pkg)) {
+                if ($data->has_po($pkg) && !defined($skip_po{$pkg})) {
                         foreach $line (@{$data->po($pkg)}) {
                                 ($file, $lang) = @{$line};
                                 next unless $lang ne '';
