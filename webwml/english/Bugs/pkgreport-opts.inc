@@ -8,6 +8,7 @@
 	[FR:Options ::]
 	[HR:Oznake::]
 	[IT:Opzioni::]
+	[JA:ÀßÄê::]
 	[SV:Flaggor::]
 </define-tag-sliced>
 <define-tag-sliced active_bugs whitespace=delete>
@@ -18,6 +19,7 @@
 	[FR:bogues non résolus:]
 	[HR:aktivni bugovi:]
 	[IT:anomalie non risolte:]
+	[JA:Ì¤²ò·è:]
 	[SV:aktiva fel:]
 </define-tag-sliced>
 <define-tag-sliced archived_bugs whitespace=delete>
@@ -28,6 +30,7 @@
 	[FR:bogues archivés:]
 	[HR:arhivirani bugovi:]
 	[IT:anomalie archiviate:]
+	[JA:²ò·èºÑ:]
 	[SV:arkiverade fel:]
 </define-tag-sliced>
 <define-tag-sliced no_status whitespace=delete>
@@ -38,6 +41,7 @@
 	[FR:pas d'ordre sur l'état ou la gravité:]
 	[HR:bez slaganja po stanju ni severityu:]
 	[IT:Senza ordine di status o di gravità:]
+	[JA:¾õÂÖ¤ä½ÅÍ×ÅÙ¤Î½ç¤ËÊÂ¤Ù¤Ê¤¤:]
 	[SV:ingen sortering på status/allvarlighetsgrad:]
 </define-tag-sliced>
 <define-tag-sliced reverse_order whitespace=delete>
@@ -48,6 +52,7 @@
 	[FR:ordre inverse de ::]
 	[HR:Obrnut redoslijed za: :]
 	[IT:Ordine inverso di: :]
+	[JA:µÕ½ç¤ËÊÂ¤Ù¤ë:]
 	[SV:Omvänd ordning för: :]
 </define-tag-sliced>
 <define-tag-sliced status whitespace=delete>
@@ -58,6 +63,7 @@
 	[FR:état:]
 	[HR:stanje:]
 	[IT:stato:]
+	[JA:¾õÂÖ:]
 	[SV:status:]
 </define-tag-sliced>
 <define-tag-sliced severities whitespace=delete>
@@ -68,6 +74,7 @@
 	[FR:gravités:]
 	[HR:severityi:]
 	[IT:gravità:]
+	[JA:½ÅÍ×ÅÙ:]
 	[SV:allvarlighetsgrader:]
 </define-tag-sliced>
 <define-tag-sliced bugs whitespace=delete>
@@ -78,6 +85,7 @@
 	[FR:bogues:]
 	[HR:bugovi:]
 	[IT:anomalie:]
+	[JA:¥Ð¥°:]
 	[SV:fel:]
 </define-tag-sliced>
 <define-tag-sliced status_include whitespace=delete>
@@ -88,6 +96,7 @@
 	[FR:Inclus l'état ::]
 	[HR:Ukljuèi stanje: :]
 	[IT:Stato incluso: :]
+	[JA:°Ê²¼¤Î¾õÂÖ¤Î¤â¤Î¤ò´Þ¤á¤ë:]
 	[SV:Inkludera status: :]
 </define-tag-sliced>
 <define-tag-sliced status_exclude whitespace=delete>
@@ -98,6 +107,7 @@
 	[FR:Exclu l'état ::]
 	[HR:Iskljuèi stanje: :]
 	[IT:Stato escluso: :]
+	[JA:°Ê²¼¤Î¾õÂÖ¤Î¤â¤Î¤ò´Þ¤á¤Ê¤¤:]
 	[SV:Exkludera status: :]
 </define-tag-sliced>
 <define-tag-sliced severity_include whitespace=delete>
@@ -108,6 +118,7 @@
 	[FR:Inclus la gravité ::]
 	[HR:Ukljuèen severity: :]
 	[IT:Includi gravità: :]
+	[JA:°Ê²¼¤Î½ÅÍ×ÅÙ¤Î¤â¤Î¤ò´Þ¤á¤ë:]
 	[SV:Inkludera allvarlighetsgrader: :]
 </define-tag-sliced>
 <define-tag-sliced severity_exclude whitespace=delete>
@@ -118,6 +129,7 @@
 	[FR:Exclu la gravité ::]
 	[HR:Iskljuèen severity: :]
 	[IT:Escludi gravità: :]
+	[JA:°Ê²¼¤Î½ÅÍ×ÅÙ¤Î¤â¤Î¤ò´Þ¤á¤Ê¤¤:]
 	[SV:Exkludera allvarlighetsgrader: :]
 </define-tag-sliced>
 <define-tag-sliced open whitespace=delete>
@@ -128,6 +140,7 @@
 	[FR:ouvert:]
 	[HR:otvoreni:]
 	[IT:open:]
+	[JA:¥ª¡¼¥×¥ó:]
 	[SV:öppet:]
 </define-tag-sliced>
 <define-tag-sliced forwarded whitespace=delete>
@@ -138,6 +151,7 @@
 	[FR:transmis:]
 	[HR:proslijeðeni:]
 	[IT:forwarded:]
+	[JA:¾åÎ®¤ËÅ¾Á÷ºÑ:]
 	[SV:vidaresänt:]
 </define-tag-sliced>
 <define-tag-sliced pending whitespace=delete>
@@ -148,6 +162,7 @@
 	[FR:en cours:]
 	[HR:u radu:]
 	[IT:pending:]
+	[JA:Î±ÊÝ:]
 	[SV:på gång:]
 </define-tag-sliced>
 <define-tag-sliced fixed whitespace=delete>
@@ -158,6 +173,7 @@
 	[FR:résolu:]
 	[HR:rije¹eni:]
 	[IT:fixed:]
+	[JA:½¤ÀµºÑ:]
 	[SV:rättat:]
 </define-tag-sliced>
 <define-tag-sliced done whitespace=delete>
@@ -168,6 +184,7 @@
 	[FR:fini:]
 	[HR:gotovi:]
 	[IT:done:]
+	[JA:²ò·è:]
 	[SV:klart:]
 </define-tag-sliced>
 <define-tag-sliced critical whitespace=delete>
@@ -178,6 +195,7 @@
 	[FR:critique:]
 	[HR:kritièni:]
 	[IT:critical:]
+	[JA:Ã×Ì¿Åª:]
 	[SV:kritiskt:]
 </define-tag-sliced>
 <define-tag-sliced grave whitespace=delete>
@@ -188,6 +206,7 @@
 	[FR:grave:]
 	[HR:te¹ki:]
 	[IT:grave:]
+	[JA:½ÅÂç:]
 	[SV:gravt:]
 </define-tag-sliced>
 <define-tag-sliced serious whitespace=delete>
@@ -198,6 +217,7 @@
 	[FR:sérieux:]
 	[HR:ozbiljni:]
 	[IT:serious:]
+	[JA:¿¼¹ï:]
 	[SV:allvarligt:]
 </define-tag-sliced>
 <define-tag-sliced important whitespace=delete>
@@ -208,6 +228,7 @@
 	[FR:important:]
 	[HR:va¾ni:]
 	[IT:important:]
+	[JA:½ÅÍ×:]
 	[SV:viktigt:]
 </define-tag-sliced>
 <define-tag-sliced normal whitespace=delete>
@@ -218,6 +239,7 @@
 	[FR:normal:]
 	[HR:normalni:]
 	[IT:normal:]
+	[JA:ÄÌ¾ï:]
 	[SV:normalt:]
 </define-tag-sliced>
 <define-tag-sliced minor whitespace=delete>
@@ -228,6 +250,7 @@
 	[FR:mineur:]
 	[HR:maleni:]
 	[IT:minor:]
+	[JA:·ÚÅÙ:]
 	[SV:mindre:]
 </define-tag-sliced>
 <define-tag-sliced wishlist whitespace=delete>
@@ -238,6 +261,7 @@
 	[FR:souhait:]
 	[HR:¾elje:]
 	[IT:wishlist:]
+	[JA:Í×Ë¾:]
 	[SV:önskelista:]
 </define-tag-sliced>
 
