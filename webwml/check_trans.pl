@@ -122,7 +122,7 @@ sub check_file {
 	}
 	open(F, $name) || die $!;
 	while(<F>) {
-		if (/translation(\s+|=")([.0-9]*)("|\s*-->)\s*$/oi) {
+		if (/translation(\s+|=")([.0-9]*)("|\s*-->)/oi) {
 			warn "Found revision $2\n" if $opt_v;
 			$oldr = $2;
 			if ($oldr eq $revision) {
