@@ -215,20 +215,29 @@ it raw .html when it can be .wml?]
 <H2>Content negotiation issues</H2>
 
   <p>The content negotiation system has several flaws that might make some
-  people give up on our site. However, we can't do much about this.
+  people give up on our site. However, we can't do much about this. Most of
+  it is caused by clients sending non-RFC strings in the Accept-Language
+  header, which makes Apache go bezerk and apply some of its illogical
+  methods of serving smallest available files.
 
-  <p>When given `Accept-Language: *', which is a client behaviour that isn't
-  defined by the RFC, Apache goes bezerk and shows the first available page,
-  which is usually Chinese. The clients that send this are undoubtedly
-  broken, but there are many of them (some versions of Internet Explorer,
-  5.5?) so we can't ignore them. Jay filed a bug with Apache, but upstream
-  chooses to stick with the RFC and doesn't care.
+  <p>When given `Accept-Language: *', the first available page will be
+  served, and that's usually Chinese. The clients that send this are
+  undoubtedly broken, but there are many of them (some versions of Internet
+  Explorer, 5.5?) so we can't ignore them.
+
+  <p>Jay said he once filed a bug with Apache, but upstream chooses to stick
+  with the RFC and doesn't care about any exceptions.
 
   <p>The /releases/potato/i386/install page seems to show up in Slovak way
   too often.
 
   <p>When given Accept-Language headers consisting of two parts, e.g. en-US,
-  en-GB or nl-BE, Apache serves the Chinese page, at least on some mirrors.
+  en-GB or nl-BE, the Chinese page is served, at least on some mirrors.
+
+  <p>When there exists a file of unknown language, i.e. an unrecognized
+  foo.*.html file with no AddLanguage or LanguagePriority setting, and when
+  the client sends an Accept-Language which contains only unavailable
+  languages, the former file will be served.
 
 <H2>Mirroring issues</H2>
 
