@@ -27,6 +27,7 @@ my (%attrs, @attrorder, %summaryattrs, @summaryorder);
 	  'bandwidth' => 'Bandwidth',
 	  'status' => 'Status',
 	  'notes' => 'Notes',
+	  'description' => 'Description',
 	  'createtimestamp' => 'Entry created',
 	  'modifytimestamp' => 'Entry modified'
 	 );
@@ -34,7 +35,8 @@ my (%attrs, @attrorder, %summaryattrs, @summaryorder);
 # This defines what fields are displayed, and in what order
 @attrorder = ('hostname', 'admin', 'architecture', 'distribution', 'access',
               'sponsor', 'sponsor-admin', 'location', 'machine', 'memory',
-	      'disk', 'bandwidth', 'status', 'notes', 'createtimestamp', 'modifytimestamp');
+	      'disk', 'bandwidth', 'status', 'notes', 'description',
+	      'createtimestamp', 'modifytimestamp');
 
 # ditto for summary
 %summaryattrs = ('hostname' => 'Host name',
