@@ -14,7 +14,7 @@ merchandise.$(LANGUAGE).html: merchandise.wml $(TEMPLDIR)/template.wml \
 
 ifeq "$(LANGUAGE)" "en"
 $(HTMLDIR)/bsd.license: bsd.license
-	cp -p $(@F) $(HTMLDIR)
+	install -m 664 -p $(@F) $(HTMLDIR)
 
 install:: $(HTMLDIR)/bsd.license
 
