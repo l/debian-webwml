@@ -1,4 +1,4 @@
-# originally written by Marcello Magallon
+# originally written by Marcelo Magallon
 # for <perl>
 #use wml::std::tags
 
