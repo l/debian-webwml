@@ -1,0 +1,293 @@
+#use wml::debian::template title="Paquets en souffrance et paquets souhaités"
+#use wml::debian::translation-check translation="1.19" maintainer="Frédéric Bothamy"
+
+<p>Les paquets en souffrance et paquets souhaités («&nbsp;Work-Needing and
+Prospective Packages&nbsp;», en bref, WNPP) sont une liste des paquets ayant
+besoin de nouveaux responsables et des paquets prospectifs dans Debian. Pour
+pouvoir suivre de près l'état réel de ceux-ci, WNPP est actuellement
+opérationnel en tant que pseudo-paquet dans le <a
+href="http://bugs.debian.org/">système de suivi des bogues Debian (BTS)</a>.
+
+<hr>
+
+<p><a href="work_needing">Paquets ayant besoin d'un nouveau responsable</a>:
+<ul>
+  <li><a href="rfa_bypackage">Paquets disponibles à l'adoption</a>
+  <li><a href="rfa_bymaint">Paquets disponibles à l'adoption, par responsable</a>
+  <li><a href="orphaned">Paquets abandonnés</a>
+  <li><a href="being_adopted">Paquets en cours d'adoption</a>
+</ul>
+
+<p><a href="prospective">Paquets prospectifs</a>:
+<ul>
+  <li><a href="being_packaged">Paquets en cours de travail</a>
+  <li><a href="requested">Paquets demandés</a>
+</ul>
+
+<p><a href="unable-to-package">Logiciels qui ne peuvent pas être empaquetés</a>
+
+<p>Note&nbsp;: ces listes sont mises à jour quotidiennement&nbsp;; pour des
+informations plus à jour, veuillez vérifier l'entrée du <a
+href="http://bugs.debian.org/wnpp">pseudo-paquet wnpp</a> dans le BTS.
+
+<hr>
+
+<p>Comme ceci utilise le BTS, chaque développeur est déjà familier avec les
+détails techniques, comme pour toute soumission de nouvelle information,
+modification d'information ou fermeture de requêtes en attente. D'un autre
+côté, pour parvenir à un niveau élevé d'automatisation, quelques procédures
+doivent être observées.</p>
+
+<p>Pour soumettre une nouvelle information, un bogue doit être créé sur le <a
+href="http://bugs.debian.org/wnpp">pseudo-paquet wnpp</a> pour chaque paquet
+(prospectif) qui est affecté. Veuillez noter que vous ne devriez soumettre
+qu'un seul bogue par paquet source et non un bogue pour chaque paquet binaire
+construit à partir d'un paquet source.</p>
+
+<p>Vous pouvez utiliser <a href="http://packages.debian.org/reportbug">reportbug</a>
+(apt-get install reportbug):</p>
+
+<blockquote>
+  $ reportbug --email username@domain.tld wnpp<br>
+  Using 'Votre Nom &lt;username@domain.tld&gt;' as your from address.<br>
+  Getting status for wnpp...<br>
+  Querying Debian bug tracking system for reports on wnpp<br>
+  (Use ? for help at prompts.)<br>
+  ...<br>
+</blockquote>
+
+<p>Vous verrez une liste de bogues rapportés sur WNPP que vous devriez lire
+pour ne pas créer un deuxième rapport pour le même paquet.</p>
+<p>Après la liste de bogues, il vous est demandé le type de requête&nbsp;:</p>
+ 
+<blockquote>
+What sort of request is this?<br>
+<br>
+1 ITP  This is an `Intent To Package'. Please submit a package description<br>
+       along with copyright and URL in such a report.<br>
+<br>
+2 O    The package has been `Orphaned'. It needs a new maintainer as soon<br>
+       as possible.<br>
+<br>
+3 RFA  This is a `Request for Adoption'. Due to lack of time, resources,<br>
+       interest or something similar, the current maintainer is asking for<br>
+       someone else to maintain this package. He/she will maintain it in<br>
+       the meantime, but perhaps not in the best possible way. In short:<br>
+       the package needs a new maintainer.<br>
+<br>
+4 RFP  This is a `Request For Package'. You have found an interesting piece<br>
+       of software and would like someone else to maintain it for Debian.<br>
+       Please submit a package description along with copyright and URL in<br>
+       such a report.<br>
+<br>
+Choose the request type: <br>
+</blockquote>
+
+<p>Après votre choix, il vous sera demandé le nom du paquet&nbsp;:</p>
+
+<blockquote>
+Choose the request type: x<br>
+Please enter the proposed package name: NOMPAQUET<br>
+Checking status database...<br>
+</blockquote>
+
+<ul>
+<li><p>Si votre requête est du type ITP (1) ou RFP (4), il vous sera demandé
+   une courte description, puis quelques informations à propos du paquet&nbsp;:</p>
+
+<blockquote>
+Please briefly describe this package; this should be an appropriate short
+description for the eventual package:<br>
+&gt; UNE DESCRIPTION<br>
+<br>
+Subject: ITP: NOMPAQUET -- UNE DESCRIPTION<br>
+Package: wnpp<br>
+Version: N/A; reported 2002-01-30<br>
+Severity: wishlist<br>
+<br>
+* Package name    : PACKAGENAME<br>
+  Version         : x.y.z<br>
+  Upstream Author : Name &lt;somebody@some.org&gt;<br>
+* URL             : http://www.some.org/<br>
+* License         : (GPL, LGPL, BSD, MIT/X, etc.)<br>
+  Description     : UNE DESCRIPTION<br>
+<br>
+<br>
+-- System Information<br>
+...<br>
+</blockquote>
+
+<p>En dessous de la ligne "Description", vous devriez donner plus
+d'informations à propos du paquet.</p>
+
+<li><p>Si votre demande est du type O (2) ou RFA (3), vous devez entrer le nom
+du paquet.</p>
+
+<blockquote>
+Choose the request type: x<br>
+Please enter the name of the package: NOMPAQUET<br>
+Checking status database...<br>
+<br>
+Subject: O: NOMPAQUET -- DESCRIPTION COURTE<br>
+Package: wnpp<br>
+Version: N/A; reported 2002-01-30<br>
+Severity: normal<br>
+<br>
+<br>
+<br>
+-- System Information<br>
+...<br>
+</blockquote>
+
+<p>Vous devriez ajouter quelques informations concernant la maintenance du
+paquet, la situation amont et peut-être une raison pour laquelle vous
+abandonnez le paquet.</p>
+
+</ul>
+
+<p>Puis, il vous est demandé si vous voulez envoyer votre requête&nbsp;:</p>
+
+<blockquote>
+Report will be sent to Debian Bug Tracking System &lt;submit@bugs.debian.org&gt;<br>
+Submit this bug report (e to edit) [Y|n|i|e|?]? <br>
+</blockquote>
+
+<p>Il est également possible de créer le rapport/bogues sur le paquet WNPP par
+courriel. Le format de la soumission devrait ressembler à ceci&nbsp;:</p>
+
+<blockquote>
+  To: submit@bugs.debian.org<br>
+  Subject: &lt;<i>TAG</i>&gt;: &lt;<b>nom du paquet</b>&gt; -- &lt;courte description&gt;<br>
+  <br>
+  Package: wnpp<br>
+  Severity: &lt;voir ci-dessous&gt;<br>
+  <br>
+  &lt; Quelques informations à propos du paquet. S'il s'agit d'une ITP ou RFP,
+  une adresse à laquelle le paquet (soit le .deb ou le source d'origine) peut
+  être téléchargé est nécessaire, ainsi que des informations concernant sa
+  licence. &gt;
+</blockquote>
+
+<p>Les marques à utiliser et leur gravité correspondantes sont&nbsp;:
+
+<table border=0 cellpadding=3 cellspacing=3>
+<tr>
+  <td valign="top" width="10%"><a name="tag-o"><b>O</b></a></td>
+  <td valign="top" width="10%"><i>normal</i></td>
+  <td width="80%">Le paquet a été abandonné («&nbsp;Orphaned&nbsp;»). Il a
+  besoin d'un nouveau responsable dès que possible. Si le paquet a une
+  priorité supérieure ou égale à standard, la gravité devrait être important.
+  </td>
+</tr>
+<tr>
+  <td valign="top" width="10%"><a name="tag-rfa"><b>RFA</b></a></td>
+  <td valign="top" width="10%"><i>normal</i></td>
+  <td width="80%">Ceci est une demande d'adoption («&nbsp;Request for
+  Adoption&nbsp;»). À cause du manque de temps, de ressource, d'intérêt ou
+  quelque chose de semblable, le responsable actuel demande à quelqu'un
+  d'autre de maintenir ce paquet. Il le maintiendra en attendant, mais
+  peut-être pas de la meilleure manière possible. En résumé&nbsp;: le paquet a
+  besoin d'un nouveau responsable.
+  </td>
+</tr>
+<tr>
+  <td valign="top" width="10%"><a name="tag-itp"><b>ITP</b></a></td>
+  <td valign="top" width="10%"><i>wishlist</i></td>
+  <td width="80%">Ceci est une intention d'empaquetage («&nbsp;Intent To
+  Package&nbsp;»). Veuillez soumettre une description de paquet avec le
+  copyright et une URL pour un tel rapport.
+  </td>
+</tr>
+<tr>
+  <td valign="top" width="10%"><a name="tag-rfp"><b>RFP</b></a></td>
+  <td valign="top" width="10%"><i>wishlist</i></td>
+  <td width="80%">Ceci est une demande de paquet («&nbsp;Request For
+  Package&nbsp;»). Quelqu'un a trouvé un logiciel intéressant et désirerais
+  que quelqu'un d'autre le maintienne pour Debian. Veuillez soumettre une
+  description du paquet ainsi que le copyright et la licence pour un tel
+  rapport.
+  </td>
+</tr>
+</table>
+
+<p>Les procédures de fermeture de ces bogues sont décrites ci-dessous&nbsp;:
+
+<table border=0 cellpadding=3 cellspacing=3>
+<tr>
+  <td valign="top" width="10%"><a name="howto-o"><b>O</b></a></td>
+  <td width="90%">Si vous voulez adopter un paquet, renommez le bogue en
+  remplaçant «&nbsp;O&nbsp;» par «&nbsp;ITA&nbsp;» pour indiquer aux autres
+  personnes que le paquet est en cours d'adoption et pour empêcher son retrait
+  automatique de l'archive. Pour adopter réellement le paquet, envoyez-le avec
+  votre nom dans le champ Maintainer: et mettez quelque chose comme
+      <blockquote>
+      * New maintainer (Closes: #<var>numerobogue</var>)
+      </blockquote>
+  dans le changelog du paquet pour fermer automatiquement ce bogue une fois
+  que le paquet a été installé&nbsp;; où <var>numerobogue</var> doit être
+  remplacé par le numéro du rapport de bogue correspondant. De plus, avant
+  d'envoyer réellement un nouveau paquet en tant que responsable, vous devriez
+  vérifier s'il n'y a pas une nouvelle version amont et vous devriez essayer
+  de corriger les bogues restants.
+  </td>
+</tr>
+<tr>
+  <td valign="top" width="10%"><a name="howto-rfa"><b>RFA</b></a></td>
+  <td width="90%">Si vous voulez adopter un paquet, renommez le bogue en
+  remplaçant «&nbsp;RFA&nbsp;» par «&nbsp;ITA&nbsp;» pour indiquer aux autres
+  personnes que le paquet est en cours d'adoption et pour empêcher son retrait
+  automatique de l'archive. Pour adopter réellement le paquet, envoyez-le avec
+  votre nom dans le champ Maintainer: et fermez le bogue une fois que le
+  paquet a été installé.
+
+  <p>Si vous décidez en tant que responsable du paquet d'abandonner un paquet
+  que vous aviez marqué avec «&nbsp;RFA&nbsp;», veuillez changer le nom du
+  rapport de bogue et remplacer «&nbsp;RFA&nbsp;» par «&nbsp;O&nbsp;». Si vous
+  voulez annuler votre demande, fermez simplement le rapport de bogue.
+  </td>
+</tr>
+<tr>
+  <td valign="top" width="10%"><a name="howto-itp"><b>ITP</b></a></td>
+  <td width="90%">Créez le paquet du logiciel, envoyez-le et fermez le bogue
+  une fois que le paquet a été installé.
+
+  <p>Si vous changez d'avis et que vous ne voulez plus créer de paquet pour le
+  logiciel, vous pouvez soit fermer le bogue ou changer son nom en RFP comme
+  il vous semble approprié.
+  </td>
+</tr>
+<tr>
+  <td valign="top" width="10%"><a name="howto-rfp"><b>RFP</b></a></td>
+  <td width="90%">Si vous voulez un paquet pour ce logiciel, changez le nom du
+  rapport de bogue en remplaçant «&nbsp;RFP&nbsp;» par «&nbsp;ITP&nbsp;» pour
+  pour indiquer aux autres personnes que le paquet est en cours de création.
+  Puis, créez le paquet du logiciel, envoyez-le et fermez le bogue une fois
+  que le paquet a été installé.
+  </td>
+</tr>
+</table>
+
+<p>Si vous avez l'impression que la liste de diffusion des développeurs
+devrait être au courant de votre ITP, RFA ou autre, ajoutez l'en-tête
+<pre>X-Debbugs-CC: debian-devel@lists.debian.org</pre> au message
+(remarque&nbsp;: ceci est un vrai en-tête, mais un pseudo en-tête).
+
+<p>Bien sûr, la façon la plus facile de fermer ces bogues est d'inclure une
+entrée dans le changelog du paquet indiquant ce que vous avez fait et
+de lui ajouter <tt>(closes:&nbsp;bug#nnnnn)</tt>. De cette façon, le bogue
+sera automatiquement fermé après l'installation du paquet dans l'archive.
+
+<p><strong>Attention&nbsp;:</strong> Vous <strong>ne pouvez pas</strong>
+réassigner ou changer de nom des rapports de bogues en envoyant le numéro du
+rapport @bugs.debian.org, <strong>ni</strong> en créant de nouveaux rapports.
+Vous devez envoyer le message approprié au robot de contrôle du BTSt &mdash;
+<a href="$(HOME)/Bugs/server-control">lisez les instructions pour
+cela</a>&nbsp;!
+
+<p>Note&nbsp;: Si un paquet reste abandonné pendant une très longue durée,
+nous examinerons la situation pour déterminer si le paquet est toujours
+nécessaire &mdash; si ce n'est pas le cas, il sera demandé aux responsables
+FTP d'enlever le paquet d'<i>unstable</i>.
+
+<p>Si vous avez besoin pour une raison de contacter les responsables WNPP, ils
+peuvent être joints à <tt>wnpp@debian.org</tt>.
