@@ -18,4 +18,5 @@ server-control.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc $(ENGLI
 server-refcard.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc $(ENGLISHDIR)/Bugs/footer.inc
 server-request.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc $(ENGLISHDIR)/Bugs/footer.inc
 pseudo-packages.$(LANGUAGE).html: $(ENGLISHDIR)/Bugs/pseudo-packages.description \
-  $(TEMPLDIR)/template.wml otherpages.inc $(ENGLISHDIR)/Bugs/footer.inc
+  $(TEMPLDIR)/template.wml otherpages.inc $(ENGLISHDIR)/Bugs/footer.inc \
+  $(ENGLISHDIR)/Bugs/pseudo-packages.inc
