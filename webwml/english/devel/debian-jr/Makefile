@@ -4,7 +4,7 @@
 
 WMLBASE=../..
 CUR_DIR=devel/debian-jr
-SUBS=
+SUBS=News
 
 include $(WMLBASE)/Make.lang
 
