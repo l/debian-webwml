@@ -89,7 +89,7 @@ while ( @row = $sth->fetchrow_array ) {
             push @cdtypes, $tmpstr;
         }
         if ($customcd) {
-            push @cdtypes, "<CustomRelease>";
+            push @cdtypes, "<custom>";
         }
         if ($nonuscd) {
             push @cdtypes, "<non-us>";
