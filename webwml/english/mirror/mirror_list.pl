@@ -28,9 +28,8 @@ sub process_line {
 		}
 		return;
 	}
-	elsif ($line =~ /^Alias(es)?:\s*(.*)\s*$/is) {
-		@tmp = split("\n", $2);
-		$mirror{$site}{aliases} = [ @tmp ];
+	elsif ($line =~ /^Alias(?:es)?:\s*(.+)\s*$/is) {
+		push @{ $mirror{$site}{aliases} }, $_ foreach (split("\n", $1));
 	}
 	elsif ($line=~ /^((Archive|nonUS|WWW|Incoming|CDimage|Old)-(\w*)):\s*(.*)\s*$/i) {
 		$type = lc $1;
@@ -40,8 +39,7 @@ sub process_line {
 		}
 	}
 	elsif ($line =~ /^Includes:\s*(.*)\s*$/i) {
-		@tmp = split(" ", $1);
-		$mirror{$site}{includes} = [ @tmp ];
+		push @{ $mirror{$site}{includes} }, $_ foreach (split(" ", $1));
 	}
 	elsif ($line =~ /^Sponsor:\s*(.*)\s*$/i) {
 		push @{ $mirror{$site}{sponsor} }, $1;
