@@ -3,7 +3,7 @@
 # $Id$
 
 s|^(<html lang="zh)">|$1-CN">|i;
-s|^(<meta http-equiv=.*charset)=big5">|$1=gb2312">|i;
+s|^(\s*<meta http-equiv=.*charset)=big5">|$1=gb2312">|i;
 s/(\.zh)(?=\.(?:gif|jpg|png))/$1-cn/g;
 s|^<A href=".*">(&#20013;&#25991;&nbsp;.+CN.+)</A>(?=&nbsp;)|<B>$1</B>|;
 
