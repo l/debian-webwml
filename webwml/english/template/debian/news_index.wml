@@ -1,0 +1,38 @@
+<perl>
+
+sub news_index {
+  my ($year) = @_;
+  if (! opendir(DIR, "$year")) {
+     $year = '.';
+     opendir(DIR, $year);
+  }
+  @files = grep { /^\d+\w?.wml$/ && -f "$year/$_" } readdir(DIR);
+  @files = sort {$b cmp $a} @files;
+  # $count = 0;
+  foreach (@files) {
+     # $count++;
+     open(FILE, "<$year/$_");
+     if (/(\d+\w?).wml/) {
+        $base = $1;
+     }
+     $date = ''; $title = '';
+     foreach $line (<FILE>) {
+        if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
+           $title = $1;
+        }
+        elsif ($line =~ /^<define-tag release_date>(.*)<\/define-tag>$/) {
+           $date = $1;
+        }
+        if ($title && $date) {
+           $str .= "<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong><br>\n";
+           last;
+        }
+     }
+     close FILE;
+     # if ($count eq "6") { last; }
+  }
+close DIR;
+return $str;
+}
+
+</perl>
