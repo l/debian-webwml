@@ -447,7 +447,7 @@ sub trailer {
 	"</p>\n".
 	"<p>". gettext( "Last Modified: " ). "LAST_MODIFIED_DATE".
 	"<br>\n".
-	sprintf( gettext( "Copyright &copy; 1997-2004 <a href=\"http://www.spi-inc.org\">SPI</a>; See <a href=\"%s/license\">license terms</a>." ), "$HOME/" )."<br>\n".
+	sprintf( gettext( "Copyright &copy; 1997-2005 <a href=\"http://www.spi-inc.org\">SPI</a>; See <a href=\"%s/license\">license terms</a>." ), "$HOME/" )."<br>\n".
 	gettext( "Debian is a registered trademark of Software in the Public Interest, Inc." ).
 	"</div> <!-- end fineprint -->\n".
 	"</div> <!-- end footer -->\n".
