@@ -10,3 +10,6 @@ SUBS=News
 include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml
+
+install::
+	install -m 664 -p *.mgp $(HTMLDIR)
