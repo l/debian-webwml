@@ -1,0 +1,124 @@
+#use wml::debian::template title="Autobuilder network" BARETITLE="true"
+
+<p>The autobuilder network is a Debian development that helps speed
+up package recompilations for all the architectures
+<a href="$(HOME)/ports/">Debian currently supports</a>. This
+network is made up of several machines that use a specific software
+package called <em>buildd</em> to pick up packages from the Debian
+archive and rebuild them for the target arquitecture.
+
+<h2>How does buildd work?</h2>
+
+<P><em>Buildd</em> is the name usually given to the software used by the 
+autobuilder network, but it's really made of three different software
+elements:
+<ul>
+<li><A href="http://packages.debian.org/sbuild">sbuild</A> a tool 
+that builds a given package in an isolated chroot.
+<li><A href="http://m68k.debian.org/buildd/getting.html">wanna-build</A>,
+a tool that helps coordinate package (re)building through a database
+that keeps a list of packages and their status.
+<li><a href="http://m68k.debian.org/buildd/getting.html">buildd</a>,
+a daemon that periodically checks the database maintained by
+<em>wanna-build</em> and calls <em>sbuild</em> to build the packages.
+It also keeps tracks of buidling failures and successes.
+<li><a href="http://packages.debian.org/quinn-diff">quinn-diff</a>,
+a program for comparing a Sources file and a Package file to
+determine which programs need to be (re)compiled from source for
+an architecture. More information on quinn-diff is available 
+<a href="http://buildd.debian.org/quinn-diff/">
+</ul>
+
+<P><em>Wanna-build</em>'s documentation provides an overview of this 
+system, which is included here for clarity:
+</p>
+
+<hr>
+<pre>
+Quinn Diff -----          -------> Build Daemon <-------> Adminstrator
+                \        /              ^
+                 \      /                \-------------
+                  |    |                               \
+                  V    V                               V
+               Wanna Build                          sbuild <--------- Andrea
+                  ^    ^                               ^
+                  |    |                              /
+                 /      \                            /
+                /        \                          /
+Packages -------          -------> Human <----------
+</pre>
+<hr>
+
+<h2>What does a Debian developer need to do?</h2>
+
+<P>Actually, an average Debian developer does not need to explicitly use
+the buildd network. Whenever he uploads a package to the archive
+(binary compiled to a given architecture) it will be added to the database
+for all architectures (in state <em>Needs-Build</em>). 
+Build machines will query the build database for packages in this state,
+and will routinely take packages from that list. The list is 
+is prioritized by previous compilation state, priority, section, and finally
+package name.
+
+<P>If the build succeeds in all architectures, the maintainer will not
+need to do anything. All those binary packages will be uploaded to the
+architecture main site. If the build does not succeed the package will
+enter a special state (<em>Failed</em> or <em>Dep-Wait</em>, if they
+depend on specific build dependencies which are not available). 
+The autobuilder administrators will review packages which fail the build
+and will report back to the maintainer, usually, opening up a bug in the
+Bug Tracking System.
+
+<P>Sometimes a package takes a long time to build for a given architecture
+and that holds the package from entering <a href="$(HOME)/devel/testing">
+testing</A>. Unfortunately, the package will need to wait until a machine 
+picks it up. Buildd administrators will not accept requests to speed
+up the building of a package since the priority list has already been
+established. A maintainer, however, can access a 
+<a href="http://db.debian.org/machines.cgi">Debian development machine</a>
+and manually build the package there.
+
+<P>You can check that status of the different buildds attempt
+of the packages that belong to any given maintainer by checking the 
+<a href="http://buildd.debian.org/bymaint.php">buildd logs</a>. 
+These logs are also linked from the Packages' Maintainer Overview.
+
+<P>For more information on the different states a package can be
+please read <a href="wanna-build-states">wanna-build-states</a>.
+
+<h2>Where can I find additional information?</h2>
+
+<P>Of course, both the documentation and the source code available for these
+different tools are the best way to find out how the buildd network
+works. Additionally, the
+<a href="$(HOME)/doc/manuals/developers-reference/ch-pkgs#s-porting">
+Porting and being ported</a> section of the 
+<a href="$(HOME)/doc/manuals/developers-reference/">Debian Developers
+Reference</a> provides complementary information on how does it work and
+it also provides some information on
+<a href="$(HOME)/doc/manuals/developers-reference/ap-tools#s-tools-builders">
+package builders</a> and
+<a href="$(HOME)/doc/manuals/developers-reference/ap-tools#s-tools-porting">
+porting tools</a> which are involved in the process of both setting
+up and maintaing the buildd network.
+
+<h2>How can I setup my own auto-builder node?</h2>
+
+<P>There are several reasons why a developer (or user)
+might want to setup and run an autobuilder:
+
+<ul>
+<li>To locally test if the package <tt>Build-Depends</tt> are properly
+defined (i.e. by compiling the package in the auto-builder enviroment).
+<li>To help in developing a port to a given architecture (when autobuilders
+are needed)
+<li>To assess the impact of a given compiler optimisation or patch
+by recompiling a large subset of packages.
+<li>To run tools that analyse packages for known mistakes and need to
+be run in compiled packages. This is even needed when doing source
+code analysis, for example , as a work-around for packages
+using <tt>dpatch</tt>.
+</ul>
+
+<P>You can read more information on how you can
+<a href="setting-up">setup an autobuilder</a>.
