@@ -4,7 +4,7 @@
 
 WMLBASE=..
 CUR_DIR=releases
-SUBS=hamm slink potato
+SUBS=hamm slink potato woody
 
 include $(WMLBASE)/Make.lang
 
