@@ -6,13 +6,15 @@ WMLBASE=..
 CUR_DIR=consultants
 SUBS=
 
+NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
-
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml $(ENGLISHSRCDIR)/consultants/consultant.data
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
+                        $(ENGLISHSRCDIR)/consultants/consultant.data
 ifeq ($(LANGUAGE),en)
 	$(ENGLISHSRCDIR)/consultants/count
 endif
 	$(WML) $(<F)
+
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/consultant.wml
 	$(WML) $(<F)
