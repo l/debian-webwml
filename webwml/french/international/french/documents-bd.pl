@@ -251,7 +251,7 @@ $translations = {
 'internals' => {
 	'type'			=> 'DDP',
 	'name'			=> 'dpkg Internals Manual',
-	'revision'		=> '1.2',
+	'revision'		=> '1.5',
 	'url'			=> 'http://www.debian.org/~elphick/manuals.html/dpkg-internals/',
 	'cvs_url'		=> 'http://cvs.debian.org/dpkg/dpkg/doc/internals.sgml?cvsroot=dpkg',
 	'package'		=> 'dpkg-dev',

@@ -205,13 +205,13 @@ $translations_status = {
 },
 
 'internals' => {
-	'status'		=> '3',
-	'since'			=> '19/10/1999',
-	'translation_name'	=> 'Le manuel de l\'intérieur de dpkg',
+	'status'		=> '4',
+	'since'			=> 'O8/O1/2001',
+	'translation_name'	=> 'Manuel des mécanismes internes de dpkg',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'translation_url'	=> '',
-	'base_revision'		=> '1.2',
-	'translation_package'	=> '',
+	'base_revision'		=> '1.5',
+	'translation_package'	=> 'dpkg',
 },
 
 'making-deb' => {
