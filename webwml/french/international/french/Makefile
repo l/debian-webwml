@@ -15,10 +15,14 @@ $(HTMLFILES): documents-bd.pl current_status.pl
 
 # ask to install the debian-l10-french-faq files
 
-$(HTMLDIR)/debian-l10n-french-faq.html:debian-l10n-french-faq.html
-	test -d $(HTMLDIR)/debian-l10-french-faq.html \
-	  || mkdir -p -m g+w $(HTMLDIR)/debian-l10-french-faq
+DLFFSOURCE := $(wildcard debian-l10n-french-faq.html/*.html)
+DLFFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(DLFFSOURCE))
+DLFFDESTDIR := $(HTMLDIR)/debian-l10n-french-faq.html
 
-$(HTMLDIR)/debian-l10n-french-faq.html/%:debian-l10n-french-faq.html/%
+install::
+	test -d $(DLFFDESTDIR) || mkdir -p -m g+w $(DLFFDESTDIR)
+install:: $(DLFFDESTFILES)
 
-install:: $(patsubst %,$(HTMLDIR)/%,$(wildcard debian-l10-french-faq.html))
+$(DLFFDESTFILES): $(DLFFSOURCE)
+	install -m664 $(@F) $(DLFFDESTDIR)
+
