@@ -1,4 +1,4 @@
-# This Makefile should need no changes from webwml/english/security/Makefile
+# This Makefile should need no changes from webwml/english/events/Makefile
 # Please send a message to debian-www if you need to modify anything, so the
 # problem can be fixed.
 
@@ -9,9 +9,8 @@ SUBS=1998 1999 2000 2001
 include $(WMLBASE)/Make.lang
 
 
-#do not modify the following line(s)
-index.$(LANGUAGE).html: index.wml $(wildcard 1998/*.wml) $(wildcard 1999/*.wml) \
+# Do Not modify the following lines
+index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*/*.wml) \
      $(ENGLISHSRCDIR)/events/index.include \
-     $(wildcard $(ENGLISHSRCDIR)/events/1998/*.wml) \
-	 $(wildcard $(ENGLISHSRCDIR)/events/1999/*.wml) \
-     $(TEMPLDIR)/template.wml $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml
+     $(wildcard $(ENGLISHSRCDIR)/events/[0-9]*/*.wml) \
+     $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml

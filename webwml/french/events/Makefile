@@ -4,7 +4,7 @@
 
 WMLBASE=..
 CUR_DIR=events
-SUBS=2001
+SUBS=1998 1999 2000 2001
 
 include $(WMLBASE)/Make.lang
 
