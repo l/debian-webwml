@@ -4,9 +4,10 @@
 
 WMLBASE=..
 CUR_DIR=News
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
-SUBS=weekly 1997 1998 1999
+# list any subdirectories in the following variable. If a listed directory
+# exists, it must contain a Makefile, or make gives an error
+YEARS:=$(wildcard [12][0-9][0-9][0-9])
+SUBS=$(YEARS) weekly
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
@@ -15,7 +16,7 @@ include $(WMLBASE)/Make.dep.generic
 include $(WMLBASE)/Make.dep.templ
 
 # Do Not modify the following line
-index.$(LANGUAGE).html: index.wml $(wildcard 1998/1998*.wml) \
-     $(wildcard $(ENGLISHSRCDIR)/News/1999/1999*.wml) \
-     $(wildcard 1999/1999*.title) \
+index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.wml) \
+     $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/$(CUR_YEAR)*.wml) \
+     $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.title) \
      $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
