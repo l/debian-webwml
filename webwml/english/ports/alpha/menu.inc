@@ -6,7 +6,7 @@
 <menu-item basename="../index">
 [EN:Ports:]
 [AR:Ports:]
-[DA:Ports:]
+[DA:Tilpasninger:]
 [DE:Ports:]
 [EL:Ports:]
 [EO:Ports:]
@@ -32,7 +32,7 @@
 <menu-item basename="index">
 [EN:Debian for Alpha:]
 [AR:Debian for Alpha:]
-[DA:Debian for Alpha:]
+[DA:Debian til Alpha:]
 [DE:Debian für Alpha:]
 [EL:Debian for Alpha:]
 [EO:Debian for Alpha:]

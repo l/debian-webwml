@@ -6,7 +6,7 @@
 <menu-item basename="../index">
 [EN:Ports:]
 [AR:Ports:]
-[DA:Ports:]
+[DA:Tilpasninger:]
 [DE:Ports:]
 [EL:Ports:]
 [EO:Ports:]
@@ -32,7 +32,7 @@
 <menu-item basename="index">
 [EN:Debian for Laptops:]
 [AR:Debian for Laptops:]
-[DA:Debian til Laptops:]
+[DA:Debian til bærbare:]
 [DE:Debian für Laptops:]
 [EL:Debian for Laptops:]
 [EO:Debian for Laptops:]
