@@ -51,6 +51,7 @@ sub process
 
     while (<CVS>)
     {
+    	next if /README/;
 		if (m[^/([^/]+)/([0-9\.]+)/])
         {
             $sourcefile{$1} = $2;
