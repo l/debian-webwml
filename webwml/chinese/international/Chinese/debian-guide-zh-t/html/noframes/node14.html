@@ -1,0 +1,455 @@
+
+<!--Converted with LaTeX2HTML 99.2beta6 (1.42)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>10 文件系統 (Filesystems)</TITLE>
+<META NAME="description" CONTENT="10 文件系統 (Filesystems)">
+<META NAME="keywords" CONTENT="debian-tutorial-zh_TW-html">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=big5">
+<META NAME="Generator" CONTENT="LaTeX2HTML v99.2beta6">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="debian-tutorial-zh_TW-html.css">
+
+<LINK REL="next" HREF="node15.html">
+<LINK REL="previous" HREF="node13.html">
+<LINK REL="up" HREF="node4.html">
+<LINK REL="next" HREF="node15.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A NAME="tex2html822"
+  HREF="node15.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html816"
+  HREF="node4.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html810"
+  HREF="node13.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html818"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A> 
+<A NAME="tex2html820"
+  HREF="node23.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index" SRC="index.png"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html823"
+  HREF="node15.html">11 聯網 (Networking)</A>
+<B> Up:</B> <A NAME="tex2html817"
+  HREF="node4.html">1 導論</A>
+<B> Previous:</B> <A NAME="tex2html811"
+  HREF="node13.html">9 X Window 系統</A>
+ &nbsp <B>  <A NAME="tex2html819"
+  HREF="node1.html">Contents</A></B> 
+ &nbsp <B>  <A NAME="tex2html821"
+  HREF="node23.html">Index</A></B> 
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html824"
+  HREF="node14.html#SECTION041010000000000000000"><SPAN CLASS="arabic">1</SPAN> 基本概念</A>
+<LI><A NAME="tex2html825"
+  HREF="node14.html#SECTION041020000000000000000"><SPAN CLASS="arabic">2</SPAN> <TT>mount</TT> 和 <TT>/etc/fstab</TT></A>
+<UL>
+<LI><A NAME="tex2html826"
+  HREF="node14.html#SECTION041021000000000000000"><SPAN CLASS="arabic">1</SPAN> 加載文件系統</A>
+<LI><A NAME="tex2html827"
+  HREF="node14.html#SECTION041022000000000000000"><SPAN CLASS="arabic">2</SPAN> 例：加載一個光碟</A>
+<LI><A NAME="tex2html828"
+  HREF="node14.html#SECTION041023000000000000000"><SPAN CLASS="arabic">3</SPAN> <TT>/etc/fstab</TT>: 自動加載處理</A>
+<LI><A NAME="tex2html829"
+  HREF="node14.html#SECTION041024000000000000000"><SPAN CLASS="arabic">4</SPAN> 抽取式磁碟（軟碟、Zip 碟等等）</A>
+</UL>
+<LI><A NAME="tex2html830"
+  HREF="node14.html#SECTION041030000000000000000"><SPAN CLASS="arabic">3</SPAN> 備份工具 (Backup Tools)</A>
+<UL>
+<LI><A NAME="tex2html831"
+  HREF="node14.html#SECTION041031000000000000000"><SPAN CLASS="arabic">1</SPAN> <TT>tar</TT></A>
+</UL></UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A NAME="SECTION041000000000000000000">
+<SPAN CLASS="arabic">10</SPAN> 文件系統 (Filesystems)</A>
+</H1>
+
+<P>
+<A NAME="3313"></A>Debian 系統使用一個文件系統來儲存和管理你的數據。在這一章裡我們會介紹這個文件系統，讓你了解怎麼加載和移走文件系統，怎麼備份你的系統。
+
+<P>
+
+<H1><A NAME="SECTION041010000000000000000">
+<SPAN CLASS="arabic">1</SPAN> 基本概念</A>
+</H1>
+在討論使用磁碟的技巧以前，我們最好先對一些理論上的東西進行簡單的注釋。要強調的是，你要先明白<SPAN  CLASS="textit">文件系統</SPAN>這個概念，因為它含有幾個意思，所以可能有點不好理解。
+
+<P>
+文件系統指的是整個目錄結構，我們上面提到，是從根目錄 (root) <TT>/</TT>
+開始的。
+
+<P>
+<A NAME="3317"></A><A NAME="3318"></A><A NAME="3319"></A><A NAME="3320"></A>一個文件系統一般是指在一個物理設備上的任何文件組織和目錄。這裡的「組織」指的是目錄層次的結構和其他所有關於文件的有用的資料：文件大小，誰有權對文件進行改動，等等的資料。你的硬碟上可能有一個文件系統，你的每個軟碟上也都有一個文件系統。
+
+<P>
+“文件系統”也可以指一個文件系統的<SPAN  CLASS="textit">類型</SPAN>。比如 MS-DOS 和 Windows 3.1 用某種方式，某種規則組織它的文件，像文件名只能有 8 個字母 3 個後綴，文件沒有關於使用限制的資料。<A NAME="3322"></A><A NAME="3323"></A><A NAME="3324"></A><A NAME="3325"></A>Linux 稱這種文件系統為 msdos 文件系統。Linux 還有它自己的文件系統：<TT>ext2</TT> 文件系統（<TT>ext</TT> 文件系統第二版）。除非你需要訪問其它操作系統或有特別的需要，一般來說，你主要使用的文件系統就是 <TT>ext2</TT> 文件系統。
+
+<P>
+使用任何一個物理設備，如果你要在它上面儲存文件，則它上面必需要有一個文件系統。這裡的文件系統是上面第二種意思：一個目錄層次的結構和其他所有關於文件的有用的資料。當然任何文件系統都屬於某一個類型，所以第三個意思也有意義。如果你在一個設備裡有一個以上的文件系統，那麼這些文件系統可以是不同的類型的，例如，你可以在同一個硬碟上同時擁有一個 DOS 分區和一個 Linux 分區。
+
+<P>
+
+<H1><A NAME="SECTION041020000000000000000">
+<SPAN CLASS="arabic">2</SPAN> <TT>mount</TT> 和 <TT>/etc/fstab</TT></A>
+</H1>
+
+<P>
+這一節裡會解釋怎樣加裝一個軟盤或一個 Zip 盤，也會討論關於 <TT>/dev</TT> 目錄，介紹在多個物理設備或分區裡較好的分配目錄結構。
+
+<P>
+
+<H2><A NAME="SECTION041021000000000000000">
+<SPAN CLASS="arabic">1</SPAN> 加載文件系統</A>
+</H2>
+
+<P>
+<A NAME="3333"></A><A NAME="3334"></A><A NAME="3335"></A><A NAME="3336"></A><A NAME="3337"></A><A NAME="3338"></A>在 GNU/Linux 系統上，目錄結構和物理設備間不一定是完全對應的，
+這一點跟 Windows 系統不一樣，在 Windows 裡，每個驅動器（硬驅，軟驅）都有它自己的目錄結構，分別以一個字母開頭（比如 <TT>C:&#92;</TT>）。
+
+<P>
+<A NAME="3340"></A><A NAME="3341"></A>而在 GNU/Linux 上，每個驅動設備（一個硬盤或一個軟盤）上會有一個或多個文件系統。為了方便訪問一個文件系統，它被指定成為另外一個文件系統下的一個目錄。為了防止死循環，根文件系統（root filesystem，裡面含有根目錄 <TT>/</TT>）是不會被放在任何別的文件系統裡的，當你啟動 Debian 的時候，你可以直接訪問它。
+
+<P>
+存在於一個文件系統中而又包含另外一個文件系統的目錄，我們稱這個目錄為<SPAN  CLASS="textit">加載點</SPAN> (<SPAN  CLASS="textit">mount point</SPAN>)。一個加載點<A NAME="3345"></A><A NAME="3346"></A><A NAME="3347"></A><A NAME="3348"></A><A NAME="3349"></A><A NAME="3350"></A>是第一文件系統中的一個目錄，而這個目錄又“包含”了另外一個文件系統（這個系統可能在另外一個設備上，比如軟盤）。只有為把一個文件系統加載到一個加載點以後，你才能訪問那個文件系統。<A NAME="3351"></A>
+
+<P>
+比如你會把一張光盤加載到 <TT>/cdrom</TT> 這個加載點上。如果你瀏覽 <TT>/cdrom</TT> 這個目錄，你會看到這張光盤上的內容。<TT>/cdrom</TT> 這個目錄本身其實是在你的硬盤上，而就實際應用來說，這張光盤上的內容成了根文件系統的一部分，當你鍵入命令或者執行程序的時候，一個文件的具體物理位置在什麼地方對於你是沒有分別的。你可以在你的硬盤建立一個 <TT>/cdrom</TT> 目錄，放進一些文件，這些文件更如果你加載你的光碟上的文件沒有什麼區別。當你加載了一個文件系統後，你根本不用考慮物理設備的問題了。
+
+<P>
+但是，在你加載一個文件系統或者在一個沒有文件系統的設備上建立文件系統前，你需要直接使用這些設備。所有的設備都有特定的名字，這些名字是在目錄 <TT>/dev</TT> 下的。如果你現在輸入 <TT>ls&nbsp;/dev</TT>，你會看到一個相當長的名單，裡面有你的 Debian 系統裡所有可能的設備名稱。第 <A HREF="#Tab:_Linux_Device_Names"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A> 頁，表格 <A HREF="#Tab:_Linux_Device_Names">2.1</A> 歸納了其中的一些設備。在你的系統裡，文件 <TT>/usr/src/linux/Documentation/devices.txt</TT> 有更完整的列表。
+
+<P>
+要加載一個文件系統，我們要讓 Linux 把它在指定設備上發現的任何文件系統與一個指定的加載點聯系起來，這裡，我們可能需要告訴 Linux 去尋找哪種文件系統。<A NAME="3361"></A><A NAME="3362"></A><A NAME="3363"></A><A NAME="3364"></A><A NAME="3365"></A><A NAME="3366"></A>
+
+<P>
+
+<H2><A NAME="SECTION041022000000000000000">
+<SPAN CLASS="arabic">2</SPAN> 例：加載一個光碟</A>
+</H2>
+
+<P>
+<A NAME="3368"></A><A NAME="3369"></A><A NAME="3370"></A><A NAME="3371"></A><A NAME="3372"></A><A NAME="3373"></A><A NAME="3374"></A><A NAME="3375"></A>我們在這裡演示一下加載光碟的步驟，光可以用你的 Debian 光碟（如果你是用光碟安裝的話）。因為你必須是 root 才能加載光碟，所以要盡量小心，做為 root，你擁有操縱整個系統的權力，而不僅僅是你自己的文件，水能載舟，亦能覆舟。以下命令已假定你的光驅裡有一張光碟，如果沒有，放一個進去。現在可以鍵入以下命令：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>su
+</DD>
+</DL>如果你還不是 root，你或者以 root 登錄或者使用<TT>su</TT>（super user 超級用戶）命令取得根的特權級。如果使用 <TT>su</TT>，當問你密碼的時候，輸入根密碼。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>ls&nbsp;/cdrom
+</DD>
+</DL>使用這個命令看一下開始以前 <TT>/cdrom</TT> 裡有什麼。如果你沒有 <TT>/cdrom</TT> 目錄，你需要用 <TT>mkdir&nbsp;/cdrom</TT> 建立一個。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>mount
+</DD>
+</DL>只輸入 <TT>mount</TT> 而沒有任何參數會列出目前已經加載的文件系統。<A NAME="3388"></A><A NAME="3389"></A><A NAME="3390"></A><A NAME="3391"></A>
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>mount&nbsp;-t&nbsp;iso9660&nbsp;<SPAN  CLASS="textit">CD-device</SPAN>&nbsp;/cdrom
+</DD>
+</DL>在這行命令裡，你需要把你光碟設備的名稱代入 <TT><SPAN  CLASS="textit">CD-device</SPAN></TT> 裡，如果你不知道這個設備名稱，你的光碟有可能是 <TT>/dev/cdrom</TT>，因為 Debian 安裝過程中應該已經建立了這個符號連接。如果這個命令失敗了，試一下不同的 IDE 設備名稱：<TT>/dev/hdc</TT> 等等。你應該看到類似這個的訊息：<TT>mount: block device /dev/hdc is write-protected, mounting read-only</TT>。
+
+<P>
+<A NAME="3399"></A><A NAME="3400"></A><A NAME="3401"></A><A NAME="3402"></A><A NAME="3403"></A><A NAME="3404"></A><A NAME="3405"></A><A NAME="3406"></A>參數選項 <TT>-t</TT> 指定文件系統類型，在這裡用的是 <TT>iso9660</TT>。大多數的光碟是 <TT>iso9660</TT>。
+下一個參數是要加載的設備名稱，最後的參數是加載點。<TT>mount</TT> 命令有很多其他的參數可用，詳細說明參看手冊 (<TT>man&nbsp;mount</TT>)。
+
+<P>
+加載好光碟後，你會發現你的光驅盤打不開了，你需要先卸載光碟，才能把光碟拿走。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>ls&nbsp;/cdrom
+</DD>
+</DL>會証實現在 <TT>/cdrom</TT> 裡包含了你的光碟上的內容。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>mount
+</DD>
+</DL>再看一下加載的文件系統，你可以看到現在你的光驅被加載了。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>umount&nbsp;/cdrom
+</DD>
+</DL>這個命令 <A NAME="3419"></A><A NAME="3420"></A>卸載你的光驅。
+現在你可以安全的把你的光碟從光碟機中拿走，注意，命令 <TT>umount</TT> 中沒有 `n'，雖然英文中對應的單詞應該是 `u<SPAN  CLASS="textit">n</SPAN>mount'。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>exit
+</DD>
+</DL>為安全起見，不要讓自己一直以 root 身份登錄，立刻出來。
+
+<P>
+
+<H2><A NAME="SECTION041023000000000000000">
+<SPAN CLASS="arabic">3</SPAN> <TT>/etc/fstab</TT>: 自動加載處理</A>
+</H2>
+
+<P>
+<A NAME="3426"></A><A NAME="3427"></A><A NAME="3428"></A><A NAME="3429"></A><A NAME="3430"></A><A NAME="3431"></A>在文件 <TT>/etc/fstab</TT>（縮寫：``filesystem table'' 文件系統表）裡有對你經常需要加載的文件系統的描述。這些文件系統就可以用一個比較簡短的命令進行加載，比如 <TT>mount&nbsp;/cdrom</TT> 就可以了。你也可以配置系統使文件系統在系統啟動時自動加載。你會想要把所以在硬盤上的文件系統在啟動時自動加載，所以 Debian 為你自動在 <TT>fstab</TT> 裡加入相應的條款。
+
+<P>
+現在輸入 <TT>more&nbsp;/etc/fstab</TT>，讓我們看看這個文件。它有兩條或以上條款，這些條款是你安裝時自動配置的。這個文件會是類似這樣的：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><SMALL CLASS="SMALL">#&nbsp;/etc/fstab:&nbsp;static&nbsp;file&nbsp;system&nbsp;information.</SMALL>
+<P>
+
+
+<P>
+<SMALL CLASS="SMALL">#</SMALL>
+<P>
+
+
+<P>
+<SMALL CLASS="SMALL">#&nbsp;&lt;file&nbsp;system&gt;&nbsp;&lt;mount&nbsp;point&gt;&nbsp;&lt;type&gt;&nbsp;&lt;options&gt; #&lt;dump&nbsp;&gt;&nbsp;&lt;pass&gt;</SMALL>
+<P>
+
+
+<P>
+<SMALL CLASS="SMALL">/dev/hda1&nbsp;/&nbsp;ext2&nbsp;defaults&nbsp;0&nbsp;1</SMALL>
+<P>
+
+
+<P>
+<SMALL CLASS="SMALL">/dev/hda3&nbsp;none&nbsp;swap&nbsp;sw&nbsp;0&nbsp;0</SMALL>
+<P>
+
+
+<P>
+<SMALL CLASS="SMALL">proc&nbsp;/proc&nbsp;proc&nbsp;defaults&nbsp;0&nbsp;0</SMALL>
+<P>
+
+
+<P>
+<SMALL CLASS="SMALL">/dev/hda5&nbsp;/tmp&nbsp;ext2&nbsp;defaults&nbsp;0&nbsp;2</SMALL>
+<P>
+
+
+<P>
+<SMALL CLASS="SMALL">/dev/hda6&nbsp;/home&nbsp;ext2&nbsp;defaults&nbsp;0&nbsp;2</SMALL>
+<P>
+
+
+<P>
+<SMALL CLASS="SMALL">/dev/hda7&nbsp;/usr&nbsp;ext2&nbsp;defaults&nbsp;0&nbsp;2</SMALL>
+<P>
+
+
+<P>
+<SMALL CLASS="SMALL">/dev/hdc&nbsp;/cdrom&nbsp;iso9660&nbsp;ro,noauto&nbsp;0&nbsp;0</SMALL>
+<P>
+
+
+<P>
+<SMALL CLASS="SMALL">/dev/fd0&nbsp;/floppy&nbsp;auto&nbsp;noauto,sync&nbsp;0&nbsp;0</SMALL>
+<P>
+
+</DD>
+</DL>第一列給出這些文件系統所在的設備，第二列是加載點的列表，如後是標明文件系統的類型。以 <TT>proc</TT> 開頭的那一行是一個特殊的文件系統。請注意交換分區（swap partition 在這裡是 <TT>/dev/hda3</TT>）是沒有加載點的，所以它的加載點那一項是 <TT>none</TT>。<A NAME="3463"></A><A NAME="3464"></A><A NAME="3465"></A><A NAME="3466"></A><A NAME="3467"></A><A NAME="3468"></A>
+
+<P>
+最後三列需要一些注釋：
+
+<P>
+第五列是給傾卸工具 (<TT>dump</TT> utility) 用來決定什麼時候進行備份的，很多情況下，你可以在這兒使用 <TT>0</TT>。
+
+<P>
+第六列是給命令 <TT>fsck</TT> 使用的，決定在系統啟動時的文件系統檢查中，應該以什麼次序來進行。根文件系統在這項應該使用 <TT>1</TT>，不用進行檢查的文件系統（比如交換分區 swap partition）應該使用 <TT>0</TT>，其它所有的文件系統應該使用 <TT>2</TT>。注意其實交換分區 (swap) 在某種意義上來說不算一個真正的文件系統，因為它不含有文件和目錄，它只是 Linux 內核用來做次級記憶體的。但是，因為歷史原因，交換分區還是與真正的文件系統列於同一個文件裡。
+
+<P>
+第四列含有一個或以上的加載時的選項。你可以查看 <TT>mount</TT> 的手冊來了解這些選項，參見第 <A HREF="node9.html#man_pages"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A> 頁，第 <A HREF="node9.html#man_pages">5.1</A> 節。
+
+<P>
+
+<H2><A NAME="SECTION041024000000000000000"></A><A NAME="3478"></A><A NAME="3479"></A>
+<BR>
+<SPAN CLASS="arabic">4</SPAN> 抽取式磁碟（軟碟、Zip 碟等等）
+</H2>
+
+<P>
+<A NAME="3480"></A><A NAME="3481"></A><A NAME="3482"></A><A NAME="3483"></A><A NAME="3484"></A><A NAME="3485"></A><A NAME="3486"></A><A NAME="3487"></A><A NAME="3488"></A><A NAME="3489"></A>把一下幾行加入你的 <TT>/etc/fstab</TT> 文件裡：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>/dev/sda1&nbsp;/mnt/zip&nbsp;ext2&nbsp;noauto,user&nbsp;0&nbsp;0&nbsp;
+
+<P>
+/dev/sda4&nbsp;/mnt/dos&nbsp;msdos&nbsp;noauto,user&nbsp;0&nbsp;0&nbsp;
+</DD>
+</DL>現在開始，你可以使用命令 <TT>mount&nbsp;/mnt/dos</TT> 來加載DOS 格式化的 Zip 碟，或者用命令 <TT>mount&nbsp;/mnt/zip</TT> 來加載 Linux 格式化的 Zip 碟。
+
+<P>
+如果你的系統裡有 SCSI 硬盤，你要把上例中的 <TT>sda</TT> 改成 <TT>sdb</TT> 或者 <TT>sdc</TT>。
+
+<P>
+
+<H1><A NAME="SECTION041030000000000000000"></A>
+<A NAME="3499"></A><A NAME="3500"></A><A NAME="3501"></A>
+<BR>
+<SPAN CLASS="arabic">3</SPAN> 備份工具 (Backup Tools)
+</H1><A NAME="3502"></A><A NAME="3503"></A>在任何操作系統裡，備份都是非常重要的。Debian GNU/Linux 提供了幾個不同的你可能會用到的工具。此外，儘管其中很多工具本來的使用對象是磁帶備份 (tape
+backup)，你會發現現在它們可以用在其它方面，例如 <TT>tar</TT> 被用於在互聯網上發放程序。你會發現以下一些工具：
+
+<P>
+
+<UL>
+<LI><TT>Taper</TT><A NAME="3507"></A> 是一個菜單界面，容易掌握的備份程序。它可以使用不同介質進行備份，但它局限於不能處理太大的備份（4GB 或以上）。<A NAME="3508"></A>
+</LI>
+<LI><TT>dump</TT><A NAME="3510"></A> 是專門為磁帶設計的，它的強項是它的文件恢復界面，低層文件系統備份，定時漸進式備份。它的局限是不能備份 NFS (network filesystem 網絡文件系統) 或者
+其它非 <TT>ext2</TT> 的文件系統，而且它的一些預設值也不太合理。<A NAME="3512"></A>
+</LI>
+<LI><A NAME="3513"></A><TT>GNU&nbsp;tar</TT><A NAME="3515"></A>（縮寫：Tape ARchiver 磁帶歸檔程序）是一個可能是在 Linux 界被最廣泛使用的備份和歸檔工具<A NAME="3516"></A><A NAME="3517"></A>。它是一個很好的多用途工具，可以用於最多的目標媒質上。又因為很多系統都可以讀取 <TT>tar</TT> 文件，所以它具有非常好的可攜性。它的弱點是在漸進式備份上不如 <TT>dump</TT>，也沒有一個互動的檔案回復操作界面。
+</LI>
+</UL>
+
+<P>
+
+<H2><A NAME="SECTION041031000000000000000"></A><A NAME="3522"></A><A NAME="tar"></A>
+<BR>
+<SPAN CLASS="arabic">1</SPAN> <TT>tar</TT>
+</H2>
+
+<P>
+<A NAME="3524"></A><A NAME="3525"></A><A NAME="3526"></A><A NAME="3527"></A><A NAME="3528"></A><A NAME="3529"></A><A NAME="3530"></A>因為 <TT>tar</TT> 非常的有用，而且在備份以外還有很多其他的功用，所以我們在這裡對它進行一些注釋。更詳細的介紹當然是參看手冊 (<TT>man tar</TT>)。使用手冊的方法在第 <A HREF="node9.html#man_pages"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A> 頁，第 <A HREF="node9.html#man_pages">5.1</A> 節中介紹。
+
+<P>
+<TT>tar</TT> 是一個<SPAN  CLASS="textit">歸檔程序</SPAN>，就是說 <TT>tar</TT> 可以把許多文件聯合包裝成一個大的文件或者把它們寫入一個備份設備，例如一個磁帶驅動器。當你生成了這麼一個大文件後，你會想要對它進行壓縮，<TT>-z</TT> 選項是專門作這個的。因此，<TT>tar</TT> 提供了一個非常好的在互聯網上發佈程序或軟件的方法。你會發現 Linux 界裡，這個方法被廣泛的采用。
+
+<P>
+這是一個 <TT>tar</TT> 命令行的例子：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>tar&nbsp;-zcvf&nbsp;myfiles.tar.gz&nbsp;/usr/local/bin
+</DD>
+</DL>讓我們分析一下這行命令的具體意思：
+
+<P>
+<DL>
+<DT><STRONG><TT>tar</TT></STRONG></DT>
+<DD>命令名。
+</DD>
+<DT><STRONG><TT>-</TT></STRONG></DT>
+<DD>告訴 <TT>tar</TT> 接下來的是選項。
+</DD>
+<DT><STRONG><TT>z</TT></STRONG></DT>
+<DD>告訴 <TT>tar</TT> 自動使用 <TT>gzip</TT> 壓縮，如果你用了這個選項，最好後綴使 .gz。
+</DD>
+<DT><STRONG><TT>c</TT></STRONG></DT>
+<DD>告訴 <TT>tar</TT> 建立一個新的檔案。
+</DD>
+<DT><STRONG><TT>v</TT></STRONG></DT>
+<DD>給出較多的信息 (verbose)，就是讓 <TT>tar</TT> 在工作時告訴你它在幹什麼。
+</DD>
+<DT><STRONG><TT>f</TT></STRONG></DT>
+<DD>這個選項是說：命令行的下一項是要建立的那個文件的名字或者要使用的設備的名字。如果在這裡使用 <TT>/dev/st0</TT>，它就會把備份寫到磁帶驅動設備<TT>/dev/st0</TT> 上。
+</DD>
+<DT><STRONG><TT>myfiles.tar.gz</TT></STRONG></DT>
+<DD>這是將要建立的文件的文件名。
+</DD>
+<DT><STRONG><TT>/usr/local/bin</TT></STRONG></DT>
+<DD>這是我們想要進行歸檔的那些文件或者目錄的名字，這裡可以放一個以上的名字，
+以空格分隔。
+</DD>
+</DL>
+
+<P>
+你會經常在網上看到 <TT>tar.gz</TT>（或者縮短成 <TT>.tgz</TT>）這樣的文件，你可以使用一下命令把它解包裝：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>tar&nbsp;-zxvf&nbsp;filename.tar.gz
+</DD>
+</DL>
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A NAME="tex2html822"
+  HREF="node15.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html816"
+  HREF="node4.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html810"
+  HREF="node13.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html818"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A> 
+<A NAME="tex2html820"
+  HREF="node23.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index" SRC="index.png"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html823"
+  HREF="node15.html">11 聯網 (Networking)</A>
+<B> Up:</B> <A NAME="tex2html817"
+  HREF="node4.html">1 導論</A>
+<B> Previous:</B> <A NAME="tex2html811"
+  HREF="node13.html">9 X Window 系統</A>
+ &nbsp <B>  <A NAME="tex2html819"
+  HREF="node1.html">Contents</A></B> 
+ &nbsp <B>  <A NAME="tex2html821"
+  HREF="node23.html">Index</A></B> </DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+John Goerzen / Ossama Othman / Debian 中文計劃
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,623 @@
+
+<!--Converted with LaTeX2HTML 99.2beta6 (1.42)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Contents of 7 再说文件</TITLE>
+<META NAME="description" CONTENT="Contents of 7 再说文件">
+<META NAME="keywords" CONTENT="debian-tutorial-zh_CN-html">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=gb2312">
+<META NAME="Generator" CONTENT="LaTeX2HTML v99.2beta6">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="debian-tutorial-zh_CN-html.css">
+
+<LINK REL="next" HREF="node12_mn.html">
+<LINK REL="previous" HREF="node10_mn.html">
+<LINK REL="up" HREF="node4_mn.html">
+<LINK REL="next" HREF="node12_mn.html">
+</HEAD>
+ 
+<BODY bgcolor="#ffffff" text="#000000" link="#9944EE" vlink="#0000ff" alink="#00ff00">
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html764" HREF="node11_ct.html#SECTION04710000000000000000" TARGET="contents"><SPAN CLASS="arabic">1</SPAN> 权限</A>
+<UL>
+<LI><A NAME="tex2html765" HREF="node11_ct.html#SECTION04711000000000000000" TARGET="contents"><SPAN CLASS="arabic">1</SPAN> 文件附属权 (file ownership)</A>
+<LI><A NAME="tex2html766" HREF="node11_ct.html#SECTION04712000000000000000" TARGET="contents"><SPAN CLASS="arabic">2</SPAN> 状态 (mode)</A>
+<LI><A NAME="tex2html767" HREF="node11_ct.html#SECTION04713000000000000000" TARGET="contents"><SPAN CLASS="arabic">3</SPAN> 权限的练习</A>
+</UL>
+<LI><A NAME="tex2html768" HREF="node11_ct.html#SECTION04720000000000000000" TARGET="contents"><SPAN CLASS="arabic">2</SPAN> 文件的存在与位置</A>
+<LI><A NAME="tex2html769" HREF="node11_ct.html#SECTION04730000000000000000" TARGET="contents"><SPAN CLASS="arabic">3</SPAN> 利用 <TT>gzip</TT> 来压缩文件</A>
+<LI><A NAME="tex2html770" HREF="node11_ct.html#SECTION04740000000000000000" TARGET="contents"><SPAN CLASS="arabic">4</SPAN> 找寻文件</A>
+<LI><A NAME="tex2html771" HREF="node11_ct.html#SECTION04750000000000000000" TARGET="contents"><SPAN CLASS="arabic">5</SPAN> 决定文件的类别</A>
+<LI><A NAME="tex2html772" HREF="node11_ct.html#SECTION04760000000000000000" TARGET="contents"><SPAN CLASS="arabic">6</SPAN> 使用文件管理器 (File Manager)</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A NAME="SECTION04700000000000000000">
+<SPAN CLASS="arabic">7</SPAN> 再说文件</A>
+</H1>
+
+<P>
+在第 <A HREF="node9_ct.html#basics-files"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A> 页的第 <A HREF="node9_ct.html#basics-files">5.2</A> 章，我们提过利用 <TT>mv</TT> 来移动文件及更改文件名称，用 <TT>cp</TT> 来覆制文件，用 <TT>rm</TT> 来删除文件，用 <TT>rmdir</TT> 来删除目录，以及用 <TT>mkdir</TT> 来建立目录。在这一章里将会更详尽地讲述有关文件的东西。
+
+<P>
+
+<H1><A NAME="SECTION04710000000000000000"></A><A NAME="2578"></A><A NAME="Permissions"></A>
+<BR>
+<SPAN CLASS="arabic">1</SPAN> 权限
+</H1>
+
+<P>
+GNU 和 Unix 系统是被设置为可以多人使用同一部计算机，但亦能把某些文件设定为私人的，或是可以使某些人不能更改某些文件。你可以试一试去验证。用你自己的账号登入，即是<SPAN  CLASS="textit">不</SPAN>要使用 root。<A NAME="2581"></A><A NAME="2582"></A><A NAME="2583"></A><A NAME="2584"></A><A NAME="2585"></A>
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>whoami
+</DD>
+</DL>这个指令证实你不是 root。跟着输入以下的指令：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>rm&nbsp;/etc/resolv.conf
+</DD>
+</DL><A NAME="2590"></A><A NAME="2591"></A><A NAME="2592"></A><A NAME="2593"></A><A NAME="2594"></A>你应会
+被警告 <TT>Permission&nbsp;denied</TT>（没有权限）。<TT>/etc/resolv.conf</TT> 是系统的一个重要的设定档，除非你是 root，你没有能力更改或删除它。这样就能防止你不慎把系统弄坏。假若那部计算机是公众使用的（例如在办公室里或学校里），这样可以防止用者刻意弄坏系统。
+
+<P>
+现在输入 <TT>ls&nbsp;-l&nbsp;/etc/resolv.conf</TT>，
+
+<P>
+你会得到类似这样的输出：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>-<SMALL CLASS="SMALL">rw-r-r-&nbsp;1&nbsp;root&nbsp;root&nbsp;119&nbsp;Feb&nbsp;23&nbsp;1997&nbsp;/etc/resolv.conf</SMALL>
+<P>
+
+</DD>
+</DL>给 <TT>ls</TT> 的参数 <TT>-l</TT> 是用来引出额外的资料。右边的资料比较简单：文件的大小是 <TT>119</TT> 个位元组 (bytes)，文件的最后更改日期是 1997 年 2 月 23 日，文件名字是 <TT>/etc/resolv.conf</TT>。左边的资料就比较复杂了。
+
+<P>
+首先，来个简短的技术性解释：<TT>-rw-r-r-</TT>&nbsp;是文件的<SPAN  CLASS="textit">状态</SPAN>，<TT>1</TT> 是指着这个文件的硬性连结 (hard link)（或是一个目录中的文件数目），而那两个 <TT>root</TT> 是分别指拥有这个文件的用户 (user) 和群组 (group)。
+
+<P>
+是的，这是有点难以理解，现在就让我们慢慢地解释吧。
+
+<P>
+
+<H2><A NAME="SECTION04711000000000000000">
+<SPAN CLASS="arabic">1</SPAN> 文件附属权 (file ownership)</A>
+</H2>
+
+<P>
+<A NAME="2613"></A><A NAME="2614"></A><A NAME="2615"></A><A NAME="2616"></A><A NAME="2617"></A><A NAME="2618"></A><A NAME="2619"></A>每一个文件都有两个拥有者：用户和群组。先前的那个例子有点混淆，因为除了用户 <TT>root</TT> 之外还有一个群组叫做 <TT>root</TT>。群组只是一些被一同容许存取系统某部份的用户。<TT>games</TT> 群组就是一个好例子。
+
+<P>
+这是一个比较实际的例子。幻想你现在正为一所学校架设一部计算机，你可能想设置某些文件为只可以让老师存取，而学生是不可以的，因此你把所有的老师都放到同一个群组里去。跟着你便告诉系统哪些文件是属于群组 <TT>teachers</TT> 的成员，而其他人就不能接触到这些文件的。
+
+<P>
+现在就让我们探索一下系统中的群组。首先，你可以在 shell prompt 用指令 <TT>groups</TT>，这样会显示你所属于的群组。例子如下：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;<SPAN  CLASS="textbf">groups</SPAN>
+
+<P>
+<A NAME="2627"></A><A NAME="2628"></A><A NAME="2629"></A><A NAME="2630"></A><A NAME="2631"></A><A NAME="2632"></A><A NAME="2633"></A>username&nbsp;dialout&nbsp;cdrom&nbsp;floppy&nbsp;audio
+</DD>
+</DL>很大机会你只是一个群组的成员，而那个群组的名称和你的用户名称是一样的。不过，root 可以加你到别的群组中。以上的例子表示那个用者是五个群组的成员。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>less&nbsp;/etc/group
+</DD>
+</DL>这个文件列出你的系统中的群组。要留意的是 <TT>root</TT> 群组（root 是这个群组的唯一成员）和与你的用户名称一样的那个群组。还有其它的群组如<TT>dialout</TT>（能够使用 modem 打出的用户）和 <TT>floppy</TT>（能够使用软磁盘机的用户）。不过你的系统有可能还未设置成利用这些群组，所以，很可能现在只有 root 才能使用软磁盘机和 modem。有关这个文件的详情，请参阅 <TT>man&nbsp;group</TT>。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>ls&nbsp;-l&nbsp;/home
+</DD>
+</DL>这个命令显示，所有用户的目录都是由那个用户及他所属的私人群组所拥有。
+如果你是刚安装 Debian 的，你可能是唯一的用户。你可以使用<TT>adduser</TT> 指令来增加用户。
+
+<P>
+
+<H2><A NAME="SECTION04712000000000000000">
+<SPAN CLASS="arabic">2</SPAN> 状态 (mode)</A>
+</H2>
+
+<P>
+<A NAME="2645"></A><A NAME="2646"></A><A NAME="2647"></A><A NAME="2648"></A><A NAME="2649"></A><A NAME="2650"></A><A NAME="2651"></A>文件和目录除了是被用户及群组所拥有之外，它们
+还有一个状态。状态决定谁可以读、写、和执行那个文件（如果它是一个程序）。其实还有其它的东西决定文件的状态，但这些是较深的课题，所以我们亦不会在此讨论。
+
+<P>
+在 <TT>ls</TT> 的输出里，我们可以看到文件的状态是：<TT>-rw-r-r-</TT>。我们会把它分成九部份来看：拥有文件的<SPAN  CLASS="textit">用户</SPAN>、<SPAN  CLASS="textit">群组</SPAN>、和<SPAN  CLASS="textit">其他用户</SPAN>（others，即是系统的所有用户，有时会称这个为<SPAN  CLASS="textit">world</SPAN>）的<SPAN  CLASS="textit">读</SPAN> (read)，<SPAN  CLASS="textit">写</SPAN> (write)，及<SPAN  CLASS="textit">执行</SPAN> (execute) 权限。
+
+<P>
+在状态一行中，第一个“元素”是文件种类 (file type)。这里的 <TT>-</TT> 表示这是一个普通的文件。如果它是 <TT>d</TT>，那么我们就是在检查一个目录。还有其它的种类，因太复杂所以不会在这里解说。详细资料可看第 <A HREF="node17_ct.html#file-types"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A> 页的第 <A HREF="node17_ct.html#file-types">13.2.2</A> 节。
+
+<P>
+<A NAME="2666"></A><A NAME="2667"></A><A NAME="2668"></A><A NAME="2669"></A><A NAME="2670"></A><A NAME="2671"></A><A NAME="2672"></A>剩下来的九个元素是用来显示文件的状态，那九个位（用户、群组、和其他用户的读、写和执行权）是由三组 <TT>rwx</TT> 来表示。
+
+<P>
+所以如果文件所有的权限都被许可，而它又是一个普通的档，状态将会是类似这样：<TT>-rwxrwxrwx</TT>。如果它是一个目录，而所有其他用户的权限都被释放，但用户和群组都被赋予所有权限，那么状态将会是：<TT>drwxrwx--</TT>。
+
+<P>
+<BR><P></P>
+<DIV ALIGN="CENTER"><A NAME="4584"></A>
+<TABLE>
+<CAPTION><STRONG>Table 7.1:</STRONG>
+Linux 上的权限</CAPTION>
+<TR><TD>
+<P>
+
+<DIV ALIGN="CENTER">
+
+</DIV><TABLE COLS=4 BORDER FRAME=BOX RULES=GROUPS>
+<COLGROUP><COL ALIGN=CENTER><COLGROUP><COL ALIGN=CENTER><COLGROUP><COL ALIGN=JUSTIFY WIDTH="1in"><COLGROUP><COL ALIGN=JUSTIFY WIDTH="1.in">
+<TBODY>
+<TR><TD VALIGN=BASELINE ALIGN=CENTER NOWRAP> 
+码</TD><TD VALIGN=BASELINE ALIGN=CENTER NOWRAP>
+名称</TD><TD VALIGN=BASELINE ALIGN=LEFT WIDTH="72">
+对于文件可做的动作</TD><TD VALIGN=BASELINE ALIGN=LEFT WIDTH="72">
+对于目录可做的动作</TD></TR>
+</TBODY><TBODY>
+<TR><TD VALIGN=BASELINE ALIGN=CENTER NOWRAP>r</TD><TD VALIGN=BASELINE ALIGN=CENTER NOWRAP>
+读取 (read)</TD><TD VALIGN=BASELINE ALIGN=LEFT WIDTH="72">
+察看文件内容</TD><TD VALIGN=BASELINE ALIGN=LEFT WIDTH="72">
+列引目录的内容</TD></TR>
+</TBODY><TBODY>
+<TR><TD VALIGN=BASELINE ALIGN=CENTER NOWRAP>w</TD><TD VALIGN=BASELINE ALIGN=CENTER NOWRAP>
+写入 (write)</TD><TD VALIGN=BASELINE ALIGN=LEFT WIDTH="72">
+更改文件</TD><TD VALIGN=BASELINE ALIGN=LEFT WIDTH="72">
+加减目录里的文件</TD></TR>
+</TBODY><TBODY>
+<TR><TD VALIGN=BASELINE ALIGN=CENTER NOWRAP>x</TD><TD VALIGN=BASELINE ALIGN=CENTER NOWRAP>
+执行 (execute)</TD><TD VALIGN=BASELINE ALIGN=LEFT WIDTH="72">
+执行一个指令</TD><TD VALIGN=BASELINE ALIGN=LEFT WIDTH="72">
+存取目录内的文件</TD></TR>
+</TBODY>
+</TABLE>
+
+<P>
+</TD></TR>
+</TABLE>
+</DIV><P></P>
+<BR>
+表 <A HREF="#Permissions_in_Linux" TARGET="_top">7.1</A> 形容对于文件及目录的读、写、及执行权限的意思。
+
+<P>
+<A NAME="2685"></A>目录的状态的意义可能有点混淆，所以这里有一些例子用来箪明不同组合的效果：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>r-
+</DD>
+</DL>用户、群组、和其他用户如拥有这个权限，则表示他们可以列出目录的内容，但除此之外不能做其它的事。目录里的文件不能被读取、更改、删除、以及任何方式的处理。唯一可以做的就是读取这个目录，亦即是观看它包含的内容。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>rw-
+</DD>
+</DL>在没有执行权限的时候，写入<A NAME="2691"></A><A NAME="2692"></A><A NAME="2693"></A><A NAME="2694"></A><A NAME="2695"></A>权限是没有作用的，所以这个状态和上面的那个是一样的。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><A NAME="2697"></A><A NAME="2698"></A><A NAME="2699"></A><A NAME="2700"></A><A NAME="2701"></A><A NAME="2702"></A><A NAME="2703"></A>
+r-x
+</DD>
+</DL>这个状态允许列印目录内的文件，以及存取这些文件，但不可以建立或删除文件。<SPAN  CLASS="textit">存取</SPAN>的意思是你可以观看，更改，及执行这些文件（如果文件本身的权限允许你这样做）。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>-x
+</DD>
+</DL>目录内的文件可以被存取，但它的内容不能被列印，所以你必须事先知道目录中文件的名称（除非你料事如神，能够猜中它们的名字）。你不能建立或删除文件。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>rwx
+</DD>
+</DL>你可以对目录内的文件做任何事，只要文件本身的权限允许你这么做。
+
+<P>
+目录的写入权限决定了你是否可以删除目录中的文件，如果你有权写入一个目录，你亦可以把内里的一个唯读文件删除掉；然而你不可以删除一个唯读目录中的文件，就算你有权更改那些文件。
+
+<P>
+亦即是说，如果你拥有一个目录，你就一定可以删除内里的文件，就算那些文件是属于 root 的。
+
+<P>
+目录的执行权限决定你是否有权存取文件──亦因此决定文件权限的用处。<SPAN  CLASS="textit">如果</SPAN>你拥有一个目录的执行权限，这个目录类文件的权限就会变得有关系了，否则，文件权限是甚么也没有所谓的，因为反正你也不能存取得到那些文件。
+
+<P>
+
+<H2><A NAME="SECTION04713000000000000000">
+<SPAN CLASS="arabic">3</SPAN> 权限的练习</A>
+</H2>
+
+<P>
+<A NAME="2713"></A><A NAME="2714"></A><A NAME="2715"></A><A NAME="2716"></A><A NAME="2717"></A><A NAME="2718"></A><A NAME="2719"></A><A NAME="2720"></A><A NAME="2721"></A><A NAME="2722"></A><A NAME="2723"></A><A NAME="2724"></A><A NAME="2725"></A><A NAME="2726"></A>在这一节我们会看看一个示范怎样使用权限的例子，以下会利用到 <TT>chmod</TT> 这个指令去改变权限的。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>cd;&nbsp;touch&nbsp;myfile
+</DD>
+</DL>这里有几个有趣的技俩。第一个，是你可以用 <TT>;</TT> 来把两个命令放在一行上。你可以把上述的命令打成：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;<SPAN  CLASS="textbf">cd</SPAN>&nbsp;
+
+<P>
+$&nbsp;<SPAN  CLASS="textbf">touch&nbsp;myfile</SPAN>&nbsp;
+</DD>
+</DL>或是：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;<SPAN  CLASS="textbf">cd;&nbsp;touch&nbsp;myfile</SPAN>
+</DD>
+</DL>无论那种方法都能达到同样效果。
+
+<P>
+若你还记得，用 <TT>cd</TT> 可以立即回到你自己的 home 目录；<TT>touch</TT> 通常是用来把文件的更新日期 (modification time) 改为现在的时间。但它有另一个有趣的特点：如果文件不存在，<TT>touch</TT> 便会制造它。所以你是用它来制造一个作练习用的文件。用 <TT>ls&nbsp;-l</TT> 来确定文件真的已被建立，并且记住它的权限模状态：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;<SPAN  CLASS="textbf">ls&nbsp;-l</SPAN>&nbsp;
+
+<P>
+-rw-r-r-&nbsp;1&nbsp;user&nbsp;user&nbsp;0&nbsp;Nov&nbsp;18&nbsp;22:04&nbsp;myfile
+</DD>
+</DL>当然，在你试的时候，时间及用户 / 群组都会有别于上述的。文件的大小是 0，因为 <TT>touch</TT> 建立的是个空的文件。<TT>-rw-r-r-</TT> 是 Debian 上的预设权限。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><A NAME="2751"></A><A NAME="2752"></A><A NAME="2753"></A><A NAME="2754"></A><A NAME="2755"></A><A NAME="2756"></A><A NAME="2757"></A>
+chmod&nbsp;u+x&nbsp;myfile
+</DD>
+</DL>这个指令的意思是添加 (<TT>+</TT>) 执行 (<TT>x</TT>) 权限给拥有该文件的用户 (<TT>u</TT>)。用 <TT>ls&nbsp;-l</TT> 去看看它的效果。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>chmod&nbsp;go-r&nbsp;myfile
+</DD>
+</DL>这样做会从拥有该文件的群组 (<TT>g</TT>) 以及其他用户 (others, <TT>o</TT>) 的手中夺去 (<TT>-</TT>) 读取权限 (<TT>r</TT>)。同样地，使用 <TT>ls&nbsp;-l</TT> 去验证它的效果。<A NAME="2770"></A><A NAME="2771"></A><A NAME="2772"></A><A NAME="2773"></A><A NAME="2774"></A><A NAME="2775"></A><A NAME="2776"></A>
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>chmod&nbsp;ugo=rx&nbsp;myfile
+</DD>
+</DL>这样做会把用户、群组、和其他用户设为拥有读取及执行的权限。这个设定是和你所输入的<SPAN  CLASS="textit">一模一样</SPAN>，之前的权限将不会保留。所以所有的 <TT>rx</TT> 都会被设置，而所有的 <TT>w</TT> 都会被取消。现在，任何人也不能写入这个文件的了。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>chmod&nbsp;a-x&nbsp;myfile
+</DD>
+</DL><TT>a</TT> 是 <TT>ugo</TT>，或 ``all'' 的简写。因此，所有的 <TT>x</TT> 权限都会被夺去。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>rm&nbsp;myfile
+</DD>
+</DL>用这个指令来删除文件，但因为你没有写入的权限，所以 <TT>rm</TT> 会询问以下的问题来确定你是否真的要这样做：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>rm:&nbsp;remove&nbsp;`myfile',&nbsp;overriding&nbsp;mode&nbsp;0444?
+</DD>
+</DL>你应回答 <TT>y</TT>，再按 <TT>Enter</TT>。这个是 <TT>rm</TT> 的特点，并不关乎权限的问题。能否删除文件取决于它所在的目录的权限。你拥有写入目录的权限，但 <TT>rm</TT> 发觉你不想改那个文件（因为你已移去了写入权限），所以它认为你也不希望把文件删除，因此它就顺便询问你以确定。
+
+<P>
+但在问题里出现的那个 <TT>0444</TT> 究竟是甚么呢？其实权限是由一个 12 个位的二进制数字所组成，如 <TT>000100100100</TT>。<TT>044</TT> 就是这个二进制数字的八进制写法，八进制是填写状态的惯用写法。所以除了输入 <TT>chmod&nbsp;ugo=r&nbsp;myfile</TT> 之外，你还可以键入 <TT>chmod&nbsp;444&nbsp;myfile</TT>。
+
+<P>
+
+<H1><A NAME="SECTION04720000000000000000">
+<SPAN CLASS="arabic">2</SPAN> 文件的存在与位置</A>
+</H1>
+
+<P>
+<A NAME="2802"></A><A NAME="2803"></A><A NAME="2804"></A>现在你已可以浏览整个目录的结构了，就让我们带你游览 Debian 安装时所建立的文件与目录吧。如果你感到很好奇，那么就 <TT>cd</TT> 到每一个目录并键入 <TT>ls</TT> 来察看它的内容。如果输出过长，可以试试 <TT>ls&nbsp;|&nbsp;less</TT>，<TT>|</TT> 是个“管道”(pipe) 符号，一般都是和 backslash <TT>&#92;</TT> 同一个键。
+
+<P>
+<A NAME="2810"></A><A NAME="2811"></A><A NAME="2812"></A><DL>
+<DT><STRONG>/</STRONG></DT>
+<DD>在先前已经说过，这个是根 (root) 目录，它载着所有别的目录。
+</DD>
+<DT><STRONG>/root</STRONG></DT>
+<DD><A NAME="2814"></A><A NAME="2815"></A><A NAME="2816"></A><A NAME="2817"></A>不要把 <TT>/root</TT> 与 <TT>/</TT> 混淆了！<TT>/root</TT> 是 root 用户，即是超级用户 (superuser) 自己的起始目录 (home directory)。这个目录叫作 <TT>/root</TT>，但它不是根目录 <TT>/</TT>。
+</DD>
+<DT><STRONG>/home</STRONG></DT>
+<DD>这里承载着所有普通用户（即是除了 root 以外）的起始目录<A NAME="2823"></A>。每个用户的起始目录都是用那个用户的名字来命名的，例如 <TT>/home/jane</TT>。倘若你使用的系统比较大，例如在学校或是商业机构，你的系统管理员可能建立了更多的目录去承载这些起始目录，例如 <TT>/home1</TT> 和 <TT>/home2</TT>。在一些系统上，你会发现多了一层的次目录，如 <TT>/home/students/username</TT>、<TT>/home/staff/username</TT> 等。
+<BR>
+<BR><A NAME="2829"></A>你的起始目录是用来放置你的私人文件、电子邮件和其它文件、以及个人的设定档。这是你在系统上的家。
+</DD>
+<DT><STRONG>/bin</STRONG></DT>
+<DD><A NAME="2830"></A>这个目录承载着对系统的运行十分重要的“二进位”(binary) 执行文件，例如 shell (<TT>bash</TT>) 和文件命令，如 <TT>cp</TT>。
+</DD>
+<DT><STRONG>/sbin</STRONG></DT>
+<DD><A NAME="2833"></A>这个目录<A NAME="2834"></A><A NAME="2835"></A><A NAME="2836"></A>承载着 root 用户或系统管理员需要使用的“系统二进位”(system binaries) 工具，这些文件大多数都不会经常地使用。
+</DD>
+<DT><STRONG>/usr<A NAME="2837"></A><A NAME="2838"></A></STRONG></DT>
+<DD><TT>/usr</TT> 承载大部份你会有兴趣的文件，它还含有很多次目录。<TT>/usr/bin</TT> 和 <TT>/usr/sbin</TT> 很像 <TT>/bin</TT> 和<TT>/sbin</TT>，不过在 <TT>/usr</TT> 底下的目录都不应理解为“对系统的运作是必需的”。
+<BR>
+<BR>虽然 <TT>/usr</TT> 对计算机的运作不是必需的，但在它底下的应用软件是那些你真正会用来把工作完成的。在 <TT>/usr</TT> 下面你亦会找到<TT>/usr/man</TT>，<TT>/usr/info</TT>，和 <TT>/usr/doc</TT> 目录，它们分别装着 manual pages，info pages，和其它说明文件。不要忘记还有 <TT>/usr/games</TT> 喔！
+</DD>
+<DT><STRONG>/usr/local</STRONG></DT>
+<DD>Debian 系统不会安装任何东西到这个目录里去。如果你需要安装一些你自己编译的软件，或是其它不是 Debian 软件包形式的软件，你便应该使用这个目录。如果你是那个软件的唯一使用者，你亦可以把软件安装到自己的起始目录里。
+</DD>
+<DT><STRONG>/etc</STRONG></DT>
+<DD><TT>/etc</TT><A NAME="2852"></A><A NAME="2853"></A>承载所有管理整个系统的设定档。每当你想改变一些会影响所有用者的设定时，例<A NAME="2854"></A><A NAME="2855"></A>如连接 Internet 的方式，或你所用的显示卡，你<A NAME="2856"></A>很可能需要先登入为 root，然后更改 <TT>/etc</TT> 中的文件。
+</DD>
+<DT><STRONG>/tmp</STRONG></DT>
+<DD><A NAME="4588"></A><A NAME="2859"></A><A NAME="2860"></A>在这里你会找到一些暂时贮藏的文件，其中有很多是系统所造的。这个目录会在你每次重新起动系统的时候清洗一次。你可以在这里任意制造新的文件，但要小心它们会被系统洗掉。
+</DD>
+<DT><STRONG>/var</STRONG></DT>
+<DD><TT>/var</TT> 承载着“动态”(variable) 的文件，这些文件是由系统自动更改的。
+<A NAME="2862"></A><A NAME="2863"></A>例如，外来的电子邮件是存放在这里；系统的记录档亦是放在这里。还有其它自动制造出来的文件。<TT>/var/log</TT> 里的内容应会令你感到很有兴趣的，因为这里放置着一些错误讯息，当系统有问题的时候它们有助你去了解系统的情况。
+</DD>
+</DL>
+不消说，系统里还有很多很多的目录，多得不能在这里逐一介绍。
+
+<P>
+有东西要改的时候，你通常都只会在你的起始目录和 <TT>/etc</TT> 里做。在 Debian 系统上是绝少有机会需要更改其他的东西，因为其它的都已经为你自动安装好了。
+
+<P>
+<TT>/etc</TT><A NAME="2868"></A><A NAME="2869"></A><A NAME="2870"></A><A NAME="2871"></A>是用来做整个<SPAN  CLASS="textit">系统</SPAN>的设定。你会使用你自己的起始目录（在 <TT>/home</TT> 之下）来做你自己的设定和贮存个人的资料。换句话说，在日常的使用，你应限制自己在 <TT>/home/<SPAN  CLASS="textit">yourname</SPAN></TT> 里工作，这样就不会弄坏任何东西。偶而你需要登入为 root 来在管理系统设定的<A NAME="2876"></A>目录里做些更改，但当然是非必要不可才这样做啦。如果你是在学校或公司里使用 Debian，而系统管理员不是你的话，你当然就没有 root 的权限，而你亦只可以更改你的起始目录及其它由你所拥有的目录。这样就能限制你对系统所能做到的事情。
+
+<P>
+
+<H1><A NAME="SECTION04730000000000000000">
+<SPAN CLASS="arabic">3</SPAN> 利用 <TT>gzip</TT> 来压缩文件</A>
+</H1>
+
+<P>
+<A NAME="2878"></A><A NAME="2879"></A><A NAME="2880"></A><A NAME="2881"></A><A NAME="2882"></A><A NAME="2883"></A>有时我们希望文件能细一点，例如使下载的时间短一点，又或占用少一点的硬盘空间。用来做这类工作的程序叫做 <TT>gzip</TT> (GNU zip)。以下是它的用法：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;<SPAN  CLASS="textbf">cd;&nbsp;cp&nbsp;/etc/profile&nbsp;./mysamplefile</SPAN>
+</DD>
+</DL>首先回到你的起始目录，然后复制任意一个被拣选的文件 (<TT>/etc/profile</TT>) 到你现在的目录，而且把它改名为 <TT>mysamplefile</TT>。这样你就有一个可以用来测试 <TT>gzip</TT> 的文件。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;<SPAN  CLASS="textbf">ls&nbsp;-l</SPAN>
+</DD>
+</DL>显示现在目录的内容，并留意 <TT>mysamplefile</TT> 的大小。<A NAME="2895"></A><A NAME="2896"></A><A NAME="2897"></A><A NAME="2898"></A><A NAME="2899"></A><A NAME="2900"></A>
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;<SPAN  CLASS="textbf">gzip&nbsp;mysamplefile</SPAN>
+</DD>
+</DL>压缩 <TT>mysamplefile</TT>。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;<SPAN  CLASS="textbf">ls&nbsp;-l</SPAN>
+</DD>
+</DL>观察这个指令的结果：<TT>mysamplefile</TT> 现在已成为 <TT>mysamplefile.gz</TT>，而且它也比以前细小得多了。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;<SPAN  CLASS="textbf">gunzip&nbsp;mysamplefile.gz;&nbsp;ls&nbsp;-l</SPAN>
+</DD>
+</DL>这个命令把文件解压。留意 <TT>mysamplefile</TT> 已回复原来的状态。解压的指令是 <TT>gunzip</TT>，而并非 <TT>gzip</TT>。<A NAME="2916"></A><A NAME="2917"></A>
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;<SPAN  CLASS="textbf">rm&nbsp;mysamplefile</SPAN>
+</DD>
+</DL>因为这个文件只是用来练习，所以用此命令来把它移掉。
+
+<P>
+
+<H1><A NAME="SECTION04740000000000000000">
+<SPAN CLASS="arabic">4</SPAN> 找寻文件</A>
+</H1>
+
+<P>
+<A NAME="2922"></A><A NAME="2923"></A><A NAME="2924"></A><A NAME="2925"></A>有两个工具是可以用来找寻文件，它们是 <TT>find</TT> 和 <TT>locate</TT>。<TT>find</TT> 用文件现在的状态来搜寻，而 <TT>locate</TT> 则用一个由系统于每日早上六时四十二分产生（这是 <TT>cron</TT> job，在其它章节有提及）的索引档来搜寻。<TT>locate</TT> 不会找得到索引档产生后才创造的文件。不过因为 <TT>locate</TT> 利用索引档来搜寻，所以速度快得很，就好像利用书本的索引而非只看内容。
+
+<P>
+为了对比这两种搜寻的方法，先假设你忘记了 X 设定档的位置。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;<SPAN  CLASS="textbf">locate&nbsp;XF86Config</SPAN>
+</DD>
+</DL>应该很快便得到答案，它们是一列<SPAN  CLASS="textit">含有</SPAN> <TT>XF86Config</TT> 
+的文件，像这样的输出：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>/etc/X11/XF86Config<A NAME="2939"></A><A NAME="2940"></A><A NAME="2941"></A><A NAME="2942"></A>
+
+<P>
+/usr/X11R6/lib/X11/XF86Config&nbsp;
+
+<P>
+/usr/X11R6/lib/X11/XF86Config.eg&nbsp;<A NAME="2943"></A><A NAME="2944"></A><A NAME="2945"></A>
+
+<P>
+/usr/X11R6/man/man5/XF86Config.5x.gz&nbsp;
+</DD>
+</DL>现在试试指令 <TT>find</TT>：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;<SPAN  CLASS="textbf">find&nbsp;/&nbsp;-name&nbsp;XF86Config</SPAN>
+</DD>
+</DL>你会听到很多磁盘活动的声音，而且时间也比较长。结果像这样：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>/etc/X11/XF86Config
+
+<P>
+/usr/X11R6/lib/X11/XF86Config
+
+<P>
+find:&nbsp;/var/spool/cron/atjobs:&nbsp;Permission&nbsp;denied
+
+<P>
+find:&nbsp;/var/spool/cron/atspool:&nbsp;Permission&nbsp;denied
+
+<P>
+find:&nbsp;/var/lib/xdm/authdir:&nbsp;Permission&nbsp;denied
+</DD>
+</DL>留意 <TT>find</TT> 只找到名字和 <TT>XF86Config</TT> <SPAN  CLASS="textit">一模一样</SPAN>的文件，而非含有那个字串的文件。另外，<TT>find</TT> 是会在系统的所有目录搜寻──包括你没有阅读权限的地方，因此你得到 <TT>Permission&nbsp;denied</TT> 的讯息。
+
+<P>
+用法也有点不同。用 <TT>find</TT> 的时候，你需要指定从哪个目录开始搜寻，但 <TT>locate</TT> 会自动使用根目录。指定名字时你需要使用 <TT>-name</TT> 选项，而且你可以用别的条件来搜寻，例如更新日期或拥有者。利用 <TT>find</TT> 去寻找含有 <TT>XF86Config</TT> 的文件，需要用到 wildcard：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;<SPAN  CLASS="textbf">find&nbsp;/&nbsp;-name&nbsp;'*XF86Config*'</SPAN>
+</DD>
+</DL>有如很多命令行式工具一样，<TT>find</TT> 接受 wildcard 用来作参数。
+
+<P>
+一般来说，<TT>find</TT> 的功能比较强大，而 <TT>locate</TT> 比较快，适合日常快速的搜寻。要把搜寻的各方面都解释得到将会耗用很长的时间，你不妨键入 <TT>info&nbsp;find</TT>，它会带你到 <TT>find</TT> 和 <TT>locate</TT> 的 info page，那里有更详尽资料。
+
+<P>
+
+<H1><A NAME="SECTION04750000000000000000">
+<SPAN CLASS="arabic">5</SPAN> 决定文件的类别</A>
+</H1>
+
+<P>
+<A NAME="2974"></A><A NAME="2975"></A><A NAME="2976"></A>Debian 有一个工具用来猜测文件的类别。虽然它不是百分百准确，你可以试试以下的命令检查一下你的系统：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;<SPAN  CLASS="textbf">file&nbsp;/bin/cp</SPAN>
+</DD>
+</DL>你会得到类似以下的回应：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><SMALL CLASS="FOOTNOTESIZE">/bin/cp:&nbsp;ELF&nbsp;32-bit&nbsp;LSB&nbsp;executable,&nbsp;Intel&nbsp;386,&nbsp;version&nbsp;1</SMALL>
+<P>
+
+</DD>
+</DL>这是个 Intel 机器上使用的执行档（技术性的部份不谈）。
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;<SPAN  CLASS="textbf">file&nbsp;/etc/init.d/boot</SPAN>
+</DD>
+</DL>使用这个命令你会得到以下的回应：
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>/etc/init.d/boot:&nbsp;Bourne&nbsp;shell&nbsp;script&nbsp;text
+</DD>
+</DL>意思是这个是一个 Bourne shell script 的文本文件。
+
+<P>
+
+<H1><A NAME="SECTION04760000000000000000">
+<SPAN CLASS="arabic">6</SPAN> 使用文件管理器 (File Manager)</A>
+</H1>
+
+<P>
+<A NAME="2990"></A><A NAME="2991"></A><A NAME="2992"></A><A NAME="2993"></A>除了利用人手来把文件移来移去，你亦
+可以使用文件管理器。如果你要移动很多的文件，文件管理器会更有效率。有的文件管理器是文本模式的，如 GNU Midnight Commander (<TT>mc</TT>)，有的是在 X 窗口系统下运作的，如 <TT>gmc</TT>（GNU Midnight Commander
+的 X 窗口系统版本）。
+
+<P>
+逐个介绍恐怕已经超出了本书的范围了，但如果你觉得命令行式不能满足你的要求，你可以试试这些软件。
+
+<P>
+
+<HR>
+<ADDRESS>
+John Goerzen / Ossama Othman / Debian 中文计划
+</ADDRESS>
+</BODY>
+</HTML>
