@@ -78,7 +78,12 @@ sub package_index_walker {
 	progress() if $env->{opts}{progress};
 	my $name = $pkg->get_name;
 
-	if ( $pkg->is_virtual ) { return; }
+	if ( $pkg->is_virtual ) {
+	    $str = "<dt><a href=\"$name\">".
+		"$name</a></dt>";
+	    $env->{si}->{virtual} .= $str;
+	    return;
+	}
 
 	my %versions = $pkg->get_arch_versions( $env->{archs} );
 	my %desc_md5s = $pkg->get_arch_fields( 'description-md5', 
