@@ -1,0 +1,70 @@
+#use wml::debian::template title="Pode¹avanje FTP mirrora"
+
+<P>Mirroranje je jednako i za slu¾bene i za neslu¾bene poslu¾itelje.
+Jednom pode¹en, mirror treba biti <a href="submit">registriran kod Debiana</a>
+da bismo ga ukljuèili u <a href="../misc/README.mirrors">popis mirrora</a>.
+Predavanje informacija mo¾ete uèiniti preko <a href="submit">jednostavnog
+web formulara</a>. Svi problemi i pitanja se trebaju uputiti na 
+<A href="mailto:mirrors@debian.org">mirrors@debian.org</A>.
+
+<h3>Anonimni rsync</h3>
+Preporuèena metoda mirroranja jest rsync-om.
+
+<p>Mo¾ete koristiti <a href="anonftpsync">ovu skriptu</a> za mirroranje
+arhive. Pratite upute u skripti da podesite mirroranje. Poslu¾itelji na
+<a href="../misc/README.mirrors">popisu mirrora</a> koji koriste
+'<kbd>Type: Push-*</kbd>' bi trebali biti dobar izbor za mirroranje.
+
+<h3>&quot;Push&quot; mirror</h3>
+
+&quot;Push&quot; mirroranje je oblik mirroranja koristeæi rsync koje smo
+razvili da smanjimo vrijeme koje je potrebno da promjene u arhivi doðu do
+mirrora. Push mirroranje koristi tzv. ssh otponac da bi reklo klijent
+mirroru kada se treba obnoviti. Takoðer, mirroranje je jo¹ uvijek
+&quot;pull&quot; tako da nije moguæe pokvariti sadr¾aj arhive preko
+falsificiranog push mirrora.
+
+<p>Neki administratori mirrora su pokazali neslkonost kori¹tenju ove metode
+mirroranja zbog straha da æe metoda otvoriti njihov stroj invaziji. To
+jednostavno nije istina. Za detaljan opis kako ovo radi i za¹to je sigurno
+pogledajte <a href="explain">ovu stranicu</a>.
+
+<p>Za pode¹avane push mirroranja treba malo vi¹e napora, jer odr¾avatelji
+izvornog i ciljnog mirrora moraju razmijeniti informacije. Prednost je u
+tome ¹to izvorni mirror pokreæe postupak mirroranja odmah nakon ¹to se
+njegova arhiva obnovila. To omoguæava promjenama u arhivi da se pro¹ire
+iznimno brzo.
+
+<p>Najbolje je podesiti koristeæi account obiènog korisnika, ne root-ov.
+Sadr¾aj javnog ssh kljuèa koji æe vam dati sa izvornog mirrora trebate
+postaviti u <kbd>~<korisnik>/.ssh/authorized_keys</kbd>.
+
+<p>Potrebne su vam i datoteke <a href="ftpsync">ftpsync</a> te
+<a href="ftpsync.conf">ftpsync.conf</a>. Uredite ftpsync.conf i pratite
+upute u njoj koristeæi informacije koje su vam dali na izvornom mirroru.
+
+<p>Ako postajete tzv. Push-Primary mirror, trebat æete 
+<a href="identity.pub.master.ftp">javni ssh kljuè za FTP arhivu</a>.
+
+<h3>Anonimni FTP koristeæi 'mirror'</h3>
+<p>Anonimni FTP je bio standardna metoda mirroranja dugo vremena. Za ovu
+svrhu program 'mirror' radi dobro s Debian arhivom. Kao ¹to ste veæ
+pretpostavili, 'mirror' je dostupan kao Debian paket. Ako ste instalirali
+Debian paket, postoji primjer, skripta za mirroranje FTP arhive u datoteci
+/etc/mirror/packages/ftp.debian.org .
+
+<h3>wget</h3>
+Mada <kbd>wget</kbd> radi dobro mirrorajuæo male arhive, nije tako podesiv
+kao mirror ili rsync tako da ga ne preporuèujemo za ovaj posao.
+
+<h3>Kada mirrorati</h3>
+Ako mirrorirate push metodom, ne trebate brinuti o ovome. Ako ne, a server
+koji odaberete za mirroranje koristi rsync, tada biste trebali pogledati
+u <kbd>project/trace/</kbd> u Debian arhivi izvornog mirrora, datoteku
+s imenom tog poslu¾itelja. Datoteka bi trebala sadr¾avati vrijeme kada je
+mirroranje zadnji put zavr¹ilo. Na to vrijeme dodajte recimo 1 sat, i
+tada mirrorajte.
+
+<p>Najlak¹i naèin da automatski pokrenete mirror svakog dana jest kori¹tenje
+cron-a. Pogledajte <kbd>man crontab</kbd> za detalje.
+
