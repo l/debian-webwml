@@ -3,7 +3,7 @@
 <ul>
   <li><a href="./">Hovedsiden for fejlrapporteringssystemet.</a>
   <li><a href="Reporting">Hvordan man rapporterer en fejl.</a>
-  <li><a href="Access">Hvordan man tilgår fejlloggene på andre måder end via web'et.</a>
+  <li><a href="Access">Hvordan man tilgår fejlloggene.</a>
   <li><a href="Developer">Oplysninger til udviklere om fejlrapporteringssystemet.</a>
   <li><a href="server-control">Oplysninger til udviklere om håndtering af fejl via e-mail.</a>
   <li><a href="server-refcard">Postservernes referencekort.</a>
