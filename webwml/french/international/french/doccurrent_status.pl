@@ -230,8 +230,13 @@ $translations_status = {
 },
 
 'securing-debian-howto' => {
-	'status'		=> 2,
+	'status'		=> 3,
+	'since'			=> '24/11/2002',
+	'translation_name'	=> 'Manuel de sécurisation',
+	'translation_source_url'=> 'http://cvs.debian.org/webwml/french/international/french/translations/securing-debian-manual-fr.sgml?cvsroot=webwml',
 	'translation_maintainer'=> ['Edi Stojicevic <es@debianworld.org>'],
+	'base_revision'		=> '2.2',
+	
 },
 
 #'making-deb' => {
