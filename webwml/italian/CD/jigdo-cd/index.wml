@@ -1,0 +1,128 @@
+#use wml::debian::cdimage title="Scaricare le immagini dei CD Debian con jigdo" BARETITLE=true
+#use wml::debian::translation-check translation="1.9" maintainer="Ireneo Funes"
+
+<p>Jigsaw Download, in breve <a
+href="http://atterer.net/jigdo/">jigdo</a>, intende diventare il modo
+principale di distribuire le immagini dei CD Debian in
+futuro. Attualmente, il sistema funziona, ma non &egrave;
+particolarmente comodo da usare perch&eacute; il download manager non
+&egrave; stato ultimato. <em>Al momento, &egrave; necessario un sistema
+Linux/Unix per utilizzare jigdo.</em></p>
+
+<p><strong>Perch&eacute; jigdo &egrave; migliore di un download
+diretto?</strong> Perch&eacute; &egrave; pi&ugrave; veloce! Per svariati
+motivi, ci sono molti meno mirror per le immagini dei CD rispetto a
+quelli dedicati al "normale" archivio Debian. Di conseguenza, se
+si scarica da un mirror delle immagini dei CD, quel mirror non solo
+risulter&agrave; pi&ugrave; lontano, ma sar&agrave; anche
+sovraccarico, soprattutto subito dopo una release.</p>
+
+<p>Naturalmente, un "normale" mirror Debian non contiene le immagini dei
+CD, ma allora come pu&ograve; jigdo scaricarle da l&igrave;? jigdo
+scarica singolarmente ciascun file presente sul CD. In una fase
+successiva, tutti i file vengono assemblati in un unico, grande file che
+&egrave; una copia esatta
+dell'immagine del CD. In ogni modo, tutto ci&ograve; avviene dietro le
+quinte - tutto quello che <em>si deve</em> fare &egrave; fornire allo
+strumento per il download l'indirizzo di un file "<tt>.jigdo</tt>" da
+processare.</p>
+
+<p><strong>Quali immagini sono disponibili?</strong></p>
+
+<ul>
+
+  <li>File jigdo ufficiali per l'<a
+  href="http://cdimage.debian.org/~atterer/jigdo/">ultima release
+  "stable"</a></li>
+
+  <li>File jigdo non ufficiali per la <a
+  href="ftp://ftp.fsn.hu/pub/CDROM-Images/debian-unofficial/woody/jigdo/">\
+  distribuzione "testing"</a>, <em>creati giornalmente</em></li>
+
+  <li>File jigdo non  ufficiali per la <a
+  href="ftp://ftp.fsn.hu/pub/CDROM-Images/debian-unofficial/sid/jigdo/">\
+  distribuzione "unstable"</a>, <em>creati giornalmente</em></li>
+
+</ul>
+
+<p><strong>Quali sono i passi da compiere per scaricare un'immagine con
+jigdo?</strong></p>
+
+<ul>
+
+  <li>Scaricare un package contenente <tt>jigdo-file</tt>. jigdo-file
+  &egrave; disponibile in varie forme sulla <a
+  href="http://atterer.net/jigdo/">homepage di jigdo</a>. Il package
+  contiene anche lo script <tt>jigdo-lite</tt>.</li>
+
+  <li>Lanciare lo script <tt>jigdo-lite</tt>. Chieder&agrave; l'URL
+  di un file "<tt>.jigdo</tt>" da processare. (Si può fornire l'URL da
+  linea di comando, se si preferisce.)</li>
+
+  <li>Selezionare cosa si vuole scaricare da uno dei tre indirizzi elencati
+  sopra e inserire l'URL del file "<tt>.jigdo</tt>".</li>
+
+  <li>Seguire le istruzioni che lo script fornisce. Se va tutto liscio, lo
+  script termina con il calcolo di un checksum dell'immagine generata,
+  dicendo che il checksum coincide con quello dell'immagine
+  originale.</li>
+
+</ul>
+
+<p>jigdo &egrave; in grado di "aggiornare" una vecchia versione di
+un'immagine di CD a quella dell'immagine fornita - in questo caso,
+verr&agrave; scaricato solo ci&ograve; che &egrave; cambiato. Inoltre,
+chi ha un proprio mirror Debian in locale, pu&ograve; fornire un'URL di
+tipo "file:" quando gli viene chiesta l'URL del mirror.</p>
+
+<p>Se si vuole dare un'occhiata al prototipo dell'applicazione con
+interfaccia grafica per i download o a dei binari sperimentali per
+Windows, si consulti la <a href="http://atterer.net/jigdo/">homepage di
+jigdo</a>. Volontari che vogliano dare una mano allo sviluppo di jigdo
+sono sempre benaccetti!</p>
+
+<hr>
+
+<p<p><strong>Aargh! Lo script si &egrave; bloccato, dandomi un errore - ho
+scaricato tutti quei MB per nulla?!?</strong></p>
+
+<p>Naturalmente questo Non Dovrebbe Accadere(C), ma per varie ragioni
+ci si potrebbe trovare in una situazione in cui un grande file
+"<tt>.iso.tmp</tt>" sia gi&agrave; stato generato e <tt>jigdo-lite</tt>
+sembra avere dei problemi, dicendo ripetutamente di cominciare il
+download da capo. Si possono tentare varie cose in questo caso:</p>
+
+<ul>
+
+  <li>Semplicemente riavviare il download premendo Invio. Forse alcuni
+  file non sono potuti essere scaricati a causa di timeout o altri
+  errori transitori - verr&agrave; effettuato un altro tentativo per
+  scaricare i file mancanti.</li>
+
+  <li>Provare un altro mirror. Alcuni mirror Debian sono leggermente fuori
+  sync - pu&ograve; succedere che un mirror differente abbia ancora file
+  che sono stati rimossi da quello che precedentemente specificato, o che sia
+  stato gi&agrave; aggiornato con dei file non ancora presenti sul proprio
+  mirror.</li>
+
+  <li>Recuperare le parti mancanti dell' immagine usando <tt><a
+  href="http://rsync.samba.org/">rsync</a></tt>. Per prima cosa, si deve
+  individuare il corretto URL rsync dell'immagine che si sta scaricando:
+  scegliere un server che offra l'accesso rsync all'immagine <a
+  href="../mirroring/rsync-mirrors">stable</a> o alla <a
+  href="../http-ftp/#testing">testing</a>, poi determinare il path e il
+  nome del file corretti. Si possono visualizzare i contenuti delle directory
+  con comandi tipo
+  <tt>rsync&nbsp;rsync://cdimage.debian.org/debian-cd/</tt>
+
+  <br>Infine, eliminare l'estensione "<tt>.tmp</tt>" dal file temporaneo
+  di <tt>jigdo-lite</tt> rinominandolo e fornendo sia l'URL remoto che
+  il nome del file locale a rsync:
+  <tt>rsync&nbsp;rsync://server.org/path/binary-i386-1.iso
+  binary-i386-1.iso</tt>
+
+  <br>Si potrebbero anche usare le opzioni di rsync <tt>--verbose</tt> e
+  <tt>--progress</tt> per avere dei messaggi di stato, e
+  <tt>--block-size=8192</tt> per accrescerne la velocit&agrave;.
+
+</ul>
