@@ -68,7 +68,7 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Nicolas Boullis' => {
-                        email       => 'Boullis.Nicolas@libertysurf.fr',
+                        email       => 'nboullis@debian.org',
                         summary     => 2,
                         logs        => 2,
                         diff        => 2,
