@@ -23,160 +23,187 @@
 sub init_translators {
         my $translators = {
                 'Jerome Abela' => {
-                        'email'     => 'Jerome.Abela@solsoft.fr',
-                        'summary'   => 2,
-                        'logs'      => 0,
-                        'diff'      => 0,
-                        'tdiff'     => 0,
-                        'file'      => 0,
-                        'compress'  => 'none'
+                        email       => 'Jerome.Abela@solsoft.fr',
+                        summary     => 2,
+                        logs        => 0,
+                        diff        => 0,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
                 },
                 'Denis Barbier' => {
-                        'email'     => 'barbier@imacs.polytechnique.fr',
-                        'summary'   => 3,
-                        'logs'      => 3,
-                        'diff'      => 3,
-                        'tdiff'     => 0,
-                        'file'      => 0,
-                        'compress'  => 'none'
+                        email       => 'barbier@imacs.polytechnique.fr',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
                 },
                 'Norbert Bottlaender-Prier' => {
-                        'email'     => 'norbert@globenet.org',
-                        'summary'   => 1,
-                        'logs'      => 0,
-                        'diff'      => 1,
-                        'tdiff'     => 0,
-                        'file'      => 0,
-                        'compress'  => 'none'
+                        email       => 'norbert@globenet.org',
+                        summary     => 1,
+                        logs        => 0,
+                        diff        => 1,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
                 },
                 'Olivier Bounhoure' =>  {
-                        'email'     => 'olivier.bounhoure@club-internet.fr',
-                        'summary'   => 3,
-                        'logs'      => 3,
-                        'diff'      => 3,
-                        'tdiff'     => 3,
-                        'file'      => 3,
-                        'compress'  => 'none'
+                        email       => 'olivier.bounhoure@club-internet.fr',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 3,
+                        file        => 3,
+                        compress    => 'none'
                 },
                 'Philippe Caillaud' => {
-                        'email'     => 'pcaillaud@infini.fr',
-                        'summary'   => 2,
-                        'logs'      => 0,
-                        'diff'      => 0,
-                        'file'      => 0,
-                        'tdiff'     => 0,
-                        'compress'  => 'none'
+                        email       => 'pcaillaud@infini.fr',
+                        summary     => 2,
+                        logs        => 0,
+                        diff        => 0,
+                        file        => 0,
+                        tdiff       => 0,
+                        compress    => 'none'
                 },
                 'Christian Couder' => {
-                        'email'     => 'chcouder@club-internet.fr',
-                        'summary'   => 3,
-                        'logs'      => 3,
-                        'diff'      => 3,
-                        'tdiff'     => 3,
-                        'file'      => 3,
-                        'compress'  => 'none'
+                        email       => 'chcouder@club-internet.fr',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 3,
+                        file        => 3,
+                        compress    => 'none'
                 },
                 'Guillaume Estival' =>  {
-                        'email'     => 'estival@dspnet.claranet.fr',
-                        'summary'   => 2,
-                        'logs'      => 2,
-                        'diff'      => 2,
-                        'tdiff'     => 2,
-                        'file'      => 2,
-                        'compress'  => 'none'
+                        email       => 'estival@dspnet.claranet.fr',
+                        summary     => 2,
+                        logs        => 2,
+                        diff        => 2,
+                        tdiff       => 2,
+                        file        => 2,
+                        compress    => 'none'
                 },
                 'Sébastien Kalt' => {
-                        'email'     => 'ustilago@bigfoot.com',
-                        'summary'   => 2,
-                        'logs'      => 0,
-                        'diff'      => 2,
-                        'tdiff'     => 0,
-                        'file'      => 0,
-                        'compress'  => 'none'
+                        email       => 'ustilago@bigfoot.com',
+                        summary     => 2,
+                        logs        => 0,
+                        diff        => 2,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
                 },
                 'Christophe Le Bars' =>  {
-                        'email'     => 'clebars@debian.org',
-                        'summary'   => 2,
-                        'logs'      => 0,
-                        'diff'      => 0,
-                        'tdiff'     => 0,
-                        'file'      => 0,
-                        'compress'  => 'none'
+                        email       => 'clebars@debian.org',
+                        summary     => 2,
+                        logs        => 0,
+                        diff        => 0,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
                 },
                 'Pierre Machard' => {
-                        'email'     => 'pmachard@tuxfamily.org',
-                        'summary'   => 2,
-                        'logs'      => 2,
-                        'diff'      => 2,
-                        'tdiff'     => 0,
-                        'file'      => 0,
-                        'compress'  => 'none'
+                        email       => 'pmachard@tuxfamily.org',
+                        summary     => 2,
+                        logs        => 2,
+                        diff        => 2,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
                 },
                 'Jérôme Marant' => {
-                        'email'     => 'jerome.marant@free.fr',
-                        'summary'   => 2,
-                        'logs'      => 0,
-                        'diff'      => 0,
-                        'tdiff'     => 0,
-                        'file'      => 0,
-                        'compress'  => 'none'
+                        email       => 'jerome.marant@free.fr',
+                        summary     => 2,
+                        logs        => 0,
+                        diff        => 0,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
                 },
                 'Thomas Marteau' => {
-                        'email'     => 'marteaut@esiee.fr',
-                        'summary'   => 2,
-                        'logs'      => 1,
-                        'diff'      => 1,
-                        'tdiff'     => 0,
-                        'file'      => 0,
-                        'compress'  => 'none'
+                        email       => 'marteaut@esiee.fr',
+                        summary     => 2,
+                        logs        => 1,
+                        diff        => 1,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
                 },
                 'Antoine Martin' => {
-                        'email'     => 'amartin@atos-group.com',
-                        'summary'   => 2,
-                        'logs'      => 0,
-                        'diff'      => 0,
-                        'tdiff'     => 0,
-                        'file'      => 0,
-                        'compress'  => 'none'
+                        email       => 'amartin@atos-group.com',
+                        summary     => 2,
+                        logs        => 0,
+                        diff        => 0,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
                 },
                 'Martin Quinson' => {
-                        'email'     => 'martin.quinson@ens-lyon.fr',
-                        'summary'   => 3,
-                        'logs'      => 3,
-                        'diff'      => 3,
-                        'tdiff'     => 3,
-                        'file'      => 0,
-                        'compress'  => 'none'
+                        email       => 'martin.quinson@ens-lyon.fr',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 3,
+                        file        => 0,
+                        compress    => 'none'
                 },
                 'Mickael Simon' =>  {
-                        'email'     => 'mickaelsimon@free.fr',
-                        'summary'   => 2,
-                        'logs'      => 0,
-                        'diff'      => 0,
-                        'tdiff'     => 0,
-                        'file'      => 0,
-                        'compress'  => 'none'
+                        email       => 'mickaelsimon@free.fr',
+                        summary     => 2,
+                        logs        => 0,
+                        diff        => 0,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
                 },
                 'Jérôme Schell' =>  {
-                        'email'     => 'jschell@noos.fr',
-                        'summary'   => 2,
-                        'logs'      => 2,
-                        'diff'      => 2,
-                        'tdiff'     => 0,
-                        'file'      => 0,
-                        'compress'  => 'none'
+                        email       => 'jschell@noos.fr',
+                        summary     => 2,
+                        logs        => 2,
+                        diff        => 2,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
                 },
-                'list' => {
-                # this is a special name containing the default addressee
-                        'email'     => 'debian-l10n-french@lists.debian.org',
-                        'missing'   => 1,
-                        'summary'   => 2,
-                        'logs'      => 0,
-                        'diff'      => 0,
-                        'tdiff'     => 0,
-                        'file'      => 0,
-                        'compress'  => 'none'
-                }
+                # Below are special users, used to handle special cases
+                #     default:      default values
+                #     untranslated: pages not translated
+                #     unmaintained: pages without maintainer
+                #     maxdelta:     outdated pages
+
+                untranslated        => {
+                        email       => '',
+                        mailsubject => '',
+                        mailbody    => '',
+                },
+                unmaintained        => {
+                        email       => 'debian-l10n-french@lists.debian.org',
+                        summary     => 2,
+                        mailsubject => 'Pages web orphelines a mettre a jour',
+                        mailbody    => 'french/international/french/mail_unmaintained.txt',
+                },
+                maxdelta            => {
+                        email       => 'debian-l10n-french@lists.debian.org',
+                        summary     => 2,
+                        maxdelta    => 5,
+                        mailsubject => '[Important] Pages web obsoletes',
+                        mailbody    => 'french/international/french/mail_obsolete.txt',
+                },
+                # this is a special name containing the default values
+                default   => {
+                        email       => '',
+                        missing     => 0,
+                        summary     => 0,
+                        logs        => 0,
+                        diff        => 0,
+                        tdiff       => 0,
+                        file        => 0,
+                        frequency   => ['jamais', 'mensuel', 'hebdomadaire', 'quotidien'],
+                        mailsubject => 'Pages web a mettre a jour',
+                        mailbody    => 'french/international/french/mail_user.txt',
+                        compress    => 'none'
+                },
         };
         return $translators;
 }
