@@ -9,31 +9,34 @@ $(HTMLDIR)/%.html.$(LANG) : %.wml $(TEMPLDIR)/template.wml
 
 # translators should comment out the line for any file they haven't translated.
 all:\
-    $(HTMLDIR)/index.html.$(LANG) \
     $(HTMLDIR)/contact.html.$(LANG) \
     $(HTMLDIR)/donations.html.$(LANG) \
-    $(HTMLDIR)/news.html.$(LANG) \
+    $(HTMLDIR)/index.html.$(LANG) \
+    $(HTMLDIR)/license.html.$(LANG) \
     $(HTMLDIR)/social_contract.html.$(LANG) \
-    #$(HTMLDIR)/2.0/HOWTO.upgrade.html.$(LANG) \
     #$(HTMLDIR)/developers_corner.html.$(LANG) \
-    #$(HTMLDIR)/license.html.$(LANG) \
+    #$(HTMLDIR)/news.html.$(LANG) \
     #$(HTMLDIR)/news1997.html.$(LANG) \
     #$(HTMLDIR)/related_links.html.$(LANG) \
     #$(HTMLDIR)/sponsor.html \
     #$(HTMLDIR)/support.html.$(LANG) \
+    #$(HTMLDIR)/2.0/errata.html.$(LANG) \
     #$(HTMLDIR)/2.0/2.0beta_CD.html.$(LANG) \
+    #$(HTMLDIR)/2.0/HOWTO.upgrade.html.$(LANG) \
     #$(HTMLDIR)/MailingLists/debian-announce.html.$(LANG) \
     #$(HTMLDIR)/MailingLists/subscribe.html.$(LANG) \
     #$(HTMLDIR)/MailingLists/unsubscribe.html.$(LANG) \
+    #$(HTMLDIR)/devel/HOWTO_translate.html.$(LANG) \
     #$(HTMLDIR)/devel/extract_key.html.$(LANG) \
-    #$(HTMLDIR)/devel/people.html.$(LANG) \
     #$(HTMLDIR)/devel/help.html.$(LANG) \
-    #$(HTMLDIR)/devel/ports.html.$(LANG) \
     #$(HTMLDIR)/devel/incoming_mirrors.html.$(LANG) \
-    #$(HTMLDIR)/devel/release_info.html.$(LANG) \
     #$(HTMLDIR)/devel/maintainer_contacts.html.$(LANG) \
-    #$(HTMLDIR)/devel/rsync_examples.html.$(LANG) \
     #$(HTMLDIR)/devel/mirror.html.$(LANG) \
+    #$(HTMLDIR)/devel/mirror_submit.html.$(LANG) \
+    #$(HTMLDIR)/devel/people.html.$(LANG) \
+    #$(HTMLDIR)/devel/ports.html.$(LANG) \
+    #$(HTMLDIR)/devel/release_info.html.$(LANG) \
+    #$(HTMLDIR)/devel/rsync_examples.html.$(LANG) \
     #$(HTMLDIR)/doc/index.html.$(LANG) \
     #$(HTMLDIR)/distrib/distrib.html.$(LANG) \
     #$(HTMLDIR)/distrib/ftplist.html.$(LANG) \
@@ -47,14 +50,17 @@ all:\
     #$(HTMLDIR)/intro/why_debian.html.$(LANG) \
     #$(HTMLDIR)/logos/index.html.$(LANG) \
     #$(HTMLDIR)/security/index.html.$(LANG) \
-    $(HTMLDIR)/
+    #$(HTMLDIR)/ports/index.html.$(LANG) \
+    #$(HTMLDIR)/ports/sparc/index.html.$(LANG) \
+    #$(HTMLDIR)/ports/sparc/problems.html.$(LANG) \
+    #$(HTMLDIR)/
 
 
 #
 # TRANSLATORS SHOULD NOT HAVE TO TOUCH ANYTHING BELOW THIS LINE
 #
 
-$(HTMLDIR)/index.html.$(LANG): index.wml news.wml $(TEMPLDIR)/mainpage.wml $(TEMPLDIR)/ctime.wml
+$(HTMLDIR)/index.html.$(LANG): index.wml ${ENGLISHSRCDIR}/news.wml $(TEMPLDIR)/mainpage.wml $(TEMPLDIR)/ctime.wml
 	wml index.wml
 
 # with no rule, the default ruleset (at the top) is used
