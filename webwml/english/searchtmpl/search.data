@@ -1,14 +1,61 @@
 #include "../../english/searchtmpl/search.def"
 <!--variables
-#DBAddr  pgsql://udm:udm@localhost/udmsearch/
-DBType pgsql
-DBName udmsearch
-DBUser udmsearch
-DBMode  crc-multi
-#IspellMode db
+DBAddr  pgsql://csmall@/mnogo/?dbmode=cache
 
-TrackQuery no
-Clones no
+VarDir /org/search.debian.org/cache
+
+# Uncomment this line to enable query tracking facility
+#TrackQuery yes
+
+# Uncomment this line to enable search result cache
+#Cache yes
+
+#  Uncomment this line if you do not want to detect and show clones
+#DetectClones	no
+
+# Use proper local and browser charsets
+# Default charset is iso-8859-1 (latin1)
+# which is suitable for the most Western European languages
+
+LocalCharset   iso-8859-1
+BrowserCharset iso-8859-1
+
+# Load stopwords file.  File name is either absolute
+# or relative to /etc directory of mnoGoSearch installation.
+#
+#StopwordFile stopwords/en.sl
+#StopwordFile stopwords/ru.sl
+#
+
+#
+# Minimum and maximum word lengths
+#
+#MinWordLen 1
+#MaxWordLen 32
+
+# Number of pages in navigator bar
+#
+#PagesPerScreen 10
+
+# Load synonyms file.  File name is either absolute
+# or relative to /etc directory of mnoGoSearch installation.
+#
+#Synonym synonym/english.syn
+#Synonym synonym/russian.syn
+#
+# How to hilight searched words.
+#
+HlBeg	<font color="000088"><b>
+HlEnd	</b></font>
+
+# Uncomment this line to enable document presence at stored
+#StoredAddr localhost
+#
+
+# Uncomment this line to change default URL basis for storedoc.cgi
+#StoredocURL     /cgi-bin/storedoc
+#
+
 -->
 
 <!--top-->
@@ -27,33 +74,32 @@ $(title=<search>)
 <br>
 <center>
 
-<FORM METHOD=GET ACTION="$A">
+<FORM METHOD=GET ACTION="$(Self)">
 <table bgcolor=#eeeee0 border=1 width=100%>
 <tr><td>
 <BR>
-<INPUT TYPE="hidden" NAME="ps" VALUE="10">
 <searchfor>
-<INPUT TYPE="text" NAME="q" SIZE=50 VALUE="$Q">
+<INPUT TYPE="text" NAME="q" SIZE=50 VALUE="$&(q)">
 <INPUT TYPE="submit" VALUE="<search>"><BR>
 
 <resultsperpage>
 <SELECT NAME="ps">
-<OPTION VALUE="10" SELECTED="$ps">10
-<OPTION VALUE="20" SELECTED="$ps">20
-<OPTION VALUE="50" SELECTED="$ps">50
+<OPTION VALUE="10" SELECTED="$(ps)">10
+<OPTION VALUE="20" SELECTED="$(ps)">20
+<OPTION VALUE="50" SELECTED="$(ps)">50
 </SELECT>
 
 <outputformat>
 <SELECT NAME="o">
-<OPTION VALUE="0" SELECTED="$o"><outputlong>
-<OPTION VALUE="1" SELECTED="$o"><outputshort>
-<OPTION VALUE="2" SELECTED="$o"><outputurl>
+<OPTION VALUE="0" SELECTED="$(o)"><outputlong>
+<OPTION VALUE="1" SELECTED="$(o)"><outputshort>
+<OPTION VALUE="2" SELECTED="$(o)"><outputurl>
 </SELECT>
 
 <defaultquerytype>
 <SELECT NAME="m">
-<OPTION VALUE="and" SELECTED="$m"><allwords>
-<OPTION VALUE="or" SELECTED="$m"><anywords>
+<OPTION VALUE="and" SELECTED="$(m)"><allwords>
+<OPTION VALUE="or" SELECTED="$(m)"><anywords>
 </SELECT>
 
 <br>
@@ -62,11 +108,11 @@ $(title=<search>)
 <searchthrough>
 <SELECT NAME="ul">
 <OPTION VALUE=""            SELECTED="$ul"><entiresite>
-<OPTION VALUE="http://www.debian.org/about/"    SELECTED="$ul"><aboutdebian>
-<OPTION VALUE="http://www.debian.org/News/"    SELECTED="$ul"><news>
-<OPTION VALUE="http://www.debian.org/distrib/"    SELECTED="$ul"><distribution>
-<OPTION VALUE="http://www.debian.org/support/"    SELECTED="$ul"><support>
-<OPTION VALUE="http://www.debian.org/devel/"    SELECTED="$ul"><develcorner>
+<OPTION VALUE="http://www.debian.org/about/"    SELECTED="$(ul)"><aboutdebian>
+<OPTION VALUE="http://www.debian.org/News/"    SELECTED="$(ul)"><news>
+<OPTION VALUE="http://www.debian.org/distrib/"    SELECTED="$(ul)"><distribution>
+<OPTION VALUE="http://www.debian.org/support/"    SELECTED="$(ul)"><support>
+<OPTION VALUE="http://www.debian.org/devel/"    SELECTED="$(ul)"><develcorner>
 </SELECT>
 
 <language>
@@ -92,47 +138,55 @@ foreach $l (sort keys %langs) {
 
 <!--restop-->
 <searchresults>
-<small>$W</small><HR>
+<small>$(W)</small><HR>
 <displaydocs>
 <!--/restop-->
 <!--res-->
 <DL><DT>
-<b>$DN.</b> <a href="$DU"><b>$DT</b></a> [<b>$DR</b>]<DD>
-$DX...<BR>
+<b>$(Order).</b> <a href="$(URL)"><b>$&(Title)</b></a> [<b>$(Score)</b>]<DD>
+$&(Body)...<BR>
 <UL>
-<li><A HREF="$DU">$DU</A> ($DC) $DM, $DS bytes
-$CL
+<li><A HREF="$(URL)">$(URL:40)</A>
+($(Content-Type)) $(Last-Modified), $(Content-Length) bytes <br />
+$(CL)
 </UL>
 </DL>
 <!--/res-->
 
-<!--ftpres-->
+<!--res-->
 <DL><DT>
-<b>$DN.</b> <a href="$DU"><b>$DT</b></a> [<b>$DR</b>]<DD>
-<UL>
-<li><A HREF="$DU">$DU</A> ($DC) $DM, $DS bytes
-$CL
-</UL>
+<b>$(Order).</b> <a href="$(URL)" TARGET="_blank"><b>$(URL:40)</b></a>
+[<b>$(Score)</b>]<DD>
 </DL>
-<!--/ftpres-->
+<!--/res-->
+
+<!--stored-->
+<DD><a href="$(stored_href)">Cached copy</a></DD>
+<!--/stored-->
+
+<!--site_limit-->
+<DD><small><a href="$(self)$(sitelimit_href)">All result from this site</a></small></DD>
+<!--/site_limit-->
+
 
 <!--resbot-->
 <HR>
 <CENTER>
-$V
+<TABLE BORDER=0>
+<TR>
+<TD>Result pages: <TD>&nbsp;</TD></TD>$(NL)$(NB)$(NR)
+</TR>
+</TABLE>
 </CENTER>
 <!--/resbot-->
 
 <!--clone-->
-<li><A HREF="$DU">$DU</A> ($DC) $DM
+<li><A HREF="$(URL)">$(URL:40)</A> $(Last-Modified), $(Content-Length) bytes
 <!--/clone-->
 
-<!--navigator-->
-<TABLE BORDER=0><TR>$NL $NB $NR</TR></TABLE>
-<!--/navigator-->
 
 <!--navleft-->
-<TD><A HREF="$NH"><prevpage></A></TD>
+<TD><A HREF="$(self)$(NH)"><prevpage></A></TD>
 <!--/navleft-->
 
 <!--navleft_nop-->
@@ -140,15 +194,15 @@ $V
 <!--/navleft_nop-->
 
 <!--navbar1-->
-<TD><A HREF="$NH">$NP</A></TD>
+<TD><A HREF="$(self)$(NH)">$(NP)</A></TD>
 <!--/navbar1-->
 
 <!--navbar0-->
-<TD>$NP</TD>
+<TD>$(NP)</TD>
 <!--/navbar0-->
 
 <!--navright-->
-<TD><A HREF="$NH"><nextpage></A></TD>
+<TD><A HREF="$(self)$(nh)"><nextpage></A></TD>
 <!--/navright-->
 
 <!--navright_nop-->
@@ -168,7 +222,7 @@ $V
 <!--error-->
 <CENTER>
 <FONT COLOR="#FF0000"><error-occured></FONT>
-<P><B>$E</B>
+<P><B>$(E)</B>
 </CENTER>
 <!--/error-->
 
