@@ -130,6 +130,14 @@ sub read_data {
 	    $data{$pkg}{"type"} = $1;
 	    $last_section="";
 	}
+	# type (of package) section ?
+	elsif (/^Upstream: (.*)$/) {
+	    if ($pkg eq "") {
+		&$parse_warn ("upstream section comes before package name section");
+	    }
+	    $data{$pkg}{"upstream"} = $1;
+	    $last_section="";
+	}
 	# stats ?
 	elsif (/^Stats: ([^:]*): (.*)$/) {
 	    if ($pkg eq "") {
@@ -189,9 +197,17 @@ sub read_data {
 	# begin of templates files section ?
 	elsif (/^TEMPLATES:$/) {
 	    if ($pkg eq "") {
-		&$parse_warn ("po files section comes before package name section");
+		&$parse_warn ("templates files section comes before package name section");
 	    }
 	    $last_section="templates";
+	    $last_nb=0;
+	}
+	# begin of menu files section ?
+	elsif (/^MENU:$/) {
+	    if ($pkg eq "") {
+		&$parse_warn ("menu files section comes before package name section");
+	    }
+	    $last_section="menu";
 	    $last_nb=0;
 	}
 	# next item of current section ?
@@ -436,6 +452,7 @@ sub write_data {
 	if (defined ($data{$pkg}{'section'})){ print DESC "Section: $data{$pkg}{'section'}\n";}
 	if (defined ($data{$pkg}{'priority'})){print DESC "Priority: $data{$pkg}{'priority'}\n";}
 	if (defined ($data{$pkg}{'type'})){    print DESC "Type: $data{$pkg}{'type'}\n";}
+	if (defined ($data{$pkg}{'upstream'})){    print DESC "Upstream: $data{$pkg}{'upstream'}\n";}
 	foreach $lang (keys %{$data{$pkg}{"stats"}}) {
 	    print DESC "Stats: $lang: $data{$pkg}{'stats'}{$lang}\n";
 	}
@@ -484,6 +501,14 @@ sub write_data {
 	    }
 	    for ($nb=0;$nb<@{$data{$pkg}{"templates"}};$nb++) {
 		print DESC " $data{$pkg}{'templates'}[$nb]\n";
+	    }
+	}
+	if (defined($data{$pkg}{"menu"})) {
+	    if (0 != @{$data{$pkg}{"menu"}}) {
+		print DESC "MENU:\n";
+	    }
+	    for ($nb=0;$nb<@{$data{$pkg}{"menu"}};$nb++) {
+		print DESC " $data{$pkg}{'menu'}[$nb]\n";
 	    }
 	}
 
