@@ -4,7 +4,7 @@
 # inside subdirectories of the given directory, and if it finds less than
 # 10, falls back to last year's news for the rest.
 sub get_weeklynews_list {
-	my ($year, $eng_dir, $match, $noyear, $count, $stopat) = @_;
+	my ($year, $eng_dir, $match, $noyear, $count, $stopat, $reccount) = @_;
 	
 	my $str="";
 
@@ -15,7 +15,7 @@ sub get_weeklynews_list {
 	$currentissue=~s:^\d+/::;
 	close CURRENT;
 
-	opendir(DIR, "$eng_dir/$year");
+	opendir(DIR, "$eng_dir/$year") or return '';
 	@files = grep { /^$match$/ && -f "$eng_dir/$year/$_/index.wml" } readdir(DIR);
 	closedir DIR;
 	
@@ -49,8 +49,8 @@ sub get_weeklynews_list {
 	close DIR;
 
 	# Get more if necessary.
-	if ($count < 10) {
-		$str.=get_weeklynews_list($year - 1, $eng_dir, $match, $noyear, $count, 10);
+	if ($count < 10 && $reccount < 3 ) {
+		$str.=get_weeklynews_list($year - 1, $eng_dir, $match, $noyear, $count, 10, $reccount++);
 	}
 	
 	return $str;
