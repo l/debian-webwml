@@ -7,35 +7,40 @@
 
 <H3>背景</H3>
 <P>本網站上所有人手寫成，非說明文件的 html 檔案皆由 wml 產成。\
-它們是利用 CVS 貯存在 cvs.debian.org 中。你先要「拿取」(check out) \
+它們是利用 CVS 貯存在 cvs.debian.org 中。你先要「拿取」(check out)
 這些 wml 檔案到你自己的電腦，以後要修改的也都是這些檔案。修改後，\
-你便可以改動過的檔案合拼 (commit) 到 cvs.debian.org。於每一天\
+你便可以改動過的檔案合拼 (commit) 到 cvs.debian.org。於每一天
 master.debian.org 上的 Makefile 都會被執行一次來更新所有網頁。\
 最後這些網頁就會被分發到鏡像站台 (mirror)。
 
 <H3>目前翻譯協調人員</H3>
 <ul>
 <li>法文：Christophe Le Bars &lt;clebars@debian.org&gt;
-    <br>See <a href="http://www.debian.org/~clebars/f2dp/ltcp.html">
-    http://www.debian.org/~clebars/f2dp/ltcp.html</a> for more information.
+    <br>詳情請見 <a href="http://www.debian.org/~clebars/f2dp/ltcp.html">
+    http://www.debian.org/~clebars/f2dp/ltcp.html</a>。
 <li>西班牙文：Javier Fdz-Sanguino Pe&ntilde;a &lt;jfs@ieeesb.etsit.upm.es&gt;
 <li>丹麥文：Flemming Mahler Larsen &lt;mahler@DK.net&gt;
-<br>See <a href="http://www.netfactory.dk/debian/">http://www.netfactory.dk/debian/</A>
-    for more information.
+<br>詳情請見 <a href="http://www.netfactory.dk/debian/">http://www.netfactory.dk/debian/</A>。
 <li>日文：前原&nbsp;惠太 Keita Maehara &lt;maehara@debian.org&gt;
 <li>德文：Thimo Neubauer &lt;thimo@debian.org&gt;
 <li>意大利文：Giuseppe Sacco &lt;gsacco@hsomail.com&gt;
-<li>俄文：D'jinnie &lt;jinn@irony.org&gt;
+<li>俄文：Peter Novodvorsky &lt;petya@logic.ru&gt;
 <li>克羅地亞文：Matej Vela &lt;mvela@public.srce.hr&gt;
 <li>波蘭文：Marcin Owsiany &lt;porridge@lo4.ids.bielsko.pl&gt;
 <li>荷蘭文：Both Florus NTC/Zurich &lt;florus.both@usa.net&gt;
 <li>葡萄牙文：Eduardo Marcel Macan &lt;thecore@thecore.com.br&gt;
-<li>中文：黃彥邦 Anthony Y. P. Wong &lt;ypwong@debian.org&gt;
+<li>中文：黃彥邦 Anthony Wong &lt;ypwong@debian.org&gt;
 <li>芬蘭文：Antti-Juhani Kaijanaho &lt;gaia@iki.fi&gt;
 <li>瑞典文：peter karlsson &lt;pk@mds.mdh.se&gt;
 <li>挪威文：Tor Slettnes &lt;tor@slett.net&gt;  
 <li>韓文：俞盛太 Seongtae Yoo &lt;alloying@nownuri.net&gt;
+<li>土耳其文：Andreas Mueller &lt;amu@tr.debian.net&gt;
+<li>世界語：Eduardo Trapani &lt;etrapani@unesco.org.uy&gt;
+<li>阿拉伯文：Shaheen &lt;hchahine@magic.fr&gt;
+<li>匈牙利文：NAGY Viktor &lt;chaos@inf.elte.hu&gt;
+<li>羅馬尼亞文：Aurelian Melinte &lt;amelinte@ALIS.COM&gt;
 </ul>
+
 如欲參與以上的翻譯計劃，請直接跟他們聯絡。\
 若有意擔當新語言的翻譯協調工作，請寄電郵至 \
 <a href="mailto:webmaster@debian.org">webmaster@debian.org</a>。\
@@ -130,15 +135,65 @@ webmaster@debian.org 以得到 CVS 的讀寫權。一旦你被加入到適當的群組後，\
 <a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>，\
 因為我們希望即使是不同語言的網頁也能保持一致。
 
-<P>希望這些工夫真正能夠使大家翻譯時更輕鬆。
+<P>希望這些功夫真正能夠使大家翻譯時更輕鬆。
 
 <p>註：當某一個網頁剛剛被翻繹好的時候，其他語言的網頁是沒有連結它的，\
 直至這些網頁再被重新產生為止。
+
+<H3>Keeping translations up-to-date</H3>
+<P>Since web pages aren't static, it is a good idea to keep track of which
+version of the original a certain translation refers to, and to use this
+information to check which pages have changed since the last translation.
+To aid with this, the script <code>check_trans.pl</code> is available in
+the webwml directory.
+
+<P>The script relies upon that the translated wml files contain information on
+which version they are translating.
+This information should be embedded somewhere in the document on the form
+<code>&lt;!--translation <var>x.x</var>--&gt;</code> where <var>x.x</var>
+is the version of the original (English).
+The string should be written on its own line in the wml file, optionally
+prefixed by a <code>#</code> (wml comment) to not to add it to the created
+HTML files.
+
+<P>If you run <code>check_trans.pl <var>language</var></code> (replace
+<var>language</var> with the directory name that contains your translation,
+like "swedish") you will get a report on pages that lack translation (shown
+as "<code>Missing <var>filename</var></code>") and pages that are not
+up-to-date (shown as "<code>NeedToUpdate <var>filename</var> to version
+<var>x.x</var></code>").
+
+<P>If you want to see what the exact changes are, you can get the
+differences by running <code>check_trans.pl -d <var>language</var></code>.
+Please note that this can take a while since it can include several accesses
+to the CVS server.
+
+<P>If you want to ignore warnings on missing pages (for instance old news
+items), you can create a file called <code>.transignore</code> in the
+directory where you want to suppress the warnings, listing each file that
+you are not going to translate, with one name per line.
 
 <H3>增加新目錄</H3>
 <P>在 CVS 上增加新目錄時，有一點大家需要留意的。如果那個新目錄是列在\
 ../Makefile 中，那麼新目錄中必需要有一個 Makefile，否則‘make’時將會\
 出錯。你不需顧慮在 SUBS 變數中不存在的目錄，因為 make 懂得自動跳過它們。
+
+<H3>Generating the images for the navbar</H3>
+<P>This should be one of the first tasks done so that once you start generating
+pages the navbar links will be usable by users who don't speak english.
+Create the Pics directory and copy the following files from webwml/english/Pics:
+<pre>
+   Makefile
+   makebuttons.sh
+   debbar.pl
+</pre>
+Translate the variables in makebuttons.sh and follow the instructions in that file.
+This relies on the gimp which has been undergoing rapid development,
+so the script breaks often. Send mail to debian-www if you have problems.
+
+<P>Note that if any of the characters used in the navbar are not in the
+iso8859-1 charset, then you will need to either change the font to one
+for your charset, or edit the images by hand.
 
 <H3>伺服器怎樣知道要傳送那個檔案？</H3>
 <P>你會發覺對內的網址 (internal link) 不是用 .html 結尾的。這是因為\
@@ -155,10 +210,10 @@ Debian 的伺服器是預設傳送英文文件，但這是可以改變的。
 
 <P>因為很多用戶根本不知道有 content-negotiation 這回事，所以\
 在每一頁的底下都有一些連結指向那一頁的其他語言版本。那些連結\
-是當網頁被更新的時候由 wml 所執行的一個 perl script 產生出來的。
+是當網頁被更新的時候由 wml 所執行的一個 perl 腳本 (script) 產生出來的。
 
 <H3>開始翻譯的範例</H3>
-在此以法文為例：
+<P>在此以法文為例：
 <pre>
    cvs checkout webwml/english
    cd webwml
@@ -168,8 +223,8 @@ Debian 的伺服器是預設傳送英文文件，但這是可以改變的。
    cp ../english/.wmlrc .
    cvs add .wmlrc
 
-作出以下修改： '-D CUR_LANG=English' to '-D CUR_LANG=French'
-               '-D CUR_ISO_LANG=en' to '-D CUR_ISO_LANG=fr'
+作出以下修改： '-D CUR_LANG=English' 改為 '-D CUR_LANG=French'
+               '-D CUR_ISO_LANG=en' 改為 '-D CUR_ISO_LANG=fr'
                有需要時請加上 'CHARSET=iso-8859-1'
 
 不要對 .wmlrc 作任何更改。
@@ -180,17 +235,24 @@ Debian 的伺服器是預設傳送英文文件，但這是可以改變的。
    cp ../english/Make.* ../english/Makefile .
    cvs add Make*
 
-在 Make.lang 中將 'LANG=en' 改成 'LANG=fr' 及將 'LANGUAGECAP=EN' 改成\
-'LANGUAGECAP=FR'。
-除非你翻譯的語言為多位元，否則你不用在 Makefile 中\
+在 Make.lang 中將 'LANG=en' 改成 'LANG=fr' 及將 'LANGUAGECAP=EN' 改成
+'LANGUAGECAP=FR'。除非你翻譯的語言為多位元，否則你不用在 Makefile 中
 更改什麼的了。
 
-每個目錄中的 makefile 將會編譯它找到的 .wml 檔案。
+每個目錄中的 Makefile 將會編譯它找到的 .wml 檔案。
 
-把加入 (add) 檔案的過程做完後，在 webmal 目錄裡執行
+把加入 (add) 檔案的過程做完後，在 webwml 目錄裡執行
    cvs commit
 </pre>
 你現在就可以開始翻譯網頁了。
+
+### start Chinese-specific
+<P>至於中文，因 Big5 及 GB 兩種編碼，以及海峽兩岸[CN:計算機:][TW:電腦:]\
+用語有別，加上中文字使用多位元，所以製作中文網頁的 Makefile 及相關\
+[CN:文件:][TW:檔案:]都有特殊的修訂，可自動從每個 *.wml 同時製作\
+*.zh-cn.html 及 *.zh-tw.html，以迎合兩岸同胞的閱讀習慣。
+### end Chinese-specific
+
 
 <H3>翻譯網頁範例</H3>
 在此以社會契約之法文譯本為例：
@@ -209,24 +271,24 @@ Debian 的伺服器是預設傳送英文文件，但這是可以改變的。
 <H3>編譯 wml</H3>
 假設你已經在你的機器上安裝了 <A href="http://packages.debian.org/wml">wml</A>，\
 在 webwml/&lt;lang&gt; 中鍵入 <kbd>make</kbd> 即可。\
-如果你下指令 <kbd>make install</kbd>，各 html 文檔就會放入\
+如果你下指令 <kbd>make install</kbd>，各 html 文檔就會放入
 <kbd>../../debian.org/</kbd> 目錄中。
 
-<p>處理多位元語言可能需要對 wml 檔案進行特別的「事前」及「事後」處理 (pre- \
-and post-processing)。你可以利用 <kbd>webwml/&lt;lang&gt;/Make.lang</kbd> \
+<p>處理多位元語言可能需要對 wml 檔案進行特別的「事前」及「事後」處理 (pre-
+and post-processing)。你可以利用 <kbd>webwml/&lt;lang&gt;/Make.lang</kbd>
 中的 <kbd>WMLPROLOG</kbd> 和 <kbd>WMLEPILOG</kbd> 變數來達到這個目的。\
-視乎 <kbd>WMLEPILOG</kbd> 指示的程式怎樣運作，你可能同時需要更改 \
+視乎 <kbd>WMLEPILOG</kbd> 指示的程式怎樣運作，你可能同時需要更改
 <kbd>WMLOUTFILE</kbd> 的值。
 
 <H3>特別檔案及目錄</H3>
 <ul>
 <li><b>News/</b><br>
 此目錄全部都是寄至 debian-announce 的新聞郵件。在首頁上列出的新聞標題\
-都是用 script 自動地讀取這些郵件來製成的。
+都是用腳本 (script) 自動地讀取這些郵件來製成的。
 
 <p>你何自由選擇翻譯哪個新聞。由於時間關係你可能止可以翻譯一些特別的\
 新聞，諸如 Debian 新版本推出的怖告。翻什麼是完全由你決定的。製作首頁\
-上新聞頭條的 script 會檢查新聞是否已被譯成，如果還未就會沿用英文版本。
+上新聞頭條的腳本 (script) 會檢查新聞是否已被譯成，如果還未就會沿用英文版本。
 
 <li><b>security/</b><br>
 此目錄包含所有與 Debian 有關的安全問題的情況。首頁上的標題的製作方法\
@@ -239,7 +301,8 @@ and post-processing)。你可以利用 <kbd>webwml/&lt;lang&gt;/Make.lang</kbd> \
 有需要翻‘homepage’，請先寄信至 debian-www。
 
 <li><b>MailingLists/subscribe.wml 和 MailingLists/unsubscribe.wml</b><br> \
-這兩個網頁是利用 scripts 自動製成的，暫時不用麻煩翻譯了。我們將會發展一 個系統來加入大家的翻譯。
+這兩個網頁是利用腳本 (scripts) 自動製成的，暫時不用麻煩翻譯了。\
+我們將會發展一個系統來加入大家的翻譯。
 
 <li><b>distrib/vendors.wml</b><br>
 vendors.wml 應被翻譯，它亦包括 <kbd>../../english/devel/vendors.CD</kbd>，\
@@ -257,3 +320,17 @@ vendors.wml 應被翻譯，它亦包括 <kbd>../../english/devel/vendors.CD</kbd>，\
 請勿翻譯該頁上任何其他文字。
 
 </ul>
+
+<P>For the news items and security reports you might wish to only translate
+the titles, to make it look good in the indices.
+To do this, create a file with the same name as the original .wml file,
+but with the extension <code>.title</code> instead.
+Just include the define-tags that are used in the indices, i.e
+<em>pagetitle</em> and <em>release_date</em> for the news items, and
+<em>pagetitle</em>, <em>report_date</em> and <em>description</em> for
+the security reports.
+
+<P>There is no need to translate the dates in the headers of the news items
+or security reports, they are automatically converted to the format
+preferred by the language using the <code>ctime.wml</code> file in the
+<code>english/template/debian</code> directory.
