@@ -159,10 +159,10 @@
     echo "Problem with query", pg_ErrorMessage($db), "<BR>";
     return FALSE;
   }
+  $rows = pg_NumRows($query);
   if ($limit && $rows > $limit) {
       $rows = $limit;
   }
-  $rows = pg_NumRows($query);
   if ($rows) {
       echo "<TABLE border=\"0\" summary=\"\">\n";
       for ($i = 0 ; $i < $rows ; $i++) {
