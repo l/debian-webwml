@@ -4,7 +4,8 @@
 
 WMLBASE=../../..
 CUR_DIR=international/spanish/contrib
-SUBS=apt-guia-usuarios.html paqifaz-capturas presentacion making-packages
+SUBS=apt-guia-usuarios.html paqifaz-capturas presentacion
+# disabled, doesn't work on www-master.d.o: making-packages
 
 include $(WMLBASE)/Make.lang
 
