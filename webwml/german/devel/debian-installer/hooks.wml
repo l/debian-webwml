@@ -1,0 +1,57 @@
+#use wml::debian::template title="Debian-Installer Hooks"
+#use wml::debian::translation-check translation="1.4"
+# $Id$
+# Translation: Gerfried Fuchs <alfie@debian.org> 2003-09-22
+
+<p>Dies ist eine Liste der verfügbaren Hooks für Debian-Installer Module und
+Erweiterungen.</p>
+
+<dl>
+
+  <dt>/etc/rcS.d/S[0-9][0-9]* [rootskel]</dt>
+  <dd>Falls diese eine ausführbare Datei ist, wird sie ausgeführt, wenn d-i
+    bootet, bevor das Hauptmenü angezeigt wird.</dd>
+
+  <dt>/cdrom/.disk/udeb_include [anna]<br>/cdrom/.disk/udeb_exclude</dt>
+  <dd>Liste der Pakete (udebs), die in die d-i Ramdisk installiert oder nicht
+    installiert werden sollen.</dd>
+
+  <dt>/etc/autopartkit.d/*.table [autopartkit]</dt>
+  <dd>Partitionstabellen-Anweisungen für autopartkit. Die Auswahl wird mittels
+    debconf getroffen.</dd>
+  
+  <dt>/cdrom/.disk/base_include
+    [base-installer]<br>/cdrom/.disk/base_exclude</dt>
+  <dd>Der Inhalt dieser Dateien wird als Liste von in den Zielbereich (nicht)
+    zu installierenden Paketen genommen.</dd>
+
+  <dt>/usr/lib/prebaseconfig.d/* [prebaseconfig]</dt>
+  <dd>Die Dateien in diesem Verzeichnis werden am Ende der Installation der
+    Reihe nach ausgefüht.</dd>
+
+  <dt>/var/lib/partconf/fstab.d/* [partconf?]</dt>
+  <dd>partconf und mkfstab lesen alle Dateien in diesem Verzeichnis und fügen
+    die Zeilen (modifiziert oder unmodifiziert) an die generierte
+    <kbd>/target/etc/fstab</kbd> an.</dd>
+
+  <dt>/usr/share/partitioner/${ARCH}.sh
+    [partitioner?]<br>/usr/share/partitioner/common.sh</dt>
+  <dd>partitioner versucht zuerst, das Shell-Skript für die aktuelle
+    Architektur aufzurufen, und falls dieses Skript nicht vorhanden ist, ruft
+    es common.sh mit der ausgewählten Festplatte als Argument auf. Das Skript
+    kann dann tun, was auch immer notwendig ist, um eine Festplatte auf dieser
+    Architektur zu partitionieren (z.B. fdisk (textbasiert) oder cfdisk
+    (slang-basiert) aufzurufen).</dd>
+
+  <dt>/var/lib/partconf/block.d/* [partconf?]</dt>
+  <dd>partconf ruft für jede Partition alle Skripte in diesem Verzeichnis auf,
+    damit einige udebs Skripte dort plazieren können, und dann die Ausgabe von
+    einigen Partitionen blockieren können; sehr nützlich für die
+    Raid/LVM-Unterstützung<br />
+    ( von Thorsten Sauter zum Inkludieren geplant )
+  </dd>
+
+  <dt>apt-install [rootskel]</dt>
+  <dd>Programm, das in postinst-Skripten verwendet wird, um nach einem Paket
+    zu fragen, das in das installierte System installiert werden soll.</dd>
+</dl>
