@@ -3,11 +3,12 @@ CUR_DIR=intro
 
 HTMLDIR=$(BASE)/../../debian.org/$(CUR_DIR)
 TEMPLDIR=$(BASE)/template/debian
-ENGLISHSRCDIR=$(BASE)/../english
+GERMANSRCDIR=$(BASE)/../german
 
 include $(BASE)/Make.lang
 
-WMLFILES := $(wildcard *.wml)
+# WMLFILES := $(wildcard *.wml)
+WMLFILES := $(shell echo *.wml)
 HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
 
 # EPILOG=--epilog=weblint
