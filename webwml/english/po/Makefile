@@ -89,7 +89,7 @@ stats:
 else
 stats:
 	-@for d in $(DOMAINS); do \
-          echo -n "$$d.$(LANGUAGE).po: "; \
+          echo -n "$$d.$(LANGUAGE).po: " 1>&2; \
           msgmerge -q $$d.$(LANGUAGE).po $(ENGLISHDIR)/po/$$d.pot |\
              msgfmt -o /dev/null --statistics -; \
         done
