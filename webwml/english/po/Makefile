@@ -89,7 +89,7 @@ init-po:
 	  cp $(ENGLISHDIR)/po/$$d.pot $$d.$(LANGUAGE).po; \
 	done
 
-update-po:
+update-po: $(POTFILES)
 	for d in $(DOMAINS); do \
 	  msgmerge -F -q $$d.$(LANGUAGE).po $(ENGLISHDIR)/po/$$d.pot -o $$d.$(LANGUAGE).po.new && mv $$d.$(LANGUAGE).po.new $$d.$(LANGUAGE).po; \
 	done
