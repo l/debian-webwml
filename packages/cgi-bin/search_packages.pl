@@ -203,7 +203,7 @@ foreach my $pkg (sort keys %pkgs) {
 
 	    foreach my $v (sort keys %{$pkgs{$pkg}{$ver}}) {
 		printf "<br>%s: %s\n",
-		$v, join (" ", (keys %{$pkgs{$pkg}{$ver}{$v}}) );
+		$v, join (" ", (sort keys %{$pkgs{$pkg}{$ver}{$v}}) );
 	    }
 	}
     }
