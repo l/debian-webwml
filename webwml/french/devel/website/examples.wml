@@ -1,5 +1,5 @@
 #use wml::debian::template title="Exemples"
-#use wml::debian::translation-check translation="1.5" maintainer="Denis Barbier"
+#use wml::debian::translation-check translation="1.6" maintainer="Denis Barbier"
 
 <H3>Exemple d'un commencement de traduction</H3>
 <p>Le français sera utilisé pour cet exemple.
@@ -10,8 +10,13 @@
    mkdir french
    cvs add french
    cd french
-   cp ../english/.wmlrc ../english/Make.* ../english/Makefile .
-   cvs add Make* .wmlrc
+   cp ../english/.wmlrc ../english/Make.*
+   sed -e 's/german/french/' ../german/Makefile &gt; Makefile
+   mkdir po
+   cvs add Make* .wmlrc po
+   cp Makefile po
+   make -C po init-po
+   cvs add po/Makefile po/*.fr.po
 </pre>
 
 <p>Éditez le fichier <tt>.wmlrc</tt> et changez&nbsp;:
@@ -33,9 +38,8 @@ d'autres variables de ce fichier, veuillez vous reporter à
 ../Makefile.common et aux exemples de traductions déjà réalisées (comme
 le chinois) pour plus de détails.
 
-<p>Éditez english/template/debian/*.wml et ajoutez des traductions à
-toutes les entrées &lt;define-tag ...&gt;.
-Cela devrait être presque évident.
+<p>Allez dans le répertoire french/po et traduisez le texte dans les
+fichiers PO. Cela devrait être presque évident.
 
 <p>Vérifiez toujours que vous avez bien copié le fichier Makefile de
 chaque répertoire que vous traduisez. Il faut le faire car le programme
@@ -50,7 +54,7 @@ et <code>make</code> a besoin de ces Makefiles.
 Vous pouvez maintenant commencer à traduire des pages.
 
 <H3>Exemple de traduction d'une page</H3>
-Une traduction en français du Contrat social sera utilisée pour cet
+<p>Une traduction en français du Contrat social sera utilisée pour cet
 exemple&nbsp;:
 
 <pre>
@@ -64,6 +68,30 @@ traduire les liens ni d'en modifier en aucune façon. Quand c'est fini,
 tapez
 
 <pre>
-   cvs commit -m "courte description des modifications faites" social_contract.wml
+   cvs commit -m "short description of the changes you made" social_contract.wml
+</pre>
+(les commentaires doivent être en anglais, car ils sont susceptibles
+d'être lus par tout le monde).
+
+<H3>Exemple d'ajout de répertoire</H3>
+
+<p>Cet exemple montre comment le répertoire intro/ peut être ajouté&nbsp;:
+
+<pre>
+   cd webwml/french
+   mkdir intro
+   cvs add intro
+   cd intro
+   cp ../Makefile .
+</pre> 
+
+Vérifiez toujours qu'un Makefile se trouve dans le répertoire ajouté, et
+que ce Makefile a été enregistré dans le CVS. Sinon il sera impossible
+de générer les pages.
+
+<pre>
+   cvs add Makefile
+   cd ..
+   cvs commit -m "added the intro dir to CVS" intro
 </pre>
 
