@@ -121,6 +121,15 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
+		'Guillaume Leclanche' => {
+			email       => 'mo-ize@nul-en.info',
+			summary     => 2,
+			logs        => 2,
+			diff        => 0,
+			tdiff       => 0,
+			file        => 0,
+			compress    => 'none'
+		},
                 'Pierre Machard' => {
                         email       => 'pmachard@tuxfamily.org',
                         summary     => 2,
