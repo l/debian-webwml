@@ -10,13 +10,15 @@ NOGENERICDEP := true
 
 include $(WMLBASE)/Make.lang
 
-LANGS_TEMPLATES  := $(shell grep 'templates:' $(ENGLISHDIR)/international/l10n/data/langs | sed -e 's/templates:  *//')
+L10N_DIR = $(ENGLISHDIR)/international/l10n
+
+LANGS_TEMPLATES  := $(shell grep 'templates:' $(L10N_DIR)/data/langs | sed -e 's/templates:  *//')
 
 HTML_TEMPLATES   := $(foreach lang,$(LANGS_TEMPLATES),$(lang).$(LANGUAGE).html)
 
 all:: $(HTML_TEMPLATES)
 
-tmpl.$(LANGUAGE).tmpl: tmpl.src $(ENGLISHDIR)/$(CUR_DIR)/../dtc.def
+tmpl.$(LANGUAGE).tmpl: tmpl.src $(L10N_DIR)/dtc.def
 	wml -o UNDEFu$(LANGUAGECAP):tmpl.$(LANGUAGE).tmpl@g+w tmpl.src
 
 todo.$(LANGUAGE).html: todo.wml $(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc
@@ -28,28 +30,14 @@ index.$(LANGUAGE).html: index.wml
 	$(WMLBASE)/../touch_translations.pl $(CURDIR)/index.wml $(LANGUAGE)
 
 $(HTML_TEMPLATES): tmpl.$(LANGUAGE).tmpl $(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc
-	langs='$(LANGS_TEMPLATES)'; for l in $$langs; do \
-   test -f gen/main-$$l.inc || :> gen/main-$$l.inc; \
-   test -f gen/contrib-$$l.inc || :> gen/contrib-$$l.inc; \
-   test -f gen/non-free-$$l.inc || :> gen/non-free-$$l.inc; \
-   test -f gen/main-$$l.exc || :> gen/main-$$l.exc; \
-   test -f gen/contrib-$$l.exc || :> gen/contrib-$$l.exc; \
-   test -f gen/non-free-$$l.exc || :> gen/non-free-$$l.exc; \
-   sed -e "s/@tmpl_lang@/$$l/" \
-       -e "/LINE: inc-main/r gen/main-$$l.inc" \
-       -e "/LINE: inc-contrib/r gen/contrib-$$l.inc" \
-       -e "/LINE: inc-non-free/r gen/non-free-$$l.inc" \
-       -e "/LINE: exc-main/r gen/main-$$l.exc" \
-       -e "/LINE: exc-contrib/r gen/contrib-$$l.exc" \
-       -e "/LINE: exc-non-free/r gen/non-free-$$l.exc" \
-       tmpl.$(LANGUAGE).tmpl > $$l.$(LANGUAGE).html; \
-   done
+	$(L10N_DIR)/scripts/fix-files.sh $(ENGLISHDIR)/$(CUR_DIR)/gen $(LANGUAGE) $(LANGS_TEMPLATES)
 
-$(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc: $(ENGLISHDIR)/$(CUR_DIR)/gen-templates.pl $(ENGLISHDIR)/$(CUR_DIR)/../data/unstable.ftp-master $(ENGLISHDIR)/$(CUR_DIR)/../data/unstable.non-US
-	cd $(ENGLISHDIR)/$(CUR_DIR) && perl gen-templates.pl
+$(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc: $(L10N_DIR)/scripts/gen-files.pl $(L10N_DIR)/data/unstable.ftp-master $(L10N_DIR)/data/unstable.non-US
+	-rm -rf $(ENGLISHDIR)/$(CUR_DIR)/gen
+	perl $(L10N_DIR)/scripts/gen-files.pl --l10ndir=$(L10N_DIR)  --templates
 
-$(ENGLISHDIR)/$(CUR_DIR)/../data/langs: $(ENGLISHDIR)/$(CUR_DIR)/../data/unstable.ftp-master $(ENGLISHDIR)/$(CUR_DIR)/../data/unstable.non-US
-	cd $(ENGLISHDIR)/$(CUR_DIR)/.. && ./scripts/list-languages.pl data/unstable.ftp-master data/unstable.non-US > data/langs
+$(L10N_DIR)/data/langs: $(L10N_DIR)/data/unstable.ftp-master $(L10N_DIR)/data/unstable.non-US
+	perl $(L10N_DIR)/scripts/gen-files.pl --l10ndir=$(L10N_DIR)  --langs
 
 clean::
 	-rm -rf gen
