@@ -1,4 +1,4 @@
-# This Makefile should need no changes from webwml/english/security/1998/Makefile
+# This Makefile should need no changes from webwml/english/events/1998/Makefile
 # Please send a message to debian-www if you need to modify anything, so the
 # problem can be fixed.
 
@@ -13,5 +13,5 @@ include $(WMLBASE)/Make.lang
 index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*\-*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
 	$(WML) index.wml
 
-%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/event.wml
+%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/past_event.wml
 	$(WML) $(<F)
