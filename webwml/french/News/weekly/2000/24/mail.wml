@@ -1,0 +1,171 @@
+#use wml::debian::weeklynews::header PAGENAME="Courriel"
+#use wml::debian::translation-check translation="1.6" maintainer="Thomas Huriaux"
+
+<a name=1></a>
+<pre>
+De : Marcelo E. Magallon &lt;magallo@debian.org&gt;
+Date : Mer. 2 août 2000 10 h 28 ' 22 " +0200
+À : debian-devel-announce@lists.debian.org
+Sujet : WNPP maintenant sur le BTS
+
+Salut,
+
+ Il y a quelques temps, Sean Perry, surnommé Shaleh, a proposé [0] de
+ déplacer l'actuel système WNPP dans le BTS. La proposition a été bien
+ accueillie, et parmis les personnes qui ont participé à la discussion,
+ Lars Wirzenius a écrit une deuxième proposition [1] plus formelle
+ définissant comment les choses devraient fonctionner à l'intérieur de
+ ce nouveau système. L'infrastructure demandée du côté du BTS a été
+ installée il y a quelques semaines et il semble que la dernière chose
+ restant à faire était de déplacer l'ancienne base de données dans le
+ BTS. Lundi dernier, je l'ai fait, mais malheureusement pas de la meilleure
+ façon...
+
+ En gros, j'ai pris la base de données WNPP [2] et j'en ai extrait le plus
+ d'informations possible, formatées de manière à correspondre aux besoins
+ du BTS et à être envoyées. La chose plus gênante là-dessus est que j'ai
+ dû forcer l'en-tête « From » de manière à permettre au BTS d'enregistrer
+ la personne correcte comme « soumetteur » des « bogues », c'est-à-dire,
+ si Joe R. Hacker &lt;jrh@foo.bar&gt; a soumis une demande au système
+ WNPP, le courriel a été envoyé de manière à ce que le BTS enregistre cette
+ adresse en tant que soumetteur de l'information. L'objectif est clair,
+ j'espère, à savoir que si une personne demande à un logiciel d'être
+ empaqueté pour Debian, une fois que le nouveau paquet est installé dans
+ l'archive, le bogue sera fermé et cette personne sera prévenue. Il en va
+ de même pour tous les autres types de requêtes.
+
+ Ceci dit, je vous prie de m'excuser pour les problèmes induits.
+
+ Maintenant, continuons.
+
+ En accord avec la proposition de Lars, le format des soumissions doit
+ ressembler à cela :
+
+     To: submit@bugs.debian.org
+     Subject: {MARQUE}: {nom du paquet} -- {courte description du paquet}
+
+     Package: wnpp
+     Severity: {voyez ci-dessous}
+
+     {Le baratin habituel qui accompagne ces annonces, une description du
+     paquet ou d'autres informations seraient utiles}
+
+ Les marques à utiliser et les gravités sont :
+
+     O    important  Le paquet est devenu orphelin. Il a besoin d'un nouveau
+                     responsable le plus tôt possible. Si le paquet a une
+		     priorité <i>standard</i>, <i>required</i> ou
+		     <i>essential</i>, la gravité doit être mise à grave.
+
+     ITO  important  L'actuel responsable de ce paquet a déclaré son intention
+                     de le rendre orphelin. Le paquet est encore maintenu,
+		     mais peut-être pas de la meilleure manière possible, à
+		     cause d'un manque de temps, de ressources ou de
+		     quelque chose similaire. Le paquet a besoin d'un nouveau
+		     responsable.
+
+     ITP  normal     Quelqu'un a l'intention d'empaqueter ce paquet. Veuillez
+                     soumettre une description du paquet avec les droits
+		     d'auteur et les liens dans un tel rapport.
+
+     RFP  wishlist   Il s'agit d'une demande d'empaquetage. Quelqu'un a trouvé
+                     un logiciel intéressant et voudrait que quelqu'un
+		     d'autre s'en occupe pour Debian et l'ajoute aux
+		     archives. Veuillez soumettre une description du paquet
+		     avec les droits d'auteur et les liens dans un tel rapport.
+
+     WTO  wishlist   L'actuel responsable désire rendre orphelin le paquet.
+                     Il s'occupe du paquet, mais désire que quelqu'un d'autre
+		     le fasse. C'est différent d'un ITA, car si personne
+		     ne réagit, le monde tel que nous le connaissons ne
+		     changera pas.
+
+     W    wishlist   Le paquet a été retiré et peut être trouvé dans
+                     project/orphaned. Veuillez noter que les paquets
+		     orphelins sont toujours installés dans l'archive
+		     principale.
+
+ Les procédures pour fermer ces bogues sont les suivantes :
+
+     O    adoptez le paquet, envoyez-le dans l'archive principale et fermez
+          ce bogue une fois que le paquet est installé. Si vous êtes
+	  sur le point de faire cela, renommez le bogue avec
+          « ITA: » + l'ancien titre.
+	  C'est nécessaire pour que les autres personnes sachent que le
+	  paquet est en cours d'adoption.
+
+     ITO  adoptez le paquet, envoyez-le dans l'archive principale et fermez
+          ce bogue une fois que le paquet est installé. Si vous êtes
+	  sur le point de faire cela, renommez le bogue avec
+          « ITA: » + l'ancien titre.
+	  C'est nécessaire pour que les autres personnes sachent que le
+	  paquet est en cours d'adoption.
+
+          Si vous changez d'avis, en tant que responsable du paquet, et
+	  que cela se transforme en WTO ou O, veuillez le renommer et le
+	  reclassifier comme nécessaire.
+
+          Si vous retirez votre ITO, fermez le bogue.
+
+     ITP  empaquetez le logiciel, envoyez-le dans l'archive principale et
+          fermez ce bogue une fois que le paquet a été installé.
+
+          Si vous changez d'avis, et que vous ne voulez plus empaqueter ce
+	  paquet, soit vous fermez le bogue, soit vous le renommez et
+	  le reclassifiez en RFP, comme cela vous semble le mieux.
+
+     RFP  empaquetez le logiciel, envoyez-le dans l'archive principale
+          et fermez ce bogue une fois que le paquet a été installé. Si vous
+	  êtes sur le point de faire cela, renommez le bogue en « ITP »
+	  et définissez sa gravité à « normal ».
+
+     WTO  adoptez le paquet, envoyez-le dans l'archive principale et
+          fermez ce bogue une fois que le paquet a été installé. Si vous
+	  êtes sur le point de faire cela, renommez ce bogue en
+          « ITA: » + l'ancien titre.
+          C'est nécessaire pour que les autres personnes sachent que le
+	  paquet est en cours d'adoption.
+
+          Si vous changez d'avis, en tant que responsable du paquet, et
+	  que cela se transforme en ITO ou O, veuillez le renommer et le
+	  reclassifier comme nécessaire.
+
+          Si vous retirez votre WTO, fermez le bogue.
+
+     W    adoptez le paquet, envoyez-le dans l'archive principale et
+          fermez ce bogue une fois que le paquet a été installé. Si vous
+	  êtes sur le point de faire cela, renommez ce bogue en
+          « ITA: » + l'ancien titre.
+          C'est nécessaire pour que les autres personnes sachent que le
+	  paquet est en cours d'adoption.
+
+ Bien sûr, la façon la plus facile de fermer les bogues est d'inclure
+ l'entrée appropriée dans le fichier changelog et d'y ajouter
+ « (Closes: bug#nnnnn) ». De cette manière, le bogue sera fermé au moment
+ où le nouveau paquet sera installé dans l'archive.
+
+ La liste actuelle des bogues sur wnpp peut être trouvée à :
+
+     http://bugs.debian.org/wnpp
+
+ Désolé pour le retard de ce courriel, et encore une fois, mes excuses
+ pour les personnes qui ont été inondées par les plus de 300 soumissions
+ au BTS.
+
+ Enfin, je voudrais faire pression sur les personnes qui ont soumis des
+ ITP, ITA, RFP, etc. pour qu'elles mettent à jour les informations sur
+ le BTS. Cela s'adresse aussi aux personnes qui ont adopté des paquets.
+ Les informations ont été extraites du WNPP et n'étaient plus synchronisées
+ avec la situation réelle dans l'archive.
+
+ Merci à tous ceux qui ont rendu cela possible.
+
+
+                              Marcelo
+
+ [0] http://lists.debian.org/debian-devel-0005/msg01968.html
+ [1] http://lists.debian.org/debian-devel-0006/msg02006.html
+ [2] http://www.debian.org/doc/prospective-packages
+</pre>
+
+#use wml::debian::weeklynews::footer translator="Thomas Huriaux"
