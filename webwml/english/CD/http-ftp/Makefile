@@ -14,5 +14,5 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml \
 ifeq "$(LANGUAGE)" "en"
 $(ENGLISHDIR)/CD/http-ftp/cdimage_mirrors.list: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
-	$< -m $(word 2,$^) -t cdimages > $@
+	$< -m $(word 2,$^) -t cdimages-httpftp > $@
 endif
