@@ -1,4 +1,4 @@
-# This Makefile should need no changes from webwml/english/2.0/Makefile
+# This Makefile should need no changes from webwml/english/releases/slink/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
@@ -14,5 +14,5 @@ include $(WMLBASE)/Make.common
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
 
-index.$(LANGUAGE).html: ../../../english/releases/slink/formats_and_architectures.wmh \
-			$(TEMPLDIR)/languages.wml $(TEMPLDIR)/install_manual.wml
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/release.wml \
+  $(ENGLISHSRCDIR)/releases/slink/formats_and_architectures.wmh
