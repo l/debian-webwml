@@ -434,8 +434,9 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'News/weekly/contributing',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '24/07/1999',
+	'translation_maintainer'=> ['Laurent Le Guillou <leguillo@hep.saclay.cea.fr>'],
 },
 
 {
@@ -1005,29 +1006,34 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'releases/slink/running-kernel-2.2',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '23/07/1999',
+	'translation_maintainer'=> ['Marant Jerome <jerome_marant@hotmail.com>'],
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'releases/potato/index',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '23/07/1999',
+	'translation_maintainer'=> ['Marant Jerome <jerome_marant@hotmail.com>'],
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'releases/index',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '23/07/1999',
+	'translation_maintainer'=> ['Marant Jerome <jerome_marant@hotmail.com>'],
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'search',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'à relire',
+	'since'			=> '25/07/1999',
+	'translation_maintainer'=> ['Marant Jerome <jerome_marant@hotmail.com>'],
+	'last_translated'	=> '25/07/1999',
 },
 
 ];
