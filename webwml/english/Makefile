@@ -21,6 +21,7 @@ all:\
     $(HTMLDIR)/sponsor.html \
     $(HTMLDIR)/support.html.$(LANG) \
     $(HTMLDIR)/2.0/2.0beta_CD.html.$(LANG) \
+    $(HTMLDIR)/MailingLists/debian-announce.html.$(LANG) \
     $(HTMLDIR)/MailingLists/subscribe.html.$(LANG) \
     $(HTMLDIR)/MailingLists/unsubscribe.html.$(LANG) \
     $(HTMLDIR)/devel/extract_key.html.$(LANG) \
