@@ -1,0 +1,99 @@
+#use wml::debian::template title="Instilling av standard språkvalg"
+
+<P>Merk: Denne siden er ikke fullstendig.  Dersom du har informasjon
+om konfigurasjon for nettlesere som ikke er beskrevet nedenfor, ber vi
+deg sende det til <a
+href="mailto:webmaster@debian.org">webmaster@debian.org</a>.
+
+<P>Det er åpenbart at ikke alle i verden bruker samme språk.
+Etterhvert som web-nettverket vokser er det mer og mer vanlig å finne
+sider som er tilgjengelig på flere språk.  En standard, kalt "content
+negotiation" (innholds-forhandling), var derfor introdusert for å la
+en bruker velge språket/språkene de foretrekker å lese dokumentene på.
+Den versjonen som faktisk leveres er forhandlet mellom leseren din og
+tjeneren; leseren sender sine preferanser og tjeneren bestemmer
+hvilken versjon den skal sende på grunnlag av dine valg, hvordan den
+er konfigurert, og hvilke versjoner av dokumentet som er tilgjengelig.
+
+<P>For å sette standard språkvalg i leseren må du sette opp en
+variabel som blir formidlet til serveren.  Måten dette gjøres på er
+avhengig av hvilken nettleser du bruker.
+
+<DL compact>
+<DT><strong>lynx</strong>
+<DD>Du kan enten sette <kbd>preferred_language</kbd>-variabelen i 
+<kbd>.lynxrc</kbd>-filen din, eller sette den med kommandoen 'O' 
+mens du er inne i lynx.
+
+<DT><strong>netscape 3.x</strong>
+<DD>Legg til
+<pre>
+     *httpAcceptLanguage: [språkvalgsstring]
+</pre>
+i Netscape's app-defaults fil eller i <kbd>~/.Xresources</kbd>.
+
+<DT><strong>netscape 4.x</strong>
+<DD>Gå til 
+<pre>
+     Edit -> Preferences -> Navigator -> Languages
+</pre>
+
+Se til at du velger språk fra de gitte valgene.  Endel folk har
+rapportert problemer fordi de skrev inn språkvalget på egen hånd.
+
+<DT><strong>W3</strong> (nettleser i emacs)
+<DD>
+<pre>(setq url-mime-language-string  "preferred_language=fr; q=1.0, en; q=0.5")</pre>
+eller om du bruker 'custom'-pakken (vi antar URL versjon p4.0pre.14):
+<pre>Hypermedia -> URL -> Mime -> Mime Language String...</pre>
+
+<DT><strong>IE</strong>
+<DD>
+<pre>
+     View -> Internet Options -> General/Languages
+</pre>
+<DT><strong>Opera</strong>
+<DD>???
+<DT><strong>iCab</strong>
+<DD>
+<pre>
+     Edit -> Preferences -> Browser -> Fonts,Languages
+</pre>
+</DL>
+
+<H3>Hva burde jeg sette variabelen til?</H3>
+
+<P>Siden det originale språket for Debian's websider er engelsk, og
+kanskje ikke alle dokumentene har blitt oversatt til språket du
+foretrekker, er det en god idé å sette språkvariabelen til å tillate
+bruk av engelsk som en reserve.  For eksempel, dersom du er en
+fransktalende lynx-bruker, vil du antakelig ha den følgende linjen i 
+<pre>.lynxrc</kbd>-filen din:
+
+<pre>
+preferred_language=fr; q=1.0, en; q=0.5
+</pre>
+
+Dette forteller tjeneren at du helst ønsker den franske versjonen av
+dokumentet dersom den fins, ellers den engelske.
+
+<p>En ting du må være forsiktig med er subkategorier av språk.  For
+ekempel, bruk av 'en-GB, fr' gjør ikke hva de fleste tror (medmindre
+de har lest http-spesifikasjonen).  En tjener som mottar en
+forespørsel etter et dokument med ønsket språkvalg 'en-GB, fr' når
+både en 'en' og en 'fr' versjon finnes, vil servere den franske.  Den
+vil bare servere det engelske dokumentet før det franske om det er en
+versjon av filen med .en-gb som språk-tilføyelse.  Derfor bør du sette
+leseren til å sende 'en-GB, en, fr' eller bare 'en, fr'.  Dette
+gjelder ikke den motsatte veien, dog.  For eksempel kan en tjener
+svare med et 'en-us' dokument når 'en' er etterspurt.
+
+<P><strong>Vi anbefaler sterkt at du ikke legger til land-koder til
+språkvalget medmindre du har god grunn</strong>.  Dersom du legger til
+en, se til at du også inkluderer språket uten denne tilføyelsen.
+
+<P>For mer informasjon om å sette språkvalgs-variabelen se: <a
+href="http://www.apache.org/docs/content-negotiation.html">Apache
+documentation on content negotiation</a> (dokumentasjon over
+innholds-forhandling).
+
