@@ -206,7 +206,7 @@ sub init_translators {
                         email       => 'mickaelsimon@free.fr',
                         summary     => 2,
                         logs        => 0,
-                        diff        => 0,
+                        diff        => 2,
                         tdiff       => 0,
                         file        => 0,
                         compress    => 'none'
