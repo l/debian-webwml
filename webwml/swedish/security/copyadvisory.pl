@@ -77,6 +77,8 @@ $insertedrevision = 0;
 
 while (<SRC>)
 {
+	next if /\$Id/;
+
 	if (/^#use wml::debian::security/)
 	{
 		print DST $_;

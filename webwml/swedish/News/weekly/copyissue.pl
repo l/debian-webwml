@@ -71,6 +71,8 @@ $insertedrevision = 0;
 
 while (<SRC>)
 {
+	next if /\$Id/;
+
 	if ($_ eq "<b>Welcome</b> to Debian Weekly News, a newsletter for the Debian developer\n")
 	{
 		# Translate intro
