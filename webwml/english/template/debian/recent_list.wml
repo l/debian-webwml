@@ -266,6 +266,7 @@ sub get_recent_list {
 sub grab_titles {
 my ($year, $number, $eng_dir, $format, $match) = @_;
 my $over = $current = $base = $str1 = $str = "";
+my $is_events = 0;
 
 foreach $file (@files) {
   ($trans_title = $file) =~ s/wml/title/;
@@ -274,6 +275,7 @@ foreach $file (@files) {
   $base = $1 if ($file =~ /($match).wml/);
   my $event = '';
   if ($WML_SRC_DIRNAME =~ /events/) { # shouldn't waste time if it's not events
+    $is_events = 1;
     foreach (<FILE>) {
       if (/^#use wml::debian::past_event$/) {
         $event = "past";
@@ -313,7 +315,7 @@ foreach $file (@files) {
       $str1 = "$elemhead<tt>[$rdate]</tt> <strong><a href=\"$year/$base\">$title</a></strong> $elemfoot$desc<br>\n";
       last;
     }
-    elsif ($title && $date) { # for News/ and events/
+    elsif ($title && $date && !$is_events) { # for News/ and not events/
       $date = newsdate($date);
       $str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong><br>\n";
       last;
