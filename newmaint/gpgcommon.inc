@@ -27,6 +27,7 @@
         }
         $rows = pg_NumRows($query);
         for ($i = 0; $i < $rows; $i++) {
+            $row = pg_Fetch_Array($query, $i);
             print_place($row["begin"], $row["finish"], $row["city"], $row["country"]);
             if ($modify) {
                 echo "<A HREF = \"gpgplace.php?id=", $row["$id"], "\">Modify entry</A>";
