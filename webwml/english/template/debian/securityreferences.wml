@@ -49,6 +49,20 @@ sub cert_secref {
 	}
 	return $cert;
 }
+sub bug_secref {
+ 	my $refstr = shift(@_);
+	my $bug = "";
+	foreach $ref (split(' ',$refstr)) { 
+		if ( $ref =~ /Bug#(\d+)/i ) {
+			my $id = $1;
+			$bug .= ", " if $bug ne "";
+			$bug .= '<a href="http://bugs.debian.org/cgi-bin/bugreport.cgi?bug='.$id.'">'
+			       .'<gettext domain="security">Bug</gettext>'
+			       ." ".$id."</a>"; 
+		}
+	}
+	return $bug;
+}
 
 sub security_references {
  	my $refstr = shift(@_);
@@ -58,6 +72,10 @@ sub security_references {
 	$bid = bid_secref($refstr);
 	$cve = cve_secref($refstr);
 	$cert = cert_secref($refstr);
+	$bugs = bug_secref($refstr);
+	$str .= q{<gettext domain="security">In the Debian bugtracking system:</gettext>}
+	       ." $bugs.<br/>"
+		if $bugs ne "";
 	$str .= q{<gettext domain="security">In the Bugtraq database (at SecurityFocus):</gettext>}
 	       ." $bid.<br/>"
 		if $bid ne "";
