@@ -162,16 +162,26 @@ do 'documents-bd.pl';
 	'network-administrator' => {
         'status'                => 2,
 	'since'			=> '08/02/2000',
-	'translation_maintainer' => ['Darlock <darlock@teleline.es>'],
+	'translation_maintainer' => ['Josep Llauradó Selvas <darlock@teleline.es>'],
 'url'                   => 'http://www.debian.org/doc/network-administrator/',
 'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/network-administrator/?cvsroot=debian-doc'
 },
 
 	'system-administrator' => {
-		'status'                => 2,
-		'translation_maintainer' => ['SKaVeN <skaven@linuxfreak.com>'],
+		'status'               => 2, 
+		'translation_maintainer' => ['Jose Angel Fdez. Luengo <skaven@linuxfreak.com>'],
 		'since' 		=> '06/02/2000',
 },
+
+	'i18n' => {
+        	'status'                => 2,
+        	'lines'                 => 1974,
+		'translation_maintainer' => ['Javier Macias-Guarasa <macias@die.upm.es>'],
+		'since'			=> '08/02/2000'
+},
+
+
+
 
 
 );
