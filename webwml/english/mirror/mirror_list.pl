@@ -206,7 +206,7 @@ sub intro {
 To contact the maintainer of this page, write to
 <a href="mailto:mirrors\@debian.org">mirrors\@debian.org</a>.
 
-<p><pre><small><b>Primary ISO Mirror Sites</b>
+<pre><small><b>Primary ISO Mirror Sites</b>
 ------------------------         	<b>/debian?</b>	<b>/debian-non-US?</b>
 Australia     -   <a href="ftp://ftp.au.debian.org/debian/">ftp.au.debian.org</a>	Yes		<a href="ftp://ftp.au.debian.org/debian-non-US">Yes</a>
 Austria       -   <a href="ftp://ftp.at.debian.org/debian/">ftp.at.debian.org</a>	Yes		<a href="ftp://ftp.at.debian.org/debian-non-US">Yes</a>
@@ -307,7 +307,7 @@ of material available are listed, along with the access method for each type.
 	not publicly accessable).
 </dl>
 
-<p><pre>
+<pre>
 END
 	foreach $country (sort keys %countries) {
 		if ($html) {
