@@ -464,7 +464,7 @@ sub multipageheader {
 	
 	$index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $no_results)." | ".nextlink($input,\%params, $no_results);
 	
-	print "<center>$index_line</center>";
+	print "<p style=\"text-align:center\">$index_line</p>";
     }
 
     if ($no_results > 100) {
