@@ -1,5 +1,5 @@
 #use wml::debian::cdimage title="Scaricare le immagini dei CD Debian con jigdo" BARETITLE=true
-#use wml::debian::translation-check translation="1.14" maintainer="Ireneo Funes"
+#use wml::debian::translation-check translation="1.15" maintainer="Ireneo Funes"
 
 <p>Jigsaw Download, in breve <a
 href="http://atterer.net/jigdo/">jigdo</a>, intende diventare il modo
@@ -44,7 +44,7 @@ processare.</p>
 
   <li>File jigdo non ufficiali per la <a
   href="ftp://ftp.fsn.hu/pub/CDROM-Images/debian-unofficial/woody-dvd/jigdo/">\
-  distribuzione "unstable" su DVD</a>, <em>creati giornalmente</em></li>
+  distribuzione "testing" su DVD</a>, <em>creati giornalmente</em></li>
 
   <li>File jigdo non ufficiali per la <a
   href="ftp://ftp.fsn.hu/pub/CDROM-Images/debian-unofficial/sid-dvd/jigdo/">\
@@ -70,7 +70,7 @@ jigdo?</strong> Se si usa Linux:</p>
   contiene anche lo script <tt>jigdo-lite</tt>.</li>
 
   <li>Lanciare lo script <tt>jigdo-lite</tt>. Chieder&agrave; l'URL
-  di un file "<tt>.jigdo</tt>" da processare. (Si può fornire l'URL da
+  di un file "<tt>.jigdo</tt>" da processare. (Si pu&ograve; fornire l'URL da
   linea di comando, se si preferisce.)</li>
 
   <li>Selezionare cosa si vuole scaricare da uno degli indirizzi elencati
@@ -110,27 +110,27 @@ sono sempre benaccetti!</p>
 
 <p>Per utilizzare un proxy qualsiasi, se ne deve assegnare l'indirizzo
 alle variabili d'ambiente <tt>http_proxy</tt> e/o <tt>ftp_proxy</tt>.
-Sotto Linux, il modo migliore per impostare tali variabili è inserire
+Sotto Linux, il modo migliore per impostare tali variabili &egrave; inserire
 una riga tipo <tt>export&nbsp;http_proxy=http://myproxy:8088/</tt> nel 
 file <tt>.bashrc</tt> della home directory. Utilizzando jigdo-easy sotto
-Windows, la soluzione più semplice è inserire una riga simile all'inizio
+Windows, la soluzione pi&ugrave; semplice &egrave; inserire una riga simile all'inizio
 dello script <tt>jigdo-easy.sh</tt>.</p>
 
 <p><strong>Aargh! Lo script si &egrave; bloccato, dandomi un errore - ho
 scaricato tutti quei MB per nulla?!?</strong></p>
 
-<p>Naturalmente questo Non Dovrebbe Accadere(C), ma per varie ragioni
-ci si potrebbe trovare in una situazione in cui un grande file
-"<tt>.iso.tmp</tt>" sia gi&agrave; stato generato e <tt>jigdo-lite</tt>
-sembra avere dei problemi, dicendo ripetutamente di cominciare il
-download da capo. Si possono tentare varie cose in questo caso:</p>
+<p>Naturalmente questo Non Dovrebbe Accadere(C), ma per varie ragioni ci
+si potrebbe trovare in una situazione in cui &egrave; gi&agrave stato
+generato un grande file "<tt>.iso.tmp</tt>" e <tt>jigdo-lite</tt> sembra
+avere dei problemi, invitando ripetutamente a cominciare il download da
+capo. Si possono tentare varie cose in questo caso:</p>
 
 <ul>
 
   <li>Semplicemente riavviare il download premendo Invio. Forse alcuni
-  file non sono potuti essere scaricati a causa di timeout o altri
-  errori transitori - verr&agrave; effettuato un altro tentativo per
-  scaricare i file mancanti.</li>
+  file non sono stati scaricati a causa di timeout o altri errori
+  transitori - verr&agrave; effettuato un altro tentativo per scaricare
+  i file mancanti.</li>
 
   <li>Provare un altro mirror. Alcuni mirror Debian sono leggermente fuori
   sync - pu&ograve; succedere che un mirror differente abbia ancora file
@@ -149,13 +149,26 @@ download da capo. Si possono tentare varie cose in questo caso:</p>
   <tt>rsync&nbsp;rsync://cdimage.debian.org/debian-cd/</tt>
 
   <br>Infine, eliminare l'estensione "<tt>.tmp</tt>" dal file temporaneo
-  di <tt>jigdo-lite</tt> rinominandolo e fornendo sia l'URL remoto che
-  il nome del file locale a rsync:
+  di <tt>jigdo-lite</tt> rinominandolo e fornire sia l'URL remoto che il
+  nome del file locale a rsync:
   <tt>rsync&nbsp;rsync://server.org/path/binary-i386-1.iso
   binary-i386-1.iso</tt>
 
   <br>Si potrebbero anche usare le opzioni di rsync <tt>--verbose</tt> e
   <tt>--progress</tt> per avere dei messaggi di stato, e
   <tt>--block-size=8192</tt> per accrescerne la velocit&agrave;.
+
+  <li>Se tutti questi metodi hanno fallito, i dati scaricati non sono
+  comunque andati persi: sotto Linux, si pu&ograve; montare in loop il
+  file <tt>.tmp</tt> per accedere ai pacchetti gi&agrave; scaricati e
+  riutilizzarli per generare un'immagine da un nuovo file jigdo (come,
+  ad esempio, l'ultima snapshot giornaliera di "testing", se il download
+  andato male riguardava la snapshot della "testing"). Per farlo, si
+  comincia dando i seguenti comandi, da root, nella directory del
+  download interrotto:
+  <tt>mkdir&nbsp;mnt;mount&nbsp;-t&nbsp;iso9660&nbsp;-o&nbsp;loop&nbsp;*.tmp&nbsp;mnt</tt>. 
+  Poi si avvia un nuovo download in un'altra directory e si fornisce il
+  percorso della directory <tt>mnt</tt> quando vengono richiesti i
+  "Files to scan".</li>
 
 </ul>
