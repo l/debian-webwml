@@ -33,6 +33,7 @@ vendors_FILES   = $(ENGLISHDIR)/CD/vendors/vendors.CD.def
 others_FILES    = $(ENGLISHDIR)/News/press/press.tags \
   $(ENGLISHDIR)/MailingLists/mklist.tags $(ENGLISHDIR)/banners/index.tags \
   $(ENGLISHDIR)/consultants/consultant.defs \
+  $(ENGLISHDIR)/devel/debian-installer/ports-status.defs \
   $(ENGLISHDIR)/devel/website/tc.data \
   $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/logos/index.data \
   $(ENGLISHDIR)/misc/merchandise.def $(ENGLISHDIR)/y2k/l10n.data \
