@@ -69,7 +69,7 @@ def cache_places(db):
 
 def get_places(db, email):
     if places_cache.has_key(email):
-        return (places_cache[email],)
+        return [(place, ) for place in places_cache[email]]
     q = db.query("SELECT places.id FROM places, people WHERE people.id = places.who AND people.email = '%s' ORDER BY country, UPPER(city)" % email)
     return q.getresult()
 
