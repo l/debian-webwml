@@ -23,13 +23,12 @@ use strict;
 # $DEBIAN_CVS must be defined
 #
 
-use vars qw($translations $types $root $from $to $translator $line $from_abr $to_abr $CVSWEB $DDPWEB $TRANSWEB @status %tag $debug);
+use vars qw($translations %translations_status $types $root $from $to $from_abr $to_abr $CVSWEB $DDPWEB $TRANSWEB @status %tag $debug);
 
 # $t : current document record
 # $k : current document key
 # $f : current document field
 
-use vars qw($t $k $f);
 
 # Read the database status
 do 'current_status.pl';
@@ -44,7 +43,7 @@ $to_abr = 'es' ;
 $CVSWEB = 'http://www.debian.org/cgi-bin/cvsweb/webwml/webwml' ; 
 $DDPWEB = 'http://www.debian.org/~elphick/manuals.html' ;
 # The place were translation documents are kept while working on them
-$TRANSWEB = 'http://www.debian.org/international/spanish/translations/';
+$TRANSWEB = 'http://www.debian.org/international/spanish/translations';
 #$TRANSWEB = 'http://www.debian.org/~clebars/f2dp/docs/'
 
 # This matrix has all the values for the $status
@@ -92,6 +91,7 @@ $tag{'included'}='incluido en el paquete';
 
 # Turn this to '1' for debugging purposes
 $debug=0;
+#$debug=1;
 
 
 $types = {
@@ -114,7 +114,7 @@ $types = {
 	'translation_source_url'=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
 					"$CVSWEB/$to/$k.wml?rev=$t->{'translation_revision'}" },
 	'diff'			=> sub {my($t, $k, $f)=@_; return (!$t->{$f} || !$t->{'translation_revision'}) ? undef :
-					"$CVSWEB/from/$k.wml$t->{$f}" },
+					"$CVSWEB/$from/$k.wml$t->{$f}" },
 },
 
 'DDP' => {
@@ -124,12 +124,27 @@ $types = {
 
 };
 
+sub merge_db {
+# Merges the $translation and the %translation_status database
+	my $key;
+	foreach $key (keys %{ $translations }) {
+	        my $current;
+       		print STDERR "(merge_db) Merging key $key\n" if $debug;
+       		foreach $current (keys  %{ $translations_status{$key} } ) {
+       			print STDERR "(merge_db) Adding information $current into $key\n" if $debug;
+	       		 $translations->{$key}->{$current}=$translations_status{$key}{$current};
+        	}
+	}
+}
+
+
 sub update_db_CVS {
 # Goes to the root directory and checks all the wml files CVS controlled
 # in order to say if they are up to date or not
 
 	my $filename = '\.wml$';
 
+	print STDERR "(update_db_CVS) Checking $root/$from for Entries\n" if $debug;
 	my @from= split(/\n/, `find $root/$from/ -name Entries -print`);
 
 	foreach (@from) {
@@ -145,15 +160,24 @@ sub update_db_CVS {
 			my $k = $from_path . $f;
 			$k =~ s#^$root/$from/##;
 			$k =~ s#\.wml$##;
-			if ($translations->{$k}) {
+			print STDERR "(update_db_CVS) Checking $f (original in ${to_path}$f\n" if $debug;
+			if ($translations->{$k} or -e "${to_path}$f") {
+			# This check should be made by revision number
+
+				if (!$translations->{$k}->{'status'}) {
+					$translations->{$k}->{'status'} = 8 ;
+					$translations->{$k}->{'type'} = 'Web';
+					print STDERR "(update_db_CVS) Status not known for $k (setting it to default)\n" if $debug;
+				}
 				$translations->{$k}->{'revision'} = $from_d->{$f};
 				$translations->{$k}->{'translation_revision'} = $to_d->{$f} if ($to_d->{$f});
+				$translations->{$k}->{'status'} = 4 if $translations->{$k}->{'translation_revision'} = $translations->{$k}->{'revision'};
 				check_file($k, "${to_path}$f", $from_d->{$f});
 			} else {
 				$translations->{$k}->{'type'} = 'Web';
 				$translations->{$k}->{'status'} = 1;
 				$translations->{$k}->{'revision'} = $from_d->{$f};
-				#print "\tWarning : $k undef\n";
+				print STDERR "(update_db_CVS) Warning : $k is not in the database\n" if $debug;
 			}
 		}
 	}
@@ -179,12 +203,12 @@ sub check_file {
 	my ($k, $name, $revision) = @_;
 	my ($oldr, $oldname);
 	unless (-r $name) {
-		#print "Missing $name\n";
+		print "(check_file) Missing $name\n" if $debug;
 		return;
 	}
 	open(F, $name) || die $!;
 	while(<F>) {
-		if (/<!--\s*translation\s+(.*)?\s*-->\s*$/oi) {
+		if (/<!--\s*translation\s+(.*)?\s*-->\s*$/oi ) {
 			$oldr = $1;
 			$translations->{$k}->{'base_revision'} = $oldr;
 			if ($oldr eq $revision) {
@@ -203,14 +227,11 @@ sub check_file {
 sub update_db_format {
 # Goes through the database and adds all the information
 # not included there but easy to extract
+	my ($k, $t);
 
 while (($k, $t) = each %$translations) {
 	
-	if ($t->{'type'} eq 'DDP' && $k) {
-		#
-		# XXX généraliser la routine CVS avant de pousser ce passage dans $types...
-		#
-		# TODO: This should be rewritten so all translators could use it
+	if (uc $t->{'type'} eq 'DDP' && $k) {
 		if ($t->{'status'} != 0
 			&& $t->{'status'} != 1
 			&& $t->{'status'} != 2) {
@@ -230,8 +251,9 @@ while (($k, $t) = each %$translations) {
 	} 
 
 	if ($k eq 'international/French') {
+		my $f;
 
-		foreach my $f ('name', 'sub_name', 'revision', 'url', 'cvs_url', 'source_url', 'package') {
+		foreach $f ('name', 'sub_name', 'revision', 'url', 'cvs_url', 'source_url', 'package') {
 			my $tmp = $t->{$f};
 			$t->{$f} = $t->{'translation_'.$f};
 			$t->{'translation_'.$f} = $tmp;
@@ -252,30 +274,32 @@ while (($k, $t) = each %$translations) {
 sub dump_html {
 
         my ($status, $type) = @_;
+	my ($k, $t);
 
-while (($k, $t) = each %$translations) {
+foreach $k (sort keys %$translations) {
+	$t = $translations->{$k} ;
 
-	print stderr "Dumping $k, $t\n" if $debug;
+	print STDERR "(dump_html) Dumping $k, $t\n" if $debug;
 
 	next if ($t->{'status'} ne $status and $status != -1);
-# TODO: check with uppercase
 	next if ($type ne "" and uc $t->{'type'} ne uc $type);
+
+	print "<LI>";
 
 	$t->{'translation_name'} = $t->{'name'} . ' (original)'
 		if (!$t->{'translation_name'});
 	$t->{'translation_url'} = $t->{'url'}
 		if (!$t->{'translation_url'});
 
-	print "<LI>";
         print "<A HREF=\"$t->{'translation_url'}\">" if $t->{'translation_url'};
         print "(No se dispone de enlace)" if !$t->{'translation_url'};
 
 	print "<B><I>$t->{'translation_name'}</I> $t->{'translation_sub_name'}</B>";
 	print "</A>" if $t->{'translation_url'};
-	print "<BLOCKQUOTE>";
+#	print "<BLOCKQUOTE>";
 	my $translation_source_name = $t->{'translation_cvs_url'};
 	$translation_source_name =~ s/.*\/([^\/]+)$/$1/;
-	print "<BR>$tag{'Source'} : <A HREF=\"$t->{'translation_source_url'}\">$translation_source_name</A>"
+	print "<BR>$tag{'Source'} : <A HREF=\"$t->{'translation_source_url'}\">$t->{'translation_source_name'}</A>"
 		if ($t->{'translation_source_url'} && uc $type ne 'DDP');
 	print " (<A HREF=\"$t->{'translation_cvs_url'}\">$tag{'CVSpage'}</A>)"
 		if ($t->{'translation_cvs_url'} && uc $type ne 'DDP');
@@ -283,7 +307,8 @@ while (($k, $t) = each %$translations) {
 		if ($t->{'translation_dev_url'} && uc $type ne 'DDP');
 	if ($t->{'translation_maintainer'}) {
 		print "<BR>$tag{'translation_maintainer'} : " ;
-		$line = '';
+		my $line = '';
+		my $translator;
 		foreach $translator (@{$t->{'translation_maintainer'}}) {
 			$translator =~ /([^\<]+)\s\<(.*)\>/;
 			$line .= " <A HREF=\"mailto:$2\"><I>$1</I></A> et";
@@ -311,32 +336,35 @@ while (($k, $t) = each %$translations) {
 	#print " ( <included> $t->{'package'} ) " if ($t->{'package'});
 	#print " ( <A HREF=\"$t->{'source_url'}\"><source></A> ) " if ($t->{'source_url'} && $t->{'source_url'} ne '?' && uc $type ne "DDP");
 	#print " ( <A HREF=\"$t->{'cvs_url'}\"><CVSpage'></A> ) " if ($t->{'cvs_url'} && $t->{'cvs_url'} ne '?' && uc $type ne "DDP");
-	# Since we cannot we use a hash array for the text
+	# Since we cannot use tags (perl pass is after tag change)
+	# we use a hash array (%tag) for the text
 	
 	print("<BR>$tag{'status'} : $status[$t->{'status'}]");
 	print(" $tag{'since'} $t->{'since'}") if ($t->{'since'});
 	print "<BR>$tag{'translation_revision'}: $t->{'translation_revision'}" if ($t->{'translation_revision'});
 	print "<BR>$tag{'base_revision'} : $t->{'base_revision'}" if ($t->{'base_revision'});
 	print "<BR>$tag{'diff'}: <A HREF=\"$t->{'diff'}\">$tag{'diff'}</A>" if ($t->{'diff'});
-	print "<BR>$tag{'available'} $t->{'translation_package'}" if ($t->{'translation_package'});
+	print "<BR>$tag{'available'} <A HREF=\"http://packages.debian.org/$t->{'translation_package'}\">$t->{'translation_package'}</A>}" if ($t->{'translation_package'});
 	if ($t->{'translation_name'} !~ /original/) {
-	        print(STDOUT <<__EOHTML__);
-		<BR>
-       		 $tag{'originaldoc'} : 
-		<A HREF="$t->{'url'}">
-		<I>$t->{'name'}</I> $t->{'sub_name'}</A>
-__EOHTML__
+	print "<BR>$tag{'originaldoc'} : <A HREF=\"$t->{'url'}\"> <I>$t->{'name'}</I> $t->{'sub_name'}</A>";
 	}
 
 	print " ( $tag{'revision'} $t->{'revision'} ) " if ($t->{'revision'});
-	print " ( $tag{'included'} $t->{'package'} ) " if ($t->{'package'});
-	print " ( <A HREF=\"$t->{'source_url'}\">$tag{'Source'}/A> ) " if ($t->{'source_url'} && $t->{'source_url'} ne '?' && uc $type ne "DDP");
-	print " ( A HREF=\"$t->{'cvs_url'}\">$tag{'CVSpage'}</A> ) " if ($t->{'cvs_url'} && $t->{'cvs_url'} ne '?' && uc $type ne "DDP");
-	print "</BLOCKQUOTE><P>&nbsp;\n";
-}
+	print " ( $tag{'included'} <A HREF=\"http://packages.debian.org/$t->{'package'}\">$t->{'package'}</A> ) " if ($t->{'package'});
+	print " ( <A HREF=\"$t->{'source_url'}\">$tag{'Source'}</A> ) " if ($t->{'source_url'} && $t->{'source_url'} ne '?' && uc $type ne "DDP");
+	print " ( <A HREF=\"$t->{'cvs_url'}\">$tag{'CVSpage'}</A> ) " if ($t->{'cvs_url'} && $t->{'cvs_url'} ne '?' && uc $type ne "DDP");
+
+#	print "</BLOCKQUOTE>"
+	print "<P>&nbsp;\n";
+} # of the foreach
 
 }
+
+merge_db();
+
 
 # This is for debugging purposes
-update_db_format();
-#dump_html(-1,"ddp");
+# Turn this on to be able to run this program standalone
+#update_db_CVS();
+#update_db_format();
+#dump_html(-1,"web");

@@ -111,7 +111,7 @@ $translations = {
 	'name'			=> 'Debian GNU/Linux Dictionary',
 	'status'		=> 1,
 	'url'                   => 'http://www.debian.org/doc/dictionary/',
-	'cvs-url'               => 'http://www.debian.org/cgi-bin/cvsweb/manuals.sgml/dictionary/'
+	'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/dictionary/?cvsroot=debian-doc'
 },
 
 'tutorial' => {
@@ -119,7 +119,7 @@ $translations = {
 	'name'			=> 'Debian Tutorial',
 	'revision'		=> '',
 	'url'			=> 'http://www.debian.org/~hp/tutorial/debian-tutorial.html',
-	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/tutorial/tutorial/debian-tutorial.sgml',
+	'cvs_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/tutorial/debian-tutorial.sgml?cvsroot=debian-doc',
 	'package'		=> '',
 },
 
@@ -128,7 +128,7 @@ $translations = {
 	'name'			=> 'Debian User Reference Manual',
 	'status'		=> 1,
 	'url'                   => 'http://www.debian.org/doc/users_manual/',
-	'cvs-url'               => 'http://www.debian.org/cgi-bin/cvsweb/manuals.sgml/users_manual/'
+	'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/users_manual/?cvsroot=debian-doc'
 },
 
 'system-administrator' => {
@@ -136,7 +136,7 @@ $translations = {
 	'name'			=> 'Debian GNU/Linux System Administrator\'s Manual',
 	'status'		=> 1,
 'url'                   => 'http://www.debian.org/doc/system-administrator/',
-'cvs-url'               => 'http://www.debian.org/cgi-bin/cvsweb/manuals.sgml/system-administrator/'
+'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/system-administrator/?cvsroot=debian-doc'
 },
 
 'network-administrator' => {
@@ -144,7 +144,7 @@ $translations = {
 	'name'			=> 'Debian GNU/Linux Network Administrator\'s Manual',
 	'status'		=> 1,
 'url'                   => 'http://www.debian.org/doc/network-administrator/',
-'cvs-url'               => 'http://www.debian.org/cgi-bin/cvsweb/manuals.sgml/network-administrator/'
+'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/network-administrator/?cvsroot=debian-doc'
 },
 
 #
@@ -156,7 +156,7 @@ $translations = {
 	'name'			=> 'Debian Installation Manual',
 	'revision'		=> '2.1',
 	'url'			=> 'http://www.debian.org/releases/slink/i386/install.en.html',
-	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/install.sgml',
+	'cvs_url'		=> 'http://cvs.debian.org/debian-boot/boot-floppies/documentation/install.sgml?cvsroot=debian-boot',
 	'package'		=> 'boot-floppies',
 },
 
@@ -165,7 +165,7 @@ $translations = {
 	'name'			=> 'Dselect beginner guide',
 	'revision'		=> '2.1',
 	'url'			=> 'http://www.debian.org/releases/slink/i386/dselect-beginner.en.html',
-	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/dselect-beginner.sgml',
+	'cvs_url'		=> 'http://cvs.debian.org/debian-boot/boot-floppies/documentation/dselect-beginner.sgml?cvsroot=debian-boot',
 	'package'		=> 'boot-floppies',
 },
 
@@ -174,7 +174,7 @@ $translations = {
 	'name'			=> 'Release Notes',
 	'revision'		=> '2.1',
 	'url'			=> 'http://www.debian.org/releases/slink/i386/release-notes/',
-	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/release-notes.sgml',
+	'cvs_url'		=> 'http://cvs.debian.org/debian-boot/boot-floppies/documentation/release-notes.sgml?cvsroot=debian-boot',
 	'package'		=> 'boot-floppies',
 },
 
@@ -185,7 +185,7 @@ $translations = {
 	'name'			=> 'Debian Policy Manual',
 	'revision'		=> '2.5.0.0',
 	'url'			=> 'http://www.debian.org/oc/debian-policy/',
-	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-policy/debian-policy/policy.sgml',
+	'cvs_url'		=> 'http://cvs.debian.org/ddp/debian-policy/debian-policy/policy.sgml?cvsroot=debian-doc',
 	'package'		=> 'debian-policy',
 },
 
@@ -194,7 +194,7 @@ $translations = {
 	'name'			=> 'Debian Packaging Manual',
 	'sub_name'		=> 'chapter 0 to 14',
 	'revision'		=> '2.4.1.0',
-	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-policy/packaging-manual/packaging.sgml',
+	'cvs_url'		=> 'http://cvs.debian.org/ddp/debian-policy/packaging-manual/packaging.sgml?cvsroot=debian-doc',
 },
 
 'developers-reference' => {
@@ -210,7 +210,7 @@ $translations = {
 	'type'			=> 'DDP',
 	'name'			=> 'Debian New Maintainer\'s Guide',
 	'url'			=> 'http://www.debian.org/doc/maint-guide/',
-	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/ddp/manuals.sgml/maint-guide/',
+	'cvs_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/maint-guide/?cvsroot=debian-doc',
 },
 
 'internals' => {
@@ -218,7 +218,7 @@ $translations = {
 	'name'			=> 'dpkg Internals Manual',
 	'revision'		=> '1.2',
 	'url'			=> 'http://www.debian.org/doc/packaging-manuals/dpkg-internals/',
-	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/dpkg/dpkg/doc/internals.sgml',
+	'cvs_url'		=> 'http://cvs.debian.org//dpkg/dpkg/doc/internals.sgml',
 	'package'		=> 'dpkg-dev',
 },
 
@@ -227,7 +227,7 @@ $translations = {
 	'name'			=> 'Debian Menu System',
 	'revision'		=> '',
 	'url'			=> 'http://www.debian.org/doc/packaging-manuals/menu.html/',
-	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/manuals.sgml/menu/',
+	'cvs_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/menu/?cvsroot=debian-doc',
 	'package'		=> 'menu',
 	'status'		=> 7,
 },
@@ -255,7 +255,7 @@ $translations = {
 	'name'			=> 'Introduction to internationalization',
 	'status'		=> 1,
 	'url'                   => 'http://www.debian.org/doc/intro-i18n/',
-	'cvs-url'               => 'http://www.debian.org/cgi-bin/cvsweb/manuals.sgml/intro-i18n/'
+	'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/intro-i18n/?cvsroot=debian-doc'
 },
 
 
