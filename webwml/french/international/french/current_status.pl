@@ -166,8 +166,9 @@ $translations_status = {
 
 
 'meta' => {
-        'status'                => 1,
-	'since'			=> '13/03/2000',
+        'status'                => 2,
+	'since'			=> '08/08/2000',
+	'translation_maintainer'=> ['Mickael Simon <simon.mickael@wanadoo.fr>'],
 },
 
 'packaging-manual' => {
@@ -209,6 +210,7 @@ $translations_status = {
 	'since'			=> '19/10/1999',
 	'translation_name'	=> 'Le manuel de l\'intérieur de dpkg',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'translation_url'	=> '',
 	'base_revision'		=> '1.2',
 	'translation_package'	=> '',
 },
