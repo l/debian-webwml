@@ -65,9 +65,9 @@ if (defined $input->param('arch') && $input->param('arch') =~ m/^([\w-]+)$/) {
 my $page = 1;
 $page = $input->param('page') if (defined $input->param('page'));
 
-my $cdir = "/org/packages.debian.org/contents";
+my $cdir = "/org/packages.debian.org/files/contents";
 my $file = "$cdir/$version/Contents-$arch";
-my $file_nonus = "$cdir/$version/non-US/Contents-$arch";
+my $file_nonus = "$cdir/$version/Contents-$arch.non-US";
 
 # The keyword needs to be modified for the actual search, but left alone
 # for future reference, so we create a different variable for searching
@@ -95,9 +95,6 @@ print <<END;
 package contents search results
 </h1>
 END
-
-# TODO: tail +32 the contents file in order to skip the opening lines
-# not sure if running zcat | tail | grep will waste too much resources
 
 # now grep the contents file appropriately
 my $grep = "grep -h ";
