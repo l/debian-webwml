@@ -422,15 +422,19 @@ sub check_file {
 		return;
 	}
 	my $transcheck = Webwml::TransCheck->new($name);
-	$oldr       = $transcheck->revision() || 0;
+	$oldr = $transcheck->revision() || 0;
+	if (!$oldr && ($name =~ m#$langto/international/$langto#i)) {
+		#   This document is original, check for
+		#   english/international/$langto...
+		$name =~ s{^$to}{$from};
+		$transcheck = Webwml::TransCheck->new($name);
+		$oldr       = $transcheck->revision() || 0;
+	}
 	$translator = $transcheck->maintainer() || "";
 	$original   = $transcheck->original();
 	warn "Found translation for $oldr\n" if $opt_v and $oldr;
 	warn "Translated by $translator\n"   if $opt_v and $translator;
 	warn "Original is $original\n"       if $opt_v and $original;
-	#  The following test was in check_trans.pl and has been
-	#  removed, I do not understand what it was intended for
-	#  if ((!$oldr) && ($name =~ /$langto\/international\/$langto/i))
 	if ($original) {
 		my ($fromname, $fromdir);
 		$fromname = $name;
