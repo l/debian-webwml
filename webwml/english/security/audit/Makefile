@@ -17,6 +17,9 @@ index.$(LANGUAGE).html: index.wml  Makefile
 faq.$(LANGUAGE).html: faq.wml  Makefile
 	$(WML) $(<F)
 
+maintainers.$(LANGUAGE).html: maintainers.wml  Makefile
+	$(WML) $(<F)
+
 packages.$(LANGUAGE).html: packages.wml  Makefile
 	$(WML) $(<F)
 
