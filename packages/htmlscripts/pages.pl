@@ -316,11 +316,11 @@ sub package_pages_walker {
 	my $archive_kw = $archive || 'main';
 	my $size_kw = exists $file_sizes{a2f}->{i386} ? $file_sizes{a2f}->{i386} : $file_sizes{max_unique};
 	$size_kw = floor(($size_kw/102.4)+0.5)/10;
-	my $package_page = header( $name, '../../..', '../../..', 
+	my $package_page = header( $name, '../..', '../..', 
 				   $env->{lang}, $short_desc,
 				   "$env->{distribution}, $subdist_kw, $archive, $section, size:$size_kw $version" );
-	$package_page .= "[&nbsp;".gettext( "Distribution:" )." <a title=\"".gettext( "Overview over this distribution" )."\" href=\"../../\">$env->{distribution}</a>&nbsp;]\n";
-	$package_page .= "[&nbsp;".gettext( "Section:" )." <a title=\"".gettext( "All packages in this section" )."\" href=\"../../$section\">$section</a>&nbsp;]\n";
+	$package_page .= "[&nbsp;".gettext( "Distribution:" )." <a title=\"".gettext( "Overview over this distribution" )."\" href=\"../\">$env->{distribution}</a>&nbsp;]\n";
+	$package_page .= "[&nbsp;".gettext( "Section:" )." <a title=\"".gettext( "All packages in this section" )."\" href=\"../$section\">$section</a>&nbsp;]\n";
 
 	$package_page .= sprintf( gettext( "<h1>Package: %s (%s)" ),
 				  $name, $v_str );
@@ -354,7 +354,7 @@ sub package_pages_walker {
 	if ( $dep_list ) {
 	    $package_page .= sprintf( gettext( "\n<h2>Other packages related to %s:</h2>\n" ), $name );
 	    if ($env->{distribution} eq "experimental") {
-		$package_page .= gettext( "<p>Note that the \"<font color=\"red\">experimental</font>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../../unstable\">unstable</a>\" distribution.</p>" );
+		$package_page .= gettext( "<p>Note that the \"<font color=\"red\">experimental</font>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable\">unstable</a>\" distribution.</p>" );
 	    }
 
 	    $package_page .= "<center><table border=\"1\"><tr>\n";
@@ -501,7 +501,7 @@ sub package_pages_walker {
 					      ${$versions{v2a}->{$version}}[0],
 					      $l );
 	}
-	$package_page .= trailer( '../../..', $name, $env->{lang}, @tr_langs );
+	$package_page .= trailer( '../..', $name, $env->{lang}, @tr_langs );
 	
 	#
 	# write file
