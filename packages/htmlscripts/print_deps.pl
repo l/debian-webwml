@@ -1,9 +1,5 @@
 use strict;
 use warnings;
-use FindBin;
-use lib "$FindBin::Bin/../lib";
-use lib "$FindBin::Bin";
-use Deb::Versions;
 
 use HTML::Entities;
 
@@ -12,10 +8,11 @@ use Deb::Versions;
 
 sub print_deps {
     my ( $env, $pkg, $versions, $type) = @_;
-    my $res = "";
-    my @all_archs = ( @{$env->{archs}}, 'all' );
     my %dep_type = ('depends' => 'dep', 'recommends' => 'rec', 
 		    'suggests' => 'sug');
+    my $res = "<ul class=\"ul$dep_type{$type}\">\n";
+    my $found = 0;
+    my @all_archs = ( @{$env->{archs}}, 'all' );
     my ( %dep_pkgs, %arch_deps );
     foreach my $a ( @all_archs ) {
 	next unless ( exists $versions->{a2v}->{$a}
@@ -36,6 +33,7 @@ sub print_deps {
 #    print Dumper( \%dep_pkgs, \%arch_deps );
     
     if ( %dep_pkgs ) {
+	$found = 1;
 #	$res .= "<h4>$type</h4>\n";
         my $first = 1;
 	my $old_dp = "";
@@ -60,8 +58,7 @@ sub print_deps {
 		} else {
 		   $res .= "</li>\n<li>";
 	        }
-		$res .= "<img src=\"../../Pics/$dep_type{$type}.gif\"". 
-		    " alt=\"[$dep_type{$type}]\" width=\"16\" height=\"16\"> ";
+		$res .= "<span class=\"hidecss\">[$dep_type{$type}] </span>";
 	    }
 	    
 	    my $arch_str = compute_arch_str ( $dp, $versions, \%arch_deps,
@@ -129,18 +126,23 @@ sub print_deps {
 	}
         $res .= "</li>\n";
     }
+    if ($found) {
+       $res .= "</ul>\n";
+    } else {
+       $res = "";
+    }
     return $res;
 }
 
 sub print_src_deps {
     my ( $env, $pkg, $version, $type) = @_;
-    my $res = "";
     my %dep_type = ('build-depends' => 'adep', 'build-depends-indep' => 'idep' );
-    
+    my $found = 0;
+    my $res = "<ul class=\"ul$dep_type{$type}\">\n";
     foreach my $dep ( @{$pkg->{versions}{$version}{$type}} ) {
+        $found = 1;
 	my @res_pkgs;
-	$res .= "<li><img src=\"../../Pics/$dep_type{$type}.gif\"". 
-	    " alt=\"[$dep_type{$type}]\" width=\"16\" height=\"16\"> ";
+	$res .= "<li><span class=\"hidecss\">[$dep_type{$type}] </span>";
 	foreach my $or_dep ( @$dep ) {
 	    my $p_name = $or_dep->[0];
 	    my $p = $env->{db}->get_pkg( $p_name );
@@ -175,7 +177,11 @@ sub print_src_deps {
 	}
 	$res .= "\n".join( "\n ".gettext( " or " )." ", @res_pkgs )."</li>\n";
     }
-    $res .= "\n";
+    if ($found) {
+        $res .= "\n</ul>";
+    } else {
+        $res = "";
+    }
     return $res;
 }
 
