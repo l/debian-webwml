@@ -142,6 +142,9 @@
 <define-tag help whitespace=delete>
   <gettext domain="bugs">help</gettext>
 </define-tag>
+<define-tag l10n whitespace=delete>
+  <gettext domain="bugs">l10n</gettext>
+</define-tag>
 <define-tag moreinfo whitespace=delete>
   <gettext domain="bugs">moreinfo</gettext>
 </define-tag>
@@ -175,6 +178,7 @@
   <label><input type="checkbox" name="include" value="fixed-in-experimental"><fixed-in-experimental></label>
   <label><input type="checkbox" name="include" value="fixed-upstream"><fixed-upstream></label>
   <label><input type="checkbox" name="include" value="help"><help></label>
+  <label><input type="checkbox" name="include" value="l10n"><l10n></label>
   <label><input type="checkbox" name="include" value="moreinfo"><moreinfo></label>
   <label><input type="checkbox" name="include" value="patch"><patch></label>
   <label><input type="checkbox" name="include" value="pending"><pending></label>
@@ -197,6 +201,7 @@
   <label><input type="checkbox" name="exclude" value="fixed-in-experimental"><fixed-in-experimental></label>
   <label><input type="checkbox" name="exclude" value="fixed-upstream"><fixed-upstream></label>
   <label><input type="checkbox" name="exclude" value="help"><help></label>
+  <label><input type="checkbox" name="exclude" value="l10n"><l10n></label>
   <label><input type="checkbox" name="exclude" value="moreinfo"><moreinfo></label>
   <label><input type="checkbox" name="exclude" value="patch"><patch></label>
   <label><input type="checkbox" name="exclude" value="pending"><pending></label>
