@@ -1,0 +1,97 @@
+#use wml::debian::template title="Come lavorare sulle pagine web Debian"
+<!--translation 1.2-->
+
+<p>Le pagine web Debian sono generate in tre modi diversi: La documentazione è
+copiata dal sito
+<a href="http://www.debian.org/~elphick/ddp/">Debian Documentation Project (DDP)</a>,
+parte del sito è generata usando script (le pagine delle anomalie e gli
+archivi delle lista, ad esempio), mentre il resto è generato usando wml.
+
+Per quello che non conosco questi programmi, sarebbe meglio leggere le pagine
+che abbiamo scritto per chi ci si avvicina per la prima volta:
+<ul>
+<li><a href="using_wml">usare wml</a>
+<li><a href="using_cvs">usare cvs</a>
+</ul>
+
+<h3>Aggiungere nuove pagine</h3>
+<p>Aggiungere nuove pagine a Debian è molto semplice. Tutto il lavoro di
+creazione dell'intestazione e del pie' di pagina è fatto da wml. Tutto quello
+che devi fare è includere una linea come la seguente all'inizio del tuo file:
+<pre><protect>
+#use wml::debian::template title="Titolo della pagina" 
+</protect></pre>
+seguita dal corpo del tuo testo. Tutte le pagine dovrebbero usare il modello
+wml::debian::template a meno che non ne usino uno particolare creato per
+quella particolare sezione (come le news e le pagine sulla sicurezza.)
+
+<p>Il modello, wml::debian::template, ti permette di definire alcune variabili
+che influenzeranno l'aspetto della pagina. In questo modo non dovrebbe essere
+necessario creare altri modelli: molti cambiamenti dovrebbero essere fatti
+semplicemente. Le variabili attualmente disponibili sono:
+<dl>
+<dt>NOHEADER="yes"
+	<dd>Rimuove l'intestazione iniziale dalla pagina. Una intestazione
+personalizzata può essere inclusa nel corpo.
+<dt>NOHOMELINK="yes"
+	<dd>Rimuove il collegamento in basso alla pagina che fa tornare alla
+pagina principale.
+<dt>NOLANGUAGES="yes"
+	<dd>Rimuove i collegamenti alla stessa pagina, ma in lingua diverse.
+<dt>NOCOPYRIGHT="yes"
+	<dd>Rimuove il copyright dal pie' di pagina.
+</dl>
+
+<p>Un esempio si ha nelle pagine dei port che hanno la loro intestazione.
+ports/arm/index.wml usa:
+<pre><protect>
+#use wml::debian::template title="ARM Port" NOHEADER="yes"
+</protect></pre>
+
+<p>Se vuoi fare qualcosa che non è prevista dal modello attuale, prova a
+considerare l'ipotesi di estendere il modello. Se non è possibile estenderlo
+mantenendo la compatibilità con l'attuale allora prova a farne uno nuovo che
+sia un superset di uno esistente. Questo permetterà di convertire la pagine al
+tuo modello al prossimo grosso aggiornamento (In genere ogni 6 mesi massimo.)
+
+<p>Se stai creando una pagina che è generata da uno script prova a vedere se è
+possibile gestiarla tramite il meccanismo delle ``slice'' di wml per
+permetterne una facile traduzione. Un buon esempio è in
+<kbd>distrib/vendors.wml</kbd>. Nuovi venditori possono essere aggiunti e la
+nuova pagina verrà automaticamente creata in tutte le lingue.
+<kbd>vendors.wml</kbd> include <kbd>vendors.CD</kbd> che contiene la vera
+lista di venditori. Questo file include a sua volta
+<kbd>distrib/vendors.CD.def</kbd> che contiene la definizione di tutte le
+frasi usate in <kbd>vendors.CD</kbd>. I traduttori dovranno quindi aggiungere
+la traduzione delle ``slice'':
+<pre><protect>
+	[EN:Country:]\
+	[ES:Pa-is:]\
+	[DE:Land:]\
+</protect></pre>
+
+<h3>Aggiungere nuove directory</h3>
+Non create alcuna directory che si chiami <code>install</code>.
+Questo confonderebbe il programma make e le pagine in quella directory non
+sarebbero aggiornate automaticamente.
+
+<p>Segue un esempio di come si aggiunge una directory al sito web.
+<pre>
+   mkdir foo
+   cvs add foo
+   cd foo
+   cp ../intro/Makefile .
+   cvs add Makefile
+</pre>
+Edita il Makefile. WMLBASE dovrebbe essere il percorso iniziale dell'albero
+della traduzione a partire dalla directory corrente. CUR_DIR è invece la
+posizione della directory attuale relativa a WMLBASE. Poi
+<pre>
+   cd ..
+</pre>
+Edita il Makefile e aggiungi la directory che hai appena creata nella
+variabile SUBDIR. Questo farà aggiungere la directory tra quelle gestite da
+make.
+
+<p>Infine, <code>cvs commit Makefile foo</code>
+per rendere definitive le tue modifiche sul sito originale.
