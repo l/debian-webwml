@@ -58,7 +58,7 @@ sub permute_as_list {
 	print "</a>";
 	if ( $#exts != -1 ) {
 	    foreach $ext (@exts) {
-	        print " (<a href=\"./$arch/$file.$ext\"><em>" . 
+	        print " (<a href=\"$arch/$file.$ext\"><em>" . 
 			$formats{$ext} . "</em></a>)";
 	    }
 	}
@@ -83,6 +83,8 @@ sub permute_as_matrix {
 
     %arches || die "%arches is not set\n";
     %formats || die "%formats is not set\n";
+
+    if ($file =~ /release-notes/) { delete $formats{'pdf'} } else { $formats{'pdf'} = "PDF" };
 
     foreach $arch (keys %arches) {
 	$ctr++;
@@ -110,7 +112,7 @@ sub permute_as_matrix {
 	    # permute over languages
 	    print "  <td>";
 	    foreach $lang (@langs) {
-	        $file_version = "./$arch/$file." . $langs{$lang} . ".$ext";
+	        $file_version = "$arch/$file." . $langs{$lang} . ".$ext";
 	        if (! $check_if_file_exists || 
                     -f "$(HTMLDIR)/releases/$release/$file_version") {
 	            # all languages should be defined in %trans. Add missing entries 
