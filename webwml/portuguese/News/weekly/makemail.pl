@@ -5,7 +5,7 @@
 
 use locale;
 
-my $current_issue=`cat CURRENT-ISSUE-IS`;
+my $current_issue=`cat /home/kov/debian/www/webwml/english/News/weekly/CURRENT-ISSUE-IS`;
 chomp $current_issue;
 my $url=shift || "http://www.debian.org/News/weekly/$current_issue/";
 
@@ -18,14 +18,14 @@ my ($story, $link);
 my $skip=1;
 # This keeps track of how many links have been skipped over, so the rest
 # can be fixed up.
-my $skippedlinks=1;
+my $skippedlinks=0;
 # The highest numbered link that was seen (not skipped).
-my $highlink=1;
+my $highlink=0;
 
 # For beautifying
-my $lastlinecontainsstar=1;
+my $lastlinecontainsstar=0;
 
-open (IN, "lynx -dump $url |");
+open (IN, "LC_ALL=C lynx -dump $url |");
 if ($url =~ m,\d\d\d\d/\d\d?/,) {
      # This is a local URL - fix the output
      $url =~ s,^,http://www.debian.org/News/weekly/,;
@@ -35,7 +35,7 @@ if ($url =~ m,\d\d\d\d/\d\d?/,) {
 while (<IN>) {
 	# We exit this loop once we hit the first divider bar,
 	# which indicates the end of the newsletter proper.
-	last if /___________/;
+	last if /____________/;
 
 	s/^\s\s\s//; # kill lynx's indent.
 
@@ -43,6 +43,8 @@ while (<IN>) {
 	     if (/^\s*$/) { 
 		  # Empty line, new story
 		  push @stories, $story;
+		  # line is empty, don't indent following lines
+		  $lastlinecontainsstar = 0;
 		  $story = "";
 	     } else {
 		  # Kill multiple spaces, since raggedright is easier on the eyes
@@ -55,9 +57,13 @@ while (<IN>) {
 		       if ( m/^\s*[^\* ]/ ) {
 			    s/^/  /;
 		       }
-		       # line is empty, don't indent following lines
-		       if ( m/^\s*$/ ) {
-			    $lastlinecontainsstar = 0;
+	          } else {
+		       if (/^\s*\*.*$/) { 
+			    # New itemized list
+			    push @stories, $story if ($story);
+		  	    $story = "";
+			    # indent following lines
+			    $lastlinecontainsstar = 1;
 		       }
 		  }
 		  # line starts an item
@@ -83,11 +89,12 @@ while (<IN>) {
 		$skip=0;
 	}
 }
+push @stories, $story;
 
 # Once we get here, all that remains is some junk, some links we should
 # print, and more junk. So scan forward to the links, and print them.
 while (<IN>) {
-	last if m/^\s\s\sLigações visíveis/;
+	last if m/^\s\s\sVisible links/;
 }
 
 # print "\n", $divider, "References\n";
@@ -95,7 +102,7 @@ while (<IN>) {
 	s/^\s+//; # kill lynx's indent.
 	if (/^(\d+)/) {
 		# Don't print the links we skipped earlier.
-		if ($1 > $skippedlinks && $1 <= $highlink) {
+		if ($1 > $skippedlinks-1 && $1 <= $highlink) {
 			# Print line, fixing link number.
 			s/^(\d+)/$1 - $skippedlinks/e;
 
@@ -112,13 +119,15 @@ while (<IN>) {
 }
 
 foreach $story (@stories) {
-     $story =~ m/\[(\d+)\]/s;
-     my $firstlink = $1;
-     $story =~ m/.*\[(\d+)\]/s;
-     my $lastlink = $1;
-     print $story, "\n";
-     foreach $link (@links[$firstlink-1 .. $lastlink-1]) {
-	  print $link;
+     $story =~ m/\[(\d+)\]/s && { my $firstlink = $1 };
+     $story =~ m/.*\[(\d+)\]/s && { my $lastlink = $1 };
+     if ($lastlink && $firstlink) {
+	 print $story, "\n";
+	 foreach $link (@links[$firstlink .. $lastlink]) {
+	     print $link;
+	 }
+     } else {
+	 print $story;
      }
      print "\n";
 }
