@@ -7,6 +7,7 @@ CUR_DIR=security
 # list any subdirectories in the following variable. If a listed directory
 # exists, it must contain a Makefile, or make gives an error
 YEARS:=$(wildcard [12][0-9][0-9][0-9])
+CUR_YEAR=2000
 SUBS=$(YEARS) undated
 
 include $(WMLBASE)/Make.lang
