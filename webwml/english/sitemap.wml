@@ -31,8 +31,12 @@ sub title_of {
   $page = "$ENGLISHDIR/$page" unless (-f $page);
   die "$page doesn't exist!\n" unless (-f $page);
   my $title = `egrep '^#use .* title=' $page `; chomp $title;
-  $title =~ s/^#use .* title="([^"]+)".*$/$1/;
+  $title =~ s/^#use .* title="(.+?)(" .*$|"$|\e.*$)/$1/;
   die "can't find a title in $page!\n" unless (($title) || ($title eq ""));
+  if ($CUR_LANG eq 'Japanese')
+  {
+    $title .= "\e(B" unless $title =~ /\e\(B$/;
+  }
   return $title;
 }
 </perl>
