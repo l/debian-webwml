@@ -128,11 +128,11 @@ if ($output{havehostdata}) {
 } else {
   # display summary info
   $hostdetails = "<h1>Summary</h1>\n";
-  $hostdetails .= "<table border=1 width=90%>\n<th>";
+  $hostdetails .= "<table border=1 width=90%>\n<tr>";
   foreach $key (@summaryorder) {
-    $hostdetails .= "<td>$summaryattrs{$key}</td>";
+    $hostdetails .= "<th>$summaryattrs{$key}</th>";
   }
-  $hostdetails .= "</th>\n";
+  $hostdetails .= "</tr>\n";
   
   foreach $host (sort(keys(%summary))) {
     $hostdetails .= "<tr>";
