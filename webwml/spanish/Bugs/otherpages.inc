@@ -1,4 +1,4 @@
-<!--#use wml::debian::translation-check translation="1.1"-->
+<!--translation 1.1-->
 
 <p>Otras páginas del Sistema de seguimiento de fallos (BTS en 
 inglés):

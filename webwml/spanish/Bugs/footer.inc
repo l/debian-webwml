@@ -1,4 +1,5 @@
-<!--#use wml::debian::translation-check translation="1.3"-->
+<!--translation 1.3-->
+
 <HR>
 <ADDRESS>
 Darren Benham / <A 
