@@ -5,7 +5,7 @@ use strict;
 
 my $blocksize = 8; # A blowfish block is 8 bytes
 my $configfile = "/etc/userdir-ldap/userdir-ldap.conf";
-#my $configfile = "/home/randolph/projects/userdir-ldap/userdir-ldap.conf";
+#my $configfile = "/home/randolph/html/debian/perl/userdir-ldap.conf";
 
 my %config = &ReadConfigFile;
 
@@ -134,13 +134,13 @@ sub CheckAuthToken {
 }
 
 sub ClearAuthToken {
-  my ($id, $hrkey) = split(/:/, shift, 2);
+  my ($id, $hrkey) = split(/,/, shift, 2);
   $id =~ y/\//_/; # switch / to _
   unlink "$config{authtokenpath}/$id" || &HTMLError("Error removing authtoken: $!");
 }
 
 sub UpdateAuthToken {
-  my ($id, $hrkey) = split(/:/, shift, 2);
+  my ($id, $hrkey) = split(/,/, shift, 2);
   my $password = shift;
   my $key = pack("H".(length($hrkey)), $hrkey);
   $id =~ y/\//_/; # switch / to _
