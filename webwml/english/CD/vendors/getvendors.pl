@@ -41,7 +41,7 @@ while ( @row = $sth->fetchrow_array ) {
         $develsscd, $nonfreecd, $contribcd, $customcd,
         $officialdvd, $vendordvd, $develssdvd,
         $arch_alpha, $arch_arm, $arch_hppa, $arch_i386, $arch_ia64, 
-        $arch_m68k, $arch_mips, $arch_powerpc, $arch_s390, $arch_sparc, 
+        $arch_m68k, $arch_mips, $arch_powerpc, $arch_os390, $arch_sparc, 
         $arch_source, $hurd_i386, $hurd_source);
 
     $country = $row[0];
@@ -54,7 +54,7 @@ while ( @row = $sth->fetchrow_array ) {
     $sql .= "nonuscd,develsscd,nonfreecd, contribcd,customcd, ";
     $sql .= "officialdvd, vendordvd, develssdvd, ";
     $sql .= "arch_alpha, arch_arm, arch_hppa, arch_i386, arch_ia64, ";
-    $sql .= "arch_m68k, arch_mips, arch_powerpc, arch_s390, arch_sparc, ";
+    $sql .= "arch_m68k, arch_mips, arch_powerpc, arch_os390, arch_sparc, ";
     $sql .= " arch_source, hurd_i386, hurd_source ";
     $sql .= "from debiancd WHERE country='$country' AND hidden = 'f' ORDER BY name";
     $vsth = $dbh->prepare($sql);
@@ -65,7 +65,7 @@ while ( @row = $sth->fetchrow_array ) {
         \$nonuscd, \$develsscd, \$nonfreecd, \$contribcd, \$customcd,
         \$officialdvd, \$vendordvd, \$develssdvd,
         \$arch_alpha, \$arch_arm, \$arch_hppa, \$arch_i386, \$arch_ia64,
-        \$arch_m68k, \$arch_mips, \$arch_powerpc, \$arch_s390,
+        \$arch_m68k, \$arch_mips, \$arch_powerpc, \$arch_os390,
         \$arch_sparc, \$arch_source, \$hurd_i386, \$hurd_source);
     while ($vsth->fetch) {
         print "<vendorentry>\n";
@@ -171,7 +171,7 @@ while ( @row = $sth->fetchrow_array ) {
         if ($arch_powerpc) {
             push @archs, "PowerPC";
         }
-        if ($arch_s390) {
+        if ($arch_os390) {
             push @archs, "S/390";
         }
         if ($arch_sparc) {
