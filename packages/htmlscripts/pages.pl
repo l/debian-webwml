@@ -336,9 +336,12 @@ sub package_pages_walker {
 	my ( $is_security, $is_nonus ) = ( 0, 0 );
 	if ( $subdist ) {
 	    $package_page .=  " [<font color=\"red\">$subdist</font>]\n";
+	    # a package can be in subdist "non-US/security"
+	    # then both $is_nonus and $is_security are true
 	    if ($subdist =~ /non-US/o) {
 		$is_nonus = 1;
-	    } elsif ($subdist =~ /security/o) {
+	    }
+	    if ($subdist =~ /security/o) {
 		$is_security = 1;
 	    }
 	}
@@ -396,10 +399,10 @@ sub package_pages_walker {
 		$package_page .=  "<input type=\"hidden\" name=\"file\" value=\"$filenames{a2f}->{$a}\">\n";
 		$package_page .=  "<input type=\"hidden\" name=\"md5sum\" value=\"$file_md5s{a2f}->{$a}\">\n";
 		$package_page .=  "<input type=\"hidden\" name=\"arch\" value=\"$a\">\n";
-		if ($is_nonus) {
-		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"nonus\">\n";
-		} elsif ($is_security) {
+		if ($is_security) {
 		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"security\">\n";
+		} elsif ($is_nonus) {
+		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"nonus\">\n";
 		} else {
 		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"main\">\n";
 		}
@@ -450,10 +453,10 @@ sub package_pages_walker {
 	    my @source_files = split( /\n\s*/, $sf );
 	    foreach( @source_files ) {
 		my ($src_file_md5, $src_file_size, $src_file_name) = split( /\s+/, $_ );
-		if ($is_nonus) {
-		    $package_page .= "<a href=\"$env->{opts}->{nonus_site}/$source_dir/$src_file_name\">[";
-		} elsif ($is_security) {
+		if ($is_security) {
 		    $package_page .= "<a href=\"$env->{opts}->{security_site}/$source_dir/$src_file_name\">[";
+		} elsif ($is_nonus) {
+		    $package_page .= "<a href=\"$env->{opts}->{nonus_site}/$source_dir/$src_file_name\">[";
 		} else {
 		    $package_page .= "<a href=\"$env->{opts}->{debian_site}/$source_dir/$src_file_name\">[";
 		}
