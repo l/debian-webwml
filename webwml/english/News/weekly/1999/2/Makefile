@@ -1,17 +1,17 @@
-# This Makefile should need no changes from webwml/english/News/1998/Makefile
+# This Makefile should need no changes from webwml/english/News/1998/2/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
-WMLBASE=../../..
-CUR_DIR=News/weekly/1999
+WMLBASE=../../../..
+CUR_DIR=News/weekly/1999/2
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
-SUBS=$(shell ls -1 |grep -v CVS)
+SUBS=
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
+include $(WMLBASE)/Make.dep.templ
 
 # Do Not modify the following line
 index.html.$(LANGUAGE): index.wml $(wildcard 1999*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
