@@ -4,7 +4,8 @@
 
 WMLBASE=../..
 CUR_DIR=ports/powerpc
-SUBS=inst
+SUBS=inst pics
 
 include $(WMLBASE)/Make.lang
 
+$(HTMLFILES): menu.inc $(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml
