@@ -25,6 +25,9 @@ cleandest::
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
 
+# there only needs to be one version of the following so
+# the non-english directories shouldn't try to install them
+ifeq ($(LANGUAGE),en)
 $(HTMLDIR)/ftpsync: ftpsync
 	cp ftpsync $(HTMLDIR)
 $(HTMLDIR)/ftpsync.conf: ftpsync.conf
@@ -47,3 +50,4 @@ $(HTMLDIR)/anonftpsync: anonftpsync
 	cp anonftpsync $(HTMLDIR)
 $(HTMLDIR)/anonwebsync: anonwebsync
 	cp anonwebsync $(HTMLDIR)
+endif
