@@ -24,10 +24,11 @@ use File::Path;
 use Getopt::Long;
 
 use lib ($0 =~ m|(.*)/|, $1 or ".") ."/../../../../Perl";
-use Local::Inside::DebSrc;
-use Webwml::L10n::Db;
 use Locale::Language;
 use Locale::Country;
+use Webwml::L10n::Db;
+use Local::Inside::DebSrc;
+use Local::L10nStats::Debconf;
 
 my $progname= $0; $progname= $& if $progname =~ m,[^/]+$,;
 
@@ -95,8 +96,6 @@ Behaviour options:
     -f, --force               force the check of packages, even if they are in db
     --force-material          force the check of packages containing any material
 Configuration options:
-    -L, --libpath=dir         Append directory dir to the list of directories
-                              (\@INC) searched for include files.
     --db=DB_FILE              use DB_FILE as database file
                                 (instead of $DB_FILE)
     --tmp=TMP_DIR             use TMP_DIR as temp dir
@@ -132,13 +131,6 @@ sub banner {
         exit 0;
 }
 
-# Add a dir to the @INC
-sub add_dir {
-        my $arg = shift; # dunno why perl give me this too...
-        my $dir = shift;
-        push (@INC, $dir);
-}
-
 # Hash used to process commandline options
 my %opthash = (
         # ------------------ general options
@@ -155,8 +147,6 @@ my %opthash = (
         "force-material" => \$force_material,
 
         # ------------------ configuration options
-        "libpath=s" => \&add_dir,
-        "L=s" => \&add_dir,
         "db=s" => \$DB_FILE,
         "tmp=s" => \$TMP_DIR,
         "root=s" => \$TRANSMONITOR_ROOT,
@@ -265,13 +255,13 @@ PKG: while ($dsc = shift @pkg_list) {
                         #   Erase this entry (it's an older version)
                         $data->clear($pkg);
                         foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT)) {
-                                File::Path::rmtree($_."/".$pkg)
-                                        if -e $_."/".$pkg;
+                                File::Path::rmtree($_."/_tmp")
+                                        if -e $_."/_tmp";
                         }
                 }
         } else {
                 foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT)) {
-                        File::Path::rmtree($_."/".$pkg) if -e $_."/".$pkg;
+                        File::Path::rmtree($_."/_tmp") if -e $_."/_tmp";
                 }
         }
         $savedb = 1; #ok, we've done something, we have to save the db
@@ -281,11 +271,14 @@ PKG: while ($dsc = shift @pkg_list) {
         ### unpack it
         ###
         $deb = parse_tarball($dsc, $pkg, $ver);
-        check_pkg($pkg, $deb);
-        if ($careful) {
-                $data->write($DB_FILE);
-        } else {
-                $savedb = 1; #ok, we've done something, we have to save the db
+        if ($deb) {
+                check_pkg($pkg, $deb);
+                if ($careful) {
+                        $data->write($DB_FILE);
+                } else {
+                        #  Ok, we've done something, we have to save the db
+                        $savedb = 1;
+                }
         }
 }
 
@@ -323,6 +316,16 @@ sub store_disk_menu {
         return $filename;
 }
 
+sub store_disk_templates {
+        my $pkg = shift;
+        my $filename = shift;
+
+        $filename = $pkg.'_'.$data->version($pkg).'/'.$filename;
+        $filename =~ s#:#\%3a#g;
+        $filename =~ s#/#_#g;
+        return $filename;
+}
+
 ###
 ### subs
 ###
@@ -338,15 +341,23 @@ sub parse_tarball {
 
         #   Determine how many characters of each files are read and cached
         #   when parsing the tar archive
+        #
+        #   Files cannot be stored on their definitive location,
+        #   since we do not know yet the package section, this
+        #   information is read from debian/control.
+        #   So they are stored in a temporary area, and moved away
+        #   as soon as possible.
+        #
         my $match = sub {
                 my $file = shift;
                 return 80  if $file =~ m#(^|/)nls/#;
                 return -1 if $file eq 'debian/control';
-                return -1 if $file =~ m#^debian/.*templates#;
-                return ":$PO_ROOT/$pkg/".store_disk_po($pkg, $file)
+                return ":$PO_ROOT/_tmp/".store_disk_po($pkg, $file)
                         if $file =~ m#\.po$#;
-                return ":$MENU_ROOT/$pkg/".store_disk_menu($pkg, $file)
+                return ":$MENU_ROOT/_tmp/".store_disk_menu($pkg, $file)
                         if $file =~ m#(^|/)debian/[^/]*menu[^/]*$#;
+                return ":$TEMPLATES_ROOT/_tmp/".store_disk_templates($pkg, $file)
+                        if $file =~ m#(^|/)debian/([^/]+\.)?templates(\.|$)#;
                 return -1 if $file =~ m#(^|/)debian/[^/]*doc-base[^/]*$#;
 
                 return 0;
@@ -361,13 +372,6 @@ sub parse_tarball {
         $data->upstream($pkg, "other")
                 if $deb->get_diff_name() ne '';
 
-        return $deb;
-}
-
-sub check_pkg {
-        my $pkg = shift;
-        my $deb = shift;
-
         #####[ search the section and priority]#################################
         #
         # (a LOT of packages place spaces here, or upper case, or even typos)
@@ -375,6 +379,7 @@ sub check_pkg {
         #####
         my $section  = "";
         my $priority = "";
+        my $pooldir  = "main/";
         my $control  = "debian/control";
 
         unless ($deb->file_exists($control)) {
@@ -386,13 +391,18 @@ sub check_pkg {
                 } else {
                         $deb->clear($pkg);
                         warn("Error: can't find debian/control; skipping package $pkg.");
-                        return;
+                        return undef;
                 }
         }
         $_ = $deb->file_content($control);
         if (m/^Section: ([^\n]*)/m) {
                 $section = lc $1;
                 $section =~ s/\s//g;
+                if ($section =~ m/^non-US/) {
+                        $pooldir = $section."/";
+                } elsif ($section =~ m#^(.*/)#) {
+                        $pooldir = $1;
+                }
         }
         if (m/^Priority: ([^\n]*)/m) {
                 $priority = lc $1;
@@ -410,8 +420,31 @@ sub check_pkg {
                 $section  = $synonym{$section};
                 $priority = $synonym{$priority};
         }
-        $data->section($pkg, $section);
+        if ($pkg =~ m/^(lib.)/) {
+                $pooldir .= $1;
+        } elsif ($pkg =~ m/^(.)/) {
+                $pooldir .= $1;
+        }
+
+        #   Move files to their definitive location
+        foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT)) {
+                File::Path::rmtree($_."/".$pooldir."/".$pkg);
+                if (-d $_."/_tmp") {
+                        File::Path::mkpath($_."/".$pooldir, 0, 0755);
+                        qx(mv $_/_tmp $_/$pooldir/$pkg);
+                }
+        }
+
+        $data->section ($pkg, $section);
         $data->priority($pkg, $priority);
+        $data->pooldir ($pkg, $pooldir."/".$pkg);
+
+        return $deb;
+}
+
+sub check_pkg {
+        my $pkg = shift;
+        my $deb = shift;
 
         #####[ Check the type of organization ]#################################
         #
@@ -444,16 +477,11 @@ sub check_pkg {
         $type_org="?" if ($type_org eq "");
         $data->type($pkg, $type_org);
 
-        #####[ Search and handle material ]#####################################
-        #
-        # search all *.po files, nls catalogs files and debconf templates
-        #  (it's a catalog iff first_line =~ /\$set[0-9 ]*\#/)
-        #####
-
         search_nls($pkg);
         search_po($pkg);
         search_menu($pkg);
         search_docbase($pkg);
+        search_templates($pkg);
 }
 
 #----[ search_nls ]-------------------------------------------------------------
@@ -493,7 +521,9 @@ sub search_po {
                 #  To transfer files with ":" in their name over http, the file
                 #  on the server must have the ":", but the URL must be fixed.
                 my $filename_http = $filename;
-                $filename_http =~ s,:,\%3a,;
+                $filename_http =~ s/:/\%3a/g;
+
+                my $PO_DIR = $PO_ROOT."/".$data->pooldir($pkg);
 
                 $this_stat = "";
                 $lang = "";
@@ -532,12 +562,9 @@ sub search_po {
                 }
                 if ($lang ne "") {
                         # stats the file
-                        ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_ROOT/$pkg/$filename 2>&1 1>/dev/null");
-                        $data->add_errors($pkg,"Error of msgfmt --statistics $PO_ROOT/$pkg/$file\n".$err_msg) if $err_msg;
-                        $data->add_errors($pkg,"Error of msgfmt --statistics $PO_ROOT/$pkg/$file\n".$err_msg) if $err_msg;
-
-                        $data->add_stats($pkg, $lang, $this_stat)
-                                if $this_stat ne "0t0f0u";
+                        ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$filename 2>&1 1>/dev/null");
+                        $data->add_errors($pkg,"Error of msgfmt --statistics $PO_DIR/$file\n".$err_msg) if $err_msg;
+                        $data->add_errors($pkg,"Error of msgfmt --statistics $PO_DIR/$file\n".$err_msg) if $err_msg;
                 } else { # no valid lang found
                         next POFILE if $file =~ m,messages.po$,;
                         if ($bad_lang eq "") {
@@ -548,8 +575,8 @@ sub search_po {
                 }
                 # Add this file to the data
                 $data->add_po($pkg, "$file:".normalize_lang($lang).":$this_stat:".$filename_http);
-                if (system("gzip -9 $PO_ROOT/$pkg/$filename")) {
-                        warn "Can't gzip $PO_ROOT/$pkg/$filename: $!";
+                if (system("gzip -9 $PO_DIR/$filename")) {
+                        warn "Can't gzip $PO_DIR/$filename: $!";
                 }
         }
         print "MEM: ".$deb->get_max_memory()."\n" if $verbose;
@@ -565,8 +592,8 @@ sub search_menu {
                 # Add this file to the data
                 $filename = store_disk_menu($pkg, $file);
                 $data->add_menu($pkg, $filename.".gz");
-                if (system("gzip -9 $MENU_ROOT/$pkg/$filename")){
-                        warn "Can't gzip $MENU_ROOT/$pkg/$filename: $!\n";
+                if (system("gzip -9 $MENU_ROOT/".$data->pooldir($pkg)."/$filename")){
+                        warn "Can't gzip $MENU_ROOT/".$data->pooldir($pkg)."/$filename: $!\n";
                 }
         }
 }
@@ -586,18 +613,71 @@ sub search_docbase {
                 $dirname  =~ s#/+[^/]*$##;
                 $filename = $dirname . '/' . $filename;
                 $filename =~ s,^.*debian/,,;
-                $filename =~ s,:,\%3a,;
+                $filename =~ s/:/\%3a/g;
                 $filename =~ s,/,_,g;
-                File::Path::mkpath($MENU_ROOT."/".$pkg, 0, 0755);
-                unless (open (DOCBASE, "> $MENU_ROOT/$pkg/$filename")) {
-                        warn "Unable to write to $MENU_ROOT/$pkg/$filename\n";
+                File::Path::mkpath($MENU_ROOT."/".$data->pooldir($pkg), 0, 0755);
+                unless (open (DOCBASE, "> $MENU_ROOT/".$data->pooldir($pkg)."/$filename")) {
+                        warn "Unable to write to $MENU_ROOT/".$data->pooldir($pkg)."/$filename\n";
                         next;
                 }
                 print DOCBASE;
                 close DOCBASE;
                 $data->add_menu($pkg, $filename.".gz");
-                if (system("gzip -9 $MENU_ROOT/$pkg/$filename")) {
-                        warn "Can't gzip $MENU_ROOT/$pkg/$filename: $!\n";
+                if (system("gzip -9 $MENU_ROOT/".$data->pooldir($pkg)."/$filename")) {
+                        warn "Can't gzip $MENU_ROOT/".$data->pooldir($pkg)."/$filename: $!\n";
+                }
+        }
+}
+
+#----[ search_templates ]------------------------------------------------------
+sub search_templates {
+        my $pkg = shift;
+        my ($filename, $tmpl, %tmpl_stats, $this_stat, @list, @list2);
+
+        my @debconffiles = $deb->file_matches("(^|/)debian/([^/]+\\.)?templates\$");
+        $tmpl = Local::L10nStats::Debconf->new();
+        foreach my $file (@debconffiles) {
+                #   All translations in a single file
+                next if $deb->file_matches($file."\\.");
+
+                # Add this file to data
+                $filename = store_disk_templates($pkg, $file);
+                my $filename_http = $filename;
+                $filename_http =~ s/:/\%3a/g;
+
+                $tmpl->read_compact($TEMPLATES_ROOT."/".$data->pooldir($pkg)."/$filename");
+                %tmpl_stats = $tmpl->bylang();
+                foreach (keys %tmpl_stats) {
+                        $this_stat = $tmpl_stats{$_}->[0].'t'.$tmpl_stats{$_}->[1].'f'.$tmpl_stats{$_}->[2].'u';
+                        $data->add_templates($pkg, "$file:".normalize_lang($_).":$this_stat:".$filename_http);
+                }
+                if (system("gzip -9 $TEMPLATES_ROOT/".$data->pooldir($pkg)."/$filename")){
+                        warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/$filename: $!\n";
+                }
+        }
+        foreach my $file (@debconffiles) {
+                #   Translations are put in separate files
+                @list = $deb->file_matches($file."\\.");
+                next unless @list;
+
+                $filename = store_disk_templates($pkg, $file);
+
+                @list2 = ();
+                my %filename_http = ();
+                foreach (@list) {
+                        my $filename = $TEMPLATES_ROOT."/".$data->pooldir($pkg)."/".store_disk_templates($pkg, $_);
+                        $filename_http{$filename} = store_disk_templates($pkg, $_);
+                        $filename_http{$filename} =~ s/:/\%3a/g;
+                        push (@list2, $filename);
+                }
+                $tmpl->read_dispatched($TEMPLATES_ROOT."/".$data->pooldir($pkg)."/$filename", @list2);
+                %tmpl_stats = $tmpl->bylang();
+                foreach (keys %tmpl_stats) {
+                        $this_stat = $tmpl_stats{$_}->[0].'t'.$tmpl_stats{$_}->[1].'f'.$tmpl_stats{$_}->[2].'u';
+                        $data->add_templates($pkg, "$file:".normalize_lang($_).":$this_stat:".$filename_http{$tmpl->filename($_)});
+                        if (system("gzip -9 $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename_http{$tmpl->filename($_)})) {
+                                warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename_http{$tmpl->filename($_)}.": $!\n";
+                        }
                 }
         }
 }
@@ -661,7 +741,7 @@ sub init_synonym {
         my $wrong;
 
         open (DATA,"< $SYN_FILE")
-                || &error ("Can't read $SYN_FILE");
+                || die ("Can't read $SYN_FILE");
         while (<DATA>) {
                 next unless /\S/;
                 next if /^\#/;
