@@ -1,0 +1,27 @@
+<define-tag pagetitle>Récapitulatif des licenses Debian&nbsp;--&nbsp;par nom</define-tag>
+#use wml::debian::template title="<pagetitle>" GEN_TIME="yes"
+#use wml::debian::legal_lists
+#use wml::debian::translation-check translation="1.3" maintainer="Mohammed Adnène Trojette"
+
+<dls-lists-page-header />
+
+<h2>Récapitulatif des licenses Debian&nbsp;&ndash;&nbsp;trié par nom de
+license</h2>
+
+<perl>
+    my %str = get_alphabetical_list( '', 'list' );
+my ( $toc, $content );
+
+foreach my $letter (sort keys %str) {
+    if (($letter eq 'foot') || ($letter eq 'head')) {
+        next;
+    }
+    if (scalar keys %str > 10) {
+        $toc .= " [&nbsp;<a href=\"#$letter\">$letter</a>&nbsp;]";
+        $content .= "<h3><a id=\"$letter\">$letter</a></h3>\n";
+    }
+    $content .= "$str{head}$str{$letter}$str{foot}\n";
+}
+print "<p>$toc</p>" if $toc;
+print $content;
+</perl>
