@@ -57,11 +57,12 @@ $translations_status = {
 'book-gtiau' => {
 	'status' 		=> 2,
 	'since'			=> '13/09/1999',
-	'translation_maintainer'=> ['Martin Quinson <mquinson@zeppelin-cb.de>'],
+	'translation_maintainer'=> ['Patrice Karatchentzeff <pkarat@club-internet.fr>'],
 	'translation_name'	=> 'Debian GNU/Linux: guide d\'installation et d\'utilisation',
 	'translation_url'	=> 'http://www.ens-lyon.fr/~mquinson/debian/guide/',
 	'translation_dev_url'   => 'http://www.newriders.com/debian/debian-guide.tar.bz2',
-	'old_translators'	=> ['Fabien Ninoles <fabien@Nightbird.TZoNE.ORG>'],
+	'old_translators'	=> [	'Martin Quinson <mquinson@zeppelin-cb.de>',
+					'Fabien Ninoles <fabien@Nightbird.TZoNE.ORG>'],
 },
 
 # ########################################################################################
@@ -186,7 +187,7 @@ $translations_status = {
 	'status'		=> '6',
 	'since'			=> '6/04/1999',
 	'translation_name'	=> 'Manuel des normes Debian',
-	'translation_maintainer'=> ['David Rocher <davroc@hplb.hpl.hp.com>'],
+	'translation_maintainer'=> ['David Rocher <djr@netgates.co.uk>'],
 	'base_revision'		=> '2.5.0.0',
 	'translation_url'	=> 'http://savage.iut-blagnac.fr/projets/developpement/policy.fr/policy.fr.html/',
 	'translation_dev_url'   => 'http://savage.iut-blagnac.fr/projets/developpement/policy.fr/policy.fr.sgml',
@@ -195,14 +196,14 @@ $translations_status = {
 },
 
 'developers-reference' => {
-	'status'		=> '5',
+	'status'		=> '6',
 	'since'			=> '01/07/1998',
 	'translation_name'	=> 'Guide de Référence du Développeur Debian',
-	'translation_maintainer'=> ['Laurent Picouleau <laurent.picouleau@wanadoo.fr>'],
+	'translation_maintainer'=> ['Alain Meessen <ameessen@ulb.ac.be>'],
 	'base_revision'		=> '0.1',
 	'translation_package'	=> '',
-	'old_translators'	=> ['Herve Floch <Herve.Floch@linux.eu.org>'],
-	'note'			=> 'Le responsable actuel veut passer la main'
+	'old_translators'	=> ['Herve Floch <Herve.Floch@linux.eu.org>',
+				    'Laurent Picouleau <laurent.picouleau@wanadoo.fr>'],
 },
 
 'internals' => {
