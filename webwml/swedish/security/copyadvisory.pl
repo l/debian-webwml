@@ -71,7 +71,7 @@ while (<SRC>)
 	if (/^#use wml::debian::security/)
 	{
 		print DST $_;
-		print DST qq'#use wml::debian::translation-check translation="$revision"\n';
+		print DST qq'#use wml::debian::translation-check translation="$revision" mindelta="1"\n';
 		$insertedrevision = 1;
 	}
 	else
@@ -82,7 +82,7 @@ while (<SRC>)
 
 unless ($insertedrevision)
 {
-	print DST qq'#use wml::debian::translation-check translation="$revision"\n';
+	print DST qq'#use wml::debian::translation-check translation="$revision" mindelta="1"\n';
 }
 
 close SRC;
