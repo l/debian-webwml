@@ -184,7 +184,7 @@ sub get_new_maintainers($)
     $sth->execute();
     $sth->bind_columns(\$firstname, \$surname, \$email);
     while($sth->fetch()) {
-        print "$firstname $surname <$email> \n";
+        print "$firstname $surname <$email>\n";
     }
 }
 
@@ -241,7 +241,7 @@ sub get_warn_maintainers($)
     $sth->execute();
     $sth->bind_columns(\$firstname, \$surname, \$email, \$apply_date);
     while($sth->fetch()) {
-        print "$firstname $surname <$email> \n";
+        print "$firstname $surname <$email>\n";
         if ($main::enable_email != 0) {
             print_warn_email($firstname, $email, $apply_date);
         }
@@ -265,7 +265,7 @@ sub get_err_maintainers($)
     $sth->execute();
     $sth->bind_columns(\$firstname, \$surname, \$email, \$apply_date);
     while($sth->fetch()) {
-        print "$firstname $surname <$email> \n";
+        print "$firstname $surname <$email>\n";
         if ($main::enable_email != 0) {
             print_err_email($firstname, $email, $apply_date);
             my $sql1 = "DELETE FROM applicant WHERE email = '$email'";
