@@ -410,8 +410,13 @@ sub check_file {
 
         $translator =~ s/^\s*(.*?)\s*/$1/;
 
-	$oldr ||= '1.1';
-	my $str  = "NeedToUpdate $name from version $oldr to version $revision";
+	my $str;
+	if (!$oldr) {
+	  $oldr = '1.1';
+	  $str = "Unknown status of $name (revision should be $revision)"
+	} else {
+	  $str = "NeedToUpdate $name from version $oldr to version $revision";
+	}
 	$str .= " (maintainer: $translator)" if $translator;
 	$str .= "\n";
 	print $str unless $opt_Q;
