@@ -26,7 +26,7 @@ all:: index.$(LANGUAGE).html $(HTMLFILES)
 # so wml gets all the relative links right.
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml
-	cd $(@D) && $(WML) $(notdir $(<)) \
+	cd $(@D) && $(WML) $(notdir $(<)) -DWMLBASE=../../../.. \
 		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
 
 install:: $(HTMLDESTFILES)
@@ -42,7 +42,7 @@ install:: $(HTMLDESTFILES)
 # Make.common to allow installation of files into subdirectories.
 $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
 	install -d $(@D)
-	@echo copying $(@F) to $(@D)
+	@echo copying $(<) $(@F) to $(@D)
 	-@cp $(<) $(@D)
 ifeq ($(LANGUAGE),en)
 	@echo making a link $(@D)/$(*F).html -\> $(@F)
