@@ -17,7 +17,7 @@ RELEASESDEP := $(ENGLISHDIR)/CD/releases/index.wml
 endif
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml $(RELEASESDEP)
-	$(WML) $(<F)
+	$(WML) $(<F) -I $(ENGLISHDIR)/CD/
 
 misc.$(LANGUAGE).html: misc.wml $(TEMPLDIR)/cdimage.wml
 	$(WML) $(<F)
