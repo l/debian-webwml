@@ -1,5 +1,5 @@
 #use wml::debian::template title="COME tradurre le pagine di Debian"
-# <!-- translation 1.1-->
+# <!-- translation 1.38-->
 
 <P>Ti ringraziamo per l'aiuto che ci vuoi dare nella traduzione delle
 	  pagine web di Debian. Invece di avere un sacco di siti diversi
@@ -15,8 +15,9 @@
 	  terminato di fare modifiche, si possono rilasciare le modifiche
 	  in www.debian.org. 
 Una volta al giorno, la copia del deposito (repository) su master sarà
-	  aggiornata. Poi viene eseguito un Makefile per creare le nuove
-	  pagine pubbliche aggiornate.
+aggiornata. Poi viene eseguito un Makefile per creare le nuove
+pagine pubbliche aggiornate. Infine le pagine sono distribuite a tutti
+i mirror.
 
 <H3>Gli attuali coordinatori delle traduzioni</H3>
 <ul>
@@ -35,7 +36,7 @@ debian/</a>
 <li>Russo: D'jinnie &lt;jinn@irony.org&gt;
 <li>Croato: Matej Vela &lt;mvela@public.srce.hr&gt;
 <li>Polacco: Marcin Owsiany &lt;porridge@pandora.info.bielsko.pl&gt;
-<li>Olandese: Both Florus NTC/Zurich &lt;florus.both@usa.net&gt;
+<li>Olandese: Remco Rijnders &lt;remmy@cistron.nl&gt;
 <li>Portoghese: Eduardo Marcel Macan &lt;thecore@thecore.com.br&gt;
 <li>Cinese: Anthony Wong &lt;ypwong@debian.org&gt;
 <li>Finlandese: Antti-Juhani Kaijanaho &lt;gaia@iki.fi&gt;
@@ -77,14 +78,20 @@ come aderire.
 </pre>
 dove &lt;lang&gt; è la lingua che si vuole. Probabilmente si vorrà
 	la versione inglese oltre a quella a cui si sta lavorando.
+Se si ha bisogno di un sottoinsieme delle pagine, è possibile copiare solo quelle
+richieste, come in
+<kbd>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</kbd>.
+oppure, se hai un account/password, inserendo il nome al posto di 'anonymous'
+<kbd>cvs -d :pserver:username@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</kbd>.
 
 <P>D'ora in poi, non è più necessario usare la parte '-d :pserver:...'
 	  in quanto le directory CVS/ contengono le informazioni necessarie.
 	  Ogni paio di giorni si dovrà fare un
 <pre>
-   cvs update
+   cvs update -d
 </pre>
-per scaricare qualsiasi file che è stato modificato nel repository.
+per scaricare qualsiasi file che è stato modificato nel repository. L'opzione -d
+aggiungerà automaticamente le eventuali nuove directory.
 
 <P>Quanto segue è per quelli che hanno permesso di scrittura sul
 	  repository. Quando si ha finito con una pagina, si possono
@@ -94,7 +101,7 @@ per scaricare qualsiasi file che è stato modificato nel repository.
 </pre>
 oppure
 <pre>
-   cvs commit &lt;dir&gt;
+   cvs commit &lt;dir&gt;   (per depositare le modifiche dei file in &lt;dir&gt;)
 </pre>
 o ancora
 <pre>
@@ -185,7 +192,7 @@ non sono aggiornate (evidenziate dal messaggio
 "<code>NeedToUpdate <var>filename</var> to version <var>x.x</var></code>").
 
 <P>Se vuoi vedere quali sono le differenze tra le due versioni del documento
-originalem, puoi eseguire il comando <code>check_trans.pl -d <var>lingua</var></code>.
+originale, puoi eseguire il comando <code>check_trans.pl -d <var>lingua</var></code>.
 Nota che questa operazione può essere molto lenta a causa dei frequenti
 accessi al server CVS che il programma deve fare.
 
@@ -194,6 +201,30 @@ puoi creare un file chiamato <code>.transignore</code>, nella directory
 dove stanno i file da ignorare, contenente la lista dei nomi dei file --- uno
 per linea --- ai quali non sei interessato.
 
+<H3>Aggingere nuove directory</H3>
+<P>Quando si aggingono nuove directory al CVS si deve fare un po' di attenzione.
+Se la directory è contenuta nel ../Makefile allora dovrà essa stessa contenere
+un Makefile - altrimenti 'make' darà un messaggio d'errore.
+Non preoccupatevi per le directory listate nella variabile SUBS poiché il make
+le salterà.
+
+<H3>Generare le immagini per la nvabar</H3>
+<P>Questa dovrebbe essere una delle prime cose da fare altrimenti le icone
+continueranno a mostrarsi in inglese.
+Create la directory Pics e copiateci i file da webwml/english/Pics:
+<pre>
+   Makefile
+   makebuttons.sh
+   debbar.pl
+</pre>
+Cambiate le variabili in makebuttons.sh e seguite le istruzioni in quel file.
+Questo script si basa su gimp che, poiché ha subito un rapido sviluppo, non 
+sempre lo accetta. Manda un messaggio a debian-www se incontri dei problemi.
+
+<P>Note che se anche un solo carattere usato nella navbar non è nell'insieme
+iso8859-1, allora dovrai cambiare il font per tutti i caratteri, oppure fare
+l'immagine a mano.
+
 <H3>Come fa il Server a Sapere Quale File Servire</H3>
 <P>Si sarà notato che molti dei link interni non finiscono in
 	  .html. Questo perché il server usa la negoziazione dei contenuti
@@ -201,7 +232,7 @@ per linea --- ai quali non sei interessato.
 	  più di una scelta, il server farà una lista di tutti possibili
 	  file da servire, per esempio se la richiesta è per il file
 	  about, allora la lista delle possibilità potrebbe essere
-	  about.html.en e about.html.it. Il comportamente predefinito per
+	  about.en.html e about.it.html. Il comportamente predefinito per
 	  i server Debian sarà di servire il documento in inglese, ma la
 	  cosa è configurabile.
 
@@ -294,8 +325,6 @@ siano tradotte. È lasciato completamente libera la scelta di quali
 news tradurre. Lo script che crea i titoli da inserire inserire nell'indice
 verifica se ci sono le news tradotte e, in caso contrario, usa quelle
 originali.
-
-***********************************************************************
 
 <li><b>security/</b><br>
 Quiesta directory contiene lo stato, rispetto ai problemi legati alla
