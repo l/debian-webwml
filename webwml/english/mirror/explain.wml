@@ -1,0 +1,37 @@
+#use wml::debian::template title="Debian GNU/Linux - Mirroring"
+
+<H1>Explanation of Push Mirroring</H1>
+
+<p>First some background on ssh. Ssh allows people to connect to accounts
+on different machines in a secure way. Not only are passwords never passed
+in the clear, once you connect to a machine you are basically guaranteed that
+future connections will be to the same machine. This prevents many man-in-the-middle
+attacks.
+
+<p>One capability ssh has is the ability for a user to take the public identity
+key for a user on another machine and add it to a file of authorized keys on your
+machine. By default, the user on the other machine (who has the private identity
+key associated with the public identity key given to you)
+then has login privileges to your account. It is possible, though, to add text
+to an authorized key restricting the type of access the person accessing your
+account using that key has.
+
+<p>So to protect the downstream mirror, the key provided by the upstream mirror
+has text added to it to limit it to only give the person accessing your account
+permission to do one thing - start the program on your machine that updates
+your mirror. Even if someone (an evil third party) was able to break the key,
+the most they could do is to start the mirror program on your machine. 
+You do not even have to worry about multiple copies of the program being started
+as it uses a lockfile.
+
+<p>On the upstream end, rsync can be configured to restrict who can mirror
+a given area by username and password. These are totaly seperate from /etc/passwd
+so you don't have to worry about giving others access to your machine.
+As it is set up, the username and password are passed in the clear. This
+shouldn't be a problem though, as the worst that can happen is that a
+third party mirrors the section of your machine that account has access to.
+
+<HR>
+<P>Back to the <A href="../../">Debian GNU/Linux homepage</A>.
+
+<:= languages ("$(HOME)", "devel/mirror", "$(WML_SRC_BASENAME)", "$(CUR_LANG)") :>
