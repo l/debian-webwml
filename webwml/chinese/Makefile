@@ -29,3 +29,6 @@ index.zh-cn.html index.zh-tw.html: index.wml $(TEMPLDIR)/mainpage.wml \
 
 install::
 	test -L $(HTMLDIR)/zh || ln -s international/chinese $(HTMLDIR)/zh
+
+clean::
+	find $(WMLBASE)/Pics -type l | xargs rm -f

@@ -8,3 +8,6 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+$(ENGLISHSRCDIR)
+
+cp -siv /english/Pics/red-*.png .
