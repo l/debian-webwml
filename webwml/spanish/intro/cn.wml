@@ -1,5 +1,5 @@
 #use wml::debian::template title="Sitio web de Debian en diferentes idiomas" BARETITLE=true
-#use wml::debian::translation-check translation="1.32"
+#use wml::debian::translation-check translation="1.33"
 
 <P>Obviamente, no todos en el mundo usamos el mismo idioma. A medida que
 la web crece está siendo más común encontrar páginas disponibles
@@ -51,10 +51,72 @@ ver otra vez las páginas.  También le sugerimos que use lynx cuando
 haga pruebas. Es el único navegador que hemos encontrado que cumple al
 100% con las especificaciones HTTP para la negociación de contenido.</p>
 
+<H3>¿Qué valor debo asignar a la variable?</H3>
+
+<P>Debido a que el idioma original de las páginas web de Debian es el
+inglés, y no todos los documentos puede que se encuentren traducidos a
+su idioma preferido, es una buena idea definir la variable de su idioma
+preferido de forma que permita el inglés como una opción de seguridad.
+Por ejemplo, si su idioma nativo es el francés y está usando lynx, usted
+debería poner la siguiente línea en su archivo <kbd>.lynxrc</kbd></p>
+
+<pre>
+preferred_language=fr; q=1.0, en; q=0.5
+</pre>
+
+<p>
+Esto le dice al servidor que a usted le agradaría la versión francesa del
+documento si está disponible, de lo contrario que use la versión en
+inglés.</p>
+
+<p>Algo con lo que ha de tener cuidado es el uso de subcategorías de
+idiomas.  El uso de 'en-GB, fr', por ejemplo, no produce lo que la mayoría
+de la gente espera (si no han leído las especificaciones del HTTP). Un
+servidor que recibe una petición de un documento con el idioma preferido
+'en-GB, fr' cuando ambas versiones existen, 'en' y 'fr', servirá la
+francesa. Solamente servirá el documento en inglés antes que en francés
+si existe una versión del fichero con la extensión 'en-gb'. Por lo tanto,
+usted debe configurar su navegador para el envío 'en-GB, en, fr' o
+simplemente 'en, fr'. También funciona de la forma inversa, por ejemplo,
+un servidor puede devolver en-us cuando se pide en.</p>
+
+<p><strong>Nosotros le recomendamos encarecidamente que usted no añada
+extensiones del país al idioma, a no ser que tenga una buena
+razón</strong>. Si usted añade una, asegúrese que también incluye el
+idioma sin la extensión.</p>
+
+<P>Para más información acerca de la configuración de la variable
+preferred_language vea la
+<a href="http://httpd.apache.org/docs/content-negotiation.html">
+documentación sobre la negociación de contenido de Apache</a>.</p>
+
+<h3><a name="cache">Problemas potenciales con servidores proxy</a></h3>
+
+<p>Esencialmente, un proxy (caché) es un servidor web que no tiene
+contenido propio. Se encuentra en el medio entre los usuarios y los
+servidores web reales. El proxy toma las peticiones de páginas web, trae
+la página y hace una copia local. Esto realmente puede disminuir el
+tráfico de la red cuando muchos usuarios piden la misma página.</p>
+
+<p>Es una gran idea la mayor parte de las veces, excepto cuando el
+proxy tiene fallos.  Particularmente, muchos proxy no entienden la
+negociación de contenido. Esto produce que guarden en el proxy la página
+en un idioma y sirvan ésa, aunque más tarde se pida otro idioma
+diferente. La única solución es conseguir una versión actualizada del
+software de cacheado o reemplazarlo por otro.</p>
+
+<p>Históricamente, solo se usaba un proxy cuando se configuraba el
+navegador a tal efecto. Este ya no es el caso. Su ISP (proveedor de
+servicios de Internet) puede estar redirigiendo todas las peticiones HTTP
+a través de un proxy transparente.  Si el proxy con controla correctamente
+la negociación de contenido, puede ser que el usuario reciba páginas ya
+almacenadas en el idioma equivocado.  La única manera de corregir esto es
+quejarse a su ISP de manera que actualicen o cambien su software.</p>
+
 <h3><a name="setting">Establecimiento del idioma preferente en un
   navegador</a></h3>
 
-<P>Nota: la siguiente lista no está completa. Si usted posee información
+<P>Si usted posee información
 sobre la configuración de un navegador que no se encuentra en esta lista,
 por favor envíela a
 <a href="mailto:debian-www@listsdebian.org">debian-www@lists.debian.org</a>.</p>
@@ -120,63 +182,3 @@ o usando el paquete custom (asumiendo la versión p4.0pre.14 de URL)
      Options (o) -&gt; Other Behavior -&gt; Accept-Language
 </pre>
 </DL>
-
-
-<H3>¿Qué valor debo asignar a la variable?</H3>
-
-<P>Debido a que el idioma original de las páginas web de Debian es el
-inglés, y no todos los documentos puede que se encuentren traducidos a
-su idioma preferido, es una buena idea definir la variable de su idioma
-preferido de forma que permita el inglés como una opción de seguridad.
-Por ejemplo, si su idioma nativo es el francés y está usando lynx, usted
-debería poner la siguiente línea en su archivo <kbd>.lynxrc</kbd></p>
-<pre>
-preferred_language=fr; q=1.0, en; q=0.5
-</pre>
-Esto le dice al servidor que a usted le agradaría la versión francesa del
-documento si está disponible, de lo contrario que use la versión en
-inglés.</p>
-
-<p>Algo con lo que ha de tener cuidado es el uso de subcategorías de
-idiomas.  El uso de 'en-GB, fr', por ejemplo, no produce lo que la mayoría
-de la gente espera (si no han leído las especificaciones del HTTP). Un
-servidor que recibe una petición de un documento con el idioma preferido
-'en-GB, fr' cuando ambas versiones existen, 'en' y 'fr', servirá la
-francesa. Solamente servirá el documento en inglés antes que en francés
-si existe una versión del fichero con la extensión 'en-gb'. Por lo tanto,
-usted debe configurar su navegador para el envío 'en-GB, en, fr' o
-simplemente 'en, fr'. También funciona de la forma inversa, por ejemplo,
-un servidor puede devolver en-us cuando se pide en.</p>
-
-<p><strong>Nosotros le recomendamos encarecidamente que usted no añada
-extensiones del país al idioma, a no ser que tenga una buena
-razón</strong>. Si usted añade una, asegúrese que también incluye el
-idioma sin la extensión.</p>
-
-<P>Para más información acerca de la configuración de la variable
-preferred_language vea la
-<a href="http://httpd.apache.org/docs/content-negotiation.html">
-documentación sobre la negociación de contenido de Apache</a>.</p>
-
-<h3><a name="cache">Problemas potenciales con servidores proxy</a></h3>
-
-<p>Esencialmente, un proxy (caché) es un servidor web que no tiene
-contenido propio. Se encuentra en el medio entre los usuarios y los
-servidores web reales. El proxy toma las peticiones de páginas web, trae
-la página y hace una copia local. Esto realmente puede disminuir el
-tráfico de la red cuando muchos usuarios piden la misma página.</p>
-
-<p>Es una gran idea la mayor parte de las veces, excepto cuando el
-proxy tiene fallos.  Particularmente, muchos proxy no entienden la
-negociación de contenido. Esto produce que guarden en el proxy la página
-en un idioma y sirvan ésa, aunque más tarde se pida otro idioma
-diferente. La única solución es conseguir una versión actualizada del
-software de cacheado o reemplazarlo por otro.</p>
-
-<p>Históricamente, solo se usaba un proxy cuando se configuraba el
-navegador a tal efecto. Este ya no es el caso. Su ISP (proveedor de
-servicios de Internet) puede estar redirigiendo todas las peticiones HTTP
-a través de un proxy transparente.  Si el proxy con controla correctamente
-la negociación de contenido, puede ser que el usuario reciba páginas ya
-almacenadas en el idioma equivocado.  La única manera de corregir esto es
-quejarse a su ISP de manera que actualicen o cambien su software.</p>
