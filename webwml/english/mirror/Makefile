@@ -13,7 +13,8 @@ include $(WMLBASE)/Make.common
 
 MFILES := ftpsync ftpsync.conf websync websync.conf \
 	identity.pub.master.ftp identity.pub.master.web \
-	anonftpsync anonwebsync
+	anonftpsync anonwebsync \
+	ftpsync-non-US ftpsync-non-US.conf identity.pub.non-US.ftp
 MIRROR_FILES := $(patsubst %,$(HTMLDIR)/%,$(MFILES))
 
 install:: $(MIRROR_FILES)
@@ -28,12 +29,18 @@ $(HTMLDIR)/ftpsync: ftpsync
 	cp ftpsync $(HTMLDIR)
 $(HTMLDIR)/ftpsync.conf: ftpsync.conf
 	cp ftpsync.conf $(HTMLDIR)
+$(HTMLDIR)/ftpsync-non-US: ftpsync-non-US
+	cp ftpsync-non-US $(HTMLDIR)
+$(HTMLDIR)/ftpsync-non-US.conf: ftpsync-non-US.conf
+	cp ftpsync-non-US.conf $(HTMLDIR)
 $(HTMLDIR)/websync: websync
 	cp websync $(HTMLDIR)
 $(HTMLDIR)/websync.conf: websync.conf
 	cp websync.conf $(HTMLDIR)
 $(HTMLDIR)/identity.pub.master.ftp: identity.pub.master.ftp
 	cp identity.pub.master.ftp $(HTMLDIR)
+$(HTMLDIR)/identity.pub.non-US.ftp: identity.pub.non-US.ftp
+	cp identity.pub.non-US.ftp $(HTMLDIR)
 $(HTMLDIR)/identity.pub.master.web: identity.pub.master.web
 	cp identity.pub.master.web $(HTMLDIR)
 $(HTMLDIR)/anonftpsync: anonftpsync
