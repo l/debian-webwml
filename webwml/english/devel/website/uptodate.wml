@@ -1,78 +1,74 @@
-#use wml::debian::template title="Keeping translations up-to-date"
+#use wml::debian::template title="Keeping web site translations up-to-date"
 
 <P>Since web pages aren't static, it is a good idea to keep track of which
 version of the original a certain translation refers to, and to use this
 information to check which pages have changed since the last translation.
-To aid with this, the script <code>check_trans.pl</code> is available in
-the webwml directory.
+This information should be embedded at the top of the document in this form:
 
-<P>The script relies on the translated wml file containing information on
-which version of the original it is a translation of.
-This information should be embedded somewhere in the document in the form
-<code>&lt;!--translation <var>x.x</var>--&gt;</code> where <var>x.x</var>
-is the version of the original (English).
-The string should be written on its own line in the wml file, optionally
-prefixed by a <code>#</code> (wml comment) so it isn't added it to the final
-HTML file.
+<ul><pre>
+\#use wml::debian::translation-check translation="X.x"
+</pre></ul>
 
-<P>If you run <code>check_trans.pl <var>language</var></code> (replace
-<var>language</var> with the directory name that contains your translation,
-like "swedish") you will get a report on pages that lack translation (shown
-as "<code>Missing <var>filename</var></code>") and pages that are not
-up-to-date (shown as "<code>NeedToUpdate <var>filename</var> to version
-<var>x.x</var></code>").
+where <var>X.x</var> is the CVS version number of the original (English).
+You can get this number looking in CVS/Entries which is in the format:
+<tt>/file_name/X.x/date//</tt>. You can also get it by running
+<code>cvs status file_name</code> in the English source directory.
 
-<P>If you want to see what the exact changes are, you can get the
-differences by running <code>check_trans.pl -d <var>language</var></code>.
-Please note that this can take a while since it can include several accesses
-to the CVS server.
+<P>This is also useful because some translations may not get updated for
+quite some time, even though the original language (English) does. Due to
+content negotiation, the reader of the translated language may not be aware
+of this and might miss important information, introduced in new versions of
+the original. The <code>translation-check</code> template contains code to
+check if your translation is outdated, and output appropriate message
+warning the user about it.
 
-<P>If you want to ignore warnings on missing pages (for instance old news
-items), you can create a file called <code>.transignore</code> in the
-directory where you want to suppress the warnings, listing each file that
-you are not going to translate, with one name per line.
-
-<H2>Proposal:Checking if translations are out of date</H2>
-<P>
-Currently some translations do not get checked for quite some time
-while they are being actively changed in the original language
-(English). However, due to content negotiation, the reader of
-the translated language will not be aware of this and might fail
-to read important information.
-</P>
-<P>Currently there is a proposal on the works, that might be able
-to fix this. There is a file (<code>english/template/debian/translation-check</code> which implements this, however crudely. This proposal was made
-by Javier Fernández-Sanguino around last week of august 1999, please also check
-the mailing list archives for more information on this proposal.
-<P>
-To use it you must add <code>#use wml::debian::translation-check translation="x.x"</code> where <em>x.x</em> is the CVS version of the document you translated from,
-you can get this number looking in CVS/Entries which is in the format:
-<code>/file_name/x.x/date//</code>,
-or by doing  a <code>cvs status file_name</code> in the English source directory.
-
-<P>
-There are also some additional parameters that you can use on the
+<P>There are also some additional parameters that you can use on the
 <code>#use</code> line:
 
-<dl>
+<blockquote><dl>
  <dt><code>original="<em>language</em>"</code>
  <dd>where <em>language</em> is the name of the language you are translating
  from, if not english.
  The name must correspond to the top-level subdirectory in the CVS, and to
- the name in <code>languages.wml</code>.
+ the name in <code>languages.wml</code> template.
 
  <dt><code>mindelta="<em>number</em>"</code>
  <dd>which defines the maximum difference in CVS revisions before the
  translation is considered aged.
- The default value is <em>2</em>.
- For important pages, set it to <em>1</em>, which means that every change is
+ The default value is <b>2</b>.
+ For important pages, set it to <b>1</b>, which means that every change is
  considered making the translation aged.
 
  <dt><code>maxdelta="<em>number</em>"</code>
  <dd>which defines the maximum difference in CVS revisions before the
  translation is considered to be outdated.
- The default value is <em>5</em>.
+ The default value is <b>5</b>.
  For very important pages, set it to be less.
- A value of <em>1</em> means that every change is considered making the
+ A value of <b>1</b> means that every change is considered making the
  translation outdated.
-</dl>
+</dl></blockquote>
+
+<P>Additionally, the script <code>check_trans.pl</code> is available in the
+webwml/ directory, which will show you a report on pages needing updates:
+
+<ul><pre>
+check_trans.pl <var>language</var>
+</pre></ul>
+
+where <var>language</var> is the directory name that contains your
+translation, e.g. "swedish".
+
+Pages that lack translation will be shown as
+"<code>Missing <var>filename</var></code>", and pages that are not up to
+date with the original will be shown as
+"<code>NeedToUpdate <var>filename</var> to version <var>x.y</var></code>".
+
+<P>If you want to see what the exact changes are, you can get the
+differences by adding <code>-d</code> command line option to the above
+command. Please note that this can take a while since it can include
+several accesses to the CVS server.
+
+<P>If you want to ignore warnings on missing pages (for instance old news
+items), you can create a file called <code>.transignore</code> in the
+directory where you want to suppress the warnings, listing each file that
+you are not going to translate, with one name per line.
