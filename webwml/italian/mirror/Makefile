@@ -1,4 +1,4 @@
-# This Makefile should need no changes from webwml/english/devel/mirror/Makefile
+# This Makefile should need no changes from webwml/english/mirror/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
@@ -8,46 +8,32 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-MFILES := ftpsync ftpsync.conf websync websync.conf \
+# there only needs to be one version of the following so
+# the non-english directories shouldn't try to install them
+ifeq "$(LANGUAGE)" "en"
+
+# Note: the masterlist file is kept private since it contains e-mail addresses
+mirrorstuff := ftpsync ftpsync.conf websync websync.conf \
 	identity.pub.master.ftp identity.pub.master.web \
 	anonftpsync anonwebsync \
 	ftpsync-non-US ftpsync-non-US.conf identity.pub.non-US.ftp
-#	anonftpsync anonwebsync Mirrors.masterlist \
-MIRROR_FILES := $(patsubst %,$(HTMLDIR)/%,$(MFILES))
+destmirrorstuff := $(patsubst %,$(HTMLDIR)/%,$(mirrorstuff))
 
-install:: $(MIRROR_FILES)
+install:: $(destmirrorstuff)
+
+$(destmirrorstuff): $(mirrorstuff)
+	install -m 664 -p $(@F) $(HTMLDIR)
 
 cleandest::
-	-rm -f $(HTMLDEST)/{$(MIRROR_FILES)}
+	rm -f $(destmirrorstuff)
 
-
-# there only needs to be one version of the following so
-# the non-english directories shouldn't try to install them
-ifeq ($(LANGUAGE),en)
-$(HTMLDIR)/ftpsync: ftpsync
-	cp ftpsync $(HTMLDIR)
-$(HTMLDIR)/ftpsync.conf: ftpsync.conf
-	cp ftpsync.conf $(HTMLDIR)
-$(HTMLDIR)/ftpsync-non-US: ftpsync-non-US
-	cp ftpsync-non-US $(HTMLDIR)
-$(HTMLDIR)/ftpsync-non-US.conf: ftpsync-non-US.conf
-	cp ftpsync-non-US.conf $(HTMLDIR)
-$(HTMLDIR)/websync: websync
-	cp websync $(HTMLDIR)
-$(HTMLDIR)/websync.conf: websync.conf
-	cp websync.conf $(HTMLDIR)
-$(HTMLDIR)/identity.pub.master.ftp: identity.pub.master.ftp
-	cp identity.pub.master.ftp $(HTMLDIR)
-$(HTMLDIR)/identity.pub.non-US.ftp: identity.pub.non-US.ftp
-	cp identity.pub.non-US.ftp $(HTMLDIR)
-$(HTMLDIR)/identity.pub.master.web: identity.pub.master.web
-	cp identity.pub.master.web $(HTMLDIR)
-$(HTMLDIR)/anonftpsync: anonftpsync
-	cp anonftpsync $(HTMLDIR)
-$(HTMLDIR)/anonwebsync: anonwebsync
-	cp anonwebsync $(HTMLDIR)
-# the masterlist is kept private since it contains email addresses
-# Don't like this decision? Discuss it on debian-www
-#$(HTMLDIR)/Mirrors.masterlist: Mirrors.masterlist
-#	cp Mirrors.masterlist $(HTMLDIR)
+.PHONY: text html
+text: mirror_list.pl Mirrors.masterlist
+	@./mirror_list.pl -m Mirrors.masterlist -t text
+html: mirror_list.pl Mirrors.masterlist
+	@./mirror_list.pl -m Mirrors.masterlist -t html
+full: mirror_list.pl Mirrors.masterlist
+	@./mirror_list.pl -m Mirrors.masterlist -t methods
+nonus: mirror_list.pl Mirrors.masterlist
+	@./mirror_list.pl -m Mirrors.masterlist -t nonus
 endif

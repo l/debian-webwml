@@ -8,4 +8,3 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-
