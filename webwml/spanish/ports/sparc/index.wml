@@ -1,5 +1,5 @@
 #use wml::debian::template title="Migración a SPARC" NOHEADER="yes"
-#use wml::debian::translation-check translation="1.22"
+#use wml::debian::translation-check translation="1.23"
 #include "$(ENGLISHDIR)/ports/sparc/menu.inc"
 
 <h1>Migración de Debian a SPARC</h1>
@@ -7,6 +7,10 @@
 <ul>
  <li><a href="#intro">Introducción</a>
  <li><a href="#status">Estado actual</a>
+ <li><a href="#64bit">Sobre el soporte de SPARC 64-bit</a>
+ <ul compact>
+   <li><a href="#kernelsun4u">Compilar núcleos para sun4u</a>
+ </ul>
  <li><a href="#errata">Erratas</a>
  <li><a href="#who">¿Quiénes somos? ¿Cómo puedo ayudar?</a>
  <li><a href="#links">¿Dónde puedo encontrar más información?</a>
@@ -36,17 +40,37 @@ que se han hecho en la cadena de herramientas de GNU nos está
 permitiendo mantener todos las migraciones de Debian sincronizadas.
 
 
-<h3>Sobre el soporte para SPARC de 64-bits</h3>
+<h3><a name="64bit">Sobre el soporte para SPARC de 64-bits</a></h3>
   <p>
-El portado de Debian a SPARC y el <a href="../sparc64/">portado a
-UltraSPARC</a> (a.k.a. sparc64) se solapan un poco.  El portado de Debian
-a SPARC, como se ha mencionado antes, soporta la arquitectura Sun4u
-(«Ultra»). Usa un núcleo de 64 bits (compilado con una versión especial
+La adaptación de Debian a SPARC,
+tal como se mencionó antes, soporta la arquitectura Sun4u («Ultra»).
+Usa un núcleo de 64 bits (compilado con una versión especial
 del compilador <code>egcs</code>, llamado «egcs64»), pero la mayoría de
 las aplicaciones corren en 32 bits. A esto también se le llama «espacio
-de usuario de 32 bits». El <a href="../sparc64/">portado a UltraSPARC</a>
-está preocupado de conseguir un entorno puro de 64 bits.
+de usuario de 32 bits».
+  <p>
+La <a href="../sparc64/">adaptación a UltraSPARC</a> no se concibe en
+estos momentos como un esfuerzo completo de adaptación, como los otros. En
+lugar de eso, está pensado como <em>añadido</em> a la adaptación a SPARC.
+  <p>
+En realidad, no tiene sentido tener todas las aplicaciones ejecutándose en
+modo 64-bit. El modo 64-bit completo implica una sobrecarga significativa
+(en tamaño de memoria y disco), a menudo sin beneficio. Algunas
+aplicaciones se pueden beneficiar realmente de ejecutarse en 64-bit, y ése
+es el propósito de este esfuerzo de adaptación.
 
+<h3><a name="kernelsun4u">Compilar núcleos para sun4u</a></h3>
+  <p>
+Para compilar un núcleo de Linux para Sun4u, necesitará usar el árbol de
+fuentes de Linux 2.2 u otro más moderno. También debe instalar el paquete
+<tt>egcs64</tt>.
+  <p>
+Le sugerimos que use el paquete <tt>kernel-package</tt> como ayuda a la
+instalación y gestión de núcleos. Puede compilar un núcleo previamente
+configurado con una sola orden (siendo root):
+<pre>
+  make-kpkg --subarch=sun4u --arch_in_name --revision=custom.1 kernel_image
+</pre>
 
 <h2><a name="errata">Erratas</a></h2>
   <p>
@@ -100,22 +124,10 @@ También hay una lista de RedHat, por supuesto.
 Esta es una pequeña lista de enlaces de Linux SPARC (a.k.a. ``S/Linux''):
  <ul>
       <li>
-<a href="../sparc64/">Portado de Debian a UltraSPARC</a>
-      <li>
 <a href="http://www.ultralinux.org/">UltraLinux</a> -- la fuente definitiva
 sobre el portado del núcleo. No se sienta decepcionado por el nombre;
 cubre en realidad SPARC en general más que UltraSPARC.
       <li>
-<!-- ¿debería relegarse a ../sparc64 ? --> <a
-href="http://ultra.penguin.cz/">UltraPenguin</a> -- una migración de S/Linux
+<a href="http://ultra.penguin.cz/">UltraPenguin</a> -- una adaptación de S/Linux
 al tipo de máquinas sun4u (`Ultra').
  </ul>
-
-
-#<!-- Keep this comment at the end of the file
-#Local variables:
-#mode: sgml
-#sgml-indent-data:nil
-#sgml-doctype:"../../releases/.doctype"
-#End:
-#-->
