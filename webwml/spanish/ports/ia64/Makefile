@@ -1,4 +1,4 @@
-# This Makefile should need no changes from webwml/english/ports/ia64/Makefile
+# This Makefile should need no change from webwml/english/ports/ia64/Makefile
 # Please send a message to debian-www if you need to modify anything, so the
 # problem can be fixed.
 
@@ -8,3 +8,4 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+$(HTMLFILES): menu.inc $(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml
