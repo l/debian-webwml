@@ -2,21 +2,21 @@
 
 <!-- BEGIN SECTION -->
 <h3><pkg-section main></h3>
-<template-table>
-<!-- DO NOT REMOVE THIS LINE: inc-main -->
-</template-table>
+<podebconf-table>
+<!-- DO NOT REMOVE THIS LINE: todo-main -->
+</podebconf-table>
 <!-- END SECTION -->
 
 <!-- BEGIN SECTION -->
 <h3><pkg-section contrib></h3>
-<template-table>
-<!-- DO NOT REMOVE THIS LINE: inc-contrib -->
-</template-table>
+<podebconf-table>
+<!-- DO NOT REMOVE THIS LINE: todo-contrib -->
+</podebconf-table>
 <!-- END SECTION -->
 
 <!-- BEGIN SECTION -->
 <h3><pkg-section non-free></h3>
-<template-table>
-<!-- DO NOT REMOVE THIS LINE: inc-non-free -->
-</template-table>
+<podebconf-table>
+<!-- DO NOT REMOVE THIS LINE: todo-non-free -->
+</podebconf-table>
 <!-- END SECTION -->

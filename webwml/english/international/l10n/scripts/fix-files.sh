@@ -8,21 +8,27 @@ shift; shift
 
 for code
 do
-    test -f $dir/main-$code.inc     || echo 'DELETE-ME' > $dir/main-$code.inc
-    test -f $dir/contrib-$code.inc  || echo 'DELETE-ME' > $dir/contrib-$code.inc
-    test -f $dir/non-free-$code.inc || echo 'DELETE-ME' > $dir/non-free-$code.inc
-    test -f $dir/main-$code.exc     || echo 'DELETE-ME' > $dir/main-$code.exc
-    test -f $dir/contrib-$code.exc  || echo 'DELETE-ME' > $dir/contrib-$code.exc
-    test -f $dir/non-free-$code.exc || echo 'DELETE-ME' > $dir/non-free-$code.exc
+    test -f $dir/main-$code.todo     || echo 'DELETE-ME' > $dir/main-$code.todo
+    test -f $dir/contrib-$code.todo  || echo 'DELETE-ME' > $dir/contrib-$code.todo
+    test -f $dir/non-free-$code.todo || echo 'DELETE-ME' > $dir/non-free-$code.todo
+    test -f $dir/main-$code.ok       || echo 'DELETE-ME' > $dir/main-$code.ok
+    test -f $dir/contrib-$code.ok    || echo 'DELETE-ME' > $dir/contrib-$code.ok
+    test -f $dir/non-free-$code.ok   || echo 'DELETE-ME' > $dir/non-free-$code.ok
+    test -f $dir/main-$code.exc      || echo 'DELETE-ME' > $dir/main-$code.exc
+    test -f $dir/contrib-$code.exc   || echo 'DELETE-ME' > $dir/contrib-$code.exc
+    test -f $dir/non-free-$code.exc  || echo 'DELETE-ME' > $dir/non-free-$code.exc
 
     stat=`grep "^$code:" $dir/stats|sed 's/^.*://'`
 
     sed -e "s/@tmpl_lang@/$code/" \
         -e "s/@tmpl_lang_stats@/$stat/" \
         -e "s/href=\"tmpl\\./href=\"$code./" \
-        -e "/LINE: inc-main/r     $dir/main-$code.inc" \
-        -e "/LINE: inc-contrib/r  $dir/contrib-$code.inc" \
-        -e "/LINE: inc-non-free/r $dir/non-free-$code.inc" \
+        -e "/LINE: todo-main/r     $dir/main-$code.todo" \
+        -e "/LINE: todo-contrib/r  $dir/contrib-$code.todo" \
+        -e "/LINE: todo-non-free/r $dir/non-free-$code.todo" \
+        -e "/LINE: ok-main/r     $dir/main-$code.ok" \
+        -e "/LINE: ok-contrib/r  $dir/contrib-$code.ok" \
+        -e "/LINE: ok-non-free/r $dir/non-free-$code.ok" \
         -e "/LINE: exc-main/r     $dir/main-$code.exc" \
         -e "/LINE: exc-contrib/r  $dir/contrib-$code.exc" \
         -e "/LINE: exc-non-free/r $dir/non-free-$code.exc" \
