@@ -46,7 +46,7 @@ foreach $l (<ADV>) {
   if ($l =~ /^(Problem type|Vulnerability)\s*: (.+)/) {
     $desc = $2;
   }
-  if ($l =~ /^(CVE (names?|id|references?)?|CERT advisor(y|ies))\s*: (.+)/i) {
+  if ($l =~ /^(CVE (names?|ids?|references?)?|CERT advisor(y|ies))\s*: (.+)/i) {
     push @dbids, $4;
   }
   if ($l =~ /^Bugtraq Id\s*: (.+)/i) {
