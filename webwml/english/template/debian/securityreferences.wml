@@ -72,3 +72,69 @@ sub security_references {
 	return $str;
 }
 </perl>
+
+
+# Only used in the nonvulns-* pages
+<define-tag nonvulns>
+<:
+sub secrefs
+{
+    my $refstr = shift;
+    my $result = '';
+
+    my $bid = bid_secref($refstr);
+    my $cve = cve_secref($refstr);
+    my $cert = cert_secref($refstr);
+
+    $result .= $bid if (length ($bid));
+    $result .= ", " if $result ne "";
+    $result .= $cve if (length ($cve));
+    $result .= ", " if $result ne "";
+    $result .= $cert if (length ($cert));
+
+    return $result;
+}
+
+    my $id = '';
+    my %ref = ();
+    my %text = ();
+    if (open (NV, "$(ENGLISHDIR)/security/nonvulns-%0.src")) {
+	while (<NV>) {
+	    next if (/^(#|\s)\s*$/);
+	    if (/^((CVE-|CAN-|VU#|CA-|BID)\S+)\s*/) {
+		$id = $1;
+	    } elsif (/^\s+((CVE-|CAN-|VU#|CA-|BID).*\S)\s*$/) {
+		$ref{$id} .= " " . $1;
+	    } elsif (/^\s+(.*)$/) {
+		$text{$id} .= $1 . "\n";
+	    }
+	}
+	close (NV);
+    }
+
+    if (open (NV, "nonvulns-%0.src")) {
+	while (<NV>) {
+	    next if (/^(#|\s)\s*$/);
+	    if (/^((CVE-|CAN-|VU#|CA-|BID)\S+)\s*/) {
+		$id = $1;
+		$text{$id} = '';
+	    } elsif (/^\s+((CVE-|CAN-|VU#|CA-|BID).*\S)\s*$/) {
+		# ignore
+	    } elsif (/^\s+(.*)$/) {
+		$text{$id} .= $1 . "\n";
+	    }
+	}
+	close (NV);
+    }
+
+    my $url;
+    my @urls;
+    my ($bid, $cve, $cert);
+    foreach $id (sort keys %text) {
+	printf "<p><a name=\"%s\" href=\"%s\">%s</a>:\n", $id, $url, $id;
+	printf "%s\n", $text{$id};
+	printf "(%s)\n", secrefs($ref{$id}) if (exists $ref{$id});
+	print  "</p>\n\n";
+    }
+:>
+</define-tag>
