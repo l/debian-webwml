@@ -25,7 +25,10 @@ unless (-d 'english' && getopts('d'))
 }
 
 # Recurse.
-&recurse('.');
+my $files = &recurse('.') || 'No';
+print "\n$files stale translations found.\n";
+print "Use -d option to remove files.\n"
+	if $files ne 'No' && !$opt_d;
 
 # Done.
 exit;
@@ -37,7 +40,7 @@ sub recurse
 	my $directory = shift;
 
 	# Don't try to do anything in the WNPP and l10n directories.
-	return if $directory =~ /wnpp$/ or $directory =~ /l10n$/;
+	return 0 if $directory =~ /wnpp$/ or $directory =~ /l10n$/;
 
 	# Load all entries for this directory.
 	opendir THISDIR, $directory
@@ -67,6 +70,7 @@ sub recurse
 	# Locate all HTML files, and find out which ones do not correspond
 	# to a WML file, and does not live in the CVS by itself.
 	my @subdirs = ();
+	my $count = 0;
 	my $direntry;
 	foreach $direntry (@entries)
 	{
@@ -98,6 +102,7 @@ sub recurse
 			unless ($haswml || $incvs)
 			{
 				# File has no reason for being here.
+				$count ++;
 
 				# Name of file installed by make install.
 				my $installed = $direntry;
@@ -106,16 +111,20 @@ sub recurse
 				# Remove or report.
 				if ($opt_d)
 				{
-					print "$direntry is stale ... removing\n";
+					if (-f $installed)
+					{
+						print "Removing $installed\n";
+						unlink $installed
+							or die "Unable to remove $installed: $!\n";
+					}
+
+					print "Removing $direntry\n";
 					unlink $direntry
 						or die "Unable to remove $direntry: $!\n";
-					print "  also removing $installed\n";
-					unlink $installed
-						or die "Unable to remove $installed: $!\n";
 				}
 				else
 				{
-					print "$direntry is stale (use -d to remove)\n";
+					print "$direntry is stale\n";
 					print "  installed file is $installed\n";
 					print " (does not exist)\n"
 						unless -f $installed;
@@ -132,6 +141,8 @@ sub recurse
 	my $subdir;
 	foreach $subdir (@subdirs)
 	{
-		recurse($subdir);
+		$count += recurse($subdir);
 	}
+
+	return $count;
 }
