@@ -1,0 +1,216 @@
+#use wml::debian::template title="Debian GNU/NetBSD" BARETITLE="yes" NOHEADER="yes"
+#use wml::fmt::verbatim
+#include "$(ENGLISHDIR)/ports/netbsd/menu.inc"
+#use wml::debian::translation-check translation="1.17" maintainer="Thomas Marteau"
+{#style#:
+<style type="text/css">
+    .update {
+	color:		red;
+	background:	inherit;
+	font-weight:	bold;
+    }
+</style>
+:##}
+
+<define-tag update endtag=required>
+  <p><span class="update">MISE À JOUR&nbsp;: </span>
+    %body
+  </p>
+</define-tag>
+
+
+#############################################################################
+<h1>
+Debian GNU/NetBSD
+</h1>
+
+<p>
+Debian GNU/NetBSD est le portage du système d'exploitation de Debian sur
+un noyau NetBSD. Bien qu'il soit au stade primitif de développement, il peut 
+être installé sur une machine vierge.
+</p>
+
+<p>
+<a href="http://www.srcf.ucam.org/debian-netbsd/floppies">
+Téléchargez les disquettes d'installtion expérimentales</a> (dernière 
+mise à jour le 6 octobre 2002)
+</p>
+
+<p>
+<a href="why">Pourquoi Debian GNU/NetBSD&nbsp;?</a>
+</p>
+
+<h2>
+Comment l'installer
+</h2>
+
+<p>
+Téléchargez les images des disquettes depuis le lien ci-dessus. Pour les 
+ordinateurs portables, utilisez l'image prévue à cet effet&nbsp;- pour les 
+autres machines, utilisez celles normales. Copiez ces images sur disquette. 
+Démarrez sur la première disquette&nbsp;- le système vous demandera de changer 
+de disquettes. Une fois le menu à l'écran, suivez les instructions qui 
+s'affichent.
+</p>
+
+<h2>
+À FAIRE
+</h2>
+
+<p>
+Paquets qu'il faut produire
+</p>
+
+<ul>
+<li>
+toute bibliothèque de <kbd>/lib</kbd> ou de <kbd>/usr/lib</kbd> qui n'est 
+pas empaquetée est sur cette liste&nbsp;;
+</li>
+<li>
+  base-passwd est désespérément mécontent&nbsp;; 
+  <update>
+    Nous avons maintenant un base-passwd basique mais opérationnel pour 
+    FreeBSD et NetBSD (modulo une erreur de segmentation). Merci à Nathan et 
+    à Matthew.              
+  </update>
+</li>
+<li>des équivalents de console-tools/data sont nécessaires&nbsp;;
+    <update>
+      Des pquets qui fournissent la fonctionnalité de base sont disponibles.
+    </update>
+</li>
+<li>
+netbase doit être revisité. C'est surement l'un des plus bizarres&nbsp;- 
+nous avons les sources pour les versions BSD de ifconfig et autres mais les 
+sémantiques sont  tout de même différentes. Si nous restons avec celle de BSD, 
+nous aurons à faire face à des scripts qui parlent de la manière Linux. 
+Est-ce-que le Hurd suit le style Linux et sinon comment ont-ils géré ce 
+point&nbsp;?&nbsp;;
+  <update>
+     Marcus Brinkmann de l'équipe Hurd
+     <a href="http://lists.debian.org/debian-bsd/2002/debian-bsd-200202/msg00087.html">
+     a clarifié</a> ceci un minimum et a esquissé les solutions possibles. 
+     L'approche actuelle est d'utiliser les outils de NetBSD et de modifier 
+     ifupdown pour que l'interface utilisateur reste identique.
+  </update>
+</li>
+<li>procps (probablement la meilleure solution de fournir la version 
+BSD)&nbsp;;
+</li>
+<li>sysklogd 
+  (nous pourrions utiliser <a
+  href="http://packages.debian.org/msyslog">msyslog</a> à la place)&nbsp;;
+
+  <update>
+     <a href="http://packages.debian.org/msyslog">msyslog</a> fonctionne sur 
+     NetBSD (modulo quelques soucis pour les chemins de fichiers)
+  </update>
+</li>
+<li>sysvinit 
+  (La phase d'initialisation de BSD ne supporte pas les <i>runlevels</i>. 
+  Nous pouvons facilement le modifier pour que Debian fonctionne qu'avec un 
+  seul niveau d'exécution sans trop de problème)&nbsp;;
+  <update>
+    sysvinit est prêt et opérationnel, Matthew a réussi de démarrer en natif 
+    sur Debian GNU/NetBSD pour i386&nbsp;! Il reste quelques soucis avec 
+    les scripts de démarrage mais c'est une étape importante vers un système 
+    totalement opérationnel.
+  </update>
+</li>
+<li><a href="http://packages.debian.org/fakeroot">fakeroot</a>&nbsp;;
+  <update>
+    Fakeroot fonctionne maintenant.
+  </update>
+</li>
+<li>XFree86 
+    (Nathan est à la tâche dessus en ce moment et a découvert que 
+    <a href="http://packages.debian.org/ed">ed</a> est nécessaire mais 
+    il fait des erreurs de segmentation. Plusieurs personnes travaillent 
+    sur la résolution de ce point)&nbsp;;
+    <update>
+        ed est opérationnel quand il est construit contre libed.a. Aussi, 
+        selon Joel&nbsp;:
+	<q>X11 est dans un état exploitable</q>&nbsp;! Il n'est pas 
+        empaqueté proprement mais il fonctionne. Les paquets arrivent bientôt.
+    </update>
+</li>
+<li>gcc-3.0
+    (Neither gcc-3.0.1 nor gcc-current are in a usable state for
+    NetBSD at the moment.  Joel has a working version of gcc-current
+    and posted the <a
+    href="http://lists.debian.org/debian-bsd/2002/debian-bsd-200202/msg00137.html">results
+    of the test suite</a>.  libstdc++ is still very unhappy.)
+
+    <update>
+        gcc-3.0.4 has been released and now <a
+        href="http://gcc.gnu.org/gcc-3.0/features.html">supports
+        NetBSD ELF systems</a> (at least for the x86 target).
+    </update>
+</li>
+<li>How to handle architectures?<br />
+    There is currently an on-going <a
+    href="http://lists.debian.org/debian-bsd/2002/debian-bsd-200202/msg00033.html">discussion</a>
+    on the mailing list about Marcus Brinkmann's <a
+    href="http://master.debian.org/~brinkmd/arch-handling.txt">arch-handling
+    proposal</a>.
+</li>
+</ul>
+
+
+<h2>
+Ressources
+</h2>
+
+<ul>
+<li><a href="$(HOME)/">Debian</a>&nbsp;;</li>
+
+<li><a href="http://www.netbsd.org/">NetBSD</a>&nbsp;;</li>
+
+<li>
+<a href="http://www.srcf.ucam.org/debian-netbsd/">
+L'archive de paquets pour <i>apt-get</i> de Matthew</a>&nbsp;;
+</li>
+
+<li>
+<a href="http://debian-bsd.lightbearer.com/">L'archive de paquets pour 
+<i>apt-get</i> de Joel</a> pour FreeBSD et NetBSD&nbsp;;
+</li>
+
+<li>
+<a href="ftp://trantor.utsl.org/pub/">A FreeBSD based chroot
+environment and some packages</a>
+</li>
+
+<li>
+<a href="http://debian-bsd.lightbearer.com/debian-gnu-freebsd.tar.bz2">Another
+FreeBSD chroot tarball</a> and <a
+href="http://debian-bsd.lightbearer.com/kernel-ext2.tar.gz">kernel
+with ext2 support</A>, both built by 
+<a href="mailto:zeratul2@wanadoo.es">Robert Millan</a>.
+</li>
+
+<li>
+<a href="http://master.debian.org/~dexter/debian-freebsd/">Debian
+GNU/FreeBSD packages</a> (very old, based on FreeBSD-3.3 and slink)
+</li>
+</ul>
+
+<p>
+There is a Debian GNU/*BSD mailing list. Send email to
+<a href="mailto:debian-bsd-request@lists.debian.org?subject=subscribe">\
+debian-bsd-request@lists.debian.org</a> with subscribe as the subject in
+order to join. Archives are available at
+<url "http://lists.debian.org/debian-bsd/">.
+</p>
+
+<hr />
+<p>
+To contact the Debian GNU/NetBSD team, send email to <a
+href="mailto:debian-bsd@lists.debian.org">debian-bsd@lists.debian.org</a>.
+Comments, questions, or suggestions regarding our section of Debian's
+website are also welcome at that address.
+</p>
+
+## Local variables:
+## sgml-default-doctype-name: "HTML"
+## End:
