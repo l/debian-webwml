@@ -13,7 +13,8 @@ install::
 	install -m 664 -p apt-get-mini-COMO.html apt-get-mini-COMO.sgml \
 	 apt-guia-usuarios.sgml mitos-debian.html mitos-debian.sgml\
 	paqifaz.html paqifaz.sgml paqifaz.txt paquetes.html \
-	presentacion-debian.tex tabla-historia.txt $(HTMLDIR)
+	presentacion-debian.tex tabla-historia.txt \
+	euro-howto.txt $(HTMLDIR)
 
 
 cleandest::
@@ -22,7 +23,7 @@ cleandest::
 	$(HTMLDIR)/mitos-debian.html $(HTMLDIR)/mitos-debian.sgml  \
 	$(HTMLDIR)/paqifaz.html $(HTMLDIR)/paqifaz.sgml $(HTMLDIR)/paqifaz.txt \
 	$(HTMLDIR)/paquetes.html $(HTMLDIR)/presentacion-debian.tex \
-	$(HTMLDIR)/tabla-historia.txt
+	$(HTMLDIR)/tabla-historia.txt $(HTMLDIR)/euro-howto.txt
 
 # SGML files:
 # build with sgml2html -c latin --split=0 -l es
