@@ -403,7 +403,7 @@ sub check_file {
         $docname =~ s#\.wml$##;
 	unless (-r $name) {
 		(my $iname = $name) =~ s/^$to\///;
-		if ($globtrans->is_global($iname)) {
+		if (!$globtrans->is_global($iname)) {
 		  unless (($opt_q) || ($opt_Q)) {
                      if ($opt_t eq 'perl') {
   	               print "'$docname' => {\n\t'type' => 'Web',\n";
