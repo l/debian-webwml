@@ -8,4 +8,4 @@ SUBS=reference-manual extra-files
 
 include $(WMLBASE)/Make.lang
 
-$(HTMLFILES): menu.inc $(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml
+$(HTMLFILES): $(ENGLISHSRCDIR)/ports/hurd/menu.inc $(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml
