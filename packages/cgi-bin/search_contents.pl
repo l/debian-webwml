@@ -136,11 +136,9 @@ foreach (@results) {
    }
 }
 
-my $numpages = floor($number / $results_per_page);
+my $numpages = ceil($number / $results_per_page);
 my $index_line = "";
 
-# this line has some bugs... search for sshd, it's on the second page, but
-# the `2' isn't displayed
 for (my $i = 1; $i <= $numpages; $i++) {
 	$index_line .= "<a href=\"$thisscript?page=$i&word=$keyword".
                     "&version=$version&arch=$arch&case=$case".
