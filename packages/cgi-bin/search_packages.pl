@@ -211,15 +211,27 @@ my @results = qx( $command );
 if (!@results) {
   my $keyword_esc = uri_escape( $keyword );
   my $printed = 0;
-  if ($searchon eq "names") {
-    print "<p><strong>Can't find that package, at least not in that distribution and on that architecture.</strong></p>\n";
+  if (($searchon eq "names") || ($searchon eq 'sourcenames')) {
+      if (($version_param eq 'all')
+	  && ($arch_param eq 'any')
+	  && ($releases_param eq 'all')) {
+	  print "<p><strong>Can't find that package.</strong></p>\n";
+      } else {
+	  print "<p><strong>Can't find that package, at least not in that distribution ($version_param, section $releases_param)".( $search_on_sources ? "" : " and on that architecture ($arch_param)" ).".</strong></p>\n";
+      }
 
     if ($exact) {
 	$printed = 1;
 	print "<p>You have searched only for exact matches of the package name. You can try to search for <a href=\"?exact=0&amp;searchon=$searchon&amp;version=$version_param&amp;case=$case&amp;release=$releases_param&amp;keywords=$keyword_esc&amp;arch=$arch_param\">package names that contain your search string</a>.</p>";
     }
   } else {
-    print "<p><strong>Can't find that string, at least not in that distribution and on that architecture.</strong></p>\n";
+      if (($version_param eq 'all')
+	  && ($arch_param eq 'any')
+	  && ($releases_param eq 'all')) {
+	  print "<p><strong>Can't find that string.</strong></p>\n";
+      } else {
+	  print "<p><strong>Can't find that string, at least not in that distribution ($version_param, section $releases_param) and on that architecture ($arch_param).</strong></p>\n";
+      }
 
     unless ($subword) {
 	$printed = 1;
