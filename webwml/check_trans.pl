@@ -125,7 +125,7 @@ unless (getopts('vgdqQm:s:p:ln:M'))
 	exit;
 }
 
-warn "Checking subtree $opt_s only\n" if $opt_v;
+warn "Checking subtree $opt_s only\n" if (($opt_v) && ($opt_s));
 
 # include only files matching $filename
 my $filename = $opt_p || '(\.wml$)|(\.html$)';
@@ -449,15 +449,22 @@ sub check_file {
 	my $str;
 	if (!$oldr) {
 	  $oldr = '1.1';
-	  $str = "Unknown status of $name (revision should be $revision)"
+	  if ($name !~ /$langto\/international\/$langto/i) {
+	    $str = "Unknown status of $name (revision should be $revision)";
+	  } else {
+	    warn "Ignoring $name\n" if $opt_v;
+	  }
 	} elsif ($oldr >> $revision) {
 	  $str = "Broken revision number $oldr for $name, it should be $revision";
 	} else {
 	  $str = "NeedToUpdate $name from version $oldr to version $revision";
 	}
 	$str .= " (maintainer: $translator)" if $translator;
-	$str .= "\n";
-	print $str unless $opt_Q;
+	if ($str) {
+	  $str .= "\n";
+	  print $str unless ($opt_Q);
+	}
+
 	$oldname = $name;
 	$oldname =~ s/^$to/$from/;
 
