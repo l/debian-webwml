@@ -305,11 +305,11 @@ END
 <tr>
   <td width="25%">$countryplain</td>
   <td width="25%" align="center"><code>$site</code></td>
-  <td width="25%"><a href="ftp://$site$mirror{$site}{method}{'archive-ftp'}">$mirror{$site}{method}{'archive-ftp'}</a></td>
+  <td width="25%"><a href="http://$site$mirror{$site}{method}{'archive-http'}">$mirror{$site}{method}{'archive-http'}</a></td>
 END
-          if (defined $mirror{$site}{method}{'nonus-ftp'}) {
+          if (defined $mirror{$site}{method}{'nonus-http'}) {
             print <<END;
-  <td width="25%"><a href="ftp://$site$mirror{$site}{method}{'nonus-ftp'}">$mirror{$site}{method}{'nonus-ftp'}</a></td>
+  <td width="25%"><a href="http://$site$mirror{$site}{method}{'nonus-http'}">$mirror{$site}{method}{'nonus-http'}</a></td>
 END
           } else {
             print <<END;
@@ -354,11 +354,11 @@ END
   <td>
 END
 	if ($site eq "ftp.us.debian.org") {
-	  die unless exists $mirror{$site}{includes}; # must be an error
+	  die "$site has no includes\n" unless exists $mirror{$site}{includes}; # must be an error
 	  my $numsubsites = @{ $mirror{$site}{includes} };
 	  my $snum = 0;
 	  foreach my $subsite (@{ $mirror{$site}{includes} }) {
-	    die "$subsite\n" unless exists $mirror{$subsite}{sponsor}; # must be an error
+	    die "$subsite has no sponsor\n" unless exists $mirror{$subsite}{sponsor}; # must be an error
 	    my $numsponsors = @{ $mirror{$subsite}{sponsor} };
 	    my $num = 0;
 	    foreach my $sponsor (@{ $mirror{$subsite}{sponsor} }) {
@@ -374,7 +374,7 @@ END
 	    print ", " unless ($snum >= $numsubsites);
 	  }
 	} else {
-	  die "$site\n" unless exists $mirror{$site}{sponsor}; # must be an error
+	  die "$site has no sponsor\n" unless exists $mirror{$site}{sponsor}; # must be an error
 	  my $numsponsors = @{ $mirror{$site}{sponsor} };
 	  my $num = 0;
 	  foreach my $sponsor (@{ $mirror{$site}{sponsor} }) {
