@@ -197,7 +197,7 @@ sub pmoreinfo {
     if ($info{maintainers}) {
 	my @uploaders = @{$d->{uploaders}};
 	foreach (@uploaders) {
-	    $_->[0] = encode_entities( $_->[0] );
+	    $_->[0] = encode_entities( $_->[0], '&<>' );
 	}
 	my ($maint_name, $maint_mail ) = @{shift @uploaders}; 
 	unless (@uploaders) {
