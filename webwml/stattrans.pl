@@ -206,7 +206,7 @@ foreach $lang (keys %langs) {
 print "\n" if ($config{'verbose'});
 
 # =============== Create HTML files ===============
-mkdir ($config{'htmldir'}, 0755) if (! -d $config{'htmldir'});
+mkdir ($config{'htmldir'}, 0775) if (! -d $config{'htmldir'});
 
 @sorted_english = sort (split (/ /, $wmlfiles{'english'}));
 
