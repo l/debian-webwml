@@ -4,8 +4,8 @@
 # the translation-check header to it. It also will create the
 # destination directory if necessary, and copy the Makefile from the source.
 
-# Written in 2000-2001 by peter karlsson <peter@softwolves.pp.se>
-# © Copyright 2000-2001 Software in the public interest, Inc.
+# Written in 2000-2002 by peter karlsson <peter@softwolves.pp.se>
+# © Copyright 2000-2002 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -24,7 +24,7 @@ unless ($number)
 
 # Locate advisory
 $number = "dsa-" . $number if $number !~ /^dsa-/;
-$year = 2001;
+$year = 2002;
 YEAR: while (-d "../../english/security/$year")
 {
 	last YEAR if -e "../../english/security/$year/$number.wml";
@@ -94,6 +94,7 @@ while (<SRC>)
 		s/We recommend that you upgrade your (.*) packages/Vi rekommenderar att du uppgraderar dina $1-paket/;
 		s/We recommend that you upgrade your (.*) package/Vi rekommenderar att du uppgraderar ditt $1-paket/;
 		s/buffer overflows?/buffertspill/;
+		s/format string vulnerability/formatsträngssårbarhet/;
 		s/This problem has been fixed/Detta problem har rättats/;
 		s/>local root exploit</>lokal rootattack</;
 		s/>remote root exploit</>fjärr-rootattack</;
