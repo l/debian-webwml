@@ -15,7 +15,10 @@ include $(WMLBASE)/Make.dep.templ
 include $(WMLBASE)/Make.dep.generic
 
 # Do Not modify the following line
-index.$(LANGUAGE).html: card.ps
+index.$(LANGUAGE).html: card.ps.gz
+
+card.ps.gz: card.ps
+	gzip  -c card.ps >card.ps.gz
 
 card.ps:  card.dvi
 	dvips card.dvi -o card.ps
