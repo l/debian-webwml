@@ -453,6 +453,7 @@ sub get_desc {
     if ( @_ == 5 ) {
 	( $self, $pkg_name, $v_str, $arch, $lang ) = @_;
 	$pkg = $self->get_pkg( $pkg_name );
+	return undef unless $pkg;
 	$md5 = $pkg->{versions}->{$v_str}->{$arch}->{'description-md5'};
     } elsif ( @_ == 3 ) {
 	( $self, $md5, $lang ) = @_;
@@ -460,15 +461,15 @@ sub get_desc {
 	warn; #DEBUG
 	return undef;
     }
+    
+    return undef unless $md5;
 
     my $desc;
     if ( $lang && ( $lang ne 'en' ) 
 	 && exists( $self->{desc}->{$md5}->{"description-".lc( $lang )} ) ) {
-	$desc = 
-	    $self->{desc}->{$md5}->{"description-".lc( $lang )};
+	$desc = $self->{desc}->{$md5}->{"description-".lc( $lang )};
     } else {
-	$desc = 
-	    $self->{desc}->{$md5}->{description};
+	$desc = $self->{desc}->{$md5}->{description};
     }
     return $desc;
 }
@@ -713,6 +714,8 @@ sub process_dep_list {
 	    } else {
 		push(@final_dep_list, [ $given_dep_strip, $dep_op, 
 					$dep_ver, $dep_archs, "(NOT AVAILABLE)" ] );
+		warn "W: package $given_dep_strip is not avilable but references by $pkg->{name}"
+		    if $self->{config}{verbose};
 	    }
 	}
 	push @$res, [ @final_dep_list ];
