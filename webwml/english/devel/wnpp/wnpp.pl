@@ -59,6 +59,7 @@ my ( %rfa, %orphaned, %rfabymaint, %rfp, %ita, %itp, %age,
      use integer;
      my $bugid = @{$entry->get('debbugsID')}[0];
      next if @{$entry->get('debbugsState')}[0] eq 'done';
+     next if @{$entry->get('debbugsState')}[0] eq 'archived';
      my $subject = @{$entry->get('debbugsTitle')}[0];
      # If a bug is merged with another, then only consider the youngest
      # bug and throw the others away.  This will weed out duplicates.
