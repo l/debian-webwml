@@ -17,7 +17,7 @@ MFILES := ftpsync ftpsync.conf websync websync.conf \
 	anonftpsync anonwebsync
 MIRROR_FILES := $(patsubst %,$(HTMLDIR)/%,$(MFILES))
 
-all: $(HTMLFILES) $(JPGDEST) $(MIRROR_FILES)
+all: $(HTMLFILES) $(IMGDEST) $(MIRROR_FILES)
 
 include $(BASE)/Make.dep.templ    
 include $(BASE)/Make.dep.generic

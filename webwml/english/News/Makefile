@@ -15,7 +15,7 @@ include $(BASE)/Make.lang
 # Comment out any lines for which the directory doesn't exist.
 # The '#' should be after the <tab> or the following lines won't
 # execute with some versions of make
-all: $(HTMLFILES) $(JPGDEST)
+all: $(HTMLFILES) $(IMGDEST)
 	( cd 1998 ; $(MAKE) )
 	( cd 1997 ; $(MAKE) )
 
