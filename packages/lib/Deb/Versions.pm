@@ -68,6 +68,8 @@ use Exporter;
 our @ISA = qw( Exporter );
 our @EXPORT = qw( version_cmp version_sort );
 
+our $VERSION = v1.0.0;
+
 sub version_cmp {
     my ( $ver1, $ver2 ) = @_;
 
@@ -122,9 +124,9 @@ sub _cmp_part {
 	    return $r;
 	}
 	$v1 =~ s/^(\d*)//o;
-	my $np1 = $1;
+	my $np1 = $1 || 0;
 	$v2 =~ s/^(\d*)//o;
-	my $np2 = $1;
+	my $np2 = $1 || 0;
 #	warn "$np1 <=> $np2 = ".($np1 <=> $np2)."\n";
 	if ( $np1 <=> $np2 ) {
 	    return $np1 <=> $np2;
