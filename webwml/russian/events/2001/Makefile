@@ -1,11 +1,10 @@
-# This Makefile should need no changes from webwml/english/events/2000/Makefile
+# This Makefile should need no changes from webwml/english/events/2001/Makefile
 # Please send a message to debian-www if you need to modify anything, so the
 # problem can be fixed.
 
 WMLBASE=../..
 CUR_DIR=events/2001
 SUBS=
-# expo vatech-if
 
 include $(WMLBASE)/Make.lang
 
