@@ -5,8 +5,8 @@
 # It also will create the destination directory if necessary, and copy the
 # Makefile from the source.
 
-# Written on 2000-02-26 by peter karlsson <peter@softwolves.pp.se>
-# © Copyright 2000-2001 Software in the public interest, Inc.
+# Originally written 2000-02-26 by peter karlsson <peterk@debian.org>
+# © Copyright 2000-2002 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -161,6 +161,8 @@ sub copy
 
 	while (<SRC>)
 	{
+		next if /\$Id/;
+
 		$isdefinetag = 1 if /<define-tag/;
 		$ignorews = 1 if $isdefinetag;
 
