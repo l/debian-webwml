@@ -12,19 +12,19 @@ include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
 include $(WMLBASE)/Make.dep.templ
 # Notice I do not include Make.dep.generic, since I have my own special
-# %.html.$(LANGUAGE) rule.
+# %.$(LANGUAGE).html rule.
 
 # This Makefile will handle converting all .wml files in this directory
 # and all subdirectories to .html files. It does it this way so I don't need
 # a new Makefile for each new issue.
 WMLFILES=$(shell find . -type f -name \*.wml)
-HTMLFILES := $(patsubst %.wml,%.html.$(LANGUAGE),$(WMLFILES))
-HTMLDESTFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
-all:: index.html.$(LANGUAGE) $(HTMLFILES)
+HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
+HTMLDESTFILES := $(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE).html,$(WMLFILES))
+all:: index.$(LANGUAGE).html $(HTMLFILES)
 
 # When building the html files we have to change into the right directory
 # so wml gets all the relative links right.
-%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
+%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml
 	cd $(@D) && $(WML) $(notdir $(<)) \
 		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
@@ -40,7 +40,7 @@ install:: $(HTMLDESTFILES)
 
 # This is used by the install rule, and I had to hack on it, overriding
 # Make.common to allow installation of files into subdirectories.
-$(HTMLDIR)/%.html.$(LANGUAGE): %.html.$(LANGUAGE)
+$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
 	install -d $(@D)
 	@echo copying $(@F) to $(@D)
 	-@cp $(<) $(@D)
@@ -52,10 +52,10 @@ endif
 # Have to add to the default clean rule to clean up all the html the
 # above target produces.
 clean::
-	-find . -type f -name \*.html.$(LANGUAGE) | xargs rm -f
+	-find . -type f -name \*.$(LANGUAGE).html | xargs rm -f
 
 # Need to rebuild the index when anything changes.
-index.html.$(LANGUAGE): $(wildcard $(YEAR)/*/index.wml) \
+index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
       $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(YEAR)/*) \
       $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
       $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml
