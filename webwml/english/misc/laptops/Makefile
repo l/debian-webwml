@@ -6,7 +6,7 @@ WMLBASE=../..
 CUR_DIR=misc/laptops
 SUBS=
 
-GETTEXTFILES += others.mo
+GETTEXTFILES += ports.mo
 
 include $(WMLBASE)/Make.lang
 
