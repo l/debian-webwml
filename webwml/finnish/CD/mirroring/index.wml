@@ -1,0 +1,122 @@
+#use wml::debian::cdimage title="Debian CD-peilipalvelimen perustaminen" BARETITLE=true
+#use wml::debian::translation-check translation="1.3"
+
+<p>Perustaaksesi Debian CD-vedoksia peilaavan palvelimen, tarvitset Linux- tai 
+UNIX-tyyppisen koneen. Vedosten hakeminen ja niiden yleiseen jakeluun 
+laittaminen voidaan tehdä usealla eri tavalla, riippuen 
+mahdollisuuksistasi.</p>
+
+<p><em>Älä</em> käytä FTP/HTTP:tä vedosten hakuun. Näillä siirtomenetelmillä 
+epäonnistuneen siirron todennäköisyys on suuri tiedostojen valtavan koon 
+vuoksi.  Lisäksi, jos vedos muuttuu hiukankin (kuten on alijulkaisujen 
+kyseessäollessa), koko tiedosto on imuroitava uudelleen.  Tämä kuormittaa 
+kovasti koneitamme ja verkkoyhteyksiämme.</p>
+
+<p>Tämän vuoksi käytämme <a href="http://rsync.samba.org/">\
+<tt>rsync</tt></a>-ohjelmaa joka varsinaisesti suorittaa etäkoneella 
+binäärimuodossa tapahtuvan korjauksen.  <tt>rsync:in</tt>avulla, 
+alijulkaisujen vedokset päivitetään tehokkaasti, sillä vain muuttuneet 
+osat siirretään verkon kautta; muuttumattomat osat kopioidaan vanhasta 
+vedoksesta.</p>
+
+<p><tt>rsync</tt> yksin pystyy toki "täysin uusien" julkaisujen 
+imurointiin, vaikka nuo vedokset eivät sisällä lainkaan muuttuneita 
+osia.  Kuitenkin, "pseudo image kit":in avulla voimme luoda 
+"näennäisvedoksia" tiedosta joka on jo saatavilla lähimmältä Debian 
+FTP-peililtä - mahdollisesti omalta kiintolevyltäsi.  Sen jälkeen 
+<tt>rsync</tt> voi korjata nämä näennäisvedokset virallisia 
+vastaaviksi.  Ja useimpien alijulkaisujen kohdallakin tämä on havaittu 
+tehokkaammaksi kuin vanhan vedoksen korjaaminen.</p>
+
+<p>"pseudo image kit" on suunniteltu pääasiassa yhden tai muutaman 
+vedoksen imurointiin, kuten useimmat tekevätkin.  On olemassa myös 
+<tt>debcdmirror</tt>-skripti joka tekee peilauksesta <em>todella</em> 
+helppoa, koska se päivittää peilisi automaattisesti "pseudo image 
+kit":iä and <tt>rsync</tt>:iä käyttäen -- ja jopa tarkistaa 
+automaattisesti imuroitujen vedoksien MD5-tarkistussummat.  
+<tt>debcdmirror:in</tt> avulla voit myös määritellä tarkoin mitä 
+haluat peilata.</p>
+
+<p>Seuraavat mahdollisuudet ovat siis käytettävissä vedoksien imurointiin ja 
+päivitykseen:</p>
+
+<ul>
+
+  <li>FTP tai HTTP: Näitä <em>ei</em> tulisi käyttää.</li>
+
+  <li>Käyttämällä vain <tt>rsync:iä</tt> (päivittäinen cron-tehtävä): 
+  Tämä on suositeltava ainoastaan palvelimille jotka eivät ole 
+  yhteydessä lähellä olevaan/nopeaan Debian FTP-peiliin.</li>
+
+  <li>Käyttämällä "pseudo image kit":iä manuaalisesti (mahdollisesti 
+  <tt>rsync:in</tt> kanssa alijulkaisujen päivittämiseen).  Paljon työtä 
+  ja paljon ongelmia.</li>
+
+  <li>Käyttämällä <tt>debcdmirror</tt>-skriptiä (joka "sisäisesti" käyttää 
+  "Pseudo-Image Kit":iä ja <tt>rsync:iä</tt>) (päivittäinen cron-tehtävä).  
+  <strong>Tämä</strong> on "oikea" tapa! :-)</li>
+
+</ul>
+
+<p>Viimeisin versio 
+<a href="http://cdimage.debian.org/~costar/pseudo-image-kit/">"pseudo
+image kit":istä</a> ja 
+<a href="http://cdimage.debian.org/~costar/debcdmirror/"><tt>debcdmirror</tt></a>-skriptistä 
+löytyy tekijöidensä kotisivuilta.  Pakettien README-tiedostoissa on 
+laajemmat ohjeet siitä kuinka homma hoidetaan.</p>
+
+<p><strong>Huomautuksia:</strong>
+
+<p><tt>debcdmirror</tt>-skriptille täytyy valita <tt>rsync</tt>-peili 
+jolta löytyy "<tt>ls-lR</tt>"-tiedosto.  Osoitteet löytyvät 
+<a href="rsync-mirrors">rsync-peilien listalta</a>.  Viralliset yleiset 
+peilipalvelimet saavat käyttää rsync:iä suoraan pääpalvelimelta, 
+cdimage.debian.org; siihen tarvitaan todennäköisesti salasana, 
+tiedustele <a href="mailto:phil@hands.com">ylläpitäjältä</a>.</p>
+
+<p>Jos käytettävissäsi ei ole paikallista 
+<a href="$(HOME)/mirror/">"tavallista" Debian FTP-peiliä</a>, valitse 
+jokin <a href="$(HOME)/distrib/ftplist" >FTP-palvelimien listalta</a>.</p>
+
+<p><tt>debcdmirror</tt> vaatii <tt>bash</tt>-version 2, tai uudemman.  
+Tarvittaessa voit asentaa sen jonnekin muualle kuin oletushakemistoon, 
+mutta muista myös muuttaa skriptin ensimmäisellä rivillä oleva 
+<tt>bash</tt>-polku uutta vastaavaksi.</p>
+
+<p>Jos käytät pelkkää <tt>rsync:iä</tt>, valitse ainakin optiot <b><tt>--times
+--links --hard-links --block-size=8192</tt></b>.  Tämä säilyttää muutosajan, 
+symboliset ja kovat linkit ja käyttää 8192 bitin lohkokokoa (tehokkain 
+CD-vedoksille).  Kun muutosajassa ja koossa ei ole eroja, <tt>rsync</tt> ei 
+koske tiedostoon, joten <tt>--times</tt> on todellakin pakollinen.</p>
+
+<p>Hakemisto "<tt><i>koodinimi</i>_test</tt>" sisältää vedokset jotka ovat 
+kovia linkkejä versioituihin (esim. <tt>2.2_r4</tt>) hakemistoihin.  
+Versioidun hakemiston nimi muuttuu (ali)julkaisujen mukaisesti, mutta 
+"<tt>test</tt>"-hakemiston nimet pysyvät samana. Niinpä, vain 
+<tt>rsync:iä</tt> käytettäessä, sekä versioitujen että tarkoituksenmukaisten 
+"<tt>test</tt>"-hakemistojen peilaus, <em>ja</em> 
+<tt>--hard-links</tt>-valitsimen käyttäminen on ainoa keino alijulkaisujen 
+kunnolliseen päivitykseen rsync:illä. ["<tt>test</tt>"-hakemistoja 
+<em>ei</em> tule huomioida <tt>debcdmirror</tt>:ia käytettäessä, koska 
+<tt>debcdmirror</tt> käsittelee asiat eri tavalla ja tehokkaammin.]</p>
+
+<p><tt>ls-lR</tt>-tiedosto kertoo peilipalvelimen tiedostorakenteen.  
+<strong>Älä</strong> peilaa <tt>ls-lR</tt>-tiedostoa; tee se itse 
+(käyttämällä "<tt>Makels-lR</tt>"-skriptiä, tunnin välein <tt>cron</tt>:in 
+avulla) tai älä tee <tt>ls-lR</tt>-tiedostoa lainkaan. [<tt>debcdmirror</tt> 
+luo paikallisen <tt>ls-lR</tt>-tiedoston automaattisesti peilauksen 
+jälkeen.]</p>
+
+<p>Kun olet hankkinut CD-vedokset jotka haluat peilata (i386- ja 
+source-CD:t ovat yleisimpiä), käynnistä 
+<tt>rsync</tt>-palvelinohjelma.  Tämä ei kuormita konettasi paljoa, ja 
+aiheuttaa huomattavasti vähemmän verkkoliikennettä kuin 
+FTP/HTTP-palvelu.  Ohjeita löydät "pseudo image kit":in 
+README-tiedostosta.</p>
+
+<p>Tietenkin, jos usean gigatavun päivittäinen verkkoliikenne ei tuota 
+ongelmia, arvostamme paljon uutta FTP/HTTP-peiliä.  Tyydymme kaikkeen 
+mitä pystyt tarjoamaan.  Ilmoita osoitteeseen <a 
+href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;debian-cd&#64;lists.debian.org"> 
+debian-cd&#64;lists.debian.org</a> mikäli ylläpidät peilipalvelinta, 
+niin päivitämme asianmukaiset sivut.  Kiitos etukäteen!</p>
