@@ -13,6 +13,7 @@ include $(WMLBASE)/Make.lang
 
 ifneq "$(LANGUAGE)" "en"
 sitemap.$(LANGUAGE).html: $(ENGLISHDIR)/sitemap.wml
+	make -C MailingLists subscribe.$(LANGUAGE).html unsubscribe.$(LANGUAGE).html
 ifeq "$(LANGUAGE)" "zh"
 	$(shell echo $(WML) | sed s/:.zh/:sitemap.zh/g) \
           $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml \
