@@ -105,6 +105,12 @@ my @en; #english files
 my $showlog; # boolean
 #$maintainer = "debian-www\@lists.debian.org"; #adress of maintainer of this script
 my $maintainer = "mquinson\@ens-lyon.fr"; #adress of maintainer of this script
+my $ignorables = "/sitemap.wml "
+		."/MailingLists/subscribe.wml "
+		."/MailingLists/unsubscribe.wml "
+		."/international/l10n/data/countries.wml "
+		."/international/l10n/scripts/l10nheader.wml "
+		; # $ignorables must end with a space!
 
 unless (getopts('vgdqQm:s:p:ln:M'))
 {
@@ -411,9 +417,12 @@ sub check_file {
 	warn "Checking $name english revision $revision\n" if $opt_v;
 	unless (-r $name) {
 	        unless ($opt_q) {
+		  ($ename = $name) =~ s/$to//;
+		  if (index($ignorables, "$ename ") < 0) {
   		     print "Missing $name version $revision\n"
 		        unless $opt_Q;
 		     add_part("list","missing","Missing $name version $revision\n");
+		  }
 		}
 		return;
 	}
