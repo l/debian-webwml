@@ -16,11 +16,11 @@ include $(WMLBASE)/Make.lang
 
 ifndef SUBLANG
 SITEMAP = sitemap.$(LANGUAGE).html
-HTMLMAP = $(HTMLDIR)/$(SITEMAP)
+DESTSITEMAP = $(HTMLDIR)/$(SITEMAP)
 else
 SITEMAP = $(sort $(foreach i,$(SUBLANG),\
 	$(patsubst %.wml,%.$(LANGUAGE)-$(i).html,sitemap.wml)))
-HTMLMAP = $(patsubst %.html,$(HTMLDIR)/%.html,$(SITEMAP))
+DESTSITEMAP = $(patsubst %.html,$(HTMLDIR)/%.html,$(SITEMAP))
 endif
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
@@ -30,7 +30,7 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(ENGLISHSRCDIR)/releases/info
 	$(WML) index.wml
 
-$(SITEMAP): $(ENGLISHDIR)/sitemap.wml \
+$(SITEMAP): $(ENGLISHDIR)/sitemap.wml $(TEMPLDIR)/card.wml \
   $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/releases/info $(ENGLISHDIR)/MailingLists/mklist.tags
 ifeq "$(LANGUAGE)" "zh"
@@ -54,7 +54,7 @@ endif
 
 all:: $(SITEMAP)
 
-install:: $(HTMLMAP)
+install:: $(DESTSITEMAP)
 ifeq "$(LANGUAGE)" "en"
 	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
 	test -L $(HTMLDIR)/mirrors || ln -sf mirror $(HTMLDIR)/mirrors
