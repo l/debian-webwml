@@ -11,25 +11,25 @@ use Date::Parse;
 # this is ok this way.  It says which server to query, on which port and what
 # to fetch from it.  The attribs array could be reduced.
 
-$server = "bugs.debian.org";
-$port = "35567";
-$base   = "ou=Bugs,o=Debian Project,c=US";
+$server = "master.debian.org";
+$port = "10101";
+$base   = "dc=testbts";
 $attrs  = [
-    'bugid',
-    'originater',
-    'date',
-    'subject',
-    'package',
-    'severity',
-    'done',
-    'mergedwith'
+    'cn', # number
+    'description', # subject
+    'postOfficeBox', # submitter
+    'street', # package
+    'destinationIndicator', # severity
+    'ou', # status
+    'l', # tags
+    'st', # date
 ];
 
 sub htmlsanit {
     %escape = ('<' => 'lt', '>' => 'gt', '&' => 'amp', '"' => 'quot');
     my $in = shift;
     my $out;
-    while ($in =~ m/^(.*?)([<>&"])(.*)$/s) {
+    while ($in =~ m/^(.*?)([<>&"])(.*)$/s) { #"
         $out .= $1.'&'.$escape{$2}.';';
         $in=$3;
     }
@@ -54,23 +54,23 @@ close MAINTAINERS;
 $ldap = Net::LDAP->new($server, 'port' => $port) or die "Couldn't make connection to ldap server: $@";
 $ldap->bind;
 $mesg = $ldap->search('base' => $base,
-                      'filter' => "(package=wnpp)",
+                      'filter' => "(street=wnpp)",
                       'attrs' => $attrs) or die;
 
 $curdate = time;
 
 ALLPKG: foreach $entry ($mesg->entries) {
     use integer;
-    next if defined ($entry->get('done'));
-    my $subject = @{$entry->get('subject')}[0];
-    my $bugid = @{$entry->get('bugid')}[0];
+    my $bugid = @{$entry->get('cn')}[0];
+    next if @{$entry->get('ou')}[0] eq 'done';
+    my $subject = @{$entry->get('description')}[0];
     # If a bug is merged with another, then only consider the youngest
     # bug and throw the others away.  This will weed out duplicates.
-    my @mergedwith = @{$entry->get('mergedwith')};
-    foreach my $merged (@mergedwith) {
-        next ALLPKG if int($merged) < int($bugid);
-    }
-    $age{$bugid} = ($curdate - str2time(@{$entry->get('date')}[0]))/86400;    
+    #my @mergedwith = @{$entry->get('mergedwith')};
+    #foreach my $merged (@mergedwith) {
+    #    next ALLPKG if int($merged) < int($bugid);
+    #}
+    $age{$bugid} = ($curdate - @{$entry->get('st')}[0])/86400;    
     chomp $subject;
     $subject = htmlsanit($subject);    
     # Make order out of chaos    
