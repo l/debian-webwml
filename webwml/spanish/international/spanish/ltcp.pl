@@ -114,7 +114,7 @@ $types = {
 	'translation_source_url'=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
 					"$CVSWEB/$to/$k.wml?rev=$t->{'translation_revision'}&cvsroot=webwml" },
 	'diff'			=> sub {my($t, $k, $f)=@_; return (!$t->{$f} || !$t->{'translation_revision'}) ? undef :
-					"$CVSWEB/$from/$k.wml$t->{$f}?cvsroot=webwml" },
+					"$CVSWEB/$from/$k.wml$t->{$f}" },
 },
 
 'DDP' => {
@@ -171,7 +171,7 @@ sub update_db_CVS {
 				}
 				$translations->{$k}->{'revision'} = $from_d->{$f};
 				$translations->{$k}->{'translation_revision'} = $to_d->{$f} if ($to_d->{$f});
-				$translations->{$k}->{'status'} = 4 if $translations->{$k}->{'translation_revision'} = $translations->{$k}->{'revision'};
+				$translations->{$k}->{'status'} = 4 if ($translations->{$k}->{'translation_revision'} == $translations->{$k}->{'revision'});
 				check_file($k, "${to_path}$f", $from_d->{$f});
 			} else {
 				$translations->{$k}->{'type'} = 'Web';
