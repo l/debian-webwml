@@ -1,6 +1,6 @@
 #use wml::debian::template title="Offizielle Debian-Spiegel" BARETITLE=true
 #include "$(ENGLISHDIR)/mirror/official.data"
-#use wml::debian::translation-check translation="1.6"
+#use wml::debian::translation-check translation="1.8"
 # $Id$
 # Translator: Martin Schulze <joey@debian.org>
 
@@ -23,29 +23,63 @@ Kriterien erfüllen:</p>
 <ul>
     <li>Der Rechner muß zuverlässig und 24 Stunden am Tag erreichbar
 	sein.  Der Rechner darf nicht zu stark belastet sein.</li>
+    <li>Er muss eine passende Anbindung haben (entsprechend dem Land). Eine
+      Anbindung gleich einer T1-Verbindung oder besser wird bevorzugt;
+      beachten Sie, dass für Ländern, in denen entwickelt wird, dieses Minimum
+      viel größer ist.</li>
+    <li>Die Router vor dem Server sollten keine globalen
+      Zugriffsbeschränkungen oder große Beschränkungen der Bandbreite
+      haben.</li>
+    <li>Dem Server muss es möglich sein, dem Verkehr standzuhalten, d.h.
+      sinnvolle Beschränkungen des HTTP, FTP und rsync Daemonen haben,
+      inklusive das Tunneln der maximalen Anzahl von Verbindungen im
+      allgemeinen und die maximale Anzahl von Verbindungen von einer einzelnen
+      IP.</li>
     <li>Verbindlichkeit für Festplattenplatz (mit Raum für Erweiterungen) --
 	lesen Sie die <a href="size">Spiegelgrößenseite</a>.</li>
     <li>Das gesamte Debian-Archiv sollte gespiegelt werden, mit einer
 	    Methode, die Zeitstempel der gespiegelten Dateien
 	    berücksichtigt (z.B. rsync), so daß die Zeiten der Dateien
 	    (UTC) mit denen von ftp.debian.org überenstimmen.</li>
-    <li>Die Spiegel-Hierarchie muß unter /debian verfügbar sein
-	    (und /debian-on-US, falls Sie auch non-US spiegeln).
+    <li>Die Spiegel-Hierarchie muß unter <kbd>/debian</kbd> verfügbar sein
+	    (und <kbd>/debian-on-US</kbd>, falls Sie auch non-US spiegeln).
 	    Begründung: Aus Konsistenz zwischen den Rechnern &mdash;
 	    Sie können einfach einen Symlink plazieren, wenn Sie den
-	    Spiegel woanders halten möchten.</li>
-    <li>Der Spiegel sollte über HTTP und rsync angeboten werden
-	    (ftp://ftp.site/debian/ sollte ebenfalls als
-	    http://ftp.site/debian/ and rsync://ftp.site::debian/
-	    anbeboten werden).
-	    Begründung: Mit HTTP/1.1 haben Web-Transfers das Potentian,
-	    effizienter zu sein als mit FTP, weswegen wir versuchen,
-	    uns in diese Richtung zu bewegen.  Rsync, auf der anderen
-	    Seite, ist die bevorzugte Methode zum Spiegeln.</li>
+      Spiegel woanders halten möchten, oder einen virtuellen Host
+      aufsetzen.</li>
+    <li>Der Spiegel sollte zumindest über diese Protokolle erreichbar sein:
+      <ul>
+        <li>FTP (ftp://<var>ihr.server</var>/debian/)
+          <br>
+          FTP ist das älteste und immer noch sehr breit verwendete
+          Datei-Übertragungs-Protokoll.
+        </li>
+        <li>HTTP (http://<var>ihr.server</var>/debian/)
+          <br>
+          HTTP wird verwendet, da mit HTTP/1.1 Übertragungen die Möglichkeit
+          besitzen, effizienter als FTP zu sein.
+        </li>
+        <li>rsync (rsync://<var>ihr.server</var>::debian/)
+          <br>
+          Rsync ist die bevorzugte Methode des Spiegelns, und eine der
+          Haupt-Funktionen eines offiziellen Spiegels ist es, beim Erstellen
+          von sekundären Spiegeln zu helfen.
+        </li>
+      </ul>
+    </li>
     <li>Die Spiegel müssen wenigstens einmal pro Tag aktualisiert
 	    werden, die Zeit der Aktualisierung sollte mit einer
 	    Zeitstempel-Datei im Verzeichnis project/trace/ notiert
-	    werden.</li>
+	    werden.<br>
+      Dies bedeutet, dass Sie
+      <kbd>date -u &gt; .../debian/project/trace/<var>ihr.server</var></kbd>
+      nach der Beendigung ihres täglichen rsync aufrufen müssen; und
+      <kbd>date -u &gt; .../debian-non-US/project/trace/<var>ihr.server</var></kbd>
+      nach der Beendigung des täglichen non-US rsync, falls Sie debian-non-US
+      spiegeln.<br>
+      Es ist einfach einzustellen, verschwendet nicht viele Resourcen, aber
+      ist nützlich, um eine Verfolgung des Spiegelns zu bewerkstelligen.
+    </li>
 </ul>
 
 <p>Bitte beachten Sie, daß dieses nur Richtlinien sind, doch ist es
@@ -60,15 +94,17 @@ Einreich-Formular</a>. Nachdem das bearbeitet ist, schicken Sie eine E-Mail an
 ein offizieller Server zu werden, inklusive der exakten Informationen des
 Bandbreiten-Verbrauchs und -Beschränkungen für Ihren Server.</p>
 
-<p>Falls möglich, sollte <a href="push_mirroring">Push-Spiegeln</a> von
-Debian-Rechnern her aufgesetzt werden.</p>
+<p>Falls möglich, sollten Sie <a href="push_mirroring">Push-Spiegeln</a> von
+einem anderem Spiegel aufsetzen, bevorzugt von einem der hoch oben in der
+Spiegel-Hierarchie steht (Primärer Push oder sekundärer Push).</p>
 
 <p>Mehrere offizielle Spiegel können in einem Land eingerichtet
-werden. In großen Ländern wie der USA und Ländern mit mehr als einem
-wichtigen Internet-Backbone, die unterschiedlich gut angebunden sind,
-wie Australien, ist das eine gute Idee.  Der erste Spiegel erhält die
-Adresse ftp.&lt;country&gt;.debian.org und
-ftp1.&lt;country&gt;.debian.org, weitere Spiegel erhalten einfach
+werden, aber nur wenn der Bedarf dafür besteht. In großen Ländern wie der USA
+und Ländern mit mehr als einem
+wichtigen Internet-Backbone, die unterschiedlich gut angebunden sind
+wie in Australien, ist das eine gute Idee.  Der erste Spiegel erhält die
+Adresse ftp.&lt;Land&gt;.debian.org und
+ftp1.&lt;Land&gt;.debian.org, weitere Spiegel erhalten einfach
 einen Alias der zweiten Art, mit einer entsprechend erhöhten Nummer.</p>
 
 <p>Für weitere Informationen über das Spiegeln der Web-Seiten lesen Sie die
