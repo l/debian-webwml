@@ -26,7 +26,7 @@ textfiles := vote_001.quorum.err vote_001.quorum.log vote_001.quorum.txt \
              gr_editorial_voters.txt                                     \
              leader2004_results.txt       leader2004_tally.txt           \
              leader2004_vote.png          leader2004_vote_detailed.png   \
-             leader2004_voters.txt
+             leader2004_voters.txt        social_contract_reform.3
 desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
 
 install:: $(desttextfiles)
