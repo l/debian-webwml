@@ -92,11 +92,9 @@ sub print_deps {
 	}
 	
 	$res .= "\n".join( "<br> ".gettext( " or " )." ", @res_pkgs )."\n";
-	$res .= "\n";
-	$res .= "</li>\n";
     }
     if (@$relations) {
-	$res .= "</ul>\n";
+	$res .= "</li></ul>\n";
     } else {
 	$res = "";
     }
