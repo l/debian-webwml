@@ -167,17 +167,16 @@ sub update_db_CVS {
 			# This check should be made by revision number
 
 				if (!$translations->{$k}->{'status'}) {
-					$translations->{$k}->{'status'} = 1 ;
+					$translations->{$k}->{'status'} = 8 ;
 					$translations->{$k}->{'type'} = 'Web';
 					print STDERR "(update_db_CVS) Status not known for $k (setting it to default)\n" if $debug;
 				}
 				$translations->{$k}->{'revision'} = $from_d->{$f};
 				$translations->{$k}->{'translation_revision'} = $to_d->{$f} if ($to_d->{$f});
-				$translations->{$k}->{'status'} = 4 if ($translations->{$k}->{'translation_revision'} == $translations->{$k}->{'revision'});
 				check_file($k, "${to_path}$f", $from_d->{$f});
 			} else {
 				$translations->{$k}->{'type'} = 'Web';
-				$translations->{$k}->{'status'} = 8;
+				$translations->{$k}->{'status'} = 1;
 				$translations->{$k}->{'revision'} = $from_d->{$f};
 				print STDERR "(update_db_CVS) Warning : $k is not in the database\n" if $debug;
 			}
@@ -215,6 +214,7 @@ sub check_file {
 			$translations->{$k}->{'base_revision'} = $oldr;
 			if ($oldr eq $revision) {
 				close(F);
+				$translations->{$k}->{'status'} = 4 if ($translations->{$k}->{'status'} == 8);
 				return;
 			}
 			last;
