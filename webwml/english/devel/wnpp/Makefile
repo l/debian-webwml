@@ -28,7 +28,8 @@ wnpp.$(LANGUAGE).html: wnpp.wml
 	wml -q wnpp.wml
 
 $(HTMLDIR)/wnpp.$(LANGUAGE).html: wnpp.$(LANGUAGE).html
+	@:
 
-install::
+install:: $(WNPP_FILES)
 	install $(WNPP_FILES) $(HTMLDIR)
 endif
