@@ -6,8 +6,8 @@
 # a removing a WML file from CVS causes the corresponding HTML file to go
 # away.
 
-# Written 2001-03-22 by peter karlsson <peterk@debian.org>
-# © Copyright 2001 Software in the public interest, Inc.
+# Originally written 2001-03-22 by peter karlsson <peterk@debian.org>
+# © Copyright 2001-2002 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -123,6 +123,12 @@ sub recurse
 				my $installed = $direntry;
 				$installed =~ s(^\./[^/]*/)(../www/);
 
+				# Name of corresponding ICS file for events.
+				my $icslocal = $direntry;
+				$icslocal =~ s/html$/ics/;
+				my $icsinstalled = $installed;
+				$icsinstalled =~ s/html$/ics/;
+
 				# Remove or report.
 				if ($opt_d)
 				{
@@ -131,6 +137,18 @@ sub recurse
 						print "Removing $installed\n";
 						unlink $installed
 							or die "Unable to remove $installed: $!\n";
+					}
+					if (-f $icsinstalled)
+					{
+						print "Removing $icsinstalled\n";
+						unlink $icsinstalled
+							or die "Unable to remove $icsinstalled: $!\n";
+					}
+					if (-f $icslocal)
+					{
+						print "Removing $icslocal\n";
+						unlink $icslocal
+							or die "Unable to remove $icslocal: $!\n";
 					}
 
 					print "Removing $direntry\n";
@@ -143,6 +161,10 @@ sub recurse
 					print "  installed file is $installed\n";
 					print " (does not exist)\n"
 						unless -f $installed;
+					print "  installed ICS file: $icsinstalled\n"
+						if -f $icsinstalled;
+					print "  local ICS file: $icslocal\n"
+						if -f $icslocal;
 				}
 			}
 		}
