@@ -2,10 +2,10 @@
 
 # This is GPL'ed, copyright 2000 Martin Quinson <mquinson@ens-lyon.fr>
 
-# In this file, you can find a DB about the translators. 
+# In this file, you can find a DB about the translators.
 # It should be hand maintained by the coordinator, it is not modified
 #  automatically.
-# For now, it is only used by check-translation.pl (in a version not 
+# For now, it is only used by check-translation.pl (in a version not
 #  commited to the cvs, but I can send it to you, if you want to)
 
 # Here is the syntax:
@@ -22,142 +22,142 @@
 
 sub init_translators {
         my $translators = {
-                'Denis Barbier' => {
-                        'email'     => 'barbier@imacs.polytechnique.fr',
-	                'summary'   => 3,
-	                'logs'      => 3,
-                        'diff'      => 3,
-                        'tdiff'     => 0,
-                        'file'      => 0,
-	                'compress'  => 'none'
-                },
-                'Antoine Martin' => {
-                        'email'     => 'amartin@atos-group.com',
-	                'summary'   => 2,
-	                'logs'      => 0,
+                'Jerome Abela' => {
+                        'email'     => 'Jerome.Abela@solsoft.fr',
+                        'summary'   => 2,
+                        'logs'      => 0,
                         'diff'      => 0,
                         'tdiff'     => 0,
                         'file'      => 0,
-	                'compress'  => 'none'
+                        'compress'  => 'none'
                 },
-                'Sébastien Kalt' => {
-                        'email'     => 'ustilago@bigfoot.com',
-                        'summary'   => 2, 
-                        'logs'      => 0, 
-                        'diff'      => 2, 
+                'Denis Barbier' => {
+                        'email'     => 'barbier@imacs.polytechnique.fr',
+                        'summary'   => 3,
+                        'logs'      => 3,
+                        'diff'      => 3,
                         'tdiff'     => 0,
-	                'file'      => 0,
-                        'compress'  => 'none' 
-                },
-                'Jérôme Marant' => {
-                        'email'     => 'jerome.marant@free.fr',
-                        'summary'   => 2, 
-                        'logs'      => 0, 
-                        'diff'      => 0, 
-                        'tdiff'     => 0,
-	                'file'      => 0,
-                        'compress'  => 'none' 
-                },
-                'Christian Couder' => {
-                        'email'     => 'chcouder@club-internet.fr',
-                        'summary'   => 3, 
-                        'logs'      => 3, 
-                        'diff'      => 3, 
-                        'tdiff'     => 3,
-	                'file'      => 3,
-                        'compress'  => 'none' 
+                        'file'      => 0,
+                        'compress'  => 'none'
                 },
                 'Norbert Bottlaender-Prier' => {
                         'email'     => 'norbert@globenet.org',
-                        'summary'   => 1, 
-                        'logs'      => 0, 
-                        'diff'      => 1, 
+                        'summary'   => 1,
+                        'logs'      => 0,
+                        'diff'      => 1,
                         'tdiff'     => 0,
-	                'file'      => 0,
-                        'compress'  => 'none' 
-                },
-                'Martin Quinson' => {
-                        'email'     => 'mquinson@ens-lyon.fr',
-                        'summary'   => 3, 
-                        'logs'      => 3, 
-                        'diff'      => 3, 
-                        'tdiff'     => 3,
-	                'file'      => 0,
+                        'file'      => 0,
                         'compress'  => 'none'
                 },
-                'Jerome Abela' => {
-                        'email'     => 'Jerome.Abela@solsoft.fr',
-                        'summary'   => 2, 
-                        'logs'      => 0, 
-                        'diff'      => 0, 
-                        'tdiff'     => 0,
-	                'file'      => 0,
-                        'compress'  => 'none' 
+                'Olivier Bounhoure' =>  {
+                        'email'     => 'olivier.bounhoure@club-internet.fr',
+                        'summary'   => 3,
+                        'logs'      => 3,
+                        'diff'      => 3,
+                        'tdiff'     => 3,
+                        'file'      => 3,
+                        'compress'  => 'none'
                 },
                 'Philippe Caillaud' => {
                         'email'     => 'pcaillaud@infini.fr',
-                        'summary'   => 2, 
-                        'logs'      => 0, 
-                        'diff'      => 0, 
-	                'file'      => 0,
+                        'summary'   => 2,
+                        'logs'      => 0,
+                        'diff'      => 0,
+                        'file'      => 0,
                         'tdiff'     => 0,
-                        'compress'  => 'none' 
+                        'compress'  => 'none'
+                },
+                'Christian Couder' => {
+                        'email'     => 'chcouder@club-internet.fr',
+                        'summary'   => 3,
+                        'logs'      => 3,
+                        'diff'      => 3,
+                        'tdiff'     => 3,
+                        'file'      => 3,
+                        'compress'  => 'none'
+                },
+                'Guillaume Estival' =>  {
+                        'email'     => 'estival@dspnet.claranet.fr',
+                        'summary'   => 2,
+                        'logs'      => 2,
+                        'diff'      => 2,
+                        'tdiff'     => 2,
+                        'file'      => 2,
+                        'compress'  => 'none'
+                },
+                'Sébastien Kalt' => {
+                        'email'     => 'ustilago@bigfoot.com',
+                        'summary'   => 2,
+                        'logs'      => 0,
+                        'diff'      => 2,
+                        'tdiff'     => 0,
+                        'file'      => 0,
+                        'compress'  => 'none'
                 },
                 'Christophe Le Bars' =>  {
- 	                'email'     => 'clebars@debian.org',
-                        'summary'   => 2, 
-                        'logs'      => 0, 
-                        'diff'      => 0, 
+                        'email'     => 'clebars@debian.org',
+                        'summary'   => 2,
+                        'logs'      => 0,
+                        'diff'      => 0,
                         'tdiff'     => 0,
-	                'file'      => 0,
-                        'compress'  => 'none' 
+                        'file'      => 0,
+                        'compress'  => 'none'
+                },
+                'Jérôme Marant' => {
+                        'email'     => 'jerome.marant@free.fr',
+                        'summary'   => 2,
+                        'logs'      => 0,
+                        'diff'      => 0,
+                        'tdiff'     => 0,
+                        'file'      => 0,
+                        'compress'  => 'none'
+                },
+                'Antoine Martin' => {
+                        'email'     => 'amartin@atos-group.com',
+                        'summary'   => 2,
+                        'logs'      => 0,
+                        'diff'      => 0,
+                        'tdiff'     => 0,
+                        'file'      => 0,
+                        'compress'  => 'none'
+                },
+                'Martin Quinson' => {
+                        'email'     => 'mquinson@ens-lyon.fr',
+                        'summary'   => 3,
+                        'logs'      => 3,
+                        'diff'      => 3,
+                        'tdiff'     => 3,
+                        'file'      => 0,
+                        'compress'  => 'none'
                 },
                 'Mickael Simon' =>  {
- 	                'email'     => 'mickaelsimon@free.fr',
-                        'summary'   => 2, 
-                        'logs'      => 0, 
-                        'diff'      => 0, 
+                        'email'     => 'mickaelsimon@free.fr',
+                        'summary'   => 2,
+                        'logs'      => 0,
+                        'diff'      => 0,
                         'tdiff'     => 0,
-	                'file'      => 0,
-                        'compress'  => 'none' 
-                },
-              'Guillaume Estival' =>  {
-		       'email'     => 'estival@dspnet.claranet.fr',
-		       'summary'   => 2,
-		       'logs'      => 2,
-		       'diff'      => 2,
-		       'tdiff'     => 2,
-		       'file'      => 2,
-		       'compress'  => 'none'
-	        },
-	      'Olivier Bounhoure' =>  {
- 	                'email'     => 'olivier.bounhoure@club-internet.fr',
-                        'summary'   => 3, 
-                        'logs'      => 3, 
-                        'diff'      => 3, 
-                        'tdiff'     => 3,
-	                'file'      => 3,
-                        'compress'  => 'none' 
+                        'file'      => 0,
+                        'compress'  => 'none'
                 },
                 'Jérôme Schell' =>  {
- 	                'email'     => 'jschell@noos.fr',
+                        'email'     => 'jschell@noos.fr',
                         'summary'   => 2,
                         'logs'      => 2,
                         'diff'      => 2,
                         'tdiff'     => 0,
-	                'file'      => 0,
+                        'file'      => 0,
                         'compress'  => 'none'
                 },
                 'list' => {
                 # this is a special name containing the default addressee
-                        'email'      => 'debian-l10n-french@lists.debian.org',
-                        'missing'    => 1, 
-                        'summary'    => 2, 
-                        'logs'       => 0, 
-                        'diff'       => 0, 
-                        'tdiff'      => 0,
-	                'file'       => 0,
-                        'compress'   => 'none'
+                        'email'     => 'debian-l10n-french@lists.debian.org',
+                        'missing'   => 1,
+                        'summary'   => 2,
+                        'logs'      => 0,
+                        'diff'      => 0,
+                        'tdiff'     => 0,
+                        'file'      => 0,
+                        'compress'  => 'none'
                 }
         };
         return $translators;
