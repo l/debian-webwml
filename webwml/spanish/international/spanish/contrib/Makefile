@@ -23,3 +23,6 @@ cleandest::
 	$(HTMLDIR)/paqifaz.html $(HTMLDIR)/paqifaz.sgml $(HTMLDIR)/paqifaz.txt \
 	$(HTMLDIR)/paquetes.html $(HTMLDIR)/presentacion-debian.tex \
 	$(HTMLDIR)/tabla-historia.txt
+
+# SGML files:
+# build with sgml2html -c latin --split=0 -l es
