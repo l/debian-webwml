@@ -1,6 +1,11 @@
 #!/usr/bin/perl
 
 $translations = {
+#
+# A faire version => revision partout...
+#
+# + tableau par type
+#
 
 #'key'			=> {
 #	'type'			=> '', # obsolète, se déduit de la clef
@@ -9,6 +14,7 @@ $translations = {
 #	'author'		=> '',
 #	'version'		=> '',
 #	'url'			=> '',
+#	'cvs_url'		=> '',
 #	'source_url'		=> '',
 #	'package'		=> '',
 #	'status'		=> '',
@@ -22,14 +28,18 @@ $translations = {
 #		'obsolète'
 #
 #	'since'			=> '',
+#	'diff'			=> '',
 #	'translation_name'	=> '',
 #	'translation_sub_name'	=> '',
 #	'translation_maintainer'=> [
 #					'', 
 #				],
 #	'translation_version'	=> '',
+#	'translation_revision'	=> '',
 #	'translation_url'	=> '',
+#	'translation_cvs_url'   => '',
 #	'translation_source_url'=> '',
+#	'translation_diff_url'  => '',
 #	'translation_package'	=> '',
 #	'last_translated'	=> '',
 #	'old_translators'	=> [],
@@ -57,7 +67,7 @@ $translations = {
 'faq' => {
 	'type'			=> 'DDP',
 	'name'			=> 'Debian GNU/Linux FAQ',
-	'source_url'		=> '?',
+	'cvs_url'		=> '?',
 	'package'		=> 'doc-debian',
 	'status'		=> 'en cours de traduction',
 	'since'			=> '21/07/1998',
@@ -97,7 +107,7 @@ $translations = {
 	'name'			=> 'Debian Tutorial',
 	'version'		=> '',
 	'url'			=> 'http://www.debian.org/~hp/tutorial/debian-tutorial.html',
-	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/tutorial/tutorial/debian-tutorial.sgml',
+	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/tutorial/tutorial/debian-tutorial.sgml',
 	'package'		=> '',
 	'status'		=> 'en cours de traduction',
 	'since'			=> '31/01/1999',
@@ -125,7 +135,7 @@ $translations = {
 	'name'			=> 'Debian Installation Manual',
 	'version'		=> '2.1',
 	'url'			=> 'http://www.debian.org/releases/slink/i386/install.en.html',
-	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/install.sgml',
+	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/install.sgml',
 	'package'		=> 'boot-floppies',
 	'status'		=> 'traduction à jour',
 	'since'			=> '16/03/1999',
@@ -133,7 +143,7 @@ $translations = {
 	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
 	'translation_version'	=> '2.1',
 	'translation_url'	=> 'http://www.debian.org/~clebars/docs-2.1/install.html/install.html',
-	'translation_source_url'=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/Attic/install.fr.sgml',
+	'translation_cvs_url'   => 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/Attic/install.fr.sgml',
 	'translation_package'	=> 'boot-floppies',
 	'last_translated'	=> '16/03/1999',
 },
@@ -143,7 +153,7 @@ $translations = {
 	'name'			=> 'Dselect beginner guide',
 	'version'		=> '2.1',
 	'url'			=> 'http://www.debian.org/releases/slink/i386/dselect-beginner.en.html',
-	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/dselect-beginner.sgml',
+	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/dselect-beginner.sgml',
 	'package'		=> 'boot-floppies',
 	'status'		=> 'traduction à jour',
 	'since'			=> '22/03/1999',
@@ -151,7 +161,7 @@ $translations = {
 	'translation_maintainer'=> ['Laurent Picouleau <lcrpic@a2points.com>'],
 	'translation_version'	=> '2.1',
 	'translation_url'	=> 'http://www.debian.org/~clebars/docs-2.1/dselect-beginner.html/dselect-beginner.html',
-	'translation_source_url'=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/Attic/dselect-beginner.fr.sgml',
+	'translation_cvs_url'   => 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/Attic/dselect-beginner.fr.sgml',
 	'translation_package'	=> 'boot-floppies',
 	'last_translated'	=> '22/003/1999',
 },
@@ -161,7 +171,7 @@ $translations = {
 	'name'			=> 'Release Notes',
 	'version'		=> '2.1',
 	'url'			=> 'http://www.debian.org/releases/slink/i386/release-notes/',
-	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/release-notes.sgml',
+	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-boot/boot-floppies/documentation/release-notes.sgml',
 	'package'		=> 'boot-floppies',
 	'status'		=> 'en cours de traduction',
 	'since'			=> '05/06/1999',
@@ -169,7 +179,7 @@ $translations = {
 	'translation_maintainer'=> ['mmenal <mmenal@francemel.com>'],
 	'translation_version'	=> '',
 	'translation_url'	=> '',
-	'translation_source_url'=> '',
+	'translation_cvs_url'   => '',
 	'translation_package'	=> 'boot-floppies',
 	'last_translated'	=> '',
 },
@@ -196,7 +206,7 @@ $translations = {
 	'name'			=> 'Debian Policy Manual',
 	'version'		=> '2.5.0.0',
 	'url'			=> 'http://www.fr.debian.org/doc/debian-policy/',
-	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-policy/debian-policy/policy.sgml',
+	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-policy/debian-policy/policy.sgml',
 	'package'		=> 'debian-policy',
 	'status'		=> 'en cours de révision',
 	'since'			=> '6/04/1999',
@@ -204,7 +214,7 @@ $translations = {
 	'translation_maintainer'=> ['David Rocher <davroc@hplb.hpl.hp.com>'],
 	'translation_version'	=> '2.5.0.0',
 	'translation_url'	=> 'http://savage.iut-blagnac.fr/projets/developpement/policy.fr/policy.fr.html/',
-	'translation_source_url'=> 'http://savage.iut-blagnac.fr/projets/developpement/policy.fr/policy.fr.sgml',
+	'translation_dev_url'   => 'http://savage.iut-blagnac.fr/projets/developpement/policy.fr/policy.fr.sgml',
 	'translation_package'	=> '',
 	'old_translators'	=> ['Serge Stinckwich <serge@info.unicaen.fr>'],
 },
@@ -214,8 +224,8 @@ $translations = {
 	'name'			=> 'Debian Packaging Manual',
 	'sub_name'		=> 'chapter 0 to 14',
 	'version'		=> '2.4.1.0',
-	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-policy/packaging-manual/packaging.sgml',
-#?!	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/dpkg/dpkg/doc/packaging.sgml',
+	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-policy/packaging-manual/packaging.sgml',
+#?!	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/dpkg/dpkg/doc/packaging.sgml',
 	'package'		=> 'packaging-manual',
 	'status'		=> 'à relire',
 	'since'			=> '01/07/1998',
@@ -251,7 +261,7 @@ $translations = {
 	'since'			=> '02/07/1999',
 	'translation_maintainer'=> ['Frederic Dumont <Frederic.Dumont@gate71.be>'],
 	'translation_url'	=> 'http://www.info.fundp.ac.be/~fdumont/maint-guide_fr.html/index.html',
-	'translation_source_url'=> 'http://www.info.fundp.ac.be/~fdumont/maint-guide_fr.sgml',
+	'translation_dev_url'   => 'http://www.info.fundp.ac.be/~fdumont/maint-guide_fr.sgml',
 	'translation_package'	=> '',
 	'last_translated'	=> '02/07/1998',
 },
@@ -261,7 +271,7 @@ $translations = {
 	'name'			=> 'dpkg Internals Manual',
 	'version'		=> '1.4.1',
 	'url'			=> 'http://www.fr.debian.org/doc/packaging-manuals/dpkg-internals/',
-	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/dpkg/dpkg/doc/internals.sgml',
+	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/dpkg/dpkg/doc/internals.sgml',
 	'package'		=> 'dpkg-dev',
 	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
@@ -276,7 +286,7 @@ $translations = {
 	'name'			=> 'Debian Menu System',
 	'version'		=> '',
 	'url'			=> 'http://www.debian.org/doc/packaging-manuals/menu.html/',
-	'source_url'		=> '',
+	'cvs_url'		=> '?',
 	'package'		=> '',
 	'status'		=> 'obsolète',
 	'since'			=> '14/09/1998',
@@ -290,14 +300,14 @@ $translations = {
 	'type'			=> 'DDP',
 	'name'			=> 'Introduction : Making a Debian Package (obsolète)',
 	'url'			=> 'http://va.debian.org/~jaldhar/',
-	'source_url'		=> '?',
+	'cvs_url'		=> '?',
 	'status'		=> 'traduction à jour',
 	'since'			=> '25/09/1998',
 	'translation_name'	=> 'Introduction : Créer un paquet Debian',
 	'translation_maintainer'=> ['Frederic Dumont <frederic.dumont@gate71.be>'],
 	'translation_version'	=> '',
 	'translation_url'	=> 'http://www.debian.org/~clebars/f2dp/docs/debian_package_intro.html/book1.html',
-	'translation_source_url'=> 'http://www.debian.org/~clebars/f2dp/docs/debian_package_intro.sgml',
+	'translation_dev_url'   => 'http://www.debian.org/~clebars/f2dp/docs/debian_package_intro.sgml',
 	'translation_package'	=> '',
 	'last_translated'	=> '01/07/1998',
 },
@@ -319,7 +329,7 @@ $translations = {
 	'translation_sub_name'	=> '',
 	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
 	'translation_version'	=> '',
-	'translation_source_url'=> '',
+	'translation_cvs_url'   => '',
 	'translation_package'	=> 'doc-debian-fr',
 	'last_translated'	=> '',
 },
@@ -357,7 +367,7 @@ $translations = {
 	'translation_maintainer'		=> ['Philippe CAILLAUD <phil@penguin.infini.fr>'],
 	'translation_version'	=> '',
 	'translation_url'	=> 'http://www.debian.org/~clebars/f2dp/docs/libc5-libc6-Mini-HOWTO.fr.html',
-	'translation_source_url'=> 'http://www.debian.org/~clebars/f2dp/docs/libc5-libc6-Mini-HOWTO.fr.sgml',
+	'translation_dev_url'   => 'http://www.debian.org/~clebars/f2dp/docs/libc5-libc6-Mini-HOWTO.fr.sgml',
 	'translation_package'	=> '',
 	'last_translated'	=> '10/08/1998',
 },
@@ -469,7 +479,7 @@ $translations = {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
 	'since'			=> '21/07/1999',
-	'translation_maintainer'=> ['<magloire@multimania.com>'],
+	'translation_maintainer'=> ['Severin Hatt <magloire@multimania.com>'],
 	'last_translated'	=> '21/07/1999',
 },
 
@@ -478,16 +488,17 @@ $translations = {
 	'status'		=> 'à relire',
 	'since'			=> '20/08/1998',
 	'translation_maintainer'=> ['Frederic Peters <fpeters@multimania.com>'],
-	'translation_source_url'=> 'http://www.multimania.com/fpeters/debian/debian-announce.fr',
+	'translation_dev_url'   => 'http://www.multimania.com/fpeters/debian/debian-announce.fr',
 	'last_translated'	=> '25/03/1999',
 },
 
+# XXX il semble que c'est une génération automatique... cas à traiter
 'MailingLists/subscribe' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
 	'since'			=> '20/08/1998',
 	'translation_maintainer'=> ['Frederic Peters <fpeters@multimania.com>'],
-	'translation_source_url'=> 'http://www.multimania.com/fpeters/debian/subscribe.fr',
+	'translation_dev_url'   => 'http://www.multimania.com/fpeters/debian/subscribe.fr',
 	'last_translated'	=> '25/03/1999',
 },
 
@@ -496,7 +507,7 @@ $translations = {
 	'status'		=> 'à relire',
 	'since'			=> '20/08/1998',
 	'translation_maintainer'=> ['Frederic Peters <fpeters@multimania.com>'],
-	'translation_source_url'=> 'http://www.multimania.com/fpeters/debian/unsubscribe.fr',
+	'translation_dev_url'   => 'http://www.multimania.com/fpeters/debian/unsubscribe.fr',
 	'last_translated'	=> '25/03/1999',
 },
 
@@ -597,7 +608,7 @@ $translations = {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
 	'since'			=> '11/07/1999',
-	'translation_maintainer'=> ['magloire@multimania.com'],
+	'translation_maintainer'=> ['Severin Hatt <magloire@multimania.com>'],
 	'last_translated'	=> '11/07/1999',
 },
 
@@ -734,20 +745,26 @@ $translations = {
 
 'mirror/explain' => {
 	'type'			=> 'Web',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'à relire',
+	'since'			=> '02/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '02/08/1999',
 },
 
 'mirror/ftpmirror' => {
 	'type'			=> 'Web',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'à relire',
+	'since'			=> '02/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '02/08/1999',
 },
 
 'mirror/index' => {
 	'type'			=> 'Web',
-	'status'		=> 'à traduire',
-	'since'			=> '16/12/1998',
+	'status'		=> 'à relire',
+	'since'			=> '02/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '02/08/1999',
 },
 
 'mirror/submit' => {
@@ -760,26 +777,34 @@ $translations = {
 
 'mirror/types' => {
 	'type'			=> 'Web',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'à relire',
+	'since'			=> '02/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '02/08/1999',
 },
 
 'mirror/webmirror' => {
 	'type'			=> 'Web',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'à relire',
+	'since'			=> '02/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '02/08/1999',
 },
 
 'mirror/push_server' => {
 	'type'			=> 'Web',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'à relire',
+	'since'			=> '02/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '02/08/1999',
 },
 
 'mirror/size' => {
 	'type'			=> 'Web',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'à relire',
+	'since'			=> '02/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '02/08/1999',
 },
 
 'ports/index' => {
@@ -860,8 +885,10 @@ $translations = {
 
 'Bugs/index' => {
 	'type'			=> 'Web',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'à relire',
+	'since'			=> '02/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '02/08/1999',
 },
 
 'Bugs/server-control' => {
