@@ -108,17 +108,21 @@ sub aptlines {
 
 
 sub table_archive {
-	print "<b>" if $html;
-	print   "Secondary FTP and HTTP mirrors of the Debian archive";
-	print "</b>" if $html;
-	print "\n----------------------------------------------------\n";
+	print "<h3 align=\"center\">" if $html;
+	print "\n                   " if (!$html);
+	print "Secondary mirrors of the Debian archive";
+	print "\n                   ---------------------------------------\n\n" if (!$html);
+	print "</h3>\n\n" if $html;
+	print "\n<pre><small>\n" if $html;
 	# $tmp = "%-$longest{site}s %-$longest{'archive-ftp'}s%-$longest{'archive-http'}sPORTS MIRRORED\n";
 	# printf $tmp, "HOSTNAME", "FTP", "HTTP";
 	# $tmp =~ s/PORTS MIRRORED/--------------/;
 	# printf $tmp, "--------", "---", "----";
 	$tmp = "%-$longest{site}s %-$longest{'archive-ftp'}s%s\n";
+	print "<strong>" if $html;
 	printf $tmp, "HOSTNAME", "FTP", "HTTP";
 	printf $tmp, "--------", "---", "----";
+	print "</strong>" if $html;
 	foreach $country (sort keys %countries) {
 		if ($html) {
 			print "\n<b>$country</b>\n";
@@ -163,79 +167,126 @@ sub table_archive {
 			}
 		}
 	}
+	print "</small></pre>" if $html;
 }
 
 
 sub intro {
-	print "<h1>" if $html;
+	print "<h1 align=\"center\">" if $html;
+	print "                 " if (!$html);
 	print "Debian GNU/Linux - worldwide mirror sites";
 	print "</h1>" if $html;
-	print "\n\n";
+	print "\n                 -----------------------------------------\n" if (!$html);
+	print "\n";
 
 	print "<p>" if $html;
-	print "This file is broken up into two separate mirror listings:\n";
-	print "primary and Secondary mirror sites.  The definitions are as follows:\n\n";
+	print <<END;
+This file is broken up into two separate mirror listings: Primary and
+Secondary mirror sites.  The definitions are as follows:
 
+END
 	print "<p>" if $html;
-	print "A Primary mirror site has good bandwidth, is available 24 hours a day,\n";
-	print "and has an easy to remember names of the form ftp.&lt;country&gt;.debian.org.\n";
-	print "Additionally, most of them are updated automatically after updates to the\n";
-	print "Debian archive.\n\n";
+	print <<END;
+END
+	if ($html) {
+          print <<END;
+  A <strong>Primary mirror</strong> site has good bandwidth, is available 24 hours a day,
+  and has an easy to remember names of the form ftp.&lt;country&gt;.debian.org.
+END
+	} else {
+	  print <<END;
+  A Primary mirror site has good bandwidth, is available 24 hours a day,
+  and has an easy to remember names of the form ftp.<country>.debian.org.
+END
+	}
 
+	print <<END;
+  Additionally, most of them are updated automatically after updates to the
+  Debian archive. The Debian archive on those sites is normally available
+  using both FTP and HTTP protocols.
+
+END
 	print "<p>" if $html;
-	print "A Secondary mirror site may have restrictions on what they\n";
-	print "mirror (due to space restrictions). Just because a site is Secondary doesn't\n";
-	print "necessarily mean it'll be any slower or less up to date than a Primary site.\n\n";
+	if ($html) {
+          print <<END;
+  A <strong>Secondary mirror</strong> site may have restrictions on what they mirror (due to
+END
+	} else {
+	  print <<END;
+  A Secondary mirror site may have restrictions on what they mirror (due to
+END
+	}
+	print <<END;
+  space restrictions). Just because a site is Secondary doesn't necessarily
+  mean it'll be any slower or less up to date than a Primary site.
 
+END
 	print "<p>" if $html;
-	print "Use the site closest to you for the fastest downloads possible whether is be\n";
-	print "a primary or secondary site. The program <em>netselect</em> can be used to\n";
-	print "determine the fastest of a list of sites.\n\n";
+	print <<END;
+Use the site closest to you for the fastest downloads possible whether it is
+END
+	if ($html) {
+          print "
+a primary or secondary site. The program
+<a href=\"http://packages.debian.org/stable/net/netselect.html\">
+<em>netselect</em></a> can be used to\n";
+	} else {
+	  print "a primary or secondary site. The program `netselect' can be used to\n";
+	}
+	print <<END;
+determine the fastest of a list of sites.
 
+END
 	print "<p>" if $html;
-	print "If you know of any mirrors that are missing from this list,\n";
-	print "please have the site maintainer fill out\n";
-
+	print <<END;
+If you know of any mirrors that are missing from this list,
+please have the site maintainer fill out:
+END
 	if ($html) {
 		print <<END;
-<a href=\"http://www.debian.org/mirror/submit\">http://www.debian.org/mirror/submit</a>.
+<a href="http://www.debian.org/mirror/submit">http://www.debian.org/mirror/submit</a>.
 To contact the maintainer of this page, write to
 <a href="mailto:mirrors\@debian.org">mirrors\@debian.org</a>.
 
-<pre><small><b>Primary ISO Mirror Sites</b>
-------------------------         	<b>/debian?</b>	<b>/debian-non-US?</b>
-Australia     -   <a href="ftp://ftp.au.debian.org/debian/">ftp.au.debian.org</a>	Yes		<a href="ftp://ftp.au.debian.org/debian-non-US/">Yes</a>
-Austria       -   <a href="ftp://ftp.at.debian.org/debian/">ftp.at.debian.org</a>	Yes		<a href="ftp://ftp.at.debian.org/debian-non-US/">Yes</a>
-Canada        -   <a href="ftp://ftp.ca.debian.org/debian/">ftp.ca.debian.org</a>	Yes		<a href="ftp://ftp.ca.debian.org/debian-non-US/">Yes</a>
-Germany       -   <a href="ftp://ftp.de.debian.org/debian/">ftp.de.debian.org</a>	Yes		<a href="ftp://ftp.de.debian.org/debian-non-US/">Yes</a>
-France        -   <a href="ftp://ftp.fr.debian.org/debian/">ftp.fr.debian.org</a>	Yes		<a href="ftp://ftp.fr.debian.org/debian-non-US/">Yes</a>
-Japan         -   <a href="ftp://ftp.jp.debian.org/debian/">ftp.jp.debian.org</a>	Yes		<a href="ftp://ftp.ja.debian.org/debian-non-US/">Yes</a>
-Korea         -   <a href="ftp://ftp.kr.debian.org/debian/">ftp.kr.debian.org</a>	Yes		<a href="ftp://ftp.kr.debian.org/debian-non-US/">Yes</a>
-Sweden        -   <a href="ftp://ftp.se.debian.org/debian/">ftp.se.debian.org</a>	Yes		<a href="ftp://ftp.se.debian.org/debian-non-US/">Yes</a>
-United Kingdom-   <a href="ftp://ftp.uk.debian.org/debian/">ftp.uk.debian.org</a>	Yes		<a href="ftp://ftp.uk.debian.org/debian-non-US/">Yes</a>
-United States -   <a href="ftp://ftp.debian.org/debian/">ftp.debian.org</a>   	Yes		No
-   
-</small></pre>
+<h2 align="center">Primary Debian Mirror Sites</h2>
+
+<table border="0" align="center" width="90%">
+<tr><th>Country</th><th>Site</th><th><b>/debian?</b></th><th><b>/debian-non-US?</b></th></tr>
+<tr><td colspan="4"><hr></td></tr>
+<tr><td width="25%">Australia</td><td width="25%" align="center"><code><a href="ftp://ftp.au.debian.org/debian/">ftp.au.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.au.debian.org/debian-non-US/">Yes</a></td></tr>
+<tr><td width="25%">Austria</td><td width="25%" align="center"><code><a href="ftp://ftp.at.debian.org/debian/">ftp.at.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.at.debian.org/debian-non-US/">Yes</a></td></tr>
+<tr><td width="25%">Canada</td><td width="25%" align="center"><code><a href="ftp://ftp.ca.debian.org/debian/">ftp.ca.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.ca.debian.org/debian-non-US/">Yes</a></td></tr>
+<tr><td width="25%">Germany</td><td width="25%" align="center"><code><a href="ftp://ftp.de.debian.org/debian/">ftp.de.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.de.debian.org/debian-non-US/">Yes</a></td></tr>
+<tr><td width="25%">France</td><td width="25%" align="center"><code><a href="ftp://ftp.fr.debian.org/debian/">ftp.fr.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.fr.debian.org/debian-non-US/">Yes</a></td></tr>
+<tr><td width="25%">Japan</td><td width="25%" align="center"><code><a href="ftp://ftp.jp.debian.org/debian/">ftp.jp.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.ja.debian.org/debian-non-US/">Yes</a></td></tr>
+<tr><td width="25%">Korea</td><td width="25%" align="center"><code><a href="ftp://ftp.kr.debian.org/debian/">ftp.kr.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.kr.debian.org/debian-non-US/">Yes</a></td></tr>
+<tr><td width="25%">Sweden</td><td width="25%" align="center"><code><a href="ftp://ftp.se.debian.org/debian/">ftp.se.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.se.debian.org/debian-non-US/">Yes</a></td></tr>
+<tr><td width="25%">United Kingdom</td><td width="25%" align="center"><code><a href="ftp://ftp.uk.debian.org/debian/">ftp.uk.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.uk.debian.org/debian-non-US/">Yes</a></td></tr>
+<tr><td width="25%">United States</td><td width="25%" align="center"><code><a href="ftp://ftp.debian.org/debian/">ftp.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center">No</td></tr>
+</table>
 END
 	}
 	else {
 		print <<END;
-http://www.debian.org/mirror/submit
-To contact the maintainer of this page, write to
-mirrors\@debian.org
+                     http://www.debian.org/mirror/submit
+To contact the maintainer of this page, write to mirrors\@debian.org
 
-Primary ISO Mirror Sites
-------------------------         	/debian?	/debian-non-US?
-Australia     -   ftp.au.debian.org	Yes		Yes
-Austria       -   ftp.at.debian.org	Yes		Yes
-Canada        -   ftp.ca.debian.org	Yes		Yes
-Germany       -   ftp.de.debian.org	Yes		Yes
-France        -   ftp.fr.debian.org	Yes		Yes
-Japan         -   ftp.jp.debian.org	Yes		Yes
-Korea         -   ftp.kr.debian.org	Yes		Yes
-Sweden        -   ftp.se.debian.org	Yes		Yes
-United Kingdom-   ftp.uk.debian.org	Yes		Yes
-United States -   ftp.debian.org   	Yes		No
+
+                         Primary Debian Mirror Sites
+                         ---------------------------
+
+ Country	-   Site		/debian?	/debian-non-US?
+ ----------------------------------------------------------------------
+ Australia	-   ftp.au.debian.org	Yes		Yes
+ Austria	-   ftp.at.debian.org	Yes		Yes
+ Canada		-   ftp.ca.debian.org	Yes		Yes
+ Germany	-   ftp.de.debian.org	Yes		Yes
+ France		-   ftp.fr.debian.org	Yes		Yes
+ Japan		-   ftp.jp.debian.org	Yes		Yes
+ Korea		-   ftp.kr.debian.org	Yes		Yes
+ Sweden		-   ftp.se.debian.org	Yes		Yes
+ United Kingdom	-   ftp.uk.debian.org	Yes		Yes
+ United States	-   ftp.debian.org   	Yes		No
 
 END
 	}
@@ -378,7 +429,7 @@ sources.list file:
 
 Read sources.list(5) on your Debian system for more information.
 
-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 Mirrors of the above site (all of them outside of US) include:
 
@@ -407,7 +458,7 @@ _END_
 	}
 	print <<_END_;
 
-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 Last modified: $last_modify             Number of sites listed: $nonuscount
 _END_
 }
@@ -476,11 +527,14 @@ if ($output_type eq 'html') {
 	$html=1;
 	header();
 	intro();
-	print "<small>\n<pre>\n";
 	table_archive();
-	print "<hr>Last modified: $last_modify                              Number of sites listed: $count\n";
-	print "</pre>\n";
-	print "</small>";
+	print <<END;
+<hr>
+<table border="0" width="100%"><tr>
+  <td align="left"><small>Last modified: $last_modify</small></td>
+  <td align="right"><small>Number of sites listed: $count</small></td>
+</tr></table>
+END
 	trailer();
 }
 elsif ($output_type eq 'text') {
@@ -488,6 +542,11 @@ elsif ($output_type eq 'text') {
 	$html=0;
 	intro();
 	table_archive();
+	print <<END;
+
+-------------------------------------------------------------------------------
+Last modified: $last_modify             Number of sites listed: $count
+END
 }
 elsif ($output_type eq 'apt') {
 	# print "http://www.debian.org/mirror/submit\n\n";
