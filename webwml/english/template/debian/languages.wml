@@ -161,7 +161,33 @@ sub languages {
      }
   }
   # printf STDERR join(', ', @used_langs);
-  if (@used_langs) {
+
+  if ($rel_dir eq "" && $file eq "sitemap") { # special case for the site map
+    $str .= "\n";
+    $str .= "<!--UdmComment-->\n";
+    $str .= "<langtext/>:\n";
+    $str .= "<br />\n";
+    foreach (keys %langs) {
+      if ($_ ne lc($cur_lang) or $cur_lang eq "Chinese") {
+        $sorted_langs{$trans{$langs{$_}}{$_}} = $_;
+      }
+    }
+    foreach (sort langcmp keys %sorted_langs) {
+      $cur_lang = $sorted_langs{$_};
+      $tooltip = $trans{$CUR_ISO_LANG}{$cur_lang};
+      if ($cur_lang ne "chinese") {
+        $str .= "<a href=\"$file.$langs{$cur_lang}.html\" title=\"$tooltip\">$_";
+        $str .= "&nbsp;($translit{$cur_lang})" if defined $translit{$cur_lang};
+        $str .= "</a>&nbsp;\n";
+      } else {
+        $str .= "<a href=\"$file.$langs{$cur_lang}-cn.html\" title=\"$tooltip (<CNc/>)\">$_&nbsp;(CN)</a>&nbsp;\n";
+        $str .= "<a href=\"$file.$langs{$cur_lang}-hk.html\" title=\"$tooltip (<HKc/>)\">$_&nbsp;(HK)</a>&nbsp;\n";
+        $str .= "<a href=\"$file.$langs{$cur_lang}-tw.html\" title=\"$tooltip (<TWc/>)\">$_&nbsp;(TW)</a>&nbsp;\n";
+      }
+    }
+     $str .= "<!--/UdmComment-->\n";
+  }
+  elsif (@used_langs) {
      $str .= "<!--UdmComment-->\n";
      $str .= "<langtext/>:\n<br />\n";
      # Language sorting. Create a hash going from the language's own name
@@ -186,30 +212,6 @@ sub languages {
         }
      }
      $str .= "\n<br /><a href=\"$base_url/intro/cn\"><setlang/></a>\n";
-     $str .= "<!--/UdmComment-->\n";
-  }
-  if ($rel_dir eq "" && $file eq "sitemap") {
-    $str .= "\n";
-    $str .= "<!--UdmComment-->\n";
-    $str .= "<langtext/>:\n<br />\n";
-    foreach (keys %langs) {
-      if ($_ ne lc($cur_lang) or $cur_lang eq "Chinese") {
-        $sorted_langs{$trans{$langs{$_}}{$_}} = $_;
-      }
-    }
-    foreach (sort langcmp keys %sorted_langs) {
-      $cur_lang = $sorted_langs{$_};
-      $tooltip = $trans{$CUR_ISO_LANG}{$cur_lang};
-      if ($cur_lang ne "chinese") {
-        $str .= "<a href=\"$file.$langs{$cur_lang}.html\" title=\"$tooltip\">$_";
-        $str .= "&nbsp;($translit{$cur_lang})" if defined $translit{$cur_lang};
-        $str .= "</a>&nbsp;\n";
-      } else {
-        $str .= "<a href=\"$file.$langs{$cur_lang}-cn.html\" title=\"$tooltip (<CNc/>)\">$_&nbsp;(CN)</a>&nbsp;\n";
-        $str .= "<a href=\"$file.$langs{$cur_lang}-hk.html\" title=\"$tooltip (<HKc/>)\">$_&nbsp;(HK)</a>&nbsp;\n";
-        $str .= "<a href=\"$file.$langs{$cur_lang}-tw.html\" title=\"$tooltip (<TWc/>)\">$_&nbsp;(TW)</a>&nbsp;\n";
-      }
-    }
      $str .= "<!--/UdmComment-->\n";
   }
 
