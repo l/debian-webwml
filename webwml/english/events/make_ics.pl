@@ -224,8 +224,8 @@ sub calline
 	while (length $line > 74)
 	{
 		$len = rindex($line,' ',75);
-		$len = 74 if -1 == $len;
-		-- $len while substr($line, $len, 1) eq '\\';
+		$len = 74 if $len < 1;
+		-- $len while substr($line, $len, 1) eq "\\";
 		print $handle substr($line, 0, $len), "\r\n ";
 		$line = substr($line, $len);
 	}
