@@ -55,6 +55,7 @@ my $action_check = 0;
 my $verbose = 0;
 my @debug;
 my $force = 0; # if true, rescan package even if already in db
+my $force_material =0;# if true, rescan package containing material even if already in db
 my $careful=0; # if true, save the db after each package
 
 my @pkg_list; #were we put the list of packages we are required to test
@@ -94,6 +95,7 @@ General options:
 Behaviour options:
     --careful                 save the db file after each package proceeding
     -f, --force               force the check of packages, even if they are in db
+    --force-material          force the check of packages containing any material
 Configuration options:
     -L, --libpath=dir         Append directory dir to the list of directories 
                               (\@INC) searched for include files.
@@ -153,6 +155,7 @@ my %opthash = (# ------------------ actions
 	       # ------------------ behaviour options
 	       "careful" => \$careful,
 	       "force|f" => \$force,
+	       "force-material" => \$force_material,
 	       
 	       # ------------------ configuration options
 	       "libpath=s" => \&add_dir,
@@ -278,7 +281,9 @@ PKG: while ($dsc = shift @pkg_list){
     ### if the package is already in the data, skip it (unless force specified)
     if (defined ($data{$pkg})) {
 	system ("dpkg","--compare-versions","$data{$pkg}{'version'}","\>","$ver");
-	if ((!$force)&&($?==0)&&($data{$pkg}{'version'} ne "")) {
+	if ((!$force)&&($?==0)&&($data{$pkg}{'version'} ne "")
+	       &&( (!$force_material) &&
+	          !(defined($data{$pkg}{'nls'})||defined($data{$pkg}{"po"})||defined($data{$pkg}{"templates"})))) {
 	    print "Package $pkg already in version $data{$pkg}{'version'} in the database. Skip this version $ver !\n" if ($verbose || ($data{$pkg}{'version'} ne "$ver"));
 	    next PKG;
 	} else {
@@ -401,7 +406,9 @@ my %sources;
        }
        if (defined ($data{$pkg})) {
 	   system ("dpkg","--compare-versions","$data{$pkg}{'version'}","\>",$sources{$pkg}{'version'});
-	   if ((!$force)&&($?==0)&&($data{$pkg}{'version'} ne "")) {
+	   if ((!$force)&&($?==0)&&($data{$pkg}{'version'} ne "")
+	       &&(!$force_material &&
+	          !(defined($data{$pkg}{'nls'})||defined($data{$pkg}{"po"})||defined($data{$pkg}{"templates"})))) {
 	       print "Package $pkg already in version $data{$pkg}{'version'} in the database. Skip this version $sources{$pkg}{'version'} !\n" if ($verbose || ($data{$pkg}{'version'} ne "$sources{$pkg}{'version'}"));
 	       next FTPPKG;
 	   } else {
@@ -703,9 +710,10 @@ sub check_pkg{
 #	print "Test file $file\n";
       File::Path::mkpath(File::Basename::dirname("$PO_ROOT/$pkg/$file"));
 	$filename = "${pkg}_$data{$pkg}{'version'}/$file";
-	$filename =~ s,:,\%3a,;
 	$filename =~ s,/,_,g;
 	$filename = File::Basename::dirname("$file")."/".$filename;
+	my $filename_http = $filename; #To transfer files with ":" in their name over http, the file
+	$filename_http =~ s,:,\%3a,;#on the server must have the ":", but the URL must be fixed.
 
 	if (system("gzip -c9 $file > $PO_ROOT/$pkg/$filename.gz")){
 	    warn "Can't gunzip $file to $PO_ROOT/$pkg/$filename.gz : $!";
@@ -752,7 +760,7 @@ sub check_pkg{
 	    }
 	}
 	# Add this file to the data
-	$data{$pkg}{"po"}[@{$data{$pkg}{"po"}}] = "$file:".normalize_lang($lang).":$this_stat:$filename";
+	$data{$pkg}{"po"}[@{$data{$pkg}{"po"}}] = "$file:".normalize_lang($lang).":$this_stat:".$filename_http;
     }
 
     search_templates($pkg);
