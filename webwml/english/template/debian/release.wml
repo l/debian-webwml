@@ -1,4 +1,5 @@
 #use wml::std::tags
+#use wml::debian::languages
 <perl>
 <protect pass=2>
 #
@@ -111,7 +112,7 @@ sub permute_as_list {
 #
 sub permute_as_matrix {
     my($file, @langs) = @_;
-    my($ext, $arch, $lang, @cur_dir, $release);
+    my($ext, $arch, $lang, $l10nlang, @cur_dir, $release);
     my $altcolor = 'white';
     my $ctr = 0;
     my $check_if_file_exists = 0;
@@ -124,6 +125,10 @@ sub permute_as_matrix {
 
     if ($file =~ /release-notes/) { delete $formats{'pdf'} } else { $formats{'pdf'} = "PDF" };
 
+    my %sorted_langs = ();
+    foreach (@langs) {
+      $sorted_langs{$trans{$(CUR_ISO_LANG)}{$_}} = $_;
+    }
     foreach $arch (sort keys %arches) {
 	$ctr++;
 	my $first = 1;
@@ -153,7 +158,8 @@ sub permute_as_matrix {
 	    print "  <td align=\"left\">" . $formats{$ext} . "</td>\n";
 	    # permute over languages
 	    print "  <td>";
-	    foreach $lang (sort @langs) {
+	    foreach $l10nlang (sort langcmp keys %sorted_langs) {
+	        $lang = $sorted_langs{$l10nlang};
 	        next if ($ext eq "pdf" && $lang eq "japanese");
 	        next if ($ext eq "pdf" && $lang eq "russian");
 	        $file_version = "$arch/$file." . $langsinstall{$lang} . ".$ext";
