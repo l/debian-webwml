@@ -62,11 +62,11 @@ sub header {
 				 sourcenames => "", );
 	$checked_searchon{$values{searchon}} = "checked=\"checked\"";
 	$search_in_header = <<MENU;
-<td align="center" valign="middle">
+<td align="left" valign="middle">
 <form method="GET" action="http://packages.debian.org/cgi-bin/search_packages.pl">
 <input type="text" size="30" name="keywords" value="$values{keywords}" id="kw" />
 <input type="submit" value="Search">
-<span style="font-size: 60%"><a href="http://packages.debian.org">Full options</a></span>
+<span style="font-size: 60%"><a href="http://packages.debian.org/#search_packages">Full options</a></span>
 <br>
 <div style="font-size: 80%">Search on:
 <input type="radio" name="searchon" value="names" id="onlynames" $checked_searchon{names}>
@@ -80,8 +80,36 @@ sub header {
 </td>
 MENU
 ;
+    } elsif ($params{print_search_field} eq 'contents') {
+	my %values = %{$params{search_field_values}};
+	$logo_align ='left';
+	my %checked_searchmode = ( searchfiles => "",
+				   searchfilesanddirs => "",
+				   searchword => "",
+				   filelist => "", );
+	$checked_searchmode{$values{searchmode}} = "checked=\"checked\"";
+	$search_in_header = <<MENU;
+<td align="left" valign="middle">
+<form method="GET" action="http://packages.debian.org/cgi-bin/search_contents.pl">
+<input type="text" size="30" name="word" id="keyword" value="$values{keyword}">&nbsp;
+<input type="submit" value="Search">
+<span style="font-size: 60%"><a href="http://packages.debian.org/#search_contents">Full options</a></span>
+<br>
+<div style="font-size: 80%">Display:
+<input type=radio name="searchmode" value="searchfiles" id="searchfiles" $checked_searchmode{searchfiles}>
+  <label for="searchfiles">files</label>
+<input type=radio name="searchmode" value="searchfilesanddirs" id="searchfilesanddirs" $checked_searchmode{searchfilesanddirs}>
+  <label for="searchfilesanddirs">files &amp; directories</label>
+<input type=radio name="searchmode" value="searchword" id="searchword" $checked_searchmode{searchword}>
+  <label for="searchword">subword matching</label>
+<input type=radio name="searchmode" value="filelist" id="filelist" $checked_searchmode{filelist}>
+  <label for="filelist">content list</label>
+</div>
+</form>
+</td>
+MENU
+;
     }
-
 
     my $keywords = $params{keywords} || '';
     my $KEYWORDS_LINE = "<meta name=\"Keywords\" content=\"debian, $keywords $title_keywords\">";

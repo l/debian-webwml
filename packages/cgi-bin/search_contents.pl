@@ -32,12 +32,6 @@ my $input = new CGI;
 
 print $input->header;
 
-print Packages::HTML::header( title => 'Package Contents Search Results' ,
-			      lang => 'en',
-			      title_tag => 'Debian package contents search results',
-			      print_title_above => 1 );
-
-
 # If you want, just print out a list of all of the variables and exit.
 # print $input->dump;
 # exit;
@@ -66,6 +60,21 @@ my $searchmode = $params{values}{searchmode}{final};
 my $arch = $params{values}{arch}{final};
 my $page = $params{values}{page}{final};
 my $results_per_page = $params{values}{number}{final};
+
+my $keyword_enc = encode_entities $keyword;
+my $version_enc = encode_entities $version;
+my $arch_enc = encode_entities $arch;
+
+print Packages::HTML::header( title => 'Package Contents Search Results' ,
+			      lang => 'en',
+			      title_tag => 'Debian package contents search results',
+			      print_title_above => 1,
+			      print_search_field => 'contents',
+			      search_field_values => { 
+				  keyword => $keyword_enc,
+				  searchmode => $searchmode,
+			      },
+			      );
 
 
 # read the configuration
@@ -139,10 +148,6 @@ my $command = $grep." ".$file." ".$file_nonus;
 #print $command."<br>\n"; # just for debugging
 
 my @results = qx( $command );
-
-my $keyword_enc = encode_entities $keyword;
-my $version_enc = encode_entities $version;
-my $arch_enc = encode_entities $arch;
 
 if ($searchmode eq "filelist") {
 	print "<p>You have searched for the contents of <em>$keyword_enc</em> in <em>$version_enc</em>, architecture <em>$arch_enc</em>.</p>";
