@@ -196,10 +196,11 @@ $translations_status = {
 	'status'		=> '6',
 	'since'			=> '01/07/1998',
 	'translation_name'	=> 'Guide de Référence du Développeur Debian',
-	'translation_maintainer'=> ['Alain Meessen <ameessen@ulb.ac.be>'],
+	'translation_maintainer'=> ['Antoine Hulin'],
 	'base_revision'		=> '0.1',
 	'translation_package'	=> '',
-	'old_translators'	=> ['Herve Floch <Herve.Floch@linux.eu.org>',
+	'old_translators'	=> ['Alain Meessen <ameessen@ulb.ac.be>',
+	                            'Herve Floch <Herve.Floch@linux.eu.org>',
 				    'Laurent Picouleau <laurent.picouleau@wanadoo.fr>'],
 },
 
