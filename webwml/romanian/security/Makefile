@@ -14,10 +14,23 @@ index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.data) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
 
-# install keys.txt
-ifeq ($(LANGUAGE),en)
+dsa.$(LANGUAGE).rdf: dsa.rdf.in $(wildcard $(CUR_YEAR)/dsa-*.wml) \
+  $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.wml) \
+  $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.data) \
+  $(TEMPLDIR)/recent_list.wml
+	wml $(WMLOPTIONS) -o dsa.$(LANGUAGE).rdf dsa.rdf.in
+
+install:: $(HTMLDIR)/dsa.$(LANGUAGE).rdf
+
+$(HTMLDIR)/dsa.$(LANGUAGE).rdf: $(HTMLDIR)/%: %
+	install -m 664 -p $< $(HTMLDIR)
+ifeq "$(LANGUAGE)" "en"
+	ln -sf dsa.en.rdf $(HTMLDIR)/dsa.rdf
+endif
+
+ifeq "$(LANGUAGE)" "en"
 install:: $(HTMLDIR)/keys.txt
 
-$(HTMLDIR)/keys.txt: keys.txt
-	install keys.txt $(HTMLDIR)
+$(HTMLDIR)/keys.txt: $(HTMLDIR)/%: %
+	install -m 664 -p $< $(HTMLDIR)
 endif
