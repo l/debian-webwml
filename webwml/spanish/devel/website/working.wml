@@ -1,6 +1,6 @@
 #use wml::debian::template title="Cómo trabajar con las páginas web de Debian" BARETITLE=true
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.24"
+#use wml::debian::translation-check translation="1.31"
 
 <toc-display/>
 
@@ -76,7 +76,86 @@ su significado.</p>
 entender cómo se organiza dicho directorio. Éstos deberían proporcionar
 toda la información necesaria cuando se trabaja en ese área.</p>
 
-+<toc-add-entry name="links">Enlaces</toc-add-entry>
+<h3>Separe los cambios en el contenido de los cambios en el formato</h3>
+
+<p>Haga siempre parches o commits separados para los cambios en el
+contenido y los cambios en el formato. Cuando se combinan, es más difícil
+para los traductores encontrar las diferencias. Si ejecuta
+<kbd>cvs diff</kbd> con tales cambios, podrá ver el desastre usted
+mismo.</p>
+
+<p>En general, evite cambios aleatorios en el formato. No debería hacer
+compatibles con XHTML/XML partes viejas de una página en el mismo commit
+con otros cambios. (Las cosas nuevas pueden y deben hacerse adecuadamente
+desde el principio, claro está.)</p>
+
+
+<h3>Actualice las traducciones, también, si fuera posible</h3>
+
+<p>Algunos cambios son idependientes del idioma usado en el fichero WML,
+como cambios en una URL o en código Perl embebido. La corrección de fallos
+al escribir también cae en esta misma categoría, puesto que los
+traductores suelen ignorarlos al traducir.
+Con este tipo de cambios independientes del idioma, puede hacer el mismo
+cambio en todos los ficheros traducidos sin saber en realidad otros
+idiomas, y modificar sin problemas la versión de la cabecera
+translation-check.</p>
+
+<p>No es que sea terriblemente duro para los traductores hacer el trabajo
+ellos mismos, y puede ser inconveniente para editores anglo-parlates tener
+que hacer un checkout completo sobre el que trabajar. Sin embargo,
+animamos a la gente a que lo haga para evitar molestar a dos docenas de
+personas por algo que podría hacer rápidamente una.</p>
+
+<p>Además, para hacer más fácil aplicar estos cambios, puede usar el
+script <code>smart_change.pl</code> del directorio superior en el módulo
+webwml de CVS.</p>
+
+<h4>Uso de smart_change.pl</h4>
+
+<pre>smart_change.pl [opciones] ficheroorigen</pre>
+
+<p>Actualmente sólo se permiten ficheros bajo <code>/english/</code> como
+<var>ficheroorigen</var>. <code>smart_change.pl</code> admite los
+siguientes argumentos:</p>
+
+<dl>
+      <dt><code>-s, --substitute=<var>REGEXP</var></code></dt>
+      <dd>Especifica una expresión regular en perl que se aplica a los
+       ficheros fuente (puede usarse más de una vez).
+      <pre>
+         Ejemplo: ./smart_change.pl -s "s,http://urlvieja/,http://urlnueva/,g" english/index.wml
+       </pre>
+      </dd>
+
+      <dt><code>-l, --lang=<var>CADENA</var></code></dt>
+      <dd>Procesa este idioma (puede usarse más de una vez). Si no se
+       especifica el idioma, se procesan todos los disponibles.</dd>
+
+      <dt><code>-n, --no-bump</code></dt>
+      <dd>No incrementa las versiones en las cabeceras translation-check.
+       Normalmente, la versión de cada cabecera translation-check se
+       incrementa en uno en el fichero traducido que están al día, y se
+       deja sin tocar en aquellos que están obsoletos.
+       Si se especifica esta opción, no se toca ninguna cabecera
+       translation-check. Vea "Cómo mantener las traducciones al día" si
+       desea una <a href="uptodate">explicación sobre las cabeceras
+       translation-check</a>.
+      </dd>
+
+      <dt><code>-p, --previous</code></dt>
+      <dd>Muestra la revisión de CVS anterior. Esto es útil principalmente
+       cuando el fichero en inglés ya ha sido enviado y quiere comprobar
+       las cabeceras translation-check frente a la versión anterior.</dd>
+
+      <dt><code>-h, --help</code></dt>
+      <dd>Muestra una información breve sobre uso.</dd>
+
+      <dt><code>-v, --verbose</code></dt>
+      <dd>Muestra mensajes prolijos mientras funciona.</dd>
+</dl>
+
+<toc-add-entry name="links">Enlaces</toc-add-entry>
 
 
 <h3>«Este enlace no parece correcto. ¿Debería cambiarlo?»</h3>
