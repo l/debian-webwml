@@ -1,0 +1,52 @@
+#use wml::debian::template title="Exemplo do uso do rsync e como configurar o ssh para não usar senha" NOHEADER=yes
+#use wml::debian::translation-check translation="1.5"
+
+<H3>Exemplo de uso do rsync</H3>
+
+<P>A seguir há um exemplo que irá espelhar ambos os sites web e FTP. Você irá
+querer modificar o nome da máquina e os diretórios involvidos para bater com
+sua situação.
+
+<P>O arquivo de lock (lockfile) é útil se você executar isso usando um trabalho
+cron. Se, por qualquer razão o mirror não completar, a próxima vez que o mirror
+tentar rodar você irá receber um email. Você pode então procurar onde está o
+problema, consertá-lo, deletar o arquivo de lock e o mirror irá funcionar bem
+da próxima vez que você rodá-lo.
+
+<blockquote>
+<pre>
+\#!/bin/sh -e
+
+lockfile -r 1 rsync.master.lock || exit 23
+
+rsync -avz -e ssh --exclude sponsor.* --delete &lt;machine&gt;:/web/debian.org/ debian.org
+
+echo Terminada a atualização do mirror web. Trabalhando no mirror FTP agora...
+
+rsync -avz --delete -e ssh &lt;machine&gt;:/debian debian
+
+rm -f rsync.master.lock
+</pre>
+</blockquote>
+
+<p>O script dado acima irá pedir uma senha a menos que você configure o ssh 
+como descrito abaixo.
+
+<H3><a name="paswordlessssh">Como configurar o ssh para que não peça senha</a>:</H3>
+
+<p>Você pode criar uma chave de autenticação RSA para estar apto a logar em um
+site remoto de sua conta sem ter de digitar sua senha.
+
+<p>Note que uma vez feito isso, se um invasor quebrar o sistema e entrar em sua
+conta/site, eles terão acesso livre ao site que você está espelhando também!
+Por isso, isso <strong>nunca</strong> deve ser feito com o root.
+
+<ul>
+  <li>Rode <code>ssh-keygen</code> na sua máquina e pressione enter quando pedir
+	uma senha.
+  <li>Depois, adicine o conteúdo do <code>~/.ssh/identity.pub</code> de sua máquina
+	a <code>~/.ssh/authorized_keys</code> no site do mirror (o arquivo deve ter
+	modo 600).
+</ul>
+
+<p>Você deve ser capaz de logar com o ssh no seu site remoto sem ser pedida senha.
