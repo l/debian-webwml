@@ -9,5 +9,5 @@ SUBS=News
 include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
-  $(TEMPLDIR)/recent_list.wml \
+  $(TEMPLDIR)/recent_list.wml $(wildcard News/[0-9]*/*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/News/[0-9]*/*.wml)
