@@ -114,7 +114,8 @@ def main():
         # Strip off revision number
         dsa = advisory.dsa.lower()[:-2].replace(' ', '-')
 
-        stem = '%d/%s' % (time.localtime()[0],dsa)
+        year = time.localtime()[0]
+        stem = '%d/%s' % (year,dsa)
         dataFile = stem + '.data'
         wmlFile = stem + '.wml'
 
@@ -159,7 +160,8 @@ def main():
                 for f in fileset.files:
                     data.write("  <dd><fileurl %s>\n" % f.url)
 
-        data.write("\n<p><md5sums http://lists.debian.org/debian-security-announce/debian-security-announce-2003/msg00000.html>\n")
+        data.write("\n</dl>\n")
+        data.write("\n<p><md5sums http://lists.debian.org/debian-security-announce/debian-security-announce-%d/msg00000.html>\n" % year)
 
         data.close()
 
@@ -172,8 +174,9 @@ def main():
         wml.write('''
 # do not modify the following line
 #include "$(ENGLISHDIR)/security/%s.data"
-# $Id$
-''' % stem)
+# $%sId: $
+''' % (stem,''))
+        # Prevent CVS from substituting $Id
 
 if __name__ == '__main__':
     main()
