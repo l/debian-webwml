@@ -54,7 +54,8 @@ endif
 
 ifneq "$(LANGUAGE)" "en"
 contact.$(LANGUAGE).html : contact.wml $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
-  $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml $(LOCALEDIR)/others.mo
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
+  $(ENGLISHDIR)/devel/website/tc.data $(LOCALEDIR)/others.mo
 endif
 
 all:: $(SITEMAP)
