@@ -8,20 +8,22 @@ use lib ($0 =~ m|(.*)/|, $1 or ".") ."/../../../../Perl";
 
 use Debian::L10n::Db;
 
-use vars qw($opt_h $opt_l $opt_D $opt_P $opt_T $opt_L);
+use vars qw($opt_h $opt_d $opt_l $opt_D $opt_P $opt_T $opt_L);
 
 sub usage {
-        print "Usage:  gen-files.pl [--l10ndir=DIR] [--po] [--templates] [--podebconf] [--langs]\n";
+        print "Usage:  gen-files.pl [--dist=DIST] [--l10ndir=DIR] [--po] [--templates] [--podebconf] [--langs]\n";
         exit($_[0]);
 }
 
 $opt_h = $opt_D = $opt_P = $opt_T = $opt_L = 0;
+$opt_d = 'unstable';
 $opt_l = '.';
 
 Getopt::Long::Configure("no_ignore_case");
 if (not Getopt::Long::GetOptions(qw(
         h|help
         l|l10ndir=s
+        d|dist=s
         D|podebconf
         P|po
         T|templates
@@ -32,9 +34,9 @@ if (not Getopt::Long::GetOptions(qw(
 usage(0) if $opt_h;
 
 my $data = Debian::L10n::Db->new();
-$data->read("$opt_l/data/unstable.gluck");
+$data->read("$opt_l/data/$opt_d.gluck");
 my $date1 = $data->get_date();
-$data->read("$opt_l/data/unstable.non-US");
+$data->read("$opt_l/data/$opt_d.non-US");
 my $date2 = $data->get_date();
 my $date = $date1; #   Ignore non-US for now
 # my $date = ($date1 lt $date2 ? $date1 : $date2);
@@ -148,7 +150,7 @@ sub get_stats_po {
                               "\"><td>";
 		        $str .= (percent_stat($stat) eq "100%" ? $pkg : "<a href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>");
 		        $str .= "</td><td>".show_stat($stat)."</td><td><a href=\"";
-                        $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
+                        $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/$opt_d/";
                         $str .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>";
 		        $str .= "<td>$translator</td><td>$team</td>".
                               "</tr>\n";
@@ -300,11 +302,11 @@ sub get_stats_templates {
 			}
 		        $str .= (percent_stat($stat) eq "100%" ? $pkg : "<a href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>");
                         $str .= "</td><td>".show_stat($stat)."</td><td><a href=\"";
-                        $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "templates/unstable/";
+                        $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "templates/$opt_d/";
                         $str .= $data->pooldir($pkg)."/$link_trans.gz\">$template</a></td><td>";
                         if ($link_orig ne '') {
                                 $str .= "<a href=\"";
-                                $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "templates/unstable/";
+                                $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "templates/$opt_d/";
                                 $str .= $data->pooldir($pkg)."/$link_orig.gz\">templates</a>";
                         }
                         $str .= "</td></tr>\n";
@@ -325,11 +327,11 @@ sub get_stats_templates {
                         my $l = uc($lang);
                         next if $list{$l};
                         $excl{$l}  = '' unless defined($excl{$l});
-                        $excl{$l} .= "<a href=\"".($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root)."templates/unstable/".$data->pooldir($pkg)."/".$ftemp.".gz\">".$pkg."</a>";
+                        $excl{$l} .= "<a href=\"".($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root)."templates/$opt_d/".$data->pooldir($pkg)."/".$ftemp.".gz\">".$pkg."</a>";
                         my $count = 1;
                         foreach (@untranslated) {
                                 $count ++;
-                                $excl{$l} .= "[<a href=\"".($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root)."templates/unstable/".$data->pooldir($pkg)."/".$_.".gz\">".$count."</a>]";
+                                $excl{$l} .= "[<a href=\"".($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root)."templates/$opt_d/".$data->pooldir($pkg)."/".$_.".gz\">".$count."</a>]";
                         }
 		        if (defined $tmpl_errors->{$pkg}) {
 			    $excl{$l} .= " (<a href=\"errors-by-pkg#P$pkg\">!</a>)";
@@ -477,7 +479,7 @@ sub get_stats_podebconf {
                         $addorig .= " [<a href=\"".
                                 ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root).
                                 ($pofile eq 'templates.pot' ? 'po' : 'templates').
-                                '/unstable/'.$data->pooldir($pkg).
+                                '/$opt_d/'.$data->pooldir($pkg).
                                 "/$link.gz\">$pofile</a>]";
                 }
                 $orig .= "<li><a name=\"$pkg\" href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>$addorig</li>\n"
@@ -507,7 +509,7 @@ sub get_stats_podebconf {
 		              "\"><td>";
 		        $str .= (percent_stat($stat) eq "100%" ? $pkg : "<a href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>");
 		        $str .= "</td><td>".show_stat($stat)."</td><td><a href=\"";
-                        $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
+                        $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/$opt_d/";
                         $str .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>";
 		        $str .= "<td>$translator</td>".
                               "</tr>\n";

@@ -11,6 +11,7 @@ GETTEXTFILES += l10n.mo
 include $(WMLBASE)/Make.lang
 
 L10N_DIR = $(ENGLISHDIR)/international/l10n
+DIST = unstable
 
 LANGS_TEMPLATES  := $(shell grep 'templates:' $(L10N_DIR)/data/langs | sed -e 's/templates:  *//')
 
@@ -33,9 +34,9 @@ $(HTMLFILES): $(ENGLISHDIR)/$(CUR_DIR)/menu.inc $(L10N_DIR)/dtc.def $(L10N_DIR)/
 $(HTML_TEMPLATES): tmpl.$(LANGUAGE).tmpl $(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc
 	$(L10N_DIR)/scripts/fix-files.sh $(ENGLISHDIR)/$(CUR_DIR)/gen $(LANGUAGE) $(LANGS_TEMPLATES)
 
-$(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc $(ENGLISHDIR)/$(CUR_DIR)/gen/rank.inc $(L10N_DIR)/date.gen $(L10N_DIR)/data/langs: $(L10N_DIR)/scripts/gen-files.pl $(L10N_DIR)/data/unstable.gluck $(L10N_DIR)/data/unstable.non-US
+$(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc $(ENGLISHDIR)/$(CUR_DIR)/gen/rank.inc $(L10N_DIR)/date.gen $(L10N_DIR)/data/langs: $(L10N_DIR)/scripts/gen-files.pl $(L10N_DIR)/data/$(DIST).gluck $(L10N_DIR)/data/$(DIST).non-US
 	-rm -rf $(ENGLISHDIR)/$(CUR_DIR)/../*/gen
-	perl $(L10N_DIR)/scripts/gen-files.pl --l10ndir=$(L10N_DIR)  --langs --po --templates --podebconf
+	perl $(L10N_DIR)/scripts/gen-files.pl --dist=$(DIST) --l10ndir=$(L10N_DIR)  --langs --po --templates --podebconf
 
 clean::
 	-rm -rf gen
