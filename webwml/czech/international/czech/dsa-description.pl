@@ -23,8 +23,14 @@ s{<define-tag description>([^<]*)several vulnerabilities([^<]*)</define-tag>}
 s{<define-tag description>([^<]*)integer overflows([^<]*)</define-tag>}
 {<define-tag description>${1}celoèíselná pøeteèení${2}</define-tag>}g;
 
+s{<define-tag description>([^<]*)integer overflow([^<]*)</define-tag>}
+{<define-tag description>${1}celoèíselné pøeteèení${2}</define-tag>}g;
+
 s{<define-tag description>([^<]*)unsanitised input([^<]*)</define-tag>}
 {<define-tag description>${1}neo¹etøený vstup${2}</define-tag>}g;
+
+s{<define-tag description>([^<]*)missing input sanitising([^<]*)</define-tag>}
+{<define-tag description>${1}chybí o¹etøení vstupu${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)buffer overflows([^<]*)</define-tag>}
 {<define-tag description>${1}pøeteèení bufferu${2}</define-tag>}g;
@@ -189,6 +195,9 @@ s{<p>The unstable distribution \(sid\) does not contain a ([\w-]+) package\.}
 
 s{In the unstable distribution \(sid\) this package does not exist anymore\.}
 {V&nbsp;unstable distribuci (sid) ji¾ tento balíèek neexistuje.}g;
+
+s{<p>In the unstable distribution \(sid\) CUPSYS does not use its own xpdf variant anymore but uses xpdf-utils.</p>}
+{<p>V&nbsp;unstable distribuci (sid) CUPSYS ji¾ nepou¾ívá svoji vlastní xpdf variantu, ale pou¾ívá xpdf-utils.</p>}g;
 
 s{It has been replaced by ([\w-]+)\.}
 {Byl nahrazen balíèkem ${1}.}g;
