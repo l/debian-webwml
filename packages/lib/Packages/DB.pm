@@ -675,8 +675,11 @@ sub process_dep_list {
 	my @final_dep_list = ();
 	foreach my $given_dep (split(/\s*\|\s*/)) {
 	    my $given_dep_strip = $given_dep;
-	    $given_dep_strip =~ s/\s*\((=|>=|<=|<<|>>)\s*(.*)\)\s*//o;
-	    my ( $dep_op, $dep_ver ) = ( $1, $2 );
+	    my ( $dep_op, $dep_ver );
+	    {
+		$given_dep_strip =~ s/\s*\((=|>=|<=|<<|>>)\s*(.*)\)\s*//o;
+		( $dep_op, $dep_ver ) = ( $1, $2 );
+	    }
 	    $given_dep_strip =~ s/\s*\[.*\]\s*//o;
 	    if ($self->pkg_exists( $given_dep_strip ) ) {
 		push(@final_dep_list, [ $given_dep_strip, 
