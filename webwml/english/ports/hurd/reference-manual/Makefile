@@ -22,7 +22,7 @@ RMDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(RMSOURCE))
 all:
 
 install::
-	-install -d $(HTMLDIR)
+	test -d $(HTMLDIR) || install -d $(HTMLDIR)
 install:: $(RMDESTFILES)
 
 $(RMDESTFILES): $(RMSOURCE)
