@@ -9,18 +9,17 @@ endif
 
 ifdef SPI
 RELHTMLBASE := ../../../debian.org/SPI
-RELTEMPLDIR := ../../english/SPI/template
-ENGLISHSRCDIR = $(WMLBASE)/../../english/SPI
+ENGLISHSRCDIR := $(WMLBASE)/../../english/SPI
+TEMPLDIR := $(ENGLISHSRCDIR)/template
 else
 RELHTMLBASE := ../../debian.org
-RELTEMPLDIR := ../english/template/debian
-ENGLISHSRCDIR = $(WMLBASE)/../english
+ENGLISHSRCDIR := $(WMLBASE)/../english
+TEMPLDIR := $(ENGLISHSRCDIR)/template/debian
 endif
 
 ENGLISHDIR := $(ENGLISHSRCDIR)
 # ^ just an alias ^
 HTMLDIR = $(WMLBASE)/$(RELHTMLBASE)/$(CUR_DIR)
-TEMPLDIR = $(WMLBASE)/$(RELTEMPLDIR)
 
 LANGUAGECAP = $(shell echo $(LANGUAGE) | tr "a-z" "A-Z")
 WMLOPTIONS := -q -D CUR_YEAR=$(shell date +%Y)
@@ -110,11 +109,13 @@ endif
 # the rule for every wml file
 ifndef NOGENERICDEP
 ifdef SPI
-%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/template.wml $(HTMLDEP)
+%.$(LANGUAGE).html : %.wml \
+  $(WMLBASE)/../../.wmlrc $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
+  $(TEMPLDIR)/template.wml $(HTMLDEP)
 	$(WML) $(<F)
 else
-%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
-		$(HTMLDEP)
+%.$(LANGUAGE).html : %.wml $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml $(HTMLDEP)
 	$(WML) $(<F)
 endif
 endif
