@@ -27,17 +27,11 @@ echo "copying events/materials/ in place..." >> $crondir/lessoften.log
 install -d -m 2775 -g debwww $webdir/events/materials
 cp -a $webtopdir/events-materials/* $webdir/events/materials/
 
-#echo "rebuilding the potato release docs..." >> $crondir/lessoften.log
-#$webtopdir/bf/potato/cvsbuild >> $crondir/lessoften.log
-#echo "copying potato release docs in place..." >> $crondir/lessoften.log
-## -f because of symlinks
-#cp -af $webtopdir/bf/potato/boot-floppies/documentation/arch/* $webdir/releases/potato/
-
-echo "rebuilding the woody release docs..." >> $crondir/lessoften.log
-$webtopdir/bf/woody/cvsbuild >> $crondir/lessoften.log
-echo "copying woody release docs in place..." >> $crondir/lessoften.log
-# -f because of symlinks
-cp -af $webtopdir/bf/woody/boot-floppies/documentation/arch/* $webdir/releases/woody/
+for release in woody sarge; do
+    echo "rebuilding the release notes for $release" >> $crondir/lessoften.log
+    make -C $webtopdir/release-notes/$release publish \
+	 PUBLISHDIR=$webtopdir/www/releases/$release >> $crondir/lessoften.log
+done
 
 # previously in parts/1l10ndata, from bouz
 cd $crondir/datafiles/
