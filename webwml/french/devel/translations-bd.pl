@@ -287,10 +287,10 @@ $translations = {
 	'url'			=> 'http://www.fr.debian.org/doc/packaging-manuals/dpkg-internals/',
 	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/dpkg/dpkg/doc/internals.sgml',
 	'package'		=> 'dpkg-dev',
-	'status'		=> 'à traduire',
+	'status'		=> 'en cours de traduction',
 	'since'			=> '01/08/1998',
 	'translation_name'	=> '',
-	'translation_sub_name'	=> '',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'base_revision'		=> '',
 	'translation_package'	=> '',
 },
@@ -654,7 +654,7 @@ $translations = {
 'devel/people' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '25/05/1999',
+	'since'			=> '11/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '25/05/1999',
 },
@@ -710,9 +710,10 @@ $translations = {
 
 'distrib/packages' => {
 	'type'			=> 'Web',
-	'status'		=> 'en cours de traduction',
+	'status'		=> 'à relire',
+	'since'			=> '11/10/1999',
 	'translation_maintainer'=> ['Marilleau Hugues <marillea@wotan.iie.cnam.fr>'],
-	'since'			=> '28/07/1999',
+	'since'			=> '11/10/1999',
 },
 
 'distrib/vendors' => {
@@ -734,7 +735,7 @@ $translations = {
 'distrib/books' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '06/09/1999',
+	'since'			=> '11/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '01/09/1999',
 },
@@ -818,7 +819,7 @@ $translations = {
 'international/Finnish' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '06/09/1999',
+	'since'			=> '11/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '13/08/1999',
 },
@@ -922,7 +923,7 @@ $translations = {
 'mirror/ftpmirror' => {
 	'type'			=> 'Web',
 	'status'		=> 'traduction à jour',
-	'since'			=> '14/08/1999',
+	'since'			=> '11/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '02/08/1999',
 },
@@ -946,7 +947,7 @@ $translations = {
 'mirror/types' => {
 	'type'			=> 'Web',
 	'status'		=> 'traduction à jour',
-	'since'			=> '14/08/1999',
+	'since'			=> '11/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '02/08/1999',
 },
@@ -954,7 +955,7 @@ $translations = {
 'mirror/webmirror' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '15/08/1999',
+	'since'			=> '11/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '02/08/1999',
 },
@@ -970,7 +971,7 @@ $translations = {
 'mirror/size' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '02/08/1999',
+	'since'			=> '11/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '02/08/1999',
 },
@@ -1052,7 +1053,7 @@ $translations = {
 'Bugs/Reporting' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '20/09/1999',
+	'since'			=> '11/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '08/08/1999',
 },
@@ -1060,7 +1061,7 @@ $translations = {
 'Bugs/index' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '20/09/1999',
+	'since'			=> '11/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '02/08/1999',
 },
@@ -1087,6 +1088,22 @@ $translations = {
 	'since'			=> '20/09/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '08/08/1999',
+},
+
+'vote/howto_proposal' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '11/10/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '11/10/1999',
+},
+
+'vote/howto_result' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '11/10/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '11/10/1999',
 },
 
 'releases/hamm/HOWTO.upgrade' => {
