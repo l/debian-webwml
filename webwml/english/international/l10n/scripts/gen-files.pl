@@ -336,27 +336,29 @@ sub get_stats_podebconf {
 
         my %incl  = ();
         my %excl  = ();
-        my $none  = '';
+        my $orig  = '';
         foreach $pkg (sort @{$packages}) {
-                unless ($data->has_podebconf($pkg)) {
-                        $none .= "<li>".$pkg."</li>\n";
-                        next;
-                }
+                next unless $data->has_podebconf($pkg);
+
                 my $list = {};
                 foreach (@pd_langs) {
                         $list{uc $_}  = 0;
                 }
-                my $addincl = '';
+                my $addorig = '';
                 foreach $line (@{$data->podebconf($pkg)}) {
                         my ($pofile, $lang, $stat, $link) = @{$line};
                         last unless $lang eq '_';
 
                         $pofile =~ s#^debian/##;
                         $link =~ s/:/\%3a/g;
-                        $addincl .= " [<a href=\"".($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root);
-                        $addincl .= ($pofile eq 'templates.pot' ? 'po' : 'templates');
-                        $addincl .= '/unstable/'.$data->pooldir($pkg)."/$link.gz\">$pofile</a>]";
+                        $addorig .= " [<a href=\"".
+                                ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root).
+                                ($pofile eq 'templates.pot' ? 'po' : 'templates').
+                                '/unstable/'.$data->pooldir($pkg).
+                                "/$link.gz\">$pofile</a>]";
                 }
+                $orig .= "<li>$pkg".$addorig."</li>\n" if $addorig;
+
                 foreach $line (@{$data->podebconf($pkg)}) {
                         my ($pofile, $lang, $stat, $link) = @{$line};
                         next if $lang eq '_';
@@ -373,7 +375,7 @@ sub get_stats_podebconf {
                               " (".show_stat($stat).")</td><td><a href=\"";
                         $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
                         $incl{$lang} .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>".
-                              "<td>$addincl</td></tr>\n";
+                              "</tr>\n";
                         if ($stat =~ m/(\d+)t/) {
                                 $score{$lang} += $1;
                         }
@@ -400,9 +402,9 @@ sub get_stats_podebconf {
                 print GEN "<p>\n".$excl{uc $lang}."</p>\n";
                 close (GEN);
         }
-        open (GEN, "> $opt_l/po-debconf/gen/$section.exc")
-                || die "Unable to write into $opt_l/po-debconf/gen/$section.exc";
-        print GEN "<ul>\n".$none."</ul>\n" if $none ne '';
+        open (GEN, "> $opt_l/po-debconf/gen/$section.orig")
+                || die "Unable to write into $opt_l/po-debconf/gen/$section.orig";
+        print GEN "<ul>\n".$orig."</ul>\n" if $orig ne '';
         close (GEN);
 }
 
