@@ -261,7 +261,9 @@ sub build_header {
 sub mail_notification {
     local($name, $subject, @text) = @_;
     open MAIL, "| $MAILER -t";
+# the Approved header seems to be necessary to post to -www-cvs
     print MAIL <<EOF ;
+Approved: webmaster\@debian.org
 From: Debian WWW CVS <webmaster\@debian.org>
 To: $name
 Subject: Debian WWW CVS commit by $login: $subject
