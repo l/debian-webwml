@@ -4,7 +4,7 @@
 # so the problem can be fixed.
 
 WMLBASE=../../../..
-CUR_DIR=international/spanish/contrib/presentacion
+CUR_DIR=international/spanish/contrib/presentacion/
 SUBS=
 
 include $(WMLBASE)/Make.lang
@@ -30,7 +30,7 @@ cleandest::
 
 endif
 
-presentacion: presentacion.ps presentacion.pdf presentacion.html/index.html
+all:: presentacion.ps presentacion.pdf presentacion.html/index.html
 
 %.pdf: %.sgml
 	debiandoc2latexpdf -l es $<
@@ -39,6 +39,7 @@ presentacion: presentacion.ps presentacion.pdf presentacion.html/index.html
 	debiandoc2latexps -l es $<
 
 presentacion.html/index.html: presentacion.sgml
+	mkdir presentacion.html
 	debiandoc2html -l es $<
 
 clean::
