@@ -163,10 +163,10 @@ sub get_color
 {
     my $percent = shift;
 
-    if ((255 - ($percent * (255/75))) < 0) {
-	return sprintf ("#%02x%02x00", 255 - ($percent * (255/100)), $percent * (255/100));
+    if ($percent < 50) {
+    	return sprintf ("#FF%02x00", (255/50) * $percent);
     } else {
-	return sprintf ("#%02x%02x00", 255 - ($percent * (255/75)), $percent * (255/100));
+	return sprintf ("#%02xFF00", (255/50) * (100 - $percent));
     }
 }
 
