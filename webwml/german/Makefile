@@ -1,16 +1,12 @@
 BASE=.
 HTMLDIR=$(BASE)/../../debian.org
 TEMPLDIR=$(BASE)/template/debian
-GERMANSRCDIR=$(BASE)/../german
+ENGLISHSRCDIR=$(BASE)/../english
 
 include $(BASE)/Make.lang
 
-# WMLFILES := $(wildcard *.wml)
-WMLFILES := $(shell echo *.wml)
+WMLFILES := $(wildcard *.wml)
 HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
-
-# bla:
-#	echo "$(HTMLFILES)"
 
 # EPILOG=--epilog=weblint
 $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
@@ -18,18 +14,18 @@ $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/langu
 
 all: $(HTMLFILES)
 	( cd 2.0; $(MAKE) )
-#       ( cd MailingLists; $(MAKE) )
+	# ( cd MailingLists; $(MAKE) )
 	( cd News; $(MAKE) )
-#	( cd SPI; $(MAKE) )
-#	( cd devel; $(MAKE) )
-#	( cd distrib; $(MAKE) )
-#	( cd doc; $(MAKE) )
+	# ( cd SPI; $(MAKE) )
+	# ( cd devel; $(MAKE) )
+	# ( cd distrib; $(MAKE) )
+	# ( cd doc; $(MAKE) )
 	( cd intro; $(MAKE) )
-#	( cd logos; $(MAKE) )
-#	( cd ports; $(MAKE) )
-#	( cd security; $(MAKE) )
+	# ( cd logos; $(MAKE) )
+	# ( cd ports; $(MAKE) )
+	# ( cd security; $(MAKE) )
 
 include $(BASE)/Make.templ.inc
 
-$(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(HTMLDIR)/News/index.html.$(LANGUAGE) $(TEMPLDIR)/mainpage.wml $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_news.wml $(TEMPLDIR)/languages.wml
+$(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(TEMPLDIR)/mainpage.wml $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_news.wml $(TEMPLDIR)/languages.wml
 	wml -q index.wml
