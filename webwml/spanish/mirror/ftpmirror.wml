@@ -1,20 +1,18 @@
-#use wml::debian::template title="Configuración de una réplica FTP"
+#use wml::debian::template title="Configuración de una réplica del archivo de Debian"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.27"
+#include "$(ENGLISHDIR)/releases/woody/release.data"
+#use wml::debian::translation-check translation="1.29"
 
-<p>El replicado es el mismo tanto para sitios no oficiales como 
-<a href="official">oficiales</a>.
+<toc-display/>
 
 <p>Una vez ponga en marcha una réplica, debería <a
 href="submit">registrarla en Debian</a> de manera que sea incluida en la
 <a href="list">lista de réplicas</a>. Puede hacerlo
 mediante nuestro <A href="submit">sencillo formulario web</A>.
 
-<p>Puede consultar cualquier problema o pregunta la puede enviar a
-<A href="mailto:mirrors@debian.org">mirrors@debian.org</A>.
-</p>
 
-<toc-display/>
+<p>Cualquier problema o consulta puede enviarlo a
+<email mirrors@debian.org>.</p>
 
 <toc-add-entry name="wherefrom">De dónde replicar</toc-add-entry>
 
@@ -29,17 +27,18 @@ interno de Debian.</p>
 completa de réplicas</a> que tengan la etiqueta '<kbd>Type:
 Push-Primary</kbd>' deberían ser buenos sitios de los que replicar.
 
-<p>Para usted, no hay apenas diferencia entre replicar ese servidor y
-replicar otro servidor <em>Push-Primary</em>. Por otra parte, si mucha
+<p>No hay apenas diferencia entre differente <em>Push-Primary</em>
+servidores en lo concerniente a la réplica. Por otra parte, si mucha
 gente usa ftp.debian.org (y por desgracia, así es), se desperdicia el
-ancho de banda que nos donan.</p>
+ancho de banda que nos donan innecesariamente.</p>
 
-<toc-add-entry name="methods">Métodos de replicación</toc-add-entry>
+<toc-add-entry name="methods">Cómo replicar</toc-add-entry>
 
-<p>El método recomendado para hacer réplicas es usando rsync.
+<p>El método recomendado para hacer réplicas es usando 
+<a href="http://packages.debian.org/stable/net/rsync.html">rsync</a>.</p>
 
 <p>Nota: mientras que <kbd>wget</kbd> funciona bien cuando se replican
-sitios pequeños, no es tan configurable como rsync o 'mirror', de manera
+sitios pequeños, no es tan configurable como rsync, de manera
 que no lo recomendamos para estas tareas.
 
 <h3>Rsync anónimo</h3>
@@ -47,6 +46,38 @@ que no lo recomendamos para estas tareas.
 <p>Puede usar <a href="anonftpsync">este guión</a> para replicar el
 archivo. Siga las instrucciones que contiene el guión para configurar
 la réplica.
+
+<p>Algunos consejos para aquellos que prefieran otros métodos:
+
+<ul>
+  <li>Use rsync al menos con estas opciones: <kbd>--recursive --times
+     --links --hard-links --delete</kbd>.
+
+  <li>Si tiene espacio en disco extra, use también la opción 
+  <kbd>--delete-after</kbd> para evitar algunos problemas temporales 
+  al realizar la actualización.
+
+  <li>Si no tiene espacio suficiente para replicar todo, use la opción 
+  <kbd>--exclude</kbd> para excluir partes del archivo. Usualmente esto incluye 
+  varias arquitecturas que no desea; por ejemplo, esto excluiría <em>todas</em>
+  las arquitecturas:
+  <br>
+<: 
+print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
+  foreach (sort keys %arches);
+:>
+  Lea también la <a href="#partial">sección sobre las réplicas parciales</a>.
+
+  <li>Después de que rsync termine de realizar la réplica, añada un fichero 
+  con la hora al subdirectorio <code>project/trace/</code> del 
+  que se llame como el nombre de su servidor de la réplica. Esto significa 
+  ejecutar <kbd>date -u &gt; .../debian/project/trace/<var>nombre.servidor</var></kbd>
+  después de que su rsync diario termine; y
+  <kbd>date -u &gt; .../debian-non-US/project/trace/<var>nombre.servidor</var></kbd>
+  después de que el rsync diario del archivo non-US termine, si hace réplica también
+  del archuvo debian-non-US.
+  
+</ul>
 
 <h3>Rsync con autenticación, de un sitio `push'</h3>
 
@@ -107,18 +138,21 @@ y aún son útiles para los usuarios.</p>
 
 <p>El archivo principal se actualiza cada 24 horas.
 
-<p>Si su sitio está siendo replicado de forma `push', entonces no tiene
-que preocuparse. En caso contrario, y si el sitio que ha escogido replicar
-usa rsync, entonces debería echar un vistazo a <kbd>project/trace/</kbd>
-en el archivo Debian de la réplica, en busca de un fichero que se llame
-igual que el sitio. El fichero debería contener la hora en la que terminó
-de hacerse la última réplica. Añada algo de tiempo, pongamos una hora o
-así, al que obtenga, y haga la réplica entonces.
+<p>Las réplicas normalmente comienzan a actualizarse a las 00:00 UTC, pero 
+ésta no es una hora fija. Recomendamos que actualice su réplica cada día, 
+varias horas después de ésta. De hecho, debería comprobar si el servidor 
+desde el que usted realiza la réplica deja un fichero con la hora en que 
+completó su réplica en su subdirectorio <kbd>project/trace/</kbd>. Este 
+fichero se debería llamar como el servidor y debe contener la hora a la 
+que la actualización de su réplica terminó. Añada un par de horas a ésa, 
+para estar seguro, y entonces haga su réplica.</p>
 
 <p>La manera más sencilla de hacer que la réplica se ejecute diariamente
 de forma automática es usar cron. Lea <kbd>man crontab</kbd> si desea más
 detalles.
 
+<p>Dése cuenta que si su mecanismo de réplica se lanza con un sistema de 
+«push», entonces no debe preocuparse por nada de ésto.</p>
 <toc-add-entry name="settings">Configuraciones adicionales recomendadas</toc-add-entry>
 
 <p>Si va a dejar disponible mediante HTTP su réplica de Debian, añada por
