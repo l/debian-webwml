@@ -37,6 +37,7 @@ install:: $(HTMLDESTFILES)
 	install -d $(HTMLDIR)/current
 	-rm -f $(HTMLDIR)/current/issue
 	-ln -sf ../$(YEAR)/$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
+	install -d $(HTMLDIR)/1999/7/
 
 # This is used by the install rule, and I had to hack on it, overriding
 # Make.common to allow installation of files into subdirectories.
