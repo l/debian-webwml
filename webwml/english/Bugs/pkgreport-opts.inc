@@ -1,4 +1,4 @@
-{#use wml::debian::language_names
+#use wml::debian::language_names
 
 <define-tag-sliced flags whitespace=delete>
 	[EN:Flags::]
