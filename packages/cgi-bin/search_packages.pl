@@ -197,7 +197,7 @@ if (!@results) {
   exit
 }
 
-my (%pkgs, %sect, %desc, %binaries);
+my (%pkgs, %sect, %part, %desc, %binaries);
 my (@colon, $package, $pkg_t, $section, $ver, $foo, $binaries);
 
 unless ($search_on_sources) {
@@ -211,6 +211,7 @@ unless ($search_on_sources) {
 	($package) = $pkg_t =~ m/^(.+)/; # untaint
 	$pkgs{$package}{$dist}{$ver}{$arch} = 1;
 	$sect{$package}{$dist}{$ver} = $section;
+	$part{$package}{$dist}{$ver} = $part unless $part eq 'main';
 
 	$desc{$package}{$dist}{$ver} = find_desc ($package, $dist, $part) if (! exists $desc{$package}{$dist}{$ver});
 	
@@ -222,8 +223,12 @@ unless ($search_on_sources) {
 	foreach $ver (('stable','testing','unstable','experimental')) {
 	    if (exists $pkgs{$pkg}{$ver}) {
 		my @versions = version_sort keys %{$pkgs{$pkg}{$ver}};
-		printf "<li><a href=\"http://packages.debian.org/%s/%s/%s\">%s</a> (%s): %s\n",
-		$ver, $sect{$pkg}{$ver}{$versions[0]}, $pkg, $ver, $sect{$pkg}{$ver}{$versions[0]}, $desc{$pkg}{$ver}{$versions[0]};
+		my $part_str = "";
+		if ($part{$pkg}{$ver}{$versions[0]}) {
+			$part_str = "[<span style=\"color:red\">$part{$pkg}{$ver}{$versions[0]}</span>]";
+		}
+		printf "<li><a href=\"http://packages.debian.org/%s/%s/%s\">%s</a> (%s): %s   %s\n",
+		$ver, $sect{$pkg}{$ver}{$versions[0]}, $pkg, $ver, $sect{$pkg}{$ver}{$versions[0]}, $desc{$pkg}{$ver}{$versions[0]}, $part_str;
 		
 		foreach my $v (@versions) {
 		    printf "<br>%s: %s\n",
@@ -246,6 +251,7 @@ unless ($search_on_sources) {
 	my ($suite, $part) = ($1, $2);
 	$pkgs{$package}{$suite} = $ver;
 	$sect{$package}{$suite}{source} = $section;
+	$part{$package}{$suite}{source} = $part unless $part eq 'main';
 
 	$binaries{$package}{$suite} = [ sort split( /\s*,\s*/, $binaries ) ];
 
@@ -256,7 +262,11 @@ unless ($search_on_sources) {
 	print "<ul>\n";
 	foreach $ver (('stable','testing','unstable','experimental')) {
 	    if (exists $pkgs{$pkg}{$ver}) {
-		printf "<li><a href=\"http://packages.debian.org/%s/source/%s\">%s</a> (%s): %s", $ver, $pkg, $ver, $sect{$pkg}{$ver}{source}, $pkgs{$pkg}{$ver};
+		my $part_str = "";
+		if ($part{$pkg}{$ver}{source}) {
+			$part_str = "[<span style=\"color:red\">$part{$pkg}{$ver}{source}</span>]";
+		}
+		printf "<li><a href=\"http://packages.debian.org/%s/source/%s\">%s</a> (%s): %s   %s", $ver, $pkg, $ver, $sect{$pkg}{$ver}{source}, $pkgs{$pkg}{$ver}, $part_str;
 		
 		print "<br>Binary packages: ";
 		my @bp_links;
