@@ -85,6 +85,8 @@ $border_foot = "</td></tr></table></td></tr></table>";
 $date = strftime "%a %b %e %H:%M:%S %Y %z", localtime;
 
 my %original;
+my %transversion;
+my %version;
 
 # Count wml files in given directory
 #
@@ -113,20 +115,18 @@ sub getwmlfiles
 	$file =~ s/\.wml$//;
 	$wmlfiles{$lang} .= " " . $file;
 	my $transcheck = Webwml::TransCheck->new("$dir/$file.wml");
+	if ($transcheck->revision()) {
+	    $transversion{"$lang/$file"} = $transcheck->revision();
+	    $original{"$lang/$file"} ||= $transcheck->original();
+	}
 	if ($is_english) {
-	    if ($original{$file}) {
-	        $version{"$lang/$file"} = $transcheck->revision();
-	    } else {
-	        $version{"$lang/$file"} = $cvs->revision($f);
-	    }
+	    $version{"$lang/$file"} = $cvs->revision($f);
 	} else {
-	    if ($transcheck->revision()) {
-	        $version{"$lang/$file"} = $transcheck->revision();
-	        $original{$file} ||= $transcheck->original();
-	    } else {
-	        $version{"$lang/$file"} = $altcvs->revision($f);
-                $original{$file} = $lang;
-            }
+	    $version{"$lang/$file"} = $altcvs->revision($f);
+	    if (!$transcheck->revision()) {
+		$original{"english/$file"} = $lang;
+		$transversion{"english/$file"} = "1.1";
+	    }
 	}
 	$version{"$lang/$file"} ||= "1.1";
 	$count++;
@@ -134,7 +134,7 @@ sub getwmlfiles
     close (FIND);
     $wmlfiles{$lang} .= " ";
     $wml{$lang} = $count;
-}	  
+}
 
 sub get_color
 {
@@ -225,9 +225,9 @@ foreach $lang (@search_in) {
 		    	$t_body .= sprintf "<a href=\"/%s.%s.html\">%s</a><br>\n", $file, $l, $file;
 		}
 		$translated{$lang}++;
-		$orig = $original{$file} || "english";
+		$orig = $original{"$lang/$file"} || "english";
 		# Outdated translations
-		$msg = check_translation ($version{"$lang/$file"}, $version{"$orig/$file"}, "$lang/$file");
+		$msg = check_translation ($transversion{"$lang/$file"}, $version{"$orig/$file"}, "$lang/$file");
 		if (length ($msg)) {
 			$o_body .= "<tr>";
 			if ($file eq "devel/wnpp/wnpp") {
@@ -235,10 +235,10 @@ foreach $lang (@search_in) {
 			} else {
 				$o_body .= sprintf "<td><a href=\"/%s.%s.html\">%s</a></td>", $file, $l, $file;
 			}
-			$o_body .= sprintf "<td>%s</td>", $version{"$lang/$file"};
+			$o_body .= sprintf "<td>%s</td>", $transversion{"$lang/$file"};
 			$o_body .= sprintf "<td>%s</td>", $version{"$orig/$file"};
 			$o_body .= sprintf "<td>%s</td>", $msg;
-			$o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/$orig/%s.wml.diff\?r1=%s\&r2=%s\&cvsroot=webwml\&diff_format=%s\">%s -> %s</a></td>", $file, $version{"$lang/$file"}, $version{"$orig/$file"}, $config{'diff_type'}, $version{"$lang/$file"}, $version{"$orig/$file"};
+			$o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/$orig/%s.wml.diff\?r1=%s\&r2=%s\&cvsroot=webwml\&diff_format=%s\">%s -> %s</a></td>", $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $config{'diff_type'}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
 			$o_body .= "</tr>\n";
     			$outdated{$lang}++;
 		}
