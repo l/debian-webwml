@@ -1,36 +1,35 @@
 <:
-# English pseudopackages descriptions
-my $file = "$(ENGLISHDIR)/Bugs/pseudo-packages.description";
-# Translated pseudopkgs descriptions
-my $tfile= "pseudo-packages.translated-description";
-
 my %pseudos = ();
-my %tpseudos= ();
-open I, "$file" or die "Can't open $file file: $!\n";
+my $file = "pseudo-packages.translated-description";
 
 # Read translated descriptions if possible
-if (open TI, $tfile) {
-  while (<TI>) {
+if (open I, $file) {
+  while (<I>) {
     if (/^(\S+)\s+(.+)$/) {
       my $foo = $2;
-      ($tpseudos{$1} = $foo) =~ s/&/&amp;/g;
+      ($pseudos{$1} = $foo) =~ s/&/&amp;/g;
     }
   }
-  close TI or die "Can't close translated descriptions file $tfile: $!\n";
+  close I or die "Can't close translated descriptions file $file: $!\n";
 }
 
+# now try English to fill in the blanks
+$file = "$(ENGLISHDIR)/Bugs/pseudo-packages.description";
+open I, "$file" or die "Can't open $file file: $!\n";
 while (<I>) {
   if (/^(\S+)\s+(.+)$/) {
     my $foo = $2;
-    ($pseudos{$1} = $foo) =~ s/&/&amp;/g;
+    if (not exists $pseudos{$1}) {
+      ($pseudos{$1} = $foo) =~ s/&/&amp;/g;
+    }
   }
 }
-close I;
+close I or die "Can't close descriptions file $file: $!\n";
+
 %pseudos || die "%pseudos is not set -- empty $file file?\n";
 foreach $a (sort keys %pseudos) {
   if ($a ne "spam" && $a ne "slink-cd") {
-    my $b = $tpseudos{$a} || $pseudos{$a};
-    print "<p><code><a href=\"http://bugs.debian.org/$a\">$a</a></code> &mdash; $b\n";
+    print "<p><code><a href=\"http://bugs.debian.org/$a\">$a</a></code> &mdash; $pseudos{$a}\n";
   }
 }
 :>
