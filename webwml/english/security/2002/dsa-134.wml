@@ -14,6 +14,23 @@ since the code relies on specific mmap features, and the PAM
 support has not been completed. There may be other problems as
 well.</p>
 
+<p>This version was released 4 days ago and introduced a new feature
+to reduce the effect of exploits in the network handling code
+called privilege separation. Unfortunately this release has a few
+known problems:</p>
+
+<ul>
+<li> compression does not work on all operating systems since the code
+  relies on specific mmap features
+
+<li> the PAM support has not been completed and may break a few PAM
+  modules
+
+<li> keyboard interactive authentication does not work with privilege
+  seperation. Most noticable for Debian users this breaks PAM modules
+  which need a PAM conversation function (like the OPIE module).
+</ul>
+
 <p>The new privilege separation support from Niels Provos changes ssh
 to use a separate non-privileged process to handle most of the
 work. This means any vulnerability in this part of OpenSSH can
@@ -34,9 +51,37 @@ Packages for the upcoming 3.0 release (woody) are available for
 most architectures.</p>
 
 <p>Please note that we have not had the time to do proper QA on these
-packages; they might contain bugs or break things unexpectedly. If
-you notice any such problems please file a bug-report so we can
-investigate.</p>
+packages; they might contain bugs or break things unexpectedly. If you
+notice any such problems (besides the ones mentioned in this advisory)
+please file a bug-report so we can investigate.</p>
+
+<p>Some notes on possible issues associated with this upgrade:</p>
+
+<ul>
+<li> This package introduce a new account called `sshd' that is used in
+  the privilege separation code. If no sshd account exists the package
+  will try to create one. If the account already exists it will be
+  re-used. If you do not want this to happen you will have to fix this
+  manually.
+
+<li> (relevant for potato only) This update adds a backport of version
+  0.9.6 of the SSL library. This means you will have to upgrade tne
+  ssl package as well.
+
+<li> (relevant for potato only) This update defaults to using version 2
+  of the SSH protocol. This can break existing setups where RSA
+  authentication is used. You will either have to add -1 to the ssh
+  invocation to keep using SSH protocol 1 and your existing keys, or
+  create new keys for SSH protocol 2.
+
+<li> sshd defaults to enabling privilege seperation, even if you do not
+  explicitly enable it in /etc/ssh/sshd_config .
+
+<li> If ssh does not work for you you can try to disable compression. We
+  already included a patch from Solar Designer which fixes the problem
+  with Linux 2.2 kernels, but there might be a few cases where this is
+  not sufficient.
+</ul>
 
 <p>This package introduce a new account called `sshd' that is used in
 the privilege separation code. If no sshd account exists the
