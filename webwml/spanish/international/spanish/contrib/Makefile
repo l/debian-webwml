@@ -4,9 +4,7 @@
 
 WMLBASE=../../..
 CUR_DIR=international/spanish/contrib
-SUBS=apt-guia-usuarios.html paqifaz-capturas presentacion
-# the following have beeen temporarily removed from $SUBS until Javier
-# fixes them: making-packages
+SUBS=apt-guia-usuarios.html paqifaz-capturas presentacion making-packages
 
 include $(WMLBASE)/Make.lang
 
