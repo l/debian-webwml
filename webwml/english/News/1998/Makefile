@@ -14,12 +14,14 @@ $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/langu
 # WMLFILES := $(wildcard *.wml)
 WMLFILES := $(shell echo *.wml)
 HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
+JPGSOURCE := $(shell echo *.jpg)
+JPGDEST := $(patsubst %.jpg,$(HTMLDIR)/%.jpg,$(JPGSOURCE))
 
-all: $(HTMLFILES) $(HTMLDIR)/19980928-apcmag-award-1998-08-26.jpg
+all: $(HTMLFILES) $(JPGDEST)
 
 include $(BASE)/Make.templ.inc
 
 $(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(wildcard 1998*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_news.wml $(TEMPLDIR)/languages.wml
 
-$(HTMLDIR)/19980928-apcmag-award-1998-08-26.jpg : 19980928-apcmag-award-1998-08-26.jpg
-	cp 19980928-apcmag-award-1998-08-26.jpg $(HTMLDIR)/19980928-apcmag-award-1998-08-26.jpg
+$(HTMLDIR)/%.jpg : %.jpg
+	@cp $< $@
