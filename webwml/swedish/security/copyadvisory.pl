@@ -99,6 +99,7 @@ while (<SRC>)
 	s/>symlink attack</>attack mot symboliska länkar</;
 	s/>remote exploit</>fjärrattack</;
 	s/Several vulnerabilities/Flera sårbarheter/;
+	s/several vulnerabilities/flera sårbarheter/;
 	s/>several</>flera</;
 	s/This has been fixed in version/Detta har rättats i version/;
 	s/this problem has been fixed in/har detta problem rättats i/;
@@ -113,6 +114,7 @@ while (<SRC>)
 	s/these problems have(?: been)?$/har dessa problem/;
 	s/these problem are fixed in/rättas dessa problem i/;
 	s/these problem are fixed/rättas dessa problem/;
+	s/these problems will be fixed soon/kommer dessa problem att rättas inom kort/;
 	s/(?:been )?fixed in version/rättats i version/;
 	s/\bin version\b/i version/;
 	s/of the Debian package/av Debianpaketet/;
