@@ -4,9 +4,9 @@
 
 WMLBASE=../../..
 CUR_DIR=international/spanish/contrib
-SUBS=apt-guia-usuarios.html paqifaz-capturas
+SUBS=apt-guia-usuarios.html paqifaz-capturas presentacion
 # the following have beeen temporarily removed from $SUBS until Javier
-# fixes them: presentacion making-packages
+# fixes them: making-packages
 
 include $(WMLBASE)/Make.lang
 
@@ -23,7 +23,7 @@ cleandest::
 	$(HTMLDIR)/apt-get-mini-COMO.sgml $(HTMLDIR)/apt-guia-usuarios.sgml \
 	$(HTMLDIR)/mitos-debian.html $(HTMLDIR)/mitos-debian.sgml  \
 	$(HTMLDIR)/paqifaz.html $(HTMLDIR)/paqifaz.sgml $(HTMLDIR)/paqifaz.txt \
-	$(HTMLDIR)/paquetes.html $(HTMLDIR)/presentacion-debian.tex \
+	$(HTMLDIR)/paquetes.html 
 	$(HTMLDIR)/tabla-historia.txt $(HTMLDIR)/euro-howto.txt
 
 # SGML files:
