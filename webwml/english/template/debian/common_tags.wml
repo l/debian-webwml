@@ -32,41 +32,9 @@
 
 #  Slices go away, and a bug in slice < 1.3.9 is revealed.
 #  This empty ZH slice prevents breakage for Chinese pages.
+<ifeq "$(CUR_ISO_LANG)" "zh" "
 [ZH::]
+">
 
 #  Add <void id="foo"> to make msgids unique
 <define-tag void></define-tag>
-
-
-#   OBSOLETE, use <gettext> instead!!
-#   The <define-tag-sliced> tag can be used instead of <define-tag>
-#   when defining piece of text to translate.  Example:
-#     <define-tag flags whitespace=delete>
-#           [EN:Flags::]
-#           [DA:Flag::]
-#           [FI:Liput::]
-#           [FR:Options ::]
-#           [HR:Oznake::]
-#           [IT:Opzioni::]
-#           [SV:Flaggor::]
-#     </define-tag>
-#   Then slices for all other languages are automatically copied from
-#   English.  It currently does only work when slices are on a single
-#   line.
-#use wml::debian::language_names
-
-<define-tag define-tag-sliced endtag=required whitespace=delete>
-  <preserve default />
-#   English text is placed in `default' variable
-  <set-var default=<subst-in-string %body
-        ".*\\[EN:([^\\n]*):\\].*" "\\1" singleline=true /> />
-#   Hack to change expansion order: string is first evaluated, then
-#   substitution is performed and output is scanned again.
-  <subst-in-string "<dummy-define-tag %attributes>
-    <foreach _webwml_lang_ _webwml_langs_>
-      <or <match %body "\[<get-var _webwml_lang_/>:[^\\n]*:\\]" action=extract />
-        "[<get-var _webwml_lang_ />:<get-var default />:]" />
-    </foreach>
-  </dummy-define-tag>" "dummy-define-tag" "define-tag" />
-  <restore default />
-</define-tag>
