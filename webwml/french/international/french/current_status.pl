@@ -277,16 +277,6 @@ $translations_status = {
 
 # En cours
 
-'News/1997/index' => {
-	'status'		=> '2',
-	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
-},
-
-'News/1998/index' => {
-	'status'		=> '2',
-	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
-},
-
 'News/weekly/contributing' => {
 	'status'		=> '2',
 	'since'			=> '24/07/1999',
