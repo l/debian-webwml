@@ -1,6 +1,6 @@
 #use wml::debian::template title="Come lavorare sulle pagine web Debian" BARETITLE=true
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.31" maintainer="Johan Haggi"
+#use wml::debian::translation-check translation="1.32" maintainer="Johan Haggi"
 
 <toc-display/>
 <hrline>
@@ -112,10 +112,17 @@ seguenti argomenti:</p>
 <dl>
       <dt><code>-s, --substitute=<var>REGEXP</var></code></dt>
       <dd>Specifica un'espressione regolare Perl da applicare al file sorgente (se
-        ne possono usare più di una).
+        ne possono usare più di una). Esempio:
 	<pre>
 	  Esempio: ./smart_change.pl -s "s,http://oldurl/,http://newurl/,g" english/index.wml
+          $&gt; ./smart_change.pl -s "s,http://oldurl/,http://newurl/,g" english/devel/index.wml
+          $&gt; cvs diff -u */devel/index.wml | less
+          $&gt; cvs ci -m "1.23: Updated oldurl to current location" */devel/index.wml
 	</pre>
+        Il primo comando effettua le modifiche, il secondo serve per controllare
+        il file inglese originale ed ogni traduzione di esso. Va usato per
+        controllare le modifiche prima del commit. Se tutto appare in
+        ordine si effettui il commit dei file modificati con il terzo comando.
       </dd>
 
       <dt><code>-l, --lang=<var>STRING</var></code></dt>
@@ -205,7 +212,7 @@ creazione dell'intestazione e del pie' di pagina è fatto da wml. Tutto quello
 che si deve fare è includere una linea come la seguente all'inizio del nuovo file:</p>
 
 <pre><protect>
-#use wml::debian::template title="Titolo della pagina" 
+#use wml::debian::template title="Titolo della pagina"
 </protect></pre>
 
 <p>seguita dal corpo del testo. Tutte le pagine dovrebbero usare il modello
