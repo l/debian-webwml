@@ -301,14 +301,41 @@
     }
 
     function show_by_country($offer) {
+        global $iso;
+        $sql = "SELECT country, begin, finish, city, forename, surname, email FROM places, people WHERE ";
         if ($offer) {
-            $sql = "SELECT id, forename, surname, email FROM people WHERE offer is TRUE ORDER BY surname";
+            $sql .= "offer is TRUE";
         } else {
-            $sql = "SELECT id, forename, surname, email FROM people WHERE offer is FALSE ORDER BY surname";
+            $sql .= "offer is FALSE";
         }
-        echo "<UL>";
-        print_people($db, $sql);
-        echo "</UL>";
+        $sql .= " AND places.who = people.id ORDER BY country, surname";
+
+        if (! ($query = pg_exec($db, $sql))) {
+            echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+            return FALSE;
+        }
+        $rows = pg_NumRows($query);
+        $old_country = "";
+        for ($i = 0; $i < $rows; $i++) {
+            $row = pg_Fetch_Array($query, $i);
+            if ($row["country"] != $old_country) {
+                if ($old_country != "") {
+                    echo "</UL>\n";
+                }
+                echo "<H2>", $row["country"], " - ", $iso[$row["country"]], "</H2>";
+                echo "\n";
+                echo "<UL>\n";
+            }
+
+            echo "<LI>", $row["forename"], " ", $row["surname"];
+            echo " &lt;", $row["email"], "&gt;";
+            echo "<UL>\n";
+            print_place($row["begin"], $row["finish"], $row["city"], $row["country"]);
+            echo "</UL>\n";
+
+            $old_country = $row["country"];
+        }
+        echo "</UL>\n";
     }
 
 ?>
