@@ -225,7 +225,7 @@ sub FormatLastSeen {
     $lastseen = (($d1 gt $d2) ? $lastseenpgp : $lastseenfrom);
   }
 
-  my ($date,$user,$list,$msgid) = ($lastseen =~ /^\[(.+?)\]\s+"(.+?)"\s+"(?:<(.+?)>.+?|\-)"\s+"<(.+?)>"/);
+  my ($date,$user,$list,$msgid) = ($lastseen =~ /^\[(.+?)\]\s+"(.+?)"\s+"(?:<(.+?)>.*?|\-)"\s+"<(.+?)>"/);
   $list = "on $list" if ($list);
   return "$date $list<br>&nbsp;Message ID: $msgid";
 }
