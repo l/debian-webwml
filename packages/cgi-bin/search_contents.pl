@@ -11,21 +11,18 @@
 
 require 5.001;
 use strict;
-use CGI;
+use CGI qw( -oldstyle_urls );
 use POSIX;
 use URI::Escape;
 
 use lib "../lib";
 
 use Deb::Versions;
-use Packages::Search;
+use Packages::Search qw( :all );
 use Packages::HTML ();
 
 my $thisscript = "search_contents.pl";
 my $HOME = "http://www.debian.org";
-
-# the number of results displayed per each page
-my $results_per_page = 40;
 
 $ENV{PATH} = "/bin:/usr/bin";
 
@@ -44,39 +41,36 @@ print Packages::HTML::header( title => 'Package Contents Search Results' ,
 # print $input->dump;
 # exit;
 
-# parsing and untainting of parameters
-my $keyword = $input->param('word');
+
+my %params_def = ( word => { default => undef, match => '^\s*([-+\@\w\/.:]+)\s*$' },
+		   version => { default => 'stable', match => '^(\w+)$' },
+		   case => { default => 'insensitive', match => '^(\w+)$' },
+		   searchmode => { default => "" },
+		   searchon => { default => 'all', match => '^(\w+)$' },
+		   arch => { default => 'i386', match => '^([\w-]+)$',
+			     replace => { all => 'i386'} },
+		   );
+my %params = Packages::Search::parse_params( $input, \%params_def );
+
+my $keyword = $params{values}{word}{final};
 unless (defined $keyword) {
    print "No keyword given for search.";
    exit 0;
 }
 $keyword =~ s,^/,,;
-if ($keyword =~ /^([-+\@\w\/.:]+)$/) {
-   $keyword = $1;                          # $keyword now untainted
-} else {
-   print "Error: \"$keyword\" is not a valid search request";
-   exit 0;
-}
-(my $version) = $input->param('version') =~ m/^(\w+)$/; # $version now untainted
-$version = "stable" unless (defined $version);
-my $case = '';
-$case = $input->param('case');
-$case = "insensitive" unless (defined $case);
-my $searchmode = '';
-$searchmode = $input->param('searchmode');
-$searchmode = "" unless (defined $searchmode);
-my $arch = "i386";
-if (defined $input->param('arch') && $input->param('arch') =~ m/^([\w-]+)$/) {
-  $arch = $1; # $arch now untainted
-  $arch = 'i386' if $arch eq 'all'; # there is no Contents-all file
-}
-my $page = 1;
-$page = $input->param('page') if (defined $input->param('page'));
+
+my $version = $params{values}{version}{final};
+my $case = $params{values}{case}{final};
+my $searchmode = $params{values}{searchmode}{final};
+my $arch = $params{values}{arch}{final};
+my $page = $params{values}{page}{final};
+my $results_per_page = $params{values}{number}{final};
+
 
 # read the configuration
 my $topdir;
 if (!open (C, "../config.sh")) {
-    printf "\nInternal Error: Cannot open configuration file.\n\n";
+    print "\nInternal Error: Cannot open configuration file.\n\n";
     exit 0;
 }
 while (<C>) {
@@ -118,7 +112,7 @@ $time_str = sprintf( "$wday, $mday $month $year %02d:%02d:%02d +0000",
 
 
 # now grep the contents file appropriately
-    my $grep;
+my $grep;
 if ($searchmode eq "filelist") {
   $searchkeyword = lc $searchkeyword; # just in case
   $searchkeyword =~ s/\+/\\\\+/g;
@@ -157,30 +151,34 @@ if (!@results) {
 
 # multiple-page stuff written by doogie
 my $number = 1;
-my $start = ($page - 1) * $results_per_page + 1;
-my $end = $page * $results_per_page + 1;
+my $start = Packages::Search::start( \%params );
+my $end = Packages::Search::end( \%params );
 my %line;
 foreach (@results) {
    $number++;
-   if ($start <= $number && $number < $end) {
+   if (($start <= $number) && ($number < $end)) {
       $line{$number - $start} = $_;
    }
 }
 
-my $numpages = ceil($number / $results_per_page);
-my $index_line = "";
+my $index_line;
+if (@results > $results_per_page) {
 
-for (my $i = 1; $i <= $numpages; $i++) {
-	my $url_keyword = uri_escape($keyword);
-	$index_line .= "<a href=\"$thisscript?page=$i&amp;word=$url_keyword".
-                    "&amp;version=$version&amp;arch=$arch&amp;case=$case".
-                    "&amp;searchmode=$searchmode\">$i</a>\n";
-	if ($i < $numpages) {
-	   $index_line .= " | ";
-	}
+    $index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $number)." | ".nextlink($input,\%params, scalar @results);
+
+    print "<center>$index_line</center>";
+
+    print "<p>Results per page: ";
+    my @resperpagelinks;
+    for (50, 100, 200) {
+        if ($params{values}{number}{final} == $_) {
+            push @resperpagelinks, $_;
+        } else {
+            push @resperpagelinks, resperpagelink($input,\%params,$_);
+        }
+    }
+    print join( " | ", @resperpagelinks )."</p>";
 }
-
-print "<CENTER>$index_line</CENTER>\n" if ($index_line);
 
 print <<END;
 <PRE>
@@ -215,7 +213,7 @@ print <<END;
 </PRE>
 <HR>
 END
-print "<CENTER>$index_line</CENTER>\n" if ($index_line);
+print "<center>$index_line</center>" if $index_line;
 print "<p align=\"left\"><small><i>The used contents file was last updated $time_str</i></small></p>\n";
 
 &printfooter;
