@@ -8,8 +8,8 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/news.wml
+%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/news.wml $(GETTEXTDEP)
 	$(WML) $(<F)
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
   $(TEMPLDIR)/recent_list.wml $(wildcard 2002*.wml) \
-  $(wildcard $(ENGLISHDIR)/News/2002/2002*.wml)
+  $(wildcard $(ENGLISHDIR)/News/2002/2002*.wml) $(GETTEXTDEP)

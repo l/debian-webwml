@@ -16,4 +16,5 @@ include $(WMLBASE)/Make.lang
 index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.wml) \
      $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/$(CUR_YEAR)*.wml) \
      $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.title) \
-     $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
+     $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml \
+     $(TEMPLDIR)/languages.wml $(GETTEXTDEP)

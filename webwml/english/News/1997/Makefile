@@ -12,9 +12,10 @@ include $(WMLBASE)/Make.lang
 # Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(wildcard 1997*.wml) \
                         $(wildcard 1997*.title) \
-                        $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
+                        $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml \
+                        $(GETTEXTDEP)
 	$(WML) index.wml
-%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/news.wml
+%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/news.wml $(GETTEXTDEP)
 	$(WML) $(<F)
 
 ifeq ($(LANGUAGE),en)
