@@ -24,23 +24,34 @@ You should not be here!</STRONG>
         return FALSE;
     }
 
-    $sql = "SELECT id FROM people WHERE email = '$s_username'";
-    if (! ($result = pg_exec($db, $sql))) {
-        echo "Problem with query", pg_ErrorMessage($db), "<BR>";
-        return FALSE;
+
+    # user pressed submit
+
+    if ($city || $country) {
+        $sql = "SELECT id FROM people WHERE email = '$s_username'";
+        if (! ($result = pg_exec($db, $sql))) {
+            echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+            return FALSE;
+        }
+        if (pg_NumRows($result) != 1) {
+            echo "That e-mail address is wicked.";
+            return FALSE;
+        }
+        $row = pg_Fetch_Array($result, 0);
+        $who = $row["id"];
+
+        echo "$city, $country";
+        echo "<P>";
+        echo "$begin_year, $begin_month, $begin_day";
+        echo "<P>";
+        echo "$end_year, $end_month, $end_day";
+        echo "<P>";
+
+        return TRUE;
     }
-    if (pg_NumRows($result) != 1) {
-        echo "That e-mail address is wicked.";
-        return FALSE;
-    }
-    $row = pg_Fetch_Array($result, 0);
-    $who = $row["id"];
 
 
-    # begin, finish
-
-    # city, country
-
+    # user wants to fill out the form
 
     # modify an entry (if $id exists), or add a new one)
     if ($id) {
@@ -138,6 +149,7 @@ function print_date($title, $name, $date) {
 
 <TR><TD><B>City</B></TD><TD><INPUT name = "city" type = "text" value="<? echo $city ?>"></TD></TR>
 <TR><TD><B>Country</B></TD><TD><INPUT name = "country" type = "text" value="<? echo $country ?>"></TD></TR>
+<TR><TD> </TD><TD><INPUT type="submit" value="Submit"></TD></TR>
 </FORM>
 </TD>
 </TR>
