@@ -13,27 +13,6 @@ sub html_header {
     $res = "<tr>";
 }
 
-sub l10n_add {
-    my $stat1 = shift;
-    my $stat2 = shift;
-    my $t = "0";
-    my $u = "0";
-    my $f = "0";
-    my $res;
-
-    if ($stat1 =~ /([0-9]*)t/) {  $t+=$1;  }
-    if ($stat1 =~ /([0-9]*)u/) {  $u+=$1;  }
-    if ($stat1 =~ /([0-9]*)f/) {  $f+=$1;  }
-
-    if ($stat2 =~ /([0-9]*)t/) {  $t+=$1;  }
-    if ($stat2 =~ /([0-9]*)u/) {  $u+=$1;  }
-    if ($stat2 =~ /([0-9]*)f/) {  $f+=$1;  }
-
-    $res ="$t t$f f$u u";
-    $res =~ s/ //g;
-    return $res;
-}
-
 sub l10n_output {
     my $stats=shift;
     my $t = "0";

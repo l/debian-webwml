@@ -752,7 +752,7 @@ sub check_pkg{
 	    }
 	}
 	# Add this file to the data
-	$data{$pkg}{"po"}[@{$data{$pkg}{"po"}}] = "$file:$lang:$this_stat:$filename";
+	$data{$pkg}{"po"}[@{$data{$pkg}{"po"}}] = "$file:".normalize_lang($lang).":$this_stat:$filename";
     }
 
     search_templates($pkg);
@@ -836,10 +836,21 @@ sub search_templates {
 		add_part($pkg,"errors","$lang is not a language code (in templates of directory $dir)");
 	    }
 	    # Add this file to the data
-	    $data{$pkg}{"templates"}[@{$data{$pkg}{"templates"}}] = "templates.$lang:$lang:$stats:$filename.gz";
+	    $data{$pkg}{"templates"}[@{$data{$pkg}{"templates"}}] = "templates.$lang:".normalize_lang($lang).":$stats:$filename.gz";
 	}    
 
     }
+}
+
+#----[ normalize_lang ]--------------------------------------------------------
+sub normalize_lang {
+    my $lang = shift;
+    if ($lang =~ m,^(..)_(..)$,) {
+	return lc($1).'_'.uc($2);
+    } elsif ($lang =~ m,^(..)$,) {
+	return lc($1);
+    }
+    return $lang;
 }
 
 #----[ parse_stats ]------------------------------------------------------------

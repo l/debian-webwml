@@ -1,0 +1,44 @@
+#include "../../../english/international/l10n/data/countries.wml"
+#include "../../../english/international/l10n/dtc.def"
+#include "../../../english/international/l10n/scripts/init.pl"
+#include "../../../english/international/l10n/scripts/ranking.pl"
+
+
+#------------------------ DO NOT translate anything below
+<:
+sub language_name{
+  my $lang=shift;
+  my $country=undef;
+
+  if ($lang =~ m,^(..)_(..)$,) {
+     $lang=$1;
+     $country=$2;
+  }
+  if (defined  ($trans{language2code($cur_lang)}{lc(code2language($lang))})) {
+	$lang=ucfirst($trans{language2code($cur_lang)}{lc(code2language($lang))});
+  } else {
+        $lang=code2language($lang);
+  }
+  if (defined $country) {
+	
+	$country=uc($country);
+        if (defined ($countries{$country}{$cur_lang})) {
+		$country=$countries{$country}{$cur_lang};
+        } elsif (defined ($countries{$country}{'EN'})) {
+	        $country=$countries{$country}{'EN'};
+        } elsif (defined (code2country($country))) {
+	 	$country=code2country($country);
+        }
+	print "<langcountryoutput $lang $country>";
+  } else {
+        print $lang;
+  }
+}
+:>
+
+<define-tag languagename whitespace=delete>
+	<:language_name('%0');:>
+</define-tag>
+
+
+
