@@ -17,6 +17,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111, USA.
 
+# For testing, call this program like:
+#   echo "Logmsg" | CVSROOT=/cvs/webwml cvs-mailcommit -m $LOGIN --from "$LOGIN@`hostname -f` --cvs 'CVSROOT loginfo,1.10,1.11' --diff
+
 $sendmail = "/usr/sbin/sendmail";
 
 $opt_xloop = '';
@@ -59,10 +62,11 @@ $dir .= "/" if ($dir);
 
 $login = $ENV{'CVS_USER'} || getlogin || (getpwuid($<))[0] || "nobody";
 
-if (open (M, "|$sendmail joey")) {
+if (open (M, "|$sendmail -t")) {
+# if (open (M, ">-")) {
     printf M "To: %s\n", join(",",@opt_mailto);
     printf M "Subject: CVS %s\n", $module_dir;
-    printf M "From: CVS User %s <%s>\n", $login, $opt_from if ($opt_from);
+    printf M "From: \"Debian CVS User %s\" <%s>\n", $login, $opt_from if ($opt_from);
     printf M "X-Loop: %s\n", $opt_xloop if ($opt_xloop);
     print  M "\n";
     print M while (<>);
@@ -72,6 +76,7 @@ if (open (M, "|$sendmail joey")) {
 	foreach $cstr (@cvs_arr) {
 	    ($file,$oldver,$newver) = split (/,/,$cstr);
 	    if ($oldver ne "NONE") {
+		# print "rcsdiff -r$oldver -r$newver -u $ENV{'CVSROOT'}/$module_dir/$file|\n";
 		if (open (R, "rcsdiff -r$oldver -r$newver -u $ENV{'CVSROOT'}/$module_dir/$file|")) {
 		    print M while (<R>);
 		    close (R);
