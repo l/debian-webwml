@@ -156,7 +156,7 @@ sub accum_subject {
 
 sub compile_subject {
     local(@files) = @_;
-    local($text, @a, @b, @c, $dir, $topdir);
+    local($text, @a, @b, @c, $dir, $topdir, $topsuffix);
 
     # find the highest common directory
     $dir = '-';
@@ -191,10 +191,11 @@ sub compile_subject {
 
     # strip out directories and the common prefix topdir.
     chop $topdir;
-    @c = ($modulename . '/' . $topdir);
+    $topsuffix = length($topdir) ? ('/' . $topdir) : '';
+    @c = ($modulename . $topsuffix);
     foreach $file (@files) {
 	if (!($file =~ /.*\/$/)) {
-	    push(@c, substr($file, length($topdir)+1));
+	    push(@c, substr($file, length($topsuffix)));
 	}
     }
 
