@@ -6,23 +6,27 @@
 
 <define-tag-sliced menu-l10n whitespace=delete>
    [EN:L10n:]
+   [DA:Lokaltilpasning:]
    [SV:Lokalanpassning:]
 </define-tag-sliced>
 
 <define-tag-sliced menu-list whitespace=delete>
    [EN:Language list:]
+   [DA:Liste over sprog:]
    [FR:Liste des langues:]
    [SV:Lista över språk:]
 </define-tag-sliced>
 
 <define-tag-sliced menu-rank whitespace=delete>
    [EN:Ranking:]
+   [DA:Placering:]
    [FR:Classement:]
    [SV:Rankning:]
 </define-tag-sliced>
 
 <define-tag-sliced menu-todo whitespace=delete>
    [EN:Todo:]
+   [DA:Skal gøres:]
    [SV:Att göra:]
 </define-tag-sliced>
 
