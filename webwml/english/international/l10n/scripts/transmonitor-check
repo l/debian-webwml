@@ -411,7 +411,7 @@ sub parse_tarball {
                 return ":$MENU_ROOT/_tmp/".store_disk_menu($pkg, $file)
                         if $file =~ m#(^|/)debian/[^/]*menu[^/]*$#;
                 return ":$TEMPLATES_ROOT/_tmp/".store_disk_templates($pkg, $file)
-                        if $file =~ m#(^|/)debian/([^/]+\.)?templates(\...(_..)?)?$#; # && !(defined($3) && $3 eq '.in');
+                        if $file =~ m#(^|/)(debian/)?([^/]+\.)?templates(\...(_..)?)?$#; # && !(defined($4) && $4 eq '.in');
                 my $manpage = match_manpages($pkg, $file);
                 return ":$MAN_ROOT/_tmp/".store_disk_man($pkg, $manpage)
                         if $manpage;
@@ -729,7 +729,7 @@ sub search_templates {
         my $pkg = shift;
         my ($filename, $tmpl, %tmpl_stats, $this_stat, @list, @list2);
 
-        my @debconffiles = $deb->file_matches("(^|/)debian/([^/]+\\.)?templates\$");
+        my @debconffiles = $deb->file_matches("(^|/)(debian/)?([^/]+\\.)?templates\$");
         $tmpl = Webwml::L10n::Debconf->new();
         foreach my $file (@debconffiles) {
                 #   All translations in a single file
@@ -817,6 +817,7 @@ sub search_podebconf {
         @_ = split(/\n/, $deb->file_content("debian/po/POTFILES.in"));
         foreach (@_) {
                 next unless s#^\[type: gettext/rfc822deb]\s+#debian/#;
+                s#^debian/\.\./##;
                 if ($deb->file_exists($_)) {
                         $filename = store_disk_templates($pkg, $_);
                         $data->add_podebconf($pkg, $_, '_', '', $filename);
