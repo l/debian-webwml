@@ -1,5 +1,5 @@
 #use wml::debian::template title="Einen FTP-Spiegel erstellen"
-#use wml::debian::translation-check translation="1.13"
+#use wml::debian::translation-check translation="1.15"
 
 <!-- 
   Translator       : Thimo Neubauer (thimo@debian.org)
@@ -38,53 +38,25 @@ von dort zu spiegeln.
 
 <h3>Rsync mit Authentifizierung, von einem Push-Spiegel</h3>
 
-Push-Spiegeln ist eine Art des Spiegelns mit rsync, die wir
+<p>Push-Spiegeln ist eine Art des Spiegelns mit rsync, die wir
 entwickelt haben, um die Zeit zu minimieren, die es ben&ouml;tigt, bis
-&Auml;nderungen im Archiv die Spiegel erreichen. Beim Push-Spiegeln
-wird die ssh verwendet, um einem weiter unten in der Hierarchie
-stehenden Spiegel mitzuteilen, dass er sich updaten soll. Der Spiegeln
-selbst bleibt ein 'pull', so da&szlig; es nicht m&ouml;glich ist, den
-Inhalt der Archivs durch einen falschen Push-Spiegel zu zerst&ouml;ren.
+&Auml;nderungen im Archiv die Spiegel erreichen.   Der Server-Spiegel
+benutzt einen SSH-Trigger, um dem nachgeschalteten Spiegel
+mitzuteilen, daß er sein Archiv aktualisieren soll.
 
-<p>Einige Spiegel-Administratoren zeigen einiges Widerstreben bei
-dieser Methode aus Angst davor, dass diese Methode ein Sicherheitsloch
-in ihrer Maschine &ouml;ffnen k&ouml;nnte. Das ist einfach nicht
-wahr. Eine ausf&uuml;hrliche Beschreibung, wie die Methode
-funktioniert und warum sie sicher ist, finden Sie auf
-<a href="explain">dieser Seite</a>.
+<p>Diese Methode ist ziemlich sicher, da SSH so konfiguriert ist,
+da&szlig; nur ein einziger Befehl ausgef&uuml;hrt wird.
+Au&szlig;erdem l&auml;uft das eigentliche Spiegeln immer noch
+"ziehenderweise" ab, so da&szlig; es nicht m&ouml;glich ist, den
+Spiegel durch gef&auml;lschte Push-Spiegel zu besch&auml;digen.
 
-<p>Einen Push-Spiegel zu installieren erfordert etwas mehr Aufwand,
-weil die Administratoren des h&ouml;her- und der tieferliegenden
-Spiegels Informationen austauschen m&uuml;ssen. Der Vorteil ist, dass
-der hierarchisch h&ouml;herliegende Server den Spiegelungsprozess
-anst&ouml;&szlig;t, wenn es mit spiegeln fertig ist. Damit werden
-&Auml;nderungen im Archiv sehr schnell weitergegeben.
-Lesen Sie die <a href="push_server">Erklärungsseite</a> für Details.
+<p>Einige Spiegel-Verwalter haben aus Angst, das System f&uuml;r
+andere zu &ouml;ffnen, eine gewisse Abneigung gegen diese
+Spiegel-Methode gezeigt.  Das ist einfach <strong>nicht</strong> wahr.
 
-<p>Es ist am besten, wenn f&uuml;r diese Methode ein eigener Account
-angelegt wird und nicht root spiegelt. Der &ouml;ffentliche
-Schl&uuml;ssel des h&ouml;herligenden Servers sollte dann nach
-<kbd>~&lt;user&gt;/.ssh/authorized_keys</kbd> kopiert werden.
-
-<p>Es werden die Dateien <a href="ftpsync">ftpsync</a> und 
-<a href="ftpsync.conf">ftpsync.conf</a> ben&ouml;tigt. Editieren Sie
-ftpsync.conf und folgen Sie den Anweisungen darin mit den
-Informationen vom h&ouml;herligenden Server.
-
-<p>Wenn Ihr Rechner ein prim&auml;rer Push-Spiegel werden soll, dann
-benötigen Sie den
-<a href="identity.pub.master.ftp">&ouml;ffentlichen Schl&uuml;ssel von
-archvsync@ftp-master.debian.org</a>.
-
-<p>Wenn Sie einen Push-Spiegel vom non-US-Archiv anlegen möchten,
-benötigen Sie die Dateien <a href="ftpsync-non-US">ftpsync-non-US</a>
-und 
-<a href="ftpsync-non-US.conf">ftpsync-non-US.conf</a>. Diese Dateien
-haben andere Namen, damit Sie im selben Account verwendet werden
-k&ouml;nnen um beider Archive zu spiegeln. Wenn Ihr Rechner ein prim&auml;rer
-non-US Push-Spiegel werden soll, dann benötigen Sie den
-<a href="identity.pub.non-US.ftp">&ouml;ffentlichen Schl&uuml;ssel von
-archvsync@non-us.debian.org</a>.
+<p>Eine detailierte Beschreibung, wie dieses funktioniert, warum es
+sicher ist und wie man einen Push-Spiegel aufsetzt, finden Sie <a
+href="push_mirroring">hier</a>. 
 
 <h3>Anonymes FTP mit 'mirror'</h3>
 
