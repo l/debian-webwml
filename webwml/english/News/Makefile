@@ -8,7 +8,7 @@ ENGLISHSRCDIR=$(BASE)/../english
 include $(BASE)/Make.lang
 
 # EPILOG=--epilog=weblint
-$(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml
+$(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
 	wml -q $(EPILOG) $(<F)
 
 WMLFILES := $(wildcard *.wml)

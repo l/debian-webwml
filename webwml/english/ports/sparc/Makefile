@@ -11,7 +11,7 @@ WMLFILES := $(wildcard *.wml)
 HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
 
 # EPILOG=--epilog=weblint
-$(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml
+$(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
 	wml -q $(EPILOG) $(<F)
 
 all: $(HTMLFILES)
