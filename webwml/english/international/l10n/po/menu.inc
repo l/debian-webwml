@@ -10,10 +10,12 @@
 
 <define-tag-sliced menu-list whitespace=delete>
    [EN:Language list:]
+   [FR:Liste des langues:]
 </define-tag-sliced>
 
 <define-tag-sliced menu-rank whitespace=delete>
    [EN:Ranking:]
+   [FR:Classement:]
 </define-tag-sliced>
 
 <define-tag-sliced menu-todo whitespace=delete>
