@@ -137,21 +137,65 @@ endif
 endif
 
 # Need to rebuild the index when anything changes.
-index.$(LANGUAGE).html: $(wildcard $(CUR_YEAR)/*/index.wml) \
-      $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(CUR_YEAR)/*) \
-      $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
+index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/*/index.wml) \
+      $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(CUR_YEAR)/*/index.wml) \
+      $(ENGLISHSRCDIR)/$(CUR_DIR)/CURRENT-ISSUE-IS \
       $(TEMPLDIR)/weeklynews/header.wml \
-      $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml \
-      $(ENGLISHSRCDIR)/$(CUR_DIR)/CURRENT-ISSUE-IS
+      $(TEMPLDIR)/weeklynews/index.wml \
+      $(TEMPLDIR)/weeklynews/footer.wml
 
 # Special case for Chinese
-index.zh-cn.html index.zh-hk.html index.zh-tw.html: \
+index.zh-cn.html index.zh-hk.html index.zh-tw.html: index.wml \
       $(wildcard $(CUR_YEAR)/*/index.wml) \
-      $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(CUR_YEAR)/*) \
-      $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
+      $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(CUR_YEAR)/*/index.wml) \
+      $(ENGLISHSRCDIR)/$(CUR_DIR)/CURRENT-ISSUE-IS \
       $(TEMPLDIR)/weeklynews/header.wml \
-      $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml \
-      $(ENGLISHSRCDIR)/$(CUR_DIR)/CURRENT-ISSUE-IS
+      $(TEMPLDIR)/weeklynews/index.wml \
+      $(TEMPLDIR)/weeklynews/footer.wml
+
+# per-year indices need to be rebuilt, too.
+# this code is an obscenely stupid kludge, though
+1999/index.$(LANGUAGE).html: 1999/index.wml \
+      $(wildcard 1999/*/index.wml) \
+      $(wildcard $(ENGLISHSRCDIR)/News/weekly/1999/*/index.wml) \
+      $(TEMPLDIR)/weeklynews/header.wml \
+      $(TEMPLDIR)/weeklynews/index.wml \
+      $(TEMPLDIR)/weeklynews/footer.wml
+2000/index.$(LANGUAGE).html: 2000/index.wml \
+      $(wildcard 2000/*/index.wml) \
+      $(wildcard $(ENGLISHSRCDIR)/News/weekly/2000/*/index.wml) \
+      $(TEMPLDIR)/weeklynews/header.wml \
+      $(TEMPLDIR)/weeklynews/index.wml \
+      $(TEMPLDIR)/weeklynews/footer.wml
+2001/index.$(LANGUAGE).html: 2001/index.wml \
+      $(wildcard 2001/*/index.wml) \
+      $(wildcard $(ENGLISHSRCDIR)/News/weekly/2001/*/index.wml) \
+      $(TEMPLDIR)/weeklynews/header.wml \
+      $(TEMPLDIR)/weeklynews/index.wml \
+      $(TEMPLDIR)/weeklynews/footer.wml
+
+# again special cases for Chinese, ugh
+1999/index.zh-cn.html 1999/index.zh-hk.html 1999/index.zh-tw.html: \
+      1999/index.wml \
+      $(wildcard 1999/*/index.wml) \
+      $(wildcard $(ENGLISHSRCDIR)/News/weekly/1999/*/index.wml) \
+      $(TEMPLDIR)/weeklynews/header.wml \
+      $(TEMPLDIR)/weeklynews/index.wml \
+      $(TEMPLDIR)/weeklynews/footer.wml
+2000/index.zh-cn.html 2000/index.zh-hk.html 2000/index.zh-tw.html: \
+      2000/index.wml \
+      $(wildcard 2000/*/index.wml) \
+      $(wildcard $(ENGLISHSRCDIR)/News/weekly/2000/*/index.wml) \
+      $(TEMPLDIR)/weeklynews/header.wml \
+      $(TEMPLDIR)/weeklynews/index.wml \
+      $(TEMPLDIR)/weeklynews/footer.wml
+2001/index.zh-cn.html 2001/index.zh-hk.html 2001/index.zh-tw.html: \
+      2001/index.wml \
+      $(wildcard 2001/*/index.wml) \
+      $(wildcard $(ENGLISHSRCDIR)/News/weekly/2001/*/index.wml) \
+      $(TEMPLDIR)/weeklynews/header.wml \
+      $(TEMPLDIR)/weeklynews/index.wml \
+      $(TEMPLDIR)/weeklynews/footer.wml
 
 # Generate the mail for posting to debian-news. Requires the web page already
 # be updated.
