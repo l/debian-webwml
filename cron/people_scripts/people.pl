@@ -28,6 +28,23 @@ my @special_maintainer = (
 	"Debian XML/SGML Group",
 	"Grub-Devel",
 	"Debian S/390 Team",
+	"Debian Firebird Group",
+	"Debian Mono Group",
+	"Debian Perl Group",
+	"Progeny Debian Packaging Group",
+	"Grub Maintainers",
+	"Debian Berkeley DB Maintainers",
+	"Debian SPARC 2.4 Kernel Maintainers",
+	"Exim4 Maintainers",
+	"Debian VoIP Team",
+	"Dbus Maintainance Team",
+	"Debian Firebird RDBMS Team",
+	"Debian kernel team",
+	"Debian logcheck Team",
+	"Debian NTP Team",
+	"Debian QEMU Team",
+	"Debian VBA Team",
+	"Debian VDR and DVB Packaging Team",
 );
 
 
