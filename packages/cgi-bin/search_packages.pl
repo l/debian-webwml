@@ -56,24 +56,27 @@ if ($keyword =~ /^([-+\@\w\/.:]+)$/) {
    exit 0;
 }
 (my $version) = $input->param('version') =~ m/^(\w+)$/; # $version now untainted
+my $version_param = $version || 'stable'; # for constructing URLs
 $version = "stable" unless (defined $version);
 $version = '*' if ($version eq 'all');
-my $case = '';
-$case = $input->param('case');
+(my $case) = $input->param('case') =~ m/^(\w+)$/;
 $case = "insensitive" unless (defined $case);
-my $subword = $input->param('subword');
+(my $subword) = $input->param('subword') =~ m/^(\w+)$/;
 $subword = 0 unless (defined $subword);
-my $searchon = $input->param('searchon');
+(my $searchon) = $input->param('searchon') =~ m/^(\w+)$/;
 $searchon = 'all' unless (defined $searchon);
-my $exact = $input->param('exact');
+(my $exact) = $input->param('exact') =~ m/^(\w+)$/;
 $exact = 0 unless (defined $exact);
-my $releases = $input->param('release');
+(my $releases) = $input->param('release') =~ m/^(\w+)$/;
+my $releases_param = $releases || 'all';
 $releases = '*' unless (defined $releases);
 $releases = '*' if ($releases eq 'all');
 
 my $arch = "*";
+my $arch_param = 'any';
 if (defined $input->param('arch') && $input->param('arch') =~ m/^([\w-]+)$/) {
   $arch = $1; # $arch now untainted
+  $arch_param = $1;
 }
 $arch = '*' if ($arch eq 'any');
 
@@ -90,6 +93,8 @@ close (C);
 
 my $fdir = $topdir . "/files/flat/$version/$releases";
 my $file = "Packages-$arch.*";
+my $srcfile = "Sources.*";
+my $search_on_sources = 0;
 
 sub find_desc
 {
@@ -116,7 +121,11 @@ sub find_desc
 # for future reference, so we create a different variable for searching
 my $searchkeyword = $keyword;
 $searchkeyword =~ s/[.]/[.]/;
-if ($searchon eq 'names') {
+if (($searchon eq 'names') || ($searchon eq 'sourcenames')) {
+    if ($searchon eq 'sourcenames') {
+	$file = $srcfile;
+	$search_on_sources = 1;
+    }
     if ($exact) {
 	$searchkeyword = "\"^".$searchkeyword." \"";
     } else {
@@ -136,7 +145,7 @@ if ($#files == -1) {
     print "Error: the $arch architecture didn't exist in $version.<br>\n"
          ."Please go back and choose a different distribution.\n";
   } else {
-    print "Error: Packages file not found.<br>\n"
+    print "Error: Packages/Sources file not found.<br>\n"
          ."If the problem persists, please inform $ENV{SERVER_ADMIN}.\n";
     printf "<p>$file</p>";
   }
@@ -200,48 +209,103 @@ my $command = "find $fdir -name $file|xargs ".$grep;
 my @results = qx( $command );
 
 if (!@results) {
+  my $keyword_esc = uri_escape( $keyword );
+  my $printed = 0;
   if ($searchon eq "names") {
     print "<p><strong>Can't find that package, at least not in that distribution and on that architecture.</strong></p>\n";
+
+    if ($exact) {
+	$printed = 1;
+	print "<p>You have searched only for exact matches of the package name. You can try to search for <a href=\"?exact=0&amp;searchon=$searchon&amp;version=$version_param&amp;case=$case&amp;release=$releases_param&amp;keywords=$keyword_esc&amp;arch=$arch_param\">package names that contain your search string</a>.</p>";
+    }
   } else {
     print "<p><strong>Can't find that string, at least not in that distribution and on that architecture.</strong></p>\n";
+
+    unless ($subword) {
+	$printed = 1;
+        print "<p>You have searched only for words exactly matching your keywords. You can try to search <a href=\"?subword=1&amp;searchon=$searchon&amp;version=$version_param&amp;case=$case&amp;release=$releases_param&amp;keywords=$keyword_esc&amp;arch=$arch_param\">allowing subword matching</a>.</p>";
+    }
   }
+  print "<p>".( $printed ? "Or you" : "You" )." can try a different search on the <a href=\"http://packages.debian.org/#search_packages\">Packages search page</a>.</p>";
+
   &printfooter;
   exit
 }
 
-my (%pkgs, %sect, %desc);
-my (@colon, $package, $section, $ver, $foo);
-foreach my $line (@results) {
-    @colon = split (/:/, $line);
-    ($package, $section, $ver, $foo) = split (/ /, $#colon >1 ? $colon[1].":".$colon[2]:$colon[1], 4);
-    $section =~ s,^(non-free|contrib)/,,;
-    $section =~ s,^non-US.*$,non-US,,;
-    $colon[0] =~ m,.*/([^/]+)/([^/]+)/Packages-([^\.]+)\.,; #$1=stable, $2=main, $3=alpha
+my (%pkgs, %sect, %desc, %binaries);
+my (@colon, $package, $section, $ver, $foo, $binaries);
 
-    $pkgs{$package}{$1}{$ver}{$3} = 1;
-    $sect{$package}{$1}{$ver} = $section;
+unless ($search_on_sources) {
+    foreach my $line (@results) {
+	@colon = split (/:/, $line);
+	($package, $section, $ver, $foo) = split (/ /, $#colon >1 ? $colon[1].":".$colon[2]:$colon[1], 4);
+	$section =~ s,^(non-free|contrib)/,,;
+	$section =~ s,^non-US.*$,non-US,,;
+	$colon[0] =~ m,.*/([^/]+)/([^/]+)/Packages-([^\.]+)\.,; #$1=stable, $2=main, $3=alpha
+	
+	$pkgs{$package}{$1}{$ver}{$3} = 1;
+	$sect{$package}{$1}{$ver} = $section;
 
-    $desc{$package}{$1}{$ver} = find_desc ($package, $1, $2) if (! exists $desc{$package}{$1}{$ver});
+	$desc{$package}{$1}{$ver} = find_desc ($package, $1, $2) if (! exists $desc{$package}{$1}{$ver});
+	
+    }
 
-}
-
-foreach my $pkg (sort keys %pkgs) {
-    printf "<h3>Package %s</h3>\n", $pkg;
-    print "<ul>\n";
-    foreach $ver (('stable','testing','unstable','experimental')) {
-	if (exists $pkgs{$pkg}{$ver}) {
-	    my @versions = version_sort keys %{$pkgs{$pkg}{$ver}};
-	    printf "<li><a href=\"http://packages.debian.org/%s/%s/%s\">%s</a> (%s): %s\n",
-	    $ver, $sect{$pkg}{$ver}{$versions[0]}, $pkg, $ver, $sect{$pkg}{$ver}{$versions[0]}, $desc{$pkg}{$ver}{$versions[0]};
-
-	    foreach my $v (@versions) {
-		printf "<br>%s: %s\n",
-		$v, join (" ", (sort keys %{$pkgs{$pkg}{$ver}{$v}}) );
+    foreach my $pkg (sort keys %pkgs) {
+	printf "<h3>Package %s</h3>\n", $pkg;
+	print "<ul>\n";
+	foreach $ver (('stable','testing','unstable','experimental')) {
+	    if (exists $pkgs{$pkg}{$ver}) {
+		my @versions = version_sort keys %{$pkgs{$pkg}{$ver}};
+		printf "<li><a href=\"http://packages.debian.org/%s/%s/%s\">%s</a> (%s): %s\n",
+		$ver, $sect{$pkg}{$ver}{$versions[0]}, $pkg, $ver, $sect{$pkg}{$ver}{$versions[0]}, $desc{$pkg}{$ver}{$versions[0]};
+		
+		foreach my $v (@versions) {
+		    printf "<br>%s: %s\n",
+		    $v, join (" ", (sort keys %{$pkgs{$pkg}{$ver}{$v}}) );
+		}
+		print "</li>\n";
 	    }
+	}
+	print "</ul>\n";
+    }
+} else {
+    foreach my $line (@results) {
+	@colon = split (/:/, $line);
+	($package, $section, $ver, $binaries) = split (/ /, $#colon >1 ? $colon[1].":".$colon[2]:$colon[1], 4);
+	$section =~ s,^(non-free|contrib)/,,;
+	$section =~ s,^non-US.*$,non-US,,;
+	$colon[0] =~ m,.*/([^/]+)/([^/]+)/Sources\.,; #$1=stable, $2=main
+	
+	my ($suite, $part) = ($1, $2);
+	$pkgs{$package}{$suite} = $ver;
+	$sect{$package}{$suite}{source} = $section;
+
+	$binaries{$package}{$suite} = [ sort split( /,\s*/, $binaries ) ];
+
+    }
+
+    foreach my $pkg (sort keys %pkgs) {
+	printf "<h3>Source package %s</h3>\n", $pkg;
+	print "<ul>\n";
+	foreach $ver (('stable','testing','unstable','experimental')) {
+	    if (exists $pkgs{$pkg}{$ver}) {
+		printf "<li>%s (%s): %s", $ver, $sect{$pkg}{$ver}{source}, $pkgs{$pkg}{$ver};
+		
+		print "<br>Binary packages: ";
+		my @bp_links;
+		foreach my $bp (@{$binaries{$pkg}{$ver}}) {
+		    my $bp_link = sprintf "<a href=\"?exact=1&amp;searchon=names&amp;version=$ver&amp;keywords=%s\">%s</a>", uri_escape( $bp ),  $bp;
+		    push @bp_links, $bp_link;
+		}
+		print join( ", ", @bp_links );
+	    print "</li>\n";
 	}
     }
     print "</ul>\n";
 }
+}
+
+
 
 print "<hr>\n";
 &printfooter;
@@ -251,7 +315,7 @@ exit;
 sub printfooter {
 print <<END;
 
-<p align=right><small><i><a href="http://packages.debian.org/">
+<p align="right"><small><i><a href="http://packages.debian.org/">
 Packages search page</a></i></small></p>
 END
 
