@@ -12,7 +12,7 @@
 
 # Invocation:
 #   check_trans.pl [-vqdlM] [-C dir] [-p pattern] [-s subtree]
-#                  [-m email -n N] [-g] [-t outputtype]
+#                  [-m email -n N] [-c charset] [-g] [-t outputtype]
 #                  [language]
 
 # It needs to be run from the top level webwml directory.
@@ -45,6 +45,7 @@
 #			(it should be the list used for organisation,
 #			e.g. debian-l10n-french@lists.debian.org)
 #	-g		debuG
+#	-c <charset>	charset used in mails
 #	-n <1|2|3>	send mails of priority upper or equal to
 #			1 (monthly), 2 (weekly) or 3 (daily)
 
@@ -97,13 +98,13 @@ my %translators;# the real hash
 my $maintainer = "mquinson\@ens-lyon.fr"; # the default e-mail at which to bitch :-)
 
 # options (note: with perl 5.6, this could change to our())
-use vars qw($opt_C $opt_M $opt_Q $opt_d $opt_g $opt_l $opt_m $opt_n $opt_p $opt_q $opt_s $opt_t $opt_T $opt_v);
+use vars qw($opt_C $opt_M $opt_Q $opt_c $opt_d $opt_g $opt_l $opt_m $opt_n $opt_p $opt_q $opt_s $opt_t $opt_T $opt_v);
 $opt_n = 5; # an invalid default
 $opt_s = '';
 $opt_C = '.';
 $opt_t = 'text';
 
-unless (getopts('vgdqQC:m:s:Tt:p:ln:M'))
+unless (getopts('vgdqQC:m:c:s:Tt:p:ln:M'))
 {
 	open SELF, "<$0" or die "Unable to display help: $!\n";
 	HELP: while (<SELF>)
@@ -290,9 +291,11 @@ sub init_mails {
         }
         1 while ($str =~ s/#(.*?)#/eval $1/ge);
 
-        $translators{$name}{"msg"}->attach(
+	my $part = MIME::Lite->new(
            Type => 'TEXT',
            Data => $str);
+	$part->attr('content-type.charset' => $opt_c) if $opt_c;
+        $translators{$name}{"msg"}->attach($part);
 	$translators{$name}{"send"}=0;
     }
 }
