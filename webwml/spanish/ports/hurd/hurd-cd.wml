@@ -1,27 +1,42 @@
 #use wml::debian::template title="Debian GNU/Hurd --- Documentación" NOHEADER="yes"
-#use wml::debian::translation-check translation="1.12"
+#use wml::debian::translation-check translation="1.14"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
 
 <H1>Debian GNU/Hurd</h1>
 
 <h2>Uso de los los CD-ROMs de instalación del Debian GNU/Hurd no oficial</H2>
 
-<P>Hay dos imágenes de CDs. La mayoría del lío y barullo asociados con
-un sistema operativo en desarrollo los encontrará en el segundo CD,
-dejando el primer CD relativamente limpio y consistente. Pero puede
-haber unos cuantos paquetes importantes en el segundo CD.</P>
+<P>Serie actual, G1./P>
 
-<H3>Nota importante para F3</H3>
+<P>Hay tres imágenes de CDs. La mayoría del lío y barullo asociados
+con un sistema operativo en desarrollo los encontrará en el tercer CD,
+en el árbol "unstable-extra", dejando el primer CD relativamente
+limpio y consistente. Pero puede haber unos cuantos paquetes
+importantes en este árbol.</P>
 
-<P>Después de montar el CD la primera vez, ejecute
-<code>/cdrom/upgrade/initial.sh</code> para actualizar el tar de Hurd.
+<H3>Nota importante para G1.</H3>
+
+<P>baseHurd.tgz (el tar de Hurd) se reconstruye como parte de la
+creación del conjunto de CD's y por tanto está actualizado.
+
+<P>apt puede quedarse bloqueado cuando se instalan paquetes desde el
+cdrom en algunos tipos de hardware. El truco sucio para arreglarlo es
+borrar pkgcache.bin y srcpkgcache.bin de /var/cache/apt/ y ejecutar
+apt-get update antes de apt-get install.
 
 <H3>Descarga.</H3>
 
-<P>Las imágenes ISO actuales son hurd-F3-Main.iso y hurd-F3-extra.iso,
-y estos son algunos de los sitios que normalmente tienen las imágenes
-actuales. Revise la versión antes de descargarlas.</P>
+<P>Las imágenes ISO actuales son hurd-G1-CD[1,2,3] y la mayoría de los
+binarios específicos del Hurd se encuentran en el primer CD, pero
+todos los juegos y algunos paquetes gráficos se encuentran en el
+segundo CD. Puede instalarse un sistema Hurd básico usando el primer
+CD.
 
+<P>El servidor principal para estas imágenes es
+ftp://ftp.gnu.org/pub/gnu/hurd/contrib/iso/hurd-G1/ y también pueden
+ser obtenidas de sus réplicas.</P>
+
+<!--
 <ul>
 <li>
 <P><A HREF="ftp://ftp.planetmirror.com/pub/debian-cd/unofficial">ftp.planetmirror.com/pub/debian-cd/unofficial</A> -  Australia
@@ -33,10 +48,10 @@ actuales. Revise la versión antes de descargarlas.</P>
 <A HREF="ftp://ftp.fsn.hu/pub/CDROM-Images/debian-unofficial/hurd">ftp.fsn.hu/pub/CDROM-Images/debian-unofficial</A> -  Hungría (Sitio primario)
 <li>
 <A HREF="ftp://www.che.iitm.ac.in/pub/hurd-cd">ftp://www.che.iitm.ac.in/pub/hurd-cd</A> - Sólo el subcontinente Indio, por favor.
-</ul>
+</ul> -->
 
 <P>Una <a href="http://ftpsearch.lycos.com/?form=medium">búsqueda
-ftp</a> de hurd-F3 podría encontrar un sitio más cercano.</P>
+ftp</a> de hurd-G1 podría encontrar un sitio más cercano.</P>
 
 <p> Las instrucciones para el quemado de CDs a partir de las imágenes
 se puede encontrar en <A
@@ -190,63 +205,7 @@ un poco. Le dirá que no puede encontar <code>sd0s1</code> y le pedirá que
 lo arregle. Habiendo comprendido bien los diferentes esquemas de nombres
 sabrá al instante que la respuesta correcta es hd0s1. Entonces, GRUB le 
 preguntará si debe usar <code>/boot/serverboot.gz</code>, 
-conteste con "Enter".<BR>
-
-No puede complicarse mucho. Si su partición no es ninguna de las anteriores,
-GRUB tiene un menú y sabe completar con tab, así que úselo.</P>
-
-<h5>Ejemplo</h5>
-
-<P>"Press any key to continue"  Haga lo obvio y se presentará un menú.
-Es posible que lo que necesita no esté allí.
-
-<p>
-"c"  le lleva a una línea de órdenes.</P>
-
-<P>Ahora se puede usar un proceso paso a paso.
-</P>
-<P>+++++<BR>
-grub$ root "TAB"    [su entrada - TAB es la tecla TAB]<BR>
-Possible commands are: root rootnoverify   [la respuesta de GRUB]<BR>
-+++++<BR>
-grub$ root "(TAB"   - - - - "(TAB" es su respuesta.<BR>
-Possible disks are:   fd0 hd0 hd1<BR>
-+++++<BR>		  
-grub$ root ("hd0,TAB"    (suponiendo que hd0 es donde se ha instalado el .tar)<BR>
-Possible partitions are:<BR>
-Partition num: 0, Filesystem type is unknown, partition type 0x82<BR>
-Partition num: 1, Filesystem type is ext2fs, partition type 0x83<BR>
-Partition num: 2, Filesystem type is ext2fs, partition type 0x83<BR>
-Partition num: 4, Filesystem type is ext2fs, partition type 0x83<BR>
-Partition num: 5, Filesystem type is ext2fs, partition type 0x83<BR>
-Partition num: 6, Filesystem type is ext2fs, partition type 0x83<BR>
-+++++<BR>
-grub$ root (hd0,"4)ENTER"	(suponiendo que el Hurd está en la 5º partición.)
- - - "ENTER" es la tecla "ENTER".<BR>
-Filesystem type is ext2fs, partition type 0x83<BR>
-+++++</P>
-
-<P>Ahora GRUB sabe dónde ir y ahora hay que decirle a Hurd dónde ir en 
-lenguaje Hurd.</P>
-
-+++++<BR>
-grub$ "kernel /boot/gnumach.gz root=hd0s5 -s  ENTER"       (Usando nombres Hurd)<BR>
-Multiboot-elf,.....<BR>
-+++++</P>
-
-<P>gnumach es el núcleo y está en hd0s5 en el directorio /boot.
-  -s = modo de usuario único.</P>
-
-<P>+++++<BR>
-grub$ "module /boot/serverboot.gz  ENTER"<BR>
-Mulltiboot-module, ........<BR>
-+++++</P>
-
-<P>Serverboot cargará el núcleo.  Ahora todo está preparado, así que podemos arrancar.</P>
-
-<P>++++<BR>
-grub$ "boot ENTER"<BR>
-+++++</P>
+conteste con "Enter".</P>
 
 <P>Mantenga sus manos alejadas del teclado hasta que se complete el proceso
 de arranque.</P>
@@ -261,7 +220,7 @@ sistema arranque sin intervención manual.</P>
 <li><em>Después de que el sistema ha arrancado, ejecute ./native-install.</em>
 Rearranque el sistema usando "reboot". ESTO ES IMPORTANTE, mire el mensaje
 de arranque y anote con cuidado donde está el CD-ROM.  [Segundo rearranque]</P>
-    
+
 <li><em>Despues de que se haya completado el segundo rearranque
 ejecute ./native-install una segunda vez.</em> Esta vez, se
 configurarán un montón de paquetes. Rearranque una vez más todavía.
@@ -274,16 +233,16 @@ partición swap y cualquier otra partición de disco duro.
 
 <p> Ejemplo
 "MAKEDEV hd2 hd0s2 hd0s3"</P>
-		
-<li><em>Edite /etc/fstab, "ae /etc/fstab"</em>.
-ae no es un mal editor para lo que ocupa.<p>
+
+<li><em>Edite /etc/fstab, "nano /etc/fstab"</em>.
+nano no es un mal editor para lo que ocupa.<p>
 Añada las particiones del disco duro, p. ej.,<br>
 /dev/[nombre de la partición de Hurd]   none    swap    sw    0       0<BR>
 /dev/[nombre de la partición de Hurd]   /CD1     ext2    rw    1       1</P>
 
 <P>El Hurd utiliza el sistema de archivos ext2. "/CD1" es un punto de
 montaje sugerido para la partición que contiene los paquetes de
-hurd-F3-main. La swap se puede compartir con Linux.</P>
+hurd-G1-CD1. La swap se puede compartir con Linux.</P>
 					
 <li><em> Active la partición swap "swapon -a".</em>
 Compruebe que ha funcionado. Se recomienda EXTREMADAMENTE usar swap
@@ -294,32 +253,26 @@ con el Hurd.</P>
 settrans -a /cdrom /hurd/isofs /dev/[Nombre de la unidad de Hurd]</P>
 	
 <li><em>Ejecute "/cdrom/upgrade/initial.sh"</em>.
-<p>Esto actualizará el tar de Hurd (baseHurd.tgz). Debido a que esta
-es una actualización bastante radical, sería bastante sabio que
-reiniciase cuando el proceso termine.</p>
-				
-<li><em>Configure el traductor para el CD-ROM de nuevo y ejecute
-"/cdrom/upgrade/second.sh".</em>
-<p>Esto instalará un buen número de paquetes (¿)útiles(?).</p>
+<p>Esto instalará algunos paquetes útiles.</p>
+
+<li><em>Si apt bloquea el sistema mientras ejecuta apt-get
+install.</em>
+<p>Tiene hardware que no le gusta a apt. Vea más arriba una
+solución.</p>
 
 <li><em> Puede instalar más paquetes usando "apt" o "dselect".</em>
 <p>Si no se siente familiarizado con esas herramientas Debian, vea
 "man apt" y "man dselect".</p>
 
 <li><em>Desmontando el cdrom</em>
-<P>La unidad de cdrom necesita ser desmontada en dos pasos,<BR>
-<code>settrans -g /cdrom</code><BR>
-<code>settrans -g /dev/[Hurd drive name]</code><BR>
-Entonces se debería desbloquear la bandeja de la unidad de cdrom.</br>
-Si esto no funciona, un reinicio resolverá el problema. Descubrí que
-era necesario después de ejecutar <code>initial.sh</code> y
-<code>second.sh</code>.</p>
+<P>La unidad de cdrom se desmonta con
+<code>settrans -agf /cdrom</code>.<BR>
+Entonces debería desbloquearse la bandeja de la unidad CDROM.</br>
+
 
 <li><em>Copiando sus CD's a particiones</em>
-<p>Si copia sus CD's a particiones, no añada el directorio
-"dists-extra" que se encuentra en el CD extra a su
-/etc/apt/sources.list, ya que contiene paquetes que podrían romperle
-el sistema.</P>
+<p>Es seguro copiar los CD's a particiones del disco duro, ya que apt
+no añadirá el directorio "unstable-extra" a su caché.</P>
 
 </ol>
 
