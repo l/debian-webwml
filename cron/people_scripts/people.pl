@@ -442,13 +442,13 @@ sub process_homepages {
   foreach (`ldapsearch -P 2 -x -h db.debian.org -b dc=debian,dc=org uid=\* cn mn sn labeledurl`) {
     chop; $line = $_;
     if ($line =~ /^(dn: )?uid=(.+),.+$/) { $name = $2; }
-    elsif ($line =~ /^cn(=|: )(.+)$/) { $ldap_cn = $2; }
+    elsif ($line =~ /^cn(=|: )(.+)$/) { $ldap_cn = from_utf8_or_iso88591_to_sgml($2); }
     elsif ($line =~ /^mn(=|: )(.+)$/) { next; }
-    elsif ($line =~ /^sn(=|: )(.+)$/) { $ldap_sn = $2; }
+    elsif ($line =~ /^sn(=|: )(.+)$/) { $ldap_sn = from_utf8_or_iso88591_to_sgml($2); }
     elsif ($line =~ /^(\w+):: (.+)$/) {
       use MIME::Base64;
       my $namepart = $1;
-      my $worddata = decode_base64($2);
+      my $worddata = from_utf8_or_iso88591_to_sgml(decode_base64($2));
       if ($namepart eq "cn") { $ldap_cn = $worddata; }
       elsif ($namepart eq "sn") { $ldap_sn = $worddata; }
       elsif ($namepart ne "mn") {
@@ -479,9 +479,10 @@ sub process_homepages {
 		next if ($ldap_cn eq "Debian BTS");
 
 		# they don't seem to have any packages, but add them anyway
-		$People{"$ldap_sn:$ldap_cn"}{email} = "";
-		$People{"$ldap_sn:$ldap_cn"}{homepage} = $homepageurl;
-		# warn "Adding $ldap_cn $ldap_sn even though they don't have any packages\n";
+		my $person = "$ldap_sn:$ldap_cn";
+		$People{$person}{email} = "";
+		$People{$person}{homepage} = $homepageurl;
+		# warn "Adding $person even though they don't have any packages\n";
 	}
     }
     elsif ($line eq "" or $line =~ /^((version|search|result):|#)/) { next; }
