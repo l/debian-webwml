@@ -101,17 +101,17 @@ my %translit2 = (
 		 cs    => "cesky",
 );
 
-sub langcmp {
-  my ($first, $second) = ($a, $b);
+sub langcmp ($$) {
+  my ($first, $second) = @_;
 
   # Handle sorting of non-latin characters
   # If there is a transliteration for this language available, use it
-  $first = $translit{$a} if defined $translit{$a};
-  $second = $translit{$b} if defined $translit{$b};
+  $first = $translit{$first} if defined $translit{$first};
+  $second = $translit{$second} if defined $translit{$second};
 
   # Then handle special cases (initial latin letters with diacritics)
-  $first = $translit2{$a} if defined $translit2{$a};
-  $second = $translit2{$b} if defined $translit2{$b};
+  $first = $translit2{$first} if defined $translit2{$first};
+  $second = $translit2{$second} if defined $translit2{$second};
 
   # Put remaining entity-only names last in the list
   if (substr($first,0,1) eq '&')
