@@ -105,6 +105,7 @@ sub printrefs {
 			}
 		}
 	}
+	print "</table>\n" if $opt_p;
 }
 
 sub parsefile {
@@ -177,7 +178,7 @@ to security fixes in Debian.
 to include cross-references in DSAs (even after they have been published),
 however, some DSAs might not have proper references to some security
 information sources. If you find information lacking please
-<a href="mailto:security@debian.org?subject=DSA cross references info">let us 
+<a href="mailto:security@debian.org?subject=DSA_cross_references_info">let us 
 know</a>
 
 <P><em>Note:</em> The data below is sorted in reverse chronological order.
