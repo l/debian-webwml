@@ -254,7 +254,7 @@ sub get_warn_maintainers($)
 sub get_err_maintainers($)
 {
     my ($dbh) = @_;
-    my ($firstname, $surname, $email, $apply_date, \$manager);
+    my ($firstname, $surname, $email, $apply_date, $manager);
     my $sth;
     my $sql = "SELECT forename, surname, email, apply_date, manager from applicant where age( 'now'::date, apply_date) > '6 weeks' AND advocate_ok is NULL AND (advocate_date IS NULL OR age('now'::date, advocate_date) > '1 weeks') ORDER BY surname";
 
