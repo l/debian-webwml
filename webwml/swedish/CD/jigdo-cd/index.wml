@@ -1,5 +1,5 @@
 #use wml::debian::cdimage title="Hämta Debian-cd-avbildningar med jigdo" BARETITLE=true
-#use wml::debian::translation-check translation="1.3"
+#use wml::debian::translation-check translation="1.4"
 
 <p>Jigsaw Download, förkortat <a href="http://atterer.net/jigdo/">jigdo</a>,
 har som mål att vara huvudmetoden för att distribuera Debian-cd-avbildningar
@@ -20,9 +20,8 @@ ny utgåva släppts.</p>
 <p>Naturligtvis har inte en &rdquo;normal&rdquo; Debianspegling cd-avbildningar,
 så hur kan jigdo hämta dem där?
 Jigdo gör detta genom att hämta alla filer som finns på cd:n individuellt.
-I nästa steg byggs alla dessa filer ihop till en enda stor fil, vilken (om månen
-är full och om du har stått på ett ben medan du mässade uråldriga och nästan
-bortglömda besvärjelser) är en exakt kopia av cd-avbildningen.
+I nästa steg byggs alla dessa filer ihop till en enda stor fil, vilken
+är en exakt kopia av cd-avbildningen.
 Allt detta sker dock i bakgrunden &ndash; allt <em>du</em> behöver göra är
 att tala om för hämtningsverktyget var &rdquo;<tt>.jigdo</tt>&rdquo;-filen som
 skall användas finns.</p>
@@ -90,10 +89,40 @@ dessa megabyte till ingen nytta?!</strong></p>
 en situation där du har en stor &rdquo;<tt>.iso.tmp</tt>&rdquo;-fil som redan
 har genererats och <tt>jigdo-lite</tt> verkar ha problem och talar vid upprepade
 tillfällen om för dig att försöka återstarta överföringen.
-För närvarande är den enda lösning som <em>inte</em> involverar att hämta all
-data igen att falla tillbaka till
-<tt><a href="http://rsync.samba.org/">rsync</a></tt>.
-Byt namn på <tt>jigdo-lite</tt>s temporära fil så att du tar bort
-&rdquo;<tt>.tmp</tt>&rdquo;-ändelsen och används sedan en av
-<a href="../mirroring/rsync-mirrors">rsync-speglingarna</a> för att hämta de
-saknade delarna av avbildningen.</p>
+Det finns flera saker att testa i detta fall:
+</p>
+
+<ul>
+ <li>Starta om överföringen genom att trycka Enter.
+     Kanske kunde några av filerna inte hämtas på grund av att något tog för
+     lång tid, eller andra övergående fel &ndash; ett nytt försök kommer
+     att göras att hämta saknade filer.
+ </li>
+
+ <li>Försök med en annan spegling.
+     Vissa Debianspeglingar kan vara något ur synk &ndash; kanske har en
+     annan spegling fortfarande filer som tagits bort från den du angav,
+     eller har redan uppdaterats mede filer som ännu inte finns på din.
+ </li>
+
+ <li>Hämta de de saknade delarna av avbildningen med
+     <tt><a href="http://rsync.samba.org/">rsync</a></tt>.
+     För det första måste du ta reda på den korrekta rsync-URL:en för den
+     avbildning du hämtar:
+     Välj en server som tillhandahåller rsync-åtkomst till de
+     <a href="../mirroring/rsync-mirrors">stabila</a> eller
+     <a href="../http-ftp/#testing">uttestnings-</a>avbildningarna,
+     och avgör sedan korrekt sökväg och filnamn.
+     Kataloglistningar kan hämtas med kommandon på formen
+     <tt>rsync&nbsp;rsync://cdimage.debian.org/debian-cd/</tt>
+
+     <br>Ta sedan bort filändelsen &rdquo;<tt>.tmp</tt>&rdquo; från
+     <tt>jigdo-lite</tt>s temporärfil genom att byta namn på den, och
+     ge både fjärr-URL:en och det lokala filnamnet till rsync:
+     <tt>rsync&nbsp;rsync://server.org/sökväg/binary-i386-1.iso
+     binary-i386-1.iso</tt>
+
+     <br>Du kan även använda flaggorna <tt>--verbose</tt> och
+     <tt>--progress</tt> hos rysnc.
+ </li>
+</ul>
