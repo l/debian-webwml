@@ -4,32 +4,21 @@
 
 WMLBASE=.
 CUR_DIR=
-SUBS=Bugs MailingLists News Pics chinese consultants devel distrib doc \
-events intro international logos mirror misc partners ports releases security \
-vote y2k
+SUBS=Bugs MailingLists News Pics consultants devel distrib doc events intro \
+international logos mirror misc partners ports releases security vote y2k \
+chinese searchtmpl
 
 include $(WMLBASE)/Make.lang
 
+CUR_YEAR ?= $(shell date +%Y)
 
 # Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
-		$(wildcard News/2000/2000*.wml) $(wildcard $(ENGLISHSRCDIR)/News/2000/2000*.wml) \
-		$(wildcard security/2000/2000*.wml) $(wildcard $(ENGLISHSRCDIR)/security/2000/2000*.wml) \
+		$(wildcard News/$(CUR_YEAR)/[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/[0-9]*.wml) \
+		$(wildcard security/$(CUR_YEAR)/dsa-[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-[0-9]*.wml) \
 		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
 		$(ENGLISHSRCDIR)/releases/info
 	$(WML) index.wml
 
-# Special case for Chinese
-index.zh-cn.html index.zh-hk.html index.zh-tw.html: index.wml \
-		$(TEMPLDIR)/mainpage.wml \
-		$(wildcard News/2000/2000*.wml) $(wildcard News/2000/2000*.title) \
-		$(wildcard $(ENGLISHSRCDIR)/News/2000/2000*.wml) \
-		$(wildcard security/2000/2000*.wml) $(wildcard $(ENGLISHSRCDIR)/security/2000/2000*.wml) \
-		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
-		$(ENGLISHSRCDIR)/releases/info
-
 install::
 	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
-
-clean::
-	find $(WMLBASE)/Pics -type l | xargs rm -f
