@@ -2,6 +2,8 @@
 
 <perl>
 
+my $host = `hostname -f`;
+
 use Net::LDAP;
 use Date::Parse;
 
