@@ -1,5 +1,5 @@
 $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
-	$(WML) $(EPILOG) $(<F)
+	$(WML) $(<F)
 
 $(HTMLDIR)/%.jpg : %.jpg
 	@cp $< $@
