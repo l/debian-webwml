@@ -2,10 +2,7 @@
   include("config.inc");
   include("common.inc");
 
-  function print_applicants($sql) {
-  if (! ($db = open_db())) {
-    return FALSE;
-  }
+  function print_applicants($db, $sql) {
   if (! ($query = pg_exec($db, $sql))) {
     echo "Problem with query", pg_ErrorMessage($db), "<BR>";
     pg_Close($db);
@@ -16,22 +13,28 @@
     $row = pg_Fetch_Array($query, $i);
     echo $row["name"], "<BR>\n";
   }
-
-  pg_Close($db);
   return TRUE;
 }?>
 #use wml::nmpage title="Debian New Maintainer - Application Manager List"
+<?
+  if (! ($db = open_db())) {
+    echo "Cannot open database!";
+    return FALSE;
+  }
+?>
 <H1>Debian New Maintainer - Application Manager List</H1><BR>
 <P>Below is the list of Debian maintainers who are currently active as
 Application Managers:
 <BR>
 <? $sql = "SELECT * from manager WHERE is_active IS TRUE ORDER by name";
-   print_applicants($sql); ?>
+   print_applicants($db, $sql); ?>
 <P>
 <P>Below is the list of Debian maintainers who used to help as Application
 Managers in the past:
 <BR>
 <? $sql = "SELECT * from manager WHERE is_active IS FALSE ORDER by name";
-   print_applicants($sql); ?>
-
+   print_applicants($db, $sql); ?>
+<?
+  pg_Close($db);
+?>
 
