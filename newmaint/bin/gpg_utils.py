@@ -45,7 +45,7 @@ def print_place(db, place, show_url=None):
 def print_all_places(db, email, show_url=None, prefix=""):
     out = []
     for place in get_places(db, email):
-        out.append(prefix + print_place(db, place, show_url))
+        out.append(prefix + print_place(db, place[0], show_url))
     return string.join(out, "\n")
 
 def find_email(db, email):
