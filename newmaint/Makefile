@@ -9,7 +9,8 @@ endif
 DEBTEMPLATES := $(wildcard $(TEMPLDIR)/*.wml) \
                 $(TEMPLDIR)/countries.def \
                 $(TEMPLDIR)/language_names.def \
-                $(wildcard template/*.wml)
+                $(wildcard template/*.wml) \
+                .wmlrc
 TARGETDIR := ../../web
 
 WMLFILES := $(wildcard *.wml)
