@@ -161,6 +161,30 @@ while (<SRC>)
 			$_ .= $next;
 		}
 	}
+	elsif ($_ eq "<p><strong>New or Noteworthy Packages.</strong> The following\n")
+	{
+		# Translate new files intro; type C;
+		$next = <SRC>;
+		if ($next eq "packages were added to the unstable Debian archive recently or contain\n")
+		{
+			$next2 = <SRC>;
+			if ($next2 eq "important updates.</p>\n")
+			{
+				$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong>\n";
+				$_ .= "Följande paket har nyligen lagts till det instabila Debianarkivet eller innehåller\n";
+				$_ .= "viktiga uppdateringar.</p>\n";
+			}
+			else
+			{
+				$_ .= $next;
+				$_ .= $next2;
+			}
+		}
+		else
+		{
+			$_ .= $next;
+		}
+	}
 	elsif ($_ eq "<p><strong>Security Updates.</strong> You know the drill, make sure\n" ||
 	       $_ eq "<p><strong>Security Updates.</strong> You know the drill, please make sure\n" ||
 	       $_ eq "<p><strong>Security Updates.</strong> You know the drill.  Please make sure\n")
