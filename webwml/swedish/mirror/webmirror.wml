@@ -1,0 +1,169 @@
+#use wml::debian::template title="Sätta upp en webbspegel"
+# <!--translation 1.11-->
+
+<p>Spegling görs på samma sätt på både officiella och inofficiella servrar.
+När en spegel satts upp bör den <a href="submit">registreras hos Debian</a>
+så att den kan läggas in i
+<a href="../misc/README.mirrors">spegellistan</a>.
+Registrering kan göras via vårt <A href="submit">enkla webbformulär</a>.
+Problem eller frågor kan ställas till
+<A href="mailto:mirrors@debian.org">mirrors@debian.org</A>.
+
+<H2>Annonsera spegelns sponsor</H2>
+sponsor.html och sponsor_img.jpg kan, och bör, ersättas av dig.
+De är till för att du ska kunna annonsera din webbplats så att folk vet vem
+som är sponsorn.
+Originalen finns i sponsor.deb.html och sonsor.deb.jpg, eftersom platsen du
+speglar kan ha ersatt exemplen som kom från Debian.
+Föreslagen maxstorlek för din logotyp är 120x60.
+
+<p>Eftersom "<a href="#cn">content negotiation</a>" används på webbsidorna
+för att välja språk, kan du till och med göra sponsor.html tillgänglig på
+olika språk.
+För att göra detta skapar du helt enkelt sponsor.&lt;språk&gt;.html för
+varje &lt;språk&gt; du önskar.
+
+<p>Se till att du inte lägger in några filer du inte vill skall skrivas över
+till speglingens exkluderingsfil.
+
+<H2>Sätt att spegla</H2>
+<h3>Anonym rsync</h3>
+Den rekommenderade metoden för att spegla är via rsync.
+
+<p>Du kan använda <a href="anonwebsync">detta skript</a> för att spegla
+arkivet.
+Följ instruktionerna i skriptet för att sätta upp speglingen.
+Platser i den <a href="mirrors_full">kompletta spegellistan</a> som använder
+'<kbd>Type: Push-*</kbd>' bör vara bra val att spegla från.
+
+<h3>"Push"-spegling</h3>
+"Push"-spegling är en variant på spegling med hjälp av rsync som vi har
+utvecklat för att minimera den tid det tar för ändringar att nå
+speglingarna.
+"Push"-spegling använder en ssh-utlösare för att tala om för klientspegeln
+när den ska uppdatera sig.
+Denna metod är relativt säker eftersom ssh konfigureras för att köra ett
+enda kommando.
+Dessutom är speglingen fortfarande "pull", så det är inte möjligt att
+förstöra innehållet i arkivet via en förfalskad "push"-spegel.
+
+<p>Vissa spegeladministratörer har uppvisat viss motvillighet mot att
+använda denna typ av spegling på grund av oro för att metoden öppnar deras
+maskin för invasion, något som inte är sant.
+För en mer utförlig beskrivning av hur det fungerar, och varför det är
+säkert, se <a href="explain">den här sidan</a>.
+
+<p>"Push"-spegling tar lite mer arbete i anspråk att sätta upp, eftersom de
+som är ansvariga för upp- och nedströmsspeglingarna måste utbyta
+information.
+Fördelen är att uppströmsspegeln är den som påbörjar speglingsprocessen
+direkt efter att dess eget arkiv har uppdateras, vilket gör att ändringar i
+arkivet propageras extremt snabbt.
+
+<p>Det är bäst att sätta upp detta med ett konto för en vanlig användare,
+inte root.
+Innehållet i den publika ssh-nyckeln som du får från spegeln uppströms ska
+placeras i <kbd>~&lt;användare&gt;/.ssh/authorized_keys</kbd>.
+
+<p>Filerna <a href="websync">websync</a> och
+<a href="websync.conf">websync.conf</a> kommer att användas.
+Redigera websync.conf och följ anvisningarna i den tillsammans med den
+information som du får från spegeln uppströms.
+
+<p>Om du vill bli en primär "push"-spegel behöver du
+<a href="identity.pub.master.ftp">webbserverns publika ssh-nyckel</a>.
+
+<h3>Anonym ftp med "mirror"</h3>
+<p>Det är inte rekommenderat att använda "mirror" på Debians webbsidor.
+För stora kataloger blir minneskraven löjligt stora.
+En spegelansvarig har sagt att det fungerade för honom med 96 Mbyte RAM.
+Andra, med mindre minne, har upptäckt att spegeln jobbar överdrivet mot
+växlingsdisken.
+
+<h3>wget</h3>
+Trots att <kbd>wget</kbd> fungerar bra för att spegla små arkiv är det inte
+lika konfigurerbart som mirror eller rsync, så det rekommenderas inte för
+detta.
+
+
+<H2>Konfigurera webbservern</H2>
+<a name="cn"><h3>Content negotiation</h3>
+"Content negotiation" är ett sätt att låta webbläsaren förhandla fram vilken
+sorts dokument som skall hämtas från servern.
+Det finns flera olika användningsområden för detta, men det mest använda är
+att förhandla fram vilket språk ett dokument skall visas med.
+Genom att använda detta kan Debian visa sina webbsidor på flera språk på ett
+(tekniskt) väldigt elegant sätt.
+
+<P>För de som använder Apache är inställningen nästan trivial.
+Du lägger helt enkelt in en sektion liknande den nedan i
+<kbd>/etc/apache/access.conf</kbd>
+(ersätt <kbd>/debian/web</kbd> med den katalog som innehåller webbsidorna)
+och starta om servern (detta exempel fungerar med betaversionen av Apache
+1.3 och senare):
+<blockquote><pre>
+&lt;Directory /debian/web&gt;
+Options +Multiviews   
+&lt;/Directory&gt;
+</pre></blockquote>
+
+<h3>Andra webbserverinställningar</h3>
+<p>Om din maskin kör Debian, så har vi valt att bryta mot Debianpolicyn och
+använda <kbd>/doc</kbd> bland webbsidorna.
+Detta betyder att du måste kommentera ut
+'<kbd>Alias /doc/ /usr/doc/</kbd>' från <kbd>srm.conf</kbd>.
+
+<p>För att hantera indexfiler i kataloger korrekt måste du antagligen
+modifiera <kbd>DirectoryIndex</kbd>-posten i <kbd>/etc/apache/srm.conf</kbd>.
+Följande bör räcka:
+<pre>
+DirectoryIndex index
+</pre>
+Dessutom måste du se till att servern kan hantera alla språk som används på
+webbplatsen.
+Detta görs genom att använda <kbd>AddLanguage</kbd>.
+Här följer en lista över de språk som används nu - men var beredd på att
+lägga in fler senare:
+<pre>
+AddLanguage en .en
+AddLanguage fr .fr 
+AddLanguage de .de
+AddLanguage da .da
+AddLanguage it .it
+AddLanguage es .es
+AddLanguage ja .ja
+AddLanguage pl .pl
+AddLanguage ko .ko
+AddLanguage hr .hr
+AddLanguage pt .pt
+AddLanguage fi .fi
+AddLanguage zh-CN .zh-cn
+AddLanguage zh-TW .zh-tw
+AddLanguage cs .cs
+AddLanguage sv .sv
+AddLanguage no .no 
+AddLanguage ru .ru
+</pre>
+
+<p>På grund av ett fel i Apache är det en bra idé att lägga in alla språk i
+LanguagePriority-inställningen.
+Annars kan fel språk skickas ut under vissa omständigheter.
+<pre>
+LanguagePriority en fr de it es ja pl hr da pt fi zh-cn zh-tw cs sv ko no ru
+</pre>
+
+<h3>Spegla sändlistearkiven</h3>
+<p>Vissa speglar väljer att inte spegla sändlistearkiven på grund av
+deras storlek (ungefär 1,4 Gbyte i 160.000 filer).
+Det är acceptabelt att inte spegla dem så länge du lägger in en omdirigering
+till en annan server, så att inga länkar går sönder.
+Detta kan göras i <kbd>/etc/apache/srm.conf</kbd> så här:
+
+<pre>
+Redirect /Lists-Archives http://www.debian.org/Lists-Archives
+</pre>
+
+Lägg sedan till <kbd>--exclude Lists-Archives</kbd> i
+<kbd>EXCLUDE</kbd>-variabeln i websync.conf för att förhindra spegling av
+katalogen.
+
