@@ -154,7 +154,7 @@
       return ($stored_passwd == $crypted_passwd);
   }
 
-  function print_applicants($db, $sql, $limit = 0, $show_am = 0) {
+  function print_applicants($db, $sql, $limit = 0, $show_am = 0, $show_date = 0) {
   if (! ($query = pg_exec($db, $sql))) {
     echo "Problem with query", pg_ErrorMessage($db), "<BR>";
     return FALSE;
@@ -168,6 +168,9 @@
       for ($i = 0 ; $i < $rows ; $i++) {
         $row = pg_Fetch_Array($query, $i);
         echo "<TR>";
+        if ($show_date) {
+            echo "<TD>", $row["apply_date"], "</TD>";
+        }
         print_flag($row["advocate_ok"],"<TD><IMG src=\"/images/shake.png\" alt=\"V\"></TD>","<TD> </TD>");
         print_flag($row["id_ok"],"<TD><IMG src=\"/images/mag.png\" alt=\"I\"></TD>","<TD> </TD>");
         print_flag($row["pnp_ok"],"<TD><IMG src=\"/images/dfsg.png\" alt=\"P\"></TD>","<TD> </TD>");
