@@ -14,7 +14,7 @@ sub get_recent_list
   @files = sort {$b cmp $a} @files;
   closedir DIR;
 
-	$str = '(none)';
+	$str = '<TR><TD>(none)</TD></TR>';
 
   $count = 0;
   foreach (@files) 
@@ -48,19 +48,19 @@ sub get_recent_list
 		{
            $desc = $1;
         }
-		if ($title && $date && $desc) 
+		if ($title && $date) 
 		{
            $str = "<tt>[$date]</tt> <strong><a href=\"$path/$base\">$title</a></strong><br>\n";
            last;
 		}
 		elsif ($title && $contact && $email && $desc)
 		{
-           $str = "<TR><TD><A HREF=\"$path/$base\">$title</A></TD><A HREF=\"mailto:$email\">$contact</A></TD><TD>$desc</TD></TR>\n";
+           $str = "<TR><TD><A HREF=\"$path/$base\">$title</A></TD><TD><A HREF=\"mailto:$email\">$contact</A></TD><TD>$desc</TD></TR>\n";
 		   last;
 		}
 		elsif ($title && $contact && $desc)
 		{
-           $str = "<TR><TD><A HREF=\"$path/$base\">$title</A></TD>$contact</TD><TD>$desc</TD></TR>\n";
+           $str = "<TR><TD><A HREF=\"$path/$base\">$title</A></TD><TD>$contact</TD><TD>$desc</TD></TR>\n";
 		}
      }
      close FILE;
@@ -69,24 +69,13 @@ sub get_recent_list
 close DIR;
 return $str;
 }
-
-#############################################################################
-# grabs the date and title of the last $number news items from directory $path.
-# If $number is zero then all the news items are shown.
-sub add_project
-{
-	my ( $name, $contact, $email, $desc ) = @_;
-
-	$str = "<TR><TD><A HREF=\"<abbr>/$name\">$name</A></TD><TD><A HREF=\"mailto:$email\">$contact</A></TD><TD>$desc</TD></TR>";
-	return $str;
-}
 </perl>
 
 <HR>
 <H2><pagetitle></H2>
-	<STRONG>When:</STORNG>  <when><BR>
-	<STRONG>Where:</STROMG>  <where><BR>
-	<STRONG>More Info:</STRONG>  <A HREF="<link>">Web Page</A><BR>
+	<STRONG>When:</STRONG>  <when><BR>
+	<STRONG>Where:</STRONG>  <where><BR>
+	<STRONG>More Info:</STRONG><A HREF="<infolink>">Web Page</A><BR>
 
 <HR>
 <intro>
@@ -95,10 +84,8 @@ sub add_project
 <H2>Debian Involvement</H2>
 <involve>
 
-<HR>
 <TABLE>
 	<TR><TH>Project</TH><TH>Coordinator</TH><TH>Description</TH></TR>
-	<projects>
 	<:= get_recent_list ( '<abbr>', '0', '$(ENGLISHDIR)/events/<year>', 'project-\w+' ) :>
 </TABLE>
 
