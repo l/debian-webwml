@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-Webwml::Langs - get all languages in which w.b.o is translated
+Webwml::Langs - get all languages in which w.d.o is translated
 
 =head1 SYNOPSIS
 
