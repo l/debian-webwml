@@ -178,7 +178,8 @@
         }
         echo "<TD><A href=\"nmstatus.php?email=", urlencode($row["email"]), "\">",
           $row["forename"], " ", $row["surname"], " &lt;",
-          $row["email"], "&gt;</A></TD></TR>\n";
+          $row["email"], "&gt;</A></TD>\n";
+        echo "</TR>\n";
       }
       echo "</TABLE>\n";
   } else {
