@@ -20,7 +20,7 @@ install:: yaboot-howto.html/index.$(LANGUAGE).html
 	test -d $(HTMLDIR)/yaboot-howto || install -d -m 2775 $(HTMLDIR)/yaboot-howto
 	install -p -m 0664 yaboot-howto.html/* $(HTMLDIR)/yaboot-howto/
 	cd $(HTMLDIR)/yaboot-howto && for i in *.en.html; do \
-          file=$$i; ln -sf $$i $${file/.en/}; done
+		file=$$i; ln -sf $$i $${file%.en.html}.html; done
 
 clean::
 	rm -rf yaboot-howto.html
