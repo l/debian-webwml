@@ -1,0 +1,256 @@
+#use wml::debian::template title="Debian bug tracking system" NOHEADER=yes WEBMASTER=bugs
+<h1><A name="developers">Informazioni sul sistema per la gestione delle anomalie a uso degli sviluppatori</A></h1>
+
+All'inizio la descrizione dell'anomalia è inviata come messaggio
+a <code>submit@bugs.debian.org</code>. Successivamente verrà
+associato un numero a questa segnalazione, rispondendo all'utente
+che l'ha segnalata, e inviandola a
+<code>debian-bugs-dist</code>. Se l'utente ha inserito una linea
+<code>Package</code> e se il pacchetto ha un gestore allora
+anch'egli riceverà il messaggio.
+<p>
+
+La linea <code>Subject</code> avrà in aggiunta
+<code>Bug#</code><var>nnn</var><code>:</code>, e la
+<code>Reply-To</code> sarà cambiata per includere sia l'utente che
+segnala il problema, sia il gestore, sia
+<var>nnn</var><code>@bugs.debian.org</code>.
+<p>
+
+<h2>Chiusura delle segnalazioni</h2>
+
+Uno sviluppatore che riceva una segnalazione dal sistema automatico,
+o che lo legga in <code>debian-bugs-dist</code>, può prenderselo
+in carico rispondendo al messaggio tramite il proprio
+programma di posta. Si deve solo cambiare il campo
+<code>To</code> per inserire
+<var>nnn</var><code>-done@bugs.debian.org</code> al posto di
+<var>nnn</var><code>@bugs</code>
+(<var>nnn</var><code>-close</code> è fornito come alias per
+<var>nnn</var><code>-done</code>).
+<p>
+
+L'indirizzo di chi segnala il problema sarà automaticamente inserito
+come <code>destinatario</code> della risposta perché il sistema lo ha inserito
+nel campo <code>Reply-To</code>.
+<p>
+
+Questi messaggi `Done' (Fatto) non sono automaticamente inviati alle
+liste di messaggi, quindi sarebbe meglio se si inserisse la lista
+<code>debian-devel@lists.debian.org</code> nel campo <code>To:</code>.
+<p>
+
+Sia la persona che corregge l'anomalia, sia chi l'ha segnalata riceverà
+una notifica del cambio di stato della segnalazione.
+
+<h2>Messaggi di Followup</h2>
+
+Se uno sviluppatore vuole rispondere alla segnalazione senza
+chiuderla può semplicemente rispondere al messaggio. Le risposte
+saranno inviate per default a
+<var>nnn</var><code>@bugs</code> e a chi ha fatto la segnalazione.
+Il sistema conserverà questo messaggio con il resto del log e lo
+invierà a <code>debian-bugs-dist</code>. L'anomalia non sarà
+considerata chiusa. Uno sviluppatore può inviare un messaggio
+a chi ha fatto la segnalazione usando l'indirizzo
+<var>nnn</var><code>-submitter@bugs</code>.
+<p>
+
+Se voui spedire un messaggio followup che non consideri appropriato
+per <code>debian-bugs-dist</code> puoi spedirlo a
+<var>nnn</var><code>-quiet@bugs</code> o
+<var>nnn</var><code>-maintonly@bugs</code>, che lo archivieranno
+(senza mandarlo a alla lista) e lo invieranno solo al gestore
+del pacchetto.
+<p>
+
+<em>Non</em> usare mai la possibilità `rispondi a tutti' o `followup'
+offerta dal programma di posta a meno che tu non intenda
+cambiare poi a mano la lista dei destinatari. In particolare non si
+deve mai spedire il messaggio a
+<var>nnn</var><code>@bugs.debian.org</code> e
+<code>submit@bugs.debian.org</code>, perché altrimenti il sistem
+creerà una seconda copia della segnalazione e la invierà a
+<code>debian-bugs-dist</code>.
+<p>
+
+<h2><A name="severities">Livelli di gravità</A></h2>
+
+Il sistema registra un livello di gravità dell'anomalia. Per default
+viene assegnato il livello <code>normal</code>, ma questo può
+essere impostato inserendo una linea 
+<code>Severity</code> nello pseudo-header quando l'anomalia viene
+segnalata (vedi le
+<A href="Reporting#pseudoheader">istruzione per segnalare le anomalie
+</A>), o utilizzando il comando <code>severity</code> nel
+<A href="#requestserv">server per il controllo delle segnalazioni</A>.
+
+<p>
+
+I livelli di gravità sono:
+
+<dl>
+<dt><code>critical</code>
+<dd>si riferisce a problemi che bloccano il pacchetto o l'intero sistema;
+oppure causano la perdita di dati importanti; oppure introducono dei problemi
+di sicurezza sui sistemi nei quali installi il pacchetto.
+
+<dt><code>grave</code>
+<dd>rende il pacchetto in questione inusabile o quasi;
+oppure causa la perdita di dati; oppure introduce dei
+problemi di sicurezza legati agli utenti del pacchetto.
+
+<dt><code>important</code>
+<dd>qualsiasi altro problema che comunque renda il pacchetto non
+inseribile nella versiona stabile della distribuzione.
+
+<dt><code>normal</code>
+<dd>Il valore di default, per le anomalie normali.
+ 
+<dt><code>wishlist</code>
+<dd>per ogni richiesta di cambiamento del programma non legata ad anomalie.
+
+<dt><code>fixed</code>
+<dd>per anomalie che sono state eliminate ma delle quali si vuole
+tenere la segnalazione aperta. Tutte le anomalie corrette da sviluppatori
+che non sono i gestori del pacchetta hanno il loro grado di gravità fixed.
+
+</dl>
+
+<h2><A name="forward">Registrazione si segnalazione esterna a Debian</A></h2>
+
+Quando uno sviluppatore manda la segnalazione a chi gestisce il 
+pacchetto originario (e non quello Debian), dovrebbe inserire il
+fatto all'interno del sistema per la gestione delle anomalie.
+<p>
+
+Assicurati che il campo <code>To</code> del tuo messaggio contenga sia
+l'indirizzo dell'autore del pacchetto e che il campo <code>Cc</code>
+contengasia l'indirizzo di chi ha fatto la segnalazione, sia
+<var>nnn</var><code>-forwarded@bugs.debian.org</code>.
+<p>
+
+Chiedi all'autore di mantenere il campo <code>Cc</code> con
+<var>nnn</var><code>-forwarded@bugs</code> quando risponderanno,
+così il sistema inserià la sua risposta all'interno della segnalazione
+oraiginaria.
+<p>
+
+Quando il sistema riceve un messaggio indirizzato a
+<var>nnn</var><code>-forwarded</code> segnerà che l'anomalia è stata
+cominicata agli indirizzi nel campo <code>To</code> del messaggio
+che riceve.
+<p>
+
+Puoi modificare quest'ultima informazione spedendo un messaggio
+a <A href="server-control"><code>control@bugs.debian.org</code></A>.
+
+<h2>Invio di riassunti a <code>debian-bugs-reports</code></h2>
+
+Ogni venerdì la lista dei bug non risolti viene inviata a
+<code>debian-bugs-reports</code>, ordinata per data della segnalazione
+Ogni martedì una lista di anomalie non risolte per troppo tempo è
+creata e inviata, ordinata per gestore di pacchetto.
+<p>
+
+<A name="maintincorrect">
+Se il gestore di un pacchetto è erroneamente nella lista</A> il
+fatto è normalmente spiegato da un recente cambio di gestore, e
+il nuovo gestore non ha ancora inserito una nuova versione del
+pacchetto con la segnalazione del cambio nel campo
+<code>Maintainer</code> del file di controllo.
+Questo problema viene automaticamente risolto quando il pacchetto
+è inviato a Debian; in alternativa c'è un file che viene usato
+per queste situazioni e che è accessibile al gestore della distribuzione.
+Se una nuova versione del pacchetto non è richiesta o non è prevista
+in un tempo breve allora si può contattare l'indirizzo
+<code>override-change@debian.org</code> per cambiare il file in
+questione.
+
+
+<h2><A name="requestserv">Riapertura, diverso assegnamento
+e gestione delle segnalazioni</A></h2>
+
+È possibile assegnare una segnalazione ad un altro pacchetto, o anche
+riaprire segnalazioni chiuse per errore, o ancora modificarne le
+informazioni relative a dove una certa segnalazione va inviata.
+È anche possibile cambiare il livello di gravità della segnalazione o
+il titolo stesso. Infine è possibile fondere più segnalazioni in una
+sola.
+Tutto questo è fatto inviando un messaggio a <code>control@bugs.debian.org</code>.
+<p>
+
+Il <A href="server-control">formato di questi messaggi</A> è
+descritto in un altro documento disponibile sul web nel file
+<code>bug-maint-mailcontrol.txt</code>.  Una versione del
+documento in solo testo è ottenibile inviando un messaggio
+con il solo testo <code>help</code> al server all'indirizzo
+di cui sopra.
+
+<h2>Feature più o meno vecchie riguardo all'analisi dell'oggetto</h2>
+
+I messaggi che arrivano a <code>submit</code> o <code>bugs</code> e il
+cui Oggetto comincia con <code>Bug#</code><var>nnn</var> verranno trattati
+come se fossero stati inviati a <var>nnn</var><code>@bugs</code>. Questo
+sia per compatibilità con i messaggi inviati al vecchio indirizzo sia
+per catturare tutti i messaggi erroneamente inviati a <code>submit</code>
+(per esempio facendo un 'rispondi a tutti'.)
+<p>
+
+Una gestione analoga è fatta per <code>maintonly</code>,
+<code>done</code>, <code>quiet</code> e <code>forwarded</code>,
+che trattano i messaggi che arrivano con Oggetto simile a quello
+di prima. Questi messaggi vengono riinviati all'indirizzo
+<var>nnn-eccetera</var><code>@bugs</code>.
+<p>
+
+I messaggi che arruvano a <code>forwarded</code> e
+<code>done</code> - vale a dire senza alcun numero di anomalia
+nell'indirizzo - e senza numero di anomalia nell'oggetto saranno
+scartati mantenuti solo per alcune settimane.
+
+<h2><A name="future">Sviluppi futuri</A></h2>
+
+Prima o poi il campo <code>Package:</code> dell'intestazione
+secondaria diverrà obbligatorio - attualmente l'omissione
+produce un semplice messaggio.
+
+<h2>Feature <code>X-Debian-PR: quiet</code> obsoleta</h2>
+
+Una volta era possibile impedire al sistema di fare il
+forward di un messaggio ricevuto all'indirizzo
+<code>debian-bugs</code>, inserendo la linea
+ <code>X-Debian-PR: quiet</code> nell'intestazione del messaggio.
+<p>
+
+Questa linea è ormai ignorata. Per ottenere lo stesso scopo il
+messaggio va indirizzato a <code>quiet</code> o
+<var>nnn</var><code>-quiet</code> (o <code>maintonly</code> o
+<var>nnn</var><code>-maintonly</code>).
+
+<hr>
+Altre pagine:
+<ul>
+<li><A href="./">Come accedere al sistema per la gestion delle anomalie.</A>
+<li><A href="Reporting">Istruzioni su come riportare una anomalia.</A>
+<li><A href="Developer">Informazioni sul sistema che processa le
+anomalie ad uso degil sviluppatori.</A>
+<li><A href="db/ix/full.html">Lista completa delle anomalie non risolte e recenti.</A>
+<li><A href="db/ix/packages.html">Pacchetti con anomalie riportate.</A>
+<li><A href="db/ix/maintainers.html">Gestori dei pacchetti che presentano anomalie.</A>
+ <li><A href="../">Debian GNU/Linux home page.</A>
+</ul>
+
+<hr>
+<address>
+Darren Benham
+ /
+<A href="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>.
+12 Sep 1999.
+<p>
+Debian bug tracking system<BR>
+copyright 1999 Darren O. Benham,
+1994-7 Ian Jackson, 1997 nCipher Corporation Ltd,
+1995 Steven Brenner.<BR>
+<A href="http://www.benham.net/debbugs/">Disponibile sotto la GPL.</A>
+</address>
