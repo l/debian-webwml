@@ -452,8 +452,8 @@ sub check_file {
 
 	my $str;
 	my $status = 8;
-	my ($numrev)  = ($revision =~ m/^1\.(\d+)$/) || "0";
-	my ($numoldr) = ($oldr =~ m/^1\.(\d+)$/) || "0";
+	(my $numrev)  = $revision =~ m/^1\.(\d+)$/; $numrev ||= "0";
+	(my $numoldr) = $oldr =~ m/^1\.(\d+)$/; $numoldr ||= "0";
 	if (!$oldr) {
 	  $oldr = '1.1';
 	  $str = "Unknown status of $name (revision should be $revision)";
