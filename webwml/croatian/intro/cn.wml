@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian web stranice na raznim jezicima"
-#use wml::debian::translation-check translation="1.32"
+#use wml::debian::translation-check translation="1.33"
 
 <P>Oèigledno, cijeli svijet ne govori istim jezikom. Kako WWW raste, stranice
 na vi¹e jezika postaju sve èe¹æe. Stoga je uveden stanadard, nazvan
@@ -42,11 +42,67 @@ poku¹ate pogledati stranice. Takoðer preporuèamo kori¹tenje lynxa kada
 testirate. To je jedini browser za kojeg smo utvrdili da se 100%
 pridr¾ava HTTP specifikacija za pregovaranje sadr¾aja.</p>
 
+<H3>Na ¹to bih trebao postaviti varijablu?</H3>
+
+<P>Buduæi je izvorni jezik Debianovih WWW stranica engleski, a svi dokumenti
+nisu prevedeni na va¹ izabrani jezik, pametno je postaviti varijablu
+izabranog jezika tako da dopu¹ta engleski kao zamjenu. Na primjer, ako
+govorite hrvatski i koristite lynx, ¾eljeli biste sljedeæi red u svom
+<kbd>.lynxrc</kbd>:</p>
+
+<pre>
+preferred_language=hr; q=1.0, en; q=0.5
+</pre>
+
+<p>To poslu¾itelju ka¾e kako biste ¾eljeli hrvatsku verziju dokumenta ako je
+dostupna, a inaèe englesku.</p>
+
+<p>Jedna stvar gdje morate biti pa¾ljivi je kori¹tenje jeziènih
+podkategorija. Na primjer, kori¹tenje `en-GB, fr' neæe uèiniti ono ¹to
+veæina ljudi oèekuje (ako nisu proèitali HTTP specifikaciju). Poslu¾itelj
+koji primi takav zahtjev za dokument koji ima i `.en' i `.fr' verziju æe
+poslu¾iti francusku verziju. Engleski dokument æe biti poslu¾en prije
+francuskog samo ako postoji verzija datoteke s jeziènim nastavkom `.en-gb'.
+Dakle, umjesto toga morate podesiti svoj browser tako da ¹alje
+`en-GB, en, fr', ili jednostavno `en, fr'. Ipak, u drugom smjeru radi, dakle
+poslu¾itelj mo¾e vratiti en-us kada se zahtijeva en.</p>
+
+<p><strong>Toplo preporuèamo da jeziku ne dodajete nastavak za zemlju osim
+ako imate dobar razlog</strong>. Ako ga ipak dodate, nemojte zaboraviti
+dodati jezik bez nastavka.</p>
+
+<P>Za vi¹e informacija o postavljanju varijable preferred_language
+pogledajte
+<a href="http://httpd.apache.org/docs/content-negotiation.html">Apacheovu
+dokumentaciju o pregovaranju sadr¾aja</a>.</p>
+
+<h3><a name="cache">Moguæi problemi s proxy poslu¾iteljima</a></h3>
+
+<p>Tzv. proxy poslu¾itelji su u osnovi web poslu¾itelji koji nemaju svoj
+sadr¾aj. Oni sjede izmeðu korisnika i pravih web poslu¾itelja. Oni hvataju
+va¹e zahtjeve za web stranicama i dohvaæaju stranice. Nakon toga vama
+proslijeðuju stranicu ali i prave lokalnu kopiju, u svoj "cache". Ovo
+stvarno mo¾e smanjiti mre¾ni promet kada vi¹e korisnika zatra¾i istu
+stranicu.</p>
+
+<p>Ovo je odlièna ideja u veæini sluèajeva, ali ona ne uspijeva kada proxy
+ima bugova. Bolje reèeno, neki stariji proxyi ne razumiju pregovaranje
+sadr¾aja. Rezultat toga je da oni saèuvaju stranicu na jednom jeziku i onda
+to poslu¾uju, pa i ako se kasnije zatra¾i drugi jezik. Jedino rje¹enje je
+nadogradnja ili zamjena caching softvera.</p>
+
+<p>Prije su ljudi koristili proxy jedino kada bi konfigurirali svoj browser
+da ga koristi. Ovo vi¹e nije sluèaj. Va¹ ISP mo¾da preusmjerava sve HTTP
+zahtjeve kroz tzv. prozirni (eng. transparent) proxy. Ako proxy ne radi
+ispravno s pregovaranjem sadr¾aja, tada æe korisnici dobivati spremljene
+stranice na krivom jeziku. Jedini naèin kako ovo mo¾ete ispraviti je da se
+po¾alite svojem ISP-u kako bi oni nadogradili ili zamijenili svoj softver.</p>
+
 <h3><a name="setting">Pode¹avanje ¾eljenog jezika u browseru</a></h3>
 
-<P>Napomena: sljedeæi popis nije potpun. Ako imate informacija o
-konfiguriranju browsera koji nije na donjem popisu, molimo po¹aljite ih na
-<a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>.</p>
+<P>Ako imate informacija o konfiguriranju browsera koji nije na donjem
+popisu, molimo po¹aljite ih na <a href="mailto:debian-www@lists.debian.org">\
+debian-www@lists.debian.org</a>.</p>
 
 <P>Za postavljanje podrazumijevanog jezika u svom browseru morate postaviti
 varijablu koja se predaje WWW poslu¾itelju. Naèin postavljanja ovisi o
@@ -109,59 +165,3 @@ ili koristite posebni paket (uz pretpostavku URL verzije p4.0pre.14):
      Options (o) -&gt; Other Behavior -&gt; Accept-Language
 </pre>
 </DL>
-
-<H3>Na ¹to bih trebao postaviti varijablu?</H3>
-
-<P>Buduæi je izvorni jezik Debianovih WWW stranica engleski, a svi dokumenti
-nisu prevedeni na va¹ izabrani jezik, pametno je postaviti varijablu
-izabranog jezika tako da dopu¹ta engleski kao zamjenu. Na primjer, ako
-govorite hrvatski i koristite lynx, ¾eljeli biste sljedeæi red u svom
-<kbd>.lynxrc</kbd>:</p>
-
-<pre>
-preferred_language=hr; q=1.0, en; q=0.5
-</pre>
-
-<p>To poslu¾itelju ka¾e kako biste ¾eljeli hrvatsku verziju dokumenta ako je
-dostupna, a inaèe englesku.</p>
-
-<p>Jedna stvar gdje morate biti pa¾ljivi je kori¹tenje jeziènih
-podkategorija. Na primjer, kori¹tenje `en-GB, fr' neæe uèiniti ono ¹to
-veæina ljudi oèekuje (ako nisu proèitali HTTP specifikaciju). Poslu¾itelj
-koji primi takav zahtjev za dokument koji ima i `.en' i `.fr' verziju æe
-poslu¾iti francusku verziju. Engleski dokument æe biti poslu¾en prije
-francuskog samo ako postoji verzija datoteke s jeziènim nastavkom `.en-gb'.
-Dakle, umjesto toga morate podesiti svoj browser tako da ¹alje
-`en-GB, en, fr', ili jednostavno `en, fr'. Ipak, u drugom smjeru radi, dakle
-poslu¾itelj mo¾e vratiti en-us kada se zahtijeva en.</p>
-
-<p><strong>Toplo preporuèamo da jeziku ne dodajete nastavak za zemlju osim
-ako imate dobar razlog</strong>. Ako ga ipak dodate, nemojte zaboraviti
-dodati jezik bez nastavka.</p>
-
-<P>Za vi¹e informacija o postavljanju varijable preferred_language
-pogledajte
-<a href="http://httpd.apache.org/docs/content-negotiation.html">Apacheovu
-dokumentaciju o pregovaranju sadr¾aja</a>.</p>
-
-<h3><a name="cache">Moguæi problemi s proxy poslu¾iteljima</a></h3>
-
-<p>Tzv. proxy poslu¾itelji su u osnovi web poslu¾itelji koji nemaju svoj
-sadr¾aj. Oni sjede izmeðu korisnika i pravih web poslu¾itelja. Oni hvataju
-va¹e zahtjeve za web stranicama i dohvaæaju stranice. Nakon toga vama
-proslijeðuju stranicu ali i prave lokalnu kopiju, u svoj "cache". Ovo
-stvarno mo¾e smanjiti mre¾ni promet kada vi¹e korisnika zatra¾i istu
-stranicu.</p>
-
-<p>Ovo je odlièna ideja u veæini sluèajeva, ali ona ne uspijeva kada proxy
-ima bugova. Bolje reèeno, neki stariji proxyi ne razumiju pregovaranje
-sadr¾aja. Rezultat toga je da oni saèuvaju stranicu na jednom jeziku i onda
-to poslu¾uju, pa i ako se kasnije zatra¾i drugi jezik. Jedino rje¹enje je
-nadogradnja ili zamjena caching softvera.</p>
-
-<p>Prije su ljudi koristili proxy jedino kada bi konfigurirali svoj browser
-da ga koristi. Ovo vi¹e nije sluèaj. Va¹ ISP mo¾da preusmjerava sve HTTP
-zahtjeve kroz tzv. prozirni (eng. transparent) proxy. Ako proxy ne radi
-ispravno s pregovaranjem sadr¾aja, tada æe korisnici dobivati spremljene
-stranice na krivom jeziku. Jedini naèin kako ovo mo¾ete ispraviti je da se
-po¾alite svojem ISP-u kako bi oni nadogradili ili zamijenili svoj softver.</p>
