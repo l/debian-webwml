@@ -19,6 +19,7 @@
 
 
 use Getopt::Std;
+use Time::gmtime;
 use IO::File;
 use Date::Parse;
 
@@ -28,6 +29,7 @@ use Date::Parse;
 # -c CERT refs
 # -m mitre refs
 # -p pretty print mode (HTML)
+# -s sort | don't sort
 getopts('hpmcbv');
 if ( $opt_h ) {
 # Help!
@@ -47,7 +49,7 @@ parsedirs (".", "data", 2);
 
 # We just print for the time being only CVE references
 printheader() if $opt_p;
-printrefs("Mitre CVE dictionary","CVE|CAN","http://cve.mitre.org/cve/refs/refmap/source-DEBIAN.html") if $opt_m;
+printrefs("Mitre CVE dictionary","(CVE|CAN)","http://cve.mitre.org/cve/refs/refmap/source-DEBIAN.html") if $opt_m;
 printrefs("Securityfocus Bugtraq database","BID","http://online.securityfocus.com/bid") if $opt_b;
 printrefs("CERT alerts","CA-","http://www.cert.org/advisories/") if $opt_c;
 printfooter() if $opt_p;
@@ -57,7 +59,7 @@ printfooter() if $opt_p;
 exit 0;
 
 sub printallkeys {
-	foreach $dsa ( sort { $dsaref{$b} <=> $dsaref{$a} } keys %dsaref) {
+	foreach $dsa (sort { $dsaref{$b}{'date'} <=> $dsaref{$a}{'date'} } keys %dsaref) {
 		print "$dsa:\t";
 		foreach $key (keys %{$dsaref{$dsa}} ) {
 			print "$dsaref{$dsa}{$key}\t";
@@ -79,19 +81,23 @@ sub printrefs {
 			print "<td>$text</td></tr>\n";
 		}
 	}
-	foreach $dsa (sort { $dsaref{$b} <=> $dsaref{$a} } keys %dsaref) {
+	foreach $dsa (sort { $dsaref{$b}{'date'} <=> $dsaref{$a}{'date'} } keys %dsaref) {
 		my (@references) = split(' ', $dsaref{$dsa}{'secrefs'});
 		my $refexists=0;
 		my $refs="";
-		foreach $ref ( pop (@references) ) {
+		foreach $ref ( @references ) {
+		print STDERR "Checking $ref for $dsa against $type\n" if $opt_v;
 			if ( $ref =~ /^$type/  ) {
-				$refs .= "$ref\t" ;
+				$refs .= "\t" if $refs;
+				$refs .= $ref ;
 				$refexists=1;
 			}
 		}
+		print STDERR "References for $dsa of $type are $refs\n" if $opt_v;
 		if ($refexists) {
 			if ( ! $opt_p ) {
-				print "DSA-$dsa\t$refs\t$dsaref{$dsa}{'date'}\n" ;
+				print "DSA-$dsa\t$refs\t";
+				print  gmctime($dsaref{$dsa}{'date'})."\n" ;
 			} else {
 				print "<tr VALIGN=\"TOP\"><td>DSA-$dsa</td><td>$refs</td></tr>\n";
 			}
@@ -115,9 +121,16 @@ sub parsefile {
 		chomp $line;
 		print STDERR "Reading $line\n" if $opt_v;
 		if ( $line =~ /report_date\>(.*?)\<\/define-tag/ )  {
-			$dsaref{$dsa}{'date'}=str2time($1) ;
+			my $dsadate=$1;
+			# Just in case...
+			$dsadate =~ s/\-(\d)\-/-0$1-/;
+			$dsadate =~ s/\-(\d)$/-0$1/;
+			$dsaref{$dsa}{'date'}=str2time($dsadate) ;
 		}
-		$dsaref{$dsa}{'secrefs'}=$1 if ( $line =~ /secrefs\>(.*?)\<\/define-tag/ ) ;
+		if ( $line =~ /secrefs\>(.*?)\<\/define-tag/ ) {
+			$dsaref{$dsa}{'secrefs'}=$1 ;
+			print STDERR "Extracted security references: $dsaref{$dsa}{'secrefs'}\n" if $opt_v;
+		}
 		$dsaref{$dsa}{'packages'}=$1 if ( $line =~ /packages\>(.*?)\<\/define-tag/ ) ;
 		$dsaref{$dsa}{'vulnerable'}=$1 if ( $line =~ /isvulnerable\>(.*?)\<\/define-tag/ ) ;
 		$dsaref{$dsa}{'fixed'}=$1 if ( $line =~ /fixed\>(.*?)\<\/define-tag/ ) ;
