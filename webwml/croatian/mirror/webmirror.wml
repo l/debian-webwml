@@ -1,0 +1,120 @@
+#use wml::debian::template title="Pode¹avanje web mirrora"
+
+<P>Mirroranje je jednako i za slu¾bene i za neslu¾bene poslu¾itelje.
+Jednom pode¹en, mirror treba biti <a href="submit">registriran kod Debiana</a>
+da bismo ga ukljuèili u <a href="../misc/README.mirrors">popis mirrora</a>.
+Predavanje informacija mo¾ete uèiniti preko <a href="submit">jednostavnog
+web formulara</a>. Svi problemi i pitanja se trebaju uputiti na 
+<A href="mailto:mirrors@debian.org">mirrors@debian.org</A>.
+
+<H2>Ogla¹avanje pokrovitelja mirrora</H2>
+sponsor.html i sponsor_img.jpg mo¾ete i trebate vi sami izmijeniti. Oni
+su tu za vas da biste ogla¹avali va¹ poslu¾itelj tako da ljudi znaju
+tko je pokrovitelj. Originali su nazvani sponsor.deb.html i sponsor.deb.jpg
+buduæi da je poslu¾itelj s kojeg mirrorate vjerojatno zamijenio primjere
+sa svojima. Preporuèena maksimalna velièina va¹eg logotipa jest 120x60.
+
+<p>Buduæi da se na web stranicama koristi pregovaranje sadr¾aja za odabir
+¾eljenog jezika, èak smijete postaviti sponsor.html u razlièitim jezicima.
+Da biste to uèinili jednostavno napravite sponsor.html.<jezik> za svaki
+<jezik> koji ¾elite.
+
+<p>Provjerite da li ste dodali datoteke koje ne ¾elite da budu prebrisane
+na listu iznimki kod mirroranja.
+
+<H2>Metode mirroranja</H2>
+<h3>Anonimni rsync</h3>
+Preporuèena metoda mirroranja jest rsync-om.
+
+<p>Mo¾ete koristiti <a href="anonftpsync">ovu skriptu</a> za mirroranje
+arhive. Pratite upute u skripti da podesite mirroranje. Poslu¾itelji na
+<a href="../misc/README.mirrors">popisu mirrora</a> koji koriste
+'<kbd>Type: Push-*</kbd>' bi trebali biti dobar izbor za mirroranje.
+
+<h3>&quot;Push&quot; mirror</h3>
+
+&quot;Push&quot; mirroranje je oblik mirroranja koristeæi rsync koje smo
+razvili da smanjimo vrijeme koje je potrebno da promjene u arhivi doðu do
+mirrora. Push mirroranje koristi tzv. ssh otponac da bi reklo klijent
+mirroru kada se treba obnoviti. Takoðer, mirroranje je jo¹ uvijek
+&quot;pull&quot; tako da nije moguæe pokvariti sadr¾aj arhive preko
+falsificiranog push mirrora.
+
+<p>Neki administratori mirrora su pokazali neslkonost kori¹tenju ove metode
+mirroranja zbog straha da æe metoda otvoriti njihov stroj invaziji. To
+jednostavno nije istina. Za detaljan opis kako ovo radi i za¹to je sigurno
+pogledajte <a href="explain">ovu stranicu</a>.
+
+<p>Za pode¹avane push mirroranja treba malo vi¹e napora, jer odr¾avatelji
+izvornog i ciljnog mirrora moraju razmijeniti informacije. Prednost je u
+tome ¹to izvorni mirror pokreæe postupak mirroranja odmah nakon ¹to se
+njegova arhiva obnovila. To omoguæava promjenama u arhivi da se pro¹ire
+iznimno brzo.
+
+<p>Najbolje je podesiti koristeæi account obiènog korisnika, ne root-ov.
+Sadr¾aj javnog ssh kljuèa koji æe vam dati sa izvornog mirrora trebate
+postaviti u <kbd>~<korisnik>/.ssh/authorized_keys</kbd>.
+
+<p>Potrebne su vam i datoteke <a href="websync">websync</a> te
+<a href="websync.conf">websync.conf</a>. Uredite websync.conf i pratite
+upute u njoj koristeæi informacije koje su vam dali na izvornom mirroru.
+
+<p>Ako postajete tzv. Push-Primary mirror, trebat æete 
+<a href="identity.pub.master.web">javni ssh kljuè za web</a>.
+
+<h3>Anonimni FTP koristeæi 'mirror'</h3>
+<p>Ne preporuèujemo kori¹tenje programa 'mirror' na Debian web stranicama.
+Za velike direktorije iskori¹tenje memorije postaje smije¹no. Jedan
+odr¾avatelj mirrora je rekao da je kod njega radilo sa 96MB RAM memorije.
+Ostalima su strojevi, s manje RAM-a, neumjereno koristili swap.
+
+<h3>wget</h3>
+Mada <kbd>wget</kbd> radi dobro mirrorajuæo male arhive, nije tako podesiv
+kao mirror ili rsync tako da ga ne preporuèujemo za ovaj posao.
+
+<H2>Konfiguriranje web servera</H2>
+<a name="cn"><H2>Pregovaranje sadr¾aja</H2>
+Pregovaranje sadr¾aja je metoda koja dopu¹ta browseru da se dogovori
+sa poslu¾iteljom o vrsti dokumenta koji æe biti isporuèen. Iako to ima velik
+broj primjena, najèe¹æa je dogovaranje o jeziku na kojem æe se dokument
+isporuèiti. To æe omoguæiti Debianu da poslu¾uje svoje stranice u mnogim
+jezicima na (tehnièki) vrlo elegantan naèin.
+
+<P>Za one koji koriste Apache, promjena je gotovo trivijalna. Jednostavno
+dodajte sekciju sliènu ovoj koja slijedi, u datoteku <kbd>/etc/apache/access.conf</kbd>
+(zamijenite <kbd>/debian/web</kbd> direktorijem koji sadr¾i WWW stranice) i
+ponovo pokrenite poslu¾itelj (ovaj primjer radi sa Apache verzijama 1.3 beta
+i kasnijima):
+<blockquote><pre>
+&lt;Directory /debian/web&gt;
+Options +Multiviews   
+&lt;/Directory&gt;
+</pre></blockquote>
+
+<H2>Druge promjene na WWW poslu¾itelju</H2>
+<p>Ako va¹ stroj radi na Debian OSu, odluèeno je da prekr¹imo Debian policy
+i koristimo <kbd>/doc</kbd> na web stranicama. Ovo znaèi da æete morati
+&quot;zakomentirati&quot; '<kbd>Alias /doc/ /usr/doc/</kbd>' iz <kbd>srm.conf</kbd>.
+
+Kako bi se indeksi direktorija poslu¾ivali ispravno, vjerojatno æete morati
+promijeniti <kbd>DirectoryIndex</kbd> postavku u <kbd>/etc/apache/srm.conf</kbd>.
+Ovo bi trebalo biti dovoljno:
+<pre>
+DirectoryIndex index index.html index.shtml index.htm
+</pre>
+
+Uz to, morate osigurati da server mo¾e rukovati svim jezicima koji se
+nalaze na WWW stranicama. To se radi koristeæi <kbd>AddLanguage</kbd>
+postavke. Ovo je samo primjer &mdash; oèekujte da æete ih kasnije dodavati jo¹:
+<pre>
+   AddLanguage en .en
+   AddLanguage fr .fr
+   AddLanguage de .de
+   AddLanguage it .it
+   AddLanguage es .es
+   AddLanguage ja .ja
+   AddLanguage da .da
+   AddLanguage hr .hr
+</pre>
+
+
