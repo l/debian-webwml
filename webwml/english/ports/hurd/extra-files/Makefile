@@ -7,7 +7,7 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 
-efsources := cross-install native-install dpkg-hurd
+efsources := cross-install native-install dpkg-hurd hurd-upgrade.txt
 efdestfiles := $(patsubst %,$(HTMLDIR)/%,$(efsources))
 
 install:: $(efdestfiles)
