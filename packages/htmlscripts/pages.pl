@@ -19,15 +19,15 @@ require( 'print_deps.pl' );
 require( 'index_pages.pl' );
 require( 'util.pl' );
 
-my $CHANGELOG_URL = 'http://packages.debian.org/changelogs';
-my $COPYRIGHT_URL = 'http://packages.debian.org/changelogs';
-my $FILELIST_URL = 'http://packages.debian.org/cgi-bin/search_contents.pl?searchmode=filelist&amp;word=';
-my $SEARCH_URL = 'http://packages.debian.org/cgi-bin/search_packages.pl?searchon=names&amp;version=all&amp;exact=1&amp;keywords=';
-my $SRC_SEARCH_URL = 'http://packages.debian.org/cgi-bin/search_packages.pl?searchon=sourcenames&amp;version=all&amp;exact=1&amp;keywords=';
+my $CHANGELOG_URL = '/changelogs';
+my $COPYRIGHT_URL = '/changelogs';
+my $FILELIST_URL = '/cgi-bin/search_contents.pl?searchmode=filelist&amp;word=';
+my $SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=names&amp;version=all&amp;exact=1&amp;keywords=';
+my $SRC_SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=sourcenames&amp;version=all&amp;exact=1&amp;keywords=';
 my $BUG_URL = 'http://bugs.debian.org/';
 my $SRC_BUG_URL = 'http://bugs.debian.org/src:';
 my $QA_URL = 'http://packages.qa.debian.org/';
-my $DL_URL = 'http://packages.debian.org/cgi-bin/download.pl';
+my $DL_URL = '/cgi-bin/download.pl';
 my $POLICY_URL = 'http://www.debian.org/doc/debian-policy/';
 
 my $files;
