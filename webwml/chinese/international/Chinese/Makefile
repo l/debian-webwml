@@ -14,3 +14,5 @@ include $(WMLBASE)/Make.common
 
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
+
+index.zh-cn.html index.zh-tw.html: index.wml News/index.wml
