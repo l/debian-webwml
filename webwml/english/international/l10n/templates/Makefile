@@ -6,6 +6,8 @@ WMLBASE=../../..
 CUR_DIR=international/l10n/templates
 SUBS=
 
+GETTEXTFILES += l10n.mo
+
 include $(WMLBASE)/Make.lang
 
 L10N_DIR = $(ENGLISHDIR)/international/l10n
@@ -16,7 +18,7 @@ HTML_TEMPLATES   := $(foreach lang,$(LANGS_TEMPLATES),$(lang).$(LANGUAGE).html)
 
 all:: $(HTML_TEMPLATES)
 
-tmpl.$(LANGUAGE).tmpl: tmpl.src $(L10N_DIR)/dtc.def $(ENGLISHDIR)/$(CUR_DIR)/menu.inc $(L10N_DIR)/date.gen
+tmpl.$(LANGUAGE).tmpl: tmpl.src $(L10N_DIR)/dtc.def $(ENGLISHDIR)/$(CUR_DIR)/menu.inc $(L10N_DIR)/date.gen $(GETTEXTDEP)
 	$(WML) tmpl.src
 
 todo.$(LANGUAGE).html: $(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc
@@ -26,7 +28,7 @@ rank.$(LANGUAGE).html: $(ENGLISHDIR)/$(CUR_DIR)/gen/rank.inc
 #   but this fake dependancy is added in order to force generation
 #   of all files ASAP, and then prevent calling gen-files.pl more
 #   than once
-$(HTMLFILES): $(ENGLISHDIR)/$(CUR_DIR)/menu.inc $(L10N_DIR)/dtc.def $(L10N_DIR)/date.gen $(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc
+$(HTMLFILES): $(ENGLISHDIR)/$(CUR_DIR)/menu.inc $(L10N_DIR)/dtc.def $(L10N_DIR)/date.gen $(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc $(GETTEXTDEP)
 
 $(HTML_TEMPLATES): tmpl.$(LANGUAGE).tmpl $(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc
 	$(L10N_DIR)/scripts/fix-files.sh $(ENGLISHDIR)/$(CUR_DIR)/gen $(LANGUAGE) $(LANGS_TEMPLATES)

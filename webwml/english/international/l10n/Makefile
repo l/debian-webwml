@@ -6,5 +6,7 @@ WMLBASE=../..
 CUR_DIR=international/l10n
 SUBS=po templates po-debconf
 
+GETTEXTFILES += l10n.mo
+
 include $(WMLBASE)/Make.lang
 

@@ -9,7 +9,7 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates ports bugs doc
+DOMAINS = templates bugs doc l10n ports
 
 POTFILES = $(addprefix $(ENGLISHDIR)/po/,$(addsuffix .pot,$(DOMAINS)))
 MOFILES = $(addsuffix .mo,$(DOMAINS))
