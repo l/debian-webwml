@@ -6,7 +6,10 @@ $0 =~ m|to(..)\.pl$|;
 my $sublang = $1;
 my $SUBLANG = uc($sublang);
 
-s|^(<HTML lang="zh)">|$1-$SUBLANG">|;
+s|^(<html lang="zh)">|$1-$SUBLANG">|i;
+if ($sublang eq 'hk') {
+	s|^(<meta http-equiv=.*charset)=big5">|$1=big5-hkscs">|i;
+}
 s/(\.zh)(?=\.(?:gif|jpg|png))/$1-$sublang/g;
 s|^<A href=".*">(&#20013;&#25991;&nbsp;.+$SUBLANG.+)</A>(?=&nbsp;)|<B>$1</B>|;
 
