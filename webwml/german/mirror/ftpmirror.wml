@@ -1,7 +1,7 @@
 #use wml::debian::template title="Einen Debian-Archiv-Spiegel erstellen"
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/woody/release.data"
-#use wml::debian::translation-check translation="1.30"
+#use wml::debian::translation-check translation="1.32"
 # $Id$
 # Translator: Thimo Neubauer <thimo@debian.org>
 
@@ -172,15 +172,19 @@ müssen Sie sich um all dies nicht kümmern.</p>
 
 <p>Wenn Sie planen, den Debian-Spiegel durch HTTP zur Verfügung zu
 stellen, fügen Sie bitte die folgenden Einstellungen zur
-Apache-Konfiguration für Verzeichnis-Indizes hinzu (angenommen
-natürlich, daß Sie Apache benutzen):</p>
+Apache-Konfiguration (natürlich unter der Annahme, daß Sie Apache benutzen)
+im <code>&lt;Directory /org/ftp.debian.org/ftp&gt;</code> Block hinzu, wobei
+<code>/org/ftp.debian.org/ftp</code> mit dem Namen des Verzeichnisses ersetzt
+werden sollte, indem sich ihr Spiegel befindet:</p>
 
 <pre>
-&lt;directory /org/ftp.debian.org/ftp&gt;
+   Options +Indexes +FollowSymlinksIfOwnerMatch
    IndexOptions NameWidth=* +SuppressDescription
    DirectoryIndex .
-&lt;/directory&gt;
 </pre>
 
-<p>(Ersetzen Sie <code>/org/ftp.debian.org/ftp</code> mit dem Namen
-des Verzeichnisses, in dem Sie den Spiegel aufbewahren.)</p>
+
+<p>Dies erlaubt Verzeichnis-Indizes und stellt sicher, dass Symlink-Verfolgung
+funktioniert. Die Datei-Namen in den Verzeichnis-Indizes werden nicht
+abgeschnitten, und die (größtenteils nichtvorhandenen) Beschreibungen werden
+nicht angezeigt.</p>
