@@ -265,8 +265,8 @@ sub ReadConfigFile {
       ($attr, $setting) = split(/=/, $_, 2);
       $setting =~ s/"//g; #"
       $setting =~ s/;$//;
-      $attr =~ s/^ +//; $attr =~ s/ +$//;
-      $setting =~ s/^ +//; $setting =~ s/ +$//;      
+      $attr =~ s/^\s+//; $attr =~ s/\s+$//;
+      $setting =~ s/^\s+//; $setting =~ s/\s+$//;      
       $config{$attr} = $setting;
     }
   }

@@ -32,6 +32,9 @@ my $username = $query->param('username');
 my $password = $query->param('password');
 my $binddn = "uid=$username,$config{basedn}";
 
+&logf(sprintf("proto=[%s]; key=[%s]; hrkey=[%s]; username=[%s]; passwd=[%s]; binddn=[%s]",
+              $proto, $key, $hrkey, $username, ($password ? "shh!" : "(null)"), $binddn));
+
 my $mesg = $ldap->bind($binddn, password => $password);
 $mesg->sync;
 
@@ -41,13 +44,29 @@ if ($mesg->code == LDAP_SUCCESS) {
   if ($query->param('update')) {
     my $url = "$proto://$ENV{SERVER_NAME}/$config{webupdateurl}?id=$username&authtoken=$cryptid,$hrkey&editdn=";
     $url .= uri_escape("uid=$username,$config{basedn}", "\x00-\x40\x7f-\xff");
+    &logf("redirect url = [$url]");
     print "Location: $url\n\n";
   } else {
-    print "Location: $proto://$ENV{SERVER_NAME}/$config{websearchurl}?id=$username&authtoken=$cryptid,$hrkey\n\n";
+    my $url = "$proto://$ENV{SERVER_NAME}/$config{websearchurl}?id=$username&authtoken=$cryptid,$hrkey";
+    &logf("redirect url = [$url]");
+    print "Location: $url\n\n";
   }
 
   $ldap->unbind;
 } else {
+  &logf("bad auth");
   print "Content-type: text/html\n\n";
   print "<html><body><h1>Not authenticated</h1></body></html>\n";
 }
+
+sub logf {
+  my $msg = shift;
+  my $t = localtime;
+  
+  if (open(L, ">>$config{weblogfile}")) {
+    print L sprintf("[%s] %s: %s\n", $ENV{REMOTE_ADDR}, $t, $msg);
+    close L;
+  }
+}
+
+exit 0;

@@ -191,7 +191,7 @@ if (!$dosearch) {
     
     # If this is ourselves, present a link to do mods
     if ($auth && ($id eq $data->{uid}->[0])) { #TODO: extract this string into a url for translation...
-     $outsub{searchresults} .= "<a href=\"$proto://$ENV{SERVER_NAME}/$config{webupdateurl}?id=$id&authtoken=$authtoken&editdn=".uri_escape($dn, "\x00-\x40\x7f-\xff")."\">Edit my settings</a>\n";
+      $outsub{searchresults} .= "<a href=\"$proto://$ENV{SERVER_NAME}/$config{webupdateurl}?id=$id&authtoken=$authtoken&editdn=".uri_escape($dn, "\x00-\x40\x7f-\xff")."\">Edit my settings</a>\n";
     }
     
     $outsub{searchresults} .= "<br><br><br>\n";
@@ -254,3 +254,5 @@ sub FormatEntry {
   
   return "<tr><td align=right><b>$key:</b></td><td>&nbsp;$val</td></tr>\n";
 }
+
+exit 0;
