@@ -3,10 +3,10 @@
 # problem can be fixed.
 
 WMLBASE=../..
-CUR_DIR=events/1998
+CUR_DIR=events/1999
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
-SUBS=
+SUBS=expo vatech-if
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
