@@ -15,7 +15,7 @@ $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/langu
 WMLFILES := $(shell echo *.wml)
 HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
 
-all: $(HTMLFILES)
+all: $(HTMLFILES) $(HTMLDIR)/19980928-apcmag-award-1998-08-26.jpg
 
 include $(BASE)/Make.templ.inc
 
