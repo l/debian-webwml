@@ -10,35 +10,16 @@
 require 5.001;
 use strict;
 
-my (@languages, @parts, $file, $filename, $lang, $path, $pid);
+# This module resides under webwml/Perl
+use lib ($0 =~ m|(.*)/|, $1 or ".") ."/Perl";
+use Webwml::Langs;
 
-# from english/template/debian/languages.wml
-# TODO: Needs to be synced frequently or fixed so it's automatic
-my %langs = ( english    => "en",
-#             arabic     => "ar",
-              catalan    => "ca",
-              danish     => "da",
-              german     => "de",
-              greek      => "el",
-              esperanto  => "eo",
-              spanish    => "es",
-              finnish    => "fi",
-              french     => "fr",
-              croatian   => "hr",
-              hungarian  => "hu",
-              italian    => "it",
-              japanese   => "ja",
-              korean     => "ko",
-              dutch      => "nl",
-              norwegian  => "no",
-              polish     => "pl",
-              portuguese => "pt",
-              romanian   => "ro",
-              russian    => "ru",
-              swedish    => "sv",
-              turkish    => "tr",
-              chinese    => "zh",
-);
+my $l = Webwml::Langs->new();
+my %langs = $l->name_iso();
+
+#print "$_ $langs{$_}\n" foreach (keys %langs); exit;
+
+my (@languages, @parts, $file, $filename, $lang, $path, $pid);
 
 if (!@ARGV) {
   open SELF, "<$0" or die "Unable to display help: $!\n";
