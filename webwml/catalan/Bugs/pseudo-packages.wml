@@ -1,0 +1,32 @@
+#use wml::debian::template title="Debian BTS - pseudo-paquets" NOHEADER="true" NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.10"
+
+<H1>Debian: sistema de seguiment d'errors dels pseudo paquets</H1>
+
+<p>Aquesta pàgina llista els pseudo paquets disponibles per a
+una en la línia <code>Package:</code> dels informes d'error.
+
+<p>Mireu les <a href="Reporting">instruccions per a reportar
+un error</a> pels detalls de com especificar una línia
+<code>Package:</code>.
+
+<hrline>
+
+<:
+my $file = "$(ENGLISHDIR)/Bugs/pseudo-packages.description";
+open I, "$file" or die "Can't open $file file: $!\n";
+while (<I>) { if (/^(\S+)\s+(.*)$/) { $pseudos{$1} = $2; } }
+close I;
+%pseudos || die "%pseudos is not set -- empty $file file?\n";
+foreach $a (sort keys %pseudos) {
+  if ($a ne "spam" && $a ne "slink-cd") {
+    print "<p><code><a href=\"http://bugs.debian.org/$a\">$a</a></code> &mdash; $pseudos{$a}\n";
+  }
+}
+:>
+
+<hrline>
+
+#use "otherpages.inc"
+
+#use "$(ENGLISHDIR)/Bugs/footer.inc"
