@@ -7,6 +7,7 @@
 my $adv = $ARGV[0];
 
 $adv || die "you must specify a parameter (original advisory file)!\n";
+die "that advisory file either ain't there or doesn't have anything in it!\n" unless -s $adv;
 
 # i'm lame, so shoot me
 my %longmoy = (	en => [ 
@@ -14,10 +15,8 @@ my %longmoy = (	en => [
   'July', 'August', 'September', 'October', 'November', 'December' ]
 );
 
-my $mlURL = "http://lists.debian.org/debian-security-announce/debian-security-announce-";
-$mlURL .= qx "date +%Y";
-chomp $mlURL;
-$mlURL .= "/";
+my $curyear = qx "date +%Y"; chomp $curyear;
+my $mlURL = "http://lists.debian.org/debian-security-announce/debian-security-announce-$curyear/";
 
 open ADV, $adv;
 foreach $l (<ADV>) {
@@ -89,7 +88,7 @@ open WML, ">$wml";
 print WML "<define-tag description>$desc</define-tag>\n";
 print WML "<define-tag moreinfo>$moreinfo</define-tag>\n";
 print WML "\n# do not modify the following line\n";
-print WML "#include \"\$(ENGLISHDIR)/security/2001/$data\"\n";
+print WML "#include \"\$(ENGLISHDIR)/security/$curyear/$data\"\n";
 close WML;
 
 print "Now edit $data and remove any English-specific stuff from it.\n";
