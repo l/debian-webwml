@@ -186,7 +186,7 @@ my (%pkgs, %sect, %desc);
 my (@colon, $package, $section, $ver, $foo);
 foreach my $line (@results) {
     @colon = split (/:/, $line);
-    ($package, $section, $ver, $foo) = split (/ /, $colon[1].":".$colon[2], 4);
+    ($package, $section, $ver, $foo) = split (/ /, $#colon >1 ? $colon[1].":".$colon[2]:$colon[1], 4);
     $section =~ s,^(non-free|contrib)/,,;
     $section =~ s,^non-US.*$,non-US,,;
     $colon[0] =~ m,.*/([^/]+)/([^/]+)/Packages-([^\.]+)\.,; #$1=stable, $2=main, $3=alpha
