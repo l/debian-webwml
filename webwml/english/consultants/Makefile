@@ -14,9 +14,9 @@ include $(BASE)/Make.lang
 
 all: $(HTMLFILES) $(JPGDEST)
 
-$(HTMLDIR)/index.html.$(LANGUAGE) : index.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
+include $(BASE)/Make.dep.templ    
+
+$(HTMLDIR)/index.html.$(LANGUAGE) : index.wml $(TEMPLDIR)/template.wml
 	wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG) $(WMLEPILOG) $(<F)
-$(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/consultant.wml $(TEMPLDIR)/languages.wml
+$(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/consultant.wml
 	$(WML) $(<F)
-$(TEMPLDIR)/consultant.wml: $(TEMPLDIR)/footer.wml
-	touch $(TEMPLDIR)/consultant.wml

@@ -14,10 +14,11 @@ include $(BASE)/Make.lang
 
 all: $(HTMLFILES) $(JPGDEST)
 
-include $(BASE)/Make.templ.inc
+include $(BASE)/Make.dep.templ    
+include $(BASE)/Make.dep.generic
 
 # Do Not modify the following line
-$(HTMLDIR)/people.html.$(LANGUAGE): people.wml $(ENGLISHSRCDIR)/devel/people.names
+$(HTMLDIR)/people.html.$(LANGUAGE): people.wml $(TEMPLDIR)/template.wml $(ENGLISHSRCDIR)/devel/people.names
 
 people: people.wml
 	$(WML) people.wml

@@ -21,4 +21,5 @@ all: $(HTMLFILES) $(JPGDEST)
 	( cd arm; $(MAKE) )
 	( cd powerpc; $(MAKE) )
 
-include $(BASE)/Make.templ.inc
+include $(BASE)/Make.dep.templ    
+include $(BASE)/Make.dep.generic

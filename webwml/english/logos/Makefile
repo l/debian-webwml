@@ -14,4 +14,5 @@ include $(BASE)/Make.lang
 
 all: $(HTMLFILES) $(JPGDEST)
 
-include $(BASE)/Make.templ.inc
+include $(BASE)/Make.dep.templ    
+include $(BASE)/Make.dep.generic
