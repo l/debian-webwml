@@ -32,7 +32,7 @@ sub test_vendor(@)
     if ($deburl eq "") {
         print "W: Vendor \"$name\" <$email> doesn't have a Debian webpage.\n";
     } else {
-        print "N: Checking $url\n";
+        print "N: Checking $deburl\n";
         $vendpage = `wget -t 1 -O- $deburl 2>&1`;
         if ($vendpage =~ /: Host not found./)
         {
