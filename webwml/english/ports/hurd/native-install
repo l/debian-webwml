@@ -1,0 +1,145 @@
+#!/bin/bash
+#
+# Copyright (c) 1998 - This script is hereby placed in the public domain
+#                      by Marcus Brinkmann.
+# Most of this script was taken from the SETUP script in Hurd CVS.
+
+# native-install
+#
+#    1 Jan 1999 - v0.0 <Marcus.Brinkmann@ruhr-uni-bochum.de>
+#        Original created by Marcus Brinkmann.
+#   14 Jan 1999 - v0.1 Matthew Vernon <mcv21@cam.ac.uk>
+#        Edited to deal with the removal of the /usr -> / symlink
+#        This should work with or without the symlink
+#   17 Feb 1999 - v1.0 Marcus Brinkmann <brinkmd@debian.org>
+#        Create /etc/fstab.
+#   27 Apr 1999 - v1.1 Marcus Brinkmann <brinkmd@debian.org>
+#        Make it work with latest packages, libc needs awk configured.
+#    5 Mar 1999 - v1.2 Marcus Brinkmann <brinkmd@debian.org>
+#        We need /dev/fd early for calling #! scripts outside of our PATH.
+#   13 May 1999 - v1.3
+#        Add -v option to MAKEDEV, so we can watch progress.
+#   17 May 1999 - v1.4
+#        Shufle around the order of initial commands. Esp, copy
+#        the password file before invoking MAKEDEV fd, before
+#        calling dpkg first time.
+#        Also, insert special calls to dpkg for missing dependencies.
+#   27 May 1999 - v1.5
+#        Explain how to reboot.
+#    1 Jun 1999 - v2.0
+#        Next generation. We create three crash servers and link to the
+#        default. Requires hurd-19990529 at least.
+#        Make pfinet point to dummy interface, so localhost works. Does only
+#        work with Marks patch to GNU Mach.
+
+
+
+# Make sure the filesystem is writeable
+
+echo I am just checking if your filesystem is really writeable.
+fsysopts / --writable
+
+# Set up standard passive translators
+echo
+echo Now I set up the translators. If you get Operation not supported
+echo errors, you have forgotten to set the file system owner to \"hurd\"!
+
+/bin/settrans -c /servers/socket/1 /hurd/pflocal
+
+/bin/settrans -c /servers/socket/2 /hurd/pfinet --interface=dummy --address=192.168.0.1
+
+/bin/settrans -c /servers/crash-suspend /hurd/crash --suspend
+/bin/settrans -c /servers/crash-kill /hurd/crash --kill
+# Not functional yet:
+/bin/settrans -c /servers/crash-dump-core /hurd/crash --dump-core
+if [ ! -e /servers/crash ] ; then
+	/bin/ln -s crash-suspend /servers/crash
+fi
+if [ ! -e /servers/socket/local ] ; then
+	/bin/ln -s 1 /servers/socket/local
+fi
+if [ ! -e /servers/socket/inet ] ; then
+	/bin/ln -s 2 /servers/socket/inet
+fi
+
+# We need the password file to chown.
+
+cp /usr/share/base-passwd/passwd.master /etc/passwd
+cp /usr/share/base-passwd/group.master /etc/group
+
+# We need /dev/fd to call scripts.
+cd /dev
+/bin/sh ./MAKEDEV -v fd
+
+# Configure libc very soon.
+/bin/dpkg --configure mawk
+/bin/dpkg --configure libc0.2
+
+# Configure packages with missing dependencies:
+if [ -e /var/lib/dpkg/info/passwd.list ] ; then
+	/bin/dpkg --configure --force-depends passwd
+fi
+if [ -e /var/lib/dpkg/info/bsdutils.list ] ; then
+	/bin/dpkg --configure --force-depends bsdutils
+fi
+
+# Setup crucial devices
+echo
+echo The next job is to setup device files.
+cd /dev
+/bin/sh ./MAKEDEV -v std ptyp ptyq
+
+# Debian set up.
+echo
+echo Now I configure Debian packages. I\'ll do this twice, so all
+echo packages get configured properly. You\'ll notice some warnings
+echo and errors in the first run, that\'s okay.
+echo
+echo Please press enter now to start configuration.
+read x
+
+dpkg --pending --configure || true
+dpkg --pending --configure || true
+
+echo The last step is to create /etc/fstab.
+
+fstype=`fsysopts / | perl -ne 'm!^/hurd/(.*?)\.static.*?([^\s]*?)$!; print $1;'`
+rootpart=`fsysopts / | perl -ne 'm!^/hurd/(.*?)\.static.*?([^\s]*?)$!; print $2;'`
+
+if [ ! -e /dev/${rootpart} ] ; then
+	cd /dev
+	/bin/sh ./MAKEDEV ${rootpart} || true
+fi
+
+if [ x${fstype} = xext2fs ] ; then
+	fstype=ext2
+fi
+
+cat > /etc/fstab << __GNU__
+# /etc/fstab: static file system information
+#
+# <file system>	<mount point>	<type>	<options>		<dump>	<pass>
+__GNU__
+
+if [ ! -e /dev/${rootpart} ] ; then
+	echo Couldn\'t determine root partition, sorry.
+	echo You have to edit /etc/fstab to match your system.
+	echo However, for your convenience, I will install a dummy entry.
+	echo "#/dev/hd0s1	/		ext2	rw			1	1" >> /etc/fstab
+else
+	echo Your root partition is /dev/${rootpart}.
+	echo Your file system type is ${fstype}.
+	echo If this information is not correct, you need to edit /etc/fstab.
+	echo "/dev/${rootpart}	/		${fstype}	rw			1	1" >> /etc/fstab
+fi
+
+echo
+echo If you have a swap partition, please add it to /etc/fstab.
+echo You should reboot the system now by entering "reboot", so all
+echo translators come into place.
+echo
+echo All packages should be configured now. If there are errors\,
+echo let me know.
+echo
+echo Have fun exploring the Hurd, Marcus Brinkmann \<brinkmd\@debian.org\>
+echo
