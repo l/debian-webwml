@@ -169,6 +169,16 @@ if (-e "./$langto/international/$langto/current_status.pl" &&
        if $opt_v;
     require 'translator.db.pl';
     %translators=%{init_translators()};
+    if (defined($translators{default})) {
+        my @field_list = keys %{$translators{default}};
+        foreach my $user (keys %translators) {
+            next unless $user =~ m/ /;
+            foreach my $f (@field_list) {
+                $translators{$user}{$f} = $translators{default}{$f}
+                    unless defined($translators{$user}{$f});
+            }
+        }
+    }
 } else {
     die "I need my DBs to send mails !\n Please read the comments in the script and try again\n" if $opt_m;
 }
@@ -264,61 +274,21 @@ sub init_mails {
     eval q{use MIME::Lite};
     foreach my $name (keys %translators) {
 	return if defined $translators{$name}{"msg"};
+	next if $name eq 'default' || $translators{$name}{email} eq '';
 	$translators{$name}{"msg"} = MIME::Lite->new(
 	   From    => "Script watching translation state <$maintainer>",
            To      => ($opt_g ? $opt_m : $translators{$name}{"email"}),
-           Subject => ($name eq "list" ?
-	    "Translations for the Debian web site unmaintained" :
-	    "Translations for the Debian web site maintained by $name"
-            ),
+           Subject => $translators{$name}{mailsubject},
            Type    => 'multipart/mixed');
-	my $str= "Hello,\n".
-      	      "This is an automatically generated mail sent to you\n".
-	      "because you are the official translator of some pages\n".
-	      "in ".ucfirst($langto)." of the Debian web site.\n".
-	      "\n".
-	      "I sent you what I think you want. (i.e. what is in my DB).\n".
-	      " That is to say:\n";
-	foreach my $n (qw(summary logs diff tdiff file)) {
-	    $str.="   ".$n.": ".
-	    ($translators{$name}{$n} != 0 ?
-	     ($translators{$name}{$n} != 1 ?
-	      ($translators{$name}{$n} != 2 ?
-	       ($translators{$name}{$n} != 3 ?
-		"dunno (error in DB !!)":
-		"daily"):
-		"weekly"):
-		"monthly"):
-	     "never")."\n";
-	}
-	if ($name eq "list") {
-	    $str .= "   missing: ".($translators{$name}{"missing"} != 0 ?
-	     ($translators{$name}{"missing"} != 1 ?
-	      ($translators{$name}{"missing"} != 2 ?
-	       ($translators{$name}{"missing"} != 3 ?
-		"dunno (error in DB !!)":
-		"daily"):
-		"weekly"):
-		"monthly"):
-	     "never")."\n";
-	}
-	$str.="   Compression=".$translators{$name}{"compress"}."  (not implemented)\n\n";
-	$str.=" You can ask to change:\n".
-              "  - the frequency of these mails\n".
-	      "    (never, monthly, weekly, daily)\n".
-              "  - the parts you want\n".
-    	      "    - The list of the work to do in a summarized form\n".
-              "    - diff between the version you translated and the current one\n".
-              "    - log between the version you translated and the current one\n".
-              "    - the file you translated (so that you don't have to download it manually)\n".
-              "  - your email address\n".
-	      "  - the compression level (none, gzip or bzip2), even if I'll ignore it\n".
-              "    because this feature is not implemented yet ;)\n".
-	      "\n".
-	      "For more information, contact your team coordinator, or\n".
-	      "the maintainer of this script ($maintainer).\n".
-	      "\n".
-	      "Thanks, and sorry for the annoyance.\n";
+        my $str;
+        {
+                open (MAIL, "< $translators{$name}{mailbody}")
+                        or die "$name: Unable to read \`$translators{$name}{mailbody}'";
+                local $/ = undef;
+	        $str= <MAIL>;
+                close (MAIL);
+        }
+        1 while ($str =~ s/#(.*?)#/eval $1/ge);
 
         $translators{$name}{"msg"}->attach(
            Type => 'TEXT',
@@ -331,6 +301,7 @@ sub send_mails {
     #Makes the mails and send them
     return unless $opt_m;
     foreach my $name (sort keys %translators) {
+	next if $name eq 'default' || $translators{$name}{email} eq '';
 	$translators{$name}{"msg"}->attach(
                      Type     => 'TEXT',
 	             Filename => 'NeedToUpdate_summary',
@@ -443,7 +414,7 @@ sub check_file {
                      } else {
   		       print "Missing $name version $revision\n";
                      }
-		     add_part("list","missing","Missing $name version $revision\n");
+		     add_part("untranslated","missing","Missing $name version $revision\n");
 		  }
 		} else {
 		  warn "Ignored $name\n" if $opt_v;
@@ -516,19 +487,33 @@ sub check_file {
 	my @logrev = split(/\./, $oldr);
 	$logrev[$#logrev] ++;
 	my $logoldr = join('.', @logrev);
+	my $maxdelta = $transcheck->maxdelta() || $translators{maxdelta}{maxdelta} || 5;
 
 	if ($opt_m) {
-	    $translator = "list" if ($translator eq "");
-	    add_part($translator,"summary",$str);
-	    add_sub_part($translator,"diff",$name,
-		 join("",qx(cvs -z3 diff -u -r'$oldr' -r $revision $oldname)));
-	    add_sub_part($translator,"tdiff",$name,
-		 get_diff_txt("$oldr","$revision","$oldname","$name"));
+            my @list_tr;
+	    if ($translator eq "") {
+                if ($numrev - $numoldr >= $maxdelta) {
+	            @list_tr = ("maxdelta");
+                } else {
+	            @list_tr = ("unmaintained");
+                }
+            } elsif ($numrev - $numoldr >= $maxdelta) {
+	        @list_tr = ($translator, "maxdelta");
+            } else {
+	        @list_tr = ($translator);
+            }
+            foreach my $tname (@list_tr) {
+                add_part($tname,"summary",$str);
+                add_sub_part($tname,"diff",$name,
+                        join("",qx(cvs -z3 diff -u -r'$oldr' -r $revision $oldname)));
+                add_sub_part($tname,"tdiff",$name,
+                        get_diff_txt("$oldr","$revision","$oldname","$name"));
 
-	    add_sub_part($translator,"logs",$name,
-		 join("",qx(cvs -z3 log -r$logoldr:$revision $oldname)));
-	    add_sub_part($translator,"file",$name,
-		 join("",qx(cat $name)));
+                add_sub_part($tname,"logs",$name,
+                        join("",qx(cvs -z3 log -r$logoldr:$revision $oldname)));
+                add_sub_part($tname,"file",$name,
+                        join("",qx(cat $name)));
+            }
 	}
 	    
 	if ($opt_d) {
