@@ -4,7 +4,10 @@
 
 . `dirname $0`/../config.sh
  
-test -n "${localdir}" || (echo skipping due to missing local archive; exit 1)
+if test -z "${localdir}"; then
+    echo skipping due to missing local archive
+    exit 1
+fi
 
 logs=$topdir/files/logs
 log=${logs}/changelogs.log
@@ -39,7 +42,7 @@ for DEBFILE in ${localdir}/pool/*/*/*/*.dsc; do
 	
 	test -d $tmpdir || mkdir -p $tmpdir
 	cd ${tmpdir}
-	chmod -R +w ${tmpdir}/*
+	chmod -f -R +w ${tmpdir}/*
 	rm -rf ${tmpdir}/*
 	out=`dpkg-source -x $DEBFILE`
 	dir=${out##* }
@@ -61,12 +64,12 @@ for DEBFILE in ${localdir}/pool/*/*/*/*.dsc; do
 		echo "No changelog found in `basename $DEBFILE`"
 	    fi
 
-	    chmod 644 $TARGETDIR/*
+	    chmod -f 644 $TARGETDIR/*
 	else
 	    echo "No copyright and changelog found in `basename $DEBFILE`"
 	fi
 	
-	chmod -R +w ${tmpdir}/*
+	chmod -f -R +w ${tmpdir}/*
 	rm -rf ${tmpdir}/*
     fi
 done
