@@ -2,8 +2,8 @@
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
-WMLBASE=../..
-CUR_DIR=News/2000
+WMLBASE=../../../..
+CUR_DIR=devel/debian-jr/News/2000
 SUBS=
 
 include $(WMLBASE)/Make.lang
