@@ -174,16 +174,16 @@ def check(currentsite = ''):
 			if not ignored_site(site['site'], currentsite):
 				if (site.has_key('site') and site.has_key('archive-http')) and (not currentsite or site['site'] == currentsite):
 					siteprob = check_site(site['site'], site['archive-http'])
-					if site.has_key('maintainer'):
-						print '  Maintainer: ' + site['maintainer']
-						if badfd and siteprob:
-							badfd.write('  Maintainer: ' + site['maintainer'] + '\n')
+#					if site.has_key('maintainer'):
+#						print '  Maintainer: ' + site['maintainer']
+#						if badfd and siteprob:
+#							badfd.write('  Maintainer: ' + site['maintainer'] + '\n')
 				if site.has_key('site') and site.has_key('nonus-http') and (not currentsite or site['site'] == currentsite):
 					siteprob = check_site(site['site'], site['nonus-http'])
-					if site.has_key('maintainer'):
-						print '  Maintainer: ' + site['maintainer']
-						if badfd and siteprob:
-							badfd.write('  Maintainer: ' + site['maintainer'] + '\n')
+#					if site.has_key('maintainer'):
+#						print '  Maintainer: ' + site['maintainer']
+#						if badfd and siteprob:
+#							badfd.write('  Maintainer: ' + site['maintainer'] + '\n')
 			if site['site'] == currentsite:
 				return
 			site = {}
