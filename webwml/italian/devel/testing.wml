@@ -1,0 +1,315 @@
+#use wml::debian::template title="La distribuzione Debian «&nbsp;testing&nbsp;»" BARETITLE=true
+#include "$(ENGLISHDIR)/releases/info"
+#use wml::debian::translation-check translation="1.19" maintainer="Renzo Cavalli"
+
+<p>Per informazioni di base sulla distribuzione testing, destinate al semplice utente,  
+si vedano <a href="$(DOC)/FAQ/ch-ftparchives#s-testing">Le FAQ Debian</a>.</p>
+
+<p>È importante richiamare l'attenzione sia dei normali utenti che degli sviluppatori di 
+testing sul fatto che per testing gli aggiornamenti di sicurezza <strong>non sono gestiti dal 
+gruppo di sicurezza</strong>. Per maggiori informazioni si vedano <a href="../security/faq#testing">
+Le FAQ del gruppo di sicurezza</a>.</p>
+
+<p>Questa pagina tratta essenzialmente gli aspetti di "testing" importanti 
+per gli sviluppatori Debian.</p>
+
+<h2>Come funziona "testing"</h2>
+
+<p>La distribuzione "testing" è una distribuzione generata automaticamente.
+Essa è generata a partire dalla distribuzione "unstable" da una serie di script che 
+tentano di integrare pacchetti che siano ragionevolmente privi di bug 
+importanti. Essi lo fanno in modo da assicurare che le dipendenze degli altri pacchetti 
+in testing siano sempre soddisfatte.</p>
+
+<p>Un (una particolare versione di un) pacchetto verrà spostato in testing quando 
+soddisfa tutte le seguenti condizioni:</p>
+
+<ol>
+  <li>Deve essere stato in unstable per 10, 5 o 2 giorni, in funzione 
+  dell'urgenza dell'upload;</li>
+
+  <li>Deve essere stato compilato e deve essere aggiornato su tutte le 
+  architetture su cui sia stato compilato in unstable;</li>
+
+  <li>Deve avere meno bug release-critical, o lo stesso numero, della 
+  versione corrente in "testing" (si veda sotto per 
+  <a href="#faq">maggiori informazioni</a>);</li>
+
+  <li>Tutte le sue dipendenze devono <em>o</em> essere soddisfatte dai 
+  pacchetti già in "testing", <em>o</em> essere soddisfatte dall'insieme 
+  di pacchetti che verranno installati nel contempo;</li>
+
+  <li>L'operazione di installazione del pacchetto in "testing" non dovrà danneggiare 
+  alcun pacchetto che sia già in "testing". (Si veda sotto per 
+  <a href="#faq">maggiori informazioni</a>.)</li>
+</ol>
+
+<p>Un pacchetto che soddisfi le prime tre condizioni scritte sopra è un 
+<q>Valido Candidato</q>.</p>
+
+<p>Lo script di aggiornamento mostra quando ciascun pacchetto può esser mosso da "unstable" a 
+"testing". L'output è doppio:</p>
+
+<ul>
+  <li>L'<a href="http://ftp-master.debian.org/testing/update_excuses.html">
+      update excuses</a>
+      [<a href="http://ftp-master.debian.org/testing/update_excuses.html.gz">
+      compresso con gzip</a>]:
+      lista di tutte le versioni del pacchetto candidato e lo stato di base della 
+      sua propagazione in "testing"; in genere più corta e accurata rispetto a
+  </li>
+  <li>L'<a href="http://ftp-master.debian.org/testing/update_output.txt">
+      update output</a>
+      [<a href="http://ftp-master.debian.org/testing/update_output.txt.gz">
+      compresso con gzip</a>]:
+      l'output completo, piuttosto grezzo, degli script di "testing" 
+      mentre operano sui pacchetti candidati
+  </li>
+</ul>
+
+<h2><a name="faq">Domande/Risposte frequenti</a></h2>
+
+<h3><q>Quali sono i bug critici per il rilascio e come vengono contati?</q></h3>
+
+<p>Tutti i bug di alto livello di gravità vengono catalogati  
+<em><a href="http://bugs.debian.org/release-critical/">release-critical</a></em> in
+maniera predefinita; attualmente, abbiamo bug <strong>critical</strong>, 
+<strong>grave</strong> e <strong>serious</strong>.</p>
+
+<p>Si presume che tali bug abbiano un'incidenza sulle possibilità che il pacchetto
+venga incluso nel rilascio stabile di Debian: in generale, se un pacchetto 
+ha dei bug critici per il rilascio aperti, non andrà in "testing", e di conseguenza 
+non sarà rilasciato in "stable".</p>
+
+<p>Il conteggio dei bug in "testing" per un pacchetto è considerato essere
+approssimativamente il conteggio dei bug al momento in cui la versione "testing"
+si equivale alla versione "unstable". I bug marcati <strong><current_release_name></strong>
+o <strong><current_testing_name></strong> non vengono conteggiati. I bug marcati
+<strong>sid</strong> saranno, invece, conteggiati.</p>
+
+<h3><q>Come può l'installazione di un pacchetto in "testing" danneggiare il funzionamento di altri 
+pacchetti?</q></h3>
+
+<p>La struttura degli archivi della distribuzione è organizzata in modo da poter
+contenere solamente una versione di un pacchetto; un pacchetto è identificato dal suo nome. Così, quando  
+il pacchetto sorgente <tt>acmefoo</tt> è installato in "testing", insieme con
+i suoi pacchetti binari <tt>acme-foo-bin</tt>, <tt>acme-bar-bin</tt>,
+<tt>libacme-foo1</tt> e <tt>libacme-foo-dev</tt>, la versione precedente viene
+rimossa.</p>
+
+<p>Tuttavia, può accadere che la precedente versione fornisse un pacchetto binario con un 
+vecchio soname di una libreria, tipo <tt>libacme-foo0</tt>. Rimuovendo il vecchio
+<tt>acmefoo</tt> verrebbe rimosso anche <tt>libacme-foo0</tt>, danneggiando qualsiasi 
+pacchetto che dovesse dipendere da esso.</p>
+
+<p>Evidentemente, questo comportamento riguarda principalmente i pacchetti che forniscono  
+insiemi di pacchetti binari in versioni differenti (e principalmente le librerie). 
+Tuttavia, riguarda anche i pacchetti per i quali sono state dichiarate con ==, &lt;= or &lt;&lt;
+delle dipendenze "versioned", ovvero dipendenze per determinate versioni.</p>
+
+<p> Quando l'insieme dei pacchetti binari forniti da un pacchetto sorgente è 
+modificato in questo modo, tutti i pacchetti che dipendevano dai precedenti binari dovranno 
+essere aggiornati per dipendere dai nuovi binari. Poiché installare tali 
+pacchetti sorgente in "testing" danneggia tutti i pacchetti che ne dipendono in 
+"testing", è necessario procedere con attenzione: tutti i pacchetti dipendenti devono 
+essere aggiornati e resi disponibili ad essere installati senza essere danneggiati
+e, quando tutto è pronto, di regola è richiesto un intervento manuale del 
+responsabile del rilascio o di un assistente.</p>
+
+<p>Se incontrate problemi con gruppi complessi di pacchetti come questi, 
+prendete contatto con debian-devel o debian-release per richiedere aiuto.</p>
+
+<h3><q>Continuo a non capire! Gli script di "testing" dicono che questo 
+pacchetto è un valido candidato, ma continua a non entrare in 
+"testing".</q></h3>
+
+<p>Ciò accade quando per qualche ragione, diretta o indiretta, 
+l'installazione del pacchetto impedirà a qualche altro pacchetto di essere installato.</p>
+
+<p>Ricordate di tener presenti le dipendenze del vostro pacchetto. Supponiamo 
+che il vostro pacchetto dipenda da libtool, o libltdl<var>X</var>. Il vostro pacchetto non entrerà 
+in "testing" sino a quando la versione corretta di libtool non sia pronta ad entrarci insieme.</p>
+
+<p>Insomma, ciò non avverrà sino a quando l'installazione di libtool potrà
+danneggiare ciò che è già in "testing". In altre parole, sino a quando tutti gli altri pacchetti 
+che dipendono da libltdl<var>Y</var> (dove <var>Y</var> è la precedente versione) non saranno stati 
+ricompilati, e tutti i bug critici per il rilascio non saranno stati corretti, eccetera, nessuno 
+di questi pacchetti entrerà in "testing".</p>
+
+<p>Qui può venir utile <a href="http://ftp-master.debian.org/testing/update_output.txt">l'output testuale</a>
+[<a href="http://ftp-master.debian.org/testing/update_output.txt.gz">compresso con gzip:</a>]:
+esso offre informazioni (sebbene molto concise) su quali pacchetti 
+vengono danneggiati quando un valido candidato è aggiunto in "testing".</p>
+
+<h3><q>Perché è spesso difficile inserire pacchetti <kbd>Architecture: all</kbd> 
+in "testing"?</q></h3>
+
+<p>Se il pacchetto <kbd>Architecture: all</kbd> deve essere installato, deve 
+essere possibile soddisfare le sue dipendenze su <strong>tutte</strong> 
+le architetture. Se dipende da alcuni pacchetti che possono essere compilati solo su 
+un insieme limitato di architetture Debian, allora non sarà incluso.</p>
+
+<p>Tuttavia, per ora, "testing" ignorerà l' installabilità o meno dei pacchetti <kbd>Architecture:
+all</kbd> su architetture non-i386. (<q>È un 
+hack inqualificabile e non sono affatto soddisfatto di averlo fatto, ma è così.</q>
+--aj)</p>
+
+<h3><q>Il mio pacchetto è bloccato perché è non aggiornato su qualche architettura.
+Cosa devo fare?</q></h3>
+
+<p>Controllate lo stato del vostro pacchetto sul 
+<a href="http://buildd.debian.org/build.php">log del database di costruzione</a>.
+Se il pacchetto non viene costruito, sarà segnato come <em>failed</em>; 
+analizzate i log di costruzione e correggete tutti i problemi che sono causati 
+dai sorgenti del vostro pacchetto.</p>
+
+<p>Se vi capita di notare che qualche architettura ha costruito la nuova  
+versione del vostro pacchetto, ma che non appare nell'output degli script in "testing" 
+dovete avere un poco più di pazienza sino a quando il responsabile del buildd 
+corrispondente metta in linea i file nell'archivio Debian.</p>
+FIXME
+<p>Se vi accorgete che alcune architetture non hanno ancora costruito la vostra nuova versione 
+del pacchetto, nonostante abbiate messo in linea un fix per un 
+precedente malfunzionamento, probabilmente la ragione è che è stato marcato in attesa di 
+dipendenze (Dep-Wait). Potete vedere la lista di questi pacchetti cosiddetti  
+<a href="http://buildd.debian.org/stats/">in attesa di costruzione</a> per 
+assicurarvene.</p>
+
+<p>Questi problemi sono generalmente corretti alla fine, ma se state 
+aspettando da un lungo periodo di tempo (cioè due settimane o più), notificatelo 
+al responsabile del buildd del port coninvolto se tale indirizzo è fornito sulla  
+<a href="$(HOME)/ports/">pagina web del port</a>, o sulla mailing list del 
+port.</p>
+
+<h3><q>Ci sono eccezioni? Sono sicuro che <tt>acmefoo</tt> è stato integrato 
+in "testing" anche se non soddisfa tutti i criteri richiesti.</q></h3>
+
+<p>I responsabili della release possono trasgredire le regole in due modi:</p>
+
+<ul>
+  <li>Possono decidere che le rotture delle dipendenze provocate dall'installazione di una nuova 
+      libreria miglioreranno la situazione invece che peggiorarla, e procederanno
+      con le loro piccole flotte di dipendenze.</li> 
+  <li>Possono anche rimuovere da "testing" manualmente i pacchetti che  
+      sarebbero danneggiati, così che nuovi elementi possano essere installati.</li>
+</ul>
+
+<h3><q>Potete fornire un esempio reale, non banale?</q></h3>
+
+<p>Eccone uno: quando il pacchetto sorgente <tt>apache</tt> viene installato in 
+"testing", insieme con i propri pacchetti binari <tt>apache</tt>,
+<tt>apache-common</tt>, <tt>apache-dev</tt> e <tt>apache-doc</tt>, la 
+precedente versione è disinstallata.</p>
+
+<p>Tuttavia, tutti i moduli di Apache dipendono da <code>apache-common (&gt;=
+<var>qualcosa</var>), apache-common (&lt;&lt; <var>qualcosa</var>)</code>,
+così che questo cambiamento romperà tutte queste dipendenze. In conseguenza, tutti 
+i moduli di Apache dovranno essere ricompilati con la nuova versione di Apache perché 
+"testing" sia aggiornata.</p>
+
+<p>Continuiamo nella nostra analisi: dopo che tutti i moduli sono stati 
+aggiornati in unstable per funzionare con un nuovo Apache, gli script di "testing" 
+provano <tt>apache-common</tt> e trovano che rompe le dipendenze di tutti i moduli di Apache 
+perché questi hanno <code>Depends: apache-common (&lt;&lt; <var>la versione 
+attuale</var>)</code>, e quando poi provano <tt>libapache-<var>foo</var></tt> trovano 
+che non si installa perché ha <code>Depends: apache-common (&gt;=
+<var>la nuova versione</var>)</code>.</p>
+
+<p> Tuttavia, in seguito gli script useranno una logica differente (qualche volta 
+suggerita da un intervento manuale): essi ignoreranno il fatto che <tt>apache-common</tt> rompe 
+le dipendenze, e continueranno con le cose che funzionano; se continuerà a non funzionare 
+dopo che noi abbiamo fatto tutto il possibile, tanto peggio, ma forse <strong>funzionerà</strong>.
+In seguito proveranno casualmente tutti i pacchetti <tt>libapache-<var>foo</var></tt> 
+e vedranno che in effetti funzionano.</p>
+
+<p>Dopo che tutto è stato provato, essi controllano quanti pacchetti hanno 
+dipendenze rotte, verificano se è meglio o peggio rispetto alla situazione iniziale e 
+o accettano tutto o non ci pensano più. Lo vedrete in 
+<tt>update_output.txt</tt> sulle linee "<code>recur:</code>".</p>
+
+<p>Per esempio:</p>
+
+<pre>
+         recur: [<var>foo</var> <var>bar</var>] <var>baz</var>
+</pre>
+
+<p>dice grosso modo <q>ho trovato che <var>foo</var> e 
+<var>bar</var> migliorano la situazione, ora provo <var>baz</var> per 
+vedere cosa succede, anche se rompe qualche dipendenza</q>. Le linee di 
+<tt>update_output.txt</tt> che iniziano con "<code>accepted</code>" indicano 
+elementi che sembrano migliorati, e le linee "<code>skipped</code>" elementi 
+peggiorati.</p>
+
+<h3><q>Il file <tt>update_output.txt</tt> è completamente illeggibile!</q></h3>
+
+<p>Questa non è una domanda. ;-)</p>
+
+<p>Facciamo un esempio:</p>
+
+<pre>
+ skipped: cln (0) (150+4)
+     got: 167+0: a-40:a-33:h-49:i-45
+     * i386: ginac-cint, libginac-dev
+</pre>
+
+<p>Questo significa che se <tt>cln</tt> entra in "testing", <tt>ginac-cint</tt> 
+e <tt>libginac-dev</tt> divengono non installabili in "testing" su i386.
+Da notare che le architetture sono controllate in ordine alfabetico e sono 
+evidenziati solo i problemi relativi alla prima architettura con problemi -- 
+ecco perché l'architettura alfa compare così spesso.</p>
+
+<p>La linea "got" include il numero di problemi in "testing" sulle 
+differenti architetture (fino alla prima architettura dove si evidenzi un problema 
+ -- vedi sopra). "i-45" significa che se  <tt>cln</tt> entrasse in 
+"testing", ciò comporterebbe che 45 pacchetti non sarebbero installabili su i386. Qualche annotazione 
+sopra e sotto <tt>cln</tt> segnala che ci sono 43 pacchetti 
+non installabili in "testing" su i386 al momento.</p>
+
+<p>La linea "skipped: cln (0) (150+4)" significa che rimangono 150 
+pacchetti da verificare dopo questo pacchetto fino a che questo controllo di 
+tutti i pacchetti sia completato, e  che sono stati già trovati 4 pacchetti che 
+non possono essere aggiornati perché romperebbero delle dipendenze. Lo "(0)" è 
+irrilevante, potete tranquillamente ignorarlo.</p>
+
+<p>E' da notare che vi sono parecchi controlli di tutti i pacchetti quando 
+viene eseguito anche uno solo script "testing".</p>
+
+<p><i>Jules Bean ha inizialmente raccolto le domande/risposte frequenti.</i></p>
+# Created: Sat Dec  8 12:44:29 GMT 2001
+
+<h2>Informazioni aggiuntive</h2>
+
+<p>Gli script scoprono inoltre bug che possono essere descritti come 
+orribilmente-gravi-non-dovrebbero-essere-qui-per-prima-cosa.
+Sono tutte offese del tipo `non seccate per discutere l'inclusione di questi pacchetti`, 
+che auspicabilmente spariranno nella fase di freeze, e 
+giornate a togliere bug e così via.
+<br>
+Vi sono delle liste di tali bug per le tre distribuzioni:
+
+<ul>
+  <li><a href="http://ftp-master.debian.org/testing/testing_probs.html">problemi in testing</a></li>
+  <li><a href="http://ftp-master.debian.org/testing/unstable_probs.html">problemi in unstable</a></li>
+  <li><a href="http://ftp-master.debian.org/testing/stable_probs.html">problemi in stable</a></li>
+</ul>
+
+<p>In aggiunta, vi sono alcune statistiche sui pacchetti binari 
+non aggiornati in 
+
+<a href="http://ftp-master.debian.org/testing/testing_outdate.txt">testing</a>,
+<a href="http://ftp-master.debian.org/testing/stable_outdate.txt">stable</a> e 
+<a href="http://ftp-master.debian.org/testing/unstable_outdate.txt">unstable</a>.</p>
+
+<p>Bj&ouml;rn Stenberg ha scritto un 
+<a href="http://bjorn.haxx.se/debian/">front-end</a> per aiutarvi a scoprire perché 
+i pacchetti sono tenuti fuori da testing.</p>
+
+<p>Potreste essere interessati a leggere una vecchia 
+<a href="http://lists.debian.org/debian-devel-0008/msg00906.html">email di spiegazione</a>. 
+Il suo unico difetto è di non tener conto dell'organizzazione in pool dei pacchetti, 
+poiché questa è stata realizzata da James Troup dopo che l'email fu scritta.</p>
+
+<p>Il codice di testing è disponibile su
+<a href="http://ftp-master.debian.org/testing/update_out_code/">ftp-master</a>.</p>
+
+<p><i>Anthony Towns è l'autore dell'implementazione di testing.</i></p>
