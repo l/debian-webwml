@@ -1,0 +1,159 @@
+#! /usr/bin/perl
+
+#   newpkg - Generate a list of new packages
+#   Copyright (c) 2004  Martin Schulze <joey@debian.org>
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+# $Id$
+
+use strict;
+use warnings;
+
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use lib "$FindBin::Bin";
+
+use Getopt::Long;
+use Locale::gettext;
+use POSIX;
+
+use Packages::HTML;
+use Packages::I18N::Locale;
+
+my %config = (
+	      'old' => undef,
+	      'new' => undef,
+	      'descr' => undef,
+	      'langs' => 'en',
+	      'quiet' => undef,
+	      'output' => undef,
+	      'locales' => undef,
+	      'component' => '',
+	      'verbose' => 0,
+	      );
+
+my %options = (
+	       'old=s' => \$config{old},
+	       'new=s' => \$config{new},
+	       'descriptions=s' => \$config{descr},
+	       'component=s' => \$config{component},
+	       'langs=s' => \$config{langs},
+	       'locales=s' => \$config{locales},
+	       "output=s" => \$config{output},
+	       'verbose+' => \$config{verbose},
+	       "quiet" => \$config{quiet},
+	       'help' => \&help,
+	       );
+
+sub help
+{
+    printf "Commandline options:\n";
+    foreach my $opt (sort keys %options) {
+	printf "  --%s\n", $opt;
+    }
+    exit 0;
+}
+
+# Parse commandline options
+#
+GetOptions (%options);
+
+if (! defined $config{old} || !defined $config{new}) {
+    printf STDERR "Need old (--old) and new (--new) files.\n";
+    exit 1;
+}
+if (! defined $config{output}) {
+    printf STDERR "Need an output file.\n";
+    exit 1;
+}
+
+my $fname = '';
+if ($config{output} =~ m,/([^/]+),) {
+    $fname = $1;
+} else {
+    printf STDERR "Need an output filename base.\n";
+    exit 1;
+}
+
+my @parts = ('main','contrib','non-free');
+
+
+
+bindtextdomain ( "pdo", $config{locales} );
+textdomain( "pdo" );
+
+open (DIFF, "diff -u $config{old} $config{new}|") or die "E: Couldn't open diff, $!";
+
+my @newpkg;
+while (<DIFF>) {
+    next unless (/^\+([^+].*)$/);
+    push (@newpkg, $1);
+}
+close (DIFF);
+
+my %db;
+my @results;
+open (DESC, $config{descr}) or die "E: Couldn't open description file $config{descr},$!";
+while (<DESC>) {
+    @results = split (/\t/, $_, 3);
+    $db{$results[0]}{description} = $results[2];
+
+    $results[1] =~ s,^(non-free|contrib)/,,;
+    $results[1] =~ s,^non-US.*$,non-US,,;
+    $db{$results[0]}{section} = $results[1];
+}
+close (DESC);
+
+my @langs = split /\s+/, $config{langs};
+foreach my $lang ( @langs ) {
+    my $locale = get_locale($lang);
+    print "processing language $lang (locale $locale)\n" if $config{verbose};
+    setlocale ( LC_ALL, $locale )
+	or do { warn "W: couldn't set locale $locale, using default\n" unless $config{quiet};
+		setlocale( LC_ALL, get_locale() ) 
+		    or do {
+			warn "W: couldn't set default locale either\n" unless $config{quiet};
+			next if ($lang ne 'en');
+			setlocale( LC_ALL, "C" );
+		};
+	    };
+    my $title = sprintf( gettext( "New Packages in \"%s\"" ), 
+			 $config{component} );
+    my $page = header( $title, '..', '..', $lang );
+    $page .= "\n<ul>\n";
+
+    foreach my $pkg (sort @newpkg) {
+	$page .= sprintf ("<li><a href=\"%s/%s\">%s</a>\n    -- %s",
+			  $db{$pkg}{section}, $pkg, $pkg,
+			  $db{$pkg}{description});
+    }
+    $page .= "\n<ul>\n";
+
+    $page .= "<center><a href=\"allpackages\" title=\"".
+	gettext( "List of all packages" ) ."\">".
+	gettext( "All packages" ) ."</a><br /><small>(<a href=\"allpackages.$lang.txt.gz\">".
+	gettext( "compact compressed textlist" )."</a>)</small></center>\n";
+    $page .= trailer( '..', $fname, $lang, @langs );
+
+    print "Write to $config{output}.$lang.html\n" if $config{verbose};
+    sysopen(FILEH, "$config{output}.$lang.html",
+	    O_WRONLY | O_TRUNC | O_CREAT, 0664)
+	|| die "E: Can\'t open $config{output}.$lang.html: $!";
+    my $now_time = time_stamp();
+    $page =~ s/LAST_MODIFIED_DATE/$now_time/g;
+    print FILEH $page;
+    close FILEH;
+}
