@@ -19,7 +19,7 @@ foreach $l (<ADV>) {
   if ($l =~ /^Debian Security Advisory (DSA-\d+-\d+)/) {
     $dsa = $1;
   }
-  if ($l =~ /^(\w+) (\d+), (\d+)/) {
+  if ($l =~ /^(\w+)\s+(\d+), (\d+)/) {
     $month = $1; $day = $2; $year = $3;
     while ($i < 12) {
       if ($month eq $longmoy{en}[$i]) {
