@@ -2,10 +2,9 @@
 
 # This script copies the file named on the command line to the translation
 # named in language.conf, and adds the translation-check header to it.
-# It also will create the destination directory if necessary, and copy the
-# Makefile from the source. If the second line of the language.conf file
-# contains the word "sync", a simple Makefile which just includes the English
-# version will be created instead.
+# It also will create the destination directory if necessary, and create the
+# Makefile.  It will do this by simply including the English version -- copied
+# Makefiles are not supported anymore for they bear too much space for errors.
 
 # Originally written 2000-02-26 by Peter Karlsson <peterk@debian.org>
 # © Copyright 2000-2002 Software in the public interest, Inc.
@@ -16,7 +15,6 @@
 use File::Path;
 
 # Get configuration
-$copymakefile = 1;
 if (exists $ENV{DWWW_LANG}) 
 {
      $language = $ENV{DWWW_LANG};
@@ -28,8 +26,6 @@ elsif (open CONF, "<language.conf")
 		next if /^#/;
 		chomp;
 		$language = $_, next unless defined $language;
-		$copymakefile = 1 if $_ eq 'copy';
-		$copymakefile = 0 if $_ eq 'sync';
 	}
 }
 else
@@ -144,19 +140,11 @@ sub copy
 			or die "Could not create $dstdir: $!\n";
 		if ( -e $srcmake )
 		{
-			if ($copymakefile)
-			{
-				print "creating it and copying $srcmake\n";
-				system "cp $srcmake $dstmake";
-			}
-			else
-			{
-				print "creating it and making a $dstmake\n";
-				open MK, "> $dstmake"
-					or die "Could not create $dstmake: $!\n";
-				print MK "include \$(subst webwml/$language,webwml/english,\$(CURDIR))/Makefile\n";
-				close MK;
-			}
+			print "creating it and making a $dstmake\n";
+			open MK, "> $dstmake"
+				or die "Could not create $dstmake: $!\n";
+			print MK "include \$(subst webwml/$language,webwml/english,\$(CURDIR))/Makefile\n";
+			close MK;
 		}
 	}
 
