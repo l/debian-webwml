@@ -83,6 +83,11 @@ q = db.query("SELECT id FROM places WHERE finish < 'now'::date")
 for place in map(lambda x: x[0], q.getresult()):
     expire_place(db, place)
 
+# While we are it, also set begin fields that have gone by to null.
+# This is useful so a entry like "from 2002-11-26 to 2005-03-12"
+# appears as "until 2005-03-12" after 2002-11-26.
+db.query("UPDATE places SET begin = NULL WHERE begin <= 'now'::date")
+
 # vim:set ts=4:
 # vim:set expandtab:
 # vim:set shiftwidth=4:
