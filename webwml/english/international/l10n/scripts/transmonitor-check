@@ -314,14 +314,18 @@ PKG: while ($dsc = shift @pkg_list){
     ### unpack it
     ###
     $res = unpack_pkg($dsc,$pkg,$ver);
-    write_data("$DB_FILE",\%data) if $careful;
     if ($res) { # badly unpacked
 	push @errors_pkg, $pkg;
 	next PKG; 
     }
 
     check_pkg($pkg,$ver);
-    chdir ($cwd) || die "can't return to the origine dir!";
+    chdir ($cwd) || die "can't return to the origine dir!"; 
+    if ($careful) {
+	write_data("$DB_FILE",\%data);
+    } else {
+	$tosave=1; #ok, we've done something, we have to save the db
+    }   
 }
 
 ##
@@ -331,8 +335,8 @@ my $username ="anonymous";
 my $password = "mquinson\@ens-lyon.fr";
 my %sources;
  FTP: while ($arg = shift @ftp_list){
-     my $ftp_try=0;#number of try on this site
-       FTPTRY: #We will come back here each time we can't switch to ascii (max:5 times)
+   FTPTRY: #We will come back here each time we can't switch to ascii 
+           # (I suppose we've got a timeout on the ftp)
      print "\n# $arg\n";
      $arg =~ m,^ftp:/([^/]*)/([^/]*)/(.*)$,;
      my $ftpsite = $1;
@@ -434,9 +438,8 @@ my %sources;
        print "  Checking $pkg v$sources{$pkg}{'version'} ...";flush STDOUT;
        $sources{$pkg}{"directory"} = $ftp_root.'/'.$sources{$pkg}{"directory"};
        $res = ftp_unpack_pkg($pkg,\%{$sources{$pkg}});
-       write_data("$DB_FILE",\%data) if $careful;
-       if ($res==2 && ($ftp_try++)<10) { #can't switch to ascii.
-	   goto FTP_TRY;
+       if ($res==2) { #can't switch to ascii.
+	   goto FTPTRY;
        }
        if ($res) { # badly unpacked (other reason or maximal retry count reached)
 	   print " failed\n";
@@ -445,9 +448,13 @@ my %sources;
        }
        
        
-       $tosave=1;#ok, we've done something, we have to save the db
        check_pkg($pkg,$sources{$pkg}{"version"});
        chdir ($cwd) || die "can't return to the origine dir!";
+       if ($careful) {
+	   write_data("$DB_FILE",\%data);
+       } else {
+	   $tosave=1; #ok, we've done something, we have to save the db
+       }   
        print " done\n";
    }
 }
