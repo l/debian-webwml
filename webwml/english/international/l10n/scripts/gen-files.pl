@@ -81,6 +81,25 @@ foreach my $pkg ($data->list_packages()) {
         }
 }
 
+sub transform_translator {
+        my $name = shift or return "";
+        #  Some translators forget the right angle bracket
+        $name =~ s/\s*<.*//;
+        $name =~ s/&(?!#)/&amp;/g;
+        $name = 'DDTP' if $name eq 'Debian Description Translation Project';
+        return $name;
+}
+
+sub transform_team {
+        my $name = shift or return "";
+        $name =~ s/.*<//;
+        $name =~ s/>.*//;
+        $name =~ s/@/ at /g;
+        $name =~ s/\./ dot /g;
+        $name =~ s/&(?!#)/&amp;/g;
+        return $name;
+}
+
 sub get_stats_po {
         my ($section, $packages) = @_;
         my ($pkg, $line, $lang, %list);
@@ -107,16 +126,8 @@ sub get_stats_po {
                 foreach $line (@{$data->po($pkg)}) {
                         my ($pofile, $lang, $stat, $link,$translator,$team) = @{$line};
                         $link =~ s/:/\%3a/g;
-		        $translator ||= "";
-		        $team ||= "";
-			#  Some translators forget the right angle bracket
-		        $translator =~ s/\s*<[^>]*>?//;
-		        $translator =~ s/&(?!#)/&amp;$1/g;
-		        $translator = 'DDTP' if $translator eq 'Debian Description Translation Project';
-		        $team =~ s/^[^<]*<([^>]*)>.*$/$1/g;
-		        $team =~ s/@/ at /g;
-		        $team =~ s/\./ dot /g;
-		        $team =~ s/&(?!#)/&amp;$1/g;
+                        $translator = transform_translator($translator);
+                        $team = transform_team($team);
                         if ($lang eq '_') {
 			        # FIXME: This wont work since the stats about the pot files are not in the DB
 			        if ($stat =~ m/(\d+)u/) {
@@ -474,8 +485,7 @@ sub get_stats_podebconf {
                         my ($pofile, $lang, $stat, $link,$translator) = @{$line};
                         next if $lang eq '_';
 		    
-		        $translator ||= "";
-		        $translator =~ s/<[^>]*>//;
+                        $translator = transform_translator($translator);
 
                         $pofile =~ s#^debian/po/##;
                         $link =~ s/:/\%3a/g;
