@@ -10,13 +10,19 @@ GETTEXTFILES += others.mo
 
 include $(WMLBASE)/Make.lang
 
+ifeq "$(LANGUAGE)" "zh"
+all:: $(foreach sl,$(SUBLANG),subscribe.$(LANGUAGE)-$(sl).html unsubscribe.$(LANGUAGE)-$(sl).html )
+install:: $(foreach sl,$(SUBLANG),$(HTMLDIR)/subscribe.$(LANGUAGE)-$(sl).html $(HTMLDIR)/unsubscribe.$(LANGUAGE)-$(sl).html )
+else
 all:: subscribe.$(LANGUAGE).html unsubscribe.$(LANGUAGE).html
+install:: $(HTMLDIR)/subscribe.$(LANGUAGE).html $(HTMLDIR)/unsubscribe.$(LANGUAGE).html
+endif
+
 clean::
 	rm -f subscribe.wml unsubscribe.wml 
 ifeq "$(LANGUAGE)" "en"
 	rm -f lists.cfg
 endif
-install:: $(HTMLDIR)/subscribe.$(LANGUAGE).html $(HTMLDIR)/unsubscribe.$(LANGUAGE).html
 
 mklist := $(ENGLISHDIR)/$(CUR_DIR)/mklist
 lists.cfg := $(ENGLISHDIR)/$(CUR_DIR)/lists.cfg
