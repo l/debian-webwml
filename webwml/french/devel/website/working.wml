@@ -1,5 +1,111 @@
-#use wml::debian::template title="Comment travailler sur les pages du site Debian"
-#use wml::debian::translation-check translation="1.4" translation_maintainer="Denis Barbier"
+#use wml::debian::template title="Travailler sur les pages du site Debian"
+#use wml::debian::translation-check translation="1.9" translation_maintainer="Denis Barbier"
+
+<h2>Informations générales</h2>
+
+<h3>Ressources nécessaires</h3>
+
+<p>Si vous voulez travailler sur notre site web, vous devez vous
+préparer à accueiller au moins 60 Mo de données sur votre disque dur. Ce
+chiffre reflète l'état actuel de l'archive. Si vous reconstruisez
+(accidentellement) toutes les pages, vous aurez besoin d'au moins du
+double de place. Et si vous ne récupérez qu'une partie des sources, vous
+aurez besoin de nettement moins d'espace, par exemple 18 Mo pour le
+répertoire english/.
+
+<h3>Récupération partielle</h3>
+
+<p>Beaucoup de personnes n'auront pas besoin de toute l'arborescence CVS
+sous <code>webwml</code>, ce qui peut occasionner des fichiers manquants
+et entrainer des erreurs à la compilation, au cas où un fichier
+important a été ajouté et qu'on n'a pas fait de <kbd>cvs update</kbd>
+dans le répertoire. Veuillez vérifier que vous avez bien tous les
+fichiers nécessaires (comme les fichiers .wmlrc) avant de vous plaindre
+à nous.
+
+<h3>Puis-je modifier la version anglaise ?</h3>
+
+<p>Cela dépend. Si vous voyez une petite erreur, comme une faute de
+frappe, corrigez-la.
+
+<p>Si vous vous rendez compte qu'une information est manquante, vous
+pouvez aussi la corriger.
+
+<p>Si vous pensez que quelque chose ne va pas et doit être réécrit,
+dites-le sur debian-www afin que cela soit discuté. Nous serons
+certainement d'accord avec vous.
+
+<H3>Quand on ajoute de nouveaux répertoires, ajouter aussi le Makefile&nbsp;!</H3>
+
+<P>Il faut faire attention quand on ajoute un nouveau répertoire au CVS.
+Si le répertoire courant est indiqué dans ../Makefile, alors il
+<b>faut</b> créer un Makefile dans ce répertoire ; sinon <tt>make</tt>
+affichera un message d'erreur.
+
+<h3>Ce lien ne semble pas marcher, dois-je le changer ?</h3>
+
+<p>À cause de la façon dont les serveurs web sont configurés (utilisant
+<a href="content_negotiation">la négociation de contenu</a>),
+vous ne devriez pas avoir besoin de changer les liens du site.
+En fait, nous vous suggérons de ne jamais le faire. Écrivez à debian-www
+si vous pensez qu'un lien est cassé avant de le changer.
+
+<h3>Correction des liens</h3>
+
+<p>Si vous trouvez un lien vers un site externe qui renvoie une
+redirection (301, 302, redirection par &lt;meta&gt; ou une page disant
+que « This page has moved. »), merci de le signaler sur debian-www.
+
+<p>Si vous trouvez un lien cassé (404, 403, ou une page qui n'est
+manifestement pas celle indiquée dans le lien), veuillez le corriger et
+en informer debian-www afin d'avertir les traducteurs. Ou alors corrigez
+aussi le lien pour toutes les traductions, en faisant attention de
+mettre à jour la ligne <code>#use wml::debian::translation-check</code>.
+
+<h3>Chercher les READMEs dans les répertoires anglais</h3>
+
+<p>Certains répertoires contiennent un fichier README qui peut vous
+aider à comprendre comment ce répertoire est organisé. Ils peuvent
+fournir des informations utiles lorsqu'on travaille dans ces
+répertoires.
+
+<h3>Que sont ces lignes commençant par «&nbsp;#&nbsp;» ?</h3>
+
+<p>Avec wml, une ligne commençant par «&nbsp;#&nbsp;» est un
+commentaire. Ils sont utilisés de préférence aux commentaires HTML, car
+ils n'apparaissent pas dans le code produit.
+
+<h3>Que sont ces fichiers truc.def et truc.data ?</h3>
+
+<p>Afin de faciliter la maintenance des traductions à jour, nous
+séparons les parties génériques (données) du texte sur certaines pages.
+Les traducteurs ne doivent copier et traduire que la partie textuelle,
+les données seront ajoutées automatiquement.
+
+<p>Les bouts dans le fichier de données seront mis à jour de façon très
+irrégulière, un message est habituellement envoyé sur debian-www quand
+cela se produit.
+
+<p>Un exemple peut être utile à mieux comprendre ; la liste des vendeurs
+est générée par trois fichiers:
+<p><dl compact>
+  <dt><code>vendors.wml</code>:
+      <dd>Le texte en haut de la page sur les vendeurs est dans ce fichier.
+      Une traduction devrait être placée dans votre répertoire.
+  <dt><code>vendors.CD.def</code>:
+      <dd>Celui-ci contient tous les morceaux de texte qui sont nécessaires
+      à chaque entrée dans la liste. Les traductions doivent être mises
+      directement dans l'original, qui est
+      english/distrib/vendors.CD.def.
+  <dt><code>vendors.CD</code>:
+      <dd>Ce fichier contient les données relatives aux vendeurs, qui
+      sont indépendantes de la langue, il ne doit donc pas être traduit.
+</dl>
+
+<p>Les nouveaux vendeurs sont ajoutés par un des webmestres qui modifie
+vendors.CD. La prochaine fois que les pages sont mises à jour, toutes
+les traductions seront automatiquement reconstruites (une mise à jour
+gratuite&nbsp;! :-)
 
 <h2>Ajouter de nouvelles pages</h2>
 
@@ -7,6 +113,7 @@
 consistant à mettre le bon en-tête et la bonne fin de page est déjà fait
 en utilisant WML. Tout ce que vous avez besoin de faire est d'inclure une
 ligne telle que la suivante en haut d'un nouveau fichier:
+
 <pre><protect>
 #use wml::debian::template title="TITRE DE LA PAGE"
 </protect></pre>
@@ -29,6 +136,10 @@ disponibles actuellement et leurs fonctions sont:
 <dt>NOHEADER="true"
 	<dd>Enlève l'entête initial de la page. Un entête spécial
         peut, bien entendu, être inclus dans le corps.
+<dt>NOMIRRORS="true"
+	<dd>Enlève la liste des miroirs de la page. Il n'est
+        généralement pas recommandé de l'utilisé, à part pour quelques
+        pages.
 <dt>NOHOMELINK="true"
 	<dd>Enlève le lien en bas de la page qui permet de revenir
         à la page Debian principale.
