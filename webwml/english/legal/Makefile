@@ -4,7 +4,7 @@
 
 WMLBASE=..
 CUR_DIR=legal
-SUBS=
+SUBS=licenses
 
 include $(WMLBASE)/Make.lang
 
