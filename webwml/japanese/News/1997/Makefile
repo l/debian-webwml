@@ -20,5 +20,7 @@ index.$(LANGUAGE).html: index.wml $(wildcard 1997*.wml) $(TEMPLDIR)/template.wml
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/news.wml
 	$(WML) $(<F)
 
+ifeq ($(LANGUAGE),en)
 install::
-	install -m664 common_library linux_press_book.txt $(HTMLDIR)
+	-install -m664 common_library linux_press_book.txt $(HTMLDIR)
+endif
