@@ -10,8 +10,9 @@ NOGENERICINSTDEP := true
 include $(WMLBASE)/Make.lang
 
 $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
+	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
 	@echo copying $(@F) to $(HTMLDIR)
-	-@cp $(@F) $(HTMLDIR)
+	-@install -m 664 -p $(@F) $(HTMLDIR)
 ifeq "$(LANGUAGE)" "sv"
 	@echo making a link $(@D)/$(*F).html -\> $(@F)
 	@ln -sf $(@F) $(@D)/$(*F).html
