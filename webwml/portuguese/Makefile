@@ -54,7 +54,7 @@ endif
 
 all:: sitemap.$(LANGUAGE).html
 
-install::
+install:: $(HTMLDIR)/sitemap.$(LANGUAGE).html
 	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
 ifneq "$(LANGUAGE)" "en"
 	-install -m 664 -p sitemap.$(LANGUAGE)*.html $(HTMLDIR)
