@@ -9,6 +9,7 @@ $/="\n\n";
 # Delete \n except comment line and last \n in paragraph
 s/\n([^\#])/ $1/g;
 s/ $/\n/g;
+s/  */ /g;
 
 #
 # Descriptions
@@ -54,6 +55,14 @@ s{<define-tag description>([^<]*)insufficient input validation([^<]*)</define-ta
 # exploit
 # vyu¾ít
 
+s{An attacker could create a carefully crafted image file in such a way that it could cause an application linked with imlib or imlib2 to execute arbitrary code when the file was opened by a victim\.}
+{Útoèník mù¾e vytvoøit peèlivì zhotovený soubor obrázku, který pak
+zpùsobí u aplikace slinkované s imlib nebo imlib2 spu¹tìní libovolného
+kódu, kdy¾ obì» tento soubor otevøe.}g;
+
+# s{A cross-site scripting vulnerability}
+# {}g;
+
 s{Several vulnerabilities have been discovered in}
 {Bylo objeveno nìkolik zranitelností v}g;
 
@@ -72,9 +81,25 @@ s{The Common Vulnerabilities and Exposures project}
 s{identifies the following problems}
 {zjistil následující problémy}g;
 
+s{Multiple heap-based buffer overflows\.}
+{Mnohonásobná pøeteèení bufferu typu halda (heap).}g;
+
+s{No such code is present in (\w+)\.}
+{Tento kód není obsa¾en v ${1}.}g;
+
+s{([Mm])ultiple integer overflows}
+{${1}nohonásobná celoèíselná pøeteèení}g;
+
+s{in (\w+) library}
+{v knihovnì ${1}}g;
+
 #
-# More info about programs
+# info about packages
 #
+
+# libTIFF
+s{the Tag Image File Format library for processing TIFF graphics files}
+{knihovnì Tag Image File Format pro zpracování grafických souborù TIFF}g;
 
 s{a picture viewer for X11 with a thumbnail-based selector}
 {programu pro prohlí¾ení obrázkù pro X11 s výbìrem z miniatur}g;
@@ -96,6 +121,18 @@ s{the archiver for .zip files}
 # pcal
 s{a program to generate Post([sS])cript calendars}
 {programu generujícího Post${1}cript kalendáøe}g;
+
+s{a full text search engine}
+{fulltextovém vyhledávacím stroji}g;
+
+# imlib
+s{imaging libraries for X11}
+{obrazových knihovnách pro X11}g;
+
+s{an imaging library for X and X11}
+{obrazové knihovnì pro X a X11}g;
+
+
 
 #
 # other info
