@@ -285,7 +285,7 @@ foreach $lang (@search_in) {
 			$o_body .= sprintf "<td>%s</td>", $version{"$orig/$file"};
 			$o_body .= sprintf "<td>%s</td>", $msg;
 			$o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/$orig/%s.wml.diff\?r1=%s\&amp;r2=%s\&amp;cvsroot=webwml\&amp;diff_format=%s\">%s -> %s</a></td>", $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $config{'difftype'}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
-			$o_body .= sprintf "<td align=center>%s</td>", $maintainer{"$lang/$file"}||"?";
+			$o_body .= sprintf "<td align=center>%s</td>", $maintainer{"$lang/$file"} || "";
 			$o_body .= "</tr>\n";
     			$outdated{$lang}++;
 		# Up-to-date translations
