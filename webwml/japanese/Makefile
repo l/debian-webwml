@@ -34,9 +34,9 @@ $(SITEMAP): $(ENGLISHDIR)/sitemap.wml \
   $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/releases/info $(ENGLISHDIR)/MailingLists/mklist.tags
 ifeq "$(LANGUAGE)" "zh"
-	$(shell echo $(WML) | sed s/:.zh/:sitemap.zh/g) \
-          $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml \
-            $(shell egrep '^-D (CUR_|CHAR)' .wmlrc)
+	$(subst :.zh,:sitemap.zh,$(WML)) \
+          $(shell egrep '^-D (CUR_|CHAR)' .wmlrc) \
+            $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml
 	@echo -n " * Converting: [zh_CN.GB2312], "
 	@$(B5TOGB) < sitemap.zh-cn.html.tmp > sitemap.zh-cn.html
 	@rm -f sitemap.zh-cn.html.tmp
