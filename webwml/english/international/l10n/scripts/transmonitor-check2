@@ -381,7 +381,11 @@ sub parse_tarball {
                 debug       => 0,
                 patch_debug => 0,
         );
-        return undef unless $deb;
+        unless ($deb) {
+                $data->clear_pkg($pkg);
+                warn "Package $pkg skipped because some file could not be retrieved\n";
+                return undef;
+        }
 
         $data->upstream($pkg, "other")
                 if $deb->get_diff_name() ne '';
