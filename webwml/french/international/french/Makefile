@@ -8,7 +8,7 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-CTDOCFILES := a-relire.$(LANGUAGE).html a-reviser.$(LANGUAGE).html en-cours.$(LANGUAGE).html a-traduire.$(LANGUAGE).html ok.$(LANGUAGE).html
+CTDOCFILES := a-relire.$(LANGUAGE).html a-reviser.$(LANGUAGE).html en-cours.$(LANGUAGE).html a-traduire.$(LANGUAGE).html non-disponible.$(LANGUAGE).html ok.$(LANGUAGE).html
 
 CTWEBFILES := www-a-relire.$(LANGUAGE).html www-a-reviser.$(LANGUAGE).html www-en-cours.$(LANGUAGE).html www-a-traduire.$(LANGUAGE).html
 
@@ -34,6 +34,7 @@ $(CTDOCFILES): docpages.src documents-bd.pl doccurrent_status.pl
   -o "(UNDEF+$(LANGUAGECAP)-CT_*)+CT_OUT:a-reviser.$(LANGUAGE).html@g+w" \
   -o "(UNDEF+$(LANGUAGECAP)-CT_*)+CT_CHECK:a-relire.$(LANGUAGE).html@g+w" \
   -o "(UNDEF+$(LANGUAGECAP)-CT_*)+CT_WIP:en-cours.$(LANGUAGE).html@g+w" \
+  -o "(UNDEF+$(LANGUAGECAP)-CT_*)+CT_FUTURE:non-disponible.$(LANGUAGE).html@g+w" \
   -o "(UNDEF+$(LANGUAGECAP)-CT_*)+CT_OK:ok.$(LANGUAGE).html@g+w" \
   docpages.src
 
