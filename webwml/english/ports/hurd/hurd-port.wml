@@ -193,4 +193,56 @@ to do so. But think (at least) thrice! before doing so. In <em>most</em>
 situations, this is completely unnecessary and will create more problems
 than it may solve. Better ask on the mailing list how to do it right if
 you can't think of a better solution.
+
+<li><code>sys_errlist[]</code> vs. <code>strerror()</code></li>
+<p>If a program has only support for <code>sys_errlist[]</code> you will
+have to do some work to make it compile on the Hurd, which has dropped
+support for it and does only provide <code>strerror()</code>. Steinar Hamre
+writes about <code>strerror():</p>
+<blockquote>
+<p><code>strerror()</code> should be used because:
+<ul><li>It is the modern, POSIX way.</li>
+<li>It is localized.</li>
+<li>It handles invalid signals/numbers out of range. (better errorhandling
+and not a buffer-overflow-candidate/security risk)</li>
+</ul></p>
+<p>
+<code>strerror()</code> should always be used if it is available.
+Unfortunaly there are still some <em>old</em> non-POSIX systems
+that do not have <code>strerror()</code>, only
+<code>sys_errlist[]</code>.</p>
+<p>
+Today, only supporting <code>strerror()</code> is far better than only supporting
+<code>sys_errlist[]</code>. The best (from a portability viewpoint), however is
+supporting both. For <code>configure.in</code>, you will need:
+</p>
+<code>AC_CHECK_FUNCS(strerror)</code></p>
+<p>
+<code>config.h.in</code>:</p>
+<p>
+<code>#undef HAVE_STRERROR</code></p>
+<p>
+Then something like:
+<pre>
+        #ifndef HAVE_STRERROR
+        static char *
+        private_strerror (errnum)
+             int errnum;
+        {
+          extern char *sys_errlist[];
+          extern int sys_nerr;
+
+          if (errnum > 0 && errnum <= sys_nerr)
+            return sys_errlist[errnum];
+          return "Unknown system error";
+        }
+        #define strerror private_strerror
+        #endif /* HAVE_STRERROR */
+</pre></p>
+<p>
+You can for example look in the latest fileutils (the above is a simplified
+version of what I found there.) Patches should of course be sent to upstream
+maintainers, this is very useful even for systems with a working
+<code>sys_errlist[]</code>.</p></blockquote></li>
+
 </UL>

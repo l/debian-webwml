@@ -20,9 +20,8 @@ so I don't forget important stuff.
 <LI>GNU Mach
 	<UL>
 	<LI>Support for Linux Character Devices (needed for X) is missing.</LI>
-	<LI>Coprocessor emulation code is broken and not free anyway. Needs to be
-	    ported from Linux. This means you need a coprocessor or a recent
-	    processor to boot the Hurd!</LI>
+	<LI><a href="#fpe" name="TOC_fpe">Floating point emulator code</a>
+	is broken and non-free.
 	<LI>Use Corba instead MiG (?).</LI>
 	<li>The official task list from CVS:
 <pre>
@@ -122,10 +121,19 @@ proposed microkernel work there as well as with thomas@gnu.ai.mit.edu.
 	</UL>
 <LI>GNU Hurd
 	<UL>
+	<li>The <a href="#pfinet" name="TOC_pfinet"><code>pfinet</code>
+	server</a> does not provide a local network if no network device
+	is available.</li>
 	<LI>Disk partition size is limited by Memory Mapping (about 1 GB)</LI>.
 	<LI>Support for multiple network interfaces.</li>
 	<LI>PPP is missing (depends on character device drivers, too).</LI>
 	<LI>Needs to be profiled for performance.</LI>
+	<lI>Collect bugs of the <code>nfsd</code> server. It partially
+	works, but there are definitely problems in it.</li>
+	<li>exec server can't run gzip and bzip2 executables. Nothing is
+	known about this bug. It doesn't seem to be a bug in the exec server
+	itself, because it seems to unzip and start the program. OKUJI says,
+	<code>S_exec_exec</code> returns successfully.</li>
 	<LI>The official Hurd task list fresh from CVS (3 Jul 1999):
 <pre>
 General system work
@@ -192,6 +200,8 @@ Hurd work (these are brief descriptions; thomas can give more information):
 	<tt>rename("foo", "bar/")</tt>.</li>
 	<LI>Network Monitoring Tools!</li>
 	<lI><net/*.h> and support for these ioctls().</li>
+	<li>Implement functional code for the stubs in
+	<code>gnu/stubs.h</code></li>
 	<li>The official task list:
 <pre>
 C library work.  See roland@gnu.ai.mit.edu if you are interested in working
@@ -207,7 +217,8 @@ on anything in the C library.
 	<UL>
 	<LI>dpkg and dpkg-architecture!</LI>
 	<LI>SysV Init emulation. (Almost done).</LI>
-	<LI>Port Linux syslogd.</li>
+	<LI>Port Linux <code>syslogd</code>.</li>
+	<li>Port <a href="#fdisk" name="TOC_fdisk"><code>fdisk</code></a>.</li>
 	<LI>Build daemon.</LI>
 	<LI>Smarter handling of Architectures via Depends.</LI>
 	<LI><a href="hurd-port">Port more packages</a>.</li>
@@ -217,3 +228,50 @@ on anything in the C library.
 	<li>iso9660 support for installation cd's.</li>
 	</ul>
 </UL>
+
+<h2>More Infos On Particular Tasks</h2>
+
+<h3>GNU Mach</h3>
+
+<a href="#TOC_fpe" name="fpe"><h4>Floating Point Emulator Code</h3></a>
+<p>
+GNU Mach currently contains an Intel-proprietary floating point
+emulator.  We don't have the source code for it (<code>fpe.o</code>
+is uudecoded from <code>gnumach/i386/i386/fpe.b_elf</code>).
+Even worse, it doesn't work. <tt>:(</tt></p>
+<p>
+This is the reason why machines without an FPU (such as 486SX
+machines) cannot boot the Hurd.  If anybody has the time or energy to
+port the Linux or BSD fpu's to gnumach, please do so... this would be
+a valuable contribution that would enable people with older hardware
+(which make cheap second machines) to run the Hurd.</p>
+<p>
+If you're willing to take on this work, please send mail to the
+<a href="hurd-contact">developer list</a> or
+<a href="mailto:gord@trick.fig.org">Gordon Matzigkeit</a> if you'd
+rather discuss this privately.</p>
+
+<h3>The Hurd</h3>
+
+<a href="#TOC_pfinet" name="pfinet"><h4><code>pfinet</code> server and Local Network</h4></a>
+<p>
+Even if there is no network device available, <code>settrans
+/servers/socket/2 /hurd/pfinet</code> should at least provide a local
+network (try with <code>ping 127.0.0.1</code>). This doesn't work.</p>
+<p>
+Find out which bug in the Hurd, glibc or GNU Mach is preventing this from
+working and find a fix.</p>
+
+<h3>Debian</h3>
+
+<a href="#TOC_fdisk" name="fdisk"><h4><code>fdisk</code></h4></a>
+<p>
+There is an old version of <code>fdisk</code> on alpha.gnu.org, but this
+should not be used anymore. Yoshinori says:</p>
+<p><blockquote>
+<code>fdisk</code> will not detect the geometry of a drive automatically,
+and the original <code>fdisk</code> is quite old. I think
+<code>storeio</code> should support the <code>V_GETPARMS
+device_get_status</code> call and then <code>fdisk</code> should use the
+call to detect the geometry before you make the <code>fdisk</code> package,
+because that should make trouble if the user sets the geometry manually.</p>
