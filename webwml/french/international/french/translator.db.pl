@@ -37,6 +37,15 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
+                'Mohammed Adnène Trojette' => {
+                       email           => 'adn@via.ecp.fr',
+                       summary         => 3,
+                       logs            => 3,
+                       diff            => 3,
+                       tdiff           => 0,
+                       file            => 0,
+                       compress        => 'none'
+                },
                 'Denis Barbier' => {
                         email       => 'barbier@imacs.polytechnique.fr',
                         summary     => 3,
@@ -261,15 +270,6 @@ sub init_translators {
                         tdiff       => 0,
                         file        => 0,
                         compress    => 'none'
-                },
-                'Mohammed Adnène Trojette' => {
-                       email           => 'adn@via.ecp.fr',
-                       summary         => 3,
-                       logs            => 3,
-                       diff            => 3,
-                       tdiff           => 0,
-                       file            => 0,
-                       compress        => 'none'
                 },
                 # Below are special users, used to handle special cases
                 #     default:      default values
