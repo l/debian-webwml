@@ -309,6 +309,7 @@ PKG: while ($dsc = shift @pkg_list){
     ### unpack it
     ###
     $res = unpack_pkg($dsc,$pkg,$ver);
+    write_data("$DB_FILE",\%data) if $careful;
     if ($res) { # badly unpacked
 	push @errors_pkg, $pkg;
 	next PKG; 
@@ -316,7 +317,6 @@ PKG: while ($dsc = shift @pkg_list){
 
     check_pkg($pkg,$ver);
     chdir ($cwd) || die "can't return to the origine dir!";
-    write_data("$DB_FILE",\%data) if $careful;
 }
 
 ##
@@ -425,10 +425,10 @@ my %sources;
        print "  Checking $pkg v$sources{$pkg}{'version'} ...";flush STDOUT;
        $sources{$pkg}{"directory"} = $ftp_root.'/'.$sources{$pkg}{"directory"};
        $res = ftp_unpack_pkg($pkg,\%{$sources{$pkg}});
+       write_data("$DB_FILE",\%data) if $careful;
        if ($res) { # badly unpacked
 	   print " failed\n";
 	   chdir ($cwd) || die "can't return to the origine dir!";
-	   $data{$pkg}=();
 	   next FTPPKG; 
        }
        
@@ -436,7 +436,6 @@ my %sources;
        $tosave=1;#ok, we've done something, we have to save the db
        check_pkg($pkg,$sources{$pkg}{"version"});
        chdir ($cwd) || die "can't return to the origine dir!";
-       write_data("$DB_FILE",\%data) if $careful;
        print " done\n";
    }
 }
@@ -474,8 +473,11 @@ sub unpack_pkg{
 	or &error ("Can't cd to tmp dir '$TMP_DIR' : $!");
 
     #extract
-    if (system("dpkg-source -x $path")) {
-	&warn ("Error while unpacking; skipping the package '$pkg'");
+    my @lines=qx,dpkg-source -x $path 2>&1 1>/dev/null,;
+    if ($?) {
+	&warn ("Error while unpacking");
+	$data{$pkg}{"version"}=$version;
+	add_part($pkg,"errors","Error of dpkg-source: can't unpack the source\n".join("\n ",@lines));
 	return 1;
     }
     my $ver=$version;
@@ -535,9 +537,11 @@ sub ftp_unpack_pkg{
     print " [dl'ed]";flush STDOUT;
 
     #extract
-
-    if (system("dpkg-source -x $dscfile 1>/dev/null")) {
-	&warn ("Error while unpacking; skipping the package $pkgname.");
+    my @lines=qx,dpkg-source -x $dscfile 2>&1 1>/dev/null,;
+    if ($?) {
+	&warn ("Error while unpacking");
+	$data{$pkgname}{"version"}=$pkg{"version"};
+	add_part($pkgname,"errors","Error of dpkg-source: can't unpack the source:\n".join("\n ",@lines));
 	return 1;
     }
     my $ver=$pkg{"version"};
@@ -768,7 +772,7 @@ The message was $msg\n");
 }
 
 #----[ search_templates ]-------------------------------------------------------
-# handel debconf templates
+# handle debconf templates
 sub search_templates {
     my $pkg = shift;
 
@@ -795,7 +799,7 @@ sub search_templates {
 	    my @lines = qx,debconf-mergetemplate $file $dir/dtc-tmp 2>&1 1>$dir/dtc-tmp2 && mv $dir/dtc-tmp2 $dir/dtc-tmp,;
 	    if ($?){
 		add_part($pkg,"errors",
-			 "Error of debconf-mergetemplate for file $file\n".join('\n ',@lines));
+			 "Error of debconf-mergetemplate for file $file\n".join("\n ",@lines));
 	    }
 	}
 
@@ -825,7 +829,7 @@ sub search_templates {
 	    $filename =~ s,:,\%3a,;
 	    $filename =~ s,/,_,g;
 	    
-	    if (system("debconf-getlang $lang $dir/dtc-tmp|gzip -c9 - > $TEMPLATES_ROOT/$pkg/$filename.gz")){
+	    if (system("debconf-getlang $lang $dir/templates $dir/templates.*|gzip -c9 - > $TEMPLATES_ROOT/$pkg/$filename.gz")){
 		warn "Can't gunzip $dir/templates.$lang to $TEMPLATES_ROOT/$pkg/$filename.gz : $!\n";
 	    }
 	    unless (is_lang($lang)) {
