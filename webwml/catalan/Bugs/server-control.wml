@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - servidor de control" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.21"
+#use wml::debian::translation-check translation="1.22"
 
 <h1>Introducció al servidor de correu de control i manipulació d'errors</h1>
 
@@ -110,6 +110,29 @@ notificació a l'usuari que va reportar l'error.</p>
 <p>Pels <A href="Developer#severities">seus significats</A> si us
 plau consulteu la documentació general del sistema d'errors pels
 desenvolupadors.
+
+<dt><code>clone</code> <var>número-d'error</var> [ <var>noves ID</var> ]
+
+  <dd>L'ordre de control clone vos permet duplicar un informe d'error. És
+  útil en el cas de que un sol informe d'error parli de múltiples errades.
+  "<var>Noves ID</var>" són números negatius, separats per espais, que es
+  poden usar en ordres de control subsequents per a referir-se als nous
+  informes duplicats. Es genera un informe nou per cada nova ID.
+
+  <p>Exemple d'ús:</p>
+
+  <pre>
+        clone 12345 -1 -2
+        reassign -1 foo
+        retitle -1 foo: foo sucks
+        reassign -2 bar
+        retitle -2 bar: bar sucks when used with foo
+        severity -2 wishlist
+        clone 123456 -2
+        reassign -2 foo
+        retitle -2 foo: foo sucks
+        merge -1 -2
+  </pre>
 
 <dt><code>merge</code> <var>número-d'error</var> <var>número-d'error</var> ...
 <dd>
