@@ -12,3 +12,6 @@ $(HTMLFILES): $(ENGLISHSRCDIR)/ports/mips/menu.inc $(TEMPLDIR)/submenu.wml $(TEM
 
 index.$(LANGUAGE).html: $(ENGLISHSRCDIR)/ports/mips/menu.inc $(ENGLISHSRCDIR)/ports/mips/people.inc \
 	$(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml
+
+cpu.$(LANGUAGE).html: $(ENGLISHSRCDIR)/ports/mips/menu.inc $(ENGLISHSRCDIR)/ports/mips/cpu.data \
+	$(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml
