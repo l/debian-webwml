@@ -11,7 +11,6 @@ include $(WMLBASE)/Make.lang
 
 organization.$(LANGUAGE).html: organization.wml \
   $(ENGLISHSRCDIR)/intro/organization.data \
-  $(ENGLISHSRCDIR)/intro/organization.tags \
   $(ENGLISHDIR)/MailingLists/lists.cfg \
   $(TEMPLDIR)/language_names.wml \
   $(TEMPLDIR)/common_tags.wml
