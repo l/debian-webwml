@@ -49,13 +49,27 @@ if ($#ARGV == -1)
 	exit;
 }
 
+# Check destination character encoding
+my $charset = 'iso-8859-1';
+if (open WMLRC, "$language/.wmlrc")
+{
+	while (<WMLRC>)
+	{
+		if (/^-D CHARSET=(.*)$/)
+		{
+			$charset = lc($1);
+			last;
+		}
+	}
+}
+
 # Loop over command line
 foreach $page (@ARGV)
 {
 	# Check if valid source
 	if ($page =~ /wml$/)
 	{
-		&copy($page);
+		&copy($page, $charset ne 'iso-8859-1');
 	}
 	else
 	{
@@ -67,6 +81,7 @@ foreach $page (@ARGV)
 sub copy
 {
 	my $page = shift;
+	my $recodelatin1 = shift;
 	print "Processing $page...\n";
 
 	# Remove english/ from path
@@ -192,6 +207,12 @@ sub copy
 		}
 		else
 		{
+			if ($recodelatin1)
+			{
+				# Recode any non-ASCII characters as entities
+				s/([\xA0-\xFF])/&entity($1)/ge;
+			}
+
 			print DST $_;
 		}
 	}
@@ -210,3 +231,9 @@ sub copy
 		if defined $dsttitle;
 }
 
+# Subroutine to encode a latin-1 character as a HTML entity
+sub entity
+{
+	# Exploiting the fact that latin-1 is a subset of Unicode
+	return '&#' . ord(shift) . ';'
+}
