@@ -121,7 +121,16 @@ sub init_translators {
 	                'file'      => 0,
                         'compress'  => 'none' 
                 },
-                'Olivier Bounhoure' =>  {
+              'Guillaume Estival' =>  {
+		       'email'     => 'estival@dspnet.claranet.fr',
+		       'summary'   => 2,
+		       'logs'      => 2,
+		       'diff'      => 2,
+		       'tdiff'     => 2,
+		       'file'      => 2,
+		       'compress'  => 'none'
+	        },
+	      'Olivier Bounhoure' =>  {
  	                'email'     => 'olivier.bounhoure@club-internet.fr',
                         'summary'   => 3, 
                         'logs'      => 3, 
