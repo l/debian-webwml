@@ -1,9 +1,9 @@
-BASE=../..
-CUR_DIR=News/1998
+BASE=..
+CUR_DIR=News
 
 HTMLDIR=$(BASE)/../../debian.org/$(CUR_DIR)
 TEMPLDIR=$(BASE)/template/debian
-GERMANSRCDIR=$(BASE)/../german
+ENGLISHSRCDIR=$(BASE)/../english
 
 include $(BASE)/Make.lang
 
@@ -11,12 +11,13 @@ include $(BASE)/Make.lang
 $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
 	wml -q $(EPILOG) $(<F)
 
-# WMLFILES := $(wildcard *.wml)
-WMLFILES := $(shell echo *.wml)
+WMLFILES := $(wildcard *.wml)
 HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
 
 all: $(HTMLFILES)
+	( cd 1998 ; $(MAKE) )
+	( cd 1997 ; $(MAKE) )
 
 include $(BASE)/Make.templ.inc
 
-$(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(wildcard 1998*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_news.wml
+$(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(wildcard 1997/1997*.wml) $(wildcard 1998/1998*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_news.wml
