@@ -153,5 +153,38 @@
       $crypted_passwd = crypt($guess, $salt);
       return ($stored_passwd == $crypted_passwd);
   }
+
+  function print_applicants($db, $sql) {
+  if (! ($query = pg_exec($db, $sql))) {
+    echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+    return FALSE;
+  }
+  $rows = pg_NumRows($query);
+  if ($rows) {
+      echo "<TABLE border=\"0\" summary=\"\">\n";
+      for ($i = 0 ; $i < $rows ; $i++) {
+        $row = pg_Fetch_Array($query, $i);
+        echo "<TR>";
+        print_flag($row["advocate_ok"],"<TD><IMG src=\"/images/shake.png\" alt=\"V\"></TD>","<TD> </TD>");
+        print_flag($row["id_ok"],"<TD><IMG src=\"/images/mag.png\" alt=\"I\"></TD>","<TD> </TD>");
+        print_flag($row["pnp_ok"],"<TD><IMG src=\"/images/dfsg.png\" alt=\"P\"></TD>","<TD> </TD>");
+        print_flag($row["tns_ok"],"<TD><IMG src=\"/images/hammer.png\" alt=\"T\"></TD>","<TD> </TD>");
+        print_flag($row["approved"],"<TD><IMG src=\"/images/thumb.png\" alt=\"A\"></TD>","<TD> </TD>");
+        print_flag($row["da_approved"],"<TD><IMG src=\"/images/new.png\" alt=\"N\"></TD>","<TD> </TD>");
+        if ($row["approved"] == "f" || $row["da_approved"] == "f") {
+            echo "<TD><IMG src=\"/images/hold.png\" alt=\"H\"></TD>";
+        } else {
+            echo "<TD> </TD>";
+        }
+        echo "<TD><A href=\"nmstatus.php?email=", urlencode($row["email"]), "\">",
+          $row["forename"], " ", $row["surname"], " &lt;",
+          $row["email"], "&gt;</A></TD></TR>\n";
+      }
+      echo "</TABLE>\n";
+  } else {
+      echo "none\n";
+  }
+  return TRUE;
+  }
 ?>
 
