@@ -14,6 +14,12 @@
     }
 
     function print_all_places($id, $modify) {
+
+        if (!($db = open_db())) {
+            echo "Cannot open SQL database";
+            return FALSE;
+        }
+
         $sql = "SELECT id, begin, finish, city, country FROM places WHERE who = '$id'";
         if (! ($query = pg_exec($db, $sql))) {
             echo "Problem with query", pg_ErrorMessage($db), "<BR>";
