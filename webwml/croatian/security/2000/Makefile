@@ -9,9 +9,11 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 
-# Do Not modify the following lines
 index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*.wml) \
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/[0-9]*.data) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
+	$(WML) $(<F)
 
-%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/security.wml
+%.$(LANGUAGE).html: %.wml $(ENGLISHSRCDIR)/$(CUR_DIR)/%.data \
+  $(TEMPLDIR)/security.wml
 	$(WML) $(<F)
