@@ -259,7 +259,7 @@ sub _read_firsttime {
 
         my ($block, $data, $maxlength, $numbytes, $offset);
 
-        my ($name, $type, $size) = $self->_read_header() or return 0;
+        my ($name, $type, $size) = $self->_read_header(0) or return 0;
         my $path = '';
 
         $offset = $self->{offset};
@@ -326,6 +326,7 @@ sub _read_firsttime {
 
 sub _read_header {
         my $self  = shift;
+        my $cont  = shift;   #  1 when reading long filenames, 0 otherwise
 
         #  Read header
         my $head = $self->_io_read(512, 1) ||
@@ -364,7 +365,7 @@ sub _read_header {
                         Carp::croak "End of file found when reading \`$self->{name}'";
                 $self->_io_read(($size & ~0x01ff) + 512 - $size)
                         if ($size & 0x01ff);
-                ($name, $type, $size) = $self->_read_header() or return 0;
+                ($name, $type, $size) = $self->_read_header(1) or return 0;
                 $name = $realname;
         }
 
@@ -406,7 +407,8 @@ sub _read_header {
                 }
         }
 
-        $type = "dir"  if $name =~ m|/$| and $type eq "file";
+        #   Fix broken archives
+        $type = "dir"  if $name =~ m|/$| and $type eq "file" and !$cont;
 
         return ($name, $type, $size);
 }
