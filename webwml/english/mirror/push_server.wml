@@ -1,20 +1,9 @@
-#use wml::debian::template title="Setting Up A Push Server"
+#use wml::debian::template title="Setting up a push server"
 
-<p>Given the large number of mirrors and the size of the Debian archive,
-it is not feasible for all the mirrors to use the master archive site
-as the upstream source for Debian. It is much more efficient if the
-load is distributed among a number of push mirrors distributed throughout
-the globe.
+<p><small>(For more information on what a push server is, please read
+<a href="push_mirroring">the explanation of push mirroring</a>.)</small>
 
-<p>Please note that we will approach sites to become push servers.
-If your site is VERY well connected (both very good bandwidth and
-well connected to major backbones) and you are willing to let other
-sites mirror from you may want to let us know so we can consider you
-for a push mirror.
-
-<p>Push servers should be machines that mirror the entire Debian archive,
-are themselves push mirrors of the master site and have good bandwidth.
-Setting up a push server is quite simple:
+<p>Setting up a push server is quite simple:
 <ul>
   <li>install <kbd>rsync</kbd> 2.1.1 or greater.
   <li>create <kbd>rsyncd.conf</kbd> and add contents similar to:
@@ -28,13 +17,13 @@ socket options = SO_KEEPALIVE
 
 [ftp]
   path = /org/ftp.debian.org/ftp
-  comment = Debian FTP Archive (~16 GB)
+  comment = Debian FTP Archive (~20 GB)
   auth users = authorized_account1,authorized_account2,authorized_accountN
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
 [web.debian.org]
   path = /org/www.debian.org/debian.org
-  comment = Debian Web Site
+  comment = Debian Web Site (~400 MB)
   auth users = authorized_account1,authorized_account2,authorized_accountN
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
@@ -92,11 +81,10 @@ USER="archvsync"
 MAIL=
 PATH="/bin:/usr/bin"
 
-#id
-
 cd $HOME
 
 ./signal some.other.site archvsync
+./signal and.another.site othersiteaccount
 </pre>
 </protect>
 
