@@ -90,22 +90,20 @@ my %langs = ( english    => "en",
 sub langcmp {
   my ($first, $second) = ($a, $b);
   # Handle sorting of non-latin characters
+  # Language names based on Latin, Greek or Cyrillic letters are sorted
+  # first, then other names, sorted on Unicode numbers.
   if (substr($first,0,1) eq '&')
   {
-#   $first =~ s/&#26085;&#26412;&#35486;/JAPANESE/;
-#   $first =~ s/&#54620;&#44397;&#50612;/KOREAN/;
-#   $first =~ s/&#20013;&#25991;/CHINESE/;
     $first =~ s/&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;/RUSSKIJ/; # er u es es ka i short-i
 #   $first =~ s/&#1593;&#1585;&#1576;&#1610;&#1577;/ARBYTM/; # ain reh beh yeh teh-marbuta
+    $first =~ s/&#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940;/ELLYNIKA/; # epsilon lambda lambda eta nu iota kappa alpha-with-tonos
     $first =~ s/^&/_&/; # put remaining entities last in the list
   }
   if (substr($second,0,1) eq '&')
   {
-#   $second =~ s/&#26085;&#26412;&#35486;/JAPANESE/;
-#   $second =~ s/&#54620;&#44397;&#50612;/KOREAN/;
-#   $second =~ s/&#20013;&#25991;/CHINESE/;
     $second =~ s/&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;/RUSSKIJ/;
 #   $second =~ s/&#1593;&#1585;&#1576;&#1610;&#1577;/ARBYTM/;
+    $second =~ s/&#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940;/ELLYNIKA/; # epsilon lambda lambda eta nu iota kappa alpha-with-tonos
     $second =~ s/^&/_&/; # put remaining entities last in the list
   }
   return uc($first) cmp uc($second);
@@ -121,6 +119,9 @@ sub languages {
   $full_base_url = &canonpath("$cwd/$base_url");
   $rel_dir = &relpath($full_base_url, $cwd);
   $rel_dir =~ s,/$,,;
+
+  # Special case: Greek is not in a directory called "greek"
+  $cur_lang = "hellas" if $cur_lang eq "Greek";
 
   # printf STDERR "base_url=$base_url rel_dir=$rel_dir file=$file cur_lang=$cur_lang\n";
 
