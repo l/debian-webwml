@@ -39,6 +39,7 @@
 #	-s <subtree>	check only that subtree
 #	-t <type>	choose output type  (default is `text')
 #	-M		display differences for all 'Makefile's
+#	-a		output age of translation (if older than 2 months)
 
 # Options useful when sending mails:
 #	-m <email>	sends mails to translation maintainers
@@ -100,13 +101,14 @@ my %translators;# the real hash
 my $maintainer = "mquinson\@ens-lyon.fr"; # the default e-mail at which to bitch :-)
 
 # options (note: with perl 5.6, this could change to our())
-use vars qw($opt_C $opt_M $opt_Q $opt_c $opt_d $opt_g $opt_l $opt_m $opt_n $opt_p $opt_q $opt_s $opt_t $opt_T $opt_v $opt_V);
+use vars qw($opt_C $opt_M $opt_Q $opt_c $opt_d $opt_g $opt_l $opt_m $opt_n
+            $opt_p $opt_q $opt_s $opt_t $opt_T $opt_v $opt_V $opt_a);
 $opt_n = 5; # an invalid default
 $opt_s = '';
 $opt_C = '.';
 $opt_t = 'text';
 
-unless (getopts('vgdqQC:m:c:s:Tt:p:ln:MV'))
+unless (getopts('vgdqQC:m:c:s:Tt:p:ln:MVa'))
 {
 	open SELF, "<$0" or die "Unable to display help: $!\n";
 	HELP: while (<SELF>)
@@ -120,6 +122,11 @@ unless (getopts('vgdqQC:m:c:s:Tt:p:ln:MV'))
 	exit;
 }
 
+if ($opt_a)
+{
+    use Date::Manip;
+}
+
 die "you can't have both verbose and quiet, doh!\n" if (($opt_v) && ($opt_Q));
 die "you can't have both very verbose and quiet, doh!\n" if (($opt_V) && ($opt_Q));
 
@@ -128,7 +135,7 @@ $opt_v = 1 if ($opt_V);
 warn "Checking subtree $opt_s only\n" if (($opt_v) && ($opt_s));
 
 # include only files matching $filename
-my $filename = $opt_p || '(\.wml$)|(\.html$)';
+my $filename = $opt_p || '(\.wml$)|(\.html$)|(\.src$)';
 
 # Go to desired directory
 chdir($opt_C) || die "Cannot go to $opt_C\n";
@@ -522,8 +529,17 @@ sub check_file {
         # The original version of this file exists (English or otherwise)
         # - compare the translated version number to the original
     	if (!$oldr) {
-    	    $oldr = '1.0';
-    	    $str = "Unknown status of $name (revision should be $revision)";
+            if ($name =~ /^english/)
+            {
+                # This is the original file
+                $status = 4; # Up-to-date
+                $oldr = $revision;
+            }
+            else
+            {
+        	    $oldr = '1.0';
+        	    $str = "Unknown status of $name (revision should be $revision)";
+            }
     	} elsif ($oldr eq $revision) {
     	    $status = 4; # Up-to-date
     	} elsif ($numoldr > $numrev) {
@@ -623,6 +639,53 @@ sub check_file {
 		system($cvsline);
 		STDOUT->flush;
 	}
+
+    if (3 == $status && $opt_a) {
+        # Check the age of this translation
+        STDOUT->flush;
+        my $cvsline = "cvs -z3 log -r'$logoldr' '$oldname'";
+        if (open CVSLOG, '-|', $cvsline)
+        {
+            CVSDATA: while (<CVSLOG>)
+            {
+                last CVSDATA if /^date:/;
+            }
+            close CVSLOG;
+            if (/^date: ([\d]{4}.[\d]{2}.[\d]{2})/)
+            {
+                # Got the date of the last translation
+                my $agestring = &DateCalc($1, 'today', 1, 1);
+                die "CVS date is in the future" if $agestring =~ /^\-/;
+                my ($years, $months, $weeks, $undef) = split /:/, substr($agestring, 1), 4;
+                my ($yearstring, $monthstring, $weekstring) = ('', '', '');
+                if ($years)
+                {
+                    $yearstring = "$years year";
+                    $yearstring .= 's' unless 1 == $years;
+                }
+                if ($months)
+                {
+                    $monthstring = "$months month";
+                    $monthstring .= 's' unless 1 == $months;
+                }
+                if ($weeks)
+                {
+                    $weekstring = "$weeks week";
+                    $weekstring .= 's' unless 1 == $weeks;
+                }
+
+                if ($weeks > 2 || $months || $years)
+                {
+                    $monthstring .= ', '
+                        if $monthstring ne '' && $weekstring ne '';
+                    $yearstring .= ', '
+                        if $yearstring ne '' && ($monthstring ne '' || $weekstring ne '');
+                    print "$name is outdated by $yearstring$monthstring$weekstring\n";
+                }
+            }
+        }
+        STDOUT->flush;
+    }
 
 	if ($opt_T) {
 	    print get_diff_txt("$oldr", "$revision", "$oldname", "$name")."\n";
