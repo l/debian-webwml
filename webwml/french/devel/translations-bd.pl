@@ -388,29 +388,55 @@ $translations = [
 	'last_translated'	=> '10/08/1998',
 },
 
-{
-	'type'			=> '',
-	'key'			=> '',
-	'name'			=> 'debian-constitution',
-	'version'		=> '',
-	'url'			=> 'http://www.debian.org/devel/constitution.en.html',
-	'source_url'		=> '',
-	'package'		=> '',
-	'status'		=> 'en cours de traduction',
-	'since'			=> '01/05/1999',
-	'translation_name'	=> '',
-	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
-	'translation_version'	=> '',
-	'translation_url'	=> '',
-	'translation_source_url'=> '',
-	'translation_package'	=> '',
-},
-
 # ########################################################################################
 #
 # Web
 #
 # ########################################################################################
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'News/1997/',
+	'status'		=> 'à traduire',
+	'since'			=> '01/08/1998',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'News/1998/',
+	'status'		=> 'à traduire',
+	'since'			=> '01/08/1998',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'News/index',
+	'status'		=> 'traduction à jour',
+	'since'			=> '17/04/1999',
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+	'since'			=> '17/04/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'News/1999/',
+	'status'		=> 'à traduire',
+	'since'			=> '01/01/1998',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'News/weekly/index',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'News/weekly/contributing',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
 
 {
 	'type'			=> 'Web',
@@ -484,68 +510,6 @@ $translations = [
 
 {
 	'type'			=> 'Web',
-	'key'			=> '2.0/2.0beta_CD',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
-},
-
-{
-	'type'			=> 'Web',
-	'key'			=> '2.0/HOWTO.upgrade',
-	'status'		=> 'à relire',
-	'since'			=> '10/08/1998',
-	'translation_maintainer'=> ['Philippe Caillaud <pcaillaud@infini.fr>'],
-	'last_translated'	=> '08/08/1998',
-},
-
-{
-	'type'			=> 'Web',
-	'key'			=> '2.0/errata',
-	'status'		=> 'traduction à jour',
-	'since'			=> '28/11/1998',
-	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
-	'last_translated'	=> '21/09/1998',
-},
-
-{
-	'type'			=> 'Web',
-	'key'			=> '2.0/index',
-	'status'		=> 'à traduire',
-	'since'			=> '16/12/1998',
-},
-
-{
-	'type'			=> 'Web',
-	'key'			=> '2.0/updates',
-	'status'		=> 'à traduire',
-	'since'			=> '16/12/1998',
-},
-
-{
-	'type'			=> 'Web',
-	'key'			=> 'News/index',
-	'status'		=> 'traduction à jour',
-	'since'			=> '17/04/1999',
-	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
-	'since'			=> '17/04/1999',
-},
-
-{
-	'type'			=> 'Web',
-	'key'			=> 'News/1997/',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
-},
-
-{
-	'type'			=> 'Web',
-	'key'			=> 'News/1998/',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
-},
-
-{
-	'type'			=> 'Web',
 	'key'			=> 'MailingLists/debian-announce',
 	'status'		=> 'à relire',
 	'since'			=> '20/08/1998',
@@ -577,16 +541,19 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/HOWTO_translate',
-	'status'		=> 'en cours de traduction',
-	'since'			=> '01/05/1999',
+	'status'		=> 'à relire',
+	'since'			=> '17/05/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '17/05/1999',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/extract_key',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'à relire',
+	'since'			=> '25/05/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '25/05/1999',
 },
 
 {
@@ -618,29 +585,24 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/maintainer_contacts',
-	'status'		=> 'à traduire',
+	'status'		=> 'non-disponible',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
-	'key'			=> 'devel/mirror',
+	'key'			=> 'devel/machines',
 	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
-},
-
-{
-	'type'			=> 'Web',
-	'key'			=> 'devel/mirror_submit',
-	'status'		=> 'à traduire',
-	'since'			=> '16/12/1998',
+	'since'			=> '25/05/1999',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/people',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'à relire',
+	'since'			=> '25/05/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '25/05/1999',
 },
 
 {
@@ -654,22 +616,28 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/rsync_examples',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'à relire',
+	'since'			=> '25/05/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '25/05/1999',
 },
 
 {
 	'type'			=> 'Web',
-	'key'			=> 'devel/HOWTO_work.on.website',
-	'status'		=> 'à traduire',
-	'since'			=> '16/12/1998',
+	'key'			=> 'devel/HOWTO_work_on_website',
+	'status'		=> 'à relire',
+	'since'			=> '25/05/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '25/05/1999',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/constitution',
-	'status'		=> 'à traduire',
-	'since'			=> '16/12/1998',
+	'status'		=> 'à relire',
+	'since'			=> '17/05/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '17/05/1999',
 },
 
 {
@@ -700,6 +668,20 @@ $translations = [
 	'key'			=> 'distrib/vendors',
 	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'distrib/cdinfo',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'distrib/books',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
 },
 
 {
@@ -737,22 +719,28 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'intro/about',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'à relire',
+	'since'			=> '25/05/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '25/05/1999',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'intro/cn',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'à relire',
+	'since'			=> '25/05/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '25/05/1999',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'intro/cooperation',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'à relire',
+	'since'			=> '25/05/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '25/05/1999',
 },
 
 {
@@ -767,15 +755,19 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'intro/international',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'à relire',
+	'since'			=> '25/05/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '25/05/1999',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'intro/license_disc',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'à relire',
+	'since'			=> '25/05/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '25/05/1999',
 },
 
 {
@@ -790,9 +782,9 @@ $translations = [
 
 {
 	'type'			=> 'Web',
-	'key'			=> 'logos/index',
+	'key'			=> 'intro/organization',
 	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'since'			=> '25/05/1999',
 },
 
 {
@@ -800,6 +792,20 @@ $translations = [
 	'key'			=> 'logos/index',
 	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'mirror/explain',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'mirror/ftpmirror',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
 },
 
 {
@@ -807,6 +813,41 @@ $translations = [
 	'key'			=> 'mirror/index',
 	'status'		=> 'à traduire',
 	'since'			=> '16/12/1998',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'mirror/submit',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'mirror/types',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'mirror/webmirror',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'mirror/push_server',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'mirror/size',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
 },
 
 {
@@ -828,8 +869,119 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'vote/index',
+	'status'		=> 'à relire',
+	'since'			=> '25/05/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'partners/index',
 	'status'		=> 'à traduire',
-	'since'			=> '12/16/1998',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'partners/partners-form',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'partners/partners',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'partners/thankyou',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'y2k/extra',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'y2k/index',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'Bugs/Access',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'Bugs/Developer',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'Bugs/Reporting',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'Bugs/index',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'Bugs/server-control',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'Bugs/server-refcard',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'Bugs/server-request',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'releases/hamm/HOWTO.upgrade',
+	'status'		=> 'à relire',
+	'since'			=> '10/08/1998',
+	'translation_maintainer'=> ['Philippe Caillaud <pcaillaud@infini.fr>'],
+	'last_translated'	=> '08/08/1998',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'releases/hamm/errata',
+	'status'		=> 'traduction à jour',
+	'since'			=> '28/11/1998',
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'last_translated'	=> '21/09/1998',
 },
 
 {
@@ -839,6 +991,34 @@ $translations = [
 	'since'			=> '16/03/1999',
 	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
 	'last_translated'	=> '16/03/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'releases/slink/running-kernel-2.2',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'releases/potato/index',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'releases/index',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
+},
+
+{
+	'type'			=> 'Web',
+	'key'			=> 'search',
+	'status'		=> 'à traduire',
+	'since'			=> '25/05/1999',
 },
 
 ];

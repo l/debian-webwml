@@ -1,0 +1,103 @@
+#use wml::debian::template title="HOWTO Travailler sur les pages web Debian"
+
+<!--translation 1.3-->
+
+<p>Les pages web Debian sont générées de l'une des trois façons suivantes:
+la documentation est reprise en miroir depuis le
+<a href="http://www.debian.org/~elphick/ddp/">Debian Documentation Project (DDP)</a>,
+d'autres parties du site web sont générées en utilisant des scripts (les pages 
+recensant les Bug et les archives de listes de diffusion en sont deux bons
+exemples), et le reste est généré en utilisant wml.
+
+<h3>Qu'est ce que wml?</h3>
+WML ressemble beaucoup à html pour la plus grande partie, mais un certain nombre de filtres
+lui sont appliqués avant de générer l'html final. Cela nous permet d'avoir des pages
+statiques (c'est une nécessité pour pouvoir créer des miroirs des pages web pages) tout en
+ayant la pluspart des avantages des pages créées dynamiquement.
+
+<p>Une des possibilité de wml dont nous faisons un usage extensif est l'utilisation de perl.
+Non, souvenez vous, pas pour avoir des pages dynamiques. Perl est utilisé au moment ou les pages html
+sont générées pour faire, hé bien, tout ce que vous voulez. Deux bons exemples de la façon
+dont nous utilisons perl dans les pages est la création de la liste des plus récentes nouvelles
+pour la page principale et la génération des liens vers les traductions à la fin des pages.
+
+<p>La documentation de wml n'est pas facile à digérer. Elle est en fait assez
+complète, mais avant de commencer à comprendre comment ça marche (et c'est assez
+puissant) il est plus facile d'utiliser simplement les pages existantes comme exemples.
+
+<h3>Accéder au source wml: utiliser CVS</h3>
+Le source wml des pages web est géré par CVS. Avec CVS, il y a un site central qui garde le
+source principal et les individus prennent en 'checkout' une copie dans le 'repository' CVS
+pour créer une copie locale. Même le source principal, qui est utilisé pour générer les pages
+web courantes, est mis à jour quotidiennement en faisant un '<kbd>cvs update</kbd>'
+à partir du repository.
+
+<p>N'importe qui peut prendre en checkout une copie en lecture seule dans le repository
+en utilisant le nom d'utilisateur <kbd>anonymous</kbd>. Pour avoir l'accès en écriture vous 
+devez écrire à <a href="mailto:webmaster@debian.org">webmaster@debian.org</a>. Si vous n'étes
+pas habitués à CVS, vous pouvez lire le passage contenant des exemples sur son utilisation
+dans le document <a href="HOWTO_translate">HOWTO traduire les pages</a>.
+
+<h3>Ajouter de Nouvelles Pages</h3>
+<p>Ajouter de nouvelles pages à Debian est assez facile. Tout le travail consistant
+à mettre le bon en tête et la bonne fin de page est déjà fait en utilisant wml. Tout ce
+vous avez besoin de faire est d'inclure une ligne telle que la suivante
+en haut d'un nouveau fichier:
+<pre><protect>
+#use wml::debian::template title="TITRE DE LA PAGE" 
+</protect></pre>
+suivi du corps de la page. Toutes les pages devraient utiliser le fichier modèle 
+wml::debian::template
+sauf si elles en utilisent un spécial créé uniquement pour leur section, 
+i.e. les pages des nouvelles ou celle sur la sécurité.
+
+<p>Le modèle, wml::debian::template, vous permet de definir certaines
+variables qui affecteront les pages créées. Cela devrait éviter d'avoir
+à créer des modèles différents pour chaque situation et permettre que les
+amméliorations soient plus faciles à implémenter. Les variables disponibles
+actuellement et leurs fonctions sont:
+<dl>
+<dt>NOHEADER="yes"
+	<dd>Enlève l'entête initial de la page. Un entête spécial
+   peut, bien sûr, être inclus dans le corps.
+<dt>NOHOMELINK="yes"
+	<dd>Enlève le lien en bas de la page qui permet de revenir
+	à la page Debian principale.
+<dt>NOLANGUAGES="yes"
+	<dd>Enlève les liens en bas de la page vers les versions dans
+	d'autres langues.
+<dt>NOCOPYRIGHT="yes"
+	<dd>Enlève la note de copyright en bas de la page.
+</dl>
+
+<p>Un exemple d'utilisation de tout cela se trouve dans les pages de portages qui ont
+leurs propres entêtes. ports/arm/index.wml utilise:
+<pre><protect>
+#use wml::debian::template title="ARM Port" NOHEADER="yes"
+</protect></pre>
+
+<p>Si vous voulez faire quelque chose qui ne peut être fait en utilisant les modèles
+existants, envisagez d'abord d'étendre l'un d'entre eux. S'il n'est pas
+possible d'étendre l'un d'eux d'une manière compatible avec l'existant,
+essayez de vous arrangez pour que le nouveau modèle soit un surensemble
+d'un modèle existant de façon à ce que les pages puissent être
+converties à lui lors du passage à la prochaine version majeure (avec un peu de chance
+jamais plus de tous les 6 mois).
+
+<p>Si vous créez une page qui est générée par un script ou qui
+contient peu de prose, envisagez d'utiliser les "slices filter" de wml pour faciliter
+la tâche de garder les traductions à jour. Un bon exemple de cela
+se trouve dans <kbd>distrib/vendors.wml</kbd>. Les nouveaux distributeurs peuvent être
+ajoutés à cette page et l'ajout sera généré dans chaque langue automatiquement.
+<kbd>vendors.wml</kbd> inclue <kbd>vendors.CD</kbd> qui contient la liste courante
+des distributeurs. Ce fichier à son tour inclue <kbd>distrib/vendors.CD.def</kbd>
+qui contient la définition de toutes les the phrases de <kbd>vendors.CD</kbd>.
+Les traducteurs ont simplement besoin d'ajouter les traductions à l'endroit où il y a une
+"slice", i.e.
+<pre><protect>
+	[EN:Country:]\
+	[ES:Pa-is:]\
+	[DE:Land:]\
+</protect></pre>
+
+
