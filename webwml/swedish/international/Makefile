@@ -4,7 +4,7 @@
 
 WMLBASE=..
 CUR_DIR=international
-SUBS=chinese spanish l10n
+SUBS=Chinese spanish l10n
 
 include $(WMLBASE)/Make.lang
 
