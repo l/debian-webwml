@@ -1,0 +1,51 @@
+#!wml -o ../../../debian.org/devel/%BASE.html.it              
+#use wml::debian::template title="Debian GNU/Linux - Esempio d'uso di rsync"
+
+<H1>Esempio d'uso di rsync</H1>
+
+<P>Il seguente è un esempio che farà il mirror sia del sito web che
+	  del sito ftp. Si dovranno modificare il nome della macchina e le
+	  directory coinvolte per adattarle alla propria situazione. 
+
+<P>Il lockfile è utile se lo si usa come un cron job. Se, per
+	  qualsiasi ragione, il mirror non viene completato, la volta
+	  successiva che si proverà a fare il mirror si riceverà una
+	  mail. Si può così scoprire dov'è il problema, analizzarlo,
+	  correggerlo, cancellare il lockfile e la prossima volta che lo
+	  si esegue il mirror funzionerà correttamente.
+<blockquote>
+<pre>
+#!/bin/bash
+set -e
+
+lockfile -r 1 rsync.master.lock || exit 23
+
+rsync -avz -e ssh --exclude .glbuild --delete &lt;machine&gt;:/web/debian.org/ debian.org
+rsync -avz -e ssh --delete &lt;machine&gt;:/web/debian.org-local/ debian.org-local
+
+echo TERMINATO L'AGGIORNAMENTO WEB. ORA INIZIO CON FTP.
+
+rsync -avz --delete -e ssh &lt;machine&gt;:/debian debian
+
+rm -f rsync.master.lock
+</pre>
+</blockquote>
+
+<H3>Come configurare ssh in modo che non venga chiesta la password:</H3>
+
+Lo script precedente chiederà una password fintantoché non si
+	configura ssh in un certo modo. Per prima cosa, quando si usa
+	ssh-keygen, si prema semplicemente Invio quando viene chiesta una
+	password [1]. Poi, si aggiunga il contenuto di ~/.ssh/identity.pub
+	a ~/.ssh/authorized_keys sul sito mirror (il mode del file
+	dovrebbe essere 600). 
+Ora si dovrebbe essere in grado di usare ssh per fare il login nel
+	sito mirror senza che venga chiesta una password.
+
+<P>
+[1] Si noti che l'impostazione di ssh con una password vuota dà ad un
+	  intruso, una volta entrato nel tuo sito, libero acceso al sito
+	  di cui si fa il mirror. Per questa ragione, questa cosa non
+	  dovrebbe mai essere fatto come root.
+
+<:= languages ("$(HOME)", "devel", "$(WML_SRC_BASENAME)", "$(CUR_LANG)") :>

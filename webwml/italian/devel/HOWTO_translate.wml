@@ -1,0 +1,184 @@
+#!wml -o ../../../debian.org/devel/%BASE.html.it
+#use wml::debian::template title="Debian GNU/Linux - COME tradurre le pagine di Debian"
+
+<H1>COME tradurre le pagine di Debian</H1>
+
+<P>Ti ringraziamo per l'aiuto che ci vuoi dare nella traduzione delle
+	  pagine web di Debian. Invece di avere un sacco di siti diversi
+	  ognuno ospitante una versione in una lingua specifica delle
+	  pagine web, è sperabile che la gente si concentri nella
+	  traduzione di un insieme comune di pagine web. 
+
+<H3>Situazione</H3>
+<P>Tutti i file scritti a mano (non la documentazione) sul sito web
+	  sono generati usando wml. Sono immagazzinati su www.debian.org
+	  usando CVS. Se si vuole si può scaricare una copia locale dei
+	  file wml per editarli nella propria macchina. Quando si è
+	  terminato di fare modifiche, si possono rilasciare le modifiche
+	  in www.debian.org. 
+Una volta al giorno, la copia del deposito (repository) su master sarà
+	  aggiornata. Poi viene eseguito un Makefile per creare le nuove
+	  pagine pubbliche aggiornate.
+
+<H3>L'uso di CVS</H3>
+<P>Nel seguito sarà usato come esempio l'accesso anonimo. Se si ha
+	  accesso ad un'altro account che autorizza l'accesso in scrittura
+	  al repository allora di dovrebbe usare quello. Per iniziare ad
+	  usare CVS, per prima cosa bisogna fare il 'login' nel server CVS 
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml login
+</pre>
+(premere semplicemente Invio come password per anonymous).
+
+<P>Per scaricare (check out) una copia dei file wml nella propria
+	  macchina locale, si deve usare
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/&lt;lang&gt;
+</pre>
+dove &lt;lang&gt; è la lingua che si vuole. Probabilmente si vorrà
+	la versione inglese oltre a quella a cui si sta lavorando.
+
+<P>D'ora in poi, non è più necessario usare la parte '-d :pserver:...'
+	  in quanto le directory CVS/ contengono le informazioni necessarie.
+	  Ogni paio di giorni si dovrà fare un
+<pre>
+   cvs update
+</pre>
+per scaricare qualsiasi file che è stato modificato nel repository.
+
+<P>Quanto segue è per quelli che hanno permesso di scrittura sul
+	  repository. Quando si ha finito con una pagina, si possono
+	  depositare (commit) le proprie modifiche nel repository usando  
+<pre>
+   cvs commit &lt;file&gt;.wml
+</pre>
+oppure
+<pre>
+   cvs commit &lt;dir&gt;
+</pre>
+o ancora
+<pre>
+   cvs commit          (per depositare tutte le modifiche nella propria copia)
+</pre>
+
+<P>Se si è la prima persona a tradurre una pagina, allora si deve fare
+<pre>
+   cvs add &lt;file&gt;.wml
+</pre>
+prima di rilasciarlo.
+
+<P>Per maggiori informazioni su CVS, si usi 'info cvs'.
+
+<H3>Traduzione delle Pagine</H3>
+<P>Per rendere il lavoro dei traduttori il più semplice possibile le
+	  pagine sono generate un po' diversamente da quanto molti di voi
+	  sono abituati. Le pagine web sono in realtà generate usando
+	  sorgenti marcati con tag wml. Ci sono directory diverse per ogni
+	  lingua. Per tradurre in un nuovo linguaggio, qualcuno prima deve
+	  tradurre i file template di wml (non un grosso lavoro).
+
+<P>A causa del modo nel quale sono configurati i server web, non si
+	  dovrà modificare nessuno dei link interni. Qualche volta
+	  durante la traduzione si vorrà modificare il contenuto di una
+	  pagina. Un esempio può essere la pagina del supporto; probabilmente si
+	  vorrà includere un'esempio di sottoscrizione alla mailing list
+	  specifica per la propria lingua, p.es. debian-italian nella
+	  versione italiana della pagina. Se si fa qualsiasi altra
+	  modifica, la si notifichi a 
+<a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>
+in quanto è desiderabile mantenere il contenuto delle pagine il più
+	  simile possibile nelle diverse versioni.
+
+<P>La prima volta che viene tradotta una pagine si invii, una nota a 
+<a
+		href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>. Deve essere eseguito uno script su queste pagine per ricostruire le versioni delle altre lingue in modo che vengano a conoscenza delle nuove traduzioni. 
+
+<P>Spero si trovi che il lavoro che stiamo facendo, renda più semplice
+	  possibile la traduzione delle pagine.
+
+<H3>Come fa il Server a Sapere Quale File Servire</H3>
+<P>Si sarà notato che molti dei link interni non finiscono in
+	  .html. Questo perché il server usa la negoziazione dei contenuti
+	  per decidere quale versione del documento inviare. Quando c'è
+	  più di una scelta, il server farà una lista di tutti possibili
+	  file da servire, per esempio se la richiesta è per il file
+	  about, allora la lista delle possibilità potrebbe essere
+	  about.html.en e about.html.it. Il comportamente predefinito per
+	  i server Debian sarà di servire il documento in inglese, ma la
+	  cosa è configurabile.
+
+<P>Se un client ha impostata la variabile appropriata, per esempio per
+	  servire in italiano, allora nell'esempio precedente sarebbe
+	  stato servito about.html.it. La cosa bella di questa
+	  configurazione è che se non è disponibile la lingua desiderata,
+	  sarà inviata invece in una diverso lingua (il che si spera sia
+	  meglio di niente). La decisione su quale documento va servito è
+	  un po' incasinata e quindi invece di descriverla qui, se
+	  interessa, si può avere la risposta definitiva da 
+<a href="http://www.apache.org/docs/content-negotiation.html">http://www.apache.org/docs/content-negotiation.html</a>.
+
+<P>Poiché molti utenti non sono nemmeno a conoscenza dell'esistenza
+	  della negoziazione dei contenuti, ci sono link in fondo alle
+	  pagine che puntano direttamente alla versione di quella pagina
+	  in ogni altra lingua disponibile. Questo è fatto usando uno
+	  script Perl chiamato da wml quando la pagina viene generata.
+
+<H3>Esempio d'Inizio di una Traduzione</H3>
+Come esempio sarà usato l'italiano.
+<pre>
+   cvs checkout webwml/english
+   cd webwml
+   mkdir italian
+   cvs add italian
+   cd italian
+   cp ../english/.wmlrc .
+lo si editi e si modifichi '-D CUR_LANG=English' in '-D CUR_LANG=Italian'
+   cp ../english/Makefile .
+lo si editi e si modifichi 'LANG=en' in 'LANG=fr'
+Inoltre si commentino tutti i target che seguono 'all:' ad eccezione
+di quelli relativi ai file che sono tradotti
+   cp -r ../english/template .
+si editi template/debian/* e si traduca qualsiasi testo.
+
+Finalmente, si può iniziare a tradurre le pagine.
+</pre>
+
+<H3>Esempio di Traduzione di una Pagina</H3>
+Come esempio sarà usata l'italianizzazione del contratto sociale
+<pre>
+   cvs checkout webwml/english webwml/italian
+   cd webwml/italian
+   cp ../english/social_contract.wml .
+   cvs add social_contract.wml
+si modifichi social_contract.wml e si traduca il testo. Non si provi a
+tradurre alcun link o a modificarli in alcun modo.
+Una volta fatto
+   cvs commit social_contract.wml
+</pre>
+
+<H3>Compilazione con wml</H3>
+Si assume di aver installato wml nella propria macchina.
+Semplicemente si digiti
+<pre>
+   make
+</pre>
+in webwml/&lt;lang&gt;. Le pagine saranno generate in ../../debian.org
+	a partire dalla directory della lingua. Questo perché là è dove
+	sono conservati i file .html rispetto ai sorgenti wml nel sito
+	master. Si dovrà creare quella directory e qualsiasi altra
+	sottodirectory necessaria o il Makefile fallirà.
+
+<P>La sola dipendenza a cui si deve stare attenti è che la pagina
+	  principale (index.html) dipende da news.wml e quindi bisogna
+	  tradurre prima questo. Se un gruppo di traduzione non vuole
+	  tradurre news.wml allora si cambi la dipendenza nel
+	  Makefile in ../english/news.wml e si modifichi 
+<pre>
+  open(FILEH, "&lt;news.wml");
+</pre>
+in template/debian/recent_news.wml in
+<pre>
+  open(FILEH, "&lt;../english/news.wml");
+</pre>
+
+<:= languages ("$(HOME)", "devel", "$(WML_SRC_BASENAME)", "$(CUR_LANG)") :>
