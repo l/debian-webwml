@@ -4,8 +4,8 @@
 # the translation-check header to it. It also will create the
 # destination directory if necessary, and copy the Makefile from the source.
 
-# Written in 2000-2002 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2000-2002 Software in the public interest, Inc.
+# Written in 2000-2003 by Peter Karlsson <peterk@debian.org>
+# © Copyright 2000-2003 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -24,7 +24,7 @@ unless ($number)
 
 # Locate advisory
 $number = "dsa-" . $number if $number !~ /^dsa-/;
-$year = 2002;
+$year = 2003;
 YEAR: while (-d "../../english/security/$year")
 {
 	last YEAR if -e "../../english/security/$year/$number.wml";
@@ -80,7 +80,7 @@ while (<SRC>)
 {
 	next if /\$Id/;
 
-    s/^(<p>)?A problem has been discovered in\b/$1Ett problem har upptäckts i/;
+	s/^(<p>)?A problem has been discovered in\b/$1Ett problem har upptäckts i/;
 	s/We recommend that you upgrade your (.*) package immediately/Vi rekommenderar att ni uppgraderar ert $1-paket omedelbart/;
 	s/We recommend that you upgrade your (.*) packages immediately/Vi rekommenderar att ni uppgraderar era $1-paket omedelbart/;
 	s/We recommend that you upgrade your (.*) packages/Vi rekommenderar att ni uppgraderar era $1-paket/;
@@ -95,12 +95,15 @@ while (<SRC>)
 	s/>symlink attack</>attack mot symboliska länkar</;
 	s/>remote exploit</>fjärrattack</;
 	s/This has been fixed in version/Detta har rättats i version/;
-    s/this problem has been fixed in/har detta problem rättats i/;
-    s/this problem has been fixed$/har detta problem rättats/;
-    s/this problem has(?: been)?$/har detta problem/;
+	s/this problem has been fixed in/har detta problem rättats i/;
+	s/this problem has been fixed$/har detta problem rättats/;
+	s/this problem has(?: been)?$/har detta problem/;
 	s/This problem has been fixed/Detta problem har rättats/;
 	s/These problems have been fixed/Dessa problem har rättats/;
-    s/(?:been )?fixed in version/rättats i version/;
+	s/these problems have been fixed in/har dessa problem rättats i/;
+	s/these problems have been fixed$/har dessa problem rättats/;
+	s/these problems have(?: been)?$/har dessa problem/;
+	s/(?:been )?fixed in version/rättats i version/;
 	s/\bin version\b/i version/;
 	s/of the Debian package/av Debianpaketet/;
 	s/upstream version/uppströmsversion/;
@@ -108,6 +111,8 @@ while (<SRC>)
 	s/([Ff])or the old stable/$1ör den gamla stabila/;
 	s/([Ff])or the current stable distribution/$1ör den nuvarande stabila utgåvan/;
 	s/([Ff])or the current stable/$1ör den nuvarande stabila/;
+	s/([Ff])or the stable distribution/$1ör den stabila utgåvan/;
+	s/([Ff])or the stable/$1ör den stabila/;
 	s/([Ff])or the unstable distribution/$1ör den instabila utgåvan/;
 	s/([Ff])or the unstable/$1ör den instabila/;
 	s/current stable distribution/nuvarande stabila utgåvan/;
@@ -119,6 +124,11 @@ while (<SRC>)
 	s/distribution (\(potato|woody|sarge\))/utgåvan $1/;
 	s/privilege escalation/utökning av privilegier/;
 	s/cross site/serveröverskridande/;
+	s/\bis not affected/påverkas inte/;
+	s/\(potato\)/(Potato)/;
+	s/\(woody\)/(Woody)/;
+	s/\(sarge\)/(Sarge)/;
+	s/\(sid\)/(Sid)/;
 
 	print DST $_;
 }
