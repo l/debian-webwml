@@ -161,14 +161,22 @@ if (!@results) {
 }
 
 # multiple-page stuff written by doogie
+my $no_results = @results;
 my ($start, $end);
 if ($results_per_page =~ /^all$/i) {
 	$start = 1;
-	$end = @results;
-	$results_per_page = @results;
+	$end = $no_results;
+	$results_per_page = $no_results;
 } else {
 	$start = Packages::Search::start( \%params );
 	$end = Packages::Search::end( \%params );
+	if ($end > $no_results) { $end = $no_results; }
+}
+
+if ($searchmode eq "filelist") {
+    print "<p>Package contains $no_results files, displaying files $start to $end.</p>";
+} else {
+    print "<p>Found <em>$no_results</em> matching files/directories, displaying files/directories $start to $end.</p>";
 }
 
 my $number = 0;
@@ -181,18 +189,18 @@ foreach (@results) {
 }
 
 my $index_line;
-if (@results > $results_per_page) {
+if ($no_results > $results_per_page) {
 
-    $index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, scalar @results)." | ".nextlink($input,\%params, scalar @results);
+    $index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $no_results)." | ".nextlink($input,\%params, $no_results);
 
     print "<center>$index_line</center>";
 }
 
-if (@results > 100) {
+if ($no_results > 100) {
     print "<p>Results per page: ";
     my @resperpagelinks;
     for (50, 100, 200) {
-        if ($params{values}{number}{final} == $_) {
+        if ($results_per_page == $_) {
             push @resperpagelinks, $_;
         } else {
             push @resperpagelinks, resperpagelink($input,\%params,$_);
@@ -201,7 +209,7 @@ if (@results > 100) {
     if ($params{values}{number}{final} =~ /^all$/i) {
     	push @resperpagelinks, "all";
     } else {
-	push @resperpagelinks, resperpagelink($input, \%params,"all");
+	push @resperpagelinks, resperpagelink($input, \%params, "all");
     }
     print join( " | ", @resperpagelinks )."</p>";
 }

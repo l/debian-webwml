@@ -325,27 +325,35 @@ print "<hr>\n";
 exit;
 
 sub multipageheader {
-    my $number = shift;
+    my $no_results = shift;
 
     my ($start, $end);
     if ($results_per_page =~ /^all$/i) {
 	$start = 1;
-	$end = $number;
-	$results_per_page = $number;
+	$end = $no_results;
+	$results_per_page = $no_results;
     } else {
 	$start = Packages::Search::start( \%params );
 	$end = Packages::Search::end( \%params );
+	if ($end > $no_results) { $end = $no_results; }
+    }
+
+    print "<p>Found <em>$no_results</em> matching packages,";
+    if ($end == $start) {
+	print " displaying package $end.</p>";
+    } else {
+	print " displaying packages $start to $end.</p>";
     }
 
     my $index_line;
-    if ($number > $results_per_page) {
+    if ($no_results > $results_per_page) {
 	
-	$index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $number)." | ".nextlink($input,\%params, $number);
+	$index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $no_results)." | ".nextlink($input,\%params, $no_results);
 	
 	print "<center>$index_line</center>";
     }
 
-    if ($number > 100) {
+    if ($no_results > 100) {
 	print "<p>Results per page: ";
 	my @resperpagelinks;
 	for (50, 100, 200) {

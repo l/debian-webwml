@@ -145,6 +145,7 @@ sub start {
     my $res_per_page = $params->{values}{number}{final}
     || DEFAULT_RES_PER_PAGE;
 
+    return 1 if $res_per_page =~ /^all$/i;
     return $res_per_page * ($page - 1) + 1;
 }
 
@@ -221,8 +222,12 @@ sub prevlink {
 sub resperpagelink {
     my ($cgi, $params, $res_per_page ) = @_;
 
-    my $start = start( $params );
-    my $page = ($res_per_page =~ /^all$/i) ? 1 : ceil($start / $res_per_page);
+    my $page;
+    if ($res_per_page =~ /^all$/i) {
+	$page = 1;
+    } else {
+	$page = ceil(start( $params ) / $res_per_page);
+    }
 
     return "<a href=\"".$cgi->self_url.
         "&page=$page&number=$res_per_page\">$res_per_page</a>";
