@@ -9,14 +9,17 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates bugs doc l10n ports
+DOMAINS = templates bugs doc l10n ports others
 
 POTFILES = $(addprefix $(ENGLISHDIR)/po/,$(addsuffix .pot,$(DOMAINS)))
 MOFILES = $(addsuffix .mo,$(DOMAINS))
 
 TEMPLATE_FILES  = $(wildcard $(TEMPLDIR)/*.wml $(TEMPLDIR)/*/*.wml) $(TEMPLDIR)/countries.def
+BUGS_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
+DOC_FILES       = $(ENGLISHDIR)/doc/books.def $(ENGLISHDIR)/doc/manuals.defs
+L10N_FILES      = $(ENGLISHDIR)/international/l10n/dtc.def $(ENGLISHDIR)/international/l10n/menu.def
 PORTS_FILES     = $(ENGLISHDIR)/ports/menu.defs $(ENGLISHDIR)/ports/mips/cpu.data $(wildcard $(ENGLISHDIR)/ports/*/menu.inc)
-BUGS_FILES     = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
+OTHERS_FILES    = $(ENGLISHDIR)/News/press/press.tags $(ENGLISHDIR)/MailingLists/mklist.tags $(ENGLISHDIR)/banners/index.tags $(ENGLISHDIR)/consultants/consultant.defs $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/logos/index.tags $(ENGLISHDIR)/misc/laptops/menu.inc $(ENGLISHDIR)/misc/merchandise.def $(ENGLISHDIR)/security/faq.inc $(ENGLISHDIR)/y2k/l10n.data
 
 ifeq "$(LANGUAGE)" "en"
 all:: $(POTFILES)
@@ -28,11 +31,20 @@ endif
 $(ENGLISHDIR)/po/templates.pot: $(TEMPLATE_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(TEMPLATE_FILES) > $@
 
+$(ENGLISHDIR)/po/bugs.pot: $(BUGS_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(BUGS_FILES) > $@
+
+$(ENGLISHDIR)/po/doc.pot: $(DOC_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(DOC_FILES) > $@
+
+$(ENGLISHDIR)/po/l10n.pot: $(L10N_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(L10N_FILES) > $@
+
 $(ENGLISHDIR)/po/ports.pot: $(PORTS_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(PORTS_FILES) > $@
 
-$(ENGLISHDIR)/po/bugs.pot: $(BUGS_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(BUGS_FILES) > $@
+$(ENGLISHDIR)/po/others.pot: $(OTHERS_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(OTHERS_FILES) > $@
 
 %.mo: %.$(LANGUAGE).po
 	msgfmt --statistics -o $@ $*.$(LANGUAGE).po

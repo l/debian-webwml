@@ -1,30 +1,9 @@
+#use wml::debian::common_tags
+
+<bind-gettext-domain domain="others" />
+
 <define-tag small_Q whitespace=delete>
-	[EN:Q:]
-	[AR:Q:]
-	[CA:P:]
-	[DA:Sp:]
-	[DE:F:]
-	[EL:Q:]
-	[EO:Q:]
-	[ES:P:]
-	[FI:K:]
-	[FR:Q.&nbsp;:]
-	[HR:Q:]
- 	[HU:K:]
-	[ID:Q:]
-	[IT:Q:]
- 	[JA:Q:]
- 	[KO:Q:]
-	[LT:Q:]
-	[NL:Q:]
-	[NO:Q:]
-	[PL:Q:]
-	[PT:P:]
-	[RO:Q:]
-	[RU:Q:]
-	[SV:F:]
-	[TR:S:]
-	[ZH:Q:]
+  <gettext domain="others">Q</gettext>
 </define-tag>
 
 <:
