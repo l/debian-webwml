@@ -319,7 +319,12 @@ sub package_pages_walker {
 		$package_page .=  "<input type=\"hidden\" name=\"file\" value=\"$filenames{a2f}->{$a}\">\n";
 		$package_page .=  "<input type=\"hidden\" name=\"md5sum\" value=\"$file_md5s{a2f}->{$a}\">\n";
 		$package_page .=  "<input type=\"hidden\" name=\"arch\" value=\"$a\">\n";
-		if ($is_security) {
+                # there was at least one package with two
+                # different source packages on different
+                # arches where one had a security update
+                # and the other one not
+		if ($subdists{a2f}{$a}
+                    && ($subdists{a2f}{$a} =~ /security/o) ) {
 		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"security\">\n";
 		} elsif ($is_nonus) {
 		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"nonus\">\n";
