@@ -649,5 +649,13 @@ $translations_status = {
 	'translation_maintainer'=> ['Jérôme Abela <Jerome.Abela@solsoft.fr>'],
 },
 
+'y2k/index' => {
+	'translation_maintainer'=> ['Sebastien Kalt <ustilago@bigfoot.com>'],
+},
+
+'y2k/extra' => {
+	'translation_maintainer'=> ['Sebastien Kalt <ustilago@bigfoot.com>'],
+},
+
 
 };
