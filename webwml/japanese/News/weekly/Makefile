@@ -4,6 +4,7 @@
 
 WMLBASE=../..
 CUR_DIR=News/weekly
+CUR_DIR_ABS=$(shell pwd)
 
 # I have my own special %.$(LANGUAGE).html rule.
 NOGENERICDEP := true
@@ -23,7 +24,7 @@ all:: index.$(LANGUAGE).html $(HTMLFILES)
 # so wml gets all the relative links right.
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml
-	cd $(@D) && $(WML) $(notdir $(<))
+	cd $(@D) && $(subst ../../convert,$(CUR_DIR_ABS)/../../convert,$(WML)) $(notdir $(<))
 
 install:: $(HTMLDESTFILES)
 	@# Set up current issue symlink. In case you're wondering, the only
