@@ -115,20 +115,20 @@ sub aptlines {
 
 
 sub table_archive {
-	print "<h3 align=\"center\">" if $html;
+	print "<h2 align=\"center\">" if $html;
 	print "\n\n                   " if (!$html);
 	print "Secondary mirrors of the Debian archive";
 	print "\n                   ---------------------------------------\n\n" if (!$html);
-	print "</h3>\n\n" if $html;
+	print "</h2>\n\n" if $html;
 	print "\n<pre><small>\n" if $html;
 	# $tmp = "%-$longest{site}s %-$longest{'archive-ftp'}s%-$longest{'archive-http'}sPORTS MIRRORED\n";
-	# printf $tmp, "HOSTNAME", "FTP", "HTTP";
+	# printf $tmp, "HOST NAME", "FTP", "HTTP";
 	# $tmp =~ s/PORTS MIRRORED/--------------/;
 	# printf $tmp, "--------", "---", "----";
 	$tmp = "%-$longest{site}s %-$longest{'archive-ftp'}s%s\n";
 	print "<strong>" if $html;
-	printf $tmp, "HOSTNAME", "FTP", "HTTP";
-	printf $tmp, "--------", "---", "----";
+	printf $tmp, "HOST NAME", "FTP", "HTTP";
+	printf $tmp, "---------", "---", "----";
 	print "</strong>" if $html;
 	foreach $country (sort keys %countries) {
 		if ($html) {
@@ -181,53 +181,62 @@ sub table_archive {
 sub intro {
 	print "<h1 align=\"center\">" if $html;
 	print "                 " if (!$html);
-	print "Debian GNU/Linux - worldwide mirror sites";
+	print "Debian worldwide mirror sites";
 	print "</h1>" if $html;
-	print "\n                 -----------------------------------------\n" if (!$html);
+	print "\n                        -----------------------------\n" if (!$html);
 	print "\n";
 
 	print "<p>" if $html;
+	print "Debian is distributed (";
+	print $html ? "<em>mirrored</em>" : "mirrored";
+	print ") on hundreds of\n";
 	print <<END;
-This file is broken up into two separate mirror listings: Primary and
-Secondary mirror sites.  The definitions are as follows:
+servers on the Internet. Using a nearby server will probably speed up your
+download, and also reduce the load on our central servers and on the
+Internet as a whole.
 
 END
 	print "<p>" if $html;
 	print <<END;
+Debian mirrors can be primary and secondary. The definitions are as follows:
+
 END
 	if ($html) {
           print <<END;
-  A <strong>Primary mirror</strong> site has good bandwidth, is available 24 hours a day,
+  <blockquote>
+  A <strong>primary mirror</strong> site has good bandwidth, is available 24 hours a day,
   and has an easy to remember name of the form ftp.&lt;country&gt;.debian.org.
+  <br>
 END
 	} else {
 	  print <<END;
-  A Primary mirror site has good bandwidth, is available 24 hours a day,
+  A primary mirror site has good bandwidth, is available 24 hours a day,
   and has an easy to remember name of the form ftp.<country>.debian.org.
 END
 	}
-
 	print <<END;
   Additionally, most of them are updated automatically after updates to the
   Debian archive. The Debian archive on those sites is normally available
   using both FTP and HTTP protocols.
 
 END
-	print "<p>" if $html;
+	print "  </blockquote>\n" if $html;
 	if ($html) {
           print <<END;
-  A <strong>Secondary mirror</strong> site may have restrictions on what they mirror (due to
+  <blockquote>
+  A <strong>secondary mirror</strong> site may have restrictions on what they mirror (due to
 END
 	} else {
 	  print <<END;
-  A Secondary mirror site may have restrictions on what they mirror (due to
+  A secondary mirror site may have restrictions on what they mirror (due to
 END
 	}
 	print <<END;
-  space restrictions). Just because a site is Secondary doesn't necessarily
-  mean it'll be any slower or less up to date than a Primary site.
+  space restrictions). Just because a site is secondary doesn't necessarily
+  mean it'll be any slower or less up to date than a primary site.
 
 END
+	print "  </blockquote>\n" if $html;
 	print "<p>" if $html;
 	print <<END;
 Use the site closest to you for the fastest downloads possible whether it is
@@ -273,7 +282,7 @@ sub primary_mirrors {
   if ($html) {
     print <<END;
 
-<h2 align="center">Primary Debian Mirror Sites</h2>
+<h2 align="center">Primary Debian mirror sites</h2>
 
 <table border="0" align="center">
 <tr>
@@ -288,7 +297,7 @@ END
     print <<END;
 
 
-                         Primary Debian Mirror Sites
+                         Primary Debian mirror sites
                          ---------------------------
 
  Country         Site                Debian archive    Debian non-US archive
@@ -486,7 +495,7 @@ sub header {
 <html>
 
 <head>
-<title>Debian GNU/Linux Worldwide Mirror Sites</title>
+  <title>Debian worldwide mirror sites</title>
 </head>
 
 <body>
@@ -611,8 +620,8 @@ sub full_listing {
 sub readmenonus {
 	print <<_END_;
 
-                      Debian GNU/Linux non-US packages
-                      --------------------------------
+                           Debian non-US packages
+                           ----------------------
 
 United States laws place restrictions on the export of certain defense
 articles, which, unfortunately, includes some types of cryptographic software.
