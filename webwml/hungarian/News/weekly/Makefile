@@ -5,29 +5,29 @@
 WMLBASE=../..
 CUR_DIR=News/weekly
 
-# I have my own special %.$(LANGUAGE).html rule.
+# we have different %.$(LANGUAGE).html and HTMLDIR/%.$(LANGUAGE).html rules here
 NOGENERICDEP := true
+NOGENERICINSTDEP := true
 include $(WMLBASE)/Make.lang
-CUR_YEAR ?= $(shell date +%Y)
-ifeq ($(LANGUAGE),ja)
-ABS_DIR=$(shell pwd)
-endif
-#WMLOPTIONS += -DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
 
-ifeq ($(LANGUAGE),zh)
+ifeq "$(LANGUAGE)" "ja"
+ABS_DIR = $(CURDIR)
+endif
+
+ifeq "$(LANGUAGE)" "zh"
 # Ugly hack to handle the "cd" just before wml...
-FIX_BIG5 := $(shell pwd)/$(FIX_BIG5)
+FIX_BIG5 := $(CURDIR)/$(FIX_BIG5)
 endif
 
 # This Makefile will handle converting all .wml files in this directory
-# and all subdirectories to .html files. It does it this way so I don't need
-# a new Makefile for each new issue.
-#
+# and all subdirectories to .html files. It does it this way so
+# a new Makefile isn't needed for each new issue.
+
 WMLFILES=$(shell find . -type f -name \*.wml)
 PNGFILES=$(shell find . -type f -name \*.png)
 PNGDESTFILES := $(patsubst %.png,$(HTMLDIR)/%.png,$(PNGFILES))
 
-ifneq ($(LANGUAGE),zh)
+ifneq "$(LANGUAGE)" "zh"
   HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
   HTMLDESTFILES := $(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE).html,$(WMLFILES))
   all:: index.$(LANGUAGE).html $(HTMLFILES)
@@ -43,7 +43,7 @@ endif
 # so wml gets all the relative links right.
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml
-ifneq ($(LANGUAGE),ja)
+ifneq "$(LANGUAGE)" "ja"
 	cd $(@D) && $(WML) $(notdir $(<))
 else
 	cd $(@D) && $(subst ../../convert,$(ABS_DIR)/../../convert,$(WML)) $(notdir $(<))
@@ -81,12 +81,12 @@ endif
 	@mv -f $*.zh-tw.html.tmp $*.zh-tw.html
 	@$(TOTW) $*.zh-tw.html
 
-install:: $(HTMLDESTFILES) $(PNGDESTFILES)
-	@# Set up current issue symlink. In case you're wondering, the only
-	@# reason I use ..../current/issue instead of ...../current is
-	@# so it will be 2 directories deep and all the relative symlinks
-	@# will still work. Bleargh.
-ifeq ($(LANGUAGE),en)
+install:: $(HTMLDIR) $(HTMLDESTFILES) $(PNGDESTFILES)
+ifeq "$(LANGUAGE)" "en"
+# Set up current issue symlink. In case you're wondering, the only
+# reason we use ..../current/issue instead of ...../current is
+# so it will be 2 directories deep and all the relative symlinks
+# will still work. Bleargh.
 	@test -d $(HTMLDIR)/current || mkdir -p -m g+w $(HTMLDIR)/current
 	@rm -f $(HTMLDIR)/current/issue
 	@ln -sf ../$(shell cat ../../../english/News/weekly/CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
@@ -94,42 +94,37 @@ endif
 
 # This is used by the install rule, and I had to hack on it, overriding
 # Make.common to allow installation of files into subdirectories.
-$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
-	test -d $(@D) || mkdir -p -m g+w $(@D)
+$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html $(HTMLDIR)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
-ifeq ($(LANGUAGE),en)
+ifeq "$(LANGUAGE)" "en"
 	@echo making a link $(@D)/$(*F).html -\> $(@F)
-	-@ln -f -s $(@F) $(@D)/$(*F).html
+	@ln -sf $(@F) $(@D)/$(*F).html
 endif
 
 # Handle images
-$(HTMLDIR)/%.png: %.png
-	test -d $(@D) || mkdir -p -m g+w $(@D)
+$(HTMLDIR)/%.png: %.png $(HTMLDIR)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
 
 # Special case for Chinese
-$(HTMLDIR)/%.zh-cn.html: %.zh-cn.html
-	test -d $(@D) || mkdir -p -m g+w $(@D)
+$(HTMLDIR)/%.zh-cn.html: %.zh-cn.html $(HTMLDIR)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
-$(HTMLDIR)/%.zh-hk.html: %.zh-hk.html
-	test -d $(@D) || mkdir -p -m g+w $(@D)
+$(HTMLDIR)/%.zh-hk.html: %.zh-hk.html $(HTMLDIR)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
-$(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
-	test -d $(@D) || mkdir -p -m g+w $(@D)
+$(HTMLDIR)/%.zh-tw.html: %.zh-tw.html $(HTMLDIR)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
 
 # Have to add to the default clean rule to clean up all the html the
 # above target produces.
 clean::
-ifeq ($(LANGUAGE),zh)
+ifeq "$(LANGUAGE)" "zh"
 	-find . -type f -name \*.$(LANGUAGE)-??.html | xargs rm -f
 else
-ifeq ($(LANGUAGE),ja)
+ifeq "$(LANGUAGE)" "ja"
 	-find . -type f -name \*.$(LANGUAGE).html.tmp | xargs rm -f
 else
 	-find . -type f -name \*.$(LANGUAGE).html | xargs rm -f
@@ -154,48 +149,24 @@ index.zh-cn.html index.zh-hk.html index.zh-tw.html: index.wml \
       $(TEMPLDIR)/weeklynews/footer.wml
 
 # per-year indices need to be rebuilt, too.
-# this code is an obscenely stupid kludge, though
-1999/index.$(LANGUAGE).html: 1999/index.wml \
-      $(wildcard 1999/*/index.wml) \
-      $(wildcard $(ENGLISHSRCDIR)/News/weekly/1999/*/index.wml) \
-      $(TEMPLDIR)/weeklynews/header.wml \
-      $(TEMPLDIR)/weeklynews/index.wml \
-      $(TEMPLDIR)/weeklynews/footer.wml
-2000/index.$(LANGUAGE).html: 2000/index.wml \
-      $(wildcard 2000/*/index.wml) \
-      $(wildcard $(ENGLISHSRCDIR)/News/weekly/2000/*/index.wml) \
-      $(TEMPLDIR)/weeklynews/header.wml \
-      $(TEMPLDIR)/weeklynews/index.wml \
-      $(TEMPLDIR)/weeklynews/footer.wml
-2001/index.$(LANGUAGE).html: 2001/index.wml \
-      $(wildcard 2001/*/index.wml) \
-      $(wildcard $(ENGLISHSRCDIR)/News/weekly/2001/*/index.wml) \
-      $(TEMPLDIR)/weeklynews/header.wml \
-      $(TEMPLDIR)/weeklynews/index.wml \
-      $(TEMPLDIR)/weeklynews/footer.wml
+# this code works around a small bug in make's $(wildcard) function, too
+[0-9]*/index.$(LANGUAGE).html: %/index.$(LANGUAGE).html: \
+	$(shell find $* -name index.wml) \
+        $(wildcard $(ENGLISHSRCDIR)/News/weekly/$*/*/index.wml) \
+        $(TEMPLDIR)/weeklynews/header.wml \
+        $(TEMPLDIR)/weeklynews/index.wml \
+        $(TEMPLDIR)/weeklynews/footer.wml
 
 # again special cases for Chinese, ugh
-1999/index.zh-cn.html 1999/index.zh-hk.html 1999/index.zh-tw.html: \
-      1999/index.wml \
-      $(wildcard 1999/*/index.wml) \
-      $(wildcard $(ENGLISHSRCDIR)/News/weekly/1999/*/index.wml) \
-      $(TEMPLDIR)/weeklynews/header.wml \
-      $(TEMPLDIR)/weeklynews/index.wml \
-      $(TEMPLDIR)/weeklynews/footer.wml
-2000/index.zh-cn.html 2000/index.zh-hk.html 2000/index.zh-tw.html: \
-      2000/index.wml \
-      $(wildcard 2000/*/index.wml) \
-      $(wildcard $(ENGLISHSRCDIR)/News/weekly/2000/*/index.wml) \
-      $(TEMPLDIR)/weeklynews/header.wml \
-      $(TEMPLDIR)/weeklynews/index.wml \
-      $(TEMPLDIR)/weeklynews/footer.wml
-2001/index.zh-cn.html 2001/index.zh-hk.html 2001/index.zh-tw.html: \
-      2001/index.wml \
-      $(wildcard 2001/*/index.wml) \
-      $(wildcard $(ENGLISHSRCDIR)/News/weekly/2001/*/index.wml) \
-      $(TEMPLDIR)/weeklynews/header.wml \
-      $(TEMPLDIR)/weeklynews/index.wml \
-      $(TEMPLDIR)/weeklynews/footer.wml
+ifeq "$(LANGUAGE)" "zh"
+[0-9]*/index.zh-cn.html [0-9]*/index.zh-hk.html [0-9]*/index.zh-tw.html: \
+	$(shell find $* -name index.wml) \
+	$(wildcard 1999/*/index.wml) \
+	$(wildcard $(ENGLISHSRCDIR)/News/weekly/$*/*/index.wml) \
+	$(TEMPLDIR)/weeklynews/header.wml \
+	$(TEMPLDIR)/weeklynews/index.wml \
+	$(TEMPLDIR)/weeklynews/footer.wml
+endif
 
 # Generate the mail for posting to debian-news. Requires the web page already
 # be updated.
