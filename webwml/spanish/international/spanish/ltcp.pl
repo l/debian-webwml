@@ -352,8 +352,8 @@ foreach $k (sort keys %$translations) {
 
 	print " ( $tag{'revision'} $t->{'revision'} ) " if ($t->{'revision'});
 	print " ( $tag{'included'} <A HREF=\"http://packages.debian.org/$t->{'package'}\">$t->{'package'}</A> ) " if ($t->{'package'});
-	print " ( <A HREF=\"$t->{'source_url'}\">$tag{'Source'}</A> ) " if ($t->{'source_url'} && $t->{'source_url'} ne '?' && uc $type ne "DDP");
-	print " ( <A HREF=\"$t->{'cvs_url'}\">$tag{'CVSpage'}</A> ) " if ($t->{'cvs_url'} && $t->{'cvs_url'} ne '?' && uc $type ne "DDP");
+	print " ( <A HREF=\"$t->{'source_url'}\">$tag{'Source'}</A> ) " if ($t->{'source_url'} && $t->{'source_url'} ne '?'); # Why this? && uc $type ne "DDP");
+	print " ( <A HREF=\"$t->{'cvs_url'}\">$tag{'CVSpage'}</A> ) " if ($t->{'cvs_url'} && $t->{'cvs_url'} ne '?'); # Why this?  && uc $type ne "DDP");
 	print "<BR>$tag{'lines'} : $t->{'lines'} " if ($t->{'lines'});
 
 #	print "</BLOCKQUOTE>"
