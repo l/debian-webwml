@@ -1,5 +1,5 @@
 #use wml::debian::template title="Översätta Debians webbsidor" BARETITLE=true
-#use wml::debian::translation-check translation="1.34"
+#use wml::debian::translation-check translation="1.35"
 
 <p>
 För att göra översättarnas jobb så enkelt som möjligt genereras sidorna
@@ -13,30 +13,68 @@ Det är separata kataloger för varje språk.
 se <a href="#completenew">sektionen om att påbörja en översättning</a>.
 </p>
 
-<h2>Översätta enskilda sidor</h2>
+<h2 id="singlepages">Översätta enskilda sidor</h2>
 
-<p>Översätt inte HTML-dokumenten direkt.
-Vi använder källfiler i WML och innehållet och allmänna delar lagras
-var för sig.
-Om du vill hjälpa till med en specifik översättning,
-<a href="using_cvs">använd CVS</a> för att hämta de aktuella källfilerna.
+<p>
+Vi använder WML för att skilja sidornas innehåll från de delar som är
+gemensamma för flera sidor, vilket medför att det är de specifka
+WML-källfilerna som måste redigeras och inte HTML-filerna.
+<a href="using_cvs">Använd CVS</a> för att hämta de aktuella källfilerna.
 Du behöver åtminstone hämta ut två kataloger: <tt>english/</tt> och
-<tt>&lt;språk&gt;/</tt>.
+<tt><var>&lt;språk&gt;</var>/</tt>.
 </p>
 
 <p>För att översätta en enskild sida från engelska till ditt språk,
-kopiera den ursprungliga .wml-filen från <tt>english/foo/bar</tt> till
-<tt>&lt;språk&gt;/foo/bar</tt>.
-Lägg till <kbd>#use wml::debian::translation-check translation="x.y"</kbd>
-efter det sista #use-kommandot (se <a href="uptodate">information om
-translation-check</a>).
-Du kan även använda skriptet <tt>copypage.pl</tt> i webwml-rotkatalogen för
-att kopiera sidan och lägga till raden automatiskt.
-När detta är gjort översätter du hela sidan och sänder den till
-<a href="translation_coordinators">någon</a> med skrivrättighet på
-CVS-servern.
-Du bör testa sidan genom att ge kommandot <tt>make
-fil.&lt;språk&gt;.html</tt>.
+måste .wml-filen översättas och läggas in i det andra språkets katalog.
+Den relativa sökvägen och filnamnet måste vara detsamma som i den engelska
+katalogen för att länkarna fortfarande skall fungera.
+Det rekommenderas även starkt att översättaren lägger till en ytterligare
+rad i sidhuvudet efter det sista #use-kommandot för att beskriva exakt
+vilken version av originalfilen som översattes, för att
+<a href="uptodate">göra det lättare att uppdatera</a>.
+Raden ser ut så här:
+<kbd>#use wml::debian::translation-check translation="<var>x.y</var>"</kbd>
+</p>
+
+<p>
+Allt detta kan enkelt göras genom att använda skriptet <tt>copypage.pl</tt>
+i webwml-rotkatalogen.
+Skriptet kopierar sidan till rätt plats, skapar kataloger och makefiler om
+så behövs, och lägger in det sidhuvud som behövs automatiskt.
+</p>
+
+<p>
+Eftersom vi använder
+<a href="content_negotiation">innehållsförhandling</a> heter inte
+HTML-filerna <tt><var>fil</var>.html</tt> utan
+<tt><var>fil</var>.<var>&lt;språk&gt;</var>.html</tt>, där
+<var>&lt;språk&gt;</var> är tvåbokstavskoden för språket, enligt
+<a href="http://ftp.ics.uci.edu/pub/ietf/http/related/iso639.txt">ISO 639</a>
+(t.ex. <tt>sv</tt> för svenska).
+</p>
+
+<p>
+Du kan bygga HTML från WML genom att ge kommandot
+<kbd>make <var>fil</var>.<bar>&lt;språk&gt;</var>.html</kbd>.
+Om det fungerar, kontrollera att syntaxen är fullt giltig med
+<kbd>weblint <var>file</var>.<var>&lt;lang&gt;</var>.html</kbd>.
+</p>
+
+<p>
+Webbsidorna byggs om från CVS på servern www-master, en procedur som är
+relativ säker mot fel.
+Dock kan ett fel i toppnivån av din översättning (t.ex index.wml-filen i
+huvudkatalogen) medföra att byggprocessen stoppar och förhindra andra
+uppderingar av webbplatsen.
+Var särskilt försiktig med dessa filer.
+</p>
+
+<p>
+När sidan är färdig att läggas upp kan du sända in den till CVS.
+Om du har rättigheter att göra detta själv, kör <kbd>cvs commit</kbd>; om
+inte, sänd den till
+<a href="translation_coordinators">någon med skrivrättighet på
+CVS-servern</a>.
 </p>
 
 <h2><a name="completenew">Påbörja en ny översättning</a></h2>
@@ -151,39 +189,16 @@ Du bör även <a href="navbar_images">översätta texten på bilderna</a> i den
 röda navigationslisten.
 </p>
 
-<p>Kommentarer i filerna indikerar om det finns saker som inte får
-översättas; respektera dem.
-</p>
-
 <p>Observera: Om du upptäcker att du måste göra andra ändringar ber vi dig
 kontakta debian-www med information om vad du ändrat, och varför, så att
 problemet kan avhjälpas.
 </p>
 
 <p>
-När mallstommen är färdig kan du börja översätta ingångssidan.
-</p>
-
-<p>Du behöver inte oroa dig för kataloger som listas i SUBS-variabeln i
-Makefile:n, även om de inte existerar i översättningskatalogen.
-När du översätter en underkatalog måste du se till att den omnämns i
-SUBS-variabeln för sin moderkatalog, annars byggs den inte.
-</p>
-
-<p>
-Kopiera varje fil från ../english/, översätt den, testa den med
-<tt>make file.&lt;språk&gt;.html</tt> (och <tt>weblint file.wml</tt>),
-och när du är klar,
-lägger du in den <a href="using_cvs">i CVS</a>.
-Se till att din översättning kan byggas korrekt, för om den inte göra det
-kan den störa byggprocessen för hela webbplatsen.
-</p>
-
-<p>När du kopierar filer, kopiera inte CVS-katalogerna eller filer i dem
-från den engelska katalogen till din egen.
-Om du gör så av misstag och senare sänder in dina ändringar kommer cvs att
-uppdatera de filerna under english/ med din översättning, vilket kommer att
-förvirra/reta många.
+När mallstommen är färdig kan du börja översätta ingångssidan och de andra
+*.wml-filerna.
+En förteckning över de sidor som bör översättas först finns på
+<a href="translation_hints">tipssidan</a>.
 </p>
 
 <p>
