@@ -27,6 +27,10 @@ $(ENGLISHSRCDIR)/security/ref-table.inc: $(ENGLISHSRCDIR)/security/make-ref-tabl
 crossreferences.$(LANGUAGE).html:: $(ENGLISHSRCDIR)/security/ref-table.inc \
 	$(ENGLISHDIR)/template/debian/securityreferences.wml 
 
+nonvulns-woody.$(LANGUAGE).html: nonvulns-woody.wml nonvulns-woody.src \
+	$(ENGLISHSRCDIR)/security/nonvulns-woody.src \
+	$(TEMPLDIR)/securityreferences.wml 
+
 clean::
 	rm -f $(DSARDF) $(DSALONGRDF)
 ifeq "$(LANGUAGE)" "ja"
