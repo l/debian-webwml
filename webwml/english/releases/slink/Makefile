@@ -14,3 +14,5 @@ include $(WMLBASE)/Make.common
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
 
+index.$(LANGUAGE).html: ../../../english/releases/slink/formats_and_architectures.wmh \
+			$(TEMPLDIR)/languages.wml $(TEMPLDIR)/install_manual.wml
