@@ -16,10 +16,16 @@
 
             if (pg_NumRows($result) == 1) {
                 $row = pg_Fetch_Array($result, 0);
-                # FIXME: email, dont print
-                echo "Password is: ";
-                echo $row["passwd"];
-                echo ".";
+                echo "<P>Password was mailed to you at $email.</P>";
+
+                $body = "Hi, your password for the GPG Coordination Page is";
+                $body .= $row["passwd"];
+                $body .= "\n\nhttp://nm.debian.org/gpg.php\n";
+
+                $headers = "From: gpg-coord@nm.debian.org";
+
+                mail($email, "[GPG-Coord] Your password", $body, $headers);
+
             } else {
                 echo "Cannot find that e-mail in the database.";
             }
