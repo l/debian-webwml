@@ -317,16 +317,15 @@ sub grab_titles {
 	    } elsif ($format eq 'rdflong') {
                 # $moreinfo is WML/HTML; we need to strip tags here
                 <protect pass=2>
+                # HTML entities
+                $moreinfo =~ s/(&[^#;]+;)/&decodehtmlentity($1)/ge;
                 # <email "xxx"> <url "xxx">
-                $moreinfo =~ s/<(?:email|url) "([^>]+)">/$1/g;
-                # HTML links
-                $moreinfo =~ s/<a href="[^>]+">([^<]+)<\/a>/$1/g;
+                $moreinfo =~ s#<email "([^>]+)">#<a href="mailto:$1">$1</a>#g;
+                $moreinfo =~ s#<url "([^>]+)">#<a href="$1">$1</a>#g;
                 # HTML tags
                 $moreinfo =~ s/</&lt;/g;
                 $moreinfo =~ s/>/&gt;/g;
                 $moreinfo =~ s/"/&quot;/g;
-                # HTML entities
-                $moreinfo =~ s/(&[^#;]+;)/&decodehtmlentity($1)/ge;
                 </protect>
 		$str1 = "
 <item rdf:about=\"http://www.debian.org/security/$rdfbase\">
