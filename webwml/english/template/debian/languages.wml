@@ -1,33 +1,34 @@
 <perl>
 
-my %langs = ("english"  => "en",
-             "french"   => "fr",
-             "german"   => "de",
-             "italian"  => "it",
-             "spanish"  => "es",
-             "korean"   => "kr",
-             "japanese" => "jp");
+# Do not translate the directory names
+#             Directory     Abbrev Language
+my %langs = ("english"  => ["en", "English"],
+             "french"   => ["fr", "French"],
+             "german"   => ["de", "German"],
+             "italian"  => ["it", "Italian"],
+             "spanish"  => ["es", "Spanish"],
+             "korean"   => ["kr", "Korean"],
+             "japanese" => ["jp", "Japanese"]);
 
 sub languages {
   my ($base_url, $rel_dir, $file, $cur_lang) = @_;
   my $str = "";
 
-  # print "$base_url $rel_dir $file $cur_lang\n";
+  # printf STDERR "base=$base_url rel_dir=$rel_dir file=$file cur_lang=$cur_lang\n";
 
-  # the following works, but should do this the right way
   foreach(keys %langs) {
-     # print "$base_url/../$_/$rel_dir/$file.wml\n";
+     # printf STDERR "$base_url/../$_/$rel_dir/$file.wml\n";
      if ( -f "$base_url/../$_/$rel_dir/$file.wml" ) {
         if ($_ ne lc($cur_lang)) {
-           @used_langs = (@used_langs, $_);
+           push @used_langs, $_;
         }
      }
   }
+  # printf STDERR @used_langs;
   if (@used_langs) {
      $str = "<hr>\nThis page is also available in the following languages:<BR>\n";
      foreach (@used_langs) {
-        $t = ucfirst;
-        $str .= "<a href=\"$file.html.$langs{$_}\">$t</a>&nbsp;\n";
+        $str .= "<a href=\"$file.html.$langs{$_}[0]\">$langs{$_}[1]</a>&nbsp;\n";
      }
      $str .= "\n<BR><a href=\"$base_url/intro/cn.html.en\">How to set the ".
              "default document language</a>\n";
