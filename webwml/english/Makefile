@@ -3,7 +3,7 @@ HTMLDIR=../../debian.org
 TEMPLDIR=template/debian
 ENGLISHSRCDIR=../english
 # EPILOG=--epilog=weblint
-$(HTMLDIR)/%.html.en : %.wml $(TEMPLDIR)/template.wml
+$(HTMLDIR)/%.html.$(LANG) : %.wml $(TEMPLDIR)/template.wml
 	cd $(<D) && wml $(EPILOG) $(<F)
 # cd $(<D) && wml -o $@ $(EPILOG) $(<F)
 
@@ -24,6 +24,7 @@ all:\
     $(HTMLDIR)/MailingLists/debian-announce.html.$(LANG) \
     $(HTMLDIR)/MailingLists/subscribe.html.$(LANG) \
     $(HTMLDIR)/MailingLists/unsubscribe.html.$(LANG) \
+    $(HTMLDIR)/devel/HOWTO_translate.html.$(LANG) \
     $(HTMLDIR)/devel/extract_key.html.$(LANG) \
     $(HTMLDIR)/devel/people.html.$(LANG) \
     $(HTMLDIR)/devel/help.html.$(LANG) \
