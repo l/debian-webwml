@@ -333,8 +333,8 @@ foreach $lang (@search_in) {
 
     $color_a = get_color ($percent_a{$lang});
     $color_t = get_color ($percent_t{$lang});
-    $color_o = get_color ($percent_o{$lang});
-    $color_u = get_color ($percent_u{$lang});
+    $color_o = get_color (100 - $percent_o{$lang});
+    $color_u = get_color (100 - $percent_u{$lang});
 
     print HTML "<tr>";
     printf HTML "<td><a href=\"%s.html\">%s</a> (%s)</td>", $l, ucfirst $lang, $l;
