@@ -14,11 +14,12 @@ index.$(LANGUAGE).html: index.wml $(wildcard 1997*.wml) \
                         $(wildcard 1997*.title) \
                         $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
 	$(WML) index.wml
-
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/news.wml
 	$(WML) $(<F)
 
 ifeq ($(LANGUAGE),en)
-install::
-	install -p -m664 common_library linux_press_book.txt $(HTMLDIR)
+$(HTMLDIR)/common_library $(HTMLDIR)/linux_press_book.txt: $(HTMLDIR)/%: %
+	install -m 664 -p $< $(HTMLDIR)
+
+install:: $(HTMLDIR)/common_library $(HTMLDIR)/linux_press_book.txt
 endif
