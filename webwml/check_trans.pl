@@ -142,7 +142,11 @@ my $globtrans = Webwml::TransIgnore->new(".");
 
 # language configuration
 my $defaultlanguage = 'italian';
-if (open CONF, "<language.conf")
+if (exists $ENV{DWWW_LANG}) 
+{
+	$defaultlanguage = $ENV{DWWW_LANG};
+} 
+elsif (open CONF, "<language.conf")
 {
 	$defaultlanguage = <CONF>;
 	chomp $defaultlanguage;
