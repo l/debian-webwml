@@ -1,5 +1,7 @@
 #use wml::std::tags
 
+# TODO: Move as much as possible of this to the PO files?
+
 <perl>
 use Time::Local;
 
@@ -90,7 +92,7 @@ use Time::Local;
 #         '七月', '八月', '九月', '十月', '十一月', '十二月' ],
 );
 
-# List of long month names (may be used in "spoken" dates).
+# List of long month names (may be used in "spoken" dates and date ranges).
 %longmoy = (
   en => [ 'January', 'February', 'March', 'April', 'May', 'June',
           'July', 'August', 'September', 'October', 'November', 'December' ],
@@ -214,6 +216,54 @@ use Time::Local;
   zh => '"%04d年%02d月%02d日", $year, $mon, $mday',
 );
 
+# Date format (sprintf) for "spoken" dates (such as the current release date),
+# without the year. If none is supplied, the date will be formatted as "Date
+# Month". Any special cases (such as the st/nd/rd/th suffixes in English) are
+# handled in the spokendate subroutine below.
+# Available variables are: $mday = day-of-month, $mon = month number,
+# $mon_str = month string (from %longmoy).
+%spokendateform_noyear = (
+# ca => '"%d de %s", $mday, $mon_str', # see below
+  da => '"%d. %s", $mday, $mon_str',
+  de => '"%d. %s", $mday, $mon_str',
+  es => '"%d de %s", $mday, $mon_str',
+  fi => '"%d. %sta", $mday, $mon_str',
+  fr => '"%d %s", $mday, $mon_str',
+  hr => '"%d. %s", $mday, $mon_str',
+# hu => '"%d. %s", $mday, $mon_str', # ???
+  id => '"%d %s", $mday, $mon_str',
+  no => '"%d. %s", $mday, $mon_str',
+  pl => '"%d. %s", $mday, $mon_str',
+  pt => '"%d de %s", $mday, $mon_str',
+  ro => '"%d %s", $mday, $mon_str',
+  sv => '"%d %s", $mday, $mon_str',
+  zh => '"%02d月%02d日", $mon, $mday',
+);
+
+# Date format (sprintf) for date ranges (used mainly for events pages), for
+# ranges within the same month. If none is supplied, the date will be created
+# using the format "Date1-Date2 Month". The year is not included. Any special
+# cases (such as the st/nd/rd/th suffixes in English) are handled in the
+# spokendate subroutine below.
+# Available variables are: $sday = start day-of-month, $eday, end
+# day-of-month, $smon = month number, $smon_str = month string (from %longmoy)
+%rangeform_samemonth = (
+	sv => '"%d-%d %s", $sday, $eday, $smon_str',
+);
+
+# Date format (sprintf) for date ranges (used mainly for events pages), for
+# ranges spanning the end of a month. If none is supplied, the date will be
+# created using the format "Date1 Month-Date2 Month". The year is not
+# included. Any special cases (such as the st/nd/rd/th suffixes in English)
+# are handled in the spokendate subroutine below.
+# Available variables are: $sday = start day-of-month, $eday, end
+# day-of-month, $smon = start month number, $emon = end month number,
+# $smon_str = start month string (from %longmoy), $emon_str = end month string
+%rangeform_severalmonths = (
+	sv => '"%d %s-%d %s", $sday, $smon_str, $eday, $emon_str',
+);
+
+
 # This function creates a last modification time stamp for the web pages.
 sub webwml_ctime {
 	my ($time, $sec, $min, $hour, $mday, $monnr, $year, $wday, $yday, $isdst, $mon);
@@ -267,9 +317,28 @@ sub newsdate {
 	       sprintf("%02d %s %04d", $mday, $mon_str, $year);
 }
 
+# Utility function for spokendate and daterange: Return the correct order
+# suffix for a date in English (i.e 24 => "th").
+sub englishsuffix {
+	my $mday = shift;
+
+	return 'st' if $mday % 10 == 1 && $mday != 11;
+	return 'nd' if $mday % 10 == 2 && $mday != 12;
+	return 'rd' if $mday % 10 == 3 && $mday != 13;
+	return 'th';
+}
+
+# Utility function for spokendate and daterange: Contract "de " followed by
+# a vowel into "d'" for Catalan
+sub contractcatalan {
+	my $str = shift;
+	$str =~ s/\bde ([a摳e氆i瀍o麔u��])/d'$1/g;
+	return $str;
+}
+
 # This function creates a "spoken" date string for use in text, for example
 # the date of the previous release.
-# Input: A date in ISO format (YYYY-MM-DD).
+# Input: A date in ISO format (YYYY-MM-DD). 
 sub spokendate {
 	my ($year, $mon, $mday) = split /-/, $_[0];
 	my $appday;
@@ -286,14 +355,7 @@ sub spokendate {
 		# Special handling of English: suffix the date with "st", "nd", "rd"
 		# or "th", according to the numeric date.
 
-		SWITCH: {
-			$appday = "st", last SWITCH if ($mday % 10 == 1 && $mday != 11);
-			$appday = "nd", last SWITCH if ($mday % 10 == 2 && $mday != 12);
-			$appday = "rd", last SWITCH if ($mday % 10 == 3 && $mday != 13);
-			$appday = "th";
-		}
-
-		return sprintf("%s %d%s, %d", $mon_str, $mday, $appday, $year);
+		return sprintf("%s %d%s, %d", $mon_str, $mday, &englishsuffix($mday), $year);
 	}
 	elsif ($CUR_ISO_LANG eq "ca")
 	{
@@ -301,8 +363,7 @@ sub spokendate {
 		# contracted to "d'" in the spoken date form
 
 		my $date = sprintf("%d de %s de %d", $mday, $mon_str, $year);
-		$date =~ s/\bde ([a摳e氆i瀍o麔u��])/d'$1/g;
-		return $date;
+		return &contractcatalan($date);
 	}
 	# Add any other special cases here as elsif cases
 	else
@@ -312,6 +373,126 @@ sub spokendate {
 		return defined($spokendateform{$CUR_ISO_LANG}) ?
 		       eval("sprintf($spokendateform{$CUR_ISO_LANG})") :
 		       newsdate($_[0]);
+	}
+}
+
+# This function creates a "spoken" date string for use in text, without the
+# year.
+# Input: A date in ISO format (YYYY-MM-DD).
+sub spokendate_noyear {
+	my (undef, $mon, $mday) = split /-/, $_[0];
+	my $appday;
+
+	# Expand month string
+	$mon_str = $longmoy{$CUR_ISO_LANG}[$mon - 1];
+
+	# Return translated date
+	if ($CUR_ISO_LANG eq "en")
+	{
+		# Special handling of English: suffix the date with "st", "nd", "rd"
+		# or "th", according to the numeric date.
+
+		return sprintf("%s %d%s", $mon_str, $mday, &englishsuffix($mday));
+	}
+	elsif ($CUR_ISO_LANG eq "ca")
+	{
+		# Special handling of Catalan: "de " followed by a vowel should be
+		# contracted to "d'" in the spoken date form
+
+		my $date = sprintf("%d de %s", $mday, $mon_str);
+		return &contractcatalan($date);
+	}
+	# Add any other special cases here as elsif cases
+	else
+	{
+		# Return translated date, fall back to newsdate if no
+		# spokendateform was defined
+		return defined($spokendateform_noyear{$CUR_ISO_LANG}) ?
+		       eval("sprintf($spokendateform_noyear{$CUR_ISO_LANG})") :
+		       sprintf("%d %s", $mday, $mon_str);
+	}
+}
+
+# This function creates a string describing a date range for use in text,
+# mainly used in the events pages. There are three string forms: One for
+# one-day ranges, one for ranges inside one month, and one for ranges
+# covering two months. The year(s) are not used by this function.
+# Input: Two dates in ISO format (YYYY-MM-DD).
+sub daterange {
+	my (undef, $smon, $sday) = split /-/, $_[0]; # Start date
+	my (undef, $emon, $eday) = split /-/, $_[1]; # End date
+
+	my $samemonth = $smon == $emon;
+
+	if ($samemonth && $sday == $eday)
+	{
+		return spokendate_noyear($_[0]); # Single day
+	}
+
+	# Expand month strings
+	$smon_str = $longmoy{$CUR_ISO_LANG}[$smon - 1];
+	$emon_str = $longmoy{$CUR_ISO_LANG}[$emon - 1];
+
+	# Return translated date range
+	if ($CUR_ISO_LANG eq "en")
+	{
+		# Special handling of English: suffix the date with "st", "nd", "rd"
+		# or "th", according to the numeric date.
+
+		return sprintf("%s %d%s - %d%s", $smon_str,
+		               $sday, &englishsuffix($sday),
+		               $eday, &englishsuffix($eday))
+			if $samemonth;
+
+		return sprintf("%s %d%s - %s %d%s", $smon_str,
+		               $sday, &englishsuffix($sday), $emon_str,
+		               $eday, &englishsuffix($eday))
+	}
+	elsif ($CUR_ISO_LANG eq "ca")
+	{
+		# Special handling of Catalan: "de " followed by a vowel should be
+		# contracted to "d'" in the spoken date form
+
+		my $str;
+		$str = sprintf("%d-%d de %s", $sday, $eday, $smon_str)
+			if $samemonth;
+		$str = sprintf("%d de %s-%d de %s", $sday, $smon_str, $eday, $emon_str)
+			if !$samemonth;
+
+		return &contractcatalan($str);
+	}
+	# Add any other special cases here as elsif cases
+	else
+	{
+		# Return translated range, fall back to generic strings if not
+		# defined above
+		my $sprintfarg;
+		if ($samemonth)
+		{
+			if (defined defined $rangeform_samemonth{$CUR_ISO_LANG})
+			{
+				$sprintfarg = $rangeform_samemonth{$CUR_ISO_LANG};
+			}
+			else
+			{
+				# Default
+				$sprintfarg = '"%d-%d %s", $sday, $eday, $smon_str';
+			}
+		}
+		else
+		{
+			if (defined defined $rangeform_severalmonths{$CUR_ISO_LANG})
+			{
+				$sprintfarg = $rangeform_severalmonths{$CUR_ISO_LANG};
+			}
+			else
+			{
+				# Default
+				$sprintfarg = '"%d %s-%d %s", $sday, $smon_str, $eday, $emon_str';
+			}
+		}
+
+		return eval("sprintf($sprintfarg)");
 	}
 }
 </perl>
