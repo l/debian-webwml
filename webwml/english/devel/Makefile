@@ -10,4 +10,5 @@ include $(WMLBASE)/Make.lang
 
 people.$(LANGUAGE).html: people.wml $(TEMPLDIR)/template.wml \
  $(ENGLISHSRCDIR)/devel/people.names
-index.$(LANGUAGE).html: index.wml index.include $(TEMPLDIR)/template.wml
+index.$(LANGUAGE).html: index.wml \
+	$(ENGLISHSRCDIR)/devel/index.include $(TEMPLDIR)/template.wml
