@@ -6,7 +6,7 @@ WMLBASE=..
 CUR_DIR=security
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
-SUBS=1997 1998 1999 undated
+SUBS=1997 1998 1999 2000 undated
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
@@ -14,8 +14,8 @@ include $(WMLBASE)/Make.common
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
 
-index.$(LANGUAGE).html: index.wml $(wildcard 1999/1999*.wml) \
-     $(wildcard $(ENGLISHSRCDIR)/security/1999/1999*.wml) \
+index.$(LANGUAGE).html: index.wml $(wildcard 2000/2000*.wml) \
+     $(wildcard $(ENGLISHSRCDIR)/security/2000/2000*.wml) \
           $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml 
 
 
