@@ -1,0 +1,173 @@
+#use wml::debian::template title="Debian BTS - hakupalvelin" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.13"
+
+<h1><a name="introduction">Opastus vikaj‰rjestelm‰n hakupalvelimeen</a></h1>
+
+<p>On olemassa postipalvelin, joka osaa pyynnˆst‰ l‰hett‰‰
+vikailmoituksia ja hakemistoja puhtaana tekstin‰.
+
+<p>Sen k‰ytt‰minen tapahtuu l‰hett‰m‰ll‰ viestej‰ osoitteeseen <a
+href="mailto:request@bugs.debian.org"><code>request@bugs.debian.org</code></a>.
+<code>Aihe</code>(<code>Subject</code>)-kentt‰ viestiss‰ ohitetaan
+lukuunottamatta vastauksen <code>Aihe</code>-kentt‰‰.
+
+<p>Viestin rungon pit‰isi sis‰lt‰‰ sarja komentoja, yksi komento per
+rivi.  Saat vastauksen, joka n‰ytt‰‰ oman tulkittavan viestisi
+j‰ljennˆkselt‰, ja vastauksen jokaiseen komentoon.  Huomautuksia ei
+l‰hetet‰ kellekk‰‰n useimmista komennoista; kuitenkin viestit
+tallennetaan ja asetetaan saataville www-sivuille.
+
+<p>Kaikki teksti riveill‰, jotka alkava risuaidalla (<code>#</code>)
+ohitetaan; palvelin lopettaa komentojen tulkitsemisen tˆrm‰tess‰‰n
+riviin, joka alkaa <code>quit</code>, <code>stop</code>,
+<code>thank</code> tai kaksi viivaa (jotta v‰ltet‰‰n allekirjoituksen
+parsinta).  Tulkinta lopetetaan myˆs jos tˆrm‰t‰‰n liian moneen
+tunnistamattomaan tai v‰‰rinmuotoiltuihin komentoihin.  Jos yht‰‰n
+komentoa ei onnistuta k‰sittelem‰‰n, palvelin palauttaa sinulle oman
+k‰yttˆohjeensa.
+
+<h1>K‰ytˆss‰ olevat komennot</h1>
+
+<dl>
+<dt><code>send</code> <var>vikanumero</var>
+<dt><code>send-detail</code> <var>vikanumero</var>
+<dd>
+
+Pyyt‰‰ kopioita kyseess‰ olevasta vikailmoituksesta.
+<code>send-detail</code> l‰hett‰‰ kaikki "tyls‰t" viestit mukana,
+kuten erin‰iset automaattiset kuittaukset (sinun kannattaa yleens‰
+k‰ytt‰‰ <code>send</code>-komentoa myˆs, sill‰ kiinnostavia viestej‰
+ei l‰hetet‰ <code>send-detail</code>-komennolla).
+
+<dt><code>index</code> [<code>full</code>]
+<dt><code>index-summary by-package</code>
+<dt><code>index-summary by-number</code>
+<dd>
+
+Pyyt‰‰ t‰ydellist‰ hakemistoa (t‰ydellisine yksityiskohtineen ja
+sis‰lt‰en korjatut ja eteenp‰in l‰hetetyt ilmoitukset) tai yhteenvetoa
+j‰rjestettyn‰ paketin tai numeron mukaan.
+
+<dt><code>index-maint</code>
+<dd>
+
+Pyyt‰‰ hakemistoa, joka listaa yll‰pit‰j‰t, joilla on vikoja (avoimia
+tai ‰skett‰in suljettuja) seurantaj‰rjestelm‰ss‰.
+
+<dt><code>index maint</code> <var>yll‰pit‰j‰</var>
+<dd>
+
+Pyyt‰‰ hakemiston j‰rjestelm‰‰n tallennetuista vioista, joiden
+yll‰pit‰j‰ sis‰lt‰‰ merkkijonon <var>yll‰pit‰j‰</var>.  Haku ei ole
+riippuvainen kirjainkoosta.  Vikahakemisto kaikille t‰sm‰‰vist‰
+yll‰pit‰jist‰ l‰hetet‰‰n erillisen‰ viestin‰.
+
+<dt><code>index-packages</code>
+<dd>
+
+Pyyt‰‰ hakemiston paketeista, joille on tallennettu vikoja (avoimia
+tai ‰skett‰in suljettuja) seurantaj‰rjestelm‰‰n.
+
+<dt><code>index packages</code> <var>paketti</var>
+<dd>
+
+Pyyt‰‰ hakemiston vioista j‰rjestelm‰ss‰, jotka koskevat jotain
+pakettia, joka t‰sm‰‰ merkkijonoon <var>paketti</var>.  Haku ei riipu
+kirjainkoosta.  Vikahakemisto t‰sm‰‰ville paketeille l‰hetet‰‰n
+erillisen‰ viestin‰.
+
+<dt><code>send-unmatched</code> [<code>this</code>|<code>0</code>]
+<dt><code>send-unmatched</code> <code>last</code>|<code>-1</code>
+<dt><code>send-unmatched</code> <code>old</code>|<code>-2</code>
+<dd>
+
+Pyyt‰‰ kirjanpidon viesteist‰, jotka eiv‰t kuuluneet mihink‰‰n
+vikailmoitukseen t‰lt‰ viikolta, edelliselt‰ viikolta ja viikko sit‰
+enne.  (Viikko loppuu keskiviikkona.)
+
+<dt><code>getinfo</code> <var>tiedosto</var>
+<dd>
+
+Pyyt‰‰ tiedoston, joka sis‰lt‰‰ tietoa paket(e)ista ja/tai
+yll‰pit‰j(i/‰)st‰ - saatavilla olevat tiedostot ovat:
+
+<dl compact>
+<dt><code>maintainers</code>
+<dd>
+
+Pakettien yll‰pit‰jien lista, jota seurantaj‰rjestelm‰ k‰ytt‰‰.  T‰m‰
+muodostetaan tiedoista <code>Packages</code>-tiedostoissa,
+ylikirjoitustiedostoista ja pseudopakettien tiedostoista.
+
+<dt><code>override.</code><var>jakelu</var>
+<dt><code>override.</code><var>jakelu</var><code>.non-free</code>
+<dt><code>override.</code><var>jakelu</var><code>.contrib</code>
+<dt><code>override.experimental</code>
+<dd>
+
+Tietoa pakettien prioriteeteista ja osastoista, jotka ylikirjoittavat
+yll‰pit‰jien asettamat arvot.  T‰t‰ tietoa k‰ytet‰‰n muodostamaan
+<code>Packages</code>-tiedostot FTP-arkistoon.  Tiedot on saatavilla
+jokaiselle p‰‰jakeluista saatavilla koodinimien mukaan.
+
+<dt><code>pseudo-packages.description</code>
+<dt><code>pseudo-packages.maintainers</code>
+<dd>
+Lista pseudopakettien kuvauksista ja yll‰pit‰jist‰.
+</dl>
+
+<dt><code>refcard</code>
+<dd>
+Pyyt‰‰ postipalvelimen pikaoppaan puhtaana tekstin‰.
+
+<dt><code>help</code>
+<dd>
+Pyyt‰‰ t‰m‰n ohjeen s‰hkˆpostitse puhtaana tekstin‰.
+
+<dt><code>quit</code>
+<dt><code>stop</code>
+<dt><code>thank</code>...
+<dt><code>--</code>...
+<dd>
+
+Lopettaa k‰sittelnyt t‰h‰n kohtaan viesti‰.  T‰m‰n j‰lkeen voit
+laittaa mit‰ tahansa haluamaasi teksti‰ ja j‰rjestelm‰ ohittaa sen.
+Voit k‰ytt‰‰ t‰t‰ kirjoittaessasi pidempi‰ kommentteja kuin
+<code>#</code>-merkki‰ k‰ytt‰en on j‰rkev‰‰, esimerkiksi
+helpottaaksesi viestisi ihmislukijoiden tyˆt‰ (jotka lukevat
+seurantaj‰rjestelm‰n tiedostoista tai <code>CC</code> tai
+<code>BCC</code> kautta ovat vastaanottajina).
+
+<dt><code>#</code>...
+<dd>
+
+Yksirivinen kommentti.  <code>#</code>-merkin pit‰‰ olla heti rivin
+alussa.
+
+<dt><code>debug</code> <var>taso</var>
+<dd>
+
+Asettaa vianetsint‰tasoksi <var>taso</var>:n, joka on ei-negatiivinen
+kokonaisluku.  0 tarkoittaa ei vianetsint‰tietoja; 1 on yleens‰
+riitt‰v‰.  Vianetsint‰tulosteet n‰kyv‰t vastauksessa.  T‰m‰ ei yleens‰
+ole hyˆdyllinen vikaj‰rjestelm‰n normaaleille k‰ytt‰jille.
+
+</dl>
+
+<p>Postipalvelimesta on saatavilla <a href="server-refcard">pikaopas
+www-sivuilla</a>, tiedostossa <code>bug-mailserver-refcard.txt</code>
+tai myˆs s‰hkˆpostitse komennolla <code>refcard</code> (ks. yll‰).
+
+<p>Jos haluat k‰sitell‰ vikailmoituksia, k‰yt‰ osoitetta
+<code>control@bugs.debian.org</code>, joka ymm‰rt‰‰ <a
+href="server-control">useita komentoja yll‰olevien lis‰ksi</a>.  N‰m‰
+muut komennot kuvataa toisessa dokumentissa <a
+href="server-control">www-sivulla</a>, tiedostossa
+<code>bug-maint-mailcontrol.txt</code> tai l‰hett‰m‰ll‰ komento
+<code>help</code> osoitteeseen <code>control@bugs</code>.
+
+<hr>
+
+#use "otherpages.inc"
+
+#use "footer.inc"
