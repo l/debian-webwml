@@ -14,6 +14,7 @@ include $(WMLBASE)/Make.lang
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(wildcard News/2000/2000*.wml) $(wildcard $(ENGLISHSRCDIR)/News/2000/2000*.wml) \
 		$(wildcard security/2000/2000*.wml) $(wildcard $(ENGLISHSRCDIR)/security/2000/2000*.wml) \
-		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
+		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
+		$(ENGLISHSRCDIR)/releases/info
 	$(WML) index.wml
 
