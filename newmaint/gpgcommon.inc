@@ -290,10 +290,10 @@
         $rows = pg_NumRows($query);
         for ($i = 0; $i < $rows; $i++) {
             $row = pg_Fetch_Array($query, $i);
-            echo "<H2>";
+            echo "<LI>";
             echo $row["forename"], " ", $row["surname"];
             echo " &lt;", $row["email"], "&gt;";
-            echo "</H2>\n";
+            echo "\n";
 
             print_all_places($row["id"], FALSE);
 
