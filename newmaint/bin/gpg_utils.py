@@ -1,5 +1,5 @@
 # Utility functions for the GPG Signing Coordination page
-# Copyright (C) 2002  Martin Michlmayr <tbm@cyrius.com>
+# Copyright (C) 2002, 2003  Martin Michlmayr <tbm@cyrius.com>
 # $Id$
 
 # This program is free software; you can redistribute it and/or modify
@@ -19,14 +19,17 @@
 import string
 import pg
 
-def print_place(db, place):
-    q = db.query("SELECT begin, finish, city, country FROM places WHERE id = %s" % place)
-    begin, finish, city, country = q.getresult()[0]
+def print_place(db, place, show_url=None):
+    q = db.query("SELECT begin, finish, city, country, url FROM places WHERE id = %s" % place)
+    begin, finish, city, country, url = q.getresult()[0]
 
     if city:
-        out = "%s, %s: " % (city, country)
+        out = "%s, %s" % (city, country)
     else:
-        out = "%s: " % (country)
+        out = "%s" % (country)
+    if show_url and url:
+        out += " [%s]" % url
+    out += ": "
 
     if (not begin and not finish):
         out += "always";
@@ -39,10 +42,10 @@ def print_place(db, place):
 
     return out
 
-def print_all_places(db, email, prefix=""):
+def print_all_places(db, email, show_url=None, prefix=""):
     out = []
     for place in get_places(db, email):
-        out.append(prefix + print_place(db, place))
+        out.append(prefix + print_place(db, place, show_url))
     return string.join(out, "\n")
 
 def find_email(db, email):
