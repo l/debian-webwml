@@ -1,9 +1,107 @@
-#use wml::debian::event_index
+#use wml::debian::basic title="Debian GNU/Linux &mdash; Upcoming Attractions"
+#use wml::debian::languages
 
-<H1><CENTER>Empty for the nonce</H1></CENTER>
+#words and phrases to translate
+<define-tag intro>
+	Send events you'd like listed to <A HREF="mailto:events@debian.org">
+	events@debian.org</A>
+</define-tag>
+<define-tag event_word>Events</define-tag>
+<define-tag past_words>past events</define-tag>
+<define-tag none_word>none</define-tag>
+
+<perl>
+sub get_event_list {
+	my ( $path, $number, $current_dir ) = @_;
+
+
+	$str=""; $over=""; $current=""; $unknown="";
+
+	opendir(DIR, "$current_dir/$path");
+  	@files = grep { /^\d+.*.wml$/ && -f "$current_dir/$path/$_" } readdir(DIR);
+  	@files = sort {$b cmp $a} @files;
+  	closedir DIR;
+
+  $count = 0;
+  foreach (@files) {
+     $count++;
+     open(FILE, "<$path/$_") || open(FILE, "<$current_dir/$path/$_");
+     if ( /(\d+.*).wml/ ) {
+        $base = $1;
+     }
+     $title = ''; $when = ''; $where = ''; $desc = ''; $past = '';
+     foreach $line (<FILE>) {
+        if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
+           $title = $1;
+        }
+        elsif ($line =~ /^#use wml::debian::past_event$/) {
+           $past = 'yes';
+        }
+        elsif ($line =~ /^#use wml::debian::event$/) {
+           $past = 'no';
+        }
+        elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) {
+           $when = $1;
+        }
+        elsif ($line =~ /^<define-tag where>(.*)<\/define-tag>$/) {
+           $where = $1;
+        }
+        elsif ($line =~ /^<define-tag desc>(.*)<\/define-tag>$/) {
+           $desc = $1;
+        }
+
+		if ($title && $when && $where) {
+           $str1 = "<TR><TD><TT>[$when]</TT></TD><TD><STRONG><A HREF=\"$path/$base\">$title</A></STRONG> ($where)</TD></TR>\n";
+		}
+		elsif ($title && $when) {
+           $str1 = "<TR><TT>[$when]</TT></TD><TD><STRONG><A HREF=\"$path/$base\">$title</A></STRONG></TD></TR>\n";
+		}
+
+		if ($past && $title && $when && $where ) {
+			last;
+		}
+     }
+	 if ( $past eq "yes" )
+	 {
+	 	$over .= $str1;
+	 }
+	 elsif ( $past eq "no" )
+	 {
+	 	$current .= $str1;
+	 }
+	 else
+	 {
+	 	$unknown .= $str1;
+	 }
+     close FILE;
+     if ($count eq $number) { last; }
+  }
+close DIR;
+if ( $over eq "" && $current eq "" && $unknown eq "" )
+{
+	$str = "$path - [<none_word>]<BR>";
+}
+else
+{
+	$str = "";
+	if ( $current ne "" ) { $str .= "<H3>$path <event_word></H3><TABLE>$current</TABLE>"; }
+	if ( $over ne "" ) { $str .= "<A HREF=\"./$path/\">$path - <past_words></A><BR>"; }
+	if ( $unknown ne "" ) { $str .= "<H3>$path Unknown (indicates bug)</H3><TABLE>$unknown</TABLE>"; }
+}
+return $str;
+}
+</perl>
+
+<H1><CENTER>Be aware, this page is auto generated so, during development, some
+or all of the data could be bogus to test various outcomes and outputs</H1></CENTER>
 
 <P>Send events you'd like listed to <A HREF="mailto:events@debian.org">
 events@debian.org</A></P>
 
 <:= get_event_list ('1998', '0', '$(ENGLISHDIR)/events' ) :>
 <:= get_event_list ('1999', '0', '$(ENGLISHDIR)/events' ) :>
+<:= get_event_list ('1997', '0', '$(ENGLISHDIR)/events' ) :>
+<:= get_event_list ('1996', '0', '$(ENGLISHDIR)/events' ) :>
+
+<:= languages() :>
+#use wml::debian::footer
