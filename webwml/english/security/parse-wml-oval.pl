@@ -127,21 +127,21 @@ sub parsefile {
 		# NOTE: Packages do _not_ include epochs (that should be
 		# fixed)
 		if ( defined($dsaref{$dsa}{'package'}) &&
-			 $line =~ /fileurl [\w:\/\.]+$dsaref{$dsa}{'package'}\/(.*?)_(.*?)_(.*?)\.deb/ ) {
-			$binary = $1; $version = $2; $architecture = $3;
+			$line =~ /fileurl [\w:\/\.]+\Q$dsaref{$dsa}{'package'}\E\/(.*?)\.deb/ ) {
+			($binary, $version, $architecture ) = split (/_/,$1);
 			# Only add a binary package if there is no one
 			# yet like it
 			if ( ! defined ($dsaref{$dsa}{'bpackages'}) ) {
 				$dsaref{$dsa}{'bpackages'} = $binary;
 				$dsaref{$dsa}{'versions'} = $version;
-			} elsif ( $binary !~ /$dsaref{$dsa}{'bpackages'}/ ) {
+			} elsif ( $binary !~ /\Q$dsaref{$dsa}{'bpackages'}\E/ ) {
 				$dsaref{$dsa}{'bpackages'} = $dsaref{$dsa}{'bpackages'}." ".$binary;
 				$dsaref{$dsa}{'versions'} = $dsaref{$dsa}{'versions'}." ".$version;
 			}
 			# Similarly for arquitectures
 			if ( ! defined ($dsaref{$dsa}{'architectures'}) ) {
 				$dsaref{$dsa}{'architectures'} = $architecture;
-			} elsif ( $architecture !~ /$dsaref{$dsa}{'architectures'}/ ) {
+			} elsif ( $dsaref{$dsa}{'architectures'} !~ /\Q$architecture\E/ ) {
 				$dsaref{$dsa}{'architectures'} = $dsaref{$dsa}{'architectures'} . " " .  $architecture;
 			}
 		}
