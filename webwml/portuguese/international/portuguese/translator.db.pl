@@ -14,27 +14,17 @@
 #  * file:     add current version of translated file
 
 sub init_translators {
-    my $translators = {
-	'Gustavo Noronha' => {
-	    email     => 'kov@debian.org',
-	    summary   => 3,
+    my $translators = { 
+	'Antonio Terceiro' => {
+	    email     => 'asaterceiro@inf.ufrgs.br',
+            summary   => 3,
 	    logs      => 3,
 	    diff      => 0,
 	    tdiff     => 0,
-	    file      => 0,
 	    compress  => 'none'
-	    },
+	},
 	'Carlos Laviola' => {
 	    email     => 'claviola@debian.org',
-	    summary   => 3,
-	    logs      => 3,
-	    diff      => 0,
-	    tdiff     => 0,
-	    file      => 0,
-	    compress  => 'none'
-	    },
-	'Philipe Gaspar' => {
-	    email     => 'philipegaspar@terra.com.br',
 	    summary   => 3,
 	    logs      => 3,
 	    diff      => 0,
@@ -50,6 +40,15 @@ sub init_translators {
 	    tdiff     => 0,
 	    file      => 0,
 	    compress  => 'none'
+	    },	
+	'Gustavo Noronha' => {
+	    email     => 'kov@debian.org',
+	    summary   => 3,
+	    logs      => 3,
+	    diff      => 0,
+	    tdiff     => 0,
+	    file      => 0,
+	    compress  => 'none'
 	    },
 	'Gustavo Rezende Montesino' => {
 	    email     => 'grmontesino@ig.com.br',
@@ -58,17 +57,25 @@ sub init_translators {
 	    diff      => 0,
 	    tdiff     => 0,
 	    compress  => 'none'
-	},
-
-	'Antonio Terceiro' => {
-	    email     => 'asaterceiro@inf.ufrgs.br',
-            summary   => 3,
+	    },
+        'Marcio Roberto Teixeira' => {
+           email     => 'marciotex@pop.com.br',
+           summary   => 2,
+           logs      => 2,
+           diff      => 0,
+           tdiff     => 0,
+           compress  => 'none'
+           },
+	'Philipe Gaspar' => {
+	    email     => 'philipegaspar@terra.com.br',
+	    summary   => 3,
 	    logs      => 3,
 	    diff      => 0,
 	    tdiff     => 0,
+	    file      => 0,
 	    compress  => 'none'
-	},
-
+	    },
+	    
 	# Below are special users, used to handle special cases
 	#     default:      default values
 	#     untranslated: pages not translated
