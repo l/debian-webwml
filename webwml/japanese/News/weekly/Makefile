@@ -2,19 +2,14 @@
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
-# Get the current year.
-YEAR=$(shell date +%Y)
-
 WMLBASE=../..
 CUR_DIR=News/weekly
-WMLSUB=wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG)
-#WMLJABASE=$(subst News/weekly,,$(PWD))
 
+# I have my own special %.$(LANGUAGE).html rule.
+NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
-include $(WMLBASE)/Make.dep.templ
-# Notice I do not include Make.dep.generic, since I have my own special
-# %.$(LANGUAGE).html rule.
+CUR_YEAR ?= $(shell date +%Y)
+WMLOPTIONS += -DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
 
 # This Makefile will handle converting all .wml files in this directory
 # and all subdirectories to .html files. It does it this way so I don't need
@@ -26,29 +21,9 @@ all:: index.$(LANGUAGE).html $(HTMLFILES)
 
 # When building the html files we have to change into the right directory
 # so wml gets all the relative links right.
-./index.ja.html : ./index.wml $(TEMPLDIR)/weeklynews/footer.wml \
-	                   $(TEMPLDIR)/weeklynews/header.wml
-	cd $(@D) && $(WMLSUB) $(notdir $(<)) \
-		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh \
-		--epilog="../../convert $(@F)"
-
-oldurl.ja.html : oldurl.wml $(TEMPLDIR)/weeklynews/footer.wml \
-	                   $(TEMPLDIR)/weeklynews/header.wml
-	cd $(@D) && $(WMLSUB) $(notdir $(<)) \
-		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh \
-		--epilog="../../convert $(@F)"
-
-./*/index.ja.html : ./*/index.wml $(TEMPLDIR)/weeklynews/footer.wml \
-	                   $(TEMPLDIR)/weeklynews/header.wml
-	cd $(@D) && $(WMLSUB) $(notdir $(<)) \
-		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh \
-		--epilog="../../../convert $(@F)"
-
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml
-	cd $(@D) && $(WMLSUB) $(notdir $(<)) \
-		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh \
-		--epilog="../../../../convert $(@F)"
+	cd $(@D) && $(WML) $(notdir $(<))
 
 install:: $(HTMLDESTFILES)
 	@# Set up current issue symlink. In case you're wondering, the only
@@ -56,7 +31,7 @@ install:: $(HTMLDESTFILES)
 	@# so it will be 2 directories deep and all the relative symlinks
 	@# will still work. Bleargh.
 ifeq ($(LANGUAGE),en)
-	@install -d $(HTMLDIR)/current
+	@test -d $(HTMLDIR)/current || install -d $(HTMLDIR)/current
 	@rm -f $(HTMLDIR)/current/issue
 	@ln -sf ../$(shell cat ../../../english/News/weekly/CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
 endif
@@ -64,7 +39,7 @@ endif
 # This is used by the install rule, and I had to hack on it, overriding
 # Make.common to allow installation of files into subdirectories.
 $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
-	install -d $(@D)
+	test -d $(@D) || install -d $(@D)
 	@echo copying $(@F) to $(@D)
 	-@cp $(<) $(@D)
 ifeq ($(LANGUAGE),en)
@@ -76,17 +51,16 @@ endif
 # above target produces.
 clean::
 	-find . -type f -name \*.$(LANGUAGE).html | xargs rm -f
+	-find . -type f -name \*.$(LANGUAGE).html.tmp | xargs rm -f
 
 # Need to rebuild the index when anything changes.
-index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
-      $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(YEAR)/*) \
+index.$(LANGUAGE).html: $(wildcard $(CUR_YEAR)/*/index.wml) \
+      $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(CUR_YEAR)/*) \
       $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
       $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml \
       ../../../english/News/weekly/CURRENT-ISSUE-IS
 
 # Generate the mail for posting to debian-news. Requires the web page already
-# be updated. The mail still requires slight edits.
-mail:	
-	@cat mail-header
-	@lynx -dump http://www.debian.org/News/weekly/current/issue/ | \
-		perl -pe 's/^\s\s?\s?//'
+# be updated.
+mail:
+	@./makemail.pl
