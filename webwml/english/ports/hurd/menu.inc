@@ -7,7 +7,7 @@
 [EN:Ports:]
 [AR:Ports:]
 [DA:Tilpasninger:]
-[DE:Ports:]
+[DE:Portierungen:]
 [EL:Ports:]
 [EO:Ports:]
 [ES:Migraciones:]
