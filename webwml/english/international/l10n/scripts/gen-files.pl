@@ -111,13 +111,12 @@ sub get_stats_po {
 		        $team ||= "";
 			#  Some translators forget the right angle bracket
 		        $translator =~ s/<[^>]*>?//;
-		        $translator =~ s/&/&amp;/g;
+		        $translator =~ s/&(?!#)/&amp;$1/g;
 		        $team =~ s/^[^<]*<([^>]*)>.*$/$1/g;
 		        $team =~ s/@/ at /g;
 		        $team =~ s/\./ dot /g;
-		        $team =~ s/&/&amp;/g;
+		        $team =~ s/&(?!#)/&amp;$1/g;
                         if ($lang eq '_') {
-			    
 			        # FIXME: This wont work since the stats about the pot files are not in the DB
 			        if ($stat =~ m/(\d+)u/) {
                                         $total{$section} += $1;
