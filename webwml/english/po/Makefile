@@ -86,7 +86,7 @@ $(ENGLISHDIR)/po/others.pot: $(others_FILES)
 
 init-po:
 	for d in $(DOMAINS); do \
-	  cp $(ENGLISHDIR)/po/$$d.pot $$d.$(LANGUAGE).po; \
+	  [ -f $$d.$(LANGUAGE).po ] || cp $(ENGLISHDIR)/po/$$d.pot $$d.$(LANGUAGE).po; \
 	done
 
 update-po: $(POTFILES)
@@ -111,7 +111,7 @@ clean::
 ifeq "$(LANGUAGE)" "en"
 stats:
 else
-stats:
+stats: $(POTFILES)
 	-@for d in $(DOMAINS); do \
           echo -n "$$d.$(LANGUAGE).po: " 1>&2; \
           msgmerge -q $$d.$(LANGUAGE).po $(ENGLISHDIR)/po/$$d.pot |\
