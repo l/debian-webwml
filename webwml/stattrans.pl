@@ -453,9 +453,9 @@ print HTML $border_head;
 print HTML "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
 print HTML "<tr><th>Language</th><th>Translations</th><th>Up to date</th><th>Outdated</th><th>Not translated</th></tr>\n";
 foreach $lang (@search_in) {
-    $l = $langs{$lang};
-    $l = "zh-cn" if ($l eq "zh"); # kludge
-
+    my @processed_langs = ($langs{$lang});
+    @processed_langs = ("zh-cn", "zh-tw") if $langs{$lang} eq "zh";
+    foreach $l (@processed_langs) {
     $color_a = get_color ($percent_a{$lang});
     $color_t = get_color ($percent_t{$lang});
     $color_o = get_color (100 - $percent_o{$lang});
@@ -468,6 +468,7 @@ foreach $lang (@search_in) {
     printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_o, $outdated{$lang}, $percent_o{$lang};
     printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $untranslated{$lang}, $percent_u{$lang};
     print HTML "</tr>\n",
+    }
 }
 print HTML "</table>\n";
 print HTML $border_foot;
@@ -479,9 +480,9 @@ print HTML "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
 print HTML "<tr><th>Language</th><th>Up to date</th><th>Fuzzy</th><th>Not translated</th></tr>\n";
 foreach $lang (@search_in) {
     next if $lang eq 'english';
-    $l = $langs{$lang};
-    $l = "zh-cn" if ($l eq "zh"); # kludge
-
+    my @processed_langs = ($langs{$lang});
+    @processed_langs = ("zh-cn", "zh-tw") if $langs{$lang} eq "zh";
+    foreach $l (@processed_langs) {
     print HTML "<tr>";
     printf HTML "<td><a href=\"%s.html#gettext\">%s</a> (%s)</td>", $l, ucfirst $lang, $l;
     $color_t = get_color ($percent_po_t{'total'}{$lang});
@@ -491,6 +492,7 @@ foreach $lang (@search_in) {
     printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_f, $po_fuzzy{'total'}{$lang}, $percent_po_f{'total'}{$lang};
     printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $po_untranslated{'total'}{$lang}, $percent_po_u{'total'}{$lang};
     print HTML "</tr>\n";
+    }
 }
 
 print HTML "</table>\n";
