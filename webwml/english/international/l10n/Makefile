@@ -9,9 +9,7 @@ CUR_DIR=international/l10n
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
 
 l10n-lang.$(LANGUAGE).html: ../../../english/international/l10n/scripts/init.pl\
 	../../../english/international/l10n/scripts/ranking.pl\
@@ -19,7 +17,6 @@ l10n-lang.$(LANGUAGE).html: ../../../english/international/l10n/scripts/init.pl\
 	../../../english/international/l10n/dtc.def
 	wml $(WMLOPTIONS) -o 'UNDEFu$(LANGUAGECAP)uINDEX-L10N*:$(WMLOUTFILE)' $(WMLPROLOG) $(WMLEPILOG) ../../../english/international/l10n/l10n-lang.wml
 
-include $(WMLBASE)/Make.dep.generic
 
 i18n.$(LANGUAGE).html: ../../../english/international/l10n/scripts/init.pl\
 	../../../english/international/l10n/scripts/i18n.pl ../../../english/international/l10n/i18n.wml\

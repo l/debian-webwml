@@ -9,9 +9,6 @@ CUR_DIR=logos
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml ../../english/logos/index.data

@@ -9,7 +9,6 @@ CUR_DIR=devel/misc
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
 MFILES := card.tex
 MISC_FILES := $(patsubst %,$(HTMLDIR)/%,$(MFILES))
@@ -19,8 +18,6 @@ install:: $(MISC_FILES)
 cleandest::
 	-rm -f $(HTMLDEST)/{$(MISC_FILES)}
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 # Do Not modify the following line
 index.$(LANGUAGE).html: card.ps.gz

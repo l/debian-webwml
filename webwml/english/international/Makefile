@@ -9,9 +9,6 @@ CUR_DIR=international
 SUBS=chinese spanish l10n
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 index.$(LANGUAGE).html: ../../english/international/index.data

@@ -9,9 +9,7 @@ CUR_DIR=security/1998
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
 
 # Do Not modify the following lines
 index.$(LANGUAGE).html: index.wml $(wildcard 1998*.wml) $(TEMPLDIR)/basic.wml $(TEMPLDIR)/recent_list.wml

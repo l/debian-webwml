@@ -9,10 +9,7 @@ CUR_DIR=y2k
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 index.$(LANGUAGE).html: ../../english/y2k/index.data
 extra.$(LANGUAGE).html: ../../english/y2k/extra.data

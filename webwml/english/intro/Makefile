@@ -9,9 +9,6 @@ CUR_DIR=intro
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 organization.$(LANGUAGE).html: organization.wml $(ENGLISHSRCDIR)/intro/organization.data $(ENGLISHSRCDIR)/intro/organization.tags

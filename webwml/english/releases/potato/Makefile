@@ -9,10 +9,7 @@ CUR_DIR=releases/potato
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/release.wml \
   $(ENGLISHSRCDIR)/releases/potato/release.data
