@@ -1,0 +1,97 @@
+#use wml::debian::template title="Using CVS"
+# <!--translation 1.1-->
+
+<p>CVS är ett program som möjliggör det för flera personer att arbeta på
+samma material samtidigt.
+Varje användare skapar en lokal kopia av CVS-trädet, vilka kan finnas på
+samma maskin, eller spridda över hela världen.
+Användarna kan sedan modifiera sina lokala kopior efter eget tycke, och när
+det modifierade materialet är klart, lägga in ("commit") dem i CVS-trädet
+("repository").
+
+<p>CVS låter dig inte lägga in en fill om kopian i huvudträdet har ändrats
+sedan du senast hämtade ut uppdateringar, något som vanligtvis inte är ett
+problem eftersom du fortfarande kan uppdatera din lokala kopia.
+Om förändringarna skedde i en andra delar än de du arbetade på kommer
+ändringarna tyst att läggas in i din fil, men om de påverkar samma område
+får du en varning att det skett konflikter, och du måste redigera filen för
+att rätta till problemet innan du lägger in den på nytt.
+
+<P>I texten nedan används det anonyma kontot ("anonymous") som exempel.
+Om du har tillgång till ett konto som ger dig skrivrättigheter så bör
+du använda det istället.
+Om du planerar att göra förändringar måste du få ett konto innan du börjar,
+eftersom anonyma användare inte kan lägga in ändringar.
+
+<p>Om du är Debianutvecklare, läs stycket om
+<a href="#cvsfordevelopers">CVS-åtkomst för Debianutvecklare</a>
+
+För att börja använda CVS måste du först logga in på CVS-servern:
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml login
+</pre>
+(tryck bara return när lösenordet för anonymous efterfrågas)
+
+<P>För att hämta en kopia av wml-filerna till din lokala dator skriver du
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/&lt;språk&gt;
+</pre>
+där <code>&lt;språk&gt;</code> är det språk du vill ha.
+Du vill antagligen hämta den engelska versionen, förutom det språk du arbetar
+på.
+Om du bara behöver en delmängd av sidorna kan du hämta bara de som behövs,
+t.ex
+<kbd>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</kbd>.
+eller om du har fått ett användarnamn och lösenord använder du det istället
+för anonymous:
+<kbd>cvs -d :pserver:användarnamn@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</kbd>.
+<P>Från och med nu behöver du inte använda <code>'-d :pserver:...'</code>
+längre.
+Med några dagars mellanrum bör du köra
+<pre>
+   cvs update -d
+</pre>
+för att hämta de filer som eventuellt har ändrats.
+-d gör att nya kataloger läggs till automatiskt.
+
+<P>Följande information är för de som har skrivrättigheter till servern.
+När du är klar med en sida kan du sända in dina ändringar ("commit") genom
+att använda
+<pre>
+   cvs commit &lt;fil&gt;.wml
+</pre>
+eller
+<pre>
+   cvs commit &lt;kat&gt;   (för att skicka in ändringar i &lt;kat&gt;)
+</pre>
+eller
+<pre>
+   cvs commit          (för att skicka in ändringar i alla underkataloger)
+</pre>
+
+<P>Om du är den första personen som översätter en sida måste du göra
+<pre>
+   cvs add &lt;file&gt;.wml
+</pre>
+innan du sänder in den.
+Observera att <code>cvs add</code> inte är rekursiv,
+så du måste lägga till en katalog innan du kan lägga till dess innehåll.
+
+<P>För mer information om CVS, skriv <code>info cvs</code>.
+
+<a name="cvsfordevelopers">
+<H3>CVS-åtkomst för Debianutvecklare</H3>
+<P>Eftersom Debianutvecklare redan har konto på cvs.debian.org finns det en
+säkrare metod att komma åt sidorna över CVS, något som är att
+föredra framför :pserver:-metoden ovan.
+Du måste skriva till webmaster@debian.org för att få rättigheter att komma åt
+CVS-servern, men när det är gjort är allt du behöver göra
+att sätta miljövariabeln CVS_RSH till ssh
+('export CVS_RSH=ssh' i din .bashrc) och hämtar ut sidorna med följande
+kommando:
+<pre>
+   cvs -d :ext:&lt;kontonamn&gt;@cvs.debian.org:/cvs/webwml checkout webwml/english/
+</pre>
+
+När du har hämtat ut sidorna fungerar allting precis som i föregående
+stycke.

@@ -1,0 +1,110 @@
+#use wml::debian::template title="Hur man arbetar på Debians webbsidor"
+# <!--translation 1.2-->
+
+<p>Debians webbsidor genereras på ett av tre sätt:
+Dokumentation speglas från
+<a href="http://www.debian.org/~elphick/ddp/">Debian Documentation Project (DDP)</a>,
+delar av webbplatsen genereras av skript (felrapporteringssidorna och
+sändlistearkivet är två bra exempel), och resten genereras med hjälp av wml.
+
+De som inte känner till programmen kan läsa mer på de sidor vi har gjort för
+att hjälpa dig komma igång med att
+<ul>
+<li><a href="using_wml">använda wml</a>
+<li><a href="using_cvs">använda cvs</a>
+</ul>
+
+<h3>Lägga till nya sidor</h3>
+<p>Att lägga till nya sidor till Debian är rätt så enkelt, allt arbete med
+att få sidhuvud och -fot rätt görs med wml.
+Allt du behöver göra är att inkludera en rad ungefär som denna överst i den
+nya filen:
+<pre><protect>
+#use wml::debian::template title="SIDTITEL" 
+</protect></pre>
+följd av sidkroppen.
+Alla sidor bör använda mallen wml::debian::template, såvida de inte använder
+en specialmall för just den sektionen, t.ex nyhets- eller säkerhetssidorna.
+
+<p>Mallen, wml::debian::template, tillåter dig definiera vissa variabler som
+påverkar sidan som skapas, vilket bör minska nödvändigheten av att skapa
+olika mallar för varje situation, och gör det enklare att implementera
+förbättringar.
+De variabler som för närvarande finns tillgängliga är:
+<dl>
+ <dt>NOHEADER="yes"
+ <dd>Tar bort det inledande sidhuvudet från sidan.
+     Ett speciellt sidhuvud kan naturligtvis inkluderas i sidkroppen.
+
+ <dt>NOHOMELINK="yes"
+ <dd>Tar bort länken tillbaka till Debians hemsida nederst på sidan.
+
+
+ <dt>NOLANGUAGES="yes"
+ <dd>Tar bort länken till de olika språkversionerna nederst på sidan.
+
+ <dt>NOCOPYRIGHT="yes"
+ <dd>Tar bort upphovsrättsinformationen nederst på sidan.
+</dl>
+
+<p>Ett exempel på hur detta används finns på anpassningssidorna vilka
+har sina egna sidhuvuden.
+ports/arm/index.wml använder:
+<pre><protect>
+#use wml::debian::template title="ARM Port" NOHEADER="yes"
+</protect></pre>
+
+<p>Om du vill göra något som inte kan göras med de existerande mallarna bör
+du först överväga om det går att utöka en existerande.
+Om det inte är möjligt att göra det på ett bakåtkompatibelt sätt, försök
+göra en ny mall som har en existerande som delmängd, så att de sidor som
+använder den gamla kan konverteras till den nya vid nästa större uppdatering
+(vilket förhoppningsvis inte behöver ske oftare än var sjätte månad).
+
+<p>Om du skapar en sida som genereras av ett skript, eller som inte har så
+mycket brödtext bör du överväga att använda wml:s "slices"-filter för att
+göra det enklare att hålla översättningarna uppdaterade.
+Ett bra exempel på detta är i <kbd>distrib/vendors.wml</kbd>, där nya
+distributörer kan läggas till, vilket får till följd att tillägget
+inkluderas i alla språkversioner automatiskt.
+<kbd>vendors.wml</kbd> inkluderar <kbd>vendors.CD</kbd>, vilken innehåller
+den faktiska listan.
+Den filen inkluderar i sin tur <kbd>distrib/vendors.CD.def</kbd> som
+innehåller definitionen av alla fraser i <kbd>vendors.CD</kbd>.
+Översättare behöver bara lägga till översättningar för varje "slice", t.ex
+
+<pre><protect>
+	[EN:Country:]\
+	[ES:Pa-is:]\
+	[DE:Land:]\
+</protect></pre>
+
+<h3>Lägga till nya kataloger</h3>
+
+Skapa inte kataloger med namnet <code>install</code>, då detta ställer till
+problem med make vilka leder till att sidorna i den katalogen inte kommer
+att uppdateras automatiskt.
+
+<p>Nedan följer ett förklarat exempel om hur nya kataloger läggs till
+webbplatsen:
+<pre>
+   mkdir foo
+   cvs add foo
+   cd foo
+   cp ../intro/Makefile .
+   cvs add Makefile
+</pre>
+Redigera Makefile.
+WMLBASE ska peka på den engelska startkatalogen, relativt den aktuella
+katalogen.
+CUR_DIR är var den aktuella katalogen finns relativt WMLBASE.
+Skriv sedan
+<pre>
+   cd ..
+</pre>
+och redigera Makefile:
+Lägg till katalogen du just skapat i SUBDIR-variabeln.
+Detta kommer att lägga till katalogen till byggcykeln när make körs.
+
+<p>Slutligen skriver du <code>cvs commit Makefile foo</code>
+för att lägga in alla ändringar du just gjort i CVS-trädet.
