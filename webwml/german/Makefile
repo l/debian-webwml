@@ -5,7 +5,10 @@ ENGLISHSRCDIR=$(BASE)/../english
 
 include $(BASE)/Make.lang
 
-WMLFILES := $(wildcard *.wml)
+# the following line does not work on alpha...
+# WMLFILES := $(wildcard *.wml)
+# but this hack works :-)
+WMLFILES := $(shell echo *.wml)
 HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
 
 # EPILOG=--epilog=weblint
