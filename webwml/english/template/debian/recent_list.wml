@@ -4,8 +4,34 @@
 # If $number is zero then all the news items are shown.
 
 sub get_recent_list {
-  my ($year, $number, $eng_dir) = @_;
-  $str='';
+  my ($year, $number, $eng_dir, $format) = @_;
+
+  if ($format =~ order) {
+    $listhead = '<OL>';
+	$listfoot = '</OL>';
+	$elemhead = '<LI>';
+	$elemfoot = '';
+  }
+  elsif ($format =~ bullet) {
+    $listhead = '<UL>';
+	$listfoot = '</UL>';
+	$elemhead = '<LI>';
+	$elemfoot = '';
+  }
+  elsif ($format =~ list) {
+    $listhead = '<DL>';
+	$listfoot = '</DL>';
+	$elemhead = '<DT>';
+	$elemfoot = '<DD>';
+  }
+  else {
+    $listhead = '';
+	$listfoot = '';
+	$elemhead = '';
+	$elemfoot = '';
+  }
+
+  $str=$listhead;
 
   opendir(DIR, "$eng_dir/$year");
   @files = grep { /^\d+\w?.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
@@ -34,7 +60,7 @@ sub get_recent_list {
            $desc = $1;
         }
         if ($title && $date) {
-           $str1 = "<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong> - $desc<br>\n";
+           $str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong> - $elemfoot$desc<br>\n";
 		}
         if ($title && $date && $desc) {
            last;
@@ -45,6 +71,7 @@ sub get_recent_list {
      if ($count eq $number) { last; }
   }
 close DIR;
+$str .= $listfoot;
 return $str;
 }
 
