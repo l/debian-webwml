@@ -1,29 +1,25 @@
-#use wml::debian::template title="Debian BTS - pseudo-paquetes" NOHEADER="true" NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.6"
+#use wml::debian::template title="SSF de Debian - pseudo-paquetes" NOHEADER="true" NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.7"
 
 <H1>Pseudo-paquetes del sistema de seguimiento de fallos de Debian</H1>
 
 <p>Esta página lista los pseudo-paquetes disponibles para su uso en
 la línea <code>Package:</code> en los informes de error.
 
-<p>Vea las <a href="Reporting">instrucciones para informar de un fallo</a> 
-para saber
-los detalles de cómo especificar una línea <code>Package:</code>.
+<p>Vea las <a href="Reporting">instrucciones para informar de un
+fallo</a> para saber los detalles de cómo especificar una línea
+<code>Package:</code>.
 
 <hrline>
 
 <:
 my $file = "pseudo-packages.description";
-my $host = `hostname -f`; chop $host;
-$file = "/org/www.debian.org/cron/scripts_daily/$file" if ($host eq 
-"klecker.debian.org");
-open I, "$file" or die "Can't find $file file at $host: $!\n";
+open I, "$file" or die "Can't find $file file: $!\n";
 while (<I>) { if (/^(\S+)\s+(.*)$/) { $pseudos{$1} = $2; } }
 close I;
-%pseudos || die "%pseudos is not set -- empty pseudo-packages.description 
-file?\n";
+%pseudos || die "%pseudos is not set -- empty $file file?\n";
 foreach $a (sort keys %pseudos) {
-  if ($a ne "dpkg-iwj" && $a ne "spam" && $a ne "slink-cd") {
+  if ($a ne "spam" && $a ne "slink-cd") {
     print "<p><code>$a</code> &mdash; $pseudos{$a}\n";
   }
 }
@@ -34,4 +30,3 @@ foreach $a (sort keys %pseudos) {
 #use "otherpages.inc"
 
 #use "footer.inc"
-
