@@ -13,6 +13,10 @@ include $(WMLBASE)/Make.lang
 include pics.conf
 
 debbar.pl := $(ENGLISHDIR)/Pics/debbar.pl
+ifneq "$(wildcard debbar.pl)" ""
+debbar.pl := ./debbar.pl
+endif
+
 debbar := $(debbar.pl)
 ifneq "$(FONTFACE)" ""
 debbar += -fontface $(FONTFACE)
