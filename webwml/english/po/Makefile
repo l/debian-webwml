@@ -28,23 +28,22 @@ endif
 $(TEMPLATE_POT): $(TEMPLATE_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../po=english $(TEMPLATE_FILES) > $@
 
-new.templates.$(LANGUAGE).po: templates.$(LANGUAGE).po $(TEMPLATE_POT)
-	msgmerge templates.$(LANGUAGE).po $(TEMPLATE_POT) -o $@
-
-templates.mo: new.templates.$(LANGUAGE).po
-	msgfmt --statistics -o $@ new.templates.$(LANGUAGE).po
+templates.mo: templates.$(LANGUAGE).po
+	msgfmt --statistics -o $@ templates.$(LANGUAGE).po
 
 #   Ports menus
 $(PORTS_POT): $(PORTS_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../po=english $(PORTS_FILES) > $@
 
-new.ports.$(LANGUAGE).po: ports.$(LANGUAGE).po $(PORTS_POT)
-	msgmerge ports.$(LANGUAGE).po $(PORTS_POT) -o $@
+ports.mo: ports.$(LANGUAGE).po
+	msgfmt --statistics -o $@ ports.$(LANGUAGE).po
 
-ports.mo: new.ports.$(LANGUAGE).po
-	msgfmt --statistics -o $@ new.ports.$(LANGUAGE).po
 
-install-mo:
+update-po:
+	msgmerge templates.$(LANGUAGE).po $(TEMPLATE_POT) -o templates.$(LANGUAGE).po.new && mv templates.$(LANGUAGE).po.new templates.$(LANGUAGE).po
+	msgmerge ports.$(LANGUAGE).po $(PORTS_POT) -o ports.$(LANGUAGE).po.new && mv ports.$(LANGUAGE).po.new ports.$(LANGUAGE).po
+
+install-mo: templates.mo ports.mo
 	[ -d $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES ] || mkdir -p $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES
 	if [ -f $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/templates.mo ]; then \
        cmp templates.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/templates.mo >/dev/null 2>&1 \

@@ -11,23 +11,15 @@ A. Read more informations about commands below in gettext documentation.
    english/template/debian/*.wml files.
 
    Running 'make' in other directories gives:
-       msgmerge templates.<xx>.po ../../english/po/templates.pot \
-              -o new.templates.<xx>.po
-       msgfmt --statistics -o templates.mo new.templates.<xx>.po
+       msgfmt --statistics -o templates.mo templates.<xx>.po
    where <xx> is the language code.
 
-   The templates.<xx>.po file is manually handled by translators and 
-   put under CVS control.  The new.templates.<xx>.po file is automatically
-   generated, and must *never* be committed, otherwise CVS conflicts
-   will appear on klecker.debian.org.  The templates.mo file is a binary
-   file, and contains a machine-readable representation of templates.<xx>.po.
-
-   This means that translators must check from time to time if their
-   templates.<xx>.po file is outdated, in which case they copy
-   new.templates.<xx>.po into templates.<xx>.po and commit it.
-   Fortunately it is possible to automatically detect those outdated
-   translations, and a tool such as check_trans.pl could send notices.
-
+   When a translator wants to work on a PO file, he runs 'make update-po'
+   which executes:
+       msgmerge templates.<xx>.po ../../english/po/templates.pot \
+              -o templates.<xx>.po.new && \
+              mv templates.<xx>.po.new templates.<xx>.po
+       
    Last, 'make install' copy templates.mo files under
      webwml/locale/<xx>/LC_MESSAGES/templates.mo
 
