@@ -9,10 +9,11 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates bugs countries doc l10n langs organization ports search vendors others
+DOMAINS = templates bugs countries date doc l10n langs organization ports search vendors others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
 countries_FILES = $(TEMPLDIR)/countries.wml
+date_FILES      = $(TEMPLDIR)/ctime.wml
 doc_FILES       = $(ENGLISHDIR)/doc/books.def $(ENGLISHDIR)/doc/manuals.defs
 l10n_FILES      = $(ENGLISHDIR)/international/l10n/dtc.def \
   $(ENGLISHDIR)/international/l10n/menu.def
@@ -40,9 +41,19 @@ templates_FILES = $(addprefix $(TEMPLDIR)/, \
 
 POTFILES = $(addprefix $(ENGLISHDIR)/po/,$(addsuffix .pot,$(DOMAINS)))
 MOFILES = $(addsuffix .mo,$(DOMAINS))
-SOURCEFILES = $(bugs_FILES) $(countries_FILES) $(doc_FILES) $(l10n_FILES) \
-  $(langs_FILES) $(organization_FILES) $(ports_FILES) $(search_FILES) \
-  $(vendors_FILES) $(others_FILES) $(templates_FILES)
+SOURCEFILES = \
+  $(bugs_FILES)                 \
+  $(countries_FILES)            \
+  $(date_FILES)                 \
+  $(doc_FILES)                  \
+  $(l10n_FILES)                 \
+  $(langs_FILES)                \
+  $(organization_FILES)         \
+  $(ports_FILES)                \
+  $(search_FILES)               \
+  $(vendors_FILES)              \
+  $(others_FILES)               \
+  $(templates_FILES)
 
 ifeq "$(LANGUAGE)" "en"
 all install:: $(POTFILES)
@@ -58,6 +69,9 @@ $(ENGLISHDIR)/po/bugs.pot: # $(bugs_FILES)
 
 $(ENGLISHDIR)/po/countries.pot: # $(countries_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl countries $(countries_FILES) > $@
+
+$(ENGLISHDIR)/po/date.pot: # $(date_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl date $(date_FILES) > $@
 
 $(ENGLISHDIR)/po/doc.pot: # $(doc_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl doc $(doc_FILES) > $@
