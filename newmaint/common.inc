@@ -206,6 +206,7 @@ function free_managers($db) {
         echo "SQL was: $sql<BR>";
         return;
     }
+    $rows = pg_NumRows($query);
     if ($rows) {
         return TRUE;
     } else {
