@@ -6,7 +6,7 @@ WMLBASE=..
 CUR_DIR=releases
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
-SUBS=hamm slink potato
+SUBS=hamm slink potato woody
 
 include $(WMLBASE)/Make.lang
 
