@@ -8,15 +8,14 @@ shift; shift
 
 for code
 do
-    test -f $dir/main-$code.todo     || echo 'DELETE-ME' > $dir/main-$code.todo
-    test -f $dir/contrib-$code.todo  || echo 'DELETE-ME' > $dir/contrib-$code.todo
-    test -f $dir/non-free-$code.todo || echo 'DELETE-ME' > $dir/non-free-$code.todo
-    test -f $dir/main-$code.ok       || echo 'DELETE-ME' > $dir/main-$code.ok
-    test -f $dir/contrib-$code.ok    || echo 'DELETE-ME' > $dir/contrib-$code.ok
-    test -f $dir/non-free-$code.ok   || echo 'DELETE-ME' > $dir/non-free-$code.ok
-    test -f $dir/main-$code.exc      || echo 'DELETE-ME' > $dir/main-$code.exc
-    test -f $dir/contrib-$code.exc   || echo 'DELETE-ME' > $dir/contrib-$code.exc
-    test -f $dir/non-free-$code.exc  || echo 'DELETE-ME' > $dir/non-free-$code.exc
+    for dist in main contrib non-free
+    do
+        for type in todo ok exc
+        do
+            file=$dir/${dist}-$code.$type
+            test -f $file || echo 'DELETE-ME' > $file
+        done
+    done
 
     stat=`grep "^$code:" $dir/stats|sed 's/^.*://'`
 
