@@ -95,8 +95,7 @@ sub get_stats_po {
                         $incl{$lang} .= "<tr bgcolor=\"".
                               get_color(percent_stat($stat)).
                               "\"><td>".$pkg."</td>".
-                              "<td>".percent_stat($stat).
-                              " (".show_stat($stat).")</td><td><a href=\"";
+                              "<td>".show_stat($stat)."</td><td><a href=\"";
                         $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
                         $incl{$lang} .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>".
                               "</tr>\n";
@@ -189,8 +188,7 @@ sub get_stats_templates {
                         $incl{$lang} .= "<tr bgcolor=\"".
                               get_color(percent_stat($stat)).
                               "\"><td>".$pkg."</td>".
-                              "<td>".percent_stat($stat).
-                              " (".show_stat($stat).")</td><td><a href=\"";
+                              "<td>".show_stat($stat)."</td><td><a href=\"";
                         $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "templates/unstable/";
                         $incl{$lang} .= $data->pooldir($pkg)."/$link_trans.gz\">$template</a></td><td>";
                         if ($link_orig ne '') {
@@ -375,8 +373,7 @@ sub get_stats_podebconf {
                         $incl{$lang} .= "<tr bgcolor=\"".
                               get_color(percent_stat($stat)).
                               "\"><td>".$pkg."</td>".
-                              "<td>".percent_stat($stat).
-                              " (".show_stat($stat).")</td><td><a href=\"";
+                              "<td>".show_stat($stat)."</td><td><a href=\"";
                         $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
                         $incl{$lang} .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>".
                               "</tr>\n";
@@ -507,24 +504,25 @@ sub process_langs {
 
 sub show_stat {
         my $stat = shift;
+        my $ret = percent_stat($stat) || return '';
         if ($stat =~ m/^(\d+)t(\d+)f(\d+)u$/) {
-                return "$1t;$2f;$3u";
+                $ret .= " ($1t;$2f;$3u)";
         } else {
-                return $stat;
+                $ret .= " ($stat)";
         }
+        return $ret;
 }
 sub percent_stat {
         my $stat = shift;
         if ($stat =~ m/^(\d+)t(\d+)f(\d+)u$/) {
-                return "0\%" if ($1+$2+$3 == 0);  # there must be an error!
+                return '' if ($1+$2+$3 == 0);  # there must be an error!
                 return sprintf "%3d%%", (100*$1/($1+$2+$3));
-        } else {
-                return 'n/a';
         }
+        return '';
 }
 sub get_color {
         my $percent = shift;
-        $percent =~ s/\%// or return "#ff0000";
+        $percent =~ s/\%$// or return "#ff0000";
         my $nbcol = 8;
         my $level = sprintf ("%d", $percent * $nbcol / 101);
         if ($level < $nbcol / 2) {
