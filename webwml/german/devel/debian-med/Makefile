@@ -5,13 +5,15 @@
 
 WMLBASE=../..
 CUR_DIR=devel/debian-med
-SUBS=News
+SUBS=News talks
 
 include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
   $(TEMPLDIR)/recent_list.wml \
-  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/News/[0-9]*/*.wml)
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/News/[0-9]*/*.wml) \
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/talks/*.wml)
+
 #  $(wildcard ../../../german/devel/debian-med/News/[0-9]*/*.wml)
 
 #packaged.$(LANGUAGE).html: packaged.wml \
