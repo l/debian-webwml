@@ -90,6 +90,7 @@ $translations = {
 	'name'			=> 'Debian Constitution',
 	'cvs_url'		=> '?',
 	'package'		=> 'doc-debian',
+	'lines'			=> 603,
 },
 
 'bug-log-access' => {
@@ -97,24 +98,28 @@ $translations = {
 	'name'			=> 'Accessing bug reports in the tracking system logs',
 	'cvs_url'		=> '?',
 	'package'		=> 'doc-debian',
+	'lines'			=> 24,
 },
 'mailing-lists' => {
 	'type'			=> 'DDP',
 	'name'			=> 'Introduction to the Debian mailing lists',
 	'cvs_url'		=> '?',
 	'package'		=> 'doc-debian',
+	'lines'			=> 906,
 },
 'bug-reporting' => {
 	'type'			=> 'DDP',
 	'name'			=> 'How to report a bug in Debian',
 	'cvs_url'		=> '?',
 	'package'		=> 'doc-debian',
+	'lines'			=> 202,
 },
 'source-unpack' => {
 	'type'			=> 'DDP',
 	'name'			=> 'How to unpack a Debian source package',
 	'cvs_url'		=> '?',
 	'package'		=> 'doc-debian',
+	'lines'			=> 33,
 },
 
 #
@@ -234,6 +239,7 @@ $translations = {
 	'sub_name'		=> 'chapter 0 to 14',
 	'revision'		=> '2.4.1.0',
 	'cvs_url'		=> 'http://cvs.debian.org/ddp/debian-policy/packaging-manual/packaging.sgml?cvsroot=debian-doc',
+	'package'		=> 'debian-policy',
 },
 
 'developers-reference' => {
