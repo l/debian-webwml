@@ -1,5 +1,5 @@
 #use wml::debian::template title="FAQ de l'équipe Debian sur la sécurité"
-#use wml::debian::translation-check translation="1.18" maintainer="DFS Task Force"
+#use wml::debian::translation-check translation="1.22" maintainer="DFS Task Force"
 #include "$(ENGLISHDIR)/security/faq.inc"
 
 <p>Ces derniers jours, nous avons reçu un peu trop souvent des questions
@@ -21,9 +21,11 @@ globalement.</p>
    espaces et tabulations.</p>
 
 <p>Les coupables habituels sont fetchmail (avec l'option mimedecode
-   activée) et formail (venant de procmail 3.14 seulement).</p>
+   activée), formail (venant de procmail 3.14 seulement) et evolution.</p>
 
-<toc-add-entry name="handling">Comment s'occupe-t-on de la sécurité dans Debian&nbsp;?</toc-add-entry>
+<toc-add-entry name="handling">Comment s'occupe-t-on de la sécurité dans 
+Debian&nbsp;?</toc-add-entry>
+
 <p>R.&nbsp;: Une fois que l'équipe en charge de la sécurité reçoit
    notification d'un incident, un ou plusieurs de ses membres examinent
    la situation et en mesurent l'impact sur la version stable de Debian
@@ -35,8 +37,35 @@ globalement.</p>
    compilés sur toutes les architectures stables et ensuite mis en
    téléchargement. Après toutes ces étapes, un rapport est publié.</p>
 
-<toc-add-entry name=policy>Quelle est la politique pour qu'un paquet stable apparaisse
-dans security.debian.org&nbsp;?</toc-add-entry>
+<toc-add-entry name=oldversion>Pourquoi vous cassez vous la tête avec une
+vieille version de ce paquet&nbsp;?</toc-add-entry>
+
+<p>La règle la plus importante lorsque l'on construit un nouveau paquet qui
+   corrige un problème de sécurité est de faire le moins de changements 
+   possibles. Nos utilisateurs et nos développeurs s'attendent à ce que la
+   distribution conserve son comportement d'origine, aussi n'importe
+   quel changement que nous faisons peut éventuellement casser 
+   le système de quelqu'un. C'est particulièrement vrai dans le cadre
+   des bibliothèques : assurez-vous de ne jamais changer l'interface de 
+   programmation du programme (API) ou l'interface binaire de l'application
+   (ABI : <i>Application Binary Interface</i>), aussi petite soit la 
+   modification.</p>
+
+<p>Cela signifie que changer pour une version plus récente n'est pas une 
+   bonne solution, au lieu de cela la modification doit être rétro-portée. 
+   En règle générale les auteurs donne un coup de main, sinon l'équipe
+   en charge de la sécurité devrait être capable de s'en charger.</p>
+
+<p>Dans des cas particuliers il n'est pas possible de rétro-porter une rustine
+   de sécurité, par exemple lorsqu'une grande partie du code source doit
+   être modifiée ou ré-écrite. Si cela survient, il sera nécessaire de passer
+   à une nouvelle version des fichiers sources, mais cela devra se faire
+   avec la participation de l'équipe en charge de la sécurité.</p>
+
+
+<toc-add-entry name=policy>Quelle est la politique pour qu'un paquet stable 
+apparaisse dans security.debian.org&nbsp;?</toc-add-entry>
+
 <p>R.&nbsp;: Un trou de sécurité dans la distribution stable justifie un 
    paquet sur security.debian.org. Le reste non. La taille de ce trou
    n'est pas un réel critère ici. Habituellement, l'équipe chargée de la
@@ -45,12 +74,13 @@ dans security.debian.org&nbsp;?</toc-add-entry>
    corrige et compile tous les paquets incriminés, puis les envoie à
    l'équipe chargée de la sécurité. Même si le problème de sécurité est
    trivial à corriger, la correction est placée sur
-   security.debian.org</p>
+   security.debian.org. Veuillez lire ci-dessous.</p>
 
-<toc-add-entry name=version>Le numéro de version d'un paquet m'indique que j'utilise
-toujours une version vulnérable&nbsp;!</toc-add-entry>
+<toc-add-entry name=version>Le numéro de version d'un paquet m'indique que 
+j'utilise toujours une version vulnérable&nbsp;!</toc-add-entry>
+
 <p>R.&nbsp;: Au lieu de passer à une nouvelle version, nous réalisons un 
-   rétroportage («&nbsp;<i>backport</i>&nbsp;») de la rustine de
+   rétro-portage («&nbsp;<i>backport</i>&nbsp;») de la rustine de
    sécurité vers la version fournie dans la distribution stable. La
    raison pour laquelle nous faisons cela est qu'une version publiée
    («&nbsp;<i>release</i>&nbsp;») change aussi peu que possible&nbsp;;
@@ -60,22 +90,30 @@ toujours une version vulnérable&nbsp;!</toc-add-entry>
    numéro exact de version et celui indiqué par le bulletin d'alerte de
    l'équipe Debian chargée de la sécurité.</p>
  
-<toc-add-entry name=testing>Comment est gérée la sécurité pour <tt>testing</tt> et
-<tt>unstable</tt>&nbsp;?</toc-add-entry>
+<toc-add-entry name=testing>Comment est gérée la sécurité pour <tt>testing</tt>
+et <tt>unstable</tt>&nbsp;?</toc-add-entry>
+
 <p>R.&nbsp;: La réponse courte est&nbsp;: elle ne l'est pas. Testing et unstable
    évoluent rapidement et l'équipe chargée de la sécurité n'a pas les
    ressources nécessaires pour faire ce travail correctement. Si vous
    souhaitez un serveur sûr (et stable), vous êtes fortement encouragés
-   à rester sur la distribution stable.</p>
+   à rester sur la distribution stable. Cependant, les membres de l'équipe
+   en charge de la sécurité essayeront de corriger les problèmes dans
+   <i>testing</i> et <i>unstable</i> une fois qu'ils auront été corrigés dans
+   la version stable.</p>
 
-<toc-add-entry name=mirror>Pourquoi n'y a-t-il pas de miroirs officiels de security.debian.org&nbsp;?</toc-add-entry>
+<toc-add-entry name=mirror>Pourquoi n'y a-t-il pas de miroirs officiels de 
+security.debian.org&nbsp;?</toc-add-entry>
+
 <p>R.&nbsp;: Le but de security.debian.org est de rendre les mises à jour pour
    raisons de sécurité disponibles aussi rapidement que possible. Des
    sites miroirs ne feraient qu'ajouter de la complexité là où elle
    n'est pas nécessaire, et pourraient causer des problèmes s'ils
    n'étaient pas à jour.</p>
 
-<toc-add-entry name=missing>J'ai vu les DSA 100&nbsp;et DSA&nbsp;102, mais où est le DSA&nbsp;101&nbsp;?</toc-add-entry>
+<toc-add-entry name=missing>J'ai vu les DSA 100&nbsp;et DSA&nbsp;102, 
+mais où est le DSA&nbsp;101&nbsp;?</toc-add-entry>
+
 <p>R.&nbsp;: plusieurs distributeurs (la plupart de GNU/Linux, mais aussi des
    dérivés BSD) coordonnent leurs avis de sécurité pour certains
    incidents et se mettent d'accord sur une date de parution, afin de
@@ -90,16 +128,32 @@ toujours une version vulnérable&nbsp;!</toc-add-entry>
    attente ne soit rendu public, et ainsi la continuité de la
    numérotation est temporairement rompue.</p>
 
-<toc-add-entry name=contact>Comment puis-je contacter l'équipe chargée de la sécurité&nbsp;?</toc-add-entry>
+<toc-add-entry name=contact>Comment puis-je contacter l'équipe chargée de la 
+sécurité&nbsp;?</toc-add-entry>
+
 <p>R.&nbsp;: Les informations relatives à la sécurité peuvent être envoyées à
    security@debian.org, qui est lue par tous les développeurs Debian.
    Si vous avez des informations sensibles, veuillez les envoyer à
    team@security.debian.org qui n'est lue que par les membres de l'équipe
    chargée de la sécurité. Si nécessaire, le message peut-être crypté
-   avec la clé publique du contact sécurité Debian (ID&nbsp;0x363CCD95).</p>
+   avec la clé publique du contact sécurité Debian 
+   (ID&nbsp;<a href="http://blackhole.pca.dfn.de:11371/pks/lookup?op=get&amp;exact=on&amp;search=0x363CCD95">\0x363CCD95).</p>
 
-<toc-add-entry name=care>Que suis-je censé faire si l'un de mes paquets présente un
-problème de sécurité&nbsp;?</toc-add-entry>
+<toc-add-entry name=discover>Je pense avoir trouvé un problème de sécurité,
+que suis-je censé faire&nbsp;?</toc-add-entry>
+
+<p>R.&nbsp;: Si vous êtes informé de l'existence d'un problème de sécurité,
+   soit dans un de vos paquets, soit dans le paquet de quelqu'un d'autre,
+   prenez systématiquement contact avec l'équipe en charge de la sécurité.
+   Si l'équipe en charge de la sécurité confirme la faille et que les autres
+   distributeurs sont également concernés, ils prennent également contact avec
+   les autres revendeurs. Si la vulnérabilité ne peut pas être publiée,
+   ils essaient de coordonner les annonces de sécurité avec les autres
+   revendeurs, ainsi les principales distributions sont synchronisées.</p>
+
+<toc-add-entry name=care>Que suis-je censé faire si l'un de mes paquets 
+présente un problème de sécurité&nbsp;?</toc-add-entry>
+
 <p>R.&nbsp;: Si vous entendez parler d'un problème de sécurité, soit
    dans votre paquet soit dans le paquet de quelqu'un d'autre, vous
    devez toujours prendre contact avec l'équipe en charge de la
@@ -111,8 +165,9 @@ problème de sécurité&nbsp;?</toc-add-entry>
    responsables du site security.debian.org.</p>
 
 <toc-add-entry name=enofile>J'ai essayé de télécharger un paquet contenu dans un
-bulletin d'alerte, mais j'ai eu une erreur comme quoi le fichier n'est
-pas trouvé.</toc-add-entry>
+bulletin d'alerte, mais j'ai eu une erreur comme quoi le fichier n'est pas 
+trouvé.</toc-add-entry>
+
 <p>R.&nbsp;: À chaque fois qu'une nouvelle correction de bogue de
    sécurité intervient sur un paquet de security.debian.org, les
    chances sont grandes que l'ancien paquet soit supprimé, ce qui
@@ -126,31 +181,65 @@ pas trouvé.</toc-add-entry>
    debian-security-announce</a>. Il vaut mieux lancer simplement
    <code>apt-get update</code> avant de mettre à jour le paquet.</p>
 
-<toc-add-entry name=upload>Je possède une rustine, puis-je la mettre en ligne sur
-security.debian.org directement&nbsp;?</toc-add-entry>
+<toc-add-entry name=upload>Je possède une rustine, puis-je la mettre en ligne 
+sur security.debian.org directement&nbsp;?</toc-add-entry>
 
 <p>R.&nbsp;: Non, vous ne pouvez pas. Les archives de
    security.debian.org sont entretenues par l'équipe en charge de la
    sécurité, qui doit approuver tous les paquets. Vous devez envoyer vos
    rustines ou des paquets sources propres à l'équipe en charge de la
-   sécurité a l'adresse team@security.debian.org. Si vous êtes certain
-   de ne pas avoir cassé quelque chose, que vous n'avez pas modifié
-   le comportement du paquet, et que vous avez pallié au problème de
-   sécurité, vous pouvez mettre en ligne les fichiers dans le répertoire
-   <a href="ftp://security.debian.org/pub/SecurityUploadQueue/">incomming</a>
-   directement. Assurez-vous, au préalable, d'en avoir lu la
-   <a href="http://lists.debian.org/debian-devel-announce/2002/debian-devel-announce-200206/msg00004.html">\
-   présentation</a> par Wichert.</p>
+   sécurité a l'adresse team@security.debian.org. Ils seront revus par
+   l'équipe en charge de la sécurité et éventuellement mis en ligne, avec
+   ou sans modifications.</p>
+   
+<p>Si vous n'êtes pas habitué des mise à jour de sécurité, et que vous
+   n'êtes pas certain que votre paquet est sain, lisez bien ce qui suit,
+   ne mettez pas vos paquet en ligne dans le répertoire <i>incoming</i>.
+   L'équipe en charge de la sécurité dispose de possibilités réduites pour
+   traiter un paquet mal-formé, particulièrement dans le cas où le numéro
+   de version n'est pas bon. Les paquets ne pourront pas être rejetés
+   et le démon de construction <i>buildd</i> sera perturbé si cela doit
+   se produire. Pour traiter ces problèmes, utilisez le courriel et 
+   aidez-nous en ne rajoutant pas des problèmes supplémentaires sur les bras
+   de l'équipe en charge de la sécurité.</p>
 
-<toc-add-entry name=help>Comment puis-je fournir de l'aide sur la sécurité&nbsp;?</toc-add-entry>
-<p>R.&nbsp;: S'il vous plait, réexaminez chaque problème avant de le
+<toc-add-entry name=SecurityUploadQueue>Je suis presque persuadé que mes
+paquets sont correctement construit, comment puis-je les mettre en 
+ligne&nbsp;?</toc-add-entry>
+
+<p>R&nbsp;: Si vous êtes certain de ne pas avoir cassé quelque chose, que le
+   numéro de version est le bon (i.e. supérieur que celui dans la version
+   qui se trouve dans stable et plus petit que celui qui se trouve dans 
+   testing/unstable), que vous n'avez pas modifié
+   le comportement du paquet, et que vous avez pallié au problème de
+   sécurité, que vous l'avez compilé pour la bonne distribution ( qui 
+   est <code>oldstable-security</code> ou <code>stable-security</code>),
+   que le paquet contiennent les sources originales si le paquet
+   est nouveau sur security.debian.org, que vous pouvez confirmer que 
+   la rustine pour la plus récente version est propre et concerne uniquement
+   le problème de sécurité dont il est question (vérifiez le avec la commande
+   <code>interdiff -z</code> et également les fichiers <code>.diff.gz</code>),
+   que vous avez relu la rustine au moins trois fois, et que 
+   <code>debdiff</code> n'affiche aucun changements, vous pouvez mettre en 
+   ligne les fichiers dans le répertoire
+   <a href="/org/ftp.root/pub/SecurityUploadQueue/">incomming</a> qui se trouve
+   sur security.debian.org directement. Veillez également à notifier l'équipe 
+   en charge de la sécurité sur team@security.debian.org de tous les détails
+   et des liens.</p>
+
+<toc-add-entry name=help>Comment puis-je fournir de l'aide sur la 
+sécurité&nbsp;?</toc-add-entry>
+
+<p>R.&nbsp;: S'il vous plaît, réexaminez chaque problème avant de le
    rapporter. Si vous en avez la possibilité, fournissez des correctifs,
    ce qui accélérera le processus. Ne renvoyez pas simplement des
    messages en provenance du bugtraq, car nous les recevons déjà &mdash;
    mais fournissez-nous des informations complémentaires à celles
    fournies par bugtraq.</p>
 
-<toc-add-entry name=proposed-updates>Quel est le contenu de «&nbsp;proposed-updates&nbsp;»&nbsp;?</toc-add-entry>
+<toc-add-entry name=proposed-updates>Quel est le contenu de 
+«&nbsp;proposed-updates&nbsp;»&nbsp;?</toc-add-entry>
+
 <p>R.&nbsp;: Ce répertoire contient les paquets qui ont été proposés dans
    le but d'être incorporés dans la prochaine version stable de Debian.
    Chaque fois que des paquets sont mis en téléchargement (uploadés) par
@@ -167,8 +256,9 @@ security.debian.org directement&nbsp;?</toc-add-entry>
    nouvelle version (<i>revision</i>) de «&nbsp;stable&nbsp;» (p.e. 2.2r3
    ou 2.2r4).</p>
 
-<toc-add-entry name=composing>De quelle façon est constituée l'équipe chargée de la
-sécurité&nbsp;?</toc-add-entry>
+<toc-add-entry name=composing>De quelle façon est constituée l'équipe chargée 
+de la sécurité&nbsp;?</toc-add-entry>
+
 <p>R.&nbsp;: L'équipe en charge de la sécurité comporte actuellement
    cinq officiers et de deux secrétaires. L'équipe chargée de la
    sécurité nomme elle-même ses membres.</p>
