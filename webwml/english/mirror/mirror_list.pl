@@ -587,10 +587,23 @@ END
 }
 
 sub full_listing {
-	print "<pre>\n";
-	foreach $country (sort keys %countries) {
+	if ($html) {
+		print "\n<hr noshade size=\"1\">\n";
+		print "<p>Jump directly to a country on the list:<br>\n";
+		my $counter = 1;
+		foreach my $country (sort keys %countries) {
+			(my $XY = $country) =~ s/^([[:upper:]]+) .+$/$1/;
+			(my $con = $country) =~ s/^[[:upper:]]+ (.+)$/$1/;
+			print " <a href=\"#$XY\">$con</a>";
+			print "<br>" unless ($counter++ % 8);
+	        }
+		print "\n<hr noshade size=\"1\">\n";
+	}
+	print "<pre>\n" if ($html);
+	foreach my $country (sort keys %countries) {
 		if ($html) {
-			print "\n<strong>$country</strong>\n";
+			(my $XY = $country) =~ s/^([[:upper:]]+) .+$/$1/;
+			print "\n<strong><a name=\"$XY\">$country</a></strong>\n";
 		}
 		else {
 			print "\n$country\n";
@@ -671,7 +684,7 @@ sub full_listing {
 			print "\n";
 		}
 	}
-	print "</pre>\n";
+	print "</pre>\n" if ($html);
 }
 
 sub nonus_mirrors {
