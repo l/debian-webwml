@@ -15,5 +15,9 @@ include $(WMLBASE)/Make.dep.templ
 include $(WMLBASE)/Make.dep.generic
 
 # Do Not modify the following line
+index.$(LANGUAGE).html: index.wml $(wildcard 1999/1999*.wml) \
+	$(wildcard $(ENGLISHSRCDIR)/Vote/1999/1999*.wml) \
+	$(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml $(TEMPLDIR)/languages.wml $(TEMPLDIR)/footer.wml 
+
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml $(TEMPLDIR)/languages.wml $(TEMPLDIR)/footer.wml
 	$(WML) $(<F)
