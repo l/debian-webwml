@@ -71,10 +71,9 @@ DLFFSOURCE := $(wildcard $(DLFFDIR)/*.html)
 DLFFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(DLFFSOURCE))
 DLFFDESTDIR := $(HTMLDIR)/$(DLFFDIR)
 
-install::
-	test -d $(DLFFDESTDIR) || mkdir -p -m g+w $(DLFFDESTDIR)
 install:: $(DLFFDESTFILES) $(GENDESTFILES)
 
 $(DLFFDESTFILES): $(DLFFSOURCE)
+	@test -d $(DLFFDESTDIR) || mkdir -p -m g+w $(DLFFDESTDIR)
 	install -m664 $(DLFFDIR)/$(@F) $(DLFFDESTDIR)
 
