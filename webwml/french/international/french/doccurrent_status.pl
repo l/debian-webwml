@@ -214,7 +214,7 @@ $translations_status = {
 	'translation_package' => 'developers-reference',
 	'translation_url'       => 'http://www.debian.org/doc/manuals/developers-reference/index.fr.html',
 	'translation_cvs_url'   => 'http://cvs.debian.org/ddp/manuals.sgml/developers-reference/?cvsroot=debian-doc',
-	'translation_dev_url'   => 'http://olympie.dyndns.org/debian/doc/dev-ref/developers-reference.fr.html/'
+	'translation_dev_url'   => 'http://olympie.dyndns.org/debian/doc/dev-ref/developers-reference.fr.html/',
 	'old_translators'       => ['Alain Meessen <ameessen@ulb.ac.be>',
 	                            'Herve Floch <Herve.Floch@linux.eu.org>',
 	                            'Laurent Picouleau <laurent.picouleau@wanadoo.fr>',
