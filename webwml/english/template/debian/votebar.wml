@@ -288,15 +288,18 @@
 sub get_issues_list {
 	my ( $path, $number, $current_dir ) = @_;
 
-
 	$str=""; $proposal=""; $discussion=""; $voting=""; $finished=""; $unknown="";
+	@years = (1999, 2000);
+	$count = 0;
 
+foreach $year (@years) {
+	$path = $year;
 	opendir(DIR, "$current_dir/$path");
   	@files = grep { /^vote.*.wml$/ && -f "$current_dir/$path/$_" } readdir(DIR);
   	@files = sort @files;
   	closedir DIR;
 
-  $count = 0;
+
   foreach (@files) {
      $count++;
      open(FILE, "<$path/$_") || open(FILE, "<$current_dir/$path/$_");
@@ -343,6 +346,7 @@ sub get_issues_list {
      close FILE;
      if ($count eq $number) { last; }
   }
+}
 close DIR;
 	if ( $proposal ne "" ) 
 	{ 
