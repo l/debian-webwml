@@ -1,10 +1,12 @@
-#!/usr/bin/perl -w -p     -*- mode: perl ; coding: iso-8859-2-unix -*-
+#!/usr/bin/perl -w     -*- mode: perl ; coding: iso-8859-2-unix -*-
 
 # Translate dsa-*.wml file from English to Czech language.
 # USAGE: dsa-description.pl file.wml
 
 # Read by paragraph
 $/="\n\n";
+
+while (<>) {
 
 # Delete \n except comment line and last \n in paragraph
 s/\n([^\#])/ $1/g;
@@ -35,6 +37,9 @@ s{<define-tag description>([^<]*)insecure temporary files([^<]*)</define-tag>}
 
 s{<define-tag description>([^<]*)insecure temporary file([^<]*)</define-tag>}
 {<define-tag description>${1}nespolehlivý doèasný soubor${2}</define-tag>}g;
+
+s{<define-tag description>([^<]*)insecure temporary directory([^<]*)</define-tag>}
+{<define-tag description>${1}nespolehlivý doèasný adresáø${2}</define-tag>}g;
 
 s{<define-tag description>([^<]*)unsanitised input([^<]*)</define-tag>}
 {<define-tag description>${1}neo¹etøený vstup${2}</define-tag>}g;
@@ -155,13 +160,16 @@ s{<p>For the (stable|unstable) distribution}
 {<p>Pro $1 distribuci}g;
 
 s{this problem has been fixed in version}
-{byl tento problém opraven ve verzi}g;
+{byl tento problém opraven\nve verzi}g;
 
 s{these problems have been fixed in version}
-{byly tyto problémy opraveny ve verzi}g;
+{byly tyto problémy opraveny\nve verzi}g;
+
+s{this problem will be fixed soon.</p>}
+{bude tento problém brzy\nodstranìn.</p>}g;
 
 s{these problems will be fixed soon.</p>}
-{budou tyto problémy brzy odstranìny.</p>}g;
+{budou tyto problémy brzy\nodstranìny.</p>}g;
 
 s{<p>This package is not present in the testing and unstable distributions.</p>}
 {<p>Tento balíèek není obsa¾en v testing a unstable distribuci.</p>}g;
@@ -190,4 +198,5 @@ s{<p>We recommend that you upgrade your (\w+) packages.</p>}
 s{ </define-tag>}{\n</define-tag>}g;
 s{<define-tag moreinfo> }{<define-tag moreinfo>\n}g;
 
-#print "---\n";
+print ;
+} # while
