@@ -28,7 +28,8 @@ $(DSARDF): $(ENGLISHDIR)/security/dsa.rdf.in \
   $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.data) \
   $(TEMPLDIR)/recent_list.wml
 ifeq "$(LANGUAGE)" "zh"
-	$(subst :.zh,:dsa.zh,$(WML)) \
+# this is _supposed_ to change :.zh-cn.html.tmp
+	$(patsubst :.zh-%.html,:dsa.zh-%.rdf,$(WML)) \
           $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
             $(ENGLISHDIR)/security/dsa.rdf.in
 	@echo -n " * Converting: [zh_CN.GB2312], "
