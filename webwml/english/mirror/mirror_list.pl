@@ -246,8 +246,8 @@ determine the fastest of a list of sites.
 END
 	print "<p>" if $html;
 	print "The authoritative copy of this list can always be found at:\n";
-	print "<a href=\"http://ftp.debian.org/debian/README.mirrors\">" if $html;
-	print "                 http://ftp.debian.org/debian/README.mirrors";
+	print "<a href=\"http://ftp.debian.org/debian/README.mirrors.html\">" if $html;
+	print "                 http://ftp.debian.org/debian/README.mirrors.html";
 	print "</a>.<br>" if $html;
 	print "\n";
 
