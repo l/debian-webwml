@@ -5,7 +5,7 @@ LOCALEROOT = $(CURDIR)/../locale
 
 TEMPLDIR   = template/debian
 
-TEMPLATES_FILES = $(wildcard $(TEMPLDIR)/*.wml) $(TEMPLDIR)/countries.def
+TEMPLATES_FILES = $(wildcard $(TEMPLDIR)/*.wml $(TEMPLDIR)/weeklynews/*.wml) $(TEMPLDIR)/countries.def
 TEMPLATES_POT   = po-files/templates.pot
 TEMPLATES_PO    = $(addprefix po-files/templates., $(addsuffix .po, $(langs)))
 TEMPLATES_UPO   = $(TEMPLATES_PO:.po=.upo)
