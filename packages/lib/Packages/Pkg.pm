@@ -151,7 +151,7 @@ sub build_cache {
     $self->{cache}->{versions_list} = [ $self->get_version_list ];
     $self->{cache}->{arch_versions} = { $self->get_arch_versions( \@archs ) };
 
-    foreach my $f ( qw( archive section uploaders
+    foreach my $f ( qw( archive section uploaders priority essential
 			size installed-size distribution subdistribution 
 			maintainer source filename md5sum ) )
     {
