@@ -51,6 +51,7 @@ my @main    = ();
 my @contrib = ();
 my @nonfree = ();
 my %score = ();
+my %total = ();
 my $tmpl_errors_maint = {};
 
 foreach my $pkg ($data->list_packages()) {
@@ -334,6 +335,7 @@ sub get_stats_podebconf {
         my ($section, $packages) = @_;
         my ($pkg, $line, $lang, %list);
 
+        $total{$section} = 0;
         my %incl  = ();
         my %excl  = ();
         my $orig  = '';
@@ -359,6 +361,7 @@ sub get_stats_podebconf {
                 }
                 $orig .= "<li>$pkg".$addorig."</li>\n" if $addorig;
 
+                my $addtotal = 0;
                 foreach $line (@{$data->podebconf($pkg)}) {
                         my ($pofile, $lang, $stat, $link) = @{$line};
                         next if $lang eq '_';
@@ -376,10 +379,14 @@ sub get_stats_podebconf {
                         $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
                         $incl{$lang} .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>".
                               "</tr>\n";
-                        if ($stat =~ m/(\d+)t/) {
+                        if ($stat =~ m/^(\d+)t(\d+)f(\d+)u$/) {
                                 $score{$lang} += $1;
+                                $addtotal = $1 + $2 + $3
+                                        if $1 + $2 + $3 > 0;
                         }
                 }
+                $total{$section} += $addtotal;
+
                 foreach $lang (@pd_langs) {
                         my $l = uc($lang) || 'UNKNOWN';
                         next if $list{$l};
@@ -427,6 +434,12 @@ sub process_podebconf {
                 print GEN "<dd><language-name $lang /></dd>\n";
         }
         print GEN "</dl>\n";
+        open (GEN, "> $opt_l/po-debconf/gen/total")
+                || die "Unable to write into $opt_l/po-debconf/gen/total";
+        print GEN "<set-var podebconf-total=\"".
+                ($total{main}+$total{contrib}+$total{'non-free'}).
+                "\" />\n";
+        close (GEN);
 }
 
 sub process_langs {
