@@ -52,3 +52,4 @@ def TemplateSubst(map, filename):
     file.close();
     return template;
 
+# vim: ts=4:expandtab:shiftwidth=4:

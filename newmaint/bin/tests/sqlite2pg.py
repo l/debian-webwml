@@ -13,3 +13,4 @@ class db:
     def getresult(self):
         return self.cu.fetchall()
 
+# vim: ts=4:expandtab:shiftwidth=4:
