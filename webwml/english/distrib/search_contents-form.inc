@@ -18,7 +18,7 @@
   <label for="searchfilesanddirs"><gettext domain="distrib">packages that contain files or directories named like this</gettext></label>
 <br />
 <input type=radio name="searchmode" value="searchword" id="searchword" />
-  <label for="searchword"><gettext domain="distrib">packages that contain files or directories, whose names contain the keyword</gettext></label>
+  <label for="searchword"><gettext domain="distrib">packages that contain files or directories whose names contain the keyword</gettext></label>
 <br />
 <input type=radio name="searchmode" value="filelist" id="filelist" />
   <label for="filelist"><gettext domain="distrib">all files in this package</gettext></label>
