@@ -97,7 +97,7 @@ sub print_deps {
 		} else {
 		    my %desc_md5s = $p->get_arch_fields( 'description-md5', 
 							 $env->{archs} );
-		    my $short_desc = conv_desc( $env->{lang}, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $lang ), "<>&\"" ) );
+		    my $short_desc = conv_desc( $lang, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $lang ), "<>&\"" ) );
 		    push @res_pkgs, dep_item( "../$subsection/$p_name", $p_name, "$pkg_version$arch_str", $short_desc );
 		    }
 	    } elsif ( $is_old_pkgs ) {
