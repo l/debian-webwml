@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 
 $translations = [
 
@@ -11,7 +12,7 @@ $translations = [
 	'url'			=> '',
 	'source_url'		=> '',
 	'package'		=> '',
-	'status'		=> 'traduction à jour',
+#	'status'		=> 'traduction à jour',
 	'since'			=> '',
 	'translation_name'	=> '',
 	'translation_sub_name'	=> '',
@@ -26,6 +27,7 @@ $translations = [
 	'old_translators'	=> [],
 },
 
+# Quel est le statut actuel de ta traduction?
 
 # ########################################################################################
 #
@@ -37,6 +39,34 @@ $translations = [
 	'type'			=> 'DDP',
 	'key'			=> 'project-history',
 	'name'			=> 'The Debian Project History',
+	'status'		=> 'non-traduit',
+},
+
+{
+	'type'			=> 'DDP',
+	'key'			=> 'faq',
+	'name'			=> 'Debian GNU/Linux FAQ',
+	'source_url'		=> '?',
+	'package'		=> 'doc-debian',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '21/07/1998',
+	'translation_name'	=> 'FAQ Debian GNU/Linux',
+	'translators'		=> ['Philippe Caillaud <phil@penguin.infini.fr>'],
+	'ping'			=> '28/11/1998',
+	'translation_version'	=> '',
+	'translation_package'	=> '',
+	'old_translators'	=> ['Vincent Renardias <vincent@waw.com>'],
+},
+
+#
+# Debian-user FAQ-O-MATIC ?
+# Linux Magazines ?
+#
+
+{
+	'type'			=> 'DDP',
+	'key'			=> 'book-suggestions',
+	'name'			=> 'Debian GNU/Linux Book Suggestions',
 	'status'		=> 'non-disponible',
 },
 
@@ -56,34 +86,6 @@ $translations = [
 
 {
 	'type'			=> 'DDP',
-	'key'			=> 'faq',
-	'name'			=> 'Debian GNU/Linux FAQ',
-	'source_url'		=> '?',
-	'package'		=> 'doc-debian',
-	'status'		=> 'en cours de traduction',
-	'since'			=> '21/07/1998',
-	'translation_name'	=> 'FAQ Debian GNU/Linux',
-	'translators'		=> ['Philippe Caillaud <phil@penguin.infini.fr>'],
-	'translation_version'	=> '',
-	'translation_package'	=> '',
-	'old_translators'	=> ['Vincent Renardias <vincent@waw.com>'],
-
-},
-
-#
-# Debian-user FAQ-O-MATIC ?
-# Linux Magazines ?
-#
-
-{
-	'type'			=> 'DDP',
-	'key'			=> 'book-suggestions',
-	'name'			=> 'Debian GNU/Linux Book Suggestions',
-	'status'		=> 'non-disponible',
-},
-
-{
-	'type'			=> 'DDP',
 	'key'			=> '',
 	'name'			=> 'Debian Tutorial',
 	'version'		=> '',
@@ -95,6 +97,7 @@ $translations = [
 	'translation_name'	=> 'Tutorial Debian',
 	'translation_sub_name'	=> '',
 	'translators'		=> ['Loïc Martin <lomartin@dejanews.com>'],
+	'ping'			=> '28/11/1998',
 	'translation_version'	=> '',
 	'translation_package'	=> '',
 },
@@ -107,17 +110,16 @@ $translations = [
 },
 
 #
-# Debian Tips
-# Hardware Compatibility List
+# Debian Tips?
 #
 
-{
-	'type'			=> 'DDP',
-	'key'			=> '',
-	'name'			=> 'Debian Release Notes',
-	'url'			=> 'http://happy.digitaldune.net/~astala/Release-notes-2.0.html/index.html',
-	'status'		=> 'non-disponible',
-},
+#{
+#	'type'			=> 'DDP',
+#	'key'			=> '',
+#	'name'			=> 'Debian Release Notes',
+#	'url'			=> 'http://happy.digitaldune.net/~astala/Release-notes-2.0.html/index.html',
+#	'status'		=> 'non-disponible',
+#},
 
 {
 	'type'			=> 'DDP',
@@ -152,83 +154,27 @@ $translations = [
 	'status'		=> 'non-disponible',
 },
 
-{
-	'type'			=> 'DDP',
-	'key'			=> '',
-	'name'			=> 'Introduction : Making a Debian Package',
-	'url'			=> 'http://va.debian.org/~jaldhar/',
-	'source_url'		=> '?',
-	'package'		=> '',
-	'status'		=> 'traduction à jour',
-	'since'			=> '25/09/1998',
-	'translation_name'	=> 'Introduction : Créer un paquet Debian',
-	'translators'		=> ['Frederic Dumont <frederic.dumont@gate71.be>'],
-	'translation_version'	=> '',
-	'translation_url'	=> 'http://www.debian.org/~clebars/f2dp/docs/debian_package_intro.html/book1.html',
-	'translation_source_url'=> 'http://www.debian.org/~clebars/f2dp/docs/debian_package_intro.sgml',
-	'translation_package'	=> '',
-	'last_translated'	=> '01/07/1998',
-},
+
+#
+# Hardware Compatibility List
+#
 
 {
 	'type'			=> 'DDP',
 	'key'			=> 'policy',
 	'name'			=> 'Debian Policy Manual',
-	'sub_name'		=> 'chapter 0 to 3',
-	'version'		=> '2.5.0.0',
-	'url'			=> 'http://www.fr.debian.org/doc/debian-policy/',
-	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-policy/debian-policy/policy.sgml',
-	'package'		=> 'debian-policy',
-	'status'		=> 'en cours de traduction',
-	'since'			=> '01/07/1998',
-	'translation_name'	=> 'Manuel des normes Debian',
-	'translation_sub_name'	=> 'parties 0 à 3',
-	'translators'		=> ['Serge Stinckwich <serge@info.unicaen.fr>'],
-	'translation_version'	=> '',
-	'translation_package'	=> '',
-},
-
-{
-	'type'			=> 'DDP',
-	'key'			=> 'policy',
-	'name'			=> 'Debian Policy Manual',
-	'sub_name'		=> 'chapter 4 and 5',
 	'version'		=> '2.5.0.0',
 	'url'			=> 'http://www.fr.debian.org/doc/debian-policy/',
 	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-policy/debian-policy/policy.sgml',
 	'package'		=> 'debian-policy',
 	'status'		=> 'en relecture',
-	'since'			=> '01/07/1998',
+	'since'			=> '30/11/1998',
 	'translation_name'	=> 'Manuel des normes Debian',
 	'translation_sub_name'	=> 'parties 4 et 5',
 	'translators'		=> ['David Rocher <rocher@mail.dotcom.fr>'],
-	'translation_version'	=> '2.4.1.0',
+	'translation_version'	=> '2.5.0.0',
 	'translation_package'	=> '',
-},
-
-{
-	'type'			=> 'DDP',
-	'key'			=> 'developers-reference',
-	'name'			=> 'Debian Developer\'s Reference',
-	'sub_name'		=> 'chapter 0 to 4',
-	'version'		=> '0.5',
-	'url'			=> 'http://www.fr.debian.org/doc/packaging-manuals/developers-reference/',
-	'package'		=> 'developers-reference',
-	'status'		=> 'en relecture',
-	'since'			=> '01/07/1998',
-	'translation_name'	=> 'Guide de Référence du Développeur Debian',
-	'translation_sub_name'	=> 'parties 0 à 4',
-	'translators'		=> ['Laurent Picouleau <lcrpic@a2points.com>'],
-	'translation_version'	=> '0.1',
-	'translation_package'	=> '',
-	'old_translators'	=> ['Herve Floch <Herve.Floch@linux.eu.org>'],
-},
-
-{
-	'type'			=> 'DDP',
-	'key'			=> 'programmer',
-	'name'			=> 'Debian Packaging HOWTO',
-	'status'		=> 'non-disponible',
+	'old_translators'	=> ['Serge Stinckwich <serge@info.unicaen.fr>'],
 },
 
 {
@@ -239,10 +185,10 @@ $translations = [
 	'version'		=> '2.4.1.0',
 	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-policy/packaging-manual/packaging.sgml',
 #?!	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/dpkg/dpkg/doc/packaging.sgml',
-	'package'		=> 'dpkg',
+	'package'		=> 'packaging-manual',
 	'status'		=> 'en relecture',
 	'since'			=> '01/07/1998',
-	'translation_name'	=> 'Manuel de création des paquets Debian',
+	'translation_name'	=> 'Manuel des paquets Debian',
 	'translation_sub_name'	=> 'parties 0 à 14',
 	'translators'		=> [
 					'David Cure <cure@cnam.fr>', 
@@ -254,14 +200,35 @@ $translations = [
 
 {
 	'type'			=> 'DDP',
+	'key'			=> 'developers-reference',
+	'name'			=> 'Debian Developer\'s Reference',
+	'version'		=> '2.5.0',
+	'url'			=> 'http://www.fr.debian.org/doc/packaging-manuals/developers-reference/',
+	'package'		=> 'developers-reference',
+	'status'		=> 'en relecture',
+	'since'			=> '01/07/1998',
+	'translation_name'	=> 'Guide de Référence du Développeur Debian',
+	'translators'		=> ['Laurent Picouleau <lcrpic@a2points.com>'],
+	'translation_version'	=> '0.1',
+	'translation_package'	=> '',
+	'old_translators'	=> ['Herve Floch <Herve.Floch@linux.eu.org>'],
+},
+
+{
+	'type'			=> 'DDP',
+	'key'			=> '',
+	'name'			=> 'Debian New Maintainer\'s Guide',
+	'status'		=> 'non-disponible',
+},
+
+{
+	'type'			=> 'DDP',
 	'key'			=> '',
 	'name'			=> 'dpkg Internals Manual',
-	'sub_name'		=> '',
-	'author'		=> '',
-	'version'		=> '1.4.0.19',
+	'version'		=> '1.4.1',
 	'url'			=> 'http://www.fr.debian.org/doc/packaging-manuals/dpkg-internals/',
 	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/dpkg/dpkg/doc/internals.sgml',
-	'package'		=> '',
+	'package'		=> 'dpkg-dev',
 	'status'		=> 'non-traduit',
 	'since'			=> '01/08/1998',
 	'translation_name'	=> '',
@@ -281,9 +248,32 @@ $translations = [
 },
 
 #
-# How to get started on a new SGML-based manual
-# Debian Documentation Guidelines
+# How Software Producers can distribute their products directly in .deb format
 #
+
+{
+	'type'			=> 'DDP',
+	'key'			=> '',
+	'name'			=> 'Introduction : Making a Debian Package (obsolète)',
+	'url'			=> 'http://va.debian.org/~jaldhar/',
+	'source_url'		=> '?',
+	'status'		=> 'traduction à jour',
+	'since'			=> '25/09/1998',
+	'translation_name'	=> 'Introduction : Créer un paquet Debian',
+	'translators'		=> ['Frederic Dumont <frederic.dumont@gate71.be>'],
+	'translation_version'	=> '',
+	'translation_url'	=> 'http://www.debian.org/~clebars/f2dp/docs/debian_package_intro.html/book1.html',
+	'translation_source_url'=> 'http://www.debian.org/~clebars/f2dp/docs/debian_package_intro.sgml',
+	'translation_package'	=> '',
+	'last_translated'	=> '01/07/1998',
+},
+
+{
+	'type'			=> 'DDP',
+	'key'			=> 'programmer',
+	'name'			=> 'Debian Packaging HOWTO',
+	'status'		=> 'non-disponible',
+},
 
 {
 	'type'			=> 'DDP',
@@ -301,6 +291,9 @@ $translations = [
 	'translation_package'	=> 'doc-debian-fr',
 	'last_translated'	=> '',
 },
+
+# How to get started on a new SGML-based manual
+# Debian Documentation Guidelines
 
 # ########################################################################################
 #
@@ -373,7 +366,8 @@ $translations = [
 	'status'		=> 'en cours de traduction',
 	'since'			=> '26/09/1998',
 	'translation_name'	=> '',
-	'translators'		=> ['"Martin Quinson" <mquinson@zeppelin-cb.de>'],
+	'translators'		=> ['Martin Quinson <mquinson@zeppelin-cb.de>'],
+	'ping'			=> '28/11/1998',
 	'translation_version'	=> '0.8',
 	'translation_url'	=> '',
 	'translation_source_url'=> '',
@@ -389,8 +383,8 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'index',
-	'status'		=> 'en relecture',
-	'since'			=> '27/07/1998',
+	'status'		=> 'traduction à jour',
+	'since'			=> '28/11/1998',
 	'translators'		=> ['Christophe Le Bars <clebars@debian.org>'],
 	'last_translated'	=> '27/07/1998',
 },
@@ -407,8 +401,8 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'contact',
-	'status'		=> 'en relecture',
-	'since'			=> '09/08/1998',
+	'status'		=> 'traduction à jour',
+	'since'			=> '28/11/1998',
 	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 	'last_translated'	=> '09/08/1998',
 },
@@ -425,8 +419,8 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'donations',
-	'status'		=> 'en relecture',
-	'since'			=> '11/08/1998',
+	'status'		=> 'traduction à jour',
+	'since'			=> '28/11/1998',
 	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 	'last_translated'	=> '11/08/1998',
 },
@@ -434,8 +428,8 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'license',
-	'status'		=> 'en relecture',
-	'since'			=> '20/08/1998',
+	'status'		=> 'traduction à jour',
+	'since'			=> '28/11/1998',
 	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 	'last_translated'	=> '11/08/1998',
 },
@@ -443,8 +437,8 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'support',
-	'status'		=> 'en relecture',
-	'since'			=> '23/08/1998',
+	'status'		=> 'traduction à jour',
+	'since'			=> '28/11/1998',
 	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 	'last_translated'	=> '11/08/1998',
 },
@@ -669,7 +663,7 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/index',
-	'status'		=> 'en cours de traduction',
+	'status'		=> 'non-traduit',
 	'since'			=> '11/08/1998',
 	'translators'		=> ['Christophe Le Bars <clebars@debian.org>'],
 },
@@ -677,8 +671,8 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> '2.0/errata',
-	'status'		=> 'en relecture',
-	'since'			=> '21/09/1998',
+	'status'		=> 'traduction à jour',
+	'since'			=> '28/11/1998',
 	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 	'last_translated'	=> '21/09/1998',
 },
@@ -686,8 +680,8 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/help',
-	'status'		=> 'en relecture',
-	'since'			=> '12/10/1998',
+	'status'		=> 'traduction à jour',
+	'since'			=> '28/11/1998',
 	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 	'last_translated'	=> '12/10/1998',
 },
