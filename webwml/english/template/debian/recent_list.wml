@@ -139,6 +139,8 @@
 # example usage:
 # get_recent_list ('1998', '0', '$(ENGLISHDIR)/News', '', '\d+\w*')
 
+# Events will be sorted in normal order instead of reverse
+
 sub get_recent_list {
 	my ($year, $number, $eng_dir, $format, $match) = @_;
 
@@ -172,6 +174,7 @@ sub get_recent_list {
 	opendir(DIR, "$eng_dir/$year");
 	@files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
 	@files = sort {$b cmp $a} @files;
+	@files = reverse @files if ($eng_dir =~ /\/events\/\d{4}$/);
 	closedir DIR;
 
 #	print STDERR "files: " . join " ", @files;
