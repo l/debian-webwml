@@ -1,54 +1,77 @@
-#use wml::debian::template title="Odr¾avanje prijevoda aktualnima"
+#use wml::debian::template title="Odr¾avanje prijevoda web stranica aktualnima"
+#use wml::debian::translation-check translation="1.5"
 
 <P>Buduæi da web stranice nisu statiène, dobra je ideja pratiti na koju se
 verziju originala neki prijevod odnosi, i koristiti tu informaciju za
 provjeravanje koje stranice su se promijenile od zadnjeg prevoðenja.
-Da vam pomogne u ovom, skripta <code>check_trans.pl</code> je dostupna u
-webwml direktoriju.
+Ova informacija treba biti upisana na vrh dokumenta u ovom obliku:
 
-<P>Skripta se oslanja na to da prevedene WML datoteke sadr¾e informacije
-o tome koju verziju (originala) prevode. Ova informacija treba biti
-ukljuèena negdje u dokumentu u obliku
-<code>&lt;!--translation <var>x.x</var>--&gt;</code>
-gdje je <var>x.x</var> verzija originala (engleskog).
+<pre>
+\#use wml::debian::translation-check translation="X.x"
+</pre>
 
-To bi trebalo biti upisano u WML datoteci na zasebnoj liniji, a mo¾ete i
-staviti prefiks <code>#</code> (WML komentar) da ju ne stavite u generirani
-HTML.
+<p>gdje je <var>X.x</var> broj CVS verzije originala (engleskog). Ovaj broj
+mo¾ete dobiti gledajuæi u CVS/Entries koji ima oblik:
+<code>/ime_datoteke/X.x/datum//</code>. Takoðer ga mo¾ete dobiti tako da
+pokrenete <kbd>cvs status file_name</kbd> u direktoriju engleskog izvornika.
+Ako koristite <kbd>copypage.pl</kbd> skriptu iz webwml direktorija, ova
+linija æe biti dodana automatski.
 
-<P>Ako pokrenete <code>check_trans.pl <var>jezik</var></code> (zamijenite
-<var>jezik</var> s imenom direktorija koji sadr¾i va¹ prijevod, npr.
-"croatian"), dobit æete izvje¹taj o stranicama koje nemaju prijevod
-(prikazane kao "<code>Missing <var>datoteka</var></code>") i stranice koje
-nisu aktualne (prikazane kao "<code>NeedToUpdate <var>datoteka</var> to
-version <var>x.x</var></code>").
+<P>Ovo je korisno i zato ¹to neki prijevodi mo¾da ne budu nadopunjavani
+prilièno vremena, iako se dokument na originalnom jeziku (engleskom)
+mijenja. Zbog pregovaranja sadr¾aja, èitatelj prevedene stranice neæe biti
+svjestan ovoga i mo¾da neæe proèitati bitne informacije, uvedene u novim
+verzijama originala. <code>translation-check</code> template koristi kod
+koji æe provjeriti je li va¹ prijevod zastario, i prikazati prikladnu poruku
+koja æe korisnika upozoriti na to.
+
+<p>Postoje i dodatni parametri koje mo¾ete koristiti u <code>#use</code>
+retku:
+
+<dl>
+ <dt><code>original="<var>jezik</var>"</code>
+ <dd>gdje je <var>jezik</var> ime jezika s kojeg prevodite, ako nije
+ engleski ("english").
+ Ime mora odgovarati imenu vr¹nog poddirektorija u CVS-u, i imenu u
+ predlo¹ku <code>languages.wml</code>.
+
+ <dt><code>mindelta="<var>broj</var>"</code>
+ <dd>koji definira najveæu razliku u CVS revizijama prije nego se
+ prijevod proglasi starim.
+ Pretpostavljena vrijednost je <var>2</var>.
+ Za va¾ne stranice, postavite je na <var>1</var>, ¹to znaèi da æe se svaka
+ promjena shvatiti kao zastarjelost prijevoda.
+
+ <dt><code>maxdelta="<var>broj</var>"</code>
+ <dd>koji definira najveæu razliku u CVS revizijama prije nego se prijevod
+ proglasi prestarim.
+ Pretpostavljena vrijednost je <var>5</var>.
+ Za vrlo va¾ne stranice, smanjite je.
+ Vrijednost <var>1</var> znaèi da æe se svaka promjena shvatiti kao
+ progla¹avanje prijevoda prestarim.
+</dl>
+
+<p>Dodatno, dostupna je skripta <code>check_trans.pl</code> u webwml
+direktoriju, kako bi vam pokazala izvje¹taj o stranicama koje trebaju
+nadopune:
+
+<pre>
+check_trans.pl <var>jezik</var>
+</pre>
+
+<p>zamijenite <var>jezik</var> imenom direktorija koji sadr¾i va¹ prijevod,
+npr. "croatian".
+
+<p>Stranice koje nemaju prijevod æe biti prikazane kao
+"<code>Missing <var>datoteka</var></code>", a stranice koje nisu a¾urne s
+originalom æe biti prikazane kao
+"<code>NeedToUpdate <var>datoteka</var> to version <var>x.y</var></code>".
 
 <P>Ako ¾elite vidjeti koje su to toène promjene, mo¾ete vidjeti promjene
-tako da pokrenete <code>check_trans.pl -d <var>jezik</var></code>.
-Molimo primijetiti da ovo mo¾e potrajati, zato ¹to mo¾e ukljuèiti nekoliko
-pristupa CVS serveru.
+tako da dodate <code>-d</code> opciju gornjoj naredbi. Molimo primijetiti da
+ovo mo¾e potrajati, zato ¹to mo¾e ukljuèiti nekoliko pristupa CVS serveru.
 
 <P>Ako ¾elite ignorirati upozorenja o stranicama koje nedostaju (naprimjer
 stare vijesti), mo¾ete napraviti datoteku s imenom <code>.transignore</code>
 u direktoriju gdje ¾elite potisnuti upozorenja, u koju æete upisati sve
 datoteke koje neæete prevesti, jedno ime po liniji.
-
-<H2>Prijedlog: Provjeravanje jesu li prijevodi a¾urni</H2>
-
-<P>Trenutno neki prijevodi ne budu provjereni prilièno vremena, dok se
-aktivno mijenjaju u originalnom jeziku (engleskom). Ipak, zbog pregovaranja
-sadr¾aja, èitatelj prevedene stranice neæe biti svjestan ovoga i mozda
-neæe proèitati bitne informacije.
-
-<P>Trenutno se radi prijedlog, koji æe mo¾da ovo popraviti. Postoji datoteka
-(<code>english/template/debian/translation-check</code> koja ovo
-implementira, ipak, ugrubo. Ovaj prijedlog je dao Javier Fernández-Sanguino
-zadnjeg tjedna kolovoza 1999, molimo provjerite arhive mailing lista za vise
-informacija o ovom prijedlogu.
-
-<P>Da biste ga koristili, dodajte
-<code>#use wml::debian::translation-check translation="x.x"</code> gdje
-je <em>x.x</em> CVS verzija dokumenta koji ste preveli, a taj broj mozete
-dobiti iz CVS/Entries datoteke koja je u formatu:
-<code>/ime_datoteke/x.x/datum//</code>, ili ako napravite
-<code>cvs status file_name</code> u izvornom direktoriju engleskog jezika.
