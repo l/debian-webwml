@@ -1,0 +1,136 @@
+#use wml::debian::template title="Debian GNU/Hurd --- Installation" NOHEADER="yes"
+
+<!--translation 1.10-->
+
+  <!--
+  Translated by         : Jerome Abela <Jerome.Abela@solsoft.fr>
+  -->
+
+[ <a href="..">Ports</a> ]
+[ <a href="index">Debian GNU/Hurd</a> ]
+[ <a href="hurd-news">News</a> ]
+[ <b>Installation</b> ]
+[ <a href="hurd-doc">Documentation</a> ]
+[ <a href="hurd-devel">Développement</a> ]
+[ <a href="hurd-links">Liens</a> ]
+[ <a href="hurd-contact">Contacts</a> ]<p>
+
+<h1>Debian GNU/Hurd</h1>
+<h2>Matériel</h2>
+<p>
+Vérifiez le
+<a href="http://www.urbanophile.com/arenn/hacking/hurd/hurd-hardware.html">Guide
+de compatibilité matérielle</a>
+pour connaître quels équipements sont supportés par Hurd.
+</p>
+<H2>Installer Debian GNU/Hurd</H2>
+<P>
+Il existe un excellent document, le
+<A HREF="http://www.pick.ucam.org/~mcv21/hurd.html">Guide Facile</A>
+par Matthew Vernon, que vous devez absolument lire. Sur cette page, vous
+ne trouverez que des informations très succintes, juste de quoi commencer
+si vous êtes un développeur ou un utilisateur expérimenté.
+</P>
+<P>
+Il y a deux façons d'installer un système Debian GNU/Hurd. La première
+rend possible l'installation directement depuis les paquets Debian, mais
+vous aurez besoin de <TT>dpkg</TT>, le gestionnaire de paquets Debian,
+pour y arriver. Cela peut être difficile si vous utilisez un autre
+distribution Linux que la Debian, ou si vous n'avez pas de Linux du tout.
+Il exite donc une deuxième méthode, qui utilise un fichier d'archive tar.
+Après l'avoir installé, vous pouvez mettre à jour votre système avec les
+dernières versions des paquets Debian en utilisant les fonctions natives.
+Ces deux méthodes sont décrites plus bas.
+</P>
+<H3>Préparatifs communs</H3>
+<P>
+Pour démarrer l'installation, créez la partition Hurd avec <TT>mke2fs -o hurd
+/dev/PARTITION</TT>, où <TT>PARTITION</TT> est la partition du disque dur
+que vous allez consacrer à Hurd. Notez que cette partition ne doit pas
+dépasser 1Go pour le moment, à cause d'une limitation connue dans Hurd.
+</P>
+<P>
+Ensuite, montez votre partition à un endroit sûr. J'utilise <TT>/gnu</TT> comme
+point de montage, principalement parceque c'est le chemin par défaut
+pour la compilation croisée. Toute autre place fait aussi bien l'affaire,
+de même qu'une installation sur une image disque sur un autre système
+de fichiers. A partir de maintenant, je vais supposer que vous utilisez
+<TT>/gnu</TT>. Si ce n'est pas le cas, pensez à modifier les commandes
+en conséquence.
+</P>
+
+<H3>Deux alternatives</H3>
+<H4>Installation à partir des paquets Debian</H3>
+<P>
+Pour installer Debian GNU/Hurd, vous devez récupérer quelques paquets
+Debian et mes scripts d'installation. Téléchargez d'abord les scripts
+suivants:
+<UL>
+<LI><A HREF="extra-files/cross-install"><TT>cross-install</TT></A> -
+Installation d'un stock de paquets pour Linux</LI>
+<LI><A HREF="extra-files/native-install"><TT>native-install</TT></A> -
+Configuration du nouveau système</LI>
+<LI><A HREF="extra-files/dpkg-hurd"><TT>dpkg-hurd</TT></A> -
+Utilisez dpkg sur la partition Hurd depuis Linux</LI>
+</UL>
+</P>
+<P>
+Si vous n'avez pas une distribution Debian, vous aurez également besoin
+d'un version de <TT>dpkg</TT> pour votre système.
+</P>
+<P>
+Enfin, le plus important, les paquets Debian. Ils se trouvent
+sur tout <A HREF="../../distrib/ftplist">miroir FTP Debian</A>, dans le
+répertoire <TT>debian/dists/unstable/main/binary-hurd-i386/</TT>. La liste
+des paquets indispensables se trouve au début du script <TT>dpkg-hurd</TT>.
+Vous pouvez sauver ces paquets dans un unique répertoire, ou dans les
+mêmes sous-répertoire que ceux utilisés sur le site FTP.
+</P>
+<P>
+Maintenant, <TT>cd</TT> vers le répertoire contenant vos scripts et
+les paquets Debian. Si vous utilisez un unique répertoire, il doit
+contenir tous les fichiers. Si vous utilisez l'organisation FTP des paquets,
+assurez-vous que les scripts sont en haut de l'arborescence pour qu'ils
+puissent trouver les paquets dans <TT>base/</TT> etc.
+Lancez <TT>./cross-install /gnu</TT>. Répondez <TT>y</TT> à la question
+à propos du lien symbolique sur <TT>/usr</TT>. Maintenant continuez avec
+le <A HREF="#reboot">Réamorçage du système</A>.
+</P>
+
+<H4>Installation à partir du fichier d'archive tar</H4>
+<P>
+De temps en temps, je dépose une image à jour du système de base
+sur <tt><a href="ftp://alpha.gnu.org/pub/gnu/hurd/contrib/marcus/">ftp://alpha.gnu.org/pub/gnu/hurd/contrib/marcus/</a></tt>
+Ces fichiers s'appellent <TT>gnu-YYYYMMDD.tar.gz</TT>, où <TT>YYYYMMDD</TT>
+est la date de l'image. Ils vous permettent d'installer Hurd même si vous
+n'avez jamais touché à un système Debian. La procédure décrite ici ne
+fonctionne pas pour <TT>gnu-19990104.tar.gz</TT>, donc il vous faut une
+version plus récente que celle-ci.
+</P>
+<P>
+Téléchargez le fichier tar dont la date est la plus récente. C'est le seul
+fichier dont vous aurez besoin pour avoir un système qui tourne (à part
+GRUB). <TT>cd /gnu</TT> pour être en haut de la partition Hurd.
+Maintenant, lancez l'extraction du fichier tar avec la commande
+<TT>tar -xpzf /quelquepart/gnu-YYYYMMDD.tar.gz</TT> en utilisant le chemin
+et la date corrects.
+</P>
+<p><B>IMPORTANT:</B>Si vous utilisez la version 19990505, remplacez
+le script <tt>native-install</tt> du fichier tar avec sa version la plus
+à jour.
+</p>
+<A NAME="reboot"><H3>Réamorçage du système</H4></A>
+<P>
+Maintenant, réamorcez le système et utilisez GRUB pour amorcer la partition
+Hurd. Je ne vous donne pas plus d'information sur GRUB et le plan de
+nommage des partitions, vous trouvez ces informations et bien d'autres
+dans le <A HREF="http://www.pick.ucam.org/~mcv21/hurd.html">Guide facile</A>
+de M. C. Vernon.
+</P>
+<P>
+Après le réamorçage, vous devez seulement lancer <TT>./native-install</TT>
+pour terminer l'installation. Amusez-vous bien !
+</P>
+
+</BODY>
+</HTML>
