@@ -298,6 +298,7 @@ sub grab_titles {
  
 	    @hdate = split ',', $rdate;
 	    $hdate = $hdate[0];
+	    $isodate = sprintf("%04d-%02d-%02d", split '-', $hdate[-1]);
 	    $rdate = newsdate($hdate);
 	    @rdate = map( newsdate($_), @hdate );
 	    $title =~ s/(DSA-\d{3})-\d{1}/$1/; # strip off the revision in the DSA number
@@ -311,6 +312,7 @@ sub grab_titles {
   <description>
     $desc
   </description>
+  <dc:date>$isodate</dc:date>
 </item>
 ";
 	    } elsif ($format eq 'rdflong') {
@@ -320,6 +322,8 @@ sub grab_titles {
                 $moreinfo =~ s/<(?:email|url) "([^>]+)">/$1/g;
                 # HTML links
                 $moreinfo =~ s/<a href="[^>]+">([^<]+)<\/a>/$1/g;
+                # HTML paragraph
+                $moreinfo =~ s/<\/?p>//g;
                 # HTML entities
                 $moreinfo =~ s/(&[^#;]+;)/&decodehtmlentity($1)/ge;
                 </protect>
@@ -330,6 +334,7 @@ sub grab_titles {
   <description>
     $moreinfo
   </description>
+  <dc:date>$isodate</dc:date>
 </item>
 ";
 	    } else {
