@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # Generates debian weekly news in text format, suitable for mailing to
 # debian-news, of the current issue that is on the web site. Or, if you
-# pass an url as the first parameter, will use the issue there instead.
+# pass a url as the first parameter, will use the issue there instead.
 
 use locale;
 
