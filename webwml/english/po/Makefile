@@ -120,6 +120,10 @@ $(ENGLISHDIR)/po/vendors.pot: # $(vendors_FILES)
 $(ENGLISHDIR)/po/others.pot: # $(others_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl others $(others_FILES) > $@
 
+#  This target prevents breakage when a new .pot file is added
+%.$(LANGUAGE).po:
+	cp $(ENGLISHDIR)/po/$*.pot $@
+
 %.mo: %.$(LANGUAGE).po $(ENGLISHDIR)/po/%.pot
 	msgmerge -q $*.$(LANGUAGE).po $(ENGLISHDIR)/po/$*.pot |\
             msgfmt --statistics -o $@ -
@@ -131,6 +135,7 @@ init-po:
 
 update-po: $(POTFILES)
 	for d in $(DOMAINS); do \
+	  if [ ! -e $$d.$(LANGUAGE).po ]; then cp $(ENGLISHDIR)/po/$$d.pot $$d.$(LANGUAGE).po; fi; \
 	  msgmerge -F -q $$d.$(LANGUAGE).po $(ENGLISHDIR)/po/$$d.pot -o $$d.$(LANGUAGE).po.new && mv $$d.$(LANGUAGE).po.new $$d.$(LANGUAGE).po; \
 	done
 
