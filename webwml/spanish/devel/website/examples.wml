@@ -1,0 +1,98 @@
+#use wml::debian::template title="Ejemplos"
+#use wml::debian::translation-check translation="1.2"
+
+<H3>Ejemplo de Cómo se Comienza una Traducción</H3>
+
+<p>Usaremos el idioma francés para el ejemplo:
+
+<pre>
+   cvs checkout webwml/Makefile.common webwml/english
+   cd webwml
+   mkdir french
+   cvs add french
+   cd french
+   cp ../english/.wmlrc ../english/Make.* ../english/Makefile .
+   cvs add Make* .wmlrc
+</pre>
+
+<p>Edite el fichero <tt>.wmlrc</tt> y modifique:
+<ul>
+  <li>'-D CUR_LANG=English' por '-D CUR_LANG=French'
+  <li>'-D CUR_ISO_LANG=en' por '-D CUR_ISO_LANG=fr'
+  <li>'CHARSET=iso-8859-1' por lo que sea apropiado
+</ul>
+
+<p>Edite Make.lang y cambie 'LANGUAGE := en' por 'LANGUAGE := fr'.
+En el caso de que traduzca a un idioma que use más de un byte por carácter (multi-byte),
+puede que tenga que cambiar algunas otras variables en ese fichero, para más
+información lea ../Makefile.common y a lo mejor otros ejemplos de trabajo
+(traducciones como la China).
+
+<p>Edite english/template/debian/*.wml y añada traducciones a todos los apartados
+&lt;define-tag ...&gt;. Ésto debería ser simple.
+
+<p>El fichero Makefile de cada directorio compilará cada fichero .wml que encuentre.
+
+<p>Cuando acabe de añadir y editar páginas, haga
+<pre>
+   cvs commit
+</pre>
+desde el directorio webwml. Ahora puede usted empezar a traducir páginas.
+
+<H3>Ejemplo de Traducción de una Página</H3>
+
+<p>Usaremos la traducción del contrato social al francés como ejemplo:
+
+<pre>
+   cd webwml/french
+   cp ../english/social_contract.wml .
+   cvs add social_contract.wml
+</pre>
+
+<p>Edite social_contract.wml y traduzca el texto. No trate de traducir o modificar
+ningún enlace de forma alguna - si quiere cambiar cualquier cosa, notifíquelo en la
+lista debian-www. Cuando termine, escriba
+
+<pre>
+   cvs commit -m "short description of the changes you made" social_contract.wml
+</pre>
+
+<H3>Ejemplo para Añadir un Nuevo Directorio</H3>
+
+<p>Éste ejemplo muestra cómo añadir el directorio intro/ a la traducción francesa:
+
+<pre>
+   cd webwml/french
+   mkdir intro
+   cvs add intro
+   cd intro
+   cp ../english/intro/Makefile .
+</pre>
+
+Asegúrese que el nuevo directorio tiene el Makefile y que ha sido enviado al CVS.
+De otra forma, dará un error a cualquiera que intente ejecutar make.
+
+<pre>
+   cvs add Makefile
+   cd ..
+   cvs commit -m "added the intro dir to CVS" intro
+</pre>
+
+#example not finished
+# <H3>Example of a Conflict</H3>
+#
+# <p>This example shows a commit that won't work because the copy in the
+# repository has been modified since your last <kbd>cvs update -d</kbd>.
+#
+# <pre>
+#    cvs commit -m"fixed a broken link" foo.wml
+# </pre>
+#
+# will output:
+#
+# <pre>
+# cvs: Up-to-date check failed for foo.wml!
+# cvs: fix the above errors first
+# </pre>
+#
+# or something like that :)
