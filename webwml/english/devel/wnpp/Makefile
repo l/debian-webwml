@@ -13,12 +13,12 @@ WNPP_FILES := being_adopted.html being_packaged.html orphaned.html \
 
 include $(WMLBASE)/Make.lang
 
-$(HTMLDIR)/index.$(LANGUAGE).html: index.$(LANGUAGE).html
-	@echo copying index.$(LANGUAGE).html to $(HTMLDIR)
-	-@cp index.$(LANGUAGE).html $(HTMLDIR)
+$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
+	@echo copying $*.$(LANGUAGE).html to $(HTMLDIR)
+	-@cp $*.$(LANGUAGE).html $(HTMLDIR)
 ifeq ($(LANGUAGE),en)
-	@echo making a link $(HTMLDIR)/index.html -\> index.$(LANGUAGE).html
-	@ln -sf index.$(LANGUAGE).html $(HTMLDIR)/index.html
+	@echo making a link $(HTMLDIR)/$*.html -\> $*.$(LANGUAGE).html
+	@ln -sf $*.$(LANGUAGE).html $(HTMLDIR)/$*.html
 endif
 
 # There is no wnpp.en.html destination. This will be run every time,
