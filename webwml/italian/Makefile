@@ -17,10 +17,10 @@ all:\
     $(HTMLDIR)/devel/help.html.$(LANG) \
     $(HTMLDIR)/devel/people.html.$(LANG) \
     $(HTMLDIR)/logos/index.html.$(LANG) \
+    $(HTMLDIR)/devel/incoming_mirrors.html.$(LANG) \
+    $(HTMLDIR)/devel/mirror.html.$(LANG) \
 #    $(HTMLDIR)/devel/HOWTO_translate.html.$(LANG) \
-#    $(HTMLDIR)/devel/incoming_mirrors.html.$(LANG) \
 #    $(HTMLDIR)/devel/maintainer_contacts.html.$(LANG) \
-#    $(HTMLDIR)/devel/mirror.html.$(LANG) \
 #    $(HTMLDIR)/devel/mirror_submit.html.$(LANG) \
 #    $(HTMLDIR)/devel/ports.html.$(LANG) \
 #    $(HTMLDIR)/devel/release_info.html.$(LANG) \
