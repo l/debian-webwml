@@ -1,0 +1,30 @@
+#use wml::debian::translation-check translation="1.2"
+# Translator: Alexander Reiter <leckse@gmx.net>
+<define-tag description>local file overwrite</define-tag>
+<define-tag moreinfo>
+Ethan Benson hat einen Fehler in den man-db-Paketen aus Debian GNU/Linux
+2.2 entdeckt. man-db beinhaltet ein mandb-Tool, welches dazu verwendet wird,
+einen Index der installierten man-Pages zu erzeugen. Wenn -u oder -c als
+Optionen auf der Kommandozeile angegeben wurden, um seine Datenbank an eine
+andere Stelle zu schreiben, scheitert es es beim Anlegen einer temporären
+Datei seine Rechte richtig fallenzulassen. Das erlaubt dem Angreifer eine
+Standard-Symlink-Attacke durchzuführen, die mandb alle Dateien mit der
+UID man, inklusive der man- und mandb-Binaries, beschreibbar macht.
+
+<p>Das wurde in Version 2.3.16-3 behoben und wir empfehlen Ihnen, daß
+Sie ihr man-db-Paket umgehend aktualisieren. Wenn sie suidmanager benutzen
+können Sie es benutzen, um sicherzugehen, daß man und mandb nicht als SUID
+installiert sind, was Sie vor dem Problem beschützt. Das kann man mit
+folgenden Befehlen durchführen.
+
+<pre>
+  suidregister /usr/lib/man-db/man root root 0755
+  suidregister /usr/lib/man-db/mandb root root 0755
+</pre>
+
+<p>Natürlich ist auch mit suidmanager das Upgrade weiterhin dringend
+empfohlen.
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2001/dsa-056.data"
