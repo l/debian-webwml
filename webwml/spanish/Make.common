@@ -18,8 +18,10 @@ JPGSOURCE := $(wildcard *.jpg)
 JPGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(JPGSOURCE))
 GIFSOURCE := $(wildcard *.gif)
 GIFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(GIFSOURCE))
-IMGFILES := $(JPGSOURCE) $(GIFSOURCE)
-IMGDESTFILES := $(JPGDESTFILES) $(GIFDESTFILES)
+PNGSOURCE := $(wildcard *.png)
+PNGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PNGSOURCE))
+IMGFILES := $(JPGSOURCE) $(GIFSOURCE) $(PNGSOURCE)
+IMGDESTFILES := $(JPGDESTFILES) $(GIFDESTFILES) $(PNGDESTFILES)
 
 all:: $(HTMLFILES)
 	@for i in $(SUBS) ''; do \
@@ -49,7 +51,7 @@ cleandest::
 	-rm -f $(HTMLDIR)/*.$(LANGUAGE).html
 	@for i in $(SUBS) ''; do \
 		if [ -d "$$i" ]; then \
-			$(MAKE) -C $$i clean; \
+			$(MAKE) -C $$i cleandest; \
 		fi ; \
 	done
 
@@ -61,5 +63,5 @@ ifeq ($(LANGUAGE),en)
 	-@ln -f -s $(@F) $(@D)/$(*F).html
 endif
 
-$(IMGDESTFILES):
+$(IMGDESTFILES): $(IMGFILES)
 	cp $(@F) $(HTMLDIR)

@@ -28,8 +28,10 @@ JPGSOURCE := $(wildcard *.jpg)
 JPGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(JPGSOURCE))
 GIFSOURCE := $(wildcard *.gif)
 GIFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(GIFSOURCE))
-IMGFILES := $(JPGSOURCE) $(GIFSOURCE)
-IMGDESTFILES := $(JPGDESTFILES) $(GIFDESTFILES)
+PNGSOURCE := $(wildcard *.png)
+PNGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PNGSOURCE))
+IMGFILES := $(JPGSOURCE) $(GIFSOURCE) $(PNGSOURCE)
+IMGDESTFILES := $(JPGDESTFILES) $(GIFDESTFILES) $(PNGDESTFILES)
 
 all:: $(INT_HTMLFILES) $(HTMLFILES)
 	@for i in $(SUBS) ''; do \
@@ -51,9 +53,9 @@ $(IMGDESTFILES): $(IMGFILES)
 	cp $(@F) $(HTMLDIR)
 
 clean::
-	rm -f *.$(LANGUAGE).html
+	-rm -f *.$(LANGUAGE).html
 ifeq ($(LANGUAGE),zh)
-	rm -f $(foreach i, cn tw, *.$(LANGUAGE)-$(i).html)
+	-rm -f $(foreach i, cn tw, *.$(LANGUAGE)-$(i).html)
 endif
 	@for i in $(SUBS) ''; do \
 		if [ -d "$$i" ]; then \
@@ -62,9 +64,9 @@ endif
 	done
 
 cleandest::
-	rm -f $(HTMLDIR)/*.$(LANGUAGE).html
+	-rm -f $(HTMLDIR)/*.$(LANGUAGE).html
 ifeq ($(LANGUAGE),zh)
-	rm -f $(foreach i, cn tw, $(HTMLDIR)/*.$(LANGUAGE)-$(i).html)
+	-rm -f $(foreach i, cn tw, $(HTMLDIR)/*.$(LANGUAGE)-$(i).html)
 endif
 	@for i in $(SUBS) ''; do \
 		if [ -d "$$i" ]; then \
@@ -75,7 +77,7 @@ endif
 
 ifeq ($(LANGUAGE),zh)
 cleansub::
-	rm -f $(foreach i, cn tw, *.$(LANGUAGE)-$(i).html)
+	-rm -f $(foreach i, cn tw, *.$(LANGUAGE)-$(i).html)
 	@for i in $(SUBS) ''; do \
 		if [ -d "$$i" ]; then \
 			$(MAKE) -C $$i cleansub; \
