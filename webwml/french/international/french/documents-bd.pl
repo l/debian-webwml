@@ -319,7 +319,7 @@ $translations = {
 	'url'			=> 'http://www.gate.net/~storm/FAQ/libc5-libc6-Mini-HOWTO.html',
 	'source_url'		=> 'http://www.gate.net/~storm/FAQ/libc5-libc6-Mini-HOWTO.sgml',
 	'package'		=> '',
-}
+},
 
 # How to get started on a new SGML-based manual
 # Debian Documentation Guidelines
