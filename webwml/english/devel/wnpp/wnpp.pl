@@ -49,7 +49,7 @@ close MAINTAINERS;
 my $ldap = Net::LDAP->new($server, 'port' => $port) or die "Couldn't make connection to ldap server: $@";
 $ldap->bind;
 my $mesg = $ldap->search('base' => $base,
-                      'filter' => "(debbugsPackage=wnpp)",
+                      'filter' => "(&(debbugsPackage=wnpp)(!(debbugsState=done))(!(debbugsState=archived)))",
                       'attrs' => $attrs) or die;
 
 my $curdate = time;
