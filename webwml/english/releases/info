@@ -1,6 +1,8 @@
+#use wml::debian::common_tags
 #use wml::debian::ctime
 
 <define-tag current_release_name>woody</define-tag>
+#<define-tag current_release_name>sarge</define-tag>
 
 <define-tag current_release><current_release_woody/></define-tag>
 
@@ -17,3 +19,17 @@
 <define-tag packages_in_stable>8710</define-tag>
 
 <define-tag current_testing_name>sarge</define-tag>
+
+<set-var diversions:_cnt=0 />
+
+<define-tag if-stable-release endtag=required>
+<preserve release />
+<set-var %attributes />
+<ifneq "<current_release_name />" "<get-var release />"
+	      "<enter NO<get-var release /><get-var diversions:_cnt /> />" "<enter <get-var release /><get-var diversions:_cnt /> />" />
+%body
+<leave />
+<dump "<get-var release /><get-var diversions:_cnt />" />
+<increment diversions:_cnt />
+<restore release />
+</define-tag>
