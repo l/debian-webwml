@@ -31,7 +31,6 @@ my %converters = (
 		  "UTF-82ISO-8859-1" => Text::Iconv->new("UTF-8", "ISO-8859-1"),
 		  "UTF-82ISO-8859-2" => Text::Iconv->new("UTF-8", "ISO-8859-2"),
 		  "UTF-82KOI8-U" => Text::Iconv->new("UTF-8", "KOI8-U"),
-		  "EUC-JP2ISO-2022-JP" => Text::Iconv->new("EUC-JP", "ISO-2022-JP"),
 		 );
 
 my $p_counter = 0;
@@ -45,16 +44,7 @@ sub conv_desc {
     # we assume that all descriptions are in UTF-8 and convert them
     # if necessary
     my $cs = get_charset($lang);
-    if ($lang eq 'ja') {
-	my $text_conv = $converters{"EUC-JP2ISO-2022-JP"}->convert($text);
-	if ($text_conv) {
-	    if (!chomp(my $tmp = $text_conv)) { # work around a bug in Text::Iconv
-		$text_conv .= "\x1B\x28\x42"; # add iso-2022-jp escape code
-		                              # if not ending in a \n
-	    }
-	    return $text_conv;
-	}
-    } elsif (($cs ne "UTF-8")
+    if (($cs ne "UTF-8")
 	&& exists $converters{"UTF-82$cs"}) {
 	my $text_conv = $converters{"UTF-82$cs"}->convert($text);
 	if ($text_conv) {
