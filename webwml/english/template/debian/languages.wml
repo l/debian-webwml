@@ -158,10 +158,10 @@ sub languages {
   # printf STDERR join(', ', @used_langs);
 
   if ($rel_dir eq "" && $file eq "sitemap") { # special case for the site map
-    $str .= "\n";
     $str .= "<!--UdmComment-->\n";
-    $str .= q{<gettext>This page is also available in the following languages:</gettext>}."\n";
-    $str .= "<br />\n";
+    $str .= "<p>\n";
+    $str .= q{<gettext>This page is also available in the following languages:</gettext>}."</p>\n";
+    $str .= "<p class=\"navpara\">\n";
     foreach (keys %langs) {
       if ($_ ne lc($cur_lang) or $cur_lang eq "Chinese") {
         $sorted_langs{$selflang{$_}} = $_;
@@ -171,21 +171,23 @@ sub languages {
       $cur_lang = $sorted_langs{$_};
       $tooltip = $trans{$CUR_ISO_LANG}{$cur_lang};
       if ($cur_lang ne "chinese") {
-        $str .= "<a href=\"$file.$langs{$cur_lang}.html\" title=\"$tooltip\" hreflang=\"$langs{$cur_lang}\" lang=\"$langs{$cur_lang}\" rel=\"alternate\">$_";
+        $str .= " <a href=\"$file.$langs{$cur_lang}.html\" title=\"$tooltip\" hreflang=\"$langs{$cur_lang}\" lang=\"$langs{$cur_lang}\" rel=\"alternate\">$_";
         $str .= "&nbsp;($translit{$cur_lang})" if defined $translit{$cur_lang};
-        $str .= "</a>&nbsp;\n";
+        $str .= "</a>\n";
       } else {
-        $str .= "<a href=\"$file.$langs{$cur_lang}-cn.html\" title=\"$tooltip (<CNc/>)\" hreflang=\"$langs{$cur_lang}-CN\" lang=\"$langs{$cur_lang}-CN\" rel=\"alternate\" style=\"white-space: nowrap\">$_(&#31616;)</a>&nbsp;\n";
-        $str .= "<a href=\"$file.$langs{$cur_lang}-hk.html\" title=\"$tooltip (<HKc/>)\" hreflang=\"$langs{$cur_lang}-HK\" lang=\"$langs{$cur_lang}-HK\" rel=\"alternate\" style=\"white-space: nowrap\">$_(HK)</a>&nbsp;\n";
-        $str .= "<a href=\"$file.$langs{$cur_lang}-tw.html\" title=\"$tooltip (<TWc/>)\" hreflang=\"$langs{$cur_lang}-TW\" lang=\"$langs{$cur_lang}-TW\" rel=\"alternate\" style=\"white-space: nowrap\">$_(&#32321;)</a>&nbsp;\n";
+        $str .= " <a href=\"$file.$langs{$cur_lang}-cn.html\" title=\"$tooltip (<CNc/>)\" hreflang=\"$langs{$cur_lang}-CN\" lang=\"$langs{$cur_lang}-CN\" rel=\"alternate\">$_(&#31616;)</a>\n";
+        $str .= " <a href=\"$file.$langs{$cur_lang}-hk.html\" title=\"$tooltip (<HKc/>)\" hreflang=\"$langs{$cur_lang}-HK\" lang=\"$langs{$cur_lang}-HK\" rel=\"alternate\">$_(HK)</a>\n";
+        $str .= " <a href=\"$file.$langs{$cur_lang}-tw.html\" title=\"$tooltip (<TWc/>)\" hreflang=\"$langs{$cur_lang}-TW\" lang=\"$langs{$cur_lang}-TW\" rel=\"alternate\">$_(&#32321;)</a>\n";
       }
     }
+     $str .= "</p>\n";
      $str .= "<!--/UdmComment-->\n";
   }
   elsif (@used_langs) {
      $str .= "<!--UdmComment-->\n";
+     $str .= "<p>\n";
      $str .= q{<gettext>This page is also available in the following languages:</gettext>}."\n";
-     $str .= "<br />\n";
+     $str .= "</p><p class=\"navpara\">\n";
      # Language sorting. Create a hash going from the language's own name
      # for itself to the language's ISO keys. Then work with the sorted
      # keys.
@@ -198,18 +200,18 @@ sub languages {
         $cur_lang = $sorted_langs{$_};
         $tooltip = $trans{$CUR_ISO_LANG}{$cur_lang};
         if ($cur_lang ne "chinese") {
-           $str .= "<a href=\"$file.$langs{$cur_lang}.html\" title=\"$tooltip\" hreflang=\"$langs{$cur_lang}\" lang=\"$langs{$cur_lang}\" rel=\"alternate\">$_";
+           $str .= " <a href=\"$file.$langs{$cur_lang}.html\" title=\"$tooltip\" hreflang=\"$langs{$cur_lang}\" lang=\"$langs{$cur_lang}\" rel=\"alternate\">$_";
            $str .= "&nbsp;($translit{$cur_lang})" if defined $translit{$cur_lang};
-           $str .= "</a>&nbsp;\n";
+           $str .= "</a>\n";
         } else {
-           $str .= "<a href=\"$file.$langs{$cur_lang}-cn.html\" title=\"$tooltip (<CNc/>)\" hreflang=\"$langs{$cur_lang}-CN\" lang=\"$langs{$cur_lang}-CN\" rel=\"alternate\" style=\"white-space: nowrap\">$_(&#31616;)</a>&nbsp;\n";
-           $str .= "<a href=\"$file.$langs{$cur_lang}-hk.html\" title=\"$tooltip (<HKc/>)\" hreflang=\"$langs{$cur_lang}-HK\" lang=\"$langs{$cur_lang}-HK\" rel=\"alternate\" style=\"white-space: nowrap\">$_(HK)</a>&nbsp;\n";
-           $str .= "<a href=\"$file.$langs{$cur_lang}-tw.html\" title=\"$tooltip (<TWc/>)\" hreflang=\"$langs{$cur_lang}-TW\" lang=\"$langs{$cur_lang}-TW\" rel=\"alternate\" style=\"white-space: nowrap\">$_(&#32321;)</a>&nbsp;\n";
+           $str .= " <a href=\"$file.$langs{$cur_lang}-cn.html\" title=\"$tooltip (<CNc/>)\" hreflang=\"$langs{$cur_lang}-CN\" lang=\"$langs{$cur_lang}-CN\" rel=\"alternate\">$_(&#31616;)</a>\n";
+           $str .= " <a href=\"$file.$langs{$cur_lang}-hk.html\" title=\"$tooltip (<HKc/>)\" hreflang=\"$langs{$cur_lang}-HK\" lang=\"$langs{$cur_lang}-HK\" rel=\"alternate\">$_(HK)</a>\n";
+           $str .= " <a href=\"$file.$langs{$cur_lang}-tw.html\" title=\"$tooltip (<TWc/>)\" hreflang=\"$langs{$cur_lang}-TW\" lang=\"$langs{$cur_lang}-TW\" rel=\"alternate\">$_(&#32321;)</a>\n";
         }
      }
-     $str .= "\n<br />\n";
+     $str .= "\n</p><p>\n";
      $str .= q{<gettext>How to set <a href=m4_HOME/intro/cn>the default document language</a></gettext>};
-     $str .= "\n<!--/UdmComment-->\n";
+     $str .= "\n</p>\n<!--/UdmComment-->\n";
   }
 
   return $str;
