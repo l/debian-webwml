@@ -5,7 +5,8 @@ require 5.001;
 use Getopt::Long;
 %opthash = (
 	"mirror|m=s" => \$mirror_source,
-	"type|t=s" => \$output_type
+	"type|t=s" => \$output_type,
+	"help|h!" => \$help,
 	);
 
 my ($site, %mirror, %countries, $count, %longest);
@@ -353,10 +354,18 @@ END
 
 ######### Begin main routine ###########################
 Getopt::Long::config('no_getopt_compat', 'no_auto_abbrev');
-GetOptions(%opthash) or fail("error parsing options");
-if (! defined $mirror_source) {
-	print "Error: No --mirror option given\n";
+GetOptions(%opthash) or die "error parsing options";
+if (defined $help) {
+	print <<END;
+Usage: $0 -m|--mirror mirror_list_source [-t|--type type]
+
+`mirror_list_source\' is usually Mirrors.masterlist file
+`type\' can be one of: "wml", "html" or "text".
+END
 	exit;
+}
+if (! defined $mirror_source) {
+	die "Error: No --mirror option given\n";
 }
 # $mirror_source = "Mirrors";
 if (! defined $output_type) { # choices are wml, html or text
