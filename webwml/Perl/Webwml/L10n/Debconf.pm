@@ -66,15 +66,18 @@ sub _init {
 
 =item read_compact
 
-Read a template containing all translations
+Read a template containing all translations.  When optional second
+parameter is non-zero, a warning is displayed if translated fields are
+found; this is useful to check for master templates file.
 
-   $tmpl->read_compact($file);
+   $tmpl->read_compact($file, 1);
 
 =cut
 
 sub read_compact {
         my $self = shift;
         my $file = shift;
+        my $master = shift || 0;
         my ($lang, $msg);
 
         $self->_init();
@@ -86,6 +89,14 @@ sub read_compact {
         while (<TMPL>) {
                 chomp;
                 $line ++;
+                if ($master && m/^[A-Z][a-z]*-[A-Za-z_]+(-fuzzy)?:/) {
+                        warn "$file:$line: translated-fields-in-master-templates\n";
+                        goto SKIP;
+                }
+                if (m/^[A-Z][a-z]*-[A-Za-z_]+-fuzzy:/) {
+                        warn "$file:$line: fuzzy-fields-in-templates\n";
+                        goto SKIP;
+                }
                 if (s/^Template:\s*//) {
                         $tmpl = $_;
                         $self->{orig}->{$tmpl} = {};
@@ -182,7 +193,7 @@ sub read_dispatched {
         my $file = shift;
 
         $self->_init();
-        $self->read_compact($file);
+        $self->read_compact($file, 1);
         $self->{trans} = {};
         $self->{langs} = {};
         foreach my $trans (@_) {
@@ -193,21 +204,35 @@ sub read_dispatched {
 sub _read_dispatched {
         my $self = shift;
         my $file = shift;
-        my ($lang, $msg, $status);
+        my ($lang, $msg, $status_c, $status_d);
 
         open (TMPL, "< $file")
                 || die "Unable to read file $file\n";
 
         my $tmpl = '';
         my $line = 0;
+        my $ext = $file;
+        $ext =~ s/.*\.//;
         while (<TMPL>) {
                 chomp;
                 $line ++;
+                if (m/^[A-Z][a-z]*-[A-Za-z_]+-fuzzy:/) {
+                        warn "$file:$line: fuzzy-fields-in-templates\n";
+                        goto SKIP;
+                }
                 if (s/^Template:\s*//) {
                         $tmpl = $_;
-                        $status = '';
-                        warn "$file:$line: template $_ does not appear in original!\n"
-                                unless defined $self->{orig}->{$tmpl};
+                        $status_c = $status_d = '';
+                        unless (defined $self->{orig}->{$tmpl}) {
+                                warn "$file:$line: translated-templates-not-in-original $_\n";
+                                while (<TMPL>) {
+                                        $line ++;
+                                        last if (!defined($_) || m/^$/);
+                                }
+                                last unless defined($_);
+                                $line --;
+                                redo;
+                        }
                 } elsif (s/^(Choices):\s*//) {
                         if ($tmpl eq '') {
                                 warn "$file:$line: \`$1' field found before \`Template'\n";
@@ -216,9 +241,9 @@ sub _read_dispatched {
                         next unless defined $self->{orig}->{$tmpl};
                         if (defined($self->{orig}->{$tmpl}->{choices}) &&
                             $_ eq $self->{orig}->{$tmpl}->{choices}) {
-                                $status = 'count';
+                                $status_c = 'count';
                         } else {
-                                $status = 'fuzzy';
+                                $status_c = 'fuzzy';
                         }
                 } elsif (s/^(Choices-(.*?)):\s*//) {
                         if ($tmpl eq '') {
@@ -226,12 +251,19 @@ sub _read_dispatched {
                                 goto SKIP;
                         }
                         $lang = $2;
+                        warn "$file:$line: lang-mismatch-in-translated-templates\n"
+                                if $lang ne $ext;
                         unless (defined($self->{langs}->{$lang})) {
                                 $self->{langs}->{$lang} = 1;
                                 $self->{trans}->{$lang}->{count} = 0;
                                 $self->{trans}->{$lang}->{fuzzy} = 0;
                         }
-                        $self->{trans}->{$lang}->{$status} ++;
+                        if ($status_c) {
+                                $self->{trans}->{$lang}->{$status_c} ++;
+                        } else {
+                                warn "$file:$line: original-fields-removed-in-translated-templates\n";
+                        }
+                        $status_c = '';
                 } elsif (s/^(Description):\s*//) {
                         if ($tmpl eq '') {
                                 warn "$file:$line: \`$1' field found before \`Template'\n";
@@ -249,9 +281,9 @@ sub _read_dispatched {
                         $msg =~ tr/ \t\n/ /s;
                         if (defined($self->{orig}->{$tmpl}->{description}) &&
                             $msg eq $self->{orig}->{$tmpl}->{description}) {
-                                $status = 'count';
+                                $status_d = 'count';
                         } else {
-                                $status = 'fuzzy';
+                                $status_d = 'fuzzy';
                         }
                         last unless defined($_);
                         $line --;
@@ -277,12 +309,18 @@ sub _read_dispatched {
                                 $_ = <TMPL>;
                                 $line ++;
                         } until (!defined($_) || m/^\S/ || m/^$/m);
-                        $self->{trans}->{$lang}->{$status} ++;
+                        if ($status_d) {
+                                $self->{trans}->{$lang}->{$status_d} ++;
+                        } else {
+                                warn "$file:$line: original-fields-removed-in-translated-templates\n";
+                        }
+                        $status_d = '';
                         last unless defined($_);
                         $line --;
                         redo;
                 } elsif (m/^\s*$/) {
                         $tmpl = '';
+                        $status_c = $status_d = '';
                 } elsif (m/^(Type|Default)/) {
                         #   Ignored fields
                 } else {
@@ -293,7 +331,7 @@ sub _read_dispatched {
                 SKIP:
                         while (<TMPL>) {
                                 $line ++;
-                                last if (!defined($_) || m/^\S/ || m/^$/m);
+                                last if (!defined($_) || m/^\S/ || m/^$/);
                         }
                         last unless defined($_);
                         $line --;
