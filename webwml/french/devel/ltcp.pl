@@ -43,11 +43,11 @@ foreach $translation (@$translations) {
 			&& $translation->{'status'} ne 'non-traduit'
 			&& $translation->{'status'} ne 'en cours de traduction') {
 			$translation->{'translation_url'} = 
-				'http://www.teaser.fr/~clebars/debian/f2dp/docs/'
+				'http://www.debian.org/~clebars/f2dp/docs/'
 				. $translation->{'key'} . '.fr.html/'
 				if (!$translation->{'translation_url'});
 			$translation->{'translation_source_url'} = 
-				'http://www.teaser.fr/~clebars/debian/f2dp/docs/'
+				'http://www.debian.org/~clebars/f2dp/docs/'
 				. $translation->{'key'} . '.fr.sgml'
 				if (!$translation->{'translation_source_url'});
 		}
