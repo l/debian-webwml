@@ -7,6 +7,7 @@
 <define-menu-item name="netbsd-i386">
    [EN:Debian GNU/NetBSD for i386:]
    [AR:Debian GNU/NetBSD for i386:]
+   [CA:Debian GNU/NetBSD per a i386:]
    [DA:Debian GNU/NetBSD til i386:]
    [DE:Debian GNU/NetBSD für i386:]
    [EL:Debian GNU/NetBSD for i386:]
@@ -33,6 +34,7 @@
 <define-menu-item name="netbsd-alpha">
    [EN:Debian GNU/NetBSD for Alpha:]
    [AR:Debian GNU/NetBSD for Alpha:]
+   [CA:Debian GNU/NetBSD per a Alpha:]
    [DA:Debian GNU/NetBSD til Alpha:]
    [DE:Debian GNU/NetBSD für Alpha:]
    [EL:Debian GNU/NetBSD for Alpha:]
@@ -59,6 +61,7 @@
 <define-menu-item name="why">
    [EN:Why:]
    [AR:Why:]
+   [CA:Per què:]
    [DA:Hvorfor:]
    [DE:Weshalb:]
    [EL:Why:]
@@ -85,6 +88,7 @@
 <define-menu-item name="people">
    [EN:People:]
    [AR:People:]
+   [CA:Gent:]
    [DA:Folk:]
    [DE:Leute:]
    [EL:People:]
