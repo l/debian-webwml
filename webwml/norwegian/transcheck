@@ -61,24 +61,30 @@ subdirs=
 
 trap "exit 1" 2 3 15
 
+
 procdir()
 {
-    dir=$1
-    subdirs=
-
-    if [ ! -d "$src/$dir" ]
-    then
-	echo "*** Source directory \`$src/${dir%/}' does not exist" >&2
+    if [ -d "$src/$1" ]; then
+	dir=$1
+	filespec=
+    elif [ -f "$src/$1" ]; then
+	dir=${1%/*}
+	filespec=${1##*/}
+    else
+	echo "*** Source \`$src/$1' does not exist" >&2
 	break
     fi
 
-    $detailed && echo "--- Source directory $src${dir:+/}${dir%/}"
-    $detailed && echo "+++ Target directory $tgt${dir:+/}${dir%/}"
+    subdirs=
+    $detailed && echo "--- Source directory ${src}${dir:+/$dir}"
+    $detailed && echo "+++ Target directory ${tgt}${dir:+/$dir}"
+
+    dir=${dir:+$dir/}
 
     exec < ${src}/${dir}CVS/Entries
     while IFS=/ read -r type file sver remainder
     do
-	msg="$dir$file: source=$sver"
+	msg="${dir}${file}: source=${sver}"
 
 	if [ ! "$file" ]
 	then
@@ -87,28 +93,34 @@ procdir()
 	elif [ "$type" = "D" ]
 	then
 	    $detailed && echo "${dir}CVS/Entries: adding subdirectory \`$file'"
-	    subdirs="${subdirs} ${dir}${file}/"
+	    subdirs="${subdirs} ${dir}${file}"
+
+	elif [ "${filespec}" ] && [ "${file}" != "${filespec}" ]
+	then
+	    $detailed && echo ", skipping"
 
 	elif [ "${file:${#file}-4}" != ".wml" ]
 	then
 	    $detailed && echo "$msg, not a .wml file"
 
-	elif [ ! -f "$tgt/$dir$file" ]
+	elif [ ! -f "${tgt}/${dir}${file}" ]
 	then
-	    if $addmissing && [ -f "$src/$dir$file" ]
+	    if $addmissing && [ -f "${src}/${dir}${file}" ]
 	    then
-		mkdir -p $tgt/$dir
-		echo "#<!--translation $sver-->"  > "$tgt/$dir$file"
-		echo "$(<$src/$dir$file)"        >> "$tgt/$dir$file"
+		mkdir -p ${tgt}/${dir}
+		echo "#<!--translation $sver-->"  > "${tgt}/${dir}${file}"
+		echo "$(<${src}/${dir}${file})"  >> "${tgt}/${dir}${file}"
 		echo "$msg, target did not exist, created"
 	    else
 		$verbose && echo "$msg, target does not exist"
 	    fi
+
 	elif ! grep -qs "/$file/" ${tgt}/${dir}CVS/Entries
 	then
 	    echo "$msg, target exists but has no CVS entry"
+
 	else
-	    text=$(<$tgt/$dir$file)
+	    text=$(<${tgt}/${dir}${file})
 	    text=(${text#*translation })
 	    tver=${text//[^0-9.]}
 
@@ -119,7 +131,8 @@ procdir()
 
 	      [0-9]*)
 		echo "$msg, target=$tver, needs update"
-		$showdiff && cvs -z3 diff -r"$tver" -r"$sver" "$src/$dir$file"
+		$showdiff && \
+		    cvs -z3 diff -r"$tver" -r"$sver" "${src}/${dir}${file}"
 		;;
 
 	      "")
@@ -197,7 +210,7 @@ do
 	    ;;
 
 	*)
-	    subdirs="${subdirs} ${1%/}/"
+	    subdirs="${subdirs} ${1%/}"
 	    ;;
     esac
     shift
@@ -237,6 +250,5 @@ fi
 
 for subdir in ${subdirs:-""}
 do
-    procdir $subdir
+    procdir ${subdir#/}
 done
-
