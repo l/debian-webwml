@@ -35,21 +35,27 @@
    my $email = "";
    my $name = "";
    my $translators = "";
-   my $last = 0;
-   my $p =0;
+   my $last = -2;
+   my $p = 0;
+   my $next = 0;
+   my $is_over = 0;
    if (length ($translator)) {
       $translator =~ s/\(at\)/@/;
       $plural = 1 if $translator =~ /,/;
    do {
    $email="";
    $name="";
-   $translators=$translators.", " unless ($last == 0);
+   $translators=$translators."," unless ($last == -2);
    $p = index($translator,"<",$last);
-   $email = substr($translator,$p+1,index($translator,">",$p)-($p+1)) unless (index($translator,">",$p)==-1);
-   $name = substr($translator,$last,$p-$last);
+   $next = index($translator,",",$last+1);
+   if ($p>$next and $next != -1){$is_over=1;}else{$is_over=0;}
+   $email = substr($translator,$p+1,index($translator,">",$p)-($p+1)) unless (index($translator,">",$p)==-1) or ($p==-1) or ($is_over);
+   $name = substr($translator,$last+2,$p-$last-2) unless ($p==-1) or ($is_over);
+   $name = substr($translator,$last+2,$next-$last-2) if ($p==-1 and $next !=-1) or ($is_over);
+   $name = substr($translator,$last+2) if ($p==-1) and ($next == -1);
    if (length ($email)){
    $translators = $translators.'<a href="mailto:'.$email.'">'."$name</a>";
-   }else{$translators = $name;}
+   }else{$translators = $translators.$name;}
    $last = index($translator,",",$last+1);
    }until ($last == -1);
    if ($CUR_ISO_LANG eq 'en') {
@@ -76,9 +82,9 @@
    } elsif ($CUR_ISO_LANG eq 'ru') {
      $translators =~ s/,([^,]+)$/ É $1/;
      $translators =~ s/,/, /g;
-   } elsif ($CUR_ISO_LANG eq 'pl') {
-     $translators =~ s/,([^,]+)$/ i $1/;
-     $translators =~ s/,/, /g;
+    } elsif ($CUR_ISO_LANG eq 'pl') {
+      $translators =~ s/,([^,]+)$/ i $1/;
+      $translators =~ s/,/, /g;
    } else {
      # Fallback to the english style if there's no translation yet
      $translators =~ s/,([^,]+)$/ and $1/;
