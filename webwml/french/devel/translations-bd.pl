@@ -797,4 +797,13 @@ $translations = [
 	'since'			=> '12/16/1998',
 },
 
+{
+	'type'			=> 'Web',
+	'key'			=> 'releases/slink/index',
+	'status'		=> 'traduction à jour',
+	'since'			=> '16/03/1999',
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+	'last_translated'	=> '16/03/1999',
+},
+
 ];
