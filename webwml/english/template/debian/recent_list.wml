@@ -95,7 +95,8 @@ sub get_recent_list {
     my $open_by_path = 0;
     my ($year, $since_year, $since_date);
     # set open_by_path, if no year is specified at all
-    if ($time ne '.') {
+    unless (($time eq '.') 
+	    || (($time =~ /\d{4}/) && !$minnum)) {
 	$year = $time;
 	$since_year = $year;
 	$since_date = timegm(0, 0, 0, 1, 0, $year) if $year =~ /\d+/; 
@@ -354,7 +355,7 @@ sub grab_titles {
 	    $hdate = iso2stamp( $hdate );
 	    @hdate = map(iso2stamp($_), @hdate); 
 	}
-	#warn "$file: hdate=$hdate\n";
+	#warn "$file: hdate=$hdate (".join( ":", @hdate ).")\n";
 
 	if ($event ne "") { # this file was for an event
 	    if ( $event eq "past" ) { 
@@ -367,7 +368,7 @@ sub grab_titles {
 	    }
 	} else {
 	    #warn "$file: no event?" if $is_events;
-	    unless ( $#hdate && $is_by_date ) {
+	    unless ( ($#hdate > 0) && $is_by_date ) {
 		($str{$hdate} = $str1 . $str{$hdate}) =~ s/NEW_REVISION//;
 		$count{$hdate}++;
 	    } else {
