@@ -13,3 +13,13 @@ include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml  Makefile
 	$(WML) $(<F)
+
+faq.$(LANGUAGE).html: faq.wml  Makefile
+	$(WML) $(<F)
+
+packages.$(LANGUAGE).html: packages.wml  Makefile
+	$(WML) $(<F)
+
+tools.$(LANGUAGE).html: tools.wml  Makefile
+	$(WML) $(<F)
+
