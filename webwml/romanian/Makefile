@@ -48,16 +48,8 @@ ifeq "$(LANGUAGE)" "zh"
 	@mv -f sitemap.zh-tw.html.tmp sitemap.zh-tw.html
 	@$(TOTW) sitemap.zh-tw.html
 else
-ifeq "$(LANGUAGE)" "ja"
-	wml -q -D CUR_YEAR=2001 -o UNDEFuJA:sitemap.ja.html.tmp@g+w \
-          --prolog="/usr/bin/kcc -e -" --epilog="./convert sitemap.ja.html" \
-            ../english/sitemap.wml \
-              -D CUR_LANG=Japanese -D CUR_ISO_LANG=ja -D CHARSET=iso-2022-jp
-else
-	$(shell echo $(WML) | sed s/index/sitemap/) \
-          $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml \
-            $(shell egrep '^-D (CUR_|CHAR)' .wmlrc)
-endif
+	$(WML) $(shell egrep '^-D (CUR_|CHAR)' .wmlrc) \
+          $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml
 endif
 
 all:: $(SITEMAP)
