@@ -14,6 +14,19 @@ endif
 
 include $(WMLBASE)/Make.lang
 
+ifndef SUBLANG
+SITEMAP = sitemap.$(LANGUAGE).html
+HTMLMAP = $(HTMLDIR)/$(SITEMAP)
+else
+SITEMAP = $(sort $(foreach i,$(SUBLANG),\
+	$(patsubst %.wml,%.$(LANGUAGE)-$(i).html,sitemap.wml)))
+HTMLMAP = $(patsubst %.html,$(HTMLDIR)/%.html,$(SITEMAP))
+endif
+
+ifeq "$(LANGUAGE)" "en"
+IMGFILES += favicon.ico
+IMGDESTFILES += $(HTMLDIR)/favicon.ico
+endif
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(wildcard News/$(CUR_YEAR)/[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/[0-9]*.wml) \
@@ -22,7 +35,7 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(ENGLISHSRCDIR)/releases/info
 	$(WML) index.wml
 
-sitemap.$(LANGUAGE).html: $(ENGLISHDIR)/sitemap.wml \
+$(SITEMAP): $(ENGLISHDIR)/sitemap.wml \
   $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/releases/info $(ENGLISHDIR)/MailingLists/mklist.tags
 ifeq "$(LANGUAGE)" "zh"
@@ -52,10 +65,7 @@ else
 endif
 endif
 
-all:: sitemap.$(LANGUAGE).html
+all:: $(SITEMAP)
 
-install:: $(HTMLDIR)/sitemap.$(LANGUAGE).html
+install:: $(HTMLMAP)
 	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
-ifneq "$(LANGUAGE)" "en"
-	-install -m 664 -p sitemap.$(LANGUAGE)*.html $(HTMLDIR)
-endif
