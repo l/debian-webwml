@@ -184,10 +184,10 @@ $translations_status = {
 
 'policy' => {
 	'status'		=> '4',
-	'since'			=> '14/01/2001',
+	'since'			=> '04/05/2001',
 	'translation_name'	=> 'La charte Debian',
 	'translation_maintainer'=> ['philippe batailler <pbatailler@teaser.fr>'],
-	'base_revision'		=> '3.2.1.1',
+	'base_revision'		=> '3.5.4.0',
 	'translation_dev_url'   => 'http://www.teaser.fr/~pbatailler/',
 	'old_translators'	=> ['Serge Stinckwich <serge@info.unicaen.fr>'],
 },
