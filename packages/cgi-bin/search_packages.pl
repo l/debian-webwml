@@ -63,7 +63,8 @@ my $exact = $input->param('exact');
 my $releases = $input->param('releases');
 $releases = '*' unless (defined $releases);
 $releases = '*' if ($releases eq 'all');
-my $arch = "i386";
+
+my $arch = "*";
 if (defined $input->param('arch') && $input->param('arch') =~ m/^([\w-]+)$/) {
   $arch = $1; # $arch now untainted
 }
