@@ -898,7 +898,7 @@ sub write_all_package {
 				 $distro );
 	my $all_package = header( title => $all_title,
 				  title_keywords => "debian, $distro",
-				  desc => encode_entities( $title, '"' ),
+				  desc => encode_entities( $all_title, '"' ),
 				  lang => $lang,
 				  print_title_below => 1 );
 	if ($distro eq "experimental") {
