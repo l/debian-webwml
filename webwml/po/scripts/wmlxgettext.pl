@@ -47,8 +47,12 @@ sub processFile {
                 $lineno += countNewline ($1.$2);
                 $nextlineno = countNewline ($3);;
                 push (@msgids, $msgid);
-                $messages->{$msgid} = []
-                        unless defined ($messages->{$msgid});
+                if (defined ($messages->{$msgid})) {
+                        print STDERR "Warning: msgid multiple defined:\n\t".
+                                $msgid."\n";
+                } else {
+                        $messages->{$msgid} = [];
+                }
                 push (@{$messages->{$msgid}}, $file, $lineno);
                 $lineno += $nextlineno;
         }

@@ -54,7 +54,7 @@ install-po:
    for l in $${langs}; do \
      lang=`grep -l CUR_ISO_LANG=$$l ../../*/.wmlrc | sed -e 's/\/\.wmlrc//' -e 's/.*\///'`; \
      [ ".$${lang}" = . ] && exit 1; \
-     cp templates.$$l.upo ../../$${lang}/po/templates.po; \
+     cp templates.$$l.upo ../../$${lang}/po/templates.$$l.po; \
    done
 
 clean:
