@@ -12,12 +12,11 @@ include $(WMLBASE)/Make.lang
 
 include pics.conf
 
-debbar.pl := $(ENGLISHDIR)/Pics/debbar.pl
+debbar := $(ENGLISHDIR)/Pics/debbar.pl
 ifneq "$(wildcard debbar.pl)" ""
-debbar.pl := ./debbar.pl
+debbar := ./debbar.pl
 endif
 
-debbar := $(debbar.pl)
 ifneq "$(FONTFACE)" ""
 debbar += -fontface $(FONTFACE)
 endif
@@ -34,19 +33,19 @@ ifneq "$(FONTENCODING)" ""
 debbar += -fontencoding $(FONTENCODING)
 endif
 
-about.$(LANGUAGE).gif: $(debbar.pl)
+about.$(LANGUAGE).gif:
 	$(debbar) -words $(ABOUT_TEXT) -o $@
-devel.$(LANGUAGE).gif: $(debbar.pl)
+devel.$(LANGUAGE).gif:
 	$(debbar) -words $(DEVEL_TEXT) -o $@
-distrib.$(LANGUAGE).gif: $(debbar.pl)
+distrib.$(LANGUAGE).gif:
 	$(debbar) -words $(DISTRIB_TEXT) -o $@
-news.$(LANGUAGE).gif: $(debbar.pl)
+news.$(LANGUAGE).gif:
 	$(debbar) -words $(NEWS_TEXT) -o $@
-search.$(LANGUAGE).gif: $(debbar.pl)
+search.$(LANGUAGE).gif:
 	$(debbar) -words $(SEARCH_TEXT) -o $@
-sitemap.$(LANGUAGE).gif: $(debbar.pl)
+sitemap.$(LANGUAGE).gif:
 	$(debbar) -words $(SITEMAP_TEXT) -o $@
-support.$(LANGUAGE).gif: $(debbar.pl)
+support.$(LANGUAGE).gif:
 	$(debbar) -words $(SUPPORT_TEXT) -o $@
 
 pics: about.$(LANGUAGE).gif devel.$(LANGUAGE).gif distrib.$(LANGUAGE).gif \
