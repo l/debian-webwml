@@ -13,6 +13,7 @@
   <li><a href="#commands">Liste des commandes</a></li>
   <li><a href="#messages">Liste de messages du ddts</a></li>
   <li><a href="#rules">Format des descriptions</a></li>
+  <li><a href="#ddts_script">Le script <strong>ddts-script</strong></a></li>
 </ul>
 
 
@@ -1200,5 +1201,638 @@ Description: An utility for creating fonts.scale file for TTF fonts.
 
   <p>Note&nbsp;: si vous utilisez la mauvaise forme, le ddts ne pourra pas
   conserver les différentes parties de la traduction.
+  </dd>
+</dl>
+
+
+
+
+<h2><a name="ddts_script">Le script</a> <strong>ddts-script</strong></h2>
+
+<ul>
+  <li><a href="#ddts_hist">Pourquoi un script&nbsp;?</a></li>
+  <li><a href="#ddts_instal">Installation</a></li>
+  <li><a href="#ddts_use">Utilisation</a></li>
+  <li><a href="#ddts_config">Fichier de configuration</a></li>
+  <li><a href="#ddts_commands">Commandes</a></li>
+  <li><a href="#ddts_options">Options</a></li>
+  <li><a href="#ddts_messages">Messages du script</a></li>
+  <li><a href="#ddts_faq">Foire aux questions</a></li>
+<ul>
+
+
+
+<h3><a name="ddts_hist">Pourquoi un script&nbsp;?</a></h3>
+
+<p>Ce script a été développé initialement par Martin Quinson, j'en assure
+maintenant la maintenance et j'en poursuis le développement, pour toute
+suggestion ou tout problème, vous pouvez me contacter (<a
+href="mailto:nico.bertol@wanadoo.fr">Nicolas Bertolissio</a>), il est soumis à
+la licence GPL versions 2 et suivantes.
+
+<p>Son but est de simplifier la gestion des courriels et des fichiers pour les
+traducteurs et les relecteurs, afin qu'ils puissent se concentrer sur leurs
+tâches principales&nbsp;: traduction, relecture et correction des erreurs.
+
+<h3><a name="ddts_instal">Installation</a></h3>
+
+<ul>
+  <li>Téléchargez le script <a
+    href="http://perso.wanadoo.fr/nico.bertol/ddts/ddts-script.txt">\
+    ici</a>&nbsp;;</li>
+  <li>Renommez-le <tt>ddts-script</tt> en supprimant l'extension
+    <tt>.txt</tt> et placez-le dans votre répertoire
+    <tt>$HOME/bin</tt>&nbsp;;</li>
+  <li>rendez-le exécutable&nbsp;: <tt>chmod +x
+    $HOME/bin/ddts-script</tt>&nbsp;;</li>
+  <li>Assurez-vous que l'interpréteur de commandes recherche des fichiers
+    exécutables dans votre répertoire <tt>$HOME/bin</tt>&nbsp;;</li>
+  <li>Téléchargez le fichier de configuration d'exemple <a
+    href="http://perso.wanadoo.fr/nico.bertol/ddts/dot.ddts-script.txt">\
+    ici</a>&nbsp;;</li>
+  <li>Renommez-le <tt>.ddts-script</tt> en supprimant le préfixe
+    <tt>dot</tt> (mais pas le point) et l'extension <tt>.txt</tt> et
+    placez-le dans votre répertoire <tt>$HOME</tt>&nbsp;;</li>
+  <li>Éditez-le avec votre éditeur de texte favori et modifiez les variables
+    avec des valeurs qui vous conviennent (voyez la partie <a
+    href="#ddts_config">Fichier de configuration</a> pour plus de
+    détails)&nbsp;;</li>
+</ul>
+
+
+
+<h3><a name="ddts_use">Utilisation</a></h3>
+
+<p>Avertissement&nbsp;:
+<ul>
+  <li>les exemples supposent que vous utilisiez les variables de configuration
+    avec les valeurs fournies dans la partie <a href="#ddts_config">Fichier de
+    configuration</a>&nbsp;;</li>
+  <li>la description du paquet <tt>asmixer</tt> m'a été fournie par Philippe
+    Trbich que je remercie. Pour les besoins de l'exemple, j'ai ajouté
+    volontairement des erreurs.</li>
+</ul>
+
+
+<dl>
+  <dt>À la réception d'un courriel du ddts&nbsp;:</dt>
+  <dd>
+    <p>passez tous les courriels venant du ddts et contenant des descriptions à
+    traduire, à relire, des rapports de relecture (<i>bug reports</i>) et des
+    notifications d'acceptation de traduction à l'entrée standard du script avec
+    la commande <tt>parse</tt>. Vous devez fournir les courriels complets, avec
+    les en-têtes et toutes les parties mime, et non pas uniquement le fichier
+    joint contenant les données. (voyez aussi <a href="#ddts_faq_20">Comment
+    automatiser l'analyse des courriels&nbsp;?</a>).
+
+    <p>Le script analyse le courriel. S'il trouve&nbsp;:
+    <dl>
+      <dt>une description à traduire,</dt>
+      <dd>
+        il crée un fichier <tt>nom_du_paquet.todo</tt> dans votre répertoire
+	<i>$tr_dir</i>. Si vous aviez déjà une version de cette
+	description, il indique les différences dans le fichier,
+      </dd>
+      <dt>une description à relire,</dt>
+      <dd>
+        il crée un fichier <tt>nom_du_paquet.todo</tt> dans votre répertoire
+	<i>$rev_dir</i>. Si vous aviez déjà une version de cette
+	description, il indique les différences dans le fichier ou, s'il n'y a
+	pas de différence, considère la description relue et sans erreur et
+	renomme le fichier nouvellement créé <tt>nom_du_paquet.rev</tt>,
+      </dd>
+      <dt>un rapport de relecture,</dt>
+      <dd>
+        il crée un fichier <tt>nom_du_paquet.bug</tt> dans votre répertoire
+	<i>$bug_dir</i> et y indique les différences avec votre version
+	traduite, il ajoute aussi les commentaires du relecteur. Si le fichier
+	existe déjà, il mélange les différents rapports de relecture pour
+	faciliter la correction. Il essaye aussi de détecter les collisions
+	(c'est-à-dire les rapports de relecture faite avec une version
+	antérieure de la traduction)&nbsp;;
+      </dd>
+    </dl>
+  </dd>
+  <dt>Travaillez avec les fichiers créés comme suit&nbsp;:
+  <dd>
+    <dl>
+      <dt>pour traduire&nbsp;:</dt>
+      <dd>
+        dans le répertoire <i>$tr_dir</i>, renommez le fichier
+	<tt>nom_du_paquet.todo</tt> en <tt>nom_du_paquet.tr</tt> et
+	éditez-le. Le fichier ressemble à ceci&nbsp;:
+
+	<p><tt>
+	\# Package: asmixer<br>
+	\# ddts id: &lt;E13LOJN-0t016u-85@auric.debian.org&gt;<br>
+	Description: AfterStep audio mixer<br>
+	&nbsp;asmixer is a small audio mixer.  It follows the look and feel<br>
+	&nbsp;of the AfterStep window manager and is ideally suited to be run<br>
+	&nbsp;within AfterStep's Wharf module.<br>
+	Description-fr: &lt;trans&gt;<br>
+	&nbsp;&lt;trans&gt;<br>
+	</tt>
+
+	<p>Mettez votre traduction à la place des «&nbsp;&lt;trans&gt;&nbsp;», ne
+	supprimez pas le pseudo-en-tête du script. Si certains passages sont
+	déjà traduit mais que la traduction ne vous convient pas, vous pouvez
+	la modifier.
+      </dd>
+      <dt>pour relire&nbsp;:</dt>
+      <dd>
+        dans le répertoire <i>$rev_dir</i>, renommez le fichier
+	<tt>nom_du_paquet.todo</tt> en <tt>nom_du_paquet.rev</tt> et
+	éditez-le. Le fichier ressemble à ceci&nbsp;:
+
+	<p><tt>
+	\# Package:    asmixer<br>
+	\# Translator: iznogood@lautre.net<br>
+	\# ddts id:    &lt;g13QqJ9-0t0265-23@auric.debian.org&gt;<br>
+	Description: AfterStep audio mixer<br>
+	&nbsp;asmixer is a small audio mixer.  It follows the look and feel<br>
+	&nbsp;of the AfterStep window manager and is ideally suited to be run<br>
+	&nbsp;within AfterStep's Wharf module.<br>
+	Description-fr: Mixeur audio pour AfterStep<br>
+	&nbsp;asmixer est petit mixeur audio. Il respecte l'esthétique du<br>
+	&gt;&gt;- gestionnaire de fenêtres AfterStep te est tout à fait adapté<br>
+	&gt;&gt;+ gestionnaire de fenêtres AfterStep et est tout à fait adapté<br>
+	&gt;&gt;+&gt;&gt; fenêtres : pluriel<br>
+	&gt;&gt;+&gt;&gt; et       : disclavie<br>
+	&nbsp;pour le module de panneau d'AfterStep.<br>
+	</tt>
+
+	<p>Si vous aviez déjà relu cette description, comme c'est le cas ici, des
+	«&nbsp;&gt;&gt;-&nbsp;» indiquent la nouvelle version du traducteur, et
+	des «&nbsp;&gt;&gt;+&nbsp;» votre dernière correction et les
+	commentaires correspondants, supprimez ces en-têtes de lignes et
+	conservez la version correcte.
+
+	<p>Faites les corrections que vous jugez nécessaires, vous pouvez
+	ajouter des commentaires pour le traducteur en insérant des lignes
+	commençant par «&nbsp;&gt;&gt;&nbsp;» suivi d'un espace, comme
+	ceci&nbsp;:
+
+	<p><tt>
+	\# Package:    asmixer<br>
+	\# Translator: <i>traducteur@hôte.org</i><br>
+	\# ddts id:    &lt;g13QqJ9-0t0265-23@auric.debian.org&gt;<br>
+	Description: AfterStep audio mixer<br>
+	&nbsp;asmixer is a small audio mixer.  It follows the look and feel<br>
+	&nbsp;of the AfterStep window manager and is ideally suited to be run<br>
+	&nbsp;within AfterStep's Wharf module.<br>
+	Description-fr: Mixeur audio pour AfterStep<br>
+	&nbsp;asmixer est un petit mixeur audio. Il respecte l'esthétique du<br>
+	&gt;&gt; un : article manquant<br>
+	&nbsp;gestionnaire de fenêtres AfterStep et est tout à fait adapté<br>
+	&gt;&gt; et: disclavie<br>
+	&nbsp;pour le module de panneau d'AfterStep.<br>
+	</tt>
+
+        <p>Ne supprimez pas le pseudo-en-tête du script.
+
+      </dt>
+      <dt>pour apporter des corrections de rapports de relecture&nbsp;:</dt>
+      <dd>
+        dans le répertoire <i>$bug_dir</i>, renommez le fichier
+	<tt>nom_du_paquet.bug</tt> en <tt>nom_du_paquet.fix</tt>. Ce
+	fichier contient tous les rapports de relecture que vous avez reçu pour
+	cette description, éditez-le, il ressemble à ceci&nbsp;:
+
+	<p><tt>
+	\# package:  asmixer<br>
+	\# ddts id:  &lt;g13QpJ8-0t016a-42@auric.debian.org&gt;<br>
+	\# bug nb:   000 a<br>
+	\# reviewer: &lt;relecteur@hôte.org&gt;<br>
+	Description: AfterStep audio mixer<br>
+	&nbsp;asmixer is a small audio mixer.  It follows the look and feel<br>
+	&nbsp;of the AfterStep window manager and is ideally suited to be run<br>
+	&nbsp;within AfterStep's Wharf module.<br>
+	Description-fr: Mixeur audio pour AfterStep<br>
+	&gt;&gt;-- asmixer est petit mixeur audio. Il respecte l'esthétique du<br>
+	&gt;&gt;a+ asmixer est un petit mixeur audio. Il respecte l'esthétique du<br>
+	&gt;&gt;a# un : article manquant<br>
+	&gt;&gt;-- gestionnaire de fenêtres AfterStep te est tout à fait adapté<br>
+	&gt;&gt;a+ gestionnaire de fenêtres AfterStep et est tout à fait adapté<br>
+	&gt;&gt;a# et: disclavie<br>
+	&nbsp;pour le module de panneau d'AfterStep.<br>
+	</tt>
+
+	<p>Le script ajoute des en-têtes de ligne&nbsp;:
+	<ul>
+	  <li><tt>&gt;&gt;--</tt> pour votre traduction&nbsp;;</li>
+	  <li><tt>&gt;&gt;a+</tt> pour les corrections du relecteur
+	    <i>a</i>&nbsp;;</li>
+	  <li><tt>&gt;&gt;a#</tt> pour les commentaires du relecteur
+	    <i>a</i>.</li>
+	</ul>
+	Il mélange plusieurs rapports de relecture afin de rendre les
+	corrections plus faciles, la lettre correspond au rapport de bogue et
+	au relecteur indiqués dans le pseudo-en-tête du fichier.
+
+	<p>Parmi les lignes traduites corrigées, sélectionnez celles que vous
+	voulez conserver en modifiant le premier caractère de l'en-tête de ligne
+	en un <tt>+<tt> (signe plus).
+
+	<p>Si la description originale a été modifiée, l'ancienne version est
+	indiquée par des lignes commençant par «&nbsp;#&nbsp;-&nbsp;». Modifiez
+	la traduction en conséquence.
+	
+        <p>Ne supprimez pas le pseudo-en-tête du script.
+	
+	<p>Attention&nbsp;: à moins de vouloir supprimer volontairement une
+	ligne, vous devez sélectionner une et une seule ligne, même votre propre
+	version si les corrections apportées ne vous conviennent pas, sinon le
+	script supprimera le passage du texte.
+
+	<p>Si aucune des lignes proposées ne vous convient, sélectionnez-en une
+	et faites les modifications manquantes à la main, ou écrivez-en une
+	nouvelle.
+	
+	<p>Lorsque vous avez fini de corriger, le fichier doit alors ressembler
+	à ceci&nbsp;:
+
+	<p><tt>
+	\# package:  asmixer<br>
+	\# ddts id:  &lt;g13QpJ8-0t016a-42@auric.debian.org&gt;<br>
+	\# bug nb:   000 a<br>
+	\# reviewer: &lt;relecteur@hôte.org&gt;<br>
+	Description: AfterStep audio mixer<br>
+	&nbsp;asmixer is a small audio mixer.  It follows the look and feel<br>
+	&nbsp;of the AfterStep window manager and is ideally suited to be run<br>
+	&nbsp;within AfterStep's Wharf module.<br>
+	Description-fr: Mixeur audio pour AfterStep<br>
+	&gt;&gt;-- asmixer est petit mixeur audio. Il respecte l'esthétique du<br>
+	+&gt;a+ asmixer est un petit mixeur audio. Il respecte l'esthétique du<br>
+	&gt;&gt;a# un : article manquant<br>
+	&gt;&gt;-- gestionnaire de fenêtres AfterStep te est tout à fait adapté<br>
+	+&gt;a+ gestionnaire de fenêtres AfterStep et est tout à fait adapté<br>
+	&gt;&gt;a# et: disclavie<br>
+	&nbsp;pour le module de panneau d'AfterStep.<br>
+	</tt>
+
+	<p>Exécutez le script avec la commande <tt>fix</tt>. À partir du
+	fichier <tt>nom_du_paquet.fix</tt>, il crée alors un fichier
+	<tt>nom_du_paquet.tr</tt> dans votre répertoire <i>$tr_dir</i>
+	avec les lignes sélectionnées. Vous pouvez éditer ce nouveau fichier si
+	vous le souhaitez pour apporter de nouvelles modifications.
+      </dd>
+    </dl>
+  </dd>
+  <dt>Renvoyez votre travail au ddts&nbsp;:</dt>
+  <dd>
+    Exécutez le script avec la commande <tt>mail</tt>. Il envoie alors les
+    fichiers <tt>nom_du_paquet.tr</tt> et <tt>nom_du_paquet.rev</tt> au
+    ddts et les renomme <tt>nom_du_paquet.ok</tt>, si nécessaire, il clôture
+    les rapports de relecture.
+  </dd>
+<dl>
+
+
+
+<h3><a name="ddts_config">Fichier de configuration</a></h3>
+
+Il s'agit du fichier <tt>$HOME/.ddts-script</tt>. Il contient les valeurs
+des variables pour votre environnement de travail. Celles-ci sont définies dans
+des lignes de la forme suivante&nbsp;:<br>
+<tt>$&lt;nom_de_variable&gt; = valeur;</tt>
+
+Le fichier doit contenir <strong>toutes</strong> les variables suivantes (des
+valeurs d'exemple sont fournies entre crochets, elle devraient convenir pour la
+plupart des configurations)&nbsp;:
+
+<ul>
+  <li>les répertoires (ils doivent être distincts les uns des autres)&nbsp;:
+    <dl>
+      <dt><i>$tr_dir</i></dt>
+      <dd>
+        pour les traductions [<tt>$HOME/ddts/tr</tt>],
+      </dd>
+      <dt><i>$rev_dir</i></dt>
+      <dd>
+        pour les relectures [<tt>$HOME/ddts/rev</tt>],
+      </dd>
+      <dt><i>$bug_dir</i></dt>
+      <dd>
+	pour les rapports de relectures
+	[<tt>$HOME/ddts/bug</tt>],
+      </dd>
+      <dt><i>$temp_dir</i></dt>
+      <dd>
+        pour les fichiers temporaires [<tt>/tmp</tt>]&nbsp;;
+      </dd>
+    </dl></li>
+  <li>les extensions de fichiers (elles doivent être distinctes les unes des
+    autres)&nbsp;:
+    <dl>
+      <dt><i>$todo_e</i></dt>
+      <dd>
+        pour les descriptions à traduire ou à relire [<tt>todo</tt>],
+      </dd>
+      <dt><i>$tr_e</i></dt>
+      <dd>
+        pour les descriptions traduites [<tt>tr</tt>],
+      </dd>
+      <dt><i>$rev_e</i></dt>
+      <dd>
+        pour les descriptions relues [<tt>rev</tt>],
+      </dd>
+      <dt><i>$bug_e</i></dt>
+      <dd>
+        pour les rapports de relectures à corriger [<tt>bug</tt>],
+      </dd>
+      <dt><i>$fix_e</i></dt>
+      <dd>
+        pour les rapports de relectures pris en compte [<tt>fix</tt>],
+      </dd>
+      <dt><i>$sent_e</i></dt>
+      <dd>
+        pour les descriptions traduites et relues renvoyées au ddts
+	[<tt>sent</sent>],
+      </dd>
+      <dt><i>$old_e</i></dt>
+      <dd>
+        pour les fichiers de sauvegarde [<tt>old</tt>],
+      </dd>
+      <dt><i>$ok_e</i></dt>
+      <dd>
+        pour les descriptions traduites et relues acceptées
+	[<tt>ok</tt>]&nbsp;;
+      </dd>
+    </dl></li>
+  <li>les autres variables&nbsp;:
+    <dl>
+      <dt><i>$comment</i></dt>
+      <dd>
+        en-tête de ligne servant à indiquer des commentaires
+	[<tt>&gt;&gt;</tt>],
+      </dd>
+      <dt><i>$debug</i></dt>
+      <dd>
+        niveau de verbosité [<tt>1</tt>]. Les niveaux sont les
+	suivants&nbsp;:
+	<ul>
+	  <li>0&nbsp;silencieux,</li>
+	  <li>1&nbsp;normal, affiche les noms des paquets traités,</li>
+	  <li>2&nbsp;bavard, un peu plus d'informations,</li>
+	  <li>3&nbsp;débogage normal, affiche les noms des procédures,</li>
+	  <li>4&nbsp;débogage bavard, affiche les noms et les arguments courts
+	    des procédures,</li>
+	  <li>5&nbsp;débogage très bavard, affiche les noms et tous les
+	    arguments des procédures,</li>
+	  <li>9&nbsp;comme le précédent, mais envoie le courriel à
+	    l'utilisateur au lieu du ddts,</li>
+	</ul>
+      </dd>
+      <dt><i>$mail_address</i></dt>
+      <dd>
+        adresse à partir de laquelle vous envoyez le courriel au ddts,
+      </dd>
+      <dt><i>$mail_from</i></dt>
+      <dd>
+        adresse où vous souhaitez recevoir le courriel du ddts,
+      </dd>
+      <dt><i>$mail_self</i></dt>
+      <dd>
+        si la valeur est <tt>yes</tt>, le script vous envoie une copie du
+	courriel à destination du ddts [<tt>yes</tt>],
+      </dd>
+      <dt><i>$mail_enc</i></dt>
+      <dd>
+        encodage mime [<tt>8bit</tt>],
+      <dd>
+      </dd>
+      <dt><i>$mail_charset</i></dt>,
+      <dd>
+        table de caractères mime [<tt>iso-8859-1</tt>].
+      </dd>
+    </dl>
+</ul>
+
+
+
+<h3><a name="ddts_commands">Commandes</a></h3>
+
+<dl>
+  <dt><tt>parse</tt></dt>
+  <dd>
+    analyse l'entrée standard et génère les fichiers nécessaires en fonction du
+    type de courriel reçu&nbsp;;
+  </dd>
+  <dt><tt>mail</tt></dt>
+  <dd>
+    envoie les descriptions traduites et relues au ddts&nbsp;;
+  </dd>
+  <dt>fix</dt>
+  <dd>
+    génère de nouvelles versions des traductions à partir des lignes
+    sélectionnées dans les rapports de relecture&nbsp;;
+  </dd>
+  <dt>clean</dt>
+  <dd>
+    supprime les fichiers obsolètes et temporaires&nbsp;;
+  </dd>
+  <dt>stats</dt>
+  <dd>
+    affiche des statistiques à partir des fichiers présents dans les
+    répertoires.
+  </dd>
+</dl>
+
+
+
+<h3><a name="ddts_options">Options</a></h3>
+
+<dl>
+  <dt><tt>-q --quiet</tt></dt>
+  <dd>
+    mode silencieux, n'affiche que les avertissements et les erreurs&nbsp;;
+  </dd>
+  <dt><tt>-v</tt></dt>
+  <dd>
+    commence à 1, puis augmente le niveau de verbosité&nbsp;;
+  </dd>
+  <dt><tt>--verbose </tt><i>n</i></dt>
+  <dd>
+    sélectionne le niveau de verbosité <i>n</i>&nbsp;;
+  </dd>
+  <dt><tt>-s<tt></dt>
+  <dd>
+    envoie les courriels en copie à l'utilisateur&nbsp;;
+  </dd>
+  <dt><tt>-n<tt></dt>
+  <dd>
+    n'envoie pas les courriels à l'utilisateur&nbsp;;
+  </dd>
+  <dt><tt>--mail-self <tt><i>yes/no</i></dt>
+  <dd>
+    envoie les courriels en copie à l'utilisateur si <i>yes</i>, ne les
+    envoie pas si <i>no</i>.
+  </dd>
+</dl>
+<p>Note&nbsp;: les options sont analysées dans l'ordre d'apparition, elles
+doivent être placées avant la commande et la dernière option trouvée annule les
+précédentes si elles sont incompatibles.
+
+
+
+<h3><a name="ddts_messages">Messages du script</a></h3>
+
+<dl>
+  <dt><tt>Is the script configured?<br>
+            Can't create `<i>répertoire</i>': <i>raison</i></tt></dt>
+  <dd>
+    Avez-vous correctement configuré le script&nbsp;? Il n'arrive pas à créer le
+    répertoire indiqué, vérifiez le nom de ce répertoire dans le fichier de
+    configuration&nbsp;; si l'erreur persiste vérifiez que vous avez les droits
+    nécessaires à la création d'un répertoire dans le répertoire parent&nbsp;;
+  </dd>
+  <dt><tt>Can't run diff: <i>raison</i></tt></dt>
+  <dd>
+    Le script n'arrive pas à lancer le programme <tt>diff</tt> pour créer les
+    différences entre deux versions des descriptions, vérifiez que le paquet du
+    même nom est bien installé&nbsp;;
+  </dd>
+  <dt><tt>Unable to run apt-cache: maybe you are not on a Debian
+    system!</tt></dt>
+  <dd>
+    Le ddts ne fournit pas de nom de paquet pour la description en cours
+    d'analyse et le script n'arrive pas à trouver <tt>apt-cache</tt>,
+    si vous travaillez avec un système Debian, vérifiez que le paquet
+    <tt>apt</tt> est bien installé, sinon c'est normal. Comme le script ne
+    peut pas trouver de nom de paquet correspondant à la description, il
+    affichera aussi le message suivant&nbsp;;
+  </dd>
+  <dt><tt>I can't guess `<i>description courte</i>', output file named
+    `<i>noname-description_courte</i>'</tt></dt>
+  <dd>
+    Le ddts ne fournit pas de nom de paquet pour la description en cours
+    d'analyse et le script n'a pas réussi à en trouver un avec
+    <tt>apt-cache</tt>, il utilisera <i>noname-description_courte</i>&nbsp;;
+  </dd>
+  <dt><tt>I guess `<i>description courte</i>' refers to
+    `<i>nom_de_paquet</i>'</tt></dt>
+  <dd>
+    Le ddts ne fournit pas de nom de paquet pour la description en cours
+    d'analyse, mais le script, suite à un appel à <tt>apt-cache search</tt>,
+    a trouvé que le paquet <i>nom_de_paquet</i> avait comme description
+    courte celle indiquée et utilisera ce nom&nbsp;;
+  </dd>
+  <dt><tt>Can't run uudecode: <i>raison</i></tt></dt>
+  <dd>
+    Le script n'arrive pas à utiliser le programme <tt>uudecode</tt> pour
+    décoder le fichier joint au courriel, vérifiez que le paquet
+    <tt>sharutils</tt> est bien installé&nbsp;;
+  </dd>
+  <dt><tt>ERROR unknown line:<br>
+      <i>ligne</i></tt></dt>
+  <dd>
+    Le script a trouvé une ligne qu'il n'est pas capable d'analyser, vérifiez
+    que vous avez bien fourni un courriel du ddts en entrée, si le problème
+    persiste, contactez-<a href="mailto:nico.bertol@wanadoo.fr">moi</a>&nbsp;;
+  </dd>
+  <dt><tt>Parse error: empty line before the package is well defined<br>
+      package: <i>nom_de_paquet</i><br>
+      langage: <i>langue</i><br>
+      description: <i>description originale</i><br>
+      translation: <i>traduction</i><br>
+      db_translation: <i>traduction de la base de données</i></tt></dt>
+  <dd>
+    Le script a trouvé une ligne vide avant que la description ne soit
+    complètement définie, vérifiez que vous avez bien fourni un courriel du ddts
+    en entrée, si le problème persiste, contactez-<a
+    href="mailto:nico.bertol@wanadoo.fr">moi</a>&nbsp;;
+  </dd>
+  <dt><tt>WARNING: review has not been sent in the script format<br>
+    <i>nom_de_paquet</i> skiped</tt></dt>
+  <dd>
+    Le relecteur n'a pas utilisé le script pour générer le rapport de relecture,
+    le script ne peut pas le traiter, il faut que vous le fassiez à la
+    main&nbsp;;
+  </dd>
+  <dt><tt>WARNING: collision detected, <i>nom_de_paquet</i>.fix exists,<br>
+    try to rename it into <i>nom_de_paquet</i>.bug.<br>
+    <i>nom_de_paquet</i> skiped.</tt></dt>
+  <dd>
+    Le script a détecté une collision&nbsp;: vous avez déjà sélectionné des
+    lignes d'un précédent rapport de relecture, essayez de renommer
+    <i>nom_de_paquet</i>.fix <i>nom_de_paquet</i>.bug et de recommencer.
+    Attention&nbsp;: faites une copie de votre fichier, la réussite n'étant pas
+    assurée. En cas d'échec, il faudra corriger et clôturer le rapport de
+    relecture à la main&nbsp;;
+  </dd>
+  <dt><tt>WARNING: collision detected, <i>nom_de_paquet</i>.tr exists,<br>
+    try to remove it and rename <i>nom_de_paquet</i>.fix.old into
+    <i>nom_de_paquet</i>package</i>.bug.<br>
+    <i>nom_de_paquet</i>package</i> skiped</tt></dt>
+  <dd>
+    Le script a détecté une collision&nbsp;: vous avez déjà utilisé
+    <tt>ddts-script fix</tt> avec un précédent rapport de relecture, essayez de
+    supprimer <i>nom_de_paquet</i>.tr, de renommer <i>nom_de_paquet</i>.fix.old
+    <i>nom_de_paquet</i>.bug et de recommencer. Attention&nbsp;: faites une
+    copie de vos fichiers, la réussite n'étant pas assurée. En cas d'échec, il
+    faudra corriger et clôturer le rapport de relecture à la main&nbsp;;
+  </dd>
+  <dt><tt>ERROR: collision detected, <i>nom_de_paquet</i>.sent exists,<br>
+      and has a DIFFERENT translation,<br>
+      <i>nom_de_paquet</i> skiped</tt></dt>
+  <dd>
+    Le script a détecté une collision&nbsp;: vous avez déjà renvoyé des
+    corrections aux ddts et le relecteur travaillait avec une ancienne version
+    de la traduction. Vous devez modifier et clôturer le rapport de relecture à
+    la main&nbsp;;
+  </dd>
+  <dt><tt>line <i>n</i> too long: <i>ligne</i></tt></dt>
+  <dd>
+    La ligne <i>n</i> est trop longue, vous devez reformater la ligne dans votre
+    fichier <tt>.tr</tt>. La description courte et les lignes de la description
+    longue ne doivent pas faire plus de 80&nbsp;caractères&nbsp;;
+  </dd>
+  <dt><tt>nothing to send</tt></dt>
+  <dd>
+    Vous avez exécuté <tt>ddts-script mail</tt> mais il n'y a rien à envoyer au
+    ddts.
+  </dt>
+</dl>
+
+
+
+<h3><a name="ddts_faq">Foire aux questions</a></h3>
+
+<ul>
+  <li><a href="#ddts_faq_10">Il y a un bogue, le script ne fait rien et renvoie
+    des erreurs <tt>Use of uninitialized value in regexp
+    compilation...</tt></a></li>
+  <li><a href="#ddts_faq_20">Comment automatiser l'analyse des
+    courriels&nbsp;?</a></li>
+</ul>
+
+<dl>
+  <dt><a name="ddts_faq_10">Il y a un bogue</a>, le script ne fait rien et renvoie
+    des erreurs <tt>Use of uninitialized value in regexp
+    compilation...</tt></dt>
+  <dd>
+    Ce n'est pas un bogue, vous devez fournir à l'entrée standard du script le
+    courriel du ddts avec les en-têtes et les parties mime, et non pas
+    uniquement le fichier joint contenant les données. Le script a besoin des
+    en-têtes pour en extraire des informations.
+  </dd>
+
+  <dt><a name="ddts_faq_20">Comment automatiser l'analyse des
+    courriels&nbsp;?</a></dt>
+  <dd>
+    Si vous utilisez <tt>procmail</tt>, ajoutez les lignes suivantes dans
+    votre fichier <tt>.procmailrc</tt>&nbsp;:<br>
+    <tt>PATH=/usr/local/bin:/usr/bin:/bin:$HOME/bin<br>
+        <br>
+	:0 c:<br>
+	* desc@ddtp.debian.org<br>
+	ddts<br>
+	<br>
+	:0 wA<br>
+	| ddts-script parse</tt>
+
+    <p>Cela permet de sauver un copie des courriels du ddts dans une boîte aux
+    lettres <tt>ddts</tt> puis de les passer à l'entrée standard du script
+    pour qu'il les analyse.
   </dd>
 </dl>
