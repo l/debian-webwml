@@ -13,3 +13,6 @@ include $(WMLBASE)/Make.common
 
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
+
+organization.$(LANGUAGE).html: organization.wml ../../english/intro/organization.wml
+	$(WML) organization.wml
