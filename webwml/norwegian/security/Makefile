@@ -18,3 +18,11 @@ index.$(LANGUAGE).html: index.wml $(wildcard 1999/1999*.wml) \
      $(wildcard $(ENGLISHSRCDIR)/security/1999/1999*.wml) \
           $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml 
 
+
+# install keys.txt
+ifeq ($(LANGUAGE),en)
+install:: $(HTMLDIR)/keys.txt
+
+$(HTMLDIR)/keys.txt: keys.txt
+	install keys.txt $(HTMLDIR)
+endif
