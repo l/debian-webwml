@@ -15,7 +15,7 @@ ifeq "$(LANGUAGE)" "en"
 # Note: the masterlist file is kept private since it contains e-mail addresses
 mirrorstuff := ftpsync ftpsync.conf websync websync.conf \
 	identity.pub.master.ftp identity.pub.master.web \
-	anonftpsync anonwebsync \
+	anonftpsync \
 	ftpsync-non-US ftpsync-non-US.conf identity.pub.non-US.ftp
 destmirrorstuff := $(patsubst %,$(HTMLDIR)/%,$(mirrorstuff))
 
