@@ -15,7 +15,7 @@ DEBTEMPLATEDIR := ${HOME}/web-source/webwml/english/template
 else
 DEBTEMPLATEDIR := ../webwml/english/template
 endif
-DEBTEMPLATES=$(wildcard $(DEBTEMPLATEDIR)/debian/*.wml) $(DEBTEMPLATEDIR)/debian/countries.def $(wildcard template/*.wml)
+DEBTEMPLATES=$(wildcard $(DEBTEMPLATEDIR)/debian/*.wml) $(DEBTEMPLATEDIR)/debian/countries.def $(DEBTEMPLATEDIR)/debian/language_names.def $(wildcard template/*.wml)
 #WML_DEFS= -DINTRO="http://www.debian.org/intro" -DDISTRIB="http://www.debian.org/distrib" -DHOME="http://www.debian.org" -DPICS="http://www.debian.org/Pics" -DCUR_ISO_LANG="en" -I $(DEBTEMPLATEDIR) -I template -DSEARCH="http://search.debian.org/"
 TARGETDIR=../../web
 
@@ -43,4 +43,7 @@ clean:
 
 $(DEBTEMPLATEDIR)/debian/countries.def: $(DEBTEMPLATEDIR)/debian/countries.wml
 	cd $(DEBTEMPLATEDIR)/debian && sed -e /^#/d countries.wml | eperl -B '<:' -E ':>' - >/dev/null
+
+$(DEBTEMPLATEDIR)/debian/language_names.def: $(DEBTEMPLATEDIR)/debian/language_names.wml
+	cd $(DEBTEMPLATEDIR)/debian && sed -e '/^#/d' -e '/^<perl>/,/^<\/perl>/!d' language_names.wml  | eperl -B '<perl>' -E '</perl>' - >/dev/null
 
