@@ -8,3 +8,4 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+$(HTMLFILES): $(ENGLISHSRCDIR)/ports/mips/menu.inc $(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml

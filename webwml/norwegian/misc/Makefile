@@ -8,3 +8,16 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+
+merchandise.$(LANGUAGE).html: merchandise.wml $(TEMPLDIR)/template.wml \
+  $(ENGLISHSRCDIR)/misc/merchandise.data $(ENGLISHSRCDIR)/misc/merchandise.def
+
+ifeq "$(LANGUAGE)" "en"
+$(HTMLDIR)/bsd.license: bsd.license
+	install -m 664 -p $(@F) $(HTMLDIR)
+
+install:: $(HTMLDIR)/bsd.license
+
+cleandest::
+	rm -f $(HTMLDIR)/bsd.license
+endif
