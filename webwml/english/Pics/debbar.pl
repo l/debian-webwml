@@ -9,7 +9,7 @@ use Gimp qw( :auto );
 use Gimp::Fu; 
    
 sub debian_button {
-	my ($words, $fontface, $fontsize, $fonttype, $fontcolor, $bgcolor) = @_;
+	my ($words, $fontface, $fontsize, $fonttype, $fontcolor, $bgcolor, $fontregistry, $fontencoding) = @_;
 	my ($image,$layer,$text,$width);
 	my $height = 18;
 
@@ -19,7 +19,7 @@ sub debian_button {
 
 	$image = gimp_image_new(80, $height, RGB);
 	$layer = gimp_layer_new($image, 80, $height, RGBA_IMAGE, "Button", 100, NORMAL_MODE);
-	$text = gimp_text($image, $layer, 9, 3, $words, 0, 0, $fontsize, PIXELS, "*", $fontface, $fonttype, "r", "*", "*", "*", "*");
+	$text = gimp_text($image, $layer, 9, 3, $words, 0, 0, $fontsize, PIXELS, "*", $fontface, $fonttype, "r", "*", "*", $fontregistry, $fontencoding);
 	
 
 	$width = gimp_drawable_width($text);
@@ -66,6 +66,8 @@ register
        [PF_STRING, "fonttype", "font type (bold, medium etc)", "bold"], 
        [PF_COLOR, "fontcolor", "Font color", [255,255,255]] ,
        [PF_COLOR, "bgcolor", "Background color", [0,0,132]] 
+       [PF_STRING, "fontregistry", "font registry (iso8859 etc)", "*"], 
+       [PF_STRING, "fonttype", "font encoding (1 etc)", "*"], 
       ], 
       \&debian_button; 
    
