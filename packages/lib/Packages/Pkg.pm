@@ -319,11 +319,11 @@ sub get_version {
     # version by string
     if ( @_ == 1 ) {
 	if ( wantarray ) {
-	    return exists $self->{versions}->{$_[0]} ?
-		$self->{versions}->{$_[0]} : undef;
+	    return exists $self->{versions}{$_[0]} ?
+		%{$self->{versions}{$_[0]}} : undef;
 	} else {
-	    return exists $self->{versions}->{$_[0]} ?
-		$_[0] : undef;
+	    return exists $self->{versions}{$_[0]} ?
+		$self->{versions}{$_[0]} : undef;
 	}
     }
     my ( $dist, $subdist, $arch ) = @_;
@@ -343,9 +343,9 @@ sub get_version {
 	    if ( ! $subdist || ( $v_self->{subdistribution}
 				 eq $subdist ) ) {
 		if ( wantarray ) {
-		    return $self->{versions}->{$_};
+		    return %{$self->{versions}{$_}};
 		} else {
-		    return $_;
+		    return $self->{versions}{$_};
 		}
 	    }
 	}
@@ -427,19 +427,21 @@ sub get_arch_fields {
   ARCH:
     foreach my $a ( @$archs ) {
 	foreach my $v ( @v_list ) {
-	    if ( exists $self->{versions}->{$v}->{$a} 
-		 && defined $self->{versions}->{$v}->{$a}->{$field} ) {
-		$fields{unique}->{$self->{versions}->{$v}->{$a}->{$field}}++;
-		$fields{a2f}->{$a} = $self->{versions}->{$v}->{$a}->{$field};
-		push @{$fields{f2a}->{$self->{versions}->{$v}->{$a}->{$field}}}, $a;
-		delete $self->{versions}->{$v}->{$a}->{$field} if $cache_mode;
+	    if ( exists $self->{versions}->{$v}->{$a} ) {
+		if ( defined $self->{versions}->{$v}->{$a}->{$field} ) {
+		    $fields{unique}->{$self->{versions}->{$v}->{$a}->{$field}}++;
+		    $fields{a2f}->{$a} = $self->{versions}->{$v}->{$a}->{$field};
+		    push @{$fields{f2a}->{$self->{versions}->{$v}->{$a}->{$field}}}, $a;
+		    delete $self->{versions}->{$v}->{$a}->{$field} if $cache_mode;
+		}
 		next ARCH;
-	    } elsif ( exists $self->{versions}->{$v}->{'all'}
-		      && defined $self->{versions}->{$v}->{'all'}->{$field} ) {
-		$fields{unique}->{$self->{versions}->{$v}->{'all'}->{$field}}++;
-		$fields{a2f}->{'all'} = $self->{versions}->{$v}->{'all'}->{$field};
-		push @{$fields{f2a}->{$self->{versions}->{$v}->{'all'}->{$field}}}, 'all';
-		delete $self->{versions}->{$v}->{'all'}->{$field} if $cache_mode;
+	    } elsif ( exists $self->{versions}->{$v}->{'all'} ) {
+		if ( defined $self->{versions}->{$v}->{'all'}->{$field} ) {
+		    $fields{unique}->{$self->{versions}->{$v}->{'all'}->{$field}}++;
+		    $fields{a2f}->{'all'} = $self->{versions}->{$v}->{'all'}->{$field};
+		    push @{$fields{f2a}->{$self->{versions}->{$v}->{'all'}->{$field}}}, 'all';
+		    delete $self->{versions}->{$v}->{'all'}->{$field} if $cache_mode;
+		}
 		next ARCH;
 	    }
 	}
@@ -526,9 +528,9 @@ sub _preprocess_section {
             }
 	    $data->{section} = $2;
 	} elsif ( $data->{subdistribution}
-		  && ( $data->{subdistribution} eq 'updates' )
+		  && ( $data->{subdistribution} eq 'security' )
 		  && ( $data->{section} eq 'non-US' ) ) {
-	    $data->{subdistribution} = 'non-US/updates';
+	    $data->{subdistribution} = 'non-US/security';
 	}
     }
     if ( exists $data->{archive} ) {
