@@ -84,6 +84,30 @@ my %langs = ( english    => "en",
 # DO NOT translate anything below here.
 # If you feel something needs to be modified, write to debian-www first.
 
+sub langcmp {
+  my ($first, $second) = ($a, $b);
+  # Handle sorting of non-latin characters
+  if (substr($first,0,1) eq '&')
+  {
+#   $first =~ s/&#26085;&#26412;&#35486;/JAPANESE/;
+#   $first =~ s/&#54620;&#44397;&#50612;/KOREAN/;
+#   $first =~ s/&#20013;&#25991;/CHINESE/;
+    $first =~ s/&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;/RUSSKIJ/; # er u es es ka i short-i
+#   $first =~ s/&#1593;&#1585;&#1576;&#1610;&#1577;/ARBYTM/; # ain reh beh yeh teh-marbuta
+    $first =~ s/^&/_&/; # put remaining entities last in the list
+  }
+  if (substr($second,0,1) eq '&')
+  {
+#   $second =~ s/&#26085;&#26412;&#35486;/JAPANESE/;
+#   $second =~ s/&#54620;&#44397;&#50612;/KOREAN/;
+#   $second =~ s/&#20013;&#25991;/CHINESE/;
+    $second =~ s/&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;/RUSSKIJ/;
+#   $second =~ s/&#1593;&#1585;&#1576;&#1610;&#1577;/ARBYTM/;
+    $second =~ s/^&/_&/; # put remaining entities last in the list
+  }
+  return uc($first) cmp uc($second);
+}
+
 sub languages {
   my $str = "";
 
@@ -117,12 +141,10 @@ sub languages {
      }
      # Sort on uppercase to work with languages which use lowercase initial
      # letters.
-     foreach (sort {uc($a) cmp uc($b)} keys %sorted_langs) {
+     foreach (sort langcmp keys %sorted_langs) {
         $cur_lang = $sorted_langs{$_};
         if ($cur_lang ne "chinese") {
-           # Always capitalize the first letter in the name for the list
-           my $uclang = ucfirst($_);
-           $str .= "<A href=\"$file.$langs{$cur_lang}.html\">$uclang</A>&nbsp;\n";
+           $str .= "<A href=\"$file.$langs{$cur_lang}.html\">$_</A>&nbsp;\n";
         } else {
            $str .= "<A href=\"$file.$langs{$cur_lang}-cn.html\">$_&nbsp;(GB)</A>&nbsp;\n";
            $str .= "<A href=\"$file.$langs{$cur_lang}-tw.html\">$_&nbsp;(Big5)</A>&nbsp;\n";
