@@ -17,10 +17,10 @@ howto_follow.$(LANGUAGE).html: howto_follow.wml \
   $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
 howto_proposal.$(LANGUAGE).html: howto_proposal.wml \
   $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
-howto_result.$(LANGUAGE).html: howto_result.wml \
-  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
-howto_vote.$(LANGUAGE).html: howto_vote.wml \
-  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
+# howto_result.$(LANGUAGE).html: howto_result.wml \
+#   $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
+# howto_vote.$(LANGUAGE).html: howto_vote.wml \
+#   $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
 
 ifeq "$(LANGUAGE)" "en"
 install::
