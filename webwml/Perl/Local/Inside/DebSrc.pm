@@ -65,6 +65,9 @@ is almost equivalent to
    $deb->bind_patch( parse_dft => -1 );
    $deb->parse();
 
+When tarball or patch file is required but does not exist, the C<new>
+method returns C<undef> after printing a warning.
+
 =cut
 
 sub new {
@@ -86,8 +89,16 @@ sub new {
                 last unless s/^ \S* \S* //;
                 if (m/\.tar\.gz$/) {
                         $origtargz = $dir . '/' . $_;
+                        unless (-f $origtargz) {
+                                warn "$origtargz: No such file\n";
+                                return undef;
+                        }
                 } elsif (m/\.diff\.gz$/) {
                         $diffgz = $dir . '/' . $_;
+                        unless (-f $diffgz) {
+                                warn "$diffgz No such file\n";
+                                return undef;
+                        }
                 }
         }
         close(DSC);
