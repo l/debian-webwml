@@ -4,26 +4,26 @@
 
 WMLBASE=.
 CUR_DIR=
-SUBS=Bugs MailingLists News Pics consultants devel distrib doc events intro \
-international logos mirror misc partners ports releases security vote y2k \
-chinese searchtmpl banners
+SUBS=Bugs MailingLists News Pics banners chinese consultants devel distrib \
+doc events intro international logos mirror misc partners ports releases \
+searchtmpl security vote y2k
 
 include $(WMLBASE)/Make.lang
 
-CUR_YEAR ?= $(shell date +%Y)
 
-# Do Not modify the following line
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
-		$(wildcard News/$(CUR_YEAR)/[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/[0-9]*.wml) \
-		$(wildcard security/$(CUR_YEAR)/dsa-[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-[0-9]*.wml) \
-		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
-		$(ENGLISHSRCDIR)/releases/info
-	$(WML) index.wml
 ifneq "$(LANGUAGE)" "en"
+sitemap.$(LANGUAGE).html: $(ENGLISHDIR)/sitemap.wml
 	$(shell echo $(WML) | sed s/index/sitemap/) \
           $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml \
             $(shell egrep '^-D (CUR_|CHAR)' .wmlrc)
 endif
+
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
+		$(wildcard News/$(CUR_YEAR)/[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/[0-9]*.wml) \
+		$(wildcard security/$(CUR_YEAR)/dsa-[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-[0-9]*.wml) \
+		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
+		$(ENGLISHSRCDIR)/releases/info sitemap.$(LANGUAGE).html
+	$(WML) index.wml
 
 install::
 	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
