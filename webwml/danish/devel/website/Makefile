@@ -10,3 +10,8 @@ include $(WMLBASE)/Make.lang
 
 translation_coordinators.$(LANGUAGE).html: translation_coordinators.wml \
   $(ENGLISHDIR)/$(CUR_DIR)/tc.data
+
+ifeq "$(LANGUAGE)" "en"
+todo.en.html: todo.wml
+	$(WML) -p 1,2,5,7,8 -W1,-N $< 
+endif
