@@ -48,7 +48,7 @@ sub init_translators {
          'email'     => 'ustilago@bigfoot.com',
          'summary'   => 2, 
          'logs'      => 0, 
-         'diff'      => 0, 
+         'diff'      => 2, 
 	 'file'      => 0,
          'compress'  => 'none' 
     },
