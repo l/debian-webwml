@@ -26,6 +26,7 @@ $opt_w = "/org/www.debian.org/webwml";
 $opt_p = "*.wml";
 $opt_t = "Debian Web site Translation Statistics";
 $opt_v = 0;
+$opt_d = "u";
 getopts('hwptv');
 %config = (
 	   'htmldir' => $opt_h,
@@ -33,6 +34,7 @@ getopts('hwptv');
 	   'wmlpat'  => $opt_p,
 	   'title'   => $opt_t,
 	   'verbose' => $opt_v,
+	   'diff'    => $opt_d,
 	   );
 
 $max_versions = 5;
@@ -229,9 +231,13 @@ foreach $lang (sort (keys %langs)) {
 		# Outdated translations
 		$msg = check_translation ($version{"$lang/$file"}, $version{"english/$file"}, "$lang/$file");
 		if (length ($msg)) {
-		    	$o_body .= sprintf ("<tr><td><a href=\"/%s.%s.html\">%s</a></td><td>%s</td><td>%s</td>"
-	    			  ."<td>%s</td></tr>\n",
-    				  $file, $l, $file, $version{"$lang/$file"}, $version{"english/$file"}, $msg);
+			$o_body .= "<tr>";
+		    	$o_body .= sprintf "<td><a href=\"/%s.%s.html\">%s</a></td>", $file, $l, $file;
+			$o_body .= sprintf "<td>%s</td>", $version{"$lang/$file"};
+			$o_body .= sprintf "<td>%s</td>", $version{"english/$file"};
+			$o_body .= sprintf "<td>%s</td>", $msg;
+			$o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/english/%s.wml.diff\?r1=%s\&r2=%s\&cvsroot=webwml\&diff_format=%s\">%s -> %s</a></td>", $file, $version{"$lang/$file"}, $version{"english/$file"}, $config{'diff_type'}, $version{"$lang/$file"}, $version{"english/$file"};
+			$o_body .= "</tr>\n";
     			$outdated{$lang}++;
 		}
 	}
@@ -276,7 +282,11 @@ foreach $lang (sort (keys %langs)) {
 	if ($o_body) {
 	    print HTML "<h3>Outdated translations:</h3>";
 	    print HTML "<table border=0 cellpadding=1 cellspacing=1>\n";
-	    print HTML "<tr><th>File</th><th>Translated</th><th>English</th><th>Comment</th></tr>\n";
+	    print HTML "<tr><th>File</th><th>Translated</th><th>English</th><th>Comment</th>";
+	    if ($opt_d eq "u") { print HTML "<th>Unified diff</th>"; }
+	    elsif ($opt_d eq "h") { print HTML "<th>Colored diff</th>"; }
+	    else { print HTML "<th>Diff</th>"; }
+	    print HTML "</tr>\n";
 	    print HTML $o_body;
 	    print HTML "</table>\n";
 	}
