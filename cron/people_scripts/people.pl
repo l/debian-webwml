@@ -18,7 +18,7 @@ my @special_maintainer = (
 	"Debian GNUstep maintainers",
 	"GNU Hurd Maintainers",
 	"GNU Libc Maintainers",
-	"Apache maintainers",
+	"Debian Apache Maintainers",
 	"Debbugs developers",
 	"Dpkg Development",
 	"teTeX maintainers",
@@ -26,6 +26,10 @@ my @special_maintainer = (
 	"Progeny Debian Packaging Team",
 	"Dynamic DNS Tools and Services",
 	"Debian OpenOffice Team",
+	"Cdbs Hackers",
+	"Debian Java Maintainers",
+	"Debian OCaml Maintainers",
+	"Debian SDL maintainers",
 );
 
 
