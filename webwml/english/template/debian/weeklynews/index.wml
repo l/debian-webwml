@@ -6,7 +6,12 @@ sub get_weeklynews_list {
 	my ($year, $number, $eng_dir, $match) = @_;
 	
 	$str="";
-	
+
+	open(CURRENT, "CURRENT-ISSUE-IS");
+	my $currentissue=<CURRENT>;
+	chomp $currentissue;
+	close CURRENT;
+
 	opendir(DIR, "$eng_dir/$year");
 	@files = grep { /^$match$/ && -f "$eng_dir/$year/$_/index.wml" } readdir(DIR);
 	closedir DIR;
@@ -14,6 +19,7 @@ sub get_weeklynews_list {
 	$count=0;
 	foreach (sort {$b <=> $a} @files) {
 		$count++;
+		next if $_ > $currentissue; # skip issues in preparation.
 		my $num=$_;
 		$_="$_/index.wml";
 		$trans_title = $_;
