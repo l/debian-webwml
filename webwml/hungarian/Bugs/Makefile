@@ -8,3 +8,8 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+
+$(HTMLFILES): $(TEMPLDIR)/template.wml otherpages.inc footer.inc
+
+pseudo-packages.$(LANGUAGE).html: $(ENGLISHDIR)/Bugs/pseudo-packages.description \
+  $(TEMPLDIR)/template.wml otherpages.inc footer.inc
