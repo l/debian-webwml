@@ -290,7 +290,7 @@ sub get_stats_templates {
                               get_color(percent_stat($stat)).
                               "\"><td>";
 		        if (defined $tmpl_errors->{$pkg}) {
-			    $str .= "<a href=errors-by-pkg#P$pkg>!</a>&nbsp;";
+			    $str .= "<a href=\"errors-by-pkg#P$pkg\">!</a>&nbsp;";
 			} else {
 			    $str .= "&nbsp;&nbsp;";
 			}
