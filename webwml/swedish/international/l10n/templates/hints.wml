@@ -1,0 +1,104 @@
+#use wml::debian::template title="Råd om lokalanpassning av Debconfmallar"
+#include "$(ENGLISHDIR)/international/l10n/templates/menu.inc"
+#use wml::debian::translation-check translation="1.4"
+
+<h2>Koncept</h2>
+<p>
+För att hålla sina översättningar à jour måste ett internationaliserat
+program ge översättare ett lätt sätt att upptäcka och rätta
+föråldrade översättningar.
+</p>
+
+<p>
+En Debconfmallfil innehåller fält och värden.
+Översatta fält följer ett bestämt namngivningsformat, t.ex står
+<code>Description-sv</code> för en spansk beskrivning.
+Faktiskt kommer <code>Description-sv_SE</code>
+(eller <code>Description-sv_FI</code>, eller vad det vara månde)
+att kontrolleras först.
+</p>
+
+<p>
+För att därför upptäcka föråldrade översättningar måste man veta
+vilken sträng översättningen grundar sig på.
+Debconfs metod är att bara ha originalfälten i mallfilen
+(<code>templates</code>) och lägga in översatta fält tillsammans med
+motsvarande engelska fält i en annan fil, med namnet
+<code>templates.xx</code> eller <code>templates.xx_XX</code>
+beroende på språknamnet.
+Råd ges nedan för att förenkla arbetet med separata filer.
+</p>
+
+<h2>Första översättning</h2>
+
+<p>
+Innan du arbetar på ett paket, kontrollera på
+<a href="http://auric.debian.org/~grisu/debian_translation/">
+Grisus mallöversättningsserver</a> och i felrapporteringssystemet att
+ingen översättning redan sänts till den ansvariga.
+När detta är gjort, hämtar du mallfilerna från
+<a href="./">språkets sida</a> eller från länken ovan, och kör sedan
+</p>
+<pre>
+   debconf-getlang xx templates &gt; templates.xx
+</pre>
+<p>
+för att generera filer med tomma översatta fält.
+När du är klar, kontrollera att alla strängar är översatta genom att köra
+</p>
+<pre>
+   debconf-getlang --stats templates templates.xx
+</pre>
+<p>   
+och sänd sedan den översatta filen till den paketansvariga.
+</p>
+
+<h2>Slå ihop översättningar</h2>
+
+<p>
+Eftersom den ansvariga också har läst den här sidan vet han att, för
+att förenkla översättarnas jobb, får han inte slå ihop mallarna, utan
+behålla filen som den är i <tt>debian</tt>-katalogen.
+</p>
+
+<p>
+De översatta mallfilerna slås endast ihop när binärpaketet byggs.
+Debhelper gör detta automatiskt åt dig om du använder kommandot
+<tt>dh_installdebconf</tt> i din <tt>debian/rules</tt>.
+I annat fall lägger du till ett kommando på formen
+</p>
+<pre>
+	cd debian &amp;&amp; debconf-mergetemplate templates templates.* &gt; tmp/DEBIAN/templates
+</pre>
+
+<p>
+Så, den ansvariga får översatta mallfiler och lägger dem på rätt plats,
+det är allt.
+</p>
+
+<h2>Uppdatera översättningar</h2>
+<p>
+Nu har de första översättningarna integrerats, men ordalydelsen har förbättrats
+i de engelska mallarna.
+Ändringar i originalmallarna måste läggas in.
+Återigen gör <tt>debconf-getlang</tt> det åt dig:
+</p>
+<pre>
+    debconf-getlang xx templates templates.xx &gt; new.xx
+</pre>
+<p>
+lägger till <tt>-fuzzy</tt>-märkningar till föråldrade fält och lägger in
+tomrader precis ovanför.
+Översättaren redigerar sedan <tt>new.xx</tt> och arbetar på föråldrade
+översättningar för att sedan testa dem med
+</p>
+<pre>
+   debconf-getlang --stats templates new.xx
+</pre>
+<p>
+när alla strängar är färdiga.
+Han byter sedan namn på filen från <tt>new.xx</tt> till <tt>templates.xx</tt>
+och sänder denna fil till den ansvariga, som utför samma procedur som besrkivs
+i föregående kapitel.
+</p>
+
