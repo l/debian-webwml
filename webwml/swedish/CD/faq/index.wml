@@ -1,6 +1,6 @@
 #use wml::debian::cdimage title="Ofta ställda frågor om Debian-cd" NOHEADER=true BARETITLE=true
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.26"
+#use wml::debian::translation-check translation="1.28"
 
 <define-tag toc-title-formatting endtag="required" whitespace="delete">
 <p><strong>%body</strong></p>
@@ -685,11 +685,19 @@ I detta fal bör du skapa en lokal cache, med följande tre möjligheter:</p>
 
 <ul>
 
-  <li><em>Gör cd-innehållet tillgängligt via ftp:</em>
+  <li><em>Gör cd-innehållet tillgängligt via http eller ftp:</em>
   Hämta cd-skivorna och gör sedan deras innehåll tillgängligt på ditt interna
-  nätverk på en lokal ftp-spegel.
+  nätverk på en lokal spegel.
   De individuella maskinerna kan använda denna spegel som om den vore en
-  vanlig Debian-ftp-spegel.</li>
+  vanlig Debianserver.
+  Om innehållet på en cd till exempel är tillgängligt från adressen
+  <tt>http://10.0.0.1/cd1/</tt>, kan maskinerna på det lokala nätverket
+  använda paketen på från cd:n med följande rad i sin
+  <tt>/etc/apt/sources.list</tt>:<br>
+  <tt>deb http://10.0.0.1/cd1/ stable main contrib</tt><br>
+  En annan URL och en separat post i <tt>sources.list</tt> krävs för varje
+  cd.
+  </li>
 
   <li><em>Instruera din http-mellanserver (proxy) att mellanlagra
   .deb-filer:</em>
@@ -703,7 +711,10 @@ I detta fal bör du skapa en lokal cache, med följande tre möjligheter:</p>
   fungerar det även där det finns begränsat med diskutrymme och har fördelen att
   endast de paket du hämtat speglas, vilket sparar bandbredd.
   Squid kan sägas till att behålla filerna genom att lägga till en rad i
-  /etc/squid.conf:<br><tt>refresh_pattern&nbsp;&nbsp;&nbsp;debian.org/.*.deb$&nbsp;&nbsp;&nbsp;129600&nbsp;100%&nbsp;129600</tt></li>
+  <tt>/etc/squid.conf</tt>:
+  <br>
+  <tt>refresh_pattern&nbsp;&nbsp;&nbsp;debian.org/.*.deb$&nbsp;&nbsp;&nbsp;129600&nbsp;100%&nbsp;129600</tt>
+  </li>
 
   <li><em>Skapa en privat Debianpaketspegel:</em>
   Observera att Debianarkivet har växt till en enorm storlek!
