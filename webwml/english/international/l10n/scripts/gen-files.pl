@@ -145,8 +145,9 @@ sub get_stats_po {
 		        my $str= '';
                         $str .= "<tr bgcolor=\"".
                               get_color(percent_stat($stat)).
-                              "\"><td>".$pkg."</td>".
-                              "<td>".show_stat($stat)."</td><td><a href=\"";
+                              "\"><td>";
+		        $str .= (percent_stat($stat) eq "100%" ? $pkg : "<a href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>");
+		        $str .= "</td><td>".show_stat($stat)."</td><td><a href=\"";
                         $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
                         $str .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>";
 		        $str .= "<td>$translator</td><td>$team</td>".
@@ -297,9 +298,8 @@ sub get_stats_templates {
 			} else {
 			    $str .= "&nbsp;&nbsp;";
 			}
-		        $str .= $pkg."</td>".
-                              "<td>".show_stat($stat);
-		        $str .= "</td><td><a href=\"";
+		        $str .= (percent_stat($stat) eq "100%" ? $pkg : "<a href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>");
+                        $str .= "</td><td>".show_stat($stat)."</td><td><a href=\"";
                         $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "templates/unstable/";
                         $str .= $data->pooldir($pkg)."/$link_trans.gz\">$template</a></td><td>";
                         if ($link_orig ne '') {
@@ -480,7 +480,7 @@ sub get_stats_podebconf {
                                 '/unstable/'.$data->pooldir($pkg).
                                 "/$link.gz\">$pofile</a>]";
                 }
-                $orig .= "<li><a name=\"$pkg\">$pkg</a>$addorig</li>\n"
+                $orig .= "<li><a name=\"$pkg\" href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>$addorig</li>\n"
                         if $addorig;
 
                 my $addtotal = 0;
@@ -497,8 +497,9 @@ sub get_stats_podebconf {
 		        my $str = '';
                         $str .= "<tr bgcolor=\"".
                               get_color(percent_stat($stat)).
-                              "\"><td>".$pkg."</td>".
-                              "<td>".show_stat($stat)."</td><td><a href=\"";
+		              "\"><td>";
+		        $str .= (percent_stat($stat) eq "100%" ? $pkg : "<a href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>");
+		        $str .= "</td><td>".show_stat($stat)."</td><td><a href=\"";
                         $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
                         $str .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>";
 		        $str .= "<td>$translator</td>".
