@@ -1,4 +1,7 @@
-# Makefile for webwml/german/devel/debian-med/News/2002
+# This Makefile should need no changes from
+# webwml/english/devel/debian-med/News/2002/Makefile
+# Please send a message to debian-www if you need to modify anything
+# so the problem can be fixed.
 
 WMLBASE=../../../..
 CUR_DIR=devel/debian-med/News/2002
