@@ -282,7 +282,7 @@ END
                          Primary Debian Mirror Sites
                          ---------------------------
 
- Country        Site                Debian archive     Debian non-US archive
+ Country         Site                Debian archive    Debian non-US archive
  ---------------------------------------------------------------------------
 END
   }
@@ -316,7 +316,7 @@ END
           } else {
             $nonusftp = "Not mirrored."
           }
-          printf " %-13s  %-18s  %-17s  %s\n", $countryplain, $site, $mirror{$site}{method}{'archive-ftp'}, $nonusftp;
+          printf " %-14s  %-18s  %-16s  %s\n", $countryplain, $site, $mirror{$site}{method}{'archive-ftp'}, $nonusftp;
 #          print <<END;
 # $countryplain	-   $site		$mirror{$site}{method}{'archive-ftp'}	$mirror{$site}{method}{'nonus-ftp'}
 #END
