@@ -196,5 +196,22 @@
   }
   return TRUE;
   }
+
+# Check if there are any free Application Managers.  (FIXME: has code
+# duplication with ammain.wml's print_free_managers()
+function free_managers($db) {
+    $sql = "select a.manager, (max(m.max_applicants) - count(a.email)) as freeslots from applicant a, manager m where approved is null and m.login = a.manager   group by a.manager HAVING max(m.max_applicants) > count(a.email)";
+    if (! ($query = pg_exec($db, $sql))) {
+        echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+        echo "SQL was: $sql<BR>";
+        return;
+    }
+    if ($rows) {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
 ?>
 
