@@ -1,8 +1,8 @@
 #use wml::debian::template title="Debian Sicherheits-FAQ"
-#use wml::debian::translation-check translation="1.18"
-#include "$(ENGLISHDIR)/security/faq.inc"
+#use wml::debian::translation-check translation="1.20"
 # $Id$
 # Translation: Gerfried Fuchs <alfie@debian.org>
+#include "$(ENGLISHDIR)/security/faq.inc"
 
 <p>Zur Zeit erreichen uns die folgenden Fragen etwas zu oft, deshalb wurden
 die Antworten dazu hier zusammengefasst.</p>
@@ -38,6 +38,29 @@ die Antworten dazu hier zusammengefasst.</p>
    anschliessend hochgeladen werden.  Nachdem das alles geschehen ist, wird
    ein Gutachten veröffentlicht.</p>
 
+<toc-add-entry name=oldversion>Wieso trödeln Sie mit einer alten Version des
+   Pakets herum?</toc-add-entry>
+
+<p>Die wichtigste Regel beim Erstellen eines neuen Pakets, das ein
+   Sicherheitsproblem behebt, ist so wenig Änderungen wie möglich vorzunehmen.
+   Unsere Benutzer und Entwickler vertrauen auf dem bestimmten Verhalten eines
+   Releases nach dessen Freigabe, daher kann jede Änderung, die wir
+   durchführen, möglicherweise das System von jemandem zerstören. Dies gilt
+   insbesondere für Bibliotheken: Darauf zu achten, dass sich das
+   Anwendungs-Programm-Interface (API) oder Anwendungs-Binär-Interface (ABI)
+   niemals ändert, egal wie klein die Änderung ist.</p>
+
+<p>Dies bedeutet, dass das Umsteigen auf eine neue Upstream-Version keine gute
+   Lösung ist und stattdessen die relevanten Änderungen zurückportiert werden
+   sollten. Üblicherweise sind die Upstream-Betreuer bereit zu helfen, wenn es
+   notwendig ist, falls das Debian Sicherheits-Team nicht helfen kann.</p>
+
+<p>In einigen Fällen ist es nicht möglich, eine Sicherheitsreparatur
+   zurückzuportieren, zum Beispiel wenn ein großer Teil des Quellcodes
+   modifiziert oder neu geschrieben werden muss.  Wenn dies passiert, kann es
+   notwendig sein, auf eine neue Upstream-Version umzusteigen, aber dies muss
+   im zuvor mit dem Sicherheits-Team koordiniert werden.</p>
+
 <toc-add-entry name=policy>Was sind die Richtlinien für ein repariertes Paket, um auf
    security.debian.org zu erscheinen?</toc-add-entry>
 <p>A: Sicherheits-Lücken in der stable Distribution garantiert ein Paket auf
@@ -46,7 +69,8 @@ die Antworten dazu hier zusammengefasst.</p>
    Sicherheits-Team die Pakete gemeinsam mit dem Paket-Betreuer vor.  Sofern
    jemand (vertrauenswürdiger) das Problem verfolgt und alle benötigten Pakete
    übersetzt und diese an dem Sicherheits-Team übermittelt, dann können auch
-   sehr kleine Sicherheits-Reparaturen auf security.debian.org erscheinen.</p>
+   sehr kleine Sicherheits-Reparaturen auf security.debian.org erscheinen.
+   Lesen Sie dazu bitte auch unterhalb weiter.</p>
 
 <toc-add-entry name=version>Die Versions-Nummer für ein Pakete zeigt an, dass ich immer noch
    eine verwundbare Version verwende!</toc-add-entry>
@@ -66,7 +90,9 @@ die Antworten dazu hier zusammengefasst.</p>
    Änderungen unterworfen und das Sicherheits-Team hat nicht die Mittel, die
    benötigt würden, um diese entsprechend zu unterstützen.  Wenn Sie einen
    sicheren (und stabilen) Server benötigen, sind Sie stark ermutigt, bei
-   stable zu bleiben.</p>
+   stable zu bleiben. Jedoch werden die Sicherheitssekretäre versuchen, die
+   Probleme in testing und unstable zu beheben, nachdem Sie im stable-Release
+   behoben sind.</p>
 
 <toc-add-entry name=mirror>Wieso gibt es keine offiziellen Spiegel-Server für
    security.debian.org?</toc-add-entry>
@@ -95,12 +121,25 @@ die Antworten dazu hier zusammengefasst.</p>
    Informationen handelt verwenden Sie bitte team@security.debian.org was
    lediglich die Sicherheits-Team Mitglieder erreicht.  Falls gewünscht können
    die Mails mit dem Debian-Sicherheits-Kontakt Schlüssel (Schlüssel-ID
-   0x363CCD95) verschlüsselt werden.</p>
+  <a href="http://blackhole.pca.dfn.de:11371/pks/lookup?op=get&amp;exact=on&amp;search=0x363CCD95">\
+   0x363CCD95</a>) verschlüsselt werden.</p>
+
+<toc-add-entry name=discover>Ich glaube, ich hab ein Sicherheitsproblem
+   entdeckt, was soll ich tun?</toc-add-entry>
+
+<p>A: Wenn Sie von einem Sicherheitsproblem finden, entweder in ihren eigenen
+   Paketen oder in denen von jemandem anderem, dann kontaktieren Sie bitte
+   immer das Sicherheits-Team.  Wenn das Debian Sicherheits-Team die
+   Verwundbarkeit bestätigt und andere Distributoren höchstwahrscheinlich auch
+   davon betroffen sind, kontaktieren sie üblicherweise auch diese. Wenn die
+   Verwundbarkeit noch nicht öffentlich bekannt ist, werden Sie versuchen, die
+   Sicherheitsgutachten mit den anderen Distributoren zu koordinieren, damit
+   alle Haupt-Distributionen synchron sind.</p>
 
 <toc-add-entry name=care>Was soll ich bei einem Sicherheitspaket in einem einem meiner Pakete
    tun?</toc-add-entry>
 <p>A: Wenn Sie von einem Sicherheitsproblem in einem ihrer oder eines anderen
-   Paket erfahren, kontaktieren Sie bitte immer das Sicherheitsteam. Sie
+   Paket erfahren, kontaktieren Sie bitte immer das Sicherheits-Team. Sie
    können Sie mit einer E-Mail an team@security.debian.org erreichen. Sie
    behalten die Übersicht über offene Sicherheitsprobleme, können den
    Betreuern mit Sicherheitsproblemen helfen oder die Probleme selbst beheben,
@@ -126,15 +165,39 @@ die Antworten dazu hier zusammengefasst.</p>
    hochladen?</toc-add-entry>
 <p>A: Nein, können Sie nicht. Das Archiv auf security.debian.org wird vom
    Sicherheitsteam betreut, das alle Pakete genehmigen muss. Sie sollten
-   stattdessen Patches oder passende Source-Pakete an das Sicherheitsteam
-   unter team@security.debian.org schicken. Wenn Sie sich sehr sicher sind,
-   dass Sie nichts zerstört, kein Verhalten des Paketes abgesehen von dem
-   entsprechenden Sicherheitsproblem geändert und es für die richtige
-   Distribution übersetzt haben, können Sie die Dateien direkt in das
-   <a href="ftp://security.debian.org/pub/SecurityUploadQueue/">Incoming</a>
-   Verzeichnis hochladen. Lesen Sie bitte ebenfalls Wicherts
-   <a href="http://lists.debian.org/debian-devel-announce/2002/debian-devel-announce-200206/msg00004.html">\
-   Beschreibung</a>.</p>
+   stattdessen Patches oder passende Source-Pakete an das Sicherheits-Team
+   unter team@security.debian.org schicken. Diese werden dann vom
+   Sicherheits-Team überprüft und gegebenenfalls hochgeladen, entweder mit
+
+<p>Wenn Sie nicht mit Sicherheits-Uploads vertraut sind und sich nicht 100%
+   sicher sind, dass Ihr Paket sauber ist, verwenden Sie bitte diesen Weg und
+   laden Sie ihr Paket nicht in das incoming-Verzeichnis hoch. Das
+   Sicherheits-Team hat nur beschränkte Möglichkeiten, mit kaputten Paketen
+   umzugehen, speziell wenn diese keine saubere Versions-Nummer haben. Paketen
+   können zur Zeit nicht zurückgewiesen werden und der buildd würde irritiert
+   sein, wenn es möglich wäre. Daher verwenden Sie bitte Mail und helfen Sie,
+   indem Sie nicht dem Sicherheits-Team keine zusätzlichen Schmerzen
+   verursachen.</p>
+
+<toc-add-entry name=SecurityUploadQueue>Ich bin ziemlich sicher, dass meine
+   Pakete in Ordnung sind, wie kann ich sie hochladen?</toc-add-entry>
+
+<p>A: Wenn Sie sich sehr sicher sind, dass ihre Pakete nichts zerstören, dass
+   die Version sauber ist (z.B. größer als die Version in stable und kleiner
+   als die Version in testing/unstable), dass Sie kein Verhalten des Pakets
+   geändert haben, trotz dem entsprechendem Sicherheitsproblem, dass Sie es
+   für die richtige Distribution übersetzt haben (das ist
+   <code>oldstable-security</code> oder <code>stable-security</code>), dass
+   das Paket den ursprünglichen Source enthält, falls das Paket neu auf
+   security.debian.org ist, dass Sie bestätigen können, dass der Patch gegen
+   die aktuellste Version sauber ist und nur das entsprechende
+   Sicherheitsproblem betrifft (prüfen Sie mit <code>interdiff -z</code> und
+   beiden <code>.diff.gz</code> Dateien), dass Sie den Patch zumindest
+   dreimal Korrekturgelesen haben, und dass <code>debdiff</code> keine
+   Änderungen anzeigt, dürfen Sie die Dateien in das incoming-Verzeichnis
+   <code>/org/ftp.root/pub/SecurityUploadQueue</code> auf security.debian.org
+   direkt hochladen. Bitte senden Sie auch eine Benachrichtigung mit allen
+   Details und Links an team@security.debian.org.</p>
 
 <toc-add-entry name=help>Wie kann ich bei der Sicherheit helfen?</toc-add-entry>
 <p>A: Bitte prüfen Sie jedes Problem nach, bevor Sie es an security@debian.org
