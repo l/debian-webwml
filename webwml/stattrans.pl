@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 
-#   webwml-stattrans - Website Translation Statistics
+#   webwml-stattrans - Debian Web site Translation Statistics
 #   Copyright (c) 2001  Martin Schulze <joey@debian.org> and others
 
 #   This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@ $| = 1;
 $opt_h = "/org/www.debian.org/debian.org/devel/website/stats";
 $opt_w = "/org/www.debian.org/webwml";
 $opt_p = "*.wml";
-$opt_t = "Website Translation Statistics";
+$opt_t = "Debian Web site Translation Statistics";
 $opt_v = 0;
 getopts('hwptv');
 %config = (
