@@ -6,7 +6,7 @@ WMLBASE=..
 CUR_DIR=releases
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
-SUBS=slink
+SUBS=hamm slink
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
