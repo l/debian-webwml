@@ -345,7 +345,7 @@ foreach $lang (@search_in) {
 	    print HTML "<p><a href=\"#untranslated\">Pages not translated</a></p>\n";
 	}
 	if ($t_body) {
-	    print HTML "<p><a href=\"#outdated\">Translations up to date</a></p>\n";
+	    print HTML "<p><a href=\"#uptodate\">Translations up to date</a></p>\n";
 	}
 	if ($lang ne 'english') {
 	    print HTML "<p><a href=\"#gettext\">Translations of templates (gettext files)</a></p>\n";
@@ -353,7 +353,7 @@ foreach $lang (@search_in) {
 	
 	# outputs the content
 	if ($o_body) {
-	    print HTML "<h3><a name='#outdated'>Outdated translations</a>: <a href='#top'>(top)</a></h3>\n";
+	    print HTML "<h3><a name='outdated'>Outdated translations</a>: <a href='#top'>(top)</a></h3>\n";
 	    print HTML "<table border=0 cellpadding=1 cellspacing=1>\n";
 	    print HTML "<tr><th>File</th><th>Translated</th><th>Origin</th><th>Comment</th>";
 	    if ($opt_d eq "u") { print HTML "<th>Unified diff</th>"; }
@@ -364,17 +364,16 @@ foreach $lang (@search_in) {
 	    print HTML "</table>\n";
 	}
 	if ($u_body) {
-	    print HTML "<h3><a name='#untranslated'>Pages not translated</a>: <a href='#top'>(top)</a></h3>\n";
+	    print HTML "<h3><a name='untranslated'>Pages not translated</a>: <a href='#top'>(top)</a></h3>\n";
 	    print HTML $u_body;
 	}
 	if ($t_body) {
-	    print HTML "<h3><a name='#uptodate'>Translations up to date</a>: <a href='#top'>(top)</a></h3>\n";
+	    print HTML "<h3><a name='uptodate'>Translations up to date</a>: <a href='#top'>(top)</a></h3>\n";
 	    print HTML $t_body;
 	}
 	# outputs the gettext stats
 	if ($lang ne 'english') {
 	    print HTML "<h3><a name='gettext'>Translations of templates (gettext files)</a>: <a href='#top'>(top)</a></h3>\n";
-	    print HTML "<h3><a name='gettext'>Stats on gettext files</a>: <a href='#top'>(top)</a></h3>\n";
 #	    print HTML $border_head;
 	    print HTML "<table width=\"100%\" border=0>\n";
 	    print HTML "<tr><th>File</th><th>Up to date</th><th>Fuzzy</th><th>Untranslated</th><th>Total</th></tr>\n";
