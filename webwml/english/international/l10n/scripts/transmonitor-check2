@@ -371,6 +371,8 @@ sub parse_tarball {
         );
         $data->upstream($pkg, "other")
                 if $deb->get_diff_name() ne '';
+        $data->upstream($pkg, "dbs")
+                if $deb->file_matches("^debian/patches/");
 
         #####[ search the section and priority]#################################
         #
@@ -558,14 +560,17 @@ sub search_po {
                 if ($lang ne "") {
                         # stats the file
                         ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$filename 2>&1 1>/dev/null");
-                        $data->add_errors($pkg,"Error of msgfmt --statistics $PO_DIR/$file\n".$err_msg) if $err_msg;
-                        $data->add_errors($pkg,"Error of msgfmt --statistics $PO_DIR/$file\n".$err_msg) if $err_msg;
+                        if ($err_msg ne '') {
+                                $err_msg =~ s/\n/ /g;
+                                $err_msg =~ s,\Q$PO_DIR/$filename\E,$file,g;
+                                $data->add_errors($pkg, "gettext: ".$err_msg);
+                        }
                 } else { # no valid lang found
                         next POFILE if $file =~ m,messages.po$,;
                         if ($bad_lang eq "") {
-                                $data->add_errors($pkg,"can't guess the language of $file");
+                                $data->add_errors($pkg, "gettext: $file: can't guess language");
                         } else {
-                                $data->add_errors($pkg,"$bad_lang is not a language code (in $file)");
+                                $data->add_errors($pkg, "gettext: $file: $bad_lang not a language code");
                         }
                 }
                 # Add this file to the data
@@ -643,7 +648,7 @@ sub search_templates {
                 {
                         local $SIG{__WARN__} = sub {
                                 my $msg = $_[0];
-                                $msg =~ s,^$storedfile,debconf: $file,;
+                                $msg =~ s,^\Q$storedfile\E,debconf: $file,;
                                 $data->add_errors($pkg, $msg);
                         };
                         eval { $tmpl->read_compact($storedfile) };
@@ -678,7 +683,7 @@ sub search_templates {
                         local $SIG{__WARN__} = sub {
                                 my $msg = $_[0];
                                 my $disk = $TEMPLATES_ROOT."/".$data->pooldir($pkg)."/$filename";
-                                $msg =~ s,^$disk,debconf: $file,;
+                                $msg =~ s,^\Q$disk\E,debconf: $file,;
                                 $data->add_errors($pkg, $msg);
                         };
                         eval { $tmpl->read_dispatched($TEMPLATES_ROOT."/".$data->pooldir($pkg)."/".$filename, @list2) };
