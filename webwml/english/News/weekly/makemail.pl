@@ -9,17 +9,25 @@ my $current_issue=`cat CURRENT-ISSUE-IS`;
 chomp $current_issue;
 my $url=shift || "http://www.debian.org/News/weekly/$current_issue/";
 
+my $tmpfile;
+my $tmpdir;
+
 # Remove the multibyte stuff
 if ($url =~ "^http://") {
     open(IN, "wget -q -O - $url|") or die "Can't open $url: $!\n";
+
+    $tmpdir = "/tmp/dwn.$$";
+    mkdir $tmpdir || die "Can't mkdir, $!\n";
+    $tmpfile = "$tmpdir/dwn.html";
 } else {
     open(IN, $url) or die "Can't open $url: $!\n";
+
+    my @foo = split (/\./, $url);
+    pop @foo;
+    $tmpfile = join (".", @foo) .".tmp.html";
 }
 
-mkdir "/tmp/dwn.$$" || die "Can't mkdir, $!\n";
-
-my $tmpfile = "/tmp/dwn.$$/dwn.html";
-open(OUT, ">$tmpfile") or die "Can't open $tmpfile: $!\n";
+open(OUT, ">$tmpfile") or die "Can't write to $tmpfile: $!\n";
 
 while (<IN>) {$all .= $_}
 
@@ -154,4 +162,4 @@ foreach $story (@stories) {
 }
 
 unlink ($tmpfile);
-rmdir ("/tmp/dwn.$$");
+rmdir ($tmpdir) if ($tmpdir);
