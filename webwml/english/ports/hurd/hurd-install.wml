@@ -108,12 +108,13 @@ certain extensions.
 </p>
 
 <p>
-To create a filesystem, use <CODE>mke2fs</CODE> and pass it <SAMP>`-o hurd'
+to create a filesystem, use <code>mke2fs</code> and pass it <samp>`-b 4096 -o hurd'
 </SAMP> to designate the Hurd as the owner of the new file system. For
 instance, assuming the partition is <TT>`/dev/hda2'</TT>:
 </p>
 
-<table><tr><td>&nbsp;</td><td class=example><pre> # mke2fs -o hurd /dev/hda2
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# mke2fs -b 4096 -o hurd /dev/hda2
 </pre></td></tr></table>
 
 
@@ -278,12 +279,6 @@ GNU/Hurd can be now booted:
 
 <table><tr><td>&nbsp;</td><td class=example><pre>grub&#62; boot
 </pre></td></tr></table>
-
-<p>
-Sit back and watch the messages. This is actually more important than most
-people believe: there is a bug in GNU Mach whereby hitting a key during the
-boot process causes the kernel to panic.
-</p>
 
 <p>
 If GNU/Hurd fails to boot, it could be due to shared IRQs: GNU Mach does not
@@ -504,11 +499,32 @@ local Debian mirror, visit <url "http://www.debian.org/distrib/ftplist">.
 If GNU Mach does not recognize your network card or you use a modem, the only
 way to upgrade will be to download the packages and then transfer them to the
 GNU system. The easiest way to do this is to use apt off-line. Refer to
-<TT>`/usr/share/doc/apt/offline'</TT> for detailed instructions.
+<tt>`/usr/share/doc/apt-doc/offline.text.gz'</tt> for detailed instructions.
 </p>
 
 
-<h3> 8.4 XFree86 </h3>
+<h3> 8.4 The Hurd console</h3>
+
+<p>
+Besides the Mach console you encountered during installation, the GNU Hurd
+features a powerful user-space console providing virtual terminals.
+Currently, you have to start the Hurd console manually with the following
+command:
+</p>
+
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# console -d vga -d pc_mouse --repeat=mouse -d pc_kbd --repeat=kbd -d generic_speaker -c /dev/cons /dev/vcs
+</pre></td></tr></table>
+
+<p>
+Inside the Hurd console, you can switch between virtual terminals via
+<kbd>ALT+F1, ALT+F2</kbd> and so on. <kbd>ALT+CTRL+BACKSPACE</kbd> detachs
+the Hurd console and brings you back to the Mach console, from where you
+can reattach again with the above command.
+</p>
+
+
+<h3> 8.5 XFree86 </h3>
 
 <p>
 XFree86 has been ported and all video cards, which it supports that do not
@@ -516,47 +532,26 @@ require a kernel module should work.
 </p>
 
 <p>
-First, set up the keyboard translator:
+You need to be in the Hurd console and have repeaters setup as indicated in
+Section 8.4 above. As XFree86 has <code>/dev/kbd</code> hardcoded as device
+for the keyboard, you have to make a symlink:
 </p>
 
-<table><tr><td>&nbsp;</td><td class=example><pre> # cd /dev
- \# ./MAKEDEV kbd
+<table><tr><td>&nbsp;</td><td class=example><pre>
+ \# cd /dev
+ \# ln -s cons/kbd kbd
+ \# ln -s cons/mouse mouse
 </pre></td></tr></table>
 
 <p>
-And then the mouse translator. For a serial port mouse, run the following
-replace <TT>`com0'</TT> with the appropriate communication port:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre> # settrans -cap /dev/mouse /hurd/mouse --device=com0 --protocol=microsoft
-</pre></td></tr></table>
-
-<p>
-Make sure that <TT>`/dev/com0'</TT> actually exists. If it does not, create it
-using <CODE>MAKEDEV</CODE> in the usual fashion.
-</p>
-
-<p>
-PS/2 so not require a device node. It is simple a matter of:
-</p>
-
-<table><tr><td>&nbsp;</td><td class=example><pre> # settrans -cap /dev/mouse /hurd/mouse --protocol=ps/2
-</pre></td></tr></table>
-
-<p>
-Other mice can be used; run <TT>`/hurd/mouse'</TT> with the
-<SAMP>`--help'</SAMP> option for details.
-</p>
-
-<p>
-You will need several X packages. x-window-system-core, rxvt and twm or fvwm
-are a good start.
+You will need several X packages. <code>x-window-system-core, rxvt</code> and
+<code>twm, fvwm<code> or <code>wmaker</code> are a good start.
 </p>
 
 <p>
 Debconf can be used to configure XFree86, however, it is not Hurd aware and
-the configuration file will need to be tweaked. Change the pointer section to
-read:
+the configuration file will need to be tweaked. After configuring, change the
+pointer section to read:
 </p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>Section "Pointer"
@@ -566,8 +561,8 @@ EndSection
 </pre></td></tr></table>
 
 <p>
-<SAMP>`Emulate3Buttons'</SAMP> may be optionally added. Nothing else will
-work.
+<samp>`Emulate3Buttons'</samp> and <samp>`ZAxisMapping'</samp> must both be
+disabled.
 </p>
 
 <p>
@@ -592,10 +587,3 @@ Debian menus. Although a <CODE>pthreads</CODE> implementation exists not all
 pthread packages have been ported: do not expect Gnome and KDE to work.
 </p>
 
-
-<h3> 8.5 Virtual Terminals </h3>
-
-<p>
-GNU/Hurd does not have virtual terminals although it is in development. Use
-the <CODE>screen</CODE> package in the interim.
-</p>
