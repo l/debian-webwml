@@ -57,6 +57,16 @@ if ('$(DUMMY_VAR_DO_NOT_REMOVE)' ne '') {
 :>
 EOT
                 $out =~ s/\n[^\n]*DUMMY_VAR_DO_NOT_REMOVE.*$/\n$replgettext/s;
+        } elsif ($file eq 'template/debian/mirrors.wml') {
+                my $replgettext = <<'EOT';
+foreach my $m (sort langcmp keys %mirrors) {
+    my $s = " selected" if $mirrors{$m} eq "us";
+    <perl:print><option value=\"$mirrors{$m}\"$s>$m</option>\n</perl:print>
+}
+</perl>\
+</select>
+EOT
+                $out =~ s/\n# Transform this list.*?<\/select>/\n$replgettext/s;
         }
         open(OUT, "> $file") || die "Unable to write $file\n";
         print OUT $out;
