@@ -15,7 +15,8 @@
 
 # Translators need to embed in the files they translate a comment
 # in its own line with the revision of the file they translated such as:
-# <!--translation revision-->
+# #use wml::debian::translation-check translation="revision"
+# (Old form <!--translation revision--> works too.)
 # The revision can be obtained from the CVS/Entries files or from
 # the command "cvs status filename".
 
@@ -109,9 +110,9 @@ sub check_file {
 	}
 	open(F, $name) || die $!;
 	while(<F>) {
-		if (/<!--\s*translation\s+(.*)?\s*-->\s*$/oi) {
-			warn "Found revision $1\n" if $opt_v;
-			$oldr = $1;
+		if (/translation(\s+|=")([.0-9]*)("|\s*-->)\s*$/oi) {
+			warn "Found revision $2\n" if $opt_v;
+			$oldr = $2;
 			if ($oldr eq $revision) {
 				close(F);
 				return;
