@@ -2,22 +2,18 @@
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
-BASE=..
+WMLBASE=..
 CUR_DIR=consultants
+# list any subdirectories in the following variable. Any directories listed
+# must exist or the make will not work
+SUBS=
 
-HTMLDIR=$(BASE)/../../debian.org/$(CUR_DIR)
-TEMPLDIR=$(BASE)/template/debian
-# Do Not Modify
-ENGLISHSRCDIR=$(BASE)/../english
+include $(WMLBASE)/Make.lang
+include $(WMLBASE)/Make.common
 
-include $(BASE)/Make.lang
+include $(WMLBASE)/Make.dep.templ    
 
-all: $(HTMLFILES) $(IMGDEST)
-
-include $(BASE)/Make.dep.templ    
-
-$(HTMLDIR)/index.html.$(LANGUAGE) : index.wml $(TEMPLDIR)/template.wml \
-		../../english/consultants/consultant.data
+index.html.$(LANGUAGE) : index.wml $(TEMPLDIR)/template.wml ../../english/consultants/consultant.data
 	wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG) $(WMLEPILOG) $(<F)
-$(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/consultant.wml
+%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/consultant.wml
 	$(WML) $(<F)

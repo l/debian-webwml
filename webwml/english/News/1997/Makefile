@@ -2,23 +2,20 @@
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
-BASE=../..
+WMLBASE=../..
 CUR_DIR=News/1997
+# list any subdirectories in the following variable. Any directories listed
+# must exist or the make will not work
+SUBS=
 
-HTMLDIR=$(BASE)/../../debian.org/$(CUR_DIR)
-TEMPLDIR=$(BASE)/template/debian
-# Do Not modify the following line
-ENGLISHSRCDIR=$(BASE)/../english
+include $(WMLBASE)/Make.lang
+include $(WMLBASE)/Make.common
 
-include $(BASE)/Make.lang
-
-all: $(HTMLFILES) $(IMGDEST)
-
-include $(BASE)/Make.dep.templ    
+include $(WMLBASE)/Make.dep.templ    
 
 # Do Not modify the following line
-$(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(wildcard 1997*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
+index.html.$(LANGUAGE): index.wml $(wildcard 1997*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
 	$(WML) index.wml
 
-$(HTMLDIR)/%.html.$(LANGUAGE): %.wml $(wildcard 1997*.wml) $(TEMPLDIR)/news.wml
+%.html.$(LANGUAGE): %.wml $(TEMPLDIR)/news.wml
 	$(WML) $(<F)
