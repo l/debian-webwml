@@ -32,16 +32,36 @@ their answers are summarized here.</p>
    architectures and uploaded afterwards.  After all of that is done,
    an advisory is published.</p>
 
+<toc-add-entry name=oldversion>Why are you fiddling with an old version of that package?</toc-add-entry>
+
+<p>The most important guideline when making a new package that fixes a
+   security problem is to make as few changes as possible.  Our users and
+   developers are relying on the exact behaviour of a release once it is made,
+   so any change we make can possibly break someone's system.  This is
+   especially true in case of libraries: make sure you never change the
+   Application Program Interface (API) or Application Binary Interface (ABI),
+   no matter how small the change is.</p>
+
+<p>This means that moving to a new upstream version is not a good solution,
+   instead the relevant changes should be backported.  Generally upstream
+   maintainers are willing to help if needed, if not the Debian security team
+   might be able to help.</p>
+
+<p>In some cases it is not possible to backport a security fix, for example
+   when large amounts of sourcecode need to be modified or rewritten.  If that
+   happens it might be necessary to move to a new upstream version, but this
+   has to be coordinated with the security team beforehand.</p>
+
 <toc-add-entry name=policy>What is the policy for a fixed package to appear in security.debian.org?</toc-add-entry>
 
 <p>A: Security breakage in the stable distribution warrants a package
    on security.debian.org.  Anything else does not.  The size of a
-   breakage is not the real problem here.  Usually the Security Team
+   breakage is not the real problem here.  Usually the security team
    will prepare packages together with the package maintainer.
    Provided someone (trusted) tracks the problem and gets all the
-   needed packages compiled and submit them to the Security Team, even
+   needed packages compiled and submit them to the security team, even
    very trivial security problem fixes will make it to
-   security.debian.org.</p>
+   security.debian.org.  Please see below.</p>
 
 <toc-add-entry name=version>The version number for a package indicates that I am still running
    a vulnerable version!</toc-add-entry>
@@ -58,7 +78,9 @@ their answers are summarized here.</p>
 <p>A: The short answer is: it's not. Testing and unstable are rapidly moving
    targets and the security team does not have the resources needed to
    properly support those. If you want to have a secure (and stable) server
-   you are strongly encouraged to stay with stable.</p>
+   you are strongly encouraged to stay with stable.  However, the security
+   secretaries will try to fix problems in testing and unstable after they are
+   fixed in the stable release.</p>
 
 <toc-add-entry name=mirror>Why are there no official mirrors for security.debian.org?</toc-add-entry>
 <p>A: The purpose of security.debian.org is to make security updates available
@@ -74,7 +96,7 @@ their answers are summarized here.</p>
    not discriminate some vendors that need more time (e.g. when the
    vendor has to pass packages through lengthy QA tests or has to
    support several architectures or binary distributions).  Our own
-   Security Team also prepares advisories in advance.  Every now and
+   security team also prepares advisories in advance.  Every now and
    then, other security issues have to be dealt with before the parked
    advisory could be released, and hence temporarily leaving out one or
    more advisories by number.
@@ -84,7 +106,19 @@ their answers are summarized here.</p>
    by all Debian developers. If you have sensitive information please
    use team@security.debian.org which only the members of the security
    team read. If desired email can be encrypted with the Debian Security
-   Contact key (key ID 0x363CCD95).</p>
+   Contact key (key ID <a
+   href="http://blackhole.pca.dfn.de:11371/pks/lookup?op=get&exact=on&search=0x363CCD95">\
+   0x363CCD95</a>).</p>
+
+<toc-add-entry name=discover>I guess I found a security problem, what should I do?</toc-add-entry>
+
+<p>A: If you learn about a security problem, either in one of your own
+   packages or in someone else's please always contact the security team.  If
+   the Debian security team confirms the vulnerability and other vendors are
+   likely to be vulnerable as well, they usually contact other vendors as
+   well.  If the vulnerability is not yet public they will try to coordinate
+   security advisories with the other vendors, so all major distributions are
+   in sync.</p>
 
 <toc-add-entry name=care>What am I supposed to do with a security problem in one of
    my packages?</toc-add-entry>
@@ -116,15 +150,37 @@ their answers are summarized here.</p>
 
 <p>A: No, you can't.  The archive at security.debian.org is maintained
    by the security team, who have to approve all packages.  You should
-   send patches or proper source packages to the security team at
-   team@security.debian.org instead.  If you are very sure that you
-   didn't break anything, didn't change the behaviour of the package,
-   despite the corresponding security problem and compiled it for the
-   proper distribution, you may upload the files into the <a
-   href="ftp://security.debian.org/pub/SecurityUploadQueue/">incoming</a>
-   directory directly.  Please also read Wichert's <a
-   href="http://lists.debian.org/debian-devel-announce/2002/debian-devel-announce-200206/msg00004.html">\
-   description</a>.</p>
+   instead send patches or proper source packages to the security team at
+   team@security.debian.org instead.  They will be reviewed by the 
+   security team and eventually uploaded, either with or without
+   modifications.</p>
+
+<p>If you are not used to security uploads and are not 100% sure that
+   your package is sane, please use this way and don't upload to the
+   incoming directory.  The security team only has limited options to
+   deal with broken packages, especially if they don't use a sane
+   version number.  Packages currently cannot be rejected and the
+   buildd would be confused if it would be possible.  Hence, please
+   use mail and help by not adding more pain to the security team.</p>
+
+<toc-add-entry name=SecurityUploadQueue>I'm pretty sure my packages are fine,
+   how can I upload them?</toc-add-entry>
+
+<p>A: If you are very sure that your packages don't break anything, that the
+   version is sane (i.e. greater than the version in stable and less than the
+   version in testing/unstable), that you didn't change the behaviour of the
+   package, despite the corresponding security problem, that you compiled it
+   for the correct distribution (that is <code>oldstable-security</code> or
+   <code>stable-security</code>), that the package contains the original
+   source if the package is new on security.debian.org, that you can confirm
+   the patch against the most recent version is clean and only touches the
+   corresponding security problem (check with <code>interdiff -z</code> and
+   both <code>.diff.gz</code> files), that you have proofread the patch at
+   least thrice, and that <code>debdiff</code> doesn't display any changes,
+   you may upload the files into the incoming directory
+   <code>/org/ftp.root/pub/SecurityUploadQueue</code> on the
+   security.debian.org directly.  Please send a notification with all details
+   and links to team@security.debian.org as well.</p>
 
 <toc-add-entry name=help>How can I help with security?</toc-add-entry>
 <p>A: Please review each problem before reporting it to
@@ -138,7 +194,7 @@ their answers are summarized here.</p>
    next revision of Debian stable.  Whenever packages are uploaded by
    a maintainer for the stable distribution, they end up in the
    proposed-updates directory.  Since stable is meant to be stable, no
-   automatic updates are made.  The Security Team will upload fixed
+   automatic updates are made.  The security team will upload fixed
    packages mentioned in their advisories to stable, however they will
    be placed in proposed-updates first.  Every couple of months the
    Stable Release Manager checks the list of packages in
