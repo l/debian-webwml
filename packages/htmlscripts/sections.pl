@@ -67,6 +67,8 @@ return (
 		"Utilities to format and print text documents." ],
 'utils'		=> [ "Utilities",
 		"Utilities for file/disk manipulation, backup and archive tools, system monitoring, input systems, etc." ],
+'virtual'	=> [ "Virtual packages",
+		"Virtual packages." ],
 'web'		=> [ "Web Software",
 		"Web servers, browsers, proxies, download tools etc." ],
 'x11'		=> [ "X Window System software",
