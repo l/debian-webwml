@@ -22,9 +22,9 @@ do 'documents-bd.pl';
 #                       'non-disponible'                0
 #                       'à traduire'                    1
 #                       'en cours de traduction'        2
-#                       'à relire'                      3
+#                       'à réviser'                     3
 #                       'traduction à jour'             4
-#                       'à réviser'                     5
+#                       'à relire'                      5
 #                       'en cours de révision'          6
 #                       'obsolète'                      7
 #                       'inconnu'                       8
@@ -54,14 +54,15 @@ do 'documents-bd.pl';
 $translations_status = {
 
 'book-gtiau' => {
-	'status' 		=> 2,
-	'since'			=> '13/09/1999',
+	'status' 		=> 3,
+	'since'			=> '16/01/2001',
 	'translation_maintainer'=> ['Patrice Karatchentzeff <p.karatchentzeff@free.fr>' ],
-	'translation_name'	=> 'Debian GNU/Linux: guide d\'installation et d\'utilisation',
-	'translation_dev_url'   => 'http://cvs.debian.org/webwml/french/international/french/translations/debian-guide_fr-1.0.sgml?cvsroot=webwml',
+	'translation_name'	=> 'Guide d\'introduction à Debian GNU-Linux',
+	'translation_source_url'   => 'http://cvs.debian.org/webwml/french/international/french/translations/debian-guide_fr-1.0.sgml?cvsroot=webwml',
 	'translation_package'	=> 'doc-debian-fr',
 	'old_translators'	=> [	'Martin Quinson <mquinson@zeppelin-cb.de>',
 					'Fabien Ninoles <fabien@Nightbird.TZoNE.ORG>'],
+	'last_translated'	=> '16/01/2001'
 },
 
 ######################################################################
@@ -72,15 +73,16 @@ $translations_status = {
 
 'policy' => {
 	'status'		=> 5,
-	'since'			=> '06/08/2001',
+	'since'			=> '19/04/2002',
 	'translation_name'	=> 'La charte Debian',
 	'translation_maintainer'=> ['philippe batailler <pbatailler@teaser.fr>'],
-	'base_revision'		=> '3.5.6.0',
+	'base_revision'		=> '3.5.6.1',
 	'translation_url'	=> 'http://www.teaser.fr/~pbatailler/charte.html/',
 	'translation_dev_url'	=> 'http://www.teaser.fr/~pbatailler/',
 	'translation_source_url'	=> 'http://cvs.debian.org/webwml/french/international/french/translations/policy.fr.sgml?cvsroot=webwml',
 	'translation_package'	=> 'doc-debian-fr',
 	'old_translators'	=> ['Serge Stinckwich <serge@info.unicaen.fr>'],
+	'last_translated'	=> '19/04/2002'
 },
 
 'project-history' => {
@@ -89,63 +91,71 @@ $translations_status = {
 	'base_revision'		=> '1.2',
 	'translation_name'	=> 'Histoire du projet Debian',
 	'translation_maintainer'=> ['Patrice Karatchentzeff <p.karatchentzeff@free.fr>'],
+	'translation_source_url'	=> 'http://cvs.debian.org/ddp/manuals.sgml/project-history/project-history.fr.sgml?cvsroot=debian-doc',
 	'translation_package'	=> 'doc-debian-fr',
+	'last_translated'	=> '03/11/2000',
 },
 
-'faq' => {
-	'status'		=> 3,
-	'since'			=> '28/05/2001',
-	'translation_name'	=> 'FAQ Debian GNU/Linux',
-	'old_translators'	=> [
-				    'Vincent Renardias <vincent@waw.com>',
-				    'Philippe Caillaud <phil@penguin.infini.fr>'],
-},
+#  Personne ne semble s'occuper de la FAQ
+#'faq' => {
+#	'status'		=> 3,
+#	'since'			=> '28/05/2001',
+#	'translation_name'	=> 'FAQ Debian GNU/Linux',
+#	'old_translators'	=> [
+#				    'Vincent Renardias <vincent@waw.com>',
+#				    'Philippe Caillaud <phil@penguin.infini.fr>'],
+#},
 
-'tutorial' => {
-	'status'		=> 7,
-	'since'			=> '28/05/2001',
-	'translation_name'	=> 'Tutorial Debian',
-	'old_translators'	=> ['Eric Jacoboni <jaco@titine.fr.eu.org>',
-				    'Loïc Martin <lomartin@dejanews.com>'],
-},
+#  De quel document s'agit-il ?
+#'tutorial' => {
+#	'status'		=> 7,
+#	'since'			=> '28/05/2001',
+#	'translation_name'	=> 'Tutorial Debian',
+#	'old_translators'	=> ['Eric Jacoboni <jaco@titine.fr.eu.org>',
+#				    'Loïc Martin <lomartin@dejanews.com>'],
+#},
 
 'install' => {
-	'status'		=> 3,
-	'since'			=> '13/03/2000',
+	'status'		=> 4,
+	'since'			=> '15/05/2002',
 	'translation_name'	=> 'Manuel d\'installation de Debian',
-	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
-	'base_revision'		=> '2.1',
+	'old_translators'       => ['Christophe Le Bars <clebars@debian.org>'],
+	'base_revision'		=> '3.0.23',
 	'translation_url'	=> 'http://www.debian.org/releases/stable/i386/install.fr.html',
-	'translation_cvs_url'   => 'http://cvs.debian.org/boot-floppies/documentation/install.fr.sgml?cvsroot=debian-boot',
+	'translation_dev_url'	=> 'http://www.debian.org/releases/unstable/i386/install.fr.html',
+	'translation_source_url'	=> 'http://cvs.debian.org/boot-floppies/documentation/install.fr.sgml?cvsroot=debian-boot',
 	'translation_package'	=> 'boot-floppies',
-	'last_translated'	=> '16/03/1999'
+	'last_translated'	=> '15/05/2002'
 },
 
 'dselect-beginner' => {
-	'status'		=> 3,
-	'since'			=> '13/03/2000',
+	'status'		=> 4,
+	'since'			=> '29/05/2002',
 	'translation_name'	=> 'Guide de dselect pour les débutants',
-	'translation_maintainer'=> ['Laurent Picouleau <laurent.picouleau@wanadoo.fr>'],
-	'base_revision'		=> '2.1',
+	'translation_maintainer'=> ['Denis Barbier <barbier@debian.org>'],
+	'old_translators'       => ['Laurent Picouleau <laurent.picouleau@wanadoo.fr>'],
+	'base_revision'		=> '3.0.23',
 	'translation_url'	=> 'http://www.debian.org/releases/stable/i386/dselect-beginner.fr.html',
-	'translation_cvs_url'   => 'http://cvs.debian.org/boot-floppies/documentation/dselect-beginner.fr.sgml?cvsroot=debian-boot',
+	'translation_dev_url'	=> 'http://www.debian.org/releases/unstable/i386/dselect-beginner.fr.html',
+	'translation_source_url'	=> 'http://cvs.debian.org/boot-floppies/documentation/dselect-beginner.fr.sgml?cvsroot=debian-boot',
 	'translation_package'	=> 'boot-floppies',
-	'last_translated'	=> '27/03/1999',
-	'note'			=> 'Le responsable est prêt à passer la main'
+	'last_translated'	=> '29/05/2002'
 },
 
 'release-notes' => {
-	'status'		=> 1,
+	'status'		=> 4,
 	'since'			=> '28/05/2001',
 	'translation_name'	=> 'Notes de publication',
 	'old_translators'       => ['mmenal <mmenal@ifrance.com>'],
 	'translation_package'	=> 'boot-floppies',
 	'translation_url'	=> 'http://www.debian.org/releases/stable/i386/release-notes/index.fr.html',
+	'translation_dev_url'	=> 'http://www.debian.org/releases/unstable/i386/release-notes/index.fr.html',
+	'translation_source_url'	=> 'http://cvs.debian.org/boot-floppies/documentation/release-notes.fr.sgml?cvsroot=debian-boot',
 },
 
 'maint-guide' => {
 	'status'		=> 4,
-	'since'			=> '30/03/2000',
+	'since'			=> '02/05/2002',
 	'translation_name'	=> 'Guide du nouveau responsable Debian',
 	'translation_maintainer'=> ['Frederic Dumont <frederic.dumont@freeworld.be>'],
 	'translation_url'	=> 'http://www.debian.org/doc/manuals/maint-guide/index.fr.html',
@@ -191,15 +201,16 @@ $translations_status = {
 					'Christian Jacolot <jacolot@ubolib.univ-brest.fr>',
 				],
 	'translation_package'	=> 'doc-debian-fr',
+	'translation_source_url'	=> 'http://cvs.debian.org/webwml/french/international/french/translations/packaging-manual.fr.sgml?cvsroot=webwml',
 },
 
 
 'developers-reference' => {
-	'status' => 4,
-	'since' => '19/12/2001',
+	'status' => 5,
+	'since' => '06/05/2002',
 	'translation_name' => 'Référence du développeur Debian',
 	'translation_maintainer'=> ['Antoine Hulin <antoine@origan.fdn.org>'],
-	'base_revision' => '1.72',
+	'base_revision' => '1.91',
 	'translation_package' => 'developers-reference',
 	'translation_url'       => 'http://www.debian.org/doc/manuals/developers-reference/index.fr.html',
 	'translation_cvs_url'   => 'http://cvs.debian.org/ddp/manuals.sgml/developers-reference/?cvsroot=debian-doc',
@@ -231,13 +242,13 @@ $translations_status = {
 #	'last_translated'	=> '01/07/1998',
 #},
 
-'sgml-howto' => {
-	'status'		=> 2,
-	'since'			=> '28/05/2001',
-	'translation_name'	=> 'The Debian SGML/XML HOWTO',
-	'translation_maintainer'=> ['Philippe Batailler <pbatailler@teaser.fr>'],
-	'old_translators'       => ['Jérôme Marant <jerome.marant@free.fr>'],
-},
+#'sgml-howto' => {
+#	'status'		=> 2,
+#	'since'			=> '28/05/2001',
+#	'translation_name'	=> 'The Debian SGML/XML HOWTO',
+#	'translation_maintainer'=> ['Philippe Batailler <pbatailler@teaser.fr>'],
+#	'old_translators'       => ['Jérôme Marant <jerome.marant@free.fr>'],
+#},
 
 'markup' => {
 	'status'		=> 4,
