@@ -5,3 +5,5 @@
 WMLBASE=../..
 CUR_DIR=devel/debian-nonprofit
 SUBS=
+
+include $(WMLBASE)/Make.lang
