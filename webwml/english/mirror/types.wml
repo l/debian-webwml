@@ -3,101 +3,87 @@
 <p>There are two types of Debian mirrors, <em>official</em> and
 <em>unofficial</em>.
 
+<h2>Unofficial Debian mirrors</h2>
+
 <p>Anyone can mirror Debian. You don't even need our permission.
-Some sites with good bandwidth, though, like to help Debian by becoming an
-Official mirror.
-Official mirrors get an address of the form ftp.&lt;country&gt;.debian.org
-or www.&lt;country&gt;.debian.org (both if you mirror the archive and web
-pages). These are the best advertised and most used sites; the face of
-Debian for most people. In exchange, your organization may put a logo
-on the main Debian page (on the copy on your mirror) with a link to your
-organizations web site.
+If you are not interested in becoming an official mirror, set up your
+<a href="ftpmirror">FTP mirror</a> and <a href="submit">register it</a>.
+The site will be an unofficial mirror and be listed as such on our
+<a href="../misc/README.mirrors">mirror list</a>.
 
-<p>If you are not interested in becoming an official mirror, set up your
-<a href="ftpmirror">FTP mirror</a> or <a href="webmirror">web mirror</a>
-and <a href="submit">register the mirror</a>.
+<p>Note that we do <strong>not</strong> require new mirrors for the web site
+at this time (mirrors of our FTP archive are desirable, on the other hand).
 
-<p>The following are the requirements for an official mirror site:
+<h2>Official Debian mirrors</h2>
 
-# the list of rules from Culus:
-#
-# 1) Top Level:
-#   a) non-us:
-#   * Must demonstrate existing very high utilization (> 50G/day of debian
-#     only traffic) [we don't have any such non-us sites]
-#   * Must conform to all guidelines below.
-#   b) US:
-#   * As above, but is invite only basically. Put you on the list of possible
-#     candidiates next time we need to make an invite, yadda yadda
-#
-# 2) Country official mirror
-#   1) Guidelines, the mirror should follow these or provide good reason why
-#      not
-#    * Must support ftp, http and rsync
-#    * FTP must report times that match ftp.debian.org (UTC) and they must
-#      mirror using a time-preserving method, rsync is the only I know of.
-#    * Must support Cannonical URLs http://.../debian, ftp://.../debian, and
-#      rsync::debian
-#    * Mirror once daily, using a means that supports the project/trace
-#      directory (ie using my scripts)
-#    * Full mirror. Whan faced with the choice of a full partial in the same
-#      country the full gets to have the label.
-#
-# Changing the assignment of ftp.?? needs to be done with the approval of
-# the current owner if possible.
+<p>Some sites with good bandwidth like to help Debian by becoming an
+<em>official mirror</em>.
+Official mirrors get an address of the form ftp.&lt;country&gt;.debian.org.
+These are the best advertised and most used sites; the face of Debian for
+most people. Your donation would be suitably acknowledged on our
+<a href="../donations">web site</a>.
 
-<UL>
-<LI>The site must be reliable and be up 24 hours a day. The machine must
+<p>To become an official mirror, your site should meet the following
+criteria:
+
+<p>
+<ul>
+    <li>The site must be reliable and be up 24 hours a day. The machine must
 	not be heavily loaded.
-<LI>It must have a decent connectivity (relative to the respective country).
+    <li>It must have a decent connectivity (relative to the respective country).
 	Bandwidth equivalent to a T1 connection or better is preferred.
-<LI>For FTP mirrors: the Debian FTP hierarchy must be available under /debian
-	(this is done for consistency between sites &mdash; you may simply
-	place a symlink if you want to keep the mirror somewhere else).
-	<br>
-	The whole FTP archive should be mirrored. If there are space
-	constraints, you can exclude the unreleased ports (dists/sid) and
-	the new distribution under development (dists/unstable), but please
-	keep the whole stable release (dists/stable).
-<LI>For FTP mirrors: the FTP archive should be made available using HTTP
+    <li>Disk space commitments (with room for expansion) -- see the
+	<a href="size">mirror size page</a>.
+    <li>If you are mirroring the packages (i.e. the FTP site):
+    <ul type="disc">
+	<li>The whole FTP archive should be mirrored, using a method that
+	preserves time stamps of mirrored files (e.g. rsync) so that the
+	times on files (UTC) match those on ftp.debian.org.
+	<li>The mirror hierarchy must be available under /debian (and
+	/debian-non-US if you mirror the non-US site, too).
+	Rationale: for consistency between sites &mdash; you may simply
+	place a symlink if you want to keep the mirror somewhere else.
+	<li>The mirror should be made available using HTTP and rsync
 	(ftp://ftp.site/debian/ should also be accessible as
-	http://ftp.site/debian/). We are asking this from all official FTP
-	sites because with HTTP/1.1, web transfers have the potential of
-	being more efficient than with FTP, so we are trying to make a move
-	in that direction.
-<LI>For WWW mirrors: a virtual server, with its own IP address.
-#	If possible the mailing list and bug archives should be mirrored too.
-#	TODO: mirroring for this hasn't been set up yet on our hosts -- Joy
-<LI>For WWW mirrors: content negotiation must be enabled in the HTTP server.
+	http://ftp.site/debian/ and rsync://ftp.site::debian/).
+	Rationale: with HTTP/1.1, web transfers have the potential of being
+	more efficient than with FTP, so we are trying to make a move in
+	that direction. Rsync, on the other hand, is the preferred method of
+	mirroring.
+	<li>The mirror must be updated at least once a day, and the time of
+	updating should be noted with a timestamp file in the project/trace/
+	subdirectory of the mirror.
+    </ul>
+    <li>If you are mirrorring the web pages (i.e. the WWW site):
+    <ul type="disc">
+	<li>A virtual server, with its own IP address.
+	<li>content negotiation must be enabled in the HTTP server.
 	Apache supports this quite well. This is to allow us to serve the web
 	pages in multiple languages transparently (for those who have set up
 	their browser properly).
 	<br>
 	See the section on <a href="webmirror#cn">content negotiation</a>.
-<LI>Disk space commitments (with room for expansion):
-	<ul>
-	  <li>at least 16 GB for FTP mirror (or much less, depending on what
-	      you exclude)
-	  <li>at least 400 MB for WWW mirror
-	</ul>
-<LI>The mirror must be updated at least once a day. If possible, set up
-	push-mirroring from Debian sites.
-</UL>
+	<li>the mirror must be updated at least twice a day, and the time of
+	updating should be noted with a timestamp file in the
+	mirror/timestamps/ directory of the mirror.
+    </ul>
+</ul>
 
-<P>Please note that these are just guidelines. If you are unsure of something,
-send a note to <A href="mailto:mirrors@debian.org">mirrors@debian.org</A>
-with your questions.
-
-<P>Note for WWW mirrors: all of our CGI scripts are run centrally on
-cgi.debian.org, so you don't need to worry about them.
+<P>Please note that these are just guidelines, but we will be more likely to
+accept your site as an official mirror if the above conditions are met. If
+you are unsure of something, <a href="mailto:mirrors@debian.org">ask us</a>.
 
 <P>Official mirrors should be registered just like any other mirror using
-the <a href="submit">mirror submission form</a>. Additionally, the
-address of the machine along with the name and e-mail of the person
-who will be maintaining the mirror should be mailed to
-<A href="mailto:mirrors@debian.org">mirrors@debian.org</A> along with a request
-to become an official site so that the DNS will be set up.
-When everything is working, your site will be added to the web pages.
+the <a href="submit">mirror submission form</a>. Additionally, a request to
+become an official site, including exact information on bandwidth
+consumption and limits for your site, should be sent to
+<a href="mailto:mirrors@debian.org">mirrors@debian.org</a>. After the DNS
+entry for the new official mirror is added, it will appear in the mirror
+list and the <a href="../donations">donations web page</a>. Also, expect an
+increase in traffic on the mirror once this happens.
+
+<P>If possible, <a href="push_server">push-mirroring</a> should be set up
+from Debian sites.
 
 <P>Multiple official sites can be set up in each country. In large countries, like
 the US, and countries with more than one major backbone that aren't well connected,
