@@ -4,9 +4,9 @@
 
 WMLBASE=.
 CUR_DIR=
-SUBS=Bugs MailingLists News Pics banners chinese consultants devel distrib \
-doc events intro international logos mirror misc partners ports releases \
-searchtmpl security vote y2k
+SUBS=Bugs CD MailingLists News Pics banners chinese consultants devel \
+distrib doc events intro international logos mirror misc partners ports \
+releases searchtmpl security vote y2k
 
 ifneq "$(wildcard om_svenska/Makefile)" ""
 SUBS += om_svenska
@@ -21,11 +21,6 @@ else
 SITEMAP = $(sort $(foreach i,$(SUBLANG),\
 	$(patsubst %.wml,%.$(LANGUAGE)-$(i).html,sitemap.wml)))
 HTMLMAP = $(patsubst %.html,$(HTMLDIR)/%.html,$(SITEMAP))
-endif
-
-ifeq "$(LANGUAGE)" "en"
-IMGFILES += favicon.ico
-IMGDESTFILES += $(HTMLDIR)/favicon.ico
 endif
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
@@ -68,4 +63,12 @@ endif
 all:: $(SITEMAP)
 
 install:: $(HTMLMAP)
+ifeq "$(LANGUAGE)" "en"
 	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
+	test -L $(HTMLDIR)/mirrors || ln -sf mirror $(HTMLDIR)/mirrors
+
+install:: $(HTMLDIR)/favicon.ico
+
+$(HTMLDIR)/favicon.ico: favicon.ico
+	install -p -m 664 favicon.ico $(HTMLDIR)
+endif

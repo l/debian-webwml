@@ -12,10 +12,7 @@ ftplist.$(LANGUAGE).html: ftplist.wml $(ENGLISHSRCDIR)/distrib/ftplist.data \
   $(TEMPLDIR)/countries.wml
 packages.$(LANGUAGE).html: packages.wml $(ENGLISHSRCDIR)/releases/info
 pre-installed.$(LANGUAGE).html: pre-installed.wml $(TEMPLDIR)/countries.wml \
-  $(ENGLISHSRCDIR)/distrib/pre-installed.data $(ENGLISHSRCDIR)/distrib/vendors.CD.def
-vendors.$(LANGUAGE).html: vendors.wml $(TEMPLDIR)/countries.wml \
-  $(TEMPLDIR)/url.wml \
-  $(ENGLISHSRCDIR)/distrib/vendors.CD $(ENGLISHSRCDIR)/distrib/vendors.CD.def
+  $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/CD/vendors/vendors.CD.def
 
 ifeq "$(LANGUAGE)" "en"
 $(ENGLISHSRCDIR)/distrib/ftplist.data: ftplist.data
