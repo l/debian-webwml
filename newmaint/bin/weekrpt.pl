@@ -200,7 +200,17 @@ sub fd_checks($)
     my $sql = "SELECT email, manager FROM applicant WHERE id_ok AND pnp_ok AND tns_ok AND decision is NULL";
 
     print "The following applicants have completed all checks but are not\napproved by their AM:\n\n";
+    $sth = $dbh->prepare($sql);
+    $sth->execute();
+    $sth->bind_columns(\$email, \$manager);
+    while($sth->fetch()) {
+        print "  $email ($manager)\n";
+    }
 
+    print "\n";
+
+    my $sql = "SELECT a.email, m.login FROM applicant a, manager m WHERE (a.approved = 'f' OR a.approved IS NULL) AND a.manager = m.login AND m.is_active = 'f'";
+    print "The following applicants are not AM approved but have an inactive AM:\n\n";
     $sth = $dbh->prepare($sql);
     $sth->execute();
     $sth->bind_columns(\$email, \$manager);
@@ -211,7 +221,6 @@ sub fd_checks($)
     print "\n";
 
     my $sql = "SELECT email, manager, decision FROM applicant WHERE approved = 'f' and age('now', decision::datetime) > '6 months'::timespan ORDER BY decision";
-
     print "The following applicants have been on hold longer than 6 months:\n\n";
 
     $sth = $dbh->prepare($sql);
