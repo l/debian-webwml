@@ -20,4 +20,5 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/logos/button-3.jpg $(ENGLISHDIR)/logos/button-k1.png \
   $(ENGLISHDIR)/logos/button-k2.png $(ENGLISHDIR)/logos/banner_64.gif \
   $(ENGLISHDIR)/logos/banner_wp.gif $(ENGLISHDIR)/logos/banner_h.gif \
-  $(ENGLISHDIR)/logos/banner_a.gif $(ENGLISHDIR)/logos/banner_v.jpg
+  $(ENGLISHDIR)/logos/banner_a.gif $(ENGLISHDIR)/logos/banner_v.jpg \
+  $(ENGLISHDIR)/logos/gnuart.png $(ENGLISHDIR)/logos/debart_logo_04.png
