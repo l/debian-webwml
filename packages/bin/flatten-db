@@ -44,6 +44,13 @@ sub help
     exit 0;
 }
 
+sub strip
+{
+    my $text = shift;
+
+    $text =~ s/[.:;_&,+\*\/-]//g;
+}
+
 # Parse commandline options
 #
 GetOptions (%options);
@@ -75,7 +82,7 @@ while (<DB>) {
     if (/^Package: (.*)$/) {
 	$foo = $1;
 	if ($info{Package}) {
-	    printf OUT "%s %s %s %s \n", $info{Package}, $info{Section}, $info{Version}, $info{Description};
+	    printf OUT "%s %s %s %s \n", $info{Package}, $info{Section}, $info{Version}, strip ($info{Description});
 	    %info = ();
 	}
 	$info{Package} = $foo;
@@ -88,7 +95,7 @@ while (<DB>) {
 	$info{Description} .= " " . $_;
     }
 }
-printf OUT "%s %s %s %s \n", $info{Package}, $info{Section}, $info{Version}, $info{Description} if ($info{Package});
+printf OUT "%s %s %s %s \n", $info{Package}, $info{Section}, $info{Version}, strip ($info{Description}) if ($info{Package});
 
 close (DB);
 close (OUT);
