@@ -46,7 +46,7 @@ $(DSARDF): $(ENGLISHDIR)/security/dsa.rdf.in \
   $(wildcard $(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.data) \
-  $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/security_tags.wml $(GETTEXTDEP)
+  $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
 ifeq "$(LANGUAGE)" "zh"
 	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:dsa.zh-$$1.rdf,g') \
           $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
@@ -70,7 +70,7 @@ $(DSALONGRDF): $(ENGLISHDIR)/security/dsa-long.rdf.in \
   $(wildcard $(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.data) \
-  $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/security_tags.wml $(GETTEXTDEP)
+  $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
 ifeq "$(LANGUAGE)" "zh"
 	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:dsa-long.zh-$$1.rdf,g') \
           $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \

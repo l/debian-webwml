@@ -1,21 +1,27 @@
-
-# The translatable tags are in security_tags.wml
-
+#use wml::debian::common_tags
 #use wml::debian::common_translation
 #use wml::debian::fixes_link
 #use wml::debian::languages
 #use wml::debian::ctime
-#use wml::debian::security_tags
 #use wml::debian::securityreferences
 
-<define-tag vulnerability>
-	<ifeq "<isvulnerable/>" "yes" "<font color="#FF0000"><yes></font>">
-	<ifeq "<isvulnerable/>" "no" "<font color="#00FF00"><no></font>">
+<bind-gettext-domain domain="security" />
+
+<define-tag source whitespace=delete>
+  <gettext domain="security">Source:</gettext>
 </define-tag>
 
-<define-tag secreferences>
-  <:= security_references("<secrefs>") :>
-</define-tag secreferences>
+<define-tag arch-indep whitespace=delete>
+  <gettext domain="security">Architecture-independent component:</gettext>
+</define-tag>
+
+<define-tag md5sums whitespace=delete>
+  <preserve url />
+  <set-var url=%0 />
+# don't translate `<get-var url />'
+  <gettext domain="security">MD5 checksums of the listed files are available in the <a href="<get-var url />">original advisory</a>.</gettext>
+  <restore url />
+</define-tag>
 
 <define-tag fileurl whitespace=delete>
 <a href="%0">%0</a><br />
@@ -25,26 +31,27 @@
 
 #use wml::debian::basic title="<security/> -- <pagetitle/>"
 
-<h1><debian_security_advisory/></h1>
+<h1><gettext domain="security">Debian Security Advisory</gettext></h1>
 
 <h2><pagetitle/> -- <description/></h2>
 
 <dl compact>
-<dt><datereported/>:</dt>
+<dt><gettext domain="security">Date Reported</gettext>:</dt>
 	<dd><:= newsdate('<report_date/>') :></dd>
-<dt><affectedpackages/>:</dt>
+<dt><gettext domain="security">Affected Packages</gettext>:</dt>
 	<dd><packages/></dd>
-<dt><vulnerable/>:</dt>
-	<dd><vulnerability/></dd>
-# This might be done with a ifneq "" tag too if people 
-# do not like the <nosecref> here (jfs)
-<dt><secdbinfo/>:</dt>
-	<dd><secreferences></dd>
-<dt><formoreinfo/>:</dt>
+<dt><gettext domain="security">Vulnerable</gettext>:</dt>
+	<dd>
+	<ifeq "<isvulnerable/>" "yes" "<font color="#FF0000"><yes></font>">
+	<ifeq "<isvulnerable/>" "no" "<font color="#00FF00"><no></font>">
+	</dd>
+<dt><gettext domain="security">Security database references</gettext>:</dt>
+	<dd><:= security_references("<secrefs>") :></dd>
+<dt><gettext domain="security">More information</gettext>:</dt>
 	<dd><moreinfo/></dd>
 #<ifneq "{#securitybody#}" "" "
 <ifneq "<isvulnerable/>" "no" "
-<dt><fixedin/>:</dt>
+<dt><gettext domain="security">Fixed in</gettext>:</dt>
 	<dd>{#securitybody#}</dd>
 "/>
 </dl>
