@@ -126,8 +126,10 @@ foreach (sort { $itp{$a} cmp $itp{$b} } keys %itp) {
 
 foreach (sort { $rfp{$a} cmp $rfp{$b} } keys %rfp) {
     push @requested_html, 
-         "<li><a href=\"http://bugs.debian.org/$_\">$rfp{$_}</a>, ",
-         "requested $age{$_} days ago.";
+         "<li><a href=\"http://bugs.debian.org/$_\">$rfp{$_}</a>, ";
+    if ( $age{$_} == 0 ) { push @requested_html, "requested today." }
+    elsif ( $age{$_} == 1 ) { push @requested_html, "requested yesterday." }
+    else { push @requested_html, "requested $age{$_} days ago." };
 }
 
 </perl>
