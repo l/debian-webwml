@@ -723,14 +723,14 @@ sub process_dep_list {
 		$dep_archs_rr = $dep_archs || "all";
 	    }
 	    if ( exists $self->{db}{$given_dep_strip} ) {
-		my $p = $self->{db}{$given_dep_strip};
+#		my $p = $self->{db}{$given_dep_strip};
 		if ( not_member($given_dep_strip, @final_dep_list) ) {
 		    push(@final_dep_list, [ $given_dep_strip, 
 					    $dep_op, $dep_ver, $dep_archs ] );
-		    $p->add_reverse_rel( $rel, $pkg, $version,
-					 ($arch eq 'source') ? $dep_archs_rr : $arch,
-					 "$dep_op $dep_ver" );
-		    $self->{db}{$given_dep_strip} = $p;
+#		    $p->add_reverse_rel( $rel, $pkg, $version,
+#					 ($arch eq 'source') ? $dep_archs_rr : $arch,
+#					 "$dep_op $dep_ver" );
+#		    $self->{db}{$given_dep_strip} = $p;
 		}
 	    } else {
 		push(@final_dep_list, [ $given_dep_strip, $dep_op, 
