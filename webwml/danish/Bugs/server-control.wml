@@ -1,0 +1,180 @@
+#use wml::debian::template title="Debians fejlrapporteringssystem - kontrolserveren" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.23"
+
+<h1>Introduktion til e-mailserveren til fejlrapportskontrol og -behandling</h1>
+
+<p>Foruden e-mailserveren på <code>request@bugs.debian.org</code> som gør det
+muligt at hente oplysninger om fejlrapporter via e-mail, er der yderligere en
+server på <code>control@bugs.debian.org</code> som desuden gør det muligt at
+behandle fejlrapporterne på forskellige måder.</p>
+
+<p>Kontrolserveren fungerer præcis som forespørgselsserveren og har desuden 
+nogle ekstra kommandoer.  Hvis sandheden skal frem, så er det faktisk det 
+samme program.  De to adresser er bare blevet adskilt for at forhindre
+afsenderen i at begå fejl og forsage problemer, når alt hvad vedkommende 
+ønskede var at hente oplysninger.</p>
+
+<p>Se <a href="server-request#introduction">introduktion til 
+forespørgselsserveren</a> som findes på nettet, i filen 
+<code>bug-log-mailserver.txt</code>, og ved at sende <code>help</code> til
+en af e-mailserverne for grundlæggende oplysninger om hvordan man anvender
+e-mailserverne, og for en liste over de tilgængelige kommandoer uanset 
+hvilken adresse man anvender.</p>
+
+<p>Et <a href="server-refcard">referencekort</a> til e-mailserveren er 
+tilgængeligt via nettet, i <code>bug-mailserver-refcard.txt</code> eller via 
+e-mail med kommandoen <code>refcard</code>.</p>
+
+
+<h1>Kommandoer som kun findes på kontrolserveren</h1>
+
+<dl>
+  <dt><code>reassign</code> <var>fejlnummer</var> <var>pakke</var>
+  <dd>Angiver at fejlen med nummeret <var>fejlnummer</var> er en fejl i pakken
+      <var>paket</var>.  Dette kan anvendes til at sætte pakkenavnet hvis
+      afsenderen glemte pseudo-brevhovedet, eller til at ændre en tidligere
+      tildeling.  Der sendes ikke besked til nogen (bortset fra normale 
+      oplysninger om kommandofortolkningen).
+      
+  <dt><code>reopen</code> <var>fejlnummer</var>
+      [ <var>oprindelsesadresse</var> | <code>=</code> | <code>!</code> ]
+  <dd>Åbner fejlrapporten med nummeret <var>fejlnummer</var> igen hvis den er
+      blevet lukket.
+      <p>Som standard, eller hvis man angiver <code>=</code>, vil stadig kun 
+      den oprindelige afsender være angivet som den der har rapporteret fejlen,
+      så vedkommende vil blive informeret når rapporten lukkes igen.</p>
+      <p>Hvis man medsender en ny <var>oprindelsesadresse</var> vil den blive
+      anvendt i stedet for.  Hvis man selv være stå opført som afsenderen af 
+      den nyåbnede fejlrapport, kan man anvende forkortelsen <code>!</code>, 
+      eller angive sin egen e-mailadresse.</p>
+		  <p>Det er normalt en god idé at underrette personen der kommer til at stå
+		  som afsender af fejlrapporten, om at man genåbner rappoten, så 
+		  vedkommende er forberedt på at blive informeret når rapporten lukkes 
+		  igen.</p>
+      <p>Hvis fejlrapporten ikke er lukket, vil reopen-kommandoen ikke gør 
+      noget, ikke engang ændre oprindelsesadressen.  Det er ikke muligt at 
+      ændre oprindelsen på en åben fejlrapport (dette er med overlæg, så det 
+      er umuligt at lukke en fejlrapport og lade den slette 28 dage senere uden
+      at nogen får besked derom).</p>
+      
+  <dt><code>forwarded</code> <var>fejlnummer</var> <var>adresse</var>
+  <dd>Noterer at fejlrapporten med nummeret <var>fejlnummer</var> er blevet
+      videresendt til en optrømsudvikler på adressen <var>adresse</var>.  Dette
+      videresender faktisk ikke rapporten, men kan anvendes til at ændre en
+      eksisterende, forkert vidersendelsesadresse, eller til at registrere en 
+      ny adresse til en fejl som ikke tidligere var registeret som videresendt.
+
+	<dt><code>notforwarded</code> <var>fejlnummer</var>
+  <dd>Glemmer alt om at fejlrapporten med nummeret <var>fejlnummer</var> er
+      blevet videresendt til en opstrømsudvikler.  Hvis fejlen ikke er 
+      registeret som videresendt, gør denne kommando ikke noget.
+
+  <dt><code>retitle</code> <var>fejlnummer</var> <var>ny-overskrift</var>
+  <dd>Ændrer overskriften på en fejlrapport til den angivne (standard er den
+      oprindelige rapports tekst i emne-linien).
+      <p>Modsat de fleste andre fejlbehandlingskommandoer, påvirker denne 
+      kommando kun den angivne fejlrapport, og ikke alle andre rapporter som
+      den er slået sammen med.</p>
+
+  <dt><code>severity</code> <var>fejlnummer</var> <var>alvorsgrad</var>
+  <dd>Sætter alvorsgraden på fejlrapporten med nummeret <var>fejlnummer</var> 
+      til alvorsgraden <var>grad</var>.  Den oprindelige afsender af rapporten
+      underrettes ikke.
+      <p>Tilgængelige alvorsgrader er <code>critical</code>, 
+      <code>grave</code>, <code>serious</code>, <code>important</code>, 
+      <code>normal</code>, <code>minor</code> og <code>wishlist</code>.</p>
+      <p>For en beskrivelse af hvad de <a href="Developer#severities">\
+      betyder</a>, se udviklernes gennerelle dokumentation vedrørende
+      fejlrapporteringssystemet.</p>
+
+  <dt><code>clone</code> <var>fejlnummer</var> [ <var>nye id'er</var> ]
+  <dd>Kloningskommandoen giver mulighed for at kopiere en fejlrapport.  Det er
+  		nyttigt hvor en enkelt fejlrapport faktisk angiver at flere forskellige
+  		fejl er opstået. "<var>Nye id'er</var>" er negative tal, adskilt af 
+  		mellemrumstegn, som kan benyttes i efterfølgende kontrolkommandoer til 
+  		at referere til de nyligt kopierede fejlrapporter.  Den oprettes en ny
+  		rapport for hver ny id.</p>
+      <p>Eksemel på anvendelse:</p>
+      <pre>
+        clone 12345 -1 -2
+        reassign -1 foo
+        retitle -1 foo: foo sucks
+        reassign -2 bar
+        retitle -2 bar: bar sucks when used with foo
+        severity -2 wishlist
+        clone 123456 -2
+        reassign -2 foo
+        retitle -2 foo: foo sucks
+        merge -1 -2
+      </pre>
+
+  <dt><code>merge</code> <var>fejlnummer</var> <var>fejlnummer</var> ...
+  <dd>Slår to eller flere fejlrapporter sammen.  Når rapporter er slået sammen
+      vil åbning, lukning, markering af videresendelse eller fjernelse af 
+      samme, samt omtildeling til en anden pakke af en af pakkerne have samme 
+      effekt på alle de rapporter som er slået sammen.
+      <p>Inden fejlrapporter kan slås sammen skal de have præcis den samme 
+      tilstand, enten skal de alle være åbne eller lukkede, med en samme 
+      videresend-opstrømsadresse eller ikke alle markeret som videresendte,
+      alle tildelt de(n) samme pakke(r) (en nøjagtig strengsammenligning 
+      anvendes på de pakker som fejlrapporterne er tildelt). og alle skal have
+      samme alvorsgrad. Hvis de fra begyndelsen ikke har samme tilstand skal 
+      man anvende <code>reassign</code>, <code>reopen</code>, og så videre så
+      de har samme tilstand inden man anvender kommanoden 
+      <code>merge</code>.</p>
+      <p>Hvis nogle af fejlrapporterne opført i en <code>merge</code>-kommando
+      allerede er slået sammen med andre rapporter, vil også de allerede 
+      sammenslåede rapporter blevet slået sammen med de angivne fejlrapporter.
+      Sammenslåning er som ækvivalent: den er refleksiv, transitiv og 
+      symetrisk.</p>
+      <p>Når fejlrapporter slås sammen, bliver dette noteret i hver enkelt
+      rapports log, og på websiderne oprettes links til de andre fejl.</p>
+      <p>Sammenslåede fejlrapporter udløber samtidig, og kun når alle 
+      rapporterne hver for sig opfylder kriterierne for at udløbe.</p>
+
+  <dt><code>unmerge</code> <var>fejlnummer</var>
+  <dd>Fjerner forbindelsen mellem en fejlrapport og de rapporter den er slået
+      sammen med.  Hvis rapporten er slået sammen med flere andre, vil de andre
+      fortsat være slået sammen, kun forbindelsen til den specifikt angivne 
+      fejlrapport fjernes.
+      <p>Hvis mange fejlrapporter er slået sammen og du ønsker at opdele dem
+      i to separate grupper af sammenslåede rapporter, skal de først fjerne
+      forbindelserne for hver enkelt rapport i den ene nye gruppe, og dernæst
+      slå dem sammen til den nye gruppe.</p>
+      <p>Du kan kun fjerne forbindelsen for en rapport ad gangen med 
+      <code>unmerge</code>-kommandoen.  Hvis du vil fjerne forbindelsen til
+      flere fejlrapporter, skal du blot angive flere 
+      <code>unmerge</code>-kommandoer i din meddelelse.</p>
+
+  <dt><code>tags</code> <var>fejlnummer</var> [ <code>+</code> | <code>-</code> 
+      | <code>=</code> ] <var>mærke</var>
+  <dd>Sætter et specifikt mærke på fejlrapporten med nummeret 
+      <var>fejlnummer</var> til <var>mærke</var>.  Brugeren som rapporterede
+      fejlen bliver ikke underrettet. <code>+</code> betyder tilføj,
+      <code>-</code> betyder fjern, og <code>=</code> betyder ignorer aktuelle 
+      markeringer og opsæt dem påny.  Standard er tilføjelse.  Et 
+      mellemrumstegn er krævet mellem tegnene +, -, = og mærket.
+      <p>Tilgængelige markeringer er pt. <code>patch</code>, 
+      <code>wontfix</code>, <code>moreinfo</code>, <code>unreproducible</code>,
+      <code>help</code>, <code>pending</code>, <code>fixed</code>,
+      <code>security</code>, <code>upstream</code>, <code>potato</code>,
+      <code>woody</code> og <code>sid</code>.</p>
+      <p>For en beskrivelse af hvad de <a href="Developer#tags">\
+      betyder</a>, se udviklernes gennerelle dokumentation vedrørende
+      fejlrapporteringssystemet.</p>
+
+  <dt><code>close</code> <var>fejlnummer</var>
+  <dd>Lukker fejlrapporten med nummeret <var>fejlnummer</var>.
+      <p>Bruger som oprindeligt indsendte fejlrapporten får besked, men 
+      indholdet i den e-mail som lukker rapporten inkluderes 
+      <em>ikke</em> (til forskel fra at sende til 
+      <var>fejlnummer</var><code>-done@bugs</code>).  Vedligeholder som lukker
+      rapporten bør sørge for at brugeren som indsendte rapporten får besked 
+      om hvorfor rapporten blev lukket, for eksempel ved at sende en separat
+      e-mail.  Anvendelse af denne kommandoen frarådes derfor.</p>
+</dl>
+
+<hr>
+
+#use "otherpages.inc"
+#use "$(ENGLISHDIR)/Bugs/footer.inc"
