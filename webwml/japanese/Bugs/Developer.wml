@@ -1,56 +1,80 @@
 #use wml::debian::template title="Debian BTS - 開発者情報" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.23"
+#use wml::debian::translation-check translation="1.32"
 
-<H1><A name="developers">バグ処理システムに関する開発者情報</A></H1>
+<H1>バグ処理システムに関する開発者情報</H1>
 
 <P>まず初めに、バグ報告はユーザから通常の電子メールとして
 <code>submit@bugs.debian.org</code> に提出されます。このバグ報告は
 通し番号が与えられ、 ユーザには受領通知が送られ、
 <code>debian-bugs-dist</code> メーリングリストに転送されます。
-報告者が <code>Package</code> 行にパッケージ名を指定した
+報告者が <code>Package</code> 行にメンテナのいるパッケージ名を指定した
 場合は、該当するメンテナにもその写しが送られます。</P>
 
 <P><code>Subject</code> 行には <code>Bug#</code><var>nnn</var><code>:</code>
 が追加されます。<code>Reply-To</code> には、そのバグ報告の提出者と
 <var>nnn</var><code>@bugs.debian.org</code> が設定されます。</P>
 
+<hrline>
 
-<h2>バグ報告のクローズ(解決)</h2>
+<ul>
+  <li><a href="#closing">バグ報告のクローズ (解決)</a></li>
+  <li><a href="#followup">フォローメッセージ</a></li>
+  <li><a href="#severities">Severity (重要度)レベル</a></li>
+  <li><a href="#tags">バグ報告のタグ</a></li>
+  <li><a href="#forward">バグ報告を転送したことの記録</a></li>
+  <li><a href="#maintincorrect">パッケージメンテナが間違っている場合</a></li>
+  <li><a href="#requestserv">Reopening, reassigning and manipulating bugs</a></li>
+  <li><a href="#subjectscan">More-or-less obsolete subject-scanning feature</a></li>
+  <li><a href="#x-debian-pr">Obsolete <code>X-Debian-PR: quiet</code> feature</a></li>
+</ul>
 
-<P>バグ追跡システムからバグを受け取った開発者や、
-<code>debian-bugs-dist</code> でバグ報告を知り、かつそのバグに対して
-責任のある開発者は、お気に入りのメールリーダで返信しなければ
-いけません。そのとき、バグをクローズするには <code>To</code> 行を
-<var>nnn</var><code>@bugs</code> のかわりに、
-<var>nnn</var><code>-done@bugs.debian.org</code> に書き換えて
-報告します (<var>nnn</var><code>-close</code> は、
-<var>nnn</var><code>-done</code> のエイリアスとして用意されています)。
-</P>
-
-<P>バグ報告の元々の提出者のアドレスがデフォルトで <code>To</code> 行に
-含められるでしょう。これは、バグ追跡システムがそのアドレスを
-<code>Reply-To</code> に入れているからです。</P>
-
-<P>`Done' メッセージは自動的に<CODE>deian-bugs-closed</CODE>メーリング
-リストに転送されます。他の開発者が関心を持ちそうであれば、
-<code>debian-devel@lists.debian.org</code> メーリングリスト
-にも転送すると良いでしょう。</P>
-
-<P>バグをクローズした人とバグ報告者に、バグ報告のステータスが変更された
-ことが通知されます。</P>
+<hrline>
 
 
-<h2>フォローメッセージ</h2>
+<h2><a name="closing">バグ報告のクローズ (解決)</a></h2>
+
+<p>Debian のバグ報告はその問題が解決したときクローズ (解決) しなければ
+なりません。パッケージ中の問題はそのバグの修正を含むパッケージが
+Debian アーカイブに入ったときのみ解決したとみなされます。</p>
+
+<p>ふつう、バグ報告をクローズしてよいのはそのバグの報告者とそのバグが
+報告されたパッケージのメンテナだけです。この規則には例外があります。
+たとえば、不明なパッケージや一般的な擬似パッケージに対するバグなどです。
+よくわからないなら、バグ報告をクローズするのではなく、まず debian-devel
+メーリングリストで助言を求めましょう。</p>
+
+<p>バグ報告は <var>nnn</var><code>-done@bugs.debian.org</code> に
+電子メールを送ることによってクローズしなければなりません。メッセージの
+本文はそのバグがどのように修正されたのかの説明を含む必要があります。</p>
+
+<p>バグ追跡システムから受けとった電子メールがあるなら、そのバグ報告を
+クローズするにはメールリーダプログラムで返信を作り、<code>To</code> 欄を
+編集してたとえば <VAR>nnn</VAR><CODE>@bugs</CODE> のかわりに
+<VAR>nnn</VAR><CODE>-done@bugs.debian.org</CODE> を使うだけでいいです。
+(<var>nnn</var><code>-close</code> は、
+<var>nnn</var><code>-done</code> のエイリアスとして用意されています)。</p>
+
+<p>バグ報告をクローズしようとしている人、それを提出した人および
+<code>debian-bugs-closed</code> メーリングリストにそのバグ報告の
+ステータスが変更されたことが通知されます。報告の提出者とこの
+メーリングリストには <var>nnn</var><code>-done</code> へ送られた
+メッセージの内容も送られます。</p>
+
+
+<h2><a name="followup">フォローメッセージ</a></h2>
+
+<p>バグ追跡システムはバグ報告をフォワードしたあとで <code>Reply-To</code>
+ヘッダに報告者のメールアドレスとそのバグのメールアドレス
+(<var>nnn</var><code>@bugs</code>) を含めます。これらは別個のメールアドレスで
+あることに注意してください。</p>
 
 <P>クローズされていないバグ報告に開発者が返信したい時は、単にそのバグ報告
-に返信します (この場合はバグがクローズされたとは<b>記録されません</b>)。
-この場合の返信は、(デフォルトで、かつ Reply-To: ヘッダを反映していれば)
-<var>nnn</var><code>@bugs</code> と元々のバグ報告提出者に送られます
-(注意: これは 2 つの個別のアドレスです)。
-バグ追跡システムは、<VAR>nnn</VAR><CODE>@bugs</CODE>として受け取った
+に返信します。<code>Reply-To</code> ヘッダをそのまま使うわけです。
+これはバグ報告をクローズ<strong>しません</strong>。</p>
+
+<p>バグ追跡システムは、<VAR>nnn</VAR><CODE>@bugs</CODE>として受け取った
 メッセージをパッケージメンテナに転送し、
 バグ報告の追加情報として記録して<code>debian-bugs-dist</code> に転送します。</P>
-
 <P>開発者はバグ報告者へのメールを<VAR>nnn</VAR><CODE>-submiter@bufs</CODE>宛に
 送信することもできます。</P>
 
@@ -83,7 +107,7 @@
 
 <dl>
 <dt><code>critical(致命的)</code>
-<dd>システム上(またはシステム全体)の関係のないソフトウェアを破壊す
+<dd>システム上の関係のないソフトウェア (またはシステム全体) を破壊す
 る、重大なデータの欠落を引き起こす、または、そのパッケージをインス
 トールしたシステム上でセキュリティーホールが生じる場合。
 
@@ -114,8 +138,14 @@
 <dt><code>fixed(修正済)</code>
 <dd>修正されているが、まだクローズしてはいけないバグ。
 ノンメンテナ・アップロードによって修正されたバグとしての例外。
-注意: 代わりに "fixed" <strong>タグ</strong>を使用うべき。
+注意: 代わりに "fixed" <strong>タグ</strong>を使うべき。
 </dl>
+
+<p><em><a href="http://bugs.debian.org/release-critical/">リリース
+クリティカル</a></em>とみなされる重要度があります。これはそのバグが
+そのパッケージを Debian の安定版でリリースするのに影響があるという意味です。
+現在、<strong>critical</strong>、<strong>grave</strong>
+そして <strong>serious</strong> がこれに該当します。</p>
 
 <H2><a name="tags">バグ報告のタグ</a></H2>
 
@@ -173,7 +203,7 @@
   (重要度)も設定すべきです。
 
 <dt><code>upstream(上流)</code>
-  <dd>このバグは、パッケージの上流開発者に報告されています。
+  <dd>このバグは、パッケージの上流の部分に影響します。
 
 <dt><code>potato</code>
   <dd>このバグは特に Debian の potato リリースに加えられるものです。
@@ -188,14 +218,14 @@
 </dl>
 
 <p>最後の 3 つのタグは主にリリースクリティカルバグのために使われるものです。
-バグの修正(やパッケージの削除)によって、どのディストリビューションが影響
-するのかを明確にするためのものです。
+これらのバグでは、バグの修正 (やパッケージの削除) が正しく行われるように、
+どのディストリビューションが影響するのかを明確にするのが重要です。。
 
-<h2><A name="forward">バグ報告についてあなたが述べた意見の記録</A></h2>
+<h2><A name="forward">バグ報告を転送したことの記録</A></h2>
 
 <P>Debian パッケージの元である上流ソースパッケージの開発者に
 Debian パッケージ開発者からバグ報告を転送する際は、バグ追跡システム
-に次のような注意をしなければなりません。</P>
+に次のようにして記録しなければなりません。</P>
 
 <P>あなたのメッセージの <code>To</code> フィールドには原作者達の
 アドレスのみが書かれていることを確認すること。そして、
@@ -213,15 +243,10 @@ Debian パッケージ開発者からバグ報告を転送する際は、バグ追跡システム
 <P><A href="server-control"><code>control@bugs.debian.org</code></A> 
 にメッセージを送ることで、`forwarded to' 情報を操作することができます。</P>
 
-<h2><code>debian-bugs-reports</code>に要約を投稿する</h2>
 
-<P>毎週金曜日に未解決バグ報告リストが、報告からの日数順に並べて
-<code>debian-bugs-reports</code> に報告されます。
-毎週火曜日に長期間未回答なままのバグ報告リストが、パッケージメンテナ
-別に並べて報告されます。</P>
+<H2><a name="maintincorrect">パッケージメンテナが間違っている場合</a></H2>
 
-<P><A name="maintincorrect">
-パッケージメンテナが間違っている場合</A>、多くの原因は最近
+<p>パッケージメンテナが間違っている場合、多くの原因は最近
 メンテナが交替されていて、新メンテナが control ファイルの
 <code>Maintainer</code> フィールドを更新した新しいパッケージを
 アップロードしていないためです。これは、パッケージをアップロード
@@ -236,7 +261,7 @@ Debian パッケージ開発者からバグ報告を転送する際は、バグ追跡システム
 
 <P>別のパッケージにバグ報告を再指定(reassign)する事や、
 誤ってクローズしてしまったバグを再オープン(reopen)する事、
-バグ報告が転送されている送付先に伝える情報を修正する事、
+バグ報告が転送されている送付先について述べている情報を修正する事、
 バグ報告の severity (重要度)やタイトルを変更する事、
 バグ報告のマージ(merge)・マージ解除(unmerge)をする事ができます。
 これらの操作は、<code>control@bugs.debian.org</code> にメールを
