@@ -118,6 +118,9 @@
 <define-tag experimental whitespace=delete>
   <gettext domain="bugs">experimental</gettext>
 </define-tag>
+<define-tag confirmed whitespace=delete>
+  <gettext domain="bugs">confirmed</gettext>
+</define-tag>
 <define-tag d-i whitespace=delete>
   <gettext domain="bugs">d-i</gettext>
 </define-tag>
@@ -151,6 +154,7 @@
   <input type="checkbox" name="include" value="sarge"><sarge>
   <input type="checkbox" name="include" value="sid"><sid>
   <input type="checkbox" name="include" value="experimental"><experimental>
+  <input type="checkbox" name="include" value="confirmed"><confirmed>
   <input type="checkbox" name="include" value="d-i"><d-i>
   <input type="checkbox" name="include" value="fixed"><fixed>
   <input type="checkbox" name="include" value="help"><help>
@@ -169,6 +173,7 @@
   <input type="checkbox" name="exclude" value="sarge"><sarge>
   <input type="checkbox" name="exclude" value="sid"><sid>
   <input type="checkbox" name="exclude" value="experimental"><experimental>
+  <input type="checkbox" name="exclude" value="confirmed"><confirmed>
   <input type="checkbox" name="exclude" value="d-i"><d-i>
   <input type="checkbox" name="exclude" value="fixed"><fixed>
   <input type="checkbox" name="exclude" value="help"><help>
