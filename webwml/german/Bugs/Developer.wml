@@ -1,8 +1,8 @@
 #use wml::debian::template title="Debian BTS - Entwicklerinformationen" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.23"
+#use wml::debian::translation-check translation="1.30"
 # $Id$
 
-<H1><A name="developers">Informationen für Entwickler, die das Fehlerverwaltungssystem betreffen</A></H1>
+<h1>Informationen für Entwickler, die das Fehlerverwaltungssystem betreffen</h1>
 
 <P>Zunächst wird ein Fehlerbericht von einem Benutzer als eine
 normale E-Mail-Nachricht an <CODE>submit@bugs.debian.org</CODE> 
@@ -18,20 +18,51 @@ dann erhält auch der Betreuer eine Kopie des Fehlerberichts.</P>
 wird so geändert, daß es beide, den Absender des Fehlerberichts und
 <VAR>nnn</VAR><CODE>@bugs.debian.org</CODE> enthält.</P>
 
+<hrline>
 
-<H2>Fehler für behoben erklären</H2>
+<ul>
+  <li><a href="#closing">Fehler schliessen</a></li>
+  <li><a href="#followup">Followup Nachrichten</a></li>
+  <li><a href="#severities">Dringlichkeitsstufen</a></li>
+  <li><a href="#tags">Tags für Fehlerberichte</a></li>
+  <li><a href="#forward">Aufzeichnen, dass Sie den Fehlerbericht
+    weitergeleitet haben</a></li>
+  <li><a href="#maintincorrect">Falsch angezeigte Paketbetreuer</a></li>
+  <li><a href="#requestserv">Wiederöffnung, Neuzuweisung und Manipulation von
+    Fehlerberichten</a></li>
+  <li><a href="#subjectscan">Das mehr oder weniger veraltete subject-scanning
+    Feature</a></li>
+  <li><a href="#x-debian-pr">Veraltetes <code>X-Debian-PR: quiet</code>
+    Feature</a></li>
+</ul>
 
-<P>Ein Entwickler, der einen Fehler aus der Fehlerdatenbank erhält oder
-einen in der Liste <CODE>debian-bugs-dist</CODE> sieht und sich dafür 
-verantwortlich fühlt, sollte den Fehlerbericht beantworten und dabei 
-das <CODE>To</CODE>-Feld von <VAR>nnn</VAR><CODE>@bugs</CODE> auf
+<hrline>
+
+
+<h2><a name="closing">Fehlerberichte schliessen</a></h2>
+
+<p>Fehlerberichte von Debian sollten geschlossen werden, wenn das Problem
+behoben ist. Probleme in Paketen können nur für behoben erachtet werden, wenn
+das Paket, das die Fehlerbehebung beinhaltet, das Debian-Archiv erreicht.</p>
+
+<p>Üblicherweise sind die einzigen Personen, die einen Fehlerbericht
+schliessen dürfen, der Einreicher des Fehlerberichts und der/die Betreuer des
+Paketes, gegen das der Fehler berichtet wurde. Es gibt Ausnahmen zu dieser
+Regel, zum Beispiel, wenn der Fehler gegen unbekannte Pakete oder gewisse
+generelle Pseudo-Pakete berichtet wurde. Falls Sie Zweifel haben, schliessen
+Sie den Fehler nicht, sondern fragen zuerst auf der debian-devel Mailing-Liste
+um Rat.</p>
+
+<p>Fehlerberichte sollten geschlossen werden, indem man eine E-Mail an
+<var>nnn</var><code>-done@bugs.debian.org</code> schickt. Der Inhalt der Mail
+muss die Erklärung enthalten, wie der Fehler behoben wurde.</p>
+
+<p>Mit den E-Mails die Sie von der Fehlerdatenbank erhalten ist alles, was Sie
+zum Schliessen des Berichts tun müssen, darauf eine Antwort zu schreiben und
+das <code>To</code> Feld auf
 <VAR>nnn</VAR><CODE>-done@bugs.debian.org</CODE> ändern
 (statt <VAR>nnn</VAR><CODE>-done</CODE> kann man auch
 <VAR>nnn</VAR><CODE>-close</CODE> verwenden).</P>
-
-<P>Die Adresse des ursprünglichen Absenders des Fehlerberichts
-wird in das voreingestellte <CODE>To</CODE>-Feld eingefügt, weil das
-Fehlerverwaltungssystem sie in das <CODE>Reply-To</CODE> eingefügt hat.</P>
 
 <P>'Done'-Nachrichten werden nur automatisch an die Mailing-Liste
 <CODE>debian-bugs-closed</CODE> weitergeleitet. Wenn es naheliegend
@@ -45,14 +76,20 @@ einzufügen.</P>
 verfaßt hat, bekommen beide eine Benachrichtigung über die Änderungen am 
 Status des Berichts.</P>
 
-<H2>Followup Nachrichten</H2>
 
-<P>Wenn ein Entwickler an ein Fehlerbericht antworten möchte, dann kann er
-einfach an die Nachricht selbst antworten (das kennzeichnet den Fehler
-allerdings <b>nicht</b> als behoben). Seine Antwort geht dann an
-<VAR>nnn</VAR><CODE>@bugs</CODE> (vorausgesetzt, er beachtet den
-Reply-To:-Header) und an den ursprünglichen Verfasser des Fehlerberichts
-(Achtung, das sind zwei unterschiedliche Adressen). Die Fehlerdatenbank
+<h2><a name="followup">Followup Nachrichten</a></h2>
+
+<p>Die Fehlerdatenbank wird die Einsender-Adresse und die Fehler-Adresse
+(<var>nnn</var><code>@bugs</code>) in der <code>Reply-To</code> Kopfzeile
+inkludieren, nach dem Weiterleiten des Fehlerberichts. Bitte beachten Sie,
+dass das zwei unterschiedliche Adressen sind.</p>
+
+<p>Wenn ein Entwickler auf einen Fehlerbericht antworten möchte, sollten Sie
+einfach auf die Nachricht antworten und die <code>Reply-To</code> Kopfzeile
+respektieren. Das wird den Fehlerbericht <strong>nicht</strong>
+schliessen.</p>
+
+<p>Die Fehlerdatenbank
 bekommt den Bericht über <VAR>nnn</VAR><CODE>@bugs</CODE>, stellt ihn
 dem Paketbetreuer zu, speichert die Antwort sowie den Rest des
 Fehlerprotokolls und leitet sie an  <CODE>debian-bugs-dist</CODE>
@@ -60,8 +97,8 @@ weiter.</P>
 
 
 <P>Ein Entwickler kann dem Absender des Fehlerberichts explizit mailen
-indem er eine Nachricht an <VAR>nnn</VAR><CODE>-submitter@bugs</CODE> 
-schickt.</P
+indem er eine Nachricht an <var>nnn</var><code>-submitter@bugs</code>
+schickt.</p>
 
 
 <P>Wenn Sie eine Followup-Nachricht schicken möchten, die nicht in
@@ -94,47 +131,56 @@ Kommandos mit dem <A href="#requestserv">control request server</A>
 geändert werden kann.</P>
 
 
-<P>Die Dringlichkeitstufen:
+<p>Die Dringlichkeitstufen:</p>
 
-<DL>
-<DT><CODE>critical</CODE>
-<DD>beschädigt Software im System, die in keinem Bezug zum fehlerhaften 
+<dl>
+<dt><code>critical</code></dt>
+<dd>beschädigt Software im System, die in keinem Bezug zum fehlerhaften 
 Paket steht (oder sogar das ganze System), bzw. verursacht einen
 ernsthaften Datenverlust, bzw. öffnet eine neue Sicherheitslücke auf dem
-System, auf dem Sie das Paket installieren.
+System, auf dem Sie das Paket installieren.</dd>
 
-<DT><CODE>grave</CODE>
-<DD>macht das betreffende Packet (fast) unbrauchbar, bzw. verursacht
+<dt><code>grave</code></dt>
+<dd>macht das betreffende Packet (fast) unbrauchbar, bzw. verursacht
 einen Datenverlust, bzw. öffnet eine Sicherheitslücke, die es erlaubt, auf
 die Benutzeraccounts derjenigen Benutzer zuzugreifen, die das Paket
-verwenden. 
+verwenden.</dd>
 
-<DT><CODE>serious</CODE>
-<DD>ist eine ernsthafte Verletzung der Debian-Politik (d.h., es verletzt
+<dt><code>serious</code></dt>
+<dd>ist eine ernsthafte Verletzung der Debian-Politik (d.h., es verletzt
 eine "muß"-oder eine "erfordert"-Klausel), bzw macht das Paket, der
-Meinung des Betreuers nach, ungeignet für eine Veröffentlichung.
+Meinung des Betreuers nach, ungeignet für eine Veröffentlichung.</dd>
 
-<DT><CODE>important</CODE>
-<DD>ein Fehler, der wesentliche Auswirkungen auf die Benutzbarkeit des
-Pakets hat, ohne es völlig unbrauchbar für jedermann zu machen.
+<dt><code>important</code></dt>
+<dd>ein Fehler, der wesentliche Auswirkungen auf die Benutzbarkeit des
+Pakets hat, ohne es völlig unbrauchbar für jedermann zu machen.</dd>
 
-<DT><CODE>normal</CODE>
-<DD>Standartwert, anwendbar auf die meisten Fehler.
+<dt><code>normal</code></dt>
+<dd>standartwert, anwendbar auf die meisten fehler.</dd>
  
-<DT><CODE>minor</CODE>
-<DD>ein Problem, das die Nützlichkeit des Pakets nicht beinflußt, und das
-vermutlich sehr leicht zu beheben ist.
+<dt><code>minor</code></dt>
+<dd>ein Problem, das die Nützlichkeit des Pakets nicht beinflußt, und das
+vermutlich sehr leicht zu beheben ist.</dd>
 
-<DT><CODE>wishlist</CODE>
-<DD>für beliebige Feature-Requests, aber auch für beliebige Fehler, die
-aufgrund wesentlicher konzeptueller Erwägungen sehr schwer zu beheben sind.
+<dt><code>wishlist</code></dt>
+<dd>für beliebige Feature-Requests, aber auch für beliebige Fehler, die
+aufgrund wesentlicher konzeptueller Erwägungen sehr schwer zu beheben
+sind.</dd>
 
-<DT><CODE>fixed</CODE>
-<DD>für Fehler, die zwar bereits behoben, jedoch nicht für geschlossen
+<dt><code>fixed</code></dt>
+<dd>für Fehler, die zwar bereits behoben, jedoch nicht für geschlossen
 erklärt wurden. Das ist eine Ausnahme für die Fehler, die von
 Nicht-Betreuern behoben und hochgeladen wurden. Bemerkung: es sollte
-stattdessen der <strong>tag</strong> "fixed" verwendet werden. 
-</DL>
+stattdessen der <strong>tag</strong> "fixed" verwendet werden.</dd>
+</dl>
+
+<p>Bestimmte Dringlichkeitsstufen werden als
+<em><a href="http://bugs.debian.org/release-critical/">\
+release-critical</a></em> erachtet, was bedeutet dass der Fehler einen
+Einfluss auf die Veröffentlichung des Paketes mit dem stabilen Release von
+Debian hat. Im Augenblick sind das <strong>critical</strong>,
+<strong>grave</strong> und <strong>serious</strong>.</p>
+
 
 <H2><a name="tags">Tags für Fehlerberichte</a></H2>
 
@@ -148,89 +194,89 @@ Pseudo-Header beim Abschicken des Fehlerberichts
 oder durch das Benutzen des <CODE>severity</CODE> Kommandos mit dem 
 <A href="#requestserv">control request server</A> gesetzt werden.</P>
 
-<P>Die zur Zeit verfügbaren Fehler-Tags:
+<p>Die zur Zeit verfügbaren Fehler-Tags:</p>
 
-<DL>
-
-<DT><CODE>patch</CODE>
-  <DD>Ein Patch oder eine andere leichte Prozedur, die den Fehler behebt,
+<dl>
+<dt><code>patch</code></dt>
+  <dd>Ein Patch oder eine andere leichte Prozedur, die den Fehler behebt,
   ist im Fehlerprotokoll enthalten. Wenn es einen Patch gibt, der jedoch
   den Fehler nicht hinreichend behebt, oder irgendwelche andere Probleme
-  verursacht, dann sollte dieser Tag nicht verwendet werden.
+  verursacht, dann sollte dieser Tag nicht verwendet werden.</dd>
   
-<DT><CODE>wontfix</CODE>
-  <DD>Dieser Fehler wird nicht behoben. Möglicherweise weil es eine Wahl
+<dt><code>wontfix</code></dt>
+  <dd>Dieser Fehler wird nicht behoben. Möglicherweise weil es eine Wahl
   gibt zwischen zwei beliebigen Arten Dinge zu erledigen und der
   Paketbetreuer und der Absender des Fehlerberichts es vorziehen, Dinge
   auf ihre eigene Weise zu regeln, möglicherweise auch, weil die Änderung
   des Verhaltens andere, schlimmere Probleme nach sich ziehen würde
-  oder, aber auch wegen anderen Problemen.
+  oder, aber auch wegen anderen Problemen.</dd>
 
-<DT><CODE>moreinfo</CODE>
-  <DD>Dieser Fehler kann nicht bearbeitet werden, bevor der Absender des
+<dt><code>moreinfo</code></dt>
+  <dd>Dieser Fehler kann nicht bearbeitet werden, bevor der Absender des
   Fehlerberichts mehr Informationen zur Verfügung stellt. Der Fehler
   wird für geschlossen erklärt, falls der Absender keine weiteren
   Informationen innerhalb eines angemessenen Zeitraumes (ein Paar
   Monate) liefert. Das ist für Fehler der Art "Das geht nicht". Was geht
-  nicht?
+  nicht?</dd>
   
-<DT><CODE>unreproducible</CODE>
-  <DD>Dieser Fehler kann nicht auf dem System des Paketbetreuers
+<dt><code>unreproducible</code></dt>
+  <dd>Dieser Fehler kann nicht auf dem System des Paketbetreuers
   reproduziert werden. In diesem Fall wird die Hilfe einer Drittpartei
-  in der Diagnose der Ursachen des Problems benötigt.
+  in der Diagnose der Ursachen des Problems benötigt.</dd>
 
-<dt><code>help</code>
-  <dd>Der Paketbetreuer ersucht um Hilfe beim Beheben des Fehlers.
+<dt><code>help</code></dt>
+  <dd>Der Paketbetreuer ersucht um Hilfe beim Beheben des Fehlers.</dd>
 
-<dt><code>pending</code>
+<dt><code>pending</code></dt>
   <dd>Das im Fehlerbericht beschriebene Problem wird aktuell bearbeitet,
-  d.h. eine Lösung steht an.
+  d.h. eine Lösung steht an.</dd>
   
-<DT><CODE>fixed</CODE>
-  <DD>Dieser Fehler wurde behoben oder es existiert ein Workaround (der
+<dt><code>fixed</code></dt>
+  <dd>Dieser Fehler wurde behoben oder es existiert ein Workaround (der
   von einem Nicht-Betreuer eingereicht wurde), es gibt jedoch immer noch
   ein Randproblem das beseitigt werden soll. Dieser Tag ersetzt die alte
-  "fixed" Dringlichkeitsstufe.
+  "fixed" Dringlichkeitsstufe.</dd>
   
-<DT><CODE>security</CODE>
-  <DD>Dieser Fehler beschreibt ein Sicherheitsproblem in einem Paket
+<dt><code>security</code></dt>
+  <dd>Dieser Fehler beschreibt ein Sicherheitsproblem in einem Paket
   (z.B. falsch gesetzte Rechte, die Zugriff auf Daten erlauben, auf die
   nicht zugegriffen werden sollte; Pufferüberlauf, der es den Leuten
   erlaubt, das System so zu kontrollieren wie sie es eigentlich nicht
   dürften; Denial Of Service Angriffe, die behoben werden sollten, etc) 
   Die meisten sicherheitsrelevanten Fehler sollten außerdem auch auf 
-  die "critical"- oder "grave"-Dringlichkeitsstufe gesetzt werden. 
+  die "critical"- oder "grave"-Dringlichkeitsstufe gesetzt werden.</dd>
 
-<dt><code>upstream</code>
+<dt><code>upstream</code></dt>
   <dd>Dieser Fehler bezieht sich auf den Code-Teil des ursprünglichen
-  Autors.
+  Autors.</dd>
 
-<DT><CODE>potato</CODE>
-  <DD>Dieser Fehler gilt insbesondere für den potato-Release des
-  Debian-Systems.
+<dt><code>potato</code></dt>
+  <dd>Dieser Fehler gilt insbesondere für den potato-Release des
+  Debian-Systems.</dd>
 
-<DT><CODE>woody</CODE>
-  <DD>Dieser Fehler gilt insbesondere für die (unveröffentlichte) 
-  woody-Distribution.
+<dt><code>woody</code></dt>
+  <dd>Dieser Fehler gilt insbesondere für die (unveröffentlichte) 
+  woody-Distribution.</dd>
 
-<DT><CODE>sid</CODE>
-  <DD>Dieser Fehler gilt für eine Architektur, die zur Zeit noch nicht
-  freigegeben worden ist (d.h., für die sid-Distribution).
-
-</DL>
+<dt><code>sid</code></dt>
+  <dd>Dieser Fehler gilt für eine Architektur, die zur Zeit noch nicht
+  freigegeben worden ist (d.h., für die sid-Distribution).</dd>
+</dl>
 
 # Bitte bei Zeiten entflechten...  -Joey
 <P>Die letzten drei Tags sind dazu bestimmt in
 veröffentlichungskritischen Fehlern benutzt zu werden, bei denen es
 wichtig ist zu wissen, welche Distributionen betroffen sind, um sicher zu
 gehen, daß Fehlerbehebungen (oder das Entfernen des betroffenen Pakets
-aus der Distribution) an der richtigen Stelle erfolgen.
+aus der Distribution) an der richtigen Stelle erfolgen.</p>
 
-<H2><A name="forward">Die Aufnahme des Fehlerberichts</A></H2>
+
+<h2><a name="forward">Aufzeichnen, dass Sie den Fehlerbericht weitergeleitet
+  haben</a></h2>
 
 <P>Wenn ein Entwickler einen Fehlerbericht an den Entwickler des
 Upstream Quellpakets, von dem das Debian Paket abstammt, weiterleitet,
-dann sollte er das in der Fehlerdatenbank wie folgt vermerken: 
+dann sollte er das in der Fehlerdatenbank wie folgt vermerken:</p>
 
 <P>Stellen Sie sicher, daß das <CODE>To</CODE>-Feld Ihrer Nachricht zum
 Autor nur die Adresse(n) des Autors enthält; fügen Sie beide, die Person
@@ -253,16 +299,9 @@ die die Datenbank bekommt.</P>
 Sie eine Nachricht an <A href="server-control">
 <CODE>control@bugs.debian.org</CODE></A> abschicken.</P>
 
-<H2>Zusammenfassende Postings an <CODE>debian-bugs-reports</CODE></H2>
+<h2><a name="maintincorrect">Falsch angezeigte Paketbetreuer</a></h2>
 
-<P>Jeden Freitag wird eine Liste der ausstehenden Fehler an
-<CODE>debian-bugs-reports</CODE> geschickt, sortiert nach dem Alter der
-Berichte. Jeden Dienstag wird eine Liste der Fehler, die bereits zu lange
-auf eine Antwort warten, veröffentlicht, sortiert nach den Namen der
-Paketbetreuer.</P>
-
-<P><A name="maintincorrect">\
-Wenn ein Paketbetreuer falsch angezeigt wird</A> dann liegt es meistens
+<p>Wenn ein Paketbetreuer falsch angezeigt wird, dann liegt es meistens
 daran, daß sich der Paketbetreuer vor kurzem geändert hat und der neue
 Betreuer es versäumt hat, eine neue Version des Pakets mit einem
 abgeänderten <CODE>Maintainer</CODE>-Feld in der Kontrolldatei
@@ -274,7 +313,8 @@ mit <CODE>override-change@debian.org</CODE> in Verbindung, um
 Änderungen an der override-Datei zu veranlassen.</P>
 
 
-<H2><A name="requestserv">Wiedereröffnung, Neuzuweisung und Manipulation der Fehler</A></H2>
+<h2><a name="requestserv">Wiederöffnung, Neuzuweisung und Manipulation von
+  Fehlerberichten</a></h2>
 
 <P>Es ist möglich, Fehlerberichte anderen Paketen zuzuweisen,
 fälschlicherweise für geschlossen erklärte Fehler neu zu eröffnen, die
@@ -288,9 +328,11 @@ auseinanderzuziehen. Das können Sie machen, indem Sie eine Nachricht an
 anderen Dokument, das entweder im WWW oder in der Datei
 <CODE>bug-maint-mailcontrol.txt</CODE> verfügbar ist, beschrieben. Eine
 Volltext-Version kann auch durch das mailen des Wortes
-<CODE>help</CODE> an den obengenannten Server erhalten werden.
+<code>help</code> an den obengenannten Server erhalten werden.</p>
 
-<H2>Das mehr oder weniger veraltete subject-scanning Feature</H2> 
+
+<h2><a name="subjectscan">Das mehr oder weniger veraltete subject-scanning
+  Feature</a></h2> 
 
 <P>Nachrichten, die beim <CODE>submit</CODE> oder bei <CODE>bugs</CODE>
 ankommen und deren Betreffzeile mit <CODE>Bug#</CODE><VAR>nnn</VAR>
@@ -306,14 +348,16 @@ E-Mailprogramms).</P>
 <CODE>maintonly</CODE>, <CODE>done</CODE>, <CODE>quiet</CODE> und
 <CODE>forwarded</CODE>, die ankommende E-Mails mit einem Subject-Tag so
 behandeln als wären sie zu der entsprechenden
-<VAR>nnn-wasauchimmer</VAR><CODE>@bugs</CODE>-Adresse geschickt worden.
+<var>nnn-wasauchimmer</var><code>@bugs</code>-Adresse geschickt worden.</p>
 
 <P>Nachrichten, die nur mit <CODE>forwarded</CODE> und <CODE>done</CODE>
 - das heißt ohne der Nummer des Fehlerberichts in der Adresse und ohne
 Fehlernummer in der Betreffzeile - verschickt werden, werden unter 'junk' einsortiert und
 für ein Paar Wochen gespeichert, ansonsten jedoch ignoriert.</P>
 
-<H2>Veraltetes <CODE>X-Debian-PR: quiet</CODE> Feature</H2>
+
+<h2><a name="x-debian-pr">Veraltetes <code>X-Debian-PR: quiet</code>
+  Feature</a></h2>
 
 <P>Früher war es möglich, die Fehlerdatenbank davon abzuhalten, die
 Nachrichten, die es an die <CODE>debian-bugs</CODE> Adresse bekam,
@@ -325,7 +369,7 @@ Nachricht an <CODE>quiet</CODE> oder <VAR>nnn</VAR><CODE>-quiet</CODE>
 (oder <CODE>maintonly</CODE> bzw. <VAR>nnn</VAR><CODE>-maintonly</CODE>)
 schicken.</P>
 
-<HR>
+<hr />
 
 #use "otherpages.inc"
 
