@@ -15,8 +15,11 @@ sub check_directory() {
 	my ($curdir) = @_;
 	my (@dir_list, @fil_list, @parts, $lang, $html, $name);
 
+	print "$curdir\n";
 	opendir(DIR, $curdir) or die "can't opendir $curdir: $!";
-	@dir_list = grep { -d "$curdir/$_" and $_ !~ /^..?$/ } readdir(DIR);
+	@dir_list = grep { -d "$curdir/$_" and $_ !~ /^..?$/ and ! -l "$curdir/$_" and
+			$_ ne "gnome" and $_ ne "OpenHardware" and $_ ne "OpenSource" and
+			$_ ne "berlin"} readdir(DIR);
 	rewinddir DIR;
 	@fil_list = grep { -f "$curdir/$_" } readdir(DIR);
 	foreach (@dir_list) {
@@ -30,7 +33,7 @@ sub check_directory() {
 		if (defined($html) and $lang =~ /^en$/ and $html eq "html") {
 			if ( ! -e "$curdir/$name.html") {
 				symlink("$file", "$curdir/$name.html");
-				print "  creating symlink to $file\n";
+				print "  creating symlink to $curdir/$file\n";
 			}
 		}
 	}
