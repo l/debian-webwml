@@ -166,7 +166,7 @@ sub update_db_CVS {
 			# This check should be made by revision number
 
 				if (!$translations->{$k}->{'status'}) {
-					$translations->{$k}->{'status'} = 8 ;
+					$translations->{$k}->{'status'} = 1 ;
 					$translations->{$k}->{'type'} = 'Web';
 					print STDERR "(update_db_CVS) Status not known for $k (setting it to default)\n" if $debug;
 				}
@@ -176,7 +176,7 @@ sub update_db_CVS {
 				check_file($k, "${to_path}$f", $from_d->{$f});
 			} else {
 				$translations->{$k}->{'type'} = 'Web';
-				$translations->{$k}->{'status'} = 1;
+				$translations->{$k}->{'status'} = 8;
 				$translations->{$k}->{'revision'} = $from_d->{$f};
 				print STDERR "(update_db_CVS) Warning : $k is not in the database\n" if $debug;
 			}
@@ -281,6 +281,11 @@ foreach $k (sort keys %$translations) {
 	$t = $translations->{$k} ;
 
 	print STDERR "(dump_html) Dumping $k, $t\n" if $debug;
+	if ($debug) {
+		foreach my $l (sort keys %$t) {
+			print STDERR "\t$l -> $t->{$l}\n";
+		}
+	}
 
 	next if ($t->{'status'} ne $status and $status != -1);
 	next if ($type ne "" and uc $t->{'type'} ne uc $type);
