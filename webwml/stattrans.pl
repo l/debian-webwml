@@ -31,7 +31,7 @@ $| = 1;
 
 $opt_h = "/org/www.debian.org/www/devel/website/stats";
 $opt_w = "/org/www.debian.org/webwml";
-$opt_p = "*.wml";
+$opt_p = "*.(wml|src)";
 $opt_t = "Debian web site translation statistics";
 $opt_v = 0;
 $opt_d = "u";
@@ -113,10 +113,9 @@ sub getwmlfiles
     foreach my $f (@listfiles) {
 	$file = substr ($f, $cutfrom);
 	next if $transignore->is_global($file);
-	$file =~ s/\.wml$//;
 	$files{$file} = 1;
 	$wmlfiles{$lang} .= " " . $file;
-	my $transcheck = Webwml::TransCheck->new("$dir/$file.wml");
+	my $transcheck = Webwml::TransCheck->new("$dir/$file");
 	if ($transcheck->revision()) {
 	    $transversion{"$lang/$file"} = $transcheck->revision();
 	    $original{"$lang/$file"} ||= $transcheck->original();
@@ -275,34 +274,40 @@ foreach $lang (@search_in) {
 		$msg = check_translation ($transversion{"$lang/$file"}, $version{"$orig/$file"}, "$lang/$file");
 		if (length ($msg)) {
 			$o_body .= "<tr>";
-			if ($file eq "devel/wnpp/wnpp") {
-				$o_body .= sprintf "<td>%s</td>", $file;
+			if (($file !~ /\.wml$/) 
+			    || ($file eq "devel/wnpp/wnpp.wml")) {
+			    $o_body .= sprintf "<td>%s</td>", $file;
 			} else {
-				$o_body .= sprintf "<td><a href=\"/%s.%s.html\">%s</a></td>", $file, $l, $file;
+			    (my $base = $file) =~ s/\.wml$//;
+			    $o_body .= sprintf "<td><a href=\"/%s.%s.html\">%s</a></td>", $base, $l, $base;
 			}
 			$o_body .= sprintf "<td>%s</td>", $transversion{"$lang/$file"};
 			$o_body .= sprintf "<td>%s</td>", $version{"$orig/$file"};
 			$o_body .= sprintf "<td>%s</td>", $msg;
-			$o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/$orig/%s.wml.diff\?r1=%s\&amp;r2=%s\&amp;cvsroot=webwml\&amp;diff_format=%s\">%s -> %s</a></td>", $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $config{'difftype'}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
-			$o_body .= sprintf "<td><a href=\"http://cvs.debian.org/webwml/$orig/%s.wml?cvsroot=webwml#rev%s\">[L]</a></td>", $file, $version{"$orig/$file"};
+			$o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/$orig/%s.diff\?r1=%s\&amp;r2=%s\&amp;cvsroot=webwml\&amp;diff_format=%s\">%s -> %s</a></td>", $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $config{'difftype'}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+			$o_body .= sprintf "<td><a href=\"http://cvs.debian.org/webwml/$orig/%s?cvsroot=webwml#rev%s\">[L]</a></td>", $file, $version{"$orig/$file"};
 			$o_body .= sprintf "<td align=center>%s</td>", $maintainer{"$lang/$file"} || "";
 			$o_body .= "</tr>\n";
     			$outdated{$lang}++;
 		# Up-to-date translations
 		} else {
-			if ($file eq "devel/wnpp/wnpp") {
-				$t_body .= sprintf "%s<br>\n", $file;
+			if (($file !~ /\.wml$/) 
+			    || ($file eq "devel/wnpp/wnpp.wml")) {
+			    $t_body .= sprintf "%s<br>\n", $file;
 			} else {
-		    		$t_body .= sprintf "<a href=\"/%s.%s.html\">%s</a><br>\n", $file, $l, $file;
+			    (my $base = $file) =~ s/\.wml$//;
+			    $t_body .= sprintf "<a href=\"/%s.%s.html\">%s</a><br>\n", $base, $l, $base;
 			}
 		}
 	}
 	# Untranslated pages
 	else {
-		if ($file eq "devel/wnpp/wnpp") {
-			$u_body .= sprintf "%s<br>\n", $file;
+		if (($file !~ /\.wml$/)
+		    || ($file eq "devel/wnpp/wnpp.wml")) {
+		    $u_body .= sprintf "%s<br>\n", $file;
 		} else {
-		    	$u_body .= sprintf "<a href=\"/%s\">%s</a><br>\n", $file, $file;
+		    (my $base = $file) =~ s/\.wml$//;
+		    $u_body .= sprintf "<a href=\"/%s\">%s</a><br>\n", $base, $base;
 		}
     		$untranslated{$lang}++;
 	}
