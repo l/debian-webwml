@@ -300,7 +300,7 @@
         }
     }
 
-    function show_by_country($offer) {
+    function show_by_country($db, $offer) {
         global $iso;
         $sql = "SELECT country, begin, finish, city, forename, surname, email FROM places, people WHERE ";
         if ($offer) {
