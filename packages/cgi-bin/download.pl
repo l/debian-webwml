@@ -12,7 +12,7 @@ use strict;
 use CGI;
 
 my ($input,   # The CGI data
-    $file, $filen, $md5sum, @file_components, $type);
+    $file, $filen, $md5sum, @file_components, $type, $arch);
 
 # TODO: find a way to get the U.S. mirror list from a more authoritive
 # location automatically. might not be overly smart to automatize it
@@ -38,6 +38,7 @@ my @north_american_sites = (
 	"debian.teleglobe.net",
 	"debian.rutgers.edu",
 	"debian.oregonstate.edu/debian",
+	"mirrors.terrabox.com/debian",
 	);
 my @european_sites = (
 	"ftp.de.debian.org/debian",
@@ -123,6 +124,22 @@ my @nonus_south_american_sites = (
 	"ftp.cl.debian.org/debian-non-US",
 	);
 
+# list of architectures
+my %arches = (
+        i386    => 'Intel x86',
+        m68k    => 'Motorola 680x0',
+        sparc   => 'SPARC',
+        alpha   => 'Alpha',
+        powerpc => 'PowerPC',
+        arm     => 'ARM',
+        hppa    => 'HP PA-RISC',
+        ia64    => 'Intel IA-64',
+        mips    => 'MIPS',
+        mipsel  => 'MIPS (DEC)',
+        s390    => 'IBM S/390',
+);
+
+
 #if (exists $ENV{'HTTP_REFERER'}) {
 #	$urlbase= $ENV{'HTTP_REFERER'};
 #}
@@ -166,6 +183,13 @@ unless (defined $md5sum) {
 $type = $input->param('type');
 unless (defined $type) {
   print "<p>Internal error: Required parameter \"type\" is missing.\n";
+  print "<p>If the problem persists, please inform $ENV{SERVER_ADMIN}.\n";
+  exit;
+}
+
+$arch = $input->param('arch');
+unless (defined $arch) {
+  print "<p>Internal error: Required parameter \"arch\" is missing.\n";
   print "<p>If the problem persists, please inform $ENV{SERVER_ADMIN}.\n";
   exit;
 }
@@ -218,7 +242,7 @@ print <<END;
 </tr>
 </table>
 
-<h2>Download Page for <kbd>$filen</kbd> on Intel x86 machines</h2>
+<h2>Download Page for <kbd>$filen</kbd> on $arches{$arch} machines</h2>
 
 <p>You can download the requested file from the <tt>
 END
