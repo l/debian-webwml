@@ -113,6 +113,39 @@ sub process_package {
 	}
 }
 
+# function contributed by Tomohiro Kubota
+sub from_utf8_or_iso88591_to_sgml ($) {
+    my $str = shift;
+    my $strsave = $str;
+    if ($str !~ /[\x80-\xff]/) {
+	# return ASCII string for less machine-time consumption.
+	return $str;
+    }
+    $str =~ s/([\xf0-\xf7])([\x80-\xbf])([\x80-\xbf])([\x80-\xbf])/
+	"&#" .
+	((ord($1)&0x7)* 0x40000 +
+	(ord($2)&0x3f)* 0x1000 +
+	(ord($3)&0x3f)* 0x40 +
+	(ord($4)&0x3f)) . ";"/eg;
+    $str =~ s/([\xe0-\xef])([\x80-\xbf])([\x80-\xbf])/
+	"&#" .
+	((ord($1)&0xf)* 0x1000 +
+	(ord($2)&0x3f)* 0x40 +
+	(ord($3)&0x3f)) . ";"/eg;
+    $str =~ s/([\xc0-\xdf])([\x80-\xbf])/
+	"&#" .
+	((ord($1)&0x1f)* 0x40 +
+	(ord($2)&0x3f)) . ";"/eg;
+    if ($str !~ /[\x80-\xff]/) {
+	# $str is UTF-8 compliant, assume UTF-8.
+	return $str;
+    } else {
+	# $str is not UTF-8 compliant, assume ISO-8859-1.
+	$strsave =~ s/([\x80-\xff])/"&#".ord($1).";"/eg;
+	return $strsave;
+    }
+}
+
 sub canonical_names {
 	PACK: foreach $pack (keys %package) {
 		$maintainer = $package{$pack}{maintainer};
@@ -128,6 +161,7 @@ sub canonical_names {
 				next PACK;
 			}
 		}
+		$maintainer = from_utf8_or_iso88591_to_sgml($maintainer);
 # Take care of the annoying cases and exceptions and overrides and stuff
 		if ($maintainer =~ /Debian Quality Assurance.*<(.+)>/) {
 			$lastname = 'Debian QA Group'; $firstname = ''; $email = $1;
@@ -171,23 +205,11 @@ sub canonical_names {
 		elsif ($maintainer =~ /Thomas Bushnell, BSG <(.+)>/) {
 			$lastname = 'Bushnell' ; $firstname = 'Thomas' ; $email = $1;
 		}
-		elsif ($maintainer =~ /Javier Viñuales Gutiérrez <(.+)>/) {
-			$lastname = 'Viñuales Gutiérrez' ; $firstname = 'Javier' ; $email = $1;
-		}
 		elsif ($maintainer =~ /Viral <(.+)>/) {
 			$lastname = 'Shah' ; $firstname = 'Viral' ; $email = $1;
 		}
-		elsif ($maintainer =~ /David Martínez Moreno <(.+)>/) {
-			$lastname = 'Martínez' ; $firstname = 'David' ; $email = $1;
-		}
-		elsif ($maintainer =~ /Eduardo Trápani <(.+)>/) {
-			$lastname = 'Trapani' ; $firstname = 'Eduardo' ; $email = $1;
-		}
 		elsif ($maintainer =~ /Masamichi Goudge M.D. <(.+)>/) {
 			$lastname = 'Goudge' ; $firstname = 'Masamichi' ; $email = $1;
-		}
-		elsif ($maintainer =~ /Jochen Röhrig <(.+)>/) {
-			$lastname = 'Röhrig' ; $firstname = 'Jochen' ; $email = $1;
 		}
 		elsif ($maintainer =~ /Pedro Zorzenon Neto <(.+)>/) {
 			$lastname = 'Zorzenon Neto' ; $firstname = 'Pedro' ; $email = $1;
@@ -201,26 +223,8 @@ sub canonical_names {
 		elsif ($maintainer =~ /Amaya Rodrigo Sastre <(.+)>/) {
 			$lastname = 'Rodrigo Sastre' ; $firstname = 'Amaya' ; $email = $1;
 		}
-		elsif ($maintainer =~ /Felix Kröger <(.+)>/) {
-			$lastname = 'Kröger' ; $firstname = 'Felix' ; $email = $1;
-		}
-		elsif ($maintainer =~ /Vanicat Rémi <(.+)>/) {
-			$lastname = 'Vanicat' ; $firstname = 'Rémi' ; $email = $1;
-		}
-		elsif ($maintainer =~ /Martin Sjögren <(.+)>/) {
-			$lastname = 'Sjögren' ; $firstname = 'Martin' ; $email = $1;
-		}
-		elsif ($maintainer =~ /Esteban Manchado Velázquez <(.+)>/) {
-			$lastname = 'Manchado Velázquez' ; $firstname = 'Esteban' ; $email = $1;
-		}
 		elsif ($maintainer =~ /Jose Carlos Garcia Sogo <(.+)>/) {
 			$lastname = 'Garcia Sogo' ; $firstname = 'Jose Carlos'; $email = $1;
-		}
-		elsif ($maintainer =~ /Martin Würtele <(.+)>/) {
-			$lastname = 'Würtele' ; $firstname = 'Martin'; $email = $1;
-		}
-		elsif ($maintainer =~ /Dagfinn Ilmari Mannsåker <(.+)>/) {
-			$lastname = 'Ilmari Manns&aring;ker' ; $firstname = 'Dagfinn'; $email = $1;
 		}
 		elsif ($maintainer =~ /Luca - De Whiskey's - De Vitis <(.+)>/) {
 			$lastname = 'De Vitis' ; $firstname = 'Luca'; $email = $1;
@@ -297,9 +301,6 @@ sub canonical_names {
 		elsif ($maintainer =~ /Manuel Estrada Sainz <(.+)>/) {
 			$lastname = 'Estrada Sainz'; $firstname = 'Manuel'; $email = $1;
 		}
-		elsif ($maintainer =~ /Manuel Estrada Sainz <(.+)>/) {
-			$lastname = 'Estrada Sainz'; $firstname = 'Manuel'; $email = $1;
-		}
 		elsif ($maintainer =~ /NOSHIRO Shigeo <(.+)>/) {
 			$lastname = 'Noshiro'; $firstname = 'Shigeo'; $email = $1;
 		}
@@ -335,7 +336,7 @@ sub canonical_names {
 # The following should handle almost everyone
 #
 # the latest insane regexp courtesy of Matt Kraai
-		elsif ($maintainer =~ /"?(.+?)\s+(([vV][ao]n )?(da |der? |Di |Le |Dal )?[\w~'-]+),?\s*([IV]*|Jr\.?)"?(\s+\(.*\))?\s+<(.+)>\s*/o) {
+		elsif ($maintainer =~ /"?(.+?)\s+(([vV][ao]n )?(da |der? |Di |Le |Dal )?[\w~'&;#-]+),?\s*([IV]*|Jr\.?)"?(\s+\(.*\))?\s+<(.+)>\s*/o) {
 			($firstname,$lastname,$email) = ($1,$2,$7);
 		}
 		# elsif ($maintainer =~ /"?([\w~'-]+?)\s+(.*?)\s*(([vV]an |Di |de |Le )?[\w~'-]+),?\s*[IV]*"?\s+<(.+)>\s*/o) {
