@@ -40,7 +40,7 @@ $from = 'english';
 $to = 'spanish'; # And this would be better used in the command line
 $from_abr = 'en';
 $to_abr = 'es' ;
-$CVSWEB = 'http://www.debian.org/cgi-bin/cvsweb/webwml/webwml' ; 
+$CVSWEB = 'http://cvs.debian.org/webwml' ; 
 $DDPWEB = 'http://www.debian.org/~elphick/manuals.html' ;
 # The place were translation documents are kept while working on them
 $TRANSWEB = 'http://www.debian.org/international/spanish/translations';
@@ -102,19 +102,19 @@ $types = {
 	'url'			=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
 					"http://www.debian.org/$k.en.html" },
 	'cvs_url'		=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
-					"$CVSWEB/$from/$k.wml" },
+					"$CVSWEB/$from/$k.wml?cvsroot=webwml" },
 	'source_url'		=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
-					"$CVSWEB/$from/$k.wml?rev=$t->{'revision'}" },
+					"$CVSWEB/$from/$k.wml?rev=$t->{'revision'}&cvsroot=webwml" },
 	'translation_name'	=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
 					"$k.$to_abr.html" },
 	'translation_url'	=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
 					"http://www.debian.org/$k.$to_abr.html" },
 	'translation_cvs_url'	=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
-					"$CVSWEB/$to/$k.wml" },
+					"$CVSWEB/$to/$k.wml?cvsroot=webwml" },
 	'translation_source_url'=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
-					"$CVSWEB/$to/$k.wml?rev=$t->{'translation_revision'}" },
+					"$CVSWEB/$to/$k.wml?rev=$t->{'translation_revision'}&cvsroot=webwml" },
 	'diff'			=> sub {my($t, $k, $f)=@_; return (!$t->{$f} || !$t->{'translation_revision'}) ? undef :
-					"$CVSWEB/$from/$k.wml$t->{$f}" },
+					"$CVSWEB/$from/$k.wml$t->{$f}?cvsroot=webwml" },
 },
 
 'DDP' => {
@@ -220,7 +220,7 @@ sub check_file {
 	}
 	close(F);
 	$translations->{$k}->{'status'} = 5;
-	$translations->{$k}->{'diff'} = "?r1=$oldr&r2=$revision";
+	$translations->{$k}->{'diff'} = "?r1=$oldr&r2=$revision&cvsroot=webwml";
 }
 
 
