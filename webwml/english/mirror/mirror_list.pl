@@ -287,8 +287,8 @@ END
   }
   foreach $country (sort keys %countries) {
     foreach $site (sort @{ $countries{$country} }) {
-      if ($site =~ /^ftp\d?\...\.debian.org$/ || $site =~ /^(ftp|http\.us)\.debian\.org$/) {
-        ($countryplain = $country) =~ s/^.. //;
+      if ($site =~ /^ftp\d?\...\.debian.org$/ || $site =~ /^http\.us\.debian\.org$/) {
+        (my $countryplain = $country) =~ s/^.. //;
 	if ($html) {
 	  $countryplain =~ s/ /&nbsp;/;
 	  print <<END;
