@@ -134,7 +134,7 @@ if (!$dosearch) {
 
     # ICQ 
     if ($data->{icquin}->[0]) {
-      $icquin = sprintf("<a href=\"http://wwp.icq.com/?icqnumber=%s\">%s</a>", $data->{icquin}->[0], $data->{icquin}->[0]);
+      $icquin = sprintf("<a href=\"http://wwp.icq.com/%s\">%s</a>", $data->{icquin}->[0], $data->{icquin}->[0]);
     }
     
     # Format PGP/GPG key fingerprints
