@@ -66,18 +66,15 @@ sub _init {
 
 =item read_compact
 
-Read a template containing all translations.  When optional second
-parameter is non-zero, a warning is displayed if translated fields are
-found; this is useful to check for master templates file.
+Read a template containing all translations.
 
-   $tmpl->read_compact($file, 1);
+   $tmpl->read_compact($file);
 
 =cut
 
 sub read_compact {
         my $self = shift;
         my $file = shift;
-        my $master = shift || 0;
         my ($lang, $msg);
 
         $self->_init();
@@ -86,17 +83,18 @@ sub read_compact {
 
         my $tmpl = '';
         my $line = 0;
+        my $once = 1;
         while (<TMPL>) {
                 chomp;
                 $line ++;
-                if ($master && m/^[A-Z][a-z]*-[A-Za-z_]+(-fuzzy)?:/) {
-                        warn "$file:$line: translated-fields-in-master-templates\n";
-                        #   Display this message only once
-                        $master = 0;
-                        goto SKIP;
-                }
                 if (m/^[A-Z][a-z]*-[A-Za-z_]+-fuzzy:/) {
                         warn "$file:$line: fuzzy-fields-in-templates\n";
+                        goto SKIP;
+                }
+                if ($once && m/^[A-Z][a-z]*-[A-Za-z_]+:/) {
+                        warn "$file:$line: translated-fields-in-master-templates\n";
+                        #   Display this message only once
+                        $once = 0;
                         goto SKIP;
                 }
                 if (s/^Template:\s*//) {
