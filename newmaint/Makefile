@@ -45,5 +45,5 @@ $(DEBTEMPLATEDIR)/debian/countries.def: $(DEBTEMPLATEDIR)/debian/countries.wml
 	cd $(DEBTEMPLATEDIR)/debian && sed -e /^#/d countries.wml | eperl -B '<:' -E ':>' - >/dev/null
 
 $(DEBTEMPLATEDIR)/debian/language_names.def: $(DEBTEMPLATEDIR)/debian/language_names.wml
-	cd $(DEBTEMPLATEDIR)/debian && sed -e '/^#/d' -e '/^<perl>/,/^<\/perl>/!d' language_names.wml  | eperl -B '<perl>' -E '</perl>' - >/dev/null
+	cd $(DEBTEMPLATEDIR)/debian && sed -e '/^#/d' -e '/^<:/,/^:>/!d' language_names.wml  | eperl -B '<:' -E ':>' - >/dev/null
 
