@@ -232,18 +232,20 @@ END
 
 for (my $i = 0; $i < $results_per_page; $i++) {
   if (defined($line{$i})) {
-    # fixing up some of the directory oddities
-    $line{$i} =~ s,non-US/main,non-US,;
-    $line{$i} =~ s,non-US/contrib,non-US,;
-    $line{$i} =~ s,non-US/non-free,non-US,;
-    $line{$i} =~ s,non-free/(.+)$,$1,;
-    $line{$i} =~ s,contrib/(.+)$,$1,;
+      # fixing up some of the directory oddities
+      $line{$i} =~ s,non-US/main,non-US,go;
     # make an HTML anchor to the file for the package
     my $list = '';
-    if ($line{$i} =~ /(\S*)\s*$/) {
+    if ($line{$i} =~ /(\S*)\s*$/o) {
       foreach my $p (split (/,/,$1)) {
-	$list .= "," if ($list);
-	$list .= sprintf ('<a href="http://packages.debian.org/%s/%s">%s</a>', $version, $p, $p);
+	  my $part = "";
+	  $part = "contrib" if $p =~ s,non-US/contrib,non-US,go;
+	  $part = "non-free" if $p =~ s,non-US/non-free,non-US,go;
+	  $part = "non-free" if $p =~ s,non-free/(.+)$,$1,g;
+	  $part = "contrib" if $p =~ s,contrib/(.+)$,$1,g;
+	  $list .= "," if ($list);
+	  $list .= "<a href=\"http://packages.debian.org/$version/$p\">$p</a>";
+	  $list .= " [<span style=\"color:red\">$part</span>]" if $part;
       }
       $line{$i} =~ s,(\S*\s*)$,$list,;
     }
