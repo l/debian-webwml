@@ -26,25 +26,25 @@
   }
   return $tuples;
 }
-  function email_advocate($advocate, $aemail, $key) {
+  function email_advocate($advocate, $aemail, $forename, $surname, $key) {
     $body = "Auth-Key: $key\n";
-    $body .= "Applicant: $aemail\n";
-    $body .= "Comment why you advocated this person (note, this comment might be\n";
-    $body .= "cited on a public mailing list):\n";
+    $body .= "Applicant: $forename $surname <$aemail>\n\n";
+    $body .= "Comment why you advocated this person, 5-10 lines (note: this comment might\n";
+    $body .= "be cited on a public mailing list):\n";
     $body .= "\n";
     $body .= "\n";
     $body .= "This is an automated message from the Debian New Maintainer website.\n\n";
-    $body .= "Someone (possibly you) nominated Debian login $advocate as an advocate\n";
-    $body .= "for $aemail application to be a Debian developer from IP address\n";
-    $body .= getenv(REMOTE_ADDR) . ". If you want to complete the advocacy process,\n";
-    $body .= "reply to this email, answer the question above and GPG sign it. Please\n";
-    $body .= "also make sure to include the Auth-Key (listed above) in your GPG signed\n";
-    $body .= "reply.\n\n";
+    $body .= "Someone (possibly you) from the IP address " .  getenv(REMOTE_ADDR) . "\n";
+    $body .= "nominated the Debian maintainer with the login \"$advocate\" as an advocate\n";
+    $body .= "for $forename $surname's application.\n\n";
+    $body .= "If you want to complete the advocacy process reply to this email, answer\n";
+    $body .= "the question above and GPG sign it. Please also make sure to include the\n";
+    $body .= "Auth-Key (listed above) in your GPG signed reply.\n\n";
     $body .= "If you do not want to advocate this application or do not know what it\n";
     $body .= "means, just ignore this email.\n\n";
 
     $headers = "From: recommend@nm.debian.org\nReply-To: recommend@nm.debian.org\nX-Mailer: PHP/" . phpversion();
-    mail("$advocate@debian.org", "Advocate key for $aemail", $body, $headers);
+    mail("$advocate@debian.org", "Advocate key for $forename $surname <$aemail>", $body, $headers);
     return TRUE;
   }
 
@@ -85,7 +85,7 @@ Debian login: <INPUT name="advocate" type="text" size="16"> @debian.org
     $sql = "UPDATE applicant SET advocate='$advocate', advocate_key = '$authid', advocate_date = 'now'::date WHERE email = '$email'";
     if (update_db($db, $sql)) {
       #send the email
-      email_advocate($advocate, $email, $authid);
+      email_advocate($advocate, $email, $row["forename"], $row["surname"], $authid);
 ?>
 <P>An email has been sent to your address, <? echo $advocate; ?>@debian.org.
 You have to GPG sign this email and reply to it to complete the advocacy step.
