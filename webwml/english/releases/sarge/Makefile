@@ -13,3 +13,6 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/release.wml \
 
 releasenotes.$(LANGUAGE).html: releasenotes.wml $(TEMPLDIR)/release.wml \
   $(ENGLISHDIR)/releases/sarge/release.data $(ENGLISHDIR)/releases/info
+
+installmanual.$(LANGUAGE).html: installmanual.wml $(TEMPLDIR)/release.wml \
+  $(ENGLISHDIR)/releases/sarge/release.data $(ENGLISHDIR)/releases/info
