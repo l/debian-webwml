@@ -79,5 +79,36 @@
       echo $falseflag;
     }
   }
+
+  # Those two functions are currently needed in the gpg signing coordination part
+  # I took the liberty to add them here as they might be useful for other parts of
+  # the page too.
+  function passwd_crypt($passwd)
+  {
+      static $initialized = 0;
+      
+      if (! $initialized ) {
+      	srand((double)microtime()*1000000);
+        $initialized=1;
+      };
+      $salt = '$1$';
+      $itoa64="./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+      # FIXME: What kind of characters are allowed in salts? Is there a better way
+      #        to create one?
+      #        And no, php's crypt() funktion does not work without salt. At least
+      #        it didn't for me.
+	
+      $random=rand(); $salt .= substr($itoa64,$random % 64,1).substr($itoa64,($random/64) % 64,1);
+      $random=rand(); $salt .= substr($itoa64,$random % 64,1).substr($itoa64,($random/64) % 64,1);
+      $random=rand(); $salt .= substr($itoa64,$random % 64,1).substr($itoa64,($random/64) % 64,1);
+      $random=rand(); $salt .= substr($itoa64,$random % 64,1).substr($itoa64,($random/64) % 64,1);
+      return crypt($passwd, $salt);
+  }
+  function passwd_verify($stored_passwd, $guess)
+  {
+      $salt = substr($stored_passwd, 0, 12);
+      $crypted_passwd = crypt($guess, $salt);
+      return ($stored_passwd == $crypted_passwd);
+  }
 ?>
 
