@@ -9,7 +9,7 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 books.$(LANGUAGE).html: books.wml $(ENGLISHSRCDIR)/distrib/books.def \
-  $(TEMPLDIR)/countries.wml
+  $(TEMPLDIR)/countries.wml $(TEMPLDIR)/language_names.wml
 ftplist.$(LANGUAGE).html: ftplist.wml $(ENGLISHSRCDIR)/distrib/ftplist.data \
   $(TEMPLDIR)/countries.wml
 packages.$(LANGUAGE).html: packages.wml $(ENGLISHSRCDIR)/releases/info
