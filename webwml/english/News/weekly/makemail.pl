@@ -2,7 +2,9 @@
 # Generates debian weekly news in text format, suitable for mailing to
 # debian-news, of the current issue that is on the web site. Or, if you
 # pass an url as the first parameter, will use the issue there instead.
-my $url=shift || 'http://debian.org/News/weekly/current/issue/';
+my $current_issue=`cat CURRENT-ISSUE-IS`;
+chomp $current_issue;
+my $url=shift || "http://www.debian.org/News/weekly/$current_issue/";
 
 my $divider=("-" x 75). "\n";
 
@@ -37,7 +39,7 @@ while (<IN>) {
 		s/^\s*//;
 		print $divider,
 		      "Debian Weekly News\n",
-		      "http://www.debian.org/News/weekly/current/issue/\n",
+		      "$url\n",
 		      $_,
 		      $divider;
 
