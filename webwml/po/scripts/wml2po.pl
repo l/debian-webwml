@@ -60,7 +60,8 @@ foreach (@ARGV) {
 }
 
 print "msgid \"\"\nmsgstr \"\"\n".
-        "\"Content-Type: text/plain; charset=CHARSET\"\n\n";
+        "\"Content-Type: text/plain; charset=CHARSET\\n\"\n".
+        "\"Content-Transfer-Encoding: 8bit\\n\"\n\n";
 
 foreach my $msgid (@msgids) {
         next unless $messages->{$msgid};
