@@ -53,14 +53,6 @@ RSYNC_DIR=debian/
 
 EXCLUDE=
 
-# Other options, you might want to add additional options to rsync
-# to suit your system. Common options might include bwlimit 
-# (but see Debian bug #181336)
-# Sample: 
-# OTHEROPTS="--bwlimit=23 --safe-links"
-#
-OTHEROPTS=
-
 # There should be no need to edit anything below this point, unless there
 # are problems.
 
@@ -91,12 +83,11 @@ trap "rm -f $LOCK > /dev/null 2>&1" exit
 set +e
 rsync --recursive --links --hard-links --times --verbose --compress --delete \
      --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
-     --exclude "project/trace/*" \
+     --exclude "project/trace/${HOSTNAME}" \
      $EXCLUDE \
-     $OTHEROPTS \
-     $RSYNC_HOST::$RSYNC_DIR $TO > ${TO}/project/trace/rsync.log 2>&1
+     $RSYNC_HOST::$RSYNC_DIR $TO > rsync.log 2>&1
 date -u > "${TO}/project/trace/${HOSTNAME}"
 
 # Note: if you don't have savelog, use any other log rotation facility, or
 # comment this out, the log will simply be overwritten each time.
-savelog ${TO}/project/trace/rsync.log > /dev/null 2>&1
+savelog rsync.log > /dev/null 2>&1
