@@ -1,0 +1,102 @@
+#use wml::debian::template title="Eksempler"
+#use wml::debian::translation-check translation="1.3"
+
+<h3>Eksempler på hvordan en oversættelse påbegyndes</h3>
+
+<p>Vi anvender fransk i dette eksempel:</p>
+
+<pre>
+   cvs checkout webwml/Makefile.common webwml/english
+   cd webwml
+   mkdir french
+   cvs add french
+   cd french
+   cp ../english/.wmlrc ../english/Make.* ../english/Makefile .
+   cvs add Make* .wmlrc
+</pre>
+
+<p>Redigér filen <tt>.wmlrc</tt> og ændr:</p>
+<ul>
+  <li>'-D CUR_LANG=English' til '-D CUR_LANG=French'
+  <li>'-D CUR_ISO_LANG=en' til '-D CUR_ISO_LANG=fr'
+  <li>'CHARSET=iso-8859-1' til hvad der er passende
+</ul>
+
+<p>Redigér Make.lang og ændr 'LANGUAGE := en' til 'LANGUAGE := fr'.
+Hvis du oversætter til et sprog som anvender multibyte-tegnopsætning er du 
+måske nødt til at ændre nogle andre variabler i filen, Læs ../Makefile.common 
+for flere oplysninger og kig evt. også på fungerende eksempler (oversættelser 
+som for eksempel den til kinesisk).
+
+<p>Redigér english/template/debian/*.wml og føj oversættelser til alle 
+forekomster af &lt;define-tag ...&gt;. Det skulle være til at finde ud af.</p>
+
+<p>Forvis dig altid om at du få kopieret filen Makefile til alle kataloger som
+du oversætter. Dette er nødvendigt fordi programmet <code>make</code> anvendes
+til at konvertere .wml-filerne til HTML, og <code>make</code> anvender 
+makefiler.</p>
+
+<p>Når du er færdig med at tilføje og redigere sider, udfør
+<pre>
+   cvs commit
+</pre>
+i webwml-kataloget. Du kan nu begynde at oversætte siderne.
+
+<h3>Eksempler på oversættelser af sider</h3>
+
+<p>Vi vil bruge en fransk oversættelse af den sociale kontrakt som eksempel:</p>
+
+<pre>
+   cd webwml/french
+   cp ../english/social_contract.wml .
+   cvs add social_contract.wml
+</pre>
+
+<p>Redigér social_contract.wml og oversæt teksten. Prøv ikke at oversætte links
+eller at ændre dem på nogen måde - hvis du ønsker at ændre noget, så sprøg 
+først på listen debian-www. Når du er færdig, udfør
+
+<pre>
+   cvs commit -m "en kort beskrivelse af dine ændringer" social_contract.wml
+</pre>
+
+<h3>Eksempel på tilføjelse af et nyt katalog</h3>
+
+<p>Dette eksempel viser en tilføjelse af kataloget intro/ til den franske 
+oversættelse:</p>
+
+<pre>
+   cd webwml/french
+   mkdir intro
+   cvs add intro
+   cd intro
+   cp ../english/intro/Makefile .
+</pre>
+
+Forvis dig om at det nye katalog indeholder makefilen og at den er overført 
+til CVS ("commited"). Ellers vil alle som kører make få en fejl.
+
+<pre>
+   cvs add Makefile
+   cd ..
+   cvs commit -m "added the intro dir to CVS" intro
+</pre>
+
+#example not finished
+# <h3>Eksempel på en konflikt</h3>
+#
+# <p>Dette eksempel viser en commit som ikke fungerer fordi kopien i arkivet
+# er blevet ændret siden din sidste kørsel af <kbd>cvs update -d</kbd>.
+#
+# <pre>
+#    cvs commit -m"fixed a broken link" foo.wml
+# </pre>
+#
+# giver:
+#
+# <pre>
+# cvs: Up-to-date check failed for foo.wml!
+# cvs: fix the above errors first
+# </pre>
+#
+# eller noget i den retning :)
