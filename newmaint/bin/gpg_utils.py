@@ -56,7 +56,7 @@ def get_owner(db, place):
 
 def get_places(db, email):
     q = db.query("SELECT places.id FROM places, people WHERE people.id = places.who AND people.email = '%s'" % email)
-    return map(lambda x: x[0], q.getresult())
+    return [x[0] for x in q.getresult()]
 
 def get_name(db, email):
     if name_cache.has_key(email):
