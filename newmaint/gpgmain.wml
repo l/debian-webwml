@@ -1,0 +1,34 @@
+<?
+  session_start();
+  include("gpgconfig.inc");
+  include("common.inc");
+  include("gpgcommon.inc");
+
+?>
+#use wml::gpgpage title="GPG Signing Coordination - Your profile"
+<?
+  if (!session_is_registered("s_username")) {
+?>
+<STRONG>
+You should not be here!</STRONG>
+<? } else {
+  session_register("s_username");
+?>
+
+<?
+    if (($db = open_db())) {
+        $sql = "SELECT id, forename, surname FROM people WHERE email = '$s_username'";
+        if (! ($query = pg_exec($db, $sql))) {
+            echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+            return FALSE;
+        }
+
+        if (pg_NumRows($result) != 1) {
+            echo "That e-mail address is wicked.";
+            return FALSE;
+        }
+
+        print_all_places($row["id"], TRUE);
+    }
+?>
+
