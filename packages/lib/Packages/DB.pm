@@ -640,7 +640,13 @@ sub calculate_depends {
 	print "\r$num/$max_num" if $self->{config}->{verbose};
 	foreach my $v ( values %{$pkg->{versions}} ) {
 	    foreach my $a ( values %$v ) {
-		 $a->{depends} .= ", $a->{'pre-depends'}" if exists $a->{"pre-depends"};
+		if (exists $a->{"pre-depends"}) {
+		    if ($a->{depends}) {
+			$a->{depends} .= ", $a->{'pre-depends'}";
+		    } else {
+			$a->{depends} = $a->{'pre-depends'};
+		    }
+		}
 		foreach ( qw( depends pre-depends recommends 
 			      suggests conflicts enhances 
 			      provides ) ) {
