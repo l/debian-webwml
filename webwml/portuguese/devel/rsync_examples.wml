@@ -1,0 +1,52 @@
+#use wml::debian::template title="Example rsync usage, and how to set up passwordless ssh" NOHEADER=yes
+
+<H3>Example rsync usage</H3>
+
+<P>The following is an example which will mirror both the web and FTP site.
+You will have to modify the machine name and the directories involved to
+match your situation.
+
+<P>The lockfile is useful if you run this using a cron job. If, for any reason,
+the mirror doesn't complete, the next time the mirror tries to run you will get
+mail. You can then track down where the problem lies, fix it, delete the lockfile and
+the mirror will work properly the next time it is run.
+
+<blockquote>
+<pre>
+\#!/bin/sh -e
+
+lockfile -r 1 rsync.master.lock || exit 23
+
+rsync -avz -e ssh --exclude sponsor.* --delete &lt;machine&gt;:/web/debian.org/ debian.org
+
+echo Finished updating web mirror. Working on FTP mirror now...
+
+rsync -avz --delete -e ssh &lt;machine&gt;:/debian debian
+
+rm -f rsync.master.lock
+</pre>
+</blockquote>
+
+<p>The script given above will prompt you for a password unless you set up
+ssh as described below.
+
+<H3><a name="paswordlessssh">How to set up ssh so you aren't asked for a
+password</a>:</H3>
+
+<p>You can create a RSA authentication key to be able to log into a remote
+site from your account, without having to type your password.
+
+<p>Note that once you've set this up, if an intruder breaks into your
+account/site, they are given free access to the site you are mirroring, too!
+For this reason, this should <strong>never</strong> be done from root.
+
+<ul>
+  <li>Run <code>ssh-keygen</code> on your machine, and just hit enter when
+      asked for a password.
+  <li>Next, add the contents of <code>~/.ssh/identity.pub</code> from your
+      machine to <code>~/.ssh/authorized_keys</code> on the mirror site (the
+      file should be mode 600).
+</ul>
+
+<p>You should then be able to use ssh to log in to the remote mirror site
+without being asked for a password.
