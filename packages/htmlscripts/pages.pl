@@ -595,7 +595,7 @@ sub src_package_pages_walker {
 	}
 	
 	$package_page .= "<tr><td><a href=\"$src_url\">$src_file_name</a></td>\n"
-	    ."<td align=\"right\">$src_file_size</td>\n"
+	    ."<td align=\"right\">".(floor(($src_file_size/102.4)+0.5)/10)."</td>\n"
 	    ."<td>$src_file_md5</td></tr>";
     }
     $package_page .= "</table>\n";
