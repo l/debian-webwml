@@ -1,0 +1,48 @@
+#use wml::debian::template title="rsync の使用例"
+<!--original_revision: 1.3 :-->
+
+<P>以下はウェブおよび FTP 両サイトをミラーする方法の一例です。
+ご自分の状況に合わせてマシン名とディレクトリの箇所は修正してください。
+
+<P>こちらを cron から実行する場合には lockfile を利用するとよいでしょう。
+もし何らかの理由でミラーが完全に行なわれなかった場合、
+次回ミラーが実行される際にその旨メールで通知されます。
+この場合には、問題がどこにあるのかを調べてそちらを修正し、
+lockfile を消去すれば、次回には適切にミラーが行なわれるでしょう。
+
+<blockquote>
+<pre>
+#!/bin/bash
+set -e
+
+lockfile -r 1 rsync.master.lock || exit 23
+
+rsync -avz -e ssh --exclude .glbuild --delete &lt;machine&gt;:/web/debian.org/ debian.org
+rsync -avz -e ssh --delete &lt;machine&gt;:/web/debian.org-local/ debian.org-local
+
+echo FINISHED UPDATING WEB. WORKING ON FTP NOW.
+
+rsync -avz --delete -e ssh &lt;machine&gt;:/debian debian
+
+rm -f rsync.master.lock
+</pre>
+</blockquote>
+
+<H3>パスワードを尋ねられないように ssh を設定するには</H3>
+
+ssh をある方法で設定しない限り、
+上記のスクリプトではパスワードの入力を求められます。
+
+まず初めに、ssh-keygen を利用している場合は、
+パスワードを尋ねられたら単にリターンキーを押してください [1]。
+次に、~/.ssh/identity.pub の内容をミラーサイト上の 
+~/.ssh/authorized_keys に追加してください。
+(~/.ssh/authorized_keys のモードは 600 にしてください。)
+こうしておけば、パスワードを尋ねられることなく、
+ssh を利用してミラーサイトにログインすることができるはずです。
+
+<P>
+[1] パスワードを入力せずに ssh を設定した場合に
+ご自分のサイトに侵入されると、
+その侵入者はミラーするサイトへのアクセスもできてしまいます。
+そのため、こちらは絶対にルートアカウントでは実行しないでください。
