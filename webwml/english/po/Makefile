@@ -18,7 +18,7 @@ doc_FILES       = $(ENGLISHDIR)/doc/books.def $(ENGLISHDIR)/doc/manuals.defs
 l10n_FILES      = $(ENGLISHDIR)/international/l10n/dtc.def \
   $(ENGLISHDIR)/international/l10n/menu.def
 langs_FILES     = $(TEMPLDIR)/language_names.wml
-organization_FILES = $(ENGLISHDIR)/intro/organization.tags
+organization_FILES = $(ENGLISHDIR)/intro/organization.data
 ports_FILES     = $(ENGLISHDIR)/ports/menu.defs \
   $(ENGLISHDIR)/ports/mips/cpu.data \
   $(wildcard $(ENGLISHDIR)/ports/*/menu.inc) \
