@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian-Webseiten übersetzen" BARETITLE=true
-#use wml::debian::translation-check translation="1.34"
+#use wml::debian::translation-check translation="1.35"
 # $Id$
 
 <p>Um die Arbeit für die Übersetzer so einfach wie möglich zu machen, werden
@@ -13,27 +13,65 @@ wollen, lesen Sie bitte den <a href="#completenew">Abschnitt über das Beginnen
 einer neuen Übersetzung</a>.</p>
 
 
-<h2>Einzelne Seiten übersetzen</h2>
+<h2><a name="singelpages">Einzelne Seiten übersetzen</a></h2>
 
-<p>Bitte übersetzen Sie nicht die HTML-Seite. Wir verwenden WML-Quelldateien
-und der Inhalt und allgemeine Elemente sind getrennt gespeichert. Wenn Sie bei
-einer bestimmten Übersetzung helfen wollen, <a href="using_cvs">verwenden Sie
+<p>Wir verwenden WML, um den speziellen Inhalt einer Seite von gemeinsamen
+Elementen für meherere Seiten zu trennen. Dies bedeutet, dass man bestimmte
+WML-Quellcode-Dateien anstelle von HTML-Dateien ändern muss.
+Bitte <a href="using_cvs">Verwenden Sie
 CVS</a>, um sich die aktuellen Quelldateien zu besorgen. Sie müssen zumindest
 zwei Verzeichnisse auschecken: <tt>english/</tt> und
-<tt>&lt;sprache&gt;/</tt>.</p>
+<tt><var>&lt;sprache&gt;</var>/</tt>.</p>
 
-<p>Um eine einzelne Seite von Englisch in ihre Sprache zu übersetzen, kopieren
-Sie die original .wml-Datei von <tt>english/foo/bar</tt> nach
-<tt>&lt;sprache&gt;/foo/bar</tt>. Fügen Sie <kbd>#use
-wml::debian::translation-check translation="x.y"</kbd> nach der letzen #use
-Anweisung hinzu (lesen Sie <a href="uptodate">über translation-check</a>).
-Sie können auch das <tt>copypage.pl</tt> Skript im webwml root-Verzeichnis
-verwenden, um die Seite zu kopieren und die benötigte Kopfzeile automatisch
-hinzuzufügen. Nachdem dies geschehen ist, übersetzen Sie die komplette Seite
-und senden Sie sie an <a href="translation_coordinators">jemanden</a> mit
-Schreibberechtigung für das Repository. Es sollte Ihnen möglich sein, die
-Seite zu testen, indem Sie <tt>make datei.&lt;sprache&gt;.html</tt>
-aufrufen.</p>
+<p>Um eine einzelne Seite von Englisch in ihre Sprache zu übersetzen, muss
+die original .wml-Datei übersetzt und im Verzeichnis der anderen Sprache
+deponiert werden. Der relative Pfad und Name muss der gleiche wie im
+englischen Verzeichnis sein, damit die Links weiterhin funktionieren. Es wird
+auch dringend empfohlen, dass der Übersetzer eine zusätzliche Zeile nach der
+letzten #use Anweisung hinzufügt, um die genau Überarbeitung der
+Original-Datei zu notieren, von der übersetzt wurde, damit das
+<a href="uptodate">Aktualisieren einfacher ist</a>. Die Zeile sieht wie folgt
+aus:
+<kbd>#use wml::debian::translation-check translation="<var>x.y</var>"</kbd>
+
+<p>All das kann einfach bewerkstelligt werden, wenn man das
+<tt>copypage.pl</tt> Skript aus dem webwml Wurzelverzeichnis verwendet. Das
+Skript wird die Seite an den richtigen Platz kopieren, Verzeichnisse und
+Makefiles falls notwendig erstellen, und die notwendige Kopfzeile automatisch
+hinzufügen.</p>
+
+<p>Nachdem Sie z.B. <kbd>./copypage.pl <var>datei</var>.wml</kbd> aufgerufen
+haben, übersetzen Sie den ursprünglichen Text in der Datei. Kommentare in
+Dateien zeigen an, ob es Teile gibt, die nicht übersetzt werden sollten;
+respektieren Sie diese. Führen Sie keine unnötigen Änderungen an der
+Formatierung durch; falls etwas behoben werden soll, soll es wahrscheinlich in
+der Original-Datei durchgeführt werden.</p>
+
+<p>Da wir <a href="content_negotiation">Inhalts-Aushandlung</a> verwenden,
+HTML-Dateien sind nicht <tt><var>datei</var>.html</tt> benannt, sondern
+<tt><var>datei</var>.<var>&lt;sprache&gt;</var>.html</tt>, wobei
+<var>&lt;sprache&gt;</var> der zweizeichige Code der Sprache ist, entsprechend
+<a href="http://ftp.ics.uci.edu/pub/ietf/http/related/iso639.txt">ISO 639</a>
+(z.B. <tt>de</tt> für Deutsch).</p>
+
+<p>Sie können aus WML HTML erzeugen, indem Sie
+<kbd>make <var>datei</var>.<var>&lt;sprache&gt;</var>.html</kbd> aufrufen.
+Falls es funktioniert, prüfen Sie, ob die Syntax komplett gültig ist, indem
+Sie <kbd>weblint <var>datei</var>.<var>&lt;sprache&gt;</var>.html</kbd>
+verwenden.</p>
+
+<p>Die Webeiten werden aus dem CVS auf dem www-master Server neu generiert,
+und dieser Prozess ist größtenteils nicht anfällig für Fehler. Falls Sie
+jedoch eine kaputte Datei im Hauptverzeichnis ihrer Übersetzung übergeben
+(z.B. die index.wml Datei im Hauptverzeichnis), wird dies den
+Übersetzungsprozess ruinieren und alle anderen Aktualisierungen für die
+Website zum Stillstand bringen. Seien Sie bitte speziell vorsichtig bei
+diesen Dateien.</p>
+
+<p>Wenn die Seite gut ist, können Sie sie ins CVS übergeben. Falls Sie die
+Berechtigungen haben, dies selbst zu tun, rufen Sie <kbd>cvs commit</kbd> auf;
+falls nicht, schicken Sie sie an <a href="translation_coordinators">jemanden
+mit Schreibberechtigung für das Repository</a>.</p>
 
 
 <h2><a name="completenew">Eine neue Übersetzung beginnen</a></h2>
@@ -130,46 +168,16 @@ Repository übergeben.</p>
 <p>Sie sollten ebenfalls <a href="navbar_images">den Text in den Bildern</a>
 für den roten Navigationsbalken übersetzen.</p>
 
-<p>Kommentare in Dateien weisen darauf hin, ob es Teile gibt, die nicht
-übersetzt werden sollten; beachten Sie diese.</p>
-
 <p>Beachten Sie: Wenn Sie es für notwendig empfinden, weitere Änderungen
 durchzuführen, schicken Sie eine E-Mail an debian-www mit dem Hinweis, was Sie
 warum geändert haben, damit das Problem behoben werden kann.</p>
 
 <p>Nachdem das Vorlagen-Skelett fertig ist, können Sie mit der Übersetzung der
-Hauptseite beginnen.</p>
-
-<p>Sie können Unterverzeichnisse ignorieren, die in der SUBS-Variable eines
-Makefiles stehen, selbst wenn diese nicht in dem übersetzten Verzeichnis
-existiert. Wenn Sie ein Unterverzeichnis übersetzen, vergewissern Sie sich,
-dass es in der SUBS-Variable des Makefiles im übergeordneten Verzeichnis
-erwähnt ist, sonst wird es nicht übersetzt.</p>
-
-<p>Sie können nun damit anfangen, *.wml Dateien zu übersetzen. Für eine Liste
+Hauptseite und den anderen *.wml-Dateien beginnen. Für eine Liste
 der Dateien, die Sie zuerst übersetzen sollten, prüfen Sie
-<a href="translation_hints">die Hinweis-Seite</a>.</p>
-
-<p>Kopieren Sie jede Datei von ../english/, übersetzen Sie, testen Sie sie mit
-<tt>make datei.&lt;sprache&gt;.html</tt> (und <tt>weblint datei.wml</tt>), und
-wenn Sie fertig sind übergeben Sie sie <a href="using_cvs">ins CVS</a>. Bitte
-vergewissern Sie sich, dass sich ihre Übersetzung bauen lasst, denn falls sie
-das nicht tut, kann dies den Bauprozess für die ganze Website
-beeinflussen.</p>
-
-# XXX replace with copypage.pl use
-
-<p>Wenn Sie Dateien kopieren, kopieren Sie keine CVS-Verzeichnisse oder
-Dateien darin aus dem english/ Verzeichnis in ihr eigenes. Wenn Sie das
-unabsichtlich tun und später die Übersetzungen übergeben wollen, wird cvs die
-englischen Dateien mit Ihrer Übersetzung aktualisieren, was viele Leute
-verwirren/ärgern wird.</p>
-
-<p>Da wir <a href="content_negotiation">Inhaltsaushandlungen</a> verwenden,
-werden die HTML-Dateien nicht <tt>datei.html</tt> genannt, sondern
-<tt>datei.&lt;sprache&gt;.html</tt>, wobei <tt>&lt;sprache&gt;</tt> der
-Zwei-Zeichen-Code der Sprache ist, wie er in ISO 639 festgelegt ist (z.B.
-<tt>de</tt> für Deutsch).</p>
+<a href="translation_hints">die Hinweis-Seite</a>. Übersetzen Sie die
+*.wml-Dateien, wie es <a href="#singlepages">am Anfang dieser Seite</a>
+beschrieben ist.</p>
 
 
 <h3>Der Rest der Geschichte</h3>
