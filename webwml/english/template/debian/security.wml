@@ -8,9 +8,65 @@
 #use wml::debian::security_tags
 
 <define-tag vulnerability>
-	<ifeq "<isvulnerable/>" "yes" "<font color="FF0000"><yes/></font>"/>
-	<ifeq "<isvulnerable/>" "no" "<font color="00FF00"><no/></font>"/>
+	<ifeq "<isvulnerable>" "yes" "<FONT COLOR=FF0000><yes></FONT>">
+	<ifeq "<isvulnerable>" "no" "<FONT COLOR=00FF00><no></FONT>">
 </define-tag>
+
+<define-tag nosecref whitespace=delete>
+	[EN:No other external database security references available.:]
+	[ES:No existen otras referencias a bases de datos de seguridad externas.:]
+</define-tag>
+
+<define-tag cert whitespace=delete>
+	[EN:CERT's advisories and incident notes::]
+	[ES:Notas y avisos de incidentes en CERT::]
+</define-tag>
+<define-tag bugtraq whitespace=delete>
+	[EN:In the Bugtraq database (at SecurityFocus)::]
+	[ES:En la base de datos de Bugtraq (en SecurityFocus)::]
+</define-tag>
+<define-tag cve whitespace=delete>
+	[EN:In Mitre's CVE dictionary::]
+	[ES:En el diccionario CVE de Mitre::]
+</define-tag>
+
+<perl>
+sub security_references {
+ 	my $refstr = shift(@_);
+	my $str = "";
+	my $bid = "";
+	my $cve = "";
+	foreach $ref (split(' ',$refstr)) { 
+		if ( $ref =~ /BID(\d+)/i ) {
+		$bid .= ", " if $bid ne "";
+		$bid .= "<a href=\"http://www.securityfocus.com/cgi-bin/vulns-item.pl?id=".$1."\">BID".$1."</A>"; 
+		}
+		if ( $ref =~ /CVE(\d+)/i ) {
+		$cve .= ", " if $cve ne "";
+		$cve .="<a href=\"http://cve.mitre.org/cgi-bin/cvename.cgi?name=".$1."\">CVE".$1."</A>";
+		}
+		if ( $ref =~ /CA-([\d-]+)/i ) {
+		$cert .= ", " if $cve ne "";
+		$cert .="<a href=\"http://www.cert.org/advisories/CA-".$1.".html\">CA-".$1."</A>";
+		}
+
+	}
+	$str .="<bugtraq> $bid"  if $bid ne "";
+	$str .="<cve> $cve"  if $cve ne "";
+	$str .="<cert> $cert"  if $cert ne "";
+
+	$str .= ". " if $str ne "";
+	$str  = "<nosecref>" if $str eq "";
+	return $str;
+}
+</perl>
+<define-tag secdbinfo>
+  [EN:Security Database references:]
+  [ES:Referencias a bases de datos de seguridad:]
+</define-tag>
+<define-tag secreferences>
+  <:= security_references("<secrefs>") :>
+</define-tag secreferences>
 
 <define-tag fileurl whitespace=delete>
 <a href="%0">%0</a><br />
@@ -31,6 +87,8 @@
 	<dd><packages/></dd>
 <dt><vulnerable/>:</dt>
 	<dd><vulnerability/></dd>
+<dt><secdbinfo>:</dt>
+	<dd><secreferences></dd>
 <dt><formoreinfo/>:</dt>
 	<dd><moreinfo/></dd>
 #<ifneq "{#securitybody#}" "" "
