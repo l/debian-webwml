@@ -590,7 +590,7 @@ sub write_all_package {
 	my $experimental_note = gettext( "<p>Warning: The <font color=\"red\">experimental</font> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.</p>\n" );
 
 	foreach ( keys %$sections ) {
-	    my $title = sprintf( gettext ( "Software Packages in &ldquo;%s&rdquo;, %s section" ), 
+	    my $title = sprintf( gettext ( "Software Packages in \"%s\", %s section" ), 
 				 $distro, $_ );
 	    $si{$_} = header( $title, '..', '..', $lang );
 	    if ($distro eq "experimental") {
