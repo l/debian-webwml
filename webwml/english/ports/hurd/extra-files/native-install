@@ -95,6 +95,13 @@ echo The next job is to setup device files.
 cd /dev
 /bin/sh ./MAKEDEV -v std ptyp ptyq
 
+# Make sure that the runsystem stuff will work
+if [ -e /libexec/runsystem.gnu -a -e /libexec/runsystem ] ; then
+  echo Removing /libexec/runsystem again, so the Hurd packages can
+  echo take care about it.
+  rm /libexec/runsystem
+fi
+
 # Debian set up.
 echo
 echo Now I configure Debian packages. I\'ll do this twice, so all
@@ -106,6 +113,14 @@ read x
 
 dpkg --pending --configure --force-depends || true
 dpkg --pending --configure --force-depends || true
+
+echo I just make sure that /libexec/runsystem is properly updated.
+if [ ! -e /libexec/runsystem -a -e /libexec/runsystem.gnu ] ; then
+  echo WHOA! We're in deep trouble. The Hurd package did not update
+  echo the link in /libexec/runsystem. For now, I am making a link
+  echo manually, but please report this.
+  ln -s runsystem.gnu /libexec/runsystem
+fi
 
 echo The last step is to create /etc/fstab.
 
