@@ -146,10 +146,15 @@ sub printrefs {
 		# some numbers (otherwise there are no references)
 		if ( defined($dsaref{$dsa}{'printtext'} ) && $dsaref{$dsa}{'printtext'} =~ /\d/ ) {
 			if ( ! $opt_p ) {
-				print "DSA-$dsa\t$dsaref{$dsa}{'printtext'}\t";
+			#Don't print DSA- for those that have year format (old
+			#type of advisories)
+				print "DSA-" if  $dsa !~ /\d{6,}/ ;
+				print "$dsa\t$dsaref{$dsa}{'printtext'}\t";
 				print  gmctime($dsaref{$dsa}{'date'})."\n" ;
 			} else {
-				print "<tr VALIGN=\"TOP\"><td>DSA-$dsa</td>$dsaref{$dsa}{'printtext'} </tr>\n";
+				print "<tr VALIGN=\"TOP\"><td>";
+				print "DSA-" if  $dsa !~ /\d{6,}/ ;
+				print "$dsa</td>$dsaref{$dsa}{'printtext'} </tr>\n";
 			}
 		}
 	}
