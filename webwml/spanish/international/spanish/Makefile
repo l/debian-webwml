@@ -4,7 +4,7 @@
 
 WMLBASE=../..
 CUR_DIR=international/spanish
-SUBS=
+SUBS=contrib
 
 include $(WMLBASE)/Make.lang
 
