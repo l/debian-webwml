@@ -5,13 +5,19 @@ use Time::Local;
 @moy = ( 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' );
 sub ctime {
-    $WML_SRC_ISOTIME =~ /(..)-(..)-(....) (..):(..):(..)/;
-    local($time) = timelocal($6, $5, $4, $1, $2-1, $3);
-    local($sec, $min, $hour, $mday, $mon, $year,
-	$wday, $yday, $isdst) = localtime($time);
-    local($str) = sprintf("%s, %2d %s 19%s %02d:%02d:%02d %s",
-	$dow[$wday], $mday, $moy[$mon], $year, $hour, $min, $sec,
-        $isdst ? "-0600 (MDT)" : "-0700 (MST)");
-    return $str;
+	my ($time, $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst);
+	# The last modification time of inputfile in ISO dd-mm-yyyy hh:mm:ss format.
+	if (defined $(GEN_TIME)) {
+		$WML_GEN_ISOTIME =~ /(..)-(..)-(....) (..):(..):(..)/;
+		$time = timelocal($6, $5, $4, $1, $2-1, $3);
+	}
+	else {
+		$WML_SRC_ISOTIME =~ /(..)-(..)-(....) (..):(..):(..)/;
+		$time = timelocal($6, $5, $4, $1, $2-1, $3);
+	}
+	($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = gmtime($time);
+	$str = sprintf("%s, %s %2d %02d:%02d:%02d %s 19%s",
+		$dow[$wday], $moy[$mon], $mday, $hour, $min, $sec, "UTC", $year);
+	return $str;
 }
 </perl>
