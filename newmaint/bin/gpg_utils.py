@@ -55,7 +55,7 @@ def get_owner(db, place):
     return q.getresult()[0][0]
 
 def get_places(db, email):
-    q = db.query("SELECT places.id FROM places, people WHERE people.id = places.who AND people.email = '%s'" % email)
+    q = db.query("SELECT places.id FROM places, people WHERE people.id = places.who AND people.email = '%s' ORDER BY country, UPPER(city)" % email)
     return [x[0] for x in q.getresult()]
 
 def get_name(db, email):
