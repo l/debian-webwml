@@ -32,6 +32,8 @@ $types = {
 my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "$k.en.html" },
                 'url'           => sub {
 my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "http://www.debian.org/$k.en.html" },
+                'epoch'         => sub {
+my($t, $k, $f) = @_; return undef if !$t->{$f}; my @tm = localtime($t->{$f}); return spokendate((1900+$tm[5]).'-'.$tm[4].'-'.$tm[3]) },
                 'cvs_url'       => sub {
 my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "$CVSWEB/webwml/$from/$k.wml?cvsroot=webwml" },
                 'source_url'    => sub {
@@ -113,11 +115,12 @@ sub dump_html {
                 next if ($t->{'status'} ne $status and $status != -1);
                 next if ($type ne "" and uc $t->{'type'} ne uc $type);
 
+                if (!$t->{'translation_name'}) {
+                        $t->{'translation_name'} = $t->{'name'} . ' (original)';
+                        $t->{'translation_url'} = $t->{'url'};
+                }
+
                 print "<LI>";
-
-                $t->{'translation_name'} = $t->{'name'} . ' (original)'
-                        if (!$t->{'translation_name'});
-
                 print "<A HREF=\"$t->{'translation_url'}\">" if $t->{'translation_url'};
                 print "<B><I>$t->{'translation_name'}</I> $t->{'translation_sub_name'}</B>";
                 print q{<ct-tag-nourl>} if !$t->{'translation_url'};
@@ -152,7 +155,11 @@ sub dump_html {
                         print "<BR>".q{<ct-tag-originaldoc>}." : <A HREF=\"$t->{'url'}\"> <I>$t->{'name'}</I> $t->{'sub_name'}</A>";
                 }
 
-                print " ( ".q{<ct-tag-revision>}." $t->{'revision'} ) " if ($t->{'revision'});
+                if ($t->{'revision'}) {
+                	print " ( ".q{<ct-tag-revision>}." $t->{'revision'} ";
+			print "-- ".$t->{'epoch'} if $t->{'epoch'};
+                	print " ) ";
+                }
                 print " ( ".q{<ct-tag-included>}." <A HREF=\"http://packages.debian.org/$t->{'package'}\">$t->{'package'}</A> ) " if ($t->{'package'});
                 print " ( <A HREF=\"$t->{'source_url'}\">".q{<ct-tag-Source>}."</A> ) " if ($t->{'source_url'} && $t->{'source_url'} ne '?'); # Why this? && uc $type ne "DDP");
                 print " ( <A HREF=\"$t->{'cvs_url'}\">".q{<ct-tag-CVSpage>}."</A> ) " if ($t->{'cvs_url'} && $t->{'cvs_url'} ne '?'); # Why this?  && uc $type ne "DDP");
