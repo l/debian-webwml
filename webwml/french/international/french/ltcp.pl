@@ -105,6 +105,7 @@ $types = {
 
 },
 
+#					"$TRANSWEB/$k.fr.html/" },
 'DDP' => {
 	'url'			=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
 					"$DDPWEB/$k/" },
@@ -113,11 +114,11 @@ $types = {
 	'source_url'		=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
 					"$CVSWEB/ddp/manuals.sgml/$k/$k.sgml?cvsroot=debian-doc" },
 	'translation_url'	=> sub {my($t, $k, $f)=@_; return ($t->{$f} || $t->{'status'} == 0 || $t->{'status'} == 1 || $t->{'status'} == 2 || $t->{'status'} == 8) ? $t->{$f} :
-					"$TRANSWEB/$k.fr.html/" },
+					"#" },
 	'translation_source_name'=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
 					"$k.fr.sgml" },
 	'translation_source_url'=> sub {my($t, $k, $f)=@_; return ($t->{$f} || $t->{'status'} == 0 || $t->{'status'} == 1 || $t->{'status'} == 2 || $t->{'status'} == 8) ? $t->{$f} :
-					"$TRANSWEB/$k.fr.sgml" },
+					"$CVSWEB/ddp/manuals.sgml/$k/$k.fr.sgml?cvsroot=debian-doc" },
 },
 
 };
