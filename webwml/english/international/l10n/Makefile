@@ -21,6 +21,7 @@ all::$(HTML_PO) $(HTML_TMPL)
 
 data/langs:data/unstable scripts/list-languages
 	scripts/list-languages data/unstable> data/langs
+	make -C ./
 
 po-%.$(LANGUAGE).html:\
 	../../../english/international/l10n/scripts/init.pl\
@@ -41,6 +42,7 @@ templates-%.$(LANGUAGE).html:\
 	$(WML) -D TEAM=$* team-templates.wml
 
 team-po.$(LANGUAGE).html:\
+	data/langs\
 	../../../english/international/l10n/scripts/init.pl\
 	../../../english/international/l10n/scripts/ranking.pl\
 	../../../english/international/l10n/scripts/team-po.pl\
@@ -49,6 +51,7 @@ team-po.$(LANGUAGE).html:\
 	../../../english/international/l10n/data/unstable
 
 team-templates.$(LANGUAGE).html:\
+	data/langs\
 	../../../english/international/l10n/scripts/init.pl\
 	../../../english/international/l10n/scripts/ranking.pl\
 	../../../english/international/l10n/scripts/team-templates.pl\
@@ -57,17 +60,20 @@ team-templates.$(LANGUAGE).html:\
 	../../../english/international/l10n/data/unstable
 
 l10n-lang.$(LANGUAGE).html: ../../../english/international/l10n/scripts/init.pl\
+	data/langs\
 	../../../english/international/l10n/scripts/ranking.pl\
 	../../../english/international/l10n/scripts/l10n-lang.pl ../../../english/international/l10n/l10n-lang.wml\
 	../../../english/international/l10n/dtc.def \
 	../../../english/international/l10n/data/unstable
 
 i18n.$(LANGUAGE).html: ../../../english/international/l10n/scripts/init.pl\
+	data/langs\
 	../../../english/international/l10n/scripts/i18n.pl ../../../english/international/l10n/i18n.wml\
 	../../../english/international/l10n/dtc.def\
 	../../../english/international/l10n/data/unstable
 
 l10n.$(LANGUAGE).html: ../../../english/international/l10n/scripts/init.pl\
+	data/langs\
 	../../../english/international/l10n/scripts/ranking.pl\
 	../../../english/international/l10n/scripts/l10n.pl ../../../english/international/l10n/l10n.wml\
 	../../../english/international/l10n/dtc.def\
