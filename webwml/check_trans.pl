@@ -3,7 +3,7 @@
 # This is GPL'ed code, copyright 1998 Paolo Molaro <lupus@debian.org>.
 
 # Little utility to keep track of translations in the debian CVS repo.
-# Invoke as check_trans.pl [-v] [-d] [-s subtree] [language] 
+# Invoke as check_trans.pl [-v] [-d] [-l] [-q] [-s subtree] [language] 
 # from the webwml directory, eg:
 # $ check_trans.pl -v italian
 # You may also check only some subtrees as in:
@@ -12,7 +12,12 @@
 # Option:
 # 	-v	enable verbose mode
 #	-d	output diff 
+#	-l	output log messages
 #	-q	don't whine about missing files
+
+# If you do not specify a language on the command line, it will try to load
+# one from a file called language.conf, if such a file exists. That file
+# should contain one line naming the language subdirectory to check.
 
 # Translators need to embed in the files they translate a comment
 # in its own line with the revision of the file they translated such as:
@@ -31,7 +36,8 @@ use IO::Handle;
 $opt_d = 0;
 $opt_s = '';
 $opt_p = undef;
-getopts('vdqs:p:');
+$opt_l = 0;
+getopts('vdqs:p:l');
 
 warn "Checking subtree $opt_s only\n" if $opt_v;
 
@@ -60,6 +66,8 @@ $from = "$from/$opt_s";
 $to = "$to/$opt_s";
 
 @en= split(/\n/, `find $from -name Entries -print`);
+
+$showlog = $opt_l;
 
 foreach (@en) {
 	next if $_ =~ "template/debian";
@@ -130,6 +138,8 @@ sub check_file {
 		$oldname = $name;
 		$oldname =~ s/^$to/$from/;
 		STDOUT->flush;
+		system("cvs -z3 log -r'$oldr:$revision' '$oldname'") if $showlog;
+		STDOUT->flush if $showlog;
 		system("cvs -z3 diff -u -r '$oldr' -r '$revision' '$oldname'");
 		STDOUT->flush;
 	} else {
