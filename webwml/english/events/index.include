@@ -84,6 +84,7 @@ foreach $path (@paths) {
        $base = $1;
     }
     my $title = ''; my $when = ''; my $where = ''; my $desc = ''; my $past = '';
+    my $startdate = ''; my $enddate = '';
     foreach $line (<FILE>) {
 <protect pass=2>
       if ($line =~ /^#use wml::debian::past_event$/) {
@@ -96,6 +97,12 @@ foreach $path (@paths) {
       elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) {
          $when = $1;
       }
+      elsif ($line =~ /^<define-tag startdate>(.*)<\/define-tag>$/) {
+         $startdate = $1;
+      }
+      elsif ($line =~ /^<define-tag enddate>(.*)<\/define-tag>$/) {
+         $enddate = $1;
+      }
       elsif ($line =~ /^<define-tag where>(.*)<\/define-tag>$/) {
          $where = $1;
       }
@@ -105,6 +112,9 @@ foreach $path (@paths) {
 </protect>
     }
     close FILE;
+    if ($startdate && $enddate) {
+       $when = &daterange($startdate, $enddate);
+    }
     if ($past ne 'yes') {
        if ($title && $when && $where) {
           $upcoming++;

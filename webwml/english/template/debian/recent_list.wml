@@ -158,7 +158,7 @@ foreach $file (@files) {
   }
 
   $title = ''; $date = ''; $rdate = ''; $desc = ''; $status = ''; $where = '';
-  $moreinfo = '';
+  $moreinfo = ''; $startdate = ''; $enddate = '';
 <protect pass=2>
   if ($content =~ /^<define-tag pagetitle>\s*(.*?)\s*<\/define-tag>$/ms) {
     $title = qq/$1/; }      # all
@@ -174,7 +174,14 @@ foreach $file (@files) {
     $moreinfo = qq/$1/; }   # dsa-long.XX.rdf
   if ($content =~ /^<define-tag status>(.*?)<\/define-tag>$/ms) {
     $status = qq/$1/; }     # vote
+  if ($content =~ /^<define-tag startdate>(.*?)<\/define-tag>$/ms) {
+    $startdate = qq/$1/; }	# startdate (events)
+  if ($content =~ /^<define-tag enddate>(.*?)<\/define-tag>$/ms) {
+    $enddate = $1; }        # enddate (events)
 </protect>
+  if ($startdate && $enddate) { # Convert date range into printable string
+    $date = &daterange($startdate, $enddate);
+  }
   if ($title && $date && $where) { # for events/
     $str1 = "$elemhead<tt>[$date]</tt>$elemdate <strong><a href=\"$year/$base\">$title</a></strong>, $elemfoot$where<br />$elemrealfoot\n";
   }
