@@ -24,7 +24,6 @@ use warnings;
 
 use FindBin;
 use lib "$FindBin::Bin/../lib";
-use lib "$FindBin::Bin";
 
 use Packages::OutputFiles;
 use Getopt::Long;
@@ -47,13 +46,17 @@ my $removal_time = $current_time - $time;
 foreach my $list_file (@ARGV) {
     my $files = Packages::OutputFiles->init;
     print "remove-stale: open list file $list_file\n" if $verbose;
-    $files->load_list_file($list_file);
+    $files->load_file_list($list_file);
 
     while ( my $fname = $files->each ) {
 	my $timestamp = $files->get_timestamp( $fname );
 	if ( $timestamp < $removal_time ) {
 	    print "remove-stale: delete file $fname\n" if $verbose;
-#	    $files->delete_file( $file );
+	    $files->delete_file( $file );
+	} else {
+	    print "remove-stale: keep file $fname\n" if $verbose > 1;
 	}
     }
+    print "remove-stale: close list file $list_file\n" if $verbose;
+    $files->write_file_list($list_file);
 }
