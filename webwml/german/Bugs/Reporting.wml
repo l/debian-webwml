@@ -1,7 +1,48 @@
 #use wml::debian::template title="Debian BTS - Fehler berichten" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.18"
+#use wml::debian::translation-check translation="1.24"
 
 <H1>Wie werden Fehler in Debian berichtet?</H1>
+
+<h2>Wichtige Dinge die <strong>vor</strong> dem abschicken zu beachten sind</h2>
+
+<p>Vermeiden Sie es bitte, mehrere, in keiner Beziehnung zueinander
+stehende Fehler - besonders keine, die in verschiedenen Paketen vorkommen,
+- in einer einzigen Nachricht zu verschicken.
+
+<p>Sie sollten vor dem Abschicken überprüfen, ob Ihre Fehlerbericht bereits von
+jemandem anderen berichtet wurde. Listen der zum jetzigen Zeitpunkt noch nicht
+behobenen Fehler finden Sie im <A href="./">WWW</A> oder
+<A href="Access">hier</A> - lesen Sie weitere Documente, um Details zu erhalten.
+
+<p>Falls Sie nicht feststellen können welches Paket für das Problem
+verantwortlich ist, sensen Sie bitte eine E-Mail an die <a
+href="mailto:debian-user@lists.debian.org">Debian-User Mailingliste</a> und
+bitten um Hilfe.  Diese Liste ist allerdings englischsprachig - falls Sie
+deutschsprachige Hilfe suchen, schicken Sie die E-Mail hingegen an die <a
+href="mailto:debian-user-de@jfs.de">deutschsprachige Debian-User
+Mailingliste</a>. Falls das Problem nicht nur ein Paket oder generelle
+Debian-Dienste betrifft figt es einige <a
+href="pseudo-packages">Pseudo-Pakete</a> oder sogar <a
+href="../MailingLists/subscribe">Mailinglisten</a>, die Sie stattdessen
+verwenden können um Ihre Nachrichten an uns weiterzuleiten.
+
+<p>Bitte verwenden Sie <a href="#xcc">eine andere Methode</a> um Ihren
+Fehlerbericht an zusätzliche Empfänger (wie zum Beispiel eine Mailingliste) zu
+senden, nicht die üblichen E-Mail Kopfzeilen.
+
+
+<h2>Fehlerberichte abschicken mittels automatischen Fehlerbericht-Werkzeuge</h2>
+
+<p>Es gibt zwei Programme die wir in Debian entwickelt haben zur Unterstützung
+des Generierens von Fehlerberichten, sie heissen
+<code><a href="http://packages.debian.org/stable/utils/bug.html">bug</a></code>
+und
+<code><a href="http://packages.debian.org/stable/utils/reportbug.html">reportbug</a></code>.
+Beide werden Sie durch den Ablauf eines Fehlerberichtes Schritt für Schritt
+leiten, und erleichtern dadurch wahrscheinlich das berichten von Fehlern.
+
+
+<h2>Fehlerberichte per E-Mail abschicken</h2>
 
 <P>Schicken Sie eine E-Mail an 
 <A href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></A>,
@@ -11,66 +52,42 @@ nicht verstehen (gebrochenes Englisch ist kein Problem).  Debian ist
 eine internationale Distribution mit Mitarbeiten aus vielen Ländern,
 so daß die verwendete Sprache meistens Englisch ist.</P>
 
-<P>Vermeiden Sie es bitte, mehrere, in keiner Beziehnung zueinander
-stehende Fehler - besonders keine, die in verschiedenen Paketen vorkommen,
-- in einer einzigen Nachricht zu verschicken. Senden Sie Ihren Fehlerbericht
-bitte an keine Mailinglisten oder Empfänger außer
-<code>submit@bugs</code> (Einzelheiten über die richtige Vorgehensweise
-finden Sie weiter <A href="#xcc">unten</A>).</P>
+<P>Wie in jeder anderen E-Mail auch, sollten Sie eine klare,
+beschreibende <code>Subject</code>-Zeile in Ihrem Mail-Header haben.
+Diese Betreffzeile wird später in der Fehlerdatendank als der usprüngliche
+Titel des von Ihnen übermittelten Programmfehlers fungieren, also
+versuchen Sie sie bitte so informativ wie nur möglich zu machen!</P>
 
-<P>Listen der zum jetzigen Zeitpunkt noch nicht behobenen Fehler finden
-Sie im <A href="./">WWW</A> oder <A href="Access">hier</A> - lesen Sie
-weitere Documente, um Details zu erhalten.
+<P>Sie müssen einen Pseudo-Header an den Anfang Ihrer Nachricht setzen.
+Das bedeutet dass die erste Zeile der Nachricht folgendermassen aussehen soll:
 
-<P>Sie müssen einen Pseudo-Header an den Anfang Ihrer Nachricht setzen,
-der die Zeilen <CODE>Package:</CODE><VAR>Name des fehlerhaften
-Paketes</VAR> und <CODE>Version:</CODE><VAR>Versionsnummer des
-fehlerhaften Paketes</VAR> enthält. (Die Felder der Pseudo-Header sollten
-ganz am Anfang ihrer jeweiligen Zeile stehen. Die Fehlerdatenbank versteht 
-gegenwärtig MIME oder PGP E-Mails noch nicht richtig, so daß es
-vorkommen kann, daß die Pseudo-Header in solchen E-Mails nicht erkannt
-werden.) Den Paketnamen/-versionsnummer finden Sie mittels <code>dpkg
---search</code> und <code>dpkg --list</code> heraus; mehr dazu
-in <code>dpkg --help</code>.
+<pre>
+Package: &lt;<var>Paket</var>&gt;
+</pre>
+
+<p>Ersetzen Sie &lt;<var>Paket</var>&gt; mit dem Namen des fehlerhaften
+Pakets.
+
+<p>Die zweite Zeile der Nachricht soll folgendermassen aussehen:
+
+<pre>
+Version: &lt;<var>Version</var>&gt;
+</pre>
+
+<p>Ersetzen Sie &lt;<var>Version</var>&gt; mit der Version des Paketes.
+
+<p>Sie müssen eine korrekte <code>Package</code>-Zeile im Pseudo-Header angeben
+damit die Fehlerdatenbank die Nachricht an den Paket-Betreuer zugestellt werden
+kann. Lesen Sie <a href="#findpkgver">dieses Beispiel</a> für Hinweise, wie man
+diese Informationen bekommt.
 
 
-<em><A href="#details">Weitere Anforderungen</A></em>.</P>
+<p>Die Felder der Pseudo-Header sollten ganz am Anfang ihrer jeweiligen Zeile
+stehen. Die Fehlerdatenbank versteht gegenwärtig MIME oder PGP E-Mails noch
+nicht richtig, so daß es vorkommen kann, daß die Pseudo-Header in solchen
+E-Mails nicht erkannt werden.
 
-<P>Es gibt einige Pseudo-Pakete, die man in der
-<code>Package</code>-Zeile des Pseudo-Headers verwenden kann, wenn man
-einen Bug meldet, der nicht in einem der Softwarepakte von Debian
-vorkommt. Die Liste mit ihren Namen finden Sie 
-<A HREF="pseudo-packages">hier</A>.</P>
-
-<H2><A name="example">Beispiel eines Fehlerberichts</A></H2>
-
-<P>Ein Fehlerbericht mit einem Header sieht ungefähr so aus:
-<PRE>
-  To: submit@bugs.debian.org
-  From: diligent@testing.linux.org
-  Subject: Hello says `goodbye'
-
-  <A name="pseudoheader">Package: hello</A>
-  Version: 1.3-16
-
-  When I invoke `hello' without arguments from an ordinary shell
-  prompt it prints `goodbye', rather than the expected `hello, world'.
-  Here is a transcript:
-
-  $ hello
-  goodbye
-  $ /usr/bin/hello
-  goodbye
-  $
-
-  I suggest that the output string, in hello.c, be corrected.
-
-  I am using Debian GNU/Linux 2.2, kernel 2.2.17-pre-patch-13
-  and libc6 2.1.3-10.
-</PRE>
-
-<h2><A name="details">Bitte fügen Sie in Ihren Bericht noch folgendes
-ein:</A></h2>
+<p>Bitte fügen Sie in Ihren Bericht noch folgendes ein:
 
 <ul>
 <li>Den <em>exakten</em> und <em>vollständigen</em> Text aller
@@ -107,11 +124,32 @@ den Inhalt der Dateien ein, mit denen Sie das Problem reproduzieren konnten
 (kodieren Sie sie notfalls mit UUEncode falls sie merkwürdige Zeichen
 enthalten etc).</P>
 
-<P>Wie in jeder anderen E-Mail auch, sollten Sie eine saubere,
-beschreibende <code>Subject</code>-Zeile in Ihrem Mail-Header haben.
-Diese Betreffzeile wird später in der Fehlerdatendank als der usprüngliche
-Titel des von Ihnen übermittelten Programmfehlers fungieren, also
-versuchen Sie sie bitte so informativ wie nur möglich zu machen!</P>
+<H2><A name="example">Beispiel eines Fehlerberichts</A></H2>
+
+<P>Ein Fehlerbericht mit einem Header sieht ungefähr so aus:
+<PRE>
+  To: submit@bugs.debian.org
+  From: diligent@testing.linux.org
+  Subject: Hello says `goodbye'
+
+  <A name="pseudoheader">Package: hello</A>
+  Version: 1.3-16
+
+  When I invoke `hello' without arguments from an ordinary shell
+  prompt it prints `goodbye', rather than the expected `hello, world'.
+  Here is a transcript:
+
+  $ hello
+  goodbye
+  $ /usr/bin/hello
+  goodbye
+  $
+
+  I suggest that the output string, in hello.c, be corrected.
+
+  I am using Debian GNU/Linux 2.2, kernel 2.2.17-pre-patch-13
+  and libc6 2.1.3-10.
+</PRE>
 
 
 <H2><A name="xcc">Versenden von Kopien der Fehlerberichte an andere
@@ -152,31 +190,48 @@ Ihres Berichts in der Dringlichkeitsstufe festlegen. Das ist allerdings
 nicht unbedingt notwendig, der Entwickler wird die passende
 Dringlichkeitsstufe festlegen, wenn Sie es nicht tun.
 
-<P>Um eine Dringlichkeitsstufe festzulegen, fügen Sie die
-<code>Severity: <var>Dringlichkeit</var></code>-Zeile zusammen mit
-<code>Package</code> und <code>Version</code> in den Pseudo-Header Ihrer
-Nachricht ein. Die verfügbaren Dringlichkeitsstufen sind in der 
-<A href="Developer#severities">Entwicklerdokumentation</A> ausführlich
-beschrieben.</P>
+<P>Um eine Dringlichkeitsstufe festzulegen, fügen Sie eine Zeile wie folgt zu
+den Pseudo-Headern hinzu:
+
+<pre>
+Severity: &lt;<var>Dringlichkeit</var>&gt;
+</pre>
+
+<p>Ersetzen Sie &lt;<var>Dringlichkeit</var>&gt; mit einer der vorhandenen
+Dringlichkeitsstufen, wie sie in der
+<A href="Developer#severities">Entwicklerdokumentation</A> beschrieben
+sind.</P>
 
 
-<H2>Keine Weiterleitung an die Mailingliste bei kleineren Fehlern</H2>
+<h2>Verschiedene Meldungsadressen (unbedeutende oder vielfache
+Fehlerberichte)</h2>
 
-<P>Wenn ein Fehlerbericht eher unbedeutend ist (zum Beispiel ein
-Tippfehler in der Dokumentation oder ein unbedeutendes Build Problem)
-oder wenn Sie mehrere Berichte auf einmal haben, dann schicken sie Sie
-an <code>maintonly@bugs</code> oder <code>quiet@bugs</code>.
-<code>maintonly</code> wird den Bericht dann an den Paketbetreuer
-weiterleiten (vorausgesetzt, Sie haben die richtige
-<code>Package</code>-Zeile im Pseudo-Header geliefert und der Betreuer
-ist der Fehlerdatenbank bekannt); <code>quiet</code> wird den Bericht zwar
-an niemanden weiterleiten, ihn jedoch als Fehler vermerken (sinnvoll wenn
-Sie zum Beispiel mehrere ähnliche Fehler melden und nur eine
-Zusammenfassung posten wollen).</P>
+<p>Wenn ein Fehlerbericht eher unbedeutend ist (zum Beispiel ein
+Tippfehler in der Dokumentation oder ein unbedeutendes Build Problem),
+passen sie die Dringlichkeitsstufe entsprechend an und schicken Sie ihn an
+<code>maintonly@bugs</code> anstatt </code>submit@bugs</code>.
+<code>maintonly</code> leitet den Fehlerbericht nur an den Paket-Betreuer
+weiter, er wird nicht an die Fehlerdatenbank-Mailing-Liste weitergeleitet.
 
-<P>Wenn Sie das tun, wird die Fehlerdatenbank das Feld <code>Reply-To</code>
-jeder weitergeleiteten Nachricht so setzen, daß diese Nachrichten genauso
-bearbeitet werden wie der Originalbericht.</P>
+<p>Wenn Sie mehrere Berichte auf einmal haben, sollten Sie auf jeden Fall
+<code>maintonly@bugs</code> verwenden um nicht zu viel redundanten Mail-Verkehr
+auf der Fehlerdatenbank-Mailing-Liste zu verursachen.  Vor dem abschicken
+vieler ähnlicher Fehler sollten Sie auch eine Zusammenfassung an
+<code>debian-bug-dist</code> schicken.
+
+<p>Wenn Sie einen Fehler an die Fehlerdatenbank schicken wollen der bereits an
+den Paket-Betreuer geschickt wurde, können Sie <code>quiet@bugs</code>
+verwenden. Fehler, die an <code>quiet@bugs</code> geschickt werden, werden
+nirgends hin weitergeleitet, lediglich abgelegt.
+
+<p>Wenn Sie diese anderen Meldungsadressen verwenden wird die Fehlerdatenbank
+das <code>Reply-To</code> von jeder weitergeleiteten Nachricht so gesetzt, dass
+Antworten genauso bearbeitet werden wie der Originalbericht. Das bedeutet zum
+Beispiel, dass Antworten an <code>maintonly</code> an
+<var>nnn</var><code>-maintonly@bugs</code> statt an
+<var>nnn</var><code>@bugs</code> geschickt werden, ausser jemand ändert das
+händisch.
+
 
 <H2>Fehlerberichte bei unbekannten Paketen</H2>
 
@@ -192,8 +247,8 @@ korrekt angeben, oder indem Sie <A href="server-control">den
 <code>control@bugs</code>-Dienst</A> nutzen und damit den Bericht passend
 zuordnen, falls es nicht bereits passiert ist.</P>
 
-<h2>Benutzen von <code>dpkg</code>, um den Paketnamen und die Version
-herauszufinden</h2>
+<h2><a name="findpkgver">Benutzen von <code>dpkg</code>, um den Paketnamen und
+die Version herauszufinden</a></h2>
 
 <P>Wenn Sie über einen Fehler in einem Kommando berichten möchten, dann
 finden Sie mit <code>dpkg --search</code> heraus, zu welchem Paket
