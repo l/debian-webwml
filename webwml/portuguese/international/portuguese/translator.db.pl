@@ -45,7 +45,7 @@ sub init_translators {
 			    'compress'  => 'none'
 			    },
 				'Philipe Gaspar' => {
-				    'email' => 'kr0n@uol.com.br',
+				    'email' => 'philipegaspar@terra.com.br',
 				    'summary' => 3,
 				    'logs'      => 3,
 				    'diff'      => 0,
