@@ -1,0 +1,64 @@
+#use wml::debian::template title="PowerPC Port (Booting)" NOHEADER="yes"
+#include "$(ENGLISHDIR)/ports/powerpc/inst/menu.inc"
+#use wml::debian::translation-check translation="1.6"
+
+<p>
+
+Yaboot ist ein Boot-Loader für "newworld"-Rechner basierend auf
+OpenFIrmware.  Es benötigt den allerneuesten 2.2.14pre9er Kernel von
+Paul Mackerras oder den obigen iBook/iMac/G4-Kernel.  Das Format der
+Konfigurationsdatei (<code>yaboot.conf</code>) ist das gleiche wie für
+quik, es sollte in der Nachbarschaft von yaboot liegen.  Botten über
+das Netzwerk funktioniert über BOOTP/TFTP (inklusive Laden der
+Ramdisk).  Version 0.4 behebt ein Problem mit Kerneln, die mehr als
+nur einen ELF-Abschnit enthielten.
+
+<p>Bemerkung: Unterstützung für ext2 ist vorhanden, jedoch in dieser
+Version noch ziemlich langsam.  Symbolische Links zum Kernel oder der
+Ramdisk werden bisher noch nicht unterstützt.  Sobald es die Zeit
+erlaubt, werden wir mehr Dokumentation und Beispieldateien zur
+Verfügung stellen.  Wenn Sie mit der Ramdisk des Installers booten,
+fügen Sie eine Zeile "initrd=path_to_ramdisk" zur Konfigurationsdatei
+zum Abschnitt für das Kernel-Image.  Sie sollten besser auch
+"initrd-size = 8192" hinzufügen.
+
+
+Quellcode: <a href="http://calvaweb.calvacom.fr/bh40/">http://calvaweb.calvacom.fr/bh40/yaboot_*.src.tgz</a><br>
+Binär : <a href="http://calvaweb.calvacom.fr/bh40/">http://calvaweb.calvacom.fr/bh40/yaboot_*.gz</a>
+
+<p>Diese Maschinen benötigen eine kleine Bootstrap-Partition mit einem
+HFS-Dateisystem, auf dem yaboot und seine Konfigurationsdatei liegt
+(sowie ein OF/CHRP-Wrapper, um OF's vorgegebenen Einstellungen zu
+erfüllen), diese Partition sollte den Typ Apple_Bootstrap haben, damit
+MacOS nicht mit ihr herumspielt.
+
+<p>Angenommen, yaboot 0.5 wird verwendet und seine Konfiguration zeigt
+auf den Symlink <code>/vmlinux</code> oder <code>/boot/vmlinux</code>
+oder die Konfigurationsdatei muß bei einem Kernel-Upgrade nicht
+aktualisiert werden, da es weiß wie ext2-Dateisysteme gelesen werden
+und wird jetzt den Symlinks folgen wohin sie zeigen (es sei denn, es
+geht über die Partitonsgrenzen hinaus, würde ich annehmen).
+
+<p>
+Ethan Benson &lt;erbenson@alaska.net&gt; hat ein paar Skripte
+geschrieben, die der Benutzer aufsetzen und die Bootstrap-Partition
+aktualisieren kann, die Skripte sind in der Lage, "newworld" OF
+bootfähig zu machen, selbst wenn OF in der voreingestellten
+Konfiguration verbleibt, angenommen, Sie verwenden die interne
+Festplatte von Apple und die Bootstrap-Partition liegt vor jeder
+MacOS-Partition, die existiert.
+
+<p>Diese Skripte hängen jedoch von hfsutils ab, um wenigstens das
+HFS-Dateisystem zu erzeugen und die Bootstrap-Partition wird nur dann
+mit der voreingestellte OF-Konfiguration funktionieren, wenn hfsutils
+benutzt werden (es gibt einige Dinge, die einfach nicht vom
+HFS-Treiber im Kernel erledigt werden können).  Die
+Bootstrap-Partition kann daher nicht von einer
+Basis-System-Installation eingerichtet werden.  Die Werkzeuge, die von
+den hfsutils benötigt werden, sind:
+hformat, hmount, humount (Ich könnte ohne dieses auskommen, wenn ich
+den Test dazu optional mächte, es macht wirklich nicht viel), hcopy
+und hattrib.
+
+<p>Die Skripte von Ethan Benson sind hier:
+<a href="http://www.alaska.net/~erbenson/ybin/">http://www.alaska.net/~erbenson/ybin/</a>
