@@ -10,6 +10,18 @@ SUBS=
 
 GETTEXTFILES += others.mo
 
+NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
-include $(ENGLISHDIR)/News/press/Makefile.press
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
+    $(TEMPLDIR)/countries.wml \
+    $(GETTEXTDEP) \
+    $(ENGLISHDIR)/News/press/press.tags \
+    $(ENGLISHDIR)/News/press/$(CUR_YEAR).data
+	$(WML) $(<F)
+
+%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/countries.wml \
+    $(GETTEXTDEP) \
+    $(ENGLISHDIR)/News/press/press.tags \
+    $(ENGLISHDIR)/News/press/%.data
+	$(WML) $(<F)
