@@ -175,7 +175,7 @@ my $number = 0;
 my %line;
 foreach (@results) {
    $number++;
-   if (($start <= $number) && ($number < $end)) {
+   if (($start <= $number) && ($number <= $end)) {
       $line{$number - $start} = $_;
    }
 }
@@ -183,7 +183,7 @@ foreach (@results) {
 my $index_line;
 if (@results > $results_per_page) {
 
-    $index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $number)." | ".nextlink($input,\%params, scalar @results);
+    $index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, scalar @results)." | ".nextlink($input,\%params, scalar @results);
 
     print "<center>$index_line</center>";
 }

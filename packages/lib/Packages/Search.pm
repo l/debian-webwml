@@ -44,7 +44,7 @@ package Packages::Search;
 use strict;
 use warnings;
 
-use CGI;
+use CGI qw( -oldstyle_urls );
 use POSIX;
 
 use Deb::Versions;
@@ -153,11 +153,10 @@ sub end {
 
     my $page = $params->{values}{page}{final}
     || DEFAULT_PAGE;
-    $page++;
     my $res_per_page = $params->{values}{number}{final}
     || DEFAULT_RES_PER_PAGE;
 
-    return $page * $res_per_page + 1;
+    return $page * $res_per_page;
 }
 
 sub indexline {

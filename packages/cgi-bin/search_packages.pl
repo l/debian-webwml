@@ -13,7 +13,7 @@
 
 require 5.001;
 use strict;
-use CGI;
+use CGI qw( -oldstyle_urls );
 use POSIX;
 use URI::Escape;
 use HTML::Entities;
@@ -21,7 +21,7 @@ use HTML::Entities;
 use lib "../lib";
 
 use Deb::Versions;
-use Packages::Search;
+use Packages::Search qw( :all );
 use Packages::HTML ();
 
 my $thisscript = "search_packages.pl";
@@ -72,6 +72,8 @@ $exact = !$subword unless defined $exact;
 my $searchon = $params{values}{searchon}{final};
 my $releases = $params{values}{release}{final};
 my $arch = $params{values}{arch}{final};
+my $page = $params{values}{page}{final};
+my $results_per_page = $params{values}{number}{final};
 
 # for URL construction
 my $version_param = $params{values}{version}{no_replace};
@@ -220,8 +222,6 @@ if (!@results) {
   exit
 }
 
-
-
 my (%pkgs, %sect, %part, %desc, %binaries);
 my (@colon, $package, $pkg_t, $section, $ver, $foo, $binaries);
 
@@ -242,7 +242,12 @@ unless ($search_on_sources) {
 	
     }
 
+    my ( $start, $end) = multipageheader( scalar keys %pkgs );
+    my $count = 0;
+
     foreach my $pkg (sort keys %pkgs) {
+	$count++;
+	next if $count < $start or $count > $end;
 	printf "<h3>Package %s</h3>\n", $pkg;
 	print "<ul>\n";
 	foreach $ver (('stable','testing','unstable','experimental')) {
@@ -282,7 +287,12 @@ unless ($search_on_sources) {
 
     }
 
+    my ( $start, $end) = multipageheader( scalar keys %pkgs );
+    my $count = 0;
+
     foreach my $pkg (sort keys %pkgs) {
+	$count++;
+	next if ($count < $start) or ($count > $end);
 	printf "<h3>Source package %s</h3>\n", $pkg;
 	print "<ul>\n";
 	foreach $ver (('stable','testing','unstable','experimental')) {
@@ -313,6 +323,47 @@ print "<hr>\n";
 &printfooter;
 
 exit;
+
+sub multipageheader {
+    my $number = shift;
+
+    my ($start, $end);
+    if ($results_per_page =~ /^all$/i) {
+	$start = 1;
+	$end = $number;
+	$results_per_page = $number;
+    } else {
+	$start = Packages::Search::start( \%params );
+	$end = Packages::Search::end( \%params );
+    }
+
+    my $index_line;
+    if ($number > $results_per_page) {
+	
+	$index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $number)." | ".nextlink($input,\%params, $number);
+	
+	print "<center>$start|$end|$results_per_page|$index_line</center>";
+    }
+
+    if ($number > 100) {
+	print "<p>Results per page: ";
+	my @resperpagelinks;
+	for (50, 100, 200) {
+	    if ($params{values}{number}{final} == $_) {
+		push @resperpagelinks, $_;
+	    } else {
+		push @resperpagelinks, resperpagelink($input,\%params,$_);
+	    }
+	}
+	if ($params{values}{number}{final} =~ /^all$/i) {
+	    push @resperpagelinks, "all";
+	} else {
+	    push @resperpagelinks, resperpagelink($input, \%params,"all");
+	}
+	print join( " | ", @resperpagelinks )."</p>";
+    }
+    return ( $start, $end );
+}
 
 sub printfooter {
 print <<END;
