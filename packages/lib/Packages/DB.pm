@@ -650,7 +650,7 @@ sub calculate_depends {
 		foreach ( qw( depends pre-depends recommends 
 			      suggests conflicts enhances 
 			      provides ) ) {
-		    $a->{$_} = $self->process_dep_list( $p, $a->{$_} )
+		    $a->{$_} = $self->process_dep_list( $_, $p, $a->{version}, $a->{architecture}, $a->{$_} )
 			if exists $a->{$_};
 		}
 	    }
@@ -668,7 +668,7 @@ sub calculate_depends {
 	    foreach ( qw( build-depends build-depends-indep 
 			  build-conflicts build-conflicts-indep 
 			  binary ) ) {
-		$v->{$_} = $self->process_dep_list( $sp, $v->{$_} )
+		$v->{$_} = $self->process_dep_list( $_, $sp, $v->{version}, 'source', $v->{$_} )
 		    if exists $v->{$_};
 	    }
 	}
@@ -691,9 +691,7 @@ sub not_member {
 
 # internal function
 sub process_dep_list {
-    my $self = shift;
-    my $pkg = shift;
-    my $dep_list = shift;
+    my ( $self, $rel, $pkg, $version, $arch, $dep_list ) = @_;
 
     return $dep_list if ref $dep_list;
 #
@@ -703,8 +701,9 @@ sub process_dep_list {
     foreach(split(/\s*,\s*/, $dep_list)) {
 	my @final_dep_list = ();
 	foreach my $given_dep (split(/\s*\|\s*/)) {
+	    chomp( $given_dep );
 	    my $given_dep_strip = $given_dep;
-	    my ( $dep_op, $dep_ver, $dep_archs );
+	    my ( $dep_op, $dep_ver, $dep_archs, $dep_archs_rr );
 	    {
 		$given_dep_strip =~ s/\s*\(\s*(=|>=|<=|<<|>>|>|<)\s*(.*)\)\s*//o;
 		( $dep_op, $dep_ver ) = ( $1 || "", $2 || "");
@@ -721,16 +720,25 @@ sub process_dep_list {
 	    {
 		$given_dep_strip =~ s/\s*\[\s*(.*)\]\s*//o;
 		$dep_archs = $1 || "";
+		$dep_archs_rr = $dep_archs || "all";
 	    }
-	    if ($self->pkg_exists( $given_dep_strip ) ) {
-		push(@final_dep_list, [ $given_dep_strip, 
-					$dep_op, $dep_ver, $dep_archs ] ) 
-		    if not_member($given_dep_strip, @final_dep_list);
+	    if ( exists $self->{db}{$given_dep_strip} ) {
+		my $p = $self->{db}{$given_dep_strip};
+		if ( not_member($given_dep_strip, @final_dep_list) ) {
+		    push(@final_dep_list, [ $given_dep_strip, 
+					    $dep_op, $dep_ver, $dep_archs ] );
+		    $p->add_reverse_rel( $rel, $pkg, $version,
+					 ($arch eq 'source') ? $dep_archs_rr : $arch,
+					 "$dep_op $dep_ver" );
+		    $self->{db}{$given_dep_strip} = $p;
+		}
 	    } else {
 		push(@final_dep_list, [ $given_dep_strip, $dep_op, 
 					$dep_ver, $dep_archs, "(NOT AVAILABLE)" ] );
-#		warn "W: package $given_dep_strip is not available but referenced by $pkg\n"
-#		    if $self->{config}{verbose};
+		warn "W:$pkg:$rel on $given_dep_strip unsatifiable\n"
+		    if $self->{config}{verbose}
+		&& ( ( $rel =~ /depends/ )
+		     || ( $rel eq 'recommends' ) );
 	    }
 	}
 	push @$res, [ @final_dep_list ];
