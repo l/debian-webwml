@@ -120,6 +120,9 @@ $(ENGLISHDIR)/po/vendors.pot: # $(vendors_FILES)
 $(ENGLISHDIR)/po/others.pot: # $(others_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl others $(others_FILES) > $@
 
+%.$(LANGUAGE).po: $(ENGLISHDIR)/po/%.pot
+	cp $(ENGLISHDIR)/po/$*.pot $*.$(LANGUAGE).po; \
+
 %.mo: %.$(LANGUAGE).po $(ENGLISHDIR)/po/%.pot
 	msgmerge -q $*.$(LANGUAGE).po $(ENGLISHDIR)/po/$*.pot |\
             msgfmt --statistics -o $@ -
