@@ -65,7 +65,19 @@ if (defined $input->param('arch') && $input->param('arch') =~ m/^([\w-]+)$/) {
 my $page = 1;
 $page = $input->param('page') if (defined $input->param('page'));
 
-my $cdir = "/org/packages.debian.org/contents";
+my $topdir;
+
+# read the configuration
+if (!open (C, "../config.sh")) {
+    printf "\nInternal Error: Cannot open configuration file.\n\n";
+    exit 0;
+}
+while (<C>) {
+    $topdir = $1 if (/^\s*topdir="?(.*)"?\s*$/);
+}
+close (C);
+
+my $cdir = $topdir . "/files/contents";
 my $file = "$cdir/$version/Contents-$arch";
 my $file_nonus = "$cdir/$version/non-US/Contents-$arch";
 
