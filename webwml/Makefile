@@ -7,6 +7,7 @@ all:
 	- $(MAKE) -C finnish install
 	- $(MAKE) -C french install
 	- $(MAKE) -C german install
+	- $(MAKE) -C hungarian install
 	- $(MAKE) -C italian install
 	- $(MAKE) -C japanese install
 	- $(MAKE) -C korean install
