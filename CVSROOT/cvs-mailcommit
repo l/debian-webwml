@@ -1,0 +1,84 @@
+#! /usr/bin/perl
+
+# cvs-mailcommit - Send CVS commitments via mail
+# Copyright (c) 1998  Martin Schulze <joey@infodrom.north.de>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111, USA.
+
+$sendmail = "/usr/sbin/sendmail";
+
+$opt_xloop = '';
+$opt_cvs = '';
+$opt_from = '';
+$opt_diff = 0;
+@opt_mailto = ();
+while (@ARGV) {
+    $arg = shift;
+
+    if ($arg eq "-m") {
+	if (@ARGV) {
+	    $tmp = shift;
+	    push (@opt_mailto, $tmp);
+	}
+    } elsif ($arg eq "--diff") {
+	$opt_diff = 1;
+    } elsif ($arg eq "--xloop") {
+	$opt_xloop = shift if (@ARGV);
+    } elsif ($arg eq "--from") {
+	$opt_from = shift if (@ARGV);
+    } elsif ($arg eq "--cvs") {
+	if (@ARGV) {
+	    $tmp = shift;
+	    $opt_cvs = $tmp;
+	}
+    }
+}
+
+exit 0 if (!@opt_mailto);
+
+# $opt_cvs looks like
+#   foo/waz bar,1.4,1.5 foo,1.2,1.3
+# or
+#   foo gnatz,1.3,1.4
+#
+@cvs_arr = split (/ /,$opt_cvs);
+$module_dir = shift(@cvs_arr);
+$dir .= "/" if ($dir);
+
+$login = $ENV{'CVS_USER'} || getlogin || (getpwuid($<))[0] || "nobody";
+
+if (open (M, "|$sendmail joey")) {
+    printf M "To: %s\n", join(",",@opt_mailto);
+    printf M "Subject: CVS %s\n", $module_dir;
+    printf M "From: CVS User %s <%s>\n", $login, $opt_from if ($opt_from);
+    printf M "X-Loop: %s\n", $opt_xloop if ($opt_xloop);
+    print  M "\n";
+    print M while (<>);
+
+    if ($opt_diff) {
+    print  M "\n";
+	foreach $cstr (@cvs_arr) {
+	    ($file,$oldver,$newver) = split (/,/,$cstr);
+	    if ($oldver ne "NONE") {
+		if (open (R, "rcsdiff -r$oldver -r$newver -u $ENV{'CVSROOT'}/$module_dir/$file|")) {
+		    print M while (<R>);
+		    close (R);
+		}
+	    }
+	}
+    }
+
+    close (M);
+}
