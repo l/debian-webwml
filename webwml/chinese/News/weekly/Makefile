@@ -1,3 +1,7 @@
+# The chinses build is broken (hangs forever), so I have disabled it with
+# a crude hack. When fixed, you can remove this ifeq -- joeyh.
+ifeq ($(NOT_BROKEN_BUILD), 1)
+
 # This Makefile should need no changes from webwml/english/News/weekly/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
@@ -96,3 +100,11 @@ mail:
 	@cat mail-header
 	@lynx -dump  http://www.debian.org/News/weekly/$(YEAR)/$(shell cat CURRENT-ISSUE-IS)/ | \
 		perl -pe 's/^\s\s?\s?//'
+
+# Remove this when the chinese build is fixed.
+else
+all:
+	true
+%:
+	true
+endif
