@@ -67,5 +67,5 @@ index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
 # be updated. The mail still requires slight edits.
 mail:	
 	@cat mail-header
-	@lynx -dump http://master.debian.org/www-master/debian.org/News/weekly/2000/6/ | \
+	@lynx -dump http://master.debian.org/www-master/debian.org/News/weekly/current/issue/ | \
        		perl -pe 's/^\s\s?\s?//'
