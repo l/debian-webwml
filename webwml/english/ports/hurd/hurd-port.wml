@@ -1,9 +1,108 @@
 #use wml::debian::template title="Debian GNU/Hurd" NOHEADER="yes"
-[ <a href="..">Ports</a> ] [ <a href="index">Debian GNU/Hurd</a> ] [ <a href="hurd-install">Installation</a> ] [ <a href="hurd-task">Task Lists</a> ] [ <a href="hurd-links">Links</a> ] [ <b>Porting Software</b> ] [ <a href="hurd-contact">Contact</a> ]<p>
+[ <a href="..">Ports</a> ]
+[ <a href="index">Debian GNU/Hurd</a> ]
+[ <a href="hurd-news">News</a> ]
+[ <a href="hurd-install">Installation</a> ]
+[ <a href="hurd-doc">Documentation</a> ]
+[ <b>Porting</b> ]
+[ <a href="hurd-task">Task Lists</a> ]
+[ <a href="hurd-links">Links</a> ]
+[ <a href="hurd-contact">Contact</a> ]<p>
 
 <h1>Debian GNU/Hurd</h1>
-<h2>Porting Software</h2>
+<h2>Porting Debian Packages</h2>
 <P>
+If you want to help the Debian GNU/Hurd port, you should make yourself
+familiar with the Debian packaging system. Once you have done this by
+reading the available documentation and visiting the <a
+href="../../devel">Developer's Corner</a> you should know how to extract
+Debian source packages and build a Debian package. Here is a crash course
+for the very lazy people:</p>
+
+<h3>Obtaining Source and Building Packages</h3>
+<p>Extracting a Debian source package requires the file
+<tt>package_version.dsc</tt> and the files listed in it. You build the
+Debian build directory with the command <tt>dpkg-source -x
+package_version.dsc</tt></p>
+
+<p>Building a package is done in the now existing Debian build directory
+<tt>package-version</tt> with the command <tt>dpkg -B -rsudo "-mMyName
+<MyEmail>"</tt>. Instead <tt>-B</tt> you can use <tt>-b</tt> if you also
+want to build the architecture independent parts of the package. You can use
+<tt>-rfakeroot</tt> instead <tt>-rsudo</tt> if you use the fakeroot package.
+You can do without the <tt>-r</tt> if you build as user root. You can add
+<tt>-uc</tt> to avoid signing the package with your pgp key.</p>
+
+<h3>Pick One</h3>
+<p>
+Which package needs to be worked on? Well, the best thing I can do for now
+is tell you which package you should not work on.
+
+<h4>Packages Which Compile Cleanly Without Any Changes</h4>
+Most packages in section <tt>base</tt>, <tt>games/an</tt>, <tt>math/bc</tt>,
+<tt>devel/bison</tt>, <tt>utils/bzip2</tt>, <tt>devel/cvs</tt>,
+<tt>libs/db</tt>, <tt>devel/diffstat</tt>, <tt>editors/ed</tt>,
+<tt>mail/exim</tt>, <tt>mail/fetchmail</tt>, <tt>devel/flex</tt>,
+<tt>text/groff</tt>,
+<tt>text/gs</tt>, <tt>net/inetutils</tt>, <tt>text/jade</tt>,
+<tt>editors/jed</tt>,
+<tt>text/less</tt>, <tt>libs/libglib</tt>, <tt>libs/libident</tt>,
+<tt>libs/libpng</tt>, <tt>web/lynx</tt>,
+<tt>devel/make</tt>, <tt>comm/minicom</tt>, <tt>mail/mpack</tt>,
+<tt>net/ncftp</tt>, <tt>libs/pcre2</tt>, <tt>doc/pinfo</tt>,
+<tt>mail/procmail</tt>, <tt>utils/sharutils</tt>,
+<tt>libs/svgalib-dummy</tt>, <tt>libs/tk8.0</tt>, <tt>web/wget</tt>.
+
+<h4>Packages Which Compile Cleanly With Only A Patch In The BTS</h4>
+<tt>utils/cpio</tt> see <a href="http://bugs.debian.org/37164">Bug#37164</a>,
+<tt>base/debianutils</tt> see <a href="http://bugs.debian.org/39126">Bug#39126</a>,
+<tt>utils/file</tt> see <a href="http://bugs.debian.org/37705">Bug#37705</a>,
+<tt>games/fortune-mod</tt> see <a href="http://bugs.debian.org/37091">Bug#37091</a>,
+<tt>libs/libpaperg</tt> see <a href="http://bugs.debian.org/39036">Bug#39036</a>,
+<tt>doc/man-db</tt> see <a href="http://bugs.debian.org/39039">Bug#39039</a>,
+<tt>otherosfs</tt> see <a href="http://bugs.debian.org/37757">Bug#37757</a>,
+<tt>interpreters/gawk</tt>.
+
+<h4>Packages which need some hacking</h4>
+<p>The following packages are known to require some hacking, but there are
+already people caring about them. If you want to help out with a specific
+packagein this list, let us know, but most likely you want to pick other
+packages beside these.</p>
+
+<ul>
+<li><b>Marcus Brinkmann</b>
+<p>All packages in section <tt>base</tt>,
+<tt>devel/egcs</tt> (mostly resolved), <tt>devel/gdb</tt> (patch by Mark
+Kettenis), <tt>interpreters/perl</tt> (perl 5.005 mostly done),
+<tt>web/apache</tt> (easy, see <a
+href="http://bugs.debian.org/38328">Bug#38328</a> and implement use of
+<tt>dpkg-architecture</tt> in <tt>debian/rules</tt>), <tt>admin/apt</tt>
+(<tt>archtable</tt> mess, some building issues), <tt>bind</tt> (implement
+<tt>dpkg-architecture</tt> in <tt>debian/rules</tt>),
+<tt>devel/binutils</tt> (<tt>gprof broken</tt>), <tt>bsdmainutils</tt> and
+<tt>bsdutils</tt> (are obsoleted by <tt>util-linux</tt> (Jeff Bailey is
+working on it?), <tt>admin/cron</tt> (<tt>MAXPATHLEN</tt>, Robert Stepanek
+is working on it), <tt>editors/emacs</tt> (<tt>dpkg-architecture</tt>
+support), <tt>gdbm</tt>, <tt>libs/libc0.2</tt> (patches from CVS sometimes),
+<tt>libs/liblockfile</tt> (harmful), <tt>mail/mailx</tt> (<tt>NOFILE</tt>,
+<tt>MAXPATHLEN</tt>, <tt>MAXHOSTNAMLEN</tt>, header files),
+<tt>mail/mutt</tt>, <tt>text/sgml-tools</tt> (<tt>sgml2txt</tt> is broken... or
+perl), <tt>libs/slang</tt>, <tt>tex/tetex</tt> (includes ncurses man pages,
+klibtool issue).</p>
+<p>As you can see, I am quite loaded. I wouldn't mind getting rid of one of
+the above packages, at least for some of them (for example, if you want to
+take a look at <tt>mailx</tt>, let me know).</p></li>
+<li><b>Brent Fulgham</b>: <tt>editors/vim</tt>,
+<tt>interpreters/python</tt>, <tt>libs/tcl8.0</tt>.</li>
+<li><b>Kalle Olavi Niemitalo</b>: <tt>libs/libpaperg</tt>,
+<tt>graphics/netpbm</tt>, <tt>graphics/aalib</tt>, <tt>pointerize</tt>,
+<tt>libtiff</tt>, <tt>libs/svgalib</tt>?.</li>
+</ul>
+
+<p>If I forgot you or some information is not up to date, please
+<a href="hurd-contact">let me know!</a>.</p>
+
+<h2>General Porting Issues</h2>
 Here is a list of common incompatibilities you may encounter when compiling
 insufficient portable software on the Hurd.
 </P>
