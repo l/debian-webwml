@@ -416,6 +416,13 @@ sub get_stats_podebconf {
         close (GEN);
 }
 
+sub podebconf_stats_ranking {
+        my $this = shift;
+        my $total = shift;
+        return 0 if $total == 0;
+        return sprintf "\%d", 100 * $this / $total;
+}
+
 sub process_podebconf {
         -d "$opt_l/po-debconf/gen" || File::Path::mkpath("$opt_l/po-debconf/gen", 0, 0775);
 
@@ -430,8 +437,11 @@ sub process_podebconf {
         open (GEN, "> $opt_l/po-debconf/gen/rank.inc")
                 || die "Unable to write into $opt_l/po-debconf/gen/rank.inc";
         print GEN "<dl>\n";
+        my $str_total = $total{main}+$total{contrib}+$total{'non-free'};
         foreach my $lang (sort {$score{uc $b} <=> $score{uc $a}} @pd_langs) {
-                print GEN "<dt><a href=\"$lang\">$lang</a> ".$score{uc $lang}."</dt>\n";
+                print GEN "<dt><a href=\"$lang\">$lang</a> ".$score{uc $lang}.
+                        " (".podebconf_stats_ranking($score{uc $lang}, $str_total),
+                        "\%)</dt>\n";
                 print GEN "<dd><language-name $lang /></dd>\n";
         }
         print GEN "</dl>\n";
