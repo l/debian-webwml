@@ -33,7 +33,11 @@ There's no session registered for you. Please relogin.
         <P><A HREF="gpguserdel.php?doit=1">YES</A> - <A HREF="gpgmain.php">NO</A></P>
 <?
     } else {
-
+        $sql = "DELETE FROM places WHERE who IN (SELECT id FROM people WHERE email = '$s_username')";
+        if (! ($result = pg_exec($db, $sql))) {
+            echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+            return FALSE;
+        }
         $sql = "DELETE FROM people WHERE email = '$s_username'";
         if (! ($result = pg_exec($db, $sql))) {
             echo "Problem with query", pg_ErrorMessage($db), "<BR>";
