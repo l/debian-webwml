@@ -33,10 +33,19 @@ my %ppl_ref = ();
 
 sub print_maintainer {
 	my ($names) = @_;
+	print "<dt><strong>";
+	if ($People{$names}{email} =~ /\@debian.org$/) {
+	   $userid = $People{$names}{email};
+	   $userid =~ s/@.*//;
+	   if (!$ppl_ref{$userid}) {
+	      print "<a name=\"$userid\"></a>";
+	      $ppl_ref{$userid} = 1;
+	   }
+        }
 	if ($ppl_ref{$lastname}) {
-           print "<dt><strong>$lastname";
+           print "$lastname";
 	} else {
-	   print "<dt><strong><a name=\"$lastname\">$lastname</a>";
+ 	   print "<a name=\"$lastname\">$lastname</a>";
            $ppl_ref{$lastname} = 1;
 	}
 	if ($lastname ne "Wookey") {
