@@ -6,8 +6,9 @@
 # For information about translation revisions please see
 # http://www.debian.org/devel/website/uptodate
 
-# This is GPL'ed code, copyright 1998 Paolo Molaro <lupus@debian.org>
-# Copyright 2000 Martin Quinson <mquinson@ens-lyon.fr>
+# This is GPL'ed code.
+# Copyright 1998 Paolo Molaro <lupus@debian.org>.
+# Copyright 2000,2001 Martin Quinson <mquinson@ens-lyon.fr>.
 
 # Invocation:
 #   check_trans.pl [-vqdlM] [-C dir] [-p pattern] [-s subtree]
@@ -30,8 +31,9 @@
 #	-C <dir>	go to <dir> directory before running this script
 #	-d		output CVS diffs
 #	-l		output CVS log messages
+#	-t		output translated diffs
 #	-p <pattern>	include only files matching <pattern>,
-# 			default is *.html|*.wml
+#			default is *.html|*.wml
 #	-s <subtree>	check only that subtree
 #	-t <type>	choose output type  (default is `text')
 #	-M		display differences for all 'Makefile's
@@ -51,7 +53,7 @@
 #  BEWARE, SOME PEOPLE DO NOT LIKE TO RECEIVE AUTOMATIC MAILS!
 
 #  PREREQUISITES:
-#  o You will need two databases:
+#   You will need two databases:
 #     - one in which to see which translator maintains which file
 #       it must be named "./$langto/international/$langto/current_status.pl"
 #       (where $langto equals "french", "italian" or so)
@@ -60,16 +62,14 @@
 #       which they want to get mails. It must be named
 #       webwml/$langto/international/$langto/translator.db.pl
 #       Please refer to the French one for more info.
-#  o You must also have the perl module called "MIME::Lite",
-#    install the package libmime-lite-perl or get it from CPAN
 
 #  USAGE:
-#   - If you give the "-g" option, all mails are sent to the default addressee
+#   If you give the "-g" option, all mails are sent to the default addressee
 #     (i.e. the one given as value to the -m option), without respect to their
 #     normal addressee. It is useful if you want to run it for yourself,
 #     and for debugging.
-#     Without that option, it sends real mails to real addresses.
-#     MAKE SURE THE ADDRESSEES REALLY WANT TO GET THESE MAILS
+#   Without that option, it sends real mails to real addresses.
+#   MAKE SURE THE ADDRESSEES REALLY WANT TO GET THESE MAILS
 
 use strict;
 use Getopt::Std;
@@ -79,6 +79,7 @@ use Date::Parse;
 #    These modules reside under webwml/Perl
 use lib ($0 =~ m|(.*)/|, $1 or ".") ."/Perl";
 use Local::Cvsinfo;
+use Local::WmlDiffTrans;
 use Webwml::TransCheck;
 use Webwml::TransIgnore;
 
@@ -121,7 +122,7 @@ die "you can't have both verbose and quiet, doh!\n" if (($opt_v) && ($opt_Q));
 warn "Checking subtree $opt_s only\n" if (($opt_v) && ($opt_s));
 
 # include only files matching $filename
-my $filename = $opt_p || '\.(w|ht)ml$';
+my $filename = $opt_p || '(\.wml$)|(\.html$)';
 
 my $cvs = Local::Cvsinfo->new();
 $cvs->options(
@@ -151,8 +152,6 @@ if (open CONF, "<language.conf")
 my $from = 'english';
 my $to = shift || $defaultlanguage;
 $to =~ s%/$%%; # Remove slash from the end
-
-#my $langfrom = $from;
 
 my $langto = $to;
 $langto =~ s,^([^/]*).*$,$1,;
@@ -202,18 +201,17 @@ foreach (sort @{$cvs->files()}) {
 	$path = $_;
 	$tpath = $path;
 	$tpath =~ s/^$from/$to/o;
-	check_file($tpath, 
-		       $cvs->revision($path),
-		       str2time($cvs->date($path)),
-		       get_translators_from_db($tpath));
+	check_file($tpath,
+		$cvs->revision($path),
+		str2time($cvs->date($path)),
+		get_translators_from_db($tpath));
 }
 
 print "}; 1;\n" if $opt_t eq 'perl';
 
 send_mails();
 
-if ($opt_M)
-{
+if ($opt_M) {
 	foreach my $makefile (split(/\n/, `find $from -name Makefile -print`)) {
 		my $destination = $makefile;
 		$destination =~ s/^$from/$to/o;
@@ -273,11 +271,11 @@ sub init_mails {
 	my $str= "Hello,\n".
       	      "This is an automatically generated mail sent to you\n".
 	      "because you are the official translator of some pages\n".
-	      "to $langto of the Debian web site.\n".
+	      "in ".ucfirst($langto)." of the Debian web site.\n".
 	      "\n".
 	      "I sent you what I think you want. (i.e. what is in my DB).\n".
 	      " That is to say:\n";
-	foreach my $n (qw(summary logs diff file)) {
+	foreach my $n (qw(summary logs diff tdiff file)) {
 	    $str.="   ".$n.": ".
 	    ($translators{$name}{$n} != 0 ?
 	     ($translators{$name}{$n} != 1 ?
@@ -308,7 +306,7 @@ sub init_mails {
     	      "    - The list of the work to do in a summarized form\n".
               "    - diff between the version you translated and the current one\n".
               "    - log between the version you translated and the current one\n".
-              "    - the file you translated (to avoid to download it before to work)\n".
+              "    - the file you translated (so that you don't have to download it manually)\n".
               "  - your email address\n".
 	      "  - the compression level (none, gzip or bzip2), even if I'll ignore it\n".
               "    because this feature is not implemented yet ;)\n".
@@ -339,7 +337,7 @@ sub send_mails {
 	             Filename => 'Missing_summary',
 		     Data     => $translators{$name}{"part_missing"})
 	    if defined($translators{$name}{"part_missing"});
-	foreach my $part (qw (file logs diff)) { 
+	foreach my $part (qw (file logs diff tdiff)) { 
 	    if (defined($translators{$name}{"part_$part"})) {
 		foreach my $file (sort keys %{$translators{$name}{"part_$part"}}) {
 		    $translators{$name}{"msg"}->attach(
@@ -352,7 +350,7 @@ sub send_mails {
 	if ($translators{$name}{"send"}) {
 	    print "send mail to $name\n";
 	    if (($name =~ m,mquinson,) || ($opt_g && $opt_m eq $maintainer)) {
-		print "Well, detoured to $maintainer\n";
+		print "Well, detourned to $maintainer\n";
 		$translators{$name}{"msg"}->send;
 	    }
 #	    $translators{$name}{"msg"}->print_header;
@@ -360,7 +358,7 @@ sub send_mails {
 	} else {
 	    print "didn't send mail to $name: nothing to say to him\n";
 	}   
-    }	
+    }
 }
 
 sub add_part {
@@ -379,20 +377,49 @@ sub add_sub_part {
     my $name = shift;
     my $part = shift;
     my $subpart=shift;
-    my $cmd = shift;
+    my $txt = shift;
     $name =~ s,<.*?>,,;
     $name =~ s,^ *(.*?) *$,$1,;
-#    print "add_sub_part($name)(part=$part)($subpart):";
+    print "add_sub_part($name)(part=$part)($subpart):$txt";
+    STDOUT->flush;
     if (verify_send($name,$part)) {
 #	print "YES\n";
-	$translators{$name}{"part_$part"}{$subpart}.=`$cmd`;
+	$translators{$name}{"part_$part"}{$subpart}.= "$txt";
 	$translators{$name}{"send"}=1;
-#	return;
     }
 #    print "no\n";
 }
-	
 
+sub get_diff_txt {
+  my ($oldr, $revision, $oldname, $name) = @_;
+  my $cmd;
+
+  # Get old revision file
+  $cmd = "cvs -z3 update -r $oldr -p $oldname";
+#  print "!get_diff_txt: cvs -z3 update -r ".$oldr." -p ".$oldname."\n";
+  my @old_rev_file_lines = qx($cmd);
+
+  # Get translation file
+  open (FILE,"$name") || die ("Can't open `$name' for read");
+#  warn "get_diff_txt: cat $name\n";
+  my @translation_file_lines;
+  while (<FILE>) {
+      $translation_file_lines[scalar @translation_file_lines] = $_;
+  }
+  close FILE || die ("Can't close $name after reading");
+
+  # Get diff lines
+  $cmd = "cvs -z3 diff -u -r$oldr -r $revision $oldname";
+  warn "!get_diff_txt: $cmd: cvs -z3 diff -u -r$oldr -r $revision $oldname\n";
+  my @diff_lines = qx($cmd);
+
+  my $txt = Local::WmlDiffTrans::find_trans_parts(\@old_rev_file_lines,
+						  \@translation_file_lines,
+						  \@diff_lines);
+
+  warn "get_diff_txt: $txt\n";
+  return $txt;
+}
 
 sub check_file {
 	my ($name, $revision, $mtime, $translator) = @_;
@@ -492,11 +519,14 @@ sub check_file {
 	    $translator = "list" if ($translator eq "");
 	    add_part($translator,"summary",$str);
 	    add_sub_part($translator,"diff",$name,
-			 "cvs -z3 diff -u -r'$oldr' -r '$revision' '$oldname'");
+		 join("",qx(cvs -z3 diff -u -r'$oldr' -r $revision $oldname)));
+	    add_sub_part($translator,"tdiff",$name,
+		 get_diff_txt("$oldr","$revision","$oldname","$name"));
+
 	    add_sub_part($translator,"logs",$name,
-			 "cvs -z3 log -r'$logoldr:$revision' '$oldname'");
+		 join("",qx(cvs -z3 log -r$logoldr:$revision $oldname)));
 	    add_sub_part($translator,"file",$name,
-			 "cat $name");
+		 join("",qx(cat $name)));
 	}
 	    
 	if ($opt_d) {
@@ -510,4 +540,8 @@ sub check_file {
 		system($cvsline);
 		STDOUT->flush;
 	} 
+
+	if ($opt_t) {
+	    print get_diff_txt("$oldr", "$revision", "$oldname", "$name")."\n";
+	}
 }
