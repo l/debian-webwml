@@ -1,6 +1,6 @@
 #use wml::debian::template title="Gestion des bogues Debian - serveur de contrôle" NOHEADER=yes NOCOPYRIGHT=true
 
-#use wml::debian::translation-check translation="1.21" translation_maintainer="Christian Couder"
+#use wml::debian::translation-check translation="1.23" translation_maintainer="Christian Couder"
 
 
 <H1>Introduction au serveur de messages de contrôle et de manipulation des 
@@ -117,6 +117,32 @@ et <code>wishlist</code> (souhaitable).
 <P>Pour <A href="Developer#severities">leur signification</A> merci de 
 consulter la documentation générale des développeurs concernant le système 
 de gestion des bogues.</P>
+
+<dt><code>clone</code> <var>NuméroDeBogue</var> [ <var>Nouveaux IDs</var> ]
+
+  <dd>La commande de contrôle clone vous permet de dupliquer un
+  rapport de bogue. Elle est utile au cas où un unique rapport de
+  bogue signale que plusieurs anomalies se sont produites.
+  Les "<var>Nouveaux IDs</var>" doivent être des nombres négatifs,
+  séparés par des espaces, qui pourront être utilisés dans les
+  commandes de contrôle suivantes pour faire référence aux bogues qui
+  viennent d'être dupliqués. Un nouveau rapport est généré pour chaque
+  nouvel ID.
+
+  <p>Exemple d'utilisation :</p>
+
+  <pre>
+        clone 12345 -1 -2
+        reassign -1 foo
+        retitle -1 foo: foo sucks
+        reassign -2 bar
+        retitle -2 bar: bar sucks when used with foo
+        severity -2 wishlist
+        clone 123456 -2
+        reassign -2 foo
+        retitle -2 foo: foo sucks
+        merge -1 -2
+  </pre>
 
 <dt><code>merge</code> <var>NuméroDeBogue</var> <var>NuméroDeBogue</var> ...
 <dd>
