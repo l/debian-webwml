@@ -832,7 +832,10 @@ sub write_all_package {
 	foreach ( keys %$sections ) {
 	    my $title = sprintf( gettext ( "Software Packages in \"%s\", %s section" ), 
 				 $distro, $_ );
-	    $si{$_} = header( title => $title, lang => $lang,
+	    $si{$_} = header( title => $title,
+			      title_keywords => "debian, $distro, $_",
+			      desc => encode_entities( $title, '"' ),
+			      lang => $lang,
 			      print_title_below => 1 );
 	    if ($distro eq "experimental") {
 		$si{$_} .= $experimental_note;
