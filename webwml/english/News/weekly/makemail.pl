@@ -19,6 +19,9 @@ my $skippedlinks=0;
 # The highest numbered link that was seen (not skipped).
 my $highlink=0;
 
+# For beautifying
+my $lastlinecontainsstar=0;
+
 open (IN, "lynx -dump $url |");
 if ($url =~ m,\d\d\d\d/\d\d?/,) {
      # This is a local URL - fix the output
@@ -38,6 +41,21 @@ while (<IN>) {
 	     s/ {2,}/ /g;
 		# Fix up links.
 		s/\[(\d+)\]/$highlink=$1; "[".($1 - $skippedlinks)."]"/eg;
+                # last line started an item, perhaps we need some indenting
+                if ( $lastlinecontainsstar ) {
+                   # line doesn't only contain whitespace and doesn't start with another *
+                   if ( m/^\s*[^\* ]/ ) {
+		       s/^/  /;
+                   }
+                   # line is empty, don't indent following lines
+                   if ( m/^\s*$/ ) {
+		       $lastlinecontainsstar = 0;
+                   }
+                }
+                # line starts an item
+                if ( m/^\s*\*/ ) {
+		    $lastlinecontainsstar = 1;
+                }
 
 		print $_;
 
