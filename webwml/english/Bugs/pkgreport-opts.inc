@@ -102,4 +102,83 @@
   <input type="checkbox" name="sev-exc" value="fixed"><fixed>
   </small></li>
 
+# distributions in the usual order, then other tags alphabetically
+<define-tag potato whitespace=delete>
+  <gettext domain="bugs">potato</gettext>
+</define-tag>
+<define-tag woody whitespace=delete>
+  <gettext domain="bugs">woody</gettext>
+</define-tag>
+<define-tag sarge whitespace=delete>
+  <gettext domain="bugs">sarge</gettext>
+</define-tag>
+<define-tag sid whitespace=delete>
+  <gettext domain="bugs">sid</gettext>
+</define-tag>
+<define-tag experimental whitespace=delete>
+  <gettext domain="bugs">experimental</gettext>
+</define-tag>
+<define-tag d-i whitespace=delete>
+  <gettext domain="bugs">d-i</gettext>
+</define-tag>
+# 'fixed' is defined above
+<define-tag help whitespace=delete>
+  <gettext domain="bugs">help</gettext>
+</define-tag>
+<define-tag moreinfo whitespace=delete>
+  <gettext domain="bugs">moreinfo</gettext>
+</define-tag>
+<define-tag patch whitespace=delete>
+  <gettext domain="bugs">patch</gettext>
+</define-tag>
+# 'pending' is defined above
+<define-tag security whitespace=delete>
+  <gettext domain="bugs">security</gettext>
+</define-tag>
+<define-tag unreproducible whitespace=delete>
+  <gettext domain="bugs">unreproducible</gettext>
+</define-tag>
+<define-tag upstream whitespace=delete>
+  <gettext domain="bugs">upstream</gettext>
+</define-tag>
+<define-tag wontfix whitespace=delete>
+  <gettext domain="bugs">wontfix</gettext>
+</define-tag>
+
+  <li><small><gettext domain="bugs">Include tag:</gettext>
+  <input type="checkbox" name="include" value="potato"><potato>
+  <input type="checkbox" name="include" value="woody"><woody>
+  <input type="checkbox" name="include" value="sarge"><sarge>
+  <input type="checkbox" name="include" value="sid"><sid>
+  <input type="checkbox" name="include" value="experimental"><experimental>
+  <input type="checkbox" name="include" value="d-i"><d-i>
+  <input type="checkbox" name="include" value="fixed"><fixed>
+  <input type="checkbox" name="include" value="help"><help>
+  <input type="checkbox" name="include" value="moreinfo"><moreinfo>
+  <input type="checkbox" name="include" value="patch"><patch>
+  <input type="checkbox" name="include" value="pending"><pending>
+  <input type="checkbox" name="include" value="security"><security>
+  <input type="checkbox" name="include" value="unreproducible"><unreproducible>
+  <input type="checkbox" name="include" value="upstream"><upstream>
+  <input type="checkbox" name="include" value="wontfix"><wontfix>
+  </small></li>
+
+  <li><small><gettext domain="bugs">Exclude tag:</gettext>
+  <input type="checkbox" name="exclude" value="potato"><potato>
+  <input type="checkbox" name="exclude" value="woody"><woody>
+  <input type="checkbox" name="exclude" value="sarge"><sarge>
+  <input type="checkbox" name="exclude" value="sid"><sid>
+  <input type="checkbox" name="exclude" value="experimental"><experimental>
+  <input type="checkbox" name="exclude" value="d-i"><d-i>
+  <input type="checkbox" name="exclude" value="fixed"><fixed>
+  <input type="checkbox" name="exclude" value="help"><help>
+  <input type="checkbox" name="exclude" value="moreinfo"><moreinfo>
+  <input type="checkbox" name="exclude" value="patch"><patch>
+  <input type="checkbox" name="exclude" value="pending"><pending>
+  <input type="checkbox" name="exclude" value="security"><security>
+  <input type="checkbox" name="exclude" value="unreproducible"><unreproducible>
+  <input type="checkbox" name="exclude" value="upstream"><upstream>
+  <input type="checkbox" name="exclude" value="wontfix"><wontfix>
+  </small></li>
+
 </ul>
