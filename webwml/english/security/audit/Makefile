@@ -26,3 +26,5 @@ packages.$(LANGUAGE).html: packages.wml  Makefile
 tools.$(LANGUAGE).html: tools.wml  Makefile
 	$(WML) $(<F)
 
+advisorises.$(LANGUAGE).html: advisorises.wml  Makefile
+	$(WML) $(<F)
