@@ -24,19 +24,21 @@ cleandest::
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
 
-$(HTMLDIR)/ftpsync: ftpsync
-	cp ftpsync $(HTMLDIR)
-$(HTMLDIR)/ftpsync.conf: ftpsync.conf
-	cp ftpsync.conf $(HTMLDIR)
-$(HTMLDIR)/websync: websync
-	cp websync $(HTMLDIR)
-$(HTMLDIR)/websync.conf: websync.conf
-	cp websync.conf $(HTMLDIR)
-$(HTMLDIR)/identity.pub.master.ftp: identity.pub.master.ftp
-	cp identity.pub.master.ftp $(HTMLDIR)
-$(HTMLDIR)/identity.pub.master.web: identity.pub.master.web
-	cp identity.pub.master.web $(HTMLDIR)
-$(HTMLDIR)/anonftpsync: anonftpsync
-	cp anonftpsync $(HTMLDIR)
-$(HTMLDIR)/anonwebsync: anonwebsync
-	cp anonwebsync $(HTMLDIR)
+# the entries below are only needed in the english directory
+
+#$(HTMLDIR)/ftpsync: ftpsync
+#	cp ftpsync $(HTMLDIR)
+#$(HTMLDIR)/ftpsync.conf: ftpsync.conf
+#	cp ftpsync.conf $(HTMLDIR)
+#$(HTMLDIR)/websync: websync
+#	cp websync $(HTMLDIR)
+#$(HTMLDIR)/websync.conf: websync.conf
+#	cp websync.conf $(HTMLDIR)
+#$(HTMLDIR)/identity.pub.master.ftp: identity.pub.master.ftp
+#	cp identity.pub.master.ftp $(HTMLDIR)
+#$(HTMLDIR)/identity.pub.master.web: identity.pub.master.web
+#	cp identity.pub.master.web $(HTMLDIR)
+#$(HTMLDIR)/anonftpsync: anonftpsync
+#	cp anonftpsync $(HTMLDIR)
+#$(HTMLDIR)/anonwebsync: anonwebsync
+#	cp anonwebsync $(HTMLDIR)
