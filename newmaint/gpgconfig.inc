@@ -1,4 +1,4 @@
 <?
   $DBName="gpg-coord";
-  $DBUser="tbm";
+  $DBUser="www-data";
 ?>
