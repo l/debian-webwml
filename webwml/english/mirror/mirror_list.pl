@@ -109,7 +109,7 @@ sub aptlines {
 
 sub table_archive {
 	print "<h3 align=\"center\">" if $html;
-	print "\n                   " if (!$html);
+	print "\n\n                   " if (!$html);
 	print "Secondary mirrors of the Debian archive";
 	print "\n                   ---------------------------------------\n\n" if (!$html);
 	print "</h3>\n\n" if $html;
@@ -268,8 +268,8 @@ sub primary_mirrors {
 <tr>
   <th>Country</th>
   <th>Site</th>
-  <th><b>Debian archive</b></th>
-  <th><b>Debian non-US archive</b></th>
+  <th><b>Debian&nbsp;archive</b></th>
+  <th><b>Debian&nbsp;non-US&nbsp;archive</b></th>
 </tr>
 <tr><td colspan="4"><hr></td></tr>
 END
@@ -289,6 +289,7 @@ END
       if ($site =~ /ftp\...\.debian.org/) {
         ($countryplain = $country) =~ s/^.. //;
 	if ($html) {
+	  $countryplain =~ s/ /&nbsp;/;
 	  print <<END;
 <tr>
   <td width="25%">$countryplain</td>
