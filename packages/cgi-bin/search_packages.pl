@@ -431,7 +431,6 @@ unless ($search_on_sources) {
 }
 
 if ($format eq 'html') {
-    print "<hr>\n";
     &printfooter;
 }
 
@@ -490,6 +489,7 @@ sub printfooter {
 print <<END;
 </div>
 
+<hr class="hidecss">
 <p style="text-align:right;font-size:small;font-stlye:italic"><a href="$SEARCHPAGE">Packages search page</a></p>
 
 </div>

@@ -256,6 +256,7 @@ exit;
 sub printfooter {
     my $stamp_file = shift;
 
+    print "</div>\n";
     if ($stamp_file) {
 	my $timestamp = time() - (-M $file) * 86_400;
 	my ($sec,$min,$hour,$mday,undef,$year) = gmtime($timestamp);
@@ -266,13 +267,10 @@ sub printfooter {
 	$time_str = sprintf( "$wday, $mday $month $year %02d:%02d:%02d +0000", 
 			     $hour, $min, $sec );
 
-	print "<p align=\"left\"><small><i>The used contents file was last updated $time_str</i></small></p>\n";
+	print "<p style=\"text-align:left;font-size:small;font-stlye:italic\">The used contents file was last updated $time_str</p>\n";
     }
 
     print <<END;
-
-</div>
-
 <p style="text-align:right;font-size:small;font-stlye:italic"><a href="http://packages.debian.org/">Packages search page</a></p>
 
 </div>
