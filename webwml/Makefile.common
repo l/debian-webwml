@@ -125,7 +125,12 @@ endif
 $(TEMPLDIR)/%.wml:
 	touch $@
 
-$(TEMPLDIR)/basic.wml: $(TEMPLDIR)/navbar.wml
+$(TEMPLDIR)/common_tags.wml: $(TEMPLDIR)/language_names.wml
+$(TEMPLDIR)/basic.wml: $(TEMPLDIR)/common_translation.wml \
+  $(TEMPLDIR)/common_tags.wml $(TEMPLDIR)/header.wml $(TEMPLDIR)/navbar.wml
+$(TEMPLDIR)/cdimage.wml: $(TEMPLDIR)/common_translation.wml \
+  $(TEMPLDIR)/common_tags.wml $(TEMPLDIR)/languages.wml \
+  $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/header.wml $(TEMPLDIR)/footer.wml
 $(TEMPLDIR)/footer.wml: $(TEMPLDIR)/ctime.wml
 $(TEMPLDIR)/languages.wml: $(TEMPLDIR)/language_names.wml $(TEMPLDIR)/language_names.def
 $(TEMPLDIR)/mainpage.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/mirrors.wml \
@@ -180,6 +185,21 @@ $(TEMPLDIR)/votebar.wml: $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml \
   $(ENGLISHSRCDIR)/Pics/blue-lowerleft.png $(ENGLISHSRCDIR)/Pics/blue-lowerright.png
 $(TEMPLDIR)/weeklynews/header.wml: $(TEMPLDIR)/ctime.wml \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/links.tags.wml
+$(TEMPLDIR)/cdimage.wml: $(TEMPLDIR)/common_translation.wml \
+  $(TEMPLDIR)/common_tags.wml $(TEMPLDIR)/languages.wml \
+  $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/header.wml $(TEMPLDIR)/footer.wml \
+  $(ENGLISHDIR)/Pics/debian.jpg $(ENGLISHSRCDIR)/logos/openlogo-nd-50.png \
+  $(ENGLISHDIR)/CD/pictures/menubar-tl.png \
+  $(ENGLISHDIR)/CD/pictures/menubar-tr.png \
+  $(ENGLISHDIR)/CD/pictures/menubar-bl.png \
+  $(ENGLISHDIR)/CD/pictures/menubar-br.png \
+  $(WMLBASE)/CD/pictures/menu-faq.$(LANGUAGE).png \
+  $(WMLBASE)/CD/pictures/menu-jigdo.$(LANGUAGE).png \
+  $(WMLBASE)/CD/pictures/menu-http-ftp.$(LANGUAGE).png \
+  $(WMLBASE)/CD/pictures/menu-buy.$(LANGUAGE).png \
+  $(WMLBASE)/CD/pictures/menu-misc.$(LANGUAGE).png \
+  $(WMLBASE)/CD/pictures/menu-netinst.$(LANGUAGE).png \
+  $(WMLBASE)/CD/pictures/menu-pik.$(LANGUAGE).png
 
 $(TEMPLDIR)/countries.def: $(TEMPLDIR)/countries.wml
 	cd $(TEMPLDIR) && sed -e /^#/d countries.wml | eperl -B '<:' -E ':>' - >/dev/null
