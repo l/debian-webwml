@@ -414,8 +414,8 @@ sub check_file {
 	if (!$oldr) {
 	  $oldr = '1.1';
 	  $str = "Unknown status of $name (revision should be $revision)"
-	} elsif ($oldr >= $revision) {
-	  $str = "Revision number $oldr for $name is broken, it should be $revision";
+	} elsif ($oldr >> $revision) {
+	  $str = "Broken revision number $oldr for $name, it should be $revision";
 	} else {
 	  $str = "NeedToUpdate $name from version $oldr to version $revision";
 	}
