@@ -9,6 +9,7 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 
+submit.$(LANGUAGE).html: submit.wml $(ENGLISHDIR)/mirror/countries.data
 webmirror.$(LANGUAGE).html: webmirror.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHSRCDIR)/mirror/webmirrors.data
 
