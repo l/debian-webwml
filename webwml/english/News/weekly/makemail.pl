@@ -54,7 +54,7 @@ my $highlink=0;
 # For beautifying
 my $lastlinecontainsstar=0;
 
-open (IN, "lynx -dump $tmpfile |") or die "Can't open $tmpfile: $!\n";
+open (IN, "lynx -dump $tmpfile |") or die "Can't open $tmpfile or no lynx in path: $!\n";
 if ($url =~ m,\d\d\d\d/\d\d?/,) {
      # This is a local URL - fix the output
      $url =~ s,^,http://www.debian.org/News/weekly/,;
