@@ -1,4 +1,5 @@
 #use wml::debian::common_tags
+#include "$(ENGLISHDIR)/releases/info"
 
 <bind-gettext-domain domain="others" />
 
@@ -32,12 +33,15 @@
 <define-tag otherdists>
 <hr>
 <:
-    $name{"2.1"} = "Slink";
-    $name{"2.2"} = "Potato";
+    my $current = "<current_release>"; $current =~ s/r\d+$//;
+    $name{"2.1"} = "slink";
+    $name{"2.2"} = "potato";
+    $name{"3.0"} = "woody";
 
     opendir (DIR, "$(ENGLISHDIR)/banners");
     foreach $_ (readdir (DIR)) {
-	push (@dirs, $_) if (/^\d+\.\d+/ && -d "$(ENGLISHDIR)/banners/$_");
+	push (@dirs, $_) if (/^\d+\.\d+/ && -d "$(ENGLISHDIR)/banners/$_"
+                             && $_ ne $current);
     }
     closedir (DIR);
 
@@ -48,7 +52,7 @@
 	foreach $_ (@dirs) {
 	    print "  <li>";
 	    if (exists $name{$_}) {
-	        printf "<a href=\"%s/\">Debian %s (%s)</a>\n", $_, $_, $name{$_};
+	        printf "<a href=\"%s/\">Debian %s (\"%s\")</a>\n", $_, $_, $name{$_};
 	    } else {
 	        printf "<a href=\"%s/\">Debian %s</a>\n", $_, $_;
 	    }
