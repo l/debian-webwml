@@ -213,11 +213,11 @@ if ($no_results > 100) {
 }
 
 print <<END;
-<PRE>
-<STRONG>FILE                                                       PACKAGE</STRONG>
-</PRE>
-<HR>
-<PRE>
+<pre>
+<strong>FILE                                                       PACKAGE</strong>
+</pre>
+<hr>
+<pre>
 END
 
 for (my $i = 0; $i < $results_per_page; $i++) {
@@ -244,8 +244,8 @@ for (my $i = 0; $i < $results_per_page; $i++) {
 }
 
 print <<END;
-</PRE>
-<HR>
+</pre>
+<hr class="hidecss">
 END
 print "<center>$index_line</center>" if $index_line;
 
@@ -271,7 +271,7 @@ sub printfooter {
     }
 
     print <<END;
-<p style="text-align:right;font-size:small;font-stlye:italic"><a href="http://packages.debian.org/">Packages search page</a></p>
+<p style="text-align:right;font-size:small;font-stlye:italic"><a href="http://packages.debian.net/">Packages search page</a></p>
 
 </div>
 END
