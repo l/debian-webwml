@@ -85,3 +85,15 @@ install-mo: $(MOFILES)
 clean::
 	-rm -f *.pot *.mo
 
+stats:
+
+ifeq "$(LANGUAGE)" "en"
+stats:
+else
+stats:
+	-@for d in $(DOMAINS); do \
+          echo -n "$$d.$(LANGUAGE).po: "; \
+          msgfmt -o /dev/null --statistics $$d.$(LANGUAGE).po; \
+        done
+endif
+
