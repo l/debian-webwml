@@ -33,6 +33,7 @@ sub init_translators {
 	 'summary'   => 2,
 	 'logs'      => 0,
          'diff'      => 0,
+         'tdiff'     => 0,
          'file'      => 0,
 	 'compress'  => 'none'
     },
@@ -41,6 +42,7 @@ sub init_translators {
 	 'summary'   => 2,
 	 'logs'      => 0,
          'diff'      => 0,
+         'tdiff'     => 0,
          'file'      => 0,
 	 'compress'  => 'none'
     },
@@ -49,6 +51,7 @@ sub init_translators {
          'summary'   => 2, 
          'logs'      => 0, 
          'diff'      => 2, 
+         'tdiff'     => 0,
 	 'file'      => 0,
          'compress'  => 'none' 
     },
@@ -57,6 +60,7 @@ sub init_translators {
          'summary'   => 2, 
          'logs'      => 0, 
          'diff'      => 0, 
+         'tdiff'     => 0,
 	 'file'      => 0,
          'compress'  => 'none' 
     },
@@ -65,6 +69,7 @@ sub init_translators {
          'summary'   => 3, 
          'logs'      => 3, 
          'diff'      => 3, 
+         'tdiff'     => 3,
 	 'file'      => 3,
          'compress'  => 'none' 
     },
@@ -73,6 +78,7 @@ sub init_translators {
          'summary'   => 1, 
          'logs'      => 0, 
          'diff'      => 1, 
+         'tdiff'     => 0,
 	 'file'      => 0,
          'compress'  => 'none' 
     },
@@ -81,6 +87,7 @@ sub init_translators {
          'summary'   => 3, 
          'logs'      => 3, 
          'diff'      => 3, 
+         'tdiff'     => 3,
 	 'file'      => 0,
          'compress'  => 'none'
     },
@@ -89,6 +96,7 @@ sub init_translators {
          'summary'   => 2, 
          'logs'      => 0, 
          'diff'      => 0, 
+         'tdiff'     => 0,
 	 'file'      => 0,
          'compress'  => 'none' 
     },
@@ -98,6 +106,7 @@ sub init_translators {
          'logs'      => 0, 
          'diff'      => 0, 
 	 'file'      => 0,
+         'tdiff'     => 0,
          'compress'  => 'none' 
     },
     'Christophe Le Bars' =>  {
@@ -105,6 +114,7 @@ sub init_translators {
          'summary'   => 2, 
          'logs'      => 0, 
          'diff'      => 0, 
+         'tdiff'     => 0,
 	 'file'      => 0,
          'compress'  => 'none' 
     },
@@ -113,7 +123,17 @@ sub init_translators {
          'summary'   => 2, 
          'logs'      => 0, 
          'diff'      => 0, 
+         'tdiff'     => 0,
 	 'file'      => 0,
+         'compress'  => 'none' 
+    },
+    'Olivier Bounhoure' =>  {
+ 	 'email'     => 'olivier.bounhoure@club-internet.fr',
+         'summary'   => 3, 
+         'logs'      => 3, 
+         'diff'      => 3, 
+         'tdiff'     => 3,
+	 'file'      => 3,
          'compress'  => 'none' 
     },
     'list' => { # this is a special name containing the default addressee
@@ -122,6 +142,7 @@ sub init_translators {
          'summary'    => 2, 
          'logs'       => 0, 
          'diff'       => 0, 
+         'tdiff'      => 0,
 	 'file'       => 0,
          'compress'   => 'none'
     }
