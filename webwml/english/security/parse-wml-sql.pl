@@ -78,7 +78,7 @@ sub printreferences {
 		}
 		# Since we don't support some references like  Bug#XXXXX
 		# exclude them
-		print $query if $query != "INSERT INTO ";
+		print $query if $query ne "INSERT INTO ";
 	}
 	return 0;
 }
