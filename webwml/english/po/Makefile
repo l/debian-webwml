@@ -50,37 +50,37 @@ else
 all install:: $(POTFILES) install-mo
 endif
 
-$(ENGLISHDIR)/po/templates.pot: $(templates_FILES)
+$(ENGLISHDIR)/po/templates.pot: # $(templates_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl $(templates_FILES) > $@
 
-$(ENGLISHDIR)/po/bugs.pot: $(bugs_FILES)
+$(ENGLISHDIR)/po/bugs.pot: # $(bugs_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl $(bugs_FILES) > $@
 
-$(ENGLISHDIR)/po/countries.pot: $(countries_FILES)
+$(ENGLISHDIR)/po/countries.pot: # $(countries_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl $(countries_FILES) > $@
 
-$(ENGLISHDIR)/po/doc.pot: $(doc_FILES)
+$(ENGLISHDIR)/po/doc.pot: # $(doc_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl $(doc_FILES) > $@
 
-$(ENGLISHDIR)/po/l10n.pot: $(l10n_FILES)
+$(ENGLISHDIR)/po/l10n.pot: # $(l10n_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl $(l10n_FILES) > $@
 
-$(ENGLISHDIR)/po/langs.pot: $(langs_FILES)
+$(ENGLISHDIR)/po/langs.pot: # $(langs_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl $(langs_FILES) > $@
 
-$(ENGLISHDIR)/po/organization.pot: $(organization_FILES)
+$(ENGLISHDIR)/po/organization.pot: # $(organization_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl $(organization_FILES) > $@
 
-$(ENGLISHDIR)/po/ports.pot: $(ports_FILES)
+$(ENGLISHDIR)/po/ports.pot: # $(ports_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl $(ports_FILES) > $@
 
-$(ENGLISHDIR)/po/search.pot: $(search_FILES)
+$(ENGLISHDIR)/po/search.pot: # $(search_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl $(search_FILES) > $@
 
-$(ENGLISHDIR)/po/vendors.pot: $(vendors_FILES)
+$(ENGLISHDIR)/po/vendors.pot: # $(vendors_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl $(vendors_FILES) > $@
 
-$(ENGLISHDIR)/po/others.pot: $(others_FILES)
+$(ENGLISHDIR)/po/others.pot: # $(others_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl $(others_FILES) > $@
 
 %.mo: %.$(LANGUAGE).po $(ENGLISHDIR)/po/%.pot
@@ -109,7 +109,11 @@ install-mo: $(MOFILES)
         done
 
 clean::
-	-rm -f *.pot *.mo
+	-rm -f *.mo
+
+pot:
+	-rm -f $(POTFILES)
+	$(MAKE) $(POTFILES)
 
 ifeq "$(LANGUAGE)" "en"
 stats:
