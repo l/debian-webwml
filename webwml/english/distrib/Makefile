@@ -17,6 +17,7 @@ packages.$(LANGUAGE).html: packages.wml $(ENGLISHSRCDIR)/releases/info \
   $(ENGLISHDIR)/distrib/search_contents-form.inc
 pre-installed.$(LANGUAGE).html: pre-installed.wml $(TEMPLDIR)/countries.wml \
   $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/CD/vendors/vendors.CD.def
+floppyinst.$(LANGUAGE).html: floppyinst.wml $(ENGLISHSRCDIR)/releases/info
 
 ifeq "$(LANGUAGE)" "en"
 
