@@ -4,7 +4,23 @@
 
 WMLBASE=..
 CUR_DIR=CD
-SUBS=images vendors
+SUBS=artwork faq http-ftp jigdo-cd mirroring netinst pictures pik releases vendors
 
+NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
+
+ifneq "$(wildcard releases/index.wml)" ""
+RELEASESDEP := releases/index.wml
+else
+RELEASESDEP := $(ENGLISHDIR)/CD/releases/index.wml
+endif
+
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml $(RELEASESDEP)
+	$(WML) $(<F)
+
+misc.$(LANGUAGE).html: misc.wml $(TEMPLDIR)/cdimage.wml
+	$(WML) $(<F)
+
+install::
+	[ -L $(HTMLDIR)/images ] || ln -sf . $(HTMLDIR)/images
