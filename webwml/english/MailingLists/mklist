@@ -296,22 +296,31 @@ sub write_mailing_lists_subscribe
 <!-- This page is generated automatically by the mklist script, do not edit -->
 
 EOF
-	@lines = split(/\n/,$list{''}->{'Introduction'});
+#	@lines = split(/\n/,$list{''}->{'Introduction'});
+#
+#	printf OUT "<h1>%s</h1>\n", $lines[0];
+#	&print_multiline_html("  ",\@lines);
 
-	printf OUT "<h1>%s</h1>\n", $lines[0];
-	&print_multiline_html("  ",\@lines);
+#	$list{''}->{'Subscription'} =~ s/>/&gt;/g;
+#	$list{''}->{'Subscription'} =~ s/</&lt;/g;
+#	$list{''}->{'Subscription'} =~ s,(http://[\w.\-~/]*),<a href="$1">$1</a>,g;
+#	$list{''}->{'Subscription'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1</a>,g;
+#	$list{''}->{'Subscription'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1</a>,g;
+#	@lines = split(/\n/,$list{''}->{'Subscription'});
+#	printf OUT "\n<h2>%s</h2>\n\n", $lines[0];
+#	&print_multiline_html("  ",\@lines);
 
-	$list{''}->{'Subscription'} =~ s/>/&gt;/g;
-	$list{''}->{'Subscription'} =~ s/</&lt;/g;
-	$list{''}->{'Subscription'} =~ s,(http://[\w.\-~/]*),<a href="$1">$1</a>,g;
-	$list{''}->{'Subscription'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1</a>,g;
-	$list{''}->{'Subscription'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1</a>,g;
-	@lines = split(/\n/,$list{''}->{'Subscription'});
-	printf OUT "\n<h2>%s</h2>\n\n", $lines[0];
-	&print_multiline_html("  ",\@lines);
+	print OUT <<END;
+<p>See the <a href="./#subunsub">mailing lists</a> page for information on
+how to subscribe using e-mail. An <a href="unsubscribe">unsubscription web
+form</a> is also available, for unsubscribing from mailing lists.
 
-	print OUT "\n<HR>\n<FORM METHOD=POST ACTION=\"http://cgi.debian.org/cgi-bin/subscribe.pl\">\n";
-	print OUT "Please select which lists you want to subscribe to:\n\n";
+<hr>
+
+<p>Please select which lists you want to subscribe to:
+
+<form method="post" action="http://cgi.debian.org/cgi-bin/subscribe.pl">
+END
 
 	foreach $section (@sections) {
 		@lists = ();
@@ -371,12 +380,17 @@ EOF
 	}
 	print OUT "<HR><STRONG>Your E-Mail address:</STRONG>\n";
 	print OUT "<BR><INPUT TYPE=\"text\" NAME=\"user_email\" SIZE=\"60\"><BR>\n";
-	print OUT "<INPUT TYPE=\"SUBMIT\"> <INPUT TYPE=\"RESET\">\n";
+	print OUT "<INPUT TYPE=\"SUBMIT\" VALUE=\"Subscribe\"> <INPUT TYPE=\"RESET\" VALUE=\"Clear\">\n";
 	print OUT "</FORM>\n\n";
 
-	@lines = split(/\n/,$list{''}->{'Advertising'});
-	printf OUT "\n\n<hr><h2>%s</h2>\n\n", $lines[0];
-	&print_multiline_html("  ",\@lines);
+	print OUT <<END;
+<p>Please respect the <a href="./#ads">Debian mailing list advertising
+policy</a>.
+END
+
+#	@lines = split(/\n/,$list{''}->{'Advertising'});
+#	printf OUT "\n\n<hr><h2>%s</h2>\n\n", $lines[0];
+#	&print_multiline_html("  ",\@lines);
 	}
 }
 
@@ -397,17 +411,26 @@ sub write_mailing_lists_unsubscribe
 <!-- This page is generated automatically by the mklist script, do not edit -->
 
 EOF
-	$list{''}->{'Subscription'} =~ s/>/&gt;/g;
-	$list{''}->{'Subscription'} =~ s/</&lt;/g;
-	$list{''}->{'Subscription'} =~ s,(http://[\w.\-~/]*),<a href="$1">$1</a>,g;
-	$list{''}->{'Subscription'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1</a>,g;
-	$list{''}->{'Subscription'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1</a>,g;
-	@lines = split(/\n/,$list{''}->{'Subscription'});
-	printf OUT "\n<h2>%s</h2>\n\n", $lines[0];
-	&print_multiline_html("  ",\@lines);
+#	$list{''}->{'Subscription'} =~ s/>/&gt;/g;
+#	$list{''}->{'Subscription'} =~ s/</&lt;/g;
+#	$list{''}->{'Subscription'} =~ s,(http://[\w.\-~/]*),<a href="$1">$1</a>,g;
+#	$list{''}->{'Subscription'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1</a>,g;
+#	$list{''}->{'Subscription'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1</a>,g;
+#	@lines = split(/\n/,$list{''}->{'Subscription'});
+#	printf OUT "\n<h2>%s</h2>\n\n", $lines[0];
+#	&print_multiline_html("  ",\@lines);
 
-	print OUT "\n<HR>\n<FORM METHOD=POST ACTION=\"http://cgi.debian.org/cgi-bin/subscribe.pl\">\n";
-	print OUT "Please select which lists you want to unsubscribe from:\n\n";
+	print OUT <<END;
+<p>See the <a href="./#subunsub">mailing lists</a> page for information on
+how to unsubscribe using e-mail. A <a href="subscribe">subscription web
+form</a> is also available, for subscribing to mailing lists.
+
+<hr>
+
+<p>Please select which lists you want to unsubscribe from:
+
+<form method="post" action="http://cgi.debian.org/cgi-bin/subscribe.pl">
+END
 
 	foreach $section (@sections) {
 	    @lists = ();
@@ -452,8 +475,13 @@ EOF
 	}
 	print OUT "<HR><STRONG>Your E-Mail address:</STRONG>\n";
 	print OUT "<BR><INPUT TYPE=\"text\" NAME=\"user_email\" SIZE=\"60\"><BR>\n";
-	print OUT "<INPUT TYPE=\"SUBMIT\"> <INPUT TYPE=\"RESET\">\n";
+	print OUT "<INPUT TYPE=\"SUBMIT\" VALUE=\"Unsubscribe\"> <INPUT TYPE=\"RESET\" VALUE=\"Clear\">\n";
 	print OUT "</FORM>\n\n";
+
+	print OUT <<END;
+<p>Please respect the <a href="./#ads">Debian mailing list advertising
+policy</a>.
+END
     }
 }
 
