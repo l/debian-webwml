@@ -1,0 +1,148 @@
+#use wml::debian::template title="Signature de clés"
+#use wml::debian::translation-check translation="1.7" maintainer="Nicolas Bertolissio"
+
+<p>Comme de nombreux développeurs se rencontrent lors de manifestations
+commerciales ou de conférences, celles-ci sont devenues une façon simple de
+faire signer des clés GnuPG et d'étendre le réseau de confiance. En particulier
+pour les gens qui sont nouveaux dans le projet, la signature de clé et la
+rencontre d'autres développeurs se montrent très intéressantes.
+
+<p>Ce document sert à vous aider à organiser une séance de signature de clés.
+Les personnes de doivent signer une clé qu'à au moins deux conditions&nbsp;:
+
+<ol>
+
+<li>le propriétaire de la clé convint le signataire que l'identité de l'UID est
+bien la sienne au moyen de toute preuve que le signataire voudra bien accepter
+comme convaincante. Habituellement cela signifie que le propriétaire de la clé
+doit présenter une carte d'identité délivrée par un gouvernement avec une photo
+et des informations lui correspondant (certains signataires savent que des
+cartes d'identité délivrées par des gouvernement sont facilement falsifiables
+et peuvent donc demander des preuves complémentaires ou alternatives
+d'identité)&nbsp;;
+
+<li>le propriétaire de la clé vérifie que l'empreinte de la clé à signer est
+bien la sienne.
+
+</ol>
+
+<p>
+Plus important encore, si le propriétaire de la clé ne participe pas activement
+à l'échange, vous ne pourrez pas remplir l'un ou l'autre des prérequis.
+Personne ne peut effectuer la première partie des prérequis du propriétaire de
+la clé pour le compte du propriétaire car sinon quiconque avec une carte
+d'identité volée pourrait facilement obtenir une clé PGP allant avec en
+prétendant être un représentant du propriétaire. Personne ne peut effectuer la
+seconde partie des prérequis du propriétaire de la clé pour le compte du
+propriétaire car le représentant pourrait substituer l'empreinte par celle
+d'une autre clé PGP avec le nom du propriétaire et faire signer la mauvaise
+clé.
+
+<ul>
+
+<li> Vous avez besoin d'une empreinte GnuPG imprimée et d'une carte d'identité
+pour prouver votre identité (passeport, permis de conduire au autre)&nbsp;;
+
+<li> Les empreintes sont distribuées aux autres personnes devant signer votre
+clé après la rencontre&nbsp;;
+
+<li> Si vous n'avez pas encore de clé GnuPG, créez-en une avec la commande
+<code>gpg --gen-key</code>&nbsp;;
+
+<li> Ne signez une clé que si l'identité de la personne dont la clé doit être
+signée a été prouvée&nbsp;;
+
+<li> Après la rencontre, vous devrez récupérer la clé GnuPG afin de la signer.
+L'exemple suivant peut vous aider&nbsp;;
+
+<pre>
+       gpg --keyserver keyring.debian.org --recv-keys 0xDEADBEEF
+</pre>
+
+     <p>Si la personne dont vous souhaitez signer la clé n'est pas dans le
+     trousseau de Debian, remplacez <code>keyring.debian.org</code> par une
+     serveur de clé public comme <code>wwwkeys.pgp.net</code> (qui malgré son
+     nom conserver des clés GnuPG).<p>
+
+     <p>Notez qu'il est possible d'utiliser les huit derniers chiffres
+     hexadécimaux de la clé ici et pour les autres opérations avec GnuPG. Le
+     <tt>0x</tt> en tête est aussi optionnel&nbsp;;</p>
+
+     </li>
+
+<li> Pour signer la clé, entrez dans le menu d'édition par&nbsp;:
+
+<pre>
+       gpg --edit-key 0xDEADBEEF
+</pre>
+
+<li> Dans GnuPG sélectionnez tous les UID à signer par <code>uid n</code>, où
+<code>n</code> est le numéro de l'UID affiché dans le menu. Vous pouvez aussi
+presser Entrée pour signer tous les UID&nbsp;;</li>
+
+<li> Pour signer une clé, tapez <code>sign</code>. L'empreinte de la clé sera
+alors affichée pour que vous la compariez avec celle que vous avez obtenue de
+la personne que vous aviez rencontrée&nbsp;;
+
+<li> Quittez GnuPG par <code>quit</code>&nbsp;;
+
+<li> Pour vérifier que vous avez bien signé la clé, vous pouvez exécuter&nbsp;:
+
+<pre>
+       gpg --list-sigs 0xDEADBEEF
+</pre>
+
+     <p>Vous devriez voir s'afficher votre nom et votre empreinte (dans sa
+     forme courte)&nbsp;;</p>
+
+     </li>
+
+<li> Une fois que vous êtes sûr que tout s'est bien passé, vous pouvez envoyée
+la clé signée à son destinataire par&nbsp;:
+
+<pre>
+       gpg --export -a 0xDEADBEEF &gt; quelqu-un.clé
+</pre>
+
+     <p>L'option <code>-a</code> exporte la clé au format ASCII pour pouvoir
+     l'envoyer par courriel sans risque de corruption&nbsp;;</p>
+
+     </li>
+
+<li> Si quelqu'un signe votre clé de cette façon, vous pouvez l'ajouter au
+trousseau de Debian par&nbsp;:
+
+<pre>
+       gpg --import mysigned.key
+       gpg --keyserver keyring.debian.org --send-keys <var>&lt;id de votre clé&gt;</var>
+</pre>
+
+     <p>La mise à jour de votre clé peut prendre du temps aux responsables du
+     trousseau, soyez patient. Vous devriez aussi télécharger votre clé à jour
+     vers un serveur de clés public.</p>
+
+     </li>
+
+</ul>
+
+<h3>Ce que vous de devriez pas faire</h3>
+
+<p>Vous ne devriez jamais signer la clé de quelqu'un d'autre que vous n'avez
+pas rencontré personnellement. La signature d'une clé qui serait basée sur
+autre chose qu'une rencontre directe détruirait l'utilité du réseau de
+confiance. Si un ami se présente à d'autres développeurs avec votre carte
+d'identité et votre empreinte mais que vous n'êtes pas présent pour vérifier
+que l'empreinte vous appartient, comment les développeurs peuvent-ils relier
+l'empreinte et la carte d'identité&nbsp;? Ils n'ont que la parole de votre ami
+et les autres signatures sur votre clé &ndash; ce n'est pas mieux que s'ils
+signaient votre clé simplement parce que d'autres personnes l'ont signée&nbsp;!
+</p>
+
+<p>Faire signer sa clé de nombreuse fois est agréable et il est tentant de
+raccourcir un peu la procédure. Mais avoir des signatures de confiance est bien
+plus important que d'avoir beaucoup de signatures, aussi est-il très important
+de conserver le processus de signature aussi strict que possible. Signer la clé
+de quelqu'un d'autre est la caution que vous avez la preuve directe de
+l'identité du détenteur de la clé. Si vous la signez sans en être totalement
+sûr, il n'est plus possible de faire confiance au réseau de confiance.
+</p>
