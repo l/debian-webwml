@@ -65,5 +65,6 @@ all:: $(SITEMAP)
 install:: $(HTMLMAP)
 ifeq "$(LANGUAGE)" "en"
 	test -f $(HTMLDIR)/favicon.ico || install -m 664 favicon.ico $(HTMLDIR)
-endif
 	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
+	test -L $(HTMLDIR)/mirrors || ln -sf mirror $(HTMLDIR)/mirrors
+endif
