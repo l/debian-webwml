@@ -1,44 +1,44 @@
 #use wml::debian::cdimage title="Devenir un miroir pour les images de cédérom de Debian" BARETITLE=true
 #use wml::debian::translation-check translation="1.3" maintainer="Willy Picard"
 
-<p>Pour devenir un miroir d'images de cédérom de Debian, vous avez besoin
-d'une machine sous Linux ou un système de type Unix. Récupérer les
-images et les rendre accessible peut être fait de différentes
-manières, selon vos possibilités</p>
+<p>Pour faire exister un miroir d'images de cédérom de Debian, vous avez besoin
+d'une machine sous Linux ou sous un système de type Unix. Récupérer les
+images et les rendre accessibles peut être fait de différentes
+manières, selon vos possibilités.</p>
 
 <p>Vous <em>ne</em> devez <em>pas</em> utiliser FTP ou HTTP pour récupérer
 les images. Ces techniques de transfert présentent une probabilité d'échec
 importante du fait de la taille énorme des fichiers. De plus, si les images
-sont modifiées, même de manière infime (comme c'est le cas pour les mises
-à jour de versions), tout le fichier doit être téléchargé à nouveau. Cela
-résulte en de fortes charges pour nos ordinateurs et du gaspillage de bande
+sont modifiées, même de manière infime (comme c'est le cas pour les versions
+intermédiaires), tout le fichier doit être téléchargé à nouveau. Il en 
+résulte de fortes charges pour nos ordinateurs et du gaspillage de bande
 passante.</p>
 
 <p>Pour ces raisons, nous utilisons le programme
 <a href="http://rsync.samba.org/"><tt>rsync</tt></a> qui
-effectue essentiellement de l'application de rustines à distance.
+effectue essentiellement des corrections de fichiers binaires à distance.
 Avec <tt>rsync</tt>, les images des mises à jour de version sont mises
-à jour de manière très efficace, les parties modifiées seulement étant
-envoyées par le réseau&nbsp;; les parties inchangées sont copiées sur l'ancienne
-image.</p>
+à jour de manière très efficace, seules les parties modifiées étant
+envoyées par le réseau&nbsp;; les parties inchangées sont copiées à partir de
+l'ancienne image.</p>
 
-<p><tt>rsync</tt> n'effectue pas de téléchargements complets des versions 
-«&nbsp;dernier cri&nbsp;», étant donné que ces images peuvent ne comprendre
-aucune nouveauté. Cependant, avec le kit pour les pseudo-images, il est
-possible de créer des «&nbsp;pseudo&nbsp;» images de cédérom à partir des
-données déjà disponible sur le miroir FTP de Debian le plus proche 
--&nbsp;éventuellement sur votre disque dur. <tt>rsync</tt> peut alors
+<p><tt>rsync</tt> effectue encore un téléchargement complet des versions 
+«&nbsp;dernier cri&nbsp;», étant donné que ces images ne comprennent 
+théoriquement pas de parties inchangées.Cependant, avec le kit pour les 
+pseudo-images, il est possible de créer des «&nbsp;pseudo&nbsp;» images 
+de cédérom à partir des données déjà disponibles sur le miroir FTP de Debian 
+le plus proche  - éventuellement sur votre disque dur. <tt>rsync</tt> peut alors
 appliquer des rustines à ces «&nbsp;pseudo-images&nbsp;» pour les
-transformer en images officielles. Et même pour les nouvelles versions, il
-semble que cette technique soit plus efficace que l'utilisation de rustines
+transformer en images officielles. Et même pour les versions intermédiaires, il
+semble que cette technique soit plus efficace que l'application de rustines
 sur l'ancienne image.</p>
 
 <p>Le kit pour les pseudo-images est conçu principalement pour télécharger
 seulement une ou quelques images, ce que la plupart des gens font. 
 Il existe également le script <tt>debcdmirror</tt> qui rend la création
-et la maintenance d'un miroir aisée, étant donné qu'il utilise de manière
+et la maintenance d'un miroir aisées, étant donné qu'il utilise de manière
 automatique le kit pour les pseudo-images et <tt>rsync</tt> pour mettre
-à jour votre miroir --&nbsp;jusqu'à vérifier automatiquement les sommes
+à jour votre miroir - jusqu'à vérifier automatiquement les sommes
 de contrôle MD5 de chaque image téléchargée. Avec <tt>debdcmirror</tt>, vous
 pouvez définir exactement ce que votre miroir doit contenir.</p>
 
@@ -50,8 +50,8 @@ et les maintenir à jour&nbsp;:</p>
   <li>Par FTP ou HTTP&nbsp;: Cela <em>ne</em> doit <em>pas</em> être 
   utilisé&nbsp;;</li>
 
-  <li>En utilisant seulement <tt>rsync</tt> (tache cron quotidienne)&nbsp;:
-  cela est préférable uniquement pour les sites qui n'ont pas accès à un
+  <li>En utilisant seulement <tt>rsync</tt> (tâche cron quotidienne)&nbsp;:
+  c'est préférable uniquement pour les sites qui n'ont pas accès à un
   miroir FTP de Debian rapide ou proche&nbsp;;</li>
 
   <li>En utilisant le kit pour les pseudo-images manuellement (avec
@@ -60,7 +60,7 @@ et les maintenir à jour&nbsp;:</p>
 
   <li>En utilisant le script <tt>debcdmirror</tt> script (qui
   utilise «&nbsp;en interne&nbsp;» le kit pour les pseudo-images et
-  <tt>rsync</tt>) (tache cron quotidienne). 
+  <tt>rsync</tt>) (tâche cron quotidienne). 
   C'est la <strong>bonne solution</strong>&nbsp;! :-)</li>
 
 </ul>
@@ -69,22 +69,22 @@ et les maintenir à jour&nbsp;:</p>
 <a href="http://cdimage.debian.org/~costar/pseudo-image-kit/">kit pour
 les pseudo-images</a> et du script
 <a href="http://cdimage.debian.org/~costar/debcdmirror/"><tt>debcdmirror</tt></a>
-sont disponibles sur la page principale de leurs auteurs. Veuillez lire
-le fichier README de chaque paquets pour de plus amples informations
+sont disponibles sur la page principale de l'auteur. Veuillez lire
+le fichier README de chaque paquet pour de plus amples informations
 sur leur utilisation.</p>
 
 <p><strong>Notes&nbsp;:</strong>
 
 <p>Pour le script <tt>debcdmirror</tt>, vous devez choisir un miroir
-<tt>rsync</tt> qui possède un fichier «&nbsp;<tt>ls-lR</tt>&nbsp;» file.
+<tt>rsync</tt> qui possède un fichier «&nbsp;<tt>ls-lR</tt>&nbsp;».
 Les adresses sont sur la <a href="rsync-mirrors">liste des miroirs rsync</a>.
-Les miroirs officiels accessible à tous peuvent utiliser rsync directement
+Les miroirs officiels accessibles à tous peuvent utiliser rsync directement
 à partir du serveur principal, cdimage.debian.org&nbsp;;
 vous avez sans aucun doute besoin d'un mot de passe pour cela, veuillez
 le demander à l'<a href="mailto:phil@hands.com">administrateur</a>.</p>
 
-<p>Si vous n'avez pas votre <a href="$(HOME)/mirror/">miroir FTP de Debian 
-«&nbsp;classique&nbsp;»</a> local, veuillez vérifier la<a
+<p>Si vous n'avez pas de <a href="$(HOME)/mirror/">miroir FTP de Debian 
+«&nbsp;classique&nbsp;»</a> près de chez vous, cherchez en un dans la<a
 href="$(HOME)/distrib/ftplist" >liste des miroirs FTP</a>.
 
 <p><tt>debcdmirror</tt> nécessite <tt>bash</tt> en version 2 ou supérieure. Si
@@ -94,20 +94,20 @@ défaut, mais veuillez alors vous assurer que le chemin d'accès à
 
 <p>Si vous utilisez seulement <tt>rsync</tt>, utilisez au moins les options
 <b><tt>--times --links --hard-links --block-size=8192</tt></b>. Cela 
-conservera les dates de dernière modification, les liens symboliques, et
+conservera les dates de dernière modification, les liens symboliques et
 forcera l'utilisation de blocs de 8192 octets (le plus efficace pour les images
-de cédérom). Lorsque la date de dernière modification et la taille sont 
-identiques, <tt>rsync</tt> ne modifiera pas le fichier, aussi <tt>--times</tt>
-est réellement obligatoire.</p>
+de cédérom). Lorsque les dates de dernière modification ainsi que les tailles
+sont identiques, <tt>rsync</tt> ne modifiera pas le fichier, aussi 
+<tt>--times</tt> est réellement obligatoire.</p>
 
 <p>Le répertoire «&nbsp;<tt><i>codename</i>_test</tt>&nbsp;» contient
-des images qui sont liés (NDT&nbsp;: «&nbsp;hard-linked&nbsp;») à celles
+des images qui sont liées (NDT&nbsp;: «&nbsp;hard-linked&nbsp;») à celles
 des répertoires versionnés (par exemple <tt>2.2_r4</tt>).
 Le nom du répertoire versionné changera avec les nouvelles (sous)versions,
 mais les noms dans les répertoires «&nbsp;<tt>test</tt>&nbsp;» resteront
 les mêmes. Aussi, pour une utilisation de <tt>rsync</tt> seulement,
 le seul moyen pour rsync pour mettre à jour les sous-versions correctement
-est de télécharger les répertoires versionné et «&nbsp;<tt>test</tt>&nbsp;»
+est de télécharger les répertoires versionnés et «&nbsp;<tt>test</tt>&nbsp;»
 correspondant <em>et</em> d'utiliser l'option <tt>--hard-links</tt>.
 [Veuillez <em>ne pas</em> utiliser les répertoires «&nbsp;<tt>test</tt>&nbsp;»
 avec <tt>debcdmirror</tt>, car <tt>debcdmirror</tt> fonctionne différemment
@@ -116,21 +116,21 @@ et de manière plus efficace.]</p>
 <p>Le fichier <tt>ls-lR</tt> décrit la structure des répertoires du miroir
 dans lequel il se trouve.
 Veuillez <strong>ne pas</strong> copier le fichier <tt>ls-lR</tt>&nbsp;; 
-fabriquez plutôt le votre (avec le «&nbsp;<tt>Makels-lR</tt>&nbsp;» fourni,
+fabriquez plutôt le vôtre (avec le «&nbsp;<tt>Makels-lR</tt>&nbsp;» fourni,
 toutes les heures avec <tt>cron</tt>) ou bien ne fournissez pas de fichier
 <tt>ls-lR</tt>.
 [<tt>debcdmirror</tt> crée un fichier <tt>ls-lR</tt> automatiquement après le
 téléchargement.]</p>
 
-<p>Une fois que vous avez obtenus les images de cédéroms que vous voulez
+<p>Une fois que vous avez obtenu les images de cédéroms que vous voulez
 rendre accessibles (les cédéroms i386 et source sont les plus populaires),
 vous devriez exécuter le programme <tt>rsync</tt> en tant que serveur.
-Cela ne devrait pas dégrader les performances de votre machines et
+Cela ne devrait pas dégrader les performances de votre machine et
 générera beaucoup moins de trafic sur le réseau qu'un accès par FTP
-ou HTTP. Les instruction pour mettre cela en place se trouvent dans
+ou HTTP. Les instructions pour mettre cela en place se trouvent dans
 le fichier README du kit pour les pseudo-images.</p>
 
-<p>Bien sur, si vous pouvez sans problème fournir plusieurs megaoctets
+<p>Bien sûr, si vous pouvez sans problème fournir plusieurs megaoctets
 quotidiennement, nous serions très heureux d'avoir un miroir
 FTP/HTTP supplémentaire. Quoi que vous puissiez offrir, nous en
 serons très satisfaits. Veuillez annoncer sur la liste de discussion
