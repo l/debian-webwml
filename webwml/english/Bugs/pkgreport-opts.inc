@@ -15,6 +15,11 @@
      <gettext domain="bugs">display merged bugs only once</gettext></label>
   <label><input type="checkbox" name="raw" value="yes">
      <gettext domain="bugs">no ordering by status or severity</gettext></label>
+  <br>
+  <label><input type="checkbox" name="show_list_header" value="no">
+     <gettext domain="bugs">don't show table of contents in the header</gettext></label>
+  <label><input type="checkbox" name="show_list_footer" value="no">
+     <gettext domain="bugs">don't show statistics in the footer</gettext></label>
   </small>
 
   <li><small><gettext domain="bugs">Reverse order of:</gettext>
