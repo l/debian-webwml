@@ -13,5 +13,5 @@
 #     nyligen inkomna felrapporter.</A>
 # <li><A href="db/ix/packages.html">Paket med felrapporter.</A>
 # <li><A href="db/ix/maintainers.html">Ansvariga för paket för vilka det
-      finns felrapporter.</A>
+#     finns felrapporter.</A>
 </ul>
