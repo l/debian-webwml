@@ -29,9 +29,14 @@ crossreferences.$(LANGUAGE).html:: $(ENGLISHSRCDIR)/security/ref-table.inc \
 
 
 # only depend on it if it exists
-translated_nonvulns=$(shell [ -f nonvulns-woody.src ] && echo nonvulns-woody.src)
-nonvulns-woody.$(LANGUAGE).html: nonvulns-woody.wml $(translated_nonvulns)  \
+translated_nonvulns-woody=$(shell [ -f nonvulns-woody.src ] && echo nonvulns-woody.src)
+nonvulns-woody.$(LANGUAGE).html: nonvulns-woody.wml $(translated_nonvulns-woody)  \
 	$(ENGLISHSRCDIR)/security/nonvulns-woody.src \
+	$(TEMPLDIR)/securityreferences.wml 
+
+translated_nonvulns-sarge=$(shell [ -f nonvulns-sarge.src ] && echo nonvulns-sarge.src)
+nonvulns-sarge.$(LANGUAGE).html: nonvulns-sarge.wml $(translated_nonvulns-sarge)  \
+	$(ENGLISHSRCDIR)/security/nonvulns-sarge.src \
 	$(TEMPLDIR)/securityreferences.wml 
 
 clean::
