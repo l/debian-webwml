@@ -44,9 +44,12 @@ foreach $l (<ADV>) {
 }
 close ADV;
 
-$files =~ s/      MD5 checksum: \w{32}\n//sg;
-$files =~ s/  Source archives:/<dt>Source:/sg;
-$files =~ s/  Architecture/<dt>Architecture/sg;
+$moreinfo =~ s/\n\n$/\n/s;
+$files =~ s/\n\n$/\n/s;
+
+$files =~ s/      MD5 checksum: (\w{32})/    <small>$1<\/small>/sg;
+$files =~ s/  Source archives:/<dt><source>/s;
+$files =~ s/  Architecture.independent.\w+:\n/<dt><arch-indep>\n/s;
 $files =~ s/  ([\w ]+) architecture:/<dt>$1:/sg;
 $files =~ s/    (http:\S+)/  <dd><fileurl $1>/sg;
 
