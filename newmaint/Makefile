@@ -9,9 +9,13 @@ HTMLFILES= deadsite.html
 PHPFILES=index.php main.php ammain.php amnew.php amnew2.php amprofile.php exit.php amstatus.php amupdate.php todo.php amlist.php fddelete.php leaderboard.php amlogin2.php login2.php nmlist.php whoisam.php newnm.php newnm2.php nmelist.php deletenm.php  nmstatus.php stats.php nmadvocate.php
 INCFILES=config.inc common.inc
 WMLFILES=$(wildcard *.wml)
-IMAGES=$(shell ls *.gif *.jpg 2>/dev/null)
-DEBTEMPLATEDIR= ${HOME}/web-source/webwml/english/template
-DEBTEMPLATES=$(shell ls $(DEBTEMPLATEDIR)/debian/*.wml) $(shell ls template/*.wml)
+IMAGES=$(wildcard *.gif) $(wildcard *.jpg)
+ifneq "$(wildcard ${HOME}/web-source/webwml/english/template)" ""
+DEBTEMPLATEDIR := ${HOME}/web-source/webwml/english/template
+else
+DEBTEMPLATEDIR := ../webwml/english/template
+endif
+DEBTEMPLATES=$(wildcard $(DEBTEMPLATEDIR)/debian/*.wml) $(wildcard template/*.wml)
 #WML_DEFS= -DINTRO="http://www.debian.org/intro" -DDISTRIB="http://www.debian.org/distrib" -DHOME="http://www.debian.org" -DPICS="http://www.debian.org/Pics" -DCUR_ISO_LANG="en" -I $(DEBTEMPLATEDIR) -I template -DSEARCH="http://search.debian.org/"
 WML_DEFS= -I $(DEBTEMPLATEDIR)
 
@@ -31,3 +35,6 @@ backup:
 
 install: $(HTMLFILES) $(PHPFILES) 
 	cp $(HTMLFILES) $(PHPFILES) $(IMAGES) $(INCFILES) /var/www/nm
+
+clean:
+	rm -f $(PHPFILES) $(HTMLFILES)
