@@ -53,7 +53,7 @@ When you are done with the page, you can commit your changes to the repository u
 </pre>
 or
 <pre>
-   cvs commit &lt;dir&gt;   (to commit the changes in <dir>)
+   cvs commit &lt;dir&gt;   (to commit the changes in &lt;dir&gt;)
 </pre>
 or
 <pre>
@@ -64,7 +64,7 @@ or
 <pre>
    cvs add &lt;file&gt;.wml
 </pre>
-before you release it.
+before you commit it.
 
 <P>For more information on CVS, use 'info cvs'.
 
@@ -133,29 +133,36 @@ French will be used for the example
    cd french
    cp ../english/.wmlrc .
 edit and change '-D CUR_LANG=English' to '-D CUR_LANG=French'
+            and '-D CUR_ISO_LANG=en' to '-D CUR_ISO_LANG=fr'
    cp -r ../english/template .
 edit template/debian/* and translate any text. This should be quite straightforward
-   cp ../english/Makefile .
-edit and change 'LANG=en' to 'LANG=fr'
-Also comment out every target after 'all:' except for the files which are translated
+   cp ../english/Make* .
+edit Make.lang and change 'LANG=en' to 'LANG=fr'
 The makefile in each directory will compile every .wml file it finds. If you
 do not want or have not created a sub-directory and its accompanying Makefile
 you will need to remove the appropriate line from the Makefile. You will
 probably find it easier to create all the directories and makefiles up front though.
+Since most people will not need to make modifications to the makefiles, it is ok
+to let them be soft links to the English version.
 
+When done adding pages, do a
+   cvs commit
+from the webwml directory.
 </pre>
-Finally, you can start translating the pages.
+You can now start translating the pages.
 
 <H3>Example of Translating a Page</H3>
 A French translation of the social contract will be used for the example
 <pre>
-   cvs checkout webwml/english webwml/french
+   cvs checkout webwml/english webwml/french   (if you hadn't already)
    cd webwml/french
    cp ../english/social_contract.wml .
    cvs add social_contract.wml
 edit social_contract.wml and translate the text. Do not try to translate any
-links or change them in any way.
-When done
+links or change them in any way. The '.en' at the end of the first line is
+changed to '.fr'. When wml is fixed so that variables can be used on that line,
+it will be changed to '.$(CUR_ISO_LANG)'.
+When done, type
    cvs commit -m "short description of the changes you made" social_contract.wml
 </pre>
 
