@@ -35,6 +35,9 @@ foreach $l (<ADV>) {
     $desc = $2;
   }
   $mi = 0 if ($l =~ /^wget url/);
+  $moreinfo .= "<p>" if ($mi && $nl);
+  $nl = 0;
+  $nl = 1 if ($mi && ($l eq "\n") && $moreinfo);
   $moreinfo .= $l if ($mi);
   $mi++ if ($l =~ /^Debian-specific:/);
 
