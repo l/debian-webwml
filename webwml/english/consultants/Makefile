@@ -14,8 +14,9 @@ include $(WMLBASE)/Make.common
 include $(WMLBASE)/Make.dep.templ    
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml $(ENGLISHSRCDIR)/consultants/consultant.data
-# You might want to comment out the following two lines if it's a translation
+ifeq ($(LANGUAGE),en)
 	$(ENGLISHSRCDIR)/consultants/count
+endif
 	$(WML) $(<F)
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/consultant.wml
 	$(WML) $(<F)
