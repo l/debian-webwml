@@ -1,11 +1,30 @@
 #! /bin/sh
 
+# Copyright 2001,2,3 Martin Schulze <joey@debian.org>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 from='Debian Webmaster <webmaster@debian.org>'
-mailto=joey@infodrom.north.de
+mailto=webwml-monitor@www-master.debian.org
 xloop=debian-www@lists.debian.org
 regexp='\(Break\|ignored\)'
 
-logfile=/org/www.debian.org/cron/wml_run.log
+. `dirname $0`/../common.sh
+
+logfile=${webtopdir}/cron/wml_run.log
+
 if grep -q "$regexp" $logfile
 then
     (
@@ -13,19 +32,6 @@ then
       echo "To: $mailto"
       echo "X-Loop: $xloop"
       echo "Subject: webwml failed"
-      echo
-      grep -A 4 -B 15 "$regexp" $logfile
-    ) | /usr/sbin/sendmail -t
-fi
-
-logfile=/org/www.debian.org/bf/woody/make.log
-if grep -q "$regexp" $logfile
-then
-    (
-      echo "From: $from"
-      echo "To: $mailto"
-      echo "X-Loop: $xloop"
-      echo "Subject: woody bf documentation build failed"
       echo
       grep -A 4 -B 15 "$regexp" $logfile
     ) | /usr/sbin/sendmail -t
