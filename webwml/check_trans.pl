@@ -45,6 +45,7 @@ $to = "$to/$opt_s";
 @en= split(/\n/, `find $from -name Entries -print`);
 
 foreach (@en) {
+	next if $_ =~ "template/debian";
 	my ($path, $tpath, $d);
 	$path = $_;
 	$path =~ s#CVS/Entries$##;
