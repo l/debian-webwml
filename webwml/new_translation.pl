@@ -20,6 +20,7 @@ closedir DIR;
 
 foreach $file (@ARGV) {
    foreach $lang (@languages) {
+      if ($lang eq "CVS") { next; }
       @parts = split ?\/?,$file;
       $filename = pop(@parts);
       $path = join('/', @parts);
