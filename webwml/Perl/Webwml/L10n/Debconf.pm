@@ -91,6 +91,8 @@ sub read_compact {
                 $line ++;
                 if ($master && m/^[A-Z][a-z]*-[A-Za-z_]+(-fuzzy)?:/) {
                         warn "$file:$line: translated-fields-in-master-templates\n";
+                        #   Display this message only once
+                        $master = 0;
                         goto SKIP;
                 }
                 if (m/^[A-Z][a-z]*-[A-Za-z_]+-fuzzy:/) {
