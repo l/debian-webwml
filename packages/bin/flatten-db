@@ -90,8 +90,12 @@ while (<DB>) {
     if (/^Package: (.*)$/) {
 	$foo = $1;
 	if ($info{Package}) {
-	    printf OUT "%s %s %s %s \n", $info{Package}, $info{Section}, $info{Version}, strip ($info{Description});
-	    printf DESC "%s\t%s\t%s\n", $info{Package}, $info{Section}, $descr if ($config{descr});
+	    if ($info{Binary}) {
+		printf OUT "%s %s %s %s\n", $info{Package}, $info{Section}, $info{Version}, $info{Binary};
+	    } else {
+		printf OUT "%s %s %s %s \n", $info{Package}, $info{Section}, $info{Version}, strip ($info{Description});
+		printf DESC "%s\t%s\t%s\n", $info{Package}, $info{Section}, $descr if ($config{descr});
+	    }
 	    %info = ();
 	}
 	$info{Package} = $foo;
@@ -99,6 +103,7 @@ while (<DB>) {
 
     $info{Section} = $1 if (/^Section: (.*)$/);
     $info{Version} = $1 if (/^Version: (.*)$/);
+    $info{Binary} = $1 if (/^Binary: (.*)$/);
     if (/^Description: (.*)$/) {
 	$info{Description} = "$1";
 	$descr = "$1";
@@ -107,8 +112,15 @@ while (<DB>) {
 	$info{Description} .= " " . $_;
     }
 }
-printf OUT "%s %s %s %s \n", $info{Package}, $info{Section}, $info{Version}, strip ($info{Description}) if ($info{Package});
-printf DESC "%s\t%s\t%s\n", $info{Package}, $info{Section}, $descr if ($info{Package} && $config{descr});
+
+if ($info{Package}) {
+    if ($info{Binary}) {
+	printf OUT "%s %s %s %s\n", $info{Package}, $info{Section}, $info{Version}, $info{Binary};
+    } else {
+	printf OUT "%s %s %s %s \n", $info{Package}, $info{Section}, $info{Version}, strip ($info{Description});
+	printf DESC "%s\t%s\t%s\n", $info{Package}, $info{Section}, $descr if $config{descr};
+    }
+}
 
 close (DB);
 close (OUT);
