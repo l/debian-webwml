@@ -1,5 +1,5 @@
-BASE=..
-CUR_DIR=2.0
+BASE=../..
+CUR_DIR=ports/sparc
 
 HTMLDIR=$(BASE)/../../debian.org/$(CUR_DIR)
 TEMPLDIR=$(BASE)/template/debian
