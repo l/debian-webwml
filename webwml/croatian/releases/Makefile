@@ -1,13 +1,1 @@
-# This Makefile should need no changes from webwml/english/releases/Makefile
-# Please send a message to debian-www if you need to modify anything
-# so the problem can be fixed.
-
-WMLBASE=..
-CUR_DIR=releases
-SUBS=hamm slink potato woody
-
-include $(WMLBASE)/Make.lang
-
-
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
-  $(ENGLISHSRCDIR)/$(CUR_DIR)/info
+include $(subst webwml/croatian,webwml/english,$(CURDIR))/Makefile
