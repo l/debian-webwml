@@ -1,13 +1,18 @@
+
+<:
 ##########
 # Config part
 ##########
 my $DB_FILE="data/transmonitor";
 my $PO_ROOT="http://www.ens-lyon.fr/~mquinson/debian/po";
+:>
 
 ##########
 # Init
 ##########
 #include "../../../english/international/l10n/scripts/utils.pl"
+
+<:
 my %data;
 my %sections;
 my %priorities;
@@ -148,3 +153,6 @@ sub stats_output {
 
     return $res."\n";
 }
+
+:>
+

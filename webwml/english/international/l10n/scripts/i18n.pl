@@ -1,17 +1,31 @@
-#include "../../english/international/l10n/dtc.def"
-<PERL>
-#include "../../english/international/l10n/scripts/init.pl"
-$str = "<table border=1><tr><td><category><td colspan=2><I18N-ED><td colspan=2><Catalogs><br><I18N-prcent><td colspan=3><Organisation><br><I18N-prcent>\n";
-$str =~ s/<td/<td align=center BGCOLOR="#ddddd5"/g;
-print $str;
-$str = "<tr><td>&nbsp;<td><total><td><I18N-ED><td>po<td>nls<td>gnu<td>nls<td><full>\n";
-$str =~ s/<td>/<td align=center BGCOLOR="#ddddd5">/g;
-print $str;
-$str = "<tr><td><wholeArch>".stats_output()."</td>"; #close the last cell to have the "to bold" patern matching this one too
-$str =~ s/<td/<td BGCOLOR="#eed0ee"/g; # change background
-$str =~ s/>([^<>]+?)</><b>$1<\/b></g;  #change to bold
-print $str;
+#include "../../../english/international/l10n/dtc.def"
+#include "../../../english/international/l10n/scripts/init.pl"
 
+<table border=1>
+<tr>
+  <td align=center BGCOLOR="#ddddd5"><category></td>
+  <td colspan=2 align=center BGCOLOR="#ddddd5"><I18N-ED></td>
+  <td colspan=2 align=center BGCOLOR="#ddddd5"><Catalogs><br><I18N-prcent></td>
+  <td colspan=3 align=center BGCOLOR="#ddddd5"><Organisation><br><I18N-prcent></td>
+</tr>
+<tr>
+  <td align=center BGCOLOR="#ddddd5">&nbsp;</td>
+  <td align=center BGCOLOR="#ddddd5"><total></td>
+  <td align=center BGCOLOR="#ddddd5"><I18N-ED></td>
+  <td align=center BGCOLOR="#ddddd5">po</td>
+  <td align=center BGCOLOR="#ddddd5">nls</td>
+  <td align=center BGCOLOR="#ddddd5">gnu</td>
+  <td align=center BGCOLOR="#ddddd5">nls</td>
+  <td align=center BGCOLOR="#ddddd5"><full></td>
+</tr>
+<tr>
+<PERL>
+  $str = "<td BGCOLOR=\"#eed0ee\"><wholeArch>".stats_output()."</td>\n";
+  $str =~ s|>([^<>]+?)<|><b>$1</b><|g;  #change to bold
+  print $str;
+</PERL>
+
+<PERL>
 PRIORITY: foreach $priority (sort keys %priorities) {
     ## Stats for this priority only
     stats_clear();
@@ -22,7 +36,7 @@ PRIORITY: foreach $priority (sort keys %priorities) {
     }
     next PRIORITY if ($stats{"total"} == 0);
     $str = "<tr><td>&nbsp;&nbsp;$priority".stats_output();
-    $str =~ s/<td/<td bgcolor='#eee0ee'/g; # change background
+    $str =~ s/<(td)/<$1 bgcolor='#eee0ee'/g; # change background
     print $str;
 
     next PRIORITY if ($priority eq "unknown");
@@ -42,11 +56,21 @@ PRIORITY: foreach $priority (sort keys %priorities) {
 	print "<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$priority/$section".(stats_output());
     }
 }    
-$str = "<tr><td>&nbsp;<td><total><td><i18n-ed><td>po<td>nls<td>gnu<td>nls<td><full>\n";
-$str =~ s/<td>/<td align=center BGCOLOR="#ddddd5">/g;
-print $str;
-$str = "<tr><td><category><td colspan=2><I18N-ED><td colspan=2><Catalogs><br><I18N-prcent><td colspan=3><Organisation><br><I18N-prcent>\n";
-$str =~ s/<td/<td align=center BGCOLOR="#ddddd5"/g;
-print $str;
 </PERL>
+<tr>
+  <td align=center BGCOLOR="#ddddd5">&nbsp;</td>
+  <td align=center BGCOLOR="#ddddd5"><total></td>
+  <td align=center BGCOLOR="#ddddd5"><i18n-ed></td>
+  <td align=center BGCOLOR="#ddddd5">po</td>
+  <td align=center BGCOLOR="#ddddd5">nls</td>
+  <td align=center BGCOLOR="#ddddd5">gnu</td>
+  <td align=center BGCOLOR="#ddddd5">nls</td>
+  <td align=center BGCOLOR="#ddddd5"><full></td>
+</tr>
+<tr>
+  <td align=center BGCOLOR="#ddddd5"><category></td>
+  <td colspan=2 align=center BGCOLOR="#ddddd5"><I18N-ED></td>
+  <td colspan=2 align=center BGCOLOR="#ddddd5"><Catalogs><br><I18N-prcent></td>
+  <td colspan=3 align=center BGCOLOR="#ddddd5"><Organisation><br><I18N-prcent></td>
+</tr>
 </table>

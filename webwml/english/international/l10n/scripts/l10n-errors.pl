@@ -1,6 +1,7 @@
-#include "../../english/international/l10n/dtc.def"
-<PERL>
-#include "../../english/international/l10n/scripts/init.pl"
+#include "../../../english/international/l10n/dtc.def"
+#include "../../../english/international/l10n/scripts/init.pl"
+
+<:
 my %errors;
 my %warns;
 my $type;
@@ -50,7 +51,7 @@ sub print_section {
 
     if (defined %data) {
 	$header .= "<font size=-2><a href=#top>(top)</a></font>";
-	$header =~ s/<td/<td bgcolor="#ddddd5" align=center/g;
+	$header =~ s/<(td)/<$1 bgcolor="#ddddd5" align=center/g;
 	$since_header = 0;
 	print  "<table border=1>".$header;
 	foreach $pkg (sort keys %data) {
@@ -124,7 +125,7 @@ if ((defined $warns{"msgfmt"})||(defined $warns{"other"})) {
 }
 #### WARNINGS of msgfmt
 if (defined $warns{"msgfmt"}) {
-    print  <<EOF
+    print  <<'EOF'
 <a name=w_msgfmt><h3><warn-msgfmt></h3>
 <warn-msgfmt-text>
 EOF
@@ -187,4 +188,5 @@ if (defined $errors{"other"}) {
 		  "<hr><tr><td><package><td><error>",
 		  \%{$errors{"other"}});
 }
-</PERL>
+
+:>

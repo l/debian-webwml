@@ -1,3 +1,4 @@
+<:
 #!/usr/bin/perl -w
 
 # di18n-utils.pl -- some utilities for di18n
@@ -641,3 +642,4 @@ sub parse_dpkg_control  {
     return @data;
 }
 
+:>
