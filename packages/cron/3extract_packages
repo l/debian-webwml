@@ -23,7 +23,8 @@ do
 		test -d ${flatdir}/${dist}/${part} || mkdir -p ${flatdir}/${dist}/${part}
 		$bindir/flatten-db \
 		    --db ${part}/binary-${arch}/Packages.gz \
-		    --descr ${flatdir}/${dist}/${part}/Description-${arch}.us \
+		    --descr ${flatdir}/${dist}/${part}/Description.tmp \
+		    --sections ${flatdir}/${dist}/main/Section.tmp \
 		    --output ${flatdir}/${dist}/${part}/Packages-${arch}.us
 	    fi
        done
@@ -47,7 +48,8 @@ do
 		test -d ${flatdir}/${dist}/${part} || mkdir -p ${flatdir}/${dist}/${part}
 		$bindir/flatten-db \
 		    --db ${part}/binary-${arch}/Packages.gz \
-		    --descr ${flatdir}/${dist}/${part}/Description-${arch}.non-US \
+		    --descr ${flatdir}/${dist}/${part}/Description.tmp \
+		    --sections ${flatdir}/${dist}/main/Section.tmp \
 		    --output ${flatdir}/${dist}/${part}/Packages-${arch}.non-US
 	    fi
        done
@@ -71,7 +73,8 @@ do
 		test -d ${flatdir}/${dist}/${part} || mkdir -p ${flatdir}/${dist}/${part}
 		$bindir/flatten-db \
 		    --db ${part}/binary-${arch}/Packages.gz \
-		    --descr ${flatdir}/${dist}/${part}/Description-${arch}.security \
+		    --descr ${flatdir}/${dist}/${part}/Description.tmp \
+		    --sections ${flatdir}/${dist}/main/Section.tmp \
 		    --output ${flatdir}/${dist}/${part}/Packages-${arch}.security
 	    fi
        done
@@ -93,38 +96,21 @@ do
 	  test -d ${flatdir}/${dist}/main || mkdir -p ${flatdir}/${dist}/main
 	  $bindir/flatten-db \
 	      --db main/debian-installer/binary-${arch}/Packages.gz \
-	      --descr ${flatdir}/${dist}/main/Description-${arch}.installer \
+	      --descr ${flatdir}/${dist}/main/Description.tmp \
+	      --sections ${flatdir}/${dist}/main/Section.tmp \
 	      --output ${flatdir}/${dist}/main/Packages-${arch}.installer
       fi
     done
    cd ${archivedir}
 done
 
-for dist in ${dists}
+for dist in ${dists} experimental
 do
     for part in ${parts}
     do
-      if [ "$dist" = "stable-proposed-updates" \
-	-o "$dist" = "testing-proposed-updates" ]; then
-	  sort ${flatdir}/${dist}/${part}/Description-*.{us,non-US} \
-	                | uniq > ${flatdir}/${dist}/${part}/Description
-      elif [ "$dist" = "stable" ]; then
-	  sort ${flatdir}/${dist}/${part}/Description-*.{us,non-US,security} \
-	      | uniq > ${flatdir}/${dist}/${part}/Description
-      else
-	  if [ "$part" = "main" ]; then
-	      sort ${flatdir}/${dist}/${part}/Description-*.{us,non-US,installer} \
-		  | uniq > ${flatdir}/${dist}/${part}/Description
-	  else
-	      sort ${flatdir}/${dist}/${part}/Description-*.{us,non-US} \
-		  | uniq > ${flatdir}/${dist}/${part}/Description
-	  fi
-      fi
+      mv ${flatdir}/${dist}/${part}/Description.tmp \
+	  ${flatdir}/${dist}/${part}/Description
+      mv ${flatdir}/${dist}/${part}/Section.tmp \
+	  ${flatdir}/${dist}/${part}/Section
     done
-done
-
-for part in ${parts}
-do
-  sort ${flatdir}/experimental/${part}/Description-*.us \
-      | uniq > ${flatdir}/experimental/${part}/Description
 done

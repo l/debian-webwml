@@ -17,6 +17,7 @@ use CGI qw( -oldstyle_urls );
 use POSIX;
 use URI::Escape;
 use HTML::Entities;
+use DB_File;
 
 use lib "../lib";
 
@@ -115,25 +116,39 @@ my $file = "Packages-$arch.*";
 my $srcfile = "Sources.*";
 my $search_on_sources = 0;
 
+my %descr;
+my %sections;
+
 sub find_desc
 {
     my $pkg = shift;
     my $suite = shift;
     my $part = shift;
-    my $desc = '';
+    my $descr = '';
 
-    $pkg =~ s/[.]/[.]/;
-
-    my $cmd = sprintf ("/bin/grep '^%s\t' %s/files/flat/%s/%s/Description",
-		      $pkg, $topdir, $suite, $part);
-
-    my @results = qx( $cmd );
-
-    if (@results) {
-	@results = split (/\t/, $results[0], 3);
-	$desc =  $results[2] if ($#results >= 2);
+    unless (exists $descr{$suite}{$part}) {
+	$descr{$suite}{$part} = {};
+	tie %{$descr{$suite}{$part}}, 'DB_File', "$topdir/files/flat/$suite/$part/Description", O_RDONLY
+	    or return "Error while loading descriptions database: $!";
     }
-    return $desc;
+
+    return $descr{$suite}{$part}{$pkg};
+}
+
+sub find_section
+{
+    my $pkg = shift;
+    my $suite = shift;
+    my $part = shift;
+    my $section = '';
+
+    unless (exists $sections{$suite}{$part}) {
+	$sections{$suite}{$part} = {};
+	tie %{$sections{$suite}{$part}}, 'DB_File', "$topdir/files/flat/$suite/$part/Section", O_RDONLY
+	    or return undef;
+    }
+
+    return $sections{$suite}{$part}{$pkg};
 }
 
 # The keyword needs to be modified for the actual search, but left alone
@@ -320,7 +335,13 @@ unless ($search_on_sources) {
 		print "<br>Binary packages: ";
 		my @bp_links;
 		foreach my $bp (@{$binaries{$pkg}{$ver}}) {
-		    my $bp_link = sprintf "<a href=\"$thisscript?exact=1&amp;searchon=names&amp;version=$ver&amp;keywords=%s\">%s</a>", uri_escape( $bp ),  $bp;
+		    my $sect = find_section($bp, $ver, $part{$pkg}{$ver}{source}||'main');
+		    my $bp_link;
+		    if ($sect) {
+			$bp_link = sprintf "<a href=\"$ROOT/%s/%s/%s\">%s</a>", $ver, $sect, uri_escape( $bp ),  $bp;
+		    } else {
+			$bp_link = $bp;
+		    }
 		    push @bp_links, $bp_link;
 		}
 		print join( ", ", @bp_links );
@@ -390,8 +411,7 @@ sub multipageheader {
 sub printfooter {
 print <<END;
 
-<p align="right"><small><i><a href="$SEARCHPAGE">
-Packages search page</a></i></small></p>
+<p style="text-align:right;font-size:small;font-stlye:italic"><a href="$SEARCHPAGE">Packages search page</a></p>
 END
 
 print $input->end_html;

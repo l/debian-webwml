@@ -21,11 +21,13 @@
 
 use strict;
 use Getopt::Long;
+use DB_File;
 
 my %config = (
 	      'db' => undef,
 	      'output' => undef,
 	      'descr' => undef,
+	      'sections' => undef,
 	      'verbose' => 0,
 	      );
 
@@ -33,6 +35,7 @@ my %options = (
 	       'db=s' => \$config{db},
 	       'output=s' => \$config{output},
 	       'descriptions=s' => \$config{descr},
+	       'sections=s' => \$config{sections},
 	       'verbose+' => \$config{verbose},
 	       'help' => \&help,
 	       );
@@ -77,8 +80,12 @@ if ($config{output}) {
     open (OUT, ">-");
 }
 
+my ( %descr, %sections );
 if ($config{descr}) {
-    open (DESC, ">$config{descr}") || die "Can't open $config{desc} for writing, $!";
+    tie %descr, 'DB_File', $config{descr} or die "Couldn't tie description db $config{descr}: $!";
+}
+if ($config{sections}) {
+    tie %sections, 'DB_File', $config{sections} or die "Couldn't tie sections db $config{section}: $!";
 }
 
 my %info = ();
@@ -93,8 +100,9 @@ while (<DB>) {
 	    if ($info{Binary}) {
 		printf OUT "%s %s %s %s\n", $info{Package}, $info{Section}, $info{Version}, $info{Binary};
 	    } else {
-		printf OUT "%s %s %s %s %s \n", $info{Package}, $info{Section}, $info{Version}, $info{Architecture}, strip ($info{Description});
-		printf DESC "%s\t%s\t%s\n", $info{Package}, $info{Section}, $descr if ($config{descr});
+		printf OUT "%s %s %s %s %s\n", $info{Package}, $info{Section}, $info{Version}, $info{Architecture}, strip ($info{Description});
+		$descr{$info{Package}} = $descr if $config{descr};
+		$sections{$info{Package}} = $info{Section} if $config{sections};
 	    }
 	    %info = ();
 	}
@@ -119,10 +127,10 @@ if ($info{Package}) {
 	printf OUT "%s %s %s %s\n", $info{Package}, $info{Section}, $info{Version}, $info{Binary};
     } else {
 	printf OUT "%s %s %s %s %s \n", $info{Package}, $info{Section}, $info{Version}, $info{Architecture}, strip ($info{Description});
-	printf DESC "%s\t%s\t%s\n", $info{Package}, $info{Section}, $descr if $config{descr};
+	$descr{$info{Package}} = $descr if $config{descr};
+	$sections{$info{Package}} = $info{Section} if $config{sections};
     }
 }
 
 close (DB);
 close (OUT);
-close (DESC) if ($config{descr});
