@@ -1305,35 +1305,3 @@ if ('$(DUMMY_VAR_DO_NOT_REMOVE)' ne '') {
 </perl>
 
 #use def::debian::language_names
-
-#   The <define-tag-sliced> tag can be used instead of <define-tag>
-#   when defining piece of text to translate.  Example:
-#     <define-tag-sliced flags whitespace=delete>
-#           [EN:Flags::]
-#           [DA:Flag::]
-#           [FI:Liput::]
-#           [FR:Options ::]
-#           [HR:Oznake::]
-#           [IT:Opzioni::]
-#           [SV:Flaggor::]
-#     </define-tag-sliced>
-#   Then slices for all other languages are automatically copied from
-#   English.  It currently does only work when slices are on a single
-#   line.
-
-<define-tag define-tag-sliced endtag=required whitespace=delete>
-  <preserve default />
-#   English text is placed in `default' variable
-  <set-var default=<subst-in-string %body
-        ".*\\[EN:([^\\n]*):\\].*" "\\1" singleline=true /> />
-#   Hack to change expansion order: string is first evaluated, then
-#   substitution is performed and output is scanned again.
-  <subst-in-string "=LT=define-tag %attributes>
-    <foreach _webwml_lang_ _webwml_langs_>
-      <or <match %body "\[<get-var _webwml_lang_/>:[^\\n]*:\\]" action=extract />
-        "[<get-var _webwml_lang_ />:<get-var default />:]" />
-    </foreach>
-  =LT=/define-tag>" "=LT=" "<" />
-  <restore default />
-</define-tag>
-
