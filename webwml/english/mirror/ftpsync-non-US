@@ -1,0 +1,29 @@
+#! /bin/sh
+set -e
+
+. $HOME/ftpsync-non-US.conf
+
+export RSYNC_PASSWORD
+
+LOCK="${TO}/Archive-Update-in-Progress-`hostname -f`"
+
+# Get in the right directory and set the umask to be group writable
+# 
+cd $HOME
+umask 002
+
+# Check to see if another sync is in progress
+if lockfile -! -l 43200 -r 0 "$LOCK"; then
+  echo `hostname` is unable to start rsync, lock file exists
+  exit 1
+fi
+trap "rm -f $LOCK > /dev/null 2>&1" exit  
+
+set +e
+rsync -rltvz --delete \
+     --exclude "Archive-Update-in-Progress-`hostname -f`" \
+     --exclude "project/trace/`hostname -f`" \
+     $EXCLUDE \
+     $RSYNC_USER@$RSYNC_HOST::debian-non-US $TO > rsync-non-US.log 2>&1
+date -u > "${TO}/project/trace/`hostname -f`"
+savelog rsync-non-US.log > /dev/null 2>&1
