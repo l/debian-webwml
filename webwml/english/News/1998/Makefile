@@ -13,10 +13,11 @@ ENGLISHSRCDIR=$(BASE)/../english
 include $(BASE)/Make.lang
 
 all: $(HTMLFILES) $(JPGDEST)
+	echo $(JPGDEST)
 
 include $(BASE)/Make.templ.inc
 
 # Do Not modify the following line
 $(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(wildcard 1998*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_news.wml $(TEMPLDIR)/languages.wml
 $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
-
+	$(WML) $(EPILOG) $(<F)
