@@ -220,9 +220,9 @@ sub trailer {
 	"\n\n<hr noshade width=\"100%\" size=\"1\">" .
 	sprintf( gettext( "Back to: <a href=\"%s/\">Debian Project homepage</a> || <a href=\"%s/\">Packages search page</a>" ), $HOME, $ROOT ).
 	"\n<hr noshade width=\"100%\" size=\"1\">\n".
-	"<small>".
-	sprintf( gettext( "See the Debian <a href=\"%s/contact\">contact page</a> for information on contacting us." ), $HOME ).
-	"</small>\n".
+	"<p><small>".
+	sprintf( gettext( "To report a problem with the web site, e-mail <a href=\"mailto:debian-www\@lists.debian.org\">debian-www\@lists.debian.org</a>. For other contact information, see the Debian <a href=\"%s/contact\">contact page</a>." ), $HOME).
+	"</small></p>\n".
 	"<p><small>". gettext( "Last Modified: " ). "LAST_MODIFIED_DATE".
 	"<br>\n".
 	sprintf( gettext( "Copyright &copy; 1997-2004 <a href=\"http://www.spi-inc.org\">SPI</a>; See <a href=\"%s/license\">license terms</a>." ), "$HOME/" )."<br>\n".
