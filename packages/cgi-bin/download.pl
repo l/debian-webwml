@@ -38,7 +38,6 @@ my @north_american_sites = (
 	"debian.teleglobe.net",
 	"debian.rutgers.edu",
 	"debian.oregonstate.edu/debian",
-	"mirrors.terrabox.com/debian",
 	);
 my @european_sites = (
 	"ftp.de.debian.org/debian",
