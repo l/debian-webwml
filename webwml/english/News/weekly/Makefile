@@ -135,9 +135,8 @@ ifeq "$(LANGUAGE)" "zh"
 else
 ifeq "$(LANGUAGE)" "ja"
 	-find . -type f -name \*.$(LANGUAGE).html.tmp | xargs rm -f
-else
-	-find . -type f -name \*.$(LANGUAGE).html | xargs rm -f
 endif
+	-find . -type f -name \*.$(LANGUAGE).html | xargs rm -f
 endif
 
 # Need to rebuild the index when anything changes.
