@@ -20,7 +20,7 @@ correo.</a>
   <li><a href="server-request">Cómo pedir informes de error por 
 correo.</a>
 #  <li><a href="db/ix/full.html">Lista completa de informes de errores
-#       imprescindibles y recientes.</a>
+#       pendientes y recientes.</a>
 #  <li><a href="db/ix/packages.html">Paquetes con informes de error.</a>
 #  <li><a href="db/ix/maintainers.html">Mantenedores de paquetes con informes 
 de error.</a>
