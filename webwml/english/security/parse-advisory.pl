@@ -64,7 +64,7 @@ foreach $l (<ADV>) {
   }
   if ($l =~ /^(Problem type|Vulnerability)\s*: (.+)/) {
     $desc = $2;
-    $desc .= ' vulnerabilities' if $desc =~ /(several|multiple)/;
+    $desc .= ' vulnerabilities' if $desc =~ /(several|multiple)\s*$/;
   }
   if ($l =~ /^(CVE (names?|ids?|references?)?|CERT advisor(y|ies))\s*: (.+)/i) {
     push @dbids, join (" ", split (/,? /, $4));
