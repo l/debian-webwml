@@ -1,4 +1,4 @@
-# This Makefile should need no changes from webwml/english/2.0/Makefile
+# This Makefile should need no changes from webwml/english/releases/potato/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
@@ -14,3 +14,5 @@ include $(WMLBASE)/Make.common
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
 
+index.$(LANGUAGE).html: $(TEMPLDIR)/install_manual.wml \
+  $(ENGLISHSRCDIR)/releases/potato/formats_and_architectures.wmh
