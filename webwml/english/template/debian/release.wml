@@ -169,7 +169,9 @@ sub permute_as_matrix {
 	        next if ($ext eq "pdf" && $lang eq "russian");
 	        $file_version = "$arch/$file." . $langsinstall{$lang} . ".$ext";
 	        if ( $file =~ /release-notes/ && $ext eq "html" ) {
-	           $file_version = "$arch/$file/index." . $langsrelnotes{$lang} . ".$ext";
+		   # convert languages with sublangs (zh_TW -> zh-tw)
+		   (my $html_lang = $langsrelnotes{$lang}) =~ s/(\w\w)_(\w\w)/"$1-".lc($2)/e;
+	           $file_version = "$arch/$file/index." . $html_lang . ".$ext";
 	        }
            elsif ( $file =~ /release-notes/ && $ext eq "txt" ) {
 	           $file_version = "$arch/$file." . $langsrelnotes{$lang} . ".$ext";
