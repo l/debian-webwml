@@ -230,20 +230,17 @@
   header, which makes Apache go bezerk and apply some of its illogical
   methods of serving smallest available files.
 
-  <p>When given `Accept-Language: *', the first available page will be
-  served, and that's usually Chinese. The clients that send this may or may
-  not be broken, but in any case there are many of them (some versions of
-  Internet Explorer, 5.5?) so we can't ignore them.
+  <p>When given "*" in the Accept-Language header, the first available page
+  will be served, and that's most likely not English, rather Arabic or
+  Chinese. This is especially problematic when the user's language
+  preference is a two-part language code (like "en-ca" or "nl-BE") followed
+  by a "*".
 
-  <p>Apache upstream chooses to stick with the RFC and doesn't care about
-  any exceptions.
+  <p>Apache 1.3 sticks with the RFC here. Apache 2.0's code will imply a
+  en or nl respectively, but it will be low priority so it probably won't
+  help with e.g. "en-ca, fr-ca, *".
 
-  <p>When given Accept-Language headers consisting of two parts, e.g. en-US,
-  en-GB or nl-BE, the Chinese page is served, at least on some mirrors.
-  Apache 2.0's code is a tad more sane in some cases, it needs to be looked
-  at.
-
-  <p>When there exists a file of unknown language, i.e. an unrecognized
+  <p>Also, when there exists a file of unknown language, i.e. an unrecognized
   foo.*.html file with no AddLanguage or LanguagePriority setting, and when
   the client sends an Accept-Language which contains only unavailable
   languages, the former file will be served.
@@ -252,7 +249,7 @@
   because there's a Slovak variant of it and we didn't have that language
   set up in Apache because there's no web site translation in Slovak.
   We've alleviated the problem by including sk in the Apache config files,
-  but unfortunately the change hasn't propagated to all of the mirrors yet.
+  but as usual, changes don't propagate to all of the mirrors fast.
 
 <toc-add-entry name="mirroring">Mirroring issues</toc-add-entry>
 
