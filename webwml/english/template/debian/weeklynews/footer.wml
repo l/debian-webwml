@@ -18,6 +18,78 @@
   <gettext><void id="plural" />Debian Weekly News is edited by <a href="mailto:dwn@debian.org">%s</a>.</gettext>
 </define-tag>
 
+<define-tag translator_singular whitespace=delete>
+# One translator only
+  <gettext><void id="singular" />This issue of Debian Weekly News was translated by %s.</gettext>
+</define-tag>
+
+<define-tag translator_plural whitespace=delete>
+# Two ore more translators
+  <gettext><void id="plural" />This issue of Debian Weekly News was translated by %s.</gettext>
+</define-tag>
+
+<define-tag translator whitespace=delete>
+<:{
+   my $translator = '$(translator)';
+   my $plural = 0;
+   my $email = "";
+   my $name = "";
+   my $translators = "";
+   my $last = 0;
+   my $p =0;
+   if (length ($translator)) {
+      $translator =~ s/\(at\)/@/;
+      $plural = 1 if $translator =~ /,/;
+   do {
+   $email="";
+   $name="";
+   $translators=$translators.", " unless ($last == 0);
+   $p = index($translator,"<",$last);
+   $email = substr($translator,$p+1,index($translator,">",$p)-($p+1)) unless (index($translator,">",$p)==-1);
+   $name = substr($translator,$last,$p-$last);
+   if (length ($email)){
+   $translators = $translators.'<a href="mailto:'.$email.'">'."$name</a>";
+   }else{$translators = $name;}
+   $last = index($translator,",",$last+1);
+   }until ($last == -1);
+   if ($CUR_ISO_LANG eq 'en') {
+     $translators =~ s/,([^,]+)$/ and $1/;
+     $translators =~ s/,/, /g;
+   } elsif ($CUR_ISO_LANG eq 'de') {
+     $translators =~ s/,([^,]+)$/ und $1/;
+     $translators =~ s/,/, /g;
+   } elsif ($CUR_ISO_LANG eq 'sv') {
+     $translators =~ s/,([^,]+)$/ och $1/;
+     $translators =~ s/,/, /g;
+     $translators =~ s/'/"/g;
+   } elsif ($CUR_ISO_LANG eq 'no' || $CUR_ISO_LANG eq 'da') {
+     $translators =~ s/,([^,]+)$/ og $1/;
+     $translators =~ s/,/, /g;
+   } elsif ($CUR_ISO_LANG eq 'hr') {
+     $translators =~ s/,([^,]+)$/ i $1/;
+     $translators =~ s/,/, /g;
+     $translators =~ s/'/"/g;
+   } elsif ($CUR_ISO_LANG eq 'fr') {
+     $translators =~ s/,([^,]+)$/ et $1/;
+     $translators =~ s/,/, /g;
+     $translators =~ s/'([^',]+)'/« $1 »/g;
+   } elsif ($CUR_ISO_LANG eq 'ru') {
+     $translators =~ s/,([^,]+)$/ É $1/;
+     $translators =~ s/,/, /g;
+   } elsif ($CUR_ISO_LANG eq 'pl') {
+     $translators =~ s/,([^,]+)$/ i $1/;
+     $translators =~ s/,/, /g;
+   } else {
+     # Fallback to the english style if there's no translation yet
+     $translators =~ s/,([^,]+)$/ and $1/;
+     $translators =~ s/,/, /g;
+   }
+   printf "<br>";
+   printf q{<translator_singular>}, $translators unless $plural;
+   printf q{<translator_plural>}, $translators if $plural;}
+}:>
+</define-tag>
+
 <define-tag editor whitespace=delete>
 <:{
    my $editor = "$(editor)";
@@ -78,6 +150,9 @@
    } elsif ($CUR_ISO_LANG eq 'ru') {
      $editor =~ s/,([^,]+)$/ É $1/;
      $editor =~ s/,/, /g;
+   } elsif ($CUR_ISO_LANG eq 'pl') {
+     $editor =~ s/,([^,]+)$/ i $1/;
+     $editor =~ s/,/, /g;
    } else {
      # Fallback to the english style if there's no translation yet
      $editor =~ s/,([^,]+)$/ and $1/;
@@ -100,3 +175,4 @@
 
 <p>
 <editor/>
+<translator/>
