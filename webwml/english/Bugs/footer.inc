@@ -1,6 +1,6 @@
 <HR>
 <ADDRESS>
-Darren Benham / <A HREF="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>.
+Debian BTS administrators &lt;<A HREF="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>&gt;
 
 <P>Debian bug tracking system
 <BR>
