@@ -1,6 +1,11 @@
 use strict;
 use warnings;
 
+use HTML::Entities;
+
+use Packages::Pkg;
+use Deb::Versions;
+
 sub print_deps {
     my ( $env, $pkg, $versions, $type) = @_;
     my $res = "";
