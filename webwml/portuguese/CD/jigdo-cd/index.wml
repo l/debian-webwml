@@ -1,5 +1,5 @@
 #use wml::debian::cdimage title="Baixando imagens do CD Debian com o jigdo" BARETITLE=true
-#use wml::debian::translation-check translation="1.15"
+#use wml::debian::translation-check translation="1.17"
 
 <p>Jigsaw Download, ou resumido  <a href="http://atterer.net/jigdo/">jigdo</a>,
 pretende ser a principal forma de distribuição das imagens de CD Debian
@@ -7,13 +7,13 @@ no futuro. Atualmente o sistema funciona, porém seu uso não é muito confortável
 pelo fato do gerenciador de cópia não estar pronto ainda.</p>
 
 <p><strong>Por que o jigdo é melhor que baixar direto?</strong> Porque é 
-mais rápido! Por várias razões, há um número menor de servidores de arquivo
+mais rápido! Por várias razões, há um número menor de servidores espelho
 ("mirrors") para imagens de CD que servidores de arquivo "normais" do Debian.
 Consequentemente se você baixar de um servidor de arquivos de imagens de CD,
 este servidor não só estará longe, também estará sobrecarregado, especialmente
 logo após a liberação de novas versões.</p>
 
-<p>Naturalmente, um servidor de arquivos Debian ("mirror") "normal" não
+<p>Naturalmente, um servidor espelho Debian ("mirror") "normal" não
 tem nenhuma imagem de CD, então como é que o jigdo consegue baixá-las de lá?
 Ele faz isso baixando individualmente todos os arquivos que estão no CD.
 No próximo passo, todos estes arquivos são agregados num único grande arquivo
@@ -25,9 +25,9 @@ cópia a localização de um arquivo "<tt>.jigdo</tt>" a ser processado.</p>
 
 <ul>
 
-  <li>Arquivos jigdo oficiais para a <a
-  href="http://cdimage.debian.org/~atterer/jigdo/">última distribuição "estável"
-  em CD</a></li>
+  <li>Arquivos jigdo oficiais para a 
+  <a href="http://us.cdimage.debian.org/jigdo-area/current/jigdo/">última 
+  distribuição "estável"  em CD</a></li>
 
   <li>Arquivos jigdo não oficiais para a <a
   href="ftp://ftp.fsn.hu/pub/CDROM-Images/debian-unofficial/woody/jigdo/">\
@@ -55,15 +55,17 @@ cópia a localização de um arquivo "<tt>.jigdo</tt>" a ser processado.</p>
 </ul>
 
 <p><strong>Quais os passos necessários para baixar uma imagem com o
-jigdo?</strong> Se você usa o Linux:</p>
+jigdo?</strong>
 
 <ul>
 
-  <li>Copie um pacote contendo o <tt>jigdo-file</tt>. Ele está
+  <li>Copie um pacote contendo o <tt>jigdo-lite</tt>. Ele está
   disponível em várias formas na <a
-  href="http://atterer.net/jigdo/">página do jigdo</a>. O pacote
-  também contém o programa "script" <tt>jigdo-lite</tt>.</li>
-
+  href="http://atterer.net/jigdo/">página do jigdo</a>.
+  <br><strong>Usuários Debian, por favor atualizem, pelo menos, para a
+  versão 0.6.8</strong> - a versão no Debian woody não é suficiente para
+  baixar as imagens mais recentes!</li>
+  
   <li>Execute o programa <tt>jigdo-lite</tt>. Ele vai pedir a URL
   de um arquivo "<tt>.jigdo</tt>" para processar. (Você também pode fornecer
   esta URL na linha de comando se quiser).</li>
@@ -77,17 +79,13 @@ jigdo?</strong> Se você usa o Linux:</p>
 
 </ul>
 
-<p>Se você é um usuário do Windows, veja a página do <a
-href="http://cdimage.debian.org/~costar/jigdo/">jigdo-easy</a> 
-sobre como baixar as imagens de CD do Debian.</p>
-
 <p>Uma vez as imagens baixadas e escritas num CD, veja as
 <a href="$(HOME)/releases/stable/installmanual">informações detalhadas 
 sobre o processo de instalação</a>.</p>
 
 <p>O jigdo é capaz de "atualizar" uma versão antiga de uma imagem de CD
 para a versão mais recente - neste caso, só o que mudou será baixado.
-Além disso, as pessoas que têm seu próprio servidor de arquivos ("mirror")
+Além disso, as pessoas que têm seu próprio servidor espelho ("mirror")
 Debian local podem fornecer uma URI do tipo "file:" quando solicitado.</p>
 
 <p>Se quiser dar uma olhada no protótipo da interface gráfica para o 
@@ -99,13 +97,27 @@ ajudar com o desenvolvimento do jigdo são sempre bem vindos!</p>
 
 <p><strong>Como faço para o jigdo usar meu proxy?</strong></p>
 
-<p>Para qualquer proxy ser usado, seu endereço deve ser colocado nas
-variáveis de ambiente <tt>http_proxy</tt> e/ou <tt>ftp_proxy</tt>. 
-No Linux, a melhor maneira de configurar estas variáveis é adicionando
-linhas do tipo <tt>export&nbsp;http_proxy=http://myproxy:8088/</tt> ao
-arquivo <tt>.bashrc</tt> no seu diretório "home". Quando usar o jigdo-easy 
-no Windows, a solução mais fácil é adicionar linhas semelhantes no início
-do programa <tt>jigdo-easy.sh</tt>.</p>
+<p>Carregue o arquivo <tt>~/.jigdo-lite</tt> (ou o
+<tt>jigdo-lite-settings.txt</tt> para usuário da versão para Windows)
+num editor de texto e procure a linha que começa com "wgetOpts". As
+opções a seguir podem ser adicionadas à linha:</p>
+
+<p><tt>-e ftp_proxy=http://<i>PROXY-LOCAL</i>:<i>PORTA</i>/</tt>
+<br><tt>-e http_proxy=http://<i>PROXY-LOCAL</i>:<i>PORTA</i>/</tt>
+<br><tt>--proxy-user=<i>USUÁRIO</i></tt>
+<br><tt>--proxy-passwd=<i>SENHA</i></tt></p>
+
+<p>É claro, substitua os valores corretos para o seu servidor proxy. As
+duas últimas opções só são necessárias se o seu proxy utiliza
+autenticação com senha. As opção devem ser adicionadas no final da linha
+wgetOpts <em>antes</em> do caracter final <tt>'</tt>. Todas as opções
+devem estar numa única linha.</p>
+
+<p>Alternativamente, no Linux você pode também configurar as variáveis
+de ambiente <tt>ftp_proxy</tt> e <tt>http_proxy</tt>, por exemplo no
+arquivo <tt>/etc/environment</tt> ou no 
+<tt>~/.bashrc</tt>.</p>
+
 
 <p><strong>Aargh! O programa parou com um  erro - será que baixei todos
 aqueles megabytes em vão?!</strong></p>
@@ -123,7 +135,7 @@ coisas que podem ser tentadas neste caso:</p>
   temporários  - fará outra tentativa de baixar quaisquer arquivos que
   esteja faltando.</li>
 
-  <li>Tente um servidor de arquivo ("mirror") diferente. Alguns servidores
+  <li>Tente um servidor espelho ("mirror") diferente. Alguns servidores
   de arquivo Debian estão ligeiramente fora de sincronia - talvez um
   servidor diferente ainda tenha os arquivos que foram apagados daquele
   que você especificou, ou já foi atualizado com arquivos que ainda não
