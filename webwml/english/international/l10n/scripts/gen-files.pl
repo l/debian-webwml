@@ -86,7 +86,9 @@ sub transform_translator {
         #  Some translators forget the right angle bracket
         $name =~ s/\s*<.*//;
         $name =~ s/&(?!#)/&amp;/g;
+        $name =~ s/=\?.*?\?=//g;
         $name = 'DDTP' if $name eq 'Debian Description Translation Project';
+        $name = '' if $name =~ m/\@/;
         return $name;
 }
 
