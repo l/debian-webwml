@@ -58,7 +58,9 @@ do 'documents-bd.pl';
 %translations_status = (
 
 'book-gtiau' => {
-	'status' => 1
+	'status' => 2,
+	'translation_maintainer'=> ['Enrique Zanardi <ezanardi@id-agora.com>']
+	'since'			=> '08/02/2000'
 },
 
 
@@ -117,7 +119,7 @@ do 'documents-bd.pl';
 	'translation_name'	=> 'Guía de dselect para principiantes',
 	'translation_maintainer'=> ['Enrique Zanardi <ezanardi@debian.org>'],
 #	'base_revision'		=> '2.1',
-#	'translation_url'	=> 'http://www.debian.org/~clebars/docs-2.1/dselect-beginner.html/dselect-beginner.html',
+#	'translation_url'	=> 'http://www.debian.org/~/docs-2.1/dselect-beginner.html/dselect-beginner.html',
 	'translation_cvs_url'   => 'http://cvs.debian.org/debian-boot/boot-floppies/documentation/dselect-beginner.es.sgml?cvsroot=debian-boot',
 	'translation_package'	=> 'boot-floppies'
 #	'last_translated'	=> '22/003/1999',
@@ -125,7 +127,7 @@ do 'documents-bd.pl';
 
 	'release-notes' => {
 	'status'		=> 1,
-#	'since'			=> '05/06/1999',
+	'since'			=> '05/06/1999',
 	'translation_name'	=> 'Notas de la versión',
 	'translation_maintainer'=> ['Enrique Zanardi <ezanardi@debian.org>'],
 #	'base_revision'		=> '',
@@ -155,5 +157,20 @@ do 'documents-bd.pl';
         'translation_maintainer'=> ['Javier Fernández-Sanguino Peña <jfs@computer.org>'],
         'translation_dev_url'   => 'http://www.dat.etsit.upm.es/~jfs/debian/doc//'
 },
+	
+	'network-administrator' => {
+        'status'                => 2,
+	'since'			=> '08/02/2000',
+	'translation_maintainer' => ['Darlock <darlock@teleline.es>'],
+'url'                   => 'http://www.debian.org/doc/network-administrator/',
+'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/network-administrator/?cvsroot=debian-doc'
+},
+
+	'system-administrator' => {
+		'status'                => 2,
+		'translation_maintainer' => ['SKaVeN <skaven@linuxfreak.com>'],
+		'since' 		=> '06/02/2000',
+},
+
 
 );
