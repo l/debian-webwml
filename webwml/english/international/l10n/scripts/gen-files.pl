@@ -172,9 +172,8 @@ sub get_stats_templates {
                 my ($template, $lang, $stat, $link_trans, $link_orig) = ();
                 foreach $line (@{$data->templates($pkg)}) {
                         ($template, $lang, $stat, $link_trans, $link_orig) = @{$line};
-                        next if $lang eq '_';
-
                         $link_orig ||= '';
+                        next if $lang eq '_';
 
                         $link_trans =~ s/:/\%3a/g;
                         $link_orig  =~ s/:/\%3a/g;
