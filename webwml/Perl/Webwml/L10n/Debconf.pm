@@ -99,7 +99,6 @@ sub read_compact {
                         warn "$file:$line: translated-fields-in-master-templates\n";
                         #   Display this message only once
                         $safe = 1;
-                        goto SKIP;
                 }
                 if (s/^Template:\s*//) {
                         $tmpl = $_;
