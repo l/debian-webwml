@@ -9,6 +9,7 @@ sub output_details {
     return $data;
 }
 
+$cur_lang = "$(CUR_LANG)";
 $team = "$(TEAM)";
 if (defined ($team) && $team ne "") {
 
