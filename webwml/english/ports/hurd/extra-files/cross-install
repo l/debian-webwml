@@ -97,19 +97,22 @@
 #                      package since a long time. Add new option
 #                      domainname. Don't create /etc/motd.
 #   15 Oct 1999 - v4.1 Add bash symlink *sigh*
+#   08 Dec 1999 - v4.2 Remove libc6 fake package.
+#                      Remove locales.
+#    1 Mar 1999	- v4.3 Various updates.
 
 plist="base/adduser base/ae base/base-files base/base-passwd base/bash \
        base/bsdutils base/debianutils base/diff base/dpkg-ftp \
-       base/dpkg-mountable base/dpkg-multicd base/dpkg base/e2fsprogs \
-       base/fileutils base/findutils base/gnumach base/grep base/grub \
-       base/gzip base/hostname base/hurd net/inetutils base/libc0.2 \
-       base/libgdbmg1 base/libncurses4 base/libnet-perl \
-       base/libreadlineg2 base/libstdc++2.9 base/libwrap0 \
-       base/mawk base/ncurses-base base/ncurses-bin base/passwd \
-       base/perl-5.005-base base/perl-base base/sed \
+       base/dpkg-mountable base/dpkg base/e2fsprogs \
+       base/fileutils base/findutils base/gettext-base base/gnumach
+       base/grep base/grub base/gzip base/hostname base/hurd
+       net/inetutils base/libc0.2 base/libgdbmg1 base/libncurses5 \
+       base/libnet-perl base/libreadlineg2 base/libstdc++2.9 \
+       base/libwrap0 base/mawk base/ncurses-base base/ncurses-bin \
+       base/passwd base/perl-5.005-base base/perl-base base/sed \
        base/shellutils base/slang1 base/syslogd base/tar base/tcpd \
-       base/textutils interpreters/perl-5.005"
-oplist="admin/locales text/less editors/ed libs/gconv-modules"
+       base/textutils interpreters/perl-5.005 oldlibs/libncurses4"
+oplist="text/less editors/ed"
 #oplist=""
 
 # If you only want a minimal base system, leave out packages listed in
@@ -321,6 +324,7 @@ set -e
 if [ ! "x${errors}" = x ] ; then
 	echo
 	echo "ERROR: dpkg did return unusual messages, please investigate:"
+	echo "INSTALLATION ABORTED!"
 	echo
 	grep -v '^rm: /tmp/.*: Device or resource busy$\|dpkg - warning, overriding problems\|trying to override\|Preparing to replace\|Unpacking\|pre-dependency problem\|Selecting previously deselected package\|pre-depends on\|overriding problem because --force enabled\|(Reading database ...\| package architecture (hurd-i386) does not match system\|is not installed.\|but has never been configured.\|dpkg-deb: building package' ${log}
 	exit 1
@@ -404,28 +408,6 @@ echo "Copying the scripts native-install and dpkg-hurd."
 cp ${nativeinstall} ${dest}
 cp ${dpkghurd} ${dest}
 
-#####################
-# Fake libc6 package
-#####################
-# Is this really needed?
-# Update: apr 99: Currently, yes. Too many packages require it.
-# But we're coming close to a "libc6" free distribution.
-
-if [ ! -e ${dest}/var/lib/dpkg/info/libc6.list ] ; then
-	echo
-	echo "Although we have libc0.2 packages, we need an entry for libc6 because"
-	echo "of dpkg's dependency system."
-
-cat >> ${dest}/var/lib/dpkg/status << '_NIL_'
-Package: libc6
-Status: install ok installed
-Version: 2.0.110
-
-_NIL_
-
-	touch ${dest}/var/lib/dpkg/info/libc6.list
-fi
-
 ########################################################
 # make some essential directories for configure of dpkg
 ########################################################
@@ -463,11 +445,11 @@ echo
 echo "Preparing /etc/resolv.conf."
 
 if [ -e /etc/resolv.conf ] ; then
-	echo Copying this machines resolv.conf to the Hurd parition.
+	echo Copying this machines resolv.conf to the Hurd partition.
 	echo If this is not correct, please edit.
 	cp /etc/resolv.conf ${dest}/etc/resolv.conf
 else
-	echo Setting up bogus file, please edit.
+	echo Setting up bogus file, PLEASE EDIT.
 	echo "domain ${domainname}" > ${dest}/etc/resolv.conf
 	echo "search localnet" >> ${dest}/etc/resolv.conf
 	echo "nameserver WWW.XXX.YYY.ZZZ" >> ${dest}/etc/resolv.conf

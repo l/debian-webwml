@@ -44,6 +44,8 @@
 #        Remove libexec/runsystem before configuring hurd.
 #   16 Oct 1999 - v2.3
 #        Set up local network only.
+#    1 Mar 2000 - v2.4
+#	 Various updates.
 
 # Make sure the filesystem is writeable
 
@@ -88,6 +90,8 @@ cd /dev
 
 # Configure libc very soon.
 /bin/dpkg --configure libc0.2
+# Oooh. base-files does not like it.
+rm /var/mail
 
 # Configure packages with missing dependencies:
 if [ -e /var/lib/dpkg/info/bsdutils.list ] ; then
@@ -129,8 +133,8 @@ fi
 
 echo The last step is to create /etc/fstab.
 
-fstype=`fsysopts / | perl -ne 'm!^/hurd/(.*?)\.static.*?([^\s]*?)$!; print $1;'`
-rootpart=`fsysopts / | perl -ne 'm!^/hurd/(.*?)\.static.*?([^\s]*?)$!; print $2;'`
+fstype=`fsysopts / | perl -ne 'm!^/hurd/(.*?)\.static.*?([^\s]+)\s*?$!; print $1;'`
+rootpart=`fsysopts / | perl -ne 'm!^/hurd/(.*?)\.static.*?([^\s]+)\s*?$!; print $2;'`
 
 if [ ! -e /dev/${rootpart} ] ; then
 	cd /dev
