@@ -40,12 +40,26 @@ foreach $l (<ADV>) {
   if ($l =~ /^(Problem type|Vulnerability)\s*: (.+)/) {
     $desc = $2;
   }
+  if ($l =~ /^(CVE name|CERT advisory)\s*: (.+)/) {
+    push @dbids, $2;
+  }
   $mi = 0 if ($l =~ /^wget url/);
   $moreinfo .= "<p>" if ($mi && $nl);
   $nl = 0;
   $nl = 1 if ($mi && ($l eq "\n") && $moreinfo);
-  $moreinfo .= $l if ($mi);
-  $mi++ if ($l =~ /^Debian-specific:/);
+  if ($mi) {
+    if ($mi > 1) {
+      $moreinfo .= $l;
+    } else {
+      $moreinfo .= "\n<p>".$l;
+      $mi++;
+    }
+  }
+  $headersnearingend++ if ($l =~ /^Debian-specific:/);
+  if ($headersnearingend && $l !~ /^.{15}: .+$/) {
+    $mi++;
+    $headersnearingend = 0;
+  }
 
   $f++ if ($l =~ /^  Source archives:/);
   $f = 0 if ($l =~ /^  These (files|packages) will (probably )?be moved/);
@@ -75,6 +89,7 @@ die "$data already exists!\n" if (-f $data);
 open DATA, ">$data";
 print DATA "<define-tag pagetitle>$pagetitle</define-tag>\n";
 print DATA "<define-tag report_date>$date</define-tag>\n";
+print DATA "<define-tag secrefs>@dbids</define-tag>\n" if @dbids;
 print DATA "<define-tag packages>$package</define-tag>\n";
 print DATA "<define-tag isvulnerable>yes</define-tag>\n";
 print DATA "<define-tag fixed>yes</define-tag>\n";
