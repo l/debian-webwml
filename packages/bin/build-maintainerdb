@@ -66,27 +66,25 @@ sub read_maintainer
 	next if (/^#/);
 	next if (/^$/);
 	/(\S+)\s+(.*)/;
-	$package=$1; $maintainer=$2;
+	$package=$1; $maint=$2;
 	if (! exists $maint{$package}) {
-	    printf "  EVAL (%s, \"%s\")\n", $package, $maintainer if ($opt_verbose > 2);
-	    foreach $maint (split(/,/,$maintainer)) {
-		printf "  EVAL_PART (%s, \"%s\")\n", $package, $maint if ($opt_verbose > 2);
+	    printf "  EVAL (%s, \"%s\")\n", $package, $maint if ($opt_verbose > 2);
 
 		if (exists $maint{$package}) {
 		    $maint{$package} .= " ";
 		    printf "  EXPAND (%s)\n", $package if ($opt_verbose > 2);
 		}
-		if (/.*<(.*)>/) {
+		if ($maint =~ /.*<(.*)>/) {
 		    $maint{$package} .= $1;
 		    printf "  ADD (%s, %s)\n", $package, $1 if ($opt_verbose > 2);
-		} elsif (/\s*(\S+)\s+\(.*\)/) {
+		} elsif ($maint =~ /\s*(\S+)\s+\(.*\)/) {
 		    $maint{$package} .= $1;
 		    printf "  ADD (%s, %s)\n", $package, $1 if ($opt_verbose > 2);
 		} else {
 		    $maint{$package} .= $maint;
 		    printf "  ADD (%s, %s)\n", $package, $maint if ($opt_verbose > 2);
 		}
-	    }
+
 	    printf "  %s: %s\n", $package, $maint{$package} if ($opt_verbose > 1);
 	    $pkgshort = "";
 	    if ($package =~ /(.*[^\d\.]+)([\d\.]*\d)$/) {
