@@ -592,8 +592,10 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/machines',
-	'status'		=> 'à traduire',
-	'since'			=> '25/05/1999',
+	'status'		=> 'à relire',
+	'since'			=> '05/07/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '05/07/1999',
 },
 
 {
