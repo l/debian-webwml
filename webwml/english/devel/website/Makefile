@@ -8,6 +8,8 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+working.$(LANGUAGE).html:: $(TEMPLDIR)/toc.wml
+
 ifeq "$(LANGUAGE)" "en"
 translation_coordinators.$(LANGUAGE).html : translation_coordinators.wml \
   $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
