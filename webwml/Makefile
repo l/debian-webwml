@@ -4,7 +4,7 @@ LANGUAGES := english arabic bulgarian catalan chinese croatian czech \
              danish dutch esperanto finnish french german greek \
              hungarian indonesian italian japanese korean lithuanian \
              norwegian polish portuguese romanian russian slovene \
-             spanish swedish turkish
+             spanish swedish turkish ukrainian
 
 LANGUAGES-install := $(addsuffix -install,$(LANGUAGES))
 LANGUAGES-clean := $(addsuffix -clean,$(LANGUAGES))
