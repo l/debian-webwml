@@ -1,44 +1,5 @@
 #use wml::debian::template title="Debian Weekly News" NOCOMMENTS="yes" NOHOMELINK="yes"
-
-<perl>
-# This should be broken off into a seperate file. Nag Joey Hess when you
-# need to translate this.
-
-# Very similar to get_recent_list except it looks for the .wml files
-# inside subdirectories of the given directory.
-sub get_weeklynews_list {
-	my ($year, $number, $eng_dir, $match) = @_;
-	
-	$str="";
-	
-	opendir(DIR, "$eng_dir/$year");
-	@files = grep { /^$match$/ && -f "$eng_dir/$year/$_/index.wml" } readdir(DIR);
-	@files = sort {$a cmp $b} @files;
-	closedir DIR;
-	
-	$count=0;
-	foreach (@files) {
-		$count++;
-		$_="$_/index.wml";
-		$trans_title = $_;
-		$trans_title =~ s/wml/title/;
-		($base)=m:(.*/):;
-		open(FILE,"<$year/$_") || open(FILE, "<$year/$trans_title") || open(FILE, "<$eng_dir/$year/$_");
-		$title = '';
-		$line=<FILE>;
-		if ($line =~ /title="(.*?)"/) {
-			$title=$1;
-		}
-		if ($title) {
-			$str.="<li><a href=\"$year/$base\">$title</a>\n";
-		}
-		close FILE;
-		if ($count eq $number) { last; }
-	}
-	close DIR;
-	return $str;
-}
-</perl>
+#use wml::debian::weeklynews::index
 
 <p>
 <b>Welcome to Debian Weekly News</b>, a newsletter for the debian developer
