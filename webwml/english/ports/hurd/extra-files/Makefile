@@ -27,3 +27,4 @@ install:: $(RMDESTFILES)
 
 $(RMDESTFILES): $(RMSOURCE)
 	install -m664 $(@F) $(HTMLDIR)
+clean:
