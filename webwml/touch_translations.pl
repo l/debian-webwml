@@ -28,6 +28,7 @@
 	"hr" => "croatian",
 	"da" => "danish",
 	"nl" => "dutch",
+	"el" => "hellas",
 	"en" => "english",
 	"eo" => "esperanto",
 	"fi" => "finnish",
@@ -96,7 +97,7 @@ sub when_forced {
 
 $argfile = $ARGV[0] or die "Invalid number of arguments";
 die "Invalid number of arguments" unless $ARGV[1];
-$arglang = $langs{$ARGV[1]} or die "Invalid lang argument";
+$arglang = $langs{$ARGV[1]} or die "Invalid lang argument: $ARGV[1]";
 $argfile =~ m+(.*)/(.*)\.wml+ or die "pattern does not match";
 my ($path, $file) = ($1, $2);
 
