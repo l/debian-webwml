@@ -1,9 +1,26 @@
 #use wml::debian::template title="Debian GNU/NetBSD" BARETITLE="yes" NOHEADER="yes"
+#use wml::fmt::verbatim
 #include "$(ENGLISHDIR)/ports/netbsd/menu.inc"
-#use wml::debian::translation-check translation="1.4"
+{#style#:
+<style type="text/css">
+    .update {
+       color:          red;
+       background:     inherit;
+    }
+</style>
+:##}
+#use wml::debian::translation-check translation="1.8"
 # Translator: Gerfried Fuchs <alfie@debian.org> 2002-02-03
 # $Id$
 
+<define-tag update endtag=required>
+  <p><span class="update">UPDATE: </span>
+    %body
+  </p>
+</define-tag>
+
+
+#############################################################################
 <h1>Debian GNU/NetBSD</h1>
 
 <p>Debian GNU/NetBSD ist eine Portierung des Debian Betriebssystems auf den
@@ -23,10 +40,12 @@ Laden Sie die aktuelle Version des Debian GNU/NetBSD Systems herunter</a>
 
 <ul>
 <li>Laden Sie die Datei herunter</li>
-<li>Extrahieren Sie sie irgendwo. <b>ACHTUNG</b> - extrahieren Sie sie nicht
-  in / - Sie würden dadurch Ihr System unbootbar machen</li>
-<li>Als root, chroot /debian /bin/bash (ersetzen Sie /debian mit dem Pfad,
-  wohin Sie die tar-Datei extrahiert haben)</li>
+<li>Extrahieren Sie sie irgendwo. <strong>ACHTUNG</strong> - extrahieren Sie
+  sie nicht in <kbd>/</kbd> - Sie würden dadurch Ihr System unbootbar
+  machen</li>
+<li>Als root, <kbd>chroot /debian /bin/bash</kbd> (ersetzen Sie
+  <kbd>/debian</kbd> mit dem Pfad, wohin Sie die tar-Datei extrahiert
+  haben)</li>
 <li>Spielen Sie damit. Freuen Sie sich. Reparieren Sie etwas.</li>
 </ul>
 
@@ -40,9 +59,15 @@ suchen und zu kopieren.</p>
 <p>Pakete, die erstellt werden müssen</p>
 
 <ul>
-<li>Alle Libraries in /lib oder /usr/lib, die noch nicht paketiert sind,
-  müssen es werden</li>
-<li>base-passwd verzweifelt unglücklich</li>
+<li>Alle Libraries in <kbd>/lib</kbd> oder <kbd>/usr/lib</kbd>, die noch nicht
+  paketiert sind, müssen es werden</li>
+<li>
+base-passwd verzweifelt unglücklich
+  <update>
+    Wir haben nun ein generell funktionierendes base-passwd für FreeBSD und
+    NetBSD (modulo einem segfault). Danke an Nathan und Matthew.
+  </update>
+</li>
 <li>gleichwertiges zu console-tools/data muss erstellt werden</li>
 <li>netbase muss neu gebaut werden. Das ist wahrscheinlich eines der
   unangenehmeren - wir haben den Source für die BSD-Version von ifconfig und
@@ -55,26 +80,63 @@ suchen und zu kopieren.</p>
 <li>shadow (funktioniert teilweise, aber NetBSD hat interessante
   Binär-Dateien, um mit Passwörtern umzugehen. Als Resultat sind Dinge wie
   passwd und adduser im Augenblick nicht so nützlich wie sie sein könnten.
-  Jemand müsste sich das ansehen)</li>
-<li>sysklogd</li>
+  Jemand müsste sich das ansehen)
+  <update>
+    Matthew hat nun eine funktionierende Version von adduser auf NetBSD.
+  </update>
+</li>
+<li>sysklogd (wir können stattdessen möglicherweise
+  <a href="http://packages.debian.org/msyslog">msyslog</a> verwenden)</li>
 <li>sysvinit (BSD init unterstützt keine Runlevel. Wir können es ohne grosse
   Schwierigkeiten dahingehend ändern, dass es sich wie Debian mit einem
-  einzigen Runlevel verhält)</li>
+  einzigen Runlevel verhält)
+  <update>
+    sysvinit läuft und läuft, Matthew hat es geschafft, Debian GNU/NetBSD auf
+    i386 direkt zu booten! Es gibt noch einige Spannungen mit den
+    Boot-Skripten und keinen gettys, aber es ist ein wichtiger Schritt zu
+    einem voll funktionierendem System.
+  </update>
+<li><a href="http://packages.debian.org/fakeroot">fakeroot</a>
+  <update>
+    Nathan schaffe es, eine funktionierende Version von fakeroot für FreeBSD
+    zu erstellen. Auf NetBSD scheint es immer noch nicht nicht zu laufen.
+  </update>
+</li>
+<li>XFree86
+    (Nathan arbeitet im Augenblick daran, und entdeckte, dass
+    <a href="http://packages.debian.org/ed">ed</a>  benötigt wird, das jedoch
+    einen segfault produziert. Einige Leute forschen in dieser Sache.)
+</li>
 </ul>
 
 <h2>Resourcen</h2>
 
-<p>
-<a href="$(HOME)/">Debian</a><br>
-<a href="http://www.netbsd.org/">NetBSD</a><br>
+<ul>
+<li><a href="$(HOME)/">Debian</a></li>
+
+<li><a href="http://www.netbsd.org/">NetBSD</a></li>
+
+<li>
 <a href="http://www.srcf.ucam.org/~mjg59/debian-netbsd/debian-netbsd.tar.gz">\
 Die Debian GNU/NetBSD chroot-Umgebung tar-Datei</a> (zuletzt am 14. Januar
-2002 aktualisiert)<br>
-<a href="http://master.debian.org/~dexter/debian-freebsd/">Debian GNU/FreeBSD
-Pakete</a><br>
-<a href="ftp://trantor.utsl.org/pub/">Eine FreeBSD basierende chroot-Umgebung
-und einige Pakete</a><br>
-</p>
+2002 aktualisiert)
+</li>
+
+<li><a href="http://master.debian.org/~dexter/debian-freebsd/">Debian
+  GNU/FreeBSD Pakete</a></li>
+
+<li><a href="ftp://trantor.utsl.org/pub/">Eine FreeBSD basierende
+  chroot-Umgebung und einige Pakete</a></li>
+
+<li><a href="http://debian-bsd.lightbearer.com/debian-gnu-freebsd.tar.bz2">\
+  Eine weiterer FreeBSD chroot tar-Datei</a> und
+  <a href="http://debian-bsd.lightbearer.com/kernel-ext2.tar.gz">ein
+  Kernel mit ext2-Unterstützung</a>, beide von
+  <a href="mailto:zeratul2@wanadoo.es">Robert Millan</a> gebaut.</li>
+
+<li><a href="http://master.debian.org/~dexter/debian-freebsd/">Debian
+  GNU/FreeBSD Pakete</a> (sehr alt, basierend auf FreeBSD-3.3 und slink)</li>
+</ul>
 
 <p>Es gibt eine Debian GNU/*BSD Mailing-Liste. Schicken Sie eine E-Mail an
 <a href="mailto:debian-bsd-request@lists.debian.org?subject=subscribe">\
@@ -85,7 +147,9 @@ um diese Liste zu abonnieren. Archive sind unter
 
 <h2>Verfügbare Pakete</h2>
 
-<pre>
+<verbatim>
+||/ Name              Version               Description
++++-==============-==============-================================================
 ii  adduser        3.11.1         Add users and groups to the system.
 ii  ae             962-26         Anthony's Editor -- a tiny full-screen edito
 ii  apt            0.5.4          Advanced front-end for dpkg
@@ -96,7 +160,7 @@ ii  autotools-dev  20020102.1     Update infrastructure for config.{guess,sub}
 ii  base-files     2.2.0          Debian base system miscellaneous files
 ii  base-passwd    3.1.10         Debian Base System Password/Group Files
 ii  bash           2.03-6         The GNU Bourne Again SHell
-ii  bash-builtins  2.03-6         Bash loadable builtins - headers &amp; examples
+ii  bash-builtins  2.03-6         Bash loadable builtins - headers & examples
 ii  bash-doc       2.03-6         Documentation and examples for the The GNU B
 ii  binutils       2.11.92.0.12.3 The GNU assembler, linker and binary utiliti
 ii  binutils-dev   2.11.92.0.12.3 The GNU binary utilities (BFD development fi
@@ -204,7 +268,7 @@ ii  util-netbsd    1.00-1         &lt;insert up to 60 chars description&gt;
 ii  zlib-bin       1.1.3-18       compression library - sample programs
 ii  zlib1g         1.1.3-18       compression library - runtime
 ii  zlib1g-dev     1.1.3-18       compression library - development
-</pre>
+</verbatim>
 
 <hr />
 
