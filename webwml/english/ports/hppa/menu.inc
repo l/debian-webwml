@@ -32,7 +32,7 @@
 [EL:Debian for PA-RISC:]
 [EN:Debian for PA-RISC:]
 [EO:Debian for PA-RISC:]
-[ES:Debian for PA-RISC:]
+[ES:Debian para PA-RISC:]
 [FI:Debian for PA-RISC:]
 [FR:Debian for PA-RISC:]
 [HR:Debian for PA-RISC:]

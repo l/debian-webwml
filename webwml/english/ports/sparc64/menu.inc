@@ -32,7 +32,7 @@
 [EL:Debian for Sparc64:]
 [EN:Debian for Sparc64:]
 [EO:Debian for Sparc64:]
-[ES:Debian for Sparc64:]
+[ES:Debian para Sparc64:]
 [FI:Debian for Sparc64:]
 [FR:Debian for Sparc64:]
 [HR:Debian for Sparc64:]

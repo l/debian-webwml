@@ -32,7 +32,7 @@
 [EL:Debian for Beowulf:]
 [EN:Debian for Beowulf:]
 [EO:Debian for Beowulf:]
-[ES:Debian for Beowulf:]
+[ES:Debian para Beowulf:]
 [FI:Debian for Beowulf:]
 [FR:Debian for Beowulf:]
 [HR:Debian for Beowulf:]

@@ -32,7 +32,7 @@
 [EL:Debian for Laptops:]
 [EN:Debian for Laptops:]
 [EO:Debian for Laptops:]
-[ES:Debian for Laptops:]
+[ES:Debian para portátiles:]
 [FI:Debian for Laptops:]
 [FR:Debian for Laptops:]
 [HR:Debian for Laptops:]

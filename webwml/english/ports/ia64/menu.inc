@@ -32,7 +32,7 @@
 [EL:Debian for IA-64:]
 [EN:Debian for IA-64:]
 [EO:Debian for IA-64:]
-[ES:Debian for IA-64:]
+[ES:Debian para IA-64:]
 [FI:Debian for IA-64:]
 [FR:Debian for IA-64:]
 [HR:Debian for IA-64:]
