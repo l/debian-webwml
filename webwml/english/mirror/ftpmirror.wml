@@ -1,28 +1,30 @@
 #use wml::debian::template title="Setting up an FTP Mirror"
 
-# partial mirroring scripts:
-
-# Joey Hess
-# http://cvs.kitenet.net/~checkout~/joey-cvs/bin/debmirror?tag=HEAD&content-type=text/plain
-# Stephan A Suerken
-# http://www.Fh-Worms.DE/~inf222/code/script/debian/www/absurd_debmirror
-
 <p>Mirroring is the same for both official and unofficial sites
 (<a href="types">more information on mirror types</a>).
-Once a mirror is set up the mirror should be <a href="submit">registered with Debian</a>
+
+<p>Once a mirror is set up the mirror should be <a href="submit">registered with Debian</a>
 in order to get included in the <a href="../misc/README.mirrors">mirror list</a>.
 Submissions can be done using our <A href="submit">simple web form</a>.
-Any problems or enquiries can be sent to <A href="mailto:mirrors@debian.org">mirrors@debian.org</A>.
+
+<p>Any problems or enquiries can be sent to <A href="mailto:mirrors@debian.org">mirrors@debian.org</A>.
+
+<H2>Methods of Mirroring</H2>
+
+<p>The recommended method of mirroring is with rsync.
+
+<p>Note: while <kbd>wget</kbd> works well for mirroring small sites, it is
+not as configurable as rsync or 'mirror' so is not recommended for this job.
 
 <h3>Anonymous rsync</h3>
-The recommended method of mirroring is with rsync.
 
 <p>You can use <a href="anonftpsync">this script</a> to mirror the archive.
 Follow the directions in the script to set up mirroring.
-Sites in the <a href="mirrors_full">full list of mirrors</a> that use '<kbd>Type: Push-*</kbd>'
-should be good to mirror from.
+Sites in the <a href="mirrors_full">full list of mirrors</a> that have
+'<kbd>Type: Push-Primary</kbd>' tag should be good to mirror from.
 
-<h3>Push Mirror</h3>
+<h3>Rsync with authentication, from a push mirror</h3>
+
 Push mirroring is a form of mirroring using rsync that we have developed to minimize the
 time it takes for changes to the archive to reach mirrors. Push mirroring uses
 an ssh trigger to tell the client mirror when to update itself. This method is
@@ -38,6 +40,7 @@ and why it is secure see <a href="explain">this page</a>.
 upstream and downstream mirror must exchange information. The benefit is that
 the upstream mirror initiates the mirror process immediately after its archive has
 been updated. This allows changes to the archive to propagate extremely quickly.
+See the <a href="push_server">explanation page</a> for details.
 
 <p>It is best to set this up using the account of an ordinary user, not root.
 The contents of the public ssh key given to you by the upstream mirror should be
@@ -47,30 +50,43 @@ placed in <kbd>~&lt;user&gt;/.ssh/authorized_keys</kbd>.
 will be needed. Edit ftpsync.conf and follow the directions in there using the information
 provided to you by the upstream mirror.
 
-<p>If you are becoming a Push-Primary, you will need the
-<a href="identity.pub.master.ftp">public ssh key for the ftp archive</a>.
+<p>If your site is becoming a Push-Primary, you will need the
+<a href="identity.pub.master.ftp">public ssh key for
+archvsync@ftp-master.debian.org</a>.
 
 <p>To push mirror the non-US archive, you will need the files <a
 href="ftpsync-non-US">ftpsync-non-US</a> and <a
 href="ftpsync-non-US.conf">ftpsync-non-US.conf</a>.  The files have
 different names so that you may use the same account to mirror both
-archives.  If you are becoming a non-US Push-Primary, you will need
-the <a href="identity.pub.non-US.ftp">public ssh key for the non-US
-ftp archive</a>.
+archives.  If your site is becoming a non-US Push-Primary, you will need
+the <a href="identity.pub.non-US.ftp">public ssh key for
+archvsync@non-us.debian.org</a>.
 
 <h3>Anonymous FTP Using 'mirror'</h3>
+
 <p>Anonymous FTP was the standard method of mirroring for a long time.
-For this, the program 'mirror' works well on the debian archive.
+For this, the program 'mirror' works well on the Debian archive.
 As you probably guessed, 'mirror' is available as a Debian package.
 If you have installed the Debian package, there is a sample script for mirroring
 the ftp archive in /etc/mirror/packages/ftp.debian.org .
 
-<h3>wget</h3>
-While <kbd>wget</kbd> works well for mirroring small sites, it is not as configurable as
-mirror or rsync so is not recommended for this job.
+<h2>Partial mirroring</h2>
 
-<h3>When to Mirror</h3>
-If you are being push mirrored, then you don't need to worry about this.
+<p>Considering the already large size of Debian archive, some people prefer
+to mirror only parts of it they need. For that, one needs specially written
+scripts, like those from
+<a href="http://cvs.kitenet.net/~checkout~/joey-cvs/bin/debmirror?tag=HEAD&content-type=text/plain">
+Joey Hess</a> and
+<a href="http://www.Fh-Worms.DE/~inf222/code/script/debian/www/absurd_debmirror">
+Stephan Suerken</a>. If you feel that something should be added to these,
+please contact the authors (contact information should be enclosed in the
+scripts themselves).
+
+<h2>When to Mirror</h2>
+
+<p>The main archive gets updated every 24 hours.
+
+<p>If your site is being push mirrored, then you don't need to worry about this.
 If not, and the site you choose to mirror uses rsync, then you should take a
 look in <kbd>project/trace/</kbd> in the Debian archive of the mirror site
 for a file with the name of that site. The file should contain the time that
@@ -79,4 +95,3 @@ then.
 
 <p>The easiest way to automatically have the mirror run every day is to use
 cron. See <kbd>man crontab</kbd> for details.
-

@@ -5,9 +5,9 @@ time. We do not encourage creating new Debian web site mirrors. The
 information below is provided only for reference to the maintainers of
 existing mirrors.</strong>
 
-# <p>Mirroring is the same for both official and unofficial sites
-# (<a href="types">more information on mirror types</a>).
-# 
+<p>Mirroring is the same for both official and unofficial sites
+(<a href="types">more information on mirror types</a>).
+
 # <p>Once a mirror is set up the mirror should be <a href="submit">registered
 # with Debian</a> in order to get included in the
 # <a href="../misc/README.mirrors">mirror list</a>.
@@ -17,20 +17,21 @@ existing mirrors.</strong>
 
 <H2>Methods of Mirroring</H2>
 
-<h3>Anonymous rsync</h3>
-
 <p>The recommended method of mirroring is with rsync.
+
+<p>It is not suggested that you use 'mirror' on the Debian web pages because
+for large directories its memory usage becomes ridiculous. Wget is also not
+recommended, because even though it works well for mirroring small sites, it
+is not as configurable as rsync (or 'mirror').
+
+<h3>Anonymous rsync</h3>
 
 <p>You can use <a href="anonwebsync">this script</a> to mirror the archive.
 Follow the directions in the script to set up mirroring.
-Sites in the <a href="mirrors_full">full list of mirrors</a> that use
-'<kbd>Type: Push-*</kbd>' should be good to mirror from.
+Sites in the <a href="mirrors_full">full list of mirrors</a> that have
+'<kbd>Type: Push-Primary</kbd>' tag should be good to mirror from.
 
-<p>The main site gets rebuilt every eight hours (see the dates on timestamp
-files in <code>/mirror/timestamps/</code> directory of the web site for
-exact times), you should calculate the mirroring time for your site.
-
-<h3>Push Mirror</h3>
+<h3>Rsync with authentication, from a push mirror</h3>
 
 <p>Push mirroring is a form of mirroring using rsync that we have developed to minimize the
 time it takes for changes to the archive to reach mirrors. Push mirroring uses
@@ -47,6 +48,7 @@ and why it is secure see <a href="explain">this page</a>.
 upstream and downstream mirror must exchange information. The benefit is that
 the upstream mirror initiates the mirror process immediately after its archive has
 been updated. This allows changes to the archive to propagate extremely quickly.
+See the <a href="push_server">explanation page</a> for details.
 
 <p>It is best to set this up using the account of an ordinary user, not root.
 The contents of the public ssh key given to you by the upstream mirror should be
@@ -56,19 +58,22 @@ placed in <kbd>~&lt;user&gt;/.ssh/authorized_keys</kbd>.
 will be needed. Edit websync.conf and follow the directions in there using the information
 provided to you by the upstream mirror.
 
-<p>If you are becoming a Push-Primary, you will need the
-<a href="identity.pub.master.web">public ssh key for the web</a>.
+<p>If your site is becoming a Push-Primary mirror, you will need the
+<a href="identity.pub.master.web">public ssh key for
+archvsync@www-master.debian.org</a>.
 
-<h3>Anonymous FTP Using 'mirror'</h3>
+<h2>When to Mirror</h2>
 
-<p>It is not suggested that you use 'mirror' on the Debian web pages. For large
-directories memory usage becomes ridiculous. One mirror maintainer said it worked
-for him with 96MB of RAM. Others, with less RAM, found the machine swapping excessively.
+<p>The main site gets rebuilt every six hours.
 
-<h3>wget</h3>
+<p>If your site is being push mirrored, then you don't need to worry about
+this. If not, you should calculate the mirroring time for your site
+according to the dates on timestamp files in
+<code>/mirror/timestamps/</code> directory of the web site mirror. Add some
+time, say half an hour, to that time and mirror then.
 
-<p>While wget works well for mirroring small sites, it is not as
-configurable as mirror or rsync so is not recommended for this job.
+<p>The easiest way to automatically have the mirror run every day is to use
+cron. See <kbd>man crontab</kbd> for details.
 
 <H2>Advertising the sponsor of the mirror</H2>
 
@@ -89,12 +94,15 @@ for mirroring.
 
 <H2>Configuring the web server</H2>
 
-<h3>Other Web Server Changes</h3>
+<h3>Various Web Server Changes</h3>
 
 <p>If your machine is running Debian, it was decided to break Debian policy
 and use <code>/doc</code> in the web pages.  This means you should comment
 out the `<code>Alias /doc/ /usr/doc/</code>' line from your
 <code>/etc/apache/srm.conf</code> file.
+
+<P>Note: all of our CGI scripts are run centrally on cgi.debian.org, so you
+don't need to worry about them.
 
 <h3><a name="cn">Content Negotiation</a></h3>
 
