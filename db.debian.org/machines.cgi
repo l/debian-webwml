@@ -1,5 +1,6 @@
 #!/usr/bin/perl
-#$Id$
+# $Id$
+
 # (c) 1999 Randolph Chung. Licensed under the GPL. <tausq@debian.org>
 
 use lib '.';
@@ -18,7 +19,6 @@ my (%attrs, @attrorder, %summaryattrs, @summaryorder);
           'distribution' => 'Distribution',
 	  'access' => 'Access',
 	  'sponsor' => 'Sponsor',
-	  'sponsorurl' => 'Sponsor URL',
 	  'sponsor-admin' => 'Sponsor admin',
 	  'location' => 'Location',
 	  'machine' => 'Processor',
@@ -87,7 +87,18 @@ foreach $dn (sort {$entries->{$a}->{host}->[0] <=> $entries->{$b}->{host}->[0]} 
     $output{'sponsor-admin'} = sprintf("<a href=\"mailto:%s\">%s</a>", $output{'sponsor-admin'}, $output{'sponsor-admin'});
     
     # URL
-    $output{sponsor} = sprintf("<a href=\"%s\">%s</a>", $output{sponsorurl}, $output{sponsor});   
+    my $sponsor;
+    $output{sponsor} = undef;
+    foreach $sponsor (@{$data->{sponsor}}) {
+      print "<!-- $sponsor -->\n";
+      $sponsor =~ /(.*)\s*(http.*)?/i;
+      $output{sponsor} .= "<br>" if ($output{sponsor});
+      if ($2) {
+        $output{sponsor} .= sprintf("<a href=\"%s\">%s</a>", $1, $2);
+      } else {
+        $output{sponsor} .= $1;
+      }
+    }
     
     $selected = " selected ";    
   }
@@ -109,7 +120,7 @@ if ($output{havehostdata}) {
   $hostdetails .= "<ul>\n";
   foreach $key (@attrorder) {
     if ($output{$key}) {
-      $hostdetails .= "<li><b>$key:</b> $output{$key}\n";
+      $hostdetails .= "<li><b>$attrs{$key}:</b> $output{$key}\n";
     }
   }
   $hostdetails .= "</ul>\n";
