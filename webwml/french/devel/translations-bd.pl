@@ -565,8 +565,8 @@ $translations = {
 
 'todo' => {
 	'type'			=> 'Web',
-	'status'		=> 'à relire',
-	'since'			=> '21/07/1999',
+	'status'		=> 'traduction à jour',
+	'since'			=> '26/01/2000',
 	'translation_maintainer'=> ['Severin Hatt <magloire@multimania.com>'],
 	'last_translated'	=> '21/07/1999',
 },
@@ -694,9 +694,9 @@ $translations = {
 
 'distrib/ftplist' => {
 	'type'			=> 'Web',
-	'status'		=> 'à relire',
+	'status'		=> 'traduction à jour',
 	'translation_dev_url'   => 'http://www.multimania.com/magloire/traduction/ftplist.fr.wml',
-	'since'			=> '11/07/1999',
+	'since'			=> '26/01/2000',
 	'translation_maintainer'=> ['Severin Hatt <magloire@multimania.com>'],
 	'last_translated'	=> '11/07/1999',
 },
