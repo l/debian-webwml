@@ -447,7 +447,7 @@ printf HTML "<p>There are %d pages to translate.</p>\n",($wml{'english'}+$untran
 
 print HTML $border_head;
 print HTML "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
-print HTML "<tr><th>Language</th><th>Translations</th><th>Up to date</th><th>Outdated</th><th>Not translated</th></tr>\n";
+print HTML "<tr><th>Language</th><th colspan=\"2\">Translations</th><th colspan=\"2\">Up to date</th><th colspan=\"2\">Outdated</th><th colspan=\"2\">Not translated</th></tr>\n";
 foreach $lang (@search_in) {
     my @processed_langs = ($langs{$lang});
     @processed_langs = ("zh-cn", "zh-tw") if $langs{$lang} eq "zh";
@@ -459,11 +459,11 @@ foreach $lang (@search_in) {
 
         print HTML "<tr>";
         printf HTML "<td><a href=\"%s.html\">%s</a> (%s)</td>", $l, ucfirst $lang, $l;
-        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_a, $wml{$lang}, $percent_a{$lang};
-        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_t, $translated{$lang}, $percent_t{$lang};
-        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_o, $outdated{$lang}, $percent_o{$lang};
-        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $untranslated{$lang}, $percent_u{$lang};
-        print HTML "</tr>\n",
+        printf HTML "<td bgcolor=\"%s\" align=right>%d</td><td>(%d%%)</td>", $color_a, $wml{$lang}, $percent_a{$lang};
+        printf HTML "<td bgcolor=\"%s\" align=right>%d</td><td>(%d%%)</td>", $color_t, $translated{$lang}, $percent_t{$lang};
+        printf HTML "<td bgcolor=\"%s\" align=right>%d</td><td>(%d%%)</td>", $color_o, $outdated{$lang}, $percent_o{$lang};
+        printf HTML "<td bgcolor=\"%s\" align=right>%d</td><td>(%d%%)</td>", $color_u, $untranslated{$lang}, $percent_u{$lang};
+        print HTML "</tr>\n";
     }
 }
 print HTML "</table>\n";
@@ -473,7 +473,7 @@ print HTML "<h2>Translated templates (gettext files)</h2>\n";
 printf HTML "<p>There are %d strings to translate.</p>\n",$po_total{'total'};
 print HTML $border_head;
 print HTML "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
-print HTML "<tr><th>Language</th><th>Up to date</th><th>Fuzzy</th><th>Not translated</th></tr>\n";
+print HTML "<tr><th>Language</th><th colspan=\"2\">Up to date</th><th colspan=\"2\">Fuzzy</th><th colspan=\"2\">Not translated</th></tr>\n";
 foreach $lang (@search_in) {
     next if $lang eq 'english';
     my @processed_langs = ($langs{$lang});
@@ -484,9 +484,9 @@ foreach $lang (@search_in) {
         $color_t = get_color ($percent_po_t{'total'}{$lang});
         $color_f = get_color (100 - $percent_po_f{'total'}{$lang});
         $color_u = get_color (100 - $percent_po_u{'total'}{$lang});
-        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_t, $po_translated{'total'}{$lang}, $percent_po_t{'total'}{$lang};
-        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_f, $po_fuzzy{'total'}{$lang}, $percent_po_f{'total'}{$lang};
-        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $po_untranslated{'total'}{$lang}, $percent_po_u{'total'}{$lang};
+        printf HTML "<td bgcolor=\"%s\" align=right>%d</td><td>(%d%%)</td>", $color_t, $po_translated{'total'}{$lang}, $percent_po_t{'total'}{$lang};
+        printf HTML "<td bgcolor=\"%s\" align=right>%d</td><td>(%d%%)</td>", $color_f, $po_fuzzy{'total'}{$lang}, $percent_po_f{'total'}{$lang};
+        printf HTML "<td bgcolor=\"%s\" align=right>%d</td><td>(%d%%)</td>", $color_u, $po_untranslated{'total'}{$lang}, $percent_po_u{'total'}{$lang};
         print HTML "</tr>\n";
     }
 }
