@@ -1,0 +1,31 @@
+#! /bin/bash
+
+. `dirname $0`/../config.sh
+
+archivefiles=${filesdir}/archive
+test -d ${archivefiles} || mkdir -p ${archivefiles}
+
+cd ${archivedir}
+
+for archive in us non-US security
+do
+   for dist in ${dists}
+   do
+      foo=\$arch_${dist//-/_}
+      for arch in `eval echo $foo`
+      do
+         for part in main contrib non-free
+	 do
+	    source=${archive}/${dist}/${part}/binary-${arch}/Packages.gz
+	    target=${archivefiles}/${dist}_${archive}_${part}_${arch}_Packages
+	    test ${source} -nt ${target} && zcat ${source} > ${target}
+         done
+      done
+      for part in main contrib non-free
+      do
+	 test  ${archive}/${dist}/${part}/source/Sources.gz -nt ${archivefiles}/${dist}_${archive}_${part}_Sources &&
+         zcat ${archive}/${dist}/${part}/source/Sources.gz \
+	    > ${archivefiles}/${dist}_${archive}_${part}_Sources
+      done
+   done
+done
