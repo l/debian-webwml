@@ -6,7 +6,7 @@
 <menu-item basename="../index">
 [EN:Ports:]
 [AR:Ports:]
-[DA:Ports:]
+[DA:Overførsler:]
 [DE:Ports:]
 [EL:Ports:]
 [EO:Ports:]
@@ -32,7 +32,7 @@
 <menu-item basename="index">
 [EN:Debian for MIPS:]
 [AR:Debian for MIPS:]
-[DA:Debian for MIPS:]
+[DA:Debian til MIPS:]
 [DE:Debian für MIPS:]
 [EL:Debian for MIPS:]
 [EO:Debian for MIPS:]
@@ -58,7 +58,7 @@
 <menu-item basename="cpu">
 [EN:CPUs:]
 [AR:CPUs:]
-[DA:CPUs:]
+[DA:Processorer:]
 [DE:CPUs:]
 [EL:CPUs:]
 [EO:CPUs:]
@@ -84,7 +84,7 @@
 <menu-item basename="system">
 [EN:Systems:]
 [AR:Systems:]
-[DA:Systems:]
+[DA:Systemer:]
 [DE:Systeme:]
 [EL:Systems:]
 [EO:Systems:]
