@@ -1,0 +1,195 @@
+
+# Ugly hack from code extracted from make-ref-table.pl
+# code should not be duplicated but including Perl in the
+# WML file makes it possible to i18n at least the header
+# (in crossreferences.wml)
+#
+# - Javi
+<perl>
+use Time::gmtime;
+use IO::File;
+use Date::Parse;
+
+# This in inherited from make-ref-table and ugly, defines
+# the behaviour based on global options
+$opt_a = 1;
+$opt_p = 1;
+if (defined ($opt_a)) {
+	$opt_m=1;
+	$opt_c=1;
+	$opt_b=1;
+	$opt_k=1;
+}
+
+parsedirs (".", "data", 2);
+
+$reference{mitre}{url}="http://cve.mitre.org/cve/refs/refmap/source-DEBIAN.html";
+$reference{mitre}{name}="Mitre CVE dictionary";
+$reference{mitre}{perlre}="(CVE|CAN)";
+
+$reference{bid}{name}="Securityfocus Bugtraq database";
+$reference{bid}{url}="http://online.securityfocus.com/bid";
+$reference{bid}{perlre}="BID";
+
+$reference{cert}{name}="CERT alerts";
+$reference{cert}{url}="http://www.cert.org/advisories/";
+$reference{cert}{perlre}="CA-";
+
+$reference{certvu}{name}="CERT vulnerabilities";
+$reference{certvu}{url}="http://www.kb.cert.org/vuls";
+$reference{certvu}{perlre}="VU";
+
+# Table with information
+printrefs();
+
+</perl>
+
+# This subroutines are mostly the same to the ones
+# in make-ref-table.pl save for the one that prints the
+# references that calls to &{bid,cve,cert}_secrefs("XXX") instead
+# of outputting wml.
+
+<perl>
+
+sub printallkeys {
+	foreach $dsa (sort { $dsaref{$b}{'date'} <=> $dsaref{$a}{'date'} } keys %dsaref) {
+		print "$dsa:\t";
+		foreach $key (keys %{$dsaref{$dsa}} ) {
+			print "$dsaref{$dsa}{$key}\t";
+		}
+		print "\n";
+	}
+	return 0;
+}
+
+sub printtableheader {
+	my ($key) = @_;
+	if (defined $reference{$key}{url}) {
+			print "<th><a href=\"$reference{$key}{url}\">$reference{$key}{name}</A></th>\n";
+		} else {
+			print "<th>$reference{$key}{name}</th>\n";
+		}
+	return 0;
+}
+
+sub getreferences {
+	my ($key,$dsa) = @_;
+	my (@references) = split(' ', $dsaref{$dsa}{'secrefs'});
+	my $text = "";
+	my $type = $reference{$key}{perlre};
+	foreach $ref ( @references ) {
+		print STDERR "Comparing $ref for $dsa against $type\n" if $opt_v;
+		if ( $ref =~ /^$type/  ) {
+			$text .= "\t" if $text;
+			$text .= $ref ;
+		}
+	}
+	print STDERR "References for $dsa of $type: $text\n" if $opt_v;
+	if ( $opt_p ) {
+		if ( $text eq "" ) {
+			$text = "<td>&nbsp;</td>" ;
+		} else {
+			$text = "<td>".&bid_secref("$text").&cert_secref("$text").&cve_secref("$text")."</td>";
+		}
+	}
+	$dsaref{$dsa}{'printtext'} .= $text;
+	return 0;
+}
+
+sub printrefs {
+	if ( ! $opt_p ) {
+		print "DSA\t$text\n";
+	} else { 
+		print "<table BORDER=\"2\" CELLPADDING=\"2\" CELLSPACING=\"2\"><tr VALIGN=\"TOP\"><th>DEBIAN DSA</th>";
+		printtableheader("mitre") if $opt_m;
+		printtableheader("bid") if $opt_b;
+		printtableheader("cert") if $opt_c;
+		printtableheader("certvu") if $opt_k;
+		print "</tr>\n";
+	}
+	foreach $dsa (sort { $dsaref{$b}{'date'} <=> $dsaref{$a}{'date'} } keys %dsaref) {
+		getreferences("mitre",$dsa) if ( $opt_m ) ;
+		getreferences("bid",$dsa)  if ( $opt_b ) ;
+		getreferences("cert",$dsa)  if ( $opt_c ) ;
+		$reft = getreferences("certvu",$dsa) if ( $opt_k );
+		# Print only if there is text _and_ it includes
+		# some numbers (otherwise there are no references)
+		if ( defined($dsaref{$dsa}{'printtext'} ) && $dsaref{$dsa}{'printtext'} =~ /\d/ ) {
+			if ( ! $opt_p ) {
+			#Don't print DSA- for those that have year format (old
+			#type of advisories)
+				print "DSA-" if  $dsa !~ /\d{6,}/ ;
+				print "$dsa\t$dsaref{$dsa}{'printtext'}\t";
+				print  gmctime($dsaref{$dsa}{'date'})."\n" ;
+			} else {
+				print "<tr VALIGN=\"TOP\"><td>";
+				print "<a href=\"http://www.debian.org/security/".$dsaref{$dsa}{'location'}."\">";
+				print "DSA-" if  $dsa !~ /\d{6,}/ ;
+				print "$dsa</a>";
+				print "</td>$dsaref{$dsa}{'printtext'} </tr>\n";
+			}
+		}
+	}
+	print "</table>\n" if $opt_p;
+}
+
+sub parsefile {
+	my ($file,$filename) = @_ ;
+# The filename gives us the DSA we are parsing
+	if ( $filename =~ /dsa\-(\d+)/ || $filename =~ /(\d+\w+)/ ) {
+		$dsa=$1;
+	} else {
+		print STDERR "File $file does not look like a proper DSA, not checking\n" if $opt_v;
+		return 1;
+	}
+	print STDERR "Parsing DSA $dsa from file $file\n" if $opt_v;
+
+	open (DATAFILE , $file) || die ("Cannot read $file: $!");
+	while ($line=<DATAFILE>) {
+		chomp $line;
+		print STDERR "Reading $line\n" if $opt_v;
+		if ( $line =~ /report_date\>(.*?)\<\/define-tag/ )  {
+			my $dsadate=$1;
+			# Just in case...
+			$dsadate =~ s/\-(\d)\-/-0$1-/;
+			$dsadate =~ s/\-(\d)$/-0$1/;
+			$dsaref{$dsa}{'date'}=str2time($dsadate) ;
+		}
+		if ( $line =~ /secrefs\>(.*?)\<\/define-tag/ ) {
+			$dsaref{$dsa}{'secrefs'}=$1 ;
+			print STDERR "Extracted security references: $dsaref{$dsa}{'secrefs'}\n" if $opt_v;
+		}
+		$dsaref{$dsa}{'packages'}=$1 if ( $line =~ /packages\>(.*?)\<\/define-tag/ ) ;
+		$dsaref{$dsa}{'vulnerable'}=$1 if ( $line =~ /isvulnerable\>(.*?)\<\/define-tag/ ) ;
+		$dsaref{$dsa}{'fixed'}=$1 if ( $line =~ /fixed\>(.*?)\<\/define-tag/ ) ;
+	}
+	$dsaref{$dsa}{'location'}=$file;
+	$dsaref{$dsa}{'location'} =~ s/.data$//;
+	$dsaref{$dsa}{'location'} =~ s/^.\///;
+	close DATAFILE;
+	return 0;
+}
+
+sub parsedirs {
+	my ($directory, $postfix, $depth) = @_ ;
+	my $dir = new IO::File;
+	if ( $depth == 0 ) {
+		print STDERR "Maximum depth reached ($depth) at $directory\n" if $opt_v;
+		return 0;
+	}
+	opendir ($dir , $directory) || die ("Cannot read $directory: $!");
+	while ( my $file = readdir ($dir) ) {
+		print STDERR "Checking $file (for $postfix at $depth)\n" if $opt_v;
+		if ( -d "${directory}/${file}"  and ! -l "${directory}/${file}" && $file !~ /^\./ ) {
+			print STDERR "Entering directory ${directory}/${file}\n" if $opt_v;
+			parsedirs ( "${directory}/${file}", $postfix, $depth - 1 );
+		} 
+		if ( -r "${directory}/${file}" && $file =~ /$postfix/ && $file !~ /^[\.\#]/ ) {
+			parsefile($directory."/".$file,$file);
+		}
+	} # of the while
+	closedir $dir;
+	return 0;
+}
+
+</perl>
