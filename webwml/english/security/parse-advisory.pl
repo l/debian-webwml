@@ -43,7 +43,7 @@ foreach $l (<ADV>) {
   if ($l =~ /^(CVE (name|id)?|CERT advisory)\s*: (.+)/i) {
     push @dbids, $3;
   }
-  $mi = 0 if ($l =~ /^wget url/);
+  $mi = 0 if ($l =~ /^(wget url|Obtaining updates)/);
   $moreinfo .= "<p>" if ($mi && $nl);
   $nl = 0;
   $nl = 1 if ($mi && ($l eq "\n") && $moreinfo);
@@ -61,22 +61,28 @@ foreach $l (<ADV>) {
     $headersnearingend = 0;
   }
 
-  $f++ if ($l =~ /^  Source archives:/);
+  $f++ if ($l =~ /^Debian (GNU\/Linux.*alias|.*\(.*\)).*/);
   $f = 0 if ($l =~ /^  These (files|packages) will (probably )?be moved/);
-  $f = 0 if ($l =~ /^(- )?-- $/);
   $files .= $l if ($f);
 }
 close ADV;
 
+
+$moreinfo =~ s/-+\n//g;
 $moreinfo =~ s/\n\n$/\n/s;
+$moreinfo =~ s/\n<p>\n$//;
+$moreinfo =~ s/\n\n/<\/p>\n\n/sg;
+chomp ($moreinfo);
+$files =~ s/-+\n//g;
 $files =~ s/\n\n$/\n/s;
 
 $files =~ s/      (Size\/)?MD5 checksum: (\s*\d+ )?\w{32}\n//sg;
-$files =~ s/  Source archives:/<dt><source>/s;
+$files =~ s/  Source archives:/<dt><source>/sg;
 $files =~ s/  Architecture.independent.\w+:\n/<dt><arch-indep>\n/s;
 $files =~ s/  (\w+) architecture \(([\w -()\/]+)\)/<dt>$1 ($2):/sg;
-$files =~ s/  ([\w -]+) architecture:/<dt>$1:/sg;
+$files =~ s/  ([\w -\/]+) architecture:/<dt>$1:/sg;
 $files =~ s/    (http:\S+)/  <dd><fileurl $1>/sg;
+$files =~ s,Debian (GNU/Linux )?(\S+) (alias |\()([a-z]+)\)?,</dl>\n\n<h3>Debian GNU/Linux $2 ($4)</h3>\n\n<dl>,sg;
 
 ($pagetitle = $adv) =~ s/dsa/DSA/;
 $pagetitle =~ s/\./ /;
@@ -88,6 +94,7 @@ die "$wml already exists!\n" if (-f $wml);
 ($data = $wml) =~ s/.wml/.data/;
 die "$data already exists!\n" if (-f $data);
 
+$files =~ s,^</dl>\n\n,,;
 open DATA, ">$data";
 print DATA "<define-tag pagetitle>$pagetitle</define-tag>\n";
 print DATA "<define-tag report_date>$date</define-tag>\n";
@@ -96,14 +103,13 @@ print DATA "<define-tag packages>$package</define-tag>\n";
 print DATA "<define-tag isvulnerable>yes</define-tag>\n";
 print DATA "<define-tag fixed>yes</define-tag>\n";
 print DATA "\n#use wml::debian::security\n\n";
-print DATA "<h3>Debian GNU/Linux 2.2 (potato)</h3>\n\n";
-print DATA "<dl>\n$files</dl>\n";
+print DATA "$files</dl>\n";
 print DATA "\n<p><md5sums $mlURL>\n";
 close DATA;
 
 open WML, ">$wml";
 print WML "<define-tag description>$desc</define-tag>\n";
-print WML "<define-tag moreinfo>$moreinfo</define-tag>\n";
+print WML "<define-tag moreinfo>$moreinfo</p>\n</define-tag>\n";
 print WML "\n# do not modify the following line\n";
 print WML "#include \"\$(ENGLISHDIR)/security/$curyear/$data\"\n";
 close WML;
