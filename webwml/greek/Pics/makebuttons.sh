@@ -21,7 +21,7 @@ HOME_TEXT="Κεντρική"
 ABOUT_TEXT="Σχετικά"
 NEWS_TEXT="Νέα"
 DISTRIB_TEXT="Διανομή"
-SUPPORT_TEXT="Υποστήριξή"
+SUPPORT_TEXT="Υποστήριξη"
 DEVEL_TEXT="Ανάπτυξη"
 SEARCH_TEXT="Αναζήτηση"
 
