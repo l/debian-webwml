@@ -15,6 +15,12 @@ use CGI;
 use POSIX;
 use URI::Escape;
 
+use lib "../lib";
+
+use Deb::Versions;
+use Packages::Search;
+use Packages::HTML ();
+
 my $thisscript = "search_contents.pl";
 my $HOME = "http://www.debian.org";
 
@@ -27,12 +33,12 @@ $ENV{PATH} = "/bin:/usr/bin";
 my $input = new CGI;
 
 print $input->header;
-print $input->start_html(-title=>'Debian package contents search results',
-			 -text=>'#000000',
-			 -bgcolor=>'#FFFFFF',
-			 -link=>'#0000FF',
-			 -vlink=>'#800080',
-			 -alink=>'#FF0000');
+
+print Packages::HTML::header( title => 'Package Contents Search Results' ,
+			      lang => 'en',
+			      title_tag => 'Debian package contents search results',
+			      print_title_above => 1 );
+
 
 # If you want, just print out a list of all of the variables and exit.
 # print $input->dump;
@@ -110,48 +116,6 @@ $year += 1900;
 $time_str = sprintf( "$wday, $mday $month $year %02d:%02d:%02d +0000", 
 		     $hour, $min, $sec );
 
-
-print <<END;
-
-<table border="0" cellpadding="3" cellspacing="0" width="100%" summary="">
-<tr>
-<td align="left" valign="middle">
-<a href="$HOME/"><img src="$HOME/logos/openlogo-nd-50.png" border="0" hspace="0" vspace="0" alt="" width="50" height="61"></a>
-<a href="$HOME/" rel="start"><img src="$HOME/Pics/debian.jpg" border="0" hspace="0" vspace="0" alt="Debian Project" width="179" height="61"></a>
-</td>
-<td align="right" valign="middle">
-<h1>Package Contents Search Results</h1>
-</td>
-</tr>
-</table>
-<table bgcolor="#DF0451" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
-<tr>
-<td valign="top">
-<img src="$HOME/Pics/red-upperleft.png" align="left" border="0" hspace="0" vspace="0" alt="" width="15" height="16">
-</td>
-<td rowspan="2" align="center">
-<a href="$HOME/intro/about"><img src="$HOME/Pics/about.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="About Debian" width="58" height="18"></a>
-<a href="$HOME/News/"><img src="$HOME/Pics/news.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="News" width="53" height="18"></a>
-<a href="$HOME/distrib/"><img src="$HOME/Pics/getting.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="Getting Debian" width="117" height="18"></a>
-<a href="$HOME/support"><img src="$HOME/Pics/support.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="Support" width="72" height="18"></a>
-<a href="$HOME/devel/"><img src="$HOME/Pics/devel.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="Developers'&nbsp;Corner" width="105" height="18"></a>
-<a href="$HOME/sitemap" rel="contents"><img src="$HOME/Pics/sitemap.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="Site map" width="76" height="18"></a>
-<a href="http://search.debian.org/"><img src="$HOME/Pics/search.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="Search" width="64" height="18"></a>
-</td>
-<td valign="top">
-<img src="$HOME/Pics/red-upperright.png" align="right" border="0" hspace="0" vspace="0" alt="" width="16" height="16">
-</td>
-</tr>
-<tr>
-<td valign="bottom">
-<img src="$HOME/Pics/red-lowerleft.png" align="left" border="0" hspace="0" vspace="0" alt="" width="16" height="16">
-</td>
-<td valign="bottom">
-<img src="$HOME/Pics/red-lowerright.png" align="right" border="0" hspace="0" vspace="0" alt="" width="15" height="16">
-</td>
-</tr>
-</table>
-END
 
 # now grep the contents file appropriately
     my $grep;

@@ -144,9 +144,9 @@ sub print_virt_pack {
 
     my $name = $pkg->get_name;
 
-    my $package_page = header( $name, '../..', '../..', 
-			       $env->{lang}, gettext( "virtual package" ),
-			       "$env->{distribution}, virtual, virtual, virtual, size:0 virtual" );
+    my $package_page = header( title => $name, lang => $env->{lang},
+			       desc => gettext( "virtual package" ),
+			       keywords => "$env->{distribution}, virtual, virtual, virtual, size:0 virtual" );
     $package_page .= sprintf( gettext( "<h1>Virtual Package: %s</h1>" ), 
 			      $name );
 
@@ -258,6 +258,7 @@ sub package_pages_walker {
 	$sourcepackage = $pkg->get_newest( 'source' );
 	$sourcepackage = $sources{max_unique} if $sourcepackage eq 'CONFLICT';
 
+
 	if ( $sourcepackage =~ s/\s*\((.*)\)\s*$//o ) {
 	    $src_version = $1;
 	} else {
@@ -324,9 +325,9 @@ sub package_pages_walker {
 	my $archive_kw = $archive || 'main';
 	my $size_kw = exists $file_sizes{a2f}->{i386} ? $file_sizes{a2f}->{i386} : $file_sizes{max_unique};
 	$size_kw = floor(($size_kw/102.4)+0.5)/10;
-	my $package_page = header( $name, '../..', '../..', 
-				   $env->{lang}, $short_desc,
-				   "$env->{distribution}, $subdist_kw, $archive, $section, size:$size_kw $version" );
+	my $package_page = header( title => $name, lang => $env->{lang},
+				   desc => $short_desc,
+				   keywords => "$env->{distribution}, $subdist_kw, $archive, $section, size:$size_kw $version" );
 	$package_page .= "[&nbsp;".gettext( "Distribution:" )." <a title=\"".gettext( "Overview over this distribution" )."\" href=\"../\">$env->{distribution}</a>&nbsp;]\n";
 	$package_page .= "[&nbsp;".gettext( "Section:" )." <a title=\"".gettext( "All packages in this section" )."\" href=\"../$section/\">$section</a>&nbsp;]\n";
 
@@ -594,7 +595,8 @@ sub write_all_package {
 	foreach ( keys %$sections ) {
 	    my $title = sprintf( gettext ( "Software Packages in \"%s\", %s section" ), 
 				 $distro, $_ );
-	    $si{$_} = header( $title, '..', '..', $lang );
+	    $si{$_} = header( title => $title, lang => $lang,
+			      print_title_below => 1 );
 	    if ($distro eq "experimental") {
 		$si{$_} .= $experimental_note;
 	    }
@@ -606,7 +608,8 @@ sub write_all_package {
 
 	my $all_title = sprintf( gettext( "All Debian Packages in &ldquo;%s&rdquo;" ),
 				 $distro );
-	my $all_package = header( $all_title, '..', '..', $lang );
+	my $all_package = header( title => $all_title, lang => $lang,
+				  print_title_below => 1 );
 	if ($distro eq "experimental") {
 	    $all_package .= $experimental_note;
 	}
@@ -737,7 +740,7 @@ sub print_deps {
 			push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $pkg_version$arch_str";
 		    } elsif ( $p->is_virtual ) {
 			my $short_desc = gettext( "Virtual package" );
-			push @res_pkgs, "<a href=\"../virtual/$p_name\">$p_name</a> $pkg_version$arch_str</td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+			push @res_pkgs, "<a href=\"../virtual/$p_name\">$p_name</a> $pkg_version$arch_str</td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
 		    } else {
 			my %sections = $p->get_arch_fields( 'section',
 							    $env->{archs} );
@@ -745,18 +748,18 @@ sub print_deps {
 			my %desc_md5s = $p->get_arch_fields( 'description-md5', 
 							     $env->{archs} );
 			my $short_desc = conv_desc( $env->{lang}, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" ) );
-			push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $pkg_version$arch_str</td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+			push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $pkg_version$arch_str</td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
 		    }
 		} elsif ( $is_old_dp ) {
 		    push @res_pkgs, "$p_name $pkg_version$arch_str";
 		} else {
 		    my $short_desc = gettext( "Package not available" );
-		    push @res_pkgs, "$p_name $pkg_version$arch_str</td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+		    push @res_pkgs, "$p_name $pkg_version$arch_str</td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
 		}
 		$pkg_ix++;
 #	    warn "$short_desc\n";
 	    }
-	    $res .= "<table><tr><td>".join( "</td></tr><tr><td> ".gettext( " or " )." ", @res_pkgs )."</td></tr></table>";
+	    $res .= "<table>\n<tr><td>".join( "</td></tr>\n<tr><td> ".gettext( " or " )." ", @res_pkgs )."</td></tr>\n</table>";
 	    $res .= "</td>";
 	    
 	}

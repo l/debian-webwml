@@ -52,7 +52,7 @@ use Storable;
 use Deb::Versions;
 
 our $VERSION = 0.1;
-our $RCS_VERSION = '$Rev$';
+our $RCS_VERSION = '$Revision$';
 
 # ===============
 # | Constructor |
@@ -203,7 +203,7 @@ sub add_version {
     }
 
     # we do not save the description, only the md5sum
-    # the db is responsible for savin the description
+    # the db is responsible for saving the description
     if ( exists $data->{description} ) {
 	$data->{'description-md5'} =
 	    Digest::MD5::md5_hex( $data->{description} );
@@ -649,7 +649,7 @@ __END__
 
 =head1 COPYRIGHT
 
-Copyright 2003 Frank Lichtenheld <frank@lichtenheld.de>
+Copyright 2003, 2004 Frank Lichtenheld <frank@lichtenheld.de>
 
 This file is distributed under the terms of the GNU Public
 License, Version 2. See the source code for more details.

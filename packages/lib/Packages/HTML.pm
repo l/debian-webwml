@@ -30,26 +30,40 @@ sub img {
 }
 
 sub header {
-    my ($TITLE, $PACKTOP, $ROOT, $LANG, $DESC, $KEYWORDS) = @_;
+    my (%params) = @_;
+
     my $DESC_LINE;
-    if (defined $DESC) {
-	$DESC_LINE = "<meta name=\"Description\" content=\"$DESC\">";
+    if (defined $params{desc}) {
+	$DESC_LINE = "<meta name=\"Description\" content=\"$params{desc}\">";
     }
     else {
 	$DESC_LINE = '';
     }
-    if (!defined $KEYWORDS) {
-	$KEYWORDS = '';
+
+    my $title_keywords = $params{title_keywords} || $params{title} || '';
+    my $title_tag = $params{title_tag} || $params{title} || '';
+    my $title_in_header = $params{page_title} || $params{title} || '';
+    my $page_title = $params{page_title} || $params{title} || '';
+
+    my $logo_align = 'center';
+    if ($params{print_title_above}) {
+	$logo_align = 'left';
+	$title_in_header = "<td align=\"right\" valign=\"middle\"><h1>$title_in_header</h1></td>";
+    } else {
+	$title_in_header = '';
     }
-    my $KEYWORDS_LINE = "<meta name=\"Keywords\" content=\"debian, $KEYWORDS $TITLE\">";
+
+    my $keywords = $params{keywords} || '';
+    my $KEYWORDS_LINE = "<meta name=\"Keywords\" content=\"debian, $keywords $title_keywords\">";
     
+    my $LANG = $params{lang};
     my $img_lang = $img_trans{$LANG} || $LANG;
     my $charset = get_charset($LANG);
     my $txt = <<HEAD;
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html lang="$LANG">
 <head>
-<title>Debian GNU/Linux -- $TITLE</title>
+<title>Debian GNU/Linux -- $title_tag</title>
 <link rev="made" href="mailto:webmaster\@debian.org">
 <meta http-equiv="Content-Type" content="text/html; charset=$charset">
 <meta name="Author" content="Debian Webmaster, webmaster\@debian.org">
@@ -57,9 +71,9 @@ $KEYWORDS_LINE
 $DESC_LINE
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#800080" alink="#FF0000">
-<table border="0" cellpadding="3" cellspacing="0" align="center" summary="">
+<table border="0" cellpadding="3" cellspacing="0" align="center" width="100%" summary="">
 <tr>
-<td>
+<td align="$logo_align" valign="middle">
 <a href="$HOME/"><img src="$HOME/logos/openlogo-nd-50.png" border="0" hspace="0" vspace="0" alt="" width="50" height="61"></a>
 HEAD
 ;
@@ -68,6 +82,7 @@ HEAD
 		 width => 179, height => 61 );
     $txt .= <<NAVBEGIN;
 </td>
+$title_in_header
 </tr>
 </table>
 <table bgcolor="#DF0451" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
@@ -120,10 +135,8 @@ NAVBEGIN
 ENDNAV
 ;
 
-# if there is no fifth parameter, this must be some sort of an index page
-# so we can add a heading with the title
-    if (!defined $DESC) {
-	$txt .= "<h1>$TITLE</h1>\n\n";
+    if ($params{print_title_below}) {
+	$txt .= "<h1>$page_title</h1>\n\n";
     }
 
     return $txt;
@@ -135,15 +148,15 @@ sub trailer {
     $txt .=
 	"\n\n<hr noshade width=\"100%\" size=\"1\">" .
 	sprintf( gettext( "Back to: <a href=\"%s/\">Debian Project homepage</a> || <a href=\"%s/\">Packages search page</a>" ), $HOME, $ROOT ).
-	"<hr noshade width=\"100%\" size=\"1\">".
+	"\n<hr noshade width=\"100%\" size=\"1\">\n".
 	"<small>".
 	sprintf( gettext( "See the Debian <a href=\"%s/contact\">contact page</a> for information on contacting us." ), $HOME ).
-	"</small>".
+	"</small>\n".
 	"<p><small>". gettext( "Last Modified: " ). "LAST_MODIFIED_DATE".
-	"<br>".
-	sprintf( gettext( "Copyright &copy; 1997-2004 <a href=\"http://www.spi-inc.org\">SPI</a>; See <a href=\"%s/license\">license terms</a>." ), "$HOME/" )."<br>".
+	"<br>\n".
+	sprintf( gettext( "Copyright &copy; 1997-2004 <a href=\"http://www.spi-inc.org\">SPI</a>; See <a href=\"%s/license\">license terms</a>." ), "$HOME/" )."<br>\n".
 	gettext( "Debian is a registered trademark of Software in the Public Interest, Inc." ).
-	"</small>".
+	"</small>\n".
 	"</body>\n</html>\n";
 
     return $txt;

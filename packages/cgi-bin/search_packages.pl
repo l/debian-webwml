@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl -wT
 #
 # search_packages.pl -- CGI interface to the Packages files on packages.debian.org
 #
@@ -6,6 +6,7 @@
 # Copyright (C) 2000, 2001 Josip Rodin
 # Copyright (C) 2001 Adam Heath
 # Copyright (C) 2004 Martin Schulze
+# Copyright (C) 2004 Frank Lichtenheld
 #
 # use is allowed under the terms of the GNU Public License (GPL)                              
 # see http://www.fsf.org/copyleft/gpl.html for a copy of the license
@@ -16,11 +17,11 @@ use CGI;
 use POSIX;
 use URI::Escape;
 
-use FindBin;
-use lib "$FindBin::Bin/../lib";
-use lib "$FindBin::Bin";
+use lib "../lib";
 
 use Deb::Versions;
+use Packages::Search;
+use Packages::HTML ();
 
 my $thisscript = "search_packages.pl";
 my $HOME = "http://www.debian.org";
@@ -31,60 +32,53 @@ $ENV{PATH} = "/bin:/usr/bin";
 my $input = new CGI;
 
 print $input->header;
-print $input->start_html(-title=>'Debian package search results',
-			 -text=>'#000000',
-			 -bgcolor=>'#FFFFFF',
-			 -link=>'#0000FF',
-			 -vlink=>'#800080',
-			 -alink=>'#FF0000');
 
 # If you want, just print out a list of all of the variables and exit.
 # print $input->dump;
 # exit;
 
-# parsing and untainting of parameters
-my $keyword = $input->param('keywords');
-unless (defined $keyword) {
-   print "No keyword given for search.";
-   exit 0;
-}
-$keyword =~ s,^/,,;
-if ($keyword =~ /^([-+\@\w\/.:]+)$/) {
-   $keyword = $1;                          # $keyword now untainted
-} else {
-   print "Error: \"$keyword\" is not a valid search request";
-   exit 0;
-}
-(my $version) = $input->param('version') =~ m/^(\w+)$/; # $version now untainted
-my $version_param = $version || 'stable'; # for constructing URLs
-$version = "stable" unless (defined $version);
-$version = '*' if ($version eq 'all');
-(my $case) = $input->param('case') =~ m/^(\w+)$/;
-$case = "insensitive" unless (defined $case);
-(my $subword) = $input->param('subword') =~ m/^(\w+)$/;
-$subword = 0 unless (defined $subword);
-my $exact = !$subword; # use subword as default for exact
-(my $searchon) = $input->param('searchon') =~ m/^(\w+)$/;
-$searchon = 'all' unless (defined $searchon);
-(my $exact_param) = $input->param('exact') =~ m/^(\w+)$/;
-$exact = $exact_param if (defined $exact_param);
-(my $releases) = $input->param('release') =~ m/^(\w+)$/;
-my $releases_param = $releases || 'all';
-$releases = '*' unless (defined $releases);
-$releases = '*' if ($releases eq 'all');
+print Packages::HTML::header( title => 'Package Search Results' ,
+			      lang => 'en',
+			      title_tag => 'Debian Package Search Results',
+			      print_title_above => 1 );
 
-my $arch = "*";
-my $arch_param = 'any';
-if (defined $input->param('arch') && $input->param('arch') =~ m/^([\w-]+)$/) {
-  $arch = $1; # $arch now untainted
-  $arch_param = $1;
+my %params_def = ( keywords => { default => undef, match => '^[-+\@\w\/.:]+$' },
+		   version => { default => 'stable', match => '^\w+$',
+				replace => { all => '*' } },
+		   case => { default => 'insensitive', match => '^\w+$' },
+		   subword => { default => 0, match => '^\w+$' },
+		   exact => { default => undef, match => '^\w+$' },
+		   searchon => { default => 'all', match => '^\w+$' },
+		   release => { default => 'all', match => '^\w+$',
+				replace => { all => '*'} },
+		   arch => { default => 'any', match => '^\w+$',
+			     replace => { any => '*'} },
+		   );
+my %params = Packages::Search::parse_params( $input, \%params_def );
+
+if ($params{errors}{keywords}) {
+    print "Error: keyword not valid or missing";
+    exit 0;
 }
-$arch = '*' if ($arch eq 'any');
+my $keyword = $params{values}{keywords}{final};
+my $version = $params{values}{version}{final};
+my $case = $params{values}{case}{final};
+my $subword = $params{values}{subword}{final};
+my $exact = $params{values}{exact}{final};
+$exact = !$subword unless defined $exact;
+my $searchon = $params{values}{searchon}{final};
+my $releases = $params{values}{release}{final};
+my $arch = $params{values}{arch}{final};
+
+# for URL construction
+my $version_param = $params{values}{version}{no_replace};
+my $releases_param = $params{values}{release}{no_replace};
+my $arch_param = $params{values}{arch}{no_replace};
 
 # read the configuration
 my $topdir;
 if (!open (C, "../config.sh")) {
-    printf "\nInternal Error: Cannot open configuration file.\n\n";
+    print "\nInternal Error: Cannot open configuration file.\n\n";
     exit 0;
 }
 while (<C>) {
@@ -134,7 +128,7 @@ if (($searchon eq 'names') || ($searchon eq 'sourcenames')) {
     }
 } else {
     if ($subword != 1) {
-	$searchkeyword = "\"\\(^\\|\\b\\)".$searchkeyword."\\b\"";
+	$searchkeyword = "\"\\(^$searchkeyword\\b\\|\\b$searchkeyword\\b\\)\"";
     }
 }
 
@@ -154,48 +148,6 @@ if ($#files == -1) {
   exit;
 }
 
-print <<END;
-
-<table border="0" cellpadding="3" cellspacing="0" width="100%" summary="">
-<tr>
-<td align="left" valign="middle">
-<a href="$HOME/"><img src="$HOME/logos/openlogo-nd-50.png" border="0" hspace="0" vspace="0" alt="" width="50" height="61"></a>
-<a href="$HOME/" rel="start"><img src="$HOME/Pics/debian.jpg" border="0" hspace="0" vspace="0" alt="Debian Project" width="179" height="61"></a>
-</td>
-<td align="right" valign="middle">
-<h1>Package Search Results</h1>
-</td>
-</tr>
-</table>
-<table bgcolor="#DF0451" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
-<tr>
-<td valign="top">
-<img src="$HOME/Pics/red-upperleft.png" align="left" border="0" hspace="0" vspace="0" alt="" width="15" height="16">
-</td>
-<td rowspan="2" align="center">
-<a href="$HOME/intro/about"><img src="$HOME/Pics/about.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="About Debian" width="58" height="18"></a>
-<a href="$HOME/News/"><img src="$HOME/Pics/news.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="News" width="53" height="18"></a>
-<a href="$HOME/distrib/"><img src="$HOME/Pics/getting.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="Getting Debian" width="117" height="18"></a>
-<a href="$HOME/support"><img src="$HOME/Pics/support.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="Support" width="72" height="18"></a>
-<a href="$HOME/devel/"><img src="$HOME/Pics/devel.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="Developers'&nbsp;Corner" width="105" height="18"></a>
-<a href="$HOME/sitemap" rel="contents"><img src="$HOME/Pics/sitemap.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="Site map" width="76" height="18"></a>
-<a href="http://search.debian.org/"><img src="$HOME/Pics/search.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="Search" width="64" height="18"></a>
-</td>
-<td valign="top">
-<img src="$HOME/Pics/red-upperright.png" align="right" border="0" hspace="0" vspace="0" alt="" width="16" height="16">
-</td>
-</tr>
-<tr>
-<td valign="bottom">
-<img src="$HOME/Pics/red-lowerleft.png" align="left" border="0" hspace="0" vspace="0" alt="" width="16" height="16">
-</td>
-<td valign="bottom">
-<img src="$HOME/Pics/red-lowerright.png" align="right" border="0" hspace="0" vspace="0" alt="" width="15" height="16">
-</td>
-</tr>
-</table>
-END
-
 # now grep the packages file appropriately
 my $grep = "grep -H ";
 if ($case =~ /^insensitive/) {
@@ -205,7 +157,7 @@ $grep .= "$searchkeyword";
 
 
 my $command = "find $fdir -name $file|xargs ".$grep;
-# print "<br>".$command."<br>\n"; # just for debugging
+#print "<br>".$command."<br>\n"; # just for debugging
 
 my @results = qx( $command );
 
@@ -246,20 +198,21 @@ if (!@results) {
 }
 
 my (%pkgs, %sect, %desc, %binaries);
-my (@colon, $package, $section, $ver, $foo, $binaries);
+my (@colon, $package, $pkg_t, $section, $ver, $foo, $binaries);
 
 unless ($search_on_sources) {
     foreach my $line (@results) {
 	@colon = split (/:/, $line);
-	($package, $section, $ver, $foo) = split (/ /, $#colon >1 ? $colon[1].":".$colon[2]:$colon[1], 4);
+	($pkg_t, $section, $ver, $foo) = split (/ /, $#colon >1 ? $colon[1].":".$colon[2]:$colon[1], 4);
 	$section =~ s,^(non-free|contrib)/,,;
 	$section =~ s,^non-US.*$,non-US,,;
-	$colon[0] =~ m,.*/([^/]+)/([^/]+)/Packages-([^\.]+)\.,; #$1=stable, $2=main, $3=alpha
-	
-	$pkgs{$package}{$1}{$ver}{$3} = 1;
-	$sect{$package}{$1}{$ver} = $section;
+	my ($dist,$part,$arch) = $colon[0] =~ m,.*/([^/]+)/([^/]+)/Packages-([^\.]+)\.,; #$1=stable, $2=main, $3=alpha
 
-	$desc{$package}{$1}{$ver} = find_desc ($package, $1, $2) if (! exists $desc{$package}{$1}{$ver});
+	($package) = $pkg_t =~ m/^(.+)/; # untaint
+	$pkgs{$package}{$dist}{$ver}{$arch} = 1;
+	$sect{$package}{$dist}{$ver} = $section;
+
+	$desc{$package}{$dist}{$ver} = find_desc ($package, $dist, $part) if (! exists $desc{$package}{$dist}{$ver});
 	
     }
 
