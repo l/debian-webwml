@@ -34,7 +34,7 @@
   }
   function print_days($db, $manager)
   {
-    $where = " WHERE decision is not null and manager_date is not null and manager = '$manager' AND decision > manager_date";
+    $where = " WHERE approved = 't' AND decision is not null and manager_date is not null and manager = '$manager' AND decision >= manager_date";
 
     $sql = "select manager, max(decision - manager_date), min(decision - manager_date), avg(decision - manager_date) from applicant ". $where . " group by manager";
     if (! ($query = pg_exec($db, $sql))) {
@@ -48,7 +48,7 @@
     }
     #
     # Mode - most popular
-    $sql = "SELECT manager, (date_part('epoch',age(decision::date,manager_date::date))/86400)::int AS days, count(*) AS entries";
+    $sql = "SELECT manager, decision - manager_date AS days, count(*) AS entries";
     $sql .= " FROM applicant" . $where;
     $sql .= " GROUP BY manager, days order by entries DESC LIMIT 1";
     if (! ($query = pg_exec($db, $sql))) {

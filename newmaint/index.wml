@@ -6,12 +6,14 @@
 <?
   function print_days($db, $startdate, $stopdate)
   {
-    $where = " WHERE " . $stopdate . " IS NOT NULL AND age('now'::date, " . $stopdate . ") < '2 months' AND " . $stopdate . " > " . $startdate;
+    $where = " WHERE " . $stopdate . " IS NOT NULL AND age('now'::date, " . $stopdate . ") < '2 months' AND " . $stopdate . " >= " . $startdate;
 
     #
     # Mode - the most "popular" number
-    $sql = "SELECT (date_part('epoch', age(" . $stopdate . "," . $startdate . "))/86400)::int, count(*) AS entries FROM applicant " . $where;
-    $sql .= " GROUP BY age(" . $stopdate . "::date," . $startdate . "::date)";
+    #$sql = "SELECT (date_part('epoch', age(" . $stopdate . "," . $startdate . "))/86400)::int, count(*) AS entries FROM applicant " . $where;
+    #$sql .= " GROUP BY age(" . $stopdate . "::date," . $startdate . "::date)";
+    $sql = "SELECT " . $stopdate . "::date -" . $startdate . "::date AS mode, count(*) AS entries FROM applicant " . $where;
+    $sql .= " GROUP BY mode";
     $sql .= " ORDER BY entries DESC LIMIT 1";
     if (! ($query = pg_exec($db, $sql))) {
           echo "<TD colspan=\"2\">Problem with query: ",
@@ -36,8 +38,8 @@
     }
     $row = pg_Fetch_Row($query, 0);
     $medcount= intval($row[0]/2);
-    $sql = "SELECT (date_part('epoch', age(" . $stopdate . "," . $startdate . "))/86400)::int FROM applicant " . $where;
-    $sql .= " ORDER by age(" . $stopdate . "," . $startdate . ")";
+    $sql = "SELECT " . $stopdate . "::date - " . $startdate . "::date as median FROM applicant " . $where;
+    $sql .= " ORDER by median";
     $sql .= " LIMIT 1 OFFSET " . $medcount;
     if (! ($query = pg_exec($db, $sql))) {
           echo "<TD colspan=\"2\">Problem with query: ",
