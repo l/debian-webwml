@@ -1,54 +1,65 @@
 #use wml::debian::template title="Examples"
 
 <H3>Example of Starting a Translation</H3>
-French will be used for the example
+
+<p>French will be used for the example:
+
 <pre>
-   cvs checkout webwml/english
+   cvs checkout webwml/Makefile.common webwml/english
    cd webwml
    mkdir french
    cvs add french
    cd french
-   cp ../english/.wmlrc .
-   cvs add .wmlrc
-edit and change: '-D CUR_LANG=English' to '-D CUR_LANG=French'
-                 '-D CUR_ISO_LANG=en' to '-D CUR_ISO_LANG=fr'
-                 'CHARSET=iso-8859-1' to whatever is appropriate
+   cp ../english/.wmlrc ../english/Make.* ../english/Makefile .
+   cvs add Make* .wmlrc
 </pre>
-Don't make any other changes to .wmlrc.
-Edit english/template/debian/*.wml and add translations to all the define-tag entries.
-This should be quite straightforward
-<pre>
-   cp ../english/Make.* ../english/Makefile .
-   cvs add Make*
-</pre>
-edit Make.lang, change 'LANG=en' to 'LANG=fr' and change 'LANGUAGECAP=EN' to
-'LANGUAGECAP=FR'. You should not need to make any other changes to the Makefiles
-unless you are translating to a language which uses a multi-byte charset.
+
+<p>Edit the <tt>.wmlrc</tt> file and change:
+<ul>
+  <li>'-D CUR_LANG=English' to '-D CUR_LANG=French'
+  <li>'-D CUR_ISO_LANG=en' to '-D CUR_ISO_LANG=fr'
+  <li>'CHARSET=iso-8859-1' to whatever is appropriate
+</ul>
+
+<p>Edit Make.lang and change 'LANGUAGE := en' to 'LANGUAGE := fr'.
+In case you are translating to a language which uses a multi-byte charset,
+you may have to change some other variables in that file, for more
+information read ../Makefile.common and perhaps other working examples
+(translations such as Chinese).
+
+<p>Edit english/template/debian/*.wml and add translations to all the
+&lt;define-tag ...&gt; entries. This should be quite straightforward.
 
 <p>The Makefile in each directory will compile every .wml file it finds.
 
-<p>When done adding pages, do a
+<p>When you are done adding and editing pages, do a
 <pre>
    cvs commit
 </pre>
 from the webwml directory. You can now start translating the pages.
 
 <H3>Example of Translating a Page</H3>
-A French translation of the social contract will be used for the example
+
+<p>A French translation of the social contract will be used for the example:
+
 <pre>
-   cvs checkout webwml/english webwml/french   (if you hadn't already)
    cd webwml/french
    cp ../english/social_contract.wml .
    cvs add social_contract.wml
 </pre>
-edit social_contract.wml and translate the text. Do not try to translate any
-links or change them in any way. When done, type
+
+<p>Edit social_contract.wml and translate the text. Do not try to translate
+any links or change them in any way - if you want to change anything,
+request it on the debian-www list. When done, type
+
 <pre>
    cvs commit -m "short description of the changes you made" social_contract.wml
 </pre>
 
 <H3>Example of Adding a New Directory</H3>
-This example shows the French translation adding the intro/ directory
+
+<p>This example shows the French translation adding the intro/ directory:
+
 <pre>
    cd webwml/french
    mkdir intro
@@ -56,17 +67,31 @@ This example shows the French translation adding the intro/ directory
    cd intro
    cp ../english/intro/Makefile .
 </pre>
-Make sure a new directory has a Makefile. Otherwise, running make will give an error
+
+Make sure a new directory has the Makefile and that it's commited in CVS.
+Otherwise, running make will give an error to everyone else trying it.
+
 <pre>
    cvs add Makefile
    cd ..
-   cvs commit -m"added the intro dir to CVS" intro
+   cvs commit -m "added the intro dir to CVS" intro
 </pre>
 
 #example not finished
 # <H3>Example of a Conflict</H3>
-# This example shows a commit that won't work because the copy in the repository
-# has been modified since your last <kbd>cvs update -d</kbd>.
+#
+# <p>This example shows a commit that won't work because the copy in the
+# repository has been modified since your last <kbd>cvs update -d</kbd>.
+#
 # <pre>
 #    cvs commit -m"fixed a broken link" foo.wml
 # </pre>
+#
+# will output:
+#
+# <pre>
+# cvs: Up-to-date check failed for foo.wml!
+# cvs: fix the above errors first
+# </pre>
+#
+# or something like that :)
