@@ -230,11 +230,13 @@ sub write {
                 }
                 foreach (qw(Errors Warnings Catgets Gettext)) {
                         if (defined($self->{data}->{$pkg}->{lc $_})) {
-                                $text = join("\.\n", @{$self->{data}->{$pkg}->{lc $_}})."\n";
+                                $text = join("\n\.\n", @{$self->{data}->{$pkg}->{lc $_}})."\n";
+                                $text =~ s/\n\n/\n/g;
+                                $text =~ s/\n+$//s;
                                 $text =~ s/^/ /mg;
                                 #  Warning: there is already a trailing
                                 #  newline within $text.
-                                print DB $_.":\n".$text;
+                                print DB $_.":\n".$text."\n";
                         }
                 }
                 foreach (qw(NLS PO TEMPLATES MENU)) {
