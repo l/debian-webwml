@@ -52,7 +52,7 @@
 </define-tag>
 
 <define-tag inddpcvs whitespace=delete>
-  <preserve name index langs formats path loc txt version />
+  <preserve name index langs formats path loc txt version cvsname />
   <set-var %attributes />
   <if <get-var name /> "" <exit message="you must pass a name to the inddpcvs tag" /> />
   #   Default values
@@ -63,6 +63,7 @@
   />
   <defvar formats html />
   <defvar path "manuals/<get-var name />" />
+  <defvar cvsname <get-var name /> />
 
   <subst-in-var langs " " "\n" />
   <subst-in-var formats " " "\n" />
@@ -110,25 +111,19 @@
   </foreach>
 
   <br>
-  <gettext domain="doc">Use <a href="cvs">CVS</a> to download the SGML source text.</gettext>
 
-  <restore name index langs formats path loc txt version />
+  <: printf "<gettext domain="doc">Use %s to download the SGML source text for %s.</gettext>",
+            '<a href="cvs">CVS</a>',
+            '<a href="http://cvs.debian.org/ddp/manuals.sgml/<get-var cvsname />/?cvsroot=debian-doc"><get-var cvsname /></a>';
+  :>
+
+  <restore name index langs formats path loc txt version cvsname />
 </define-tag>
 
 <define-tag inbfdcvs>
   <p><gettext domain="doc">CVS sources working copy: set <code>CVSROOT</code>
   to <kbd>:ext:<var>userid</var>@cvs.debian.org:/cvs/debian-boot</kbd>,
   and check out the <kbd>boot-floppies/documentation</kbd> module.</gettext>
-</define-tag>
-
-<define-tag inpolcvs>
-  <preserve doc />
-  <set-var doc=%0 />
-  <p><gettext domain="doc">CVS sources working copy: <p>Login to the CVS server using the command:<br>
-<pre>cvs -d:pserver:anonymous@cvs.debian.org:/cvs/debian-policy login</pre>
-and just press enter when you are asked for a password. To check out the sources, use the command:<br>
-<pre>cvs -d:pserver:anonymous@cvs.debian.org:/cvs/debian-policy co <get-var doc /></pre></gettext>
-  <restore doc />
 </define-tag>
 
 <define-tag inpackage>
