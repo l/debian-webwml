@@ -1,4 +1,5 @@
 #use wml::debian::template title="Debian 2.1 (slink) Release Information"
+#use wml::debian::languages
 
 <:
 # list of architectures
@@ -14,10 +15,20 @@
 	     txt  => "ASCII",
            );
 
-$about_lang_setting = 'If you have set your <a href="../../intro/cn">preferred
-language</a>, you should get the right version automatically.';
+# some languages aren't yet in debian/template files
+$langs{'russian'} = 'ru';
+$langs{'czech'} = 'cz';
 
-sub permute_file {
+$about_lang_setting = "If you have set your browser's localization
+properly, you can use the above link to get the right HTML version
+automatically -- see <A href=\"$base_url/intro/cn\"><setlang></A>.
+Otherwise, pick the exact architecture, language, and format you want
+from the table below.\n";
+
+#
+# emits an bunch of li (list items)
+#
+sub permute_as_list {
     my($file, $name, @exts) = @_;
     my($ext, $arch);
 
@@ -32,6 +43,53 @@ sub permute_file {
 	print "\n";
     }
 }
+
+#
+# emits an HTML table matrix:
+#   | arch | format | lang1, lang2, lang3 |
+#
+sub permute_as_matrix {
+    my($file, @langs) = @_;
+    my($ext, $arch, $lang);
+    my $altcolor = 'white';
+    my $ctr = 0;
+
+    foreach $arch (keys %arches) {
+	$ctr++;
+	my $first = 1;
+
+	foreach $ext (keys %formats) {
+	    # alternate the row color
+	    if ( $ctr % 2 ) {
+		print "\n<tr>\n";
+	    } else {
+		print "\n<tr bgcolor=\"$altcolor\">\n";
+	    }
+	    # only print the arch name on the first row
+	    if ( $first == 1 ) {
+		print "  <td align=\"left\"><a href=\"$arch/$file\">" . $arches{$arch} . "</a></td>\n";
+		$first = 0;
+	    } else {
+		print "  <td>&nbsp;</td>\n";
+	    }
+	    print "  <td align=\"left\">" . $formats{$ext} . "</td>\n";
+	    # permute over languages
+	    print "  <td>";
+	    foreach $lang (@langs) {
+		print "<a href=\"./$arch/$file." . $langs{$lang} . ".$ext\">";
+		# sometimes the language name isn't properly defined yet
+		my $workaroundlang = $trans{$CUR_ISO_LANG}{$lang};
+		( $workaroundlang = $lang ) =~ s/^(.)/\U$1/
+		    unless $workaroundlang;
+		print $workaroundlang . "</a> \n";
+	    }
+	    print "  </td>";
+	    print "</tr>\n";
+	    
+	}
+    }
+}
+
  :>
 
 <ul>
@@ -63,13 +121,23 @@ architecture.  The Release Notes also contain instructions for users
 who are upgrading from prior releases.
 
 <ul>
-<: &permute_file('release-notes/index', 'Release Notes'); :>
+<: &permute_as_list('release-notes/index', 'Release Notes'); :>
 </ul>
 
-The Release Notes are available in Croatian, Czech, English, German
-Japanese, Portuguese, and Russian.
-
 <: print $about_lang_setting; :>
+
+<center>
+<table border=2 cellspacing=0 cellpadding=3 bgcolor="#DDDDDD"> 
+<tr bgcolor="#44CCCC">
+  <th align="left"><strong>Architecture</strong></th>
+  <th align="left"><strong>Format</strong></th>
+  <th align="left"><strong>Languages</strong></th>
+</tr>
+<: &permute_as_matrix('release-notes/index', 'english', 'croatian', 'czech',
+		      'german', 'japanese', 'portuguese', 'russian');
+:>
+</table>
+</center>
 
 <p>
 
@@ -85,8 +153,24 @@ since the last two releases.
 Installation instructions, along with downloadable files, are broken
 out by architecture:
 <ul>
-<: &permute_file('install', 'Install Manual'); :>
+<: &permute_as_list('install', 'Install Manual'); :>
 </ul>
+
+<: print $about_lang_setting; :>
+
+<center>
+<table border=2 cellspacing=0 cellpadding=3 bgcolor="#DDDDDD"> 
+<tr bgcolor="#44CCCC">
+  <th align="left"><strong>Architecture</strong></th>
+  <th align="left"><strong>Format</strong></th>
+  <th align="left"><strong>Languages</strong></th>
+</tr>
+<: &permute_as_matrix('install', 'english', 'croatian',  'czech', 
+		      'finnish', 'french', 'german', 
+		      'japanese', 'portuguese', 'russian', 'spanish');
+:>
+</table>
+</center>
 
 A lot of effort has been put into the Debian Installation Manual in
 order to support non-i386 distributions.  However, some architectures
@@ -103,11 +187,6 @@ comments.  Contributors or readers wonder exactly what is new should
 see the <a href="source/ChangeLog">ChangeLog</a>.
 
 <p>
-
-The Installation Manual is available in Croatian, Czech, English,
-Finnish, French, German, Japanese, Portuguese, Russian, and Spanish.
-
-<: print $about_lang_setting; :>
 
 
 
