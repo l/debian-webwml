@@ -6,7 +6,7 @@ WMLBASE=..
 CUR_DIR=News
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
-SUBS=1997 1998
+SUBS=weekly 1997 1998 1999
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
@@ -17,4 +17,4 @@ include $(WMLBASE)/Make.dep.templ
 # Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(wildcard 1998/1998*.wml) \
      $(wildcard $(ENGLISHSRCDIR)/News/1998/1998*.wml) \
-     $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_news.wml $(TEMPLDIR)/languages.wml
+     $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
