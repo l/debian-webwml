@@ -75,12 +75,8 @@ if (open (M, "|$sendmail -t")) {
     print  M "\n";
 	foreach $cstr (@cvs_arr) {
 	    ($file,$oldver,$newver) = split (/,/,$cstr);
+	    next if ($oldver eq "" || $newver eq "");
 	    if ($oldver ne "NONE") {
-		if (open (FOO, "|$sendmail joey-inbox\@infodrom.ffis.de")) {
-		    print FOO "Subject: CVS debug\n";
-		    print FOO "rcsdiff -r$oldver -r$newver -u $ENV{'CVSROOT'}/$module_dir/$file|\n";
-		    close (FOO);
-		}
 		# print "rcsdiff -r$oldver -r$newver -u $ENV{'CVSROOT'}/$module_dir/$file|\n";
 		if (open (R, "rcsdiff -r$oldver -r$newver -u $ENV{'CVSROOT'}/$module_dir/$file|")) {
 		    print M while (<R>);
