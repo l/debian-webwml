@@ -15,6 +15,10 @@ index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/dsa-*.wml) \
   $(ENGLISHSRCDIR)/releases/info \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
 
+faq.$(LANGUAGE).html: faq.wml \
+  $(ENGLISHSRCDIR)/security/faq.wml \
+  $(ENGLISHSRCDIR)/security/faq.inc
+
 ifndef SUBLANG
 DSARDF := dsa.$(LANGUAGE).rdf
 DESTDSARDF := $(HTMLDIR)/$(DSARDF)
