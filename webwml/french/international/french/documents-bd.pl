@@ -226,7 +226,7 @@ $translations = {
 'policy' => {
 	'type'			=> 'DDP',
 	'name'			=> 'Debian Policy Manual',
-	'revision'		=> '3.5.4.0',
+	'revision'		=> '3.5.6.0',
 	'url'			=> 'http://www.debian.org/doc/debian-policy/',
 	'cvs_url'		=> 'http://cvs.debian.org/debian-policy/policy.sgml?cvsroot=debian-policy',
 	'package'		=> 'debian-policy',
@@ -253,6 +253,7 @@ $translations = {
 	'type'			=> 'DDP',
 	'name'			=> 'Debian New Maintainer\'s Guide',
 	'lines'			=> 1448,
+	'package'		=> 'maint-guide',
 },
 
 'internals' => {
@@ -262,7 +263,7 @@ $translations = {
 	'url'			=> 'http://www.debian.org/doc/packaging-manuals/dpkg-internals/',
 	'source_url'		=> 'http://cvs.debian.org/dpkg/doc/internals.sgml?cvsroot=dpkg',
 	'cvs_url'		=> 'http://cvs.debian.org/dpkg/doc/internals.sgml?cvsroot=dpkg',
-	'package'		=> 'dpkg-dev',
+	'package'		=> 'dpkg-doc',
 },
 
 'menu' => {

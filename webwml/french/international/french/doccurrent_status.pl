@@ -204,7 +204,6 @@ $translations_status = {
 	'translation_name'	=> 'Manuel des mécanismes internes de dpkg',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'base_revision'		=> '1.5',
-	'translation_package'	=> 'dpkg',
 },
 
 #'making-deb' => {
@@ -229,6 +228,7 @@ $translations_status = {
 	'translation_name'	=> 'Manuel de Debiandoc-SGML',
 	'translation_sub_name'	=> '',
 	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
+	'translation_url'       => 'http://www.debian.org/~clebars/f2dp/translations/markup.fr.html/',
 	'translation_cvs_url'   => '',
 	'translation_package'	=> 'doc-debian-fr',
 	'last_translated'	=> '',
