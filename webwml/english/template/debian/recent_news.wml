@@ -4,17 +4,17 @@
 # If $number is zero then all the news items are shown.
 
 sub get_recent_news {
-  my ($year, $number) = @_;
-  if (! opendir(DIR, "$year")) {
-     $year = '.';
-     opendir(DIR, $year);
-  }
-  @files = grep { /^\d+\w?.wml$/ && -f "$year/$_" } readdir(DIR);
+  my ($year, $number, $eng_dir) = @_;
+
+  opendir(DIR, "$eng_dir/$year");
+  @files = grep { /^\d+\w?.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
   @files = sort {$b cmp $a} @files;
+  closedir DIR;
+
   $count = 0;
   foreach (@files) {
      $count++;
-     open(FILE, "<$year/$_");
+     open(FILE, "<$year/$_") || open(FILE, "<$eng_dir/$year/$_");
      if (/(\d+\w?).wml/) {
         $base = $1;
      }
