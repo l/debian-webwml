@@ -99,7 +99,6 @@ my %translators = (
         },
   french => {
 	'Denis Barbier' => 'barbier@debian.org',
-	'Christophe Le Bars' => 'clebars@debian.org',
 	'Martin Quinson' => 'mquinson@ens-lyon.fr',
 	},
   german => {
@@ -163,6 +162,8 @@ my %translators = (
 );
 
 sub list_translators {
+my $lang = shift;
+unless (defined $lang) {
   print "<ul>";
   my %translang = map { $trans{$CUR_ISO_LANG}{$_} => $_ } keys %langs;
   foreach $tlang (sort langcmp keys %translang) {
@@ -189,5 +190,27 @@ sub list_translators {
     }
   }
   print "</ul>";
+} else {
+  $lang = lc $lang;
+  return if ($lang eq "english");
+  if (defined $translators{$lang}) {
+    my $num = scalar keys %{$translators{$lang}};
+    foreach $person (keys %{$translators{$lang}}) {
+      print "$person &lt;$translators{$lang}{$person}&gt;";
+      $num--;
+      print ", " if ($num);
+    }
+  } else {
+    die "There are no translators for $lang. WTF?\n";
+  }
+  if (defined $translation_notes{$lang}) {
+    print "<br>\n";
+    if (defined $translation_notes{$lang}{uc $CUR_ISO_LANG}) {
+      print "$translation_notes{$lang}{uc $CUR_ISO_LANG}\n";
+    } else {
+      print "$translation_notes{$lang}{'EN'}\n";
+    }
+  }
+}
 }
 </perl>
