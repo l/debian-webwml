@@ -331,6 +331,8 @@ my $username ="anonymous";
 my $password = "mquinson\@ens-lyon.fr";
 my %sources;
  FTP: while ($arg = shift @ftp_list){
+     my $ftp_try=0;#number of try on this site
+       FTPTRY: #We will come back here each time we can't switch to ascii (max:5 times)
      print "\n# $arg\n";
      $arg =~ m,^ftp:/([^/]*)/([^/]*)/(.*)$,;
      my $ftpsite = $1;
@@ -433,7 +435,10 @@ my %sources;
        $sources{$pkg}{"directory"} = $ftp_root.'/'.$sources{$pkg}{"directory"};
        $res = ftp_unpack_pkg($pkg,\%{$sources{$pkg}});
        write_data("$DB_FILE",\%data) if $careful;
-       if ($res) { # badly unpacked
+       if ($res==2 && ($ftp_try++)<10) { #can't switch to ascii.
+	   goto FTP_TRY;
+       }
+       if ($res) { # badly unpacked (other reason or maximal retry count reached)
 	   print " failed\n";
 	   chdir ($cwd) || die "can't return to the origine dir!";
 	   next FTPPKG; 
@@ -530,7 +535,7 @@ sub ftp_unpack_pkg{
 	    unless ($ftp->type('A')) {
 		print "Can't change ftp to type ascii\n";
 		print $ftp->message() . "\n";
-		return 1;
+		return 2;
 	    }
 	} else {
 	    $ftp->binary();
