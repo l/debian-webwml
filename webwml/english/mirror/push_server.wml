@@ -1,0 +1,98 @@
+#use wml::debian::template title="Setting Up A Push Server"
+
+<p>Given the large number of mirrors and the size of the Debian archive,
+it is not feasible for all the mirrors to use the master archive site
+as the upstream source for Debian. It is much more efficient if the
+load is distributed among a number of push mirrors distributed throughout
+the globe.
+
+<p>Push servers should be machines that mirror the entire Debian archive,
+are themselves push mirrors of the master site and have good bandwidth.
+Setting up a push server is quite simple:
+<ul>
+<li>install <kbd>rsync</kbd> 2.1.1 or greater.
+<li>create <kbd>rsyncd.conf</kbd> and add contents similar to:
+	<pre>
+uid = nobody
+gid = nogroup
+max connections = 25
+syslog facility = daemon
+socket options = SO_KEEPALIVE
+
+[ftp]
+  path = /debian/debian
+  comment = Debian FTP Archive (~5 GB)
+  auth users = list_of_authorized_accounts
+  read only = true
+  secrets file = /etc/rsyncd/debian.secrets
+[web.debian.org]
+  path = /debian2/web/debian.org
+  comment = Debian Web Site
+  auth users = list_of_authorized_accounts
+  read only = true
+  secrets file = /etc/rsyncd/debian.secrets
+	</pre>
+<li>For each site you are pushing to add an entry to <kbd>/etc/rsyncd/debian.secrets</kbd>:
+	<pre>
+account1:a_password
+account2:another_password
+	</pre>
+<li>You will probably want to start the rsync daemon from inetd. To do this add
+	<pre>
+rsync           873/tcp
+	</pre>
+	to <kbd>/etc/services</kbd> and the following to <kbd>/etc/inetd.conf</kbd>
+	<pre>
+rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daemon
+	</pre>
+	You  will  then need to send inetd a HUP signal to tell it to reread its config file.
+<li>create a new ssh key for the account that you use to mirror Debian. Make sure you don't
+	overwrite your original ssh key by using the -f option,
+	<kbd>ssh-keygen -f ~/.ssh/&lt;filename&gt;</kbd>.
+</ul>
+
+<p>For each site you will be push mirroring, you need to add a username and
+password in <kbd>/etc/rsyncd/debian.secrets</kbd> and then add the username to the access list
+in <kbd>/etc/rsyncd.conf</kbd>. 
+To simplify things you may want to use the account name you are pushing to on the downstream
+mirror. You have now given the downstream mirror access to the archive on your
+machine. The username and password are sent to the downstream site.
+
+<p>You still need to set up the script that will contact the downstream mirrors.
+Create the files <kbd>runmirrors</kbd>:
+<blockquote><pre>
+#! /bin/sh
+
+HOME=/home/archvsync
+LOGNAME="archvsync"
+USER="archvsync"
+MAIL=
+PATH="/bin:/usr/bin"
+
+id
+
+cd $HOME
+
+./signal va.debian.org archvsync
+</pre></blockquote>
+and <kbd>signal</kbd>:
+<blockquote><pre>
+\#! /bin/sh
+
+\# This script is called to signal the remote host that it is time to
+\# mirror the archive. This is done in the most secure way I can think of,
+\# a ssh trigger. The remote end has an entry for this key allowing it to
+\# run a single program - ftpsync.
+
+echo Signaling $1
+ssh  -o batchmode=yes -q -o user="$2" "$1" sleep 1
+</pre></blockquote>
+For each site you are pushing to you need to create a
+<pre>
+./signal &lt;site&gt; &lt;username&gt;
+</pre>
+line in <kbd>runmirrors</kbd>.
+
+<p>Finally, add a line to the end of <kbd>ftpsync</kbd> that calls <kbd>runmirrors</kbd>.
+Thus, as soon as your site is finished mirroring from the upstream site, you will
+start pushing to those downstream from you.
