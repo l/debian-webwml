@@ -27,7 +27,7 @@ while ( @row = $sth->fetchrow_array ) {
         $vendorcd, $vcd_nonfree, $vcd_nonus, $vcd_contrib, $nonuscd,
         $develsscd, $nonfreecd, $contribcd, $customcd,
         $arch_alpha, $arch_arm, $arch_i386, $arch_m68k, $arch_powerpc,
-        $arch_sparc, $arch_source);
+        $arch_sparc, $arch_source, $hurd_i386, $hurd_source);
 
     $country = $row[0];
     $cc = uc($country);
@@ -37,7 +37,8 @@ while ( @row = $sth->fetchrow_array ) {
     $sql .= "officialcd,ocd_nonfree,ocd_nonus,ocd_vendor,ocd_contrib, ";
     $sql .= "vendorcd,vcd_nonfree,vcd_nonus,vcd_contrib, ";
     $sql .= "nonuscd,develsscd,nonfreecd, contribcd,customcd, ";
-    $sql .= "arch_alpha,arch_arm,arch_i386,arch_m68k,arch_powerpc,arch_sparc,arch_source ";
+    $sql .= "arch_alpha,arch_arm,arch_i386,arch_m68k,arch_powerpc,arch_sparc, ";
+    $sql ,= " arch_source, hurd_i386, hurd_source ";
     $sql .= "from debiancd WHERE country='$country' AND hidden = 'f' ORDER BY name";
     $vsth = $dbh->prepare($sql);
     $vrv = $vsth->execute();
@@ -130,6 +131,12 @@ while ( @row = $sth->fetchrow_array ) {
         }
         if ($arch_source) {
             push @archs, "<source>";
+        }
+        if ($hurd_i386) {
+            push @archs, "Hurd-i386";
+        }
+        if ($hurd_source) {
+            push @archs, "Hurd-<source>";
         }
         $tmpstr = join ' ; ',@archs;
         print "$tmpstr</TD></TR>\n";
