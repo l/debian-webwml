@@ -80,16 +80,18 @@
 #   30 Jun 1999 - v2.7 Add overwrite stuff to grep, so it doesn't bail out.
 #                      Also mention that you need dpkg, sharutils and patch.
 #                      Reported by Ognyan Kulev. 
-#    2 Jul 1999 - v2.8 Remove some patches. We don't want to carry around
+#    2 Jul 1999 - v2.8 Removed some patches. We don't want to carry around
 #                      this crap for ever.
 #   22 Jul 1999 - v3.0 Work with perl5, add libgdbmg1.
-#                      Only set up /etc/ttys if it is not a conffile.
+#                      Only setup /etc/ttys if it is not a conffile.
 #                      Really fix the overwrite stuff now (blech).
 #    6 Aug 1999 - v3.1 Add base/perl-base dummy package.
 #    7 Sep 1999 - v3.2 Add base/libwrap0, base/tcpd, base/dpkg-mountable,
 #                      base/dpkg-multicd, base/libnet-perl.
 #                      Apply patch to support download and option parsing by
 #                      Daniel Burrows.
+#   19 Sep 1999 - v3.3 Create subdirectories when downloading files
+#                      (reported by Peter Hung <peter@wahoo.com.tw>).
 
 plist="base/adduser base/ae base/base-files base/base-passwd base/bash \
        base/bsdutils base/debianutils base/diff base/dpkg-ftp \
@@ -246,6 +248,7 @@ do
 			echo "- ${pname} not found, downloading from ${download}."
 			mkdir -p ${repository}/partial
 			wget --retr-symlinks -cqP ${repository}/partial ftp://${download}/debian/dists/unstable/main/binary-hurd-i386/${pname}_\*.deb
+			mkdir -p ${repository}/`dirname ${pname}`
 			mv ${repository}/partial/`basename ${pname}`_*.deb ${repository}/`dirname ${pname}`
 			package=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | tail -n 1`
 			matches=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | wc -l`
@@ -283,6 +286,7 @@ do
 			echo "- ${pname} not found, downloading from ${download}."
 			mkdir -p ${repository}/partial
 			wget --retr-symlinks -cqP ${repository}/partial ftp://${download}/debian/dists/unstable/main/binary-hurd-i386/${pname}_\*.deb
+			mkdir -p ${repository}/`dirname ${pname}`
 			mv ${repository}/partial/`basename ${pname}`_*.deb ${repository}/`dirname ${pname}`
 			package=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | tail -n 1`
 			matches=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | wc -l`
