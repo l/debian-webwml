@@ -110,7 +110,7 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Christian Couder' => {
-                        email       => 'christian@kdevelop.org',
+                        email       => 'christian.couder@tuxfamily.org',
                         summary     => 3,
                         logs        => 3,
                         diff        => 3,
