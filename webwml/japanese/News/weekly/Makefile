@@ -7,8 +7,7 @@ YEAR=$(shell date +%Y)
 
 WMLBASE=../..
 CUR_DIR=News/weekly
-WMLSUB=wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG) \
-	--epilog="../../../../convert $(@F)"
+WMLSUB=wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG)
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
@@ -26,19 +25,26 @@ all:: index.$(LANGUAGE).html $(HTMLFILES)
 
 # When building the html files we have to change into the right directory
 # so wml gets all the relative links right.
+index.ja.html : index.wml $(TEMPLDIR)/weeklynews/footer.wml \
+	                   $(TEMPLDIR)/weeklynews/header.wml
+	cd $(@D) && $(WMLSUB) $(notdir $(<)) \
+		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh \
+		--epilog="../../convert $(@F)"
+
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml
 	cd $(@D) && $(WMLSUB) $(notdir $(<)) \
-		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
+		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh \
+		--epilog="../../../../convert $(@F)"
 
 install:: $(HTMLDESTFILES)
+	@# Set up current issue symlink. In case you're wondering, the only
+	@# reason I use ..../current/issue instead of ...../current is
+	@# so it will be 2 directories deep and all the relative symlinks
+	@# will still work. Bleargh.
 ifeq ($(LANGUAGE),en)
-	# Set up current issue symlink. In case you're wondering, the only
-	# reason I use ..../current/issue instead of ...../current is
-	# so it will be 2 directories deep and all the relative symlinks
-	# will still work. Bleargh.
-	install -d $(HTMLDIR)/current
-	-rm -f $(HTMLDIR)/current/issue
+	@install -d $(HTMLDIR)/current
+	@-rm -f $(HTMLDIR)/current/issue
 	-ln -sf ../$(YEAR)/$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
 endif
 
@@ -63,3 +69,10 @@ index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
       $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(YEAR)/*) \
       $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
       $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml
+
+# Generate the mail for posting to debian-news. Requires the web page already
+# be updated. The mail still requires slight edits.
+mail:	
+	@cat mail-header
+	@lynx -dump  http://www.debian.org/News/weekly/$(YEAR)/$(shell cat CURRENT-ISSUE-IS)/ | \
+		perl -pe 's/^\s\s?\s?//'
