@@ -28,7 +28,7 @@ use Locale::Language;
 use Locale::Country;
 use Webwml::L10n::Db;
 use Local::Inside::DebSrc;
-use Local::L10nStats::Debconf;
+use Webwml::L10n::Debconf;
 
 my $progname= $0; $progname= $& if $progname =~ m,[^/]+$,;
 
@@ -635,7 +635,7 @@ sub search_templates {
         my ($filename, $tmpl, %tmpl_stats, $this_stat, @list, @list2);
 
         my @debconffiles = $deb->file_matches("(^|/)debian/([^/]+\\.)?templates\$");
-        $tmpl = Local::L10nStats::Debconf->new();
+        $tmpl = Webwml::L10n::Debconf->new();
         foreach my $file (@debconffiles) {
                 #   All translations in a single file
                 next if $deb->file_matches($file."\\.");
@@ -646,7 +646,7 @@ sub search_templates {
                 $filename_http =~ s/:/\%3a/g;
 
                 $tmpl->read_compact($TEMPLATES_ROOT."/".$data->pooldir($pkg)."/$filename");
-                %tmpl_stats = $tmpl->bylang();
+                %tmpl_stats = $tmpl->stats();
                 foreach (keys %tmpl_stats) {
                         $this_stat = $tmpl_stats{$_}->[0].'t'.$tmpl_stats{$_}->[1].'f'.$tmpl_stats{$_}->[2].'u';
                         $data->add_templates($pkg, "$file:".normalize_lang($_).":$this_stat:".$filename_http);
@@ -671,7 +671,7 @@ sub search_templates {
                         push (@list2, $filename);
                 }
                 $tmpl->read_dispatched($TEMPLATES_ROOT."/".$data->pooldir($pkg)."/$filename", @list2);
-                %tmpl_stats = $tmpl->bylang();
+                %tmpl_stats = $tmpl->stats();
                 foreach (keys %tmpl_stats) {
                         $this_stat = $tmpl_stats{$_}->[0].'t'.$tmpl_stats{$_}->[1].'f'.$tmpl_stats{$_}->[2].'u';
                         $data->add_templates($pkg, "$file:".normalize_lang($_).":$this_stat:".$filename_http{$tmpl->filename($_)});
