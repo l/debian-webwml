@@ -9,11 +9,12 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates bugs countries date doc l10n langs organization ports search security vendors others
+DOMAINS = templates bugs countries date distrib doc l10n langs organization ports search security vendors others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
 countries_FILES = $(TEMPLDIR)/countries.wml
 date_FILES      = $(TEMPLDIR)/ctime.wml
+distrib_FILES	= $(ENGLISHDIR)/distrib/search_packages-form.inc
 doc_FILES       = $(ENGLISHDIR)/doc/books.def $(ENGLISHDIR)/doc/manuals.defs
 l10n_FILES      = $(ENGLISHDIR)/international/l10n/dtc.def \
   $(ENGLISHDIR)/international/l10n/menu.def
@@ -52,6 +53,7 @@ SOURCEFILES = \
   $(bugs_FILES)                 \
   $(countries_FILES)            \
   $(date_FILES)                 \
+  $(distrib_FILES)              \
   $(doc_FILES)                  \
   $(l10n_FILES)                 \
   $(langs_FILES)                \
@@ -80,6 +82,9 @@ $(ENGLISHDIR)/po/countries.pot: # $(countries_FILES)
 
 $(ENGLISHDIR)/po/date.pot: # $(date_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl date $(date_FILES) > $@
+
+$(ENGLISHDIR)/po/distrib.pot: # $(date_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl distrib $(distrib_FILES) > $@
 
 $(ENGLISHDIR)/po/doc.pot: # $(doc_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl doc $(doc_FILES) > $@
