@@ -602,7 +602,7 @@ $translations = {
 'devel/HOWTO_translate' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '06/09/1999',
+	'since'			=> '04/01/2000',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '17/05/1999',
 },
@@ -633,7 +633,7 @@ $translations = {
 'devel/index' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '07/12/1999',
+	'since'			=> '07/01/2000',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '17/05/1999',
 },
@@ -720,7 +720,7 @@ $translations = {
 'distrib/vendors' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '07/12/1999',
+	'since'			=> '07/01/2000',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '03/09/1999',
 },
@@ -772,7 +772,7 @@ $translations = {
 'intro/about' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '07/12/1999',
+	'since'			=> '07/01/2000',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '25/05/1999',
 },
@@ -1062,7 +1062,7 @@ $translations = {
 'Bugs/index' => {
 	'type'			=> 'Web',
 	'status'		=> 'traduction à jour',
-	'since'			=> '07/12/1999',
+	'since'			=> '04/01/2000',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '02/08/1999',
 },
