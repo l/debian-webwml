@@ -13,6 +13,10 @@ submit.$(LANGUAGE).html: submit.wml $(ENGLISHDIR)/mirror/countries.data \
   $(TEMPLDIR)/countries.wml
 webmirror.$(LANGUAGE).html: webmirror.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHSRCDIR)/mirror/webmirrors.data
+official_sponsors.$(LANGUAGE).html: official_sponsors.wml \
+  $(TEMPLDIR)/template.wml $(ENGLISHDIR)/mirror/official_sponsors.list
+ftpmirror.$(LANGUAGE).html: ftpmirror.wml $(TEMPLDIR)/template.wml \
+  $(TEMPLDIR)/toc.wml
 
 # there only needs to be one version of the following so
 # the non-english directories shouldn't try to install them
@@ -33,7 +37,7 @@ $(destmirrorstuff): $(HTMLDIR)/%: %
 cleandest::
 	rm -f $(destmirrorstuff)
 
-.PHONY: text html
+.PHONY: text html full nonus
 text: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t text
 html: mirror_list.pl Mirrors.masterlist
@@ -43,4 +47,7 @@ full: mirror_list.pl Mirrors.masterlist
 nonus: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t nonus
 
+$(ENGLISHDIR)/mirror/official_sponsors.list: \
+  $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
+	./mirror_list.pl -m Mirrors.masterlist -t sponsors > $@
 endif
