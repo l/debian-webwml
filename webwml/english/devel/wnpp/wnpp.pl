@@ -114,14 +114,20 @@ foreach (sort { $withdrawn{$a} cmp $withdrawn{$b} } keys %withdrawn) {
 
 foreach (sort { $ita{$a} cmp $ita{$b} } keys %ita) {
     push @being_adopted_html, 
-         "<li><a href=\"http://bugs.debian.org/$_\">$ita{$_}</a>, ",
-         "$age{$_} days in adoption.";
+         "<li><a href=\"http://bugs.debian.org/$_\">$ita{$_}</a>, ";
+    if ( $age{$_} == 0 ) { push @being_adopted_html, "in adoption since today." }
+    elsif ( $age{$_} == 1 ) { push @requested_html, "in adoption since yesterday." }
+    else { push @requested_html, "$age{$_} days in adoption." };
+         "$age{$_} days in adoption\n";
 }
 
 foreach (sort { $itp{$a} cmp $itp{$b} } keys %itp) {
     push @being_packaged_html, 
-         "<li><a href=\"http://bugs.debian.org/$_\">$itp{$_}</a>, ",
-         "$age{$_} days in preparation";
+         "<li><a href=\"http://bugs.debian.org/$_\">$itp{$_}</a>, ";
+    if ( $age{$_} == 0 ) { push @being_packaged_html, "in preparation since today." }
+    elsif ( $age{$_} == 1 ) { push @requested_html, "in preparation since yesterday." }
+    else { push @requested_html, "$age{$_} days in preparation." };
+         "$age{$_} days in preparation\n";
 }
 
 foreach (sort { $rfp{$a} cmp $rfp{$b} } keys %rfp) {
@@ -129,7 +135,7 @@ foreach (sort { $rfp{$a} cmp $rfp{$b} } keys %rfp) {
          "<li><a href=\"http://bugs.debian.org/$_\">$rfp{$_}</a>, ";
     if ( $age{$_} == 0 ) { push @requested_html, "requested today." }
     elsif ( $age{$_} == 1 ) { push @requested_html, "requested yesterday." }
-    else { push @requested_html, "requested $age{$_} days ago." };
+    else { push @requested_html, "requested $age{$_} days ago.\n" };
 }
 
 </perl>
