@@ -24,22 +24,30 @@ ftplist.data: ../mirror/Mirrors.masterlist
 	echo "<ul>" >> $@
 	for i in `grep-dctrl -n -F Site -s Site -r 'ftp\...\.debian.org' ../mirror/Mirrors.masterlist | sort`; do \
           xy=`echo $$i | sed -e s/^ftp.// -e s/.debian.org$$// | tr a-z A-Z`; \
-	  echo "<li><a href=\"http://$${i}`grep-dctrl -n -F Site -s Archive-http -X $$i ../mirror/Mirrors.masterlist`\"><$${xy}c></a>" >> $@; \
-	  echo " (<a href=\"ftp://$${i}`grep-dctrl -n -F Site -s Archive-ftp -X $$i ../mirror/Mirrors.masterlist`\">FTP</a>)" >> $@; \
+          hpath=`grep-dctrl -n -F Site -s Archive-http -X $$i ../mirror/Mirrors.masterlist`; \
+          fpath=`grep-dctrl -n -F Site -s Archive-ftp -X $$i ../mirror/Mirrors.masterlist`; \
+	  echo "<li><a href=\"http://$${i}$${hpath}\"><$${xy}c></a>: " >> $@; \
+          echo "<small>" >> $@; \
+	  echo " <a href=\"http://$${i}$${hpath}\">HTTP</a>" >> $@; \
+	  echo " <a href=\"ftp://$${i}$${fpath}\">FTP</a>" >> $@; \
+          echo "</small>" >> $@; \
 	done
 	echo "</ul>" >> $@
 	echo "</define-tag>" >> $@
 	echo "<define-tag nonusmirrors>" >> $@
 	echo "<ul>" >> $@
 	for i in `grep-dctrl -n -F Site -s Site -r 'ftp\...\.debian.org' ../mirror/Mirrors.masterlist | sort`; do \
-          ch=`grep-dctrl -n -F Site -s NonUS-http -X $$i ../mirror/Mirrors.masterlist`; \
-          cf=`grep-dctrl -n -F Site -s NonUS-ftp -X $$i ../mirror/Mirrors.masterlist`; \
+          hpath=`grep-dctrl -n -F Site -s NonUS-http -X $$i ../mirror/Mirrors.masterlist`; \
+          fpath=`grep-dctrl -n -F Site -s NonUS-ftp -X $$i ../mirror/Mirrors.masterlist`; \
           xy=`echo $$i | sed -e s/^ftp.// -e s/.debian.org$$// | tr a-z A-Z`; \
-          if [ "$$ch" ]; then \
-            echo "<li><a href=\"http://$${i}$${ch}\"><$${xy}c></a>" >> $@; \
-            if [ "$$cf" ]; then \
-              echo " (<a href=\"ftp://$${i}$${cf}\">FTP</a>)" >> $@; \
+          if [ "$$hpath" ]; then \
+            echo "<li><a href=\"http://$${i}$${hpath}\"><$${xy}c></a>: " >> $@; \
+            echo "<small>" >> $@; \
+            echo " <a href=\"http://$${i}$${hpath}\">HTTP</a>" >> $@; \
+            if [ "$$fpath" ]; then \
+              echo " <a href=\"ftp://$${i}$${fpath}\">FTP</a>" >> $@; \
             fi; \
+            echo "</small>" >> $@; \
           fi; \
         done
 	echo "</ul>" >> $@
@@ -69,4 +77,7 @@ archive.mirrors: ../mirror/Mirrors.masterlist
 	done
 	echo "</ul>" >> $@
 	echo "</define-tag>" >> $@
+
+.DELETE_ON_ERROR:
+
 endif
