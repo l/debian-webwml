@@ -35,7 +35,6 @@ $ENV{PATH} = "/bin:/usr/bin";
 # Read in all the variables set by the form
 my $input = new CGI;
 
-print $input->header;
 
 # If you want, just print out a list of all of the variables and exit.
 # print $input->dump;
@@ -52,11 +51,20 @@ my %params_def = ( keywords => { default => undef, match => '^\s*([-+\@\w\/.:]+)
 				replace => { all => '*'} },
 		   arch => { default => 'any', match => '^(\w+)$',
 			     replace => { any => '*'} },
+		   format => { default => 'html', match => '^(\w+)$' },
 		   );
 my %params = Packages::Search::parse_params( $input, \%params_def );
 
+my $format = $params{values}{format}{final};
+if ($format eq 'html') {
+    print $input->header;
+} elsif ($format eq 'xml') {
+#    print $input->header( -type=>'application/rdf+xml' );
+    print $input->header( -type=>'text/plain' );
+}
+
 if ($params{errors}{keywords}) {
-    print "Error: keyword not valid or missing";
+    print "Error: keyword not valid or missing" if $format eq 'html';
     exit 0;
 }
 my $keyword = $params{values}{keywords}{final};
@@ -83,6 +91,7 @@ my $version_enc = encode_entities $version_param;
 my $releases_enc = encode_entities $releases_param;
 my $arch_enc = encode_entities $arch_param;
 
+if ($format eq 'html') {
 print Packages::HTML::header( title => 'Package Search Results' ,
 			      lang => 'en',
 			      title_tag => 'Debian Package Search Results',
@@ -99,11 +108,12 @@ print Packages::HTML::header( title => 'Package Search Results' ,
 				  case => $case,
 				  },
 			      );
+}
 
 # read the configuration
 my $topdir;
 if (!open (C, "../config.sh")) {
-    print "\nInternal Error: Cannot open configuration file.\n\n";
+    print "\nInternal Error: Cannot open configuration file.\n\n" if $format eq 'html';
     exit 0;
 }
 while (<C>) {
@@ -175,16 +185,18 @@ if (($searchon eq 'names') || ($searchon eq 'sourcenames')) {
 my @files = glob ("$fdir/$file");
 if ($#files == -1) {
 # XXX has to be updated for post-woody
-  if ($version eq "stable" and $arch =~ /^(hurd|sh)$/) {
-    print "Error: the $arch architecture didn't exist in $version.<br>\n"
-         ."Please go back and choose a different distribution.\n";
-  } else {
-    print "Error: Packages/Sources file not found.<br>\n"
-         ."If the problem persists, please inform $ENV{SERVER_ADMIN}.\n";
-    printf "<p>$file</p>";
-  }
-  &printfooter;
-  exit;
+    if ($format eq 'html') {
+	if ($version eq "stable" and $arch =~ /^(hurd|sh)$/) {
+	    print "Error: the $arch architecture didn't exist in $version.<br>\n"
+		."Please go back and choose a different distribution.\n";
+	} else {
+	    print "Error: Packages/Sources file not found.<br>\n"
+		."If the problem persists, please inform $ENV{SERVER_ADMIN}.\n";
+	    printf "<p>$file</p>";
+	}
+	&printfooter;
+    }
+    exit;
 }
 
 # now grep the packages file appropriately
@@ -200,55 +212,59 @@ my $command = "find $fdir -name $file|xargs ".$grep;
 
 my @results = qx( $command );
 
-my $dist_wording = $version_param eq "all" ? "all distributions"
-    : "distribution <em>$version_enc</em>";
-my $section_wording = $releases_param eq 'all' ? "all sections"
-    : "section <em>$releases_enc</em>";
-my $arch_wording = $arch_param eq 'any' ? "all architectures"
-    : "architecture <em>$arch_enc</em>";
-if (($searchon eq "names") || ($searchon eq 'sourcenames')) {
-    my $source_wording = $search_on_sources ? "source " : "";
-    my $exact_wording = $exact ? "named" : "that names contain";
-    print "<p>You have searched for ${source_wording}packages $exact_wording <em>$keyword_enc</em> in $dist_wording, $section_wording, and $arch_wording.</p>";
-} else {
-    my $exact_wording = $exact ? "" : " (including subword matching)";
-    print "<p>You have searched for <em>$keyword_enc</em> in packages names and descriptions in $dist_wording, $section_wording, and $arch_wording$exact_wording.</p>";
+if ($format eq 'html') {
+    my $dist_wording = $version_param eq "all" ? "all distributions"
+	: "distribution <em>$version_enc</em>";
+    my $section_wording = $releases_param eq 'all' ? "all sections"
+	: "section <em>$releases_enc</em>";
+    my $arch_wording = $arch_param eq 'any' ? "all architectures"
+	: "architecture <em>$arch_enc</em>";
+    if (($searchon eq "names") || ($searchon eq 'sourcenames')) {
+	my $source_wording = $search_on_sources ? "source " : "";
+	my $exact_wording = $exact ? "named" : "that names contain";
+	print "<p>You have searched for ${source_wording}packages $exact_wording <em>$keyword_enc</em> in $dist_wording, $section_wording, and $arch_wording.</p>";
+    } else {
+	my $exact_wording = $exact ? "" : " (including subword matching)";
+	print "<p>You have searched for <em>$keyword_enc</em> in packages names and descriptions in $dist_wording, $section_wording, and $arch_wording$exact_wording.</p>";
+    }
 }
 
 if (!@results) {
-  my $keyword_esc = uri_escape( $keyword );
-  my $printed = 0;
-  if (($searchon eq "names") || ($searchon eq 'sourcenames')) {
-      if (($version_param eq 'all')
-	  && ($arch_param eq 'any')
-	  && ($releases_param eq 'all')) {
-	  print "<p><strong>Can't find that package.</strong></p>\n";
-      } else {
-	  print "<p><strong>Can't find that package, at least not in that distribution ".( $search_on_sources ? "" : " and on that architecture" ).".</strong></p>\n";
-      }
-
-    if ($exact) {
-	$printed = 1;
-	print "<p>You have searched only for exact matches of the package name. You can try to search for <a href=\"$thisscript?exact=0&amp;searchon=$searchon&amp;version=$version_param&amp;case=$case&amp;release=$releases_param&amp;keywords=$keyword_esc&amp;arch=$arch_param\">package names that contain your search string</a>.</p>";
+    if ($format eq 'html') {
+	my $keyword_esc = uri_escape( $keyword );
+	my $printed = 0;
+	if (($searchon eq "names") || ($searchon eq 'sourcenames')) {
+	    if (($version_param eq 'all')
+		&& ($arch_param eq 'any')
+		&& ($releases_param eq 'all')) {
+		print "<p><strong>Can't find that package.</strong></p>\n";
+	    } else {
+		print "<p><strong>Can't find that package, at least not in that distribution ".( $search_on_sources ? "" : " and on that architecture" ).".</strong></p>\n";
+	    }
+	    
+	    if ($exact) {
+		$printed = 1;
+		print "<p>You have searched only for exact matches of the package name. You can try to search for <a href=\"$thisscript?exact=0&amp;searchon=$searchon&amp;version=$version_param&amp;case=$case&amp;release=$releases_param&amp;keywords=$keyword_esc&amp;arch=$arch_param\">package names that contain your search string</a>.</p>";
+	    }
+	} else {
+	    if (($version_param eq 'all')
+		&& ($arch_param eq 'any')
+		&& ($releases_param eq 'all')) {
+		print "<p><strong>Can't find that string.</strong></p>\n";
+	    } else {
+		print "<p><strong>Can't find that string, at least not in that distribution ($version_param, section $releases_param) and on that architecture ($arch_param).</strong></p>\n";
+	    }
+	    
+	    unless ($subword) {
+		$printed = 1;
+		print "<p>You have searched only for words exactly matching your keywords. You can try to search <a href=\"$thisscript?subword=1&amp;searchon=$searchon&amp;version=$version_param&amp;case=$case&amp;release=$releases_param&amp;keywords=$keyword_esc&amp;arch=$arch_param\">allowing subword matching</a>.</p>";
+	    }
+	}
+	print "<p>".( $printed ? "Or you" : "You" )." can try a different search on the <a href=\"http://packages.debian.org/#search_packages\">Packages search page</a>.</p>";
+	
+	&printfooter;
     }
-  } else {
-      if (($version_param eq 'all')
-	  && ($arch_param eq 'any')
-	  && ($releases_param eq 'all')) {
-	  print "<p><strong>Can't find that string.</strong></p>\n";
-      } else {
-	  print "<p><strong>Can't find that string, at least not in that distribution ($version_param, section $releases_param) and on that architecture ($arch_param).</strong></p>\n";
-      }
-
-    unless ($subword) {
-	$printed = 1;
-        print "<p>You have searched only for words exactly matching your keywords. You can try to search <a href=\"$thisscript?subword=1&amp;searchon=$searchon&amp;version=$version_param&amp;case=$case&amp;release=$releases_param&amp;keywords=$keyword_esc&amp;arch=$arch_param\">allowing subword matching</a>.</p>";
-    }
-  }
-  print "<p>".( $printed ? "Or you" : "You" )." can try a different search on the <a href=\"http://packages.debian.org/#search_packages\">Packages search page</a>.</p>";
-
-  &printfooter;
-  exit
+    exit;
 }
 
 my (%pkgs, %sect, %part, %desc, %binaries);
@@ -271,32 +287,60 @@ unless ($search_on_sources) {
 
     }
 
-    my ( $start, $end) = multipageheader( scalar keys %pkgs );
-    my $count = 0;
+    if ($format eq 'html') {
+	my ($start, $end) = multipageheader( scalar keys %pkgs );
+	my $count = 0;
 
-    foreach my $pkg (sort keys %pkgs) {
-	$count++;
-	next if $count < $start or $count > $end;
-	printf "<h3>Package %s</h3>\n", $pkg;
-	print "<ul>\n";
-	foreach $ver (('stable','testing','unstable','experimental')) {
-	    if (exists $pkgs{$pkg}{$ver}) {
-		my @versions = version_sort keys %{$pkgs{$pkg}{$ver}};
-		my $part_str = "";
-		if ($part{$pkg}{$ver}{$versions[0]}) {
+	foreach my $pkg (sort keys %pkgs) {
+	    $count++;
+	    next if $count < $start or $count > $end;
+	    printf "<h3>Package %s</h3>\n", $pkg;
+	    print "<ul>\n";
+	    foreach $ver (('stable','testing','unstable','experimental')) {
+		if (exists $pkgs{$pkg}{$ver}) {
+		    my @versions = version_sort keys %{$pkgs{$pkg}{$ver}};
+		    my $part_str = "";
+		    if ($part{$pkg}{$ver}{$versions[0]}) {
 			$part_str = "[<span style=\"color:red\">$part{$pkg}{$ver}{$versions[0]}</span>]";
+		    }
+		    printf "<li><a href=\"$ROOT/%s/%s/%s\">%s</a> (%s): %s   %s\n",
+		    $ver, $sect{$pkg}{$ver}{$versions[0]}, $pkg, $ver, $sect{$pkg}{$ver}{$versions[0]}, $desc{$pkg}{$ver}{$versions[0]}, $part_str;
+		    
+		    foreach my $v (@versions) {
+			printf "<br>%s: %s\n",
+			$v, join (" ", (sort keys %{$pkgs{$pkg}{$ver}{$v}}) );
+		    }
+		    print "</li>\n";
 		}
-		printf "<li><a href=\"$ROOT/%s/%s/%s\">%s</a> (%s): %s   %s\n",
-		$ver, $sect{$pkg}{$ver}{$versions[0]}, $pkg, $ver, $sect{$pkg}{$ver}{$versions[0]}, $desc{$pkg}{$ver}{$versions[0]}, $part_str;
-		
-		foreach my $v (@versions) {
-		    printf "<br>%s: %s\n",
-		    $v, join (" ", (sort keys %{$pkgs{$pkg}{$ver}{$v}}) );
+	    }
+	    print "</ul>\n";
+	}
+    } elsif ($format eq 'xml') {
+	require RDF::Simple::Serialiser;
+	my $rdf = new RDF::Simple::Serialiser;
+	$rdf->addns( debpkg => 'http://packages.debian.org/xml/01-debian-packages-rdf' );
+	my @triples;
+	foreach my $pkg (sort keys %pkgs) {
+	    foreach $ver (('stable','testing','unstable','experimental')) {
+		if (exists $pkgs{$pkg}{$ver}) {
+		    my @versions = version_sort keys %{$pkgs{$pkg}{$ver}};
+		    foreach my $version (@versions) {
+			my $id = "$ROOT/$ver/$sect{$pkg}{$ver}{$version}/$pkg/$version";
+			push @triples, [ $id, 'debpkg:package', $pkg ];
+			push @triples, [ $id, 'debpkg:version', $version ];
+			push @triples, [ $id, 'debpkg:section', $sect{$pkg}{$ver}{$version}, ];
+			push @triples, [ $id, 'debpkg:suite', $ver ];
+			push @triples, [ $id, 'debpkg:shortdesc', $desc{$pkg}{$ver}{$version} ];
+			push @triples, [ $id, 'debpkg:part', $part{$pkg}{$ver}{$version} || 'main' ];
+			foreach my $arch (sort keys %{$pkgs{$pkg}{$ver}{$version}}) {
+			    push @triples, [ $id, 'debpkg:architecture', $arch ];
+			}
+		    }
 		}
-		print "</li>\n";
 	    }
 	}
-	print "</ul>\n";
+	
+	print $rdf->serialise(@triples);
     }
 } else {
     foreach my $line (@results) {
@@ -352,10 +396,10 @@ unless ($search_on_sources) {
 }
 }
 
-
-
-print "<hr>\n";
-&printfooter;
+if ($format eq 'html') {
+    print "<hr>\n";
+    &printfooter;
+}
 
 exit;
 
