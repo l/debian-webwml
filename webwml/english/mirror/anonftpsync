@@ -1,33 +1,54 @@
 #! /bin/sh
 set -e
 
-# Set the variables below to fit your site. You can then use cron to have this
-# script run daily to automatically update your copy of the archive
-#
-# TO is the destination for the base of the debian directory (the dir that
-# holds dists/ and ls-lR)
-#
-# RSYNC_HOST is the site you have chosen from the mirrors file
-#
-# RSYNC_DIR is the directory given in the Archive-rsync: line of the
-# mirrors file for the site you have chosen to mirror.
-#
-# chmod 744 anonftpsync
-#
-# You MUST have rsync 2.0.16-1 or newer which is available in slink
+# This script originates from http://www.debian.org/mirror/anonftpsync
 
-# With a blank EXCLUDE you will mirror the entire archive.
-#EXCLUDE="--exclude *alpha.deb --exclude *m68k.deb --exclude \
-#    *powerpc.deb --exclude stable/ --exclude bo/ --exclude \
-#    /contrib/ --exclude /non-free/ --exclude source/ --exclude \
-#    /Debian-1.3* --exclude binary-alpha/ --exclude binary-m68k/ \
-#    --exclude binary-powerpc/ --exclude Incoming/ --exclude \
-#    local/ --exclude bo-unstable/ --exclude bo-updates/ "
+# Note: You MUST have rsync 2.0.16-1 or newer, which is available in slink
+# and all newer Debian releases, or at http://rsync.samba.org/
+
+# Set the variables below to fit your site. You can then use cron to have
+# this script run daily to automatically update your copy of the archive.
+
+# Don't forget:
+# chmod 744 anonftpsync
+
+# TO is the destination for the base of the Debian mirror directory
+# (the dir that holds dists/ and ls-lR).
 
 TO=
+
+# RSYNC_HOST is the site you have chosen from the mirrors file.
+# (http://www.debian.org/mirror/mirrors_full)
+
 RSYNC_HOST=
+
+# RSYNC_DIR is the directory given in the "Packages over rsync:" line of
+# the mirrors file for the site you have chosen to mirror.
+
 RSYNC_DIR=debian/
+
+# EXCLUDE is a list of parameters listing patterns that rsync will exclude.
+# The following example would exclude mostly everything:
+#EXCLUDE="\
+#  --exclude binary-alpha/ --exclude binary-arm/ --exclude binary-i386/ \
+#  --exclude binary-m68k/ --exclude binary-powerpc/ --exclude binary-sparc/ \
+#  --exclude binary-ia64/ --exclude binary-mips*/ --exclude binary-hppa/ --exclude binary-sh/ \
+#  --exclude *_alpha.deb --exclude *_arm.deb --exclude *_i386.deb \
+#  --exclude *_m68k.deb --exclude *_powerpc.deb --exclude *_sparc.deb \
+#  --exclude *_ia64.deb --exclude *_hppa.deb --exclude *_mips.deb --exclude *_sh.deb \
+#  --exclude stable/ --exclude testing/ --exclude unstable/ \
+#  --exclude source/ \
+#  --exclude /contrib/ --exclude /non-free/ \
+# "
+
+# With a blank EXCLUDE you will mirror the entire archive.
+
 EXCLUDE=
+
+# There should be no need to edit anything below this point, unless there
+# are problems.
+
+#-----------------------------------------------------------------------------#
 
 # Note: on some non-Debian systems, hostname doesn't accept -f option.
 # If that's the case on your system, make sure hostname prints the full
@@ -48,13 +69,16 @@ if lockfile -! -l 43200 -r 0 "$LOCK"; then
 fi
 # Note: on some non-Debian systems, trap doesn't accept "exit" as signal
 # specification. If that's the case on your system, try using "0".
-trap "rm -f $LOCK > /dev/null 2>&1" exit  
+trap "rm -f $LOCK > /dev/null 2>&1" exit
 
 set +e
-rsync -rltvz --delete \
+rsync --recursive --links --times --verbose --compress --delete \
      --exclude "Archive-Update-in-Progress-`hostname -f`" \
      --exclude "project/trace/`hostname -f`" \
      $EXCLUDE \
      $RSYNC_HOST::$RSYNC_DIR $TO > rsync.log 2>&1
 date -u > "${TO}/project/trace/`hostname -f`"
+
+# Note: if you don't have savelog, use any other log rotation facility, or
+# comment this out, the log will simply be overwritten each time.
 savelog rsync.log > /dev/null 2>&1
