@@ -7,9 +7,6 @@
       	text-align: right;
       }     
       
-      body                     {
-      	font-family: Helvetica, Times New Roman, Georgia, serif;
-      }
       h1.center                { text-align: center;  }
       h1.title                 {
       	text-align: center; 
