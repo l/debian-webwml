@@ -14,7 +14,7 @@
    [ES:Debian para Beowulf:]
    [FI:Debian for Beowulf:]
    [FR:Debian pour Beowulf:]
-   [HR:Debian for Beowulf:]
+   [HR:Debian za Beowulf:]
    [HU:Debian for Beowulf:]
    [IT:Debian per Beowulf:]
    [JA:Debian for Beowulf:]
