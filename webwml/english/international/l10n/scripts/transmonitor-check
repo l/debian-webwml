@@ -271,9 +271,10 @@ PKG: while ($dsc = shift @pkg_list) {
                 system ("dpkg","--compare-versions", $data->version($pkg), "\>", $ver);
                 if ((!$force) && $?==0 && $data->version($pkg) ne ""
                         && !( $force_material &&
-                                ($data->has_nls($pkg)
-                                        || $data->has_po($pkg)
-                                        || $data->has_templates($pkg)))) {
+                                ($data->has_nls($pkg) ||
+                                 $data->has_po($pkg) ||
+                                 $data->has_templates($pkg) ||
+                                 $data->has_podebconf($pkg)))) {
                         print STDERR "Package $pkg $ver (skipped)\n"
                                 if ($verbose || ($data->version($pkg) ne $ver));
                         next PKG;
@@ -334,7 +335,7 @@ sub store_disk_po {
 
         my $dirname  = $filename;
         $dirname  =~ s#/+[^/]*$##;
-        $filename =~ s#.*/##g;
+        $filename =~ s#.*/##;
         $filename =~ s#:#\%3a#g;
         return $dirname.'/'.$pkg.'_'.$data->version($pkg).'_'.$filename;
 }
@@ -384,8 +385,9 @@ sub parse_tarball {
                 my $file = shift;
                 return 80  if $file =~ m#(^|/)nls/#;
                 return -1 if $file eq 'debian/control';
+                return -1 if $file eq 'debian/po/POTFILES.in';
                 return ":$PO_ROOT/_tmp/".store_disk_po($pkg, $file)
-                        if $file =~ m#\.po$#;
+                        if $file =~ m#\.pot?$#;
                 return ":$MENU_ROOT/_tmp/".store_disk_menu($pkg, $file)
                         if $file =~ m#(^|/)debian/[^/]*menu[^/]*$#;
                 return ":$TEMPLATES_ROOT/_tmp/".store_disk_templates($pkg, $file)
@@ -534,7 +536,7 @@ sub check_pkg {
         search_po($pkg);
         search_menu($pkg);
         search_docbase($pkg);
-        search_templates($pkg);
+        search_podebconf($pkg) || search_templates($pkg);
 }
 
 #----[ search_nls ]-------------------------------------------------------------
@@ -736,6 +738,42 @@ sub search_templates {
                         warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename.": $!\n";
                 }
         }
+}
+
+#----[ search_podebconf ]-------------------------------------------------------
+sub search_podebconf {
+        my $pkg = shift;
+
+        return 0 unless $deb->file_exists("debian/po/templates.pot")
+                     && $deb->file_exists("debian/po/POTFILES.in");
+
+        my $filename = store_disk_po($pkg, "debian/po/templates.pot");
+        if (system("gzip -9 $PO_ROOT/".$data->pooldir($pkg)."/".$filename)) {
+                warn "Can't gzip $PO_ROOT/".$data->pooldir($pkg)."/".$filename.": $!\n";
+        }
+
+        #   List of templates files
+        my @tmplfiles = ($filename);
+        @_ = split(/\n/, $deb->file_content("debian/po/POTFILES.in"));
+        foreach (@_) {
+                next unless s#^\[type: gettext/rfc822deb]\s+#debian/#;
+                if ($deb->file_exists($_)) {
+                        push (@tmplfiles, store_disk_templates($pkg, $_));
+                        $filename = store_disk_templates($pkg, $_);
+                        if (system("gzip -9 $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename)) {
+                                warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename.": $!\n";
+                        }
+
+                } else {
+                        $data->add_errors($pkg, "podebconf: file $_ not found");
+                }
+        }
+        $data->add_podebconf($pkg, @tmplfiles);
+
+        #  PO files are already handled by search_po
+
+        print STDERR "MEM: ".$deb->get_max_memory()."\n" if $verbose;
+        1;
 }
 
 #----[ normalize_lang ]--------------------------------------------------------
