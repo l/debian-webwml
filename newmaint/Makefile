@@ -2,9 +2,9 @@
 # requires a checkout of webwml/template/debian from the webwml tree!
 
 ifneq "$(wildcard ${HOME}/web-source/webwml/english/template)" ""
-TEMPLDIR := ${HOME}/web-source/webwml/english/template/debian
+TEMPLDIR := ${HOME}/web-source/webwml/po/template/debian
 else
-TEMPLDIR := ../webwml/english/template/debian
+TEMPLDIR := ../webwml/po/template/debian
 endif
 DEBTEMPLATES := $(wildcard $(TEMPLDIR)/*.wml) \
                 $(TEMPLDIR)/countries.def \
