@@ -48,6 +48,10 @@ sub conv_desc {
     if ($lang eq 'ja') {
 	my $text_conv = $converters{"EUC-JP2ISO-2022-JP"}->convert($text);
 	if ($text_conv) {
+	    if (!chomp(my $tmp = $text_conv)) { # work around a bug in Text::Iconv
+		$text_conv .= "\x1B\x28\x42"; # add iso-2022-jp escape code
+		                              # if not ending in a \n
+	    }
 	    return $text_conv;
 	}
     } elsif (($cs ne "UTF-8")
