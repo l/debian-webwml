@@ -1,5 +1,5 @@
 #use wml::debian::cdimage title="jigdo をつかって Debian CD イメージをダウンロードする" BARETITLE=true
-#use wml::debian::translation-check translation="1.13"
+#use wml::debian::translation-check translation="1.15"
 
 <p>jigsaw (糸鋸) ダウンロード、あるいは短く <a href="http://atterer.net/jigdo/">jigdo</a>
 は、将来 Debian CD イメージを配布する主となる方法として考えられたものです。
@@ -98,6 +98,16 @@ jigdo の開発に参加していただけるボランティアはいつでも大歓迎です。</p>
 
 <hr>
 
+<p><strong>jigdo で proxy サーバを使うようにするにはどうすればいいのでしょう?</strong></p>
+
+<p>どのような proxy を使う場合でも、<tt>http_proxy</tt> および/または
+<tt>ftp_proxy</tt> 環境変数に proxy サーバのアドレスを指定する必要があります。
+Linux では、ホームディレクトリの <tt>.bashrc</tt> ファイルに
+<tt>export&nbsp;http_proxy=http://myproxy:8088/</tt>
+のような行を付け加えるのが一番手っ取り早いやりかたです。
+jigdo-easy を Windows で使っている場合は、同様の行を <tt>jigdo-easy.sh</tt>
+スクリプトの最初に足すのが一番簡単でしょう。</p>
+
 <p><strong>あ痛ぁ! スクリプトがエラーで落ちてしまいました。これまでダウンロードした何百 MB は無駄になってしまうんですか?</strong></p>
 
 <p>もちろん、「こういうことは起こってはならない」(tm)
@@ -132,7 +142,21 @@ jigdo の開発に参加していただけるボランティアはいつでも大歓迎です。</p>
 
   <br>rsync の <tt>--verbose</tt> と <tt>--progress</tt>
   スイッチで状態情報を得られます。また、<tt>--block-size=8192</tt>
-  で速度が改善されます。試してみてください。
+  で速度が改善されます。試してみてください。</li>
+
+  <li>これら全てが失敗したとしても、ダウンロードしたデータはまだ失われたわけではありません。
+  Linux 下では、それまでにダウンロードしたファイルを、<tt>.tmp</tt>
+  ファイルを loop ファイルシステムとしてマウントすることでアクセスでき、
+  またそれを新たに作成する jigdo
+  ファイルを作成する際に再利用することも出来ます
+  (例えば、ダウンロードに失敗したのが毎日作成のスナップショットだった場合、
+  最新のスナップショットを作成する際、このファイルを利用できます)。
+  具体的には、まず失敗したダウンロード結果の置かれたディレクトリで root
+  になって、以下のコマンドを実行してください。
+  <tt>mkdir&nbsp;mnt;
+  mount&nbsp;-t&nbsp;iso9660&nbsp;-o&nbsp;loop&nbsp;*.tmp&nbsp;mnt</tt>
+  次に、新規のダウンロードは別のディレクトリを使って行い、"Files to scan"
+  プロンプトがでたときに <tt>mnt</tt> ディレクトリを指定してください。</li>
 
 </ul>
 
