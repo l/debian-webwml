@@ -8,3 +8,6 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+
+merchandise.$(LANGUAGE).html: ../../english/misc/merchandise.data \
+		../../english/misc/merchandise.def
