@@ -25,6 +25,7 @@ my @special_maintainer = (
 	"APT Development Team",
 	"Progeny Debian Packaging Team",
 	"Dynamic DNS Tools and Services",
+	"Debian OpenOffice Team",
 );
 
 
