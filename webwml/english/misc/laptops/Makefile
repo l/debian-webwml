@@ -6,7 +6,9 @@ WMLBASE=../..
 CUR_DIR=misc/laptops
 SUBS=
 
+GETTEXTFILES += others.mo
+
 include $(WMLBASE)/Make.lang
 
 $(HTMLFILES): $(ENGLISHSRCDIR)/misc/laptops/menu.inc \
-  $(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml
+  $(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml $(GETTEXTDEP)

@@ -6,6 +6,8 @@ WMLBASE=..
 CUR_DIR=security
 SUBS=undated $(wildcard [12][0-9][0-9][0-9])
 
+GETTEXTFILES += others.mo
+
 include $(WMLBASE)/Make.lang
 
 
@@ -17,7 +19,7 @@ index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/dsa-*.wml) \
 
 faq.$(LANGUAGE).html: faq.wml \
   $(ENGLISHSRCDIR)/security/faq.wml \
-  $(ENGLISHSRCDIR)/security/faq.inc
+  $(ENGLISHSRCDIR)/security/faq.inc $(GETTEXTDEP)
 
 ifndef SUBLANG
 DSARDF := dsa.$(LANGUAGE).rdf
