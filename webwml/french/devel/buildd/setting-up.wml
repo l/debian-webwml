@@ -1,0 +1,126 @@
+#use wml::debian::template title="Mettre en place un service d'empaquetage" BARETITLE="true"
+#use wml::debian::translation-check translation="1.4" maintainer="Mohammed Adnène Trojette"
+
+<p>Vous trouverez ici une antisèche pour mettre en place un service
+d'empaquetage pour Debian. Andreas Barth a écrit ce document lorsqu'il
+a mis en place des services d'empaquetage pour <em>experimental</em>
+et backports.org, il est donc possible qu'il ne soit pas
+complètement cohérent avec la mise en place réalisée sur les machines
+des développeurs qui sont utilisées comme serveurs d'empaquetage
+automatique.</p>
+
+<p>Pour réaliser un service d'empaquetage, vous pouvez
+soit utiliser le service d'empaquetage situé sur
+db.debian.org, ou en extraire un depuis les sources de <a
+href="http://m68k.debian.org/buildd/getting.html">wanna-build</a>. Si
+vous souhaitez utiliser la version de db.debian.org, veuillez ajouter
+<tt>deb http://db.debian.org debian-admin/</tt> au fichier
+<tt>sources.list</tt> et installer <tt>buildd</tt>.</p>
+
+<p>Par ailleurs, vous avez besoin d'un <tt>debootstrap</tt> récent afin
+de pouvoir mettre en place des «&nbsp;chroots&nbsp;» pour <em>sarge</em>
+et <em>sid</em>. Vous aurez alors peut-être besoin d'un rétroportage
+pour cela. Vous pouvez soit le prendre sur un dépôt de rétroportage ou
+alors le réempaqueter depuis le paquet source vous-même.</p>
+
+<p>Vous devez créer les répertoires suivants (sous
+<tt>/org/buildd/</tt>)&nbsp;:</p>
+<pre>
+install -d build mqueue -o buildd -g buildd
+install -d chroots -m 755
+install -d logs stats -o buildd -g buildd
+install -d secret -o buildd -g adm -m 2770
+install -d /var/debbuild/srcdep-lock -o buildd
+install -d /var/lib/sbuild/srcdep-lock -o buildd
+install -d chroots/sid/var/debbuild/srcdep-lock -o buildd
+install -d chroots/sid/build/buildd -m 777
+install -d chroots/woody-backports/var/debbuild/srcdep-lock -o buildd
+install -d chroots/woody-backports/build/buildd -m 777
+install -d bin -o buildd -g adm -m 775
+cp /etc/passwd chroots/sid/etc/
+cp /etc/passwd chroots/woody-backports/etc/
+ln -s source-dependencies-unstable /etc/source-dependencies-sid-nonfree
+sudo ln -s source-dependencies-stable /etc/source-dependencies-woody-backports.org
+</pre>
+
+<p>ajouter les «&nbsp;chroots&nbsp;»&nbsp;:</p>
+<pre>
+sudo debootstrap --variant=buildd sid chroots/sid http://ftp.debian.org/debian
+sudo ln -s /org/buildd/chroots/sid/ build/chroot-unstable
+</pre>
+
+<p>mettre ensuite à jour et installer les paquets nécessaires&nbsp;:</p>
+<pre>
+sudo chroot chroots/sid apt-get update
+sudo chroot chroots/sid apt-get install fakeroot build-essential sudo debfoster
+sudo chroot chroots/sid debfoster
+</pre>
+
+<p>et pour les rétroportage <em>woody</em> également&nbsp;:</p>
+<pre>
+sudo debootstrap --variant=buildd woody chroots/woody-backports http://ftp.debian.org/debian
+sudo ln -s /org/buildd/chroots/woody-backports/ build/chroot-woody-backports.org
+</pre>
+<p>Éditons
+<tt>chroots/woody-backports/etc/apt/sources.list</tt></p>
+<pre>
+deb http://ftp.debian.org/debian woody main non-free contrib
+deb-src http://ftp.debian.org/debian woody main non-free contrib
+deb-src ftp://linux.mathematik.tu-darmstadt.de/pub/linux/distributions/debian-backports/debian woody all
+</pre>
+<p>mettons à jour et installons quelques petites choses&nbsp;:</p>
+<pre>
+sudo chroot chroots/woody-backports apt-get update
+sudo chroot chroots/woody-backports apt-get install fakeroot build-essential sudo debfoster
+sudo chroot chroots/woody-backports debfoster
+</pre>
+
+<p>OK, créons le <tt>.sbuildrc</tt></p>
+<pre>
+\# Adresse de courriel où les journaux sont envoyés (obligatoire, pas de
+\# valeur par défaut !)
+$mailto = 'ce que vous voulez';
+
+\# Nom du responsable à utiliser dans les fichiers .changes (obligatoire, 
+\# pas de valeur par défaut !)
+$maintainer_name='what should be in changes';
+
+\#$fakeroot='/usr/bin/sudo';
+$fakeroot='/usr/bin/fakeroot';
+
+%dist_order = ( 'oldstable-security' => 0, stable => 1, 'stable-security' => 1, testing => 2, 'testing-security' => 2, unstable => 3, 'woody-backports.org' => 5, 'sarge-backports.org' => 6, experimental => 7 );
+</pre>
+
+<p>N'oubliez pas d'ajouter l'utilisateur du service d'empaquetage au
+fichier de configuration de <tt>sudo</tt> de façon à ce qu'il puisse
+lancer les outils sans restriction.</p>
+
+<p>OK, testons le tout maintenant&nbsp;: allons dans ~buildd/build et
+empaquetons un paquet&nbsp;:</p>
+<pre>
+sbuild -d unstable -v netpbm-nonfree_2:9.20-2
+sbuild -d woody-backports.org -v arj_3.10.19-1.backports.org.1
+</pre>
+
+<p>Ajoutons <tt>|/usr/bin/buildd-mail-wrapper</tt> à ~buildd/.forward de
+façon à pouvoir répondre aux courriels des services d'empaquetage.</p>
+
+<p>Vous devez aussi modifier ~buildd/buildd.conf&nbsp;-&nbsp;mais
+désolé, il n'y a pas d'antisèche pour cela, parce que cela dépend de
+votre <tt>wanna-build</tt>.</p>
+
+<p>Vous pouvez lire plus d'informations au sujet des états du service
+d'empaquetage <a href="wanna-build-states">ici</a> pour plus de
+détails. Veuillez répondre les courriels des services d'empaquetage
+soit avec le fichier .changes signé, soit avec «&nbsp;give-back&nbsp;»,
+«&nbsp;retry&nbsp;», «&nbsp;dep-wait&nbsp;», «&nbsp;failed&nbsp;»,
+«&nbsp;dep-wait&lt;dependencies&gt;&nbsp;», «&nbsp;failed\n&lt;why it
+failed&gt;&nbsp;».</p>
+
+<p>Vous pouvez utiliser les tâches suivantes comme des tâches
+automatisées dans la cron</p>
+<pre>
+@reboot        touch ~buildd/NO-DAEMON-PLEASE
+17 * * * * /usr/bin/buildd-watcher
+47 * * * * /usr/bin/buildd-uploader
+</pre>
