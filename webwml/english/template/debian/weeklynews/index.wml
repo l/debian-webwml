@@ -6,8 +6,13 @@
 sub get_weeklynews_list {
 	my ($year, $eng_dir, $match, $noyear, $count, $stopat, $reccount, $trans_dir) = @_;
 
-	$trans_dir ||= '.'; # trans_dir should point to dir above the year dir
-	
+	# trans_dir should point to dir above the year dir
+	if ($noyear) {
+		$trans_dir ||= '..'; 
+	} else {
+		$trans_dir ||= '.';
+	}
+
 	my $str="";
 
 	open(CURRENT, "CURRENT-ISSUE-IS") or open(CURRENT, "$eng_dir/CURRENT-ISSUE-IS") or return '';
@@ -23,7 +28,6 @@ sub get_weeklynews_list {
 
 	foreach (sort {$b <=> $a} @files) {
 		next if $year == $currentyear && $_ > $currentissue; # skip issues in preparation.
-		my $num=$_;
 		$_="$_/index.wml";
 		$trans_title = $_;
 		$trans_title =~ s/wml/title/;
@@ -39,9 +43,6 @@ sub get_weeklynews_list {
 			$summary=$1;
 		}
 		if ($title) {
-			if (length $num == 1) {
-				$num="&nbsp;$num";
-			}
 			$str.="<a href=\"". ($noyear ? "" : "$year/" )."$base\">$title</a> $summary<br>\n";
 		}
 		close FILE;
