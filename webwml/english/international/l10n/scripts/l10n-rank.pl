@@ -2,6 +2,7 @@
     "../../english/template/debian/language_names.wml",
     which is done for this purpose -->
 
+#include "../../../english/international/l10n/scripts/l10nheader.wml"
 #include "../../../english/template/debian/language_names.wml"
 #include "../../../english/international/l10n/dtc.def"
 #include "../../../english/international/l10n/scripts/init.pl"
@@ -41,12 +42,9 @@ foreach $score (sort {$b <=> $a} keys %scores) {
 	    $exaequo = 1;
 	}
 	$str .= "</td><td><a href=\"l10n-lang-$lang\">";
-	if (defined  $trans{language2code($cur_lang)}{lc(code2language($lang))}) {
-	    $str .= ucfirst($trans{language2code($cur_lang)}{lc(code2language($lang))});
-	} else {
-	    $str .= code2language($lang);
-	}
-	$str .= "</a><td>$score<td>$nb_per_lang{$lang}<td>";
+	print $str;
+	language_name($lang);
+	$str = "</a><td>$score<td>$nb_per_lang{$lang}<td>";
 	$str .= l10n_output($average{$lang})."\n";
 	$str =~ s/<(td)/<$1 align=center/g;
 	print $str;

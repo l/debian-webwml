@@ -15,7 +15,7 @@ my $since_header=0;
 
 my $header = "<tr><td><package></td><td><orgAbrev></td>";
 foreach $lang (sort keys %l10nlangs) {
-    $header .= "<td><a href=\"l10n-lang-$lang\">$lang</a></td>";
+    $header .= "<td><a href=\"po-$lang\">$lang</a></td>";
 }
 $header .= "\n";
 $header =~ s/<(td)/<$1 BGCOLOR="#ddddd5" align=center/g; # change background and center
