@@ -29,7 +29,7 @@ po-%.$(LANGUAGE).html:\
   $(ENGLISHDIR)/international/l10n/scripts/team-po.pl\
   $(ENGLISHDIR)/international/l10n/scripts/l10nheader.wml\
   $(ENGLISHDIR)/international/l10n/team-po.wml\
-  $(TEMPLDIR)/countries_perl.wml\
+  $(TEMPLDIR)/countries.wml\
   $(TEMPLDIR)/language_names.wml\
   $(ENGLISHDIR)/international/l10n/dtc.def \
   $(ENGLISHDIR)/international/l10n/data/unstable
@@ -51,7 +51,7 @@ team-po.$(LANGUAGE).html:\
   $(ENGLISHDIR)/international/l10n/scripts/team-po.pl\
   $(ENGLISHDIR)/international/l10n/scripts/l10nheader.wml\
   $(ENGLISHDIR)/international/l10n/team-po.wml\
-  $(TEMPLDIR)/countries_perl.wml\
+  $(TEMPLDIR)/countries.wml\
   $(TEMPLDIR)/language_names.wml\
   $(ENGLISHDIR)/international/l10n/dtc.def \
   $(ENGLISHDIR)/international/l10n/data/unstable

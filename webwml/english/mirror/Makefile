@@ -10,7 +10,7 @@ include $(WMLBASE)/Make.lang
 
 
 submit.$(LANGUAGE).html: submit.wml $(ENGLISHDIR)/mirror/countries.data \
-  $(TEMPLDIR)/countries_perl.wml
+  $(TEMPLDIR)/countries.wml
 webmirror.$(LANGUAGE).html: webmirror.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHSRCDIR)/mirror/webmirrors.data
 
