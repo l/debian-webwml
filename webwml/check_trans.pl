@@ -417,26 +417,27 @@ sub check_file {
 	print $str unless $opt_Q;
 	$oldname = $name;
 	$oldname =~ s/^$to/$from/;
+
+	my @logrev = split(/\./, $oldr);
+	$logrev[$#logrev] ++;
+	my $logoldr = join('.', @logrev);
+
 	if ($opt_m) {
 	    $translator = "list" if ($translator eq "");
 	    add_part($translator,"summary",$str);
 	    add_sub_part($translator,"diff",$name,
 			 "cvs -z3 diff -u -r'$oldr' -r '$revision' '$oldname'");
 	    add_sub_part($translator,"logs",$name,
-			 "cvs -z3 log -r'$oldr:$revision' '$oldname'");
+			 "cvs -z3 log -r'$logoldr:$revision' '$oldname'");
 	    add_sub_part($translator,"file",$name,
 			 "cat $name");
 	}
 	    
 	if ($opt_d) {
 		STDOUT->flush;
-		system("cvs -z3 log -r'$oldr:$revision' '$oldname'") if $showlog;
+		system("cvs -z3 log -r'$logoldr:$revision' '$oldname'") if $showlog;
 		STDOUT->flush if $showlog;
 		system("cvs -z3 diff -u -r '$oldr' -r '$revision' '$oldname'");
 		STDOUT->flush;
 	} 
 }
-
-
-
-
