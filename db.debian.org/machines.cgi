@@ -87,16 +87,17 @@ foreach $dn (sort {$entries->{$a}->{host}->[0] <=> $entries->{$b}->{host}->[0]} 
     $output{'sponsor-admin'} = sprintf("<a href=\"mailto:%s\">%s</a>", $output{'sponsor-admin'}, $output{'sponsor-admin'});
     
     # URL
-    my $sponsor;
+    my ($sponsor, $url) = undef;
     $output{sponsor} = undef;
     foreach $sponsor (@{$data->{sponsor}}) {
-      print "<!-- $sponsor -->\n";
-      $sponsor =~ /(.*)\s*(http.*)?/i;
+      $sponsor =~ m#((http|ftp)://\S+)#i;
+      $url = $1;
+      $sponsor =~ s/$url//;
       $output{sponsor} .= "<br>" if ($output{sponsor});
-      if ($2) {
-        $output{sponsor} .= sprintf("<a href=\"%s\">%s</a>", $1, $2);
+      if ($url) {
+        $output{sponsor} .= sprintf("<a href=\"%s\">%s</a>", $url, $sponsor);
       } else {
-        $output{sponsor} .= $1;
+        $output{sponsor} .= $sponsor;
       }
     }
     
