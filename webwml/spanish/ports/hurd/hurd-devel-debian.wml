@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian GNU/Hurd --- Desarrollo" NOHEADER="yes"
-#use wml::debian::translation-check translation="1.21" 
+#use wml::debian::translation-check translation="1.24"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
 
 <h1>
@@ -65,7 +65,7 @@ Paquetes que No Van a Ser Adaptados
 <p>
 Algunos de estos paquetes, o partes de ellos, podrían ser adaptables
 más adelante, pero, al menos actualmente, se consideran inadaptables.</p>
-<p>
+
 <ul>
 <li>
 <code>base/update</code>, porque el Hurd no necesita un demonio
@@ -104,6 +104,8 @@ probablemente muy específico para Linux).</li>
 <code>base/setserial</code>, porque es específico para el núcleo de Linux.
 Sin embargo, con la adaptación de los gestores de dispositivos de 
 caracteres al Mach de GNU, quizá podamos utilizarlo.</li>
+</ul>
+
 <h3>
  Generalidades de la Adaptación
 </h3>
@@ -164,7 +166,7 @@ mejor.</p></li>
 Si un programa sólo tiene soporte para <code>sys_errlist[]</code> tendrá
 que hacer algún trabajo para hacerlo compatible en el Hurd, que ha
 dejado de dar soporte para esto y sólo proporciona <code>strerror()</code>. 
-Steinar Hamre escribió lo siguiente acerca de <code>strerror():</p></li>
+Steinar Hamre escribió lo siguiente acerca de <code>strerror():</code></p>
 <blockquote>
 <p>
 Se debería usar<code>strerror()</code> porque :
@@ -175,7 +177,7 @@ Es la forma moderna y POSIX.</li>
 Está localizada.</li>
 <li>
 Gestiona señales/número no válidos fuera de rango. (mejor gestión de
-error y no un candidato a desbordamiento de buffer/riesgo de seguridad)</li></ul></p>
+error y no un candidato a desbordamiento de buffer/riesgo de seguridad)</li></ul>
 <p>
 Si está disponible, se debería usar siempre <code>strerror()</code>.
 Desafortunadamente, todavía hay algunos <em>viejos</em> sistemas
@@ -196,7 +198,7 @@ Para <code>config.h.in</code>, necesitará añadir:</p>
 <p>
 Luego, algo como:
 <pre>
-        #ifndef HAVE_STRERROR
+        \#ifndef HAVE_STRERROR
         static char *
         private_strerror (errnum)
              int errnum;
@@ -204,12 +206,12 @@ Luego, algo como:
           extern char *sys_errlist[];
           extern int sys_nerr;
 
-          if (errnum &gt; 0 && errnum &lt;= sys_nerr)
+          if (errnum &gt; 0 &amp;&amp; errnum &lt;= sys_nerr)
             return sys_errlist[errnum];
           return "Unknown system error";
         }
-        #define strerror private_strerror
-        #endif /* HAVE_STRERROR */
+        \#define strerror private_strerror
+        \#endif /* HAVE_STRERROR */
 </pre>
 <p>
 Por ejemplo, puede mirar en el último fileutils (lo anterior es una
