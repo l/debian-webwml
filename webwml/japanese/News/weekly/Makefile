@@ -8,7 +8,7 @@ YEAR=$(shell date +%Y)
 WMLBASE=../..
 CUR_DIR=News/weekly
 WMLSUB=wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG)
-WMLJABASE=$(subst News/weekly,,$(PWD))
+#WMLJABASE=$(subst News/weekly,,$(PWD))
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
@@ -26,11 +26,29 @@ all:: index.$(LANGUAGE).html $(HTMLFILES)
 
 # When building the html files we have to change into the right directory
 # so wml gets all the relative links right.
+./index.ja.html : ./index.wml $(TEMPLDIR)/weeklynews/footer.wml \
+	                   $(TEMPLDIR)/weeklynews/header.wml
+	cd $(@D) && $(WMLSUB) $(notdir $(<)) \
+		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh \
+		--epilog="../../convert $(@F)"
+
+oldurl.ja.html : oldurl.wml $(TEMPLDIR)/weeklynews/footer.wml \
+	                   $(TEMPLDIR)/weeklynews/header.wml
+	cd $(@D) && $(WMLSUB) $(notdir $(<)) \
+		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh \
+		--epilog="../../convert $(@F)"
+
+./*/index.ja.html : ./*/index.wml $(TEMPLDIR)/weeklynews/footer.wml \
+	                   $(TEMPLDIR)/weeklynews/header.wml
+	cd $(@D) && $(WMLSUB) $(notdir $(<)) \
+		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh \
+		--epilog="../../../convert $(@F)"
+
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml
 	cd $(@D) && $(WMLSUB) $(notdir $(<)) \
 		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh \
-		--epilog="$(WMLJABASE)convert $(@F)"
+		--epilog="../../../../convert $(@F)"
 
 install:: $(HTMLDESTFILES)
 	@# Set up current issue symlink. In case you're wondering, the only
@@ -71,4 +89,4 @@ index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
 mail:	
 	@cat mail-header
 	@lynx -dump http://www.debian.org/News/weekly/current/issue/ | \
-       		perl -pe 's/^\s\s?\s?//'
+		perl -pe 's/^\s\s?\s?//'
