@@ -44,7 +44,9 @@ foreach $l (<ADV>) {
     push @dbids, $3;
   }
   if ($l =~ /^Bugtraq Id\s*: (.+)/i) {
-    push @dbids, "BID".$1;
+      for $id (split (/ /, $1)) {
+	  push @dbids, "BID".$id;
+      }
   }
   $mi = 0 if ($l =~ /^(wget url|Obtaining updates)/);
   $moreinfo .= "<p>" if ($mi && $nl);
@@ -115,6 +117,7 @@ print WML "<define-tag description>$desc</define-tag>\n";
 print WML "<define-tag moreinfo>$moreinfo</p>\n</define-tag>\n";
 print WML "\n# do not modify the following line\n";
 print WML "#include \"\$(ENGLISHDIR)/security/$curyear/$data\"\n";
+printf WML "# %sId: \$\n", "\$";
 close WML;
 
 print "Now edit $data and remove any English-specific stuff from it.\n";
