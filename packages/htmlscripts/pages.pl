@@ -640,7 +640,7 @@ sub src_package_pages_walker {
 	}
     }
     if (@bin_list) {
-	$package_page .= gettext( "The following binary packages are build from this source package:" );
+	$package_page .= gettext( "The following binary packages are built from this source package:" );
 	$package_page .= "<table cellspacing=\"0\" cellpadding=\"2\">";
 	$package_page .= join "\n", @bin_list;
 	$package_page .= "</table>";
