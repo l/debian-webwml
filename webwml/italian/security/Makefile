@@ -14,7 +14,7 @@ include $(WMLBASE)/Make.common
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
 
-index.html.$(LANGUAGE): index.wml $(wildcard 1999/1999*.wml) \
+index.$(LANGUAGE).html: index.wml $(wildcard 1999/1999*.wml) \
      $(wildcard $(ENGLISHSRCDIR)/security/1999/1999*.wml) \
           $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml 
 
