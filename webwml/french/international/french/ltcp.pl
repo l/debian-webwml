@@ -18,6 +18,10 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+require 'translator.db.pl';
+
+$translators = init_translators();
+
 # $t : current document record
 # $k : current document key
 # $f : current document field
@@ -35,9 +39,9 @@ my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "$CVSWEB/webwml/$from/$k.wml?c
                 'translation_name'      => sub {
 my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "$k.$to_abr.html" },
                 'translation_url'       => sub {
-my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "http://www.debian.org/$k.$to_abr.html" },
+my($t, $k, $f) = @_; return $t->{$f} if $t->{$f}; return $t->{'status'} <= 1 ? undef : "http://www.debian.org/$k.$to_abr.html" },
                 'translation_cvs_url'   => sub {
-my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "$CVSWEB/webwml/$to/$k.wml?cvsroot=webwml" },
+my($t, $k, $f) = @_; return $t->{$f} if $t->{$f}; return $t->{'status'} <= 1 ? undef : "$CVSWEB/webwml/$to/$k.wml?cvsroot=webwml" },
                 'translation_source_url'=> sub {
 my($t, $k, $f) = @_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} : "$CVSWEB/webwml/$to/$k.wml?cvsroot=webwml&amp;rev=$t->{'translation_revision'}" },
                 'translation_source_name'=> sub {
@@ -113,8 +117,6 @@ sub dump_html {
 
                 $t->{'translation_name'} = $t->{'name'} . ' (original)'
                         if (!$t->{'translation_name'});
-                $t->{'translation_url'} = $t->{'url'}
-                        if (!$t->{'translation_url'});
 
                 print "<A HREF=\"$t->{'translation_url'}\">" if $t->{'translation_url'};
                 print "<B><I>$t->{'translation_name'}</I> $t->{'translation_sub_name'}</B>";
@@ -132,10 +134,11 @@ sub dump_html {
                         my $line = '';
                         my $translator;
                         foreach $translator (@{$t->{'translation_maintainer'}}) {
-                                $translator =~ /([^\<]+)\s\<(.*)\>/;
-                                $line .= " <A HREF=\"mailto:$2\"><I>$1</I></A> et";
+                                $translator =~ s/\s*(<.*)?$//;
+                                $line .= (defined $translators->{$translator} ?
+                                        " <A HREF=\"mailto:$translators->{$translator}->{email}\"><I>$translator</I></A> " :
+                                        " <I>$translator</I> ");
                         }
-                        $line =~ s/et$//;
                         print $line;
                 }
 
