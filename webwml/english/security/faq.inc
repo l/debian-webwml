@@ -8,7 +8,7 @@
 	[EO:Q:]
 	[ES:P:]
 	[FI:K:]
-	[FR:Q.&nbsp:]
+	[FR:Q.&nbsp;:]
 	[HR:Q:]
  	[HU:Q:]
 	[ID:Q:]
