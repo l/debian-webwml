@@ -20,6 +20,7 @@ index.$(LANGUAGE).html: index.wml $(wildcard 1997*.wml) \
 
 ifeq ($(LANGUAGE),en)
 $(HTMLDIR)/common_library $(HTMLDIR)/linux_press_book.txt: $(HTMLDIR)/%: %
+	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
 	install -m 664 -p $< $(HTMLDIR)
 
 install:: $(HTMLDIR)/common_library $(HTMLDIR)/linux_press_book.txt
