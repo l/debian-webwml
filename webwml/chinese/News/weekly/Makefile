@@ -48,6 +48,7 @@ endif
 	cd $(@D) && $(WML) $(notdir $(<))
 
 # Special case for Chinese
+%.zh-cn.html %.zh-tw.html : FIX_BIG5 := $(shell pwd)/$(FIX_BIG5)
 %.zh-cn.html %.zh-tw.html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml \
 			   $(TOCN) $(TOTW)
@@ -65,13 +66,13 @@ endif
 	    done; \
 	done
 
-	@echo "Converting $*.zh-cn.html.tmp to $*.zh-cn.html (zh_CN.GB2312)..."
+	@echo -n " * Converting: [zh_CN.GB2312], "
 	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
-	rm -f $*.zh-cn.html.tmp
+	@rm -f $*.zh-cn.html.tmp
 	@$(TOCN) $*.zh-cn.html
 
-	@echo "Converting $*.zh-tw.html.tmp to $*.zh-tw.html (zh_TW.Big5)..."
-	mv -f $*.zh-tw.html.tmp $*.zh-tw.html
+	@echo "[zh_TW.Big5]."
+	@mv -f $*.zh-tw.html.tmp $*.zh-tw.html
 	@$(TOTW) $*.zh-tw.html
 
 install:: $(HTMLDESTFILES)
