@@ -1,55 +1,117 @@
-#use wml::debian::template title="데비안 버그 추적 시스템" NOHEADER=yes WEBMASTER=bugs
-#use wml::debian::translation-check translation="1.1"
+#use wml::debian::template title="Debian BTS - reporting bugs" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.25"
 
-<h1>Debian의 버그를 보고하는 법</h1>
+<h1>데비안에 버그를 보고하는 법</h1>
 
-아래의 설명대로 <A
-href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></A>에
-메일을 보내십시오.
+<h2>보내기 <strong>전</strong>에 알아야 할 중요한 것들</h2>
 
 <p>
-
 관계없는 여러 개의 버그를 - 특히 여러 패키지들의 버그를 - 한 메세지에
-한꺼번에 보내지 마십시오. 또, 버그 보고를 <code>submit@bugs</code> 이외에
-다른 메일링 리스트나 수신자로 보내지 마십시오 (이렇게 하고 싶을 때, 제대로
-보내는 방법은 <A href="#xcc">아래를</A> 보십시오).
-<p>
+한꺼번에 보내지 마십시오. 
 
-현재의 미해결 버그 리스트는 <A href="./">웹에</A> 있으며
+<p>버그 보고를 제출하기 전에 그 버그를 다른 사람이 이미 올렸는지
+확인해야 합니다. 현재의 미해결 버그 리스트는 <A href="./">웹</A>에 있으며
 <A href="Access">그 외의 곳</A>에도 있습니다 - 자세한 점은 다른 문서에
-쓰여 있습니다.
-<p>
+쓰여 있습니다. <var>&lt;number&gt;</var>@bugs.debian.org</p>로 전자우편을
+보내 이미 있는 버그 보고 #<var>&lt;number&gt;</var>에 자신의 의견을
+제출할 수 있습니다.</p>
 
-메세지 본문의 시작 부분에 <code>Package:</code>와 <code>Version:</code>
-으로 시작하는 두 줄을 `가짜 헤드'로서 넣어주어야 합니다. 각각은 해당
-버그가 있는 패키지의 이름과 버전입니다. (이 `가짜헤더' 필드는 메세지의
-앞 부분에 써야 하며, 현재 이 버그 시스템은 MIME이나 PGP에 파뭍인 필드를
-알아 보지 못합니다.).
-<code>dpkg --search</code> and <code>dpkg --list</code>를 이용하여
-패키지 이름과 버전을 알아 낼 수 있습니다. dpkg의 사용법은
-<code>dpkg --help</code>를 참고 하십시오.
+<p>어느 패키지에 문제가 있는지 확실하지 않다면 <a
+href="mailto:debian-user@lists.debian.org">데비안 사용자 메일링
+리스트</a>로 전자우편을 보내 조언을 요청하기 바랍니다. 문제가 한
+패키지가 아니라 일반적인 데비안 서비스와 관련되어 있다면 여러 개의 <a
+href="pseudo-packages">pseudo-packages</a>나 메시지를 대신 전달해줄 <a
+href="../MailingLists/subscribe">메일링 리스트</a>가 있습니다.
 
-<em><A href="#details">그 외에 필요한 점</A>에 대해서는 아래를 보세요</em>.
-<p>
+<p>버그 보고를 다른 곳(예:메일링 리스트)에도 보내려면 일반적인
+전자우편 머리말(header)이 아닌 <a href="#xcc">다른 방법</a>을 사용하기 바랍니다.
 
+<h2>자동 버그 보고 도구를 사용해 버그 보고 보내기</h2>
 
-보고 하려는 버그가 실제로 있는 소프트웨어 패키지에 대한 것이 아니라
-다른 종류의 것이라면 버그 보고의 <code>Package</code> 항목에 무엇을
-써 넣을 것인가? 그런 경우를 대비해서 가짜 패키지를 준비해 놓고 있다.
-bugs WWW 페이지에서 <A HREF="pseudo-packages">가짜 패키지
-목록</A>을 확인하기 바란다.
+<p>버그 보고를 위해 <code><a
+href="http://packages.debian.org/stable/utils/bug.html">bug</a></code>와
+<code><a
+href="http://packages.debian.org/stable/utils/reportbug.html">reportbug</a></code>라는
+프로그램을 개발했습니다. 두 프로그램은 버그 보고 과정을 단계별로
+따라할 수 있게 안내해줄 것입니다. 프로그램의 안내를 따라하다 보면 쉽게
+버그를 보고할 수 있을 것입니다. 
 
+<h2>전자우편으로 버그 보고 보내기</h2>
+
+<P><A
+href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></A>로
+전자우편을 보냅니다.
+</P>
+
+<P>물론, 보통 메일과 마찬가지로 원 메일 머리말에 있는 <code>Subject</code>에는
+간략하게 문제점을 설명하는 문장을 쓸 수 있습니다. 이 메일 제목은 이 버그
+추적 시스템에서 처음 버그 제목으로 사용될 것이므로, 버그 내용을 알기 쉽도록
+제목을 써 주세요! </P>
+
+<P>메시지 본문의 시작 부분에 pseudo-header를 반드시 넣어야
+합니다. 즉, 메시지 본문의 첫 번째 줄은 다음과 같아야 합니다.
+
+<pre>
+Package: &lt;something&gt;
+</pre>
+
+<p><code>&lt;something&gt;</code> 부분을 버그가 있는 패키지 이름으로
+바꿉니다. 
+
+<p>본문의 두 번째 줄은 다음과 같아야 합니다.
+
+<pre>
+Version: &lt;something&gt;
+</pre>
+
+<p><code>&lt;something&gt;</code> 부분을 패키지 버전으로 바꿉니다.
+
+<p>pseudo-header에 정확한 <code>Package</code>를 입력해야 버그 추적
+시스템이 메시지를 패키지 관리자에게 전달합니다. 이 정보를 찾는 방법에
+대한 자세한 내용은 <a href="#findpkgver">이 예제</a>를 참고하세요.
+
+<p>pseudo-header 항목(field)은 메시지가 시작하는 부분에 써야
+합니다. 버그 추적 시스템은 MIME이나 PGP 메일을 제대로 이해하지
+못합니다. 그런 메일에서는 pseudo-header를 인식하지 못할 수 있습니다. 
+
+<p>버그 보고는 다음 사항을 포함해야 합니다.
+
+<ul>
+<li>출력되거나 기록되어 있는 <em>정확</em>하고 <em>완전한</em> 에러 메세지.
+매우 중요합니다!
+<li>이 문제가 발생했을 때 정확히 어떻게 타이프, 혹은 무슨 일을 했는지.
+<li>무엇이 잘못된 동작인가에 대한 설명: 여러분이 예상했던 동작과, 실제
+나타난 현상. 여기에 대해 설명하는 좋은 방법은, 예를 드는 프로그램
+실행을 기록해서 보내는 것입니다.
+<li>(알고 있다면) 어떻게 고쳐야 하는지, 혹은 패치까지도.
+<li>이 문제가 발생하는 프로그램의 설정 상태. 설정 파일을 완전히 포함해 주세요.
+<li>버그가 있는 패키지가 의존하는 패키지의 버전.
+<li>사용하는 커널 버전(<code>uname -a</code>)과 사용하는 공유 C
+라이브러리 버전(<code>ls -l /lib/libc.so.6</code> 또는 <code>dpkg -s
+libc6 | grep ^Version</code>), 자신의 데비안 시스템에서 특별하다고
+생각되는 것. 예를 들어, 펄 스크립트와 문제를 일으킨다면, `perl'
+바이너리의 버전(<code>perl -v</code> 혹은 <code>dpkg -s perl-5.005 | grep
+^Version:</code>)을 포함시키는 것이 좋습니다.
+<li>여러분의 리눅스 시스템에 사용하는 특별한 하드웨어. 장치 드라이버에
+문제가 있다면, 여러분의 시스템에 있는 <em>모든</em> 하드웨어 목록을
+포함시켜야 합니다. 그런 문제들은 IRQ와 I/O 주소 충돌에 의해 발생하기 때문입니다.
+</ul>
+
+<P>관계가 있는 듯한 사항들을 뭐든지 포함해 주세요 - 너무 많은 정보를 포함해서
+보고가 너무 길어진다는 걱정은 할 필요 없습니다. 문제점을 재현할 때 필요한
+어떤 파일이라도 보고에 포함해 주세요(특수 문자가 들어 있다면 uuencode하세요). </P>
 
 <h2><A name="example">버그 보고의 예</A></h2>
 
-메일헤더까지 포함한 어떤 버그 레포트는 다음과 같은 모양입니다:
-<pre>
+<p>메일 머리말까지 포함한 어떤 버그 레포트는 다음과 같은 모양입니다.
+
+<PRE>
   To: submit@bugs.debian.org
   From: diligent@testing.linux.org
   Subject: Hello says `goodbye'
 
   <A name="pseudoheader">Package: hello</A>
-  Version: 1.3-2
+  Version: 1.3-16
 
   When I invoke `hello' without arguments from an ordinary shell
   prompt it prints `goodbye', rather than the expected `hello, world'.
@@ -63,168 +125,139 @@ bugs WWW 페이지에서 <A HREF="pseudo-packages">가짜 패키지
 
   I suggest that the output string, in hello.c, be corrected.
 
-  I am using Debian 1.1, kernel version 1.3.99.15z
-  and libc 5.2.18.3.2.1.3-beta.
-</pre>
+  I am using Debian GNU/Linux 2.2, kernel 2.2.17-pre-patch-13
+  and libc6 2.1.3-10.
+</PRE>
 
-<h2><A name="details">보고에 다음을 포함해 주십시오:</A></h2>
+<h2><A name="xcc">버그 보고의 복사본을 다른 주소로 보내기</A></h2>
 
-<ul>
-<li>출력되거나 기록되어 있는 <em>정확하고 완전한</em> 에러 메세지.
-매우 중요합니다!
-<li>이 문제가 발생했을 때 정확히 어떻게 타이프, 혹은 무슨 일을 했는지.
-<li>무엇이 잘못된 동작인가에 대한 설명: 여러분이 예상했던 동작과, 실제
-나타난 현상. 여기에 대해 설명하는 좋은 방법은, 예를 드는 프로그램
-실행을 기록해서 보내는 것입니다.
-<li>(알고 있다면) 어떻게 고쳐야 하는지, 혹은 패치까지도.
-<li>이 문제가 발생하는 프로그램의 설정 상태. 설정 파일을 완전히 포함해 주세요.
-<li>버그가 있는 패키지가 의존하는 패키지의 버전.
-<li>사용하는 커널 버전 (<code>uname -a</code>).
-<li>사용하는 공유 C 라이브러리 버전 (<code>ls -l /lib/libc.so.6</code>).
-<li>여러분의 리눅스 시스템에서 특별하다고 생각되는 것. 예를 들어, 데비안
-펄 스크립트와 문제를 일으킨다면, `perl' 바이너리의 버전을
-(<code>perl -v</code>) 포함시는 것이 좋다.
-<li>여러분의 리눅스 시스템에 사용하는 특별한 하드웨어. 장치 드라이버에
-문제가 있다면, 여러분의 시스템에 있는 <em>모든</em> 하드웨어 목록을
-포함시켜야 한다. 그런 문제들은 IRQ와 I/O 주소 충돌에 의해 발생하기 때문이다.
+<P>가끔씩 버그 보고의 복사본을 일반적으로 보내는
+<code>debian-bugs-dist</code>와 패키지 관리자 외에 다른 곳으로 보내야
+할 때가 있습니다.</P>
 
-</ul>
-
-관계가 있는 듯한 사항들을 뭐든지 포함해 주세요 - 너무 많은 정보를 포함해서
-보고가 너무 길어진다는 걱정은 할 필요 없습니다. 문제점을 재현할 때 필요한
-어떤 파일이라도 보고에 포함해 주세요 (특수 문자가 들어 있다면 uuencode하세요). 
-
-<p>
-
-물론, 보통 메일과 마찬가지로 원 메일 헤더에 있는 <code>Subject</code>에는
-간략하게 문제점을 설명하는 문장을 쓸 수 있습니다. 이 메일 제목은 이 버그
-추적 시스템의 처음 버그 제목으로 사용될 것이므로, 버그 내용을 알기 쉽도록
-제목을 써 주세요 ! 
-
-<h2><A name="xcc">버그 보고를 다른 주소로도 보내기</A></h2>
-
-어떤 경우에는 (보통 버그 보고가 포워드되는) 메일링 리스트와 패키지 관리자
-이외에 다른 어딘가의 주소로 버그 보고를 보내야 할 일이 생깁니다.
-<p>
-
-간단히 다른 주소로 버그 보고를 보낼 때 CC:에 추가하면 됩니다. 하지만,
+<p>간단히 다른 주소로 버그 보고를 보낼 때 CC:에 추가하면 됩니다. 하지만,
 그 다른 주소로 가는 메일들은 <code>Reply-To</code> 필드와
-<code>Subject</code> 필드에 버그 보고 번호가 없게 됩니다. 버그 메일을
-받는 사람은 헤더에 submit를 사용할 것이고 여기에 답장을 보내면 새로운
-버그 보고가 될 겁니다. 즉, 같은 버그 보고가 여러 개 쌓이게 됩니다.
-<p>
+<code>Subject</code> 필드에 버그 보고 번호가 없게 됩니다. 수신자는
+답장을 보내면서 아마도 머리말의 <code>submit@bugs.debian.org</code>
+엔트리를 그대로 둘 것이고 그 메시지는 새로운 버그 보고로 기록될
+것입니다. 이렇게 되면 많은 중복된 버그 보고가 생깁니다.</P>
 
-<em>제대로</em> 하는 방법은 <code>X-Debbugs-CC</code> 헤더를 쓰는
-것입니다. 다음과 같은 줄을 메일의 헤더에 (<code>Package</code> 필드와
-같은 가짜헤더가 아닙니다) 추가합니다:
+<p><em>제대로</em> 하는 방법은 <code>X-Debbugs-CC</code> 머리말을 쓰는
+것입니다. 다음과 같은 줄을 메일의 머리말에(<code>Package</code> 필드와
+같은 가짜 머리말이 아닙니다) 추가합니다.</p>
+
 <pre>
  X-Debbugs-CC: other-list@cosmic.edu
 </pre>
-이렇게 하면 버그 추적 시스템이 <code>X-Debbugs-CC</code> 줄에 있는 주소
-및 메일링 리스트로 버그 보고의 복사본을 직접 보내게 됩니다. 
-<p>
 
-이 기능은 <code>quiet</code>에 메일을 보낼 때 유용하게 쓰일 수
-있습니다 - 아래를 보세요.
+<P>이렇게 하면 버그 추적 시스템이 <code>debian-bugs-dist</code>와
+<code>X-Debbugs-CC</code>의 주소로 버그 보고의 복사본을 보낼 것입니다.</P>
 
+<p>이 기능은 <code>quiet</code>에 메일을 보낼 때 유용하게 쓰일 수
+있습니다 - 아래를 보세요.</p>
 
 <h2><A name="severities">심각도(severity) 단계</A></h2>
 
-만약 어떤 보고가 특히 심각한 버그라면, 혹은 단순히 어떤 기능을
-요구하는 경우라면, 버그 보고시에 그 버그의 심각도 단계 (severity
-level)을 지정할 수 있습니다. 심각도는 꼭 필요한 건 아니지만, 심각도를
+<p>만약 어떤 보고가 특히 심각한 버그이거나 단순히 어떤 기능을
+요구하는 경우라면, 버그 보고시에 그 버그의 심각도 단계(severity
+level)를 지정할 수 있습니다. 심각도는 꼭 필요한 건 아니지만, 심각도를
 부여하지 않고 보고할 경우 개발자가 직접 적합한 심각도를 부여할 수
 있습니다.
-<p>
+</p>
 
-심각도를 부여하려면, `가상의 헤더'에 <var>Severity</code> 라는 줄을
-<code>Package</code>와 <code>Version</code>과 같이 씁니다. 사용할 수
-있는 심각도 단계는 <A href="Developer#severities">개발자 문서</A>에
-설명되어 있습니다.
+<p>심각도 단계를 지정하려면 pseudo-header에 다음 줄을 추가합니다.
 
-
-<h2>메일링 리스트에 포워드하지 않는 경우 - 마이너 버그 레포트</h2>
-
-어떤 버그 보고가 마이너일 경우 (예를 들어, 문서의 타이핑 실수라든지
-간단한 빌드 문제일 경우), 혹은 여러 개의 보고를 한 번에 보낼 경우,
-<code>maintonly@bugs</code>나 <code>quiet@bugs</code>로 메일을
-보냅니다. <code>maintonly</code>는 패키지 관리자에게 (가상의 헤더에
-<code>Package</code> 줄을 제대로 쓰고, 관리자를 알 수 있는 경우에 한해)
-보고 메세지를 보낼 것입니다. 그리고 <code>quiet</code>는 어디에도
-보고 메세지를 보내지 않고 버그로 보고나하기만 합니다. (<code>quiet</code>
-기능은 예를 들어, 비슷한 여러 개의 버그를 보고하거나 버그의 요약을 올리고
-싶을 때 유용하게 쓰입니다.) 
-<p>
-
-이 기능을 사용한다면, 버그 시스템은 포워드되는 메세지의
-<code>Reply-To</code>를 맞춰 놓아서, 이 보고에 관계된 답장 역시 원래
-보고 메세지와 같은 방법으로 처리될 것입니다.
-
-<h3>알 수 없는 패키지, 혹은 <code>Package</code>가 없는 버그</h3>
-
-버그 추적 시스템이 해당 패키지의 메인테이너가 누군지 모른다면, 그
-메세지는 <code>maintonly</code>를 사용한 경우에도 메일링 리스트로
-보내질 것입니다.
-<p>
-
-<code>maintonly@bugs</code> 또는 <var>nnn</var><code>-maintonly@bugs</code>로
-메일을 보낼 때, 버그 보고가 원래 보고를 제출 할 때 <code>Package</code>에
-쓰여 있는 대로 올바른 패키지에 지정되도록 해야 합니다. 혹은
-<A href="server-control"><code>control@bugs</code> 서비스</A>를 이용해 처음에
-패키지가 제대로 지정되지 않았을 경우 패키지를 (재)지정할 수 있습니다.
-
-<h2><code>dpkg</code>를 이용하여 버그 보고할 패키지와 버전 알아내기</h2>
-
-어떤 명령어에서 버그를 찾았다면, 그 명령어를 포함하고 있는 패키지는
-<code>dpkg --search</code> 명령으로 찾을 수 있다. 그리고 설치된 패키지의
-버전은 <code>dpkg --list</code> 또는 <code>dpkg --status</code> 명령으로
-알 수 있다.
-
-<p>
-
-예를 들어:
 <pre>
-$ which dpkg
-/usr/bin/dpkg
-$ type dpkg
-dpkg is hashed (/usr/bin/dpkg)
-$ dpkg --search /usr/bin/dpkg
-dpkg: /usr/bin/dpkg
-$ dpkg --search '*/dpkg'
-dpkg: /usr/doc/copyright/dpkg
-dpkg: /var/lib/dpkg
-dpkg: /usr/bin/dpkg
-dpkg: /usr/lib/dpkg
-dpkg: /usr/doc/dpkg
-$ dpkg --list dpkg
-Desired=Unknown/Install/Remove/Purge
-| Status=Not/Installed/Config-files/Unpacked/Failed-config/Half-installed
-|/ Err?=(none)/Hold/Reinst-required/X=both-problems (Status,Err: uppercase=bad)
-||/ Name            Version        Description
-+++-===============-==============-============================================
-ii  dpkg            1.2.9elf       Package maintenance system for Debian GNU/Linux
-$ dpkg --status dpkg
-Package: dpkg
-Essential: yes
-Status: install ok installed
-Priority: required
-Section: base
-Maintainer: Ian Jackson &lt;ian@chiark.chu.cam.ac.uk&gt;
-Version: 1.2.9elf
-Replaces: dpkgname
-Pre-Depends: libc5 (&gt;= 5.2.18-2), ncurses3.0
-Conflicts: dpkgname
-Description: Package maintenance system for Debian GNU/Linux
- This package contains the programs which handle the installation and
- removal of packages on your system.
- .
- The primary interface for the dpkg suite is the `dselect' program;
- a more low-level and less user-friendly interface is available in
- the form of the `dpkg' command.
-
-$
+Severity: &lt;<var>severity</var>&gt;
 </pre>
 
+<p>&lt;<var>severity</var>&gt;를 <A href="Developer#severities">개발자
+문서</A>에서 설명한 심각도 단계로 바꿉니다.</P>
+
+<h2>다른 제출 주소(중요하지 않거나 다량의 버그 보고)</h2>
+<p>버그 보고가 사소한(minor) 것이면(예: 문서의 오자나 대수롭지 않은
+빌드 문제) 심각도를 적절하게 고쳐서 <code>maintonly@bugs</code>로
+메일을 보냅니다(<code>submit@bugs</code>가 아닙니다). 
+<code>maintonly</code>는 패키지 관리자에게 버그 보고를 전달하고 BTS
+메일링 리스트로는 전달하지 않을 것입니다.
+
+<p>많은 버그 보고를 한꺼번에 제출하려면 <code>maintonly@bugs</code>를
+사용해야 합니다. 그렇지 않으면 BTS 메일링 리스트에 불필요한 트래픽이
+너무 많이 생길 것입니다. Before submitting many similar bugs you
+may also want to post a summary on <code>debian-bugs-dist</code>.
+
+<p>이미 패키지 관리자에게 전달된 버그를 버그 추적 시스템에 보고하려면
+<code>quiet@bugs</code>를 사용할 수
+있습니다. <code>quiet@bugs</code>에 보내진 버그는 다른 곳으로 전달되지
+않고 기록만 될 것입니다. 
+
+<p>서로 다른 제출 주소를 사용한다면 버그 추적 시스템은 전달된 메시지의
+<code>Reply-To</code>를 설정해서 회신이 기본적으로 원 보고와 같은
+방법으로 처리되게 할 것입니다. 다시 말하면 예를 들어
+<code>maintonly</code>에 대한 회신은 수동으로 덮어쓰지 않는 한
+<var>nnn</var><code>@bugs</code>가 아니라
+<var>nnn</var><code>-maintonly@bugs</code>로 갈 것입니다.
+
+<h2>알 수 없는 패키지에 대한 버그 보고</h2>
+
+<P>버그 추적 시스템이 관련된 패키지의 관리자가 누구인지 모른다면
+<code>maintonly</code>를 사용했다고 하더라도 버그 보고는
+<code>debian-bugs-dist</code>로 전달될 것이다. </P>
+
+<p><code>maintonly@bugs</code>나 <var>nnn</var><code>-maintonly@bugs</code>로
+메일을 보낼 때, 버그 보고가 원래 보고를 제출할 때 <code>Package</code>에
+쓰여 있는 대로 올바른 패키지에 지정되도록 해야 합니다. 혹은
+<A href="server-control"><code>control@bugs</code> 서비스</A>를 이용해 처음에
+패키지가 제대로 지정되지 않았을 경우 패키지를 (재)지정할 수
+있습니다.</p>
+
+<h2><a name="findpkgver"><code>dpkg</code>를 사용해 패키지와 버그 보고
+버전 찾기</a></h2>
+
+<P>명령으로 버그를 보고한다면 <code>dpkg --search</code>로 설치된
+패키지를 찾을 수 있습니다. <code>dpkg --list</code>나 <code>dpkg
+--status</code>로 설치한 패키지의 버전을 찾을 수도 있습니다.
+</P>
+
+<P>예를 들면 다음과 같습니다.
+
+<pre>
+$ which apt-get
+/usr/bin/apt-get
+$ type apt-get
+apt-get is /usr/bin/apt-get
+$ dpkg --search /usr/bin/apt-get
+apt: /usr/bin/apt-get
+$ dpkg --list apt
+Desired=Unknown/Install/Remove/Purge/Hold
+| Status=Not/Installed/Config-files/Unpacked/Failed-config/Half-installed
+|/ Err?=(none)/Hold/Reinst-required/X=both-problems (Status,Err: uppercase=bad)
+||/ Name           Version        Description
++++-==============-==============-============================================
+ii  apt            0.3.19         Advanced front-end for dpkg
+$ dpkg --status apt
+Package: apt
+Status: install ok installed
+Priority: standard
+Section: base
+Installed-Size: 1391
+Maintainer: APT Development Team &lt;deity@lists.debian.org&gt;
+Version: 0.3.19
+Replaces: deity, libapt-pkg-doc (&lt;&lt; 0.3.7), libapt-pkg-dev (&lt;&lt; 0.3.7)
+Provides: libapt-pkg2.7
+Depends: libapt-pkg2.7, libc6 (&gt;= 2.1.2), libstdc++2.10
+Suggests: dpkg-dev
+Conflicts: deity
+Description: Advanced front-end for dpkg
+ This is Debian's next generation front-end for the dpkg package manager.
+ It provides the apt-get utility and APT dselect method that provides a
+ simpler, safer way to install and upgrade packages.
+ .
+ APT features complete installation ordering, multiple source capability
+ and several other unique features, see the Users Guide in
+ /usr/doc/apt/guide.text.gz
+
+</pre>
 
 <hr>
 
