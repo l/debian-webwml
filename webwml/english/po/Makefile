@@ -131,6 +131,7 @@ init-po:
 
 update-po: $(POTFILES)
 	for d in $(DOMAINS); do \
+	  if [ ! -e $$d.$(LANGUAGE).po ]; then touch $$d.$(LANGUAGE).po; fi; \
 	  msgmerge -F -q $$d.$(LANGUAGE).po $(ENGLISHDIR)/po/$$d.pot -o $$d.$(LANGUAGE).po.new && mv $$d.$(LANGUAGE).po.new $$d.$(LANGUAGE).po; \
 	done
 
