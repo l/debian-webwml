@@ -338,6 +338,6 @@ my $delta_time = -M $0;
 my $mod_time = $^T - ($delta_time * 86400);
 my $time_str = gmtime($mod_time)." +0000";
 
-my $trailer = Packages::HTML::trailer( "../" );
+my $trailer = Packages::HTML::trailer( ".." );
 $trailer =~ s/LAST_MODIFIED_DATE/$time_str/;
 print $trailer;
