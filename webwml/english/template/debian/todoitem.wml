@@ -37,10 +37,19 @@
  <img src="$(PICS)/star-red.gif" alt="*"><img src="$(PICS)/star-red.gif" alt="*"><img src="$(PICS)/star-red.gif" alt="*">
 </define-tag>
 
+<set-var todoitem:count=0 />
+
 <define-tag item endtag=required>
-<preserve subject url urlname taken-by rating />
+<preserve id subject url urlname taken-by rating />
 <set-var %attributes />
 
+<when <not <get-var id />/>>
+  <set-var id=<get-var todoitem:count />/>
+  <increment todoitem:count />
+</when>
+<subst-in-var id ".*/([^/.]+).*" "\\1" />
+
+{#!TODO<get-var id />OUT#:
 <table width="100%" border="0" cellspacing="0" cellpadding="15">
 <tr><td>
   <minicard name=<get-var subject />>
@@ -61,6 +70,25 @@
   </minicard>
 </td></tr>
 </table>
+:#TODO<get-var id />OUT#}
+<when <not <get-var todoitem:<get-var id />/>/>>
+   #   Insert only once
+   {#TODO<get-var id />OUT#}
+   <set-var todoitem:<get-var id />=1 />
+</when>
 
-<restore subject url urlname taken-by rating />
+<restore id subject url urlname taken-by rating />
 </define-tag>
+
+<define-tag todo-list-items>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#BBDDFF"><tr>
+  <td width="3%"></td>
+  <td>
+#   English items
+#include '$(ENGLISHDIR)/devel/todo/items/[0-9][0-9]*.wml' IPP_SORT=name
+#   Overwrite localized items
+#include 'items/[0-9][0-9]*.wml' IPP_SORT=name
+  </td>
+</tr></table>
+</define-tag>
+
