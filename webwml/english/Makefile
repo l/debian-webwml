@@ -10,6 +10,8 @@ ports releases searchtmpl security users vote y2k
 
 all install:: install-locale
 
+clean:: clean-locale
+
 include $(WMLBASE)/Make.lang
 
 ifndef SUBLANG
@@ -71,3 +73,5 @@ endif
 install-locale:
 	$(MAKE) -C po install
 
+clean-locale:
+	$(MAKE) -C po clean
