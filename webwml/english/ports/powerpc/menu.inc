@@ -7,6 +7,7 @@
 <define-menu-item name="powerpc">
    [EN:Debian for PowerPC:]
    [AR:Debian for PowerPC:]
+   [CA:Debian per a PowerPC:]
    [DA:Debian til PowerPC:]
    [DE:Debian für PowerPC:]
    [EL:Debian for PowerPC:]
