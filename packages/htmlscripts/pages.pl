@@ -149,7 +149,7 @@ sub package_pages_walker {
 	my $long_desc = encode_entities( $env->{db}->get_long_desc( $d->{desc_md5},
 								    $lang ), "<>&\"" );
 	
-	$long_desc =~ s,((ftp|http|https)://[\S~-]+?/?)((\&gt\;)?[)]?[']?[.\,]?(\s|$)),<a href=\"$1\">$1</a>$3,go; # syntax highlighting -> '];
+	$long_desc =~ s,((ftp|http|https)://[\S~-]+?/?)((\&gt\;)?[)]?[']?[:.\,]?(\s|$)),<a href=\"$1\">$1</a>$3,go; # syntax highlighting -> '];
 	$long_desc =~ s/\A //o;
 	$long_desc =~ s/\n /\n/sgo;
 	$long_desc =~ s/\n.\n/\n<p>\n/go;
