@@ -280,13 +280,13 @@ END
                          Primary Debian Mirror Sites
                          ---------------------------
 
- Country	Site		   Debian archive	Debian non-US archive
- ----------------------------------------------------------------------------
+ Country        Site                Debian archive     Debian non-US archive
+ ---------------------------------------------------------------------------
 END
   }
   foreach $country (sort keys %countries) {
     foreach $site (sort @{ $countries{$country} }) {
-      if ($site =~ /ftp\...\.debian.org/) {
+      if ($site =~ /^ftp\d?\...\.debian.org$/ || $site =~ /^(ftp|http\.us)\.debian\.org$/) {
         ($countryplain = $country) =~ s/^.. //;
 	if ($html) {
 	  $countryplain =~ s/ /&nbsp;/;
@@ -314,7 +314,7 @@ END
           } else {
             $nonusftp = "Not mirrored."
           }
-          printf " %-13s  %-14s  %-18s	%s\n", $countryplain, $site, $mirror{$site}{method}{'archive-ftp'}, $nonusftp;
+          printf " %-13s  %-18s  %-17s  %s\n", $countryplain, $site, $mirror{$site}{method}{'archive-ftp'}, $nonusftp;
 #          print <<END;
 # $countryplain	-   $site		$mirror{$site}{method}{'archive-ftp'}	$mirror{$site}{method}{'nonus-ftp'}
 #END
@@ -323,60 +323,6 @@ END
     }
   }
   print "</table>\n" if $html;
-
-if (0) {
-	if ($html) {
-	  print <<END;
-<tr><td width="25%">Australia</td><td width="25%" align="center"><code><a href="ftp://ftp.au.debian.org/debian/">ftp.au.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.au.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Austria</td><td width="25%" align="center"><code><a href="ftp://ftp.at.debian.org/debian/">ftp.at.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.at.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Bulgaria</td><td width="25%" align="center"><code><a href="ftp://ftp.bg.debian.org/debian/">ftp.bg.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.bg.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Canada</td><td width="25%" align="center"><code><a href="ftp://ftp.ca.debian.org/debian/">ftp.ca.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.ca.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Germany</td><td width="25%" align="center"><code><a href="ftp://ftp.de.debian.org/debian/">ftp.de.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.de.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Finland</td><td width="25%" align="center"><code><a href="ftp://ftp.fi.debian.org/debian/">ftp.fi.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.fi.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">France</td><td width="25%" align="center"><code><a href="ftp://ftp.fr.debian.org/debian/">ftp.fr.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.fr.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Hungary</td><td width="25%" align="center"><code><a href="ftp://ftp.hu.debian.org/debian/">ftp.hu.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.hu.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Italy</td><td width="25%" align="center"><code><a href="ftp://ftp.it.debian.org/debian/">ftp.it.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.it.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Japan</td><td width="25%" align="center"><code><a href="ftp://ftp.jp.debian.org/debian/">ftp.jp.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.ja.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Korea</td><td width="25%" align="center"><code><a href="ftp://ftp.kr.debian.org/debian/">ftp.kr.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.kr.debian.org/pub/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Netherlands</td><td width="25%" align="center"><code><a href="ftp://ftp.nl.debian.org/pub/linux/debian/">ftp.nl.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.nl.debian.org/pub/linux/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">New Zealand</td><td width="25%" align="center"><code><a href="ftp://ftp.nz.debian.org/debian/">ftp.nz.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.nz.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Norway</td><td width="25%" align="center"><code><a href="ftp://ftp.no.debian.org/debian/">ftp.no.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.no.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Poland</td><td width="25%" align="center"><code><a href="ftp://ftp.pl.debian.org/pub/debian/">ftp.pl.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.pl.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Slovenia</td><td width="25%" align="center"><code><a href="ftp://ftp.si.debian.org/debian/">ftp.si.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.si.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Spain</td><td width="25%" align="center"><code><a href="ftp://ftp.es.debian.org/debian/">ftp.es.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.es.debian.org/mirrors/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Sweden</td><td width="25%" align="center"><code><a href="ftp://ftp.se.debian.org/debian/">ftp.se.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.se.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">Turkey</td><td width="25%" align="center"><code><a href="ftp://ftp.tr.debian.org/debian/">ftp.tr.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center">No</td></tr>
-<tr><td width="25%">United Kingdom</td><td width="25%" align="center"><code><a href="ftp://ftp.uk.debian.org/debian/">ftp.uk.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center"><a href="ftp://ftp.uk.debian.org/debian-non-US/">Yes</a></td></tr>
-<tr><td width="25%">United States</td><td width="25%" align="center"><code><a href="ftp://ftp.debian.org/debian/">ftp.debian.org</a></code></td>	<td width="25%" align="center">Yes</td>	<td width="25%" align="center">No</td></tr>
-</table>
-END
-	} else {
-	  print <<END;
- Australia	-   ftp.au.debian.org	/pub/debian	/pub/linux/debian-non-US
- Austria	-   ftp.at.debian.org	/debian		/debian-non-US
- Bulgaria	-   ftp.bg.debian.org	/debian		/debian-non-US
- Canada		-   ftp.ca.debian.org	/debian		/debian-non-US
- Germany	-   ftp.de.debian.org	/debian		/debian-non-US
- Finland	-   ftp.fi.debian.org	/debian		/debian-non-US
- France		-   ftp.fr.debian.org	/debian		/debian-non-US
- Hungary	-   ftp.hu.debian.org	/debian		/debian-non-US
- Italy		-   ftp.it.debian.org	/debian		/debian-non-US
- Japan		-   ftp.jp.debian.org	/debian		/debian-non-US
- Korea		-   ftp.kr.debian.org	/pub/debian	/pub/debian-non-US
- Netherlands	-   ftp.nl.debian.org	/pub/linux/debian /pub/linux/debian-non-US
- New Zealand	-   ftp.nz.debian.org	/debian		/debian-non-US
- Norway		-   ftp.no.debian.org	/debian		/debian-non-US
- Poland		-   ftp.pl.debian.org	/pub/debian	/debian-non-US
- Slovenia	-   ftp.si.debian.org	/debian		/debian-non-US
- Spain		-   ftp.es.debian.org	/debian		/mirrors/debian-non-US
- Sweden		-   ftp.se.debian.org	/debian		/debian-non-US
- Turkey		-   ftp.tr.debian.org	/debian		Not mirrored
- United Kingdom	-   ftp.uk.debian.org	/debian		/debian/non-US
- United States	-   ftp.debian.org   	/debian		Not mirrored
-
-END
-	}
-} # 0
 }
 
 
