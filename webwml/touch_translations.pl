@@ -23,7 +23,7 @@
 
 # This should contain all languages
 %langs = (
-	"ar" => "arabic",
+#	"ar" => "arabic",
 	"ca" => "catalan",
 	"zh" => "chinese",
 	"hr" => "croatian",
