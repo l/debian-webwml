@@ -204,15 +204,15 @@ To contact the maintainer of this page, write to
 
 <pre><small><b>Primary ISO Mirror Sites</b>
 ------------------------         	<b>/debian?</b>	<b>/debian-non-US?</b>
-Australia     -   <a href="ftp://ftp.au.debian.org/debian/">ftp.au.debian.org</a>	Yes		<a href="ftp://ftp.au.debian.org/debian-non-US">Yes</a>
-Austria       -   <a href="ftp://ftp.at.debian.org/debian/">ftp.at.debian.org</a>	Yes		<a href="ftp://ftp.at.debian.org/debian-non-US">Yes</a>
-Canada        -   <a href="ftp://ftp.ca.debian.org/debian/">ftp.ca.debian.org</a>	Yes		<a href="ftp://ftp.ca.debian.org/debian-non-US">Yes</a>
-Germany       -   <a href="ftp://ftp.de.debian.org/debian/">ftp.de.debian.org</a>	Yes		<a href="ftp://ftp.de.debian.org/debian-non-US">Yes</a>
-France        -   <a href="ftp://ftp.fr.debian.org/debian/">ftp.fr.debian.org</a>	Yes		<a href="ftp://ftp.fr.debian.org/debian-non-US">Yes</a>
-Japan         -   <a href="ftp://ftp.jp.debian.org/debian/">ftp.jp.debian.org</a>	Yes		<a href="ftp://ftp.ja.debian.org/debian-non-US">Yes</a>
-Korea         -   <a href="ftp://ftp.kr.debian.org/debian/">ftp.kr.debian.org</a>	Yes		<a href="ftp://ftp.kr.debian.org/debian-non-US">Yes</a>
-Sweden        -   <a href="ftp://ftp.se.debian.org/debian/">ftp.se.debian.org</a>	Yes		<a href="ftp://ftp.se.debian.org/debian-non-US">Yes</a>
-United Kingdom-   <a href="ftp://ftp.uk.debian.org/debian/">ftp.uk.debian.org</a>	Yes		<a href="ftp://ftp.uk.debian.org/debian-non-US">Yes</a>
+Australia     -   <a href="ftp://ftp.au.debian.org/debian/">ftp.au.debian.org</a>	Yes		<a href="ftp://ftp.au.debian.org/debian-non-US/">Yes</a>
+Austria       -   <a href="ftp://ftp.at.debian.org/debian/">ftp.at.debian.org</a>	Yes		<a href="ftp://ftp.at.debian.org/debian-non-US/">Yes</a>
+Canada        -   <a href="ftp://ftp.ca.debian.org/debian/">ftp.ca.debian.org</a>	Yes		<a href="ftp://ftp.ca.debian.org/debian-non-US/">Yes</a>
+Germany       -   <a href="ftp://ftp.de.debian.org/debian/">ftp.de.debian.org</a>	Yes		<a href="ftp://ftp.de.debian.org/debian-non-US/">Yes</a>
+France        -   <a href="ftp://ftp.fr.debian.org/debian/">ftp.fr.debian.org</a>	Yes		<a href="ftp://ftp.fr.debian.org/debian-non-US/">Yes</a>
+Japan         -   <a href="ftp://ftp.jp.debian.org/debian/">ftp.jp.debian.org</a>	Yes		<a href="ftp://ftp.ja.debian.org/debian-non-US/">Yes</a>
+Korea         -   <a href="ftp://ftp.kr.debian.org/debian/">ftp.kr.debian.org</a>	Yes		<a href="ftp://ftp.kr.debian.org/debian-non-US/">Yes</a>
+Sweden        -   <a href="ftp://ftp.se.debian.org/debian/">ftp.se.debian.org</a>	Yes		<a href="ftp://ftp.se.debian.org/debian-non-US/">Yes</a>
+United Kingdom-   <a href="ftp://ftp.uk.debian.org/debian/">ftp.uk.debian.org</a>	Yes		<a href="ftp://ftp.uk.debian.org/debian-non-US/">Yes</a>
 United States -   <a href="ftp://ftp.debian.org/debian/">ftp.debian.org</a>   	Yes		No
    
 </small></pre>
@@ -236,7 +236,7 @@ Korea         -   ftp.kr.debian.org	Yes		Yes
 Sweden        -   ftp.se.debian.org	Yes		Yes
 United Kingdom-   ftp.uk.debian.org	Yes		Yes
 United States -   ftp.debian.org   	Yes		No
-   
+
 END
 	}
 }
@@ -262,7 +262,8 @@ sub trailer {
 sub access_methods {
 	print <<END;
 <h1>Access Methods for the Debian mirror sites</h1>
-This page contains a list of mirrors of Debian. For each site, the different types
+
+<p>This page contains a list of mirrors of Debian. For each site, the different types
 of material available are listed, along with the access method for each type.
 
 <p>The following things are mirrored:
@@ -272,9 +273,6 @@ of material available are listed, along with the access method for each type.
 <dt><b>nonUS</b>
 	<dd>The nonUS portion of the Debian archive. Software is placed here if
 	it can't be distributed in the US due to software patents or uses encryption.
-<dt><b>Incoming</b>
-	<dd>The Incoming directory for packages destined to go into the archive.
-	These packages are untested so you should only use these if you like living on the edge.
 <dt><b>WWW</b>
 	<dd>The Debian web pages.
 <dt><b>CDimage</b>
@@ -300,7 +298,7 @@ of material available are listed, along with the access method for each type.
 	<dd>These comprise the bulk of the mirrors. Most of them mirror from a Push-Primary.
 <dt><b>Push-Primary</b>
 	<dd>These sites mirror directly from the master archive site (which is
-	not publicly accessable).
+	not publicly accessible).
 </dl>
 
 <pre>
