@@ -61,4 +61,4 @@ index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
       $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(YEAR)/*) \
       $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
       $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml \
-      CURRENT-ISSUE-IS $(ENGLISHSRCDIR)/News/weekly/CURRENT-ISSUE-IS
+      $(ENGLISHSRCDIR)/News/weekly/CURRENT-ISSUE-IS
