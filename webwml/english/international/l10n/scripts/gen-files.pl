@@ -48,6 +48,7 @@ my @main    = ();
 my @contrib = ();
 my @nonfree = ();
 my %score = ();
+my $tmpl_errors_maint = {};
 
 foreach my $pkg ($data->list_packages()) {
         #   Populate arrays
@@ -151,12 +152,12 @@ sub process_po {
 
 sub get_stats_templates {
         my ($section, $packages) = @_;
-        my ($pkg, $line, $lang, %list);
+        my ($pkg, $line, $lang, $maint, %list);
 
         my %incl = ();
         my %excl = ();
         my $none = '';
-        my $errors = {};
+        my $tmpl_errors = {};
         foreach $pkg (sort @{$packages}) {
                 unless ($data->has_templates($pkg)) {
                         $none .= "<li>".$pkg."</li>\n";
@@ -213,25 +214,25 @@ sub get_stats_templates {
                         $excl{$l} .= ", ";
                 }
                 if ($data->has_errors($pkg)) {
-                        $errors->{$pkg} = { unknown => [], master => [], fuzzy => [], mismatch => [], };
+                        $tmpl_errors->{$pkg} = { unknown => [], master => [], fuzzy => [], mismatch => [], };
                         my $found = 0;
                         foreach (@{$data->errors($pkg)}) {
                                 next unless s/debconf: //;
                                 if (m/([^:]+):(\d+): original-fields-removed-in-translated-templates/) {
-                                        push(@{$errors->{$pkg}->{unknown}}, "$1:$2");
+                                        push(@{$tmpl_errors->{$pkg}->{unknown}}, "$1:$2");
                                         $found = 1;
                                 } elsif (m/([^:]+):(\d+): translated-fields-in-master-templates/) {
-                                        push(@{$errors->{$pkg}->{master}}, "$1:$2");
+                                        push(@{$tmpl_errors->{$pkg}->{master}}, "$1:$2");
                                         $found = 1;
                                 } elsif (m/([^:]+):(\d+): fuzzy-fields-in-templates/) {
-                                        push(@{$errors->{$pkg}->{fuzzy}}, "$1:$2");
+                                        push(@{$tmpl_errors->{$pkg}->{fuzzy}}, "$1:$2");
                                         $found = 1;
                                 } elsif (m/([^:]+):(\d+): lang-mismatch-in-translated-templates/) {
-                                        push(@{$errors->{$pkg}->{mismatch}}, "$1:$2");
+                                        push(@{$tmpl_errors->{$pkg}->{mismatch}}, "$1:$2");
                                         $found = 1;
                                 }
                         }
-                        delete $errors->{$pkg} unless $found;
+                        delete $tmpl_errors->{$pkg} unless $found;
                 }
         }
         foreach $lang (@td_langs) {
@@ -254,33 +255,39 @@ sub get_stats_templates {
         print GEN "<ul>\n".$none."</ul>\n" if $none ne '';
         close (GEN);
         open (GEN, "> $opt_l/templates/gen/errors-by-pkg.$section.inc");
-        foreach $pkg (sort keys %$errors) {
-                print GEN "<li>$pkg\n<ul>\n";
-                if (@{$errors->{$pkg}->{master}}) {
-                        print GEN "<li><a href=\"errors#master\">translated-fields-in-master-templates</a><br>\n".${$errors->{$pkg}->{master}}[0]."</li>\n";
+        foreach $pkg (sort keys %$tmpl_errors) {
+                $maint = $data->maintainer($pkg);
+                $maint =~ s/<.*>//;
+                print GEN "<li>$pkg ".$data->version($pkg)." [$maint]\n";
+                my $errors_pkg = "<ul>\n";
+                if (@{$tmpl_errors->{$pkg}->{master}}) {
+                        $errors_pkg .= "<li><a href=\"errors#master\">translated-fields-in-master-templates</a><br>\n".${$tmpl_errors->{$pkg}->{master}}[0]."</li>\n";
                 }
-                if (@{$errors->{$pkg}->{unknown}}) {
-                        print GEN "<li><a href=\"errors#unknown\">translated-templates-not-in-original</a><br>\n";
-                        foreach (@{$errors->{$pkg}->{unknown}}) {
-                                print GEN "$_<br>\n";
+                if (@{$tmpl_errors->{$pkg}->{unknown}}) {
+                        $errors_pkg .= "<li><a href=\"errors#unknown\">translated-templates-not-in-original</a><br>\n";
+                        foreach (@{$tmpl_errors->{$pkg}->{unknown}}) {
+                                $errors_pkg .= "$_<br>\n";
                         }
-                        print GEN "</li>\n";
+                        $errors_pkg .= "</li>\n";
                 }
-                if (@{$errors->{$pkg}->{fuzzy}}) {
-                        print GEN "<li><a href=\"errors#fuzzy\">fuzzy-fields-in-templates</a><br>\n";
-                        foreach (@{$errors->{$pkg}->{fuzzy}}) {
-                                print GEN "$_<br>\n";
+                if (@{$tmpl_errors->{$pkg}->{fuzzy}}) {
+                        $errors_pkg .= "<li><a href=\"errors#fuzzy\">fuzzy-fields-in-templates</a><br>\n";
+                        foreach (@{$tmpl_errors->{$pkg}->{fuzzy}}) {
+                                $errors_pkg .= "$_<br>\n";
                         }
-                        print GEN "</li>\n";
+                        $errors_pkg .= "</li>\n";
                 }
-                if (@{$errors->{$pkg}->{mismatch}}) {
-                        print GEN "<li><a href=\"errors#mismatch\">lang-mismatch-in-translated-templates</a><br>\n";
-                        foreach (@{$errors->{$pkg}->{mismatch}}) {
-                                print GEN "$_<br>\n";
+                if (@{$tmpl_errors->{$pkg}->{mismatch}}) {
+                        $errors_pkg .= "<li><a href=\"errors#mismatch\">lang-mismatch-in-translated-templates</a><br>\n";
+                        foreach (@{$tmpl_errors->{$pkg}->{mismatch}}) {
+                                $errors_pkg .= "$_<br>\n";
                         }
-                        print GEN "</li>\n";
+                        $errors_pkg .= "</li>\n";
                 }
-                print GEN "</ul>\n";
+                $errors_pkg .= "</ul>\n";
+                print GEN $errors_pkg;
+                $tmpl_errors_maint->{$maint} = {} unless defined($tmpl_errors_maint->{$maint});
+                $tmpl_errors_maint->{$maint}->{$pkg} = "$pkg ".$data->version($pkg)."\n".$errors_pkg;
         }
         close (GEN);
 }
@@ -304,6 +311,15 @@ sub process_templates {
                 print GEN "<dd><language-name $lang /></dd>\n";
         }
         print GEN "</dl>\n";
+        close (GEN);
+        open (GEN, "> $opt_l/templates/gen/errors-by-maint.inc");
+        foreach my $maint (sort keys %$tmpl_errors_maint) {
+                print GEN "<li>$maint\n<ul>";
+                foreach my $pkg (sort keys %{$tmpl_errors_maint->{$maint}}) {
+                        print GEN "<li>".$tmpl_errors_maint->{$maint}->{$pkg}."</li>\n";
+                }
+                print GEN "</ul></li>\n";
+        }
         close (GEN);
 }
 
