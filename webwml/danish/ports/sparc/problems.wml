@@ -1,0 +1,111 @@
+#use wml::debian::template title="SPARC-tilpasning -- fejl" NOHEADER="yes"
+#use wml::debian::translation-check translation="1.12"
+#include "$(ENGLISHDIR)/ports/sparc/menu.inc"
+
+<h1>Debian SPARC-fejl</h1>
+
+<p>Denne side indeholder en liste over velkendte problemer med Debian SPARC.
+Der er lagt vægt på den stabile udgave (eller en frossen udgave, hvis det er 
+passende), da disse problemer ændrer sig meget sjældent og påvirker et større
+antal personer.</p>
+
+<p>Listen over problemer forsøger ikke at erstatte Debians 
+fejlrapporteringssystem.  Hovedformålet med disse oplysninger er at begrænse
+forvirring hos brugerne, nedbringe trafikken på postlisten, og at foreklare
+hvordan man undgår problemerne indtil de er løst.  Hvis et fejlnummer er 
+forbundet med et problem, vil dette være oplyst.</p>
+
+
+<h2>Installation</h2>
+
+<p>På grund af en fejl i den måde boot-disketterne blev fremstillet, kan ingen
+Sun4u-maskiner starte fra en rescue-diskette.  Du er nødt til at bruge en anden
+startmetode.</p>
+
+<p>Der er en anden fejl i det symbolske link fra /dev/sunmouse til /dev/mouse, 
+som ikke oprettes.  Udfør blot <tt>ln -s sunmouse /dev/mouse</tt> som root.  
+(Fejl rettet i <tt>proposed-updates/makedev</tt>.)</p>
+
+<p>Hvis du har et ældre Sony CDU cd-rom-drev og du får beskeden 
+"esp0: disconnect, resetting bus", har du to måder at omgå problemet på.
+Du kan starte fra silos "boot:"-prompt med dit normalt aftryk, tilføjet 
+parameteret "max_scsi_luns=1".  Alternativt kan du opgradere din kerne til 
+2.2.4 eller større.</p>
+
+<p>Der er nogle kendte problemer under installation med understøttelse af et
+PS/2-tastatur og nogle mindre problemer og støj under installering via en 
+seriel konsol.  Dette forventes rettet i version 2.2.11 eller større af 
+boot-disketterne.</p>
+
+<p>På grund af en forglemmelse indeholder 2.2.1-kernen på SPARCs boot-disketter 
+ikke understøttelse af NFSROOT.</p>
+
+<p>Mange af disse problemer er rettet i den uofficelle test-opbygning af 
+boot-disketterne på 
+<a href="ftp://lix.polytechnique.fr/pub/Linux/debian/sparc/exp/">\
+ftp://lix.polytechnique.fr/pub/Linux/debian/sparc/exp/</a>.</p>
+
+
+# The Boot Disks do not appear to work on all PROMS.  On my SS2, SILO
+# will load, but the kernel will not.  Others have reported the same
+# problems.
+# 
+# <h2>Broken tftpboot.img</h2>
+# <p>
+#  The tftpboot.img we distribute does not seem to work on all
+#  machines.  On an SS2 with PROM version 2.4, it will hang for a very
+#  long time in the final ACK, and not ever finish.  This appears to be
+#  an alignment problem - if the image is padded to a multiple of 4
+#  bytes, it will run fine.  On PROM 2.6, it works fine.
+# </p>
+
+
+<h2>X Window System</h2>
+
+<p>Problemer i forbindelse med X Window System.</p>
+
+<h3>Hvordan finder jeg ud af hvilken X-server jeg skal bruge?</h3>
+
+<p>Dette kommer an på din maskine og hvilkem framebuffer (videokort) du har
+installeret.  Den følgende listen over X-serverpakker skulle hjælpe - vælg den
+der svarer til din hardware og installér pakken (og opsæt den som 
+standard-X-serveren når du bliver spurgt om det under installationen).</p>
+
+<dl>
+      <dt>xserver-xsun</dt>
+      <dd>Anvendes ved de fleste Sun- og klonede 8-bits framebuffere, så som
+          CG3, CG6, osv.  Indeholder også monokrom-understøttelse.
+      <dt>xserver-xsun-mono</dt>
+      <dd>Anvendes ved BWTWO og andre monokrome framebuffere, eller ved brug
+          af farve-framebuffere i monoktrom tilstand.
+      <dt>xserver-xsun24</dt>
+      <dd>X-server med understøttelse af 24-bits farver - egnet til 24-bits
+          framebuffere understøttet af Linux-kernen.  Ikke ret mange bruger 
+	  dette.
+      <dt>xserver-mach64</dt>
+      <dd>Brug denne X-server til ATI Rage-framebuffere, som dem der findes i 
+          mange PCI-baserede UltraSPARC-maskiner.
+    </dl>
+
+#  <p>
+# There are experimental Creator accelerated X servers somewhere to be
+# found. Is that in the distribution already?
+
+
+<h3>Kan ikke starte X bortset fra som root</h3>
+
+<p>Registeret som <a href="http://bugs.debian.org/35613">Fejl 35613</a>, og
+rettet siden xfree86-1 3.3.3.1-3.</p>
+
+<p>Måden at omgå problemet på, på maskiner som kører "slink" er at gøre noget
+ganske usikkert.  Gør følgende som root:</p>
+
+<pre>
+  chmod 666 /dev/fb?
+</pre>
+
+<h3>Problemer med Mach64-serveren</h3>
+
+<p>Denne server kigger kun efter framebufferen på <tt>/dev/fd0</tt>.  Du kan
+være nødt til at eksperimentere med symbolske links for at få det til at 
+virke.</p>
