@@ -587,7 +587,7 @@ sub match_manpages {
         return unless $mandata->has_package($pkg) && $mandata->has_man($pkg);
         foreach my $line (@{$mandata->man($pkg)}) {
                 my ($man, $lang, $link) = @{$line};
-                return $lang.'_'.$man if $file eq $link;
+                return $link if defined($link) && $file eq $link;
         }
         return 0;
 }
@@ -638,6 +638,7 @@ sub process_po_file {
 
         $this_stat = "";
         $lang = "";
+        $lang = '_' if $file=~ m/\.pot$/;
         if ($lang eq "" && $file=~ m,(?:_|\b)$regexp_for_lang_code\.po$,o) {
                 $bad_lang =$1;
                 if (is_lang($bad_lang)) {
@@ -653,7 +654,10 @@ sub process_po_file {
                         $bad_lang = "";
                 }
         }
-        if ($lang ne "") {
+        if ($lang eq "_") {
+                # do nothing
+                1;
+        } elsif ($lang ne "") {
                 # stats the file
                 ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$filename 2>&1 1>/dev/null");
                 if ($err_msg ne '') {
@@ -733,8 +737,10 @@ sub search_man {
 
         foreach my $line (@{$mandata->man($pkg)}) {
                 my ($man, $lang, $link) = @{$line};
-                my $filename = store_disk_man($pkg, $lang.'_'.$man);
-                $data->add_man($pkg, $man, $filename.".gz");
+                next unless defined($link);
+                my $manpage = match_manpages($pkg, $link);
+                my $filename = store_disk_man($pkg, $manpage);
+                $data->add_man($pkg, $man, $lang, $filename.".gz");
                 if (system("gzip -9f $MAN_ROOT/".$data->pooldir($pkg)."/$filename")){
                         warn "Can't gzip $MAN_ROOT/".$data->pooldir($pkg)."/$filename: $!\n";
                 }
