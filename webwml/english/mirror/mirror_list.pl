@@ -400,6 +400,50 @@ END
 
 # meant to be output into a file which is then included into a .wml file
 # and processed by WML
+sub mirror_sponsors {
+  return unless $html;
+  print <<END;
+<tr><td colspan="3"><hr></td></tr>
+END
+  foreach $country (sort keys %countries) {
+    foreach $site (sort @{ $countries{$country} }) {
+      if ((defined $mirror{$site}{method}{'archive-ftp'} ||
+           defined $mirror{$site}{method}{'archive-http'} ||
+           defined $mirror{$site}{method}{'nonus-ftp'} ||
+           defined $mirror{$site}{method}{'nonus-http'}) &&
+           exists $mirror{$site}{sponsor}) {
+        (my $countrycode = $country) =~ s/^(..).*/$1/;
+	print <<END;
+<tr>
+  <td valign="top">${countrycode} <${countrycode}c></td>
+  <td valign="top" align="center">$site</td>
+  <td>
+END
+	if ($site ne "ftp.us.debian.org") {
+	  my $numsponsors = @{ $mirror{$site}{sponsor} };
+	  my $num = 0;
+	  foreach my $sponsor (@{ $mirror{$site}{sponsor} }) {
+	    if ($sponsor =~ /^(.+) (http:.*)$/) {
+	      $sponsorname = $1;
+	      $sponsorurl = $2;
+	    }
+	    print "<a href=\"$sponsorurl\">$sponsorname</a>";
+	    $num++;
+	    print ",\n" unless ($num >= $numsponsors);
+	  }
+          print "\n";
+	}
+        print <<END;
+  </td>
+</tr>
+END
+      }
+    }
+  }
+}
+
+# meant to be output into a file which is then included into a .wml file
+# and processed by WML
 sub cdimage_mirrors {
   my $which = shift;
   return unless $html;
@@ -682,6 +726,7 @@ Usage: $0 -m|--mirror mirror_list_source [-t|--type type]
 	apt
 	methods
 	nonus
+	officialsponsors
 	sponsors
 	cdimages-httpftp
 	cdimages-rsync
@@ -765,9 +810,13 @@ elsif ($output_type eq 'methods') {
 elsif ($output_type eq 'nonus') {
 	readmenonus();
 }
-elsif ($output_type eq 'sponsors') {
+elsif ($output_type eq 'officialsponsors') {
 	$html=1;
 	primary_mirror_sponsors();
+}
+elsif ($output_type eq 'sponsors') {
+	$html=1;
+	mirror_sponsors();
 }
 elsif ($output_type eq 'cdimages-httpftp') {
 	$html=1;
