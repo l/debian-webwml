@@ -52,21 +52,13 @@ my %mirrors = (
     "<USc/>" => "us", # the same as www.d.o
     "<ZAc/>" => "za",
               );
-# Transform this list
-my $mirrors_lang = {};
-foreach $m (keys %mirrors) {
-  while ($m =~ m/\[([A-Z_]+):(.*?):\]/g) {
-    $mirrors_lang->{$1}->{$2} = $mirrors{$m};
-  }
-}
-foreach $l (keys %$mirrors_lang) {
-  foreach $m (sort langcmp keys %{$mirrors_lang->{$l}}) {
-    my $s = " selected" if $mirrors_lang->{$l}->{$m} eq "us";
-    <perl:print>[$l:<option value=\"$mirrors_lang->{$l}->{$m}\"$s>$m</option>\n:]</perl:print>
-  }
+foreach my $m (sort langcmp keys %mirrors) {
+    my $s = " selected" if $mirrors{$m} eq "us";
+    <perl:print><option value=\"$mirrors{$m}\"$s>$m</option>\n</perl:print>
 }
 </perl>\
 </select>
+
 <input type="submit" value=" <go/> "$(small:+ style="font-size:90%;") />
 <br />
 </form>
