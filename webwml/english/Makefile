@@ -20,7 +20,9 @@ all:\
     $(HTMLDIR)/social_contract.html.$(LANG) \
     $(HTMLDIR)/sponsor.html \
     $(HTMLDIR)/support.html.$(LANG) \
+    $(HTMLDIR)/2.0/errata.html.$(LANG) \
     $(HTMLDIR)/2.0/2.0beta_CD.html.$(LANG) \
+    $(HTMLDIR)/2.0/HOWTO.upgrade.html.$(LANG) \
     $(HTMLDIR)/MailingLists/debian-announce.html.$(LANG) \
     $(HTMLDIR)/MailingLists/subscribe.html.$(LANG) \
     $(HTMLDIR)/MailingLists/unsubscribe.html.$(LANG) \
