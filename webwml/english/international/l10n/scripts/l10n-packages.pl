@@ -1,5 +1,5 @@
-#include "../../../english/international/l10n/dtc.def"
-#include "../../../english/international/l10n/scripts/init.pl"
+#include "$(ENGLISHDIR)/international/l10n/dtc.def"
+#include "$(ENGLISHDIR)/international/l10n/scripts/init.pl"
 
 <:
 my $nb; #counter
