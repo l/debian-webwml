@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-#
+
 # Check translation status for mailing list descriptions. Since these files
 # aren't WML files, the translation data is stored in a separate file in
 # each directory, listing the names of the files and the corresponding
@@ -8,17 +8,38 @@
 # Since I couldn't figure out how to add this to the regular check_trans.pl
 # script, this is a separate script.
 #
-# The script MUST be called from the top-level webwml directory!
+# To use this script, create a file called translation-check in each
+# directory under <language>/MailingLists/desc/. In it you list the name of
+# the translated file and the version of the English original, separated by
+# whitespace. Then run this script, and it will tell you about which files
+# are missing, which files are outdated, and if there are files translating
+# files that are no longer in the English directory.
+#
 # There are no command line parameters.
 
-die "Must be callede from the top-level directory!\n"
-    unless -e 'swedish/MailingLists/desc/check_desc_trans.pl';
+# Originally written 2002-10-05 by Peter Karlsson <peterk@debian.org>
+# © Copyright 2002-2003 Software in the public interest, Inc.
+# This program is released under the GNU General Public License, v2.
 
-# Load configuration
-open CONF, '<language.conf' or die "Cannot read language.conf: $!\n";
-$language = <CONF>;
-chomp $language;
-close CONF;
+# $Id$
+
+# Get configuration
+if (exists $ENV{DWWW_LANG}) 
+{
+	$language = $ENV{DWWW_LANG};
+} 
+elsif (open CONF, "<language.conf")
+{
+	while (<CONF>)
+	{
+		next if /^#/;
+		chomp;
+		$language = $_, next unless defined $language;
+	}
+}
+
+die "Language not defined in DWWW_LANG or language.conf\n"
+	unless defined $language;
 
 # Counter
 $old = 0;
@@ -69,7 +90,7 @@ sub process
         # Get data for the entries and compare
         while (<CHECK>)
         {
-            if (/^(.+)\t([0-9\.]+)$/)
+            if (/^([^\s]+)\s*([0-9\.]+)$/)
             {
             	print "Ghost entry $destination/$1\n"
             		unless -f "$destination/$1";
