@@ -1,181 +1,71 @@
-#use wml::debian::template title="Debian BTS - servidor de requisições" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.15" translation_maintainer="André Luís Lopes"
+#use wml::debian::template title="Debian BTS - cartão de referência do servidor de mensgens" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.17" translation_maintainer="André Luís Lopes"
 
-<h1><A name="introduction">Introdução so servidor de requisições do sistema de bugs</A></h1>
+<h1>Cartão de referência do servidor de mensagens</h1>
 
-<p>Existe um servidor de e-mail que pode enviar relatórios de bugs
-e índices como texto puro por demanda (por requisições).</p>
+<P>A documentação completa dos servidores de mensagens está disponível
+na WWW, nos arquivos <A href="server-request">bug-log-mailserver.txt</A> e
+<A href="server-control">bug-maint-mailcontrol.txt</A> ou enviando a
+palavra <code>help</code> para cada servidor de mensagem.</P>
 
-<p>Para usá-lo você envia uma mensagem de e-mail para
-<A href="mailto:request@bugs.debian.org"><code>request@bugs.debian.org</code></A>.
-O <code>Assunto</code> da mensagem é ignorado, exceto para geração do
-<code>Assunto</code> de resposta.</p>
+<h2>Sinópse dos comandos disponíveis em <code>request@bugs.debian.org</code></h2>
 
-<p>O corpo da mensagem que você envia deve ser uma série de comandos,
-sendo um comando por linha. Você receberá uma resposta parecida com uma
-transcrição de sua mensagem sendo interpretada, com uma resposta para
-cada comando. Nenhuma notificação é enviada para ninguém para a maioria
-dos comandos; porém, as mensagens são logadas e ficam disponíveis nas
-páginas WWW.</p>
+<ul compact>
+<li><code>send</code> <var>número do bug</var>
+<li><code>send-detail</code> <var>número do bug</var>
+<li><code>index</code> [<code>full</code>]
+<li><code>index-summary by-package</code>
+<li><code>index-summary by-number</code>
+<li><code>index-maint</code>
+<li><code>index maint</code> <var>substring-mantenedor</var>
+<li><code>index-packages</code>
+<li><code>index packages</code> <var>substring-pacote</var>
+<li><code>send-unmatched</code> [<code>this</code>|<code>0</code>]
+<li><code>send-unmatched</code> <code>last</code>|<code>-1</code>
+<li><code>send-unmatched</code> <code>old</code>|<code>-2</code>
+<li><code>getinfo</code> <var>nome-do-arquivo</var> <small>(ftp.debian.org/debian/doc/*)</small>
+<li><code>help</code>
+<li><code>refcard</code>
+<li><code>quit</code>|<code>stop</code>|<code>thank</code>...|<code>--</code>...
+<li><code>#</code>... <em>(comentário)</em>
+<li><code>debug</code> <var>nível</var>
+</ul>
 
-<p>Qualquer texto em uma linha iniciando com um caracter hash <code>#</code>
-é ignorado; o servidor irá parar o processamento quando encontrar uma
-linha iniciada com <code>quit</code>, <code>stop</code>, <code>thank</code>
-ou com dois hífens (para evitar interpretar uma assinatura).  O servidor também
-irá parar caso encontre muitos comandos não reconhecidos ou mal-formatados. Caso
-nenhum comando seja tratado com sucesso o texto de ajuda será enviado para
-o servidor.</p>
+<h2>Sinópse dos comandos extra disponíveis no servidor de mensagens de controle</h2>
 
-<h1>Comandos disponíveis</h1>
+<ul compact>
+<li><code>reassign</code> <var>número do bug</var> <var>pacote</var>
+<li><code>severity</code> <var>número do bug</var> <var>severidade</var>
+<li><code>reopen</code> <var>número do bug</var>
+ [ <var>endereço-origem</var> | <code>=</code> | <code>!</code> ]
+<li><code>forwarded</code> <var>número do bug</var> <var>endereço</var>
+<li><code>notforwarded</code> <var>número do bug</var>
+<li><code></code> <var>número do bug</var> <var>novo-título</var>
+<li><code>clone</code> <var>número do bug</var> [ <var>novos IDs</var> ]
+<li><code>merge</code> <var>número do bug</var> <var>número do bug</var> ...
+<li><code>unmerge</code> <var>número do bug</var>
+<li><code>tags</code> <var>número do bug</var>
+ [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var>
+<li><code>close</code> <var>número do bug</var>
+ <strong>(ultrapassado -- você deve separadamente dizer a quem reportou a razão)</strong>
+</ul>
 
-<dl>
-<dt><code>send</code> <var>número do bug</var>
-<dt><code>send-detail</code> <var>número do bug</var>
-<dd>
+<P><code>reopen</code> com <code>=</code> ou sem endereço de origem deixa
+a origem como o endereço da pessoa que reportou o bug; <code>!</code>
+define-o para você, a pessoa reabrindo o bug.</P>
 
-Requisitam a transcrição para o relatório de bug em questão.
-<code>send-detail</code> envia todas as mensagens `chatas' na transcrição,
-como os vários auto-acks (você deverá normalmente usar <code>send</code>
-também, pois as mensagens interessantes não são enviada por
-<code>send-detail</code>).
+<p>As severidades são <code>critical</code>, <code>grave</code>,
+<code>serious</code>, <code>important</code>, <code>normal</code>,
+<code>minor</code> e <code>wishlist</code>.
 
-<dt><code>index</code> [<code>full</code>]
-<dt><code>index-summary by-package</code>
-<dt><code>index-summary by-number</code>
-<dd>
-
-Requisita o índice completo (com detalhes completos, e incluíndo
-relatórios de feito e encaminhado) ou o sumário ordenado por pacote
-ou por número, respectivamente.
-
-<dt><code>index-maint</code>
-<dd>
-
-Requisita a página de índice fornecendo a lista de mantenedores com
-bugs (abertos e recentemente fechados) no sistema de gerenciamento
-de bugs.
-
-<dt><code>index maint</code> <var>mantenedor</var>
-<dd>
-
-Requisita o índice de páginas no sistema para todos os mantenedores
-contendo a string <var>mantenedor</var>. O termo de procura é uma
-substring sensível a maiúsculas e minúsculas. O índice de bugs para
-cada mantenedor encontrado será enviado em uma mensagem separada.
-
-<dt><code>index-packages</code>
-<dd>
-
-Requisita o página de índice fornecendo a lista de pacotes com bugs
-(abertos ou rcentemente fechados) no sistema de gerenciamento de bugs.
-
-<dt><code>index packages</code> <var>pacote</var>
-<dd>
-
-Requisita o índice de páginas de bugs no sistema para o pacote
-<var>pacote</var>. O termo de procura é um casamento exato (e não
-sensível a maiúsculas e minúsculas). O índice de bugs para cada
-pacote encontrado será enviado em uma mensagem separada.
-
-<dt><code>send-unmatched</code> [<code>this</code>|<code>0</code>]
-<dt><code>send-unmatched</code> <code>last</code>|<code>-1</code>
-<dt><code>send-unmatched</code> <code>old</code>|<code>-2</code>
-<dd>
-
-Requisita os logs de mensagens que não casaram com um relatório de
-bug específico, para esta semana (this), a última semana (last) e a
-semana anterior (before). (Cada semana finaliza em uma quarta-feira.)
-
-<dt><code>getinfo</code> <var>nome-do-arquivo</var>
-<dd>
-
-Requisita um arquivo contendo informações sobre pacote(s) e ou
-mantenedor(es) - os arquivos disponíveis são :
-<dl compact>
-<dt><code>maintainers</code>
-<dd>
-A lista unificada de mantenedores de pacotes, como usada pelo
-sistema de gerenciamento de bugs. Este é derivado da informação
-nos arquivos <code>Packages</code>, arquivos de sobreescrita
-(override) e arquivos de pseudo-pacotes.
-
-
-<dt><code>override.</code><var>distribution</var>
-<dt><code>override.</code><var>distribution</var><code>.non-free</code>
-<dt><code>override.</code><var>distriburion</var><code>.contrib</code>
-<dt><code>override.experimental</code>
-<dd>
-Informação sobre as prioridades e seções de pacotes e valores de
-sobreescrita para os mantenedores. Esta informação é usada pelo
-processo que gera os arquivos <code>Packages</code> no repositório
-FTP. Informações estão disponíveis para cada uma das árvores principais
-da distribuição, por suas palvras-chaves.
-
-
-<dt><code>pseudo-packages.description</code>
-<dt><code>pseudo-packages.maintainers</code>
-<dd>
-Lista das descrições e mantenedores respectivamente para pseudo-pacotes.
-</dl>
-
-<dt><code>refcard</code>
-<dd>
-Requisita que o cartão de referência do servidor de e-mail seja enviado
-em ASCII puro.
-
-<dt><code>help</code>
-<dd>
-Requisita que este documento de ajuda seja enviado por e-mail em
-ASCII puro.
-
-<dt><code>quit</code>
-<dt><code>stop</code>
-<dt><code>thank</code>...
-<dt><code>--</code>...
-<dd>
-
-Para o processamento neste ponto da mensagem. Depois disso você pode
-incluir qualquer texto que quiser e o mesmo será ignorado. Você pode
-usar isso para incluir comentários mais longos dos que são aplicáveis
-para <code>#</code>, por exemplo, para o benefício de leitores humanos
-de sua mensagem (que a lê através dos logs do sistema de gerenciamento
-de bugs ou devido ao <code>CC</code> ou <code>BCC</code>).
-
-<dt><code>#</code>...
-<dd>
-
-Comentário de uma linha. O <code>#</code> deve estar no início da linha.
-
-<dt><code>debug</code> <var>nível</var>
-<dd>
-
-Define o nível de depuração para <var>nível</var>, o qual deve ser
-um inteiro não-negativo. 0 significa sem depuração; 1 é normalmente
-o suficiente. A sáida de depuração aparece na transcrição. Não é muito
-útil para usuários em geral do sistema de bugs.
-
-</dl>
-
-<p>Existe um <A href="server-refcard">cartão de referência</A> para o
-servidor de e-mails, disponível através da WWW em
-<code>bug-mailserver-refcard.txt</code> ou por e-mail usando o comando
-<code>refcard</code> (veja acima).</p>
-
-<p>Caso você deseje manipular relatórios de bugs você deverá usar o
-endereço <code>control@bugs.debian.org</code>, o qual entende o
-<A href="server-control">superconjunto dos comandos disponíveis
-acima</A>. Isto está descrito em outro documento, disponível na
-<A href="server-control">WWW</A>, no arquivo
-<code>bug-maint-mailcontrol.txt</code> ou enviando <code>help</code>
-para <code>control@bugs</code>.</p>
-
-<p>Caso você esteja lendo isto como um arquivo em texto puro ou por
-e-mail : uma versão em HTML está disponível através da página
-principal de conteúdo do sistema de bugs em
-<code>http://www.debian.org/Bugs/</code>.</p>
+<p>As tags atualmente incluem <code>patch</code>, <code>wontfix</code>,
+<code>moreinfo</code>, <code>unreproducible</code>, <code>fixed</code>,
+<code>security</code>, <code>potato</code>, <code>woody</code> e
+<code>sid</code>.
 
 <hr>
 
 #use "otherpages.inc"
 
 #use "$(ENGLISHDIR)/Bugs/footer.inc"
+
