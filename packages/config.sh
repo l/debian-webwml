@@ -3,6 +3,7 @@
 
 topdir=/org/packages.debian.org
 
+tmpdir=${topdir}/tmp
 bindir=${topdir}/bin
 scriptdir=${topdir}/htmlscripts
 libdir=${topdir}/lib
