@@ -1,5 +1,6 @@
 #use wml::debian::ctime
 #use wml::debian::common_tags
+#use wml::debian::openrecode
 
 <define-tag noitemsforthisyear whitespace=delete>
   <gettext>No items for this year.</gettext>
@@ -211,16 +212,14 @@ sub grab_titles {
 	#warn "$file -> $base\n";
 
 	# read file in
-	open FILE, "$file" 
-	    or open FILE, "$trans_title" 
-	    or open FILE, "$eng_dir/$file" 
+	my $fh = openrecode($file, $trans_title, "$eng_dir/$file")
 	    or die "couldn't open $eng_dir/$file: $!\n";
 	my $content;
 	{
 	    local $/;
-	    $content = <FILE>;
+	    $content = <$fh>;
 	}
-	close FILE;
+	close $fh;
 
 	# decide, if we reading a event file,
 	# and if it's a past or current event

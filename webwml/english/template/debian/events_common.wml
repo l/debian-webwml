@@ -1,5 +1,6 @@
 #use wml::std::tags
 #use wml::debian::common_translation
+#use wml::debian::openrecode
 
 
 <define-tag eventtitle whitespace=delete>
@@ -72,7 +73,7 @@ sub get_event_stuff {
   foreach (@files) 
   {
      $count++;
-     open(FILE, "< $path/$_") || open(FILE, "< $current_dir/$path/$_");
+     my $fh = openrecode("$path/$_", "$current_dir/$path/$_");
      if ( /($match).wml/ ) 
 	 {
         $base = $1;
@@ -80,7 +81,7 @@ sub get_event_stuff {
      $title = ''; $date = ''; $contact = ''; $email = ''; $desc = '';
      $startdate = ''; $enddate = '';
      <protect pass=2>
-     foreach $line (<FILE>) 
+     foreach $line (<$fh>) 
 	 {
         if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) 
 		{
@@ -130,7 +131,7 @@ sub get_event_stuff {
            $str = "<tr><td><a href=\"$path/$base\">$title</a></td><td>$contact</td><td>$desc</td></tr>\n";
 		}
      }
-     close FILE;
+     close $fh;
      if ($count eq $number) { last; }
   }
 close DIR;

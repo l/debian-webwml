@@ -1,3 +1,6 @@
+#use wml::std::tags
+#use wml::debian::openrecode
+
 <perl>
 
 use Cwd;
@@ -39,11 +42,11 @@ sub get_weeklynews_list {
 		$trans_title = $_;
 		$trans_title =~ s/wml/title/;
 		($base)=m:(.*/):;
-		open(FILE,"<$trans_dir/$year/$_") || open(FILE, "<$trans_dir/$year/$trans_title") || open(FILE, "<$eng_dir/$year/$_");
+		my $fh = openrecode("$trans_dir/$year/$_", "$trans_dir/$year/$trans_title", "$eng_dir/$year/$_");
 		$title = '';
 		$summary = '';
-		$line=<FILE>;
-		$line=<FILE> if $line =~ m/use wml::debian::translation-check/;
+		$line=<$fh>;
+		$line=<$fh> if $line =~ m/use wml::debian::translation-check/;
 		if ($line =~ /PUBDATE="(.*?)"/) {
 			$title=newsdate($1);
 		}
@@ -53,7 +56,7 @@ sub get_weeklynews_list {
 		if ($title) {
 			$str.="<a href=\"". ($noyear ? "$dirprefix" : "$year/" )."$base\">$title</a> $summary<br>\n";
 		}
-		close FILE;
+		close $fh;
 		$count++;
 		last if ($stopat ne '' && $count >= $stopat);
 	}
