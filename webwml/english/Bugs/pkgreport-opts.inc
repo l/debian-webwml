@@ -1,389 +1,81 @@
 #use wml::debian::language_names
+#use wml::debian::common_tags
 
-<define-tag-sliced flags whitespace=delete>
-	[EN:Flags::]
-	[CA:Opcions::]
-	[DA:Flag::]
-	[DE:Flags::]
-	[FI:Liput::]
-	[FR:Options ::]
-	[HR:Oznake::]
-	[IT:Opzioni::]
-	[JA:ÀßÄê::]
-	[NO:Flagger::]
-	[PL:Flagi::]
-	[SV:Flaggor::]
-	[ES:Opciones::]
-	[NL:Opties::]
-</define-tag-sliced>
-<define-tag-sliced active_bugs whitespace=delete>
-	[EN:active bugs:]
-	[CA:errors actius:]
-	[DA:aktive fejl:]
-	[DE:aktive Fehler:]
-	[FI:aktiiviset viat:]
-	[FR:bogues non résolus:]
-	[HR:aktivni bugovi:]
-	[IT:anomalie non risolte:]
-	[JA:Ì¤²ò·è:]
-	[NO:aktive feil:]
-	[PL:b³êdy atywne:]
-	[SV:aktiva fel:]
-	[ES:fallos activos:]
-	[NL:actieve bugs:]
-</define-tag-sliced>
-<define-tag-sliced archived_bugs whitespace=delete>
-	[EN:archived bugs:]
-	[CA:errors arxivats:]
-	[DA:arkiverede fejl:]
-	[DE:archivierte Fehler:]
-	[FI:arkistoidut viat:]
-	[FR:bogues archivés:]
-	[HR:arhivirani bugovi:]
-	[IT:anomalie archiviate:]
-	[JA:²ò·èºÑ:]
-	[NO:arkiverte feil:]
-	[PL:b³êdy zarchiwizowane:]
-	[SV:arkiverade fel:]
-	[ES:fallos archivados:]
-	[NL:gearchiveerde bugs:]
-</define-tag-sliced>
-<define-tag-sliced no_status whitespace=delete>
-	[EN:no ordering by status or severity:]
-	[CA:no ordenar pel seu estat de gravetat:]
-	[DA:ingen sortering på status/alvorlighedsgrad:]
-	[DE:nicht nach Status oder Dringlichkeit sortieren:]
-	[FI:ei järjestystä tilan tai vakavuuden perusteella:]
-	[FR:pas d'ordre sur l'état ou la gravité:]
-	[HR:bez slaganja po stanju ni severityu:]
-	[IT:Senza ordine di status o di gravità:]
-	[JA:¾õÂÖ¤ä½ÅÍ×ÅÙ¤Î½ç¤ËÊÂ¤Ù¤Ê¤¤:]
-	[NO:ingen sortering på status/alvorlighetsgrad:]
-	[PL:nie sortuj wed³ug stanu lub powagi:]
-	[SV:ingen sortering på status/allvarlighetsgrad:]
-	[ES:no ordenar por estado o gravedad:]
-	[NL:geen sortering op status of ernst van de bug:]
-</define-tag-sliced>
-<define-tag-sliced reverse_order whitespace=delete>
-	[EN:Reverse order of: :]
-	[CA:Invertir l'ordre de: :]
-	[DA:Omvendt rækkefølge af: :]
-	[DE:Sortierung umkehren von: :]
-	[FI:Käänteinen järjestys::]
-	[FR:ordre inverse de ::]
-	[HR:Obrnut redoslijed za: :]
-	[IT:Ordine inverso di: :]
-	[JA:µÕ½ç¤ËÊÂ¤Ù¤ë: :]
-	[NO:Omvendt rekkefølge for: :]
-	[PL:Odwróæ kolejno¶æ: :]
-	[SV:Omvänd ordning för: :]
-	[ES:Invertir el orden de: :]
-	[NL:Gebruik omgekeerde sortering voor: :]
-</define-tag-sliced>
-<define-tag-sliced status whitespace=delete>
-	[EN:status:]
-	[CA:estat:]
-	[DA:status:]
-	[DE:Status:]
-	[FI:tila:]
-	[FR:état:]
-	[HR:stanje:]
-	[IT:stato:]
-	[JA:¾õÂÖ:]
-	[NO:status:]
-	[PL:stanów:]
-	[SV:status:]
-	[ES:estado:]
-	[NL:status:]
-</define-tag-sliced>
-<define-tag-sliced severities whitespace=delete>
-	[EN:severities:]
-	[CA:gravetat:]
-	[DA:alvorlighedsgrader:]
-	[DE:Dringlichkeiten:]
-	[FI:vakavuudet:]
-	[FR:gravités:]
-	[HR:severityi:]
-	[IT:gravità:]
-	[JA:½ÅÍ×ÅÙ:]
-	[NO:alvorlighetsgrader:]
-	[PL:powag:]
-	[SV:allvarlighetsgrader:]
-	[ES:gravedad:]
-	[NL:ernst:]
-</define-tag-sliced>
-<define-tag-sliced bugs whitespace=delete>
-	[EN:bugs:]
-	[CA:errors:]
-	[DA:fejl:]
-	[DE:Fehler:]
-	[FI:viat:]
-	[FR:bogues:]
-	[HR:bugovi:]
-	[IT:anomalie:]
-	[JA:¥Ð¥°:]
-	[PL:b³êdów:]
-	[SV:fel:]
-	[ES:fallos:]
-	[NL:bugs:]
-</define-tag-sliced>
-<define-tag-sliced status_include whitespace=delete>
-	[EN:Include status: :]
-	[CA:Incloure l'estat: :]
-	[DA:Status indeholder: :]
-	[DE:Status einschliessen: :]
-	[FI:Sisällytä tila: :]
-	[FR:Inclus l'état ::]
-	[HR:Ukljuèi stanje: :]
-	[IT:Stato incluso: :]
-	[JA:´Þ¤á¤ë¾õÂÖ: :]
-	[PL:Pokazuj stany: :]
-	[SV:Inkludera status: :]
-	[ES:Estados a incluir: :]
-	[NL:Status bijsluiten::]
-</define-tag-sliced>
-<define-tag-sliced status_exclude whitespace=delete>
-	[EN:Exclude status: :]
-	[CA:Excloure l'estat: :]
-	[DA:Status indeholder ikke: :]
-	[DE:Status ausschliessen: :]
-	[FI:Poista tila: :]
-	[FR:Exclu l'état ::]
-	[HR:Iskljuèi stanje: :]
-	[IT:Stato escluso: :]
-	[JA:´Þ¤á¤Ê¤¤¾õÂÖ: :]
-	[PL:Nie pokazuj stanów: :]
-	[SV:Exkludera status: :]
-	[ES:Estados a excluir: :]
-	[NL:Status niet bijsluiten: :]
-</define-tag-sliced>
-<define-tag-sliced severity_include whitespace=delete>
-	[EN:Include severity: :]
-	[CA:Incloure gravetat: :]
-	[DA:Alvorlighedsgrad indeholder: :]
-	[DE:Dringlichkeit einschliessen: :]
-	[FI:Sisällytä vakavuus: :]
-	[FR:Inclus la gravité ::]
-	[HR:Ukljuèen severity: :]
-	[IT:Includi gravità: :]
-	[JA:´Þ¤á¤ë½ÅÍ×ÅÙ: :]
-	[NO:Inkludér alvorlighetsgrader: :]
-	[PL:Pokazuj powagi: :]
-	[SV:Inkludera allvarlighetsgrader: :]
-	[ES:Gravedades a incluir: :]
-	[NL:Ernst bijsluiten: :]
-</define-tag-sliced>
-<define-tag-sliced severity_exclude whitespace=delete>
-	[EN:Exclude severity: :]
-	[CA:Excloure gravetat: :]
-	[DA:Alvorlighedsgrad indeholder ikke: :]
-	[DE:Dringlichkeit ausschliessen: :]
-	[FI:Poista vakavuus: :]
-	[FR:Exclu la gravité ::]
-	[HR:Iskljuèen severity: :]
-	[IT:Escludi gravità: :]
-	[JA:´Þ¤á¤Ê¤¤½ÅÍ×ÅÙ: :]
-	[NO:Ekskludér alvorlighetsgrad: :]
-	[PL:Nie pokazuj powag: :]
-	[SV:Exkludera allvarlighetsgrader: :]
-	[ES:Gravedades a excluir: :]
-	[NL:Ernst niet bijsluiten: :]
-</define-tag-sliced>
-<define-tag-sliced open whitespace=delete>
-	[EN:open:]
-	[CA:obert:]
-	[DA:åben:]
-	[DE:open:]
-	[FI:avoin:]
-	[FR:ouvert:]
-	[HR:otvoreni:]
-	[IT:open:]
-	[JA:¥ª¡¼¥×¥ó:]
-	[NO:åpen:]
-	[PL:otwarty:]
-	[SV:öppet:]
-	[ES:abierto:]
-	[NL:open:]
-</define-tag-sliced>
-<define-tag-sliced forwarded whitespace=delete>
-	[EN:forwarded:]
-	[CA:enviat:]
-	[DA:videresendt:]
-	[DE:forwarded:]
-	[FI:siirretty eteenpäin:]
-	[FR:transmis:]
-	[HR:proslijeðeni:]
-	[IT:forwarded:]
-	[JA:¾åÎ®¤ËÅ¾Á÷ºÑ:]
-	[NO:videresendt:]
-	[PL:przekazany:]
-	[SV:vidaresänt:]
-	[ES:reenviado:]
-	[NL:doorgestuurd:]
-</define-tag-sliced>
-<define-tag-sliced pending whitespace=delete>
-	[EN:pending:]
-	[CA:pendent:]
-	[DA:i gang:]
-	[DE:pending:]
-	[FI:ratkaisematon:]
-	[FR:en cours:]
-	[HR:u radu:]
-	[IT:pending:]
-	[JA:Î±ÊÝ:]
-	[NO:på gang:]
-	[PL:poprawiany:]
-	[SV:på gång:]
-	[ES:pendiente:]
-	[NL:in afwachting:]
-</define-tag-sliced>
-<define-tag-sliced fixed whitespace=delete>
-	[EN:fixed:]
-	[CA:fixat:]
-	[DA:rettet:]
-	[DE:fixed:]
-	[FI:korjattu:]
-	[FR:résolu:]
-	[HR:rije¹eni:]
-	[IT:fixed:]
-	[JA:½¤ÀµºÑ:]
-	[NO:rettet:]
-	[PL:poprawiony:]
-	[SV:rättat:]
-	[ES:arreglado:]
-	[NL:opgelost:]
-</define-tag-sliced>
-<define-tag-sliced done whitespace=delete>
-	[EN:done:]
-	[CA:tancat:]
-	[DA:færdig:]
-	[DE:done:]
-	[FI:valmis:]
-	[FR:fini:]
-	[HR:gotovi:]
-	[IT:done:]
-	[JA:²ò·è:]
-	[NO:ferdigt:]
-	[PL:zamkniêty:]
-	[SV:klart:]
-	[ES:cerrado:]
-	[NL:klaar:]
-</define-tag-sliced>
-<define-tag-sliced critical whitespace=delete>
-	[EN:critical:]
-	[CA:crític:]
-	[DA:kritisk:]
-	[DE:critical:]
-	[FI:kriittinen:]
-	[FR:critique:]
-	[HR:kritièni:]
-	[IT:critical:]
-	[JA:Ã×Ì¿Åª:]
-	[NO:kritisk:]
-	[PL:krytyczny:]
-	[SV:kritiskt:]
-	[ES:crítico:]
-	[NL:kritiek:]
-</define-tag-sliced>
-<define-tag-sliced grave whitespace=delete>
-	[EN:grave:]
-	[CA:greu:]
-	[DA:graverende:]
-	[DE:grave:]
-	[FI:haudanvakava:]
-	[FR:grave:]
-	[HR:te¹ki:]
-	[IT:grave:]
-	[JA:½ÅÂç:]
-	[NO:graverende:]
-	[PL:bardzo powa¿ny:]
-	[SV:gravt:]
-	[ES:grave:]
-	[NL:zeer ernstig:]
-</define-tag-sliced>
-<define-tag-sliced serious whitespace=delete>
-	[EN:serious:]
-	[CA:seriós:]
-	[DA:alvorlig:]
-	[DE:serious:]
-	[FI:vakava:]
-	[FR:sérieux:]
-	[HR:ozbiljni:]
-	[IT:serious:]
-	[JA:¿¼¹ï:]
-	[NO:alvorlig:]
-	[PL:powa¿ny:]
-	[SV:allvarligt:]
-	[ES:serio:]
-	[NL:ernstig:]
-</define-tag-sliced>
-<define-tag-sliced important whitespace=delete>
-	[EN:important:]
-	[CA:important:]
-	[DA:vigtig:]
-	[DE:important:]
-	[FI:tärkeä:]
-	[FR:important:]
-	[HR:va¾ni:]
-	[IT:important:]
-	[JA:½ÅÍ×:]
-	[NO:viktig:]
-	[PL:wa¿ny:]
-	[SV:viktigt:]
-	[ES:importante:]
-	[NL:belangrijk:]
-</define-tag-sliced>
-<define-tag-sliced normal whitespace=delete>
-	[EN:normal:]
-	[CA:normal:]
-	[DA:normal:]
-	[DE:normal:]
-	[FI:normaali:]
-	[FR:normal:]
-	[HR:normalni:]
-	[IT:normal:]
-	[JA:ÄÌ¾ï:]
-	[NO:vanlig:]
-	[PL:zwyk³y:]
-	[SV:normalt:]
-	[NL:normaal:]
-</define-tag-sliced>
-<define-tag-sliced minor whitespace=delete>
-	[EN:minor:]
-	[CA:menor:]
-	[DA:mindre:]
-	[DE:minor:]
-	[FI:vähäpätöinen:]
-	[FR:mineur:]
-	[HR:maleni:]
-	[IT:minor:]
-	[JA:·ÚÅÙ:]
-	[NO:liten:]
-	[PL:drobny:]
-	[SV:mindre:]
-	[ES:menor:]
-	[NL:klein:]
-</define-tag-sliced>
-<define-tag-sliced wishlist whitespace=delete>
-	[EN:wishlist:]
-	[CA:desitg:]
-	[DA:ønskeliste:]
-	[DE:wishlist:]
-	[FI:toive:]
-	[FR:souhait:]
-	[HR:¾elje:]
-	[IT:wishlist:]
-	[JA:Í×Ë¾:]
-	[NO:ønske:]
-	[PL:¿yczenie:]
-	[SV:önskelista:]
-	[ES:deseo:]
-	[NL:verzoek:]
-</define-tag-sliced>
+<bind-gettext-domain domain="bugs" />
 
-#
-# DON'T try to translate anything below this line
-#
+<define-tag flags whitespace=delete>
+  <gettext domain="bugs">Flags:</gettext>
+</define-tag>
+<define-tag active_bugs whitespace=delete>
+  <gettext domain="bugs">active bugs</gettext>
+</define-tag>
+<define-tag archived_bugs whitespace=delete>
+  <gettext domain="bugs">archived bugs</gettext>
+</define-tag>
+<define-tag no_status whitespace=delete>
+  <gettext domain="bugs">no ordering by status or severity</gettext>
+</define-tag>
+<define-tag reverse_order whitespace=delete>
+  <gettext domain="bugs">Reverse order of: </gettext>
+</define-tag>
+<define-tag status whitespace=delete>
+  <gettext domain="bugs">status</gettext>
+</define-tag>
+<define-tag severities whitespace=delete>
+  <gettext domain="bugs">severities</gettext>
+</define-tag>
+<define-tag bugs whitespace=delete>
+  <gettext domain="bugs">bugs</gettext>
+</define-tag>
+<define-tag status_include whitespace=delete>
+  <gettext domain="bugs">Include status: </gettext>
+</define-tag>
+<define-tag status_exclude whitespace=delete>
+  <gettext domain="bugs">Exclude status: </gettext>
+</define-tag>
+<define-tag severity_include whitespace=delete>
+  <gettext domain="bugs">Include severity: </gettext>
+</define-tag>
+<define-tag severity_exclude whitespace=delete>
+  <gettext domain="bugs">Exclude severity: </gettext>
+</define-tag>
+<define-tag open whitespace=delete>
+  <gettext domain="bugs">open</gettext>
+</define-tag>
+<define-tag forwarded whitespace=delete>
+  <gettext domain="bugs">forwarded</gettext>
+</define-tag>
+<define-tag pending whitespace=delete>
+  <gettext domain="bugs">pending</gettext>
+</define-tag>
+<define-tag fixed whitespace=delete>
+  <gettext domain="bugs">fixed</gettext>
+</define-tag>
+<define-tag done whitespace=delete>
+  <gettext domain="bugs">done</gettext>
+</define-tag>
+<define-tag critical whitespace=delete>
+  <gettext domain="bugs">critical</gettext>
+</define-tag>
+<define-tag grave whitespace=delete>
+  <gettext domain="bugs">grave</gettext>
+</define-tag>
+<define-tag serious whitespace=delete>
+  <gettext domain="bugs">serious</gettext>
+</define-tag>
+<define-tag important whitespace=delete>
+  <gettext domain="bugs">important</gettext>
+</define-tag>
+<define-tag normal whitespace=delete>
+  <gettext domain="bugs">normal</gettext>
+</define-tag>
+<define-tag minor whitespace=delete>
+  <gettext domain="bugs">minor</gettext>
+</define-tag>
+<define-tag wishlist whitespace=delete>
+  <gettext domain="bugs">wishlist</gettext>
+</define-tag>
+
 <ul>
   <li><small><flags>
   <input type="radio" name="archive" value="no" checked> <active_bugs>

@@ -1,4 +1,4 @@
-# This Makefile should need no changes from webwml/english/devel/Makefile
+# This Makefile should need no changes from webwml/english/po/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
@@ -9,56 +9,54 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-TEMPLATE_FILES  = $(wildcard $(TEMPLDIR)/*.wml $(TEMPLDIR)/*/*.wml) $(TEMPLDIR)/countries.def
-TEMPLATE_POT    = $(ENGLISHDIR)/po/templates.pot
+DOMAINS = templates ports bugs
 
+POTFILES = $(addprefix $(ENGLISHDIR)/po/,$(addsuffix .pot,$(DOMAINS)))
+MOFILES = $(addsuffix .mo,$(DOMAINS))
+
+TEMPLATE_FILES  = $(wildcard $(TEMPLDIR)/*.wml $(TEMPLDIR)/*/*.wml) $(TEMPLDIR)/countries.def
 PORTS_FILES     = $(ENGLISHDIR)/ports/menu.defs $(ENGLISHDIR)/ports/mips/cpu.data $(wildcard $(ENGLISHDIR)/ports/*/menu.inc)
-PORTS_POT       = $(ENGLISHDIR)/po/ports.pot
+BUGS_FILES     = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
 
 ifeq "$(LANGUAGE)" "en"
-all:: $(TEMPLATE_POT) $(PORTS_POT)
+all:: $(POTFILES)
 else
-all:: templates.mo ports.mo
+all:: $(MOFILES)
 install:: install-mo
 endif
 
-#   Templates files
-$(TEMPLATE_POT): $(TEMPLATE_FILES)
+$(ENGLISHDIR)/po/templates.pot: $(TEMPLATE_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(TEMPLATE_FILES) > $@
 
-templates.mo: templates.$(LANGUAGE).po
-	msgfmt --statistics -o $@ templates.$(LANGUAGE).po
-
-#   Ports menus
-$(PORTS_POT): $(PORTS_FILES)
+$(ENGLISHDIR)/po/ports.pot: $(PORTS_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(PORTS_FILES) > $@
 
-ports.mo: ports.$(LANGUAGE).po
-	msgfmt --statistics -o $@ ports.$(LANGUAGE).po
+$(ENGLISHDIR)/po/bugs.pot: $(BUGS_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(BUGS_FILES) > $@
 
+%.mo: %.$(LANGUAGE).po
+	msgfmt --statistics -o $@ $*.$(LANGUAGE).po
 
 init-po:
-	cp $(TEMPLATE_POT) templates.$(LANGUAGE).po
-	cp $(PORTS_POT) ports.$(LANGUAGE).po
+	for d in $(DOMAINS); do \
+	  cp $(ENGLISHDIR)/po/$$d.pot $$d.$(LANGUAGE).po; \
+	done
 
 update-po:
-	msgmerge templates.$(LANGUAGE).po $(TEMPLATE_POT) -o templates.$(LANGUAGE).po.new && mv templates.$(LANGUAGE).po.new templates.$(LANGUAGE).po
-	msgmerge ports.$(LANGUAGE).po $(PORTS_POT) -o ports.$(LANGUAGE).po.new && mv ports.$(LANGUAGE).po.new ports.$(LANGUAGE).po
+	for d in $(DOMAINS); do \
+	  msgmerge -q $$d.$(LANGUAGE).po $(ENGLISHDIR)/po/$$d.pot -o $$d.$(LANGUAGE).po.new && mv $$d.$(LANGUAGE).po.new $$d.$(LANGUAGE).po; \
+	done
 
-install-mo: templates.mo ports.mo
+install-mo: $(MOFILES)
 	[ -d $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES ] || mkdir -p $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES
-	if [ -f $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/templates.mo ]; then \
-       cmp templates.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/templates.mo >/dev/null 2>&1 \
-       || cp -f templates.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/templates.mo; \
-     else \
-       cp -f templates.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/templates.mo; \
-     fi
-	if [ -f $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/ports.mo ]; then \
-       cmp ports.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/ports.mo >/dev/null 2>&1 \
-       || cp -f ports.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/ports.mo; \
-     else \
-       cp -f ports.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/ports.mo; \
-     fi
+	for d in $(DOMAINS); do \
+          if [ -f $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/$$d.mo ]; then \
+            cmp $$d.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/$$d.mo >/dev/null 2>&1 \
+            || cp -f $$d.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/$$d.mo; \
+          else \
+            cp -f $$d.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/$$d.mo; \
+          fi; \
+        done
 
 clean::
 	-rm -f *.pot *.mo
