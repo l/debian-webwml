@@ -59,8 +59,6 @@ sub package_index_walker {
 
 	progress() if $env->{opts}{progress};
 	my $name = $pkg->get_name;
-	my $fl = substr $name, 0, 1;
-	my $sl = substr $name, 0, 2;
 
 	if ( $pkg->is_virtual ) { return; }
 
@@ -120,10 +118,8 @@ sub print_virt_pack {
     my ( $pkg, $env ) = @_;
 
     my $name = $pkg->get_name;
-    my $fl = substr $name, 0, 1;
-    my $sl = substr $name, 0, 2;
 
-    my $package_page = header( $name, '../../..', '../../..', 
+    my $package_page = header( $name, '../..', '../..', 
 			       $env->{lang}, gettext( "virtual package" ),
 			       "$env->{distribution}, virtual, virtual, virtual, size:0 virtual" );
     $package_page .= sprintf( gettext( "<h1>Virtual Package: %s</h1>" ), 
@@ -138,17 +134,18 @@ sub print_virt_pack {
 	my $p_pkg = $env->{db}->get_pkg( $p );
 
 	if ( $p_pkg ) {
-	    my $p_fl = substr $p, 0, 1;
-	    my $p_sl = substr $p, 0, 2;
+	    my %sections = $p_pkg->get_arch_fields( 'section',
+						    $env->{archs} );
+	    my $section = $sections{max_unique};
 	    my %desc_md5s = $p_pkg->get_arch_fields( 'description-md5', 
 						     $env->{archs} );
 	    my $short_desc = encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" );
-	    $package_page .= "<dt><a href=\"../../$fl/$sl/$p\">$p</a></dt>\n".
+	    $package_page .= "<dt><a href=\"../$section/$p\">$p</a></dt>\n".
 		"\t<dd>$short_desc</dd>\n";
 	} else { die "$p"; } #FIXME
     }
     $package_page .= "</dl>\n";
-    $package_page .= trailer( '../../..' );
+    $package_page .= trailer( '../..' );
     
     my $dirname = "$env->{dest_dir}/virtual";
     unless ( -d $dirname ) {
