@@ -32,7 +32,7 @@
 <menu-item basename="index">
 [EN:Debian for PowerPC:]
 [AR:Debian for PowerPC:]
-[DA:Debian for PowerPC:]
+[DA:Debian til PowerPC:]
 [DE:Debian für PowerPC:]
 [EL:Debian for PowerPC:]
 [EO:Debian for PowerPC:]

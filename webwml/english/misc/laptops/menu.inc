@@ -32,7 +32,7 @@
 <menu-item basename="index">
 [EN:Debian for Laptops:]
 [AR:Debian for Laptops:]
-[DA:Debian for Laptops:]
+[DA:Debian til Laptops:]
 [DE:Debian für Laptops:]
 [EL:Debian for Laptops:]
 [EO:Debian for Laptops:]

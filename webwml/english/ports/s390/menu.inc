@@ -29,7 +29,7 @@
 <menu-item basename="index">
 [EN:Debian for S/390:]
 [AR:Debian for S/390:]
-[DA:Debian for S/390:]
+[DA:Debian til S/390:]
 [DE:Debian für S/390:]
 [EL:Debian for S/390:]
 [EO:Debian for S/390:]
