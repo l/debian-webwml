@@ -141,12 +141,25 @@ sub readinfo {
                 and join("\n", $oldoptions->{skipdir}) eq join("\n", $self->{OPTIONS}->{skipdir})
                 and join("\n", $oldoptions->{matchfile}) eq join("\n", $self->{OPTIONS}->{matchfile});
 
-        #   Read CVS/Repository
+        #   Read CVS/Repository and CVS/Root to determine top-level
+        #   directory
         open(REP, "< $dir/CVS/Repository")
                 or croak "Unable to read file $dir/CVS/Repository\n";
         $self->_verbose("Reading $dir/CVS/Repository");
         $line = <REP>;
         close(REP);
+        if ($line =~ m#^/#) {
+                #   Absolute path, we must read CVS/Root
+                open(ROOT, "< $dir/CVS/Root")
+                        or croak "Unable to read file $dir/CVS/Root\n";
+                $self->_verbose("Reading $dir/CVS/Root");
+                my $root = <ROOT>;
+                close(ROOT);
+                chomp $root;
+                $root =~ s/^:[^:]+://;
+                $line =~ s#^$root/##
+                        or croak "Unable to determine toplevel CVS directory\n";
+        }
         chomp $line;
         $line =~ s{[^/]+}{..}g;
         $line =~ s{^\.\.}{.};
