@@ -271,8 +271,11 @@ sub printfooter {
 
     print <<END;
 
-<p align="right"><small><i><a href="http://packages.debian.org/">
-Packages search page</a></i></small></p>
+</div>
+
+<p style="text-align:right;font-size:small;font-stlye:italic"><a href="http://packages.debian.org/">Packages search page</a></p>
+
+</div>
 END
 
     print $input->end_html;

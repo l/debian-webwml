@@ -488,8 +488,11 @@ sub multipageheader {
 
 sub printfooter {
 print <<END;
+</div>
 
 <p style="text-align:right;font-size:small;font-stlye:italic"><a href="$SEARCHPAGE">Packages search page</a></p>
+
+</div>
 END
 
 print $input->end_html;
