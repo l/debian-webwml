@@ -375,7 +375,7 @@ END
 	print <<END;
 <tr>
   <td valign="top"><${countrycode}c></td>
-  <td valign="top" align="center"><a href="ftp://$site$mirror{$site}{method}{'archive-ftp'}">$site</a></td>
+  <td valign="top" align="center"><a href="http://$site$mirror{$site}{method}{'archive-http'}">$site</a></td>
   <td>
 END
 	if ($site eq "ftp.us.debian.org") {
