@@ -15,8 +15,8 @@ merchandise.$(LANGUAGE).html: merchandise.wml $(TEMPLDIR)/template.wml \
   $(TEMPLDIR)/url.wml $(ENGLISHSRCDIR)/misc/merchandise.data \
 	$(ENGLISHSRCDIR)/misc/merchandise.def $(GETTEXTDEP)
 
-hardware-wanted.$(LANGUAGE).html: hardware-wanted.wml $(TEMPLDIR)/template.wml \
-  $(TEMPLDIR)/url.wml $(ENGLISHSRCDIR)/misc/hardware-wanted.data \
+hardware_wanted.$(LANGUAGE).html: hardware_wanted.wml $(TEMPLDIR)/template.wml \
+  $(TEMPLDIR)/url.wml $(ENGLISHSRCDIR)/misc/hardware_wanted.data \
   $(ENGLISHSRCDIR)/misc/hardware.def $(GETTEXTDEP)
 
 ifeq "$(LANGUAGE)" "en"
