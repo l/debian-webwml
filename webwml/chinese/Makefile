@@ -4,7 +4,7 @@
 
 WMLBASE=.
 CUR_DIR=
-SUBS=Bugs MailingLists News Pics SPI chinese consultants devel distrib doc \
+SUBS=Bugs MailingLists News Pics chinese consultants devel distrib doc \
 events intro international logos mirror misc partners ports releases security \
 vote y2k
 
