@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+. `dirname $0`/../common.sh
+
+for release in woody sarge; do
+    echo "rebuilding the release notes for $release" >> $crondir/lessoften.log
+    (cd $webtopdir/release-notes/$release && cvs update -d -P) >> $crondir/lessoften.log 2>&1
+    make -C $webtopdir/release-notes/$release publish \
+	 PUBLISHDIR=$webtopdir/www/releases/$release >> $crondir/lessoften.log
+done
+
+echo
