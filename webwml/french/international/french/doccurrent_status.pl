@@ -193,17 +193,21 @@ $translations_status = {
 	'translation_package'	=> 'doc-debian-fr',
 },
 
+
 'developers-reference' => {
-	'status'		=> 5,
-	'since'			=> '28/05/2001',
-	'translation_name'	=> 'Manuel de référence du développeur Debian',
-	'translation_maintainer'=> ['Antoine Hulin <antoine@origan.fdn.fr>'],
-	'base_revision'		=> '',
-	'translation_package'	=> 'doc-debian-fr',
-	'translation_url'	=> 'http://www.debian.org/doc/manuals/developers-reference/index.fr.html',
-	'old_translators'	=> ['Alain Meessen <ameessen@ulb.ac.be>',
+	'status' => 4,
+	'since' => '19/12/2001',
+	'translation_name' => 'Référence du développeur Debian',
+	'translation_maintainer'=> ['Antoine Hulin <antoine@origan.fdn.org>'],
+	'base_revision' => '1.72',
+	'translation_package' => 'developers-reference',
+	'translation_url'       => 'http://www.debian.org/doc/manuals/developers-reference/index.fr.html',
+	'translation_cvs_url'   => 'http://cvs.debian.org/ddp/manuals.sgml/developers-reference/?cvsroot=debian-do
++c',
+	'translation_dev_url'   => 'http://www.fdn.org/~hulin/',
+	'old_translators'       => ['Alain Meessen <ameessen@ulb.ac.be>',
 	                            'Herve Floch <Herve.Floch@linux.eu.org>',
-				    'Laurent Picouleau <laurent.picouleau@wanadoo.fr>'],
+	                            'Laurent Picouleau <laurent.picouleau@wanadoo.fr>'],
 },
 
 'internals' => {
