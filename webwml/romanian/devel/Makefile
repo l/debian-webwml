@@ -10,5 +10,5 @@ include $(WMLBASE)/Make.lang
 
 people.$(LANGUAGE).html: people.wml $(TEMPLDIR)/template.wml \
  $(ENGLISHSRCDIR)/devel/people.names
-	$(WML) -W1,-N $<
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/basic.wml $(TEMPLDIR)/develbar.wml
+index.$(LANGUAGE).html: index.wml \
+	$(ENGLISHSRCDIR)/devel/index.include $(TEMPLDIR)/template.wml
