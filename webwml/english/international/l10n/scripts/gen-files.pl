@@ -189,7 +189,7 @@ sub get_stats_templates {
                         $incl{$lang} .= $data->pooldir($pkg)."/$link_trans.gz\">$template</a></td><td>";
                         if ($link_orig ne '') {
                                 $incl{$lang} .= "<a href=\"";
-                                $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root);
+                                $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "templates/unstable/";
                                 $incl{$lang} .= $data->pooldir($pkg)."/$link_orig.gz\">templates</a>";
                         }
                         $incl{$lang} .= "</td></tr>\n";
