@@ -18,9 +18,26 @@ my $langs = {
         all             => {},
 };
 
+#   These packages use a RFC1766 naming convention for language codes
+#   which makes output page look ugly.  Do not display them until a
+#   better solution is found
+#   This list is defined in list-languages.pl and gen-files.pl
+my %skip_po = (
+        abiword         => 1,
+        squirrelmail    => 1,
+        #   Horde related packages
+        horde2          => 1,
+        imp3            => 1,
+        kronolith       => 1,
+        mnemo           => 1,
+        nag             => 1,
+        'sork-passwd'   => 1,
+        turba           => 1,
+);
+
 my ($pkg, $line, $file, $lang);
 foreach $pkg ($data->list_packages()) {
-        if ($data->has_po($pkg)) {
+        if ($data->has_po($pkg) && !defined($skip_po{$pkg})) {
                 foreach $line (@{$data->po($pkg)}) {
                         ($file, $lang) = @{$line};
                         $langs->{po}->{$lang}  = 1;
