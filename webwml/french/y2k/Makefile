@@ -4,15 +4,10 @@
 
 WMLBASE=..
 CUR_DIR=y2k
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 index.$(LANGUAGE).html: ../../english/y2k/index.data
 extra.$(LANGUAGE).html: ../../english/y2k/extra.data

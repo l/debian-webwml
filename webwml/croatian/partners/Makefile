@@ -4,15 +4,10 @@
 
 WMLBASE=..
 CUR_DIR=partners
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=images
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
                         $(ENGLISHSRCDIR)/partners/index.include

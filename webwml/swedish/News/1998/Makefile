@@ -4,14 +4,10 @@
 
 WMLBASE=../..
 CUR_DIR=News/1998
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
 
 # Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(wildcard 1998*.wml) $(wildcard 1998*.title) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml

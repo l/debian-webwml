@@ -4,15 +4,10 @@
 
 WMLBASE=..
 CUR_DIR=devel
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=debian-jr
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 # Do Not modify the following line
 people.$(LANGUAGE).html: people.wml $(TEMPLDIR)/template.wml $(ENGLISHSRCDIR)/devel/people.names

@@ -4,16 +4,11 @@
 
 WMLBASE=..
 CUR_DIR=releases
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 #SUBS=hamm slink potato woody
 SUBS=potato
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 # unfortunately, I have to force this since it checks whether directories exist
 index.$(LANGUAGE).html: FORCE

@@ -4,15 +4,10 @@
 
 WMLBASE=..
 CUR_DIR=events
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=1998 1999 2000
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 #do not modify the following line(s)
 index.$(LANGUAGE).html: index.wml $(wildcard 1998/*.wml) $(wildcard 1999/*.wml) \

@@ -4,8 +4,6 @@
 
 WMLBASE=.
 CUR_DIR=
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=Bugs MailingLists News Pics SPI consultants devel distrib doc events intro \
 international logos mirror misc partners ports releases security vote y2k
 
@@ -17,4 +15,3 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(wildcard security/2000/2000*.wml) $(wildcard $(ENGLISHSRCDIR)/security/2000/2000*.wml) \
 		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
 	$(WML) index.wml
-
