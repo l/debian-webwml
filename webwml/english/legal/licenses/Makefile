@@ -28,3 +28,8 @@ byname.$(LANGUAGE).html: byname.wml $(wildcard dls-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/dls-*.data) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/legal_lists.wml $(GETTEXTDEP)
 	$(WML) $(<F)
+
+byclass.$(LANGUAGE).html: byclass.wml $(wildcard dls-*.wml) \
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/dls-*.data) \
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/legal_lists.wml $(GETTEXTDEP)
+	$(WML) $(<F)
