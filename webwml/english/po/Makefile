@@ -27,8 +27,7 @@ OTHERS_FILES    = $(ENGLISHDIR)/News/press/press.tags $(ENGLISHDIR)/MailingLists
 ifeq "$(LANGUAGE)" "en"
 all install:: $(POTFILES)
 else
-all:: $(MOFILES)
-install:: install-mo
+all install:: install-mo
 endif
 
 $(ENGLISHDIR)/po/templates.pot: $(TEMPLATE_FILES)
