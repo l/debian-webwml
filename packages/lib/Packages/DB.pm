@@ -617,9 +617,7 @@ sub calculate_depends {
 	print "\r$num/$max_num" if $self->{config}->{verbose};
 	foreach my $v ( values %{$pkg->{versions}} ) {
 	    foreach my $a ( values %$v ) {
-		#TODO: merge depends & pre-depends
-		#TODO: done, but somewhat ugly
-		 $a->{depends} = $a->{"pre-depends"} if exists $a->{"pre-depends"};
+		 $a->{depends} .= ", $a->{'pre-depends'}" if exists $a->{"pre-depends"};
 		foreach ( qw( depends pre-depends recommends 
 			      suggests conflicts enhances 
 			      provides ) ) {
