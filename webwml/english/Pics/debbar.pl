@@ -62,7 +62,7 @@ register
       [ 
        [PF_STRING, "words", "words to put in button", "About"], 
        [PF_STRING, "fontface", "font face", "Lucida"], 
-       [PF_STRING, "fontsize", "font size", "14"], 
+       [PF_STRING, "fontsize", "font size", "15"], 
        [PF_STRING, "fonttype", "font type (bold, medium etc)", "bold"], 
        [PF_COLOR, "fontcolor", "Font color", [255,255,255]] ,
        [PF_COLOR, "bgcolor", "Background color", [0,0,132]],
