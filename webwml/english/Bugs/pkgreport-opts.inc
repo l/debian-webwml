@@ -312,29 +312,32 @@
 #
 # DON'T try to translate anything below this line
 #
-  <small>
-  <ul>
-  <li><flags>
+<ul>
+  <li><small><flags>
   <input type="radio" name="archive" value="no" checked> <active_bugs>
   <input type="radio" name="archive" value="yes"> <archived_bugs>
   <input type="checkbox" name="raw" value="yes"> <no_status>
-  <li><reverse_order>
+  </small>
+  <li><small><reverse_order>
   <input type="checkbox" name="pend-rev" value="yes"><status>
   <input type="checkbox" name="sev-rev" value="yes"><severities>
   <input type="checkbox" name="bug-rev" value="yes"><bugs>
-  <li><status_include>
+  </small>
+  <li><small><status_include>
   <input type="checkbox" name="pend-inc" value="pending"><open>
   <input type="checkbox" name="pend-inc" value="forwarded"><forwarded>
   <input type="checkbox" name="pend-inc" value="pending-fixed"><pending>
   <input type="checkbox" name="pend-inc" value="fixed"><fixed>
   <input type="checkbox" name="pend-exc" value="done"><done>
-  <li><status_exclude>
+  </small>
+  <li><small><status_exclude>
   <input type="checkbox" name="pend-exc" value="pending"><open>
   <input type="checkbox" name="pend-exc" value="forwarded"><forwarded>
   <input type="checkbox" name="pend-exc" value="pending-fixed"><pending>
   <input type="checkbox" name="pend-exc" value="fixed"><fixed>
   <input type="checkbox" name="pend-exc" value="done"><done>
-  <li><severity_include>
+  </small>
+  <li><small><severity_include>
   <input type="checkbox" name="sev-inc" value="critical"><critical>
   <input type="checkbox" name="sev-inc" value="grave"><grave>
   <input type="checkbox" name="sev-inc" value="serious"><serious>
@@ -343,7 +346,8 @@
   <input type="checkbox" name="sev-inc" value="minor"><minor>
   <input type="checkbox" name="sev-inc" value="wishlist"><wishlist>
   <input type="checkbox" name="sev-inc" value="fixed"><fixed>
-  <li><severity_exclude>
+  </small>
+  <li><small><severity_exclude>
   <input type="checkbox" name="sev-exc" value="critical"><critical>
   <input type="checkbox" name="sev-exc" value="grave"><grave>
   <input type="checkbox" name="sev-exc" value="serious"><serious>
@@ -352,5 +356,5 @@
   <input type="checkbox" name="sev-exc" value="minor"><minor>
   <input type="checkbox" name="sev-exc" value="wishlist"><wishlist>
   <input type="checkbox" name="sev-exc" value="fixed"><fixed>
-  </ul>
   </small>
+</ul>
