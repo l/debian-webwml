@@ -185,6 +185,7 @@
         echo "<TD>";
         if ($am) {
             echo "<A href=\"amstatus.php?"; ?><?=SID?><?;
+            echo "&user=";
         } else {
             echo "<A href=\"nmstatus.php?email=";
         }
