@@ -67,7 +67,7 @@ register
        [PF_COLOR, "fontcolor", "Font color", [255,255,255]] ,
        [PF_COLOR, "bgcolor", "Background color", [0,0,132]],
        [PF_STRING, "fontregistry", "font registry (iso8859 etc)", "*"], 
-       [PF_STRING, "fonttype", "font encoding (1 etc)", "*"]
+       [PF_STRING, "fontencoding", "font encoding (1 etc)", "*"]
       ], 
       \&debian_button; 
    
