@@ -331,7 +331,7 @@ sub get_stats_templates {
                                 $excl{$l} .= "[<a href=\"".($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root)."templates/unstable/".$data->pooldir($pkg)."/".$_.".gz\">".$count."</a>]";
                         }
 		        if (defined $tmpl_errors->{$pkg}) {
-			    $excl{$l} .= " (<a href=errors-by-pkg#P$pkg>!</a>)";
+			    $excl{$l} .= " (<a href=\"errors-by-pkg#P$pkg\">!</a>)";
 			}
                         $excl{$l} .= ", ";
                 }
