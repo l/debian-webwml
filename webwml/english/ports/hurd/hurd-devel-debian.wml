@@ -1,0 +1,265 @@
+#use wml::debian::template title="Debian GNU/Hurd --- Development" NOHEADER="yes"
+[ <a href="../">Ports</a> ]
+[ <a href="index">Debian GNU/Hurd</a> ]
+[ <a href="hurd-news">News</a> ]
+[ <a href="hurd-install">Installation</a> ]
+[ <a href="hurd-doc">Documentation</a> ]
+[ <a href="hurd-devel">Development</a> ]
+[ <a href="hurd-links">Links</a> ]
+[ <a href="hurd-contact">Contact</a> ]<p>
+
+<h1>Debian GNU/Hurd</h1>
+<h2>Development of the Distribution</h2>
+<h3>Boot Disks</h3>
+<p>
+Currently, we are investigating the various ways to boot a minimal Hurd
+system and how to create boot floppies.</p>
+
+<h3>Porting Debian Packages</h3>
+<P>
+If you want to help the Debian GNU/Hurd port, you should make yourself
+familiar with the Debian packaging system. Once you have done this by
+reading the available documentation and visiting the <a
+href="../../devel/">Developer's Corner</a> you should know how to extract
+Debian source packages and build a Debian package. Here is a crash course
+for the very lazy people:</p>
+
+<h3>Obtaining Source and Building Packages</h3>
+<p>Extracting a Debian source package requires the file
+<tt>package_version.dsc</tt> and the files listed in it. You build the
+Debian build directory with the command <tt>dpkg-source -x
+package_version.dsc</tt></p>
+
+<p>Building a package is done in the now existing Debian build directory
+<tt>package-version</tt> with the command <tt>dpkg -B -rsudo "-mMyName
+<MyEmail>"</tt>. Instead <tt>-B</tt> you can use <tt>-b</tt> if you also
+want to build the architecture independent parts of the package. You can use
+<tt>-rfakeroot</tt> instead <tt>-rsudo</tt> if you use the fakeroot package.
+You can do without the <tt>-r</tt> if you build as user root. You can add
+<tt>-uc</tt> to avoid signing the package with your pgp key.</p>
+
+<h3>Pick One</h3>
+<p>
+Which package needs to be worked on? Well, the best thing I can do for now
+is tell you which package you should not work on.
+
+<h4>Packages That Won't Be Ported</h4>
+<p>
+For some of these packages, you will find an explanation below.</p>
+<p>
+<code>base/update</code>
+</p>
+
+<h4>Packages Which Compile Cleanly Without Any Changes</h4>
+Most packages in section <code>base</code>,
+<code>games/an</code>,
+<code>math/bc</code>,
+<code>devel/bison</code>,
+<code>utils/bzip2</code>,
+<code>utils/cpio</code>,
+<code>devel/cvs</code>,
+<code>libs/db</code>,
+<code>devel/diffstat</code>,
+<code>editors/ed</code>,
+<code>mail/exim</code>,
+<code>mail/fetchmail</code>,
+<code>devel/flex</code>,
+<code>text/groff</code>,
+<code>text/gs</code>,
+<code>net/inetutils</code>,
+<code>utils/iselect</code>,
+<code>text/jade</code>,
+<code>editors/jed</code>,
+<code>text/less</code>,
+<code>net/lftp</code>,
+<code>libs/libglib</code>,
+<code>libs/libident</code>,
+<code>libs/libpng</code>,
+<code>web/lynx</code>,
+<code>devel/make</code>,
+<code>text/most</code>,
+<code>comm/minicom</code>,
+<code>mail/mpack</code>,
+<code>net/ncftp</code>,
+<code>net/netcat</code> (reported by Andres),
+<code>text/par</code>
+<code>libs/pcre2</code>,
+<code>doc/pinfo</code>,
+<code>mail/procmail</code>,
+<code>text/psutils</code>,
+<code>text/recode</code>,
+<code>utils/sharutils</code>,
+<code>libs/svgalib-dummy</code>,
+<code>libs/tk8.0</code>,
+<code>web/wget</code>.
+
+<h4>Packages Which Compile Cleanly With Only A Patch In The BTS</h4>
+<code>mail/biff</code> see NOT YET KNOWN.
+<code>base/debianutils</code> see <a href="http://bugs.debian.org/39126">Bug#39126</a>,
+<code>utils/file</code> see <a href="http://bugs.debian.org/37705">Bug#37705</a>,
+<code>games/fortune-mod</code> see <a href="http://bugs.debian.org/37091">Bug#37091</a>,
+<code>libs/libpaperg</code> see <a href="http://bugs.debian.org/39036">Bug#39036</a>,
+<code>doc/man-db</code> see <a href="http://bugs.debian.org/39039">Bug#39039</a>,
+<code>otherosfs/mtools</code> see <a href="http://bugs.debian.org/37757">Bug#37757</a>,
+<code>interpreters/gawk</code>.
+
+<h4>Pacxkages for which a source NMU was necessary</h4>
+<p>
+<code>base/shellutils</h4>,
+<code>base/shadow</code> see <a href="http://bugs.debian.org/42480">Bug#42480</a>.
+</p>
+
+<h4>Packages which need some hacking</h4>
+<p>
+The following packages are known to require some hacking, but there are
+already people caring about them. If you want to help out with a specific
+package in this list, let us know, but most likely you want to pick other
+packages beside these.</p>
+
+<ul>
+<li><b>Marcus Brinkmann</b>
+<p>Some packages in section <code>base</code>,
+<code>devel/egcs</code> (mostly resolved),
+<code>devel/gdb</code> (patch by Mark Kettenis),
+<code>interpreters/perl</code> (perl 5.005 mostly done),
+<code>web/apache</code> (easy, see <a href="http://bugs.debian.org/38328">Bug#38328</a>
+and implement use of <code>dpkg-architecture</code> in <code>debian/rules</code>),
+<code>admin/apt</code> (<code>archtable</code> mess, some building issues),
+<code>bind</code> (implement <code>dpkg-architecture</code> in <code>debian/rules</code>),
+<code>devel/binutils</code> (<code>gprof broken</code>),
+<code>bsdmainutils</code> and <code>bsdutils</code> (are obsoleted by
+<code>util-linux</code> (Jeff Bailey is working on it?),
+<code>admin/cron</code> (<code>MAXPATHLEN</code>, Robert Stepanek is working on it),
+<code>editors/emacs</code> (<code>dpkg-architecture</code> support),
+<code>gdbm</code>,
+<code>libs/libc0.2</code> (patches from CVS sometimes),
+<code>libs/liblockfile</code> (harmful),
+<code>mail/mailx</code> (<code>NOFILE</code>, <code>MAXPATHLEN</code>,
+ <code>MAXHOSTNAMLEN</code>, header files),
+<code>mail/mutt</code>,
+<code>text/sgml-tools</code> (<code>sgml2txt</code> is broken... or perl),
+<code>libs/slang</code>,
+<code>tex/tetex</code> (includes ncurses man pages, klibtool issue).
+</p>
+<p>
+As you can see, I am quite loaded. I wouldn't mind getting rid of one of
+the above packages, at least for some of them (for example, if you want to
+take a look at <code>mailx</code>, let me know).</p></li>
+<li><b>Brent Fulgham</b>: <code>editors/vim</code>,
+<code>interpreters/python</code>, <code>libs/tcl8.0</code>.</li>
+<li><b>Kalle Olavi Niemitalo</b>: <code>libs/libpaperg</code>,
+<code>graphics/netpbm</code>, <code>graphics/aalib</code>, <code>pointerize</code>,
+<code>libtiff</code>, <code>libs/svgalib</code>?.</li>
+</ul>
+
+<p>If I forgot you or some information is not up to date, please
+<a href="hurd-contact">let me know!</a>.</p>
+
+<h3>Further Information To Specific Packages</h3>
+<h4>base/update</h4>
+<p>
+The update package is not necessary, as the file systems are managed by
+their translators and sync themselves periodically. To change to sync
+interval, you can use <code>fsysopts</code> to adjust the <code>--sync</code>
+option. You can set different sync intervals for each file system!</p>
+To do this manully, use the <a href="hurd-doc-utils#syncfs"><code>syncfs</code>
+utility</a>.</p>
+<p>
+This means, that the update package is only interesting for Debian
+GNU/Linux, and won't be ported.</p>
+
+<h3>General Porting Issues</h3>
+Here is a list of common incompatibilities you may encounter when compiling
+insufficient portable software on the Hurd.
+</P>
+<P>
+<UL>
+<LI><code>Bad File Descriptor</code>
+<P>
+If you get <code>Bad File Descriptor</code> error when trying to read from a file
+(or accessing it at all), check the <code>open()</code> invocation. The second
+argument is the access method. If it is a hard coded number instead of a
+symbol defined in the standard header files, the code is screwed and should
+be fixed to either use <code>O_RDONLY</code>, <code>O_WRONLY</code> or
+<code>O_RDWR</code>. This bug was observed in the <code>fortunes</code> and
+<code>mtools</code> packages for example.
+</P></LI>
+<LI><code>PATH_MAX</code>
+<P>
+Every unconditionalized use of <code>PATH_MAX</code> is a POSIX incompatibility.
+If there is no upper limit on the length of a path, this symbol is not
+defined in any header file. Instead, you need to either use a different
+implementation that does not rely on the length of a string or use
+<code>sysconf()</code> to query the length at runtime. If <code>sysconf()</code>
+returns <code>-1</code>, you have to use <code>realloc()</code> to allocate the
+needed memory dynamically.
+</p></li>
+<LI><code>MAXHOSTNAMELEN</code>
+<P>see <code>PATH_MAX</code>
+</p></li>
+<li><code>MAXPATHLEN</code>
+<p>see <code>PATH_MAX</code>
+</p></li>
+<li><code>NOFILE</code>
+<p>see <code>PATH_MAX></code>
+</p></li>
+<li>Hurd specific <code>#define</code>
+<p>If you need to include specific code for the Hurd using
+<code>#if...#endif</code>, then you can use the <code>__GNU__</code> symbol
+to do so. But think (at least) thrice! before doing so. In <em>most</em>
+situations, this is completely unnecessary and will create more problems
+than it may solve. Better ask on the mailing list how to do it right if
+you can't think of a better solution.
+
+<li><code>sys_errlist[]</code> vs. <code>strerror()</code></li>
+<p>If a program has only support for <code>sys_errlist[]</code> you will
+have to do some work to make it compile on the Hurd, which has dropped
+support for it and does only provide <code>strerror()</code>. Steinar Hamre
+writes about <code>strerror():</p>
+<blockquote>
+<p><code>strerror()</code> should be used because:
+<ul><li>It is the modern, POSIX way.</li>
+<li>It is localized.</li>
+<li>It handles invalid signals/numbers out of range. (better errorhandling
+and not a buffer-overflow-candidate/security risk)</li>
+</ul></p>
+<p>
+<code>strerror()</code> should always be used if it is available.
+Unfortunaly there are still some <em>old</em> non-POSIX systems
+that do not have <code>strerror()</code>, only
+<code>sys_errlist[]</code>.</p>
+<p>
+Today, only supporting <code>strerror()</code> is far better than only supporting
+<code>sys_errlist[]</code>. The best (from a portability viewpoint), however is
+supporting both. For <code>configure.in</code>, you will need:
+</p>
+<code>AC_CHECK_FUNCS(strerror)</code></p>
+<p>
+<code>config.h.in</code>:</p>
+<p>
+<code>#undef HAVE_STRERROR</code></p>
+<p>
+Then something like:
+<pre>
+        #ifndef HAVE_STRERROR
+        static char *
+        private_strerror (errnum)
+             int errnum;
+        {
+          extern char *sys_errlist[];
+          extern int sys_nerr;
+
+          if (errnum > 0 && errnum <= sys_nerr)
+            return sys_errlist[errnum];
+          return "Unknown system error";
+        }
+        #define strerror private_strerror
+        #endif /* HAVE_STRERROR */
+</pre></p>
+<p>
+You can for example look in the latest fileutils (the above is a simplified
+version of what I found there.) Patches should of course be sent to upstream
+maintainers, this is very useful even for systems with a working
+<code>sys_errlist[]</code>.</p></blockquote></li>
+
+</UL>
