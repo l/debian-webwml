@@ -47,7 +47,8 @@
 # advisories and vote summaries.
 #
 # The format parameter specifies the type of output: numbered, definition
-# and bulleted list, a table, or a RDF file (rdf or rdflong).
+# and bulleted list, a table, or a RDF file (rdf, rdflong, or rfsseq).  
+# RDF output is currently only supported for DSAs.
 #
 # The match parameter is a regexp used to determine if the file is special,
 # i.e. that it should be parsed.
@@ -248,7 +249,7 @@ sub grab_titles {
 
 	my ($title, $date, $rdate, $rvdate, $hdate, $desc, $status,
 	    $where, $moreinfo, $startdate, $enddate, $repfile, $just);
-	my (@hdate, @rdate) = ();
+	my (@hdate, @rdate, @isodate) = ();
 	<protect pass=2>
 	if ($content =~ /^<define-tag pagetitle>\s*(.*?)\s*<\/define-tag>$/ms) {
 	    $title = qq/$1/; }      # all
@@ -312,21 +313,27 @@ sub grab_titles {
 	    $isodate = sprintf("%04d-%02d-%02d", split '-', $hdate[-1]);
 	    $rdate = newsdate($hdate);
 	    @rdate = map( newsdate($_), @hdate );
+	    @isodate = map( sprintf("%04d-%02d-%02d", split '-', $_), @hdate );
 	    $title =~ s/(DSA-\d{3})-\d{1}/$1/; # strip off the revision in the DSA number
 	    # we need absolut paths for rdf
 	    (my $rdfbase = $base) =~ s/^security\///;
-	    if ($format eq 'rdf') {
-		$str1 = "
-<item rdf:about=\"http://www.debian.org/security/$rdfbase\">
-  <title>$title</title>
-  <link>http://www.debian.org/security/$rdfbase</link>
-  <description>
-    $desc
-  </description>
-  <dc:date>$isodate</dc:date>
-</item>
-";
-	    } elsif ($format eq 'rdflong') {
+	    if ($format =~ /\brdf\b/) {
+		foreach (@isodate)
+		{
+		    push @str1, "\n"
+			."<item rdf:about=\"http://www.debian.org"
+			."/security/$rdfbase\">\n"
+			."  <title>$title</title>\n"
+			."  <link>http://www.debian.org/"
+			."security/$rdfbase</link>\n"
+			."  <description>\n"
+			."    $desc\n"
+			."  </description>\n"
+			."  <dc:date>$_</dc:date>\n"
+			."</item>\n";
+                }
+		$str1 = $str1[0];
+	    } elsif ($format =~ /\brdflong\b/) {
                 # $moreinfo is WML/HTML; we need to strip tags here
                 <protect pass=2>
                 # HTML entities
@@ -341,16 +348,30 @@ sub grab_titles {
                 # WML continuation
                 $moreinfo =~ s/\\\n//g;
                 </protect>
-		$str1 = "
-<item rdf:about=\"http://www.debian.org/security/$rdfbase\">
-  <title>$title - $desc</title>
-  <link>http://www.debian.org/security/$rdfbase</link>
-  <description>
-    $moreinfo
-  </description>
-  <dc:date>$isodate</dc:date>
-</item>
-";
+		foreach (@isodate)
+		{
+		    push @str1, "\n"
+			."<item rdf:about=\"http://www.debian.org"
+			."/security/$rdfbase\">\n"
+			."  <title>$title - $desc</title>\n"
+			."  <link>http://www.debian.org"
+			."/security/$rdfbase</link>\n"
+			."  <description>\n"
+			."    $moreinfo\n"
+			."  </description>\n"
+			."  <dc:date>$_</dc:date>\n"
+			."</item>\n";
+		}
+	        $str1 = @str1[0];
+	    } elsif ($format =~ /\brdfseq/){
+		foreach (@isodate)
+		{
+<protect pass=2>
+		    push @str1, "<rdf:li resource=\"http://www.debian.org"
+                        ."/security/$rdfbase\" />\n";
+</protect>
+		}
+		$str1 = $str1[0];
 	    } else {
 		foreach( @rdate ) {
 		    push @str1, "$elemhead<tt>[$_]</tt> "
@@ -573,54 +594,6 @@ sub iso2stamp {
     return timegm( 59, 59, 23, $day, $month-1, $year);
 }
 
-# rdf_item_list outputs stuff to be used in a <rdf:Seq> section of a RDF
-# file. Accepted parameters include all of get_recent_list's except for
-# the format, as that is not variable.
-# this function is not yet compatible with the 'bydate' format option!
-# Don't use 'bydate' in conjunction with rdf files.
-
-sub rdf_item_list {
-  my ($year, $number, $eng_dir, $match) = @_;
-  my $count = 0;
-
-  opendir DIR, "$eng_dir/$year";
-  @files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
-  @files = sort {$b cmp $a} @files;
-  @files = reverse @files if ($eng_dir =~ /\/events\/\d{4}$/);
-  closedir DIR;
-
-  $count += scalar @files;
-
-  foreach my $file (@files) {
-    $n++;
-    last if ($n > $number && $number ne 0);
-    (my $f = $file) =~ s/.wml$//;
-<protect pass=2>
-    print "<rdf:li resource=\"http://www.debian.org/security/$year/$f\" />\n";
-</protect>
-  }
-
-  if ($count < $number && $number ne 0) {
-    @tmp = split('/', $year);
-    $tmp[$#tmp]--;
-    $year = join('/', @tmp);
-    if (-d "$eng_dir/$year") {
-      opendir DIR, "$eng_dir/$year" or warn "couldn't open dir $eng_dir/$year\n";
-      @files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
-      @files = sort {$b cmp $a} @files;
-      closedir DIR;
-      foreach my $file (@files) {
-        $n++;
-        last if ($n > $number && $number ne 0);
-        (my $f = $file) =~ s/.wml$//;
-<protect pass=2>
-        print "<rdf:li resource=\"http://www.debian.org/security/$year/$f\" />\n";
-</protect>
-      }
-    }
-  }
-}
-
 # decode_html_entity is used in the RDF outputs to convert the predefined
 # HTML/SGML entities to NCRs, as they are not predefined for XML formats.
 sub decodehtmlentity {
@@ -812,3 +785,7 @@ sub decodehtmlentity {
   return '?'; # Say what?
 }
 </perl>
+
+#
+# vim:ts=8:sw=4:
+#
