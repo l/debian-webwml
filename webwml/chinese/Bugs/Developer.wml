@@ -1,348 +1,501 @@
-#use wml::debian::template title="Debian 錯誤跟蹤系統" NOHEADER=yes WEBMASTER=bugs
+#use wml::debian::template title="Debian 錯誤追蹤系統" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.33"
 
 # $Id$
-#use wml::debian::translation-check translation="1.7"
-# 譯者：張嘉聖 Jonathan Chang <changcs@santos.ee.ntu.edu.tw>
 
-<H1><A name="developers">關於錯誤處理系統的開發者[CN:信息:][HKTW:資訊:]</A></h1>
-# <H1><A name="developers">Developers' information regarding the bug processing system</A></h1>
+# Translators: 張嘉聖 Jonathan Chang <changcs@santos.ee.ntu.edu.tw>, May-June 2000
+#              Franklin <franklin@goodhorse.idv.tw>, 2002/11/15
+# Checked by foka, 2002/11/17 (Note: 我未處理 "message" vs. "訊息？信件？" 等問題。
 
-<P>一開始，一份錯誤報告被使用者以一般郵件訊息方式提送\
-給 <CODE>submit@bugs.debian.org</CODE>。之後這份報告會分配到一個識別號碼，\
-通知該使用者報告已收到，並轉送給 <CODE>debian-bugs-dist</CODE>。如果\
-提送者加了一行<CODE>Package</CODE>列出一個有維護者的套件，那麼該維護者也會收\
-到一份副本。</P>
-# Initially, a bug report is submitted by a user as an ordinary mail
-# message to <CODE>submit@bugs.debian.org</CODE>.  This will then be
-# given a number, acknowledged to the user, and forwarded to
-# <CODE>debian-bugs-dist</CODE>.  If the submitter included a
-# <CODE>Package</CODE> line listing a package with a known maintainer
-# the maintainer will get a copy too.
+#<h1>Developers' information regarding the bug processing system</h1>
+<h1>關於錯誤處理系統的開發者[CN:信息:][HKTW:資訊:]</h1>
 
-<P><CODE>Subject</CODE> 文字列會\
-加上 <CODE>Bug#</CODE><VAR>nnn</VAR><CODE>:</CODE>，而且
-<CODE>Reply-To</CODE>的設定會包含報告提送者和
-<VAR>nnn</VAR><CODE>@bugs.debian.org</CODE>。</P>
-# The <CODE>Subject</CODE> line will have
-# <CODE>Bug#</CODE><VAR>nnn</VAR><CODE>:</CODE> added, and the
-# <CODE>Reply-To</CODE> will be set to include both the submitter of the
-# report and <VAR>nnn</VAR><CODE>@bugs.debian.org</CODE>.
+#<p>Initially, a bug report is submitted by a user as an ordinary mail
+#message to <code>submit@bugs.debian.org</code>.  This will then be
+#given a number, acknowledged to the user, and forwarded to
+#<code>debian-bugs-dist</code>.  If the submitter included a
+#<code>Package</code> line listing a package with a known maintainer
+#the maintainer will get a copy too.</p>
+<p>一開始，使用者以一般郵件訊息方式送出一份錯誤報告\
+給 <code>submit@bugs.debian.org</code>。之後這份報告會分配到一個識別號碼，\
+通知該使用者報告已收到，並轉送給 <code>debian-bugs-dist</code>。如果\
+提送者加了一行 <code>Package</code> 列出一個有維護者的套件，那麼該維護者也會收\
+到一份副本。</p>
 
+#<p>The <code>Subject</code> line will have
+#<code>Bug#</code><var>nnn</var><code>:</code> added, and the
+#<code>Reply-To</code> will be set to include both the submitter of the
+#report and <var>nnn</var><code>@bugs.debian.org</code>.</p>
+<p><code>Subject</code> 標題列會\
+加上 <code>Bug#</code><var>nnn</var><code>:</code>，而且
+<code>Reply-To</code> 的設定會包含報告提送者和
+<var>nnn</var><code>@bugs.debian.org</code>。</p>
 
-<H2>關閉錯誤報告</h2>
-# <H2>Closing bug reports</h2>
+<hrline/>
 
-<P>一位開發者不論是由跟蹤系統收到錯誤報告，或是\
-從 <CODE>debian-bugs-dist</CODE> 上得知，且對其做了應有的處理後，應該使用其\
-最常用的郵件閱讀程式回報此訊息，回報郵件中的 <CODE>To</CODE> 欄位要改為
-<VAR>nnn</VAR><CODE>-done@bugs.debian.org</CODE> 而不是原來的
-<VAR>nnn</VAR><CODE>@bugs</CODE>（<VAR>nnn</VAR><CODE>-close</CODE>
-也可作為 <VAR>nnn</VAR><CODE>-done</CODE>的別名）。</P>
-# A developer who receives a bug from the tracking system, or sees it on
-# <CODE>debian-bugs-dist</CODE>, and takes
-# responsibility for it should hit Reply in their favourite mailreader,
-# and then edit the <CODE>To</CODE> field to say
-# <VAR>nnn</VAR><CODE>-done@bugs.debian.org</CODE> instead of
-# <VAR>nnn</VAR><CODE>@bugs</CODE>
-# (<VAR>nnn</VAR><CODE>-close</CODE> is provided as an alias for
-# <VAR>nnn</VAR><CODE>-done</CODE>).
+<ul>
+#  <li><a href="#closing">Closing bug reports</a></li>
+  <li><a href="#closing">關閉錯誤報告</a></li>
+#  <li><a href="#followup">Followup messages</a></li>
+  <li><a href="#followup">接續的討論訊息</a></li>
+#  <li><a href="#severities">Severity levels</a></li>
+  <li><a href="#severities">嚴重程度</a></li>
+#  <li><a href="#tags">Tags for bug reports</a></li>
+  <li><a href="#tags">錯誤報告的標籤</a></li>
+#  <li><a href="#forward">Recording that you have passed on a bug report</a></li>
+  <li><a href="#forward">如何紀錄您已轉送一份錯誤報告</a></li>
+#  <li><a href="#maintincorrect">Incorrectly listed package maintainers</a></li>
+  <li><a href="#maintincorrect">列出的套件維護者不正確的問題</a></li>
+#  <li><a href="#requestserv">Reopening, reassigning and manipulating bugs</a></li>
+  <li><a href="#requestserv">重開，重分配，與操控錯誤</a></li>
+#  <li><a href="#subjectscan">More-or-less obsolete subject-scanning feature</a></li>
+  <li><a href="#subjectscan">標題掃描功能</a></li>
+#  <li><a href="#x-debian-pr">Obsolete <code>X-Debian-PR: quiet</code> feature</a></li>
+  <li><a href="#x-debian-pr">已作廢的 <code>X-Debian-PR: quiet</code> 功能</a></li>
+</ul>
 
-<P>因為錯誤跟蹤系統將其加在 <CODE>Reply-To</CODE> 欄位，所以\
-原來提送者的郵件位址也會加入[CN:缺省:][HKTW:預設:]的 <CODE>To</CODE> 欄位。</P>
-# The address of the original submitter of the bug report will be
-# included in the default <CODE>To</CODE> field, because the bug system
-# included it in the <CODE>Reply-To</CODE>.
-
-<P>『處理完成』訊息不會自動轉送到通信論壇，所以若其他的開發者也可能希望被知\
-會，有時也值得順手多寄一份給 <CODE>debian-devel@lists.debian.org</CODE> 通信\
-論壇。</P>
-# `Done' messages are not automatically forwarded to the mailing list,
-# so it may sometimes be worthwhile including the
-# <CODE>debian-devel@lists.debian.org</CODE> mailing list if the other
-# developers are
-# likely to be interested.
-
-<P>關閉與提送錯誤報告的人都會收到一份關於該報告狀態變動的通知。</P>
-# The person closing the bug and the person who submitted it will each
-# get a notification about the change in status of the report.
-
-<H2>接續的討論訊息</H2>
-# <H2>Followup messages</h2>
-
-<P>如果一個開發者在還沒關閉一錯誤前想回應該錯誤報告，只要直接送回應就可以了。\
-他們的回應（[CN:缺省:][HKTW:預設:]）會送到 <VAR>nnn</VAR><CODE>@bugs</CODE> 以及原先的錯誤報告\
-提送者。錯誤跟蹤系統會將接續的討論與其餘錯誤報告紀錄一起歸檔，並轉送一\
-份到 <CODE>debian-bugs-dist</CODE>。而該報告並不會因此標示為處理完畢。\
-開發者可以送信到 <VAR>nnn</VAR><CODE>-submitter@bugs</CODE> 以直接跟原錯誤\
-提送者聯絡。</P>
-# If a developer wishes to reply to a bug report without marking the bug
-# as done they may simply reply to the message.  Their reply will (by
-# default) go to <VAR>nnn</VAR><CODE>@bugs</CODE> and to the original
-# submitter of the bug report.  The bug tracking system will file the
-# reply with the rest of the logs for that bug report and forward it to
-# <CODE>debian-bugs-dist</CODE>.  The bug will not be marked as done.  A
-# developer may explicitly mail the bug's submitter with an email to
-# <VAR>nnn</VAR><CODE>-submitter@bugs</CODE>.
-
-<P>如果你想要送一份不適合在 <CODE>debian-bugs-dist</CODE> 出現的接續討論訊息，\
-你可以將它送到 <VAR>nnn</VAR><CODE>-quiet@bugs</CODE>
-或是 <VAR>nnn</VAR><CODE>-maintonly@bugs</CODE>，該訊息只會歸檔\
-且轉送給該套件的維護者（不再做任何其他轉送）。</P>
-# If you wish to send a followup message which is not appropriate for
-# <CODE>debian-bugs-dist</CODE> you can do so by sending it to
-# <VAR>nnn</VAR><CODE>-quiet@bugs</CODE> or
-# <VAR>nnn</VAR><CODE>-maintonly@bugs</CODE>, which only file it (not
-# forwarding it anywhere) and send it on only to the maintainer of the
-# package in question, respectively.
-
-<P><EM>絕不要</EM>使用你郵件收發程式的『回應所有收件人』或是『接續討論』功能\
-除非你想要編輯幾乎所有收信人的郵件地址。特別是，不要送接續討論訊息到
-# 我不太確定第一句翻得是否正確---Jonathan
-<VAR>nnn</VAR><CODE>@bugs.debian.org</CODE> 又到
-<CODE>submit@bugs.debian.org</CODE>，因為錯誤跟蹤系統會收到兩份同樣的訊息，
-而每一份都會分別轉送到 <CODE>debian-bugs-dist</CODE>。</P>
-
-# Do <EM>not</EM> use the `reply to all recipients' or `followup'
-# feature of your mailer unless you intend to edit down the recipients
-# substantially.  In particular, don't send a followup message both to
-# <VAR>nnn</VAR><CODE>@bugs.debian.org</CODE> and to
-# <CODE>submit@bugs.debian.org</CODE>, because the bug system will then
-# get two copies of it and each one will be forwarded to
-# <CODE>debian-bugs-dist</CODE> separately.
-
-<H2><A name="severities">嚴重程度</A></h2>
-# <H2><A name="severities">Severity levels</A></h2>
-
-<P>錯誤跟蹤系統對每個錯誤報告紀錄一個嚴重程度指標。此指標的[CN:缺省:][HKTW:預設:]值\
-為 <CODE>normal</CODE>，但是可在提送錯誤報告時在 pseudo-header 加上一\
-行 <CODE>Severity</CODE>（詳見<A href="Reporting#pseudoheader">錯誤提送\
-指示</A>），或是對<A href="#requestserv">控制請求伺服器</A>使\
-用 <CODE>severity</CODE> 命令來修改[CN:缺省:][HKTW:預設:]值。</P>
-# <P>The bug system records a severity level with each bug report.  This is
-# set to <CODE>normal</CODE> by default, but can be overridden either by
-# supplying a <CODE>Severity</CODE> line in the pseudo-header when the
-# bug is submitted (see the
-# <A href="Reporting#pseudoheader">instructions for reporting
-# bugs</A>), or by using the <CODE>severity</CODE> command with the
-# <A href="#requestserv">control request server</A>.</p>
-
-<P>嚴重程度可分為：
-# <P>The severity levels are:
-
-<DL>
-<DT><CODE>重大危急 (critical)</CODE>
-<DD>能使不相關的系統內軟體（或整個系統）損壞，或造成嚴重的資訊遺失，\
-或為安裝該套件的系統引入安全漏洞。
-# <DD>makes unrelated software on the system (or the whole system)
-# break, or causes serious data loss, or introduces a security hole on
-# systems where you install the package.
-
-<DT><CODE>嚴重 (grave)</CODE>
-<DD>使該套件無法或幾乎無法使用，或造成資料遺失，或引入一個允許侵入\
-此套間使用者之帳號的安全漏洞。
-# <DD>makes the package in question unuseable or mostly so, or causes
-# data loss, or introduces a security hole allowing access to the
-# accounts of users who use the package.
-
-<DT><CODE>重要 (important)</CODE>
-<DD>其他任何使該套件不適於散佈的錯誤。
-# <DD>any other bug which makes the package unsuitable for release.
-
-<DT><CODE>一般 (normal)</CODE>
-<DD>為[CN:缺省:][HKTW:預設:]值，泛指一般的錯誤。
-# <DD>the default value, for normal bugs.
-
-<DT><CODE>期望列表 (wishlist)</CODE>
-# <DT><CODE>wishlist</CODE>
-<DD>表示任何附加功能的請求，也可用於表示任何因主體設計考量而很難修復\
-的錯誤。
-# <DD>for any feature request, and also for any bugs that are
-# very difficult to fix due to major design considerations.
-
-<DT><CODE>已修正 (fixed)</CODE>
-# <DT><CODE>fixed</CODE>
-
-<DD>用來表示以修正但尚未關閉的錯誤。由非維護者上\
-載 (non-maintainer-uploads) 修復的錯誤，其嚴重度皆設定為已修正。
-# <DD>for bugs that are fixed but should not yet be closed.
-# Bugs fixed by non-maintainer-uploads have their severity set to fixed.
-
-</DL>
-
-<H2><A name="forward">你對一個錯誤報告的轉送紀錄</A></h2>
-# <H2><A name="forward">Recording that you have passed on a bug report</A></h2>
-
-<P>當一個開發者轉送一份錯誤報告到 Debian 套件之上游原始碼套件所屬開發者時，\
-他們應該以下述方式將這件事告知錯誤追蹤系統：
-# When a developer forwards a bug report to the developer of the
-# upstream source package from which the Debian package is derived,
-# they should note this in the bug tracking system as follows:
-
-<P>確定你寄給該作者訊息的 <CODE>To</CODE> 欄位只有一個郵件地址；將錯誤提報者\
-與 <VAR>nnn</VAR><CODE>-forwarded@bugs.debian.org</CODE> 都放\
-在 <CODE>CC</CODE> 的欄位。</P>
-# Make sure that the <CODE>To</CODE> field of your message to the author
-# to has only the author(s) address(es) in it; put both the person who
-# reported the bug and
-# <VAR>nnn</VAR><CODE>-forwarded@bugs.debian.org</CODE> in the
-# <CODE>CC</CODE> field.
-
-<P>要求該作者在回應時將 <VAR>nnn</VAR><CODE>-forwarded@bugs</CODE> 保留\
-在 <CODE>CC</CODE> 欄位中，如此一來錯誤追蹤系統就會將他們的回應與原有\
-的報告一起歸檔。</P>
-# Ask the author to preserve the <CODE>CC</CODE> to
-# <VAR>nnn</VAR><CODE>-forwarded@bugs</CODE> when they reply, so that
-# the bug tracking system will file their reply with the original
-# report.
-
-<P>當錯誤追蹤系統在 <VAR>nnn</VAR><CODE>-forwarded</CODE> 收到一份訊息，它會\
-將相關的錯誤標示為已轉寄給所收到訊息中<CODE>To</CODE>欄位的位址。</P>
-# When the bug tracking system gets a message at
-# <VAR>nnn</VAR><CODE>-forwarded</CODE> it will mark the relevant bug as
-# having been forwarded to the address(es) in the <CODE>To</CODE> field
-# of the message it gets.
-
-<P>你也可以採用送訊息\
-到 <A href="server-control"><CODE>control@bugs.debian.org</CODE></A> 的\
-方式來操控『轉送至』的訊息。</P>
-# You can also manipulate the `forwarded to' information by sending
-# messages to <A href="server-control"><CODE>control@bugs.debian.org</CODE></A>.
-
-<H2><CODE>debian-bugs-reports</CODE>上的摘要週報</H2>
-# <H2>Summary postings to <CODE>debian-bugs-reports</CODE></H2>
-
-<P>每週五一份未解決錯誤報告的列表會貼\
-到<CODE>debian-bugs-reports</CODE>，其中的錯誤是以提送日期來排序。\
-每週四一份已經太久沒人回應的錯誤報告列表也會貼出，其中的錯誤是以套件維護者\
-來排序。</P>
-# <P>Every Friday a list of outstanding bug reports is posted to
-# <CODE>debian-bugs-reports</CODE>, sorted by age of report.
-# Every Tuesday a list of bug reports that have gone unanswered too long
-# is posted, sorted by package maintainer.</P>
-
-<P><A name="maintincorrect">\
- 如果一個列出套件的維護者不正確 </A>，這通常是因為最近更換了維護者，\
-且新的維護者尚未上載過任何已更動過<CODE>Maintainer</CODE>控制[CN:文件:][HKTW:檔案:]欄位\
-的更新版本套件。當有新版本上載，這種情況就會被更正；\
-舉例來說，如果預期最近沒有該套件重包或是再上傳的需要，
-另一種方法，發佈系統維護者可以編輯一個覆寫[CN:文件:][HKTW:檔案:]來記錄維護者的更動。\
-請聯絡 <CODE>override-change@debian.org</CODE> 以更動該覆寫[CN:文件:][HKTW:檔案:]。</P>
-# <P><A name="maintincorrect">\
-# If the maintainer of a package is listed incorrectly</A>, this is
-# usually because the maintainer has changed recently, and the new
-# maintainer hasn't yet uploaded a new version of the package with a
-# changed <CODE>Maintainer</CODE> control file field.  This will be
-# fixed when the package is uploaded; alternatively, there is an
-# override file which the distribution maintainers can edit to record
-# the change in maintainer, for example if a rebuild and reupload of the
-# package is not expected to be needed soon.  Contact
-# <CODE>override-change@debian.org</CODE> for changes to the
-# override file.</P>
-
-<H2><A name="requestserv">重開，重分配，與操控錯誤</A></H2>
-# <H2><A name="requestserv">Reopening, reassigning and manipulating bugs</A></H2>
-
-<P>錯誤報告可以重分配到其他的套件，可重開被錯關的錯誤報告，可修改錯誤報告\
-所轉送到位址的資訊（若真得曾被轉送過），可以修改嚴重程度與報告標題，也可以\
-把錯誤報告合併或是解除其合併。這可由送電子郵件\
-到 <CODE>control@bugs.debian.org</CODE> 的方式來達成。</P>
-# <P>It is possible to reassign bug reports to other packages, to reopen
-# erroneously-closed ones, to modify the information saying to where, if
-# anywhere, a bug report has been forwarded, to change the severities
-# and titles of reports and to merge and unmerge bug reports.  This is
-# done by sending mail to <CODE>control@bugs.debian.org</CODE>.</P>
-
-<P><A href="server-control">這些訊息的格式</A>可在另一個[CN:萬維網:][HKTW: WWW :]上的[CN:文件:][HKTW:檔案:]或是\
-在 <CODE>bug-maint-mailcontrol.txt</CODE> [CN:文件:][HKTW:檔案:]中找到。也可\
-以 <CODE>help</CODE> 為內容寄一封信到上述位址來取得一份純文字的版本。</P>
-# <P>The <A href="server-control">format of these messages</A> is
-# described in another document available on the World Wide Web or in
-# the file <CODE>bug-maint-mailcontrol.txt</CODE>.  A plain text version
-# can also be obtained by mailing the word <CODE>help</CODE> to the
-# server at the address above.</P>
+<hrline/>
 
 
-<H2>略為過時的標題掃描功能</H2>
-# <H2>More-or-less obsolete subject-scanning feature</H2>
+#<h2><a name="closing">Closing bug reports</a></h2>
+<h2><a name="closing">關閉錯誤報告</a></h2>
 
-<P>寄到 <CODE>submit</CODE> 或是 <CODE>bugs</CODE>，且標題開頭為\
-<CODE>Bug#</CODE><VAR>nnn</VAR> 的信件將視為是寄\
-到 <VAR>nnn</VAR><CODE>@bugs</CODE> 。這是為了與從舊地址寄來的信\
-保持向後相容性，也是為了接住那些誤寄到 <CODE>submit</CODE> 的接續\
-討論信件（比如說，用了信件收發程式的『回應所有收件人』功能）。</P>
-# <P>Messages that arrive at <CODE>submit</CODE> or <CODE>bugs</CODE> whose
-# Subject starts <CODE>Bug#</CODE><VAR>nnn</VAR> will be treated as
-# having been sent to <VAR>nnn</VAR><CODE>@bugs</CODE>.  This is both
-# for backwards compatibility with mail forwarded from the old
-# addresses, and to catch followup mail sent to <CODE>submit</CODE> by
-# mistake (for example, by using reply to all recipients).</P>
+#<p>Debian bug reports should be closed when the problem is fixed. Problems
+#in packages can only be considered fixed once a package that includes the
+#bug fix enters the Debian archive.</p>
+<p>當使用者提出的錯誤被修正之後，就可以關閉錯誤報告。要注意的是，\
+套件的錯誤只有在包含修正的套件進入到 Debian 檔案庫之中時才能視為已修正。</p>
 
-<P>對 <CODE>maintonly</CODE> ， <CODE>done</CODE> ，\
- <CODE>quiet</CODE> 和 <CODE>forwarded</CODE> 也有類似的功能。\
-凡是有這種標題標籤的信件都會被視為是要寄往所對應\
-的 <VAR>nnn-whatever</VAR><CODE>@bugs</CODE> 位址。</P>
-# <P>A similar scheme operates for <CODE>maintonly</CODE>,
-# <CODE>done</CODE>, <CODE>quiet</CODE> and <CODE>forwarded</CODE>,
-# which treat mail arriving with a Subject tag as having been sent to
-# the corresponding <VAR>nnn-whatever</VAR><CODE>@bugs</CODE> address.</P>
+#<p>Normally, the only people that are allowed to close a bug report are the
+#submitter of the bug and the maintainer(s) of the package against which the
+#bug is filed. There are exceptions to this rule, for example, the bugs filed
+#against unknown packages or certain generic pseudo-packages. When in doubt,
+#don't close bugs, first ask for advice on the debian-devel mailing list.</p>
+<p>一般而言，只有提出錯誤報告的人，還有包含錯誤的套件的維護者才能關閉報告。\
+不過有些例外，例如當錯誤並不歸屬於任何一個套件，或者是屬於所謂的虛擬套件。\
+如果不知道該不該關閉，那麼就不要關閉，先去 debian-devel 郵件論壇上問問大家\
+的意見。</p>
 
-<P>在單純 <CODE>forwarded</CODE> 與 <CODE>done</CODE> 收到 --- 換\
-言之，位址中不含錯誤報告識別號碼 --- 且標題中不含錯誤報告識別號碼的信會被\
-歸檔到 `junk' 類別然後保存一週，除此以外將完全不做任何處理。</P>
-# <P>Messages arriving at plain <CODE>forwarded</CODE> and
-# <CODE>done</CODE> - ie, with no bug report number in the address - and
-# without a bug number in the Subject will be filed under `junk' and
-# kept for a few weeks, but otherwise ignored.</P>
+#<p>Bug reports should be closed by sending email to
+#<var>nnn</var><code>-done@bugs.debian.org</code>. The message body
+#needs to contain an explanation of how the bug was fixed.</p>
+<p>要關閉錯誤報告，就送一封電子郵件到
+<var>nnn</var><code>-done@bugs.debian.org</code>，並且在信件內容\
+中說明這個錯誤如何修正。</p>
 
-<H2><A name="future">未來的計畫</A></H2>
-# <H2><A name="future">Future plans</A></H2>
+#<p>With the emails received from the bug tracking system, all you need
+#to do to close the bug is to make a Reply in your mail reader program
+#and edit the <code>To</code> field to say
+#<var>nnn</var><code>-done@bugs.debian.org</code> instead of
+#<var>nnn</var><code>@bugs</code>
+#(<var>nnn</var><code>-close</code> is provided as an alias for
+#<var>nnn</var><code>-done</code>).</p>
+<p>當您收到錯誤追蹤系統寄來的電子郵件後，您只要回覆該封郵件，\
+並將郵件中的 <code>To</code> 欄位中改成：\
+<var>nnn</var><code>-done@bugs.debian.org</code>
+而不是原來的<var>nnn</var><code>@bugs</code>。\
+（也可以使用 <var>nnn</var><code>-close</code>，是
+<var>nnn</var><code>-done</code> 的別名，功能相同。）</p>
 
-未來第二標頭欄位 <CODE>Package:</CODE> 可能轉為強制性的 --- 到那\
-時省略它會產生一個警告訊息。</P>
-# <P>At some point the <CODE>Package:</CODE> secondary header field may
-# become mandatory - at the moment omitting it just produces a warning
-# message.</P>
+#<p>The person closing the bug, the person who submitted it and the
+#<code>debian-bugs-closed</code> mailing list will each get a notification
+#about the change in status of the report. The submitter and the mailing list
+#will also receive the contents of the message sent to
+#<var>nnn</var><code>-done</code>.</p>
+<p>關閉錯誤報告的人、提送錯誤報告的人，還有 <code>debian-bugs-closed</code> 郵件論壇\
+都會收到一份關於該報告狀態變動的通知。提送者與郵件論壇也會\
+收到送給 <var>nnn</var><code>-done</code> 的訊息內容。</p>
 
-<H2>已作廢的 <CODE>X-Debian-PR: quiet</CODE> 功能</H2>
-# <H2>Obsolete <CODE>X-Debian-PR: quiet</CODE> feature</H2>
+#<h2><a name="followup">Followup messages</a></h2>
+<h2><a name="followup">接續的討論訊息</a></h2>
 
-<P>以前可以使用在實際信件標頭加一\
-行 <CODE>X-Debian-PR: quiet</CODE> 的方式來防止錯誤追蹤系統轉寄\
-它在 <CODE>debian-bugs</CODE> 收到的訊息。
-# <P>It used to be possible to prevent the bug tracking system from
-# forwarding anywhere messages it received at <CODE>debian-bugs</CODE>,
-# by putting an <CODE>X-Debian-PR: quiet</CODE> line in the actual mail
-# header.</P>
+#<p>The bug tracking system will include the submitter's address and the bug
+#address (<var>nnn</var><code>@bugs</code>) in the <code>Reply-To</code>
+#header after forwarding the bug report. Please note that these are two
+#distinct addresses.</p>
+<p>錯誤追蹤系統轉送錯誤報告時，會將提送錯誤報告的使用者郵件地址以及
+<var>nnn</var><code>@bugs</code> 放入 <code>Reply-To</code> 標頭欄位中。\
+請注意有兩個不同的郵件地址。</p>
 
-現在這個標頭行已沒有效果。改寄你的訊息\
-到 <CODE>quiet</CODE> 或 <VAR>nnn</VAR><CODE>-quiet</CODE> （\
-或 <CODE>maintonly</CODE> 或 <VAR>nnn</VAR><CODE>-maintonly</CODE> ）。</P>
+#<p>If a developer wishes to reply to a bug report they should simply reply
+#to the message, respecting the <code>Reply-To</code> header. This will
+#<strong>not</strong> close the bug.</p>
+<p>如果開發者要回覆這個錯誤報告，他們只需要直接回覆即可\
+（遵照原信的 <code>Reply-To</code> 標頭欄位。）\
+但是這樣並<strong>不會</strong>關閉錯誤報告。</p>
 
-# <P>This header line is now ignored.  Instead, send your message to
-# <CODE>quiet</CODE> or <VAR>nnn</VAR><CODE>-quiet</CODE> (or
-# <CODE>maintonly</CODE> or <VAR>nnn</VAR><CODE>-maintonly</CODE>).</P>
+#<p>The bug tracking system will
+#receive the message at <var>nnn</var><code>@bugs</code>, pass it on to the
+#package maintainer, file the reply with the rest of the logs for that bug
+#report and forward it to <code>debian-bugs-dist</code>.</p>
+<p>錯誤追蹤系統會從 <var>nnn</var><code>@bugs</code> 收到這些回覆，\
+並將它轉送給套件維護者，將這些回覆紀錄歸檔並送到
+<code>debian-bugs-dist</code>。</p>
 
-<HR>
+#<p>A developer may explicitly mail the bug's submitter with an email to
+#<var>nnn</var><code>-submitter@bugs</code>.</p>
+<p>開發者可以送信到 <var>nnn</var><code>-submitter@bugs</code>
+以直接跟原錯誤提送者聯絡。</p>
 
-<P>其他網頁：
-# <P>Other pages:
-<UL>
-<LI><A href="./">錯誤跟蹤系統主目錄頁。</A>
-# <LI><A href="./">Bug tracking system main contents page.</A>
-<LI><A href="Reporting">回報錯誤的方法。</A>
-# <LI><A href="Reporting">Instructions for reporting bugs.</A>
-<LI><A href="Access">以[CN:萬維網:][HKTW: WWW :]以外的方式取得錯誤追蹤紀錄。</A>
-# <LI><A href="Access">Accessing the bug tracking logs other than by WWW.</A>
-<LI><A href="server-refcard">電子郵件伺服器參考卡片。</A>
-# <LI><A href="server-refcard">Mailservers' reference card.</A>
-<LI><A href="db/ix/full.html">未解決的和最近的錯誤報告詳細列表。</A>
-# <LI><A href="db/ix/full.html">Full list of outstanding and recent bug reports.</A>
-<LI><A href="db/ix/packages.html">有錯誤報告的套件索引。</A>
-# <LI><A href="db/ix/packages.html">Packages with bug reports.</A>
-<LI><A href="db/ix/maintainers.html">有錯誤報告的套件之維護者索引。</A>
-# <LI><A href="db/ix/maintainers.html">Maintainers of packages with bug reports.</A>
-<LI><A href="$(HOME)/">Debian GNU/Linux 計畫主頁。</A>
-# <LI><A href="$(HOME)/">Debian GNU/Linux home page.</A>
-</UL>
+#<p>If you wish to send a followup message which is not appropriate for
+#<code>debian-bugs-dist</code> you can do so by sending it to
+#<var>nnn</var><code>-quiet@bugs</code> or
+#<var>nnn</var><code>-maintonly@bugs</code>.
+#Mail to <var>nnn</var><code>-quiet@bugs</code> is filed in the Bug Tracking
+#System but is not delivered to any individuals or mailing lists.  Mail to
+#<var>nnn</var><code>-maintonly@bugs</code> is filed in the Bug Tracking
+#System and is delivered only to the maintainer of the package in question.</p>
+<p>如果您想要送一份不適合在 <code>debian-bugs-dist</code> 出現的討論訊息，\
+您可以將它送到 <var>nnn</var><code>-quiet@bugs</code>
+或是 <var>nnn</var><code>-maintonly@bugs</code>，該訊息只會歸檔\
+且轉送給該套件的維護者，不再做任何其他轉送。</p>
+
+#<p>Do <em>not</em> use the `reply to all recipients' or `followup'
+#feature of your mailer unless you intend to edit down the recipients
+#substantially.  In particular, see that you don't send followup messages
+#to <code>submit@bugs.debian.org</code>.</p>
+<p><em>絕不要</em>使用郵件收發程式中的「回覆所有收件人」或新聞群組的\
+「回應文章」功能，除非您想自己寫所有的收件者地址。特別注意不要送出\
+回覆討論的郵件到 <code>submit@bugs.debian.org</code>。</p>
+
+#<h2><a name="severities">Severity levels</a></h2>
+<h2><a name="severities">嚴重程度</a></h2>
+
+#<p>The bug system records a severity level with each bug report.  This is
+#set to <code>normal</code> by default, but can be overridden either by
+#supplying a <code>Severity</code> line in the pseudo-header when the
+#bug is submitted (see the
+#<a href="Reporting#pseudoheader">instructions for reporting
+#bugs</a>), or by using the <code>severity</code> command with the
+#<a href="#requestserv">control request server</a>.</p>
+<p>錯誤跟蹤系統對每個錯誤報告紀錄一個嚴重程度指標。\
+此指標的預設值為 <code>normal</code>，\
+但是可在提送錯誤報告時在 pseudo-header 加上一行 <code>Severity</code>
+（詳見<a href="Reporting#pseudoheader">錯誤提送說明</a>），\
+或是對<a href="#requestserv">控制請求伺服器</a>使用
+<code>severity</code> 命令來修改預設值。</p>
+
+#<p>The severity levels are:
+<p>嚴重程度可分為：
+
+<dl>
+#<dt><code>critical</code>
+#<dd>makes unrelated software on the system (or the whole system)
+#break, or causes serious data loss, or introduces a security hole on
+#systems where you install the package.
+<dt><code>危急 (critical)</code>
+<dd>能使不相關的系統內軟體（或整個系統）損壞，或造成嚴重的資訊遺失，或為安裝該套件的系統引入安全漏洞。
+
+#<dt><code>grave</code>
+#<dd>makes the package in question unuseable or mostly so, or causes
+#data loss, or introduces a security hole allowing access to the
+#accounts of users who use the package.
+<dt><code>重大 (grave)</code>
+<dd>使該套件無法或幾乎無法使用，或造成資料遺失，或引入一個允許侵入此套件使用者之帳號的安全漏洞。
+
+#<dt><code>serious</code>
+#<dd>is a severe violation of Debian policy (that is, it violates a "must"
+#or "required" directive), or, in the package maintainer's opinion, makes
+#the package unsuitable for release.
+<dt><code>嚴重 (serious)</code>
+<dd>該套件違反了 Debian 的政策（換句話說，違反了「必須」或「必要」的規定），或者是套件維護者認為該套件已不適合散佈釋出。
+
+#<dt><code>important</code>
+#<dd>a bug which has a major effect on the usability of a package, without
+#rendering it completely unusable to everyone.
+<dt><code>重要 (important)</code>
+<dd>該錯誤影響了套件可用性，但不至造成所有人都無法使用。
+
+#<dt><code>normal</code>
+#<dd>the default value, applicable to most bugs.
+<dt><code>一般 (normal)</code>
+<dd>為預設值，適用於大部份的錯誤。
+ 
+#<dt><code>minor</code>
+#<dd>a problem which doesn't affect the package's usefulness, and is
+#presumably trivial to fix.
+<dt><code>輕微 (minor)</code>
+<dd>該錯誤不致影響套件的使用，而且應該很容易解決。
+
+#<dt><code>wishlist</code>
+#<dd>for any feature request, and also for any bugs that are
+#very difficult to fix due to major design considerations.
+<dt><code>期望列表 (wishlist)</code>
+<dd>表示任何附加功能的請求，也可用於表示任何因主體設計考量而很難修復的錯誤。
+
+#<dt><code>fixed</code>
+#<dd>for bugs that are fixed but should not yet be closed. This is an
+#exception for bugs fixed by non-maintainer uploads. Note: the "fixed"
+#<strong>tag</strong> should be used instead.
+<dt><code>已修正 (fixed)</code>
+<dd>用來表示以修正但尚未關閉的錯誤。這通常是指該錯誤由非維護者修復後上傳。注意：應該改用「已修正」的<strong>標籤</strong>。
+
+</dl>
+
+#<p>Certain severities are considered
+#<em><a href="http://bugs.debian.org/release-critical/">release-critical</a></em>, meaning the bug will have an impact on releasing the package with the
+#stable release of Debian. Currently, these are <strong>critical</strong>,
+#<strong>grave</strong> and <strong>serious</strong>.</p>
+<p>嚴重程度被認定為\
+<em><a href="http://bugs.debian.org/release-critical/">釋出危急(release-critical)</a></em> 的錯誤，\
+意指這個錯誤會影響到包含釋出該套件的穩定版本 Debian 系統。目前，\
+該嚴重程度包含了<strong>危急(critical)</strong>、<strong>重大(grave)</strong>\
+與<strong>嚴重(serious)</strong>。</p>
+
+#<h2><a name="tags">Tags for bug reports</a></h2>
+<h2><a name="tags">錯誤報告的標籤</a></h2>
+
+#<p>Each bug can have zero or more of a set of given tags. These tags are
+#displayed in the list of bugs when you look at a package's page, and when
+#you look at the full bug log.
+<p>每個錯誤報告可以沒有，也可以包含多個標籤。這些標籤在套件的錯誤列表中，\
+還有完整的錯誤紀錄中會被顯示出來。</p>
+
+#<p>Tags can be set by supplying a <code>Tags</code> line in the
+#pseudo-header when the bug is submitted (see the
+#<a href="Reporting#pseudoheader">instructions for reporting bugs</a>),
+#or by using the <code>tags</code> command with the
+#<a href="#requestserv">control request server</a>.
+<p>要設定標籤可以在送出錯誤報告時，在 pseudo-header 中加上一行
+<code>Tags</code>（請參考<a href="Reporting#pseudoheader">錯誤提送說明</a>），\
+或者是對<a href="#requestserv">控制請求伺服器</a>送出<code>tags</code>命令。</p>
+
+#<p>The current bug tags are:
+<p>目前的錯誤標籤包含：</p>
+
+<dl>
+
+#<dt><code>patch</code>
+#  <dd>A patch or some other easy procedure for fixing the bug is included in
+#  the bug logs. If there's a patch, but it doesn't resolve the bug
+#  adequately or causes some other problems, this tag should not be used.
+<dt><code>修補(patch)</code>
+<dd>錯誤紀錄中包含了簡易的修正程序或者是修補程式(patch)。但如果修補程式不能完全解決這個錯誤，或會造成其他的問題，那就不該用這個標籤。
+
+#<dt><code>wontfix</code>
+#  <dd>This bug won't be fixed. Possibly because this is a choice between two
+#  arbitrary ways of doing things and the maintainer and submitter prefer
+#  different ways of doing things, possibly because changing the behaviour
+#  will cause other, worse, problems for others, or possibly for other
+#  reasons.
+<dt><code>不修正(wontfix)</code>
+<dd>這個錯誤不會被修正。有可能是因為是因為有兩種以上不同的做法來完成一件事，而維護者與提報者傾向採用另一種方式。也可能是因為如果修正這個錯誤或改變某項行為會導至其他更糟糕的問題。當然還有可能是其他的原因。
+
+#<dt><code>moreinfo</code>
+#  <dd>This bug can't be addressed until more information is provided by the
+#  submitter. The bug will be closed if the submitter doesn't provide more
+#  information in a reasonable (few months) timeframe. This is for bugs like
+#  "It doesn't work". What doesn't work?
+<dt><code>需要更多資訊(moreinfo)</code>
+<dd>這個錯誤需要提報者提供更多的資訊才能處理。如果提報者沒有在一段時間（通常是幾個月）內提供更詳細的資訊，那麼這個錯誤會被關閉。例如提報者只說「這無法運作」時，維護者會搞不清楚到底是什麼不能運作。
+
+#<dt><code>unreproducible</code>
+#  <dd>This bug can't be reproduced on the maintainer's system.  Assistance
+#  from third parties is needed in diagnosing the cause of the problem.
+<dt><code>無法重現錯誤(unreproducible)</code>
+<dd>這個錯誤在維護者的系統中無法重現。有可能需要第三者的協助來確定診斷提報者所提供的問題。
+
+#<dt><code>help</code>
+#  <dd>The maintainer is requesting help with dealing with this bug.
+<dt><code>請求協助(help)</code>
+<dd>維護者請求其他人的協助來處理這個錯誤。
+
+#<dt><code>pending</code>
+#  <dd>The problem described in the bug is being actively worked on,
+#  i.e. a solution is pending.
+<dt><code>處理中(pending)</code>
+<dd>這個錯誤已經有人在著手處理中。
+#(by Franklin: 這樣翻譯對嗎？不對的話記得同步修改 server-control.wml)
+
+#<dt><code>fixed</code>
+#  <dd>This bug is fixed or worked around (by a non-maintainer upload, for
+#  example), but there's still an issue that needs to be resolved. This tag
+#  replaces the old "fixed" severity.
+<dt><code>已修正(fixed)</code>
+<dd>這個錯誤已經修正（可能是由非維護者修正並已上傳），但還有一些事情要處理。注意，這個標籤取代之前「已修正」的嚴重程度。
+
+#<dt><code>security</code>
+#  <dd>This bug describes a security problem in a package (e.g., bad
+#  permissions allowing access to data that shouldn't be accessible; buffer
+#  overruns allowing people to control a system in ways they shouldn't be
+#  able to; denial of service attacks that should be fixed, etc). Most
+#  security bugs should also be set at critical or grave severity.
+<dt><code>安全問題(security)</code>
+<dd>這個錯誤跟安全性的問題有關，如錯誤的資料存取權限設定，暫存器溢位造成使用者可以不當地操控系統，或是出現 DoS 攻擊等等。大部份的安全問題都應該將嚴重程度設定為危急(critical)或重大(grave)。
+
+#<dt><code>upstream</code>
+#  <dd>This bug applies to the upstream part of the package.
+<dt><code>上游問題(upstream)</code>
+<dd>這個錯誤是源於上游套件 (upstream part of the package)。
+
+<dt><code>potato</code>
+#  <dd>This bug particularly applies to the potato release of Debian.
+<dd>這個錯誤屬於 Debian 的 potato release。
+
+<dt><code>woody</code>
+#  <dd>This bug particularly applies to the woody distribution.
+<dd>這個錯誤屬於 Debian 的 woody distribution。
+
+<dt><code>sarge</code>
+#  <dd>This bug particularly applies to the (unreleased) sarge distribution.
+<dd>這個錯誤屬於（未公開釋出的）sarge distribution。
+
+<dt><code>sid</code>
+#  <dd>This bug particularly applies to an architecture that is currently
+#  unreleased (that is, in the sid distribution).
+<dd>這個錯誤屬於未釋出的架構(architecture)，也就是說，屬於 sid distribution。
+
+# Anthony: 似乎英文原文在這裏用 architecture 一詞也不大正確。 (i386 is an released architecture,
+#          but there is also a sid distribution for i386!)
+
+#<dt><code>experimental</code>
+#  <dd>This bug particularly applies to the experimental distribution.
+<dt><code>實驗中的(experimental)</code>
+<dd>這個錯誤屬於實驗中的套件。
+
+</dl>
+
+#<p>The latter three tags are intended to be used mainly for release critical
+#bugs, for which it's important to know which distributions are affected to
+#make sure fixes (or removals) happen in the right place.
+<p>最後三個標籤主要是用於「釋出危急」的錯誤，註明這個錯誤是屬於哪個散佈的套件，以便確定能在正確的地方修正或移除。
+
+
+#<h2><a name="forward">Recording that you have passed on a bug report</a></h2>
+<h2><a name="forward">如何紀錄您已轉送一份錯誤報告</a></h2>
+
+#<p>When a developer forwards a bug report to the developer of the
+#upstream source package from which the Debian package is derived,
+#they should note this in the bug tracking system as follows:</p>
+<p>當一個開發者轉送一份錯誤報告到 Debian 套件之上游原始碼套件所屬開發者時，\
+他們應該以下述方式將這件事告知錯誤追蹤系統：</p>
+
+#<p>Make sure that the <code>To</code> field of your message to the author
+#to has only the author(s) address(es) in it; put both the person who
+#reported the bug and
+#<var>nnn</var><code>-forwarded@bugs.debian.org</code> in the
+#<code>CC</code> field.</p>
+<p>確定您寄給該作者訊息的 <code>To</code> 欄位只有一個郵件地址；將錯誤提報者\
+與 <var>nnn</var><code>-forwarded@bugs.debian.org</code> 都放在
+<code>CC</code> 的欄位。</p>
+
+#<p>Ask the author to preserve the <code>CC</code> to
+#<var>nnn</var><code>-forwarded@bugs</code> when they reply, so that
+#the bug tracking system will file their reply with the original
+#report.</p>
+<p>要求該作者在回應時將 <var>nnn</var><code>-forwarded@bugs</code> 保留\
+在 <code>CC</code> 欄位中，如此一來錯誤追蹤系統就會將他們的回應與原有\
+的報告一起歸檔。</p>
+
+#<p>When the bug tracking system gets a message at
+#<var>nnn</var><code>-forwarded</code> it will mark the relevant bug as
+#having been forwarded to the address(es) in the <code>To</code> field
+#of the message it gets.</p>
+<p>當錯誤追蹤系統在 <var>nnn</var><code>-forwarded</code> 收到一份訊息，它會\
+將相關的錯誤標示為已轉寄給所收到訊息中<code>To</code>欄位的位址。</p>
+
+#<p>You can also manipulate the `forwarded to' information by sending
+#messages to <a href="server-control"><code>control@bugs.debian.org</code></a>.</p>
+<p>您也可以採用送訊息到
+<a href="server-control"><code>control@bugs.debian.org</code></a>
+的方式來操控『轉送至』的訊息。</p>
+
+#<h2><a name="maintincorrect">Incorrectly listed package maintainers</a></h2>
+<h2><a name="maintincorrect">列出的套件維護者不正確的問題</a></h2>
+
+#<p>If the maintainer of a package is listed incorrectly, this is
+#usually because the maintainer has changed recently, and the new
+#maintainer hasn't yet uploaded a new version of the package with a
+#changed <code>Maintainer</code> control file field.  This will be
+#fixed when the package is uploaded; alternatively, the archive maintainers
+#can override the maintainer record of a package manually, for example if
+#a rebuild and reupload of the package is not expected to be needed soon.
+#Contact <code>override-change@debian.org</code> for changes to the
+#override file.</p>
+<p>如果一個列出套件的維護者不正確，這通常是因為最近更換了維護者，\
+且新的維護者尚未上載過任何已更動過 <code>Maintainer</code>
+控制[CN:文件:][HKTW:檔案:]欄位的更新版本套件。當有新版本上載，\
+這種情況就會被更正。\
+另一種方法，發佈系統維護者可以編輯一個覆寫[CN:文件:][HKTW:檔案:]\
+來記錄維護者的更動，這個方法可以用於預期最近沒有該套件重包或是再上傳的需要時。\
+請聯絡 <code>override-change@debian.org</code> 以更動該覆寫\
+[CN:文件:][HKTW:檔案:]。</p>
+
+#<h2><a name="requestserv">Reopening, reassigning and manipulating bugs</a></h2>
+<h2><a name="requestserv">重開，重分配，與操控錯誤</a></h2>
+
+#<p>It is possible to reassign bug reports to other packages, to reopen
+#erroneously-closed ones, to modify the information saying to where, if
+#anywhere, a bug report has been forwarded, to change the severities
+#and titles of reports and to merge and unmerge bug reports.  This is
+#done by sending mail to <code>control@bugs.debian.org</code>.</p>
+<p>錯誤報告可以重分配到其他的套件，可重開被錯關的錯誤報告，可修改錯誤報告\
+所轉送到位址的資訊（若真的曾被轉送過），可以修改嚴重程度與報告標題，也可以\
+把錯誤報告合併或是解除其合併。這可由送電子郵件到
+<code>control@bugs.debian.org</code> 的方式來達成。</p>
+
+#<p>The <a href="server-control">format of these messages</a> is
+#described in another document available on the World Wide Web or in
+#the file <code>bug-maint-mailcontrol.txt</code>.  A plain text version
+#can also be obtained by mailing the word <code>help</code> to the
+#server at the address above.</p>
+<p><a href="server-control">這些訊息的格式</a>在另一個\
+[CN:萬維網:][HKTW: WWW :]上的[CN:文檔:][HKTW:文件:]，\
+或是在 <code>bug-maint-mailcontrol.txt</code> [CN:文件:][HKTW:檔案:]\
+中有描述。也可以以單詞 <code>help</code> 為內容寄一封信到上述位址\
+來取得一份[CN:文本:][HKTW:純文字:]的版本。</p>
+
+#<h2><a name="subjectscan">More-or-less obsolete subject-scanning feature</a></h2>
+<h2><a name="subjectscan">標題掃描功能</a></h2>
+
+#<p>Messages that arrive at <code>submit</code> or <code>bugs</code> whose
+#Subject starts <code>Bug#</code><var>nnn</var> will be treated as
+#having been sent to <var>nnn</var><code>@bugs</code>.  This is both
+#for backwards compatibility with mail forwarded from the old
+#addresses, and to catch followup mail sent to <code>submit</code> by
+#mistake (for example, by using reply to all recipients).</p>
+<p>寄到 <code>submit</code> 或是 <code>bugs</code>，且標題開頭為
+<code>Bug#</code><var>nnn</var> 的信件將視為是寄到
+<var>nnn</var><code>@bugs</code>。這是為了與從舊地址寄來的信保持相容，\
+也是為了接住那些誤寄到 <code>submit</code> 的接續討論信件\
+（比如說，用了信件收發程式的『回應所有收件人』功能）。</p>
+
+#<p>A similar scheme operates for <code>maintonly</code>,
+#<code>done</code>, <code>quiet</code> and <code>forwarded</code>,
+#which treat mail arriving with a Subject tag as having been sent to
+#the corresponding <var>nnn-whatever</var><code>@bugs</code> address.</p>
+<p>對 <code>maintonly</code>、<code>done</code>、<code>quiet</code>
+和 <code>forwarded</code> 也有類似的功能。凡是有這種標題標籤的信件\
+都會被視為是要寄往所對應的 <var>nnn-XXX</var><code>@bugs</code>
+位址。</p>
+
+#<p>Messages arriving at plain <code>forwarded</code> and
+#<code>done</code> - ie, with no bug report number in the address - and
+#without a bug number in the Subject will be filed under `junk' and
+#kept for a few weeks, but otherwise ignored.</p>
+<p>在單純 <code>forwarded</code> 與 <code>done</code> 收到──\
+換言之，位址中不含錯誤報告識別號碼──且標題中不含錯誤報告識別號碼的信會被\
+歸檔到 `junk' 類別然後保存一週，除此以外將完全不做任何處理。</p>
+
+#<h2><a name="x-debian-pr">Obsolete <code>X-Debian-PR: quiet</code> feature</a></h2>
+<h2><a name="x-debian-pr">已作廢的 <code>X-Debian-PR: quiet</code> 功能</a></h2>
+
+#<p>It used to be possible to prevent the bug tracking system from
+#forwarding anywhere messages it received at <code>debian-bugs</code>,
+#by putting an <code>X-Debian-PR: quiet</code> line in the actual mail
+#header.</p>
+<p>過去為了要預防將從 <code>debian-bugs</code> 接收到的信件到處轉寄的情況，\
+在實際的郵件標頭中會加上一行 <code>X-Debian-PR: quiet</code>。</p>
+
+#<p>This header line is now ignored.  Instead, send your message to
+#<code>quiet</code> or <var>nnn</var><code>-quiet</code> (or
+#<code>maintonly</code> or <var>nnn</var><code>-maintonly</code>).</p>
+<p>現在這個標頭已經不適用了，它會被忽略掉。請改送您的信件到
+<code>quiet</code> 或 <var>nnn</var><code>-quiet</code>，
+或 <code>maintonly</code> 或 <var>nnn</VAR<code>-maintonly</code>。</p>
+
+<hr />
+
+#use "otherpages.inc"
 
 #use "$(ENGLISHDIR)/Bugs/footer.inc"
