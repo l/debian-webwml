@@ -6,7 +6,7 @@
 <menu-item basename="../index">
 [EN:Ports:]
 [AR:Ports:]
-[DA:Overførsler:]
+[DA:Tilpasninger:]
 [DE:Ports:]
 [EL:Ports:]
 [EO:Ports:]
@@ -84,7 +84,7 @@
 <menu-item basename="hurd-install">
 [EN:Installation:]
 [AR:Installation:]
-[DA:Installation:]
+[DA:Installering:]
 [DE:Installation:]
 [EL:Installation:]
 [EO:Installation:]
