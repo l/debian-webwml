@@ -48,7 +48,7 @@ foreach $l (<ADV>) {
   $mi++ if ($l =~ /^Debian-specific:/);
 
   $f++ if ($l =~ /^  Source archives:/);
-  $f = 0 if ($l =~ /^  These (files|packages) will be moved/);
+  $f = 0 if ($l =~ /^  These (files|packages) will (probably )?be moved/);
   $files .= $l if ($f);
 }
 close ADV;
