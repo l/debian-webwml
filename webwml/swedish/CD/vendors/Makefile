@@ -15,3 +15,6 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/url.wml \
 
 info.$(LANGUAGE).html: info.wml $(TEMPLDIR)/template.wml
 	$(WML) $(<F)
+
+adding.$(LANGUAGE).html: adding.wml $(TEMPLDIR)/template.wml
+	$(WML) $(<F)
