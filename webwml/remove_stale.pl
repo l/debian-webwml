@@ -6,8 +6,8 @@
 # a removing a WML file from CVS causes the corresponding HTML file to go
 # away.
 
-# Originally written 2001-03-22 by peter karlsson <peterk@debian.org>
-# © Copyright 2001-2002 Software in the public interest, Inc.
+# Originally written 2001-03-22 by Peter Karlsson <peterk@debian.org>
+# © Copyright 2001-2002,2004 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -129,9 +129,19 @@ sub recurse
 				my $icsinstalled = $installed;
 				$icsinstalled =~ s/html$/ics/;
 
+				# Extra symlinks for languages
+				my $extra = $installed;
+				$extra =~ s/\.no\.html$/.nb.html/;
+
 				# Remove or report.
 				if ($opt_d)
 				{
+					if (-f $extra || -l $extra)
+					{
+						print "Removing $extra\n";
+						unlink $extra
+							or die "Unable to remove $extra: $!\n";
+					}
 					if (-f $installed)
 					{
 						print "Removing $installed\n";
@@ -161,6 +171,8 @@ sub recurse
 					print "  installed file is $installed\n";
 					print " (does not exist)\n"
 						unless -f $installed;
+					print "  and $extra\n"
+						if (-f $extra || -l $extra) and $extra ne $installed;
 					print "  installed ICS file: $icsinstalled\n"
 						if -f $icsinstalled;
 					print "  local ICS file: $icslocal\n"
