@@ -41,7 +41,11 @@ $MAINTAINERS = "$(ENGLISHDIR)/devel/wnpp/Maintainers" if ( $host ne "klecker.deb
 open MAINTAINERS or die "Can't find $MAINTAINERS file at $host: $!\n";
 while (<MAINTAINERS>) {
     if (/^(\S+)\s+(.*)$/) {
-    	$maintainer{$1} = $2;
+      $pack = $1;
+		$maint = $2;
+		$maint =~ s/</&lt;/;
+		$maint =~ s/>/&gt;/;
+		$maintainer{$pack} = $maint;
     }
 }
 close MAINTAINERS;
