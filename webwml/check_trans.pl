@@ -167,6 +167,7 @@ elsif (open CONF, "<language.conf")
 		next if /^#/;
 		$defaultlanguage = $_;
 		chomp $defaultlanguage;
+		last;
 	}
 	close CONF;
 }
