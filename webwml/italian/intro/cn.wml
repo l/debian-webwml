@@ -21,12 +21,16 @@ modificare una variabile che viene inviata al server web, ma il modo
 	  con cui ciò è ottenibile dipende dal browser che si sta utilizzando.
 
 <DL compact>
-<DT><b>lynx</b>
-<DD>È possibile o modificare la variabile preferred_language nel proprio
-.lynxrc o impostarla usando il comando 'O' all'interno di lynx
-.
+<DT><strong>lynx</strong>
+<DD>È possibile o modificare la variabile <kbd>preferred_language</kbd>
+nel proprio <kbd>.lynxrc</kbd> o impostarla usando il comando 'O'
+all'interno di lynx.
 <DT><b>netscape 3.x</b>
-<DD>???
+<DD>Aggiungere
+<pre>
+     *httpAcceptLanguage: [preferred_language string]
+</pre>
+nel file app-defaults di Netscape o in <kbd>~/.Xresources</kbd>
 <DT><b>netscape 4.x</b>
 <DD>Usare da menu
 <pre>
@@ -35,10 +39,25 @@ poi dalla finestra di dialogo
      Navigator -> Languages
 </pre>
 Assicurarsi di selezionare la lingua dalle scelte disponibili. Alcuni
-		incontrato problemi poiché avevano scritto a mano la lingua
-		preferita. 
+incontrato problemi poiché avevano scritto a mano la lingua preferita. 
+<DT><strong>W3</strong> (browser web basato su emacs)
+<DD>
+<pre>(setq url-mime-language-string  "preferred_language=it; q=1.0, en; q=0.5")<
+/pre>
+o usando il package personalizzato (assumendo URL versione p4.0pre.14):
+<pre>Hypermedia -> URL -> Mime -> Mime Language String...</pre>
 <DT><b>IE</b>
+<DD>
+<pre>
+	View -> Opzioni internet -> Generali/Lingue
+</pre>
+<DT><strong>Opera</strong>
 <DD>???
+<DT><strong>iCab</strong>
+<DD>
+<pre>
+     Edit -> Preferences -> Browser -> Fonts,Languages
+</pre>
 </DL>
 
 <H3>A quale valore si dovrebbe impostare la variabile?</H3>
@@ -57,12 +76,24 @@ seguente linea nel suo .lynxrc
     preferred_language=it; q=1.0, en; q=0.5
 </pre>
 Questo informa il server che, se disponibile, si preferisce la
-	versione italiana del documento, altrimenti la versione inglese.
+versione italiana del documento, altrimenti la versione inglese.
+
+<P>Bisogna perstare particolare attenzione nell'usare le sottocategorie
+delle lingue. Inserendo 'it-IT, en' per esempio, non si ha quello che la
+maggior parte delle persone si aspetta (se non si sono letti la specifica HTTP.)
+Un server che riceve la richiesta di un documento che un linguaggio preferito
+'it-IT, en' nel caso in cui sia la versione 'it' che la 'en' esistano, fornira`
+quella inglese.
+Fornira` l'italiana solo nel caso in cui trovi un documento la cui versione
+sia it-IT. Quindi se preferite l'italiano e, in alternativa, l'inglese dovete specificare 'it-IT, it, en' oppure, piu` semplicemente, 'it, en'.
+In realta` funziona al contrario, vale a dire che un server puo` restituire
+un documento in it-CH se se ne e` richiesto uno it.
+
+<P><strong>Raccomandiamo vivamente che non inseriate estensioni relative alla nazione salvo che per motivi ben ponderati</strong>. Se le inserite, fate attenzione a inserire anche la lingua senza la specificazione della nazione.
 
 <P>Per maggiori informazioni su come impostare la variabile
 preferred_language vedere la
 <a
 href="http://www.apache.org/docs/content-negotiation.html">documentazione
-Apache sulla negoziazione del contenuto
-</a>.
+Apache sulla negoziazione del contenuto</a>.
 
