@@ -380,6 +380,11 @@ END
 
 print "<p>The MD5sum for <tt>$filen</tt> is <strong>$md5sum</strong>\n" if ($md5sum);
 
+# compute modification date
+my $delta_time = -M $0;
+my $mod_time = $^T - ($delta_time * 86400);
+my $time_str = gmtime($mod_time)." +0000";
+
 print <<END;
 <div align="center">
 <hr>
@@ -389,9 +394,9 @@ print <<END;
 <p><small>See the Debian <a href="http://www.debian.org/contact">contact page</A>
 for information on contacting us.</small>
 
-<p><small>Last modified: Thu Apr  5 20:24:50 UTC 2001
+<p><small>Last modified: $time_str
 <br>
-Copyright &copy; 1997-2001 <A href="http://www.spi-inc.org/">SPI</a>;
+Copyright &copy; 1997-2004 <A href="http://www.spi-inc.org/">SPI</a>;
 See <a href="http://www.debian.org/license">license terms</a></small>
 </div>
 END
