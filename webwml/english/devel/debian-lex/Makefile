@@ -9,5 +9,5 @@ CUR_DIR=devel/debian-lex
 include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
-  $(TEMPLDIR)/recent_list.wml)
+  $(TEMPLDIR)/recent_list.wml
 
