@@ -21,7 +21,9 @@ my $CHANGELOG_URL = 'http://packages.debian.org/changelogs';
 my $COPYRIGHT_URL = 'http://packages.debian.org/changelogs';
 my $FILELIST_URL = 'http://packages.debian.org/cgi-bin/search_contents.pl?searchmode=filelist&amp;word=';
 my $SEARCH_URL = 'http://packages.debian.org/cgi-bin/search_packages.pl?searchon=names&amp;version=all&amp;exact=1&amp;keywords=';
+my $SRC_SEARCH_URL = 'http://packages.debian.org/cgi-bin/search_packages.pl?searchon=sourcenames&amp;version=all&amp;exact=1&amp;keywords=';
 my $BUG_URL = 'http://bugs.debian.org/';
+my $SRC_BUG_URL = 'http://bugs.debian.org/src:';
 my $QA_URL = 'http://packages.qa.debian.org/';
 my $DL_URL = 'http://packages.debian.org/cgi-bin/download.pl';
 my $POLICY_URL = 'http://www.debian.org/doc/debian-policy/';
@@ -65,6 +67,19 @@ sub walk_db_packages ($\&;$) {
 
     foreach (@pkg_list) {
 	my $p = $db->get_pkg( $_ );
+	&$func( $p, $env );
+    }
+}
+
+sub walk_db_src_packages ($\&;$) {
+    my $db = shift;
+    my $func = shift;
+    my $env = shift;
+
+    my @src_pkg_list = $db->get_sorted_srclist();
+
+    foreach (@src_pkg_list) {
+	my $p = $db->get_src_pkg( $_ );
 	&$func( $p, $env );
     }
 }
@@ -147,6 +162,9 @@ sub print_virt_pack {
     my $package_page = header( title => $name, lang => $env->{lang},
 			       desc => gettext( "virtual package" ),
 			       keywords => "$env->{distribution}, virtual, virtual, virtual, size:0 virtual" );
+    $package_page .= "[&nbsp;".gettext( "Distribution:" )." <a title=\"".gettext( "Overview over this distribution" )."\" href=\"../\">$env->{distribution}</a>&nbsp;]\n";
+    $package_page .= "[&nbsp;".gettext( "Section:" )." <a title=\"".gettext( "All packages in this section" )."\" href=\"../virtual/\">virtual</a>&nbsp;]\n";
+
     $package_page .= sprintf( gettext( "<h1>Virtual Package: %s</h1>" ), 
 			      $name );
 
@@ -536,6 +554,211 @@ sub package_pages_walker {
 	$files->update_file( $filename, $package_page );
     }
 
+sub src_package_pages_walker {
+    my ( $pkg, $env ) = @_;
+    
+    my $name = $pkg->get_name;
+    
+    #
+    # get information
+    #
+    my @versions = $pkg->get_version_list();
+    my $v_str = $versions[0];
+    my $v_pkg = $pkg->get_version( $v_str );
+    
+    my $subdist = $v_pkg->{subdistribution};
+    my $archive = $v_pkg->{archive};
+    
+    my $binaries = $v_pkg->{binary};
+
+    my $dirname = "$env->{dest_dir}/source";
+    my $filename = "$dirname/$name.html";
+    
+    progress() if $env->{opts}{progress};
+    
+    #
+    # process maintainer and uploaders
+    #
+    my ( $maint_name, $maint_email ) = split_name_mail( $v_pkg->{maintainer} );
+    my @uploaders;
+    if (exists $v_pkg->{uploaders}) {
+	@uploaders = split( /\s*,\s*/, 
+			    $v_pkg->{uploaders} );
+	foreach (@uploaders) {
+	    $_ = [ split_name_mail( $_ ) ];
+	}
+    }
+
+    #
+    # begin output
+    #
+    my $subdist_kw = $subdist || $env->{distribution};
+    my $archive_kw = $archive || 'main';
+    
+    my $package_page = header( title => $name, lang => 'en',
+			       keywords => "$env->{distribution}, $subdist_kw, $archive, $v_str" );
+    $package_page .= "[&nbsp;".gettext( "Distribution:" )." <a title=\"".gettext( "Overview over this distribution" )."\" href=\"../\">$env->{distribution}</a>&nbsp;]\n";
+#	$package_page .= "[&nbsp;".gettext( "Section:" )." <a title=\"".gettext( "All packages in this section" )."\" href=\"../$section/\">$section</a>&nbsp;]\n";
+    
+    $package_page .= sprintf( gettext( "<h1>Source package: %s (%s)" ),
+			      $name, $v_str );
+    
+    my ( $is_security, $is_nonus ) = ( 0, 0 );
+    if ( $subdist ) {
+	$package_page .=  " [<font color=\"red\">$subdist</font>]\n";
+	# a package can be in subdist "non-US/security"
+	# then both $is_nonus and $is_security are true
+	if ($subdist =~ /non-US/o) {
+	    $is_nonus = 1;
+	}
+	if ($subdist =~ /security/o) {
+	    $is_security = 1;
+	}
+    }
+    if ( $archive && ( $archive ne 'main' ) ) {
+	$package_page .=  " [<font color=\"red\">$archive</font>]\n";
+    }
+    $package_page .= "</h1>\n";
+
+    if ($env->{distribution} eq "experimental") {
+	$package_page .= gettext( "<h2 style=\"color: red\">Experimental package</h2>\n".
+				  "<p>Warning: This package is from the <font color=\"red\">experimental</font> distribution. That means it is likely unstable or buggy, and it may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.</p>".
+				  "<p>Users of experimental packages are encouraged to contact the package maintainers directly in case of problems.</p>" );
+    }
+    if ($archive eq "debian-installer") {
+	$package_page .= gettext( "<h2 style=\"color: red\">debian-installer udeb package</h2>\n".
+				  "<p>Warning: This package is intended for the use in building <a href=\"http://www.debian.org/devel/debian-installer\">debian-installer</a> images only. Do not install it on a normal Debian system.</p>" );
+    }
+
+    my @bin_list;
+    foreach my $bp ( sort { $a->[0][0] cmp $b->[0][0] } @$binaries ) {
+	my $p_name = $bp->[0][0];
+	my $p = $env->{db}->get_pkg( $p_name );
+	if ($p) {
+	    my %sections = $p->get_arch_fields( 'section',
+						$env->{archs} );
+	    my $section = $sections{max_unique};
+	    my %desc_md5s = $p->get_arch_fields( 'description-md5', 
+						 $env->{archs} );
+	    my $short_desc = conv_desc( $env->{lang}, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" ) );
+	    push @bin_list, "<tr><td><a href=\"../$section/$p_name\">$p_name</a></td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc</td></tr>";
+	}
+    }
+    if (@bin_list) {
+	$package_page .= gettext( "The following binary packages are build from this source package:" );
+	$package_page .= "<table cellspacing=\"0\" cellpadding=\"2\">";
+	$package_page .= join "\n", @bin_list;
+	$package_page .= "</table>";
+    }
+
+    #
+    # display dependencies
+    #
+    my $dep_list = print_src_deps( $env, $pkg, $v_str, 'build-depends' );
+    $dep_list .= print_src_deps( $env, $pkg, $v_str, 'build-depends-indep' );
+
+    if ( $dep_list ) {
+	$package_page .= sprintf( gettext( "\n<h2>Other packages related to %s:</h2>\n" ), $name );
+	if ($env->{distribution} eq "experimental") {
+	    $package_page .= gettext( "<p>Note that the \"<font color=\"red\">experimental</font>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution.</p>" );
+	}
+
+	$package_page .= "<center><table border=\"1\"><tr>\n";
+	$package_page .= "<td><font size=\"-1\"><img src=\"../../Pics/dep.gif\" ALT=\"[req]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'build-depends' )."</font>".
+	    "<td><font size=\"-1\"><img src=\"../../Pics/rec.gif\" ALT=\"[rec]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'build-depends-indep' )."</font>";
+	$package_page .= "</table></center>\n";
+	$package_page .= "<table cellspacing=\"0\" cellpadding=\"2\">";
+	$package_page .= $dep_list;
+	$package_page .= "</table>";
+    }
+
+    #
+    # Source package download
+    #
+    my $encodedpack = uri_escape( $name );
+    $package_page .= sprintf( gettext( "<h2>Download %s</h2>\n" ),
+			      $name ) ;
+    
+    my $sf = $v_pkg->{files};
+    my $source_dir = $v_pkg->{directory};
+    $sf =~ s/\A\s*//o; # remove leading spaces
+    my @source_files = split( /\n\s*/, $sf );
+    $package_page .= sprintf( "<table cellspacing=\"0\" cellpadding=\"2\">\n"
+			      ."<tr><th>%s</th><th>%s</th><th>%s</th>",
+			      gettext("File"),
+			      gettext("Size (in kB)"),
+			      gettext("md5sum") );
+    foreach( @source_files ) {
+	my ($src_file_md5, $src_file_size, $src_file_name) = split( /\s+/, $_ );
+	my $src_url = "$env->{opts}{debian_site}/$source_dir/$src_file_name";
+	if ($is_security) {
+	    $src_url = "$env->{opts}{security_site}/$source_dir/$src_file_name";
+	} elsif ($is_nonus) {
+	    $src_url = "$env->{opts}{nonus_site}/$source_dir/$src_file_name";
+	}
+	
+	$package_page .= "<tr><td><a href=\"$src_url\">$src_file_name</a></td>\n"
+	    ."<td align=\"right\">$src_file_size</td>\n"
+	    ."<td>$src_file_md5</td></tr>";
+    }
+    $package_page .= "</table>\n";
+
+    #
+    # more information
+    #
+    $package_page .= sprintf( gettext( "<h2>More information on %s</h2>" ), $name );
+    
+    $package_page .= sprintf( gettext( "<small>Check for <a href=\"%s\">bug reports</a> about %s</small><br>\n" ), $SRC_BUG_URL.$name, $name );
+    
+    #
+    # Changelog and copyright
+    #
+    if ( $env->{distribution} ne 'experimental' ) {
+	my $source_dir = $v_pkg->{directory};
+	(my $src_basename = $v_str) =~ s,^\d+:,,; # strip epoche
+	$src_basename = "${name}_$src_basename";
+	$source_dir =~ s,pool/updates,pool,o;
+	$source_dir =~ s,pool/non-US,pool,o;
+	$package_page .= "<br><small>".sprintf( gettext( "View the <a href=\"%s\">Debian changelog</a>" ), "$CHANGELOG_URL/$source_dir/$src_basename/changelog" )."</small><br>\n";
+	$package_page .= "<small>".sprintf( gettext( "View the <a href=\"%s\">copyright file</a>" ), "$CHANGELOG_URL/$source_dir/$src_basename/copyright" )."</small><br>\n";
+    }
+    
+    #
+    # Maintainer and PTS
+    #
+    $maint_name =~ s/\s+$//o;
+    unless (@uploaders) {
+	$package_page .= sprintf( "<p><small>".
+				  gettext( "%s is responsible for this Debian package." ).
+				  "</small>\n", 
+				  "<a href=\"mailto:$maint_email\">$maint_name</a>" 
+				  );
+    } else {
+	my $up_str = "<a href=\"mailto:$maint_email\">$maint_name</a> ";
+	foreach (@uploaders) {
+	    $_ = "<a href=\"mailto:$_->[1]\">$_->[0]</a>";
+	}
+	my $last_up = pop @uploaders;
+	$up_str .= ", ".join ", ", @uploaders if @uploaders;
+	$up_str .= sprintf( gettext( " and %s are responsible for this Debian package." ), $last_up );
+	$package_page .= "<p><small>$up_str</small>\n";
+    }
+
+    $package_page .= sprintf( gettext( "<small>See the <a href=\"%s\">developer information for %s</a>.</small>\n" ), $QA_URL.$name, $name );
+    
+    $package_page .= sprintf( gettext( "<p><small>Search for <a href=\"%s\">other versions of %s</a></small>\n" ), $SRC_SEARCH_URL.$encodedpack, $name );
+
+    #
+    # Trailer
+    #
+    $package_page .= trailer( '../..', $name, 'en' );
+	
+    #
+    # write file
+    #
+    $files->update_file( $filename, $package_page );
+}
+
 sub write_pages {
 	my ( $db, $opts, $dist, $archs, $langs ) = @_;
 
@@ -580,9 +803,20 @@ sub write_pages {
 				archs => $archs,
 				opts => $opts } );
 	    print "\n" if $opts->{progress};
+	    if ($l eq 'en') {
+		print "writing pages for source packages\n" unless $opts->{quiet};
+		$p_counter = 0;
+		walk_db_src_packages( $db, &src_package_pages_walker,
+				      { db => $db,
+					dest_dir => $dest_dir,
+					distribution => $dist,
+					opts => $opts } );
+		print "\n" if $opts->{progress};
+	    }
 	}
+	
 	$files->write_file_list( $opts->{md5file} );
-}
+    }
 
 sub write_all_package {
 	my ( $db, $sections, $archs, $dest_dir, 
@@ -734,9 +968,18 @@ sub print_deps {
 
 		if ( $p ) {
 		    if ( $is_old_dp ) {
-			my %sections = $p->get_arch_fields( 'section',
+			my $section;
+			if ($p->is_virtual) {
+			    $section = "virtual";
+			} else {
+			    my %sections = $p->get_arch_fields( 'section',
 							    $env->{archs} );
-			my $section = $sections{max_unique};
+			    $section = $sections{max_unique} or warn "W: no section found for package ".$p->get_name()."\n";
+			}
+#DEBUG
+			unless(defined($section)&& defined($p_name)&& defined($pkg_version) && defined($arch_str)) {
+			    print STDERR "E: $section&&$p_name&&$pkg_version&&$arch_str&&".$pkg->get_name()."\n";
+			}
 			push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $pkg_version$arch_str";
 		    } elsif ( $p->is_virtual ) {
 			my $short_desc = gettext( "Virtual package" );
@@ -767,5 +1010,48 @@ sub print_deps {
     
     return $res;
 }
+
+sub print_src_deps {
+    my ( $env, $pkg, $version, $type) = @_;
+    my $res = "";
+    my %dep_type = ('build-depends' => 'adep', 'build-depends-indep' => 'idep' );
+    
+    foreach my $dep ( @{$pkg->{versions}{$version}{$type}} ) {
+	my @res_pkgs;
+	$res .= "<tr><td width=\"20\" valign=\"top\"><img src=\"../../Pics/$dep_type{$type}.gif\"". 
+	    " alt=\"[$dep_type{$type}]\" width=\"16\" height=\"16\"></td><td>";
+	foreach my $or_dep ( @$dep ) {
+	    my $p_name = $or_dep->[0];
+	    my $p = $env->{db}->get_pkg( $p_name );
+	    my $p_version = $or_dep->[1] ? "(".encode_entities( $or_dep->[1] ).
+		" $or_dep->[2]) " : "";
+	    my $not = gettext( "not" );
+	    $or_dep->[3] =~ s/!\s*/$not /go if $or_dep->[3];
+	    my $arch_str = $or_dep->[3] ? " [$or_dep->[3]]" : "";
+	    if ( $p ) {
+		if ( $p->is_virtual ) {
+		    my $short_desc = gettext( "Virtual package" );
+		    push @res_pkgs, "<a href=\"../virtual/$p_name\">$p_name</a> $p_version$arch_str</td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+		} else {
+		    my %sections = $p->get_arch_fields( 'section',
+							$env->{archs} );
+		    my $section = $sections{max_unique};
+		    my %desc_md5s = $p->get_arch_fields( 'description-md5', 
+							 $env->{archs} );
+		    my $short_desc = conv_desc( $env->{lang}, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" ) );
+		    push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $p_version$arch_str</td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+		}
+	    } else {
+		my $short_desc = gettext( "Package not available" );
+		push @res_pkgs, "$p_name $p_version$arch_str</td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+	    }
+	}
+	$res .= "<table>\n<tr><td>".join( "</td></tr>\n<tr><td> ".gettext( " or " )." ", @res_pkgs )."</td></tr>\n</table>";
+	$res .= "</td>";
+    }
+
+    return $res;
+}
+
 
 1;
