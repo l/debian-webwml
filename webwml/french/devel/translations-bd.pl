@@ -493,7 +493,7 @@ $translations = {
 'contact' => {
 	'type'			=> 'Web',
 	'status'		=> 'traduction à jour',
-	'since'			=> '28/11/1998',
+	'since'			=> '13/08/1998',
 	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 	'last_translated'	=> '09/08/1998',
 },
@@ -517,7 +517,7 @@ $translations = {
 'license' => {
 	'type'			=> 'Web',
 	'status'		=> 'traduction à jour',
-	'since'			=> '28/11/1998',
+	'since'			=> '13/08/1999',
 	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 	'last_translated'	=> '11/08/1998',
 },
