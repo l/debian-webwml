@@ -16,6 +16,18 @@
 #   License along with this library; if not, write to the Free Software
 #   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+# INSTRUCTIONS:
+#
+# * You need dpkg, sharutils (uudecode) and patch to use this script.
+#   If you do not use Debian, you can find dpkg on any Debian mirror
+#   in debian/project/dpkg/.
+# * Mount your hurd partition, created with "mke2fs -o hurd /dev/???"
+# * Make a directory somewhere, and put the following files in it:
+#   cross-install    - this file. Installs the base packages on the hurd partition.
+#   native-install   - To be run after booting to the Hurd.
+#   dpkg-hurd        - a script to cross install packages even if they contain pre* scripts.
+#   Also the packages mentioned in ${plist}, below.
+
 # cross-install <path>
 #
 # for example: cross-install /gnu
@@ -68,17 +80,8 @@
 #   30 Jun 1999 - v2.7 Add overwrite stuff to grep, so it doesn't bail out.
 #                      Also mention that you need dpkg, sharutils and patch.
 #                      Reported by Ognyan Kulev. 
-# INSTRUCTIONS:
-#
-# * You need dpkg, sharutils (uudecode) and patch to use this script.
-#   If you do not use Debian, you can find dpkg on any Debian mirror
-#   in debian/project/dpkg/.
-# * Mount your hurd partition, created with "mke2fs -o hurd /dev/???"
-# * Make a directory somewhere, and put the following files in it:
-#   cross-install    - this file. Installs the base packages on the hurd partition.
-#   native-install   - To be run after booting to the Hurd.
-#   dpkg-hurd        - a script to cross install packages even if they contain pre* scripts.
-#   Also the packages mentioned in ${plist}, below:
+#    2 Jul 1999 - v2.8 Remove some patches. We don't want to carry around
+#                      this crap for ever.
 
 plist="base/ae base/adduser base/base-files base/base-passwd base/bash \
        base/bsdutils \
@@ -185,7 +188,7 @@ touch ${dest}/var/lib/dpkg/{status,available}
 ##########################
 echo
 echo I will now install packages. If you have multiple versions of the
-echo same package available, it may be that I don\'t reckognize the latest.
+echo same package available, it may be that I don\'t recognize the latest. 
 echo Please remove the offending old version in this case and start from
 echo scratch.
 echo
@@ -286,7 +289,7 @@ touch ${dest}/servers/exec
 # Explanation: It is a conf file in some versions of Hurd.
 
 echo
-echo Latest hurd packages declare boot/servers.boot as a conffile, let me check.
+echo Latest Hurd packages declare boot/servers.boot as a conffile, let me check.
 
 if [ -e ${dest}/boot/servers.boot.dpkg-new ] ; then
 	echo Yes, found it. I will copy boot/servers.boot.dpkg-new to boot/servers.boot
@@ -342,20 +345,6 @@ _NIL_
 	touch ${dest}/var/lib/dpkg/info/libc6.list
 fi
 
-#####################
-# Patch libc6 shlibs
-#####################
-# This is fixed in libc0.2 (>= 2.1)
-#
-#if [ -e ${dest}/var/lib/dpkg/info/libc0.2.shlibs ] ; then
-#	if ! grep libc0.2 ${dest}/var/lib/dpkg/info/libc0.2.shlibs > /dev/null; then
-#		echo
-#		echo Hacking shlibs file of libc0.2 package, do you have an old version?
-#		sed -e s/\$/libc0.2/ ${dest}/var/lib/dpkg/info/libc0.2.shlibs > ${dest}/libc0.2.shlibs.new
-#		mv ${dest}/libc0.2.shlibs.new ${dest}/var/lib/dpkg/info/libc0.2.shlibs
-#	fi
-#fi
-
 ########################################################
 # make some essential directories for configure of dpkg
 ########################################################
@@ -369,120 +358,6 @@ if [ ! -e ${dest}/etc/rc0.d ] ; then
         done
         install -d -m 755 -o root -g root ${dest}/etc/rc.boot
 fi
-
-#grep Source:\ dpkg-hurd ${dest}/var/lib/dpkg/status > /dev/null 2>&1 && newdpkg=y || newdpkg=n
-#
-#if [ x${newdpkg} = xn ] ; then
-#
-#	####################
-#	# Patch dpkg-divert
-#	####################
-#	echo
-#	echo Fixing Debian scripts for the Hurd
-#
-#cd ${dest}
-#patch -p0 << '_NIL_' 
-#*** usr/sbin/dpkg-divert~   Sat Jan  2 01:40:22 1999
-#--- usr/sbin/dpkg-divert    Sun Jan  3 00:01:52 1999
-#***************
-#*** 1,7 ****
-#  #! /usr/bin/perl --
-#
-#! #use POSIX; &ENOENT;
-#! sub ENOENT { 2; }
-#  # Sorry about this, but POSIX.pm isn't necessarily available
-#
-#  $version="1.4.1"; # This line modified by Makefile
-#--- 1,7 ----
-#  #! /usr/bin/perl --
-#
-#! use POSIX; &ENOENT;
-#! #sub ENOENT { 2; }
-#  # Sorry about this, but POSIX.pm isn't necessarily available
-#
-#  $version="1.4.1"; # This line modified by Makefile
-#_NIL_
-#
-#cd ${dest}
-#patch -p0 << '_NIL_'
-#*** usr/sbin/update-alternatives~   Sat Jan  2 01:40:22 1999
-#--- usr/sbin/update-alternatives    Sat Jan  2 23:41:47 1999
-#***************
-#*** 1,7 ****
-#  #! /usr/bin/perl --
-#
-#! #use POSIX; &ENOENT;
-#! sub ENOENT { 2; }
-#  # Sorry about this, but POSIX.pm isn't necessarily available
-#
-#  $version="1.4.1"; # This line modified by Makefile
-#--- 1,7 ----
-#  #! /usr/bin/perl --
-#
-#! use POSIX; &ENOENT;
-#! #sub ENOENT { 2; }
-#  # Sorry about this, but POSIX.pm isn't necessarily available
-#
-#  $version="1.4.1"; # This line modified by Makefile
-#_NIL_
-#
-#cd ${dest}
-#patch -p0 << '_NIL_'
-#*** usr/sbin/install-info~  Sat Jan  2 01:40:22 1999
-#--- usr/sbin/install-info   Sun Jan  3 00:04:44 1999
-#***************
-#*** 208,217 ****
-#      }
-#  }
-#
-#! if (!$nowrite && !link("$infodir/dir","$infodir/dir.lock")) {
-#!     die "$name: failed to lock dir for editing! $!\n".
-#!         ($! =~ m/exists/i ? "try deleting $infodir/dir.lock ?\n" : '');
-#! }
-#
-#  open(OLD,"$infodir/dir") || &ulquit("$name: open $infodir/dir: $!\n");
-#  @work= <OLD>;
-#--- 208,217 ----
-#      }
-#  }
-#
-#! #if (!$nowrite && !link("$infodir/dir","$infodir/dir.lock")) {
-#! #    die "$name: failed to lock dir for editing! $!\n".
-#! #        ($! =~ m/exists/i ? "try deleting $infodir/dir.lock ?\n" : '');
-#! #}
-#
-#  open(OLD,"$infodir/dir") || &ulquit("$name: open $infodir/dir: $!\n");
-#  @work= <OLD>;
-#***************
-#*** 338,349 ****
-#          &ulquit("$name: cannot backup old $infodir/dir, giving up: $!\n");
-#      rename("$infodir/dir.new","$infodir/dir") ||
-#          &ulquit("$name: install new $infodir/dir: $!\n");
-#! unlink("$infodir/dir.lock") || die "$name: unlock $infodir/dir: $!\n";
-#  }
-#
-#  sub ulquit {
-#!     unlink("$infodir/dir.lock") ||
-#!         warn "$name: warning - unable to unlock $infodir/dir: $!\n";
-#      die $_[0];
-#  }
-#
-#--- 338,349 ----
-#          &ulquit("$name: cannot backup old $infodir/dir, giving up: $!\n");
-#      rename("$infodir/dir.new","$infodir/dir") ||
-#          &ulquit("$name: install new $infodir/dir: $!\n");
-#! #unlink("$infodir/dir.lock") || die "$name: unlock $infodir/dir: $!\n";
-#  }
-#
-#  sub ulquit {
-#! #    unlink("$infodir/dir.lock") ||
-#! #        warn "$name: warning - unable to unlock $infodir/dir: $!\n";
-#      die $_[0];
-#  }
-#_NIL_
-#
-#
-#fi
 
 ##################
 # Setup hostname.
@@ -572,56 +447,6 @@ M``T*`!M;)7`Q)61-`!M;)7`Q)61"`!M;)7`Q)61,`!M;)7`Q)61$`!M;)7`Q
 `
 end
 _NIL_
-fi
-
-##################
-# Setup etc/login
-##################
-# This is in latest hurd packages.
-
-if [ ! -e ${dest}/etc/login ] ; then
-	echo
-	echo Setting up etc/login.
-
-	install -d -m 755 -o root -g root ${dest}/etc/login
-cat << '_NIL_' > ${dest}/etc/login/README
-This is a hurd login shell; it is a normal user shell, but has no user
-privileges.  To login as a user with a userid of USER, use the command:
-
-  login USER
-
-other useful commands:
-
-  ql USER       # quick login -- just start a shell in USER's home directory
-  su USER       # set the id of the current (login) shell to USER
-                # (use the `unsu' command to undo this, or just exit the shell)
-_NIL_
-
-cat << '_NIL_' > ${dest}/etc/login/.bash_login
-. .bashrc
-. .profile
-_NIL_
-
-cat << '_NIL_' > ${dest}/etc/login/.bashrc
-# login -- a normal login
-alias login='exec login -p -R-p -R-aHOME -R-aMOTD -R-e_LOGIN_RETRY=yes'
-alias logon=login
-alias l=login
-
-# quick login -- don't act like a login shell, but do cd to $HOME
-alias ql='exec login -pSL -aMOTD -R-p -R-aHOME -R-aMOTD -R-e_LOGIN_RETRY=yes'
-
-alias help='cat $HOME/README'
-alias '?'=help
-_NIL_
-
-cat << '_NIL_' > ${dest}/etc/login/.profile
-PS1='login> '
-test "$_LOGIN_RETRY" || echo "Use \`login USER' to login, or \`help' for more information."
-unset _LOGIN_RETRY
-_NIL_
-
-touch ${dest}/etc/login/.hushlogin
 fi
 
 echo

@@ -1,7 +1,7 @@
 #use wml::debian::template title="Debian GNU/Hurd" NOHEADER="yes"
 [ <a href="..">Ports</a> ] [ <a href="index">Debian GNU/Hurd</a> ] [ <a href="hurd-install">Installation</a> ] [ <a href="hurd-task">Task Lists</a> ] [ <a href="hurd-links">Links</a> ] [ <b>Porting Software</b> ] [ <a href="hurd-contact">Contact</a> ]<p>
 
-<h1>Debian/GNU Hurd</h1>
+<h1>Debian GNU/Hurd</h1>
 <h2>Porting Software</h2>
 <P>
 Here is a list of common incompatibilities you may encounter when compiling
@@ -16,6 +16,26 @@ If you get <tt>Bad File Descriptor</tt> error when trying to read from a file
 argument is the access method. If it is a hard coded number instead of a
 symbol defined in the standard header files, the code is screwed and should
 be fixed to either use <tt>O_RDONLY</tt>, <tt>O_WRONLY</tt> or
-<tt>O_RDWR</tt>. (seen in <tt>fortunes</tt> package)
+<tt>O_RDWR</tt>. This bug was observed in the <tt>fortunes</tt> and
+<tt>mtools</tt> packages for example.
 </P></LI>
+<LI><tt>PATH_MAX</tt>
+<P>
+Every unconditionalized use of <tt>PATH_MAX</tt> is a POSIX incompatibility.
+If there is no upper limit on the length of a path, this symbol is not
+defined in any header file. Instead, you need to either use a different
+implementation that does not rely on the length of a string or use
+<tt>sysconf()</tt> to query the length at runtime. If <tt>sysconf()</tt>
+returns <tt>-1</tt>, you have to use <tt>realloc()</tt> to allocate the
+needed memory dynamically.
+</p></li>
+<LI><tt>MAXHOSTNAMELEN</tt>
+<P>see <tt>PATH_MAX</tt>
+</p></li>
+<li><tt>MAXPATHLEN</tt>
+<p>see <tt>PATH_MAX</tt>
+</p></li>
+<li><tt>NOFILE</tt>
+<p>see <tt>PATH_MAX></tt>
+</p></li>
 </UL>
