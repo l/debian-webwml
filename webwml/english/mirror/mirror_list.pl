@@ -239,23 +239,25 @@ determine the fastest of a list of sites.
 
 END
 	print "<p>" if $html;
+	print "The authoritative copy of this list can always be found at:\n";
+	print "<a href=\"http://ftp.debian.org/debian/README.mirrors\">" if $html;
+	print "                 http://ftp.debian.org/debian/README.mirrors";
+	print "</a>.<br>" if $html;
+	print "\n";
+
 	print <<END;
 If you know of any mirrors that are missing from this list,
-please have the site maintainer fill out:
+please have the site maintainer fill out the form at:
 END
-	if ($html) {
-		print <<END;
-<a href="http://www.debian.org/mirror/submit">http://www.debian.org/mirror/submit</a>.
-To contact the maintainer of this page, write to
-<a href="mailto:mirrors\@debian.org">mirrors\@debian.org</a>.
-END
-	}
-	else {
-		print <<END;
-                     http://www.debian.org/mirror/submit
-To contact the maintainer of this page, write to mirrors\@debian.org
-END
-	}
+	print "<a href=\"http://www.debian.org/mirror/submit\">" if $html;
+	print "                     http://www.debian.org/mirror/submit";
+	print "</a>. " if $html;
+	print "\n";
+
+	print "To contact the maintainer of this page, write to ";
+	print "<a href=\"mailto:mirrors\@debian.org\">" if $html;
+	print "mirrors\@debian.org";
+	print "</a>.<br>" if $html;
 }
 
 sub primary_mirrors {
@@ -347,7 +349,7 @@ sub access_methods {
 	print <<END;
 <h1>Access Methods for the Debian mirror sites</h1>
 
-<p>This page contains a list of mirrors of Debian. For each site, the different types
+<p>This is a complete list of mirrors of Debian. For each site, the different types
 of material available are listed, along with the access method for each type.
 
 <p>The following things are mirrored:
@@ -364,7 +366,7 @@ of material available are listed, along with the access method for each type.
 	<a href="http://cdimage.debian.org/">http://cdimage.debian.org/</a> for details.
 </dl>
 
-<p>The following access methods are available:
+<p>The following access methods are possible:
 <dl compact>
 <dt><strong>HTTP</strong>
 	<dd>Standard web access, but it can be used for downloading files.
@@ -386,6 +388,16 @@ of material available are listed, along with the access method for each type.
 </dl>
 
 <pre>
+END
+
+	print <<END;
+The authoritative copy of this list can always be found at:
+<a href="http://www.debian.org/mirror/mirrors_full">
+http://www.debian.org/mirror/mirrors_full</a>.
+<br>
+To contact the maintainer of this page, write to 
+<a href="mailto:mirrors\@debian.org">mirrors\@debian.org</a>.
+<br>
 END
 }
 
@@ -445,6 +457,10 @@ sub full_listing {
 
 sub readmenonus {
 	print <<_END_;
+
+                      Debian GNU/Linux non-US packages
+                      --------------------------------
+
 United States laws place restrictions on the export of defense articles,
 which, unfortunately, includes some types of cryptographic software.  PGP
 and ssh, among others, fall into this category.  It is legal however, to
@@ -498,6 +514,14 @@ _END_
 -------------------------------------------------------------------------------
 Last modified: $last_modify             Number of sites listed: $nonuscount
 _END_
+	print <<END;
+
+The authoritative copy of this list can always be found at:
+                 http://ftp.debian.org/debian/README.non-US
+To contact the maintainer of this page, write to mirrors\@debian.org
+END
+# that should be http://non-us.debian.org/debian-non-US/README.non-US
+# but the FTP admins still haven't made it happen, sigh
 }
 
 sub footer_stuff() {
