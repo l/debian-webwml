@@ -15,7 +15,6 @@ Local::Cvsinfo - retrieve CVS related informations from a checked out copy
 
  use Local::Cvsinfo;
  my $cvs = Local::Cvsinfo->new();
- }
  $cvs->readinfo('.', recursive => 1, verbose => 1 );
  my $top = $cvs->topdir();
  my $rev = $cvs->revision('foo/bar');
