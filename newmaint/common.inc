@@ -114,9 +114,19 @@
   {
     echo "<TR><TD width=\"200\"><B>$title</B> </TD><TD width=\"400\"> <INPUT type=\"password\" name=\"$name\"></TD></TR>\n";
   }
+  # Operates on bools
   function print_flag($value,$trueflag,$falseflag)
   {
     if ($value == 't') {
+      echo $trueflag;
+    } else {
+      echo $falseflag;
+    }
+  }
+  # Operates on texts
+  function print_flag_text($value,$trueflag,$falseflag)
+  {
+    if ($value != '') {
       echo $trueflag;
     } else {
       echo $falseflag;
@@ -176,7 +186,7 @@
         print_flag($row["pnp_ok"],"<TD><IMG src=\"/images/dfsg.png\" alt=\"P\"></TD>","<TD> </TD>");
         print_flag($row["tns_ok"],"<TD><IMG src=\"/images/hammer.png\" alt=\"T\"></TD>","<TD> </TD>");
         print_flag($row["approved"],"<TD><IMG src=\"/images/thumb.png\" alt=\"A\"></TD>","<TD> </TD>");
-        print_flag($row["da_approved"],"<TD><IMG src=\"/images/new.png\" alt=\"N\"></TD>","<TD> </TD>");
+        print_flag_text($row["newmaint"],"<TD><IMG src=\"/images/new.png\" alt=\"N\"></TD>","<TD> </TD>");
         if ($row["approved"] == "f" || $row["da_approved"] == "f") {
             echo "<TD><IMG src=\"/images/hold.png\" alt=\"H\"></TD>";
         } else {
