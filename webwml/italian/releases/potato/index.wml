@@ -1,7 +1,8 @@
 #use wml::debian::template title="Debian GNU/Linux 2.2 (`potato') Release Information" BARETITLE=yes
 #use wml::debian::release
 #include "$(ENGLISHDIR)/releases/potato/release.data"
-#use wml::debian::translation-check translation="1.31"
+#include "$(ENGLISHDIR)/releases/info"
+#use wml::debian::translation-check translation="1.42"
 
 <define-tag about_lang_setting>
 <p>Se hai attivato correttamente la localizzazione del tuo browser, puoi usare
@@ -16,13 +17,19 @@ architettura, la lingua e il formato che preferisci dalle tabelle.
        <li><a href="#release-notes">Release Notes</a>
        <li><a href="#new-inst">Nuove installazioni</a>
        <li><a href="#errata">Errata</a>
+       <li><a href="#reporting-bugs">Segnalare problemi</a>
        <li><a href="#credits">Ringraziamenti</a>
 </ul>
 
 <h2><a name="general">Informazioni generali</a></h2>
 
 <p>Debian GNU/Linux 2.2, nota anche come ``potato'', è disponibile dal 14
-agosto 2000.
+agosto 2000. L'ultimo aggiornamento di Debian 2.2 è
+<ifeq "<current_release_name>" "potato"
+"<current_release>, rilasciata il <current_release_date>."
+"2.2r3, rilasciata il <:=spokendate('2001-4-17'):>">
+# the above will still need to be updated after woody release, but it'll
+# be less wrong than saying it's 2.3r0 etc
 
 Per informazioni sui principali cambiamenti apportati in questa versione fai
 riferimento alle <a href="#release-notes">Release Notes</a> e all'
@@ -79,6 +86,17 @@ versioni precedenti.
 rapporto dettagliato</a> che descrive i pacchetti che sono cambiati per
 l'architettura <:= $arches{'i386'} :> nelle ultime due release.
 
+<p>Se stai utilizzando APT, puoi usare la seguente linea nel tuo file
+<code>/etc/apt/sources.list</code>  per avere accesso ai pacchetti di potato:
+
+<pre>
+  deb http://http.us.debian.org/debian potato main contrib non-free
+  deb http://non-us.debian.org/debian-non-US potato/non-US main non-free
+</pre>
+
+<p>Leggi le pagine di manuale relative a <code>apt-get</code>(8) e
+<code>sources.list</code>(5) per maggiori informazioni.
+
 <h2><a name="new-inst">Nuove installazioni</a></h2>
 
 <p>Le istruzioni per l'installazione e i file da scaricare sono divisi per
@@ -120,13 +138,34 @@ CVS</a>.
 
 <h2><a name="errata">Errata</a></h2>
 
-<p>A volte, in caso di problemi particolarmente critici o legati alla
+<h3>Sicurezza</h3>
+
+<p>Il team di sicurezza di Debian, rilascia aggiornamenti dei pacchetti nella
+distribuzione stabile per problemi legati alla sicurezza
+Per favore consulta le
+<a href="$(HOME)/security/">pagine della sicurezza</a> per informazioni
+concernenti i problemi di sicurezza identificati in `potato'.
+
+<p>Se utilizzi APT, aggiungi la seguente linea al file
+<tt>/etc/apt/sources.list</tt> per essere in grado di accedere agli ultimi
+aggiornamenti:
+
+<pre>
+  deb http://security.debian.org/ potato/updates main contrib non-free
+</pre>
+
+<p>Dopo di ciò, esegui <kbd>apt-get update</kbd> seguito da <kbd>apt-get upgrade</kbd>.
+
+<h3>Aggiornamenti (versioni minori)</h3>
+
+<p>A volte, in caso di molti problemi particolarmente critici o legati alla
 sicurezza, la versione distribuita è aggiornata, In genere questi cambiamenti
 sono indicati come 'point release' cioè versioni intermedie.
 
 <p>La prima versione minore di Potato, 2.2r1, &egrave; stata rilasciata in 14
-november 2000. La seconda versione minore, 2.2r2, &egrave; stat rilasciata il
-3 dicember 2000. Vedi il file <a
+novembre 2000. La seconda versione minore, 2.2r2, &egrave; stata rilasciata il
+3 dicembre 2000. La terza versione minore, 2.2r3, è stata rilasciata il
+17 aprile 2001. Vedi il file <a
 href="http://http.us.debian.org/debian/dists/potato/ChangeLog">ChangeLog</a>
 (e <a
 href="http://non-us.debian.org/debian-non-US/dists/potato/non-US/ChangeLog">
@@ -141,50 +180,83 @@ stesso posto del nostro <a
 href="ftp://non-us.debian.org/debian-non-US/dists/potato-proposed-updates/">
 server non-US</a> e nei suoi mirror.)
 
-<p>Le <a href="$(HOME)/security/">pagine della sicurezza</a> dovrebbero essere
-consultate per saperne di più sui problemi riscontrati.
-
 <p>Se usi <tt>apt</tt> per aggiornare i tuoi pacchetti, puoi installare gli
 aggiornamenti proposti aggiungendo questa linea al tuo file
 <tt>/etc/apt/sources.list</tt>:
 
 <pre>
-  \# aggiornamenti relativi alla sicurezza
-  deb http://security.debian.org/ potato/updates main contrib non-free
   \# proposte di aggiornamento per Debian 2.2
   deb http://http.us.debian.org/debian dists/proposed-updates/
   deb http://non-us.debian.org/debian-non-US dists/proposed-updates/
 </pre>
 
-Dopodiché esegui <kbd>apt-get update</kbd> seguito da <kbd>apt-get
-upgrade</kbd>.
+<p>Dopodiché esegui <kbd>apt-get update</kbd> seguito da <kbd>apt-get upgrade</kbd>.
 
-<h3>Creare le immagini per i CD</h3>
+#<h3>Creare le immagini per i CD</h3>
+#
+#<p>Coloro che vogliano creare delle immagini CD personalizzare basate su 2.2r2
+#dovranno utilizzare la versione CVS di `debian-cd' e <strong>non</strong>
+#quella attualmente installata in potato.
 
-<p>Coloro che vogliano creare delle immagini CD personalizzare basate su 2.2r2
-dovranno utilizzare la versione CVS di `debian-cd' e <strong>non</strong>
-quella attualmente installata in potato.
-
-<h3>Sistema di installazione internazionale</h3>
+<h3>Supporto al sistema di installazione internazionale (non ufficiale)</h3>
 
 <p>Una versione internazionale del sistema di installazione per i386 &egrave;
 <a href="http://people.debian.org/~aph/current-i18n/">disponibile</a> per il
 test. Devi utilizzare la versione 'idepci' o 'compact'.
 
-<p>Questo sistema andr&agrave; incorporato in Debian Potato nella versione
-2.2r3. Sar&agrave; supportato nella versione i386 che utilizza il framebuffer
-e nella altre architetture dipendentemente da quali porting potranno
-supportarlo.
+<p>A causa di alcuni problemi non ancora risolti nel sistema internazionale
+di installazione, sarà difficile includerlo in una versione minore di 
+potato. Possiamo però sperare di poterlo avere definito in tempo per
+<a href="../woody/">woody</a>.
 
-# Debian 2.2 in press
-#  http://www.linuxworld.com/linuxworld/lw-2000-10/lw-10-vcontrol_2.html
-#  http://www.pro-linux.de/berichte/debian.html
-#  http://www.pro-linux.de/berichte/ll-debian.html
-#  http://www.linux-community.de/News/story?storyid=609
+<h3>Supporto non ufficiale a ReiserFS</h3>
 
-# Reports
-#  http://www.pro-linux.de/t_netzwerk/debian-isdn.html
+<p>Pare che ci siano almeno due versioni non ufficiali del sistema di
+installazione per i386 che supportano ReiserFS.
 
+<p>Una versione è di John H. Robinson, IV, ed è disponibile con alcune
+istruzioni presso <a href="http://chao.ucsd.edu/debian/boot-floppies/">
+http://chao.ucsd.edu/debian/boot-floppies/</a>.
+
+L'altra è di Marc A. Volovic ed è disponibile presso <a
+href="http://www.bard.org.il/~marc/linux/rfs/">
+http://www.bard.org.il/~marc/linux/rfs/</a>.
+
+
+<h3>Supporto non ufficiale per il Kernel Linux 2.4</h3>
+
+<p>
+Adrian Bunk ha fornito n insieme di pacchetti per i sistemi potato i386
+che assicura la compatibilità con la versione 2.4 del kernel Linux.
+Vedi <a href="http://www.fs.tum.de/~bunk/kernel-24.html">
+http://www.fs.tum.de/~bunk/kernel-24.html</a> per istruzioni, avvertimenti e
+linee da aggiungere a <code>/etc/apt/sources.list</code>.
+
+<h2><a name="reporting-bugs">Segnalare anmalie</a></h2>
+
+<p>Se hai qualsiasi tipo di problema con il sistema di istallazione,
+per favore segnalalo come difetto del pacchett <tt>boot-floppies</tt>.
+Le informazioni che dovresti fornire sono specificate nel
+<a href="i386/ch-rescue-boot#s-boot-troubleshooting">Manuale di
+installazione</a>.
+
+<p>Se hai invece suggerimenti o correzioni al <a 
+href="#new-inst">Manuale di istallazione</a>, dovresti inviarle egualmente
+come segnalazioni al pacchetto <tt>boot-floppies</tt>, che è il pacchetto
+nel quale è inserita tutta la documentazione.
+
+<p>Se hai delle considerazioni sul sistema di installazione che non è
+appropriato definire anomalie (ad esepio se non sei sicuro che sia un difetto
+o se hai ben chiaro cosa sia successo) dovresti probabilmente inviare
+un messaggio alla lista <a href="mailto:debian-boot@lists.debian.org">
+&lt;debian-boot@lists.debian.org&gt;</a>.
+
+<p>Se hai problemi con il sistema successivamente alla installazione,
+dovresti provare a capire qual è il pacchetto incriminato e segnalare
+l'anomalia riferendoti a quel pacchetto.
+
+<p>Per informazioni su come segnalare anomalie vedi le pagine del
+<a href="$(HOME)/Bugs/">sistema di tracciamento delle anomalie</a>.
 
 <h2><a name="credits">Ringraziamenti e critiche</a></h2>
 
@@ -205,10 +277,10 @@ Debian boot-floppies.
 <p>Gli <a href="$(HOME)/devel/people">sviluppatori</a> e chiunque altro abbia
 contribuito.
 
-<!-- Keep this comment at the end of the file
-Local variables:
-mode: sgml
-sgml-indent-data:nil
-sgml-doctype:"../.doctype"
-End:
--->
+# <!-- Keep this comment at the end of the file
+# Local variables:
+# mode: sgml
+# sgml-indent-data:nil
+# sgml-doctype:"../.doctype"
+# End:
+# -->
