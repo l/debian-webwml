@@ -18,6 +18,7 @@ cleandest::
 
 
 # Do Not modify the following line
+ifeq ($(LANGUAGE),en)
 index.$(LANGUAGE).html: card.ps.gz
 
 card.ps.gz: card.ps
@@ -28,6 +29,7 @@ card.ps:  card.dvi
 
 card.dvi: card.tex bottle.eps
 	latex card.tex
+endif
 
 # there only needs to be one version of the following so
 # the non-english directories shouldn't try to install them
