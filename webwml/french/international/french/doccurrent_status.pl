@@ -220,7 +220,7 @@ $translations_status = {
 
 'securing-debian-howto' => {
 	'status'		=> 2,
-	'translation_maintainer'=> ['Gaetan Ryckeboer <gryckeboer@virtual-net.fr>'],
+	'translation_maintainer'=> ['Edi Stojicevic <es@debianworld.org>'],
 },
 
 #'making-deb' => {
