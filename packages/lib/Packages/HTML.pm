@@ -147,7 +147,7 @@ sub trailer {
 	sprintf( gettext( "Copyright &copy; 1997-2003 <a href=\"http://www.spi-inc.org\">SPI</a>; See <a href=\"%s/license\">license terms</a>." ), "$HOME/" )."<br>".
 	gettext( "Debian is a registered trademark of Software in the Public Interest, Inc." ).
 	"</small>".
-	"</body>\n</html>";
+	"</body>\n</html>\n";
 
     return $txt;
 }
