@@ -206,14 +206,12 @@ if ($opt_l) {
 print "Computing statistics in gettext files... " if ($config{'verbose'});
 my %po_translated,%po_fuzzy,%po_untranslated,%po_total;
 my %percent_po_t,%percent_po_u,%percent_po_f;
-print STDERR "Debugging output temporarily added in order to track a bug, do not care\n";
 foreach $lang (@search_in) {
     next if $lang eq 'english';
     $l = $langs{$lang};
     $po_translated{"total"}{$lang} = $po_fuzzy{"total"}{$lang} = $po_untranslated{"total"}{$lang} = 0;
     my @status = qx,LC_ALL=C make -C $opt_w/$lang/po stats 2>&1 1>/dev/null,;
     foreach $line (@status) {
-print STDERR $line;
         chomp $line;
         ($domain = $line) =~ s/\..*//;
         $po_translated{$domain}{$lang} = ($line =~ /(\d+) translated/ ? $1 : "0");
