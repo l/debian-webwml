@@ -23,9 +23,24 @@ TOTW = $(BIN)/totw.pl
 #                -o $(@F)
 # If you use --epilog as above, then you will want to add a line to
 # Make.templ.inc to remove $(@F) after WML is done.
-WMLOPTIONS=-q -D CUR_YEAR=$(shell date +%Y)
-# WMLOUTFILE=$(@F)
+#WMLOPTIONS=-q -D CUR_YEAR=$(shell date +%Y)
+#WMLOUTFILE=$(@F)
 WMLOUTPUT=-o UNDEFuZH@uCN:$(notdir $*).zh-cn.html.tmp -o UNDEFuZH@uTW:$(notdir $*).zh-tw.html.tmp
 WMLPROLOG=--prolog='/usr/bin/perl -pe "s/^(([\\x00-\\x7F]|([\\x80-\\xFF].))+[\\x80-\\xFF]\\\\)$$/\$$1\\\\\\\\/;"'
 WMLEPILOG=
-WML=wml $(WMLOPTIONS) $(WMLOUTPUT) $(WMLPROLOG) $(WMLEPILOG)
+
+# This is the WML definition for the non-buggy WML.
+#WML=wml $(WMLOPTIONS) $(WMLOUTPUT) $(WMLPROLOG) $(WMLEPILOG)
+
+# These are the relevant WML and WMLOPTIONS definition for the buggy WML.
+# Yes, it was fixed, but someone re-installed wml-1.6.8 on va.debian.org
+# on June 17, 2000, and since then Chinese build was broken.
+#
+# DO NOT REMOVE THE FOLLOWING LINES!  I'll do it myself when va.debian.org
+# gets upgraded to Debian 2.2.  -- Anthony Fok <foka@debian.org>, June 27, 2000
+#
+# Note to self: REMEMBER to modify Make.dep.generic too.  "$(WML) $(<F)"
+#
+WMLOPTIONS += -p1-8
+WML=wml $(WMLOPTIONS) $(WMLPROLOG) $(WMLEPILOG) $(<F) \
+	| /usr/lib/wml/exec/wml_p9_slice $(WMLOUTPUT)
