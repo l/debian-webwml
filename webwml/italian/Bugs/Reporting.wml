@@ -1,38 +1,110 @@
 #use wml::debian::template title="Debian BTS - segnalare anomalie" NOHEADER=yes NOCPYRIGHT=true
-#use wml::debian::translation-check translation="1.17"
+#use wml::debian::translation-check translation="1.24"
 
 <h1>Come segnalare una anomalia in Debian</h1>
 
-<P>Manda un messaggio a
+<h2>Cose importanti da sapere <strong>prima</strong> di spedire</h2>
+
+<p>Per favore non segnalate più anomalie slegate - soprattutto quelle
+per pacchetti differenti - in un unico messaggio.
+
+<p>Dovresti controllare se la tua segnalazione è già stata spedita da qualcun
+altro prima di inviarla. Liste delle anomalie al momento irrisolte sono disponibili
+<a href="./">sul World Wide Web</a> e <a href="Access">da altre parti</a>
+- vedi altri documenti per dettagli.</p>
+
+<p>Se non riesci a determinare quale pacchetto contiene il problema,
+per favore spedisci una e-mail alla <a href="mailto:debian-user@lists.debian.org">
+Debian user mailing list</a> chiedendo consigli. Se il tuo problema non è
+in relazione con un solo pacchetto ma con un qualche generico servizio Debian, ci sono
+parecchi <a href="pseudo-packages">pseudo-pacchetti</a> o anche
+<a href="../MailingLists/subscribe">mailing list</a> che potete usare
+per farci avere la vostra segnalazione.
+
+<p>Per favore usa <a href="#xcc">un metodo differente</a> per spedire la tua
+segnalazione ad altre destinazioni (come le mailing list), non le solite
+intestazioni per l'email.
+
+
+<h2>Spedire una segnalazione di anomalia usando un programma automatico</h2>
+
+<p>Ci sono due programmi che abbiamo sviluppato in Debian per facilitare la segnalazione
+di anomalie, sono chiamati
+<code><a href="http://packages.debian.org/stable/utils/bug.html">bug</a></code>
+e
+<code><a href="http://packages.debian.org/stable/utils/reportbug.html">reportbug</a></code>.
+Entrambi ti guideranno attraverso il processo di segnalazione di un'anomalia passo per passo,
+e probabilmente rendono più semplice la segnalazione in questo modo.
+
+
+<h2>Spedire la segnalazione di anomalia via e-mail</h2>
+
+<P>Spedisci un'email a
 <A href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></A>,
-come descritto qui sotto.</p>
+come descritto sotto.</P>
 
-<P>Per favore non segnalate più anomalie slegate - soprattutto quelle
-per pacchetti differenti - in un unico messaggio. Inoltre non mandate
-la vostra segnalazione sulle liste di messaggi o ad altri diversi da
-<code>submit@bugs</code> (per i dettagli su come fare questo
-correttamente, vedere <A href="#xcc">più avanti</A>).</p>
+<P>Naturalmente, come in ogni email, dovresti includere un chiaro, preciso
+<code>Oggetto</code> fra le intestazioni principali della tua mail. L'oggetto che usi
+sarà usato come titolo iniziale della anomalia nel sistema di gestione, perciò
+per favore cerca di renderlo chiaro!</P>
 
-<P>Le liste delle anomalie già segnalate sono disponibili <A href="./">
-sul World Wide Web</A> e <A href="Access">altrove</A> - vedi altri
-documeneti per i dettagli.</p>
+<P>Devi inserire una pseudo-intestazione all'inizio del testo del
+messaggio. Ciò significa che le prime righe del messaggio dovrebbero essere:
 
-<P>Va inserita una pseudo intestazione all'inizio del testo del
-mmessaggio con delle linee <code>Package:</code> e <code>Version:</code>
-che diano il nome e la versione del pacchetto che presenta l'anomalia.
-(I campi della pseudo intestazione devono cominciare a inizio linea.
-Il sistema di tracciamento delle anomalie non comprende queste istruzioni se
-sono incluse in sezioni MIME o PGP.)
-(Puoi raccogliere queste informazioni tramite i comandi
-<code>dpkg --search</code> e <code>dpkg --list</code>; vedi anche
-<code>dpkg --help</code>.
+<pre>
+Package: &lt;qualcosa&gt;
+</pre>
 
-<em>Vedi inoltre le <A href="#details">ulteriori richieste</A></em>.</p>
+<p>Sostituisci <code>&lt;qualcosa&gt;</code> con il nome del pacchetto che
+ha un'anomalia.
 
-<P>Ci sono inoltre alcuni pseudo pacchetti disponibili per segnalare
-anomalie che non rientrano in pacchetti reali.
-C'è <A HREF="pseudo-packages">una lista di questi</A> 
-sulle pagine WWW relative alle anomalie.</p>
+<p>La seconda riga del messaggio dovrebbe essere:
+
+<pre>
+Version: &lt;qualsiasi&gt;
+</pre>
+
+<p>Sostituisci <code>&lt;qualsiasi&gt;</code> con la versione del pacchetto.
+
+<p>Devi fornire una corretta riga <code>Package</code> nella
+pseudo-intestazione affinchè il sistema di gestione delle anomalie possa inviare il messaggio
+allo sviluppatore del pacchetto. Guarda <a href="#findpkgver">questo esempio</a> per
+informazioni su come rintracciare questo dato.
+
+<p>I campi contenenti pseudo-intestazioni dovrebbero cominciare all'inizio delle rispettive righe.
+Il sistema di gestione delle anomalie attualmente non riconosce mail MIME o PGP propriamente
+e potrebbe non riuscire a riconoscere le pseudo-intestazioni in questo tipo di mail.
+
+<p>Per favore includi nella tua segnalazione:
+
+<ul>
+<li>L' <em>esatto</em> e <em>completo</em> testo di ogni messaggio di
+errore stampato a video o loggato. Ciò è molto importante!
+<li>Esattamente cosa hai scritto o fatto per riprodurre il problema.
+<li>Una descrizione del comportamento incorretto: esattamente quale comportamento
+ti aspettavi, e cosa hai osservato. Una trascrizione della
+prova fatta è un buon metodo per mostrare ciò.
+<li>Una correzione suggerita, o anche una patch, se ne hai una.
+<li>Dettagli della configurazione del programma con l'anomalia.
+Includi il testo completo dei suoi file di configurazione.
+<li>Le versioni di ogni pacchetto da cui dipende il pacchetto che riporta il problema.
+<li>Quale versione del kernel state usando (scrivi <code>uname -a</code>), quale versione
+della libreria C (scrivi <code>ls -l /lib/libc.so.6</code> o
+<code>dpkg -s libc6 | grep ^Version</code>), e ogni altro dettaglio riguardo
+il tuo sistema Debian, se ti sembra utile. Per esempio, se avessi un
+problema con uno script Perl, dovresti fornire la versione del binario
+`perl' (scrivi <code>perl -v</code> o <code>dpkg -s perl-5.005 | grep
+^Version:</code>).
+<li>Dettagli appropriati dell'hardware del tuo sistema. Se stai
+segnalando un problema con un device driver per favore segnala <em>tutti</em> i componenti
+hardware del tuo sistema, poichè i problemi sono spesso causati da conflitti fra IRQ and I/O.
+</ul>
+
+<P>Includi ogni dettaglio che ti sembra rilevante - non corri nessun pericolo
+a scrivere una segnalazione troppo lunga includendo troppe informazioni. Se
+sono piccoli per favore includi nella tua segnalazione ogni file che hai utilizzato
+per riprodurre il problema (uuencodali nel caso in cui contengano 
+strani caratteri etc.).</P>
 
 
 <h2><A name="example">Esempio</A></h2>
@@ -64,57 +136,19 @@ assomiglia a quanto scritto sotto, ma è opportuno scriverla in inglese.
   libc6 2.1.3-10.
 </PRE>
 
-<h2><A name="details">Per favore inserite sempre:</A></h2>
-
-<ul>
-<li>Il testo <em>esatto</em> e <em>completo</em> di ogni messaggio
-d'errore stampato o memorizzato in qualche file di log. Questo
-è molto importante!
-<li>Un estratto di cosa avete fatto per riprodurre il problema.
-<li>Una descrizione del comportamento scorretto: cosa stavate
-aspettando e cosa avete invece trovato. La trascrizione di una
-breve sessione è un buon modo per mostrarlo.
-<li>Un suggerimento per la soluzione del problema o addirittura
-un patch, se lo avete.
-<li>Particolari sulla configurazione del programma che presenta il problema.
-Includendo anche i file completi.
-<li>La versione di tutti i pacchetti dai quali il pacchetto incriminato dipende.
-<li>La versione del kernel che usate (basta scrivere <code>uname -a</code>), la
-versione della libreria C condivisa (scrivere <code>ls -l /lib/libc.so.6</code>
-oppure <code>dpkg -s libc6 | grep ^Version</code>), e ogni altro dettaglio
-riguardo il vostro sistema Debian, se lo ritenete opportuno. Ad esempio, se avete
-un problema legato ad uno script Perl, potreste inviare la versione
-del comando Perl (scrivere  <code>perl -v</code> o <code>dpkg -s perl-5.005 | grep
-^Version:</code>).
-<li>Eventuali dettagli sull'hardware della vostra macchine. Se riportate
-un problema legato ad un driver di dispositivo inserite <em>tutta</em>
-ls descrizione del vostro sistema, poiché spesso il problema può
-essere causato da un conflitto di IRQ o I/O.
-</ul>
-
-<P>Nella descrizione includi ogni particolare che ritieni interessante -
-non c'è alcun pericolodi fare diventare la segnalazione troppo lunga.
-Se sono piccoli allega anche i file che usi per riprodurre il
-problema (magari usando uuencode per evitare problemi con i caratteri
-speciali e i file binarii.).</p>
-
-<P>Naturalmente, come in ogni email, usa un <code>Oggetto</code> chiaro
-e descrittivo nell'intestazione del messaggio.
-L'oggetto che scrivi verrà usato come titolo iniziale dal sistema
-di gestione, quindi cerca di renderlo informativo!</P>
 
 <h2><A name="xcc">Invio di copie di segnalazioni ad altri indirizzi</A></h2>
 
 <P>Può capitare di dover mandare una copia della segnalazione a qualcuno
 diverso da <code>debian-bugs-dist</code> e dal gestore del pacchetto,
-che sono quelli cui normalmente va il messaggio.</p>
+che sono quelli cui normalmente va il messaggio.</P>
 
 <P>Potresti farlo inserendo gli indirizzi in più nel capo CC, ma poi
 questi non riceverebbero il numero associato alla segnalazione nel
 campo <code>Reply-To</code> e <code>Subject</code>. Quando gli altri
 destinatari faranno il `reply' del messaggio useranno l'indirizzo
-<code>submit@bugs.debian.org</code> e quindi inseriranno un duplicato
-della segnalazione.</p>
+<code>submit@bugs.debian.org</code> e avranno il loro messaggio riportato
+come un nuova anomalia. Ciò genera molte segnalazioni duplicate.</p> 
 
 <P>Il modo <em>corretto</em> di fare questo è di usare il campo
 <code>X-Debbugs-CC</code> dell'intestazione. Aggiungi una linea
@@ -123,9 +157,9 @@ che contiene il campo <code>Package</code>):</P>
 <pre>
  X-Debbugs-CC: other-list@cosmic.edu
 </pre>
-<P>Questo farà sì che il sistema si gestione delle segnalazioni mandi
+<P>Questo farà sì che il sistema di gestione delle anomalie mandi
 una copia della tua segnalazione agli indirizzi specificati nel
-campo <code>X-Debbugs-CC</code> oltre che a <code>debian-bugs-dist</code>.</p>
+campo <code>X-Debbugs-CC</code> oltre che a <code>debian-bugs-dist</code>.</P>
 
 <P>Questa caratteristica può essere ben combinata con l'invio a
 <code>quiet</code> - vedi oltre.</P>
@@ -137,31 +171,46 @@ campo <code>X-Debbugs-CC</code> oltre che a <code>debian-bugs-dist</code>.</p>
 la richiesta di una aggiunta ad un pacchetto, puoi selezionare
 tu stesso il livello di gravità della segnalazione.
 Questo non è obbligatorio, ovviamente, e gli sviluppatori
-assegneranno il livello adeguato alle segnalazioni sprovviste.</p>
+assegneranno il livello adeguato alle segnalazioni sprovviste.</P>
 
-<P>Per assegnare il livello di gravità si deve inserire una linea
-<code>Severity: <var>grado</var></code> nella pseudo intestazione,
-assiema a <code>Package</code> e <code>Version</code>. I
-livelli di gravità sono descritti nella
-<A href="Developer#severities">documentazione per gli sviluppatori</A>.</P>
+<p>Per assegnare un grado di gravità, inserisci una riga come questa fra le
+pseudo-intestazioni:
+
+<pre>
+Severity: &lt;<var>qualsiasi</var>&gt;
+</pre>
+
+<p>Sostituisci &lt;<var>qualsiasi</var>&gt; con uno dei gradi disponibili,
+come descritto nella
+<A href="Developer#severities">documentazione degli sviluppatori</A>.</P>
 
 
 <h2>Segnalazioni da non inviare alla lista -- segnalazioni minori</h2>
 
 <P>Se l'anomalia non è grave (ad esempio, se c'è una svista nella
-documentazione o altro semplice errore), o se vuoi segnalare varie
-anomalie con un solo messaggio, manda il tutto a 
-<code>maintonly@bugs</code> o <code>quiet@bugs</code>.
-<code>maintonly</code> manda la segnalazione al gestore del pacchetto
-(a condizione che questo sia correttamente specificati nella
-pseud intestazione <code>Package</code> e che il gestore
-sia conosciuto) mentre <code>quiet</code> non fa assolutamente
-nessun `forward' (utile nel caso si voglia inserire varie segnalazione
-ma mandare a tutti solo un riassunto delle varie problematiche.)</p>
+documentazione o un banale problema di compilazione), scegli il giusto grado 
+di gravità e manda il tutto a 
+<code>maintonly@bugs</code> invece che a <code>submit@bugs</code>.
+<code>maintonly</code> invierà la segnalazione solo a chi mantiene il pacchetto,
+non la invierà al contrario alle mailing list del BTS.
 
-<P>Se usi questi metodi il sistema assegnerà al campo <code>Reply-To</code>
-di ogni messaggio rispedito un valore tale che ogni risposta
-verrà processata allo stesso modo della segnalazione originale.</P>
+<p>Se stai inviando molte segnalazioni in una volta, dovresti assolutamente utilizzare
+<code>maintonly@bugs</code> così non provocherai troppo traffico ridondante
+sulle mailing list del BTS. Prima di inviare molte segnalazioni simili dovresti
+scrivere le tue intenzioni a <code>debian-bugs-dist</code>.
+
+<p>Se desideri segnalare un'anomalia al sistema di gestione delle anomalie che è già stata
+spedita allo sviluppatore, puoi utilizzare <code>quiet@bugs</code>. Le segnalazioni spedite a
+<code>quiet@bugs</code> non saranno inoltrate da nessuna parte, solo registrate.
+
+<p>Quando usi indirizzi differenti per segnalare anomalie, il sistema di gestione delle anomalie
+setterà il <code>Reply-To</code> di ogni messaggio inoltrato così le risposte
+saranno automaticamente processate allo stesso modo della segnalazione originaria. Ciò
+significa che, per esempio, le risposte a <code>maintonly</code> andranno a
+<var>nnn</var><code>-maintonly@bugs</code> invece di
+<var>nnn</var><code>@bugs</code>, a meno che ovviamente qualcuno non sostituisca
+questi campi a mano.
+
 
 <h3>Pacchetti sconosciuti o segnalazioni senza la specifica <code>Package</code></h3>
 
@@ -173,15 +222,17 @@ farà in modo che la segnalazione venga inviata alla lista di messaggi
 <var>nnn</var><code>-maintonly@bugs</code> devi essere certo che
 la segnalazione sia assegnata al pacchetto corretto, inserendo
 la voce <code>Package</code> all'inizio della pseudo intestazione
-o usando <A href="server-control">il servizio <code>control@bugs</code></A>
-per (ri)assegnare la segnalazione la segnalazione nel caso non
+o usando <A href="server-control">il robot <code>control@bugs</code></A>
+per (ri)assegnare la segnalazione nel caso non
 fosse stato fatto correttamente in precedenza.</P>
 
-<h2>Uso di <code>dpkg</code> per avere il pacchetto e la versione da usare nella segnalazione</h2>
+
+<h2><a name="findpkgver">Usare <code>dpkg</code> per trovare il pacchetto e 
+la versione per la segnalazione</a></h2>
 
 <P>Se stai segnalando un'anomalia in un comando, puoi trovare in quale
 pacchetto sia distribuito usando il comando
-<code>dpkg --search</code>. Puoi avere la versione di un pacchetto
+<code>dpkg --search</code>. Puoi sapere la versione di un pacchetto installato
 usando i comandi
 <code>dpkg --list</code> e <code>dpkg --status</code>.</p>
 
