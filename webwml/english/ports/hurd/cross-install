@@ -1,0 +1,625 @@
+#!/bin/bash
+#
+# Copyright (c) 1999 by Marcus Brinkmann <Marcus.Brinkmann@ruhr-uni-bochum.de>
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as
+#   published by the Free Software Foundation; either version 2 of
+#   the License, or (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Library General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public
+#   License along with this library; if not, write to the Free Software
+#   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+# cross-install <path>
+#
+# for example: cross-install /gnu
+#
+#    1 Jan 1999 - v0.0 <Marcus.Brinkmann@ruhr-uni-bochum.de>
+#        Original created by Marcus Brinkmann.
+#                 v0.1 Added etc/login and terminal support.
+#                 v0.2 Fixed typo in passwd file.
+#    4 Jan 1999 - v1.0 Added logging and verbose messages.
+#                      Adding checks for certain malfunctions.
+#                      Cleaned up the hacks.
+#                      Only using ONE directory of base packages.
+#   16 Jan 1999 - v1.1 now works with or without the symlink /usr -> /
+#                      Uncommented timezone option.
+#                      Install perl tar file only if it exists.
+#   16 Feb 1999 - v1.2 Fix stupid error.
+#                      Added error check for dpkg run.
+#   2  Mar 1999 - v1.3 Replace [ == ] with [ = ], because former doesn't
+#                      work on all systems (Emmanuel Michon).
+#                      Only install known packages.
+#                      Change working directory before applying patches (Brian May)
+#                      Check if servers.boot is a conffile and needs to be copied.
+#   6  Mar 1999 - v1.4 slang0.99.38 -> slang1 (Brian May)
+#                      Don't bail out for NFS kernel problem (Brian May).
+#                 v1.5 Do install terminfo in /usr/share, not in /share.
+#                      Copy boot/servers.boot, not /servers.boot (Gavin Lewis)
+#   28 Mar 1999	- v1.6 Add link from mtab to fstab.
+#                      Patch shlibs of libc6 package, or dpkg-shlibdeps won't work.
+#                      Make it work for flat and hierarchical repository.
+#                      Move if/fi to include more patches against dpkg (thanks Santiago!)
+#   27 Apr 1999 - v2.0 Update package list, move perl.dist to perl (because
+#                      glibc 2.1.1 needs perl to configure, sucker!)
+#                      Copy also dpkg-hurd to ${dest}.
+#    2 Mai 1999 - v2.1 Remove base/timezones, add base/e2fsprogs.
+#    7 Mai 1999 - v2.2 Add base/grub.
+#                      Do not ask about /usr symlink. All known problems are
+#                      resolved.
+#   13 Mai 1999 - v2.3 Add editors/ed, base/libstdc++2.9 to oplist
+#                      (requested by Roland McGrath)
+#                      Replace /etc/motd with something sensible.
+#   17 Mai 1999 - v2.4 Added syslogd and inetutils. A lot of packages are
+#                      now required which were optional before. I am not
+#                      going to take a risk. Base is base.
+#                      Add ncurses-base.
+#                      Don't do the mtab symlink. It is harmful for e2fsck.
+#   27 Mai 1999 - v2.5 Commented out some old fixes. I am going to remove
+#                      them silently in one of the next versions.
+#                      Add /etc/hosts.
+#   15 Jun 1999 - v2.6 Add adduser.
+
+# INSTRUCTIONS:
+#
+# * Mount your hurd partition, created with "mke2fs -o hurd /dev/???"
+# * Make a directory somewhere, and put the following files in it:
+#   cross-install    - this file. Installs the base packages on the hurd partition.
+#   native-install   - To be run after booting to the Hurd.
+#   dpkg-hurd        - a script to cross install packages even if they contain pre* scripts.
+#   Also the packages mentioned in ${plist}, below:
+
+plist="base/ae base/adduser base/base-files base/base-passwd base/bash \
+       base/bsdutils \
+       base/debianutils base/diff base/dpkg base/e2fsprogs base/fileutils \
+       base/findutils base/gnumach base/grep base/grub base/gzip \
+       base/hostname base/hurd base/inetutils base/libc0.2 \
+       base/libncurses4 base/libreadlineg2 base/libstdc++2.9 base/mawk \
+       base/ncurses-base base/ncurses-bin base/passwd base/perl-base base/sed \
+       base/shellutils base/slang1 base/syslogd base/tar base/textutils \
+       interpreters/perl"
+oplist="admin/locales text/less editors/ed"
+#oplist=""
+
+# If you only want a minimal base system, leave out packages listed in
+# ${oplist}.
+#
+# It is possible to work from a Debian mirror, use .../binary-hurd-i386/ as
+# the repository directory.
+#
+# Then login as user ROOT, enter the directory ("cd path/to/repository")
+# and run
+#  ./cross-install /gnu
+# where /gnu is the mount point of your hurd partition.
+
+#
+# CONFIGURATION
+#
+hostname="hurd"
+dpkghurd="`pwd`/dpkg-hurd"
+nativeinstall="`pwd`/native-install"
+log="`pwd`/install.log"
+
+# END OF CONFIGURATION
+
+set -u -e
+
+PS4='+$LINENO: '
+
+err ()
+{
+    echo "$0: $1" 1>&2
+    exit 1
+}
+
+if [ ! "$#" = 1 ] ; then
+  err "exactly one argument is required, the destination directory"
+fi
+
+repository="`pwd`"
+
+echo Determining destination directory.
+expr "${1}" > /dev/null : / \
+ && { echo You are using an absolute path, fine. ; \
+      dest="${1}"; } \
+ || { echo You are using a relative path, prepending working directory. ; \
+      dest="`pwd`/${1}"; }
+echo dest = ${dest}
+echo log = ${log}
+cat > ${log} < /dev/null
+
+#############################
+# Comply to Hurd philosophy.
+#############################
+
+if [ ! -e ${dest}/usr ] ; then
+#        echo We now can setup a link from /usr to the root directory.
+#        echo The idea is that the Hurd provides better facilities to spread
+#        echo the data on several media, and the /usr tree is not needed
+#        echo anymore. However, because Debian per se assumes that /usr
+#        echo is a seperate directory, this could lead to subtle problems.
+#        echo
+#        echo You have now the choice between making /usr a symlink or
+#        echo a real directory tree. It is recommended to answer yes, though,
+#        echo because this is what we use to test the system.
+#        echo
+#        echo Please answer "y" if you want me to install the symlink.
+#        read x
+#        if [ x$x = x ] ; then
+#		echo You have given no answer, so I will terminate the
+#                echo installation process. Come back if you have made up
+#                echo your mind. Thank you.
+#		exit 0
+#	fi
+#	if [ x$x = xy ] ; then
+		echo
+		echo Setting up link from usr to root directory to comply with Hurd philosophy.
+		rm -f ${dest}/usr
+		ln -s . ${dest}/usr
+#	fi
+fi
+
+###########################
+# Prepare dpkg's database.
+###########################
+# INFO: This is needed so dpkg-hurd does actually work.
+echo
+echo Preparing dpkg\'s database.
+
+install -d -m 755 -o root -g root ${dest}/var/lib/dpkg/{info,updates}
+touch ${dest}/var/lib/dpkg/{status,available}
+
+##########################
+# cross-install packages.
+##########################
+echo
+echo I will now install packages. If you have multiple versions of the
+echo same package available, it may be that I don\'t reckognize the latest.
+echo Please remove the offending old version in this case and start from
+echo scratch.
+echo
+echo Installing necessary packages, this may take some time.
+
+cd ${dest}
+for pname in ${plist}
+do
+	package=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | tail -n 1`
+	matches=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | wc -l`
+
+	if [ ${matches} = 0 ] ; then
+		pname=`basename ${pname}`
+		package=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | tail -n 1`
+		matches=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | wc -l`
+	fi
+
+	if [ ${matches} = 0 ] ; then
+		echo - ${pname} could not be found, but it is needed.
+		exit 1
+	else
+		if [ ${matches} != 1 ] ; then
+			echo There is more than one version of package ${pname} available, choosing the alphabetically last.
+		fi
+		echo - ${package}
+		${dpkghurd} --unpack ${package} --force-depends >> ${log} 2>&1 || break
+	fi
+done
+echo
+echo Installing optional packages, this may take some time.
+for pname in ${oplist}
+do
+	package=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | tail -n 1`
+	matches=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | wc -l`
+
+	if [ ${matches} = 0 ] ; then
+		pname=`basename ${pname}`
+		package=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | tail -n 1`
+		matches=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | wc -l`
+	fi
+
+	if [ ${matches} = 0 ] ; then
+		echo - ${pname} could not be found, let us hope it is not vital.
+	else
+		if [ ${matches} != 1 ] ; then
+			echo There is more than one version of package ${pname} available, choosing the alphabetically last.
+		fi
+		echo - ${package}
+		${dpkghurd} --unpack ${package} --force-depends >> ${log} 2>&1 || break
+	fi
+done
+
+set +e
+errors=`grep -v 'Preparing to replace\|Unpacking\|pre-dependency problem\|Selecting previously deselected package\|pre-depends on\|overriding problem because --force enabled\|(Reading database ...\| package architecture (hurd-i386) does not match system\|is not installed.\|but has never been configured.\|dpkg-deb: building package' ${log}`
+set -e
+
+if [ ! "x${errors}" = x ] ; then
+	echo
+	echo dpkg did return unusual messages, please investigate:
+	echo
+	grep -v '^rm: /tmp/.*: Device or resource busy$\|Preparing to replace\|Unpacking\|pre-dependency problem\|Selecting previously deselected package\|pre-depends on\|overriding problem because --force enabled\|(Reading database ...\| package architecture (hurd-i386) does not match system\|is not installed.\|but has never been configured.\|dpkg-deb: building package' ${log}
+	exit 1
+fi
+
+##############################
+# Change /etc/motd
+##############################
+echo
+echo Writing /etc/motd.
+
+cat > ${dest}/etc/motd << _NIL_
+Debian GNU/Hurd
+
+Copyright (C) 1993-1999 Software in the Public Interest,
+                    the Free Software Foundation, and others
+
+Most of the programs included with the Debian GNU/Hurd system are
+freely redistributable; the exact distribution terms for each program
+are described in the individual files in /usr/doc/*/copyright
+
+Debian GNU/Hurd comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+_NIL_
+
+##############################
+# Prepare initial translator.
+##############################
+# FIX: Should be done in the Hurd?
+echo
+echo Setting up initial translator hook.
+
+install -d -m 755 -o root -g root ${dest}/servers/socket
+touch ${dest}/servers/exec
+
+#####################################
+# Make sure boot/servers.boot exists
+#####################################
+# Explanation: It is a conf file in some versions of Hurd.
+
+echo
+echo Latest hurd packages declare boot/servers.boot as a conffile, let me check.
+
+if [ -e ${dest}/boot/servers.boot.dpkg-new ] ; then
+	echo Yes, found it. I will copy boot/servers.boot.dpkg-new to boot/servers.boot
+	cp ${dest}/boot/servers.boot.dpkg-new ${dest}/boot/servers.boot
+else
+	echo Nope, not your version. Please make sure that you check boot/servers.boot after
+        echo your next update of the hurd package, because your changes will be overriden.
+fi
+
+############################
+# Move perl in proper place
+############################
+# Explanation: Latest glibc package needs perl (and awk) to configure!
+
+if [ ! -e ${dest}/usr/bin/perl ] ; then
+	if [ -e ${dest}/usr/bin/perl.dist ] ; then
+		echo
+		echo Moving perl into place.
+		mv ${dest}/usr/bin/perl.dist ${dest}/usr/bin/perl
+	else
+		echo
+		echo Warning, I couldn\'t find perl!
+	fi
+fi
+
+#############################
+# Copy native install script
+#############################
+echo
+echo Copying the native install script and dpkg-hurd.
+
+cp ${nativeinstall} ${dest}
+cp ${dpkghurd} ${dest}
+
+#####################
+# Fake libc6 package
+#####################
+# Is this really needed?
+# Update: apr 99: Currently, yes. Too many packages require it.
+
+if [ ! -e ${dest}/var/lib/dpkg/info/libc6.list ] ; then
+	echo
+	echo Although we have libc0.2 packages, we need an entry for libc6 because
+	echo of dpkg\'s dependency system.
+
+cat >> ${dest}/var/lib/dpkg/status << '_NIL_'
+Package: libc6
+Status: install ok installed
+Version: 2.0.110
+
+_NIL_
+
+	touch ${dest}/var/lib/dpkg/info/libc6.list
+fi
+
+#####################
+# Patch libc6 shlibs
+#####################
+# This is fixed in libc0.2 (>= 2.1)
+#
+#if [ -e ${dest}/var/lib/dpkg/info/libc0.2.shlibs ] ; then
+#	if ! grep libc0.2 ${dest}/var/lib/dpkg/info/libc0.2.shlibs > /dev/null; then
+#		echo
+#		echo Hacking shlibs file of libc0.2 package, do you have an old version?
+#		sed -e s/\$/libc0.2/ ${dest}/var/lib/dpkg/info/libc0.2.shlibs > ${dest}/libc0.2.shlibs.new
+#		mv ${dest}/libc0.2.shlibs.new ${dest}/var/lib/dpkg/info/libc0.2.shlibs
+#	fi
+#fi
+
+########################################################
+# make some essential directories for configure of dpkg
+########################################################
+# FIX: Later.
+if [ ! -e ${dest}/etc/rc0.d ] ; then
+        echo
+        echo Making etc/rc\?.d directories for dpkg
+        for nr in 0 1 2 3 4 5 6 S
+        do
+                install -d -m 755 -o root -g root ${dest}/etc/rc${nr}.d
+        done
+        install -d -m 755 -o root -g root ${dest}/etc/rc.boot
+fi
+
+#grep Source:\ dpkg-hurd ${dest}/var/lib/dpkg/status > /dev/null 2>&1 && newdpkg=y || newdpkg=n
+#
+#if [ x${newdpkg} = xn ] ; then
+#
+#	####################
+#	# Patch dpkg-divert
+#	####################
+#	echo
+#	echo Fixing Debian scripts for the Hurd
+#
+#cd ${dest}
+#patch -p0 << '_NIL_' 
+#*** usr/sbin/dpkg-divert~   Sat Jan  2 01:40:22 1999
+#--- usr/sbin/dpkg-divert    Sun Jan  3 00:01:52 1999
+#***************
+#*** 1,7 ****
+#  #! /usr/bin/perl --
+#
+#! #use POSIX; &ENOENT;
+#! sub ENOENT { 2; }
+#  # Sorry about this, but POSIX.pm isn't necessarily available
+#
+#  $version="1.4.1"; # This line modified by Makefile
+#--- 1,7 ----
+#  #! /usr/bin/perl --
+#
+#! use POSIX; &ENOENT;
+#! #sub ENOENT { 2; }
+#  # Sorry about this, but POSIX.pm isn't necessarily available
+#
+#  $version="1.4.1"; # This line modified by Makefile
+#_NIL_
+#
+#cd ${dest}
+#patch -p0 << '_NIL_'
+#*** usr/sbin/update-alternatives~   Sat Jan  2 01:40:22 1999
+#--- usr/sbin/update-alternatives    Sat Jan  2 23:41:47 1999
+#***************
+#*** 1,7 ****
+#  #! /usr/bin/perl --
+#
+#! #use POSIX; &ENOENT;
+#! sub ENOENT { 2; }
+#  # Sorry about this, but POSIX.pm isn't necessarily available
+#
+#  $version="1.4.1"; # This line modified by Makefile
+#--- 1,7 ----
+#  #! /usr/bin/perl --
+#
+#! use POSIX; &ENOENT;
+#! #sub ENOENT { 2; }
+#  # Sorry about this, but POSIX.pm isn't necessarily available
+#
+#  $version="1.4.1"; # This line modified by Makefile
+#_NIL_
+#
+#cd ${dest}
+#patch -p0 << '_NIL_'
+#*** usr/sbin/install-info~  Sat Jan  2 01:40:22 1999
+#--- usr/sbin/install-info   Sun Jan  3 00:04:44 1999
+#***************
+#*** 208,217 ****
+#      }
+#  }
+#
+#! if (!$nowrite && !link("$infodir/dir","$infodir/dir.lock")) {
+#!     die "$name: failed to lock dir for editing! $!\n".
+#!         ($! =~ m/exists/i ? "try deleting $infodir/dir.lock ?\n" : '');
+#! }
+#
+#  open(OLD,"$infodir/dir") || &ulquit("$name: open $infodir/dir: $!\n");
+#  @work= <OLD>;
+#--- 208,217 ----
+#      }
+#  }
+#
+#! #if (!$nowrite && !link("$infodir/dir","$infodir/dir.lock")) {
+#! #    die "$name: failed to lock dir for editing! $!\n".
+#! #        ($! =~ m/exists/i ? "try deleting $infodir/dir.lock ?\n" : '');
+#! #}
+#
+#  open(OLD,"$infodir/dir") || &ulquit("$name: open $infodir/dir: $!\n");
+#  @work= <OLD>;
+#***************
+#*** 338,349 ****
+#          &ulquit("$name: cannot backup old $infodir/dir, giving up: $!\n");
+#      rename("$infodir/dir.new","$infodir/dir") ||
+#          &ulquit("$name: install new $infodir/dir: $!\n");
+#! unlink("$infodir/dir.lock") || die "$name: unlock $infodir/dir: $!\n";
+#  }
+#
+#  sub ulquit {
+#!     unlink("$infodir/dir.lock") ||
+#!         warn "$name: warning - unable to unlock $infodir/dir: $!\n";
+#      die $_[0];
+#  }
+#
+#--- 338,349 ----
+#          &ulquit("$name: cannot backup old $infodir/dir, giving up: $!\n");
+#      rename("$infodir/dir.new","$infodir/dir") ||
+#          &ulquit("$name: install new $infodir/dir: $!\n");
+#! #unlink("$infodir/dir.lock") || die "$name: unlock $infodir/dir: $!\n";
+#  }
+#
+#  sub ulquit {
+#! #    unlink("$infodir/dir.lock") ||
+#! #        warn "$name: warning - unable to unlock $infodir/dir: $!\n";
+#      die $_[0];
+#  }
+#_NIL_
+#
+#
+#fi
+
+##################
+# Setup hostname.
+##################
+echo
+echo Hey, ${hostname} is really a nice hostname for your machine!
+
+echo ${hostname} > ${dest}/etc/hostname
+
+###################
+# Setup /etc/hosts
+###################
+echo
+echo Preparing /etc/hosts.
+
+echo "127.0.0.1		localhost ${hostname}" > ${dest}/etc/hosts
+
+##############
+# Setup ttys.
+##############
+
+if [ ! -e ${dest}/etc/ttys ] ; then
+	echo
+	echo Setting up the terminal. Activate it with \"export TERM=mach\" if
+	echo booting single user mode.
+
+	cat << '_NIL_' > ${dest}/etc/ttys
+console "/libexec/getty 9600"           mach    on      secure trusted console
+_NIL_
+
+fi
+
+##################
+# Setup terminal. 
+##################
+# FIX: WILL BE IN NCURSES-BASE.
+# #30109, #31375
+
+if [ ! -e ${dest}/usr/share/terminfo/m ] ; then
+	echo Installing terminfo directory.
+	install -d -m 755 -o root -g root ${dest}/share/terminfo/m
+fi
+
+if [ ! -e ${dest}/usr/share/terminfo/m/mach ] ; then
+	echo Installing terminfo entry for mach.
+	cd ${dest}
+uudecode << '_NIL_'
+begin 666 usr/share/terminfo/m/mach
+M&@$2``D``P"E`.D`;6%C:'Q-86-H($-O;G-O;&4```$````````!`%``"``9
+M`/__```"`/____\$``<`"P#_____#P`@`"(`__\F`/____\H`/__+`#_____
+M,`#_______\T`#D`________________/@!#`/_______T@`________30#_
+M______________________]2`/__5@#_______]8`/__7`#__________V``
+M9`!H`&P`<`!T`'@`?`"``(0`B`",`/__D`"4`)@`G`"@`/_______Z0`____
+M____________________________________J`#_____JP"T`/____^]`,8`
+MSP#__]@`_____________________________________^$`___________C
+M`/__________________________________________________________
+M___________________E``<`#0`;8P`;6TL`&UM*`!M;)6DE<#$E9#LE<#(E
+M9$@`"@`;6T@`"``;6T,`&UM!`!M;30`;6S5M`!M;,6T`&ULW;0`;6S=M`!M;
+M,&T`&ULP;0`;6TP`"``;6SD`&UM"`!M/4``;3UD`&T]1`!M/4@`;3U,`&T]4
+M`!M/50`;3U8`&T]7`!M/6``;6T@`&UM``!M;1``;6T8`&UM5`!M;5@`;6T,`
+M&UM!``T*`!M;)7`Q)61-`!M;)7`Q)61"`!M;)7`Q)61,`!M;)7`Q)61$`!M;
+8)7`Q)61#`!M;)7`Q)61!``H`"0`;6UD`
+`
+end
+_NIL_
+fi
+if [ ! -e ${dest}/usr/share/terminfo/m/mach-bold ] ; then
+        echo Installing terminfo entry for mach-bold.
+        cd ${dest}
+uudecode << '_NIL_'
+begin 666 usr/share/terminfo/m/mach-bold
+M&@$V``D``P"E`.\`;6%C:"UB;VQD?$UA8V@@0V]N<V]L92!W:71H(&)O;&0@
+M:6YS=&5A9"!O9B!U;F1E<FQI;F4```$````````!`%``"``9`/__```"`/__
+M__\$``<`"P#_____#P`@`"(`__\F`/____\H`/__+`#_____,`#_______\T
+M`#D`________________/@!#`$@`_____TT`________4@!7`/__________
+M__________]<`/__8`#_______]B`/__9@#__________V@`;`!P`'0`>`!\
+M`(``A`"(`(P`D`"4`/__F`":`)X`H@"F`/_______ZH`________________
+M________________________K@#_____L0"Z`/_____#`,P`U0#__]X`____
+M_________________________________^<`___________I`/__________
+M____________________________________________________________
+M_______K``<`#0`;8P`;6TL`&UM*`!M;)6DE<#$E9#LE<#(E9$@`"@`;6T@`
+M"``;6T,`&UM!`!M;30`;6S5M`!M;,6T`&ULW;0`;6S=M`!M;,6T`&ULP;0`;
+M6S!M`!M;,&T`&UM,``@`&ULY``H`&T]0`!M/60`;3U$`&T]2`!M/4P`;3U0`
+M&T]5`!M/5@`;3U<`&T]8`!M;2``;6T``"``;6T8`&UM5`!M;5@`;6T,`&UM!
+M``T*`!M;)7`Q)61-`!M;)7`Q)61"`!M;)7`Q)61,`!M;)7`Q)61$`!M;)7`Q
+5)61#`!M;)7`Q)61!``H`"0`;6UD`
+`
+end
+_NIL_
+fi
+
+##################
+# Setup etc/login
+##################
+# This is in latest hurd packages.
+
+if [ ! -e ${dest}/etc/login ] ; then
+	echo
+	echo Setting up etc/login.
+
+	install -d -m 755 -o root -g root ${dest}/etc/login
+cat << '_NIL_' > ${dest}/etc/login/README
+This is a hurd login shell; it is a normal user shell, but has no user
+privileges.  To login as a user with a userid of USER, use the command:
+
+  login USER
+
+other useful commands:
+
+  ql USER       # quick login -- just start a shell in USER's home directory
+  su USER       # set the id of the current (login) shell to USER
+                # (use the `unsu' command to undo this, or just exit the shell)
+_NIL_
+
+cat << '_NIL_' > ${dest}/etc/login/.bash_login
+. .bashrc
+. .profile
+_NIL_
+
+cat << '_NIL_' > ${dest}/etc/login/.bashrc
+# login -- a normal login
+alias login='exec login -p -R-p -R-aHOME -R-aMOTD -R-e_LOGIN_RETRY=yes'
+alias logon=login
+alias l=login
+
+# quick login -- don't act like a login shell, but do cd to $HOME
+alias ql='exec login -pSL -aMOTD -R-p -R-aHOME -R-aMOTD -R-e_LOGIN_RETRY=yes'
+
+alias help='cat $HOME/README'
+alias '?'=help
+_NIL_
+
+cat << '_NIL_' > ${dest}/etc/login/.profile
+PS1='login> '
+test "$_LOGIN_RETRY" || echo "Use \`login USER' to login, or \`help' for more information."
+unset _LOGIN_RETRY
+_NIL_
+
+touch ${dest}/etc/login/.hushlogin
+fi
+
+echo
+echo Now boot the Hurd and run
+echo ./native-install
+echo
