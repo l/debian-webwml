@@ -300,5 +300,16 @@
         }
     }
 
+    function show_by_country($offer) {
+        if ($offer) {
+            $sql = "SELECT id, forename, surname, email FROM people WHERE offer is TRUE ORDER BY surname";
+        } else {
+            $sql = "SELECT id, forename, surname, email FROM people WHERE offer is FALSE ORDER BY surname";
+        }
+        echo "<UL>";
+        print_people($db, $sql);
+        echo "</UL>";
+    }
+
 ?>
 
