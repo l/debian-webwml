@@ -148,6 +148,15 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
+                'Willy Picard' =>  {
+                        email       => 'picard@kti.ae.poznan.pl',
+                        summary     => 2,
+                        logs        => 0,
+                        diff        => 0,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
+                },
                 'Martin Quinson' => {
                         email       => 'martin.quinson@ens-lyon.fr',
                         summary     => 3,
