@@ -15,6 +15,6 @@ include $(WMLBASE)/Make.dep.templ
 include $(WMLBASE)/Make.dep.generic
 
 # Do Not modify the following line
-people.html.$(LANGUAGE): people.wml $(TEMPLDIR)/template.wml $(ENGLISHSRCDIR)/devel/people.names
+people.$(LANGUAGE).html: people.wml $(TEMPLDIR)/template.wml $(ENGLISHSRCDIR)/devel/people.names
 
-$(HTMLDIR)/ltcp.html.$(LANGUAGE): ltcp.wml translations-bd.pl ltcp.body
+$(HTMLDIR)/ltcp.$(LANGUAGE).html: ltcp.wml translations-bd.pl ltcp.body
