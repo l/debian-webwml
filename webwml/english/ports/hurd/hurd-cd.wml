@@ -11,10 +11,16 @@ a developing os will be found on the second CD leaving the first CD
 relatively clean and consistent.  But there may be a few important packages 
 on the second CD.</P>
 
+<H3>Important note for F3</H3>
+
+<P>After mounting the CD for the first time run <code>/cdrom/upgrade/initial.sh
+</code> to update the tarball.</P>
+
 <H3>Download.</H3>
 
-<P>The current iso images are hurd-F2-Main.iso and hurd-F2-extra.iso
-and these are some of the sites that have the current images.</P>
+<P>The current iso images are hurd-F3-Main.iso and hurd-F3-extra.iso
+and these are some of the sites that usually have the current images.  
+Check the version before you download.</P>
 
 <ul>
 <li>
@@ -30,8 +36,7 @@ and these are some of the sites that have the current images.</P>
 </ul>
 
 <P>An <a href="http://ftpsearch.lycos.com/?form=medium">ftp search</a>
-for hurd-F2 could find a closer site, but check that the site you have
-chosen has the current images.</P>
+for hurd-F3 could find a closer site.</P>
 
 <p> Instructions for burning CDs from the images can be found at <A
 HREF="http://cdimage.debian.org/faq.html">http://cdimage.debian.org/faq.html</A>
@@ -39,24 +44,25 @@ HREF="http://cdimage.debian.org/faq.html">http://cdimage.debian.org/faq.html</A>
 
 <H3>CD-ROMs</H3>
 
-<P>See <A HREF="../../distrib/vendors"> for Hurd CD vendors</A>.  Look for
- <code>hurd</code> using your browser's search facility.</P>
+<P>See <A HREF="../../distrib/vendors"> this page for Hurd CD vendors</A>.  
+Look for <code>hurd</code> using your browser's search facility.</P>
 
 <H3>How the Installation Disc works</H3>
 
-<P>The standard Debian GNU/Linux installation CDs uses the cross
+<P>The potato Debian GNU/Linux installation CDs uses the cross
 install method to install the base system.  A ramdisk is created in
 memory and a mini GNU/Linux system installed into this disk.  This
 mini system is used to partition and format drives, and to prepare the
 target machine for the main installation.  The critical phase is to
 unpack a tarball with the essential base packages onto the drives of
 the target system.  The new system is then rebooted using the packages
-installed onto the HDD.  Further packages are then installed and
+unpacked onto the HDD.  Further packages are then installed and
 configured to create the desired system.</P>
 
 <P>As the Hurd also uses the cross install method, this meant that the
 scripts to build the Hurd installation CDs could be adapted from the
-Debian GNU/Linux boot and CD scripts.</P>
+Debian GNU/Linux boot and CD scripts so that the Hurd rather than the 
+Linux tarball would be unpacked.</P>
 
 <P>Installing the Hurd using a cd-rom set has several advantages.
 
@@ -260,7 +266,7 @@ Add the HDD partitions, eg,<br>
 /dev/[Hurd partition name]   /CD1     ext2    rw    1       1</P>
 
 <P>The Hurd uses the ext2 fs.  "/CD1" is a suggested mount-point for 
-the partition which contains the packages from hurd-F2-main. 
+the partition which contains the packages from hurd-F3-main. 
 Swap can be shared with Linux.</P>
 					
 <li><em> Activate the swap "swapon -a".</em>
@@ -270,30 +276,30 @@ Check to see that is has worked.  Swap is HIGHLY recommended with the Hurd.</P>
 <p>
 settrans -a /cdrom /hurd/isofs /dev/[Hurd drive name]</P>
 	
-<li><em>Run "dselect"</em>.
-<p>Choose the "Mounted filesystem" for access.  
-"/cdrom/dists/unstable" should find the Debian
-installation tree.  Only the ../main/binary-hurd-i386 tree contains any 
-packages, so don't worry if dselect makes rude noises at you because contrib 
-is empty. contrib and non-US packages are incorporated into the 
-binary-hurd-i386 file system.</P>
+<li><em>Run "/cdrom/upgrade/initial.sh"</em>.
+<p>This will upgrade the tarball (baseHurd.tgz).  As this is a radical upgrade 
+you would be wise to reboot when this is completed.</p>
 				
-<li><em> "Update" next.</em>
-<p> Using the "Select" menu, unselect the tetex packages. Run
-"install" and think of something else to do. File access is slow. The
-installation run should be clean except for trivial comments at the
-end.</P>
+<li><em> Set up the translator for the cdrom again and run 
+/cdrom/upgrade/second.sh.</em>
+<p>This will install a number of useful(?) packages.</p>
+
+<li><em> Further packages can be installed using "apt or "dselect".</em>
+<p>If you are unfamiliar with these Debian tools, see 
+"man apt" and "man dselect".</p>
 
 <li><em>Unmounting the cdrom</em>
 <P>The cdrom drive needs to be unmounted in two steps,<BR>
 <code>settrans -g /cdrom</code><BR>
 <code>settrans -g /dev/[Hurd drive name]</code><BR>
-The cdrom drive drawer will then be unlocked.</P>
+The cdrom drive drawer should then be unlocked.</br>
+If this does not work, a reboot will solve the problem.  I found this was 
+needed after running <code>initial.sh</code> and <code>second.sh</code>.</p>
 
 <li><em>Copying the CDs to partitions.</em>
-<P>If you copy the cdrom's to partitions, do not add the the partition containing 
-the extra CD to your /etc/apt/sources.list as it contains packages that may 
-break your system.</P>
+<P>If you copy the cdrom's to partitions, do not add the directory 
+"dists-extra" found on the extra CD to your <code>/etc/apt/sources.list </code>
+as it contains packages that may break your system.</P>
 
 </ol>
 
