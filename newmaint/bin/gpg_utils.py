@@ -18,7 +18,10 @@
 
 import pg
 
-def print_places(begin, finish, city, country):
+def print_place(db, place):
+    q = db.query("SELECT begin, finish, city, country FROM places WHERE id = %s" % place)
+    begin, finish, city, country = q.getresult()[0]
+
     if city:
         out = "%s, %s: " % (city, country)
     else:
@@ -40,6 +43,10 @@ def find_email(db, email):
     if q.getresult():
         return 1
 
+def get_owner(db, place):
+    q = db.query("SELECT email FROM people WHERE people.id = places.who AND places.id = %s" % place)
+    return q.getresult()[0][0]
+
 def get_name(db, email):
     if name_cache.has_key(email):
         return name_cache[email]
@@ -60,6 +67,9 @@ def get_firstname(db, email):
 
 def get_lastname(db, email):
     return get_name(db, email)[1]
+
+def remove_place(db, place):
+    db.query("DELETE FROM place WHERE id = %s" % place)
 
 
 # main
