@@ -1,3 +1,5 @@
+#use wml::debian::translation-check translation="1.3"
+
 <HR>
 <ADDRESS>
 Darren Benham / <A HREF="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>.
