@@ -23,8 +23,8 @@ sub process_line {
 		}
 		return;
 	}
-	elsif ($line =~ /^Aliases:\s*(.*)\s*$/is) {
-		@tmp = split("\n", $1);
+	elsif ($line =~ /^Alias(es)?:\s*(.*)\s*$/is) {
+		@tmp = split("\n", $2);
 		$mirror{$site}{aliases} = [ @tmp ];
 	}
 	elsif ($line=~ /^((Archive|nonUS|WWW|Incoming|CDimage|Old)-(\w*)):\s*(.*)\s*$/i) {
@@ -360,7 +360,7 @@ if (defined $help) {
 Usage: $0 -m|--mirror mirror_list_source [-t|--type type]
 
 `mirror_list_source\' is usually Mirrors.masterlist file
-`type\' can be one of: "wml", "html" or "text".
+`type\' can be one of: "html", "text", "apt" or "methods".
 END
 	exit;
 }
