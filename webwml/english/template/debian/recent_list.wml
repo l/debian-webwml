@@ -226,8 +226,18 @@
 
 <perl>
 
-# grabs the date and title of the last $number news items from directory $year.
+# get_recent_list grabs the date and title of the last $number special files
+# $from directory year. The special files can be news, events, security
+# advisories and vote summaries.
+#
 # If $number is zero then all the news items are shown.
+#
+# The format parameter specifies the type of output: numbered, definition
+# and bulleted list, a table, or a RDF file.
+#
+# The match parameter is a regexp used to determine if the file is special,
+# i.e. that it should be parsed.
+# 
 # example usage:
 # get_recent_list ('1998', '0', '$(ENGLISHDIR)/News', '', '\d+\w*')
 
@@ -300,6 +310,9 @@ sub get_recent_list {
   $str =~ s/$listfoot\n$listfoot/$listfoot/;
   return $str;
 }
+
+# grab_titles is an auxiliary function to get_recent_list, which actually
+# does the real work. It is separated to avoid duplication.
 
 sub grab_titles {
 my ($year, $number, $eng_dir, $format, $match) = @_;
@@ -407,6 +420,10 @@ if ($WML_SRC_DIRNAME =~ /events/) {
 
 return $str;
 }
+
+# rdf_item_list outputs stuff to be used in a <rdf:Seq> section of a RDF
+# file. Accepted parameters include all of get_recent_list's except for
+# the format, as that is not variable.
 
 sub rdf_item_list {
   my ($year, $number, $eng_dir, $match) = @_;
