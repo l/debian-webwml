@@ -6,7 +6,7 @@
 <menu-item basename="../index">
 [EN:Ports:]
 [AR:Ports:]
-[DA:Ports:]
+[DA:Tilpasninger:]
 [DE:Ports:]
 [EL:Ports:]
 [EO:Ports:]
@@ -32,7 +32,7 @@
 <menu-item basename="index">
 [EN:Debian for Beowulf:]
 [AR:Debian for Beowulf:]
-[DA:Debian for Beowulf:]
+[DA:Debian til Beowulf:]
 [DE:Debian für Beowulf:]
 [EL:Debian for Beowulf:]
 [EO:Debian for Beowulf:]
