@@ -17,14 +17,14 @@ session_unregister("s_username");
     if (! ($db = open_db())) {
       return FALSE;
     }
-    $sql = "SELECT * FROM people WHERE email = '$login'";
+    $sql = "SELECT * FROM people2 WHERE email = '$login'";
     if (! ($result = pg_exec($db, $sql))) {
       echo "Problem with query", pg_ErrorMessage($db), "<BR>";
       return FALSE;
     }
     if (pg_NumRows($result) == 1) {
       $row = pg_Fetch_Array($result, 0);
-      if (($row["passwd"] == $password) || ($row["passwd"] == "")) {
+      if ((passwd_verify($row["passwd"], $password)) || ($row["passwd"] == "")) {
         $s_username = $login;
         session_register("s_username");
         return TRUE;
