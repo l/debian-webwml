@@ -1,6 +1,9 @@
 #! /usr/bin/perl -w
 
 use strict;
+use Getopt::Std;
+
+use vars qw($opt_p);
 
 my $messages = {};
 my @msgids = ();
@@ -21,14 +24,21 @@ sub countNewline {
 
 sub processFile {
         my $file = shift;
+        my $prefix = shift;
         my ($text, $lineno, $nextlineno, $msgid);
         my (@messages) = ();
         my (%msgids) = ();
+        my $repl = '';
 
         open(IN, "< $file") || die "Unable to open $file\n";
         local ($/) = undef;
         $text = <IN>;
         close(IN);
+
+        if ($prefix =~ s/=(.*)//) {
+                $repl = $1;
+        }
+        $file =~ s{^$prefix}{$repl}o unless $prefix eq '__';
         #  Remove comments
         $text =~ s/^[ \t]*#.*//g;
         $lineno = 1;
@@ -44,8 +54,11 @@ sub processFile {
         }
 }
 
+$opt_p = '__';
+getopt('p');
+
 foreach (@ARGV) {
-        processFile($_);
+        processFile($_, $opt_p);
 }
 
 print "msgid \"\"\nmsgstr \"\"\n".

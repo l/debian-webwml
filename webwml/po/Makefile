@@ -1,22 +1,22 @@
 
 langs = ar ca da de el eo es fi fr hr hu id it ja ko lt nl no pl pt ro ru sv tr zh
 
-LOCALEROOT = $(CURDIR)/locale
+LOCALEROOT = $(CURDIR)/../locale
 TEMPLDIR   = template/debian
 
 TMPL_FILES = $(wildcard $(TEMPLDIR)/*.wml) $(TEMPLDIR)/countries.def
 POFILES    = $(addprefix po-files/templates., $(addsuffix .po, $(langs)))
 UPOFILES   = $(POFILES:.po=.upo)
-GMOFILES   = $(POFILES:.po=.gmo)
+MOFILES    = $(POFILES:.po=.mo)
 POTFILES   = po-files/templates.pot
 
 #  Aliases
 pot: $(POTFILES)
 update-po: $(UPOFILES)
-gmo: $(GMOFILES)
+mo: $(MOFILES)
 
 $(POTFILES): $(TMPL_FILES)
-	./scripts/wmlxgettext.pl $(TMPL_FILES) > po-files/templates.pot.new
+	./scripts/wmlxgettext.pl -p =english/ $(TMPL_FILES) > po-files/templates.pot.new
 	cd po-files && \
 	  if [ -f templates.pot ]; then \
 	    cmp templates.pot templates.pot.new >/dev/null 2>&1 \
@@ -32,26 +32,34 @@ po-files/templates.%.upo: $(POTFILES) po-files/templates.%.po
    msgmerge templates.$*.po templates.pot -o templates.$*.upo \
    || echo "Command failed: msgmerge templates.$*.po templates.pot"
 
-po-files/templates.%.gmo: $(POTFILES) po-files/templates.%.upo
+po-files/templates.%.mo: $(POTFILES) po-files/templates.%.upo
 	-@echo Lang $*:
 	-@cd po-files; \
-   msgfmt --statistics -o templates.$*.gmo templates.$*.upo
+   msgfmt --statistics -o templates.$*.mo templates.$*.upo
 
-install-gmo:
+install-mo:
 	cd po-files; langs='$(langs)'; \
    for l in $${langs}; do \
      [ -d $(LOCALEROOT)/$$l/LC_MESSAGES ] || mkdir -p $(LOCALEROOT)/$$l/LC_MESSAGES; \
      if [ -f $(LOCALEROOT)/$$l/LC_MESSAGES/templates.mo ]; then \
-       cmp templates.$$l.gmo $(LOCALEROOT)/$$l/LC_MESSAGES/templates.mo >/dev/null 2>&1 \
-       || cp -f templates.$$l.gmo $(LOCALEROOT)/$$l/LC_MESSAGES/templates.mo; \
+       cmp templates.$$l.mo $(LOCALEROOT)/$$l/LC_MESSAGES/templates.mo >/dev/null 2>&1 \
+       || cp -f templates.$$l.mo $(LOCALEROOT)/$$l/LC_MESSAGES/templates.mo; \
      else \
-       cp -f templates.$$l.gmo $(LOCALEROOT)/$$l/LC_MESSAGES/templates.mo; \
+       cp -f templates.$$l.mo $(LOCALEROOT)/$$l/LC_MESSAGES/templates.mo; \
      fi; \
+   done
+
+install-po:
+	cd po-files; langs='$(langs)'; \
+   for l in $${langs}; do \
+     lang=`grep -l CUR_ISO_LANG=$$l ../../*/.wmlrc | sed -e 's/\/\.wmlrc//' -e 's/.*\///'`; \
+     [ ".$${lang}" = . ] && exit 1; \
+     cp templates.$$l.upo ../../$${lang}/po/templates.po; \
    done
 
 clean:
 	-@rm -f $(UPOFILES)
-	-@rm -f $(GMOFILES)
+	-@rm -f $(MOFILES)
 	-@rm -f $(POTFILES)
 
 #   Extract PO files from slices
