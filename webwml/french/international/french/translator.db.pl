@@ -176,7 +176,7 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Jérôme Schell' =>  {
-                        email       => 'jschell@noos.fr',
+                        email       => 'jerome@myreseau.org',
                         summary     => 2,
                         logs        => 2,
                         diff        => 2,
