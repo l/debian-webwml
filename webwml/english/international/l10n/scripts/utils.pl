@@ -508,7 +508,11 @@ sub write_data {
 		print DESC "MENU:\n";
 	    }
 	    for ($nb=0;$nb<@{$data{$pkg}{"menu"}};$nb++) {
-		print DESC " $data{$pkg}{'menu'}[$nb]\n";
+		print DESC " ";
+		print DESC join("\n ",split(/\n/,$data{$pkg}{'menu'}[$nb]));
+		print DESC "\n";
+#		printf "save menuentry '%s'\n",$data{$pkg}{'menu'}[$nb];
+#		print DESC " $data{$pkg}{'menu'}[$nb]\n";
 	    }
 	}
 
