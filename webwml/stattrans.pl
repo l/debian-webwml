@@ -222,15 +222,15 @@ foreach $lang (sort (keys %langs)) {
 	printf HTML "<tr><td align=center width=50%%><b>%d files (%d%%) translated</b></td>", $wml{$l}, $percent;
 	printf HTML "<td align=center width=50%%><b>%d files untranslated</b></td></tr></table>", $wml{'en'} - $wml{$l};
 
-	print HTML "<p><a href=\"index.html\">Index</a><p>\n";
-	print HTML "<p><a href=\"http://www.debian.org/devel/website/\">Working on the website</a><p>\n";
+	print HTML "<p><a href=\"./\">Index</a><p>\n";
+	print HTML "<p><a href=\"../\">Working on the website</a><p>\n";
 
 	$body = '';
 	foreach $file (@sorted_english) {
 	    next if ($file eq "");
 	    $msg = check_translation ($version{"$lang/$file"}, $version{"english/$file"}, "$lang/$file");
 	    if (length ($msg)) {
-		$body .= sprintf ("<tr><td><a href=\"http://www.debian.org/%s.%s.html\">%s</a></td><td>%s</td><td>%s</td>"
+		$body .= sprintf ("<tr><td><a href=\"/%s.%s.html\">%s</a></td><td>%s</td><td>%s</td>"
 				  ."<td>%s</td></tr>\n",
 				  $file, $l, $file, $version{"$lang/$file"}, $version{"english/$file"}, $msg);
 		$outdated{$lang}++;
@@ -249,7 +249,7 @@ foreach $lang (sort (keys %langs)) {
 	foreach $file (@sorted_english) {
 	    next if ($file eq "");
 	    if (index ($wmlfiles{$l}, " $file ") < 0) {
-		$body .= sprintf ("<a href=\"http://www.debian.org/%s\">%s</a><br>", $file, $file);
+		$body .= sprintf ("<a href=\"/%s\">%s</a><br>", $file, $file);
 		$untranslated{$lang}++;
 	    }
 	}
@@ -263,7 +263,7 @@ foreach $lang (sort (keys %langs)) {
 	foreach $file (@sorted_english) {
 	    next if ($file eq "");
 	    if (index ($wmlfiles{$l}, " $file ") >= 0) {
-		$body .= sprintf ("<a href=\"http://www.debian.org/%s.%s.html\">%s</a><br>\n",
+		$body .= sprintf ("<a href=\"/%s.%s.html\">%s</a><br>\n",
 				  $file, $l, $file);
 		$translated{$lang}++;
 	    }
@@ -286,11 +286,11 @@ print "Creating index.html...\n" if ($config{'verbose'});
 open (HTML, ">$config{'htmldir'}/index.html")
     || die "Can't open $config{'htmldir'}/index.html";
 
-printf HTML "<html><head><title>%s</title></head><body bgcolor=#ffffff>\n", $config{'title'};
-printf HTML "<h1>%s</h1>", $config{'title'};
+printf HTML "<html>\n<head><title>%s</title></head>\n<body bgcolor=#ffffff>\n", $config{'title'};
+printf HTML "<h1>%s</h1>\n", $config{'title'};
 
 print HTML $border_head;
-print HTML "<table border=0 bgcolor=\"#cdc9c9\">";
+print HTML "<table border=0 bgcolor=\"#cdc9c9\">\n";
 print HTML "<tr><th>Language</th><th>Percent</th><th>Translated</th><th>Out-dated</th><th>Untranslated</th></tr>\n";
 foreach $lang (sort (keys %langs)) {
     $l = $langs{$lang};
@@ -304,10 +304,10 @@ foreach $lang (sort (keys %langs)) {
 print HTML "</tr></table>";
 print HTML $border_foot;
 
-print HTML "</table>";
-print HTML "<p><a href=\"webwml-stattrans\">webwml-stattrans</a><p>\n";
-print HTML "<hr><address>Compiled at $date</address>\n";
-print HTML "</body></html>";
+print HTML "</table>\n";
+print HTML "<p>Made with <a href=\"http://cvs.debian.org/webwml/stattrans.pl?cvsroot=webwml\">webwml-stattrans</a>\n";
+print HTML "<p><hr><address>Compiled at $date</address>\n";
+print HTML "</body></html>\n";
 close (HTML);
 
 
