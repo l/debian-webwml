@@ -1,40 +1,38 @@
-#use wml::debian::template title="Debian 2.1 (slink) Release Information"
-#use wml::debian::translation-check translation="1.8"
+#use wml::debian::template title=""Información de Debian 2.0 (slink)"
+#use wml::debian::release
+#use wml::debian::translation-check translation="1.44"
+#include "$(ENGLISHDIR)/releases/slink/formats_and_architectures.wmh"
 
 <:
-# list of architectures
-%arches = ( i386   => 'Intel x86',
-	    m68k   => 'Motorola 680x0',
-	    sparc  => 'SPARC',
-	    alpha  => 'DEC Alpha',
-	  );
-
-# language specific name for output formats
-%formats = ( html => "HTML",
-	     pdf  => "PDF",
-	     txt  => "ASCII",
-           );
-
-sub permute_file {
-    my($file, $name, @exts) = @_;
-    my($ext, $arch);
-
-    foreach $arch (keys %arches) {
-        print "<li> <a href=\"./$arch/$file/\">$name para " . $arches{$arch} . "</a>";
-	if ( $#exts != -1 ) {
-	    print ":";
-	    foreach $ext (@exts) {
-	        print " (<a href=\"./$arch/$file.$ext\">" . $formats{$ext} . "</a>)";
-	    }
-	}
-	print "\n";
-    }
-}
+$about_lang_setting = "Si ha puesto las opciones de localización de su
+navegador correctamente, puede usar el enlace de arriba para obtener
+la versión HTML correcta automáticamente -- vea <A
+href=\"$base_url/intro/cn\"><setlang></A>. Si no es así, escoja la
+arquitectura, idioma y formato que desee de la tabla siguiente.\n";
  :>
 
+<ul>
+     <li><a href="#release-notes">Notas de la versión</a>
+     <li><a href="#new-inst">Instalación desde cero</a>
+     <li><a href="#errata">Erratas</a>
+     <li><a href="#unofficial-updates">Actualizaciones no oficiales</a>
+     <li><a href="#acquiring">Cómo obtener Debian 2.1</a>
+</ul>
+
 <p>
-Debian 2.1, también conocido como ``slink'', está ya disponible.
-Las siguientes arquitecturas están soportadas en Debian 2.1:
+
+<strong>Debian 2.1 es obsoleta.</strong>
+ 
+<p>
+ 
+Desde que hay <a href="../">versiones más nuevas</a>, la versión 2.1
+se ha quedado obsoleta. Estas páginas se mantienen por motivos
+históricos. Debería al menos saber que Debian 2.1 ya no se mantiene.
+
+</p>
+
+<p>
+Debian 2.1 soporta las siguientes arquitecturas:
 
 <ul>
 <: foreach $arch (keys %arches) {
@@ -43,59 +41,202 @@ Las siguientes arquitecturas están soportadas en Debian 2.1:
 </ul>
 
 
-<h2>Notas de Distribución</h2>
+<h2><a name="release-notes">Notas de la versión</a></h2>
 
 <p>
-Para saber qué hay nuevo en Debian 2.1, lea las Notas de la Distribución
-para su arquitectura. Las Notas de la Distribución también contienen información
-para los usuarios que están actualizando de versiones anteriores.
+Para saber qué hay nuevo en Debian 2.1, lea las Notas de la versión
+para su arquitectura. Las Notas de versión también contienen
+información para los usuarios que están actualizando desde versiones
+anteriores.
 
 <ul>
-<: &permute_file('release-notes', 'Notas de la Distribución', 'html', 'txt'); :>
+<: &permute_as_list('release-notes/', 'Notas de la versión'); :>
 </ul>
 
-Las Notas de la Distribución están disponibles en Inglés, Croata y Japonés.
+<: print $about_lang_setting; :>
 
 <p>
-Para la arquitectura i386, está disponible un <a href="i386/reports">informe detallado</A> sobre
-los paquetes que han cambiado entre las dos últimas disitribuciones.
+<center>
+<table border=2 cellspacing=0 cellpadding=3 bgcolor="#DDDDDD"> <tr bgcolor="#44CCCC">
+  <th align="left"><strong>Arquitectura</strong></th>
+  <th align="left"><strong>Formato</strong></th>
+  <th align="left"><strong>Idioma</strong></th>
+</tr>
+<: &permute_as_matrix('release-notes', 'inglés', 'croata', 'checo',
+		      'japonés', 'portugués', 'ruso');
+:>
+</table>
+</center>
 
-<h2>Nuevas Instalaciones</h2>
+<p>
+Para la arquitectura i386, hay disponible un <a
+href="i386/reports">informe detallado</A> que describe los paquetes
+que han cambiado entre las dos últimas distribuciones.
+
+<h2><a name="new-inst">Instalación desde cero</a></h2>
 
 <p>
 Las instrucciones de instalación, así como ficheros descargables, están
 separados por arquitecturas:
 <ul>
-<: &permute_file('install', 'Manual de Instalación', 'html', 'pdf', 'txt'); :>
+<:= &permute_as_list('install', 'Manual de Instalación'); :>
 </ul>
+
+<: print $about_lang_setting; :>
+
+<p>
+
+<center>
+<table border=2 cellspacing=0 cellpadding=3 bgcolor="#DDDDDD"> <tr bgcolor="#44CCCC">
+  <th align="left"><strong>Arquitectura</strong></th>
+  <th align="left"><strong>Formato</strong></th>
+  <th align="left"><strong>Idioma</strong></th>
+</tr>
+<:= &permute_as_matrix('install', 'inglés', 'croata', 'checo'
+		      'finés', 'francés',
+		      'japonés', 'portugués', 'ruso', 'español');
+:>
+</table>
+</center>
+
+Sepa también que la documentación en Alemán está asimismo disponible,
+pero sólo para la arquitectura i386; puede obtenerla en
+<a href="i386/install.de.txt">ASCII</a>,
+<a href="i386/install.de.pdf">PDF</a>, o
+<a href="i386/install.de.html">HTML</a>.
+
+<p>
 
 Se ha puesto mucho esfuerzo en el Manual de Instalación de Debian
 para dar soporte a distribuciones distintas de la i386. Algunas
-arquitecturas, sin embargo,
-(notablemente <:=$arches{'alpha'}:>) aún necesitan trabajarse más-
-lea el propio documento para ver cómo puede vd. contribuir.
+arquitecturas, sin embargo, (notablemente <:=$arches{'alpha'}:>) aún
+necesitan trabajarse más - lea dicho documento para ver cómo podría
+contribuir.
 
-<p> Estas páginas se actualizarán con las nuevas versiones del
-Manual de Instalación para slink en cuanto se encuentren disponibles. Si quiere contribuir con 
-cambios, lea la sección correspondiente en el manual; también puede conseguir las
-el <a href="source/">fuentes en SGML</A> -- parches son la mejor forma de comentarios.
+<p> Estas páginas se actualizarán con las nuevas versiones del Manual
+de Instalación para slink en cuanto se encuentren disponibles. Si
+quiere contribuir con cambios, lea la sección correspondiente en el
+manual; también puede conseguir las <a href="source/">fuentes en
+SGML</A> -- los parches son la mejor forma de comentarios. Aquellos
+voluntarios o lectores que se estén preguntando cuáles son las cosas
+nuevas deberían leer el <a href="source/ChangeLog">fichero de cambios
+(ChangeLog)</a>.
 
-El Manual de Instalación está disponible en Croata, Inglés, Finlandés, Francés y
-Japonés.
-
-<h3>Errata</h3>
 <p>
-Slink está cerficado para usar la serie 2.0.x de los núcleos Linux. Si desea
-utilizar los núcleos Linux 2.2.x con slink, lea la <a href="running-kernel-2.2">lista de problemas conocidos</A>.
 
 
 
+<h3><a name="errata">Errata</a></h3>
+
+<p>
+
+De vez en cuando, en el caso de problemas críticos o avisos de
+seguridad, la distribución en curso (en este caso, Slink) se ve
+actualizada. Generalmente, esto se indica como versiones puntuales.
+La versión puntual en este momento es Debian 2.1r5. Puede encontrar el
+<a href="ftp://ftp.debian.org/debian/dists/slink/ChangeLog">fichero de
+cambios (ChangeLog)</a> en cualquier réplica del archivo de Debian.
+
+<p>
+
+Cualquier arreglo a la distribución estable actual a menudo atraviesa
+un extenso período de pruebas antes de que sea aceptado en el archivo.
+Aún así, estos arreglos están disponibles en el directorio <a
+href="ftp://ftp.debian.org/debian/dists/slink-proposed-updates/">dists/slink-proposed-updates</a>
+de cualquier réplica del archivo de Debian. Si usa <tt>apt</tt> para
+actualizar sus paquetes, puede instalar los paquetes propuestos
+simplemente añadiendo la siguiente línea a su
+<tt>/etc/apt/sources.list</tt>:
+<pre>
+ deb http://http.us.debian.org/debian dists/proposed-updates/
+</pre>
+Después de esto, ejecute <kbd>apt-get update; apt-get upgrade</kbd>.
+
+<p>
+
+Slink está certificada para usar la serie 2.0.x de los núcleos Linux.
+Si desea utilizar los núcleos Linux 2.2.x con slink, lea la <a
+href="running-kernel-2.2">lista de problemas conocidos</A>.
+
+
+<h2><a name="unofficial-updates">Actualizaciones no oficiales</a></h2>
+
+<p>
+
+Las versiones que se lanzan de Debian sólo se actualizan en casos de
+errores críticos o problemas de seguridad. Sin embargo, para la
+conveniencia del usuario, hay cierto software actualizado que otros
+usuarios y desarrolladores hacen disponible de forma no oficial. El
+material de esta sección no está soportado oficialmente por Debian.
+
+<h3>Discos de arranque internacionalizados</h3>
+
+<p>
+
+Hay discos de arranque portugueses no oficiales en <a
+href="ftp://ftp2.escelsanet.com.br/debian/">ftp://ftp2.escelsanet.com.br/debian/</a>.
+
+
+<h3>Disco de rescate</h3>
+
+<p>
+
+Los usuarios de tarjetas SCSI Adaptec 2940, y otras controladoras SCSI
+con el juego de chips aic7xxx, probablemente experimentarán problemas
+con los discos de arranque estándar. Un amable usuario ha hecho
+algunos experimentos con los que mucha gente ha encontrado la solución
+a sus problemas. Hay dos discos de arranque alternativos para la
+arquitectura i386 en <a
+href="ftp://kalle.csb.ki.se/pub/">ftp://kalle.csb.ki.se/pub/</a>.
+También hay núcleos de reemplazo en ese sitio, que puede usar para
+simplemente sustituir los ya existentes en los discos de arranque.
+Necesitará los Discos de Controladores normales.
+
+<p>
+
+Se puede encontrar un conjunto de Discos de Rescate y Controladores
+actualizados y funcionales para usuarios de Adaptec en <a
+href="http://www.debian.org/~adric/aic7xxx/">http://www.debian.org/~adric/aic7xxx/</a>.
+
+
+
+<h3>Gnome</h3>
+
+<p>
+
+Si quiere usar el último Gnome de la distribución estable, vea <a
+href="http://www.gnome.org/start/debian-readme.html">Actualización
+de GNOME para Debian 2.1</a>.
+
+
+<h3>APT</h3>
+
+<p>
+
+Hay una versión actualizada de <code>apt</code> en Debian, en 2.1r3.
+Los beneficios de esta versión actualizada es básicamente que es capaz
+de manejar una instalación de CD-ROM's múltiples por sí solo. Esto
+hace la opción de adquisición <code>dpkg-multicd</code> en
+<code>dselect</code> innecessaria. Sin embargo, su CD-ROM de 2.1 puede
+que contenga un <code>apt</code> antiguo, así que podría interesarle
+actualizarlo al nuevo de Slink.
+
+
+
+<h2><a name="acquiring">Cómo obtener Debian 2.1</a></h2>
+
+<p>
+
+Debian está disponible electrónicamente o mediante vendedores de CD's.
 
 <h3>Comprar Debian en CD</h3>
-<p> Puede encontrar <a href="../../distrib/vendors">aquí</A> una lista
+
+<p>
+
+Puede encontrar <a href="../../distrib/vendors">aquí</A> una lista
 de vendedores de CDs que venden CDs de Debian 2.1.
 
-<h3>Obtener Debian de Internet</h3>
+<h3>Descargar Debian de Internet</h3>
 
 <P>Puede encontrar <a href="../../distrib/ftplist">aquí</A> una lista
 de servidores que hacen réplicas de la distribución.
@@ -107,4 +248,3 @@ sgml-indent-data:nil
 sgml-doctype:"../.doctype"
 End:
 -->
-
