@@ -71,7 +71,7 @@ sub score_output {
     if ($t+$u+$f == 0) {
 	return "Err";
     }
-    $res = $t/($t+$u+$f) * $nb_per_lang{$lang};
+    $res = $t;
     $res =~ s/^([0-9]*\..).*/$1/;
     if (defined($scores{$res})) {
 	$scores{$res} .= "|$lang";

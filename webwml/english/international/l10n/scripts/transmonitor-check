@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# di18n-check -- i18n checker script. it does :
+# transmonitor-check -- l10n checker script. it does :
 # - greps the archives against catgets and gettext
 # - search all *.po files and nls catalogs files 
 #     (it's a catalog iff first_line =~ /\$set[0-9 ]*\#/)
@@ -50,6 +50,7 @@ my $DB_FILE="../data/transmonitor";
 my $TRANSMONITOR_ROOT = "./";
 my $SYN_FILE = "../data/synonyms";
 my $PO_ROOT="../po";
+my $TEMPLATES_ROOT="../templates";
 my $action_remove = 0;
 my $action_check = 0;
 my $verbose = 0;
@@ -104,6 +105,8 @@ Configuration options:
                                 (warning, the script do 'rm -rf' on this dir!)
     --po=PO_ROOT              where to store the po files 
                                 (instead of $PO_ROOT)
+    --templates=DIR           where to store the debconf templates files
+                                (instead of $TEMPLATES_ROOT)
     --root=ROOTDIR            search the libs in ROOTDIR 
                                 (instead of $TRANSMONITOR_ROOT)
     --syn=SYN_FILE            use SYN_FILE as file of synonyms
@@ -159,7 +162,8 @@ my %opthash = (# ------------------ actions
 	       "tmp=s" => \$TMP_DIR,
 	       "root=s" => \$TRANSMONITOR_ROOT,
 	       "syn=s" => \$SYN_FILE,
-	       "po=s" => \$PO_ROOT
+	       "po=s" => \$PO_ROOT,
+	       "templates=s" => \$TEMPLATES_ROOT
 
 	    );
 
@@ -198,6 +202,7 @@ chop($cwd = `pwd`);
 $DB_FILE = "$cwd/$DB_FILE" unless ($DB_FILE =~ m,^/,);
 $TMP_DIR = "$cwd/$TMP_DIR" unless ($TMP_DIR =~ m,^/,);
 $PO_ROOT = "$cwd/$PO_ROOT" unless ($PO_ROOT =~ m,^/,);
+$TEMPLATES_ROOT = "$cwd/$TEMPLATES_ROOT" unless ($TEMPLATES_ROOT =~ m,^/,);
 $SYN_FILE = "$TRANSMONITOR_ROOT/$SYN_FILE" unless ($SYN_FILE=~ m,^/,);
 
 my ($succeded,$result);
@@ -314,9 +319,11 @@ my $password = "mquinson\@ens-lyon.fr";
 my %sources;
  FTP: while ($arg = shift @ftp_list){
      print "\n# $arg\n";
-     $arg =~ m,^ftp:/([^/]*)/(.*)$,;
+     $arg =~ m,^ftp:/([^/]*)/([^/]*)/(.*)$,;
      my $ftpsite = $1;
-     my $ftpdir = $2;
+     my $ftpdir = "$2/$3";
+     my $ftp_root = $2; ; # contains "debian" or "debian-non-US"
+
      print "Connecting to $ftpsite ...";flush STDOUT;
      $ftp = Net::FTP->new($ftpsite);
      if (!($ftp && $ftp->ok)) { 
@@ -369,13 +376,17 @@ my %sources;
 	 push @ftp_errors,$arg;
 	 next FTP;
      }
+     if (! $ftp->cwd ("/")) { 
+	 print " failed\n"; 
+	 print $ftp->message() . "\n";
+	 print "Unable to change directory to '/'; skipping site\n"; 
+	 push @ftp_errors,$arg;
+	 next FTP;
+     }
      #
      # Loop on all packages of this site
      #
    FTPPKG: foreach $pkg (keys %sources) {
-       ### FIXME : these are big packages which are faulty
-#       if ($pkg =~ m,mysql,||$pkg =~ m,cil,||$pkg =~ m,clue,||$pkg =~ m,mozilla,) { next FTPPKG; }
-	
        if (! defined $sources{$pkg}{'version'}) {
 	   print "Package $pkg has no version entry... Skipping\n";
 	   next FTPPKG;
@@ -404,6 +415,7 @@ my %sources;
        # Download it and unpack
        #
        print "  Checking $pkg v$sources{$pkg}{'version'} ...";flush STDOUT;
+       $sources{$pkg}{"directory"} = $ftp_root.'/'.$sources{$pkg}{"directory"};
        $res = ftp_unpack_pkg($pkg,\%{$sources{$pkg}});
        if ($res) { # badly unpacked
 	   print " failed\n";
@@ -492,17 +504,17 @@ sub ftp_unpack_pkg{
     #download
     my $dscfile;
     for ($nb=0;$nb<@{$pkg{"files"}};$nb++) {
-	$pkg{"directory"} =~ m,/([^/]*)$,;
-	if ($1 eq "source") {
-	    $filename = "";
-	} else {
-	    $filename = "$1/";
-	}
+	$filename = $pkg{"directory"}.'/';
+
 	my @array = split (/ /,$pkg{"files"}[$nb]);
 	$filename .= $array[2];
 	if ($array[2] =~ m,\.dsc$,) {
 	    $dscfile = $array[2];
-	    die "Can't change ftp to type ascii" unless $ftp->type('A');
+	    unless ($ftp->type('A')) {
+		print "Can't change ftp to type ascii\n";
+		print $ftp->message() . "\n";
+		return 1;
+	    }
 	} else {
 	    $ftp->binary();
 	}
@@ -515,10 +527,9 @@ sub ftp_unpack_pkg{
     print " [dl'ed]";flush STDOUT;
 
     #extract
-    # FIXME : this is an evil work around to not see the error dpkg makes cpio commit on solaris. But we can't see any error if we block &2 too. We should only make 1>/dev/null.
+
     if (system("dpkg-source -x $dscfile 1>/dev/null")) {
 	&warn ("Error while unpacking; skipping the package $pkgname.");
-	exit 1;#FIXME : You probabily want to survive this error, if you don't debug
 	return 1;
     }
     my $ver=$pkg{"version"};
@@ -558,10 +569,10 @@ The message was $msg\n");
     ### (a LOT of packages place spaces here, or upper case, or even typos)
     my $section ="";
     my $priority="";
-    if (!-e "debian/control") {
-	die "can't find the file debian/control";
+    unless (-e "debian/control" && open CTRL,"debian/control") {
+	&warn ("Error: Can't find debian/control; skipping the package $pkg.");
+	return \%data;
     }
-    open CTRL,"debian/control" || die "can't open the file debian/control";
     while (<CTRL>) {
 	if ((/^Section: (.*)$/)&&(!defined ($data{$pkg}{'section'}) || $data{$pkg}{'section'} eq "")) {
 	    $section = lc $1;
@@ -588,34 +599,18 @@ The message was $msg\n");
     $data{$pkg}{'priority'} = $priority;
 
     ###
-    ### grep for catgets and gettext
-    ###
-#    my $grep_it = sub {
-#	my $regexp=shift;
-#	open (PIPEOUT,"grep -c -r -F $regexp *|") 
-#	    or die("can't open input pipe: $!");
-#	
-#	while (<PIPEOUT>) {
-#	    next if /:0$/;
-#	    chop;
-#	    $data{$pkg}{$regexp}[@{$data{$pkg}{$regexp}}] = $_;
-#	}
-#    };
-#    &$grep_it("catgets");
-#    &$grep_it("gettext");
-
-    ###
-    ### search all *.po files and nls catalogs files 
+    ### search all *.po files, nls catalogs files and debconf templates
     ###  (it's a catalog iff first_line =~ /\$set[0-9 ]*\#/)
     # Search *.po files. 
     my ($nb);
     my @pofiles;
+    my @templates;
     open LIST,"find ./ -name \"*.po\" -type f|" || die "Can't run find : $!";
     while (<LIST>) {
 	chop;
 	$_ =~ s,^./(.*),$1, ;
 #	print "put $_ in \$pofiles[@pofiles]\n";
-	$pofiles[@pofiles]=$_;
+	$pofiles[scalar @pofiles]=$_;
     }
     close LIST;
     
@@ -642,6 +637,15 @@ The message was $msg\n");
     }
     close LIST;
     
+    #search debconf templates
+    open LIST,"find debian/ -name \"templates\" -o -name \"templates.*\"|" || die "Can't run find : $!";
+    while (<LIST>) {
+	chop;
+	$_ =~ s,^./(.*),$1, ;
+	$templates[scalar @templates]=$_;
+    }
+    close LIST;
+
     ###
     ### for po files, try to guess the language from the name, 
     ###      and the l10n with msgfmt
@@ -654,34 +658,46 @@ The message was $msg\n");
     my $u; #nb of untranslated msg
     my $t; #nb of translated msg
     my $this_stats = ""; #stats for this file
+    my $regexp_for_lang_code = "((..)([-_][a-zA-Z]*)?(@[^\.]*)?)(\.[^\.]*)?";
+    
 #    print "PO: @pofiles\n";
-   foreach $file (@pofiles) {
+   POFILE: foreach $file (@pofiles) {
 #	print "Test file $file\n";
       File::Path::mkpath(File::Basename::dirname("$PO_ROOT/$pkg/$file"));
 	$filename = "${pkg}_$data{$pkg}{'version'}/$file";
 	$filename =~ s,/,_,g;
 	$filename = File::Basename::dirname("$file")."/".$filename;
+
 	if (system("gzip -c9 $file > $PO_ROOT/$pkg/$filename.gz")){
 	    warn "Can't gunzip $file to $PO_ROOT/$pkg/$filename.gz : $!";
 	}
 	$this_stats="";
 	$lang ="";
-	if ($file=~ /\/(..)([-_][a-zA-Z]*)?\.po$/){ 
+	if ($file=~ /\/$regexp_for_lang_code\.po$/){ 
 	    $bad_lang =$1;
 	    if (is_lang($bad_lang)) {
 		$lang = $bad_lang;
 		$bad_lang = "";
 	    }
 	}
-	if ($lang eq "" && $file=~ /\/(..)\//){
+	if ($lang eq "" && $file=~ /\/$regexp_for_lang_code\//){
 	    $bad_lang =$1;
 	    if (is_lang($bad_lang)) {
 		$lang = $bad_lang;
 		$bad_lang = "";
 	    }
 	}
-	    if ($lang ne "") {
-		# stats the file
+	# The next rule is for kde-i18n and other such packages
+	if ($lang eq "" && $file =~ m,^$regexp_for_lang_code/messages,) {
+	    $bad_lang = $1;
+	    if (is_lang($bad_lang)) {
+		$lang = $bad_lang;
+		$bad_lang = "";
+	    }
+	}
+
+	if ($lang ne "") {
+	    # stats the file
 	    my ($found)=0;   #true if the output seems to be an output of no err
 	    my @lines;   #to read the output
 	    my ($line);  #to read the output
@@ -740,6 +756,7 @@ The message was $msg\n");
 	    }
 	    
 	} else { # no valid lang found
+	    next POFILE if $file =~ m,messages.po$,;
 	    if ($bad_lang eq "") { 
 		&$add_part($pkg,"errors","can't guess the language of $file");
 	    } else {
@@ -750,6 +767,54 @@ The message was $msg\n");
 	$data{$pkg}{"po"}[@{$data{$pkg}{"po"}}] = "$file:$lang:$this_stats:$filename";
 #	print "Find '".$data{$pkg}{"po"}[@{$data{$pkg}{"po"}}-1]."'\n";
     }
+
+    ###
+    ### For debconf templates, do the same thing than for po files
+    ###
+    foreach $file (@templates) {
+	# Store the templates
+      File::Path::mkpath(File::Basename::dirname("$TEMPLATES_ROOT/$pkg/$file"));
+	$filename = "${pkg}_$data{$pkg}{'version'}/$file";
+	$filename =~ s,/,_,g;
+	$filename = File::Basename::dirname("$file")."/".$filename;
+	$filename =~ s,^debian/(.*),$1,;
+
+	if (system("gzip -c9 $file > $TEMPLATES_ROOT/$pkg/$filename.gz")){
+	    warn "Can't gunzip $file to $TEMPLATES_ROOT/$pkg/$filename.gz : $!";
+	}
+	#search to guess the language
+	$this_stats="";
+	$lang ="";
+	if ($file=~ m,templates\.(..)([-_][a-zA-Z]*)?$,){ 
+	    $bad_lang =$1;
+	    if (is_lang($bad_lang)) {
+		$lang = $bad_lang;
+		$bad_lang = "";
+	    }
+	} elsif ($file =~ m,templates$,) {
+	    $lang="en";
+	}
+	if ($lang eq "" && $file=~ /\/(..)\//){
+	    $bad_lang =$1;
+	    if (is_lang($bad_lang)) {
+		$lang = $bad_lang;
+		$bad_lang = "";
+	    }
+	}
+	if ($lang ne "") {
+	    # stats the file: (FIXME) TODO because debconf gives no easy way to stat templates
+	    
+	} else { # no valid lang found
+	    if ($bad_lang eq "") { 
+		&$add_part($pkg,"errors","can't guess the language of $file");
+	    } else {
+		&$add_part($pkg,"errors","$bad_lang is not a language code (in $file)");
+	    }
+	}
+	# Add this file to the data
+	$data{$pkg}{"templates"}[@{$data{$pkg}{"templates"}}] = "$file:$lang".'::'.$filename;
+    }	
+
     ###
     ### try to guess the organisation of this stuff. It could be :
     ###   - standard gnu (po dir, Makefile.in.in file and POTFILES.in in it)
@@ -805,7 +870,11 @@ sub init_synonym {
         next unless /\S/;
 	next if /^\#/;
         chop;
-        ($wrong, $right) = split(/:/, $_, 2);
+	if (m,:,) {
+	    ($wrong, $right) = split(/:/, $_, 2);
+	} else {
+	    $wrong=$right=$_;
+	}
         $synonym{$wrong} = $right;
     }
     close DATA;

@@ -40,13 +40,13 @@ foreach $score (sort {$b <=> $a} keys %scores) {
 	    $str = "<tr><td>$rank";
 	    $exaequo = 1;
 	}
-	$str .= "</td><td>";
+	$str .= "</td><td><a href=\"l10n-lang-$lang\">";
 	if (defined  $trans{language2code($cur_lang)}{lc(code2language($lang))}) {
 	    $str .= ucfirst($trans{language2code($cur_lang)}{lc(code2language($lang))});
 	} else {
 	    $str .= code2language($lang);
 	}
-	$str .= "<td>$score<td>$nb_per_lang{$lang}<td>";
+	$str .= "</a><td>$score<td>$nb_per_lang{$lang}<td>";
 	$str .= l10n_output($average{$lang})."\n";
 	$str =~ s/<(td)/<$1 align=center/g;
 	print $str;

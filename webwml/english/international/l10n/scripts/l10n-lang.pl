@@ -21,16 +21,26 @@ sub make_one_lang {
     } else {
 	$str .= code2language($lang);
     }
-    $str .= "</h2>\n<table border=1 cellpadding=0 cellspacing=0>\n";
+    $str .= "</h2>\n<l10nLangIntro>\n";
+    $str .= "<ul><li><a href=\"#po\"><listPoFiles></a></li>\n";
+    $str .= "<li><a href=\"#templates\"><listTemplates></a></li></ul>\n\n";
+    $str .= "<h3><a name=\"po\"><listPoFiles></h3>\n";
+    $str .= "<table border=1 cellpadding=0 cellspacing=0>\n";
     print $str;
 
+    #
+    # outputs the po files
+    #
     $header = "<tr><td><package><td><score><td><details><td><poFiles>\n";#<td>Maintainer<td>comments\n";
     $header =~ s/<(td)/<$1 bgcolor="#ddddd5" align=center/g;
     print $header;
 
-    
     foreach $pkg (sort keys %data) {
 	if (defined $data{$pkg}{'stats'} && defined $data{$pkg}{'po'}) {
+	    if ($since_header++ >25) {
+		print $header;
+		$since_header=0;
+	    }
 	    $str ="<tr><td>$pkg<td>";
 	    $str .= (defined $data{$pkg}{'stats'}{$lang} ? 
 		     l10n_output($data{$pkg}{'stats'}{$lang}) :
@@ -55,6 +65,58 @@ sub make_one_lang {
 	}
     }
     print $header."</table>";
+
+    #
+    # Outputs the templates
+    #
+    $header = "<tr><td><package><td><templatesFiles><td><englishTemplate>\n";#<td>Maintainer<td>comments\n";
+    $header =~ s/<(td)/<$1 bgcolor="#ddddd5" align=center/g;
+    $since_header=0;
+
+    print "<h3><a name=\"templates\"><listTemplates></h3>\n";
+    print "<table border=1 cellpadding=0 cellspacing=0>\n".$header;
+
+    foreach $pkg (sort keys %data) {
+	if (defined $data{$pkg}{'templates'}) {
+	    if ($since_header++ >25) {
+		print $header;
+		$since_header=0;
+	    }
+	    print "<tr><td>$pkg";
+
+	    #put link to template in this lang
+	    $found = 0;
+	    $str = "<td>";
+	    for ($nb=0;$nb<@{$data{$pkg}{"templates"}};$nb++) {
+		@po_part=split(/:/,$data{$pkg}{'templates'}[$nb]);
+		if ("$po_part[1]" eq "$lang") {
+		    $found = 1;
+		    $str .= "<a href=\"$TEMPLATES_ROOT/$pkg/$po_part[3].gz\">$po_part[0]</a>";
+		    $str .= "&nbsp;(".(output_details($po_part[2])).")" if ($po_part[2] ne ""); 
+		    $str .= "<br>";
+		}
+	    }
+	    $str .= "---" unless $found;
+	    print $str;
+
+	    #put english template
+	    $found = 0;
+	    $str = "<td>";
+	    for ($nb=0;$nb<@{$data{$pkg}{"templates"}};$nb++) {
+		@po_part=split(/:/,$data{$pkg}{'templates'}[$nb]);
+		if ("$po_part[1]" eq "en") {
+		    $found = 1;
+		    $str .= "<a href=\"$TEMPLATES_ROOT/$pkg/$po_part[3].gz\">$po_part[0]</a>";
+		    $str .= "&nbsp;(".(output_details($po_part[2])).")" if ($po_part[2] ne ""); 
+		    $str .= "<br>";
+		}
+	    }
+	    $str .= "---" unless $found;
+	    print $str."\n";
+	}
+    }
+    print $header."</table>";
+
 }
 sub do_all {
     my $cil = uc("$(CUR_ISO_LANG)");
