@@ -60,6 +60,7 @@ sub get_event_stuff {
         $base = $1;
      }
      $title = ''; $date = ''; $contact = ''; $email = ''; $desc = '';
+     $startdate = ''; $enddate = '';
      <protect pass=2>
      foreach $line (<FILE>) 
 	 {
@@ -70,6 +71,14 @@ sub get_event_stuff {
         elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) 
 		{
            $date = $1;
+        }
+        elsif ($line =~ /^<define-tag startdate>(.*)<\/define-tag>$/) 
+		{
+           $startdate = $1;
+        }
+        elsif ($line =~ /^<define-tag enddate>(.*)<\/define-tag>$/) 
+		{
+           $enddate = $1;
         }
         elsif ($line =~ /^<define-tag contact>(.*)<\/define-tag>$/) 
 		{
@@ -84,6 +93,10 @@ sub get_event_stuff {
            $desc = $1;
         }
      </protect>
+		if ($startdate && $enddate)
+		{
+			$date = &daterange($startdate, $enddate);
+		}
 		if ($title && $date) 
 		{
            $str = "<tt>[$date]</tt> <strong><a href=\"$path/$base\">$title</a></strong><br />\n";
