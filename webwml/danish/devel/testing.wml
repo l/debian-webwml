@@ -1,29 +1,55 @@
 #use wml::debian::template title="Debians 'testing'-distribution" BARETITLE=true
-#use wml::debian::translation-check translation="1.4"
+#use wml::debian::translation-check translation="1.8"
+#include "$(ENGLISHDIR)/releases/info"
 
 <p>For at få generelle, brugerorienterede oplysninger om distributionen 
-"testing", se <a href="$(DOC)/FAQ/ch-ftparchives#s-testing">OSS'en</a>.</p>
+"testing", se <a href="$(DOC)/FAQ/ch-ftparchives#s-testing">Debians 
+OSS</a>.</p>
+
+<p>En vigtig ting at bemærke, både for almindelige brugere og udviklerne af
+"testing", er at sikkerhedsopdateringer til "testing" <strong>ikke varetages af
+sikkerhedsteamet</strong>.  For flere oplysninger, se 
+<a href="../security/faq#testing">sikkerhedsteamets OSS</a>.</p>
 
 <p>Denne side handler primært om ting vedrørende "testing", der er vigtige for
 Debian-udviklere.</p>
 
-<p>Dokumentationen indeholder:</p>
+<h2>Hvordan "testing" fungerer</h2>
 
-<ul>
-  <li>Jules Beans <a href="http://people.debian.org/~jules/testingfaq.html">\
-      testing-OSS</a> der forklarer nogle af de kryptiske oplysninger.
-      <br>
-      Der var en <a href="http://lists.debian.org/debian-devel/2001/debian-devel-200112/msg00610.html">\
-      tråd på -devel</a> om OSS'en, som indeholder oplysninger der mens dette
-      skrives ikke er blevet tilføjet korrekt.
-  </li>
-  <li>En ældre <a href="http://lists.debian.org/debian-devel-0008/msg00906.html">\
-      forklarende e-mail</a>, som er forældet da James har implementeret
-      pakke-puljen ("package pool"), men måske vil du læse den alligevel.
-  </li>
-</ul>
+<p>"Testing"-distributionen genereres automatisk.  Den genereres fra den 
+"ustabile" distribution af nogle scripts som prøver at flytte pakker der
+indenfor rimelighedens grænser, ikke forventes at indeholde vigtige fejl.  Det
+gøres på en måde, der sikrer at afhængigheder med andre pakker i testing altid
+er opfyldt.</p>
 
-<p>update-scriptet opretter to uddata-filer:</p>
+<p>En (given version af en) pakke bliver flyttet til "testing" når den opfylder
+samtlige følgende kriterier:</p>
+
+<ol>
+  <li>Den skal have været i "unstable" i 10, 5 eller 2 dage, afhængigt af hvor 
+  meget uploadningen har hastet;</li>
+  
+  <li>Den skal være oversat og ajourført på alle arkitekturer som den tidlgiere
+  har været oversat til i "unstable";</li>
+  
+  <li>Den skal have færre udgivelseskritiske fejl, eller det samme antal, som
+  versionen i "testing" (<a href="#faq">se nedenfor</a> for flere 
+  oplysninger);</li>
+  
+  <li>Alle dens afhængigheder skal <em>enten</em> kunne opfyldes af pakker som
+  allerede er i "testing", <em>eller</em> skal kunne opfyldes af en gruppe
+  pakker som vil blive installeret på samme tid;</li>
+  
+  <li>Processen med at installere pakken i "testing" må ikke resultere i at 
+  andre pakker i "testing" holder op med at virke. (<a href="#faq">Se 
+  nedenfor</a> for flere oplysninger.)</li>
+</ol>  
+
+<p>En pakke som opfylder de første tre punkter ovenfor, kaldes en <q>Valid 
+Candidate</q>.</p>
+
+<p>Opdateringsscriptet viser hvornår enhver pakke kan tænkes at blive flyttet
+fra "unstable" til "testing".  Dets uddata er dobbelt:</p>
 
 <ul>
   <li>Det <a href="http://ftp-master.debian.org/testing/update_excuses.html">\
@@ -35,6 +61,184 @@ Debian-udviklere.</p>
       [<a href="http://ftp-master.debian.org/testing/update_output.txt.gz">gzip'et</a>]
   </li>
 </ul>
+
+<h2><a name="faq">Ofte stillede/besvarede spørgsmål</a></h2>
+
+<h3><q>Hvad er udgivelseskritiske fejl, og hvordan optæller man dem?</q></h3>
+
+<p>Alle fejl med en højere alvorlighedsgrad betragtes som standard, som 
+<em><a href="http://bugs.debian.org/release-critical/">udgivelseskritiske</a></em>
+(release-critical); for tiden er det <strong>critical</strong> (kritisk), 
+<strong>grave</strong> (graverende) og <strong>serious</strong> (alvorlig) 
+fejl.</p>
+
+<p>Sådanne fejl antages at have betydning for hvorvidt en pakke vil blive 
+udgivet med den stabile udgave af Debian: generelt, hvis en pakke har åbne
+udgivelseskritiske fejl mod sig, kommer den ikke ind i "testing", og dermed
+bliver den heller ikke udgivet i "stable".</p>
+
+<p>Optællingen af fejl i "testing" for en pakke, er omtrent antallet af fejl
+på det seneste tidpunkt hvor versionen i "testing" svarede til versionen i
+"unstable".  Fejl hørende til <strong><current_release_name></strong> eller
+<strong><current_testing_name></strong> tælles ikke med.  Fejl hørende til 
+<strong>sid</strong> tælles til gengæld med.</p>
+
+<h3><q>Hvordan kan overførslen af en pakke til "testing" overhovedet få andre
+pakker til at holde op med at virke?</q></h3>
+
+<p>Strukturen på distributionsarkiverne er sådan, at de kun kan indeholde en
+version af en pakke; en pakke defineres via sit navn.  Derfor, når 
+kildekode-pakken <tt>acmefoo</tt> overføres til "testing", sammen med sine
+binære pakker <tt>acme-foo-bin</tt>, <tt>acme-bar-bin</tt>, 
+<tt>libacme-foo1</tt> og <tt>libacme-foo-dev</tt>, fjernes den gamle 
+version.</p>
+
+<p>Dog kan den gamle version have leveret et gammelt soname på et bibliotek til
+en binær pakke, så som <tt>libacme-foo0</tt>.  Fjernes den gamle 
+<tt>acmefoo</tt> fjernes <tt>libacme-foo0</tt>, hvilket resulterer i at alle
+pakker der er afhængig af den, holder op med at virke.</p>
+
+<p>Dette påvirker hovedsagligt pakker der stiller foranderlige binære pakker i 
+forskellige versioner til rådighed (dermed primært biblioteker).  Dog vil det
+også påvirke pakker, hvortil der er knyttet versionsafhængigheder af typerne 
+==, &lt;= or &lt;&lt;.</p>
+
+<h3><q>Jeg forstår det stadig ikke!  "testing"-scriptene siger at denne pakke
+er en "valid candidate", men den er stadig ikke overført til "testing".</q></h3>
+
+<p>Dette har tilbøjelighed til at ske, når en installering, direkte eller 
+indirekte, vil få andre pakker til at holde op med at virke.</p>
+
+<p>Husk at overveje din pakkes afhængigheder.  Lad os antage at din pakke er
+afhængig af libtool, eller libltdl<var>X</var>.  Din pakke vil ikke blive 
+overført til "testing", før den rigtige version af libtool er parat til at 
+følge med.</p>
+
+<p>Det vil dermed ikke ske, før en installering af libtool ikke resultere i at
+ting, som allerede er i "testing" holder op med at virke.  Med andre ord, 
+indtil alle andre pakker som er afhængige af libltdl<var>Y</var> (hvor 
+<var>Y</var> er den tidligere version) er blevet genoversat, og alle deres
+udgivelseskritiske fejl er væk, osv., vil ingen af disse pakker bliver overført
+til "testing".</p>
+
+<p>Her er <a href="http://ftp-master.debian.org/testing/update_output.txt">\
+tekstuddataene</a> [<a href="http://ftp-master.debian.org/testing/update_output.txt.gz">gzip'et</a>]
+nyttige: de giver tips (omend meget kortfattede) til hvilke pakker som holder
+op med at virke, når en "valid candidate" overføres til "testing".</p>
+
+<h3><q>Hvorfor er det nogle gange svært at få <kbd>Architecture: 
+all</kbd>-pakker overført til "testing"?</q></h3>
+
+<p>Hvis <kbd>Architecture: all</kbd>-pakken skal overføres, skal det være 
+muligt at opfylde alle dens afhængigheder på <strong>alle</strong> 
+arkitekturer.  Hvis den er afhængig af bestemte pakker som kun kan oversættes
+på et begrænset antal af Debians arkitekturer, så kan det ikke lade sig 
+gøre.</p>
+
+<p>Dog vil "testing" indtil videre ignorere <kbd>Architecture: 
+all</kbd>-pakkers installérbarhed på ikke-i386-arkitekturer.  ("Det er en stort
+'hack' og jeg er ikke stolt over at have gjort det, men... --aj)</p>
+
+<h3><q>Er der nogen undtagelser? Jeg er sikker på at <tt>acmefoo</tt> lige er
+blevet overført til "testing" på trods af at alle krav ikke er opfyldt.</q></h3>
+
+<p>Udgivelsesadministratorene ("release managers") kan tilsidesætte reglerne på 
+to måder:</p>
+
+<ul>
+  <li>De kan beslutte at beskadigelsen som skyldes overførslen af et nyt
+      bibliotek vil gøre ting bedre, fremfor værre, og slippe den igennem 
+      sammen med sin flotile af afhængige pakker.</li>
+  <li>De kan også manuelt fjerne pakker fra "testing" som ikke virker, så nye
+      ting kan installeres.</li>
+</ul>
+
+<h3><q>Har du et rigtigt, ikke-trivielt eksempel?</q></h3>
+
+<p>Her er et: når kildekode-pakken <tt>apache</tt> overføres til "testing", 
+sammen med sin binære pakker <tt>apache</tt>, <tt>apache-common</tt>, 
+<tt>apache-dev</tt> og <tt>apache-doc</tt>, fjernes den gamle version.</p>
+
+<p>Dog er alle modulpakker til Apache afhængige af <code>apache-common (&gt;=
+<var>et-eller-andet</var>), apache-common (&lt;&lt;
+<var>et-eller-andet</var>)</code>, så denne ændring ødelægger alle disse
+afhængigheder.  Som følge deraf skal alle Apache-moduler oversættes mod den nye
+version af Apache for at "testing" kan opdateres.</p>
+
+<p>Lad os uddybe dette lidt mere:  efter alle modulerne er blevet opdateret i
+"unstable" så de fungerer med den nye Apache, vil "testing"-scriptene prøve
+<tt>apache-common</tt> og finde ud af at det får alle Apache-modulerne til at 
+holde op med at virke, fordi de har <code>Depends: apache-common (&lt;&lt; 
+<var>den aktuelle version</var>)</code>, og de prøver 
+<tt>libapache-<var>foo</var></tt> for at finde ud af at den ikke kan overføres
+fordi den har <code>Depends: apache-common (&gt;= <var>den nye 
+version</var>)</code>.</p>
+
+<p>Dog vil jeg senere anvende en anden form for logik (nogle gange resultatet 
+af manuel indgriben):  den vil ingorere det faktum at <tt>apache-common</tt> 
+får ting til at holde op med at virke, og fortsætte med ting der virker; hvis
+det stadig ikke virker efter jeg har gjort alt hvad vi kan, er det bare
+ærgerligt, men måske <strong>vil</strong> det fungere.  Senere vil jeg prøve
+alle de tilfældige <tt>libapache-<var>foo</var></tt>-pakker og sikre mig at de
+rent faktisk fungerer.</p>
+
+<p>Når alt har været prøvet, kontrolleres der hvor mange pakker som ikke 
+længere virker, afgører om det er værre eller bedre end det oprindelige, og
+enten acceptere alt eller glemme det.  Du kan ses det i 
+<tt>update_output.txt</tt> på linierne "<code>recur:</code>".</p>
+
+<p>For eksempel:</p>
+
+<pre>
+         recur: [<var>foo</var> <var>bar</var>] <var>baz</var>
+</pre>
+
+<p>betyder i bund og grund <q>har allerede opdaget at <var>foo</var> og
+<var>bar</var> forbedrer situationen, jeg prøver nu <var>baz</var>, selvom det
+får ting til at holde op med at virke, for at se hvad der sker</q>.  Linierne i
+<tt>update_output.txt</tt> som begynder med "<code>accepted</code>" indikerer
+at situationen lader til at være blevet forbedret, og linierne med
+"<code>skipped</code>" gør det værre.</p>
+
+<h3><q>Filen <tt>update_output.txt</tt> er fuldstændig ulæselig!</q></h3>
+
+<p>Det er ikke et spørgsmål. ;-)</p>
+
+<p>Lad os prøve med et eksempel:</p>
+
+<pre>
+ skipped: cln (0) (150+4)
+     got: 167+0: a-40:a-33:h-49:i-45
+     * i386: ginac-cint, libginac-dev
+</pre>
+
+<p>Dette betyder at hvis <tt>cln</tt> overføres til "testing", vil 
+<tt>ginac-cint</tt> og <tt>libginac-dev</tt> ikke kunne installeres i 
+"testing" på i386.  Bemærk at arkitekturene kontrolleres i alfabetisk 
+rækkefølge og kun den første arkitektur med problemer vises - det er grunden 
+til at alpha-arkitekturen vises så ofte.</p>
+
+<p>Linien "got" indeholder antallet af problemer i "testing" på de forskellige
+arkitekturer (indtil den første arkitektur hvor der findes problemer - se
+ovenfor).  "i-45" betyder, at hvis <tt>cln</tt> blev overført til "testing", 
+ville der være 45 pakker på i386 som ikke kan installeres.  Nogle af posterne
+over og under <tt>cln</tt> viser at der var 43 uinstallérbare pakker i 
+"testing" på i386, på det tidspunkt.</p>
+
+<p>Linien "skipped: cln (0) (150+4)" betyder at der stadig er 150 pakker som
+skal gennemgås efter denne pakke indtil denne kontrol af alle pakker er 
+gennemført, og at 4 pakker allerede er fundet, som det ikke planlægges at 
+opgradere, fordi de ville ødelægge afhængigheder. "(0)" er irrelevant og kan
+roligt ignoreres.</p>
+
+<p>Bemærk at der er flere kontroller af alle pakker i et gennemløg af 
+"testing"-scriptet.</p>
+
+<p><i>Jules Bean påbegyndte indsamlingen af de ofte stillede spørgsmål med 
+svar</i>.</p>
+# Created: Sat Dec  8 12:44:29 GMT 2001
+
+<h2>Yderligere oplysninger</h2>
 
 <p>Script'ene opfanger også fejl der kan beskrives som "uhyggeligt alvorlige og
 skulle slet ikke have været her".  Disse er alle "man behøver ikke engang at
@@ -54,10 +258,16 @@ Der findes lister over sådanne fejl vedrørende alle tre distributioner:</p>
 <a href="http://ftp-master.debian.org/testing/stable_outdate.txt">stable</a> og
 <a href="http://ftp-master.debian.org/testing/unstable_outdate.txt">unstable</a>.</p>
 
+<p>Det kan være interessant at læse en ældre 
+<a href="http://lists.debian.org/debian-devel-0008/msg00906.html">\
+forklarende e-mail</a>.  Den eneste mangel er, at den ikke tager højde for
+pakkepuljen ("package pool"), fordi denne blev implementeret af James Troup
+efter e-mail'en blev skrevet.</p>
+
 <p>Koden til testing er tilgængelig via anonym CVS fra 
 <a href="http://cvs.debian.org/testing/?cvsroot=dak">cvs.debian.org</a>. Opsæt
 din <code>CVSROOT</code> til 
 <kbd>:pserver:anonymous@cvs.debian.org:/cvs/dak</kbd>, modulet er 
 <kbd>testing</kbd>.</p>
 
-<p><i>Anthony Towns har stået for implementeringen af testing.</i></p>
+<p><i>Anthony Towns har stået for implementeringen af "testing".</i></p>
