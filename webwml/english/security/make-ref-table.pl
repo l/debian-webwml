@@ -26,7 +26,7 @@ use Date::Parse;
 
 # Stdin options
 # -v verbose
-# -a pritn all refereces (in HTML mode side by side)
+# -a print all references (in HTML mode side by side)
 # -b bugtraq refs
 # -c CERT refs
 # -k CERT kb refs
@@ -42,7 +42,7 @@ if ( $opt_h ) {
 	print "\t-m\tPrint CVE/Mitre references (default)\n";
 	print "\t-b\tPrint Bugtraq references\n";
 	print "\t-c\tPrint CERT references\n";
-	print "\t-p\tPretty-Print mode (HMTL)\n";
+	print "\t-p\tPretty-Print mode (HTML)\n";
 	exit 0;
 }
 
