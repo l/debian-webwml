@@ -12,6 +12,7 @@ include $(WMLBASE)/Make.lang
 index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.data) \
+  $(ENGLISHSRCDIR)/releases/info \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
 
 ifndef SUBLANG
