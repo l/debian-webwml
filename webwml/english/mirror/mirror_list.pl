@@ -268,35 +268,35 @@ of material available are listed, along with the access method for each type.
 
 <p>The following things are mirrored:
 <dl>
-<dt><b>Archive</b>
-	<dd>The Debian archive.
-<dt><b>nonUS</b>
-	<dd>The nonUS portion of the Debian archive. Software is placed here if
-	it can't be distributed in the US due to software patents or uses encryption.
-<dt><b>WWW</b>
+<dt><strong>Packages</strong>
+	<dd>The Debian package pool.
+<dt><strong>Non-US packages</strong>
+	<dd>A pool for Debian packages that can't be distributed in the US
+	due to software patents or use of encryption.
+<dt><strong>WWW pages</strong>
 	<dd>The Debian web pages.
-<dt><b>CDimage</b>
+<dt><strong>CD Images</strong>
 	<dd>Official Debian CD Images. See
 	<a href="http://cdimage.debian.org/">http://cdimage.debian.org/</a> for details.
 </dl>
 
 <p>The following access methods are available:
 <dl compact>
-<dt><b>http</b>
-	<dd>Standard web access.
-<dt><b>ftp</b>
-	<dd>File Transfer Protocol
-<dt><b>rsync</b>
-	<dd>An efficient means of mirroring
-<dt><b>nfs</b>
-	<dd>If you don't know what it is, you don't need it.
+<dt><strong>HTTP</strong>
+	<dd>Standard web access, but it can be used for downloading files.
+<dt><strong>FTP</strong>
+	<dd>The file transfer protocol.
+<dt><strong>rsync</strong>
+	<dd>An efficient means of mirroring.
+<dt><strong>nfs</strong>
+	<dd>Network file system (if you don't know what it is, you don't need it).
 </dl>
 
 <p>The 'Type' entry is one of:
 <dl compact>
-<dt><b>leaf</b>
+<dt><strong>leaf</strong>
 	<dd>These comprise the bulk of the mirrors. Most of them mirror from a Push-Primary.
-<dt><b>Push-Primary</b>
+<dt><strong>Push-Primary</strong>
 	<dd>These sites mirror directly from the master archive site (which is
 	not publicly accessible).
 </dl>
@@ -305,7 +305,7 @@ of material available are listed, along with the access method for each type.
 END
 	foreach $country (sort keys %countries) {
 		if ($html) {
-			print "\n<b>$country</b>\n";
+			print "\n<strong>$country</strong>\n";
 		}
 		else {
 			print "\n$country\n";
@@ -327,14 +327,24 @@ END
 				print "Type: $mirror{$site}{'type'}\n";
 			}
 			foreach ( sort keys %{ $mirror{$site}{method} } ) {
-				if ($_ =~ /http/) {
-					print $_.":	<a href=\"http://$site$mirror{$site}{method}{$_}\">$mirror{$site}{method}{$_}</a>\n";
+				my $display = $_;
+				$display =~ s/archive-/Packages /;
+				$display =~ s/nonus-/Non-US packages /;
+				$display =~ s/www-/WWW pages /;
+				$display =~ s/cdimage-/CD Images /;
+				$display =~ s/old-/Old releases /;
+				$display =~ s/ftp/over FTP/;
+				$display =~ s/http/over HTTP/;
+				$display =~ s/nfs/over NFS/;
+				$display =~ s/rsync/over rsync/;
+				if (/http/) {
+					print $display.":	<a href=\"http://$site$mirror{$site}{method}{$_}\">$mirror{$site}{method}{$_}</a>\n";
 				}
-				elsif ($_ =~ /ftp/) {
-					print $_.":	<a href=\"ftp://$site$mirror{$site}{method}{$_}\">$mirror{$site}{method}{$_}</a>\n";
+				elsif (/ftp/) {
+					print $display.":	<a href=\"ftp://$site$mirror{$site}{method}{$_}\">$mirror{$site}{method}{$_}</a>\n";
 				}
 				else {
-					print $_.":	".$mirror{$site}{method}{$_}."\n";
+					print $display.":	".$mirror{$site}{method}{$_}."\n";
 				}
 			}
 			if (exists $mirror{$site}{'comment'}) {
