@@ -1,4 +1,4 @@
-[ <a href="..">Ports</a> ]
+[ <a href="../">Ports</a> ]
 [ <ifneq <get-var WML_SRC_BASENAME> "index"
   "<a href="index.html">Debian MIPS</a>"
   "<b>Debian MIPS</b>"
