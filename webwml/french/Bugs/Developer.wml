@@ -1,14 +1,16 @@
 #use wml::debian::template title="Gestion des bogues Debian - informations pour les développeurs" NOHEADER=yes NOCOPYRIGHT=true
 
-#use wml::debian::translation-check translation="1.23" translation_maintainer="Christian Couder"
+#use wml::debian::translation-check translation="1.32" maintainer="Christian Couder"
 
 
-<H1><A name="developers">Informations pour les développeurs 
-concernant le système de traitement des bogues</A></H1>
+<H1>Informations pour les développeurs 
+concernant le système de traitement des bogues</H1>
 
 <P>Initialement, un rapport de bogue est soumis par un utilisateur 
-comme un message ordinaire à <CODE>submit@bugs.debian.org</CODE>. 
-Il lui sera alors donné un numéro, un accusé de réception sera envoyé 
+comme un message ordinaire à 
+<CODE><a href="mailto:submit@bugs.debian.org">submit@bugs.debian.org</a>
+</CODE>. 
+Ce rapport recevra un numéro, un accusé de réception sera envoyé 
 à l'utilisateur, et il sera transmis à
 <CODE>debian-bugs-dist</CODE>. Si celui qui a soumis le rapport a
 inclus une ligne
@@ -20,41 +22,69 @@ le responsable recevra aussi une copie.</P>
 <CODE>Reply-To</CODE> sera modifié pour inclure à la fois celui qui 
 a soumis le rapport et <var>nnn</var><CODE>@bugs.debian.org</CODE>.</P>
 
-<h2>Fermer un rapport de bogue</h2>
+<hrline>
 
-<P>Un développeur qui reçoit un bogue du système de gestion, ou qui le voit sur
-<CODE>debian-bugs-dist</CODE>, et prend la responsabilité de celui-ci
-doit répondre à l'aide de son logiciel de courrier préféré,
-et modifier le champ <CODE>To</CODE> pour y inscrire
-<var>nnn</var><CODE>-done@bugs.debian.org</CODE> à la place de
+<ul>
+  <li><a href="#closing">Fermer un rapport de bogue</a></li>
+  <li><a href="#followup">Destinataires des messages</a></li>
+  <li><a href="#severities">Niveaux de gravité</a></li>
+  <li><a href="#tags">Étiquettes pour les rapports de bogues</a></li>
+  <li><a href="#forward">Enregistrer que vous avez traité un rapport de bogue</a></li>
+  <li><a href="#maintincorrect">Responsables de paquet mal énoncés</a></li>
+  <li><a href="#requestserv">Rouvrir, réassigner ou utiliser un rapport de bogue</a></li>
+  <li><a href="#subjectscan">Possibilités plus ou moins obsolètes d'utiliser l'obj\et des messages</a></li>
+  <li><a href="#x-debian-pr">Fonctionnalité obsolète <code>X-Debian-PR: quiet</code></a></li>
+</ul>
+
+<hrline>
+
+<h2><a name="closing">Fermer un rapport de bogue</a></h2>
+
+<p>Un rapport de bogue devrait être fermé quand le problème est corrigé.
+On peut considérer qu'un problème dans un paquet est corrigé seulement quand
+le paquet qui comporte la correction est entré dans l'archive Debian.
+</p>
+
+<p>Normallement, seuls celui qui a envoyé le rapport et le responsable ou les
+responsables du paquet concerné ont le droit de fermer un rapport de bogue.
+Il y a des exceptions à cette règle ; par exemple, les rapport concernant
+des paquets inconnus ou concernant des pseudo paquets génériques. En cas de
+doute, demandez de l'aide sur la liste debian-devel.</p>
+
+<p>Les rapports de bogues seront fermés en envoyant un courriel à
+<var>nnn</var><code><a href="mailto:-done@bugs.debian.org">-done@bugs.debian.org</a></code>. Le corps du message doit contenir l'explication de la correction
+du bogue.</p>
+
+<p>Avec les courriels réçus du système de gestion de bogues, il suffit, pour
+fermer un rapport de bogue, de répondre à l'aide de son logiciel de courrier 
+préféré, et de modifier le champ <CODE>To</CODE> pour y inscrire
+<var>nnn</var><CODE><a href="mailto:-done@bugs.debian.org">-done@bugs.debian.org</a></CODE> à la place de
 <var>nnn</var><CODE>@bugs</CODE>
 (<var>nnn</var><CODE>-close</CODE> est fourni comme alias pour
-<var>nnn</var><CODE>-done</CODE>).</P>
+<var>nnn</var><CODE>-done</CODE>).</p>
 
-<P>L'adresse de celui qui a soumis le rapport de bogue sera incluse
-dans le champ <CODE>To</CODE> par défaut, parce que le système de
-gestion des bogues l'a inclus dans le <CODE>Reply-To</CODE>.</P>
+<p>La personne qui a soumis le rapport de bogue, celle qui l'a fermé et la 
+liste <code>debian-bugs-closed</code> seront informées du changement de statut
+du rapport. La personne qui a soumis le rapport de bogue et la liste recevront
+en outre le contenu du message envoyé à <var>nnn</var><code>-done</code>.</p>
 
-<P>Les messages « Done » sont automatiquement envoyés à la liste 
-de diffusion <CODE>debian-bugs-closed</CODE> uniquement.
-Si d'autres développeurs sont susceptibles d'être intéressés il 
-peut être parfois utile d'inclure la liste de diffusion
-<CODE>debian-devel@lists.debian.org</CODE>.</P>
+<h2><a name="followup">Destinataires des messages</a></h2>
 
-<P>La personne fermant le bogue et la personne l'ayant soumis recevront
-une notification du changement de statut du rapport.</P>
+<p>Le système de gestion des bogues indiquent l'adresse de la personne qui a 
+soumis le rapport de bogue et l'adresse du rapport 
+(<var>nnn</var><code>@bugs</code>) dans le champ <code>Reply-To</code> 
+après avoir fait suivre le rapport de bogue. Veuillez 
+remarquer que ce sont deux adresses différentes.</p>
 
-<h2>Messages suivants</h2>
+<p>Si un développeur souhaite répondre à un rapport de bogue, il peut
+simplement répondre au message, en respectant l'en-tête <code>Reply-To</code>.
+Cela <strong>ne fermera pas</strong> le rapport.
+</p>
 
-<P>Si un développeur souhaite répondre à un rapport de bogue, il peut
-simplement répondre au message (cela <b>ne marquera pas</b> le bogue comme
-ayant été traité). Sa réponse ira (par défaut s'il respecte le champ
-<CODE>Reply-To:</CODE>) à <VAR>nnn</VAR><CODE>@bugs</CODE>, et à celui qui a
-soumis le rapport de bogue original (note : ce sont deux adresses
-distinctes). Le système de gestion des bogues recevra le message à
-<VAR>nnn</VAR><CODE>@bugs</CODE>, le transmettra au responsable du
-paquet, enregistrera la réponse avec les autres enregistrements
-de ce rapport de bogue et le transmettra à <CODE>debian-bugs-dist</CODE>.</P>
+<p> Le système de gestion des bogues recevra le message
+avec <VAR>nnn</VAR><CODE>@bugs</CODE>, l'enverra au responsable de paquet,
+enregistrera la réponse avec les autres enregistrements  pour ce rapport de 
+bogue et fera suivre à <CODE>debian-bugs-dist</CODE>.</p>
 
 <P>Un développeur pourra explicitement envoyer un message à celui qui a soumis
 le bogue en envoyant un message à
@@ -65,17 +95,17 @@ approprié pour <CODE>debian-bugs-dist</CODE> vous pouvez le faire en
 l'envoyant à <var>nnn</var><CODE>-quiet@bugs</CODE> ou
 <VAR>nnn</VAR><CODE>-maintonly@bugs</CODE>.  Un message envoyé à
 <VAR>nnn</VAR><CODE>-quiet@bugs</CODE> est enregistré dans le système
-de gestion des bogues mais n'est transmis à personne ni aucune liste
+de gestion des bogues mais n'est transmis à personne ni à aucune liste
 de diffusion.  Un message envoyé à
 <VAR>nnn</VAR><CODE>-maintonly@bugs</CODE> est enregistré dans le
-système de gestion des bogues et est transmis au responsable du paquet
+système de gestion des bogues ; il n'est transmis qu'au responsable du paquet
 en question.</P>
 
 <P>N'utilisez <em>pas</em> les fonctions « répondre à tous les
 destinataires » ou « transférer » de votre logiciel de courrier sauf
 si vous avez l'intention de modifier la liste des destinataires de
 manière substantielle.  En particulier, vérifiez que vous n'envoyez
-pas de réponse à <CODE>submit@bugs.debian.org</CODE>.</P>
+pas de réponse à <CODE><a href="mailto:submit@bugs.debian.org">submit@bugs.debian.org</a></CODE>.</P>
 
 <h2><A name="severities">Niveaux de gravité</A></h2>
 
@@ -125,38 +155,43 @@ paquet.
 <DT><CODE>fixed</CODE> (corrigé)
 <DD>pour les bogues qui ont été corrigés mais ne devraient pas encore être 
 fermés. C'est une exception faite pour les bogues résolus par des
-envois de non-responsables. Note : la marque « fixed » devrait être utilisée à
-la place.
+envois de non responsables. Note : l'étiquette « fixed » devrait être 
+utilisée à la place.
 </DL>
+<p>Certains niveaux de gravité sont considérés comme 
+<em><a href="http://bugs.debian.org/release-critical/">de niveau « édition entière »</a></em> ; c'est
+à dire que le bogue influera sur l'introduction du paquet dans la version
+stable de Debian. Actuellement, ce sont les niveaux <strong>critical</strong>,
+<strong>grave</strong> et <strong>serious</strong>.</p>
 
-<H2><a name="tags">Marques sur les rapports de bogues</a></H2>
+<H2><a name="tags">Étiquettes sur les rapports de bogues</a></H2>
 
-<p>Chaque bogue peut avoir zéro, un ou plusieurs ensembles de marques. 
-Ces marques sont affichées dans la liste des bogues quand vous regardez la 
+<p>Chaque bogue peut avoir zéro, un ou plusieurs ensembles d'étiquettes. 
+Ces étiquettes sont affichées dans la liste des bogues quand vous regardez la 
 page d'un paquet, et quand vous regardez l'enregistrement complet du bogue.
 
-<p>Les marques peuvent être indiquées en fournissant une ligne 
+<p>Les étiquettes peuvent être indiquées en fournissant une ligne 
 <code>Tags</code> dans le pseudo-en-tête quand le bogue est soumis (voyez les
 <a href="Reporting#pseudoheader">instructions pour signaler des bogues</a>),
 ou en utilisant la commande <code>tags</code> avec le
 <a href="#requestserv">serveur de requêtes de contrôle</a>.
 
-<p>Les marques disponibles actuellement pour les bogues sont :
+<p>Les étiquettes disponibles actuellement pour les bogues sont :
 
 <dl>
 
-<dt><code>patch</code> (rustine)
-  <dd>Une rustine ou une procédure facile à suivre pour résoudre le bogue
-  est incluse dans les enregistrements du bogue. S'il y a une rustine
-  mais qu'elle ne résout pas le bogue correctement ou cause d'autres
-  problèmes, cette marque ne devrait pas être utilisée.
+<dt><code>patch</code> (patch)
+  <dd>Un patch ou une procédure facile à suivre pour résoudre le bogue
+  est incluse dans les enregistrements du bogue. S'il y a un patch
+  mais qu'il ne résout pas le bogue correctement ou cause d'autres
+  problèmes, cette étiquette ne devrait pas être utilisée.
 
 <dt><code>wontfix</code> (ne va pas être résolu)
   <dd>Ce bogue ne sera pas résolu. Peut être parce que c'est un choix
   entre deux façons arbitraires de faire les choses et que le responsable
   et celui qui a soumis le bogue préfèrent des façons différentes de
   faire les choses, peut être parce que changer le fonctionnement
-  entraînera des problèmes plus graves pour certains, ou peut-être pour
+  entrainera des problèmes plus graves pour certains, ou peut-être pour
   d'autres raisons.
 
 <dt><code>moreinfo</code> (plus d'info)
@@ -190,7 +225,7 @@ ou en utilisant la commande <code>tags</code> avec le
   qui ne devraient pas être accessibles ; dépassement de limite de
   tampon permettant à des gens de prendre le contrôle d'un système
   par des moyens illicites ; attaques par dénis de service
-  qui devraient être résolues, etc.). La plupart des bogues de sécurité
+  qui devraient être résolues, etc). La plupart des bogues de sécurité
   devraient aussi être signalés par une sévérité critique (critical) 
   ou grave (grave).
 
@@ -210,7 +245,7 @@ ou en utilisant la commande <code>tags</code> avec le
   pour l'instant non disponible (c'est à dire dans la distribution sid).
 </dl>
 
-<p>Les trois marques qui précèdent sont destinées à être utilisées 
+<p>Les trois étiquettes qui précèdent sont destinées à être utilisées 
 principalement pour les bogues critiques pour la sortie de la version, 
 pour lesquels il est important de savoir quelles distributions sont 
 affectées afin d'appliquer les corrections (ou les suppressions) au 
@@ -225,8 +260,7 @@ noter cela dans le système de gestion de la manière suivante :</P>
 <P>S'assurer que le champ <CODE>To</CODE> de son message à l'auteur 
 ne comporte que l'adresse du ou des auteurs ; mettre à la fois la personne qui
 a rapporté le bogue et
-<var>nnn</var><CODE>-forwarded@bugs.debian.org</CODE> dans le champ
-<CODE>CC</CODE>.</P>
+<var>nnn</var><CODE><a href="mailto:-forwarded@bugs.debian.org">-forwarded@bugs.debian.org</a></CODE> dans le champ <CODE>CC</CODE>.</P>
 
 <P>Demander à l'auteur de garder tel quel le <CODE>CC</CODE> vers
 <var>nnn</var><CODE>-forwarded@bugs</CODE> quand il répond, de
@@ -242,41 +276,37 @@ message qu'il reçoit.</P>
 des messages à 
 <A href="server-control"><CODE>control@bugs.debian.org</CODE></A>.</P>
 
-<H2>Résumés postés à <CODE>debian-bugs-reports</CODE></H2>
+<H2><a name="maintincorrect">Responsables de paquet mal énoncés</a></H2>
 
-<P>Chaque vendredi une liste de rapports de bogues non encore corrigés est 
-postée à <CODE>debian-bugs-reports</CODE>, triée par date du rapport.
-Chaque mardi une liste de rapports de bogues auxquels il n'a pas été répondu 
-depuis trop longtemps est postée, triée par responsable de paquet.</P>
-
-<P><A name="maintincorrect">
-Si le responsable d'un paquet est inscrit de manière incorrecte</A> cela
+<p>Si le responsable d'un paquet est inscrit de manière incorrecte, cela
 est généralement dû au fait que le responsable a changé récemment, et que le
-nouveau responsable n'a pas encore soumis une nouvelle version du paquet 
-avec le champ de contrôle <CODE>Maintainer</CODE> modifié. Cela sera 
-corrigé quand le paquet sera remis à jour ; autrement, les responsables des 
-archives peuvent annuler à la main les informations concernant le 
-responsable, par exemple si une reconstruction ou une remise à jour du 
-paquet n'est pas prévue avant un certain temps. Contactez 
-<CODE>override-change@debian.org</CODE> pour les modifications du fichier
-d'annulation (override file).</P>
+nouveau responsable n'a pas encore soumis une nouvelle version du paquet
+avec le champ de contrôle <CODE>Maintainer</CODE> modifié. Cela sera
+corrigé quand le paquet sera remis à jour ; autrement, les responsables des
+archives peuvent annuler à la main les informations concernant le
+responsable, par exemple si une reconstruction ou une remise à jour du
+paquet n'est pas prévue avant un certain temps. Contactez
+<CODE><a href="mailto:override-change@debian.org">override-change@debian.org</a></CODE> pour les modifications du fichier d'annulation (override file).</p>
 
-<H2><A name="requestserv">Rouvrir, réassigner et manipuler les bogues</A></H2>
+<H2><A name="requestserv">Rouvrir, réassigner ou utiliser un rapport de bogue</A></H2>
 
-<P>Il est possible de réassigner des rapports de bogues à d'autres paquets, 
-de rouvrir des bogues fermés par erreur, de modifier l'information disant 
-où, s'il y a lieu, un rapport de bogue a été transmis, de changer les 
-gravités et titres des rapports et de fusionner et de diviser des rapports 
-de bogue. Ceci se fait en envoyant un message à 
-<CODE>control@bugs.debian.org</CODE>.</P>
+<p>Il est possible de réassigner des rapports de bogues à d'autres paquets,
+de rouvrir des bogues fermés par erreur, de modifier l'information disant
+où, s'il y a lieu, un rapport de bogue a été transmis, de changer les
+niveaux de gravités et les titres des rapports et de fusionner et de diviser
+des rapports de bogue. Ceci se fait en envoyant un message à
+<CODE><a href="mailto:control@bugs.debian.org">control@bugs.debian.org</a>
+</CODE>.
+</p>
 
 <P>Le <A href="server-control">format de ces messages</A> est
 décrit dans un autre document disponible sur la Toile ou dans
-le fichier <CODE>bug-maint-mailcontrol.txt</CODE>. Une version en texte seul
-peut aussi être obtenue en envoyant le mot <CODE>help</CODE> au serveur à 
+le fichier <CODE>bug-maint-mailcontrol.txt</CODE>. Une version simple texte
+peut aussi être obtenue en envoyant le mot <CODE>help</CODE> au serveur à
 l'adresse ci-dessus.</P>
 
-<H2>Possibilités plus ou moins obsolètes d'utiliser l'objet des messages</H2>
+
+<H2><a name="subjectscan">Possibilités plus ou moins obsolètes d'utiliser l'objet des messages</a></H2>
 
 <P>Les messages qui arrivent à <CODE>submit</CODE> ou <CODE>bugs</CODE> et 
 dont le champ « Objet » (Subject) commence par 
@@ -297,9 +327,9 @@ envoyés à l'adresse correspondante
 <CODE>done</CODE> sans identificateur - i.e., sans numéro de rapport 
 de bogue dans l'adresse - et sans numéro de bogue dans l'Objet seront 
 enregistrés sous « junk » et gardés pendant quelques semaines, mais 
-à part cela ignorés.</P>
+néammoins ignorés.</P>
 
-<H2>Fonctionnalité obsolète <CODE>X-Debian-PR: quiet</CODE></H2>
+<H2><a name="x-debian-pr">Fonctionnalité obsolète <CODE>X-Debian-PR: quiet</CODE></a></H2>
 
 <P>Il était possible d'empêcher le système de gestion des bogues de
 transmettre les messages qu'il recevait à <CODE>debian-bugs</CODE>,
@@ -310,9 +340,8 @@ du message.</P>
 message à <CODE>quiet</CODE> ou <var>nnn</var><CODE>-quiet</CODE> (ou
 <CODE>maintonly</CODE> ou <var>nnn</var><CODE>-maintonly</CODE>).</P>
 
+<HR>
+
 #use "otherpages.inc"
- 
+
 #use "$(ENGLISHDIR)/Bugs/footer.inc"
-
-
-
