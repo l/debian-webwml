@@ -68,8 +68,10 @@ sub read_data {
     my %data;
 
     if (!open DESC,"$datafile") {
-	return (0,\%data);
+	return (0,'1970-01-01',\%data);
     }
+    my $date = <DESC>;
+
     my ($pkg)="";
     my ($last_section)=""; 
     # ""  : last can't be continued
@@ -244,7 +246,7 @@ sub read_data {
 	}
     }
     close DESC;
-    return (1,\%data);
+    return (1,$date,\%data);
 }
 #
 # read_sources(path_to_sources_file) : reads Sources files (obtained from ftp)
@@ -446,6 +448,10 @@ sub write_data {
     my $line; # a line in one error field
 
     open DESC,">$path" or &error ("can't open $path in write access");
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
+    $year += 1900;
+
+    print DESC $year."-".$mon."-".$mday."\n";
     foreach $pkg (keys %data) {
 	print DESC "\nPackage: $pkg\n";
 	if (defined ($data{$pkg}{'version'})){ print DESC "Version: $data{$pkg}{'version'}\n";}
