@@ -20,13 +20,15 @@ import string
 import pg
 
 def print_place(db, place, show_url=None):
-    q = db.query("SELECT begin, finish, city, country, url FROM places WHERE id = %s" % place)
-    begin, finish, city, country, url = q.getresult()[0]
+    q = db.query("SELECT begin, finish, city, country, state, url FROM places WHERE id = %s" % place)
+    begin, finish, city, country, state, url = q.getresult()[0]
 
+    out = ""
     if city:
-        out = "%s, %s" % (city, country)
-    else:
-        out = "%s" % (country)
+        out += "%s, " % city
+    if state:
+        out += "%s, " % state
+    out += country
     if show_url and url:
         out += " [%s]" % url
     out += ": "
