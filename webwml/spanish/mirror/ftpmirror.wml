@@ -1,6 +1,6 @@
 #use wml::debian::template title="Configuración de una réplica FTP"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.23"
+#use wml::debian::translation-check translation="1.25"
 
 <p>El replicado es el mismo tanto para sitios no oficiales como 
 <a href="official">oficiales</a>.
@@ -55,7 +55,14 @@ desarrollado para minimizar el tiempo que tardan en llegar los cambios en
 el archivo hasta las réplicas. El servidor replicado utiliza un disparador
 mediante ssh para indicarle al cliente replicador que debe actualizarse.
 
-<p>Este método es bastante seguro ya que ssh se configura para ejecutar
+<p>El replicado `push' es necesario para mantener la sincronización de
+múltiples servidores (como servidores de alias de DNS en round-robin como
+<tt>ftp.us.debian.org</tt>), y lo usamos comúnmente para los primeros y
+segundos niveles de nuestros sitios de réplica. Para los sitios de réplica
+"normales", este método precisa mucho esfuerzo en la configuración, lo que
+no compensa con respecto a una tarea del cron bien ajustada.</p>
+
+<p>El método es bastante seguro ya que ssh se configura para ejecutar
 sólo una orden. Además, el replicado sigue siendo `pull', de manera que
 <strong>no</strong> es posible corromper el contenido del archivo mediante
 un servidor `push' falso. Algunos administradores de réplicas han mostrado
@@ -79,14 +86,22 @@ ejemplo para replicar el archivo ftp en
 
 <toc-add-entry name="partial">Réplicas parciales</toc-add-entry>
 
-<p>Considerando el ya gran tamaño del archivo de Debian, hay
-gente que prefiere replicar sólo las partes que necesita. Para esto se
-necesitan scripts escritos especialmente, como los de
-<a href="http://cvs.kitenet.net/~checkout~/joey-cvs/bin/debmirror?tag=HEAD&amp;content-type=text/plain">
-Joey Hess</a> y
-<a href="http://people.debian.org/~absurd/">Stephan Suerken</a>. Si cree
-que debería añadírseles algo, contacte por favor con los autores (la
-información de contacto debería venir en los propios scripts).
+<p>Considerando el <a href="size">gran tamaño actual del archivo de
+Debian</a>, hay gente que prefiere replicar sólo las partes que necesita.
+Si quiere excluir algo, debería excuir arquitecturas.</p>
+
+<p>Con <a href="anonftpsync">anonftpsync</a>, puede hacer esto editando la
+variable EXCLUDE. También puede usar scripts escritos específicamente, como
+<a href="http://packages.debian.org/unstable/net/debmirror.html">debmirror</a>
+(de Joey Hess and Joerg Wendland) o
+<a href="http://people.debian.org/~absurd/absurd_debmirror/">absurd_debmirror</a>
+(dy Stephan Suerken). Si cree que debería añadírseles algo, contacte por favor
+con los autores (la información de contacto debería venir en los propios
+scripts).
+
+<p>Le aconsejamos encarecidamente que no excluya <tt>project</tt>,
+<tt>doc</tt> ni otros subdirectorios. Normalmente, su tamaño es pequeño
+y aún son útiles para los usuarios.</p>
 
 <toc-add-entry name="when">Cuándo replicar</toc-add-entry>
 
