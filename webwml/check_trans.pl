@@ -422,7 +422,7 @@ sub check_file {
 		return;
 	}
 	my $transcheck = Webwml::TransCheck->new($name);
-	$oldr       = $transcheck->revision();
+	$oldr       = $transcheck->revision() || 0;
 	$translator = $transcheck->maintainer() || "";
 	$original   = $transcheck->original();
 	warn "Found translation for $oldr\n" if $opt_v and $oldr;
@@ -448,8 +448,8 @@ sub check_file {
 
 	my $str;
 	my $status = 8;
-	my ($numrev)  = ($revision =~ m/^1\.(\d+)$/);
-	my ($numoldr) = ($oldr =~ m/^1\.(\d+)$/);
+	my ($numrev)  = ($revision =~ m/^1\.(\d+)$/) || "0";
+	my ($numoldr) = ($oldr =~ m/^1\.(\d+)$/) || "0";
 	if (!$oldr) {
 	  $oldr = '1.1';
 	  $str = "Unknown status of $name (revision should be $revision)";
