@@ -75,6 +75,7 @@ $tag{'available'}='Disponible en el paquete';
 $tag{'originaldoc'}='Documento original';
 $tag{'revision'}='versión';
 $tag{'included'}='incluido en el paquete';
+$tag{'lines'}='Número de líneas en el documento';
 
 
 # In english
@@ -353,6 +354,7 @@ foreach $k (sort keys %$translations) {
 	print " ( $tag{'included'} <A HREF=\"http://packages.debian.org/$t->{'package'}\">$t->{'package'}</A> ) " if ($t->{'package'});
 	print " ( <A HREF=\"$t->{'source_url'}\">$tag{'Source'}</A> ) " if ($t->{'source_url'} && $t->{'source_url'} ne '?' && uc $type ne "DDP");
 	print " ( <A HREF=\"$t->{'cvs_url'}\">$tag{'CVSpage'}</A> ) " if ($t->{'cvs_url'} && $t->{'cvs_url'} ne '?' && uc $type ne "DDP");
+	print "<BR>$tag{'lines'} : $t->{'lines'} " if ($t->{'lines'});
 
 #	print "</BLOCKQUOTE>"
 	print "<P>&nbsp;\n";

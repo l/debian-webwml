@@ -59,7 +59,7 @@ do 'documents-bd.pl';
 
 'book-gtiau' => {
 	'status' => 2,
-	'translation_maintainer'=> ['Enrique Zanardi <ezanardi@id-agora.com>']
+	'translation_maintainer'=> ['Enrique Zanardi <ezanardi@id-agora.com>'],
 	'since'			=> '08/02/2000'
 },
 
@@ -122,8 +122,8 @@ do 'documents-bd.pl';
 	'base_revision'		=> '2.1',
 	'translation_url'	=> 'http://www.debian.org/releases/stable/source/dselect-beginner.es.sgml',
 	'translation_cvs_url'   => 'http://cvs.debian.org/debian-boot/boot-floppies/documentation/dselect-beginner.es.sgml?cvsroot=debian-boot',
-	'translation_package'	=> 'boot-floppies'
-	'last_translated'	=> '27/03/1999',
+	'translation_package'	=> 'boot-floppies',
+	'last_translated'	=> '27/03/1999'
 },
 
 	'release-notes' => {
