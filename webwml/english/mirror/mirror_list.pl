@@ -391,6 +391,7 @@ END
 	        $sponsorname = $1;
 	        $sponsorurl = $2;
 	      }
+	      $sponsorname =~ s/&/&amp;/g;
 	      print "<a href=\"$sponsorurl\">$sponsorname</a>";
 	      $num++;
 	      print ", " unless ($num >= $numsponsors);
@@ -407,6 +408,7 @@ END
 	      $sponsorname = $1;
 	      $sponsorurl = $2;
 	    }
+	    $sponsorname =~ s/&/&amp;/g;
 	    print "<a href=\"$sponsorurl\">$sponsorname</a>";
 	    $num++;
 	    print ", " unless ($num >= $numsponsors);
@@ -452,6 +454,7 @@ END
 	      $sponsorname = $1;
 	      $sponsorurl = $2;
 	    }
+	    $sponsorname =~ s/&/&amp;/g;
 	    print "<a href=\"$sponsorurl\">$sponsorname</a>";
 	    $num++;
 	    print ",\n" unless ($num >= $numsponsors);
