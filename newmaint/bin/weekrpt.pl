@@ -196,6 +196,7 @@ sub fd_checks($)
     my ($email, $manager, $decision);
     my $sth;
 
+    print "\n";
     print "Random checks\n";
     print "===============\n";
 
@@ -293,7 +294,6 @@ sub get_err_maintainers($)
         print "Email will ";
         if ($main::enable_email == 0) { print "NOT "; }
         print "be sent to the applicants.\n";
-        print "\n";
     }
 }
 
