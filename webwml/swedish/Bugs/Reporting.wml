@@ -1,70 +1,83 @@
 #use wml::debian::template title="Debians felrapporteringssystem - rapportera fel" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.17"
+#use wml::debian::translation-check translation="1.24"
 
 <h1>Hur man rapporterar fel (buggar) i Debian</h1>
+
+<h2>Viktiga saker att tänka på <strong>innan</strong> du rapporterar</h2>
+
+<p>Rapportera inte flera orelaterade fel i samma meddelande, speciellt inte om
+de berör olika paket.
+
+<p>Kontrollera om felet har rapporterats av någon annan innan du
+skickar in en rapport. En lista över för närvarande ännu ej avhjälpta
+fel finns <a href="./">på webben</A> och <a href="Access">andra
+ställen</a> &ndash; se andra dokument för detaljer.</p>
+
+<p>Om du inte kan avgöra vilket paket problemet har att göra med,
+skicka e-post till <a href="mailto:debian-user@lists.debian.org">
+sändlistan för debiananvändare</a> och fråga om hjälp.  Om felet inte
+beror på ett särskilt paket, utan någon mer generell aspekt, så finns
+det flera <a href="pseudo-packages">pseudo-paket</a>, alternativt <a
+href="../MailingLists/subscribe">sändlistor</a> som du kan använda för
+att kontakta oss.
+
+<p>Vänligen använd <A href="#xcc">ett annat sätt</A>) för att skicka
+felrapporten till flera mottagare (t.ex sändlistor), inte de vanliga
+e-post-raderna (To, Cc, Bcc).
+
+
+<h2>Skicka rapporten med ett automatiskt felrapportsverktyg</h2>
+
+<p>Vi har utvecklat två program i Debian för att rapportera fel.  De är
+<code><a
+href="http://packages.debian.org/stable/utils/bug.html">bug</a></code>
+och <code><a
+href="http://packages.debian.org/stable/utils/reportbug.html">reportbug</a></code>.
+Båda hjälper dig stegvis genom rapporten och gör det på så sätt
+enklare att rapportera fel.
+
+<h2>Skicka rapporten med e-post</h2>
 
 <p>Sänd e-post till
 <A href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></A>,
 enligt nedan.</p>
 
-<p>Rapportera inte flera orelaterade fel i samma meddelande, speciellt inte om
-de berör olika paket.
-Skicka inte heller felrapporten till någon av sändlistorna, eller till andra
-mottagare än <code>submit@bugs</code> (för detaljer om hur du gör detta på
-rätt sätt, se <A href="#xcc">nedan</A>).</p>
-
-<p>En lista över för närvarande ännu ej avhjälpta fel finns
-<a href="./">på webben</A> och <a href="Access">andra
-ställen</a> &mdash; se andra dokument för detaljer.</p>
-
-<p>Du måste lägga in ett "pseudo-brevhuvud" i början på meddelandekroppen, med
-raderna <code>Package:</code> och <code>Version:</code> för att ange namn
-och version på det paket som innehåller felet
-(dessa fält bör skrivas i början på raderna.
-Felrapporteringssystemet förstår för närvarande inte MIME- eller PGP-kodade
-brev korrekt, och kan komma att misslyckas med att tolka pseudohuvud i
-sådana brev).
-Du kan få fram paketnamn och versionsnummer med
-<code>dpkg --search</code> och <code>dpkg --list</code>; se
-<code>dpkg --help</code> för information.
-
-<em>Se nedan för <a href="#details">ytterligare krav</A></em>.</p>
-
-<p>Det finns några pseudo-paket som används för att lägga in
-<code>Package</code>-raden när du rapporterar ett fel i någonting annat än
-ett egentligt Debianprogramvarupaket.
-Det finns en <A HREF="pseudo-packages">lista över dessa</A>
-på webbsidorna.</p>
+<p>Självklart bör du, som i alla annan e-post, ange en tydlig och
+beskrivande ärenderad i brevhuvudet.  Ärenderaden används initialt som
+titel för rapporten i felhanteringssystemet, så försök göra den
+informativ!</p>
 
 
-<h2><A name="example">Exempel</A></h2>
-
-<p>En felrapport, med brevhuvud, ser ut ungefär så här:
+<p>Du måste lägga in ett "pseudo-brevhuvud" i början på
+meddelandekroppen.  Det betyder att första raden av meddelande skall
+vara
 <pre>
-  To: submit@bugs.debian.org
-  From: diligent@testing.linux.org
-  Subject: Hello says `goodbye'
-
-  <A name="pseudoheader">Package: hello</A>
-  Version: 1.3-16
-
-  When I invoke `hello' without arguments from an ordinary shell
-  prompt it prints `goodbye', rather than the expected `hello, world'.
-  Here is a transcript:
-
-  $ hello
-  goodbye
-  $ /usr/bin/hello
-  goodbye
-  $
-
-  I suggest that the output string, in hello.c, be corrected.
-
-  I am using Debian GNU/Linux 2.2, kernel 2.2.17-pre-patch-13
-  and libc6 2.1.3-10.
+Package: &lt;någonting&gt;
 </pre>
 
-<h2><A name="details">Vad som bör inkluderas i rapporten</A></h2>
+<p>Byt ut <code>&lt;någonting&gt;</code> mot namnet på paketet som har
+ett fel.
+
+<p>Andra raden skall vara
+
+<pre>
+Version: &lt;någonting&gt;
+</pre>
+
+<p>Byt ut <code>&lt;någonting&gt;</code> mot paketets version.
+
+
+<p>Du måste ha en korrekt <code>Package</code>-rad i
+"pseudo-brevhuvudet" för att felrapporteringssystemet skall kunna
+skicka rapporten till paketets underhållare.  Se <a
+href="#findpkgver">ett exempel</a> för att hitta de uppgifterna.
+
+<p>Raderna i "pseudo-brevhuvud" måste börja längst till vänster på
+varje rad.  Felrapporteringssystemet förstår för närvarande inte MIME-
+eller PGP-kodade brev korrekt, och kan komma att misslyckas med att
+tolka pseudohuvud i sådana brev.
+
+<p>Vad som bör inkluderas i rapporten
 
 <ul>
 <li>En <em>exakt</em> och <em>komplett</em> avskrift av det/de
@@ -98,10 +111,33 @@ Om de är små bör du även inkludera eventuella filer som kan användas för att
 reproducera felet (om de innehåller konstiga tecken eller liknande är det
 säkrast att skicka dem uu-kodade).</p>
 
-<p>Självklart bör du, som i alla annan e-post, ange en tydlig och beskrivande
-ärenderad i brevhuvudet.
-Ärenderaden används initialt som titel för rapporten i
-felhanteringssystemet, så försök göra den informativ!</p>
+
+<h2><A name="example">Exempel</A></h2>
+
+<p>En felrapport, med brevhuvud, ser ut ungefär så här:
+<pre>
+  To: submit@bugs.debian.org
+  From: diligent@testing.linux.org
+  Subject: Hello says `goodbye'
+
+  <A name="pseudoheader">Package: hello</A>
+  Version: 1.3-16
+
+  When I invoke `hello' without arguments from an ordinary shell
+  prompt it prints `goodbye', rather than the expected `hello, world'.
+  Here is a transcript:
+
+  $ hello
+  goodbye
+  $ /usr/bin/hello
+  goodbye
+  $
+
+  I suggest that the output string, in hello.c, be corrected.
+
+  I am using Debian GNU/Linux 2.2, kernel 2.2.17-pre-patch-13
+  and libc6 2.1.3-10.
+</pre>
 
 <h2><A name="xcc">Skicka kopior av felrapporten till andra adresser</A></h2>
 
@@ -141,31 +177,45 @@ Det är dock inget krav att du gör det, och utvecklarna kommer att tilldela
 en allvarlighetsgrad till din rapport om du inte gör det.</p>
 
 <p>För att ange hur allvarlig din rapport är lägger du raden
-<code>Severity: <var>allvarlighet</var></code> i ditt pseudo-brevhuvud,
-tillsammans med <code>Package</code> och <code>Version</code>.
-Vilka grader som finns anges i
+<pre>
+Severity: &lt;<var>allvarlighet</var>&gt;
+</pre>
+i ditt pseudo-brevhuvud.
+
+Ersätt &lt;<var>allvarlighet</var>&gt; med en av graderna som finns angivna i
 <A href="Developer#severities">utvecklardokumentationen</A>.</p>
 
 
-<h2>Inte skicka till sändlistorna &mdash; mindre felrapporter</h2>
+<h2>Skicka till olika adresser (mindre felrapporter och massrapporter)</h2>
 
-<p>Om felrapporten är mindre (till exempel ett stavfel i dokumentationen, eller
-andra triviala problem), eller om du skickar in många felrapporter på en
-gång, skicka dem då till <code>maintonly@bugs</code> eller
-<code>quiet@bugs</code>.
-<code>maintonly</code> skickar rapporten till den som är ansvarig för
-paketet (vilket naturligtvis kräver att du anger rätt
-<code>Package</code>-rad i ditt pseudo-brevhuvud, och att det finns en känd
-ansvarig), medan <code>quiet</code> inte skickar vidare rapporten
-någonstans, utan bara arkiverar den som ett fel (vilket till exempel kan
-vara användbart om du skickar in många likartade fel och bara vill posta en
-sammanfattning).</p>
+<p>Om felrapporten är mindre, till exempel ett stavfel i
+dokumentationen, eller andra triviala problem, sätt då allvarliheten
+därefter och skicka dem till <code>maintonly@bugs</code> istället för
+<code>submit@bugs</code>.  <code>maintonly</code> skickar rapporten
+till paketets underhållare, och inte till den allmänna sändlistan för
+felrapporteringar.
+
+<p>Om du skickar in många rapporter samtidigt skall du definitivt
+använda <code>maintonly@bugs</code> så att du inte skapar för mycket
+onödig trafik på sändlistan.  Innan du skickar in många liknande
+felrapporter kan du också skicka en summering till
+<code>debian-bugs-dist</code>.
+
+<p>Om du vill rapportera ett fel till felrapporteringssystemet som
+redan har skickats till underhållaren så kan du använda
+<code>quiet@bugs</code>.  Rapporter skickade till
+<code>quiet@bugs</code> skickas inte vidare någonstans, de arkiveras
+bara.
 
 <p>Om du gör detta kommer felrapporteringssystemet att sätta
-<code>Reply-To</code> i eventuella vidaresända meddelanden så att de som
-standard hanteras på samma sätt som den ursprungliga rapporten.</p>
+<code>Reply-To</code> i eventuella vidaresända meddelanden så att de
+som standard hanteras på samma sätt som den ursprungliga rapporten.
+Det betyder till exempel att svar till <code>maintonly</code> går till
+<var>nnn</var><code>-maintonly@bugs</code> istället för
+<var>nnn</var><code>@bugs</code>, så länge ingen ändrar det manuellt
+förstås.
 
-<h3>Felrapporter mot okända paket</h3>
+<h2>Felrapporter mot okända paket</h2>
 
 <p>Om felrapporteringssystemet inte vet vem som är ansvarig för det paket som
 anges kommer det att skicka rapporten till <code>debian-bugs-dist</code>
@@ -179,7 +229,7 @@ genom att använda <A href="server-control"><code>control@bugs</code></A> för
 att flytta över rapporten till rätt paket, om det inte är rätt från
 början.</p>
 
-<h2>Använda <code>dpkg</code> för att hitta paket och version till rapporten</h2>
+<h2><a name="findpkgver">Använda <code>dpkg</code> för att hitta paket och version till rapporten</a></h2>
 
 <p>Om du rapporterar ett fel i ett kommando kan du ta reda på vilket paket som
 installerade det genom att använda <code>dpkg --search</code>.
