@@ -118,7 +118,7 @@ while (<SRC>)
 	s/these problems have(?: been)?$/er disse problemer/;
 	s/these problem are fixed in/rettet disse problemer i/;
 	s/these problem are fixed/rettet disse problemer/;
-	s/these problems will be fixed soon/disse problemer vil snart blive rettet/;
+	s/these problems will be fixed soon/vil disse problemer snart blive rettet/;
 	s/(?:been )?fixed in version/rettet i version/;
 	s/\bin version\b/i version/;
 	s/of the Debian package/af Debian-pakken/;
