@@ -49,12 +49,12 @@
 @langs = values(%langs);
 
 # Set this to 1 for debugging
-$debug = 1;
+$debug = 0;
 
 sub rebuild {
     my $file = shift;
     $now = time;
-    print "touching $file\n";
+    print "touching $file\n" if $debug;
     utime $now, $now, $file or die "$file: $!";
 }
 
@@ -115,7 +115,7 @@ foreach $lang (@langs) {
     my $transfile = $argfile;
     my ($maxdelta, $mindelta) = (5, 2);
     my ($original, $langrev);
-    print "Now checking $lang\n";
+    print "Now checking $lang\n" if $debug;
     $transfile =~ s+$arglang+$lang+ or die "wrong argument: pattern does not match file: $transfile";
 
     # Parse the translated file
