@@ -1,5 +1,5 @@
 #use wml::debian::template title="Uso del CVS"
-#use wml::debian::translation-check translation="1.3"
+#use wml::debian::translation-check translation="1.9"
 
 <p>CVS es un programa para ayudar en la gestión de varias personas que
 trabajan simultáneamente en el mismo material. Cada usuario crea una copia
@@ -30,30 +30,41 @@ cuenta antes de empezar, ya que los usuarios anónimos no pueden enviar cambios.
    cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml login
 </pre>
 
-<p>(simplemente presione enter para la clave)
+<p>(simplemente presione Enter cuando se le pregunte por una clave).
 
-<P>Para bajarse una copia de ficheros wml a su máquina loca, necesita usar
-
-<pre>
-   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/&lt;lang&gt;
-</pre>
-
-<p>donde <code>&lt;lang&gt;</code> es el idioma que quiere. Probablemente quiera la versión
-inglesa a parte del idioma en el que trabaja. Si solo necesita un subconjunto de las
-páginas, puede bajarse solamente lo que necesite, por ejemplo
+<P>Para bajarse una copia de los ficheros wml a su máquina local,
+necesita usar:
 
 <pre>
-   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/english/doc
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml
 </pre>
 
-<p>Si ha recibido un usuario y clave, insérterla en vez de anonymous
+<p>Puede descargar un subconjunto de las páginas de esta forma:
+
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout -l \\
+          webwml webwml/&lt;<var>idioma</var>&gt;
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout \\
+          webwml/Perl webwml/english/template webwml/&lt;<var>idioma</var>&gt;/Pics
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout \\
+          &lt;<var>ruta a los ficheros deseados</var>&gt;
+</pre>
+
+<p>Repita esto para todos los directorios o ficheros que quiera. La
+segunda línea incluye todos los ficheros que necesitará si quiere
+crear HTML a partir de los ficheros WML. Las descargas parciales no
+están soportadas en realidad, así que las instrucciones de más arriba
+puede que no siempre funcionen.
+
+<p>Si ha recibido un usuario y clave, insértela en vez de «anonymous»,
+de esta forma:
 
 <pre>
    cvs -d :pserver:username@cvs.debian.org:/cvs/webwml checkout webwml/english/doc
 </pre>
 
 <P>Desde ahora, no necesitará usar la parte <code>'-d :pserver:...'</code>
-Cada pocos días deseará hacer
+Cada pocos días tendrá que hacer:
 
 <pre>
    cvs update -d
@@ -100,20 +111,23 @@ necesitará añadir un directorio antes de añadir su contenido.
 
 <P>Para más información sobre CVS, use <code>info cvs</code>.
 
-<H3><a name="cvsfordevelopers">Acceso al CVS para desarrolladores de Debian</a></H3>
+<H3><a name="cvsfordevelopers">Acceso con escritura al CVS para
+desarrolladores de Debian</a></H3>
 
 <P>Dado que los desarrolladores de Debian ya disponen de una cuenta en cvs.debian.org, pueden
-usar un mecanismo más seguro para acceder al repositorio CVS. Es preferible éste método
+usar un mecanismo más seguro para acceder al repositorio CVS. Es preferible este método
 al de 'pserver' dado anteriormente.
 
-<p>Necesita escribir a webmaster@debian.org y preguntar por acceso al CVS. Una vez
-ha sido añadido al grupo, simplemente configure la variable de ambiente CVS_RSH con ssh
+<p>Necesita escribir a webmaster@debian.org y preguntar por acceso al
+CVS. Una vez haya sido añadido al grupo, simplemente asigne a la
+variable de entorno CVS_RSH la cadena ssh
 ('<code>export CVS_RSH=ssh</code>' en su <code>~/.bashrc</code>) y
 saque ficheros del repositorio usando lo siguiente:
 
 <pre>
-   cvs -d :ext:<var>account_name</var>@cvs.debian.org:/cvs/webwml checkout webwml/english/
+   cvs -d :ext:<var>account_name</var>@cvs.debian.org:/cvs/webwml checkout webwml/
 </pre>
 
-<p>Una vez se haya bajado el repositorio, cualquier otra cosa funciona de la misma
-forma que la sección anterior.
+<p>Una vez se haya descargado el repositorio, cualquier otra cosa
+funciona de la misma forma que la sección anterior (incluyendo la
+parte sobre descargas parciales).
