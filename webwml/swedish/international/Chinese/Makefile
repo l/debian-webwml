@@ -9,4 +9,3 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 
-index.$(LANGUAGE).html: ../../english/international/index.data
