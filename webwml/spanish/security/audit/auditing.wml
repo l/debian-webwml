@@ -1,6 +1,6 @@
 #use wml::debian::template title="Realizar una auditoría"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.10" maintainer="juanma"
+#use wml::debian::translation-check translation="1.11" maintainer="juanma"
 # $Id$
 
 
@@ -52,27 +52,122 @@
 
 
 
-<h2>Informar de problemas</h2>
+<h2 name="reporting">Informar de problemas</h2>
 
 <p>Si descubre un problema en el paquete que está examinando, debería
- informar de ello.</p>
+ informar de ello. Cuando informe de un fallo de seguridad, intente
+ proporcionar también un parche, para que los desarrolladores puedan
+ repararlo cuanto antes.  No es necesario facilitar una muestra de
+ ataque (lo que se suele llamar un <em>exploit</em> o una <em>prueba de
+ concepto</em>), ya que el parche debería hablar por sí msimo. Suele
+ preferirse la inversión de tiempo en proporcionar un parche adecuado
+ que en facilitar un ataque con éxito que saque provecho del error.</p>
 
-<p>Como normalmente los fallos de seguridad no deberían desvelarse hasta que
- se hayan corregido, <i>no</i> informe de estos fallos usando el <a
- href="http://bugs.debian.org/">sistema de seguimiento de fallos de Debian</a>.
- En vez de eso, informe del problema directamente al <a
- href="$(HOME)/security/">equipo de seguridad</a>, que gestionará la
- publicación de un paquete actualizado.</p>
+<p>Aquí tiene una lista con los pasos recomendados para cuando
+ encuentre un error de seguridad en Debian:</p>
 
-<p>De forma ideal, cada informe debería contener una corrección al problema
- que ha descubierto, y que haya probado y verificado que efectivamente cierra
- el problema.</p>
+<ol>
+
+<li>Intente producir un parche para el error u obtener información
+ suficiente para que otros puedan determinar la existencia del fallo.
+ De forma ideal, cada fallo debería contener una solución para el
+ problema que se ha descubierto, y que se haya probado y verificado
+ que ciertamente corrige el problema.
 
 <p>Si no tiene una solución para el problema, lo mejor será que dé los máximos
  detalles sobre el ámbito del problema, la severidad de la incidencia y la
- información adicional que haya recopilado sobre ella durante su análisis.</p>
+ información adicional que haya recopilado sobre ella durante su
+ análisis.</p></li>
 
-<p>El equipo de seguridad se coordinará con otras distribuciones de Linux si
- fuera necesario y se pondrá en contacto con el responsable del paquete en su
- nombre.</p>
+<li>En primer lugar, compruebe si el error de seguridad está presente
+ en la versión estable de Debian o si puede estar presente en otras
+ distribuciones o en la versión original.</li>
 
+<li>Según los resultados de la comprobación anterior, informe del
+ incidente:
+
+<ul>
+
+<li>Al desarrollador original, a través del correo electrónico de
+ contacto para seguridad. Proporcione el análisis y el parche.
+
+<li>Al equipo de seguridad de Debian, si el error está presente
+ la versión publicada de Debian. El equipo de seguridad de Debian le
+ suele asignar un <a
+ href="$(HOME)/security/cve-compatibility">nombre CVE</a> a la
+ vulnerabilidad. El equipo de seguridad se coordinará con otras
+ distribuciones de Linux si fuese necesario y se pondrá en contacto
+ con el responsable del paquete en su nombre. Una cosa que podría
+ hacer usted es mandar también una copia del correo al responsable
+ del paquete. De todas formas, hágalo sólo cuando se trate de
+ vulnerabilidades de bajo riesgo (tiene más información abajo).</p>
+
+<li>Si el error no está presente en la versión publicada de Debian
+ y la aplicación puede estar presente en otras distribuciones o
+ sistemas operativos, escriba a <a
+ href="https://www.lst.de/cgi-bin/mailman/listinfo/vendor-sec">vendor-sec</a>
+ (una lista de correo privada que la mayoría de distribuciones de
+ software libre utilizan para debatir sobre errores de seguridad). No
+ tiene que hacer esto si ya ha enviado el fallo al equipo de seguridad
+ de Debian, puesto que este equipo también seguirá los pasos de esta
+ lista. </li>
+
+<li>Si el error <strong>no</strong> está presente en ninguna de las
+ versiones publicadas por Debian y está absolutamente seguro de que la
+ aplicación <strong>no</strong> forma parte de ninguna otra distribución
+ ni sistema operativo, informe de ello a través del sistema de
+ seguimiento de fallos.
+
+</ul>
+
+<li>Una vez que la vulnerabilidad sea pública (por ejemplo, cuando el
+ equipo de seguridad de Debian o cualquier otro vendedor haya emitido
+ un aviso) se rellenará un informe de fallo con toda la información
+ relevante en el sistema de seguimiento de fallos de Debian para seguir
+ la pista de las incidencias de seguridad en las versiones no publicadas
+ de Debian (esto es, <em>sid</em> o <em>en pruebas</em>).  Esto lo
+ suele hacer el propio equipo de seguridad. De todas formas, si viera
+ que no se ha producido este paso o si no va a avisar de esto al equipo
+ de seguridad, puede informar usted mismo.  Asegúrese de que la etiqueta
+ del fallo es la adecuada (use la etiqueta <em>seguridad</em>) y de que
+ ha definido la prioridad apropiada (normalmente, <em>grave</em> o
+ superior). Asegúrese también de que el título del error incluye el <a
+ href="$(HOME)/security/cve-compatibility">nombre CVE</a> adecuado, si
+ es que se le ha asignado. De esta forma se le puede seguir la pista a
+ los errores de seguridad que se han corregido tanto en las versiones
+ publicadas como en las no publicadas de Debian.
+
+<li>Si lo desea, una vez que sea pública la incidencia, puede reenviar
+ esta información a listas de correo públicas de divulgación, como
+ <a href="http://lists.netsys.com/full-disclosure-charter.html">full-disclosure</a>
+ o
+ <a href="http://www.securityfocus.com/archive/1">Bugtraq</a>.
+
+</ol>
+
+<p>Tenga en cuenta que estos pasos pueden variar según el riesgo
+ asociado con la vulnerabilidad que se encuentre. Tiene que valorar
+ el riesgo según:
+ 
+<ul>
+<li>Se trate de una vulnerabilidad remota o local.
+<li>Las consecuencias del provecho que se pueda sacar de la
+ vulnerabilidad.
+<li>La popularidad y difusión del software que se vea afectado por la
+ vulnerabilidad.
+</ul>
+
+<p>Se deben dar distintos pasos, por ejemplo, para informar de un
+ ataque local de enlaces simbólicos que sólo puedan aplicar los
+ usuarios autenticados y que sólo provea de una forma de dañar el
+ sistema que para informar de un desbordamiento remoto de buffer que
+ proporcione privilegios administrativos y esté presente en un
+ software popular y de gran difusión.</p>
+
+<p>En la mayor parte de los casos, los errores de seguridad no se
+deberían revelar hasta que se hayan corregido. Por tanto, <i>no</i>
+informe de ellos por el <a href="http://bugs.debian.org/">sistema 
+estándar de seguimiento de fallos</a>. En su lugar, informe del
+problema directamente al <a href="$(HOME)/security/">equipo de
+seguridad</a>, que gestionará la publicación de un paquete actualizado
+y, una vez corregido, informará de ello en el BTS.</p>
