@@ -318,7 +318,8 @@ sub write_mailing_lists_subscribe
 	if (open(OUT, ">$_[0]")) {
 #	if (open(OUT, ">-")) {
 	print OUT <<"EOF";
-#use wml::debian::template title="Mailing List Subscription"
+#include "\$(ENGLISHDIR)/MailingLists/mklist.tags"
+#use wml::debian::template title="<subscribe_title>"
 
 <!-- This page is generated automatically by the mklist script, do not edit -->
 
@@ -338,13 +339,11 @@ EOF
 #	&print_multiline_html("  ",\@lines);
 
 	print OUT <<END;
-<p>See the <a href="./#subunsub">mailing lists</a> page for information on
-how to subscribe using e-mail. An <a href="unsubscribe">unsubscription web
-form</a> is also available, for unsubscribing from mailing lists.
+<p><see_also_subscribe>
 
 <hr>
 
-<p>Please select which lists you want to subscribe to:
+<p><select_subscribe>
 
 <form method="post" action="http://cgi.debian.org/cgi-bin/subscribe.pl">
 END
@@ -389,30 +388,33 @@ END
 					printf OUT "\n\n	<DD>%s\n", $lines[0];
 				}
 				else {
-					printf OUT "\n\n	<DD>No description given\n";
+					printf OUT "\n\n	<DD><no_desc>\n";
 				}
 				&print_multiline_html("	",\@lines);
-				printf OUT "	<BR>Moderated: <em>%s</em>&nbsp;&nbsp;&nbsp;&nbsp;\n", $list{$l}->{'Moderated'};
-				printf OUT "	Subscription: <em>%s</em>\n", $list{$l}->{'Subscription'};
+				if ($list{$l}->{'Moderated'} eq "yes") {
+					printf OUT "	<BR><moderated> <em><yes></em>&nbsp;&nbsp;&nbsp;&nbsp;\n";
+				} elsif ($list{$l}->{'Moderated'} eq "no") {
+					printf OUT "	<BR><moderated> <em><no></em>&nbsp;&nbsp;&nbsp;&nbsp;\n";
+				} else { die "unknown moderated value for $l" }
+				printf OUT "	<subscription> <em>%s</em>\n", $list{$l}->{'Subscription'};
 
 				if (exists $list{$l}->{'Digest'}) {
 					$slist = $list{$l}->{'Digest'}; $slist =~ s/@.*//;
 					printf OUT "	<BR><INPUT TYPE=\"checkbox\" NAME=\"subscribe\" VALUE=\"%s\">\n", $slist;
-					printf OUT "	<STRONG>%s</STRONG> is a read-only, digestified version.\n", $slist;
+					printf OUT "	<STRONG>%s</STRONG> <digest>\n", $slist;
 				}
 				print OUT "\n";
 			}
 			print OUT "</DL>\n";
 		}
 	}
-	print OUT "<HR><STRONG>Your E-Mail address:</STRONG>\n";
+	print OUT "<HR><STRONG><your_email></STRONG>\n";
 	print OUT "<BR><INPUT TYPE=\"text\" NAME=\"user_email\" SIZE=\"60\"><BR>\n";
-	print OUT "<INPUT TYPE=\"SUBMIT\" VALUE=\"Subscribe\"> <INPUT TYPE=\"RESET\" VALUE=\"Clear\">\n";
+	print OUT "<INPUT TYPE=\"SUBMIT\" VALUE=\"<subscribe>\"> <INPUT TYPE=\"RESET\" VALUE=\"<clear>\">\n";
 	print OUT "</FORM>\n\n";
 
 	print OUT <<END;
-<p>Please respect the <a href="./#ads">Debian mailing list advertising
-policy</a>.
+<p><respect_ad_policy>
 END
 
 #	@lines = split(/\n/,$list{''}->{'Advertising'});
@@ -433,7 +435,8 @@ sub write_mailing_lists_unsubscribe
 
 	if (open(OUT, ">$_[0]")) {
 		print OUT <<"EOF";
-#use wml::debian::template title="Mailing List Unsubscription"
+#include "\$(ENGLISHDIR)/MailingLists/mklist.tags"
+#use wml::debian::template title="<unsubscribe_title>"
 
 <!-- This page is generated automatically by the mklist script, do not edit -->
 
@@ -448,13 +451,11 @@ EOF
 #	&print_multiline_html("  ",\@lines);
 
 	print OUT <<END;
-<p>See the <a href="./#subunsub">mailing lists</a> page for information on
-how to unsubscribe using e-mail. A <a href="subscribe">subscription web
-form</a> is also available, for subscribing to mailing lists.
+<p><see_also_unsubscribe>
 
 <hr>
 
-<p>Please select which lists you want to unsubscribe from:
+<p><select_unsubscribe>
 
 <form method="post" action="http://cgi.debian.org/cgi-bin/subscribe.pl">
 END
@@ -500,14 +501,13 @@ END
                 print OUT "</table>\n";
 	    }
 	}
-	print OUT "<HR><STRONG>Your E-Mail address:</STRONG>\n";
+	print OUT "<HR><STRONG><your_email></STRONG>\n";
 	print OUT "<BR><INPUT TYPE=\"text\" NAME=\"user_email\" SIZE=\"60\"><BR>\n";
-	print OUT "<INPUT TYPE=\"SUBMIT\" VALUE=\"Unsubscribe\"> <INPUT TYPE=\"RESET\" VALUE=\"Clear\">\n";
+	print OUT "<INPUT TYPE=\"SUBMIT\" VALUE=\"<unsubscribe>\"> <INPUT TYPE=\"RESET\" VALUE=\"<clear>\">\n";
 	print OUT "</FORM>\n\n";
 
 	print OUT <<END;
-<p>Please respect the <a href="./#ads">Debian mailing list advertising
-policy</a>.
+<p><respect_ad_policy>
 END
     }
 }
