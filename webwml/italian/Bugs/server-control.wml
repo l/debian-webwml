@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - server di controllo" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.21"
+#use wml::debian::translation-check translation="1.23" maintainer="Giuseppe Sacco"
 
 <h1>Introduzione al server di posta di controllo e gestione bug</h1>
 
@@ -113,6 +113,29 @@ il bug.</p>
 <p>Per <A href="Developer#severities">il loro significato</A> 
 consulta la documentazione generale dello sviluppatore
 per il sistema dei bug.
+
+<dt><code>clone</code> <var>bugnumber</var> [ <var>new IDs</var> ]
+
+  <dd>Il comando di controllo clone permette di duplicare una segnalazione.
+  È utile quando una singola segnalazione indica varie anomalie. 
+  "<var>New IDs</var>" sono numeri negativi, separati da spazi, che possono
+  essere utilizzati nei comandi successivi per riferirsi alla anomalia
+  clonata. Per ogni ID viene generata una nuova segnalazione di anomalia.
+
+  <p>Esempio di utilizzo:</p>
+
+  <pre>
+        clone 12345 -1 -2
+        reassign -1 foo
+        retitle -1 foo: foo sucks
+        reassign -2 bar
+        retitle -2 bar: bar sucks when used with foo
+        severity -2 wishlist
+        clone 123456 -2
+        reassign -2 foo
+        retitle -2 foo: foo sucks
+        merge -1 -2
+  </pre>
 
 <dt><code>merge</code> <var>bugnumber</var> <var>bugnumber</var> ...
 <dd>
