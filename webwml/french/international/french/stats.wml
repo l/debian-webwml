@@ -1,9 +1,10 @@
+
 #use wml::debian::template title="Statistiques du projet de traduction"
 
 <UL>
 <perl>
+do 'doccurrent_status.pl';
 do 'ltcp.pl';
-update_db_CVS();
 update_db_format();
 
 my ($total, $cat, $cpt);
@@ -11,24 +12,37 @@ my ($total, $cat, $cpt);
 foreach my $k (sort keys %$translations) {
 	$total++;
 	my $t = $translations->{$k} ;
-	my $type = $t->{'type'} eq 'Web' ? $t->{'type'} : '';
-	$cat->{$type}++;
-	$cpt->{$type}->{$t->{'status'}}++;
+	$cat->{'DDP'}++;
+	$cpt->{'DDP'}->{$t->{'status'}}++;
+}
+
+do 'webcurrent_status.pl';
+update_db_CVS();
+update_db_format();
+
+foreach my $k (sort keys %$translations) {
+	$total++;
+	my $t = $translations->{$k} ;
+	$cat->{'Web'}++;
+	$cpt->{'Web'}->{$t->{'status'}}++;
 }
 
 print "
 <P>Nombre total de documents : $total
-<P>Documents du DDP: $cat->{''}
+<P>Documents du DDP: $cat->{'DDP'}
 <UL>
 ";
-foreach my $s (sort keys %{$cpt->{''}}) {
-	printf ("<LI>Documents « $status[$s] » : $cpt->{''}->{$s} (%.1f\%)",$cpt->{''}->{$s}/$cat->{''}*100);
+
+foreach my $s (sort keys %{$cpt->{'DDP'}}) {
+	printf ("<LI>Documents « $status[$s] » : $cpt->{'DDP'}->{$s} (%.1f\%)",$cpt->{'DDP'}->{$s}/$cat->{'DDP'}*100);
 }
+
 print "
 </UL>
 <P>Documents du site web: $cat->{'Web'}
 <UL>
 ";
+
 foreach my $s (sort keys %{$cpt->{'Web'}}) {
 	printf ("<LI>Documents « $status[$s] » : $cpt->{'Web'}->{$s} (%.1f\%)",$cpt->{'Web'}->{$s}/$cat->{'Web'}*100);
 }
