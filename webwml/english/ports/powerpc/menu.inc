@@ -23,6 +23,7 @@
 [SV:Anpassningar:]
 [TR:Ports:]
 [ZH:Ports:]
+[IT:Port:]
 </menu-item>
 
 <menu-item basename="index">
@@ -48,6 +49,7 @@
 [SV:Debian för PowerPC:]
 [TR:Debian for PowerPC:]
 [ZH:Debian for PowerPC:]
+[IT:Debian per PowerPC:]
 </menu-item>
 
 <menu-item basename="news">
@@ -73,6 +75,7 @@
 [SV:Nyheter:]
 [TR:News:]
 [ZH:News:]
+[IT:Novità:]
 </menu-item>
 
 <menu-item basename="devel">
@@ -98,6 +101,7 @@
 [SV:Utveckling:]
 [TR:Development:]
 [ZH:Development:]
+[IT:Sviluppo:]
 </menu-item>
 
 <menu-item basename="docu">
@@ -123,6 +127,7 @@
 [SV:Dokumentation:]
 [TR:Documentation:]
 [ZH:Documentation:]
+[IT:Documentazione:]
 </menu-item>
 
 <menu-item basename="supply">
@@ -148,6 +153,7 @@
 [SV:Tillgänglighet:]
 [TR:Supply:]
 [ZH:Supply:]
+[IT:Fornitura:]
 </menu-item>
 
 <menu-item basename="inst/install">
@@ -173,4 +179,5 @@
 [SV:Installation:]
 [TR:Installation:]
 [ZH:Installation:]
+[IT:Installazione:]
 </menu-item>

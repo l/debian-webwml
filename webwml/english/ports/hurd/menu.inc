@@ -23,6 +23,7 @@
 [SV:Anpassningar:]
 [TR:Ports:]
 [ZH:Ports:]
+[IT:Port:]
 </menu-item>
 
 <menu-item basename="index">
@@ -48,6 +49,7 @@
 [SV:Debian GNU/Hurd:]
 [TR:Debian GNU/Hurd:]
 [ZH:Debian GNU/Hurd:]
+[IT:Debian GNU/Hurd:]
 </menu-item>
 
 <menu-item basename="hurd-news">
@@ -73,6 +75,7 @@
 [SV:Nyheter:]
 [TR:News:]
 [ZH:News:]
+[IT:Novità:]
 </menu-item>
 
 <menu-item basename="hurd-install">
@@ -98,6 +101,7 @@
 [SV:Installation:]
 [TR:Installation:]
 [ZH:Installation:]
+[IT:Installazione:]
 </menu-item>
 
 <menu-item basename="hurd-cd">
@@ -123,6 +127,7 @@
 [SV:Hurd på cd:]
 [TR:Hurd-CDs:]
 [ZH:Hurd-CDs:]
+[IT:CD di Hurd:]
 </menu-item>
 
 <menu-item basename="hurd-doc">
@@ -148,6 +153,7 @@
 [SV:Dokumentation:]
 [TR:Documentation:]
 [ZH:Documentation:]
+[IT:Documentazione:]
 </menu-item>
 
 <menu-item basename="hurd-devel">
@@ -173,6 +179,7 @@
 [SV:Utveckling:]
 [TR:Development:]
 [ZH:Development:]
+[IT:Sviluppo:]
 </menu-item>
 
 <menu-item basename="hurd-links">
@@ -198,6 +205,7 @@
 [SV:Länkar:]
 [TR:Links:]
 [ZH:Links:]
+[IT:Collegamenti:]
 </menu-item>
 
 <menu-item basename="hurd-contact">
@@ -223,4 +231,5 @@
 [SV:Kontakt:]
 [TR:Contact:]
 [ZH:Contact:]
+[IT:Contatti:]
 </menu-item>
