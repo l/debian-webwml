@@ -81,7 +81,7 @@ endif
 	@mv -f $*.zh-tw.html.tmp $*.zh-tw.html
 	@$(TOTW) $*.zh-tw.html
 
-install:: $(HTMLDIR) $(HTMLDESTFILES) $(PNGDESTFILES)
+install:: $(HTMLDESTFILES) $(PNGDESTFILES)
 ifeq "$(LANGUAGE)" "en"
 # Set up current issue symlink. In case you're wondering, the only
 # reason we use ..../current/issue instead of ...../current is
@@ -94,7 +94,8 @@ endif
 
 # This is used by the install rule, and I had to hack on it, overriding
 # Make.common to allow installation of files into subdirectories.
-$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html $(HTMLDIR)
+$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
+	@test -d $(@D) || mkdir -m g+w -p $(@D)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
 ifeq "$(LANGUAGE)" "en"
@@ -103,18 +104,22 @@ ifeq "$(LANGUAGE)" "en"
 endif
 
 # Handle images
-$(HTMLDIR)/%.png: %.png $(HTMLDIR)
+$(HTMLDIR)/%.png: %.png
+	@test -d $(@D) || mkdir -m g+w -p $(@D)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
 
 # Special case for Chinese
-$(HTMLDIR)/%.zh-cn.html: %.zh-cn.html $(HTMLDIR)
+$(HTMLDIR)/%.zh-cn.html: %.zh-cn.html
+	@test -d $(@D) || mkdir -m g+w -p $(@D)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
-$(HTMLDIR)/%.zh-hk.html: %.zh-hk.html $(HTMLDIR)
+$(HTMLDIR)/%.zh-hk.html: %.zh-hk.html
+	@test -d $(@D) || mkdir -m g+w -p $(@D)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
-$(HTMLDIR)/%.zh-tw.html: %.zh-tw.html $(HTMLDIR)
+$(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
+	@test -d $(@D) || mkdir -m g+w -p $(@D)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
 
