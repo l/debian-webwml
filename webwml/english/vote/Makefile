@@ -4,7 +4,7 @@
 
 WMLBASE=..
 CUR_DIR=vote
-SUBS=1999 2000 2001 2002
+SUBS=$(wildcard [12][0-9][0-9][0-9])
 
 include $(WMLBASE)/Make.lang
 
