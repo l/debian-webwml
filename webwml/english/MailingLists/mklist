@@ -58,7 +58,7 @@ sub fieldname
 {
 	my $field;
 
-	foreach $field (@fieldlist,@specialist,@globlist,@sections) {
+	foreach $field (@fieldlist,@specialist,@globlist,@sections,"Alias") {
 		return $field if ($_[0] =~ /$field/i);
 	}
 }
@@ -82,7 +82,10 @@ sub read_config
 			} else {
 				if (/^([a-z]+)\s*:\s*(.*)$/i) {
 					$field = &fieldname($1);
-					if ($field eq "List") {
+					if ($field eq "Alias") {
+						$mylist = $2;
+					}
+					elsif ($field eq "List") {
 						$mylist = $2;
 					}
 					else {
@@ -200,11 +203,10 @@ sub write_mailing_lists_txt
 
 				foreach $l (@lists) {
 					printf OUT "\n  %s\n\n", $l;
-					if (exists $list{$l}->{'Description'} and $list{$l}->{'Description'}) {
-						@lines = split(/\n/,$list{$l}->{'Description'});
-						printf OUT "      Description : %s\n", $lines[0];
-						&print_multiline_txt("                    ",\@lines);
-					}
+					die "$l has no description!\n" unless $list{$l}->{'Description'};
+					@lines = split(/\n/,$list{$l}->{'Description'});
+					printf OUT "      Description : %s\n", $lines[0];
+					&print_multiline_txt("                    ",\@lines);
 
 					foreach $field (@fieldlist) {
 						printf OUT "      %-12s: %s\n", $field, $list{$l}->{$field}
@@ -273,7 +275,7 @@ EOF
 	    @lists = ();
 	    foreach $l (keys(%list)) {
 		next if (!$l || ($list{$l}->{'Section'} ne $section));
-		next if (! exists $list{$l}->{'Description'});
+		die "$l has no description!\n" unless $list{$l}->{'Description'};
 		push(@lists, $l);
 	    }
 	    @lists = sort @lists;
@@ -355,8 +357,8 @@ END
 		@lists = ();
 		foreach $l (keys(%list)) {
 			next if (!$l || ($list{$l}->{'Section'} ne $section));
-			die "$l has no description!\n" unless exists $list{$l}->{'Description'};
-			die "$l has no subscription policy!\n" unless exists $list{$l}->{'Subscription'};
+			die "$l has no description!\n" unless $list{$l}->{'Description'};
+			die "$l has no subscription policy!\n" unless $list{$l}->{'Subscription'};
 			next unless exists $list{$l}->{'Moderated'}; # weeds out external lists
 			next unless $list{$l}->{'Subscription'} =~ /^open/;
 			push(@lists, $l);
@@ -384,12 +386,7 @@ END
 				$list{$l}->{'Description'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1</a>,g;
 				$list{$l}->{'Description'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1</a>,g;
 				@lines = split(/\n/,$list{$l}->{'Description'});
-				if (@lines) {
-					printf OUT "\n\n	<DD>%s\n", $lines[0];
-				}
-				else {
-					printf OUT "\n\n	<DD><no_desc>\n";
-				}
+				printf OUT "\n\n	<DD>%s\n", $lines[0];
 				&print_multiline_html("	",\@lines);
 				if ($list{$l}->{'Moderated'} eq "yes") {
 					printf OUT "	<BR><moderated> <em><yes></em>&nbsp;&nbsp;&nbsp;&nbsp;\n";
