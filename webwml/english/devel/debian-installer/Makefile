@@ -6,8 +6,7 @@
 
 WMLBASE=../..
 CUR_DIR=devel/debian-installer
-YEARS:=$(wildcard News/[12][0-9][0-9][0-9])
-SUBS=$(YEARS)
+SUBS=News
 
 include $(WMLBASE)/Make.lang
 
