@@ -112,6 +112,9 @@
 <define-tag sarge whitespace=delete>
   <gettext domain="bugs">sarge</gettext>
 </define-tag>
+<define-tag sarge-ignore whitespace=delete>
+  <gettext domain="bugs">sarge-ignore</gettext>
+</define-tag>
 <define-tag sid whitespace=delete>
   <gettext domain="bugs">sid</gettext>
 </define-tag>
@@ -125,6 +128,12 @@
   <gettext domain="bugs">d-i</gettext>
 </define-tag>
 # 'fixed' is defined above
+<define-tag fixed-in-experimental whitespace=delete>
+  <gettext domain="bugs">fixed-in-experimental</gettext>
+</define-tag>
+<define-tag fixed-upstream whitespace=delete>
+  <gettext domain="bugs">fixed-upstream</gettext>
+</define-tag>
 <define-tag help whitespace=delete>
   <gettext domain="bugs">help</gettext>
 </define-tag>
@@ -152,11 +161,14 @@
   <label><input type="checkbox" name="include" value="potato"><potato></label>
   <label><input type="checkbox" name="include" value="woody"><woody></label>
   <label><input type="checkbox" name="include" value="sarge"><sarge></label>
+  <label><input type="checkbox" name="include" value="sarge-ignore"><sarge-ignore></label>
   <label><input type="checkbox" name="include" value="sid"><sid></label>
   <label><input type="checkbox" name="include" value="experimental"><experimental></label>
   <label><input type="checkbox" name="include" value="confirmed"><confirmed></label>
   <label><input type="checkbox" name="include" value="d-i"><d-i></label>
   <label><input type="checkbox" name="include" value="fixed"><fixed></label>
+  <label><input type="checkbox" name="include" value="fixed-in-experimental"><fixed-in-experimental></label>
+  <label><input type="checkbox" name="include" value="fixed-upstream"><fixed-upstream></label>
   <label><input type="checkbox" name="include" value="help"><help></label>
   <label><input type="checkbox" name="include" value="moreinfo"><moreinfo></label>
   <label><input type="checkbox" name="include" value="patch"><patch></label>
@@ -171,11 +183,14 @@
   <label><input type="checkbox" name="exclude" value="potato"><potato></label>
   <label><input type="checkbox" name="exclude" value="woody"><woody></label>
   <label><input type="checkbox" name="exclude" value="sarge"><sarge></label>
+  <label><input type="checkbox" name="exclude" value="sarge-ignore"><sarge-ignore></label>
   <label><input type="checkbox" name="exclude" value="sid"><sid></label>
   <label><input type="checkbox" name="exclude" value="experimental"><experimental></label>
   <label><input type="checkbox" name="exclude" value="confirmed"><confirmed></label>
   <label><input type="checkbox" name="exclude" value="d-i"><d-i></label>
   <label><input type="checkbox" name="exclude" value="fixed"><fixed></label>
+  <label><input type="checkbox" name="exclude" value="fixed-in-experimental"><fixed-in-experimental></label>
+  <label><input type="checkbox" name="exclude" value="fixed-upstream"><fixed-upstream></label>
   <label><input type="checkbox" name="exclude" value="help"><help></label>
   <label><input type="checkbox" name="exclude" value="moreinfo"><moreinfo></label>
   <label><input type="checkbox" name="exclude" value="patch"><patch></label>
