@@ -16,6 +16,7 @@ all:\
     $(HTMLDIR)/devel/extract_key.html.$(LANG) \
     $(HTMLDIR)/devel/help.html.$(LANG) \
     $(HTMLDIR)/devel/people.html.$(LANG) \
+    $(HTMLDIR)/logos/index.html.$(LANG) \
 #    $(HTMLDIR)/devel/HOWTO_translate.html.$(LANG) \
 #    $(HTMLDIR)/devel/incoming_mirrors.html.$(LANG) \
 #    $(HTMLDIR)/devel/maintainer_contacts.html.$(LANG) \
@@ -48,7 +49,6 @@ all:\
 #    $(HTMLDIR)/intro/cn.html.$(LANG) \
 #    $(HTMLDIR)/intro/free.html.$(LANG) \
 #    $(HTMLDIR)/intro/why_debian.html.$(LANG) \
-#    $(HTMLDIR)/logos/index.html.$(LANG) \
 #    $(HTMLDIR)/security/index.html.$(LANG) \
 #    $(HTMLDIR)/
 
