@@ -1,4 +1,5 @@
 #use wml::debian::template title="Einen FTP-Spiegel erstellen"
+#use wml::debian::translation-check translation="1.13"
 
 <!-- 
   Translator       : Thimo Neubauer (thimo@debian.org)
@@ -6,16 +7,27 @@
   -->
 
 <p>Spiegeln ist genau gleich f&uuml;r offizielle wie inoffizielle
-Server. Wenn ein Spiegelserver installiert ist, sollte er <a
+Server (<a href="types">Mehr Informationen über Spiegeltypen</a>).
+
+<p>Wenn ein Spiegelserver installiert ist, sollte er <a
 href="submit">bei Debian registriert</a> werden, damit er in die
 <a href="../misc/README.mirrors">Liste der Spiegel</a> aufgenommen
 werden kann. Anmelden kann man sich &uuml;ber ein
-<A href="submit">einfaches Web-Formular</a>. Probleme und Anfragen
+<A href="submit">einfaches Web-Formular</a>.
+
+<p>Probleme und Anfragen
 k&ouml;nnen Sie an <A
 href="mailto:mirrors@debian.org">mirrors@debian.org</A> schicken.
 
+<H2>Methodden des Spiegelns</H2>
+
+<p>Die bevorzugte Methode zum Spiegeln ist mit rsync.
+
+<p>Beachten Sie: Während <kbd>wget</kbd> für kleine Sites ganz gut
+arbeitet, ist es nicht so gut konfigurierbar wie rsync oder 'mirror',
+weswegen es nicht für diese Aufgabe empfohlen wird.
+
 <h3>Anonymes rsync</h3>
-Die empfohlene Methode des Spiegelns ist mit rsync.
 
 <p>Sie k&ouml;nnen <a href="anonftpsync">dieses Skript</a> benutzen,
 um das Archiv zu spiegeln. Folgen Sie einfach den Anweisungen im
@@ -24,15 +36,15 @@ Skript, um den Spiegel zu erstellen. Server in der
 vom Typ '<kbd>Type: Push-*</kbd>' sind, sollten gut geeignet sein, um
 von dort zu spiegeln.
 
-<h3>Push Mirror</h3>
+<h3>Rsync mit Authentifizierung, von einem Push-Spiegel</h3>
 
-Push-mirroring ist eine Art des Spiegelns mit rsync, die wir
+Push-Spiegeln ist eine Art des Spiegelns mit rsync, die wir
 entwickelt haben, um die Zeit zu minimieren, die es ben&ouml;tigt, bis
-&Auml;nderungen im Archiv die Spiegel erreichen. Beim Push-mirroring
+&Auml;nderungen im Archiv die Spiegel erreichen. Beim Push-Spiegeln
 wird die ssh verwendet, um einem weiter unten in der Hierarchie
 stehenden Spiegel mitzuteilen, dass er sich updaten soll. Der Spiegeln
 selbst bleibt ein 'pull', so da&szlig; es nicht m&ouml;glich ist, den
-Inhalt der Archivs durch einen falschen Push-mirror zu zerst&ouml;ren.
+Inhalt der Archivs durch einen falschen Push-Spiegel zu zerst&ouml;ren.
 
 <p>Einige Spiegel-Administratoren zeigen einiges Widerstreben bei
 dieser Methode aus Angst davor, dass diese Methode ein Sicherheitsloch
@@ -41,36 +53,38 @@ wahr. Eine ausf&uuml;hrliche Beschreibung, wie die Methode
 funktioniert und warum sie sicher ist, finden Sie auf
 <a href="explain">dieser Seite</a>.
 
-<p>Einen Push-mirror zu installieren erfordert etwas mehr Aufwand,
+<p>Einen Push-Spiegel zu installieren erfordert etwas mehr Aufwand,
 weil die Administratoren des h&ouml;her- und der tieferliegenden
 Spiegels Informationen austauschen m&uuml;ssen. Der Vorteil ist, dass
 der hierarchisch h&ouml;herliegende Server den Spiegelungsprozess
 anst&ouml;&szlig;t, wenn es mit spiegeln fertig ist. Damit werden
 &Auml;nderungen im Archiv sehr schnell weitergegeben.
+Lesen Sie die <a href="push_server">Erklärungsseite</a> für Details.
 
 <p>Es ist am besten, wenn f&uuml;r diese Methode ein eigener Account
 angelegt wird und nicht root spiegelt. Der &ouml;ffentliche
 Schl&uuml;ssel des h&ouml;herligenden Servers sollte dann nach
-<kbd>~<user>/.ssh/authorized_keys</kbd> kopiert werden.
+<kbd>~&lt;user&gt;/.ssh/authorized_keys</kbd> kopiert werden.
 
 <p>Es werden die Dateien <a href="ftpsync">ftpsync</a> und 
 <a href="ftpsync.conf">ftpsync.conf</a> ben&ouml;tigt. Editieren Sie
 ftpsync.conf und folgen Sie den Anweisungen darin mit den
 Informationen vom h&ouml;herligenden Server.
 
-<p>Wenn Sie ein prim&auml;rer Push-mirror werden wollen, dann brauchen
-Sie den
-<a href="identity.pub.master.ftp">&ouml;ffentlichen Schl&uuml;ssel des
-FTP-Archivs</a>.
+<p>Wenn Ihr Rechner ein prim&auml;rer Push-Spiegel werden soll, dann
+benötigen Sie den
+<a href="identity.pub.master.ftp">&ouml;ffentlichen Schl&uuml;ssel von
+archvsync@ftp-master.debian.org</a>.
 
-<p>Wenn Sie einen Push-mirror vom non-US-Archiv anlegen wollen,
-brauchen Sie die Dateien <a href="ftpsync-non-US">ftpsync-non-US</a>
+<p>Wenn Sie einen Push-Spiegel vom non-US-Archiv anlegen möchten,
+benötigen Sie die Dateien <a href="ftpsync-non-US">ftpsync-non-US</a>
 und 
 <a href="ftpsync-non-US.conf">ftpsync-non-US.conf</a>. Diese Dateien
 haben andere Namen, damit Sie im selben Account verwendet werden
-k&ouml;nnen um beider Archive zu spiegeln. Wenn Sie ein prim&auml;rer
-non-US Push-mirror werden wollen, dann brauchen Sie den
-<a href="identity.pub.non-US.ftp">&ouml;ffentlichen Schl&uuml;ssel des non-US-FTP-Archivs</a>.
+k&ouml;nnen um beider Archive zu spiegeln. Wenn Ihr Rechner ein prim&auml;rer
+non-US Push-Spiegel werden soll, dann benötigen Sie den
+<a href="identity.pub.non-US.ftp">&ouml;ffentlichen Schl&uuml;ssel von
+archvsync@non-us.debian.org</a>.
 
 <h3>Anonymes FTP mit 'mirror'</h3>
 
@@ -81,12 +95,24 @@ erh&auml;ltlich. Wenn Sie das Debian-Paket installiert haben werden
 Sie ein Beispielskript zum Spiegeln des FTP-Archivs in
 /etc/mirror/packages/ftp.debian.org finden.
 
-<h3>wget</h3>
-Zwar funktioniert <kbd>wget</kbd>, um kleine Server zu spiegeln, man
-kann es allerdings nicht so gut konfigurieren wie mirror oder rsync,
-weshalb wir davon abraten, es daf&uuml;r zu verwenden.
+<h2>Partielles Spiegeln</h2>
 
-<h3>Wann soll gespiegelt werden?</h3>
+<p>Aufgrund des bereits großen Umfangs des Debian-Archivs bevorzugen
+einige Leute, nur die Teile zu spiegeln, die sie auch benötigen.  Um
+dieses zu erreichen, werden speziell geschriebene Skripte benötigt,
+wie die von
+<a href="http://cvs.kitenet.net/~checkout~/joey-cvs/bin/debmirror?tag=HEAD&content-type=text/plain">
+Joey Hess</a> und
+<a href="http://www.Fh-Worms.DE/~inf222/code/script/debian/www/absurd_debmirror">
+Stephan Suerken</a>. Wenn Sie der Meinung sind, daß etwas nicht
+beachtet wird bei diesen, kontaktieren Sie bitte die Autoren
+(Kontaktinformationen sollten in den Skripten enthalten sein).
+
+<h2>Wann soll gespiegelt werden?</h2>
+
+<p>Das Hauptarchiv wird alle 24 Stunden neu zusammengestellt.
+
+<p>
 Wenn Sie einen Push-Mirror betreiben, brauchen Sie sich darum nicht zu
 k&uuml;mmern. Wenn nicht, und der Server, von dem Sie spiegeln,
 verwendet rsync, dann sollten Sie in das Verzeichnis
@@ -99,3 +125,19 @@ etwas Zeit, z.B. eine Stunde, zu dieser Zeit und spiegeln Sie dann.
 t&auml;glich von cron aufrufen zu lassen. Weitere Informationen mit
 <kbd>man crontab</kbd>.
 
+<h2>Empfohlene zusätzliche Einstellungen</h2>
+
+<p>Wenn Sie planen, den Debian-Spiegel durch HTTP zur Verfügung zu
+stellen, fügen Sie bitte die folgenden Einstellungen zur
+Apache-Konfiguration für Verzeichnis-Indizes hinzu (angenommen
+natürlich, daß Sie Apache benutzen):
+
+<pre>
+&lt;directory /org/ftp.debian.org/ftp&gt;
+   IndexOptions NameWidth=* +SuppressDescription
+   DirectoryIndex .
+&lt;/directory&gt;
+</pre>
+
+<p>(Ersetzen Sie <code>/org/ftp.debian.org/ftp</code> mit dem Namen
+des Verzeichnisses, in dem Sie den Spiegel aufbewahren.)
