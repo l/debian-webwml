@@ -22,6 +22,7 @@ sponsors.$(LANGUAGE).html: sponsors.wml \
 ftpmirror.$(LANGUAGE).html: ftpmirror.wml $(TEMPLDIR)/template.wml \
   $(TEMPLDIR)/toc.wml $(GETTEXTDEP)
 official.$(LANGUAGE).html: official.wml $(TEMPLDIR)/template.wml \
+  $(ENGLISHDIR)/mirror/Mirrors.masterlist \
   $(ENGLISHDIR)/mirror/official.data $(TEMPLDIR)/countries.wml \
   $(GETTEXTDEP)
 
@@ -56,8 +57,6 @@ nonus: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t nonus
 nonushtml: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t nonushtml
-
-$(ENGLISHDIR)/mirror/official.data: $(ENGLISHDIR)/mirror/Mirrors.masterlist
 
 $(ENGLISHDIR)/mirror/official_sponsors.list: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
