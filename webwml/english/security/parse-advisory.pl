@@ -31,8 +31,8 @@ foreach $l (<ADV>) {
   if ($l =~ /^Package        : (.+)/) {
     $package = $1;
   }
-  if ($l =~ /^Problem type   : (.+)/) {
-    $desc = $1;
+  if ($l =~ /^(Problem type  |Vulnerability ) : (.+)/) {
+    $desc = $2;
   }
   $mi = 0 if ($l =~ /^wget url/);
   $moreinfo .= $l if ($mi);
@@ -50,29 +50,30 @@ $files =~ s/  Architecture/<dt>Architecture/sg;
 $files =~ s/  ([\w ]+) architecture:/<dt>$1:/sg;
 $files =~ s/    (http:\S+)/  <dd><fileurl $1>/sg;
 
-($pagetitle = $dsa) =~ s/dsa/DSA/;
+($pagetitle = $adv) =~ s/dsa/DSA/;
 $pagetitle =~ s/\./ /;
 
 if ($adv =~ /(dsa-\d+)-\d+\./) {
   $wml = "$1.wml";
 }
 die "$wml already exists\!" if (-f $wml);
-open WML, ">$wml";
-print WML "<define-tag pagetitle>$pagetitle</define-tag>\n";
-print WML "<define-tag report_date>$date</define-tag>\n";
-print WML "<define-tag packages>$package</define-tag>\n";
-print WML "<define-tag isvulnerable>yes</define-tag>\n";
-print WML "<define-tag fixed>yes</define-tag>\n";
-print WML "\n#use wml::debian::security\n\n";
-print WML "<h3>Debian GNU/Linux 2.2 (`potato')</h3>\n\n";
-print WML "<dl>\n$files</dl>\n";
-close WML;
-
 ($data = $wml) =~ s/.wml/.data/;
 die "$data already exists\!" if (-f $data);
+
 open DATA, ">$data";
-print DATA "<define-tag description>$desc</define-tag>\n";
-print DATA "<define-tag moreinfo>$moreinfo</define-tag>\n";
-print DATA "\n# do not modify the following line\n";
-print DATA "#include '$(ENGLISHDIR)/security/2001/dsa-049.data'\n";
+print DATA "<define-tag pagetitle>$pagetitle</define-tag>\n";
+print DATA "<define-tag report_date>$date</define-tag>\n";
+print DATA "<define-tag packages>$package</define-tag>\n";
+print DATA "<define-tag isvulnerable>yes</define-tag>\n";
+print DATA "<define-tag fixed>yes</define-tag>\n";
+print DATA "\n#use wml::debian::security\n\n";
+print DATA "<h3>Debian GNU/Linux 2.2 (`potato')</h3>\n\n";
+print DATA "<dl>\n$files</dl>\n";
 close DATA;
+
+open WML, ">$wml";
+print WML "<define-tag description>$desc</define-tag>\n";
+print WML "<define-tag moreinfo>$moreinfo</define-tag>\n";
+print WML "\n# do not modify the following line\n";
+print WML "#include \"\$(ENGLISHDIR)/security/2001/dsa-049.data\"\n";
+close WML;
