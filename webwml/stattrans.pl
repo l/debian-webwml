@@ -127,10 +127,9 @@ sub getwmlfiles
 	    $version{"$lang/$file"} = $altcvs->revision($f);
 	    if (!$transcheck->revision()) {
 		$original{"english/$file"} = $lang;
-		$transversion{"english/$file"} = "1.1";
+		$transversion{"english/$file"} ||= "1.1";
 	    }
 	}
-	$version{"$lang/$file"} ||= "1.1";
 	$count++;
     }
     close (FIND);
@@ -191,10 +190,8 @@ if ($opt_l) {
   getwmlfiles ('english');
 } else {
   foreach $lang (keys %langs) {
-    next if ($lang eq "english");
     getwmlfiles ($lang);
   }
-  getwmlfiles ('english');
 }
 print "\n" if ($config{'verbose'});
 
@@ -222,11 +219,6 @@ foreach $lang (@search_in) {
 	next if ($file eq "");
 	# Translated pages
 	if (index ($wmlfiles{$lang}, " $file ") >= 0) {
-		if ($file eq "devel/wnpp/wnpp") {
-			$t_body .= sprintf "%s<br>\n", $file;
-		} else {
-		    	$t_body .= sprintf "<a href=\"/%s.%s.html\">%s</a><br>\n", $file, $l, $file;
-		}
 		$translated{$lang}++;
 		$orig = $original{"$lang/$file"} || "english";
 		# Outdated translations
@@ -244,6 +236,13 @@ foreach $lang (@search_in) {
 			$o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/$orig/%s.wml.diff\?r1=%s\&r2=%s\&cvsroot=webwml\&diff_format=%s\">%s -> %s</a></td>", $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $config{'diff_type'}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
 			$o_body .= "</tr>\n";
     			$outdated{$lang}++;
+		# Up-to-date translations
+		} else {
+			if ($file eq "devel/wnpp/wnpp") {
+				$t_body .= sprintf "%s<br>\n", $file;
+			} else {
+		    		$t_body .= sprintf "<a href=\"/%s.%s.html\">%s</a><br>\n", $file, $l, $file;
+			}
 		}
 	}
 	# Untranslated pages
@@ -263,10 +262,10 @@ foreach $lang (@search_in) {
     $wml{$lang} = $translated{$lang};
     $translated{$lang} = $translated{$lang} - $outdated{$lang};
 
-    $percent_a{$lang} = $wml{$lang}/$nfiles * 100;
-    $percent_t{$lang} = $translated{$lang}/$nfiles * 100;
-    $percent_o{$lang} = $outdated{$lang}/$nfiles * 100;
-    $percent_u{$lang} = $untranslated{$lang}/$nfiles * 100;
+    $percent_a{$lang} = int ($wml{$lang}/$nfiles * 100);
+    $percent_t{$lang} = int ($translated{$lang}/$nfiles * 100);
+    $percent_o{$lang} = 100 - $percent_t{$lang};
+    $percent_u{$lang} = 100 - $percent_a{$lang};
 
     if (open (HTML, ">$config{'htmldir'}/$l.html")) {
 	printf HTML "<html><head><title>%s: %s</title></head><body bgcolor=#ffffff>\n", $config{'title'}, ucfirst $lang;
