@@ -455,7 +455,7 @@ sub parse_tarball {
                         $control = $list[0];
                 } else {
                         $data->clear_pkg($pkg);
-                        warn("Error: can't find debian/control; skipping package $pkg.");
+                        warn("Error: can't find debian/control; skipping package $pkg.\n");
                         return undef;
                 }
         }
@@ -594,11 +594,20 @@ sub search_po {
 
         my @pofiles = $deb->file_matches("\\.po\$");
 
-        ##
-        ## for po files, try to guess the language from the name,
-        ##      and the l10n with msgfmt
-        ##
-        my $file; # the po file name in the package
+        foreach my $file (@pofiles) {
+                next if $file =~ m,^debian/po/,;
+                next if $file =~ m,messages.po$,;
+
+                process_po_file($pkg, $file, 'po');
+        }
+        print STDERR "MEM: ".$deb->get_max_memory()."\n" if $verbose;
+}
+
+sub process_po_file {
+        my $pkg = shift;
+        my $file = shift;
+        my $type = shift;
+
         my $filename; #the po file name to be archived
         my $lang=""; # the identified code language
         my $bad_lang=""; #this could be a language, but this is not a valid language
@@ -606,50 +615,50 @@ sub search_po {
         my $err_msg =""; # err msg of the statistic external command (ie, msgfmt or debconf-stats)
         my $regexp_for_lang_code = '(([a-zA-Z]{2})([-_][a-zA-Z]{2})?(@[^./]*)?)(\.[^./]+)?';
 
-        POFILE: foreach $file (@pofiles) {
-                $filename = store_disk_po($pkg, $file);
+        $filename = store_disk_po($pkg, $file);
 
-                my $PO_DIR = $PO_ROOT."/".$data->pooldir($pkg);
+        my $PO_DIR = $PO_ROOT."/".$data->pooldir($pkg);
 
-                $this_stat = "";
-                $lang = "";
-                if ($lang eq "" && $file=~ m,(?:_|\b)$regexp_for_lang_code\.po$,o) {
-                        $bad_lang =$1;
-                        if (is_lang($bad_lang)) {
-                                $lang = $bad_lang;
-                                $bad_lang = "";
-                        }
-                }
-                # The next rule is for kde-i18n and other such packages
-                if ($lang eq "" && $file =~ m,(?:^|/)$regexp_for_lang_code/(messages|LC_MESSAGES)/,) {
-                        $bad_lang = $1;
-                        if (is_lang($bad_lang)) {
-                                $lang = $bad_lang;
-                                $bad_lang = "";
-                        }
-                }
-                if ($lang ne "") {
-                        # stats the file
-                        ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$filename 2>&1 1>/dev/null");
-                        if ($err_msg ne '') {
-                                $err_msg =~ s,\Q$PO_DIR/$filename\E,$file,g;
-                                $data->add_errors($pkg, "gettext: ".$err_msg);
-                        }
-                } else { # no valid lang found
-                        next POFILE if $file =~ m,messages.po$,;
-                        if ($bad_lang eq "") {
-                                $data->add_errors($pkg, "gettext: $file: can't guess language");
-                        } else {
-                                $data->add_errors($pkg, "gettext: $file: $bad_lang not a language code");
-                        }
-                }
-                # Add this file to the data
-                $data->add_po($pkg, $file, normalize_lang($lang), $this_stat, $filename);
-                if (system("gzip -9 $PO_DIR/$filename")) {
-                        warn "Can't gzip $PO_DIR/$filename: $!";
+        $this_stat = "";
+        $lang = "";
+        if ($lang eq "" && $file=~ m,(?:_|\b)$regexp_for_lang_code\.po$,o) {
+                $bad_lang =$1;
+                if (is_lang($bad_lang)) {
+                        $lang = $bad_lang;
+                        $bad_lang = "";
                 }
         }
-        print STDERR "MEM: ".$deb->get_max_memory()."\n" if $verbose;
+        # The next rule is for kde-i18n and other such packages
+        if ($lang eq "" && $file =~ m,(?:^|/)$regexp_for_lang_code/(messages|LC_MESSAGES)/,) {
+                $bad_lang = $1;
+                if (is_lang($bad_lang)) {
+                        $lang = $bad_lang;
+                        $bad_lang = "";
+                }
+        }
+        if ($lang ne "") {
+                # stats the file
+                ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$filename 2>&1 1>/dev/null");
+                if ($err_msg ne '') {
+                        $err_msg =~ s,\Q$PO_DIR/$filename\E,$file,g;
+                        $data->add_errors($pkg, "gettext: ".$err_msg);
+                }
+        } else { # no valid lang found
+                if ($bad_lang eq "") {
+                        $data->add_errors($pkg, "gettext: $file: can't guess language");
+                } else {
+                        $data->add_errors($pkg, "gettext: $file: $bad_lang not a language code");
+                }
+        }
+        # Add this file to the data
+        if ($type eq 'po') {
+                $data->add_po($pkg, $file, normalize_lang($lang), $this_stat, $filename);
+        } else {
+                $data->add_podebconf($pkg, $file, normalize_lang($lang), $this_stat, $filename);
+        }
+        if (system("gzip -9 $PO_DIR/$filename")) {
+                warn "Can't gzip $PO_DIR/$filename: $!\n";
+        }
 }
 
 #----[ search_menu ]-----------------------------------------------------------
@@ -822,7 +831,11 @@ sub search_podebconf {
         }
         $data->add_podebconf($pkg, @tmplfiles);
 
-        #  PO files are already handled by search_po
+        my @pofiles = $deb->file_matches("^debian/po/.*\\.po\$");
+
+        foreach my $file (@pofiles) {
+                process_po_file($pkg, $file, 'podebconf');
+        }
 
         print STDERR "MEM: ".$deb->get_max_memory()."\n" if $verbose;
         1;
