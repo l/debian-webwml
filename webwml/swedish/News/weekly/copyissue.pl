@@ -5,8 +5,8 @@
 # adds the translation-check header to it. It will also create the
 # destination directory if necessary.
 
-# Written in 2000 by peter karlsson <peter@softwolves.pp.se>
-# © Copyright 2000 Software in the public interest, Inc.
+# Written in 2000-2001 by peter karlsson <peter@softwolves.pp.se>
+# © Copyright 2000-2001 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -88,6 +88,29 @@ while (<SRC>)
 	{
 		# Translate intro
 		$_ = "<b>Välkommen</b> till Debian Weekly News, ett nyhetsbrev för Debianfolk.\n";
+	}
+	elsif ($_ eq "<p><strong>New or Noteworthy Packages.</strong> The following new or\n")
+	{
+		# Translate new files intro
+		$next = <SRC>;
+		if ($next eq "updated packages were added to the Debian archive since our last\n")
+		{
+			$next2 = <SRC>;
+			if ($next2 eq "issue.</p>\n")
+			{
+				$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong>\n";
+				$_ .= "Följande paket har lagts till Debianarkivet sedan förra utgåvan.</p>\n";
+			}
+			else
+			{
+				$next .= $next2;
+				$_ .= $next;
+			}
+		}
+		else
+		{
+			$_ .= $next;
+		}
 	}
 
 	unless ($insertedrevision || /^#/)
