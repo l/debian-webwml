@@ -4,8 +4,8 @@
 # the translation-check header to it. It also will create the
 # destination directory if necessary, and copy the Makefile from the source.
 
-# Written in 2000-2003 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2000-2003 Software in the public interest, Inc.
+# Written in 2000-2004 by Peter Karlsson <peterk@debian.org>
+# © Copyright 2000-2004 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -24,7 +24,7 @@ unless ($number)
 
 # Locate advisory
 $number = "dsa-" . $number if $number !~ /^dsa-/;
-$year = 2003;
+$year = 2004;
 YEAR: while (-d "../../english/security/$year")
 {
 	last YEAR if -e "../../english/security/$year/$number.wml";
@@ -83,6 +83,7 @@ while (<SRC>)
 	s/^(<p>)?A problem has been discovered in\b/$1Ett problem har upptäckts i/;
 	s/We recommend that you upgrade your (.*) package immediately/Vi rekommenderar att ni uppgraderar ert $1-paket omedelbart/;
 	s/We recommend that you upgrade your (.*) packages immediately/Vi rekommenderar att ni uppgraderar era $1-paket omedelbart/;
+	s/We recommend that you upgrade your (.*) and (.*) packages/Vi rekommenderar att ni uppgraderar era $1- och $2-paket/;
 	s/We recommend that you upgrade your (.*) packages/Vi rekommenderar att ni uppgraderar era $1-paket/;
 	s/We recommend that you upgrade your (.*) package/Vi rekommenderar att ni uppgraderar ert $1-paket/;
 	s/We recommend that you update your (.*) package immediately/Vi rekommenderar att ni uppgraderar ert $1-paket omedelbart/;
