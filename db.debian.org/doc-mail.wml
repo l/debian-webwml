@@ -9,14 +9,14 @@ cache that prevents the gateway from accepting the same message more than
 once.
 
 <p>
-There are three functions logically split into 3 seperate email addresses
+There are three functions logically split into 3 separate email addresses
 that are implemented by the gateway: <b>ping</b>, <b>new password</b> and
 <b>changes</b>. The function to act on is the first argument to the program.
 
 <p>
 Error handling is currently done by generating a bounce message and passing
 descriptive error text to the mailer. This can generate a somewhat hard to 
-read error message, but it does have all the relevent information.
+read error message, but it does have all the relevant information.
 
 <h1>Ping</h1>
 The ping command simply returns the users public record. It is useful for
@@ -28,16 +28,16 @@ user is alive. Any PGP signed message will produce a reply.
 If a user looses their password they can request that a new one be generated 
 for them. This is done by sending the phrase "Please change my Debian 
 password" to chpasswd@db.debian.org. The phrase is required to prevent the 
-daemon from triggering on arbitary signed email. The best way to invoke this
+daemon from triggering on arbitrary signed email. The best way to invoke this
 feature is with 
 <pre>echo "Please change my Debian password" | gpg --clearsign | mail chpasswd@db.debian.org</pre>
 After validating the request the daemon will generate a new random password,
-set it in the directory and respond with an encrpyted message containing the
+set it in the directory and respond with an encrypted message containing the
 new password. The password can be changed using one of the other interface
 methods.
 
 <h1>Changes</h1>
-An address (changes@db.debian.org) is provided for making almost arbitary 
+An address (changes@db.debian.org) is provided for making almost arbitrary 
 changes to the contents of the record. The daemon parses its input line by 
 line and acts on each line in a command oriented manner. Anything, except for 
 passwords, can be changed using this mechanism. Note however that because 
@@ -48,11 +48,21 @@ specific field formats to be met.
 <ul>
 <li>A line of the form <tt>'field: value'</tt> will change the contents of 
 the field to value. Some simple checks are performed on value to make sure 
-that it is not set to nonsense. The values that can be changed are: 
+that it is not set to nonsense. You can't set an empty string as
+value, use <tt>del</tt> instead (see below). The values that can
+be changed are: 
 <b>c</b>, <b>l</b>, <b>facsimiletelephonenumber</b>, <b>telephonenumber</b>, 
 <b>postaladdress</b>, <b>postalcode</b>,
 <b>loginshell</b>, <b>emailforward</b>, <b>ircnick</b>, <b>onvacation</b>, 
 and <b>labledurl</b>
+
+<li>A line of the form <tt>'del field'</tt> will completly remove all
+occurrences of a field. Useful e.g. to unset your vacation status.
+The fields that can be deleted are:
+<b>c</b>, <b>l</b>, <b>facsimiletelephonenumber</b>, <b>telephonenumber</b>,
+<b>postaladdress</b>, <b>postalcode</b>, <b>emailforward</b>, <b>ircnick</b>,
+<b>onvacation</b>, <b>labeleduri</b>, <b>latitude</b>, <b>longitude</b>,
+<b>icquin</b>, <b>sshrsaauthkey</b>, and <b>sshdsaauthkey</b>
 
 <li>The daemon has a special parser to help changing latitude and longitude
 values. It accepts several common formats for position information and
@@ -98,12 +108,12 @@ processed.
 <h2>Notes</h2>
 <p>
 In this document PGP refers to any message or key that GnuPG is
-able to generate or parse, specificaly it includes both PGP2.x and OpenPGP
+able to generate or parse, specifically it includes both PGP2.x and OpenPGP
 (aka GnuPG) keys. 
 <p>
 Due to the replay cache the clock on the computer that generates the
 signatures has to be accurate to at least one day. If it is off by several
-months or more then the deamon will outright reject all messages.
+months or more then the daemon will outright reject all messages.
 <p>
 Examples are given using GnuPG, but PGP 2.x can also be used. The correct
 options to generate a clear signed ascii armored message in 'filter' mode
