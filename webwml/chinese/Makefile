@@ -27,9 +27,11 @@ index.zh-cn.html index.zh-tw.html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
 		$(ENGLISHSRCDIR)/releases/info
 
-install::
-	test -L $(HTMLDIR)/zh && rm -f $(HTMLDIR)/zh
-	test -d $(HTMLDIR)/zh mkdir -p $(WMLBASE)/$(RELHTMLBASE)/zh
+# the following lines are breaking the wml build. Explain why to debian-www
+# if you uncomment them
+# install::
+# 	test -L $(HTMLDIR)/zh && rm -f $(HTMLDIR)/zh
+# 	test -d $(HTMLDIR)/zh mkdir -p $(WMLBASE)/$(RELHTMLBASE)/zh
 
 clean::
 	find $(WMLBASE)/Pics -type l | xargs rm -f
