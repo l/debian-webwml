@@ -7,6 +7,7 @@
 <define-menu-item name="m68k">
    [EN:Debian for Motorola 680x0:]
    [AR:Debian for Motorola 680x0:]
+   [CA:Debian per a Motorola 680x0:]
    [DA:Debian for Motorola 680x0:]
    [DE:Debian für Motorola 680x0:]
    [EL:Debian for Motorola 680x0:]
