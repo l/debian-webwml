@@ -4,7 +4,7 @@
 
 WMLBASE=..
 CUR_DIR=misc
-SUBS=
+SUBS=laptops
 
 include $(WMLBASE)/Make.lang
 
