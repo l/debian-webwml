@@ -21,7 +21,7 @@ my ($input,   # The CGI data
 #   -- Joy
 
 # hint:
-# grep-dctrl -F Site,Alias -e '(udel|bigfoot|download.sourceforge|kernel|crosslink|internap|cerias|lcs.mit|progeny)' Mirrors.masterlist | timestamps/archive_mirror_check.py
+# grep-dctrl -F Site,Alias -e '(udel|bigfoot|kernel|crosslink|internap|cerias|lcs.mit|progeny)' Mirrors.masterlist | timestamps/archive_mirror_check.py
 my @north_american_sites = (
 	"ftp.us.debian.org/debian",
 	"http.us.debian.org/debian",
@@ -30,13 +30,15 @@ my @north_american_sites = (
 	"ftp.egr.msu.edu/debian",
 	"mirrors.kernel.org/debian",
 	"archive.progeny.com/debian",
-	"osdn.dl.sourceforge.net/debian",
 	"debian.crosslink.net/debian",
 	"ftp-mirror.internap.com/pub/debian",
 	"ftp.cerias.purdue.edu/pub/os/debian",
 	"ftp.lug.udel.edu/debian",
 	"debian.lcs.mit.edu/debian",
 	"debian.teleglobe.net",
+	"debian.rutgers.edu",
+	"debian.oregonstate.edu/debian",
+	"mirrors.terrabox.com/debian",
 	);
 my @european_sites = (
 	"ftp.de.debian.org/debian",
