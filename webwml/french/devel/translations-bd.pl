@@ -504,9 +504,10 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'todo',
-	'status'		=> 'en cours de traduction',
-	'since'			=> '10/07/1999',
+	'status'		=> 'à relire',
+	'since'			=> '21/07/1999',
 	'translation_maintainer'=> ['magloire@multimania.com'],
+	'last_translated'	=> '21/07/1999',
 },
 
 {
