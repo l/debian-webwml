@@ -195,6 +195,31 @@ if ($opt_l) {
 }
 print "\n" if ($config{'verbose'});
 
+my @search_in;
+if ($opt_l) {
+  @search_in = ( 'english', $opt_l );
+} else {
+  @search_in = sort keys %langs;
+}
+
+foreach $lang (@search_in) {
+    next if $lang eq 'english';
+    $l = $langs{$lang};
+    my @status = qx,make -C $opt_w/$lang/po stats 2>&1 1>/dev/null,;
+    foreach $line (@status) {
+        chomp $line;
+        ($domain = $line) =~ s/\..*//;
+        $po_translated{$domain}{$lang} = ($line =~ /(\d+) translated/ ? $1 : "0");
+        $po_fuzzy{$domain}{$lang} = ($line =~ /(\d+) fuzzy/ ? $1 : "0");
+        $po_untranslated{$domain}{$lang} = ($line =~ /(\d+) untranslated/ ? $1 : "0");
+        $po_total{$domain} = $po_translated{$domain}{$lang} + $po_fuzzy{$domain}{$lang} + $po_untranslated{$domain}{$lang};
+
+        $percent_po_t{$domain}{$lang} = int ($po_translated{$domain}{$lang}/$po_total{$domain} * 100 + .5);
+        $percent_po_f{$domain}{$lang} = int ($po_fuzzy{$domain}{$lang}/$po_total{$domain} * 100 + .5);
+        $percent_po_u{$domain}{$lang} = int ($po_untranslated{$domain}{$lang}/$po_total{$domain} * 100 + .5);
+    }
+}
+
 # =============== Create HTML files ===============
 mkdir ($config{'htmldir'}, 02775) if (! -d $config{'htmldir'});
 
@@ -202,12 +227,6 @@ my @filenames = sort keys %files;
 my $nfiles = scalar @filenames;
 
 print "Creating files: " if ($config{'verbose'});
-my @search_in;
-if ($opt_l) {
-  @search_in = ( 'english', $opt_l );
-} else {
-  @search_in = sort keys %langs;
-}
 foreach $lang (@search_in) {
     $l = $langs{$lang};
     print "$l.html " if ($config{'verbose'});
@@ -344,11 +363,42 @@ foreach $lang (@search_in) {
     printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $untranslated{$lang}, $percent_u{$lang};
     print HTML "</tr>\n",
 }
-
-print HTML "</tr></table>";
 print HTML $border_foot;
-
 print HTML "</table>\n";
+
+print HTML $border_head;
+print HTML "<table width=100% border=0 bgcolor=\"#cdc9c9\">\n";
+print HTML "<tr><th>Language</th><th>File</th><th>Up to date</th><th>Fuzzy</th><th>Untranslated</th><th>Total</th></tr>\n";
+foreach $lang (@search_in) {
+    next if $lang eq 'english';
+    $l = $langs{$lang};
+    $l = "zh-cn" if ($l eq "zh"); # kludge
+
+    my $first = 1;
+    foreach my $domain (sort keys %po_total) {
+        print HTML "<tr>";
+        if ($first) {
+            printf HTML "<td>%s (%s)</td>", ucfirst $lang, $l;
+        } else {
+            printf HTML "<td>&nbsp;</td>";
+        }
+        $first = 0;
+
+        $color_t = get_color ($percent_po_t{$domain}{$lang});
+        $color_f = get_color (100 - $percent_po_f{$domain}{$lang});
+        $color_u = get_color (100 - $percent_po_u{$domain}{$lang});
+
+        print HTML "<td>$domain.$langs{$lang}.po</td>";
+        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_t, $po_translated{$domain}{$lang}, $percent_po_t{$domain}{$lang};
+        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_f, $po_fuzzy{$domain}{$lang}, $percent_po_f{$domain}{$lang};
+        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $po_untranslated{$domain}{$lang}, $percent_po_u{$domain}{$lang};
+        printf HTML "<td align=right>%d</td>", $po_total{$domain};
+        print HTML "</tr>\n";
+    }
+}
+print HTML $border_foot;
+print HTML "</table>\n";
+
 print HTML "<p><hr noshade size=1 width=100%>\n";
 print HTML "<p>Created with <a href=\"http://cvs.debian.org/webwml/stattrans.pl?cvsroot=webwml\">webwml-stattrans</a> at $date\n";
 print HTML "</body></html>\n";
