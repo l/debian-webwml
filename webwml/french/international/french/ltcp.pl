@@ -19,20 +19,15 @@
 
 use strict;
 
-#
-# $DEBIAN_CVS must be defined
-#
-
-use vars qw($translations %translations_status $types $root $from $to $from_abr $to_abr $CVSWEB $DDPWEB $TRANSWEB @status %tag $debug);
-
-# $t : current document record
-# $k : current document key
-# $f : current document field
-
+use vars qw(
+	$CVSWEB $DDPWEB $TRANSWEB
+	$translations $translations_status
+	$types $root $from $to $from_abr $to_abr
+	@status %tag $debug
+	);
 
 # Read the database status
 do 'current_status.pl';
-
 
 # Global variables
 $root = '../../..'; #This should be take from the Makefile
@@ -40,7 +35,7 @@ $from = 'english';
 $to = 'french'; # And this would be better used in the command line
 $from_abr = 'en';
 $to_abr = 'fr' ;
-$CVSWEB = 'http://cvs.debian.org/' ; 
+$CVSWEB = 'http://cvs.debian.org' ; 
 $DDPWEB = 'http://www.debian.org/~elphick/manuals.html' ;
 # The place were translation documents are kept while working on them
 $TRANSWEB = 'http://www.debian.org/~clebars/f2dp/translations';
@@ -75,24 +70,15 @@ $tag{'originaldoc'}='Document original';
 $tag{'revision'}='révision';
 $tag{'included'}='inclus dans le paquet';
 $tag{'lines'}='Nombre de lignes du document original';
-
-
-# In english
-#               'not-available' - 0
-#               'not translated' - 1
-#               'being translated' - 2
-#               'needs revision' - 3
-#               'translation updated', - 4
-#               'needs check' - 5
-#               'being revised' -  6
-#               'obsolete' - 7
-#               'unknown' - 8
-
+$tag{'no url'}='(pas d\'url)';
 
 # Turn this to '1' for debugging purposes
 $debug=0;
 #$debug=1;
 
+# $t : current document record
+# $k : current document key
+# $f : current document field
 
 $types = {
 
@@ -102,19 +88,19 @@ $types = {
 	'url'			=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
 					"http://www.debian.org/$k.en.html" },
 	'cvs_url'		=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
-					"$CVSWEB/$from/$k.wml?cvsroot=webwml" },
+					"$CVSWEB/webwml/$from/$k.wml?cvsroot=webwml" },
 	'source_url'		=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
-					"$CVSWEB/$from/$k.wml?rev=$t->{'revision'}&cvsroot=webwml" },
+					"$CVSWEB/webwml/$from/$k.wml?rev=$t->{'revision'}&cvsroot=webwml" },
 	'translation_name'	=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
 					"$k.$to_abr.html" },
 	'translation_url'	=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
 					"http://www.debian.org/$k.$to_abr.html" },
 	'translation_cvs_url'	=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
-					"$CVSWEB/$to/$k.wml?cvsroot=webwml" },
+					"$CVSWEB/webwml/$to/$k.wml?cvsroot=webwml" },
 	'translation_source_url'=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
-					"$CVSWEB/$to/$k.wml?rev=$t->{'translation_revision'}&cvsroot=webwml" },
+					"$CVSWEB/webwml/$to/$k.wml?rev=$t->{'translation_revision'}&cvsroot=webwml" },
 	'diff'			=> sub {my($t, $k, $f)=@_; return (!$t->{$f} || !$t->{'translation_revision'}) ? undef :
-					"$CVSWEB/$from/$k.wml$t->{$f}" },
+					"$CVSWEB/webwml/$from/$k.wml$t->{$f}" },
 	'lines'			=> sub {my($t, $k, $f)=@_; my $file= $root."/".$from."/".$k.".wml"; my $line_string=`wc -l $file`; $line_string=~s/\Q$file\E//; return $line_string;},
 
 },
@@ -137,15 +123,18 @@ $types = {
 };
 
 sub merge_db {
-# Merges the $translation and the %translation_status database
-	my $key;
-	foreach $key (keys %{ $translations }) {
-	        my $current;
+# Merges the $translation and the $translation_status database
+	foreach my $key (keys %{ $translations }) {
        		print STDERR "(merge_db) Merging key $key\n" if $debug;
-       		foreach $current (keys  %{ $translations_status{$key} } ) {
+       		foreach my $current (keys  %{ $translations_status->{$key} } ) {
        			print STDERR "(merge_db) Adding information $current into $key\n" if $debug;
-	       		 $translations->{$key}->{$current}=$translations_status{$key}{$current};
+	       		 $translations->{$key}->{$current}=$translations_status->{$key}->{$current};
         	}
+		delete $translations_status->{$key};
+	}
+	foreach my $key (keys %{ $translations_status }) {
+       		print STDERR "(merge_db) Adding key $key\n" if $debug;
+		$translations->{$key} = $translations_status->{$key};
 	}
 }
 
@@ -172,23 +161,26 @@ sub update_db_CVS {
 			my $k = $from_path . $f;
 			$k =~ s#^$root/$from/##;
 			$k =~ s#\.wml$##;
-			print STDERR "(update_db_CVS) Checking $f (original in ${to_path}$f\n" if $debug;
+			print STDERR "(update_db_CVS) Checking $k\n" if $debug;
 			if ($translations->{$k} or -e "${to_path}$f") {
-			# This check should be made by revision number
-
-				if (!$translations->{$k}->{'status'}) {
-					$translations->{$k}->{'status'} = 8 ;
+				if (!defined($translations->{$k}->{'type'})) {
 					$translations->{$k}->{'type'} = 'Web';
-					print STDERR "(update_db_CVS) Status not known for $k (setting it to default)\n" if $debug;
+					print STDERR "(update_db_CVS) Type not known (setting it to default)\n" if $debug;
+				}
+				if (!defined($translations->{$k}->{'status'})) {
+					$translations->{$k}->{'status'} = 8 ;
+					print STDERR "(update_db_CVS) Status not known (setting it to default)\n" if $debug;
 				}
 				$translations->{$k}->{'revision'} = $from_d->{$f};
+				print STDERR "(update_db_CVS) set original version to $from_d->{$f}\n" if $debug;
 				$translations->{$k}->{'translation_revision'} = $to_d->{$f} if ($to_d->{$f});
+				print STDERR "(update_db_CVS) set translation version to $to_d->{$f}\n" if ($debug && $to_d->{$f});
 				check_file($k, "${to_path}$f", $from_d->{$f});
 			} else {
 				$translations->{$k}->{'type'} = 'Web';
 				$translations->{$k}->{'status'} = 1;
 				$translations->{$k}->{'revision'} = $from_d->{$f};
-				print STDERR "(update_db_CVS) Warning : $k is not in the database\n" if $debug;
+				print STDERR "(update_db_CVS) Warning : not in the database\n" if $debug;
 			}
 		}
 	}
@@ -214,28 +206,34 @@ sub check_file {
 	my ($k, $name, $revision) = @_;
 	my ($oldr, $oldname);
 	unless (-r $name) {
-		print "(check_file) Missing $name\n" if $debug;
+		print STDERR "(check_file) Missing $name\n" if $debug;
 		return;
 	}
 	open(F, $name) || die $!;
 	while(<F>) {
 		if (/\s+translation_maintainer=\"(.*)?\"\s+/oi) {
 			$translations->{$k}->{'translation_maintainer'} = [ $1 ];
+			print STDERR "(check_file) found translation_maintainer $1 in WML vars\n" if $debug;
 		}
-		if (/<!--\s*translation\s+(.*)?\s*-->\s*$/oi || /\s+base_revision=\"(.*)?\"\s+/oi) {
+		if (/<!--\s*translation\s+(.*)?\s*-->\s*$/oi || /\s+base_revision=\"([\d\.]+)?\"\s+/oi) {
 			$oldr = $1;
 			$translations->{$k}->{'base_revision'} = $oldr;
+			print STDERR "(check_file) found base_revision $oldr in WML vars\n" if $debug;
 			if ($oldr eq $revision) {
 				close(F);
 				$translations->{$k}->{'status'} = 4 if ($translations->{$k}->{'status'} == 8);
+				print STDERR "(check_file) set status to 4\n" if ($debug && $translations->{$k}->{'status'} == 8);
+				close(F);
 				return;
 			}
 			last;
 		}
 	}
 	close(F);
-	$translations->{$k}->{'status'} = 5;
+	$translations->{$k}->{'status'} = 5 if ($translations->{$k}->{'status'} == 8);
+	print STDERR "(check_file) set status to 5\n" if ($debug && $translations->{$k}->{'status'} == 8);
 	$translations->{$k}->{'diff'} = "?r1=$oldr&r2=$revision&cvsroot=webwml";
+	print STDERR "(check_file) set diff args\n" if $debug;
 }
 
 
@@ -299,9 +297,8 @@ foreach $k (sort keys %$translations) {
 		if (!$t->{'translation_url'});
 
         print "<A HREF=\"$t->{'translation_url'}\">" if $t->{'translation_url'};
-        print "(No se dispone de enlace)" if !$t->{'translation_url'};
-
-	print "<B><I>$t->{'translation_name'}</I> $t->{'translation_sub_name'}</B>";
+ 	print "<B><I>$t->{'translation_name'}</I> $t->{'translation_sub_name'}</B>";
+	print "$tag{'no url'}" if !$t->{'translation_url'};
 	print "</A>" if $t->{'translation_url'};
 #	print "<BLOCKQUOTE>";
 	my $translation_source_name = $t->{'translation_cvs_url'};
@@ -375,4 +372,4 @@ merge_db();
 # Turn this on to be able to run this program standalone
 #update_db_CVS();
 #update_db_format();
-#dump_html(-1,"web");
+#dump_html(2,"web");
