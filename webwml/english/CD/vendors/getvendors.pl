@@ -31,15 +31,18 @@ my $rv = $sth->execute();
 print $header;
 my @row;
 while ( @row = $sth->fetchrow_array ) {
-    my ($country, $cc, $vsth, $vrv, $tmpstr, $cdstr, $archstr,$sql);
+    my ($country, $cc, $vsth, $vrv, $tmpstr, $cdstr, $dvdstr, $archstr,$sql);
     my @cdtypes;
+    my @dvdtypes;
     my @archs;
     my ($name, $email, $url, $urldeb,$contribution,$ship,
         $officialcd, $ocd_nonfree, $ocd_nonus, $ocd_vendor, $ocd_contrib,
         $vendorcd, $vcd_nonfree, $vcd_nonus, $vcd_contrib, $nonuscd,
         $develsscd, $nonfreecd, $contribcd, $customcd,
-        $arch_alpha, $arch_arm, $arch_i386, $arch_m68k, $arch_powerpc,
-        $arch_sparc, $arch_source, $hurd_i386, $hurd_source);
+        $officialdvd, $vendordvd, $develssdvd,
+        $arch_alpha, $arch_arm, $arch_hppa, $arch_i386, $arch_ia64, 
+        $arch_m68k, $arch_mips, $arch_powerpc, $arch_s390, $arch_sparc, 
+        $arch_source, $hurd_i386, $hurd_source);
 
     $country = $row[0];
     $cc = uc($country);
@@ -49,7 +52,9 @@ while ( @row = $sth->fetchrow_array ) {
     $sql .= "officialcd,ocd_nonfree,ocd_nonus,ocd_vendor,ocd_contrib, ";
     $sql .= "vendorcd,vcd_nonfree,vcd_nonus,vcd_contrib, ";
     $sql .= "nonuscd,develsscd,nonfreecd, contribcd,customcd, ";
-    $sql .= "arch_alpha,arch_arm,arch_i386,arch_m68k,arch_powerpc,arch_sparc, ";
+    $sql .= "officialdvd, vendordvd, develssdvd, ";
+    $sql .= "arch_alpha, arch_arm, arch_hppa, arch_i386, arch_ia64, ";
+    $sql .= "arch_m68k, arch_mips, arch_powerpc, arch_s390, arch_sparc, ";
     $sql .= " arch_source, hurd_i386, hurd_source ";
     $sql .= "from debiancd WHERE country='$country' AND hidden = 'f' ORDER BY name";
     $vsth = $dbh->prepare($sql);
@@ -58,7 +63,9 @@ while ( @row = $sth->fetchrow_array ) {
         \$officialcd, \$ocd_nonfree, \$ocd_nonus, \$ocd_vendor, \$ocd_contrib,
         \$vendorcd, \$vcd_nonfree, \$vcd_nonus, \$vcd_contrib, 
         \$nonuscd, \$develsscd, \$nonfreecd, \$contribcd, \$customcd,
-        \$arch_alpha, \$arch_arm, \$arch_i386, \$arch_m68k, \$arch_powerpc,
+        \$officialdvd, \$vendordvd, \$develssdvd,
+        \$arch_alpha, \$arch_arm, \$arch_hppa, \$arch_i386, \$arch_ia64,
+        \$arch_m68k, \$arch_mips, \$arch_powerpc, \$arch_s390,
         \$arch_sparc, \$arch_source, \$hurd_i386, \$hurd_source);
     while ($vsth->fetch) {
         print "<vendorentry>\n";
@@ -120,6 +127,23 @@ while ( @row = $sth->fetchrow_array ) {
         $cdstr = join ' ; ', @cdtypes;
         print "$cdstr\n";
 
+        if ($officialdvd || $vendordvd || $develssdvd) {
+            print "    </TD></TR><TR><TD colspan=\"2\">\n";
+            print "    <dvdtype> ";
+            @dvdtypes = ();
+            if ($officialdvd) {
+                push @dvdtypes, "<OfficialCD>";
+            }
+            if ($vendordvd) {
+                push @dvdtypes, "<VendorRelease>";
+            }
+            if ($develssdvd) {
+                push @dvdtypes, "<DevelopmentSnapshot>";
+            }
+            $dvdstr = join ' ; ', @dvdtypes;
+            print "$dvdstr\n";
+        }
+
         print "    </TD></TR><TR><TD colspan=\"2\">\n";
         print "    <architectures> ";
         @archs = ();
@@ -129,14 +153,26 @@ while ( @row = $sth->fetchrow_array ) {
         if ($arch_arm) {
             push @archs, "ARM";
         }
+        if ($arch_hppa) {
+            push @archs, "HPPA";
+        }
         if ($arch_i386) {
             push @archs, "i386";
+        }
+        if ($arch_ia64) {
+            push @archs, "IA-64";
         }
         if ($arch_m68k) {
             push @archs, "m68k";
         }
+        if ($arch_mips) {
+            push @archs, "MIPS";
+        }
         if ($arch_powerpc) {
             push @archs, "PowerPC";
+        }
+        if ($arch_s390) {
+            push @archs, "S/390";
         }
         if ($arch_sparc) {
             push @archs, "Sparc";
