@@ -127,7 +127,7 @@ if ((defined $warns{"msgfmt"})||(defined $warns{"other"})) {
 if (defined $warns{"msgfmt"}) {
     print  <<'EOF'
 <a name=w_msgfmt><h3><warn-msgfmt></h3>
-<warn-msgfmt-text>
+$slice{'warn-msgfmt-text'}
 EOF
     ;
 
@@ -155,7 +155,7 @@ if ((defined $errors{"msgfmt"})||
 }
 
 if (defined $errors{"msgfmt"}) {
-    print "<a name=e_msgfmt><h3><err-msgfmt></h3><err-msgfmt-text>\n";
+    print "<a name=e_msgfmt><h3><err-msgfmt></h3>$slice{'err-msgfmt-text'}\n";
     print_section("errors of msgfmt",
 		  1, #col_file true
 		  "<tr><td><package><td><file><td><err-msgfmt>\n",
@@ -164,7 +164,7 @@ if (defined $errors{"msgfmt"}) {
 
 #### ERRORS of section
 if (defined $errors{"section"}) {
-    print "<a name=section><h3><err-sec></h3>\n<err-sec-text>\n<table border=1>";
+    print "<a name=section><h3><err-sec></h3>\n$slice{err-sec-text}\n<table border=1>";
     print_section("errors of section and priority",
 		  0, #col_file false
 		  "<tr><td><package><td><err-sec>\n",
@@ -173,7 +173,7 @@ if (defined $errors{"section"}) {
 
 #### ERRORS of guess
 if (defined $errors{"guess"}) {
-    print  "<a name=guess><h3><err-guess></h3>\n<err-guess-text>\n<table border=1>\n";
+    print  "<a name=guess><h3><err-guess></h3>\n$slice{err-guess-text}\n<table border=1>\n";
     print_section("errors of guess",
 		  0, #col_file false
 		  "<tr><td><package><td><err-guess>\n",
