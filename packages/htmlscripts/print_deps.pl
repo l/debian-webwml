@@ -109,7 +109,7 @@ sub print_deps {
 
 	}
 	
-	$res .= "\n".join( "<dt>".gettext( "or " )." ", @res_pkgs )."\n";
+	$res .= "\n".join( "<dt>".gettext( "or" )." ", @res_pkgs )."\n";
     }
     if (@$relations) {
 	$res .= "</dl></li>\n";
@@ -206,7 +206,7 @@ sub print_deps_ds {
 	    }
 
 	}
-	push @res, join( gettext( " or " ), @res_pkgs );
+	push @res, join( " ".gettext( "or" )." ", @res_pkgs );
     }
     
     if (@res) {
@@ -262,6 +262,7 @@ sub print_reverse_rel_ds {
     }
 
     if (@res) {
+	#FIXME: gettext
 	$res = "<li>Reverse $type: ".join( ", ", @res)."</li>\n";
     }
     return $res;
