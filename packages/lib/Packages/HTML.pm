@@ -55,7 +55,7 @@ sub simple_menu {
 }
 
 sub title {
-    return "<h1>$_[0]</h1>";
+    return "<h1>$_[0]</h1>\n";
 }
 
 sub marker {
@@ -245,7 +245,7 @@ sub ds_begin {
     return $ds_begin;
 }
 sub ds_item {
-    return "$ds_item_desc$_[0]$ds_item$_[1]$ds_item_end";
+    return "$ds_item_desc$_[0]$ds_item$_[1]$ds_item_end\n";
 }
 sub ds_end {
     return $ds_end;
