@@ -9,7 +9,8 @@ SUBS=artwork faq http-ftp jigdo-cd mirroring netinst pictures pik releases vendo
 NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml releases/index.wml
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml \
+  $(ENGLISHDIR)/CD/releases/index.wml
 	$(WML) $(<F)
 
 misc.$(LANGUAGE).html: misc.wml $(TEMPLDIR)/cdimage.wml
