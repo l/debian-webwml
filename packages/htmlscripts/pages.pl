@@ -90,9 +90,9 @@ sub package_index_walker {
 	my %subdists = $pkg->get_arch_fields( 'subdistribution', 
 					      $env->{archs} );
 
-	my $txt_desc = $env->{db}->get_short_desc( $desc_md5s{max_unique}, 
-						   $env->{lang} );
-	my $desc = encode_entities( $txt_desc, "<>&\"" );
+	my $short_desc_txt = conv_desc( $env->{lang}, $env->{db}->get_short_desc( $desc_md5s{max_unique}, 
+										  $env->{lang} ) );
+	my $short_desc = encode_entities( $short_desc_txt, "<>&\"" );
 
 	my ( $version, $section, $archive, $subdist );
 	$version = ($pkg->get_version_list)[0];
@@ -125,8 +125,8 @@ sub package_index_walker {
 	    $str .=  " [<font color=\"red\">$subdist</font>]\n";
 	    $txt_str .=  " [$subdist]";
 	}
-	$str .= "</dt>\n     <dd>$desc</dd>\n";
-	$txt_str .= " $txt_desc\n";
+	$str .= "</dt>\n     <dd>$short_desc</dd>\n";
+	$txt_str .= " $short_desc_txt\n";
 	${$env->{all_package}} .= $str;
 	${$env->{all_pkg_txt}} .= $txt_str;
 	$env->{si}->{$section} .= $str if $section;
