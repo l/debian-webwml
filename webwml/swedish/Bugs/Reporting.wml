@@ -1,0 +1,270 @@
+#use wml::debian::template title="Debians felrapporteringssystem" NOHEADER=yes WEBMASTER=bugs
+
+<h1>Hur man rapporterar fel (buggar) i Debian</h1>
+
+Sänd e-post till
+<A href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></A>,
+enligt nedan.
+<p>
+
+Rapportera inte flera orelaterade fel i samma meddelande, speciellt inte om
+de berör olika paket.
+Skicka inte heller felrapporten till någon av sändlistorna, eller till andra
+mottagare än <code>submit@bugs</code> (för detaljer om hur du gör detta på
+rätt sätt, se <A href="#xcc">nedan</A>).
+<p>
+
+En lista över för närvarande ännu ej avhjälpta fel finns
+<a href="./">på webben</A> såväl som på <a href="Access">andra ställen</a>,
+se andra dokument för detaljer.
+<p>
+
+Du bör lägga in ett "pseudo-brevhuvud" i början på meddelandekroppen, med
+raderna <code>Package:</code> och <code>Version:</code> för att ange namn
+och version på det paket som innehåller felet
+(dessa rader skrivas i början på raderna, och felhanteringssystemet förstår
+för närvarande dem inte om de finns i ett MIME- eller PGP-kodat brev.)
+Du kan få fram paketnamn och versionsnummer med
+<code>dpkg --search</code> och <code>dpkg --list</code>, se
+<code>dpkg --help</code> för information.
+
+<em>Se nedan för <a href="#details">ytterligare krav</A></em>.
+<p>
+
+Det finns några pseudo-paket som används för att lägga in
+<code>Package</code>-raden när du rapporterar ett fel i någonting annat än
+ett egentligt Debianprogramvarupaket.
+Det finns en <A href="db/ix/pseudopackages.html">lista över dessa</A>
+på webbsidorna.
+
+
+<h2><A name="example">Exempel</A></h2>
+
+En felrapport, med brevhuvud, ser ut ungefär så här:
+<pre>
+  To: submit@bugs.debian.org
+  From: diligent@testing.linux.org
+  Subject: Hello says `goodbye'
+
+  <A name="pseudoheader">Package: hello</A>
+  Version: 1.3-2
+
+  When I invoke `hello' without arguments from an ordinary shell
+  prompt it prints `goodbye', rather than the expected `hello, world'.
+  Here is a transcript:
+
+  $ hello
+  goodbye
+  $ /usr/bin/hello
+  goodbye
+  $
+
+  I suggest that the output string, in hello.c, be corrected.
+
+  I am using Debian 1.1, kernel version 1.3.99.15z
+  and libc 5.2.18.3.2.1.3-beta.
+</pre>
+
+<h2><A name="details">Vad som bör inkluderas i rapporten</A></h2>
+
+<ul>
+<li>En <em>exakt</em> och <em>komplett</em> avskrift av det/de
+    felmeddelanden som skrivs ut eller loggas.
+    Detta är mycket viktigt!
+<li>Precis vad du skriver eller gjorde när problemet uppstod.
+<li>En beskrivning av felaktigheten: beskriv vad du förväntade dig skulle
+    hända, och vad du såg faktiskt hände.
+    En avskrift av en körning är ett bra sätt att visa detta.
+<li>Förslag på rättning, eller till och med en patch, om du har någon.
+<li>Detaljer om hur du konfigurerat programmet i vilket felet uppstod.
+    Inkludera hela konfigurationsfilen.
+<li>Versionsnumren på eventuella paket det felaktiga paketet
+    är beroende på.
+<li>Vilken version av kärnan du använder (skriv <code>uname -a</code>).
+<li>Vilken version av C-biblioteket du använder
+    (skriv <code>ls -l /lib/libc.so.6</code>).
+<li>Andra detaljer om ditt Linuxsystem om det verkar vara passande.
+    Om du till exempel har ett problem med ett Perlskript, så bör du ange
+    versionsnumret på perlbinären (<code>perl -v</code>).
+<li>Lämpliga detaljer om din dators maskinvara.
+    Om du rapporterar ett problem med en drivrutin, se till att lista
+    <em>all</em> maskinvara i din dator, eftersom problem ofta beror
+    på IRQ- eller I/O-adresskonflikter.
+</ul>
+
+Inkludera alla detaljer som verkar vara relevanta, faran är väldigt liten
+att du inkluderar för mycket information och rapporten därmed blir för stor.
+Om de är små bör du även inkludera eventuella filer som kan användas för att
+reproducera felet (om de innehåller konstiga tecken eller liknande är det
+säkrast att skicka dem uu-kodade).
+
+<p>
+
+Självklart bör du, som i alla annan e-post, ange en tydlig och beskrivande
+ärenderad i brevhuvudet.
+Ärenderaden används initialt som titel för rapporten i
+felhanteringssystemet, så försök göra den informativ!
+
+<h2><A name="xcc">Skicka kopior av felrapporten till andra adresser</A></h2>
+
+Ibland är det nödvändigt att skicka en kopia av rapporten, förutom till
+<code>debian-bugs-dist</code> och den som är ansvarig för paketet, vilket är
+var den normalt skickas.
+<p>
+
+Du kan göra detta genom att skicka en kopia (Cc) av din felrapport till de
+andra adresserna, men i så fall kommer inte de andra kopiorna att ha
+felrapportens nummer i <code>Reply-To</code>-fältet och ärenderaden, och
+när dessa mottagare sedan svarar kommer de antagligen att ha kvar
+<code>submit@bugs.debian.org</code> i brevhuvudet, vilket får till följd att
+deras svar anses som en ny felrapport.
+Detta leder till att det blir alltför många duplicerade rapporter.
+<p>
+
+Det <em>rätta</em> sättet att göra detta är att använda raden
+<code>X-Debian-CC</code> i brevhuvudet.
+Lägg till en rad som den nedan till brevhuvudet (inte pseudo-brevhuvudet,
+vilket har <code>Package</code>-fältet):
+<pre>
+ X-Debian-CC: other-list@cosmic.edu
+</pre>
+Detta får till följd att felhanteringssystemet skickar en kopia av din
+felrapport till adressen/-rna på <code>X-Debian-CC</code>-raden, förutom
+<code>debian-bugs-dist</code>.
+<p>
+
+Den här funktionen kan ofta kombineras med att skicka till
+<code>quiet</code> - se nedan.
+
+
+<h2><A name="severities">Allvarlighetsgrad</A></h2>
+
+Om rapporten handlar om ett speciellt allvarligt fel, eller bara är en
+önskan om en ny funktion, så kan du ange vilken allvarlighetsgrad du tycker
+att felrapporten ska ha.
+Det är dock inget krav att du gör det, och utvecklarna kommer att tilldela
+en allvarlighetsgrad till din rapport om du inte gör det.
+<p>
+
+För att ange hur allvarlig din rapport är lägger du raden
+<code>Severity: <var>allvarlighet</var></code> i ditt pseudo-brevhuvud,
+tillsammans med <code>Package</code> och <code>Version</code>.
+Vilka grader som finns anges i
+<A href="Developer#severities">utvecklardokumentationen</A>.
+
+
+<h2>Inte skicka till sändlistorna - mindre felrapporter</h2>
+
+Om felrapporten är mindre (till exempel ett stavfel i dokumentationen, eller
+andra triviala problem), eller om du skickar in många felrapporter på en
+gång, skicka dem då till <code>maintonly@bugs</code> eller
+<code>quiet@bugs</code>.
+<code>maintonly</code> skickar rapporten till den som är ansvarig för
+paketet (vilket naturligtvis kräver att du anger rätt
+<code>Package</code>-rad i ditt pseudo-brevhuvud, och att det finns en känd
+ansvarig), medan <code>quiet</code> inte skickar vidare rapporten
+någonstans, utan bara arkiverar den som ett fel (vilket till exempel kan
+vara användbart om du skickar in många likartade fel och bara vill posta en
+sammanfattning).
+<p>
+
+Om du gör detta kommer felrapporteringssystemet att sätta
+<code>Reply-To</code> i eventuella vidaresända meddelanden så att de som
+standard hanteras på samma sätt som den ursprungliga rapporten.
+
+<h3>Okända paket, eller fel utan <code>Package</code></h3>
+
+Om felrapporteringssystemet inte vet vem som är ansvarig för det paket som
+anges kommer det att skicka rapporten till <code>debian-bugs-dist</code>
+äveon om <code>maintonly</code> användes.
+<p>
+
+När du skickar till <code>maintonly@bugs</code> eller
+<var>nnn</var><code>-maintonly@bugs</code> så måste du vara säker på att
+felrapporten tilldelas rätt paket, genom att lägga in en korrekt
+<code>Package</code>-rad i början av den ursprungliga felrapporten, eller
+genom att använda <A href="server-control"><code>control@bugs</code></A> för
+att flytta över rapporten till rätt paket, om det inte är rätt från början.
+
+<h2>Använda <code>dpkg</code> för att hitta paket och version till rapporten</h2>
+
+Om du rapporterar ett fel i ett kommando kan du ta reda op vilket paket som
+installerade det genom att använda <code>dpkg --search</code>.
+Du kan ta reda på vilken version av paketet du har installerat genom att
+använda <code>dpkg --list</code> eller <code>dpkg --status</code>.
+
+<p>
+
+Exempelvis:
+<pre>
+$ which dpkg
+/usr/bin/dpkg
+$ type dpkg
+dpkg is hashed (/usr/bin/dpkg)
+$ dpkg --search /usr/bin/dpkg
+dpkg: /usr/bin/dpkg
+$ dpkg --search '*/dpkg'
+dpkg: /usr/doc/copyright/dpkg
+dpkg: /var/lib/dpkg
+dpkg: /usr/bin/dpkg
+dpkg: /usr/lib/dpkg
+dpkg: /usr/doc/dpkg
+$ dpkg --list dpkg
+Desired=Unknown/Install/Remove/Purge
+| Status=Not/Installed/Config-files/Unpacked/Failed-config/Half-installed
+|/ Err?=(none)/Hold/Reinst-required/X=both-problems (Status,Err: uppercase=bad)
+||/ Name            Version        Description
++++-===============-==============-============================================
+ii  dpkg            1.2.9elf       Package maintenance system for Debian GNU/Linux
+$ dpkg --status dpkg
+Package: dpkg
+Essential: yes
+Status: install ok installed
+Priority: required
+Section: base
+Maintainer: Ian Jackson &lt;ian@chiark.chu.cam.ac.uk&gt;
+Version: 1.2.9elf
+Replaces: dpkgname
+Pre-Depends: libc5 (&gt;= 5.2.18-2), ncurses3.0
+Conflicts: dpkgname
+Description: Package maintenance system for Debian GNU/Linux
+ This package contains the programs which handle the installation and
+ removal of packages on your system.
+ .
+ The primary interface for the dpkg suite is the `dselect' program;
+ a more low-level and less user-friendly interface is available in
+ the form of the `dpkg' command.
+k
+$
+</pre>
+
+
+
+<hr>
+Andra sidor:
+<ul>
+<li><A href="./">Framsida för felrapporteringssystemet.</A>
+<li><A href="Developer">Utvecklarinformation om hur systemet används.</A>
+<li><A href="Access">Komma åt loggarna på andra sätt än via webben.</A>
+<li><A href="db/ix/full.html">En komplett lista över ej åtgärdade och
+nyligen inkomna felrapporter.</A>
+<li><A href="db/ix/packages.html">Paket med felrapporter.</A>
+<li><A href="db/ix/maintainers.html">Ansvariga för paket för vilka det finns felrapporter.</A>
+<li><A href="../">Debian GNU/Linux hemsida.</A>
+
+</ul>
+
+<hr>
+<address>
+<A href="http://www.chiark.greenend.org.uk/~ijackson/">Ian Jackson</A>
+ /
+<A href="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>.
+20 Jan 1998.
+<p>
+Debians felrapporteringssystem
+© 1994-1997 Ian Jackson, © 1997 nCipher Corporation Ltd,
+© 1995 Steven Brenner.
+<A href="http://www.chiark.greenend.org.uk/~ian/debbugs/">Tillgänglig
+under GPL.</A>
+
+</address>

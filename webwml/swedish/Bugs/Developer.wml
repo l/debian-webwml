@@ -1,0 +1,246 @@
+#use wml::debian::template title="Debians felrapporteringssystem" NOHEADER=yes WEBMASTER=bugs
+<h1><A name="developers">Utvecklarinformation om hur systemet används</A></h1>
+
+Det första som händer är att en användare skickar in en felrapport per
+e-post till <code>submit@bugs.debian.org</code>.
+Felrapporten tilldelas ett nummer, vilket sänds tillbaka till användaren som
+kvittens, och vidaresänds sedan till <code>debian-bugs-dist</code>.
+Om avsändaren inkluderade en <code>Package</code>-rad som angav ett paket
+med en känd underhållare, så skickas även en kopia dit.
+<p>
+
+Ärenderaden kommer att få texten
+"<code>Bug#</code><var>nnn</var><code>:</code>" tillagd, och
+<code>Reply-To</code> sätts så att den inkluderar både felrapportens
+avsändare och <var>nnn</var><code>@bugs.debian.org</code>.
+<p>
+
+<h2>Stänga en felrapport</h2>
+
+Om en utvecklare som får felrapporten från hanteringssystemet, eller ser det
+på <code>debian-bugs-dist</code>, tar hand om det ska han/hon använda
+svarsfunktionen i e-postläsaren och sedan redigera mottagarfältet så att det
+står <var>nnn</var><code>-done@bugs.debian.org</code> istället för
+<var>nnn</var><code>@bugs</code>
+(<var>nnn</var><code>-close</code> finns även som alias till
+<var>nnn</var><code>-done</code>).
+
+<p>
+Felrapportens ursprungliga avsändare inkluderas i standardmottagarfältet,
+eftersom felrapporteringssystemet lade till det i <code>Reply-To</code>.
+<p>
+
+'Done'-meddelanden vidaresänds inte automatiskt till sändlista, så det kan
+ibland vara värt besväret att inkludera sändlistan
+<code>debian-devel@lists.debian.org</code> om övriga utvecklare kan tänkas
+vara intresserade.
+<p>
+
+Personen som stänger felrapporten, såväl som personen som ursprungligen
+rapporterade den kommer båda att få en notifiering om det rapportens status
+ändras.
+
+<h2>Uppföljningsmeddelanden</h2>
+
+Om en utvecklare vill svara på rapporten utan att markera felet som avhjälpt
+går det helt enkelt att svara på meddelande.
+Svaret kommer (som standard) att skickas till
+<var>nnn</var><code>@bugs</code> och den som ursprungligen rapporterade
+felet.
+Felrapporteringssystemet kommer att arkivera svaret, tillsammans med övriga
+loggar, och vidaresända det till <code>debian-bugs-dist</code>.
+Felet rapporteras inte som avhjälpt.
+En utvecklare kan explicit skicka e-post till den som rapporterade felet
+genom att använda adressen <var>nnn</var><code>-submitter@bugs</code>.
+<p>
+
+Om du vill sända ett uppföljningsmeddelande som inte är lämpligt för
+<code>debian-bugs-dist</code> kan du göra det genom att skicka till
+<var>nnn</var><code>-quiet@bugs</code> eller
+<var>nnn</var><code>-maintonly@bugs</code>, vilka enbart arkiverar det (utan
+att vidaresända det någonstans), respektive enbart skickar det till den som
+har hand om paketet i fråga.
+<p>
+
+Använd <em>inte</em> 'svara till alla mottagare' i ditt e-postprogram såvida
+du inte manuellt vill redigera mottagarlistan ordentligt.
+Du bör definitivt inte skicka uppföljningsmeddelandet till både
+<var>nnn</var><code>@bugs.debian.org</code> och
+<code>submit@bugs.debian.org</code>, eftersom det kommer generera två kopior
+i felrapporteringssystemet, och båda kommer att skickas separat till
+<code>debian-bugs-dist</code>.
+<p>
+
+<h2><A name="severities">Allvarlighetsgrad</A></h2>
+
+Systemet lagrar en "allvarlighetsgrad" tillsammans med varje felrapport.
+Denna sätts som standard till <code>normal</code>, men kan ändras, antingen
+genom att skicka med en rad i ett "pseudo-brevhuvud" <code>Severity</code>
+när felet rapporteras (se <A href="Reporting#pseudoheader">instruktioner
+för att rapportera fel</A>), eller genom att använda
+<A href="#requestserv">kontrollserverns</A>
+<code>severity</code>-kommando.
+
+<p>
+
+Allvarlighetsgraderna är:
+
+<dl>
+<dt><code>critical</code> (kritiskt)
+<dd>anger att orelaterad programvara i systemet (eller hela systemet) inte
+fungerar, kan orsaka kritiskt databortfall, eller att ett säkerhetshål
+introduceras på system där paketet installeras.
+
+<dt><code>grave</code> (allvarligt)
+<dd>felet gör paketet i fråga helt eller till stor del oanvändbart, orsakar
+databortfall, eller introducerar ett säkerhetshål som ger åtkomst till
+konton hos de som använder paketet.
+
+<dt><code>important</code> (viktigt)
+<dd>andra fel som gör paketet olämpligt att släppas.
+
+<dt><code>normal</code> (normalt)
+<dd>standardvärdet, för normala fel.
+ 
+<dt><code>wishlist</code> (önskelista)
+<dd>förfrågningar om nya funktioner, och även för fel som är väldigt svåra
+att fixa på grund av större designöverväganden.
+
+<dt><code>fixed</code> (fixat)
+
+<dd>för fel som är rättade, men som inte bör stängas än.
+Fel som rättas av utomstående får sin allvarlighetsgrad satt till "fixed".
+
+</dl>
+
+<h2><A name="forward">Ange att du har skickat vidare en felrapport</A></h2>
+
+När en utvecklare skickar vidare en felrapport till den som "uppströms"
+tillverkar den källkod som Debianpaketet härstammar från bör notera detta i
+felrapporteringssystemet så här:
+<p>
+
+Se till att mottagarfältet i ditt brev till författaren bara anger
+författarens/-rnas adress/er och ange både den som rapporterade felet och
+<var>nnn</var><code>-forwarded@bugs.debian.org</code> i
+<code>Cc</code>-fältet.
+<p>
+
+Be författaren att behålla <code>Cc</code> till
+<var>nnn</var><code>-forwarded@bugs</code> när han/hon svarar,
+så att felrapporteringssystemet arkiverar svaret tillsammans med den
+ursprungliga rapporten.
+<p>
+
+När felrapporteringssystemet får ett meddelande till
+<var>nnn</var><code>-forwarded</code> markerar det den angivna felrapporten
+som vidaresänd till adresserna i mottagarfältet på det brev det tar emot.
+<p>
+
+Du kan även manipulera 'forwarded to'-informationen genom att skicka
+meddelanden till
+<A href="server-control"><code>control@bugs.debian.org</code></A>.
+
+<h2>Sammanfattande postningar till <code>debian-bugs-reports</code></h2>
+
+Varje fredag skickas en lista av ej avklarade felrapporter till
+<code>debian-bugs-reports</code>, sorterade efter felrapportens ålder,
+och varje tisdag skickas en lista över fel det har tagit för lång tid för
+dem att få svar, sorterad efter paketansvariga.
+<p>
+
+<A name="maintincorrect">Om fel person anges som ansvarig för ett paket</A>
+är det vanligtvis för att den ansvarige nyligen har ändrats, och att den som
+tagit över ännu inte har skickat upp en ny version av paketet med ett ändrat
+<code>Maintainer</code>-kontrollfält.
+Detta rättas när paketet skickas upp, men det finns även en lista över
+ändrade ansvariga i vilka ändringar kan lagras, något som kan användas om
+den ny version av paketet inte förväntas skickas upp på ett tag.
+Kontakta <code>override-change@debian.org</code> för ändringar.
+
+<h2><A name="requestserv">Nyöppna, flytta över och manipulera
+felrapporter</A></h2>
+
+Det är möjligt att flytta över felrapporter till andra paket, att nyöppna
+de som felaktigt har stängts, att modifiera informationen som säger var (om
+någonstans) rapporten har vidaresänts, för att ändra allvarlighetsgraden
+eller rapporttiteln, och för att slå ihop eller dela på felrapporter.
+Detta görs genom att skicka e-post till
+<code>control@bugs.debian.org</code>.
+<p>
+
+<A href="server-control">Formatet på dessa kontrollmeddelanden</A> beskrivs
+i ett annat dokument på webben samt i filen
+<code>bug-maint-mailcontrol.txt</code>.
+En version i ren text kan fås genom att skicka ordet <code>help</code> till
+servern på adressen ovan.
+
+<h2>Mer eller mindre omodern ärenderadavsökning</h2>
+
+Meddelanden som kommer till <code>submit</code> eller <code>bugs</code> vars
+ärenderader börjar med <code>Bug#</code><var>nnn</var> räknas som om de hade
+sänts till <var>nnn</var><code>@bugs</code>.
+Detta används både för bakåtkompatibilitet med post som vidaresänts från de
+gamla adresserna, och för att fånga uppföljningar som skickas till
+<code>submit</code> av misstag (till exempel, genom att svara till alla
+mottagare).
+
+<p>
+
+En liknande funktion finns för <code>maintonly</code>,
+<code>done</code>, <code>quiet</code> och <code>forwarded</code>,
+vilka räknar e-post med en ärenderad enligt ovan som om de sänts till
+<var>nnn-vaddetnuvar</var><code>@bugs</code>.
+
+<p>
+
+Meddelanden som kommer till <code>forwarded</code> och <code>done</code>
+utan något felrapportsnummer, och dessutom utan ett nummer i ärenderaden
+arkiveras under 'skräp' och behålls i några veckor, men ignoreras i övrigt.
+
+<h2><A name="future">Framtidsplaner</A></h2>
+
+Meningen är att <code>Package:</code>-fältet ska komma att krävas - för
+tillfället ger avsaknaden av en sådan bara ett varningsmeddelande.
+
+<h2>Föråldrad <code>X-Debian-PR: quiet</code>-funktion</h2>
+
+Tidigare var det möjligt att undvika att felrapporteringssystemet
+vidaresände meddelanden det tog emot till <code>debian-bugs</code>
+genom att lägga in raden <code>X-Debian-PR: quiet</code> i brevhuvudet.
+<p>
+
+Denna rad ignoreras numera, använd istället adresserna
+<code>quiet</code> och <var>nnn</var><code>-quiet</code> (eller
+<code>maintonly</code> eller <var>nnn</var><code>-maintonly</code>).
+
+
+<hr>
+Andra sidor:
+<ul>
+<li><A href="./">Framsida för felrapporteringssystemet.</A>
+<li><A href="Reporting">Instruktioner om hur man rapporterar fel.</A>
+<li><A href="Access">Komma åt loggarna på andra sätt än via webben.</A>
+<li><A href="server-refcard">E-postserverns referenskort.</A>
+<li><A href="db/ix/full.html">En komplett lista över ej åtgärdade och
+nyligen inkomna felrapporter.</A>
+<li><A href="db/ix/packages.html">Paket med felrapporter.</A>
+<li><A href="db/ix/maintainers.html">Ansvariga för paket för vilka det finns felrapporter.</A>
+<li><A href="../">Debian GNU/Linux hemsida.</A>
+
+</ul>
+
+<hr>
+<address>
+<A href="http://www.chiark.greenend.org.uk/~ijackson/">Ian Jackson</A>
+ /
+<A href="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>.
+20 Jan 1998.
+<p>
+Debians felrapporteringssystem
+© 1994-1997 Ian Jackson, © 1997 nCipher Corporation Ltd,
+© 1995 Steven Brenner.
+<A href="http://www.chiark.greenend.org.uk/~ian/debbugs/">Tillgänglig
+under GPL.</A>
+
+</address>
