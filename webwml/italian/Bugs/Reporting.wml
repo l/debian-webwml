@@ -1,0 +1,266 @@
+#use wml::debian::template title="Debian bug tracking system" NOHEADER=yes WEBMASTER=bugs
+
+<h1>Come segnalare una anomalia in Debian</h1>
+
+Manda un messaggio a
+<A href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></A>,
+come descritto qui sotto.
+<p>
+
+Per favore non segnalate più anomalie slegate - soprattutto quelle
+per pacchetti differenti - in un unico messaggio. Inoltre non mandate
+la vostra segnalazione sulle liste di messaggi o ad altri diversi da
+<code>submit@bugs</code> (per i dettagli su come fare questo
+correttamente, vedere <A href="#xcc">più avanti</A>).
+<p>
+
+Le liste delle anomalia già segnalate sono disponibili <A href="./">
+sul World Wide Web</A> e <A href="Access">altrove</A> - vedi altri
+documeneti per i dettagli.
+<p>
+
+Va inserita una pseudo intestazione all'inizio del testo del
+mmessaggio con delle linee <code>Package:</code> e <code>Version:</code>
+che diano il nome e la versione del pacchetto che presenta l'anomalia.
+(I campi della pseudo intestazione devono cominciare a inizio linea e
+non devono essere inseriti in sezioni MIME o PGP.)
+(Puoi raccogliere queste informazioni tramite i comandi
+<code>dpkg --search</code> e <code>dpkg --list</code>; vedi anche
+<code>dpkg --help</code>.
+
+<em>Vedi inoltre le <A href="#details">ulteriori richieste</A></em>.
+<p>
+
+Ci sono inoltre alcuni pseudo pacchetti disponibili per segnalare
+anomalie che non rientrano in pacchetti reali.
+C'è <A href="db/ix/pseudopackages.html">una lista di questi</A> 
+sulle pagine WWW relative alle anomalie.
+
+
+<h2><A name="example">Esempio</A></h2>
+
+Una segnalazione, comprensica dell'intestazione del messaggio,
+assomigia a quanto scritto sotto, ma è opportuno scriverla in inglese.
+<pre>
+  To: submit@bugs.debian.org
+  From: diligent@testing.linux.org
+  Subject: Hello stampa `goodbye'
+
+  <A name="pseudoheader">Package: hello</A>
+  Version: 1.3-2
+
+  Quando invico il programma `hello' senza rgomenti dall'interpreti
+  dei comandi normale, questo stampa la stringa `goodbye', piuttosto
+  che `hello, word'.
+  Ecco l'esempio
+
+  $ hello
+  goodbye
+  $ /usr/bin/hello
+  goodbye
+  $
+
+  Suggerirei di cambiare la stringa stampata nel file hello.c correggendola.
+
+  Sto usando la Debian 1.1, kernel 1.3.99.15z e libc 5.2.18.3.2.1.3-beta.
+</pre>
+
+<h2><A name="details">Per favore inserite sempre:</A></h2>
+
+<ul>
+<li>Il testo <em>esatto</em> e <em>completo</em> di ogni messaggio
+d'errore stampato o memorizzato in qualche file di log. Questo
+è molto importante!
+<li>Un estratto di cosa avete fatto per riprodurre il problema.
+<li>Una descrizione del comportamento scorretto: cosa stavate
+aspettando e cosa avete invece trovato. La trascrizione di una
+breve sessione è un buon modo per mostrarlo.
+<li>Un suggerimento per la soluzione del problema o addirittura
+un patch, se lo avete.
+<li>Particolari sulla configurazione del programma che presenta il problema.
+Includendo anche i file completi.
+<li>La versione di tutti i pacchetti dai quali il pacchetto incriminato dipende.
+<li>La versione del kernel che usate (basta scrivere <code>uname -a</code>).
+<li>Quale versione della libreria C usate (scrivere <code>ls -l /lib/libc.so.6</code>).
+<li>Ogni altro particolare sul vostro sistema Linux che riteniate
+opportuno.  Ad esempio, se avete un problema con uno script Perl,
+potreste inviare la versione dell'eseguibile `perl' che usate
+(<code>perl -v</code>).
+<li>Eventuali dettagli sull'hardware della vostra macchine. Se riportate
+un problema legato ad un driver di dispositivo inserite <em>tutta</em>
+ls descrizione del vostro sistema, poiché spesso il problema può
+essere causato da un conflitto di IRQ o I/O.
+</ul>
+
+Nella descrizione includi ogni particolare che ritieni interessante -
+non c'è alcun pericolodi fare diventare la segnalazione troppo lunga.
+Se sono piccoli allega anche i file che usi per riprodurre il
+problema (magari usando uuencode per evitare problemi con i caratteri
+speciali e i file binarii.)
+<p>
+
+Naturalmente, come in oni email, usa un <code>Oggetto</code> chiaro
+e descrittivo nell'intestazione del messaggio.
+L'oggetto che scrivi verrà usato come titolo iniziale dal sistema
+di gestione, quindi cerca di renderlo informativo!
+
+<h2><A name="xcc">Invio di copie di segnalazioni ad altri indirizzi</A></h2>
+
+Può capitare di dover mandare una copia della segnalazione a qualcuno
+diverso da <code>debian-bugs-dist</code> e dal gestore del pacchetto,
+che sono quelli cui normalmente va il messaggio.
+<p>
+
+Potresti farlo inserendo gli indirizzi in più nel capo CC, ma poi
+questi non riceverebbero il numero associato alla segnalazione nel
+campo <code>Reply-To</code> e <code>Subject</code>. Quando gli altri
+destinatari faranno il `reply' del messaggio useranno l'indirizzo
+<code>submit@bugs.debian.org</code> e quindi inseriranno un duplicato
+della segnalazione.
+<p>
+
+Il modo <em>corretto</em> di fare questo è di usare il campo
+<code>X-Debbugs-CC</code> dell'intestazione. Aggiungi una linea
+tipo questa alla tua intestazione (non la pseudo intestazione
+che contiene il campo <code>Package</code>):
+<pre>
+ X-Debbugs-CC: other-list@cosmic.edu
+</pre>
+Questo farà sì che il sistema si gestione delle segnalazioni mandi
+una copia della tua segnalazione agli indirizzi specificati nel
+campo <code>X-Debbugs-CC</code> oltre che a <code>debian-bugs-dist</code>.
+<p>
+
+Questa caratteristica può essere ben combinata con l'invio a
+<code>quiet</code> - vedi oltre.
+
+
+<h2><A name="severities">Gradi di gravità</A></h2>
+
+Se una segnalazione riguarda una anomalia seria o riguarda invece
+la richiesta di una aggiunta ad un pacchetto, puoi selezionare
+tu stesso il livello di gravità della segnalazione.
+Questo non è obbligatorio, ovviamente, e gli sviluppatori
+assegneranno il livello adeguato alle segnalazioni sprovviste.
+<p>
+
+Per assegnare il livello di gravità si deve inserire una linea
+<code>Severity: <var>grado</var></code> nella pseudo intestazione,
+assiema a <code>Package</code> e <code>Version</code>. I
+livelli di gravità sono descritti nella
+<A href="Developer#severities">documentazione per gli sviluppatori</A>.
+
+
+<h2>Segnalazioni da non inviare alla lista -- segnalazioni minori</h2>
+
+Se l'anomalia non è grave (ad esempio, se c'è una svista nella
+documentazione o altro semplice errore), o se vuoi segnalare varie
+anomalie con un solo messaggio, manda il tutto a 
+<code>maintonly@bugs</code> o <code>quiet@bugs</code>.
+<code>maintonly</code> manda la segnalazione al gestore del pacchetto
+(a condizione che questo sia correttamente specificati nella
+pseud intestazione <code>Package</code> e che il gestore
+sia conosciuto) mentre <code>quiet</code> non fa assolutamente
+nessun `forward' (utile nel caso si voglia inserire varie segnalazione
+ma mandare a tutti solo un riassunto delle varie problematiche.)
+<p>
+
+Se usi questi metodi il sistema assegnerà al campo <code>Reply-To</code>
+di ogni messaggio rispedito un valore tale che ogni risposta
+verrà processata allo stesso modo della segnalazione originale.
+
+<h3>Pacchetti sconosciuti o segnalazioni senza la specifica <code>Package</code></h3>
+
+If the bug tracking system doesn't know who the maintainer of the
+relevant package is it'll forward the report to
+<code>debian-bugs-dist</code> even if <code>maintonly</code> was used.
+<p>
+
+Quando si invia a <code>maintonly@bugs</code> o
+<var>nnn</var><code>-maintonly@bugs</code> devi essere certo che
+la segnalazione sia assegnata al pacchetto corretto, inserendo
+la voce <code>Package</code> all'inizio della pseudo intestazione
+o usando <A href="server-control">il servizio <code>control@bugs</code></A>
+per (ri)assegnare la segnalazione la segnalazione nel caso non
+fosse stato fatto correttamente in precedenza.
+
+<h2>Uso di <code>dpkg</code> per avere il pacchetto e la versione da usare nella segnalazione</h2>
+
+Se stai segnalando uni'anomalia in un comando, puoi trovare in quale
+pacchetto sia distribuito usando il comando
+<code>dpkg --search</code>. Puoi avere la versione di un pacchetto
+usando i comandi
+<code>dpkg --list</code> e <code>dpkg --status</code>.
+<p>
+
+Per esempio
+<pre>
+$ which dpkg
+/usr/bin/dpkg
+$ type dpkg
+dpkg is hashed (/usr/bin/dpkg)
+$ dpkg --search /usr/bin/dpkg
+dpkg: /usr/bin/dpkg
+$ dpkg --search '*/dpkg'
+dpkg: /usr/doc/copyright/dpkg
+dpkg: /var/lib/dpkg
+dpkg: /usr/bin/dpkg
+dpkg: /usr/lib/dpkg
+dpkg: /usr/doc/dpkg
+$ dpkg --list dpkg
+Desired=Unknown/Install/Remove/Purge
+| Status=Not/Installed/Config-files/Unpacked/Failed-config/Half-installed
+|/ Err?=(none)/Hold/Reinst-required/X=both-problems (Status,Err: uppercase=bad)
+||/ Name            Version        Description
++++-===============-==============-============================================
+ii  dpkg            1.2.9elf       Package maintenance system for Debian GNU/Linux
+$ dpkg --status dpkg
+Package: dpkg
+Essential: yes
+Status: install ok installed
+Priority: required
+Section: base
+Maintainer: Ian Jackson &lt;ian@chiark.chu.cam.ac.uk&gt;
+Version: 1.2.9elf
+Replaces: dpkgname
+Pre-Depends: libc5 (&gt;= 5.2.18-2), ncurses3.0
+Conflicts: dpkgname
+Description: Package maintenance system for Debian GNU/Linux
+ This package contains the programs which handle the installation and
+ removal of packages on your system.
+ .
+ The primary interface for the dpkg suite is the `dselect' program;
+ a more low-level and less user-friendly interface is available in
+ the form of the `dpkg' command.
+
+$
+</pre>
+
+
+
+<hr>
+Altre pagine:
+<ul>
+<li><A href="./">Pagina principale del sistema di gestione delle anomalie.</A>
+<li><A href="Developer">Informazioni sul sistema di gestione delle anomalie ad uso degli sviluppatori.</A>
+<li><A href="Access">Accesso ai log in maniera diversa che tramite WWW.</A>
+<li><A href="db/ix/full.html">Lista completa delle anomalie non corrette e lista delle segnalazioni recenti.</A>
+<li><A href="db/ix/packages.html">Pacchetti con anomalie non corrette</A>
+<li><A href="db/ix/maintainers.html">Gestori di pacchetti con segnalazioni non ancora corrette.</A>
+ <li><A href="../">Pagina principale del Debian GNU/Linux.</A>
+
+</ul>
+
+<hr>
+<address>
+Darren Benham
+ /
+<A href="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>.
+12 Sep 1999.
+<p>
+Debian bug tracking system<BR>
+copyright 1999 Darren O. Benham,
+1994-7 Ian Jackson, 1997 nCipher Corporation Ltd,
+1995 Steven Brenner.<BR>
+<A href="http://www.benham.net/debbugs/">Disponibile sotto la GPL.</A>
+</address>
