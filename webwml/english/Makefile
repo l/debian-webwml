@@ -65,12 +65,10 @@ ifeq "$(LANGUAGE)" "en"
 	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
 	test -L $(HTMLDIR)/mirrors || ln -sf mirror $(HTMLDIR)/mirrors
 
-install:: $(HTMLDIR)/favicon.ico $(HTMLDIR)/debian.css
+install:: $(HTMLDIR)/favicon.ico
 
 $(HTMLDIR)/favicon.ico: favicon.ico
 	install -p -m 664 favicon.ico $(HTMLDIR)
-$(HTMLDIR)/debian.css: debian.css
-	install -p -m 664 debian.css $(HTMLDIR)
 endif
 
 install-locale:
