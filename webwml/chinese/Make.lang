@@ -23,19 +23,14 @@ TOTW = $(BIN)/totw.pl
 #                -o $(@F)
 # If you use --epilog as above, then you will want to add a line to
 # Make.templ.inc to remove $(@F) after WML is done.
-WMLOPTIONS=-q
-WMLOUTFILE=$(@F)
+#WMLOPTIONS=-q
+#WMLOUTFILE=$(@F)
+WMLOUTPUT=-o UNDEFuZH@uCN:$*.zh-cn.html.tmp -o UNDEFuZH@uTW:$*.zh-tw.html.tmp
 WMLPROLOG=--prolog='/usr/bin/perl -pe "s/^(([\\x00-\\x7F]|([\\x80-\\xFF].))+[\\x80-\\xFF]\\\\)$$/\$$1\\\\\\\\/;"'
 WMLEPILOG=
-WML=wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG) $(WMLEPILOG)
+#WML=wml $(WMLOPTIONS) $(WMLOUTPUT) $(WMLPROLOG) $(WMLEPILOG)
 
-%.$(LANGUAGE)-cn.html: %.$(LANGUAGE).html
-	@echo "Converting $< to $@ (zh_CN.GB2312)..."
-	@$(B5TOGB) < $< > $@
-	@$(TOCN) $@
-
-%.$(LANGUAGE)-tw.html: %.$(LANGUAGE).html
-	@echo "Converting $< to $@ (zh_TW.Big5)..."
-#	@$(U8TOB5) < $< > $@
-	@cp -a $< $@
-	@$(TOTW) $@
+# Hack for wml 1.7.4: buggy "@" handling in sliceterm
+WMLOPTIONS=-q -p1-8
+WML=wml $(WMLOPTIONS) $(WMLPROLOG) $(WMLEPILOG) $(<F) \
+	| /usr/lib/wml/exec/wml_p9_slice $(WMLOUTPUT)
