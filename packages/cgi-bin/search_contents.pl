@@ -192,7 +192,7 @@ for (my $i = 0; $i < $results_per_page; $i++) {
     if ($line{$i} =~ /(\S*)\s*$/) {
       foreach my $p (split (/,/,$1)) {
 	$list .= "," if ($list);
-	$list .= sprintf ('<a href="http://packages.debian.org/%s/%s.html">%s</a>', $version, $p, $p);
+	$list .= sprintf ('<a href="http://packages.debian.org/%s/%s">%s</a>', $version, $p, $p);
       }
       $line{$i} =~ s,(\S*\s*)$,$list,;
     }
