@@ -141,17 +141,17 @@ sub print_errors($)
     print_pairerror($dbh, "AM confirm date filled in but AM confirm field blank",
         "SELECT applicant.email, applicant.manager from applicant, manager WHERE am_confirm_date IS NOT NULL AND am_confirm IS NULL");
     print_dateerror($dbh, "Apply dates set into the future",
-        "SELECT email, apply_date, 'now'::date, manager from applicant WHERE apply_date > 'now'::date");
+        "SELECT email, apply_date, CURRENT_DATE, manager from applicant WHERE apply_date > CURRENT_DATE");
     print_dateerror($dbh, "Manager date set into the future",
-        "SELECT email, manager_date, 'now'::date, manager from applicant WHERE manager_date > 'now'::date");
+        "SELECT email, manager_date, CURRENT_DATE, manager from applicant WHERE manager_date > CURRENT_DATE");
     print_dateerror($dbh, "Manager assigned date before apply date",
         "SELECT email, apply_date, manager_date, manager from applicant WHERE apply_date > manager_date");
     print_dateerror($dbh, "AM Confirm date set into the future",
-        "SELECT email, am_confirm_date, 'now'::date, manager from applicant WHERE am_confirm_date > 'now'::date");
+        "SELECT email, am_confirm_date, CURRENT_DATE, manager from applicant WHERE am_confirm_date > CURRENT_DATE);
     print_dateerror($dbh, "AM confirm date occurs before AM assignment date",
         "SELECT email, manager_date, am_confirm_date, manager from applicant WHERE manager_date > am_confirm_date");
     print_dateerror($dbh, "AM recommendation to the DAM date set into the future",
-        "SELECT email, decision, 'now'::date, manager from applicant WHERE decision > 'now'::date");
+        "SELECT email, decision, CURRENT_DATE, manager from applicant WHERE decision > CURRENT_DATE);
 
 }
 sub print_stats($)
@@ -160,8 +160,8 @@ sub print_stats($)
 
     print "Weekly Summary Statistics\n";
     print "=========================\n";
-    print_stat($dbh, "more people applied to become a new maintainer", "SELECT COUNT(*) from applicant WHERE age('now', apply_date::datetime) < '7 days'::timespan");
-    print_stat($dbh, "applicants became maintainers.", "SELECT COUNT(*) from applicant WHERE age('now', newmaint::datetime) < '7 days'::timespan AND da_approved = 't'");
+    print_stat($dbh, "more people applied to become a new maintainer", "SELECT COUNT(*) FROM applicant WHERE CURRENT_TIMESTAMP - apply_date < '7 days'");
+    print_stat($dbh, "applicants became maintainers.", "SELECT COUNT(*) FROM applicant WHERE CURRENT_TIMESTAMP - newmaint < '7 days' AND da_approved = 't'");
 
     print "\n";
 
@@ -174,7 +174,7 @@ sub get_new_maintainers($)
     my ($dbh) = @_;
     my ($firstname, $surname, $email);
     my $sth;
-    my $sql = "SELECT forename, surname, email from applicant where  da_approved = 't' AND age('now', newmaint::datetime) < '7 days'::timespan ORDER BY surname";
+    my $sql = "SELECT forename, surname, email FROM applicant WHERE da_approved = 't' AND CURRENT_TIMESTAMP - newmaint < '7 days' ORDER BY surname";
 
     print "New Maintainers\n";
     print "===============\n";
@@ -220,7 +220,8 @@ sub fd_checks($)
 
     print "\n";
 
-    my $sql = "SELECT email, manager, decision FROM applicant WHERE approved = 'f' and age('now', decision::datetime) > '6 months'::timespan ORDER BY decision";
+    my $sql = "SELECT email, manager, decision FROM applicant WHERE
+approved = 'f' and CURRENT_TIMESTAMP - decision > '6 months' ORDER BY decision";
     print "The following applicants have been on hold longer than 6 months:\n\n";
 
     $sth = $dbh->prepare($sql);
@@ -230,8 +231,6 @@ sub fd_checks($)
         printf("  %-60.60s  %s\n", ("$email ($manager)"), $decision);
     }
 
-
-    my $sql = "SELECT forename, surname, email from applicant where  da_approved = 't' AND age('now', newmaint::datetime) < '7 days'::timespan ORDER BY surname";
 }
 
 sub get_warn_maintainers($)
@@ -239,7 +238,7 @@ sub get_warn_maintainers($)
     my ($dbh) = @_;
     my ($firstname, $surname, $email, $apply_date);
     my $sth;
-    my $sql = "SELECT forename, surname, email, apply_date from applicant where age( 'now'::date, apply_date) > '3 weeks' AND age('now'::date, apply_date) < '4 weeks' and advocate_date IS NULL ORDER BY surname";
+    my $sql = "SELECT forename, surname, email, apply_date from applicant where CURRENT_TIMESTAMP - apply_date > '3 weeks' AND CURRENT_TIMESTAMP - apply_date < '4 weeks' and advocate_date IS NULL ORDER BY surname";
 
     print "\nApplicants with no advocate\n";
     print "===========================\n";
@@ -265,7 +264,7 @@ sub get_err_maintainers($)
     my ($dbh) = @_;
     my ($firstname, $surname, $email, $apply_date, $manager);
     my $sth;
-    my $sql = "SELECT forename, surname, email, apply_date, manager from applicant where age( 'now'::date, apply_date) > '6 weeks' AND advocate_ok is NULL AND (advocate_date IS NULL OR age('now'::date, advocate_date) > '1 weeks') ORDER BY surname";
+    my $sql = "SELECT forename, surname, email, apply_date, manager FROM applicant WHERE CURRENT_TIMESTAMP - apply_date > '6 weeks' AND advocate_ok is NULL AND (advocate_date IS NULL OR CURRENT_TIMESTAMP - advocate_date > '1 week') ORDER BY surname";
 
     print "\nThe following applicants will be deleted as they have been waiting in the\n";
     print "the queue for longer than 6 weeks with no advocate:\n";
@@ -292,7 +291,6 @@ sub get_err_maintainers($)
     print "be sent to the applicants.\n";
     print "\n";
 }
-#select email, age('now', manager_date::datetime) from applicant where age('now', manager_date::datetime) < '7 days'::timespan;
 
 my $dbh = DBI->connect("dbi:Pg:dbname=$DBNAME", $DBUSER, "", "");
 

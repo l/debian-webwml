@@ -83,13 +83,13 @@ def expire_place(db, place):
 
 to_move = parse_args()
 db = pg.connect(Cnf["MyDB"])
-q = db.query("SELECT id FROM places WHERE finish < 'now'::date")
+q = db.query("SELECT id FROM places WHERE finish < CURRENT_TIMESTAMP")
 for place in q.getresult():
     expire_place(db, place)
 
 # While we are it, also set begin fields that have gone by to null.
 # This is useful so a entry like "from 2002-11-26 to 2005-03-12"
 # appears as "until 2005-03-12" after 2002-11-26.
-db.query("UPDATE places SET begin = NULL WHERE begin <= 'now'::date")
+db.query("UPDATE places SET begin = NULL WHERE begin <= CURRENT_TIMESTAMP")
 
 # vim: ts=4:expandtab:shiftwidth=4:
