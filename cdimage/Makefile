@@ -7,12 +7,12 @@ languages-install := $(addsuffix -install,$(languages))
 .SUFFIXES: 
 .PHONY: install all $(languages) $(languages-install)
 
-install: $(languages-install)
-
 all: $(languages)
 
-$(languages-install):
-	$(MAKE) -C $(subst -install,,$@) install
+install: $(languages-install)
 
 $(languages):
 	$(MAKE) -C $@
+
+$(languages-install):
+	$(MAKE) -C $(subst -install,,$@) install
