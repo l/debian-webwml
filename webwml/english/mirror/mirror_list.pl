@@ -381,11 +381,16 @@ of material available are listed, along with the access method for each type.
 <p>The 'Type' entry is one of:
 <dl compact>
 <dt><strong>leaf</strong>
-	<dd>These comprise the bulk of the mirrors. Most of them mirror from a Push-Primary.
+	<dd>These comprise the bulk of the mirrors.
+<dt><strong>Push-Secondary</strong>
+	<dd>These sites mirror directly from a Push-Primary site, using push
+	mirroring.
 <dt><strong>Push-Primary</strong>
-	<dd>These sites mirror directly from the master archive site (which is
-	not publicly accessible).
+	<dd>These sites mirror directly from the master archive site (which
+	is not publicly accessible), using push mirroring.
 </dl>
+(See <a href="http://www.debian.org/mirror/push_mirroring">the page on push
+mirroring</a> for details on that.)
 END
 
 	print <<END;
