@@ -258,6 +258,7 @@ sub get_stats_templates {
         foreach $pkg (sort keys %$tmpl_errors) {
                 $maint = $data->maintainer($pkg);
                 $maint =~ s/\s*<.*>//;
+                $maint =~ s/&/&amp;/g;
                 print GEN "<li><a name=\"P$pkg\">$pkg</a> ".$data->version($pkg)." [$maint]\n";
                 my $errors_pkg = "<ul>\n";
                 if (@{$tmpl_errors->{$pkg}->{master}}) {
@@ -316,6 +317,7 @@ sub process_templates {
         foreach my $maint (sort keys %$tmpl_errors_maint) {
                 my $anchor_maint = lc $maint;
                 $anchor_maint =~ s/[^a-z0-9]/_/g;
+                $anchor_maint =~ s/&/&amp;/g;
                 print GEN "<li><a name=\"M$anchor_maint\">$maint</a>\n<ul>";
                 foreach my $pkg (sort keys %{$tmpl_errors_maint->{$maint}}) {
                         print GEN "<li>".$tmpl_errors_maint->{$maint}->{$pkg}."</li>\n";
