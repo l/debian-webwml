@@ -51,7 +51,9 @@ sub Encrypt {
   my $input = shift;
   my ($pos, $output);
 
-  $input .= " " x ($blocksize - (length($input) % $blocksize)) if (length($input % $blocksize));
+  # prepend a length byte */
+  $input = chr(length($input)).$input;
+  $input .= "\001" x ($blocksize - (length($input) % $blocksize)) if (length($input % $blocksize));
 
   for ($pos = 0; $pos < length($input); $pos += $blocksize) {    
     $output .= unpack("H16", $cipher->encrypt(substr($input, $pos, $blocksize))) if ($hascryptix);
@@ -64,7 +66,7 @@ sub Decrypt {
   # trailing spaces are unimportant.
   my $cipher = shift;
   my $input = shift;
-  my ($pos, $portion, $output);
+  my ($pos, $portion, $output, $len);
   
   ((length($input) % $blocksize) == 0) || &HTMLError("Password corrupted"); # should always be true...
 
@@ -72,8 +74,10 @@ sub Decrypt {
     $portion = pack("H16", substr($input, $pos, $blocksize*2));
     $output .= $cipher->decrypt($portion) if ($hascryptix);
   }
-    
-  $output =~ s/ +$//;
+  
+  # check length byte, discard junk
+  $len = substr($output, 0, 1);
+  $output = substr($output, 1, ord($len));
   return $output;
 }
 
