@@ -4,7 +4,9 @@
 # inside subdirectories of the given directory, and if it finds less than
 # 10, falls back to last year's news for the rest.
 sub get_weeklynews_list {
-	my ($year, $eng_dir, $match, $noyear, $count, $stopat, $reccount) = @_;
+	my ($year, $eng_dir, $match, $noyear, $count, $stopat, $reccount, $trans_dir) = @_;
+
+	$trans_dir ||= '.'; # trans_dir should point to dir above the year dir
 	
 	my $str="";
 
@@ -18,7 +20,7 @@ sub get_weeklynews_list {
 	opendir(DIR, "$eng_dir/$year") or return '';
 	@files = grep { /^$match$/ && -f "$eng_dir/$year/$_/index.wml" } readdir(DIR);
 	closedir DIR;
-	
+
 	foreach (sort {$b <=> $a} @files) {
 		next if $year == $currentyear && $_ > $currentissue; # skip issues in preparation.
 		my $num=$_;
@@ -26,7 +28,7 @@ sub get_weeklynews_list {
 		$trans_title = $_;
 		$trans_title =~ s/wml/title/;
 		($base)=m:(.*/):;
-		open(FILE,"<$year/$_") || open(FILE, "<$year/$trans_title") || open(FILE, "<$eng_dir/$year/$_");
+		open(FILE,"<$trans_dir/$year/$_") || open(FILE, "<$trans_dir/$year/$trans_title") || open(FILE, "<$eng_dir/$year/$_");
 		$title = '';
 		$summary = '';
 		$line=<FILE>;
