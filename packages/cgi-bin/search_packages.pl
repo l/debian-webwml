@@ -16,6 +16,12 @@ use CGI;
 use POSIX;
 use URI::Escape;
 
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use lib "$FindBin::Bin";
+
+use Deb::Versions;
+
 my $thisscript = "search_packages.pl";
 my $HOME = "http://www.debian.org";
 
@@ -213,9 +219,9 @@ foreach my $line (@results) {
     $colon[0] =~ m,.*/([^/]+)/([^/]+)/Packages-([^\.]+)\.,; #$1=stable, $2=main, $3=alpha
 
     $pkgs{$package}{$1}{$ver}{$3} = 1;
-    $sect{$package}{$1} = $section;
+    $sect{$package}{$1}{$ver} = $section;
 
-    $desc{$package}{$1} = find_desc ($package, $1, $2) if (! exists $desc{$package}{$1});
+    $desc{$package}{$1}{$ver} = find_desc ($package, $1, $2) if (! exists $desc{$package}{$1}{$ver});
 
 }
 
@@ -224,10 +230,11 @@ foreach my $pkg (sort keys %pkgs) {
     print "<ul>\n";
     foreach $ver (('stable','testing','unstable','experimental')) {
 	if (exists $pkgs{$pkg}{$ver}) {
+	    my @versions = version_sort keys %{$pkgs{$pkg}{$ver}};
 	    printf "<li><a href=\"http://packages.debian.org/%s/%s/%s\">%s</a> (%s): %s\n",
-	    $ver, $sect{$pkg}{$ver}, $pkg, $ver, $sect{$pkg}{$ver}, $desc{$pkg}{$ver};
+	    $ver, $sect{$pkg}{$ver}{$versions[0]}, $pkg, $ver, $sect{$pkg}{$ver}{$versions[0]}, $desc{$pkg}{$ver}{$versions[0]};
 
-	    foreach my $v (sort keys %{$pkgs{$pkg}{$ver}}) {
+	    foreach my $v (@versions) {
 		printf "<br>%s: %s\n",
 		$v, join (" ", (sort keys %{$pkgs{$pkg}{$ver}{$v}}) );
 	    }
