@@ -77,7 +77,7 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Christian Couder' => {
-                        email       => 'chcouder@club-internet.fr',
+                        email       => 'christian@kdevelop.org',
                         summary     => 3,
                         logs        => 3,
                         diff        => 3,
