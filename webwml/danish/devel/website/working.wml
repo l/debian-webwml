@@ -1,6 +1,6 @@
 #use wml::debian::template title="Hvordan man arbejder på Debians websider" BARETITLE=true
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.25"
+#use wml::debian::translation-check translation="1.28"
 
 <toc-display/>
 
@@ -85,6 +85,62 @@ hvor uoverskueligt det bliver.</p>
 til at overholde XHTML/XML-standarderne, bør ikke ske samtidig med at man
 commit'er andre ændringer.  (Nye ting kan og skal naturligvis laves korrekt 
 fra første færd.)</p>
+
+<h3>Opdatér også oversættelser, hvis muligt</h3>
+
+<p>Nogle ændringer er sproguafhængige, specielt ændringer af URL'er eller 
+indlejret Perl-kode. Rettelser af slåfejl hører også til denne kategori, da de
+normalt ikke kræver ændringer i de oversatte filer, bortset fra opdatering af
+versionsnummeret i "translation-check"-linien.  Man kan naturligvis foretage 
+sådanne ændringer i alle oversættelser, uden at have kendskab til sprogene.</p>
+
+<p>Men da der er så mange sprog, undgår man måske alligevel dette arbejde og
+lader oversætterne tage sig af det, også selvom man kunne foretage ændringen
+hurtigere end de kan.  Dette kan være noget irriterende.</p>
+
+<p>Dog, for at gøre den slags ændringer nemmere at foretage, kan man anvende
+skriptet <code>smart_change.pl</code>, der ligger i webwmls cvs root-mappe.</p>
+
+<h4>Anvendelse af smart_change.pl</h4>
+
+<pre>smart_change.pl [parametre] original-fil</pre>
+
+<p>Pt. tillades kun filer i <code>/english/</code> som <var>original-fil</var>. 
+<code>smart_change.pl</code> kender følgende parametre:</p>
+
+<dl>
+  <dt><code>-s, --substitute=<var>REGEXP</var></code></dt>
+  <dd>Skriv et regulært udtryk i Perl, som vil blive kørt på kildekodefilerne
+      (kan anvendes mere end én gang).
+      <pre>
+	Eksempel: ./smart_change.pl -s "s,http://gammel-url/,http://ny-url/,g" english/index.wml
+      </pre>
+  </dd>
+
+  <dt><code>-l, --lang=<var>STRING</var></code></dt>
+  <dd>Dette sprog behandles (kan anvendes mere end én gang).  Hvis der ikke er
+      angivet etsprog, vil alle tilgængelige sprog blive behandlet.</dd>
+
+  <dt><code>-n, --no-bump</code></dt>
+  <dd>Opdatér ikke "translation-check"-linier.  Normalt anvendes cvs-revisionen
+      af <var>original-fil</var> som reference og i alle ajourførte filer, til
+      opdateringen af "translation-check"-linien.  I forældede filer forblive
+      den uændret.  Hvis paremetret er angivet, røres der ikke ved nogen 
+      "translation-check"-linier.  Se "om at holde oversættelser ajour" for en
+      <a href="uptodate">beskrivelse af "translation-check"-linierne</a>.
+      </dd>
+
+  <dt><code>-p, --previous</code></dt>
+  <dd>Hent foregående CVS-revision.  Dette er primært nyttigt, hvis den 
+      engelske fil allerede er commit'et og man ønsker at kontrollere 
+      "translation-check"-linierne mod den foregående version.</dd>
+
+  <dt><code>-h, --help</code></dt>
+  <dd>Vis en kort brugsanvisning.</dd>
+
+  <dt><code>-v, --verbose</code></dt>
+  <dd>Vis alle meddelelser.</dd>
+</dl>
 
 <toc-add-entry name="links">Links</toc-add-entry>
      
