@@ -1,0 +1,68 @@
+# Nothing in here should require any modification
+# If you feel you need to modify something send mail
+# to debian-www explaining why so that others can benefit
+# from your improvements
+
+RELHTMLBASE=.
+RELTEMPLDIR=template/debian
+
+HTMLDIR=$(WMLBASE)/$(RELHTMLBASE)/$(CUR_DIR)
+TEMPLDIR=$(WMLBASE)/$(RELTEMPLDIR)
+# Do Not modify the following line
+ENGLISHSRCDIR=$(WMLBASE)
+
+WMLFILES := $(wildcard *.wml)
+# HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
+HTMLFILES := $(patsubst %.wml,%.html,$(WMLFILES))
+HTMLDESTFILES := $(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE).html,$(WMLFILES))
+JPGSOURCE := $(wildcard *.jpg)
+JPGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(JPGSOURCE))
+GIFSOURCE := $(wildcard *.gif)
+GIFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(GIFSOURCE))
+PNGSOURCE := $(wildcard *.png)
+PNGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PNGSOURCE))
+IMGFILES := $(JPGSOURCE) $(GIFSOURCE) $(PNGSOURCE)
+IMGDESTFILES := $(JPGDESTFILES) $(GIFDESTFILES) $(PNGDESTFILES)
+
+all:: $(HTMLFILES)
+	@for i in $(SUBS) ''; do \
+		if [ -d "$$i" ]; then \
+			$(MAKE) -C $$i ; \
+		fi ; \
+	done
+
+#install::
+#	-install -d $(HTMLDIR)
+#install:: $(HTMLDESTFILES) $(IMGDESTFILES)
+#	@for i in $(SUBS) ''; do \
+#		if [ -d "$$i" ]; then \
+#			$(MAKE) -C $$i install; \
+#		fi ; \
+#	done
+
+clean::
+	-rm -f *.$(LANGUAGE).html
+	@for i in $(SUBS) ''; do \
+		if [ -d "$$i" ]; then \
+			$(MAKE) -C $$i clean; \
+		fi ; \
+	done
+
+cleandest::
+	-rm -f $(HTMLDIR)/*.$(LANGUAGE).html
+	@for i in $(SUBS) ''; do \
+		if [ -d "$$i" ]; then \
+			$(MAKE) -C $$i cleandest; \
+		fi ; \
+	done
+
+#$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
+#	@echo copying $(@F) to $(HTMLDIR)
+#	-@cp $(@F) $(HTMLDIR)
+#ifeq ($(LANGUAGE),en)
+#	@echo making a link $(@D)/$(*F).html -\> $(@F)
+#	-@ln -f -s $(@F) $(@D)/$(*F).html
+#endif
+
+#$(IMGDESTFILES): $(IMGFILES)
+#	cp $(@F) $(HTMLDIR)

@@ -1,0 +1,134 @@
+#use wml::debian::ctime
+
+<define-tag noitemsforthisyear whitespace=delete>
+	[EN:No items for this year.:]
+	[TR:Bu yIl iCin bilgi yok:]
+	[FI:Ei otsikoita tältä vuodelta:]
+	[PT:Sem itens neste ano.:]
+	[HR:Za ovu godinu nema èlanaka.:]
+	[FR:Pas d'éléments cette année.:]
+	[DE:Kein Eintrag für dieses Jahr.:]
+	[IT:No items for this year.:]
+	[JA:No items for this year.:]
+	[PL:Brak wydarzeñ w tym roku.:]
+	[ES:No items for this year.:]
+	[DA:Ingen begivenheder i dette &aring;r.:]
+	[NO:Ingen begivenheter dette året:]
+	[ZH:No items for this year.:]
+	[SV:Ingenting detta år.:]
+	[KO:No items for this year.:]
+</define-tag>
+
+# DO NOT translate anything below here. If you feel something needs to be changed, write to
+# debian-www first
+
+<perl>
+
+# grabs the date and title of the last $number news items from directory $year.
+# If $number is zero then all the news items are shown.
+# example usage:
+# get_recent_list ('1998', '0', '$(ENGLISHDIR)/News', '', '\d+\w*')
+
+sub get_recent_list {
+	my ($year, $number, $eng_dir, $format, $match) = @_;
+
+	if ($format =~ order) {
+		$listhead = '<OL>';
+		$listfoot = '</OL>';
+		$elemhead = '<LI>';
+		$elemfoot = '';
+	}
+	elsif ($format =~ bullet) {
+		$listhead = '<UL>';
+		$listfoot = '</UL>';
+		$elemhead = '<LI>';
+		$elemfoot = '';
+	}
+	elsif ($format =~ list) {
+		$listhead = '<DL>';
+		$listfoot = '</DL>';
+		$elemhead = '<DT>';
+		$elemfoot = '<DD>';
+	}
+	else {
+		$listhead = '';
+		$listfoot = '';
+		$elemhead = '';
+		$elemfoot = '';
+	}
+
+	$str=$listhead;
+
+	opendir(DIR, "$eng_dir/$year");
+	@files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
+	@files = sort {$b cmp $a} @files;
+	closedir DIR;
+
+	$count = 0;
+	grab_titles($year, $number, $eng_dir, $format, $match);
+
+	if ($count < $number && $number ne 0) {
+		@tmp = split('/', $year);
+		$tmp[$#tmp]--;
+		# $year--;
+		$year = join('/', @tmp);
+		if (-d "$eng_dir/$year") {
+			opendir(DIR, "$eng_dir/$year") or printf stderr "couldn't open dir $eng_dir/$year\n";
+			@files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
+			@files = sort {$b cmp $a} @files;
+			closedir DIR;
+		}
+		grab_titles($year, $number, $eng_dir, $format, $match);
+	}
+	if ($count eq 0) {
+		$str .= "<noitemsforthisyear>\n";
+	}
+	$str .= $listfoot;
+	return $str;
+}
+
+sub grab_titles {
+	my ($year, $number, $eng_dir, $format, $match) = @_;
+	foreach (@files) {
+		$trans_title = $_;
+		$trans_title =~ s/wml/title/;
+		$count++;
+		open(FILE, "<$year/$_") || open(FILE, "<$year/$trans_title") || open(FILE, "<$eng_dir/$year/$_") or printf stderr "ACK: can't open $year/$_\n";
+		if (/($match).wml/) {
+			$base = $1;
+		}
+		$date = ''; $title = ''; $desc = '';
+		foreach $line (<FILE>) {
+			if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
+				$title = qq/$1/;
+			}
+			elsif ($line =~ /^<define-tag release_date>(.*)<\/define-tag>$/) {
+				$date = qq/$1/;
+			}
+			elsif ($line =~ /^<define-tag report_date>(.*)<\/define-tag>$/) {
+				$date = qq/$1/;
+			}
+			elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) {
+				$date = qq/$1/;
+			}
+			elsif ($line =~ /^<define-tag description>(.*)<\/define-tag>$/) {
+				$desc = qq/$1/;
+			}
+			if ($title && $date && $desc) {
+				$date = newsdate($date);
+				$str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong> - $elemfoot$desc<br>\n";
+				last;
+			}
+			elsif ($title && $date) {
+				$date = newsdate($date);
+				$str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong><br>\n";
+			}
+		}
+		$str .= $str1;
+		close FILE;
+		if ($count eq $number) { last; }
+	}
+	return $str;
+}
+
+</perl>
