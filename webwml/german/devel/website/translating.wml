@@ -1,5 +1,6 @@
 #use wml::debian::template title="Debian-Webseiten übersetzen" BARETITLE=true
-#use wml::debian::translation-check translation="1.36"
+#use wml::fmt::verbatim
+#use wml::debian::translation-check translation="1.43"
 # $Id$
 
 <p>Um die Arbeit für die Übersetzer so einfach wie möglich zu machen, werden
@@ -20,13 +21,18 @@ Elementen für mehrere Seiten zu trennen. Dies bedeutet, dass man bestimmte
 WML-Quellcode-Dateien anstelle von HTML-Dateien ändern muss.
 Bitte <a href="using_cvs">Verwenden Sie
 CVS</a>, um sich die aktuellen Quelldateien zu besorgen. Sie müssen zumindest
-zwei Verzeichnisse auschecken: <tt>english/</tt> und
-<tt><var>&lt;sprache&gt;</var>/</tt>.</p>
+zwei Verzeichnisse auschecken: <tt>webwml/english/</tt> und
+<tt>webwml/<var>&lt;sprache&gt;</var>/</tt>.</p>
 
 <p>Um eine einzelne Seite von Englisch in ihre Sprache zu übersetzen, muss
 die original .wml-Datei übersetzt und im Verzeichnis der anderen Sprache
 deponiert werden. Der relative Pfad und Name muss der gleiche wie im
-englischen Verzeichnis sein, damit die Links weiterhin funktionieren. Es wird
+englischen Verzeichnis sein, damit die Links weiterhin funktionieren.</p>
+
+
+<h3>Kopfzeilen übersetzen</h3>
+
+<p>Es wird
 auch dringend empfohlen, dass der Übersetzer eine zusätzliche Zeile nach der
 letzten <code>#use</code> Anweisung hinzufügt, um die genaue Überarbeitung der
 Original-Datei zu notieren, von der übersetzt wurde, damit das
@@ -34,7 +40,53 @@ Original-Datei zu notieren, von der übersetzt wurde, damit das
 aus:
 <kbd>#use wml::debian::translation-check translation="<var>x.y</var>"</kbd>
 
-<p>All das kann einfach bewerkstelligt werden, wenn man das
+<p>Einige Übersetzungsteams verwenden diese Zeile ebenfalls, um den
+offiziellen Übersetzer für jede Webseite zu notieren. Falls Sie dies tun,
+erhalten Sie automatische Mails, wenn die Seiten, die Sie betreuen, im
+Original aktualisiert werden, und die Übersetzung Ihre Aufmerksamkeit zum
+Aktualisieren benötigt. Dafür fügen Sie einfach Ihren Namen als Betreuer am
+<kbd>#use wml::debian::translation-check translation="<var>x.y</var>" maintainer="<var>Ihr Name</var>"</kbd></p>
+
+<p>Sie müssen dem Roboter auch erzählen, wer Sie sind, wie oft Sie
+automatische Mails erhalten wollen, und was darin enthalten sein soll. Dafür
+editieren Sie (oder lassen es von Ihrem Koordinator editieren) die Datei
+<tt>webwml/<var>sprache</var>/international/<var>sprache</var>/translator.db.pl</tt>
+im CVS. Die Schreibweise sollte gut verständlich sein, und Sie können die
+Datei des französischen Teams als Vorlage verwenden, falls sie für Ihre
+Sprache noch nicht vorhanden ist. Der Roboter kann verschiedene Arten von
+Informationen verschicken, und für jede davon können Sie die Häufigkeit
+angeben, in der sie an Sie geschickt werden. Die verschiedenen Arten der
+Informationen sind:</p>
+
+<ul>
+  <li><b>summary</b>: Eine Zusammenfassung, welche Dokumente veraltet
+    sind.</li>
+  <li><b>logs</b>: Das »cvs log« zwischen den übersetzten und aktuellen
+    Versionen.</li>
+  <li><b>diff</b>: »cvs diff«</li>
+  <li><b>tdiff</b>: Das Skript wird versuchen, den Teil im übersetzten Text zu
+    finden, der vom englischen Patch geändert wurde.</li>
+  <li><b>file</b>: Fügt die aktuelle Version der Datei hinzu, die übersetzt
+    werden soll.</li>
+</ul>
+
+<p>Der Wert für jedes davon sollte eines von den folgenden sein: 0 (niemals),
+1 (monatlich), 2 (wöchentlich) oder 3 (täglich).</p>
+
+<p>Ein Beispiel könnte sein:</p>
+
+<verbatim>
+                'Martin Quinson' => {
+                        email       => 'martin.quinson@tuxfamily.org',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 0,
+                        file        => 0
+                },
+</verbatim>
+
+<p>Die Kopfzeilen der Web-Seite können leicht erstellt werden, indem man das
 <tt>copypage.pl</tt> Skript aus dem webwml Wurzelverzeichnis verwendet. Das
 Skript wird die Seite an den richtigen Platz kopieren, Verzeichnisse und
 Makefiles falls notwendig erstellen, und die notwendige Kopfzeile automatisch
@@ -46,6 +98,9 @@ Dateien zeigen an, ob es Teile gibt, die nicht übersetzt werden sollten;
 respektieren Sie diese. Führen Sie keine unnötigen Änderungen an der
 Formatierung durch; falls etwas behoben werden soll, soll es wahrscheinlich in
 der Original-Datei durchgeführt werden.</p>
+
+
+<h3>Übersetzen und Veröffentlichen der Seiten</h3>
 
 <p>Da wir <a href="content_negotiation">Inhalts-Aushandlung</a> verwenden,
 sind HTML-Dateien nicht <tt><var>datei</var>.html</tt> benannt, sondern
