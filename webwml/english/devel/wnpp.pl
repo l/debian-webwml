@@ -72,40 +72,40 @@ $ldap->unbind;
 
 $\ = "\n";
 
-my (@rfa_bypackage-html, @rfa_bymaint-html, @orphaned-html, @withdrawn-html);
-my (@being_adopted-html, @being_packaged-html, @requested-html);
+my (@rfa_bypackage_html, @rfa_bymaint_html, @orphaned_html, @withdrawn_html);
+my (@being_adopted_html, @being_packaged_html, @requested_html);
 
 foreach (sort { $rfa{$a} cmp $rfa{$b} } keys %rfa) {
-    push @rfa_bypackage-html, "\n<li><a href=\"http://bugs.debian.org/$_\">$rfa{$_}</a>";
+    push @rfa_bypackage_html, "\n<li><a href=\"http://bugs.debian.org/$_\">$rfa{$_}</a>";
 }
 
 foreach $maint (sort keys %rfabymaint) {
-    push @rfa_bymaint-html, "<li>$maint";
-    push @rfa_bymaint-html, "<ul>";
+    push @rfa_bymaint_html, "<li>$maint";
+    push @rfa_bymaint_html, "<ul>";
     foreach (sort { $rfa{$a} cmp $rfa{$b} } @{$rfabymaint{$maint}}) {
-        push @rfa_bymaint-html, "<li><a href=\"http://bugs.debian.org/$_\">$rfa{$_}</a>";
+        push @rfa_bymaint_html, "<li><a href=\"http://bugs.debian.org/$_\">$rfa{$_}</a>";
     }
-    push @rfa_bymaint-html, "</ul>";
+    push @rfa_bymaint_html, "</ul>";
 }
 
 foreach (sort { $orphaned{$a} cmp $orphaned{$b} } keys %orphaned) {
-    push @orphaned-html, "<li><a href=\"http://bugs.debian.org/$_\">$orphaned{$_}</a>";
+    push @orphaned_html, "<li><a href=\"http://bugs.debian.org/$_\">$orphaned{$_}</a>";
 }
 
 foreach (sort { $withdrawn{$a} cmp $withdrawn{$b} } keys %withdrawn) {
-    push @withdrawn-html, "<li><a href=\"http://bugs.debian.org/$_\">$withdrawn{$_}</a>";
+    push @withdrawn_html, "<li><a href=\"http://bugs.debian.org/$_\">$withdrawn{$_}</a>";
 }
 
 foreach (sort { $ita{$a} cmp $ita{$b} } keys %ita) {
-    push @being_adopted-html, "<li><a href=\"http://bugs.debian.org/$_\">$ita{$_}</a>";
+    push @being_adopted_html, "<li><a href=\"http://bugs.debian.org/$_\">$ita{$_}</a>";
 }
 
 foreach (sort { $itp{$a} cmp $itp{$b} } keys %itp) {
-    push @being_packaged-html, "<li><a href=\"http://bugs.debian.org/$_\">$itp{$_}</a>";
+    push @being_packaged_html, "<li><a href=\"http://bugs.debian.org/$_\">$itp{$_}</a>";
 }
 
 foreach (sort { $rfp{$a} cmp $rfp{$b} } keys %rfp) {
-    push @requested-html, "<li><a href=\"http://bugs.debian.org/$_\">$rfp{$_}</a>";
+    push @requested_html, "<li><a href=\"http://bugs.debian.org/$_\">$rfp{$_}</a>";
 }
 
 </perl>
