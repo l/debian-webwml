@@ -156,7 +156,7 @@ sub readinfo {
                 my $root = <ROOT>;
                 close(ROOT);
                 chomp $root;
-                $root =~ s/^:[^:]+://;
+                $root =~ s/^.*://;
                 $line =~ s#^$root/##
                         or croak "Unable to determine toplevel CVS directory\n";
         }
