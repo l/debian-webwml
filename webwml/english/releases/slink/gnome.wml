@@ -1,0 +1,202 @@
+#use wml::debian::template title="GNOME update for Debian 2.1 (slink)"
+    <h1>GNOME update for Debian 2.1 (slink)</h1>
+
+    <h2>Preface</h2>
+
+    <p>This update consists of packages from the Debian developement
+    tree. It has not been led through the same release procedure as
+    the Debian 2.1 release with freeze, extensive testing
+    etc. Therefore, the packages in this update may not be as stable
+    as the rest of Debian 2.1. The glibc2.1 versions of these packages
+    are in use by the Debian developers and interested users though,
+    so they work. But you have been warned.</p>
+
+    <p>Also only the update for the i386 architecture is complete.</p>
+
+    <h2>New Installation</h2>
+
+    <p>The best way to install the GNOME update for Debian slink is
+    to use the <tt>apt</tt> method in dselect.</p>
+
+    <ol>
+
+    <li><p>First add the following line to
+	  <tt>/etc/apt/sources.list</tt>: </p> <blockquote>deb
+	  http://www.debian.org/gnome-slink-dist stable main</blockquote>
+
+	<p>You can also use one of the GNOME mirrors. See the <a
+	name="http://www.gnome.org/start/getting_debian.shtml#mirrors">GNOME
+	for Debian</a> page for the sources.list lines.</p>
+
+    <li><p>Then start <tt>dselect</tt> and make sure at the
+	  <tt>[A]ccess</tt> step, that you use apt as the access method.
+	  Update the package list with <tt>[U]pdate</tt> and choose
+	  <tt>[S]elect</tt>.</p></li>
+	
+    <li><p>Now you can choose from the GNOME packages. Either select
+	  the packages you are interested in, or select one of the
+	  meta packages we provide. These packages will install a set
+	  of packages for users who want a fairly normal GNOME
+	  desktop, but do not feel confident to select the packages
+	  manually. The meta packages are:</p>
+
+	<p>
+	<dl>
+	  <dt>task-gnome-desktop</dt> <dd>This package will install
+	  the basic components that create the GNOME desktop
+	  environment as well as the <a
+	  href="http://www.gnome.org/users-guide/project.shtml">GNOME
+	  user's guide</a>.
+	  </dd>
+	  <dt>task-gnome-apps</dt>
+	  <dd>This package will install a fairly complete set of
+	    GNOME programs and utilities</dd>
+	  <dt>task-gnome-net</dt>
+	  <dd>Here are the programms for use on netwoks, like a mail
+	    reader or irc clients</dd>
+	  <dt>task-gnome-wm</dt>
+	  <dd>Although GNOME can be used with any window manager,
+	    GNOME complient ones have some advantages through better
+	    interaction. This packages installs the available GNOME
+	    compliant window managers, so you can give them a
+	    try.</dd>
+	  <dt>task-gnome-games</dt>
+	  <dd>With this package, you get the full load of GNOME
+	    games.</dd>
+	</dl>
+      </p>
+      </li>
+
+      <li>After selecting the packages, hit <tt>[I]nstall</tt> to get
+	apt going.</li>
+
+    </ol>
+
+    <p>After installation, you can remove these meta packages. The
+    packages installed by selecting these metapackages won't get
+    removed, but this step will allow you to deinstall any of the
+    packages automatically installed.</p>
+
+    <p>An alternative is to use apt-get instead of dselect to install
+    these packages. Use commands like the following to do this:</p>
+
+<blockquote><pre>
+apt-get update
+apt-get install task-gnome-apps
+</pre></blockquote>
+
+    <h2>Upgrading an old GNOME Installation</h2>
+
+    <p>The procedure to update your existing GNOME 0.3 installation
+    from the Debian slink release is the same as the first
+    installation method described above. Of cause, you don't have to
+    select additional packages, if you are satisfied with your current
+    selection. In this case, you can skip dselect but use <tt>apt-get
+    update &amp;&amp; apt-get dist-upgrade</tt> to install newer versions
+    of your current packages.</p>
+
+    <h2>Running GNOME</h2>
+
+    <p>There are two recommended ways to run the GNOME desktop. In
+    both cases, you have to edit the file <tt>.xsession</tt> in your
+    home directory. You may have to create this file if it is not
+    present yet.</p>
+    <ul>
+
+      <li>You can use just the line <blockquote>exec
+      gnome-session</blockquote> as the only thing in the file. This
+      is the way recommended by the GNOME developers. gnome-session
+      will then manage the programms to start at startup, as well as
+	the window manager to use. See the <a href="http://www.gnome.org/users-guide/project.shtml">GNOME user's guide</a> accessable
+      through the gnome-help-browser for further details. We have reports of
+      gnome-session sometimes reseting the desktop thus loosing your
+      customisations. For the ones who want to play save, the second
+      option is preferable.</li>
+
+      <li>You can also choose not to use gnome-session, but call the
+      panel directly, as in 
+<blockquote><pre>
+xterm &         # Start a xterm
+wmaker-gnome &  # start the window maker window manager 
+panel           # start the gnome panel
+</pre></blockquote>
+
+      Using this setup is the safest option, but you loose the ability
+      to change the window manager in the GNOME control center.</li>
+    </ul>
+
+    <h2>Beware</h2>
+
+    <p>Although GNOME is stable enough for everyday use, some packages
+    may be problematic.</p>
+    <dl>
+      <dt>gnome-session</dt> <dd>Sometimes gnome session forgets about
+      your desktop settings and resets the panel and other
+      things.</dd>
+
+      <dt>gdm</dt> <dd>gdm is a substitute for xdm, thus providing
+      login services. This package is not ready for production use. It
+      interferes badly with xdm, sometimes even causing screen
+      freezes. So beware if you want to use it, it once filled my /var
+      partition with a logfile in /var/state due to an error. Here is
+      a short advise, if something goes wrong: to disable gdm at boot
+      time if it locks up your machine, enter <tt>linux single</tt> at
+      the lilo prompt to enter single user mode. Then disable gdm with
+      <tt>chmod -x /etc/init.d/gdm</tt>. For big NIS environments,
+      usage may be very slow, as gdm fetches the whole user map to
+      display it for user selection. Of cause the package may work for
+      you without any problems. YMMV. As a security measure, gdm won't
+      serve a display, nor will it listen to xdmcp. To enable these
+      functions, edit <tt>/etc/gdm/gdm.conf</tt> .
+      </dd>
+      
+      <dt>gmc</dt> <dd>Although stability has improved greatly, it is
+      still possible to crash gmc in extreme conditions. Also startup
+      can be slow in big NIS or automounted environments, as gmc reads
+      all subdirectories of the user's home directory to determine if
+      there are subdirectories present.</dd>
+
+      <dt>imlib</dt> <dd>Imlib changed the location of the configfiles
+      from /etc/im/ to /etc/imlib/. This affects users who chose
+      <tt>Force Palette</tt> in the imlib config editor or enabled
+      <tt>PaletteOverride</tt> in .imrc. You will then get the error
+<blockquote>
+<pre>
+GImLib ERROR: Cannot find file : /etc/im/im_palette.pal
+gdk_imlib : Cannot find Palette. A Palette file is required for this mode
+</pre>
+</blockquote>
+	To fix this problem, edit the file .imrc in you home directory
+	and change the first line of the file from
+<pre>
+PaletteFile /etc/im/im_palette.pal                                              
+PaletteOverride yes      
+</pre>
+
+	to 
+
+<pre>
+PaletteFile /etc/imlib/im_palette.pal                                              
+PaletteOverride yes      
+</pre>
+
+      </dd>
+    </dl>
+
+    <h2>Help and Information</h2>
+
+    <p>The primary source of information about GNOME is the <a
+    href="http://www.gnome.org/">GNOME homepage</a>. The GNOME User's
+    Guide is available in the package <tt>gnome-users-manual-en</tt>,
+    which is also part of the gnome-meta-desktop profile. You can
+    access it through the GNOME help system.</p>
+
+    <p>Usage and other userlevel questions should be directed to the
+    <a href="mailto:debian-user@lists.debian.org">debian-users mailing
+    list</a>. Questions about the packaging of a component can be
+    directed to the <a
+    href="mailto:debian-gtk-gnome@lists.debian.org">debian-gtk-gnome
+    mailing list</a>.
+    </p>
+
+    <p><strong>Now go and enjoy your new GNOME desktop!</strong></p>    
