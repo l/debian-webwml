@@ -484,7 +484,7 @@ sub check_file {
 	(my $numrev)  = $revision =~ m/^1\.(\d+)$/; $numrev ||= "0";
 	(my $numoldr) = $oldr =~ m/^1\.(\d+)$/; $numoldr ||= "0";
 	if (!$oldr) {
-	  $oldr = '1.1';
+	  $oldr = '1.0';
 	  $str = "Unknown status of $name (revision should be $revision)";
 	} elsif ($oldr eq $revision) {
 	  $status = 4;
