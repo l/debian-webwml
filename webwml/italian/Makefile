@@ -12,7 +12,7 @@ all:\
     $(HTMLDIR)/contact.html.$(LANG) \
     $(HTMLDIR)/social_contract.html.$(LANG) \
     $(HTMLDIR)/index.html.$(LANG) \
-#    $(HTMLDIR)/developers_corner.html.$(LANG) \
+    $(HTMLDIR)/developers_corner.html.$(LANG) \
 #    $(HTMLDIR)/donations.html.$(LANG) \
 #    $(HTMLDIR)/license.html.$(LANG) \
 #    $(HTMLDIR)/news.html.$(LANG) \
