@@ -83,11 +83,11 @@ $files =~ s/\n\n$/\n/s;
 
 $files =~ s/      (Size\/)?MD5 checksum: (\s*\d+ )?\w{32}\n//sg;
 $files =~ s/  Source archives:/<dt><source>/sg;
-$files =~ s/  Architecture.independent.\w+:\n/<dt><arch-indep>\n/s;
+$files =~ s/  Architecture independent \w+:\n/<dt><arch-indep>\n/sg;
 $files =~ s/  (\w+) architecture \(([\w -()\/]+)\)/<dt>$1 ($2):/sg;
 $files =~ s/  ([\w -\/]+) architecture:/<dt>$1:/sg;
 $files =~ s/    (http:\S+)/  <dd><fileurl $1>/sg;
-$files =~ s,Debian (GNU/Linux )?(\S+) (alias |\()([a-z]+)\)?,</dl>\n\n<h3>Debian GNU/Linux $2 ($4)</h3>\n\n<dl>,sg;
+$files =~ s,[\n]?Debian (GNU/Linux )?(\S+) (alias |\()([a-z]+)\)?,</dl>\n\n<h3>Debian GNU/Linux $2 ($4)</h3>\n\n<dl>,sg;
 
 $adv =~ /.*dsa[- ](\d+)-(\d+)\.(.*)/;
 $wml = "$curyear/dsa-$1.wml";
@@ -115,6 +115,7 @@ print WML "<define-tag description>$desc</define-tag>\n";
 print WML "<define-tag moreinfo>$moreinfo</p>\n</define-tag>\n";
 print WML "\n# do not modify the following line\n";
 print WML "#include \"\$(ENGLISHDIR)/security/$data\"\n";
+printf WML "# %sId: \$\n", "\$";
 close WML;
 
 print "Now edit $data and remove any English-specific stuff from it.\n";
