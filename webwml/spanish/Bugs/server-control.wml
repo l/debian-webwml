@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - control del servidor" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.36"
+#use wml::debian::translation-check translation="1.40"
 
 <h1>Información para desarrolladores sobre cómo manipular fallos
 utilizando el interfaz de correo electrónico.</h1>
@@ -161,7 +161,8 @@ asignados al mismo paquete o paquetes (se realiza una comparación exacta
 sobre el nombre del paquete al que se asignó el fallo), y todos de la
 gravedad. Si no comienzan en el mismo estado, debería usar
 <code>reassign</code> (reasignar), <code>reopen</code> (reabrir), etc., para asegurarse de
-que lo están antes usar <code>merge</code> (fusionar).</p>
+que lo están antes usar <code>merge</code> (fusionar). No es necesario
+que coincidan los títulos ya que no afectará a la fusión.</p>
 
 <P>Si cualquiera de los informes listados en una orden <code>merge</code>
 ya se encuentra fusionado con otro fallo, entonces todos los informes
@@ -190,15 +191,36 @@ para luego fusionarlos en el nuevo grupo que se desea.</p>
 desea desconectar más de un informe, no tiene más que incluir varias
 órdenes <code>unmerge</code> en su mensaje.
 
-<dt><code>tags</code> <var>número de fallo</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>etiqueta</var>
+<dt><code>tags</code> <var>número de fallo</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>etiqueta</var> [ <var>etiqueta</var> ...]
 
-  <dd>Establece una etiqueta particular para el informe de fallo
-  #<var>número de fallo</var> con el valor <var>etiqueta</var>. No se
+  <dd>Añade a las etiquetas del informe de fallo
+  #<var>número de fallo</var> la etiqueta <var>etiqueta</var>. No se
   enviará notificación alguna al usuario que informó del fallo.
-  <code>+</code> indica adición, <code>-</code> indica sustracción, y
-  <code>=</code> indica que se han de ignorar las etiquetas que hayan
-  en este momento, y que la cosa debe quedar como estamos indicando ahora.
+  Si la acción es <code>+</code> se añade, si la acción es <code>-</code>
+  se sustrae y si es <code>=</code> se
+  indica que se han de ignorar las etiquetas que hayan
+  en este momento, y que se deben fijar los valores que se indican en ese momento.
   La acción en su defecto es añadir.
+
+ <p>Ejemplo de uso:</p>
+
+ <pre>
+        \# lo mismo que 'tags 123456 + patch'
+        tags 123456 patch
+
+        \# lo mismo que 'tags 123456 + help security'
+        tags 123456 help security
+
+        \# añadir las etiquetas 'fixed' y 'pending' 
+        tags 123456 + fixed pending
+
+        \# eliminar la etiqueta 'unreproducible' 
+        tags 123456 - unreproducible
+
+        \# fijar las etiquetas a  'moreinfo'y  'unreproducible'
+        tags 123456 = moreinfo unreproducible
+  </pre>
+
 
   <p>Entre las etiquetas disponibles en este momento se incluyen
   <code>patch</code>, <code>wontfix</code>, <code>moreinfo</code>,
@@ -215,7 +237,7 @@ desea desconectar más de un informe, no tiene más que incluir varias
   significados</a>.
 
 
-<dt><code>close</code> <var>número de fallo</var>
+<dt><code>close</code> <var>número de fallo</var> (obsoleto)
 <dd>
 
 Cierra el informe de fallo #<var>número de fallo</var>.
