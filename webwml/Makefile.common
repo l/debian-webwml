@@ -52,7 +52,7 @@ all:: $(HTMLFILES) $(existing-SUBS)
 $(existing-SUBS):
 	-$(MAKE) -C $@
 
-install:: $(HTMLDIR) $(HTMLDESTFILES) $(IMGDESTFILES) $(existing-SUBS-install)
+install:: $(HTMLDESTFILES) $(IMGDESTFILES) $(existing-SUBS-install)
 
 $(existing-SUBS-install):
 	-$(MAKE) -C $(subst -install,,$@) install
@@ -98,11 +98,9 @@ ifneq "$(findstring /international/,$(CURDIR)/)" ""
 endif
 endif
 
-$(HTMLDIR):
-	test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
-
 ifndef NOGENERICINSTDEP
-$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html $(HTMLDIR)
+$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
+	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
 	@echo copying $(@F) to $(HTMLDIR)
 	-@install -m 664 -p $(@F) $(HTMLDIR)
 ifeq ($(LANGUAGE),en)
@@ -111,7 +109,8 @@ ifeq ($(LANGUAGE),en)
 endif
 endif
 
-$(IMGDESTFILES): $(HTMLDIR)/%: % $(HTMLDIR)
+$(IMGDESTFILES): $(HTMLDIR)/%: %
+	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
 	install -m 664 -p $< $(HTMLDIR)
 ifeq "$(LANGUAGE)" "en"
 	[ -f "$(HTMLDIR)/$(basename $(basename $<))$(suffix $<)" ] || ln -s $< $(HTMLDIR)/$(basename $(basename $<))$(suffix $<)
