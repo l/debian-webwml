@@ -46,8 +46,8 @@ foreach $l (<ADV>) {
   if ($l =~ /^(Problem type|Vulnerability)\s*: (.+)/) {
     $desc = $2;
   }
-  if ($l =~ /^(CVE (name|id)?|CERT advisory)\s*: (.+)/i) {
-    push @dbids, $3;
+  if ($l =~ /^(CVE (names?|id|references?)?|CERT advisor(y|ies))\s*: (.+)/i) {
+    push @dbids, $4;
   }
   if ($l =~ /^Bugtraq Id\s*: (.+)/i) {
       for $id (split (/ /, $1)) {
@@ -117,6 +117,7 @@ $pagetitle = "DSA-$1-$2 $3";
 die "$wml already exists!\n" if (-f $wml);
 die "$data already exists!\n" if (-f $data);
 
+# $data = $wml = "-";
 $files =~ s,^</dl>\n\n,,;
 open DATA, ">$data";
 print DATA "<define-tag pagetitle>$pagetitle</define-tag>\n";
