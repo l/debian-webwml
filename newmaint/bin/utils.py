@@ -24,7 +24,6 @@ Error = 'Message Error';
 def send_mail(message):
     sendmail = os.popen("/usr/sbin/sendmail -t", "w")
     sendmail.write(message)
-#    if not sendmail.close():
     if sendmail.close():
          raise Error, "Sendmail gave a non-zero return code";
 
