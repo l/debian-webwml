@@ -289,7 +289,7 @@ FIXME
 =cut
 
 sub add_reverse_rel {
-    my ( $self, $rel, $pkg, $version, $constraint ) = @_;
+    my ( $self, $rel, $pkg, $version, $arch, $constraint ) = @_;
 
     $constraint ||= "";
 
@@ -301,9 +301,9 @@ sub add_reverse_rel {
     $self->_debug( "add reverse rel $rel from $self->{package} to $pkg" );
 
     $self->{rr}{$rel} = {} unless exists $self->{rr}{$rel};
-    $self->{rr}{$rel}{$pkg}{$version} = []
-	unless exists $self->{rr}{$rel}{$pkg}{$version};
-    push @{$self->{rr}{$rel}{$pkg}{$version}}, $constraint;
+    $self->{rr}{$rel}{$pkg}{$version}{$arch} = []
+	unless exists $self->{rr}{$rel}{$pkg}{$version}{$arch};
+    push @{$self->{rr}{$rel}{$pkg}{$version}{$arch}}, $constraint;
 }
 
 =pod

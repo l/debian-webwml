@@ -580,7 +580,7 @@ sub merge_in {
 		    foreach my $p ( split /\s*,\s*/o, $entry->{provides} ) {
 			$self->new_pkg( $p );
 			my $tmp_pkg = $self->{db}->{$p}; 
-			$tmp_pkg->add_reverse_rel( $entry->{package}, $entry->{version} );
+			$tmp_pkg->add_reverse_rel( "provides", $entry->{package}, $entry->{version}, $entry->{architecture} );
 			$self->{db}->{$p} = $tmp_pkg;
 		    }
 		}
@@ -593,7 +593,7 @@ sub merge_in {
 			    my $wv = ( $p =~ s/\s*\((.*)\)\s*//o );
 			    $self->new_pkg( $p );
 			    my $tmp_pkg = $self->{db}->{$p}; 
-			    $tmp_pkg->add_reverse_rel( $entry->{package}, $entry->{version},
+			    $tmp_pkg->add_reverse_rel( "enhances", $entry->{package}, $entry->{version}, $entry->{architecture},
 						       $wv ? $1 : undef );
 			    $self->{db}->{$p} = $tmp_pkg;
 			}
@@ -729,8 +729,8 @@ sub process_dep_list {
 	    } else {
 		push(@final_dep_list, [ $given_dep_strip, $dep_op, 
 					$dep_ver, $dep_archs, "(NOT AVAILABLE)" ] );
-		warn "W: package $given_dep_strip is not available but referenced by $pkg\n"
-		    if $self->{config}{verbose};
+#		warn "W: package $given_dep_strip is not available but referenced by $pkg\n"
+#		    if $self->{config}{verbose};
 	    }
 	}
 	push @$res, [ @final_dep_list ];
