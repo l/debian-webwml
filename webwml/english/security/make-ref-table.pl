@@ -1,5 +1,12 @@
 #!/usr/bin/perl
 # Extracts the data file and makes a CVE cross-reference
+#
+# TODO
+# - use the same code as in the security template to make URL entries
+#   for the security references
+# DONE:
+# - printed references should follow some order - done by date
+# 
 
 
 # Format of data files is:
@@ -13,32 +20,44 @@
 
 use Getopt::Std;
 use IO::File;
+use Date::Parse;
+
 # Stdin options
 # -v verbose
 # -b bugtraq refs
 # -c CERT refs
 # -m mitre refs
-getopts('mcbv');
-# Defaul is to print only Mitre's
+# -p pretty print mode (HTML)
+getopts('hpmcbv');
+if ( $opt_h ) {
+# Help!
+	print "usage: $0 [-vp] [-b|c|m]\n";
+	print "\t-v\tverbose mode\n";
+	print "\t-m\tPrint CVE/Mitre references (default)\n";
+	print "\t-b\tPrint Bugtraq references\n";
+	print "\t-c\tPrint CERT references\n";
+	print "\t-p\tPretty-Print mode (HMTL)\n";
+	exit 0;
+}
+
+# Default is to print only Mitre's
 $opt_m = 1 if !defined ($opt_m) && ! defined($opt_c) && ! defined ($opt_b);
 
-#printHeader();
 parsedirs (".", "data", 2);
 
 # We just print for the time being only CVE references
-printrefs("Mitre CVE dictionary","CVE|CAN") if $opt_m;
-printrefs("Securityfocus Bugtraq database","BID") if $opt_b;
-printrefs("CERT alerts","CA-") if $opt_c;
+printheader() if $opt_p;
+printrefs("Mitre CVE dictionary","CVE|CAN","http://cve.mitre.org/cve/refs/refmap/source-DEBIAN.html") if $opt_m;
+printrefs("Securityfocus Bugtraq database","BID","http://online.securityfocus.com/bid") if $opt_b;
+printrefs("CERT alerts","CA-","http://www.cert.org/advisories/") if $opt_c;
+printfooter() if $opt_p;
 
 # But we could also print all the keys like this:
 # printallkeys();
-
-#printFooter ();
-
 exit 0;
 
 sub printallkeys {
-	foreach $dsa (sort(keys %dsaref)) {
+	foreach $dsa ( sort { $dsaref{$b} <=> $dsaref{$a} } keys %dsaref) {
 		print "$dsa:\t";
 		foreach $key (keys %{$dsaref{$dsa}} ) {
 			print "$dsaref{$dsa}{$key}\t";
@@ -49,9 +68,18 @@ sub printallkeys {
 }
 
 sub printrefs {
-	my ($text,$type) = @_;
-	print "DSA\t$text\n";
-	foreach $dsa (sort(keys %dsaref)) {
+	my ($text,$type,$url) = @_;
+	if ( ! $opt_p ) {
+		print "DSA\t$text\n";
+	} else { 
+		print "<table BORDER=\"2\" CELLPADDING=\"2\" CELLSPACING=\"2\"><tr VALIGN=\"TOP\">\n<td>DEBIAN DSA</td>\n";
+		if ( $url ) {
+			print "<td><a href=\"$url\">$text</A></td></tr>\n";
+		} else {
+			print "<td>$text</td></tr>\n";
+		}
+	}
+	foreach $dsa (sort { $dsaref{$b} <=> $dsaref{$a} } keys %dsaref) {
 		my (@references) = split(' ', $dsaref{$dsa}{'secrefs'});
 		my $refexists=0;
 		my $refs="";
@@ -61,7 +89,13 @@ sub printrefs {
 				$refexists=1;
 			}
 		}
-		print "DSA-$dsa\t".$refs."\n" if $refexists;
+		if ($refexists) {
+			if ( ! $opt_p ) {
+				print "DSA-$dsa\t$refs\t$dsaref{$dsa}{'date'}\n" ;
+			} else {
+				print "<tr VALIGN=\"TOP\"><td>DSA-$dsa</td><td>$refs</td></tr>\n";
+			}
+		}
 	}
 }
 
@@ -80,7 +114,9 @@ sub parsefile {
 	while ($line=<DATAFILE>) {
 		chomp $line;
 		print STDERR "Reading $line\n" if $opt_v;
-		$dsaref{$dsa}{'date'}=$1 if ( $line =~ /report_date\>(.*?)\<\/define-tag/ ) ;
+		if ( $line =~ /report_date\>(.*?)\<\/define-tag/ )  {
+			$dsaref{$dsa}{'date'}=str2time($1) ;
+		}
 		$dsaref{$dsa}{'secrefs'}=$1 if ( $line =~ /secrefs\>(.*?)\<\/define-tag/ ) ;
 		$dsaref{$dsa}{'packages'}=$1 if ( $line =~ /packages\>(.*?)\<\/define-tag/ ) ;
 		$dsaref{$dsa}{'vulnerable'}=$1 if ( $line =~ /isvulnerable\>(.*?)\<\/define-tag/ ) ;
@@ -113,3 +149,29 @@ sub parsedirs {
 }
 
 
+sub printheader {
+	print <<EOF;
+#use wml::debian::template title="Security Crossreferences" GEN_TIME="yes"
+<H1>Cross References of Debian Security Advisories</H1>
+<P>The data below shows the cross references of Debian Security Advisories
+to other security information sources. These data is provided as 
+references that might be useful to track down information relevant
+to security fixes in Debian.
+
+<P>Please notice that the Debian Security Team makes every effort possible
+to include cross-references in DSAs (even after they have been published),
+however, some DSAs might not have proper references to some security
+information sources. If you find information lacking please
+<a href="mailto:security@debian.org?subject=DSA cross references info">let us 
+know</a>
+
+<P><em>Note:</em> The data below is sorted in reverse chronological order.
+
+EOF
+	return 0;
+}
+
+sub printfooter {
+# Nothing here (yet)
+	return 0;
+}
