@@ -76,7 +76,7 @@ $translations_status = {
 	'since'			=> '19/04/2002',
 	'translation_name'	=> 'La charte Debian',
 	'translation_maintainer'=> ['philippe batailler <pbatailler@teaser.fr>'],
-	'base_revision'		=> '3.5.6.1',
+	'base_revision'		=> '3.5.10.0',
 	'translation_url'	=> 'http://www.teaser.fr/~pbatailler/charte.html/',
 	'translation_dev_url'	=> 'http://www.teaser.fr/~pbatailler/',
 	'translation_source_url'	=> 'http://cvs.debian.org/webwml/french/international/french/translations/policy.fr.sgml?cvsroot=webwml',
