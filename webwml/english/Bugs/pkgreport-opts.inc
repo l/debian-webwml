@@ -72,7 +72,7 @@
 </define-tag>
 <define-tag open whitespace=delete>
 	[EN:open:]
-	[DA:Åben:]
+	[DA:åben:]
 	[HR:otvoreni:]
 	[SV:öppet:]
 </define-tag>
@@ -138,7 +138,7 @@
 </define-tag>
 <define-tag wishlist whitespace=delete>
 	[EN:wishlist:]
-	[DA:Ønskeliste:]
+	[DA:ønskeliste:]
 	[HR:¾elje:]
 	[SV:önskelista:]
 </define-tag>
