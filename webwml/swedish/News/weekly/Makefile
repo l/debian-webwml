@@ -65,6 +65,7 @@ clean::
 index.$(LANGUAGE).html: $(wildcard $(CUR_YEAR)/*/index.wml) \
       $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(CUR_YEAR)/*) \
       $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
+      $(TEMPLDIR)/weeklynews/header.wml \
       $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml \
       ../../../english/News/weekly/CURRENT-ISSUE-IS
 
