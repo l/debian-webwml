@@ -3,7 +3,7 @@
 <ul>
   <li><a href="./">Debianin vianseurantajärjestelmän pääsivu</a>
   <li><a href="Reporting">Ohjeita vioista ilmoittamiseen</a>
-  <li><a href="Access">Vianseurantalogien hakeminen muutoin kuin www:n kautta</a>
+  <li><a href="Access">Vianseurantalogien hakeminen</a>
   <li><a href="Developer">Järjestelmän käyttöohjeita kehittäjille</a>
   <li><a href="server-control">Tietoa vikailmoitusten käsittelystä sähköpostitse kehittäjille</a>
   <li><a href="server-refcard">Postipalvelimen pikaopas</a>
