@@ -13,16 +13,17 @@ use Date::Parse;
 
 $server = "master.debian.org";
 $port = "10101";
-$base   = "dc=testbts";
+$base   = "dc=current,dc=bugs,dc=debian,dc=org";
 $attrs  = [
-    'cn', # number
-    'description', # subject
-    'postOfficeBox', # submitter
-    'street', # package
-    'destinationIndicator', # severity
-    'ou', # status
-    'l', # tags
-    'st', # date
+    'debbugsID',
+    'debbugsTitle',
+    'debbugsSubmitter',
+    'debbugsPackage',
+    'debbugsSeverity',
+    'debbugsState',
+    'debbugsTag',
+    'debbugsDate',
+    'debbugsMergedWith',
 ];
 
 sub htmlsanit {
@@ -54,23 +55,23 @@ close MAINTAINERS;
 $ldap = Net::LDAP->new($server, 'port' => $port) or die "Couldn't make connection to ldap server: $@";
 $ldap->bind;
 $mesg = $ldap->search('base' => $base,
-                      'filter' => "(street=wnpp)",
+                      'filter' => "(debbugsPackage=wnpp)",
                       'attrs' => $attrs) or die;
 
 $curdate = time;
 
 ALLPKG: foreach $entry ($mesg->entries) {
     use integer;
-    my $bugid = @{$entry->get('cn')}[0];
-    next if @{$entry->get('ou')}[0] eq 'done';
-    my $subject = @{$entry->get('description')}[0];
+    my $bugid = @{$entry->get('debbugsID')}[0];
+    next if @{$entry->get('debbugsState')}[0] eq 'done';
+    my $subject = @{$entry->get('debbugsTitle')}[0];
     # If a bug is merged with another, then only consider the youngest
     # bug and throw the others away.  This will weed out duplicates.
-    #my @mergedwith = @{$entry->get('mergedwith')};
-    #foreach my $merged (@mergedwith) {
-    #    next ALLPKG if int($merged) < int($bugid);
-    #}
-    $age{$bugid} = ($curdate - @{$entry->get('st')}[0])/86400;    
+    my @mergedwith = @{$entry->get('debbugsMergedWith')};
+    foreach my $merged (@mergedwith) {
+        next ALLPKG if int($merged) < int($bugid);
+    }
+    $age{$bugid} = ($curdate - @{$entry->get('debbugsDate')}[0])/86400;    
     chomp $subject;
     $subject = htmlsanit($subject);    
     # Make order out of chaos    
