@@ -8,7 +8,7 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml \
+rsync-mirrors.$(LANGUAGE).html: rsync-mirrors.wml $(TEMPLDIR)/cdimage.wml \
   $(ENGLISHDIR)/CD/mirroring/cdimage_mirrors.list
 
 ifeq "$(LANGUAGE)" "en"
