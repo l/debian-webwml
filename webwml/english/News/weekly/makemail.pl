@@ -31,15 +31,22 @@ while (<IN>) {
 	s/^\s\s\s//; # kill lynx's indent.
 
 	unless ($skip) {
+	     # Kill multiple spaces, since raggedright is easier on the eyes
+	     s/ {2,}/ /g;
 		# Fix up links.
 		s/\[(\d+)\]/$highlink=$1; "[".($1 - $skippedlinks)."]"/eg;
+
+		# Put the [42] behind the word linked.  Footnotes are always 
+		# after, not before
+		s/\[(\d+)\]([-\w]+)/${2}[$1]/g;
+	
 		print $_;
+
 	}
 	else {
 		$skippedlinks++ while m/\[\d+\]/g;
 	}
-
-	# See if it's time to stop skipping.
+		# See if it's time to stop skipping.
 	if ($skip && /^\s+Debian Weekly News - /) {
 		# Title found, stop skipping. But first, print the header.
 		s/^\s*//;
