@@ -1,6 +1,6 @@
 #use wml::debian::template title="Çoklu dilde sunulan sayfalar hakkýnda bilgiler"
 #Translator: Murat Demirten <murat@debian.org>
-#use wml::debian::translation-check translation="1.29"
+#use wml::debian::translation-check translation="1.35"
 
 <P>Dünya üzerindeki herkes doðal olarak ayný dili konuþmuyor. Web'in büyümesi ile birlikte
 sayfalarýn birden fazla dilde hazýrlanmasý aranýlan bir özellik haline geldi.
@@ -38,6 +38,48 @@ bildiriniz. En kýsa zamanda yansýnýn tutulduðu sunucudaki yetkili kiþiye hata il
 <p>Probleminizi çözdükten sonra yapacaðýnýz ilk denemeden önce cache'inizi temizlemeniz önerilir(hem
 disk hem de bellekte tutulan). Ayrýca daha doðru test için <a href="http://packages.debian.org/stable/web/lynx.html">lynx</a> tarayýcýsýný öneriyoruz. Þu ana kadar
 "content negotiation" ve HTTP spesifikasyonlarý ile %100 uyumlu olan tek tarayýcýdýr.
+
+<H3>Deðiþkenleri nasýl ayarlamalýyým?</H3>
+
+<P>Debian web sayfalarýnýn asýl dili Ýngilizcedir ve tüm sayfalar kendi dilinize henüz çevrilmemiþ
+olabilir. Bu durumda ikinci öncelikli olarak Ýngilizceyi seçmeniz mantýklý olacaktýr. Örneðin lynx
+kullanýyor, ana diliniz Fransýzca fakat Ýngilizceyi de anlayabiliyorsanýz <kbd>.lynxrc</kbd> dosyanýzý
+aþaðýdaki þekilde ayarlayabilirsiniz:
+<pre>
+preferred_language=fr; q=1.0, en; q=0.5
+</pre>
+Bu ayar, bakmak istediðiniz sayfanýn Fransýzca versiyonu varsa karþýnýza onu getirecektir, ancak eðer
+sayfa henüz Fransýzcaya çevirilmemiþse, bu kez Ýngilizce versiyonu karþýnýza gelecektir.
+
+<p>Dillerin alt kategorilerini kullanýrken bazý noktalara dikkat edilmesi gerekir.
+'en-GB, fr' gibi bir þekilde dil ayarý yapýlýrsa beklenen sonuç ortaya çýkmayacaktýr.
+Bu durumda sayfanýn Ýngilizce ve Fransýzca versiyonu olsa dahi kullanýcýnýn karþýsýna Fransýzca olan
+versiyon çýkacaktýr. Böyle bir durumda yapmanýz gereken ayar 'en-GB, en, fr' þeklinde olmalýdýr.
+
+<p><strong>Ýyi bir nedeniniz yoksa bu tip alt kategorileri kullanmaktan kaçýnmanýzý
+öneriyoruz</strong>. Eðer kullanýrsanýz, ayný dilin alt kategori olmayan halini de ayarlamayý
+unutmayýn.
+
+<P>preferred_language deðiþkenini ayarlayabilmek için daha detaylý bilgiyi
+<a href="http://httpd.apache.org/docs/content-negotiation.html">Apache
+content negotiation dökümanlarýnda</a> bulabilirsiniz.
+
+<h3><a name="cache">Caching Web Sunucularý hakkýnda notlar (Proxy)</a></h3>
+
+<p>Pek çok web isteði caching sunuculardan geçmektedir. Bu sunucular gerçek web sunucularý ve
+kullanýcýlar arasýnda yer alýr. Gerekli isteði kullanýcý adýna yerine getirir ve sayfanýn bir kopyasýný
+kendi üzerinde saklar. Bir sonraki ayný isteðe ise kendi üzerindeki kopya ile cevap verir.
+
+<p>Bu çoðu zaman yararlý bir yöntemdir, ancak cache'te yer alan bilgiler hatalýysa istenmeyen durumlar
+ortaya çýkmaktadýr. Çoðu cache mekanizmalarý, content negotiation tekniðini kullanamazlar. Bu yüzden
+kullanýcýlarýn karþýsýna istemedikleri dilde sayfalar gözükebilir. Bu durumun tek çözümü kullanýlan
+caching yazýlýmýnýn deðiþtirilmesi veya versiyonunun yükseltilmesidir.
+
+<p>Önceleri, kiþiler caching sunucularýný sadece web tarayýcýlarýný bu þekilde ayarlamýþlarsa
+kullanýyorlardý. Ancak artýk bu deðiþti. Kullandýðýnýz internet servis saðlayýcý tüm web isteklerini
+bir cache üzerine yönlendirip cevabý buradan veriyor olabilir. Eðer burada kullanýlan cache, content
+negotiation tekniðini düzgün olarak kullanamýyorsa gene istenmeyen sonuçlar oluþacaktýr.
+(Bu teknik ayný zamanda transparent proxy olarak bilinmektedir.)
 
 <h3><a name="setting">Tercih edilen dil için tarayýcýda yapýlmasý gereken ayarlar</a></h3>
 
@@ -100,44 +142,3 @@ veya bu iþ için özel paketi kullanýn (URL versiyon p4.0pre.14):
 </pre>
 </DL>
 
-<H3>Deðiþkenleri nasýl ayarlamalýyým?</H3>
-
-<P>Debian web sayfalarýnýn asýl dili Ýngilizcedir ve tüm sayfalar kendi dilinize henüz çevrilmemiþ
-olabilir. Bu durumda ikinci öncelikli olarak Ýngilizceyi seçmeniz mantýklý olacaktýr. Örneðin lynx
-kullanýyor, ana diliniz Fransýzca fakat Ýngilizceyi de anlayabiliyorsanýz <kbd>.lynxrc</kbd> dosyanýzý
-aþaðýdaki þekilde ayarlayabilirsiniz:
-<pre>
-preferred_language=fr; q=1.0, en; q=0.5
-</pre>
-Bu ayar, bakmak istediðiniz sayfanýn Fransýzca versiyonu varsa karþýnýza onu getirecektir, ancak eðer
-sayfa henüz Fransýzcaya çevirilmemiþse, bu kez Ýngilizce versiyonu karþýnýza gelecektir.
-
-<p>Dillerin alt kategorilerini kullanýrken bazý noktalara dikkat edilmesi gerekir.
-'en-GB, fr' gibi bir þekilde dil ayarý yapýlýrsa beklenen sonuç ortaya çýkmayacaktýr.
-Bu durumda sayfanýn Ýngilizce ve Fransýzca versiyonu olsa dahi kullanýcýnýn karþýsýna Fransýzca olan
-versiyon çýkacaktýr. Böyle bir durumda yapmanýz gereken ayar 'en-GB, en, fr' þeklinde olmalýdýr.
-
-<p><strong>Ýyi bir nedeniniz yoksa bu tip alt kategorileri kullanmaktan kaçýnmanýzý
-öneriyoruz</strong>. Eðer kullanýrsanýz, ayný dilin alt kategori olmayan halini de ayarlamayý
-unutmayýn.
-
-<P>preferred_language deðiþkenini ayarlayabilmek için daha detaylý bilgiyi
-<a href="http://httpd.apache.org/docs/content-negotiation.html">Apache
-content negotiation dökümanlarýnda</a> bulabilirsiniz.
-
-<h3><a name="cache">Caching Web Sunucularý hakkýnda notlar (Proxy)</a></h3>
-
-<p>Pek çok web isteði caching sunuculardan geçmektedir. Bu sunucular gerçek web sunucularý ve
-kullanýcýlar arasýnda yer alýr. Gerekli isteði kullanýcý adýna yerine getirir ve sayfanýn bir kopyasýný
-kendi üzerinde saklar. Bir sonraki ayný isteðe ise kendi üzerindeki kopya ile cevap verir.
-
-<p>Bu çoðu zaman yararlý bir yöntemdir, ancak cache'te yer alan bilgiler hatalýysa istenmeyen durumlar
-ortaya çýkmaktadýr. Çoðu cache mekanizmalarý, content negotiation tekniðini kullanamazlar. Bu yüzden
-kullanýcýlarýn karþýsýna istemedikleri dilde sayfalar gözükebilir. Bu durumun tek çözümü kullanýlan
-caching yazýlýmýnýn deðiþtirilmesi veya versiyonunun yükseltilmesidir.
-
-<p>Önceleri, kiþiler caching sunucularýný sadece web tarayýcýlarýný bu þekilde ayarlamýþlarsa
-kullanýyorlardý. Ancak artýk bu deðiþti. Kullandýðýnýz internet servis saðlayýcý tüm web isteklerini
-bir cache üzerine yönlendirip cevabý buradan veriyor olabilir. Eðer burada kullanýlan cache, content
-negotiation tekniðini düzgün olarak kullanamýyorsa gene istenmeyen sonuçlar oluþacaktýr.
-(Bu teknik ayný zamanda transparent proxy olarak bilinmektedir.)
