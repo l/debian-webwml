@@ -150,11 +150,7 @@ sub print_virt_pack {
     $package_page .= "</dl>\n";
     $package_page .= trailer( '../../..' );
     
-    my $dirname = "$env->{dest_dir}/$fl";
-    unless ( -d $dirname ) {
-	mkdir $dirname or die "Can\'t create dir $dirname: $!";
-    }
-    $dirname .= "/$sl";
+    my $dirname = "$env->{dest_dir}/virtual";
     unless ( -d $dirname ) {
 	mkdir $dirname or die "Can\'t create dir $dirname: $!";
     }
