@@ -1,0 +1,570 @@
+#use wml::debian::template title="Debian GNU/Hurd --- Desarrollo" NOHEADER="yes"
+#use wml::debian::translation-check translation="1.17" 
+[ <a href="../">Arquitecturas</a> ]
+[ <a href="index">Debian GNU/Hurd</a> ]
+[ <a href="hurd-news">Noticias</a> ]
+[ <a href="hurd-install">Intalación</a> ]
+[ <a href="hurd-cd">CDes del Hurd</a> ]
+[ <a href="hurd-doc">Documentación</a> ]
+[ <a href="hurd-devel">Desarrollo</a> ]
+[ <a href="hurd-links">Enlaces</a> ]
+[ <a href="hurd-contact">Contacto</a> ]<p>
+
+<h1>
+Debian GNU/Hurd</h1>
+<h2>
+Desarrollo de la Distribución</h2>
+<h3>
+Boot Disks</h3>
+<p>
+Actualmente estamos investigando los distintos modos de arrancar un sistema
+Hurd mínimo y cómo crear floppies de arranque. En <code><a
+href="ftp://alpha.gnu.org/gnu/hurd/contrib/marcus/">ftp://alpha.gnu.org/gnu/hurd/contrib/marcus</a></code> hay disponible un disco de arranque provisional
+en el archivo <code>boot-YYYYMMDD</code>. Este disco contiene el Mach de GNU,
+el servidor <code>ext2fs</code>, el enlazador <code>ld.so</code>, el
+programa de arranque <code>serverboot</code> y una copia de GRUB. Este 
+disco arranca y espera un disco raiz, que no está disponible todavía.</p>
+
+<h3>
+Adaptando Paquetes de Debian</h3>
+<p>
+Si quiere ayudar con la arquitectura GNU/Hurd, debería familiarizarse
+con el sistema de empaquetado de Debian. Una vez que lo haya hecho, 
+leyendo la documentación disponible y visitando el <a
+href="../../devel/">Rincón de los Desarrolladores</a> debería saber
+cómo extraer los fuentes de los paquetes de Debian y construir un
+paquete Debian. He aquí un curso acelerado para los muy perezosos:</p>
+
+<h3>
+Obtener el Código Fuente y Construir Paquetes</h3>
+<p>
+Para extraer el contenido de un paquete de fuentes de Debian se necesita
+el archivo
+<code>package_version.dsc</code> y los archivos listados en él. El 
+directorio de construcción Debian se construye con la orden
+ <code>dpkg-source -x package_version.dsc</code></p>
+<p>
+La construcción de un paquete se lleva a en el nuevo directorio de
+construcción Debian 
+<code>package-version</code> con la orden <code>dpkg -B -rsudo
+"-mMyName &lt;MyEmail&gt;"</code>. En lugar de <code>-B</code> se puede
+usar 
+<code>-b</code> si también quiere construir las partes del paquete que 
+son independientes de la arquitectura. Puede utilizar
+ <code>-rfakeroot</code> en lugar de
+<code>-rsudo</code>, si utiliza el paquete fakeroot. Si está construyendo
+como usuario root, puede hacerlo sin <code>-r</code>. Puede añadir
+<code>-uc</code> para evitar firmar el paquete con su clave pgp.</p>
+
+<h3>
+Coja Uno</h3>
+<p>
+¿En que paquetes se necesita trabajar? Bien, lo mejor que puedo
+hacer ahora es decir en qué paquetes no debería trabajar.</p>
+
+<h4>
+Paquetes que No Van a Ser Adaptados
+</h4>
+<p>
+Algunos de estos paquetes, o parte de ellos, podrían ser adaptables
+más adelante, pero, al menos actualmente, se consideran inadaptables.</p>
+<p>
+<ul>
+<li>
+<code>base/update</code>, porque el Hurd no necesita un daemon
+update (los sistemas de archivos se sincronizan ellos mismos). Para 
+cambiar el intervalo de sincronización, puede utilizar
+ <code>fsysopts</code> para ajustar la opción <code>--sync</code>. 
+¡Se puede establecer diferentes intervalos de sincronización para cada
+sistema de archivos! Para sincronizar manualmente, utilice la utilidad <a
+href="hurd-doc-utils#syncfs"><code>syncfs</code></a>.</li>
+<li>
+<code>base/makedev</code>, porque el Hurd viene con su propia versión de
+este guión. El paquete de fuentes de Debian sólo contiene una versión
+específica para Linux.</li>
+<li>
+<code>base/ld.so</code>, porque el Hurd no utiliza el enlazador que se
+distribuye con la biblioteca de C de GNU.</li>
+<li>
+<code>base/modconf</code> y <code>base/modutils</code>, porque el concepto
+de módulo es específico de Linux.</li>
+<li>
+<code>base/netbase</code>, porque el resto de cosas que hay en él es 
+muy específico del núcleo Linux. El Hurd, en su lugar, utiliza
+<code>inetutils</code>.</li>
+<li>
+<code>base/pcmcia-cs</code>, porque el Hurd no da soporte para PCMCIA
+(e incluso si lo tuviese, este paquete es probablemente específico para
+Linux).</li>
+<li>
+<code>base/procps</code>, porque este código es específico para el sistema
+de archivos proc de Linux
+filesystem.</li>
+<li>
+<code>base/ppp</code> y <code>base/pppconfig</code>, porque el Hurd no 
+da ningún soporte para PPP (e incluso si lo tuviese, este paquete es 
+probablemente específico para Linux).</li>
+<li>
+<code>base/setserial</code>, porque es específico para el núcleo de Linux.
+Sin embargo, con la adaptación de los gestores de dispositivos de 
+caracteres al Mach de GNU, podríamos poder utilizarlos.</li>
+
+<h4>
+Paquetes Que Se Compilan Limpiamente Sin Cambios
+</h4>
+<p>Sección
+<ul>
+<li><code>admin</code>:
+<code>anacron</code>,
+<code>at</code>,
+<code>base-config</code>,
+<code>cron</code>,
+<code>cruft</code>,
+<code>logrotate</code>,
+<code>mon</code>,
+<code>pwgen</code>,
+<code>sudo</code>.</li>
+
+<li><code>base</code>:
+<code>ae</code>,
+<code>base-files</code>,
+<code>base-passwd</code>,
+<code>bash</code>,
+<code>debianutils</code>,
+<code>diff</code>,
+<code>dpkg-mountable</code>,
+<code>e2fsprogs</code>,
+<code>elvis-tiny</code>,
+<code>fileutils</code>,
+<code>findutils</code>,
+<code>glibc</code>,
+<code>gnumach</code>,
+<code>grep</code>,
+<code>grub</code>,
+<code>gzip</code>,
+<code>hostname</code>,
+<code>hurd</code>,
+<code>mawk</code>,
+<code>ncurses</code>,
+<code>sed</code>,
+<code>shadow</code>,
+<code>shellutils</code>,
+<code>tar</code>,
+<code>tcp-wrappers</code>,
+<code>textutils</code>.</li>
+
+<li><code>comm</code>:
+<code>casio</code>,
+<code>minicom</code>,
+<code>uqwk</code>.</li>
+
+<li><code>devel</code>:
+<code>binutils</code>,
+<code>bison</code>,
+<code>blas</code>,
+<code>byacc</code>,
+<code>cmix</code>,
+<code>cook</code>,
+<code>crashme</code>,
+<code>cutils</code>,
+<code>cvs</code>,
+<code>cweb</code>,
+<code>diffstat</code>,
+<code>flex</code>,
+<code>gdb</code>,
+<code>genparse</code>,
+<code>gettext</code>,
+<code>global</code>,
+<code>hello</code>,
+<code>hello-debhelper</code>,
+<code>indent</code>,
+<code>make</code>,
+<code>mig</code>,
+<code>nasm</code>,
+<code>opt</code>,
+<code>perl-byacc</code>,
+<code>pointerize</code>,
+<code>rcs</code>.</li>
+
+<li><code>doc</code>:
+<code>man-db</code>,
+<code>man2html</code>,
+<code>pinfo</code>,
+<code>texinfo</code>.</li>
+
+<li><code>editors</code>:
+<code>ed</code>,
+<code>jed</code>,
+<code>joe</code> (pero no funciona demasiado bien),
+<code>le</code>,
+<code>nvi</code>,
+<code>vim</code>.</li>
+
+<li><code>games</code>:
+<code>games/an</code>,
+<code>empire-leaf</code>,
+<code>fortune-mod</code>,
+<code>freesweep</code>,
+<code>gnugo</code>,
+<code>gnushogi</code>,
+<code>typespeed</code>,
+<code>xbat</code>,
+<code>xdemineur</code>,
+<code>xemeraldia</code>,
+<code>xevil</code>,
+<code>xfishtank</code>,
+<code>xflip</code>,
+<code>xjewel</code>,
+<code>xjokes</code>,
+<code>xjump</code>,
+<code>xkobo</code>,
+<code>xlaby</code>,
+<code>xmountains</code>,
+<code>xoids</code>,
+<code>xoj</code>,
+<code>xpat2</code>,
+<code>xphoon</code>,
+<code>xpuzzles</code>,
+<code>xroach</code>,
+<code>xskat</code>,
+<code>xsok</code>,
+<code>xsoldier</code>,
+<code>xtris</code>,
+<code>xtron</code>,
+<code>xvier</code>,
+<code>xzip</code>,
+<code>xzip</code>.</li>
+
+<li><code>graphics</code>:
+<code>ean13</code>,
+<code>giftrans</code>,
+<code>jpeginfo</code>,
+<code>xaos</code>.</li>
+
+<li><code>hamradio</code>:
+<code>gc</code>.</li>
+
+<li><code>interpreters</code>:
+<code>gawk</code>,
+<code>m4</code>,
+<code>perl</code>,
+<code>pforth</code>,
+<code>python</code>.</li>
+
+<li><code>libs</code>:
+<code>aalib</code>,
+<code>db</code>,
+<code>dialog</code>,
+<code>gdbm</code> (but see bug#54401),
+<code>libaudiofile</code>,
+<code>libglib</code>,
+<code>libident</code>,
+<code>libiodbc2</code>,
+<code>libjpeg62</code>,
+<code>libpng</code>,
+<code>libxml</code>,
+<code>pcre</code>,
+<code>popt</code>,
+<code>slang1</code>,
+<code>svgalib-dummy</code>,
+<code>tcl8.0</code>,
+<code>tk8.0</code>,
+<code>zlib</code>.</li>
+
+<li><code>mail</code>:
+<code>asmail</code>,
+<code>exim</code>,
+<code>fetchmail</code>,
+<code>mailcheck</code>,
+<code>mimedecode</code>,
+<code>mpack</code>,
+<code>mutt</code>,
+<code>procmail</code>.</li>
+
+<li><code>math</code>:
+<code>aribas</code>,
+<code>bc</code>,
+<code>g2</code>,
+<code>libplot-perl</code>,
+<code>oleo</code>,
+<code>plotutils</code>,
+<code>sgb</code>,
+<code>spline</code>,
+<code>wzip</code>.</li>
+
+<li><code>misc</code>:
+<code>birthday</code>,
+<code>dbview</code>,
+<code>fastdnaml</code>,
+<code>megahal</code>,
+<code>nslint</code>,
+<code>otp</code>.</li>
+
+<li><code>net</code>:
+<code>cftp</code>,
+<code>hx</code>,
+<code>inetutils</code>,
+<code>ircii</code>,
+<code>lftp</code> (pero no funciona demasiado bien),
+<code>lurkftp</code>,
+<code>ncftp</code>,
+<code>netcat</code> (informe de Andrés),
+<code>tcputils</code>,
+<code>whois</code>.</li>
+
+<li><code>otherosfs</code>:
+<code>macutils</code>,
+<code>mtools</code>.</li>
+
+<li><code>shells</code>:
+<code>flin</code>.</li>
+
+<li><code>sound</code>:
+<code>mp3info</code>,
+<code>sox</code>.</li>
+
+<li><code>tex</code>:
+<code>dvidvi</code>,
+<code>tetex-bin</code>,
+<code>untex</code>.</li>
+
+<li><code>text</code>:
+<code>c2ps</code>,
+<code>diction</code>,
+<code>enscript</code>,
+<code>figlet</code>,
+<code>groff</code>,
+<code>gs</code>,
+<code>jade</code>,
+<code>less</code>,
+<code>most</code>,
+<code>par</code>
+<code>psutils</code>,
+<code>ptx</code>,
+<code>recode</code>,
+<code>rxp</code>,
+<code>sgml-tools</code>,
+<code>since</code>,
+<code>slice</code>,
+<code>tcs</code>,
+<code>word2x</code>.</li>
+
+<li><code>utils</code>:
+<code>ascii</code>,
+<code>binstats</code>,
+<code>buffer</code>,
+<code>bzip2</code>,
+<code>cpio</code>,
+<code>cracklib</code>,
+<code>file</code>,
+<code>hex</code>,
+<code>hextype</code>,
+<code>iselect</code>,
+<code>nwrite</code>,
+<code>patch</code>,
+<code>pgrep</code>,
+<code>sharutils</code>,
+<code>symlinks</code>.</li>
+
+<li><code>web</code>:
+<code>analog</code>,
+<code>lynx</code>,
+<code>mailto</code>,
+<code>wget</code>.
+
+<li><code>x11</code>:
+<code>9menu</code>,
+<code>9wm</code>,
+<code>bbpager</code>,
+<code>bclock</code>,
+<code>blackbox</code>,
+<code>sunclock</code>,
+<code>unclutter</code>,
+<code>xaw3d</code>,
+<code>xfishtank</code>,
+<code>xodo</code>,
+<code>xpm</code>,
+<code>xvt</code>,
+<code>xwit</code>.</li>
+</ul>
+
+<h4>
+Paquetes Que Se Compilan Limpiamente Con Sólo Un Parche En El BTS</h4>
+<p>
+<ul>
+<li>
+<code>libs/libpaperg</code> véase <a
+href="http://bugs.debian.org/39036">Bug#39036</a>,</li>
+<li>
+<code>web/boa</code> véase <a
+href="http://bugs.debian.org/45508">Bug#45508</a>.</li>
+<li>
+<code>base/dpkg-mountable</code> véase <a
+href="http://bugs.debian.org/44381">Bug#44381</a>.</li>
+<li>
+<code>base/slang1</code> véase <a
+href="http://bugs.debian.org/48814">Bug#48814</a>.</li>
+</ul></p>
+
+<h4>
+Paquetes Para Los Que Ha Sido Necesario Una NMU De Fuentes</h4>
+<p>
+Currently empty.</p>
+
+<h4>
+Paquetes Que Requieren Algo De Programación</h4>
+<p>
+Se sabe que los siguientes paquetes necesitan algo de programación, pero
+ya hay gente ocupándose de ellos. Si quiere ayudarnos con un paquete
+específico de esta lista, hagánoslo saber, pero con casi toda seguridad
+querrá coger otro paquete que no esté entre estos.</p>
+
+<ul>
+<li><b>Marcus Brinkmann</b>
+<p>Algunos paquetes de la sección <code>base</code>,
+<code>devel/egcs</code> (básicamente solucionado, pero hay que hacer gcc 2.95 
+desde el principio),
+<code>web/apache</code> (implementación del uso de <code>dpkg-architecture</code> de <code>debian/rules</code>),
+<code>admin/apt</code> (esperando una nueva versión),
+<code>bind</code> (implementación del <code>dpkg-architecture</code> de <code>debian/rules</code>),
+<code>bsdmainutils</code> y <code>bsdutils</code> (están obsoletos en favor de
+<code>util-linux</code> (Jeff Bailey trabaja en él)),
+<code>editors/emacs20</code> (soporte para <code>dpkg-architecture</code>),
+<code>libs/liblockfile</code> (peligroso),
+<code>mail/mailx</code> (<code>NOFILE</code>, <code>MAXPATHLEN</code>,
+<code>MAXHOSTNAMLEN</code>, archivos de cabecera),
+<code>tex/tetex</code> (incluye las páginas man de ncurses man pages, asunto klibtool).
+</p>
+<p>
+Como puede ver, tengo bastante trabajo. No me importaría librarme de uno
+de los paquetes de arriba, al menos de algunos de ellos (por ejemplo, 
+si quiere echarle un vistazo a <code>mailx</code>, hágamelo saber).</p></li>
+<li><b>Brent Fulgham</b>: <code>editors/vim</code>,
+<code>interpreters/python</code>.</li>
+<li><b>Kalle Olavi Niemitalo</b>: <code>libs/libpaperg</code>,
+<code>graphics/netpbm</code>, <code>pointerize</code>,
+<code>libtiff</code>, <code>libs/svgalib</code>?.</li>
+</ul>
+
+<p>Si le he olvidado o alguna información no está actualizada, por favor,
+<a href="hurd-contact">¡Hágamelo saber!</a>.</p>
+
+<h3>
+ Generalidades de la Adaptación
+</h3>
+<p>
+He aquí una lista de incompatibilidades comunes que puede encontrar 
+cuando compile en el Hurd programas no suficientemente portables.</p>
+<p>
+<ul>
+<li>
+<code>Descriptor de Archivo Erróneo</code>
+<p>
+Si ve el error <code>Bad File Descriptor</code> cuando intenta leer
+un archivo (o acceder a él de algún modo), compruebe la llamada a
+ <code>open()</code>. El segundo argumento es el método de acceso.
+Si tiene un número en lugar de uno de los símbolos definidos en los
+ficheros estándar de cabecera, el código es enredado y se debería
+arreglarlo o usar
+<code>O_RDONLY</code>, <code>O_WRONLY</code> o
+<code>O_RDWR</code>. Este error se ha observado en los paquetes
+<code>fortunes</code> y <code>mtools</code>, por ejemplo.</p></li>
+<li>
+<code>PATH_MAX</code>
+<p>
+Cada uso sin condiciones de <code>PATH_MAX</code> es una incompatibilidad
+con POSIX. Si no hay límite superior para la longitud de un camino, este
+símbolo no está definido en ningún archivo de cabecera. En su lugar, 
+necesita usar una implementación diferente que no dependa de la
+longitud de una cadena, o usar <code>sysconf()</code> para preguntar
+la longitud durante la ejecución. Si <code>sysconf()</code> devuelve <code>-1</code>, ha de usar <code>realloc()</code> para reservar de modo dinámico la memoria necesaria.</p></li>
+<li>
+<code>MAXHOSTNAMELEN</code>
+<p>
+véase <code>PATH_MAX</code></p></li>
+<li>
+<code>MAXPATHLEN</code>
+<p>
+véase <code>PATH_MAX</code></p></li>
+<li>
+<code>NOFILE</code>
+<p>
+véase <code>PATH_MAX</code></p></li>
+<li>
+<code>#define</code> específico del Hurd
+<p>
+Si necesita incluir código específico para el Hurd utilizando
+<code>#if...#endif</code>, entonces puede usar el símbolo
+ <code>__GNU__</code> para hacerlo. !Pero antes piénselo (al menos) tres veces!
+En la 
+<em>mayoría</em> de las situaciones, es completamente innecesario y creará
+más problemas de los que puede resolver. Mejor pregunte en las listas
+de correo como hacerlo correctamente si no se le ocurre una solución
+mejor.</p></li>
+<li>
+<code>sys_errlist[]</code> vs. <code>strerror()</code>
+<p>
+Si un programa sólo tiene soporte para <code>sys_errlist[]</code> tendrá
+que hacer algún trabajo para hacerlo compatible en el Hurd, que ha
+dejado de dar soporte para esto y sólo proporciona <code>strerror()</code>. 
+Steinar Hamre escribió lo siguiente acerca de <code>strerror():</p></li>
+<blockquote>
+<p>
+Se debería usar<code>strerror()</code> porque :
+<ul>
+<li>
+Es la forma moderna y POSIX.</li>
+<li>
+Está localizada.</li>
+<li>
+Gestiona señales/número no válidos fuera de rango. (mejor gestión de
+error y no un candidato a desbordamiento de buffer/riesgo de seguridad)</li></ul></p>
+<p>
+Si está disponible, se debería usar siempre <code>strerror()</code>.
+Desafortunadamente, todavía hay algunos <em>viejos</em> sistemas
+no POSIX que no tienen <code>strerror()</code>, sólo
+<code>sys_errlist[]</code>.</p>
+<p>
+Hoy, dar soporte sólo a <code>strerror()</code> es mucho mejor que dar
+soporte sólo a
+<code>sys_errlist[]</code>. Lo mejor (desde el punto de vista de la portabilidad), sin embargo, es dar soporte a ambos. Para <code>configure.in</code>, necesitará:</p>
+<p>
+<code>AC_CHECK_FUNCS(strerror)</code></p>
+<p>
+Para <code>config.h.in</code>, necesitará añadir:</p>
+<p>
+<code>#undef HAVE_STRERROR</code></p>
+<p>
+Luego, algo como:
+<pre>
+        #ifndef HAVE_STRERROR
+        static char *
+        private_strerror (errnum)
+             int errnum;
+        {
+          extern char *sys_errlist[];
+          extern int sys_nerr;
+
+          if (errnum &gt; 0 && errnum &lt;= sys_nerr)
+            return sys_errlist[errnum];
+          return "Unknown system error";
+        }
+        #define strerror private_strerror
+        #endif /* HAVE_STRERROR */
+</pre>
+<p>
+Por ejemplo, puede mirar en el último fileutils (lo anterior es una
+versión simplificada de lo que encontré ahí.) Por supuesto, los parches
+se deberían enviar a los mantenedores principales, esto es muy útil 
+incluso para sistemas en los que funciona <code>sys_errlist[]</code>.</blockquote>
+<li>
+Nombres De Archivo Que Terminan En `/'
+<p>
+Son malvados si no existen y quiere darle un nombre así a un directorio.
+Por ejemplo, <code>mkdir foobar/</code> <em>no</em> funcionará en
+el Hurd. Esto es compatible con POSIX. POSIX dice que el camino
+de un directorio puede tener `/' concatenados. Pero el directorio no
+existe todavía, así que el camino no se refiere a un directorio,
+y de ahí que no se garantice que los `/' al final funcionen. Simplemente,
+descarte los `/', y le irá bien.
+</ul>

@@ -1,0 +1,972 @@
+#use wml::debian::template title="Debian GNU/Hurd --- Documentación" NOHEADER="yes"
+#use wml::debian::translation-check translation="1.10" 
+[ <a href="..">Arquitecturas</a> ]
+[ <a href="index">Debian GNU/Hurd</a> ]
+[ <a href="hurd-news">Noticias</a> ]
+[ <a href="hurd-cd">CDes del Hurd</a> ]
+[ <a href="hurd-install">Instalación</a> ]
+[ <a href="hurd-doc">Documentación</a> ]
+[ <a href="hurd-devel">Desarrollo</a> ]
+[ <a href="hurd-links">Enlaces</a> ]
+[ <a href="hurd-contact">Contacto</a> ]<p>
+
+<h1>Debian GNU/Hurd</h1>
+
+<p> Dirk Ritter me envió el siguiente texto, que contiene la salida de la
+opción <tt>--help</tt> de cada uno de los programas servidores del Hurd.
+Este puede ser un buen punto de partida para otra documentación adicional
+ de los programas servidores, especialmente para aquellos utiles para
+los usuarios, como ext2fs, ufs, isofs, ftpfs, crash, etc.  </p>
+
+<p>
+Desde entonces, actualicé el texto utilizando extractos de cartas
+procedentes de las listas de correo del Hurd. Gracias a Martin von 
+Loewis.
+
+<h2>Descripción Preliminar de la Interfaz de Usuario del GNU/Hurd</h2>
+
+<p>
+Actualmente no hay casi nada, pero es mejor que si no hubiese absolutamente
+nada, así que, por favor, envíe las quejas, correcciones y añadidos a
+<a href="mailto:dirk@gnumatic.s.bawue.de">Dirk Ritter</a>,
+&lt;dirk@gnumatic.s.bawue.de&gt;. Por favor, tenga en cuenta que mis
+habilidades programando son <em>muy</em> limitadas, 
+así que no debería esperar que realmente comprenda cosas relacionadas
+con el diseño e implementación de sistemas operativos.
+
+<p>
+<table border="2"
+       summary="Índice de servidores y traductores del HURD:">
+
+<caption><em>Índice de servidores y traductores del HURD::</em></caption>
+
+<tr>
+  <th><a href="#auth" name="TOC_auth" type="text/html">
+      El servidor de autentificación</a>
+  <th>&quot;<code>auth</code>&quot;
+<tr>
+  <th><a href="#crash" name="TOC_crash" type="text/html">
+      El servidor crash</a>
+  <th>&quot;<code>crash</code>&quot;
+<tr>
+  <th><a href="#exec" name="TOC_exec" type="text/html">
+      El servidor de ejecución</a>
+  <th>&quot;<code>exec</code>&quot;
+<tr>
+  <th><a href="#ext2fs" name="TOC_ext2fs" type="text/html">
+      El servidorext2fs </a>
+  <th>&quot;<code>ext2fs</code>&quot;
+<tr>
+  <th><a href="#fifo" name="TOC_fifo" type="text/html">
+      El traductor fifo</a>
+  <th>&quot;<code>fifo</code>&quot;
+<tr>
+  <th><a href="#firmlink" name="TOC_firmlink" type="text/html">
+      El traductor firmlink</a>
+  <th>&quot;<code>firmlink</code>&quot;
+<tr>
+  <th><a href="#ftpfs" name="TOC_ftpfs" type="text/html">
+      El traductor de sistemas de archivo ftp</a>
+  <th>&quot;<code>ftpfs</code>&quot;
+<tr>
+  <th><a href="#fwd" name="TOC_fwd" type="text/html">
+      El servidor fwd</a>
+  <th>&quot;<code>fwd</code>&quot;
+<tr>
+  <th><a href="#hostmux" name="TOC_hostmux" type="text/html">
+      El servidor hostmux</a>
+  <th>&quot;<code>hostmux</code>&quot;
+<tr>
+  <th><a href="#ifsock" name="TOC_ifsock" type="text/html">
+      El servidor ifsock</a>
+  <th>&quot;<code>ifsock</code>&quot;
+<tr>
+  <th><a href="#init" name="TOC_init" type="text/html">
+      El servidor init</a>
+  <th>&quot;<code>init</code>&quot;
+<tr>
+  <th><a href="#isofs" name="TOC_isofs" type="text/html">
+      El servidor de sistemas de archivo iso</a>
+  <th>&quot;<code>isofs</code>&quot;
+<tr>
+  <th><a href="#magic" name="TOC_magic" type="text/html">
+      El servidor magic</a>
+  <th>&quot;<code>magic</code>&quot;
+<tr>
+  <th><a href="#new-fifo" name="TOC_new-fifo" type="text/html">
+      El servidor new-fifo</a>
+  <th>&quot;<code>new-fifo</code>&quot;
+<tr>
+  <th><a href="#nfs" name="TOC_nfs" type="text/html">
+      El servidor nfs</a>
+  <th>&quot;<code>nfs</code>&quot;
+<tr>
+  <th><a href="#null" name="TOC_null" type="text/html">
+      El servidor null</a>
+  <th>&quot;<code>null</code>&quot;
+<tr>
+  <th><a href="#pfinet" name="TOC_pfinet" type="text/html">
+      El servidor pfinet</a>
+  <th>&quot;<code>pfinet</code>&quot;
+<tr>
+  <th><a href="#pflocal" name="TOC_pflocal" type="text/html">
+      El servidor pflocal</a>
+  <th>&quot;<code>pflocal</code>&quot;
+<tr>
+  <th><a href="#proc" name="TOC_proc" type="text/html">
+      El servidor process</a>
+  <th>&quot;<code>proc</code>&quot;
+<tr>
+  <th><a href="#storeio" name="TOC_storeio" type="text/html">
+      El traductor storage</a>
+  <th>&quot;<code>storeio</code>&quot;
+<tr>
+  <th><a href="#symlink" name="TOC_symlink" type="text/html">
+      El traductor de enlaces simbólicos</a>
+  <th>&quot;<code>symlink</code>&quot;
+<tr>
+  <th><a href="#term" name="TOC_term" type="text/html">
+      El servidor de terminales</a>
+  <th>&quot;<code>term</code>&quot;
+<tr>
+  <th><a href="#ufs" name="TOC_ufs" type="text/html">
+      El servidor ufs</a>
+  <th>&quot;<code>ufs</code>&quot;
+<tr>
+  <th><a href="#usermux" name="TOC_usermux" type="text/html">
+      El servidor usermux</a>
+  <th>&quot;<code>usermux</code>&quot;
+
+<!-- Uncomment and fill the blanks...
+<tr>
+  <th><a href="#" name="TOC_" type="text/html">
+      El servidor</a>
+  <th>&quot;<code></code>&quot;
+-->
+</table>
+
+
+<h2 align="center"><a href="#TOC_auth" name="auth" type="text/html">
+El Servidor de Autentificación - &quot;<code>auth</code>&quot;</a></h2>
+
+<p>
+Pasa credenciales cuando dos servidores que no confían el uno en el
+otro se comunican entre sí. En cierto sentido, cada servidor auth
+establece un dominio de confianza. (Martin von
+Loewis, 10 de Octubre de 1996)</p>
+
+<P>
+Una de sus características interesantes es que hace posible que los
+procesos adopten varias identidades al mismo tiempo, y también
+obtener o recuperar identidades dinámicamente.</p>
+
+<p>
+Ejecutando &quot;<code>/hurd/auth --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: auth [OPTION...]
+
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+<h2 align="center"><a href="#TOC_crash" name="crash" type="text/html">
+El Servidor Crash - &quot;<code>crash</code>&quot;</a></h2>
+
+<p>
+El servidor crash se activa cuando alguna tarea recibe una señal
+de error fatal, por ejemplo, porque haya violado sus límites de memoria
+(fallo de segmentación). El servidor crash tiene tres modos de operación:
+suspender el grupo de procesos (pgrp) de la tarea infractora, matarla
+o generar un archivo de imagen de memoria. El último no está 
+implementado aún. Considere el servidor crash como un airbag.</p>
+<p>
+Por supuesto, con <code>settrans</code> se puede establecer el modo
+de operación, pero también con <code>fsysopts</code> durante la ejecución.
+Esto es válido para el funcionamiento por defecto de todo el sistema y
+normalmente requiere privilegios de superusuario. Un usuario puede seleccionar
+un funcionamiento por defecto distindo con la variable de entorno 
+<code>CRASHSERVER</code>. Esta variable recibe como valor un nodo-i
+que tiene asociado el servidor <code>crash</code>. En un sistema Debian
+GNU/Linux normal, hay tres operaciones por defecto que tienen
+sus traductores correspondientes ubicados en
+ <code>/servers/crash-*</code>.</p>
+
+<p><pre>
+
+ Las siguientes opciones especifican las acciones para un proceso que falla:
+  -s, --suspend              Suspend the process
+  -k, --kill                 Kill the process
+  -c, --core-file            Dump a core file
+      --dump-core
+</pre>
+
+
+<h2 align="center"><a href="#TOC_exec" name="exec" type="text/html">
+El Servidor de Ejecución - &quot;<code>exec</code>&quot;</a></h2>
+
+<p>
+Exec gestiona la creación de las imágenes de los procesos nuevos a partir del
+archivo imagen.</p>
+
+<P>
+Realmente este servidor da soporte a la creación de una imagen de proceso
+ejecutable a partir de cualquier archivo imagen reconocible por la
+biblioteca BFD (lo cual incluye a.out, ELF, y muchos otros). También
+reconoce los ejecutables comprimidos con gzip (útil para floppies de
+arranque).</p>
+
+<p>
+Ejecutando &quot;<code>/hurd/exec --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: exec [OPTION...]
+Hurd standard exec server
+
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_ext2fs" name="ext2fs" type="text/html">
+El Servidor de Sistemas de Archivo ext2 - &quot;<code>ext2fs</code>&quot;</a></h2>
+
+<p>
+Este servidor gestiona los sistemas de archivo de tipo ext2.
+Hace lo mismo que 
+<code>ext2fs.static</code>, sólo que <code>ext2fs.static</code>
+es un ejecutable enlazado de forma estática.
+
+<p>
+Ejecutando &quot;<code>/hurd/ext2fs --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: ext2fs [OPTION...] DEVICE...
+
+If neither --interleave or --layer is specified, multiple DEVICEs are
+concatenated.
+
+  -E, --no-exec              Don't permit any execution of files on this
+                             filesystem
+  -I, --interleave=BLOCKS    Interleave in runs of length BLOCKS
+  -L, --layer                Layer multiple devices for redundancy
+  -n, --no-sync              Don't automatically sync data to disk
+  -r, --readonly             Never write to disk or allow opens for writing
+  -s, --sync[=INTERVAL]      If INTERVAL is supplied, sync all data not
+                             actually written to disk every INTERVAL seconds,
+                             otherwise operate in synchronous mode (the default
+                             is to sync every 30 seconds)
+  -S, --no-suid              Don't permit set-uid or set-gid execution
+  -T, --store-type=TYPE      Each DEVICE names a store of type TYPE
+  -w, --writable             Use normal read/write behavior
+
+ Boot options:
+      --bootflags=FLAGS
+  -C, --directory=DIRECTORY
+      --device-master-port=PORT
+      --exec-server-task=PORT
+      --host-priv-port=PORT
+
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+
+If neither --interleave or --layer is specified, multiple DEVICEs are
+concatenated.
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_fifo" name="fifo" type="text/html">
+El Servidor fifo  - &quot;<code>fifo</code>&quot;</a></h2>
+
+<p>
+El traductor fifo implementa las tuberías con nombre.
+
+<p>
+Ejecutando &quot;<code>/hurd/fifo --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: fifo [OPTION...]
+Translator for fifos
+
+  -d, --dgram                Reads reflect write record boundaries
+  -m, --multiple-readers     Allow multiple simultaneous readers
+  -n, --noblock              Don't block on open
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_firmlink" name="firmlink" type="text/html">
+El Servidor firmlink - &quot;<code>firmlink</code>&quot;</a></h2>
+
+<p>
+Un traductor para los enlaces fijos.
+
+<p>
+Ejecutando &quot;<code>/hurd/firmlink --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: firmlink [OPTION...] TARGET
+A translator for firmlinks
+
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
+
+A firmlink is sort of half-way between a symbolic link and a hard link;
+
+Like a symbolic link, it is `by name', and contains no actual reference to the
+target.  However, the lookup returns a node which will redirect parent lookups
+so that attempts to find the cwd that go through the link will reflect the link
+name, not the target name.  The target referenced by the firmlink is looked up
+in the namespace of the translator, not the client.
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_ftpfs" name="ftpfs" type="text/html">
+El Servidor de Sistemas de Archivo ftp - &quot;<code>ftpfs</code>&quot;</a></h2>
+
+<p>
+Un servidor para los sistemas de archivo ftp.
+
+<p>
+Ejecutando &quot;<code>/hurd/ftpfs --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: ftpfs [OPTION...] REMOTE_FS [SERVER]
+Hurd ftp filesystem translator
+
+  -D, --debug[=FILE]         Print debug output to FILE
+
+ Parameters:
+      --bulk-stat-period=SECS   Period for detecting bulk stats (default 10)
+      --bulk-stat-threshold=SECS   Number of stats within the bulk-stat-period
+                             that trigger a bulk stat (default 5)
+      --name-timeout=SECS    Time directory names are cached (default 300)
+      --node-cache-size=ENTRIES   Number of recently used filesystem nodes that
+                             are cached (default 50)
+      --stat-timeout=SECS    Time stat information is cached (default 120)
+
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+
+If SERVER is not specified, an attempt is made to extract it from REMOTE_FS,
+using `SERVER:FS' notation.  SERVER can be a hostname, in which case anonymous
+ftp is used, or may include a user and password like `USER:PASSWORD@HOST' (the
+`:PASSWORD' part is optional).
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_fwd" name="fwd" type="text/html">
+El Servidor fwd - &quot;<code>fwd</code>&quot;</a></h2>
+
+<p>
+Cuando se accede a él, el traductor reenvía las peticiones a otro
+servidor. Se usa en los servidores fifo y symlink. La idea es que no
+se tenga una barbaridad de servidores para cosas triviales; fws se usa
+para coordinar convenientemente la gestión de varios nodos diferentes
+por parte de un servidor.
+
+<p>
+Ejecutando &quot;<code>/hurd/fwd --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: /hurd/fwd SERVER [TRANS_NAME [TRANS_ARG...]]
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_hostmux" name="hostmux" type="text/html">
+El servidor hostmux - &quot;<code>hostmux</code>&quot;</a></h2>
+
+<p>
+No tengo ni idea de para qué es bueno este servidor. 
+
+<small>
+(¿Un servidor para buscar máquinas?)
+</small>
+
+<p>
+Ejecutando &quot;<code>/hurd/hostmux --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: hostmux [OPTION...] TRANSLATOR [ARG...]
+A translator for invoking host-specific translators
+
+  -H, --host-pattern=PAT     The string to replace in the translator
+                             specification with the hostname; if empty, or
+                             doesn't occur, the hostname is appended as
+                             additional argument instead (default `${host}')
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+
+This translator appears like a directory in which hostnames can be looked up,
+and will start TRANSLATOR to service each resulting node.
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_ifsock" name="ifsock" type="text/html">
+El servidor ifsock - &quot;<code>ifsock</code>&quot;</a></h2>
+
+<p>
+<code>ifsock</code> sólo gestiona los nodos de sistemas de archivo
+ <code>S_IFSOCK</code> para sistemas de archivo que no lo hacen 
+por sí mismos, actuando como un gancho del cual colgar las direcciones
+de los enchufes de dominio Unix. pfinet y pflocal implementan la 
+interfaz cd programación de aplicaciones de los enchufes.
+ (Thomas Bushnell, 10 de Octubre de 1996)
+
+<p>
+Ejecutando &quot;<code>/hurd/ifsock --help</code>&quot; se obtiene:
+<br>
+<pre>
+/hurd/ifsock: Must be started as a translator
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_init" name="init" type="text/html">
+El servidor de inicio - &quot;<code>init</code>&quot;</a></h2>
+
+<p>
+Un servidor para los procedimientos de arranque del sistema y la configuración
+básica durante la ejecución.
+
+<p>
+Ejecutando &quot;<code>/hurd/init --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: init [OPTION...]
+Start and maintain hurd core servers and system run state
+
+  -d, --debug
+  -f, --fake-boot            This hurd hasn't been booted on the raw machine
+  -n, --init-name
+  -q, --query                Ask for the names of servers to start
+  -s, --single-user          Startup system in single-user mode
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_isofs" name="isofs" type="text/html">
+El servidor de sistemas de archivo iso - &quot;<code>isofs</code>&quot;</a></h2>
+
+<p>
+Un servidor para sistemas de archivo de tipo iso, usado habitualmente en
+los discos compactos.
+
+<p>
+Ejecutando &quot;<code>/hurd/isofs --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: isofs [OPTION...] DEVICE...
+
+If neither --interleave or --layer is specified, multiple DEVICEs are
+concatenated.
+
+  -E, --no-exec              Don't permit any execution of files on this
+                             filesystem
+  -I, --interleave=BLOCKS    Interleave in runs of length BLOCKS
+  -L, --layer                Layer multiple devices for redundancy
+  -n, --no-sync              Don't automatically sync data to disk
+  -r, --readonly             Never write to disk or allow opens for writing
+  -s, --sync[=INTERVAL]      If INTERVAL is supplied, sync all data not
+                             actually written to disk every INTERVAL seconds,
+                             otherwise operate in synchronous mode (the default
+                             is to sync every 30 seconds)
+  -S, --no-suid              Don't permit set-uid or set-gid execution
+  -T, --store-type=TYPE      Each DEVICE names a store of type TYPE
+  -w, --writable             Use normal read/write behavior
+
+ Boot options:
+      --bootflags=FLAGS
+  -C, --directory=DIRECTORY
+      --device-master-port=PORT
+      --exec-server-task=PORT
+      --host-priv-port=PORT
+
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+
+If neither --interleave or --layer is specified, multiple DEVICEs are
+concatenated.
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_magic" name="magic" type="text/html">
+El servidor magic - &quot;<code>magic</code>&quot;</a></h2>
+
+<p>
+Un traductor que devuelve el resultado mágico de reintento <code>MAGIC</code>.
+
+Los usuarios normales y finales probablemente no necesiten saber mucho acerca
+de él, puesto que se usa, por ejemplo, para facilitar la entrada/salida a y
+de terminales. Los programadores podrían encontrar útil la siguiente
+información que dió Thomas Bushnell:
+
+<p><blockquote>
+La clave aquí está en saber qué es un &quot;resultado de reintento mágico&quot;.
+Lo que hay que hacer es mirar en la <abbr>RPC</abbr> <code>dir_lookup</code>,
+documentada en <code>&lt;hurd/fs.defs&gt;</code> y
+<code>&lt;hurd/hurd_types.defs&gt;</code>.
+
+<br>
+Los resultados de búsqueda mágicos sirven básicamente en los casos en los
+que la búsqueda necestia información que es parte del estado del 
+proceso llamante, y no parte del procedimiento normal de búsqueda de
+nombres. Estos &quot; punteros al estado del llamador&quot;
+tienen que implementarse especialmente en la biblioteca de C (véase
+<code>libc/hurd/hurdlookup.c</code>), y contemplar los casos conocidos
+para proporcionar las funciones que proporcionan muchos otros sistemas.
+</blockquote>
+
+<p>
+También explicó amablemente un comportamiento particular que usualmente
+lía a los usuarios finales normales cuando se lo encuentran por primera
+vez:
+
+<p><blockquote>
+La imposibilidad de hacer &quot;<kbd>ls /dev/fd</kbd>&quot; se debe a que
+el traductor no sabe que descriptores de archivo se tienen abiertos, 
+de modo que no puede decir cuáles existen. Pero el comportamiento es
+exactamente el mismo que en otros sistemas.
+</blockquote>
+
+<p>
+Ejecutando &quot;<code>/hurd/magic --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: magic [OPTION...] MAGIC
+A translator that returns the magic retry result MAGIC
+
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_new-fifo" name="new-fifo" type="text/html">
+El servidor new-fifo - &quot;<code>new-fifo</code>&quot;</a></h2>
+
+<p>
+Servidor alternativo para las tuberías con nombre.
+
+<p>
+Ejecutando &quot;<code>/hurd/new-fifo --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: new-fifo [OPTION...]
+
+  -d, --dgram                Reflect write record boundaries
+  -n, --noblock              Don't block on open
+  -r, --multiple-readers     Allow multiple simultaneous readers
+  -s, --server               Operate in server mode
+  -S, --standalone           Don't attempt to use a fifo server
+  -U, --use-server=NAME      Attempt use server NAME
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_nfs" name="nfs" type="text/html">
+El servidor de sistemas de archivo en red - &quot;<code>nfs</code>&quot;</a></h2>
+
+<p>
+Soporte para el sistema de archivos en red de Sun.
+
+<p>
+Ejecutando &quot;<code>/hurd/nfs --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: nfs [OPTION...] REMOTE_FS [HOST]
+Hurd nfs translator
+
+  -h, --hard                 Retry file systems requests until they succeed
+  -s, --soft[=RETRIES]       File system requests will eventually fail, after
+                             RETRIES tries if specified, otherwise 3
+  -R, --read-size=BYTES, --rsize=BYTES
+                             Max packet size for reads (default 8192)
+  -W, --write-size=BYTES, --wsize=BYTES
+                             Max packet size for writes (default 8192)
+
+ Timeouts:
+      --cache-timeout=SEC    Timeout for cached file data (default 3)
+      --init-transmit-timeout=SEC
+      --max-transmit-timeout=SEC
+      --name-cache-neg-timeout=SEC
+                             Timeout for negative directory cache entires
+                             (default 3)
+      --name-cache-timeout=SEC   Timeout for positive directory cache entries
+                             (default 3)
+      --stat-timeout=SEC     Timeout for cached stat information (default 3)
+
+ Server specification:
+      --default-mount-port=PORT   Port for mount server, if none can be found
+                             automatically
+      --default-nfs-port=PORT   Port for nfs operations, if none can be found
+                             automatically
+      --mount-port=PORT      Port for mount server
+      --mount-program=ID[.VERS]
+      --nfs-port=PORT        Port for nfs operations
+      --nfs-program=ID[.VERS]
+      --pmap-port=SVC|PORT
+
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+
+If HOST is not specified, an attempt is made to extract it from REMOTE_FS,
+using either the `HOST:FS' or `FS@HOST' notations.
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_null" name="null" type="text/html">
+El fregadero de la cocina - &quot;<code>null</code>&quot;</a></h2>
+
+<p>
+Un servidor para montones de espacio libre y un número incalculable de
+ceros, implementa
+<code>/dev/null</code> y <code>/dev/zero</code>.
+
+<p>
+Ejecutando &quot;<code>/hurd/null --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: null [OPTION...]
+Endless sink and null source
+
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_pfinet" name="pfinet" type="text/html">
+El servidor TCP/IP  - &quot;<code>pfinet</code>&quot;</a></h2>
+
+<p>
+Un servidor para TCP/IP, que implementa la familia de protocolos 
+(IPv4) PF_INET. Bajo el esquema actual, el 
+servidor que implementará la familia de protocolos
+IPv6 se podría llamar pfinet6.</p>
+<p>
+Configurarlo no es en absoluto difícil. Siempre está ubicado en
+<code>/servers/socket/2</code>, porque ahí es donde lo buscará
+glibc.
+Así que asegurese de instalarlo del siguiente modo:
+ <code>settrans /servers/socket/1 /hurd/pfinet --interface=eth0 OPTIONS</code>, donde <code>OPTIONS</code>
+especifica su dirección, máscara y pasarela IP (si hay). Actualmente sólo hay 
+soporte para una interfaz de red. Mas tarde, también puede configurar
+interfaces adicionales, como <code>eth1</code>, y de ahí en adelante con
+la misma orden.</p>
+<p>
+Si no tiene tarjeta de red debería instalar al menos la interfaz en bucle,
+de modo que funcione localhost (es importante para la cola de impresión
+y otras cosas útiles). Haga esto con la orden de arriba, pero no especifique
+ninguna interfaz ni 
+<code>OPTIONS</code>. Un simple <code>settrans /servers/socket/1
+/hurd/pfinet</code> lo hará.</p>
+<p>
+Ejecutando &quot;<code>/hurd/pfinet --help</code>&quot; se obtiene:
+<br>
+<pre>
+Swansea University Computer Society TCP/IP for NET3.019
+IP Protocols: ICMP, UDP, TCP
+Usage: pfinet [OPTION...]
+Interface-specific options before the first interface specification apply to
+the first following interface; otherwise they apply to the previously specified
+interface.
+
+  -i, --interface=DEVICE     Network interface to use
+
+ These apply to a given interface:
+  -a, --address=ADDRESS      Set the network address
+  -g, --gateway=ADDRESS      Set the default gateway
+  -m, --netmask=MASK         Set the netmask
+  -s, --shutdown             Shut it down
+
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_pflocal" name="pflocal" type="text/html">
+El servidor pflocal - &quot;<code>pflocal</code>&quot;</a></h2>
+
+<p>
+Implementa los enchufes de dominio UNIX. Necesarios para las tuberías, por
+ejemplo.
+
+<p>
+Ejecutando &quot;<code>/hurd/pflocal --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: /hurd/pflocal
+</pre>
+
+<h2 align="center"><a href="#TOC_proc" name="proc" type="text/html">
+El servidor de procesos - &quot;<code>proc</code>&quot;</a></h2>
+
+<p>
+El servidor de procesos asigna los PIDes y las estructuras de procesos
+a las tareas, y gestiona todas las cosas de nivel de procesos, como
+esperar, parte de los fork y el soporte para la biblioteca de C.
+
+<p>
+Ejecutando &quot;<code>/hurd/proc --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: proc [OPTION...]
+Hurd process server
+
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_storeio" name="storeio" type="text/html">
+El traductor de almacenamiento - &quot;<code>storeio</code>&quot;</a></h2>
+
+<p>
+Un traductor para dispositivos y otros almacenes.
+
+<p>
+Ejecutando &quot;<code>/hurd/storeio --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: storeio [OPTION...] DEVICE...
+Translator for devices and other stores
+
+  -I, --interleave=BLOCKS    Interleave in runs of length BLOCKS
+  -L, --layer                Layer multiple devices for redundancy
+  -n, --rdev=ID              The stat rdev number for this node; may be either
+                             a single integer, or of the form MAJOR,MINOR
+  -r, --readonly             Disallow writing
+  -T, --store-type=TYPE      Each DEVICE names a store of type TYPE
+  -w, --writable             Allow writing
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+
+If neither --interleave or --layer is specified, multiple DEVICEs are
+concatenated.
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_symlink" name="symlink" type="text/html">
+El servidor de enlaces simbólicos - &quot;<code>symlink</code>&quot;</a></h2>
+
+<p>
+Un servidor para enlaces simbólicos destinado a sistemas de archivos que 
+no los soportan por sí mismos.
+
+<p>
+Ejecutando &quot;<code>/hurd/symlink --help</code>&quot; se obtiene:
+<br>
+<pre>
+?
+</pre>
+(¿No ha habido ninguna salida? Extraño...)
+
+
+<h2 align="center"><a href="#TOC_term" name="term" type="text/html">
+El servidor de terminales - &quot;<code>term</code>&quot;</a></h2>
+
+<p>
+Implementa los terminales POSIX.
+
+<p>
+Ejecutando &quot;<code>/hurd/term --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: term ttyname type arg
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_ufs" name="ufs" type="text/html">
+El servidor ufs - &quot;<code>ufs</code>&quot;</a></h2>
+
+<p>
+Un servidor para los sistemas de archivo de tipo ufs. Hace lo mismo que
+<code>ufs.static</code>, sólo que <code>ufs.static</code>
+es un ejecutable enlazado de forma estática.
+
+<p>
+Ejecutando &quot;<code>/hurd/ufs --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: ufs [OPTION...] DEVICE...
+
+If neither --interleave or --layer is specified, multiple DEVICEs are
+concatenated.
+
+  -C, --compat=FMT           FMT may be GNU, 4.4, or 4.2, and determines which
+                             filesystem extensions are written onto the disk
+                             (default is GNU)
+  -E, --no-exec              Don't permit any execution of files on this
+                             filesystem
+  -I, --interleave=BLOCKS    Interleave in runs of length BLOCKS
+  -L, --layer                Layer multiple devices for redundancy
+  -n, --no-sync              Don't automatically sync data to disk
+  -r, --readonly             Never write to disk or allow opens for writing
+  -s, --sync[=INTERVAL]      If INTERVAL is supplied, sync all data not
+                             actually written to disk every INTERVAL seconds,
+                             otherwise operate in synchronous mode (the default
+                             is to sync every 30 seconds)
+  -S, --no-suid              Don't permit set-uid or set-gid execution
+  -T, --store-type=TYPE      Each DEVICE names a store of type TYPE
+  -w, --writable             Use normal read/write behavior
+
+ Boot options:
+      --bootflags=FLAGS
+      --device-master-port=PORT
+      --directory=DIRECTORY
+      --exec-server-task=PORT
+      --host-priv-port=PORT
+
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+
+If neither --interleave or --layer is specified, multiple DEVICEs are
+concatenated.
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<h2 align="center"><a href="#TOC_usermux" name="usermux" type="text/html">
+El traductor usermux - &quot;<code>usermux</code>&quot;</a></h2>
+
+<p>
+Un traductor para llamar a traductores de usuario específicos.
+
+<p>
+Ejecutando &quot;<code>/hurd/usermux --help</code>&quot; se obtiene:
+<br>
+<pre>
+Usage: usermux [OPTION...] [TRANSLATOR [ARG...]]
+A translator for invoking user-specific translators
+
+  -C, --clear-patterns       Reset all patterns to empty; this option may then
+                             be followed by options to set specific patterns
+      --home-pattern=PAT     The string to replace in the translator
+                             specification with the user's home directory
+                             (default `${home}')
+      --uid-pattern=PAT      The string to replace in the translator
+                             specification with the uid (default `${uid}')
+      --user-pattern=PAT     The string to replace in the translator
+                             specification with the user name (default
+                             `${user}')
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+
+This translator appears like a directory in which user names can be looked up,
+and will start TRANSLATOR to service each resulting node.  If no pattern occurs
+in the translator specification, the users's home directory is appended to it
+instead; TRANSLATOR defaults to /hurd/symlink.
+
+Report bugs to bug-hurd@gnu.org.
+</pre>
+
+
+
+<!-- Uncomment and fill the blanks...
+<h2 align="center"><a href="#TOC_" name="" type="text/html">
+El servidor - &quot;<code></code>&quot;</a></h2>
+
+<p>
+Un servidor para .
+
+<p>
+Ejecutando &quot;<code>/hurd/ --help</code>&quot; se obtiene:
+<br>
+<pre>
+
+</pre>
+-->
+
