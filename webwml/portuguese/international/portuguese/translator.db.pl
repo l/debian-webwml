@@ -52,9 +52,18 @@ sub init_translators {
 	    compress  => 'none'
 	    },
 	'Gustavo Rezende Montesino' => {
-	    email     => 'ikki_gerrard@yahoo.com.br',
+	    email     => 'grmontesino@ig.com.br',
 	    summary   => 2,
 	    logs      => 2,
+	    diff      => 0,
+	    tdiff     => 0,
+	    compress  => 'none'
+	},
+
+	'Antonio Terceiro' => {
+	    email     => 'asaterceiro@inf.ufrgs.br',
+            summary   => 3,
+	    logs      => 3,
 	    diff      => 0,
 	    tdiff     => 0,
 	    compress  => 'none'
