@@ -3,84 +3,76 @@
 #use wml::debian::common_tags
 #use wml::debian::language_names
 
-<define-tag langtext whitespace=delete>
-  <gettext>This page is also available in the following languages</gettext>
-</define-tag>
-<define-tag setlang whitespace=delete>
-  <gettext>How to set <a href=m4_HOME/intro/cn>the default document language</a></gettext>
-</define-tag>
-
 <perl>
-# Add your language directory along with its ISO abbreviation here.
-# Do _not_ translate the directory names.
-#            Directory   Abbrev
-my %langs = ( english    => "en",
-#             arabic     => "ar",
-              catalan    => "ca",
-              danish     => "da",
-              german     => "de",
-              greek      => "el",
-              esperanto  => "eo",
-              spanish    => "es",
-              finnish    => "fi",
-              french     => "fr",
-              croatian   => "hr",
-              hungarian  => "hu",
-	      indonesian => "id",
-              italian    => "it",
-              japanese   => "ja",
-              korean     => "ko",
-	      lithuanian => "lt",
-              dutch      => "nl",
-              norwegian  => "no",
-              polish     => "pl",
-              portuguese => "pt",
-              romanian   => "ro",
-              russian    => "ru",
-              swedish    => "sv",
-              slovene    => "sl",
-              turkish    => "tr",
-              chinese    => "zh",
+# language directory name => ISO 639 two-letter code for the language name
+my %langs = (
+  english    => "en",
+  arabic     => "ar",
+  catalan    => "ca",
+  danish     => "da",
+  german     => "de",
+  greek      => "el",
+  esperanto  => "eo",
+  spanish    => "es",
+  finnish    => "fi",
+  french     => "fr",
+  croatian   => "hr",
+  hungarian  => "hu",
+  indonesian => "id",
+  italian    => "it",
+  japanese   => "ja",
+  korean     => "ko",
+  lithuanian => "lt",
+  dutch      => "nl",
+  norwegian  => "no",
+  polish     => "pl",
+  portuguese => "pt",
+  romanian   => "ro",
+  russian    => "ru",
+  swedish    => "sv",
+  slovene    => "sl",
+  turkish    => "tr",
+  chinese    => "zh",
 );
 
-# Add your language in your own language.  Non-ASCII letters must be
-# escaped.
+# language directory name => native name of the language
+# non-ASCII letters must be escaped (using entities)!
 my %selflang = (
-#             arabic     => '&#1593;&#1585;&#1576;&#1610;&#1577;',
-              catalan    => 'catal&agrave;',
-              chinese    => '&#20013;&#25991;',
-              croatian   => 'hrvatski',
-              danish     => 'dansk',
-              dutch      => 'Nederlands',
-              english    => 'English',
-              esperanto  => 'Esperanto',
-              finnish    => 'suomi',
-              french     => 'fran&ccedil;ais',
-              german     => 'Deutsch',
-              greek      => '&#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940;',
-              hungarian  => 'magyar',
-              indonesian => 'Indonesia',
-              italian    => 'Italiano',
-              japanese   => '&#26085;&#26412;&#35486;',
-              korean     => '&#54620;&#44397;&#50612;',
-              lithuanian => 'Lietuvi&#371;',
-              norwegian  => 'norsk&nbsp;(bokm&aring;l)',
-              polish     => 'polski',
-              portuguese => 'Portugu&ecirc;s',
-              romanian   => 'rom&acirc;n&#259;',
-              russian    => '&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;',
-              spanish    => 'espa&ntilde;ol',
-              swedish    => 'svenska',
-              slovene    => 'sloven&#353;&#269;ina',
-              turkish    => 'T&uuml;rk&ccedil;e'
+  arabic     => '&#1593;&#1585;&#1576;&#1610;&#1577;',
+  catalan    => 'catal&agrave;',
+  chinese    => '&#20013;&#25991;',
+  croatian   => 'hrvatski',
+  danish     => 'dansk',
+  dutch      => 'Nederlands',
+  english    => 'English',
+  esperanto  => 'Esperanto',
+  finnish    => 'suomi',
+  french     => 'fran&ccedil;ais',
+  german     => 'Deutsch',
+  greek      => '&#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940;',
+  hungarian  => 'magyar',
+  indonesian => 'Indonesia',
+  italian    => 'Italiano',
+  japanese   => '&#26085;&#26412;&#35486;',
+  korean     => '&#54620;&#44397;&#50612;',
+  lithuanian => 'Lietuvi&#371;',
+  norwegian  => 'norsk&nbsp;(bokm&aring;l)',
+  polish     => 'polski',
+  portuguese => 'Portugu&ecirc;s',
+  romanian   => 'rom&acirc;n&#259;',
+  russian    => '&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;',
+  spanish    => 'espa&ntilde;ol',
+  swedish    => 'svenska',
+  slovene    => 'sloven&#353;&#269;ina',
+  turkish    => 'T&uuml;rk&ccedil;e',
 );
 
-# If your language name contains entirely of non-latin characters, you
-# might wish to give a latin transliteration of the name here, to aid
-# those that have browser that cannot show different character sets at
-# once.
+# language directory name => Latin transliteration of the language name
+# This is used for language names which consist entirely of non-Latin
+# characters, to aid those that have browsers which cannot show different
+# character sets at once.
 my %translit = (
-# arabic   => "Arbytm",
+  arabic   => "Arbytm",
   chinese  => "Zhongzu",
   greek    => "Ellinika",
   japanese => "Nihongo",
@@ -88,9 +80,6 @@ my %translit = (
   russian  => "Russkij",
 );
 </perl>
-
-# DO NOT translate anything below here.
-# If you feel something needs to be modified, write to debian-www first.
 
 <when "$(CUR_LOCALE)">
   <perl>
@@ -151,7 +140,7 @@ sub languages {
   if ($rel_dir eq "" && $file eq "sitemap") { # special case for the site map
     $str .= "\n";
     $str .= "<!--UdmComment-->\n";
-    $str .= "<langtext/>:\n";
+    $str .= q{<gettext>This page is also available in the following languages:</gettext>}."\n";
     $str .= "<br />\n";
     foreach (keys %langs) {
       if ($_ ne lc($cur_lang) or $cur_lang eq "Chinese") {
@@ -175,7 +164,8 @@ sub languages {
   }
   elsif (@used_langs) {
      $str .= "<!--UdmComment-->\n";
-     $str .= "<langtext/>:\n<br />\n";
+     $str .= q{<gettext>This page is also available in the following languages:</gettext>}."\n";
+     $str .= "<br />\n";
      # Language sorting. Create a hash going from the language's own name
      # for itself to the language's ISO keys. Then work with the sorted
      # keys.
@@ -197,8 +187,9 @@ sub languages {
            $str .= "<a href=\"$file.$langs{$cur_lang}-tw.html\" title=\"$tooltip (<TWc/>)\" hreflang=\"$langs{$cur_lang}-TW\" lang=\"$langs{$cur_lang}-TW\" rel=\"alternate\" style=\"white-space: nowrap\">$_(&#32321;)</a>&nbsp;\n";
         }
      }
-     $str .= "\n<br />".q{<setlang/>}."\n";
-     $str .= "<!--/UdmComment-->\n";
+     $str .= "\n<br />\n";
+     $str .= q{<gettext>How to set <a href=m4_HOME/intro/cn>the default document language</a></gettext>};
+     $str .= "\n<!--/UdmComment-->\n";
   }
 
   return $str;
