@@ -2,6 +2,7 @@
 
 <define-tag-sliced flags whitespace=delete>
 	[EN:Flags::]
+	[CA:Opcions::]
 	[DA:Flag::]
 	[DE:Flags::]
 	[FI:Liput::]
@@ -15,6 +16,7 @@
 </define-tag-sliced>
 <define-tag-sliced active_bugs whitespace=delete>
 	[EN:active bugs:]
+	[CA:errors actius:]
 	[DA:aktive fejl:]
 	[DE:aktive Fehler:]
 	[FI:aktiiviset viat:]
@@ -28,6 +30,7 @@
 </define-tag-sliced>
 <define-tag-sliced archived_bugs whitespace=delete>
 	[EN:archived bugs:]
+	[CA:errors arxivats:]
 	[DA:arkiverede fejl:]
 	[DE:archivierte Fehler:]
 	[FI:arkistoidut viat:]
@@ -41,6 +44,7 @@
 </define-tag-sliced>
 <define-tag-sliced no_status whitespace=delete>
 	[EN:no ordering by status or severity:]
+	[CA:no ordenar pel seu estat de gravetat:]
 	[DA:ingen sortering på status/alvorlighedsgrad:]
 	[DE:nicht nach Status oder Dringlichkeit sortieren:]
 	[FI:ei järjestystä tilan tai vakavuuden perusteella:]
@@ -54,6 +58,7 @@
 </define-tag-sliced>
 <define-tag-sliced reverse_order whitespace=delete>
 	[EN:Reverse order of: :]
+	[CA:Invertir l'ordre de: :]
 	[DA:Omvendt rækkefølge af: :]
 	[DE:Sortierung umkehren von: :]
 	[FI:Käänteinen järjestys::]
@@ -67,6 +72,7 @@
 </define-tag-sliced>
 <define-tag-sliced status whitespace=delete>
 	[EN:status:]
+	[CA:estat:]
 	[DA:status:]
 	[DE:Status:]
 	[FI:tila:]
@@ -80,6 +86,7 @@
 </define-tag-sliced>
 <define-tag-sliced severities whitespace=delete>
 	[EN:severities:]
+	[CA:gravetat:]
 	[DA:alvorlighedsgrader:]
 	[DE:Dringlichkeiten:]
 	[FI:vakavuudet:]
@@ -93,6 +100,7 @@
 </define-tag-sliced>
 <define-tag-sliced bugs whitespace=delete>
 	[EN:bugs:]
+	[CA:errors:]
 	[DA:fejl:]
 	[DE:Fehler:]
 	[FI:viat:]
@@ -105,6 +113,7 @@
 </define-tag-sliced>
 <define-tag-sliced status_include whitespace=delete>
 	[EN:Include status: :]
+	[CA:Incloure l'estat: :]
 	[DA:Status indeholder: :]
 	[DE:Status einschliessen: :]
 	[FI:Sisällytä tila: :]
@@ -117,6 +126,7 @@
 </define-tag-sliced>
 <define-tag-sliced status_exclude whitespace=delete>
 	[EN:Exclude status: :]
+	[CA:Excloure l'estat: :]
 	[DA:Status indeholder ikke: :]
 	[DE:Status ausschliessen: :]
 	[FI:Poista tila: :]
@@ -129,6 +139,7 @@
 </define-tag-sliced>
 <define-tag-sliced severity_include whitespace=delete>
 	[EN:Include severity: :]
+	[CA:Incloure gravetat: :]
 	[DA:Alvorlighedsgrad indeholder: :]
 	[DE:Dringlichkeit einschliessen: :]
 	[FI:Sisällytä vakavuus: :]
@@ -142,6 +153,7 @@
 </define-tag-sliced>
 <define-tag-sliced severity_exclude whitespace=delete>
 	[EN:Exclude severity: :]
+	[CA:Excloure gravetat: :]
 	[DA:Alvorlighedsgrad indeholder ikke: :]
 	[DE:Dringlichkeit ausschliessen: :]
 	[FI:Poista vakavuus: :]
@@ -155,6 +167,7 @@
 </define-tag-sliced>
 <define-tag-sliced open whitespace=delete>
 	[EN:open:]
+	[CA:obert:]
 	[DA:åben:]
 	[DE:open:]
 	[FI:avoin:]
@@ -168,6 +181,7 @@
 </define-tag-sliced>
 <define-tag-sliced forwarded whitespace=delete>
 	[EN:forwarded:]
+	[CA:enviat:]
 	[DA:videresendt:]
 	[DE:forwarded:]
 	[FI:siirretty eteenpäin:]
@@ -181,6 +195,7 @@
 </define-tag-sliced>
 <define-tag-sliced pending whitespace=delete>
 	[EN:pending:]
+	[CA:pendent:]
 	[DA:i gang:]
 	[DE:pending:]
 	[FI:ratkaisematon:]
@@ -194,6 +209,7 @@
 </define-tag-sliced>
 <define-tag-sliced fixed whitespace=delete>
 	[EN:fixed:]
+	[CA:fixat:]
 	[DA:rettet:]
 	[DE:fixed:]
 	[FI:korjattu:]
@@ -207,6 +223,7 @@
 </define-tag-sliced>
 <define-tag-sliced done whitespace=delete>
 	[EN:done:]
+	[CA:tancat:]
 	[DA:færdig:]
 	[DE:done:]
 	[FI:valmis:]
@@ -220,6 +237,7 @@
 </define-tag-sliced>
 <define-tag-sliced critical whitespace=delete>
 	[EN:critical:]
+	[CA:crític:]
 	[DA:kritisk:]
 	[DE:critical:]
 	[FI:kriittinen:]
@@ -233,6 +251,7 @@
 </define-tag-sliced>
 <define-tag-sliced grave whitespace=delete>
 	[EN:grave:]
+	[CA:greu:]
 	[DA:graverende:]
 	[DE:grave:]
 	[FI:haudanvakava:]
@@ -246,6 +265,7 @@
 </define-tag-sliced>
 <define-tag-sliced serious whitespace=delete>
 	[EN:serious:]
+	[CA:seriós:]
 	[DA:alvorlig:]
 	[DE:serious:]
 	[FI:vakava:]
@@ -259,6 +279,7 @@
 </define-tag-sliced>
 <define-tag-sliced important whitespace=delete>
 	[EN:important:]
+	[CA:important:]
 	[DA:vigtig:]
 	[DE:important:]
 	[FI:tärkeä:]
@@ -272,6 +293,7 @@
 </define-tag-sliced>
 <define-tag-sliced normal whitespace=delete>
 	[EN:normal:]
+	[CA:normal:]
 	[DA:normal:]
 	[DE:normal:]
 	[FI:normaali:]
@@ -284,6 +306,7 @@
 </define-tag-sliced>
 <define-tag-sliced minor whitespace=delete>
 	[EN:minor:]
+	[CA:menor:]
 	[DA:mindre:]
 	[DE:minor:]
 	[FI:vähäpätöinen:]
@@ -297,6 +320,7 @@
 </define-tag-sliced>
 <define-tag-sliced wishlist whitespace=delete>
 	[EN:wishlist:]
+	[CA:desitg:]
 	[DA:ønskeliste:]
 	[DE:wishlist:]
 	[FI:toive:]
