@@ -3,6 +3,21 @@ import sys, urllib, htmllib, httplib, ftplib, formatter, urlparse, socket, strin
 import re, signal
 from sgmllib import SGMLParser
 
+# check_http and check_ftp are subroutines that can be used to check whether
+# a url is valid. They are not currently being used.
+
+# The file resulting from running this program, ftplist.data, is not sorted
+# so the countries come out in random order. Ideally, template/debian/countries.wml
+# will be modified appropriately and a sorting function written so that the
+# list is sorted according to rules for each language.
+
+# Until fixed, ftplist.data should be sorted alphabetically by hand before
+# being committed.
+
+# Running
+# no arguments are needed. It uses the file ../mirror/Mirrors.masterlist as
+# input and the output is written to ftplist.data 
+
 TIMEOUT = 15
 mirror_file = '../mirror/Mirrors.masterlist'
 ftplist_file = 'ftplist.data'
