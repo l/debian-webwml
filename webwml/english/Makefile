@@ -11,7 +11,10 @@ searchtmpl security vote y2k
 include $(WMLBASE)/Make.lang
 
 
-ifneq "$(LANGUAGE)" "en"
+ifeq "$(LANGUAGE)" "en"
+sitemap.$(LANGUAGE).html: $(ENGLISHDIR)/sitemap.wml
+	make -C MailingLists subscribe.$(LANGUAGE).html unsubscribe.$(LANGUAGE).html
+else
 sitemap.$(LANGUAGE).html: $(ENGLISHDIR)/sitemap.wml
 	make -C MailingLists subscribe.$(LANGUAGE).html unsubscribe.$(LANGUAGE).html
 ifeq "$(LANGUAGE)" "zh"
