@@ -9,6 +9,7 @@
         "CH" => "Switzerland",
         "IT" => "Italy",
         "NL" => "Netherlands",
+        "AF" => "Afghanistan",
         "AL" => "Albania",
         "DZ" => "Algeria",
         "AS" => "American Samoa",
