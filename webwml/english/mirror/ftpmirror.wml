@@ -1,0 +1,61 @@
+#use wml::debian::template title="Debian GNU/Linux - Mirroring"
+
+<H1>Setting up an FTP Mirror</H1>
+
+<p>Mirroring is the same for both official and unofficial sites.
+Once a mirror is set up the mirror should be <a href="submit">registered with Debian</a>
+in order to get included in the <a href="mirrors">mirror list</a>. Send mail to
+<A href="mailto:mirrors@debian.org">mirrors@debian.org</A>
+with the name of the mirror maintainer, mirror site, and path to the debian archive.
+
+<h3>Anonymous rsync</h3>
+The recommended method of mirroring is with rsync.
+
+<p>You can use <a href="anonftpsync">this script</a> to mirror the archive.
+Follow the directions in the script to set up mirroring.
+Sites in the <a href="mirrors">list of mirrors</a> that use '<kdb>Type: Push-*</kdb>'
+should be good to mirror from.
+
+<h3>Push Mirror</h3>
+Push mirroring is a form of mirroring using rsync that we have developed to minimize the
+time it takes for changes to the archive to reach mirrors. Push mirroring uses
+an ssh trigger to tell the client mirror when to update itself. This method is
+quite secure as ssh is configured to run only a single command. Also, mirroring is still
+'pull' so it is not possible to corrupt the contents of the archive via a forged push mirror.
+
+<p>The way this works is that the parent mirror connects to the downstream mirror
+using ssh with a special mirror key. The downstream mirror is configured to only allow
+that key to run a single command, <kbd>~/ftpsync &</kbd>. After authentication the
+archive sync is initiated and the parent mirror continues on it's way.
+
+<p>Push mirroring takes a little more effort to set up since the maintainers of the
+upstream and downstream mirror must exchange information. The benefit is that
+the upstream mirror initiates the mirror process immediately after it's archive has
+been updated. This allows changes to the archive to propogate extremely quickly.
+
+<p>It is best to set this up using the account of an ordinary user, not root.
+The contents of the public ssh key given to you by the upstream mirror should be
+placed in <kbd>~<user>/.ssh/authorized_keys</kbd>.
+
+<p>The files <a href="ftpsync">ftpsync</a> and <a href="ftpsync.conf">ftpsync.conf</a>
+will be needed. Edit ftpsync.conf and follow the directions in there using the information
+provided to you by the upstream mirror.
+
+<p>If you are becoming a Push-Primary, you will need the
+<a href="identity.pub.master.ftp">public ssh key for the ftp archive</a>.
+
+<h3>Anonymous FTP Using 'mirror'</h3>
+<p>Anonymous FTP was the standard method of mirroring for a long time.
+For this, the program 'mirror' works well on the debian archive.
+As you probably guessed, 'mirror' is available as a Debian package.
+If you have installed the Debian package, there is a sample script for mirroring
+the ftp archive in /etc/mirror/packages/ftp.debian.org .
+
+<h3>wget</h3>
+While wget works well for mirroring small sites, it is not as configurable as
+mirror or rsync so is not recommended for this job.
+
+<HR>
+<P>Back to the <A href="../../">Debian GNU/Linux homepage</A>.
+
+<:= languages ("$(HOME)", "devel/mirror", "$(WML_SRC_BASENAME)", "$(CUR_LANG)") :>
