@@ -11,7 +11,7 @@ include $(WMLBASE)/Make.lang
 
 # Do Not modify the following lines
 EVENTFILES := $(wildcard [0-9]*\-*.wml)
-ICSFILES := $(shell ls [0-9]*\-*.wml | grep -v '-report.wml')
+ICSFILES := $(filter-out %-report.wml,$(EVENTFILES))
 ICSFILES := $(ICSFILES:.wml=.$(LANGUAGE).ics)
 DESTICSFILES := $(patsubst %.ics,$(HTMLDIR)/%.ics,$(ICSFILES))
 
