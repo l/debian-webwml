@@ -87,6 +87,7 @@ $date = strftime "%a %b %e %H:%M:%S %Y %z", localtime;
 my %original;
 my %transversion;
 my %version;
+my %files;
 
 # Count wml files in given directory
 #
@@ -113,6 +114,7 @@ sub getwmlfiles
 	$file = substr ($f, $cutfrom);
 	next if $transignore->is_global($file);
 	$file =~ s/\.wml$//;
+	$files{$file} = 1;
 	$wmlfiles{$lang} .= " " . $file;
 	my $transcheck = Webwml::TransCheck->new("$dir/$file.wml");
 	if ($transcheck->revision()) {
@@ -199,7 +201,8 @@ print "\n" if ($config{'verbose'});
 # =============== Create HTML files ===============
 mkdir ($config{'htmldir'}, 02775) if (! -d $config{'htmldir'});
 
-@sorted_english = sort (split (/ /, $wmlfiles{'english'}));
+my @filenames = sort keys %files;
+my $nfiles = scalar @filenames;
 
 print "Creating files: " if ($config{'verbose'});
 my @search_in;
@@ -215,7 +218,7 @@ foreach $lang (@search_in) {
 
     $t_body = $u_body = $o_body = "";
 
-    foreach $file (@sorted_english) {
+    foreach $file (@filenames) {
 	next if ($file eq "");
 	# Translated pages
 	if (index ($wmlfiles{$lang}, " $file ") >= 0) {
@@ -260,10 +263,10 @@ foreach $lang (@search_in) {
     $wml{$lang} = $translated{$lang};
     $translated{$lang} = $translated{$lang} - $outdated{$lang};
 
-    $percent_a{$lang} = $wml{$lang}/$wml{english} * 100;
-    $percent_t{$lang} = $translated{$lang}/$wml{english} * 100;
-    $percent_o{$lang} = $outdated{$lang}/$wml{english} * 100;
-    $percent_u{$lang} = $untranslated{$lang}/$wml{english} * 100;
+    $percent_a{$lang} = $wml{$lang}/$nfiles * 100;
+    $percent_t{$lang} = $translated{$lang}/$nfiles * 100;
+    $percent_o{$lang} = $outdated{$lang}/$nfiles * 100;
+    $percent_u{$lang} = $untranslated{$lang}/$nfiles * 100;
 
     if (open (HTML, ">$config{'htmldir'}/$l.html")) {
 	printf HTML "<html><head><title>%s: %s</title></head><body bgcolor=#ffffff>\n", $config{'title'}, ucfirst $lang;
