@@ -1,56 +1,67 @@
 #use wml::debian::template title="Examples"
-<!--translation 1.1-->
+<!--translation 1.2-->
 
 <H3>Esempio di come cominciare una nuova traduzione</H3>
-Per questo esempio useremo la lingua francese
+
+<p>Per questo esempio useremo la lingua francese
+
 <pre>
-   cvs checkout webwml/english
+   cvs checkout webwml/Makefile.common webwml/english
    cd webwml
    mkdir french
    cvs add french
    cd french
-   cp ../english/.wmlrc .
-   cvs add .wmlrc
-cambiando: '-D CUR_LANG=English' in '-D CUR_LANG=French'
-           '-D CUR_ISO_LANG=en' in '-D CUR_ISO_LANG=fr'
-           'CHARSET=iso-8859-1' in cosa è più appropriato
+   cp ../english/.wmlrc ../english/Make.* ../english/Makefile .
+   cvs add Make* .wmlrc
 </pre>
-Non fare altre modifiche al file .wmlrc.
-Modifica i file english/template/debian/*.wml aggiungendo le traduzioni per
-tutti i define-tag. Dopodiché tocca ai Makefile:
-<pre>
-   cp ../english/Make.* ../english/Makefile .
-   cvs add Make*
-</pre>
-edita il file Make.lang cambiando 'LANG=en' in 'LANG=fr' e 'LANGUAGECAP=EN' in
-'LANGUAGECAP=FR'. Non dovresti avere bisogno di apportare altri cambiamenti al
-Makefile a meno di tradurre in lingue che usano carattery multi-byte.
+
+<p>Edita il file <tt>.wmlrc</tt> e cambia:
+<ul>
+  <li>'-D CUR_LANG=English' in '-D CUR_LANG=French'
+  <li>'-D CUR_ISO_LANG=en' in '-D CUR_ISO_LANG=fr'
+  <li>'CHARSET=iso-8859-1' in maniera appropriata
+</ul>
+ 
+<p>Edita Make.lang e cambia 'LANGUAGE := en' in 'LANGUAGE := fr'.
+Nel caso tu stia traducendo in una lingua che usa i caratteri multi-byte
+dovresti cambiare anche altre variabili in quel file, per maggiorni
+informazioni leggi ../Makefile.common e forse altri esempi funzionanti come la
+traduzione cinese.
+
+<p>Edita english/template/debian/*.wml and e aggiungi le traduzioni a tutti i
+&lt;define-tag ...&gt; . Questo dovrebbe essere abbastanza facile.
 
 <p>I makefile in ogni directory compilano automaticamente tutti i .wml che
 trovano.
 
-<p>Quando si finisce di aggiungere pagine, si deve eseguire
+<p>Quando si finisce di aggiungere pagine e modificare i file, si deve eseguire
 <pre>
    cvs commit
 </pre>
 dalla directory webwml. A questo punto si può cominciare a tradurre le pagine.
 
 <H3>Esempio di traduzione di una pagina</H3>
-Per questo esempio useremo la traduzione francese del contratto sociale
+
+<p>Per questo esempio useremo la traduzione francese del contratto sociale
+
 <pre>
-   cvs checkout webwml/english webwml/french   (se non l'hai già fatto)
    cd webwml/french
    cp ../english/social_contract.wml .
    cvs add social_contract.wml
 </pre>
-modifica il file social_contract.wml traducendo il testo. Non tradurre alcun
-link e non cambiarli in alcun modo. Quando hai finito, esegui
+
+<p>modifica il file social_contract.wml traducendo il testo. Non tradurre alcun
+link e non cambiarli in alcun modo. Se vuoi cambiare altro chiedilo nella
+lista debian-www. Quando hai finito, esegui
+
 <pre>
    cvs commit -m "short description of the changes you made" social_contract.wml
 </pre>
 
 <H3>Esempio su come aggiungere una nuova directory</H3>
-In questo esempio aggiungiamo la versione francese della directory intro/
+
+<p>In questo esempio aggiungiamo la versione francese della directory intro/
+
 <pre>
    cd webwml/french
    mkdir intro
@@ -58,18 +69,32 @@ In questo esempio aggiungiamo la versione francese della directory intro/
    cd intro
    cp ../english/intro/Makefile .
 </pre>
-Assicurati che la nuova directory abbia il Makefile. Altrimenti il make darà
-un errore
+
+Assicurati che la nuova directory abbia il Makefile e sia stata isnerita
+(tramite commit) nel CVS. Altrimenti il make darà un errore
+
 <pre>
    cvs add Makefile
    cd ..
-   cvs commit -m"added the intro dir to CVS" intro
+   cvs commit -m "added the intro dir to CVS" intro
 </pre>
 
 #example not finished
 # <H3>Example of a Conflict</H3>
-# This example shows a commit that won't work because the copy in the repository
-# has been modified since your last <kbd>cvs update -d</kbd>.
+#
+# <p>This example shows a commit that won't work because the copy in the
+# repository has been modified since your last <kbd>cvs update -d</kbd>.
+#
 # <pre>
 #    cvs commit -m"fixed a broken link" foo.wml
 # </pre>
+#
+# will output:
+#
+# <pre>
+# cvs: Up-to-date check failed for foo.wml!
+# cvs: fix the above errors first
+# </pre>
+#
+# or something like that :)
+
