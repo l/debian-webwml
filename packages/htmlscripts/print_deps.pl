@@ -6,136 +6,105 @@ use HTML::Entities;
 use Packages::Pkg;
 use Deb::Versions;
 
+sub dep_item {
+    my ( $link, $name, $info, $desc ) = @_;
+    my $post_link = '';
+    if ($link) {
+	$link = "<a href=\"$link\">";
+	$post_link = '</a>';
+    } else {
+	$link = '';
+    }
+    if ($info) {
+	$info = " $info";
+    } else {
+	$info = '';
+    }
+    if ($desc) {
+	$desc = "<br>$desc";
+    } else {
+	$desc = '';
+    }
+
+    return "$link$name$post_link$info$desc";
+}
+
 sub print_deps {
-    my ( $env, $pkg, $versions, $type) = @_;
+    my ( $env, $lang, $pkg, $relations, $type) = @_;
     my %dep_type = ('depends' => 'dep', 'recommends' => 'rec', 
 		    'suggests' => 'sug');
     my $res = "<ul class=\"ul$dep_type{$type}\">\n";
-    my $found = 0;
-    my @all_archs = ( @{$env->{archs}}, 'all' );
-    my ( %dep_pkgs, %arch_deps );
-    foreach my $a ( @all_archs ) {
-	next unless ( exists $versions->{a2v}->{$a}
-		      && exists $pkg->{versions}->{$versions->{a2v}->{$a}}->{$a}->{$type} );
-	my @a_deps = @{$pkg->{versions}->{$versions->{a2v}->{$a}}->{$a}->{$type}};
-	foreach my $d ( @a_deps ) {
-	    my ( @dep_str, $dep_str );
-	    foreach ( @$d ) {
-		$_->[1] ||= ""; $_->[2] ||= "";
-		push @dep_str, "$_->[0]($_->[1]$_->[2])";
-	    }
-	    $dep_str = join( "|", @dep_str );
-	    $dep_pkgs{$dep_str}++;
-	    $arch_deps{$a}->{$dep_str} = $d;
-	}
-    }
-    @all_archs = sort keys %arch_deps;
-#    print Dumper( \%dep_pkgs, \%arch_deps );
-    
-    if ( %dep_pkgs ) {
-	$found = 1;
-#	$res .= "<h4>$type</h4>\n";
-        my $first = 1;
-	my $old_dp = "";
-	my $is_old_dp = 0;
-	foreach my $dp ( sort keys %dep_pkgs ) {
-	    my $dp_v = $dp;
-	    $dp_v =~ s/\(.*?\)//g;
-	    my @pkgs = split /\|/, $dp;
+    my $first = 1;
 
-	    if ( $dp_v eq $old_dp ) {
-		$res .= "<br>";
-		$is_old_dp = 1;
-		foreach ( @pkgs ) {
-		    s/\(.*\)$//o;
-		}
+#    use Data::Dumper;
+#    warn Dumper( \$lang, $pkg->get_name, \$type, $relations ); 
+
+    foreach my $rel (@$relations) {
+	my $is_old_pkgs = $rel->[0];
+	my @res_pkgs = ();
+
+	if ($is_old_pkgs)  {
+	    $res .= "<br>";
+	} else {
+	    if ($first) {
+		$res .= "<li>";
+		$first = 0;
 	    } else {
-		$old_dp = $dp_v;
-		$is_old_dp = 0;
-		if ($first) {
-		   $res .= "<li>";
-		   $first = 0;
-		} else {
-		   $res .= "</li>\n<li>";
-	        }
-		$res .= "<span class=\"hidecss\">[$dep_type{$type}] </span>";
+		$res .= "</li>\n<li>";
 	    }
-	    
-	    my $arch_str = compute_arch_str ( $dp, $versions, \%arch_deps,
-					      \@all_archs );
-
-	    my @res_pkgs; my $pkg_ix = 0;
-	    foreach my $p_name ( @pkgs ) {
-#	    warn "before: $p_name\n";
-		$p_name =~ s/\(.*\)$//o;
-#	    warn "after: $p_name\n";
-		
-		if ( $pkg_ix > 0 ) { $arch_str = ""; }
-		
-		my $p = $env->{db}->get_pkg( $p_name );
-
-		my $pkg_version = "";
-		foreach my $a ( @all_archs ) {
-		    if ( exists( $arch_deps{$a}->{$dp} )
-			 && $arch_deps{$a}->{$dp}->[$pkg_ix]->[1] ) {
-			$pkg_version = "(".encode_entities( $arch_deps{$a}->{$dp}->[$pkg_ix]->[1] ).
-			    " $arch_deps{$a}->{$dp}->[$pkg_ix]->[2])";
-			last;
-		    }
-		}
-
-		if ( $p ) {
-		    if ( $is_old_dp ) {
-			my $section;
-			if ($p->is_virtual) {
-			    $section = "virtual";
-			} else {
-			    my %sections = $p->get_arch_fields( 'section',
-							    $env->{archs} );
-			    $section = $sections{max_unique} or warn "W: no section found for package ".$p->get_name()."\n";
-			}
-#DEBUG
-			unless(defined($section)&& defined($p_name)&& defined($pkg_version) && defined($arch_str)) {
-			    print STDERR "E: $section&&$p_name&&$pkg_version&&$arch_str&&".$pkg->get_name()."\n";
-			}
-			push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $pkg_version$arch_str";
-		    } elsif ( $p->is_virtual ) {
-			my $short_desc = gettext( "Virtual package" );
-			push @res_pkgs, "<a href=\"../virtual/$p_name\">$p_name</a> $pkg_version$arch_str<br>\n&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
-		    } else {
-			my %sections = $p->get_arch_fields( 'section',
-							    $env->{archs} );
-			my $section = $sections{max_unique};
-			my %desc_md5s = $p->get_arch_fields( 'description-md5', 
-							     $env->{archs} );
-			my $short_desc = conv_desc( $env->{lang}, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" ) );
-			push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $pkg_version$arch_str<br>\n&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
-		    }
-		} elsif ( $is_old_dp ) {
-		    push @res_pkgs, "$p_name $pkg_version$arch_str";
-		} else {
-		    my $short_desc = gettext( "Package not available" );
-		    push @res_pkgs, "$p_name $pkg_version$arch_str<br>\n&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
-		}
-		$pkg_ix++;
-#	    warn "$short_desc\n";
-	    }
-	    $res .= "\n".join( "<br> ".gettext( " or " )." ", @res_pkgs )."\n";
-	    $res .= "\n";
-	    
+	    $res .= "<span class=\"hidecss\">[$dep_type{$type}] </span>";
 	}
-        $res .= "</li>\n";
+
+	foreach my $rel_alt ( @$rel ) {
+	    next unless ref($rel_alt);
+	    my ( $p_name, $pkg_version, $arch_neg,
+		 $arch_str, $subsection, $available ) = @$rel_alt;
+
+	    if ($arch_str) {
+		if ($arch_neg) {
+		    $arch_str = " [".gettext("not")." $arch_str]";
+		} else {
+		    $arch_str = " [$arch_str]";
+		}
+	    }
+	    $pkg_version = "($pkg_version)" if $pkg_version;
+	    
+	    my $p = $env->{db}->get_pkg( $p_name );
+	    if ( $p ) {
+		if ( $is_old_pkgs ) {
+		    push @res_pkgs, dep_item( "../$subsection/$p_name", $p_name, "$pkg_version$arch_str" );
+		} elsif ( $subsection eq 'virtual' ) {
+		    my $short_desc = gettext( "Virtual package" );
+		    push @res_pkgs, dep_item( "../virtual/$p_name", $p_name, "$pkg_version$arch_str", $short_desc );
+		} else {
+		    my %desc_md5s = $p->get_arch_fields( 'description-md5', 
+							 $env->{archs} );
+		    my $short_desc = conv_desc( $env->{lang}, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $lang ), "<>&\"" ) );
+		    push @res_pkgs, dep_item( "../$subsection/$p_name", $p_name, "$pkg_version$arch_str", $short_desc );
+		    }
+	    } elsif ( $is_old_pkgs ) {
+		push @res_pkgs, dep_item( undef, $p_name, "$pkg_version$arch_str" );
+	    } else {
+		my $short_desc = gettext( "Package not available" );
+		push @res_pkgs, dep_item( undef, $p_name, "$pkg_version$arch_str", $short_desc );
+	    }
+
+	}
+	
+	$res .= "\n".join( "<br> ".gettext( " or " )." ", @res_pkgs )."\n";
+	$res .= "\n";
+	$res .= "</li>\n";
     }
-    if ($found) {
-       $res .= "</ul>\n";
+    if (@$relations) {
+	$res .= "</ul>\n";
     } else {
-       $res = "";
+	$res = "";
     }
     return $res;
 }
 
 sub print_src_deps {
-    my ( $env, $pkg, $version, $type) = @_;
+    my ( $env, $lang, $pkg, $version, $type) = @_;
     my %dep_type = ('build-depends' => 'adep', 'build-depends-indep' => 'idep' );
     my $found = 0;
     my $res = "<ul class=\"ul$dep_type{$type}\">\n";
@@ -160,22 +129,22 @@ sub print_src_deps {
 	    if ( $p ) {
 		if ( $p->is_virtual ) {
 		    my $short_desc = gettext( "Virtual package" );
-		    push @res_pkgs, "<a href=\"../virtual/$p_name\">$p_name</a> $p_version$arch_str<br>\n&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+		    push @res_pkgs, dep_item( "../virtual/$p_name", $p_name, "$p_version$arch_str", $short_desc );
 		} else {
 		    my %sections = $p->get_arch_fields( 'section',
 							$env->{archs} );
 		    my $section = $sections{max_unique};
 		    my %desc_md5s = $p->get_arch_fields( 'description-md5', 
 							 $env->{archs} );
-		    my $short_desc = conv_desc( $env->{lang}, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" ) );
-		    push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $p_version$arch_str<br>\n&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+		    my $short_desc = conv_desc( $lang, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $lang ), "<>&\"" ) );
+		    push @res_pkgs, dep_item( "../$section/$p_name", $p_name, "$p_version$arch_str", $short_desc );
 		}
 	    } else {
 		my $short_desc = gettext( "Package not available" );
-		push @res_pkgs, "$p_name $p_version$arch_str<br>\n&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+		push @res_pkgs, dep_item( undef, $p_name, "$p_version$arch_str", $short_desc );
 	    }
 	}
-	$res .= "\n".join( "\n ".gettext( " or " )." ", @res_pkgs )."</li>\n";
+	$res .= "\n".join( "<br>\n".gettext( " or " )." ", @res_pkgs )."</li>\n";
     }
     if ($found) {
         $res .= "\n</ul>";
@@ -186,70 +155,48 @@ sub print_src_deps {
 }
 
 sub print_deps_ds {
-    my ( $env, $pkg, $versions, $type) = @_;
+    my ( $env, $pkg, $relations, $type) = @_;
     my $res = "";
-    my @all_archs = ( @{$env->{archs}}, 'all' );
-    my ( %dep_pkgs, %arch_deps );
-    foreach my $a ( @all_archs ) {
-	next unless ( exists $versions->{a2v}{$a}
-		      && exists $pkg->{versions}{$versions->{a2v}{$a}}{$a}{lc $type} );
-	my @a_deps = @{$pkg->{versions}{$versions->{a2v}{$a}}{$a}{lc $type}};
-	foreach my $d ( @a_deps ) {
-	    my ( @dep_str, $dep_str );
-	    foreach ( @$d ) {
-		$_->[1] ||= ""; $_->[2] ||= "";
-		push @dep_str, "$_->[0]($_->[1]$_->[2])";
-	    }
-	    $dep_str = join( "|", @dep_str );
-	    $dep_pkgs{$dep_str}++;
-	    $arch_deps{$a}->{$dep_str} = $d;
-	}
-    }
-    @all_archs = sort keys %arch_deps;
-#    print Dumper( \%dep_pkgs, \%arch_deps );
     
+    use Data::Dumper;
+#    warn Dumper( $type, $relations );
+
     my @res;
-    if ( %dep_pkgs ) {
-	foreach my $dp ( sort keys %dep_pkgs ) {
-	    my $dp_v = $dp;
-	    $dp_v =~ s/\(.*?\)//g;
-	    my @pkgs = split /\|/, $dp;
-
-	    my $arch_str = compute_arch_str ( $dp, $versions, \%arch_deps,
-					      \@all_archs );
-
-	    my @res_pkgs; my $pkg_ix = 0;
-	    foreach my $p_name ( @pkgs ) {
-		$p_name =~ s/\(.*\)$//o;
-		
-		if ( $pkg_ix > 0 ) { $arch_str = ""; }
-		
-		my $pkg_version = "";
-		foreach my $a ( @all_archs ) {
-		    if ( exists( $arch_deps{$a}->{$dp} )
-			 && $arch_deps{$a}->{$dp}->[$pkg_ix]->[1] ) {
-			$pkg_version = "(".encode_entities( $arch_deps{$a}->{$dp}->[$pkg_ix]->[1] ).
-			    " $arch_deps{$a}->{$dp}->[$pkg_ix]->[2])";
-			last;
-		    }
+    foreach my $rel (@$relations) {
+	my @res_pkgs = ();
+	foreach my $rel_alt ( @$rel ) {
+	    next unless ref($rel_alt);
+	    my ( $p_name, $pkg_version, $arch_neg,
+		 $arch_str, $subsection, $available ) = @$rel_alt;
+	    
+	    if ($arch_str) {
+		if ($arch_neg) {
+		    $arch_str = " [".gettext("not")." $arch_str]";
+		} else {
+		    $arch_str = " [$arch_str]";
 		}
-
-		push @res_pkgs, compute_link( $env, $p_name )
-		    ." $pkg_version$arch_str";
-		$pkg_ix++;
 	    }
-	    push @res, join( gettext( " or " ), @res_pkgs );
+	    $pkg_version = "($pkg_version)" if $pkg_version;
+
+	    if ($available) {
+		push @res_pkgs, dep_item( "../$subsection/$p_name",
+					  $p_name, "$pkg_version$arch_str" );
+	    } else {
+		push @res_pkgs, dep_item( undef,
+					  $p_name, "$pkg_version$arch_str" );
+	    }
+
 	}
+	push @res, join( gettext( " or " ), @res_pkgs );
     }
     
     if (@res) {
-        $res .= "<ul>\n";
-	$res = "<li>$type: ".join( ", ", @res)."</li>\n";
-        $res .= "</ul>\n";
+        $res .= ds_item($type, join( ", ", @res));
     }
     return $res;
 }
 
+#FIXME
 sub print_reverse_rel_ds {
     my ( $env, $pkg, $versions, $type, $is_src_dep) = @_;
     my $res = "";
@@ -301,36 +248,6 @@ sub print_reverse_rel_ds {
     return $res;
 }    
 
-sub compute_arch_str {
-    my ( $dp, $versions, $arch_deps, $all_archs, $is_src_dep ) = @_;
-
-    if ($is_src_dep) {
-	return compute_src_arch_str( @_ );
-    }
-
-    my ( @dependend_archs, @not_dependend_archs );
-    my $arch_str;
-    foreach my $a ( @$all_archs ) {
-	if ( exists( $versions->{a2v}{$a} )
-	     && exists( $arch_deps->{$a} ) ) {
-	    if ( exists $arch_deps->{$a}{$dp} ) {
-		push @dependend_archs, $a;
-	    } else {
-		push @not_dependend_archs, $a;
-	    }
-	}
-    }
-    if ( @dependend_archs == @$all_archs ) {
-	$arch_str = "";
-    } else {
-	if ( @dependend_archs > (@$all_archs/2) ) {
-	    $arch_str = " [".gettext( "not" )." ".join( ", ", @not_dependend_archs)."]";
-	} else {
-	    $arch_str = " [".join( ", ", @dependend_archs)."]";
-	}
-    }
-    return $arch_str;
-}
 
 sub compute_src_arch_str {
     my ( $dp, $versions, $arch_deps, $all_archs ) = @_;
@@ -375,28 +292,6 @@ sub compute_src_arch_str {
     }
 
     return $arch_str;
-}
-
-
-sub compute_link {
-    my ( $env, $p_name ) = @_;
-
-    my $p = $env->{db}->get_pkg( $p_name );
-    if ($p) {
-	my $section;
-	if ($p->is_virtual) {
-	    $section = "virtual";
-	} else {
-	    my %sections = $p->get_arch_fields( 'section',
-						$env->{archs} );
-	    $section = $sections{max_unique}
-	    or warn "W: no section found for package ".
-		$p_name."\n";
-	}
-	$p_name = "<a href=\"../$section/$p_name\">$p_name</a>";
-    }
-
-    return $p_name;
 }
 
 1;

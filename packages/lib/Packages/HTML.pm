@@ -3,15 +3,20 @@ package Packages::HTML;
 use strict;
 use warnings;
 
-use Locale::gettext;
+use URI::Escape;
+use HTML::Entities;
 
+use Packages::Util;
 use Packages::I18N::Locale;
 use Packages::I18N::Languages;
 use Packages::I18N::LanguageNames;
+use Generated::Strings qw( gettext dgettext );
 
 our @ISA = qw( Exporter );
-our @EXPORT = qw( header trailer file_changed time_stamp
-		  read_md5_hash write_md5_hash );
+our @EXPORT = qw( header title trailer file_changed time_stamp
+		  read_md5_hash write_md5_hash simple_menu
+		  ds_begin ds_item ds_end note title marker pdesc
+		  pdeplegend pkg_list pmoreinfo );
 
 our $HOME = "http://www.debian.org";
 our $SEARCH_PAGE = "http://packages.debian.org/";
@@ -29,6 +34,215 @@ sub img {
     }
 
     return "<a href=\"$root$url\"><img src=\"$root$src\" border=\"0\" alt=\"$alt\" @attr></a>";
+}
+
+sub simple_menu {
+    my $str = "";
+    foreach my $entry (@_) {
+	$str .= "[&nbsp;$entry->[0] <a title=\"$entry->[1]\" href=\"$entry->[2]\">$entry->[3]</a>&nbsp;]\n";
+    }
+    return $str;
+}
+
+sub title {
+    return "<h1>$_[0]</h1>";
+}
+
+sub marker {
+    return "[<font color=\"red\">$_[0]</font>]";
+}
+
+sub note {
+    my ( $title, $note ) = @_;
+    my $str = "";
+
+    if ($note) {
+	$str .= "<h2 style=\"color: red\">$title</h2>";
+    } else {
+	$note = $title;
+    }
+    $str .= "<p>$note</p>";
+    return $str;
+}
+
+sub pdesc {
+    my ( $short_desc, $long_desc ) = @_;
+    my $str = "";
+
+    $str .= "<div id=\"pdesc\">\n";
+    $str .= "<h2>$short_desc</h2>\n";
+
+    $str .= "<p>$long_desc</p>\n";
+    $str .= "</div> <!-- end pdesc -->\n";
+
+    return $str;
+}
+
+sub pdeplegend {
+    my $str = "<table border=\"1\" summary=\"legend\"><tr>\n";
+
+    foreach my $entry (@_) {
+	$str .= "<td><img src=\"../../Pics/$entry->[0].gif\" alt=\"[$entry->[0]]\" width=\"16\" height=\"16\">= $entry->[1]</td>";
+    }
+
+    $str .= "\n</tr></table>\n";
+    return $str;
+}
+
+sub pkg_list {
+    my ( $pkgs, $lang, $env ) = @_;
+
+    my $str = "<dl>\n";
+    foreach my $p ( @$pkgs ) {
+	my $p_pkg = $env->{db}->get_pkg( $p );
+
+	if ( $p_pkg ) {
+	    if ($p_pkg->is_virtual) {
+		$str .= "<dt><a href=\"../virtual/$p\">$p</a></dt>\n".
+		    "\t<dd>".gettext("Virtual package")."</dd>\n";
+	    } else {
+		my %subsections = $p_pkg->get_arch_fields( 'section',
+							   $env->{archs} );
+		my $subsection = $subsections{max_unique};
+		my %desc_md5s = $p_pkg->get_arch_fields( 'description-md5', 
+							 $env->{archs} );
+		my $short_desc = conv_desc( $lang,
+					    encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $lang ), "<>&\"" ) );
+		$str .= "<dt><a href=\"../$subsection/$p\">$p</a></dt>\n".
+		    "\t<dd>$short_desc</dd>\n";
+	    }
+	} else {
+	    $str .= "<dt>$p</dt>\n\t<dd>".gettext("Not available")."</dd>\n";
+	}
+    }
+    $str .= "</dl>\n";
+
+    return $str;
+}
+
+my $CHANGELOG_URL = '/changelogs';
+my $COPYRIGHT_URL = '/changelogs';
+my $SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=names&amp;version=all&amp;exact=1&amp;keywords=';
+my $SRC_SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=sourcenames&amp;version=all&amp;exact=1&amp;keywords=';
+my $BUG_URL = 'http://bugs.debian.org/';
+my $SRC_BUG_URL = 'http://bugs.debian.org/src:';
+my $QA_URL = 'http://packages.qa.debian.org/';
+
+sub pmoreinfo {
+    my %info = @_;
+    
+    my $name = $info{name} or return;
+    my $env = $info{env} or return;
+    my $d = $info{data} or return;
+    my $is_source = $info{is_source};
+
+    my $str = "<div id=\"pmoreinfo\">";
+    $str .= sprintf( "<h2>".gettext( "More information on %s" )."</h2>",
+		     $name );
+	
+    
+    if ($info{bugreports}) {
+	my $bug_url = $is_source ? $SRC_BUG_URL : $BUG_URL; 
+	$str .= sprintf( gettext( "Check for <a href=\"%s\">bug reports</a> about %s." )."<br>\n",
+			 $bug_url.$name, $name );
+    }
+	
+    if ($info{sourcedownload}) {
+	$str .= gettext( "Source Package:" );
+	$str .= " <a href=\"../source/$d->{src_name}\">$d->{src_name}</a>, ".
+	    gettext( "Download" ).":\n";
+
+	unless ($d->{src_files}) {
+	    $str .= gettext( "Not found" );
+	} else {
+	    foreach( @{$d->{src_files}} ) {
+		my ($src_file_md5, $src_file_size, $src_file_name) = @$_;
+		if ($d->{is_security}) {
+		    $str .= "<a href=\"$env->{opts}{security_site}/$d->{src_directory}/$src_file_name\">[";
+		} elsif ($d->{is_nonus}) {
+		    $str .= "<a href=\"$env->{opts}{nonus_site}/$d->{src_directory}/$src_file_name\">[";
+		} else {
+		    $str .= "<a href=\"$env->{opts}{debian_site}/$d->{src_directory}/$src_file_name\">[";
+		}
+		if ($src_file_name =~ /dsc$/) {
+		    $str .= "dsc";
+		} else {
+		    $str .= $src_file_name;
+		}
+		$str .= "]</a>\n";
+	    }
+	}
+#	    $package_page .= sprintf( gettext( " (These sources are for version %s)\n" ), $src_version )
+#		if ($src_version ne $version) && !$src_version_given_in_control;
+    }
+
+    if ($info{changesandcopy}) {
+	if ( $d->{src_directory} ) {
+	    my $src_dir = $d->{src_directory};
+	    (my $src_basename = $d->{src_version}) =~ s,^\d+:,,; # strip epoche
+	    $src_basename = "$d->{src_name}_$src_basename";
+	    $src_dir =~ s,pool/updates,pool,o;
+	    $src_dir =~ s,pool/non-US,pool,o;
+	    $str .= "<br>".sprintf( gettext( "View the <a href=\"%s\">Debian changelog</a>" ),
+				    "$CHANGELOG_URL/$src_dir/$src_basename/changelog" )."<br>\n";
+	    $str .= sprintf( gettext( "View the <a href=\"%s\">copyright file</a>" ),
+			     "$COPYRIGHT_URL/$src_dir/$src_basename/$name.copyright" )."<br>\n";
+	}
+    }
+
+    if ($info{maintainers}) {
+	my @uploaders = @{$d->{uploaders}};
+	my ($maint_name, $maint_mail ) = @{shift @uploaders}; 
+	unless (@uploaders) {
+	    $str .= sprintf( "<p>".
+			     gettext( "%s is responsible for this Debian package." ).
+			     "\n", 
+			     "<a href=\"mailto:$maint_mail\">$maint_name</a>" 
+			     );
+	} else {
+	    my $up_str = "<a href=\"mailto:$maint_mail\">$maint_name</a>";
+	    my @uploaders_str;
+	    foreach (@uploaders) {
+		push @uploaders_str, "<a href=\"mailto:$_->[1]\">$_->[0]</a>";
+	    }
+	    my $last_up = pop @uploaders_str;
+	    $up_str .= ", ".join ", ", @uploaders_str if @uploaders_str;
+	    $up_str .= sprintf( gettext( " and %s are responsible for this Debian package." ), $last_up );
+	    $str .= "<p>$up_str ";
+	}
+
+	$str .= sprintf( gettext( "See the <a href=\"%s\">developer information for %s</a>." )."</p>", $QA_URL.$d->{src_name}, $name );
+    }
+
+    if ($info{search}) {
+	my $encodedname = uri_escape( $name );
+	my $search_url = $is_source ? $SRC_SEARCH_URL : $SEARCH_URL;
+	$str .= sprintf( "<p>".gettext( "Search for <a href=\"%s\">other versions of %s</a>" )."</p>\n", $search_url.$encodedname, $name );
+    }
+
+    $str .= "</div> <!-- end pmoreinfo -->\n";
+    return $str;
+}
+
+my $ds_begin = '<dl>';
+my $ds_item_desc  = '<dt>';
+my $ds_item = ':</dt><dd>';
+my $ds_item_end = '</dd>';
+my $ds_end = '</dl>';
+#	    my $ds_begin = '<table><tbody>';
+#	    my $ds_item_desc  = '<tr><td>';
+#	    my $ds_item = '</td><td>';
+#	    my $ds_item_end = '</td></tr>';
+#	    my $ds_end = '</tbody></table>';
+
+sub ds_begin {
+    return $ds_begin;
+}
+sub ds_item {
+    return "$ds_item_desc$_[0]$ds_item$_[1]$ds_item_end";
+}
+sub ds_end {
+    return $ds_end;
 }
 
 sub header {
@@ -216,15 +430,15 @@ sub trailer {
     $txt .=
 	"\n\n<hr class=\"hidecss\">" .
 	sprintf( gettext( "Back to: <a href=\"%s/\">Debian Project homepage</a> || <a href=\"%s/\">Packages search page</a>" ), $HOME, $ROOT ).
-	"\n<hr noshade width=\"100%\" size=\"1\">\n".
-	"<p><small>".
+	"\n<hr>\n".
+	"<p>".
 	sprintf( gettext( "To report a problem with the web site, e-mail <a href=\"mailto:debian-www\@lists.debian.org\">debian-www\@lists.debian.org</a>. For other contact information, see the Debian <a href=\"%s/contact\">contact page</a>." ), $HOME).
-	"</small></p>\n".
-	"<p><small>". gettext( "Last Modified: " ). "LAST_MODIFIED_DATE".
+	"</p>\n".
+	"<p>". gettext( "Last Modified: " ). "LAST_MODIFIED_DATE".
 	"<br>\n".
 	sprintf( gettext( "Copyright &copy; 1997-2004 <a href=\"http://www.spi-inc.org\">SPI</a>; See <a href=\"%s/license\">license terms</a>." ), "$HOME/" )."<br>\n".
 	gettext( "Debian is a registered trademark of Software in the Public Interest, Inc." ).
-	"</small>\n".
+	"\n".
 	"</div> <!-- end footer -->\n".
 	"</div> <!-- end outer -->\n".
 	"</body>\n</html>\n";
@@ -259,7 +473,7 @@ sub languages {
 	    $str .= "</a>\n";
 	}
 	$str .= "\n</p><p>\n";
-	$str .= gettext( "How to set <a href=\"$CN_HELP_URL\">the default document language</a></p>" );
+	$str .= sprintf( gettext( "How to set <a href=\"%s\">the default document language</a></p>" ), $CN_HELP_URL );
 	$str .= "\n<!--/UdmComment-->\n";
     }
     

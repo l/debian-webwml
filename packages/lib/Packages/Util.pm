@@ -1,8 +1,26 @@
-use strict;
-use warnings;
 
+package Packages::Util;
+
+use Exporter;
 use Text::Iconv;
 Text::Iconv->raise_error(0); # do not throw exeptions
+
+use Packages::I18N::Locale;
+
+our @ISA = qw( Exporter );
+
+our @EXPORT = qw( _assert conv_desc first_val split_name_mail );
+
+sub _assert {
+    my ( $cond, $message ) = @_;
+
+    die "assertion failed: $message\n" unless $cond;
+}
+
+sub first_val {
+    my ( $hash ) = @_;
+    return (each %$hash)[1];
+} 
 
 my %converters = (
 		  "UTF-82ISO-8859-1" => Text::Iconv->new("UTF-8", "ISO-8859-1"),
@@ -41,6 +59,7 @@ sub split_name_mail {
 	$name = gettext( 'package has bad maintainer field' );
 	$email = '';
     }
+    $name =~ s/\s+$//o;
     return ($name, $email);
 }
 

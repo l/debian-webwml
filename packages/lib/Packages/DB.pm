@@ -735,10 +735,10 @@ sub process_dep_list {
 	    } else {
 		push(@final_dep_list, [ $given_dep_strip, $dep_op, 
 					$dep_ver, $dep_archs, "(NOT AVAILABLE)" ] );
-		warn "W:$pkg:$rel on $given_dep_strip unsatifiable\n"
-		    if $self->{config}{verbose}
-		&& ( ( $rel =~ /depends/o )
-		     || ( $rel eq 'recommends' ) );
+#		warn "W:$pkg:$rel on $given_dep_strip unsatifiable\n"
+#		    if $self->{config}{verbose}
+#		&& ( ( $rel =~ /depends/o )
+#		     || ( $rel eq 'recommends' ) );
 	    }
 	}
 	push @$res, [ @final_dep_list ];

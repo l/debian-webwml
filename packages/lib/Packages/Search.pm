@@ -93,7 +93,7 @@ sub parse_params {
 	my $p_value_orig = $cgi->param($param);
 	my $p_value = $p_value_orig;
 
-        #TODO: don't produce "uninitialized value" warnings
+        #TODO: do not produce "uninitialized value" warnings
 	print "DEBUG: Value (Orig) $p_value_orig<br>" if $debug;
 
 	if ($params_def->{$param}{match} && defined $p_value_orig) {
