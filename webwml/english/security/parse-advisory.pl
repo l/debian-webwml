@@ -55,7 +55,7 @@ $files =~ s/\n\n$/\n/s;
 $files =~ s/      MD5 checksum: (\w{32})\n//sg;
 $files =~ s/  Source archives:/<dt><source>/s;
 $files =~ s/  Architecture.independent.\w+:\n/<dt><arch-indep>\n/s;
-$files =~ s/  ([\w ]+) architecture:/<dt>$1:/sg;
+$files =~ s/  ([\w -]+) architecture:/<dt>$1:/sg;
 $files =~ s/    (http:\S+)/  <dd><fileurl $1>/sg;
 
 ($pagetitle = $adv) =~ s/dsa/DSA/;
