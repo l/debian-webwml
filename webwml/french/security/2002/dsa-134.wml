@@ -1,0 +1,137 @@
+#use wml::debian::translation-check translation="1.9" maintainer="Pierre Machard"
+<define-tag description>Exploitation à distance</define-tag>
+<define-tag moreinfo>
+<p>Theo de Raadt a annoncé que l'équipe OpenBSD était actuellement en train
+de travailler avec ISS sur une exploitation à distance d'OpenSSH (une
+implémentation libre du protocole de SHell Sécurisé). Ils se refusent à 
+communiquer les détails de la vulnérabilité mais insistent sur l'importance
+que chacun fasse une mise à jour vers la version&nbsp;3.3.</p>
+
+<p>Cette version a été publiée le 22 juin 2002 et elle utilise par défaut 
+une caractéristique appelée séparation des droits <i>privilege 
+separation</i>, afin de minimiser l'effet d'une exploit indue du code dédié
+au réseau. Malheureusement cette version contient quelques problèmes 
+connus&nbsp;:</p>
+
+<ul>
+<li>La compression ne fonctionne pas sur tous les systèmes d'exploitation 
+    étant donné sur le code repose sur des options particulières de 
+    nmap&nbsp;;</li>
+
+<li>Le support de PAM n'a pas été achevé et peuvent empêcher le fonctionnement
+    de certains modules PAM&nbsp;;</li>
+
+<li>L'authentification interactive à l'aide du clavier ne fonctionne pas
+    avec la séparation des droits (<i>privilege seperation</i>). Le plus
+    flagrant pour les utilisateurs de Debian est que cela empêche le 
+    fonctionnement des modules PAM qui emploient une fonction de conversion
+    PAM (comme le module OPIE).</li>
+</ul>
+
+<p>La nouvelle séparation des droits (<i>privilege separation</i>) fournie
+par Niels Provos oblige ssh à utiliser un processus séparé non-privilégié 
+pour le travail courant. Ce qui signifie que toutes vulnérabilités émanent 
+de cette partie d'OpenSSH ne pourra jamais conduire à une compromission du 
+root, mais seulement à la compromission d'un accès restreint non-privilégié 
+dans un chroot.</p>
+
+<p>Theo l'a clairement précisé, cette nouvelle version ne corrige pas
+la faille de sécurité, mais en utilisant une nouvelle séparation des droits,
+cela réduit considérablement le risque étant donné que l'assaillant peut
+uniquement accéder à un compte spécial restreint à un chroot.</p>
+
+<p>Étant donné que les détails du problèmes n'ont pas été communiqués, le
+passage à la version&nbsp;3.3p1, la dernière version portable d'OpenSSH,
+est la seule méthode de réduire le risque de la faille de sécurité.</p>
+
+<p>Veuillez noter que nous n'avons pas eu le temps de nous assurer comme
+il se doit de la fiabilité de ces paquets&nbsp;; ils pourraient contenir des
+bogues ou provoquer des erreurs inattendue. Si vous constatez de tels problèmes,
+(autre que ceux mentionnés ci-dessous) veuillez remplir un rapport de bogue
+de sorte que nous puissions mener l'enquête.</p>
+
+<p>Quelques notes sur les conséquences possible de cette mise à jour&nbsp;:</p>
+
+<ul>
+<li>Ce paquet introduit un nouveau compte appelé «&nbsp;sshd&nbsp;» qui est
+    utilisé dans le code de séparation des droits. Si aucun compte sshd 
+    n'existe, le paquet essayera de le créer. Si un compte existe d'ores et 
+    déjà, il sera réutilisé. Si vous ne souhaitez pas que cela arrive, vous
+    devrez le corriger manuellement.</li>
+
+<li>(Valable uniquement pour <i>Potato</i>) Cette mise à jour ajoute
+    un rétroportage de la version&nbsp;0.9.6c de la bibliothèque SSL. Ce
+    qui signifie que vous devrez aussi bien mettre à jour le paquet ssl.</li>
+
+<li>(Valable uniquement pour <i>Potato</i>) Cette mise à jour utilise par 
+    défaut la version&nbsp;2 du protocole SSH. Ceci peut empêcher le 
+    fonctionnement des configurations où l'authentification RSA est utilisée. 
+    Vous devrez soit&nbsp;:
+    <ul>
+      <li>ajouter -1 à l'invocation de la commande ssh pour continuer 
+	  d'utiliser la version&nbsp;1 du protocole SSH et votre clé 
+	  existante, ou
+      <li>modifier la ligne Protocol dans le fichier 
+      <tt>/etc/ssh/ssh_config</tt> et/ou le fichier 
+      <tt>/etc/ssh/sshd_config</tt> en «&nbsp;Protocol 1,2&nbsp;» pour essayer 
+      d'utiliser le protocole&nbsp;1 avec d'essayer le protocole&nbsp;2, ou
+      <li>créer de nouvelles clés rsa ou dsa pour le protocole SSH&nbsp;2
+    </ul>
+    </li>
+
+<li>sshd active par défaut la séparation des droits (<i>privilege 
+    seperation</i>), même si vous ne l'avez pas explicitement activé dans
+    <tt>/etc/ssh/sshd_config</tt>. Encore une fois, à moins que vous n'ayez 
+    «&nbsp;UsePrivilegeSeparation no&nbsp;» dans votre fichier sshd-config, 
+    vous utiliserez la séparation des droits avec ce paquet.</li>
+
+<li>Si ssh ne fonctionne pas, vous devriez essayer de désactiver la 
+    compression. Nous incluons déjà une rustine de <i>Solar Designer</i>
+    qui corrige ce problème avec les noyaux Linux&nbsp;2.2, mais il semble
+    que dans des situations bien particulière cela ne soit pas suffisant.</li>
+
+<li>(Valable uniquement pour <i>Potato</i>) La séparation des droits ne 
+    fonctionne pas avec les noyaux Linux&nbsp;2.0.</li>
+ 
+<li>Si pour quelque raison que ce soit, vous ne pouvez pas utiliser la 
+    séparation des droits, (par exemple parce que vous utilisez un 
+    noyau&nbsp;2.0), mais que vous avez déjà installé le paquet 
+    openssh&nbsp;3.3p1, vous pouvez revenir au comportement précédent en
+    ajoutant «&nbsp;UsePrivilegeSeparation no&nbsp;» dans votre fichier
+    <tt>/etc/ssh/sshd_config<tt>. <strong>Notez que cela désactive la 
+    séparation des droits et vous laisse à la merci de la vulnérabilité 
+    décrite dans cette annonce et cela ne devrait être effectué qu'en cas 
+    d'extrême nécessité.</strong></li>
+
+<li>Des élément des paquets openssh&nbsp;3.3p1 précédents sont corrigées dans 
+ce bulletin (Journal des mise à jour non-exhaustif)&nbsp;:</p>
+
+<ul>
+<li>(Valable uniquement pour <i>Potato</i>) La réponse à la question 
+d'installation, «&nbsp;[souhaitez-vous utiliser uniquement la version&nbsp;2 
+du protocole&nbsp;», n'est plus «&nbsp;Oui&nbsp;» par défaut. Les utilisateurs
+qui répondraient oui à cette question et choisiraient également de régénérer
+leur fichier sshd_config constaterons qu'ils ne peuvent plus se connecter à 
+leur serveur en utilisant le  protocole 1. Regardez 
+<tt>/usr/doc/ssh/README.Debian</tt> pour des instructions sur la façon 
+d'activer le protocole 1, si vous vous trouvez dans cette situation.</li>
+
+<li>(Valable uniquement pour <i>Potato</i>) le paquet ssh n'entre plus en 
+conflit avec rsh-server, et ne fournit plus non plus d'alternative à rsh.</li>
+</ul>
+
+<p>Encore une fois, nous regrettons d'avoir publié des paquets avec des 
+changements profonds, en les testant moins bien qu'à notre habitude&nbsp;; en 
+donnant la sévérité probable et la nature non-spécifique de la menace, nous 
+avons décidé que le meilleur moyen de servir nos utilisateurs était de mettre
+à disposition des paquets aussi rapidement que possible. Nous fournirons
+des informations complémentaires dès que nous en aurons, et nous continuerons
+à travailler sur les problèmes auxquels vous êtes confrontés.</p> 
+</ul>
+
+<p>Veuillez noter que les paquet pour l'architecture m68k pour <i>Woody</i>
+ne sont pas encore disponibles.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2002/dsa-134.data"
