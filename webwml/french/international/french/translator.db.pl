@@ -236,7 +236,7 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Martin Quinson' => {
-                        email       => 'martin.quinson@tuxfamily.org',
+                        email       => 'frederic.bothamy@free.fr',
                         summary     => 3,
                         logs        => 3,
                         diff        => 3,
@@ -254,7 +254,7 @@ sub init_translators {
                         compress    => 'none'
                 }, 
                 'Jérôme Schell' =>  {
-                        email       => 'martin.quinson@tuxfamily.org',
+                        email       => 'frederic.bothamy@free.fr',
                         summary     => 2,
                         logs        => 2,
                         diff        => 2,
