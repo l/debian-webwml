@@ -81,7 +81,11 @@ sub get_stats {
                               " (".show_stat($stat).")</td><td><a href=\"";
                         $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root);
                         $incl{$lang} .= $data->pooldir($pkg)."/$link_trans.gz\">$template</a></td>";
-                        $incl{$lang} .= "<td><a href=\"".$data->pooldir($pkg)."/$link_orig.gz\">templates</a></td>" if $link_orig ne '';
+                        if ($link_orig ne '') {
+                                $incl{$lang} .= "<td><a href=\"";
+                                $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root);
+                                $incl{$lang} .= $data->pooldir($pkg)."/$link_orig.gz\">templates</a></td>";
+                        }
                         $incl{$lang} .= "</tr>\n";
                 }
                 foreach $lang (@langs) {
