@@ -147,11 +147,11 @@ sub print_errors($)
     print_dateerror($dbh, "Manager assigned date before apply date",
         "SELECT email, apply_date, manager_date, manager from applicant WHERE apply_date > manager_date");
     print_dateerror($dbh, "AM Confirm date set into the future",
-        "SELECT email, am_confirm_date, CURRENT_DATE, manager from applicant WHERE am_confirm_date > CURRENT_DATE);
+        "SELECT email, am_confirm_date, CURRENT_DATE, manager from applicant WHERE am_confirm_date > CURRENT_DATE");
     print_dateerror($dbh, "AM confirm date occurs before AM assignment date",
         "SELECT email, manager_date, am_confirm_date, manager from applicant WHERE manager_date > am_confirm_date");
     print_dateerror($dbh, "AM recommendation to the DAM date set into the future",
-        "SELECT email, decision, CURRENT_DATE, manager from applicant WHERE decision > CURRENT_DATE);
+        "SELECT email, decision, CURRENT_DATE, manager from applicant WHERE decision > CURRENT_DATE");
 
 }
 sub print_stats($)
