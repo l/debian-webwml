@@ -11,6 +11,9 @@ my $url=shift || "http://www.debian.org/News/weekly/$current_issue/";
 
 my $divider=("-" x 75). "\n";
 
+my (@stories, @links);
+my ($story, $link);
+
 # Start skipping lines, because the page dump begins with some garbage.
 my $skip=1;
 # This keeps track of how many links have been skipped over, so the rest
@@ -37,28 +40,32 @@ while (<IN>) {
 	s/^\s\s\s//; # kill lynx's indent.
 
 	unless ($skip) {
-	     # Kill multiple spaces, since raggedright is easier on the eyes
-	     s/ {2,}/ /g;
-		# Fix up links.
-		s/\[(\d+)\]/$highlink=$1; "[".($1 - $skippedlinks)."]"/eg;
-                # last line started an item, perhaps we need some indenting
-                if ( $lastlinecontainsstar ) {
-                   # line doesn't only contain whitespace and doesn't start with another *
-                   if ( m/^\s*[^\* ]/ ) {
-		       s/^/  /;
-                   }
-                   # line is empty, don't indent following lines
-                   if ( m/^\s*$/ ) {
-		       $lastlinecontainsstar = 0;
-                   }
-                }
-                # line starts an item
-                if ( m/^\s*\*/ ) {
-		    $lastlinecontainsstar = 1;
-                }
-
-		print $_;
-
+	     if (/^\s*$/) { 
+		  # Empty line, new story
+		  push @stories, $story;
+		  $story = "";
+	     } else {
+		  # Kill multiple spaces, since raggedright is easier on the eyes
+		  s/ {2,}/ /g;
+		  # Fix up links.
+		  s/\[(\d+)\]/$highlink=$1; "[".($1 - $skippedlinks)."]"/eg;
+		  # last line started an item, perhaps we need some indenting
+		  if ( $lastlinecontainsstar ) {
+		       # line doesn't only contain whitespace and doesn't start with another *
+		       if ( m/^\s*[^\* ]/ ) {
+			    s/^/  /;
+		       }
+		       # line is empty, don't indent following lines
+		       if ( m/^\s*$/ ) {
+			    $lastlinecontainsstar = 0;
+		       }
+		  }
+		  # line starts an item
+		  if ( m/^\s*\*/ ) {
+		       $lastlinecontainsstar = 1;
+		  }
+		  $story .= $_;
+	     }
 	}
 	else {
 		$skippedlinks++ while m/\[\d+\]/g;
@@ -82,7 +89,8 @@ while (<IN>) {
 while (<IN>) {
 	last if m/^\s\s\sVisible links/;
 }
-print "\n", $divider, "References\n";
+
+# print "\n", $divider, "References\n";
 while (<IN>) {
 	s/^\s+//; # kill lynx's indent.
 	if (/^(\d+)/) {
@@ -93,12 +101,24 @@ while (<IN>) {
 
 			# Fix local links
 			s,file://localhost/.*/webwml/[^/]*/,http://www.debian.org/,g;
+			push @links, " $_";
 
-			print "  $_";
 		}
 	}
 	else {
 		# End of links.
 		close IN;
 	}
+}
+
+foreach $story (@stories) {
+     $story =~ m/\[(\d+)\]/s;
+     my $firstlink = $1;
+     $story =~ m/.*\[(\d+)\]/s;
+     my $lastlink = $1;
+     print $story, "\n";
+     foreach $link (@links[$firstlink .. $lastlink]) {
+	  print $link;
+     }
+     print "\n";
 }
