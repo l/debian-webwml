@@ -3,7 +3,7 @@
 # so the problem can be fixed.
 
 WMLBASE=../..
-CUR_DIR=buildd
+CUR_DIR=devel/buildd
 SUBS=
 
 include $(WMLBASE)/Make.lang
