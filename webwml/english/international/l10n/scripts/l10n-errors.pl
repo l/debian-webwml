@@ -50,7 +50,7 @@ sub print_section {
     my $rowspawn;
 
     if (defined %data) {
-	$header .= "<font size=-2><a href=#top>(top)</a></font>";
+	$header .= "<font size=-2><a href=#top>(<top>)</a></font>";
 	$header =~ s/<(td)/<$1 bgcolor="#ddddd5" align=center/g;
 	$since_header = 0;
 	print  "<table border=1>".$header;
