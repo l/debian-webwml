@@ -15,7 +15,7 @@ my %longmoy = (	en => [
   'July', 'August', 'September', 'October', 'November', 'December' ]
 );
 
-my $curyear = qx "date +%Y"; chomp $curyear;
+my $curyear = (localtime())[5] + 1900;
 my $mlURL = "http://lists.debian.org/debian-security-announce/debian-security-announce-$curyear/";
 
 open ADV, $adv;
@@ -89,11 +89,9 @@ $files =~ s/  ([\w -\/]+) architecture:/<dt>$1:/sg;
 $files =~ s/    (http:\S+)/  <dd><fileurl $1>/sg;
 $files =~ s,Debian (GNU/Linux )?(\S+) (alias |\()([a-z]+)\)?,</dl>\n\n<h3>Debian GNU/Linux $2 ($4)</h3>\n\n<dl>,sg;
 
-$year = (localtime())[5] + 1900;
-
 $adv =~ /.*dsa[- ](\d+)-(\d+)\.(.*)/;
-$wml = "$year/dsa-$1.wml";
-$data = "$year/dsa-$1.data";
+$wml = "$curyear/dsa-$1.wml";
+$data = "$curyear/dsa-$1.data";
 $pagetitle = "DSA-$1-$2 $3";
 
 die "$wml already exists!\n" if (-f $wml);
@@ -116,11 +114,11 @@ open WML, ">$wml";
 print WML "<define-tag description>$desc</define-tag>\n";
 print WML "<define-tag moreinfo>$moreinfo</p>\n</define-tag>\n";
 print WML "\n# do not modify the following line\n";
-print WML "#include \"\$(ENGLISHDIR)/security/$curyear/$data\"\n";
+print WML "#include \"\$(ENGLISHDIR)/security/$data\"\n";
 printf WML "# %sId: \$\n", "\$";
 close WML;
 
 print "Now edit $data and remove any English-specific stuff from it.\n";
 print "\n";
 print "Also, go to $mlURL\n";
-print "find $dsa, then put a link to that page on the last line of $data.\n";
+print "find $dsa, then put a link to that page on the last line of $data .\n";
