@@ -16,3 +16,4 @@ include $(WMLBASE)/Make.dep.templ
 
 # Do Not modify the following line
 
+$(HTMLFILES): documents-bd.pl current_status.pl
