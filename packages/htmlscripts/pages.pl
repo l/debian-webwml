@@ -104,9 +104,9 @@ sub package_index_walker {
 	my %subdists = $pkg->get_arch_fields( 'subdistribution', 
 					      $env->{archs} );
 
-	my $short_desc_txt = conv_desc( $env->{lang}, $env->{db}->get_short_desc( $desc_md5s{max_unique}, 
-										  $env->{lang} ) );
-	my $short_desc = encode_entities( $short_desc_txt, "<>&\"" );
+	my $short_desc_orig = $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} );
+	my $short_desc_txt = conv_desc( $env->{lang}, $short_desc_orig );
+	my $short_desc = conv_desc( $env->{lang}, encode_entities( $short_desc_orig, "<>&\"" ) );
 
 	my ( $version, $section, $archive, $subdist );
 	$version = ($pkg->get_version_list)[0];
