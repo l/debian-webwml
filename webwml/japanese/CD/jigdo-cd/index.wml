@@ -1,5 +1,5 @@
 #use wml::debian::cdimage title="jigdo をつかって Debian CD イメージをダウンロードする" BARETITLE=true
-#use wml::debian::translation-check translation="1.15"
+#use wml::debian::translation-check translation="1.19"
 
 <p>jigsaw (糸鋸) ダウンロード、あるいは短く <a href="http://atterer.net/jigdo/">jigdo</a>
 は、将来 Debian CD イメージを配布する主となる方法として考えられたものです。
@@ -25,9 +25,10 @@
 
 <ul>
 
-  <li>公式の jigdoファイル: <a
-  href="http://cdimage.debian.org/~atterer/jigdo/">最新の「安定版」
-  ディストリビューション</a>向け CD</li>
+  <li>公式の最新「安定版」CD 向け jigdoファイル <a
+  href="http://us.cdimage.debian.org/jigdo-area/current/jigdo/">米国</a>,
+  <a href="http://non-us.cdimage.debian.org/jigdo-area/current/jigdo/"
+  >欧州</a></li>
 
   <li>非公式の jigdoファイル: <a
   href="ftp://ftp.fsn.hu/pub/CDROM-Images/debian-unofficial/woody/jigdo/">\
@@ -55,15 +56,19 @@
 
 </ul>
 
-<p><strong>jigdo を使ってイメージをダウンロードする手順を教えてください</strong>
-Linux を使っている場合: </p>
+<p><strong>jigdo を使ってイメージをダウンロードする手順を教えてください</strong></p>
 
 <ul>
 
-  <li><tt>jigdo-file</tt> を含むパッケージをダウンロードします。jigdo-file
+  <li><tt>jigdo-lite</tt> を含むパッケージをダウンロードします。jigdo-lite
   は <a href="http://atterer.net/jigdo/">jigdo homepage</a>
-  に様々な形で置かれています。パッケージには、<tt>jigdo-lite</tt>
+  に様々な形でおかれています。
+  パッケージには、<tt>jigdo-lite</tt>
   スクリプトが同封されています。</li>
+  href="http://atterer.net/jigdo/">jigdo homepage</a>.
+  <br><strong>Debian ユーザは、最新版の 0.6.8 にアップグレードしてください
+  </strong> - Debian woody
+  に収録のものは、最新のイメージをダウンロードするには不足です。</li>
 
   <li><tt>jigdo-lite</tt> スクリプトを実行します。処理する "<tt>.jigdo</tt>"
   ファイルの URL を聞かれますので、それに答えます
@@ -76,10 +81,6 @@ Linux を使っている場合: </p>
   すべてが上手くいけば、スクリプトは作成したイメージのチェックサムを計算して、それがもとのイメージと同じであることを報告し、終了します。</li>
 
 </ul>
-
-<p>Windows を使っている場合は、Debian CD イメージをダウンロードする手順は
-<a href="http://cdimage.debian.org/~costar/jigdo/">jigdo-easy</a>
-ページを参照下さい。</p>
 
 <p>イメージをダウンロードして、CD に焼いた後は、<a
 href="$(HOME)/releases/stable/installmanual">インストールのための詳しい情報</a>
@@ -100,13 +101,25 @@ jigdo の開発に参加していただけるボランティアはいつでも大歓迎です。</p>
 
 <p><strong>jigdo で proxy サーバを使うようにするにはどうすればいいのでしょう?</strong></p>
 
-<p>どのような proxy を使う場合でも、<tt>http_proxy</tt> および/または
-<tt>ftp_proxy</tt> 環境変数に proxy サーバのアドレスを指定する必要があります。
-Linux では、ホームディレクトリの <tt>.bashrc</tt> ファイルに
-<tt>export&nbsp;http_proxy=http://myproxy:8088/</tt>
-のような行を付け加えるのが一番手っ取り早いやりかたです。
-jigdo-easy を Windows で使っている場合は、同様の行を <tt>jigdo-easy.sh</tt>
-スクリプトの最初に足すのが一番簡単でしょう。</p>
+<p><tt>~/.jigdo-lite</tt> ファイルを (または Windows 版の場合は
+<tt>jigdo-lite-settings.txt</tt> を) テキストエディタで読み込んでください。
+次に、"wgetOpts" で始まる行を探します。以下のオプションをこの行に追加できます。
+</p>
+
+<p><tt>-e ftp_proxy=http://<i>LOCAL-PROXY</i>:<i>PORT</i>/</tt>
+<br><tt>-e http_proxy=http://<i>LOCAL-PROXY</i>:<i>PORT</i>/</tt>
+<br><tt>--proxy-user=<i>USER</i></tt>
+<br><tt>--proxy-passwd=<i>PASSWORD</i></tt></p>
+
+<p>ここで、使っている proxy サーバにあわせて上記を適切な値に書き換えてください。
+最後の二つのオプションは、proxy でパスワード認証を行っている場合に限り、必要になります。
+オプションは、wgetOpts の行の最後の、<tt>'</tt> の <em>前</em>
+に追加してください。
+オプションは全て、この wgetOpts の行に、一行で書く必要があります。</p>
+
+<p>別法として、Linux 下では <tt>~/.bashrc</tt> や <tt>/etc/environment</tt>
+ファイル中で <tt>http_proxy</tt> および/または
+<tt>ftp_proxy</tt> 環境変数を設定するようにしても OK です。</p>
 
 <p><strong>あ痛ぁ! スクリプトがエラーで落ちてしまいました。これまでダウンロードした何百 MB は無駄になってしまうんですか?</strong></p>
 
