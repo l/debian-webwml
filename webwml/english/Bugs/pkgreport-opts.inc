@@ -1,5 +1,6 @@
 <define-tag flags whitespace=delete>
 	[EN:Flags::]
+	[DE:Flags::]
 	[IT:Opzioni::]
 	[FI:Liput::]
 	[DA:Flag::]
@@ -8,6 +9,7 @@
 </define-tag>
 <define-tag active_bugs whitespace=delete>
 	[EN:active bugs:]
+	[DE:aktive Fehler:]
 	[IT:anomalie non risolte:]
 	[FI:aktiiviset viat:]
 	[DA:aktive fejl:]
@@ -16,6 +18,7 @@
 </define-tag>
 <define-tag archived_bugs whitespace=delete>
 	[EN:archived bugs:]
+	[DE:archivierte Fehler:]
 	[IT:anomalie archiviate:]
 	[FI:arkistoidut viat:]
 	[DA:arkiverede fejl:]
@@ -24,6 +27,7 @@
 </define-tag>
 <define-tag no_status whitespace=delete>
 	[EN:no ordering by status or severity:]
+	[DE:nicht nach Status oder Dringlichkeit sortieren:]
 	[IT:Senza ordine di status o di gravità:]
 	[FI:ei järjestystä tilan tai vakavuuden perusteella:]
 	[DA:ingen sortering på status/alvorlighedsgrad:]
@@ -32,6 +36,7 @@
 </define-tag>
 <define-tag reverse_order whitespace=delete>
 	[EN:Reverse order of: :]
+	[DE:Sortierung umkehren von: :]
 	[IT:Ordine inverso di: :]
 	[FI:Käänteinen järjestys::]
 	[DA:Omvendt rækkefølge af: :]
@@ -40,6 +45,7 @@
 </define-tag>
 <define-tag status whitespace=delete>
 	[EN:status:]
+	[DE:Status:]
 	[IT:stato:]
 	[FI:tila:]
 	[DA:status:]
@@ -48,6 +54,7 @@
 </define-tag>
 <define-tag severities whitespace=delete>
 	[EN:severities:]
+	[DE:Dringlichkeiten:]
 	[IT:gravità:]
 	[FI:vakavuudet:]
 	[DA:alvorlighedsgrader:]
@@ -56,6 +63,7 @@
 </define-tag>
 <define-tag bugs whitespace=delete>
 	[EN:bugs:]
+	[DE:Fehler:]
 	[IT:anomalie:]
 	[FI:viat:]
 	[DA:fejl:]
@@ -64,6 +72,7 @@
 </define-tag>
 <define-tag status_include whitespace=delete>
 	[EN:Include status: :]
+	[DE:Status einschliessen: :]
 	[IT:Stato incluso: :]
 	[FI:Sisällytä tila: :]
 	[DA:Status indeholder: :]
@@ -72,6 +81,7 @@
 </define-tag>
 <define-tag status_exclude whitespace=delete>
 	[EN:Exclude status: :]
+	[DE:Status ausschliessen: :]
 	[IT:Stato escluso: :]
 	[FI:Poista tila: :]
 	[DA:Status indeholder ikke: :]
@@ -80,6 +90,7 @@
 </define-tag>
 <define-tag severity_include whitespace=delete>
 	[EN:Include severity: :]
+	[DE:Dringlichkeit einschliessen: :]
 	[IT:Includi gravità: :]
 	[FI:Sisällytä vakavuus: :]
 	[DA:Alvorlighedsgrad indeholder: :]
@@ -88,6 +99,7 @@
 </define-tag>
 <define-tag severity_exclude whitespace=delete>
 	[EN:Exclude severity: :]
+	[DE:Dringlichkeit ausschliessen: :]
 	[IT:Escludi gravità: :]
 	[FI:Poista vakavuus: :]
 	[DA:Alvorlighedsgrad indeholder ikke: :]
@@ -96,6 +108,7 @@
 </define-tag>
 <define-tag open whitespace=delete>
 	[EN:open:]
+	[DE:open:]
 	[IT:open:]
 	[FI:avoin:]
 	[DA:åben:]
@@ -104,6 +117,7 @@
 </define-tag>
 <define-tag forwarded whitespace=delete>
 	[EN:forwarded:]
+	[DE:forwarded:]
 	[IT:forwarded:]
 	[FI:siirretty eteenpäin:]
 	[DA:videresendt:]
@@ -112,6 +126,7 @@
 </define-tag>
 <define-tag pending whitespace=delete>
 	[EN:pending:]
+	[DE:pending:]
 	[IT:pending:]
 	[FI:ratkaisematon:]
 	[DA:i gang:]
@@ -120,6 +135,7 @@
 </define-tag>
 <define-tag fixed whitespace=delete>
 	[EN:fixed:]
+	[DE:fixed:]
 	[IT:fixed:]
 	[FI:korjattu:]
 	[DA:rettet:]
@@ -128,6 +144,7 @@
 </define-tag>
 <define-tag done whitespace=delete>
 	[EN:done:]
+	[DE:done:]
 	[IT:done:]
 	[FI:valmis:]
 	[DA:færdig:]
@@ -136,6 +153,7 @@
 </define-tag>
 <define-tag critical whitespace=delete>
 	[EN:critical:]
+	[DE:critical:]
 	[IT:critical:]
 	[FI:kriittinen:]
 	[DA:kritisk:]
@@ -144,6 +162,7 @@
 </define-tag>
 <define-tag grave whitespace=delete>
 	[EN:grave:]
+	[DE:grave:]
 	[IT:grave:]
 	[FI:haudanvakava:]
 	[DA:graverende:]
@@ -152,6 +171,7 @@
 </define-tag>
 <define-tag serious whitespace=delete>
 	[EN:serious:]
+	[DE:serious:]
 	[IT:serious:]
 	[FI:vakava:]
 	[DA:alvorlig:]
@@ -160,6 +180,7 @@
 </define-tag>
 <define-tag important whitespace=delete>
 	[EN:important:]
+	[DE:important:]
 	[IT:important:]
 	[FI:tärkeä:]
 	[DA:vigtig:]
@@ -168,6 +189,7 @@
 </define-tag>
 <define-tag normal whitespace=delete>
 	[EN:normal:]
+	[DE:normal:]
 	[IT:normal:]
 	[FI:normaali:]
 	[DA:normal:]
@@ -176,6 +198,7 @@
 </define-tag>
 <define-tag minor whitespace=delete>
 	[EN:minor:]
+	[DE:minor:]
 	[IT:minor:]
 	[FI:vähäpätöinen:]
 	[DA:mindre:]
@@ -184,6 +207,7 @@
 </define-tag>
 <define-tag wishlist whitespace=delete>
 	[EN:wishlist:]
+	[DE:wishlist:]
 	[IT:wishlist:]
 	[FI:toive:]
 	[DA:ønskeliste:]
@@ -191,6 +215,9 @@
 	[SV:önskelista:]
 </define-tag>
 
+#
+# DON'T try to translate anything below this line
+#
   <small>
   <ul>
   <li><flags>
