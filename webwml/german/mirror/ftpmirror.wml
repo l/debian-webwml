@@ -1,0 +1,101 @@
+#use wml::debian::template title="Einen FTP-Spiegel erstellen"
+
+<!-- 
+  Translator       : Thimo Neubauer (thimo@debian.org)
+  $Id$
+  -->
+
+<p>Spiegeln ist genau gleich f&uuml;r offizielle wie inoffizielle
+Server. Wenn ein Spiegelserver installiert ist, sollte er <a
+href="submit">bei Debian registriert</a> werden, damit er in die
+<a href="../misc/README.mirrors">Liste der Spiegel</a> aufgenommen
+werden kann. Anmelden kann man sich &uuml;ber ein
+<A href="submit">einfaches Web-Formular</a>. Probleme und Anfragen
+k&ouml;nnen Sie an <A
+href="mailto:mirrors@debian.org">mirrors@debian.org</A> schicken.
+
+<h3>Anonymes rsync</h3>
+Die empfohlene Methode des Spiegelns ist mit rsync.
+
+<p>Sie k&ouml;nnen <a href="anonftpsync">dieses Skript</a> benutzen,
+um das Archiv zu spiegeln. Folgen Sie einfach den Anweisungen im
+Skript, um den Spiegel zu erstellen. Server in der
+<a href="mirrors_full">vollst&auml;ndigen Liste aller Spiegel</a>, die
+vom Typ '<kbd>Type: Push-*</kbd>' sind, sollten gut geeignet sein, um
+von dort zu spiegeln.
+
+<h3>Push Mirror</h3>
+
+Push-mirroring ist eine Art des Spiegelns mit rsync, die wir
+entwickelt haben, um die Zeit zu minimieren, die es ben&ouml;tigt, bis
+&Auml;nderungen im Archiv die Spiegel erreichen. Beim Push-mirroring
+wird die ssh verwendet, um einem weiter unten in der Hierarchie
+stehenden Spiegel mitzuteilen, dass er sich updaten soll. Der Spiegeln
+selbst bleibt ein 'pull', so da&szlig; es nicht m&ouml;glich ist, den
+Inhalt der Archivs durch einen falschen Push-mirror zu zerst&ouml;ren.
+
+<p>Einige Spiegel-Administratoren zeigen einiges Widerstreben bei
+dieser Methode aus Angst davor, dass diese Methode ein Sicherheitsloch
+in ihrer Maschine &ouml;ffnen k&ouml;nnte. Das ist einfach nicht
+wahr. Eine ausf&uuml;hrliche Beschreibung, wie die Methode
+funktioniert und warum sie sicher ist, finden Sie auf
+<a href="explain">dieser Seite</a>.
+
+<p>Einen Push-mirror zu installieren erfordert etwas mehr Aufwand,
+weil die Administratoren des h&ouml;her- und der tieferliegenden
+Spiegels Informationen austauschen m&uuml;ssen. Der Vorteil ist, dass
+der hierarchisch h&ouml;herliegende Server den Spiegelungsprozess
+anst&ouml;&szlig;t, wenn es mit spiegeln fertig ist. Damit werden
+&Auml;nderungen im Archiv sehr schnell weitergegeben.
+
+<p>Es ist am besten, wenn f&uuml;r diese Methode ein eigener Account
+angelegt wird und nicht root spiegelt. Der &ouml;ffentliche
+Schl&uuml;ssel des h&ouml;herligenden Servers sollte dann nach
+<kbd>~<user>/.ssh/authorized_keys</kbd> kopiert werden.
+
+<p>Es werden die Dateien <a href="ftpsync">ftpsync</a> und 
+<a href="ftpsync.conf">ftpsync.conf</a> ben&ouml;tigt. Editieren Sie
+ftpsync.conf und folgen Sie den Anweisungen darin mit den
+Informationen vom h&ouml;herligenden Server.
+
+<p>Wenn Sie ein prim&auml;rer Push-mirror werden wollen, dann brauchen
+Sie den
+<a href="identity.pub.master.ftp">&ouml;ffentlichen Schl&uuml;ssel des
+FTP-Archivs</a>.
+
+<p>Wenn Sie einen Push-mirror vom non-US-Archiv anlegen wollen,
+brauchen Sie die Dateien <a href="ftpsync-non-US">ftpsync-non-US</a>
+und 
+<a href="ftpsync-non-US.conf">ftpsync-non-US.conf</a>. Diese Dateien
+haben andere Namen, damit Sie im selben Account verwendet werden
+k&ouml;nnen um beider Archive zu spiegeln. Wenn Sie ein prim&auml;rer
+non-US Push-mirror werden wollen, dann brauchen Sie den
+<a href="identity.pub.non-US.ftp">&ouml;ffentlichen Schl&uuml;ssel des non-US-FTP-Archivs</a>.
+
+<h3>Anonymes FTP mit 'mirror'</h3>
+
+<p>Anonymes FTP war lange Zeit die Standardmethode zum Spiegeln. Das
+Programm 'mirror' funktioniert gut mit dem Debian-Archiv. Wie Sie
+vielleicht erraten haben, ist 'mirror' als Debian-Paket
+erh&auml;ltlich. Wenn Sie das Debian-Paket installiert haben werden
+Sie ein Beispielskript zum Spiegeln des FTP-Archivs in
+/etc/mirror/packages/ftp.debian.org finden.
+
+<h3>wget</h3>
+Zwar funktioniert <kbd>wget</kbd>, um kleine Server zu spiegeln, man
+kann es allerdings nicht so gut konfigurieren wie mirror oder rsync,
+weshalb wir davon abraten, es daf&uuml;r zu verwenden.
+
+<h3>Wann soll gespiegelt werden?</h3>
+Wenn Sie einen Push-Mirror betreiben, brauchen Sie sich darum nicht zu
+k&uuml;mmern. Wenn nicht, und der Server, von dem Sie spiegeln,
+verwendet rsync, dann sollten Sie in das Verzeichnis
+<kbd>project/trace/</kbd> im Debian-Archiv des Servers nach einer
+Datei mit dem Namen des Servers schauen. Diese Datei sollte die Zeit
+enthalten, wann die letzte Spiegelung beendet wurde. Addieren Sie
+etwas Zeit, z.B. eine Stunde, zu dieser Zeit und spiegeln Sie dann.
+
+<p>Die einfachste Art, um automatisch zu spiegeln, ist, den Prozess
+t&auml;glich von cron aufrufen zu lassen. Weitere Informationen mit
+<kbd>man crontab</kbd>.
+
