@@ -1,4 +1,5 @@
 #use wml::debian::common_tags
+#use wml::debian::translation-check translation="1.84"
 
 <define-tag subscribe>
   <gettext>To receive this newsletter weekly in your mailbox, <a href="http://lists.debian.org/debian-news/">subscribe to the debian-news mailing list</a>.</gettext>
@@ -28,71 +29,65 @@
   <gettext><void id="plural" />This issue of Debian Weekly News was translated by %s.</gettext>
 </define-tag>
 
+<define-tag translator_singular_female whitespace=delete>
+# One female translator only
+  <gettext><void id="singular" />This issue of Debian Weekly News was translated by %s.</gettext>
+</define-tag>
+
+<define-tag translator_plural_female whitespace=delete>
+# Two ore more female translators
+  <gettext><void id="plural" />This issue of Debian Weekly News was translated by %s.</gettext>
+</define-tag>
+
 <define-tag translator whitespace=delete>
 <:{
    my $translator = '$(translator)';
    my $plural = 0;
-   my $email = "";
-   my $name = "";
-   my $translators = "";
-   my $last = -2;
-   my $p = 0;
-   my $next = 0;
-   my $is_over = 0;
+   my $female = 0;
    if (length ($translator)) {
-      $translator =~ s/\(at\)/@/;
-      $plural = 1 if $translator =~ /,/;
-   do {
-   $email="";
-   $name="";
-   $translators=$translators."," unless ($last == -2);
-   $p = index($translator,"<",$last);
-   $next = index($translator,",",$last+1);
-   if ($p>$next and $next != -1){$is_over=1;}else{$is_over=0;}
-   $email = substr($translator,$p+1,index($translator,">",$p)-($p+1)) unless (index($translator,">",$p)==-1) or ($p==-1) or ($is_over);
-   $name = substr($translator,$last+2,$p-$last-2) unless ($p==-1) or ($is_over);
-   $name = substr($translator,$last+2,$next-$last-2) if ($p==-1 and $next !=-1) or ($is_over);
-   $name = substr($translator,$last+2) if ($p==-1) and ($next == -1);
-   if (length ($email)){
-   $translators = $translators.'<a href="mailto:'.$email.'">'."$name</a>";
-   }else{$translators = $translators.$name;}
-   $last = index($translator,",",$last+1);
-   }until ($last == -1);
-   if ($CUR_ISO_LANG eq 'en') {
-     $translators =~ s/,([^,]+)$/ and $1/;
-     $translators =~ s/,/, /g;
-   } elsif ($CUR_ISO_LANG eq 'de') {
-     $translators =~ s/,([^,]+)$/ und $1/;
-     $translators =~ s/,/, /g;
-   } elsif ($CUR_ISO_LANG eq 'sv') {
-     $translators =~ s/,([^,]+)$/ och $1/;
-     $translators =~ s/,/, /g;
-     $translators =~ s/'/"/g;
-   } elsif ($CUR_ISO_LANG eq 'no' || $CUR_ISO_LANG eq 'da') {
-     $translators =~ s/,([^,]+)$/ og $1/;
-     $translators =~ s/,/, /g;
-   } elsif ($CUR_ISO_LANG eq 'hr') {
-     $translators =~ s/,([^,]+)$/ i $1/;
-     $translators =~ s/,/, /g;
-     $translators =~ s/'/"/g;
-   } elsif ($CUR_ISO_LANG eq 'fr') {
+    $plural = 1 if $translator =~ /,/;
+    $female = 1 if $translator =~ /\{f\}/;
+    $_ = $translator;
+    s/\{f\}//;
+    s/([^@,]+)((?<=<)[^,>]+@[^,>]+(?=>))/<a href=mailto:'$2'>$1\/a/g;
+    $translator = $_;
+    if ($CUR_ISO_LANG eq 'en') {
+     $translator =~ s/,([^,]+)$/ and $1/;
+     $translator =~ s/,/, /g;
+    } elsif ($CUR_ISO_LANG eq 'de') {
+     $translator =~ s/,([^,]+)$/ und $1/;
+     $translator =~ s/,/, /g;
+    } elsif ($CUR_ISO_LANG eq 'sv') {
+     $translator =~ s/,([^,]+)$/ och $1/;
+     $translator =~ s/,/, /g;
+     $translator =~ s/'/"/g;
+    } elsif ($CUR_ISO_LANG eq 'no' || $CUR_ISO_LANG eq 'da') {
+     $translator =~ s/,([^,]+)$/ og $1/;
+     $translator =~ s/,/, /g;
+    } elsif ($CUR_ISO_LANG eq 'hr') {
+     $translator =~ s/,([^,]+)$/ i $1/;
+     $translator =~ s/,/, /g;
+     $translator =~ s/'/"/g;
+    } elsif ($CUR_ISO_LANG eq 'fr') {
      $translators =~ s/,([^,]+)$/ et $1/;
      $translators =~ s/,/, /g;
-     $translators =~ s/'([^',]+)'/« $1 »/g;
-   } elsif ($CUR_ISO_LANG eq 'ru') {
-     $translators =~ s/,([^,]+)$/ É $1/;
-     $translators =~ s/,/, /g;
+     $translators =~ s/'([^',]+)'/&laquo; $1 &raquo;/g;
+    } elsif ($CUR_ISO_LANG eq 'ru') {
+     $translator =~ s/,([^,]+)$/ É $1/;
+     $translator =~ s/,/, /g;
     } elsif ($CUR_ISO_LANG eq 'pl') {
-      $translators =~ s/,([^,]+)$/ i $1/;
-      $translators =~ s/,/, /g;
-   } else {
+      $translator =~ s/,([^,]+)$/ i $1/;
+      $translator =~ s/,/, /g;
+    } else {
      # Fallback to the english style if there's no translation yet
-     $translators =~ s/,([^,]+)$/ and $1/;
-     $translators =~ s/,/, /g;
-   }
-   printf "<br>";
-   printf q{<translator_singular>}, $translators unless $plural;
-   printf q{<translator_plural>}, $translators if $plural;}
+     $translator =~ s/,([^,]+)$/ and $1/;
+     $translator =~ s/,/, /g;
+    }
+    printf "<br>";
+    printf q{<translator_singular>}, $translator unless $plural and $female;
+    printf q{<translator_plural>}, $translator if $plural and $female==0;
+    printf q{<translator_singular_female>}, $translator if $plural==0 and $female;
+    printf q{<translator_plural_female>}, $translator if $plural and $female;}
 }:>
 </define-tag>
 
@@ -152,7 +147,7 @@
    } elsif ($CUR_ISO_LANG eq 'fr') {
      $editor =~ s/,([^,]+)$/ et $1/;
      $editor =~ s/,/, /g;
-     $editor =~ s/'([^',]+)'/« $1 »/g;
+     $editor =~ s/'([^',]+)'/&laquo; $1 &raquo;/g;
    } elsif ($CUR_ISO_LANG eq 'ru') {
      $editor =~ s/,([^,]+)$/ É $1/;
      $editor =~ s/,/, /g;
