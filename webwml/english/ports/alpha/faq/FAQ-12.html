@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+ <META NAME="GENERATOR" CONTENT="SGML-Tools 1.0.7">
+ <TITLE>Linux/Alpha Frequently Asked Questions: What Graphics Cards Work With Linux/Alpha?</TITLE>
+ <LINK HREF="FAQ-13.html" REL=next>
+ <LINK HREF="FAQ-11.html" REL=previous>
+ <LINK HREF="FAQ.html#toc12" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="FAQ-13.html">Next</A>
+<A HREF="FAQ-11.html">Previous</A>
+<A HREF="FAQ.html#toc12">Contents</A>
+<HR>
+<H2><A NAME="s12">12. What Graphics Cards Work With Linux/Alpha?</A></H2>
+
+<P> Linux/Alpha supports both DEC's TGA and generic VGA cards.  The
+new PowerStorm cards from DEC are not supported yet.
+<P>
+<H2><A NAME="ss12.1">12.1 TGA Card</A>
+</H2>
+
+<P> TGA is DEC's (first) family of workstation graphics cards for the
+PCI bus.  It makes for nice and very quick cards.  The only drawback
+is that since it is coming from the workstation market, it does
+<EM>not</EM> support 16-bit color mode.
+<P>There are three versions of the TGA card.  They are all based on the
+21030 chip:
+<BLOCKQUOTE><CODE>
+<PRE>
+Model:  Description:
+ZLXp-E1  8-plane TGA (256 colors)
+ZLXp-E2 24-plane TGA (16 million colors)
+ZLXp-E3 24-plane TGA + 32-plane Zbuffer (16 million colors and 3D support)
+</PRE>
+</CODE></BLOCKQUOTE>
+
+Caveat: as described below, only the ZLXp-E1 is currently supported by
+an X server.
+<P>
+<H2><A NAME="ss12.2">12.2 VGA Cards</A>
+</H2>
+
+<P> Linux boots in VGA mode, so pretty much any graphics card should
+do for Linux.  However, the graphics card also needs to work with the
+firmware.  This is non-trivial since many PCI cards need proprietary
+wakeup sequences to bring them into a VGA compatible mode.  To solve
+this problem, the firmware includes an x86 emulator that is used to
+execute the BIOS initialization code on the graphics card.  In theory,
+it is therefore possible plug in any PC graphics card.
+<P>DEC implemented an x86 emulator that is used by the MILO (Linux), SRM
+(DEC Unix), and ARC (Windows NT) firmware.  This emulator is mature
+and can indeed initialize most, if not all, cards.  To be on the safe
+side, take a look at the hardware-compatibility lists for DEC Unix and
+Windows NT before deciding on a card.
+<P>MILO also comes with an (optional) emulator that is free.  It is not
+nearly as mature as DEC's emulator, but it nevertheless is able to
+initialize at least following graphics cards:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+bus card type:                  chip:   BIOS version:                   Note:
+=== =========================== ======  ===========================     =====
+ISA Orchid Fahrenheit 1280      S3 805  ????                            4
+ISA #9 GXE Level 12             S3 928  BIOS Version 1.13.03S
+PCI #9 GXE 64 PCI               S3 864  BIOS Version 1.02.09u
+PCI Diamond Stealth 64 DRAM PCI S3 864  BIOS Version 1.14               1
+PCI Diamond Video 64 DRAM PCI   S3 868  BIOS Version 1.02               1
+PCI Diamond Stealth 64 DRAM     S3 764  BIOS Version 2.01               2,3
+
+Notes:
+======
+1:     Reported by pgwduane@mail.atnet.net.
+2:     The S3 764 chip is mostly known as Trio64.
+3:     Reported by viper@ludd.luth.se.
+4:     Reported by jestabro@amt.tay1.dec.com.
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>
+<H2><A NAME="ss12.3">12.3 Cards Supported by the X Windowing System</A>
+</H2>
+
+<P> According to the XFree 3.3.3.1 Release Notes:
+<BLOCKQUOTE><CODE>
+<PRE>
+The following X servers are available for Alpha hardware:
+
+          XMa64.tgz       Mach 64 server
+          XMono.tgz       Mono server (generic driver only)
+          XP9K.tgz        P9000 server
+          XTGA.tgz        DEC 21030 (TGA) server
+          XS3.tgz         S3 server
+          XS3V.tgz        old S3 ViRGE server (please use SVGA server)
+          XSVGA.tgz       SVGA server (Matrox Millennium and S3 ViRGE drivers only)
+</PRE>
+</CODE></BLOCKQUOTE>
+
+The S3 server is known to work with 764x, 805, 864,
+928 based cards (e.g., Orchid Fahrenheit 1280, #9 GXE64, #9
+Level 12, #9 Motion 771).  The Mach64 server is known to work
+with WinTurbo GX-VRAM and Graphics Xpression CX-DRAM cards.
+<P>
+<P> These servers are available from 
+<A HREF="ftp://ftp.xfree86.org/pub/">ftp://ftp.xfree86.org/pub/</A>.
+More recent developments are availabel from 
+<A HREF="http://www.suse.com/">SuSE</A>. Check out the section on commercial software for other options.
+<P>
+<P> For TGA not just one, but two servers exist: the first one is by the
+XFree project, as mentioned above. It's relatively young so it's not
+well-optimized yet, but it's definitively usable and since sources are
+available for it, anybody can improve it.<BR> The other one is
+based on DEC-proprietary code (sources are not available). It is fast
+and relatively stable and can be found 
+<A HREF="ftp://ftp.digital.com/pub/DEC/Linux-Alpha/X11">here</A>.
+<P>
+<H2><A NAME="ss12.4">12.4 Can Linux/Alpha Run Without Graphics Card?</A>
+</H2>
+
+<P> The firmware can be controlled over a serial line terminal at 9600
+Baud and it is possible to boot Linux/Alpha in that manner, but Linux
+itself does not currently support headless boots.  There are kernel
+patches floating on the net that add this functionality, however.
+<P>
+<P>
+<HR>
+<A HREF="FAQ-13.html">Next</A>
+<A HREF="FAQ-11.html">Previous</A>
+<A HREF="FAQ.html#toc12">Contents</A>
+</BODY>
+</HTML>

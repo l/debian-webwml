@@ -1,0 +1,429 @@
+<HTML>
+<HEAD>
+<TITLE>The aboot Loader</TITLE>
+</HEAD>
+<BODY>
+<A NAME="aboot"></A> <H1>3. <A NAME="s3"></A>The aboot Loader</H1>
+<P>
+<A HREF="srm.html#toc3">Contents of this section</A></P>
+
+<P> When using the SRM firmware, <CODE>aboot</CODE> is the preferred way of
+booting Linux.  It supports:</P>
+<P>
+<UL>
+<LI> direct booting from various filesystems (<CODE>ext2</CODE>, <CODE>ISO9660</CODE>, and
+<CODE>UFS</CODE>, the DEC Unix filesystem)</LI>
+<LI> booting of executable object files (both ELF and ECOFF)</LI>
+<LI> booting compressed kernels</LI>
+<LI> network booting (using bootp)</LI>
+<LI> partition tables in DEC Unix format (which is
+compatible with BSD Unix partition tables)</LI>
+<LI> interactive booting and default configurations for
+SRM consoles that cannot pass long option strings</LI>
+</UL>
+</P>
+<P></P>
+<P></P>
+<H2>3.1 <A NAME="ss3.1"></A> Getting and Building aboot</H2>
+
+<P> The latest sources for <CODE>aboot</CODE> are available in 
+<A HREF="ftp://ftp.azstarnet.com/pub/linux/axp/aboot">this ftp directory</A>
+.  The description in this manual applies to <CODE>aboot</CODE>
+version 0.5 or newer.</P>
+<P></P>
+<P> Once you downloaded and extracted the latest tar file, take a look
+at the <CODE>README</CODE> and <CODE>INSTALL</CODE> files for installation hints.  In
+particular, be sure to adjust the variables in <CODE>Makefile</CODE> and in
+<CODE>include/config.h</CODE> to match your environment.  Normally, you
+won't need to change anything when building under Linux, but it is
+always a good idea to double check.  If you're satisfied with the
+configuration, simply type <CODE>make</CODE> to build it (if you're not
+building under Linux, be advised that <CODE>aboot</CODE> requires GNU
+<CODE>make</CODE>).</P>
+<P>After running <CODE>make</CODE>, the <CODE>aboot</CODE> directory should contain the
+following files:</P>
+<P>
+<DL>
+<DT><B>aboot</B><DD><P>This is the actual <CODE>aboot</CODE> executable (either an
+ECOFF or ELF object file).</P>
+<DT><B>bootlx</B><DD><P>Same as above, but it contains only the text, data
+and bss segments---that is, this file is not an object file.</P>
+<DT><B>sdisklabel/writeboot</B><DD><P>Utility to install <CODE>aboot</CODE> on a
+hard disk.</P>
+<DT><B>tools/e2writeboot</B><DD><P>Utility to install <CODE>aboot</CODE> on an ext2
+filesystem (usually used for floppies only).</P>
+<DT><B>tools/isomarkboot</B><DD><P>Utility to install <CODE>aboot</CODE> on a iso9660
+filesystem (used by CD-ROM distributors).</P>
+<DT><B>tools/abootconf</B><DD><P>Utility to configure an installed <CODE>aboot</CODE>.</P>
+</DL>
+</P>
+<P></P>
+
+<H2>3.2 <A NAME="ss3.2"></A> Floppy Installation</H2>
+
+<P> The bootloader can be installed on a floppy using the
+<CODE>e2writeboot</CODE> command (note: this can't be done on a Jensen since
+its firmware does <EM>not</EM> support booting from floppy).  This command
+requires that the disk is not overly fragmented as it needs to find
+enough contiguous file blocks to store the entire <CODE>aboot</CODE> image
+(currently about 90KB).  If <CODE>e2writeboot</CODE> fails because of this,
+reformat the floppy and try again (e.g., with <CODE>fdformat(1)</CODE>).  For
+example, the following steps install <CODE>aboot</CODE> on floppy disk
+assuming the floppy is in drive <CODE>/dev/fd0</CODE>:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+fdformat /dev/fd0
+mke2fs /dev/fd0
+e2writeboot /dev/fd0 bootlx
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P></P>
+<P></P>
+
+<H2>3.3 <A NAME="ss3.3"></A> Harddisk Installation</H2>
+
+<P> Since the <CODE>e2writeboot</CODE> command may fail on highly fragmented
+disks and since reformatting a harddisk is not without pain, it is
+generally safer to install <CODE>aboot</CODE> on a harddisk using the
+<CODE>swriteboot</CODE> command.  <CODE>swriteboot</CODE> requires that the first few
+sectors are reserved for booting purposes.  We suggest that the disk
+be partitioned such that the first partition starts at an offset of
+2048 sectors.  This leaves 1MB of space for storing <CODE>aboot</CODE>.  On
+a properly partitioned disk, it is then possible to install <CODE>aboot</CODE>
+as follows (assuming the disk is <CODE>/dev/sda</CODE>):</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+swriteboot /dev/sda bootlx
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P>On a Jensen, you will want to leave some more space, since you need to
+write a kernel to this place, too---2MB should be sufficient when
+using compressed kernels.  Use <CODE>swriteboot</CODE> as described in Section
+<A HREF="#booting">booting</A>
+ to write <CODE>bootlx</CODE> together with the Linux
+kernel.</P>
+<P></P>
+
+<H2>3.4 <A NAME="ss3.4"></A> CD-ROM Installation</H2>
+
+<P> To make a CD-ROM bootable by SRM, simply build <CODE>aboot</CODE> as
+described above.  Then, make sure that the <CODE>bootlx</CODE> file is present
+on the iso9660 filesystem (e.g., copy <CODE>bootlx</CODE> to the directory
+that is the filesystem master, then run <CODE>mkisofs</CODE> on that
+directory).  After that, all that remains to be done is to mark the
+filesystem as SRM bootable.  This is achieved with a command of the
+form:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+isomarkboot filesystem bootlx
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P>The command above assumes that <CODE>filesystem</CODE> is a file containing
+the iso9660 filesystem and that <CODE>bootlx</CODE> has been copied into the
+root directory of that filesystem.  That's it!</P>
+<P></P>
+<P></P>
+
+<A NAME="Building Linux"></A> <H2>3.5 <A NAME="ss3.5"></A> Building the Linux Kernel</H2>
+
+<P> A bootable Linux kernel can be built with the following steps.  During
+the <CODE>make config</CODE>, be sure to answer "yes" to the question whether you
+want to boot the kernel via SRM.</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+cd /usr/src/linux
+make config
+make dep
+make boot
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P></P>
+<P> The last command will build the file
+<CODE>arch/alpha/boot/vmlinux.gz</CODE> which can then be copied to the
+disk from which you want to boot from.  In our floppy disk example
+above, this would entail:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+mount /dev/fd0 /mnt
+cp arch/alpha/boot/vmlinux.gz /mnt
+umount /mnt
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P></P>
+<P></P>
+
+<A NAME="booting"></A> <H2>3.6 <A NAME="ss3.6"></A> Booting Linux</H2>
+
+<P> With the SRM firmware and <CODE>aboot</CODE> installed, Linux is generally
+booted with a command of the form:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<CODE>boot</CODE> <I>devicename</I> <CODE>-fi</CODE> <I>filename</I> <CODE>-fl</CODE> <I>flags</I>
+</CODE></BLOCKQUOTE>
+</P>
+<P></P>
+<P> The <I>filename</I> and <I>flags</I> arguments are optional.  If they
+are not specified, SRM uses the default values stored in environment
+variables <CODE>BOOT_OSFILE</CODE> and <CODE>BOOT_OSFLAGS</CODE>.  The
+syntax and meaning of these two arguments is described in more detail
+below.</P>
+<P></P>
+<P></P>
+<H3>Boot Filename</H3>
+
+<P> The filename argument takes the form:
+<BLOCKQUOTE>
+[<EM>n</EM>/]<EM>filename</EM>
+</BLOCKQUOTE>
+</P>
+<P><EM>n</EM> is a single digit in the range 1..8 that gives the partition
+number from which to boot from.  <EM>filename</EM> is the path of the file
+you want boot.  For example to boot from the second partition of SCSI
+device 6, you would enter:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+boot dka600 -file 2/vmlinux.gz
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P>Or to boot from floppy drive 0, you'd enter:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+boot dva0 -file vmlinux.gz
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P></P>
+<P> If a disk has no partition table , <CODE>aboot</CODE> pretends the disk
+contains one <CODE>ext2</CODE> partition starting at the first diskblock.
+This allows booting from floppy disks.</P>
+<P></P>
+<P> As a special case, partition number 0 is used to request booting
+from a disk that does not (yet) contain a file system.  When
+specifying "partition" number 0, <CODE>aboot</CODE> assumes that the Linux
+kernel is stored right behind the <CODE>aboot</CODE> image.  Such a layout
+can be achieved with the <CODE>swriteboot</CODE> command.  For example, to
+setup a filesystem-less boot from <CODE>/dev/sda</CODE>, one could use
+the command:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+swriteboot /dev/sda bootlx vmlinux.gz
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P></P>
+<P> Booting a system in this way is not normally necessary.  The
+reason this feature exists is to make it possible to get Linux
+installed on a systems that can't boot from a floppy disk (e.g., the
+Jensen).</P>
+<P></P>
+<P></P>
+<H3>Boot Flags</H3>
+
+<P>A number of bootflags can be specified.  The syntax is:
+<BLOCKQUOTE><CODE>
+<PRE>
+-flags &quot;options...&quot;
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P>Where "options..." is any combination the following options (separated
+by blanks).  There are many more bootoptions, depending on what
+drivers your kernel has installed.  The options listed below are
+therefore just examples to illustrate the general idea:</P>
+<P>
+<DL>
+<P></P>
+<DT><B>load_ramdisk=1</B><DD><P>Copy root file system from a (floppy) disk to the RAM disk
+before starting the system.  The RAM disk will be used in
+lieu of the root device.  This is useful to bootstrap Linux
+on a system with only one floppy drive.</P>
+<P></P>
+<DT><B>floppy=<EM>str</EM></B><DD><P>Sets floppy configuration to <EM>str</EM>.</P>
+<P></P>
+<DT><B>root=<EM>dev</EM></B><DD><P>Select device <EM>dev</EM> as the root-file
+system. The device can be specified as a major/minor hex number (e.g.,
+0x802 for /dev/sda2) or one of a few canonical names (e.g.,
+<CODE>/dev/fd0</CODE>, <CODE>/dev/sda2</CODE>).</P>
+<P></P>
+<DT><B>single</B><DD><P>Boot system in single user mode.</P>
+<P></P>
+<DT><B>kgdb</B><DD><P>Enable kernel-gdb (works only if <CODE>CONFIG_KGDB</CODE> is
+enabled; a second Alpha system needs to be connected over the serial
+port in order to make this work)</P>
+<P></P>
+</DL>
+</P>
+<P></P>
+<P> Some SRM implementations (e.g., the one for the Jensen) are
+handicapped and allow only short option strings (e.g., at most 8
+characters).  In such a case, <CODE>aboot</CODE> can be booted with the
+single-character boot flag "i".  With this flag, <CODE>aboot</CODE> will
+prompt the user to interacively enter a boot option string of up to
+256 characters.  For example:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+boot dka0 -fl i
+aboot&gt; 3/vmlinux.gz root=/dev/sda3 single
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P>Since booting in that manner quickly becomes tedious, <CODE>aboot</CODE>
+allows to define short-hands for frequently used commandlines.  In
+particular, a single digit option (0-9) requests that <CODE>aboot</CODE> uses
+the corresponding option string stored in file
+<CODE>/etc/aboot.conf</CODE>.  A sample <CODE>aboot.conf</CODE> is shown below:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+#
+# aboot default configurations
+#
+0:3/vmlinux.gz root=/dev/sda3
+1:3/vmlinux.gz root=/dev/sda3 single
+2:3/vmlinux.new.gz root=/dev/sda3
+3:3/vmlinux root=/dev/sda3
+8:- root=/dev/sda3            # fs-less boot of raw kernel
+9:0/vmlinux.gz root=/dev/sda3 # fs-less boot of (compressed) ECOFF kernel
+-
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P>With this configuration file, the command</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+boot dka0 -fl 1
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P>corresponds exactly to the boot command shown above.  It is quite easy
+to forget what number corresponds to what option string.  To alleviate
+this problem, boot with option "h" and <CODE>aboot</CODE> will print the
+contents of <CODE>/etc/aboot.conf</CODE> before issueing the prompt for
+the full option string.</P>
+<P>Finally, whenever <CODE>aboot</CODE> prompts for an option string, it is
+possible to enter one of the single character flags ("i", "h", or
+"0"-"9") to get the same effect as if that flag had been specified in
+the boot command line.  For example, you could boot with flag "i" and
+then type "h" (followed by return) to remind yourself of the contents of
+<CODE>/etc/aboot.conf</CODE></P>
+<P></P>
+<H3>Selecting the Partition of /etc/aboot.conf</H3>
+
+<P> When installed on a harddisk, <CODE>aboot</CODE> needs to know what
+partition to search for the <CODE>/etc/aboot.conf</CODE> file.  A newly
+compiled <CODE>aboot</CODE> will search the <EM>second</EM> partition (e.g.,
+<CODE>/dev/sda2</CODE>).  Since it would be inconvenient to have to
+recompile <CODE>aboot</CODE> just to change the partition number,
+<CODE>abootconf</CODE> allows to directly modify an installed <CODE>aboot</CODE>.
+Specifically, if you want to change <CODE>aboot</CODE> to use the <EM>third</EM>
+partition on disk <CODE>/dev/sda</CODE>, you'd use the command:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+abootconf /dev/sda 3
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P>You can verify the current setting by simply omitting the partition
+number.  That is: <CODE>abootconf /dev/sda</CODE> will print the currently
+selected partition number.  Note that <CODE>aboot</CODE> does have to be
+installed already for this command to succeed.  Also, when installing
+a new <CODE>aboot</CODE>, the partition number will fall back to the default
+(i.e., it will be necessary to rerun <CODE>abootconf</CODE>).</P>
+<P>Since <CODE>aboot</CODE> version 0.5, it is also possible to select the
+<CODE>aboot.conf</CODE> partition via the boot command line. This can be
+done with a command line of the form <I>a</I><CODE>:</CODE><I>b</I> where <I>a</I>
+is the partition that holds <CODE>/etc/aboot.conf</CODE> and <I>b</I> is a
+single-letter option as described above (<CODE>0</CODE>-<CODE>9</CODE>, <CODE>i</CODE>, or
+<CODE>h</CODE>). For example, if you type <CODE>boot -fl "3:h" dka100</CODE> the
+system boots from SCSI ID 1, loads <CODE>/etc/aboot.conf</CODE> from the
+third partition, prints its contents on the screen and waits for you
+to enter the boot options.</P>
+<P></P>
+<P></P>
+
+<A NAME="Network Booting"></A> <H2>3.7 <A NAME="ss3.7"></A> Booting Over the Network</H2>
+
+<P> Two prelimenary steps are necessary before Linux can be booted via
+a network.  First, you need to set the SRM environment variables to
+enable booting via the bootp protocol and second you need to setup
+another machine as the your boot server.  Please refer to the SRM
+documentation that came with your machine for information on how to
+enable bootp.  Setting up the boot server is obviously dependent on
+what operating system that machine is running, but typically it
+involves starting the program <CODE>bootpd</CODE> in the background after
+configuring the <CODE>/etc/bootptab</CODE> file.  The <CODE>bootptab</CODE> file
+has one entry describing each client that is allowed to boot from
+the server.  For example, if you want to boot the machine
+<CODE>myhost.cs.arizona.edu</CODE>, then an entry of the following form would
+be needed:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+myhost.cs.arizona.edu:\
+        :hd=/remote/:bf=vmlinux.bootp:\
+        :ht=ethernet:ha=08012B1C51F8:hn:vm=rfc1048:\
+        :ip=192.12.69.254:bs=auto:
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P>This entry assumes that the machine's Ethernet address is
+<CODE>08012B1C51F8</CODE> and that its IP address is 192.12.69.254.  The
+Ethernet address can be found with the <CODE>show device</CODE> command of the
+SRM console or, if Linux is running, with the <CODE>ifconfig</CODE> command.
+The entry also defines that if the client does not specify otherwise,
+the file that will be booted is <CODE>vmlinux.bootp</CODE> in directory
+<CODE>/remote</CODE>.  For more information on configuring <CODE>bootpd</CODE>,
+please refer to its man page.</P>
+<P>Next, build <CODE>aboot</CODE> with with the command <CODE>make netboot</CODE>.  Make
+sure the kernel that you want to boot has been built already.  By
+default, the <CODE>aboot</CODE> <CODE>Makefile</CODE> uses the kernel in
+<CODE>/usr/src/linux/arch/alpha/boot/vmlinux.gz</CODE> (edit the
+<CODE>Makefile</CODE> if you want to use a different path).  The result of
+<CODE>make netboot</CODE> is a file called <CODE>vmlinux.bootp</CODE> which contains
+<CODE>aboot</CODE> <EM>and</EM> the Linux kernel, ready for network booting.</P>
+<P>Finally, copy <CODE>vmlinux.bootp</CODE> to the bootsever's directory.  In the
+example above, you'd copy it into <CODE>/remote/vmlinux.bootp</CODE>.
+Next, power up the client machine and boot it, specifying the Ethernet
+adapter as the boot device.  Typically, SRM calls the first Ethernet
+adapter <CODE>ewa0</CODE>, so to boot from that device, you'd use the command:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+boot ewa0
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P>The <CODE>-fi</CODE> and <CODE>-fl</CODE> options can be used as usual.  In
+particular, you can ask <CODE>aboot</CODE> to prompt for Linux kernel
+arguments by specifying the option <CODE>-fl i</CODE>.</P>
+<P></P>
+
+<HR>
+<P>
+<A HREF="srm-4.html">Next</A> Chapter,
+<A HREF="srm-2.html">Previous</A> Chapter
+<P>
+Table of contents of <A HREF="srm.html#toc3">this chapter</A>,
+ General <A HREF="srm.html#toc">table of contents</A></P>
+<P>
+<A HREF="srm.html">Top</A> of the document,
+ <A HREF="#0"> Beginning of this Chapter</A></P>
+</BODY>
+</HTML>

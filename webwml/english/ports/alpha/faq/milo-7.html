@@ -1,0 +1,165 @@
+<HTML>
+<HEAD>
+<TITLE>Alpha Miniloader Howto: Running the Flash Management Utility </TITLE>
+</HEAD>
+<BODY>
+<A HREF="milo-6.html">Previous</A>
+<A HREF="milo-8.html">Next</A>
+<A HREF="milo.html#toc7">Table of Contents</A>
+<HR>
+<H2><A NAME="MILO-fmu-section"></A> <A NAME="s7">7. Running the Flash Management Utility </A></H2>
+
+<P>The <CODE>run</CODE> command is used to run the flash management utility.
+Before you start you will need a device available to MILO that
+contains the updateflash program.  
+This (like vmlinux) can be gzip'd.  You need to run the flash management
+utility  program from the MILO using the (<CODE>run</CODE>) command:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+     MILO&gt; run fd0:fmu.gz
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+<P>Once it has loaded and initialised, the flash management utility
+will tell you some information about the flash device and give you
+a command prompt.  Again the <CODE>help</CODE> command is most useful.</P>
+
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+Linux MILO Flash Management Utility V1.0
+
+Flash device is an Intel 28f008SA
+  16 segments, each of 0x10000 (65536) bytes
+Scanning Flash blocks for usage
+Block 12 contains the environment variables
+FMU&gt; 
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+<P><CODE>Note</CODE> that on systems where environment variables may be stored
+and where there is more than one flash block (for example, the AlphaPC64)
+the flash management utility will look for a block to hold MILO's 
+environment variables.  If such a block already exists, the flash management
+utility will tell you where it is.  Otherwise, you must use the <CODE>environment</CODE>
+command to set a block and initialise it.
+In the above example, flash block 12 contains MILO's environment 
+variables.</P>
+
+<H2><A NAME="ss7.1">7.1 The ''help'' command</A></H2>
+
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+FMU&gt; help
+FMU command summary:
+
+list                - List the contents of flash
+program             - program an image into flash
+quit                - Quit
+environment         - Set which block should contain the environment variables
+bootopt num         - Select firmware type to use on next power up
+help                - Print this help text
+FMU&gt;           
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P><EM>Note</EM> that the <CODE>environment</CODE> and <CODE>bootopt</CODE> commands are only available on
+the EB66+, the AlphaPC64, EB164 and PC164 systems (and their clones).</P>
+
+
+<H2><A NAME="ss7.2">7.2 The ''list'' command</A></H2>
+
+<P>The ''list'' command shows the current usage of the flash memory.
+Where there is more than one flash block, the usage of each flash block
+is shown.   In the example below you can see that Windows NT ARC is using
+blocks 4:7 and block 15.</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+FMU&gt; list
+Flash blocks:  0:DBM  1:DBM  2:DBM  3:WNT  4:WNT  5:WNT  6:WNT  7:WNT  8:MILO  
+        9:MILO 10:MILO 11:MILO 12:MILO 13:U 14:U 15:WNT
+Listing flash Images
+  Flash image starting at block 0:
+    Firmware Id:  0 (Alpha Evaluation Board Debug Monitor)
+    Image size is 191248 bytes (3 blocks)
+    Executing at 0x300000
+  Flash image starting at block 3:
+    Firmware Id:  1 (Windows NT ARC)
+    Image size is 277664 bytes (5 blocks)
+    Executing at 0x300000
+  Flash image starting at block 8:
+    Firmware Id:  7 (MILO/Linux)
+    Image size is 217896 bytes (4 blocks)
+    Executing at 0x200000
+FMU&gt;
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+
+<H2><A NAME="ss7.3">7.3 The ''program'' command</A></H2>
+
+<P>The flash management utility contains a compressed copy of a flash
+image of MILO.  The ''program'' command allows you to blow this image
+into flash.
+The command allows you to back out, but before you run it you should
+use the ''list'' command to see where to put MILO.  
+If MILO is already in flash, then the flash management utility will 
+offer to overwrite it.</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+FMU&gt; program
+Image is:
+    Firmware Id:  7 (MILO/Linux)
+    Image size is 217896 bytes (4 blocks)
+    Executing at 0x200000
+Found existing image at block 8
+Overwrite existing image? (N/y)? y
+Do you really want to do this (y/N)? y
+Deleting blocks ready to program: 8 9 10 11
+Programming image into flash
+Scanning Flash blocks for usage
+FMU&gt; 
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+<P>Wait until it has completed before powering off your system.</P>
+
+<P><CODE>Note:</CODE> I cannot emphasise just how careful you must be here
+not to overwrite an existing flash image that you might need or
+render your system useless.   A very good rule is never to overwrite
+the Debug Monitor.</P>
+
+
+<H2><A NAME="ss7.4">7.4 The ''environment'' command</A></H2>
+
+<P>This selects a flash block to contain MILO's environment variables.</P>
+
+
+<H2><A NAME="ss7.5">7.5 The ''bootopt'' command</A></H2>
+
+<P>This is just the same as MILO's ''bootopt'' command,
+see (Section 
+<A HREF="milo-6.html#MILO-bootopt-section">The ''bootopt'' command</A>).</P>
+
+
+<H2><A NAME="ss7.6">7.6 The ''quit'' command</A></H2>
+
+<P>This is really pretty meaningless.  The only way back to MILO (or
+anything else) once the flash management utility has run is to reboot
+the system.</P>
+
+
+<HR>
+<A HREF="milo-6.html">Previous</A>
+<A HREF="milo-8.html">Next</A>
+<A HREF="milo.html#toc7">Table of Contents</A>
+</BODY>
+</HTML>

@@ -1,0 +1,77 @@
+<HTML>
+<HEAD>
+<TITLE>Alpha Miniloader Howto: Problem Solving.</TITLE>
+</HEAD>
+<BODY>
+<A HREF="milo-8.html">Previous</A>
+<A HREF="milo-10.html">Next</A>
+<A HREF="milo.html#toc9">Table of Contents</A>
+<HR>
+<H2><A NAME="s9">9. Problem Solving.</A></H2>
+
+<P>Here are some common problems that people have seen, together with the
+solutions.</P>
+
+<P><B>Reading MS-DOS floppies from the Evaluation Board Debug Monitor.</B>  </P>
+<P> Some of the older versions of the Evaluation Board Debug Monitor (pre-version 2.0)
+have a problem with DOS format flopies generated from Linux.
+Usually, the Debug Monitor can load the first few sectors all right, but then goes
+into an endless loop complaining about "bad sectors."  Apparently,
+there is an incompatibility between the DOS file system as expected by
+the Debug Monitor and the Linux implementation of DOSFS.  To make the
+long story short: if you run into this problem, try using DOS to write
+the floppy disk.  For example, if loading the file <CODE>MILO.cab</CODE>
+doesn't work, use a DOS machine, insert the floppy and then do:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+     copy a:MILO.cab c:
+     copy c:MILO.cab a:
+     del c:MILO.cab
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+<P> Then try booting from that floppy again.  This normally solves the problem.</P>
+
+<P><B>MILO displays a long sequence of <CODE>O></CODE> and does not accept input.</B></P>
+<P>This usually happens when MILO was built to use COM1 as a secondary console
+device.   In such a case, MILO echo output to COM1 and accepts input from
+there also.   This is great for debugging but not so great if you have
+a device other than a terminal connected.
+If this happens, disconnect the device or power it down until the Linux
+kernel has booted.
+Once Linux is up and running, everything will work as expected.</P>
+
+<P><B>MILO complains that the kernel image has the wrong magic number</B></P>
+<P> Older versions of MILO did not support the ELF object file format and so
+could not recognise an ELF image and this might be your problem.
+If this is reported, upgrade to the latest MILO that you can find.  All
+2.0.20 and beyond MILOs support ELF.
+On the other hand it could be that the image is indeed damaged.  You should
+also note that MILO does not yet automatically distinquish between GZIP'd
+and non-GZIP'd images; you need to add the ".gz" suffix to the file name.</P>
+
+<P><B>MILO prints "...turning on virtual addressing and jumping to the Linux Kernel" and
+nothing else happens</B></P>
+<P>One obvious problem is that the kernel image is wrongly built or is built for another
+Alpha system altogether.
+Another is that the video board is a TGA (Zlxp) device and the kernel has been built
+for a VGA device (or vice versa).
+It is worth building the kernel to echo to COM1 and then connecting a terminal to
+that serial port or retrying the kernel that came with the Linux distribution that you
+installed.</P>
+
+<P><B>MILO does not recognise the SCSI device</B></P>
+<P>The standard MILO images include as many device drivers as are known to be stable
+for Alpha (as of now that includes the NCR 810, QLOGIC ISP, Buslogic and Adaptec 2940s
+and 3940 cards).  If your card is not included, it may be that the driver is not stable
+enough on an Alpha system yet.  Again, the latest MILO images are worth trying.  You
+can tell which SCSI devices a MILO image has built into it by using the "show" command.</P>
+
+<HR>
+<A HREF="milo-8.html">Previous</A>
+<A HREF="milo-10.html">Next</A>
+<A HREF="milo.html#toc9">Table of Contents</A>
+</BODY>
+</HTML>

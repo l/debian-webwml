@@ -1,0 +1,76 @@
+<HTML>
+<HEAD>
+<TITLE>The Raw Loader</TITLE>
+</HEAD>
+<BODY>
+<H1>2. <A NAME="s2"></A>The Raw Loader</H1>
+<P>
+<A HREF="srm.html#toc2">Contents of this section</A></P>
+
+<P> The sources for this loader can be found in directory</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+        linux/arch/alpha/boot
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P>of the Linux kernel source distribution.  It loads the Linux kernel by
+reading <CODE>START_SIZE</CODE> bytes starting at disk offset
+<CODE>BOOT_SIZE+512</CODE> (also in bytes).  The constants
+<CODE>START_SIZE</CODE> and <CODE>BOOT_SIZE</CODE> are defined in
+<CODE>linux/include/asm-alpha/system.h</CODE>.  <CODE>START_SIZE</CODE>
+must be at least as big as the kernel image (i.e., the size of the
+<CODE>.text</CODE>, <CODE>.data</CODE>, and <CODE>.bss</CODE> segments).  Similarly,
+<CODE>BOOT_SIZE</CODE> must be at least as big as the image of the raw
+bootstrap loader.  Both constants should be an integer multiple of the
+sector size, which is 512 bytes.  The default values are currently
+2MB for <CODE>START_SIZE</CODE> and 16KB for <CODE>BOOT_SIZE</CODE>.
+Note that if you want to boot from a 1.44MB floppy disk, you have to
+reduce <CODE>START_SIZE</CODE> to 1400KB and make sure that the kernel
+you want to boot is no bigger than that.</P>
+<P></P>
+<P> To build a raw loader, simply type <CODE>make rawboot</CODE> in
+<CODE>/usr/src/linux</CODE>.  This should produce the following files in
+<CODE>arch/alpha/boot</CODE>:</P>
+<P>
+<DL>
+<DT><B><CODE>tools/lxboot</CODE>:</B><DD><P>The first
+sector on the disk.  It contains the offset and size of
+the next file in the format described above.</P>
+<DT><B><CODE>tools/bootlx</CODE>:</B><DD><P>The raw boot loader that
+will load the file below.</P>
+<DT><B><CODE>vmlinux.nh</CODE>:</B><DD><P>The raw kernel image consisting of
+the <CODE>.text</CODE>, <CODE>.data</CODE>, and <CODE>.bss</CODE> segments of the
+object file in <CODE>/usr/src/linux/vmlinux</CODE>.  The
+extension <CODE>.nh</CODE> indicates that this file has no object-file
+header.</P>
+</DL>
+</P>
+<P></P>
+<P> The concatenation of these three files should be written to the
+disk from which you want to boot.  For example, to boot from a floppy,
+insert an empty floppy disk in, say, <CODE>/dev/fd0</CODE> and then type:
+<BLOCKQUOTE><CODE>
+<PRE>
+cat tools/lxboot tools/bootlx vmlinux &gt;/dev/fd0
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P></P>
+<P> You can then shutdown the system and boot from the floppy by
+issueing the command <CODE>boot dva0</CODE>.</P>
+<P></P>
+<P></P>
+<HR>
+<P>
+<A HREF="srm-3.html">Next</A> Chapter,
+<A HREF="srm-1.html">Previous</A> Chapter
+<P>
+Table of contents of <A HREF="srm.html#toc2">this chapter</A>,
+ General <A HREF="srm.html#toc">table of contents</A></P>
+<P>
+<A HREF="srm.html">Top</A> of the document,
+ <A HREF="#0"> Beginning of this Chapter</A></P>
+</BODY>
+</HTML>

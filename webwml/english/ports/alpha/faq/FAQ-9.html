@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+ <META NAME="GENERATOR" CONTENT="SGML-Tools 1.0.7">
+ <TITLE>Linux/Alpha Frequently Asked Questions: Jensen (DEC 2000/DECpc 150/Highscreen AXP)</TITLE>
+ <LINK HREF="FAQ-10.html" REL=next>
+ <LINK HREF="FAQ-8.html" REL=previous>
+ <LINK HREF="FAQ.html#toc9" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="FAQ-10.html">Next</A>
+<A HREF="FAQ-8.html">Previous</A>
+<A HREF="FAQ.html#toc9">Contents</A>
+<HR>
+<H2><A NAME="s9">9. Jensen (DEC 2000/DECpc 150/Highscreen AXP)</A></H2>
+
+<P><I>This section was contributed and was maintained for many 
+years by Martin Ostermann. (Thanks, Martin !) Currently Martin doesn't own a 
+Jensen anymore: updates for this section may be sent directly 
+to 
+<A HREF="mailto:geerten@bart.nl">me</A></I>
+<P>
+<P> The Jensen was the first Alpha PC that has been available
+commercially from DEC.  Not surprisingly, there are a few oddities
+with it.  This section is an attempt to help people getting
+Linux/Alpha installed on a Jensen, and to provide additional
+information operating Linux on the Jensen.
+<P>
+<H2><A NAME="ss9.1">9.1 Installation</A>
+</H2>
+
+<P>First off, there is no MILO for the Jensen.  So it is unavoidable to
+use Jensen's builtin 
+<A HREF="http://www.azstarnet.com/~axplinux/srm.html">SRM</A> 
+console.  Unfortunately, it is severely
+handicapped with respect to boot command line option processing.
+Thanks to 
+<A HREF="mailto:michaels@stochastik.rwth-aachen.de">Michael Schwingen</A> there is now a new
+<A HREF="ftp://ftp.azstarnet.com/pub/linux/axp/aboot">aboot</A>
+loader that can work around these limitations.
+<P>Secondly, the Jensen SRM console cannot boot from a floppy. This used
+to make bootstrapping Linux a real pain, until 
+<A HREF="mailto:paradis@amt.tay1.dec.com">Jim Paradis</A> contributed a minlabel and
+writeboot programs executable from the ARC console.  An updated 
+version, which you probably want to use, includes a pre-compiled aboot 
+loader and updated installation instructions and is  available 
+<A HREF="ftp://ftp.azstarnet.com/pub/linux/axp/jensen/install">here</A>.
+<P>The original version -- <B> which is outdated and you should not use this 
+now</B> -- is available together with a the JENSEN-HOWTO describing the installation 
+process in detail from 
+<A HREF="ftp://ftp.digital.com/pub/DEC/Linux-Alpha/JENSEN_INSTALL/">ftp.digital.com</A>.
+<P>The Jensen is supported by 
+<A HREF="http://www.redhat.com">Red Hat Linux</A>, but some things still cause trouble.
+<P>
+<H2><A NAME="ss9.2">9.2 The Jensen is different</A>
+</H2>
+
+<P>The Jensen differs from other systems in several ways:
+<P>
+<UL>
+<LI> <B>No MILO.</B> It was already stated that there is no MILO for the Jensen. This is
+because the firmware implementation of the Jensen differs somewhat
+from the one on other systems. <I>PALcode</I> is the keyword to look for, if
+your interested to know more.
+</LI>
+<LI> <B>EISA-Bus.</B> The Jensen only got an EISA bus, no
+PCI. Furthermore, it uses a very special addressing scheme for the
+bus. While the kernel usually takes care of that in respect to device
+drivers, it has to be taken care of by utilities that do i/o in user
+space, like the X servers. Therefore you need special support from the
+X server, which is  available in XFree86 version 3.3 (or later) for S3
+cards, available from 
+<A HREF="http://www.xfree86.org/">www.xfree86.org</A>. 
+There is an older version for pure ECOFF systems available via ftp from 
+<A HREF="ftp://ftp.azstarnet.com/pub/linux/axp/jensen/">AZStarNet</A>. You'll also find
+other useful stuff there, ported by 
+<A HREF="http://www.informatik.rwth-aachen.de/I6/Colleagues/kanthak/Jensen/jensen_fan_page.html">Stephan Kanthak</A>,
+like a ported SVGAlib.
+
+If you're interested in details, watch for the keywords <I> SPARSE vs
+DENSE memory</I>.
+
+<P><B>Note:</B> Only S3 based cards are supported. The Compaq QVision,
+which is one of the graphic cards originally  shipped by Digital, is
+<B>not</B> currently not supported by XFree86, and support for it is
+unlikely to occur at all.
+<P>
+</LI>
+<LI> <B>RTC.</B> Somehow it was managed to locate the real time clock
+at a different place (I/O port 0x170 instead of 0x70 on all other
+machines). Thus the original clock program will fail. A patched
+version is available from 
+<A HREF="http://www.comnets.rwth-aachen.de/~ost/alpha/alpha.html">Martin Ostermann's Alpha Page</A>.
+</LI>
+<LI> <B>Firmware.</B> Since the Jensen is the oldest machine around,
+there are chances that you got a very old firmware. The date format
+changed in newer version, which will cause an offset of 20 years. You
+ought to get a 
+<A HREF="http://ftp.digital.com/pub/DEC/Linux-Alpha/JENSEN_INSTALL/jensen_firmware_procedure.html">firmware update</A>. WARNING: If you own an ELSA-Winner 1000
+graphics adapter, don't update beyond version 1.7!
+Otherwise you'll not be able to use your card in EISA mode. This is
+probably due to a bug in the EISA BIOS of the card.
+</LI>
+</UL>
+<P>
+<H2><A NAME="ss9.3">9.3 Known Problems</A>
+</H2>
+
+<P> Know Problem and workarounds:
+<UL>
+<LI> <B>Date and Time.</B> Due to the location of the real time clock
+and/or an old firmware. See above.
+</LI>
+<LI> <B>Won't boot after firmware update.</B> Aboot doesn't work with
+new firmwares. It is known to work 
+<A HREF="http://ftp.digital.com/pub/DEC/Linux-Alpha/JENSEN_INSTALL/jensen_firmware_procedure.html">with versions up to 1.7</A>.<BR>
+If you own an
+ELSA-Winner 1000  graphics adapter and upgraded beyond firmware
+version 1.7, the card won't work in EISA mode. Turn the card, so that
+it is plugged in with its ISA side. <BR>
+Maybe you want to downgrade you
+firmware again. (Windows-NT 3.51 and 4.0 seem to work fine with firmware 1.7)
+<A HREF="http://ftp.digital.com/pub/DEC/Linux-Alpha/JENSEN_INSTALL/jensen_firmware_procedure.html">This version</A>
+is now available from Digital's FTP server.
+</LI>
+<LI> <B>aboot-0.x doesn't compile on recent kernels.</B> 
+Get aboot-0.4 or above, it works with recent kernels.
+</LI>
+<LI> <B>Won't automatic reboot after correct shutdown.</B> Known
+problem, with 2.0.x kernels. Apparently this has been solved with
+recent 2.1.x kernels. I tried 2.1.88, and rebooting worked. But that
+kernel version had other problems.
+</LI>
+<LI> <B>Second serial port is unusable.</B> 
+Accessing '/dev/cua1' will freeze the system immediately. You may test 
+this by issuing 'cat /dev/cua1', but I suggest that you put your 
+file-systems in read-only mode first. In case you need more serial 
+ports, it is no problem to install an additional serial buffer 
+card. In case you need this for a modem, you ought to do that 
+anyway, because  the builtin ports are unbuffered (16450 
+compatible), not buffered onces (16550!). 
+</LI>
+</UL>
+<P>Sometimes people tend to blame the Jensen for general Alpha related
+problems. Please keep in mind that only the hardware is different, and
+that in most cases the kernel handles the hardware access. Thus for most
+programs it doesn't make a difference if they are being run on the
+Jensen or any other Digital/Alpha machine. 
+<P>
+<H2><A NAME="ss9.4">9.4 Hardware Issues</A>
+</H2>
+
+<P>You may ask yourself, how you can upgrade your system. Here are some 
+suggestions, but please note that I actually <B>did not</B> test most of this 
+stuff, I just collected information found on the internet: 
+<P>
+<UL>
+<LI><B>RAM updates.</B>
+4 MB, 8MB (dual-RAS aka doublesided), 16 MB, and 32 MB SIMMs produced 
+as late as summer of 96 have been reported to work, but I do not know 
+if a certain refresh cyclus is required. Note that you need <B> 36 
+bit true parity</B> SIMMs (but only one of the 4 paritiy bits on each 
+SIMM is actually used, as Michael Schwingen confirmed).   
+</LI>
+<LI><B>Video card.</B>
+Basically any VGA ISA or EISA card <B>may</B> work. Most actually do, if 
+you use the ARC console and Windows NT. Unfortunatly, the SRM 
+console, which you need to boot Linux, is somewhat picky about the 
+cards it supports. It uses an Intel-x86 emulation to initialize the card 
+via its VGA-BIOS, and that one seems to be buggy.<BR>
+If you want to run X, you need an S3 based card. Any S3 card (but, 
+<B>not</B> S3-Virge, etc), which has been accepted by the SRM console, 
+should work. Look at the XFree documentation for the XF86S3 driver for 
+detailed information.
+</LI>
+</UL>
+<P>
+<H2><A NAME="ss9.5">9.5 Miscellaneous Information</A>
+</H2>
+
+<P>So what is the Jensen all about? There is a some information
+available online:
+<P>
+<UL>
+<LI><B>The Evolution of the Alpha AXP PC (
+<A HREF="http://www.digital.com/.i/info/DTJD04/DTJD04SC.TXT">text</A>/
+<A HREF="http://www.digital.com/.i/info/DTJD04/DTJD04P8.PS">Postscript</A>)</B>
+by David G. Conroy, Thomas E. Kopec, and Joseph R. Falcone.
+This describes the development leading to the Jensen system. 
+</LI>
+<LI><B>Product announcement and description (
+<A HREF="http://ftp.digital.com/pub/DEC/Alpha/systems/as1000/docs/SOC/Feb94/ch-1-b.txt">text</A>/
+<A HREF="http://ftp.digital.com/pub/DEC/Alpha/systems/as1000/docs/SOC/Feb94/ch-1-b.ps.Z">Postscript</A>)</B>  by Digital. This is
+an overview of the Jensen system components and options.</LI>
+<LI><B>PB22H-KB System Module -- Hardware Reference Information (
+<A HREF="ftp://ftp.netbsd.org/pub/NetBSD/misc/dec-docs/ek-a0638-td.pdf.gz">PDF</A>)</B> by Digital. This is an in-depth description of the Jensen hardware.</LI>
+</UL>
+<P>
+<HR>
+<A HREF="FAQ-10.html">Next</A>
+<A HREF="FAQ-8.html">Previous</A>
+<A HREF="FAQ.html#toc9">Contents</A>
+</BODY>
+</HTML>

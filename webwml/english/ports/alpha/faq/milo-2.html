@@ -1,0 +1,118 @@
+<HTML>
+<HEAD>
+<TITLE>Alpha Miniloader Howto: What is MILO? </TITLE>
+</HEAD>
+<BODY>
+<A HREF="milo-1.html">Previous</A>
+<A HREF="milo-3.html">Next</A>
+<A HREF="milo.html#toc2">Table of Contents</A>
+<HR>
+<H2><A NAME="what-section"></A> <A NAME="s2">2. What is MILO? </A></H2>
+
+<P>On Intel based PC systems, the BIOS firmware
+sets up the system and then loads the image to be run from the boot 
+block of a DOS file system.
+This is more or less what MILO does on an Alpha based system,
+however there are several interesting differences between BIOS firmware and
+MILO, not least of which is that MILO includes and 
+uses standard Linux device drivers unmodified.
+MILO is firmware, unlike LILO, which relies on the BIOS firmware to 
+get itself loaded.
+The main functional parts of MILO are:</P>
+<P>
+<OL>
+<LI> PALcode,</LI>
+<LI> Memory set up code (builds page tables and turns on virtual addressing),</LI>
+<LI> Video code (BIOS emulation code and TGA (21030)),</LI>
+<LI> Linux kernel code.  This includes real Linux
+kernel code (for example, the interrupt handling) and 
+ersatz or mock Linux kernel,</LI>
+<LI> Linux block device drivers (for example, the floppy driver),</LI>
+<LI> File system support (ext2, MS-DOS and ISO9660),</LI>
+<LI> User inteface code (MILO),</LI>
+<LI> Kernel interface code (sets up the HWRPB and memory map for linux),</LI>
+<LI> NVRAM code for managing environment variables.</LI>
+</OL>
+</P>
+
+<P>The following paragraphs describe these functional parts in more detail.</P>
+
+<P>PALcode can be thought of as a tiny software layer that tailors the
+chip to a particular operating system.  
+It runs in a special mode (PALmode) which has certain restrictions but it
+uses the standard Alpha instruction set with just five extra instructions.
+In this way, the Alpha chip can run such diverse operating systems as
+Windows NT, OpenVMS, Digital Unix and, of course, Linux.
+The PALcode that MILO uses (and therefore Linux itself)
+is, like the rest of MILO, freeware.
+It is derived from Digital's Evaluation Board software example Digital Unix
+PALcode..
+The differences between the different PALcodes are because of 
+differences in address mapping and interrupt handling that
+exist between the Alpha chips (21066 based systems have 
+a different I/O map to 21064+2107x systems) and different
+Alpha based systems.</P>
+
+<P>For MILO to operate properly it needs to know what memory 
+is available, where Linux will eventually be running from and it must be
+able to allocate temporary memory for the Linux device drivers.
+The code maintains a memory map that has entries for permanent and temporary
+allocated pages.
+As it boots, MILO uncompresses itself into the correct place in
+physical memory.   When it passes control to the Linux kernel,
+it reserves memory for the compressed version of itself, the PALcode
+(which the kernel needs) and some data structures.
+This leaves <CODE>most</CODE> of the memory in the system for Linux itself.</P>
+
+<P>The final act of the memory code is to set up and turn on virtual addressing
+so that the data structures that Linux expects to see are at the correct place
+in virtual memory.</P>
+
+<P>MILO contains video code that initialises and uses the video device
+for the system.   
+It will detect and use a VGA device if there is one, otherwise
+it will try to use a TGA (21030) video device.   
+Failing that, it will assume that there is no graphics device.
+The BIOS emulation that the standard, pre-built, images include is
+Digital's own BIOS emulation which supports most, if not all, of
+the standard graphics devices available.</P>
+
+<P>Linux device drivers live within the kernel and expect 
+certain services from the kernel.  Some of these services are provided directly
+by Linux kernel code, for example the interrupt handling and some is provided
+by kernel look-alike routines.</P>
+
+<P>MILO's most powerful
+feature is that you can embed unaltered Linux device drivers into it.
+This gives it the potential to support every device that Linux does.
+MILO includes all of the block devices that are configured into the
+Linux kernel that it is built against as well as a lot of the block device
+code (for example, ll_rw_blk()).</P>
+
+<P>MILO loads the Linux kernel from real file systems rather 
+than  from boot blocks and other strange places.
+It understands MSDOS, EXT2 and ISO9660 filesystems.
+Gzip'd files are supported and these are recommended, particularly if
+you are loading from floppy which is rather slow.
+MILO recognises these by their <EM>.gz</EM> suffix.</P>
+
+<P>Built into MILO is a simple keyboard driver which, together with
+an equally simple video driver allows it to have a simple user interface.
+That interface allows you to list file systems on configured devices, boot
+Linux or run flash update utilities and set environment variables that 
+control the system's booting.
+Like LILO, you can pass arguments to the Kernel.</P>
+
+<P>MILO must tell the Linux kernel what sort of system this is,
+how much memory there is and which of that memory is free.
+It does this using the HWRPB (Hardware Restart Parameter Block) data 
+structure and associated memory cluster descriptions.
+These are placed at the appropriate place in virtual memory just before
+control is passed to the Linux kernel.</P>
+
+<HR>
+<A HREF="milo-1.html">Previous</A>
+<A HREF="milo-3.html">Next</A>
+<A HREF="milo.html#toc2">Table of Contents</A>
+</BODY>
+</HTML>

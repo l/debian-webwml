@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+ <META NAME="GENERATOR" CONTENT="SGML-Tools 1.0.7">
+ <TITLE>Linux/Alpha Frequently Asked Questions: Samsung APC164UX (Ruffian): The Irreverent Guide </TITLE>
+ <LINK HREF="FAQ-12.html" REL=next>
+ <LINK HREF="FAQ-10.html" REL=previous>
+ <LINK HREF="FAQ.html#toc11" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="FAQ-12.html">Next</A>
+<A HREF="FAQ-10.html">Previous</A>
+<A HREF="FAQ.html#toc11">Contents</A>
+<HR>
+<H2><A NAME="s11">11. Samsung APC164UX (Ruffian): The Irreverent Guide </A></H2>
+
+<P> (This section is written by 
+<A HREF="mailto:stig@alpha-processor.com">Stig Telfer</A>.)
+<P>
+<H2><A NAME="ss11.1">11.1 Ruffian Links</A>
+</H2>
+
+<P>
+<UL>
+<LI>
+<A HREF="http://www.theophys.kth.se/~jurijus/alpha/">A detailed installation guide</A> for Red Hat 5.2. 
+</LI>
+<LI>
+<A HREF="http://www.usa.samsungsemi.com/products/alpha/alpha-prodinfo.htm">Samsung Semiconductor page</A> giving a good introduction to their Alpha systems.
+</LI>
+<LI>
+<A HREF="http://www.usa.samsungsemi.com/products/browse/alphaboards.htm">Samsung Semiconductor page</A> for specs on UX, LX motherboards. 
+</LI>
+<LI>
+<A HREF="ftp://gatekeeper.dec.com/pub/DEC/Linux-Alpha/Kernels">Gatekeeper</A>, Digital's Linux support page. Several useful Ruffian upgrades available here. 
+</LI>
+<LI>
+<A HREF="http://192.84.116.34:80/linux/">Deskstation's Ruffian Information</A> (Deskstation are the designers of the Ruffian)
+- beware, the install guide is a little dated (Red Hat 4.1?) 
+</LI>
+</UL>
+<P>p><B>Note</B>: This section of the FAQ is brand new, and I accept no responsibility for anything that 
+goes wrong as a consequence of reading it. If you have anything to add to it, please do! 
+<P>
+<P>
+<H2><A NAME="ss11.2">11.2 Introduction</A>
+</H2>
+
+<P> For some people, the Ruffian is the absolute business. Compared to the LX, it has more memory
+capacity, more PCI slots, onboard SCSI and ethernet and takes higher-clocked processors. Yet it 
+is plagued with a bad reputation.
+<P>
+<H3>The Caveat</H3>
+
+<P> While the vast majority have no trouble with their Ruffians (author included), a handful of
+users find fundamental shortcomings that make the board unusable for their applications. 
+<P>
+<H3>The Symptoms</H3>
+
+<P> A virtual memory stress-test that induces continuous heavy paging can cause the machine to die. 
+The problem manifests itself through various "Unable to handle kernel paging request", "killing 
+the swapper", "attempting to swap the idle process" messages, and a register dump. The system 
+may become unusable after that. 
+<P>
+<P> The stress-test may run without failure (I have run it for three days without fault), 
+or it may fail within two seconds. I have seen both
+behaviours on the same machine, in different configurations. 
+<P>
+<P> Some people claim this problem only arises with large memory configurations. 
+<P>
+<H3>The Cause</H3>
+
+<P> Empirical evidence (above) suggests heavy paging causes this situation. However, some
+people have seen their Ruffians fail within seconds. I can induce rapid failure by 
+reordering the DIMM pairs in my machine. However, on putting them back in the original order,
+the problem remains for a while! Could there be some non-volatile state that is being confused? 
+<P>
+<H3>The Fix</H3>
+
+<P> There are several suggested fixes: 
+<UL>
+<LI>     Use the latest milo and ldmilo available on gatekeeper (see below). </LI>
+<LI>     The patched 2.0.35 kernel sources on that site are also worth installing. </LI>
+<LI>     Another empirical fix is to set the memory available to Linux to be a small
+amount less than the total memory. </LI>
+</UL>
+<P>
+<P>Hopefully a definite fix beyond these heuristic measures will be found soon, and 
+several people are involved with the problem (in spare time...) 
+<P>
+<P>
+<H2><A NAME="ss11.3">11.3 The Red Hat Release CDs and the Ruffian </A>
+</H2>
+
+<P>Unfortunately, both Red Hat 5.1 and 5.2 releases have flaws to be aware of when installing on a Ruffian.
+<P>
+<H2><A NAME="ss11.4">11.4 Red Hat 5.1 </A>
+</H2>
+
+<P>For your first disk, you should use a different milo and ldmilo.exe file, which are 
+downloadable from Gatekeeper, Digital's FTP server:
+<P>
+<UL>
+<LI>    
+<A HREF="ftp://gatekeeper.dec.com/pub/DEC/Linux-Alpha/Kernels/milo-ruffian-981020">ftp://gatekeeper.dec.com/pub/DEC/Linux-Alpha/Kernels/milo-ruffian-981020</A></LI>
+<LI>    
+<A HREF="ftp://gatekeeper.dec.com/pub/DEC/Linux-Alpha/Kernels/ldmilo-ruffian-981020">ftp://gatekeeper.dec.com/pub/DEC/Linux-Alpha/Kernels/ldmilo-ruffian-981020</A></LI>
+</UL>
+<P>
+<H3>How to build your milo disk</H3>
+
+<P>
+<OL>
+<LI>   Take a DOS-formatted floppy </LI>
+<LI>   Copy the two files above onto it, renaming them to 'ldmilo.exe' and 'milo' </LI>
+<LI>   Thats it, you're done :-) </LI>
+</OL>
+<P>
+<H3>Running XFree with Red Hat 5.1 </H3>
+
+<P>If the XFree X server fails to start on your system, try adding the following link:
+<P>
+<P><CODE>cd /etc; ln -s EB164 alpha_systype</CODE>
+<P>
+<P>If your graphics card uses the SVGA X-server (eg, if you have a Matrox graphics card), 
+you should also pick up the patched SVGA server. ( 
+<A HREF="ftp://mea.tmt.tele.fi/pub/XFree86/">ftp://mea.tmt.tele.fi/pub/XFree86/</A> ) 
+<P>
+<H3>Reading the time and date correctly with Red Hat 5.1 </H3>
+
+<P>The Ruffian ARCSBIOS uses a different format for time and date. In releases of Red Hat 
+up to 5.1, this meant that Linux would not report the correct date and time. 
+<P>
+<P>This can be fixed using: 
+<UL>
+<LI>     An updated version of the clock binary (try gatekeeper), </LI>
+<LI>     by getting your date and time from another system on the network using rdate -s, </LI>
+<LI>     or by using xntpd. </LI>
+</UL>
+<P>
+<P>Date and time issues are fixed for the Ruffian in Red Hat 5.2 
+<P>
+<H2><A NAME="ss11.5">11.5 Red Hat 5.2 </A>
+</H2>
+
+<P>Unfortunately the Ruffian kernel provided on the Red Hat 5.2 CD doesn't contain 
+support for the Symbios 875 on-board SCSI. However, you can take the kernel image 
+from Red Hat 5.1 to perform the install. Once installed, you can build your own kernel 
+- the sources on 
+<A HREF="ftp://gatekeeper.dec.com/pub/DEC/Linux-Alpha/Kernels">ftp://gatekeeper.dec.com/pub/DEC/Linux-Alpha/Kernels</A> 
+for 2.0.35 are tried and trusted.
+<P>
+<P>
+<P>
+<H2><A NAME="ss11.6">11.6 Hardware Issues with the Ruffian </A>
+</H2>
+
+<H3>Ruffian On-board Ethernet </H3>
+
+<P>The Ruffian's on-board DEC Tulip Ethernet is not very good at auto-sensing a 100Mbit 
+link with the Linux Tulip driver. However, one of the recent versions (0.89H) seems to 
+work for most cases. Other people have reported problems with version 0.90.
+<P>
+<P>The tulip device driver page is well documented at:
+<UL>
+<LI> 
+<A HREF="http://maximus.bmen.tulane.edu/~siekas/tulip.html">http://maximus.bmen.tulane.edu/~siekas/tulip.html</A> </LI>
+<LI> 
+<A HREF="http://cesdis.gsfc.nasa.gov/linux/drivers/tulip.html">http://cesdis.gsfc.nasa.gov/linux/drivers/tulip.html</A> </LI>
+</UL>
+<P>
+<P>These pages also contain instructions on how to install the driver. Alternatively, 
+try looking at the section on building your own kernel in this FAQ. (The location 
+of the tulip device driver in the linux source tree is drivers/net/tulip.c, copy 
+your newly-downloaded version in here and you're ready to build)
+<P>
+<P>If your ethernet doesn't autosense 100Mbit, there are some other options I have 
+found to sometimes work, although we're in experimental territory here and what may 
+work for me may not work for you.
+<P>
+<P>Your first option is to hard-code your ethernet interface to be 100baseTX, 
+bypassing the autosensing mechanism. However, this doesn't always work. What 
+does sometimes work is hard-coding the medium to be 10Mbit, and then 100Mbit. 
+The first packet will fail transmission, but after that the link is brought up 
+in 100Mbit mode. To bypass the auto-sensing mechanism, edit tulip.c and put 
+numbers into the options array, according to your media type as defined in 
+an array further down the code (10baseT is 12, 100baseT is 4). If you still 
+can't get this to work, try this patched version of the tulip driver, actually 
+patched for the Miata by Loic Prylli. What it does is to keep trying with 
+user-specified hard-coded media.
+<P>
+<P>Again, your experience may vary...
+<P>
+<H3>Video Cards </H3>
+
+<P>To boot Linux on the Ruffian, you must put the video card in the 64-bit slot. 
+This is the only slot on PCI bus 0. All other slots are behind a PCI-PCI bridge 
+that Milo doesn't fully support. 
+<P>
+<HR>
+<A HREF="FAQ-12.html">Next</A>
+<A HREF="FAQ-10.html">Previous</A>
+<A HREF="FAQ.html#toc11">Contents</A>
+</BODY>
+</HTML>
