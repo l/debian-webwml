@@ -45,7 +45,7 @@ if (open CONF, "<language.conf")
 }
 else
 {
-	$defaultlanguage = 'norwegian';
+	$defaultlanguage = 'italian';
 }
 
 $from = 'english';
