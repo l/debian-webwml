@@ -1,0 +1,214 @@
+#use wml::debian::template title="Debian BTS - control server" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.16"
+
+<h1>Einführung in den Mail-Server für die Kontrolle und Manipulation</h1>
+
+<p>Als Ergänzung zum Mail-Server unter <code>request@bugs.debian.org</code>,
+der die Versendung von Fehler-Daten und -Dokumentation via E-Mail
+erlaubt, gibt es einen weiteren Server unter
+<code>control@bugs.debian.org</code>, der zusätzlich erlaubt,
+Fehlerberichte auf verschiedene Arten zu manipulieren.</p>
+
+<p>Der Kontroll-Server arbeitet genauso wie der Request-Server, mit
+der Ausnahme, daß er einige zusätzliche Befehle unterstützt.  In der
+Tat ist er sogar das gleiche Programm.  Die beiden Adressen werden nur
+unterschieden, um zu verhindern, daß Anwender Fehler machen und
+Probleme verursachen, während sie lediglich versuchen, Informationen
+zu erhalten.</p>
+
+<p>Bitte lesen Sie die
+<A href="server-request#introduction">Einführung zum
+Request-Server</A>, die im World Wide Web bereitsteht, in der Datei
+<code>bug-log-mailserver.txt</code>, oder durch Senden des Wortes
+<code>help</code> an einen der Mail-Server, um Details der Arbeit der
+Mail-Server zu erhalten sowie der bekannten Befehle.</p>
+
+<p>Die <A href="server-refcard">Referenzkarte</A> für den Mail-Server
+ist im WWW verfügbar, in
+<code>bug-mailserver-refcard.txt</code> oder per E-Mail durch Senden
+des Befehls
+<code>refcard</code>.</P>
+
+<h1>Befehle, die nur beim Kontroll-Mail-Server zur Verfügung stehen</h1>
+
+<dl>
+
+<dt><code>close</code> <var>bugnumber</var>
+<dd>
+
+Schließt den Fehlerbericht #<var>bugnumber</var>.
+
+<p>Eine Benachrichtigung wird an den Benutzer geschickt, der den
+Fehler berichtet hat, doch (im Gegensatz zu Mails an
+<var>bugnumber</var><code>-done@bugs</code>) der Text der Mail, der
+das Schließen verursacht hat, ist <em>nicht</em> in dieser
+Benachrichtigung enthalten.  Der Betreuer, der den Bericht geschlossen
+hat, sollte sicherstellen, womöglich durch Versenden einer separaten
+Nachricht, daß der Benutzer, der den Fehler berichtet hat, weiß, wieso
+er geschlossen wurde.
+
+<dt><code>reassign</code> <var>bugnumber</var> <var>package</var>
+<dd>
+
+Nimmt auf, daß der Fehler #<var>bugnumber</var> ein Fehler in
+<var>package</var> ist.  Dieses kann verwendet werden, um nachträglich
+einen Fehler nachträglich einem Paket zuzuordnen, wenn der Benutzer
+vergessen hat, den Pseudo-Header anzugeben, oder um eine frühere
+Zuweisung zu ändern.  Keine Benachrichtigungen werden an jemanden
+geschickt (anders als die üblichen Informationen bei der Verarbeitung).
+
+<dt><code>reopen</code> <var>bugnumber</var>
+ [ <var>originator-address</var> | <code>=</code> | <code>!</code> ]
+<dd>
+
+Öffnet #<var>bugnumber</var> erneut, wenn er geschlossen ist.
+
+<p>Wenn Sie <code>=</code> als Urheber angeben, wird der gleiche
+Urheber verwendet, der den Fehler ursprünglich berichtet hat, so daß
+er erneut eine Bestätigung erhält, wenn der Fehlerbericht erneut
+geschlossen wird.</p>
+
+<p>Wenn Sie eine <var>originator-address</var> angeben, wird der
+urheber auf die angegebene Adresse gesetzt.  Wenn Sie wünschen, als
+neuer Urheber des wieder-geöffneten Fehlerberichts eingetragen zu
+werden, verwenden Sie das Kürzel <code>!</code> oder geben Sie ihre
+eigene Mail-Adresse an.</p>
+
+<p>Es ist normalerweise eine gute Idee, der Person mitzuteilen, daß
+sie neuer Urheber ist, wenn sie neuer Urheber wird, wenn Sie einen
+Bericht erneut öffnen, damit sie Bescheid weiß, daß sie eine
+Bestätigung zu erwarten haben, wenn der Bericht erneut geschlossen
+wird.</p>
+
+<p>Wenn der Fehler nicht geschlossen wurde, wird reopen nichts tun,
+nicht einmal den Urheber ändern.  Es gibt keinen Weg den Urheber eines
+offenen Fehlerberichts zu ändedern (das ist absichtlich so, damit Sie
+keinen Fehler haben können, der geschlossen, dann 28 Tage später
+gelöscht wird ohne daß jemand davon etwas erfährt).
+
+<dt><code>forwarded</code> <var>bugnumber</var> <var>address</var>
+<dd>
+
+Vermerkt, daß <var>bugnumber</var> wurde an den ursprünglichen
+Betreuer unter <var>address</var> weitergeleitet wurde.  Dieses leitet
+die den Bericht nicht tatsächlich weiter.  Es kann dafür benutzt
+werden, um eine fehlerhafte forwarded-to-Adresse zu ändern oder um
+eine neue für einen Fehler zu vermerkten, der bisher nicht als
+forwarded markiert wurde.
+
+<dt><code>notforwarded</code> <var>bugnumber</var>
+<dd>
+
+Vergißt jegliche Idee, daß <var>bugnumber</var> an einen
+ursprünglichen Betreuer weitergeleitet wurde.  Wenn der Fehler nicht
+als forwarded markiert war, wird dieses nichts tun.
+
+<dt><code>retitle</code> <var>bugnumber</var> <var>new-title</var>
+<dd>
+
+Ändert den Titel des Fehlerberichts zu dem angegebenen (normalerweise
+wird das <code>Subject</code> aus dem Mail-Header des ursprünglichen
+Berichts genommen).
+
+<p>Anders als die meisten sonstigen Befehle zur Manipulation von
+Fehlern, wird dieser nur den Titel eines einzigen Fehlerberichts
+ändern und nicht alle, wenn er auf einen einzigen aus einer Menge von
+zusammengefaßten Berichten angewendet wird.
+
+<dt><code>severity</code> <var>bugnumber</var> <var>severity</var>
+<dd>
+
+<p>Setzt die Dringlichkeitsstufe für den Fehlerbericht
+#<var>bugnumber</var> auf <var>severity</var>.  Es wird keine
+Benachrichtigung an den Benutzer verschickt, der den Fehler berichtet
+hat.</p>
+
+<p>Dringlichkeitsstufen (<code>severity</code>) sind
+<code>critical</code>, <code>grave</code>, <code>serious</code>,
+<code>important</code>, <code>normal</code>, <code>minor</code>, und
+<code>wishlist</code>.
+
+<p>Die Bedeutung von <A
+href="Developer#severities">Dringlichkeitsstufen</A> finden Sie in den
+allgemeinen Informationen zum Bug-System für Entwickler.
+
+<dt><code>merge</code> <var>bugnumber</var> <var>bugnumber</var> ...
+<dd>
+
+Faßt zwei oder mehrere Fehlerberichte zusammen.  Wenn Berichte
+zusammengefaßt sind, wirken sich das Öffnen, Schließen, Markieren als
+Weitergeleitet bzw. dessen Aufhebung und die Zuweisung an ein Paket
+jeweils auf alle Berichte dieser Menge aus und nicht nur auf einen
+einzigen.
+
+<p>Bevor Fehler zusammengefaßt werden können, müssen sie sich in exakt
+dem gleichen Zustand befinden: entweder sind alle geöffnet oder
+geschlossen, mit den gleichen ursprünglichen Autoren als forwarded-to
+markiert oder alle nicht als weitergeleitet markiert, alle dem
+gleichen Paket (oder den gleichen Paketen, ein exakter
+String-Vergleich wird auf die Pakete durchgeführt) zugewiesen und alle
+müssen die gleiche Dringlichkeitsstufe haben.  Wenn sie sich nicht im
+gleichen Zustand befinden, sollten Sie <code>reassign</code>,
+<code>reopen</code> und so weiter verwenden, um sicherzustellen, daß
+sie sich im gleichen Zustand befinden, bevor Sie <code>merge</code>
+benutzen.</p>
+
+<p>Wenn einer der Fehler, der in einem <code>merge</code>-Befehl
+aufgelistet ist, bereits mit einem anderen Fehler zusammengefaßt ist,
+werden alle diese Berichte mit den neuen aufgelisteten zusammengefaßt.
+Zusammenfassen ist wie eine Gleichheits-Relation: Es ist reflexif,
+transitiv und symmetrisch.</p>
+
+<p>Das Zusammenfassen von Berichten bewirkt, daß eine Bemerkung im Log
+jedes Berichts erscheint; auf den WWW-Seiten beinhaltet dieses Links
+zu den anderen Bugs.</p>
+
+<p>Zusammengefaßte Berichte verfallen gleichzeitig, und nur dann, wenn
+alle der Berichte gleichzeitig die Kriterien für den Verfall erfüllen.
+
+<dt><code>unmerge</code> <var>bugnumber</var>
+<dd>
+
+Zieht einen Fehlerbericht aus einer zusammengefaßten Fehler-Menge
+heraus.  Wenn der angegebene Bericht mit mehreren anderen
+zusammengefaßt ist, bleiben die anderen Fehlerberichte weiterhin
+zusammengefaßt; lediglich die Assoziation mit dem explizit angegebenen
+Bericht wird gelöst.
+
+<p>Wenn viele Fehlerberichte zusammengefaßt sind und Sie wünschen,
+diese in zwei separate Gruppen aufzuteilen, müssen Sie jeden einzelnen
+Bericht einer dieser Gruppen aus der großen Gruppe herausziehen und
+anschließend in der neuen Gruppe zusammenfassen.</p>
+
+<p>Sie können mit dem Befehl <code>unmerge</code> nur einen Bericht
+aus einer Menge herausziehen; wenn Sie mehr als einen Bericht aus
+einer Gruppe herausziehen möchten, schreiben Sie einfach mehrere
+<code>unmerge</code>-Befehle in Ihre Mail.
+
+<dt><code>tags</code> <var>bugnumber</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var>
+
+  <dd>Setzt einen speziellen Tag für den Fehlerbericht
+  #<var>bugnumber</var> auf <var>tag</var>.  Keine Benachrichtigung
+  wird an den Anwender geswchickt, der den Fehler berichtet hat.
+  <code>+</code> bedeutet Hinzufügen, <code>-</code> Wegnehmen und
+  <code>=</code> bedeutet, daß aktuelle Tags ignoriert und neu gesetzt
+  werden sollen.  Voreingestellt ist, daß neue Tags hinzugefügt
+  werden.  Ein Leerzeichen wird zwischen dem Zeichen +/-/= und dem
+  Namen des Tags benötigt.
+
+  <p>Tags können zur Zeit folgende Werte annehmen: <code>patch</code>,
+  <code>wontfix</code>, <code>moreinfo</code>,
+  <code>unreproducible</code>, <code>fixed</code>,
+  <code>security</code>, <code>potato</code>, <code>woody</code> und
+  <code>sid</code>.
+
+  <p>Die Bedeutung der <a href="Developer#tags">Tags für Fehlerberichte</a>
+  finden Sie in den allgemeinen Informationen zum Bug-System für Entwickler.
+
+</dl>
+
+<hr>
+
+#use "otherpages.inc"
+
+#use "footer.inc"
