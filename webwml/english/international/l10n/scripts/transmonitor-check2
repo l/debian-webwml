@@ -253,7 +253,7 @@ PKG: while ($dsc = shift @pkg_list) {
                         next PKG;
                 } else {
                         #   Erase this entry (it's an older version)
-                        $data->clear($pkg);
+                        $data->clear_pkg($pkg);
                         foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT)) {
                                 File::Path::rmtree($_."/_tmp")
                                         if -e $_."/_tmp";
@@ -389,7 +389,7 @@ sub parse_tarball {
                 if (@list) {
                         $control = $list[0];
                 } else {
-                        $deb->clear($pkg);
+                        $deb->clear_pkg($pkg);
                         warn("Error: can't find debian/control; skipping package $pkg.");
                         return undef;
                 }
@@ -518,11 +518,6 @@ sub search_po {
         POFILE: foreach $file (@pofiles) {
                 $filename = store_disk_po($pkg, $file);
 
-                #  To transfer files with ":" in their name over http, the file
-                #  on the server must have the ":", but the URL must be fixed.
-                my $filename_http = $filename;
-                $filename_http =~ s/:/\%3a/g;
-
                 my $PO_DIR = $PO_ROOT."/".$data->pooldir($pkg);
 
                 $this_stat = "";
@@ -574,7 +569,7 @@ sub search_po {
                         }
                 }
                 # Add this file to the data
-                $data->add_po($pkg, "$file:".normalize_lang($lang).":$this_stat:".$filename_http);
+                $data->add_po($pkg, $file, normalize_lang($lang), $this_stat, $filename);
                 if (system("gzip -9 $PO_DIR/$filename")) {
                         warn "Can't gzip $PO_DIR/$filename: $!";
                 }
@@ -591,7 +586,7 @@ sub search_menu {
         foreach my $file (@menufiles) {
                 # Add this file to the data
                 $filename = store_disk_menu($pkg, $file);
-                $data->add_menu($pkg, $filename.".gz");
+                $data->add_menu($pkg, $file, $filename.".gz");
                 if (system("gzip -9 $MENU_ROOT/".$data->pooldir($pkg)."/$filename")){
                         warn "Can't gzip $MENU_ROOT/".$data->pooldir($pkg)."/$filename: $!\n";
                 }
@@ -622,7 +617,7 @@ sub search_docbase {
                 }
                 print DOCBASE;
                 close DOCBASE;
-                $data->add_menu($pkg, $filename.".gz");
+                $data->add_menu($pkg, $file, $filename.".gz");
                 if (system("gzip -9 $MENU_ROOT/".$data->pooldir($pkg)."/$filename")) {
                         warn "Can't gzip $MENU_ROOT/".$data->pooldir($pkg)."/$filename: $!\n";
                 }
@@ -642,14 +637,12 @@ sub search_templates {
 
                 # Add this file to data
                 $filename = store_disk_templates($pkg, $file);
-                my $filename_http = $filename;
-                $filename_http =~ s/:/\%3a/g;
 
                 $tmpl->read_compact($TEMPLATES_ROOT."/".$data->pooldir($pkg)."/$filename");
                 %tmpl_stats = $tmpl->stats();
                 foreach (keys %tmpl_stats) {
                         $this_stat = $tmpl_stats{$_}->[0].'t'.$tmpl_stats{$_}->[1].'f'.$tmpl_stats{$_}->[2].'u';
-                        $data->add_templates($pkg, "$file:".normalize_lang($_).":$this_stat:".$filename_http);
+                        $data->add_templates($pkg, $file, normalize_lang($_), $this_stat, $filename);
                 }
                 if (system("gzip -9 $TEMPLATES_ROOT/".$data->pooldir($pkg)."/$filename")){
                         warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/$filename: $!\n";
@@ -663,20 +656,21 @@ sub search_templates {
                 $filename = store_disk_templates($pkg, $file);
 
                 @list2 = ();
-                my %filename_http = ();
+                my %storedfile = ();
+                my %origfile = ();
                 foreach (@list) {
-                        my $filename = $TEMPLATES_ROOT."/".$data->pooldir($pkg)."/".store_disk_templates($pkg, $_);
-                        $filename_http{$filename} = store_disk_templates($pkg, $_);
-                        $filename_http{$filename} =~ s/:/\%3a/g;
-                        push (@list2, $filename);
+                        my $relfile = $TEMPLATES_ROOT."/".$data->pooldir($pkg)."/".store_disk_templates($pkg, $_);
+                        $storedfile{$relfile} = store_disk_templates($pkg, $_);
+                        $origfile{$relfile} = $_;
+                        push (@list2, $relfile);
                 }
-                $tmpl->read_dispatched($TEMPLATES_ROOT."/".$data->pooldir($pkg)."/$filename", @list2);
+                $tmpl->read_dispatched($TEMPLATES_ROOT."/".$data->pooldir($pkg)."/".$filename, @list2);
                 %tmpl_stats = $tmpl->stats();
                 foreach (keys %tmpl_stats) {
                         $this_stat = $tmpl_stats{$_}->[0].'t'.$tmpl_stats{$_}->[1].'f'.$tmpl_stats{$_}->[2].'u';
-                        $data->add_templates($pkg, "$file:".normalize_lang($_).":$this_stat:".$filename_http{$tmpl->filename($_)});
-                        if (system("gzip -9 $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename_http{$tmpl->filename($_)})) {
-                                warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename_http{$tmpl->filename($_)}.": $!\n";
+                        $data->add_templates($pkg, $origfile{$tmpl->filename($_)}, normalize_lang($_), $this_stat, $storedfile{$tmpl->filename($_)}, $filename);
+                        if (system("gzip -9 $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$storedfile{$tmpl->filename($_)})) {
+                                warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$storedfile{$tmpl->filename($_)}.": $!\n";
                         }
                 }
         }
