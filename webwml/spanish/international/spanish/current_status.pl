@@ -127,7 +127,7 @@ do 'documents-bd.pl';
 },
 
 	'release-notes' => {
-	'status'		=> 1,
+	'status'		=> 2,
 	'since'			=> '05/06/1999',
 	'translation_name'	=> 'Notas de la versión',
 	'translation_maintainer'=> ['Enrique Zanardi <ezanardi@debian.org>'],
@@ -183,6 +183,7 @@ do 'documents-bd.pl';
 
 	'meta' => {
         'name'                  => 'META Manual de Debian',
+	'status'		=> 2,
 	'base_revision'		=> '0.9',
 	'translation_maintainer' => ['Lluís Vilanova <xscript.geo@yahoo.com>'],
 	'since'			=> '08/02/2000'
