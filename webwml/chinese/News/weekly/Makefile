@@ -1,3 +1,8 @@
+# This Makefile had been changed from webwml/english/News/weekly/Makefile
+# in order to accommodate both zh-cn and zh-tw.  -- foka, 2000-03-04
+
+# Original notice template:
+# ~~~~~~~~~~~~~~~~~~~~~~~~
 # This Makefile should need no changes from webwml/english/News/weekly/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
@@ -18,38 +23,53 @@ include $(WMLBASE)/Make.dep.templ
 # and all subdirectories to .html files. It does it this way so I don't need
 # a new Makefile for each new issue.
 WMLFILES=$(shell find . -type f -name \*.wml)
-ifeq ($(LANGUAGE),zh)
-#INT_HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
-HTMLFILES := $(foreach i, cn tw, \
-	$(patsubst %.wml,%.$(LANGUAGE)-$(i).html,$(WMLFILES)))
-HTMLDESTFILES := $(foreach i, cn tw, \
-	$(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE)-$(i).html,$(WMLFILES)))
-all:: index.$(LANGUAGE)-cn.html index.$(LANGUAGE)-tw.html $(HTMLFILES)
+ifneq ($(LANGUAGE),zh)
+  HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
+  HTMLDESTFILES := $(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE).html,$(WMLFILES))
 else
-HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
-HTMLDESTFILES := $(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE).html,$(WMLFILES))
+  HTMLFILES := $(foreach i, $(SUBLANG), \
+	$(patsubst %.wml,%.$(LANGUAGE)-$(i).html,$(WMLFILES)))
+  HTMLDESTFILES := $(foreach i, $(SUBLANG), \
+	$(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE)-$(i).html,$(WMLFILES)))
+endif
+
+ifneq ($(LANGUAGE),zh)
 all:: index.$(LANGUAGE).html $(HTMLFILES)
+else
+all:: index.zh-cn.html index.zh-tw.html $(HTMLFILES)
 endif
 
 # When building the html files we have to change into the right directory
 # so wml gets all the relative links right.
-#%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
-
-%.$(LANGUAGE)-cn.html %.$(LANGUAGE)-tw.html: \
-                           %.wml $(TEMPLDIR)/weeklynews/footer.wml \
+%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml
-	cd $(@D) && WMLOPTS="-DWML_SRC_REALNAME=\"Joey Hess\" -DWML_SRC_USERNAME=joeyh" $(WML) $(notdir $(<))
+	cd $(@D) && $(WML) $(notdir $(<)) \
+		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
 
-	@echo "Converting $*.zh-cn.html to (zh_CN.GB2312)..."
-	mv -f $*.zh-cn.html $*.zh-cn.html.tmp
+# Special case for Chinese
+%.zh-cn.html %.zh-tw.html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
+	                   $(TEMPLDIR)/weeklynews/header.wml \
+			   $(TOCN) $(TOTW)
+	cd $(@D) && $(WML) $(notdir $(<)) \
+		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh \
+		&& if [ -f index.imgdot-1x1-transp.gif ]; then \
+			mv -f index.imgdot-1x1-transp.gif i.imgdot-1x1-transp.gif; \
+		fi
+
+	@if [ "$(notdir $*)" = "index" ]; then \
+	    for i in $*.$(LANGUAGE)-??.html.tmp; do \
+		perl -pi -e 's/index(?=\.imgdot-1x1-tran)/i/g' $$i; \
+	    done; \
+	fi
+
+	@echo "Converting $*.zh-cn.html.tmp to $*.zh-cn.html (zh_CN.GB2312)..."
 	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
+	rm -f $*.zh-cn.html.tmp
 	@$(TOCN) $*.zh-cn.html
 
-	@echo "Converting $*.zh-cn.html to $*.zh-tw.html (zh_TW.Big5)..."
-	#       @$(U8TOB5) < $*.zh-tw.html > $*.zh-tw.html.tmp
-	mv -f $*.zh-cn.html.tmp $*.zh-tw.html
+	@echo "Converting $*.zh-tw.html.tmp to $*.zh-tw.html (zh_TW.Big5)..."
+	mv -f $*.zh-tw.html.tmp $*.zh-tw.html
 	@$(TOTW) $*.zh-tw.html
-
 
 install:: $(HTMLDESTFILES)
 	@# Set up current issue symlink. In case you're wondering, the only
@@ -58,14 +78,13 @@ install:: $(HTMLDESTFILES)
 	@# will still work. Bleargh.
 ifeq ($(LANGUAGE),en)
 	@install -d $(HTMLDIR)/current
-	@-rm -f $(HTMLDIR)/current/issue
-	-ln -sf ../$(YEAR)/$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
+	@rm -f $(HTMLDIR)/current/issue
+	@ln -sf ../$(shell cat ../../../english/News/weekly/CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
 endif
 
 # This is used by the install rule, and I had to hack on it, overriding
 # Make.common to allow installation of files into subdirectories.
-$(HTMLDIR)/%.$(LANGUAGE)-cn.html $(HTMLDIR)/%.$(LANGUAGE)-tw.html: \
-							%.$(LANGUAGE).html
+$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
 	install -d $(@D)
 	@echo copying $(@F) to $(@D)
 	-@cp $(<) $(@D)
@@ -74,25 +93,38 @@ ifeq ($(LANGUAGE),en)
 	-@ln -f -s $(@F) $(@D)/$(*F).html
 endif
 
+# Special case for Chinese
+$(HTMLDIR)/%.zh-cn.html: %.zh-cn.html
+	install -d $(@D)
+	@echo copying $(@F) to $(@D)
+	-@cp $(<) $(@D)
+$(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
+	install -d $(@D)
+	@echo copying $(@F) to $(@D)
+	-@cp $(<) $(@D)
+
 # Have to add to the default clean rule to clean up all the html the
 # above target produces.
 clean::
-	-find . -type f \( -name \*.$(LANGUAGE).html -o \
-			   -name \*.$(LANGUAGE)-tw.html -o \
-			   -name \*.$(LANGUAGE)-cn.html \) | xargs rm -f
+	-find . -type f -name \*.$(LANGUAGE).html | xargs rm -f
 
 # Need to rebuild the index when anything changes.
-#index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
-
-index.$(LANGUAGE)-cn.html index.$(LANGUAGE)-tw.html: \
-					$(wildcard $(YEAR)/*/index.wml) \
+index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
       $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(YEAR)/*) \
       $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
-      $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml
+      $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml \
+      ../../../english/News/weekly/CURRENT-ISSUE-IS
+
+# Special case for Chinese
+index.zh-cn.html index.zh-tw.html: $(wildcard $(YEAR)/*/index.wml) \
+      $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(YEAR)/*) \
+      $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
+      $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml \
+      ../../../english/News/weekly/CURRENT-ISSUE-IS
 
 # Generate the mail for posting to debian-news. Requires the web page already
 # be updated. The mail still requires slight edits.
 mail:	
 	@cat mail-header
-	@lynx -dump  http://www.debian.org/News/weekly/$(YEAR)/$(shell cat CURRENT-ISSUE-IS)/ | \
-		perl -pe 's/^\s\s?\s?//'
+	@lynx -dump http://master.debian.org/www-master/debian.org/News/weekly/2000/6/ | \
+       		perl -pe 's/^\s\s?\s?//'
