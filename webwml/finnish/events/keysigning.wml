@@ -1,5 +1,5 @@
 #use wml::debian::template title="Avainten allekirjoittaminen"
-#use wml::debian::translation-check translation="1.2"
+#use wml::debian::translation-check translation="1.6"
 
 <p>Koska useat kehittäjät tapaavat toisiaan messuilla ja
 konferensseissä, ovat he ottaneet tavaksi allekirjoittaa toistensa
@@ -60,23 +60,74 @@ omistaja on todistanut henkilöllisyytensä.
 allekirjoittaaksesi sen.  Seuraavasta voi olla apua:
 
 <pre>
-       gpg --keyserver keyring.debian.org --recv-keys 0xDEADBEAF
+       gpg --keyserver keyring.debian.org --recv-keys 0xDEADBEEF
 </pre>
+
+<p>Jos henkilö, jonka avaimen haluat allekirjoittaa ei ole Debianin
+avainrenkaassa, korvaa <code>keyring.debian.org</code> julkisella
+avainpalvelimella, kuten <code>pgpkeys.pgp.net</code> (joka nimestä
+huolimatta säilöö myös GnuPG-avaimia).</p>
+
+<p>Huomaa, että voimme käyttää avaimen viimeistä kahdeksaa
+heksadesimaalia tässä ja muissa GnuPG-toiminnoissa.  Myös etuliite
+<tt>0x</tt> on valinnainen.</p>
+
+</li>
 
 <li>Allekirjoittaaksesi avaimen, mene valikkoon komennolla
 
 <pre>
-       gpg --edit-key 0xDEADBEAF
+       gpg --edit-key 0xDEADBEEF
 </pre>
 
 <li>GnuPGssä valitse kaikki uidit allekirjoitusta varten komennolla
-<code>uid n</code>.
+<code>uid n</code>, jossa <code>n</code> on uid:n numero, joka näkyy
+valikossa.  Voit myös painaa enteriä allekirjoittaaksesi kaikki
+uidit.</li>
+
 
 <li>Allekirjoittaaksesi avaimen, kirjoita <code>sign</code>.  Tällöin
 sinulle näytetään allekirjoitettavan avaimen sormenjälki, jota sinun
 pitäisi verrata siihen, jonka sait tapaamaltasi henkilöltä.
 
 <li>Sulje GnuPG komennolla <code>quit</code>
+
+<li>Varmistaaksesi, että olet allekirjoittanut avaimen oikein, voit tehdä:
+
+<pre>
+       gpg --list-sigs 0xDEADBEEF
+</pre>
+
+<p>Tulosteessa sinun pitäisi nähdä oma nimesi ja sormenjälki (lyhyessä
+muodossa).</p>
+
+</li>
+
+<li>Varmistettuasi, että kaikki meni hyvin, voit lähettää
+allekirjoittamasi avaimen sen omistajalle komentamalla:
+
+<pre>
+       gpg --export -a 0xDEADBEEF &gt; jonkun.key
+</pre>
+
+<p>Valitsin <code>-a</code> tulostaa avaimen ASCII-muodossa, jotta se
+voidaan lähettää ilman pelkoa korruptoitumisesta matkalla.</p>
+
+</li>
+
+<li>Jos joku allekirjoittaa sinun avaimesi tällä tavoin, voit lisätä
+sen Debianin avainrenkaaseen komentamalla:
+
+<pre>
+       gpg --import minunallekirjoitettu.key
+       gpg --keyserver keyring.debian.org --send-keys <var>&lt;avaimesi id&gt;</var>
+</pre>
+
+<p>Voi kestää jonkin aikaa ennen kuin avainrenkaan ylläpitäjät
+päivittävät avaimesi, joten ole kärsivällinen.  Voit myös lähettää
+päivitetyn avaimesi julkisille avainpalvelimille.</p>
+
+</li>
 
 </ul>
 
