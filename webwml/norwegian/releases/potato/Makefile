@@ -4,7 +4,7 @@
 
 WMLBASE=../..
 CUR_DIR=releases/potato
-SUBS=
+SUBS=installguide
 
 include $(WMLBASE)/Make.lang
 

@@ -3,8 +3,9 @@
 # problem can be fixed.
 
 WMLBASE=../..
-CUR_DIR=ports/hurds
-SUBS=reference_manual
+CUR_DIR=ports/hurd
+SUBS=reference-manual extra-files
 
 include $(WMLBASE)/Make.lang
 
+$(HTMLFILES): $(ENGLISHSRCDIR)/ports/hurd/menu.inc $(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml
