@@ -7,7 +7,7 @@
 <label for="keyword"><gettext domain="distrib">Keyword</gettext>:</label>
 <input type="text" size="30" name="word" id="keyword" /> &nbsp;
 <input type="submit" value="<gettext domain="distrib">Search</gettext>" />
-&nbsp;<input type="reset" />
+&nbsp;<input type="reset" value="<gettext domain="distrib">Reset</gettext>" />
 <br />
 <gettext domain="distrib">Display</gettext>:
 <br />

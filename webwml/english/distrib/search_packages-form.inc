@@ -6,7 +6,7 @@
 <form method="GET" action="http://packages.debian.org/cgi-bin/search_packages.pl">
 <label for="kw"><gettext domain="distrib">Keyword</gettext>:</label>
 <input type="text" size="30" name="keywords" id="kw" />
-<input type="submit" value="<gettext domain="distrib">Search</gettext>" /> <input type="reset" />
+<input type="submit" value="<gettext domain="distrib">Search</gettext>" /> <input type="reset" value="<gettext domain="distrib">Reset</gettext>" />
 <br />
 <gettext domain="distrib">Search on</gettext>:
 <input type="radio" name="searchon" value="names" id="onlynames" checked="checked" />
