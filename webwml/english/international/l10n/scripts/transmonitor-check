@@ -173,7 +173,6 @@ Getopt::Long::GetOptions(%opthash)
 #                        The main program
 #-----------------------------------------------------------------------------
 my %synonym;  # developers can't spell sections and priorities...
-my $savedb=0; # do we have to save the database?
 
 ###
 ### Initialization
@@ -291,7 +290,6 @@ PKG: while ($dsc = shift @pkg_list) {
                         File::Path::rmtree($_."/_tmp") if -e $_."/_tmp";
                 }
         }
-        $savedb = 1; #ok, we've done something, we have to save the db
         print STDERR "Package $pkg $ver (processing)\n" if $verbose;
 
         ###
@@ -300,12 +298,7 @@ PKG: while ($dsc = shift @pkg_list) {
         $deb = parse_tarball($dsc, $pkg, $ver, $maint);
         if ($deb) {
                 check_pkg($pkg, $deb);
-                if ($careful) {
-                        $data->write($DB_FILE);
-                } else {
-                        #  Ok, we've done something, we have to save the db
-                        $savedb = 1;
-                }
+                $data->write($DB_FILE) if $careful;
         }
 }
 
@@ -317,12 +310,11 @@ if ($remove_unused) {
                                 File::Path::rmtree($_."/".$data->pooldir($pkg));
                         }
                         $data->clear_pkg($pkg);
-                        $savedb = 1;
                 }
         }
 }
 
-$data->write($DB_FILE) if $savedb;
+$data->write($DB_FILE);
 # print with which packages we had problems
 if (@errors_pkg > 0) {
         print STDERR "Some errors where encountred during the check of this packages\n";
