@@ -1,7 +1,11 @@
 <?
 
     function print_place($begin, $finish, $city, $country) {
-        echo "<LI>$city, $country: ";
+        if ($city) {
+            echo "<LI>$city, $country: ";
+        } else {
+            echo "<LI>$country: ";
+        }
         if (! $begin && ! $finish) {
             echo "always";
         } else if ($begin && ! $finish) {
