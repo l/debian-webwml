@@ -4,9 +4,10 @@
 
 WMLBASE=..
 CUR_DIR=security
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
-SUBS=1997 1998 1999 2000 undated
+# list any subdirectories in the following variable. If a listed directory
+# exists, it must contain a Makefile, or make gives an error
+YEARS:=$(wildcard [12][0-9][0-9][0-9])
+SUBS=$(YEARS) undated
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
