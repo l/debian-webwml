@@ -110,8 +110,9 @@ sub get_stats_po {
 		        $translator ||= "";
 		        $team ||= "";
 			#  Some translators forget the right angle bracket
-		        $translator =~ s/<[^>]*>?//;
+		        $translator =~ s/\s*<[^>]*>?//;
 		        $translator =~ s/&(?!#)/&amp;$1/g;
+		        $translator = 'DDTP' if $translator eq 'Debian Description Translation Project';
 		        $team =~ s/^[^<]*<([^>]*)>.*$/$1/g;
 		        $team =~ s/@/ at /g;
 		        $team =~ s/\./ dot /g;
