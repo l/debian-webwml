@@ -269,13 +269,13 @@ Self explanatory.
 sub pkg_exists {
     my ( $self, $pkg ) = @_;
     
-    return exists $self->{db}->{$pkg};
+    return (exists $self->{db}{$pkg} && defined $self->{db}{$pkg});
 }
 
 sub src_pkg_exists {
     my ( $self, $pkg ) = @_;
     
-    return exists $self->{srcdb}->{$pkg};
+    return (exists $self->{srcdb}{$pkg} && defined $self->{srcdb}{$pkg});
 }
 
 
