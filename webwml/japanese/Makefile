@@ -7,7 +7,7 @@ CUR_DIR=
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
 SUBS=Bugs MailingLists News Pics SPI devel distrib doc events intro \
-logos mirror ports releases security y2k
+logos mirror partners ports releases security y2k
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
@@ -18,6 +18,7 @@ include $(WMLBASE)/Make.dep.templ
 # Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(wildcard News/1999/1999*.wml) $(wildcard $(ENGLISHSRCDIR)/News/1999/1999*.wml) \
+		$(wildcard security/1999/1999*.wml) $(wildcard $(ENGLISHSRCDIR)/security/1999/1999*.wml) \
 		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
 	$(WML) index.wml
 
