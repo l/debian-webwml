@@ -57,8 +57,11 @@ ifeq "$(LANGUAGE)" "en"
 endif
 
 ifeq "$(LANGUAGE)" "en"
-install:: $(HTMLDIR)/keys.txt
+install:: $(HTMLDIR)/keys.txt $(HTMLDIR)/dsa-rdf.css
 
 $(HTMLDIR)/keys.txt: $(HTMLDIR)/%: %
 	install -m 664 -p $< $(HTMLDIR)
+
+$(HTMLDIR)/dsa-rdf.css: $(HTMLDIR)/%: %
+	install -m 644 -p $< $(HTMLDIR)
 endif
