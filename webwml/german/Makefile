@@ -10,12 +10,12 @@ $(HTMLDIR)/%.html.$(LANG) : %.wml $(TEMPLDIR)/template.wml
 # translators should comment out the line for any file they haven't translated.
 all:\
     $(HTMLDIR)/social_contract.html.$(LANG) \
-    # $(HTMLDIR)/contact.html.$(LANG) \
-    # $(HTMLDIR)/developers_corner.html.$(LANG) \
-    # $(HTMLDIR)/donations.html.$(LANG) \
-    # $(HTMLDIR)/index.html.$(LANG) \
-    # $(HTMLDIR)/license.html.$(LANG) \
-    # $(HTMLDIR)/news.html.$(LANG) \
+    $(HTMLDIR)/contact.html.$(LANG) \
+    $(HTMLDIR)/developers_corner.html.$(LANG) \
+    $(HTMLDIR)/donations.html.$(LANG) \
+    $(HTMLDIR)/index.html.$(LANG) \
+    $(HTMLDIR)/license.html.$(LANG) \
+    $(HTMLDIR)/news.html.$(LANG) \
     # $(HTMLDIR)/news1997.html.$(LANG) \
     # $(HTMLDIR)/related_links.html.$(LANG) \
     # $(HTMLDIR)/sponsor.html \
