@@ -368,7 +368,7 @@ sub get_stats_templates {
 	        my $anchor_maint = lc $maint;
                 $anchor_maint =~ s/[^a-z0-9]/_/g;
 
-                print GEN "<li><a name=\"P$pkg\">$pkg</a> ".$data->version($pkg)." [<a href=errors-by-maint#M$anchor_maint>$maint</a>]\n";
+                print GEN "<li><a name=\"P$pkg\">$pkg</a> ".$data->version($pkg)." [<a href=\"errors-by-maint#M$anchor_maint\">$maint</a>]\n";
                 my $errors_pkg = "<ul>\n";
                 if (@{$tmpl_errors->{$pkg}->{master}}) {
                         $errors_pkg .= "<li><a href=\"errors#master\">translated-fields-in-master-templates</a><br>\n".${$tmpl_errors->{$pkg}->{master}}[0]."</li>\n";
