@@ -266,6 +266,7 @@ sub header {
     my $title_tag = $params{title_tag} || $params{title} || '';
     my $title_in_header = $params{page_title} || $params{title} || '';
     my $page_title = $params{page_title} || $params{title} || '';
+    my $meta = $params{meta} || '';
 
     if ($params{print_title_above}) {
  	$title_in_header = "<h1>$title_in_header</h1>";
@@ -357,6 +358,7 @@ MENU
 <meta name="Author" content="Debian Webmaster, $WEBMASTER_MAIL">
 $KEYWORDS_LINE
 $DESC_LINE
+$meta
 <link href="$HOME/debian.css" rel="stylesheet" type="text/css" media="all">
 </head>
 <body>
