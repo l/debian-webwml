@@ -5,7 +5,9 @@ set -e
 
 export RSYNC_PASSWORD
 
-LOCK="${TO}/Archive-Update-in-Progress-`hostname -f`"
+HOSTNAME=`hostname -f`
+
+LOCK="${TO}/Archive-Update-in-Progress-${HOSTNAME}"
 
 # Get in the right directory and set the umask to be group writable
 # 
@@ -14,16 +16,16 @@ umask 002
 
 # Check to see if another sync is in progress
 if lockfile -! -l 43200 -r 0 "$LOCK"; then
-  echo `hostname` is unable to start rsync, lock file exists
+  echo ${HOSTNAME} unable to start rsync, lock file exists
   exit 1
 fi
 trap "rm -f $LOCK > /dev/null 2>&1" exit  
 
 set +e
 rsync -Hrltvz --delete \
-     --exclude "Archive-Update-in-Progress-`hostname -f`" \
-     --exclude "project/trace/`hostname -f`" \
+     --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
+     --exclude "project/trace/${HOSTNAME}" \
      $EXCLUDE \
      $RSYNC_USER@$RSYNC_HOST::ftp $TO > rsync.log 2>&1
-date -u > "${TO}/project/trace/`hostname -f`"
+date -u > "${TO}/project/trace/${HOSTNAME}"
 savelog rsync.log > /dev/null 2>&1
