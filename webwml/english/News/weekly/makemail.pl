@@ -43,6 +43,8 @@ while (<IN>) {
 	     if (/^\s*$/) { 
 		  # Empty line, new story
 		  push @stories, $story;
+		  # line is empty, don't indent following lines
+		  $lastlinecontainsstar = 0;
 		  $story = "";
 	     } else {
 		  # Kill multiple spaces, since raggedright is easier on the eyes
@@ -54,10 +56,6 @@ while (<IN>) {
 		       # line doesn't only contain whitespace and doesn't start with another *
 		       if ( m/^\s*[^\* ]/ ) {
 			    s/^/  /;
-		       }
-		       # line is empty, don't indent following lines
-		       if ( m/^\s*$/ ) {
-			    $lastlinecontainsstar = 0;
 		       }
 		  }
 		  # line starts an item
@@ -83,6 +81,7 @@ while (<IN>) {
 		$skip=0;
 	}
 }
+push @stories, $story;
 
 # Once we get here, all that remains is some junk, some links we should
 # print, and more junk. So scan forward to the links, and print them.
@@ -95,7 +94,7 @@ while (<IN>) {
 	s/^\s+//; # kill lynx's indent.
 	if (/^(\d+)/) {
 		# Don't print the links we skipped earlier.
-		if ($1 > $skippedlinks && $1 <= $highlink) {
+		if ($1 > $skippedlinks-1 && $1 <= $highlink) {
 			# Print line, fixing link number.
 			s/^(\d+)/$1 - $skippedlinks/e;
 
@@ -116,9 +115,11 @@ foreach $story (@stories) {
      my $firstlink = $1;
      $story =~ m/.*\[(\d+)\]/s;
      my $lastlink = $1;
-     print $story, "\n";
-     foreach $link (@links[$firstlink .. $lastlink]) {
-	  print $link;
+     if ($lastlink && $firstlink) {
+	 print $story, "\n";
+	 foreach $link (@links[$firstlink .. $lastlink]) {
+	     print $link;
+	 }
      }
      print "\n";
 }
