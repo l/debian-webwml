@@ -701,6 +701,7 @@ sub process_dep_list {
 #
     my $res = [];
     foreach(split(/\s*,\s*/, $dep_list)) {
+	next if $_ eq ''; # ignore empty depends due to superfluous commas
 	my @final_dep_list = ();
 	foreach my $given_dep (split(/\s*\|\s*/)) {
 	    chomp( $given_dep );
