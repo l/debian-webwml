@@ -795,9 +795,11 @@ sub check_pkg{
 	    # stats the file
 	    ($this_stat,$err_msg)=
 		read_stats("msgfmt --statistics -o /dev/null $file 2>&1 1>/dev/null");
-	    if ($err_msg) {
+	    print("($this_stat,$err_msg)\n");
+            if ($err_msg) {
 		add_part($pkg,"errors","Error of msgfmt --statistics ".$file."\n".$err_msg);
-	    } else {
+	    } 
+	    if ($this_stat ne "0t0f0u") {
 		$data{$pkg}{"stats"}{$lang}=l10n_add($data{$pkg}{"stats"}{$lang},$this_stat);
 	    }
 	} else { # no valid lang found
@@ -1005,18 +1007,20 @@ sub read_stats {
     my @lines;   #to read the output
     my ($line);  #to read the output
     my $returned_err="";
-    my $returned_stats="";
+    my $returned_stats="0t0f0u";
 
     # reads the new stats
     @lines = qx,$cmd,;
     $line = $lines[0];
     chop ($line);
     return ("0t0f0u","Something weird append (no output)\n") unless defined($line);
-    # if msgfmt didn't output something like 'bla translated,bla fuzzy', it's an error.
-    if (($line =~ /untranslated/)||($line =~ /translated/)||($line =~ /fuzzy/)) {
-	$returned_stats=parse_stats($line);
-    } else {
-	$returned_err=join('\n ',@lines);
+    # if msgfmt didn't output something like 'bla translated,bla fuzzy', it's an error or a warning
+    foreach $line (@lines) {
+        if (($line =~ /untranslated/)||($line =~ /translated/)||($line =~ /fuzzy/)) {
+  	    $returned_stats=parse_stats($line);
+        } else {
+            $returned_err .= $line;
+        }
     }
     return ($returned_stats,$returned_err);
 }
