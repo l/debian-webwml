@@ -131,7 +131,7 @@ sub read_data {
 	    $last_section="";
 	}
 	# stats ?
-	elsif (/^Stats: (..): (.*)$/) {
+	elsif (/^Stats: ([^:]*): (.*)$/) {
 	    if ($pkg eq "") {
 		&$parse_warn ("stat section comes before package name section");
 	    }
