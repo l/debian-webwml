@@ -53,9 +53,10 @@ EXCLUDE=
 # Note: on some non-Debian systems, hostname doesn't accept -f option.
 # If that's the case on your system, make sure hostname prints the full
 # hostname, and remove the -f option. If there's no hostname command,
-# replace `hostname -f` with the hostname manually below.
+# explicitly replace `hostname -f` with the hostname.
+HOSTNAME=`hostname -f`
 
-LOCK="${TO}/Archive-Update-in-Progress-`hostname -f`"
+LOCK="${TO}/Archive-Update-in-Progress-${HOSTNAME}
 
 # Get in the right directory and set the umask to be group writable
 # 
@@ -64,7 +65,7 @@ umask 002
 
 # Check to see if another sync is in progress
 if lockfile -! -l 43200 -r 0 "$LOCK"; then
-  echo `hostname` is unable to start rsync, lock file exists
+  echo ${HOSTNAME} is unable to start rsync, lock file exists
   exit 1
 fi
 # Note: on some non-Debian systems, trap doesn't accept "exit" as signal
@@ -73,11 +74,11 @@ trap "rm -f $LOCK > /dev/null 2>&1" exit
 
 set +e
 rsync --recursive --links --times --verbose --compress --delete \
-     --exclude "Archive-Update-in-Progress-`hostname -f`" \
-     --exclude "project/trace/`hostname -f`" \
+     --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
+     --exclude "project/trace/${HOSTNAME}" \
      $EXCLUDE \
      $RSYNC_HOST::$RSYNC_DIR $TO > rsync.log 2>&1
-date -u > "${TO}/project/trace/`hostname -f`"
+date -u > "${TO}/project/trace/${HOSTNAME}"
 
 # Note: if you don't have savelog, use any other log rotation facility, or
 # comment this out, the log will simply be overwritten each time.
