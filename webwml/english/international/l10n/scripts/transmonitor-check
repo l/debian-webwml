@@ -741,7 +741,7 @@ sub check_pkg{
     my $t; #nb of translated msg
     my $this_stat = ""; #stats for this file
     my $err_msg =""; # err msg of the statistic external command (ie, msgfmt or debconf-stats)
-    my $regexp_for_lang_code = "(([a-zA-Z]{2})([-_][a-zA-Z]{2})?(@[^\.]*)?)(\.[^\.]*)?"
+    my $regexp_for_lang_code = "(([a-zA-Z]{2})([-_][a-zA-Z]{2})?(@[^\.]*)?)(\.[^\.]*)?";
 
 #    print "PO: @pofiles\n";
    POFILE: foreach $file (@pofiles) {
@@ -758,15 +758,25 @@ sub check_pkg{
 	}
 	$this_stat="";
 	$lang ="";
-	if ($file=~ /\/$regexp_for_lang_code\.po$/){ 
+	if ($lang eq "" && $file=~ /\/$regexp_for_lang_code\.po$/){
 	    $bad_lang =$1;
+#	   print("Rule 0 match ($1)\n");
 	    if (is_lang($bad_lang)) {
 		$lang = $bad_lang;
 		$bad_lang = "";
 	    }
 	}
-	if ($lang eq "" && $file=~ /\/$regexp_for_lang_code\//){
+	if ($lang eq "" && $file=~ /\/po\/$regexp_for_lang_code\.po$/){
 	    $bad_lang =$1;
+#	   print("Rule 1 match ($1)\n");
+	    if (is_lang($bad_lang)) {
+		$lang = $bad_lang;
+		$bad_lang = "";
+	    }
+	}
+	if ($lang eq "" && $file=~ /\/$regexp_for_lang_code\// && $1 ne "po"){
+	    $bad_lang =$1;
+#	   print("Rule 2 match ($1)\n");
 	    if (is_lang($bad_lang)) {
 		$lang = $bad_lang;
 		$bad_lang = "";
@@ -775,6 +785,7 @@ sub check_pkg{
 	# The next rule is for kde-i18n and other such packages
 	if ($lang eq "" && $file =~ m,^$regexp_for_lang_code/messages,) {
 	    $bad_lang = $1;
+#	   print("Rule 3 match ($1)\n");
 	    if (is_lang($bad_lang)) {
 		$lang = $bad_lang;
 		$bad_lang = "";
