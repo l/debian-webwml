@@ -48,11 +48,12 @@ $translations = [
 	'type'			=> 'DDP',
 	'key'			=> 'project-history',
 	'name'			=> 'The Debian Project History',
-	'status'		=> 'en cours de traduction',
-	'since'			=> '16/02/1999',
+	'status'		=> 'à relire',
+	'since'			=> '03/05/1999',
 	'translation_name'	=> 'Histoire du projet Debian',
 	'translation_maintainer'=> ['Jerome Rousselot <r.jerome@francemel.com>'],
 	'translation_version'	=> '1.2',
+	'last_translated'	=> '03/05/1999',
 },
 
 {
@@ -395,12 +396,10 @@ $translations = [
 	'url'			=> 'http://www.debian.org/devel/constitution.en.html',
 	'source_url'		=> '',
 	'package'		=> '',
-	'status'		=> 'à traduire',
-	'since'			=> '26/09/1998',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '01/05/1999',
 	'translation_name'	=> '',
-#	'translation_maintainer'=> ['Martin Quinson <mquinson@zeppelin-cb.de>'],
-	'translation_maintainer'=> [''],
-	'ping'			=> '28/11/1998',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'translation_version'	=> '',
 	'translation_url'	=> '',
 	'translation_source_url'=> '',
@@ -578,8 +577,9 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/HOWTO_translate',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '01/05/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 },
 
 {
