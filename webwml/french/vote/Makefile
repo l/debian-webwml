@@ -1,14 +1,17 @@
-# This Makefile should need no changes from webwml/english/devel/Makefile
+# This Makefile should need no changes from webwml/english/vote/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
 WMLBASE=..
 CUR_DIR=vote
-SUBS=1999 
+SUBS=1999 2000
 
+NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
 
-# Do Not modify the following line
-%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml $(TEMPLDIR)/languages.wml $(TEMPLDIR)/footer.wml
+%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
 	$(WML) $(<F)
+index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/*.wml) \
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/$(CUR_YEAR)/*.wml) \
+  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
