@@ -1,28 +1,20 @@
-# This Makefile should need no changes from webwml/english/ports/mips/Makefile
-# Please send a message to debian-www if you need to modify anything, so the
-# problem can be fixed.
+# Nothing translatable here.
 
 WMLBASE=../../..
 CUR_DIR=ports/hurd/extra-files
 SUBS=
 
-RELHTMLBASE=../../debian.org
-RELTEMPLDIR=../english/template/debian
+include $(WMLBASE)/Make.lang
 
-HTMLDIR=$(WMLBASE)/$(RELHTMLBASE)/$(CUR_DIR)
-TEMPLDIR=$(WMLBASE)/$(RELTEMPLDIR)
-# Do Not modify the following line
-ENGLISHSRCDIR=$(WMLBASE)/../english
 
-RMSOURCE := cross-install native-install dpkg-hurd
-RMDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(RMSOURCE))
+efsources := cross-install native-install dpkg-hurd
+efdestfiles := $(patsubst %,$(HTMLDIR)/%,$(efsources))
 
-all:
+install:: $(efdestfiles)
 
-install::
-	test -d $(HTMLDIR) || mkdir -p -m g+w $(HTMLDIR)
-install:: $(RMDESTFILES)
+$(efdestfiles): $(HTMLDIR)/%: %
+	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
+	install -m 664 -p $< $(HTMLDIR)
 
-$(RMDESTFILES): $(RMSOURCE)
-	install -m664 $(@F) $(HTMLDIR)
-clean:
+cleandest::
+	rm -f $(efdestfiles)
