@@ -10,7 +10,8 @@ include $(WMLBASE)/Make.lang
 
 
 merchandise.$(LANGUAGE).html: merchandise.wml $(TEMPLDIR)/template.wml \
-  $(ENGLISHSRCDIR)/misc/merchandise.data $(ENGLISHSRCDIR)/misc/merchandise.def
+  $(TEMPLDIR)/url.wml $(ENGLISHSRCDIR)/misc/merchandise.data \
+  $(ENGLISHSRCDIR)/misc/merchandise.def \
 
 ifeq "$(LANGUAGE)" "en"
 $(HTMLDIR)/bsd.license: bsd.license
