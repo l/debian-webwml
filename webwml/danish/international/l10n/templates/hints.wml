@@ -1,0 +1,95 @@
+#use wml::debian::template title="Tips om lokaltilpasning af Debconf-skabeloner"
+#use wml::debian::translation-check translation="1.3"
+#include "$(ENGLISHDIR)/international/l10n/templates/menu.inc"
+
+<h2>Begreber</h2>
+<p>
+  For at holde oversættelserne ajour, skal et internationaliseret program give
+  oversætterne en nem måde at opdage og rette forældede oversættelser.
+</p>
+
+<p>
+  En Debconf-skablonfil består af felter og værdier.  Oversatte felter følger
+  et bestemt navngivningsprincip, f.eks. <code>Description-es</code> betyder
+  en spansk beskrivelse.  Faktisk vil <code>Description-es_ES</code> (eller
+  <code>Description-es_MX</code>, og tilsvarende) blive kontrolleret først.
+</p>
+
+<p>
+  Derfor, for at opdage forældede oversættelser, er man nødt til at vide fra 
+  hvilken streng den pågældende beskrivelse er oversat.  Debconf-metoden er 
+  kun at beholde originale felter i skablonfilen, og placere oversatte felter
+  sammen med de tilsvarende engelske felter i en anden fil, med navnet
+  <code>templates.xx</code> eller <code>templates.xx_XX</code> afhængigt af
+  navnet på sproget.  Nedenfor er der tips til hvordan man arbejder med 
+  separate filer.
+</p>
+
+<h2>Indledende oversættelse</h2>
+
+<p>
+  Før man begynder at arbejde på en pakke, skal man på 
+  <a href="http://auric.debian.org/~grisu/debian_translation/">Grisus
+  skablonoversættelsesserver</a> og i fejlrapporteringssystemet kontrollere at 
+  der ikke allerede er blevet indsendt oversættelser til vedligeholderen.
+  Når man er færdig, kan oversætteren få skablonfilen fra <a href="./">\
+  vedkommendes sprogs side</a> eller fra linket ovenfor.  Dernæst kører man
+</p>
+<pre>
+   debconf-getlang xx templates &gt; templates.xx
+</pre>
+<p>
+  for at generere en fil med tomme oversættelsesfelter.  Man oversætter, 
+  kontrollerer med
+</p>
+<pre>
+   debconf-getlang --stats templates templates.xx
+</pre>
+<p>
+  at alle strenge er oversat, og indsender filen til vedligeholderen.
+</p>
+
+<h2>Fletning af oversættelser</h2>
+
+<p>
+  Da vedligeholderen også har læst siden, ved vedkommende at skablonerne ikke
+  må flettes sammen for at gøre oversætterens arbejder nemmere, og lade filen
+  være som den er i kataloget <tt>debian</tt>.
+</p>
+
+<p>
+  De oversatte skabelonfiler flettes kun når den binære pakke kompiles.
+  Debhelper gør det automatisk, hvis kommandoen <tt>dh_installdebconf</tt> 
+  anvendes i <tt>debian/rules</tt>. Ellers tilføjes en kommando ala
+</p>
+<pre>
+	cd debian &amp;&amp; debconf-mergetemplate templates templates.* &gt; tmp/DEBIAN/templates
+</pre>
+
+<p>
+  Vedligeholderen modtager altså oversatte skabelonfiler og placerer dem det
+  rigtige sted, og dermed er arbejdet gjort.
+</p>
+
+<h2>Opdatering af oversættelser</h2>
+<p>
+  De indledende oversættelser er blevet integreret, men nu er formuleringerne i 
+  de engelske skabeloner blevet forbedret.  Ændringer i de originale skabloner 
+  skal tilføjes.  Igen, gør <tt>debconf-getlang</tt> arbejdet.
+</p>
+<pre>
+    debconf-getlang xx templates templates.xx &gt; new.xx
+</pre>
+<p>
+  tilføjer <tt>-fuzzy</tt>-mærket til forældede felter, og indsætter en tom 
+  linie lige oven over.  Oversætteren retter i <tt>new.xx</tt>, ændrer på de 
+  forældede oversættelser, og kontrollerer med
+</p>
+<pre>
+   debconf-getlang --stats templates new.xx
+</pre>
+<p>
+  at alle strenge er ført ajour.  Dernæst omdøbes <tt>new.xx</tt> til 
+  <tt>templates.xx</tt> og filen indsendes til vedligeholderen, der giver 
+  filen samme behandling som beskrevet i et foregående afsnit.
+</p>
