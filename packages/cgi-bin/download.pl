@@ -219,10 +219,22 @@ print <<END;
 END
 my $dir;
 foreach $dir (@file_components) { print "$dir/"; };
-print <<END;
-</tt> subdirectory at any of these sites:
+print "</tt> subdirectory at";
+print $type ne 'security' ? "any of these sites:" : ":";
+
+if ($type eq 'security') {
+
+	print <<END;
+<ul>
+  <li><a href="http://security.debian.org/debian-security/$file">security.debian.org/debian-security</a>
+</ul>
+
+<p>Debian security updates are currently officially distributed only via
+security.debian.org.</p>
 END
-if ($type eq 'nonus') {
+
+} elsif ($type eq 'nonus') {
+
 	print "<p><em>North America</em>";
 	print "<ul>";
 	foreach (@nonus_north_american_sites) {
@@ -262,8 +274,14 @@ if ($type eq 'nonus') {
 		# print "<li><a href=\"ftp://$_/$file\">$_</a>\n";
 	}
 	print "</ul>";
-}
-else {
+
+	print <<END;
+<p>If none of the above sites are fast enough for you, please see our
+<a href="http://www.debian.org/mirror/list-non-US">complete mirror list</a>.
+END
+
+} elsif ($type eq 'main') {
+
 	print "<table border=0><tr><td valign=top>";
 	print "<p><em>North America</em>";
 	print "<ul>";
@@ -313,14 +331,7 @@ else {
 	}
 	print "</ul>";
 	print "</td></tr></table>";
-}
 
-if ($type eq 'nonus') {
-	print <<END;
-<p>If none of the above sites are fast enough for you, please see our
-<a href="http://www.debian.org/mirror/list-non-US">complete mirror list</a>.
-END
-} else {
 	print <<END;
 <p>If none of the above sites are fast enough for you, please see our
 <a href="http://www.debian.org/mirror/list">complete mirror list</a>.
