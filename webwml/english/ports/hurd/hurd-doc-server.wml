@@ -17,6 +17,10 @@ starting point for further documentation of the server programs, especially
 those useful to a user, like extf2s, ufs, isofs, ftpfs, crash, etc.
 </p>
 
+<p>
+Since then, I updated the text using mail excerpts from the Hurd mailing
+lists. Thanks to Martin on Loewis.
+
 <h2>Preliminary GNU/Hurd User Interface Description</a></h1>
 
 <p>
@@ -143,7 +147,14 @@ anything related to Operating Systems design and implementations.
 The authenticitation server - &quot;<code>auth</code>&quot;</a></h2>
 
 <p>
-For authenticitation purposes.
+Passes credentials when two mutually untrusting servers communicate.
+In a sense, each auth server establishes a domain of trust. (Martin von
+Loewis, 10 Oct 1996)</p>
+
+<P>
+One of its interesting features is that it makes it possible for
+processes to impersonate several identities at the same time, and
+also to dynamically acquire or relinquish identities.</p>
 
 <p>
 Running &quot;<code>/hurd/auth --help</code>&quot; gives:
@@ -162,18 +173,20 @@ Report bugs to bug-hurd@gnu.org.
 <h2 align="center"><a href="#TOC_crash" name="crash" type="text/html">
 The crash server - &quot;<code>crash</code>&quot;</a></h2>
 
-As far as I know it somehow suspends crashing processes and lets you
-attach a debugger so that you do not have to dig through coredumps
-any longer. Just think of it as some kind of airbag - your car hits
-something and the journey ends, but eventually you may survive the crash
-and walk around in order to examine the situation and ... - er, well -
-that is where the analogy starts to break down, but you get the idea.
+The crash server gets active whenever a task gets a fatal error signal,
+for example because it violates memeory boundaries (segmentation fault).
+The crash server has three modes of operation: suspending the process group
+(pgrp) of the offending task, killing it or dumping a core file.
+The latter is not yet implemented. Think of the crash
+server of an airbag.
 
-<p>
-Running &quot;<code>/hurd/crash --help</code>&quot; gives:
-<br>
-<pre>
-/hurd/crash: Must be started as a translator
+<p><pre>
+
+ These options specify the disposition of a crashing process:
+  -s, --suspend              Suspend the process
+  -k, --kill                 Kill the process
+  -c, --core-file            Dump a core file
+      --dump-core
 </pre>
 
 
@@ -181,7 +194,13 @@ Running &quot;<code>/hurd/crash --help</code>&quot; gives:
 The execute server - &quot;<code>exec</code>&quot;</a></h2>
 
 <p>
-This server is responsible for program execution.
+Exec manages the creation of a new process image from the image file.</p>
+
+<P>
+Actually this server has support to create a runnable process image
+out of any image file recognized by the BFD library (this includes
+a.out, ELF, and many others).  Gzipped executable are also
+recognized (useful for boot floppies).</p>
 
 <p>
 Running &quot;<code>/hurd/exec --help</code>&quot; gives:
@@ -256,7 +275,7 @@ Report bugs to bug-hurd@gnu.org.
 The fifo server - &quot;<code>fifo</code>&quot;</a></h2>
 
 <p>
-A translator for fifos.
+The fifo translator implements named pipes.
 
 <p>
 Running &quot;<code>/hurd/fifo --help</code>&quot; gives:
@@ -351,12 +370,10 @@ Report bugs to bug-hurd@gnu.org.
 The fwd server - &quot;<code>fwd</code>&quot;</a></h2>
 
 <p>
-I have no idea what this server is good for.
-
-<small>
-(A random guess would be that it kindly forwards requests if a translator does
- not handle them itself.)
-</small>
+When accessed, the fwd translator forwards requests to another server.
+It is used in the fifo and symlink server. The idea is so that you don't get
+a jillion servers for such trivial things; fwd is used to coordinate
+having one server handle several different nodes conveniently.
 
 <p>
 Running &quot;<code>/hurd/fwd --help</code>&quot; gives:
@@ -406,7 +423,10 @@ Report bugs to bug-hurd@gnu.org.
 The ifsock server - &quot;<code>ifsock</code>&quot;</a></h2>
 
 <p>
-A server for sockets of some kind?
+<code>ifsock</code> only handles <code>S_IFSOCK</code> filesystem
+nodes for filesystems which don't do it themselves, acting as a hook
+upon which to hang Unix domain socket addresses.  pfinet and pflocal
+implement the socket API. (Thomas Bushnell, 10 Oct 1996)
 
 <p>
 Running &quot;<code>/hurd/ifsock --help</code>&quot; gives:
@@ -550,7 +570,7 @@ Report bugs to bug-hurd@gnu.org.
 The new-fifo server - &quot;<code>new-fifo</code>&quot;</a></h2>
 
 <p>
-A server for new fifo's.
+Alternative server for named pipes.
 
 <p>
 Running &quot;<code>/hurd/new-fifo --help</code>&quot; gives:
@@ -579,7 +599,7 @@ Report bugs to bug-hurd@gnu.org.
 The network filesystem server - &quot;<code>nfs</code>&quot;</a></h2>
 
 <p>
-A translator for nfs-type filesystem functionality.
+Network file system support for Sun's Network File System.
 
 <p>
 Running &quot;<code>/hurd/nfs --help</code>&quot; gives:
@@ -636,7 +656,8 @@ Report bugs to bug-hurd@gnu.org.
 The kitchen sink - &quot;<code>null</code>&quot;</a></h2>
 
 <p>
-A server for lots of free space and countless numbers of zeroes.
+A server for lots of free space and countless numbers of zeroes, implements
+<code>/dev/null</code> and <code>/dev/zero</code>.
 
 <p>
 Running &quot;<code>/hurd/null --help</code>&quot; gives:
@@ -694,7 +715,7 @@ Report bugs to bug-hurd@gnu.org.
 The pflocal server - &quot;<code>pflocal</code>&quot;</a></h2>
 
 <p>
-No idea what it is good for.
+Implements UNIX domain sockets. Needed for pipes, for example.
 
 <p>
 Running &quot;<code>/hurd/pflocal --help</code>&quot; gives:
@@ -703,13 +724,12 @@ Running &quot;<code>/hurd/pflocal --help</code>&quot; gives:
 Usage: /hurd/pflocal
 </pre>
 
-
-
 <h2 align="center"><a href="#TOC_proc" name="proc" type="text/html">
 The process server - &quot;<code>proc</code>&quot;</a></h2>
 
 <p>
-A server for processes.
+The proc server assigns PID's and process structures to tasks, and manages
+all the process level stuff like wait, bits of fork, C library support.
 
 <p>
 Running &quot;<code>/hurd/proc --help</code>&quot; gives:
@@ -766,7 +786,8 @@ Report bugs to bug-hurd@gnu.org.
 The symbolic link server - &quot;<code>symlink</code>&quot;</a></h2>
 
 <p>
-A server for symbolic links.
+A server for symbolic links for filesystems which don't support it
+themselves.
 
 <p>
 Running &quot;<code>/hurd/symlink --help</code>&quot; gives:
@@ -781,7 +802,7 @@ Running &quot;<code>/hurd/symlink --help</code>&quot; gives:
 The terminal server - &quot;<code>term</code>&quot;</a></h2>
 
 <p>
-A server for character terminals.
+Implements a POSIX terminal.
 
 <p>
 Running &quot;<code>/hurd/term --help</code>&quot; gives:
