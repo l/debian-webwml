@@ -33,9 +33,8 @@ if (!@ARGV) {
 
 foreach my $file (@ARGV) {
   $file =~ s,^english/,,;
-  my $path = ""; my $filename;
+  my $path = ""; my $filename = $file;
   if ($file =~ m,(.*)/([^/]+)$,) { $path = $1; $filename = $2; };
-  warn "$path $filename\n";
   foreach my $lang (@languages) {
       if ( -f "$lang/$file" ) {
          my $pid = fork;
