@@ -3,7 +3,7 @@
 # Very similar to get_recent_list except it looks for the .wml files
 # inside subdirectories of the given directory.
 sub get_weeklynews_list {
-	my ($year, $number, $eng_dir, $match, $depth) = @_;
+	my ($year, $eng_dir, $match) = @_;
 	
 	$str="";
 
@@ -17,9 +17,7 @@ sub get_weeklynews_list {
 	@files = grep { /^$match$/ && -f "$eng_dir/$year/$_/index.wml" } readdir(DIR);
 	closedir DIR;
 	
-	$count=0;
 	foreach (sort {$b <=> $a} @files) {
-		$count++;
 		next if $_ > $currentissue; # skip issues in preparation.
 		my $num=$_;
 		$_="$_/index.wml";
@@ -43,7 +41,6 @@ sub get_weeklynews_list {
 			$str.="$num.\t<a href=\"$year/$base\">$title</a> $summary<br>\n";
 		}
 		close FILE;
-		if ($count eq $number) { last; }
 	}
 	close DIR;
 	return $str;
