@@ -29,11 +29,13 @@ use Packages::OutputFiles;
 use Getopt::Long;
 
 my $verbose = 0;
+my $dry_run = 0;
 my $time = 100_000; # wait a day and some more time
 
 my %options = (
 	       'time=s' => \$time,
 	       'verbose+' => \$verbose,
+	       'dry-run' => \$dry_run,
 	       );
 
 # Parse commandline options
@@ -52,7 +54,7 @@ foreach my $list_file (@ARGV) {
 	my $timestamp = $files->get_timestamp( $fname );
 	if ( $timestamp < $removal_time ) {
 	    print "remove-stale: delete file $fname\n" if $verbose;
-	    $files->delete_file( $fname );
+	    $files->delete_file( $fname ) unless $dry_run;
 	} else {
 	    print "remove-stale: keep file $fname\n" if $verbose > 1;
 	}
