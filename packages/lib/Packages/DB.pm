@@ -577,6 +577,7 @@ sub merge_in {
 
 	    if ( $success ) {
 		if ( exists $entry->{provides} ) {
+		    chomp $entry->{provides};
 		    foreach my $p ( split /\s*,\s*/o, $entry->{provides} ) {
 			$self->new_pkg( $p );
 			my $tmp_pkg = $self->{db}->{$p}; 
@@ -585,6 +586,7 @@ sub merge_in {
 		    }
 		}
 		if ( exists $entry->{enhances} ) {
+		    chomp $entry->{enhances};
 		    if ($entry->{enhances} =~ /\|/) {
 			warn "W: `|' in Enhances field for $entry->{package}\n"
 			    if $self->{config}{verbose};
@@ -735,10 +737,10 @@ sub process_dep_list {
 	    } else {
 		push(@final_dep_list, [ $given_dep_strip, $dep_op, 
 					$dep_ver, $dep_archs, "(NOT AVAILABLE)" ] );
-		warn "W:$pkg:$rel on $given_dep_strip unsatifiable\n"
-		    if $self->{config}{verbose}
-		&& ( ( $rel =~ /depends/o )
-		     || ( $rel eq 'recommends' ) );
+#		warn "W:$pkg:$rel on $given_dep_strip unsatifiable\n"
+#		    if $self->{config}{verbose}
+#		&& ( ( $rel =~ /depends/o )
+#		     || ( $rel eq 'recommends' ) );
 	    }
 	}
 	push @$res, [ @final_dep_list ];
