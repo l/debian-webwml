@@ -96,6 +96,12 @@ $intro =~ s/<[^>]+>//g;
 
 # Collapse excessive spacing
 $intro =~ s/\s{2,}/ /g;
+$intro =~ s/^\s+//g;
+
+# Replace some common entities
+$intro =~ s/&[mn]dash;/--/g;
+$intro =~ s/&[rl]dquo;/"/g;
+$intro =~ s/&[rl]squo;/'/g;
 
 # Add backslashes in front of commas in the descriptive texts
 $intro =~ s/,/\\,/g;
@@ -164,7 +170,7 @@ open ICS, '>' . $icsfile or die "Cannot create $icsfile: $!\n";
 &calline(ICS, 'X-EPOCAGENDAENTRYTYPE:EVENT'); # My Revo+ adds this on export
 &calline(ICS, 'DTSTART:'. $startstring);
 &calline(ICS, 'DTEND:' . $endstring);
-&calline(ICS, 'TRANSP:TRANSPARENT'); # Can be argued
+# &calline(ICS, 'TRANSP:TRANSPARENT'); # Can be argued
 &calline(ICS, 'LOCATION' . $charsetlanguage . ':' . $where);
 &calline(ICS, 'LAST-MODIFIED:' . POSIX::strftime('%Y%m%dT%H%M%SZ', gmtime($mtime)));
 &calline(ICS, 'END:VEVENT');
