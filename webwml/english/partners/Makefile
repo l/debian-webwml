@@ -10,7 +10,8 @@ include $(WMLBASE)/Make.lang
 
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
-                        $(ENGLISHSRCDIR)/partners/index.include
+                        $(ENGLISHSRCDIR)/partners/index.include \
+                        $(ENGLISHSRCDIR)/partners/images/*
 
 # there is no reason to translate the file partners-form.txt 
 # so don't modify the following
