@@ -1,0 +1,128 @@
+<define-tag description>vulnerabilidade remota</define-tag>
+<define-tag moreinfo>
+<p>Theo de Raadt anunciou que o time do OpenBSD está trabalhando junto ao ISS
+em uma vulnerabilidade remota do OpenSSH (uma implentação livre do protocolo
+Secure SHell). Eles se recusam a fornecer qualquer detalhe da vulnerabilidade
+mas aconselham a todos para atualizarem para a última versão, 3.3.
+</p>
+
+<p>Esta versão foi lançada em 22 de Junho de 2002 e habilita, por padrão, 
+uma característica chamada separação de pribilégio, para minimizar o efeito
+da vulnerabilidade do código de tratamento de rede ssh. Infelizmente, esta 
+versão tem alguns problemas conhecidos:</p>
+
+<ul>
+<li>compactação não funciona em todos os sistemas operacionais uma vez que
+o código conta com uma característica específica da mmap,</li>
+
+<li>o suporte a PAM não está completo e pode quebrar alguns módulos PAM,</li>
+
+<li>autenticação interativa por teclado não funciona com separação de privilégio. 
+Especialmente para usuários Debian, isto quebra os módulos PAM que necessitam 
+da funcão de conversão PAM (como o módulo OPIE).</li>
+</ul>
+
+<p>
+O novo suporte a separação de privilégio de Niels Provos altera o ssh 
+para usar um processo separado não-privilegiado para lidar com a maioria
+deste trabalho. Isto significa que qualquer vulnerabilidade nesta parte
+do OpenSSH nunca poderá levar até a conta root mas somente a uma conta
+não privilegiada e restrita a um ambiente chroot.
+</p>
+
+<p>Isto significa que qualquer vulnerabilidade nesta parte
+do OpenSSH nunca poderá levar até a conta root mas somente a uma conta
+separada e restrita a um ambiente chroot.</p>
+
+<p>Como os detalhes do problema não foram informados, a mudança para a 
+última versão portada do OpenSSH, 3.3p1, é o único método conhecido de diminuir
+o risco da vulnerabilidade informada.</p>
+
+<p>Por favor, note que não tivemos tempo para realizar um processo de QA
+adequado para estes pacotes; eles podem conter bugs ou quebrar coisas 
+inesperadamente. Se você observar algum desses problemas (exceto aqueles
+mencionados neste alerta), por favor, envie-nos um bug report para que possamos
+investigar.</p>
+
+<p>Algumas notas sobre possíveis assuntos associados com esta atualização:</p>
+
+<ul>
+<li>Este pacote traz uma nova conta chamada `sshd' que é usada no código 
+de separação de privilégio. Se a conta ssh não existir, o pacote tentará
+criar uma. Se a conta já existir, ele irá usá-la. Se você não quer que 
+isto ocorra, deverá corrigir manualmente.</li>
+
+<li>(relevante somente para a potato) Esta atualização adiciona um backport
+da versão 0.9.6c da biblioteca SSL. Isto significa que você deverá 
+atualizar o pacote ssl também. </li>
+
+<li>(relevante somente para a potato) Esta atualização usa por padrão a 
+versão 2 do protocolo SSH. Isto pode quebrar configurações existentes onde
+a autenticação RSA é usada. Você deverá também
+    <ul>
+      <li>adicione -1 ao executar o ssh para manter o uso do protocolo 1 do SSH e suas chaves
+existentes, ou 
+      <li>altere a linha <kbd>Protocol</kbd> no arquivo <tt>/etc/ssh/ssh_config</tt>
+          e/ou
+          <tt>/etc/ssh/sshd_config</tt> para "<kbd>Protocol 1,2</kbd>"
+          para tentar o protocolo 1 antes do 2 ou 
+      <li>criar novas chaves rsa ou dsa para o protocolo 2 do SSH 
+    </ul>
+    </li>
+
+<li>por padrão, o sshd habilita a separação de privilégio, mesmo que você
+não tenha explicidamente habilitado no arquivo <tt>/etc/ssh/sshd_config</tt>.
+Novamente, a menos que você tenha "<kbd>UsePrivilegeSeparation no</kbd>" no seu
+sshd_config, você estará usando a separação de privilégio com este pacote. </li>
+
+<li>Se o ssh não funcionar, você pode tentar desabilitar a compactação. Nos 
+incluímos um patch do Solar Designer que deve corrigir o problema com kernels 
+Linux 2.2, mas pode haver alguns casos onde isto não é suficiente. </li>
+
+<li>(relevante somente para a potato) Separação de privilégio atualmente não funciona
+com kernels Linux 2.0.</li>
+
+<li>Se, por alguma razão, você não pode usar separação de privilégio (por exemplo,
+porque você está rodando um kernel 2.0) mas já instalou o pacote openssh 3.3p1, você
+pode reverter o comportamente anterior, adicionando "<kbd>UsePrivilegeSeparation no</kbd>"
+ao seu arquivo <tt>/etc/ssh/sshd_config</tt>.
+    <strong>Note que desabilitando a separação de privilégio, você estará
+vulnerável ao problema de segurança descrito neste alerta e que isto deve ser feito
+somente em casos emergenciais.</strong></li>
+</ul>
+
+<p>Algumas características de pacotes anteriores ao openssh 3.3p1 corrigidas ***
+
+Some issues from previous openssh 3.3p1 packages corrected in this
+advisory (not a complete changelog):</p>
+
+<ul>
+<li>(relevante somente para a potato) a questão feita durante a instalação,
+"Você quer permitir somente o uso do protocolo 2" não será mais "sim" por padrão. 
+Usuários que responderam sim a esta questão e também escolheram recriar o arquivo
+sshd_config não poderão mais conectar ao servidor via protocolo 1. Veja o arquivo 
+<tt>/usr/doc/ssh/README.Debian</tt> para obter instruções sobre como habilitar o
+protocolo 1 se estiver nesta situação.</li>
+
+
+<li>(relevante somente para a potato) o pacote ssh não conflita mais com o rsh-server, 
+nem que fornece uma alternativa ao rsh</li>
+
+<li>a instalação não falhará se os usuários escolherem gerar chaves com o protocolo 1
+</li>
+</ul>
+
+<p>Novamente, nos lamentos ter que lançar pacotes com grandes mudanças e menos
+testes com relação aos que são feitos normalmente; dada a potencial severidade
+e natureza não especificada desta ameaça nós decidimos que nossos usuários 
+estariam melhor servidos tendo pacotes disponíveis para atualização quanto mais
+rápido possível. Nós iremos enviar informações adicionais assim que as tivermos
+e continuaremos a trabalhar nos assuntos que estão sendo tratados.</p>
+
+
+<p>Por favor, note que pacotes para a arquitetura m68k para woody não estão 
+disponíveis ainda. </p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2002/dsa-134.data"
