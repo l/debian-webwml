@@ -1,5 +1,5 @@
 #use wml::debian::template title="Sito web Debian in altre lingue" BARETITLE=true
-#use wml::debian::translation-check translation="1.32"
+#use wml::debian::translation-check translation="1.33"
 
 <P>Ovviamente non tutti nel mondo usano la stessa lingua. Dato che la
 	  rete cresce sta diventando sempre più comune trovare pagine
@@ -44,10 +44,71 @@ se il problema è stato risolto. Suggeriamo inoltre di usare lynx per i test. È
 l'unico browser 100% compatibile con la specificata HTTP della negoziazione
 dei contenuti.</p>
 
+<H3>Quale valore dare alle varibili?</H3>
+
+<P>Poiché la lingua nella quale sono scritte le pagine web originali di Debian
+è l'inglese e non tutti i documenti possono essere tradotti nella tua lingua, è
+una buona idea quella di fare in modo che il tuo browser accetti l'inglese come
+linga di scorta. Per esempio, se sei una persona che parla italiano e utilizzi
+lynx, puoi inserire questa riga nel tuo <kbd>.lynxrc</kbd></p>
+
+<pre>
+preferred_language=it; q=1.0, en; q=0.5
+</pre>
+
+<p>Questo dice al server che preferisci la versione italiana dei documenti, ma
+che altrimenti accetti anche gli inglesi.</p>
+
+<p>Una cosa alla quale devi prestare particolarmente attenzione è l'utilizzo
+delle sottocategorie delle lingue.
+Utilizzare 'en-GB, it', ad esempio, non fa quello che la maggior parte della
+gente si aspetta (a meno che non ci si sia letta tutta la specifica HTTP.)
+Un server che riceve una richiesta per un documento con lingua preferita
+'en-GB, it' quando ci sono dispobili sia 'en' che 'it' restituirà la versione
+italiana.
+Restituirà la versione inglese prima di quella italiana solo se avrà il documento
+anche nella versione en-gb.
+Quindi dovresti configurare il tuo browser per spedire 'en-GB, en, it' o
+semplicemente 'en, it'.
+Funziona invece il procedimento contrario, vale a dire che un server può
+restituire la versione en-us se viene richiesta la en.</p>
+
+<p><strong>Noi sconsigliamo vivamente di inserire il codice della
+nazione all'interno delle lingua preferite a meno che non ci sia una
+motivazione molto forte</strong>. Se la aggiungi allora accertati di aver
+inserito anche la lingua senza l'estensione della nazione.</p>
+
+<P>Per maggiori informazioni sulla variabile preferred_language vedi
+<a href="http://httpd.apache.org/docs/content-negotiation.html">Apache
+documentation on content negotiation</a>.</p>
+
+<h3><a name="cache">Potenziali problemi con i server proxy</a></h3>
+
+<p>I server Proxy sono essenzialmente dei web server che non contengono nulla di
+proprio. Questi giacciono fra gli utenti e i veri web server. Intercettano le
+tue richieste di pagine web e scaricano la pagina. Dopo aver fatto ciò, inviano
+la pagina a te ma creano anche una copia locale, salvata localmente, per
+richieste successive. Ciò può ridurre drasticamente il traffico di rete quando
+molti utenti richiedono la stessa pagina.</p>
+
+<p>Questa è una grande idea la maggior parte delle volte, ma fallisce quando la
+memoria ha problemi.  In particolare, alcuni vecchi server proxy non interpretano
+correttamente la negoziazione dei contenuti. Ciò comporta che facciano il
+'caching' di una pagina anche se altri la richiedono in lingue diverse. L'unica
+soluzione è di aggiornare o sostituire il programma di cache.</p>
+
+<p>Una volta le persone usavano il proxy solamente quando configuravano il
+proprio browser per usarne uno. Ciò non è più vero. Il tuo ISP potrebbe
+redirigere tutte le richieste HTTP attraverso un transparent proxy. Se il proxy
+non gestisce correttamente la negoziazione, gli utenti potranno ricevere pagine
+salvate nella lingua sbagliata. L'unico modo in cui potete risolvere questo
+problema è quello di lamentarvi col vostro ISP affinchè aggiornino o cambino il
+loro software.</p>
+
 <h3><a name="setting">Selezionare la lingua preferita nel browser</a></h3>
 
-<P>Nota: il seguente elenco non è completo. Se hai informazioni su come
-configurare un browser che non si trovi in questo elenco, per favore mandale a
+<P>Se hai informazioni su come configurare un browser che non si trovi in questo
+elenco, per favore mandale a
 <a href="mailto:debian-www@debian.org">debian-www@debian.org</a>.</p>
 
 <P>Per impostare la lingua preferita nel proprio browser, si deve
@@ -114,64 +175,3 @@ o usando il package personalizzato (assumendo URL versione p4.0pre.14):
      Options (o) -&gt; Other Behavior -&gt; Accept-Language
 </pre>
 </DL>
-
-<H3>A quale valore si dovrebbe impostare la variabile?</H3>
-
-<P>Questo è scritto per coloro che devono riempire il valore della
-variabile manualmente, per esempio gli utenti di lynx. Gli utenti di
-Netscape 4.x dovrebbero scegliere tra le scelte offerte.
-
-<P>Dato che il lingua originale delle pagine web Debian è
-l'inglese e non tutti i documenti potrebbero essere tradotti, è una
-buona idea impostare il suo linguaggio preferito in modo da
-permettere l'inglese come ultima risorsa. Per esempio, se si è un
-utente italiano che utilizza lynx, si potrebbe voler impostare la
-seguente riga nel proprio <kbd>.lynxrc</kbd></p>
-<pre>
-    preferred_language=it; q=1.0, en; q=0.5
-</pre>
-
-<p>
-Questo informa il server che, se disponibile, si preferisce la
-versione italiana del documento, altrimenti la versione inglese.</p>
-
-<P>Bisogna perstare particolare attenzione nell'usare le sottocategorie
-delle lingue. Inserendo 'it-IT, en' per esempio, non si ha quello che la
-maggior parte delle persone si aspetta (se non si sono letti la specifica HTTP.)
-Un server che riceve la richiesta di un documento che un linguaggio preferito
-'it-IT, en' nel caso in cui sia la versione 'it' che la 'en' esistano, fornirà
-quella inglese.
-Fornirà l'italiana solo nel caso in cui trovi un documento la cui versione
-sia it-IT. Quindi se preferite l'italiano e, in alternativa, l'inglese dovete specificare 'it-IT, it, en' oppure, più semplicemente, 'it, en'.
-In realtà funziona al contrario, vale a dire che un server può restituire
-un documento in it-CH se se ne è richiesto uno it.</p>
-
-<P><strong>Raccomandiamo vivamente che non inseriate estensioni relative alla nazione salvo che per motivi ben ponderati</strong>.
-Se le inserite, fate attenzione a inserire anche la lingua senza la specificazione della nazione.</p>
-
-<P>Per maggiori informazioni su come impostare la variabile
-preferred_language vedere la
-<a
-href="http://www.apache.org/docs/content-negotiation.html">documentazione
-Apache sulla negoziazione del contenuto</a>.</p>
-
-<h3><a name="cache">Potenziali problemi con i server proxy</a></h3>
-<p>I server Proxy sono essenzialmente dei web server che non contengono nulla
-di proprio. Questi giacciono fra gli utenti e i veri web server. Intercettano
-le tue richieste di pagine web e scaricano la pagina. Dopo aver fatto ciò, inviano la
-pagina a te ma creano anche una copia locale, salvata localmente, per richieste successive. Ciò
-può ridurre drasticamente il traffico di rete quando molti utenti richiedono la stessa
-pagina.</p>
-
-<p>Questa è una grande idea la maggior parte delle volte, ma fallisce quando la memoria ha problemi.
-In particolare, alcuni vecchi server proxy non interpretano correttamente la negoziazione dei contenuti. Ciò comporta
-che facciano il 'caching' di una pagina anche se altri la richiedono in lingue diverse. L'unica soluzione è di
-aggiornare o sostituire il programma di cache.</p>
-
-<p>Una volta le persone usavano il proxy solamente quando configuravano il proprio browser
-per usarne uno. Ciò non è più vero. Il tuo ISP potrebbe redirigere tutte le richieste
-HTTP attraverso un transparent proxy. Se il proxy non gestisce correttamente la negoziazione,
-gli utenti potranno ricevere pagine salvate nella lingua sbagliata. L'unico modo
-in cui potete risolvere questo problema è quello di lamentarvi col vostro ISP
-affinchè aggiornino o cambino il loro software.</p>
-
