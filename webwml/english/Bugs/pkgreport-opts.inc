@@ -56,7 +56,7 @@
 	[FR:ordre inverse de ::]
 	[HR:Obrnut redoslijed za: :]
 	[IT:Ordine inverso di: :]
-	[JA:µÕ½ç¤ËÊÂ¤Ù¤ë:]
+	[JA:µÕ½ç¤ËÊÂ¤Ù¤ë: :]
 	[NO:Omvendt rekkefølge for: :]
 	[SV:Omvänd ordning för: :]
 </define-tag-sliced>
@@ -103,7 +103,7 @@
 	[FR:Inclus l'état ::]
 	[HR:Ukljuèi stanje: :]
 	[IT:Stato incluso: :]
-	[JA:°Ê²¼¤Î¾õÂÖ¤Î¤â¤Î¤ò´Þ¤á¤ë:]
+	[JA:´Þ¤á¤ë¾õÂÖ: :]
 	[SV:Inkludera status: :]
 </define-tag-sliced>
 <define-tag-sliced status_exclude whitespace=delete>
@@ -114,7 +114,7 @@
 	[FR:Exclu l'état ::]
 	[HR:Iskljuèi stanje: :]
 	[IT:Stato escluso: :]
-	[JA:°Ê²¼¤Î¾õÂÖ¤Î¤â¤Î¤ò´Þ¤á¤Ê¤¤:]
+	[JA:´Þ¤á¤Ê¤¤¾õÂÖ: :]
 	[SV:Exkludera status: :]
 </define-tag-sliced>
 <define-tag-sliced severity_include whitespace=delete>
@@ -125,7 +125,7 @@
 	[FR:Inclus la gravité ::]
 	[HR:Ukljuèen severity: :]
 	[IT:Includi gravità: :]
-	[JA:°Ê²¼¤Î½ÅÍ×ÅÙ¤Î¤â¤Î¤ò´Þ¤á¤ë:]
+	[JA:´Þ¤á¤ë½ÅÍ×ÅÙ: :]
 	[NO:Inkludér alvorlighetsgrader: :]
 	[SV:Inkludera allvarlighetsgrader: :]
 </define-tag-sliced>
@@ -137,7 +137,7 @@
 	[FR:Exclu la gravité ::]
 	[HR:Iskljuèen severity: :]
 	[IT:Escludi gravità: :]
-	[JA:°Ê²¼¤Î½ÅÍ×ÅÙ¤Î¤â¤Î¤ò´Þ¤á¤Ê¤¤:]
+	[JA:´Þ¤á¤Ê¤¤½ÅÍ×ÅÙ: :]
 	[NO:Ekskludér alvorlighetsgrad: :]
 	[SV:Exkludera allvarlighetsgrader: :]
 </define-tag-sliced>
