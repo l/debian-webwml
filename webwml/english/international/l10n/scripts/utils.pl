@@ -187,13 +187,21 @@ sub read_data {
 	    $last_section="po";
 	    $last_nb=0;
 	}
+	# begin of templates files section ?
+	elsif (/^TEMPLATES:$/) {
+	    if ($pkg eq "") {
+		&$parse_warn ("po files section comes before package name section");
+	    }
+	    $last_section="templates";
+	    $last_nb=0;
+	}
 	# next item of current section ?
 	elsif (/^ .$/) {
 	    if ($pkg eq "") {
 		&$parse_warn ("continuing a section comes before package name section");
 	    }
 	    if (($last_section eq "")
-		||($last_section eq "po")||($last_section eq "nls")
+		||($last_section eq "po")||($last_section eq "nls")||($last_section eq "templates")
 		||($last_section eq "catgets")||($last_section eq "gettext")) {
 		&$parse_warn ("this section can't be continued");
 	    }
@@ -207,7 +215,7 @@ sub read_data {
 	    if ($last_section eq "") {
 		&$parse_warn ("this section can't be continued");
 	    }
-	    if (($last_section eq "po")||($last_section eq "nls")
+	    if (($last_section eq "po")||($last_section eq "nls")||($last_section eq "templates")
 		||($last_section eq "catgets")||($last_section eq "gettext")) {
 		$data{$pkg}{$last_section}[$last_nb] = "$1";
 		$last_nb++;
@@ -357,6 +365,22 @@ sub read_sources {
 	    $last_section="files";
 	    $last_nb=0;
 	}
+	# begin of format section ?
+	elsif (/^Format:/) {
+	    if ($pkg eq "") {
+		&$parse_warn ("Format section comes before package name section");
+	    }
+	    $last_section="format";
+	    $last_nb=0;
+	}
+	# begin of Origin section ?
+	elsif (/^Origin:/) {
+	    if ($pkg eq "") {
+		&$parse_warn ("Origin section comes before package name section");
+	    }
+	    $last_section="origin";
+	    $last_nb=0;
+	}
 	# next item of current section ?
 	elsif (/^ .$/) {
 	    if ($pkg eq "") {
@@ -453,6 +477,14 @@ sub write_data {
 	    }
 	    for ($nb=0;$nb<@{$data{$pkg}{"po"}};$nb++) {
 		print DESC " $data{$pkg}{'po'}[$nb]\n";
+	    }
+	}
+	if (defined($data{$pkg}{"templates"})) {
+	    if (0 != @{$data{$pkg}{"templates"}}) {
+		print DESC "TEMPLATES:\n";
+	    }
+	    for ($nb=0;$nb<@{$data{$pkg}{"templates"}};$nb++) {
+		print DESC " $data{$pkg}{'templates'}[$nb]\n";
 	    }
 	}
 

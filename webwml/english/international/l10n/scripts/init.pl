@@ -3,8 +3,10 @@
 ##########
 # Config part
 ##########
-my $DB_FILE="data/transmonitor";
-my $PO_ROOT="http://www.ens-lyon.fr/~mquinson/debian/po";
+my $DISTRIB="unstable";
+my $DB_FILE="data/$DISTRIB";
+my $PO_ROOT="http://www.ens-lyon.fr/~mquinson/debian/material/po/$DISTRIB";
+my $TEMPLATES_ROOT="http://www.ens-lyon.fr/~mquinson/debian/material/templates/$DISTRIB";
 
 ##########
 # Init

@@ -15,7 +15,7 @@ my $since_header=0;
 
 my $header = "<tr><td><package></td><td><orgAbrev></td>";
 foreach $lang (sort keys %l10nlangs) {
-    $header .= "<td>$lang</td>";
+    $header .= "<td><a href=\"l10n-lang-$lang\">$lang</a></td>";
 }
 $header .= "\n";
 $header =~ s/<(td)/<$1 BGCOLOR="#ddddd5" align=center/g; # change background and center
@@ -90,7 +90,7 @@ sub score_output {
     if ($t+$u+$f == 0) {
 	return "Err";
     }
-    $res = $t/($t+$u+$f) * $nb_per_lang{$lang};
+    $res = $t;#/($t+$u+$f) * $nb_per_lang{$lang};
     $res =~ s/^([0-9]*\..).*/$1/;
     if (defined($scores{$res})) {
 	$scores{$res} .= "|$lang";
