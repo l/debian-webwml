@@ -55,6 +55,7 @@ $translations = {
 # ########################################################################################
 
 'book-gtiau' => {
+	'status'		=> 0,
 	'type'			=> 'none',
 	'name'			=> 'Debian GNU/Linux: Guide to Installation and Usage',
 	'url'			=> 'http://www.newriders.com/debian/html/noframes/',
@@ -67,25 +68,29 @@ $translations = {
 # ########################################################################################
 
 'project-history' => {
+	'status'		=> 1,
 	'type'			=> 'DDP',
 	'name'			=> 'The Debian Project History',
 	'author'		=> 'Will Lowe',
 	'revision'		=> '1.1.1',
-	'status'		=> 1,
 	'lines'			=> 336,
 },
 
 'faq' => {
+	'status'		=> 0,
 	'type'			=> 'DDP',
-	'author'		=> 'Josip Rodin',
 	'name'			=> 'Debian GNU/Linux FAQ',
+	'author'		=> 'Josip Rodin',
 	'package'		=> 'doc-debian',
+	'url'			=> 'http://www.debian.org/doc/manuals/debian-faq/',
+	'cvs_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/faq/?cvsroot=debian-doc',
+	'source_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/faq/debian-faq.sgml?cvsroot=debian-doc',
 },
 
 'constitution' => {
+	'status'		=> 0,
 	'type'			=> 'DDP',
 	'name'			=> 'Debian Constitution',
-	'status'		=> 0,
 	'url'			=> '#',
 	'cvs_url'		=> '?',
 	'package'		=> 'doc-debian',
@@ -93,36 +98,36 @@ $translations = {
 },
 
 'bug-log-access' => {
+	'status'		=> 0,
 	'type'			=> 'DDP',
 	'name'			=> 'Accessing bug reports in the tracking system logs',
-	'status'		=> 0,
 	'url'			=> '#',
 	'cvs_url'		=> '?',
 	'package'		=> 'doc-debian',
 	'lines'			=> 24,
 },
 'mailing-lists' => {
+	'status'		=> 0,
 	'type'			=> 'DDP',
 	'name'			=> 'Introduction to the Debian mailing lists',
-	'status'		=> 0,
 	'url'			=> '#',
 	'cvs_url'		=> '?',
 	'package'		=> 'doc-debian',
 	'lines'			=> 906,
 },
 'bug-reporting' => {
+	'status'		=> 0,
 	'type'			=> 'DDP',
 	'name'			=> 'How to report a bug in Debian',
-	'status'		=> 0,
 	'url'			=> '#',
 	'cvs_url'		=> '?',
 	'package'		=> 'doc-debian',
 	'lines'			=> 202,
 },
 'source-unpack' => {
+	'status'		=> 0,
 	'type'			=> 'DDP',
 	'name'			=> 'How to unpack a Debian source package',
-	'status'		=> 0,
 	'url'			=> '#',
 	'cvs_url'		=> '?',
 	'package'		=> 'doc-debian',
@@ -135,52 +140,53 @@ $translations = {
 #
 
 'book-suggestions' => {
+	'status'		=> 1,
 	'type'			=> 'DDP',
 	'name'			=> 'Debian GNU/Linux Book Suggestions',
-	'status'		=> 1,
 },
 
 'meta' => {
+	'status'		=> 1,
 	'type'			=> 'DDP',
 	'name'			=> 'Debian META Manual',
 	'author'		=> 'Ardo van Rangelrooij',
-	'status'		=> 1,
 	'lines'			=> 398,
 	'lines'			=> 407
 },
 
 'dictionary' => {
+	'status'		=> 1,
 	'type'			=> 'DDP',
 	'name'			=> 'Debian GNU/Linux Dictionary',
-	'status'		=> 1,
 	'lines'			=> 346,
 },
 
 'tutorial' => {
+	'status'		=> 1,
 	'type'			=> 'DDP',
 	'name'			=> 'Debian Tutorial',
 	'revision'		=> '2.1',
 	'lines'			=>  6131,
-	'url'			=> 'http://www.debian.org/~hp/tutorial/debian-tutorial.html',
+	'source_url'		=> 'http://cvs.debian.org/ddp/manuals.sgml/tutorial/debian-tutorial.sgml?cvsroot=debian-doc',
 },
 
 'user' => {
+	'status'		=> 1,
 	'type'			=> 'DDP',
 	'name'			=> 'Debian User Reference Manual',
-	'status'		=> 1,
 },
 
 'system-administrator' => {
+	'status'		=> 1,
 	'type'			=> 'DDP',
 	'name'			=> 'Debian GNU/Linux System Administrator\'s Manual',
-	'status'		=> 1,
 	'lines'			=> 2322,
 },
 
 'network-administrator' => {
+	'status'		=> 1,
 	'type'			=> 'DDP',
 	'name'			=> 'Debian GNU/Linux Network Administrator\'s Manual',
-	'status'		=> 1,
 	'lines'			=> 2086,
 },
 
@@ -222,7 +228,7 @@ $translations = {
 	'name'			=> 'Debian Policy Manual',
 	'revision'		=> '3.5.4.0',
 	'url'			=> 'http://www.debian.org/doc/debian-policy/',
-	'cvs_url'		=> 'http://cvs.debian.org/ddp/debian-policy/debian-policy/debian-policy.sgml?cvsroot=debian-doc',
+	'cvs_url'		=> 'http://cvs.debian.org/debian-policy/policy.sgml?cvsroot=debian-policy',
 	'package'		=> 'debian-policy',
 },
 
@@ -230,7 +236,8 @@ $translations = {
 	'type'			=> 'DDP',
 	'name'			=> 'Debian Packaging Manual',
 	'revision'		=> '2.4.1.0',
-	'cvs_url'		=> 'http://cvs.debian.org/ddp/debian-policy/packaging-manual/packaging.sgml?cvsroot=debian-doc',
+	'cvs_url'		=> 'http://cvs.debian.org/packaging-manual/?cvsroot=debian-policy',
+	'source_url'		=> 'http://cvs.debian.org/packaging-manual/packaging.sgml?cvsroot=debian-policy',
 	'package'		=> 'debian-policy',
 },
 
@@ -252,8 +259,9 @@ $translations = {
 	'type'			=> 'DDP',
 	'name'			=> 'dpkg Internals Manual',
 	'revision'		=> '1.5',
-	'url'			=> 'http://www.debian.org/~elphick/manuals.html/dpkg-internals/',
-	'cvs_url'		=> 'http://cvs.debian.org/dpkg/dpkg/doc/internals.sgml?cvsroot=dpkg',
+	'url'			=> 'http://www.debian.org/doc/packaging-manuals/dpkg-internals/',
+	'source_url'		=> 'http://cvs.debian.org/dpkg/doc/internals.sgml?cvsroot=dpkg',
+	'cvs_url'		=> 'http://cvs.debian.org/dpkg/doc/internals.sgml?cvsroot=dpkg',
 	'package'		=> 'dpkg-dev',
 },
 
@@ -312,6 +320,7 @@ $translations = {
 },
 
 'debiandoc-startup' => {
+	'status'		=> 0,
         'type'                  => 'DDP',
         'name'                  => 'Debiandoc Starup',
         'revision'              => '',
@@ -327,6 +336,7 @@ $translations = {
 # ########################################################################################
 
 'newbie-doc' => {
+	'status'		=> 0,
 	'type'			=> 'DDP',
 	'name'			=> 'Documentation for new users',
 	'lines'			=> 3803,
@@ -334,6 +344,7 @@ $translations = {
 },
 
 'debian-bugs' => {
+	'status'		=> 0,
 	'type'			=> 'DDP',
 	'name'			=> 'Debian\'s Bug Tracking System',
 	'revision'		=> '0.2',
