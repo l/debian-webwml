@@ -11,7 +11,9 @@ $(HTMLDIR)/%.html.$(LANG) : %.wml $(TEMPLDIR)/template.wml
 all:\
 	$(HTMLDIR)/contact.html.$(LANG) \
 	$(HTMLDIR)/index.html.$(LANG) \
+	$(HTMLDIR)/license.html.$(LANG) \
 	$(HTMLDIR)/social_contract.html.$(LANG) \
+	$(HTMLDIR)/support.html.$(LANG) \
 	$(HTMLDIR)/developers_corner.html.$(LANG) \
 	$(HTMLDIR)/devel/HOWTO_translate.html.$(LANG) \
 	$(HTMLDIR)/devel/extract_key.html.$(LANG) \
@@ -26,12 +28,10 @@ all:\
 #    $(HTMLDIR)/devel/mirror_submit.html.$(LANG) \
 #    $(HTMLDIR)/devel/ports.html.$(LANG) \
 #    $(HTMLDIR)/donations.html.$(LANG) \
-#    $(HTMLDIR)/license.html.$(LANG) \
 #    $(HTMLDIR)/news.html.$(LANG) \
 #    $(HTMLDIR)/news1997.html.$(LANG) \
 #    $(HTMLDIR)/related_links.html.$(LANG) \
 #    $(HTMLDIR)/sponsor.html \
-#    $(HTMLDIR)/support.html.$(LANG) \
 #    $(HTMLDIR)/2.0/errata.html.$(LANG) \
 #    $(HTMLDIR)/2.0/2.0beta_CD.html.$(LANG) \
 #    $(HTMLDIR)/2.0/HOWTO.upgrade.html.$(LANG) \
