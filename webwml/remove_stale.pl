@@ -77,7 +77,9 @@ sub recurse
 	my $direntry;
 	foreach $direntry (@entries)
 	{
-		if (-f $direntry && $direntry =~ /\.html$/)
+		# sitemap.??.html files should be ignored since they don't have a .wml
+		# file, except in the english dir
+		if (-f $direntry && $direntry =~ /\.html$/ && $direntry !~ /sitemap\...\.html$/)
 		{
 			my ($haswml, $incvs) = (0, 0);
 
