@@ -148,7 +148,7 @@ $DESC_LINE
 HEAD
 ;
 
-    $txt .= img( "$HOME/", "", "Pics/debian.jpg", gettext( "Debian Project" ),
+    $txt .= img( "$HOME/", "", "Pics/debian.png", gettext( "Debian Project" ),
 		 width => 179, height => 61 );
     $txt .= <<NAVBEGIN;
 </td>

@@ -114,16 +114,6 @@ if (!-r $file) {
   exit;
 }
 
-my $timestamp = time() - (-M $file) * 86_400;
-my ($sec,$min,$hour,$mday,undef,$year) = gmtime($timestamp);
-my $time_str = gmtime($timestamp);
-my ($wday, $month) = ($time_str =~ /^(\w{3})\s+(\w+)/);
-
-$year += 1900;
-$time_str = sprintf( "$wday, $mday $month $year %02d:%02d:%02d +0000", 
-		     $hour, $min, $sec );
-
-
 # now grep the contents file appropriately
 my $grep;
 if ($searchmode eq "filelist") {
@@ -164,7 +154,7 @@ if (!@results) {
   } else {
     print "Can't find that file, at least not in that distribution and on that architecture.\n";
   }
-  &printfooter;
+  &printfooter( $file );
   exit
 }
 
@@ -258,18 +248,32 @@ print <<END;
 <HR>
 END
 print "<center>$index_line</center>" if $index_line;
-print "<p align=\"left\"><small><i>The used contents file was last updated $time_str</i></small></p>\n";
 
-&printfooter;
+&printfooter( $file );
 
 exit;
 
 sub printfooter {
-print <<END;
+    my $stamp_file = shift;
+
+    if ($stamp_file) {
+	my $timestamp = time() - (-M $file) * 86_400;
+	my ($sec,$min,$hour,$mday,undef,$year) = gmtime($timestamp);
+	my $time_str = gmtime($timestamp);
+	my ($wday, $month) = ($time_str =~ /^(\w{3})\s+(\w+)/);
+
+	$year += 1900;
+	$time_str = sprintf( "$wday, $mday $month $year %02d:%02d:%02d +0000", 
+			     $hour, $min, $sec );
+
+	print "<p align=\"left\"><small><i>The used contents file was last updated $time_str</i></small></p>\n";
+    }
+
+    print <<END;
 
 <p align="right"><small><i><a href="http://packages.debian.org/">
 Packages search page</a></i></small></p>
 END
 
-print $input->end_html;
+    print $input->end_html;
 }
