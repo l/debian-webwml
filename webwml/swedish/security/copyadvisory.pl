@@ -81,6 +81,7 @@ while (<SRC>)
 	next if /\$Id/;
 
 	s/^(<p>)?A problem has been discovered in\b/$1Ett problem har upptäckts i/;
+	s/\bdiscovered a problem in\b/upptäckte ett problem i/;
 	s/We recommend that you upgrade your (.*) package immediately/Vi rekommenderar att ni uppgraderar ert $1-paket omedelbart/;
 	s/We recommend that you upgrade your (.*) packages immediately/Vi rekommenderar att ni uppgraderar era $1-paket omedelbart/;
 	s/We recommend that you upgrade your (.*) and (.*) packages/Vi rekommenderar att ni uppgraderar era $1- och $2-paket/;
@@ -95,10 +96,12 @@ while (<SRC>)
 	s/format string vulnerability/formatsträngssårbarhet/;
 	s/format string vulnerabilities/formatsträngssårbarheter/;
 	s/insecure temporary files/osäkra temporära filer/;
+	s/>insecure temporary file creation</>osäkra temporära filer</;
 	s/>local root exploit</>lokal rootattack</;
 	s/>remote root exploit</>fjärr-rootattack</;
 	s/>symlink attack</>attack mot symboliska länkar</;
 	s/>remote exploit</>fjärrattack</;
+	s/>missing input sanitising</>städar inte indata</;
 	s/Several vulnerabilities/Flera sårbarheter/;
 	s/several vulnerabilities/flera sårbarheter/;
 	s/>several</>flera</;
