@@ -127,15 +127,13 @@ $translations = [
 	'url'			=> 'http://www.igoria.net/install/install.html',
 	'source_url'		=> 'http://www.igoria.net/install/install.sgml',
 	'package'		=> 'boot-floppies',
-	'status'		=> 'en relecture',
-	'since'			=> '05/08/1998',
+	'status'		=> 'traduction à jour',
+	'since'			=> '28/10/1998',
 	'translation_name'	=> 'Manuel d\'installation de Debian',
-	'translation_sub_name'	=> '',
 	'translators'		=> ['Christophe Le Bars <clebars@debian.org>'],
 	'translation_version'	=> '2.0',
 	'translation_url'	=> 'http://www.teaser.fr/~clebars/debian/docs-2.0/install.fr.html',
-# A Faire!!!!!!!!!!!!!!!!!!!!!!!
-#	'translation_source_url'=> 'http://www.teaser.fr/~clebars/debian/docs-2.0/install.fr.sgml',
+	'translation_source_url'=> 'http://www.teaser.fr/~clebars/debian/docs-2.0/install.fr.sgml',
 	'translation_package'	=> 'doc-debian-fr',
 	'last_translated'	=> '27/07/1998',
 },
@@ -510,22 +508,25 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/ports',
-	'status'		=> 'non-traduit',
-	'since'			=> '01/08/1998',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '13/10/1998',
+	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/incoming_mirrors',
-	'status'		=> 'non-traduit',
-	'since'			=> '01/08/1998',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '13/10/1998',
+	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/release_info',
-	'status'		=> 'non-traduit',
-	'since'			=> '01/08/1998',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '13/10/1998',
+	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 },
 
 {
