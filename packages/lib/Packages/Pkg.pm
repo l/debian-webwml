@@ -622,7 +622,7 @@ sub _update_newest {
 		}
 	}
 	if (scalar( keys %values ) == 1) {
-		$self->{newest}{$f} = (values %values)[0];
+		$self->{newest}{$f} = (keys %values)[0];
 	} elsif (scalar( keys %values ) > 1) {
 		$self->{newest}{$f} = "CONFLICT";
 	}
