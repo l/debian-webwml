@@ -95,7 +95,7 @@ my (@being_adopted_html, @being_packaged_html, @requested_html);
 
 foreach my $bug (sort { $rfa{$a} cmp $rfa{$b} } keys %rfa) {
     push @rfa_bypackage_html, "\n<li><a href=\"http://bugs.debian.org/$bug\">$rfa{$bug}</a>";
-    (my $pkg = $rfa{$bug}) =~ s/^(.+)\s+--.*$/$1/;
+    (my $pkg = $rfa{$bug}) =~ s/^(.+):\s+/$1/;
     push @rfa_bypackage_html, " (<a href=\"http://packages.debian.org/$pkg\">package info</a>)";
     push @rfa_bypackage_html, "\n";
 }
@@ -106,7 +106,7 @@ foreach $maint (sort keys %rfabymaint) {
     push @rfa_bymaint_html, "<ul>";
     foreach my $bug (sort { $rfa{$a} cmp $rfa{$b} } @{$rfabymaint{$maint}}) {
         push @rfa_bymaint_html, "<li><a href=\"http://bugs.debian.org/$bug\">$rfa{$bug}</a>";
-        (my $pkg = $rfa{$bug}) =~ s/^(.+)\s+--.*$/$1/;
+        (my $pkg = $rfa{$bug}) =~ s/^(.+):\s+/$1/;
         push @rfa_bymaint_html, " (<a href=\"http://packages.debian.org/$pkg\">package info</a>)";
     }
     push @rfa_bymaint_html, "</ul>";
@@ -116,14 +116,14 @@ if ($#rfa_bymaint_html == -1) { @rfa_bymaint_html = ('<li>No requests for adopti
 
 foreach my $bug (sort { $orphaned{$a} cmp $orphaned{$b} } keys %orphaned) {
     push @orphaned_html, "<li><a href=\"http://bugs.debian.org/$bug\">$orphaned{$bug}</a>";
-    (my $pkg = $orphaned{$bug}) =~ s/^(.+)\s+--.*$/$1/;
+    (my $pkg = $orphaned{$bug}) =~ s/^(.+):\s+/$1/;
     push @orphaned_html, " (<a href=\"http://packages.debian.org/$pkg\">package info</a>)";
     push @orphaned_html, "\n";
 }
 if ($#orphaned_html == -1) { @orphaned_html = ('<li>No orphaned packages') }
 
 foreach my $bug (sort { $ita{$a} cmp $ita{$b} } keys %ita) {
-    (my $pkg = $ita{$bug}) =~ s/^(.+)\s+--.*$/$1/;
+    (my $pkg = $ita{$bug}) =~ s/^(.+):\s+/$1/;
     push @being_adopted_html, 
          "<li><a href=\"http://bugs.debian.org/$bug\">$ita{$bug}</a>";
     push @being_adopted_html,
