@@ -1,0 +1,96 @@
+#use wml::std::tags
+# EXAMPLE CODE (file translation-check.wml called as
+# #use wml::debian::translation-check translation="1.1")
+
+<perl>
+
+sub check_translation {
+# Checks the current document (translated) with its original
+# version, receives as input the name of the document and
+# the CVS version it was translated from.
+# Use it this way 
+# #use wml::debian::translation-check translation="X.xx"
+# instead of  <!--translation X.xx-->
+# 
+# TODO: modify check_trans.pl to recognize also this call
+
+my ($translation, $file) = @_;
+
+# This is the maximum difference between a translated
+# document and the original before printing the warning
+$max_versions = 5;
+
+# This is the directory where the original source is kept
+# maybe it could be a parameter, since sometimes the original
+# language is NOT english
+$original_dir = "../english";
+# TODO: Should do error checking here if file does not exist...
+open (MAKE,"<Makefile");
+# We could also do this same grepping ?faster?
+# Or we could use also $WML_SRC_DIRNAME and then cut out to the root
+while ($line = <MAKE>) 
+{
+        chomp $line;
+        if ( $line =~ /^WMLBASE\s*=\s*(.*)/ )
+        {
+                $wmlbase = $1; 
+        }
+        if ( $line =~ /^CUR_DIR\s*=\s*(.*)/ )
+        {
+                $current_dir = $1; 
+        }
+        last if $wmlbase and $current_dir;
+}
+close MAKE;
+
+# Now read the original CVS file in by opening $wmlbase/$original_dir/$current_dir/CVS/Entries
+# It has to go "back" to the root dir and the "forward" to the same dir we are in
+# but in the language dir.
+ 
+open (CVS_ENTRY,"<$wmlbase/$original_dir/$current_dir/CVS/Entries");
+while ( $line =<CVS_ENTRY> )
+{
+        chomp $line;
+        print "Reading $line \n";
+        if ( $line =~ /\/\Q$file\E\/([\d\.]*)/ ) {
+                $version = $1;
+        }
+        last if $version;
+}
+# TODO: Should check if version not found (maybe yell?)
+
+# Here we compare the original version with the translated one
+# and if their last numbers are too further apart report
+# to the user
+
+# TODO: Also check major number
+if ( $version =~ /\.(\d*)$/ )
+{ $last_number = $1; }
+else
+{ print STDERR "CVS Entry $file version number not as expected: $version not
+in expected format\n";
+  return 1;
+}
+if ( $translation =~ /\.(\d*)$/ )
+{ $last_translated_number = $1;}
+else
+{ print STDERR "Call to the subroutine has not been made as expected:
+$translation not in expected format\n";
+  return 1;
+}
+print "Comparing original $version to translation version $translation\n";
+print "Comparing minor $last_number to minor $last_translated_number\n";
+
+if ( $last_number - $last_translated_number > $max_versions ) 
+{
+# TODO:This should be printed using tags in order to tell the
+# user in his language
+        print "<B>This translations is too out of date<B><BR>";
+}
+close CVS_ENTRY;
+}
+</perl>
+
+
+#The call to the subroutine is done here
+<: check_translation ($(translation),"$WML_SRC_FILENAME)" :>
