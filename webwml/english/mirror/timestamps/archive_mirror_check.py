@@ -38,11 +38,11 @@ def check_site(url, uplink):
 		h.endheaders()
 		errcode, errmsg, headers = h.getreply()
 	except (IOError, socket.error):
-		print '  Problem accessing site'
+		print '  Error accessing site'
 		#continue
 		return
 	if errcode != 200:
-		print '  Site returned Error Code ' + str(errcode)
+		print '  Error: site returned Error Code ' + str(errcode)
 		#continue
 		return
 	# site must be good so actually download it
@@ -50,22 +50,27 @@ def check_site(url, uplink):
 	parse = htmllib.HTMLParser(formatter.NullFormatter())
 	parse.feed(current.read())
 	parse.close()
-	links = parse.anchorlist
+	alllinks = parse.anchorlist
 	# typical list is
-	# ['?N=D', '?M=A', '?S=A', '?D=A', '/mirror/', 'klecker.debian.org']
-	while links and links[0] != uplink:
-		links.pop(0)
+	# ['?N=D', '?M=A', '?S=A', '?D=A', '/mirror/', 'klecker.debian.org', 'mailto:webmaster@debian.org']
+	badlink = re.compile(r'([?/]|mailto:)');
+	links = [];
+	for tmp in alllinks:
+		if not badlink.match(tmp) and not links.count(tmp):
+			links.append(tmp)
 	if not links:
-		print '  Problem with page'
+		print '  Error with page: no useful links'
 		return
-	links.pop(0)
 	urls = {}
-	for url in parse.anchorlist:
-		# urls.append(url)
+	for url in links:
 		if mailto.match(url):
 			continue
 		fullurl = urlparse.urljoin(mirror, url)
-		current = urllib.urlopen(fullurl)
+		try:
+			current = urllib.urlopen(fullurl)
+		except IOError, args:
+			print "  Error: ", args
+			return
 		# Fri Apr 20 17:43:33 UTC 2001
 		# %a  %b  %d %X       %Z  %Y
 		data = current.readline()[:-1]
@@ -78,7 +83,7 @@ def check_site(url, uplink):
 			(hr, min, sec) = string.split(tim, ':')
 			epochtime = time.mktime((int(year), months[mon], int(dom), int(hr), int(min), int(sec), daysofweek[dow], 0, 0))
 		except:
-			print "  Problem with file " + url
+			print "  Error with file " + url
 			print "  Data = " + data
 			return
 		urls[epochtime] = out
