@@ -2,7 +2,6 @@
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
-# Get the current year.
 WMLBASE=../..
 CUR_DIR=News/weekly
 
