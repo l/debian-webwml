@@ -19,3 +19,5 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(ENGLISHSRCDIR)/releases/info
 	$(WML) index.wml
 
+install::
+	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
