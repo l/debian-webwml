@@ -229,7 +229,7 @@ sub print_deps_ds {
 }
 
 sub print_reverse_rel_ds {
-    my ( $env, $pkg, $versions, $type) = @_;
+    my ( $env, $pkg, $versions, $type, $is_src_dep) = @_;
     my $res = "";
     my @res = ();
     my @all_archs = ( @{$env->{archs}}, 'all' );
@@ -250,7 +250,7 @@ sub print_reverse_rel_ds {
 	    }
 	    @all_archs = sort keys %arch_deps;
 	    my $arch_str = compute_arch_str( $r_p, $versions, \%arch_deps,
-					     \@all_archs );
+					     \@all_archs, $is_src_dep );
 	    if ( ($r_p eq $save_p) && ($arch_str eq $save_as) ) {
 		push @save_vs, $r_v;
 	    } else {
@@ -279,7 +279,11 @@ sub print_reverse_rel_ds {
 }    
 
 sub compute_arch_str {
-    my ( $dp, $versions, $arch_deps, $all_archs ) = @_;
+    my ( $dp, $versions, $arch_deps, $all_archs, $is_src_dep ) = @_;
+
+    if ($is_src_dep) {
+	return compute_src_arch_str( @_ );
+    }
 
     my ( @dependend_archs, @not_dependend_archs );
     my $arch_str;
@@ -304,6 +308,52 @@ sub compute_arch_str {
     }
     return $arch_str;
 }
+
+sub compute_src_arch_str {
+    my ( $dp, $versions, $arch_deps, $all_archs ) = @_;
+
+
+    my $full_arch_string = "";
+    my $arch_str = "";
+    foreach my $a ( @$all_archs ) {
+	if ( exists( $versions->{a2v}{$a} )
+	     && exists( $arch_deps->{$a} ) ) {
+	    if ( exists $arch_deps->{$a}{$dp} ) {
+		$full_arch_string .= $a;
+	    }
+	}
+    }
+
+    my ( %dep_archs, %not_dep_archs );
+    my @toks = split / /, $full_arch_string;
+    foreach (@toks) {
+	/^all$/ && return "";
+
+	/^!(\w+)$/ && do {
+	    $not_dep_archs{$1}++;
+	    next;
+	};
+
+	/^(\w+)$/ && do {
+	    $dep_archs{$1}++;
+	    next;
+	};
+    }
+
+    foreach (keys %dep_archs) {
+	if (exists $not_dep_archs{$_}) {
+	    delete $not_dep_archs{$_};
+	}
+
+	$arch_str .= $_;
+    }
+    foreach (keys %not_dep_archs) {
+	$arch_str .= "!$_";
+    }
+
+    return $arch_str;
+}
+
 
 sub compute_link {
     my ( $env, $p_name ) = @_;

@@ -513,8 +513,20 @@ sub package_pages_walker {
 	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Enhances' );
 	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Conflicts' );
 	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Provides' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Depends' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Recommends' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Suggests' );
 	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Enhances' );
 	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Provides' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Conflicts' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Build-Depends' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Build-Depends-Indep' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Build-Conflicts' );
+
+#	    if ( $name eq 'libc6' ) {
+#		use Data::Dumper;
+#		print STDERR Dumper( $pkg );
+#	    }
 
 	    $data_sheet .= "</tbody></table>";
 	    
@@ -830,11 +842,22 @@ sub write_all_package {
 	    }
 	    $si{$_} .= "<dl>\n";
 	}
-	foreach ( keys %$priorities ) {
+
+	my @priorities = sorted_priorities();
+	foreach ( @priorities ) {
+	    my $priority_header;
+	    foreach my $hp ( @priorities ) {
+		if ( $hp ne $_ ) {
+		    $priority_header .= "[<a href=\"$hp\">$hp</a>]&nbsp;";
+		} else {
+		    $priority_header .= "[$hp]&nbsp;";
+		}
+	    }
 	    my $title = sprintf( gettext ( "Software Packages in \"%s\", priority %s" ), 
 				 $distro, $_ );
-	    $pi{$_} = header( title => $title, lang => $lang,
-			      print_title_below => 1 );
+	    $pi{$_} = header( title => $title, lang => $lang );
+	    $pi{$_} .= "$priority_header\n";
+	    $pi{$_} .= "<h1>$title</h1>\n";
 	    if ($distro eq "experimental") {
 		$pi{$_} .= $experimental_note;
 	    }
