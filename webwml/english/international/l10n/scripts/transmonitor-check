@@ -779,6 +779,21 @@ sub search_templates {
                         $this_stat = $tmpl_stats{$_}->[0].'t'.$tmpl_stats{$_}->[1].'f'.$tmpl_stats{$_}->[2].'u';
                         $data->add_templates($pkg, $file, normalize_lang($_), $this_stat, $filename);
                 }
+                {
+                        #  Reports an error if debian/po/templates.pot
+                        #  or debian/po/POTFILES.in files are missing
+                        #  when templates file seem to be in po-debconf
+                        #  format.
+                        local $/ = undef;
+                        open(TEMPLATE, "< $storedfile");
+                        $_ = <TEMPLATE>;
+                        close(TEMPLATE);
+                        if (m/^_/m) {
+                                $data->add_errors($pkg, 'podebconf: file debian/po/templates.pot not found') unless $deb->file_exists("debian/po/templates.pot");
+                                $data->add_errors($pkg, 'podebconf: file debian/po/POTFILES.in not found') unless $deb->file_exists("debian/po/POTFILES.in");
+                        }
+                }
+
                 if (system("gzip -9f $storedfile")){
                         warn "Can't gzip $storedfile: $!\n";
                 }
