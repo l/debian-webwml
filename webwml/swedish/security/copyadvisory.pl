@@ -58,7 +58,7 @@ open DST, ">$dstfile"
 # Retrieve the CVS version number
 while (<CVS>)
 {
-	if (m[^/$number\.wml/([0-9]*\.[0-9])*/]o)
+	if (m[^/$number\.wml/([0-9]*\.[0-9]*)/]o)
 	{
 		$revision = $1;
 	}
