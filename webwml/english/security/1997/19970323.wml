@@ -1,75 +1,11 @@
-#!wml -o ../../../../debian.org/security/1997/%BASE.html.en
 <define-tag pagetitle>tftp</define-tag>
 <define-tag report_date>23 Mar 1997</define-tag>
 <define-tag packages>netstd</define-tag>
 <define-tag description>tftpd allows retrieval of files with ".." in their path</define-tag>
 <define-tag isvulnerable>no</define-tag>
 <define-tag fixed>N/A</define-tag>
-#use wml::debian::basic title="Debian GNU/Linux &mdash; <pagetitle>"
+<define-tag moreinfo></define-tag>
+
 #use wml::debian::security
 
-<P>Date: Sun, 23 Mar 1997 09:11:34 -0800 (PST)<BR>
-From: Alex Belits <abelits@phobos.illtel.denver.co.us>
-
-<P>[Mod: David Holland's message added to the back, linux-alert added to the list of addresses -- alex]
-
-<P>On Sat, 22 Mar 1997, Ben Cantrick wrote: It's a cute little hack, and it seems to work. But I am convinced that someone must have seen the need and done this before. My extended forays into the web via several search engines have failed to turn up anything relevant. So I'm curious if anyone on the list knows of (or better, has) freely distributable source for a "secure" tftpd. 
-
-<P>tftpd in FreeBSD distribution uses chroot() and sets its uid to nobody. I don't think, it does anything reasonable with groups.
-
-<P>But... I've looked at both Linux (NetKit 0.09) and FreeBSD (2.2-ALPHA) tftpd and found rather strange code in Linux tftpd's validate_access() function:
-
-<PRE>
-syslog(LOG_ERR, "tftpd: trying to get file: %s\n", %filename);
-
-if (*filename != '/') { 
-	syslog(LOG_ERR, "tftpd: serving file from %s\n", %dirs[0]); 
-	chdir(dirs[0]); 
-} else {
-	for (dirp = dirs; *dirp; dirp++)
-	    if (strncmp(filename, *dirp, strlen(*dirp)) == 0)
-			break;
-    if (*dirp==0 && dirp!=dirs)
-		return (EACCESS);
-}  /*
-	* prevent tricksters from getting around the directory restrictions
-	*/
-for (cp = filename + 1; *cp; cp++)
-	if(*cp == '.' && strncmp(cp-1, "/../", 4) == 0)
-		return(EACCESS); 
-</PRE>		
-	
-<P>...it checks _only_ for "/../" and start _always_ from the second character in the filename (in other words, if filename is empty, it will "analyze" the memory after it where other piece of code places mode, so at least it won't do anything destructive).  But it also assumes all not starting from '/' filenames to be relative to some directory, and never checks them for "../" that FreeBSD one does.  So (see code above for locations of calls to syslog()): 
-
-<P>Mar 23 06:55:08 phobos in.tftpd[9799]: connect from phobos.illtel.denver.co.us<BR>
-Mar 23 06:55:08 phobos tftpd[9800]: tftpd: trying to get file: ../etc/passwd<BR>
-Mar 23 06:55:08 phobos tftpd[9800]: tftpd: serving file from /tftpboot 
-
-<P>...and obviously it was /tftpboot/../etc/passwd aka /etc/passwd
-
-<P>Not that it does any damage by itself, but it definitely wasn't supposed to do that.  FreeBSD tftpd disallows such things.  
-
-<P>According to copyright notices, both tftpd are derived from some old (1983) Berkeley code, and Linux one has some general clumsiness all over its code (and default /tftpboot directory didn't exist until 0.09, 0.08 seems to require the list of directories, or it will just SIGSEGV on NULL pointer).  
-
-<P>FreeBSD tftpd compiles with command line:
-
-<CODE>gcc -O -DLOG_FTP=LOG_DAEMON -o tftpd  tftpd.c tftpsubs.c</CODE>
-                   
-and works fine if -ls /tftpboot is added as options to its command line. Otherwise it only checks file permissions without even trying to become "nobody" and thus opens hole for non-executable directories (even if directory is non-executable for anyone but root, files in it will be accessible). Also it's necessary to hardlink /dev/log under chroot directory to keep logging functional.  
-
-<P>P.S.  how such umm...  not obviously secure code got into tftpd in the first place after that many revisions that definitely were done to increase security?  After all, changes between NetKit revisions _do_ make sense.  
-
-<P>Return-Path: dholland@hcs.harvard.edu<BR>
-[tftpd source mapped to /dev/null] 
-
-<P>Finally, it prevents ".." and "." in filename to be used to go up: 
-<P>He's right; it doesn't block leading ".." in the case where the filename doesn't begin with "/".  
-<P>Someone already caught this and the fix is going to be in the next release; in the meantime here's a patch.
-<P>It needs an intensive rewrite.  Don't hold your breath...  :( 
-
-<P>Patch not stored</P>
-
-<:= languages ("$(HOME)", "security", "$(WML_SRC_BASENAME)", "$(CUR_LANG)") :>
-
-<HR>
-#use wml::debian::footer
+<:= fixes_link( 'not',  'All', '', '', '' ) :>

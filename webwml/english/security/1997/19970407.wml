@@ -1,60 +1,11 @@
-#!wml -o ../../../../debian.org/security/1997/%BASE.html.en
 <define-tag pagetitle>amd</define-tag>
 <define-tag report_date>07 Apr 1997</define-tag>
 <define-tag packages>amd</define-tag>
 <define-tag description>amd ignores nodev option</define-tag>
 <define-tag isvulnerable>yes</define-tag>
-<define-tag fixed>amd upl102-11</define-tag>
-#use wml::debian::basic title="Debian GNU/Linux &mdash; <pagetitle>"
+<define-tag fixed>yes</define-tag>
+<define-tag moreinfo></define-tag>
+
 #use wml::debian::security
 
-<blockquote>
-<b>Date: Mon, 7 Apr 1997 22:59:27 -0400 (EDT)</b> <br>
-<b>From: Bradley M Keryan &lt;keryan@andrew.cmu.edu&gt;</b> <p>
-
-amd from the amd-920824upl102-6.i386.rpm file distributed with RedHat
-Linux 4.1 does not honor the nodev option for NFS filesystems and probably
-other mount types, allowing any user access to the device files in /dev on
-a system, provided that they have root access to another linux box on the
-network. In addition, the default amd.conf from RH 4.1 maps /net/* to NFS
-mounting, which makes the bug in amd an easily accessible security hole. <p>
-
-<b>The Exploit:</b> <p>
-
-A friend of mine who has an account on my machine found a major security
-hole in amd when he decided to play a prank on me involving /dev/dsp at
-odd hours, but found I had denied access to /dev/dsp and /dev/audio. He
-assumed that I had forgotten to put the options nosuid and nodev in the
-amd mapping for NFS (the default RedHat 4.1 mapping, which *does* have
-opts=nosuid,nodev), so he created a char device on his machine with major
-number 14 and minor 3, permissions 666, exported the directory it was in
-via NFS, and logged into my machine. He used the /net/* amd mapping to
-mount the directory, and then used the char device in the NFS-mounted
-filesystem to play sounds, although /proc/mounts and /etc/mtab displayed
-it as mounted nodev. <p>
-
-This exploit works for block and char devices. It could be used to do more
-malicious acts than merely play sounds, such as scan /dev/mem for
-passwords, change file permissions or the contents of /etc/shadow with a
-raw disk editor, and sundry and various other bad things. <p>
-
-This bug may affect any other distributions that include amd, but both
-the exploit and the bug have only been tested on RedHat 4.1. <p>
-
-<b>The Fix:</b>
-
-A one-character typo in the linux-specific header file for amd prevents it
-from actually passing the nodev option to the kernel. <p>
-
-That's it. Evidently M_NODEV was defined to something else elsewhere,
-otherwise amd shouldn't have compiled. <p>
-
-Brad Keryan <br>
-<a href="mailto:keryan@andrew.cmu.edu">keryan@andrew.cmu.edu</a> <br>
-<a href="http://fatale.res.cmu.edu/">http://fatale.res.cmu.edu/</a>
-</blockquote>
-
-<:= languages ("$(HOME)", "security", "$(WML_SRC_BASENAME)", "$(CUR_LANG)") :>
-
-<HR>
-#use wml::debian::footer
+<:= fixes_link( 'bo',  'All', '', 'amd', 'upl102-11' ) :>
