@@ -13,7 +13,7 @@ include $(WMLBASE)/Make.common
 
 include $(WMLBASE)/Make.dep.templ    
 
-index.html.$(LANGUAGE) : index.wml $(TEMPLDIR)/template.wml ../../english/consultants/consultant.data
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml ../../english/consultants/consultant.data
 	wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG) $(WMLEPILOG) $(<F)
-%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/consultant.wml
+%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/consultant.wml
 	$(WML) $(<F)
