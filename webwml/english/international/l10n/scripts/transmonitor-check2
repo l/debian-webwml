@@ -314,10 +314,9 @@ sub store_disk_po {
         my $pkg = shift;
         my $filename = shift;
 
-        my $dirname  = $filename;
-        $dirname  =~ s#/+[^/]*$##;
         $filename =~ s#/#_#g;
-        return $dirname.'/'.$pkg.'_'.$data->version($pkg).'_'.$filename;
+        $filename =~ s#:#\%3a#g;
+        return $pkg.'_'.$data->version($pkg).'_'.$filename;
 }
 
 sub store_disk_menu {
@@ -327,17 +326,16 @@ sub store_disk_menu {
         $filename =~ s#.*debian/##;
         $filename =~ s#/#_#g;
         $filename =~ s#:#\%3a#g;
-        return $filename;
+        return $pkg.'_'.$data->version($pkg).'_'.$filename;
 }
 
 sub store_disk_templates {
         my $pkg = shift;
         my $filename = shift;
 
-        $filename = $pkg.'_'.$data->version($pkg).'/'.$filename;
-        $filename =~ s#:#\%3a#g;
         $filename =~ s#/#_#g;
-        return $filename;
+        $filename =~ s#:#\%3a#g;
+        return $pkg.'_'.$data->version($pkg).'_'.$filename;
 }
 
 ###
@@ -572,7 +570,6 @@ sub search_po {
                         # stats the file
                         ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$filename 2>&1 1>/dev/null");
                         if ($err_msg ne '') {
-                                $err_msg =~ s/\n/ /g;
                                 $err_msg =~ s,\Q$PO_DIR/$filename\E,$file,g;
                                 $data->add_errors($pkg, "gettext: ".$err_msg);
                         }
@@ -706,6 +703,9 @@ sub search_templates {
                         if (system("gzip -9 $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$storedfile{$tmpl->filename($_)})) {
                                 warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$storedfile{$tmpl->filename($_)}.": $!\n";
                         }
+                }
+                if (system("gzip -9 $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename)) {
+                        warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename.": $!\n";
                 }
         }
 }
