@@ -127,7 +127,7 @@ sub copy
 
 	while (<SRC>)
 	{
-		unless ($insertedrevision || /^#/)
+		unless ($insertedrevision || /^#/ || /^<define/)
 		{
 			print DST qq'#use wml::debian::translation-check translation="$revision"\n';
 			$insertedrevision = 1;
