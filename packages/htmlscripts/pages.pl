@@ -228,7 +228,7 @@ sub package_pages_walker {
 	$package_page .= "\n<tr><th></th>\n";
 	foreach my $a ( @all_archs ) {
 	    if ( exists $versions{a2v}{$a} ) {
-		$package_page .=  "<td align=\"center\"><form action=\"$DL_URL\" method=\"post\">\n<p>";
+		$package_page .=  "<td align=\"center\"><form action=\"$DL_URL\" method=\"post\">\n<div>";
 		$package_page .=  "<input type=\"hidden\" name=\"file\" value=\"$filenames{a2f}->{$a}\">\n";
 		$package_page .=  "<input type=\"hidden\" name=\"md5sum\" value=\"$file_md5s{a2f}->{$a}\">\n";
 		$package_page .=  "<input type=\"hidden\" name=\"arch\" value=\"$a\">\n";
@@ -248,7 +248,7 @@ sub package_pages_walker {
 		if ( $env->{distribution} ne "experimental" ) {
 		    $package_page .= "<br>".sprintf( "[<a href=\"%s\">".gettext( "list of files" )."</a>]\n", "$FILELIST_URL$encodedpack&amp;version=$env->{distribution}&amp;arch=$a", $name );
 		}
-		$package_page .= "</form>\n";
+		$package_page .= "</div></form>\n";
 		$package_page .= "</td>\n";
 	    }
 	}
