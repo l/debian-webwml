@@ -265,8 +265,8 @@ Everything else you want to know about Debian mirrors:
 END
 	print "<a href=\"http://www.debian.org/mirror/\">" if $html;
 	print "                        http://www.debian.org/mirror/";
-	print "</a>. " if $html;
-	print "<br>\n";
+	print "</a>.<br>" if $html;
+	print "\n";
 }
 
 sub primary_mirrors {
