@@ -122,7 +122,8 @@ do 'documents-bd.pl';
 	'translation_url'	=> 'http://www.debian.org/releases/stable/source/dselect-beginner.fr.sgml',
 	'translation_cvs_url'   => 'http://cvs.debian.org/boot-floppies/documentation/dselect-beginner.fr.sgml?cvsroot=debian-boot',
 	'translation_package'	=> 'boot-floppies',
-	'last_translated'	=> '27/03/1999'
+	'last_translated'	=> '27/03/1999',
+	'note'			=> 'Le responsable est prêt à passer la main'
 },
 
 'release-notes' => {
@@ -201,6 +202,7 @@ do 'documents-bd.pl';
 	'base_revision'		=> '0.1',
 	'translation_package'	=> '',
 	'old_translators'	=> ['Herve Floch <Herve.Floch@linux.eu.org>'],
+	'note'			=> 'Le responsable actuel veut passer la main'
 },
 
 'internals' => {
