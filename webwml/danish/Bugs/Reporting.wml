@@ -1,36 +1,110 @@
 #use wml::debian::template title="Debian BTS - fejlrapportering" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.17"
+#use wml::debian::translation-check translation="1.24"
 
 <h1>Hvordan man rapporterer fejl i Debian</h1>
+
+<h2>Vigtige ting at vide <strong>før</strong> indsendelsen</h2>
+
+<p>Rapportér venligst ikke flere, ikke-relaterede fejl - specielt fejl i 
+forskellige pakker - i en enkelt fejlrapport.
+
+<p>Før du indsender din fejlrapport bør du undersøge om andre allerede har 
+rapporteret den samme fejl. Oversigter over fejl der ikke er rettet er 
+tilgængelig <a href="./">via World Wide Web</a> og 
+<a href="Access">andre steder</a> - se andre dokumenter for detajlerede 
+oplysninger.</p>
+
+<p>Hvis du ikke kan finde ud af hvilken pakke der indeholder problemet, 
+så send en e-mail på engelsk til <a href="mailto:debian-user@lists.debian.org">
+Debians bruger-postliste</a> og bed om vejledning. Hvis problemet ikke blot 
+har med en pakke at gøre, men en generel Debian-service, så er der flere 
+<a href="pseudo-packages">pseudo-pakker</a> eller endda 
+<a href="../MailingLists/subscribe">postlister</a> som du i stedet kan 
+anvende for at oplyse os om problemet.
+
+<p>Brug venligst <a href="#xcc">en anden metode</a> til at sende din 
+fejlrapport til flere modtager (så som postlister), brug ikke de sædvanlige 
+e-mail-headere.
+
+<h2>Indsendelse af fejlrapporten vha. et automatisk fejlrapporteringsværktøj</h2>
+
+<p>Debian har udviklet to programmer til hjælp ved rapportering af fejl, de 
+hedder 
+<code><a href="http://packages.debian.org/stable/utils/bug.html">bug</a></code> 
+(fejl) og 
+<code><a href="http://packages.debian.org/stable/utils/reportbug.html">reportbug</a></code> 
+(rapportér fejl).
+Begge leder dig gennem fejlrapporteringsforløbet, trin for trin, og gør det nok
+lidt nemmere at rapportere fejl.
+
+<h2>Indsendelse af fejlrapport via e-mail</h2>
 
 <P>Send en e-mail til
 <A href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></A>,
 som beskrevet nedenfor.</P>
 
-<p>Rapportér venligst ikke flere, ikke-relaterede fejl - specielt i forskellige 
-pakker - i en e-mail. Send ikke din fejlrapport til andre postlister eller 
-modtagere end <code>submit@bugs</code> (for oplysninger om hvordan man gør, se 
-<A href="#xcc">nedenfor</A>).</P>
+<P>Som i alle andre e-mails skal du naturligvis vælge en præcis og beskrivende 
+<code>Emne</code>-linie i e-mail'en. Det emne du vælger vil i begyndelsen blive 
+anvendt som fejloverskrift i rapportsystemet, så prøv venligst at gøre den 
+informativ!</P>
 
-<P>Oversigter over aktuelt udestående fejl er tilgængelige 
-<A href="./">via WWW</A> og <A href="Access">andre steder</A> - se andre 
-dokumenter for flere oplysninger.</P>
+<P>Du er nødt til at tilføje et pseudo-brevhoved i begyndelsen af meddelelsen.
+Dette betyder at den første linie i meddelelsensteksten skal være:
 
-<P>Du er nødt til at tilføje et pseudo-brevhoved i begyndelsen af meddelelsen, 
-med linierne <code>Package:</code> og <code>Version:</code> til angivelse af 
-navn og version på den pakke, der indeholder fejlen. (Pseudo-brevhovedlinierne 
-skal begynde i første position af deres linier. Fejlrapporteringssystemet kan 
-indtil videre ikke forstå MIME- eller PGP-mails korrekt og vil måske ikke 
-genkende pseudo-brevhovedet i sådanne mails.) Du kan se pakkenavne og 
-versionsnumre ved hjælp af <code>dpkg --search</code> og 
-<code>dpkg --list</code>; se <code>dpkg --help</code>.
+<pre>
+Package: &lt;en-eller-anden&gt;
+</pre>
 
-<em>Se nedenfor for <A href="#details">yderligere krav</A></em>.</P>
+<p>Udskift <code>&lt;en-eller-anden&gt;</code> med navnet på den pakke, som 
+indeholder fejlen.
 
-<P>Der findes nogle pseudopakker der kan angives på <code>Package</code>-linien
-ved rapportering af fejl i andre end egentlige Debian-pakker.
-Der er en <A HREF="pseudo-packages">liste over disse</A> på fejlsiderne.</P>
+<p>Meddelelsens anden linie skal være:
 
+<pre>
+Version: &lt;en-eller-anden&gt;
+</pre>
+
+<p>Udskift <code>&lt;en-eller-anden&gt;</code> med versionen på pakken.
+
+<p>Du er nødt til at angive en korrekt <code>Package</code>-linie i 
+pseudo-brevhovedet, så fejlrapporteringssystemet kan levere meddelelsen til 
+pakkens vedligeholder. Se <a href="#findpkgver">dette eksempel</a> for
+oplysninger om hvordan du finder pakkens navn og versionsnummer.
+
+<p>Pseudo-brevhoved-linierne skal begynde i første position på deres linier.
+Fejlrapporteringssystemet kan indtil videre ikke forstå MIME- og PGP-mails 
+korrekt og vil måske ikke genkende pseudo-brevhovedet i sådanne e-mails.
+
+<p>Følgende skal medtages i din rapport:
+
+<ul>
+<li>Den <em>nøjagtige</em> og <em>komplette</em> tekst fra eventuelle 
+fejlmeddelelser på skærmen eller i en log. Dette er meget vigtigt!
+<li>Præcis hvad du skrev eller gjorde, som fik problemet til at opstå.
+<li>En beskrivelse af fejlen: præcis hvad du forventede, og hvad der der 
+rent faktisk skete. En trin-for-trin-beskrivelse af hvordan fejlen kan 
+genskabes er en god måde at vise dette på.
+<li>Forslag til hvad der skal rettes, eller endda en rettelse, hvis du har en.
+<li>Oplysninger om det fejlramte programs opsætning. Inklusive 
+konfigurationsfilernes komplette tekst.
+<li>Versionsnumrene på alle pakker, som den fejlramte pakke eventuelt er 
+afhængig af.
+<li>Hvilken version af kernen du bruger (skriv <code>uname -a</code>), 
+C-bibliotekets version (skriv <code>ls -l /lib/libc.so.6</code> eller
+<code>dpkg -s libc6 | grep ^Version</code>), og andre eventuelt relevante 
+oplysninger om dit Debian-system. Hvis du for eksempel har problemer med et 
+Perl-script, skal du angive versionsnummeret på `perl'-programmet (skriv 
+<code>perl -v</code> eller <code>dpkg -s perl-5.005 | grep ^Version:</code>).
+<li>Relevante oplysninger om hardwaren i din computer. Hvis du rapporterer 
+om et problem med et styreprogram (en 'driver') angiv da <em>al</em> hardware 
+i din computer, da problemer ofte skyldes konflikter med IRQ- eller I/O-adresse.
+</ul>
+
+<P>Inkludér alle oplysninger du mener er relevante - risikoen for at for gøre 
+din rapport for lang ved at inkludere for mange oplysninger er lille. Hvis 
+de er små, så inkludér alle de filer du brugte til at genskabe problemet 
+(hvis de indeholder usædvanlige tegn eller lignende, er det bedst at uu-kode 
+(uuencode) dem).
 
 <h2><A name="example">Eksempel</A></h2>
 
@@ -59,59 +133,24 @@ Der er en <A HREF="pseudo-packages">liste over disse</A> på fejlsiderne.</P>
   and libc6 2.1.3-10.
 </PRE>
 
-<h2><A name="details">Hvad der skal medtages i din rapport:</A></h2>
-
-<ul>
-<li>Den <em>nøjagtige</em> og <em>komplette</em> tekst fra eventuelle 
-fejlmeddelelser på skærmen eller i en log. Dette er meget vigtigt!
-<li>Præcis hvad du skrev eller gjorde, som fik problemet til at opstå.
-<li>En beskrivelse af fejlen: præcis hvad du forventede, og hvad der der 
-rent faktisk skete. En trin-for-trin beskrivelse af hvordan fejlen kan 
-genskabes er en god måde at vise dette på.
-<li>Forslag til hvad der skal rettes, eller endda en rettelse, hvis du har en.
-<li>Oplysninger om det fejlramte programs opsætning. Inklusive 
-konfigurationsfilernes komplette tekst.
-<li>Versionsnumrene på alle pakker, som den fejlramte pakker eventuelt er 
-afhængig af.
-<li>Hvilken version af kernen du bruger (skriv <code>uname -a</code>), 
-C-bibliotekets version (skriv <code>ls -l /lib/libc.so.6</code> eller
-<code>dpkg -s libc6 | grep ^Version</code>), og andre eventuelt relevante 
-oplysninger om dit Debian-system. Hvis du for eksempel har problemer med et 
-Perl-script, skal du angive versionsnummeret på `perl'-programmet (skriv 
-<code>perl -v</code> eller <code>dpkg -s perl-5.005 | grep ^Version:</code>).
-<li>Relevante oplysninger om hardwaren i din computer. Hvis du rapporterer 
-om et problem med et styreprogram (en 'driver') angiv da <em>al</em> hardware 
-i din computer, da problemer ofte skyldes konflikter med IRQ- eller I/O-adresse.
-</ul>
-
-<P>Inkludér alle oplysninger du mener er relevante - risikoen for at for gøre 
-din rapport for lang ved at inkludere for mange oplysninger er lille. Hvis 
-de er små, så inkludér alle de filer du brugte til at genskabe problemet 
-(hvis de indeholder usædvanlige tegn eller lignende, er det bedst at uu-kode 
-(uuencode) dem).
-
-<P>Som i alle andre e-mails skal du naturligvis vælge en præcis og beskrivende 
-<code>Emne</code>-linie i e-mail'en. Det emne du vælger vil i begyndelsen blive 
-anvendt som fejloverskrift i rapportsystmet, så prøv venligst at gøre den 
-informativ!</P>
-
-<h2><A name="xcc">Send kopier af fejlrapporten til andre adresser</A></h2>
+<h2><A name="xcc">Afsendelse af kopier af fejlrapporten til andre adresser</A></h2>
 
 <P>Nogle gange er det nødvendigt at sende kopier af en fejlrapport til andre 
-steder en <code>debian-bugs-dist</code> og pakkens vedligeholder, hvortil de 
+steder end <code>debian-bugs-dist</code> og pakkens vedligeholder, hvortil de 
 normalt sendes.</P>
 
 <P>Du kan gøre det ved at sende en kopi (CC) af din fejlrapport til de andre 
 adresser, men så vil disse kopier ikke indeholde fejlrapportnummeret i
-<code>Reply-To</code>-feltet og <code>emne</code>-feltet.
+<code>Reply-To</code>-feltet og <code>Emne</code>-linien.
 Når modtagerne svarer vil de formentlig bevare 
-<code>submit@bugs.debian.org</code> i brevhovedet og få deres meddelelse 
-gemt som en ny fejlrapport. Dette resulterer i mange ens rapporter.</P>
+<code>submit@bugs.debian.org</code>-linien i brevhovedet og dermed få deres 
+meddelelse gemt som en ny fejlrapport. Dette resulterer i mange ens 
+rapporter.</P>
 
 <P>Den <em>rigtige</em> måde at gøre dette på, er at bruge 
-<code>X-Debbugs-CC</code>-linien i brevhovedet. Tilføj en linie som denne 
-til din e-mails brevhoved (ikke pseudo-brevhovedet med 
-<code>Package</code>-feltet):</P>
+<code>X-Debbugs-CC</code>-linien i e-mailens brevhoved. Tilføj en linie som 
+denne til din e-mails brevhoved (ikke pseudo-brevhovedet med 
+<code>Package</code>-linien):</P>
 <pre>
  X-Debbugs-CC: other-list@cosmic.edu
 </pre>
@@ -122,35 +161,47 @@ til både adresserne i <code>X-Debbugs-CC</code>-linien og til
 <P>Denne funktion kan ofte kombineres med at skrive til <code>quiet</code> - 
 se nedenfor.</P>
 
-
 <h2><A name="severities">Alvorsgrader</A></h2>
 
 <P>Hvis der rapporteres en særligt alvorlig fejl, eller er det bare et 
 ønske om ny funktionalitet, kan du angive alvorsgraden på fejlen når 
 du rapporterer den. Dette er dog ikke påkrævet, og udviklerne vil fastsætte 
-en passende alvorsgrad på din rapport hvis du ikke gør det.</P>
+en passende alvorsgrad på din rapport, hvis du ikke gør det.</P>
 
-<P>For at angive en alvorsgrad skal du tilføje en
-<code>Severity: <var>alvorsgrad</var></code>-linie til pseudo-brevhovedet, 
-sammen med <code>Package</code> og <code>Version</code>. Mulige alvorsgrader 
-er beskrevet i <A href="Developer#severities">udviklerdokumentationen</A>.</P>
+<P>For at angive en alvorsgrad skal du tilføje en linie som denne til 
+pseudo-brevhovedet:
 
+<pre>
+Severity: &lt;<var>alvorsgrad</var>&gt;
+</pre>
 
-<h2>Send ikke til postlisten - mindre fejlrapporter</h2>
+Udskift &lt;<var>alvorsgrad</var>&gt; med en de mulige alvorsgrader, som 
+beskrevet i <A href="Developer#severities">udviklerdokumentationen</A>.</P>
 
-<P>Hvis en rapporteret fejl er mindre (for eksempel en tastefejl i 
-dokumentationen eller andre trivielle problemer), eller sender du mange 
-rapporter på én gang, så send dem til <code>maintonly@bugs</code> eller 
-<code>quiet@bugs</code>. <code>maintonly</code> vil sende rapporten videre 
-til pakkens vedligeholder (forudsat at du angiver en korrekt 
-<code>Package</code>-linie i pseudo-brevhovedet og vedligeholderen kendes),
-og <code>quiet</code> vil overhovedet ikke videresende rapporten, men kun 
-gemme den som en fejl (praktisk hvis du for eksempel indsender mange enslydende 
-fejl og kun ønsker at poste et sammedrag).</P>
+<h2>Forskellige rapporteringsadresser (mindre rapporter eller masse-rapportering)</h2>
 
-<P>Hvis du gør dette vil fejlsystemet sætte <code>Reply-To</code> på eventuelt 
-videresende meddelelser, således at svar automatisk vil blive behandlet på 
-samme måde som den originale rapport.</P>
+<P>Hvis en rapporteret fejl er mindre, for eksempel en tastefejl i 
+dokumentationen eller andre trivielle problemer, så opsæt alvorsgraden 
+tilsvarende og send den til <code>maintonly@bugs</code> i stedet for 
+<code>submit@bugs</code>.
+<code>maintonly</code> vil kun videresende rapporten til pakkens 
+vedligeholder, den vil ikke videresende rapporten til BTS-postlisterne.
+
+<P>Hvis du sender mange rapporter på én gang, så send dem til 
+<code>maintonly@bugs</code> så du ikke er skyld i en masse unødig trafik 
+i BTS-postlisterne. Før du sender mange ens fejlrapporter, kan det være en 
+god idé at poste et sammendrag i <code>debian-bugs-dist</code>.
+
+<P>Hvis du ønsker at rapportere en fejl som allerede er sendt til 
+vedligeholderen, kan du bruge <code>quiet@bugs</code>. Fejl sendt til 
+<code>quiet@bugs</code> vil ikke blive videresendt, men kun blive arkiveret.
+
+<P>Når du anvender forskellige indsendelsesadresser vil 
+fejlsystemet sætte <code>Reply-To</code> på eventuelt videresendte meddelelser, 
+således at svar automatisk vil blive behandlet på samme måde som den originale 
+rapport. Der betyder at, for eksempel svar til <code>maintonly</code> vil 
+blive sendt til <var>nnn</var><code>-maintonly@bugs</code> i stedet for 
+<var>nnn</var><code>@bugs</code>, selvfølgelig med mindre de manuelt ændres.
 
 <h3>Fejlrapporter mod ukendte pakker</h3>
 
@@ -163,12 +214,12 @@ også selvom <code>maintonly</code> er angivet.</P>
 hæftes på den rigtige pakke, ved enten at angive en korrekt
 <code>Package</code> øverst i den originale rapport, eller ved at bruge 
 <A href="server-control"><code>control@bugs</code></a>-tjenesten til at 
-overføre rapporten til den rette pakke, hvis den ikke allerede er korrekt.</P>
+hæfte rapporten til den rette pakke, hvis den ikke allerede er korrekt.</P>
 
 <h2>Brug af <code>dpkg</code> til at finde pakke og versionsnummer til brug i rapporten</h2>
 
 <P>Hvis du rapporterer en fejl i en kommando, kan du finde ud af hvilke 
-pakke der installerede den ved at bruge <code>dpkg --search</code>. Du kan 
+pakke der installerede den, ved at bruge <code>dpkg --search</code>. Du kan 
 finde ud af versionsnummeret på en pakke ved at bruge 
 <code>dpkg --list</code> eller <code>dpkg --status</code>.
 </P>
@@ -208,12 +259,12 @@ Description: Advanced front-end for dpkg
  .
  APT features complete installation ordering, multiple source capability
  and several other unique features, see the Users Guide in
- /usr/doc/apt/guide.text.gz
+ /usr/doc/apt/guide.text.gz 
 
-</pre>
+</pre> 
 
-<hr>
+<hr> 
 
-#use "otherpages.inc"
+#use "otherpages.inc" 
 
 #use "footer.inc"
