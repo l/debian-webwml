@@ -9,3 +9,16 @@ SUBS=
 GETTEXTFILES += others.mo
 
 include $(WMLBASE)/Make.lang
+
+ifeq "$(LANGUAGE)" "en"
+textfiles := test.c test.c.html
+desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
+
+install:: $(desttextfiles)
+
+$(desttextfiles): $(HTMLDIR)/%: %
+	install -m 664 -p $< $(HTMLDIR)
+
+cleandest::
+	rm -f $(desttextfiles)
+endif
