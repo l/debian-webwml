@@ -46,7 +46,7 @@ if ($mesg->code == LDAP_SUCCESS) {
   my $oldpassword = $entries->{$dn}->{userpassword}->[0];
   if ($oldpassword !~ /^{crypt}\$1\$/) {
     # Update their password to md5
-    open (LOG, ">$config{weblogfile}");
+    open (LOG, ">>$config{weblogfile}");
     print LOG scalar(localtime);
     print LOG ": Updating MD5 password for $dn\n";
     close LOG;
