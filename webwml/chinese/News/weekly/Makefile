@@ -19,6 +19,8 @@ include $(WMLBASE)/Make.dep.templ
 # Notice I do not include Make.dep.generic, since I have my own special
 # %.$(LANGUAGE).html rule.
 
+WMLOPTIONS += -DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
+
 # This Makefile will handle converting all .wml files in this directory
 # and all subdirectories to .html files. It does it this way so I don't need
 # a new Makefile for each new issue.
@@ -43,24 +45,25 @@ endif
 # so wml gets all the relative links right.
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml
-	cd $(@D) && $(WML) $(notdir $(<)) \
-		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
+	cd $(@D) && $(WML) $(notdir $(<))
 
 # Special case for Chinese
 %.zh-cn.html %.zh-tw.html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml \
 			   $(TOCN) $(TOTW)
-	cd $(@D) && $(WML) $(notdir $(<)) \
-		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh \
-		&& if [ -f index.imgdot-1x1-transp.gif ]; then \
-			mv -f index.imgdot-1x1-transp.gif i.imgdot-1x1-transp.gif; \
-		fi
+	cd $(@D) && $(WML) $(notdir $(<))
 
-	@if [ "$(notdir $*)" = "index" ]; then \
-	    for i in $*.$(LANGUAGE)-??.html.tmp; do \
-		perl -pi -e 's/index(?=\.imgdot-1x1-tran)/i/g' $$i; \
+# *.imgdot-1x1-transp.gif are evil!  Get rid of them!
+# Must set nullglob or else the following fails - foka, July 2000
+
+	@shopt -s nullglob; \
+	for i in *.imgdot-1x1-transp.gif; do \
+	    rm -f $$i; \
+	    j=`basename $$i .imgdot-1x1-transp.gif` ; \
+	    for k in $$j.$(LANGUAGE)-??.html.tmp; do \
+		perl -pi -e "s|$$j\\.(?=imgdot-1x1-transp\\.gif)|$(WMLBASE)/Pics/|g" $$k; \
 	    done; \
-	fi
+	done
 
 	@echo "Converting $*.zh-cn.html.tmp to $*.zh-cn.html (zh_CN.GB2312)..."
 	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
@@ -124,7 +127,7 @@ index.zh-cn.html index.zh-tw.html: $(wildcard $(YEAR)/*/index.wml) \
 
 # Generate the mail for posting to debian-news. Requires the web page already
 # be updated. The mail still requires slight edits.
-mail:	
+mail:
 	@cat mail-header
 	@lynx -dump http://master.debian.org/www-master/debian.org/News/weekly/2000/6/ | \
        		perl -pe 's/^\s\s?\s?//'
