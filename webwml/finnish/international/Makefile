@@ -4,10 +4,9 @@
 
 WMLBASE=..
 CUR_DIR=international
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
-SUBS=Chinese
+SUBS=Chinese Swedish Croatian spanish l10n German Polish
 
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html: ../../english/international/index.data
+
+index.$(LANGUAGE).html: index.wml $(ENGLISHSRCDIR)/international/index.data
