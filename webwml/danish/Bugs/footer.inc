@@ -1,4 +1,4 @@
-<HR
+<HR>
 <ADDRESS>
 Debians BTS-administratorer &lt;
 <A HREF="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>&gt;
