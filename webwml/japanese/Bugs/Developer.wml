@@ -1,0 +1,243 @@
+#use wml::debian::template title="Debian バグ追跡システム" NOHEADER=yes WEBMASTER=bugs
+<h1><A name="developers">バグ処理システムに関する開発者情報</A></h1>
+<!--original_revision: 1.4 :-->
+
+まず初めに、バグ報告はユーザから通常の電子メールとして
+<code>submit@bugs.debian.org</code> に提出される。このバグ報告は
+通し番号が与えられ、 ユーザには受領通知が送られ、
+<code>debian-bugs-dist</code> メーリングリストに転送されます。
+提出文書に <code>Package</code> 行にパッケージ名が指定されている
+場合、該当するメンテナーにもその写しが送られる。
+<p>
+
+<code>Subject</code> 行には <code>Bug#</code><var>nnn</var><code>:</code>
+が追加される。<code>Reply-To</code> には、そのバグ報告の提出者と
+<var>nnn</var><code>@bugs.debian.org</code> が設定される。
+<p>
+
+<h2>バグ報告のクローズ(解決)</h2>
+
+バグ追跡システムからバグを受け取った開発者や、
+<code>debian-bugs-dist</code> でバグ報告を知り、かつそのバグに対し
+責任のある開発者は、自分の好みのメールリーダ等で返信しなければ
+ならない。その後、バグをクローズする時は <code>To</code> 行を
+<var>nnn</var><code>@bugs</code> の代わりに、
+<var>nnn</var><code>-done@bugs.debian.org</code> に書き換えて
+報告する。(<var>nnn</var><code>-close</code> は、
+<var>nnn</var><code>-done</code> のエイリアスとして用意されている)。
+<p>
+
+バグ報告の元々の提出者のアドレスがデフォルトで <code>To</code> 行に
+入れられる。これは、バグ追跡システムがそのアドレスを
+<code>Reply-To</code> に含めているからである。
+<p>
+
+`Done' メッセージは自動的にメーリングリストに転送されない。
+他の開発者が関心を持ちそうであれば、
+<code>debian-devel@lists.debian.org</code> メーリングリスト
+にも転送すると良い。
+<p>
+
+バグをクローズした人とバグ報告者に、バグ報告のステータスが変更された
+ことが通知される。
+
+<h2>フォローメッセージ</h2>
+
+クローズされていないバグ報告に開発者が返信したい時は、単にそのバグ報告
+に返信する場合がある。この場合の返信は、(デフォルトで)
+<var>nnn</var><code>@bugs</code> と元々のバグ報告提出者に送られる。
+バグ追跡システムはその返信をバグ報告の追加情報として記録し、
+<code>debian-bugs-dist</code> に転送する。この時、バグは解決したもの
+として記録されない。
+開発者は、アドレス <var>nnn</var><code>-submitter@bugs</code> を使う
+ことによりバグ報告者に直接メールを送ることもできる。
+<p>
+
+<code>debian-bugs-dist</code> には適当でないフォローメッセージ
+を送りたい場合、<var>nnn</var><code>-quiet@bugs</code> や
+<var>nnn</var><code>-maintonly@bugs</code> に使うことができる。
+これらのアドレスでは、メッセージは(どこにも転送されず)単に保存され、
+該当するパッケージメンテナーにだけそのメッセージが送られる。
+<p>
+
+もし受取人を編集する十分な意図がないのでしたら、メーラーの
+`reply to all recipients(すべての受取人に返事をする)' や 
+`followup(フォローする)'
+の機能を<em>使ってはならない</em>。特にフォローメッセージを
+<var>nnn</var><code>@bugs.debian.org</code> と
+<code>submit@bugs.debian.org</code> の両方に送ってはならない。この
+場合、バグシステムは同じメッセージを 2 通受け取ることになり、
+それぞれを <code>debian-bugs-dist</code> に転送してしまう。
+<p>
+
+<h2><A name="severities">Severity (重要度)レベル</A></h2>
+
+バグシステムは、それぞれのバグ報告について severity (重要度)レベルを
+記録する。デフォルトでは <code>normal(通常)</code> に設定されるが、
+バグ報告の際に疑似ヘッダに <code>Severity</code> 行を入れる
+(<A href="Reporting#pseudoheader">Debian にバグを報告する方法</A>
+を参照)か、<A href="#requestserv">コントロール、リクエストサーバ</A>
+に <code>severity</code> コマンドを送ることで変更できる。
+<p>
+
+severity レベルには以下のものがある。
+
+<dl>
+<dt><code>critical(致命的)</code>
+<dd>システム上(またはシステム全体)の関係のないソフトウェアを破壊す
+る、重大なデータの欠落を引き起こす、または、そのパッケージをインス
+トールしたシステム上でセキュリティーホールが生じる場合。
+
+<dt><code>grave(重大)</code>
+<dd>問題のあるパッケージが使用できない、またはほとんど使用できない。
+またはデータの欠落を引き起こす、そのパッケージを使用するユーザの
+アカウントにアクセスを許してしまうセキュリティーホールが生じる場合。
+
+<dt><code>important(重要)</code>
+<dd>上記以外に、該当のパッケージをリリースするには不適切と思われるバグ
+がある場合。
+
+<dt><code>normal(通常)</code>
+<dd>デフォルト値。通常のバグ。
+ 
+<dt><code>wishlist(要望)</code>
+<dd>将来的な要望、主に設計上の理由により修正が非常に困難なバグ。
+
+<dt><code>fixed(修正済)</code>
+
+<dd>修正されているが、まだクローズしてはいけないバグ。
+ノンメンテナーアップロードによって修正されたバグの severity 
+は fixed(修正済) に設定される。
+
+</dl>
+
+<h2><A name="forward">バグ報告についてあなたが述べた意見の記録</A></h2>
+
+Debian パッケージの元であるオリジナルソースパッケージの開発者に
+Debian パッケージ開発者からバグ報告を転送する際は、バグ追跡システム
+に次のような注意をしなければならない。
+<p>
+
+あなたのメッセージの <code>To</code> フィールドにはオリジナルソース
+パッケージ開発者のアドレスのみが書かれていることを確認すること。
+<code>CC</code> フィールドには、バグを報告した人と
+<var>nnn</var><code>-forwarded@bugs.debian.org</code> を入れること。
+<p>
+
+
+原作者が返信をする際に、<code>CC</code> に
+<var>nnn</var><code>-forwarded@bugs</code> を残すように依頼すること。
+バグ追跡システムはこの返信を元々のバグ報告とともに保存する。
+<p>
+
+バグ追跡システムが <var>nnn</var><code>-forwarded</code> で
+メッセージを受け取ると、そのメッセージの <code>To</code> フィールド
+にあるアドレスには転送済であるとして該当するバグに記録される。
+<p>
+
+<A href="server-control"><code>control@bugs.debian.org</code></A> 
+にメッセージを送ることで、`forwarded to' 情報を操作することができる。
+
+<h2><code>debian-bugs-reports</code>に要約を投稿する</h2>
+
+毎週金曜日に未解決バグ報告リストが、報告からの日数順に並べて
+<code>debian-bugs-reports</code> に報告される。
+毎週火曜日に長期間未回答なままのバグ報告リストが、パッケージメンテナー
+別に並べて報告される。
+<p>
+
+<A name="maintincorrect">
+パッケージメンテナーが間違っている場合</A>、多くの原因は最近
+メンテナーが交替されていて、新メンテナーが control ファイルの
+<code>Maintainer</code> フィールドを更新した新しいパッケージを
+アップロードしていないためである。これは、パッケージをアップロード
+することにより修正される。これ以外に、ディストリビューション
+メンテナーがパッケージメンテナー変更記録を編集できる override file
+があります。例えば、すぐにパッケージの再構築、再アップロードの必要
+がないと思われる場合に利用する。override file を変更するには
+<code>override-change@debian.org</code> に連絡すること。
+
+
+<h2><A name="requestserv">バグを再オープン(reopen)、再指定(reassign)、操作する</A></h2>
+
+別のパッケージにバグ報告を再指定(reassign)する、
+誤ってクローズしてしまったバグを再オープン(reopen)とする、
+バグ報告が転送されている送付先に伝える情報を修正する、
+バグ報告の severity (重要度)やタイトルを変更する、
+バグ報告のマージ(merge)・マージ解除(unmerge)をすることができる。
+これらの操作は、<code>control@bugs.debian.org</code> にメールを
+送ることにより行う。
+<p>
+
+<A href="server-control">これらのメッセージの書式</A> は
+WWW 上で利用できる別の文書や <code>bug-maint-mailcontrol.txt</code> 
+ファイルに記述されている。テキストバージョンは、上記のアドレスのサー
+バに <code>help</code> と書いたメールを送ることで入手することも可能。
+
+<h2>subject-scanning の機能は多少廃れている</h2>
+
+サブジェクトが <code>Bug#</code><var>nnn</var> で始まるメッセージが
+<code>submit</code> や <code>bugs</code> に到着した場合、この
+メッセージは <var>nnn</var><code>@bugs</code> に送付済であるとして
+扱われる。これは、昔のアドレスから転送されたメールと互換性を残すためと、
+誤って(例えば、全ての受取人へ返信をしてしまうことにより)
+<code>submit</code> に送られたフォローメールを捕えるためである。
+
+<p>
+<code>maintonly</code>、<code>done</code>、<code>quiet</code>、
+<code>forwarded</code> についても同様に扱われる。これらのアドレスでは、
+サブジェクトタグのあるメールは対応する 
+<var>nnn-whatever</var><code>@bugs</code> アドレスには送付済であると
+して扱われる。
+
+<p>
+
+<code>forwarded</code> と <code>done</code> に届いたタグのない
+メッセージ、つまりサブジェクトにバグ番号がついていないメッセージ
+は 'junk' として記録され数週間保存されるが、無視される。
+
+<h2><A name="future">将来的な計画</A></h2>
+
+ある時点で、<code>Package:</code> 疑似ヘッダ行を必須にする。しばらくの
+間は、この行が無い場合は警告メッセージが出るだけである。
+
+<h2><code>X-Debian-PR: quiet</code> の働きは廃れている</h2>
+
+バグ追跡システムが <code>debian-bugs</code> で受け取った
+メッセージをどこにも転送させないようにするためには、従来は
+実際のメールヘッダに <code>X-Debian-PR: quiet</code> 行を入れていた。
+<p>
+
+現在、このヘッダ行は無視される。代わりに、
+<code>quiet</code> や <var>nnn</var><code>-quiet</code> (もしくは、
+<code>maintonly</code> や <var>nnn</var><code>-maintonly</code>)
+にメッセージを送ること。
+
+<hr>
+他のページ
+<ul>
+<li><A href="./">バグ追跡システムトップページ</A>
+<li><A href="Reporting">Debian にバグを報告する方法</A>
+<li><A href="Access">バグ追跡システムに記録されているバグ報告の調べ方</A>
+<li><A href="server-refcard">メールサーバリファレンスカード</A>
+<li><A href="db/ix/full.html">未解決バグ、最近報告されたバグ一覧</A>
+<li><A href="db/ix/packages.html">バグ報告を受けているパッケージ</A>
+<li><A href="db/ix/maintainers.html">バグ報告を受けているパッケージメンテナー</A>
+ <li><A href="../">Debian GNU/Linux トップページ</A>
+
+</ul>
+
+<hr>
+<address>
+<A href="http://www.chiark.greenend.org.uk/~ijackson/">Ian Jackson</A>
+ /
+<A href="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>.
+20 Jan 1998.
+<p>
+Debian bug tracking system
+copyright 1994-1997 Ian Jackson, copyright 1997 nCipher Corporation Ltd,
+copyright 1995 Steven Brenner.
+<A href="http://www.chiark.greenend.org.uk/~ian/debbugs/">Available
+under the GPL.</A>
+
+</address>
