@@ -47,6 +47,9 @@ s{<define-tag description>([^<]*)insecure temporary file([^<]*)</define-tag>}
 s{<define-tag description>([^<]*)insecure temporary directory([^<]*)</define-tag>}
 {<define-tag description>${1}nespolehlivý doèasný adresáø${2}</define-tag>}g;
 
+s{<define-tag description>([^<]*)insecure file access([^<]*)</define-tag>}
+{<define-tag description>${1}nespolehlivý pøístup k&nbsp;souboru${2}</define-tag>}g;
+
 s{<define-tag description>([^<]*)unsanitised input([^<]*)</define-tag>}
 {<define-tag description>${1}neo¹etøený vstup${2}</define-tag>}g;
 
@@ -59,9 +62,11 @@ s{<define-tag description>([^<]*)format string([^<]*)</define-tag>}
 s{<define-tag description>([^<]*)insufficient input validation([^<]*)</define-tag>}
 {<define-tag description>${1}nedostateèná kontrola vstupu${2}</define-tag>}g;
 
-s{<define-tag description>weak hostname and username validation</define-tag>}
-{<define-tag description>slabá kontrola jména poèítaèe a jména u¾ivatele</define-tag>}g;
+s{<define-tag description>([^<]*)weak hostname and username validation([^<]*)</define-tag>}
+{<define-tag description>${1}slabá kontrola jména poèítaèe a jména u¾ivatele${2}</define-tag>}g;
 
+s{<define-tag description>([^<]*)missing privilege release([^<]*)</define-tag>}
+{<define-tag description>${1}chybìjící kontrola práv${2}</define-tag>}g;
 
 #
 # More info
