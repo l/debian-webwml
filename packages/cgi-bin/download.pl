@@ -194,6 +194,8 @@ unless (defined $arch) {
   exit;
 }
 
+my $arch_string = $arch ne 'all' ? "on $arches{$arch} machines" : "";
+
 print <<END;
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html lang="en">
@@ -242,7 +244,7 @@ print <<END;
 </tr>
 </table>
 
-<h2>Download Page for <kbd>$filen</kbd> on $arches{$arch} machines</h2>
+<h2>Download Page for <kbd>$filen</kbd> $arch_string</h2>
 
 <p>You can download the requested file from the <tt>
 END
