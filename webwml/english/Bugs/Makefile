@@ -10,3 +10,9 @@ include $(WMLBASE)/Make.lang
 
 
 $(HTMLFILES): otherpages.inc footer.inc
+
+# this needs to be forced, because the pseudo-packages.description list
+# may change any time
+pseudo-packages.$(LANGUAGE).html: FORCE
+
+FORCE:
