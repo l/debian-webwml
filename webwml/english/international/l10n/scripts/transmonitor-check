@@ -813,14 +813,13 @@ sub search_podebconf {
                 warn "Can't gzip $PO_ROOT/".$data->pooldir($pkg)."/".$filename.": $!\n";
         }
 
-        #   List of templates files
-        my @tmplfiles = ($filename);
+        $data->add_podebconf($pkg, 'templates.pot', '_', '', $filename);
         @_ = split(/\n/, $deb->file_content("debian/po/POTFILES.in"));
         foreach (@_) {
                 next unless s#^\[type: gettext/rfc822deb]\s+#debian/#;
                 if ($deb->file_exists($_)) {
-                        push (@tmplfiles, store_disk_templates($pkg, $_));
                         $filename = store_disk_templates($pkg, $_);
+                        $data->add_podebconf($pkg, $_, '_', '', $filename);
                         if (system("gzip -9 $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename)) {
                                 warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename.": $!\n";
                         }
@@ -829,7 +828,6 @@ sub search_podebconf {
                         $data->add_errors($pkg, "podebconf: file $_ not found");
                 }
         }
-        $data->add_podebconf($pkg, @tmplfiles);
 
         my @pofiles = $deb->file_matches("^debian/po/.*\\.po\$");
 
