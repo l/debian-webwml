@@ -208,11 +208,14 @@ print <<END;
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#800080" alink="#FF0000">
 
-<table border="0" cellpadding="3" cellspacing="0" align="center" summary="">
+<table border="0" cellpadding="3" cellspacing="0" width="100%" summary="">
 <tr>
-<td>
-<a href="$urlbase/logos/"><IMG src="$urlbase/logos/openlogo-nd-50.png" border="0" hspace="0" vspace="0" alt="" width="50" height="61"></A>
-<a href="$urlbase/"><IMG src="$urlbase/Pics/debian.jpg" border="0" hspace="0" vspace="0" alt="Debian Project" width="179" height="61"></a>
+<td align="left" valign="middle">
+<a href="$urlbas/"><img src="$urlbase/logos/openlogo-nd-50.png" border="0" hspace="0" vspace="0" alt="" width="50" height="61"></a>
+<a href="$urlbas/" rel="start"><img src="$urlbase/Pics/debian.jpg" border="0" hspace="0" vspace="0" alt="Debian Project" width="179" height="61"></a>
+</td>
+<td align="right" valign="middle">
+<h1>Package Download Selection</h1>
 </td>
 </tr>
 </table>
