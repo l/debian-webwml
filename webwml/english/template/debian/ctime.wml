@@ -76,7 +76,7 @@ use Time::Local;
 # List of long month names (may be used in "spoken" dates).
 %longmoy = (
 	en => [ 'January', 'February', 'March', 'April', 'May', 'June',
-         'July', 'August', 'Septemper', 'October', 'November', 'December' ],
+         'July', 'August', 'September', 'October', 'November', 'December' ],
 	ro => [ 'Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie',
          'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie' ],
 	fi => [ 'tammikuu', 'helmikuu', 'maaliskuu', 'huhtikuu', 'toukokuu',
@@ -223,13 +223,13 @@ sub spokendate {
 		# or "th", according to the numeric date.
 
 		SWITCH: {
-			$mday .= "st", last SWITCH if ($date % 10 == 1);
-			$mday .= "nd", last SWITCH if ($date % 10 == 2);
-			$mday .= "rd", last SWITCH if ($date % 10 == 3);
+			$mday .= "st", last SWITCH if ($mday % 10 == 1 && $mday != 11);
+			$mday .= "nd", last SWITCH if ($mday % 10 == 2 && $mday != 12);
+			$mday .= "rd", last SWITCH if ($mday % 10 == 3 && $mday !=13);
 			$mday .= "th";
 		}
 
-		return sprintf("%s %s %d", $mon_str, $mday, $year);
+		return sprintf("%s %s, %d", $mon_str, $mday, $year);
 	}
 	# Add any other special cases here as elsif cases
 	else
