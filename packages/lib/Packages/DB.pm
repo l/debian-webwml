@@ -700,8 +700,17 @@ sub process_dep_list {
 	    my $given_dep_strip = $given_dep;
 	    my ( $dep_op, $dep_ver, $dep_archs );
 	    {
-		$given_dep_strip =~ s/\s*\(\s*(=|>=|<=|<<|>>)\s*(.*)\)\s*//o;
+		$given_dep_strip =~ s/\s*\(\s*(=|>=|<=|<<|>>|>|<)\s*(.*)\)\s*//o;
 		( $dep_op, $dep_ver ) = ( $1 || "", $2 || "");
+		if ( $dep_op eq '>' ) {
+		    $dep_op = '>>';
+		    warn "W: package $pkg still uses old style versioning (>) when referencing $given_dep_strip\n"
+			if $self->{config}{verbose};
+		} elsif ( $dep_op eq '<' ) {
+		    $dep_op = '<<';
+		    warn "W: package $pkg still uses old style versioning (<) when referencing $given_dep_strip\n"
+			if $self->{config}{verbose};
+		}
 	    }
 	    {
 		$given_dep_strip =~ s/\s*\[\s*(.*)\]\s*//o;
@@ -714,7 +723,7 @@ sub process_dep_list {
 	    } else {
 		push(@final_dep_list, [ $given_dep_strip, $dep_op, 
 					$dep_ver, $dep_archs, "(NOT AVAILABLE)" ] );
-		warn "W: package $given_dep_strip is not avilable but references by $pkg"
+		warn "W: package $given_dep_strip is not available but referenced by $pkg\n"
 		    if $self->{config}{verbose};
 	    }
 	}
