@@ -188,7 +188,7 @@ sub package_pages_walker {
 				   gettext( "Users of experimental packages are encouraged to contact the package maintainers directly in case of problems." )
 				   );
 	}
-	if ($d->{subsuite} eq "debian-installer") {
+	if ($d->{section} eq "debian-installer") {
 	    $package_page .= note( gettext( "debian-installer udeb package"),
 				   gettext( "Warning: This package is intended for the use in building <a href=\"http://www.debian.org/devel/debian-installer\">debian-installer</a> images only. Do not install it on a normal Debian system." )
 				   );
@@ -445,7 +445,7 @@ sub src_package_pages_walker {
     $package_page .= "<div id=\"pdesc\">\n";
     if ($env->{distribution} eq "experimental") {
 	$package_page .= note(
-			      gettext( "Experimental package")."</h2>",
+			      gettext( "Experimental package"),
 			      gettext( "Warning: This package is from the <span class=\"pred\">experimental</span> distribution. That means it is likely unstable or buggy, and it may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.")."</p><p>".
 			      gettext( "Users of experimental packages are encouraged to contact the package maintainers directly in case of problems." ) );
     }
