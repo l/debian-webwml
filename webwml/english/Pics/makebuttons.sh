@@ -10,6 +10,11 @@
 #
 # gimp --no-interface --no-data --batch '(extension-perl-server 0 0 0)' &
 #
+# If you want to go into totally evil mode with no X display, try
+# this on for size. I hope it works :/
+# Xvfb :1 -screen 0 10x10x8 -pixdepths 1 &
+# gimp --display :1.0 --no-interface --no-data --batch '(extension-perl-server 0 0 0)' &
+#
 # TRANSLATORS, Edit the stuff in ""s
 LANG="en"
 HOME_TEXT="Home"
