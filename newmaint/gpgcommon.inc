@@ -217,7 +217,7 @@
         "TM" => "Turkmenistan",
         "TC" => "Turks and Caicos Isl",
         "TV" => "Tuvalu",
-        "AE" => "U.A.E.",
+        "AE" => "United Arab Emirates",
         "UM" => "U.S.Minor Outlying Isl",
         "UG" => "Uganda",
         "UA" => "Ukraine",
