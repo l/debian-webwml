@@ -3,8 +3,8 @@
 #include "../../english/template/debian/language_names.wml"
 #include "../../english/international/l10n/dtc.def"
 <PERL>
-#include "../../english/international/l10n/init.pl"
-#include "../../english/international/l10n/ranking.pl"
+#include "../../english/international/l10n/scripts/init.pl"
+#include "../../english/international/l10n/scripts/ranking.pl"
 
 $cur_lang = "$(CUR_LANG)";
 $header = "<tr><td><Rank><td><Language><td><Score><td><nbpkg><td><avgl10n>\n";

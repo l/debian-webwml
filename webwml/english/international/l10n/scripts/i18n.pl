@@ -1,6 +1,6 @@
 #include "../../english/international/l10n/dtc.def"
 <PERL>
-#include "../../english/international/l10n/init.pl"
+#include "../../english/international/l10n/scripts/init.pl"
 $str = "<table border=1><tr><td><category><td colspan=2><I18N-ED><td colspan=2><Catalogs><br><I18N-prcent><td colspan=3><Organisation><br><I18N-prcent>\n";
 $str =~ s/<td/<td align=center BGCOLOR="#ddddd5"/g;
 print $str;

@@ -1,7 +1,7 @@
 #include "../../english/international/l10n/dtc.def"
 <PERL>
-#include "../../english/international/l10n/init.pl"
-#include "../../english/international/l10n/ranking.pl"
+#include "../../english/international/l10n/scripts/init.pl"
+#include "../../english/international/l10n/scripts/ranking.pl"
 
 ###
 ### Makes the big table
