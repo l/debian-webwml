@@ -15,8 +15,8 @@ include $(WMLBASE)/Make.dep.templ
 include $(WMLBASE)/Make.dep.generic
 
 #do not modify the following line(s)
-index.$(LANGUAGE).html: index.wml $(wildcard 1998/*.wml) $(wildcard 1999/*.wml) \
+index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*/*.wml) \
      $(ENGLISHSRCDIR)/events/index.include \
-     $(wildcard $(ENGLISHSRCDIR)/events/1998/*.wml) \
-	 $(wildcard $(ENGLISHSRCDIR)/events/1999/*.wml) \
+     $(wildcard $(ENGLISHSRCDIR)/events/[0-9]*/*.wml) \
+	 $(wildcard $(ENGLISHSRCDIR)/events/[0-9]*/*.wml) \
      $(TEMPLDIR)/template.wml $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml
