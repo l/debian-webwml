@@ -25,19 +25,29 @@ foreach $file (@ARGV) {
       $filename = pop(@parts);
       $path = join('/', @parts);
       if ( -f "$lang/$file" ) {
-         print "running 'wml $lang/$path/$filename'\n";
+			if ($path eq '') {
+         	print "running 'wml -q $lang/$filename'\n";
+			}
+			else {
+         	print "running 'wml -q $lang/$path/$filename'\n";
+			}
          $pid = fork;
          if ($pid) { # parent
             # do nothing
          }
          else {      # child
-            chdir "$lang/$path" && system("wml", $filename);
+            chdir "$lang/$path" && system("wml", "-q", $filename);
             exit 0;
          }
          waitpid($pid,0);
       }
       else {
-         print "$lang/$file doesn't exist\n";
+			if ($path eq '') {
+         	print "$lang/$file doesn't exist\n";
+			}
+			else {
+         	print "$lang/$path/$file doesn't exist\n";
+			}
       }
    }
 }
