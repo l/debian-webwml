@@ -141,7 +141,6 @@ sub getwmlfiles
 	next if (/\/template\//);
 	next if (/\/MailingLists\/(un)?subscribe\.wml/);
 	next if (/\/devel\/wnpp\/wnpp\.wml/);
-	next if (/\/international\/l10n\/data\/countries\.wml/);
 	next if (/\/international\/l10n\/scripts\/l10nheader\.wml/);
 	chomp;
 	$file = substr ($_, $cutfrom);
