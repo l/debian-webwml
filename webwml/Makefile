@@ -1,24 +1,9 @@
-all:
-	- $(MAKE) -C arabic install
-	- $(MAKE) -C chinese install
-	- $(MAKE) -C croatian install
-	- $(MAKE) -C danish install
-	- $(MAKE) -C dutch install
-	- $(MAKE) -C english install
-	- $(MAKE) -C esperanto install
-	- $(MAKE) -C finnish install
-	- $(MAKE) -C french install
-	- $(MAKE) -C german install
-	- $(MAKE) -C hungarian install
-	- $(MAKE) -C italian install
-	- $(MAKE) -C japanese install
-	- $(MAKE) -C korean install
-	- $(MAKE) -C norwegian install
-	- $(MAKE) -C polish install
-	- $(MAKE) -C portuguese install
-	- $(MAKE) -C romanian install
-	- $(MAKE) -C russian install
-	- $(MAKE) -C spanish install
-	- $(MAKE) -C swedish install
-	- $(MAKE) -C turkish install
+# Top-level Makefile for the Debian Web pages
 
+LANGUAGES := arabic chinese croatian danish dutch english esperanto finnish \
+             french german hungarian italian japanese korean norwegian \
+             polish portuguese romanian russian spanish swedish turkish
+
+.PHONY: all
+all:
+	for d in ${LANGUAGES}; do $(MAKE) -C $$d install; done
