@@ -273,16 +273,16 @@
     function print_place_long($begin, $finish, $city, $state, $country, $url) {
         global $iso;
         if ($city) {
-            echo "$city, ";
+            echo "$city";
         }
         if ($state) {
-            echo "<b>$state</b>, ";
+            echo ", <b>$state</b>";
         }
         if ($country) {
-            echo "<i>$iso[$country]</i>, ";
+            echo ", <i>$iso[$country]</i>";
         }
         if ($url) {
-            echo "<kbd>$url</kbd>, ";
+            echo ", <kbd>$url</kbd>";
         }
         print_from_to($begin, $finish);
     }
