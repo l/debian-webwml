@@ -460,7 +460,7 @@ sub package_pages_walker {
 	#
 	# create data sheet
 	#
-	if ($env->{lang} == "en") {
+	if ($env->{lang} eq "en") {
 
 	    my $data_sheet = header( title => "$name -- Data sheet",
 				     lang => "en",
