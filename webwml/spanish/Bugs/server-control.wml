@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - control del servidor" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.20"
+#use wml::debian::translation-check translation="1.22"
 
 <h1>Información para desarrolladores sobre cómo manipular fallos
 utilizando el interfaz de correo electrónico.</h1>
@@ -106,6 +106,31 @@ que informó de él.</p>
 sírvase consultar la documentación general para desarrolladores sobre el
 sistema de fallos.
 
+<dt><code>clone</code> <var>número de fallo</var> [ <var>nuevos ID</var> ]
+
+  <dd>La orden de control clone le permite duplicar un informe. Es útil en
+  caso de que un mismo informe indique realmente que han ocurrido varios
+  fallos diferentes. "<var>Nuevos ID</var>" son números negativos,
+  separados por espacios, que se usarán en órdenes de control subsecuentes
+  para referirse a los informes recién duplicados. Se genera un nuevo
+  informe por cada nuevo ID.
+
+  <p>Ejemplo de uso:</p>
+
+  <pre>
+        clone 12345 -1 -2
+        reassign -1 foo
+        retitle -1 foo: foo apesta
+        reassign -2 bar
+        retitle -2 bar: bar apesta cuando se usa con foo
+        severity -2 wishlist
+        clone 123456 -2
+        reassign -2 foo
+        retitle -2 foo: foo apesta
+        merge -1 -2
+  </pre>
+
+
 <dt><code>merge</code> <var>número de fallo</var> <var>número de fallo</var> ...
 <dd>
 
@@ -184,6 +209,7 @@ contraste a enviar <var>número de fallo</var><code>-done@bugs</code>)
 el cierre del fallo. El mantenedor que cierra el fallo debería asegurarse,
 probablemente enviando un mensaje aparte, de que el usuario que informó
 del fallo sabe por qué ha sido cerrado.
+Por tanto, el uso de esta orden es obsoleto.
 </dl>
 
 <hr>
