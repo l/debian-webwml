@@ -75,28 +75,35 @@ Read a template containing all translations
 sub read_compact {
         my $self = shift;
         my $file = shift;
-        my ($tmpl, $lang, $msg);
+        my ($lang, $msg);
 
         $self->_init();
         open (TMPL, "< $file")
                 || die "Unable to read file $file\n";
 
-        $tmpl = '';
+        my $tmpl = '';
+        my $line = 0;
         while (<TMPL>) {
                 chomp;
+                $line ++;
                 if (s/^Template:\s*//) {
                         $tmpl = $_;
                         $self->{orig}->{$tmpl} = {};
-                } elsif (s/^Choices:\s*//) {
-                        die "\`Choices' field found before \`Template'\n"
-                                unless $tmpl ne '';
+                } elsif (s/^(Choices):\s*//) {
+                        if ($tmpl eq '') {
+                                warn "$file:$line: \`$1' field found before \`Template'\n";
+                                goto SKIP;
+                        }
                         $self->{orig}->{$tmpl}->{choices} = $_;
                         $self->{count} ++;
-                } elsif (s/^Description:\s*//) {
-                        die "\`Description' field found before \`Template'\n"
-                                unless $tmpl ne '';
+                } elsif (s/^(Description):\s*//) {
+                        if ($tmpl eq '') {
+                                warn "$file:$line: \`$1' field found before \`Template'\n";
+                                goto SKIP;
+                        }
                         $msg = $_ . "\n";
                         while (<TMPL>) {
+                                $line ++;
                                 last if (!defined($_) || m/^\S/ || m/^$/m);
                                 $msg .= $_;
                         }
@@ -106,21 +113,26 @@ sub read_compact {
                         $self->{orig}->{$tmpl}->{description} = $msg;
                         $self->{count} ++;
                         last unless defined($_);
+                        $line --;
                         redo;
-                } elsif (s/^Choices-(.*?):\s*//) {
-                        die "\`Choices-$1' field found before \`Template'\n"
-                                unless $tmpl ne '';
-                        $lang = $1;
+                } elsif (s/^(Choices-(.*?)):\s*//) {
+                        if ($tmpl eq '') {
+                                warn "$file:$line: \`$1' field found before \`Template'\n";
+                                goto SKIP;
+                        }
+                        $lang = $2;
                         unless (defined($self->{langs}->{$lang})) {
                                 $self->{langs}->{$lang} = 1;
                                 $self->{trans}->{$lang}->{count} = 0;
                                 $self->{trans}->{$lang}->{fuzzy} = 0;
                         }
                         $self->{trans}->{$lang}->{count} ++;
-                } elsif (s/^Description-(.*?):\s+//) {
-                        die "\`Description-$1' field found before \`Template'\n"
-                                unless $tmpl ne '';
-                        $lang = $1;
+                } elsif (s/^(Description-(.*?)):\s+//) {
+                        if ($tmpl eq '') {
+                                warn "$file:$line: \`$1' field found before \`Template'\n";
+                                goto SKIP;
+                        }
+                        $lang = $2;
                         unless (defined($self->{langs}->{$lang})) {
                                 $self->{langs}->{$lang} = 1;
                                 $self->{trans}->{$lang}->{count} = 0;
@@ -128,13 +140,29 @@ sub read_compact {
                         }
                         do {
                                 $_ = <TMPL>;
+                                $line ++;
                         } until (!defined($_) || m/^\S/ || m/^$/m);
                         $self->{trans}->{$lang}->{count} ++;
                         last unless defined($_);
+                        $line --;
                         redo;
                 } elsif (m/^\s*$/) {
                         $tmpl = '';
+                } elsif (m/^(Type|Default)/) {
+                        #   Ignored fields
+                } else {
+                        warn "$file:$line: Wrong input line:\n $_\n";
                 }
+                next;
+
+                SKIP:
+                        while (<TMPL>) {
+                                $line ++;
+                                last if (!defined($_) || m/^\S/ || m/^$/m);
+                        }
+                        last unless defined($_);
+                        $line --;
+                        redo;
         }
         close(TMPL);
 }
@@ -171,38 +199,47 @@ sub _read_dispatched {
                 || die "Unable to read file $file\n";
 
         my $tmpl = '';
+        my $line = 0;
         while (<TMPL>) {
                 chomp;
+                $line ++;
                 if (s/^Template:\s*//) {
                         $tmpl = $_;
                         $status = '';
-                        warn "$file: template $_ does not appear in original!\n"
+                        warn "$file:$line: template $_ does not appear in original!\n"
                                 unless defined $self->{orig}->{$tmpl};
-                } elsif (s/^Choices:\s*//) {
-                        die "\`Choices' field found before \`Template'\n"
-                                unless $tmpl ne '';
+                } elsif (s/^(Choices):\s*//) {
+                        if ($tmpl eq '') {
+                                warn "$file:$line: \`$1' field found before \`Template'\n";
+                                goto SKIP;
+                        }
                         next unless defined $self->{orig}->{$tmpl};
                         if ($_ eq $self->{orig}->{$tmpl}->{choices}) {
                                 $status = 'count';
                         } else {
                                 $status = 'fuzzy';
                         }
-                } elsif (s/^Choices-(.*?):\s*//) {
-                        die "\`Choices-$1' field found before \`Template'\n"
-                                unless $tmpl ne '';
-                        $lang = $1;
+                } elsif (s/^(Choices-(.*?)):\s*//) {
+                        if ($tmpl eq '') {
+                                warn "$file:$line: \`$1' field found before \`Template'\n";
+                                goto SKIP;
+                        }
+                        $lang = $2;
                         unless (defined($self->{langs}->{$lang})) {
                                 $self->{langs}->{$lang} = 1;
                                 $self->{trans}->{$lang}->{count} = 0;
                                 $self->{trans}->{$lang}->{fuzzy} = 0;
                         }
                         $self->{trans}->{$lang}->{$status} ++;
-                } elsif (s/^Description:\s*//) {
-                        die "\`Description' field found before \`Template'\n"
-                                unless $tmpl ne '';
+                } elsif (s/^(Description):\s*//) {
+                        if ($tmpl eq '') {
+                                warn "$file:$line: \`$1' field found before \`Template'\n";
+                                goto SKIP;
+                        }
                         next unless defined $self->{orig}->{$tmpl};
                         $msg = $_ . "\n";
                         while (<TMPL>) {
+                                $line ++;
                                 last if (!defined($_) || m/^\S/ || m/^$/m);
                                 $msg .= $_;
                         }
@@ -215,11 +252,14 @@ sub _read_dispatched {
                                 $status = 'fuzzy';
                         }
                         last unless defined($_);
+                        $line --;
                         redo;
-                } elsif (s/^Description-(.*?):\s+//) {
-                        die "\`Description-$1' field found before \`Template'\n"
-                                unless $tmpl ne '';
-                        $lang = $1;
+                } elsif (s/^(Description-(.*?)):\s+//) {
+                        if ($tmpl eq '') {
+                                warn "$file:$line: \`$1' field found before \`Template'\n";
+                                goto SKIP;
+                        }
+                        $lang = $2;
                         if (defined($self->{files}->{$lang})) {
                                 die "Lang \`$lang' found in \`$file' and \`$self->{files}->{$lang}'\n"
                                         unless $self->{files}->{$lang} eq $file;
@@ -233,13 +273,29 @@ sub _read_dispatched {
                         }
                         do {
                                 $_ = <TMPL>;
+                                $line ++;
                         } until (!defined($_) || m/^\S/ || m/^$/m);
                         $self->{trans}->{$lang}->{$status} ++;
                         last unless defined($_);
+                        $line --;
                         redo;
                 } elsif (m/^\s*$/) {
                         $tmpl = '';
+                } elsif (m/^(Type|Default)/) {
+                        #   Ignored fields
+                } else {
+                        warn "$file:$line: Wrong input line:\n $_\n";
                 }
+                next;
+
+                SKIP:
+                        while (<TMPL>) {
+                                $line ++;
+                                last if (!defined($_) || m/^\S/ || m/^$/m);
+                        }
+                        last unless defined($_);
+                        $line --;
+                        redo;
         }
         close(TMPL);
 }
