@@ -94,7 +94,8 @@ sub print_deps {
 	$res .= "\n".join( "<br> ".gettext( " or " )." ", @res_pkgs )."\n";
     }
     if (@$relations) {
-	$res .= "</li></ul>\n";
+	$res .= "</li>\n";
+	$res .= "</ul>\n";
     } else {
 	$res = "";
     }
