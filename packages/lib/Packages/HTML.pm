@@ -54,6 +54,7 @@ sub header {
     }
 
     my $search_in_header = '';
+    $params{print_search_field} ||= "";
     if ($params{print_search_field} eq 'packages') {
 	my %values = %{$params{search_field_values}};
 	$logo_align ='left';
