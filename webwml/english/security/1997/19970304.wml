@@ -1,0 +1,84 @@
+#!wml -o ../../../../debian.org/security/1997/%BASE.html.en
+<define-tag pagetitle>superprobe</define-tag>
+<define-tag report_date>04 Mar 1997</define-tag>
+<define-tag packages>xbase</define-tag>
+<define-tag description>SuperProbe (of XFree86) contains a number of buffer overflows</define-tag>
+<define-tag vulnerable><FONT COLOR=007F00>No</FONT></define-tag>
+<define-tag fixed></define-tag>
+#use wml::debian::basic title="Debian GNU/Linux &mdash; <pagetitle>"
+#use wml::debian::security
+
+<blockquote>
+<b>Date: 	Tue, 4 Mar 1997 23:24:28 -0500</b> <br>
+<b>From: solar@IDEAL.RU</b> <p>
+
+Hi! <p>
+
+SuperProbe is a program supplied with XFree86 (to determine the type of video
+hardware installed in the machine), and it is installed setuid root in many
+Linux distributions. It has already been discussed here that SuperProbe got
+some buffer overflows, but there still seems to be no exploit. The reason for
+this might be that the exploit has to be a bit unusual. That's why I decided
+to post the exploit, as an example of exploiting an overflow without dealing
+with the return address. <p>
+
+The overflow I'm exploiting is in the TestChip function: <p>
+
+<pre>
+   static Bool TestChip(chip_p, Chipset)
+   Chip_Descriptor *chip_p;
+   int *Chipset;
+   {
+       char *p, *p1, name[64];
+
+  [...]
+
+		   (void)strcpy(name, p);
+	       }
+	       if (StrCaseCmp(name, chip_p->name) == 0)
+
+  [...]
+
+       if (chip_p->f(Chipset))
+       {
+	   return(TRUE);
+       }
+       return(FALSE);
+   }
+
+</pre>
+
+Chip_Descriptor is defined like this: <p>
+
+<pre>
+   typedef Bool (*ProbeFunc) __STDCARGS((int *));
+
+[...]
+
+  typedef struct {
+           char            *name;          /* Chipset vendor/class name    */
+           ProbeFunc       f;              /* Probe function               */
+[...]
+   } Chip_Descriptor;
+</pre>
+
+It is possible to overwrite the return address by the strcpy, but one byte of
+chip_p would get zeroed out (since chip_p is located right after the return
+address, and the string is ASCIIZ). This would cause the program to crash when
+trying to access chip_p->name for passing it to StrCaseCmp, before the return
+address is used. <p>
+
+That's why I overwrite chip_p to point into an environment variable (well, the
+return address gets overwritten also, but it's never used), which has an array
+of pointers to the shellcode (located at the end of the same variable's value)
+in it. One of these is first used by StrCaseCmp, so it doesn't crash, and the
+next one is used as the probe function pointer, so the shellcode gets executed
+when calling chip_p->f() (it might be required to adjust the alignment in my
+exploit, try values 0 to 3 if the default does't work). <p>
+
+patch removed due to age
+</blockquote>
+
+<:= languages ("$(HOME)", "security", "$(WML_SRC_BASENAME)", "$(CUR_LANG)") :>
+<HR>
+#use wml::debian::footer

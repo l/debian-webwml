@@ -1,5 +1,5 @@
 BASE=../..
-CUR_DIR=Security/1997
+CUR_DIR=security/1997
 
 HTMLDIR=$(BASE)/../../debian.org/$(CUR_DIR)
 TEMPLDIR=$(BASE)/template/debian
@@ -19,4 +19,4 @@ all: $(HTMLFILES)
 
 include $(BASE)/Make.templ.inc
 
-$(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(wildcard 1997*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_news.wml
+$(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(wildcard 1997*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
