@@ -286,7 +286,7 @@ $translations_status = {
 
 'devel/help' => {
 	'status'		=> '2',
-	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@globenet.org>'],
 },
 
 'intro/why_debian' => {
@@ -337,11 +337,11 @@ $translations_status = {
 },
 
 'contact' => {
-	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@globenet.org>'],
 },
 
 'donations' => {
-	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@globenet.org>'],
 },
 
 'index' => {
@@ -349,7 +349,7 @@ $translations_status = {
 },
 
 'license' => {
-	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@globenet.org>'],
 },
 
 'social_contract' => {
@@ -357,7 +357,7 @@ $translations_status = {
 },
 
 'support' => {
-	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@globenet.org>'],
 },
 
 'todo' => {
@@ -377,7 +377,7 @@ $translations_status = {
 },
 
 'devel/incoming_mirrors' => {
-	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@globenet.org>'],
 },
 
 'devel/index' => {
@@ -393,7 +393,7 @@ $translations_status = {
 },
 
 'devel/release_info' => {
-	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@globenet.org>'],
 },
 
 'devel/rsync_examples' => {
@@ -561,7 +561,7 @@ $translations_status = {
 },
 
 'releases/hamm/errata' => {
-	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@globenet.org>'],
 },
 
 'releases/slink/running-kernel-2.2' => {
