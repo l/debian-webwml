@@ -1,38 +1,119 @@
-#use wml::debian::cdimage title="Mettere su un mirror per le immagini dei CD Debian" BARETITLE=true
-#use wml::debian::translation-check translation="1.5" maintainer="Giuseppe Sacco"
-
-<p><strong>L'informazione in questa pagina non è aggiornata! Si utilizzi
-rsync o si provi jigdo-mirror.</strong></p>
+#use wml::debian::cdimage title="Attivare un mirror per le immagini dei CD Debian" BARETITLE=true
+#use wml::debian::toc
+#use wml::debian::translation-check translation="1.7" maintainer="Emanuele Rocca"
 
 <p>Per realizzare un sito mirror delle immagini dei CD Debian, occorre
-una macchina Linux o UNIX-like. Ci sono vari modi per ottenere e rendere
-disponibili le immagini, a seconda delle proprie possibilit&agrave;.</p>
+una macchina Linux o UNIX-like con connessione ad internet permanente e affidabile.<p>
 
-<p><em>Non</em> si dovrebbero usare FTP o HTTP per procurarsi le
-immagini. Questi metodi di trasferimanto hanno un'elevata
-probabilit&agrave; di fallimento, a causa delle dimensioni enormi dei
-file. In pi&ugrave;, se le immagini cambiano anche solo di pochissimo
-(come nel caso delle subrelease), i dati debbono essere riscaricati per
-intero. In questo modo si mettono a dura prova i propri computer e le proprie
-connessioni di rete.</p>
+<p>I siti mirror delle immagini dei CD forniscono solitamente dei template jigdo e
+alcuni rendono anche disponibili delle immagini complete precostituite. I template
+sono comunemente aggiornati tramite rsync da uno <a href="../jigdo-cd/#which">\
+dei siti ufficiali</a> e le immagini complete vengono aggiornate usando
+<kbd>jigdo-mirror</kbd>.</p>
 
-<p>Per questi motivi, si utilizza il programma <a
+<toc-display/>
+
+<hr>
+
+<toc-add-entry name="httpftp">Perch&eacute; FTP e HTTP <strong>non</strong> sono adatti</toc-add-entry>
+
+<p><em>Non</em> si dovrebbero usare FTP o HTTP per scaricare le immagini. Questi
+metodi di trasferimento file hanno un' alta probabilit&agrave; di fallimento considerando
+l'enorme dimensione dei file.</p>
+
+<p>Inoltre, se l'immagine cambia solo di pochissimo (come nel caso delle subrelease), tutti
+i dati debbono essere scaricati nuovamente. In questo modo si mettono a dura
+prova i propri computer e le proprie connessioni di rete.
+
+<toc-add-entry name="download">Scaricare tramite rsync</toc-add-entry>
+
+<p>Per le ragioni elencate in precedenza, viene usato il programma <a
 href="http://rsync.samba.org/"><tt>rsync</tt></a>, che
 fondamentalmente esegue un patching binario in remoto.  Con
-<tt>rsync</tt>, le immagini di subrelease vengono aggiornate molto
+<tt>rsync</tt>, le immagini delle subrelease vengono aggiornate molto
 efficientemente, poich&eacute; vengono trasferite attraverso la rete
 solo le parti modificate; quelle rimaste immutate sono copiate dalla
 vecchia immagine.</p>
 
+<p>Per siti che vogliono includere solo le immagini dei CD Debian 
+(e non vogliono fare da mirror per quanto riguarda il resto), suggeriamo
+l'utilizzo di <kbd>rsync</kbd>, inserendolo nel cron daily.</p>
+
+<p>Si pu&ograve; utilizzare qualunque mirror presente in <a href="rsync-mirrors">questa 
+lista</a>.</p>
+
+<p>Si usino quantomeno le opzioni <strong><kbd>--times --links --hard-links
+--block-size=8192</kbd></strong>. Questo manterr&agrave; la data di modifica,
+i symlinks e gli hardlinks, usando un block size di 8192 bytes (il pi&ugrave; efficiente
+per le immagini dei CD). Quando la data di modifica e la dimensione sono le
+medesime, <kbd>rsync</kbd> lascier&agrave; semplicemente il file com'&egrave;, quindi solo
+<tt>--times</tt> &egrave; realmente obbligatorio.</p>
+
+<toc-add-entry name="jigdomirror">Generare le immagini con jigdo-mirror</toc-add-entry>
+
+<p>Molte persone mantengono mirror Debian "regolari" (<kbd>debian/</kbd>),
+o semplicemente hanno un mirror del genere vicino. Ci&ograve; significa che
+hanno gia i .deb che sono inclusi nelle immagini dei CD. La questione che
+sorge spontanea &egrave; -- perch&egrave; non si possono usare tali file nelle
+immagini dei CD?</p>
+
+<p><kbd>jigdo-mirror</kbd> &egrave; un programma che consente di generare l'immagine di
+un CD Debian usando i file da un mirror "normale", pi&ugrave; alcuni template jigdo.</p>
+
+<p>Notare che <kbd>jigdo-mirror</kbd> &egrave; incluso in jigdo 0.6.8, ma questa 
+versione non &egrave; parte di Debian 3.0 ("woody"). Ci&ograve; significa semplicemente
+che dovrai prendere il pacchetto separatamente, non ci sono attualmente dei problemi
+usando la nuova versione su "woody".</p>
+
+<p>Prima di tutto, sono necessari i template di jigdo. Si trovano in vari posti,
+ma i due siti primari sono:</p>
+
+<ul compact>
+  <li><kbd>rsync us.cdimage.debian.org::jigdo-area/</kbd> (mirror Statunitense)
+  <li><kbd>rsync non-us.cdimage.debian.org::jigdo-area/</kbd> (mirror Europeo)
+</ul>
+
+<p>Si prendano i file dalle sottodirectory
+&lt;<var>versione</var>&gt;/jigdo/&lt;<var>architettura</var>&gt;
+, per ogni architettura per la quale si ha intenzione di creare l' immagine.</p>
+
+<p>Per configurare il programma, creare il file <kbd>~/.jigdo-mirror</kbd>.
+Ecco un esempio:</p>
+
+<pre>
+jigdoDir="/dove_tieni_i_mirror/debian-cd/current/jigdo"
+imageDir="/dove_tieni_i_mirror/debian-cd/current/images"
+tmpDir="/dove_tieni_i_mirror/debian-cd/current/images"
+debianMirror="file:/dove_tieni_i_mirror/debian"
+nonusMirror="file:/dove_tieni_i_mirror/debian-non-US"
+include='i386/|sparc/|powerpc/|source/'; exclude='-1\.'
+</pre>
+
+<p>Le variabili <i>include</i> e <i>exclude</i> contengono la lista delle
+architetture per le quali si intende creare le immagini (sono ammesse espressioni
+regolari). Per maggiori informazioni, si veda la pagina di manuale di <kbd>jigdo-mirror</kbd>
+o il codice stesso (&egrave; uno script di shell molto commentato).</p>
+
+<p>Dopo la configurazione, si lanci semplicemente <kbd>jigdo-mirror</kbd>, il quale
+dovrebbe fare tutto da solo. Produrr&agrave; parecchio output e probabilmente
+ci metter&agrave; un po' quindi consigliamo di lanciarlo e redirigere l'output
+su un file.</p>
+
+<toc-add-entry name="pik">Generare le immagini con il pseudo-image kit e debcdmirror</toc-add-entry>
+
+
 <p>Il solo <tt>rsync</tt> pu&ograve; anche scaricare le release
 "completamente nuove", poich&eacute; tali immagini virtualmente non
-contengono parti modificate. Comunque, con lo pseudo image kit, si possono
+contengono parti modificate. Comunque, con lo pseudo-image kit, si possono
 creare "pseudo" immagini di CD dai dati già disponibili sul pi&ugrave;
 vicino mirror FTP Debian - magari sul proprio disco fisso locale. Poi
 <tt>rsync</tt> potr&agrave; patchare in binario queste "pseudo
 immagini", facendole corrispondere alle ufficiali. Persino per la
 maggior parte delle immagini di subrelease, questo metodo risulta essere
 pi&ugrave; efficiente del patchare la vecchia immagine.</p>
+
+<p><strong>Le informazioni in questa sezione potrebbero non essere aggiornate!
+Si raccomanda l'utilizzo di rsync o di jigcdo-mirror.</strong></p>
 
 <p>Lo pseudo image kit &egrave; pensato principalmente per il download
 di poche immagini, come avviene nella maggior parte dei casi. C'&egrave;
@@ -43,27 +124,14 @@ pseudo image kit e <tt>rsync</tt> per mantenere il proprio mirror aggiornato
 ciascuna immagine scaricata. Con <tt>debcdmirror</tt>, si può anche
 specificare nel dettaglio di cosa si intende fare il mirror.</p>
 
-<p>Quindi abbiamo le seguenti possibilit&agrave; per ottenere le
-immagini e mantenerle aggiornate:</p>
+<p>L'uso manuale dello pseudo image kit (magari con <tt>rsync</tt>
+per aggiornare le subrelease) comporta molto lavoro e molti problemi,
+quindi non lo raccomandiamo.
 
-<ul>
+<p>Invece, si dovrebbe usare lo script <tt>debcdmirror</tt> (il quale
+usa "internamente" lo pseudo-image kit e <tt>rsync</tt>) (daily cron
+job).</p>
 
-  <li>Tramite FTP o HTTP: Questo <em>non</em> si dovrebbe fare.</li>
-
-  <li>Usare il solo <tt>rsync</tt> (cron job giornaliero): &Egrave;
-  preferibile solamente su siti che non hanno un mirror FTP Debian
-  vicino/veloce.</li>
-
-  <li>Usare lo pseudo image kit manualmente (magari con <tt>rsync</tt>
-  per aggiornare le subrelease). Parecchio lavoro e parecchi
-  fastidi.</li>
-
-  <li>Usare lo script <tt>debcdmirror</tt> (che utilizza "internamente" lo
-  Pseudo-Image Kit e <tt>rsync</tt>) (cron job giornaliero). 
-  <strong>Questo</strong> &egrave; ci&ograve; che andrebbe fatto!
-  :-)</li>
-
-</ul>
 
 <p>Le ultime versioni dello <a
 href="http://cdimage.debian.org/~costar/pseudo-image-kit/">pseudo image
@@ -77,34 +145,29 @@ procedure.</p>
 
 <p>Con lo script <tt>debcdmirror</tt>, si è obbligati a scegliere un
 mirror <tt>rsync</tt> che offra un flie "<tt>ls-lR</tt>". Gli
-indirizzi di tali mirror sono sulla <a href="rsync-mirrors.html">lista dei mirror
-rsync</a>. I mirror pubblici ufficiali sono autorizzati a fare rsync
-direttamente dal server principale, cdimage.debian.org; per questo
-probabilmente si necessiterà di una password, si chieda ai <a
-href="mailto:phil@hands.com">suoi amministratori</a>.</p>
+indirizzi di tali mirror sono sulla <a href="rsync-mirrors">lista dei mirror
+rsync</a>. 
 
 <p>Se non si ha un <a href="$(HOME)/mirror/">mirror FTP Debian
 "regolare"</a> in locale, si consulti la <a href="$(HOME)/mirror/list">\
-lista dei siti FTP</a>.
+lista dei siti mirror</a>.
+
 
 <p><tt>debcdmirror</tt> richiede <tt>bash</tt> versione 2 o
-superiore. Se necessario, la si può installare in una locazione non di
-default, ma ci si assicuri di aggiornare il path della <tt>bash</tt> nella
-prima linea dello script.</p>
+superiore. Questo non &egrave; un problema in ogni sistema Debian attuale.
+Se necessario, &egrave; possibile installare bash in una directory diversa da quella 
+di default, ma ci si assicuri di aggiornare il percorso della <tt>bash</tt>
+nella prima riga dello script.</p>
 
-<p>Se si utilizza il solo <tt>rsync</tt>, si usino almeno le opzioni
-<b><tt>--times --links --hard-links --block-size=8192</tt></b>. In
-questo modo si manterranno la data di ultima modifica, i symlink e gli
-hardlink e l'uso della dimensione dei blocchi di 8192 byte (la
-pi&ugrave; efficiente per le immagini dei CD). Quando la data di ultima
-modifica e la dimensione sono invariate, <tt>rsync</tt> ignora il file,
-quindi <tt>--times</tt> &egrave; strettamente necessario.</p>
+<toc-add-entry name="test">Immagini di prova</toc-add-entry>
 
 <p>La directory "<tt><i>codename</i>_test</tt>" contiene immagini
 hard-linked a quelle residenti nelle directory recanti il numero di
 versione (es. <tt>2.2_r4</tt>). Il nome delle directory recanti la
 versione cambier&agrave; da una (sub)release all'altra, ma i nomi nelle
-directory "<tt>test</tt>" rimarranno sempre uguali. Così, nella
+directory "<tt>test</tt>" rimarranno sempre uguali.</p>
+
+<p>Così, nella
 situazione solo-<tt>rsync</tt>, fare il mirror sia delle directory
 recanti la versione che delle corrette directory "<tt>test</tt>",
 <em>e</em> usare l'opzione <tt>--hard-links</tt> &egrave; l'unico modo
@@ -114,6 +177,8 @@ correttamente. [<em>Non</em> si dovrebbero includere le directory
 <tt>debcdmirror</tt> gestice il tutto in modo diverso e pi&ugrave;
 efficiente.]</p>
 
+<toc-add-entry name="ls-lR">Il file ls-lR</toc-add-entry>
+
 <p>Il file <tt>ls-lR</tt> descrive la struttura delle directory del
 mirror su cui si trova. <strong>Non fare</strong> il mirror del file
 <tt>ls-lR</tt>; o se ne realizza uno in proprio (con il "<tt>Makels-lR</tt>"
@@ -122,19 +187,39 @@ si usi alcun file <tt>ls-lR</tt>. [<tt>debcdmirror</tt> creer&agrave; un
 <tt>ls-lR</tt> locale automaticamente dopo aver completato il
 mirroring.]</p>
 
+<toc-add-entry name="serve">Fornire i file</toc-add-entry>
+
 <p>Una volta acquisite le immagini dei CD di cui vuoi fare il mirror
 (CD i386 e sorgenti sono quelli che vanno per la maggiore), si dovrebbe
 lanciare il programma <tt>rsync</tt>. Questo non appesantir&agrave;
 eccessivamente la propria macchina, generando molto meno traffico di rete
-rispetto ad un servizio FTP/HTTP. Le istruzioni per la configurazione
-sono nel README dello pseudo image kit.</p>
+rispetto ad un servizio FTP/HTTP.</p>
 
-<p>Naturalmente, se non si avessero problemi ad avere parecchi
-gigabyte di traffico di rete al giorno, noi gradiremmo molto un altro
-mirror FTP/HTTP. Ci accontenteremo di tutto quello che si può offrire. Si 
-prega di rendere noto presso <a
-href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;debian-cd&#64;lists.debian.org"
->debian-cd&#64;lists.debian.org</a> che si sta gestendo un mirror, in modo
-da permetterci di aggiornare le pagine contenenti le liste. Grazie in
-anticipo!</p>
+<p>Le istruzioni per la configurazione sono nel README dello pseudo-image 
+kit. In breve, si aggiunga <kbd>rsync --daemon</kbd> al proprio <i>inetd</i>
+e si configuri <kbd>rsyncd.conf</kbd> a piacimento.
 
+Raccomandiamo di limitare l' accesso ad una manciata di connessioni per IP.
+
+# TODO-IT: capire che significa la frase commentata ^_^
+# We recommend limiting access to a handful connections per IP address,
+# and a double-figure number total, at most.</p>
+
+# TODO: include more stuff here rather than depending on pik, with examples
+
+<toc-add-entry name="register">Registrare il mirror nella nostra lista</toc-add-entry>
+
+<p>Per rendere il mirror utile per un maggior numero di persone,
+&egrave; possibile registrarlo nella nostra lista dei mirror, come 
+<a href="../http-ftp/">questa</a> o <a href="rsync-mirrors">questa</a>.
+Comunque, visto che le immagini complete sono file molto grandi, l'aggiunta del proprio
+mirror alla nostra lista, potrebbe provocare parecchi gigabyte di traffico di
+rete giornaliero.</p>
+
+<p>Si può anche registrare il proprio mirror sia compilando la <a href="$(HOME)/mirror/submit">
+maschera per l'aggiunta di mirror</a>
+(notare che i campi CDImage-* sono quelli importanti), o mandando una e-mail a
+<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;debian-cd&#64;lists.debian.org">\
+debian-cd&#64;lists.debian.org</a>.</p>
+
+<p>Apprezziamo tutti i nuovi mirror. Grazie in anticipo!</p>
