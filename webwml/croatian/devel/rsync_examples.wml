@@ -1,0 +1,45 @@
+#use wml::debian::template title="Primjer upotrebe rsync-a"
+
+<P>Ono ¹to slijedi jest primjer koji æe zrcaliti i web i ftp site. Morat
+æete promijeniti ime stroja i direktorije u pitanju ovisno o va¹oj
+situaciji.
+
+<P>'lock' datoteka je korisna ako æete ovo pokretati kao cron zadatak.
+Ako zbog bilo kojeg razloga mirror ne zavr¹i s poslom, sljedeæi put æe
+vam na pokretanju mirror poslati e-mail. Tako æete moæi utvrditi gdje
+le¾i problem, ispraviti, obrisati lock datoteku i mirror æe ispravno
+raditi pri sljedeæem pokretanju.
+
+<blockquote>
+<pre>
+#!/bin/bash
+set -e
+
+lockfile -r 1 rsync.master.lock || exit 23
+
+rsync -avz -e ssh --exclude .glbuild --delete &lt;machine&gt;:/web/debian.org/ debian.org
+rsync -avz -e ssh --delete &lt;machine&gt;:/web/debian.org-local/ debian.org-local
+
+echo FINISHED UPDATING WEB. WORKING ON FTP NOW.
+
+rsync -avz --delete -e ssh &lt;machine&gt;:/debian debian
+
+rm -f rsync.master.lock
+</pre>
+</blockquote>
+
+<H3>Kako podesiti ssh da vas ne pita lozinku:</H3>
+
+Gornja skripta æe vas pitati lozinku osim ako ne podesite ssh na stanovit
+naèin. Prvo, kada koristite ssh-keygen, samo pritisnite return kada vas
+bude tra¾io lozinku [1]. Dalje, dodajte sadr¾aj datoteke ~/.ssh/identity.pub
+u ~/.ssh/authorized_keys na site-u s kojeg zrcalite (ta datoteka treba
+imati mod 600).
+Tako biste trebali biti u moguænosti koristiti ssh da se logirate na
+site kojeg zrcalite bez pitanja o lozinci.
+
+<P>
+[1] Primijetite da pode¹avanje ssh-a sa praznom lozinkom daje uljezu
+slobodan pristup i site-u kojeg zrcalite, jednom kada provali u va¹
+site. Zbog ovog razloga, to se nikad ne bi smjelo raditi kao root.
+
