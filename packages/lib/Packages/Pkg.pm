@@ -216,7 +216,9 @@ sub add_version {
     # ensure we have no superfluous newlines left
     # this has to be after description handling because this
     # would change the MD5 sum otherwise
-    chomp %$data;
+    foreach (keys %$data) {
+	chomp $data->{$_} if $data->{$_};
+    }
 
     unless ( $self->_preprocess_section( $data ) ) {
 	return 0;
