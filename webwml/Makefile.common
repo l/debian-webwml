@@ -127,7 +127,7 @@ $(TEMPLDIR)/mainpage.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/mirrors.wml \
   $(TEMPLDIR)/languages.wml $(TEMPLDIR)/footer.wml $(TEMPLDIR)/links.tags.wml \
   $(ENGLISHSRCDIR)/Pics/blue-upperleft.png $(ENGLISHSRCDIR)/Pics/blue-upperright.png \
   $(ENGLISHSRCDIR)/Pics/blue-lowerleft.png $(ENGLISHSRCDIR)/Pics/blue-lowerright.png
-$(TEMPLDIR)/mirrors.wml: $(TEMPLDIR)/countries.wml
+$(TEMPLDIR)/mirrors.wml: $(TEMPLDIR)/countries.wml $(TEMPLDIR)/countries.def
 $(TEMPLDIR)/template.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml \
   $(TEMPLDIR)/footer.wml
 $(TEMPLDIR)/news.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/footer.wml \
@@ -175,6 +175,10 @@ $(TEMPLDIR)/votebar.wml: $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml \
   $(ENGLISHSRCDIR)/Pics/blue-lowerleft.png $(ENGLISHSRCDIR)/Pics/blue-lowerright.png
 $(TEMPLDIR)/weeklynews/header.wml: $(TEMPLDIR)/ctime.wml \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/links.tags.wml
+
+$(TEMPLDIR)/countries.def: $(TEMPLDIR)/countries.wml
+	cd $(TEMPLDIR) && sed -e /^#/d countries.wml | eperl -B '<:' -E ':>' - >/dev/null
+
 
 .SUFFIXES: 
 .PHONY: all $(existing-SUBS) install $(existing-SUBS-install)
