@@ -105,7 +105,7 @@ while (<SRC>)
 	s/this problem has been fixed$/er dette problem rettet/;
 	s/this problem has(?: been)?$/er dette problem/;
 	s/This problem has been fixed/Dette problem er rettet/;
-	s/this problem is fixed in/rettet dette problem i/;
+	s/this problem is fixed in/er dette problem rettet i/;
 	s/this problem is fixed/rettet dette problem/;
 	s/These problems have been fixed/Disse problemer er rettet/;
 	s/these problems have been fixed in/er disse problemer rettet i/;
@@ -138,12 +138,12 @@ while (<SRC>)
 	s/does not contain ([[:word:]]*) packages?/indeholder ikke pakker $1-pakker/;
 	s/does not contain a(?:ny)? ([[:word:]]*) packages/indeholder ikke $1-pakker/;
 	s/does not contain a(?:ny)? ([[:word:]]*) package/indeholder ikke pakken $1/;
-	s/this problem will be fixed soon/dette problem vil snart blive rettet/;
+	s/this problem will be fixed soon/vil dette problem snart blive rettet/;
 	s/\(potato\)/(potato)/;
 	s/\(woody\)/(woody)/;
 	s/\(sarge\)/(sarge)/;
 	s/\(sid\)/(sid)/;
-	s/Refer to Debian (<.*>)?bug #([0-9]+)</Se Debians $1fejl nummer $2/;
+	s/Refer to Debian (<.*>)?bug #([0-9]+)</Se Debians $1fejl nummer $2</;
 
 	print DST $_;
 }
