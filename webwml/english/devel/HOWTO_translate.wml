@@ -146,6 +146,39 @@ the pages as easy as possible.
 <p>Note: when a page is first translated, the other languages will not create
 links to your page until they are regenerated.
 
+<H3>Keeping translations up-to-date</H3>
+<P>Since web pages aren't static, it is a good idea to keep track of which
+version of the original a certain translation refers to, and to use this
+information to check which pages have changed since the last translation.
+To aid with this, the script <code>check_trans.pl</code> is available in
+the webwml directory.
+
+<P>The script relies upon that the translated wml files contain information on
+which version they are translating.
+This information should be embedded somewhere in the document on the form
+<code>&lt;!--translation <var>x.x</var>--&gt;</code> where <var>x.x</var>
+is the version of the original (English).
+The string should be written on its own line in the wml file, optionally
+prefixed by a <code>#</code> (wml comment) to not to add it to the created
+HTML files.
+
+<P>If you run <code>check_trans.pl <var>language</var></code> (replace
+<var>language</var> with the directory name that contains your translation,
+like "swedish") you will get a report on pages that lack translation (shown
+as "<code>Missing <var>filename</var></code>") and pages that are not
+up-to-date (shown as "<code>NeedToUpdate <var>filename</var> to version
+<var>x.x</var></code>").
+
+<P>If you want to see what the exact changes are, you can get the
+differences by running <code>check_trans.pl -d <var>language</var></code>.
+Please note that this can take a while since it can include several accesses
+to the CVS server.
+
+<P>If you want to ignore warnings on missing pages (for instance old news
+items), you can create a file called <code>.transignore</code> in the
+directory where you want to suppress the warnings, listing each file that
+you are not going to translate, with one name per line.
+
 <H3>Adding New Directories</H3>
 <P>Some care should be taken when adding a new directory to CVS.
 If the current directory is listed in ../Makefile then the current directory should
@@ -296,4 +329,18 @@ For example,
 Do not translate any other text on the page.
 
 </ul>
+
+<P>For the news items and security reports you might wish to only translate
+the titles, to make it look good in the indices.
+To do this, create a file with the same name as the original .wml file,
+but with the extension <code>.title</code> instead.
+Just include the define-tags that are used in the indices, i.e
+<em>pagetitle</em> and <em>release_date</em> for the news items, and
+<em>pagetitle</em>, <em>report_date</em> and <em>description</em> for
+the security reports.
+
+<P>There is no need to translate the dates in the headers of the news items
+or security reports, they are automatically converted to the format
+preferred by the language using the <code>ctime.wml</code> file in the
+<code>english/template/debian</code> directory.
 

@@ -1,5 +1,5 @@
 #use wml::debian::template title="HOWTO: Översätta Debians webbsidor"
-# <!--translation 1.34-->
+# <!--translation 1.35-->
 
 <P>Tack för att du hjälper till att översätta Debians webbsidor.
 Istället för att ha ett antal olika webbplatser med olika språkspecifika
@@ -158,6 +158,41 @@ olika versionerna.
 
 <p>Kom ihåg att när en sida först översätts kommer de andra sidorna inte att
 generera länkar till din sida förren de omskapas.
+
+<H3>Hålla översättningarna à jour</H3>
+<P>Eftersom webbsidor inte är statiska är det bra att kunna hålla reda på
+vilken version av originalet som en viss sida översätter, och använda denna
+information för att ta reda på vilka sidor som ändrats sedan senaste
+översättningen.
+För att hjälpa till med detta finns skriptfilen <code>check_trans.pl</code>
+tillgänglig i webwml-katalogen.
+
+<P>Skriptfilen bygger på att de översatta wml-filerna innehåller
+information om vilken version de översätter.
+Denna information bäddas in någonstans i dokumentet på formen
+<code>&lt;!--translation <var>x.x</var>--&gt;</code> där <var>x.x</var> är
+versionsnumret för originalet (engelska).
+Strängen skall skrivas på en egen rad i wml-filen, eventuellt föregången av
+ett <code>#</code> (wml-kommentar) för att inte lägga in det i den skapade
+HTML-filen.
+
+<P>Om du kör <code>check_trans.pl <var>språk</var></code> (ersätt
+<var>språk</var> med katalognamnet som innehåller din översättning,
+exempelvis "swedish") får du en rapport över vilka sidor som saknar
+översättning (visas som "<code>Missing <var>filename</var></code>") och
+sidor som inte är à jour (visas som "<code>NeedToUpdate <var>filename</var>
+to version <var>x.x</var></code>").
+
+<P>Om du vill se exakt vilka förändringar som skett kan du få fram dessa
+genoma tt köra <code>check_trans.pl -d <var>språk</var></code>.
+Notera att detta kan ta en stund, eftersom det kan inbegripa flera anrop
+till CVS-servern.
+
+<P>Om du vill ignorera varningar på saknade sidor (exempelvis för gamla
+nyheter) kan du skapa en fil vid namn <code>.transignore</code> i katalogen
+du vill strunta i varningarna för.
+Filen skall innehålla en lista över de filer du inte tänker översätta, ett
+namn på varje rad.
 
 <H3>Lägga till nya kataloger</H3>
 <P>Man bör ha viss omsorg vad det gäller att lägga till nya kataloger till
@@ -323,3 +358,16 @@ Du bör lägga in översättningar för alla posterna på formen
 
 </ul>
 
+<P>För nyhetsartiklarna och säkerhetsrapporterna kanske du bara vill
+översätta titlarna, så att indexsidorna ser bra ut.
+För att göra detta skapar du en fil med samma namn som den ursprungliga
+.wml-filen, men med filtypen <code>.title</code> istället.
+Inkludera bara de define-tags som används i indexen, dvs.
+<em>pagetitle</em> och <em>release_date</em> för nyhetsartiklarna,
+respektive <em>pagetitle</em>, <em>report_date</em> och <em>description</em>
+för säkerhetsrapporterna.
+
+<P>Du behöver inte översätta de datum som används i huvudena på
+nyhetsartiklarna och säkerhetsrapporterna, de konverteras automatiskt till
+det format som används i språket med hjälp av <code>ctime.wml</code> i
+katalogen <code>english/template/debian</code>.
