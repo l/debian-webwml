@@ -1,0 +1,233 @@
+#use wml::debian::template title="Debianページの翻訳の仕方"
+
+<P>Debianのwebページの翻訳作業を手伝って下さって有り難うございます。
+各言語に翻訳されたwebページを公開している数多くのサイトがあるにもかかわらず、
+翻訳作業はwebページの翻訳されたものが管理されているプライマリサイト上で集中的に行うことが望まれている。
+
+<H3>背景</H3>
+<P>webサイト上の全てのhtmlファイル（文書のページを除く）はwmlを使って作成されている。
+これらのファイルは、CVSを利用して、cvs.debian.orgに蓄積されています。
+自宅の機械で編集するためにwmlファイルのローカルコピーをチェックアウトすることになります。
+変更が完了すれば、cvs.debian.orgに変更をコミットできます。
+日に一度、master.debian.org上のレポジトリは更新されます。
+Makefileが実行されることにより更新されたwebページができあがります。
+そして、各ページは全てのミラーサイトに分配されます。
+
+<H3>現在の翻訳コーディネータ</H3>
+<ul>
+<li>フランス語: Christophe Le Bars &lt;clebars@teaser.fr&gt;
+    <br><a href="http://www.debian.org/~clebars/f2dp/ltcp.html">
+    http://www.debian.org/~clebars/f2dp/ltcp.html</a> に詳細がありますのでご覧下さい。
+<li>スペイン語: Javier Fdz-Sanguino Pe&ntilde;a &lt;jfs@ieeesb.etsit.upm.es&gt;
+<li>デンマーク語: Kenneth Vestergaard Schmidt &lt;2903KVS@post.kkhs.dk&gt;
+<li>日本語: Keita Maehara &lt;maehara@debian.org&gt;
+<li>ドイツ語: Thimo Neubauer &lt;thimo@fsphys.exchi.uni-heidelberg.de&gt;
+<li>イタリア語: Giuseppe Sacco &lt;gsacco@hsomail.com&gt;
+<li>ロシア語: D'jinnie &lt;jinn@irony.org&gt;
+<li>クロアチア語: Matej Vela &lt;mvela@public.srce.hr&gt;
+<li>ポーランド語: Marcin Owsiany &lt;porridge@lo4.ids.bielsko.pl&gt;
+<li>オランダ語: Both Florus NTC/Zurich &lt;florus.both@usa.net&gt;
+<li>ポルトガル語: Eduardo Marcel Macan &lt;thecore@thecore.com.br&gt;
+</ul>
+翻訳プロジェクトに参加するには上記のコーディネータに直接連絡を取って下さい。
+もし新しい言語についての翻訳コーディネータになるのであれば、
+<a href="mailto:webmaster@debian.org">webmaster@debian.org</a>までメールを送って下さい。
+あるいは、Debian webメーリングリスト(debian-www@list.debian.org)に参加して、そちらで尋ねて下さい。
+購読に関する情報は
+<a href="http://www.debian.org/MailingLists/subscribe">
+http://www.debian.org/MailingLists/subscribe</a>
+を参照して下さい。
+
+<H3>CVSの利用法</H3>
+<P>以下では anonymous によるアクセスを例に取ります。
+もしレポジトリへの書き込み権利を付加された他のアカウントでアクセスする場合にはそのアカウントを代わりに使って下さい。
+CVSを使い始めるために、まずはCVSサーバへ <pre>login</pre> しなければなりません。
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml login
+</pre>
+(anonymousのパスワードにはリターンキーだけを押下して下さい)
+
+<P>自分のローカルコンピュータ上にwmlファイルをチェックアウトするためには、以下のように入力して下さい
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/&lt;lang&gt;
+</pre>
+&lt;lang&gt; にはご希望の言語を指定して下さい。
+おそらく作業中の言語に付加して英語版も必要となるでしょう。
+もし必要な部分のみページが欲しいのであれば、例えば、
+<kbd>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</kbd>
+、あるいは、もしユーザ(username)とパスワードが与えられているのであれば、anonymousの代わりにそれを利用して下さい、
+<kbd>cvs -d :pserver:username@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</kbd>
+
+<P>これより後は、'-d :pserver:...' の部分は必要ありません。
+数日後に変更されたファイルをレポジトリから取得するために
+<pre>
+   cvs update -d
+</pre>
+を実行して下さい。-d は自動的に全ての新規のディレクトリでも追加します。
+
+<P>以下はレポジトリの書き込み権利を持った方にのみ有効です。
+ページが完了したら、レポジトリに変更をコミットするために
+<pre>
+   cvs commit &lt;file&gt;.wml
+</pre>
+あるいは
+<pre>
+   cvs commit &lt;dir&gt;   (&lt;dir&gt; の変更をコミットします)
+</pre>
+それとも
+<pre>
+   cvs commit          (現在のディレクトリ配下の全ての変更をコミットします)
+</pre>
+と入力してください。
+
+<P>もし最初にページを翻訳したのであれば、コミットする前に
+<pre>
+   cvs add &lt;file&gt;.wml
+</pre>
+を実行して下さい。
+注意：'cvs add'は再帰的ではありませんので内容を追加する前にディレクトリを追加する必要があります。
+
+<P>CVSに関するさらなる情報は、'info cvs'を利用して下さい。
+
+<H3>ページの翻訳作業</H3>
+<P>翻訳作業をより簡単にできるようにするために、多くの方が今までやってこられた方法とは少々異なった方法でページは作成されます。
+webページは実際にはwmlによって記述されたソースを使って作成されています。
+各言語に対してそれぞれにディレクトリが存在しています。
+新規で翻訳するためには、最初に english/template/debian/*.wml にある wmlテンプレートファイルに翻訳を追加しなければなりません(大した作業ではありません)。
+各ファイルにあるコメント(これらは翻訳しないで下さい)に従って下さい。
+コメントはwmlでは'#'で始まっています。
+
+<P>サーバの設定(content negotiationを利用)によって、内部のリンクを一切変更する必要がありません。
+もしリンクが正しくないと思ったならば変更する前にdebian-wwwまで知らせて下さい。
+内容に変更を加えたいと思った場合には翻訳をしましょう。
+一例としてサポートページをあげます；
+おそらく言語に特有のメーリングリスト(例・フランス語のページではdebian-french)の購読方法の例を含めたくなるでしょう。
+どのような変更を行う場合でも、
+できる限り異なった言語間でも同一内容を保ちたいので
+<a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>
+までお知らせ下さい。
+
+<P>我々の行ったことによってページの翻訳がより簡単になればと思います。
+
+<p>注記：ページを最初に翻訳した場合には、そのほかのページが再度作成されるまで翻訳したページへのリンクは作成されません。
+
+<H3>サーバはどの様にいずれのファイルを配信するかを決定するのか</H3>
+<P>内部リンクが.htmlで終わっていないことにお気づきでしょう。
+これはサーバがいずれの言語の文書を配信するかを決定するのにcontent negotiationを利用しているからです。
+一つ以上の候補がある場合に、サーバは全ての取得可能なファイルのリストを作成します。
+例えば、'about'が要求された場合には、about.en.htmlとabout.de.htmlがリストアップされるでしょう。
+Debianサーバのデフォルト設定は英語版のドキュメントを配信するようになっておりますが、これは変更可能です。
+
+<P>クライアントに適切な変数の設定がしてあれば、
+例えばドイツ語の設定をしてあれば、
+上記の例ではabout.de.htmlが配信されます。
+この設定の良い所は
+要求した言語が無い場合には代わりに他の言語が配信される事にあります
+(なにも配信されないよりもいいでしょう)。
+どのドキュメントを配信するかの決定方法は少々難解ですので、
+この場で解説する代わりに、もし興味があれば、
+<a href="http://www.apache.org/docs/content-negotiation.html">http://www.apache.org/docs/content-negotiation.html</a>
+からちゃんとした答えを得て下さい。
+
+<P>多くのユーザはcontent-negotiationの存在をまだ知りませんので、
+全てのページの末尾に取得できる他の全ての言語版への直接のリンクを付けています。
+このリンクはページが作成されるときにwmlと呼ばれるperlスクリプトをつかって生成されます。
+
+<H3>翻訳作業開始の一例</H3>
+フランス語を例に取ります。
+<pre>
+   cvs checkout webwml/english
+   cd webwml
+   mkdir french
+   cvs add french
+   cd french
+   cp ../english/.wmlrc .
+   cvs add .wmlrc
+変更: '-D CUR_LANG=English' から '-D CUR_LANG=French' へ
+      '-D CUR_ISO_LANG=en' から '-D CUR_ISO_LANG=fr' へ
+      必要であれば 'CHARSET=iso-8859-1' を追加
+.wmlrcへは他の修正を絶対に加えないで下さい。
+english/template/debian/*.wmlを編集し
+全てのタグに関する翻訳を使いして下さい。
+素直に
+   cp ../english/Make.* ../english/Makefile .
+   cvs add Make*
+を行い、Make.langで'LANG=en'から'LANG=fr'へそして'LANGUAGECAP=EN'から
+'LANGUAGECAP=FR'へ変更して下さい。マルチバイトキャラクタを利用する言語を
+翻訳しない限りはMakefileへのその外の修正は行う必要がありません。
+全てのディレクトリにあるmakefileは全ての見つかった.wmlファイルをコンパイルします。
+ページを追加しおわったらwebwmlディレクトリから、
+   cvs commit
+を実行して下さい。
+</pre>
+さあページの翻訳をしましょう。
+
+<H3>ページ翻訳の一例</H3>
+例としてsocial contract(社会契約)のフランス語への翻訳を上げます。
+<pre>
+   cvs checkout webwml/english webwml/french   (if you hadn't already)
+   cd webwml/french
+   cp ../english/social_contract.wml .
+   cvs add social_contract.wml
+social_contract.wmlを編集し文書を翻訳してください。どのような方法でもリンクを翻訳する事や変更する事はしないでください。もし変更してしまった場合には
+   cvs commit -m "簡単な変更の説明" social_contract.wml
+を実行して下さい。
+</pre>
+
+<H3>wmlのコンパイル</H3>
+既にwmlがインストールされているものとします。
+webwml/&lt;lang&gt;ディレクトリで単純に<kbd>make</kbd>と入力して下さい。
+<kbd>make install</kbd>と入力すれば、<kbd>../../debian.org/</kbd>ディレクトリにhtmlファイルを配置します。
+
+<p>マルチバイト系の言語では正しくキャラクタセットが扱われるようにwmlファイルに対して特別な事前あるいは事後処理が必要になるかもしれない。
+この処理は、<kbd>webwml/&lt;lang&gt;/Make.lang</kbd>の<kbd>WMLPROLOG</kbd>と<kbd>WMLEPILOG</kbd>の変数を適切に変更する事により、出来るようになります。
+<kbd>WMLEPILOG</kbd>に指定されたプログラムがどのように動作するかによって、<kbd>WMLOUTFILE</kbd>変数の内容を変更しなければならないかもしれない。
+
+<H3>特別なファイルやディレクトリ</H3>
+<ul>
+<li><b>News/</b><br>
+このディレクトリにはdebian-announceに投稿された全てのニュース記事が掲載されます。
+ニュース記事はメインページの最新ニュースのタイトル一覧を作成するときにも利用されます。この作業はスクリプトによって自動的に行われます。
+
+<p>翻訳したい記事を翻訳して下さい。
+時間の制約があるのであれば、Debianの新しいリリースのアナウンスのような、
+特別な記事のみを翻訳するだけでかまいません。
+何を翻訳するかは全てあなた次第です。
+スクリプトは、一覧のページを作成するためにニュースの表題を取得し、
+webのメインページ上の記事にはニュース記事の翻訳を確認し、
+もし翻訳されたものが無ければ、英語版のタイトルを利用する。
+
+<li><b>security/</b><br>
+こちらのディレクトリには、既に報告された全てのDebianに関連するセキュリティ上の問題点の状況があります。
+一覧はNews/ディレクトリと同様に作成されます。
+翻訳するか否かはあなた次第です。
+
+<li><b>devel/people.wml</b><br>
+こちらにはパッケージのメンテナの一覧と彼らがどのパッケージをメンテナンスしているかが掲載されています。
+氏名とパッケージの一覧は自動的に生成され、webwml/english/devel/people.namesに保持されています。
+この文書の 'main', 'non-free', 'non-us', 'contrib' 及び 'homepage' は英語のままにしておいて下さい。
+もし翻訳者が必要と感じたならば、'homepage' は翻訳してもかまいません。
+もし翻訳したいのであればdebian-wwwまでメールを下さい。
+
+<li><b>MailingLists/subscribe.wml と MailingLists/unsubscribe.wml</b><br>
+これらのページはスクリプトによって自動的に作成されます。
+まだ、どちらのページも翻訳しないで下さい。
+翻訳を追加するシステムが開発されます。
+
+<li><b>distrib/vendors.wml</b><br>
+vendors.wml は翻訳を行って下さい。
+このファイルは、実際の販売業者のリストがかかれている、<kbd>../../english/devel/vendors.CD</kbd>が含まれています。
+このファイルはどの言語に関しても特別な情報を含んでいません、
+しかしながら<kbd>vendors.CD</kbd>に必要となる全てのフレーズの翻訳が含まれている
+<kbd>vendors.CD.def</kbd>を含んでいます。
+<kbd><protect>[EN:...:]</protect></kbd>にある項目全てに関して翻訳を付加して下さい。
+例えば、
+<pre>
+	<protect>[EN:Country:]\</protect>
+	<protect>[ES:Pa-is:]\</protect>
+	<protect>[DE:Land:]\</protect>
+</pre>
+このページのその他の文書は翻訳しないで下さい。
+
+</ul>
+
