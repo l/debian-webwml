@@ -338,6 +338,7 @@
         for ($i = 0; $i < $rows; $i++) {
             $row = pg_Fetch_Array($query, $i);
             if ($row["country"] != $old_country) {
+                echo "\n";
                 echo "<H2>";
                 echo "<A NAME = \"", $row["country"], "\">";
                 echo $row["country"], " - ", $iso[$row["country"]];
