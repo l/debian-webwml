@@ -42,7 +42,7 @@ my %data; #the hash were we put all the infos
 #######################################
 #  Global Variables
 #######################################
-my $TRANSMONITOR_VERSION = "0.5"; #External Version Number
+my $TRANSMONITOR_VERSION = "0.6"; #External Version Number
 my $BANNER = "Translation Monitor v$TRANSMONITOR_VERSION"; # Version Banner - text form
 my $TMP_DIR="/tmp/transmonitor";
 my $DB_FILE="../data/transmonitor";
@@ -411,7 +411,7 @@ my %sources;
 	   print "Package $pkg has no version entry... Skipping\n";
 	   next FTPPKG;
        }
-       if (defined ($data{$pkg})) {
+       if (defined ($data{$pkg}) && defined($data{$pkg}{'version'})) {
 	   system ("dpkg","--compare-versions","$data{$pkg}{'version'}","\>",$sources{$pkg}{'version'});
 	   if ((!$force)&&($?==0)&&($data{$pkg}{'version'} ne "")
 	       && !($force_material &&
@@ -554,7 +554,7 @@ sub ftp_unpack_pkg{
     # upstream=debian by default
     # upstream=other if there is a .diff.gz
     my $dscfile;
-    $data{$pkg}{"upstream"}="debian";
+    $data{$pkgname}{'upstream'}="debian";
     for ($nb=0;$nb<@{$pkg{"files"}};$nb++) {
 	$filename = $pkg{"directory"}.'/';
 
@@ -576,7 +576,7 @@ sub ftp_unpack_pkg{
 	    return 1;
 	}
 	if ($array[2] =~ m,\.diff\.gz$,) {
-	    $data{$pkg}{"upstream"}="other";
+	    $data{$pkgname}{"upstream"}="other";
 	}
     }
     print " [dl'ed]";flush STDOUT;
@@ -879,7 +879,7 @@ sub search_templates {
 	    #   -getlang $lang templates templates.*
 	    # So we have to get the right template. But it's hard to find the good lower/upper case combination.
 	    # That's why I use the -iname facility of find.
-	    if (system("debconf-getlang $lang $dir/templates `find -iname \"$dir/templates.$lang\"`|gzip -c9 - > $TEMPLATES_ROOT/$pkg/$filename.gz")){
+	    if (system("debconf-getlang $lang $dir/templates `find $dir -iname \"templates.$lang\"`|gzip -c9 - > $TEMPLATES_ROOT/$pkg/$filename.gz")){
 		warn "Can't gunzip $dir/templates.$lang to $TEMPLATES_ROOT/$pkg/$filename.gz : $!\n";
 	    }
 	    unless (is_lang($lang)) {
@@ -899,15 +899,15 @@ sub search_menu {
     ###
     ### Search the menu files and store them (do not anything else)
     ###
-  File::Path::mkpath("$MENU_ROOT/$pkg");
-    open LIST,"find -name \"debian\"|" || die "can't run find: $!";
+    open LIST,"find -name \"debian\" -type d|" || die "can't run find: $!";
     while (my $dirname=<LIST>) {
 	chomp($dirname);
 	my $cwd=`pwd`;chomp($cwd);
-	die "Can't cd to $dirname: $!" unless chdir($dirname);
+	die "Can't cd to $dirname (was in $cwd): $!" unless chdir($dirname);
 	# search for menu files
 	open LIST2,"ls *menu* 2>/dev/null|" || die "can't run ls: $!";
 	while (<LIST2>) {
+	  File::Path::mkpath("$MENU_ROOT/$pkg");
 	    chomp;
 	    my $filename="$dirname/$_";
 	    $filename =~ s,^\.*,,;
@@ -924,6 +924,7 @@ sub search_menu {
 	# search for doc-base files, since doc-base generate menu files for dwww
 	open LIST2,"ls *doc-base* 2>/dev/null|" || die "can't run ls: $!";
 	while (my $docbase=<LIST2>) {
+	  File::Path::mkpath("$MENU_ROOT/$pkg");
 	    chomp($docbase);
 	    open DOCBASE,"$docbase" || die "can't open $docbase: $!";
 	    my $id=undef;
@@ -943,9 +944,13 @@ sub search_menu {
 	    if (system("gzip -c9 $docbase > $MENU_ROOT/$pkg/$filename.gz")){
 		warn "Can't gunzip $docbase to $MENU_ROOT/$pkg/$filename.gz : $!\n";
 	    }
-	    $data{$pkg}{"menu"}[@{$data{$pkg}{"menu"}}] = "$filename.gz";
-	    chdir ($cwd)|| die "can't return to $cwd after searching for menu files";
+	    $data{$pkg}{"menu"}[scalar @{$data{$pkg}{"menu"}}] = "$filename.gz";
 	}
+#	for (my $i=0; $i<scalar @{$data{$pkg}{"menu"}} ; $i++) {
+#	    printf "data{%s}{\"menu\"}[%d]=%s\n",
+#	    $pkg,$i,$data{$pkg}{"menu"}[$i];
+#	}
+	chdir ($cwd)|| die "can't return to $cwd after searching for menu files";
     }
 }
 
