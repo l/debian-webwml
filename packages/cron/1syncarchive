@@ -19,10 +19,16 @@ then
 	    do
 		test -d us/${dist}/${part}/binary-${arch} || mkdir -p us/${dist}/${part}/binary-${arch}
 		(cd us/${dist}/${part}/binary-${arch} &&
-		    wget -q -m ${ftpsite}/dists/${dist}/${part}/binary-${arch}/Packages.gz)
+		    wget -q -N ${ftpsite}/dists/${dist}/${part}/binary-${arch}/Packages.gz)
 	    done
 	    (cd us/${dist} &&
-		wget -q -m ${ftpsite}/dists/${dist}/Contents-${arch}.gz)
+		wget -q -N ${ftpsite}/dists/${dist}/Contents-${arch}.gz)
+	done
+	for part in main contrib non-free
+	do
+	    test -d us/${dist}/${part}/source || mkdir -p us/${dist}/${part}/source
+            (cd us/${dist}/${part}/source &&
+                wget -q -N ${ftpsite}/dists/${dist}/${part}/source/Sources.gz)
 	done
     done
 else
@@ -40,6 +46,12 @@ else
 	    rsync ${localdir}/dists/${dist}/Contents-${arch}.gz \
 		us/${dist}/Contents-${arch}.gz
 	done
+	for part in main contrib non-free
+        do
+            test -d us/${dist}/${part}/source || mkdir -p us/${dist}/${part}/source
+            rsync ${localdir}/dists/${dist}/${part}/source/Sources.gz \
+	    	us/${dist}/${part}/source/Sources.gz
+	done
     done
 fi
 
@@ -54,10 +66,16 @@ do
 	do
 	    test -d non-US/${dist}/${part}/binary-${arch} || mkdir -p non-US/${dist}/${part}/binary-${arch}
 	    (cd non-US/${dist}/${part}/binary-${arch} &&
-		wget -q -m ${nonus_ftpsite}/dists/${dist}/non-US/${part}/binary-${arch}/Packages.gz)
+		wget -q -N ${nonus_ftpsite}/dists/${dist}/non-US/${part}/binary-${arch}/Packages.gz)
 	done
 	(cd non-US/${dist} &&
-	    wget -q -m ${nonus_ftpsite}/dists/${dist}/non-US/Contents-${arch}.gz)
+	    wget -q -N ${nonus_ftpsite}/dists/${dist}/non-US/Contents-${arch}.gz)
+    done
+    for part in main contrib non-free
+    do
+    	test -d non-US/${dist}/${part}/source || mkdir -p non-US/${dist}/${part}/source
+	(cd non-US/${dist}/${part}/source &&
+	    wget -q -N ${nonus_ftpsite}/dists/${dist}/non-US/${part}/source/Sources.gz)
     done
 done
 
@@ -70,6 +88,12 @@ do
     do
 	test -d security/${dist}/main/binary-${arch} || mkdir -p security/${dist}/main/binary-${arch}
 	(cd  security/${dist}/main/binary-${arch} &&
-	    wget -q -m ${security_ftpsite}/dists/${dist}/updates/main/binary-${arch}/Packages.gz)
+	    wget -q -N ${security_ftpsite}/dists/${dist}/updates/main/binary-${arch}/Packages.gz)
+    done
+    for part in main contrib non-free
+    do
+        test -d security/${dist}/${part}/source || mkdir -p security/${dist}/${part}/source
+        (cd security/${dist}/${part}/source &&
+            wget -q -N ${security_ftpsite}/dists/${dist}/updates/${part}/source/Sources.gz)
     done
 done

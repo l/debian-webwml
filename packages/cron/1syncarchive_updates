@@ -19,8 +19,14 @@ then
 	    do
 		test -d us/${dist}/${part}/binary-${arch} || mkdir -p us/${dist}/${part}/binary-${arch}
 		(cd us/${dist}/${part}/binary-${arch} &&
-		    wget -q -m ${ftpsite}/dists/${dist}/${part}/binary-${arch}/Packages.gz)
+		    wget -q -N ${ftpsite}/dists/${dist}/${part}/binary-${arch}/Packages.gz)
 	    done
+	done
+	for part in main contrib non-free
+        do
+            test -d us/${dist}/${part}/source || mkdir -p us/${dist}/${part}/source
+            (cd us/${dist}/${part}/source &&
+                wget -q -N ${ftpsite}/dists/${dist}/${part}/source/Sources.gz)
 	done
     done
 else
@@ -36,6 +42,12 @@ else
 		    us/${dist}/${part}/binary-${arch}/Packages.gz
 	    done
 	done
+	for part in main contrib non-free
+        do
+            test -d us/${dist}/${part}/source || mkdir -p us/${dist}/${part}/source
+            rsync ${localdir}/dists/${dist}/${part}/source/Sources.gz \
+                us/${dist}/${part}/source/Sources.gz
+        done
     done
 fi
 
@@ -50,7 +62,13 @@ do
 	do
 	    test -d non-US/${dist}/${part}/binary-${arch} || mkdir -p non-US/${dist}/${part}/binary-${arch}
 	    (cd non-US/${dist}/${part}/binary-${arch} &&
-		wget -q -m ${nonus_ftpsite}/dists/${dist}/${part}/binary-${arch}/Packages.gz)
+		wget -q -N ${nonus_ftpsite}/dists/${dist}/${part}/binary-${arch}/Packages.gz)
 	done
+    done
+    for part in main contrib non-free
+    do
+        test -d non-US/${dist}/${part}/source || mkdir -p non-US/${dist}/${part}/source
+        (cd non-US/${dist}/${part}/source &&
+            wget -q -N ${nonus_ftpsite}/dists/${dist}/${part}/source/Sources.gz)
     done
 done
