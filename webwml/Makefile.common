@@ -91,9 +91,9 @@ cleandest:: $(existing-SUBS-cleandest)
 $(existing-SUBS-cleandest):
 	-$(MAKE) -C $(subst -cleandest,,$@) cleandest
 
-# subdirectories of News, events, security and vote dirs all have their own
-# generic wml file deps
-ifneq "$(findstring /News/,$(CURDIR))" ""
+# subdirectories of News/weekly, events, security and vote dirs all have
+# their own generic wml file deps
+ifneq "$(findstring /News/weekly,$(CURDIR))" ""
 NOGENERICDEP := true
 endif
 ifneq "$(findstring /events/,$(CURDIR))" ""
@@ -109,10 +109,11 @@ endif
 # the rule for every wml file
 ifndef NOGENERICDEP
 ifdef SPI
-%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/template.wml
+%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/template.wml $(HTMLDEP)
 	$(WML) $(<F)
 else
-%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
+%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
+		$(HTMLDEP)
 	$(WML) $(<F)
 endif
 endif
