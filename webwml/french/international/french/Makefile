@@ -4,7 +4,7 @@
 
 WMLBASE=../..
 CUR_DIR=international/french
-SUBS=
+SUBS=dico
 
 include $(WMLBASE)/Make.lang
 
