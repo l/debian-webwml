@@ -31,27 +31,23 @@ usage(0) if $opt_h;
 
 my $data = Webwml::L10n::Db->new();
 $data->read("$opt_l/data/unstable.ftp-master");
+my $date1 = $data->get_date();
 $data->read("$opt_l/data/unstable.non-US");
+my $date2 = $data->get_date();
+my $date = ($date1 lt $date2 ? $date1 : $date2);
 
 my $root = 'http://ftp-master.debian.org/~barbier/l10n/material/';
 my $rootnonus = 'http://nonus.debian.org/~barbier/l10n/material/';
 
 my $langfile = $opt_l.'/data/langs';
 
-my @langs = ();
-open(LANGS, "< $langfile") || die "Unable to read $langfile";
-while (<LANGS>) {
-        if (s/^po:\s+//) {
-                @langs = split(' ', $_);
-                last;
-        }
-}
-close(LANGS);
-die "No langs found in $langfile" unless @langs;
+my @po_langs = ();
+my @td_langs = ();
 
 my @main    = ();
 my @contrib = ();
 my @nonfree = ();
+my %score = ();
 
 foreach my $pkg ($data->list_packages()) {
         #   Populate arrays
@@ -69,9 +65,9 @@ sub get_stats_po {
         my ($section, $packages) = @_;
         my ($pkg, $line, $lang, %list);
 
-        my %incl = ();
-        my %excl = ();
-        my $none = '';
+        my %incl  = ();
+        my %excl  = ();
+        my $none  = '';
         foreach $pkg (sort @{$packages}) {
                 if ($data->upstream($pkg) eq 'dbs') {
                         $none .= "<li>".$pkg." (*)\n";
@@ -82,8 +78,8 @@ sub get_stats_po {
                         next;
                 }
                 my $list = {};
-                foreach (@langs) {
-                        $list{uc $_} = 0;
+                foreach (@po_langs) {
+                        $list{uc $_}  = 0;
                 }
                 foreach $line (@{$data->po($pkg)}) {
                         my ($pofile, $lang, $stat, $link) = @{$line};
@@ -99,31 +95,34 @@ sub get_stats_po {
                         $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
                         $incl{$lang} .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>".
                               "</tr>\n";
+                        if ($stat =~ m/(\d+)t/) {
+                                $score{$lang} += $1;
+                        }
                 }
-                foreach $lang (@langs) {
-                        my $l = uc($lang);
+                foreach $lang (@po_langs) {
+                        my $l = uc($lang) || 'UNKNOWN';
                         next if $list{$l};
                         $excl{$l}  = '' unless defined($excl{$l});
                         $excl{$l} .= $pkg.", ";
                 }
         }
-        foreach $lang (@langs) {
+        foreach $lang (@po_langs) {
                 next unless defined $incl{uc $lang};
                 open (GEN, "> $opt_l/po/gen/$section-$lang.inc")
-                        || die "Unable to write $section-$lang.inc";
+                        || die "Unable to write into $section-$lang.inc";
                 print GEN $incl{uc $lang};
                 close (GEN);
         }
-        foreach $lang (@langs) {
+        foreach $lang (@po_langs) {
                 next unless defined $excl{uc $lang};
                 $excl{uc $lang} =~ s/, $//s;
                 open (GEN, "> $opt_l/po/gen/$section-$lang.exc")
-                        || die "Unable to write $section-$lang.exc";
+                        || die "Unable to write into $section-$lang.exc";
                 print GEN "<p>\n".$excl{uc $lang}."\n";
                 close (GEN);
         }
         open (GEN, "> $opt_l/po/gen/$section.exc")
-                || die "Unable to write $section.exc";
+                || die "Unable to write into $section.exc";
         print GEN "<ul>\n".$none."</ul>\n" if $none ne '';
         close (GEN);
 }
@@ -131,9 +130,23 @@ sub get_stats_po {
 sub process_po {
         -d "$opt_l/po/gen" || File::Path::mkpath("$opt_l/po/gen", 0, 0775);
 
+        foreach (@po_langs) {
+                $score{uc $_} = 0;
+        }
+
         get_stats_po('main', \@main);
         get_stats_po('contrib', \@contrib);
         get_stats_po('non-free', \@nonfree);
+
+        open (GEN, "> $opt_l/po/gen/rank.inc")
+                || die "Unable to write into po/gen/rank.inc";
+        print GEN "<dl>\n";
+        foreach my $lang (sort {$score{uc $b} <=> $score{uc $a}} @po_langs) {
+                print GEN "<dt><a href=\"$lang\">$lang</a> ".$score{uc $lang}."\n";
+                print GEN "<dd><language-name $lang>\n";
+        }
+        print GEN "</dl>\n";
+        close (GEN);
 }
 
 sub get_stats_templates {
@@ -153,7 +166,7 @@ sub get_stats_templates {
                         next;
                 }
                 my $list = {};
-                foreach (@langs) {
+                foreach (@td_langs) {
                         $list{uc $_} = 0;
                 }
                 foreach $line (@{$data->templates($pkg)}) {
@@ -178,31 +191,34 @@ sub get_stats_templates {
                                 $incl{$lang} .= $data->pooldir($pkg)."/$link_orig.gz\">templates</a>";
                         }
                         $incl{$lang} .= "</td></tr>\n";
+                        if ($stat =~ m/(\d+)t/) {
+                                $score{$lang} += $1;
+                        }
                 }
-                foreach $lang (@langs) {
+                foreach $lang (@td_langs) {
                         my $l = uc($lang);
                         next if $list{$l};
                         $excl{$l}  = '' unless defined($excl{$l});
                         $excl{$l} .= $pkg.", ";
                 }
         }
-        foreach $lang (@langs) {
+        foreach $lang (@td_langs) {
                 next unless defined $incl{uc $lang};
                 open (GEN, "> gen/$section-$lang.inc")
-                        || die "Unable to write $section-$lang.inc";
+                        || die "Unable to write into $section-$lang.inc";
                 print GEN $incl{uc $lang};
                 close (GEN);
         }
-        foreach $lang (@langs) {
+        foreach $lang (@td_langs) {
                 next unless defined $excl{uc $lang};
                 $excl{uc $lang} =~ s/, $//s;
                 open (GEN, "> gen/$section-$lang.exc")
-                        || die "Unable to write $section-$lang.exc";
+                        || die "Unable to write into $section-$lang.exc";
                 print GEN "<p>\n".$excl{uc $lang}."</p>\n";
                 close (GEN);
         }
         open (GEN, "> gen/$section.exc")
-                || die "Unable to write $section.exc";
+                || die "Unable to write into $section.exc";
         print GEN "<ul>\n".$none."</ul>\n" if $none ne '';
         close (GEN);
 }
@@ -210,12 +226,28 @@ sub get_stats_templates {
 sub process_templates {
         -d "$opt_l/templates/gen" || File::Path::mkpath("$opt_l/templates/gen", 0, 0775);
 
+        foreach (@td_langs) {
+                $score{uc $_} = 0;
+        }
+
         get_stats_templates('main', \@main);
         get_stats_templates('contrib', \@contrib);
         get_stats_templates('non-free', \@nonfree);
+
+        open (GEN, "> $opt_l/templates/gen/rank.inc")
+                || die "Unable to write into templates/gen/rank.inc";
+        print GEN "<dl>\n";
+        foreach my $lang (sort {$score{uc $b} <=> $score{uc $a}} @td_langs) {
+                print GEN "<dt><a href=\"$lang\">$lang</a> ".$score{uc $lang}."\n";
+                print GEN "<dd><language-name $lang>\n";
+        }
+        print GEN "</dl>\n";
+        close (GEN);
 }
 
 sub process_langs {
+        my $store = shift;
+
         my $langs = {
                 po              => {},
                 templates       => {},
@@ -227,6 +259,7 @@ sub process_langs {
                 if ($data->has_po($pkg)) {
                         foreach $line (@{$data->po($pkg)}) {
                                 ($file, $lang) = @{$line};
+                                next unless $lang ne '';
                                 $langs->{po}->{$lang}  = 1;
                                 $langs->{all}->{$lang} = 1;
                         }
@@ -234,14 +267,18 @@ sub process_langs {
                 if ($data->has_templates($pkg)) {
                         foreach $line (@{$data->templates($pkg)}) {
                                 ($file, $lang) = @{$line};
+                                next unless $lang ne '';
                                 $langs->{templates}->{$lang} = 1;
                                 $langs->{all}->{$lang} = 1;
                         }
                 }
         }
-        
+        @po_langs = keys %{$langs->{po}};
+        @td_langs = keys %{$langs->{templates}};
+        return unless $store;
+
         open (GEN, "> $opt_l/data/langs")
-                || die "Unable to write data/langs";
+                || die "Unable to write into data/langs";
         foreach my $material (sort keys %$langs) {
                 print GEN "$material: ";
                 print GEN join(" ", sort keys %{$langs->{$material}});
@@ -282,7 +319,21 @@ sub get_color {
         }
 }
 
+open (GEN, "> $opt_l/date.gen")
+        || die "Unable to write into date.gen";
+print GEN <<"EOT";
+#  File automatically generated.  Do not edit!
+
+\#use wml::debian::ctime
+
+<p>
+<show-data-date "<:= spokendate('$date') :>">
+<warn-data-outdated>
+EOT
+close (GEN);
+
+process_langs($opt_L);
 process_po()        if $opt_P;
 process_templates() if $opt_T;
-process_langs()     if $opt_L;
+
 1;
