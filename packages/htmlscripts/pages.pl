@@ -21,7 +21,7 @@ my $CHANGELOG_URL = 'http://people.debian.org/~noel/changelogs';
 my $CHANGELOG_UPSTREAM_URL = 'http://packages.debian.org/cgi-bin/get-changelog-upstream?package=';
 my $COPYRIGHT_URL = 'http://people.debian.org/~noel/changelogs';
 my $FILELIST_URL = 'http://packages.debian.org/cgi-bin/search_contents.pl?searchmode=filelist&amp;word=';
-my $SEARCH_URL = 'http://packages.debian.org/cgi-bin/search_packages.pl?searchon=names&amp;keywords=';
+my $SEARCH_URL = 'http://packages.debian.org/cgi-bin/search_packages.pl?searchon=names&amp;version=all&amp;exact=1&amp;keywords=';
 my $BUG_URL = 'http://bugs.debian.org/';
 my $QA_URL = 'http://packages.qa.debian.org/';
 my $DL_URL = 'http://packages.debian.org/cgi-bin/download.pl';
