@@ -625,6 +625,8 @@ sub process_po_file {
         my $pkg = shift;
         my $file = shift;
         my $type = shift;
+        $type = 'podebconf' unless $type eq 'po';
+        $type = 'add_'.$type;
 
         my $filename; #the po file name to be archived
         my $lang=""; # the identified code language
@@ -636,6 +638,8 @@ sub process_po_file {
         $filename = store_disk_po($pkg, $file);
 
         my $PO_DIR = $PO_ROOT."/".$data->pooldir($pkg);
+        my $lasttrans = "";
+        my $langteam = "";
 
         $this_stat = "";
         $lang = "";
@@ -673,11 +677,27 @@ sub process_po_file {
                 }
         }
         # Add this file to the data
-        if ($type eq 'po') {
-                $data->add_po($pkg, $file, normalize_lang($lang), $this_stat, $filename);
-        } else {
-                $data->add_podebconf($pkg, $file, normalize_lang($lang), $this_stat, $filename);
+        if ($lang ne "_") {
+                local $/ = "\n\n";
+                open(PO, "< $PO_DIR/$filename");
+                while (<PO>) {
+                        last if m/^msgid/m;
+                }
+                close(PO);
+                if (m/^"Last-Translator:\s*(.*)\\n"$/m) {
+                        $lasttrans = $1 || '';
+                        $lasttrans =~ s/!//g;
+                        $lasttrans = '' if $lasttrans =~ m/EMAIL\@ADDRESS/;
+                }
+                if (m/^"Language-Team:\s*(.*)\\n"$/m) {
+                        $langteam = $1 || '';
+                        $langteam =~ s/!//g;
+                        $langteam = '' if $langteam =~ m/<LL\@li.org>/;
+                }
         }
+
+        # Add this file to the data
+        $data->$type($pkg, $file, normalize_lang($lang), $this_stat, $filename, $lasttrans, $langteam);
         if (system("gzip -9f $PO_DIR/$filename")) {
                 warn "Can't gzip $PO_DIR/$filename: $!\n";
         }
