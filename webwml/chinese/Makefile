@@ -26,3 +26,6 @@ index.zh-cn.html index.zh-tw.html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(wildcard security/2000/2000*.wml) $(wildcard $(ENGLISHSRCDIR)/security/2000/2000*.wml) \
 		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
 		$(ENGLISHSRCDIR)/releases/info
+
+install::
+	test -L $(HTMLDIR)/zh || ln -s international/chinese $(HTMLDIR)/zh
