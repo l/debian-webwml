@@ -46,6 +46,15 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
+	        'Nicolas Bertolissio' => {
+		        email       => 'nico.bertol@free.fr',
+		        summary     => 3,
+		        logs        => 3,
+		        diff        => 3,
+		        tdiff       => 0,
+		        file        => 0,
+		        compress    => 'none'
+		},
                 'Laurence Bock' => {
                         email       => 'ybecker@mindspring.com',
                         summary     => 3,
