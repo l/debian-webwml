@@ -301,4 +301,20 @@ sub ReadConfigFile {
   return %config;
 }
 
+sub LDAPUpdate {
+  my $ldap = shift;
+  my $dn = shift;
+  my $attr = shift;
+  my $val = shift;
+  my $mesg;
+  
+  if (!$val) {
+    $mesg = $ldap->modify($dn, delete => { $attr => [] });
+  } else {
+    $val = [ $val ] if (!ref($val));
+    $mesg = $ldap->modify($dn, replace => { $attr => $val });
+    $mesg->code && &Util::HTMLError("error updating $attr: ".$mesg->error);
+  }
+}
+
 1;
