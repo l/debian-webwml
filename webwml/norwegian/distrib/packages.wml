@@ -1,5 +1,5 @@
 #use wml::debian::template title="Packages"
-<!--translation 1.14-->
+<!--translation 1.15-->
 <!--Oversatt til norsk av Tor Slettnes (tor@slett.net)-->
 
     <p><dl>
@@ -8,11 +8,10 @@
 
       <dd>Dette er den siste offisielle utgaven av Debian
       GNU/Linux-distribusjonen, også kalt `<em>Main</em>'.  Alle
-      pakkene er tilgjengelig gratis. De er alle utgitt med
-      kopirettigheter som tillater fri videreformidling, og alle
-      kommer med fullstending kildekode (iflg. <A
+      pakkene er fritt tilgjengelige i henhold til <A
       HREF="../social_contract#guidelines">Debian's Veiledninger for
-      Fri Programvare</A>).</dd>
+      Fri Programvare</A>), noe som forsikrer fri bruk og
+      videreformidling av pakkene og all kildekoden.
 
       <p>Det fings også noen tillegg til <em>main</em>-distribusjonen
       som har visse begrensninger - noe som betyr at de ikke kan være
@@ -49,52 +48,57 @@
 
       <dd>Dette er et midlertidig fase hver utgave går igjennom mens
       den blir testet, rett før den løsgis som en ny stabil
-      (<blockquote>stable</blockquote>) distribusjon.</dd>
+      (<em>stable</em>) distribusjon.</dd>
 # <: } :>
 
       <dt><a href="$(HOME)/Packages/unstable/">Se på pakkene i
 	<strong>unstable</strong></a>.</dt>
 
       <dd>Denne katalogen inneholder programmer som er på vei inn i
-      den stabile (<blockquote>stable</blockquote>) distribusjonen
-      ovenfor.  De har enten ikke blitt fullstendig testet (og kan
-      dermed gjøre systemet ditt utilgjengelig), eller de har ikke
-      vært i omløp lenge nok til å bli med i den normale
-      distribusjonen.</dd>
+      den stabile (<em>stable</em>) distribusjonen ovenfor.  De har
+      enten ikke blitt fullstendig testet (og kan dermed gjøre
+      systemet ditt utilgjengelig), eller de har ikke vært i omløp
+      lenge nok til å bli med i den normale distribusjonen.</dd>
     </dl>
 
     <hr>
     <h2>Søk i pakkekatalogene</h2>
 
-    <p>Denne søkemaskinen vil søkke for de angitte nøkkelordene i
-    innledningen eller beskrivelsen av pakkene.
+    <p>Denne søkemaskinen vil søke for de angitte nøkkelordene i
+    innledningen eller beskrivelsen av pakkene.</p>
 
+    <p>
     <form method="get" action="http://cgi.debian.org/cgi-bin/search_packages.pl">
-      <label>Stikkord: <input type="text" size="30" name="keywords"></label>
-      <input type="submit" value="Search">
-      <input type="reset">
+      <label for="kw">Stikkord:</label>
+      <input type="text" size="30" name="keywords" id="kw">
+      <input type="submit" value="Søk"> <input type="reset">
       <br>
 
       Søk på:
-      <label><input type="radio" name="searchon" value="names" checked>Bare pakkenavn</label>
-      <label><input type="radio" name="searchon" value="all">Beskrivelse</label>
-      <br>
-
-      Versjon:
-      <label><input type="radio" name="version" value="unstable">unstable</label>
-      <label><input type="radio" name="version" value="stable" checked>stable</label>
-      <label><input type="radio" name="version" value="frozen">frozen</label>
-      <label><input type="radio" name="version" value="all">alle versjoner</label>
+      <input type=radio name="searchon" value="names" id="onlynames" checked>
+      <label for="onlynames">Bare pakkenavn</label>&nbsp;&nbsp;
+      <input type=radio name="searchon" value="all" id="descs">
+      <label for="descs">Beskrivelse</label>
       <br>
 
       Distribusjon:
-      <label><input type="radio" name="release" value="main">main</label>
-      <label><input type="radio" name="release" value="contrib">contrib</label>
-      <label><input type="radio" name="release" value="non-free">non-free</label>
-      <label><input type="radio" name="release" value="non-us">non-us</label>
-      <label><input type="radio" name="release" value="all" checked>alle</label>
+      <select name="version">
+        <option value="unstable">unstable</option>
+        <option value="stable" selected>stable</option>
+        <option value="frozen">frozen</option>
+        <option value="all">alle</option>
+      </select>
 
+      Avsnitt:
+      <select name="release">
+        <option value="main">main</option>
+        <option value="contrib">contrib</option>
+        <option value="non-free">non-free</option>
+        <option value="non-us">non-US</option>
+        <option value="all" selected>alle</option>
+      </select>
     </form>
+
 
     <P>Søk på pakkenavn skal inneholde et enkelt ord.  En stjerne,
     '*', kan brukes som joker i <b>slutten</b> av et ord.  Søk på
@@ -109,34 +113,38 @@
     Debian-distribusjonene for ethvert filnavn (eller del derav) som
     fins i pakkene.
 
-    <form method=post action="http://cgi.debian.org/cgi-bin/search_contents.pl">
-      Søk i:
-      <label>
-	<select name="version">
-	  <option value="stable">stable
-	  <option value="frozen">frozen
-	  <option value="unstable">unstable
-	</select>
-      </label>
 
-      Arkitektur:
-      <label>
-	<select name="arch">
-	  <option value="i386">Intel x86
-	  <option value="m68k">Motorola 680x0
-	  <option value="alpha">Alpha
-	  <option value="sparc">SPARC
-	  <option value="powerpc">PowerPC
-	  <option value="arm">ARM
-	</select>
-      </label>
-
-      Store/små bokstaver:
-      <label><input type=radio name=case value=insensitive CHECKED>ufølsom</label>
-      <label><input type=radio name=case value=sensitive>følsom</label>
+    <form method="post" action="http://cgi.debian.org/cgi-bin/search_contents.pl">
+      <label for="keyword">Stikkord:</label>
+      <input type="text" size=30 name="word" id="keyword"> &nbsp;
+      <input type="submit" value="Søk"> &nbsp;<input type="reset">
       <br>
+
+      <label for="casesens">Store/små bokstaver:</label>
+      <select name="case" id="casesens">
+        <option value="insensitive" selected>ufølsom</option>
+        <option value="sensitive">følsom</option>
+      </select>
       
-      <label>Stikkord:<INPUT type=text SIZE=30 name=word value=""></label>
-      <input type=submit value=Search><INPUT type="reset">
+      <label for="distro">Distribution:</label>
+      <select name="version" id="distro">
+        <option value="stable" selected>stable</option>
+        <option value="frozen">frozen</option>
+        <option value="unstable">unstable</option>
+      </select>
+
+      <label for="architecture">Architecture:</label>
+      <select name="arch" id="architecture">
+        <option value="i386" selected>Intel x86</option>
+        <option value="m68k">Motorola 680x0</option>
+        <option value="alpha">Alpha</option>
+        <option value="sparc">SPARC</option>
+        <option value="powerpc">PowerPC</option>
+        <option value="arm">ARM</option>
+# Hurd should be a separate distribution
+#       <option value="hurd-i386">Hurd (i386)</option>
+      </select>
     </form>
+
+    <p>Søk på pakkenavn vil også vise alle filene i pakken.</p>
 
