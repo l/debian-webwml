@@ -150,9 +150,9 @@ my $command = $grep." ".$file." ".$file_nonus;
 my @results = qx( $command );
 
 if ($searchmode eq "filelist") {
-	print "<p>You have searched for the contents of <em>$keyword_enc</em> in <em>$version_enc</em>, architecture <em>$arch_enc</em>.</p>";
+	print "<p>You have searched for the contents of <em>$keyword_enc</em> in <em>$version_enc</em>, architecture <em>$arch_enc</em>.<br>";
 } else {
-	print "<p>You have searched for <em>$keyword_enc</em> in <em>$version_enc</em>, architecture <em>$arch_enc</em>.</p>";
+	print "<p>You have searched for <em>$keyword_enc</em> in <em>$version_enc</em>, architecture <em>$arch_enc</em>.<br>";
 }
 
 if (!@results) {
@@ -179,9 +179,9 @@ if ($results_per_page =~ /^all$/i) {
 }
 
 if ($searchmode eq "filelist") {
-    print "<p>Package contains $no_results files, displaying files $start to $end.</p>";
+    print "Package contains $no_results files, displaying files $start to $end.</p>";
 } else {
-    print "<p>Found <em>$no_results</em> matching files/directories, displaying files/directories $start to $end.</p>";
+    print "Found <em>$no_results</em> matching files/directories, displaying files/directories $start to $end.</p>";
 }
 
 my $number = 0;
