@@ -53,7 +53,8 @@ my $mesg = $ldap->search('base' => $base,
 
 my $curdate = time;
 
-my ( %rfa, %orphaned, %rfabymaint, %rfp, %ita, %itp, %age );
+my ( %rfa, %orphaned, %rfabymaint, %rfp, %ita, %itp, %age,
+     %rfh, %oth );
  ALLPKG: foreach my $entry ($mesg->entries) {
      use integer;
      my $bugid = @{$entry->get('debbugsID')}[0];
@@ -84,7 +85,11 @@ my ( %rfa, %orphaned, %rfabymaint, %rfp, %ita, %itp, %age );
      } elsif ($subject =~ m/^ITP:(?:\s*RFP:)?\s*(.*)/) {
          $itp{$bugid} = join(": ", split(/\s+-+\s+/, $1,2));
      } elsif ($subject =~ m/^RFP:\s*(.*)/) {
-         $rfp{$bugid} = join(": ", split(/\s+-+\s+/, $1,2)); 
+         $rfp{$bugid} = join(": ", split(/\s+-+\s+/, $1,2));
+     } elsif ($subject =~ m/^RFH:\s*(.*)/) {
+         $rfh{$bugid} = join(": ", split(/\s+-+\s+/, $1,2));
+     } elsif ($subject =~ m/^(?:OTH|ITH):\s*(.*)/) {
+         $oth{$bugid} = join(": ", split(/\s+-+\s+/, $1,2));
      } else {
 #         print STDERR "What is this ($bugid): $subject\n" if ( $host ne "klecker.debian.org" );
      }
@@ -94,6 +99,7 @@ $ldap->unbind;
 
 my (@rfa_bypackage_html, @rfa_bymaint_html, @orphaned_html);
 my (@being_adopted_html, @being_packaged_html, @requested_html);
+my (@rfh_html, @oth_html);
 
 foreach my $bug (sort { $rfa{$a} cmp $rfa{$b} } keys %rfa) {
     push @rfa_bypackage_html, "\n<li><btsurl bugnr=\"$bug\">$rfa{$bug}</btsurl>";
@@ -157,6 +163,19 @@ foreach (sort { $rfp{$a} cmp $rfp{$b} } keys %rfp) {
 }
 if ($#requested_html == -1) { @requested_html = ('<li><norfp /></li>') }
 
+foreach (sort { $rfh{$a} cmp $rfh{$b} } keys %rfh) {
+    (my $pkg = $rfh{$_}) =~ s/^(.+):\s+.*$/$1/;
+    push @rfh_html, 
+         "<li><btsurl bugnr=\"$_\">$rfh{$_}</btsurl>, ";
+    push @rfh_html,
+         " <pdolink \"$pkg\" />, ";
+    if ( $age{$_} == 0 ) { push @rfh_html, '<req-today />' }
+    elsif ( $age{$_} == 1 ) { push @rfh_html, '<req-yesterday />' }
+    else { push @rfh_html, "<req-days \"$age{$_}\" />" };
+    push @rfh_html, "</li>\n";
+}
+if ($#rfh_html == -1) { @rfh_html = ('<li><norfh /></li>') }
+
 <protect pass="2">
 print "\\#use wml::debian::wnpp\n";
 print "<define-tag rfa_bypackage><ul>@rfa_bypackage_html</ul></define-tag>\n";
@@ -165,6 +184,7 @@ print "<define-tag orphaned><ul>@orphaned_html</ul></define-tag>\n";
 print "<define-tag being_adopted><ul>@being_adopted_html</ul></define-tag>\n";
 print "<define-tag being_packaged><ul>@being_packaged_html</ul></define-tag>\n";
 print "<define-tag requested><ul>@requested_html</ul></define-tag>\n";
+print "<define-tag help_req><ul>@rfh_html</ul></define-tag>\n";
 </protect>
 
 </perl>
