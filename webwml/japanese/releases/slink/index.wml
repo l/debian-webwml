@@ -1,5 +1,6 @@
 #use wml::debian::template title="Debian 2.1 (slink) リリース情報"
-<!--original_revision: 1.17 :-->
+#use wml::debian::languages
+<!--original_revision: 1.23 :-->
 
 <:
 # list of architectures
@@ -15,10 +16,20 @@
 	     txt  => "ASCII",
            );
 
-$about_lang_setting = '<a href="../../intro/cn">お好みの言語</a>
-が設定されていれば、自動的に適切な版をご覧いただけるはずです。';
+# some languages aren't yet in debian/template files
+$langs{'russian'} = 'ru';
+$langs{'czech'} = 'cz';
 
-sub permute_file {
+$about_lang_setting = "お使いのブラウザの言語設定が適切に行なわれていれば、
+上記のリンクから自動的に適切な文書が HTML 形式でご覧いただけるはずです。
+こちらに関しては <A href=\"$base_url/intro/cn\"><setlang></A> をご覧ください。
+あるいは、ご希望のアーキテクチャ、言語、形式の文書を
+以下の表から選んでいただいても結構です。\n";
+
+#
+# emits an bunch of li (list items)
+#
+sub permute_as_list {
     my($file, $name, @exts) = @_;
     my($ext, $arch);
 
@@ -33,7 +44,55 @@ sub permute_file {
 	print "\n";
     }
 }
+
+#
+# emits an HTML table matrix:
+#   | arch | format | lang1, lang2, lang3 |
+#
+sub permute_as_matrix {
+    my($file, @langs) = @_;
+    my($ext, $arch, $lang);
+    my $altcolor = 'white';
+    my $ctr = 0;
+
+    foreach $arch (keys %arches) {
+	$ctr++;
+	my $first = 1;
+
+	foreach $ext (keys %formats) {
+	    # alternate the row color
+	    if ( $ctr % 2 ) {
+		print "\n<tr>\n";
+	    } else {
+		print "\n<tr bgcolor=\"$altcolor\">\n";
+	    }
+	    # only print the arch name on the first row
+	    if ( $first == 1 ) {
+		print "  <td align=\"left\"><a href=\"$arch/$file\">" . $arches{$arch} . "</a></td>\n";
+		$first = 0;
+	    } else {
+		print "  <td>&nbsp;</td>\n";
+	    }
+	    print "  <td align=\"left\">" . $formats{$ext} . "</td>\n";
+	    # permute over languages
+	    print "  <td>";
+	    foreach $lang (@langs) {
+		print "<a href=\"./$arch/$file." . $langs{$lang} . ".$ext\">";
+		# sometimes the language name isn't properly defined yet
+		my $workaroundlang = $trans{$CUR_ISO_LANG}{$lang};
+		( $workaroundlang = $lang ) =~ s/^(.)/\U$1/
+		    unless $workaroundlang;
+		print $workaroundlang . "</a> \n";
+	    }
+	    print "  </td>";
+	    print "</tr>\n";
+	    
+	}
+    }
+}
+
  :>
+
 <ul>
 	<li><a href="#release-notes">リリースノート</a>
 	<li><a href="#new-inst">新たにインストールする</a>
@@ -62,13 +121,25 @@ Debian 2.1 で何が新しいのかを知るためには、
 リリースノートには、以前のリリースからアップグレードするユーザのための
 手引きも含まれています。
 <ul>
-<: &permute_file('release-notes/index', 'リリースノート'); :>
+<: &permute_as_list('release-notes/index', 'リリースノート'); :>
 </ul>
 
-リリースノートは、クロアチア語、チェコ語、英語、ドイツ語、
-日本語、およびロシア語でご利用いただけます。
-
 <: print $about_lang_setting; :>
+
+<p>
+
+<center>
+<table border=2 cellspacing=0 cellpadding=3 bgcolor="#DDDDDD"> 
+<tr bgcolor="#44CCCC">
+  <th align="left"><strong>アーキテクチャ</strong></th>
+  <th align="left"><strong>形式</strong></th>
+  <th align="left"><strong>言語</strong></th>
+</tr>
+<: &permute_as_matrix('release-notes/index', 'english', 'croatian', 'czech',
+		      'german', 'japanese', 'portuguese', 'russian');
+:>
+</table>
+</center>
 
 <p>
 
@@ -83,8 +154,28 @@ i386 アーキテクチャに関しては、
 インストールマニュアルは、ダウンロード可能なファイルで、
 各アーキテクチャごとに用意されています。
 <ul>
-<: &permute_file('install', 'インストールマニュアル'); :>
+<: &permute_as_list('install', 'インストールマニュアル'); :>
 </ul>
+
+<: print $about_lang_setting; :>
+
+<p>
+
+<center>
+<table border=2 cellspacing=0 cellpadding=3 bgcolor="#DDDDDD"> 
+<tr bgcolor="#44CCCC">
+  <th align="left"><strong>アーキテクチャ</strong></th>
+  <th align="left"><strong>形式</strong></th>
+  <th align="left"><strong>言語</strong></th>
+</tr>
+<: &permute_as_matrix('install', 'english', 'croatian',  'czech', 
+		      'finnish', 'french', 'german', 
+		      'japanese', 'portuguese', 'russian', 'spanish');
+:>
+</table>
+</center>
+
+<p>
 
 i386 以外のディストリビューションをサポートするために、
 Debian インストールマニュアルの作成には力が注がれてきました。
@@ -108,11 +199,6 @@ slink 用インストールマニュアルの最新版が利用できるように
 <a href="source/ChangeLog">変更履歴</a> をご覧ください。
 
 <p>
-
-インストールマニュアルは、クロアチア語、チェコ語、英語、フィンランド語、
-フランス語、ドイツ語、日本語、およびロシア語でご利用いただけます。
-
-<: print $about_lang_setting; :>
 
 <h2><a name="errata">エラッタ</a></h2>
 
@@ -153,17 +239,23 @@ Slink を Linux カーネルの 2.0.x
 <a href="running-kernel-2.2">確認されている問題の一覧</a>
 をご覧ください。
 
-
 <h2><a name="unofficial-updates">非公式なアップデート</a></h2>
 
 <p>
 
-リリース済の Debian のバージョンは、
-クリティカルなエラーやセキュリティ上の問題がない限り、
-一般的にはアップデートされません。
-しかしながら、ユーザに便利なように、
-いくつかのアップデートパッケージが利用できるようになっています。
+リリース済みの Debian のバージョンは、
+クリティカルなエラーやセキュリティ上の問題がある場合のみアップデートされます。
+しかしながら、ユーザに便利なように、いくつかのアップデートソフトウェアが、
+非公式に他のユーザや開発者から提供されています。
+この節でご紹介するものは Debian がサポートする公式なものではありません。
 
+<h3>国際化されたブートフロッピー</h3>
+
+<p>
+
+非公式なポルトガル語版ブートフロッピーが
+<a href="ftp://ftp2.escelsanet.com.br/debian/">ftp://ftp2.escelsanet.com.br/debian/</a>
+からご利用いただけます。
 
 <h3>レスキューフロッピー</h3>
 
@@ -178,7 +270,14 @@ SCSI コントローラをご利用のユーザは、
 i386 アーキテクチャ用の代替レスキューフロッピーが 2 種用意されています。
 そちらには他にも置き換え可能なカーネルが用意されています。
 こちらは単にブートフロッピー上の既存のカーネルと置き換えるだけで利用できます。
+なお、その際には正規のドライバフロッピーが必要になるでしょう。
 
+<p>
+
+Adaptec ユーザ向けのレスキューフロッピーおよびドライバフロッピー
+として提供されている最新セットは、
+<a href="http://www.debian.org/~adric/aic7xxx/">http://www.debian.org/~adric/aic7xxx/</a>
+にあります。
 
 <h3>Gnome</h3>
 
@@ -190,7 +289,6 @@ Gnome は複数のプログラムからなる重要なセットで、
 slink 向けに deb パッケージ化しています。
 その詳細は <A HREF="gnome">Slink/Gnome ページ</A>をご覧ください。
 
-
 <h3>Apt</h3>
 
 <p>
@@ -199,7 +297,7 @@ potato 用の <tt>apt</tt> 最新版が、Slink
 でも使えるようコンパイルされています。
 <a href="http://netgod.net/x/apt_0.3.7slink0_i386.deb">
 http://netgod.net/x/apt_0.3.7slink0_i386.deb</a>
-で、その Debian パッケージをダウンロードしてください。
+からその Debian パッケージをダウンロードしてください。
 
 <p>
 
@@ -221,7 +319,6 @@ Debian はネットワークや CD ベンダから入手することができます。
 
 Debian 2.1 の CD を販売している CD ベンダの一覧は、
 <a href="../../distrib/vendors">こちら</a>にあります。
-
 
 <h3>インターネットを通して Debian をダウンロードする</h3>
 
