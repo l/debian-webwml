@@ -16,6 +16,7 @@ do
     test -f $dir/non-free-$code.exc || echo 'DELETE-ME' > $dir/non-free-$code.exc
 
     sed -e "s/@tmpl_lang@/$code/" \
+        -e "s/href=\"tmpl\\./href=\"$code./" \
         -e "/LINE: inc-main/r     $dir/main-$code.inc" \
         -e "/LINE: inc-contrib/r  $dir/contrib-$code.inc" \
         -e "/LINE: inc-non-free/r $dir/non-free-$code.inc" \
