@@ -1,26 +1,26 @@
-#use wml::debian::template title="rsync ¤Î»ÈÍÑÎã"
-#use wml::debian::translation-check translation="1.3"
+#use wml::debian::template title="rsync $B$N;HMQNc$*$h$S(B ssh $B$r%Q%9%o!<%I$J$7$G;H$&@_Dj(B" NOHEADER=yes
+#use wml::debian::translation-check translation="1.5"
 
-<P>°Ê²¼¤Ï¥¦¥§¥Ö¤ª¤è¤Ó FTP Î¾¥µ¥¤¥È¤ò¥ß¥é¡¼¤¹¤ëÊýË¡¤Î°ìÎã¤Ç¤¹¡£
-¤´¼«Ê¬¤Î¾õ¶·¤Ë¹ç¤ï¤»¤Æ¥Þ¥·¥óÌ¾¤È¥Ç¥£¥ì¥¯¥È¥ê¤Î²Õ½ê¤Ï½¤Àµ¤·¤Æ¤¯¤À¤µ¤¤¡£
+<H3>rsync $B$NMxMQNc(B</H3>
 
-<P>¤³¤Á¤é¤ò cron ¤«¤é¼Â¹Ô¤¹¤ë¾ì¹ç¤Ë¤Ï lockfile ¤òÍøÍÑ¤¹¤ë¤È¤è¤¤¤Ç¤·¤ç¤¦¡£
-¤â¤·²¿¤é¤«¤ÎÍýÍ³¤Ç¥ß¥é¡¼¤¬´°Á´¤Ë¹Ô¤Ê¤ï¤ì¤Ê¤«¤Ã¤¿¾ì¹ç¡¢
-¼¡²ó¥ß¥é¡¼¤¬¼Â¹Ô¤µ¤ì¤ëºÝ¤Ë¤½¤Î»Ý¥á¡¼¥ë¤ÇÄÌÃÎ¤µ¤ì¤Þ¤¹¡£
-¤³¤Î¾ì¹ç¤Ë¤Ï¡¢ÌäÂê¤¬¤É¤³¤Ë¤¢¤ë¤Î¤«¤òÄ´¤Ù¤Æ¤½¤Á¤é¤ò½¤Àµ¤·¡¢
-lockfile ¤ò¾Ãµî¤¹¤ì¤Ð¡¢¼¡²ó¤Ë¤ÏÅ¬ÀÚ¤Ë¥ß¥é¡¼¤¬¹Ô¤Ê¤ï¤ì¤ë¤Ç¤·¤ç¤¦¡£
+<P>$B0J2<$O%&%'%V%5%$%H$H(B FTP $B%5%$%H$NN>J}$r%_%i!<$9$k$d$jJ}$NNc$G$9!#(B
+$B$4<+J,$N>u67$K9g$o$;$F%^%7%sL>$H%G%#%l%/%H%j$N2U=j$O=$@5$7$F$/$@$5$$!#(B
+
+<P>$B$3$A$i$r(B cron $B$+$i<B9T$9$k>l9g$K$O(B lockfile $B$rMxMQ$9$k$H$h$$$G$7$g$&!#(B
+$B$b$72?$i$+$NM}M3$G%_%i!<$,40A4$K9T$J$o$l$J$+$C$?>l9g!"(B
+$B<!2s%_%i!<$,<B9T$5$l$k:]$K$=$N;]%a!<%k$GDLCN$5$l$^$9!#(B
+$B$3$N>l9g$K$O!"LdBj$,$I$3$K$"$k$N$+$rD4$Y$F=$@5$7!"(B
+lockfile $B$r>C5n$9$l$P!"<!2s$K$OE,@Z$K%_%i!<$,9T$J$o$l$k$G$7$g$&!#(B
 
 <blockquote>
 <pre>
-#!/bin/bash
-set -e
+\#!/bin/sh -e
 
 lockfile -r 1 rsync.master.lock || exit 23
 
-rsync -avz -e ssh --exclude .glbuild --delete &lt;machine&gt;:/web/debian.org/ debian.org
-rsync -avz -e ssh --delete &lt;machine&gt;:/web/debian.org-local/ debian.org-local
+rsync -avz -e ssh --exclude sponsor.* --delete &lt;machine&gt;:/web/debian.org/ debian.org
 
-echo FINISHED UPDATING WEB. WORKING ON FTP NOW.
+echo Finished updating web mirror. Working on FTP mirror now...
 
 rsync -avz --delete -e ssh &lt;machine&gt;:/debian debian
 
@@ -28,21 +28,27 @@ rm -f rsync.master.lock
 </pre>
 </blockquote>
 
-<H3>¥Ñ¥¹¥ï¡¼¥É¤ò¿Ò¤Í¤é¤ì¤Ê¤¤¤è¤¦¤Ë ssh ¤òÀßÄê¤¹¤ë¤Ë¤Ï</H3>
+<p>$B>e5-$N%9%/%j%W%H$O!"(Bssh $B$r0J2<$N5-=R$N$h$&$K@_Dj$7$J$1$l$P(B
+$B%Q%9%o!<%I$r?R$M$k%W%m%s%W%H$r=P$7$^$9!#(B
 
-ssh ¤ò¤¢¤ëÊýË¡¤ÇÀßÄê¤·¤Ê¤¤¸Â¤ê¡¢
-¾åµ­¤Î¥¹¥¯¥ê¥×¥È¤Ç¤Ï¥Ñ¥¹¥ï¡¼¥É¤ÎÆþÎÏ¤òµá¤á¤é¤ì¤Þ¤¹¡£
+<H3><a name="paswordlessssh">$B%Q%9%o!<%I$r?R$M$i$l$J$$$h$&$K(B ssh $B$r@_Dj$9$k$K$O(B</a>:</H3>
 
-¤Þ¤º½é¤á¤Ë¡¢ssh-keygen ¤òÍøÍÑ¤·¤Æ¤¤¤ë¾ì¹ç¤Ï¡¢
-¥Ñ¥¹¥ï¡¼¥É¤ò¿Ò¤Í¤é¤ì¤¿¤éÃ±¤Ë¥ê¥¿¡¼¥ó¥­¡¼¤ò²¡¤·¤Æ¤¯¤À¤µ¤¤ [1]¡£
-¼¡¤Ë¡¢~/.ssh/identity.pub ¤ÎÆâÍÆ¤ò¥ß¥é¡¼¥µ¥¤¥È¾å¤Î 
-~/.ssh/authorized_keys ¤ËÄÉ²Ã¤·¤Æ¤¯¤À¤µ¤¤¡£
-(~/.ssh/authorized_keys ¤Î¥â¡¼¥É¤Ï 600 ¤Ë¤·¤Æ¤¯¤À¤µ¤¤¡£)
-¤³¤¦¤·¤Æ¤ª¤±¤Ð¡¢¥Ñ¥¹¥ï¡¼¥É¤ò¿Ò¤Í¤é¤ì¤ë¤³¤È¤Ê¤¯¡¢
-ssh ¤òÍøÍÑ¤·¤Æ¥ß¥é¡¼¥µ¥¤¥È¤Ë¥í¥°¥¤¥ó¤¹¤ë¤³¤È¤¬¤Ç¤­¤ë¤Ï¤º¤Ç¤¹¡£
+<p>$B$"$J$?$N%"%+%&%s%H$+$i%j%b!<%H%5%$%H$K%m%0%$%s$G$-$k$h$&!"(B
+RSA $BG'>Z%-!<$r:n$C$F$/$@$5$$!#%Q%9%o!<%I$O%?%$%W$7$J$$$G$/$@$5$$!#(B
 
-<P>
-[1] ¥Ñ¥¹¥ï¡¼¥É¤òÆþÎÏ¤»¤º¤Ë ssh ¤òÀßÄê¤·¤¿¾ì¹ç¤Ë
-¤´¼«Ê¬¤Î¥µ¥¤¥È¤Ë¿¯Æþ¤µ¤ì¤ë¤È¡¢
-¤½¤Î¿¯Æþ¼Ô¤Ï¥ß¥é¡¼¤¹¤ë¥µ¥¤¥È¤Ø¤Î¥¢¥¯¥»¥¹¤â¤Ç¤­¤Æ¤·¤Þ¤¤¤Þ¤¹¡£
-¤½¤Î¤¿¤á¡¢¤³¤Á¤é¤ÏÀäÂÐ¤Ë¥ë¡¼¥È¥¢¥«¥¦¥ó¥È¤Ç¤Ï¼Â¹Ô¤·¤Ê¤¤¤Ç¤¯¤À¤µ¤¤¡£
+<p>$B$3$N@_Dj$r$7$?>l9g$K$"$J$?$N%"%+%&%s%H(B/$B%5%$%H$,?/F~$5$l$k$H!"(B
+$B$=$N?/F~<T$O%_%i!<$9$k%5%$%H$X$N%"%/%;%9$b$G$-$F$7$^$$$^$9(B!
+$B$7$?$,$C$F!"$3$l$O(B<strong>$B@dBP$K(B</strong>
+root $B%"%+%&%s%H$G$O<B9T$7$J$$$G$/$@$5$$!#(B
+
+<ul>
+  <li>$B$"$J$?$N%^%7%s$G(B <code>ssh-keygen</code> $B$r<B9T$7!"(B
+      $B%Q%9%o!<%I$r?R$M$i$l$?$H$-$OC1$K%j%?!<%s$r2!$7$^$9!#(B
+  <li>$B<!$K!"$"$J$?$N%^%7%s$N(B <code>~/.ssh/identity.pub</code> $B$NFbMF$r(B
+      $B%_%i!<%5%$%H$N(B <code>~/.ssh/authorized_keys</code> $B$K%3%T!<$7$^$9(B
+      ($B$3$N%U%!%$%k$N%b!<%I$O(B 600 $B$K$7$^$7$g$&(B)$B!#(B
+</ul>
+
+<p>$B$3$l$G%j%b!<%H$N%_%i!<%5%$%H$K!"%Q%9%o!<%I$r?R$M$i$l$k$3$H$J$/!"(B
+ssh $B$G%m%0%$%s$G$-$k$h$&$K$J$k$O$:$G$9!#(B
+
