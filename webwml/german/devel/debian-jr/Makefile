@@ -8,7 +8,11 @@ SUBS=News
 
 include $(WMLBASE)/Make.lang
 
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
+  $(TEMPLDIR)/recent_list.wml \
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/News/[0-9]*/*.wml)
+
 packaged.$(LANGUAGE).html: packaged.wml \
   $(ENGLISHSRCDIR)/devel/debian-jr/lists.tmpl \
-  $(ENGLISHSRCDIR)/devel/debian-jr/packaged.data \
-  $(ENGLISHSRCDIR)/devel/debian-jr/packaged-non-free.data
+  $(wildcard $(ENGLISHSRCDIR)/devel/debian-jr/packaged/*/*) \
+  $(wildcard $(ENGLISHSRCDIR)/devel/debian-jr/packaged-non-free/*/*)
