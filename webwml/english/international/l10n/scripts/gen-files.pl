@@ -177,6 +177,7 @@ sub get_stats_templates {
         my %excl = ();
         my $none = '';
         my $tmpl_errors = {};
+	$total{$section}=0;
         foreach $pkg (sort @{$packages}) {
                 unless ($data->has_templates($pkg)) {
                         $none .= "<li>".$pkg."</li>\n";
@@ -195,6 +196,9 @@ sub get_stats_templates {
                         $link_orig  =~ s/:/\%3a/g;
                         if ($lang eq '_') {
                                 push(@untranslated, $link_trans);
+			        if ($stat =~ m/(\d+)t/) {
+                                        $total{$section} += $1;
+                                }
                                 next;
                         }
 
@@ -342,6 +346,12 @@ sub process_templates {
                 }
                 print GEN "</ul></li>\n";
         }
+        close (GEN);
+        open (GEN, "> $opt_l/templates/gen/total")
+                || die "Unable to write into $opt_l/templates/gen/total";
+        print GEN "<define-tag templates-total-strings>".
+                ($total{main}+$total{contrib}+$total{'non-free'}).
+                "</define-tag>\n";
         close (GEN);
 }
 
