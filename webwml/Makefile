@@ -16,6 +16,7 @@ all:
 	- $(MAKE) -C polish install
 	- $(MAKE) -C portuguese install
 	- $(MAKE) -C romanian install
+	- $(MAKE) -C russian install
 	- $(MAKE) -C spanish install
 	- $(MAKE) -C swedish install
 	- $(MAKE) -C turkish install
