@@ -1,8 +1,13 @@
 #!/usr/bin/perl
-# this script parses files in pandora:/org/security.debian.org/advisories/DSA/
+#
+# parse-advisory.pl
+#
+# this script parses files in
+# security.debian.org:/org/security.debian.org/advisories/DSA/
 # and makes wmls out of them
-
-# made by Joy, 2001.
+# 
+# Copyright (C) 2001 Josip Rodin
+# Licensed under the GNU General Public License version 2.
 
 my $adv = $ARGV[0];
 
