@@ -170,10 +170,14 @@ sub get_stats_templates {
                         $list{uc $_} = 0;
                 }
                 my ($template, $lang, $stat, $link_trans, $link_orig) = ();
+                my @untranslated = ();
                 foreach $line (@{$data->templates($pkg)}) {
                         ($template, $lang, $stat, $link_trans, $link_orig) = @{$line};
                         $link_orig ||= '';
-                        next if $lang eq '_';
+                        if ($lang eq '_') {
+                                push(@untranslated, $link_trans);
+                                next;
+                        }
 
                         $link_trans =~ s/:/\%3a/g;
                         $link_orig  =~ s/:/\%3a/g;
@@ -197,11 +201,19 @@ sub get_stats_templates {
                                 $score{$lang} += $1;
                         }
                 }
+                #   Ensure $ftemp is defined
+                my $ftemp = shift @untranslated || $link_trans;
                 foreach $lang (@td_langs) {
                         my $l = uc($lang);
                         next if $list{$l};
                         $excl{$l}  = '' unless defined($excl{$l});
-                        $excl{$l} .= "<a href=\"".($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root)."templates/unstable/".$data->pooldir($pkg)."/".($link_orig ne '' ? $link_orig : $link_trans).".gz\">".$pkg."</a>, ";
+                        $excl{$l} .= "<a href=\"".($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root)."templates/unstable/".$data->pooldir($pkg)."/".$ftemp.".gz\">".$pkg."</a>";
+                        my $count = 1;
+                        foreach (@untranslated) {
+                                $count ++;
+                                $excl{$l} .= "<a href=\"".($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root)."templates/unstable/".$data->pooldir($pkg)."/".$_.".gz\">[".$count."]</a>";
+                        }
+                        $excl{$l} .= ", ";
                 }
         }
         foreach $lang (@td_langs) {
