@@ -7,11 +7,11 @@ CUR_DIR=devel/wnpp
 SUBS=
 
 NOGENERICINSTDEP := true
-WNPP_FILES := being_adopted.html being_packaged.html orphaned.html \
-	prospective.html requested.html rfa_bymaint.html \
-	rfa_bypackage.html withdrawn.html work_needing.html
-
 include $(WMLBASE)/Make.lang
+
+WNPP_FILES := being_adopted.$(LANGUAGE).html being_packaged.$(LANGUAGE).html orphaned.$(LANGUAGE).html \
+	prospective.$(LANGUAGE).html requested.$(LANGUAGE).html rfa_bymaint.$(LANGUAGE).html \
+	rfa_bypackage.$(LANGUAGE).html withdrawn.$(LANGUAGE).html work_needing.$(LANGUAGE).html
 
 $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
 	@echo copying $*.$(LANGUAGE).html to $(HTMLDIR)
@@ -21,9 +21,8 @@ ifeq ($(LANGUAGE),en)
 	@ln -sf $*.$(LANGUAGE).html $(HTMLDIR)/$*.html
 endif
 
-# There is no wnpp.en.html destination. This will be run every time,
+# There is no wnpp.XY.html destination. This will be run every time,
 # which is what we want
-ifeq ($(LANGUAGE),en)
 wnpp.$(LANGUAGE).html: wnpp.wml
 	wml -q wnpp.wml
 
@@ -31,5 +30,7 @@ $(HTMLDIR)/wnpp.$(LANGUAGE).html: wnpp.$(LANGUAGE).html
 	@:
 
 install:: $(WNPP_FILES)
-	install $(WNPP_FILES) $(HTMLDIR)
+	install -m 664 -p $(WNPP_FILES) $(HTMLDIR)
+ifeq "$(LANGUAGE)" "en"
+	$(foreach file,$(WNPP_FILES),ln -sf $(file) $(HTMLDIR)/$(basename $(basename $(file))).html;)
 endif
