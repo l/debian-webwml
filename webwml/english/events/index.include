@@ -85,158 +85,128 @@ sub get_event_list {
 
 
 # get_past_event_list
-# This finds out if the given year (or any years if none are given) has any
-# events that have past.  If there are it provides links.
+# This finds out if there are any events that have passed, and returns
+# links to the respective years.
 #
-# Sun Aug  1 18:11:02 EDT 1999
-# Added.  Code is mostly stolen from get_event_list();
-# - blackie@sfcc.net
+# written by blackie@sfcc.net (code stolen from get_event_list),
+# later greatly simplified by joy
 
 sub get_past_event_list {
+my $current_dir = "$ENGLISHDIR/events";
+my $path = $CUR_YEAR;
 my $str = '';
-my @paths = ();
-my ($current_dir, $path, $monthorder, $yearorder ) = @_;
-if ($path ne '') {
-  push(@paths,$path);
-}
+my $past = '';
 
-if ($path eq '') {
-  ($sec,$min,$hour,$mday,$month,$year,$wday,$yday,$isdst) = localtime(time);
-  # This is not a y2k bug.
-  $year += '1900';
-  $path = $year;
-  while (1) {
-    if ( -d "$current_dir/$path") {
-      push(@paths,$path);
-      $path--;
-    } else {
-      last;
-    }
-  }
-  if ($yearorder ne 'futurefirst') {
-    @paths =  reverse @paths;
-  }
-}
+$str .= "<ul>\n";
 
-foreach $path (@paths) {
-  opendir DIR, "$current_dir/$path" || die "Can't open $current_dir/$path: $!";
-  @files = grep { /^\d+.*.wml$/ && -f "$current_dir/$path/$_" } readdir DIR;
-  @files = sort @files;
-  closedir DIR;
-  foreach (@files) {
-    open(FILE, "<$path/$_") || open(FILE, "<$current_dir/$path/$_");
-    if ( /(\d+.*).wml/ ) {
-       $base = $1;
-    }
-    my $past = '';
-    foreach $line (<FILE>) {
-       if ($line =~ /^#use wml::debian::past_event$/) {
-           $past = 'yes';
-           last;
-       }
-    }
-    if ($past eq 'yes') {
-      $str .= "<A HREF=\"$path/\">$path - <past_words></A> &nbsp; ";
-      last;
-    }
+# check if the current year has any past events.
+opendir DIR, "$current_dir/$path" || die "Can't open $current_dir/$path: $!";
+@files = grep { /^\d+.*.wml$/ && -f "$current_dir/$path/$_" } readdir DIR;
+@files = sort @files;
+closedir DIR;
+foreach (@files) {
+  open FILE, "$current_dir/$path/$_" || die "something went wrong, check permissions on $current_dir/$path/$_";
+  foreach (<FILE>) { if (/^#use wml::debian::past_event$/) { $past = 'yes'; last; } }
   close FILE;
+  if ($past eq 'yes') {
+    $str .= "  <li><a href=\"$path/\"><past_words> $path</a>\n";
+    last;
   }
 }
+
+# if it's a year that's not the current year, assume it has at least one
+# past event and thus include it in $str. no need to waste resources
+# checking it.
+while (1) {
+  $path--;
+  last unless (-d "$current_dir/$path");
+    $str .= "  <li><a href=\"$path/\"><past_words> $path</a>\n";
+}
+
+$str .= "</ul>\n";
+
 return $str;
 }
 
 
 # get_future_event_list
-# This displays future events in whatever order the translator asks.
+# This displays future events.
 #
 # Sun Aug  1 18:11:02 EDT 1999
 # Added.  Code is mostly stolen from get_event_list();
 # - blackie@sfcc.net  
 
 sub get_future_event_list {
+my $current_dir = "$ENGLISHDIR/events";
+my $path = $CUR_YEAR;
 my $str;
 my @paths;
-my ($current_dir, $path, $monthorder, $yearorder ) = @_;
 
-if ($path ne '') {
-  push(@paths,$path);
-}
-if ($path eq '') {
-  ($sec,$min,$hour,$mday,$month,$year,$wday,$yday,$isdst) = localtime(time);
-  # This is not a y2k bug.  
-  $year += 1900;
-  $path = $year;
-  while (1) {
-    if ( -d "$current_dir/$path") {
-      push(@paths,$path);
-      $path++;
-    } else {
-      last;
-    }
-  } 
-# if ($yearorder eq 'futurefirst') {
-#   @paths =  reverse @paths;
-# }
-}
+while (1) {
+  if ( -d "$current_dir/$path") {
+    push(@paths,$path);
+    $path++;
+  } else {
+    last;
+  }
+} 
 
 foreach $path (@paths) {
   my $events = '';
   my @files = ();
+
   opendir DIR, "$current_dir/$path" || die "Can't open $current_dir/$path: $!";
   @files = grep { /^\d+.*.wml$/ && -f "$current_dir/$path/$_" } readdir DIR;
   @files = sort @files;
-  if ($monthorder eq 'decfirst') {
-    @files =  reverse @files;
-  }
-
   closedir DIR;
+
   foreach (@files) {
-  open(FILE, "<$path/$_") || open(FILE, "<$current_dir/$path/$_");
-  if ( /(\d+.*).wml/ ) {
-     $base = $1;
-  }
-  my $title = ''; my $when = ''; my $where = ''; my $desc = ''; my $past = '';
-  foreach $line (<FILE>) {
+    open(FILE, "<$path/$_") || open(FILE, "<$current_dir/$path/$_");
+    if ( /(\d+.*).wml/ ) {
+       $base = $1;
+    }
+    my $title = ''; my $when = ''; my $where = ''; my $desc = ''; my $past = '';
+    foreach $line (<FILE>) {
 <protect pass=2>
-    if ($line =~ /^#use wml::debian::past_event$/) {
-        $past = 'yes';
-        last;
-    }
-    if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
-        $title = $1;
-    }
-    elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) {
-       $when = $1;
-    }
-    elsif ($line =~ /^<define-tag where>(.*)<\/define-tag>$/) {
-       $where = $1;
-    }
-    elsif ($line =~ /^<define-tag desc>(.*)<\/define-tag>$/) {
-       $desc = $1;
-    }
+      if ($line =~ /^#use wml::debian::past_event$/) {
+          $past = 'yes';
+          last;
+      }
+      if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
+          $title = $1;
+      }
+      elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) {
+         $when = $1;
+      }
+      elsif ($line =~ /^<define-tag where>(.*)<\/define-tag>$/) {
+         $where = $1;
+      }
+      elsif ($line =~ /^<define-tag desc>(.*)<\/define-tag>$/) {
+         $desc = $1;
+      }
 </protect>
-  }
-  if ($past ne 'yes') {
-     if ($title && $when && $where) {
-        $events .= "
+    }
+    close FILE;
+    if ($past ne 'yes') {
+       if ($title && $when && $where) {
+          $events .= "
 <TR>\n
   <TD><TT>[$when]</TT></TD>\n
   <TD><STRONG> <A HREF=\"$path/$base\">$title</A></STRONG> ($where)</TD>\n
 </TR>\n
 ";
-     }
-     elsif ($title && $when) {
-        $events .= "
+       }
+       elsif ($title && $when) {
+          $events .= "
 <TR>\n
   <TD><TT>[$when]</TT></TD>\n
   <TD><STRONG> <A HREF=\"$path/$base\">$title</A></STRONG></TD>\n
 </TR>\n
 ";
-     }
+       }
+    }
   }
-  close FILE;
-  }
-  $str .= sprintf("<H3><event_year></H3>\n<TABLE>\n$events\n</TABLE>\n", $path);
+  $str .= "<TABLE>\n$events\n</TABLE>\n";
 }
 
 return $str;
