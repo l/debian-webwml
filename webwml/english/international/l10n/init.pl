@@ -1,13 +1,13 @@
 ##########
 # Config part
 ##########
-my $DB_FILE="../../../transmonitor.data";
+my $DB_FILE="data/transmonitor";
 my $PO_ROOT="http://www.ens-lyon.fr/~mquinson/debian/po";
 
 ##########
 # Init
 ##########
-#include "../../../english/international/l10n/transmonitor_utils.pl"
+#include "../../../english/international/l10n/scripts/utils.pl"
 my %data;
 my %sections;
 my %priorities;

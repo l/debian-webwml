@@ -26,7 +26,13 @@
 
 my $dpkglibdir="/usr/lib/dpkg";
 
-use Locale::Language;
+# XXX we must first install liblocale-codes-perl on va.debian.org
+# use Locale::Language;
+# XXX include /usr/lib/perl5/Locale/Language.pm
+use lib 'scripts';
+use Language;
+# XXX include /usr/lib/perl5/Locale/Language.pm
+
 push (@INC, $dpkglibdir);
 require 'controllib.pl';
 
@@ -41,7 +47,6 @@ sub is_lang {
 	return 0;
     }
 }
-
 
 sub clear_data {
     my $dataref=shift;

@@ -58,8 +58,7 @@ sub make_one_lang {
 sub do_all {
     my $cil = uc("$(CUR_ISO_LANG)");
 
-    print("[$cil:\n");
-    print("[MINUS:\n");
+    print("[$cil:[MINUS:\n");
     print "<ul>";
     foreach $lang (sort keys %langs) {
 	$str =  "<li><a href=\"l10n-lang-$lang\">";
@@ -71,19 +70,22 @@ sub do_all {
 	print $str."</a></li>\n";
     }
     print "</ul>";
-    print(":MINUS]\n");
-    print(":$cil]\n");
+    print(":MINUS]:$cil]\n");
 
     #foreach $lang (sort keys %langs) {
     foreach $lang ('ca') {
 	my $code = 'L10N' . uc ($lang);
 	print("[NULL:\n");
-	print("%!slice -o UNDEFu($code-MINUS):$(WML_SRC_BASENAME)-$lang.$(CUR_ISO_LANG).html\n");
+	print("%!slice -o UNDEFu((${code}\@u${cil})-MINUS):$(WML_SRC_BASENAME)-$lang.$(CUR_ISO_LANG).html\n");
 	print(":NULL]\n");
+        print("[$cil:[MINUS:<!--:MINUS]:$cil]\n");
 	print("[$code:\n");
 	make_one_lang($lang);
 	print(":$code]\n");
+        print("[$cil:[MINUS:-->:MINUS]:$cil]\n");
     }
 }	
+
+do_all();
 
 </perl>
