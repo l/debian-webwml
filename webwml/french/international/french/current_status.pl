@@ -15,18 +15,18 @@ do 'documents-bd.pl';
 #               'needs revision' - 3
 #               'translation up to date', - 4
 #               'needs check' - 5
-#               'being revised' -  6
+#               'being revised' - 6
 #               'obsolete' - 7
 #		'unknown' - 8
 # In french:
-#		'non-disponible'
-#		'à traduire'
-#		'en cours de traduction'
-#		'à relire'
-#		'traduction à jour',
-#		'à reviser'
-#		'en cours de révision'
-#		'obsolète'
+#		'non-disponible' - 0
+#		'à traduire' - 1
+#		'en cours de traduction' - 2
+#		'à relire' - 3
+#		'traduction à jour', - 4
+#		'à reviser' - 5
+#		'en cours de révision' - 6
+#		'obsolète' - 7
 #
 #	'since'			=> '',
 #	'diff'			=> '',
@@ -183,14 +183,12 @@ $translations_status = {
 },
 
 'policy' => {
-	'status'		=> '6',
-	'since'			=> '6/04/1999',
+	'status'		=> '3',
+	'since'			=> '25/12/2000',
 	'translation_name'	=> 'Manuel des normes Debian',
 	'translation_maintainer'=> ['philippe batailler <pbatailler@teaser.fr>'],
-	'base_revision'		=> '2.5.0.0',
-	'translation_url'	=> 'http://savage.iut-blagnac.fr/projets/developpement/policy.fr/policy.fr.html/',
-	'translation_dev_url'   => 'http://savage.iut-blagnac.fr/projets/developpement/policy.fr/policy.fr.sgml',
-	'translation_package'	=> '',
+	'base_revision'		=> '3.2.1.1',
+	'translation_dev_url'   => 'http://www.teaser.fr/~pbatailler/',
 	'old_translators'	=> ['Serge Stinckwich <serge@info.unicaen.fr>'],
 },
 
