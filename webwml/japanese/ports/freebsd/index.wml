@@ -1,91 +1,21 @@
-#use wml::debian::template title="Debian GNU/FreeBSD" BARETITLE="true"
-#use wml::debian::translation-check translation="1.3"
+#use wml::debian::template title="Debian GNU/FreeBSD" BARETITLE="true" NOHEADER="yes"
+#use wml::debian::translation-check translation="1.4"
+#include "$(ENGLISHDIR)/ports/freebsd/menu.inc"
 
-<p>Debian GNU/FreeBSD は「通常の」 Debian (GNU) ユーザランドに、
-<a href="http://www.freebsd.org/">FreeBSD</a> カーネルと、
-カーネルに関連したユーティリティ、C ライブラリ といくつかの特有のユーティリティ
-の4つを結びつけたものからなる移植版です。この移植版は現在インテル x86 アーキテクチャのみに基づいてい
-ます。</p>
+<h1>Debian GNU/FreeBSD</h1>
 
-<p>移植版の主メンテナは Nathan Hawkins です。</p>
-
-<p>以前はパッケージが利用可能でしたが、<a
-href="$(HOME)/News/2002/20021122">サーバが火事で失われた</a>ため、
-現在は公開されていません。このこと及び他の不幸な状況のため、
-移植作業は現在中断状態です。</p>
-
-<p>
-歴史に関するより詳しい情報は、密接な関係にある
-<a href="../netbsd/">NetBSD</a> 移植版を参照してください。</p>
-
-<h2>ステータス</h2>
-
-<p><i>最終更新 2002 年 4 月 22 日</i></p>
-
-<p>FreeBSD の主要な部分はパッケージ化されていて、いつでもアップロード
-できます。
-暗号関連ソフトウェアが main に統合されるまで、アップロードを延期します。
-それ以降、woody のリリースまでは experimental にアップロードするつもりです。
+<p>FreeBSD カーネルの上に Debian ディストリビューションを構築するために、
+現在、ふたつの異なる作業が行われています。双方とも実験的な段階にあり、
+どちらを公式な Debian GNU/FreeBSD とするかはまだ決められていません。
+詳しくは、それぞれのサイトを参照してください。
 </p>
 
-<p>基本システムはほとんど動作しますが、未解決の問題がいくつかあります:</p>
+<p>
+<a href="gnu-libc-based">GNU C ライブラリ (Glibc)
+に基づく Debian GNU/FreeBSD</a>
+</p>
 
-<h3>特定のパッケージに関する問題</h3>
-
-<ul>
-    <li>sysvinit はパッチが当てられ動作していますが、そのパッチをマージすると Linux
-	が壊れてしまうという問題があり、解決できずにいます。
-    </li>
-    <li>shadow のハックはひどいので、大仕事が必要となります。
-	<i><b>Update: 
-	主要な仕事がいくつか成されました。状況は今ではだいたい
-	良くなっています。更なるテストが必要です。</b></i>
-    </li>
-    <li>apt-get は頻繁にセグメンテーションフォルトします。ソースパッケージ
-	ではほとんど動作しますが、バイナリは確かに失敗するようです。
-	<i><b>Update: これは今では修整されました。</b></i>
-    </li>
-    <li>groff: 現在のバージョンは、libc の国際化問題のために構築できません。
-	<i><b>Update: langinfo.h が MFC (FreeBSD-CURRENT から STABLE ブランチへマージ) されたときに直りました。</b></i>
-    </li>
-    <li>gcc/binutils: gcc -g でデバッグ情報を実際に含めるのを妨げているものが
-        あります。おそらく binutils で、それで他にもおかしなところがあるでしょう。
-	<i><b>Update: 現在動作しています。奇妙ですね...</b></i>
-    </li>
-    <li>util-linux: まったくのお手上げです。諦めて私は新しいパッケージである
-	util-bsd を作りました。
-    </li>
-    <li>e2fsprogs: 構築できません。おそらく当分無理でしょう。
-    </li>
-</ul>
-
-<h3>移植版一般の問題</h3>
-
-<ul>
-    <li>libc は -lintl を含んでいません。多くのパッケージがこのせいで
-	チェックを通らないでしょう。そしてみんながパッチを望んでいます。
-    </li>
-    <li>getopt や他の -liberty 関数が libc にはありません。
-	これにより多くの Debian 特有のパッケージが壊されます。
-	<i><b>Update: 私は NetBSD の getopt_long を移植し、
-	うまく動作しているようです。この問題は解決されたようです。</b></i>
-    </li>
-    <li>マルチバイト文字セットの関数がありません。これにより libncurses
-	を UTF サポート付きで構築できません。
-	<i><b>Update: libiconv がパッケージ化されました。ここに書いてあるのと
-	状況は変わるかもしれません。</b></i>
-    </li>
-    <li>shadow パスワードの完全に異なる実装。BSD 4.4 は明らかに互換性のない方法を
-	導入しています。実際はより良いのかもしれませんが、それを扱う
-	標準のライブラリ関数がありません。getspnam と freinds が存在していません。
-	<i><b>Update: これは修整されました。私は libshadow ライブラリを書き、それに
-	よりこの問題は解決されました。</b></i>
-    </li>
-    <li>パッケージの build dep での libc6-dev の使用。これは止めるべきです!
-    </li>
-    <li>gcc 3.0 の使用。これも、gcc 3.0 に基づいている他の移植版のように、少ないながら問題になります。
-    </li>
-    <li>configure 用の一意的なホスト型。FreeBSD 用の設定はときに Debian
-	としては適当でなく、Debian 用の変更で FreeBSD を壊してしまうのを避けら
-	れるなら好ましいでしょう。最大の問題は libtool です。</li>
-</ul>
+<p>
+<a href="bsd-libc-based">BSD C ライブラリ (libc5)
+に基づく Debian GNU/FreeBSD</a>
+</p>
