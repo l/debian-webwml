@@ -1,5 +1,5 @@
 #use wml::debian::cdimage title="jigdo をつかって Debian CD イメージをダウンロードする" BARETITLE=true
-#use wml::debian::translation-check translation="1.3"
+#use wml::debian::translation-check translation="1.5"
 
 <p>jigsaw (糸鋸) ダウンロード、あるいは短く <a href="http://atterer.net/jigdo/">jigdo</a>
 は、将来 Debian CD イメージを配布する主となる方法として考えられたものです。
@@ -16,8 +16,8 @@
 <p>もちろん、「通常の」Debian ミラーは CD イメージをおいていません。
 それでは jigdo がどうやってそこからダウンロードするのかと言いますと、jigdo
 は CD 中の全部のファイルを個別にダウンロードするのです。
-次にダウンロードしたファイルを一つのファイルに集めて、(満月の夜に、片足で立ち、
-古の遙けく伝承される咒を結びて) CD イメージと全く同じものを作成します。
+次にダウンロードしたファイルを一つのファイルに集めて、CD
+イメージと全く同じものを作成します。
 ただし、これは舞台裏で行われていることであり、<em>あなたの</em>
 すべきことは、ダウンロードツールに処理すべき "<tt>.jigdo</tt>"
 ファイルの場所を教えることだけです。</p>
@@ -80,8 +80,35 @@ jigdo の開発に参加していただけるボランティアはいつでも大歓迎です。</p>
 んですが、様々な理由から大きな "<tt>.iso.tmp</tt>"
 ファイルはすでに作成されているが、<tt>jigdo-lite</tt>
 は問題を発見してダウンロードを再開しろと繰り返し伝えてくる、という状態になることがあります。
-現時点で、全データを再度ダウンロード <em>しない</em> 唯一の解決法は、
-<tt><a href="http://rsync.samba.org/">rsync</a></tt> で復旧することです。
-<tt>jigdo-lite</tt> の一時ファイルをリネームして "<tt>.tmp</tt>"
-拡張子を削除し、<a href="../mirroring/rsync-mirrors">rsync ミラー</a>
-のどれかを使ってイメージ中に欠けている部分を取ってきてください。</p>
+この場合、試せることが幾つかあります。</p>
+
+<ul>
+
+  <li>単にダウンロードを再開してリターンキーをたたいてみてください。
+  たぶん一部のファイルがタイムアウトやその他の一時的なエラーでダウンロードできなかったのでしょう。
+  再試行によって、不足したファイルをダウンロードできるかもしれません。</li>
+
+  <li>別のミラーを試してみます。一部の Debian ミラーサイトは更新の同期が多少狂っています。
+  別のミラーは、あなたが指定したミラーではすでに消されたファイルをまだ持っているかもしれませんし、指定したミラーにまだない更新済みのファイルを持っていることもあります。</li>
+
+  <li>イメージの不足部分を <tt><a href="http://rsync.samba.org/">rsync</a></tt>
+  で回復してみてください。最初にダウンロードしようとしているイメージの正しい
+  rsync URL を見つける必要があります。rsync イメージアクセスを提供しているサーバを
+  <a href="../mirroring/rsync-mirrors">安定版 (stable)</a> か
+  <a href="../http-ftp/#testing">テスト版 (testing) </a>
+  から選び、正しいパスとファイル名を決めます。ディレクトリの内容一覧は、
+  <tt>rsync&nbsp;rsync://cdimage.debian.org/debian-cd/</tt>
+  コマンドで得られます。
+
+  <br>次に、<tt>jigdo-lite</tt> の一時ファイルをリネームして "<tt>.tmp</tt>"
+  拡張子を削除し、リモートの URL とローカルのファイル名の両方を以下のように
+  rsync に与えます。
+    <tt>rsync&nbsp;rsync://server.org/path/binary-i386-1.iso
+  binary-i386-1.iso</tt>
+
+  <br>rsync の <tt>--verbose</tt> と <tt>--progress</tt>
+  スイッチで状態情報を得られます。また、<tt>--block-size=8192</tt>
+  で速度が改善されます。試してみてください。
+
+</ul>
+
