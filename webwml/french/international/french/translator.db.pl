@@ -208,6 +208,15 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
+		'Yannick Roehlly' => {
+			email	    => 'yannick.roehlly@free.fr',
+                        summary     => 3,
+                        logs        => 0,
+                        diff        => 3,
+                        tdiff       => 0,
+                        file        => 3,
+                        compress    => 'none'
+                }, 
                 'Jérôme Schell' =>  {
                         email       => 'jerome@myreseau.org',
                         summary     => 2,
