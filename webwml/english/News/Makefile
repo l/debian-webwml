@@ -20,4 +20,4 @@ all: $(HTMLFILES)
 
 include $(BASE)/Make.templ.inc
 
-$(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(wildcard 1997/1997*.wml) $(wildcard 1998/1998*.wml) $(TEMPLDIR)/template.wml
+$(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(wildcard 1997/1997*.wml) $(wildcard 1998/1998*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_news.wml
