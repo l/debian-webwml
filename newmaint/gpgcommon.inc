@@ -25,6 +25,7 @@
             echo "Problem with query", pg_ErrorMessage($db), "<BR>";
             return FALSE;
         }
+        echo "<UL>";
         $rows = pg_NumRows($query);
         for ($i = 0; $i < $rows; $i++) {
             $row = pg_Fetch_Array($query, $i);
@@ -33,6 +34,7 @@
                 echo " <A HREF = \"gpgplace.php?id=", $row["id"], "\">Modify entry</A>";
             }
         }
+        echo "</UL>";
     }
 
 ?>
