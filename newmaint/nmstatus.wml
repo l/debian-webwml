@@ -1,0 +1,165 @@
+<?
+  include("config.inc");
+  include("common.inc");
+
+  function find_applicant($email) {
+  global $row, $query;
+  # start looking at stuffk
+  if (! ($db = open_db())) {
+    return FALSE;
+  }
+  $sql = "SELECT * from applicant WHERE email='$email'";
+  if (! ($query = pg_exec($db, $sql))) {
+    echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+    return FALSE;
+  }
+  if ( pg_numRows($query) < 1) {
+    echo "Could not find $email in the database.  You can find a full list of applicants <A href=\"nmlist.php\">here</A>.<BR>";
+    return FALSE;
+  }
+  $row = pg_Fetch_Array($query, 0);
+  return TRUE;
+}
+  function print_textarea($title, $name, $value, $editable)
+  {
+    if ($editable) {
+      echo "<B>$title</B><BR><INPUT type=\"textarea\" name=\"$name\" rows=\"5\" cols=\"15\">$value</TEXTAREA>\n";
+    } else {
+      echo "<B>$title</B><BR>$value<HR><BR>\n";
+    }
+  }
+?>
+#use wml::nmpage title="Debian New Maintainer - Applicant Status"
+<?
+  $email = trim(strip_tags($email));
+  if (find_applicant($email)) {
+    $whattodo = "";
+?>
+<H1>Status Page for applicant: <? echo $row["forename"], " ", $row["surname"], " &lt;", $row["email"], "&gt;"; ?> </H1><BR>
+<TABLE width=100%>
+<TR><TD>Received application</TD><TD><? echo $row["apply_date"]?></TD></TR>
+
+<TR><TD>Application Manager Assigned</TD><TD>
+<?
+  if (pg_FieldIsNull($query, 0, "manager") || pg_FieldIsNull($query, 0, "manager_date")) {
+    echo "None Assigned";
+    $whattodo .= "<LI>Front desk to assign Application Manager\n";
+  } else {
+    echo $row["manager"], " assigned on ", $row["manager_date"];
+  }
+?>
+</TD></TR>
+<TR><TD>ID Check</TD><TD>
+<?
+  if (pg_FieldIsNull($query, 0, "id_ok") || pg_FieldIsNull($query, 0, "id_checked")) {
+    echo "Not Checked";
+    $whattodo .= "<LI>ID to be checked by AM\n";
+  } else {
+    if ($row["id_ok"] == 't') {
+      echo "Passed at ", $row["id_checked"];
+    } else {
+      echo "Failed at ", $row["id_checked"];
+      $whattodo .= "<LI>The ID check failed, talk to your AM to see why and how to pass this check.\n";
+    }
+  }
+?>
+</TD></TR>
+<TR><TD>Philosophy and Procedures Check</TD><TD>
+<?
+  if (pg_FieldIsNull($query, 0, "pnp_ok") || pg_FieldIsNull($query, 0, "pnp_checked")) {
+    echo "Not Checked";
+    $whattodo .= "<LI>Philosophy and Procedures to be checked by AM.\n";
+  } else {
+    if ($row["pnp_ok"] == 't') {
+      echo "Passed at ", $row["pnp_checked"];
+    } else {
+      echo "Failed at ", $row["pnp_checked"];
+      $whattodo .= "<LI>Resubmit for Philosophy and Procedures check.\n";
+    }
+  }
+?>
+</TD></TR>
+<TR><TD>Tasks and Skills Check</TD><TD>
+<?
+  if (pg_FieldIsNull($query, 0, "tns_ok") || pg_FieldIsNull($query, 0, "tns_checked")) {
+    echo "Not Checked";
+    $whattodo .= "<LI>Tasks and Skills to be checked by AM.\n";
+  } else {
+    if ($row["tns_ok"] == 't') {
+      echo "Passed at ", $row["tns_checked"];
+    } else {
+      echo "Failed at ", $row["tns_checked"];
+      $whattodo .= "<LI>Resubmit for Tasks and Skills check.\n";
+    }
+  }
+?>
+</TD></TR>
+<TR><TD>Application Manager recomends to DAM</TD><TD>
+<?
+  if (pg_FieldIsNull($query, 0, "approved") || pg_FieldIsNull($query, 0, "decision")) {
+    echo "--";
+    $whattodo .= "<LI>Your Application Manager will put their approval to the DAM.\n";
+  } else {
+    if ($row["approved"] == 't') {
+      echo "Approved on ", $row["decision"];
+    } else {
+      echo "Not approved on ", $row["decision"];
+      $whattodo .= "<LI>You Application Manager has not approved you to the DAM, they should explain why.\n";
+    }
+  }
+?>
+</TD></TR>
+<TR><TD>DAM Phone Contact</TD><TD>
+<?
+  if ($row["da_phone_required"] == 't') { 
+    if (pg_FieldIsNull($query, 0, "da_phone") ) {
+      echo "--";
+      $whattodo .= "<LI>The DAM will phone you for final check-in.\n";
+    } else {
+      echo "Called on ", $row["da_phone"];
+    }
+  } else {
+    echo "Not Required";
+  }
+?>
+</TD></TR>
+<TR><TD>DAM Approval</TD><TD>
+<?
+  if (pg_FieldIsNull($query, 0, "da_approved")) {
+    echo "--";
+    $whattodo .= "<LI>DAM to approve application\n";
+  } else {
+    if ($row["da_approved"] == 't') {
+      echo "Approved";
+    } else {
+      echo "Not approved";
+      $whattodo .= "<LI>For some reason you were not approved by the DAM, they will be in contact with you about this soon.\n";
+    }
+  }
+?>
+<TR><TD>Account Created</TD><TD>
+<?
+  if (pg_FieldIsNull($query, 0, "newmaint")) {
+    echo "No";
+    $whattodo .= "<LI>DAM creates new account\n";
+  } else {
+    echo $row["newmaint"];
+  }
+?>
+</TD></TR>
+</TABLE>
+<?
+  print_textarea("Application Manager Comments", "man_comment", $row["man_comment"], FALSE);
+  print_textarea("Debian Account Manager Comments", "da_comment", $row["da_comment"], FALSE);
+?>
+
+<P>The following things need to happen still:
+<UL>
+<? if ($whattodo == "") {
+     echo "<LI>nothing!!\n";
+   } else {
+     echo $whattodo;
+   }
+?>
+</UL>
+<? } ?>

@@ -1,0 +1,72 @@
+<?
+
+session_start();
+include("config.inc");
+include("common.inc");
+
+session_name("DebianNM");
+session_unregister("s_username");
+session_unregister("s_isam");
+session_unregister("s_isfd");
+session_unregister("s_isdam");
+
+?>
+<HTML>
+<BODY bgcolor="#ffffff">
+<?
+  function find_manager($login, $password) {
+    global $s_isam, $s_isfd, $s_isdam, $s_username;
+
+    if (! ($db = open_db())) {
+      return FALSE;
+    }
+    $sql = "SELECT * FROM manager WHERE login = '$login'";
+    if (! ($result = pg_exec($db, $sql))) {
+      echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+      return FALSE;
+    }
+    if (pg_NumRows($result) == 1) {
+      $row = pg_Fetch_Array($result, 0);
+      $salt = substr($row["passwd"], 0, 2);
+      if (($row["passwd"] == crypt($password, $salt)) || ($row["passwd"] == "")) {
+        $s_username = $login;
+	$s_isam = 't';
+	$s_isfd = $row["is_frontdesk"];
+	$s_isdam = $row["is_dam"];
+	session_register("s_username");
+	session_register("s_isam");
+	session_register("s_isfd");
+	session_register("s_isdam");
+	return TRUE;
+      }
+    }
+    return FALSE;
+  }
+?>
+<?
+#=============main()
+  if ($username == "") {
+?>
+No username supplied, please click the back button and enter in a username.
+<?
+  session_destroy();
+  } else {
+   $username = strip_tags($username);
+   $passwd = strip_tags($passwd);
+   if (find_manager($username, $passwd)) {
+
+     echo "<META http-equiv=\"refresh\" content=\"0;URL=ammain.php?";?><?=SID?>
+     <? echo "\">"; ?>
+Logged in ok, click <A href="ammain.php?<?=SID?>">here</A> to continue if the
+refresh doesn't do it itself.
+<? 
+    } else {
+     session_destroy();
+?>
+<P>I can either not find that manager in the database or you have entered in
+the wrong password. Click <A href="index.php">here</A> to go back.<BR>
+<?
+   }
+} ?>
+</BODY>
+</HTML>

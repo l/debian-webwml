@@ -1,0 +1,73 @@
+<?
+  session_start();
+  include("config.inc");
+  include("common.inc");
+
+  function print_applicants($sql) {
+  if (! ($db = open_db())) {
+    return FALSE;
+  }
+  if (! ($query = pg_exec($db, $sql))) {
+    echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+    pg_Close($db);
+    return FALSE;
+  }
+  $rows = pg_NumRows($query);
+  for ($i = 0 ;   $i < $rows ; $i++) {
+    $row = pg_Fetch_Array($query, $i);
+    echo "<TR><TD>", $row["apply_date"], "</TD>";
+    print_flag($row["id_ok"],"<TD><IMG src=\"/images/mag.png\" alt=\"I\"></TD>","<TD> </TD>");
+    print_flag($row["pnp_ok"],"<TD><IMG src=\"/images/dfsg.png\" alt=\"P\"></TD>","<TD> </TD>");
+    print_flag($row["tns_ok"],"<TD><IMG src=\"/images/hammer.png\" alt=\"T\"></TD>","<TD> </TD>");
+    print_flag($row["approved"],"<TD><IMG src=\"/images/thumb.png\" alt=\"A\"></TD>","<TD> </TD>");
+    print_flag($row["da_approved"],"<TD><IMG src=\"/images/new.png\" alt=\"N\"></TD>","<TD> </TD>");
+    if ($row["approved"] == "f" || $row["da_approved"] == "f") {
+      echo "<TD><IMG src=\"/images/hold.png\" alt=\"H\"></TD>";
+    } else {
+      echo "<TD> </TD>";
+    }
+    echo "<TD><A href=\"amstatus.php?"; ?><?=SID?><?;
+    echo "&user=", urlencode($row["email"]), "\">",
+          $row["forename"], " ", $row["surname"], " &lt;",
+	  $row["email"], "&gt;</A>",
+          " </TD><TD>", $row["manager"], "</TD></TR>\n";
+  }
+  # Now for other stuff
+
+  pg_Close($db);
+  return TRUE;
+}?>
+#use wml::nmpage title="Debian New Maintainer - List of all Applicants"
+<?
+  
+  if (!session_is_registered("s_username") || !session_is_registered("s_isam")) {
+?>
+<STRONG>
+You should not be here!!</STRONG>
+<? } else { 
+  session_register("s_username");
+  session_register("s_isam");
+  session_register("s_isfd");
+  session_register("s_isdam");
+?>
+<H1>Debian New Maintainer - All Applicants</H1><BR>
+<P>This is a list of all applicants known to the database. This list is sorted
+by application date. Applicants who are now maintainers are not shown up
+in this list.
+<TABLE border=0>
+ <TR><TH>Appl Date</TH><TH colspan="6">Flags</TH><TH>Applicant</TH><TH>Manager</TH></TR>
+<?
+   $sql = "SELECT * from applicant WHERE newmaint IS NULL ORDER BY apply_date" ;
+   print_applicants($sql);
+?>
+</TABLE>
+<H3>Key</H3>
+<UL>
+<LI><IMG src="/images/mag.png" alt="I"> : Identification complete
+<LI><IMG src="/images/dfsg.png" alt="P"> : Philosopy and Procedures complete
+<LI><IMG src="/images/hammer.png" alt="T"> : Tasks and Skills complete
+<LI><IMG src="/images/thumb.png" alt="A"> : Application Manager Recommends applicant
+<LI><IMG src="/images/new.png" alt="N"> : New Debian maintainer
+<LI><IMG src="/images/hold.png" alt="H"> : On hold
+</UL>
+<? } # Registered session ?>

@@ -1,0 +1,94 @@
+<?
+  session_start();
+  include("config.inc");
+  include("common.inc");
+
+  function find_user($db, $email) {
+  global $row, $query;
+  $sql = "SELECT * from applicant WHERE email='$email'";
+  if (! ($query = pg_exec($db, $sql))) {
+    echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+    return FALSE;
+  }
+  $row = pg_Fetch_Array($query, 0);
+  return TRUE;
+}
+  function print_textarea($title, $name, $value, $editable)
+  {
+    if ($editable) {
+      echo "<TR><TD width=\"200\">$title</TD><TD><textarea name=\"$name\" rows=\"5\" cols=\"30\">$value</TEXTAREA></TD></TR>\n";
+    } else {
+      echo "<TR><TD width=\"200\">$title</TD><TD>$value</TD></TR>\n";
+    }
+  }
+?>
+#use wml::nmpage title="Debian New Maintainer - Applicant Status"
+<?
+  
+  if (!session_is_registered("s_username") || !session_is_registered("s_isam")) {
+?>
+<STRONG>
+You should not be here!!</STRONG>
+<? } else { 
+  session_register("s_username");
+  session_register("s_isfd");
+  session_register("s_isdam");
+
+
+  if ( (($db = open_db())) && (find_user($db, $user))) {
+?>
+<H1>New Maintainer Applicant: <? echo $row["email"] ?></H1>
+<SMALL><B>Note:</B>The database will accept dates in the following formats:
+4 May 1999 4/5/1999 1999/5/4. No not use mm/dd/yyyy!</SMALL>
+<FORM method=post action="amupdate.php?<?=SID?>">
+<INPUT name="emailkey" type="hidden" value="<? echo $row["email"] ?>">
+<TABLE valign="t">
+<?
+  if ($s_isdam == 't' || $s_isfd == 't') { $fd_only = TRUE; }
+  if ($s_isdam == 't' ) { $dam_only = TRUE; }
+  if ($s_username == trim($row["manager"]) || $s_isfd == 't' || $s_isdam == 't')
+  	{ $am_only = TRUE; }
+  #echo "Comparing '", $s_username, "' with '", trim($row["manager"], "'.";
+  print_text("Email Address", "email", $row["email"], $fd_only);
+  print_text("First Name", "forename", $row["forename"], $fd_only);
+  print_text("Last Name", "surname", $row["surname"], $fd_only);
+  print_text("Date of Application", "apply_date", $row["apply_date"], $fd_only);
+  print_text("Application Manager", "manager", $row["manager"], $fd_only);
+  print_text("Date AM Assigned", "manager_date", $row["manager_date"], $fd_only);
+  print_bool("AM Confirms Assignment", "am_confirm", $row["am_confirm"], $am_only);
+  print_text("Date AM Confirms Assignment", "am_confirm_date", $row["am_confirm_date"], $am_only);
+  print_text("Date AM Contacts Applicant", "am_contact", $row["am_contact"], $am_only);
+  print_bool("ID OK", "id_ok", $row["id_ok"], $am_only);
+  print_text("Checked on", "id_checked", $row["id_checked"], $am_only);
+  print_bool("Policy and Procedures Check Passed", "pnp_ok", $row["pnp_ok"], $am_only);
+  print_text("Checked on", "pnp_checked", $row["pnp_checked"], $am_only);
+  print_bool("Tasks and Skills Check Passed", "tns_ok", $row["tns_ok"], $am_only);
+  print_text("Checked on", "tns_checked", $row["tns_checked"], $am_only);
+  print_bool("AM approves and submits report", "approved", $row["approved"], $am_only | $dam_only);
+  print_text("Date:", "decision", $row["decision"], $am_only | $dam_only);
+  print_bool("Documentation complete", "application_ok", $row["application_ok"], $dam_only);
+  print_bool("DAM Phonecall Required", "da_phone_required", $row["da_phone_required"], $dam_only);
+  print_text("DAM Phones applicant", "da_phone", $row["da_phone"], $dam_only);
+  print_bool("DAM Approves maintainership", "da_approved", $row["da_approved"], $dam_only);
+  print_text("Date Account created", "newmaint", $row["newmaint"], $dam_only);
+  print_textarea("Application Manager Comments", "man_comment", $row["man_comment"], $am_only);
+  print_textarea("Debian Account Manager Comments", "da_comment", $row["da_comment"], $dam_only);
+?>
+<? if ($am_only || $fd_only || $dam_only) { ?>
+<TR><TD align="m" colspan="2"><INPUT type="submit" value="Update Application"></TD></TR>
+<? } #am or fd or dam ?>
+</TABLE>
+</FORM>
+<? if ($fd_only) { ?>
+<H3>Delete Applicant</H3>
+<P>The button below will delete an applicant permanently from the database!!
+<STRONG>Use with care</STRONG>
+<FORM method=post action="deletenm.php?<?=SID?>">
+<INPUT name="email" type="hidden" value="<? echo $row["email"] ?>">
+<INPUT value="Delete" name="delete" type="submit">
+</FORM>
+<? } #fd to delete applicant ?>
+<? } else { ?>
+<STRONG>Sorry there is a problem with connecting to the new maintainers database, please try again later.
+</STRONG>
+<? } } ?>

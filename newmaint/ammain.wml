@@ -1,0 +1,156 @@
+<?
+  session_start();
+  include("config.inc");
+  include("common.inc");
+
+  /* How many applicants to display on the FD screen? */
+  $FD_MAX_APPLICANTS = 5;
+
+  function print_applicants($db, $sql,$limit) {
+  if (! ($query = pg_exec($db, $sql))) {
+    echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+    echo "SQL was: $sql<BR>\n";
+    return FALSE;
+  }
+  echo "<TABLE border=\"0\" summary=\"\">\n";
+  $rows = pg_NumRows($query);
+  if ($limit != 0 && $rows > $limit) { $rows = $limit; }
+  for ($i = 0 ;   $i < $rows ; $i++) {
+    $row = pg_Fetch_Array($query, $i);
+    echo "<TR>";
+    print_flag($row["id_ok"],"<TD><IMG src=\"/images/mag.png\" alt=\"I\"></TD>","<TD> </TD>");
+    print_flag($row["pnp_ok"],"<TD><IMG src=\"/images/dfsg.png\" alt=\"P\"></TD>","<TD> </TD>");
+    print_flag($row["tns_ok"],"<TD><IMG src=\"/images/hammer.png\" alt=\"T\"></TD>","<TD> </TD>");
+    print_flag($row["approved"],"<TD><IMG src=\"/images/thumb.png\" alt=\"A\"></TD>","<TD> </TD>");
+    print_flag($row["da_approved"],"<TD><IMG src=\"/images/new.png\" alt=\"N\"></TD>","<TD> </TD>");
+    if ($row["approved"] == "f" || $row["da_approved"] == "f") {
+      echo "<TD><IMG src=\"/images/hold.png\" alt=\"H\"></TD>";
+    } else {
+      echo "<TD> </TD>";
+    }
+    echo "<TD><A href=\"amstatus.php?"; ?><?=SID?><?;
+    echo "&user=", urlencode($row["email"]), "\">",
+          $row["forename"], " ", $row["surname"], " &lt;",
+	  $row["email"], "&gt;</A></TD>",
+          "<TD> (", $row["manager"], ") </TD></TR>\n";
+  }
+  echo "</TABLE>\n";
+
+  return TRUE;
+}?>
+#use wml::nmpage title="Debian New Maintainer - AM Main Page"
+<?
+  
+  if (!session_is_registered("s_username") || !session_is_registered("s_isam")) {
+?>
+<STRONG>
+You should not be here!!</STRONG>
+<? } else { 
+  session_register("s_username");
+  session_register("s_isam");
+  session_register("s_isfd");
+  session_register("s_isdam");
+  if  (($db = open_db())) {
+?>
+<H1>Debian New Maintainer</H1><BR>
+<P>Currently the database thinks you have the following functions:
+<UL>
+  <LI>Application Manager
+<? if ($s_isfd == 't') { ?>  <LI>Front Desk <? } ?>
+<? if ($s_isdam == 't') { ?>  <LI>Debian Accounts Manager <? } ?>
+</UL>
+<? if ($s_isfd == 't') { ?>
+<H3>Front Desk</H3>
+<P>The following applicants are waiting for an Application Manager to be 
+assigned (only the first <? echo $FD_MAX_APPLICANTS; ?> have been 
+displayed here).<BR>
+<? 
+   $sql = "SELECT * from applicant WHERE manager IS NULL OR manager = '' ORDER BY apply_date";
+   print_applicants($db, $sql,$FD_MAX_APPLICANTS);
+?>
+<P>Applicants assigned to AM but AM has not confirmed:<BR>
+<? 
+   $sql = "SELECT * from applicant WHERE manager IS NOT NULL AND am_confirm IS NULL ORDER BY apply_date";
+   print_applicants($db, $sql,0);
+?>
+<P>Applicants assigned to AM but AM has rejected assignment:<BR>
+<? 
+   $sql = "SELECT * from applicant WHERE manager IS NOT NULL AND am_confirm = 'f' ORDER BY apply_date";
+   print_applicants($db, $sql,0);
+?>
+<? } #End of Front Desk ?>
+<? if ($s_isdam == 't') { ?>
+<H3>Debian Accounts Manager</H3>
+<P>The following applicants have been approved by the NM committee 
+but a DAM has not fully processed them yet:<BR>
+<?
+  $sql = "SELECT * from applicant WHERE manager IS NOT NULL AND approved = 't' AND decision IS NOT NULL AND (application_ok IS NULL OR application_ok = 't') AND ( da_approved IS NULL OR ( da_approved = 't' AND newmaint IS NULL )) ORDER BY apply_date, decision";
+   print_applicants($db, $sql,0);
+?>
+<P>These applications have been approved by the NM committee but for some
+reason the DAM has considered the application incomplete:<BR>
+<?
+  $sql = "SELECT * from applicant WHERE manager IS NOT NULL AND approved = 't' AND decision IS NOT NULL AND application_ok = 'f' AND ( da_approved IS NULL OR ( da_approved = 't' AND newmaint IS NULL )) ORDER BY apply_date, decision";
+   print_applicants($db, $sql,0);
+?>
+
+<? } # DAM stuff ?>
+<H3>Application Manager</H3>
+<P>Hello <? echo $s_username; ?>, here is a list of New Maintainer applicants
+that you are the AM for:<BR>
+<H5>Applicants to Accept</H5>
+<P>These applicants have been assigned to you by the Front Desk but you have
+not confirmed that you will or will not be their AM. These applicants are
+ordered by application date.<BR>
+<?
+  $sql = "SELECT * FROM applicant WHERE manager = '$s_username' AND am_confirm IS NULL ORDER BY apply_date";
+  print_applicants($db, $sql,0);
+?>
+<H5>Applicants to process</H5>
+<P>The following applicants you are the AM for and you have accepted being
+their AM but they have not passed through the whole NM process yet.<BR>
+<?
+  $sql = "SELECT * FROM applicant WHERE manager = '$s_username' AND am_confirm = 't' AND approved IS NULL ORDER BY apply_date";
+  print_applicants($db, $sql,0);
+?>
+<H5>Applicants needing re-processing</H5>
+<P>These applicants you have processed but the DAM believe the documenation is
+incomplete.  Check the DAM comments field for details:<BR>
+<?
+  $sql = "SELECT * FROM applicant WHERE manager = '$s_username' AND am_confirm = 't' AND approved = 't' AND application_ok = 'f' ORDER BY apply_date";
+  print_applicants($db, $sql,0);
+?>
+
+<H5>Processed Applicants</H5>
+<P>These applicants you have processed through the system and are here for
+historical or informational purposes.<BR>
+<?
+  $sql = "SELECT * FROM applicant WHERE manager = '$s_username' AND am_confirm = 't' AND approved = 't' AND ( application_ok = 't' OR application_ok IS NULL) ORDER BY apply_date";
+  print_applicants($db, $sql,0);
+?>
+<H5>Applicants on Hold</H5>
+<P>Applicants who make it here have been not recommended by you and therefore
+put temporarily or permanently on hold.<BR>
+<?
+  $sql = "SELECT * FROM applicant WHERE manager = '$s_username' AND approved = 'f' ORDER BY apply_date";
+  print_applicants($db, $sql,0);
+?>
+
+<H5>Rejected Applicants</H5>
+<P>These applicants you have rejected being their AM.<BR>
+<?
+  $sql = "SELECT * FROM applicant WHERE manager = '$s_username' AND am_confirm = 'f' ORDER BY apply_date";
+  print_applicants($db, $sql,0);
+?>
+<H3>Key</H3>
+<UL>
+<LI><IMG src="/images/mag.png" alt="I"> : Identification complete
+<LI><IMG src="/images/dfsg.png" alt="P"> : Philosopy and Procedures complete
+<LI><IMG src="/images/hammer.png" alt="T"> : Tasks and Skills complete
+<LI><IMG src="/images/thumb.png" alt="A"> : Application Manager Recommends applicant
+<LI><IMG src="/images/new.png" alt="N"> : New Debian maintainer
+<LI><IMG src="/images/hold.png" alt="H"> : On hold
+</UL>
+
+<? } # db ok
+} # Registered session ?>
