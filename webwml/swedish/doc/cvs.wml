@@ -1,0 +1,167 @@
+#use wml::debian::ddp title="DDP CVS-åtkomst"
+#use wml::debian::translation-check translation="1.4"
+
+<h1>CVS-åtkomst till DDP-dokument</h1>
+
+<p>Debian Documentation Project lagrar sina webbsidor samt stora delar av
+manualtexterna på Debians CVS-server <b>cvs.debian.org</b>.
+
+<p>Endast Debian Documentation Projects medlemmar kan uppdatera filer på
+CVS-servern, andra kan endast hämta dessa filer.
+
+<p>Du kan använda
+<a href="http://cvs.debian.org/ddp/manuals.sgml/?cvsroot=debian-doc">CVSWeb</a>
+för att komma åt filer individuellt och se ändringarna på dem.
+
+<p>För att hämta en hel manual är direktåtkomst till CVS-servern ett bättre val.
+Du måste då installera <tt>cvs</tt>-paketet på din egen maskin.
+
+<h2>Ansluta anonymt (skrivskyddat) till CVS-servern</h2>
+
+<p>För att ansluta ger du detta kommando:
+
+<p style="margin-left: 2em">
+  <code>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/debian-doc login</code>
+</p>
+
+<p>och trycker bara Enter när du ombeds ange ett lösenord.
+
+<p>Du kan sedan använda normala CVS-kommandon (se CVS' infosidor) för att hämta
+ut filer, men du kan inte ändra och sända in dem.
+
+<p>För att hämta filerna för första gången skapar du en katalog att lägga det
+i, och går till denna katalog.
+Två kataloger, <strong>CVS</strong> och <strong>ddp</strong> kommer skapas inuti
+denna katalog.
+
+<p>Använd detta kommando för att hämta alla filer:
+
+<p style="margin-left: 2em">
+  <code>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/debian-doc -z3 checkout ddp/manuals.sgml</code>
+</p>
+
+<p>Detta kommer att skapa och fylla alla kataloger rekursivt.
+
+<p>För att uppdatera din lokala kopia med ändringar gjorda av andra går du
+in i katalogen <strong>ddp/manuals.sgml</strong> och kör kommandot:
+
+<p style="margin-left: 2em">
+  <code>cvs -z3 update -d -P</code>
+</p>
+
+<p>När du är klar med en fjärrsession mot CVS, ger du detta kommando för
+att koppla ned från servern:
+
+<p style="margin-left: 2em">
+  <code>cvs logout</code>
+</p>
+
+<h2>Ansluta mot CVS-server med uppdateringsprivilegier</h2>
+
+<p>För att ansluta med ssh talar du först om för CVS att använda det med:
+
+<p style="margin-left: 2em">
+  <code>export CVS_RSH=ssh</code>
+</p>
+
+<p>Skapa sedan en katalog att lägga det i, gå till denna katalog och ge detta
+kommando:
+
+<p style="margin-left: 2em">
+  <code>cvs -d :ext:<i>användar-id</i>@cvs.debian.org:/cvs/debian-doc -z3 checkout <i>modul</i></code>
+</p>
+
+<p>I kommandot ovan ersätter du <i>användar-id</i> med ditt eget användar-id på
+CVS-lösenordsservern.
+Det är inte nödvändigtvis detsamma som ditt inloggningsnamn på
+<b>cvs.debian.org</b>, om du har ett.
+Ersätt <i>modul</i> med namnet på den modul du vill hämta ut, vanligtvis är
+detta <tt>ddp/manuals.sgml</tt>.
+
+<p>Du ombeds sedan ange ditt lösenord på CVS-servern.
+Blanda inte samman detta med ditt vanliga inloggningslösenord, vare sig på
+<b>cvs.debian.org</b> eller på din egen maskin.
+
+<p>Två kataloger, <strong>CVS</strong> och <strong>ddp</strong> kommer skapas
+inuti denna katalog.
+CVS kommer rekursivt skapa de moduler (dvs. kataloger) du efterfrågade, och
+fylla dem med filer.
+
+<p>Du kan sedan använda normala CVS-kommandon (se CVS-infosidorna) för att hämta
+ut och sända in filer.
+
+<p>För att uppdatera din lokala kopia med ändringar gjorda av andra går du
+in i katalogen <strong>ddp/manuals.sgml</strong> och kör kommandot:
+
+<p style="margin-left: 2em">
+  <code>cvs -z3 update -d -P</code>
+</p>
+
+<h2>Få uppdateringsprivilegier</h2>
+
+<p>Uppdateringsprivilegier är tillgängliga för alla som önskar delta i att
+skriva manualerna.
+
+<p>För att få uppdateringsprivilegier sänder du en förfrågan till
+<a href="mailto:aph@debian.org">dokumentationssamordnaren</a> i vilket du
+anger det användar-id du önskar på pserver:n, och anger ett krypterat lösenord,
+skapat med
+
+<p style="margin-left: 2em">
+  <code>makepasswd --crypt --clear=<i>ditt_lösenord</i></code>
+</p>
+
+<p>(<tt>makepasswd</tt> är ett Debianpaket.)
+
+<p>Om du inte anger något lösenord kommer ett att skapas för dig, men det kommer
+inte att vara lätt att komma ihåg.
+För att ändra ditt lösenord kontaktar du åter samordnaren och anger det nya,
+krypterade, lösenordet.
+
+<hr>
+
+<h1>Filernas organisation</h1>
+
+<p>Denna figur visar strukturen på CVS-katalogträdet:
+
+<p><img src="dirtree.jpg" align="middle" alt="[Katalogträd]">
+
+<p>Observera att DDPs webbplats befinner sig i webwml-modulen i Debians
+CVS-server, så att den kan integreras med resten av Debians webbsidor.
+
+<hr>
+
+<h1>Automatisk uppdateringsmekanism</h1>
+
+<p>De publicerade webbversionerna av manualtexterna genereras av ett cronjobb
+som körs på <b>va.debian.org</b> klockan 01:27 och 13:27 atlanttid varje dag.
+
+<p>Manualerna uppdateras med "make" i katalogen
+<code>ddp/manuals.sgml</code>, vilket utför "make" i alla underkataloger.
+Underkatalogernas makefiler är symboliska länkar till (eller derivat av)
+<code>ddp/manuals.sgml/standard.makefile</code>.
+
+<p>Detta är innehållet i cron-skriptet:
+
+<pre style="margin-left: 2em">
+\#! /bin/bash
+\# Script for updating the DDP manuals and webpages
+
+echo "Debian Documentation Project
+
+Build run at `date`
+"
+
+export CVSROOT=/cvs/debian-doc
+
+(cd ddp/manuals.sgml; make clean)
+cvs update -d ddp
+
+cd ddp/manuals.sgml
+make
+
+echo "
+
+Build finished at `date`
+"
+</pre>
