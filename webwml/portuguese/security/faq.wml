@@ -1,5 +1,5 @@
 #use wml::debian::template title="FAQ de Segurança Debian"
-#use wml::debian::translation-check translation="1.18" translation_maintainer="Philipe Gaspar"
+#use wml::debian::translation-check translation="1.20" translation_maintainer="Philipe Gaspar"
 #include "$(ENGLISHDIR)/security/faq.inc"
 
 <p>As perguntas a seguir são feitas muitas vezes, então suas respostas estão resumidas aqui
@@ -33,8 +33,32 @@
    O mantenedor do pacote é contatado também, se ele já não contatou
    o time de segurança. Finalmente, a correção é testada e novos pacotes
    são preparados, compilados em todas as arquiteturas da versão estável e
-   é feito o upload dos mesmos. Depois de tudo isso, um alerta é publicado.
+   é feito o envio dos mesmos. Depois de tudo isso, um alerta é publicado.
   </p>
+  
+<toc-add-entry name=oldversion>Por que vocês insistem com versões antigas 
+daquele pacote?</toc-add-entry>
+
+<p>R: A regra mais importante de quando está se fazendo um novo pacote que corrige
+   problemas de segurança é fazer menos alterações o possível. Nossos usuários e
+   desenvolvedores estão confiando no comportamento correto de um release uma
+   vez que é feito, então qualquer mudança que fazemos pode possivelmente
+   quebrar o sistema de alguém. Isso é verdade especialmente no caso de 
+   bibliotecas: tenha certeza que você nunca modifique as 
+   Application Program Interface (API) ou Application Binary Interface (ABI),
+   não importa o quão pequeno seja essa alteração.</p>
+   
+<p>Isso significa que mudando para a nova versão do autor não é uma boa 
+   solução, em vez disso as alteração relevantes devem ser adaptadas à versão
+   antiga. Geralmente os autores dessas novas versões têm vontade de ajudar
+   se preciso, se não o time de segurança do Debian pode estar disponível para
+   ajudar.</p>
+
+<p>Em alguns casos não é possível adaptar a versão antiga a uma correção de 
+   segurança, por exemplo quando muita quantidade de código fonte precisa ser 
+   modificada ou reescrita. Se isto acontecer pode ser necessário mudar para a
+   nova versão do autor, mas isso deve ser coordenado antecipadamente com o 
+   time de segurança.</p>
 
 <toc-add-entry name=policy>Qual é a política usada para que pacotes corrigidos apareçam
    no security.debian.org?</toc-add-entry>
@@ -45,7 +69,7 @@
    irá preparar pacotes juntamente com o mantenedor do pacote. Desde que
    alguém (confiável) investigue o problema e construa os pacotes necessários
    e os envie ao Time de Segurança, mesmo problemas de segurança triviais
-   irão entrar no security.debian.org.</p>
+   irão entrar no security.debian.org. Por favor veja abaixo</p>
 
 <toc-add-entry name=version>O número de versão de um pacote indica que eu ainda estou
    rodando uma versão vulnerável!</toc-add-entry>
@@ -53,7 +77,7 @@
 <p>R: Ao invés de atualizar para uma nova versão nós portamos correções
    de segurança das versões mais novas para a versão lançada com a release
    estável. A razão para que façamos isto é certificar-nos de que uma release mude o
-   mínimo possível e que as coisas não mudarão ou quebraão inesperadamente
+   mínimo possível e que as coisas não mudarão ou quebrarão inesperadamente
    como consequência de uma correção de segurança. Você pode checar se
    está executando uma versão segura de um pacote verificando o seu changelog
    ou comparando o exato número de versão com a versão indicada
@@ -66,14 +90,16 @@
    e a equipe de segurança não possui os recursos necessários
    para checá-las Se quer ter um servidor seguro e
    estável, nós recomendamos fortemente que continue com a versão
-   estável.</p>
+   estável. Entretanto, os secretários de segurança tentarão consertar 
+   os problemas na testing e unstable depois que eles forem consertados no
+   lançamento estável.</p>
 
 <toc-add-entry name=mirror>Por que não há mirrors oficiais de security.debian.org?</toc-add-entry>
 
 <p>R: O propósito de security.debian.org é tornar atualizações de
    segurança disponíveis da maneira mais rápida e fácil possível.
    Mirrors adicionam uma complexidade desnecessária podem causar
-  frustação se não estiverem atualizados.</p>
+  frustração se não estiverem atualizados.</p>
 
 <toc-add-entry name=missing>Vi o DSA 100 e o DSA 102, agora, onde está o DSA 101?</toc-add-entry>
 <p>R: Vários distribuidores (a maioria deles de GNU/Linux, mas também
@@ -97,7 +123,18 @@
    enviar, por favor, use o e-mail team@security.debian.org, que é lido apenas pelos
    membros da equipe de segurança. Caso deseje, a mensagem pode ser
    criptografada com a chave do Contato de Segurança Debian
-   (o ID da chave é 0x363CCD95).</p>
+   (o ID da chave é <a href="http://blackhole.pca.dfn.de:11371/pks/lookup?op=get&exact=on&search=0x363CCD95">\
+   0x363CCD95</a>).</p>
+
+<toc-add-entry name=discover>Eu acho que encontrei um problema de segurança, o que devo fazer?</toc-add-entry>
+
+<p>R: Se você descobriu um problema de segurança, tanto em um dos seus pacotes
+   ou de outro desenvolvedor por favor contate o time de segurança. Se o time
+   de segurança do Debian confirmar a vulnerabilidade e outros distribuidores
+   também estiverem vulneráveis, eles geralmente contatam estes outros distribuidores
+   . Se a vulnerabilidade ainda não é pública eles tentam coordenar os
+   alertas de segurança com os dos outros distribuidores para que todas as 
+   principais distribuições fiquem sincronizadas.</p>
 
 <toc-add-entry name=care>O que eu devo fazer com um problema de segurança em um dos meus 
 pacotes?</toc-add-entry>
@@ -114,10 +151,10 @@ mandar os alertas de segurança e mantém o security.debian.org.</p>
     mas eu recebo um erro do tipo `arquivo não encontrado'.</toc-add-entry>
 
 <p>R: Quando algum pacote que leva uma correção de bug substitui um pacote
-    antigo na security.debian.org, as chances de que o antigo seja removido 
-assim que o outro entrar são altas.  Portanto, você irá 
-    receber o erro `arquivo não encontrado'. Nós não queremos distribuir
-    pacotes com erros de segurança conhecidos a não ser que seja absolutamente necessário.</p>
+   antigo na security.debian.org, as chances de que o antigo seja removido 
+   assim que o outro entrar são altas.  Portanto, você irá 
+   receber o erro `arquivo não encontrado'. Nós não queremos distribuir
+   pacotes com erros de segurança conhecidos a não ser que seja absolutamente necessário.</p>
 
 <p>Por favor use os pacotes dos últimos avisos de segurança, que
    são distribuídos através da lista de discussão <a
@@ -129,15 +166,38 @@ assim que o outro entrar são altas.  Portanto, você irá
 security.debian.org diretamente?</toc-add-entry>
 
 <p>R: Não, você não pode. O repositório na security.debian.org é mantido
-pelo time de segurança, quem deve aprovar todos os pacotes. Você pode é 
-enviar patches ou o próprio pacote fonte para o time de segurança pelo email 
-team@security.debian.org. Se você realmente fez tudo certo, não alterou o
-comportamento do pacote e compilou ele para a distribuição apropriada, você
-pode enviar os arquivos para o diretório 
-<a href="ftp://security.debian.org/pub/SecurityUploadQueue/">incoming</a> 
-diretamente. Por favor também leia a 
-<a href="http://lists.debian.org/debian-devel-announce/2002/debian-devel-announce-200206/msg00004.html">\
-descrição</a> de Wichert.</p>
+   pelo time de segurança, que deve aprovar todos os pacotes. Em vez disso
+   você pode enviar patches ou pacotes fonte apropriados para o time de segurança
+   pelo email team@security.debian.org. Eles serão revisados pelo time de segurança
+   e eventualmente enviados, tanto com ou sem modificações.</p>
+
+<p>Se você não está acostumado com uploads de segurança e não tem
+   100% de certeza que seu pacote está correto, por favor use esta 
+   maneira e não envie para o diretório incoming. O time de segurança
+   não tem muitas opções para tratar com pacotes quebrados, especialmente
+   se eles não usam uma versão correta. Os pacotes atualmente não podem
+   ser rejeitados e o buildd poderia ficar confuso se isto fosse 
+   possível. Então, por favor use mail e ajude evitando colocar mais
+   peso para o time de segurança.</p>
+
+<toc-add-entry name=SecurityUploadQueue>Eu tenho certeza que meus pacotes estão corretos,
+    como posso enviá-los?</toc-add-entry>
+    
+<p>R: Se você tem tanta certeza que seus pacotes não irão quebrar alguma coisa, que
+   a versão está correta (exemplo maior do que a versão no estável e menor do que
+   a versão no testing/instável), que você não alterou o comportamento do pacote, 
+   apesar do problema de segurança correspondente, que você compilou ele para a 
+   distribuição correta (que é a <code>oldstable-security</code> ou 
+   <code>stable-security</code>), que contém o código fonte original se o pacote
+   for novo na security.debian.org, que você pode confirmar que o patch da versão
+   mais recente é claro e somente modificado a parte relacionada com o problema de 
+   segurança correspondente (verifique com <code>interdiff -z</code> e ambos
+   arquivos <code>.diff.gz</code>), que você tenha revisado o patch pelo menos
+   três vezes, e que o <code>debdiff</code> não tenha mostrado nenhuma mudança, você 
+   pode enviar diretamente os arquivo para o diretório incoming 
+   <code>/org/ftp.root/pub/SecurityUploadQueue</code> no security.debian.org. Por favor
+   envie também uma notificação com todos os detalhes e links para o email
+   team@security.debian.org.</p>
     
 <toc-add-entry name=help>Como posso ajudar com a segurança?</toc-add-entry>
 <p>R: Por favor, reveja cada problema antes de informá-lo ao 
