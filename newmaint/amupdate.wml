@@ -81,7 +81,11 @@
     if ($value == "" ) {
       $str = $name . "= null";
     } else {
-      $str = $name . "='" . trim(strip_tags($value)) . "'";
+      if (trim($value) == "today") {
+        $str = $name . "='now'::date";
+      } else {
+        $str = $name . "='" . trim(strip_tags($value)) . "'";
+      }
     }
     return $str;
   }
@@ -137,6 +141,10 @@ You should not be here!!</STRONG>
     if ($manager == "" && $manager_date != "")
       { $errors .= "<LI>A manager has not been assigned but there is a manager assigned date.\n"; }
   }
+  if ($advocate_ok != "n" && $advocate_checked == "")
+    { $errors .= "<LI>Advocate check entered but no date given.\n"; }
+  if ($advocate_ok == "n" && $advocate_checked != "")
+    { $errors .= "<LI>Advocate Check Date given but Advocate check not changed.\n"; }
   if ($am_confirm != "n" && $am_confirm_date == "")
     { $errors .= "<LI>AM has confirmed applicant but not put a date in.\n"; }
   if ($am_confirm == "n" && $am_confirm_date != "")
@@ -174,6 +182,10 @@ You should not be here!!</STRONG>
               ", " . get_text("email", $email) .
               ", " . get_text("forename", $forename) .
 	      ", " . get_text("apply_date", $apply_date) .
+	      ", " . get_text("advocate", $advocate) .
+	      ", " . get_text("advocate_date", $advocate_date) .
+	      ", " . get_bool("advocate_ok", $advocate_ok) .
+	      ", " . get_text("advocate_checked", $advocate_checked) .
 	      ", " . get_text("manager", $manager) .
 	      ", " . get_text("manager_date", $manager_date) . ", ";
     } 
