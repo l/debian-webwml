@@ -484,9 +484,16 @@ sub get_stats_podebconf {
                         if $addorig;
 
                 my $addtotal = 0;
+                my $curtotal = 0;
                 foreach $line (@{$data->podebconf($pkg)}) {
                         my ($pofile, $lang, $stat, $link,$translator) = @{$line};
-                        next if $lang eq '_';
+                        if ($lang eq '_') {
+                                if ($stat =~ m/(\d+)u/) {
+                                        $addtotal += $1;
+                                        $curtotal = $1;
+                                }
+                                next;
+                        }
 		    
                         $translator = transform_translator($translator);
 
@@ -505,9 +512,8 @@ sub get_stats_podebconf {
 		        $str .= "<td>$translator</td>".
                               "</tr>\n";
                         if ($stat =~ m/^(\d+)t(\d+)f(\d+)u$/) {
-                                $score{$lang} += $1;
-                                $addtotal = $1 + $2 + $3
-                                        if $1 + $2 + $3 > 0;
+                                $score{$lang} += $1
+                                        if $curtotal == ($1 + $2 + $3);
                         }
 		    	if (percent_stat($stat) eq "100%") {
                            $done{$lang}  = '' unless defined($done{$lang});
@@ -586,9 +592,7 @@ sub process_podebconf {
         print GEN "</dl>\n";
         open (GEN, "> $opt_l/po-debconf/gen/total")
                 || die "Unable to write into $opt_l/po-debconf/gen/total";
-        print GEN "<define-tag podebconf-total-strings>".
-                ($total{main}+$total{contrib}+$total{'non-free'}).
-                "</define-tag>\n";
+        print GEN "<define-tag podebconf-total-strings>$str_total</define-tag>\n";
         close (GEN);
         open (GEN, "> $opt_l/po-debconf/gen/stats")
                 || die "Unable to write into $opt_l/po-debconf/gen/stats";
