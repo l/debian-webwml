@@ -137,7 +137,7 @@ sub printrefs {
 	if ( ! $opt_p ) {
 		print "DSA\t$text\n";
 	} else { 
-		print "<table BORDER=\"2\" CELLPADDING=\"2\" CELLSPACING=\"2\"><tr VALIGN=\"TOP\"><th>DEBIAN DSA</th>";
+		print "<table BORDER=\"2\" CELLPADDING=\"2\" CELLSPACING=\"2\"><tr VALIGN=\"TOP\"><th>Debian DSA</th>";
 		printtableheader("mitre") if $opt_m;
 		printtableheader("bid") if $opt_b;
 		printtableheader("cert") if $opt_c;
