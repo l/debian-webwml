@@ -1,4 +1,4 @@
-# This Makefile should need no changes from webwml/english/News/Makefile
+# This Makefile should need no changes from webwml/english/devel/debian-jr/News/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
@@ -13,7 +13,6 @@ include $(WMLBASE)/Make.lang
 
 
 # Do Not modify the following line
-index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.wml) \
-     $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/$(CUR_YEAR)*.wml) \
-     $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.title) \
-     $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
+  $(TEMPLDIR)/recent_list.wml \
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/[0-9]*/*.wml)

@@ -20,5 +20,5 @@ index.$(LANGUAGE).html: index.wml $(wildcard 1997*.wml) \
 
 ifeq ($(LANGUAGE),en)
 install::
-	install -m664 common_library linux_press_book.txt $(HTMLDIR)
+	install -p -m664 common_library linux_press_book.txt $(HTMLDIR)
 endif
