@@ -426,23 +426,23 @@ sub check_file {
 	}
 	open(F, $name) || die $!;
 	while(<F>) {
-		if (/wml::debian::translation-check/i) {
-			if (/translation="([^"]+)"/i) {
+		if (/wml::debian::translation-check/) {
+			if (/translation="([^"]+)"/) {
 				$oldr = $1;
 				warn "Found translation for $oldr\n" if $opt_v;
 			}
-			if (/maintainer="([^"]+)"/i) {
+			if (/maintainer="([^"]+)"/) {
 				$translator = $1;
 				warn "Translated by $translator\n" if $opt_v;
 			}
-			if (/original="([^"]+)"/i) {
+			if (/original="([^"]+)"/) {
 				$original = $1;
 				warn "Original is $original\n" if $opt_v;
 			}
 			last;
 		}
 		# the following old style cases should be removed eventually
-		if (/translation\s+([.0-9]*)\s*-->/oi) {
+		if (/translation\s+([.0-9]*)\s*-->/i) {
 			$oldr = $1;
 			warn "Found translation for $oldr\n" if $opt_v;
 		}
@@ -454,16 +454,16 @@ sub check_file {
 	}
 	close(F);
 
-	if ((!$oldr) && ($name =~ /$langto\/international\/$langto/i)) {
+	if ((!$oldr) && ($name =~ /$langto\/international\/$langto/)) {
 	    ($ename = $name) =~ s/$to/$from/;
 	    open FE, $ename || die $!;
 	    while (<FE>) {
-		if (/wml::debian::translation-check/i) {
-		    if (/translation="([^"]+)"/i) {
+		if (/wml::debian::translation-check/) {
+		    if (/translation="([^"]+)"/) {
 			$oldr = $1;
 			warn "Found translation for $1\n" if $opt_v;
 		    }
-		    if (/original="([^"]+)"/i) {
+		    if (/original="([^"]+)"/) {
 			$original = $1;
 			warn "Original is $1\n" if $opt_v;
 		    }
