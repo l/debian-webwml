@@ -116,7 +116,7 @@ sub pkg_list {
 	}
     }
     if ($str) {
-	$str .= "<dl>$str</dl>\n";
+	$str = "<dl>$str</dl>\n";
     }
 
     return $str;

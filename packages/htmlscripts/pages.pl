@@ -464,9 +464,7 @@ sub src_package_pages_walker {
 
     if (@bin_list) {
 	$package_page .= gettext( "The following binary packages are built from this source package:" );
-	$package_page .= "<dl>";
 	$package_page .= pkg_list( \@bin_list, 'en', $env );
-	$package_page .= "</dl>";
     }
     $package_page .= "</div> <!-- end pdesc -->\n";
 
@@ -516,7 +514,7 @@ sub src_package_pages_walker {
 	}
 	
 	$package_page .= "<tr><td><a href=\"$src_url\">$src_file_name</a></td>\n"
-	    ."<td align=\"dotalign\">".sprintf("%1f", (floor(($src_file_size/102.4)+0.5)/10))."</td>\n"
+	    ."<td class=\"dotalign\">".sprintf("%.1f", (floor(($src_file_size/102.4)+0.5)/10))."</td>\n"
 	    ."<td>$src_file_md5</td></tr>";
     }
     $package_page .= "</table>\n";
