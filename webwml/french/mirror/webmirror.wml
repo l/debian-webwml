@@ -1,0 +1,167 @@
+#use wml::debian::template title="Mettre en place un Miroir Web"
+
+<!--translation 1.8-->
+
+Faire tourner un miroir revient au même que le site soit officiel ou non.
+Une fois qu'un miroir est mis en place il doit être 
+<a href="submit">enregistré par Debian</a>
+de façon à être inclus dans la 
+<a href="../misc/README.mirrors">liste des miroirs</a>.
+Si vous avez n'importe quelle question, envoyez un courrier à
+<A href="mailto:mirrors@debian.org">mirrors@debian.org</A>.
+
+<H2>La publicité du sponsor sur le miroir</H2>
+sponsor.html et sponsor_img.jpg peuvent et devraient être remplacés 
+par vos soins. 
+Elles sont destinées a faire de la publicité pour votre site de façon à 
+ce que les gens sachent qui est le sponsor.
+Les originaux sont sous sponsor.deb.html et sponsor.deb.jpg du fait que le 
+site dont vous faites un miroir peut avoir remplacé celles que Debian 
+fournis en exemple.
+La taille maximum suggérée pour votre logo est 120x60.
+
+<p>Comme <a href="#cn">la négociation de contenu</a> est utilisée sur les 
+pages web pour choisir la langue préférée, vous pouvez même fournir 
+sponsor.html dans différentes langues. Pour cela vous devez simplement 
+créer sponsor.<lang>.html pour chaque <lang> que vous souhaitez.
+
+<p>Soyez sûr d'ajouter tous les fichiers que vous ne voulez pas voir 
+écraser par le miroir dans la liste d'exclusions du miroir.
+
+<H2>Méthodes pour faire tourner le miroir</H2>
+<h3>rsync anonyme</h3>
+La méthode recommandée pour faire un miroir est d'utiliser rsync.
+
+<p>Vous pouvez utiliser <a href="anonwebsync">ce script</a> pour faire un 
+miroir de l'archive.
+Suivez les indications du script pour mettre en place 
+le miroir.
+Les sites dans la <a href="mirrors_full">liste complète des miroirs</a> qui 
+utilisent le 
+'<kbd>Type: Push-*</kbd>' devraient être de bons sites comme base de miroir.
+
+<h3>Miroir Push</h3>
+Les miroirs Push sont une forme de miroir, utilisant rsync, que nous avons 
+développé pour minimiser le temps que ça prend aux changements de l'archive
+pour atteindre les miroirs. Les miroirs Push utilisent un script déclencheur 
+ssh pour indiquer au miroir client qu'il doit se mettre à jour. Cette méthode
+est assez sûre car ssh est configuré pour lancer une unique commande. Ainsi
+le miroir se fait toujours par 'Pull', il n'est donc pas possible de corrompre
+le contenu de l'archive via un miroir push infiltré.
+
+<p>Quelques administrateurs de miroirs ont montré une certaine hésitation à 
+utiliser cette méthode de miroirs par crainte qu'elle n'ouvre leur machine à 
+une invasion. Ce n'est certainement pas le cas. Pour une description plus 
+détaillée de la manière dont cela fonctionne et des raisons pour lesquelles 
+c'est sûr, visitez <a href="explain">cette page</a>.
+
+<p>Les miroirs Push prennent un tout petit peu plus d'effort à mettre en place
+car les mainteneurs du site serveur et client doivent s'échanger des
+informations. Les avantages sont que le miroir serveur lance le processus 
+miroir client immédiatement après que ces archives aient été mise à jour. 
+Cela permet aux changements dans l'archive de se propager extrêmement 
+rapidement.
+
+<p>Le mieux est de mettre en place tout cela en utilisant le compte d'un
+utilisateur ordinaire, non root.
+Le contenu de la clé ssh publique que le miroir serveur vous donne devrait être
+placée dans <kbd>~<user>/.ssh/authorized_keys</kbd>.
+
+<p>Les fichiers <a href="websync">websync</a> et 
+<a href="websync.conf">websync.conf</a>
+sont nécessaires. Editez ftpsync.conf et suivez les indications qui se 
+trouvent à l'intérieur en utilisant les informations qui vous sont données 
+par le miroir serveur.
+
+<p>p>Si vous devenez un Push-Primaire, vous avez besoin de la
+<a href="identity.pub.master.web">clé publique ssh pour l'archive web</a>.
+
+<h3>FTP Anonyme en utilisant 'mirror'</h3>
+<p>Il est déconseillé d'utiliser 'mirror' sur les pages Web Debian. Pour 
+les gros répertoires l'utilisation de la mémoire est inadapté. Un 
+mainteneur de miroir a dit que cela fonctionne pour lui avec 96MO de RAM. 
+D'autres, avec moins de RAM, se sont aperçus que la machine swappait 
+beaucoup trop.
+
+<h3>wget</h3>
+Bien que wget fonctionne bien pour faire des miroirs de petits sites, il 
+n'est pas aussi configurable que 'mirror' ou rsync c'est pourquoi il n'est 
+pas recommandé pour ce travail.
+
+<H2>Configuration du serveur web</H2>
+<a name="cn"><h3>Négociation de Contenu</h3>
+La Négociation de Contenu est un moyen qui laisse le navigateur négocier 
+avec le serveur le type de document qui doit être servi. Bien qu'il y ait 
+un certain nombre d'utilisation pour cela, le plus courant est de négocier 
+en quelle langue un document doit être servi. Cela permet à Debian de 
+servir ses pages dans de multiples langues d'un façon (techniquement) très
+élégante.
+
+<P>Pour ceux qui utilisent Apache, la modification est presque triviale. 
+Ajoutez simplement une section identique à la suivante dans
+<kbd>/etc/apache/access.conf</kbd>
+(modifiez le répertoire contenant les pages web de 
+<kbd>/debian/web</kbd>) et relancez le serveur
+(cet exemple fonctionne avec la version 1.3 beta ou suivante d'Apache):
+<blockquote><pre>
+&lt;Directory /debian/web&gt;
+Options +Multiviews   
+&lt;/Directory&gt;
+</pre></blockquote>
+
+<h3>Autres Modifications du Serveur Web</h3>
+<p>Si votre machine tourne sous Debian, il a été décidé sortir des 
+règles de Debian et d'utiliser <kbd>/doc</kbd> dans les pages web. 
+Cela signifie que vous devez mettre en commentaire
+'<kbd>Alias /doc/ /usr/doc/</kbd>' dans <kbd>srm.conf</kbd>.
+
+<p>De façon à servir les fichiers d'index de répertoires correctement, 
+vous devrez probablement modifier l'entrée
+<kbd>DirectoryIndex</kbd> dans <kbd>/etc/apache/srm.conf</kbd>.
+Ce qui suit devrait suffire:
+<pre>
+DirectoryIndex index
+</pre>
+De plus, vous devez vérifier que le serveur peut gérer toutes les
+langues qui seront sur le site web. Ceci peut être fait en utilisant
+la commande <kbd>AddLanguage</kbd>. Ce qui suit est une liste des 
+langues déjà utilisés - prévoyez d'en ajouter d'autres plus tard:
+<pre>
+AddLanguage en .en
+AddLanguage fr .fr
+AddLanguage de .de
+AddLanguage da .da
+AddLanguage it .it  
+AddLanguage es .es
+AddLanguage br .br
+AddLanguage ja .ja
+AddLanguage dk .dk
+AddLanguage pl .pl
+AddLanguage kr .kr
+AddLanguage hr .hr
+AddLanguage pt .pt
+AddLanguage fi .fi
+</pre>
+
+<p>A cause d'un bug dans Apache, c'est une bonne idée d'ajouter chaque langue
+servie à l'option LanguagePriority. Autrement la mauvaise langue peut être
+servie dans certaines circonstances.
+<pre>
+LanguagePriority en fr de it es ja pl hr da pt fi
+</pre>
+
+<h3>Faire un miroir des Archives de Listes</h3>
+<p>Quelques miroirs ne souhaitent pas faire un miroir des Archives des Listes 
+de discussion a cause de leur taille (environ 1GO utilisant plus de 160,000 
+fichiers). Il est acceptable de ne pas faire un miroir de celles ci, à 
+condition de rediriger les requêtes correspondantes vers un autre site de 
+façon à ce qu'aucun lien ne soit brisé.
+Cela peut être fait dans <kbd>/etc/apache/srm.conf</kbd>. Par exemple:
+
+<pre>
+Redirect /Lists-Archives http://www.debian.org/Lists-Archives
+</pre>
+
+Vous devez alors ajoutez <kbd>--exclude Lists-Archives</kbd> à la variable 
+<kbd>EXCLUDE</kbd> dans websync.conf pour éviter que le répertoire ne soit
+copié par un autre miroir.

@@ -1,0 +1,37 @@
+#use wml::debian::template title="Explication des Miroirs Push"
+
+<!--translation 1.4-->
+
+<p>Tout d'abord quelques informations sur ssh. Ssh permet de se connecter à des
+comptes sur différentes machines d'une manière sûre. Non seulement les mots de 
+passe ne sont jamais transmis en clair, mais une fois que vous êtes connecté à 
+une machine vous êtes certain que les connections futures se feront sur la même 
+machine. Cela prévient beaucoup d'attaques du type un-homme-au-milieu.
+
+<p>Une possibilité que vous offre ssh est la faculté d'accepter la clé publique 
+d'identification d'un utilisateur d'une autre machine et de 
+l'ajouter au fichier des clés autorisées sur sa propre machine. Par défaut,
+l'utilisateur sur l'autre machine (qui a la clé d'identification privée associée 
+à la clé d'identité publique qu'il a donnée) a alors le droit de se logger sous 
+votre compte. Il est cependant possible de rajouter des options à une clé 
+autorisée pour restreindre le type d'accès d'une personne l'utilisant pour se 
+logger sur votre machine.
+
+<p>Ainsi pour protéger le miroir client, des options sont ajoutées à une clé 
+fournie par le miroir serveur pour donner aux personnes qui accèdent à votre 
+compte un seul droit - celui de lancer sur votre machine le programme qui met à 
+jour votre miroir. Même si quelqu'un (un tiers malveillant) était capable de 
+casser les clés, le plus qu'il pourrait faire serait de démarrer le programme 
+de miroir sur votre machine. Vous n'avez même pas vous soucier de la possibilité 
+d'avoir plusieurs copies du programme lancées, car un lockfile est utilisé.
+
+<p>Sur le miroir client, rsync peut être configuré pour restreindre par nom 
+d'utilisateur et mot de passe la possibilité de faire un miroir d'une zone 
+donnée. Ceux-ci sont complètement séparés de <kbd>/etc/passwd</kbd>
+de façon à ce qu'un serveur push n'ait pas à se soucier de donner à d'autres
+l'accès à sa machine.
+De la façon dont c'est configuré, le nom d'utilisateur et le mot de passe sont
+transmis en clair. Cela ne devrait cependant pas être un problème, car le pire
+qu'il puisse se produire est qu'un tiers ait la possibilité de faire un miroir
+des pages Debian depuis ce site. 
+
