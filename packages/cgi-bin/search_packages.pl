@@ -60,6 +60,7 @@ $subword = 0 unless (defined $subword);
 my $searchon = $input->param('searchon');
 $searchon = 'all' unless (defined $searchon);
 my $exact = $input->param('exact');
+$exact = 0 unless (defined $exact);
 my $releases = $input->param('releases');
 $releases = '*' unless (defined $releases);
 $releases = '*' if ($releases eq 'all');
@@ -89,7 +90,7 @@ my $file = "Packages-$arch.*";
 my $searchkeyword = $keyword;
 $searchkeyword =~ s/[.]/[.]/;
 if ($searchon eq 'names') {
-    if (defined $exact) {
+    if ($exact) {
 	$searchkeyword = "\"^".$searchkeyword." \"";
     } else {
 	$searchkeyword = "\"^[^ ]*".$searchkeyword."[^ ]* \"";
