@@ -1,4 +1,6 @@
 # Top-level makefile for the Debian Documentation Project manuals
+#
+install: 
 
 # live documentation
 SUBDIRS	:= apt-get-mini-COMO apt-guia-usuarios making-packages \
@@ -17,7 +19,7 @@ install_dir := install -d -m 2775
 publish_args := PUBLISHDIR=$(PUBLISHDIR)/$(THISSUBDIR) install_file="$(install_file)" install_dir="$(install_dir)"
 
 .SUFFIXES: 
-.PHONY: all publish clean $(SUBDIRS) $(SUBDIRS-publish) $(SUBDIRS-clean)
+.PHONY: all publish clean $(SUBDIRS) $(SUBDIRS-publish) $(SUBDIRS-clean) install
 
 all: $(SUBDIRS)
 
