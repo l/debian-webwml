@@ -103,12 +103,15 @@ my ($path, $file) = ($1, $2);
 
 # Get the revision of the original file
 my $origrev;
-open FILE, "${path}/CVS/Entries" or die "${path}/CVS/Entries: $!";
-while (<FILE>) {
+if (open FILE, "${path}/CVS/Entries") {
+  while (<FILE>) {
     if (m,^/$file.wml/([^/]+)/,) {
         $origrev = $1;
         last;
     }
+  }
+} else {
+    $origrev = "1.0";
 }
 
 foreach $lang (@langs) {
