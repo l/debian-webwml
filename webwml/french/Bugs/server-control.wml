@@ -1,0 +1,219 @@
+#use wml::debian::template title="Le Système de Gestion des Bogues Debian" NOHEADER=yes WEBMASTER=bugs
+
+<!--translation 1.3-->
+
+<h1>Introduction au serveur de messages de contrôle et de manipulation des bogues</h1>
+
+En plus du serveur de messages à <code>request@bugs.debian.org</code>
+qui permet de récupérer les données et la documentation des bogues par
+courrier électronique, il y a un autre serveur à <code>control@bugs.debian.org</code> 
+qui permet aussi de manipuler des rapports de bogue de différentes façons.
+<p>
+
+Le serveur de contrôle fonctionne simplement comme le serveur de requêtes, 
+excepté qu'il dispose de commandes supplémentaires; en fait, c'est le même programme. 
+Les deux adresses sont simplement séparées pour éviter aux utilisateurs de faire des
+erreurs et de causer des problèmes en essayant juste de récupérer des informations.
+<p>
+
+Merci de lire au préalable
+<A href="server-request#introduction">l'introduction au serveur de requêtes</A>
+disponible sur le Web, dans le fichier
+<code>bug-log-mailserver.txt</code>, ou en envoyant
+<code>help</code> à l'un des serveurs de messages, pour connaître les détails 
+de l'utilisation de base de ces serveurs et les commandes usuelles disponibles
+lors de l'envoi de message à ces adresses.
+<p>
+
+La <A href="server-refcard">carte de référence</A> pour les serveurs de messages 
+est disponible sur le Web, à
+<code>bug-mailserver-refcard.txt</code> ou par courrier électronique en utilisant 
+la commande <code>refcard</code>).
+
+<h1>Les commandes disponibles uniquement sur le serveur de messages de contrôle</h1>
+
+<dl>
+
+<dt><code>close</code> <var>numerodebogue</var>
+<dd>
+
+Ferme le rapport de bogue #<var>numerodebogue</var>.
+<p>
+
+Une notification est envoyée à l'utilisateur qui a signalé le bogue, mais (au 
+contraire de l'envoi à <var>numerodebogue</var><code>-done@bugs</code>) le 
+texte du message qui a servi à fermer le bogue n'est <em>pas</em>
+inclus dans cette notification. Le mainteneur qui ferme un rapport
+devrait s'assurer, probablement en envoyant un message séparément, que 
+l'utilisateur qui a signalé le bogue sait pourquoi le rapport est fermé.
+
+<dt><code>reassign</code> <var>numerodebogue</var> <var>paquet</var>
+<dd>
+
+Enregistre le fait que le bogue #<var>numerodebogue</var> est un bogue dans 
+<var>package</var>.
+Cela peut être utilisé pour indiquer le paquet si l'utilisateur a oublié le 
+pseudo entête, ou de changer un assignement préalable. Aucune notification
+n'est envoyée à quiconque (autre que l'information habituelle lors de la 
+transcription en cours).
+
+<dt><code>reopen</code> <var>numerodebogue</var>
+ [ <var>originator-address</var> | <code>=</code> | <code>!</code> ]
+<dd>
+
+Rouvre #<var>numerodebogue</var> s'il a été fermé.
+<p>
+
+Par défaut, ou si vous spécifiez <code>=</code>, celui qui a soumis 
+initialement le rapport reste l'origine du rapport, de façon à ce qu'il 
+reçoive une confirmation quand il sera de nouveau refermé.
+<p>
+
+Si vous fournissez une <var>adresse-d-origine</var> l'origine sera 
+l'adresse que vous fournissez. Si vous souhaitez devenir la nouvelle
+origine du rapport rouvert vous pouvez utiliser le raccourcis 
+<code>!</code> ou spécifier votre propre adresse.
+<p>
+
+C'est habituellement une bonne idée de dire à la personne qui va être
+enregistrée comme l'origine du rapport que vous le rouvrez, de façon 
+à ce qu'elle s'attende à la confirmation qu'elle recevra quand il sera
+de nouveau fermé.
+<p>
+
+Si le bogue n'est pas fermé alors 'reopen' ne fera rien, même pas changer
+l'origine du bogue. Il n'y a pas de moyen de changer l'origine d'un rapport
+de bogue ouvert (c'est un choix délibéré, de façon à ne pas avoir un bogue 
+fermé et ensuite détruit 28 jours plus tard sans que quelqu'un n'en soit
+averti).
+
+<dt><code>forwarded</code> <var>numerodebogue</var> <var>adresse</var>
+<dd>
+
+Enregistre le fait que <var>numerodebogue</var> a été transmis au 
+mainteneur original à <var>adresse</var>. Cela ne transmet pas en réalité le
+rapport. Cela peut être utilisé pour changer une adresse 'forwarded-to' 
+existante incorrecte, ou pour en enregistrer une nouvelle pour un bogue qui 
+n'a pas été signalé auparavant comme ayant été transmis.
+
+<dt><code>notforwarded</code> <var>numerodebogue</var>
+<dd>
+
+Oublie toute idée que le bogue <var>numerodebogue</var> ait pu être envoyé
+à un mainteneur original. Si le bogue n'a pas été enregistré comme ayant été
+transmis alors cela ne fera rien.
+
+<dt><code>retitle</code> <var>numerodebogue</var> <var>nouveau-titre</var>
+<dd>
+
+Remplace le titre d'un rapport de bogue par celui qui est spécifié (le titre 
+par défaut est l'<code>Objet</code> en entête du message du rapport original.
+<p>
+
+Au contraire de la plupart des autres commandes de manipulation des bogues, quand
+celle ci est utilisée sur un rapport faisant partie d'un ensemble de rapports 
+fusionnés, cela changera le titre uniquement du rapport du bogue en question, et 
+non pas de tous ceux avec lesquels il est fusionné.
+
+<dt><code>severity</code> <var>numerodebogue</var> <var>gravité</var>
+<dd>
+
+Le niveau de gravité du rapport de bogue #<var>numerodebogue</var> est mis à
+<var>gravité</var>. Aucune notification n'est envoyée à l'utilisateur qui a
+signalé le bogue.
+<p>
+
+Les niveaux de gravité sont <code>critical</code> (critique), <code>grave</code> (grave),
+<code>normal</code> (normal), <code>important</code> (important), et <code>wishlist</code>
+(souhaitable).
+
+Pour <A href="Developer#severities">leur signification</A> merci de consulter 
+la documentation générale des développeurs concernant le système de gestion des bogues.
+
+<dt><code>merge</code> <var>numerodebogue</var> <var>numerodebogue</var> ...
+<dd>
+
+Fusionne deux plusieurs rapports de bogues. Une fois les rapports fusionnés, l'ouverture, 
+la fermeture, le marquage ou le démarquage comme ayant été envoyé et la réassignation 
+de n'importe lequel des bogues à un nouveau paquet auront un effet identique sur tous les 
+rapports fusionnés.
+<p>
+
+Avant que les bogues puissent être fusionnés, ils doivent être exactement dans le même 
+état: soit tous ouverts ou tous fermés, avec la même adresse de l'auteur original dans
+le champs 'forwarded-to' ou alors aucun n'ayant été marqué comme ayant été envoyé, 
+et tous assignés au(x) même(s) paquet(s) (une comparaison exacte de chaîne de 
+caractère est fait sur le paquet auquel le bogue est assigné). 
+S'ils ne sont pas tous dans le même état au début vous devriez utiliser 
+<code>reassign</code>, <code>reopen</code>
+et ainsi de suite pour être sûr qu'ils le sont avant d'utiliser 
+<code>merge</code>.
+<p>
+
+Si des bogues contenus dans une commande <code>merge</code> sont déjà fusionnés
+avec d'autre bogues alors tous les rapports fusionnés avec l'un de ceux de la 
+commande seront aussi fusionnés. Les fusions sont comme les égalités : elles 
+sont réflexives, transitives and symétriques.
+<p>
+
+La fusion de rapports entraîne l'apparition d'une note sur chacun des enregistrement 
+du rapport; sur les pages web cela contient des liens vers les autres bogues.
+<p>
+
+Les rapports fusionnés expirent tous simultanément, et seulement quand chacun des 
+rapport pris séparément à atteint le critère d'expiration.
+
+<dt><code>unmerge</code> <var>numerodebogue</var>
+<dd>
+
+Déconnecte un rapport de bogue de n'importe quel autre rapport avec lequel il
+a pu être fusionné. Si le rapport en question est fusionné avec plusieurs autres 
+alors les autres sont tous laissés comme étant fusionnés ensemble; seulement leurs
+associations avec le bogue explicitement désigné sont retirées.
+<p>
+
+Si beaucoup de rapports de bogues sont fusionnés et si vous désirez les diviser en
+deux groupes séparés de rapports fusionnés, vous devez déconnecter chaque rapport
+de l'un des nouveaux groupes séparément et ensuite les fusionner dans le nouveau groupe.
+<p>
+
+Vous ne pouvez déconnecter qu'un seul rapport par commande <code>unmerge</code>; 
+si vous voulez déconnecter plus d'un seul rapport incluez simplement plusieurs 
+commandes <code>unmerge</code> dans votre message.
+
+</dl>
+
+<hr>
+Autres pages:
+<ul>
+<li><A href="./">La page principale du système de gestion des bogues.</A>
+<li><A href="Reporting">Les instructions pour rapporter des bogues.</A>
+<li><A href="Access">Accéder aux enregistrements de gestion des bogues 
+autrement que par le web.</A>
+<li><A href="Developer">Les informations pour les Développeurs sur les 
+moyens d'utiliser le système.</A>
+<li><A href="server-request">Demander un rapport de bogue par courrier 
+électronique.</A>
+<li><A href="server-refcard">La carte de référence des serveurs de messages.</A>
+<li><A href="db/ix/full.html">La liste complète des rapports de bogues 
+remarquables et récents.</A>
+<li><A href="db/ix/packages.html">Les paquets ayant des rapports de bogues.</A>
+<li><A href="db/ix/maintainers.html">Les mainteneurs de paquets ayant des rapports de bogues.</A>
+ <li><A href="../">La page principale de Debian GNU/Linux.</A>
+
+</ul>
+
+<hr>
+<address>
+<A href="http://www.chiark.greenend.org.uk/~ijackson/">Ian Jackson</A>
+ /
+<A href="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>.
+29 Mars 1998.
+<p>
+Le système de gestion des bogues Debian
+copyright 1994-1997 Ian Jackson, copyright 1997 nCipher Corporation Ltd,
+copyright 1995 Steven Brenner.
+<A href="http://www.chiark.greenend.org.uk/~ian/debbugs/">Disponible
+sous GPL.</A>
+
+</address>
