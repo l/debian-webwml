@@ -48,7 +48,9 @@ templates_FILES = $(addprefix $(TEMPLDIR)/, \
   ddp.wml events_common.wml fixes_link.wml footer.wml languages.wml \
   links.tags.wml mirrors.wml news.wml recent_list.wml speakers.wml \
   todoitem.wml translation-check.wml url.wml votebar.wml \
-  weeklynews/footer.wml) $(ENGLISHDIR)/devel/website/tc.data
+  weeklynews/footer.wml legal.wml legal_tags.wml) \
+  $(ENGLISHDIR)/devel/website/tc.data
+
 
 POTFILES = $(addprefix $(ENGLISHDIR)/po/,$(addsuffix .pot,$(DOMAINS)))
 MOFILES = $(addsuffix .mo,$(DOMAINS))
