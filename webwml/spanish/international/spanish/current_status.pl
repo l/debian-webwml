@@ -181,6 +181,13 @@ do 'documents-bd.pl';
 },
 
 
+	'meta' => {
+        'name'                  => 'META Manual de Debian',
+	'base_revision'		=> '0.9',
+	'translation_maintainer' => ['Lluís Vilanova <xscript.geo@yahoo.com>'],
+	'since'			=> '08/02/2000'
+},
+
 
 
 
