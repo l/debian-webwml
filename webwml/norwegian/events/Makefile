@@ -11,6 +11,7 @@ include $(WMLBASE)/Make.lang
 
 #do not modify the following line(s)
 index.$(LANGUAGE).html: index.wml $(wildcard 1998/*.wml) $(wildcard 1999/*.wml) \
+     $(ENGLISHSRCDIR)/events/index.include \
      $(wildcard $(ENGLISHSRCDIR)/events/1998/*.wml) \
 	 $(wildcard $(ENGLISHSRCDIR)/events/1999/*.wml) \
      $(TEMPLDIR)/template.wml $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml
