@@ -14,7 +14,6 @@ CUR_DIR=News/weekly
 NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 CUR_YEAR ?= $(shell date +%Y)
-
 WMLOPTIONS += -DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
 
 # Ugly hack to handle the "cd" just before wml...
@@ -109,6 +108,8 @@ $(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
 # above target produces.
 clean::
 	-find . -type f -name \*.$(LANGUAGE).html | xargs rm -f
+# Special case for Chinese
+	-find . -type f -name \*.$(LANGUAGE)-??.html | xargs rm -f
 
 # Need to rebuild the index when anything changes.
 index.$(LANGUAGE).html: $(wildcard $(CUR_YEAR)/*/index.wml) \
@@ -125,8 +126,6 @@ index.zh-cn.html index.zh-tw.html: $(wildcard $(CUR_YEAR)/*/index.wml) \
       ../../../english/News/weekly/CURRENT-ISSUE-IS
 
 # Generate the mail for posting to debian-news. Requires the web page already
-# be updated. The mail still requires slight edits.
+# be updated.
 mail:
-	@cat mail-header
-	@lynx -dump http://master.debian.org/www-master/debian.org/News/weekly/2000/6/ | \
-       		perl -pe 's/^\s\s?\s?//'
+	@./makemail.pl
