@@ -1,57 +1,100 @@
 #use wml::debian::template title="Çoklu dilde sunulan sayfalar hakkýnda bilgiler"
 #Translator: Murat Demirten <murat@debian.org>
-#use wml::debian::translation-check translation="1.35"
+#use wml::debian::translation-check translation="1.46"
 
 <P>Dünya üzerindeki herkes doðal olarak ayný dili konuþmuyor. Web'in büyümesi ile birlikte
 sayfalarýn birden fazla dilde hazýrlanmasý aranýlan bir özellik haline geldi.
 Bu yüzden "content negotiation" standardý geliþtirildi. Böylelikle kullanýcýlar sayfalarý
 hangi dilde görüntülemek istediklerini seçebilir hale geldiler. Bu yöntemde web tarayýcý yazýlýmýnýz
 sunucu tarafa dil seçiminize göre gerekli verileri gönderir ve server üzerinde bu dilde bir sayfa varsa
-karþýnýza getirilir.
+karþýnýza getirilir.</p>
 
-<p><ul>
+<ul>
 <li><a href="#fix">Bir Debian sayfasý yanlýþ dilde görüntüleniyorsa ne yapmalý</a>
-<li><a href="#setting">Tercih ettiðim dil için tarayýcý'da yapýlmasý gereken ayarlar</a>
-<li><a href="#cache">Caching Web Sunucularý hakkýnda not</a>
+<li><a href="#howtoset">Dil ayarlamalarýný nasýl yapabilirim?</a>
 </ul>
 
-<h3><a name="fix">Bir Debian sayfasý yanlýþ dilde görüntüleniyorsa ne yapmalý</a></h3>
+<hr>
+<h2><a name="fix">Bir Debian sayfasý yanlýþ dilde görüntüleniyorsa
+ne yapmalý</a></h2>
 
 <p>Debian sitesinde yer alan bir sayfanýn yanlýþ dilde gözükmesinin üç nedeni vardýr. 
 Bunlardan birincisi ve en çok karþýlaþýlaný, yanlýþ yapýlan tarayýcý yazýlýmý ayarlarýdýr.
-Çözümü için <a href="#setting">tarayýcýda yapýlmasý gereken ayarlar</a>
-kýsmýna bakmalýsýnýz.
+Çözümü için <a href="#howtoset">tarayýcýda yapýlmasý gereken ayarlar</a>
+kýsmýna bakmalýsýnýz.</p>
 
 <p>Ýkinci neden, yanlýþ ayarlanan veya hatalý, cache'de tutulan bilgilerdir. 
 Bu gittikçe daha büyük bir problem haline gelmektedir, zira çoðu internet servis saðlayýcý að trafiðini
 azaltmak için "caching" yöntemleri kullanmaktadýr.
-Ayrýntýlar için <a href="#cache">caching sunucularý hakkýnda not</a> bölümünü okuyabilirsiniz.
+Ayrýntýlar için <a href="#cache">proxy sunucu kullanýmýnda olasý
+problemler</a> bölümünü okuyabilirsiniz.
+</p>
 
 <p>Üçüncü ve son neden o anda 
 <a href="http://www.debian.org/">www.debian.org</a> sitesinde bir sorun olmasýdýr.
-Son iki yýl içerisinde sadece bir kez böyle bir durumla karþýlaþýlmýþ olup, sorunun bundan
-kaynaklanmasý çok düþük bir olasýlýktýr. Bu yüzden bizimle iletiþime geçmeden önce yukarýda saydýðýmýz
+Þimdiye kadar bu probleme çok ender olarak rastlanmýþtýr, sorunun bundan
+kaynaklanmasý düþük bir olasýlýktýr. Bu yüzden bizimle iletiþime geçmeden önce yukarýda saydýðýmýz
 ilk iki neden üzerinde dikkatlice düþünün. Eðer <a href="http://www.debian.org/">http://www.debian.org/</a>
 adresinin çalýþýyor fakat yansýlardan birinin çalýþmýyor olduðunu görürseniz lütfen durumu bize
 bildiriniz. En kýsa zamanda yansýnýn tutulduðu sunucudaki yetkili kiþiye hata iletilecektir.
 
 <p>Probleminizi çözdükten sonra yapacaðýnýz ilk denemeden önce cache'inizi temizlemeniz önerilir(hem
-disk hem de bellekte tutulan). Ayrýca daha doðru test için <a href="http://packages.debian.org/stable/web/lynx.html">lynx</a> tarayýcýsýný öneriyoruz. Þu ana kadar
-"content negotiation" ve HTTP spesifikasyonlarý ile %100 uyumlu olan tek tarayýcýdýr.
+disk hem de bellekte tutulan). Ayrýca daha doðru test için 
+<a href="http://packages.debian.org/stable/web/lynx.html">lynx</a> 
+tarayýcýsýný kullanmanýzý öneririz. Gördüðümüz kadarýyla 
+"content negotiation" ve HTTP spesifikasyonlarý ile %100 uyumlu olan tek 
+tarayýcý lynx'tir.</p>
 
-<H3>Deðiþkenleri nasýl ayarlamalýyým?</H3>
+<h3><a name="cache">Proxy sunucu kullanýmýnda olasý problemler</a></h3>
+<p>Proxy sunucular aslýnda kendilerine özel içerikleri olmayan web
+sunucularýdýr. Kullanýcý ile gerçek web sunucu arasýnda
+bulunurlar. Kullanýcýdan gelen isteði alýp, ilgili sayfayý gerçek
+web sunucudan çeker ve kullanýcýya iletirler. Ayný sayfa için
+gelebilecek sonraki istekler için de sayfanýn bir kopyasýný kendi
+önbelleklerinde tutarlar. Böylelikle pek çok kullanýcýnýn ayný
+sayfa için istekte bulunduðu durumlarda oluþacak að trafiði
+azaltýlmýþ olur.</p>
+
+<p>Proxy sunucu kullanýmýnýn tüm bu avantajlarýna raðmen, Proxy
+önbelleðinde tutulan sayfalar yanlýþ veya güncel deðilse problemler
+ortaya çýkmaktadýr. Özellikle bazý eski Proxy sunucular "content 
+negotiation" mekanýzmasýyla yanlýþ çalýþmaktadýr. Bu tip
+sunucular birden fazla dilde versiyonu bulunan bir sayfanýn, öncelikle
+hangi dil için istekte bulunulmuþsa, sonraki isteklere de - dil ayarý
+farklý olsa bile - ilk olarak yapýlan istek sonucu elde edilen sayfa
+ile cevap vermektedirler. Maalesef bu durumun tek çözümü Proxy
+yazýlýmýnýn deðiþtirilmesi veya güncellenmesidir.</p>
+
+<p>Önceleri proxy sunucular sadece kullanýcý tarafýnda gerekli
+ayarlar yapýlýrsa kullanýlýrdý ve bu durumda kullanýcý
+istemediði takdirde proxy sunucuyu devre dýþý býrakabilirdi. Ancak
+þu an durum bundan farklýdýr. Çoðu internet servis saðlayýcý
+kullanýcýlarýndan gelen web isteklerini transparan olarak proxy
+sunucuya yönlendirmekte ve bu þekilde kullanýcý tarafýnda hiç bir
+ayar yapýlmamýþ olsa bile proxy kullandýrma yoluyla að trafiðini
+azaltmayý hedeflemektedir. Eðer internet servis saðlayýcýnýn
+kullandýðý proxy yazýlýmýnda yukarýda bahsedilen problemler var
+ise gene tek çözüm yazýlým güncellemesi veya deðiþtirilmesi olacaktýr.
+</p>
+
+<hr>
+
+<H2><a name="howtoset">Dil ayarlamalarýný nasýl yapabilirim?</a></H2>
 
 <P>Debian web sayfalarýnýn asýl dili Ýngilizcedir ve tüm sayfalar kendi dilinize henüz çevrilmemiþ
 olabilir. Bu durumda ikinci öncelikli olarak Ýngilizceyi seçmeniz mantýklý olacaktýr. Örneðin lynx
-kullanýyor, ana diliniz Fransýzca fakat Ýngilizceyi de anlayabiliyorsanýz <kbd>.lynxrc</kbd> dosyanýzý
-aþaðýdaki þekilde ayarlayabilirsiniz:
-<pre>
-preferred_language=fr; q=1.0, en; q=0.5
-</pre>
-Bu ayar, bakmak istediðiniz sayfanýn Fransýzca versiyonu varsa karþýnýza onu getirecektir, ancak eðer
-sayfa henüz Fransýzcaya çevirilmemiþse, bu kez Ýngilizce versiyonu karþýnýza gelecektir.
+kullanýyor, ana diliniz Türkçe fakat Ýngilizceyi de anlayabiliyorsanýz
+dil kodlarýnda önce '<code>tr</code>' sonra '<code>en</code>' olacak
+þekilde seçim yapmalýsýnýz. Bu ayar, bakmak istediðiniz sayfanýn
+Türkçe versiyonu varsa karþýnýza
+onu getirecektir, ancak eðer sayfa henüz Türkçeye çevirilmemiþse,
+bu kez Ýngilizce versiyonu karþýnýza gelecektir.</p>
 
-<p>Dillerin alt kategorilerini kullanýrken bazý noktalara dikkat edilmesi gerekir.
+<p>Her tarayýcý için <a href="#setting">dil ayarlarýnýn nasýl
+yapýlacaðý</a> aþaðýda anlatýlmaktadýr.</p>
+
+<p>Dillerin alt kategorilerini kullanýrken bazý hususlara dikkat
+edilmesi gerekir.
 'en-GB, fr' gibi bir þekilde dil ayarý yapýlýrsa beklenen sonuç ortaya çýkmayacaktýr.
 Bu durumda sayfanýn Ýngilizce ve Fransýzca versiyonu olsa dahi kullanýcýnýn karþýsýna Fransýzca olan
 versiyon çýkacaktýr. Böyle bir durumda yapmanýz gereken ayar 'en-GB, en, fr' þeklinde olmalýdýr.
@@ -64,81 +107,107 @@ unutmayýn.
 <a href="http://httpd.apache.org/docs/content-negotiation.html">Apache
 content negotiation dökümanlarýnda</a> bulabilirsiniz.
 
-<h3><a name="cache">Caching Web Sunucularý hakkýnda notlar (Proxy)</a></h3>
-
-<p>Pek çok web isteði caching sunuculardan geçmektedir. Bu sunucular gerçek web sunucularý ve
-kullanýcýlar arasýnda yer alýr. Gerekli isteði kullanýcý adýna yerine getirir ve sayfanýn bir kopyasýný
-kendi üzerinde saklar. Bir sonraki ayný isteðe ise kendi üzerindeki kopya ile cevap verir.
-
-<p>Bu çoðu zaman yararlý bir yöntemdir, ancak cache'te yer alan bilgiler hatalýysa istenmeyen durumlar
-ortaya çýkmaktadýr. Çoðu cache mekanizmalarý, content negotiation tekniðini kullanamazlar. Bu yüzden
-kullanýcýlarýn karþýsýna istemedikleri dilde sayfalar gözükebilir. Bu durumun tek çözümü kullanýlan
-caching yazýlýmýnýn deðiþtirilmesi veya versiyonunun yükseltilmesidir.
-
-<p>Önceleri, kiþiler caching sunucularýný sadece web tarayýcýlarýný bu þekilde ayarlamýþlarsa
-kullanýyorlardý. Ancak artýk bu deðiþti. Kullandýðýnýz internet servis saðlayýcý tüm web isteklerini
-bir cache üzerine yönlendirip cevabý buradan veriyor olabilir. Eðer burada kullanýlan cache, content
-negotiation tekniðini düzgün olarak kullanamýyorsa gene istenmeyen sonuçlar oluþacaktýr.
-(Bu teknik ayný zamanda transparent proxy olarak bilinmektedir.)
-
 <h3><a name="setting">Tercih edilen dil için tarayýcýda yapýlmasý gereken ayarlar</a></h3>
-
-<P>Not: aþaðýdaki liste henüz tamamlanmamýþtýr. Eðer web tarayýcýnýzý düzgün bir þekilde ayarlayabilmek
-için aþaðýda anlatýlanlarýn dýþýnda bir bilgiye sahipseniz lütfen 
-<a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a> mail adresine gönderiniz.
 
 <P>Tercih ettiðiniz dili sunucuya bildirebilmek için, sunucuya gönderilen istekte bir deðiþkenin
 deðerini istediðiniz dile uygun bir þekilde tanýmlamalýsýnýz. Bu iþin nasýl yapýlacaðý kullanýlan
 tarayýcý yazýlýmýna göre çeþitlilik göstermektedir.
 
 <DL compact>
-<DT><strong>lynx</strong>
-<DD><kbd>.lynxrc</kbd> dosyasýndaki <kbd>preferred_language</kbd> deðiþkenine deðer atayabilir 
-veya lynx'i kullanýrken 'O' komutunu kullanabilirsiniz.
-<DT><strong>netscape 3.x</strong>
-<DD>Aþaðýdaki satýrý
-<pre>
-     *httpAcceptLanguage: [preferred_language string]
-</pre>
-Netscape app-defaults veya <kbd>~/.Xresources</kbd> dosyasýna ekleyin.    
-<DT><strong>netscape 4.x</strong>
-<DD>Aþaðýdaki sýralamayý takip edin
-<pre>
-     Edit -&gt; Preferences -&gt; Navigator -&gt; Languages
-</pre>
-Karþýnýza çýkan menüde istediðiniz dili seçin.
-<DT><strong>Mozilla</strong>
+<DT><strong>Mozilla / Netscape 4.x ve sonrasý</strong>
 <DD>
 <pre>
      Edit -&gt; Preferences -&gt; Navigator -&gt; Languages
 </pre>
-<DT><strong>W3</strong> (emacs tabanlý web tarayýcý)
-<DD>
-<pre>(setq url-mime-language-string  "preferred_language=fr; q=1.0, en; q=0.5")</pre>
-veya bu iþ için özel paketi kullanýn (URL versiyon p4.0pre.14):
-<pre>Hypermedia -&gt; URL -&gt; Mime -&gt; Mime Language String...</pre>
-<DT><strong>IE ??</strong>
-<DD>
+Not: Netscape 4.x sürümlerinde menüdeki dillerden birini
+seçmelisiniz. Bazý kullanýcýlarýmýz el ile dil kodu doðrudan
+yazýldýðýnda problem çýktýðýný rapor ettiler.
+
+<dt><strong>Internet Explorer</strong>
+<dd>Windows:
 <pre>
-     View -&gt; Internet Options -&gt; General/Languages
+     Tools veya View veya Extras -&gt; Internet Options -&gt; (General)
+Languages
 </pre>
-<DT><strong>IE 5</strong>
-<DD>
+
+<dd>MacOS:
 <pre>
-     Tools (or Extras) -&gt; Internet Options -&gt; Languages
+     Edit -&gt; Preferences -&gt; Web Browser -&gt; Language/Fonts
 </pre>
+</dd>
+
 <DT><strong>Opera</strong>
-<DD>Windows: File -&gt; Preferences -&gt; Languages
-<DD>Linux: File -&gt; Preferences -&gt; Document -&gt; Languages
+<DD>Windows:
+<pre>
+     File -&gt; Preferences -&gt; Languages
+</pre>
+<DD>Linux:
+<pre>
+     File -&gt; Preferences -&gt; Document -&gt; Languages
+</pre>
+<dt><strong>Galeon</strong></dt>
+<dd>
+<pre>
+     Settings -&gt; Preferences -&gt; Rendering -&gt; Languages
+</pre>
+</dd>
+
+<dt><strong>Konqueror</strong></dt>
+<dd>
+  Eðer tek bir dil seçmek isterseniz basitçe KDE Kontrol Merkezi'nden
+  ilgili dili seçmeniz yeterli olacaktýr.
+  <br>
+  Eðer birden fazla dil için ayar yapmak istiyorsanýz 
+  <kbd>~/.kde/share/config/kio_httprc</kbd> dosyasý içerisine
+  aþaðýdakine benzer bir kayýt eklemelisiniz:
+<pre>
+     Language=tr,en
+</pre>
+  Deðiþiklikleri yaptýktan sonra KDE oturumunuzu yeniden
+  baþlatmalýsýnýz.
+</dd>
+<DT><strong>lynx</strong>
+<DD><kbd>preferred_language</kbd> deðiþkenini
+<kbd>.lynxrc</kbd> dosyasýndan deðiþtirebilir veya lynx programýndayken
+'O' komutu ile deðer atayabilirsiniz.
+
+<p>Örnek olarak aþaðýdakine benzer bir kaydý <kbd>.lynxrc</kbd>
+dosyanýza ekleyebilirsiniz:</p>
+
+<pre>
+preferred_language=tr; q=1.0, en; q=0.5
+</pre>
+
+<DT><strong>W3</strong> (emacs tabanlý)
+<DD>
+<pre>(setq url-mime-language-string "preferred_language=tr; q=1.0, en; q=0.5")</pre>
+veya özel bir paket kullanarak (URL versiyon p4.0pre.14):
+<pre>Hypermedia -&gt; URL -&gt; Mime -&gt; Mime Language String...</pre>
+
 <DT><strong>iCab</strong>
 <DD>
 <pre>
      Edit -&gt; Preferences -&gt; Browser -&gt; Fonts,Languages
 </pre>
+
 <DT><strong>W3M</strong>
 <DD>
 <pre>
      Options (o) -&gt; Other Behavior -&gt; Accept-Language
 </pre>
+
+<DT><strong>Netscape 3.x</strong>
+<DD>Aþaðýdaki satýrý
+<pre>
+     *httpAcceptLanguage: [preferred_language string]
+</pre>
+Netscape app-defaults veya <kbd>~/.Xresources</kbd> dosyasýna
+eklemelisiniz.
+
 </DL>
 
+<p>Eðer burada listelenmeyen bir tarayýcýda dil ayarlarýnýn
+yapýlmasýyla ilgili bilginiz varsa lütfen 
+<a href="mailto:debian-www@lists.debian.org">
+debian-www@lists.debian.org</a> adresine gerekli ayarlamalarýn
+nasýl yapýldýðýna iliþkin mail gönderiniz.</p>
