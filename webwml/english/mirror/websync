@@ -8,7 +8,7 @@ export RSYNC_PASSWORD
 LOCK="${TO}/Archive-Update-in-Progress-`hostname -f`"
 
 # Get in the right directory and set the umask to be group writable
-# 
+#
 cd $HOME
 umask 002
 
@@ -17,7 +17,7 @@ if lockfile -! -l 43200 -r 0 "$LOCK"; then
   echo `hostname` is unable to start rsync, lock file exists
   exit 1
 fi
-trap "rm -f $LOCK > /dev/null 2>&1" exit  
+trap "rm -f $LOCK > /dev/null 2>&1" exit
 
 set +e
 rsync -rltvz --delete \
@@ -25,6 +25,8 @@ rsync -rltvz --delete \
 	--exclude "mirror/timestamps/`hostname -f`" \
 	$EXCLUDE \
 	$RSYNC_USER@$RSYNC_HOST::web.debian.org $TO > rsync.log 2>&1
-date -u > "${TO}/mirror/timestamps/`hostname -f`"
+if [ -d ${TO}/mirror/timestamps ]; then
+	date -u > "${TO}/mirror/timestamps/`hostname -f`" ;
+fi
 savelog rsync.log > /dev/null 2>&1
 
