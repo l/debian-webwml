@@ -257,8 +257,8 @@ sub get_stats_templates {
         open (GEN, "> $opt_l/templates/gen/errors-by-pkg.$section.inc");
         foreach $pkg (sort keys %$tmpl_errors) {
                 $maint = $data->maintainer($pkg);
-                $maint =~ s/<.*>//;
-                print GEN "<li>$pkg ".$data->version($pkg)." [$maint]\n";
+                $maint =~ s/\s*<.*>//;
+                print GEN "<li><a name=\"P$pkg\">$pkg</a> ".$data->version($pkg)." [$maint]\n";
                 my $errors_pkg = "<ul>\n";
                 if (@{$tmpl_errors->{$pkg}->{master}}) {
                         $errors_pkg .= "<li><a href=\"errors#master\">translated-fields-in-master-templates</a><br>\n".${$tmpl_errors->{$pkg}->{master}}[0]."</li>\n";
@@ -314,7 +314,9 @@ sub process_templates {
         close (GEN);
         open (GEN, "> $opt_l/templates/gen/errors-by-maint.inc");
         foreach my $maint (sort keys %$tmpl_errors_maint) {
-                print GEN "<li>$maint\n<ul>";
+                my $anchor_maint = lc $maint;
+                $anchor_maint =~ s/[^a-z0-9]/_/g;
+                print GEN "<li><a name=\"M$anchor_maint\">$maint</a>\n<ul>";
                 foreach my $pkg (sort keys %{$tmpl_errors_maint->{$maint}}) {
                         print GEN "<li>".$tmpl_errors_maint->{$maint}->{$pkg}."</li>\n";
                 }
