@@ -1,0 +1,38 @@
+#!/bin/bash
+# Copyright 2003 Noel Köthe
+
+. `dirname $0`/../config.sh
+ 
+test -n "${localdir}" || (echo skipping due to missing local archive; exit 0)
+
+for DEBFILE in ${localdir}/pool/*/*/*/*.dsc; do
+    
+    TARGET=`echo $DEBFILE|perl -pe "s,^${localdir}/(.*)/.*.dsc,\1,"`
+    PACKAGE=`echo $DEBFILE|perl -pe "s,.*/(.*).*.dsc,\1,"`
+    TARGETDIR=${htmldir}/changelogs/$TARGET/$PACKAGE
+    
+# debugging
+#echo $DEBFILE
+#echo $TARGET
+#echo $PACKAGE
+#echo $TARGETDIR
+    
+# If the target directory doesn't exist yet or
+# if the DEBFILE is newer than the target directory,
+# unpack the package
+    if [ ! -d $TARGETDIR -o $DEBFILE -nt $TARGETDIR ]; then
+	
+	
+	test -d $tmpdir || mkdir -p $tmpdir
+	cd ${tmpdir}
+	rm -rf ${tmpdir}/*
+	dpkg-source -x $DEBFILE
+	
+	test -d $TARGETDIR || mkdir -p $TARGETDIR/
+	mv */debian/copyright $TARGETDIR/
+	mv */debian/changelog $TARGETDIR/
+      	chmod 644 $TARGETDIR/*
+	
+	rm -rf ${tmpdir}/*
+    fi
+done
