@@ -294,6 +294,8 @@ sub _read_dispatched {
                                 goto SKIP;
                         }
                         $lang = $2;
+                        warn "$file:$line: lang-mismatch-in-translated-templates\n"
+                                if $lang ne $ext;
                         if (defined($self->{files}->{$lang})) {
                                 die "Lang \`$lang' found in \`$file' and \`$self->{files}->{$lang}'\n"
                                         unless $self->{files}->{$lang} eq $file;
