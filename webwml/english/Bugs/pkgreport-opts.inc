@@ -15,6 +15,9 @@
 <define-tag no_status whitespace=delete>
   <gettext domain="bugs">no ordering by status or severity</gettext>
 </define-tag>
+<define-tag no_repeat_merged whitespace=delete>
+  <gettext domain="bugs">display merged bugs only once</gettext>
+</define-tag>
 <define-tag reverse_order whitespace=delete>
   <gettext domain="bugs">Reverse order of: </gettext>
 </define-tag>
@@ -81,6 +84,7 @@
   <input type="radio" name="archive" value="no" checked> <active_bugs>
   <input type="radio" name="archive" value="yes"> <archived_bugs>
   <input type="checkbox" name="raw" value="yes"> <no_status>
+  <input type="checkbox" name="repeatmerged" value="no"> <no_repeat_merged>
   </small>
   <li><small><reverse_order>
   <input type="checkbox" name="pend-rev" value="yes"><status>
