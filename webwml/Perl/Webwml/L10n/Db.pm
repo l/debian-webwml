@@ -150,8 +150,9 @@ Read database from a given file.  Returns 1 on success and otherwise 0.
 sub read {
         my $self = shift;
         my $file  = shift;
-        my $check  = shift || 1;
-
+        my $check  = shift;
+        $check = 1 unless defined $check;
+    
         if ($file =~ m/\.gz$/) {
                 open (DB,"gzip -dc $file |") || return 0;
         } else {
