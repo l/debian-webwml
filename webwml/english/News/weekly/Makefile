@@ -66,4 +66,4 @@ index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
 # Generate the mail for posting to debian-news. Requires the web page already
 # be updated.
 mail:
-	./makemail.pl
+	@./makemail.pl
