@@ -41,7 +41,7 @@
    [ES:CDs de Hurd:]
    [FI:Hurd-CDs:]
    [FR:Hurd-CDs:]
-   [HR:Hurd-CDs:]
+   [HR:Hurd CDi:]
    [HU:Hurd-CDs:]
    [IT:CD di Hurd:]
    [JA:Hurd-CDs:]
