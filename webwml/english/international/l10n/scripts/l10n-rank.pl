@@ -1,12 +1,13 @@
-<!-- to translate the names of the languages, you have to modify 
-    "../../english/template/debian/language_names.wml",
-    which is done for this purpose -->
+#   To translate the names of the languages, you have to modify 
+#         $(ENGLISHDIR)/template/debian/language_names.wml
+#   which is done for this purpose
 
-#include "../../../english/international/l10n/scripts/l10nheader.wml"
-#include "../../../english/template/debian/language_names.wml"
-#include "../../../english/international/l10n/dtc.def"
-#include "../../../english/international/l10n/scripts/init.pl"
-#include "../../../english/international/l10n/scripts/ranking.pl"
+#use wml::debian::language_names
+#use wml::scripts::l10nheader
+
+#include "$(ENGLISHDIR)/international/l10n/dtc.def"
+#include "$(ENGLISHDIR)/international/l10n/scripts/init.pl"
+#include "$(ENGLISHDIR)/international/l10n/scripts/ranking.pl"
 
 <table border=1>
 <tr>

@@ -1,4 +1,5 @@
-#include "$(ENGLISHDIR)/international/l10n/scripts/l10nheader.wml"
+#use wml::scripts::l10nheader
+
 #include "$(ENGLISHDIR)/international/l10n/dtc.def"
 #include "$(ENGLISHDIR)/international/l10n/scripts/init.pl"
 #include "$(ENGLISHDIR)/international/l10n/scripts/ranking.pl"

@@ -11,7 +11,7 @@ my $TEMPLATES_ROOT="http://www.ens-lyon.fr/~mquinson/debian/material/templates/$
 ##########
 # Init
 ##########
-push (@INC,"../../../english/international/l10n/scripts/");
+push (@INC,"$(ENGLISHDIR)/international/l10n/scripts/");
 require 'utils.pl';
 
 my %data;

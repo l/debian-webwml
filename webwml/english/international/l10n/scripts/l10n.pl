@@ -1,6 +1,6 @@
-#include "../../../english/international/l10n/dtc.def"
-#include "../../../english/international/l10n/scripts/init.pl"
-#include "../../../english/international/l10n/scripts/ranking.pl"
+#include "$(ENGLISHDIR)/international/l10n/dtc.def"
+#include "$(ENGLISHDIR)/international/l10n/scripts/init.pl"
+#include "$(ENGLISHDIR)/international/l10n/scripts/ranking.pl"
 
 <table border=1 cellpadding=0 cellspacing=0>
 

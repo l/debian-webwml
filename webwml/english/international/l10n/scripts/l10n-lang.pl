@@ -1,5 +1,5 @@
-#include "../../../english/international/l10n/scripts/l10nheader.wml"
-#include "../../../english/international/l10n/dtc.def"
+#use wml::scripts::l10nheader
+#include "$(ENGLISHDIR)/international/l10n/dtc.def"
 
 <:
 $cur_lang = "$(CUR_LANG)";
