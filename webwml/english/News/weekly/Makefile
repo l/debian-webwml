@@ -64,8 +64,6 @@ index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
       ../../../english/News/weekly/CURRENT-ISSUE-IS
 
 # Generate the mail for posting to debian-news. Requires the web page already
-# be updated. The mail still requires slight edits.
-mail:	
-	@cat mail-header
-	@lynx -dump http://debian.org/News/weekly/current/issue/ | \
-       		perl -pe 's/^\s\s?\s?//'
+# be updated.
+mail:
+	./makemail.pl
