@@ -59,11 +59,16 @@ $mesg = $ldap->search('base' => $base,
 
 $curdate = time;
 
-foreach $entry ($mesg->entries) {
+ALLPKG: foreach $entry ($mesg->entries) {
     use integer;
     next if defined ($entry->get('done'));
     my $subject = @{$entry->get('subject')}[0];
     my $bugid = @{$entry->get('bugid')}[0];
+    # If a bug is merged with another, then only consider the youngest
+    # bug and throw the others away.  This will weed out duplicates.
+    foreach $merged (@mergedwith) {
+        next ALLPKG if int($merged) < int($bugid);
+    }
     $age{$bugid} = ($curdate - str2time(@{$entry->get('date')}[0]))/86400;    
     chomp $subject;
     $subject = htmlsanit($subject);    
