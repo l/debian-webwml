@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 
 #   build-maintainerdb - convert several Packages files to maintainer database
-#   Copyright (c) 1998,9,2001,3  Martin Schulze <joey@debian.org>
+#   Copyright (c) 1998,9,2001,3,4  Martin Schulze <joey@debian.org>
 
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,19 +23,19 @@
 #    . Read maintainer changes from overrides file(s), need to rub
 #      out all existing entries
 
-$hostname = `hostname`;chomp $hostname;
-if ($hostname eq "gluck") {
-    $indexdir = "/org/packages.debian.org/etc";
-    $etcdir = "/org/packages.debian.org/etc";
-} elsif ($hostname eq "finlandia") {
-    $indexdir = "/pub/debian/indices";
-    $etcdir = "/home/users/joey/tmp/debian/home/etc";
-} else {
-    die "Unknown host: $hostname";
+# read the configuration
+if (!open (C, "../config.sh")) {
+    printf "\nInternal Error: Cannot open configuration file.\n\n";
+    exit 0;
 }
-$maintainerfile = "$indexdir/Maintainers";
-$maintainerdb = "$etcdir/maintainerdb";
-$overridefile = "$etcdir/maintainerdb.override";
+while (<C>) {
+    $topdir = $1 if (/^\s*topdir="?(.*)"?\s*$/);
+}
+close (C);
+
+$maintainerfile = "$topdir/archive/Maintainers";
+$maintainerdb = "$topdir/files/maintainerdb";
+$overridefile = "$topdir/etc/maintainerdb.override";
 
 sub package_maintainer
 {
