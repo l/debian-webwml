@@ -9,7 +9,7 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates bugs doc l10n organization ports others
+DOMAINS = templates bugs doc l10n organization ports search others
 
 POTFILES = $(addprefix $(ENGLISHDIR)/po/,$(addsuffix .pot,$(DOMAINS)))
 MOFILES = $(addsuffix .mo,$(DOMAINS))
@@ -20,6 +20,7 @@ DOC_FILES       = $(ENGLISHDIR)/doc/books.def $(ENGLISHDIR)/doc/manuals.defs
 L10N_FILES      = $(ENGLISHDIR)/international/l10n/dtc.def $(ENGLISHDIR)/international/l10n/menu.def
 ORGANIZATION_FILES = $(ENGLISHDIR)/intro/organization.tags
 PORTS_FILES     = $(ENGLISHDIR)/ports/menu.defs $(ENGLISHDIR)/ports/mips/cpu.data $(wildcard $(ENGLISHDIR)/ports/*/menu.inc)
+SEARCH_FILES    = $(ENGLISHDIR)/searchtmpl/search.def
 OTHERS_FILES    = $(ENGLISHDIR)/News/press/press.tags $(ENGLISHDIR)/MailingLists/mklist.tags $(ENGLISHDIR)/banners/index.tags $(ENGLISHDIR)/consultants/consultant.defs $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/logos/index.tags $(ENGLISHDIR)/misc/laptops/menu.inc $(ENGLISHDIR)/misc/merchandise.def $(ENGLISHDIR)/security/faq.inc $(ENGLISHDIR)/y2k/l10n.data
 
 ifeq "$(LANGUAGE)" "en"
@@ -41,11 +42,14 @@ $(ENGLISHDIR)/po/doc.pot: $(DOC_FILES)
 $(ENGLISHDIR)/po/l10n.pot: $(L10N_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(L10N_FILES) > $@
 
+$(ENGLISHDIR)/po/organization.pot: $(ORGANIZATION_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(ORGANIZATION_FILES) > $@
+
 $(ENGLISHDIR)/po/ports.pot: $(PORTS_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(PORTS_FILES) > $@
 
-$(ENGLISHDIR)/po/organization.pot: $(ORGANIZATION_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(ORGANIZATION_FILES) > $@
+$(ENGLISHDIR)/po/search.pot: $(SEARCH_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(SEARCH_FILES) > $@
 
 $(ENGLISHDIR)/po/others.pot: $(OTHERS_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(OTHERS_FILES) > $@
