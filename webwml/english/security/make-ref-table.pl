@@ -15,13 +15,20 @@ use Getopt::Std;
 use IO::File;
 # Stdin options
 # -v verbose
-getopts('v');
+# -b bugtraq refs
+# -c CERT refs
+# -m mitre refs
+getopts('mcbv');
+# Defaul is to print only Mitre's
+$opt_m = 1 if !defined ($opt_m) && ! defined($opt_c) && ! defined ($opt_b);
 
 #printHeader();
 parsedirs (".", "data", 2);
 
 # We just print for the time being only CVE references
-printcverefs();
+printrefs("Mitre CVE dictionary","CVE|CAN") if $opt_m;
+printrefs("Securityfocus Bugtraq database","BID") if $opt_b;
+printrefs("CERT alerts","CA-") if $opt_c;
 
 # But we could also print all the keys like this:
 # printallkeys();
@@ -41,20 +48,20 @@ sub printallkeys {
 	return 0;
 }
 
-sub printcverefs {
-
-	print "DSA\tCVE|CAN\n";
+sub printrefs {
+	my ($text,$type) = @_;
+	print "DSA\t$text\n";
 	foreach $dsa (sort(keys %dsaref)) {
 		my (@references) = split(' ', $dsaref{$dsa}{'secrefs'});
-		my $cveexists=0;
-		my $cverefs="";
+		my $refexists=0;
+		my $refs="";
 		foreach $ref ( pop (@references) ) {
-			if ( $ref =~ /^CVE|CAN/  ) {
-				$cverefs .= "$ref\t" ;
-				$cveexists=1;
+			if ( $ref =~ /^$type/  ) {
+				$refs .= "$ref\t" ;
+				$refexists=1;
 			}
 		}
-		print "DSA-$dsa\t".$cverefs."\n" if $cveexists;
+		print "DSA-$dsa\t".$refs."\n" if $refexists;
 	}
 }
 
@@ -62,7 +69,7 @@ sub parsefile {
 	my ($file) = @_ ;
 	print STDERR "Parsing DSA file $file\n" if $opt_v;
 # The filename gives us the DSA we are parsing
-	if ( $file =~ /dsa\-(\d+)/ ) {
+	if ( $file =~ /dsa\-(\d+)/ || $file =~ /(\d+\w+)/ ) {
 		$dsa=$1;
 	} else {
 		print STDERR "File $file does not look like a proper DSA, not checking\n" if $opt_v;
