@@ -41,6 +41,8 @@ sub debian_button {
 
 	gimp_floating_sel_anchor($text);
 
+	gimp_palette_set_background("#df0451");
+
 	gimp_convert_indexed($image, 0, 0, 8, 0, 0, "");
 
 	return $image;
