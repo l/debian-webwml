@@ -137,7 +137,7 @@ sub package_pages_walker {
 					      $lang )) {
 	    $files->delete_file( $filename )
 		if $files->file_exists( $filename );
-	    return;
+	    next;
 	}
 	progress() if $env->{opts}{progress};
 	
