@@ -1,6 +1,3 @@
-# Translators should only need to change the LANG variable
-LANG=it
-
 BASE=..
 CUR_DIR=intro
 
@@ -9,11 +6,11 @@ TEMPLDIR=$(BASE)/template/debian
 ENGLISHSRCDIR=$(BASE)/../english
 
 # EPILOG=--epilog=weblint
-$(HTMLDIR)/%.html.$(LANG) : %.wml $(TEMPLDIR)/template.wml
+$(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml
 	wml -q $(EPILOG) $(<F)
 
 WMLFILES := $(wildcard *.wml)
-HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANG),$(WMLFILES))
+HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
 
 all: $(HTMLFILES)
 
