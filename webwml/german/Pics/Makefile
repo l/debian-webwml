@@ -9,9 +9,19 @@ CUR_DIR=Pics
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include pics_texts.in
+
+include pics.conf
 
 debbar.pl := $(ENGLISHDIR)/Pics/debbar.pl
+ifneq "$(FONTFACE)" ""
+debbar.pl += -fontface $(FONTFACE)
+endif
+ifneq "$(FONTSIZE)" ""
+debbar.pl += -fontsize $(FONTSIZE)
+endif
+ifneq "$(FONTTYPE)" ""
+debbar.pl += -fonttype $(FONTTYPE)
+endif
 
 about.$(LANGUAGE).gif: $(debbar.pl)
 	$(debbar.pl) -words $(ABOUT_TEXT) -o $@
