@@ -79,18 +79,28 @@ sub recurse
 	{
 		# sitemap.??.html files should be ignored since they don't have a .wml
 		# file, except in the english dir
-		if (-f $direntry && $direntry =~ /\.html$/ && $direntry !~ /sitemap\...\.html$/)
+		if (-f $direntry && $direntry =~ /\.html$/ && $direntry !~ /sitemap\..*\.html$/)
 		{
 			my ($haswml, $incvs) = (0, 0);
 
 			# Check for WML file.
 			my $source = $direntry;
 			$source =~ s/\...(-..)?\.html$/.wml/;
-			my $wmlfile;
-			WMLS: foreach $wmlfile (@wmlfiles)
+			if ($source =~ /wml$/)
 			{
-				$haswml = 1, last WMLS
-					if $wmlfile eq $source;
+				my $wmlfile;
+				WMLS: foreach $wmlfile (@wmlfiles)
+				{
+					$haswml = 1, last WMLS
+						if $wmlfile eq $source;
+				}
+
+				unless ($haswml)
+				{
+					# Check if WML file is in the directory, even if it is
+					# not in the CVS (for auto-generated WML files).
+					$haswml =1 if -f $source;
+				}
 			}
 
 			unless ($haswml)
