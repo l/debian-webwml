@@ -24,7 +24,10 @@ do
         -e "/LINE: exc-non-free/r $dir/non-free-$code.exc" \
             tmpl.$lang.tmpl |\
         sed -e '/<!-- DO NOT REMOVE THIS LINE/d' |\
-        sed -e ':t /BEGIN SECTION/,/END SECTION/{/END SECTION/!{$!{N;bt};};/DELETE-ME/d;}' \
+        perl -e 'while(<>) {if (m/BEGIN SECTION/) {$body=$_; $found=0;do {$_ = <>; $found=1 if m/DELETE-ME/; $body.=$_} until m/END SECTION/; print $body unless $found} else {print}}' \
                 > $code.$lang.html
 done
 
+#  Perl code has replaced the following line, which is awfully slow
+#  on Potato
+#     sed -e ':t /BEGIN SECTION/,/END SECTION/{/END SECTION/!{$!{N;bt};};/DELETE-ME/d;}'
