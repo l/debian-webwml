@@ -1,0 +1,107 @@
+#use wml::debian::template title="Configurare un mirror FTP"
+#use wml::debian::translation-check translation="1.16"
+
+<p>La procedura di mirroring è identico per siti ufficiali e non ufficiali
+(<a href="types">maggiori informazioni sui tipi di mirror</a>).
+
+<p>Una volta che il mirror è configurato dovrebbe essere 
+<a href="submit">registrato con Debian</a>
+in modo da essere incluso nella <a href="../misc/README.mirrors">lista
+dei mirror</a>.
+Le sottomissioni possono essere fatte usando il nostro 
+<A href="submit">semplice modulo web</a>.
+
+<p>Ogni problema o domanda può essere inviata a 
+<A href="mailto:mirrors@debian.org">mirrors@debian.org</A>.
+
+<H2>Metodi di mirroring</H2>
+
+<p>Il metodo raccomandato di mirroring è usare rsync.
+
+<p>Nota: mentre <kbd>wget</kbd> lavora bene per copiare piccoli siti,
+non è flessibile come rsync o 'mirror', per cui non è raccomandato
+per questo compito.
+
+<h3>Rsync anonimo</h3>
+
+<p>Puoi usare <a href="anonftpsync">questo script</a> per copiare
+l'archivio.
+Segui le direttive dello script per configurare il mirroring.
+I siti nella 
+<a href="mirrors_full">lista completa dei mirror</a> che hanno
+l'indicazione '<kbd>Type: Push-Primary</kbd>' dovrebbero essere buoni per il
+mirroring.
+
+<h3>Rsync con autenticazione, da un push mirror</h3>
+
+<p>Il push mirroring è un tipo di
+mirroring con rsync che abbiamo sviluppato per minimizzare il tempo
+richiesto perché le modifiche all'archivio raggiungano i mirror.
+Il server mirror usa procedura ssh per dire al client mirror di
+aggiornarsi.
+
+<p>Questo metodo è abbastanza sicuro in quanto ssh è configurato
+per lanciare un singolo comando. Inoltre il mirroring è ancora di
+tipo `pull', cosìcché <strong>non</strong> è possibile
+corrompere il contenuto dell'archivio usando un falso
+push mirror.
+Alcuni amministratori di mirror hanno qualche riluttanza a usare
+questo metodo di mirroring per paura di aprire le propria macchina
+a intrusioni. Questo è semplicemente <strong>falso</strong>.
+
+<p>Per una spiegazione più dettagliata di come il meotodo lavora, perché 
+è sicuro, e come configurare un push mirror, leggi 
+<a href="push_mirroring">la spiegazione completa</a>.
+
+<h3>FTP anonimo usando 'mirror'</h3>
+
+<p>L'Anonymous FTP è stato il metodo standard di mirroring per lungo
+tempo. Per questo il programma 'mirror' lavora bene con l'archivio
+Debian. Come probabilmente immagini, 'mirror' è disponibile come
+pacchetto Debian. Se hai installato il paccetto Debian, 
+c'è un semplice script per copiare l'archivio ftp in
+/etc/mirror/packages/ftp.debian.org .
+
+<h2>Mirroring parziale</h2>
+
+<p>Considerate le dimensioni già grandi dell'archivio Debian,
+qualcuno preferisce copiare solo le parti di esso di cui hanno bisogno.
+Per questo, occorrono script scritti appositamente, come quelli di
+<a href="http://cvs.kitenet.net/~checkout~/joey-cvs/bin/debmirror?tag=HEAD&content-type=text/plain">
+Joey Hess</a> e
+<a href="http://people.debian.org/~absurd/">Stephan Suerken</a>. 
+Se pensi di aggiungere qualcosa ad essi, contatta gli autori (le
+informazioni di contatto dovrebbero essere incluse negli script
+stessi).
+
+<h2>Quando copiare</h2>
+
+<p>L'archivio principale vien aggiornato ogni 24 ore.
+
+<p>Se il tuo sito e' un push mirror, non hai bisogno di preoccuparti di
+questo.
+Altrimenti, se scegli di copiare con rsync, dovresti dare una occhiata
+a <kbd>project/trace/</kbd> 
+nell'archivio Debian del sito mirror per un file con lo stesso nome 
+di quel sito. Il file dovrebbe contenere l'ora alla quale l'ultima
+copia è terminata. Aggiungi un po' di tempo, diciamo 1 ora, a
+quell'orario e fai partire la copia a quell'orario.
+
+<p>La maniera più semplice di avere la copia automatica ogni giorno 
+è usare cron. Vedi <kbd>man crontab</kbd> per dettagli.
+
+<h2>Configurazioni aggiuntive raccomandate</h2>
+
+<p>Se vuoi rendere il mirror Debian disponibile via HTTP, aggiungi
+le istruzioni seguenti alla tua configurazione di Apache (presumendo
+ovviamente, che usi Apachi) per gli indici delle directory:
+
+<pre>
+&lt;directory /org/ftp.debian.org/ftp&gt;
+   IndexOptions NameWidth=* +SuppressDescription
+   DirectoryIndex .
+&lt;/directory&gt;
+</pre>
+
+<p>(sostituisci <code>/org/ftp.debian.org/ftp</code> col nome della
+directory dove mantieni il mirror)
