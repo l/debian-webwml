@@ -337,19 +337,20 @@ foreach $lang (@search_in) {
 	# Make the table of content
 	print HTML "<h3>Table of Contents</h3>\n";
 	print HTML "<p><a href=\"./\">Back to index of languages</a></p>\n";
-	print HTML "<p><a href=\"../\">Working on the website</a></p>\n";
+	print HTML "<br /><a href=\"../\">Working on the website</a>\n";
 	if ($o_body) {
-	    print HTML "<p><a href=\"#outdated\">Outdated translations</a></p>\n";
+	    print HTML "<br /><a href=\"#outdated\">Outdated translations</a>\n";
 	}
 	if ($u_body) {
-	    print HTML "<p><a href=\"#untranslated\">Pages not translated</a></p>\n";
+	    print HTML "<br /><a href=\"#untranslated\">Pages not translated</a>\n";
 	}
 	if ($t_body) {
-	    print HTML "<p><a href=\"#uptodate\">Translations up to date</a></p>\n";
+	    print HTML "<br /><a href=\"#uptodate\">Translations up to date</a>\n";
 	}
 	if ($lang ne 'english') {
-	    print HTML "<p><a href=\"#gettext\">Translations of templates (gettext files)</a></p>\n";
+	    print HTML "<br /><a href=\"#gettext\">Translations of templates (gettext files)</a>\n";
 	}
+   print HTML "</p>\n";
 	
 	# outputs the content
 	if ($o_body) {
