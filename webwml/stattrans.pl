@@ -209,7 +209,6 @@ my ( %po_translated, %po_fuzzy, %po_untranslated, %po_total );
 my ( %percent_po_t, %percent_po_u, %percent_po_f );
 foreach $lang (@search_in) {
     next if $lang eq 'english';
-    $l = $langs{$lang};
     $po_translated{"total"}{$lang} = $po_fuzzy{"total"}{$lang} = $po_untranslated{"total"}{$lang} = 0;
     my @status = qx,LC_ALL=C make -C $opt_w/$lang/po stats 2>&1 1>/dev/null,;
     foreach $line (@status) {
@@ -398,9 +397,6 @@ foreach $lang (@search_in) {
     #            print HTML $border_head;
                 print HTML "<table width=\"100%\" border=0>\n";
                 print HTML "<tr><th>File</th><th>Up to date</th><th>Fuzzy</th><th>Untranslated</th><th>Total</th></tr>\n";
-                $l = $langs{$lang};
-                $l = "zh-cn" if ($l eq "zh"); # kludge
-                
                 foreach my $domain (sort keys %po_total) {
                     next if $domain eq 'total';
                     print HTML "<tr>";
@@ -456,18 +452,18 @@ foreach $lang (@search_in) {
     my @processed_langs = ($langs{$lang});
     @processed_langs = ("zh-cn", "zh-tw") if $langs{$lang} eq "zh";
     foreach $l (@processed_langs) {
-    $color_a = get_color ($percent_a{$lang});
-    $color_t = get_color ($percent_t{$lang});
-    $color_o = get_color (100 - $percent_o{$lang});
-    $color_u = get_color (100 - $percent_u{$lang});
+        $color_a = get_color ($percent_a{$lang});
+        $color_t = get_color ($percent_t{$lang});
+        $color_o = get_color (100 - $percent_o{$lang});
+        $color_u = get_color (100 - $percent_u{$lang});
 
-    print HTML "<tr>";
-    printf HTML "<td><a href=\"%s.html\">%s</a> (%s)</td>", $l, ucfirst $lang, $l;
-    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_a, $wml{$lang}, $percent_a{$lang};
-    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_t, $translated{$lang}, $percent_t{$lang};
-    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_o, $outdated{$lang}, $percent_o{$lang};
-    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $untranslated{$lang}, $percent_u{$lang};
-    print HTML "</tr>\n",
+        print HTML "<tr>";
+        printf HTML "<td><a href=\"%s.html\">%s</a> (%s)</td>", $l, ucfirst $lang, $l;
+        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_a, $wml{$lang}, $percent_a{$lang};
+        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_t, $translated{$lang}, $percent_t{$lang};
+        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_o, $outdated{$lang}, $percent_o{$lang};
+        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $untranslated{$lang}, $percent_u{$lang};
+        print HTML "</tr>\n",
     }
 }
 print HTML "</table>\n";
@@ -483,15 +479,15 @@ foreach $lang (@search_in) {
     my @processed_langs = ($langs{$lang});
     @processed_langs = ("zh-cn", "zh-tw") if $langs{$lang} eq "zh";
     foreach $l (@processed_langs) {
-    print HTML "<tr>";
-    printf HTML "<td><a href=\"%s.html#gettext\">%s</a> (%s)</td>", $l, ucfirst $lang, $l;
-    $color_t = get_color ($percent_po_t{'total'}{$lang});
-    $color_f = get_color (100 - $percent_po_f{'total'}{$lang});
-    $color_u = get_color (100 - $percent_po_u{'total'}{$lang});
-    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_t, $po_translated{'total'}{$lang}, $percent_po_t{'total'}{$lang};
-    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_f, $po_fuzzy{'total'}{$lang}, $percent_po_f{'total'}{$lang};
-    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $po_untranslated{'total'}{$lang}, $percent_po_u{'total'}{$lang};
-    print HTML "</tr>\n";
+        print HTML "<tr>";
+        printf HTML "<td><a href=\"%s.html#gettext\">%s</a> (%s)</td>", $l, ucfirst $lang, $l;
+        $color_t = get_color ($percent_po_t{'total'}{$lang});
+        $color_f = get_color (100 - $percent_po_f{'total'}{$lang});
+        $color_u = get_color (100 - $percent_po_u{'total'}{$lang});
+        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_t, $po_translated{'total'}{$lang}, $percent_po_t{'total'}{$lang};
+        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_f, $po_fuzzy{'total'}{$lang}, $percent_po_f{'total'}{$lang};
+        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $po_untranslated{'total'}{$lang}, $percent_po_u{'total'}{$lang};
+        print HTML "</tr>\n";
     }
 }
 
