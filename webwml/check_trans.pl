@@ -452,7 +452,7 @@ sub get_diff_txt {
 
 sub check_file {
 	my ($name, $revision, $mtime, $translator) = @_;
-    $revision ||= 'n/a';
+	$revision ||= 'n/a';
 	my ($oldr, $oldname, $original, $fromname);
 	warn "Checking $name, English revision $revision\n" if $opt_v;
         my $docname = $name;
@@ -465,7 +465,7 @@ sub check_file {
                      if ($opt_t eq 'perl') {
   	               print "'$docname' => {\n\t'type' => 'Web',\n";
   	               print "\t'revision' => '$revision',\n";
-  	               print "\t'mtime' => '$mtime',\n";
+  	               print "\t'mtime' => '$mtime',\n" if $mtime;
   	               print "\t'status' => 1,\n";
   	               print "},\n";
                      } else {
@@ -550,7 +550,7 @@ sub check_file {
 	if ($opt_t eq 'perl') {
   	  print "'$docname' => {\n\t'type' => 'Web',\n";
   	  print "\t'revision' => '$revision',\n";
-  	  print "\t'mtime' => '$mtime',\n";
+  	  print "\t'mtime' => '$mtime',\n" if $mtime;
   	  print "\t'base_revision' => '$oldr',\n";
   	  print "\t'translation_maintainer' => ['$translator'],\n" if $translator;
   	  print "\t'status' => $status,\n";
