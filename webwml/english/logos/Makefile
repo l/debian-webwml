@@ -6,11 +6,14 @@ WMLBASE=..
 CUR_DIR=logos
 SUBS=
 
+GETTEXTFILES += others.mo
+
 include $(WMLBASE)/Make.lang
 
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/logos/index.data $(ENGLISHDIR)/logos/index.tags \
+  $(GETTEXTDEP) \
   $(ENGLISHDIR)/logos/openlogo-25.jpg $(ENGLISHDIR)/logos/openlogo-nd-25.jpg \
   $(ENGLISHDIR)/logos/officiallogo-25.jpg $(ENGLISHDIR)/logos/officiallogo-nd-25.jpg \
   $(ENGLISHDIR)/logos/button-1.gif $(ENGLISHDIR)/logos/button-2.gif \

@@ -6,6 +6,8 @@ WMLBASE=..
 CUR_DIR=MailingLists
 SUBS=
 
+GETTEXTFILES += others.mo
+
 include $(WMLBASE)/Make.lang
 
 all:: subscribe.$(LANGUAGE).html unsubscribe.$(LANGUAGE).html

@@ -6,6 +6,8 @@ WMLBASE=..
 CUR_DIR=y2k
 SUBS=
 
+GETTEXTFILES += others.mo
+
 include $(WMLBASE)/Make.lang
 
 

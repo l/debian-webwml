@@ -6,8 +6,10 @@ WMLBASE=..
 CUR_DIR=banners
 SUBS=2.1
 
+GETTEXTFILES += others.mo
+
 include $(WMLBASE)/Make.lang
 
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
-  $(ENGLISHDIR)/banners/index.tags
+  $(ENGLISHDIR)/banners/index.tags $(GETTEXTDEP)
