@@ -4,7 +4,7 @@
 inglés):
 
 <ul>
-  <li><a href="./">>Página de contenidos principal del Sistema de
+  <li><a href="./">Página de contenidos principal del Sistema de
        seguimiento de fallos de Debian.</a>
   <li><a href="Reporting">Instrucciones de cómo informar de un 
 fallo.</a>
