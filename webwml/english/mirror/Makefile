@@ -10,7 +10,7 @@ include $(WMLBASE)/Make.lang
 
 # there only needs to be one version of the following so
 # the non-english directories shouldn't try to install them
-ifeq ($(LANGUAGE),en)
+ifeq "$(LANGUAGE)" "en"
 
 # Note: the masterlist file is kept private since it contains e-mail addresses
 mirrorstuff := ftpsync ftpsync.conf websync websync.conf \
@@ -26,4 +26,10 @@ $(destmirrorstuff): $(mirrorstuff)
 
 cleandest::
 	rm -f $(destmirrorstuff)
+
+.PHONY: text html
+text: mirror_list.pl Mirrors.masterlist
+	@./mirror_list.pl -m Mirrors.masterlist -t text
+html: mirror_list.pl Mirrors.masterlist
+	@./mirror_list.pl -m Mirrors.masterlist -t html
 endif
