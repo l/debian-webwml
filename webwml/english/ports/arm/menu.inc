@@ -6,7 +6,7 @@
 <menu-item basename="../index">
 [EN:Ports:]
 [AR:Ports:]
-[DA:Ports:]
+[DA:Tilpasninger:]
 [DE:Ports:]
 [EL:Ports:]
 [EO:Ports:]
@@ -32,7 +32,7 @@
 <menu-item basename="index">
 [EN:Debian for ARM:]
 [AR:Debian for ARM:]
-[DA:Debian for ARM:]
+[DA:Debian til ARM:]
 [DE:Debian für ARM:]
 [EL:Debian for ARM:]
 [EO:Debian for ARM:]
@@ -58,7 +58,7 @@
 <menu-item basename="softwaremap">
 [EN:Software Map:]
 [AR:Software Map:]
-[DA:Software Map:]
+[DA:Softwarekatalog:]
 [DE:Software-Verzeichnis:]
 [EL:Software Map:]
 [EO:Software Map:]
