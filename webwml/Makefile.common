@@ -12,7 +12,7 @@ ENGLISHDIR := $(ENGLISHSRCDIR)
 HTMLDIR = $(WMLBASE)/$(RELHTMLBASE)/$(CUR_DIR)
 
 LANGUAGECAP = $(shell echo $(LANGUAGE) | tr "a-z" "A-Z")
-WMLOPTIONS := -q -D CUR_YEAR=$(shell date +%Y)
+WMLOPTIONS := -q -D CUR_YEAR=$(CUR_YEAR)
 WMLOUTFILE = $(@F)
 WMLPROLOG :=
 WMLEPILOG :=
@@ -126,44 +126,30 @@ ifeq "$(LANGUAGE)" "en"
 endif
 
 # template dependencies
+$(TEMPLDIR)/%.wml:
+	touch $@
+
 $(TEMPLDIR)/basic.wml: $(TEMPLDIR)/navbar.wml
-	touch $(TEMPLDIR)/basic.wml
-
 $(TEMPLDIR)/footer.wml: $(TEMPLDIR)/ctime.wml
-	touch $(TEMPLDIR)/footer.wml
-
 $(TEMPLDIR)/menubar.wml: $(TEMPLDIR)/footer.wml
-	touch $(TEMPLDIR)/menubar.wml
-
 $(TEMPLDIR)/mainpage.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/menubar.wml
-	touch $(TEMPLDIR)/mainpage.wml
-
 $(TEMPLDIR)/template.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/footer.wml \
-		$(TEMPLDIR)/languages.wml 
-	touch $(TEMPLDIR)/template.wml
-
+  $(TEMPLDIR)/languages.wml 
 $(TEMPLDIR)/news.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/footer.wml \
-		$(TEMPLDIR)/languages.wml 
-	touch $(TEMPLDIR)/news.wml
-
+  $(TEMPLDIR)/languages.wml 
 $(TEMPLDIR)/consultant.wml: $(TEMPLDIR)/footer.wml
-	touch $(TEMPLDIR)/consultant.wml
-
-$(TEMPLDIR)/event.wml: $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml $(TEMPLDIR)/basic.wml
-	touch $(TEMPLDIR)/event.wml
-
-$(TEMPLDIR)/navbar.wml: $(ENGLISHSRCDIR)/Pics/banner.jpg $(ENGLISHSRCDIR)/Pics/logo-50.jpg
-	touch $(TEMPLDIR)/navbar.wml
-
+$(TEMPLDIR)/event.wml: $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml \
+  $(TEMPLDIR)/basic.wml
+$(TEMPLDIR)/navbar.wml: $(ENGLISHSRCDIR)/Pics/banner.jpg \
+  $(ENGLISHSRCDIR)/Pics/logo-50.jpg $(WMLBASE)/Pics/home.$(LANGUAGE).gif \
+  $(WMLBASE)/Pics/about.$(LANGUAGE).gif $(WMLBASE)/Pics/news.$(LANGUAGE).gif \
+  $(WMLBASE)/Pics/distrib.$(LANGUAGE).gif $(WMLBASE)/Pics/support.$(LANGUAGE).gif \
+  $(WMLBASE)/Pics/devel.$(LANGUAGE).gif $(WMLBASE)/Pics/search.$(LANGUAGE).gif
 $(TEMPLDIR)/security.wml: $(TEMPLDIR)/common_translation.wml \
-		$(TEMPLDIR)/basic.wml $(TEMPLDIR)/fixes_link.wml \
-		$(TEMPLDIR)/languages.wml $(TEMPLDIR)/ctime.wml \
-		$(TEMPLDIR)/footer.wml
-	touch $(TEMPLDIR)/security.wml
-
+  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/fixes_link.wml $(TEMPLDIR)/languages.wml \
+  $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/footer.wml
 $(TEMPLDIR)/ddp.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml \
-		$(TEMPLDIR)/footer.wml
-	touch $(TEMPLDIR)/ddp.wml
+  $(TEMPLDIR)/footer.wml
 
 .SUFFIXES: 
 .PHONY: all $(existing-SUBS) install $(existing-SUBS-install)
