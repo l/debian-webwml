@@ -1,0 +1,254 @@
+#use wml::debian::template title="KAKO prevoditi Debian stranice"
+
+<P>Hvala vam ¹to poma¾ete u prevoðenju Debian web stranica.
+Umjesto da imamo puno razlièitih mjesta za stranice na razlièitim
+jezicima, nadamo se da æe se ljudi usredotoèiti na prevoðenje
+glavnog site-a koji æe poslu¾ivati prijevode uobièajenog skupa
+web stranica.
+
+<H3>Pozadina</H3>
+<P>Sve ruèno napisane, ne-dokumentacijske, html datoteke na web site-u
+su generirani koriseæi wml. Oni se pohranjuju na cgi.debian.org koristeæi
+CVS. Vi trebate 'izvaditi' (checkout) lokalnu kopiju wml datoteka da
+biste ih ureðivali na va¹em raèunalu. Kada zavr¹ite s promjenama, tada ih
+mo¾ete 'predati' (commit) promjene nazad na cgi.debian.org. Jednom dnevno,
+obnovit æe se kopija cijelog spremi¹ta (repository) na master.debian.org.
+Tada se pokreæe Makefile na njima da bi se stvorile obnovljene web stranice.
+Na kraju, stranice se distribuiraju svim web zrcalima.
+
+<H3>Trenutni koordinatori prijevoda</H3>
+<ul>
+<li>Francuski: Christophe Le Bars &lt;clebars@teaser.fr&gt;
+    <br>Pogledajte <a href="http://www.debian.org/~clebars/f2dp/ltcp.html">
+    http://www.debian.org/~clebars/f2dp/ltcp.html</a> za vi¹e informacija.
+<li>©panjolski: Javier Fdz-Sanguino Pe&ntilde;a &lt;jfs@ieeesb.etsit.upm.es&gt;
+<li>Danski: Jacob Sparre Andersen &lt;sparre@cats.nbi.dk&gt;
+<li>Japanski: Keita Maehara &lt;maehara@debian.org&gt;
+<li>Njemaèki: Thimo Neubauer &lt;thimo@fsphys.exchi.uni-heidelberg.de&gt;
+<li>Talijanski: Marco d'Itri &lt;md@linux.it&gt;
+<li>Ruski: D'jinnie &lt;jinn@irony.org&gt;
+<li>Hrvatski: Matej Vela &lt;mvela@public.srce.hr&gt;
+</ul>
+Kontaktirajte ih direktno da biste se ukljuèili u projekt prevoðenja.
+Po¹aljite e-mail na <a href="mailto:webmaster@debian.org">webmaster@debian.org</a>
+ako biste ¾eljeli koordinirati prevoðenje na neki novi jezik.
+Osim toga mo¾ete se pretplatiti na Debian web mailing listu,
+debian-www@lists.debian.org, i pitati tamo. Pogledajte 
+<a href="http://www.debian.org/MailingLists/subscribe">
+http://www.debian.org/MailingLists/subscribe</a> za informacije o
+pretplaæivanju.
+
+<H3>Kori¹tenje CVS-a</H3>
+<P>U ovom ¹to slijedi, anoniman pristup (anonymous) æe se koristiti
+za primjer. Ako imate pristup nekom drugom accountu koji daje prava
+pisanja u spremi¹te (repository) onda trebate koristiti taj account.
+Da biste poèeli koristiti CVS, prvo se morate 'logirati' (login) u
+CVS server:
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml login
+</pre>
+(samo pritisnite return za lozinku anonymous-a)
+
+<P>Da izvadite lokalnu kopiju wml datoteka na va¹e lokalno raèunalo,
+trebate koristiti 
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/&lt;lang&gt;
+</pre>
+gdje je &lt;lang&gt; jezik koji ¾elite. Vjerojatno ¾elite englesku verziju
+uz jezik na kojem radite. Ako trebate podskup stranica mo¾ete izvaditi
+samo one koje trebate, npr.
+<kbd>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</kbd>.
+ili ako vam je dano korisnièko ime (s lozinkom) umetnite ga umjesto anonymous
+<kbd>cvs -d :pserver:username@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</kbd>.
+
+<P>Od tog trenutka nadalje vi¹e neæete trebati koristiti '-d :pserver:...' dio.
+Svako par dana trebat æete napraviti
+<pre>
+   cvs update -d
+</pre>
+da biste prenijeli sve datoteke iz spremi¹ta (repository) koji su se
+promijenili. Opcija -d æe automagièno dodati sve nove direktorije.
+
+<P>Sljedeæe je za one koji imaju pravo pisanja po spremi¹tu (repository).
+Kada zavr¹ite sa stranicom, mo¾ete 'predati' (commit) va¹e promjene u
+spremi¹te (repository) koristeæi:
+<pre>
+   cvs commit &lt;datoteka&gt;.wml
+</pre>
+ili
+<pre>
+   cvs commit &lt;direktorij&gt;   (da predate promjene u &lt;direktoriju&gt;)
+</pre>
+ili
+<pre>
+   cvs commit          (da predate sve promjene iz trenutnog direktorija nadolje)
+</pre>
+
+<P>Ako ste prva osoba koja prevodi neku stranicu, trebate je 'dodati' (add):
+<pre>
+   cvs add &lt;datoteka&gt;.wml
+</pre>
+prije nego je predate. Primijetite da 'cvs add' nije rekurzivan tako da
+trebate dodati direktorij prije nego dodate njegov sadr¾aj.
+
+<P>Za vi¹e informacija o CVS-u, koristite 'info cvs'.
+
+<H3>Prevoðenje stranica</H3>
+<P>Da bismo ¹to vi¹e olak¹ali posao prevoditelja, stranice su generirane
+malo drugaèije nego su mnogi od vas navikli. Web stranice su ustvari
+izgenerirane koristeæi izvornik koji je ureðivan wml-om. Postoje odvojeni
+direktoriji za svaki jezik. Da biste prevodili na novi jezik, netko mora
+prvo prevesti wml datoteke predlo¾aka (nije velik posao). Molimo vas da
+pratite komentare jer postoje neke stvari koje se ne smiju prevoditi.
+Komentari u wml-u poèinju sa znakom povisilice, '#'.
+
+<P>Zbog naèina na koji su web serveri pode¹eni (koristeæi dogovaranje o
+sadr¾aju), ne smijete mijenjati interne linkove. Postoje situacije u kojima
+æete ¾eljeti malo promijeniti sadr¾aj koji prevodite. Za primjer uzmimo
+stranicu o podr¹ci; vjerojatno æete htjeti ukljuèiti primjer pretplaæivanja
+na jezièno specifiène mailing liste, npr. debian-french na francuskoj
+verziji stranice. Ako napravite neke druge promjene, molimo obavijestite
+<a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>
+jer je po¾eljno da oèuvamo najveæu moguæu sliènost izmeðu razlièitih verzija
+stranica.
+
+<P>Prvi put kada se stranica prevede, po¹aljite poruku na
+<a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>.
+Jedna skripta se mora izvr¹iti na tim stranicama da se ponovo stvore verzije
+na drugim jezicima, tako da bi svi znali za novi prijevod.
+
+<P>Nadamo se da æe vam sve ¹to smo napravili olak¹ati prevoðenje u
+najveæoj moguæoj mjeri.
+
+<H3>Kako uopæe server zna koju datoteku da poslu¾i?</H3>
+<P>Primijetit æete da interni linkovi ne zavr¹avaju sa .html. Ovo se radi
+zbog toga ¹to server koristi dogovaranje o sadr¾aju (sa browserom) da bi
+odluèio koji verziju dokumenta da isporuèi. Kada postoji vi¹e izbora,
+server æe napraviti listu svih datoteka koje mo¾e poslu¾iti, npr. ako se
+tra¾i 'about', tada bi lista zavr¹etaka mogla biti about.html.en i
+about.html.de. Pretpostavljena vrijednost za Debian servere æe biti
+dokument na engleskom, ali i to se mo¾e podesiti.
+
+<P>Ako klijent ima ispravno pode¹ene varijable, naprimjer da poslu¾i
+njemaèki, tada æe about.html.de iz gornjeg primjera biti poslu¾en.
+Dobra stvar u ovom pode¹avanju je da æe, ako zahtijevani jezik nije
+dostupan, drugi jezik biti isporuèen (¹to je nadajmo se bolje nego
+ni¹ta). Odluka o tome koji æe se dokument servirati je prilièno
+zbunjujuæa, tako da to neæemo opisati ovdje, nego æemo vas uputiti
+na definitivni odgovor sa 
+<a href="http://www.apache.org/docs/content-negotiation.html">http://www.apache.org/docs/content-negotiation.html</a>
+ako vas zanima.
+
+<P>Zbog toga ¹to mnogi korisnici uopæe ne znaju za postojanje dogovaranja o
+sadr¾aju, tu su linkovi na dnu svake stranice koji izravno upuæuju na
+verziju stranice u svim drugim dostupnim jezicima. Ovo se izraèunava
+koristeæi perl skriptu koju wml poziva kada generira kruh.
+
+<H3>Primjer pokretanja prijevoda</H3>
+Francuski jezik æemo koristiti za primjer:
+<pre>
+   cvs checkout webwml/english
+   cd webwml
+   mkdir french
+   cvs add french
+   cd french
+   cp ../english/.wmlrc .
+   cvs add .wmlrc
+editirajte i promijenite '-D CUR_LANG=English' u '-D CUR_LANG=French'
+                      te '-D CUR_ISO_LANG=en' u '-D CUR_ISO_LANG=fr'
+Nemojte ni¹ta drugo mijenjati u .wmlrc
+   cp -r ../english/template .
+   cvs add template
+   cvs add template/debian
+   cvs add template/debian/*.wml
+cvs add nije rekurzivan, pa morate dodati poddirektorije rekurzivno, kao ¹to
+je pokazano.
+editirajte template/debian/* i prevedite sav tekst. Ovo bi trebalo biti sasvim izravno
+   cp ../english/Make.* ../english/Makefile .
+   cvs add Make*
+editirajte Make.lang i promijenite 'LANG=en' u 'LANG=fr'
+Makefile u svakom direktoriju æe kompajlirati svaku .wml datoteku koju naðe.
+Ako ne ¾elite ili ako niste stvorili neki poddirektorij i pripadajuæi mu
+Makefile, ne morate micati to ime ili poddirektorij iz SUBS varijable u Makefile-u.
+Vjerojatno æete vam ipak biti lak¹e napraviti sve direkorije i Makefile-ove.
+
+Kad zavr¹ite s dodavanjem stranica, napravite
+   cvs commit
+iz webwml direktorija.
+</pre>
+Sada mo¾ete poèeti prevoditi stranice.
+
+<H3>Primjer prevoðenja jedne stranice</H3>
+Francuski prijevod dru¹tvenog ugovora æemo koristiti za primjer:
+<pre>
+   cvs checkout webwml/english webwml/french   (ako veæ niste)
+   cd webwml/french
+   cp ../english/social_contract.wml .
+   cvs add social_contract.wml
+editirajte social_contract.wml i prevedite tekst. Ne poku¹avajte prevoditi
+linkove ili ih mijenjati, nikako. Kada zavr¹ite, otipkajte
+   cvs commit -m "short description of the changes you made" social_contract.wml
+</pre>
+
+<H3>Kompajliranje wml-a</H3>
+Ovo podrazumijeva da imate wml instaliran na va¹em raèunalu.
+Jednostavno otipkajte <kbd>make</kbd> u webwml/&lt;lang&gt; direktoriju.
+Ako vi¹e volite da se izgenerirane stranice stave u neki drugi direktorij,
+mo¾ete koristiti <kbd>make RELHTMLBASE=loc install</kbd>, s tim da je 'loc'
+relativna putanja do najgornjeg direktorija u kojem ¾elite html datoteke.
+Pretpostavljena vrijednost za <kbd>RELHTMLBASE</kbd> jest <kbd>../../debian.org</kbd>.
+
+<P>Neki jezici bi mogli trebati posebno pre- ili post-procesiranje wml
+datoteka da bi se ispravno rukovalo skupom znakova. Ovo se mo¾e napraviti
+odgovarajuæim mijenjanjem varijabli <kbd>WMLPROLOG</kbd> i <kbd>WMLEPILOG</kbd>
+u <kbd>webwml/&lt;lang&gt;/Make.lang</kbd>. Ovisno o tome kako radi va¹
+<kbd>WMLEPILOG</kbd> program, mo¾da æete morati promijeniti vrijednost
+varijable <kbd>WMLOUTFILE</kbd>.
+
+<H3>Posebne datoteke i direktoriji</H3>
+<ul>
+<li><b>News/</b><br>
+Ovaj direktorij sadr¾i sve stavke vijesti poslane na debian-announce
+(mailing listu). Te vijesti se takoðer koriste za pravljenje liste naslova
+stavki na glavnoj stranici. Ovo se radi automatski kroz skripte.
+
+<p>Mo¾ete prevesti koje god stavke vijesti ¾elite. Oèekuje se da vremenska
+ogranièenja znaèe da æe se samo posebne stavke, kao najave novog izdanja
+Debian, prevesti. Sasvim je na vama, ¹to æete prevesti. Skripta koja
+uzima naslove vijesti da generira indeks stranicu i stavke na glavnoj
+web stranici provjerava prijevode vijesti i ako ih ne naðe uzima naslov
+engleske kopije.
+
+<li><b>security/</b><br>
+Ovaj direktorij sadr¾i statuse svih sigurnosnih problema vezanih za Debian
+koji su prijavljeni. Indeksi se kreiraju slièno onima u News/ direktoriju.
+Prevoðenje ovisi o vama.
+
+<li><b>devel/people.wml</b><br>
+Ovdje je sadr¾ana lista svih odr¾avatelja paketa i imena paketa koje oni
+odr¾avaju. Lista imena i paketa se generira automatski i èuva se u datoteci
+webwml/english/devel/people.names. Jedini tekst u tome koji je poseban za
+engleski jezik je 'main', 'non-free', 'non-us', 'contrib' and 'homepage'.
+Ako prevoditelji misle da je to potrebno, 'homepage' bi mogli prevesti.
+Po¹aljite e-mail na debian-www (mailing listu) ako ¾elite to napravljeno.
+
+<li><b>MailingLists/subscribe.wml i MailingLists/unsubscribe.wml</b><br>
+Ove stranice se generiraju automatski iz skripti. Ne trudite se prevoditi
+ih. Sustav za dodavanje prijevoda æemo tek razviti.
+
+<li><b>distrib/vendors.wml</b><br>
+vendors.wml se treba prevesti. Ona ukljuèuje <kbd>../../english/devel/vendors.CD</kbd>
+datoteku, koja sadr¾i pravu listu prodavaèa. Ova datoteka ne sadr¾i nekakve
+informacije jezièno ovisne, nego ukljuèuje <kbd>vendors.CD.def</kbd> koja
+sadr¾i prijevode svih fraza kori¹tenih u <kbd>vendors.CD</kbd>. Vi trebate
+dodate prijevode svih unosa u obliku <kbd><protect>[EN:...:]</protect></kbd>.
+Naprimjer,
+<pre>
+	<protect>[EN:Country:]\</protect>
+	<protect>[ES:Pa-is:]\</protect>
+	<protect>[DE:Land:]\</protect>
+</pre>
+Nemojte prevoditi nikakav drugi tekst na toj stranici.
+
+</ul>
+

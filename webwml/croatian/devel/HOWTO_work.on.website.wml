@@ -1,0 +1,96 @@
+#use wml::debian::template title="KAKO raditi na Debian web stranicama"
+
+<p>Debian web stranice se generiraju na jedan od tri naèina: dokumentacija
+se zrcali sa <a href="../~elphick/ddp/">Dokumentacijskog projekta</a>,
+dijelovi web site-a se generiraju koristeæi skripte (stranice o bugovima
+i arhive lista su dva dobra primjera), a ostatak se generira koristeæi wml.
+
+<h3>©to je wml?</h3>
+WML veæinom jako slièi html-u, ali ima brojne filtere koji se izvr¹avaju
+'preko' podataka prije nego se generira zavr¹ni html. Ovo nam omoguæuje
+da imamo statiène stranice (nu¾nost za web stranice da bi se mogle zrcaliti)
+dok jo¹ posjedujemo veæinu prednosti dinamièki kreiranih stranica.
+
+<p>Jedna od osobina wml-a je da prilièno iskori¹tavamo njegovo kori¹tenje
+perl-a. Zapamtite, ovo nisu dinamièke stranice. Perl se koristi dok se html
+stranice generiraju, da bi se napravilo, zapravo, ¹to god po¾elite. Dva
+dobra primjera u kojima koristimo perl na stranicama su kreiranje liste
+najsvje¾ijih stavki vijesti i generiranje linkova na kraju stranica.
+
+<p>Dokumentacija za wml nije ba¹ jednostavna za uèenje iz nje. Ona je
+zapravo vrlo kompletna, ali dok ne uspijete razumjeti kako sve radi (a to je
+prilièno moæno) najlak¹e je jednostavno uzimati postojeæe stranice kao
+primjere.
+
+<h3>Pristup wml izvornicima: kori¹tenjem CVS-a</h3>
+Wml izvornici za web stranice se èuvaju u CVS-u. Sa CVS-om, postoji
+centralno mjesto koje èuva glavne izvornike, tako da pojedinci 'vade' kopije
+iz spremi¹ta (repository) da bi napravili lokalne kopije. Èak se i kopija na
+glavnom serveru, koja se koristi da generira prave web stranice, obnavlja
+dnevno radeæi '<kbd>cvs update</kbd>' iz spremi¹ta (repository).
+
+<p>Bilo tko mo¾e izvaditi kopiju zamo za èitanje iz spremi¹ta (repository)
+koristeæi korisnièko ime <kbd>anonymous</kbd>. Da bi imali moguænost
+pisanja, morate pisati e-mail na <a href="mailto:webmaster@debian.org">webmaster@debian.org</a>.
+Ako niste upoznati sa CVS-om, mo¾ete proèitati diskusiju sa nekim primjerima
+o kori¹tenju u <a href="HOWTO_translate">KAKO prevoditi stranice</a> dokumentu.
+
+<h3>Dodavanje novih stranica</h3>
+<p>Dodavanje novih stranica u Debian (web site) je vrlo jednostavno. Sav
+posao ispravnog dodavanja zaglavlja i fusnota se radi kroz wml. Sve ¹to
+trebate napraviti je ukljuèiti ovakvu liniju na vrh nove datoteke:
+<pre><protect>
+#use wml::debian::template title="NASLOV STRANICE"
+</protect></pre>
+nakon kojeg je tijelo teksta. Sve stranice trebaju koristiti
+wml::debian::template datoteku predlo¹ka osim ako ne koriste neku posebnu
+stvorenu ba¹ za tu sekciju, npr. News/ ili security/ stranice.
+
+<p>Taj predlo¾ak, wml::debian::template, vam dopu¹ta da definirate odreðene
+varijable koje æe utjecati na generirane stranice. Ovo treba zaobiæi potrebu
+za kreiranjem razlièitih predlo¾aka za svaku situaciju i dozvoljava lak¹e
+implementiranje pobolj¹anja. Ovo su trenutno dostupne varijable i njihova
+svrha:
+<dl>
+<dt>NOHEADER="yes"
+	<dd>Mièe osnovno zaglavlje sa stranice. Posebno zaglavlje se naravno
+        mo¾e ukljuèiti u tijelo teksta.
+<dt>NOHOMELINK="yes"
+	<dd>Mièe link na dnu stranice koji upuæuje na glavnu Debian stranicu.
+<dt>NOLANGUAGES="yes"
+	<dd>Mièe linkove na dnu stranice koji upuæuju na verzije na drugim
+        jezicima.
+<dt>NOCOPYRIGHT="yes"
+	<dd>Mièe obavijest o copyright-u sa dna stranice.
+</dl>
+
+<p>Primjer upotrebe ovoga je na stranicama portova koje imaju vlastita
+zaglavlja. ports/arm/index.wml koristi:
+<pre><protect>
+#use wml::debian::template title="ARM Port" NOHEADER="yes"
+</protect></pre>
+
+<p>Ako ¾elite ne¹to napraviti ¹to se ne mo¾e izvr¹iti kori¹tenjem postojeæih
+predlo¾aka, prvo razmislite o pro¹irivanju jednog od njih. Ako nije moguæe
+pro¹iriti jedan od njih, u smislu da je kompatibilan s ranijima, probajte
+napraviti novi predlo¾ak kao nadogradnju na postojeæi tako da æe se stranice
+moæi konvertirati na njega u sljedeæoj glavnoj nadogradnji (nadajmo se nikad
+daljoj od svako 6 mjeseci).
+
+<p>Ako pravite stranicu koja se generira pomoæu skripte ili ima malo pravog
+teksta, razmislite o upotrebi filtera 'odrezaka' (slices) unutar wml-a da bi
+olak¹ali zadatak odr¾avanja prijevoda a¾urnima. Dobar primjer ovoga je u 
+<kbd>distrib/vendors.wml</kbd>. Novi prodavaèi se mogu dodati na ovu
+stranicu i dodatak æe se generirati za svaki jezik automatski.
+<kbd>vendors.wml</kbd> ukljuèuje <kbd>vendors.CD</kbd> koji ustvari sadr¾i
+pravu listu prodavaèa. Ova datoteka usto ukljuèuje i <kbd>distrib/vendors.CD.def</kbd>
+koja sadr¾i definicije svih fraza u <kbd>vendors.CD</kbd>.
+Prevoditelji jednostavno trebaju dodati prijevode gdje god je 'odrezak'
+(slice), npr.:
+<pre><protect>
+	[EN:Country:]\
+	[ES:Pa-is:]\
+	[DE:Land:]\
+</protect></pre>
+
+
