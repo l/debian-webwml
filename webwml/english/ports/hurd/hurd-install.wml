@@ -1,0 +1,104 @@
+#use wml::debian::template title="Debian GNU/Hurd --- Installation" NOHEADER="yes"
+[ <a href="..">Ports</a> ] [ <a href="index">Debian GNU/Hurd</a> ] [ <b>hurd-install</b> ] [ <a href="hurd-task">Task Lists</a> ] [ <a href="hurd-links">Links</a> ]<p>
+
+<h1>Debian GNU/Hurd</h1>
+<H2>Installing Debian GNU/Hurd</H2>
+<P>
+There is an excellent document available, the <A
+HREF="http://pick.sel.cam.ac.uk/~mcv21/hurd.html">Easy Guide</A> by Matthew
+Vernon, which you should definitly read. On this page, you will only find
+very sparse information, just enough to get you started if you are an
+experienced user or developer.
+</P>
+<P>
+There are two ways to install a Debian GNU/Hurd system. The first way makes
+it possible to install directly from the Debian packages, but you will need
+<TT>dpkg</TT>, the Debian package manager, to do so. This may be difficult
+if you use another Linux distribution beside Debian, or if you don't run
+Linux at all. Therefore, there is a second method, using a prepared tar
+archive file. After installing that, you can update your system to the most
+up to date versions of the Debian packages natively. Both methods will be
+described in more detail below.
+</P>
+<H3>Common Preperations</H3>
+<P>
+To start the installation, make the Hurd partition with <TT>mke2fs -o hurd
+/dev/PARTITION</TT>, where <TT>PARTITION</TT> is the partition of the hard
+disk you want to dedicate to the Hurd. Note that the partition size should not
+exceed about 1 GB currently, due to a known limitation in the Hurd.
+</P>
+<P>
+Then mount your partition somewhere safe. I use <TT>/gnu</TT> as the mount
+point, mostly because this is our default for cross compilation. Any other
+place is good enough, as well as doing this into a disk image on a file
+system. From here, I will assume that you use <TT>/gnu</TT>. Please change the
+commands accordingly if you use something else.
+</P>
+
+<H3>Two Alternatives</H3>
+<H4>Installing with Debian packages</H3>
+<P>
+To install Debian GNU/Hurd, you need to fetch the Debian software packages
+and my installation scripts. First get the following scripts:
+<UL>
+<LI><A HREF="cross-install"><TT>cross-install</TT></A> - Installing a
+	bunch of packages from Linux</LI>
+<LI><A HREF="native-install"><TT>native-install</TT></A> - Configuring the new
+	system</LI>
+<LI><A HREF="dpkg-cross"><TT>dpkg-hurd</TT></A> - Use dpkg on the Hurd
+	partition from Linux</LI>
+</UL>
+</P>
+<P>
+If you don't have Debian, you will also need a version of <TT>dpkg</TT> for your
+system.
+</P>
+<P>
+Last but not least, the Debian packages are required. They are located on
+any <A HREF="../../distrib/ftplist">Debian FTP mirror</A>, in the directory
+<TT>debian/dists/unstable/main/binary-hurd-i386/</TT>. You need a certain
+set which is specified at the top of the <TT>dpkg-hurd</TT> script. You can
+save the packages in a single directory or spread in subdirectories in the
+way they are organized at the FTP site.
+</P>
+<P>
+Now <TT>cd</TT> into the directory you keep your scripts and the Debian
+packages in. If you use a single directory, it must contain all files. If
+you use the FTP organization for packages, be sure that the scripts are in
+the top level directory, so it can find the packages in <TT>base/</TT> etc.
+Run <TT>./cross-install /gnu</TT>. Answer the question about the
+<TT>/usr</TT> symlink with <TT>y</TT>. Now continue with <A
+HREF="#reboot">Rebooting the System</A>.
+</P>
+
+<H4>Installing with tar Archive File</H4>
+<P>
+Sometimes, I upload snapshots of the current base system to some FTP site.
+Those files are named <TT>gnu-YYYYMMDD.tar.gz</TT>, where <TT>YYYYMMDD</TT>
+is the date of the snapshot. Those files can be used to install the Hurd even
+if you have never seen a Debian system. The procedure described here will
+not work out of the box for the <TT>gnu-19990104.tar.gz</TT>, so get a later
+one if available.
+</P>
+<P>
+To do this, download the tar file of the most recent date. This is the only
+file you will need to get a working system (beside GRUB). <TT>cd /gnu</TT> to
+get to the root of the Hurd partition. Now extract the tar file with the
+command <TT>tar -xpzf /somewhere/gnu-YYYYMMDD.tar.gz</TT> using the correct
+path and date.
+<P>
+
+<A NAME="reboot"><H3>Rebooting the System</H4></A>
+<P>
+Now reboot the system and use GRUB to boot the Hurd partition. I won't give
+detailed information on GRUB and partition naming schemes here, this is
+covered elsewhere. You will find this and other useful information in the <A
+HREF="http://pick.sel.cam.ac.uk/~mcv21/hurd.html">Easy Guide</A> by M. C. Vernon.
+</P>
+<P>
+After the reboot, you only need to run <TT>./native-install</TT> to finish
+the installation. Have fun!
+</P>
+
+</BODY>
+</HTML>
