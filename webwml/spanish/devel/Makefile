@@ -4,11 +4,11 @@
 
 WMLBASE=..
 CUR_DIR=devel
-SUBS=website join
+SUBS=website debian-jr join misc wnpp
 
 include $(WMLBASE)/Make.lang
 
-
-# Do Not modify the following line
-people.$(LANGUAGE).html: people.wml $(TEMPLDIR)/template.wml $(ENGLISHSRCDIR)/devel/people.names
-
+people.$(LANGUAGE).html: people.wml $(TEMPLDIR)/template.wml \
+ $(ENGLISHSRCDIR)/devel/people.names
+index.$(LANGUAGE).html: index.wml \
+	$(ENGLISHSRCDIR)/devel/index.include $(TEMPLDIR)/template.wml
