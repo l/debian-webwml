@@ -651,6 +651,7 @@ sub process_po_file {
         my $type = shift;
         $type = 'podebconf' unless $type eq 'po';
         $type = 'add_'.$type;
+        my $potfile = shift;
 
         my $filename; #the po file name to be archived
         my $lang=""; # the identified code language
@@ -685,7 +686,11 @@ sub process_po_file {
         }
         if ($lang ne "") {
                 # stats the file
-                ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$filename 2>&1 1>/dev/null");
+                if (defined $potfile) {
+                        ($this_stat, $err_msg) = read_stats("msgmerge $PO_DIR/$filename $PO_DIR/$potfile 2>/dev/null | msgfmt --statistics -o /dev/null - 2>&1 1>/dev/null");
+                } else {
+                        ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$filename 2>&1 1>/dev/null");
+                }
                 if ($err_msg ne '') {
                         $err_msg =~ s,\Q$PO_DIR/$filename\E,$file,g;
                         $data->add_errors($pkg, "gettext: ".$err_msg);
@@ -895,21 +900,18 @@ sub search_podebconf {
         return 0 unless $deb->file_exists("debian/po/templates.pot")
                      && $deb->file_exists("debian/po/POTFILES.in");
 
-        my $filename = store_disk_po($pkg, "debian/po/templates.pot");
+        my $potfile = store_disk_po($pkg, "debian/po/templates.pot");
         my $PO_DIR = $PO_ROOT."/".$data->pooldir($pkg);
-        my ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$filename 2>&1 1>/dev/null");
-        if (system("gzip -9f $PO_DIR/$filename")) {
-                warn "Can't gzip $PO_DIR/$filename: $!\n";
-        }
+        my ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$potfile 2>&1 1>/dev/null");
 
-        $data->add_podebconf($pkg, 'templates.pot', '_', $this_stat, $filename);
+        $data->add_podebconf($pkg, 'templates.pot', '_', $this_stat, $potfile);
         @_ = split(/\n/, $deb->file_content("debian/po/POTFILES.in"));
         foreach (@_) {
                 next unless s#^\[type: gettext/rfc822deb]\s+#debian/#;
                 s#^debian/\.\./##;
                 s#\s+$##;
                 if ($deb->file_exists($_)) {
-                        $filename = store_disk_templates($pkg, $_);
+                        my $filename = store_disk_templates($pkg, $_);
                         $data->add_podebconf($pkg, $_, '_', '', $filename);
                         if (system("gzip -9f $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename)) {
                                 warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename.": $!\n";
@@ -923,7 +925,10 @@ sub search_podebconf {
         my @pofiles = $deb->file_matches("^debian/po/.*\\.po\$");
 
         foreach my $file (@pofiles) {
-                process_po_file($pkg, $file, 'podebconf');
+                process_po_file($pkg, $file, 'podebconf', $potfile);
+        }
+        if (system("gzip -9f $PO_DIR/$potfile")) {
+                warn "Can't gzip $PO_DIR/$potfile $!\n";
         }
 
         print STDERR "MEM: ".$deb->get_max_memory()."\n" if $verbose;
