@@ -37,6 +37,19 @@
     return TRUE;
   }
 
+  function log($db, $who, $manager, $action, $name, $email) {
+      $sql = "INSERT INTO log (who, manager, action, name, email) VALUES ('$who', '$manager', '$action', '$name', '$email')";
+      if (! ($result = pg_exec($db, $sql))) {
+          echo "Problem with interrogating database: ", pg_ErrorMessage($db), "<BR>\n";
+          return FALSE;
+      }
+      if (($tuples = pg_CmdTuples($result)) != 1) {
+          echo "Only one row should be effected but $tuples rows were<BR>\n";
+          return FALSE;
+      }
+      return TRUE;
+  }
+
   function print_bool($title, $name, $value, $editable)
   {
     echo "<TR><TD width=\"200\"><B>$title</B> </TD><TD width=\"200\">";
