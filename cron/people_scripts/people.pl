@@ -106,6 +106,22 @@ sub process_package_file {
 	}
 }
 
+sub process_source_file {
+	my ($filename,$distribution) = @_;
+	my ($temp, $member, $name, $nname);
+
+	open (PKG, $filename) or return;
+	while (<PKG>) {
+		if (/^$/) {
+			process_src_package($distribution);
+			$package_info = "";
+		}
+		else {
+			$package_info .= $_;
+		}
+	}
+}
+
 sub process_package {
 	my ($distribution) = @_;
 	chop $package_info;
@@ -121,6 +137,36 @@ sub process_package {
 	if (!defined $package{$pack}) {
 		$package{$pack}{distribution} = $distribution;
 		$package{$pack}{maintainer} = $maintainer;
+	}
+}
+
+sub process_src_package {
+	my ($distribution) = @_;
+	my (@packages, $maintainer, @uploaders);
+
+	chop $package_info;
+	@package_pieces = split(/\n\b/, $package_info);
+	foreach (@package_pieces) {
+		if (/^binary:\s+(.+)$/io) {
+			@packages = split /\s*,\s*/, $1;
+		}
+		elsif (/^maintainer:\s+(.+)$/io) {
+			$maintainer = $1;
+		}
+		elsif (/^uploaders:\s+(.+)$/io) {
+		    # this seems ugly but works
+		    # improvements welcome
+		    @uploaders = split />\s*,\s*/, $1;
+		    map { $_ = "$_>" if ($_ =~ /</) 
+			      && ($_ !~ />/); } @uploaders;
+		}
+	}
+	foreach my $pack (@packages) {
+	    if (!defined $package{$pack}) {
+		$package{$pack}{distribution} = $distribution;
+		$package{$pack}{maintainer} = $maintainer;
+	    }
+	    $package{$pack}{uploaders} = \@uploaders if @uploaders;
 	}
 }
 
@@ -157,19 +203,17 @@ sub from_utf8_or_iso88591_to_sgml ($) {
     }
 }
 
-sub canonical_names {
-	PACK: foreach $pack (keys %package) {
-		$maintainer = $package{$pack}{maintainer};
+sub process_name {
+    my ($maintainer) = @_;
 		$maintainer =~ s/&/&amp;/g;
+
+    my ($lastname, $firstname, $email);
 
 		# Take care of the special cases first
 		foreach (@special_maintainer) {
 			if ($maintainer =~ /($_).*<(.+)>\s*/) {
 				$lastname = "$1"; $firstname = ""; $email = $2;
-				$package{$pack}{lastname} = $lastname;
-				$package{$pack}{firstname} = $firstname;
-				$package{$pack}{email} = $email;
-				next PACK;
+				return ($lastname, $firstname, $email);
 			}
 		}
 		$maintainer = from_utf8_or_iso88591_to_sgml($maintainer);
@@ -177,7 +221,7 @@ sub canonical_names {
 		if ($maintainer =~ /Debian Quality Assurance.*<(.+)>/) {
 			$lastname = 'Debian QA Group'; $firstname = ''; $email = $1;
 		}
-		if ($maintainer =~ /Boot Floppies Team <(.+)>/) {
+		elsif ($maintainer =~ /Boot Floppies Team <(.+)>/) {
 			$lastname = 'Debian Install System Team'; $firstname = ''; $email = $1;
 		}
 		elsif ($maintainer =~ /Javier Fernandez-Sanguino Pen~a\s+<(.+)>/o) {
@@ -234,7 +278,7 @@ sub canonical_names {
 		elsif ($maintainer =~ /Jose Carlos Garcia Sogo <(.+)>/) {
 			$lastname = 'Garcia Sogo' ; $firstname = 'Jose Carlos'; $email = $1;
 		}
-		elsif ($maintainer =~ /Luca - De Whiskey's - De Vitis <(.+)>/) {
+		elsif ($maintainer =~ /Luca - De Whiskey's - De Vitis <(.+)>/) { #'
 			$lastname = 'De Vitis' ; $firstname = 'Luca'; $email = $1;
 		}
 		elsif ($maintainer =~ /Chris(topher)? L\.? Cheney <(.+)>/) {
@@ -318,52 +362,44 @@ sub canonical_names {
 		# Only an email address is given
 		elsif ($maintainer =~ /(.+)*/o) {
 			$_ = $1;
-			print "$_ X\n";
-			die "Unknown maintainer format:\n$_\n";
+#			print "$_ X\n";
+			warn "Unknown maintainer format:\n$_\n";
+			return;
 			# this error ends up being sent via cron mail
 		}
+    return ($lastname, $firstname, $email);
+}
+
+sub canonical_names {
+	PACK: foreach $pack (keys %package) {
+		$maintainer = $package{$pack}{maintainer};
+
+		my ($lastname, $firstname, $email) = process_name($maintainer);
+
+		next unless $lastname;
 
 		$package{$pack}{lastname} = $lastname;
 		$package{$pack}{firstname} = $firstname;
 		$package{$pack}{email} = $email;
-	}
-}
 
+		my @uploaders;
+		foreach my $uploader (@{$package{$pack}{uploaders}}) {
+		    my ($ulastname, $ufirstname, $uemail) = process_name($uploader);
+		    next unless $ulastname;
+		    next if ($package{$pack}{lastname} eq $ulastname)
+			&& ($package{$pack}{firstname} eq $ufirstname);
+#		    warn "process_name: $uploader: $ulastname, $ufirstname\n";
+		    push( @uploaders, { lastname => $ulastname,
+				       firstname => $ufirstname,
+				       email => $uemail, } )
+			if $ulastname;
+		}
+		$package{$pack}{uploadernames} = \@uploaders if @uploaders;
+	    }
+      }
 
-# some old, obsolete code:
-
-# # Add this package onto the list
-# #    if (/^Maintainer: /) {
-# #       $People{"$lastname:$firstname"}{email} = $email;
-# #       push @{ $People{"$lastname:$firstname"}{$distribution} }, $pname;
-#        #$temp = $#{ $People{"$lastname:$firstname"}{$distribution} };
-# #print "temp=$temp, lastname=$lastname, firstname=$firstname, email=$email, dist=$distribution, dist=$distribution, pname=$pname\n";
-# #print @{ $People{"$lastname:$firstname"}{$distribution} }."\n";
-#        #if ($temp == -1) {
-#        #   push @{ $People{"$lastname:$firstname"}{$distribution} }, $pname;
-#        #}
-#        #else {
-#        #   $member=0;
-#        #   foreach (@{ $People{"$lastname:$firstname"}{$distribution} }) {
-#        #      if ($_ eq $pname) {
-#        #         $member = 1;
-#        #         last;
-#        #      }
-#        #   }
-#        #   if ($member == 0) {
-#        #      push @{ $People{"$lastname:$firstname"}{$distribution} }, $pname;
-#        #   }
-#        #}
-# #    }
-# # }
-# #}
-
-sub create_maintainer_list {
-	foreach $pack (keys %package) {
-		$distribution = $package{$pack}{distribution};
-		$lastname = $package{$pack}{lastname};
-		$firstname = $package{$pack}{firstname};
-		$email = $package{$pack}{email};
+sub insert_maintainer {
+    my ($lastname, $firstname, $email, $distribution, $pack) =@_;
 
 		if (!exists $People{"$lastname:$firstname"}) {
 			@namelist = keys %People;
@@ -379,7 +415,28 @@ sub create_maintainer_list {
 			$People{"$lastname:$firstname"}{email} = $email;
 		}
 		push( @{$People{"$lastname:$firstname"}{$distribution}}, $pack );
+}
 
+sub create_maintainer_list {
+	foreach my $pack (keys %package) {
+		my $distribution = $package{$pack}{distribution};
+		my $lastname = $package{$pack}{lastname} || "";
+		my $firstname = $package{$pack}{firstname} || "";
+		my $email = $package{$pack}{email} || "";
+
+		insert_maintainer( $lastname, $firstname, $email,
+				   $distribution, $pack );
+
+		foreach my $uploader (@{$package{$pack}{uploadernames}}) {
+		    my $ulastname = $uploader->{lastname} || "";
+		    my $ufirstname = $uploader->{firstname} || "";
+		    my $uemail = $uploader->{email} || "";
+		    
+#		    warn "uploader: $ufirstname, $ulastname, $pack\n";
+		    insert_maintainer( $ulastname, $ufirstname, $uemail,
+				       $distribution, 
+				       "$pack\*" );
+		}
 	}
 }
 
@@ -450,27 +507,33 @@ sub process_homepages {
 # and now, the script body itself.
 
 # go through Packages files one at a time
+    my $section;
 while ($file = shift @ARGV) {
     if ($file =~ m,main.*non-US,) {
-        process_package_file($file, 'nonusmain');
+        $section = 'nonusmain';
     }
     elsif ($file =~ m,contrib.*non-US,) {
-        process_package_file($file, 'nonuscontrib');
+        $section = 'nonuscontrib';
     }
     elsif ($file =~ m,non-free.*non-US,) {
-        process_package_file($file, 'nonusnonfree');
+        $section = 'nonusnonfree';
     }
     elsif ($file =~ m,main,) {
-        process_package_file($file, 'main');
+        $section = 'main';
     }
     elsif ($file =~ m,contrib,) {
-        process_package_file($file, 'contrib');
+        $section = 'contrib';
     }
     elsif ($file =~ m,non-free,) {
-        process_package_file($file, 'nonfree');
+        $section = 'nonfree';
     }
     else {
         die "can't determine distribution from file name: $file";
+    }
+    if ($file =~ m,Sources,) {
+	process_source_file($file, $section);
+    } else {
+	process_package_file($file, $section);
     }
 }
 
