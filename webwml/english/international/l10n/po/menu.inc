@@ -4,8 +4,10 @@
 <define-menu-item name="l10n"><menu-l10n></define-menu-item>
 <define-menu-item name="list"><menu-list></define-menu-item>
 <define-menu-item name="rank"><menu-rank></define-menu-item>
+<define-menu-item name="pot"><menu-pot></define-menu-item>
 
 <menu-item name="l10n"          basename="../">
 <menu-item name="list"          basename="./">
 <menu-item name="rank"          basename="rank">
+<menu-item name="pot"           basename="pot">
 
