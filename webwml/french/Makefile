@@ -14,7 +14,7 @@ all:\
     $(HTMLDIR)/donations.html.$(LANG) \
     $(HTMLDIR)/news.html.$(LANG) \
     $(HTMLDIR)/social_contract.html.$(LANG) \
-    $(HTMLDIR)/2.0/HOWTO.upgrade.html.$(LANG) \
+    #$(HTMLDIR)/2.0/HOWTO.upgrade.html.$(LANG) \
     #$(HTMLDIR)/developers_corner.html.$(LANG) \
     #$(HTMLDIR)/license.html.$(LANG) \
     #$(HTMLDIR)/news1997.html.$(LANG) \
