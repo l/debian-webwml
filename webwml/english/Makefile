@@ -13,9 +13,25 @@ include $(WMLBASE)/Make.lang
 
 ifneq "$(LANGUAGE)" "en"
 sitemap.$(LANGUAGE).html: $(ENGLISHDIR)/sitemap.wml
+ifneq "$(LANGUAGE)" "zh"
 	$(shell echo $(WML) | sed s/index/sitemap/) \
           $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml \
             $(shell egrep '^-D (CUR_|CHAR)' .wmlrc)
+else
+	$(shell echo $(WML) | sed s/:.zh/:sitemap.zh/g) \
+          $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml \
+            $(shell egrep '^-D (CUR_|CHAR)' .wmlrc)
+	@echo -n " * Converting: [zh_CN.GB2312], "
+	@$(B5TOGB) < sitemap.zh-cn.html.tmp > sitemap.zh-cn.html
+	@rm -f sitemap.zh-cn.html.tmp
+	@$(TOCN) sitemap.zh-cn.html
+	@echo -n "[zh_HK.Big5], "
+	@mv -f sitemap.zh-hk.html.tmp sitemap.zh-hk.html
+	@$(TOHK) sitemap.zh-hk.html
+	@echo "[zh_TW.Big5]."
+	@mv -f sitemap.zh-tw.html.tmp sitemap.zh-tw.html
+	@$(TOTW) sitemap.zh-tw.html
+endif
 endif
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
@@ -28,5 +44,5 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 install::
 	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
 ifneq "$(LANGUAGE)" "en"
-	-install -m 664 -p sitemap.$(LANGUAGE).html $(HTMLDIR)
+	-install -m 664 -p sitemap.$(LANGUAGE)*.html $(HTMLDIR)
 endif
