@@ -19,7 +19,8 @@ index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.wml) \
      $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
 
 # Special case for Chinese
-index.zh-cn.html index.zh-tw.html: index.wml $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.wml) \
+index.zh-cn.html index.zh-hk.html index.zh-tw.html: index.wml \
+     $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.wml) \
      $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/$(CUR_YEAR)*.wml) \
      $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.title) \
      $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
