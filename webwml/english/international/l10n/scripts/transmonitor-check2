@@ -49,6 +49,7 @@ my $TRANSMONITOR_VERSION = "2.0"; #External Version Number
 my $BANNER = "Translation Monitor v$TRANSMONITOR_VERSION"; # Version Banner - text form
 my $TMP_DIR = "/tmp/transmonitor";
 my $DB_FILE = "../data/transmonitor";
+my $FROM_FILE = "";
 my $TRANSMONITOR_ROOT = "./";
 my $SYN_FILE = "../data/synonyms";
 my $PO_ROOT = "../po";
@@ -79,9 +80,9 @@ my @ftp_errors; # were we put the name of packages with which we had an error
 sub syntax_msg {
         my $msg = shift;
         if (defined $msg) {
-                print "$progname: $msg\n";
+                print STDERR "$progname: $msg\n";
         } else {
-                print "$BANNER\n";
+                print STDERR "$BANNER\n";
         }
         print
 "Syntax: $0 [action] [options] [--] [package|path to the dist]+
@@ -96,6 +97,7 @@ Behaviour options:
     -f, --force               force the check of packages, even if they are in db
     --force-material          force the check of packages containing any material
 Configuration options:
+    -F, --files-from=FILE     reads dsc filenames from FILE
     --db=DB_FILE              use DB_FILE as database file
                                 (instead of $DB_FILE)
     --tmp=TMP_DIR             use TMP_DIR as temp dir
@@ -124,9 +126,9 @@ Configuration options:
 # Options: -V|--version, --print-version
 sub banner {
         if ($_[0] eq 'print-version') {
-                print "$TRANSMONITOR_VERSION\n";
+                print STDERR "$TRANSMONITOR_VERSION\n";
         } else {
-                print "$BANNER\n";
+                print STDERR "$BANNER\n";
         }
         exit 0;
 }
@@ -147,6 +149,7 @@ my %opthash = (
         "force-material" => \$force_material,
 
         # ------------------ configuration options
+        "files-from=s" => \$FROM_FILE,
         "db=s" => \$DB_FILE,
         "tmp=s" => \$TMP_DIR,
         "root=s" => \$TRANSMONITOR_ROOT,
@@ -170,9 +173,20 @@ my %synonym;  # developers can't spell sections and priorities...
 my $savedb=0; # do we have to save the database?
 
 ###
-### initialisation
+### Initialization
 ###
-(@ARGV > 0) or &syntax_msg("Nothing to do !");
+my @args = ();
+if ($FROM_FILE ne '') {
+        if ($FROM_FILE eq '-') {
+                @args = <STDIN>;
+        } else {
+                open(FROM, "< $FROM_FILE")
+                        || die "Unable to read from $FROM_FILE\n";
+                @args = <FROM>;
+                close(FROM);
+        }
+}
+push (@args, @ARGV) or syntax_msg("Nothing to do !");
 
 push (@INC, $TRANSMONITOR_ROOT);
 init_synonym();
@@ -181,9 +195,9 @@ my $data = Webwml::L10n::Db->new();
 $data->read($DB_FILE);
 my $date = $data->get_date();
 
-my $arg;
 # read args to search package files
-while ($arg = shift @ARGV) {
+foreach my $arg (@args) {
+        chomp $arg;
         if (-f $arg) {
                 $arg =~ /\.dsc$/
                         || die "bad package file name $arg (not a .dsc file)";
@@ -248,7 +262,7 @@ PKG: while ($dsc = shift @pkg_list) {
                                 ($data->has_nls($pkg)
                                         || $data->has_po($pkg)
                                         || $data->has_templates($pkg)))) {
-                        print "Package $pkg $ver (skipped)\n"
+                        print STDERR "Package $pkg $ver (skipped)\n"
                                 if ($verbose || ($data->version($pkg) ne $ver));
                         next PKG;
                 } else {
@@ -265,7 +279,7 @@ PKG: while ($dsc = shift @pkg_list) {
                 }
         }
         $savedb = 1; #ok, we've done something, we have to save the db
-        print "Package $pkg $ver (processing)\n" if $verbose;
+        print STDERR "Package $pkg $ver (processing)\n" if $verbose;
 
         ###
         ### unpack it
@@ -285,9 +299,9 @@ PKG: while ($dsc = shift @pkg_list) {
 $data->write($DB_FILE) if $savedb;
 # print with which packages we had problems
 if (@errors_pkg > 0) {
-        print "Some errors where encountred during the check of this packages\n";
+        print STDERR "Some errors where encountred during the check of this packages\n";
         while ($pkg = shift @errors_pkg) {
-                print "    $pkg\n";
+                print STDERR "    $pkg\n";
         }
 }
 
@@ -563,7 +577,7 @@ sub search_po {
                         warn "Can't gzip $PO_DIR/$filename: $!";
                 }
         }
-        print "MEM: ".$deb->get_max_memory()."\n" if $verbose;
+        print STDERR "MEM: ".$deb->get_max_memory()."\n" if $verbose;
 }
 
 #----[ search_menu ]-----------------------------------------------------------
