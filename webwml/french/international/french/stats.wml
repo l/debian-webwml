@@ -1,10 +1,17 @@
 
 #use wml::debian::template title="Statistiques du projet de traduction"
 
+#include 'ltcp.def'
+
+#depends 'documents-bd.pl'
+#depends 'check_trans.status'
+
+
 <UL>
 <perl>
-do 'doccurrent_status.pl';
-do 'ltcp.pl';
+#include 'ltcp.pl'              IPP_NOSYNCLINES
+#include 'doccurrent_status.pl' IPP_NOSYNCLINES
+
 update_db_format();
 
 my ($total, $cat, $cpt);
@@ -16,8 +23,8 @@ foreach my $k (sort keys %$translations) {
 	$cpt->{'DDP'}->{$t->{'status'}}++;
 }
 
-do 'webcurrent_status.pl';
-update_db_CVS();
+#include 'webcurrent_status.pl' IPP_NOSYNCLINES
+
 update_db_format();
 
 foreach my $k (sort keys %$translations) {
@@ -34,7 +41,7 @@ print "
 ";
 
 foreach my $s (sort keys %{$cpt->{'DDP'}}) {
-	printf ("<LI>Documents « $status[$s] » : $cpt->{'DDP'}->{$s} (%.1f\%)",$cpt->{'DDP'}->{$s}/$cat->{'DDP'}*100);
+	printf ("<LI>Documents « <a href=\"doc-$filename[$s].fr.html\">$status[$s]</a> » : $cpt->{'DDP'}->{$s} (%.1f\%)",$cpt->{'DDP'}->{$s}/$cat->{'DDP'}*100);
 }
 
 print "
@@ -44,7 +51,7 @@ print "
 ";
 
 foreach my $s (sort keys %{$cpt->{'Web'}}) {
-	printf ("<LI>Documents « $status[$s] » : $cpt->{'Web'}->{$s} (%.1f\%)",$cpt->{'Web'}->{$s}/$cat->{'Web'}*100);
+	printf ("<LI>Documents « <a href=\"www-$filename[$s].fr.html\">$status[$s]</a> » : $cpt->{'Web'}->{$s} (%.1f\%)",$cpt->{'Web'}->{$s}/$cat->{'Web'}*100);
 }
 print "
 </UL>
