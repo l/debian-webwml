@@ -12,12 +12,12 @@ $comment	= '^# Consultant:\s*(.*)\s*$';
 open( FILE, "<$filename" ) || die "$filename: $!\n";
 
 my $buffer = "";
+my $outfile = "consultant.inc";
 my $count = 0;
 my %country;
 
 # Count consultants/countries
 while ( <FILE> ) {
-	$buffer .= $_;
 	chomp;
 	if( /$comment/ ) {
 		$count++;
@@ -33,25 +33,19 @@ my $number = $#_;
 
 close( FILE );
 
-# Print results and modify file
-my $changes = $buffer;
+# Print results
 
 foreach ( sort keys %country ) {
 	printf "%-4d  %s\n", $country{$_}, $_;
-	$changes =~ s/(#$_.*?)\((\d+)\)/$1($country{$_})/s;
+	$buffer .= sprintf ("<define-tag %s_count>%d</define-tag>\n", $_, $country{$_});
 }
 
 # Report numbers and update file in buffer
 print "Number of consultants: $count\n";
 print "Number of countries:   $number\n";
-$changes =~ s|(total_consultant>)\d+(</define)|$1$count$2|s;
-$changes =~ s|(total_country>)\d+(</define)|$1$number$2|s;
+$buffer .= sprintf ("<define-tag total_consultant>%d</define-tag>\n", $count);
+$buffer .= sprintf ("<define-tag total_country>%d</define-tag>\n", $number);
 
-# Compare and replace
-if( $changes ne $buffer ) {
-	print "File has changed.  Updating '$filename'.\n";
-	rename $filename, "$filename.bak";
-	open( FILE, ">$filename" ) || die "$filename: $!\n";
-	print FILE $changes;
-	close( FILE );
-}
+open (FILE, ">$outfile") || die "$outfile: $!\n";
+print FILE $buffer;
+close (FILE);
