@@ -17,7 +17,7 @@ include $(WMLBASE)/Make.dep.templ
 # When building the html files we have to take into account which directory
 # they are in.
 WMLOUTFILE=$(@D)/$(@F)
-%.html.$(LANGUAGE) : %.wml
+%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/weeklynews/footer.wml
 	$(WML) $(<)
 
 # This Makefile will handle converting all .wml files in this directory
@@ -34,4 +34,5 @@ clean::
 # Need to rebuild the index when anything changes.
 index.html.$(LANGUAGE): $(wildcard $(YEAR)/*) \
       $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(YEAR)/*) \
-      $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
+      $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
+      $(TEMPLDIR)/weeklynews/footer.wml
