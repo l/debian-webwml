@@ -238,7 +238,7 @@ sub languages {
     my $str = "";
     
     if (@used_langs) {
-	$str .= "<hr>\n";
+	$str .= "<hr class=\"hidecss\">\n";
 	$str .= "<!--UdmComment-->\n<p>\n";
 	$str .= gettext( "This page is also available in the following languages:\n" );
 	$str .= "</p><p class=\"navpara\">\n";
