@@ -56,7 +56,7 @@ sub new {
                 #   Package must always be the first field
                 scalar  => [qw(Package Version Section Priority Maintainer PoolDir Type Upstream)],
                 array1  => [qw(Errors Catgets Gettext)],
-                array2  => [qw(NLS PO TEMPLATES PODEBCONF MENU DESKTOP)],
+                array2  => [qw(NLS PO TEMPLATES PODEBCONF MENU DESKTOP MAN)],
         };
         $self->{methods} = {};
         foreach (@{$self->{scalar}}) {
@@ -301,7 +301,8 @@ sub get_date {
 Data about packages can be classified within scalar values (C<package>,
 C<version>, C<section>, C<priority>, C<maintainer>, C<pooldir>, C<type>,
 C<upstream>), arrays (C<errors>, C<catgets>, C<gettext>), and arrays of
-arrays (C<nls>, C<po>, C<templates>, C<podebconf>, C<menu> and C<desktop>).
+arrays (C<nls>, C<po>, C<templates>, C<podebconf>, C<man>, C<menu> and
+C<desktop>).
 Each field has a method with the same name to get and set it, e.g.
 
    $section = $l10n_db->section($pkg);
