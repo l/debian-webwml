@@ -14,4 +14,9 @@ include $(WMLBASE)/Make.common
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
 
-# Do Not modify the following line
+# there is no reason to translate the file partners-form.txt 
+# so don't modify the following
+ifeq ($(LANGUAGE),en)
+install::
+	install -m664 partners-form.txt $(HTMLDIR)
+endif
