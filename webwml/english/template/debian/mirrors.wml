@@ -27,49 +27,12 @@
 # Don't change anything below this point.
 
 #use wml::debian::countries
-
-<define-tag mirrordroplist>
-<form method="GET" action="http://cgi.debian.org/cgi-bin/redirect.pl">
-<input type="hidden" name="page" value="%0">
-<if "$(usefonts)" "<font"><if "$(fontface)" " face="$(fontface)""><if "$(fontcolor)" " color="$(fontcolor)""><if "$(usefonts)" ">">
-<if "$(small)" "<small>">
-<selectserver>:
-<if "$(small)" "</small>">
-<if "$(usefonts)" "</font>">
-<br>
-# note: the values for site don't have an ending slash on purpose, that's page
-<select name="site"<if "$(small)" " style=font-size:90%;">>
-	<option value="http://www.at.debian.org"><ATc></option>
-	<option value="http://www.au.debian.org"><AUc></option>
-# down	<option value="http://www.br.debian.org"><BRc></option>
-	<option value="http://www.bg.debian.org"><BGc></option>
-# dead	<option value="http://www.ca.debian.org"><CAc></option>
-	<option value="http://www.cn.debian.org"><CNc></option>
-	<option value="http://www.dk.debian.org"><DKc></option>
-	<option value="http://www.fr.debian.org"><FRc></option>
-	<option value="http://www.de.debian.org"><DEc></option>
-# screwed up	<option value="http://www.hu.debian.org"><HUc></option>
-	<option value="http://www.jp.debian.org"><JPc></option>
-	<option value="http://www.kr.debian.org"><KRc></option>
-	<option value="http://www.it.debian.org"><ITc></option>
-	<option value="http://www.nl.debian.org"><NLc></option>
-	<option value="http://www.pl.debian.org"><PLc></option>
-	<option value="http://www.ru.debian.org"><RUc></option>
-	<option value="http://www.za.debian.org"><ZAc></option>
-	<option value="http://www.es.debian.org"><ESc></option>
-	<option value="http://www.tr.debian.org"><TRc></option>
-	<option value="http://www.uk.debian.org"><UKc></option>
-#  \/	<option value="http://www.us.debian.org"><USc></option>
-	<option value="http://www.debian.org" selected>www.debian.org</option>
-</select>
-<input type="SUBMIT" value=" <go> "<if "$(small)" " style=font-size:90%;">>
-<br>
-</form>
-</define-tag>
-
 #use wml::sup::path
+#use wml::std::tags
 
-<perl>
+<form method="GET" action="http://cgi.debian.org/cgi-bin/redirect.pl">
+
+<perl> 
   my $rootdir = &canonpath('$(WML_SRC_DIRNAME)/$(HOME)');
 #    print STDERR "rootdir = $rootdir\n";
   my $curdir = &relpath($rootdir, '$(WML_SRC_DIRNAME)');
@@ -78,7 +41,70 @@
 #    print STDERR "file = $file\n";
   (my $path = &canonpath($file)) =~ s/index$//;
 #    print STDERR "path = $path\n";
-  print <<END;
-<mirrordroplist $path>
-END
+  print "<input type=\"hidden\" name=\"page\" value=\"$path\">\n";
 </perl>
+
+<if "$(usefonts)" "<font"><if "$(fontface)" " face="$(fontface)""><if "$(fontcolor)" " color="$(fontcolor)""><if "$(usefonts)" ">">
+<if "$(small)" "<small>">
+<selectserver>:
+<if "$(small)" "</small>">
+<if "$(usefonts)" "</font>">
+<br>
+# note: the values for site don't have an ending slash on purpose, that's page
+<select name="site"<if "$(small)" " style=font-size:90%;">>
+<perl>
+my %mirrors = (
+    "<ATc>" => "at",
+    "<AUc>" => "au",
+    "<BGc>" => "bg",
+    "<CNc>" => "cn",
+    "<DKc>" => "dk",
+    "<FRc>" => "fr",
+    "<DEc>" => "de",
+    "<JPc>" => "jp",
+    "<KRc>" => "kr",
+    "<ITc>" => "it",
+    "<NLc>" => "nl",
+    "<PLc>" => "pl",
+    "<RUc>" => "ru",
+    "<ZAc>" => "za",
+    "<ESc>" => "es",
+    "<TRc>" => "tr",
+    "<UKc>" => "uk",
+              );
+# Transform this list
+my $mirrors_lang = {};
+foreach $m (keys %mirrors) {
+    while ($m =~ m/\[([A-Z_]+):(.*?):\]/g) {
+        $mirrors_lang->{$1}->{$2} = $mirrors{$m};
+    }
+}
+foreach $l (keys %$mirrors_lang) {
+  foreach $m (sort langcmp keys %{$mirrors_lang->{$l}}) {
+  <perl:print>  [$l:<option value=\"http://www.$mirrors_lang->{$l}->{$m}.debian.org\">$m</option>\n:]</perl:print>
+  }
+}
+</perl>
+#	<option value="http://www.at.debian.org"><ATc></option>
+#	<option value="http://www.au.debian.org"><AUc></option>
+#	<option value="http://www.bg.debian.org"><BGc></option>
+#	<option value="http://www.cn.debian.org"><CNc></option>
+#	<option value="http://www.dk.debian.org"><DKc></option>
+#	<option value="http://www.fr.debian.org"><FRc></option>
+#	<option value="http://www.de.debian.org"><DEc></option>
+#	<option value="http://www.jp.debian.org"><JPc></option>
+#	<option value="http://www.kr.debian.org"><KRc></option>
+#	<option value="http://www.it.debian.org"><ITc></option>
+#	<option value="http://www.nl.debian.org"><NLc></option>
+#	<option value="http://www.pl.debian.org"><PLc></option>
+#	<option value="http://www.ru.debian.org"><RUc></option>
+#	<option value="http://www.za.debian.org"><ZAc></option>
+#	<option value="http://www.es.debian.org"><ESc></option>
+#	<option value="http://www.tr.debian.org"><TRc></option>
+#	<option value="http://www.uk.debian.org"><UKc></option>
+##  \/	<option value="http://www.us.debian.org"><USc></option>
+	<option value="http://www.debian.org" selected>www.debian.org</option>
+</select>
+<input type="SUBMIT" value=" <go> "<if "$(small)" " style=font-size:90%;">>
+<br>
+</form>
