@@ -25,7 +25,7 @@ sub countNewline {
 sub processFile {
         my $file = shift;
         my $prefix = shift;
-        my ($text, $lineno, $nextlineno, $msgid);
+        my ($text, $lineno, $comment, $nextlineno, $msgid);
         my (@messages) = ();
         my (%msgids) = ();
         my $repl = '';
@@ -39,13 +39,19 @@ sub processFile {
                 $repl = $1;
         }
         $file =~ s{^$prefix}{$repl}o unless $prefix eq '__';
-        #  Remove comments
-        $text =~ s/^[ \t]*#.*//mg;
+        #  Remove comments if they contain <gettext> or </gettext>
+        $text =~ s/^[ \t]*#.*<\/?gettext\b//mg;
         $lineno = 1;
         while ($text =~ m{\G(.*?)(<gettext\b[^>]*>)(.*?)</gettext>}gs) {
                 $msgid = escape($3);
                 $lineno += countNewline ($1.$2);
                 $nextlineno = countNewline ($3);;
+                $comment = '';
+                if ($1 =~ m/(((^|\n)[ \t]*#.*)+)\n?[^\n]*$/) {
+                        $comment = $1;
+                        $comment =~ s/^\s+#\s*//;
+                        $comment =~ s/\n[ \t]*#\s*/\n/g;
+                }
                 push (@msgids, $msgid);
                 if (defined ($messages->{$msgid})) {
                         print STDERR "Warning: msgid multiple defined:\n\t".
@@ -53,7 +59,7 @@ sub processFile {
                 } else {
                         $messages->{$msgid} = [];
                 }
-                push (@{$messages->{$msgid}}, $file, $lineno);
+                push (@{$messages->{$msgid}}, $comment, $file, $lineno);
                 $lineno += $nextlineno;
         }
 }
@@ -72,6 +78,9 @@ print "msgid \"\"\nmsgstr \"\"\n".
 foreach my $msgid (@msgids) {
         next unless $messages->{$msgid};
         while (@{$messages->{$msgid}}) {
+                $_ = shift(@{$messages->{$msgid}});
+                s/\n/\n#. /g;
+                print "#. ".$_."\n" if $_;
                 print "#: ".shift(@{$messages->{$msgid}}).":".
                             shift(@{$messages->{$msgid}})."\n";
         }
