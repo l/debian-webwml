@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - server di controllo" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.36" maintainer="Giuseppe Sacco"
+#use wml::debian::translation-check translation="1.40" maintainer="Giuseppe Sacco"
 
 <h1>Introduzione al server di posta di controllo e gestione bug</h1>
 
@@ -167,7 +167,9 @@ esatto viene fatto su tutti i pacchetti ai quali il bug è assegnato), e tutti
 con la medesima gravità.
 Se non partissero tutti dallo stesso stato dovresti usare 
 <code>reassign</code>, <code>reopen</code> e così via 
-per essere sicuro che lo siano prima di usare <code>merge</code>.</p>
+per essere sicuro che lo siano prima di usare <code>merge</code>.
+Non &egrave; necessario che i titoli corrispondano e non saranno
+modificati dal merge.</p>
 
 <P>Se uno dei bug elencati in un comando <code>merge</code>
 è già collegato con un altro bug, tutti i rapporti collegati con
@@ -200,7 +202,7 @@ gruppo nuovo.</p>
 se vuoi scollegare più di un bug semplicemente includi un serie di comandi
 <code>unmerge</code> nel tuo messaggio.
 
-<dt><code>tags</code> <var>bugnumber</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var>
+<dt><code>tags</code> <var>bugnumber</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var> [ <var>tag</var> ... ]
 
   <dd>Imposta un particolare tag per il rapporto su bug 
   #<var>bugnumber</var> al valore
@@ -209,6 +211,33 @@ se vuoi scollegare più di un bug semplicemente includi un serie di comandi
   <code>-</code> significa sottrai, e
   <code>=</code> significa ignora i tag correnti e impostali da zero.
   L'azione di default è aggiungi.
+
+  <dd>Imposta i tag per la segnalazione numbero <var>bugnumber</var>.
+  Nessuna notifica viene inviata a chi ha fatto la segnalazione. Se
+  l'azione &egrave; <code>+</code> allora ogni <var>tag</var> specificato
+  sar&agrave; aggiunto; se &egrave; <code>-</code> allora ogni <var>tag</var>
+  specificato verr&agrave; tolto; se &egrave; <code>=</code> allora i
+  <var>tag</var> specificati andranno a sostituire gli attuali. L'azione
+  predefinita &egrave; aggiungi.
+
+  <p>Esempio d'uso:</p>
+
+  <pre>
+        \# eguale a 'tags 123456 + patch'
+        tags 123456 patch
+
+        \# eguale a 'tags 123456 + help security'
+        tags 123456 help security
+
+        \# aggiunge i tag 'fixed' e 'pending'
+        tags 123456 + fixed pending
+
+        \# elimina il tag 'unreproducible'
+        tags 123456 - unreproducible
+
+        \# imposta esattamente i tag 'moreinfo' e 'unreproducible'
+        tags 123456 = moreinfo unreproducible
+  </pre>
 
   <p>I tag correntemente disponibili includono <code>patch</code>, <code>wontfix</code>,
   <code>moreinfo</code>, <code>unreproducible</code>, <code>help</code>,
@@ -223,7 +252,7 @@ se vuoi scollegare più di un bug semplicemente includi un serie di comandi
   <p>Per <a href="Developer#tags">i loro significati</a> consulta 
   la documentazione generale dello sviluppatore per il sistema bug.
 
-<dt><code>close</code> <var>bugnumber</var>
+<dt><code>close</code> <var>bugnumber</var> (sconsigliato)
 <dd>
 
 Chiude il rapporto sul bug #<var>bugnumber</var>.
