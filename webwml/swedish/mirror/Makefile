@@ -8,6 +8,10 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+
+# there only needs to be one version of the following so
+# the non-english directories shouldn't try to install them
+ifeq ($(LANGUAGE),en)
 MFILES := ftpsync ftpsync.conf websync websync.conf \
 	identity.pub.master.ftp identity.pub.master.web \
 	anonftpsync anonwebsync \
@@ -19,10 +23,6 @@ install:: $(MIRROR_FILES)
 cleandest::
 	-rm -f $(HTMLDEST)/{$(MIRROR_FILES)}
 
-
-# there only needs to be one version of the following so
-# the non-english directories shouldn't try to install them
-ifeq ($(LANGUAGE),en)
 $(HTMLDIR)/ftpsync: ftpsync
 	cp ftpsync $(HTMLDIR)
 $(HTMLDIR)/ftpsync.conf: ftpsync.conf
