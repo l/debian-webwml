@@ -1,74 +1,61 @@
 #use wml::debian::template title="ミラーサイズ"
-#use wml::debian::translation-check translation="1.2"
+#use wml::debian::translation-check translation="1.15"
 
-<h3>アーカイブの大きさは?</h3>
+<h3>Debian FTP サイトの大きさは?</h3>
 
-このページにあげられている数値は、
-1999 年 5 月 17 日現在のアーカイブのものです。
+# psql -U nobody projectb
+# projectb=> select sum(files.size) from files,binaries,architecture
+#            where architecture.id=binaries.architecture and
+#            architecture.arch_string='i386' and files.id=binaries.file;
+# projectb=> select architecture.arch_string as Architecture, sum(files.size)
+#            from files,binaries,architecture where
+#            architecture.id=binaries.architecture and files.id=binaries.file
+#            group by architecture.arch_string;
 
-<h4>アーカイブ全体</h4>
+# however, this might not work completely reliably, it will report smaller
+# figures. dunno exactly why, elmo didn't have a good answer.
 
-約 9GB (増加中)
 
-<h4>Debian 2.1 (現行の安定版、コード名 slink)</h4>
-<pre>
-3156032 main
-         368683  binary-all
-         432143  binary-alpha
-         486672  binary-i386
-         350246  binary-m68k
-         211870  binary-sparc
-         95139   disks-alpha
-         44251   disks-i386
-         66989   disks-m68k
-         41782   disks-sparc
-         1039269 source
-         893     upgrade-2.0-i386
-         39168   upgrade-older-i386
- 212470 contrib
- 574768 non-free
--------
-3943270
-</pre>
+<p>このページにあげられている数値は、
+2001 年 9 月 7 日現在のアーカイブのものです。
 
-<h4>現行の開発版 (コード名 potato)</h4>
-<pre>
-1227450  main
-          91533   binary-all
-          113576  binary-alpha
-          349389  binary-i386
-          206211  binary-m68k
-          83500   binary-sparc
-          383240  source
-  93502  contrib
- 301688  non-free
--------
-1622640
-</pre>
+<dl>
+<dt><strong>全体</strong></dt>
+  <dd>約 35 GB</dd>
 
-リリースが近づくと、開発版のアーカイブが増大することには注意してください。
-安定版と開発版の両方に同じバージョンがある場合、
-開発版のバージョンには安定版のバージョンから
-シンボリックリンクが張られます。
+<dt><strong>Debian 2.2 (現在の安定版リリース, `potato')</strong></dt>
+  <dd>約 9 GB</dd>
 
-<h4>sid (Debian でリリースされていない移植版を収録)</h4>
+<dt><strong>リリースされたアーキテクチャ</strong></dt>
+  <dd>およそ 2.3 GB から 3.9 GB の範囲</dd>
 
-約 1100000 (増加中)
+<dt><strong>リリースされていないアーキテクチャ</strong></dt>
+  <dd>平均で 1 GB だが増加中</dd>
+</dl>
 
-<br>こちらは、新たに移植版がリリースされたときにはアーカイブが縮小されます。
-もちろん、このことはアーカイブの安定版と開発版が増大することを意味します。
+<p>アーカイブは恒常的に増加していることに注意してください。
+テスト版はリリース時期になると特に増加するでしょう。
+ただし、私達は特定のディストリビューションや特定のアーキテクチャ、
+ソースなどを除外することでミラーのサイズを減少させることは認めていません。
+
+<h3>Debian non-US FTP サイトの大きさは?</h3>
+
+<p>non-US アーカイブは全体で約 1.7 GB です。リリースされた
+アーキテクチャごとに 100 - 180 MB で、リリースされていないアーキテクチャ
+はそれらより少ないです。
 
 <h3>ウェブページの大きさは?</h3>
 
-<h4>ウェブページ全体</h4>
+<dl>
+<dt><strong>www.debian.org</strong></dt>
+  <dd>約 500 MB</dd>
 
-約 2200000
+<dt><strong>lists.debian.org</strong></dt>
+  <dd>約 4.2 GB</dd>
 
-<h4>全ミラーサイトがミラーしなければならないとは限らない部分:</h4>
-<pre>
- 310000  Bugs
-1400000  Lists-Archives (増加中)
-</pre>
+<dt><strong>packages.debian.org</strong></dt>
+  <dd>約 160 MB</dd>
+</dl>
 
-上記のディレクトリすべてをミラーしない場合は、
-すべてのリンクが機能するように他のサイトへのリダイレクトを用いてください。
+<p>これらのサイズは恒常的に増加しています。
+ただし、FTP サイトにくらべればゆっくりしたものです。
