@@ -8,24 +8,14 @@
   <gettext><a href="../../">Back issues</a> of this newsletter are available.</gettext>
 </define-tag>
 
-<define-tag editor1 whitespace=delete>
-  <gettext>Debian Weekly News is edited by <a href="mailto:dwn@debian.org">Joey Hess</a>.</gettext>
-</define-tag>
-<define-tag editor2 whitespace=delete>
-  <gettext>Debian Weekly News is edited by <a href="mailto:dwn@debian.org">Joe 'Zonker' Brockmeier, Jean-Christophe Helary and Tollef Fog Heen</a>.</gettext>
-</define-tag>
-<define-tag editor3 whitespace=delete>
-  <gettext>Debian Weekly News is edited by <a href="mailto:dwn@debian.org">Joe 'Zonker' Brockmeier and Martin 'Joey' Schulze</a>.</gettext>
-</define-tag>
-<define-tag editor4 whitespace=delete>
-  <gettext>Debian Weekly News is edited by <a href="mailto:dwn@debian.org">Yooseong Yang and Martin 'Joey' Schulze</a>.</gettext>
-</define-tag>
-<define-tag editor5 whitespace=delete>
-  <gettext>Debian Weekly News is edited by <a href="mailto:dwn@debian.org">Martin 'Joey' Schulze</a>.</gettext>
+<define-tag editor_form whitespace=delete>
+  <gettext>Debian Weekly News is edited by <a href="mailto:dwn@debian.org">%s</a>.</gettext>
 </define-tag>
 
 <define-tag editor whitespace=delete>
 <:{
+   my $editor = "$(editor)";
+   if (!length ($editor)) {
      my $path = q|<get-var WML_SRC_DIRNAME>|;
      my ($issue, $year, $null) = split /\//, scalar reverse $path;
      $year = reverse $year;
@@ -42,15 +32,32 @@
 	  $issue = 0;
      }
      
-     if (($year > 2002) or (($year == 2002) and ($issue >= 2))) {
-	  print q{<editor4>};
+     if (($year > 2002) or (($year == 2002) and ($issue >= 31))) {
+	  $editor = "Martin 'Joey' Schulze";
+     } elsif (($year > 2002) or (($year == 2002) and ($issue >= 2))) {
+	  $editor = "Yooseong Yang, Martin 'Joey' Schulze";
      } elsif (($year > 2001) or (($year >= 2001) and ($issue >= 20))) {
-	  print q{<editor3>};
+	  $editor = "Joe 'Zonker' Brockmeier, Martin 'Joey' Schulze";
      } elsif (($year > 2001) or (($year >= 2001) and ($issue >= 10))) {
-	  print q{<editor2>};
+	  $editor = "Joe 'Zonker' Brockmeier, Jean-Christophe Helary, Tollef Fog Heen";
      } else {
-	  print q{<editor1>};
+	  $editor = "Joey Hess";
      }
+   }
+
+   if ($CUR_ISO_LANG eq 'en') {
+     $editor =~ s/,([^,]+)$/ and $1/;
+     $editor =~ s/,/, /g;
+   } elsif ($CUR_ISO_LANG eq 'de') {
+     $editor =~ s/,([^,]+)$/ und $1/;
+     $editor =~ s/,/, /g;
+   } else {
+     # Fallback to the english style if there's no translation yet
+     $editor =~ s/,([^,]+)$/ and $1/;
+     $editor =~ s/,/, /g;
+   }
+
+    printf q{<editor_form>}, $editor;
 }:>
 </define-tag>
 
