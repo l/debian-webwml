@@ -326,7 +326,7 @@ sub package_pages_walker {
 				   $env->{lang}, $short_desc,
 				   "$env->{distribution}, $subdist_kw, $archive, $section, size:$size_kw $version" );
 	$package_page .= "[&nbsp;".gettext( "Distribution:" )." <a title=\"".gettext( "Overview over this distribution" )."\" href=\"../\">$env->{distribution}</a>&nbsp;]\n";
-	$package_page .= "[&nbsp;".gettext( "Section:" )." <a title=\"".gettext( "All packages in this section" )."\" href=\"../$section\">$section</a>&nbsp;]\n";
+	$package_page .= "[&nbsp;".gettext( "Section:" )." <a title=\"".gettext( "All packages in this section" )."\" href=\"../$section/\">$section</a>&nbsp;]\n";
 
 	$package_page .= sprintf( gettext( "<h1>Package: %s (%s)" ),
 				  $name, $v_str );
