@@ -38,6 +38,7 @@ my $input = new CGI;
 
 
 # If you want, just print out a list of all of the variables and exit.
+# print $input->header;
 # print $input->dump;
 # exit;
 
@@ -48,7 +49,7 @@ my %params_def = ( keywords => { default => undef, match => '^\s*([-+\@\w\/.:]+)
 		   subword => { default => 0, match => '^(\w+)$' },
 		   exact => { default => undef, match => '^(\w+)$' },
 		   searchon => { default => 'all', match => '^(\w+)$' },
-		   release => { default => 'all', match => '^(\w+)$',
+		   release => { default => 'all', match => '^([\w-]+)$',
 				replace => { all => '*'} },
 		   arch => { default => 'any', match => '^(\w+)$',
 			     replace => { any => '*'} },
@@ -79,6 +80,12 @@ my $exact = $params{values}{exact}{final};
 $exact = !$subword unless defined $exact;
 my $searchon = $params{values}{searchon}{final};
 my $releases = $params{values}{release}{final};
+# ugly hack -- djpig
+my $archive = '*';
+if ($releases =~ /non-US/i) {
+	$releases = '*';
+	$archive = 'non-US';
+}
 my $arch = $params{values}{arch}{final};
 my $page = $params{values}{page}{final};
 my $results_per_page = $params{values}{number}{final};
@@ -126,8 +133,8 @@ while (<C>) {
 close (C);
 
 my $fdir = $topdir . "/files/flat/$version/$releases";
-my $file = "Packages-$arch.*";
-my $srcfile = "Sources.*";
+my $file = "Packages-$arch.$archive";
+my $srcfile = "Sources.$archive";
 my $search_on_sources = 0;
 
 my %descr;
