@@ -154,10 +154,13 @@
       return ($stored_passwd == $crypted_passwd);
   }
 
-  function print_applicants($db, $sql) {
+  function print_applicants($db, $sql, $limit = 0) {
   if (! ($query = pg_exec($db, $sql))) {
     echo "Problem with query", pg_ErrorMessage($db), "<BR>";
     return FALSE;
+  }
+  if ($limit && $rows > $limit) {
+      $rows = $limit;
   }
   $rows = pg_NumRows($query);
   if ($rows) {
