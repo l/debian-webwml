@@ -3,7 +3,7 @@
 # problem can be fixed.
 
 WMLBASE=../..
-CUR_DIR=events/1999
+CUR_DIR=events/1998
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
 SUBS=expo vatech-if
