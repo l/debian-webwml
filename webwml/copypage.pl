@@ -156,18 +156,12 @@ sub copy
 
 	# Copy the file and insert the revision number
 	my $insertedrevision = 0;
-	my $isdefinetag = 0;
-	my $ignorews = 0;
 
 	while (<SRC>)
 	{
 		next if /\$Id/;
 
-		$isdefinetag = 1 if /<define-tag/;
-		$ignorews = 1 if $isdefinetag;
-
-		unless ($insertedrevision || /^#/ || $isdefinetag ||
-		        ($ignorews && /^$/))
+		unless ($insertedrevision || /^#/)
 		{
 			print DST qq'#use wml::debian::translation-check translation="$revision"\n';
 			$insertedrevision = 1;
@@ -180,9 +174,6 @@ sub copy
 		{
 			print DST $_;
 		}
-
-		$isdefinetag = 0 if m'</define-tag>';
-		$ignorews = 0 if /^#/;
 	}
 
 	unless ($insertedrevision)
