@@ -4,12 +4,10 @@
 
 WMLBASE=../..
 CUR_DIR=international/spanish
-SUBS=contrib
+SUBS=
 
 include $(WMLBASE)/Make.lang
 
 
 # Do Not modify the following line
-%.$(LANGUAGE).html: %.wml $(WMLBASE)/../spanish/ltcp.pl $(WMLBASE)/../spanish/current_status.pl $(WMLBASE)/../spanish/documents-bd.pl
-# As a matter of fact the www pages should depend on all the www tree..
-# ¿How to make this run always?
+
