@@ -10,13 +10,11 @@ GETTEXTFILES = search.mo
 
 include $(WMLBASE)/Make.lang
 
-all:: search-convert
-
 search.$(LANGUAGE).html: search.wml $(ENGLISHSRCDIR)/searchtmpl/search.data \
   $(ENGLISHSRCDIR)/searchtmpl/search.def $(TEMPLDIR)/common_translation.wml \
   $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml $(TEMPLDIR)/footer.wml \
   $(GETTEXTDEP)
-
-search-convert: search.$(LANGUAGE).html
-	c=`grep '^<meta http-equiv="Content-Type" content="text/html; charset=.*">' $? | sed -e 's/^<meta http-equiv="Content-Type" content="text\/html; charset=\(.*\)">/\1/'`; \
-          iconv -f $$c -t UTF-8 $? | sed -e 's/<meta http-equiv="Content-Type" content="text\/html; charset=.*">/<meta http-equiv="Content-Type" content="text\/html; charset=UTF-8">/' > $?.tmp && mv $?.tmp $?
+	$(WML) $<
+# XXX this likely doesn't work at all for SUBLANG-enabled languages!
+	c=`grep CHARSET ../.wmlrc | cut -d= -f2`; \
+          iconv -f $$c -t UTF-8 $< | perl -pe 's,^(\s*<meta http-equiv="Content-Type" content="text/html; charset=)\S+(">)$$,$$1UTF-8$$2,' > $<
