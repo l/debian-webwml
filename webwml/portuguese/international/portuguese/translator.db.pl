@@ -51,6 +51,14 @@ sub init_translators {
 	    file      => 0,
 	    compress  => 'none'
 	    },
+	'Gustavo Rezende Montesino' => {
+	    email     => 'ikki_gerrard@yahoo.com.br',
+	    summary   => 2,
+	    logs      => 2,
+	    diff      => 0,
+	    tdiff     => 0,
+	    compress  => 'none'
+	},
 
 	# Below are special users, used to handle special cases
 	#     default:      default values
