@@ -156,6 +156,7 @@ sub get_stats_templates {
         my %incl = ();
         my %excl = ();
         my $none = '';
+        my $errors = {};
         foreach $pkg (sort @{$packages}) {
                 unless ($data->has_templates($pkg)) {
                         $none .= "<li>".$pkg."</li>\n";
@@ -211,6 +212,27 @@ sub get_stats_templates {
                         }
                         $excl{$l} .= ", ";
                 }
+                if ($data->has_errors($pkg)) {
+                        $errors->{$pkg} = { unknown => [], master => [], fuzzy => [], mismatch => [], };
+                        my $found = 0;
+                        foreach (@{$data->errors($pkg)}) {
+                                next unless s/debconf: //;
+                                if (m/([^:]+):(\d+): original-fields-removed-in-translated-templates/) {
+                                        push(@{$errors->{$pkg}->{unknown}}, "$1:$2");
+                                        $found = 1;
+                                } elsif (m/([^:]+):(\d+): translated-fields-in-master-templates/) {
+                                        push(@{$errors->{$pkg}->{master}}, "$1:$2");
+                                        $found = 1;
+                                } elsif (m/([^:]+):(\d+): fuzzy-fields-in-templates/) {
+                                        push(@{$errors->{$pkg}->{fuzzy}}, "$1:$2");
+                                        $found = 1;
+                                } elsif (m/([^:]+):(\d+): lang-mismatch-in-translated-templates/) {
+                                        push(@{$errors->{$pkg}->{mismatch}}, "$1:$2");
+                                        $found = 1;
+                                }
+                        }
+                        delete $errors->{$pkg} unless $found;
+                }
         }
         foreach $lang (@td_langs) {
                 next unless defined $incl{uc $lang};
@@ -230,6 +252,36 @@ sub get_stats_templates {
         open (GEN, "> $opt_l/templates/gen/$section.exc")
                 || die "Unable to write into $opt_l/templates/gen/$section.exc";
         print GEN "<ul>\n".$none."</ul>\n" if $none ne '';
+        close (GEN);
+        open (GEN, "> $opt_l/templates/gen/errors-by-pkg.$section.inc");
+        foreach $pkg (sort keys %$errors) {
+                print GEN "<li>$pkg\n<ul>\n";
+                if (@{$errors->{$pkg}->{master}}) {
+                        print GEN "<li><a href=\"errors#master\">translated-fields-in-master-templates</a><br>\n".${$errors->{$pkg}->{master}}[0]."</li>\n";
+                }
+                if (@{$errors->{$pkg}->{unknown}}) {
+                        print GEN "<li><a href=\"errors#unknown\">translated-templates-not-in-original</a><br>\n";
+                        foreach (@{$errors->{$pkg}->{unknown}}) {
+                                print GEN "$_<br>\n";
+                        }
+                        print GEN "</li>\n";
+                }
+                if (@{$errors->{$pkg}->{fuzzy}}) {
+                        print GEN "<li><a href=\"errors#fuzzy\">fuzzy-fields-in-templates</a><br>\n";
+                        foreach (@{$errors->{$pkg}->{fuzzy}}) {
+                                print GEN "$_<br>\n";
+                        }
+                        print GEN "</li>\n";
+                }
+                if (@{$errors->{$pkg}->{mismatch}}) {
+                        print GEN "<li><a href=\"errors#mismatch\">lang-mismatch-in-translated-templates</a><br>\n";
+                        foreach (@{$errors->{$pkg}->{mismatch}}) {
+                                print GEN "$_<br>\n";
+                        }
+                        print GEN "</li>\n";
+                }
+                print GEN "</ul>\n";
+        }
         close (GEN);
 }
 
