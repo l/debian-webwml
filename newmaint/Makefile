@@ -17,6 +17,8 @@ DEBTEMPLATEDIR := ../webwml/english/template
 endif
 DEBTEMPLATES=$(wildcard $(DEBTEMPLATEDIR)/debian/*.wml) $(wildcard template/*.wml)
 #WML_DEFS= -DINTRO="http://www.debian.org/intro" -DDISTRIB="http://www.debian.org/distrib" -DHOME="http://www.debian.org" -DPICS="http://www.debian.org/Pics" -DCUR_ISO_LANG="en" -I $(DEBTEMPLATEDIR) -I template -DSEARCH="http://search.debian.org/"
+TARGETDIR=../../web
+
 WML_DEFS= -I $(DEBTEMPLATEDIR)
 
 all: $(HTMLFILES) $(PHPFILES)
@@ -34,7 +36,7 @@ backup:
 	rsync -e ssh -r template $(WMLFILES) $(INCFILES) Makefile pandora.debian.org:/org/nm.debian.org/wml
 
 install: $(HTMLFILES) $(PHPFILES) 
-	cp $(HTMLFILES) $(PHPFILES) $(IMAGES) $(INCFILES) /var/www/nm
+	cp $(HTMLFILES) $(PHPFILES) $(IMAGES) $(INCFILES) $(TARGETDIR)
 
 clean:
 	rm -f $(PHPFILES) $(HTMLFILES)
