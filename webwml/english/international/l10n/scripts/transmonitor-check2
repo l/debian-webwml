@@ -369,6 +369,8 @@ sub parse_tarball {
                 debug       => 0,
                 patch_debug => 0,
         );
+        return undef unless $deb;
+
         $data->upstream($pkg, "other")
                 if $deb->get_diff_name() ne '';
         $data->upstream($pkg, "dbs")
@@ -391,7 +393,7 @@ sub parse_tarball {
                 if (@list) {
                         $control = $list[0];
                 } else {
-                        $deb->clear_pkg($pkg);
+                        $data->clear_pkg($pkg);
                         warn("Error: can't find debian/control; skipping package $pkg.");
                         return undef;
                 }
@@ -515,7 +517,7 @@ sub search_po {
         my $bad_lang=""; #this could be a language, but this is not a valid language
         my $this_stat = ""; #stats for this file
         my $err_msg =""; # err msg of the statistic external command (ie, msgfmt or debconf-stats)
-        my $regexp_for_lang_code = "(([a-zA-Z]{2})([-_][a-zA-Z]{2})?(@[^.]*)?)(\.[^.]*)?";
+        my $regexp_for_lang_code = '(([a-zA-Z]{2})([-_][a-zA-Z]{2})?(@[^./]*)?)(\.[^./]+)?';
 
         POFILE: foreach $file (@pofiles) {
                 $filename = store_disk_po($pkg, $file);
@@ -524,25 +526,8 @@ sub search_po {
 
                 $this_stat = "";
                 $lang = "";
-                if ($lang eq "" && $file=~ m/\/$regexp_for_lang_code\.po$/o) {
+                if ($lang eq "" && $file=~ m,(?:_|\b)$regexp_for_lang_code\.po$,o) {
                         $bad_lang =$1;
-#          print("Rule 0 match ($1)\n");
-                        if (is_lang($bad_lang)) {
-                                $lang = $bad_lang;
-                                $bad_lang = "";
-                        }
-                }
-                if ($lang eq "" && $file=~ m/\/po\/$regexp_for_lang_code\.po$/o){
-                        $bad_lang =$1;
-#          print("Rule 1 match ($1)\n");
-                        if (is_lang($bad_lang)) {
-                                $lang = $bad_lang;
-                                $bad_lang = "";
-                        }
-                }
-                if ($lang eq "" && $file=~ m#/$regexp_for_lang_code#o && $1 ne "po") {
-                        $bad_lang =$1;
-#          print("Rule 2 match ($1)\n");
                         if (is_lang($bad_lang)) {
                                 $lang = $bad_lang;
                                 $bad_lang = "";
@@ -551,7 +536,6 @@ sub search_po {
                 # The next rule is for kde-i18n and other such packages
                 if ($lang eq "" && $file =~ m,^$regexp_for_lang_code/messages,) {
                         $bad_lang = $1;
-#          print("Rule 3 match ($1)\n");
                         if (is_lang($bad_lang)) {
                                 $lang = $bad_lang;
                                 $bad_lang = "";
@@ -776,6 +760,8 @@ sub init_synonym {
 # sub is_lang(code) : returns true iff code is a valide code of language
 sub is_lang {
         my $code = shift;
+        #   Accept these codes
+        return 1 if $code eq 'du-NL' || $code eq 'no_NY' || $code eq 'cz' || $code eq 'dk' || $code eq 'sp' || $code eq 'wa';
         if ($code =~ /^(..)[-_](..)$/) {
                 return (defined(code2language($1)) && defined(code2country($2)));
         }
