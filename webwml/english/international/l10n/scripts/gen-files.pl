@@ -492,10 +492,10 @@ sub show_stat {
 sub percent_stat {
         my $stat = shift;
         if ($stat =~ m/^(\d+)t(\d+)f(\d+)u$/) {
-                return "100\%" if ($1+$2+$3 == 0);
+                return "0\%" if ($1+$2+$3 == 0);  # there must be an error!
                 return sprintf "%3d%%", (100*$1/($1+$2+$3));
         } else {
-                return 'NaN';
+                return 'n/a';
         }
 }
 sub get_color {
