@@ -1,0 +1,114 @@
+#use wml::debian::template title="Push-Spiegeln"
+#use wml::debian::translation-check translation="1.3"
+# Translator: Martin Schulze <joey@infodrom.north.de>
+
+<p>Push-Spiegeln ist eine Form des Spiegelns unter Verwendung von rsync, so
+daß die Zeit minimiert wird, die benötigt wird, damit Änderungen im
+Hauptarchiv auf den Spiegeln erscheinen.  Der Server-Spiegel benutzt einen
+Trigger-Mechanismus, um den Spiegel zu informieren, daß es aktualisiert
+werden muß.
+
+<p>Push-Spiegeln bedeutet etwas größeren Aufwand beim Einrichten, da die
+Verwalter der beiden betroffenen Spiegel Informationen austauschen müssen.
+Der Vorteil besteht darin, daß der in der Hierarchie höhergelegene Spiegel
+den Spiegel-Prozeß selbst anstoßen kann, sobald sein Archiv aktualisiert
+wurde.  Dadurch werden Änderungen im Archiv extrem schnell propagiert.
+
+<h2>Beschreibung der Methode</h2>
+
+<p>Zuerst etwas Hintergrund über SSH.  SSH erlaubt Personen, sich auf
+Accounts auf anderen Rechnern auf eine sichere Weise zu verbinden.
+Paßwörter werden niemals im Klartext übertragen.  Wenn Sie einmal eine
+Verbindung zu einem Rechner aufgebaut haben, können Sie sicher sein, daß
+zukünftige Verbindungen zu derselben Maschine gehen.  Dieses verhindert
+viele Mann-in-der-Mitte-Angriffe.
+
+<p>Eine Fähigkeit, die SSH mitbringt, besteht in der Möglichkeit eines
+Benutzers, den öffentlichen Identitätschlüssel (public key) eines Benutzers
+auf einer anderen Maschine zu nehmen und auf dem eigenen Rechner zu einer
+Datei authorisierter Schlüssel hinzuzufügen.  Vorgeingestellt ist, daß der
+Benutzer der anderen Maschine (der den privaten Identitätschlüssel hat, der
+zu dem öffentlichen paßt) von da an die Privilegien genießt, sich unter
+Ihrem Account einzuloggen.  Es ist jedoch möglich, Text zu dem
+authorisierten Schlüssel hinzuzufügen, der den Zugang des anderen Benutzers
+beschränkt.
+
+<p>Um den Spiegel zu schützen, ist dem Schlüssel vom höhergelegenen Spiegel
+Text hinzugefügt, so daß die Person, die dadurch Zugang zum Spiegel erhält
+nur eines darf - das Programm auf Ihrem Rechner zu starten, das den Spiegel
+aktualisiert.  Selbst wenn jemand (ein böser dritter) in der Lage sein
+sollte, den Schlüssel zu knacken, könnte er nur das Spiegel-Programm auf
+Ihrem Rechner starten.  Sie müssen Sich keine Gedanken darüber machen, daß
+das Programm mehrfach parallel läuft, da es eine Lockdatei verwendet.
+
+<p>Auf der anderen Seite kann rsync so konfiguriert werden, daß beschränkt
+wird, wer einen bestimmten Bereich spiegeln darf, basierend auf einem
+Benutzernamen und Paßwort.  Diese sind komplett verschieden von
+<kbd>ætc/passwd</kbd>, so daß ein Push-Spiegel sich keine Sorgen darüber
+machen muß, anderen Zugang zum Rechner zu geben.  Es ist so konfiguriert,
+daß Benutzername und Paßtwort im Klartext übertragen werden.  Das sollte
+jedoch kein Problem sein, da das schlimmste, das passieren kann, darin
+besteht, daß ein dritter die Möglichkeit erhält, Debian von dem Rechner zu
+spiegeln.
+
+<h2>Aufsetzen eines Push-Client-Spiegels</h2>
+
+<p>Am besten wird es so eingerichtet, daß der Account eines herkömmlichen
+Benutzers verwendet wird, nicht root.  Der Inhalt des öffentlichen
+SSH-Schlüssels, der Ihnen vom höhergelegenen Spiegel gegeben wird, sollte
+in <kbd>~&lt;user&gt;/.ssh/authorized_keys</kbd> abgelegt werden.
+
+<p>Um ein Push-Spiegel für das FTP-Archiv zu werden, benötigen Sie die
+Dateien <a href="ftpsync">ftpsync</a> und <a
+href="ftpsync.conf">ftpsync.conf</a>.  Bearbeiten Sie ftpsync.conf und
+folgen Sie den Anweisungen in der Datei unter Verwendung der Informationen,
+die Ihnen vom höhergelegenen Spiegel gegeben wurden.
+
+<p>Um ein Push-Spiegel für das non-US FTP-Archiv zu werden, benötigen Sie
+die Dateien <a href="ftpsync-non-US">ftpsync-non-US</a> und <a
+href="ftpsync-non-US.conf">ftpsync-non-US.conf</a>.  Die Dateien haben
+andere Namen, so daß Sie den gleichen Account für beide Archive verwenden
+können.
+
+<p>Um ein Push-Spiegel für die Webseiten zu werden, benötigen Sie die
+Dateien <a href="websync">websync</a> und <a
+href="websync.conf">websync.conf</a>.  Bearbeiten Sie websync.conf und
+folgen Sie den Anweisungen in der Datei unter Verwendung der Informationen,
+die Ihnen vom höhergelegenen Spiegel gegeben wurden.
+
+<h2>Primäre Push-Spiegel</h2>
+
+<p>Primäre Push-Spiegel, die auch als Tier-1-Spiegel bezeichnet werden,
+sind die Push-Spiegel, denen es gestattet ist, von unserem Haupt-Archiv zu
+spiegeln.
+
+<p>Wenn Ihr Rechner ein primärer Push-Spiegel für das FTP-Archiv wird,
+benötigen Sie den<a href="identity.pub.master.ftp">öffentlichen Schlüssel
+für archvsync@ftp-master.debian.org</a>.
+
+<p>Wenn Ihr Rechner ein primärer Push-Spiegel für das non-US FTP-Archiv wird,
+benötigen Sie den<a href="identity.pub.non-US.ftp">öffentlichen Schlüssel
+für archvsync@non-us.debian.org</a>.
+
+<p>Wenn Ihr Rechner ein primärer Push-Spiegel für die Webseiten wird,
+benötigen Sie den<a href="identity.pub.master.web">öffentlichen Schlüssel
+für archvsync@www-master.debian.org</a>.
+
+<h2>Einrichten eines Push-Server-Spiegels</h2>
+
+<p>Angesichts der großen Anzahl von Spiegeln und der Größe des
+Debian-Archivs ist es nicht machbar, daß alle Spiegel das Haupt-Archiv als
+Quelle nehemn.  Es ist viel effizienter, die Last auf die Anzahl der
+Push-Spiegel zu verteilen, die über den Globus verteilt sind.
+
+<p>Bitte beachten Sie, daß wir auf Sites zugehen, damit sie Push-Spiegel
+werden.  Wenn Ihr Rechner <strong>sehr</strong> gut angebunden ist (sowohl
+sehr gute Bandbreite als auch gute Verbindungen zu wichtigen Backbones) und
+Sie möchten, daß andere Sites von Ihnen spiegeln, können Sie es uns wissen
+lassen, damit wir Sie für einen Push-Spiegel vorsehen können.
+
+<p>Zusätzlich sollten Push-Spiegel einen Spiegel des gesamten Debian-Archiv
+vorhalten und selbst Push-Spiegel des Hauptarchivs (oder eines anderen
+Push-Servers) sein.
+
+<p>Lesen Sie auch die <a href="push_server">Details zum Einrichten eines Push-Servers</a>.
