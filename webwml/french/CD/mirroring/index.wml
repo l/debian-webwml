@@ -1,64 +1,130 @@
 #use wml::debian::cdimage title="Créer un miroir pour les images de cédérom de Debian" BARETITLE=true
-#use wml::debian::translation-check translation="1.8" maintainer="Willy Picard"
+#use wml::debian::translation-check translation="1.10" maintainer="Willy Picard"
 #use wml::debian::toc
 
 <p>Pour créer un miroir d'images de cédérom de Debian, vous avez besoin
 d'une machine sous Linux ou sous un système de type Unix avec une connexion
-permanente et fiable à l'Internet. Récupérer les images et les rendre
-accessibles peut être fait de différentes manières, selon vos possibilités.</p>
-
-<p>Les miroirs d'images de cédérom de Debian fournissent généralement
-les fichiers pour jigdo. Certains fournissent également des images
-préfabriquées complètes. Les fichiers jigdo sont habituellement mis
-à jour à l'aide de rsync à partir d'<a href="../jigdo-cd/#which">un
-des sites officiels</a> et les images complètes sont mises à jour
-à l'aide de <kbd>jigdo-mirror</kbd>.</p>
+permanente et fiable à l'Internet. Les miroirs d'images de cédérom de
+Debian fournissent des images <tt>.iso</tt> pour des cédéroms ou des
+dévédéroms de différentes tailles, les fichiers pour
+<a href="http://atterer.net/jigdo/">jigdo</a> (<tt>.jigdo</tt> et
+<tt>.template</tt>), les fichiers
+<a href="http://bitconjurer.org/BitTorrent/">BitTorrent</a>
+(<tt>.torrent</tt>) et les sommes de contrôle MD5 des images
+(<tt>MD5SUMS*</tt>).</p>
 
 <toc-display/>
 
 <hr>
+#______________________________________________________________________
 
-<toc-add-entry name="httpftp">Pourquoi FTP et HTTP <strong>ne</strong>
-sont-ils <strong>pas</strong> adaptés&nbsp;?</toc-add-entry>
+<toc-add-entry name="master">Site principal</toc-add-entry>
+
+<p>Deux sites sont destinés à la création d'un miroir Debian, un pour
+les images de la distribution stable, l'autre pour les images des
+distributions beta, instable et de test. Les liens du site principal
+sont donnés ci-dessous &mdash; cependant, <strong>veuillez</strong>
+ne pas négliger la possibilité de créer un miroir à partir d'un autre
+miroir proche (pour obtenir la liste des miroirs&nbsp;: 
+<a href="../http-ftp/">HTTP/FTP</a>, <a href="rsync-mirrors">rsync</a>)
+si cela est possible. L'accès au site principal sera certainement
+restreint à l'approche de la nouvelle publication.</p>
+
+<p>Faites également attention au fait qu'une quantité
+<strong>énorme</strong> de données sont stockées dans ces répertoires &mdash;
+lisez la <a href="#exclude">section ci-dessous</a> pour savoir comment
+limiter la taille en excluant certains fichiers.</p>
+
+<ul>
+
+  <li>Images de la distribution stable (mises à jour pour chaque
+  nouvelle publication de la distribution stable)&nbsp;:<br/>
+
+      <a href="http://cdimage.debian.org/debian-cd/">\
+      <tt>http://cdimage.debian.org/debian-cd/</tt></a><br/>
+      
+      <a href="ftp://cdimage.debian.org/debian-cd/">\
+      <tt>ftp://cdimage.debian.org/debian-cd/</tt></a><br/>
+      
+      <tt>rsync://cdimage.debian.org/debian-cd/</tt>
+
+  </li>
+
+  <li>Images des distributions beta, instable et de test
+  (la plupart de ces sections sont mises à jour
+  hebdomadairement)&nbsp;:<br/>
+
+    <a href="http://cdimage.debian.org/pub/cdimage-testing/">\
+    <tt>http://cdimage.debian.org/pub/cdimage-testing/</tt></a><br/>
+    
+    <a href="ftp://cdimage.debian.org/pub/cdimage-testing/">\
+    <tt>ftp://cdimage.debian.org/pub/cdimage-testing/</tt></a><br/>
+
+    <tt>rsync://cdimage.debian.org/cdimage-testing/</tt>
+
+  </li>
+
+</ul>
+#______________________________________________________________________
+
+<toc-add-entry name="httpftp">Créer un miroir avec FTP et HTTP
+n'est pas recommandé</toc-add-entry>
  
-<p>Vous <em>ne</em> devez <em>pas</em> utiliser FTP ou HTTP pour récupérer
-les images. Ces techniques de transfert présentent une probabilité d'échec
+<p>Vous ne devez pas utiliser FTP ou HTTP pour mettre à jour votre miroir.
+Ces techniques de transfert présentent une probabilité d'échec
 importante du fait de la taille énorme des fichiers.</p>
 
-<p>De plus, si les images sont modifiées, même de manière infime
-(comme c'est le cas pour les versions intermédiaires), tout le fichier
-doit être téléchargé à nouveau. Il en résulte de fortes charges pour
-nos ordinateurs et un gaspillage de la bande passante.</p>
+<p>De plus, HTTP et FTP ne permettent pas la vérification de l'intégrité
+des données téléchargées, et il est plus que probable que les
+téléchargements interrompus ou les données corrompues ne seront pas
+signalés.</p>
+#______________________________________________________________________
 
-<toc-add-entry name="download">Téléchargement par rsync</toc-add-entry>
+<toc-add-entry name="download">Créer un miroir avec rsync est
+tolérable</toc-add-entry>
 
-<p>Pour les raisons présentées ci-dessus, nous utilisons le programme
-<a href="http://rsync.samba.org/"><tt>rsync</tt></a> qui
-effectue essentiellement des corrections de fichiers binaires à distance.
-Avec <tt>rsync</tt>, les nouvelles versions des images sont mises
-à jour de manière très efficace, seules les parties modifiées étant
-envoyées par le réseau&nbsp;; les parties inchangées sont copiées à partir de
-l'ancienne image.</p>
+<p>Le programme <a href="http://rsync.samba.org/"><kbd>rsync</kbd></a>
+est une bonne solution pour la création d'un miroir. Elle est moins
+efficace que l'autre, à savoir la création d'un miroir à la manière de Debian
+présentée ci-dessous, mais peut être plus facile à configurer.
+De plus, elle assure que l'ensemble des fichiers sont transférés correctement
+et que les méta-données (par exemple les cachets de date) sont synchronisées
+de la même manière que les données des fichiers.</p>
 
-<p>Pour les sites qui souhaitent ne fournir que des images de cédérom
-de Debian (et pour ces sites-là seulement) et qui n'ont pas
-de miroir rapide de Debian (<kbd>debian/</kbd>) à proximité, nous
-suggérons l'utilisation de <kbd>rsync</kbd> dans une tâche cron
-quotidienne.</p>
-
-<p>Tous les sites de la <a href="rsync-mirrors">liste des miroirs</a>
-peuvent être utilisés comme source pour vos miroirs.
+<p>Reportez vous à la section <a href="#exclude">exclure des fichiers
+du miroir</a> pour des exemples d'utilisation de <kbd>--include</kbd>
+et <kbd>--exclude</kbd>. La <a href="rsync-mirrors">liste des miroirs
+rsync</a> est disponible sur une page séparée.</p>
 
 <p>Veuillez utiliser au moins les options <strong><kbd>--times
---links --hard-links --block-size=8192</kbd></strong>. Cela conservera
-la date de dernière modification, les liens symboliques et un bloc
-de 8192 octets (le plus adapté pour les images de cédérom) sera utilisé.
-Lorsque la date de dernière modification et la taille d'un fichier
-n'ont pas été modifiées, <kbd>rsync</kbd> ignore le fichier, aussi
-<tt>--times</tt> est réellement nécessaire.</p>
+--links --hard-links --partial --block-size=8192</kbd></strong>.
+Cela conservera la date de dernière modification, les liens symboliques
+et durs et un bloc de 8192 octets (le plus adapté pour les images de
+cédérom) sera utilisé. Lorsque la date de dernière modification et la
+taille d'un fichier n'ont pas été modifiées, <kbd>rsync</kbd> ignore le
+fichier, aussi <tt>--times</tt> est réellement nécessaire.</p>
+#______________________________________________________________________
 
-<toc-add-entry name="jigdomirror">Fabriquer des images avec
-jigdo-mirror</toc-add-entry>
+<toc-add-entry name="jigdomirror">Créer un miroir avec jigdo-lite
+n'est pas recommandé</toc-add-entry>
+
+<p>Les versions récentes du programme <a href="http://atterer.net/jigdo/">\
+<kbd>jigdo-lite</kbd></a> prend en charge le téléchargement groupé de
+plusieurs images. Cependant, nous ne recommandons pas d'utiliser
+<kbd>jigdo-lite</kbd> pour la création des miroirs de cédérom Debian
+&mdash; veuillez utiliser <kbd>jigdo-mirror</kbd> à la place.</p>
+#______________________________________________________________________
+
+<toc-add-entry name="jigdomirror">Créer un miroir avec jigdo-mirror est
+recommandé</toc-add-entry>
+
+<p>En fait, cela signifie&nbsp;: créer un miroir des fichiers <tt>.iso</tt>
+en utilisant <a href="http://atterer.net/jigdo/"><kbd>jigdo-mirror</kbd></a>,
+puis (si vous voulez créer un miroir d'autres types de fichiers, par exemple
+les fichiers <tt>.jigdo</tt> et <tt>.template</tt>) lancez rsync sur le
+répertoire pour récupérer le reste. Les scripts disponibles sur
+<a href="http://www.acc.umu.se/~maswan/debian-push/cdimage/">cette
+page</a> peuvent vous aider à configurer l'ensemble.</p>
 
 <p>De nombreuses personnes tiennent à jour des miroirs
 «&nbsp;classiques&nbsp;» de Debian (<kbd>debian/</kbd>) ou ont un tel
@@ -71,19 +137,14 @@ images de cédérom de Debian à l'aide des fichiers d'un miroir
 «&nbsp;classique&nbsp;», ainsi que de quelques fichiers supplémentaires
 à l'usage de jigdo.</p>
 
-<p>Veuillez noter que <kbd>jigdo-mirror</kbd> est compris dans jigdo 0.6.8,
-mais cette version n'est pas fournie avec Debian 3.0 («&nbsp;woody&nbsp;»).
-Cela signifie que vous devez vous le procurer séparément. Il n'existe pas
-actuellement de problèmes liés à l'utilisation de cette nouvelle version
-sur «&nbsp;woody&nbsp;».</p>
-
-<p>Tout d'abord, vous avez besoin des fichiers pour jigdo. Ils peuvent
+<p>Tout d'abord, vous avez besoin des fichiers modèles pour jigdo. Ils peuvent
 être téléchargés à partir de la plupart des sites officiels mais les
 deux sites principaux sont&nbsp;:</p>
 
 <ul compact>
   <li><kbd>rsync us.cdimage.debian.org::jigdo-area/</kbd> (miroir aux USA)
-  <li><kbd>rsync non-us.cdimage.debian.org::debian-jigdo/</kbd> (miroir européen)
+  <li><kbd>rsync non-us.cdimage.debian.org::debian-jigdo/</kbd>
+  (miroir européen)
 </ul>
 
 <p>Téléchargez les fichiers depuis le répertoire
@@ -95,11 +156,11 @@ les images.</p>
 Voici un exemple&nbsp;:</p>
 
 <pre>
-jigdoDir="/where/you/keep/mirrors/debian-cd/current/jigdo"
-imageDir="/where/you/keep/mirrors/debian-cd/current/images"
-tmpDir="/where/you/keep/mirrors/debian-cd/current/images"
-debianMirror="file:/where/you/keep/mirrors/debian"
-nonusMirror="file:/where/you/keep/mirrors/debian-non-US"
+jigdoDir="/chemin/vers/votre/miroir/debian-cd/current/jigdo"
+imageDir="/chemin/vers/votre/miroir/debian-cd/current/images"
+tmpDir="/chemin/vers/votre/miroir/debian-cd/current/images"
+debianMirror="file:/chemin/vers/votre/miroir/debian"
+nonusMirror="file:/chemin/vers/votre/miroir/debian-non-US"
 include='i386/|sparc/|powerpc/|source/'; exclude='-1\.'
 </pre>
 
@@ -115,118 +176,130 @@ de messages et l'exécution prend un certain temps, aussi nous vous
 suggérons de prendre des mesures pour le gérer (lancez le programme à l'écran,
 redirigez la sortie vers un fichier, etc.).</p>
 
-<toc-add-entry name="pik">Fabriquer des images avec le kit pour les
-pseudo-images et debcdmirror</toc-add-entry>
+<toc-add-entry name="pushmirror">Comment devenir un miroir
+«&nbsp;Push&nbsp;»&nbsp;?</toc-add-entry>
 
-<p><tt>rsync</tt> effectue encore un téléchargement complet des toutes 
-dernières versions, étant donné que ces images ne comprennent 
-théoriquement pas de parties inchangées. Cependant, avec le kit pour les 
-pseudo-images, il est possible de créer des «&nbsp;pseudo&nbsp;» images 
-de cédérom à partir des données déjà disponibles sur le miroir FTP de Debian 
-le plus proche  - éventuellement sur votre disque dur. <tt>rsync</tt> peut alors
-appliquer des rustines à ces «&nbsp;pseudo-images&nbsp;» pour les
-transformer en images officielles. Et même pour les versions intermédiaires, il
-semble que cette technique soit plus efficace que l'application de rustines
-sur l'ancienne image.</p>
+<p>À chaque fois que de nouvelles images sont disponibles, le site
+principal peut envoyer un message à ses miroirs et les faire immédiatement
+démarrer la mise à jour. De cette manière, les nouvelles données sont
+«&nbsp;poussées&nbsp;» plutôt que «&nbsp;tirées&nbsp;» par les miroirs
+durant la mise à jour quotidienne suivante, ce qui conduit à une
+propagation plus rapide des nouvelles publications d'une image.</p>
 
-<p> <strong>Les informations de cette page sont désuètes&nbsp;! Veuillez
-utiliser rsync de manière ordinaire ou essayez jigdo-mirror.</strong></p>
+<p>Si vous voulez que votre miroir fasse partie de ce système, veuillez
+consulter <a href="http://www.acc.umu.se/~maswan/debian-push/cdimage/">\
+cette page</a>.</p>
+#______________________________________________________________________
 
-<p>Le kit pour les pseudo-images est conçu principalement pour ne télécharger
-seulement que quelques images, ainsi que le font la plupart des gens. 
-Il existe également le script <tt>debcdmirror</tt> qui rend la création
-et la maintenance d'un miroir aisées, étant donné qu'il utilise de manière
-automatique le kit pour les pseudo-images et <tt>rsync</tt> pour mettre
-à jour votre miroir - jusqu'à vérifier automatiquement les sommes
-de contrôle MD5 de chaque image téléchargée. Avec <tt>debdcmirror</tt>, vous
-pouvez définir exactement ce que votre miroir doit contenir.</p>
+<toc-add-entry name="exclude">Exclure des fichiers du miroir</toc-add-entry>
 
-<p>L'utilisation manuelle du kit pour les pseudo-images (avec
-éventuellement <tt>rsync</tt> pour mettre à jour les nouvelles versions)
-implique beaucoup de travail et de problèmes. Aussi, nous ne le
-recommandons pas.</p>
+<p>Pour réduire la place nécessaire pour votre miroir de cédéroms Debian,
+vous pouvez exclure certains fichiers du processus de création du miroir.
+Les instructions suivantes présentent les options courantes pour
+<kbd>rsync</kbd>, mais peuvent vous aider si vous utiliser un utilitaire
+différent pour la création des miroirs. Avec <kbd>rsync</kbd>, les
+options <kbd>--include</kbd> et <kbd>--exclude</kbd> sont prises en
+compte en fonction de leur ordre d'apparition, et la première option
+dont le motif du fichier correspond détermine si le fichier doit être
+inclu ou exclu.</p>
 
-<p>Au lieu de cela, vous devriez utiliser le script <tt>debcdmirror</tt> (qui
-utilise «&nbsp;en interne&nbsp;» le kit pour les pseudo-images et
-<tt>rsync</tt>) (tâche cron quotidienne).</p>
+<ul>
 
-<p>Les dernières versions du
-<a href="http://cdimage.debian.org/~costar/pseudo-image-kit/">kit pour
-les pseudo-images</a> et du script
-<a href="http://cdimage.debian.org/~costar/debcdmirror/"><tt>debcdmirror</tt></a>
-sont disponibles sur la page principale de l'auteur. Veuillez lire
-le fichier README de chaque paquet pour de plus amples informations
-sur leur utilisation.</p>
+  <li><strong>Exclure le code source&nbsp;:</strong>
+  <kbd>--exclude=source/</kbd><br>
 
-<p><strong>Notes&nbsp;:</strong>
+  Évite aux images contenant du code source d'être incluses dans
+  le miroir. Veuillez noter que certaines personnes considèrent inapproprié
+  d'offrir des binaires d'un programme sous licence GPL sur un serveur
+  sans offrir en même temps les codes source du programme <em>sur le même
+  serveur</em>.</li>
 
-<p>Pour le script <tt>debcdmirror</tt>, vous devez choisir un miroir
-<tt>rsync</tt> qui possède un fichier «&nbsp;<tt>ls-lR</tt>&nbsp;».
-Les adresses sont sur la <a href="rsync-mirrors">liste des miroirs
-rsync</a>.</p>
+  <li><strong>Exclure les images entières&nbsp;:</strong>
+  <kbd>--include='*businesscard*.iso' --include='*netinst*.iso'
+  --exclude='*.iso'</kbd><br>
 
-<p>Si vous n'avez pas de <a href="$(HOME)/mirror/">miroir FTP de Debian 
-«&nbsp;classique&nbsp;»</a> près de chez vous, cherchez en un dans la<a
-href="$(HOME)/mirror/list" >liste des miroirs</a>.</p>
+  Exclut toutes les images de cédérom et dévédérom pour toutes les
+  architectures <em>à l'exception</em> des images de type carte de visite
+  ainsi que des images <tt>.iso</tt> pour l'installation par le réseau.
+  Nous recommendons de toujours inclure ces images&nbsp;: en considérant
+  leur taille, elles sont extrêmement utiles&nbsp;!</li>
 
-<p><tt>debcdmirror</tt> nécessite <tt>bash</tt> en version 2 ou supérieure. 
-Cela n'est pas un problème sur un système Debian moderne. Si
-nécessaire, vous pouvez l'installer dans un répertoire autre que celui par
-défaut, mais veuillez alors vous assurer que le chemin d'accès à
-<tt>bash</tt> est correct dans la première ligne du script.</p>
+  <li><strong>Exclure les images entières des architectures
+  non-i386&nbsp;:</strong>
+  <kbd>--include='*businesscard*.iso' --include='*netinst*.iso'
+  --include='i386/**.iso' --exclude='*.iso'</kbd><br>
 
-<toc-add-entry name="test">Images de test</toc-add-entry>
+  Comme ci-dessus, mais <em>inclut</em> toutes les images de cédérom et
+  de dévédrom pour l'architecture i386.</li>
 
-<p>Les répertoires «&nbsp;<tt><i>codename</i>_test</tt>&nbsp;» contiennent
-des images qui sont liées (NDT&nbsp;: «&nbsp;hard-linked&nbsp;») à celles
-des répertoires versionnés (par exemple <tt>2.2_r4</tt>).
-Le nom du répertoire versionné changera avec les nouvelles (sous-)versions,
-mais les noms dans les répertoires «&nbsp;<tt>test</tt>&nbsp;» resteront
-les mêmes.</p>
+  <li><strong>Exclure les images entières, à l'exception des trois premiers
+  cédéroms de l'architecture i386&nbsp;:</strong>
+  <kbd>--include='*netinst*.iso' --include='i386/**-[1-3].iso'
+  --exclude='*.iso'</kbd><br>
 
-<p>Aussi, dans le cas où l'on utilise seulement <tt>rsync</tt>,
-le seul moyen de mettre à jour correctement les sous-versions
-est de télécharger les répertoires versionnés et «&nbsp;<tt>test</tt>&nbsp;»
-correspondant <em>et</em> d'utiliser l'option <tt>--hard-links</tt>.
-[Veuillez <em>ne pas</em> utiliser les répertoires «&nbsp;<tt>test</tt>&nbsp;»
-avec <tt>debcdmirror</tt> car <tt>debcdmirror</tt> fonctionne différemment
-et de manière plus efficace.]</p>
+  L'ensemble complet des images i386 peut toujours prendre trop d'espace
+  pour vous si cela inclut les images dévédérom simple et double
+  couche. Cela exclut l'ensemble des images <tt>.iso</tt> à l'exception
+  des images pour l'installation par le réseau ainsi que les trois premiers
+  cédéroms pour l'architecture i386.</li>
 
-<toc-add-entry name="ls-lR">Fichiers ls-lR</toc-add-entry>
+  <li><strong>Exclure toutes les architectures à l'exception de
+  l'i386&nbsp;:</strong>
+  <kbd>--exclude=alpha/ --exclude=arm/ --exclude=hppa/ --exclude=hurd/
+  --exclude=ia64/ --exclude=m68k/ --exclude=mips/ --exclude=mipsel/
+  --exclude=powerpc/ --exclude=s390/ --exclude=sh/
+  --exclude=sparc/</kbd><br>
 
-<p>Le fichier <tt>ls-lR</tt> décrit la structure des répertoires du miroir
-dans lequel il se trouve.
-Veuillez <strong>ne pas</strong> copier le fichier <tt>ls-lR</tt>&nbsp;; 
-fabriquez plutôt le vôtre (avec le «&nbsp;<tt>Makels-lR</tt>&nbsp;» fourni,
-toutes les heures avec <tt>cron</tt>) ou bien ne fournissez pas de fichier
-<tt>ls-lR</tt>.
-[<tt>debcdmirror</tt> crée un fichier <tt>ls-lR</tt> automatiquement après le
-téléchargement.]</p>
+  Inclut seulment l'ensemble complet des fichiers pour l'architecture i386,
+  et n'inclut aucun des fichiers <tt>.jigdo</tt>, <tt>.iso</tt>, etc. pour
+  les autres architectures.</li>
 
-<toc-add-entry name="serve">Rendre les fichiers accessibles</toc-add-entry>
+</ul>
+#______________________________________________________________________
 
-<p>Une fois que vous avez obtenu les images de cédéroms que vous voulez
-rendre accessibles (les cédéroms i386 et source sont les plus populaires),
-vous devriez exécuter le programme <tt>rsync</tt> en tant que serveur.
-Cela ne devrait pas dégrader les performances de votre machine et
-générera beaucoup moins de trafic sur le réseau qu'un accès par FTP
-ou HTTP.</p>
+<toc-add-entry name="names">Conventions de nommage et taille nécessaire
+pour les images <tt>.iso</tt></toc-add-entry>
 
-<p>Les instructions pour mettre cela en place se trouvent dans
-le fichier README du kit pour les pseudo-images. En bref, veuillez
-ajouter <kbd>rsync --daemon</kbd> à votre configuration de <i>inetd</i>
-et modifier <kbd>rsyncd.conf</kbd> pour qu'il corresponde à vos souhaits.
-Nous recommandons de limiter l'accès à un nombre restreint de connexions
-par adresse IP et à un nombre de connexions total à deux chiffres au
-maximum.</p>
+<p>Les différentes variantes d'images <tt>.iso</tt> sont différentiables
+par leurs noms. Cela vous permet de restreindre votre miroir à certains
+types d'images.</p>
 
-# TODO: include more stuff here rather than depending on pik, with examples
+<ul>
 
-<toc-add-entry name="register">Enregistrer le miroir sur nos listes</toc-add-entry>
+  <li><strong><tt>*-businesscard.iso</tt></strong>&nbsp;: Une image pour
+  chacune des <a href="/ports/#released">architectures supportées</a>,
+  50&nbsp;Mo</li>
+
+  <li><strong><tt>*-netinst.iso</tt></strong>&nbsp;: Une image pour
+  chacune des architectures, 110&nbsp;Mo</li>
+
+  <li><strong><tt>*-dvd.iso</tt></strong> (Dévédéroms simple couche)&nbsp;:
+  Images multiples pour l'architecture i386 uniquement, chacune pouvant 
+  atteindre jusqu'à 4482&nbsp;Mo. Pour <em>Sarge</em>, la taille totale
+  accumulé des images pour l'architecture i386 est d'environ
+  9000&nbsp;Mo.</li>
+
+  <li><strong><tt>*-dldvd.iso</tt></strong> (Dévédéroms double couche)&nbsp;:
+  Comme ci-dessus, si ce n'est que les images individuelles peuvent atteindre
+  jusqu'à 8106&nbsp;Mo. Pour <em>Sarge</em>, aucune image <tt>.iso</tt> n'est
+  disponible. Seuls les fichiers jigdo le sont.</li>
+
+  <li><strong><tt>*.iso</tt></strong>: Tous les fichiers <tt>.iso</tt>
+  restants qui ne correspondent à aucun des motifs ci-dessus sont des
+  images de cédérom. Il y a plusieurs images pour chaque architecture,
+  chacune d'elle étant au maximum de 650&nbsp;Mo. La taille totale
+  de toutes les images et pour toutes les architectures est égale à la
+  <a href="/mirror/size">taille d'un miroir Debian complet</a>
+  (100&nbsp;Go au moment où nous écrivons ces lignes).</li>
+
+</ul>
+#______________________________________________________________________
+
+<toc-add-entry name="register">Enregistrer le miroir</toc-add-entry>
 
 <p>Afin de rendre votre miroir d'images de cédérom utilisable par un plus
 grand nombre d'utilisateurs, vous pouvez l'enregistrer sur notre liste
-de miroirs tels que <a href="../http-ftp/">celle-là</a> ou
+de miroirs tels que <a href="../http-ftp/">celle-ci</a> ou
 <a href="rsync-mirrors">celle-là</a>. Cependant, étant donné que
 les images complètes sont des fichiers de grande taille, cela peut
 entraîner un trafic quotidien de plusieurs gigaoctets.</p>
