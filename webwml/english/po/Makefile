@@ -36,11 +36,12 @@ others_FILES    = $(ENGLISHDIR)/News/press/press.tags \
   $(ENGLISHDIR)/devel/website/tc.data \
   $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/logos/index.data \
   $(ENGLISHDIR)/misc/merchandise.def $(ENGLISHDIR)/y2k/l10n.data \
-  $(ENGLISHDIR)/devel/join/nm-steps.inc
+  $(ENGLISHDIR)/devel/join/nm-steps.inc \
+  $(ENGLISHDIR)/events/speakers/speakers.defs
 templates_FILES = $(addprefix $(TEMPLDIR)/, \
   cdimage.wml common_tags.wml common_translation.wml consultant.wml \
   ddp.wml events_common.wml fixes_link.wml footer.wml languages.wml \
-  links.tags.wml mirrors.wml news.wml recent_list.wml \
+  links.tags.wml mirrors.wml news.wml recent_list.wml speakers.wml \
   todoitem.wml translation-check.wml url.wml votebar.wml \
   weeklynews/footer.wml) $(ENGLISHDIR)/devel/website/tc.data
 
