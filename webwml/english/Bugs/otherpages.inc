@@ -3,8 +3,7 @@
 <ul>
   <li><a href="./">Bug tracking system main contents page.</a>
   <li><a href="Reporting">Instructions for reporting bugs.</a>
-  <li><a href="Access">Accessing the bug tracking logs other than by
-      WWW.</a>
+  <li><a href="Access">Accessing the bug tracking system logs.</a>
   <li><a href="Developer">Information for developers on the bug tracking
       system.</a>
   <li><a href="server-control">Developers' information on manipulation
