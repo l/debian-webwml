@@ -157,10 +157,6 @@ sub get_stats_templates {
         my %excl = ();
         my $none = '';
         foreach $pkg (sort @{$packages}) {
-                if ($data->upstream($pkg) eq 'dbs') {
-                        $none .= "<li>".$pkg." (*)</li>\n";
-                        next;
-                }
                 unless ($data->has_templates($pkg)) {
                         $none .= "<li>".$pkg."</li>\n";
                         next;
