@@ -1,0 +1,167 @@
+#use wml::debian::template title="Errata: Använda Linux 2.2.x med Slink"
+
+<p>
+
+Denna sida dokumenterar kända problem med att köra version 2.2.x av
+Linuxkärnan tillsammans med Debian 2.1 (slink).
+
+<p>
+
+Utgåvan slink är certifierad och officiellt testad för att användas
+tillsammans med senare 2.0.x-versioner av Linuxkärnan.
+Eftersom "frysningen" av denna version inträffade innan version
+2.2 av Linux släpptes, och ändringar i andra delen av kärnans
+versionsnummer kan introducera komplexa problem bestämdes det
+att stanna kvar med den bevisat funktionsdugliga 2.0.x-serien.
+
+<p>
+
+Dock är inte Debianutgåvor nödvändigtvis bundna av kärnans
+versionsnummer, du kan köra vilken kärna du vill i Debian.
+Det är bara så att vi helt enkelt inte kan garantera att allting
+kommer att fungera korrekt.
+Om du bestämmer dig för att flytta till 2.2.x-serien och får
+problem med ett paket, så kanske det fungerar bättre att använda
+"unstable"-versionen (från potato) av det paketet.
+
+<p>
+
+Paketet <a
+href="http://packages.debian.org/kernel-source-2.2.1">kernel-source-2.2.1</a>
+skickas med distributionen för att hjälpa användare som vill köra
+2.2.x-versioner av Linuxkärnan.
+Hursomhelst rekommenderas det att du tittar på de vanliga
+Linuxkärnedistributionsplatserna, såsom <a
+href="http://www.kernel.org/">kernel.org</a>, efter nya versioner
+av 2.2.x-källkodsträdet, såväl som ytterligare erratainformation.
+Det finns kända fel i version 2.2.1, och det är känt att den
+versionen har orsakat datakorruption på vissa ställen.
+Du bör hämta patcharna för en nyare kärna ur 2.2.x-serien och
+applicera dem på Linuxkärnans källkodsträd.
+
+
+<h2>Möjligen problematiska paket</h2>
+
+<p>
+
+Notera att den här listan kan vara inkomplett.
+Skicka in en felrapport mot www.debian.org om du hittar andra problem
+som inte är listade här.
+Du bör även se om den
+<a href="running-kernel-2.2.en.html">engelska versionen</a>
+av denna sidan innehåller nyare information än denna översättning.
+Titta även på felloggen för paketet ifråga, försök säkerställa
+att problemet introduceras med Linux 2.2.
+
+<dl>
+	<dt><a href="http://packages.debian.org/sysutils">sysutils</a>
+	<dd>
+<tt>procinfo</tt> fungerar inte. Versionen från
+<a href="http://www.debian.org/Packages/unstable/utils/sysutils.html">
+unstable</a> fixar detta.
+
+	<dt><a href="http://packages.debian.org/netbase">netbase</a>
+	<dd>
+I Linux 2.2 måste <tt>ipautofw</tt> ersättas med <tt>ipmasqadm</tt>,
+och <tt>ipfwadm</tt> med <tt>ipchains</tt>.
+Paketet <a
+href="http://www.debian.org/Packages/unstable/base/netbase.html">
+netbase</a> från "unstable" innehåller ett "wrapper"-skript,
+<tt>ipfwadm-wrapper</tt>, för att förenkla övergången.
+<p>
+<tt>ifconfig</tt> visar inte alias-nätverksgränssnitt, och, under
+vissa omständigheter, misslyckas <tt>ipchains</tt> tyst att
+nollställa paketräknare.
+Vissa rutter byggda med <tt>netbase</tt>:s initieringsskript
+skapar harmlösa varningsmeddelanden.
+<p>
+Alla dessa problem är lösta i
+<a href="http://www.debian.org/Packages/unstable/base/netbase.html">
+unstable</a>-versionen.
+Om du inte vill uppgradera till unstable, så finns Debian 2.1-kompatibla
+paket tillgängliga
+<a href="http://www.debian.org/~rcw/2.2/netbase/">här</a>.
+
+	<dt><a href="http://packages.debian.org/pcmcia-source">pcmcia-source</a>
+	<dd>
+Versionen av <tt>pcmcia-source</tt> som finns i slink kan inte kompileras
+tillsammans med 2.2-kärnan. Fixat i
+<a href="http://www.debian.org/Packages/unstable/admin/pcmcia-source.html">
+unstable</a>-versionen.
+
+	<dt><a href="http://packages.debian.org/dhcpcd">dhcpcd</a>
+	<dd>
+Fungerar inte under Linux 2.2. Använd
+<a href="http://www.debian.org/Packages/unstable/net/dhcpcd.html">
+unstable-versionen</a>.
+
+	<dt><a href="http://packages.debian.org/dhcp-client-beta">dhcp-client-beta</a>
+	<dd>
+<tt>/etc/dhclient-script</tt> fungerar inte tillsammans med 2.2.
+versionen från
+<a href="http://www.debian.org/Packages/unstable/net/dhcp-client-beta.html">
+unstable</a> fixar detta.
+
+	<dt><a href="http://packages.debian.org/wanpipe">wanpipe</a>
+	<dd>
+Version 2.0.1, i slink, är inkompatibel med 2.2-kärnorna.
+Version 2.0.4 och senare, vilken finns i
+<a href="http://www.debian.org/Packages/unstable/net/wanpipe.html">
+unstable</a>, fungerar tillsammans med 2.2-kärnor, men inte
+2.0-kärnor (en patch till 2.0-kärnorna finns dock med i unstable-versionen).
+
+	<dt><a href="http://packages.debian.org/netstd">netstd</a>
+	<dd>
+<tt>bootpc</tt> kommer inte att ta emot ett svar om inte
+nätverksgränssnittet har konfigurerats.
+Detta har fixats i det numera separata
+<a href="http://packages.debian.org/bootpc">bootpc-paketet</a> i unstable.
+
+	<dt><a href="http://packages.debian.org/lsof">lsof</a>
+	<dd>
+<tt>lsof</tt> måste kompileras om för att fungera tillsammans med
+Linux 2.2. Se <a
+href="http://www.debian.org/Bugs/db/31/31935.html">Bug#31935</a>. 
+En fix är ännu inte tillgänglig i Debian.
+
+	<dt><a href="http://packages.debian.org/acct">acct</a>
+	<dd>
+"Accounting"-strukturen har ändrats i 2.2-kärnan.
+<tt>acct</tt> måste kompileras om för att hantera detta.
+Paketets underhållare jobbar med att skapa ett paket med binärer
+kompilerade mot båda, med automatiskt byte mellan dem vid uppstart.
+Se <a href="http://www.debian.org/Bugs/db/18/18314.html">Bug#18314</a>.
+
+	<dt><a href="http://packages.debian.org/isdnutils">isdnutils</a>
+	<dd>
+<tt>isdnutils</tt> 3.0 eller senare bör fungera med både 2.0.x- och
+2.1.x-versioner av kärnan.
+Detta är dock enbart fallet eftersom Debianpaketunderhållaren tog sig
+extra besvär att se till att så var fallet.
+Andra distributioner är möjligen inte lika lyckligt lottade.
+
+	<dt><a href="http://packages.debian.org/diald">diald</a>
+	<dd>
+<tt>diald</tt>-paketet som kommer med slink har problem att skapa rutter
+dynamiskt tillsammans med Linux 2.2.
+Ännu finns det inte någon version som fixar detta i "unstable".
+Se <a href="http://www.debian.org/Bugs/db/32/32592.html">Bug#32592</a>.
+
+        <dt><a href="http://packages.debian.org/xosview">xosview</a>
+	<dd>
+<tt>xosview</tt> går in i en oändlig slinga på Linux 2.2.2 och senare.
+En <a href="http://lore.ece.utexas.edu/~bgrayson/xosview.html">fix</a> 
+har gjorts tillgänglig av xosview-författaren men är ännu inte tillgänglig i
+Debian. Se <a
+href="http://www.debian.org/Bugs/db/33/33795.html">Bug#33795</a>.
+
+</dl>
+
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-indent-data:nil
+sgml-doctype:"../.doctype"
+End:
+-->
