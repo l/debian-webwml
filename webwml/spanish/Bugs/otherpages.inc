@@ -23,6 +23,7 @@ correo.</a>
 #       pendientes y recientes.</a>
 #  <li><a href="db/ix/packages.html">Paquetes con informes de error.</a>
 #  <li><a href="db/ix/maintainers.html">Mantenedores de paquetes con informes 
-de error.</a>
+#
+#de error.</a>
 </ul>
 
