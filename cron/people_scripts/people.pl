@@ -265,6 +265,9 @@ sub canonical_names {
 		elsif ($maintainer =~ /W\. Borgert <(.+)>/) {
 			$lastname = 'Borgert'; $firstname = 'Wolfgang'; $email = $1;
 		}
+		elsif ($maintainer =~ /Lenart Janos <(.+)>/) {
+			$lastname = 'Lenart'; $firstname = 'Janos'; $email = $1;
+		}
 
 #
 # The following should handle almost everyone
