@@ -1,52 +1,89 @@
 #use wml::debian::template title="PowerPC Port (Booting)" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/powerpc/inst/menu.inc"
 
+
+<h1>HOWTO-Booting with Yaboot on PowerPC</h1>
+
+<hr>
+
+[ <a href="index.en.html#abstract">Abstract</a> ]
+[ <a href="index.en.html#copyright">Copyright Notice</a> ]
+[ <a href="index.en.html#contents">Contents</a> ]
+
+<hr>
+
+<h1>HOWTO-Booting with Yaboot on PowerPC</h1>
+
+<hr>
+
+<h2><a name="abstract">Abstract</a></h2>
+
 <p>
+This document contains installation and usage instructions for
+<code>yaboot</code>, the GNU/Linux PowerPC bootloader.
 
-Yaboot is an OpenFirmware based bootloader for newworld machines. 
-It requires the very latest 2.2.14pre9 kernel from Paul Mackerras or the
-iBook/iMac/G4 kernel above. The format of the config file (<code>yaboot.conf</code>) 
-is the same as quik, it should be next to yaboot itself. Netbooting works
-via BOOTP/TFTP (including loading the ramdisk). Version 0.4 fixes a problem 
-with kernels containing more than one ELF section. <p>
+<h2><a name="copyright">Copyright Notice</a></h2>
 
-Note: ext2 support works but is very slow in this version. Also, symbolic 
-links for the kernel or the ramdisk are not supported yet. I'll post a
-small documentation and sample config files as soon as I find time to write 
-them. If you want to boot with the installer ramdisk, add an
-"initrd=path_to_ramdisk" line to the config file section of the kernel image. 
-You should probably also add "initrd-size = 8192". <p>
+<p>
+This document may be distributed and modified under the terms of the
+GNU General Public License. &copy; 1998&ndash;2001 Chris Tillman
 
-sources: <a href="http://calvaweb.calvacom.fr/bh40/">http://calvaweb.calvacom.fr/bh40/yaboot_*.src.tgz</a><br>
-binary : <a href="http://calvaweb.calvacom.fr/bh40/">http://calvaweb.calvacom.fr/bh40/yaboot_*.gz</a>
+<p>
+This document is free software; you may redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 2, or (at your option) any later version.
 
-<p>These machines instead require a small bootstrap partition with an
-HFS filesystem containing yaboot and its configuration file (and a OF
-CHRP wrapper to satisfy OF's default settings), this partition should
-be type Apple_Bootstrap to avoid MacOS from messing with it. <p>
+<p>
+This document is distributed in the hope that it will be useful, but
+<em>without any warranty</em>; without even the implied warranty of
+merchantability or fitness for a particular purpose.  See the GNU General
+Public License for more details.
 
-Assuming yaboot 0.5 is used and its configuration is set to point at
-the kernel symlink <code>/vmlinux</code> or <code>/boot/vmlinux</code> yaboot or its config
-file need not be updated on kernel upgrades as it knows how to read
-ext2 filesystems and will now follow the symlinks to whereever they
-point (unless it crossed partitions I would assume). <p>
+<p>
+A copy of the GNU General Public License is available as
+<code>/usr/share/common-licenses/GPL</code> in the Debian GNU/Linux
+distribution or on the World Wide Web at the <code><a
+href="http://www.gnu.org/copyleft/gpl.html">GNU website</a></code>.  You can
+also obtain it by writing to the Free Software Foundation, Inc., 59 Temple
+Place - Suite 330, Boston, MA 02111-1307, USA.
 
-Ethan Benson &lt;erbenson@alaska.net&gt; wrote some scripts that the user can
-use to setup and update a bootstrap partition, these scripts are
-capable of making a newworld mac OF bootable even when leaving OF at
-its default configuration, assuming you use the internal apple
-supplied hard disk and the bootstrap partition appears before any
-MacOS partitions that may exist. <p>
+</p>
 
-These scripts do however depend on hfsutils to at the very least create
-the hfs filesystem and the bootstrap partition will only work with
-default OF configuration if hfsutils are used (there are some
-things that simply cannot be done with the kernel space hfs driver).
-So currently the bootstrap partition cannot be set up with a base
-system install... the utilities from hfsutils that are required are:
-hformat, hmount, humount (this one I could live without if I made
-the check for it optional, it really does not do much), hcopy, and
-hattrib. <p>
+<hr>
 
-The scripts from Ethan Benson are here:
-<a href="http://www.alaska.net/~erbenson/ybin/">http://www.alaska.net/~erbenson/ybin/</a>
+<h2><a name="contents">Contents</a></h2>
+
+<ul>
+<li><a href="ch1.en.html">1 Yaboot's Purpose</a>
+<li><a href="ch2.en.html">2 System Requirements</a>
+<li><a href="ch3.en.html">3 Obtaining Yaboot</a>
+<li><a href="ch4.en.html">4 Creating the Bootstrap Partition</a>
+<li><a href="ch5.en.html">5 Yabootconfig: Make It Easy</a>
+<li><a href="ch6.en.html">6 Customizing Your Boot Configuration</a>
+<ul>
+<li><a href="ch6.en.html#s6.1">6.1</a> Linux Style Device Paths
+<li><a href="ch6.en.html#s6.2">6.2</a> OpenFirmware Device Paths
+<li><a href="ch6.en.html#s6.3">6.3</a> Required Settings
+<li><a href="ch6.en.html#s6.4">6.4</a> Boot Menu Options
+<li><a href="ch6.en.html#s6.5">6.5</a> Kernel Image Settings
+<li><a href="ch6.en.html#s6.6">6.6</a> Optional and Cool Settings
+</ul>
+<li><a href="ch7.en.html">7 Saving Boot Configuration Changes</a>
+<li><a href="ch8.en.html">8 Common Mistakes</a>
+<li><a href="ch9.en.html">9 Recovering From Misconfiguration</a>
+<ul>
+<li><a href="ch9.en.html#s9.1">9.1</a> Resetting the NVRAM
+<li><a href="ch9.en.html#s9.2">9.2</a> Loading Yaboot
+<li><a href="ch9.en.html#s9.3">9.3</a> Manually Loading a Kernel Image
+</ul>
+<li><a href="ch10.en.html">10 Yaboot as a Temporary Bootloader</a>
+<li><a href="ch11.en.html">11 For More Information</a>
+</ul>
+</p>
+
+<hr>
+<address>
+version 1.00, Oct 31 2001<br>
+Chris Tillman
+</address>
+

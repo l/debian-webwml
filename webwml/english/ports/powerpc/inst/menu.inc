@@ -28,9 +28,7 @@
 
 <menu-item name="ports"         basename="../../index">
 <menu-item name="powerpc"       basename="../index">
-<menu-item name="news"          basename="../news">
 <menu-item name="devel"         basename="../devel">
 <menu-item name="doc"           basename="../docu">
-<menu-item name="supply"        basename="../supply">
 <menu-item name="install"       basename="install">
 
