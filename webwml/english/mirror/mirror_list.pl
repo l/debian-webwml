@@ -353,7 +353,10 @@ $current = '';
 $count = 0;
 foreach (<SRC>) {
 	chop;
-	if (/^$/) {
+	if (/^$/ && $current eq '') {
+		next;
+	}
+	elsif (/^$/) {
 		process_line($current);
 		$current = '';
 		next;
@@ -369,7 +372,7 @@ foreach (<SRC>) {
 			
 	}
 	else {
-		die "Error: unknown line format\n$_\n";
+		die "Error: unknown format on line $.:\n$_\n";
 	}
 }
 if ($current ne "") {
