@@ -41,7 +41,7 @@ foreach $score (sort {$b <=> $a} keys %scores) {
 	    $str = "<tr><td>$rank";
 	    $exaequo = 1;
 	}
-	$str .= "</td><td><a href=\"l10n-lang-$lang\">";
+	$str .= "</td><td><a href=\"l10n-lang#$lang\">";
 	print $str;
 	language_name($lang);
 	$str = "</a><td>$score<td>$nb_per_lang{$lang}<td>";
