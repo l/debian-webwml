@@ -213,6 +213,13 @@ sub get_recent_list {
 		$elemhead = '<DT>';
 		$elemfoot = '<DD>';
 	}
+	elsif ($format =~ table) {
+		$listhead = '<TABLE>';
+		$listfoot = '</TABLE>';
+		$elemhead = '<TR><TD>';
+		$elemdate = '</TD><TD>';
+		$elemfoot = '';
+	}
 	else {
 		$listhead = '';
 		$listfoot = '';
@@ -280,7 +287,7 @@ foreach $file (@files) {
   $title = ''; $date = ''; $rdate = ''; $desc = ''; $status = ''; $where = '';
 <protect pass=2>
   foreach $line (<FILE>) {
-       if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) { $title = qq/$1/; }   # all
+       if ($line =~ /^<define-tag pagetitle>\s*(.*)\s*<\/define-tag>$/) { $title = qq/$1/; }   # all
     elsif ($line =~ /^<define-tag release_date>(.*)<\/define-tag>$/) { $date = qq/$1/; } # News
     elsif ($line =~ /^<define-tag where>(.*)<\/define-tag>$/) { $where = qq/$1/; }       # events
     elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) { $date = qq/$1/; }         # events
@@ -288,7 +295,7 @@ foreach $file (@files) {
     elsif ($line =~ /^<define-tag status>(.*)<\/define-tag>$/) { $status = qq/$1/; }     # vote
 </protect>
     if ($title && $date && $where) { # for events/
-      $str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong> $elemfoot$where<br>\n";
+      $str1 = "$elemhead<tt>[$date]</tt>$elemdate <strong><a href=\"$year/$base\">$title</a></strong>, $elemfoot$where<br>\n";
       last;
     }
     elsif ($desc) { # for security/
