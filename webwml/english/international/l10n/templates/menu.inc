@@ -3,13 +3,15 @@
 
 <define-menu-item name="l10n"><menu-l10n></define-menu-item>
 <define-menu-item name="list"><menu-list></define-menu-item>
-<define-menu-item name="hints"><menu-hints></define-menu-item>
 <define-menu-item name="rank"><menu-rank></define-menu-item>
+<define-menu-item name="errors"><menu-errors></define-menu-item>
+<define-menu-item name="hints"><menu-hints></define-menu-item>
 <define-menu-item name="todo"><menu-todo></define-menu-item>
 
 <menu-item name="l10n"          basename="../index">
 <menu-item name="list"          basename="index">
-<menu-item name="hints"         basename="hints">
 <menu-item name="rank"          basename="rank">
+<menu-item name="errors"        basename="errors">
+<menu-item name="hints"         basename="hints">
 <menu-item name="todo"          basename="todo">
 
