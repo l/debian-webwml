@@ -82,7 +82,7 @@ $(ENGLISHDIR)/po/others.pot: $(others_FILES)
 
 %.mo: %.$(LANGUAGE).po $(ENGLISHDIR)/po/%.pot
 	msgmerge -q $*.$(LANGUAGE).po $(ENGLISHDIR)/po/$*.pot |\
-            msgfmt --use-fuzzy --statistics -o $@ -
+            msgfmt --statistics -o $@ -
 
 init-po:
 	for d in $(DOMAINS); do \
