@@ -4,7 +4,7 @@
 
 WMLBASE=..
 CUR_DIR=devel
-SUBS=website
+SUBS=website join
 
 include $(WMLBASE)/Make.lang
 
