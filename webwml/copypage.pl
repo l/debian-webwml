@@ -106,7 +106,7 @@ close CVS;
 unless ($revision)
 {
 	print "Could not get revision number - bug in script?\n";
-	revision = '1.1';
+	$revision = '1.1';
 }
 
 # Copy the file and insert the revision number
