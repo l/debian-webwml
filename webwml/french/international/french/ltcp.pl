@@ -38,7 +38,7 @@ $to_abr = 'fr' ;
 $CVSWEB = 'http://cvs.debian.org' ; 
 $DDPWEB = 'http://www.debian.org/~elphick/manuals.html' ;
 # The place were translation documents are kept while working on them
-$TRANSWEB = 'http://www.debian.org/~clebars/f2dp/translations';
+$TRANSWEB = 'http://cvs.debian.org/webwml/french/international/french/translations/?cvsroot=webwml';
 
 # This matrix has all the values for the $status
 # This way we do not have to put it in the %translation database
