@@ -1,287 +1,117 @@
 #use wml::std::tags
+#use wml::debian::common_tags
 
-# TODO: Move as much as possible of this to the PO files?
+<bind-gettext-domain domain="date" />
 
 <perl>
 use Time::Local;
 
+@dow = (
 # List of weekday names (used in modification dates)
-%dow = (
-  en => [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ],
-  ar => [ 'ÃÍÏ', 'Ëää', 'ËáË' , 'ÑÈÚ', 'ÎãÓ', 'ÌãÚ', 'ÓÈÊ' ],
-  ca => [ 'diumenge', 'dilluns', 'dimarts', 'dimecres', 'dijous', 'divendres', 'dissabte' ],
-  da => [ 'Søn', 'Man', 'Tirs', 'Ons', 'Tors', 'Fre', 'Lør' ],
-  de => [ 'Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag' ],
-  el => [ 'Äåõ', 'Ôñé', 'Ôåô', 'Ðåì', 'Ðáñ', 'Óáâ', 'Êõñ' ],
-  eo => [ 'Dim', 'Lun', 'Mar', 'Mer', '¬aý', 'Ven', 'Sab' ],
-  es => [ 'dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb' ],
-  fi => [ 'su', 'ma', 'ti', 'ke', 'to', 'pe', 'la' ],
-  fr => [ 'dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi' ],
-  hr => [ 'nedjelja', 'ponedjeljak', 'utorak', 'srijeda', 'èetvrtak', 'petak', 'subota' ],
-  hu => [ 'vasárnap', 'hétfõ', 'kedd', 'szerda', 'csütörtök', 'péntek', 'szombat' ],
-  id => [ 'Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu' ],
-  it => [ 'dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab' ],
-  ja => [ '(Æü)', '(·î)', '(²Ð)', '(¿å)', '(ÌÚ)', '(¶â)', '(ÅÚ)' ],
-  ko => [ 'ÀÏ¿äÀÏ', '¿ù¿äÀÏ', 'È­¿äÀÏ', '¼ö¿äÀÏ', '¸ñ¿äÀÏ', '±Ý¿äÀÏ', 'Åä¿äÀÏ' ],
-  lt => [ 'Sekmadienis', 'Pirmadienis', 'Antradienis', 'Treèiadienis', 'Ketvirtadienis', 'Penktadienis', 'Ðeðtadienis' ],
-  nl => [ 'Zon', 'Maa', 'Din', 'Woe', 'Don', 'Vri', 'Zat' ],
-  no => [ 'Søn', 'Man', 'Tirs', 'Ons', 'Tors', 'Fre', 'Lør' ],
-  pl => [ 'ni', 'pon', 'wt', '¶ro', 'czw', 'pt', 'so' ],
-  pt => [ 'Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado' ],
-  ro => [ 'duminicã', 'luni', 'marþi', 'miercuri', 'joi', 'vineri', 'sîmbãtã' ], 
-  ru => [ '÷ÓË', 'ðÎÄ', '÷ÔÒ', 'óÒÄ', 'þÔ×', 'ðÔÎ', 'óÂÔ' ],
-  sv => [ 'Sön', 'Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör' ],
-  tr => [ 'Paz', 'Pzt', 'Sa', 'Çar', 'Prþ', 'Cum', 'Cts' ],
-  zh => [ '¤é', '¤@', '¤G', '¤T', '¥|', '¤­', '¤»' ],
+                '<gettext domain="date">Sun</gettext>',
+                '<gettext domain="date">Mon</gettext>',
+                '<gettext domain="date">Tue</gettext>',
+                '<gettext domain="date">Wed</gettext>',
+                '<gettext domain="date">Thu</gettext>',
+                '<gettext domain="date">Fri</gettext>',
+                '<gettext domain="date">Sat</gettext>'
 );
 
+@moy = (
 # List of month names (used in modification dates, and may be used in news 
 # listings)
-%moy = (
-  en => [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ],
-  ar => [ 'ÊíÈË', 'ÔÈÇØ', 'ÂÐÇÑ', 'äíÓÇä', 'ÃíøÇÑ', 'ÎÒíÑÇä',
-          'ÊãøæÒ', 'ÂÈ', 'Ãíáæá', 'ÊÔÑíä', 'ÎÔæÇä', 'ßÇäæä' ],
-  ca => [ 'gen', 'feb', 'mar', 'abr', 'mai', 'jun',
-          'jul', 'ago', 'set', 'oct', 'nov', 'des' ],
-  da => [ 'jan', 'feb', 'mar', 'apr', 'maj', 'jun',
-          'jul', 'aug', 'sep', 'okt', 'nov', 'dec' ],
-  de => [ 'Jan', 'Feb', 'M&auml;r', 'Apr', 'Mai', 'Jun',
-          'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez' ],
-  el => [ 'Éáí', 'Öåâ', 'Ìáñ', 'Áðñ', 'Ìáé', 'Éïõí',
-          'Éïõë', 'Áõã', 'Óåðô', 'Ïêô', 'Íïåì', 'Äåê' ],
-  eo => [ 'Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun',
-          'Jul', 'Aýg', 'Sep', 'Okt', 'Nov', 'Dec' ],
-  es => [ 'ene', 'feb', 'mar', 'abr', 'may', 'jun',
-          'jul', 'ago', 'sep', 'oct', 'nov', 'dic' ],
-  fi => [ 'tammi', 'helmi', 'maalis', 'huhti', 'touko',
-          'kesä', 'heinä', 'elo', 'syys', 'loka', 'marras', 'joulu' ],
-  fr => [ 'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
-          'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre' ],
-  hr => [ 'sijeènja', 'veljaèe', 'o¾ujka', 'travnja', 'svibnja', 'lipnja',
-          'srpnja', 'kolovoza', 'rujna', 'listopada', 'studenog', 'prosinca' ],
-  hu => [ 'január', 'február', 'március', 'április', 'május', 'június',
-          'július', 'augusztus', 'szeptember', 'október', 'november', 'december' ],
-  id => [ 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agust',
-          'Sept', 'Okt', 'Nov', 'Des' ],
-  it => [ 'gen', 'feb', 'mar', 'apr', 'mag', 'giu',
-          'lug', 'ago', 'set', 'ott', 'nov', 'dic' ],
-  ja => [ '1', '2', '3', '4', '5', '6',
-          '7', '8', '9', '10', '11', '12' ],
-  lt => [ '1', '2', '3', '4', '5', '6',
-          '7', '8', '9', '10', '11', '12' ],
-  nl => [ 'Jan', 'Feb', 'Maa', 'Apr', 'Mei', 'Jun',
-          'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec' ],
-  no => [ 'jan', 'feb', 'mar', 'apr', 'mai', 'jun',
-          'jul', 'aug', 'sep', 'okt', 'nov', 'des' ],
-  pl => [ 'sty', 'lut', 'mar', 'kwie', 'maj', 'cze',
-          'lip', 'sie', 'wrz', 'pa¼', 'lis', 'gru' ],
-  pt => [ 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-          'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro' ],
-  ro => [ 'ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie', 
-          'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie' ],
-  ru => [ 'ñÎ×', 'æÅ×', 'íÁÒ', 'áÐÒ', 'íÁÊ', 'éÀÎ',
-          'éÀÌ', 'á×Ç', 'óÅÎ', 'ïËÔ', 'îÏÑ', 'äÅË' ],
-  sv => [ 'jan', 'feb', 'mar', 'apr', 'maj', 'jun',
-          'jul', 'aug', 'sep', 'okt', 'nov', 'dec' ],
-  tr => [ 'Oca', 'Þub', 'Mar', 'Nis', 'May', 'Haz',
-          'Tem', 'Aðu', 'Eyl', 'Eki', 'Kas', 'Ara' ],
-  zh => [ '1', '2', '3', '4', '5', '6', '7', '8',
-          '9', '10', '11', '12' ],
-# zh => [ '¤@¤ë', '¤G¤ë', '¤T¤ë', '¥|¤ë', '¤­¤ë', '¤»¤ë',
-#         '¤C¤ë', '¤K¤ë', '¤E¤ë', '¤Q¤ë', '¤Q¤@¤ë', '¤Q¤G¤ë' ],
+                '<gettext domain="date">Jan</gettext>',
+                '<gettext domain="date">Feb</gettext>',
+                '<gettext domain="date">Mar</gettext>',
+                '<gettext domain="date">Apr</gettext>',
+                '<gettext domain="date">May</gettext>',
+                '<gettext domain="date">Jun</gettext>',
+                '<gettext domain="date">Jul</gettext>',
+                '<gettext domain="date">Aug</gettext>',
+                '<gettext domain="date">Sep</gettext>',
+                '<gettext domain="date">Oct</gettext>',
+                '<gettext domain="date">Nov</gettext>',
+                '<gettext domain="date">Dec</gettext>'
 );
 
+@longmoy = (
 # List of long month names (may be used in "spoken" dates and date ranges).
-%longmoy = (
-  en => [ 'January', 'February', 'March', 'April', 'May', 'June',
-          'July', 'August', 'September', 'October', 'November', 'December' ],
-  ca => [ 'gener', 'febrer', 'març', 'abril', 'maig', 'juny',
-          'juliol', 'agost', 'setembre', 'octubre', 'novembre', 'desembre' ],
-  da => [ 'januar', 'februar', 'marts', 'april', 'maj', 'juni',
-          'juli', 'august', 'september', 'oktober', 'november', 'december' ],
-  de => [ 'Januar', 'Februar', 'M&auml;rz', 'April', 'Mai', 'Juni', 'Juli',
-          'August', 'September', 'Oktober', 'November', 'Dezember' ],
-  el => [ 'ÉáíïõÜñéïò', 'ÖåâñïõÜñéïò', 'ÌÜñôéïò', 'Áðñßëéïò', 'ÌÜéïò', 'Éïýíéïò',
-          'Éïýëéïò', 'Áýãïõóôïò', 'ÓåðôÝìâñéïò', 'Ïêôþâñéïò', 'ÍïÝìâñéïò', 'ÄåêÝìâñéïò' ],
-  eo => [ 'Januaro', 'Februaro', 'Marto', 'Aprilo', 'Majo', 'Junio',
-          'Julio', 'Aýgusto', 'Septembro', 'Oktobro', 'Novembro', 'Decembro' ],
-  es => [ 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-          'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre' ],
-  fi => [ 'tammikuu', 'helmikuu', 'maaliskuu', 'huhtikuu', 'toukokuu', 'kesäkuu',
-          'heinäkuu', 'elokuu', 'syyskuu', 'lokakuu', 'marraskuu', 'joulukuu' ],
-  fr => [ 'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
-          'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre' ],
-  hr => [ 'sijeènja', 'veljaèe', 'o¾ujka', 'travnja', 'svibnja', 'lipnja',
-          'srpnja', 'kolovoza', 'rujna', 'listopada', 'studenog', 'prosinca' ],
-  hu => [ 'január', 'február', 'március', 'április', 'május', 'június',
-          'július', 'augusztus', 'szeptember', 'október', 'november', 'december' ],
-  id => [ 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-          'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember' ],
-  it => [ 'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
-          'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre' ],
-  ja => [ '1', '2', '3', '4', '5', '6',
-          '7', '8', '9', '10', '11', '12' ],
-  lt => [ 'Sausis', 'Vasaris', 'Kovas', 'Balandis', 'Geguþë', 'Birþelis',
-          'Liepa', 'Rugpjûtis', 'Rugsëjis', 'Spalis', 'Lapkritis', 'Gruodis' ],
-  nl => [ 'January', 'February', 'March', 'April', 'May', 'June',
-          'July', 'August', 'September', 'October', 'November', 'December' ],
-  no => [ 'januar', 'februar', 'mars', 'april', 'mai', 'juni',
-          'juli', 'august', 'september', 'oktober', 'november', 'desember' ],
-  pl => [ 'stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca',
-          'lipca', 'sierpnia', 'wrze¶nia', 'pa¼dziernika', 'listopada', 'grudnia'],
-  pt => [ 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-          'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro' ],
-  ro => [ 'ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie',
-          'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie' ],
-  ru => [ 'January', 'February', 'March', 'April', 'May', 'June',
-          'July', 'August', 'September', 'October', 'November', 'December' ],
-  sv => [ 'januari', 'februari', 'mars', 'april', 'maj', 'juni',
-          'juli', 'augusti', 'september', 'oktober', 'november', 'december' ],
-  tr => [ 'Ocak', 'Þubat', 'Mart', 'Nisan', 'Mayýs', 'Haziran',
-          'Temmuz', 'Aðustos', 'Eylül', 'Ekim', 'Kasým', 'Aralýk' ],
-  lt => [ 'Sausis', 'Vasaris', 'Kovas', 'Balandis', 'Geguþë', 'Birþelis',
-          'Liepa', 'Rugpjûtis', 'Rugsëjis', 'Spalis', 'Lapkritis', 'Gruodis' ],
+                '<gettext domain="date">January</gettext>',
+                '<gettext domain="date">February</gettext>',
+                '<gettext domain="date">March</gettext>',
+                '<gettext domain="date">April</gettext>',
+# The <void> tag is to distinguish short and long forms of May.
+# Do not put it in msgstr.
+                '<gettext domain="date"><void id="fullname" />May</gettext>',
+                '<gettext domain="date">June</gettext>',
+                '<gettext domain="date">July</gettext>',
+                '<gettext domain="date">August</gettext>',
+                '<gettext domain="date">September</gettext>',
+                '<gettext domain="date">October</gettext>',
+                '<gettext domain="date">November</gettext>',
+                '<gettext domain="date">December</gettext>'
 );
 
-# Date format (sprintf) for modification dates. If none is supplied, the
-# standard format "Www, Mmm Dd HH:MM:SS UTC Yyyy" is used instead.
+# $dateform: Date format (sprintf) for modification dates.
 # Available variables are: $mday = day-of-month, $monnr = month number,
-# $mon = month string (from %moy), $year = year number.
-%dateform = (
-  ca => '"%s, %2d %s. de %s, %02d:%02d:%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
-  da => '"%s %2d. %s %s kl. %02d.%02d.%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
-  de => '"%s den %d. %s %s um %02d:%02d:%02d Uhr %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
-  es => '"%s, %2d de %s de %s, %02d:%02d:%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
-  fr => '"%s %d %s %s %02d:%02d:%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
-  hr => '"%s, %2d. %s %s., %02d:%02d:%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
-  hu => '"%d. %s %d. %s, %02d:%02d:%02d %s", 1900+$year, $mon, $mday, $wday, $hour, $min, $sec, "UTC"',
-  id => '"%s, %2d %s %s, %02d:%02d:%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
-  ja => '"%s Ç¯ %s ·î %s Æü %s %02d:%02d:%02d %s", 1900+$year, $mon, $mday, $wday, $hour, $min, $sec, "UTC"',
-  ko => '"%s %4d ³â %2d ¿ù %2d ÀÏ %s %02d:%02d:%02d", "UTC", 1900+$year, $monnr+1, $mday, $wday, $hour, $min, $sec',
-  lt => '"%s %04d-%02d-%02d %02d.%02d.%02d %s", $wday, 1900+$year, $monnr+1, $mday, $hour, $min, $sec, "UTC"',
-  nl => '"%s, %2d. %s %s., %02d:%02d:%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
-  no => '"%s %2d. %s %s kl. %02d.%02d.%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
-  pl => '"%s, %2d. %s %sr, %02d:%02d:%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
-  pt => '"%s, %2d de %s de %s, %02d:%02d:%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
-  ro => '"%s, %2d %s %s, %02d:%02d:%02d.", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec',
-  ru => '"%s, %2d %s %s, %02d:%02d:%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
-  sv => '"%s %04d-%02d-%02d %02d.%02d.%02d %s", $wday, 1900+$year, $monnr+1, $mday, $hour, $min, $sec, "UTC"',
-#  tr => '"%s, %2d. %s %s., %02d:%02d:%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
-  zh => '"%s¦~%s¤ë%s¤é ¬P´Á%s %02d:%02d:%02d %s", 1900+$year, $mon, $mday, $wday, $hour, $min, $sec, "UTC"',
-);
+# $mon = month string (from @moy), $year = year number.
+# Percent signs are escaped because they are special during pass 2,
+# replace all % by [%]
+$dateform = '<gettext domain="date">q{[%]s, [%]s [%]2d [%]02d:[%]02d:[%]02d [%]s [%]04d}, $wday, $mon, $mday, $hour, $min, $sec, q{UTC}, 1900+$year</gettext>';
+$dateform =~ s/\[%\]/%/g;
 
-# Date format (sprintf) for news items. If none is supplied, the standard
-# format "Dd Mmm Yyyy" is used instead.
+# $newsdateform: Date format (sprintf) for news items.
 # Available variables are: $mday = day-of-month, $mon = month number,
-# $mon_str = month string (from %moy), $year = year number.
-%newsdateform = (
-  ca => '"%02d/%02d/%04d", $mday, $mon, $year',
-  da => '"%2d. %s %04d", $mday, $mon_str, $year',
-  de => '"%d. %s %04d", $mday, $mon_str, $year',
-  es => '"%02d %s %04d", $mday, $mon_str, $year',
-  fi => '"%2d.%2d.%04d", $mday, $mon, $year',
-  fr => '"%02d %s %04d", $mday, $mon_str, $year',
-  hr => '"%02d. %02d. %04d.", $mday, $mon, $year',
-  hu => '"%04d. %02d. %02d.", $year, $mon, $mday',
-  ja => '"%04d Ç¯ %2d ·î %2d Æü", $year, $mon, $mday',
-  ko => '"%4d ³â %2d ¿ù %2d ÀÏ", $year, $mon, $mday',
-  lt => '"%4d-%02d-%02d", $year, $mon, $mday',
-  no => '"%02d. %s %04d", $mday, $mon_str, $year',
-  pl => '"%02d.%02d.%04d", $mday, $mon, $year',
-  pt => '"%02d/%02d/%04d", $mday, $mon, $year',
-  ro => '"%02d/%02d/%04d", $mday, $mon, $year',
-  ru => '"%02d.%02d.%04d", $mday, $mon, $year',
-  sv => '"%4d-%02d-%02d", $year, $mon, $mday',
-  zh => '"%04d/%02d/%02d", $year, $mon, $mday',
-);
+# $mon_str = month string (from @moy), $year = year number.
+# Percent signs are escaped because they are special during pass 2,
+# replace all % by [%]
+$newsdateform = '<gettext domain="date">q{[%]02d [%]s [%]04d}, $mday, $mon_str, $year</gettext>';
+$newsdateform =~ s/\[%\]/%/g;
 
-# Date format (sprintf) for "spoken" dates (such as the current release date).
-# If none is supplied, the date will be converted according to the
-# newsdateform as specified above (i.e, if you want the same format for
-# both, you only need to specify that. Any special cases (such as the
-# st/nd/rd/th suffixes in English) are handled in the spokendate subroutine
-# below.
-# Available variables are: $mday = day-of-month, $mon = month number,
-# $mon_str = month string (from %longmoy), $year = year number.
-%spokendateform = (
-# ca => '"%d de %s de %d", $mday, $mon_str, $year', # see below
-  da => '"%d. %s %d", $mday, $mon_str, $year',
-  de => '"%d. %s %d", $mday, $mon_str, $year',
-  es => '"%d de %s de %d", $mday, $mon_str, $year',
-  fi => '"%d. %sta %d", $mday, $mon_str, $year',
-  fr => '"%d %s %d", $mday, $mon_str, $year',
-  hr => '"%d. %s %d.", $mday, $mon_str, $year',
-  hu => '"%d. %s %d", $year, $mon_str, $mday',
-  id => '"%d %s %d", $mday, $mon_str, $year',
-  ja => '"%04d Ç¯ %02d ·î %02d Æü", $year, $mon, $mday',
-  no => '"%d. %s %d", $mday, $mon_str, $year',
-  pl => '"%d. %s %dr", $mday, $mon_str, $year',
-  pt => '"%d de %s de %d", $mday, $mon_str, $year',
-  ro => '"%d %s %d", $mday, $mon_str, $year',
-  sv => '"%d %s %d", $mday, $mon_str, $year',
-  zh => '"%04d¦~%02d¤ë%02d¤é", $year, $mon, $mday',
-);
-
-# Date format (sprintf) for "spoken" dates (such as the current release date),
-# without the year. If none is supplied, the date will be formatted as "Date
-# Month". Any special cases (such as the st/nd/rd/th suffixes in English) are
+# $spokendateform: Date format (sprintf) for "spoken" dates
+# (such as the current release date).
+# Any special cases (such as the st/nd/rd/th suffixes in English) are
 # handled in the spokendate subroutine below.
 # Available variables are: $mday = day-of-month, $mon = month number,
-# $mon_str = month string (from %longmoy).
-%spokendateform_noyear = (
-# ca => '"%d de %s", $mday, $mon_str', # see below
-  da => '"%d. %s", $mday, $mon_str',
-  de => '"%d. %s", $mday, $mon_str',
-  es => '"%d de %s", $mday, $mon_str',
-  fi => '"%d. %sta", $mday, $mon_str',
-  fr => '"%d %s", $mday, $mon_str',
-  hr => '"%d. %s", $mday, $mon_str',
-# hu => '"%d. %s", $mday, $mon_str', # ???
-  id => '"%d %s", $mday, $mon_str',
-  ja => '"%02d ·î %02d Æü", $mon, $mday',
-  no => '"%d. %s", $mday, $mon_str',
-  pl => '"%d. %s", $mday, $mon_str',
-  pt => '"%d de %s", $mday, $mon_str',
-  ro => '"%d %s", $mday, $mon_str',
-  sv => '"%d %s", $mday, $mon_str',
-  zh => '"%02d¤ë%02d¤é", $mon, $mday',
-);
+# $mon_str = month string (from @longmoy), $year = year number.
+# Percent signs are escaped because they are special during pass 2,
+# replace all % by [%]
+$spokendateform = '<gettext domain="date">q{[%]02d [%]s [%]d}, $mday, $mon_str, $year</gettext>';
+$spokendateform =~ s/\[%\]/%/g;
 
-# Date format (sprintf) for date ranges (used mainly for events pages), for
-# ranges within the same month. If none is supplied, the date will be created
-# using the format "Date1-Date2 Month". The year is not included. Any special
-# cases (such as the st/nd/rd/th suffixes in English) are handled in the
-# spokendate subroutine below.
-# Available variables are: $sday = start day-of-month, $eday, end
-# day-of-month, $smon = month number, $smon_str = month string (from %longmoy)
-%rangeform_samemonth = (
-	da => '"%d.-%d. %s", $sday, $eday, $smon_str',
-	de => '"%d. - %d. %s", $sday, $eday, $smon_str',
-	hr => '"%d.-%d. %s", $sday, $eday, $smon_str',
-	fi => '"%d.-%d. %sta", $sday, $eday, $smon_str',
-        ja => '"%02d ·î %02d Æü - %02d Æü", $smon, $sday, $eday',
-	no => '"%d.-%d. %s", $sday, $eday, $smon_str',
-	sv => '"%d-%d %s", $sday, $eday, $smon_str',
-);
+# $spokendateform_noyear: Date format (sprintf) for "spoken" dates
+# (such as the current release date), without the year.
+# Any special cases (such as the st/nd/rd/th suffixes in English) are
+# handled in the spokendate subroutine below.
+# Available variables are: $mday = day-of-month, $mon = month number,
+# $mon_str = month string (from @longmoy).
+# Percent signs are escaped because they are special during pass 2,
+# replace all % by [%]
+$spokendateform_noyear = '<gettext domain="date">q{[%]d [%]s}, $mday, $mon_str</gettext>';
+$spokendateform_noyear =~ s/\[%\]/%/g;
 
-# Date format (sprintf) for date ranges (used mainly for events pages), for
-# ranges spanning the end of a month. If none is supplied, the date will be
-# created using the format "Date1 Month-Date2 Month". The year is not
-# included. Any special cases (such as the st/nd/rd/th suffixes in English)
-# are handled in the spokendate subroutine below.
+# $rangeform_samemonth: Date format (sprintf) for date ranges
+# (used mainly for events pages), for ranges within the same month.
+# Any special cases (such as the st/nd/rd/th suffixes in English) are
+# handled in the spokendate subroutine below.
+# Available variables are: $sday = start day-of-month, $eday = end
+# day-of-month, $smon = month number, $smon_str = month string (from @longmoy)
+# Percent signs are escaped because they are special during pass 2,
+# replace all % by [%]
+$rangeform_samemonth = '<gettext domain="date">q{[%]d-[%]d [%]s}, $sday, $eday, $smon_str</gettext>';
+$rangeform_samemonth =~ s/\[%\]/%/g;
+
+# $rangeform_severalmonths: Date format (sprintf) for date ranges
+# (used mainly for events pages), for ranges spanning the end of a month.
+# Any special cases (such as the st/nd/rd/th suffixes in English) are
+# handled in the spokendate subroutine below.
 # Available variables are: $sday = start day-of-month, $eday, end
 # day-of-month, $smon = start month number, $emon = end month number,
-# $smon_str = start month string (from %longmoy), $emon_str = end month string
-%rangeform_severalmonths = (
-	da => '"%d. %s-%d. %s", $sday, $smon_str, $eday, $emon_str',
-	de => '"%d. %s - %d. %s", $sday, $smon_str, $eday, $emon_str',
-	hr => '"%d. %s - %d. %s", $sday, $smon_str, $eday, $emon_str',
-	fi => '"%d. %sta-%d. %sta", $sday, $smon_str, $eday, $emon_str',
-        ja => '"%02d ·î %02d Æü - %02d ·î %02d Æü", $smon, $sday, $emon, $day',
-	no => '"%d. %s-%d. %s", $sday, $smon_str, $eday, $emon_str',
-	sv => '"%d %s-%d %s", $sday, $smon_str, $eday, $emon_str',
-);
+# $smon_str = start month string (from @longmoy), $emon_str = end month string
+# Percent signs are escaped because they are special during pass 2,
+# replace all % by [%]
+$rangeform_severalmonths = '<gettext domain="date">q{[%]d [%]s-[%]d [%]s}, $sday, $smon_str, $eday, $emon_str</gettext>';
+$rangeform_severalmonths =~ s/\[%\]/%/g;
 
 
 # This function creates a last modification time stamp for the web pages.
@@ -311,13 +141,9 @@ sub webwml_ctime {
 		# $time = timelocal($lsec, $lmin, $lhr, $lday, $lmon-1, $lyear);
 	}
 	($sec, $min, $hour, $mday, $monnr, $year, $wday, $yday, $isdst) = gmtime($time);
-	$wday = $dow{$CUR_ISO_LANG}[$wday];
-	$mon = $moy{$CUR_ISO_LANG}[$monnr];
-	$str = defined($dateform{$CUR_ISO_LANG}) ? 
-		eval("sprintf($dateform{$CUR_ISO_LANG})") :
-		sprintf("%s, %s %2d %02d:%02d:%02d %s %04d",
-			$wday, $mon, $mday, $hour, $min, $sec, "UTC", 1900+$year);
-	return $str;
+	$wday = $dow[$wday];
+	$mon = $moy[$monnr];
+	return eval("sprintf($dateform)");
 }
 
 # This function creates a terse date string for use in news articles.
@@ -329,12 +155,10 @@ sub newsdate {
 	return $_[0] if ($year < 1900);
 
 	# Expand month number to string
-	$mon_str = $moy{$CUR_ISO_LANG}[$mon - 1];
+	$mon_str = $moy[$mon - 1];
 
 	# Return translated date
-	return defined($newsdateform{$CUR_ISO_LANG}) ?
-	       eval("sprintf($newsdateform{$CUR_ISO_LANG})") :
-	       sprintf("%02d %s %04d", $mday, $mon_str, $year);
+	return eval("sprintf($newsdateform)");
 }
 
 # Utility function for spokendate and daterange: Return the correct order
@@ -367,7 +191,7 @@ sub spokendate {
 	return $_[0] if ($year < 1900);
 
 	# Expand month string
-	$mon_str = $longmoy{$CUR_ISO_LANG}[$mon - 1];
+	$mon_str = $longmoy[$mon - 1];
 
 	# Return translated date
 	if ($CUR_ISO_LANG eq "en")
@@ -388,11 +212,8 @@ sub spokendate {
 	# Add any other special cases here as elsif cases
 	else
 	{
-		# Return translated date, fall back to newsdate if no
-		# spokendateform was defined
-		return defined($spokendateform{$CUR_ISO_LANG}) ?
-		       eval("sprintf($spokendateform{$CUR_ISO_LANG})") :
-		       newsdate($_[0]);
+		# Return translated date,
+		return eval("sprintf($spokendateform)");
 	}
 }
 
@@ -404,7 +225,7 @@ sub spokendate_noyear {
 	my $appday;
 
 	# Expand month string
-	$mon_str = $longmoy{$CUR_ISO_LANG}[$mon - 1];
+	$mon_str = $longmoy[$mon - 1];
 
 	# Return translated date
 	if ($CUR_ISO_LANG eq "en")
@@ -425,11 +246,8 @@ sub spokendate_noyear {
 	# Add any other special cases here as elsif cases
 	else
 	{
-		# Return translated date, fall back to newsdate if no
-		# spokendateform was defined
-		return defined($spokendateform_noyear{$CUR_ISO_LANG}) ?
-		       eval("sprintf($spokendateform_noyear{$CUR_ISO_LANG})") :
-		       sprintf("%d %s", $mday, $mon_str);
+		# Return translated date,
+		return eval("sprintf($spokendateform_noyear)");
 	}
 }
 
@@ -450,8 +268,8 @@ sub daterange {
 	}
 
 	# Expand month strings
-	$smon_str = $longmoy{$CUR_ISO_LANG}[$smon - 1];
-	$emon_str = $longmoy{$CUR_ISO_LANG}[$emon - 1];
+	$smon_str = $longmoy[$smon - 1];
+	$emon_str = $longmoy[$emon - 1];
 
 	# Return translated date range
 	if ($CUR_ISO_LANG eq "en")
@@ -484,35 +302,10 @@ sub daterange {
 	# Add any other special cases here as elsif cases
 	else
 	{
-		# Return translated range, fall back to generic strings if not
-		# defined above
-		my $sprintfarg;
-		if ($samemonth)
-		{
-			if (defined $rangeform_samemonth{$CUR_ISO_LANG})
-			{
-				$sprintfarg = $rangeform_samemonth{$CUR_ISO_LANG};
-			}
-			else
-			{
-				# Default
-				$sprintfarg = '"%d-%d %s", $sday, $eday, $smon_str';
-			}
-		}
-		else
-		{
-			if (defined $rangeform_severalmonths{$CUR_ISO_LANG})
-			{
-				$sprintfarg = $rangeform_severalmonths{$CUR_ISO_LANG};
-			}
-			else
-			{
-				# Default
-				$sprintfarg = '"%d %s-%d %s", $sday, $smon_str, $eday, $emon_str';
-			}
-		}
-
-		return eval("sprintf($sprintfarg)");
+		# Return translated range,
+		return $samemonth ?
+			eval("sprintf($rangeform_samemonth)") :
+			eval("sprintf($rangeform_severalmonths)");
 	}
 }
 </perl>
