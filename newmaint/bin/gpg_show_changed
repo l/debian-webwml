@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
-# Show all people and their entries who have registered newly or changed
-# their entries in the last day
+# Show all people or only those whose entries have changed
 # Copyright (C) 2002  Martin Michlmayr <tbm@cyrius.com>
 # $Id$
 
@@ -24,8 +23,14 @@ import utils, gpg_utils
 import apt_pkg
 
 def help():
-    print """Usage: gpg_show_changed
-Show everyone who has made changes or registered newly in the last day
+    print """Usage: gpg_show
+Show all people or only those whose entries have changed
+
+  -c, --no-mail             Don't send any mail
+  -c, --changed             Show those whose entries have changed
+  -o, --offers              Show those who offer key signings
+  -r, --requests            Show those who request key signings
+
 """
     sys.exit(1)
 
@@ -36,11 +41,14 @@ def parse_args():
     Cnf = apt_pkg.newConfiguration()
     apt_pkg.ReadConfigFileISC(Cnf, "gpg.conf")
 
-    Arguments = [("h", "help", "ShowChanged::Options::Help")]
+    Arguments = [("h", "help", "Show::Options::Help"),
+                 ("c", "changed", "Show::Options::Changed"),
+                 ("o", "offers", "Show::Options::Offers"),
+                 ("r", "requests", "Show::Options::Requests")]
 
     apt_pkg.ParseCommandLine(Cnf, Arguments, sys.argv)
 
-    if Cnf["ShowChanged::Options::Help"]:
+    if Cnf["Show::Options::Help"]:
         help()
 
 
@@ -48,12 +56,28 @@ def parse_args():
 
 parse_args()
 db = pg.connect(Cnf["MyDB"])
-q = db.query("SELECT email, offer FROM people WHERE age('now', last_update::datetime) < '2 day'::timespan ORDER BY offer, UPPER(surname)")
+
+# Generate the WHERE part of the SQL query
+Options = Cnf.SubTree("Show::Options")
+selection = []
+if Options["Changed"]:
+    selection.append("age('now', last_update::datetime) < '2 day'::timespan")
+if Options["Offers"] and not Options["Requests"]:
+    selection.append("offer = 't'")
+if Options["Requests"] and not Options["Offers"]:
+    selection.append("offer = 'f'")
+if selection:
+    where = " WHERE " + string.join(selection, " AND ")
+else:
+    where = ""
+
+q = db.query("SELECT email, offer FROM people %s ORDER BY offer, UPPER(surname)" % where)
 if not q.getresult():
     sys.exit(0)
 
-Subst = {}
-print utils.TemplateSubst(Subst, Cnf["Dir::Templates"]+"/gpg_show_changed.header"),
+if Options["Changed"]:
+    Subst = {}
+    print utils.TemplateSubst(Subst, Cnf["Dir::Templates"]+"/gpg_show_changed.header"),
 
 previous = ""
 for email, offer in [x[:] for x in q.getresult()]:
