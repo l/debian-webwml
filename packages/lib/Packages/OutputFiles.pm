@@ -155,7 +155,10 @@ sub write_file_list {
     my ( $self, $listfile ) = @_;
     $listfile ||= $self->{listfile};
     sysopen LF, $listfile, O_WRONLY | O_TRUNC | O_CREAT, 0664 
-	or warn "Can\'t open $listfile: $!";
+	or do {
+	    warn "Can\'t open $listfile: $!";
+	    return;
+	};
     foreach ( keys %{$self->{files}} ) {
 	print LF "$self->{files}{$_}{time} $self->{files}{$_}{md5} $_\n";
     }
