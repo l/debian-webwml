@@ -8,6 +8,11 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+
+submit.$(LANGUAGE).html: submit.wml $(ENGLISHDIR)/mirror/countries.data
+webmirror.$(LANGUAGE).html: webmirror.wml $(TEMPLDIR)/template.wml \
+  $(ENGLISHSRCDIR)/mirror/webmirrors.data
+
 # there only needs to be one version of the following so
 # the non-english directories shouldn't try to install them
 ifeq "$(LANGUAGE)" "en"
@@ -21,8 +26,8 @@ destmirrorstuff := $(patsubst %,$(HTMLDIR)/%,$(mirrorstuff))
 
 install:: $(destmirrorstuff)
 
-$(destmirrorstuff): $(mirrorstuff)
-	install -m 664 -p $(@F) $(HTMLDIR)
+$(destmirrorstuff): $(HTMLDIR)/%: %
+	install -m 664 -p $< $(HTMLDIR)
 
 cleandest::
 	rm -f $(destmirrorstuff)
