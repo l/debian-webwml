@@ -27,16 +27,18 @@ my (%attrs, @attrorder, %summaryattrs, @summaryorder);
 	  'bandwidth' => 'Bandwidth',
 	  'status' => 'Status',
 	  'notes' => 'Notes',
+	  'sshrsahostkey' => 'SSH host key (RSA)',
+	  'sshdsahostkey' => 'SSH host key (DSA)',
 	  'description' => 'Description',
 	  'createtimestamp' => 'Entry created',
 	  'modifytimestamp' => 'Entry modified'
 	 );
 
 # This defines what fields are displayed, and in what order
-@attrorder = ('hostname', 'admin', 'architecture', 'distribution', 'access',
-              'sponsor', 'sponsor-admin', 'location', 'machine', 'memory',
-	      'disk', 'bandwidth', 'status', 'notes', 'description',
-	      'createtimestamp', 'modifytimestamp');
+@attrorder = qw(hostname admin architecture distribution access
+                sponsor sponsor-admin location machine memory
+	        disk bandwidth status notes sshrsahostkey sshdsahostkey
+		description createtimestamp modifytimestamp);
 
 # ditto for summary
 %summaryattrs = ('hostname' => 'Host name',
