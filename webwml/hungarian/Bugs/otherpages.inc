@@ -1,14 +1,13 @@
-#use wml::debian::translation-check translation="1.1"
+#use wml::debian::translation-check translation="1.2"
 
 <hr>
 További oldalak:
 <ul>
 
-<li><A href="./">Hibakövetõ rendszer fõ oldala</A>
+<li><A href="./">A hibakövetõ rendszer fõ oldala</A>
 <li><a href="Reporting">Hogyan lehet hibát bejelenteni?</a>
-<li><A href="Access">WWW-n kívüli módok a
-hibakövetõ rendszer naplóinak
-elérésére</A>
+<li><A href="Access">A hibakövetõ rendszer naplóinak
+elérése</A>
 <li><A href="Developer">Információk a hibafeldolgozó
 rendszerrõl fejlesztõk részére</A>
 <li><a href="server-control">A hibafeldolgozás vezérlése e-mailen keresztül</a>
