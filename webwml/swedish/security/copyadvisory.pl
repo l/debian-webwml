@@ -89,10 +89,10 @@ while (<SRC>)
         s/<h4>Source archives:/<h4>Källkodsarkiv:/;
         s/ architecture:</</;
 		s/<h4>Architech?ture-independent component:/<h4>Arkitekturoberoende arkiv:/;
-		s/We recommend that you upgrade your (.*) package immediately/Vi rekommenderar att du uppgraderar ditt $1-paket omedelbart/;
-		s/We recommend that you upgrade your (.*) packages immediately/Vi rekommenderar att du uppgraderar dina $1-paket omedelbart/;
-		s/We recommend that you upgrade your (.*) packages/Vi rekommenderar att du uppgraderar dina $1-paket/;
-		s/We recommend that you upgrade your (.*) package/Vi rekommenderar att du uppgraderar ditt $1-paket/;
+		s/We recommend that you upgrade your (.*) package immediately/Vi rekommenderar att ni uppgraderar era $1-paket omedelbart/;
+		s/We recommend that you upgrade your (.*) packages immediately/Vi rekommenderar att ni uppgraderar ert $1-paket omedelbart/;
+		s/We recommend that you upgrade your (.*) packages/Vi rekommenderar att ni uppgraderar era $1-paket/;
+		s/We recommend that you upgrade your (.*) package/Vi rekommenderar att ni uppgraderar ert $1-paket/;
 		s/buffer overflows?/buffertspill/;
 		s/format string vulnerability/formatsträngssårbarhet/;
 		s/This problem has been fixed/Detta problem har rättats/;
