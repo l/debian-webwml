@@ -3,7 +3,7 @@
 # problem can be fixed.
 
 WMLBASE=../../..
-CUR_DIR=ports/hurds/reference_manual
+CUR_DIR=ports/hurd/reference_manual
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
 SUBS=
