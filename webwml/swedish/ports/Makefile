@@ -4,7 +4,7 @@
 
 WMLBASE=..
 CUR_DIR=ports
-SUBS=alpha arm beowulf hppa hurd laptops m68k mips powerpc sparc sparc64
+SUBS=sparc alpha arm powerpc mips sparc64 beowulf laptops hurd hppa m68k ia64
 
 include $(WMLBASE)/Make.lang
 
