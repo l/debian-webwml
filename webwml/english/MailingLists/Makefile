@@ -7,9 +7,3 @@ CUR_DIR=MailingLists
 SUBS=
 
 include $(WMLBASE)/Make.lang
-
-ifeq ($(LANGUAGE),en)
-stuff-on-master:
-	scp master.debian.org:/org/www.debian.org/webwml/english/MailingLists/\*subscribe.wml .
-	cvs commit -m "updated (un)subscription pages" *subscribe.wml
-endif
