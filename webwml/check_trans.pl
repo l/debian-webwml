@@ -323,15 +323,15 @@ sub send_mails {
 	    }
 	}
 	if ($translators{$name}{"send"}) {
-	    print "send mail to $name\n";
+	    print "send mail to $name\n" unless $opt_Q;
 	    if (($name =~ m,mquinson,) || ($opt_g && $opt_m eq $maintainer)) {
-		print "Well, detourned to $maintainer\n";
+		print "Well, detourned to $maintainer\n" unless $opt_Q;
 		$translators{$name}{"msg"}->send;
 	    }
 #	    $translators{$name}{"msg"}->print_header;
 	    $translators{$name}{"msg"}->send;
 	} else {
-	    print "didn't send mail to $name: nothing to say to him\n";
+	    print "didn't send mail to $name: nothing to say to him\n" unless $opt_Q;
 	}   
     }
 }
