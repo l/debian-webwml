@@ -473,38 +473,43 @@ END
 sub cdimage_mirrors {
   my $which = shift;
   return unless $html;
-  print "<ul>\n";
-  foreach $country (sort keys %countries) {
+  print "#use wml::debian::languages\n\n<perl>\nmy \@cdmirrors = (\n";
+  foreach $country (keys %countries) {
     foreach $site (sort @{ $countries{$country} }) {
       (my $countrycode = $country) =~ s/^(..) .*/$1/;
       if ($which eq "httpftp") {
         if (defined $mirror{$site}{method}{'cdimage-ftp'} ||
             defined $mirror{$site}{method}{'cdimage-http'}) {
-          print "<li><${countrycode}c>: $site: ";
+          print "  '<${countrycode}c>: $site:";
           if (defined $mirror{$site}{method}{'cdimage-ftp'}) {
-            print <<END;
-    <a href="ftp://$site$mirror{$site}{method}{'cdimage-ftp'}">FTP</a>
-END
+            print qq( <a href="ftp://$site$mirror{$site}{method}{'cdimage-ftp'}">FTP</a>);
           }
           if (defined $mirror{$site}{method}{'cdimage-http'}) {
-            print <<END;
-    <a href="http://$site$mirror{$site}{method}{'cdimage-http'}">HTTP</a>
-END
+            print qq( <a href="http://$site$mirror{$site}{method}{'cdimage-http'}">HTTP</a>);
           }
-          print "</li>\n";
+          print "',\n";
         }
       } elsif ($which eq "rsync") {
         if (defined $mirror{$site}{method}{'cdimage-rsync'}) {
-          print <<END;
-  <li><${countrycode}c>: $site:
-    <font color="#6b1300">rsync $site\:\:$mirror{$site}{method}{'cdimage-rsync'}</font>
-  </li>
+          print qq(  '<${countrycode}c>: $site: <font color="#6b1300">rsync $site\:\:$mirror{$site}{method}{'cdimage-rsync'}</font>',\n);
 END
         }
       }
     }
   }
-  print "</ul>\n";
+  print ");\n\n";
+
+  # Write some code to sort the list alphabetically (the ordering is
+  # language-dependent)
+  print <<'EOM';
+print "<ul>\n";
+foreach $line (sort langcmp @cdmirrors)
+{
+  print "<li>$line</li>\n";
+}
+print "</ul>\n";
+</perl>
+EOM
 }
 
 sub header {
