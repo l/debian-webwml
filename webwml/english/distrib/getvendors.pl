@@ -147,3 +147,5 @@ while ( @row = $sth->fetchrow_array ) {
 
 }
 print $footer;
+$sth->finish();
+$dbh->disconnect();
