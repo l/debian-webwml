@@ -135,7 +135,7 @@ MENU
 <meta name="Author" content="Debian Webmaster, webmaster\@debian.org">
 $KEYWORDS_LINE
 $DESC_LINE
-<link href="/debian.css" rel="stylesheet" type="text/css">
+<link href="$HOME/debian.css" rel="stylesheet" type="text/css">
 <style type="text/css" media="all">
 </style>
 </head>
