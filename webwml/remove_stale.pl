@@ -24,8 +24,16 @@ unless (-d 'english' && getopts('d'))
 	exit;
 }
 
+# Read the list of languages
+my @languages = readlanguages('Makefile');
+
 # Recurse.
-my $files = &recurse('.') || 'No';
+my $files = 0;
+foreach my $language (@languages)
+{
+	$files += &recurse("./$language");
+}
+$files ||= 'No';
 print "\n$files stale translations found.\n";
 print "Use -d option to remove files.\n"
 	if $files ne 'No' && !$opt_d;
@@ -133,6 +141,11 @@ sub recurse
 				my $extra = $installed;
 				$extra =~ s/\.no\.html$/.nb.html/;
 
+				# Check for translations to other languages, they
+				# need to have their .wml file touched
+				my @translations = ();
+				@translations = &findtranslations($source);
+
 				# Remove or report.
 				if ($opt_d)
 				{
@@ -161,6 +174,15 @@ sub recurse
 							or die "Unable to remove $icslocal: $!\n";
 					}
 
+					# Touch translation sources to update the list of
+					# translations on them
+					foreach my $translation (@translations)
+					{
+						print "Touching $translation\n";
+						system('/usr/bin/touch', $translation) == 0
+							or warn "touch: error code $?";
+					}
+
 					print "Removing $direntry\n";
 					unlink $direntry
 						or die "Unable to remove $direntry: $!\n";
@@ -177,6 +199,10 @@ sub recurse
 						if -f $icsinstalled;
 					print "  local ICS file: $icslocal\n"
 						if -f $icslocal;
+					foreach my $translation (@translations)
+					{
+						print "  translation in $translation\n";
+					}
 				}
 			}
 		}
@@ -194,4 +220,49 @@ sub recurse
 	}
 
 	return $count;
+}
+
+# Read the list of active languages from the Makefile
+sub readlanguages
+{
+	my $source = shift;
+	my (@languages, $langsrc);
+	open MAKE, '<', $source or die "Cannot read $source: $!\n";
+	LANGUAGES: while (<MAKE>)
+	{
+		if (/LANGUAGES := (.*)/)
+		{
+			$langsrc = $1;
+			while ($langsrc =~ /\\$/)
+			{
+				my $nextline = <MAKE>;
+				chomp $nextline;
+				$langsrc =~ s/\\$/$nextline/;
+			}
+		}
+	}
+	close MAKE;
+
+	return split /\s+/, $langsrc;
+}
+
+# Locate all translated copies of this wml file
+sub findtranslations
+{
+	my $wml = shift;
+	my @files;
+
+	# Remove the first component of the path (which contains the
+	# current language)
+	my $tail = $wml;
+	$tail =~ s(^\./[^/]+/)();
+
+	# Locte all translated copies
+	foreach my $language (@languages)
+	{
+		my $translated = "./$language/$tail";
+		push @files, $translated if -f $translated;
+	}
+
+	return @files;
 }
