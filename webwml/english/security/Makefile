@@ -29,6 +29,9 @@ crossreferences.$(LANGUAGE).html:: $(ENGLISHSRCDIR)/security/ref-table.inc \
 
 clean::
 	rm -f $(DSARDF) $(DSALONGRDF)
+ifeq "$(LANGUAGE)" "ja"
+	rm -f $(DSARDF).tmp $(DSALONGRDF).tmp
+endif
 	rm -f ref-table.inc
 
 ifndef SUBLANG
