@@ -151,10 +151,18 @@ foreach my $lang ( @langs ) {
     }
     $page .= "\n</ul>\n";
 
+    my $clist = '';
+    foreach my $c (('main','contrib','non-free')) {
+	$clist .= ", " if ($clist);
+	$clist .= $config{component} eq $c ? $c : sprintf ("<a href=\"newpkg_%s\">%s</a>", $c, $c);
+    }
+
     $page .= "<center><a href=\"allpackages\" title=\"".
 	gettext( "List of all packages" ) ."\">".
 	gettext( "All packages" ) ."</a><br /><small>(<a href=\"allpackages.$lang.txt.gz\">".
-	gettext( "compact compressed textlist" )."</a>)</small></center>\n";
+	gettext( "compact compressed textlist" )."</a>)<br />".
+	sprintf ( gettext ( "New packages in %s" ), $clist ).
+	"</small></center>\n";
     $page .= trailer( '..', $fname, $lang, @langs );
 
     print "Write to $config{output}.$lang.html\n" if $config{verbose};
