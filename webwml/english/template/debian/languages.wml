@@ -78,11 +78,17 @@ my %selflang = (
 my %translit = (
   arabic   => "Arabiya",
   bulgarian=> "B&#601;lgarski",
-  chinese  => "Zhongzu",
+  chinese  => "Zhongzu", # Not printed due to Chinese-specific code; kept for sort order
   greek    => "Ellinika",
   japanese => "Nihongo",
   korean   => "Hangul", # Not sure. "Hanguk-Mal" (=Spoken Korean)?
   russian  => "Russkij",
+);
+
+# second transliteration table, used for languages starting with a latin
+# diacritic letter
+my %translit2 = (
+  czech    => "cesky",
 );
 </perl>
 
@@ -102,6 +108,10 @@ sub langcmp {
   # If there is a transliteration for this language available, use it
   $first = $translit{$sorted_langs{$a}} if defined $translit{$sorted_langs{$a}};
   $second = $translit{$sorted_langs{$b}} if defined $translit{$sorted_langs{$b}};
+
+  # Then handle special cases (initial latin letters with diacritics)
+  $first = $translit2{$sorted_langs{$a}} if defined $translit2{$sorted_langs{$a}};
+  $second = $translit2{$sorted_langs{$b}} if defined $translit2{$sorted_langs{$b}};
 
   # Put remaining entity-only names last in the list
   if (substr($first,0,1) eq '&')
