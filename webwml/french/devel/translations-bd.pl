@@ -20,6 +20,7 @@ $translations = [
 #		'traduction à jour',
 #		'à reviser'
 #		'en cours de révision'
+#		'obsolète'
 #
 	'since'			=> '',
 	'translation_name'	=> '',
@@ -257,8 +258,10 @@ $translations = [
 	'key'			=> 'menu',
 	'name'			=> 'Debian Menu System',
 	'version'		=> '',
+	'url'			=> 'http://www.debian.org/doc/packaging-manuals/menu.html/',
+	'source_url'		=> '',
 	'package'		=> '',
-	'status'		=> 'à traduire',
+	'status'		=> 'obsolète',
 	'since'			=> '14/09/1998',
 },
 
@@ -336,13 +339,13 @@ $translations = [
 	'url'			=> 'ftp://ftp.us.debian.org/debian/stable/disks-i386/current/dselect.beginner.6.txt',
 	'source_url'		=> '',
 	'package'		=> '',
-	'status'		=> 'traduction à jour',
+	'status'		=> 'à relire',
 	'since'			=> '',
 	'translation_name'	=> 'Dselect : le guide du débutant',
 	'translation_sub_name'	=> '',
 	'translation_maintainer'=> ['Laurent Picouleau <lcrpic@a2points.com>'],
 	'translation_version'	=> '',
-	'translation_url'	=> 'http://www.debian.org/~clebars/docs-1.3/dselect.beginner.6.fr.txt',
+	'translation_url'	=> '',
 	'translation_source_url'=> '',
 	'translation_package'	=> 'doc-debian-fr',
 	'last_translated'	=> '',
@@ -373,9 +376,9 @@ $translations = [
 {
 	'type'			=> '',
 	'key'			=> '',
-	'name'			=> 'debian-organisation',
+	'name'			=> 'debian-constitution',
 	'version'		=> '',
-	'url'			=> 'http://www.chiark.greenend.org.uk/~ian/debian-organisation.html',
+	'url'			=> 'http://www.debian.org/devel/constitution.en.html',
 	'source_url'		=> '',
 	'package'		=> '',
 	'status'		=> 'à traduire',
@@ -384,7 +387,7 @@ $translations = [
 #	'translation_maintainer'=> ['Martin Quinson <mquinson@zeppelin-cb.de>'],
 	'translation_maintainer'=> [''],
 	'ping'			=> '28/11/1998',
-	'translation_version'	=> '0.8',
+	'translation_version'	=> '',
 	'translation_url'	=> '',
 	'translation_source_url'=> '',
 	'translation_package'	=> '',
