@@ -55,6 +55,32 @@
 [ZH:Debian for MIPS:]
 </menu-item>
 
+<menu-item basename="news">
+[EN:News:]
+[AR:News:]
+[DA:Nyheder:]
+[DE:Neues:]
+[EL:News:]
+[EO:News:]
+[ES:Noticias:]
+[FI:News:]
+[FR:News:]
+[HR:News:]
+[HU:News:]
+[IT:Novità:]
+[JA:News:]
+[KO:News:]
+[NL:News:]
+[NO:Nyheter:]
+[PL:News:]
+[PT:News:]
+[RO:News:]
+[RU:News:]
+[SV:Nyheter:]
+[TR:News:]
+[ZH:News:]
+</menu-item>
+
 <menu-item basename="cpu">
 [EN:CPUs:]
 [AR:CPUs:]
@@ -106,3 +132,5 @@
 [TR:Systems:]
 [ZH:Systems:]
 </menu-item>
+
+<define-tag email>&lt;<A href="mailto:%0">%0</A>&gt;</define-tag>
