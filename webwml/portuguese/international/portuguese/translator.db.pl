@@ -16,56 +16,86 @@
 sub init_translators {
     my $translators = {
 	'Gustavo Noronha' => {
-	    'email'     => 'kov@debian.org',
-	    'summary'   => 3,
-	    'logs'      => 3,
-	    'diff'      => 0,
-	    'tdiff'     => 0,
-	    'file'      => 0,
-	    'compress'  => 'none'
+	    email     => 'kov@debian.org',
+	    summary   => 3,
+	    logs      => 3,
+	    diff      => 0,
+	    tdiff     => 0,
+	    file      => 0,
+	    compress  => 'none'
 	    },
 		
-		'Carlos Laviola' => {
-		    'email'     => 'claviola@debian.org',
-		    'summary'   => 3,
-		    'logs'      => 3,
-		    'diff'      => 0,
-		    'tdiff'     => 0,
-		    'file'      => 0,
-		    'compress'  => 'none'
-		    },
+	'Carlos Laviola' => {
+	    email     => 'claviola@debian.org',
+	    summary   => 3,
+	    logs      => 3,
+	    diff      => 0,
+	    tdiff     => 0,
+	    file      => 0,
+	    compress  => 'none'
+	    },
 			
-			'Eduardo Macan' => {
-			    'email'     => 'macan@debian.org',
-			    'summary'   => 3,
-			    'logs'      => 3,
-			    'diff'      => 0,
-			    'tdiff'     => 0,
-			    'file'      => 0,
-			    'compress'  => 'none'
-			    },
-				'Philipe Gaspar' => {
-				    'email' => 'philipegaspar@terra.com.br',
-				    'summary' => 3,
-				    'logs'      => 3,
-				    'diff'      => 0,
-				    'tdiff'     => 0,
-				    'file'      => 0,
-				    'compress'  => 'none'
-				    },
-					'list' => {
-					    # this is a special name containing the default addressee
-					    'email'     => 'debian-l10n-portuguese@lists.debian.org',
-					    'missing'   => 1,
-					    'summary'   => 2,
-					    'logs'      => 0,
-					    'diff'      => 0,
-					    'tdiff'     => 0,
-					    'file'      => 0,
-					    'compress'  => 'none'
-					    }
+	'Eduardo Macan' => {
+	    email     => 'macan@debian.org',
+	    summary   => 3,
+	    logs      => 3,
+	    diff      => 0,
+	    tdiff     => 0,
+	    file      => 0,
+	    compress  => 'none'
+	    },
+	'Philipe Gaspar' => {
+	    email     => 'philipegaspar@terra.com.br',
+	    summary   => 3,
+	    logs      => 3,
+	    diff      => 0,
+	    tdiff     => 0,
+	    file      => 0,
+	    compress  => 'none'
+	    },
+
+	# Below are special users, used to handle special cases
+	#     default:      default values
+	#     untranslated: pages not translated
+	#     unmaintained: pages without maintainer
+	#     maxdelta:     outdated pages
+
+	untranslated        => {
+	    email       => '',
+	    mailsubject => '',
+	    mailbody    => '',
+	},
+	unmaintained        => {
+	    email       => 'debian-l10n-portuguese@lists.debian.org',
+	    summary     => 2,
+	    mailsubject => 'Outdated pages without maintainer',
+	    mailbody    => 'portuguese/international/portuguese/mail_unmaintained.txt',
+	},
+	maxdelta            => {
+	    email       => 'debian-l10n-portuguese@lists.debian.org',
+	    summary     => 2,
+	    maxdelta    => 5,
+	    mailsubject => '[Important] Outdated web pages',
+	    mailbody    => 'portuguese/international/portuguese/mail_obsolete.txt',
+	},
+	# this is a special name containing the default values
+	# Translate frequency values, mailsubject and mailbody files
+	default   => {
+	    email       => '',
+	    missing     => 0,
+	    summary     => 0,
+	    logs        => 0,
+	    diff        => 0,
+	    tdiff       => 0,
+	    file        => 0,
+	    frequency   => ['never', 'monthly', 'weekly', 'daily'],
+	    mailsubject => 'Outdated web pages',
+	    mailbody    => 'portuguese/international/portuguese/mail_user.txt',
+	    compress    => 'none'
+	},
     };
     return $translators;
 }
 
 1;
+
