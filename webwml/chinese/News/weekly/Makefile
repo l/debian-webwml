@@ -7,17 +7,13 @@
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
-# Get the current year.
-YEAR=$(shell date +%Y)
-
 WMLBASE=../..
 CUR_DIR=News/weekly
 
+# I have my own special %.$(LANGUAGE).html rule.
+NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
-include $(WMLBASE)/Make.dep.templ
-# Notice I do not include Make.dep.generic, since I have my own special
-# %.$(LANGUAGE).html rule.
+CUR_YEAR ?= $(shell date +%Y)
 
 WMLOPTIONS += -DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
 
@@ -115,15 +111,15 @@ clean::
 	-find . -type f -name \*.$(LANGUAGE).html | xargs rm -f
 
 # Need to rebuild the index when anything changes.
-index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
-      $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(YEAR)/*) \
+index.$(LANGUAGE).html: $(wildcard $(CUR_YEAR)/*/index.wml) \
+      $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(CUR_YEAR)/*) \
       $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
       $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml \
       ../../../english/News/weekly/CURRENT-ISSUE-IS
 
 # Special case for Chinese
-index.zh-cn.html index.zh-tw.html: $(wildcard $(YEAR)/*/index.wml) \
-      $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(YEAR)/*) \
+index.zh-cn.html index.zh-tw.html: $(wildcard $(CUR_YEAR)/*/index.wml) \
+      $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(CUR_YEAR)/*) \
       $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
       $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml \
       ../../../english/News/weekly/CURRENT-ISSUE-IS

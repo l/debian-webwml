@@ -3,16 +3,13 @@
 # so the problem can be fixed.
 
 # Get the current year.
-YEAR=$(shell date +%Y)
-
 WMLBASE=../..
 CUR_DIR=News/weekly
 
+# I have my own special %.$(LANGUAGE).html rule.
+NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
-include $(WMLBASE)/Make.dep.templ
-# Notice I do not include Make.dep.generic, since I have my own special
-# %.$(LANGUAGE).html rule.
+CUR_YEAR ?= $(shell date +%Y)
 
 # This Makefile will handle converting all .wml files in this directory
 # and all subdirectories to .html files. It does it this way so I don't need
@@ -35,15 +32,15 @@ install:: $(HTMLDESTFILES)
 	@# so it will be 2 directories deep and all the relative symlinks
 	@# will still work. Bleargh.
 ifeq ($(LANGUAGE),en)
-	@install -d $(HTMLDIR)/current
-	@-rm -f $(HTMLDIR)/current/issue
-	-ln -sf ../$(YEAR)/$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
+	@test -d $(HTMLDIR)/current || install -d $(HTMLDIR)/current
+	@rm -f $(HTMLDIR)/current/issue
+	@ln -sf ../$(shell cat ../../../english/News/weekly/CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
 endif
 
 # This is used by the install rule, and I had to hack on it, overriding
 # Make.common to allow installation of files into subdirectories.
 $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
-	install -d $(@D)
+	test -d $(@D) || install -d $(@D)
 	@echo copying $(@F) to $(@D)
 	-@cp $(<) $(@D)
 ifeq ($(LANGUAGE),en)
@@ -57,8 +54,13 @@ clean::
 	-find . -type f -name \*.$(LANGUAGE).html | xargs rm -f
 
 # Need to rebuild the index when anything changes.
-index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
-      $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(YEAR)/*) \
+index.$(LANGUAGE).html: $(wildcard $(CUR_YEAR)/*/index.wml) \
+      $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(CUR_YEAR)/*) \
       $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
       $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml \
-      $(ENGLISHSRCDIR)/News/weekly/CURRENT-ISSUE-IS
+      ../../../english/News/weekly/CURRENT-ISSUE-IS
+
+# Generate the mail for posting to debian-news. Requires the web page already
+# be updated.
+mail:
+	@./makemail.pl
