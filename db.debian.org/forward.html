@@ -8,8 +8,8 @@
 <META NAME="Keywords" CONTENT="debian, GNU, linux, unix, open source, free, DFSG ">
 <META NAME="Language" CONTENT="English">
 <meta name="Author"    content="Debian Webmaster, webmaster@debian.org">
-<meta name="Generator" content="WML 1.6.8 (12-01-1999)">
-<meta name="Modified"  content="09-05-2000 22:51:33">
+<meta name="Generator" content="WML 1.7.4 (06-Oct-1999)">
+<meta name="Modified"  content="24-10-2000 23:46:04">
 </HEAD>
 <BODY text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#800080" alink="#FF0000">
 <TABLE border="0" cellpadding="3" cellspacing="0" width="100%">
@@ -33,12 +33,12 @@
 </TABLE>
 <H1>Email Forwarding</H1>
 <p>
-Emails to @debian.org now go through a LDAP distributed email system. This
-system uses the forwarding field in the LDAP directory to route mail without
-passing it through a users .forward file on a single computer.
-Multiple machines participate in the forwarding to provide redudency.
+Emails to @debian.org addresses now go through a LDAP distributed email system.
+This system uses the forwarding field in the LDAP directory to route mail
+without passing it through a users .forward file on a single host.
+Multiple machines participate in the forwarding to provide redudancy.
 <p>
-Each of the forwarders inspects the LDAP database
+Each forwarders inspects the LDAP database
 to see if foo@debian.org has forwarding set to an address, if so the <i>envelope
 to address</i> is rewritten and the message redirected to the new address.
 Otherwise the message is relayed to master.debian.org for processing by the
@@ -51,11 +51,18 @@ email. If the user has a home directory and no .forward file the mail is
 forwarded rather than delivered to /var/spool/mail. This makes sure cron
 reports, bug responses and other unexpected emails are not misplaced.
 <p>
+If you set the forwarding address to be a specific Debian machine and do
+not create a forward file then that machine will spool the mail to
+/var/spool/mail instead of creating a mail loop.
+<p>
 The email forwarding can be easially reconfigured using GnuPG:
 <pre>
 echo "emailforward: foo@bar.com" | gpg --clearsign | mail change@db.debian.org
 </pre>
 or by visiting <a href="https://db.debian.org/login.html">db.debian.org</a>
+<p>
+You can test the email routing by using the command <tt>/usr/sbin/exim -bt
+foo@debian.org</tt>
 <h2>procmail</h2>
 If you use procmail for your main mailbox, PLEASE, erase your .forward
 file and put a .procmailrc in its place instead. This feature has been
@@ -65,7 +72,7 @@ supported.
 The correct way to invoke procmail for extension addresses is "|/usr/bin/procmail [options]"
 Ignore the IFS=".." stuff in the procmail man page.
 <h2>MailBox formats</h2>
-Emails can be saved to mailboxes or maildirs by using the correct lines in a
+Email can be saved to mailboxes or maildirs by using the correct lines in a
 .forward file:
 <p>
 Mailbox format files "/debian/home/foo/Mbox"
@@ -78,7 +85,7 @@ Exim.
 <p>
 Also, 'Exim Filter' files are deliberately turned off.
 <h2>Delivey Environment</h2>
-Some environment variables are set per-message (not quoted! Carefull!)
+Some environment variables are set per-message (not quoted! Careful!)
 It is important to note that the environment variables dealing with
 addressing apply to the ENVELOPE address are are totally completely
 unrelated to the actual contents of the message:
@@ -97,12 +104,12 @@ unrelated to the actual contents of the message:
 <li>RECIPIENT = (the entire envelope to)
 </ol>
 <p>
-Such that, <i>$RECIPIENT = $LOCAL-EXTENSION@&lt;something&gt;</i>.
+Such that, <i>$RECIPIENT = $LOCAL-$EXTENSION@&lt;something&gt;</i>.
 <HR>
 <P>Back to the <A href="http://www.debian.org/">Debian Project homepage</A>.
 <HR>
 <SMALL>You can contact us at <A href="mailto:admin@db.debian.org">admin@db.debian.org</A>.</SMALL><P>
-<SMALL>Last Modified: Wed, May 10 04:51:33 UTC 2000<BR>
+<SMALL>Last Modified: Wed, Oct 25 05:46:04 UTC 2000<BR>
 Copyright &copy; 1997-1999 <A href="http://www.spi-inc.org/">SPI</A>; See <A href="http://www.debian.org/license">license terms</A>
 	
 	 </SMALL>
