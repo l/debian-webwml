@@ -6,7 +6,7 @@
 <menu-item basename="../index">
 [EN:Ports:]
 [AR:Ports:]
-[DA:Ports:]
+[DA:Overførsler:]
 [DE:Ports:]
 [EL:Ports:]
 [EO:Ports:]
@@ -110,7 +110,7 @@
 <menu-item basename="hurd-cd">
 [EN:Hurd-CDs:]
 [AR:Hurd-CDs:]
-[DA:Hurd-CDs:]
+[DA:Hurd på cd:]
 [DE:Hurd-CDs:]
 [EL:Hurd-CDs:]
 [EO:Hurd-CDs:]
@@ -136,7 +136,7 @@
 <menu-item basename="hurd-doc">
 [EN:Documentation:]
 [AR:Documentation:]
-[DA:Documentation:]
+[DA:Dokumentation:]
 [DE:Dokumentation:]
 [EL:Documentation:]
 [EO:Documentation:]
