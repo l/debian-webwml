@@ -5,7 +5,7 @@
 
 use locale;
 
-my $current_issue=`cat /home/kov/debian/www/webwml/english/News/weekly/CURRENT-ISSUE-IS`;
+my $current_issue=`cat /home/michelle/webwml/english/News/weekly/CURRENT-ISSUE-IS`;
 chomp $current_issue;
 my $url=shift || "http://www.debian.org/News/weekly/$current_issue/";
 
