@@ -38,7 +38,7 @@ if (defined ($team) && $team ne "") {
 	    
 	    print "<td>".($found ? l10n_output($score) : '--')
 		 ."<td>".($found ? output_details($score) : '--')
-	         ."<td>".($found ? "<a href=\"$PO_ROOT/$pkg/$file\">$filename</a>" : "--");
+	         ."<td>".($found ? "<a href=\"$TEMPLATES_ROOT/$pkg/$file\">$filename</a>" : "--");
 
 	    #put english template
 	    #FIXME: It's a pain when the english template is not better handeled by DB
