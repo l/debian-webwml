@@ -1,8 +1,8 @@
 # Top-level Makefile for the Debian Web pages
 
-LANGUAGES := english arabic catalan chinese croatian danish dutch esperanto \
-             finnish french german greek hungarian indonesian italian \
-             japanese korean lithuanian norwegian polish portuguese \
+LANGUAGES := english arabic catalan chinese croatian czech danish dutch \
+             esperanto finnish french german greek hungarian indonesian \
+             italian japanese korean lithuanian norwegian polish portuguese \
              romanian russian slovene spanish swedish turkish
 
 LANGUAGES-install := $(addsuffix -install,$(LANGUAGES))
