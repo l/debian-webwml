@@ -1,11 +1,13 @@
 #!/usr/bin/perl -w
 
-# This script creates any missing soft links in the Debian html
-# directory on master. These links are necessary so that under content
-# negotiation there is a default language.
-# Translators shouldn't have any need of this.
+# This script creates any missing soft links in the Debian html directory
+# on master. These links are necessary so that under content negotiation
+# there is a default language. For every <file>.en.html there needs to be
+# a <file>.html -> <file>.en.html
 
-# For every <file>.html.en there needs to be a <file>.html -> <file>.html.en
+# Translators shouldn't have any need of this.
+# Makefiles in webwml/english/ have already been set up to create these
+# links while installing files, so there should be no need to run this.
 
 $top_dir = "/debian2/web/debian.org";
 
@@ -27,13 +29,13 @@ sub check_directory() {
 	}
 	foreach $file (@fil_list) {
 		@parts = split('\.', $file);
-		$lang = pop @parts;
 		$html = pop @parts;
+		$lang = pop @parts;
 		$name = join('.', @parts);
 		if (defined($html) and $lang =~ /^en$/ and $html eq "html") {
 			if ( ! -e "$curdir/$name.html") {
-				symlink("$file", "$curdir/$name.html");
 				print "  creating symlink to $curdir/$file\n";
+				symlink("$file", "$curdir/$name.html");
 			}
 		}
 	}
