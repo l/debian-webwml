@@ -25,18 +25,18 @@ include $(WMLBASE)/Make.dep.templ
 include $(WMLBASE)/Make.dep.generic
 
 $(HTMLDIR)/ftpsync: ftpsync
-	cp -a ftpsync $(HTMLDIR)
+	cp ftpsync $(HTMLDIR)
 $(HTMLDIR)/ftpsync.conf: ftpsync.conf
-	cp -a ftpsync.conf $(HTMLDIR)
+	cp ftpsync.conf $(HTMLDIR)
 $(HTMLDIR)/websync: websync
-	cp -a websync $(HTMLDIR)
+	cp websync $(HTMLDIR)
 $(HTMLDIR)/websync.conf: websync.conf
-	cp -a websync.conf $(HTMLDIR)
+	cp websync.conf $(HTMLDIR)
 $(HTMLDIR)/identity.pub.master.ftp: identity.pub.master.ftp
-	cp -a identity.pub.master.ftp $(HTMLDIR)
+	cp identity.pub.master.ftp $(HTMLDIR)
 $(HTMLDIR)/identity.pub.master.web: identity.pub.master.web
-	cp -a identity.pub.master.web $(HTMLDIR)
+	cp identity.pub.master.web $(HTMLDIR)
 $(HTMLDIR)/anonftpsync: anonftpsync
-	cp -a anonftpsync $(HTMLDIR)
+	cp anonftpsync $(HTMLDIR)
 $(HTMLDIR)/anonwebsync: anonwebsync
-	cp -a anonwebsync $(HTMLDIR)
+	cp anonwebsync $(HTMLDIR)
