@@ -35,9 +35,15 @@ Na kraju, stranice se distribuiraju svim WWW mirrorima.
 <li>Portugalski: Eduardo Marcel Macan &lt;thecore@thecore.com.br&gt;
 <li>Kineski: Anthony Wong &lt;ypwong@debian.org&gt;
 <li>Finski: Antti-Juhani Kaijanaho &lt;gaia@iki.fi&gt;
-<li>©vedski: peter karlsson &lt;pk@mds.mdh.se&gt;
+<li>©vedski: peter karlsson &lt;peter@softwolves.pp.se&gt;
 <li>Norve¹ki: Tor Slettnes &lt;tor@slett.net&gt;
 <li>Korejski: Seongtae Yoo &lt;alloying@nownuri.net&gt;
+
+<li>Turkish: Andreas Mueller &lt;amu@tr.debian.net&gt;
+<li>Esperanto: Eduardo Trapani &lt;etrapani@unesco.org.uy&gt;
+<li>Arabic: Shaheen &lt;hchahine@magic.fr&gt;
+<li>Hungarian: NAGY Viktor &lt;chaos@inf.elte.hu&gt;
+<li>Romanian: Aurelian Melinte &lt;amelinte@ALIS.COM&gt;
 </ul>
 Kontaktirajte ih direktno da biste se ukljuèili u projekt prevoðenja.
 Po¹aljite e-mail na <a href="mailto:webmaster@debian.org">webmaster@debian.org</a>
@@ -144,6 +150,40 @@ najveæoj moguæoj mjeri.
 jezicima neæe napraviti link do va¹e stranice prije nego ¹to se ponovo
 generiraju.
 
+<H3>Odr¾avanje prijevoda aktualnima</H3>
+<P>Buduæi da web stranice nisu statiène, dobra je ideja pratiti na koju se
+verziju originala neki prijevod odnosi, i koristiti tu informaciju za
+provjeravanje koje stranice su se promijenile od zadnjeg prevoðenja.
+Da vam pomogne u ovom, skripta <code>check_trans.pl</code> je dostupna u
+webwml direktoriju.
+
+<P>Skripta se oslanja na to da prevedene WML datoteke sadr¾e informacije
+o tome koju verziju (originala) prevode. Ova informacija treba biti
+ukljuèena negdje u dokumentu u obliku
+<code>&lt;!--translation <var>x.x</var>--&gt;</code>
+gdje je <var>x.x</var> verzija originala (engleskog).
+
+To bi trebalo biti upisano u WML datoteci na zasebnoj liniji, a mo¾ete i
+staviti prefiks <code>#</code> (WML komentar) da ju ne stavite u generirani
+HTML.
+
+<P>Ako pokrenete <code>check_trans.pl <var>jezik</var></code> (zamijenite
+<var>jezik</var> s imenom direktorija koji sadr¾i va¹ prijevod, npr.
+"croatian"), dobit æete izvje¹taj o stranicama koje nemaju prijevod
+(prikazane kao "<code>Missing <var>datoteka</var></code>") i stranice koje
+nisu aktualne (prikazane kao "<code>NeedToUpdate <var>datoteka</var> to
+version <var>x.x</var></code>").
+
+<P>Ako ¾elite vidjeti koje su to toène promjene, mo¾ete vidjeti promjene
+tako da pokrenete <code>check_trans.pl -d <var>jezik</var></code>.
+Molimo primijetiti da ovo mo¾e potrajati, zato ¹to mo¾e ukljuèiti nekoliko
+pristupa CVS serveru.
+
+<P>Ako ¾elite ignorirati upozorenja o stranicama koje nedostaju (naprimjer
+stare vijesti), mo¾ete napraviti datoteku s imenom <code>.transignore</code>
+u direktoriju gdje ¾elite potisnuti upozorenja, u koju æete upisati sve
+datoteke koje neæete prevesti, jedno ime po liniji.
+
 <H3>Dodavanje novih direktorija</H3>
 <P>Treba pripaziti pri dodavanju novog direktorija u CVS. Ako je novi
 direktorij sadr¾an u datoteci ../Makefile, tada bi i trenutni direktorij
@@ -151,6 +191,28 @@ takoðer trebao sadr¾avati jedan Makefile - inaèe æe 'make' naredba dati
 poruku o gre¹ci. Ne trebate brinuti o nepostojeæim direktorijima koji su
 sadr¾ani u SUBS varijabli jer je 'make' dovoljno inteligentan da bi ih
 preskoèio.
+
+<H3>Generiranje slika za navigacijsku traku</H3>
+
+<P>Ovo bi trebao biti jedan od prvih uèinjenih stvari, tako da jednom kad
+poènete generirati stranice, veze u navigacijskoj traci budu korisne
+korisnicima koji ne govore engleski.
+
+Napravite Pics direktorij i kopirajte sljedeæe datoteke iz
+webwml/english/Pics:
+<pre>
+   Makefile
+   makebuttons.sh
+   debbar.pl
+</pre>
+Prevedite varijable u makebuttons.sh, i pratite upute u toj datoteci.
+Ovo se oslanja na GIMP koji prolazi kroz brz razvoj i promjene, tako da
+se skripta èesto kvari. Po¹aljite e-mail na debian-www listu ako budete
+imali problema.
+
+<P>Primijetite da ako neki od znakova kori¹tenih u navigacijskoj traci nisu
+u ISO8859-1 charsetu, morat æete ili promijeniti font u neki s va¹im
+charsetom, ili ruèno promijeniti slike.
 
 <H3>Kako uopæe poslu¾itelj zna koju datoteku poslu¾iti?</H3>
 <P>Primijetit æete da interne veze ne zavr¹avaju sa .html. Ovo se radi
@@ -279,3 +341,15 @@ Nemojte prevoditi ostatak teksta na toj stranici.
 
 </ul>
 
+<P>Za vijesti i sigurnosne izvje¹taje mo¾da biste ¾eljeli prevesti samo
+naslove, tako da dobro izgledaju u indeksima. Da to napravite, napravite
+datoteku sa istim imenom kao i originalna .wml datoteka, ali s nastavkom
+<code>.title</code>. Samo ukljuèite definirajuæe oznake koje se koriste
+u indeksima, tj. <em>pagetitle</em> i <em>release_date</em> za vijesti,
+te <em>pagetitle</em>, <em>report_date</em> i <em>description</em> za
+sigurnosne izvje¹taje.
+
+<P>Nema potrebe da prevodite datume u zaglavljima vijesti ili sigurnosnih
+izvje¹taja, jer su oni automatski konvertirani u oblik za va¹ jezik,
+koristeæi datoteku <code>ctime.wml</code> u <code>english/template/debian</code>
+direktoriju.
