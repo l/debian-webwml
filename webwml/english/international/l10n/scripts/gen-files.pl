@@ -112,8 +112,7 @@ sub get_stats_po {
 			#  Some translators forget the right angle bracket
 		        $translator =~ s/<[^>]*>?//;
 		        $translator =~ s/&/&amp;/g;
-		        $team =~ s/</(/g;
-		        $team =~ s/>/)/g;
+		        $team =~ s/^[^<]*<([^>]*)>.*$/$1/g;
 		        $team =~ s/@/ at /g;
 		        $team =~ s/\./ dot /g;
 		        $team =~ s/&/&amp;/g;
@@ -459,16 +458,11 @@ sub get_stats_podebconf {
 
                 my $addtotal = 0;
                 foreach $line (@{$data->podebconf($pkg)}) {
-                        my ($pofile, $lang, $stat, $link,$translator,$team) = @{$line};
+                        my ($pofile, $lang, $stat, $link,$translator) = @{$line};
                         next if $lang eq '_';
 		    
 		        $translator ||= "";
-		        $team ||= "";
 		        $translator =~ s/<[^>]*>//;
-		        $team =~ s/</(/g;
-		        $team =~ s/>/)/g;
-		        $team =~ s/@/ at /g;
-		        $team =~ s/\./ dot /g;
 
                         $pofile =~ s#^debian/po/##;
                         $link =~ s/:/\%3a/g;
@@ -481,7 +475,7 @@ sub get_stats_podebconf {
                               "<td>".show_stat($stat)."</td><td><a href=\"";
                         $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
                         $str .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>";
-		        $str .= "<td>$translator</td><td>$team</td>".
+		        $str .= "<td>$translator</td>".
                               "</tr>\n";
                         if ($stat =~ m/^(\d+)t(\d+)f(\d+)u$/) {
                                 $score{$lang} += $1;
