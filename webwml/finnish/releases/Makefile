@@ -1,4 +1,4 @@
-# This Makefile should need no changes from webwml/english/2.0/Makefile
+# This Makefile should need no changes from webwml/english/releases/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
@@ -9,10 +9,6 @@ CUR_DIR=releases
 SUBS=hamm slink potato
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
-
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 # unfortunately, I have to force this since it checks whether directories exist
 index.$(LANGUAGE).html: FORCE
