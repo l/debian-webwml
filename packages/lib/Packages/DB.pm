@@ -563,7 +563,7 @@ sub merge_in {
 		}
 		if ( exists $entry->{enhances} ) {
 		    if ($entry->{enhances} =~ /\|/) {
-			warn "W: `|' in Enhaces field for $entry->{package}\n"
+			warn "W: `|' in Enhances field for $entry->{package}\n"
 			    if $self->{config}{verbose};
 		    } else {
 			foreach my $p ( split /\s*,\s*/, $entry->{enhances} ) {
