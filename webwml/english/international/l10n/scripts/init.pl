@@ -24,7 +24,7 @@ my %stats;
 my @malformed;
 
 
-my ($succeded,$res) = read_data ($DB_FILE);
+my ($succeded,$date,$res) = read_data ($DB_FILE);
 if ($succeded) {
     %data=%{$res};
 } else {
