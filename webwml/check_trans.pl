@@ -31,7 +31,7 @@ $opt_s = '';
 $opt_p = undef;
 getopts('vds:p:');
 
-warn "Checking subtrre $opt_s only\n" if $opt_v;
+warn "Checking subtree $opt_s only\n" if $opt_v;
 
 # include only files matching $filename
 $filename = $opt_p || '(\.wml$)|(\.html$)';
@@ -51,8 +51,9 @@ foreach (@en) {
 	$tpath = $path;
 	$tpath =~ s/^$from/$to/o;
 	$d = load_entries($_);
+	$ignore = load_ignorelist($tpath);
 	foreach $f (keys %$d) {
-		check_file("${tpath}$f", $d->{$f});
+		check_file("${tpath}$f", $d->{$f}) unless $$ignore{"${tpath}$f"};
 	}
 }
 
@@ -67,6 +68,19 @@ sub load_entries {
 			my($name, $rev) =($1, $2);
 			$data{$name} = $rev if $name =~ /$filename/o;
 		}
+	}
+	close (F);
+	return \%data;
+}
+
+sub load_ignorelist {
+	my ($dir) = shift;
+	my (%data);
+	open(F, "${dir}.transignore") || return \%data;
+	warn "Loading ${dir}.transignore\n" if $opt_v;
+	while(<F>) {
+		chomp;
+		$data{"$dir$_"} = 1;
 	}
 	close (F);
 	return \%data;
