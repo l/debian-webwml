@@ -4,7 +4,7 @@
 # the translation-check header to it. It also will create the
 # destination directory if necessary, and copy the Makefile from the source.
 
-# Written in 2000 by peter karlsson <peter@softwolves.pp.se>
+# Written in 2000-2001 by peter karlsson <peter@softwolves.pp.se>
 # © Copyright 2000-2001 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
@@ -93,8 +93,11 @@ while (<SRC>)
 		s/We recommend that you upgrade your (.*) packages immediately/Vi rekommenderar att du uppgraderar dina $1-paket omedelbart/;
 		s/We recommend that you upgrade your (.*) packages/Vi rekommenderar att du uppgraderar dina $1-paket/;
 		s/We recommend that you upgrade your (.*) package/Vi rekommenderar att du uppgraderar ditt $1-paket/;
-		s/buffer overflow/buffertspill/;
+		s/buffer overflows?/buffertspill/;
 		s/This problem has been fixed/Detta problem har rättats/;
+		s/>local root exploit</>lokal rootattack</;
+		s/>remote root exploit</>fjärr-rootattack</;
+		s/>symlink attack</>attack mot symboliska länkar</;
 		print DST $_;
 	}
 }
