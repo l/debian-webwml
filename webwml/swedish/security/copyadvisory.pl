@@ -99,6 +99,7 @@ while (<SRC>)
 		s/>local root exploit</>lokal rootattack</;
 		s/>remote root exploit</>fjärr-rootattack</;
 		s/>symlink attack</>attack mot symboliska länkar</;
+		s/>remote exploit</>fjärrattack</;
 		print DST $_;
 	}
 }
