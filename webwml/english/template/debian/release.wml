@@ -153,7 +153,7 @@ sub permute_as_matrix {
 	    print "  <td align=\"left\">" . $formats{$ext} . "</td>\n";
 	    # permute over languages
 	    print "  <td>";
-	    foreach $lang (@langs) {
+	    foreach $lang (sort @langs) {
 	        next if ($ext eq "pdf" && $lang eq "japanese");
 	        next if ($ext eq "pdf" && $lang eq "russian");
 	        $file_version = "$arch/$file." . $langsinstall{$lang} . ".$ext";
@@ -164,7 +164,10 @@ sub permute_as_matrix {
                     -f "$(HTMLDIR)/releases/$release/$file_version") {
 	            # all languages should be defined in %trans. Add missing entries 
 	            # in English if this is not the case
-	            print "<a href=\"$file_version\">" . $trans{$CUR_ISO_LANG}{$lang} . "</a> \n";
+		    print "<strong>" if $lang eq lc($CUR_LANG);
+	            print "<a href=\"$file_version\">" . $trans{$CUR_ISO_LANG}{$lang} . "</a>";
+		    print "</strong>" if $lang eq lc($CUR_LANG);
+		    print " \n";
 	        }
 	    }
 	    print "  </td>";
