@@ -1,5 +1,9 @@
 #! /usr/bin/perl
 
+# this script finds new files and touches old ones so that the list of
+# languages at the bottom is updated to include the new file.
+# or something like that. made by Joey.
+
 %config = ('wmldir'  => '/org/www.debian.org/webwml',
 	   'datadir' => '/org/www.debian.org/cron/scripts_daily',
 	   );
