@@ -10,7 +10,7 @@
 	[FI:K:]
 	[FR:Q.&nbsp;:]
 	[HR:Q:]
- 	[HU:Q:]
+ 	[HU:K:]
 	[ID:Q:]
 	[IT:Q:]
  	[JA:Q:]
