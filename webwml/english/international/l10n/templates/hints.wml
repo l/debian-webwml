@@ -1,0 +1,91 @@
+#use wml::debian::template title="Hints about l10n of Debconf templates"
+
+<h2>Concepts</h2>
+<p>
+  In order to keep its translations up to date, an i18n-ed application must
+  provide translators an easy way to detect and fix outdated translations.
+</p>
+
+<p>
+  A Debconf templates file consist of fields and values.  Translated fields
+  follow a specific naming scheme, e.g. <code>Description-es</code> stands
+  for a Spanish description.  Actually, <code>Description-es_ES</code> (or
+  <code>Description-es_MX</code>, or whatever) will be checked first.
+</p>
+
+<p>
+  Thus to detect outdated translations, one must know from which string
+  this description is translated.  The Debconf way is to keep only
+  original fields in the templates file, and put translated fields along
+  with the corresponding English fields into another file, named
+  <code>templates.xx</code> or <code>templates.xx_XX</code> depending on
+  language name.  Hints are given below to help working with separate
+  files.
+</p>
+
+<h2>Initial translation</h2>
+
+<p>
+  When a translator wants to work on a given file, he could get it from
+  <a href="./">his language page</a>.  He then runs
+</p>
+<pre>
+   debconf-getlang xx templates &gt; templates.xx
+</pre>
+<p>
+  to generate a file with empty translated fields.  He does his job,
+  checks with
+</p>
+<pre>
+   debconf-getlang --stats templates templates.xx
+</pre>
+<p>
+  that he translated all strings, and sends this file to maintainer.
+</p>
+
+<h2>Merging translations</h2>
+
+<p>
+  As the maintainer did also read this page, he knows that he must not
+  merge templates to ease translators' job, and keep this file as is in
+  the <tt>debian</tt> directory.
+</p>
+
+<p>
+  The translated templates files are only merged when building the binary
+  package.  Debhelper will do this automatically for you if you use the
+  <tt>dh_installdebconf</tt> command in your <tt>debian/rules</tt>.
+  Otherwise, add a command similar to
+</p>
+<pre>
+	cd debian &amp;&amp; debconf-mergetemplate templates templates.* &gt; tmp/DEBIAN/templates
+</pre>
+
+<p>
+  So maintainer receives translated templates files and puts them at the right
+  place, that's all.
+</p>
+
+<h2>Updating translations</h2>
+<p>
+  Now, initial translation has been integrated, but wording has been
+  improved in English templates.  Changes in original templates must be
+  incorporated.  Again, <tt>debconf-getlang</tt> does the job for you:
+</p>
+<pre>
+    debconf-getlang xx templates templates.xx &gt; new.xx
+</pre>
+<p>
+  appends <tt>-fuzzy</tt> tag to outdated fields, and insert a blank line
+  just above.  Translator then edits <tt>new.xx</tt>, works on outdated
+  translations, and checks with
+</p>
+<pre>
+   debconf-getlang --stats templates new.xx
+</pre>
+<p>
+  that all strings are done.  He then renames <tt>new.xx</tt> into
+  <tt>templates.xx</tt> and sends this file to maintainer, which applies
+  the same treatment as seen at previous section.
+</p>
+
