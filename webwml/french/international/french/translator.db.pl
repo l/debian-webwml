@@ -30,7 +30,7 @@ sub init_translators {
  $translators = {
     'Denis Barbier' => {
          'email'     => 'barbier@imacs.polytechnique.fr',
-	 'summary'   => 0,
+	 'summary'   => 2,
 	 'logs'      => 0,
          'diff'      => 0,
          'file'      => 0,
@@ -38,7 +38,7 @@ sub init_translators {
     },
     'Antoine Martin' => {
          'email'     => 'amartin@atos-group.com',
-	 'summary'   => 0,
+	 'summary'   => 2,
 	 'logs'      => 0,
          'diff'      => 0,
          'file'      => 0,
@@ -46,7 +46,7 @@ sub init_translators {
     },
     'Sébastien Kalt' => {
          'email'     => 'ustilago@bigfoot.com',
-         'summary'   => 0, 
+         'summary'   => 2, 
          'logs'      => 0, 
          'diff'      => 0, 
 	 'file'      => 0,
@@ -54,7 +54,7 @@ sub init_translators {
     },
     'Jérôme Marant' => {
          'email'     => 'jerome.marant@free.fr',
-         'summary'   => 0, 
+         'summary'   => 2, 
          'logs'      => 0, 
          'diff'      => 0, 
 	 'file'      => 0,
@@ -86,7 +86,7 @@ sub init_translators {
     },
     'Frederic Pascal' => {
          'email'     => 'frederic.pascal@maisel-gw.enst-bretagne.fr',
-         'summary'   => 0, 
+         'summary'   => 2, 
          'logs'      => 0, 
          'diff'      => 0, 
 	 'file'      => 0,
@@ -94,7 +94,7 @@ sub init_translators {
     },
     'Jerome Abela' => {
          'email'     => 'Jerome.Abela@solsoft.fr',
-         'summary'   => 0, 
+         'summary'   => 2, 
          'logs'      => 0, 
          'diff'      => 0, 
 	 'file'      => 0,
@@ -102,7 +102,7 @@ sub init_translators {
     },
     'Philippe Caillaud' => {
          'email'     => 'pcaillaud@infini.fr',
-         'summary'   => 0, 
+         'summary'   => 2, 
          'logs'      => 0, 
          'diff'      => 0, 
 	 'file'      => 0,
@@ -110,7 +110,7 @@ sub init_translators {
     },
     'Christophe Le Bars' =>  {
  	 'email'     => 'clebars@debian.org',
-         'summary'   => 0, 
+         'summary'   => 2, 
          'logs'      => 0, 
          'diff'      => 0, 
 	 'file'      => 0,
@@ -118,7 +118,7 @@ sub init_translators {
     },
     'list' => { # this is a special name containing the default addressee
          'email'      => 'debian-l10n-french@lists.debian.org',
-         'missing'    => 0, 
+         'missing'    => 1, 
          'summary'    => 2, 
          'logs'       => 0, 
          'diff'       => 0, 
