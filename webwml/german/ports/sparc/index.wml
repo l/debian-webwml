@@ -1,13 +1,16 @@
-#use wml::debian::template title="SPARC Port" NOHEADER="yes"
+#use wml::debian::template title="SPARC-Portierung" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/sparc/menu.inc"
-#use wml::debian::translation-check translation="1.22"
-# $Id$
+#use wml::debian::translation-check translation="1.23"
 
-<h1>Debian SPARC Port</h1>
+<h1>Debian SPARC-Portierung</h1>
 
 <ul>
  <li><a href="#intro">Überblick</a>
  <li><a href="#status">Aktueller Status</a>
+ <li><a href="#64bit">Über 64-bit SPARC Unterstützung</a>
+ <ul compact>
+   <li><a href="#kernelsun4u">Kernel für sun4u übersetzen</a>
+ </ul>
  <li><a href="#errata">Ergänzungen</a>
  <li><a href="#who">Wer sind wir?  Wie kann ich helfen?</a>
  <li><a href="#links">Wo kann ich weitere Informationen finden?</a>
@@ -33,18 +36,42 @@ zu erhalten und wie man auf diesen Debian installiert.</p>
 Debian SPARC in Debian GNU/Linux 2.2 (``potato'') verwendet Linux 2.2
 (der SPARC-Patches enthält), die GNU libc 2.1, egcs 1.1.2 etc.  Kurz:
 aktuelle Arbeit in der GNU Toolchain ermöglicht es uns, alle
-Debian-Ports synchron zu halten.</p>
+Debian-Portierungen synchron zu halten.</p>
 
-<h3>Über die Unterstützung von 64-Bit SPARC</h3>
-  <p>
-Der Debian-SPARC-Port und der <a href="../sparc64/">UltraSPARC-Port</a>
-(a.k.a. sparc64) überlappen sich.  Der Debian-SPARC-Port, wie er oben
-erwähnt wird, unterstützt die Sun4u-Architektur (``Ultra'').  Er
+<h2><a name="64bit">Über die Unterstützung von 64-Bit SPARC</a></h2>
+
+<p>Die Debian-SPARC-Portierung, wie sie oben
+erwähnt wird, unterstützt die Sun4u-Architektur (``Ultra'').  Sie
 verwendet einen 64-Bit-Kernel (compiliert mit einer speziellen Version
 des <code>egcs</code>-Compilers, der ``egcs64'' genannt wird), doch
 die meisten der Applikationen laufen im 32-Bit-Modus.  Dieses wird ebenfalls ``32-Bit
-Userland'' genannt.  Der <a href="../sparc64/">UltraSPARC-Port</a>
-macht sich Gedanken über die Einführung einer reinen 64-Bit-Umgebung.</p>
+Userland'' genannt.
+
+<p>Die Anstrengungen, Debian auf SPARC 64 (auch als ``UltraLinux'' bekannt) zu
+portieren, ist nicht vollständig und eigenständig wie andere Portierungen.
+Stattdessen ist sie als <em>Add-On</em> zur Debian SPARC-Portierung gedacht.
+
+<p>In der Tat gibt es wirklich keinen Grund, alle Applikationen im
+64-Bit-Modus laufen zu lassen.  Ein vollständiger 64-Bit-Modus
+erfordert einen signifikanten Verwaltungsaufwand (in Speicher- und
+Plattengröße),
+oftmals ohne Vorteile.  Einige Applikationen können tatsächlich davon
+profitieren, im 64-Bit zu laufen, und das ist der Grund dieser Portierung.
+
+
+<h3><a name="kernelsun4u">Kernel für sun4u übersetzen</a></h3>
+
+<p>Um einen Linux-Kernel für Sun4u zu übersetzen, müssen Sie den Quellcode von
+Linux 2.2 oder neuer verwenden. Sie müssen ebenfalls das <tt>egcs64</tt> Paket
+installieren.
+
+<p>Wir empfehlen Ihnen dringend, ebenfalls das <tt>kernel-package</tt> zu
+verwenden, das Ihnen bei der Installation und der Verwaltung der Kernel hilft.
+Sie können einen konfigurierten Kernel mit einem Befehl (als root) übersetzen:
+<pre>
+  make-kpkg --subarch=sun4u --arch_in_name --revision=custom.1 kernel_image
+</pre>
+
 
 <h2><a name="errata">Ergänzungen</a></h2>
   <p>
@@ -56,7 +83,7 @@ href="problems">Ergänzungs-Seite</a> zu beschreiben.</p>
 
 <h2><a name="who">Wer sind wir?  Wie kann ich helfen?</a></h2>
   <p>
-Der Debian-SPARC-Port ist eine verteilte Anstrengung, genau wie es
+Die Debian-SPARC-Portierung ist eine verteilte Anstrengung, genau wie es
 Debian auch ist.  Zahllose Personen haben bei der Portierung und
 Dokumentation mitgeholfen, obwohl nur eine kleine Liste von <a
 href="credits">Anerkennungen</a> verfügbar sind.</p>
@@ -72,7 +99,7 @@ sowie die <a href="porting">SPARC-Portierungs-Seite</a>.</p>
 
 <h2><a name="links">Wo kann ich weitere Informationen finden?</a></h2>
   <p>
-Der beste Ort, um Debian-spezifische Fragen zum SPARC-Port zu stellen,
+Der beste Ort, um Debian-spezifische Fragen zur SPARC-Portierung zu stellen,
 ist auf der Mailing-Liste <a href="$(HOME)/MailingLists/subscribe#debian-sparc">\
 &lt;debian-sparc@lists.debian.org&gt;</a>.
 <a
@@ -82,8 +109,9 @@ sind im Web vorhanden.</p>
 Um sich auf die Liste einzutragen, schreiben Sie eine Mail an
 <a href="mailto:debian-sparc-request@lists.debian.org">\
 debian-sparc-request@lists.debian.org</a>, mit dem Wort `subscribe'
-als Subject ohne Mail-Text.  Alternativ tragen Sie sich im Web ein
-über die <a href="$(HOME)/MailingLists/subscribe#debian-sparc">Mailing-Listen-Subscriptions-Seite</a>.</p>
+als Betreff ohne Mail-Text.  Alternativ tragen Sie sich im Web ein
+über die
+<a href="$(HOME)/MailingLists/subscribe#debian-sparc">Mailing-Listen-Bestell-Seite</a>.</p>
   <p>
 Kernel-Fragen sollten auf der Liste
 &lt;sparclinux@vger.rutgers.edu&gt; gestellt werden.  Tragen Sie sich
@@ -96,13 +124,10 @@ Dieses ist ein sehr kleines Verzeichnis von Links zu Linux SPARC (a.k.a.
 ``S/Linux''):</p>
  <ul>
       <li>
-<a href="../sparc64/">Debian UltraSPARC Port</a></li>
-      <li>
 <a href="http://www.ultralinux.org/">UltraLinux</a> -- die definitive
-Quelle für den Kernel-Port.  Lassen Sie sich nicht vom Namen täuschen,
+Quelle für die Kernel-Portierung.  Lassen Sie sich nicht vom Namen täuschen,
 sie behandelt meistens SPARC anstatt von UltraSPARC.</li>
       <li>
-<!-- should be relegated to ../sparc64 ? --> <a
-href="http://ultra.penguin.cz/">UltraPenguin</a> -- ein Port von S/Linux
-zur sun4u-Serie (`Ultra').</li>
+<a href="http://ultra.penguin.cz/">UltraPenguin</a> -- eine Portierung von
+S/Linux zur sun4u-Serie (`Ultra').</li>
  </ul>
