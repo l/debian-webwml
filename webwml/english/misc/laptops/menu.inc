@@ -7,6 +7,7 @@
 <define-menu-item name="laptops">
    [EN:Debian for Laptops:]
    [AR:Debian for Laptops:]
+   [CA:Debian per a portàtils:]
    [DA:Debian til bærbare:]
    [DE:Debian für Laptops:]
    [EL:Debian for Laptops:]
