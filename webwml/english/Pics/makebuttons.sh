@@ -4,6 +4,9 @@
 # to have gimp perl up and running so it is a lot faster.
 #
 # Uncomment this line to run the server
+# You now MUST have a perl server running, so either uncomment this line
+# or run gimp and select menu item Xtns->Perl->Server
+# You have been (belatedly) warned!!
 #
 # gimp --no-interface --no-data --batch '(extension-perl-server 0 0 0)' &
 #
