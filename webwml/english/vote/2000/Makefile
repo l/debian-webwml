@@ -4,7 +4,7 @@
 
 WMLBASE=../..
 CUR_DIR=vote/2000
-SUBS=
+SUBS=leadership_debate
 
 include $(WMLBASE)/Make.lang
 
