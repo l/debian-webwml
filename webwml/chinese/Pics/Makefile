@@ -8,8 +8,3 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-# I have no idea what this is for and it is breaking the build
-# explain why on debian-www if you uncomment this - Jay
-# $(ENGLISHSRCDIR)
-# 
-# cp -siv /english/Pics/red-*.png .
