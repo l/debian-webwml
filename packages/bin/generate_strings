@@ -46,6 +46,12 @@ use Data::Dumper;
 
 use Packages::I18N::Locale;
 
+# clean up env
+delete $ENV{'LANGUAGE'};
+delete $ENV{'LANG'};
+delete $ENV{'LC_ALL'};
+delete $ENV{'LC_MESSAGES'};
+
 my %config = (
 	      'langs' => undef,
 	      'quiet' => undef,
@@ -60,7 +66,7 @@ my %options = (
 	       'locales=s' => \$config{locales},
 	       "output=s" => \$config{output},
 	       'verbose+' => \$config{verbose},
-	       "quiet" => \$config{quiet},
+	       'quiet' => \$config{quiet},
 	       'help' => \&help,
 	       );
 
@@ -174,7 +180,7 @@ foreach my $pot (@ARGV) {
 
 	    my $msgstr = gettext( $msgid );
 	    $msgid =~ s/\\@/@/go;
-	    print "got msgstr: $msgstr\n" if $config{verbose} > 1;
+	    print "got msgstr ($lang): $msgstr\n" if $config{verbose} > 1;
 	    $result{$lang}{$msgid} = $msgstr;
 	}
     }
