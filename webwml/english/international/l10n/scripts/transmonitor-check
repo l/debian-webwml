@@ -18,9 +18,8 @@
 # - check that all languages have the same number of msgs
 #   (problem: multibinaries source package=> multiple po dirs)
 # - stat the catalogs for catgets
-# - not only take the languages, but also <lang code>-<country code>
 
-# Copyright (C) 1999 by Martin Quinson. Distributed under GPL
+# Copyright (C) 1999-2001 by Martin Quinson. Distributed under GPL
 
 my $dpkglibdir="/usr/lib/dpkg";
 
@@ -38,7 +37,7 @@ sub interrupted {
 }
 
 
-my (%data); #the hash were we put all the infos
+my %data; #the hash were we put all the infos
             # $data{$pkg_name}=("version","section","priority","type","stats"=>(<code lang>=>stats),"err"=>@errors,"warn"=>@warnings)
 #######################################
 #  Global Variables
@@ -203,6 +202,7 @@ $DB_FILE = "$cwd/$DB_FILE" unless ($DB_FILE =~ m,^/,);
 $TMP_DIR = "$cwd/$TMP_DIR" unless ($TMP_DIR =~ m,^/,);
 $PO_ROOT = "$cwd/$PO_ROOT" unless ($PO_ROOT =~ m,^/,);
 $TEMPLATES_ROOT = "$cwd/$TEMPLATES_ROOT" unless ($TEMPLATES_ROOT =~ m,^/,);
+$TRANSMONITOR_ROOT = "$cwd/$TRANSMONITOR_ROOT" unless ($TRANSMONITOR_ROOT =~ m,^/,);
 $SYN_FILE = "$TRANSMONITOR_ROOT/$SYN_FILE" unless ($SYN_FILE=~ m,^/,);
 
 my ($succeded,$result);
@@ -314,7 +314,7 @@ PKG: while ($dsc = shift @pkg_list){
 	next PKG; 
     }
 
-    %data = %{check_pkg($pkg,$ver,\%data)};
+    check_pkg($pkg,$ver);
     chdir ($cwd) || die "can't return to the origine dir!";
     write_data("$DB_FILE",\%data) if $careful;
 }
@@ -434,7 +434,7 @@ my %sources;
        
        
        $tosave=1;#ok, we've done something, we have to save the db
-       %data = %{check_pkg($pkg,$sources{$pkg}{"version"},\%data)};
+       check_pkg($pkg,$sources{$pkg}{"version"});
        chdir ($cwd) || die "can't return to the origine dir!";
        write_data("$DB_FILE",\%data) if $careful;
        print " done\n";
@@ -557,29 +557,19 @@ sub ftp_unpack_pkg{
 sub check_pkg{
     my $pkg = shift;
     my $version = shift;
-    my $dataref=shift;
-    my %data = %{$dataref};
-    my $add_part = sub {
-	my $pkg=shift;
-	my $type=shift;
-	my $msg=shift;
-	if (($type ne "errors")&&($type ne "warnings")) {
-	    &internerr ("Can't add a msg to the unknown category '$type' of pkg $pkg.
-The message was $msg\n");
-	}
-	$data{$pkg}{$type}[@{$data{$pkg}{$type}}] = $msg;
-    };
 
     $data{$pkg}{'version'}=$version;
 
-    ###
-    ### search the section and priority
-    ### (a LOT of packages place spaces here, or upper case, or even typos)
+    #####[ search the section and priority]####################################
+    #
+    # (a LOT of packages place spaces here, or upper case, or even typos)
+    #
+    #####
     my $section ="";
     my $priority="";
     unless (-e "debian/control" && open CTRL,"debian/control") {
 	&warn ("Error: Can't find debian/control; skipping the package $pkg.");
-	return \%data;
+	return;
     }
     while (<CTRL>) {
 	if ((/^Section: (.*)$/)&&(!defined ($data{$pkg}{'section'}) || $data{$pkg}{'section'} eq "")) {
@@ -592,11 +582,11 @@ The message was $msg\n");
     }
     close CTRL;
     if (!defined($synonym{$section})) {
-	&$add_part($pkg,"errors","'$section' is not a valid section\n");
+	add_part($pkg,"errors","'$section' is not a valid section\n");
 	$section = "unknown";
 	$priority = "unknown";
     } elsif (!defined($synonym{$priority})) {
-	&$add_part($pkg,"errors","'$priority' is not a valid priority\n");
+	add_part($pkg,"errors","'$priority' is not a valid priority\n");
 	$section = "unknown";
 	$priority = "unknown";
     } else { 
@@ -606,23 +596,58 @@ The message was $msg\n");
     $data{$pkg}{'section'} = $section;
     $data{$pkg}{'priority'} = $priority;
 
-    ###
-    ### search all *.po files, nls catalogs files and debconf templates
-    ###  (it's a catalog iff first_line =~ /\$set[0-9 ]*\#/)
-    # Search *.po files. 
-    my ($nb);
-    my @pofiles;
-    my @templates;
-    open LIST,"find ./ -name \"*.po\" -type f|" || die "Can't run find : $!";
-    while (<LIST>) {
-	chop;
-	$_ =~ s,^./(.*),$1, ;
-#	print "put $_ in \$pofiles[@pofiles]\n";
-	$pofiles[scalar @pofiles]=$_;
+    #####[ Check the type of organization ]#####################################
+    #
+    # try to guess the organisation of this stuff. It could be :
+    #   - standard gnu (po dir, Makefile.in.in file and POTFILES.in in it)
+    #   - standard nls (nls dir hopefully, with all catalogs in it)
+    #   - full (dir "en" containing po files or "nls" dir or "LC_MESSAGES" dir)
+    #     (and hopefully man pages and info pages)
+    #####
+    my $type_org="";
+    my $addtype=sub{ 
+	my ($arg) = shift;
+	if ($type_org eq "") {
+	    $type_org=$arg;
+	} else {
+	    $type_org="$type_org|$arg";
+	}
+    };
+    # check if it's a standard nls package (nls dir)
+    open LIST,"find -name \"nls\" -type d |" || die "Can't run find : $!";
+    &$addtype("nls") if <LIST>;
+    close LIST;
+    
+    # Check if it's a standard gnu install (po dir, Makefile.in.in file and POTFILES.in in it)
+    open LIST,"find -name \"po\" -type d|" || die "Can't run find : $!";
+    while ($a = <LIST>) {
+	chop ($a);
+	&$addtype("gnu") if (-e "$a/Makefile.in.in" && -e "$a/POTFILES.in");
+	#FIXME: we could regenerate the po file in this case
     }
     close LIST;
     
+    # check if it's a full i18n package
+    open LIST,"find -name \"en\" -type d|" || die "Can't run find : $!";
+    while (<LIST>) {
+	chop;
+	open LIST2,"find $_ -name \"*.po\" -type f -o -name \"nls\" -type d -o -name \"LC_MESSAGES\" -type d|" 
+	    || die "Can't run find : $!";
+	&$addtype("full") if (<LIST2>);
+	close LIST2 || die;
+    }
+    close LIST;
+    $type_org="?" if ($type_org eq "");
+    $data{$pkg}{"type"} = $type_org;
+
+
+    #####[ Search and handel material ]########################################
+    #
+    # search all *.po files, nls catalogs files and debconf templates
+    #  (it's a catalog iff first_line =~ /\$set[0-9 ]*\#/)
+    #####    
     #search nls catalogs
+    my ($nb);
     my(@nls_files);
     open LIST,"find ./ -type f|" || die "Can't run find : $!";
     my $line;
@@ -633,10 +658,8 @@ The message was $msg\n");
 	} else {
 	    $nb=0;
 	}
-#	print "test $_ for nls catalog\n";
 	open FILE,$_ || die ("can't open file $_ to check if it's a nls catalog : $!");
 	$line = <FILE>;
-#	print "  read: $line\n";
 	if ((defined $line)&&($line =~ /\$set[0-9 ]*\#/)) { #if FILE is empty, $line is undef
 	    $_ =~ s,^./(.*),$1, ;
 	    $data{$pkg}{'nls'}[$nb]=$_;
@@ -645,19 +668,21 @@ The message was $msg\n");
     }
     close LIST;
     
-    #search debconf templates
-    open LIST,"find debian/ -name \"templates\" -o -name \"templates.*\"|" || die "Can't run find : $!";
+    ##
+    ## Search *.po files. 
+    ##
+    my @pofiles;
+    open LIST,"find ./ -name \"*.po\" -type f|" || die "Can't run find : $!";
     while (<LIST>) {
 	chop;
 	$_ =~ s,^./(.*),$1, ;
-	$templates[scalar @templates]=$_;
+	$pofiles[scalar @pofiles]=$_;
     }
     close LIST;
-
-    ###
-    ### for po files, try to guess the language from the name, 
-    ###      and the l10n with msgfmt
-    ###
+    ##
+    ## for po files, try to guess the language from the name, 
+    ##      and the l10n with msgfmt
+    ##
     my $file; # the po file name in the package
     my $filename; #the po file name to be archived
     my $lang=""; # the identified code language
@@ -665,22 +690,23 @@ The message was $msg\n");
     my $f; #nb of fuzzy msg
     my $u; #nb of untranslated msg
     my $t; #nb of translated msg
-    my $this_stats = ""; #stats for this file
+    my $this_stat = ""; #stats for this file
+    my $err_msg =""; # err msg of the statistic external command (ie, msgfmt or debconf-stats)
     my $regexp_for_lang_code = "((..)([-_][a-zA-Z]*)?(@[^\.]*)?)(\.[^\.]*)?";
-    
+
 #    print "PO: @pofiles\n";
    POFILE: foreach $file (@pofiles) {
 #	print "Test file $file\n";
       File::Path::mkpath(File::Basename::dirname("$PO_ROOT/$pkg/$file"));
 	$filename = "${pkg}_$data{$pkg}{'version'}/$file";
-	$filename = s,:,\%3a,;
+	$filename =~ s,:,\%3a,;
 	$filename =~ s,/,_,g;
 	$filename = File::Basename::dirname("$file")."/".$filename;
 
 	if (system("gzip -c9 $file > $PO_ROOT/$pkg/$filename.gz")){
 	    warn "Can't gunzip $file to $PO_ROOT/$pkg/$filename.gz : $!";
 	}
-	$this_stats="";
+	$this_stat="";
 	$lang ="";
 	if ($file=~ /\/$regexp_for_lang_code\.po$/){ 
 	    $bad_lang =$1;
@@ -704,172 +730,160 @@ The message was $msg\n");
 		$bad_lang = "";
 	    }
 	}
-
 	if ($lang ne "") {
 	    # stats the file
-	    my ($found)=0;   #true if the output seems to be an output of no err
-	    my @lines;   #to read the output
-	    my ($line);  #to read the output
-	    my ($t)="0"; #number of translated msg found
-	    my ($u)="0"; #number of untranslated msg found
-	    my ($f)="0"; #number of fuzzy msg found
-	    # reads the old stats (it may be more than one po per lang and pck)
-	    if ((defined($data{$pkg}{"stats"})) && (defined ($data{$pkg}{"stats"}{$lang}))) {
-		if ($data{$pkg}{"stats"}{$lang} =~ /([0-9]*)t/) {
-		    $t=$1;
-		} if ($data{$pkg}{"stats"}{$lang} =~ /([0-9]*)u/) {
-		    $u=$1;
-		} if ($data{$pkg}{"stats"}{$lang} =~ /([0-9]*)f/) {
-		    $f=$1;
-		}
-	    }
-	    # reads the new stats
-	    @lines = qx,msgfmt --statistics -o /dev/null $file 2>&1 1>/dev/null,;
-	    $line = $lines[0];
-	    chop ($line);
-	    if ($line =~ /([0-9]*) translated/) {
-		$t+=$1;
-		$this_stats.="$1 t";
+	    ($this_stat,$err_msg)=
+		read_stats("msgfmt --statistics -o /dev/null $file 2>&1 1>/dev/null");
+	    if ($err_msg) {
+		add_part($pkg,"errors","Error of msgfmt --statistics ".$file."\n".$err_msg);
 	    } else {
-		$this_stats.="0t";
+		$data{$pkg}{"stats"}{$lang}=l10n_add($data{$pkg}{"stats"}{$lang},$this_stat);
 	    }
-	    if ($line =~ /([0-9]*) fuzzy/) {
-		$f+=$1;
-		$this_stats.="$1 f";
-	    } else {
-		$this_stats.="0f";
-	    }
-	    if ($line =~ /([0-9]*) untranslated/) {
-		$u+=$1;
-		$this_stats.="$1 u";
-	    } else {
-		$this_stats.="0u";
-	    }
-	    # outputs the stats
-	    $data{$pkg}{"stats"}{$lang} = "$t t$f f$u u";
-	    #(output with space because perl understand $tt as a new var)
-	    $data{$pkg}{"stats"}{$lang}=~ s/ //g;
-	    $this_stats=~s/ //g;
-	    # if msgfmt didn't output something like 'bla translated,bla fuzzy', it's an error.
-	    unless (($line =~ /untranslated/)||($line =~ /translated/)||($line =~ /fuzzy/)) {
-		&$add_part($pkg,"errors","Error of msgfmt --statistics ".$file."\n".@lines);
-	    }
-	    # the output of msgfmt -v may be a warning
-	    # FIXME : I removed '-v' to work around a mysterious segfault of msgfmt on solaris
-	    @lines = qx,msgfmt --statistics -o /dev/null $file 2>&1 1>/dev/null,;
-	    $line = $lines[0];
-	    unless (($line =~ /untranslated/)||($line =~ /translated/)||($line =~ /fuzzy/)) {
-		$line = join ("\n",@lines);
-		$line =~ s/\n\n/\n/g;
-		&$add_part($pkg,"warnings","(Warning of msgfmt --statistics -v ".$file.")\n".$line);
-	    }
-	    
 	} else { # no valid lang found
 	    next POFILE if $file =~ m,messages.po$,;
 	    if ($bad_lang eq "") { 
-		&$add_part($pkg,"errors","can't guess the language of $file");
+		add_part($pkg,"errors","can't guess the language of $file");
 	    } else {
-		&$add_part($pkg,"errors","$bad_lang is not a language code (in $file)");
+		add_part($pkg,"errors","$bad_lang is not a language code (in $file)");
 	    }
 	}
 	# Add this file to the data
-	$data{$pkg}{"po"}[@{$data{$pkg}{"po"}}] = "$file:$lang:$this_stats:$filename";
-#	print "Find '".$data{$pkg}{"po"}[@{$data{$pkg}{"po"}}-1]."'\n";
+	$data{$pkg}{"po"}[@{$data{$pkg}{"po"}}] = "$file:$lang:$this_stat:$filename";
     }
+
+    search_templates($pkg);
+
+}
+#----[ add_part ]---------------------------------------------------------------
+# simple function to add an error or a warning to a package
+sub add_part  {
+    my $pkg=shift;
+    my $type=shift;
+    my $msg=shift;
+    if (($type ne "errors")&&($type ne "warnings")) {
+	&internerr ("Can't add a msg to the unknown category '$type' of pkg $pkg.
+The message was $msg\n");
+    }
+    $data{$pkg}{$type}[@{$data{$pkg}{$type}}] = $msg;
+}
+
+#----[ search_templates ]-------------------------------------------------------
+# handel debconf templates
+sub search_templates {
+    my $pkg = shift;
 
     ###
     ### For debconf templates, do the same thing than for po files
     ###
-    foreach $file (@templates) {
-	# Store the templates
-      File::Path::mkpath(File::Basename::dirname("$TEMPLATES_ROOT/$pkg/$file"));
-	$filename = "${pkg}_$data{$pkg}{'version'}/$file";
-	$filename =~ s,/,_,g;
-	$filename = s,:,\%3a,;
-	$filename = File::Basename::dirname("$file")."/".$filename;
-	$filename =~ s,^debian/(.*),$1,;
-
-	if (system("gzip -c9 $file > $TEMPLATES_ROOT/$pkg/$filename.gz")){
-	    warn "Can't gunzip $file to $TEMPLATES_ROOT/$pkg/$filename.gz : $!";
-	}
-	#search to guess the language
-	$this_stats="";
-	$lang ="";
-	if ($file=~ m,templates\.(..)([-_][a-zA-Z]*)?$,){ 
-	    $bad_lang =$1;
-	    if (is_lang($bad_lang)) {
-		$lang = $bad_lang;
-		$bad_lang = "";
-	    }
-	} elsif ($file =~ m,templates$,) {
-	    $lang="en";
-	}
-	if ($lang eq "" && $file=~ /\/(..)\//){
-	    $bad_lang =$1;
-	    if (is_lang($bad_lang)) {
-		$lang = $bad_lang;
-		$bad_lang = "";
-	    }
-	}
-	if ($lang ne "") {
-	    # stats the file: (FIXME) TODO because debconf gives no easy way to stat templates
-	    
-	} else { # no valid lang found
-	    if ($bad_lang eq "") { 
-		&$add_part($pkg,"errors","can't guess the language of $file");
-	    } else {
-		&$add_part($pkg,"errors","$bad_lang is not a language code (in $file)");
-	    }
-	}
-	# Add this file to the data
-	$data{$pkg}{"templates"}[@{$data{$pkg}{"templates"}}] = "$file:$lang".'::'.$filename;
-    }	
-
-    ###
-    ### try to guess the organisation of this stuff. It could be :
-    ###   - standard gnu (po dir, Makefile.in.in file and POTFILES.in in it)
-    ###   - standard nls (nls dir hopefully, with all catalogs in it)
-    ###   - full (dir "en" containing po files or "nls" dir or "LC_MESSAGES" dir)
-    ###     (and hopefully man pages and info pages)
-    ###
-    my ($type_org)="";
-    my $addtype=sub{ 
-	my ($arg) = shift;
-	if ($type_org eq "") {
-	    $type_org=$arg;
-	} else {
-	    $type_org="$type_org|$arg";
-	}
-    };
-    # check if it's a standard nls package (nls dir)
-    open LIST,"find -name \"nls\" -type d |" || die "Can't run find : $!";
-    &$addtype("nls") if <LIST>;
-    close LIST;
-
-    # Check if it's a standard gnu install (po dir, Makefile.in.in file and POTFILES.in in it)
-    open LIST,"find -name \"po\" -type d|" || die "Can't run find : $!";
-    while ($a = <LIST>) {
-	chop ($a);
-	&$addtype("gnu") if (-e "$a/Makefile.in.in" && -e "$a/POTFILES.in");
-    }
-    close LIST;
-
-    # check if it's a full i18n package
-    open LIST,"find -name \"en\" -type d|" || die "Can't run find : $!";
+    # search directories containing debconf templates, and the debconf templates
+    my %dirs;
+    open LIST,"find debian/ -name \"templates\" -o -name \"templates*\"|" || die "Can't run find : $!";
     while (<LIST>) {
 	chop;
-	open LIST2,"find $_ -name \"*.po\" -type f -o -name \"nls\" -type d -o -name \"LC_MESSAGES\" -type d|" 
-	    || die "Can't run find : $!";
-	&$addtype("full") if (<LIST2>);
-	close LIST2 || die;
+	$_ =~ s,^./(.*),$1, ;
+	$dirs{File::Basename::dirname($_)} = 1;
     }
     close LIST;
-    $type_org="?" if ($type_org eq "");
-    $data{$pkg}{"type"} = $type_org;
+    # stat templates in each dir
+    foreach my $dir (keys %dirs) {
+      File::Path::mkpath(File::Basename::dirname("$TEMPLATES_ROOT/$pkg/$dir"));
+	qx,cp $dir/templates $dir/dtc-tmp,;
+	open LIST,"ls $dir/templates.* 2>/dev/null|" || die "can't run ls: $!";
+	my $file;
+	while ($file=<LIST>) {
+	    chop($file);
+	    my @lines = qx,debconf-mergetemplate $file $dir/dtc-tmp 2>&1 1>$dir/dtc-tmp2 && mv $dir/dtc-tmp2 $dir/dtc-tmp,;
+	    if ($?){
+		add_part($pkg,"errors",
+			 "Error of debconf-mergetemplate for file $file\n".join('\n ',@lines));
+	    }
+	}
 
-    return \%data;
+	# store the full template
+	my $filename = "${pkg}_$data{$pkg}{'version'}/$dir/templates";
+	$filename =~ s,:,\%3a,;
+	$filename =~ s,/,_,g;
+	if (system("if [ -e $dir/dtc-tmp ] ; then gzip -c9 $dir/dtc-tmp > $TEMPLATES_ROOT/$pkg/$filename.gz; else echo '$dir/dtc-tmp was not created. I guess it was no debconf template there'; exit 1; fi")){
+	    warn "Can't gunzip $dir/templates to $TEMPLATES_ROOT/$pkg/$filename.gz : $!\n";
+	}
+	# Add this file to the data
+	$data{$pkg}{"templates"}[@{$data{$pkg}{"templates"}}] = "templates:en".'::'."$filename";
+
+	# For each lang
+	my @lines = qx,debconf-getlang --stats $dir/templates $dir/templates.* 2>&1,;
+	foreach my $line (@lines) {
+	    unless (($line =~ /untranslated/)||($line =~ /translated/)||($line =~ /fuzzy/)) {
+		add_part($pkg,"errors",
+			 "Error of debconf-getlang in directory ".$dir."\n".join('\n ',@lines));
+		last;
+	    }
+	    $line =~ m,^([^:]*): (.*)$,;
+	    my $lang=$1;
+	    my $stats=parse_stats($2);
+	    # Store the templates
+	    my $filename = "${pkg}_$data{$pkg}{'version'}/$dir/templates.$lang";
+	    $filename =~ s,:,\%3a,;
+	    $filename =~ s,/,_,g;
+	    
+	    if (system("debconf-getlang $lang $dir/dtc-tmp|gzip -c9 - > $TEMPLATES_ROOT/$pkg/$filename.gz")){
+		warn "Can't gunzip $dir/templates.$lang to $TEMPLATES_ROOT/$pkg/$filename.gz : $!\n";
+	    }
+	    unless (is_lang($lang)) {
+		add_part($pkg,"errors","$lang is not a language code (in templates of directory $dir)");
+	    }
+	    # Add this file to the data
+	    $data{$pkg}{"templates"}[@{$data{$pkg}{"templates"}}] = "templates.$lang:$lang:$stats:$filename.gz";
+	}    
+
+    }
 }
 
+#----[ parse_stats ]------------------------------------------------------------
+# do "5 translated templates, 1 fuzzy translations" -> "5t1f0u"
+sub parse_stats {
+    my $line=shift;
+    my $returned_stats="";
+
+    $returned_stats.=($line =~ /([0-9]*) translated/   ? "$1 t" : "0t");
+    $returned_stats.=($line =~ /([0-9]*) fuzzy/        ? "$1 f" : "0f");
+    $returned_stats.=($line =~ /([0-9]*) untranslated/ ? "$1 u" : "0u");
+    #(output with space because perl understand $tt as a new var)
+    $returned_stats=~ s/ //g;
+
+    return $returned_stats;
+}
+
+#----[ read_stats ]-------------------------------------------------------------
+# run an external command to get the level of translation of a file
+# arg1 = cmd to run
+#
+# ret1 = stats line
+# ret2 = "" or error msg got
+sub read_stats {
+    my $cmd = shift;
+
+    my ($found)=0;   #true if the output seems to be an output of no err
+    my @lines;   #to read the output
+    my ($line);  #to read the output
+    my $returned_err="";
+    my $returned_stats="";
+
+    # reads the new stats
+    @lines = qx,$cmd,;
+    $line = $lines[0];
+    chop ($line);
+    return ("0t0f0u","Something weird append (no output)\n") unless defined($line);
+    # if msgfmt didn't output something like 'bla translated,bla fuzzy', it's an error.
+    if (($line =~ /untranslated/)||($line =~ /translated/)||($line =~ /fuzzy/)) {
+	$returned_stats=parse_stats($line);
+    } else {
+	$returned_err=join('\n ',@lines);
+    }
+    return ($returned_stats,$returned_err);
+}
+
+#----[ init_synonym ]--------------------------------------------------------------
+# Read the synonym file
 sub init_synonym {
     my $right;
     my $wrong;
@@ -888,11 +902,6 @@ sub init_synonym {
         $synonym{$wrong} = $right;
     }
     close DATA;
-#    foreach $wrong (sort keys %synonym) {
-#	if ($wrong ne $right) {
-#	    print "$wrong is a synonym for $synonym{$wrong}\n";
-#	}
-#    }
 }
 
 0;
