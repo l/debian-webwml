@@ -1,31 +1,55 @@
 #use wml::debian::template title="Distribución «testing» de Debian" BARETITLE=true
-#use wml::debian::translation-check translation="1.4"
+#use wml::debian::translation-check translation="1.8"
 
 <p>Si desea información básica, orientada al usuario, sobre la
 distribución testing, diríjase a
-<a href="$(DOC)/FAQ/ch-ftparchives#s-testing">las FAQ</a>.</p>
+<a href="$(DOC)/FAQ/ch-ftparchives#s-testing">las FAQ de Debian</a>.</p>
+
+<p>Algo que es importante que tengan en cuenta tanto los usuarios
+habituales como los desarrolladores de testing, es que sus actualizaciones
+de seguridad <strong>no son gestionadas por el equipo de
+seguridad</strong>. Si desea más información lea por favor las <a
+href="../security/faq#testing">FAQ del equipo de seguridad</a>.</p>
 
 <p>Esta página cubre principalmente los aspectos de «testing» importantes
 para desarrolladores de Debian.</p>
 
-<p>La documentación incluye:
+<h2>Cómo funciona «testing»</h2>
 
-<ul>
-  <li>Las <a href="http://people.debian.org/~jules/testingfaq.html">preguntas
-      frecuentes sobre testing</a> de Jules Bean, que explican algo de la
-      información críptica que hay aquí.
-      <br>
-      Hubo una <a href="http://lists.debian.org/debian-devel/2001/debian-devel-200112/msg00610.html">serie
-      de mensajes en -devel</a> sobre estas PF con más información que, en
-      el momento de escribir esto, aún no había sido incorporada.
-  </li>
-  <li>Un viejo <a href="http://lists.debian.org/debian-devel-0008/msg00906.html">mensaje
-      aclaratorio</a>, que quedó obsoleto tras implementar James el
-      «package pool», pero puede que quiera leerlo, de todas maneras.
-  </li>
-</ul>
+<p>La distribución «testing» se genera de forma automática. Se origina
+partiendo de la distribución «unstable» mediante una serie de scripts que
+intentan pasar de una a otra paquetes sobre los que sea razonable pensar
+que carecen de fallos importantes. Lo hacen de manera que las dependencias
+de los otros paquetes en testing se puedan satisfacer siempre.</p>
 
-<p>El script de actualización crea dos ficheros de salida:
+<p>Un paquete (una versión en particular) pasará a testing cuando
+satisfaga todos los siguientes criterios:</p>
+
+<ol>
+  <li>Debe haber estado en unstable 10, 5 o 2 días, dependiendo de la
+  urgencia marcada al enviarlo;</li>
+
+  <li>Debe estar compilado y al día en todas las arquitecturas en las que
+  ha sido compilado anteriormente en unstable;</li>
+
+  <li>Debe tener el mismo número o menos de fallos críticos que la versión
+  actualmente en «testing» (<a href="#faq">más adelante</a> tiene más
+  información);</li>
+
+  <li>Todas sus dependencias deben poder ser satisfechas <em>bien</em>
+  mediante paquetes ya en «testing», <em>bien</em> mediante el grupo de
+  paquetes que va a ser instalado al mismo tiempo;</li>
+
+  <li>La operación de instalar un paquete en «testing» no debe afectar
+  adversamente a ningún paquete que ya esté en «testing». (<a
+  href="#faq">Más adelante</a> tiene más información).</li>
+</ol>
+
+<p>De un paquete que satisface las tres primeras condiciones se dice que
+es un <q>Candidato válido</q>.</p>
+
+<p>El script de actualización muestra el momento en que cada paquete
+pasará de «unstable» a «testing». La salida es doble:</p>
 
 <ul>
   <li>La <a href="http://ftp-master.debian.org/testing/update_excuses.html">\
@@ -39,6 +63,189 @@ para desarrolladores de Debian.</p>
       con gzip</a>]
   </li>
 </ul>
+
+<h2><a name="faq">Preguntas frecuentes</a></h2>
+
+<h3><q>¿Qué son los fallos críticos, y cómo se cuentan?</q></h3>
+
+Todos los fallos de importancia alta se consideran por defecto <em><a
+href="http://bugs.debian.org/release-critical/">fallos críticos a efectos
+de publicación</a></em>; actualmente lo son: <strong>critical</strong>,
+<strong>grave</strong> y <strong>serious</strong>.</p>
+
+<p>Se presume que tales fallos tienen cierto impacto en las posibilidades
+de que el paquete sea distribuido con la versión estable de Debian: en
+general, si un paquete tiene un fallo crítico abierto, no pasará a
+«testing» y en consecuencia no saldrá en «stable».</p>
+
+<p>Para el conteo de fallos de «testing» se considera básicamente el
+número de bugs en el último momento en que la versión en «testing» era
+igual a la de «unstable». Los fallos marcados como
+<strong><current_release_name></strong> o
+<strong><current_testing_name></strong> no se cuentan. Sí se cuentan, sin
+embargo, los fallos marcados con la etiqueta <strong>sid</strong>.</p>
+
+<h3><q>¿Cómo puede ser que instalar un paquete en «testing» estropee otros
+paquetes?</q></h3>
+
+<p>La estructura de los archivos de distribución es tal que sólo pueden
+contener una versión de un paquete; un paquete se define por su nombre.
+Por lo tanto, cuando se instala el paquete fuente <tt>acmefoo</tt> en
+«testing», junto con sus paquetes binarios <tt>acme-foo-bin</tt>,
+<tt>acme-bar-bin</tt>, <tt>libacme-foo1</tt> y <tt>libacme-foo-dev</tt>,
+se elimina la versión antigua.</p>
+
+<p>Sin embargo, puede que la versión anterior proporcionase un paquete
+binario con otro soname para librerías, como <tt>libacme-foo0</tt>. Borrar
+<tt>acmefoo</tt> eliminará <tt>libacme-foo0</tt>, lo cual dejará sin
+posibilidad de instalación a los paquetes que dependieran de él.</p>
+
+<p>Evidentemente, esto afecta principalmente a paquetes que proporcionen
+conjuntos cambiantes de paquetes binarios en diferentes versiones
+(principalmente librerías). Sin embargo, también afecta a paquetes sobre
+los que haya declarados dependencias versionadas de los tipos ==, &lt;= o
+&lt;&lt;.</p>
+
+<h3><q>¡Aún no lo entiendo! Los scripts de «testing» dicen que este
+paquete es un candidato válido, pero sigue sin entrar en
+«testing».</q></h3>
+
+<p>Esto suele pasar cuando de alguna manera, directa o indirecta, instalar
+el paquete pueda afectar a otro.</p>
+
+<p>Recuerde considerar las dependencias de su paquete. Suponga que el
+paquete depende de libtool, o libltdl<var>X</var>. El paquete no entrará
+en «testing» hasta que la versión adecuada de libtool esté preparada para
+entrar.</p>
+
+<p>A su vez, esto no sucederá hasta que la instalación de libtool no rompa
+las cosas que ya había en «testing». En otras palabras, hasta que todos
+los otros paquetes que dependan de libltdl<var>Y</var> (donde <var>Y</var>
+es una versión anterior) hayan sido recompilados, y se hayan eliminado
+todos los fallos críticos, etc, ninguno de estos paquetes entrará en
+«testing».</p>
+
+<p>Aquí es donde es útil la <a href="http://ftp-master.debian.org/testing/update_output.txt">\
+salida textual</a>
+[<a href="http://ftp-master.debian.org/testing/update_output.txt.gz">gzipeada</a>]:
+da pistas (aunque un poco breves) sobre los paquetes que podrían quedar
+malparados al añadir un candidato válido a «testing».</p>
+
+<h3><q>¿Por qué a veces es difícil que entren en «testing» paquetes
+<kbd>Architecture: all</kbd>?</q></h3>
+
+<p>Si se ha de instalar un paquete <kbd>Architecture: all</kbd>, se debe
+poder satisfacer sus dependencias en <strong>todas</strong> las
+arquitecturas. Si depende de un cierto paquete que sólo compila en un
+conjunto limitado de arquitecturas de Debian, entonces no pasará.</p>
+
+<p>Sin embargo, por ahora «testing» ignorará la incapacidad de los
+paquetes <kbd>Architecture: all</kbd> para instalarse en arquitecturas que
+no sean i386. ("Es un hack apestoso y no estoy contento de haberlo hecho,
+pero ahí está." --aj)</p>
+
+<h3><q>¿Hay alguna excepción? Estoy seguro de que <tt>acmefoo</tt> entró
+en «testing» aunque no satisfacía todos los requisitos.</q></h3>
+
+<p>El «release manager» puede saltarse las reglas de dos maneras:</p>
+
+<ul>
+  <li>Puede decidir que la situación de inestabilidad causada por una nueva
+      librería sea para mejor en lugar de para peor, y la deje entrar
+      junto con su flotilla de dependientes.</li>
+  <li>También puede eliminar de forma manual de «testing» paquetes que
+      pudieran estar mal, de manera que se puedan instalar nuevas
+      cosas.</li>
+</ul>
+
+<h3><q>¿Podrías darme un ejemplo real y no trivial?</q></h3>
+
+<p>Aquí va uno: cuando se instala en «testing» el paquete fuente
+<tt>apache</tt>, junto con sus paquetes binarios <tt>apache</tt>,
+<tt>apache-common</tt>, <tt>apache-dev</tt> y <tt>apache-doc</tt>, se
+elimina la versión antigua.</p>
+
+<p>Sin embargo, todos los paquetes de módulos de Apache dependen de
+<code>apache-common (&gt;= <var>algo</var>), apache-common (&lt;&lt;
+<var>algo</var>)</code>, de manera que este cambio rompe todas esas
+dependencias. Consecuentemente, se necesita recompilar todos los módulos
+con la nueva versión de Apache para poder actualizar «testing».</p>
+
+<p>Vamos a elaborarlo un poco más: después de haber actualizado en
+unstable todos los módulos para que funcionen con el nuevo Apache, los
+scripts de «testing» prueban <tt>apache-common</tt> y encuentran que rompe
+todos los módulos de Apache porque tienen la dependencia <code>Depends:
+apache-common (&lt;&lt; <var>la versión actual</var>)</code>, y entonces
+prueban <tt>libapache-<var>foo</var></tt> para encontrarse conque no se
+instalará porque tiene <code>Depends: apache-common (&gt;= <var>la nueva
+versión</var>)</code>.</p>
+
+<p>Sin embargo, más tarde aplicará una lógica diferente (a veces mediante
+intervención manual): ignorará el hecho de que <tt>apache-common</tt>
+rompe cosas, y seguirá mirando las cosas que funciona; si después de hacer
+todo lo que podemos sigue sin funcionar, muy mal, pero
+<strong>quizá</strong> funcione. Más tarde comprobará todos los paquetes
+<tt>libapache-<var>foo</var></tt> aleatorios y verá que sí que
+funcionan.</p>
+
+<p>Después de haberlo probado todo, comprueba cuántos paquetes han quedado
+en mal estado, y compara para ver si es mejor o peor que la situación
+original y bien acepta todo, o bien se olvida del asunto. Se puede ver en
+las líneas "<code>recur:</code>" de <tt>update_output.txt</tt>.</p>
+
+<p>Por ejemplo:</p>
+
+<pre>
+         recur: [<var>foo</var> <var>bar</var>] <var>baz</var>
+</pre>
+
+<p>básicamente quiere decir <q>habiendo encontrado que <var>foo</var> y
+<var>bar</var> lo hacen mejor, ahora estoy probando <var>baz</var>,
+incluso sabiendo que rompe cosas, a ver qué pasa</q>. Las líneas de
+<tt>update_output.txt</tt> que empiezan con "<code>accepted</code>"
+indican cosas que parece que harán que la situación mejore, y las líneas
+"<code>skipped</code>" hacen que empeore.</p>
+
+<h3><q>¡El fichero <tt>update_output.txt</tt> es completamente
+ilegible!</q></h3>
+
+<p>Eso no es una pregunta. ;-)</p>
+
+<p>Veamos un ejemplo:</p>
+
+<pre>
+ skipped: cln (0) (150+4)
+     got: 167+0: a-40:a-33:h-49:i-45
+     * i386: ginac-cint, libginac-dev
+</pre>
+
+<p>Esto significa que si <tt>cln</tt> entra en «testing»,
+<tt>ginac-cint</tt> y <tt>libginac-dev</tt> no podrán instalarse en
+«testing» en i386. Tenga en cuenta que las arquitecturas se comprueban en
+orden alfabético y que sólo aparecen los problemas de la primera
+arquitectura que los tenga (es por eso que alpha aparece tan a
+menudo).</p>
+
+<op>La línea «got» incluye el número de problemas en «testing» en las
+diferentes arquitecturas (hasta la primera arquitectura en la que
+encuentra problemas - vea más adelante). El "i-45" significa que si
+<tt>cln</tt> entrase en «testing», quedarían 45 paquetes en i386 en estado
+ininstalable. Algunas entradas antes y después de <tt>cln</tt> muestran
+que hay 43 paquetes en ese estado en «testing» en i386 en ese momento.</p>
+
+<p>La línea "skipped: cln (0) (150+4)" indica que todavía queda por mirar
+150 paquetes tras éste antes de completar las comprobaciones de todos los
+paquetes, y que ya se ha encontrado 4 que no se planea actualizar porque
+romperán dependencias. El "(0)" es irrelevante, y puede ignorarlo.</p>
+
+<p>Tenga en cuenta que se hacen diversas comprobaciones sobre todos los
+paquetes en cada ejecución de un script «testing».</p>
+
+<p><i>Jules Bean se encargaba al principio de juntar las preguntas y
+respuesta frecuentes.</i></p>
+# Created: Sat Dec  8 12:44:29 GMT 2001
+
+<h2>Información adicional</h2>
 
 <p>Los script también detectan fallos que pueden ser descritos como
 horriblemente-graves-nunca-debieron-llegar-a-existir.
@@ -60,6 +267,12 @@ binarios que están obsoletos para
 <a href="http://ftp-master.debian.org/testing/testing_outdate.txt">testing</a>,
 <a href="http://ftp-master.debian.org/testing/stable_outdate.txt">stable</a> y
 <a href="http://ftp-master.debian.org/testing/unstable_outdate.txt">unstable</a>.</p>
+
+<p>Puede que esté interesado en leer un viejo <a
+href="http://lists.debian.org/debian-devel-0008/msg00906.html">mensaje
+aclaratorio</a>. Su único fallo importante es que no tiene en cuenta el
+«package pool», porque James Troup lo implementó tras haber sido escrito
+esto.</p>
 
 <p>El código de testing se encuentra disponible mediante CVS anónimo en
 <a href="http://cvs.debian.org/testing/?cvsroot=dak">cvs.debian.org</a>.
