@@ -1,0 +1,110 @@
+#use wml::debian::template title="Mettre en place un Serveur Push"
+
+<!--translation 1.1-->
+
+<p>Etant donné le grand nombre de miroirs et la taille de l'archive Debian,
+il n'est pas possible pour tous les miroirs d'utiliser le site d'archive 
+principal comme serveur source pour Debian. Il est beaucoup plus efficace de 
+distribuer la charge sur un certain nombre de miroirs push répartis partout
+dans le monde.
+
+<p>Les serveurs Push sont des machines qui font un miroir de toute
+l'archive Debian, ce sont eux mêmes des miroirs push du site principal
+et ont une large bande passante.
+Mettre en place un serveur push est assez simple:
+<ul>
+<li>installer <kbd>rsync</kbd> 2.1.1 ou plus.
+<li>créer <kbd>rsyncd.conf</kbd> et ajoutez y un contenu similaire au suivant:
+	<pre>
+uid = nobody
+gid = nogroup
+max connections = 25
+syslog facility = daemon
+socket options = SO_KEEPALIVE
+
+[ftp]
+  path = /debian/debian
+  comment = Archive FTP Debian (~5 GO)
+  auth users = liste_des_comptes_autorisés
+  read only = true
+  secrets file = /etc/rsyncd/debian.secrets
+[web.debian.org]
+  path = /debian2/web/debian.org
+  comment = Site Web Debian
+  auth users = liste_des_comptes_autorisés
+  read only = true
+  secrets file = /etc/rsyncd/debian.secrets
+	</pre>
+<li>Pour chaque site dont vous faite un miroir push, ajouter une entrée à 
+<kbd>/etc/rsyncd/debian.secrets</kbd>:
+	<pre>
+compte1:un_mot_de_passe
+compte2:autre_mot_de_passe
+	</pre>
+<li>Vous voudrez probablement lancer le démon rsync depuis inetd. Pour faire 
+cela ajoutez
+	<pre>
+rsync           873/tcp
+	</pre>
+	à <kbd>/etc/services</kbd> et ce qui suit à <kbd>/etc/inetd.conf</kbd>
+	<pre>
+rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daemon
+	</pre>
+	Vous aurez alors besoin d'envoyer à inetd un signal HUP pour lui dire de relire
+son fichier de configuration.
+<li>créer une nouvelle clé ssh pour le compte que vous utilisez pour faire un miroir 
+de Debian. Faites attention à ne pas écraser votre clé ssh originale et pour cela 
+utilisez l'option -f,
+	<kbd>ssh-keygen -f ~/.ssh/&lt;filename&gt;</kbd>.
+</ul>
+
+<p>Pour chaque site dont vous faite un miroir push, vous devez ajouter un nom 
+d'utilisateur et un mot de passe dans
+<kbd>/etc/rsyncd/debian.secrets</kbd> et ensuite ajouter le nom d'utilisateur
+à la liste des accès dans <kbd>/etc/rsyncd.conf</kbd>. 
+Pour simplifier les choses vous voudrez peut être utiliser le nom du compte
+sous lequel vous faites le push sur le miroir client. Vous aurez alors donné
+au miroir client l'accès à l'archive sur votre machine. Le nom d'utilisateur
+et le mot de passe sont envoyés sur le site client.
+
+<p>Vous devez encore mettre en place le script qui contactera les miroirs 
+clients.
+Créez les fichiers <kbd>runmirrors</kbd>:
+<blockquote><pre>
+#! /bin/sh
+
+HOME=/home/archvsync
+LOGNAME="archvsync"
+USER="archvsync"
+MAIL=
+PATH="/bin:/usr/bin"
+
+id
+
+cd $HOME
+
+./signal va.debian.org archvsync
+</pre></blockquote>
+et <kbd>signal</kbd>:
+<blockquote><pre>
+\#! /bin/sh
+
+\# Ce script est appelé pour signaler à l'hôte distant qu'il est temps de
+\# mettre à jour le miroir à partir de l'archive. Ceci est fait de la
+\# façon la plus sûre que je connaisse, avec un déclancheur ssh. 
+\# L'hôte distant a une entrée pour cette clé qui ne lui laisse lancer 
+\# qu'un seul programme - ftpsync.
+
+echo Signaling $1
+ssh  -o batchmode=yes -q -o user="$2" "$1" sleep 1
+</pre></blockquote>
+Pour chaque site dont vous faite un miroir push vous devez inscrire une ligne
+<pre>
+./signal &lt;site&gt; &lt;username&gt;
+</pre>
+dans <kbd>runmirrors</kbd>.
+
+<p>Enfin, ajoutez une ligne à la fin de <kbd>ftpsync</kbd> qui appelle 
+<kbd>runmirrors</kbd>.
+De cette façon, dès que votre site a fini de mettre à jour son miroir à partir
+du site serveur, vous commencerez à mettre à jour vos sites clients.

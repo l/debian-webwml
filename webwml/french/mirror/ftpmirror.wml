@@ -1,0 +1,91 @@
+#use wml::debian::template title="Mettre en place un Miroir FTP"
+
+<!--translation 1.8-->
+
+<p>Faire tourner un miroir revient au même que le site soit officiel ou non.
+Une fois qu'un miroir est mis en place il doit être 
+<a href="submit">enregistré par Debian</a>
+de façon à être inclus dans la 
+<a href="../misc/README.mirrors">liste des miroirs</a>.
+Les soumissions peuvent être faites en utilisant notre 
+<A href="submit">simple formulaire web</a>.
+Les problèmes ou questions peuvent être envoyés à 
+<A href="mailto:mirrors@debian.org">mirrors@debian.org</A>.
+
+<h3>rsync anonyme</h3>
+La méthode recommandée pour faire un miroir est d'utiliser rsync.
+
+<p>Vous pouvez utiliser <a href="anonftpsync">ce script</a> pour faire un 
+miroir de l'archive. Suivez les indications du script pour mettre en place 
+le miroir.
+Les sites dans la <a href="mirrors_full">liste complète des miroirs</a> qui 
+utilisent le '<kbd>Type: Push-*</kbd>'
+devraient être de bons sites comme base de miroir.
+
+<h3>Miroir Push</h3>
+Les miroirs Push sont une forme de miroir, utilisant rsync, que nous avons 
+développé pour minimiser le temps que ça prend aux changements de l'archive
+pour atteindre les miroirs. Les miroirs Push utilisent un script déclencheur 
+ssh pour indiquer au miroir client qu'il doit se mettre à jour. Cette méthode
+est assez sûre car ssh est configuré pour lancer une unique commande. Ainsi
+le miroir se fait toujours par 'Pull', il n'est donc pas possible de corrompre
+le contenu de l'archive via un miroir push infiltré.
+
+<p>Quelques administrateurs de miroirs ont montré une certaine hésitation à utiliser
+cette méthode de miroirs par crainte qu'elle n'ouvre leur machine à une invasion.
+Ce n'est certainement pas le cas. Pour une description plus détaillée de la
+manière dont cela fonctionne et des raisons pour lesquelles c'est sûr, visitez
+<a href="explain">cette page</a>.
+
+<p>Les miroirs Push prennent un tout petit peu plus d'effort à mettre en place
+car les mainteneurs du site serveur et client doivent s'échanger des
+informations. Les avantages sont que le miroir serveur lance le processus miroir 
+client immédiatement après que ces archives aient été mise à jour. Cela permet
+aux changements dans l'archive de se propager extrêmement rapidement.
+
+<p>Le mieux est de mettre en place tout cela en utilisant le compte d'un
+utilisateur ordinaire, non root.
+Le contenu de la clé ssh publique que le miroir serveur vous donne devrait être
+placée dans <kbd>~<user>/.ssh/authorized_keys</kbd>.
+
+<p>Les fichiers <a href="ftpsync">ftpsync</a> et <a href="ftpsync.conf">ftpsync.conf</a>
+sont nécessaires. Editez ftpsync.conf et suivez les indications qui se trouvent 
+à l'intérieur en utilisant les informations qui vous sont données par le miroir 
+serveur.
+
+<p>Si vous devenez un Push-Primaire, vous avez besoin de la
+<a href="identity.pub.master.ftp">clé publique ssh pour l'archive ftp</a>.
+
+<p>Pour faire un miroir push de l'archive non-US, vous avez besoin des fichiers
+<a href="ftpsync-non-US">ftpsync-non-US</a> et 
+<a href="ftpsync-non-US.conf">ftpsync-non-US.conf</a>. Ces fichiers ont
+des noms différents de façon à ce que vous puissiez utiliser le même compte
+pour faire un miroir des deux archives. Si vous devenez un Push-Primaire non-US,
+vous avez besoin de la <a href="identity.pub.non-US.ftp">clé publique ssh pour
+l'archive ftp non-US</a>.
+
+<h3>FTP Anonyme en utilisant 'mirror'</h3>
+<p>Les FTP Anonymes étaient la méthode standard pour faire un miroir pendant
+longtemps.
+Pour cela, le programme 'mirror' marche bien sur l'archive debian.
+Comme vous vous en doutez probablement, 'mirror' est disponible en paquet Debian.
+Si vous avez installé le paquet Debian, il y a un script d'exemple pour faire 
+un miroir de l'archive ftp dans /etc/mirror/packages/ftp.debian.org .
+
+<h3>wget</h3>
+Bien que <kbd>wget</kbd> fonctionne bien pour faire des miroirs de petits sites,
+il n'est pas aussi configurable que 'mirror' ou rsync c'est pourquoi il n'est pas
+recommandé pour ce travail.
+
+<h3>A quelle fréquence faire les mises à jour du miroir?</h3>
+Si vous faites un miroir push, ceci ne vous concerne pas.
+Sinon, et si le site que vous choisissez comme serveur utilise rsync, alors vous
+devriez jeter un oeil à <kbd>project/trace/</kbd> dans l'archive Debian du site
+miroir et chercher un fichier avec le même nom que le site. Le fichier devrait
+contenir le moment auquel la dernière mise à jour s'est terminée. Attendez 
+quelque temps, par exemple 1 heure, à partir de ce moment là et relancer la mise 
+à jour.
+
+<p>La façon la plus facile de mettre automatiquement à jour le miroir est d'utiliser
+cron. Voir <kbd>man crontab</kbd> pour plus de détails.
+
