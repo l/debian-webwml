@@ -1,0 +1,185 @@
+#use wml::debian::template title="Migraci&oacute;n a SPARC" NOHEADER="yes"
+
+<h1>Debian-SPARC</h1>
+
+<h2>Aviso</h2>
+<p>
+ Estas p&aacute;ginas no son parte oficial del sitio web de debian
+ todav&iacute;a. Han sido creadas por <a href="mailto:jules@debian.org">
+ Jules Bean</a> y todos los comentarios deber&iacute;an dirigirse a 
+ &eacute;l. Dichas p&aacute;ginas est&aacute;n actualmente en 
+ construcci&oacute;n. Se agradece el env&iacute;o de contribuciones, 
+ as&iacute; como sugerencias de dise&ntilde;o. Tenga en cuenta que el 
+ dise&ntilde;o de estas p&aacute;ginas aspira a ser &uacute;til para el 
+ de las p&aacute;ginas de otras migraciones de debian que ir&aacute;n 
+ apareciendo.
+</p>
+
+<h2>Visi&oacute;n general</h2>
+<p>
+ La migraci&oacute;n debian-sparc est&aacute; en un estado 'casi-estable'.
+ Tenemos un buen sistema funcionando (la versi&oacute;n inglesa de estas 
+ p&aacute;ginas fue editada usando X-windows en una estaci&oacute;n 
+ SPARC 2 con Debian instalado). Actualmente estamos trabajando en corregir
+ peque&ntilde;os problemas espec&iacute;ficos de la arquitectura, y
+ esperamos tener la entrega estable para debian 2.1 (nombre clave slink).
+</p>
+
+<h2>Estado de debian-sparc</h2>
+
+<h3>Versiones del n&uacute;cleo</h3>
+<p>
+ Desafortunadamente, el soporte para Sparc no est&aacute; todav&iacute;a
+ suficientemente integrado en la distribuci&oacute;n de fuentes de los
+ n&uacute;cleos 2.0.x. Se sabe que los n&uacute;cleos 2.0.33 y 2.0.35
+ funcionan bien para debian-sparc, y se pueden bajar como binarios por FTP
+ en <a href="ftp://vger.rutgers.edu/pub/linux/Sparc/">vger.rutgers.edu</a>.
+ Actualmente parece que no hay soporte para versiones inestables - desde la
+ 2.1.93. Sin embargo, esto es un problema espec&iacute;fico de debian, y
+ probablemente de nuestro bash (ya que el n&uacute;cleo arranca bien, pero los
+ scripts rc provocan fallos de segmento). M&aacute;s detalles en la
+ p&aacute;gina de 'Problemas'.
+</p>
+
+<h3>LibC</h3>
+<p>
+ Usamos una pre-entrega de glibc-2.1. S&oacute;lo &eacute;sta es responsable
+ de la mayor&iacute;a de nuestros problemas construyendo paquetes que
+ compilan correctamente en un i386. Hay tambi&eacute;n un problema muy
+ curioso que algunos usuarios de Sun4c (entre los que me incluyo)
+ experimentan y que hace que 'ldd' no funcione. Aparentemente esto tiene
+ alguna relaci&oacute;n con el gestor de memoria del n&uacute;cleo, y
+ est&aacute; catalogado en el actual &aacute;rbol de n&uacute;cleos
+ inestables.
+</p>
+
+<h3>X</h3>
+<p>
+ Tenemos funcionando un servidor X de tarjetas gr&aacute;ficas de 1-bit, 
+ 8-bit y 24-bit. Usamos una versi&oacute;n de Xsun que ha sido alterada y
+ convertida a XFree86 (lo que convierte el nombre de 'xfree86' en un
+ peque&ntilde;o sin sentido... ;-).
+</p>
+
+<h3>Compilando y construyendo.</h3>
+
+<p>
+El entorno para compilar/contruir en la sparc dista de ser perfecto. A
+continuaci&oacute;n se muestra una lista de algunos de los problemas que he
+visto:
+
+<ul>
+ <li> Nuestro entorno de C++ no parece funcionar exactamente igual que el
+ del i386. El paquete 'menu' parece tener unos pocos cast
+ 'impl&iacute;citos' que tuve que hacer 'expl&iacute;citos' o reemplazar para
+ compilar en mi sistema. No me he molestado en examinar esto para enterame
+ exactamente de qu&eacute; est&aacute; pasando.
+ <li> 'ldd' no funciona en unas pocas m&aacute;quinas. Como la m&iacute;a
+ :-(. Esto significa que la fase ${shlibs:Depends} de la construcci&oacute;n
+ del paquete debian falla. Un posible arreglo es reemplazar ldd por otro 
+ programa que diga 'enlazado est&aacute;ticamente' (Ver la secci&oacute;n 
+ 'problemas').
+ <li> &lt;sys/socket.h&gt; no se preprocesar&aacute;, pues este usa los
+ ficheros netatalk/at.h y linux/rose.h. Posibles soluciones son o comentar
+ las l&iacute;neas que dan errores de &lt;bits/sockunion.h&gt; (que es lo que 
+ he hecho en mi m&aacute;quina de desarrollo) o copiar estos dos ficheros de
+ cabeceras de una plataforma i386.
+ </ul>
+</p>
+
+<h3>Lista de problemas</h3>
+<p>
+ <a href="problems.html">Una (esperanzadora) lista actualizada de problemas
+ conocidos de debian-sparc, y sus soluciones.</a>
+</p>
+
+<h2>&iquest;Qui&eacute;nes somos?</h2>
+<p>
+Nadie est&aacute; 'a cargo de' debian-sparc, y no hay un equipo concreto de
+desarrollo. El mejor sitio para preguntar dudas espec&iacute;ficas de debian
+acerca de la migraci&oacute;n a sparc es en la lista de correo, 
+debian-sparc@lists.debian.org. Para suscribirse env&iacute;e un mensaje a 
+<a href="mailto:debian-sparc-request@lists.debian.org"> 
+debian-sparc-request@lists.debian.org</a>, con la palabra 'subscribe' en el
+cuerpo de dicho mensaje.
+</p>
+ 
+<p>
+Algunas personas a las que me gustar&iacute;a dar las gracias, sin embargo,
+son:
+<ul>
+ <li><a href="mailto:johnie@debian.org">Johnie 'netgod' Ingram</a> que corre
+sparc auto-compilados, migrando la mayor&iacute;a de los paquetes sin
+contratiempos (o, por lo menos, sin contratiempos para el resto de nosotros
+;-)
+ <li><a href="mailto:iko@iko.pp.se">Anders Hammarquist</a> quien
+compil&oacute; el servidor x para las m&aacute;quinas sun.
+ <li><a href="mailto:adam@rocheworld.dyn.ml.org">Adam Haberlach</a> que
+hizo la p&aacute;gina debian-sparc antes de que yo lo hiciera, y de la cual
+he extra&iacute;do algo de informaci&oacute;n.
+ <li>CORRIJANME: Debe de haber mucha m&aacute;s gente...
+</ul>
+</p>
+
+
+<h3>Lista no-oficial de mantenedores de archivos</h3>
+<p>
+Debian no tiene soporte oficial para el concepto de 'mantenedor de
+archivos'. Sin embargo, mantengo esta lista como gesto de cortes&iacute;a a
+los usuarios de debian-sparc. Si tiene un problema con cualquiera de los
+paquetes siguientes, y sospecha que pueda tener relaci&oacute;n con la
+conversi&oacute;n a sparc, pruebe primero a enviar un mensaje al mantenedor 
+aqu&iacute; listado y preguntarle si sabe m&aacute;s antes de rellenar un 
+informe de bug.
+</p>
+<p>
+Si se encuentra con que necesita un paquete en particular, y ve que puede 
+compilarlo por s&iacute; mismo, le animo a que me env&iacute;e un mensaje a 
+<a href="mailto:jules@debian.org">m&iacute;</a>, y le a&ntilde;adir&eacute; a 
+lista abajo mostrada - especialmente si su trabajo no fue trivial, o sabe que 
+el paquete funciona s&oacute;lo parcialmente.
+</p>
+
+<table>
+<tr><td><b>Paquete</b><td><b>Mantenedor de archivo</b><td>Notas
+<tr>
+ <td> menu
+ <td> Jules Bean &lt;jules@debian.org&gt;
+ <td> menu-method.h necesita algunos retoques. En breve se har&aacute; el NMU.
+</table>
+
+
+<h2>&iquest;D&oacute;nde puedo encontrar m&aacute;s informaci&oacute;n?</h2>
+<p>
+La lista debian-sparc mencionada anteriormente es el lugar al que hay ir 
+que ir para todas las cuestiones espec&iacute;ficas de esta plataforma. 
+Las cuestiones relativas al n&uacute;cleo deber&iacute;an dirigirse a
+sparclinux@vger.rutgers.edu, a la que puede suscribirse enviando un mensaje 
+con el texto "subscribe sparclinux" en el cuerpo del mismo a la 
+direcci&oacute;n  <a href="mailto:majordomo@vger.rutgers.edu">
+majordomo@vger.rutgers.edu</a>. Por supuesto tambi&eacute;n hay una lista 
+redhat.
+</p>
+<p>
+Hay unas pocos sitios web sobre S/Linux dignos de visita:
+ <ul>
+ <li><a href="http://www.clark.net/pub/mike911/linux/sparc/news.html">
+      Linux/SPARC news</a> una p&aacute;gina muy actualizada hecha por 
+      <a href="mailto:mike911@clark.net">Justin Maurer</a>
+ <li><a href="http://rocheworld.dyn.ml.org/debian-sparc">Debian/Sparc
+      information</a> una p&aacute;gina recientemente editada por <a
+      href="mailto:adam@rocheworld.dyn.ml.org">Adam Haberlach</a>,
+      incluyendo una peque&ntilde;a FAQ.
+ <li><a href="http://www.geog.ubc.ca/s_linux.html">S/Linux Home
+      Page</a> - El fuente definitivo para la migraci&oacute;n del 
+      n&uacute;cleo.
+ <li><a href="http://sunsite.mff.cuni.cz/linux/ultrapenguin-1.0/">The
+      UltraPenguin home page</a> UltraPenguin es una migraci&oacute;n de
+      S/Linux a la serie de m&aacute;quinas sun4u ('Ultra').
+ </ul>
+</p>
+<p>
+ Adam Haberlach inici&oacute; una FAQ que probablemente ser&aacute; integrada 
+ en esta p&aacute;gina.
+</p>
+
