@@ -169,7 +169,14 @@ foreach my $lang ( @langs ) {
     sysopen(FILEH, "$config{output}.$lang.html",
 	    O_WRONLY | O_TRUNC | O_CREAT, 0664)
 	|| die "E: Can\'t open $config{output}.$lang.html: $!";
-    my $now_time = time_stamp();
+
+    my @months = ("Dummy", "January","February", "March", "April",
+	       "May", "June", "July", "August", "September",
+	       "October", "November", "December");
+
+    # ($date_sec,$date_min,$date_hour,$date_mday,$date_mon,$date_year,$date_wday,$date_isdst)
+    (my @date)= localtime();
+    my $now_time = sprintf ("%s %02d, %04d", $months[$date[4]], $date[3], $date[5]+1900);
     $page =~ s/LAST_MODIFIED_DATE/$now_time/g;
     print FILEH $page;
     close FILEH;
