@@ -1,0 +1,88 @@
+#!/usr/bin/python
+
+# Warn users who don't have any place entries
+# Copyright (C) 2002  Martin Michlmayr <tbm@cyrius.com>
+# $Id$
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+import pg, sys
+import utils, gpg_utils
+import apt_pkg
+
+def help():
+    print """Usage: gpg_nm2dd [OPTION] EMAIL...
+Move a user from looking for signatures to offering them
+
+Options:
+  -s, --no-mail             Don't send any mail
+"""
+    sys.exit(1)
+
+def parse_args():
+    global Cnf
+
+    apt_pkg.init()
+    Cnf = apt_pkg.newConfiguration()
+    apt_pkg.ReadConfigFileISC(Cnf, "gpg.conf")
+
+    Arguments = [("h", "help", "NoPlaces::Options::Help"),
+                 ("s", "no-mail", "NoPlaces::Options::No-Mail", "HasArg")]
+
+    to_move = apt_pkg.ParseCommandLine(Cnf, Arguments, sys.argv)
+
+    if Cnf["NoPlaces::Options::Help"]:
+        help()
+    if not to_move: # not user given
+        print "No user given!"
+        help()
+    return to_move
+
+# Move a user from looking for signatures to offering them
+def no_place(db, email):
+    Subst = {}
+    Subst["__FROM__"] = "%s <%s>" % (Cnf["MyFromName"], Cnf["MyEmailAddress"])
+    Subst["__BCC__"] = "Bcc: %s" % Cnf["MyEmailAddress"]
+    Subst["__WHOAMI__"] = Cnf["MyAdminName"]
+    Subst["__MY_EMAIL__"] = Cnf["MyEmailAddress"]
+    Subst["__URL__"] = Cnf["MyURL"]
+    if gpg_utils.find_name(db, email):
+        firstname = gpg_utils.get_firstname(db, email)
+        lastname = gpg_utils.get_lastname(db, email)
+        Subst["__TO__"] = '"%s %s" <%s>' % (firstname, lastname, email)
+        Subst["__FIRSTNAME__"] = firstname
+    else:
+        Subst["__TO__"] = email
+        Subst["__FIRSTNAME__"] = "you"
+    mail_message = utils.TemplateSubst(Subst, Cnf["Dir::Templates"]+"/gpg_no_places.complain")
+    if not Cnf["NoPlaces::Options::No-Mail"]:
+        utils.send_mail(mail_message)
+    else:
+        print "Not sending the following the following message:"
+        print mail_message
+
+
+# main
+
+to_move = parse_args()
+db = pg.connect(Cnf["MyDB"])
+q = db.query("SELECT email FROM people WHERE id NOT IN (SELECT DISTINCT who FROM places) AND active = 't'")
+for email in map(lambda x: x[0], q.getresult()):
+    no_place(db, email)
+
+# vim:set ts=4:
+# vim:set expandtab:
+# vim:set shiftwidth=4:
