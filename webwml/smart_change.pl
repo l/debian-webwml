@@ -81,8 +81,8 @@ foreach my $lang (@opt_l) {
 
         # Parse the translated file
         my $transcheck = Webwml::TransCheck->new($transfile);
-        next unless $transcheck->revision();
-        my $langrev  = $transcheck->revision();
+        next unless $transcheck->revision() || $lang eq 'english';
+        my $langrev = $transcheck->revision();
 
         my $origtext = '';
         my $transtext = '';
@@ -100,6 +100,7 @@ foreach my $lang (@opt_l) {
         }
         close (TRANS);
         if ($origtext ne $transtext) {
+                verbose("Writing $transfile");
                 open (TRANS, "> $transfile");
                 print TRANS $transtext;
                 close (TRANS);
