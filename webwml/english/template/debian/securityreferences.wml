@@ -10,7 +10,9 @@ sub bid_secref {
 		if ( $ref =~ /BID(\d+)/i ) {
 			my $id = $1;
 			$bid .= ", " if $bid ne "";
-			$bid .= "<a href=\"http://online.securityfocus.com/bid/".$id."\"><bugtraqid> ".$id."</a>"; 
+			$bid .= '<a href="http://online.securityfocus.com/bid/'.$id.'">'
+			       .'<gettext domain="security">BugTraq ID</gettext>'
+			       ." ".$id."</a>"; 
 		}
 	}
 	return $bid;
@@ -54,14 +56,17 @@ sub security_references {
 	$bid = bid_secref($refstr);
 	$cve = cve_secref($refstr);
 	$cert = cert_secref($refstr);
-	$str .= "<bugtraq> $bid.<br>"  if $bid ne "";
-	$str .= "<cve> $cve.<br>"  if $cve ne "";
-	$str .= "<cert> $cert.<br>"  if $cert ne "";
-	$str = "<nosecref>" if $str eq "";
+	$str .= q{<gettext domain="security">In the Bugtraq database (at SecurityFocus):</gettext>}
+	       ." $bid.<br>"
+		if $bid ne "";
+	$str .= q{<gettext domain="security">In Mitre's CVE dictionary:</gettext>}
+	       ." $cve.<br>"
+		if $cve ne "";
+	$str .= q{<gettext domain="security">CERT's vulnerabilities, advisories and incident notes:</gettext>}
+	       ." $cert.<br>"
+		if $cert ne "";
+	$str = q{<gettext domain="security">No other external database security references currently available.</gettext>}
+		if $str eq "";
 	return $str;
 }
 </perl>
-
-<define-tag secreferences>
-  <:= security_references("<secrefs>") :>
-</define-tag secreferences>

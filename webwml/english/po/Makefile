@@ -9,7 +9,7 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates bugs countries date doc l10n langs organization ports search vendors others
+DOMAINS = templates bugs countries date doc l10n langs organization ports search security vendors others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
 countries_FILES = $(TEMPLDIR)/countries.wml
@@ -24,6 +24,10 @@ ports_FILES     = $(ENGLISHDIR)/ports/menu.defs \
   $(wildcard $(ENGLISHDIR)/ports/*/menu.inc) \
   $(ENGLISHDIR)/misc/laptops/menu.inc
 search_FILES    = $(ENGLISHDIR)/searchtmpl/search.def
+security_FILES  = $(TEMPLDIR)/security.wml \
+  $(TEMPLDIR)/securityreferences.wml \
+  $(ENGLISHDIR)/security/dsa.rdf.in \
+  $(ENGLISHDIR)/security/make-ref-table.pl
 vendors_FILES   = $(ENGLISHDIR)/CD/vendors/vendors.CD.def
 others_FILES    = $(ENGLISHDIR)/News/press/press.tags \
   $(ENGLISHDIR)/MailingLists/mklist.tags $(ENGLISHDIR)/banners/index.tags \
@@ -35,7 +39,7 @@ others_FILES    = $(ENGLISHDIR)/News/press/press.tags \
 templates_FILES = $(addprefix $(TEMPLDIR)/, \
   cdimage.wml common_tags.wml common_translation.wml consultant.wml \
   ddp.wml events_common.wml fixes_link.wml footer.wml languages.wml \
-  links.tags.wml mirrors.wml news.wml recent_list.wml security_tags.wml \
+  links.tags.wml mirrors.wml news.wml recent_list.wml \
   todoitem.wml translation-check.wml url.wml votebar.wml \
   weeklynews/footer.wml) $(ENGLISHDIR)/devel/website/tc.data
 
@@ -51,6 +55,7 @@ SOURCEFILES = \
   $(organization_FILES)         \
   $(ports_FILES)                \
   $(search_FILES)               \
+  $(security_FILES)             \
   $(vendors_FILES)              \
   $(others_FILES)               \
   $(templates_FILES)
@@ -90,6 +95,9 @@ $(ENGLISHDIR)/po/ports.pot: # $(ports_FILES)
 
 $(ENGLISHDIR)/po/search.pot: # $(search_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl search $(search_FILES) > $@
+
+$(ENGLISHDIR)/po/security.pot: # $(security_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl security $(security_FILES) > $@
 
 $(ENGLISHDIR)/po/vendors.pot: # $(vendors_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl vendors $(vendors_FILES) > $@
