@@ -16,6 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import pg
 
 def print_places(begin, finish, city, country):
     if city:
@@ -33,6 +34,32 @@ def print_places(begin, finish, city, country):
         out += "%s to %s" % (begin, finish)
 
     return out
+
+def get_name(db, email):
+    if name_cache.has_key(email):
+        return name_cache[email]
+    q = db.query("SELECT forename, surname FROM people WHERE email = '%s'" % email)
+    if q.getresult():
+        ql = q.getresult()
+        name_cache[email] = ql[0]
+        return name_cache[email]
+    else:
+        return None, None
+
+def find_name(db, email):
+    if get_name(db, email)[0] and get_name(db, email)[1]:
+        return 1
+
+def get_firstname(db, email):
+    return get_name(db, email)[0]
+
+def get_lastname(db, email):
+    return get_name(db, email)[1]
+
+
+# main
+
+name_cache = {}
 
 
 # vim:set ts=4:
