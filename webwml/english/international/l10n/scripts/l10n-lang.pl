@@ -28,8 +28,9 @@ foreach $lang (sort keys %{$mylangs{all}}) {
 	$since_header=0;
     }
 
-    print "<tr><td>";
+    print "<tr><td><a name=$lang>";
     language_name($lang);
+    print "</a>";
     if (defined ($mylangs{'po'}{$lang})) {
 	print "<td align=center><a href=\"po-$lang\"><yes></a> ";
     } else {
