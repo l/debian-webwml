@@ -40,7 +40,7 @@ sub progress {
 }
 
 sub conv_desc {
-    my ( $lang, $text ) = shift;
+    my ( $lang, $text ) = @_;
     
     # we assume that all descriptions are in UTF-8 and convert them
     # if necessary
