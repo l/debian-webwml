@@ -18,16 +18,16 @@ $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/langu
 
 all: $(HTMLFILES)
 	( cd 2.0; $(MAKE) )
-#	( cd MailingLists; $(MAKE) )
+	# ( cd MailingLists; $(MAKE) )
 	( cd News; $(MAKE) )
-#	( cd SPI; $(MAKE) )
-#	( cd devel; $(MAKE) )
-#	( cd distrib; $(MAKE) )
-#	( cd doc; $(MAKE) )
-#	( cd intro; $(MAKE) )
-#	( cd logos; $(MAKE) )
-#	( cd ports; $(MAKE) )
-#	( cd security; $(MAKE) )
+	# ( cd SPI; $(MAKE) )
+	# ( cd devel; $(MAKE) )
+	# ( cd distrib; $(MAKE) )
+	# ( cd doc; $(MAKE) )
+	# ( cd intro; $(MAKE) )
+	# ( cd logos; $(MAKE) )
+	# ( cd ports; $(MAKE) )
+	# ( cd security; $(MAKE) )
 
 include $(BASE)/Make.templ.inc
 
