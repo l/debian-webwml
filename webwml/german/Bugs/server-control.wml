@@ -1,5 +1,5 @@
-#use wml::debian::template title="Debian BTS - control server" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.21"
+#use wml::debian::template title="Debian BTS - control-Server" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.22"
 # $Id$
 
 <h1>Einführung in den Mail-Server für die Kontrolle und Manipulation</h1>
@@ -118,6 +118,32 @@ hat.</p>
 <p>Die Bedeutung von <A
 href="Developer#severities">Dringlichkeitsstufen</A> finden Sie in den
 allgemeinen Informationen zum Bug-System für Entwickler.</dd>
+
+
+<dt><code>clone</code> <var>Fehlernummer</var> [ <var>neue IDs</var> ]
+
+  <dd>Das clone Control-Kommando erlaubt es, einen Fehlerbericht zu
+  duplizieren.  Es ist nützlich, wenn ein einziger Bericht tatsächlich mehrere
+  unterschiedliche Fehler anspricht. "<var>neue IDs</var>" sind negative
+  Nummern, von Leerzeichen getrennt, die in nachfolgenden Control-Befehlen
+  verwendet werden können, um auf die neuen duplizierten Fehlerberichte zu
+  verweisen. Ein neuer Bericht wird für jede neue ID generiert.
+
+  <p>Beispielsverwendung:</p>
+
+  <pre>
+        clone 12345 -1 -2
+        reassign -1 foo
+        retitle -1 foo: foo sucks
+        reassign -2 bar
+        retitle -2 bar: bar sucks when used with foo
+        severity -2 wishlist
+        clone 123456 -2
+        reassign -2 foo
+        retitle -2 foo: foo sucks
+        merge -1 -2
+  </pre>
+</dd>
 
 <dt><code>merge</code> <var>bugnumber</var> <var>bugnumber</var> ...</dt>
 <dd>
