@@ -5,8 +5,8 @@
 # adds the translation-check header to it. It will also create the
 # destination directory if necessary.
 
-# Written in 2000-2002 by Peter Karlsson <peter@softwolves.pp.se>
-# © Copyright 2000-2002 Software in the public interest, Inc.
+# Written in 2000-2003 by Peter Karlsson <peter@softwolves.pp.se>
+# © Copyright 2000-2003 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -58,7 +58,7 @@ else
 
 	while (<CVS>)
 	{
-		if (m[^/index\.wml/([0-9]*\.[0-9])*/]o)
+		if (m[^/index\.wml/([0-9]*\.[0-9]*)/]o)
 		{
 			$revision = $1;
 		}
