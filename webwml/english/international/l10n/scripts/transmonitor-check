@@ -59,6 +59,7 @@ my $verbose = 0;
 my @debug;
 my $force = 0; # if true, rescan package even if already in db
 my $force_material = 0;# if true, rescan package containing material even if already in db
+my $remove_unused = 0;# if true, remove packages not found in Packages file
 my $careful = 0; # if true, save the db after each package
 
 my @pkg_list; #were we put the list of packages we are required to test
@@ -94,8 +95,9 @@ General options:
     --print-version           print unadorned version number and exit
 Behaviour options:
     --careful                 save the db file after each package proceeding
-    -f, --force               force the check of packages, even if they are in db
-    --force-material          force the check of packages containing any material
+    -f, --force               force check even if packages are up-to-date in db
+    --force-material          force check for any package containing material
+    -u, --remove-unused       remove packages not found in Packages files
 Configuration options:
     -F, --files-from=FILE     reads dsc filenames from FILE
     --db=DB_FILE              use DB_FILE as database file
@@ -147,6 +149,7 @@ my %opthash = (
         "careful" => \$careful,
         "force|f" => \$force,
         "force-material" => \$force_material,
+        "remove-unused|u" => \$remove_unused,
 
         # ------------------ configuration options
         "files-from=s" => \$FROM_FILE,
@@ -221,15 +224,21 @@ foreach my $arg (@args) {
 my $dsc; # the path to the dsc file
 my $pkg; # the package name
 my $ver; # the package version
+my $maint; # maintainer's name
 my $deb; # instance of Local::Inside::DebSrc
 my @errors_pkg; # packages for which we had a problem
+
+if ($remove_unused) {
+        foreach $pkg ($data->list_packages()) {
+                $data->maintainer($pkg, "");
+        }
+}
 
 PKG: while ($dsc = shift @pkg_list) {
         ###
         ### read the name and the version
         ###
-        $pkg = "";
-        $ver = "";
+        $pkg = $ver = $maint = "";
         unless (open (DESC, $dsc)) {
                 warn "Can't read file $dsc, skipped\n";
                 next PKG;
@@ -239,6 +248,8 @@ PKG: while ($dsc = shift @pkg_list) {
                         $pkg = $1;
                 } elsif (m/^Version: (.*)$/ && $ver eq "") {
                         $ver = $1;
+                } elsif (m/^Maintainer: (.*)$/) {
+                        $maint = $1;
                 }
         }
         close DESC;
@@ -256,6 +267,8 @@ PKG: while ($dsc = shift @pkg_list) {
         ### if the package is already in the data, skip it
         ### (unless force specified)
         if ($data->has_package($pkg)) {
+                #   Update Maintainer: field
+                $data->maintainer($pkg, $maint);
                 system ("dpkg","--compare-versions", $data->version($pkg), "\>", $ver);
                 if ((!$force) && $?==0 && $data->version($pkg) ne ""
                         && !( $force_material &&
@@ -284,13 +297,23 @@ PKG: while ($dsc = shift @pkg_list) {
         ###
         ### unpack it
         ###
-        $deb = parse_tarball($dsc, $pkg, $ver);
+        $deb = parse_tarball($dsc, $pkg, $ver, $maint);
         if ($deb) {
                 check_pkg($pkg, $deb);
                 if ($careful) {
                         $data->write($DB_FILE);
                 } else {
                         #  Ok, we've done something, we have to save the db
+                        $savedb = 1;
+                }
+        }
+}
+
+if ($remove_unused) {
+        foreach $pkg ($data->list_packages()) {
+                if ($data->maintainer($pkg) eq "") {
+                        print STDERR "Package $pkg ".$data->version($pkg)." removed\n" if $verbose;
+                        $data->clear_pkg($pkg);
                         $savedb = 1;
                 }
         }
@@ -346,11 +369,11 @@ sub store_disk_templates {
 sub parse_tarball {
         my $path    = shift;
         my $pkg     = shift;
-        my $version = shift;
         my $patch = '';
 
         $data->package($pkg, $pkg);
-        $data->version($pkg, $version);
+        $data->version($pkg, shift);
+        $data->maintainer($pkg, shift);
         $data->upstream($pkg, "debian");
 
         #   Determine how many characters of each files are read and cached
