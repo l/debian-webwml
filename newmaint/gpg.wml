@@ -1,0 +1,40 @@
+<?
+  include("gpgconfig.inc");
+  include("common.inc");
+  include("gpgcommon.inc");
+?>
+#use wml::gpgpage title="GPG Signing Coordination Page"
+<?
+
+    function print_people($db, $sql) {
+        if (! ($query = pg_exec($db, $sql))) {
+            echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+            return FALSE;
+        }
+        $rows = pg_NumRows($query);
+        for ($i = 0; $i < $rows; $i++) {
+            $row = pg_Fetch_Array($query, $i);
+            echo "<H2>";
+            echo $row["forename"], " ", $row["surname"];
+            echo " &lt;", $row["email"], "&gt;";
+            echo "</H2>\n";
+
+            echo "<LI>";
+            print_all_places($row["id"], FALSE);
+            echo "</LI>";
+
+        }
+
+?>
+
+<H1>People looking for GPG Signing</H1>
+<?
+    $sql = "SELECT id, forename, surname, email FROM people WHERE offer is FALSE";
+    print_people($db, $sql);
+?>
+<H1>People offering GPG Signing</H1>
+<?
+    $sql = "SELECT id, forename, surname, email FROM people WHERE offer is TRUE";
+    print_people($db, $sql);
+?>
+

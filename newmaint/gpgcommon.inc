@@ -1,0 +1,32 @@
+<?
+
+    function print_place($begin, $finish, $city, $country) {
+        echo "<LI>$city, $country: ";
+        if (! $begin && ! $finish) {
+            echo "always";
+        } else if ($begin && ! $finish) {
+            echo "starting on $begin";
+        } else if (! $begin && $finish) {
+            echo "until $finish";
+        } else {
+            echo "$begin to $finish";
+        }
+    }
+
+    function print_all_places($id, $modify) {
+        $sql = "SELECT id, begin, finish, city, country FROM places WHERE who = '$id'";
+        if (! ($query = pg_exec($db, $sql))) {
+            echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+            return FALSE;
+        }
+        $rows = pg_NumRows($query);
+        for ($i = 0; $i < $rows; $i++) {
+            print_place($row["begin"], $row["finish"], $row["city"], $row["country"])
+            if ($modify) {
+                echo "<A HREF = \"gpgplace.php?id=", $row["$id"], "\">Modify entry</A>";
+            }
+        }
+    }
+
+?>
+
