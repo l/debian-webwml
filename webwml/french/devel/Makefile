@@ -4,12 +4,11 @@
 
 WMLBASE=..
 CUR_DIR=devel
-SUBS=
+SUBS=website
 
 include $(WMLBASE)/Make.lang
 
-
-# Do Not modify the following line
-people.$(LANGUAGE).html: people.wml $(TEMPLDIR)/template.wml $(ENGLISHSRCDIR)/devel/people.names
-
-$(HTMLDIR)/ltcp.$(LANGUAGE).html: ltcp.wml translations-bd.pl ltcp.body
+people.$(LANGUAGE).html: people.wml $(TEMPLDIR)/template.wml \
+ $(ENGLISHSRCDIR)/devel/people.names
+	$(WML) -W1,-N $<
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/basic.wml $(TEMPLDIR)/develbar.wml
