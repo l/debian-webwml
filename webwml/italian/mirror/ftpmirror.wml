@@ -1,6 +1,6 @@
 #use wml::debian::template title="Configurare un mirror FTP"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.23"
+#use wml::debian::translation-check translation="1.25" maintainer="Giuseppe Sacco"
 
 <p>La procedura di mirroring è identica per siti <a
 href="official">ufficiali</a> e non ufficiali.
@@ -56,6 +56,13 @@ richiesto perché le modifiche all'archivio raggiungano i mirror.
 Il server mirror usa una procedura ssh per dire al client mirror di
 aggiornarsi.
 
+<p>Il mirror di tipo push è necessario per mantenere vari server in sincrono
+(come per i server in round robin sul DNS, come <tt>ftp.us.debian.org</tt>),
+a normalmente li usiamo come mirror di primo e secondo livello.
+Per mirror "normali" questo metodo è sconsigliato poiché lo sforzo necessario
+per attivarlo e configurarlo è decisamente superiore di quello necessario per
+avere un job cron ben fatto.</p>
+
 <p>Questo metodo è abbastanza sicuro in quanto ssh è configurato
 per lanciare un unico comando. Inoltre il mirroring è ancora di
 tipo `pull', cosìcché <strong>non</strong> è possibile
@@ -80,15 +87,19 @@ c'è un semplice script per copiare l'archivio ftp in
 
 <toc-add-entry name="partial">Mirroring parziale</toc-add-entry>
 
-<p>Considerate le dimensioni già grandi dell'archivio Debian,
-qualcuno preferisce copiare solo le parti di esso di cui hanno bisogno.
-Per questo, occorrono script scritti appositamente, come quelli di
-<a href="http://cvs.kitenet.net/~checkout~/joey-cvs/bin/debmirror?tag=HEAD&amp;content-type=text/plain">
-Joey Hess</a> e
-<a href="http://people.debian.org/~absurd/">Stephan Suerken</a>. 
+<p>Utilizzando <a href="anonftpsync">anonftpsync</a> si può modificare
+la variabile EXCLUDE. Si possono anche utilizzare degli script appositi quali
+<a href="http://packages.debian.org/unstable/net/debmirror.html">debmirror</a>
+(di Joey Hess e Joerg Wendland) o
+<a href="http://people.debian.org/~absurd/absurd_debmirror/">\
+absurd_debmirror</a> (di Stephan Suerken).
 Se pensi di aggiungere qualcosa ad essi, contatta gli autori (le
 informazioni di contatto dovrebbero essere incluse negli script
 stessi).
+
+<p>Scoraggiamo fortemente di escludere le directory <tt>project/</tt>,
+<tt>doc/</tt> e altre sottodirectory. Normalmente esse sono di dimensioni
+modeste e molto utili agli utenti.<p>
 
 <toc-add-entry name="when">Quando copiare</toc-add-entry>
 
