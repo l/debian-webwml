@@ -21,7 +21,7 @@ install::
 	@if [ -d $(HTMLDIR)/hamm -a ! -L $(HTMLDIR)/2.0 ]; then ln -sv hamm $(HTMLDIR)/2.0; fi
 	@if [ -d $(HTMLDIR)/slink -a ! -L $(HTMLDIR)/2.1 ]; then ln -sv slink $(HTMLDIR)/2.1; fi
 	@if [ -d $(HTMLDIR)/potato -a ! -L $(HTMLDIR)/2.2 ]; then ln -sv potato $(HTMLDIR)/2.2; fi
-	@[ -d "$(tes)" -a -d "$(rel)" ] || { echo "something's wrong with releases"; exit 1; }
+	@[ -d "$(tes)" -a -d "$(rel)" ] || { echo "No $(tes) or $(rel) directory in releases."; exit 1; }
 	@test -L $(HTMLDIR)/stable || ln -sv $(rel) $(HTMLDIR)/stable
 	@test -L $(HTMLDIR)/testing || ln -sv $(tes) $(HTMLDIR)/testing
 endif
