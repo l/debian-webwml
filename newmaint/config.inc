@@ -1,4 +1,4 @@
 <?
   $DBName="newmaint";
-  $DBUser="csmall";
+  $DBUser="www-data";
 ?>
