@@ -6,12 +6,18 @@ WMLBASE=..
 CUR_DIR=vote
 SUBS=1999 2000 2001 2002
 
-NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
 
-%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
-	$(WML) $(<F)
-index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/*.wml) \
-  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/$(CUR_YEAR)/*.wml) \
+index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*/vote_*.wml) \
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/[0-9]*/vote_*.wml) \
+  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
+
+howto_follow.$(LANGUAGE).html: howto_follow.wml \
+  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
+howto_proposal.$(LANGUAGE).html: howto_proposal.wml \
+  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
+howto_result.$(LANGUAGE).html: howto_result.wml \
+  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
+howto_vote.$(LANGUAGE).html: howto_vote.wml \
   $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
