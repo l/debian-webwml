@@ -1,6 +1,9 @@
 #use wml::debian::template title="Mettre en place un Serveur Push"
 
-<!--translation 1.1-->
+<!--translation 1.2-->
+
+<!-- traduction en français par Christian Couder
+<chcouder@club-internet.fr> -->
 
 <p>Etant donné le grand nombre de miroirs et la taille de l'archive Debian,
 il n'est pas possible pour tous les miroirs d'utiliser le site d'archive 
@@ -8,14 +11,21 @@ principal comme serveur source pour Debian. Il est beaucoup plus efficace de
 distribuer la charge sur un certain nombre de miroirs push répartis partout
 dans le monde.
 
-<p>Les serveurs Push sont des machines qui font un miroir de toute
+<p>Merci de noter que nous allons approcher des sites miroirs afin 
+afin qu'ils deviennent des serveurs push.
+Si votre site est TRES bien connecté (à la fois une bonne bande passante
+et une bonne connection aux dorsales majeures) et si vous souhaitez
+laisser d'autres sites mirorer à partir de votre site, vous pouvez nous 
+le faire savoir afin que nous envisagions un miroir push dans votre cas.
+
+<p>Les serveurs push sont des machines qui font un miroir de toute
 l'archive Debian, ce sont eux mêmes des miroirs push du site principal
 et ont une large bande passante.
 Mettre en place un serveur push est assez simple:
 <ul>
 <li>installer <kbd>rsync</kbd> 2.1.1 ou plus.
 <li>créer <kbd>rsyncd.conf</kbd> et ajoutez y un contenu similaire au suivant:
-	<pre>
+        <pre>
 uid = nobody
 gid = nogroup
 max connections = 25
@@ -34,28 +44,28 @@ socket options = SO_KEEPALIVE
   auth users = liste_des_comptes_autorisés
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
-	</pre>
+        </pre>
 <li>Pour chaque site dont vous faite un miroir push, ajouter une entrée à 
 <kbd>/etc/rsyncd/debian.secrets</kbd>:
-	<pre>
+        <pre>
 compte1:un_mot_de_passe
 compte2:autre_mot_de_passe
-	</pre>
+        </pre>
 <li>Vous voudrez probablement lancer le démon rsync depuis inetd. Pour faire 
 cela ajoutez
-	<pre>
+        <pre>
 rsync           873/tcp
-	</pre>
-	à <kbd>/etc/services</kbd> et ce qui suit à <kbd>/etc/inetd.conf</kbd>
-	<pre>
+        </pre>
+        à <kbd>/etc/services</kbd> et ce qui suit à <kbd>/etc/inetd.conf</kbd>
+        <pre>
 rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daemon
-	</pre>
-	Vous aurez alors besoin d'envoyer à inetd un signal HUP pour lui dire de relire
+        </pre>
+        Vous aurez alors besoin d'envoyer à inetd un signal HUP pour lui dire de relire
 son fichier de configuration.
 <li>créer une nouvelle clé ssh pour le compte que vous utilisez pour faire un miroir 
 de Debian. Faites attention à ne pas écraser votre clé ssh originale et pour cela 
 utilisez l'option -f,
-	<kbd>ssh-keygen -f ~/.ssh/&lt;filename&gt;</kbd>.
+        <kbd>ssh-keygen -f ~/.ssh/&lt;filename&gt;</kbd>.
 </ul>
 
 <p>Pour chaque site dont vous faite un miroir push, vous devez ajouter un nom 
@@ -83,7 +93,7 @@ id
 
 cd $HOME
 
-./signal va.debian.org archvsync
+../signal va.debian.org archvsync
 </pre></blockquote>
 et <kbd>signal</kbd>:
 <blockquote><pre>
@@ -100,7 +110,7 @@ ssh  -o batchmode=yes -q -o user="$2" "$1" sleep 1
 </pre></blockquote>
 Pour chaque site dont vous faite un miroir push vous devez inscrire une ligne
 <pre>
-./signal &lt;site&gt; &lt;username&gt;
+../signal &lt;site&gt; &lt;username&gt;
 </pre>
 dans <kbd>runmirrors</kbd>.
 
@@ -108,3 +118,4 @@ dans <kbd>runmirrors</kbd>.
 <kbd>runmirrors</kbd>.
 De cette façon, dès que votre site a fini de mettre à jour son miroir à partir
 du site serveur, vous commencerez à mettre à jour vos sites clients.
+
