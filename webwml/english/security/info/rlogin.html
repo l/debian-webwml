@@ -1,0 +1,195 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Debian GNU/Linux - Security Information</TITLE>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+<H1><IMG SRC="../../Pics/debian.jpg" WIDTH=114 HEIGHT=140 ALIGN="middle" ALT="Debian GNU/Linux - ">Security Information</H1>
+<HR>
+Debian takes security very seriously.  Most <a href="../index.html">security problems</a> brought
+to our attention are corrected within 48 hours.
+
+<P> Please send security-related bug reports to <a href="mailto:security@debian.org">security@debian.org</a><P>
+
+<blockquote>
+<a href="ftp://info.cert.org/pub/cert_advisories/CA-97.06.rlogin-term">CERT-Advisory</a> <p>
+
+The CERT Coordination Center has received reports of a vulnerability in many
+implementations of the rlogin program, including eklogin and klogin. By
+exploiting this vulnerability, users with access to an account on the system
+can cause a buffer overflow and execute arbitrary programs as root. <p>
+
+The CERT/CC staff recommends installing a vendor patch for this problem
+(Sec. III.A). Until you can do so, we urge you to turn off rlogin or replace
+it with a wrapper (see Sec. III.B.2). <p>
+
+We will update this advisory as we receive additional information.
+Please check advisory files regularly for updates that relate to your site. <p>
+
+<hr>
+
+<ol>
+<li><b>   Description</b> <p>
+
+     The rlogin program provided by many UNIX systems, as well as some non-UNIX
+     systems, is described in RFC 1282. Here is an excerpt from that RFC that
+     describes its elemental functionality: <p>
+
+     <em>
+        "The rlogin facility provides a remote-echoed, locally flow-
+         controlled virtual terminal with proper flushing of output.
+         It is widely used between Unix hosts because it provides
+         transport of more of the Unix terminal environment semantics
+         than does the Telnet protocol, and because on many Unix hosts
+         it can be configured not to require user entry of passwords
+         when connections originate from trusted hosts."
+     </em> <p>
+
+     The key point from this description is that the rlogin program passes
+     the terminal type description from the local host to the remote host.
+     This functionality allows terminal-aware programs such as full-screen
+     text editors to operate properly across a computer-to-computer
+     connection created with rlogin. <p>
+
+     To do this, the rlogin program uses the current terminal definition as
+     identified by the TERM environment variable. The protocol described in
+     RFC 1282 explains how this terminal information is transferred from the
+     local machine where the rlogin client program is running to the remote
+     machine where service is sought. <p>
+
+     Unfortunately, many implementations of the rlogin program contain a
+     defect whereby the value of the TERM environment variable is copied to
+     an internal buffer without due care. The buffer holding the copied value
+     of TERM can be overflowed. In some implementations, the buffer is a local
+     variable, meaning that the subroutine call stack can be overwritten and
+     arbitrary code executed. The executed code is under the control of the
+     user running the rlogin program. <p>
+
+     In addition, the rlogin program is set-user-id root. rlogin requires
+     these increased privileges so it can allocate a port in the required
+     range, as described in the in.rlogind (or rlogind) manual page: <p>
+
+     <em>
+         "The server checks the client's source port. If the port is not
+          in the range 0-1023, the server aborts the connection."
+     </em> <p>
+
+     In summary, rlogin is a set-user-id root program that in many
+     implementations contains a programming defect whereby an internal buffer
+     can be overflowed and arbitrary code can be executed as root.
+
+<li><b>  Impact</b> <p>
+
+     Users can become root if they have access to an account on the system.
+
+<li> <b>Solution</b> <p>
+
+     Install a patch from your vendor if one is available (Section A).
+     Until you can take one of those actions, we recommend applying the
+     workaround described in Section B.
+
+     <ol>
+     <li>  Obtain and install a patch for this problem. <p>
+
+         Below is a list of vendors who have provided information about 
+         rlogin. Details are in Appendix A of this advisory; we will update
+         the appendix as we receive more information. If your vendor's name is
+         not on this list, the CERT/CC did not hear from that vendor. Please
+         contact your vendor directly. <p>
+
+              Berkeley Software Design, Inc. (BSDI) <br>
+              Cray Research - A Silicon Graphics Company <br>
+              Cygnus Solutions (formerly Cygnus Support) <br>
+              Data General Corporation <br>
+              Digital Equipment Corporation <br>
+              FreeBSD, Inc. <br>
+              Hewlett-Packard Corporation <br>
+              IBM Corporation <br>
+              Linux Systems <br>
+              NEC Corporation <br>
+              NetBSD <br>
+              NeXT Software, Inc. <br>
+              The Open Group <br>
+              The Santa Cruz Operation (SCO) <br>
+              Sun Microsystems, Inc. <p>
+
+     <li>  Until you are able to install the appropriate patch, we recommend
+         one of the following workarounds: <p>
+
+         <ol>
+         <li>Turn off rlogin. <p>
+            If your user community does not use rlogin, turn it off.
+            As root, do the following: <p>
+
+                % chmod 0 /usr/bin/rlogin <p>
+
+            You may find the rlogin program in some other directory on
+            your system. Example directories are: /bin, /usr/bin, /usr/ucb. <p>
+
+            Note: On some systems, rlogin is provided in different forms
+            that do additional work. Examples are eklogin (kerberos
+            authentication plus encryption of the data stream) and klogin
+            (kerberos authentication only). These, too, need to be turned
+            off. <p>
+
+         <li> Replace the rlogin program with a wrapper. <p>
+            We have written a prototype wrapper that is available at
+
+          URL <a href="ftp://info.cert.org/pub/tools/rlogin_wrapper/rlogin_wrapper.c">ftp://info.cert.org/pub/tools/rlogin_wrapper/rlogin_wrapper.c</a> <p>
+
+            The PGP signature for this file is available at
+          URL <a href="ftp://info.cert.org/pub/tools/rlogin_wrapper/rlogin_wrapper.c.asc">ftp://info.cert.org/pub/tools/rlogin_wrapper/rlogin_wrapper.c.asc</a> <p>
+
+            To verify that this file is correct, fetch both the
+            rlogin_wrapper.c and rlogin_wrapper.c.asc files and check the
+            signature with pgp as in <p>
+
+               % pgp rlogin_wrapper.c.asc rlogin_wrapper.c <p>
+
+            <b>Notes:</b>
+		<ul>
+               <li> You may have to change this program to get it to compile and
+                  work correctly on your system.
+
+               <li> If you have different forms of rlogin, as noted in the
+                  previous section, then you will need to replace those forms
+                  with the wrapper as well.
+		</ul>
+	</ol>
+</ol>
+<hr>
+
+<h3>Appendix A - Vendor Information</h3>
+
+
+Below is a list of the vendors who have provided information for this
+advisory. We will update this appendix as we receive additional information.
+If you do not see your vendor's name, the CERT/CC did not hear from that
+vendor. Please contact the vendor directly.
+
+
+Linux Systems <p>
+
+        Only very out of date Linux systems are vulnerable. <p>
+
+        Linux Netkit 0.08 has rlogin fixed. All Linux systems using older
+        NetKits should upgrade to NetKit 0.09. Some vendors have shipped
+        patched Netkit-0.08 releases. Check with your vendor for
+        confirmation. <p>
+
+        NetKit 0.09 is available from: <a href="ftp://ftp.uk.linux.org/pub/linux/Networking/base/NetKit-0.09.tar.gz">ftp://ftp.uk.linux.org/pub/linux/Networking/base/NetKit-0.09.tar.gz</a> <p>
+
+</blockquote>
+
+<P><SMALL>Last Modified: 10 Jan 1998.
+Copyright &copy;1997 SPI; See
+<A HREF="../../license.html">license terms.</A></SMALL>
+<HR>
+</BODY>
+</HTML>
+
+

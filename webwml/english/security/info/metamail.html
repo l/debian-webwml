@@ -1,0 +1,80 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Debian GNU/Linux - Security Information</TITLE>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+<H1><IMG SRC="../../Pics/debian.jpg" WIDTH=114 HEIGHT=140 ALIGN="middle" ALT="Debian GNU/Linux - ">Security Information</H1>
+<HR>
+Debian takes security very seriously.  Most <a href="../index.html">security problems</a> brought
+to our attention are corrected within 48 hours.
+
+<P> Please send security-related bug reports to <a href="mailto:security@debian.org">security@debian.org</a><P>
+
+<blockquote>
+<b>From: Alan Cox &lt;alan@cymru.net&gt;</b> <br>
+<b>Date: Wed, 9 Apr 1997 10:58:48 +0100 (BST)</b> <p>
+
+This appears to be a tcsh bug, but it shows up with metamail and can
+be abused. Olaf's message follows below. I've also passed it on to CERT <p>
+
+Alan Cox <p>
+
+<hr>
+
+Hi Alan, <p>
+
+Here's the info on metamail I promised to send you. The hole may be
+exploitable if you let metamail run showext for messages of type
+message/external-body. At least tcsh, and possily a few other csh's,
+do seem to do weird things when expanding command line arguments.
+If you give a script an argument of "foo FTP=/tmp/evilcmd", and it
+does <p>
+
+<pre>
+	set var=$1
+</pre>
+
+this will assign foo to $var, and /tmp/evilcmd to $FTP. Unfortunately,
+metamail invokes showext with the mime attributes on the command line,
+so you basically send it a header like this <p>
+
+<pre>
+   Content-type:  message/external-body;
+	   access-type="anon-ftp";
+	   name="passwd";
+	   site="monad.swb.de";
+	   directory="/etc";
+	   mode="image FTP=/tmp/evilcmd"
+</pre>
+
+Further below, the script will run $FTP to initiate the ftp connection.
+Up to now, I have not been able to pass arguments to the command, but
+that doesn't mean that you can't do interesting things with the above. <p>
+
+The patch is appended <a href="metamail.patch">here</a>. <p>
+
+Cheers
+Olaf <p>
+<hr>
+<pre>
+Olaf Kirch         |  --- o --- Nous sommes du soleil we love when we play
+okir@monad.swb.de  |    / | \   sol.dhoop.naytheet.ah kin.ir.samse.qurax
+okir@lst.de        +-------------------- Why Not?! -----------------------
+</pre>
+<hr>
+
+</blockquote>
+
+<P><SMALL>Last Modified: 10 Jan 1998.
+Copyright &copy;1997 SPI; See
+<A HREF="../../license.html">license terms.</A></SMALL>
+<HR>
+</BODY>
+</HTML>
+
+

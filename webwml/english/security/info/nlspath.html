@@ -1,0 +1,63 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Debian GNU/Linux - Security Information</TITLE>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+<H1><IMG SRC="../../Pics/debian.jpg" WIDTH=114 HEIGHT=140 ALIGN="middle" ALT="Debian GNU/Linux - ">Security Information</H1>
+<HR>
+Debian takes security very seriously.  Most <a href="../index.html">security problems</a> brought
+to our attention are corrected within 48 hours.
+
+<P> Please send security-related bug reports to <a href="mailto:security@debian.org">security@debian.org</a><P>
+
+<blockquote>
+<b>Date: 	Thu, 13 Feb 1997 23:08:13 -0500</b> <br>
+<b>From: solar@IDEAL.RU</b> <p>
+
+Hi! <p>
+
+I'm sorry if the information I'm going to tell about was already known, but
+I hope it wasn't... <p>
+
+I just occasionally found a vulnerability in Linux libc (actually, some of
+the versions seem not to be vulnerable; my Slackware 3.1 box was though).
+Unfortunately, I have no time for a real investigation right now, but here's
+the exploit anyway. Note that the shellcode is a bit different from the
+usual one: <p>
+<ul>
+<li> it does setuid(geteuid()) by itself;
+<li> easier to modify (no more fixed offsets in shellcode, and the shell name
+can be changed, too -- the length is not fixed);
+<li> the NULL pointer itself is passed in %edx to the execve syscall, not the
+pointer to NULL (it seems like a mistake in the Aleph One's article); this
+doesn't seem to affect anything though.
+</ul>
+
+It might be possible to exploit this hole remotely, if using a patched telnet
+client which would allow exporting large environment variable values. The
+overflow would happen at /bin/login startup then (somewhat like the famous
+LD_PRELOAD exploit, but an overflow). I'm not sure of that though, there might
+be some restrictions on environment variables in telnetd. <p>
+
+As for the fix, well, this is a hard one -- would require re-compiling libc,
+and statically linked binaries. To protect yourself against remote attacks,
+you could for example change the variable name to something different, with
+a hex editor (like /usr/bin/bpe), in /lib/libc.so.5, and ensure the exploit
+stopped working. Of course, this is only a temporary fix. <p>
+
+<a href="nlspath.c">nlspath.c</a> and <a href="shellcode.s">shellcode.s</a>
+</blockquote>
+
+<P><SMALL>Last Modified: 10 Jan 1998.
+Copyright &copy;1997 SPI; See
+<A HREF="../../license.html">license terms.</A></SMALL>
+<HR>
+</BODY>
+</HTML>
+
+

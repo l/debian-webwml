@@ -1,0 +1,17 @@
+<perl>
+use Time::Local;
+
+@dow = ( 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' );
+@moy = ( 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' );
+sub ctime {
+    $WML_SRC_ISOTIME =~ /(..)-(..)-(....) (..):(..):(..)/;
+    local($time) = timelocal($6, $5, $4, $1, $2-1, $3);
+    local($sec, $min, $hour, $mday, $mon, $year,
+	$wday, $yday, $isdst) = localtime($time);
+    local($str) = sprintf("%s, %2d %s 19%s %02d:%02d:%02d %s",
+	$dow[$wday], $mday, $moy[$mon], $year, $hour, $min, $sec,
+        $isdst ? "-0600 (MDT)" : "-0700 (MST)");
+    return $str;
+}
+</perl>

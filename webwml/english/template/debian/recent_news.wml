@@ -1,0 +1,23 @@
+<perl>
+
+sub get_recent_news {
+  open(FILEH, "<news.wml");
+  $count = 0;
+  while (<FILEH>) {
+     if (/^<(LI|li)><(A|a) (HREF|href)=\"(#\w+)\">(.+)<\/(A|a)>$/) {
+        $count++;
+        $link = $4;
+        $title = $5;
+        $_ = <FILEH>;
+        if (/^\s*<(SMALL|small)>\((.*)\)<\/(SMALL|small)>$/) {
+           $date = $2;
+        }
+        $str .= "[$date] <a href=\"news$link\">$title<\/A><BR>\n";
+     }
+     if ($count eq "6") { last; }
+  }
+close FILEH;
+return $str;
+}
+
+</perl>

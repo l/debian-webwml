@@ -1,0 +1,47 @@
+#!wml -o ../../../debian.org/devel/%BASE.html.en              
+#use wml::debian::template title="Debian GNU/Linux - Example rsync usage"
+
+<H1>Example rsync usage</H1>
+
+<P>The following is an example which will mirror both the web and ftp site.
+You will have to modify the machine name and the directories involved to
+match your situation.
+
+<P>The lockfile is useful if you run this using a cron job. If, for any reason,
+the mirror doesn't complete, the next time the mirror tries to run you will get
+mail. You can then track down where the problem lies, fix it, delete the lockfile and
+the mirror will work properly the next time it is run.
+<blockquote>
+<pre>
+#!/bin/bash
+set -e
+
+lockfile -r 1 rsync.master.lock || exit 23
+
+rsync -avz -e ssh --exclude .glbuild --delete &lt;machine&gt;:/web/debian.org/ debian.org
+rsync -avz -e ssh --delete &lt;machine&gt;:/web/debian.org-local/ debian.org-local
+
+echo FINISHED UPDATING WEB. WORKING ON FTP NOW.
+
+rsync -avz --delete -e ssh &lt;machine&gt;:/debian debian
+
+rm -f rsync.master.lock
+</pre>
+</blockquote>
+
+<H3>How to set up ssh so you aren't asked for a password:</H3>
+
+The script given above will prompt you for a password unless you set up
+ssh a certain way. First, when you use ssh-keygen, just hit return when
+asked for a password [1]. Next, add the contents
+of ~/.ssh/identity.pub to ~/.ssh/authorized_keys on the mirror site (the
+file should be mode 600).
+You should then be able to use ssh to log in to the mirror site without
+being asked for a password.
+
+<P>
+[1] Note that setting up ssh with a blank password gives an intruder free access
+to the site you are mirroring once they have broken into your site.
+For this reason, this should never be done from root.
+
+<:= languages ("$(HOME)", "devel", "$(WML_SRC_BASENAME)", "$(CUR_LANG)") :>

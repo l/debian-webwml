@@ -1,0 +1,280 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Debian GNU/Linux - Security Information</TITLE>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+<H1><IMG SRC="../../Pics/debian.jpg" WIDTH=114 HEIGHT=140 ALIGN="middle" ALT="Debian GNU/Linux - ">Security Information</H1>
+<HR>
+Debian takes security very seriously.  Most <a href="../index.html">security problems</a> brought
+to our attention are corrected within 48 hours.
+
+<P> Please send security-related bug reports to <a href="mailto:security@debian.org">security@debian.org</a><P>
+
+<blockquote>
+<a href="ftp://info.cert.org/pub/cert_advisories/CA-97.04.talkd">CERT-Advisory</a> <p>
+
+
+The CERT Coordination Center has received reports of a vulnerability in
+talkd(8) program used by talk(1). By constructing DNS data with particular
+characteristics, an intruder can remotely execute arbitrary commands with root
+privileges. <p>
+
+An exploitation script for this problem has been made publicly available,
+and we have received reports of successful root compromises involving the use
+of this script. <p>
+
+You may be aware of advisories that have been published by other response
+teams about this problem. Note that this advisory contains additional material
+and covers additional aspects of the vulnerability related to a broader set of
+problems of which this particular problem is only a specific instance. <p>
+
+The CERT/CC team recommends taking steps to solve the general problem
+(Sec. III.A) and installing a vendor patch to address this particular instance
+of the problem (Sec. III.B). Until you can install a patch, we urge you to
+disable the talkd program(s) at your site. <p>
+
+We will update this advisory as we receive additional information.
+Please check advisory files regularly for updates that relate to your site. <p>
+
+<hr>
+
+<ol>
+<li><b>   Description</b> <p>
+
+     The CERT Coordination Center has received information of a vulnerability
+     in the talkd(8) program used by talk(1). talk is a communication program
+     that copies text from one user's terminal to that of another, possibly
+     remote, user. talkd is the daemon that notifies a user that someone else
+     wishes to initiate a talk conversation. <p>
+
+     As part of the talk connection, talkd does a DNS lookup for the name
+     of the host that the connection is being initiated from. Because there
+     is insufficient bounds checking on the buffer where the hostname is
+     stored, it is possible to overwrite the internal stack space of talkd. <p>
+
+     It is possible to force talkd to execute arbitrary commands by carefully
+     manipulating the hostname information. As talkd runs with root
+     privileges, this may allow intruders to remotely execute arbitrary
+     commands with these privileges. <p>
+
+     This attack requires an intruder to be able to make a network connection
+     to a vulnerable talkd program and provide corrupt DNS information to that
+     host. <p>
+
+     This type of attack is a particular instance of the problem described in
+     CERT advisory CA-96.04, "Corrupt Information from Network Servers,"
+     available from <a href="ftp://info.cert.org/pub/cert_advisories/CA-96.04.corrupt_info_from_servers">ftp://info.cert.org/pub/cert_advisories/CA-96.04.corrupt_info_from_servers</a> <p>
+
+     Sites that use BIND 4.9.4 Patch Level 1 or later are NOT vulnerable to
+     the general class of hostname/ip-address-based buffer overflow attacks
+     (including this specific problem). <p>
+
+     Be aware that there are different versions of the talkd program.
+     Depending on your system, the program may have any of the following
+     names: talkd, otalkd, ntalkd. <p>
+
+     To determine whether your site allows talk sessions, check
+     /etc/inetd.conf: <p>
+
+<pre>
+          # grep -i "^[a-z]*talk" /etc/inetd.conf
+</pre>
+
+     <b>Note:</b> An exploitation script for this problem has been made publicly
+           available. The CERT/CC has received reports of successful root
+           compromises involving the use of this script.
+
+<li><b>  Impact</b> <p>
+
+     Intruders may be able to remotely execute arbitrary commands with root
+     privileges. They do not need access to an account on the system to
+     exploit this vulnerability.
+
+<li><b> Solution</b> <p>
+
+     There are several options available to avoid this problem. We recommend
+     that all sites defend against the general class of problem (Sec. A) and
+     also install a patch from your vendor (Sec. B). Until you can install a
+     patch, we urge you to disable the talkd program(s) at your site (Sec C). <p>
+
+     Note that disabling the talkd program will defend against the
+     particular attack described in this advisory, but will not defend
+     against the general class of network-based attacks that manipulate
+     hostname/ip-address information to exploit a vulnerability. <p>
+
+     <ol>
+     <li> Defend against the general class of problem <p>
+
+        In the general case, the problem described in this advisory is one
+        in which the attacker uses particular hostname/ip-address data to
+        exploit a vulnerability. The exploitation script mentioned above
+        uses the specific case of DNS attacks, but attackers can use other
+        hostname/ip-address resolution methods, such as NIS, /etc/hosts,
+        and so on. <p>
+
+        If the following measures are in place for all hostname/address
+        transformation techniques on your system, then your system would be
+        immune not only to this particular talkd exploit, but also to the
+        general class of hostname/ip-address-based buffer overflow attacks. <p>
+
+        <ol>
+	<li> DNS-Based Attacks <p>
+
+        To defend against a DNS-based attack, we encourage you to upgrade to
+        BIND 4.9.4 Patch level 1 or later (or your vendor's equivalent). The
+        reason is that BIND 4.9.4 Patch Level 1 conforms to the RFC (RFC 952)
+        defining valid hostname syntax (described in CERT advisory CA-96.04,
+        "Corrupt Information from Network Servers"). <p>
+
+        Keep in mind that an upgrade to 4.9.5 may require a sendmail upgrade
+        because of the POSIX extensions in the latest version of BIND
+        (described in CA-96.04). For the latest available version of sendmail,
+        please consult the file
+
+                <a href="ftp://info.cert.org/pub/latest_sw_versions/sendmail">ftp://info.cert.org/pub/latest_sw_versions/sendmail</a> <p>
+
+        <li> Other Network Information Services <p>
+
+        For systems that rely on additional name/address transformation
+        techniques (such as NIS, netinfo, and flat files like /etc/hosts),
+        using the recommended version of BIND may be insufficient since DNS
+        lookups--and therefore hostname/ip-address validation--may be bypassed
+        in favor of the alternative technique (NIS, netinfo, etc). Thus, we
+        also encourage sites and vendors to include in the suite of resolution
+        techniques the same code that BIND uses to validate hostnames and IP
+        addresses. This code is described in the next section. <p>
+
+        <li> In-house Software <p>
+
+        Use the hostname and IP address validation subroutines available
+        at the locations listed below. Include them in all programs that
+        use the result of the hostname lookups in any way. <p>
+
+          <a href="ftp://info.cert.org/pub/tools/ValidateHostname/IsValid.c">ftp://info.cert.org/pub/tools/ValidateHostname/IsValid.c</a> <br>
+          <a href="ftp://ftp.cert.dfn.de/pub/tools/net/ValidateHostname/IsValid.c">ftp://ftp.cert.dfn.de/pub/tools/net/ValidateHostname/IsValid.c</a> <p>
+
+        The IsValid.c file contains code for the IsValidHostname and
+        IsValidIPAddress subroutines. This code can be used to check host
+        names and IP addresses for validity according to RFCs 952 and 1123,
+        as well as names containing characters drawn from common practice,
+        namely "_" and "/". <p>
+
+        The following files are in the directory (from the README):
+
+        <pre>
+        IsValid.l       The lex/flex file containing the code for
+                        IsValidHostname and IsValidIPAddress
+                        MD5 (IsValid.l) = 2d35040aacae4fb12906eb1b48957776
+
+        IsValid-raw.c   The C file created by running flex
+                        on IsValid.l
+                        MD5 (IsValid-raw.c) = 367c77d3ef84bc63a5c23d90eeb69330
+
+        IsValid.c       The edited file created by internalizing
+                        variable and function definitions in
+                        IsValid-raw.c
+                        MD5 (IsValid.c) = ffe45f1256210aeb71691f4f7cdad27f
+
+        IsValid.diffs   The set of diffs between IsValid-raw.c
+                        and IsValid.c
+                        MD5 (IsValid.diffs) = 3619022cf31d735151f8e8c83cce3744
+
+        htest.c         A main routing for testing IsValidHostname
+                        and IsValidIPAddress
+                        MD5 (htest.c) = 2d50b2bffb537cc4e637dd1f07a187f4
+        </pre>
+      </ol>
+
+     <li> Install a patch from your vendor <p>
+
+        Below is a list of the vendors who have provided information. Details
+        are in Appendix A of this advisory; we will update the appendix as we
+        receive additional information.
+
+        If your vendor's name is not on this list, we have not received any
+        information. Please contact the vendor directly.
+
+           Berkeley Software Design, Inc. (BSDI)
+           Cisco Systems
+           Data General Corporation
+           FreeBSD, Inc.
+           Hewlett-Packard Company
+           IBM Corporation
+           Linux
+           NEC Corporation
+           The Santa Cruz Operation, Inc. (SCO)
+           Silicon Graphics Inc. (SGI)
+           Solbourne (Grumman System Support)
+           Sun Microsystems, Inc.
+
+     <li> Disable the talkd program(s) <p>
+
+        Until you can install a vendor patch, disable any talkd programs found
+        in /etc/inetd.conf by commenting out those lines and restarting inetd.
+
+        Example commands executed as root:
+
+        # grep -i talk /etc/inetd.conf
+        talk    dgram   udp     wait    root  /usr/etc/in.talkd     in.talkd
+
+        Comment out *all* references to talkd, otalkd or ntalkd.
+        (Comments in /etc/inetd.conf begin with "#".)
+
+        After editing /etc/inetd.conf, restart inetd. On many Unix systems,
+        this is done by sending the inetd process a HUP signal.
+
+        For SYSV:
+
+                 # ps -ef | grep inetd | grep -v grep
+                 # kill -HUP {inetd PID}
+
+        For BSD:
+
+                # ps -aux | grep inetd | grep -v grep
+                # kill -HUP {inetd PID}
+
+     Note that disabling talkd will solve the specific problem discussed in
+     this advisory. However it will not solve the general problem of
+     network-based attacks that manipulate hostname/ip-address information
+     to exploit a vulnerability.
+    </ol>
+</ol>
+
+<hr>
+
+<h3>Appendix A - Vendor Information</h3>
+
+Below is a list of the vendors who have provided information for this
+advisory. We will update this appendix as we receive additional information.
+If you do not see your vendor's name, please contact the vendor directly. <p>
+
+<b>Linux</b> <p>
+
+   This bug was fixed in Linux NetKit 0.08 which is shipped with all reasonably
+   up to date Linux distributions. Linux users using NetKit 0.07 or earlier
+   should upgrade to NetKit 0.09. NetKit 0.09 has fixed other bugs and it is
+   strongly recommended Linux users upgrade from NetKit 0.08 to NetKit
+   0.09. This is available from
+      <a href="ftp://ftp.uk.linux.org/pub/linux/Networking/base/NetKit-0.09.tar.gz"></a> <p>
+
+   Some vendors have opted to issue NetKit 0.08 with additional fixes rather
+   than 0.09. Consult your vendor for detailed information. <p>
+
+   The Linux community would like to thank David A Holland for his continuing
+   work on Linux network security. <p>
+
+</blockquote>
+
+<P><SMALL>Last Modified: 10 Jan 1998.
+Copyright &copy;1997 SPI; See
+<A HREF="../../license.html">license terms.</A></SMALL>
+<HR>
+</BODY>
+</HTML>
+
+
