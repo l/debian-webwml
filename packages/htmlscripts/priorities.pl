@@ -11,4 +11,8 @@ return (
 );
 }
 
+sub sorted_priorities() {
+    return ( "required", "important", "standard", "optional", "extra" );
+}
+
 1;
