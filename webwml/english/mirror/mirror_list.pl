@@ -401,48 +401,40 @@ END
 # meant to be output into a file which is then included into a .wml file
 # and processed by WML
 sub cdimage_mirrors {
+  my $which = shift;
   return unless $html;
-  print <<END;
-<tr><td colspan="2"><hr></td></tr>
-END
+  print "<ul>\n";
   foreach $country (sort keys %countries) {
-    my $ccount = 0;
     foreach $site (sort @{ $countries{$country} }) {
-      if (defined $mirror{$site}{method}{'cdimage-ftp'} ||
-          defined $mirror{$site}{method}{'cdimage-http'} ||
-          defined $mirror{$site}{method}{'cdimage-rsync'}) {
-        (my $countrycode = $country) =~ s/^(..).*/$1/;
-
-	print "<tr>\n  <td valign=\"top\">";
-#	warn $ccount."\n";
-	print "<${countrycode}c>" unless ($ccount > 0);
-	print "</td>\n";
-	print <<END;
-  <td valign="top">
+      (my $countrycode = $country) =~ s/^(..) .*/$1/;
+      if ($which eq "httpftp") {
+        if (defined $mirror{$site}{method}{'cdimage-ftp'} ||
+            defined $mirror{$site}{method}{'cdimage-http'}) {
+          print "<li><${countrycode}c>: $site: ";
+          if (defined $mirror{$site}{method}{'cdimage-ftp'}) {
+            print <<END;
+    <a href="ftp://$site$mirror{$site}{method}{'cdimage-ftp'}">FTP</a>
 END
-	if (defined $mirror{$site}{method}{'cdimage-ftp'}) {
-	  print <<END;
-    <a href="ftp://$site$mirror{$site}{method}{'cdimage-ftp'}">FTP: $site:$mirror{$site}{method}{'cdimage-ftp'}</a><br>
+          }
+          if (defined $mirror{$site}{method}{'cdimage-http'}) {
+            print <<END;
+    <a href="http://$site$mirror{$site}{method}{'cdimage-http'}">HTTP</a>
 END
-	}
-	if (defined $mirror{$site}{method}{'cdimage-http'}) {
-	  print <<END;
-    <a href="http://$site$mirror{$site}{method}{'cdimage-http'}">HTTP: $site$mirror{$site}{method}{'cdimage-http'}</a><br>
+          }
+          print "</li>\n";
+        }
+      } elsif ($which eq "rsync") {
+        if (defined $mirror{$site}{method}{'cdimage-rsync'}) {
+          print <<END;
+  <li><${countrycode}c>: $site:
+    <font color="#6b1300">rsync $site\:\:$mirror{$site}{method}{'cdimage-rsync'}</font>
+  </li>
 END
-	}
-	if (defined $mirror{$site}{method}{'cdimage-rsync'}) {
-	  print <<END;
-    <font color="#6b1300">rsync $site\:\:$mirror{$site}{method}{'cdimage-rsync'}</font><br>
-END
-	}
-	print <<END;
-  </td>
-</tr>
-END
-	$ccount++;
+        }
       }
     }
   }
+  print "</ul>\n";
 }
 
 sub header {
@@ -691,7 +683,8 @@ Usage: $0 -m|--mirror mirror_list_source [-t|--type type]
 	methods
 	nonus
 	sponsors
-	cdimages
+	cdimages-httpftp
+	cdimages-rsync
 END
 	exit;
 }
@@ -776,9 +769,13 @@ elsif ($output_type eq 'sponsors') {
 	$html=1;
 	primary_mirror_sponsors();
 }
-elsif ($output_type eq 'cdimages') {
+elsif ($output_type eq 'cdimages-httpftp') {
 	$html=1;
-	cdimage_mirrors();
+	cdimage_mirrors("httpftp");
+}
+elsif ($output_type eq 'cdimages-rsync') {
+	$html=1;
+	cdimage_mirrors("rsync");
 }
 else {
 	die "Error: unknown output type requested, $output_type\n";
