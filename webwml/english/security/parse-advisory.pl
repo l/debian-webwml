@@ -62,7 +62,7 @@ foreach $l (<ADV>) {
   }
 
   $f++ if ($l =~ /^Debian (GNU\/Linux.*alias|.*\(.*\)).*/);
-  $f = 0 if ($l =~ /^  These (files|packages) will (probably )?be moved/);
+  $f = 0 if ($l =~ /^(-- |  These (files|packages) will (probably )?be moved)/);
   $files .= $l if ($f);
 }
 close ADV;
