@@ -11,6 +11,14 @@ SUBS=
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
 
+MFILES := card.tex
+MISC_FILES := $(patsubst %,$(HTMLDIR)/%,$(MFILES))
+
+install:: $(MISC_FILES)
+
+cleandest::
+	-rm -f $(HTMLDEST)/{$(MISC_FILES)}
+
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
 
@@ -25,3 +33,10 @@ card.ps:  card.dvi
 
 card.dvi: card.tex bottle.eps
 	latex card.tex
+
+# there only needs to be one version of the following so
+# the non-english directories shouldn't try to install them
+ifeq ($(LANGUAGE),en)
+$(HTMLDIR)/card.tex: card.tex
+	cp card.tex $(HTMLDIR)
+endif
