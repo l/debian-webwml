@@ -29,7 +29,7 @@ my %longmoy = (	en => [
 my $curyear = (localtime())[5] + 1900;
 my $mlURL = "http://lists.debian.org/debian-security-announce/debian-security-announce-$curyear/";
 
-my $arch = (
+my %arch = (
 	    'alpha'   => 'Alpha',
 	    'hppa'    => 'HP Precision',
 	    'i386'    => 'Intel IA-32',
@@ -93,7 +93,7 @@ foreach $l (<ADV>) {
   }
 
   $f++ if ($l =~ /^Debian (GNU\/Linux.*alias|.*\(.*\)).*/);
-  $f = 0 if ($l =~ /^((- )?-- |  These (files|packages) will (probably )?be moved)/);
+  $f = 0 if ($l =~ /^((- )?-- |(  )?These (files|packages) will (probably )?be moved)/);
   $files .= $l if ($f);
 }
 close ADV;
