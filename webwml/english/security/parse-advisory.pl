@@ -67,10 +67,10 @@ foreach $l (<ADV>) {
     $desc .= ' vulnerabilities' if $desc =~ /(several|multiple)/;
   }
   if ($l =~ /^(CVE (names?|ids?|references?)?|CERT advisor(y|ies))\s*: (.+)/i) {
-    push @dbids, $4;
+    push @dbids, join (" ", split (/,? /, $4));
   }
   if ($l =~ /^Bugtraq Ids?\s*: (.+)/i) {
-      for $id (split (/ /, $1)) {
+      for $id (split (/,? /, $1)) {
 	  push @dbids, "BID".$id;
       }
   }
@@ -103,7 +103,7 @@ $moreinfo =~ s/(- )?-+\n//g;
 $moreinfo =~ s/\n\n$/\n/s;
 $moreinfo =~ s/\n<p>\n$//;
 $moreinfo =~ s/\n\n/<\/p>\n\n/sg;
-$moreinfo =~ s|(Refer to Debian )(bug #)([0-9]{6,})\.|$1<a href="http://bugs.debian.org/$3">$2$3</a>.|g;
+$moreinfo =~ s|(CAN-\d+-\d+)|<a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=$1">$1</a>|g;
 chomp ($moreinfo);
 $files =~ s/(- )?-+\n//g;
 $files =~ s/\n\n$/\n/s;
