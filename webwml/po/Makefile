@@ -1,6 +1,5 @@
 
-#  Disable ko: this lang does not build
-langs = ar ca da de el eo es fi fr hr hu id it ja nl no pl pt ro ru sv tr zh
+langs = ar ca da de el eo es fi fr hr hu id it ja ko nl no pl pt ro ru sv tr zh
 
 LOCALEROOT = $(CURDIR)/locale
 TEMPLDIR   = template/debian
@@ -30,6 +29,7 @@ $(POTFILES): $(TMPL_FILES)
 
 po-files/templates.%.upo: $(POTFILES) po-files/templates.%.po
 	-@cd po-files; \
+   echo -n "Merging $* "; \
    msgmerge templates.$*.po templates.pot -o templates.$*.upo \
    || echo "Command failed: msgmerge templates.$*.po templates.pot"
 
@@ -63,15 +63,19 @@ init-po:
 fix-po:
 	langs='$(langs)'; \
    for l in $${langs}; do \
-     charset=''; \
-     for c in ../*/.wmlrc; do \
-       grep CUR_ISO_LANG=$$l $$c >/dev/null 2>&1 \
-       && charset=`grep CHARSET= $$c | sed -e 's/.*CHARSET=//'`; \
-     done; \
+     if [ "$$l" = ja ]; then \
+       charset='euc-jp'; \
+     else \
+       charset=''; \
+       for c in ../*/.wmlrc; do \
+         grep CUR_ISO_LANG=$$l $$c >/dev/null 2>&1 \
+         && charset=`grep CHARSET= $$c | sed -e 's/.*CHARSET=//'`; \
+       done; \
+     fi; \
      if [ "x$${charset}" = x ]; then \
        echo Unknown encoding for language $$l; \
      else \
-       sed -e "3s/CHARSET/$${charset}/" po-files/templates.$$l.po > po-files/templates.$$l.po.new \
+       sed -e "3s/charset=\\([^\"\\\\]*\\)/charset=$${charset}/" po-files/templates.$$l.po > po-files/templates.$$l.po.new \
        && mv po-files/templates.$$l.po.new po-files/templates.$$l.po; \
      fi; \
    done
