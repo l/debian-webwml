@@ -19,10 +19,12 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(wildcard News/$(CUR_YEAR)/[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/[0-9]*.wml) \
 		$(wildcard security/$(CUR_YEAR)/dsa-[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-[0-9]*.wml) \
 		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
-		$(ENGLISHSRCDIR)/releases/info sitemap.$(LANGUAGE).html
+		$(ENGLISHSRCDIR)/releases/info
 	$(WML) index.wml
 
-sitemap.$(LANGUAGE).html: $(ENGLISHDIR)/sitemap.wml
+sitemap.$(LANGUAGE).html: $(ENGLISHDIR)/sitemap.wml \
+  $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/template.wml \
+  $(ENGLISHDIR)/releases/info
 	make -C MailingLists subscribe.$(LANGUAGE).html unsubscribe.$(LANGUAGE).html
 ifeq "$(LANGUAGE)" "zh"
 	$(shell echo $(WML) | sed s/:.zh/:sitemap.zh/g) \
