@@ -190,7 +190,7 @@ sub FetchKey {
   $fingerprint = "0x".$fingerprint;
 
   $/ = undef; # just suck it up ....
-  open(FP, "$config{gpg} --no-options --no-default-keyring $keyringparam --list-sigs --fingerprint $fingerprint|");
+  open(FP, "$config{gpg} --no-options --no-default-keyring $keyringparam --check-sigs --fingerprint $fingerprint|");
   $out = <FP>;
   close FP;
   open(FP, "$config{gpg} --no-options --no-default-keyring $keyringparam --export -a $fingerprint|");
