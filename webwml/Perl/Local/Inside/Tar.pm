@@ -329,6 +329,10 @@ sub _read_header {
         my $cont  = shift;   #  1 when reading long filenames, 0 otherwise
 
         #  Read header
+        if (eof($self->{handle})) {
+                $self->_debug("EOF detected");
+                return;
+        }
         my $head = $self->_io_read(512, 1) ||
                 Carp::croak "End of file found when reading \`$self->{name}'";
         if ($head eq "\0" x 512) {
