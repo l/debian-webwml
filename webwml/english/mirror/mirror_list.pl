@@ -398,6 +398,53 @@ END
   print "</table>\n";
 }
 
+# meant to be output into a file which is then included into a .wml file
+# and processed by WML
+sub cdimage_mirrors {
+  return unless $html;
+  print <<END;
+<tr><td colspan="2"><hr></td></tr>
+END
+  foreach $country (sort keys %countries) {
+    my $ccount = 0;
+    foreach $site (sort @{ $countries{$country} }) {
+      if (defined $mirror{$site}{method}{'cdimage-ftp'} ||
+          defined $mirror{$site}{method}{'cdimage-http'} ||
+          defined $mirror{$site}{method}{'cdimage-rsync'}) {
+        (my $countrycode = $country) =~ s/^(..).*/$1/;
+
+	print "<tr>\n  <td valign=\"top\">";
+#	warn $ccount."\n";
+	print "<${countrycode}c>" unless ($ccount > 0);
+	print "</td>\n";
+	print <<END;
+  <td valign="top">
+END
+	if (defined $mirror{$site}{method}{'cdimage-ftp'}) {
+	  print <<END;
+    <a href="ftp://$site$mirror{$site}{method}{'cdimage-ftp'}">FTP: $site:$mirror{$site}{method}{'cdimage-ftp'}</a><br>
+END
+	}
+	if (defined $mirror{$site}{method}{'cdimage-http'}) {
+	  print <<END;
+    <a href="http://$site$mirror{$site}{method}{'cdimage-http'}">HTTP: $site$mirror{$site}{method}{'cdimage-http'}</a><br>
+END
+	}
+	if (defined $mirror{$site}{method}{'cdimage-rsync'}) {
+	  print <<END;
+    <font color="#6b1300">rsync $site\:\:$mirror{$site}{method}{'cdimage-rsync'}</font><br>
+END
+	}
+	print <<END;
+  </td>
+</tr>
+END
+	$ccount++;
+      }
+    }
+  }
+}
+
 sub header {
 	print <<END;
 <html>
@@ -637,7 +684,14 @@ if (defined $help) {
 Usage: $0 -m|--mirror mirror_list_source [-t|--type type]
 
 `mirror_list_source\' is usually Mirrors.masterlist file
-`type\' can be one of: "html", "text", "apt", "methods", "nonus" or "sponsors".
+`type\' can be one of:
+	html
+	text
+	apt
+	methods
+	nonus
+	sponsors
+	cdimages
 END
 	exit;
 }
@@ -721,6 +775,10 @@ elsif ($output_type eq 'nonus') {
 elsif ($output_type eq 'sponsors') {
 	$html=1;
 	primary_mirror_sponsors();
+}
+elsif ($output_type eq 'cdimages') {
+	$html=1;
+	cdimage_mirrors();
 }
 else {
 	die "Error: unknown output type requested, $output_type\n";
