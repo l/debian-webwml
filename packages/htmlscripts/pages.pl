@@ -85,7 +85,7 @@ sub print_virt_pack {
     $package_page .= sprintf( "<h2>".gettext( "Packages providing %s:" )."</h2>",
 			      $name );
     $package_page .= "<dl>\n";
-    foreach my $p ( @{$pkg->{provided_by}} ) {
+    foreach my $p ( keys %{$pkg->{rr}{provides}} ) {
 	my $p_pkg = $env->{db}->get_pkg( $p );
 
 	if ( $p_pkg ) {
@@ -513,6 +513,8 @@ sub package_pages_walker {
 	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Enhances' );
 	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Conflicts' );
 	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Provides' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Enhances' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Provides' );
 
 	    $data_sheet .= "</tbody></table>";
 	    

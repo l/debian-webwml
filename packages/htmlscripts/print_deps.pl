@@ -49,28 +49,8 @@ sub print_deps {
 		    " alt=\"[$dep_type{$type}]\" width=\"16\" height=\"16\"></td><td>";
 	    }
 	    
-
-	    my ( @dependend_archs, @not_dependend_archs );
-	    my $arch_str;
-	    foreach my $a ( @all_archs ) {
-		if ( exists( $versions->{a2v}->{$a} )
-		     && exists( $arch_deps{$a} ) ) {
-		    if ( exists $arch_deps{$a}->{$dp} ) {
-			push @dependend_archs, $a;
-		    } else {
-			push @not_dependend_archs, $a;
-		    }
-		}
-	    }
-	    if ( @dependend_archs == @all_archs ) {
-		$arch_str = "";
-	    } else {
-		if ( @dependend_archs > (@all_archs/2) ) {
-		    $arch_str = " [".gettext( "not" )." ".join( ", ", @not_dependend_archs)."]";
-		} else {
-		    $arch_str = " [".join( ", ", @dependend_archs)."]";
-		}
-	    }
+	    my $arch_str = compute_arch_str ( $dp, $versions, \%arch_deps,
+					      \@all_archs );
 
 	    my @res_pkgs; my $pkg_ix = 0;
 	    foreach my $p_name ( @pkgs ) {
@@ -215,27 +195,8 @@ sub print_deps_ds {
 	    $dp_v =~ s/\(.*?\)//g;
 	    my @pkgs = split /\|/, $dp;
 
-	    my ( @dependend_archs, @not_dependend_archs );
-	    my $arch_str;
-	    foreach my $a ( @all_archs ) {
-		if ( exists( $versions->{a2v}{$a} )
-		     && exists( $arch_deps{$a} ) ) {
-		    if ( exists $arch_deps{$a}->{$dp} ) {
-			push @dependend_archs, $a;
-		    } else {
-			push @not_dependend_archs, $a;
-		    }
-		}
-	    }
-	    if ( @dependend_archs == @all_archs ) {
-		$arch_str = "";
-	    } else {
-		if ( @dependend_archs > (@all_archs/2) ) {
-		    $arch_str = " [".gettext( "not" )." ".join( ", ", @not_dependend_archs)."]";
-		} else {
-		    $arch_str = " [".join( ", ", @dependend_archs)."]";
-		}
-	    }
+	    my $arch_str = compute_arch_str ( $dp, $versions, \%arch_deps,
+					      \@all_archs );
 
 	    my @res_pkgs; my $pkg_ix = 0;
 	    foreach my $p_name ( @pkgs ) {
@@ -282,6 +243,72 @@ sub print_deps_ds {
 	$res = "<tr><td valign=\"top\">$type:</td><td>".join( ", ", @res)."</td></tr>\n";
     }
     return $res;
+}
+
+sub print_reverse_rel_ds {
+    my ( $env, $pkg, $versions, $type) = @_;
+    my $res = "";
+    my @res = ();
+    my @all_archs = ( @{$env->{archs}}, 'all' );
+    my $lc_type = lc $type;
+
+    unless (exists $pkg->{rr}{$lc_type}) {
+	return "";
+    }
+
+    my ( $save_p, $save_vs, $save_as ) = ( "", "", "" );
+    foreach my $r_p ( sort keys %{$pkg->{rr}{$lc_type}} ) {
+	foreach my $r_v ( version_sort keys %{$pkg->{rr}{$lc_type}{$r_p}} ) {
+	    my %arch_deps;
+	    foreach my $r_a ( keys %{$pkg->{rr}{$lc_type}{$r_p}{$r_v}} ) {
+		$arch_deps{$r_a}{$r_p} =
+		    "@{$pkg->{rr}{$lc_type}{$r_p}{$r_v}{$r_a}}";
+	    }
+	    my $arch_str = compute_arch_str( $r_p, $versions, \%arch_deps,
+					     \@all_archs );
+	    if ( ($r_p eq $save_p) && ($arch_str eq $save_as) ) {
+		$save_vs .= ", $r_v";
+	    } else {
+		push @res, "$save_p ($save_vs)$save_as"
+		    if $save_p && $save_vs;
+		$save_p = $r_p;
+		$save_vs = $r_v;
+		$save_as = $arch_str;
+	    }
+	}
+    }
+
+    if (@res) {
+	$res = "<tr><td valign=\"top\">Reverse $type:</td><td>".join( ", ", @res)."</td></tr>\n";
+    }
+    return $res;
+}    
+
+sub compute_arch_str {
+    my ( $dp, $versions, $arch_deps, $all_archs ) = @_;
+
+    my ( @dependend_archs, @not_dependend_archs );
+    my $arch_str;
+    foreach my $a ( @$all_archs ) {
+	if ( exists( $versions->{a2v}{$a} )
+	     && exists( $arch_deps->{$a} ) ) {
+	    if ( exists $arch_deps->{$a}{$dp} ) {
+		push @dependend_archs, $a;
+	    } else {
+		push @not_dependend_archs, $a;
+	    }
+	}
+    }
+    if ( @dependend_archs == @$all_archs ) {
+	$arch_str = "";
+    } else {
+	if ( @dependend_archs > (@$all_archs/2) ) {
+	    $arch_str = " [".gettext( "not" )." ".join( ", ", @not_dependend_archs)."]";
+	} else {
+	    $arch_str = " [".join( ", ", @dependend_archs)."]";
+	}
+    }
+    return $arch_str;
 }
 
 1;
