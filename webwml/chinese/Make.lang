@@ -18,6 +18,14 @@ TOCN = $(BIN)/tocn.pl
 TOTW = $(BIN)/totw.pl
 FIX_BIG5 = $(BIN)/fix_big5.pl
 
+COMMONPICS = debian.jpg logo-50.jpg \
+	red-upperleft.png red-upperright.png \
+	red-lowerleft.png red-lowerright.png \
+	blue-upperleft.png blue-upperright.png \
+	blue-lowerleft.png blue-lowerright.png
+
+COMMONPICS_ZH = $(addprefix $(WMLBASE)/Pics/,$(COMMONPICS))
+
 WMLOUTPUT = -o UNDEFuZH@uCN:$(*F).zh-cn.html.tmp@g+w \
 	-o UNDEFuZH@uTW:$(*F).zh-tw.html.tmp@g+w
 WMLPROLOG = --prolog=$(FIX_BIG5)
@@ -84,5 +92,11 @@ endif
 
 $(WMLBASE)/template/debian-zh/template.tmpl: $(TEMPLDIR)/template.wml \
 		$(WMLBASE)/template/debian-zh/macros.tmpl \
-		$(WMLBASE)/template/debian-zh/navbar.tmpl
+		$(WMLBASE)/template/debian-zh/navbar.tmpl \
+		$(WMLBASE)/template/debian-zh/debian/navbar.wml \
+		$(COMMONPICS_ZH)
 	touch $@
+
+$(COMMONPICS_ZH):
+	cd $(WMLBASE)/Pics \
+		&& cp -sf $(addprefix ../../english/Pics/,$(COMMONPICS)) .
