@@ -57,7 +57,7 @@ $translations_status = {
 'book-gtiau' => {
 	'status' 		=> 2,
 	'since'			=> '13/09/1999',
-	'translation_maintainer'=> ['Patrice Karatchentzeff <pkarat@club-internet.fr>' ],
+	'translation_maintainer'=> ['Patrice Karatchentzeff <p.karatchentzeff@free.fr>' ],
 	'translation_name'	=> 'Debian GNU/Linux: guide d\'installation et d\'utilisation',
 	'translation_dev_url'   => 'http://cvs.debian.org/webwml/french/international/french/translations/debian-guide_fr-1.0.sgml?cvsroot=webwml',
 	'old_translators'	=> [	'Martin Quinson <mquinson@zeppelin-cb.de>',
@@ -75,29 +75,24 @@ $translations_status = {
 	'since'			=> '03/11/2000',
 	'base_revision'		=> '1.2',
 	'translation_name'	=> 'Histoire du projet Debian',
-	'translation_maintainer'=> ['Patrice Karatchentzeff <pkarat@club-internet.fr>'],
+	'translation_maintainer'=> ['Patrice Karatchentzeff <p.karatchentzeff@free.fr>'],
 },
 
 'faq' => {
-	'status'		=> 2,
-	'since'			=> '21/07/1998',
+	'status'		=> 1,
+	'since'			=> '28/05/2001',
 	'translation_name'	=> 'FAQ Debian GNU/Linux',
-	'translation_maintainer'=> ['Philippe Caillaud <phil@penguin.infini.fr>'],
-	'ping'			=> '28/11/1998',
-	'old_translators'	=> ['Vincent Renardias <vincent@waw.com>'],
+	'old_translators'	=> [
+				    'Vincent Renardias <vincent@waw.com>',
+				    'Philippe Caillaud <phil@penguin.infini.fr>'],
 },
 
 'tutorial' => {
-	'status'		=> 2,
-	'since'			=> '31/01/1999',
-	'translation_name'	=> 'Tutorial Debian',
-	'translation_maintainer'=> ['Eric Jacoboni <jaco@titine.fr.eu.org>'],
-	'old_translators'	=> ['Loïc Martin <lomartin@dejanews.com>'],
-},
-
-'user' => {
 	'status'		=> 1,
-	'since'			=> '?'
+	'since'			=> '28/05/2001',
+	'translation_name'	=> 'Tutorial Debian',
+	'old_translators'	=> ['Eric Jacoboni <jaco@titine.fr.eu.org>',
+				    'Loïc Martin <lomartin@dejanews.com>'],
 },
 
 'install' => {
@@ -126,10 +121,10 @@ $translations_status = {
 },
 
 'release-notes' => {
-	'status'		=> 2,
-	'since'			=> '05/06/1999',
-	'translation_name'	=> 'Notes sur la version',
-	'translation_maintainer'=> ['mmenal <mmenal@francemel.com>'],
+	'status'		=> 1,
+	'since'			=> '28/05/2001',
+	'translation_name'	=> 'Notes de publication',
+	'old_translators'       => ['mmenal <mmenal@ifrance.com>'],
 	'translation_package'	=> 'boot-floppies',
 },
 
@@ -193,12 +188,12 @@ $translations_status = {
 },
 
 'developers-reference' => {
-	'status'		=> '6',
-	'since'			=> '01/07/1998',
-	'translation_name'	=> 'Guide de Référence du Développeur Debian',
+	'status'		=> '4',
+	'since'			=> '28/05/2001',
+	'translation_name'	=> 'Manuel de référence du développeur Debian',
 	'translation_maintainer'=> ['Antoine Hulin <antoine@origan.fdn.fr>'],
-	'base_revision'		=> '0.1',
-	'translation_package'	=> '',
+	'base_revision'		=> '',
+	'translation_package'	=> 'developers-reference',
 	'old_translators'	=> ['Alain Meessen <ameessen@ulb.ac.be>',
 	                            'Herve Floch <Herve.Floch@linux.eu.org>',
 				    'Laurent Picouleau <laurent.picouleau@wanadoo.fr>'],
@@ -224,9 +219,10 @@ $translations_status = {
 
 'sgml-howto' => {
 	'status'		=> 2,
-	'since'			=> '30/03/2000',
+	'since'			=> '28/05/2001',
 	'translation_name'	=> 'The Debian SGML/XML HOWTO',
-	'translation_maintainer'=> ['Jérôme Marant <jerome.marant@free.fr>'],
+	'translation_maintainer'=> ['Philippe Batailler <pbatailler@teaser.fr>'],
+	'old_translators'       => ['Jérôme Marant <jerome.marant@free.fr>'],
 },
 
 'markup' => {
