@@ -231,25 +231,25 @@ foreach $lang (sort (keys %langs)) {
     		$untranslated{$lang}++;
 	}
     }
-    $percent_t = $wml{$l}/$wml{en} * 100;
-    $percent_w = $translated{$lang}/$wml{en} * 100;
-    $percent_o = $outdated{$lang}/$wml{en} * 100;
-    $percent_u = $untranslated{$lang}/$wml{en} * 100;
+    $percent_a{$l} = $wml{$l}/$wml{en} * 100;
+    $percent_t{$l} = $translated{$lang}/$wml{en} * 100;
+    $percent_o{$l} = $outdated{$lang}/$wml{en} * 100;
+    $percent_u{$l} = $untranslated{$lang}/$wml{en} * 100;
 
     if (open (HTML, ">$config{'htmldir'}/$l.html")) {
 	printf HTML "<html><head><title>%s: %s</title></head><body bgcolor=#ffffff>\n", $config{'title'}, $l;
 
-	$color = get_color ($percent_t);
+	$color = get_color ($percent_a{$l});
 
 	printf HTML "<table width=100%% cellpadding=2 cellspacing=0 bgcolor=%s>\n", $color;
 
 	printf HTML "<tr><td colspan=4><h1 align=center>%s: %s</h1></td></tr>", $config{'title'}, $l;
 
 	print HTML "<tr>\n";
-	printf HTML "<td align=center width=25%%><b>%d files (%d%%) translated</b></td>", $wml{$l}, $percent_w;
-	printf HTML "<td align=center width=25%%><b>%d files (%d%%) up to date</b></td>", $translated{$lang}, $percent_t;
-	printf HTML "<td align=center width=25%%><b>%d files (%d%%) outdated</b></td>", $outdated{$lang}, $percent_o;
-	printf HTML "<td align=center width=25%%><b>%d files (%d%%) not translated</b></td>", $untranslated{$lang}, $percent_u;
+	printf HTML "<td align=center width=25%%><b>%d files (%d%%) translated</b></td>", $wml{$l}, $percent_a{$l};
+	printf HTML "<td align=center width=25%%><b>%d files (%d%%) up to date</b></td>", $translated{$lang}, $percent_t{$l};
+	printf HTML "<td align=center width=25%%><b>%d files (%d%%) outdated</b></td>", $outdated{$lang}, $percent_o{$l};
+	printf HTML "<td align=center width=25%%><b>%d files (%d%%) not translated</b></td>", $untranslated{$lang}, $percent_u{$l};
 	print HTML "</tr>\n</table>\n";
 
 	print HTML "<p><a href=\"./\">Index</a><p>\n";
@@ -293,19 +293,14 @@ print HTML "<tr><th>Language</th><th>Translated</th><th>Up to date</th><th>Outda
 foreach $lang (sort (keys %langs)) {
     $l = $langs{$lang};
 
-    $percent_t = $wml{$l}/$wml{en} * 100;
-    $percent_w = $translated{$lang}/$wml{en} * 100;
-    $percent_o = $outdated{$lang}/$wml{en} * 100;
-    $percent_u = $untranslated{$lang}/$wml{en} * 100;
-
-    $color = get_color ($percent_t);
+    $color = get_color ($percent_a{$l});
 
     print HTML "<tr>";
     printf HTML "<td><a href=\"%s.html\">%s</a> (%s)</td>", $l, $lang, $l;
-    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color, $wml{$l}, $percent_w;
-    printf HTML "<td align=right>%d (%d%%)</td>", $translated{$lang}, $percent_t;
-    printf HTML "<td align=right>%d (%d%%)</td>", $outdated{$lang}, $percent_o;
-    printf HTML "<td align=right>%d (%d%%)</td>", $untranslated{$lang}, $percent_u;
+    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color, $wml{$l}, $percent_a{$l};
+    printf HTML "<td align=right>%d (%d%%)</td>", $translated{$lang}, $percent_t{$l};
+    printf HTML "<td align=right>%d (%d%%)</td>", $outdated{$lang}, $percent_o{$l};
+    printf HTML "<td align=right>%d (%d%%)</td>", $untranslated{$lang}, $percent_u{$l};
     print HTML "</tr>\n",
 }
 
