@@ -57,9 +57,9 @@ sub new {
                         version         => '$',
                         section         => '$',
                         priority        => '$',
+                        pooldir         => '$',
                         type            => '$',
                         upstream        => '$',
-                        stats           => '%',
                         errors          => '@',
                         warnings        => '@',
                         catgets         => '@',
@@ -153,7 +153,7 @@ sub read {
         chomp($self->{date});
         <DB>;
         MAIN: while (1) {
-                my $entry = { stats => {} };
+                my $entry = {};
                 my $desc = '';
                 my $last_item = 0;
                 my $text;
@@ -170,16 +170,13 @@ sub read {
                 # leading tabs are illegal, but handle them anyway
                 $desc =~ s/^\t/ \t/mg;
 
-                foreach (qw(Package Version Section Priority Type Upstream)) {
+                foreach (qw(Package Version Section Priority PoolDir Type Upstream)) {
                         if ($desc =~ m/^$_: (.*)$/m) {
                                 $entry->{lc $_} = $1;
                         } else {
                                 warn "Parse error when reading $file: missing $_ field\n";
                                 next MAIN;
                         }
-                }
-                while ($desc =~ m/^Stats: ([^:]*): ([^\n]*)/mg) {
-                        $entry->{stats}->{$1} = $2;
                 }
                 foreach (qw(Errors Warnings Catgets Gettext)) {
                         if ($desc =~ m/(^|\n)$_:\n(.+?)(\n\S|$)/s) {
@@ -222,11 +219,8 @@ sub write {
 
         print DB join('-', (localtime->year() + 1900, localtime->mon() + 1, localtime->mday))."\n\n";
         foreach my $pkg (keys %{$self->{data}}) {
-                foreach (qw(Package Version Section Priority Type Upstream)) {
+                foreach (qw(Package Version Section Priority PoolDir Type Upstream)) {
                         print DB $_.": ".$self->{data}->{$pkg}->{lc $_}."\n";
-                }
-                foreach (keys %{$self->{data}->{$pkg}->{stats}}) {
-                        print DB "Stats: ".$_.": ".$self->{data}->{$pkg}->{stats}->{$_}."\n";
                 }
                 foreach (qw(Errors Warnings Catgets Gettext)) {
                         if (defined($self->{data}->{$pkg}->{lc $_})) {
@@ -293,9 +287,9 @@ sub get_date {
 =head2 DATA MANIPULATION
 
 Data about packages can be classified within scalar values (C<package>,
-C<version>, C<section>, C<priority>, C<type>, C<upstream>), arrays
-(C<errors>, C<warnings>, C<catgets>, C<gettext>, C<nls>, C<po>,
-C<templates>, C<menu>) and hash tables (C<stats>).
+C<version>, C<section>, C<priority>, C<pooldir>, C<type>, C<upstream>),
+and arrays (C<errors>, C<warnings>, C<catgets>, C<gettext>, C<nls>,
+C<po>, C<templates>, C<menu>).
 Each field has a method with the same name to get and set it, e.g.
 
    $section = $l10n_db->section($pkg);
@@ -304,7 +298,7 @@ Each field has a method with the same name to get and set it, e.g.
 The first line get the section associated with the package in C<$pkg>,
 whereas the second set it to C<libs>.
 
-Two other methods are also defined to access those datas, by prefixing
+Two other methods are also defined to access those data, by prefixing
 field name by C<has_> and C<add_>.  The former is used to ask whether
 this field is defined in database, and the latter appends values for
 arrays or hash values.
@@ -312,7 +306,7 @@ arrays or hash values.
    if ($l10n_db->has_templates($pkg)) {
            print "Package $pkg has Debconf templates\n";
    }
-   $l10n_db->add_stats($pkg, 'fr', 'fr.po');
+   $l10n_db->add_po($pkg, 'po/fr.po:fr:42t0f0u:po/adduser_3.42_po_fr.po');
 
 =head1 AUTHOR
 
