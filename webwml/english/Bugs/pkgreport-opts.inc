@@ -91,7 +91,7 @@
   <input type="checkbox" name="sev-inc" value="fixed"><fixed>
   </small></li>
 
-  <li><small><gettext domain="bugs">Exclude severity: </gettext>
+  <li><small><gettext domain="bugs">Exclude severity:</gettext>
   <input type="checkbox" name="sev-exc" value="critical"><critical>
   <input type="checkbox" name="sev-exc" value="grave"><grave>
   <input type="checkbox" name="sev-exc" value="serious"><serious>
