@@ -342,17 +342,20 @@ foreach $lang (@search_in) {
     $l = $langs{$lang};
     $l = "zh-cn" if ($l eq "zh"); # kludge
 
-    $color = get_color ($percent_a{$lang});
+    $color_a = get_color ($percent_a{$lang});
+    $color_t = get_color ($percent_t{$lang});
+    $color_o = get_color ($percent_o{$lang});
+    $color_u = get_color ($percent_u{$lang});
 
     print HTML "<tr>";
     printf HTML "<td><a href=\"%s.html\">%s</a> (%s)</td>", $l, ucfirst $lang, $l;
-    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color, $wml{$lang}, $percent_a{$lang};
+    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_a, $wml{$lang}, $percent_a{$lang};
     if ($l ne "en") {
-      printf HTML "<td align=right>%d (%d%%)</td>", $translated{$lang}, $percent_t{$lang};
-      printf HTML "<td align=right>%d (%d%%)</td>", $outdated{$lang}, $percent_o{$lang};
-      printf HTML "<td align=right>%d (%d%%)</td>", $untranslated{$lang}, $percent_u{$lang};
+      printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_t, $translated{$lang}, $percent_t{$lang};
+      printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_o, $outdated{$lang}, $percent_o{$lang};
+      printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $untranslated{$lang}, $percent_u{$lang};
     } else {
-      print HTML "<td align=right>-</td><td align=right>-</td><td align=right>-</td>";
+      print HTML "<td bgcolor=\"#00FF00\" align=right>-</td><td bgcolor=\"#00FF00\" align=right>-</td><td bgcolor=\"#FF0000\" align=right>-</td>";
     }
     print HTML "</tr>\n",
 }
