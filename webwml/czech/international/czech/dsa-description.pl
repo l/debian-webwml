@@ -60,6 +60,9 @@ s{An attacker could create a carefully crafted image file in such a way that it 
 zpùsobí u aplikace slinkované s imlib nebo imlib2 spu¹tìní libovolného
 kódu, kdy¾ obì» tento soubor otevøe.}g;
 
+s{An attacker could prepare specially crafted input that would not be sanitised by namazu2 and hence displayed verbatim for the victim\.}
+{Útoèník mù¾e pøipravit speciálnì upravený vstup, který není programem vyèi¹tìn a proto je doslovnì zobrazen obìti.}g;
+
 # s{A cross-site scripting vulnerability}
 # {}g;
 
