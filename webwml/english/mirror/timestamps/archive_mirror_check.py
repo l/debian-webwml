@@ -75,7 +75,14 @@ def check_site(hostname, loc):
 		print '  Error: site returned Error Code ' + str(errcode)
 		return 1
 	# site must be good so actually download it
-	current = urllib.urlopen(mirror)
+	try:
+		current = urllib.urlopen(mirror)
+	except (IOError, socket.error), arg:
+		if badfd:
+			badfd.write(mirror + ' (' + hostaddress + ')' + '\n')
+			badfd.write('  Error accessing (supposedly good) site: ' + str(arg.args[0]) + '\n')
+		print '  Error (supposedly good) accessing site: ' + str(arg.args[0])
+		return 1
 	parse = htmllib.HTMLParser(formatter.NullFormatter())
 	parse.feed(current.read())
 	parse.close()
@@ -99,8 +106,8 @@ def check_site(hostname, loc):
 		except IOError, args:
 			if badfd:
 				badfd.write(mirror + ' (' + hostaddress + ')' + '\n')
-				badfd.write(' Error: ' + args + '\n')
-			print "  Error: " + args
+				badfd.write(' Error: ' + str(args) + '\n')
+			print "  Error: " + str(args)
 			return 1
 		# Fri Apr 20 17:43:33 UTC 2001
 		# %a  %b  %d %X       %Z  %Y
