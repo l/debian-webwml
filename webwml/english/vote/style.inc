@@ -58,6 +58,15 @@
             padding:                0.5em;
             text-align:             left;
           }
+     .Ignored { 
+       color: rgb(136, 125, 107);
+       background-color: Bisque;
+       text-align: center;
+         }
 
+     p.note                   {
+         color: green;
+         margin-left: 1em;
+     }
     </style>
 :##}
