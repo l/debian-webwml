@@ -19,6 +19,7 @@ sub send_email(@)
     print FP "CC: new-maintainer\@debian.org\n";
     print FP "From: Debian New Maintainer <new-maintainer\@debian.org>\r\n";
     print FP "Errors-To: new-maintainer\@debian.org\r\n";
+    print FP "Content-Type: text/plain; charset=iso-8859-1\r\n";
     print FP "Subject: $subject\n\n";
     print FP $body;
     close FP;
