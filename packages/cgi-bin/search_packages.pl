@@ -282,6 +282,7 @@ unless ($search_on_sources) {
     }
 } else {
     foreach my $line (@results) {
+	chomp($line);
 	@colon = split (/:/, $line);
 	($package, $section, $ver, $binaries) = split (/ /, $#colon >1 ? $colon[1].":".$colon[2]:$colon[1], 4);
 	$section =~ s,^(non-free|contrib)/,,;
@@ -292,7 +293,7 @@ unless ($search_on_sources) {
 	$pkgs{$package}{$suite} = $ver;
 	$sect{$package}{$suite}{source} = $section;
 
-	$binaries{$package}{$suite} = [ sort split( /,\s*/, $binaries ) ];
+	$binaries{$package}{$suite} = [ sort split( /\s*,\s*/, $binaries ) ];
 
     }
 
