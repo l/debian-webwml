@@ -1,0 +1,179 @@
+#!wml -o ../../../debian.org/devel/%BASE.html.en
+#use wml::debian::template title="Debian GNU/Linux - HOWTO translate Debian pages"
+
+<H1>HOWTO translate Debian pages</H1>
+
+<P>Thanks you for helping to translate the Debian web pages.
+Instead of having a number of different sites hosting language
+specific versions of the web pages, it is hoped that people
+will concentrate on keeping a primary site which will host the
+translations of a common set of web pages.
+
+<H3>Background</H3>
+<P>All the hand written (non documentation) files on the web site are
+generated using wml. They are stored on www.debian.org using CVS.
+You will want to check out a local copy of the wml files to edit
+on your home machine. When you are done making changes, you can then
+release the changes back to www.debian.org. Once a day, the copy of
+the repository on master will be updated. A Makefile is then run
+on them to create the updated public web pages.
+
+<H3>Using CVS</H3>
+<P>In what follows anonymous access will be used as an example. If
+you have access to another account which gives you write permission to
+the repository then you should use that account instead.
+To begin using CVS, you must first 'login' to the CVS server
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml login
+</pre>
+(just hit return for the password for anonymous)
+
+<P>To check out a copy of the wml files on your local machine, you
+need to use
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/&lt;lang&gt;
+</pre>
+where &lt;lang&gt; is the language you want. You will probably want
+the English version in addition to the language you are working on.
+
+<P>From then on, you will not need to use the '-d :pserver:...' part
+as the CVS/ directories contain the necessary information.
+Every few days you will want to do a
+<pre>
+   cvs update
+</pre>
+to retrieve any files from the repository which have changed.
+
+<P>The following is for those who have write permission on the repository.
+When you are done with the page, you can commit your changes to the repository using
+<pre>
+   cvs commit &lt;file&gt;.wml
+</pre>
+or
+<pre>
+   cvs commit &lt;dir&gt;
+</pre>
+or
+<pre>
+   cvs commit          (to commit all changes in your copy)
+</pre>
+
+<P>If you are the first person translating a page, you need to do
+<pre>
+   cvs add &lt;file&gt;.wml
+</pre>
+before you release it.
+
+<P>For more information on CVS, use 'info cvs'.
+
+<H3>Translating Pages</H3>
+<P>To make the job of the translators as easy as possible the
+pages are generated a bit differently than many of
+you will be used to. The web pages are actually generated
+using source that is marked up with wml. There are
+separate directories for each language. To translate to a
+new language, someone must first translate the wml template
+files (not a big job).
+
+<P>Because of the way the web servers are set up, you should not
+have to change any of the internal links. There are times when
+you may want to make a change to the content when you are
+translating. One example is on the support page; you will
+probably want to include an example on subscribing to the
+language specific mailing list, e.g. debian-french on the
+French version of the pages. If you make any other changes,
+please notify
+<a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>
+as it is desired to keep the content as similar as possible
+between the different versions.
+
+<P>The first time a page is translated, send a note to
+<a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>
+A script must be run on the pages to re-make the other language
+versions so they will know about the new translation.
+
+<P>I hope you find the work we've done will make translating
+the pages as easy as possible.
+
+<H3>How Does the Server Know Which File to Serve</H3>
+<P>You will notice that internal links don't end in .html. This
+is because the server is using content negotation to decide
+which version of the document to deliver. When there is more
+than one choice, the server will make a list of all possible
+files to serve, e.g. if the request is for about, then the list
+of completions might be about.html.en and about.html.de.
+The default for Debian servers will be to serve the English
+document, but it is configurable.
+
+<P>If a client has the proper variable set, for example to serve German,
+then in the example above about.html.de would be served. The
+nice thing about this setup is that if the desired language is
+not available, a different language will be delivered instead
+(which hopefully is better than nothing). The decision on which
+document is served is a bit confusing so instead of describing
+it here, you should get the definitive answer from
+<a href="http://www.apache.org/docs/content-negotiation.html">http://www.apache.org/docs/content-negotiation.html</a>
+if you are interested.
+
+<P>Because many users will not even know of the existence of content-negotation,
+there are links at the bottom of every page pointing directly
+to the version of that page in every other language available.
+This is computed using a perl script called by wml when the
+page is generated. 
+
+<H3>Example of Starting a Translation</H3>
+French will be used for the example
+<pre>
+   cvs checkout webwml/english
+   cd webwml
+   mkdir french
+   cvs add french
+   cd french
+   cp ../english/.wmlrc .
+edit and change '-D CUR_LANG=English' to '-D CUR_LANG=French'
+   cp ../english/Makefile .
+edit and chenge 'LANG=en' to 'LANG=fr'
+Also comment out every target after 'all:' except for the files which are translated
+   cp -r ../english/template .
+edit template/debian/* and translate any text
+
+Finally, you can start translating the pages.
+</pre>
+
+<H3>Example of Translating a Page</H3>
+A French of the social contract will be used for the example
+<pre>
+   cvs checkout webwml/english webwml/french
+   cd webwml/french
+   cp ../english/social_contract.wml .
+   cvs add social_contract.wml
+edit social_contract.wml and translate the text. Do not try to translate any
+links or change them in any way.
+When done
+   cvs commit social_contract.wml
+</pre>
+
+<H3>Compiling wml</H3>
+This assumes that you have wml installed on your machine.
+Simply type
+<pre>
+   make
+</pre>
+in webwml/&lt;lang&gt;. The pages will be made in ../../debian.org from the
+language directory. This is because that is where the .html files are relative
+to the wml source on the master site. You will have to make that dir and any
+needed subdirs or the Makefile will fail.
+
+<P>The only dependency you need to be careful of is that the main page (index.html) depends
+upon news.wml so you need to translate that first. If a translation team does not want
+to translate news.wml then change the dependency in the Makefile to be ../english/news.wml
+and change
+<pre>
+  open(FILEH, "&lt;news.wml");
+</pre>
+in template/debian/recent_news.wml to
+<pre>
+  open(FILEH, "&lt;../english/news.wml");
+</pre>
+
+<:= languages ("$(HOME)", "devel", "$(WML_SRC_BASENAME)", "$(CUR_LANG)") :>
