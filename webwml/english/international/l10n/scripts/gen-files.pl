@@ -157,13 +157,11 @@ sub get_stats_po {
                         if ($stat =~ m/(\d+)t/) {
                                 $score{$lang} += $1;
                         }
-		        if (percent_stat($stat) eq "100%") {
-                           $done{$lang}  = '' unless defined($done{$lang});
-			   $done{$lang} .= $str;
- 			} else {
-                           $todo{$lang}  = '' unless defined($todo{$lang});
-			   $todo{$lang} .= $str;
-			}
+                        if (percent_stat($stat) eq "100%") {
+                                $done{$lang} = ($done{$lang} || '') . $str; # avoid warning when concatening
+                        } else {
+                                $todo{$lang} = ($todo{$lang} || '') . $str;
+                        }
                 }
                 foreach $lang (@po_langs) {
                         my $l = uc($lang) || 'UNKNOWN';
