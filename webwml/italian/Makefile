@@ -51,7 +51,6 @@ else
 endif
 
 ifneq "$(LANGUAGE)" "en"
-LOCALEDIR=$(WMLBASE)/po
 contact.$(LANGUAGE).html : contact.wml $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml $(LOCALEDIR)/others.mo
 endif
