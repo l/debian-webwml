@@ -20,7 +20,7 @@ sub process_line {
 	($line) = @_;
 	$field = '';
 
-	if ($line =~ /^Site:\s*(.*)\s*$/i) {
+	if ($line =~ /^Site:\s*(.+)\s*$/i) {
 		$site = $1;
 		$count++;
 		if (!defined($longest{site}) || length($site) > $longest{site}) {
@@ -38,13 +38,13 @@ sub process_line {
 			$longest{$type} = length($4);
 		}
 	}
-	elsif ($line =~ /^Includes:\s*(.*)\s*$/i) {
+	elsif ($line =~ /^Includes:\s*(.+)\s*$/i) {
 		push @{ $mirror{$site}{includes} }, $_ foreach (split(" ", $1));
 	}
-	elsif ($line =~ /^Sponsor:\s*(.*)\s*$/i) {
+	elsif ($line =~ /^Sponsor:\s*(.+)\s*$/i) {
 		push @{ $mirror{$site}{sponsor} }, $1;
 	}
-	elsif ($line =~ /^([\w-]+):\s*(.*?)\s*$/s) {
+	elsif ($line =~ /^([\w-]+):\s*(.+)\s*$/s) {
 		$field = lc $1;
 		$mirror{$site}{$field} = $2;
 		if (!defined($longest{$field}) || length($2) > $longest{$field}) {
