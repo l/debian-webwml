@@ -109,7 +109,7 @@ while (<SRC>)
 		}
 		elsif ($next eq "updated packages were updated or added to the Debian archive recently.</p>\n")
 		{
-			$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong\n";
+			$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong>\n";
 			$_ .= "Följande nya eller uppdaterade paket har nyligen lagts till\n";
 			$_ .= "Debianarkivet.</p>\n";
 		}
