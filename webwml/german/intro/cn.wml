@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian Web-Seiten in verschiedenen Sprachen"
-#use wml::debian::translation-check translation="1.40"
+#use wml::debian::translation-check translation="1.41"
 # Translator       : Philipp Frauenfelder <pfrauenf@debian.org>
 # Changed-by       : Martin Schulze <joey@debian.org>
 # $Id$
@@ -19,17 +19,18 @@ welche Version des Dokuments zurückgegeben wird.</p>
 <ul>
 <li><a href="#fix">Was tun, wenn eine Webseite in der falschen Sprache
   dargestellt wird</a></li>
-<li><a href="#cache">Potentielle Probleme mit Proxy-Servern</a></li>
-<li><a href="#setting">Bevorzugte Sprache im Browser einstellen</a></li>
+<li><a href="#howtoset">Wie man die Sprach-Einstellungen konfiguriert</a></li>
 </ul>
+
+<hr />
 
 <h2><a name="fix">Was tun, wenn eine Webseite in der falschen Sprache dargestellt wird</a></h2>
 
-<p>Es gibt drei Gründe, weswegen ein Dokument von der Debian Website
-in der falschen Sprache empfangen wird.  Erstens, und am
-wahrscheinlichsten, liegt es an einem fehlkonfigurierten Browser.
-Lesen Sie bitte den Abschnitt <a href="#setting">Bevorzugte Sprache im
-Browser einstellen</a>, um dieses zu beheben.</p>
+<p>Der erste und und wahrscheinlichste Grund, warum ein Dokument mit der
+falschen Sprache vom Debian-Web-Server geliefert wird, ist ein
+unpassend konfigurierter Browser.
+Lesen Sie bitte den Abschnitt über <a href="#howtoset">Wie man die bevorzugte
+Sprache einstellt</a>, um dieses zu beheben.</p>
 
 <p>Der zweite Grund betrifft defekte oder fehlkonfigurierte Caches.
 Dieses ist ein wachsendes Problem, da mehr und mehr ISPs im Cachen
@@ -56,61 +57,8 @@ schlagen ebenfalls vor, daß Sie
 wenn Sie testen.  Es ist der einzige Browser, den wir gefunden haben, der
 100%ig mit der HTTP-Spezifikation für Inhalts-Aushandlung übereinstimmt.</p>
 
-<h3>Auf welchen Wert soll die Variable gesetzt werden?</h3>
 
-<p>Da die Seiten von Debian urspr&uuml;nglich in Englisch geschrieben
-worden sind und m&ouml;glicherweise nicht alle Seiten in Ihre Sprache
-der Wahl &uuml;bersetzt worden sind, ist es eine gute Idee die
-Variable so einzustellen, dass auch Englisch erlaubt ist. Ein
-franz&ouml;sischsprachiger Benutzer, der Lynx benutzt, w&uuml;rde also
-sicherstellen, dass die folgende Zeile in seinem <kbd>.lynxrc</kbd> steht:</p>
-
-<pre>
-preferred_language=fr; q=1.0, en; q=0.5
-</pre>
-
-# Das nachfolgende Beispiel ist von mir, um den deutschsprechenden
-# Benutzern auch noch ein Beispiel zu geben, die sind schliesslich unser
-# Zielpublikum.
-<p>
-Ich w&uuml;rde dagegen die folgende Zeile bevorzugen:
-</p>
-
-<pre>
-preferred_language=de; q=1.0, en; q=0.7, fr; q=0.3
-</pre>
-
-<p>da ich Englisch besser verstehe als Franz&ouml;sisch. Meine Variable
-bewirkt, dass der Server mir die deutsche Version schickt, falls sie
-vorhanden ist. Andernfalls w&uuml;rde er mir die englische Seite
-schicken und, wenn es auch die nicht gibt, allenfalls die
-franz&ouml;sische.</p>
-
-<p>Sie müssen vorsichtig mit der Verwendung von Sub-Kategorien von
-Sprachen sein.  Die Verwendung von 'en-GB, fr' zum Beispiel hat nicht
-die Auswirkungen, die von den meisten Personen erwartet werden (wenn
-sie nicht die HTTP-Spezifikation gelesen haben).  Wenn ein Server eine
-Anfrage für ein Dokument mit der bevorzugten Sprache 'en-GB, fr'
-erhält, wenn sowohl 'en'- als auch 'fr'-Versionen vorhanden sind, wird
-er die französische Datei zurückschicken.  Der Server wird nur dann
-das englische Dokument dem französischen vorziehen, wenn es eine
-Version der Datei mit en-gb als Spracherweiterung gibt.  Daher sollten
-Sie in einem solchen Fall Ihren Browser derart konfigurieren, daß er
-'en-GB, en, fr' oder einfach nur 'en, fr' schickt.  Es funktioniert
-jedoch in umgekehrter Richtung.  Ein Server kann en-us zurückliefern,
-wenn en angefordert wurde.</p>
-
-<p><strong>Wir raten Ihnen dringend dazu, keine Ländererweiterungen zu
-einer Sprache hinzuzufügen, wenn Sie keinen guten Grund dafür
-haben.</strong>  Wenn Sie eines hinzufügen, stellen Sie sicher, daß
-Sie ebenfalls die Sprache ohne Erweiterung hinzufügen.</p>
-
-<p>F&uuml;r zus&auml;tzliche Informationen &uuml;ber diese Variable,
-siehe auch die 
-<a href="http://httpd.apache.org/docs/content-negotiation.html">Apache
-Dokumentation &uuml;ber Inhalts-Aushandlung</a>.</p>
-
-<h2><a name="cache">Potentielle Probleme mit Proxy-Servern</a></h2>
+<h3><a name="cache">Potentielle Probleme mit Proxy-Servern</a></h3>
 
 <p>Proxy-Server sind im Wesentlichen Web-Server die keinen eigenen Inhalt
 haben. Sie befinden sich in der Mitte zwischen dem Benutzer und den echten
@@ -136,7 +84,53 @@ zwischengespeicherten Seiten in der falschen Sprache erhalten. Der einzige
 Weg wie Sie das beheben können, ist sich bei Ihrem ISP zu beschweren damit
 diese ihre Software aktualisieren oder ersetzen.</p>
 
-<h2><a name="setting">Bevorzugte Sprache im Browser einstellen</a></h2>
+<hr>
+
+<h2><a name="howtoset">Wie man die Sprach-Einstellungen konfiguriert</a></h2>
+
+<h3>Auf welchen Wert soll die Variable gesetzt werden?</h3>
+
+<p>Sie sollten die bevorzugte Sprache auf alle Sprachen einstellen, die sie
+sprechen, sortiert nach Ihren Vorzügen. Es ist eine gute Idee, Englisch ('en')
+zur Sicherheit hinzuzufügen (als letztes in der Liste), da die
+original-Sprache der Debian-Webseiten Englisch ist, und nicht alle Dokumente
+in ihre bevorzugte(n) Sprache(n) übersetzt sein dürften.</p>
+
+<p>Zum Beispiel, da wahrscheinlich Deutsch Ihre Muttersprache ist, würden Sie
+die Sprach-Variable derart setzen, dass die deutsche Sprache zuerst kommt (mit
+dem Sprach-Code '<code>de</code>'), gefolgt von Englisch (mit dem Sprach-Code
+'<code>en</code>').</p>
+
+<p>Sehen Sie etwas weiter unterhalb für <a href="#setting">genaue Anweisungen,
+wie man dies in speziellen Browsern tut</a>.</p>
+
+<p>Sie müssen vorsichtig mit der Verwendung von Sub-Kategorien von
+Sprachen sein.  Die Verwendung von 'en-GB, fr' zum Beispiel hat nicht
+die Auswirkungen, die von den meisten Personen erwartet werden (wenn
+sie nicht die HTTP-Spezifikation gelesen haben).</p>
+
+<p><strong>Wir raten Ihnen dringend dazu, keine Ländererweiterungen zu
+einer Sprache hinzufügen, wenn Sie keinen guten Grund dafür
+haben</strong>.  Wenn Sie eine hinzufügen, stellen Sie sicher, dass
+sie ebenfalls die Sprache ohne die Erweiterung hinzufügen.</p>
+
+<p>Erklärung: Ein Server, der eine Anfrage für ein Dokument mit einer
+bevorzugten Sprache von 'en-GB, fr' erhält, wird nicht die englische ('en')
+vor der französischen Version zurückliefern. Er wird nur dann das englische
+Dokument vor dem französischen liefern, wenn es eine Version der Datei mit
+'en-gb' für die Sprach-Erweiterung gibt.</p>
+
+<p>Daher sollten Sie Ihren Browser derart konfigurieren, dass er
+'en-GB, en, fr' oder einfach nur 'en, fr' schickt.  Es funktioniert
+jedoch in umgekehrter Richtung, z.B. kann ein Server 'en-us' zurückliefern,
+wenn 'en' angefordert wurde.</p>
+
+<p>F&uuml;r zus&auml;tzliche Informationen &uuml;ber das setzen der
+bevorzugten Sprach-Variable lesen Sie die 
+<a href="http://httpd.apache.org/docs/content-negotiation.html">Apache
+Dokumentation &uuml;ber Inhalts-Aushandlung</a>.</p>
+
+<h3><a name="setting">Die bevorzugte Sprache im Browser einstellen</a></h3>
 
 <p>Um die Standard-Sprache in Ihrem Browser einzustellen, m&uuml;ssen
 Sie eine Variable setzen, die dem Server &uuml;bermittelt wird. Wie
@@ -186,7 +180,14 @@ zur Netscape app-defaults Datei oder <kbd>~/.Xresources</kbd> hinzu.</dd>
 <dt><strong>Lynx</strong></dt>
 <dd>Sie k&ouml;nnen entweder in <kbd>.lynxrc</kbd> die Variable
 <kbd>preferred_language</kbd> &auml;ndern oder in Lynx das Kommando
-'O' (den Buchstaben, nicht die Zahl!) ben&uuml;tzen.</dd>
+'O' (den Buchstaben, nicht die Zahl!) ben&uuml;tzen.
+
+<p>Zum Beispiel, verwenden Sie die folgende Zeile in Ihrer
+<kbd>.lynxrc</kbd></p>
+
+<pre>
+preferred_language=de; q=1.0, en; q=0.5
+</pre></dd>
 
 <dt><strong>W3</strong> (Emacs-basierter Web-Browser browser)</dt>
 <DD>
