@@ -268,9 +268,9 @@ sub get_err_maintainers($)
         print "$firstname $surname <$email> \n";
         if ($main::enable_email != 0) {
             print_err_email($firstname, $email, $apply_date);
-            my $sql = "DELETE FROM applicant WHERE email = '$email'";
-            $sth = $dbh->prepare($sql);
-            $sth->execute();
+            my $sql1 = "DELETE FROM applicant WHERE email = '$email'";
+            $sth1 = $dbh->prepare($sql);
+            $sth1->execute();
         }
     }
     print "Email will ";
