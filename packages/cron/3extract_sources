@@ -63,3 +63,22 @@ do
     done
     cd ${archivedir}
 done
+
+# volatile
+#
+for dist in stable testing
+do
+    test -d ${flatdir}/${dist} || mkdir -p ${flatdir}/${dist}
+    cd volatile/${dist}
+    for part in ${parts}
+      do
+      if [ -f ${part}/source/Sources.gz ]
+	  then
+	  test -d ${flatdir}/${dist}/${part} || mkdir -p ${flatdir}/${dist}/${part}
+	  $bindir/flatten-db \
+	      --db ${part}/source/Sources.gz \
+	      --output ${flatdir}/${dist}/${part}/Sources.volatile
+      fi
+    done
+    cd ${archivedir}
+done

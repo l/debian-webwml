@@ -84,6 +84,11 @@ my @asian_sites = (
 	"linux.cdpa.nsysu.edu.tw/debian",
 	); 
 
+my @volatile_european_sites = (
+        "volatile.debian.net/debian-volatile",
+        "ftp2.de.debian.org/debian-volatile",
+        "ftp.sk.debian.org/debian-volatile",
+			       );
 my @nonus_north_american_sites = (
 #	"ftp.ca.debian.org/debian-non-US",
 	"debian.yorku.ca/debian/non-US",
@@ -206,6 +211,20 @@ END
     print <<END;
 <p>If none of the above sites are fast enough for you, please see our
 <a href="http://www.debian.org/mirror/list-non-US">complete mirror list</a>.</p>
+END
+
+} elsif ($type eq 'volatile') {
+
+#    print_links( "North America", $file, @nonus_north_american_sites );
+    print_links( "Europe", $file, @volatile_european_sites );
+#    print_links( "Australia and New Zealand", $file,
+#		 @nonus_australian_sites );
+#    print_links( "Asia", $file, @nonus_asian_sites );
+#    print_links( "South America", $file, @nonus_south_american_sites );
+
+    print <<END;
+<p>If none of the above sites are fast enough for you, please see our
+<a href="http://volatile.debian.net/mirrors.html">complete mirror list</a>.</p>
 END
 
 } elsif ($type eq 'main') {

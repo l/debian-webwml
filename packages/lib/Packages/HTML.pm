@@ -163,6 +163,8 @@ sub pmoreinfo {
 		my ($src_file_md5, $src_file_size, $src_file_name) = @$_;
 		if ($d->{is_security}) {
 		    $str .= "<a href=\"$env->{opts}{security_site}/$d->{src_directory}/$src_file_name\">[";
+		} elsif ($d->{is_volatile}) {
+		    $str .= "<a href=\"$env->{opts}{volatile_site}/$d->{src_directory}/$src_file_name\">[";
 		} elsif ($d->{is_nonus}) {
 		    $str .= "<a href=\"$env->{opts}{nonus_site}/$d->{src_directory}/$src_file_name\">[";
 		} else {

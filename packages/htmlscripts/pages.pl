@@ -239,6 +239,10 @@ sub package_pages_walker {
 		if ($subsuites{a2f}{$a}
 		    && ($subsuites{a2f}{$a} =~ /security/o) ) {
 		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"security\">\n";
+		} elsif ($subsuites{a2f}{$a}
+			 && ($subsuites{a2f}{$a} =~ /volatile/o) ) {
+		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"volatile\">\n";
+
 		} elsif ($d->{is_nonus}) {
 		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"nonus\">\n";
 		} else {
@@ -431,7 +435,7 @@ sub src_package_pages_walker {
     my $title .= sprintf( gettext( "Source package: %s (%s)" ),
 			  $name, $v_str );
     
-    my ( $is_security, $is_nonus ) = ( 0, 0 );
+    my ( $is_security, $is_nonus, $is_volatile ) = ( 0, 0, 0  );
     if ( $subdist ) {
 	$title .=  " ".marker( $subdist );
 	# a package can be in subdist "non-US/security"
@@ -441,6 +445,9 @@ sub src_package_pages_walker {
 	}
 	if ($subdist =~ /security/o) {
 	    $is_security = 1;
+	}
+	if ($subdist =~ /volatile/o) {
+	    $is_volatile = 1;
 	}
     }
     if ( $archive && ( $archive ne 'main' ) ) {
@@ -512,6 +519,8 @@ sub src_package_pages_walker {
 	my $src_url = "$env->{opts}{debian_site}/$source_dir/$src_file_name";
 	if ($is_security) {
 	    $src_url = "$env->{opts}{security_site}/$source_dir/$src_file_name";
+	} elsif ($is_volatile) {
+	    $src_url = "$env->{opts}{volatile_site}/$source_dir/$src_file_name";
 	} elsif ($is_nonus) {
 	    $src_url = "$env->{opts}{nonus_site}/$source_dir/$src_file_name";
 	}
