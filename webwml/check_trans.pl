@@ -96,7 +96,7 @@ my $ignorables = "/sitemap.wml "
 		; # $ignorables must begin and end with a space!
 
 # options (note: with perl 5.6, this could change to our())
-use vars qw($opt_M $opt_Q $opt_d $opt_g $opt_l $opt_m $opt_n $opt_p $opt_q $opt_s $opt_v);
+use vars qw($opt_C $opt_M $opt_Q $opt_d $opt_g $opt_l $opt_m $opt_n $opt_p $opt_q $opt_s $opt_t $opt_v);
 $opt_n = 5; # an invalid default
 $opt_s = '';
 $opt_C = '.';
