@@ -27,7 +27,10 @@ endif
 # There is no wnpp.XY.html destination. This will be run every time,
 # which is what we want
 wnpp.$(LANGUAGE).html: wnpp.wml
-	wml -q wnpp.wml
+	wml -q $(WMLPROLOG) wnpp.wml
+ifeq "$(LANGUAGE)" "ja"
+	$(foreach file,$(WNPP_FILES),$(WMLBASE)/convert $(file) $(file).tmp;)
+endif
 
 $(HTMLDIR)/wnpp.$(LANGUAGE).html: wnpp.$(LANGUAGE).html
 	@:
