@@ -11,9 +11,6 @@ LOCALEROOT = $(WMLBASE)/../locale
 
 DOMAINS = templates bugs countries doc l10n langs organization ports search vendors others
 
-POTFILES = $(addprefix $(ENGLISHDIR)/po/,$(addsuffix .pot,$(DOMAINS)))
-MOFILES = $(addsuffix .mo,$(DOMAINS))
-
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
 countries_FILES = $(TEMPLDIR)/countries.wml
 doc_FILES       = $(ENGLISHDIR)/doc/books.def $(ENGLISHDIR)/doc/manuals.defs
@@ -40,6 +37,12 @@ templates_FILES = $(addprefix $(TEMPLDIR)/, \
   links.tags.wml mirrors.wml news.wml recent_list.wml security_tags.wml \
   todoitem.wml translation-check.wml url.wml votebar.wml \
   weeklynews/footer.wml)
+
+POTFILES = $(addprefix $(ENGLISHDIR)/po/,$(addsuffix .pot,$(DOMAINS)))
+MOFILES = $(addsuffix .mo,$(DOMAINS))
+SOURCEFILES = $(bugs_FILES) $(countries_FILES) $(doc_FILES) $(l10n_FILES) \
+  $(langs_FILES) $(organization_FILES) $(ports_FILES) $(search_FILES) \
+  $(vendors_FILES) $(others_FILES) $(templates_FILES)
 
 ifeq "$(LANGUAGE)" "en"
 all install:: $(POTFILES)
@@ -119,3 +122,5 @@ stats: $(POTFILES)
         done
 endif
 
+cvsupdate:
+	-@echo 'cd $(WMLBASE)/..;' `echo cvs update $(SOURCEFILES) | sed -e 's/ [^ ]*\/\.\.\// /g'`
