@@ -19,6 +19,9 @@ all:: $(ICSFILES)
 
 install:: $(DESTICSFILES)
 
+clean::
+	rm -f *.$(LANGUAGE).ics
+
 index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*\-*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
 
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/event.wml
