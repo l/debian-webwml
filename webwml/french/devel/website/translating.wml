@@ -1,5 +1,6 @@
 #use wml::debian::template title="Traduction du site web Debian"
-#use wml::debian::translation-check translation="1.36" maintainer="Frédéric Bothamy"
+#use wml::debian::translation-check translation="1.43" maintainer="Frédéric Bothamy"
+#use wml::fmt::verbatim
 
 <P>Pour rendre le travail des traducteurs aussi facile que possible, les
 pages sont générées un peu différemment de ce à quoi beaucoup d'entre
@@ -19,24 +20,77 @@ généraux sont enregistrés séparément. Ce qui signifie qu'il faut éditer
 un certain nombre de fichiers source WML au lieu d'éditer les pages HTML
 Veuillez récupérez les sources
 <a href="using_cvs">en utilisant CVS</a>. Vous aurez besoin de récupérer
-au moins les répertoires <tt>english/</tt> et 
-<tt><var>&lt;language&gt;</var>/</tt>.</p>
+au moins les répertoires <tt>webwml/english/</tt> et 
+<tt>webwml/<var>&lt;language&gt;</var>/</tt>.</p>
 
 <p>Pour traduire une page de l'anglais dans votre langue préférée,
 il faut traduire le fichier .wml original et le placer dans le répertoire
 de votre langue qui correspond. Le chemin relatif ainsi que le nom devront 
 être les mêmes que ceux de la version anglaise pour que les liens puissent 
-fonctionner. Nous recommandons tout spécialement au traducteur d'ajouter une 
+fonctionner.</p>
+
+<h3>En-têtes de traduction</h3>
+
+<p>Nous recommandons tout spécialement au traducteur d'ajouter une 
 ligne supplémentaire dans les en-têtes, juste à la suite de la dernière commande
 <code>#use</code>, pour enregister le numéro de version exact du document 
 qu'il vient de traduire. De cette manière, <a href="uptodate">les mises à jour 
 sont facilitées</a>. La ligne ressemble à cela&nbsp;:
 <kbd>#use wml::debian::translation-check translation="<var>x.y</var>"</kbd>
 
-<p>Vous pouvez effectuer cela très simplement en utilisant le script
-<tt>copypage.pl</tt> qui se trouve à la racine du module webwml. Le
+<p>Plusieurs équipes de traduction utilisent également cette ligne pour
+indiquer le traducteur officiel de chaque page web. Ainsi, vous recevrez
+automatiquement des courriels quand les pages dont vous êtes le responsables
+sont mises à jour dans la version anglaise et nécessitent votre attention pour
+la mise à jour de la traduction. Pour cela, ajoutez simplement votre nom comme
+responsable à la fin de la ligne <code>#use</code> pour la faire ressembler à
+ceci&nbsp;:
+<kbd>#use wml::debian::translation-check translation="<var>x.y</var>"
+maintainer="<var>votre nom</var>"</kbd>
+</p>
+
+<p>Vous devez également expliquer au robot qui vous êtes, la fréquence à
+laquelle vous désirez recevoir les courriels automatiques et le contenu de
+ceux-ci. Pour cela, éditez (ou demandez à votre coordinateur d'éditer) le fichier
+webwml/<var>language</var>/international/<var>language</var>/translator.db.pl
+dans le CVS. La syntaxe devrait être assez compréhensbiel et vous pouvez
+utiliser le fichier de l'équipe française comme modèle si celui de votre
+langue n'existe pas encore. Le robot peut envoyer plusieurs types
+d'informations et pour chacune d'entre elles, vous pouvez choisir la fréquence
+à laquelle elle doit vous être envoyée. Les différents types d'informations
+sont&nbsp;:
+</p>
+
+<ul>
+ <li><b>summary</b>&nbsp;: un résumé des documents non à jour</li>
+ <li><b>logs</b>&nbsp;: le «&nbsp;journal cvs&nbsp;» entre les versions traduite et actuelle</li>
+ <li><b>diff</b>&nbsp;: le «&nbsp;diff cvs&nbsp;»</li>
+ <li><b>tdiff</b>&nbsp;: le script va tenter de trouver les parties du texte traduit
+modifié par le correctif anglais</li>
+ <li><b>file</b>&nbsp;: ajoute la version actuelle du fichier à traduire</li>
+</ul>
+
+<p>Puis, pour chacun d'entre eux, la valeur devrait être l'une des suivantes&nbsp;: 0 (jamais), 1
+(tous les mois), 2 (toutes les semaines) ou 3 (tous les jours).</p>
+
+<p>Un exemple pourrait être&nbsp;:
+</p>
+
+<verbatim>
+                'Martin Quinson' => {
+                        email       => 'martin.quinson@tuxfamily.org',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 0,
+                        file        => 0
+                },
+</verbatim>
+
+<p>Les en-têtes de page web peuvent être générés très simplement en utilisant
+le script <tt>copypage.pl</tt> qui se trouve à la racine du module webwml. Le
 script va copier la page au bon endroit, créer les répertoires et les fichiers
-makefiles si nécessaire et ajouter l'en-tête qui convient de façon 
+makefiles si nécessaire et ajouter l'en-tête qui convient de façon
 automatique.</p>
 
 <p>Une fois que vous avez par exemple exécuté la commande&nbsp;:
@@ -46,6 +100,8 @@ indiquent s'il y a des portions de texte à ne pas traduire. Suivez ces
 commentaires. N'effectuez pas de modifications non justifiées
 dans la mise en page. S'il faut faire des corrections, il faut également
 que ces corrections soient apportées dans le fichier original.</p>
+
+<h3>Construction et publication des pages<h3>
 
 <p>Étant donné que nous utilisons <a href="content_negotiation">la négociation
 du contenu</a>, les fichiers HTML ne sont pas nommés 
