@@ -1,0 +1,88 @@
+#use wml::debian::template title="Using CVS"
+
+<p>CVS is a program to help manage having multiple people work on
+the same material simultaneously. Every user creates a local copy
+of the main repository. The local copies can be on the same machine,
+or across the world. Users can then modify the local copy as they
+wish and when the modified material is ready, commit the changes
+back to the main repository.
+
+<p>CVS will not let you commit a file if the copy in the main
+repository has been modified since your last update. This is
+not normally a problem as you can still update your local copy
+If the modifications were to different parts than you were working
+on, the changes are silently merged. If the changes affect the same area you
+were working on, you will be warned that there is a conflict
+and you need to edit the file to fix the problem before committing.
+
+<P>In what follows anonymous access will be used as an example. If
+you have access to another account which gives you write permission to
+the repository then you should use that account instead. If you
+are planning on making changes, you should get an account before
+starting as anonymous users can not commit changes.
+
+<p>If you are a Debian developer read the section on
+<a href="#cvsfordevelopers">CVS Access for Debian Developers</a>
+
+<p>To begin using CVS, you must first <code>login</code> to the CVS server
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml login
+</pre>
+(just hit return for the password for anonymous)
+
+<P>To check out a copy of the wml files on your local machine, you need to use
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/&lt;lang&gt;
+</pre>
+where <code>&lt;lang&gt;</code> is the language you want. You will probably want
+the English version in addition to the language you are working on.
+If you only need a subset of the pages you can check out only those needed, e.g.
+<pre>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</pre>.
+or if you have been given a username/password, insert it instead of anonymous
+<pre>cvs -d :pserver:username@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</pre>.
+
+<P>From then on, you will not need to use the <code>'-d :pserver:...'</code> part.
+Every few days you will want to do a
+<pre>
+   cvs update -d
+</pre>
+to retrieve any files from the repository which have changed.  The <code>-d</code> will add
+any new directories, automatically.
+
+<P>The following is for those who have write permission on the repository.
+When you are done with a page, you can commit your changes to the repository using
+<pre>
+   cvs commit &lt;file&gt;.wml
+</pre>
+or
+<pre>
+   cvs commit &lt;dir&gt;   (to commit the changes in &lt;dir&gt;)
+</pre>
+or
+<pre>
+   cvs commit          (to commit all changes from the current dir down)
+</pre>
+
+<P>If you are the first person translating a page, you need to do
+<pre>
+   cvs add &lt;file&gt;.wml
+</pre>
+before you commit it. Note that <code>cvs add</code> is not recursive so you need to
+add a directory before you can add its contents.
+
+<P>For more information on CVS, use <code>info cvs</code>.
+
+<a name="cvsfordevelopers">
+<H3>CVS Access for Debian Developers</H3>
+<P>Since Debian developers already have an account on cvs.debian.org, a more
+secure mechanism can be used to access the CVS repository. This method is preferred
+over the :pserver: method given above.
+You need to write to webmaster@debian.org asking for CVS access. Once you are added
+to the group, simply set the environment variable CVS_RSH to ssh
+('export CVS_RSH=ssh' in your .bashrc) and checkout the repository using the following:
+<pre>
+   cvs -d :ext:&lt;account_name&gt;@cvs.debian.org:/cvs/webwml checkout webwml/english/
+</pre>
+
+Once you have checked out the repository everything else works as in the previous section.
+
