@@ -46,10 +46,9 @@ sub init {
 sub file_exists {
     my ( $self, $file ) = @_;
 
-    if ( exists $self->{files}{$file}
-	 && $self->{files}{$file}{time}
-	 && $self->{files}{$file}{md5}
-	 && ( -f $file ) ) {
+    if ( -f $file ) {
+	$self->{files}{$file}{time} ||= 0;
+	$self->{files}{$file}{md5} ||= '';
 	print "D: $file [".gmtime($self->{files}{$file}{time})."] [$self->{files}{$file}{md5}] exists\n" if $debug;
 	return 1;
     }

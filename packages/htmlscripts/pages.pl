@@ -5,12 +5,12 @@ use warnings;
 
 use POSIX;
 use HTML::Entities;
-use Compress::Zlib;
 use Data::Dumper;
 use URI::Escape;
 use Text::Iconv;
 Text::Iconv->raise_error(0); # do not throw exeptions
 
+use Packages::OutputFiles;
 use Packages::HTML;
 use Packages::I18N::Locale;
 use Deb::Versions;
@@ -26,7 +26,7 @@ my $QA_URL = 'http://packages.qa.debian.org/';
 my $DL_URL = 'http://packages.debian.org/cgi-bin/download.pl';
 my $POLICY_URL = 'http://www.debian.org/doc/debian-policy/';
 
-my %md5s;
+my $files;
 my %converters = (
 		  "UTF-82ISO-8859-1" => Text::Iconv->new("UTF-8", "ISO-8859-1"),
 		  "UTF-82ISO-8859-2" => Text::Iconv->new("UTF-8", "ISO-8859-2"),
@@ -182,24 +182,12 @@ sub print_virt_pack {
     $package_page .= "</dl>\n";
     $package_page .= trailer( '../..' );
     
-    my $dirname = "$env->{dest_dir}/virtual";
-    unless ( -d $dirname ) {
-	mkdir $dirname or die "Can\'t create dir $dirname: $!";
-    }
-    
     #
     # write file
     #
-    my $now_time = time_stamp();
+    my $dirname = "$env->{dest_dir}/virtual";
     my $filename = "$dirname/$name.$env->{lang}.html";
-    if ( file_changed( \%md5s, $filename, $package_page ) ) {
-	sysopen(FILEH_VPACK, $filename, 
-		O_WRONLY | O_TRUNC | O_CREAT, 0664) 
-	    || die "Can\'t open file $filename: $!";
-	$package_page =~ s/LAST_MODIFIED_DATE/$now_time/;
-	print FILEH_VPACK $package_page;
-	close FILEH_VPACK;
-    }
+    $files->update_file( $filename, $package_page );
 }
 
 sub split_name_mail {
@@ -237,11 +225,6 @@ sub package_pages_walker {
 	#
 	my %versions = $pkg->get_arch_versions( $env->{archs} );
 	my $version = (version_sort( keys %{$versions{unique}} ))[0];
-	return unless (( $env->{lang} eq 'en' ) 
-		       || $env->{db}->is_translated( $name, $version,
-						     ${$versions{v2a}->{$version}}[0],
-						     $env->{lang} ));
-	progress() if $env->{opts}{progress};
 
 	my %desc_md5s = $pkg->get_arch_fields( 'description-md5', 
 					       $env->{archs} );
@@ -266,6 +249,19 @@ sub package_pages_walker {
 	my ( $section, $archive, 
 	     $sourcepackage, $src_version, $subdist, $maintainer );
 	$section = $sections{max_unique};
+
+	my $dirname = "$env->{dest_dir}/$section";
+	my $filename = "$dirname/$name.$env->{lang}.html";
+
+	unless (( $env->{lang} eq 'en' ) 
+		|| $env->{db}->is_translated( $name, $version,
+					      ${$versions{v2a}->{$version}}[0],
+					      $env->{lang} )) {
+	    $files->delete_file( $filename ) if $files->file_exists( $filename );
+	    return;
+	}
+	progress() if $env->{opts}{progress};
+
 	$maintainer = $maintainers{max_unique};
 	$sourcepackage = $sources{max_unique};
 	if ( $sourcepackage =~ s/\s*\((.*)\)\s*$//o ) {
@@ -538,25 +534,7 @@ sub package_pages_walker {
 	#
 	# write file
 	#
-	my $dirname = "$env->{dest_dir}";
-	unless ( -d $dirname ) {
-	    mkdir $dirname or die "Can\'t create dir $dirname: $!";
-	}
-	$dirname .= "/$section";
-	unless ( -d $dirname ) {
-	    mkdir $dirname or die "Can\'t create dir $dirname: $!";
-	}
-	
-	my $now_time = time_stamp();
-	my $filename = "$dirname/$name.$env->{lang}.html";
-	if ( file_changed( \%md5s, $filename, $package_page ) ) {
-	    sysopen(FILEH_PACK, $filename, 
-		    O_WRONLY | O_TRUNC | O_CREAT, 0664) 
-		|| die "Can\'t open file $filename: $!";
-	    $package_page =~ s/LAST_MODIFIED_DATE/$now_time/;
-	    print FILEH_PACK $package_page;
-	    close FILEH_PACK;
-	}
+	$files->update_file( $filename, $package_page );
     }
 
 sub write_pages {
@@ -565,7 +543,8 @@ sub write_pages {
 	$db->lock;
 	$db->build_cache( @$archs );
 	my $dest_dir = $opts->{html_root};
-	%md5s = %{ read_md5_hash( $opts->{md5file} ) };
+	$files = Packages::OutputFiles->init;
+	$files->load_file_list( $opts->{md5file} );
 	unless ( @$langs ) {
 	    $langs = [ "en" ];
 	}
@@ -603,7 +582,7 @@ sub write_pages {
 				opts => $opts } );
 	    print "\n" if $opts->{progress};
 	}
-	write_md5_hash( $opts->{md5file} );
+	$files->write_file_list( $opts->{md5file} );
 }
 
 sub write_all_package {
@@ -644,48 +623,17 @@ sub write_all_package {
 	    $si{$_} .= "</dl>\n";
 	    $si{$_} .= trailer( '..', 'index', $lang, @$langs );
 	    my $dirname = "$dest_dir/$_";
-	    unless ( -d $dirname ) {
-		mkdir $dirname or die "Can\'t create dir $dirname: $!";
-	    }
 	    my $filename = "$dirname/index.$lang.html";
-	    if( file_changed( \%md5s, $filename, $si{$_} )) {
-		sysopen(FILEH, $filename, 
-			O_WRONLY | O_TRUNC | O_CREAT, 0664) 
-		    || die "Can\'t open file $filename: $!";
-		my $now_time = time_stamp();
-		$si{$_} =~ s/LAST_MODIFIED_DATE/$now_time/;
-		print FILEH $si{$_};
-		close FILEH;
-	    }
+	    $files->update_file( $filename, $si{$_} );
 	}
 	
 	$all_package .= "</dl>\n";
 	$all_package .= trailer( '..', 'allpackages', $lang, @$langs );
 
 	my $filename = "$dest_dir/allpackages.$lang.html";
-	if( file_changed( \%md5s, $filename, $all_package )) {
-	    sysopen(FILEH, $filename, 
-		    O_WRONLY | O_TRUNC | O_CREAT, 0664) 
-		|| die "Can\'t open file $filename: $!";
-	    my $now_time = time_stamp();
-	    $all_package =~ s/LAST_MODIFIED_DATE/$now_time/;
-	    print FILEH $all_package;
-	    close FILEH;
-	}
+	$files->update_file( $filename, $all_package );
 	$filename = "$dest_dir/allpackages.$lang.txt.gz";
-	if( file_changed( \%md5s, $filename, $all_pkg_txt )) {
-	    sysopen( my $fh, $filename, 
-		    O_WRONLY | O_TRUNC | O_CREAT, 0664) 
-		|| die "Can\'t open file $filename: $!";
-	    my $gz = gzopen( $fh, "wb" )
-		or die "Can't open gzfile $filename: $!";
-	    my $now_time = time_stamp();
-	    $all_pkg_txt =~ s/LAST_MODIFIED_DATE/$now_time/;
-	    $gz->gzwrite( $all_pkg_txt )
-		or die "Error while writing $filename: ".$gz->gzerror();
-	    $gz->gzclose();
-	    close $fh;
-	}
+	$files->update_gz_file( $filename, $all_pkg_txt );
 }
 
 sub print_deps {
