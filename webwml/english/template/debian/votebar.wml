@@ -1,6 +1,90 @@
 #use wml::debian::ctime
 #use wml::debian::languages
 
+<perl>
+sub get_issues_list {
+	my ( $path, $number, $current_dir ) = @_;
+
+
+	$str=""; $proposal=""; $discussion=""; $voting=""; $finished=""; $unknown="";
+
+	opendir(DIR, "$current_dir/$path");
+  	@files = grep { /^vote.*.wml$/ && -f "$current_dir/$path/$_" } readdir(DIR);
+  	@files = sort @files;
+  	closedir DIR;
+
+  $count = 0;
+  foreach (@files) {
+     $count++;
+     open(FILE, "<$path/$_") || open(FILE, "<$current_dir/$path/$_");
+     if ( /(vote.*).wml/ ) {
+        $base = $1;
+     }
+     $title = ''; $status = '';
+     foreach $line (<FILE>) {
+        if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
+           $title = $1;
+        }
+        elsif ($line =~ /^<define-tag status>(.*)<\/define-tag>$/) {
+           $status = $1;
+        }
+
+		if ( $title && $status ) {
+           $str1 = "$nbsp;<A HREF=\"$path/$base\">$title</A><BR>\n";
+		   last;
+		}
+		elsif ( $title ) {
+           $str1 = "$nbsp;<A HREF=\"$path/$base\">$title</A><BR>\n";
+		}
+     }
+	 if ( $status eq "P" )
+	 {
+	 	$proposal .= $str1;
+	 }
+	 elsif ( $status eq "D" )
+	 {
+	 	$discussion .= $str1;
+	 }
+	 elsif ( $status eq "V" )
+	 {
+	 	$voting .= $str1;
+	 }
+	 elsif ( $status eq "F" )
+	 {
+	 	$finished .= $str1;
+	 }
+	 else
+	 {
+	 	$unknown .= $str1;
+	 }
+     close FILE;
+     if ($count eq $number) { last; }
+  }
+close DIR;
+	if ( $proposal ne "" ) 
+	{ 
+		$str .= "<P><FONT face=\"Arial,Helvetica\"><B>Waiting&nbsp;for&nbsp;Sponsors</B></FONT><BR><SMALL>$proposal</SMALL></FONT></P>";
+	}
+	if ( $discussion ne "" ) 
+	{ 
+		$str .= "<P><FONT face=\"Arial,Helvetica\"><B>In&nbsp;Discussion</B></FONT><BR><SMALL>$discussion</SMALL></FONT></P>";
+	}
+	if ( $voting ne "" ) 
+	{ 
+		$str .= "<P><FONT face=\"Arial,Helvetica\"><B>Voting&nbsp;Open</B></FONT><BR><SMALL>$voting</SMALL></FONT></P>";
+	}
+	if ( $finished ne "" ) 
+	{ 
+		$str .= "<P><FONT face=\"Arial,Helvetica\"><B>Decided</B></FONT><BR><SMALL>$finished</SMALL></FONT></P>";
+	}
+	if ( $unknown ne "" ) 
+	{ 
+		$str .= "<P><FONT face=\"Arial,Helvetica\"><B>Other</B></FONT><BR><SMALL>$unknown</SMALL></FONT></P>";
+	}
+return $str;
+}
+</perl>
+
 <TABLE border="0" cellpadding="5" cellspacing="0" width="100%">
 <TR>
 	<TD valign="TOP" width="140" bgcolor="#BBDDFF">
@@ -19,12 +103,7 @@
 			&nbsp;<A href="./howto_vote">Vote</A><BR>
 			</SMALL>
 		</FONT></P>
-		<P><FONT face="Arial,Helvetica"><B>Recent&nbsp;Proposals</B></FONT><BR>
-			<SMALL>
-			&nbsp;<A href="vote_constitution">Constitution</A><BR>
-			&nbsp;<A href="vote_elections">Elections</A><BR>
-			</SMALL>
-		</FONT></P>
+		<:= get_issues_list( <sub>, '0', <current> ) :>
 	</TD>
 	<TD valign="TOP">
 		<BR>
