@@ -206,18 +206,19 @@ $translations_status = {
 
 
 'developers-reference' => {
-	'status' => 5,
-	'since' => '06/05/2002',
+	'status' => 4,
+	'since' => '01/01/2003',
 	'translation_name' => 'Référence du développeur Debian',
-	'translation_maintainer'=> ['Antoine Hulin <antoine@origan.fdn.org>'],
-	'base_revision' => '1.91',
+	'translation_maintainer'=> ['Frédéric Bothamy <fbothamy@mail.dotcom.fr>'],
+	'base_revision' => '1.153',
 	'translation_package' => 'developers-reference',
 	'translation_url'       => 'http://www.debian.org/doc/manuals/developers-reference/index.fr.html',
 	'translation_cvs_url'   => 'http://cvs.debian.org/ddp/manuals.sgml/developers-reference/?cvsroot=debian-doc',
-	'translation_dev_url'   => 'http://www.fdn.org/~hulin/',
+	'translation_dev_url'   => 'http://olympie.dyndns.org/debian/doc/dev-ref/developers-reference.fr.html/'
 	'old_translators'       => ['Alain Meessen <ameessen@ulb.ac.be>',
 	                            'Herve Floch <Herve.Floch@linux.eu.org>',
-	                            'Laurent Picouleau <laurent.picouleau@wanadoo.fr>'],
+	                            'Laurent Picouleau <laurent.picouleau@wanadoo.fr>',
+				    'Antoine Hulin <antoine@origan.fdn.org>' ],
 },
 
 'internals' => {
