@@ -228,8 +228,8 @@ sub get_recent_list {
 	@files = reverse @files if ($eng_dir =~ /\/events\/\d{4}$/);
 	closedir DIR;
 
-#	print STDERR "files: " . join " ", @files;
-#	print STDERR "year=$year number=$number eng_dir=$eng_dir format=$format match=$match";
+#	print STDERR "files: " . join " ", @files; print STDERR "\n";
+#	print STDERR "year=$year number=$number eng_dir=$eng_dir format=$format match=$match\n";
 	$count = 0;
 	$str .= grab_titles($year, $number, $eng_dir, $format, $match);
 
@@ -259,10 +259,11 @@ sub get_recent_list {
 sub grab_titles {
 my ($year, $number, $eng_dir, $format, $match) = @_;
 my $over = $current = $base = $str1 = $str = "";
+
 foreach $file (@files) {
   ($trans_title = $file) =~ s/wml/title/;
   $count++;
-  open FILE, "$year/$file" || open FILE, "$year/$trans_title" || open FILE, "$eng_dir/$year/$file" || warn "can't open any $year/$file\n";
+  open FILE, "$year/$file" or open FILE, "$year/$trans_title" or open FILE, "$eng_dir/$year/$file" or print STDERR "couldn't open $eng_dir/$year/$file: $!\n";
   $base = $1 if ($file =~ /($match).wml/);
   my $event = '';
   if ($WML_SRC_DIRNAME =~ /events/) { # shouldn't waste time if it's not events
@@ -275,6 +276,7 @@ foreach $file (@files) {
     }
     seek FILE, 0, SEEK_SET;
   }
+#  print STDERR (stat FILE)[7]; print STDERR "\n";
   $title = ''; $date = ''; $rdate = ''; $desc = ''; $status = ''; $where = '';
 <protect pass=2>
   foreach $line (<FILE>) {
