@@ -15,9 +15,8 @@ from you, it will also be overloaded, especially just after a release.</p>
 <p>Of course, a "normal" Debian mirror does not carry any CD images, so how
 can jigdo download them there? jigdo achieves this by downloading
 individually all the files that are on the CD. In the next step, all these
-files are assembled in one big file which (if the moon is full and you have
-been standing on one leg while chanting ancient and almost-forgotten
-incantations) is an exact copy of the CD image. However, all this happens
+files are assembled in one big file which
+is an exact copy of the CD image. However, all this happens
 behind the scenes - all that <em>you</em> need to do is tell the download
 tool the location of a "<tt>.jigdo</tt>" file to process.</p>
 
@@ -80,11 +79,38 @@ those MBs in vain?!</strong></p>
 <p>Of course this Should Not Happen(tm), but for various reasons you
 may end up in a state where a large "<tt>.iso.tmp</tt>" file has
 already been generated and <tt>jigdo-lite</tt> appears to have
-problems, telling you repeatedly to try restarting the download. At
-the moment, the only solution that does <em>not</em> involve
-downloading all the data again is to revert to <tt><a
-href="http://rsync.samba.org/">rsync</a></tt>. Rename
-<tt>jigdo-lite</tt>'s temporary file to remove the "<tt>.tmp</tt>"
-extension, then use one of the <a
-href="../mirroring/rsync-mirrors">rsync mirrors</a> to retrieve the
-missing parts of the image.</p>
+problems, telling you repeatedly to try restarting the download. There
+are several possible things to try in this case:</p>
+
+<ul>
+
+  <li>Simply restart the download by pressing Return. Maybe some of
+  the files could not be downloaded because of timeouts or other
+  transient errors - another attempt will be made to download any
+  missing files.</li>
+
+  <li>Try a different mirror. Some Debian mirrors are slightly out of
+  sync - maybe a different mirror still holds files that were deleted
+  from the one you specified, or it has already been updated with
+  files that are not yet present on your mirror.</li>
+
+  <li>Retrieve the missing parts of the image using <tt><a
+  href="http://rsync.samba.org/">rsync</a></tt>. First, you need to
+  find out the correct rsync URL of the image you are downloading:
+  Choose a server that offers rsync access to the <a
+  href="../mirroring/rsync-mirrors">stable</a> or <a
+  href="../http-ftp/#testing">testing</a> images, then determine the
+  correct path and filename. Directory listings can be obtained with
+  commands like
+  <tt>rsync&nbsp;rsync://cdimage.debian.org/debian-cd/</tt>
+
+  <br>Next, remove the "<tt>.tmp</tt>" extension from
+  <tt>jigdo-lite</tt>'s temporary file by renaming it, and pass both
+  the remote URL and the local filename to rsync:
+  <tt>rsync&nbsp;rsync://server.org/path/binary-i386-1.iso
+  binary-i386-1.iso</tt>
+
+  <br>You may want to use rsync's <tt>--verbose</tt> and
+  <tt>--progress</tt> switches.
+
+</ul>
