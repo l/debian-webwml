@@ -83,7 +83,7 @@ install:: $(HTMLDESTFILES)
 	@# so it will be 2 directories deep and all the relative symlinks
 	@# will still work. Bleargh.
 ifeq ($(LANGUAGE),en)
-	@test -d $(HTMLDIR)/current || install -d $(HTMLDIR)/current
+	@test -d $(HTMLDIR)/current || mkdir -p -m g+w $(HTMLDIR)/current
 	@rm -f $(HTMLDIR)/current/issue
 	@ln -sf ../$(shell cat ../../../english/News/weekly/CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
 endif
@@ -91,7 +91,7 @@ endif
 # This is used by the install rule, and I had to hack on it, overriding
 # Make.common to allow installation of files into subdirectories.
 $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
-	test -d $(@D) || install -d $(@D)
+	test -d $(@D) || mkdir -p -m g+w $(@D)
 	@echo copying $(@F) to $(@D)
 	-@cp $(<) $(@D)
 ifeq ($(LANGUAGE),en)
@@ -101,15 +101,15 @@ endif
 
 # Special case for Chinese
 $(HTMLDIR)/%.zh-cn.html: %.zh-cn.html
-	test -d $(@D) || install -d $(@D)
+	test -d $(@D) || mkdir -p -m g+w $(@D)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
 $(HTMLDIR)/%.zh-hk.html: %.zh-hk.html
-	test -d $(@D) || install -d $(@D)
+	test -d $(@D) || mkdir -p -m g+w $(@D)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
 $(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
-	test -d $(@D) || install -d $(@D)
+	test -d $(@D) || mkdir -p -m g+w $(@D)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
 
