@@ -81,7 +81,7 @@
 [ZH:News:]
 </menu-item>
 
-<menu-item basename="port-status">
+<menu-item basename="status">
 [EN:Status:]
 [AR:Status:]
 [DA:Status:]
