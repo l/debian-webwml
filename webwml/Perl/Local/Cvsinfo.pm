@@ -211,7 +211,7 @@ sub _fix_skip {
                 my $sub = "\$_ = shift; if (-d \$_) { return 1 if m{^(.*/)?CVS\$};";
                 ref($self->{OPTIONS}->{skipdir}) eq "ARRAY" and do {
                         foreach (@{$self->{OPTIONS}->{skipdir}}) {
-                                $sub .= "return 1 if m{$_};";
+                                $sub .= "return 1 if m{/$_\$};";
                         }
                 };
                 $sub .= "return 0; }";
