@@ -56,6 +56,7 @@ my @european_sites = (
 	"ftp.si.debian.org/debian",
 	"ftp.es.debian.org/debian",
 	"ftp.se.debian.org/debian",
+	"ftp.tr.debian.org/debian",
 	"ftp.uk.debian.org/debian",
 	);
 my @south_american_sites = (
@@ -97,6 +98,7 @@ my @nonus_european_sites = (
 	"ftp.si.debian.org/debian-non-US",
 	"ftp.es.debian.org/debian-non-US",
 	"ftp.se.debian.org/debian-non-US",
+	"ftp.tr.debian.org/debian-non-US",
 	"ftp.uk.debian.org/debian/non-US",
 	);
 my @nonus_australian_sites = (
