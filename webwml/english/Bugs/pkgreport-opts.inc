@@ -1,4 +1,4 @@
-#use wml::debian::language_names
+{#use wml::debian::language_names
 
 <define-tag-sliced flags whitespace=delete>
 	[EN:Flags::]
@@ -9,6 +9,7 @@
 	[HR:Oznake::]
 	[IT:Opzioni::]
 	[JA:ÀßÄê::]
+	[NO:Flagger::]
 	[SV:Flaggor::]
 </define-tag-sliced>
 <define-tag-sliced active_bugs whitespace=delete>
@@ -20,6 +21,7 @@
 	[HR:aktivni bugovi:]
 	[IT:anomalie non risolte:]
 	[JA:Ì¤²ò·è:]
+	[NO:aktive feil:]
 	[SV:aktiva fel:]
 </define-tag-sliced>
 <define-tag-sliced archived_bugs whitespace=delete>
@@ -31,6 +33,7 @@
 	[HR:arhivirani bugovi:]
 	[IT:anomalie archiviate:]
 	[JA:²ò·èºÑ:]
+	[NO:arkiverte feil:]
 	[SV:arkiverade fel:]
 </define-tag-sliced>
 <define-tag-sliced no_status whitespace=delete>
@@ -42,6 +45,7 @@
 	[HR:bez slaganja po stanju ni severityu:]
 	[IT:Senza ordine di status o di gravità:]
 	[JA:¾õÂÖ¤ä½ÅÍ×ÅÙ¤Î½ç¤ËÊÂ¤Ù¤Ê¤¤:]
+	[NO:ingen sortering på status/alvorlighetsgrad:]
 	[SV:ingen sortering på status/allvarlighetsgrad:]
 </define-tag-sliced>
 <define-tag-sliced reverse_order whitespace=delete>
@@ -53,6 +57,7 @@
 	[HR:Obrnut redoslijed za: :]
 	[IT:Ordine inverso di: :]
 	[JA:µÕ½ç¤ËÊÂ¤Ù¤ë:]
+	[NO:Omvendt rekkefølge for: :]
 	[SV:Omvänd ordning för: :]
 </define-tag-sliced>
 <define-tag-sliced status whitespace=delete>
@@ -64,6 +69,7 @@
 	[HR:stanje:]
 	[IT:stato:]
 	[JA:¾õÂÖ:]
+	[NO:status:]
 	[SV:status:]
 </define-tag-sliced>
 <define-tag-sliced severities whitespace=delete>
@@ -75,6 +81,7 @@
 	[HR:severityi:]
 	[IT:gravità:]
 	[JA:½ÅÍ×ÅÙ:]
+	[NO:alvorlighetsgrader:]
 	[SV:allvarlighetsgrader:]
 </define-tag-sliced>
 <define-tag-sliced bugs whitespace=delete>
@@ -119,6 +126,7 @@
 	[HR:Ukljuèen severity: :]
 	[IT:Includi gravità: :]
 	[JA:°Ê²¼¤Î½ÅÍ×ÅÙ¤Î¤â¤Î¤ò´Þ¤á¤ë:]
+	[NO:Inkludér alvorlighetsgrader: :]
 	[SV:Inkludera allvarlighetsgrader: :]
 </define-tag-sliced>
 <define-tag-sliced severity_exclude whitespace=delete>
@@ -130,6 +138,7 @@
 	[HR:Iskljuèen severity: :]
 	[IT:Escludi gravità: :]
 	[JA:°Ê²¼¤Î½ÅÍ×ÅÙ¤Î¤â¤Î¤ò´Þ¤á¤Ê¤¤:]
+	[NO:Ekskludér alvorlighetsgrad: :]
 	[SV:Exkludera allvarlighetsgrader: :]
 </define-tag-sliced>
 <define-tag-sliced open whitespace=delete>
@@ -141,6 +150,7 @@
 	[HR:otvoreni:]
 	[IT:open:]
 	[JA:¥ª¡¼¥×¥ó:]
+	[NO:åpen:]
 	[SV:öppet:]
 </define-tag-sliced>
 <define-tag-sliced forwarded whitespace=delete>
@@ -152,6 +162,7 @@
 	[HR:proslijeðeni:]
 	[IT:forwarded:]
 	[JA:¾åÎ®¤ËÅ¾Á÷ºÑ:]
+	[NO:videresendt:]
 	[SV:vidaresänt:]
 </define-tag-sliced>
 <define-tag-sliced pending whitespace=delete>
@@ -163,6 +174,7 @@
 	[HR:u radu:]
 	[IT:pending:]
 	[JA:Î±ÊÝ:]
+	[NO:på gang:]
 	[SV:på gång:]
 </define-tag-sliced>
 <define-tag-sliced fixed whitespace=delete>
@@ -174,6 +186,7 @@
 	[HR:rije¹eni:]
 	[IT:fixed:]
 	[JA:½¤ÀµºÑ:]
+	[NO:rettet:]
 	[SV:rättat:]
 </define-tag-sliced>
 <define-tag-sliced done whitespace=delete>
@@ -185,6 +198,7 @@
 	[HR:gotovi:]
 	[IT:done:]
 	[JA:²ò·è:]
+	[NO:ferdigt:]
 	[SV:klart:]
 </define-tag-sliced>
 <define-tag-sliced critical whitespace=delete>
@@ -196,6 +210,7 @@
 	[HR:kritièni:]
 	[IT:critical:]
 	[JA:Ã×Ì¿Åª:]
+	[NO:kritisk:]
 	[SV:kritiskt:]
 </define-tag-sliced>
 <define-tag-sliced grave whitespace=delete>
@@ -207,6 +222,7 @@
 	[HR:te¹ki:]
 	[IT:grave:]
 	[JA:½ÅÂç:]
+	[NO:graverende:]
 	[SV:gravt:]
 </define-tag-sliced>
 <define-tag-sliced serious whitespace=delete>
@@ -218,6 +234,7 @@
 	[HR:ozbiljni:]
 	[IT:serious:]
 	[JA:¿¼¹ï:]
+	[NO:alvorlig:]
 	[SV:allvarligt:]
 </define-tag-sliced>
 <define-tag-sliced important whitespace=delete>
@@ -229,6 +246,7 @@
 	[HR:va¾ni:]
 	[IT:important:]
 	[JA:½ÅÍ×:]
+	[NO:viktig:]
 	[SV:viktigt:]
 </define-tag-sliced>
 <define-tag-sliced normal whitespace=delete>
@@ -240,6 +258,7 @@
 	[HR:normalni:]
 	[IT:normal:]
 	[JA:ÄÌ¾ï:]
+	[NO:vanlig:]
 	[SV:normalt:]
 </define-tag-sliced>
 <define-tag-sliced minor whitespace=delete>
@@ -251,6 +270,7 @@
 	[HR:maleni:]
 	[IT:minor:]
 	[JA:·ÚÅÙ:]
+	[NO:liten:]
 	[SV:mindre:]
 </define-tag-sliced>
 <define-tag-sliced wishlist whitespace=delete>
@@ -262,6 +282,7 @@
 	[HR:¾elje:]
 	[IT:wishlist:]
 	[JA:Í×Ë¾:]
+	[NO:ønske:]
 	[SV:önskelista:]
 </define-tag-sliced>
 
