@@ -27,8 +27,7 @@ my (%attrs, @attrorder, %summaryattrs, @summaryorder);
 	  'bandwidth' => 'Bandwidth',
 	  'status' => 'Status',
 	  'notes' => 'Notes',
-	  'sshrsahostkey' => 'SSH host key (RSA)',
-	  'sshdsahostkey' => 'SSH host key (DSA)',
+	  'sshrsahostkey' => 'SSH host key',
 	  'description' => 'Description',
 	  'createtimestamp' => 'Entry created',
 	  'modifytimestamp' => 'Entry modified'
@@ -37,7 +36,7 @@ my (%attrs, @attrorder, %summaryattrs, @summaryorder);
 # This defines what fields are displayed, and in what order
 @attrorder = qw(hostname admin architecture distribution access
                 sponsor sponsor-admin location machine memory
-	        disk bandwidth status notes sshrsahostkey sshdsahostkey
+	        disk bandwidth status notes sshrsahostkey
 		description createtimestamp modifytimestamp);
 
 # ditto for summary
@@ -97,6 +96,11 @@ foreach $dn (sort {$entries->{$a}->{host}->[0] cmp $entries->{$b}->{host}->[0]} 
     # Format email addresses
     $output{admin} = sprintf("<a href=\"mailto:%s\">%s</a>", $output{admin}, $output{admin});
     $output{'sponsor-admin'} = sprintf("<a href=\"mailto:%s\">%s</a>", $output{'sponsor-admin'}, $output{'sponsor-admin'});
+
+    $output{sshrsahostkey} = undef;
+    foreach $key (@{$data->{sshrsahostkey}}) {
+      $output{sshrsahostkey} .= $key . "<br>";
+    }
     
     # URL
     my ($sponsor, $url) = undef;
