@@ -362,12 +362,6 @@ $meta
 <link href="$HOME/debian.css" rel="stylesheet" type="text/css" media="all">
 </head>
 <body>
-<p style="border: solid 1px black;padding:.5em">
-<strong>Scheduled downtime:</strong> Due to a scheduled power shutdown
-at the site where this server is hosted, packages.debian.org will not
-be available from Saturday, January 29th 00:00 UTC until Monday,
-January 31th, 07:00 UTC.
-</p>
 <div id="header">
    <div id="upperheader">
    <div id="logo">
