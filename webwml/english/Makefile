@@ -50,6 +50,8 @@ all:\
     $(HTMLDIR)/intro/why_debian.html.$(LANG) \
     $(HTMLDIR)/logos/index.html.$(LANG) \
     $(HTMLDIR)/security/index.html.$(LANG) \
+    $(HTMLDIR)/ports/sparc/index.html.$(LANG) \
+    $(HTMLDIR)/ports/sparc/problems.html.$(LANG) \
 #    $(HTMLDIR)/
 
 
