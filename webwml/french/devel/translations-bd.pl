@@ -344,6 +344,7 @@ $translations = {
 	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
 	'base_revision'		=> '',
 	'translation_cvs_url'   => '',
+	'translation_url'	=> 'http://www.debian.org/~clebars/f2dp/docs/markup.fr.html/',
 	'translation_package'	=> 'doc-debian-fr',
 	'last_translated'	=> '',
 },
@@ -632,7 +633,7 @@ $translations = {
 'devel/index' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '13/08/1999',
+	'since'			=> '07/12/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '17/05/1999',
 },
@@ -719,7 +720,7 @@ $translations = {
 'distrib/vendors' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '20/09/1999',
+	'since'			=> '07/12/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '03/09/1999',
 },
@@ -735,7 +736,7 @@ $translations = {
 'distrib/books' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '11/10/1999',
+	'since'			=> '07/12/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '01/09/1999',
 },
@@ -771,7 +772,7 @@ $translations = {
 'intro/about' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '14/08/1999',
+	'since'			=> '07/12/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '25/05/1999',
 },
@@ -1093,7 +1094,7 @@ $translations = {
 'vote/howto_proposal' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '11/10/1999',
+	'since'			=> '07/12/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '11/10/1999',
 },
@@ -1101,7 +1102,7 @@ $translations = {
 'vote/howto_result' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '11/10/1999',
+	'since'			=> '07/12/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '11/10/1999',
 },
