@@ -4,8 +4,9 @@
 
 WMLBASE=..
 CUR_DIR=international
-SUBS=Chinese finnish french german italian japanese korean spanish turkish
+SUBS=Chinese Swedish Croatian spanish l10n German
 
 include $(WMLBASE)/Make.lang
 
 
+index.$(LANGUAGE).html: index.wml $(ENGLISHSRCDIR)/international/index.data
