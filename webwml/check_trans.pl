@@ -431,7 +431,7 @@ sub get_diff_txt {
 sub check_file {
 	my ($name, $revision, $mtime, $translator) = @_;
     $revision ||= 'n/a';
-	my ($oldr, $oldname, $original);
+	my ($oldr, $oldname, $original, $fromname);
 	warn "Checking $name, English revision $revision\n" if $opt_v;
         my $docname = $name;
         $docname =~ s#^$langto/##;
@@ -471,7 +471,7 @@ sub check_file {
 	warn "Translated by $translator\n"   if $opt_v and $translator;
 	warn "Original is $original\n"       if $opt_v and $original;
 	if ($original) {
-		my ($fromname, $fromdir);
+		my ($fromdir);
 		$fromname = $name;
 		$fromname =~ s{^[^/]+}{$original};
 		$fromdir  = $fromname;
@@ -541,8 +541,17 @@ sub check_file {
     # Return if we're up-to-date or the original is missing
 	return if (defined($oldr) && ($oldr eq $revision || $revision eq 'n/a'));
 
-	$oldname = $name;
-	$oldname =~ s/^$to/$from/;
+    if ($original)
+    {
+        # Source is non-English, use name we set up above
+        $oldname = $fromname;
+    }
+    else
+    {
+        # Source is English
+        $oldname = $name;
+        $oldname =~ s/^$to/$from/;
+    }
 
 	my @logrev = split(/\./, $oldr);
 	$logrev[$#logrev] ++;
