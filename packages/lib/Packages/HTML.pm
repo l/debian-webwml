@@ -19,9 +19,19 @@ our @EXPORT = qw( header title trailer file_changed time_stamp
 		  pdeplegend pkg_list pmoreinfo );
 
 our $HOME = "http://www.debian.org";
+our $CONTACT_MAIL = 'debian-www@lists.debian.org';
+our $WEBMASTER_MAIL = 'webmaster@debian.org';
 our $SEARCH_PAGE = "http://packages.debian.org/";
 our $CGI_ROOT = "http://packages.debian.org/cgi-bin";
 our $CN_HELP_URL = "${HOME}/intro/cn";
+our $CHANGELOG_URL = '/changelogs';
+our $COPYRIGHT_URL = '/changelogs';
+our $SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=names&amp;version=all&amp;exact=1&amp;keywords=';
+our $SRC_SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=sourcenames&amp;version=all&amp;exact=1&amp;keywords=';
+our $BUG_URL = 'http://bugs.debian.org/';
+our $SRC_BUG_URL = 'http://bugs.debian.org/src:';
+our $QA_URL = 'http://packages.qa.debian.org/';
+
 
 my %img_trans = ( pt_BR => "pt", pt_PT => "pt", sv_SE => "sv" );
 
@@ -121,14 +131,6 @@ sub pkg_list {
 
     return $str;
 }
-
-my $CHANGELOG_URL = '/changelogs';
-my $COPYRIGHT_URL = '/changelogs';
-my $SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=names&amp;version=all&amp;exact=1&amp;keywords=';
-my $SRC_SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=sourcenames&amp;version=all&amp;exact=1&amp;keywords=';
-my $BUG_URL = 'http://bugs.debian.org/';
-my $SRC_BUG_URL = 'http://bugs.debian.org/src:';
-my $QA_URL = 'http://packages.qa.debian.org/';
 
 sub pmoreinfo {
     my %info = @_;
@@ -350,9 +352,9 @@ MENU
 <html lang="$LANG">
 <head>
 <title>Debian -- $title_tag</title>
-<link rev="made" href="mailto:webmaster\@debian.org">
+<link rev="made" href="mailto:$WEBMASTER_MAIL">
 <meta http-equiv="Content-Type" content="text/html; charset=$charset">
-<meta name="Author" content="Debian Webmaster, webmaster\@debian.org">
+<meta name="Author" content="Debian Webmaster, $WEBMASTER_MAIL">
 $KEYWORDS_LINE
 $DESC_LINE
 <link href="$HOME/debian.css" rel="stylesheet" type="text/css" media="all">
@@ -436,7 +438,7 @@ sub trailer {
 	sprintf( gettext( "Back to: <a href=\"%s/\">Debian Project homepage</a> || <a href=\"%s/\">Packages search page</a>" ), $HOME, $ROOT ).
 	"\n<hr class=\"hidecss\">\n".
 	"<div id=\"fineprint\"><p>".
-	sprintf( gettext( "To report a problem with the web site, e-mail <a href=\"mailto:debian-www\@lists.debian.org\">debian-www\@lists.debian.org</a>. For other contact information, see the Debian <a href=\"%s/contact\">contact page</a>." ), $HOME).
+	sprintf( gettext( "To report a problem with the web site, e-mail <a href=\"mailto:%s\">%s</a>. For other contact information, see the Debian <a href=\"%s/contact\">contact page</a>." ), $CONTACT_MAIL, $CONTACT_MAIL, $HOME).
 	"</p>\n".
 	"<p>". gettext( "Last Modified: " ). "LAST_MODIFIED_DATE".
 	"<br>\n".
