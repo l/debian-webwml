@@ -4,13 +4,12 @@
 
 WMLBASE=../..
 CUR_DIR=vote/2000
-SUBS=
+SUBS=leadership_debate
 
 include $(WMLBASE)/Make.lang
 
 
-%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/basic.wml $(TEMPLDIR)/footer.wml \
-  $(TEMPLDIR)/languages.wml $(TEMPLDIR)/votebar.wml
+%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/template.wml
 	$(WML) $(<F)
 index.$(LANGUAGE).html: index.wml $(wildcard vote_*.wml) \
-  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/recent_list.wml
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
