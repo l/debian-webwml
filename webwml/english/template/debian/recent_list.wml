@@ -41,7 +41,7 @@
 # If $number is zero then all the news items are shown.
 #
 # The format parameter specifies the type of output: numbered, definition
-# and bulleted list, a table, or a RDF file.
+# and bulleted list, a table, or a RDF file (rdf or rdflong).
 #
 # The match parameter is a regexp used to determine if the file is special,
 # i.e. that it should be parsed.
@@ -137,80 +137,97 @@ foreach $file (@files) {
   $count++;
   open FILE, "$year/$file" or open FILE, "$year/$trans_title" or open FILE, "$eng_dir/$year/$file" or warn "couldn't open $eng_dir/$year/$file: $!\n";
   $base = $1 if ($file =~ /($match).wml/);
+  my $content;
+  {
+    local $/;
+    $content = <FILE>;
+  }
+  close FILE;
+
   my $event = '';
+
   if ($WML_SRC_DIRNAME =~ /events/) { # shouldn't waste time if it's not events
     $is_events = 1;
 <protect pass=2>
-    foreach (<FILE>) {
-      if (/^#use wml::debian::past_event$/) {
-        $event = "past";
-      } elsif (/^#use wml::debian::event$/) {
-        $event = "current";
-      }
+    if ($content =~ /^#use wml::debian::past_event$/m) {
+      $event = "past";
+    } elsif ($content =~ /^#use wml::debian::event$/m) {
+      $event = "current";
     }
 </protect>
-    seek FILE, 0, SEEK_SET;
   }
-#  warn (stat FILE)[7]; warn "\n";
+
   $title = ''; $date = ''; $rdate = ''; $desc = ''; $status = ''; $where = '';
+  $moreinfo = '';
 <protect pass=2>
-  foreach $line (<FILE>) {
-       if ($line =~ /^<define-tag pagetitle>\s*(.*)\s*<\/define-tag>$/) { $title = qq/$1/; }   # all
-    elsif ($line =~ /^<define-tag release_date>(.*)<\/define-tag>$/) { $date = qq/$1/; } # News
-    elsif ($line =~ /^<define-tag where>(.*)<\/define-tag>$/) { $where = qq/$1/; }       # events
-    elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) { $date = qq/$1/; }         # events
-    elsif ($line =~ /^<define-tag description>(.*)<\/define-tag>$/) { $desc = qq/$1/; }  # security
-    elsif ($line =~ /^<define-tag status>(.*)<\/define-tag>$/) { $status = qq/$1/; }     # vote
+  if ($content =~ /^<define-tag pagetitle>\s*(.*?)\s*<\/define-tag>$/ms) {
+    $title = qq/$1/; }      # all
+  if ($content =~ /^<define-tag release_date>(.*?)<\/define-tag>$/ms) {
+    $date = qq/$1/; }       # News
+  if ($content =~ /^<define-tag where>(.*?)<\/define-tag>$/ms) {
+    $where = qq/$1/; }      # events
+  if ($content =~ /^<define-tag date>(.*?)<\/define-tag>$/ms) {
+    $date = qq/$1/; }       # events
+  if ($content =~ /^<define-tag description>(.*?)<\/define-tag>$/ms) {
+    $desc = qq/$1/; }       # security
+  if ($content =~ /^<define-tag moreinfo>(?:(.*?<\/p>)|(.*?)<\/define-tag>)$/ms) {
+    $moreinfo = qq/$1/; }   # dsa-long.XX.rdf
+  if ($content =~ /^<define-tag status>(.*?)<\/define-tag>$/ms) {
+    $status = qq/$1/; }     # vote
 </protect>
-    if ($title && $date && $where) { # for events/
-      $str1 = "$elemhead<tt>[$date]</tt>$elemdate <strong><a href=\"$year/$base\">$title</a></strong>, $elemfoot$where<br />$elemrealfoot\n";
-      last;
+  if ($title && $date && $where) { # for events/
+    $str1 = "$elemhead<tt>[$date]</tt>$elemdate <strong><a href=\"$year/$base\">$title</a></strong>, $elemfoot$where<br />$elemrealfoot\n";
+  }
+  elsif ($desc) { # for security/
+    open DATAFILE, "$eng_dir/$year/$base.data" or warn "couldn't open $eng_dir/$year/$base.data: $!\n";
+<protect pass=2>
+    foreach $l (<DATAFILE>) {
+         if ($l =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) { $title = qq/$1/; }
+      elsif ($l =~ /^<define-tag report_date>(.*)<\/define-tag>$/) { $rdate = qq/$1/; }
     }
-    elsif ($desc) { # for security/
-      open DATAFILE, "$eng_dir/$year/$base.data" or warn "couldn't open $eng_dir/$year/$base.data: $!\n";
-<protect pass=2>
-      foreach $l (<DATAFILE>) {
-           if ($l =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) { $title = qq/$1/; }
-        elsif ($l =~ /^<define-tag report_date>(.*)<\/define-tag>$/) { $rdate = qq/$1/; }
-      }
 </protect>
-      close DATAFILE;
-#      warn "title: $title rdate: $rdate\n";
-      $rdate = newsdate($rdate);
-      $title =~ s/(DSA-\d{3})-\d{1}/$1/; # strip off the revision in the DSA number
-      if ($format =~ rdf) {
-        $str1 = "
+    close DATAFILE;
+#    warn "title: $title rdate: $rdate\n";
+    $rdate = newsdate($rdate);
+    $title =~ s/(DSA-\d{3})-\d{1}/$1/; # strip off the revision in the DSA number
+    if ($format eq 'rdf') {
+      $str1 = "
 <item rdf:about=\"http://www.debian.org/security/$year/$base\">
   <title>$title</title>
   <link>http://www.debian.org/security/$year/$base</link>
   <description>
-$desc
+    $desc
   </description>
 </item>
 ";
-      } else {
-        $str1 = "$elemhead<tt>[$rdate]</tt> <strong><a href=\"$year/$base\">$title</a></strong> $elemfoot$desc<br />$elemrealfoot\n";
-      }
-      last;
+    } elsif ($format eq 'rdflong') {
+      $str1 = "
+<item rdf:about=\"http://www.debian.org/security/$year/$base\">
+  <title>$title - $desc</title>
+  <link>http://www.debian.org/security/$year/$base</link>
+  <description>
+    $moreinfo
+  </description>
+</item>
+";
+    } else {
+      $str1 = "$elemhead<tt>[$rdate]</tt> <strong><a href=\"$year/$base\">$title</a></strong> $elemfoot$desc<br />$elemrealfoot\n";
     }
-    elsif ($title && $date && !$is_events) { # for News/ and not events/
-      $date = newsdate($date);
-      $str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong><br />$elemrealfoot\n";
-      last;
-    }
-    elsif ($title && $status) { # for vote/
-      $str1 = "$elemhead<a href=\"$year/$base\">$title</a> &mdash; ";
-         if ( $status eq "P" ) { $str1 .= "<proposed/>"; }
-      elsif ( $status eq "D" ) { $str1 .= "<discussed/>"; }
-      elsif ( $status eq "V" ) { $str1 .= "<votedon/>"; }
-      elsif ( $status eq "F" ) { $str1 .= "<finished/>"; }
-      elsif ( $status eq "W" ) { $str1 .= "<withdrawn/>"; }
-      else { $str1 .= "$status"; }
-      $str1 .= "<br />$elemrealfoot\n";
-      last;
-    }
-  } # for each line in file
-  close FILE;
+  }
+  elsif ($title && $date && !$is_events) { # for News/ and not events/
+    $date = newsdate($date);
+    $str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong><br />$elemrealfoot\n";
+  }
+  elsif ($title && $status) { # for vote/
+    $str1 = "$elemhead<a href=\"$year/$base\">$title</a> &mdash; ";
+       if ( $status eq "P" ) { $str1 .= "<proposed/>"; }
+    elsif ( $status eq "D" ) { $str1 .= "<discussed/>"; }
+    elsif ( $status eq "V" ) { $str1 .= "<votedon/>"; }
+    elsif ( $status eq "F" ) { $str1 .= "<finished/>"; }
+    elsif ( $status eq "W" ) { $str1 .= "<withdrawn/>"; }
+    else { $str1 .= "$status"; }
+    $str1 .= "<br />$elemrealfoot\n";
+  }
 
   if ($event ne "") { # this file was for an event
        if ( $event eq "past" ) { $over .= $str1; }
