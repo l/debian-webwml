@@ -13,34 +13,34 @@ include $(WMLBASE)/Make.lang
 # Not modify the following line
 ifeq ($(LANGUAGE),es)
 
-OFILES:=presentacion.ps presentacion.pdf
+OFILES:=presentacion.pdf presentacion.html/index.html
 OTHER_FILES:=$(patsubst %,$(HTMLDIR)/%,$(OFILES))
 
 $(HTMLDIR)/presentacion.ps: presentacion.ps
 	install -m 664 -p $< $(HTMLDIR)
-$(HTMLDIR)/presentacion.pdf: presentacion.pdf
+$(HTMLDIR)/presentacion.pdf: presentacion.ps
+	install -m 664 $< $(HTMLDIR)
+$(HTMLDIR)/presentacion.html/index.html: presentacion.html/index.html
 	install -m 664 -p $< $(HTMLDIR)
 
 install:: $(OTHER_FILES)
 cleandest::
-	-rm -f $(HTMLDIR)/{$(OFILES)}
+	-rm -rf $(HTMLDIR)/{$(OFILES)}
 
 
 endif
 
-presentacion: presentacion.ps presentacion.pdf
+presentacion: presentacion.ps presentacion.pdf presentacion.html/index.html
 
-%.pdf: %.ps
-	ps2pdf $< $@
+%.pdf: %.sgml
+	debiandoc2latexpdf -l es $<
 
-%.ps: final-%.ps
-	cp $< $@
+%.ps: %.sgml
+	debiandoc2latexps -l es $<
 
-%.dvi: %.tex
-	-latex  `echo $< | perl -p -e 's/\..+$$//;'`
+presentacion.html/index.html: presentacion.sgml
+	debiandoc2html -l es $<
 
-%.ps: %.dvi
-	dvips -o $@ $<
 clean::
-	-rm -rf *.bbl *.aux *.toc *.log *.lof *.tmp *.aux *.ps *.pdf
+	-rm -rf *.bbl *.aux *.toc *.log *.lof *.tmp *.aux *.ps *.pdf *.html
 
