@@ -8,6 +8,8 @@ CUR_DIR=News/press
 # exists, it must contain a Makefile, or make gives an error
 SUBS=
 
+GETTEXTFILES += others.mo
+
 include $(WMLBASE)/Make.lang
 
 include $(ENGLISHDIR)/News/press/Makefile.press

@@ -7,6 +7,8 @@ CUR_DIR=consultants
 SUBS=
 
 NOGENERICDEP := true
+GETTEXTFILES += others.mo
+
 include $(WMLBASE)/Make.lang
 
 ifeq ($(LANGUAGE),en)
@@ -17,7 +19,8 @@ endif
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
                         $(ENGLISHSRCDIR)/consultants/consultant.data \
                         $(ENGLISHSRCDIR)/consultants/consultant.inc \
-                        $(ENGLISHSRCDIR)/consultants/consultant.defs
+                        $(ENGLISHSRCDIR)/consultants/consultant.defs \
+                        $(GETTEXTDEP)
 	$(WML) $(<F)
 
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/consultant.wml
