@@ -1,3 +1,4 @@
+#use wml::sup::path
 <perl>
 
 # Do not translate the directory names
@@ -12,8 +13,16 @@ my %langs = ("english"  => ["en", "English"],
              "japanese" => ["ja", "Japanese"]);
 
 sub languages {
-  my ($base_url, $rel_dir, $file, $cur_lang) = @_;
+  # my ($base_url, $file, $cur_lang) = @_;
   my $str = "";
+
+  $base_url = "$(HOME)";
+  $file = "$(WML_SRC_BASENAME)";
+  $cur_lang = "$(CUR_LANG)";
+  $cwd = `pwd`;
+  $full_base_url = &canonpath("$cwd/$base_url");
+  $rel_dir = &relpath($full_base_url, $cwd);
+  chop $rel_dir; chop $rel_dir;
 
   # printf STDERR "base=$base_url rel_dir=$rel_dir file=$file cur_lang=$cur_lang\n";
 
@@ -22,10 +31,11 @@ sub languages {
      if ( -f "$base_url/../$_/$rel_dir/$file.wml" ) {
         if ($_ ne lc($cur_lang)) {
            push @used_langs, $_;
+           # printf STDERR "found file in $_\n";
         }
      }
   }
-  # printf STDERR @used_langs;
+  # printf STDERR join(', ', @used_langs);
   if (@used_langs) {
      $str = "<hr>\nThis page is also available in the following languages:<BR>\n";
      foreach (@used_langs) {
