@@ -181,7 +181,7 @@ sub readinfo {
                         push (@{$self->{DIRS}}, $entry);
                         push (@heredir, $entry);
                         $self->_verbose("Found directory: $entry");
-                } elsif (m|^/([^/]+)/([^/]+)/([^/]+)/([^/]*)/$|) {
+                } elsif (m|^/([^/]+)/([^/]+)/([^/]+)/([^/]*)/(?:T[^/]+)?$|) {
                         $entry = $dir."/".$1;
                         next if $self->_skippable($entry) or ! -f $entry;
                         $self->{FILES}->{$entry} = {
