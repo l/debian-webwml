@@ -4,8 +4,10 @@
 
 WMLBASE=../..
 CUR_DIR=devel/debian-jr
-SUBS=
+SUBS=News
 
 include $(WMLBASE)/Make.lang
 
-
+packaged.$(LANGUAGE).html: packaged.wml \
+  $(ENGLISHSRCDIR)/devel/debian-jr/lists.tmpl \
+  packaged.data packaged-non-free.data
