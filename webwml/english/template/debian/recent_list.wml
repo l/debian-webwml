@@ -237,28 +237,28 @@ sub get_recent_list {
 	my ($year, $number, $eng_dir, $format, $match) = @_;
 
 	if ($format =~ order) {
-		$listhead = '<OL>';
-		$listfoot = '</OL>';
-		$elemhead = '<LI>';
+		$listhead = '<ol>';
+		$listfoot = '</ol>';
+		$elemhead = '<li>';
 		$elemfoot = '- ';
 	}
 	elsif ($format =~ bullet) {
-		$listhead = '<UL>';
-		$listfoot = '</UL>';
-		$elemhead = '<LI>';
+		$listhead = '<ul>';
+		$listfoot = '</ul>';
+		$elemhead = '<li>';
 		$elemfoot = '- ';
 	}
 	elsif ($format =~ list) {
-		$listhead = '<DL>';
-		$listfoot = '</DL>';
-		$elemhead = '<DT>';
-		$elemfoot = '<DD>';
+		$listhead = '<dl>';
+		$listfoot = '</dl>';
+		$elemhead = '<dt>';
+		$elemfoot = '<dd>';
 	}
 	elsif ($format =~ table) {
-		$listhead = '<TABLE>';
-		$listfoot = '</TABLE>';
-		$elemhead = '<TR><TD>';
-		$elemdate = '</TD><TD>';
+		$listhead = '<table>';
+		$listfoot = '</table>';
+		$elemhead = '<tr><td>';
+		$elemdate = '</td><td>';
 		$elemfoot = '';
 	}
 	else {
@@ -295,7 +295,7 @@ sub get_recent_list {
 		}
 	}
 	if ($count eq 0) {
-		$str .= "<noitemsforthisyear>\n";
+		$str .= "<noitemsforthisyear/>\n";
 	}
 	$str .= $listfoot;
 	# these two lines are a dumb kludge, happens with events/
@@ -317,6 +317,7 @@ foreach $file (@files) {
   my $event = '';
   if ($WML_SRC_DIRNAME =~ /events/) { # shouldn't waste time if it's not events
     $is_events = 1;
+<protect pass=2>
     foreach (<FILE>) {
       if (/^#use wml::debian::past_event$/) {
         $event = "past";
@@ -324,6 +325,7 @@ foreach $file (@files) {
         $event = "current";
       }
     }
+</protect>
     seek FILE, 0, SEEK_SET;
   }
 #  print STDERR (stat FILE)[7]; print STDERR "\n";
@@ -338,38 +340,38 @@ foreach $file (@files) {
     elsif ($line =~ /^<define-tag status>(.*)<\/define-tag>$/) { $status = qq/$1/; }     # vote
 </protect>
     if ($title && $date && $where) { # for events/
-      $str1 = "$elemhead<tt>[$date]</tt>$elemdate <strong><a href=\"$year/$base\">$title</a></strong>, $elemfoot$where<br>\n";
+      $str1 = "$elemhead<tt>[$date]</tt>$elemdate <strong><a href=\"$year/$base\">$title</a></strong>, $elemfoot$where<br />\n";
       last;
     }
     elsif ($desc) { # for security/
       open DATAFILE, "$eng_dir/$year/$base.data" or print STDERR "couldn't open $eng_dir/$year/$base.data: $!\n";
-      foreach $l (<DATAFILE>) {
 <protect pass=2>
+      foreach $l (<DATAFILE>) {
            if ($l =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) { $title = qq/$1/; }
         elsif ($l =~ /^<define-tag report_date>(.*)<\/define-tag>$/) { $rdate = qq/$1/; }
-</protect>
       }
+</protect>
       close DATAFILE;
 #      print STDERR "title: $title rdate: $rdate\n";
       $rdate = newsdate($rdate);
       $title =~ s/(DSA-\d{3})-\d{1}/$1/; # strip off the revision in the DSA number
-      $str1 = "$elemhead<tt>[$rdate]</tt> <strong><a href=\"$year/$base\">$title</a></strong> $elemfoot$desc<br>\n";
+      $str1 = "$elemhead<tt>[$rdate]</tt> <strong><a href=\"$year/$base\">$title</a></strong> $elemfoot$desc<br />\n";
       last;
     }
     elsif ($title && $date && !$is_events) { # for News/ and not events/
       $date = newsdate($date);
-      $str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong><br>\n";
+      $str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong><br />\n";
       last;
     }
     elsif ($title && $status) { # for vote/
       $str1 = "$elemhead<a href=\"$year/$base\">$title</a> &mdash; ";
-         if ( $status eq "P" ) { $str1 .= "<proposed>"; }
-      elsif ( $status eq "D" ) { $str1 .= "<discussed>"; }
-      elsif ( $status eq "V" ) { $str1 .= "<votedon>"; }
-      elsif ( $status eq "F" ) { $str1 .= "<finished>"; }
-      elsif ( $status eq "W" ) { $str1 .= "<withdrawn>"; }
+         if ( $status eq "P" ) { $str1 .= "<proposed/>"; }
+      elsif ( $status eq "D" ) { $str1 .= "<discussed/>"; }
+      elsif ( $status eq "V" ) { $str1 .= "<votedon/>"; }
+      elsif ( $status eq "F" ) { $str1 .= "<finished/>"; }
+      elsif ( $status eq "W" ) { $str1 .= "<withdrawn/>"; }
       else { $str1 .= "$status"; }
-      $str1 .= "<br>\n";
+      $str1 .= "<br />\n";
       last;
     }
   } # for each line in file
@@ -387,10 +389,10 @@ foreach $file (@files) {
 if ($WML_SRC_DIRNAME =~ /events/) {
   $str = "";
   if ($current) {
-    $str .= "<H2><future_events></H2>\n$listhead\n$current\n$listfoot\n";
+    $str .= "<h2><future_events/></h2>\n$listhead\n$current\n$listfoot\n";
   }
   if ($over) {
-    $str .= "<H2><past_events></H2>\n$listhead\n$over\n$listfoot\n";
+    $str .= "<h2><past_events/></h2>\n$listhead\n$over\n$listfoot\n";
   }
 }
 

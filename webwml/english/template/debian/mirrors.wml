@@ -37,7 +37,7 @@
 
 <define-tag mirrors-serverlist>
 <!--UdmComment-->
-<form method="GET" action="http://cgi.debian.org/cgi-bin/redirect.pl">
+<form method="get" action="http://cgi.debian.org/cgi-bin/redirect.pl">
 
 <perl> 
   my $rootdir = &canonpath('$(WML_SRC_DIRNAME)/$(HOME)');
@@ -48,40 +48,39 @@
 #    print STDERR "file = $file\n";
   (my $path = &canonpath($file)) =~ s/index$//;
 #    print STDERR "path = $path\n";
-  print "<input type=\"hidden\" name=\"page\" value=\"$path\">\n";
+  print "<input type=\"hidden\" name=\"page\" value=\"$path\" />\n";
 </perl>
 
-<if "$(usefonts)" "<font"><if "$(fontface)" " face="$(fontface)""><if "$(fontcolor)" " color="$(fontcolor)""><if "$(usefonts)" ">">
-<if "$(small)" "<small>">
-<selectserver>:
-<if "$(small)" "</small>">
-<if "$(usefonts)" "</font>">
-<br>
+#  See wml_p1_ipp(1) for details on these constructs
+$(usefonts:+<font$(fontface:+ face="$(fontface)")$(fontcolor:+ color="$(fontcolor)")>)
+$(small:+<small>)<selectserver/>:$(small:+</small>)
+$(usefonts:+</font>)
+<br />
 # note: the values for site don't have an ending slash on purpose, that's page
-<select name="site"<if "$(small)" " style=font-size:90%;">>
+<select name="site"$(small:+ style="font-size:90%;")>
 <perl>
 my %mirrors = (
-    "<ATc>" => "at",
-    "<AUc>" => "au",
-    "<BGc>" => "bg",
-    "<BRc>" => "br",
-    "<CNc>" => "cn",
-    "<DEc>" => "de",
-    "<DKc>" => "dk",
-    "<ESc>" => "es",
-    "<FRc>" => "fr",
-    "<HKc>" => "hk",
-    "<IDc>" => "id",
-    "<ITc>" => "it",
-    "<JPc>" => "jp",
-    "<KRc>" => "kr",
-    "<NLc>" => "nl",
-    "<PLc>" => "pl",
-    "<RUc>" => "ru",
-    "<TRc>" => "tr",
-    "<UKc>" => "uk",
+    "<ATc/>" => "at",
+    "<AUc/>" => "au",
+    "<BGc/>" => "bg",
+    "<BRc/>" => "br",
+    "<CNc/>" => "cn",
+    "<DEc/>" => "de",
+    "<DKc/>" => "dk",
+    "<ESc/>" => "es",
+    "<FRc/>" => "fr",
+    "<HKc/>" => "hk",
+    "<IDc/>" => "id",
+    "<ITc/>" => "it",
+    "<JPc/>" => "jp",
+    "<KRc/>" => "kr",
+    "<NLc/>" => "nl",
+    "<PLc/>" => "pl",
+    "<RUc/>" => "ru",
+    "<TRc/>" => "tr",
+    "<UKc/>" => "uk",
 # no USc=us because it's the same as www.d.o
-    "<ZAc>" => "za",
+    "<ZAc/>" => "za",
               );
 # Transform this list
 my $mirrors_lang = {};
@@ -98,8 +97,8 @@ foreach $l (keys %$mirrors_lang) {
 </perl>\
 <option value="http://www.debian.org" selected>www.debian.org</option>
 </select>
-<input type="SUBMIT" value=" <go> "<if "$(small)" " style=font-size:90%;">>
-<br>
+<input type="submit" value=" <go/> "$(small:+ style="font-size:90%;") />
+<br />
 </form>
 <!--/UdmComment-->
 </define-tag>
