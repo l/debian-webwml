@@ -1,0 +1,276 @@
+#use wml::debian::template title="Le Système de Gestion des Bogues Debian" NOHEADER=yes WEBMASTER=bugs
+
+<!--translation 1.4-->
+
+<h1>Les instructions pour signaler des bogues</h1>
+
+Envoyez un message à
+<A href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></A>,
+comme décrit ci dessous.
+<p>
+
+S'il vous plaît, ne signalez pas plusieurs bogues qui n'ont pas de liens entre eux - 
+en particulier s'ils sont dans différents paquets - dans un même message. 
+Merci aussi de ne pas envoyer votre message de rapport de bogue
+à aucune liste de diffusion ou aucun destinataire autre que 
+<code>submit@bugs</code> (pour les détails sur la manière de le faire correctement, 
+voyez <A href="#xcc">ci dessous</A>).
+<p>
+
+Les listes des bogues actuellement remarquables sont disponibles <A href="./">sur
+le Web</A> et <A href="Access">ailleurs</A> - voyez
+les autres documents pour plus de détails.
+<p>
+
+Vous devriez mettre en pseudo en tête au début du corps du message, 
+en utilisant les lignes <code>Package:</code> et <code>Version:</code>
+qui donnent le nom et la version du paquet ayant le bogue.
+(Les champs du pseudo en tête doivent commencer au tout début de leur ligne,
+et le système de gestion des bogues ne les comprend pas actuellement s'ils sont
+contenus dans un message MIMEd ou PGPd.)
+(Vous pouvez obtenir cela en utilisant
+<code>dpkg --search</code> et <code>dpkg --list</code>; voyez
+<code>dpkg --help</code>.
+
+<em>Voyez ci dessous <A href="#details">les exigences supplémentaires</A></em>.
+<p>
+
+Il y a des pseudo-paquets disponibles pour remplir la ligne
+<code>Package</code> quand on signale un bogue dans autre chose qu'un paquet 
+logiciel Debian.
+Il y a <A href="db/ix/pseudopackages.html">une liste de ceux ci</A> sur les 
+pages WWW concernant les bogues.
+
+
+<h2><A name="example">Exemple</A></h2>
+
+Un rapport de bogue, avec un en tête de message, ressemble à quelque chose comme ceci:
+<pre>
+  A: submit@bugs.debian.org
+  De: diligent@testing.linux.org
+  Objet: Hello affiche `goodbye'
+
+  <A name="pseudoheader">Package: hello</A>
+  Version: 1.3-2
+
+  Quand je lance `hello' sans arguments depuis un shell ordinaire
+  cela affiche `goodbye', plutôt que le `hello, world' attendu.
+  Voici une transcription:
+
+  $ hello
+  goodbye
+  $ /usr/bin/hello
+  goodbye
+  $
+
+  Je suggère que la chaîne de caractère en sortie, dans hello.c, soit corrigée.
+
+  J'utilise Debian 1.1, noyau version 1.3.99.15z
+  et libc 5.2.18.3.2.1.3-beta.
+</pre>
+
+<h2><A name="details">Merci d'inclure dans votre rapport:</A></h2>
+
+<ul>
+<li>Le texte <em>exact</em> et <em>complet</em> de tout message d'erreur
+affiché ou enregistré. Ceci est très important!
+<li>Ce que vous avez exactement tapé ou fait pour obtenir le problème.
+<li>Une description du comportement incorrect: ce que vous attendiez exactement, 
+et ce que vous avez observé. Une transcription d'une session d'exemple est un 
+bon moyen de montrer cela.
+<li>Une suggestion de correction, ou même un patch, si vous en avez.
+<li>Les détails de la configuration du programme ayant les problèmes.
+Incluez le texte complet de son fichier de configuration.
+<li>Les versions de tous les paquets desquels le paquet ayant des bogues dépend.
+<li>Quelle version du noyau vous utilisez (tapez <code>uname -a</code>).
+<li>Quelles librairies partagées C vous utilisez (tapez <code>ls -l /lib/libc.so.6</code>).
+<li>Tout autre détail de votre système Linux, si cela semble approprié. Par
+exemple, si vous aviez un problème avec un script Perl Debian, vous devriez
+fournir la version du binaire `perl' (<code>perl -v</code>).
+<li>Les détails appropriés de votre matériel. Si vous rapportez un problème
+avec un pilote de périphérique merci de décrire <em>tout</em> le matériel
+de votre système, car les problèmes sont souvent causés par des conflits d'IRQ 
+et d'adresse I/O.
+
+</ul>
+
+Incluez tout détail qui semble lié - il y a très peu de risque de rendre votre 
+rapport trop long en incluant trop d'informations. S'ils sont petits, merci 
+d'inclure dans votre rapport tout fichier que vous avez utilisé pour reproduire 
+le problème (en les uuencodant s'ils peuvent contenir des caractères spéciaux).
+
+<p>
+
+Bien sûr, comme pour tout message, vous devriez mettre une ligne 
+<code>Objet</code> claire, descriptive dans votre en tête de message. 
+L'objet que vous donnez sera utilisé comme le titre initial du bogue dans le
+système de gestion, aussi merci d'essayer d'être informatifs!
+
+<h2><A name="xcc">Envoyer des copies de rapports de bogue à d'autres adresses</A></h2>
+
+Il est parfois nécessaire d'envoyer une copie d'un rapport de bogue ailleurs
+qu'à <code>debian-bugs-dist</code> et qu'au mainteneur du paquet,
+où le rapport est normalement envoyé.
+<p>
+
+Vous pourriez faire cela en utilisant mettant les autres adresses dans le champs 
+<code>Copies-A</code> (<code>CC</code> en anglais) de votre logiciel de 
+messagerie, mais alors les autres copies n'auraient pas de numéro de rapport de 
+bogue mises dans le champs <code>Répondre-A</code> (<code>Reply-To</code> en 
+anglais) et dans la ligne <code>Objet</code> (<code>Subject</code> en anglais).
+Quand les destinataires répondront ils garderont probablement l'entrée
+<code>submit@bugs.debian.org</code> dans l'entête et verront leur message
+enregistré comme un nouveau rapport de bogue. Cela engendre beaucoup de rapports
+dupliqués.
+<p>
+
+La <em>bonne</em> manière de procéder est d'utiliser l'entête
+<code>X-Debian-CC</code>. Ajoutez une ligne comme celle ci à votre entête
+de message (pas au pseudo entête contenant le champs
+<code>Package</code>):
+<pre>
+ X-Debian-CC: autre-liste@cosmic.edu
+</pre>
+Cela fera envoyer par le système de gestion des bogues une copie de votre rapport 
+à l'adresse (aux adresses) de la ligne <code>X-Debian-CC</code> aussi bien qu'à 
+<code>debian-bugs-dist</code>.
+<p>
+
+Cette fonctionnalité peut souvent être utilement combinée avec le code de message 
+<code>quiet</code> - voyez ci dessous.
+
+
+<h2><A name="severities">Les niveaux de gravité</A></h2>
+
+Si un rapport concerne un bogue particulièrement grave, ou si c'est plutôt une
+demande de fonctionnalité, vous pouvez indiquer un niveau de gravité pour le bogue
+lorsque vous le signalez. Ce n'est cependant pas indispensable et les développeurs 
+assigneront un niveau de gravité approprié à votre rapport si vous ne le faites pas.
+<p>
+
+Pour indiquer un niveau de gravité mettez une ligne 
+<code>Severity: <var>sévérité</var></code> dans le pseudo entête,
+avec les lignes <code>Package</code> et <code>Version</code>. Les
+niveaux de gravité disponibles sont décrits dans la
+<A href="Developer#severities">documentation des développeurs</A>.
+
+
+<h2>Comment ne pas envoyer un bogue vers la liste de diffusion - 
+les rapports de bogues mineurs</h2>
+
+Si un rapport de bogue est mineur (par exemple, une typo dans la documentation ou 
+tout autre problème trivial de compilation), ou si vous envoyez plusieurs rapports 
+en une seule fois, envoyez les à <code>maintonly@bugs</code> ou <code>quiet@bugs</code>.
+<code>maintonly</code> enverra le rapport au mainteneur de paquet 
+(pourvu que vous ayez fourni une ligne <code>Package</code> correcte
+dans le pseudo entête et que le mainteneur soit connu), et <code>quiet</code>
+ne le transmettra nulle part mais l'enregistrera seulement comme un bogue (utile 
+si, par exemple, vous envoyez beaucoup de bogues similaires et si vous voulez 
+poster seulement un résumé).
+<p>
+
+Si vous faites cela, le système de gestion des bogues remplira le champs 
+<code>Répondre-A</code> (<code>Reply-To</code>) de tout message transmis 
+de façon à ce que les réponses soient par défaut traitées de la même manière
+que le rapport original.
+
+<h3>Les paquets inconnus ou les bogues avec aucune clé <code>Package</code></h3>
+
+Si le système de gestion des bogues ne connaît pas qui est le mainteneur du paquet
+concerné il enverra le rapport à 
+<code>debian-bugs-dist</code> même si le code <code>maintonly</code> a été utilisé.
+<p>
+
+Quand vous envoyez un message à <code>maintonly@bugs</code> ou
+<var>nnn</var><code>-maintonly@bugs</code> vous devriez vérifier que
+le rapport de bogue est assigné au bon paquet, en remplissant correctement le
+champs <code>Package</code> en haut de la soumission originale d'un rapport,
+ou en utilisant <A href="server-control">le service 
+<code>control@bugs</code></A> pour tout d'abord (re)assigner correctement le 
+rapport si ce n'est pas déjà correct.
+
+<h2>Utiliser <code>dpkg</code> pour trouver le paquet et la version pour le 
+rapport</h2>
+
+Si vous signalez un bogue dans une commande, vous pouvez déterminer quel 
+paquet l'a installée en utilisant <code>dpkg --search</code>. Vous pouvez
+trouver la version d'un paquet que vous avez installé en utilisant
+<code>dpkg --list</code> ou <code>dpkg --status</code>.
+
+<p>
+
+Par exemple:
+<pre>
+$ which dpkg
+/usr/bin/dpkg
+$ type dpkg
+dpkg is hashed (/usr/bin/dpkg)
+$ dpkg --search /usr/bin/dpkg
+dpkg: /usr/bin/dpkg
+$ dpkg --search '*/dpkg'
+dpkg: /usr/doc/copyright/dpkg
+dpkg: /var/lib/dpkg
+dpkg: /usr/bin/dpkg
+dpkg: /usr/lib/dpkg
+dpkg: /usr/doc/dpkg
+$ dpkg --list dpkg
+Desired=Unknown/Install/Remove/Purge
+| Status=Not/Installed/Config-files/Unpacked/Failed-config/Half-installed
+|/ Err?=(none)/Hold/Reinst-required/X=both-problems (Status,Err: uppercase=bad)
+||/ Name            Version        Description
++++-===============-==============-============================================
+ii  dpkg            1.2.9elf       Package maintenance system for Debian GNU/Linux
+$ dpkg --status dpkg
+Package: dpkg
+Essential: yes
+Status: install ok installed
+Priority: required
+Section: base
+Maintainer: Ian Jackson &lt;ian@chiark.chu.cam.ac.uk&gt;
+Version: 1.2.9elf
+Replaces: dpkgname
+Pre-Depends: libc5 (&gt;= 5.2.18-2), ncurses3.0
+Conflicts: dpkgname
+Description: Package maintenance system for Debian GNU/Linux
+ This package contains the programs which handle the installation and
+ removal of packages on your system.
+ .
+ The primary interface for the dpkg suite is the `dselect' program;
+ a more low-level and less user-friendly interface is available in
+ the form of the `dpkg' command.
+
+$
+</pre>
+
+
+
+<hr>
+Autres pages:
+<ul>
+<li><A href="./">La page principale du système de gestion des bogues.</A>
+<li><A href="Developer">Les informations pour les Développeurs sur les 
+moyens d'utiliser le système.</A>
+<li><A href="Access">Accéder aux enregistrements de gestion des bogues 
+autrement que par le web.</A>
+<li><A href="db/ix/full.html">La liste complète des rapports de bogues 
+remarquables et récents.</A>
+<li><A href="db/ix/packages.html">Les paquets ayant des rapports de bogues.</A>
+<li><A href="db/ix/maintainers.html">Les mainteneurs de paquets ayant des rapports de bogues.</A>
+ <li><A href="../">La page principale de Debian GNU/Linux.</A>
+
+</ul>
+
+<hr>
+<address>
+<A href="http://www.chiark.greenend.org.uk/~ijackson/">Ian Jackson</A>
+ /
+<A href="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>.
+20 Janvier 1998.
+<p>
+Le système de gestion des bogues Debian
+copyright 1994-1997 Ian Jackson, copyright 1997 nCipher Corporation Ltd,
+copyright 1995 Steven Brenner.
+<A href="http://www.chiark.greenend.org.uk/~ian/debbugs/">Disponible
+sous GPL.</A>
+
+</address>

@@ -1,0 +1,221 @@
+#use wml::debian::template title="Le Système de Gestion des Bogues Debian" NOHEADER=yes WEBMASTER=bugs
+
+<!--translation 1.4-->
+
+<A name="introduction">
+<h1>Introduction au serveur de requêtes du système de gestion des bogues</h1>
+</A>
+
+Il y a un serveur de message qui peut envoyer des rapports de bogues et des indexes 
+en texte seul à la demande.
+<p>
+
+Pour l'utiliser il faut envoyer un message à
+<A href="mailto:request@bugs.debian.org"><code>request@bugs.debian.org</code></A>.
+L'<code>Objet</code> (Subject en anglais) du message est ignoré, sauf pour générer 
+l'<code>Objet</code> de la réponse.
+<p>
+
+Le corps du message que vous envoyez doit être une série de commandes, une par ligne.
+Vous recevrez une réponse qui ressemblera à une transcription de votre message 
+ayant été interprété, avec une réponse pour chaque commande. Aucune notification 
+n'est envoyée à personne pour la plupart des commandes; cependant, les messages sont 
+enregistrés et rendus disponibles sur les pages web.
+<p>
+
+Tout texte d'une ligne commençant par un caractère dièse <code>#</code> est 
+ignorée; le serveur arrête de traiter un message lorsqu'il trouve une ligne 
+commençant par <code>quit</code>, <code>stop</code>, <code>thank</code> ou deux 
+traits d'union (pour éviter de traiter une signature). Il arrêtera aussi s'il 
+rencontre trop de commandes inconnues ou mal formatées. Si aucune commande 
+n'est traitée avec succès il enverra le texte d'aide du serveur.
+
+<h1>Les commandes disponibles</h1>
+
+<dl>
+<dt><code>send</code> <var>numerodubogue</var>
+<dt><code>send-detail</code> <var>numerodubogue</var>
+<dd>
+
+Demande la transcription concernant le rapport de bogue spécifié.
+<code>send-detail</code> envoie tous les messages `ennuyeux' de la
+transcription, comme les diverses auto-confirmations (vous devriez 
+généralement utiliser la commande <code>send</code> en même temps, 
+car les messages intéressants ne sont pas envoyés par
+<code>send-detail</code>).
+
+<dt><code>index</code> [<code>full</code>]
+<dt><code>index-summary by-package</code>
+<dt><code>index-summary by-number</code>
+<dd>
+
+Demande l'index complet (avec tous les détails, et incluant les rapports 
+traités ('done') et transmis ('forwarded')), ou le sommaire trié par paquet 
+ou par numéro, respectivement.
+
+<dt><code>index-maint</code>
+<dd>
+
+Demande la page d'index donnant la liste des mainteneurs ayant des bogues (ouverts
+et récemment fermés) dans le système de gestion des bogues.
+
+<dt><code>index maint</code> <var>mainteneur</var>
+<dd>
+
+Demande les pages d'index des bogues du système pour tous les mainteneurs
+contenant la chaîne de caractère <var>mainteneur</var>. Le terme recherché 
+est une sous chaîne insensible à la casse. L'index des bogues pour chaque mainteneur 
+correspondant à la chaîne cherchée sera envoyé dans un message séparé.
+
+<dt><code>index-packages</code>
+<dd>
+
+Demande la page d'index donnant la liste des paquets ayant des bogues (ouverts
+et récemment fermés) dans le système de gestion des bogues.
+
+<dt><code>index packages</code> <var>paquet</var>
+<dd>
+
+Demande les pages d'index des bogues du système pour tous les paquets 
+contenant la chaîne de caractère <var>paquet</var>. Le terme recherché 
+est une sous chaîne insensible à la casse. L'index des bogues pour chaque paquet 
+correspondant à la chaîne cherchée sera envoyé dans un message séparé.
+
+<dt><code>send-unmatched</code> [<code>this</code>|<code>0</code>]
+<dt><code>send-unmatched</code> <code>last</code>|<code>-1</code>
+<dt><code>send-unmatched</code> <code>old</code>|<code>-2</code>
+<dd>
+
+Demande les enregistrements des messages non liés à un rapport de bogue 
+particulier, pour cette semaine, la semaine dernière et la semaine d'avant. 
+(Chaque semaine se termine un mercredi.)
+
+<dt><code>getinfo</code> <var>nomdefichier</var>
+<dd>
+
+Demande un fichier contenant les informations à propos d'un ou plusieurs paquet 
+et ou mainteneur - les fichiers disponibles sont:
+<dl compact>
+<dt><code>maintainers</code>
+<dd>
+La liste unifiée des mainteneurs de paquets, telle qu'elle est utilisée par 
+le système de gestion des bogues.
+Elle est déduite des informations dans les fichiers <code>Packages</code>, 
+les fichiers 'override' et les fichiers de pseudo paquets.
+
+
+<dt><code>override.</code><var>distribution</var>
+<dt><code>override.</code><var>distribution</var><code>.non-free</code>
+<dt><code>override.</code><var>distribution</var><code>.contrib</code>
+<dt><code>override.experimental</code>
+<dd>
+Les informations concernant les priorités, les sections des paquets et 
+les données principales pour les mainteneurs. Ces informations sont utilisées 
+par le processus qui génère les fichiers <code>Packages</code> dans l'archive 
+FTP. Ces informations sont disponibles pour chacun des principaux arbres 
+disponible de la distribution; les arbres courants des distributions stables 
+et de développement sont disponibles par leur nom de code aussi bien que 
+par leur statut ('stable' ou 'development').
+
+<dt><code>pseudo-packages.description</code>
+<dt><code>pseudo-packages.maintainers</code>
+<dd>
+La liste des descriptions et des mainteneurs respectivement pour les pseudo
+paquets.
+</dl>
+
+<dt><code>refcard</code>
+<dd>
+Demande que la carte de référence des serveurs de messages soit envoyée 
+uniquement en ASCII.
+
+<dt><code>help</code>
+<dd>
+Demande que ce document d'aide soit envoyé par courrier électronique 
+uniquement en ASCII.
+
+<dt><code>quit</code>
+<dt><code>stop</code>
+<dt><code>thank</code>...
+<dt><code>--</code>...
+<dd>
+
+Arrête le traitement à l'endroit courant dans le message. Après cette 
+commande vous pouvez inclure n'importe quel texte que vous souhaitez, et 
+il sera ignoré. Vous pouvez utiliser cela pour inclure de plus longs 
+commentaires que ce qui est approprié avec <code>#</code>, par 
+exemple pour le plus grand bénéfice des lecteurs humains de votre message 
+(qui le lisent depuis les enregistrements du système de gestion ou à cause
+d'un <code>Copies-A</code> ('CC' en anglais) ou d'un 
+<code>Copies-Cachées-A</code> ('BCC' en anglais).
+
+<dt><code>#</code>...
+<dd>
+
+Commentaire d'une ligne. Le <code>#</code> doit être au début de la ligne.
+
+<dt><code>debug</code> <var>niveau</var>
+<dd>
+
+Configure le niveau de déboguage à <var>niveau</var>, qui doit être un entier 
+positif. 0 signifie pas de déboguage; 1 est habituellement suffisant. Le 
+résultat du déboguage apparaît dans la transcription. Il est peu probable que 
+cela soit utile aux utilisateurs normaux du système de gestion des bogues.
+
+</dl>
+
+Il y a une <A href="server-refcard">carte de référence</A> du serveur de 
+message, disponible sur le web, dans 
+<code>bug-mailserver-refcard.txt</code> ou par courrier électronique en 
+utilisant la commande <code>refcard</code> (voyez plus haut).
+<p>
+
+Si vous souhaitez manipuler les rapports de bogue vous devriez utiliser 
+l'adresse <code>control@bugs.debian.org</code>, qui comprend un 
+<A href="server-control">sur ensemble des commandes listées plus 
+haut</A>. Cet ensemble de commandes est décrit dans un autre document, 
+disponible sur le Web, dans le fichier <code>bug-maint-mailcontrol.txt</code>, 
+ou en envoyant la commande <code>help</code> à <code>control@bugs</code>.
+<p>
+
+Au cas où vous lisiez ceci dans un fichier en texte seul ou dans un message: 
+une version HTML est disponible à partir de la page principale du système de 
+gestion des bogues <code>http://www.debian.org/Bugs/</code>.
+<p>
+
+<hr>
+Autres pages:
+<ul>
+<li><A href="./">La page principale du système de gestion des bogues.</A>
+<li><A href="Reporting">Les instructions pour rapporter des bogues.</A>
+<li><A href="Access">Accéder aux enregistrements de gestion des bogues 
+autrement que par le web.</A>
+<li><A href="Developer">Les informations pour les Développeurs sur les 
+moyens d'utiliser le système.</A>
+<li><A href="server-control">Les informations pour les Développeurs sur
+les moyens de manipuler les bogues par courrier électronique.</A>
+<li><A href="server-refcard">La carte de référence des serveurs de messages.</A>
+<li><A href="db/ix/full.html">La liste complète des rapports de bogues 
+remarquables et récents.</A>
+<li><A href="db/ix/packages.html">Les paquets ayant des rapports de bogues.</A>
+<li><A href="db/ix/maintainers.html">Les mainteneurs de paquets ayant des rapports de bogues.</A>
+ <li><A href="../">La page principale de Debian GNU/Linux.</A>
+
+</ul>
+
+<hr>
+<address>
+<A href="http://www.chiark.greenend.org.uk/~ijackson/">Ian Jackson</A>
+ /
+<A href="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>.
+20 Janvier 1998.
+<p>
+Le système de gestion des bogues Debian
+copyright 1994-1997 Ian Jackson, copyright 1997 nCipher Corporation Ltd,
+copyright 1995 Steven Brenner.
+<A href="http://www.chiark.greenend.org.uk/~ian/debbugs/">Disponible
+sous GPL.</A>
+
+</address>
+
+
