@@ -27,9 +27,10 @@
 #	Configurable options
 #
 
-$MAILER      = "/usr/sbin/sendmail";		   		# something with UCB sendmail syntax
-$MAILFROM    = "Debian WWW CVS <>";          		# mail comes from
-$MAILREPLYTO = "debian-www\@lists.debian.org";		# redirect replies to
+$debug = 1;
+$MAILER      = "/usr/sbin/sendmail";		 # something with UCB sendmail syntax
+$MAILFROM    = "Debian WWW CVS <webmaster\@debian.org>"; # mail comes from
+$MAILREPLYTO = "debian-www\@lists.debian.org";	 # redirect replies to
 
 # Constants (don't change these!)
 #
@@ -39,12 +40,12 @@ $STATE_ADDED   = 2;
 $STATE_REMOVED = 3;
 $STATE_LOG     = 4;
 
-$LAST_FILE     = "/tmp/#cvs.lastdir";
+$LAST_FILE     = "/cvs/webwml/CVSROOT/tmp/#cvs.lastdir";
 
-$CHANGED_FILE  = "/tmp/#cvs.files.changed";
-$ADDED_FILE    = "/tmp/#cvs.files.added";
-$REMOVED_FILE  = "/tmp/#cvs.files.removed";
-$LOG_FILE      = "/tmp/#cvs.files.log";
+$CHANGED_FILE  = "/cvs/webwml/CVSROOT/tmp/#cvs.files.changed";
+$ADDED_FILE    = "/cvs/webwml/CVSROOT/tmp/#cvs.files.added";
+$REMOVED_FILE  = "/cvs/webwml/CVSROOT/tmp/#cvs.files.removed";
+$LOG_FILE      = "/cvs/webwml/CVSROOT/tmp/#cvs.files.log";
 
 $FILE_PREFIX   = "#cvs.files";
 
@@ -56,7 +57,7 @@ sub cleanup_tmpfiles {
     local($wd, @files);
 
     $wd = `pwd`;
-    chdir("/tmp") || die("Can't chdir('/tmp')\n");
+    chdir("/cvs/webwml/CVSROOT/tmp") || die("Can't chdir('/cvs/webwml/CVSROOT/tmp')\n");
     opendir(DIR, ".");
     push(@files, grep(/^$FILE_PREFIX\..*\.$id$/, readdir(DIR)));
     closedir(DIR);
@@ -189,9 +190,13 @@ sub mail_notification {
     local($name, @text) = @_;
     open(MAIL, "| $MAILER -t");
     print MAIL <<EOF ;
+Mail-Copies-To: never
+Mail-Followup-To: debian-www\@lists.debian.org
+Approved: webmaster\@debian.org
 To: $name
+From: $MAILFROM
 Reply-To: $MAILREPLYTO
-Subject: GNOME CVS: $modulename $login
+Subject: Debian WWW CVS: $login
 
 EOF
     print MAIL join("\n", @text), "\n";
@@ -216,7 +221,8 @@ $debug = 0;
 $id = getpgrp();	# note, you *must* use a shell which does setpgrp()
 $state = $STATE_NONE;
 
-$login = $ENV{'CVS_USER'} || getlogin || (getpwuid($<))[0] || "nobody";
+#$login = $ENV{'CVS_USER'} || getlogin || (getpwuid($<))[0] || "nobody";
+$login = $ENV{'LOGNAME'} || getlogin || (getpwuid($<))[0] || "nobody";
 
 chop($hostname = `hostname`);
 if ($hostname !~ /\./) {
