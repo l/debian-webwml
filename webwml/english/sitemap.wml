@@ -26,9 +26,10 @@ sub title_of {
   if ($page =~ /\/$/) { $page .= "index.wml" } else { $page .= ".wml" };
 #  print STDERR "page: $page\n"; return;
   $page = "$ENGLISHDIR/$page" unless (-f $page);
-  my $title = `egrep '^#use .* title=' $page ` if (-r $page); chomp $title;
+  die "$page doesn't exist!\n" unless (-f $page);
+  my $title = `egrep '^#use .* title=' $page `; chomp $title;
   $title =~ s/^#use .* title="([^"]+)".*$/$1/;
-  $title = $_[0] if (!$title);
+  die "can't find a title in $page!\n" unless (($title) || ($title eq ""));
   return $title;
 }
 </perl>
