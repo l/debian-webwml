@@ -18,7 +18,7 @@ $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/langu
 
 all: $(HTMLFILES) $(JPGDEST)
 	( cd 1997 ; $(MAKE) )
-	#( cd 1998 ; $(MAKE) )
+	( cd 1998 ; $(MAKE) )
 
 $(HTMLDIR)/%.gif : %.gif
 	@cp $< $@
