@@ -1,18 +1,25 @@
-#use wml::debian::ddp title="DDP CVS Access"
+#use wml::debian::ddp title="DDP CVS"
+#use wml::debian::toc
 
 <p>The Debian Documentation Project stores its webpages and much of the
 manual text on the Debian CVS server at <b>cvs.debian.org</b>.
 
-<p>Only members of the Debian Documentation Project can update files on
-the CVS server.  Others can access these files for downloading only.
+<p>Everybody can download the sources from the CVS server. Only members of
+the Debian Documentation Project can update files.</p>
+
+<toc-display/>
+
+<toc-add-entry name="access">Accessing the sources in CVS</toc-add-entry>
   
-<p>You can use <a href="http://cvs.debian.org/ddp/manuals.sgml/?cvsroot=debian-doc">CVSWeb</a>
+<p>You can use a <a href="http://cvs.debian.org/ddp/manuals.sgml/?cvsroot=debian-doc">web interface</a>
 to access the files individually and see changes to them.
 
 <p>For downloading an entire manual, direct access to the CVS server
-is a better option. You need the <tt>cvs</tt> package on your own machine.
+is often a better option. You need the
+<tt><a href="http://packages.debian.org/cvs">cvs</a></tt> package on your
+own machine.
 
-<h2>Connecting anonymously (read-only) to the CVS server</h2>
+<h3>Connecting anonymously (read-only) to the CVS server</h3>
 
 <p>To connect, enter this command:
 
@@ -51,7 +58,7 @@ disconnect from the server:
   <code>cvs logout</code>
 </p>
 
-<h2>Connecting to the CVS server, with update privileges</h2>
+<h3>Connecting to the CVS server, with update privileges</h3>
 
 <p>Before accessing the CVS server using this method you have to be
 granted write access to it first.  Please read how to <a
@@ -60,11 +67,11 @@ href="#obtaining">request</a> update permission first.
 <p>To connect, enter this command:
 
 <p style="margin-left: 2em">
-  <code>cvs -d :pserver:userid@cvs.debian.org:/cvs/debian-doc login</code>
+  <code>cvs -d :pserver:<var>userid</var>@cvs.debian.org:/cvs/debian-doc login</code>
 </p>
 
 <p>and enter the password you have negotiated with the documentation coordinator.
-In the above command, replace <i>userid</i> with your own user name on the
+In the above command, replace <var>userid</var> with your own user name on the
 CVS password server. This is not necessarily the same as your login name in
 <b>cvs.debian.org</b>, if you have one.
 
@@ -97,7 +104,7 @@ disconnect from the server:
   <code>cvs logout</code>
 </p>
 
-<h2>Connecting to the CVS server, with update privileges, using SSH</h2>
+<h3>Connecting to the CVS server, with update privileges, using SSH</h3>
 
 <p>This method is only available to registered Debian developers and
 is preferred over the pserver from above.  If you have recently become
@@ -114,12 +121,12 @@ coordinator to nuke your pserver account.
 command:
 
 <p style="margin-left: 2em">
-  <code>cvs -d :ext:<i>userid</i>@cvs.debian.org:/cvs/debian-doc -z3 checkout <i>module</i></code>
+  <code>cvs -d :ext:<var>userid</var>@cvs.debian.org:/cvs/debian-doc -z3 checkout <var>module</var></code>
 </p>
 
-<p>In the above command, replace <i>userid</i> with your own user name on the
-CVS server. This is the same as your login name in
-<b>cvs.debian.org</b>, if you have one. Replace <i>module</i> with the name
+<p>In the above command, replace <var>userid</var> with your own user name on the
+CVS server. This is the same as your login name on all Debian machines.
+Replace <var>module</var> with the name
 of the module you wish to check out, commonly that's <tt>ddp/manuals.sgml</tt>.
 You are then prompted for your password to the CVS server. Do not confuse
 this with your own machine.
@@ -138,7 +145,7 @@ the <strong>ddp/manuals.sgml</strong> directory and run the command:
   <code>cvs -z3 update -d -P</code>
 </p>
 
-<h2><a name="obtaining">Obtaining update privileges</a></h2>
+<toc-add-entry name="obtaining">Obtaining update privileges</toc-add-entry>
 
 <p>Update privileges are available to anyone who wishes to participate in
 writing the manuals.
@@ -149,18 +156,15 @@ username you want to use on the pserver and supplying an encrypted password,
 generated with
 
 <p style="margin-left: 2em">
-  <code>makepasswd --crypt --clear=<i>your_password</i></code>
+  <code>makepasswd --crypt --clear=<var>your_password</var></code>
 </p>
 
-<p>(<tt>makepasswd</tt> is a Debian package.)
-
-<p>If you don't supply a password, one will be generated for you, but it
-won't be memorable. To change your password, e-mail the Coordinator again,
-supplying the new, encrypted password.
+<p>(<tt><a href="http://packages.debian.org/makepasswd">makepasswd</a></tt>
+is a Debian package.)
 
 <hr>
 
-<h1>Organisation of files</h1>
+<toc-add-entry name="organization">Organization of files</toc-add-entry>
 
 <p>This figure shows the structure of the CVS directory tree:
 
@@ -172,10 +176,10 @@ pages.
 
 <hr>
 
-<h1>Automatic update mechanism</h1>
+<toc-add-entry name="updates">Automatic update mechanism</toc-add-entry>
 
 <p>The published web pages of the manual text are generated by a cron job run
-on www.debian.org every day at 7:00, 15:00 and 23:00 (Pacific time).
+on www-master.debian.org every day sometime after 15:39 Pacific time.
 
 <p>The script does a <kbd>cvs update -d -P</kbd>, and then
 <kbd>make -C manuals.sgml clean publish</kbd>, both in in the
@@ -185,5 +189,11 @@ on www.debian.org every day at 7:00, 15:00 and 23:00 (Pacific time).
 maintained documentation), and to install the files from each subdirectory
 in <code>doc/manuals/</code> subdirectory of the web site. The subdirectory
 makefiles are derived from <code>ddp/manuals.sgml/standard.makefile</code>.
+
+<p>The documentation files generated by the update script can be found at
+<a href="manuals/">http://www.debian.org/doc/manuals/</a>
+
+<p>The log files generated by the update script can be found at
+<url "http://www.debian.org/devel/website/build/ddp/">
 
 # <!-- Created: Mon Jul  6 19:58:09 BST 1998 -->
