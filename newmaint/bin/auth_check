@@ -21,6 +21,7 @@
 
 import os, pg, re, string, sys, time
 import utils
+import apt_pkg
 
 # A valid authentication key consists of the string "nmauth" followed by
 # a md5 hash (i.e. a 32-character hexadecimal number).
@@ -29,19 +30,19 @@ re_auth_key = re.compile(r"(nmauth[a-f\d]{32})")
 # Read the mail from stdin
 input = sys.stdin.readlines()
 
-# FIXME: read this from a config file
-Cnf = {}
-Cnf["Dir::Templates"] = "/org/nm.debian.org/bin/templates"
-Cnf["MyFrom"] = "NM Front Desk <new-maintainer@debian.org>"
+# Read the configuration file
+apt_pkg.init()
+Cnf = apt_pkg.newConfiguration()
+apt_pkg.ReadConfigFileISC(Cnf, "nm.conf")
 
 Subst = {}
 Subst["__LDAP_EMAIL__"] = os.environ["LDAP_EMAIL"] # passed to us by gpgwrapper
-Subst["__FROM__"] = Cnf["MyFrom"]
+Subst["__FROM__"] = "%s <%s>" % (Cnf["MyFromName"], Cnf["MyEmailAddress"])
 Subst["__ORIG_MESSAGE__"] = string.join(map(lambda x: "> " + x, input), "")
 Subst["__LDAP_UID__"] = os.environ["LDAP_UID"] # passed to us by gpgwrapper
-Subst["__BCC__"] = "Bcc: %s" % Cnf["MyFrom"]
-Subst["__WHOAMI__"] = "Martin Michlmayr and others"
-Subst["__MY_EMAIL__"] = "new-maintainer@debian.org"
+Subst["__BCC__"] = "Bcc: %s" % Cnf["MyEmailAddress"]
+Subst["__WHOAMI__"] = Cnf["MyAdminName"]
+Subst["__MY_EMAIL__"] = Cnf["MyEmailAddress"]
 
 # Search for a valid authentication key
 for line in input:
