@@ -27,7 +27,8 @@ $opt_p = "*.wml";
 $opt_t = "Debian Web site Translation Statistics";
 $opt_v = 0;
 $opt_d = "u";
-getopts('hwptv');
+$opt_l = undef;
+getopts('h:w:p:t:vd:l:');
 %config = (
 	   'htmldir' => $opt_h,
 	   'wmldir'  => $opt_w,
@@ -122,15 +123,15 @@ sub get_translation_version
 sub getwmlfiles
 {
     my $lang = shift;
-    my $cmd  = "find $config{'wmldir'}/$lang -name \"$config{'wmlpat'}\"";
+    my $dir = "$config{'wmldir'}/$lang";
+    my $cmd = "find $dir -name \"$config{'wmlpat'}\"";
     my $cutfrom = length ($config{'wmldir'})+length($lang)+2;
     my $count = 0;
     my $is_english = ($lang eq "english")?1:0;
     my $file, $v;
 
     print "$lang " if ($config{verbose});
-
-    die if (! -d "$config{'wmldir'}/$lang");
+    die "$0: can't find $dir!\n" if (! -d "$dir");
     open (FIND, "$cmd|") || die "Can't read from $cmd";
     while (<FIND>) {
 	next if (/\/sitemap\.wml/);
@@ -141,9 +142,9 @@ sub getwmlfiles
 	$file =~ s/\.wml$//;
 	$wmlfiles{$lang} .= " " . $file;
 	if ($is_english) {
-	    $version{"$lang/$file"} = get_cvs_version ("$config{'wmldir'}/$lang", "$file.wml");
+	    $version{"$lang/$file"} = get_cvs_version ($dir, "$file.wml");
 	} else {
-	    $version{"$lang/$file"} = get_translation_version ("$config{'wmldir'}/$lang", "$file.wml");
+	    $version{"$lang/$file"} = get_translation_version ($dir, "$file.wml");
 	}
 	$count++;
     }
@@ -200,20 +201,32 @@ sub check_translation
 }
 
 print "Collecting data in: " if ($config{'verbose'});
-getwmlfiles ('english');
-foreach $lang (keys %langs) {
+if ($opt_l) {
+  getwmlfiles ('english');
+  getwmlfiles ($opt_l);
+} else {
+  getwmlfiles ('english');
+  foreach $lang (keys %langs) {
     next if ($lang eq "english");
     getwmlfiles ($lang);
+  }
 }
 print "\n" if ($config{'verbose'});
 
 # =============== Create HTML files ===============
-mkdir ($config{'htmldir'}, 2775) if (! -d $config{'htmldir'});
+mkdir ($config{'htmldir'}, 02775) if (! -d $config{'htmldir'});
 
 @sorted_english = sort (split (/ /, $wmlfiles{'english'}));
 
 print "Creating files: " if ($config{'verbose'});
-foreach $lang (sort (keys %langs)) {
+my @search_in = ();
+if ($opt_l) {
+  push @search_in, 'english';
+  push @search_in, $opt_l;
+} else {
+  @search_in = sort keys %langs;
+}
+foreach $lang (@search_in) {
     $l = $langs{$lang};
     print "$l.html " if ($config{'verbose'});
     $l = "zh-cn" if ($l eq "zh"); # kludge
@@ -319,7 +332,7 @@ printf HTML "<h1 align=center>%s</h1>\n", $config{'title'};
 print HTML $border_head;
 print HTML "<table width=100% border=0 bgcolor=\"#cdc9c9\">\n";
 print HTML "<tr><th>Language</th><th>Translations</th><th>Up to date</th><th>Outdated</th><th>Not translated</th></tr>\n";
-foreach $lang (sort (keys %langs)) {
+foreach $lang (@search_in) {
     $l = $langs{$lang};
     $l = "zh-cn" if ($l eq "zh"); # kludge
 
