@@ -151,7 +151,7 @@ sub build_cache {
     $self->{cache}->{versions_list} = [ $self->get_version_list ];
     $self->{cache}->{arch_versions} = { $self->get_arch_versions( \@archs ) };
 
-    foreach my $f ( qw( archive section uploaders
+    foreach my $f ( qw( archive section uploaders priority essential
 			size installed-size distribution subdistribution 
 			maintainer source filename md5sum ) )
     {
@@ -204,9 +204,12 @@ sub add_version {
 
     # we do not save the description, only the md5sum
     # the db is responsible for saving the description
-    if ( exists $data->{description} ) {
+    if ( $data->{description} ) {
 	$data->{'description-md5'} =
 	    Digest::MD5::md5_hex( $data->{description} );
+    } else {
+    	$self->_warn( "add_version:$name: no description found\n" );
+	$data->{'description-md5'} = "";
     }
     delete $data->{description};
 
@@ -257,12 +260,12 @@ sub add_version {
 		 || ( ! $a_self->{$k} )
 		 || ( $a_self->{$k} ne $data->{$k} ) ) {
 		my $oldval = $a_self->{$k} ? $a_self->{$k} : ""; # supress warning
-		#unless( $name && $k && $oldval ) {
-		#    print Dumper( $data );
-		#    die;
-		#}
+#		unless( $name && $k && defined($oldval) && $data->{$k} ) {
+#		    print Dumper( $data, $name, $k, $oldval );
+#		    die;
+#		}
 		$self->_debug( "add_version:$name: replacing $k\n"
-		    . "\t$oldval => $data->{$k}" );
+			       . "\t$oldval => $data->{$k}" );
 		$a_self->{$k} = $data->{$k};
 	    }
 	}
@@ -279,52 +282,37 @@ sub add_version {
 
 =pod
 
-=item C<add_provided_by>,C<add_enhanced_by>
+=item C<add_reverse_rel>
 
 FIXME
 
 =cut
 
-sub add_provided_by {
-    my $self = shift;
-    my $pkg = shift;
+sub add_reverse_rel {
+    my ( $self, $rel, $pkg, $version, $arch, $constraint ) = @_;
+
+    $constraint ||= "";
 
     if ( $self->is_locked ) {
 	$self->_error( "add_provided_by: db is locked" );
 	return 0;
     }
 
-    $self->_debug( "add provided_by( $pkg ) to $self->{package}" );
-    $self->{provided_by} = [] unless exists $self->{provided_by};
-    push @{$self->{provided_by}}, $pkg 
-	if _not_member( $pkg, $self->{provided_by} );
+    $self->_debug( "add reverse rel $rel from $self->{package} to $pkg" );
+
+    $self->{rr}{$rel} = {} unless exists $self->{rr}{$rel};
+    $self->{rr}{$rel}{$pkg}{$version}{$arch} = []
+	unless exists $self->{rr}{$rel}{$pkg}{$version}{$arch};
+    push @{$self->{rr}{$rel}{$pkg}{$version}{$arch}}, $constraint;
 }
 
-sub _not_member {
-    my ( $str, $array ) = @_;
+=pod
 
-    foreach ( @$array ) {
-	if ( $_ eq $str ) {
-	    return 0;
-	}
-    }
-    return 1;
-}
+=item C<delete_version>
 
-sub add_enhanced_by {
-    my $self = shift;
-    my $pkg = shift;
-    my $version = shift;
+FIXME
 
-    if ( $self->is_locked ) {
-	$self->_error( "add_enhanced_by: db is locked" );
-	return 0;
-    }
-
-    $self->_debug( "add enhanced_by( $pkg ) to $self->{package}" );
-    $self->{enhanced_by} = {} unless exists $self->{enhanced_by};
-    $self->{enhanced_by}->{$pkg} = $version;
-}
+=cut
 
 sub delete_version {
     my $self = shift;
@@ -335,7 +323,7 @@ sub delete_version {
 	return 0;
     }
 
-    return delete $self->{versions}->{$version};
+    return delete $self->{versions}{$version};
 }
 
 # ======================
@@ -351,8 +339,8 @@ sub is_virtual {
     my $self = shift;
 
     if ( ! %{$self->{versions}}
-	 && ( exists $self->{provided_by}
-	      || exists $self->{enhanced_by} ) ) {
+	 && ( exists $self->{rr}{provides}
+	      || exists $self->{rr}{enhances} ) ) {
 	return 1;
     }
     return 0;

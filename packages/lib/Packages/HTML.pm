@@ -53,6 +53,67 @@ sub header {
 	$title_in_header = '';
     }
 
+    my $search_in_header = '';
+    $params{print_search_field} ||= "";
+    if ($params{print_search_field} eq 'packages') {
+	my %values = %{$params{search_field_values}};
+	$logo_align ='left';
+	my %checked_searchon = ( names => "",
+				 all => "",
+				 sourcenames => "", );
+	$checked_searchon{$values{searchon}} = "checked=\"checked\"";
+	$search_in_header = <<MENU;
+<td align="left" valign="middle">
+<form method="GET" action="http://packages.debian.org/cgi-bin/search_packages.pl">
+<input type="text" size="30" name="keywords" value="$values{keywords}" id="kw" />
+<input type="submit" value="Search">
+<span style="font-size: 60%"><a href="http://packages.debian.org/#search_packages">Full options</a></span>
+<br>
+<div style="font-size: 80%">Search on:
+<input type="radio" name="searchon" value="names" id="onlynames" $checked_searchon{names}>
+<label for="onlynames">Package names only</label>&nbsp;&nbsp;
+<input type="radio" name="searchon" value="all" id="descs" $checked_searchon{all}>
+<label for="descs">Descriptions</label>
+<br>
+<input type="radio" name="searchon" value="sourcenames" id="src" $checked_searchon{sourcenames}>
+<label for="src">Source package names</label>
+</div>
+</form>
+</td>
+MENU
+;
+    } elsif ($params{print_search_field} eq 'contents') {
+	my %values = %{$params{search_field_values}};
+	$logo_align ='left';
+	my %checked_searchmode = ( searchfiles => "",
+				   searchfilesanddirs => "",
+				   searchword => "",
+				   filelist => "", );
+	$checked_searchmode{$values{searchmode}} = "checked=\"checked\"";
+	$search_in_header = <<MENU;
+<td align="left" valign="middle">
+<form method="GET" action="http://packages.debian.org/cgi-bin/search_contents.pl">
+<input type="text" size="30" name="word" id="keyword" value="$values{keyword}">&nbsp;
+<input type="submit" value="Search">
+<span style="font-size: 60%"><a href="http://packages.debian.org/#search_contents">Full options</a></span>
+<br>
+<div style="font-size: 80%">Display:
+<input type=radio name="searchmode" value="searchfiles" id="searchfiles" $checked_searchmode{searchfiles}>
+<label for="searchfiles">files</label>
+<input type=radio name="searchmode" value="searchfilesanddirs" id="searchfilesanddirs" $checked_searchmode{searchfilesanddirs}>
+<label for="searchfilesanddirs">files &amp; directories</label>
+<br>
+<input type=radio name="searchmode" value="searchword" id="searchword" $checked_searchmode{searchword}>
+<label for="searchword">subword matching</label>
+<input type=radio name="searchmode" value="filelist" id="filelist" $checked_searchmode{filelist}>
+<label for="filelist">content list</label>
+</div>
+</form>
+</td>
+MENU
+;
+    }
+
     my $keywords = $params{keywords} || '';
     my $KEYWORDS_LINE = "<meta name=\"Keywords\" content=\"debian, $keywords $title_keywords\">";
     
@@ -60,7 +121,7 @@ sub header {
     my $img_lang = $img_trans{$LANG} || $LANG;
     my $charset = get_charset($LANG);
     my $txt = <<HEAD;
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html lang="$LANG">
 <head>
 <title>Debian GNU/Linux -- $title_tag</title>
@@ -82,6 +143,7 @@ HEAD
 		 width => 179, height => 61 );
     $txt .= <<NAVBEGIN;
 </td>
+$search_in_header
 $title_in_header
 </tr>
 </table>

@@ -13,14 +13,15 @@
 
 require 5.001;
 use strict;
-use CGI;
+use CGI qw( -oldstyle_urls );
 use POSIX;
 use URI::Escape;
+use HTML::Entities;
 
 use lib "../lib";
 
 use Deb::Versions;
-use Packages::Search;
+use Packages::Search qw( :all );
 use Packages::HTML ();
 
 my $thisscript = "search_packages.pl";
@@ -38,11 +39,6 @@ print $input->header;
 # If you want, just print out a list of all of the variables and exit.
 # print $input->dump;
 # exit;
-
-print Packages::HTML::header( title => 'Package Search Results' ,
-			      lang => 'en',
-			      title_tag => 'Debian Package Search Results',
-			      print_title_above => 1 );
 
 my %params_def = ( keywords => { default => undef, match => '^\s*([-+\@\w\/.:]+)\s*$' },
 		   version => { default => 'stable', match => '^(\w+)$',
@@ -71,11 +67,31 @@ $exact = !$subword unless defined $exact;
 my $searchon = $params{values}{searchon}{final};
 my $releases = $params{values}{release}{final};
 my $arch = $params{values}{arch}{final};
+my $page = $params{values}{page}{final};
+my $results_per_page = $params{values}{number}{final};
 
 # for URL construction
 my $version_param = $params{values}{version}{no_replace};
 my $releases_param = $params{values}{release}{no_replace};
 my $arch_param = $params{values}{arch}{no_replace};
+
+# for output
+my $keyword_enc = encode_entities $keyword;
+my $searchon_enc = encode_entities $searchon;
+my $version_enc = encode_entities $version_param;
+my $releases_enc = encode_entities $releases_param;
+my $arch_enc = encode_entities $arch_param;
+
+print Packages::HTML::header( title => 'Package Search Results' ,
+			      lang => 'en',
+			      title_tag => 'Debian Package Search Results',
+			      print_title_above => 1,
+			      print_search_field => 'packages',
+			      search_field_values => { 
+				  keywords => $keyword_enc,
+				  searchon => $searchon,
+				  },
+			      );
 
 # read the configuration
 my $topdir;
@@ -163,6 +179,21 @@ my $command = "find $fdir -name $file|xargs ".$grep;
 
 my @results = qx( $command );
 
+my $dist_wording = $version_param eq "all" ? "all distributions"
+    : "distribution <em>$version_enc</em>";
+my $section_wording = $releases_param eq 'all' ? "all sections"
+    : "section <em>$releases_enc</em>";
+my $arch_wording = $arch_param eq 'any' ? "all architectures"
+    : "architecture <em>$arch_enc</em>";
+if (($searchon eq "names") || ($searchon eq 'sourcenames')) {
+    my $source_wording = $search_on_sources ? "source " : "";
+    my $exact_wording = $exact ? "named" : "that names contain";
+    print "<p>You have searched for ${source_wording}packages $exact_wording <em>$keyword_enc</em> in $dist_wording, $section_wording, and $arch_wording.</p>";
+} else {
+    my $exact_wording = $exact ? "" : " (including subword matching)";
+    print "<p>You have searched for <em>$keyword_enc</em> in packages names and descriptions in $dist_wording, $section_wording, and $arch_wording$exact_wording.</p>";
+}
+
 if (!@results) {
   my $keyword_esc = uri_escape( $keyword );
   my $printed = 0;
@@ -172,7 +203,7 @@ if (!@results) {
 	  && ($releases_param eq 'all')) {
 	  print "<p><strong>Can't find that package.</strong></p>\n";
       } else {
-	  print "<p><strong>Can't find that package, at least not in that distribution ($version_param, section $releases_param)".( $search_on_sources ? "" : " and on that architecture ($arch_param)" ).".</strong></p>\n";
+	  print "<p><strong>Can't find that package, at least not in that distribution ".( $search_on_sources ? "" : " and on that architecture" ).".</strong></p>\n";
       }
 
     if ($exact) {
@@ -205,10 +236,10 @@ my (@colon, $package, $pkg_t, $section, $ver, $foo, $binaries);
 unless ($search_on_sources) {
     foreach my $line (@results) {
 	@colon = split (/:/, $line);
-	($pkg_t, $section, $ver, $foo) = split (/ /, $#colon >1 ? $colon[1].":".$colon[2]:$colon[1], 4);
+	($pkg_t, $section, $ver, $arch, $foo) = split (/ /, $#colon >1 ? $colon[1].":".$colon[2]:$colon[1], 5);
 	$section =~ s,^(non-free|contrib)/,,;
 	$section =~ s,^non-US.*$,non-US,,;
-	my ($dist,$part,$arch) = $colon[0] =~ m,.*/([^/]+)/([^/]+)/Packages-([^\.]+)\.,; #$1=stable, $2=main, $3=alpha
+	my ($dist,$part,undef) = $colon[0] =~ m,.*/([^/]+)/([^/]+)/Packages-([^\.]+)\.,; #$1=stable, $2=main, $3=alpha
 
 	($package) = $pkg_t =~ m/^(.+)/; # untaint
 	$pkgs{$package}{$dist}{$ver}{$arch} = 1;
@@ -216,10 +247,15 @@ unless ($search_on_sources) {
 	$part{$package}{$dist}{$ver} = $part unless $part eq 'main';
 
 	$desc{$package}{$dist}{$ver} = find_desc ($package, $dist, $part) if (! exists $desc{$package}{$dist}{$ver});
-	
+
     }
 
+    my ( $start, $end) = multipageheader( scalar keys %pkgs );
+    my $count = 0;
+
     foreach my $pkg (sort keys %pkgs) {
+	$count++;
+	next if $count < $start or $count > $end;
 	printf "<h3>Package %s</h3>\n", $pkg;
 	print "<ul>\n";
 	foreach $ver (('stable','testing','unstable','experimental')) {
@@ -259,7 +295,12 @@ unless ($search_on_sources) {
 
     }
 
+    my ( $start, $end) = multipageheader( scalar keys %pkgs );
+    my $count = 0;
+
     foreach my $pkg (sort keys %pkgs) {
+	$count++;
+	next if ($count < $start) or ($count > $end);
 	printf "<h3>Source package %s</h3>\n", $pkg;
 	print "<ul>\n";
 	foreach $ver (('stable','testing','unstable','experimental')) {
@@ -290,6 +331,55 @@ print "<hr>\n";
 &printfooter;
 
 exit;
+
+sub multipageheader {
+    my $no_results = shift;
+
+    my ($start, $end);
+    if ($results_per_page =~ /^all$/i) {
+	$start = 1;
+	$end = $no_results;
+	$results_per_page = $no_results;
+    } else {
+	$start = Packages::Search::start( \%params );
+	$end = Packages::Search::end( \%params );
+	if ($end > $no_results) { $end = $no_results; }
+    }
+
+    print "<p>Found <em>$no_results</em> matching packages,";
+    if ($end == $start) {
+	print " displaying package $end.</p>";
+    } else {
+	print " displaying packages $start to $end.</p>";
+    }
+
+    my $index_line;
+    if ($no_results > $results_per_page) {
+	
+	$index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $no_results)." | ".nextlink($input,\%params, $no_results);
+	
+	print "<center>$index_line</center>";
+    }
+
+    if ($no_results > 100) {
+	print "<p>Results per page: ";
+	my @resperpagelinks;
+	for (50, 100, 200) {
+	    if ($results_per_page == $_) {
+		push @resperpagelinks, $_;
+	    } else {
+		push @resperpagelinks, resperpagelink($input,\%params,$_);
+	    }
+	}
+	if ($params{values}{number}{final} =~ /^all$/i) {
+	    push @resperpagelinks, "all";
+	} else {
+	    push @resperpagelinks, resperpagelink($input, \%params,"all");
+	}
+	print join( " | ", @resperpagelinks )."</p>";
+    }
+    return ( $start, $end );
+}
 
 sub printfooter {
 print <<END;

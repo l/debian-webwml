@@ -15,6 +15,7 @@ use Packages::I18N::Locale;
 use Deb::Versions;
 
 require( 'sections.pl' );
+require( 'priorities.pl' );
 require( 'print_deps.pl' );
 require( 'index_pages.pl' );
 require( 'util.pl' );
@@ -29,6 +30,7 @@ my $SRC_BUG_URL = 'http://bugs.debian.org/src:';
 my $QA_URL = 'http://packages.qa.debian.org/';
 my $DL_URL = '/cgi-bin/download.pl';
 my $POLICY_URL = 'http://www.debian.org/doc/debian-policy/';
+my $DDPO_URL = 'http://qa.debian.org/developer.php?login=';
 
 my $files;
 
@@ -83,7 +85,7 @@ sub print_virt_pack {
     $package_page .= sprintf( "<h2>".gettext( "Packages providing %s:" )."</h2>",
 			      $name );
     $package_page .= "<dl>\n";
-    foreach my $p ( @{$pkg->{provided_by}} ) {
+    foreach my $p ( keys %{$pkg->{rr}{provides}} ) {
 	my $p_pkg = $env->{db}->get_pkg( $p );
 
 	if ( $p_pkg ) {
@@ -132,6 +134,10 @@ sub package_pages_walker {
 					       $env->{archs} );
 	my %sections = $pkg->get_arch_fields( 'section', 
 					      $env->{archs} );
+	my %priorities = $pkg->get_arch_fields( 'priority', 
+						$env->{archs} );
+	my %essential = $pkg->get_arch_fields( 'essential', 
+					       $env->{archs} );
 	my %archives = $pkg->get_arch_fields( 'archive', 
 					      $env->{archs} );
 	my %subdists = $pkg->get_arch_fields( 'subdistribution', 
@@ -148,9 +154,11 @@ sub package_pages_walker {
 						$env->{archs} );
 	my %inst_sizes = $pkg->get_arch_fields( 'installed-size',
 						$env->{archs} );
-	my ( $section, $archive, 
+	my ( $section, $archive, $priority, $essential,
 	     $sourcepackage, $src_version, $subdist, $maintainer );
 	$section = $sections{max_unique};
+	$priority = $priorities{max_unique} || "";
+	$essential = $essential{max_unique} || "";
 
 	my $dirname = "$env->{dest_dir}/$section";
 	my $filename = "$dirname/$name.$env->{lang}.html";
@@ -372,11 +380,12 @@ sub package_pages_walker {
 	$package_page .= "<small>".gettext( "Source Package:" );
 	$package_page .= " <a href=\"../source/$sourcepackage\">$sourcepackage</a>, ".gettext( "Download" ).":\n";
 
+	my @source_files;
 	if ( $src_pkg ) {
 	    my $sf = $src_pkg->{versions}->{$src_version}->{files};
 	    my $source_dir = $src_pkg->{versions}->{$src_version}->{directory};
 	    $sf =~ s/\A\s*//o; # remove leading spaces
-	    my @source_files = split( /\n\s*/, $sf );
+	    @source_files = split( /\n\s*/, $sf );
 	    foreach( @source_files ) {
 		my ($src_file_md5, $src_file_size, $src_file_name) = split( /\s+/, $_ );
 		if ($is_security) {
@@ -413,7 +422,7 @@ sub package_pages_walker {
 	    $package_page .= "<br><small>".sprintf( gettext( "View the <a href=\"%s\">Debian changelog</a>" ), "$CHANGELOG_URL/$source_dir/$src_basename/changelog" )."</small><br>\n";
 	    $package_page .= "<small>".sprintf( gettext( "View the <a href=\"%s\">copyright file</a>" ), "$COPYRIGHT_URL/$source_dir/$src_basename/$name.copyright" )."</small><br>\n";
 	}
-					    
+
 	#
 	# Maintainer and PTS
 	#
@@ -426,11 +435,12 @@ sub package_pages_walker {
 				      );
 	} else {
 	    my $up_str = "<a href=\"mailto:$maint_email\">$maint_name</a> ";
+	    my @uploaders_str;
 	    foreach (@uploaders) {
-		$_ = "<a href=\"mailto:$_->[1]\">$_->[0]</a>";
+		push @uploaders_str, "<a href=\"mailto:$_->[1]\">$_->[0]</a>";
 	    }
-	    my $last_up = pop @uploaders;
-	    $up_str .= ", ".join ", ", @uploaders if @uploaders;
+	    my $last_up = pop @uploaders_str;
+	    $up_str .= ", ".join ", ", @uploaders_str if @uploaders_str;
 	    $up_str .= sprintf( gettext( " and %s are responsible for this Debian package." ), $last_up );
 	    $package_page .= "<p><small>$up_str</small>\n";
 	}
@@ -456,6 +466,78 @@ sub package_pages_walker {
 	# write file
 	#
 	$files->update_file( $filename, $package_page );
+
+	#
+	# create data sheet
+	#
+	if ($env->{lang} eq 'en') {
+
+	    my $data_sheet = header( title => "$name -- Data sheet",
+				     lang => "en",
+				     desc => $short_desc,
+				     keywords => "$env->{distribution}, $subdist_kw, $archive, $section, size:$size_kw $version" );	    
+	    $data_sheet .= "<div align=\"center\"><h1>$name";
+	    if ( $subdist ) {
+		$data_sheet .=  " [<font color=\"red\">$subdist</font>]\n";
+	    }
+	    if ( $archive && ( $archive ne 'main' ) ) {
+		$data_sheet .=  " [<font color=\"red\">$archive</font>]\n";
+	    }
+	    $data_sheet .= "</h1></div>\n";
+
+	    $data_sheet .= "<table><tbody>";
+	    $data_sheet .= "<tr><td>".gettext( "Version" ).":</td>\n".
+		"<td>$v_str</td></tr>";
+	    $data_sheet .= "<tr><td>".gettext( "Maintainer" ).":</td>\n"
+		."<td><a href=\"$DDPO_URL".uri_escape($maint_email)."\">$maint_name</a></td></tr>";
+	    if (@uploaders) {
+		$data_sheet .= "<tr><td>".gettext( "Uploaders" ).":</td>\n";
+		my @uploaders_str;
+		foreach (@uploaders) {
+		    push @uploaders_str, "<a href=\"$DDPO_URL".uri_escape($_->[1])."\">$_->[0]</a>";
+		}
+		$data_sheet .= "<td>".join( ", ", @uploaders_str )."</td></tr>";
+	    }	    
+	    $data_sheet .= "<tr><td>".gettext( "Section" ).":</td>\n".
+		"<td><a href=\"../$section/\">$section</a></td></tr>";
+	    $data_sheet .= "<tr><td>".gettext( "Priority" ).":</td>\n".
+		"<td><a href=\"../$priority\">$priority</a></td></tr>";
+	    $data_sheet .= "<tr><td>".gettext( "Essential" ).":</td>\n".
+		"<td><a href=\"../essential\">".gettext("yes")."</a></td></tr>"
+		if $essential && ( $essential =~ /yes/i );
+	    $data_sheet .= "<tr><td>".gettext( "Source package" ).":</td>\n"
+		."<td><a href=\"../source/$sourcepackage\">$sourcepackage</a></td></tr>";
+	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Depends' );
+	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Recommends' );
+	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Suggests' );
+	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Enhances' );
+	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Conflicts' );
+	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Provides' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Depends' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Recommends' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Suggests' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Enhances' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Provides' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Conflicts' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Build-Depends' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Build-Depends-Indep' );
+	    $data_sheet .= print_reverse_rel_ds( $env, $pkg, \%versions, 'Build-Conflicts' );
+
+#	    if ( $name eq 'libc6' ) {
+#		use Data::Dumper;
+#		print STDERR Dumper( $pkg );
+#	    }
+
+	    $data_sheet .= "</tbody></table>";
+	    
+	    $data_sheet .= trailer( '../..', $name );
+
+	    my $ds_filename = "$dirname/ds_$name.$env->{lang}.html";
+	    #
+	    # write file
+	    #
+	    $files->update_file( $ds_filename, $data_sheet );
+	}
     }
 
 sub src_package_pages_walker {
@@ -689,6 +771,7 @@ sub write_pages {
 	}
 	my $num_descs = $db->get_stats_val( 'num_descriptions' );
 	my %sections = create_sections();
+	my %priorities = create_priorities();
 	foreach my $l ( @$langs ) {
 	    my $locale = get_locale($l);
 	    print "processing language $l (locale $locale)\n" unless $opts->{quiet};
@@ -703,7 +786,7 @@ sub write_pages {
 		    };
 	    print "writing distribution indices\n" unless $opts->{quiet};
 	    $p_counter = 0;
-	    write_all_package( $db, \%sections, $archs, 
+	    write_all_package( $db, \%sections, \%priorities, $archs, 
 			       $dest_dir, $dist, $l, $opts, $langs );
 	    print "\n" if $opts->{progress};
 	    print "writing pages for individual packages\n" unless $opts->{quiet};
@@ -737,10 +820,12 @@ sub write_pages {
     }
 
 sub write_all_package {
-	my ( $db, $sections, $archs, $dest_dir, 
+	my ( $db, $sections, $priorities, $archs, $dest_dir, 
 	     $distro, $lang, $opts, $langs ) = @_;
 
 	my %si = ();
+	my %pi = ();
+	my $ei = "";
 	my $experimental_note = "<p>".gettext( "Warning: The <font color=\"red\">experimental</font> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk." )."</p>\n";
 	my $installer_note = "<p>".gettext( "Warning: These packages are intended for the use in building <a href=\"http://www.debian.org/devel/debian-installer/\">debian-installer</a> images only. Do not install them on a normal Debian system.")."</p>";
 
@@ -756,6 +841,35 @@ sub write_all_package {
 		$si{$_} .= $installer_note;
 	    }
 	    $si{$_} .= "<dl>\n";
+	}
+
+	my @priorities = sorted_priorities();
+	foreach ( @priorities ) {
+	    my $priority_header;
+	    foreach my $hp ( @priorities ) {
+		if ( $hp ne $_ ) {
+		    $priority_header .= "[<a href=\"$hp\">$hp</a>]&nbsp;";
+		} else {
+		    $priority_header .= "[$hp]&nbsp;";
+		}
+	    }
+	    my $title = sprintf( gettext ( "Software Packages in \"%s\", priority %s" ), 
+				 $distro, $_ );
+	    $pi{$_} = header( title => $title, lang => $lang );
+	    $pi{$_} .= "$priority_header\n";
+	    $pi{$_} .= "<h1>$title</h1>\n";
+	    if ($distro eq "experimental") {
+		$pi{$_} .= $experimental_note;
+	    }
+	    $pi{$_} .= "<dl>\n";
+	}
+	if ($distro ne 'experimental') {
+            # no index of essential packages for experimental
+	    my $title = sprintf( gettext ( "Software Packages in \"%s\", essential packages" ), 
+				 $distro );
+	    $ei .= header( title => $title, lang => $lang,
+			   print_title_below => 1 );
+	    $ei .= "<dl>\n";
 	}
 
 	my $all_title = sprintf( gettext( "All Debian Packages in \"%s\"" ),
@@ -774,7 +888,8 @@ sub write_all_package {
 	walk_db_packages( $db, &package_index_walker, 
 			  { all_package => \$all_package, db => $db,
 			    all_pkg_txt => \$all_pkg_txt, opts => $opts,
-			    lang => $lang, si => \%si, archs => $archs } );
+			    lang => $lang, si => \%si, pi => \%pi,
+			    ei => \$ei, archs => $archs } );
 
 	foreach ( keys %$sections ) {
 	    $si{$_} .= "</dl>\n";
@@ -782,6 +897,20 @@ sub write_all_package {
 	    my $dirname = "$dest_dir/$_";
 	    my $filename = "$dirname/index.$lang.html";
 	    $files->update_file( $filename, $si{$_} );
+	}
+	foreach ( keys %$priorities ) {
+	    $pi{$_} .= "</dl>\n";
+	    $pi{$_} .= trailer( '..', $_, $lang, @$langs );
+	    my $dirname = "$dest_dir";
+	    my $filename = "$dirname/$_.$lang.html";
+	    $files->update_file( $filename, $pi{$_} );
+	}
+	if ($distro ne 'experimental') {
+	    $ei .= "</dl>\n";
+	    $ei .= trailer( '..', 'essential', $lang, @$langs );
+	    my $dirname = "$dest_dir";
+	    my $filename = "$dirname/essential.$lang.html";
+	    $files->update_file( $filename, $ei );
 	}
 	
 	$all_package .= "</dl>\n";

@@ -89,9 +89,6 @@ sub get_arch_versions {
 sub get_arch_fields {
     die "invalid operation";
 }
-sub add_enhanced_by {
-    die "invalid operation";
-}
-sub add_provided_by {
+sub add_reverse_rel {
     die "invalid operation";
 }
