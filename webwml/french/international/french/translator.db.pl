@@ -175,7 +175,7 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
-                'dfstf' =>  {
+                'DFS Task Force' =>  {
                         email       => 'dfstf@dsa.tuxfamily.org',
                         summary     => 2,
                         logs        => 2,
