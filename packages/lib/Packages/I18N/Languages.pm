@@ -8,7 +8,7 @@ use strict;
 use warnings;
 
 our @ISA = qw( Exporter );
-our @EXPORT = qw( langcmp get_transliteration );
+our @EXPORT = qw( langcmp get_transliteration get_selfname );
 
 # language directory name => ISO 639 two-letter code for the language name
 my %langs = (
@@ -101,19 +101,17 @@ my %translit2 = (
 		 cs    => "cesky",
 );
 
-my %sorted_langs;
-
 sub langcmp {
   my ($first, $second) = ($a, $b);
 
   # Handle sorting of non-latin characters
   # If there is a transliteration for this language available, use it
-  $first = $translit{$sorted_langs{$a}} if defined $translit{$sorted_langs{$a}};
-  $second = $translit{$sorted_langs{$b}} if defined $translit{$sorted_langs{$b}};
+  $first = $translit{$a} if defined $translit{$a};
+  $second = $translit{$b} if defined $translit{$b};
 
   # Then handle special cases (initial latin letters with diacritics)
-  $first = $translit2{$sorted_langs{$a}} if defined $translit2{$sorted_langs{$a}};
-  $second = $translit2{$sorted_langs{$b}} if defined $translit2{$sorted_langs{$b}};
+  $first = $translit2{$a} if defined $translit2{$a};
+  $second = $translit2{$b} if defined $translit2{$b};
 
   # Put remaining entity-only names last in the list
   if (substr($first,0,1) eq '&')
@@ -128,6 +126,11 @@ sub langcmp {
   #    Perl 5.005 so we need those extra variables.
   my ($ufirst, $usecond) = (uc($first), uc($second));
   return $ufirst cmp $usecond;
+}
+
+sub get_selfname {
+    return $selflang{$_[0]} if exists $selflang{$_[0]};
+    return undef;
 }
 
 sub get_transliteration {
