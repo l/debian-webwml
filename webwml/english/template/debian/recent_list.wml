@@ -1,5 +1,6 @@
 #use wml::debian::ctime
 #use wml::debian::common_tags
+#use wml::debian::legal_tags
 #use wml::debian::openrecode
 
 <define-tag noitemsforthisyear whitespace=delete>
@@ -116,25 +117,26 @@ sub get_recent_list {
     
     #warn scalar gmtime($since_date) . " - " . scalar gmtime() . "\n";
 
+<protect pass="2">
     if ($format =~ order) {
 	$listhead = '<ol>';
 	$listfoot = '</ol>';
 	$elemhead = '<li>';
 	$elemfoot = '- ';
-	$elemrealfoot = '';
+	$elemrealfoot = '</li>';
     } elsif ($format =~ bullet) {
 	$listhead = '<ul>';
 	$listfoot = '</ul>';
 	$elemhead = '<li>';
 	$elemfoot = '- ';
-	$elemrealfoot = '';
+	$elemrealfoot = '</li>';
     } elsif ($format =~ list) {
 	$listhead = '<dl>';
 	$listhead = '<dl compact>' if $format eq "cdeflist";
 	$listfoot = '</dl>';
 	$elemhead = '<dt>';
-	$elemfoot = '<dd>';
-	$elemrealfoot = '';
+	$elemfoot = '</dt><dd>';
+	$elemrealfoot = '</dd>';
     } elsif ($format =~ table) {
 	$listhead = '<table>';
 	$listfoot = '</table>';
@@ -149,6 +151,7 @@ sub get_recent_list {
 	$elemfoot = '- ';
 	$elemrealfoot = '';
     }
+</protect>
 
     my @files;
 
@@ -215,10 +218,12 @@ sub grab_titles {
 	my $fh = openrecode($file, $trans_title, "$eng_dir/$file")
 	    or die "couldn't open $eng_dir/$file: $!\n";
 	my $content;
+	<protect pass=2>
 	{
 	    local $/;
 	    $content = <$fh>;
 	}
+	</protect>
 	close $fh;
 
 	# decide, if we reading a event file,
@@ -237,7 +242,7 @@ sub grab_titles {
 	 }
 
 	my ($title, $date, $rdate, $rvdate, $hdate, $desc, $status, 
-	    $where, $moreinfo, $startdate, $enddate, $repfile);
+	    $where, $moreinfo, $startdate, $enddate, $repfile, $just);
 	my (@hdate, @rdate) = ();
 	<protect pass=2>
 	if ($content =~ /^<define-tag pagetitle>\s*(.*?)\s*<\/define-tag>$/ms) {
@@ -250,6 +255,8 @@ sub grab_titles {
 	    $date = qq/$1/; }       # events
 	if ($content =~ /^<define-tag description>(.*?)<\/define-tag>$/ms) {
 	    $desc = qq/$1/; }       # security
+	if ($content =~ /^<define-tag justification>\s*(.*?)\s*<\/define-tag>$/ms) {
+	    $just = qq/$1/; }      # licenses
 	if ($content =~ /^<define-tag moreinfo>(?:(.*?<\/p>)|(.*?)<\/define-tag>)$/ms) {
 	    $moreinfo = qq/$1/; }   # dsa-long.XX.rdf
 	if ($content =~ /^<define-tag status>(.*?)<\/define-tag>$/ms) {
@@ -325,7 +332,7 @@ sub grab_titles {
                 # HTML tags
                 $moreinfo =~ s/</&lt;/g;
                 $moreinfo =~ s/>/&gt;/g;
-                $moreinfo =~ s/"/&quot;/g;
+                $moreinfo =~ s/"/&quot;/g; #"
                 # WML continuation
                 $moreinfo =~ s/\\\n//g;
                 </protect>
@@ -348,12 +355,46 @@ sub grab_titles {
 		$str1 = $str1[0];
 	    }
 	}
+        elsif ($just) { # for licenses/
+	    # read in datafile
+	    open DATAFILE, "$eng_dir/$base.data" 
+		or do {
+		    warn "couldn't open $eng_dir/$base.data: $!\n";
+		    next;
+		};
+	    <protect pass=2>
+             my ( $free, $l_name );
+	     foreach my $l (<DATAFILE>) {
+		 if ($l =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) 
+		 { $title = qq/$1/; }
+		 if ($l =~ /^<define-tag license-name>(.*)<\/define-tag>$/) 
+		 { $l_name = qq/$1/; }
+		 elsif ($l =~ /^<define-tag report_date>(.*)<\/define-tag>$/) 
+		 { $rdate = qq/$1/; }
+		 elsif ($l =~ /^<define-tag isfree>(.*)<\/define-tag>$/) 
+		 { $free = qq/$1/; }
+	     }
+	    </protect>
+	    close DATAFILE;
+            $rdate = newsdate($rdate);
+            if ($free eq 'yes') {
+                $free = '<dls-result isfree="yes" />';
+            } elsif ($free eq 'no') {
+                $free = '<dls-result isfree="no" />';
+            } elsif ($free eq 'non-dist') {
+                $free = '<dls-result isfree="non-dist" />';
+            }
+            $str1 = "$elemhead<tt>[$rdate]</tt> "
+                ."<strong><a href=\"$base\">$title</a></strong>$elemfoot "
+                ."$l_name &ndash; $free<br />$elemrealfoot\n";
+        }
 	elsif ($title && $date && !$is_events) { # for News/ and not events/
 	    $date = newsdate($date);
 	    $str1 = "$elemhead<tt>[$date]</tt> "
 		."<strong><a href=\"$base\">$title</a></strong><br />" 
 		."$elemrealfoot\n";
 	}
+
 	elsif ($title && $status) { # for vote/
 	    $str1 = "$elemhead<a href=\"$base\">$title</a> &mdash; ";
 	    if ( $status eq "P" ) { $str1 .= "<proposed/>"; }
@@ -392,7 +433,7 @@ sub grab_titles {
 		($str{$hdate[0]} = $str1[0] . $str{$hdate[0]}) =~ s/NEW_REVISION//;
 		for (1..$#str1) {
 		    ($str{$hdate[$_]} = $str1[$_] . $str{$hdate[$_]}) 
-			=~ s/NEW_REVISION/<new_revision>/;
+			=~ s,NEW_REVISION,<new_revision/>,;
 		    $count{$hdate[$_]}++;
 		}
 	    }
