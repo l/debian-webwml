@@ -1,7 +1,7 @@
 #use wml::debian::cdimage title="Debian-CD-Images mit jigdo herunterladen" BARETITLE=true
-#use wml::debian::translation-check translation="1.3"
-# Translator: Gerfried Fuchs <alfie@debian.org> 2002-01-19
+#use wml::debian::translation-check translation="1.4"
 # $Id$
+# Translator: Gerfried Fuchs <alfie@debian.org> 2002-01-19
 
 <p>Jigsaw Download, oder kurz <a href="http://atterer.net/jigdo/">jigdo</a>,
 beabsichtigt, in der Zukunft die Haupt-Art des Verteilens von Debian-CD-Images
@@ -20,9 +20,8 @@ einem Release.</p>
 <p>Natürlich bietet ein "normaler" Debian-Spiegel keine CD-Images, wie kann
 daher jigdo diese herunterladen? jigdo erreicht das, in dem es individuell
 alle Datein herunterladet, die auf der CD sind. Im nächsten Schritt werden
-all diese Dateien in einer grossen Datei zusammengefügt, die (wenn der Mond
-voll ist und Sie auf einem Bein gestanden sind, während Sie alte und
-beinah-vergessene Beschwörungen gesungen haben) eine exakte Kopie des
+all diese Dateien in einer grossen Datei zusammengefügt, die
+eine exakte Kopie des
 CD-Images ist. Wie auch immer, das alles passiert hinter der Bühne - alles,
 was <em>Sie</em> tun müssen, ist dem Werkzeug zum Herunterladen die Position
 einer "<tt>.jigdo</tt>"-Datei zu nennen, die es verarbeiten soll.</p>
@@ -90,10 +89,36 @@ MBs umsonst heruntergeladen?!</strong></p>
 Sie sich in einem Stadium befinden, wo bereits ein grosses "<tt>.iso.tmp</tt>"
 erstellt wurde und <tt>jigdo-lite</tt> anscheinend Probleme hat und Ihnen
 wiederholt sagt, dass Sie versuchen sollen, das Herunterladen neu zu starten.
-In diesem Moment ist die einzige Möglichkeit, die <em>nicht</em> das
-nochmalige Herunterladen aller Daten benötigt, auf
-<tt><a href="http://rsync.samba.org/">rsync</a></tt> zurück zu greifen.
-Benennen Sie die temporäre Datei von <tt>jigdo-lite</tt> um und löschen die
-"<tt>.tmp</tt>"-Erweiterung, und verwenden Sie dann einen der
-<a href="../mirroring/rsync-mirrors">rsync-Spiegel</a>, um die fehlenden Teile
-des Images zu holen.</p>
+Es gibt mehrere Möglichkeiten, die man in diesem Fall ausprobieren kann:</p>
+
+<ul>
+  <li>Einfach den Prozess des Herunterladens durch Drücken von Enter neu
+  starten. Es könnte sein, dass einige der Dateien nicht heruntergeladen
+  werden konnten aufgrund von Zeitüberschreitungen oder vorübergehenden
+  Fehlern - ein weiterer Versuch wird unternommen, um jegliche fehlenden
+  Dateien herunterzuladen.</li>
+
+  <li>Versuchen Sie einen anderen Spiegel. Einige Debian-Spiegel befinden sich
+  nicht ganz im Einklang - eventuell hat ein anderer Spiegel noch Dateien, die
+  auf dem, den Sie verwenden wollten, bereits gelöscht sind, oder er ist schon
+  mit Dateien aktualisiert, die noch nicht auf Ihrem Spiegel vorhanden
+  sind.</li>
+
+  <li>Holen Sie sich die fehlenden Teile des Images mit <tt><a
+  href="http://rsync.samba.org/">rsync</a></tt>. Zuerst müssen Sie die
+  tatsächliche URL des Images herausfinden, das Sie herunterladen: Wählen Sie
+  einen Server, der rsync-Zugriff auf die <a
+  href="../mirroring/rsync-mirrors">stable</a> oder <a
+  href="../http-ftp/#testing">testing</a> Images bietet, und finden Sie dann
+  den richtigen Pfad und Dateinamen heraus. Verzeichnis-Listen können über
+  Befehle wie
+  <tt>rsync&nbsp;rsync://cdimage.debian.org/debian-cd/</tt> erhalten
+  werden.<br>
+  Anschliessend löschen Sie die "<tt>.tmp</tt>" Erweiterung der
+  <tt>jigdo-lite</tt> Temporär-Datei durch umbenennen der Datei und übergeben
+  sowohl die entfernte URL als auch den lokalen Dateinamen an rsync:
+  <tt>rsync&nbsp;rsync://server.org/path/binary-i386-1.iso
+  binary-i386-1.iso</tt><br>
+  Sie möchten vielleicht die <tt>--verbose</tt> und <tt>--progress</tt>
+  Schalter von rsync verwenden.</li>
+</ul>
