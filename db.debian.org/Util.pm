@@ -278,6 +278,38 @@ sub CheckLatLong {
   }
 }
 
+sub FixParams {
+  my $query = shift;
+  my $key;
+  my @names = $query->param;
+
+  foreach $key (@names) { # web security is a joke ... <sigh>
+    $_ = $query->param($key);
+    s/&/&amp;/g; 
+    s/[<\x8B]/&lt;/g;
+    s/[>\x9B]/&gt;/g;
+
+    $query->param($key, $_);
+  }
+}   
+
+  
+sub LDAPUpdate {
+  my $ldap = shift;
+  my $dn = shift;
+  my $attr = shift;
+  my $val = shift;
+  my $mesg;
+  
+  if (!$val) {
+    $mesg = $ldap->modify($dn, delete => { $attr => [] });
+  } else {
+    $val = [ $val ] if (!ref($val));
+    $mesg = $ldap->modify($dn, replace => { $attr => $val });
+    $mesg->code && &Util::HTMLError("error updating $attr: ".$mesg->error);
+  }
+}
+
 ###################
 # Config file stuff
 sub ReadConfigFile {
@@ -299,22 +331,6 @@ sub ReadConfigFile {
   }
   close F;
   return %config;
-}
-
-sub LDAPUpdate {
-  my $ldap = shift;
-  my $dn = shift;
-  my $attr = shift;
-  my $val = shift;
-  my $mesg;
-  
-  if (!$val) {
-    $mesg = $ldap->modify($dn, delete => { $attr => [] });
-  } else {
-    $val = [ $val ] if (!ref($val));
-    $mesg = $ldap->modify($dn, replace => { $attr => $val });
-    $mesg->code && &Util::HTMLError("error updating $attr: ".$mesg->error);
-  }
 }
 
 1;
