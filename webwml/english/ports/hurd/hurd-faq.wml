@@ -1,0 +1,76 @@
+#use wml::debian::template title="Debian GNU/Hurd" NOHEADER="yes"
+[ <a href="..">Ports</a> ]
+[ <a href="index">Debian GNU/Hurd</a> ]
+[ <a href="hurd-news">News</a> ]
+[ <a href="hurd-install">Installation</a> ]
+[ <a href="hurd-doc">Documentation</a> ]
+[ <a href="hurd-port">Porting</a> ]
+[ <a href="hurd-task">Task Lists</a> ]
+[ <a href="hurd-links">Links</a> ]
+[ <a href="hurd-contact">Contact</a> ]<p>
+
+<h1>Debian GNU/Hurd</h1>
+<h2>Frequently Asked Questions (FAQ)</h2>
+<h3>... At Installation Time</h3>
+<P>
+<B>Question</B>:
+Which partition type should I use for my GNU/Hurd partition?</P>
+<p><b>Answer</b>:
+You should use an ext2 file system. Alternatively, you may
+use BSD style ufs. The partition type number for ext2fs is 0x83 (same as Linux),
+<em>not</em> 0x63 (GNU HURD). Thomas explains why 0x63 is the wrong choice:
+<quote>
+One day we may have a new filesystem format, which would probably be
+called the GNU Hurd filesystem format, and might well use that
+partition code.  Regardless, it is always an error to use that code
+for an ext2fs partition, as Roland points out.
+</quote>
+
+<p><b>Question</b>:
+How do I add a swap partition?</p>
+<p><b>Answer</b>:
+A swap partition is also called a paging file. Usually, it is sufficient to
+add the swap partition to <tt>/etc/fstab</tt> just as you would under Linux.
+You can swap to a Linux swap partition, and the Hurd will honour the Linux
+swap signature (both versions). But the Hurd will just as happily swap to
+any other raw disk space and overwrite anything it finds, so be careful!
+</p>
+<p>If you want to swap to a file, or make sure that it checks the Linux swap
+signature before, you need to edit <tt>/boot/servers.boot</tt>. The syntax
+is the partition device file name, plus optionally the swap file inside an
+ext2fs, followed by a space and then one of
+<tt>$(add-raw-paging-file)</tt>, </tt>$(add-linux-paging-file)</tt>,
+<tt>$(add-paging-file)</tt>. The first works with any partition/file and
+does not honour any swap sigature or other data. The second has a safety
+check and only works if a Linux swap signature can be found. The third looks
+for a swap signature first and falls back to raw paging if it couldn't find
+one. This is also the default for entries in <tt>/etc/fstab</tt>.
+</p>
+
+<h3>... When Something Breaks</h3>
+<p><b>Question</b>:
+What is a <tt>default pager</tt>, <tt>paging</tt>, and a
+<tt>pager request</tt>?</p>
+<p><b>Answer</b>:
+The default pager handles the virtual memory allocation. If it can't
+allocate a new memory page, because you are out of memory, some terrible
+things may happen. Whenever you get such errors you either need more memory
+or you have found a memory leak. Always add a swap partition.</p>
+
+<p><b>Question</b>:
+What is a <tt>Gratuitous error</tt>?</p>
+<p><b>Answer</b>:
+This is coming from <tt>strerror(EGRATUITOUS)</tt>. If you check glibc's
+documentation, it will say that this error code has no purpose <tt>:)</tt>.
+However, this is not quite true. You only< get this when something terrible
+happened. Thomas explains:
+<quote>
+More precisely EGRATUITOUS officially means that some server has
+responded in an impossible or protocol-violating fashion.  There are
+some cases in the Hurd where EGRATUITOUS is returned and probably
+something else should be chosen instead.
+</quote>
+If you can reproduce this error message, please report it. But <em>do
+not</em> report that accessing <tt>/dev/fd</tt> returns this error message,
+we already know that.
+</p>
