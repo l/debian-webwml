@@ -70,6 +70,8 @@ sub process
         {
             if (/^(.+)\t([0-9\.]+)$/)
             {
+            	print "Ghost entry $destination/$1\n"
+            		unless -f "$destination/$1";
                 if (defined $sourcefile{$1})
                 {
                     my ($file, $oldrev, $newrev) = ($1, $2, $sourcefile{$1});
@@ -83,6 +85,7 @@ sub process
                     {
                         $uptodate ++;
                     }
+		            delete $sourcefile{$1};
                 }
                 else
                 {
@@ -90,6 +93,11 @@ sub process
                     $unknown ++;
                 }
             }
+        }
+        foreach $untranslated (keys %sourcefile)
+        {
+        	print "Untranslated file: $destination/$untranslated ",
+        	      $sourcefile{$untranslated}, "\n";
         }
     }
     else
