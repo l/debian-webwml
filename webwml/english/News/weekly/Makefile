@@ -37,7 +37,6 @@ install:: $(HTMLDESTFILES)
 	install -d $(HTMLDIR)/current
 	-rm -f $(HTMLDIR)/current/issue
 	-ln -sf ../$(YEAR)/$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
-	install -d $(HTMLDIR)/1999/7/
 
 # This is used by the install rule, and I had to hack on it, overriding
 # Make.common to allow installation of files into subdirectories.
@@ -65,5 +64,5 @@ index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
 # be updated. The mail still requires slight edits.
 mail:	
 	@cat mail-header
-	@lynx -dump  http://www.debian.org/News/weekly/current/issue/ | \
+	@lynx -dump  http://www.debian.org/News/weekly/$(YEAR)/$(shell cat CURRENT-ISSUE-IS)/ | \
 		perl -pe 's/^\s\s?\s?//'
