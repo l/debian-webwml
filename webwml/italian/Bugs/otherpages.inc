@@ -10,5 +10,5 @@
   <li><a href="server-control">Informazioni agli sviluppatori sulla
       manipolazione delle segnalizioni tramite l'interfaccia e-mail.</a>
   <li><a href="server-refcard">Carta di riferimento per il mailserver.</a>
-  <li><a href="server-request">Aprire segnalazioni si e-mail.</a>
+  <li><a href="server-request">Richiedere segnalazioni via e-mail.</a>
 </ul>
