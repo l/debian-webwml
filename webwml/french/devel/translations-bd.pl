@@ -272,7 +272,7 @@ $translations = {
 	'type'			=> 'DDP',
 	'name'			=> 'Debian New Maintainer\'s Guide',
 	'status'		=> 'traduction à jour',
-	'since'			=> '31/08/1999',
+	'since'			=> '19/10/1999',
 	'translation_name'	=> 'Nouveau Guide du Responsable Debian',
 	'translation_maintainer'=> ['Frederic Dumont <Frederic.Dumont@gate71.be>'],
 	'translation_url'	=> 'http://www.info.fundp.ac.be/~fdumont/maint-guide_fr.html/index.html',
@@ -280,18 +280,18 @@ $translations = {
 	'last_translated'	=> '02/07/1998',
 },
 
-'' => {
+'internals' => {
 	'type'			=> 'DDP',
 	'name'			=> 'dpkg Internals Manual',
-	'revision'		=> '1.4.1',
+	'revision'		=> '1.2',
 	'url'			=> 'http://www.fr.debian.org/doc/packaging-manuals/dpkg-internals/',
 	'cvs_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/dpkg/dpkg/doc/internals.sgml',
 	'package'		=> 'dpkg-dev',
-	'status'		=> 'en cours de traduction',
-	'since'			=> '01/08/1998',
-	'translation_name'	=> '',
+	'status'		=> 'à relire',
+	'since'			=> '19/10/1999',
+	'translation_name'	=> 'Le manuel de l\'intérieur de dpkg',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
-	'base_revision'		=> '',
+	'base_revision'		=> '1.2',
 	'translation_package'	=> '',
 },
 
@@ -517,9 +517,9 @@ $translations = {
 'donations' => {
 	'type'			=> 'Web',
 	'status'		=> 'traduction à jour',
-	'since'			=> '28/11/1998',
+	'since'			=> '12/10/1999',
 	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
-	'last_translated'	=> '11/08/1998',
+	'last_translated'	=> '12/10/1999',
 },
 
 'index' => {
@@ -803,23 +803,23 @@ $translations = {
 'international/index' => {
 	'type'			=> 'Web',
 	'status'		=> 'traduction à jour',
-	'since'			=> '13/08/1999',
+	'since'			=> '16/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '13/08/1999',
 },
 
 'international/Chinese' => {
 	'type'			=> 'Web',
-	'status'		=> 'à relire',
-	'since'			=> '13/08/1999',
+	'status'		=> 'traduction à jour',
+	'since'			=> '16/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '13/08/1999',
 },
 
 'international/Finnish' => {
 	'type'			=> 'Web',
-	'status'		=> 'à relire',
-	'since'			=> '11/10/1999',
+	'status'		=> 'traduction à jour',
+	'since'			=> '16/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '13/08/1999',
 },
@@ -834,48 +834,48 @@ $translations = {
 
 'international/German' => {
 	'type'			=> 'Web',
-	'status'		=> 'à relire',
-	'since'			=> '06/09/1999',
+	'status'		=> 'traduction à jour',
+	'since'			=> '16/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '13/08/1999',
 },
 
 'international/Italian' => {
 	'type'			=> 'Web',
-	'status'		=> 'à relire',
-	'since'			=> '13/08/1999',
+	'status'		=> 'traduction à jour',
+	'since'			=> '16/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '13/08/1999',
 },
 
 'international/Japanese' => {
 	'type'			=> 'Web',
-	'status'		=> 'à relire',
-	'since'			=> '13/08/1999',
+	'status'		=> 'traduction à jour',
+	'since'			=> '16/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '13/08/1999',
 },
 
 'international/Korean' => {
 	'type'			=> 'Web',
-	'status'		=> 'à relire',
-	'since'			=> '20/09/1999',
+	'status'		=> 'traduction à jour',
+	'since'			=> '16/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '13/08/1999',
 },
 
 'international/Spanish' => {
 	'type'			=> 'Web',
-	'status'		=> 'à relire',
-	'since'			=> '13/08/1999',
+	'status'		=> 'traduction à jour',
+	'since'			=> '16/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '13/08/1999',
 },
 
 'international/Turkish' => {
 	'type'			=> 'Web',
-	'status'		=> 'à relire',
-	'since'			=> '20/09/1999',
+	'status'		=> 'traduction à jour',
+	'since'			=> '16/10/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '13/08/1999',
 },
@@ -1037,7 +1037,7 @@ $translations = {
 'Bugs/Access' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '20/09/1999',
+	'since'			=> '07/12/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '08/08/1999',
 },
@@ -1060,8 +1060,8 @@ $translations = {
 
 'Bugs/index' => {
 	'type'			=> 'Web',
-	'status'		=> 'à relire',
-	'since'			=> '11/10/1999',
+	'status'		=> 'traduction à jour',
+	'since'			=> '07/12/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '02/08/1999',
 },
