@@ -150,7 +150,7 @@ if (!@results) {
 }
 
 # multiple-page stuff written by doogie
-my $number = 1;
+my $number = 0;
 my $start = Packages::Search::start( \%params );
 my $end = Packages::Search::end( \%params );
 my %line;
