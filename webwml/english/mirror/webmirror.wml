@@ -1,0 +1,123 @@
+#use wml::debian::template title="Debian GNU/Linux - Mirroring"
+
+<H1>Setting up a web Mirror</H1>
+
+Mirroring is the same for both official and unofficial sites.
+Once a mirror is set up the mirror should be <a href="submit">registered with Debian</a>
+in order to get included in the <a href="mirrors">mirror list</a>. Send mail to
+<A href="mailto:mirrors@debian.org">mirrors@debian.org</A>
+with the name of the mirror maintainer, mirror site, and path to the debian archive.
+
+<P>Mirrors should register with Debian in order to get included in the
+mirror list. Send mail to <A href="mailto:mirrors@debian.org">mirrors@debian.org</A>
+with the name of the mirror maintainer and mirror site.
+
+<H2>Advertising the sponsor of the mirror</H2>
+sponsor.html and sponsor_img.jpg can and should be replaced by you. They are
+for you to advertise your site so people know who the sponsor is.
+The originals are under sponsor.deb.html and sponsor.deb.jpg as the site you
+are mirroring may have replaced the ones Debian provided as examples.
+The suggested maximum size for your logo is 120x60.
+
+<p>Since <a href="#cn">contentent negotiation</a> is being used on the web pages
+to select the preferred language, you may even provide sponsor.html in different
+languages. To do this you simply create sponsor.html.<lang> for each <lang> you
+would like.
+
+<p>Make sure you add any files you don't want overwritten to the exclude list for mirroring.
+
+<H2>Methods of Mirroring</H2>
+<h3>Anonymous rsync</h3>
+The recommended method of mirroring is with rsync.
+
+<p>You can use <a href="anonwebsync">this script</a> to mirror the archive.
+Follow the directions in the script to set up mirroring.
+Sites in the <a href="mirrors">list of mirrors</a> that use '<kdb>Type: Push-*</kdb>'
+should be good to mirror from.
+
+<h3>Push Mirror</h3>
+Push mirroring is a form of mirroring using rsync that we have developed to minimize the
+time it takes for changes to the archive to reach mirrors. Push mirroring uses
+an ssh trigger to tell the client mirror when to update itself. This method is
+quite secure as ssh is configured to run only a single command. Also, mirroring is still
+'pull' so it is not possible to corrupt the contents of the archive via a forged push mirror.
+
+<p>The way this works is that the parent mirror connects to the downstream mirror
+using ssh with a special mirror key. The downstream mirror is configured to only allow
+that key to run a single command, <kbd>~/ftpsync &</kbd>. After authentication the
+archive sync is initiated and the parent mirror continues on it's way.
+
+<p>Push mirroring takes a little more effort to set up since the maintainers of the
+upstream and downstream mirror must exchange information. The benefit is that
+the upstream mirror initiates the mirror process immediately after it's archive has
+been updated. This allows changes to the archive to propogate extremely quickly.
+
+<p>It is best to set this up using the account of an ordinary user, not root.
+The contents of the public ssh key given to you by the upstream mirror should be
+placed in <kbd>~<user>/.ssh/authorized_keys</kbd>.
+
+<p>The files <a href="websync">websync</a> and <a href="websync.conf">websync.conf</a>
+will be needed. Edit websync.conf and follow the directions in there using the information
+provided to you by the upstream mirror.
+
+<p>If you are becoming a Push-Primary, you will need the
+<a href="identity.pub.master.web">public ssh key for the web</a>.
+
+<h3>Anonymous FTP Using 'mirror'</h3>
+<p>It is not suggested that you use 'mirror' on the Debian web pages. For large
+directories memory usage becomes ridculous. One mirror maintainer said it worked
+for him with 96MB of RAM. Others, with less RAM, found the machine swapping excessively.
+
+<h3>wget</h3>
+While wget works well for mirroring small sites, it is not as configurable as
+mirror or rsync so is not recommended for this job.
+
+
+<H2>Configuring the web server</H2>
+<P>A few notes about the Debian web pages. For historical reasons, the web pages
+are in two directories, debian.org and debian.org-local. debian.org has links into
+debian.org-local so your web server must allow symbolic links. Also, if your machine
+is running Debian, it was decided to break Debian policy and use /doc in the web pages.
+This means you should comment out 'Alias /doc/ /usr/doc/' from srm.conf .
+
+<a name="cn"><h3>Content Negotiation</h3>
+Content Negotiation is a method which lets a browser negotiate with a server
+the type of document that should be served. While there are a number of
+uses for this, the most common is to negotiate what language a document
+should be served in. Using this will allow Debian to serve its pages in
+multiple languages in a (technically) very elegant fashion.
+
+<P>For those who are using Apache, the change is almost trivial. Simply
+add a section similar to the following to /etc/apache/access.conf
+(substitute the directory containing the web pages for /debian/web) and
+restart the server (this example works with the apache 1.3 beta releases and later):
+<blockquote><pre>
+&lt;Directory /debian/web&gt;
+Options +Multiviews   
+&lt;/Directory&gt;
+</pre></blockquote>
+
+<h3>Other Web Server Changes</h3>
+In order to serve directory index files correctly, you will probably need to
+modify the <kbd>DirectoryIndex</kbd> entry in <kbd>/etc/apache/srm.conf</kbd>.
+The following should be sufficient:
+<pre>
+DirectoryIndex index index.html index.shtml index.htm
+</pre>
+Additionally, you need to make sure that the server can handle all the languages
+that will be on the web site. This is done using the <kbd>AddLanguage</kbd> tag. The
+following is a list of those languages already used - expect to add more later:
+<pre>
+AddLanguage en .en
+AddLanguage fr .fr                                                       
+AddLanguage de .de                         
+AddLanguage it .it
+AddLanguage es .es
+AddLanguage ja .ja
+AddLanguage da .da
+</pre>
+
+<HR>
+<P>Back to the <A href="../../">Debian GNU/Linux homepage</A>.
+
+<:= languages ("$(HOME)", "devel/mirror", "$(WML_SRC_BASENAME)", "$(CUR_LANG)") :>
