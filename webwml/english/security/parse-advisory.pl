@@ -73,18 +73,18 @@ foreach $l (<ADV>) {
   }
 
   $f++ if ($l =~ /^Debian (GNU\/Linux.*alias|.*\(.*\)).*/);
-  $f = 0 if ($l =~ /^(-- |  These (files|packages) will (probably )?be moved)/);
+  $f = 0 if ($l =~ /^((- )?-- |  These (files|packages) will (probably )?be moved)/);
   $files .= $l if ($f);
 }
 close ADV;
 
 
-$moreinfo =~ s/-+\n//g;
+$moreinfo =~ s/(- )?-+\n//g;
 $moreinfo =~ s/\n\n$/\n/s;
 $moreinfo =~ s/\n<p>\n$//;
 $moreinfo =~ s/\n\n/<\/p>\n\n/sg;
 chomp ($moreinfo);
-$files =~ s/-+\n//g;
+$files =~ s/(- )?-+\n//g;
 $files =~ s/\n\n$/\n/s;
 
 $files =~ s/      (Size\/)?MD5 checksum: (\s*\d+ )?\w{32}\n//sg;
@@ -95,6 +95,19 @@ $files =~ s/  (\w+) architecture \(([\w -()\/]+)\)/<dt>$1 ($2):/sg;
 $files =~ s/  ([\w -\/]+) architecture:/<dt>$1:/sg;
 $files =~ s/    (http:\S+)/  <dd><fileurl $1>/sg;
 $files =~ s,[\n]?Debian (GNU/Linux )?(\S+) (alias |\()([a-z]+)\)?,</dl>\n\n<h3>Debian GNU/Linux $2 ($4)</h3>\n\n<dl>,sg;
+
+my @f = ();
+my $ign = 0;
+foreach $_ (split (/\n/, $files)) {
+    if (!$ign && /was released/) {
+	$ign = 1;
+    } elsif ($ign && /^$/) {
+	$ign = 0;
+    } elsif (!$ign) {
+	push (@f, $_);
+    }
+}
+$files = join ("\n", @f);
 
 $adv =~ /.*dsa[- ](\d+)-(\d+)\.(.*)/;
 $wml = "$curyear/dsa-$1.wml";
