@@ -6,6 +6,7 @@ use Crypt::Blowfish;
 
 my $blocksize = 8; # A blowfish block is 8 bytes
 my $configfile = "/etc/userdir-ldap/userdir-ldap.conf";
+#my $configfile = "./userdir-ldap.conf";
 
 my %config = &ReadConfigFile;
 
@@ -169,7 +170,7 @@ sub FormatFingerPrint {
 
 sub FetchKey {
   my $fingerprint = shift;
-  my ($out, $keyringparam);
+  my ($out, $keyringparam) = undef;
   
   foreach (split(/:/, $config{keyrings})) {
     $keyringparam .= "--keyring $_ ";
@@ -179,10 +180,10 @@ sub FetchKey {
   $fingerprint = "0x".$fingerprint;
 
   $/ = undef; # just suck it up ....
-  open(FP, "$config{gpg} $keyringparam --list-sigs --fingerprint $fingerprint|");
+  open(FP, "$config{gpg} --no-options --no-default-keyring $keyringparam --list-sigs --fingerprint $fingerprint|");
   $out = <FP>;
   close FP;
-  open(FP, "$config{gpg} $keyringparam --export -a $fingerprint|");
+  open(FP, "$config{gpg} --no-options --no-default-keyring $keyringparam --export -a $fingerprint|");
   $out .= <FP>;
   close FP;
   $/ = "\n";
