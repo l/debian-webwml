@@ -24,14 +24,14 @@ endif
 
 #   Templates files
 $(TEMPLATE_POT): $(TEMPLATE_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../po=english $(TEMPLATE_FILES) > $@
+	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(TEMPLATE_FILES) > $@
 
 templates.mo: templates.$(LANGUAGE).po
 	msgfmt --statistics -o $@ templates.$(LANGUAGE).po
 
 #   Ports menus
 $(PORTS_POT): $(PORTS_FILES)
-	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../po=english $(PORTS_FILES) > $@
+	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(PORTS_FILES) > $@
 
 ports.mo: ports.$(LANGUAGE).po
 	msgfmt --statistics -o $@ ports.$(LANGUAGE).po
