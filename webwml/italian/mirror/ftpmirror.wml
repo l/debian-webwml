@@ -1,21 +1,17 @@
-#use wml::debian::template title="Configurare un mirror FTP"
+#use wml::debian::template title="Configurare un mirror dell'archivio Debian"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.27" maintainer="Giuseppe Sacco"
+#use wml::debian::translation-check translation="1.30" maintainer="Giuseppe Sacco"
+#include "$(ENGLISHDIR)/releases/woody/release.data"
 
-<p>La procedura di mirroring è identica per siti <a
-href="official">ufficiali</a> e non ufficiali.
+<toc-display/>
 
-<p>Una volta che il mirror è configurato dovrebbe essere 
-<a href="submit">registrato con Debian</a>
-in modo da essere incluso nella <a href="list">lista
-dei mirror</a>.
-Le sottomissioni possono essere fatte usando il nostro 
+<p>Una volta che il mirror è configurato dovrebbe essere <a href="submit">\
+registrato con Debian</a> in modo da essere incluso nella <a href="list">lista
+dei mirror</a>. Le sottomissioni possono essere fatte usando il nostro 
 <A href="submit">semplice modulo web</a>.
 
 <p>Ogni problema o domanda può essere inviata a 
-<A href="mailto:mirrors@debian.org">mirrors@debian.org</A>.</p>
-
-<toc-display/>
+<email mirrors@debian.org>.</p>
 
 <toc-add-entry name="wherefrom">Da dove copiare i dati</toc-add-entry>
 
@@ -29,24 +25,54 @@ che vengono aggiornati da un altro server Debian.</p>
 mirror</a> che è segnato come '<kbd>Type: Push-Primary</kbd>' è buono da
 utilizzare come fonte.</p>
 
-<p>Per te, non dovrebbe esserci alcuna differenza tra tutti i server
-dichiarati mirror <em>Push-Primary</em>. D'altro canto, se molte poersone
-utilizzano ftp.debian.org (e, sofrtunatamente, lo fanno), questo spreca
-la banda donataci.</p>
+<p>Non c'è alcuna differenza reale tra i server <em>Push-Primary</em> per
+quanto riguarda il mirroring. D'altro canto, se molte persone
+utilizzano ftp.debian.org (e, sfortunatamente, lo fanno), questo spreca
+inutilmente la banda donataci.</p>
 
-<toc-add-entry name="methods">Metodi di mirroring</toc-add-entry>
+<toc-add-entry name="how">Come copiare</toc-add-entry>
 
-<p>Il metodo raccomandato di mirroring è usare rsync.
+<p>Il metodo raccomandato di mirroring è usare 
+<a href="http://packages.debian.org/stable/net/rsync.html">rsync</a>.</p>
 
 <p>Nota: mentre <kbd>wget</kbd> lavora bene per copiare piccoli siti,
-non è flessibile come rsync o 'mirror', per cui non è raccomandato
-per questo compito.
+non è flessibile come rsync, per cui non è raccomandato
+per questo compito.</p>
 
 <h3>Rsync anonimo</h3>
 
 <p>Puoi usare <a href="anonftpsync">questo script</a> per copiare
-l'archivio.
-Segui le direttive dello script per configurare il mirroring.
+l'archivio. Segui le direttive dello script per configurare il mirroring.
+
+<p>Ecco alcuni consigli per coloro che preferiscono metodi diversi:
+
+<ul>
+  <li>Eseguire rsync con almeno queste opzioni: <kbd>--recursive --times
+      --links --hard-links --delete</kbd>.
+
+  <li>Se si ha altro spazio disco, si utilizzi anche l'opzione
+      <kbd>--delete-after</kbd> per evitare alcuni dei problemi temporanei
+      durante l'aggiornamento.
+
+  <li>Se non si ha sufficiente spazio disco per fare il mirror completo, si usi
+      l'opzione <kbd>--exclude</kbd> per escludere porzioni dell'archivio dalla
+      copia. Normalmente questo include alcune architetture che non si vogliono;
+      per esempio questo escluderebbe l'architettura <em>all</em>:
+     <br>
+<: 
+ print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
+  foreach (sort keys %arches);
+:>
+      Si veda inoltre la <a href="#partial">sezione sul mirror parziale</a>.
+
+  <li>Dopo che rsync ha fatto la copia, si aggiunga un file che faccia da
+      marca temporale nella sottodirectory <code>project/trace/</code> del
+      mirro che si chiami come il proprio server. Vale a dire eseguire
+      <kbd>date -u &gt; .../debian/project/trace/<var>your.server</var></kbd>
+      dopo la copia quotidiana, e
+      <kbd>date -u &gt; .../debian-non-US/project/trace/<var>your.server</var></kbd>
+      dopo la copia di non-US, se si copia anche debian-non-US.
+</ul>
 
 <h3>Rsync con autenticazione, da un push mirror</h3>
 
@@ -105,17 +131,19 @@ modeste e molto utili agli utenti.<p>
 
 <p>L'archivio principale vien aggiornato ogni 24 ore.
 
-<p>Se il tuo sito e' un push mirror, non hai bisogno di preoccuparti di
-questo.
-Altrimenti, se scegli di copiare con rsync, dovresti dare una occhiata
-a <kbd>project/trace/</kbd> 
-nell'archivio Debian del sito mirror per un file con lo stesso nome 
-di quel sito. Il file dovrebbe contenere l'ora alla quale l'ultima
-copia è terminata. Aggiungi un po' di tempo, diciamo 1 ora, a
-quell'orario e fai partire la copia a quell'ora.
+<p>I mirror normalmente cominciano ad aggiornarsi attorno alle 00:00 UTC, ma
+questo non è un orario fisso. Noi raccomandiamo di effettuare la copia ogni
+giorno, alcune ore dopo. Infatti, si dovrebbe verificare se il sito dal quale
+si copia abbia una marca temporale in <kbd>project/trace/</kbd>. Il file di
+marca temporale avrà lo stesso nome del server e conterrà l'orario esatto
+della fine dell'ultima copia. Si aggiungano un paio d'ore (per essere sicuri)
+e si faccia partire la copia.</p>
 
 <p>La maniera più semplice di avere la copia automatica ogni giorno 
 è usare cron. Vedi <kbd>man crontab</kbd> per dettagli.
+
+<p>Nota che se il proprio sito effettua la copia tramite il meccanismo di tipo
+push allora non ci si deve preoccupare di ciò.</p>
 
 <toc-add-entry name="settings">Configurazioni aggiuntive raccomandate</toc-add-entry>
 
