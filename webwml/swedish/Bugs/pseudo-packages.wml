@@ -1,0 +1,37 @@
+#use wml::debian::template title="Debians felrapporteringssystem" NOHEADER="true"
+#use wml::debian::translation-check translation="1.2"
+
+<H1>Pseudopaket i Debians felrapporteringssystem</H1>
+
+<p>Denna sida listar de pseudopaket som finns kan användas på
+<code>Package:</code>-raden i felrapporter.
+
+<p>Se <a href="Reporting">instruktionerna för rapportering av fel</a> för
+information om hur man anger en <code>Package:</code>-rad.
+
+<hrline>
+
+<p>Listan nedan är automatgenererad, och är därför tyvärr ej översatt.
+
+<:
+my $file = "pseudo-packages.description";
+my $host = `hostname -f`; chop $host;
+$file = "/org/www.debian.org/cron/scripts_daily/$file" if ($host eq "klecker.debian.org");
+open I, "$file" or die "Can't find $file file at $host: $!\n";
+while (<I>) {
+  if (/^(\S+)\s+(.*)$/) {
+    $pseudos{$1} = $2;
+  }
+}
+close I;
+%pseudos || die "%pseudos is not set -- empty pseudo-packages.description file?\n";
+foreach $a (sort keys %pseudos) {
+  print "<p><code>$a</code> &mdash; $pseudos{$a}\n";
+}
+:>
+
+<hrline>
+
+#use "otherpages.inc"
+
+#use "footer.inc"
