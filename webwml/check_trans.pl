@@ -26,9 +26,10 @@
 #   $ check_trans.pl -s devel italian
 
 # Options:
-# 	-v		enable verbose mode
-#	-q		just don't whine about missing files
 #	-Q		enable really quiet mode
+#	-q		just don't whine about missing files
+# 	-v		enable verbose mode
+#	-V		enable very verbose mode
 #	-C <dir>	go to <dir> directory before running this script
 #	-d		output CVS diffs
 #	-l		output CVS log messages
@@ -99,13 +100,13 @@ my %translators;# the real hash
 my $maintainer = "mquinson\@ens-lyon.fr"; # the default e-mail at which to bitch :-)
 
 # options (note: with perl 5.6, this could change to our())
-use vars qw($opt_C $opt_M $opt_Q $opt_c $opt_d $opt_g $opt_l $opt_m $opt_n $opt_p $opt_q $opt_s $opt_t $opt_T $opt_v);
+use vars qw($opt_C $opt_M $opt_Q $opt_c $opt_d $opt_g $opt_l $opt_m $opt_n $opt_p $opt_q $opt_s $opt_t $opt_T $opt_v $opt_V);
 $opt_n = 5; # an invalid default
 $opt_s = '';
 $opt_C = '.';
 $opt_t = 'text';
 
-unless (getopts('vgdqQC:m:c:s:Tt:p:ln:M'))
+unless (getopts('vgdqQC:m:c:s:Tt:p:ln:MV'))
 {
 	open SELF, "<$0" or die "Unable to display help: $!\n";
 	HELP: while (<SELF>)
@@ -120,6 +121,9 @@ unless (getopts('vgdqQC:m:c:s:Tt:p:ln:M'))
 }
 
 die "you can't have both verbose and quiet, doh!\n" if (($opt_v) && ($opt_Q));
+die "you can't have both very verbose and quiet, doh!\n" if (($opt_V) && ($opt_Q));
+
+$opt_v = 1 if ($opt_V);
 
 warn "Checking subtree $opt_s only\n" if (($opt_v) && ($opt_s));
 
@@ -206,7 +210,8 @@ print "\$translations = {\n" if $opt_t eq 'perl';
 
 # Check the files in the English directory
 
-$cvs->readinfo($from);
+my $V = $opt_V ? 1 : 0;
+$cvs->readinfo($from, verbose => $V );
 foreach my $path (@{$cvs->dirs()}) {
 	my $tpath = $path;
 	$tpath =~ s/^$from/$to/o;
@@ -237,7 +242,7 @@ foreach (sort @{$cvs->files()}) {
 # some files that are not available in the English version.
 
 $cvs->reset();
-$cvs->readinfo($to);
+$cvs->readinfo($to, verbose => $V );
 foreach my $tpath (@{$cvs->dirs()})
 {
     my $transignore = Webwml::TransIgnore->new($tpath);
