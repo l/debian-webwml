@@ -15,6 +15,7 @@ cd ..
 cvs update .wmlrc
 cvs update Makefile.common
 
+cvs update -d $translation
 files=`find $translation -name '*' -print | grep -v CVS`
 
 for f in $files
@@ -30,7 +31,7 @@ do
 done
 #echo $tfiles
 #echo $efiles
-cvs update $tfiles
+#cvs update $tfiles
 cvs update $efiles
 
 # check which one is newer
