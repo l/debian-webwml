@@ -30,13 +30,13 @@ all:: index.$(LANGUAGE).html $(HTMLFILES)
 		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
 
 install:: $(HTMLDESTFILES)
-	# Set up current issue symlink. In case you're wondering, the only
-	# reason I use ..../current/issue instead of ...../current is
-	# so it will be 2 directories deep and all the relative symlinks
-	# will still work. Bleargh.
+	@# Set up current issue symlink. In case you're wondering, the only
+	@# reason I use ..../current/issue instead of ...../current is
+	@# so it will be 2 directories deep and all the relative symlinks
+	@# will still work. Bleargh.
 ifeq ($(LANGUAGE),en)
-	install -d $(HTMLDIR)/current
-	-rm -f $(HTMLDIR)/current/issue
+	@install -d $(HTMLDIR)/current
+	@-rm -f $(HTMLDIR)/current/issue
 	-ln -sf ../$(YEAR)/$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
 endif
 
