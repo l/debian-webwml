@@ -16,14 +16,9 @@ set -e
 #
 # You MUST have rsync 2.0.16-1 or newer which is available in slink
 
-# With a blank EXCLUDE you will mirror the entire archive.
-# This exclude list is what ftp1.us.debian.org uses
-#EXCLUDE="--exclude *alpha.deb --exclude *m68k.deb --exclude \
-#    *powerpc.deb --exclude stable/ --exclude bo/ --exclude \
-#    /contrib/ --exclude /non-free/ --exclude source/ --exclude \
-#    /Debian-1.3* --exclude binary-alpha/ --exclude binary-m68k/ \
-#    --exclude binary-powerpc/ --exclude Incoming/ --exclude \
-#    local/ --exclude bo-unstable/ --exclude bo-updates/ "
+# This exclude should work quite well
+#EXCLUDE="--exclude .glbuild* --exclude core --exclude \
+#   .mhonarc.db --exclude *~ --exclude #*"
 
 TO=
 RSYNC_HOST=
@@ -49,9 +44,9 @@ set +e
 rsync -rltvz --delete \
      --exclude "Archive-Update-in-Progress-`hostname -f`" \
      $EXCLUDE \
-     $RSYNC_HOST::web.debian.org $TO > rsync.log 2>&1
+     $RSYNC_HOST::web.debian.org $TO/debian.org > rsync.log 2>&1
 rsync -rltvz --delete \
      --exclude "Archive-Update-in-Progress-`hostname -f`" \
      $EXCLUDE \
-     $RSYNC_HOST::web.debian.org.local $TO >> rsync.log 2>&1
+     $RSYNC_HOST::web.debian.org.local $TO/debian.org-local >> rsync.log 2>&1
 savelog rsync.log > /dev/null 2>&1
