@@ -1,0 +1,85 @@
+#use wml::debian::template title="Mailing List Unsubscription"
+# <!--translation 1.19-->
+
+<h2>Prenumeration/avbeställning</h2>
+
+Våra listor hanteras av Smartlist, vilket resulterar i ett enkelt sätt att
+hantera dem.
+Om prenumerationspolicyn för en speciell lista är att den är öppen kan vem
+som helst prenumerera/avbeställa den.
+<p>
+*INGA* prenumerations- eller avbeställningsmeddelanden skall sändas till
+listadresserna, utan istället skall en speciell kontrolladress som skiljer
+sig något från adresserna användas.
+För att prenumerera på eller avbeställa en lista, sänd e-post till:
+<p>
+&lt;listname&gt;-REQUEST@lists.debian.org
+<p>
+med orden "subscribe" (prenumerera) eller "unsubscribe" (avbeställ) som
+ärenderad.
+<p>
+Kom ihåg -REQUEST-delen av namnet.
+<p>
+Om du behöver få personlig kontakt med en listansvarig, skriv till
+<a href="mailto:listmaster@debian.org">listmaster@debian.org</a>
+eller
+<a href="mailto:listmaster@va.debian.org">listmaster@va.debian.org</a>.
+Detta är på två olika maskiner, om en av dem skulle vara otillgänglig.
+För att ta reda på vem som är ansvarig för listorna, se
+<a href="../devel/maintainer_contacts">http://www.debian.org/devel/maintainer_contacts</a>
+
+<HR>
+<FORM METHOD=POST ACTION="http://cgi.debian.org/cgi-bin/subscribe.pl">
+Välj de listor du vill avbeställa:
+
+<h3><a name="user">Användarlistor</a></h3>
+
+<perl>
+ my $copy = 0;
+ open ENGLISH, "$(ENGLISHDIR)/MailingLists/unsubscribe.wml"
+  or die "Can't open $(ENGLISHDIR)/MailingLists/unsubscribe.wml";
+ LINE: while (<ENGLISH>)
+ {
+  # Keep count of where we are
+  $copy ++ if m(^</?table>$);
+
+  # If this is in a list, just print it (with some minor changes)
+  if ($copy == 1 || $copy == 4 || $copy == 7 || $copy == 10 ||
+      $copy == 13|| $copy == 16 || m(</table>))
+  {
+   print $_;
+  }
+  elsif ($copy == 2)
+  {
+   print '<h3><a name="devel">Utvecklarlistor</a></h3>', "\n";
+   $copy = 3;
+  }
+  elsif ($copy == 5)
+  {
+   print '<h3><a name="int">Landsanpassning och översättning</a></h3>', "\n";
+   $copy = 6;
+  }
+  elsif ($copy == 8)
+  {
+   print '<h3><a name="ports">Anpassningar till icke-i386-arkitekturer</a></h3>', "\n";
+   $copy = 9;
+  }
+  elsif ($copy == 11)
+  {
+   print '<h3><a name="bugs">Felrapporteringssystemet</a></h3>', "\n";
+   $copy = 12;
+  }
+  elsif ($copy == 14)
+  {
+   print '<h3><a name="foreign">Listor vi handhar för andra projekt</a></h3>', "\n";
+   $copy = 15;
+  }
+ }
+</perl>
+
+</table>
+<HR><STRONG>Din e-postadress:</STRONG>
+<BR><INPUT TYPE="text" NAME="user_email" SIZE="60"><BR>
+<INPUT TYPE="SUBMIT" value="Sänd"> <INPUT TYPE="RESET" value="Återställ">
+</FORM>
+

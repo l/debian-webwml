@@ -1,0 +1,188 @@
+#use wml::debian::template title="Prenumerera på sändlistor"
+# <!--translation 1.22-->
+
+<h1>Introduktion till Debians sändlistor</h1>
+
+Den största delen av konversationen mellan Debianutvecklare och
+-användare sker på sändlistor.
+Debian GNU/Linux utveckling sker spredd över hela världen, och därför är
+e-post det bästa sättet att diskutera olika saker.
+<p>
+Det finns flertalet sändlistor som är öppna för alla att läsa, men även
+några som endast är öppna för utvecklare.
+Tolka inte detta som om vår utvecklingsprocess är stängd för insyn, alla
+och envar uppmanas att hjälpa till med utvecklingen av Debian och att sprida
+budskapet om fri programvara.
+Å andra sidan så är det inte särdeles vettigt att diskutera interna ämnen
+med ickeutvecklare.
+<p>
+Alla äkta Debiansändlistor sköts via en speciell server, med
+e-postserverprogramvara specialanpassad för listor. Denna server heter
+lists.debian.org, och via den går alla inlägg, så väl som prenumerations-
+och avbeställningsförfrågningar.
+<p>
+Det språk som används på alla listor är engelska, om inte annat anges.
+Det finns en del listor för andra språk.
+
+<h2>Prenumeration/avbeställning</h2>
+
+Våra listor hanteras av Smartlist, vilket resulterar i ett enkelt sätt att
+hantera dem.
+Om prenumerationspolicyn för en speciell lista är att den är öppen kan vem
+som helst prenumerera/avbeställa den.
+<p>
+*INGA* prenumerations- eller avbeställningsmeddelanden skall sändas till
+listadresserna, utan istället skall en speciell kontrolladress som skiljer
+sig något från adresserna användas.
+För att prenumerera på eller avbeställa en lista, sänd e-post till:
+<p>
+&lt;listname&gt;-REQUEST@lists.debian.org
+<p>
+med orden "subscribe" (prenumerera) eller "unsubscribe" (avbeställ) som
+ärenderad.
+<p>
+Kom ihåg -REQUEST-delen av namnet.
+<p>
+Om du behöver få personlig kontakt med en listansvarig, skriv till
+<a href="mailto:listmaster@debian.org">listmaster@debian.org</a>
+eller
+<a href="mailto:listmaster@va.debian.org">listmaster@va.debian.org</a>.
+Detta är på två olika maskiner, om en av dem skulle vara otillgänglig.
+För att ta reda på vem som är ansvarig för listorna, se
+<a href="../devel/maintainer_contacts">http://www.debian.org/devel/maintainer_contacts</a>
+
+<HR>
+<FORM METHOD=POST ACTION="http://cgi.debian.org/cgi-bin/subscribe.pl">
+Välj de listor du vill prenumerera på:
+(Den här sammanfattningen är automatgenererad, och därför inte översatt från
+ engelska).
+
+<h3><a name="user">Användarlistor</a></h3>
+
+Det finns flera sändlistor där utvecklare och användare kan komma i kontakt
+med varandra för att diskutera och lösa problem.
+
+<perl>
+ my $copy = 0;
+ open ENGLISH, "$(ENGLISHDIR)/MailingLists/subscribe.wml"
+  or die "Can't open $(ENGLISHDIR)/MailingLists/subscribe.wml";
+ LINE: while (<ENGLISH>)
+ {
+  # Keep count of where we are
+  $copy ++ if m(^</?DL>$);
+
+  # If this is in a list, just print it (with some minor changes)
+  if ($copy == 1 || $copy == 4 || $copy == 7 || $copy == 10 ||
+      $copy == 13|| $copy == 16 || m(</DL>))
+  {
+   if (s/^<BR>Moderated:/<BR>Modererad:/)
+   {
+    s/yes/ja/;
+    s/no/nej/;
+   }
+   elsif (s/^    Subscription:/    Prenumeration:/)
+   {
+    s/open/öppen/;
+    s/closed/stängd/;
+    s/>developers only</>endast utvecklare</;
+   }
+   print $_;
+  }
+  # When just having ended a list, print the correct headline for the
+  # next one
+  elsif ($copy == 2)
+  {
+   print <<'EOT';
+    <h3><a name="devel">Utvecklarlistor</a></h3>
+
+    Det finns flera sändlistor på vilka utvecklare och erfarna användare
+    diskuterar mer tekniska aspekter.
+    Dessutom finns det listor för tillkännagivanden för att hjälpa
+    erfarna användare att hålla reda på utvecklingen.
+EOT
+   $copy = 3;
+  }
+  elsif ($copy == 5)
+  {
+   print <<'EOT';
+    <h3><a name="int">Landsanpassning och översättning</a></h3>
+
+    Detta är listor för användare- och anpassningsfrågor för
+    ickeengelska språk.
+EOT
+   $copy = 6;
+  }
+  elsif ($copy == 8)
+  {
+   print <<'EOT';
+    <h3><a name="ports">Anpassningar till icke-i386-arkitekturer</a></h3>
+
+    Debian GNU/Linux är anpassat för flera andra system.
+EOT
+   $copy = 9;
+  }
+  elsif ($copy == 11)
+  {
+   print <<'EOT';
+    <h3><a name="bugs">Felrapporteringssystemet</a></h3>
+
+    Debian GNU/Linux felrapporteringssystem är öppet för allmänheten.
+    Det producerar mycket post som kan vara av allmänt intresse för
+    vissa användare och utvecklare, varför det finns några
+    vidaresändningslistor som skapats för att distribuera denna post
+    från systemet.
+EOT
+   $copy = 12;
+  }
+  elsif ($copy == 14)
+  {
+   print <<'EOT';
+    <h3><a name="foreign">Listor vi handhar för andra projekt</a></h3>
+
+    Vår listserver upplåter även sina resurser till andra fria projekt.
+EOT
+   $copy = 15;
+  }
+  # Are we done yet?
+  elsif ($copy == 17)
+  {
+   last LINE;
+  }
+ }
+ close ENGLISH;
+</perl>
+
+<HR><STRONG>Din e-postadress:</STRONG>
+<BR><INPUT TYPE="text" NAME="user_email" SIZE="60"><BR>
+<INPUT TYPE="SUBMIT" value="Sänd"> <INPUT TYPE="RESET" value="Återställ">
+</FORM>
+
+<hr><h2>Annonseringspolicy för sändlistorn</h2>
+
+Denna policy är avsedd för att bekämpa "spamming" mot sändlistorna.
+<p>
+Debians sändlistor tillåter kommersiell annonsering mot betalning.
+Denna tjänst tillhandahålls om du kan uppvisa en kvitterad check på
+1000 amerikanska dollar eller högre, donerat till "Software in the Public
+Interest" (SPI).
+En donation för varje annons.
+Om du inte önskar donera, posta din annons till listan, varpå
+sändlisteoperatören kommer att skicka en räkning på 1999 amerikanska
+dollar till dig.
+Operatören kommer att donera detta belopp, minus utgiften för att ta emot
+den, till SPI.
+Notera att listorna distribueras automatiskt - inläggen läses eller
+kontrolleras normalt inte innan de vidareförmedlas.
+<p>
+Genom att sända annonsen godtar du att ta ansvar för kostnaden, och du
+samtycker att hålla sändlisteoperatören skadeslös gentemot alla juridiska
+krav från dig eller andra i samband med din annons, och du samtycker även
+till att betala alla kostnader som följer av inkassering av försenade
+betalningar.
+Vårt ansvar mot dig är begränsat till att efter bästa förmåga leverera ditt
+inlägg.
+<p>
+Nedsatta priser och/eller upphävning av avgiften kan fås för annonser som är
+relaterade till Debian.
+Kontakta sändlisteoperatören innan du sänder din annons för att få möjlighet
+till att sänka eller upphäva priset.
