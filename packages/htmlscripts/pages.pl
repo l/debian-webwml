@@ -611,7 +611,7 @@ sub write_all_package {
 
 	foreach ( keys %$sections ) {
 	    $si{$_} .= "</dl>\n";
-	    $si{$_} .= trailer( '..', $_, $lang, @$langs );
+	    $si{$_} .= trailer( '..', 'index', $lang, @$langs );
 	    my $dirname = "$dest_dir/$_";
 	    unless ( -d $dirname ) {
 		mkdir $dirname or die "Can\'t create dir $dirname: $!";
