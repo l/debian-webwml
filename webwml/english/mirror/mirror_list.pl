@@ -257,8 +257,8 @@ please have the site maintainer fill out the form at:
 END
 	print "<a href=\"http://www.debian.org/mirror/submit\">" if $html;
 	print "                     http://www.debian.org/mirror/submit";
-	print "</a>. " if $html;
-	print "<br>\n";
+	print "</a>.<br>" if $html;
+	print "\n";
 
 	print <<END;
 Everything else you want to know about Debian mirrors:
