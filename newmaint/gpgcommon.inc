@@ -31,8 +31,8 @@
             $row = pg_Fetch_Array($query, $i);
             print_place($row["begin"], $row["finish"], $row["city"], $row["country"]);
             if ($modify) {
-                echo " <A HREF = \"gpgplace.php?id=", $row["id"], "\">Modify</A>";
-                echo " <A HREF = \"gpgplace.php?remove=1&id=", $row["id"], "\">Remove</A>";
+                echo " <A HREF = \"gpgplace.php?id=", $row["id"], "\">[Modify]</A>";
+                echo " <A HREF = \"gpgplace.php?remove=1&id=", $row["id"], "\">[Remove]</A>";
             }
         }
         echo "</UL>";
