@@ -1,0 +1,281 @@
+#use wml::debian::template title="Suggerimenti sulla localizzazione dei modelli Debconf"
+#include "$(ENGLISHDIR)/international/l10n/templates/menu.inc"
+#use wml::debian::translation-check translation="1.8" maintainer="Luca Monducci"
+
+<h2>Introduzione</h2>
+
+<p>Per porter mantenere le traduzioni aggiornate un'applicazione
+internazionalizzata deve fornire ai traduttori un modo semplice per scoprire
+e aggiornare le traduzioni vecchie.</p>
+
+<p>Un file con modelli Debconf è composto da campi e valori. I campi tradotti
+seguono un ben preciso schema di attribuzione dei nomi, per esempio
+<code>Description-es</code> indica una descrizione in spagnolo. Al momento
+<code>Description-es_ES</code> (o <code>Description-es_MX</code> o qualsiasi
+altra) viene controllata prima.</p>
+
+<p>Quindi per riconoscere le traduzioni vecchie si deve sapere quali sono le
+stringhe della descrizione tradotte. Il metodo usato da Debconf è salvare solo
+i campi originali nel file con i modelli e mettere i campi tradotti insieme ai
+corrispondenti campi in inglese in un altro file chiamato
+<code>templates.xx</code> o <code>templates.xx_XX</code> a seconda del nome
+della lingua. In seguito sono forniti dei suggerimenti per gestire le
+traduzioni in file separati.</p>
+
+
+<h2>Traduzione iniziale</h2>
+
+<p>Prima di iniziare a lavorare su un pacchetto controllare sul
+<a href="http://auric.debian.org/~grisu/debian_translation/">server per la
+traduzione dei modelli di Grisu</a> e sul BTS che non siano già state inviate
+traduzioni al manutentore. Una volta sicuri di non ripetere un lavoro già
+fatto scaricare i file con i modelli dalla <a href="./">pagina delle
+lingue</a> oppure dal link precedente ed eseguire</p>
+
+<pre>$ debconf-getlang xx templates &gt; templates.xx</pre>
+
+<p>per creare un file con i campi tradotti vuoti. Non cancellare i campi
+originali, sono necessari per tener traccia delle vecchie traduzioni! Quando
+si è finito controllare che tutte le stringhe tradotte eseguendo</p>
+
+<pre>$ debconf-getlang --stats templates templates.xx</pre>
+
+<p>e inviare il file tradotto al manutentore.</p>
+
+
+<h2>Unione delle traduzioni</h2>
+
+<p>Poiché anche il manutentore ha letto questa pagina sa come semplificare il
+lavoro del traduttore: non deve unire i modelli ma deve salvare i file con i
+modelli tradotti nella directory <tt>debian</tt>.
+
+<p>I file con i modelli tradotti sono uniti solo quando viene creato il
+pacchetto binario. Debhelper fa questa operazione automaticamente se si usa
+il comando <tt>dh_installdebconf</tt> in <tt>debian/rules</tt>. Altrimenti
+aggiungere un comando simile a</p>
+
+<pre>
+	cd debian &amp;&amp; debconf-mergetemplate templates templates.* &gt; tmp/DEBIAN/templates
+</pre>
+
+<p>In questo modo tutto quello che il manutentore deve fare quando riceve un
+file con i modelli tradotti è salvarlo nel posto appropriato.</p>
+
+
+<h2>Aggiornamento delle traduzioni</h2>
+
+<p>Una volta che la traduzione iniziale è stata integrata può succedere che i
+modelli in inglese siano migliorati, le modifiche nei modelli originali devono
+passare anche nelle traduzioni. <tt>debconf-getlang</tt> svolge nuovamente
+questo compito:</p>
+
+<pre>$ debconf-getlang xx templates templates.xx &gt; new.xx</pre>
+
+<p>appone l'etichetta <tt>-fuzzy</tt> ai campi vecchi e inserisce una riga
+vuota, poi il traduttore aggiorna <tt>new.xx</tt> sfruttando le vecchie
+traduzioni e controllare con</p>
+
+<pre>$ debconf-getlang --stats templates new.xx</pre>
+
+<p>che tutte le stringhe siano tradotte. Infine rinomina <tt>new.xx</tt> in
+<tt>templates.xx</tt> e invia il file al manutentore che applica a questo
+file lo stesso trattamento descritto nella sezione precedente.</p>
+
+
+<h2>Esempio completo</h2>
+
+<p>Segue un esempio completamente immaginario che illusta i passi precedenti.
+Si consideri il seguente file con modelli chiamato per comodità
+<code>debconf.templates</code>:</p>
+
+<pre>
+Template: debconf/frontend
+Type: select
+Choices: Slang, Text, Editor, Dialog, Gnome, Noninteractive
+Default: Dialog
+Description: What interface should be used for configuring packages?
+ Packages that use debconf for configuration share a common look and feel.
+ You can select the type of user interface they use.
+ .
+ The slang frontend provides a colorful, full-screen, character based
+ windowing interface, while the text frontend uses a more traditional plain
+ text interface, and the gnome frontend is a modern X interface. The editor
+ frontend lets you configure things using your favorite text editor.  The
+ noninteractive frontend never asks you any questions. The dialog frontend
+ is a primitive frontend that is being phased out.
+</pre>
+
+<p>Per tradurlo in francese il traduttore esegue:</p>
+
+<pre>$ debconf-getlang fr debconf.templates &gt; debconf.templates.fr</pre>
+
+<p>che crea il file <code>debconf.templates.fr</code> con i campi tradotti
+vuoti:</p>
+
+<pre>
+Template: debconf/frontend
+Type: select
+Choices: Slang, Text, Editor, Dialog, Gnome, Noninteractive
+<b>Choices-fr:</b>
+Default: Dialog
+Description: What interface should be used for configuring packages?
+ Packages that use debconf for configuration share a common look and feel.
+ You can select the type of user interface they use.
+ .
+ The slang frontend provides a colorful, full-screen, character based
+ windowing interface, while the text frontend uses a more traditional plain
+ text interface, and the gnome frontend is a modern X interface. The editor
+ frontend lets you configure things using your favorite text editor.  The
+ noninteractive frontend never asks you any questions. The dialog frontend
+ is a primitive frontend that is being phased out.
+<b>Description-fr:</b>
+</pre>
+
+<p>Dopo che i campi vuoti sono riempiti dal traduttore
+<code>debconf.templates.fr</code> diventa:</p>
+
+<pre>
+Template: debconf/frontend
+Type: select
+Choices: Slang, Text, Editor, Dialog, Gnome, Noninteractive
+Choices-fr: Slang, Texte, Éditeur, Dialogue, Gnome, Non-interactif
+Default: Dialog
+Description: What interface should be used for configuring packages?
+ Packages that use debconf for configuration share a common look and feel.
+ You can select the type of user interface they use.
+ .
+ The slang frontend provides a colorful, full-screen, character based
+ windowing interface, while the text frontend uses a more traditional plain
+ text interface, and the gnome frontend is a modern X interface. The editor
+ frontend lets you configure things using your favorite text editor.  The
+ noninteractive frontend never asks you any questions. The dialog frontend
+ is a primitive frontend that is being phased out.
+Description-fr: Quelle interface utiliser pour configurer les paquets ?
+ Les paquets utilisant debconf pour leur configuration partagent la même
+ apparence et ergonomie. Vous pouvez choisir leur interface utilisateur.  
+ .
+ 'Slang' est une interface couleur en plein écran basée sur une interface 
+ fenêtrée en mode caractère. 'Texte' est une interface en mode texte, plus
+ traditionnelle et sans fioriture, et 'Gnome' est une interface X
+ moderne. L'interface 'Éditeur' vous permet de faire vos configurations
+ depuis votre éditeur favori. Si vous choisissez 'Non-interactif', le
+ système ne vous posera jamais de question.  'Dialogue' est une interface
+ primitive et dépassée. 
+</pre>
+
+<p>Il traduttore invia <code>debconf.templates.fr</code> che ha tradotto al
+manutentore del pacchetto Debian.</p>
+
+<p>Il manutentore del pacchetto inserisce il file
+<code>debconf.templates.fr</code> nella directory <code>debian/</code>.
+Poiché usa <code>dh_installdebconf</code> in <code>debian/rules</code> non
+deve fare nulla per unire i modelli. L'unione dei modelli verrà fatta
+automagicamente da <code>dh_installdebconf</code> al momento della creazione
+del pacchetto binario.</p>
+
+<p>Alcune settimane dopo il manutentore del pacchetto migliora il suo lavoro
+con una nuova interfaccia e modifica <code>debconf.templates</code>:</p>
+
+<pre>
+Template: debconf/frontend
+Type: select
+Choices: Dialog, Readline, Gnome, Editor, Noninteractive
+Default: Dialog
+Description: What interface should be used for configuring packages?
+ Packages that use debconf for configuration share a common look and feel.
+ You can select the type of user interface they use.
+ .
+ The dialog frontend is a full-screen, character based interface, while the
+ readline frontend uses a more traditional plain text interface, and the gnome
+ frontend is a modern X interface. The editor frontend lets you configure
+ things using your favorite text editor. The noninteractive frontend never
+ asks you any questions.
+</pre>
+
+<p>Poiché non conosce il francese non può aggiornare anche
+<code>debconf.templates.fr</code> ma decide di fare comunque l'upload della
+nuova versione del suo pacchetto.</p>
+
+<p>Fortunatamente ha scritto i file con i modelli <i>nel modo giusto</i>,
+l'incongruenza fra originale e traduzione è visibile su <a href="fr">\
+http://www.debian.org/intl/l10n/templates/fr</a> perché in questo pacchetto
+c'è una stringa è etichettata come <b>fuzzy</b>. Nei giorni seguenti uno dei
+traduttori francesi nota la stringa fuzzy e la vuole correggere, prima scarica
+il nuovo file <code>debconf.templates</code> e poi esegue:</p>
+
+<pre>$ debconf-getlang --stats debconf.templates debconf.templates.fr 
+fr: 2 fuzzy translations</pre>
+
+<p>che conferma che la traduzione non è più aggiornata.</p>
+
+<p>Il traduttore deve tradurre nuovamente il file
+<code>debconf.templates.fr</code> ma lavorerà su un file <code>new.fr</code>
+temporaneo creato con:</p>
+
+<pre>$ debconf-getlang fr debconf.templates debconf.templates.fr &gt; new.fr</pre>
+
+<p>Il file <code>new.fr</code> assomiglierà a questo:</p>
+
+<pre>
+Template: debconf/frontend
+Type: select
+Choices: Dialog, Readline, Gnome, Editor, Noninteractive
+<b>Choices-fr</b>:
+<b>Choices-fr-fuzzy</b>: Slang, Texte, Éditeur, Dialogue, Gnome, Non-interactif
+Default: Dialog
+Description: What interface should be used for configuring packages?
+ Packages that use debconf for configuration share a common look and feel.
+ You can select the type of user interface they use.
+ .
+ The dialog frontend is a full-screen, character based interface, while the
+ readline frontend uses a more traditional plain text interface, and the
+ gnome frontend is a modern X interface. The editor frontend lets you
+ configure things using your favorite text editor. The noninteractive
+ frontend never asks you any questions.
+<b>Description-fr</b>:
+<b>Description-fr-fuzzy</b>: Quelle interface utiliser pour configurer les paquets ?
+ Les paquets utilisant debconf pour leur configuration partagent la même
+ apparence et ergonomie. Vous pouvez choisir leur interface utilisateur.
+ .
+ 'Slang' est une interface couleur en plein écran basée sur une interface
+ fenêtrée en mode caractère. 'Texte' est une interface en mode texte, plus
+ traditionnelle et sans fioriture, et 'Gnome' est une interface X moderne.
+ L'interface 'Éditeur' vous permet de faire vos configurations depuis votre
+ éditeur favori. Si vous choisissez 'Non-interactif', le système ne vous
+ posera jamais de question.  'Dialogue' est une interface primitive et
+ dépassée.
+</pre>
+
+<p>&Egrave; semplice individuare i campi fuzzy e il traduttore può completare
+<code>new.fr</code> rapidamente:</p>
+
+<pre>
+Template: debconf/frontend
+Type: select
+Choices: Dialog, Readline, Gnome, Editor, Noninteractive
+Choices-fr: Dialogue, Readline, Gnome, Éditeur, Non-interactif
+Default: Dialog
+Description: What interface should be used for configuring packages?
+ Packages that use debconf for configuration share a common look and feel.
+ You can select the type of user interface they use.
+ .
+ The dialog frontend is a full-screen, character based interface, while the
+ readline frontend uses a more traditional plain text interface, and the
+ gnome frontend is a modern X interface. The editor frontend lets you
+ configure things using your favorite text editor. The noninteractive
+ frontend never asks you any questions.
+Description-fr: Quelle interface utiliser pour configurer les paquets ?
+ Les paquets utilisant debconf pour leur configuration partagent la même
+ apparence et ergonomie. Vous pouvez choisir leur interface utilisateur.
+ .
+ «Dialogue» est une interface couleur en plein écran en mode caractère.
+ «Readline» est une interface plus traditionelle en mode texte. «Gnome» est
+ une interface X moderne. L'interface «Éditeur» vous permet de faire vos
+ configurations depuis votre éditeur favori. Si vous choisissez  
+ «Non-interactif», le système ne vous posera jamais de question.
+</pre>
+
+<p>Infine il traduttore rinomina il file temporaneo in
+<code>debconf.templates.fr</code> e lo invia al manutentore del pacchetto che
+sostituisce il precedente file <code>debian/debconf.templates.fr</code> con
+questo aggiornamento.</p>
