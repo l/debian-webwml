@@ -5,8 +5,8 @@
   <input type="radio" name="archive" value="yes"> archived bugs
   <input type="checkbox" name="raw" value="yes">No status/severity ordering
   <li>Reverse order of:
-  <input type="checkbox" name="sev-rev" value="yes">status
-  <input type="checkbox" name="pend-rev" value="yes">severities
+  <input type="checkbox" name="pend-rev" value="yes">status
+  <input type="checkbox" name="sev-rev" value="yes">severities
   <input type="checkbox" name="bug-rev" value="yes">bugs
   <li>Status Include:
   <input type="checkbox" name="pend-inc" value="pending">Open
