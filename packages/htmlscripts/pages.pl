@@ -184,7 +184,7 @@ sub package_pages_walker {
 	
 	if ($env->{distribution} eq "experimental") {
 	    $package_page .= note( gettext( "Experimental package"),
-				   gettext( "Warning: This package is from the <font color=\"red\">experimental</font> distribution. That means it is likely unstable or buggy, and it may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.")."</p><p>".
+				   gettext( "Warning: This package is from the <span class=\"pred\">experimental</span> distribution. That means it is likely unstable or buggy, and it may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.")."</p><p>".
 				   gettext( "Users of experimental packages are encouraged to contact the package maintainers directly in case of problems." )
 				   );
 	}
@@ -206,7 +206,7 @@ sub package_pages_walker {
 	    $package_page .= "<div id=\"pdeps\">\n";
 	    $package_page .= sprintf( "<h2>".gettext( "Other packages related to %s:" )."</h2>\n", $name );
 	    if ($env->{distribution} eq "experimental") {
-		$package_page .= note( gettext( "Note that the \"<font color=\"red\">experimental</font>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution." ) );
+		$package_page .= note( gettext( "Note that the \"<span class=\"pred\">experimental</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution." ) );
 	    }
 	    
 	    $package_page .= pdeplegend( [ 'dep',  gettext( 'depends' ) ],
@@ -226,11 +226,11 @@ sub package_pages_walker {
 	$package_page .= "<div id=\"pdownload\">";
 	$package_page .= sprintf( "<h2>".gettext( "Download %s\n" )."</h2>",
 				  $name ) ;
-	$package_page .= "<table border=\"0\" summary=\"\">\n";
+	$package_page .= "<table border=\"0\" summary=\"Download for all available architectures\">\n";
 	$package_page .= "\n<tr><th></th>\n";
 	foreach my $a ( @all_archs ) {
 	    if ( exists $versions{a2v}{$a} ) {
-		$package_page .=  "<td align=\"center\" valign=\"top\"><form action=\"$DL_URL\" method=\"post\">\n";
+		$package_page .=  "<td align=\"center\"><form action=\"$DL_URL\" method=\"post\">\n<p>";
 		$package_page .=  "<input type=\"hidden\" name=\"file\" value=\"$filenames{a2f}->{$a}\">\n";
 		$package_page .=  "<input type=\"hidden\" name=\"md5sum\" value=\"$file_md5s{a2f}->{$a}\">\n";
 		$package_page .=  "<input type=\"hidden\" name=\"arch\" value=\"$a\">\n";
@@ -259,7 +259,7 @@ sub package_pages_walker {
 	foreach my $a ( @all_archs ) {
 	    if ( exists $versions{a2v}{$a} ) {
 		my $size = $d->{sizes_deb}{$a};
-		$package_page .=  "<td align=\"center\" valign=\"top\">$size</td>";
+		$package_page .=  "<td align=\"center\">$size</td>";
 	    }
 	}
 	$package_page .= "</tr><tr>\n";
@@ -267,7 +267,7 @@ sub package_pages_walker {
 	foreach my $a ( @all_archs ) {
 	    if ( exists $versions{a2v}->{$a} ) {
 		my $inst_size = $d->{sizes_inst}{$a};
-		$package_page .=  "<td align=\"center\" valign=\"top\">$inst_size</td>";
+		$package_page .=  "<td align=\"center\">$inst_size</td>";
 	    }
 	}
 	$package_page .= "</tr></table>\n";
@@ -326,11 +326,11 @@ sub package_pages_walker {
 	    $data_sheet .= ds_item(gettext( "Maintainer" ),
 				   "<a href=\"$DDPO_URL".
 				   uri_escape($maint_email).
-				   "\">$maint_name</a>" );
+				   "\">".encode_entities($maint_name)."</a>" );
 	    if (@uploaders) {
 		my @uploaders_str;
 		foreach (@uploaders) {
-		    push @uploaders_str, "<a href=\"$DDPO_URL".uri_escape($_->[1])."\">$_->[0]</a>";
+		    push @uploaders_str, "<a href=\"$DDPO_URL".uri_escape($_->[1])."\">".encode_entities($_->[0])."</a>";
 		}
 		$data_sheet .= ds_item(gettext( "Uploaders" ),
 				       join( ", ", @uploaders_str ));
@@ -448,7 +448,7 @@ sub src_package_pages_walker {
     if ($env->{distribution} eq "experimental") {
 	$package_page .= note(
 			      gettext( "Experimental package")."</h2>",
-			      gettext( "Warning: This package is from the <font color=\"red\">experimental</font> distribution. That means it is likely unstable or buggy, and it may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.")."</p><p>".
+			      gettext( "Warning: This package is from the <span class=\"pred\">experimental</span> distribution. That means it is likely unstable or buggy, and it may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.")."</p><p>".
 			      gettext( "Users of experimental packages are encouraged to contact the package maintainers directly in case of problems." ) );
     }
     if ($archive eq "debian-installer") {
@@ -469,7 +469,6 @@ sub src_package_pages_walker {
 	$package_page .= "</dl>";
     }
     $package_page .= "</div> <!-- end pdesc -->\n";
-    $package_page .= "<div id=\"pdeps\">\n";
 
     #
     # display dependencies
@@ -478,21 +477,22 @@ sub src_package_pages_walker {
     $dep_list .= print_src_deps( $env, 'en', $pkg, $v_str, 'build-depends-indep' );
 
     if ( $dep_list ) {
+	$package_page .= "<div id=\"pdeps\">\n";
 	$package_page .= sprintf( "\n<h2>".gettext( "Other packages related to %s:" )."</h2>\n", $name );
 	if ($env->{distribution} eq "experimental") {
-	    $package_page .= note( gettext( "Note that the \"<font color=\"red\">experimental</font>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution." ) );
+	    $package_page .= note( gettext( "Note that the \"<span class=\"pred\">experimental</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution." ) );
 	}
 
 	$package_page .= pdeplegend( [ 'adep', gettext( 'build-depends' ) ],
 	                             [ 'idep', gettext( 'build-depends-indep' ) ] );
 	$package_page .= $dep_list;
+	$package_page .= "</div> <!-- end pdeps -->\n";
     }
-    $package_page .= "</div> <!-- end pdeps -->\n";
-    $package_page .= "<div id=\"pdownload\">\n";
 
     #
     # Source package download
     #
+    $package_page .= "<div id=\"pdownload\">\n";
     my $encodedpack = uri_escape( $name );
     $package_page .= sprintf( "<h2>".gettext( "Download %s" )."</h2>\n",
 			      $name ) ;
@@ -501,7 +501,7 @@ sub src_package_pages_walker {
     my $source_dir = $v_pkg->{directory};
     $sf =~ s/\A\s*//o; # remove leading spaces
     my @source_files = split( /\n\s*/, $sf );
-    $package_page .= sprintf( "<table cellspacing=\"0\" cellpadding=\"2\">\n"
+    $package_page .= sprintf( "<table cellspacing=\"0\" cellpadding=\"2\" summary=\"Download information for the files of this source package\">\n"
 			      ."<tr><th>%s</th><th>%s</th><th>%s</th>",
 			      gettext("File"),
 			      gettext("Size (in kB)"),
@@ -516,7 +516,7 @@ sub src_package_pages_walker {
 	}
 	
 	$package_page .= "<tr><td><a href=\"$src_url\">$src_file_name</a></td>\n"
-	    ."<td align=\"right\">".(floor(($src_file_size/102.4)+0.5)/10)."</td>\n"
+	    ."<td align=\"dotalign\">".sprintf("%1f", (floor(($src_file_size/102.4)+0.5)/10))."</td>\n"
 	    ."<td>$src_file_md5</td></tr>";
     }
     $package_page .= "</table>\n";
@@ -615,7 +615,7 @@ sub write_all_package {
 	
 	&Generated::Strings::string_lang($lang);
 	
-	my $experimental_note = note( gettext( "Warning: The <font color=\"red\">experimental</font> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk." ) );
+	my $experimental_note = note( gettext( "Warning: The <span class=\"pred\">experimental</span> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk." ) );
 	my $installer_note = note( gettext( "Warning: These packages are intended for the use in building <a href=\"http://www.debian.org/devel/debian-installer/\">debian-installer</a> images only. Do not install them on a normal Debian system.") );
 	
 	#
@@ -754,7 +754,7 @@ sub write_src_index {
     &Generated::Strings::string_lang($lang);
  
     my $source_index;
-    my $experimental_note = note( gettext( "Warning: The <font color=\"red\">experimental</font> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk." ) );
+    my $experimental_note = note( gettext( "Warning: The <span class=\"pred\">experimental</span> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk." ) );
     
     my $title = sprintf( gettext ( "Source Packages in \"%s\"" ), 
 			 $distro, $_ );

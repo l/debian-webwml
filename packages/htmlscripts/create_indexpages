@@ -135,9 +135,11 @@ foreach my $lang ( @langs ) {
 			     lang => $lang,
 			     print_title_below => 1 );
     if ($experimental) {
-	$index_page .= note( gettext( "Warning: The <font color=\"red\">experimental</font> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk." ) );
+	$index_page .= note( gettext( "Warning: The <span class=\"red\">experimental</span> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk." ) );
     }
-    $index_page .= "<div id=\"lefthalfcol\">\n<dl>\n";
+    if ($num_sections) {
+	$index_page .= "<div id=\"lefthalfcol\">\n<dl>\n";
+    }
     my $i = 0;
     foreach my $s (sort keys %sections) {
 	if ($sections{$s}[2]) {
@@ -148,10 +150,12 @@ foreach my $lang ( @langs ) {
 	    }
 	}
     }
-    $index_page .= "</dl>\n</div> <!-- end righthalfcol -->\n";
-    $index_page .= "<div align=\"center\"><p class=\"clr\"><a href=\"allpackages\" title=\"".
+    if ($num_sections) {
+	$index_page .= "</dl>\n</div> <!-- end righthalfcol -->\n";
+    }
+    $index_page .= "<p class=\"smallcenter\"><a href=\"allpackages\" title=\"".
 	gettext( "List of all packages" ) ."\">".
-	gettext( "All packages" ) ."</a><br />(<a href=\"allpackages.$lang.txt.gz\">".
+	gettext( "All packages" ) ."</a><br>(<a href=\"allpackages.$lang.txt.gz\">".
 	gettext( "compact compressed textlist" )."</a>)</p></div>\n";
     $index_page .= trailer( '../..', 'index', $lang, @langs );
     my $dest_dir = "$html_root/$distribution";

@@ -33,7 +33,7 @@ sub img {
 	push @attr, "$a=\"$attr{$a}\"";
     }
 
-    return "<a href=\"$root$url\"><img src=\"$root$src\" border=\"0\" alt=\"$alt\" @attr></a>";
+    return "<a href=\"$root$url\"><img src=\"$root$src\" alt=\"$alt\" @attr></a>";
 }
 
 sub simple_menu {
@@ -49,7 +49,7 @@ sub title {
 }
 
 sub marker {
-    return "[<font color=\"red\">$_[0]</font>]";
+    return "[<span class=\"pred\">$_[0]</span>]";
 }
 
 sub note {
@@ -57,7 +57,7 @@ sub note {
     my $str = "";
 
     if ($note) {
-	$str .= "<h2 style=\"color: red\">$title</h2>";
+	$str .= "<h2 class=\"pred\">$title</h2>";
     } else {
 	$note = $title;
     }
@@ -72,7 +72,7 @@ sub pdesc {
     $str .= "<div id=\"pdesc\">\n";
     $str .= "<h2>$short_desc</h2>\n";
 
-    $str .= "<p>$long_desc</p>\n";
+    $str .= "<p>$long_desc\n";
     $str .= "</div> <!-- end pdesc -->\n";
 
     return $str;
@@ -92,7 +92,7 @@ sub pdeplegend {
 sub pkg_list {
     my ( $pkgs, $lang, $env ) = @_;
 
-    my $str = "<dl>\n";
+    my $str = "";
     foreach my $p ( @$pkgs ) {
 	my $p_pkg = $env->{db}->get_pkg( $p );
 
@@ -115,7 +115,9 @@ sub pkg_list {
 	    $str .= "<dt>$p</dt>\n\t<dd>".gettext("Not available")."</dd>\n";
 	}
     }
-    $str .= "</dl>\n";
+    if ($str) {
+	$str .= "<dl>$str</dl>\n";
+    }
 
     return $str;
 }
@@ -143,7 +145,7 @@ sub pmoreinfo {
     
     if ($info{bugreports}) {
 	my $bug_url = $is_source ? $SRC_BUG_URL : $BUG_URL; 
-	$str .= sprintf( gettext( "Check for <a href=\"%s\">bug reports</a> about %s." )."<br>\n",
+	$str .= "<p>\n".sprintf( gettext( "Check for <a href=\"%s\">bug reports</a> about %s." )."<br>\n",
 			 $bug_url.$name, $name );
     }
 	
@@ -186,19 +188,21 @@ sub pmoreinfo {
 	    $str .= "<br>".sprintf( gettext( "View the <a href=\"%s\">Debian changelog</a>" ),
 				    "$CHANGELOG_URL/$src_dir/$src_basename/changelog" )."<br>\n";
 	    $str .= sprintf( gettext( "View the <a href=\"%s\">copyright file</a>" ),
-			     "$COPYRIGHT_URL/$src_dir/$src_basename/$name.copyright" )."<br>\n";
+			     "$COPYRIGHT_URL/$src_dir/$src_basename/$name.copyright" )."</p>";
 	}
     }
 
     if ($info{maintainers}) {
 	my @uploaders = @{$d->{uploaders}};
+	foreach (@uploaders) {
+	    $->[0] = encode_entities( $_->[0] );
+	}
 	my ($maint_name, $maint_mail ) = @{shift @uploaders}; 
 	unless (@uploaders) {
-	    $str .= sprintf( "<p>".
-			     gettext( "%s is responsible for this Debian package." ).
-			     "\n", 
-			     "<a href=\"mailto:$maint_mail\">$maint_name</a>" 
-			     );
+	    $str .= "<p>\n".sprintf( gettext( "%s is responsible for this Debian package." ).
+				     "\n",
+				     "<a href=\"mailto:$maint_mail\">$maint_name</a>" 
+				     );
 	} else {
 	    my $up_str = "<a href=\"mailto:$maint_mail\">$maint_name</a>";
 	    my @uploaders_str;
@@ -208,7 +212,7 @@ sub pmoreinfo {
 	    my $last_up = pop @uploaders_str;
 	    $up_str .= ", ".join ", ", @uploaders_str if @uploaders_str;
 	    $up_str .= sprintf( gettext( " and %s are responsible for this Debian package." ), $last_up );
-	    $str .= "<p>$up_str ";
+	    $str .= "<p>\n$up_str ";
 	}
 
 	$str .= sprintf( gettext( "See the <a href=\"%s\">developer information for %s</a>." )."</p>", $QA_URL.$d->{src_name}, $name );
@@ -217,7 +221,7 @@ sub pmoreinfo {
     if ($info{search}) {
 	my $encodedname = uri_escape( $name );
 	my $search_url = $is_source ? $SRC_SEARCH_URL : $SEARCH_URL;
-	$str .= sprintf( "<p>".gettext( "Search for <a href=\"%s\">other versions of %s</a>" )."</p>\n", $search_url.$encodedname, $name );
+	$str .= "<p>".sprintf( gettext( "Search for <a href=\"%s\">other versions of %s</a>" ), $search_url.$encodedname, $name )."</p>\n";
     }
 
     $str .= "</div> <!-- end pmoreinfo -->\n";
@@ -262,7 +266,7 @@ sub header {
     my $page_title = $params{page_title} || $params{title} || '';
 
     if ($params{print_title_above}) {
- 	$title_in_header = "<h1 align=\"center\">$title_in_header</h1>";
+ 	$title_in_header = "<h1>$title_in_header</h1>";
     } else {
  	$title_in_header = '';
     }
@@ -342,7 +346,7 @@ MENU
     my $img_lang = $img_trans{$LANG} || $LANG;
     my $charset = get_charset($LANG);
     my $txt = <<HEAD;
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="$LANG">
 <head>
 <title>Debian -- $title_tag</title>
@@ -351,7 +355,7 @@ MENU
 <meta name="Author" content="Debian Webmaster, webmaster\@debian.org">
 $KEYWORDS_LINE
 $DESC_LINE
-<link href="$HOME/debian.css" rel="stylesheet" type="text/css">
+<link href="$HOME/debian.css" rel="stylesheet" type="text/css" media="all">
 </head>
 <body>
 <div id="header">
@@ -414,10 +418,10 @@ ENDNAV
 BEGINCONTENT
 ;
     if ($params{print_title_above}) {
-	$txt .= "<h1 align=\"center\">$page_title</h1>\n";
+	$txt .= "<h1>$page_title</h1>\n";
     }
     if ($params{print_title_below}) {
-	$txt .= "<h1 align=\"center\">$page_title</h1>\n";
+	$txt .= "<h1>$page_title</h1>\n";
     }
 
     return $txt;

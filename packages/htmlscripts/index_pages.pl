@@ -13,7 +13,7 @@ sub package_index_walker {
     
     if ( $pkg->is_virtual ) {
 	$sect_str = "<dt><a href=\"$name\">".
-	    "$name</a></dt>";
+	    "$name</a></dt>\n";
 	$env->{si}{en}{virtual} .= $sect_str;
 	return;
     }
