@@ -682,10 +682,7 @@ sub process_po_file {
                         $bad_lang = "";
                 }
         }
-        if ($lang eq "_") {
-                # do nothing
-                1;
-        } elsif ($lang ne "") {
+        if ($lang ne "") {
                 # stats the file
                 ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$filename 2>&1 1>/dev/null");
                 if ($err_msg ne '') {
@@ -896,11 +893,13 @@ sub search_podebconf {
                      && $deb->file_exists("debian/po/POTFILES.in");
 
         my $filename = store_disk_po($pkg, "debian/po/templates.pot");
-        if (system("gzip -9f $PO_ROOT/".$data->pooldir($pkg)."/".$filename)) {
-                warn "Can't gzip $PO_ROOT/".$data->pooldir($pkg)."/".$filename.": $!\n";
+        my $PO_DIR = $PO_ROOT."/".$data->pooldir($pkg);
+        my ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$filename 2>&1 1>/dev/null");
+        if (system("gzip -9f $PO_DIR/$filename")) {
+                warn "Can't gzip $PO_DIR/$filename: $!\n";
         }
 
-        $data->add_podebconf($pkg, 'templates.pot', '_', '', $filename);
+        $data->add_podebconf($pkg, 'templates.pot', '_', $this_stat, $filename);
         @_ = split(/\n/, $deb->file_content("debian/po/POTFILES.in"));
         foreach (@_) {
                 next unless s#^\[type: gettext/rfc822deb]\s+#debian/#;
