@@ -19,6 +19,7 @@
 
 use POSIX qw(strftime);
 use Getopt::Std;
+$| = 1;
 
 $opt_h = "/org/www.debian.org/debian.org/devel/website/stats";
 $opt_w = "/org/www.debian.org/webwml";
@@ -124,9 +125,10 @@ sub getwmlfiles
     my $count = 0;
     my $is_english = ($lang eq "english")?1:0;
     my $file, $v;
-    my $l = $langs{$lang};
 
-    return if (! -d "$config{'wmldir'}/$lang");
+    print "$lang " if ($config{verbose});
+
+    die if (! -d "$config{'wmldir'}/$lang");
     open (FIND, "$cmd|") || die "Can't read from $cmd";
     while (<FIND>) {
 	next if (/\/sitemap\.wml/);
@@ -135,7 +137,7 @@ sub getwmlfiles
 	chomp;
 	$file = substr ($_, $cutfrom);
 	$file =~ s/\.wml$//;
-	$wmlfiles{$l} .= " " . $file;
+	$wmlfiles{$lang} .= " " . $file;
 	if ($is_english) {
 	    $version{"$lang/$file"} = get_cvs_version ("$config{'wmldir'}/$lang", "$file.wml");
 	} else {
@@ -144,8 +146,8 @@ sub getwmlfiles
 	$count++;
     }
     close (FIND);
-    $wmlfiles{$l} .= " ";
-    $wml{$l} = $count;
+    $wmlfiles{$lang} .= " ";
+    $wml{$lang} = $count;
 }	  
 
 sub get_color
@@ -195,30 +197,28 @@ sub check_translation
     return "";
 }
 
-print "Investigating english \n" if ($config{'verbose'});
-
+print "Collecting data in: " if ($config{'verbose'});
 getwmlfiles ('english');
-
-foreach $l (keys %langs) {
-    next if ($l eq "english");
-    print "$l " if ($config{'verbose'});
-    getwmlfiles ($l);
+foreach $lang (keys %langs) {
+    next if ($lang eq "english");
+    getwmlfiles ($lang);
 }
 print "\n" if ($config{'verbose'});
 
 # =============== Create HTML files ===============
 mkdir ($config{'htmldir'}, 0755) if (! -d $config{'htmldir'});
 
-@sorted_english = sort (split (/ /, $wmlfiles{'en'}));
+@sorted_english = sort (split (/ /, $wmlfiles{'english'}));
 
+print "Creating files: " if ($config{'verbose'});
 foreach $lang (sort (keys %langs)) {
     $l = $langs{$lang};
-    printf "Creating %s.html...\n", $l if ($config{'verbose'});
+    print "$l.html " if ($config{'verbose'});
 
     foreach $file (@sorted_english) {
         next if ($file eq "");
 	# Translated pages
-	if (index ($wmlfiles{$l}, " $file ") >= 0) {
+	if (index ($wmlfiles{$lang}, " $file ") >= 0) {
 	    	$t_body .= sprintf ("<a href=\"/%s.%s.html\">%s</a><br>\n",
     			  $file, $l, $file);
     		$translated{$lang}++;
@@ -240,25 +240,25 @@ foreach $lang (sort (keys %langs)) {
 
     $translated{$lang} = $translated{$lang} - $outdated{$lang};
 
-    $percent_a{$l} = $wml{$l}/$wml{en} * 100;
-    $percent_t{$l} = $translated{$lang}/$wml{en} * 100;
-    $percent_o{$l} = $outdated{$lang}/$wml{en} * 100;
-    $percent_u{$l} = $untranslated{$lang}/$wml{en} * 100;
+    $percent_a{$lang} = $wml{$lang}/$wml{english} * 100;
+    $percent_t{$lang} = $translated{$lang}/$wml{english} * 100;
+    $percent_o{$lang} = $outdated{$lang}/$wml{english} * 100;
+    $percent_u{$lang} = $untranslated{$lang}/$wml{english} * 100;
 
     if (open (HTML, ">$config{'htmldir'}/$l.html")) {
-	printf HTML "<html><head><title>%s: %s</title></head><body bgcolor=#ffffff>\n", $config{'title'}, $l;
+	printf HTML "<html><head><title>%s: %s</title></head><body bgcolor=#ffffff>\n", $config{'title'}, $lang;
 
-	$color = get_color ($percent_a{$l});
+	$color = get_color ($percent_a{$lang});
 
 	printf HTML "<table width=100%% cellpadding=2 cellspacing=0 bgcolor=%s>\n", $color;
 
-	printf HTML "<tr><td colspan=4><h1 align=center>%s: %s</h1></td></tr>", $config{'title'}, $l;
+	printf HTML "<tr><td colspan=4><h1 align=center>%s: %s</h1></td></tr>", $config{'title'}, $lang;
 
 	print HTML "<tr>\n";
-	printf HTML "<td align=center width=25%%><b>%d files (%d%%) translated</b></td>", $wml{$l}, $percent_a{$l};
-	printf HTML "<td align=center width=25%%><b>%d files (%d%%) up to date</b></td>", $translated{$lang}, $percent_t{$l};
-	printf HTML "<td align=center width=25%%><b>%d files (%d%%) outdated</b></td>", $outdated{$lang}, $percent_o{$l};
-	printf HTML "<td align=center width=25%%><b>%d files (%d%%) not translated</b></td>", $untranslated{$lang}, $percent_u{$l};
+	printf HTML "<td align=center width=25%%><b>%d files (%d%%) translated</b></td>", $wml{$lang}, $percent_a{$lang};
+	printf HTML "<td align=center width=25%%><b>%d files (%d%%) up to date</b></td>", $translated{$lang}, $percent_t{$lang};
+	printf HTML "<td align=center width=25%%><b>%d files (%d%%) outdated</b></td>", $outdated{$lang}, $percent_o{$lang};
+	printf HTML "<td align=center width=25%%><b>%d files (%d%%) not translated</b></td>", $untranslated{$lang}, $percent_u{$lang};
 	print HTML "</tr>\n</table>\n";
 
 	print HTML "<p><a href=\"./\">Index</a><p>\n";
@@ -286,9 +286,10 @@ foreach $lang (sort (keys %langs)) {
 	close (HTML);
     }
 }
+print "\n" if ($config{'verbose'});
 
 # =============== Creating index.html ===============
-print "Creating index.html...\n" if ($config{'verbose'});
+print "Creating index.html... " if ($config{'verbose'});
 
 open (HTML, ">$config{'htmldir'}/index.html")
     || die "Can't open $config{'htmldir'}/index.html";
@@ -302,17 +303,17 @@ print HTML "<tr><th>Language</th><th>Files</th><th>Up to date</th><th>Outdated</
 foreach $lang (sort (keys %langs)) {
     $l = $langs{$lang};
 
-    $color = get_color ($percent_a{$l});
+    $color = get_color ($percent_a{$lang});
 
     print HTML "<tr>";
     printf HTML "<td><a href=\"%s.html\">%s</a> (%s)</td>", $l, $lang, $l;
-    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color, $wml{$l}, $percent_a{$l};
+    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color, $wml{$lang}, $percent_a{$lang};
     if ($l ne "en") {
-      printf HTML "<td align=right>%d (%d%%)</td>", $translated{$lang}, $percent_t{$l};
-      printf HTML "<td align=right>%d (%d%%)</td>", $outdated{$lang}, $percent_o{$l};
-      printf HTML "<td align=right>%d (%d%%)</td>", $untranslated{$lang}, $percent_u{$l};
+      printf HTML "<td align=right>%d (%d%%)</td>", $translated{$lang}, $percent_t{$lang};
+      printf HTML "<td align=right>%d (%d%%)</td>", $outdated{$lang}, $percent_o{$lang};
+      printf HTML "<td align=right>%d (%d%%)</td>", $untranslated{$lang}, $percent_u{$lang};
     } else {
-      print HTML "<td>-</td><td>-</td><td>-</td>";
+      print HTML "<td align=right>-</td><td align=right>-</td><td align=right>-</td>";
     }
     print HTML "</tr>\n",
 }
@@ -326,6 +327,7 @@ print HTML "<p>Created with <a href=\"http://cvs.debian.org/webwml/stattrans.pl?
 print HTML "</body></html>\n";
 close (HTML);
 
+print "done.\n" if ($config{'verbose'});
 
 # Note:
 #   Translated pages on ll.html may be higher than in index.html.
