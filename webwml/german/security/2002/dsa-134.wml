@@ -1,0 +1,82 @@
+<define-tag description>Entfernte Ausnutzbarkeit</define-tag>
+<define-tag moreinfo>
+<p>Theo de Raadt kündigte an, dass das OpenBSD-Team gemeinsam mit ISS an einer
+entfernten Ausnutzbarkeit für OpenSSH (einer freien Implementierung des Secure
+SHell Protokolls) arbeiten. Sie weigern sich, Details über die Verwundbarkeit
+zur Verfügung zu stellen sondern raten allen, auf das neueste Release zu
+aktualisieren, Version 3.3.</p>
+
+<p>Diese Version wurde vor drei Tagen veröffentlicht und führte eine neue
+Methode ein, die Auswirkungen von Ausnutzbarkeiten im Netzwerkbehandlungs-Code
+ein, Privilegienteilung genannt. Unglücklicherweise hat dieses Release einige
+bekannte Probleme:</p>
+
+<ul>
+<li>Kompression funktioniert nicht auf allen Betriebssystemen, da sich der
+    Code auf spezielle mmap-Fähigkeiten verläßt.</li>
+
+<li>Die PAM-Unterstützung wurde nicht abgeschlossen und könnte einige
+    PAM-Module unbrauchbar machen.</li>
+
+<li>Interaktive Tastaturauthentifizierung funktioniert nicht mit
+    Privilegienteilung. Am meisten bemerkbar für Debian-Benutzer macht dies
+    PAM-Module unbrauchbar, die eine PAM-Konversationsfunktion benötigen (wie
+    das OPIE-Modul).</li>
+</ul>
+
+<p>Die neue Privilegteilungs-Unterstützung von Niels Provos ändert ssh
+dahingehend, dass ein eigener nicht-priviligierter Prozess die meiste Arbeit
+erledigt. Dies bedeutet, dass jegliche Verwundbarkeit in diesem Teil von
+OpenSSH niemals zu einer root-Beeinträchtigung führt, sondern nur Zugriff auf
+einen getrennten Account ermöglicht, der auf eine chroot-Umgebung beschränkt
+ist.</p>
+
+<p>Theo stellte klar, dass diese neue Version die Verwundbarkeit nicht behebt,
+sondern durch den neuen Privilegteilungs-Code nur das Risiko vermindert, da
+ein Angreifer nur Zugriff auf einen speziellen Account erlangt, der auf eine
+chroot-Umgebung beschränkt ist.</p>
+
+<p>Da die Details des Problems nicht veröffentlicht wurden, sahen wir uns
+gezwungen, auf das neueste tragbare Release von OpenSSH umzusteigen, Version
+3.3p1.</p>
+
+<p>Bitte beachten Sie, dass wir nicht die Zeit hatten, ordnungsgemäße
+Qualitätssicherung für diese Pakete durchzuführen; sie könnten Fehler
+beinhalten oder andere Dinge unerwarteterweise beeinflussen. Wenn Sie ein
+solches Problem bemerken (neben denen, die in diesem Gutachten erwähnt sind),
+schreiben Sie bitte einen Fehlerbericht, damit wir dem nachgehen können.</p>
+
+<p>Einige Notizen zu möglichen Fragen, die mit dieser Aktualisierung
+zusammenhängen:</p>
+
+<ul>
+<li>Dieses Paket führt einen neuen Account namens `sshd' ein, der im
+    Privilegteilungs-Code verwendet wird. Falls sshd-Account existiert, wird
+    das Paket versuchen, einen zu erstellen. Wenn der Account bereits
+    vorhanden ist, wird er wiederverwendet. Falls Sie nicht wollen, dass dies
+    passiert, müssen Sie dies manuell ändern.</li>
+
+<li>(Nur für potato relevant) Diese Aktualisierung führt ein zurückportierte
+    Version 0.9.6 der SSL-Bibliothek ein. Das bedeutet, dass Sie das ssl-Paket
+    ebenfalls aktualisieren müssen.</li>
+
+<li>(Nur für potato relevant) Diese Aktualisierung verwendet standardmäßig die
+    Version 2 des SSH-Protokolls. Das kann vorhandene Einrichtungen unwirksam
+    machen, bei denen RSA-Authentifizierung verwendet wurde. Sie müssen
+    entweder -1 zum ssh-Aufruf hinzufügen, um weiterhin SSH Protokoll 1 und
+    ihre vorhandenen Schlüssel zu verwenden, oder neue Schlüssel für SSH
+    Protokoll 2 erstellen.</li>
+
+<li>sshd hat standardmäßig Privilegienteilung aktiviert, selbst wenn Sie es
+    nicht explizit in <tt>/etc/ssh/sshd_config</tt> aktivieren.</li>
+
+<li>Wenn ssh für Sie nicht funktioniert, können Sie versuchen, die
+    Komprimierung abzudrehen. Wir haben bereits einen Patch von Solar Designer
+    inkludiert, der das Problem mit Linux 2.2 Kernel behebt, aber es dürfte
+    einige wenige Fälle geben, bei denen dies nicht ausreicht.</li>
+</ul>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2002/dsa-134.data"
+#use wml::debian::translation-check translation="1.3"
