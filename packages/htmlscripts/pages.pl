@@ -213,9 +213,7 @@ sub package_pages_walker {
 					 [ 'rec',  gettext( 'recommends' ) ],
 					 [ 'sug',  gettext( 'suggests' ) ], );
 	    
-	    $package_page .= "<ul>\n";
 	    $package_page .= $dep_list;
-	    $package_page .= "</ul>\n";
 	    $package_page .= "</div> <!-- end pdeps -->\n";
 	}
 	
