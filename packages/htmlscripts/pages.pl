@@ -460,7 +460,7 @@ sub package_pages_walker {
 	#
 	# create data sheet
 	#
-	if ($env->{lang} = "en") {
+	if ($env->{lang} == "en") {
 
 	    my $data_sheet = header( title => "$name -- Data sheet",
 				     lang => "en",
@@ -476,9 +476,9 @@ sub package_pages_walker {
 	    $data_sheet .= "</h1></div>\n";
 
 	    $data_sheet .= "<table><tbody>";
-	    $data_sheet .= "<tr><td>".gettext( "Version" )":</td>\n".
+	    $data_sheet .= "<tr><td>".gettext( "Version" ).":</td>\n".
 		"<td>$v_str</td></tr>";
-	    $data_sheet .= "<tr><td>".gettext( "Section" )":</td>\n".
+	    $data_sheet .= "<tr><td>".gettext( "Section" ).":</td>\n".
 		"<td>$section</td></tr>";
 	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Depends' );
 	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Recommends' );
@@ -490,11 +490,12 @@ sub package_pages_walker {
 	    
 	    $data_sheet .= trailer( '../..', $name );
 
-	    $ds_filename = "$dirname/ds_$name.$env->{lang}.html";
+	    my $ds_filename = "$dirname/ds_$name.$env->{lang}.html";
 	    #
 	    # write file
 	    #
 	    $files->update_file( $ds_filename, $data_sheet );
+	}
     }
 
 sub src_package_pages_walker {
