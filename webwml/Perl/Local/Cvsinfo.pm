@@ -177,13 +177,13 @@ sub readinfo {
                 chomp;
                 if (m|^D/([^/]+)/|) {
                         $entry = $dir."/".$1;
-                        next if $self->_skippable($entry);
+                        next if $self->_skippable($entry) or ! -d $entry;
                         push (@{$self->{DIRS}}, $entry);
                         push (@heredir, $entry);
                         $self->_verbose("Found directory: $entry");
                 } elsif (m|^/([^/]+)/([^/]+)/([^/]+)/([^/]*)/$|) {
                         $entry = $dir."/".$1;
-                        next if $self->_skippable($entry);
+                        next if $self->_skippable($entry) or ! -f $entry;
                         $self->{FILES}->{$entry} = {
                                 REV     => $2,
                                 DATE    => $3,
