@@ -8,22 +8,31 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-all:: subscribe.wml unsubscribe.wml
+all:: subscribe.$(LANGUAGE).html unsubscribe.$(LANGUAGE).html
+clean::
+	rm -f subscribe.wml unsubscribe.wml
 install:: $(HTMLDIR)/subscribe.$(LANGUAGE).html $(HTMLDIR)/unsubscribe.$(LANGUAGE).html
 
 mklist := $(ENGLISHDIR)/$(CUR_DIR)/mklist
 lists.cfg := $(ENGLISHDIR)/$(CUR_DIR)/lists.cfg
+descfiles := $(shell find $(ENGLISHDIR)/$(CUR_DIR)/desc -type f \
+                      ! -path '*/CVS/*' ! -name introduction \
+                      ! -name subscription ! -name advertising ! -name README)
+ifneq "$(wildcard desc)" ""
+descfiles := $(shell find desc -type f ! -path '*/CVS/*' ! -name introduction \
+                      ! -name subscription ! -name advertising ! -name README)
+endif
 
-subscribe.wml: $(mklist) $(lists.cfg)
+subscribe.wml: $(mklist) $(lists.cfg) $(descfiles) $(mklist).tags
 	$(mklist) -f $(lists.cfg) -s
 
-unsubscribe.wml: $(mklist) $(lists.cfg)
+unsubscribe.wml: $(mklist) $(lists.cfg) $(descfiles) $(mklist).tags
 	$(mklist) -f $(lists.cfg) -u
 
 ifeq "$(LANGUAGE)" "en"
-mailing-lists.txt: $(mklist) $(lists.cfg)
+mailing-lists.txt: $(mklist) $(lists.cfg) $(descfiles)
 	$(mklist) -f $(lists.cfg) -t
 else
-mailing-lists.$(LANGUAGE).txt: $(mklist) $(lists.cfg)
+mailing-lists.$(LANGUAGE).txt: $(mklist) $(lists.cfg) $(descfiles)
 	$(mklist) -f $(lists.cfg) -t && mv mailing-lists.txt mailing-lists.$(LANGUAGE).txt
 endif
