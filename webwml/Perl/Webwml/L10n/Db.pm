@@ -153,7 +153,7 @@ sub read {
 
         chomp($self->{date});
         $_ = <DB>;
-        next unless defined $_;
+        return unless defined $_;
         MAIN: while (1) {
                 my $entry = {};
                 my $desc = '';
@@ -175,8 +175,12 @@ sub read {
                 foreach (@{$self->{scalar}}) {
                         if ($desc =~ m/^$_: (.*)$/m) {
                                 $entry->{$_} = $1;
+                        } elsif ($_ eq 'Package') {
+                                warn "Parse error when reading $file: missing \`$_' field\n";
+                                next MAIN;
                         } else {
-                                warn "Parse error when reading $file: missing $_ field\n";
+                                warn "Parse error when reading $file: Package ".$entry->{Package}.": missing \`$_' field\n";
+                                delete $self->{data}->{$entry->{Package}};
                                 next MAIN;
                         }
                 }
