@@ -1,0 +1,134 @@
+#use wml::debian::template title="Utilisation de CVS"
+#use wml::debian::translation-check translation="1.3" translation_maintainer="Denis Barbier"
+
+<p>CVS est un programme pour aider la modification simultanée de
+documents par plusieurs personnes. Chaque utilisateur crée une copie
+locale des documents. Ces copies peuvent être sur la même machine, ou
+aux quatre coins du monde. Les utilisateurs peuvent alors modifier leur
+copie locale comme ils le souhaitent, et quand la version modifiée est
+prête, enregistrer leurs changements sur le serveur.
+
+<p>CVS ne vous laissera pas enregistrer vos modifications si la version
+originale a été modifiée depuis votre dernière mise à jour.
+Ce n'est normalement pas un problème parce que vous pouvez mettre à jour
+votre copie locale. Si vos propres changements sont dans des zones du
+fichier différentes des modifications sur le fichier original, celles-ci
+sont silencieusement répercutées sur votre copie locale.
+Si les changements affectent la m6me zone, vous êtes averti qu'il y a
+conflit et que vous devez éditer le fichier pour corriger le problème
+avant d'enregistrer vos modifications.
+
+<P>Dans ce qui suit un accès anonyme (par le compte
+«&nbsp;anonymous&nbsp;») sera utilisé comme exemple. Si vous avez accès
+à un autre compte qui vous donne une permission en écriture dans le
+"repository" alors vous devriez utiliser ce compte à la place.
+Si vous pensez faire des changements, vous devriez commencer par obtenir
+un compte, puisque les utilisateurs anonymes ne peuvent pas enregistrer
+leurs changements.
+
+<P>Si vous êtes un développeur Debian, lisez la section sur
+<a href="#cvsfordevelopers">l'accès CVS pour les développeurs Debian</a>.
+
+<p>Pour commencer à utiliser CVS, vous devez d'abord faire un
+<code>login</code> sur le serveur CVS
+
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml login
+</pre>
+
+<p>(appuyez simplement sur la touche Entrée pour le mot de passe
+«&nbsp;password&nbsp;» du compte «&nbsp;anonymous&nbsp;»)
+
+<P>Pour récupérer une copie de fichiers wml sur votre machine locale,
+vous devez utiliser
+
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/&lt;langue&gt;
+</pre>
+
+<p>où <code>&lt;langue&gt;</code> est la langue que vous voulez. Vous
+allez probablement vouloir la version anglaise en plus de la langue sur
+laquelle vous travaillez. Si vous avez seulement besoin d'un
+sous-ensemble des pages, vous pouvez ne récupérer que celles dont vous
+avez besoin, par exemple
+
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/english/doc
+</pre>
+
+<p>Si on vous a donné un nom d'utilisateur et un mot de passe, tapez le
+à la place de anonymous
+
+<pre>
+   cvs -d :pserver:username@cvs.debian.org:/cvs/webwml checkout webwml/english/doc
+</pre>
+
+<P>À partir de là, vous n'aurez plus besoin d'utiliser la partie
+<code>'-d :pserver:...'</code>.  De temps en temps vous voudrez faire un
+
+<pre>
+   cvs update -d
+</pre>
+
+<p>pour récupérer les fichiers qui ont changé. L'option <code>-d</code>
+ajoutera les nouveaux répertoires éventuels, automatiquement.
+Vous pouvez créer un fichier <code>~/.cvsrc</code> afin de ne pas avoir
+à taper les mêmes options à chaque fois. Par exemple, il peut contenir
+
+<pre>
+cvs -z9
+update -d -P
+diff -u
+</pre>
+
+<P>La suite concerne ceux qui ont une permission en écriture dans le
+"repository". Quand vous en avez fini avec une page, vous pouvez
+enregistrer vos modifications dans le "repository" en utilisant
+
+<pre>
+   cvs commit &lt;file&gt;.wml
+</pre>
+
+<p>ou
+
+<pre>
+   cvs commit &lt;dir&gt;   (pour enregistrer toutes les modifications dans &lt;dir&gt;)
+</pre>
+
+<p>ou
+
+<pre>
+   cvs commit          (pour enregistrer toutes les modifications dans le répertoire courant)
+</pre>
+
+<P>Si vous êtes la première personne à traduire une page, vous aurez
+besoin de faire un
+
+<pre>
+   cvs add &lt;file&gt;.wml
+</pre>
+
+<p>avant de pouvoir l'enregistrer. Notez que <code>cvs add</code> n'est
+pas récursif donc vous aurez besoin d'ajouter un répertoire avant de
+pouvoir ajouter son contenu.
+
+<P>Pour plus d'information sur CVS, utilisez <code>info cvs</code>.
+
+<H3><a name="cvsfordevelopers">Accès à CVS pour les développeurs Debian</H3>
+
+<P>Comme les développeurs Debian ont déjà un compte sur cvs.debian.org,
+une méthode plus sûre peut être utilisée pour accéder au "repository"
+CVS. Cette méthode est préférable à la méthode :pserver: expliquée plus
+haut.
+
+<p>Vous devez écrire à webmaster@debian.org en demandant un accès CVS.
+Une fois que vous avez été ajouté au groupe, modifiez simplement la
+variable d'environnement CVS_RSH en y mettant ssh («&nbsp;<code>export
+CVS_RSH=ssh</code>&nbsp;» dans votre .bashrc) et tapez
+
+<pre>
+   cvs -d :ext:<nom_compte>@cvs.debian.org:/cvs/webwml checkout webwml/english/
+</pre>
+
+<p>Une fois que vous avez récupéré les fichiers, tout le reste
+fonctionne comme dans la section précédente.
