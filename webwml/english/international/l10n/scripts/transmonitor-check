@@ -394,7 +394,7 @@ sub parse_tarball {
                 return ":$MENU_ROOT/_tmp/".store_disk_menu($pkg, $file)
                         if $file =~ m#(^|/)debian/[^/]*menu[^/]*$#;
                 return ":$TEMPLATES_ROOT/_tmp/".store_disk_templates($pkg, $file)
-                        if $file =~ m#(^|/)debian/([^/]+\.)?templates(\.|$)#;
+                        if $file =~ m#(^|/)debian/([^/]+\.)?templates(\...(_..)?)?$#; # && !(defined($3) && $3 eq '.in');
                 return -1 if $file =~ m#(^|/)debian/[^/]*doc-base[^/]*$#;
 
                 return 0;
@@ -675,7 +675,7 @@ sub search_templates {
         $tmpl = Webwml::L10n::Debconf->new();
         foreach my $file (@debconffiles) {
                 #   All translations in a single file
-                next if $deb->file_matches("^".$file."\\.");
+                next if $deb->file_matches("^".$file."\\...(_..)?\$");
 
                 # Add this file to data
                 $filename = store_disk_templates($pkg, $file);
@@ -703,7 +703,7 @@ sub search_templates {
         }
         foreach my $file (@debconffiles) {
                 #   Translations are put in separate files
-                @list = $deb->file_matches("^".$file."\\.");
+                @list = $deb->file_matches("^".$file."\\...(_..)?\$");
                 next unless @list;
 
                 $filename = store_disk_templates($pkg, $file);
