@@ -1,0 +1,64 @@
+#use wml::debian::translation-check translation="1.4"
+<define-tag description>explotación remota</define-tag>
+<define-tag moreinfo>
+<p>Theo de Raadt anunció que el equipo de OpenBSD está trabajando con ISS
+en una explotación remota de OpenSSH (una implementación del protocolo
+Secure SHell). Rechazan dar cualquier detalle de la vulnerabilidad, pero en
+su lugar aconsejan a todos que se actualicen a la última liberación, la
+versión 3.3.</p>
+
+<p>Esta versión se liberó hace 3 días e introduce una nueva característica
+para reducir los efectos de las explotaciones en el código de gestión de
+redes llamada separación de privilegios.  Desafortunadamente, esta versión
+tiene unos pocos de problemas conocidos:</p>
+
+<ul>
+<li>la compresión no funciona en todos los sistemas operativos porque se
+basa en características especiales de mmap,</li>
+
+<li> el soporte de PAM no ha sido completado y puede romper unos pocos
+  módulos PAM
+
+<li>la autenticación interactiva por teclado no funciona con separación de
+  privilegios. Lo más noticiable para los usuarios de Debian es que esto
+  rompre los módulos de PAM que necesitan una función de conversación PAM
+  (como el módulo OPIE).</li>
+</ul>
+
+<p>El nuevo soporte de separación de privilegios de Niels Provos cambia ssh
+para que use un proceso separado sin privilegios para que gestione la
+mayoría del trabajo. Esto significa que cualquier vulnerabilidad en esta
+parte de OpenSSH nunca puede llevar a un compromiso de root pero sólo para
+acceder a una cuenta separada restringida por chroot.</p>
+
+<p>Theo dijo claramente que esta nueva versión no arregla la
+vulnerabilidad, en su lugar, al usar el nuevo código de separación de
+privilegios simplemente reduce el riesgo ya que el atacante sólo puede
+ganar el acceso a root en una cuenta especial restringida por chroot.</p>
+
+<p>Ya que los detalles del problema no han sido liberados, nos vemos
+obligados a cambiar a la última liberación portable de OpenSSH, la versión
+3.3p1.</p>
+
+<p>Fíjese en que no hemos tenido tiempo de hacer un aseguramiento de
+calidad adecuado en estos paquetes: pueden contener errores o cosas rotas
+de forma inesperada. Si descubre cualquiera de estos problemas (o alguno de
+los mencionados anteriormente en este aviso) rellene un informe de errores
+para que podamos investigar.</p>
+
+<p>Algunas notas sobre posibles cuestiones relativas a esta
+actualización:</p>
+
+<ul>
+<li>sshd activa de forma predeterminada la separación de privilegios,
+    aunque no lo active explícitamente en
+    <tt>/etc/ssh/sshd_config</tt>.</li>
+<li>Si ssh no le funciona puede intentar desactivar la comprensión. Ya
+    incluimos un parche para de Solar Designer que corrige el problema con
+    los núcleos de Linux 2.2, pero puede haber unos pocos casos en los que
+    esto no sea suficiente.</li>
+</ul>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2002/dsa-134.data"
