@@ -8,7 +8,7 @@
 # or run gimp and select menu item Xtns->Perl->Server
 # You have been (belatedly) warned!!
 #
-# gimp --no-interface --no-data --batch '(extension-perl-server 0 0 0)' &
+gimp --no-interface --no-data --batch '(extension-perl-server 0 0 0)' &
 #
 # If you want to go into totally evil mode with no X display, try
 # this on for size. I hope it works :/
@@ -17,7 +17,7 @@
 #
 # TRANSLATORS, Edit the stuff in ""s
 LANG="pt"
-HOME_TEXT="Home"
+HOME_TEXT="Principal"
 ABOUT_TEXT="Sobre o Debian"
 NEWS_TEXT="Novidades"
 DISTRIB_TEXT="Distribuição"
