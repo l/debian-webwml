@@ -65,7 +65,7 @@ sub init_translators {
                         compress    => 'none'
                 },
 		'Frédéric Bothamy' => {
-                        email       => 'fbothamy@mail.dotcom.fr',
+                        email       => 'frederic.bothamy@free.fr',
                         summary     => 2,
                         logs        => 0,
                         diff        => 1,
