@@ -46,17 +46,12 @@ wget -q -N http://gluck.debian.org/~barbier/l10n/material/data/unstable.gz || { 
 gunzip -c -f unstable.gz > unstable.gluck
 ln -sf $crondir/datafiles/unstable.gluck $webtopdir/webwml/english/international/l10n/data/unstable.gluck
 
-echo "updating the non-US database file used to display l10n stats..." >> $crondir/lessoften.log
-wget -q -N http://non-us.debian.org/~barbier/l10n/material/data/unstable.gz || { echo "couldn't fetch data/unstable on non-us!"; exit 1; }
-gunzip -c -f unstable.gz > unstable.non-US
-ln -sf $crondir/datafiles/unstable.non-US $webtopdir/webwml/english/international/l10n/data/unstable.non-US
-
 # cleanup
 rm -f unstable.gz
 
 echo "extracting the list of languages..." >> $crondir/lessoften.log
 cd $webtopdir/webwml/english/international/l10n
-./scripts/list-languages.pl data/unstable.gluck data/unstable.non-US > data/langs
+./scripts/list-languages.pl data/unstable.gluck > data/langs
 
 # the below scripts will echo what they are doing themselves
 $crondir/people_scripts/update.packages+sources >> $crondir/lessoften.log
