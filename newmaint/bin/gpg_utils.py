@@ -54,9 +54,25 @@ def get_owner(db, place):
     q = db.query("SELECT email FROM people, places WHERE people.id = places.who AND places.id = %s" % place)
     return q.getresult()[0][0]
 
+def cache_places(db):
+    places_cache.clear()
+    q = db.query("SELECT people.email, places.id FROM places, people WHERE people.id = places.who ORDER BY country, UPPER(city)")
+    for email, place in [x[:] for x in q.getresult()]:
+        if not places_cache.has_key(email):
+            places_cache[email] = []
+        places_cache[email].append(place)
+
 def get_places(db, email):
+    if places_cache.has_key(email):
+        return places_cache[email]
     q = db.query("SELECT places.id FROM places, people WHERE people.id = places.who AND people.email = '%s' ORDER BY country, UPPER(city)" % email)
     return [x[0] for x in q.getresult()]
+
+def cache_names(db):
+    q = db.query("SELECT email, forename, surname FROM people")
+    for email, forename, surname in [x[:] for x in q.getresult()]:
+        if not name_cache.has_key(email):
+            name_cache[email] = (forename, surname)
 
 def get_name(db, email):
     if name_cache.has_key(email):
@@ -89,6 +105,7 @@ def remove_place(db, place):
 # main
 
 name_cache = {}
+places_cache = {}
 
 
 # vim:set ts=4:
