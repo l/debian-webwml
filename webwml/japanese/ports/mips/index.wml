@@ -1,6 +1,6 @@
 #use wml::debian::template title="MIPS 移植版" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/mips/menu.inc"
-#use wml::debian::translation-check translation="1.83"
+#use wml::debian::translation-check translation="1.84"
 
 <h1>debian-mips と debian-mipsel</h1>
 
@@ -16,49 +16,35 @@
 SGI の機械 (SGI Indy と Indigo2) は
 <a href="http://www.foldoc.org/foldoc/foldoc.cgi?query=big-endian">ビッグエンディアン</a>
 で動作しますので debian-mips です。
-Digital Decstations は
+Digital Decstations や Cobalt Cube/RaQ は
 <a href="http://www.foldoc.org/foldoc/foldoc.cgi?query=little-endian">リトルエンディアン</a>
-で動作しますので debian-mipsel です。</p>
+で動作しますので debian-mipsel です。SWARM と呼ばれる BCM91250A はどちらのモードでも動作します。
+ボード上のスイッチで選択可能です。</p>
 
 <h2>既知の問題</h2>
+<ul>
+	<li>O2 R10000 はサポートされていません。</li>
+	<li>O2 R5000 はフレームバッファがうまく動作せず、実験的なものです。</li>
+	<li>Indigo 2 R8000/R10000 はサポートされていません。</li>
+	<li>XL を除く Indigo 2 のフレームバッファはサポートされていません。</li>
+	<li>Challenge S extra Ethernet/SCSI はサポートされていません
+	(GIO64 のデバイス)。</li>
+	<li>Indigo 2 の EISA スロットはサポートされていません。</li>
+</ul>
+<h2>既知の問題 (解決済み)</h2>
 <ul>
 	<li>Decstation には XFree 4 用の X キーマップがありません。</li>
 	<li>R4600 CPU には現在解決されていないバグがあるようで、
 	perl を segfault させてしまいます。
 	<code>export LD_BIND_NOW=1</code> とすることで解決できます。</li>
 	<li>R4600 V1.7 は現在の CVS 版では動作しません。ハングすることがあります。</li>
-	<li>O2 R10000 はサポートされていません。</li>
-	<li>O2 R5000 はフレームバッファが有効では動作せず、実験的なものです。</li>
-	<li>Indigo 2 R8000/R10000 はサポートされていません。</li>
-	<li>Challenge S extra Ethernet/SCSI はサポートされていません
-	(GIO64 のデバイス)</li>
-	<li>Indigo 2 の EISA スロットはサポートされていません。</li>
 	<li>R3000 decstation は現在の cvs 版カーネルだとクラッシュします。</li>
-</ul>
-<h2>既知の問題 (解決済み)</h2>
-<ul>
 	<li>Indigo2 で Framebuffer/Newport が有効になっていると
         早い時期にクラッシュすることがあります。
-	<li>XFree XShm は壊れており、pixmap が破壊されます - 現在の cvs では修正済みです。</li>
-	<li>"sleep" がスリープから戻ってこないことがあります。
-	strace した結果 22 年スリープしてしまうそうです...
-	librt/fpu 関連の問題のようです
-	- 二ヶ月の間、この問題は起っていません。Kernel 2.4.17 / glibc 2.2.5-3 では、修正されるようです。</li>
-	<li>update-menus が SIGBUS を出します。c++ の exception handling のようです
-	- 現在は静的リンクしていて、それで問題が解決するようです。</li>
-	<li>woody でリリースされる予定の 3.0.22 Boot-Floppies は、間違ったボリュームヘッダで
- カーネルに名前をつけてしまいます。その名前は、"linux" ではなく、"linux.bi" です。
- SGI のための次世代ブートローダである "arcboot" を使ってみてください。ただし、
- ELF カーネルを含む、より新しいカーネルイメージをインストールする必要があることに注意してください。
- Woody は 3.0.23 と共にリリースされるでしょう。
 </ul>
 
 <h2>公開マシン</h2>
 <ul>
-	<li>pongo.verwaltung.uni-mainz.de.<br>
-	An SGI Indy - R4000SC 256MB Ram<br>
-	<email martin@uni-mainz.de>
-
 	<li>remake.rfc822.org<br>
 	Lasat より寄付されたMasquerade Proです。
 	リトルエンディアンの R5000@250Mhz で debian-mipsel と
@@ -101,24 +87,19 @@ Digital Decstations は
 	<a href="http://lists.debian.org/debian-mips/">lists.debian.org</a>
 	にあります。
 
-	<li>linux-mips@oss.sgi.com - SGI だけでなく Linux/Mips と
-	Linux/Mipsel の全てのアーキテクチャについて議論します。<br>
-	購読するには to <email majordomo@oss.sgi.com> に
-	"subscribe linux-mips" という内容のメールを送ります。
-
-	<li>cobalt-22@devel.alal.com - Cobalt Qube/RaQ への 2.2/2.4 カーネルの移植<br>
-	<a href="http://devel.alal.com/mailman/listinfo/cobalt-22">http://devel.alal.com/mailman/listinfo/cobalt-22</a>
+	<li>linux-mips@linux-mips.org - Linux/Mips と Linux/Mipsel カーネルの開発。<br>
+	<email ecartis@linux-mips.org> に "subscribe linux-mips" というメールを送って登録してください。
 </ul>
 
 <h2>リンク</h2>
 
 <dl>
-  <dt>Decstation Linux - とりわけ Decstation ユーザのためのページ - 少しばかり時代遅れ
-    <dd><a href="http://decstation.unix-ag.org/">decstation.unix-ag.org</a>
+  <dt>Linux/MIPS カーネル開発 - 多くの MIPS 関連情報
+    <dd><a href="http://www.linux-mips.org/">linux-mips.org</a>
   <dt>CPU ベンダ
     <dd><a href="http://www.mips.com/">www.mips.com</a>
-  <dt>SGI 提供の Linux/Mips ウェブページ
-    <dd><a href="http://oss.sgi.com/mips/">oss.sgi.com/mips</a>
+  <dt>Decstation Linux - Decstation ユーザのためのページ - 時代遅れ
+    <dd><a href="http://decstation.unix-ag.org/">decstation.unix-ag.org</a>
   <dt>Karsten Merker のリトルエンディアンの MIPS RPM パッケージ
     <dd><a href="ftp://bolug.uni-bonn.de/mips/">bolug.uni-bonn.de/mips/</a>
   <dt>Maciej W. Rozycki のリポジトリ
@@ -129,7 +110,7 @@ Digital Decstations は
     <dd><a href="http://www.netbsd.org/Ports/cobalt/faq.html">http://www.netbsd.org/Ports/cobalt/faq.html</a>
   <dt>Linux-Mips クロス開発 HOWTO
     <dd><a href="http://foobazco.org/~wesolows/mips-cross.html">http://foobazco.org/~wesolows/mips-cross.html</a>
-  <dt>Debian/Mips indy インストール HOWTO
+  <dt>Debian/Mips Indy インストール HOWTO
     <dd><a href="http://www.linux-debian.de/howto/debian-mips-woody-install.html">\
       http://www.linux-debian.de/howto/debian-mips-woody-install.html</a>
   <dt>Philips Nino 上の GNU/Linux
