@@ -60,7 +60,7 @@ sub do_all {
 
     print("[$cil:[MINUS:\n");
     print "<ul>";
-    foreach $lang (sort keys %langs) {
+    foreach $lang (sort keys %l10nlangs) {
 	$str =  "<li><a href=\"l10n-lang-$lang\">";
 	if (defined  $trans{language2code($cur_lang)}{lc(code2language($lang))}) {
 	    $str .= ucfirst($trans{language2code($cur_lang)}{lc(code2language($lang))});
@@ -72,8 +72,8 @@ sub do_all {
     print "</ul>";
     print(":MINUS]:$cil]\n");
 
-    #foreach $lang (sort keys %langs) {
-    foreach $lang ('ca') {
+    foreach $lang (sort keys %l10nlangs) {
+    #foreach $lang ('ca') {
 	my $code = 'L10N' . uc ($lang);
 	print("[NULL:\n");
 	print("%!slice -o UNDEFu((${code}\@u${cil})-MINUS):$(WML_SRC_BASENAME)-$lang.$(CUR_ISO_LANG).html\n");

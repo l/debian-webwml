@@ -84,7 +84,7 @@ sub score_output {
 sub score_init {
     foreach $pkg (sort keys %data) {
 	if (defined($data{$pkg}{'stats'})) {
-	    foreach $lang (sort keys %langs) {
+	    foreach $lang (sort keys %l10nlangs) {
 		if (defined($data{$pkg}{'stats'}{$lang})) {
 		    #store in average
 		    if (!defined ($average{$lang})) {
@@ -102,7 +102,7 @@ sub score_init {
 	    }
 	}
     }
-    foreach $lang (sort keys %langs) {
+    foreach $lang (sort keys %l10nlangs) {
 	score_output($lang);
     }
 }
