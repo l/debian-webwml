@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Debian GNU/Linux - Security Information</TITLE>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+<H1><IMG SRC="../../Pics/debian.jpg" WIDTH=114 HEIGHT=140 ALIGN="middle" ALT="Debian GNU/Linux - ">Security Information</H1>
+<HR>
+Debian takes security very seriously.  Most <a href="../index.html">security problems</a> brought
+to our attention are corrected within 48 hours.
+
+<P> Please send security-related bug reports to <a href="mailto:security@debian.org">security@debian.org</a><P>
+
+<blockquote>
+<b>Date: 	Sun, 2 Mar 1997 21:42:14 -0700</b> <br>
+<b>From: David Sacerdote &lt;davids@SECNET.COM&gt;</b> <p>
+
+<pre>
+                        ######    ##   ##    ######
+                        ##        ###  ##      ##
+                        ######    ## # ##      ##
+                            ##    ##  ###      ##
+                        ###### .  ##   ## .  ######.
+
+                            Secure Networks Inc.
+
+                             Security Advisory
+                               March 2, 1997
+
+
+                     Buffer Overflow in imapd and ipop3d
+</pre>
+
+A vulnerability exists within Mark Crispin's mail server toolkit that will
+allow arbitrary individuals to obtain root access to servers running
+imapd and ipop3d.  This vulnerability is present in both the POP3 and IMAP2bis
+servers included in the PINE distribution, as well as the IMAP2bis and
+IMAP4 servers included in Mr. Crispin's IMAP toolkit. <p>
+
+
+<b>Technical Details</b> <p>
+
+The vulnerable mail servers call a library routine to affect a Unix
+"login", authenticating the user against it's password. A stack overrun
+exists in this routine. In essence this will allow any client with the ability
+to attempt a login to enter an overly long username to cause arbitrary machine
+code to execute. <p>
+
+Both the POP and IMAP servers Mr. Crispin distributes discard supervisory
+privileges sometime after this authentication phase. Unfortunately, the
+overflow occurs before this happens, and the vulnerability will thus
+allow an attacker superuser access. <p>
+
+The problematic routine is server_login(), which is in "log_xxx.c" in the
+OS-dependent code tree of the server source distribution. The problem
+occurs due to the routine's attempt to allow a case insensitive match on
+the username, which it does by copying the username provided to the
+routine into an automatic variable in the routine's stack. <p>
+
+The username buffer is MAILTMPLEN long, which defaults to 1024 bytes.
+Unfortunately, the server's input buffer is greater than this, allowing a
+remote client to feed the routine a username greater than 1024 bytes.
+If the excess characters in this username contain a valid virtual memory
+address, the routine will overwrite it's stack frame when copying the
+username, causing the return from the routine to jump to an unexpected
+location. <p>
+
+Interestingly, the buffer is converted to lowercase after being copied.
+This provides a slight technical challenge, as the machine code required
+to take over the server contains uppercase characters. However,
+modifications to the "standard" stack overrun exploit code to reverse the
+affects of this lowercasing were trivial. On i386 4.4BSD, the VM address
+required to redirect server_login()'s return need not contain uppercase
+characters. <p>
+
+The flawed code reads: <p>
+
+<pre>
+long server_login (char *user, char *pass, int argc, char *argv[])
+{
+        char tmp[MAILTMPLEN];
+        struct passwd *pw = getpwnam (user);
+                /* allow case-independent match */
+        if(!pw) pw = getpwnam (lcase (strcpy (tmp, user)));
+
+        <complete server login and return>
+}
+</pre>
+
+
+<b>Impact</b> <p>
+
+
+Remote individuals, who do not have a valid username and password for
+the mail server, can obtain root access to systems running a vulnerable
+IMAP or POP server. <p>
+
+
+<b>Vulnerable Systems</b> <p>
+
+Any system running Mark Crispin's POP or IMAP server, of a release
+earlier than 4.1beta is vulnerable.  To determine whether your system
+is vulnerable, telnet to ports 109, 110, 143 and 220.  If you see a banner
+looking like: <p>
+
+<pre>
+* OK example.com IMAP2bis Service 7.8(92) at Mon, 3 Mar 1997 12:00:00
+-0500 (EST)
+
+or:
+
+* OK example.com IMAP4 v10.00 server ready
+
+or:
+
++OK example.com POP3 3.0(10) w/IMAP client (Report problems in this server
+to MRC@CAC.Washington.edu) at Mon, 3 Mar 1998 12:00:00 -0500 (EST)
+</pre>
+
+
+Then your system is vulnerable.  If you see "POP3 3.3" or "IMAP4rev1"
+or later, your POP or IMAP server is not vulnerable. <p>
+
+POP servers not derived from Mark Crispin's code, including the somewhat
+confusingly named "pop3d" from the University of California at Davis are
+not vulnerable to the attack described in this advisory.  Similarly,
+the University of California at Berkeley popper, and derived POP servers,
+including the Qualcomm popper, are not vulnerable to this attack. <p>
+
+<b>Fix Information</b> <p>
+
+As a temporary workaround, you can disable the POP and IMAP services
+in /etc/inetd.conf, and then kill and restart inetd. <p>
+
+You can fix the problem in the source yourself, by changing the
+server_login() function to read: <p>
+
+<pre>
+        char tmp[MAILTMPLEN];
+        struct passwd *pw = getpwnam (user);
+
+        if(!pw) {
+                strncpy(tmp, user, MAILTMPLEN - 1);
+                pw = getpwnam(lcase(tmp));
+</pre>
+
+Or, as a final option, you can switch to the IMAP 4.1 beta distribution,
+which can be found at <a href="ftp://ftp.cac.washington.edu/mail/imap.tar.Z">ftp://ftp.cac.washington.edu/mail/imap.tar.Z</a>. <p>
+
+<b>Additional Information</b> <p>
+
+If you have any questions about this advisory, feel free to contact me,
+by sending mail to davids@secnet.com  If you wish to encrypt your
+messages to me, feel free to use the following PGP public key. <p>
+
+<pre>
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: 2.6.2
+
+mQCNAzJ4qJAAAAEEAOgB7mooQ6NgzcUSIehKUufGsyojutC7phVXZ+p8FnHLLZNB
+BLQEtj5kmfww2A2pR29q4rgPeqEUOjWPlLNdSLby3NI8yKz1AQSQLHAwIDXt/lku
+8QXClaV6pNIaQSN8cnyyvjH6TYF778yZhYz0mwLqW6dU5whHtP93ojDw1UhtAAUR
+tCtEYXZpZCBTYWNlcmRvdGUgPGRhdmlkc0BzaWxlbmNlLnNlY25ldC5jb20+
+=LtL9
+-----END PGP PUBLIC KEY BLOCK-----
+</pre>
+
+Further information about the Interactive Mail Aaccess Protocol can be
+found in RFCs 1731, 1732, 1733, 2060, 2061, 2062, 2086, 2087, 2088, and
+2095.  Further information about the Post Office Protocol can be found
+in RFCs 1939 and 1957.  Copies of RFCs can be found at
+<a href="http://ds.internic.net/rfc/rfcXXXX.txt">http://ds.internic.net/rfc/rfcXXXX.txt</a>. <p>
+
+For further information about Secure Networks Inc, including product
+information, past advisories, and papers, see <a href="http://www.secnet.com/">http://www.secnet.com/</a>.
+
+If you wish to obtain Secure Networks advisories via our mailing list,
+please send mail to sni-advisories-request@secnet.com, with a single line
+reading:
+subscribe sni-advisories <p>
+
+
+<b>Copyright</b> <p>
+
+
+The contents of this advisory are Copyright (C) 1997 Secure Networks Inc,
+and may be distributed freely provided that no fee is charged for
+distribution, and that proper credit is given. <p>
+
+imapd and ipop3d fall under the following license: <p>
+
+Copyright 1997 by the University of Washington <p>
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted, provided
+that the above copyright notice appears in all copies and that both the
+above copyright notice and this permission notice appear in supporting
+documentation, and that the name of the University of Washington not be
+used in advertising or publicity pertaining to distribution of the software
+without specific, written prior permission.  This software is made
+available "as is", and
+THE UNIVERSITY OF WASHINGTON DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED,
+WITH REGARD TO THIS SOFTWARE, INCLUDING WITHOUT LIMITATION ALL IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, AND IN
+NO EVENT SHALL THE UNIVERSITY OF WASHINGTON BE LIABLE FOR ANY SPECIAL,
+INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, TORT
+(INCLUDING NEGLIGENCE) OR STRICT LIABILITY, ARISING OUT OF OR IN CONNECTION
+WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+</blockquote>
+
+<P><SMALL>Last Modified: 10 Jan 1998.
+Copyright &copy;1997 SPI; See
+<A HREF="../../license.html">license terms.</A></SMALL>
+<HR>
+</BODY>
+</HTML>
+
+

@@ -1,0 +1,79 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Debian GNU/Linux - Security Information</TITLE>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+<H1><IMG SRC="../../Pics/debian.jpg" WIDTH=114 HEIGHT=140 ALIGN="middle" ALT="Debian GNU/Linux - ">Security Information</H1>
+<HR>
+Debian takes security very seriously.  Most <a href="../index.html">security problems</a> brought
+to our attention are corrected within 48 hours.
+
+<P> Please send security-related bug reports to <a href="mailto:security@debian.org">security@debian.org</a><P>
+
+<blockquote>
+<b>Date: 	Mon, 10 Feb 1997 05:44:53 +0400</b> <br>
+<b>From: "Dmitry E. Kim" &lt;jason@redline.ru&gt;</b> <p>
+
+        hi ppl, <p>
+
+  well, here is another standard buffer overrun vulnerability, which may
+sometimes lead to root compromise (not always. not in new distributions,
+fortunately). Current Slackware and current RedHat don't install minicom
+suid root, only sgid/uucp, which is not *that* dangerous. But when you
+build minicom from source, it asks you to do "chmod +s" on it. <p>
+
+<dl>
+<dt><b>Summary:</b>
+<dd>    Vulnerability in minicom allows (certain) local users to obtain group
+  "uucp" privileges and, in certain cases, root privileges.
+
+<dt><b>Platforms:</b>
+<dd>    Supposedly all platforms where minicom is installed suid and/or sgid.
+  I have tested it only on several Linux boxes (fresh Slackware 3.1 and
+  fresh RedHat 4.1), and it works for me.
+
+<dt><b>Description:</b>
+<dd>    According to man pages, "minicom is a communication program which somewhat
+  resembles the shareware program TELIX but is free with source code and runs
+  under most unices".
+    Minicom binary is usually owned by user "root" and group "uucp", and it
+  is "-rwxr-sr-x" or, in some old distributions, "-rwsr-sr-x". Actually,
+  minicom has *alot* of arbitrary size buffers and it is really easy to
+  overrun some of them. At least one of these overrunable buffers is
+  automatic -- an argument to "-d" option of minicom is copied into 128 bytes
+  long automatic array. Thus, it is possible to overwrite the function return
+  address and to execute an arbitrary code (as usually).
+
+<dt><b>Impact:</b>
+<dd>    If minicom is installed suid root, any user which is permitted to use
+  minicom can obtain root shell. If minicom is installed sgid uucp, any
+  minicom user can obtain uucp group privileges (please don't think it's
+  nothing -- at least on Slackware machines /usr/lib/uucp is group-writeable.
+  This means you can easily substitute uucico/uuxqt/etc with your scripts).
+
+<dt><b>Solution:</b>
+<dd>    Quick fix, as usually -- chmod 755 `which minicom`.
+
+<dt><b>Exploit:</b>
+<dd>    Below goes the exploit for Linux. After running this, you have shell with
+  uid=0 and euid=your_usual_uid (if minicom is suid root) and gid=uucp
+  egid=your_usual_gid. Getting real root and real uucp group permissions from
+  that is really too trivial to describe here.
+
+Quoting file "<a href="stack.c">stack.c</a>" 
+
+</blockquote>
+
+<P><SMALL>Last Modified: 10 Jan 1998.
+Copyright &copy;1997 SPI; See
+<A HREF="../../license.html">license terms.</A></SMALL>
+<HR>
+</BODY>
+</HTML>
+
+
