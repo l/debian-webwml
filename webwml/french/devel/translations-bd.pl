@@ -780,7 +780,7 @@ $translations = {
 'intro/cn' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '25/05/1999',
+	'since'			=> '18/12/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '25/05/1999',
 },
@@ -1094,7 +1094,7 @@ $translations = {
 'vote/howto_proposal' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '07/12/1999',
+	'since'			=> '18/12/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '11/10/1999',
 },
@@ -1102,7 +1102,7 @@ $translations = {
 'vote/howto_result' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '07/12/1999',
+	'since'			=> '18/12/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '11/10/1999',
 },
