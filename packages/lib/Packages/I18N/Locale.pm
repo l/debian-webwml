@@ -23,6 +23,7 @@ my %lang2charset = (
 		    fi => 'ISO-8859-1',
 		    hu => 'ISO-8859-2',
 		    it => 'ISO-8859-1',
+		    ja => 'ISO-2022-JP',
 		    nl => 'ISO-8859-1',
 		    pl => 'ISO-8859-2',
 		    pt_BR => 'ISO-8859-1',

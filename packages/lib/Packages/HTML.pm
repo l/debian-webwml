@@ -35,7 +35,6 @@ sub header {
     my ($TITLE, $PACKTOP, $ROOT, $LANG, $DESC, $KEYWORDS) = @_;
     my $DESC_LINE;
     if (defined $DESC) {
-	$DESC =~ s/"/&quot;/g; # " <- Make syntax highlighting happy
 	$DESC_LINE = "<meta name=\"Description\" content=\"$DESC\">";
     }
     else {
