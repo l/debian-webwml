@@ -94,6 +94,8 @@ if (!($query->param('doupdate'))) {
   # Actually update stuff...
   my ($newpassword, $newstaddress);
   
+  &Util::FixParams($query);
+
   if (($query->param('labeledurl')) && 
       ($query->param('labeledurl') !~ /^https?:\/\//i)) {
     &Util::HTMLError("Your homepage URL is invalid");
