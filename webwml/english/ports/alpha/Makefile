@@ -13,6 +13,6 @@ install:: $(HTMLDIR)/postgresql-noopt.diff.gz
 
 ifeq ($(LANGUAGE),en)
 $(HTMLDIR)/postgresql-noopt.diff.gz: postgresql-noopt.diff.gz
-	cp postgresql-noopt.diff.gz $(HTMLDIR)
+	install -m 664 -p postgresql-noopt.diff.gz $(HTMLDIR)
 endif
 

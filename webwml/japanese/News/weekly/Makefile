@@ -42,7 +42,7 @@ endif
 $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
 	test -d $(@D) || install -d $(@D)
 	@echo copying $(@F) to $(@D)
-	-@cp $(<) $(@D)
+	-@install -m 664 -p $(<) $(@D)
 ifeq ($(LANGUAGE),en)
 	@echo making a link $(@D)/$(*F).html -\> $(@F)
 	-@ln -f -s $(@F) $(@D)/$(*F).html

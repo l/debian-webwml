@@ -33,5 +33,5 @@ card.dvi: card.tex bottle.eps
 # the non-english directories shouldn't try to install them
 ifeq ($(LANGUAGE),en)
 $(HTMLDIR)/card.tex: card.tex
-	cp card.tex $(HTMLDIR)
+	install -m 664 -p card.tex $(HTMLDIR)
 endif
