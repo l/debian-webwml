@@ -2,10 +2,11 @@
 # Extracts the data file and makes a CVE cross-reference
 #
 # TODO
-# - use the same code as in the security template to make URL entries
-#   for the security references
+# - provide a way for localization of header text
 # DONE:
 # - printed references should follow some order - done by date
+# - use the same code as in the security template to make URL entries
+#   for the security references
 # 
 
 
@@ -120,8 +121,13 @@ sub getreferences {
 		}
 	}
 	print STDERR "References for $dsa of $type: $text\n" if $opt_v;
-	$text = "&nbsp;" if $text eq "";
-	$text = "<td>$text</td>" if $opt_p;
+	if ( $opt_p ) {
+		if ( $text eq "" ) {
+			$text = "<td>&nbsp;</td>" ;
+		} else {
+			$text = "<td><:= bid_secref(\"$text\") :><:= cert_secref(\"$text\") :><:= cve_secref(\"$text\") :></td>";
+		}
+	}
 	$dsaref{$dsa}{'printtext'} .= $text;
 	return 0;
 }
@@ -153,8 +159,10 @@ sub printrefs {
 				print  gmctime($dsaref{$dsa}{'date'})."\n" ;
 			} else {
 				print "<tr VALIGN=\"TOP\"><td>";
+				print "<a href=\"http://www.debian.org/security/".$dsaref{$dsa}{'location'}."\">";
 				print "DSA-" if  $dsa !~ /\d{6,}/ ;
-				print "$dsa</td>$dsaref{$dsa}{'printtext'} </tr>\n";
+				print "$dsa</a>";
+				print "</td>$dsaref{$dsa}{'printtext'} </tr>\n";
 			}
 		}
 	}
@@ -191,6 +199,9 @@ sub parsefile {
 		$dsaref{$dsa}{'vulnerable'}=$1 if ( $line =~ /isvulnerable\>(.*?)\<\/define-tag/ ) ;
 		$dsaref{$dsa}{'fixed'}=$1 if ( $line =~ /fixed\>(.*?)\<\/define-tag/ ) ;
 	}
+	$dsaref{$dsa}{'location'}=$file;
+	$dsaref{$dsa}{'location'} =~ s/.data$//;
+	$dsaref{$dsa}{'location'} =~ s/^.\///;
 	close DATAFILE;
 	return 0;
 }
@@ -221,6 +232,7 @@ sub parsedirs {
 sub printheader {
 	print <<EOF;
 #use wml::debian::template title="Security Crossreferences" GEN_TIME="yes"
+#use wml::debian::securityreferences
 <H1>Cross References of Debian Security Advisories</H1>
 <P>The data below shows cross references of Debian Security Advisories
 to other security information sources. This data is provided in the
