@@ -43,10 +43,10 @@ sub processFile {
         #  Remove comments
         $text =~ s/^[ \t]*#.*//mg;
         $lineno = 1;
-        while ($text =~ m{\G(.*?)(<define-tag[^>]*>)(.*?)</define-tag}gs) {
-                $msg = $3;
+        while ($text =~ m{\G(.*?)(<(define-tag|define-menu-item)[^>]*>)(.*?)</\3}gs) {
+                $msg = $4;
                 $lineno += countNewline ($1.$2);
-                $nextlineno = countNewline ($3);
+                $nextlineno = countNewline ($4);
                 if ($msg =~ m/(.*?)\[EN:(.*?):\](\n.*)/s) {
                         $msgid = escape('EN', $2);
                         $lineno += countNewline ($1);
