@@ -1,40 +1,110 @@
 #use wml::debian::basic title="Debian GNU/Linux &mdash; Upcoming Attractions"
 #use wml::debian::languages
-#use wml::debian::recent_list
 
 <perl>
+#############################################################################
+# grabs the date and title of the last $number news items from directory $path.
+# If $number is zero then all the news items are shown.
+sub get_recent_list 
+{
+  my ( $path, $number, $current_dir, $match ) = @_;
+
+  opendir(DIR, "$current_dir/$path");
+  @files = grep { /^$match.wml$/ && -f "$current_dir/$path/$_" } readdir(DIR);
+  @files = sort {$b cmp $a} @files;
+  closedir DIR;
+
+	$str = '(none)';
+
+  $count = 0;
+  foreach (@files) 
+  {
+     $count++;
+     open(FILE, "<$path/$_") || open(FILE, "<$current_dir/$path/$_");
+     if ( /($match).wml/ ) 
+	 {
+        $base = $1;
+     }
+     $title = ''; $date = ''; $contact = ''; $email = ''; $desc = '';
+     foreach $line (<FILE>) 
+	 {
+        if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) 
+		{
+           $title = $1;
+        }
+        elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) 
+		{
+           $date = $1;
+        }
+        elsif ($line =~ /^<define-tag contact>(.*)<\/define-tag>$/) 
+		{
+           $contact = $1;
+        }
+        elsif ($line =~ /^<define-tag email>(.*)<\/define-tag>$/) 
+		{
+           $email = $1;
+        }
+        elsif ($line =~ /^<define-tag desc>(.*)<\/define-tag>$/) 
+		{
+           $desc = $1;
+        }
+		if ($title && $date && $desc) 
+		{
+           $str = "<tt>[$date]</tt> <strong><a href=\"$path/$base\">$title</a></strong><br>\n";
+           last;
+		}
+		elsif ($title && $contact && $email && $desc)
+		{
+           $str = "<TR><TD><A HREF=\"$path/$base\">$title</A></TD><A HREF=\"mailto:$email\">$contact</A></TD><TD>$desc</TD></TR>\n";
+		   last;
+		}
+		elsif ($title && $contact && $desc)
+		{
+           $str = "<TR><TD><A HREF=\"$path/$base\">$title</A></TD>$contact</TD><TD>$desc</TD></TR>\n";
+		}
+     }
+     close FILE;
+     if ($count eq $number) { last; }
+  }
+close DIR;
+return $str;
+}
+
+#############################################################################
+# grabs the date and title of the last $number news items from directory $path.
+# If $number is zero then all the news items are shown.
 sub add_project
 {
 	my ( $name, $contact, $email, $desc ) = @_;
 
-	$str = "<TR><TD><A HREF=\"$name.html\">$name</A></TD><TD><A HREF=\"mailto:$email\">$contact</A></TD><TD>$desc</TD></TR>";
+	$str = "<TR><TD><A HREF=\"<abbr>/$name\">$name</A></TD><TD><A HREF=\"mailto:$email\">$contact</A></TD><TD>$desc</TD></TR>";
 	return $str;
 }
 </perl>
 
-<H2>Intro</H2>
-<intro>
-
-<UL>
-	<LI><when>
-	<LI><where>
-	<LI><A HREF="<link>">More Info</A>
-</UL>
+<HR>
+<H2><pagetitle></H2>
+	<STRONG>When:</STORNG>  <when><BR>
+	<STRONG>Where:</STROMG>  <where><BR>
+	<STRONG>More Info:</STRONG>  <A HREF="<link>">Web Page</A><BR>
 
 <HR>
-<H2>Involvement</H2>
+<intro>
+
+<HR>
+<H2>Debian Involvement</H2>
 <involve>
 
 <HR>
-<H2>Projects</H2>
 <TABLE>
 	<TR><TH>Project</TH><TH>Coordinator</TH><TH>Description</TH></TR>
 	<projects>
+	<:= get_recent_list ( '<abbr>', '0', '$(ENGLISHDIR)/events/<year>', 'project-\w+' ) :>
 </TABLE>
 
 <HR>
 <H2>Latest News</H2>
-<:= get_recent_list ( '.', '6', '$(ENGLISHDIR)/events/<year>/<abbr>', '', '\d+\w*' ) :>
+<:= get_recent_list ( '<abbr>', '0', '$(ENGLISHDIR)/events/<year>', 'news-\d+\w*' ) :>
 
 <HR>
 <H2>Related Links</H2>
