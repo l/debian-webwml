@@ -9,22 +9,22 @@ $(HTMLDIR)/%.html.$(LANG) : %.wml $(TEMPLDIR)/template.wml
 
 # translators should comment out the line for any file they haven't translated.
 all:\
-    $(HTMLDIR)/contact.html.$(LANG) \
-    $(HTMLDIR)/social_contract.html.$(LANG) \
-    $(HTMLDIR)/index.html.$(LANG) \
-    $(HTMLDIR)/developers_corner.html.$(LANG) \
-    $(HTMLDIR)/devel/extract_key.html.$(LANG) \
-    $(HTMLDIR)/devel/help.html.$(LANG) \
-    $(HTMLDIR)/devel/people.html.$(LANG) \
-    $(HTMLDIR)/logos/index.html.$(LANG) \
-    $(HTMLDIR)/devel/incoming_mirrors.html.$(LANG) \
-    $(HTMLDIR)/devel/mirror.html.$(LANG) \
-#    $(HTMLDIR)/devel/HOWTO_translate.html.$(LANG) \
-#    $(HTMLDIR)/devel/maintainer_contacts.html.$(LANG) \
+	$(HTMLDIR)/contact.html.$(LANG) \
+	$(HTMLDIR)/index.html.$(LANG) \
+	$(HTMLDIR)/social_contract.html.$(LANG) \
+	$(HTMLDIR)/developers_corner.html.$(LANG) \
+	$(HTMLDIR)/devel/HOWTO_translate.html.$(LANG) \
+	$(HTMLDIR)/devel/extract_key.html.$(LANG) \
+	$(HTMLDIR)/devel/help.html.$(LANG) \
+	$(HTMLDIR)/devel/incoming_mirrors.html.$(LANG) \
+	$(HTMLDIR)/devel/maintainer_contacts.html.$(LANG) \
+	$(HTMLDIR)/devel/mirror.html.$(LANG) \
+	$(HTMLDIR)/devel/people.html.$(LANG) \
+	$(HTMLDIR)/devel/release_info.html.$(LANG) \
+	$(HTMLDIR)/devel/rsync_examples.html.$(LANG) \
+	$(HTMLDIR)/logos/index.html.$(LANG) \
 #    $(HTMLDIR)/devel/mirror_submit.html.$(LANG) \
 #    $(HTMLDIR)/devel/ports.html.$(LANG) \
-#    $(HTMLDIR)/devel/release_info.html.$(LANG) \
-#    $(HTMLDIR)/devel/rsync_examples.html.$(LANG) \
 #    $(HTMLDIR)/donations.html.$(LANG) \
 #    $(HTMLDIR)/license.html.$(LANG) \
 #    $(HTMLDIR)/news.html.$(LANG) \
