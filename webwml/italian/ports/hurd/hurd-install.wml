@@ -1,6 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd -- Installazione" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/hurd/menu.inc"
-#use wml::debian::translation-check translation="1.29" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.30" maintainer="Luca Monducci"
 
 <h1>Installazione di Debian GNU/Hurd</h1>
 
@@ -35,9 +35,8 @@ Questi filesystem non risiedono nel kernel e nemmeno necessitano di essere
 eseguiti come root; l'unica cosa che richiedono è l'accesso al supporto
 sottostante e un <code>mount point</code>. Un'altra differenza è che i
 processi anziché avere l'identità di un singolo utente fissata al momento
-della creazione, hanno le indicazioni dell'identità che sono separate dal
-processo, cioè con i giusti permessi si possono aggiungere o rimuovere le
-identità.</p>
+della creazione, hanno le informazioni sull'identità separate dal processo,
+quindi, con i giusti permessi, si possono aggiungere o rimuovere identità.</p>
 
 <p>Essendo parente stretto dell'ambiente Unix (e in particolar modo dello
 spazio utente GNU che si tova in varianti anche molto popolari come GNU/Linux)
@@ -47,14 +46,14 @@ macchiana con GNU/Hurd.</p>
 
 <p>Qusta guida si sforza di rendere il processo di installazione di GNU/Hurd
 il più semplice possibile. Se si riscontrano degli errori (che sono certamente
-dovuti all'autore), si prega di segnalarli insieme a qualsiasi suggerimento
-o critica si voglia fare all'autore stesso; viene accettato tutto con immenso
+dovuti all'autore) si prega di segnalarli insieme a qualsiasi suggerimento o
+critica si voglia fare all'autore stesso; viene accettato tutto con immenso
 piacere.</p>
 
 <h2>2. Casa di proprietà o cercarne una</h2>
 
 <p>Se non si dispone di una partizione disponibile o di un hard disk
-aggiuntivo questo può essere il passo più lungo. In questo caso è necessario
+aggiuntivo questo può essere il passo più lungo, infatti in questo caso è necessario
 ripartizionare l'hard disk. Una possibilità è usare l'editor di partizioni
 di GNU, Parted. Non solo permette la modifica di base delle partizioni ma
 permette anche il ridimensionamento e lo spostamento delle partizioni.
@@ -63,7 +62,7 @@ Il manuale è abbastanza completo e include svariati tutorial.</p>
 
 <p>Hurd può supportare solo partizioni di dimensione massima di circa due
 GigaByte; qualsiasi cosa più grande non funziona. Questa limitazione è
-dovuta alla decisione presa durante la fase di progetto molti anni fa che
+dovuta alla decisione presa molti anni fa durante la fase di progetto che
 i serventi del filesystem dovessero mappare l'intero filesystem nella
 memoria virtuale. L'ammontare della memoria virtuale su un sistema ia32 è
 solo di quattro GigaByte, in questa memoria Mach alloca tre Gigabyte per
@@ -74,12 +73,12 @@ limitazione.</p>
 
 <p>Detto questo, un singolo filesystem di due GigaByte è più che sufficiente
 per un sistema funzionante. Comunque molti preferiscono almeno due filesystem:
-un filesystem per root e un altro per <tt>/home</tt>. Questo schema è
+un filesystem di root e un altro per <tt>/home</tt>. Questo schema è
 altamente raccomandato agli sviluppatori: la compilazione di Hurd può
 richiedere un bel po' di spazio.</p>
 
 <p>Hurd supporta diverse estensioni al formato del filesystem ext2fs. Le cose
-più importante fra queste sono i traduttori passivi e un quarto gruppo di bit
+più importanti fra queste sono i traduttori passivi e un quarto gruppo di bit
 con i permessi per gli utenti sconosciuti (gli utenti senza identità, non gli
 utenti "other"). Per usare queste estensioni il proprietario della partizione
 deve essere impostato a <code>hurd</code>. <code>mke2fs</code>, a meno che non
@@ -101,10 +100,10 @@ esempio, supponendo che la partizione sia <tt>/dev/hda2</tt>:
 
 <h2>3. Boot loader</h2>
 
-<p>Il bootloader del sistema GNU è GRUB (GRand Unified Boot loader) e il suo
+<p>Il boot loader del sistema GNU è GRUB (GRand Unified Boot loader) e il suo
 scopo principale è avviare il cuore del sistema GNU (Mach e l'Hurd). Qualsiasi
 bootloader che supporti lo standard multiboot può essere usato per caricare
-Mach e l'Hurd. Al momento (noi sappiamo che) GNU GRUB è l'unico bootloader
+Mach e l'Hurd. Al momento (noi sappiamo che) GNU GRUB è l'unico boot loader
 che supporta questo standard.</p>
 
 <p>Una parola su Grub, diversamente dai boot loader tradizionali per x86,
@@ -151,7 +150,7 @@ necessario:</p>
 <p>Adesso tutto è pronto per avviare GNU/Hurd per la prima volta. Dopo aver
 verificato che il dischetto di avvio con Grub sia inserito nel drive riavviare
 il sistema. Se tutto va bene verrà mostrato il menu o la riga di comando di
-Grub. Se di presenta il menu premere <kbd>c</kbd> per passare alla riga di
+Grub. Se si presenta il menu premere <kbd>c</kbd> per passare alla riga di
 comando.</p>
 
 <p>Per prima cosa si deve caricare GNU Mach, questo richiede la conoscenza
@@ -206,11 +205,11 @@ controller secondario, si usarà:</p>
 <p>Successivamente devono essere caricati il servente per il filesystem di
 root e il servente <code>exec</code>. Questo si può fare grazie alla capacità
 di Grub di avviare i moduli. Le ${var} sono inserite da GNU Mach. Gli
-argomenti usati da Hurd per indicare quale tipo di informazione sarà fornita.
-Dato che la riga di comando di ext2fs è molto lunga, può essere spezzata
+argomenti sono usati da Hurd per indicare quale tipo di informazione sarà fornita.
+Dato che la riga di comando di ext2fs è molto lunga la si può spezzare
 usando la sequenza di escape del carattere a capo nello stesso modo usato
-normalmente in Unix. Assicurarsi che non ci siano spazi dopo lo slash finale
-di ogni riga, inoltre assicurarsi di distinguere <kbd>{</kbd> e <kbd>}</kbd>
+normalmente in Unix. Assicurarsi di non lasciare spazi dopo lo slash finale
+di ogni riga inoltre assicurarsi di distinguere <kbd>{</kbd> e <kbd>}</kbd>
 da <kbd>(</kbd> e <kbd>)</kbd>.</p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>  grub&#62; module (hd0,0)/hurd/ext2fs.static \
@@ -237,16 +236,17 @@ inserendo gli appropriati comandi nel file di configurzione di Grub
 quando possa sembrare: c'è un bug in GNU Mach per cui la pressione un tasto
 durante il processo di avvio genera un kernel panic.</p>
 
-<p>Se GNU/Hurd non si avvia, potrebbe essere colpa di IRQ condivisi: GNU Mach
-non li gestisce molto bene. Si può verificare questa situazione guardando, per
-esempio, il file <tt>/proc/interrupts</tt> sotto GNU/Linux. Inoltre, dato che
-GNU Mach non supporta i moduli del kernel molti dei driver sono compilati nel
-kernel, se ci sono delle vecchie periferiche queste potrebbero creare dei
-problemi: un dispositivo potrebbe rispondere in modo non corretto a un segnale
-rivolto a un dispositivo completamente indipendente e quindi causare un crash.
-Di solito compilare un nuovo kernel con solo i driver dei dispositivi necessari
-risolve questo problema, GNU Mach è facilmente cross-compilabile. Se si usa
-Debian si installi il pacchetto <tt>gcc-i386-gnu</tt>.</p>
+<p>Se GNU/Hurd non si avvia potrebbe essere colpa di IRQ condivisi: GNU Mach
+non li gestisce molto bene. Si può verificare questa situazione guardando,
+per esempio, il file <tt>/proc/interrupts</tt> sotto GNU/Linux. Inoltre, dato
+che GNU Mach non supporta i moduli del kernel molti dei driver sono compilati
+nel kernel, se nel sistema sono presenti delle vecchie periferiche queste
+potrebbero creare dei problemi infatti un dispositivo potrebbe rispondere in
+modo non corretto a un segnale rivolto a un dispositivo completamente
+indipendente e quindi causare un crash. Di solito compilare un nuovo kernel
+con solo i driver dei dispositivi necessari risolve questo genere di problemi,
+GNU Mach è facilmente cross-compilabile. Se si usa Debian si installi il
+pacchetto <tt>gcc-i386-gnu</tt>.</p>
 
 <p>Se questo non è di aiuto si consulti i riferimenti elencati alla fine di
 questo documento e come ultima risorsa si chieda sull'appriopriata lista di
@@ -255,8 +255,8 @@ messaggi.</p>
 
 <h2>6. Installazione nativa</h2>
 
-<p>Una volta che si dispone del prompt della shell e ogni volta che Hurd è in
-modalità singolo-utente, è necessario impostare il tipo di terminale:</p>
+<p>Una volta che si dispone del prompt della shell e ogni volta che Hurd è
+in modalità singolo-utente è necessario impostare il tipo di terminale:</p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre> # export TERM=mach
 </pre></td></tr></table>
@@ -272,7 +272,7 @@ configurerà i pacchetti e imposterà molti importanti traduttori:</p>
 
 <p>La fine premetura dello script indica che è necessario eseguirlo una
 seconda volta. Seguite le sue istruzioni e riavviate usando il comando
-<code>reboot</code>. Nuovamente si entri in modalità singolo-utente e si
+<code>reboot</code>. Si entri nuovamente in modalità singolo-utente e si
 esegua di nuovo <code>./native-install</code>.</p>
 
 
@@ -283,7 +283,7 @@ esegua di nuovo <code>./native-install</code>.</p>
 
 <p>Per configurare la rete è necessario configurare prima il traduttore
 pfinet. Questo lo si fa con il comando <code>settrans</code> che collega
-un tradutore a un dato nodo del filesystem, quando i programmi accedono
+un tradutore a un certo nodo del filesystem e quando i programmi accedono
 al nodo, per esempio inviando un RPC, il sistema operativo avvia in modo
 trasparente il servente per gestire la richiesta.</p>
 
@@ -294,15 +294,15 @@ trasparente il servente per gestire la richiesta.</p>
 <p>In questo esempio a <code>settrans</code> sono state passate diverse
 opzioni. Le prime due <samp>fg</samp> forzano tutti i traduttori esistenti
 a disattivarsi. Le due successive <samp>ap</samp> creano un traduttore sia
-attivo che passivo, rendendo attivo un traduttore è si possono immediatamente
-vedre i messaggi di errore su <tt>stderr</tt>. Le opzioni seguenti salvano
-il traduttore e gli argomenti nel nodo, quindi può essere riavviato in modo
+attivo che passivo, rendendo attivo un traduttore si possono immediatamente
+vedere i messaggi di errore su <tt>stderr</tt>. Le opzioni seguenti salvano
+il traduttore e gli argomenti nel nodo e quindi può essere riavviato in modo
 trasparente in seguito (cioè rendono le impostazioni persistenti ai riavvii
 del sistema). Le opzioni sono seguite dal nodo a cui deve essere collegato
 il traduttore, infine c'è il programma (cioè il traduttore) da eseguire e
 tutti gli argomenti da passargli. L'opzione <samp>-i</samp> è l'interfaccia
 su cui <code>pfinet</code> si metterà in ascolto, <samp>-a</samp> è
-l'indirizzo IP, <samp>-g</samp>è il gateway e <samp>-m</samp> è la maschera
+l'indirizzo IP, <samp>-g</samp> è il gateway e <samp>-m</samp> è la maschera
 di rete.</p>
 
 <p>Assicurarsi di aggiungere i name server nel file
@@ -311,7 +311,7 @@ di rete.</p>
 <table><tr><td>&nbsp;</td><td class=example><pre>  nameserver 192.168.1.1
 </pre></td></tr></table>
 
-<p>Testare la configurazione <code>ping -c2 gateway</code>, l'opzione
+<p>Testare la configurazione con <code>ping -c2 gateway</code>, l'opzione
 <samp>-c</samp> è importantre per limitare il numero di ping, infatti
 <kbd>CONTROL-C</KBD> non funziona in modalità singolo-utente.</p>
 
@@ -326,7 +326,7 @@ invocandolo dalla riga di comando con lo stesso argomento, per esempio:</p>
 <table><tr><td>&nbsp;</td><td class=example><pre> # /hurd/pfinet --help
 </pre></td></tr></table>
 
-<p>Come in questo caso può essere generarto molto output, si tenga
+<p>Come in questo caso può essere generato molto output, si tenga
 in considerazione l'uso di una pipe con un impaginatore come
 <code>less</code>.</p>
 
@@ -337,7 +337,7 @@ in considerazione l'uso di una pipe con un impaginatore come
 filesystem e lo spazio di swap. &Egrave; <em>molto importante</em> usare lo
 spazio di swap, l'Hurd risulterà di un ordine di grandezza più stabile. Notare
 che l'Hurd può condividere in modo trasparente una partizione di swap con
-Linux ma sarà lieto di condividere qualsiasi altro dispositivo comprese
+Linux ma sarà anche lieto di condividere qualsiasi altro dispositivo comprese
 partizioni grezze come la partizione con la home. Normalmente <code>nano</code>
 è l'unico editor installato con la distribuzione di base.</p>
 
@@ -368,7 +368,7 @@ l'opzione <samp>insicure</samp> nella riga export. Segue un esempio di
 </pre></td></tr></table>
 
 <p>Per montarlo sul sistema GNU supponendo che l'indirizzo IP del server nfs
-è <tt>192.168.1.1</tt> usare:</p>
+sia <tt>192.168.1.1</tt> usare:</p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre># settrans -cgap /mount/point /hurd/nfs 192.168.1.1:/home
 </pre></td></tr></table>
@@ -402,9 +402,9 @@ necessita.</p>
 
 <h3>8.3 Installazione di altri pacchetti</h3>
 
-<p>Esistono diversi modi per aggiungere dei pacchetti. Scaricarli e usare
-<code>dpkg -i</code> funziona ma è molto scomodo, il modo più semplice è
-usare <code>apt-get</code>. aggiungere e prossime due righe a
+<p>Esistono diversi modi per aggiungere dei pacchetti, scaricarli e usare
+<code>dpkg -i</code> funziona ma è molto scomodo. Il modo più semplice è
+usare <code>apt-get</code>. Aggiungere e prossime due righe a
 <tt>/etc/apt/sources.list</tt>:</p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>
@@ -418,7 +418,7 @@ sito non ha dei mirror). Per usare un mirror locale Debian vedere
 <url "http://www.debian.org/distrib/ftplist" />.</p>
 
 <p>Se GNU Mach non riconosce la scheda di rete o si usa un modem, l'unico
-modo per aggiornare è scaricare i pacchetti e poi trasferirli nel sistema
+modo per aggiornare i pacchetti è scaricarli e poi trasferirli nel sistema
 GNU. Il modo più semplice per fare queste operazioni è usare apt fuori-linea.
 Vedere <tt>/usr/share/doc/apt/offline</tt> per le istruzioni dettagliate.</p>
 
@@ -437,7 +437,7 @@ che non richiedono un modulo del kernel dovrebbero funzionare.</p>
 <p>e poi il traduttore per il mouse. Per mouse seriali eseguire il seguente
 comando sostituendo <tt>com0</tt> con la giusta porta di comunicazione:</p>
 
-<table><tr><td>&nbsp;</td><td class=example><pre> # settrans /dev/mouse /hurd/mouse --device=com0 --protocol=microsoft
+<table><tr><td>&nbsp;</td><td class=example><pre> # settrans -cap /dev/mouse /hurd/mouse --device=com0 --protocol=microsoft
 </pre></td></tr></table>
 
 <p>Assicurarsi che <tt>/dev/com0</tt> esista. Se non esiste deve essere
@@ -445,13 +445,13 @@ creato con il solito <code>MAKEDEV</code>.</p>
 
 <p>I mouse PS/2 non richiedono un device node, è sufficiente:</p>
 
-<table><tr><td>&nbsp;</td><td class=example><pre> # settrans /dev/mouse /hurd/mouse --protocol=ps/2
+<table><tr><td>&nbsp;</td><td class=example><pre> # settrans -cap /dev/mouse /hurd/mouse --protocol=ps/2
 </pre></td></tr></table>
 
 <p>Si possono usare anche altri tipi di mouse; eseguire <tt>/hurd/mouse</tt>
 con l'opzione <samp>--help</samp> per i dettagli.</p>
 
-<p>Sono necessari parecchi pacchetti X. x-window-core, rxvt e twm o fvwm
+<p>Sono necessari parecchi pacchetti per X. x-window-core, rxvt e twm o fvwm
 sono un buon inizio.</p>
 
 <p>Si può usare debconf per configurare XFree86, comunque non è pronto per
@@ -468,7 +468,7 @@ EndSection
 senza altre modifiche.</p>
 
 <p>GNU/Hurd non usa ld.so.conf. Dato che <tt>/X11R6/lib</tt> non fa parte
-del path predefinito di ricerca delle librerie è necessario aggiungere a
+del path predefinito di ricerca delle librerie, è necessario aggiungere a
 <tt>/etc/profile</tt> o ai <tt>.profile</tt> di ogni utente:</p>
 
 <table><tr><td>&nbsp;</td><td class=example><pre>export LD_LIBRARY_PATH=/X11R6/lib:$LD_LIBRARY_PATH
@@ -476,10 +476,10 @@ del path predefinito di ricerca delle librerie è necessario aggiungere a
 
 <p>Infine, eseguire <code>startx</code>.</p>
 
-<p>Ci sono diversi avvisi da tenere in mente. <code>xterm</code> non funziona
+<p>Ci sono diverse cose da tenere in mente. <code>xterm</code> non funziona
 correttamente quando è SETGID (perché ignora LD_LIBRARY_PATH e non riesce a
-caricare le giuste librerie condivise); provare <code>rxvt</code>. Ancora non
-è stato fatto il port di <code>update-menu</code>, quindi mancano i menu
+caricare le giuste librerie condivise) provare <code>rxvt</code>. Ancora non
+è stato fatto il port di <code>update-menu</code> quindi mancano i menu
 Debian. Sebbene esista l'implementazione di <code>pthreads</code> non è stato
 fatto il port di tutti i pacchetti pthread: non pensate che GNOME o KDE
 funzionino senza.</p>
