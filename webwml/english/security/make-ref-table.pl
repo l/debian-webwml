@@ -25,13 +25,14 @@ use Date::Parse;
 
 # Stdin options
 # -v verbose
+# -a pritn all refereces (in HTML mode side by side)
 # -b bugtraq refs
 # -c CERT refs
 # -k CERT kb refs
 # -m mitre refs
 # -p pretty print mode (HTML)
 # -s sort | don't sort
-getopts('hpmkcbv');
+getopts('hpmkcbva');
 if ( $opt_h ) {
 # Help!
 	print "usage: $0 [-vp] [-b|c|m]\n";
@@ -45,16 +46,41 @@ if ( $opt_h ) {
 
 # Default is to print only Mitre's
 $opt_m = 1 if !defined ($opt_m) && ! defined($opt_c) && ! defined ($opt_b) && ! defined ($opt_k);
+if (defined ($opt_a)) {
+	$opt_m=1;
+	$opt_c=1;
+	$opt_b=1;
+	$opt_k=1;
+}
 
 parsedirs (".", "data", 2);
 
+$reference{mitre}{url}="http://cve.mitre.org/cve/refs/refmap/source-DEBIAN.html";
+$reference{mitre}{name}="Mitre CVE dictionary";
+$reference{mitre}{perlre}="(CVE|CAN)";
+
+$reference{bid}{name}="Securityfocus Bugtraq database";
+$reference{bid}{url}="http://online.securityfocus.com/bid";
+$reference{bid}{perlre}="BID";
+
+$reference{cert}{name}="CERT alerts";
+$reference{cert}{url}="http://www.cert.org/advisories/";
+$reference{cert}{perlre}="CA-";
+
+$reference{certvu}{name}="CERT vulnerabilities";
+$reference{certvu}{name}="http://www.kb.cert.org/vuls";
+$reference{certvu}{perlre}="VU";
+
 # We just print for the time being only CVE references
 printheader() if $opt_p;
-printrefs("Mitre CVE dictionary","(CVE|CAN)","http://cve.mitre.org/cve/refs/refmap/source-DEBIAN.html") if $opt_m;
-printrefs("Securityfocus Bugtraq database","BID","http://online.securityfocus.com/bid") if $opt_b;
-printrefs("CERT alerts","CA-","http://www.cert.org/advisories/") if $opt_c;
-printrefs("CERT vulnerabilities","VU","http://www.kb.cert.org/vuls") if $opt_k;
+# Table with information
+printrefs();
 printfooter() if $opt_p;
+
+#printrefs($reference{mitre}{name},$reference{mitre}{perlre},$reference{mitre}{url}) if $opt_m;
+#printrefs($reference{bid}{name},$reference{bid}{perlre},$reference{bid}{url}) if $opt_b;
+#printrefs($reference{cert}{name},$reference{cert}{perlre},$reference{cert}{url}) if $opt_c;
+#printrefs($reference{certvu}{name},$reference{certkb}{perlre},$reference{certvu}{url}) if $opt_k;
 
 # But we could also print all the keys like this:
 # printallkeys();
@@ -71,37 +97,58 @@ sub printallkeys {
 	return 0;
 }
 
+sub printtableheader {
+	my ($key) = @_;
+	if (defined $reference{$key}{url}) {
+			print "<td><a href=\"$reference{$key}{url}\">$reference{$key}{name}</A></td>\n";
+		} else {
+			print "<td>$reference{$key}{name}</td>\n";
+		}
+	return 0;
+}
+
+sub getreferences {
+	my ($key,$dsa) = @_;
+	my (@references) = split(' ', $dsaref{$dsa}{'secrefs'});
+	my $text = "";
+	my $type = $reference{$key}{perlre};
+	foreach $ref ( @references ) {
+		print STDERR "Comparing $ref for $dsa against $type\n" if $opt_v;
+		if ( $ref =~ /^$type/  ) {
+			$text .= "\t" if $text;
+			$text .= $ref ;
+		}
+	}
+	print STDERR "References for $dsa of $type: $text\n" if $opt_v;
+	$text = "<td>$text</td>" if $opt_p;
+	$dsaref{$dsa}{'printtext'} .= $text;
+	return 0;
+}
+
 sub printrefs {
-	my ($text,$type,$url) = @_;
 	if ( ! $opt_p ) {
 		print "DSA\t$text\n";
 	} else { 
 		print "<table BORDER=\"2\" CELLPADDING=\"2\" CELLSPACING=\"2\"><tr VALIGN=\"TOP\">\n<td>DEBIAN DSA</td>\n";
-		if ( $url ) {
-			print "<td><a href=\"$url\">$text</A></td></tr>\n";
-		} else {
-			print "<td>$text</td></tr>\n";
-		}
+		printtableheader("mitre") if $opt_m;
+		printtableheader("bid") if $opt_b;
+		printtableheader("cert") if $opt_c;
+		printtableheader("certvu") if $opt_k;
+		print "</tr>\n";
 	}
 	foreach $dsa (sort { $dsaref{$b}{'date'} <=> $dsaref{$a}{'date'} } keys %dsaref) {
-		my (@references) = split(' ', $dsaref{$dsa}{'secrefs'});
-		my $refexists=0;
-		my $refs="";
-		foreach $ref ( @references ) {
-		print STDERR "Checking $ref for $dsa against $type\n" if $opt_v;
-			if ( $ref =~ /^$type/  ) {
-				$refs .= "\t" if $refs;
-				$refs .= $ref ;
-				$refexists=1;
-			}
-		}
-		print STDERR "References for $dsa of $type are $refs\n" if $opt_v;
-		if ($refexists) {
+		getreferences("mitre",$dsa) if ( $opt_m ) ;
+		getreferences("bid",$dsa)  if ( $opt_b ) ;
+		getreferences("cert",$dsa)  if ( $opt_c ) ;
+		$reft = getreferences("certvu",$dsa) if ( $opt_k );
+		# Print only if there is text _and_ it includes
+		# some numbers (otherwise there are no references)
+		if ( defined($dsaref{$dsa}{'printtext'} ) && $dsaref{$dsa}{'printtext'} =~ /\d/ ) {
 			if ( ! $opt_p ) {
-				print "DSA-$dsa\t$refs\t";
+				print "DSA-$dsa\t$dsaref{$dsa}{'printtext'}\t";
 				print  gmctime($dsaref{$dsa}{'date'})."\n" ;
 			} else {
-				print "<tr VALIGN=\"TOP\"><td>DSA-$dsa</td><td>$refs</td></tr>\n";
+				print "<tr VALIGN=\"TOP\"><td>DSA-$dsa</td>$dsaref{$dsa}{'printtext'} </tr>\n";
 			}
 		}
 	}
@@ -169,17 +216,17 @@ sub printheader {
 	print <<EOF;
 #use wml::debian::template title="Security Crossreferences" GEN_TIME="yes"
 <H1>Cross References of Debian Security Advisories</H1>
-<P>The data below shows the cross references of Debian Security Advisories
-to other security information sources. These data is provided as 
-references that might be useful to track down information relevant
-to security fixes in Debian.
+<P>The data below shows cross references of Debian Security Advisories
+to other security information sources. This data is provided in the
+hopes that might be useful to track down information relevant
+to security issues and fixes in the Debian distribution.
 
 <P>Please notice that the Debian Security Team makes every effort possible
 to include cross-references in DSAs (even after they have been published),
 however, some DSAs might not have proper references to some security
 information sources. If you find information lacking please
 <a href="mailto:security@debian.org?subject=DSA_cross_references_info">let us 
-know</a>
+know</a>.
 
 <P><em>Note:</em> The data below is sorted in reverse chronological order.
 
