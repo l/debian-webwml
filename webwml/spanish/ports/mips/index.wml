@@ -1,5 +1,5 @@
 #use wml::debian::template title="Migración a MIPS" NOHEADER="yes"
-#use wml::debian::translation-check translation="1.47"
+#use wml::debian::translation-check translation="1.69"
 #include "$(ENGLISHDIR)/ports/mips/menu.inc"
 
 <h1>debian-mips y debian-mipsel</h1>
@@ -22,22 +22,45 @@ debian-mipsel.</p>
 
 <h2>Problemas conocidos</h2>
 <ul>
+	<li>La versión 3.0.22 de los discos de arranque, que probablemente
+	serán publicados con woody, ponen un nombre incorrecto al núcleo
+	en la cabecera del volumen. Su nombre es `linux.bi', no sólo
+	`linux.bi'. Intente usar «arcboot», que es el programa de carga de
+	nueva generación para las máquina SGI, pero tenga cuidado
+	(necesitará instalar una imagen de núcleo nueva, que incluya un
+	núcleo ELF.</li>
+	<li>No hay un mapa de teclado que funcione para XFree 4 en las
+	DECstation</li>
 	<li>Las CPUs R4600 parecen tener actualmente un fallo aún por
-        resolver.</li>
+        resolver, que produce fallos de segmento en perl. Parece ser que
+	<code>export LD_BIND_NOW=1</code> soluciona el problema.</li>
         <li>NO hay soporte para la O2 R10000.</li>
-        <li>La O2 R5000 sólo funciona sin caché - muy EXPERIMENTAL.</li>
-        <li>No hay soporte para la Indigo 2 R6000/R8000/R10000.</li>
+        <li>La O2 R5000 sólo funciona sin caché (muy EXPERIMENTAL).</li>
+        <li>No hay soporte para las Indigo 2 R6000/R8000/R10000.</li>
         <li>No hay soporte para los framebuffer de la Indigo 2.</li>
         <li>No hay soporte para la Ethernet/SCSI extra de la Challenge
         S (Dispositivos GIO64).</li>
         <li>No hay soporte para los slots EISA en la Indigo 2.</li>
+	<li>Se produce un fallo durante el arranque en las Indigo 2 si se
+	activa Framebuffer/Newport.</li>
+</ul>
+<h2>Problemas conocidos (resueltos)</h2>
+<ul>
+       <li>XFree XShm está mal (los Pixmap se corrompen). Hay una
+       corrección en el CVS actual.</li>
+       <li>«sleep» a veces no vuelve de su sueño (Strace muestra un sleep
+       de 22 años). Parece tener algo que ver con librt/fpu. No lo hemos
+       visto en un par de meses. Parece estar solucionado desde el núcleo
+       2.4.17 / glibc 2.2.5-3.</li>
+       <li>update-menus lanza una SIGBUS (parece ser algo del control de
+       excepciones de c+). Estamos enlazándolo estáticamente por el
+       momento, y parece resolver el problema.</li>
 </ul>
 
 <h2>Máquinas públicas</h2>
 <p><ul>
 	<li>pongo.verwaltung.uni-mainz.de.<br>
 	Una SGI Indy - R4000SC 256MB Ram<br>
-        ¡¿¡Temporalmente apagada!?!
 	<email martin@uni-mainz.de>
 	<li>remake.rfc822.org<br>
 	Una Masquerade Pro donada por <a
@@ -89,27 +112,35 @@ especialmente sobre Debian/Mips.</p>
 <h2>Enlaces</h2>
  
 <dl>
-   <dd><a href="http://www.linux-mips.org/">www.linux-mips.org</a>
-  <dt>Proyecto Linux-vr para la serie de CPUs Mips VR - PDAs y cía.
-   <dd><a href="http://www.linux-vr.org/">www.linux-vr.org</a>
   <dt>Decstation Linux - Páginas especialmente para usuarios de
-  Decstation.
+  Decstation (un tanto obsoletas).
    <dd><a href="http://decstation.unix-ag.org/">decstation.unix-ag.org</a>
   <dt>El vendedor de la CPU
    <dd><a href="http://www.mips.com/">www.mips.com</a>
   <dt>Páginas web de Linux/Mips albergadas por SGI.
    <dd><a href="http://oss.sgi.com/mips/">oss.sgi.com/mips</a>
-  <dt>Repositorio de paquetes RPM para MIPS little-endian en MontaVista.
-   <dd><a href="ftp://ftp.mvista.com/pub/Area51/ddb-5476/">ftp.mvista.com/pub/Area51/ddb-5476/</a>
   <dt>Repositorio de Karsten Merker de paquetes RPM para MIPS
   little-endian.
    <dd><a href="ftp://bolug.uni-bonn.de/mips/">bolug.uni-bonn.de/mips/</a>
   <dt>Repositorio de Maciej W. Rozycki.
    <dd><a href="ftp://ftp.ds2.pg.gda.pl/pub/macro/">ftp.ds2.pg.gda.pl/pub/macro</a>
-  <dt>Documentación del 79RC32332.
-   <dd><a href="http://www.idt.com/products/pages/Processors-79RC32332.html">http://www.idt.com/products/pages/Processors-79RC32332.html</a>
-  <dt>Parches al núcleo 2.4 para Cobalt Cube/RaQ
+  <dt>Parches obsoletos al núcleo 2.4 para Cobalt Qube/RaQ
    <dd><a href="http://cobalt22.cobalt.com/patches/">http://cobalt22.cobalt.com/patches/</a>
-  <dt>CÓMO de Linux-Mips crossdev.
+  <dt>FAQ para NetBSD en Cobalt Qube
+   <dd><a href="http://www.netbsd.org/Ports/cobalt/faq.html">http://www.netbsd.org/Ports/cobalt/faq.html</a>
+  <dt>Cómo de Linux-Mips crossdev.
    <dd><a href="http://foobazco.org/~wesolows/mips-cross.html">http://foobazco.org/~wesolows/mips-cross.html</a>
+  <dt>Cómo de instalación de Debian/Mips en Indy
+   <dd><a href="http://www.linux-debian.de/howto/debian-mips-woody-install.html">\
+     http://www.linux-debian.de/howto/debian-mips-woody-install.html</a>
+  <dt>GNU/Linux en el Philips Nino
+   <dd><a href="http://www.cotw.com/projects/nino/port/">http://www.cotw.com/projects/nino/port/</a>
+  <dt>Instalación de XFree86 en SGI/Indy (Howto/Bugs/Todo)
+   <dd><a href="http://honk.physik.uni-konstanz.de/linux-mips/x/x.html">http://honk.physik.uni-konstanz.de/linux-mips/x/x.html</a>
+  <dt>Más sobre hardware de Indy/Indigo2
+   <dd><a href="http://www.futuretech.vuurwerk.nl/i2sec3.html">http://www.futuretech.vuurwerk.nl/i2sec3.html</a>
+  <dt>Documentación sobre el Mips R10000
+   <dd><a href="http://www.sgi.com/processors/r10k/">http://www.sgi.com/processors/r10k/</a>
+  <dt>Documentación sobre el 79RC32332
+   <dd><a href="http://www.idt.com/products/pages/Integrated_Processors-79RC32332.html">http://www.idt.com/products/pages/Integrated_Processors-79RC32332.html</a>
 </dl>
