@@ -26,6 +26,7 @@ ports_FILES     = $(ENGLISHDIR)/ports/menu.defs \
 search_FILES    = $(ENGLISHDIR)/searchtmpl/search.def
 security_FILES  = $(TEMPLDIR)/security.wml \
   $(TEMPLDIR)/securityreferences.wml \
+  $(ENGLISHDIR)/security/faq.inc \
   $(ENGLISHDIR)/security/dsa.rdf.in \
   $(ENGLISHDIR)/security/make-ref-table.pl
 vendors_FILES   = $(ENGLISHDIR)/CD/vendors/vendors.CD.def
@@ -34,8 +35,7 @@ others_FILES    = $(ENGLISHDIR)/News/press/press.tags \
   $(ENGLISHDIR)/consultants/consultant.defs \
   $(ENGLISHDIR)/devel/website/tc.data \
   $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/logos/index.data \
-  $(ENGLISHDIR)/misc/merchandise.def $(ENGLISHDIR)/security/faq.inc \
-  $(ENGLISHDIR)/y2k/l10n.data
+  $(ENGLISHDIR)/misc/merchandise.def $(ENGLISHDIR)/y2k/l10n.data
 templates_FILES = $(addprefix $(TEMPLDIR)/, \
   cdimage.wml common_tags.wml common_translation.wml consultant.wml \
   ddp.wml events_common.wml fixes_link.wml footer.wml languages.wml \

@@ -1,9 +1,9 @@
 #use wml::debian::common_tags
 
-<bind-gettext-domain domain="others" />
+<bind-gettext-domain domain="security" />
 
 <define-tag small_Q whitespace=delete>
-  <gettext domain="others">Q</gettext>
+  <gettext domain="security">Q</gettext>
 </define-tag>
 
 <:
