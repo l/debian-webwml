@@ -1,14 +1,16 @@
-#use wml::debian::translation-check translation="1.6" mindelta="1"
+#use wml::debian::translation-check translation="1.9" mindelta="1"
 <define-tag description>fjärrattack</define-tag>
 <define-tag moreinfo>
-<p>Theo de Raadt tillkännagav att OpenBSD-gruppen samarbetar med ISS om en
+<p>Theo de Raadt tillkännagav att OpenBSD-gruppen samarbetar med ISS för att
+rätta en
 fjärrattack mot OpenSSH (en fri implementation av Secure SHell-protokollet).
-De vägrar att berätta några detaljer om sårbarheten utan uppmanar istället alla
+De vägrar att berätta några detaljer om sårbarheten utan uppmanar istället
+användare
 att uppgradera till den senaste utgåvan, version 3.3.</p>
 
-<p>Denna version släpptes för tre dagar sedan och introducerade en ny funktion
-som skall reducera effekten av problem i nätverkshanteringskoden som kan
-utnyttjad, vilken kallas privilegiedelning.
+<p>Denna version släpptes den 22 juni 2002 och aktiverar som standard en ny
+funktion vid namn privilegiedelning, vilken skall minimera effekten av
+problem som kan utnyttjas i nätverkshanteringskoden.
 Tyvärr har denna utgåva en del kända problem:
 </p>
 
@@ -26,17 +28,19 @@ Tyvärr har denna utgåva en del kända problem:
 <p>Det nya stödet för privilegiedelning från Niels Provos ändrar ssh så att det
 använder en icke-privilegierad process för att hantera det mesta.
 Detta betyder att eventuella sårbarheter i denna del av OpenSSH aldrig kan leda
-till att root komprometteras, utan endast tillgång till ett separat konto som
+till att root komprometteras, utan endast komprommetera ett
+icke-privilegierat konto som
 begränsas av en chroot.</p>
 
 <p>Theo gjorde det väldigt tydligt att denna nya version inte rättar
-sårbarheten, utan istället med den nya privilegiedelningen endast reducerar
-risken eftersom angriparen bara kan nå ett speciellt konto som begränsas av
-en chroot.</p>
+sårbarheten. Genom att istället använda den nya privilegiedelningen mildrar
+den sårbarheten eftersom eftersom angriparen bara kan nå det
+icke-privilegierade kontot som begränsats i en chroot.</p>
 
-<p>Eftersom detaljer om problemet inte har släppts har vi tvingats att flytta
-över till den senaste släppta versionen av den anpassningsbara versionen av
-OpenSSH, version 3.3p1.</p>
+<p>Eftersom detaljer om problemet inte har släppts är den enda kända metoden
+att mildra risken för den rapporterade sårbarheten att flytta över till den
+senaste utgåvan av den anpassningsbara versionen av OpenSSH, version
+3.3p1.</p>
 
 <p>Observera att vi inte har haft tid att utföra ordentlig kvalitetssäkring på
 dessa paket; de kan innehålla fel eller förstöra andra saker på ett oväntat
@@ -54,24 +58,75 @@ vi dig sända in en felrapport så att vi kan undersöka det.</p>
      Om du inte vill att detta skall ske måste du ändra det manuellt.</li>
 
  <li>(gäller endast potato) Denna uppdatering lägger till en bakåtanpassad
-     version 0.9.6 av SSL-biblioteket. Detta betyder att du även måste
+     version 0.9.6c av SSL-biblioteket. Detta betyder att du även måste
      uppgradera ssl-paketet.</li>
 
  <li>(gäller endast potato) Denna uppdatering använder som standard version
      2 av SSH-protokollet, något som kan förstöra för existerande system där
      RSA-autentisering används.
-     Du måste antingen lägga till -1 till ssh:s kommandorad för att
-     fortsätta använda SSH-protokoll 1 och dina existerande nycklar,
-     eller skapa nya nycklar för SSH-protokoll 2.</li>
-
+     Du måste antingen
+  <ul>
+   <li>lägga till -1 till ssh:s kommandorad för att fortsätta använda
+       SSH-protokoll 1 och dina existerande nycklar, eller</li>
+   <li>ändra Protocol-raden i <tt>/etc/ssh/ssh_config</tt> och/eller
+       <tt>/etc/ssh/sshd_config</tt> till &rdquo;Protocol 1,2&rdquo;
+       för att försöka med protokoll 1 före protokoll 2, eller
+   <li>skapa nya rsa- eller dsa-nycklar för SSH-protokoll 2.</li>
+  </ul>
+ </li>
  <li>sshd använder privilegiedelning som standard, även om du inte explicit
-     aktiverar det i <tt>/etc/ssh/sshd_config</tt>.</li>
+     aktiverar det i <tt>/etc/ssh/sshd_config</tt>.
+     För att repetera, såvida du inte har
+     &rdquo;UsePrivilegeSeparation no&rdquo;
+     i din sshd_config kommer du att använda privilegiedelning med detta
+     paket.</li>
 
  <li>Om ssh inte fungerar för dig kan du försöka inaktivera komprimering.
-     Vi inkluderar redan en patch från Solar Designer som rättar problemet
+     Vi inkluderar en patch från Solar Designer som rättar problemet
      med Linux 2.2-kärnor, men det kan finnas några tillfällen när detta
      inte är tillräckligt.</li>
+
+ <li>(gäller endast potato) Privilegiedelning fungerar för närvarande inte
+     för Linux 2.0-kärnor.</li>
+
+ <li>Om du av någon anledning inte kan använda privilegiedelning (t.ex
+     för att du kör en 2.0-kärna) men redan har installerat openssh
+     3.3p1-paketet kan du återgå till tidigare beteende genom att lägga
+     in &rdquo;UsePrivilegeSeparation no&rdquo; i din
+     /etc/ssh/sshd_config-fil.
+     <strong>Observera att om du inaktiverar privilegiedelning förblir
+     du sårbar för säkerhetsproblemet som beskrivs i denna bulletin;
+     detta bör endast göras i nödfall.</strong></li>
 </ul>
+
+<p>Några problem med tidigare openssh 3.3p1-paket som rättats i denna
+bulletin (inte en komplett ändringslogg):</p>
+
+<ul>
+ <li>(gäller endast potato) installationsfrågan, &rdquo;vill du endast
+     tillåta protokoll 2&rdquo; har inte längre &rdquo;ja&rdquo; som
+     förval.
+     Användare som svarade ja på denna fråga och även valde att skapa
+     en ny sshd_config-fil upptäckte att de inte längre kunde ansluta
+     mot sina servrar via protokoll 1.
+     Se <tt>/usr/doc/ssh/README.Debian</tt>
+     för instruktioner om hur man aktiverar protokoll 1 om du hamnat i
+     denna situation.</li>
+
+ <li>(gäller endast potato) ssh-paketet har ej längre en konflikt mot
+     rsh-server, och tillhandahåller inte heller ett rsh-alternativ.</li>
+
+ <li>installationen misslyckas inte längre om användaren väljer att
+     generera protokoll 1-nycklar.</li>
+</ul>
+
+<p>Återigen ber vi om ursäkt för att vi måste släppa paket med större
+ändringar och mindre testning än vad vi normalt gör; givet den möjliga
+allvarlighetsgraden och icke-specifika natur hos hotet valde vi att våra
+användare bäst betjänades genom att ha paket tillgängliga för utvärdering så
+fort som möjligt.
+Vi kommer sända ut ytterligare information när den når oss, och kommer
+fortsätta arbeta på de kvarvarande problemen.</p>
 
 <p>Observera att paket för m68k-arkitekturen för Woody ännu inte är
 tillgängliga.</p>
