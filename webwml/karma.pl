@@ -14,6 +14,12 @@
 
 # Invocation:
 #   karma.pl [language]
+# list of languages in webwml: 
+#    english esperanto french japanese german arabic catalan bulgarian 
+#    chinese croatian czech danish dutch farsi finnish greek hungarian 
+#    indonesian italian korean lithuanian norwegian romanian russian 
+#    slovene spanish swedish turkish
+  
 
 use strict;
 use Getopt::Std;
