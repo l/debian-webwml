@@ -65,9 +65,9 @@
 #    7 Mai 1999 - v2.2 Add base/grub.
 #                      Do not ask about /usr symlink. All known problems are
 #                      resolved.
-#   13 Mai 1999 - v2.3 Add editors/ed, base/libstdc++2.9 to oplist
-#                      (requested by Roland McGrath)
-#                      Replace /etc/motd with something sensible.
+#   13 Mai 1999 - v2.3 Add editors/ed to oplist (requested by Roland McGrath)
+#                      base/libstdc++2.9 for dselect
+#                      Replace /etc/motd with something more sensible.
 #   17 Mai 1999 - v2.4 Added syslogd and inetutils. A lot of packages are
 #                      now required which were optional before. I am not
 #                      going to take a risk. Base is base.
@@ -82,16 +82,20 @@
 #                      Reported by Ognyan Kulev. 
 #    2 Jul 1999 - v2.8 Remove some patches. We don't want to carry around
 #                      this crap for ever.
+#   22 Jul 1999 - v3.0 Work with perl5, add libgdbmg1.
+#                      Only set up /etc/ttys if it is not a conffile.
+#                      Really fix the overwrite stuff now (blech).
 
 plist="base/ae base/adduser base/base-files base/base-passwd base/bash \
        base/bsdutils \
        base/debianutils base/diff base/dpkg base/e2fsprogs base/fileutils \
        base/findutils base/gnumach base/grep base/grub base/gzip \
-       base/hostname base/hurd net/inetutils base/libc0.2 \
+       base/hostname base/hurd net/inetutils base/libc0.2 base/libgdbmg1 \
        base/libncurses4 base/libreadlineg2 base/libstdc++2.9 base/mawk \
-       base/ncurses-base base/ncurses-bin base/passwd base/perl-base base/sed \
+       base/ncurses-base base/ncurses-bin base/passwd base/perl-5.005-base \
+       base/sed \
        base/shellutils base/slang1 base/syslogd base/tar base/textutils \
-       interpreters/perl"
+       interpreters/perl-5.005"
 oplist="admin/locales text/less editors/ed"
 #oplist=""
 
@@ -142,35 +146,16 @@ echo dest = ${dest}
 echo log = ${log}
 cat > ${log} < /dev/null
 
+
 #############################
 # Comply to Hurd philosophy.
 #############################
 
 if [ ! -e ${dest}/usr ] ; then
-#        echo We now can setup a link from /usr to the root directory.
-#        echo The idea is that the Hurd provides better facilities to spread
-#        echo the data on several media, and the /usr tree is not needed
-#        echo anymore. However, because Debian per se assumes that /usr
-#        echo is a seperate directory, this could lead to subtle problems.
-#        echo
-#        echo You have now the choice between making /usr a symlink or
-#        echo a real directory tree. It is recommended to answer yes, though,
-#        echo because this is what we use to test the system.
-#        echo
-#        echo Please answer "y" if you want me to install the symlink.
-#        read x
-#        if [ x$x = x ] ; then
-#		echo You have given no answer, so I will terminate the
-#                echo installation process. Come back if you have made up
-#                echo your mind. Thank you.
-#		exit 0
-#	fi
-#	if [ x$x = xy ] ; then
-		echo
-		echo Setting up link from usr to root directory to comply with Hurd philosophy.
-		rm -f ${dest}/usr
-		ln -s . ${dest}/usr
-#	fi
+	echo
+	echo Setting up link from usr to root directory to comply with Hurd philosophy.
+	rm -f ${dest}/usr
+	ln -s . ${dest}/usr
 fi
 
 ###########################
@@ -214,7 +199,7 @@ do
 			echo There is more than one version of package ${pname} available, choosing the alphabetically last.
 		fi
 		echo - ${package}
-		${dpkghurd} --unpack ${package} --force-depends >> ${log} 2>&1 || break
+		${dpkghurd} --unpack ${package} --force-depends --force-overwrite >> ${log} 2>&1 || break
 	fi
 done
 echo
@@ -237,19 +222,19 @@ do
 			echo There is more than one version of package ${pname} available, choosing the alphabetically last.
 		fi
 		echo - ${package}
-		${dpkghurd} --unpack ${package} --force-depends >> ${log} 2>&1 || break
+		${dpkghurd} --unpack ${package} --force-depends --force-overwrite >> ${log} 2>&1 || break
 	fi
 done
 
 set +e
-errors=`grep -v 'Preparing to replace\|Unpacking\|pre-dependency problem\|Selecting previously deselected package\|pre-depends on\|overriding problem because --force enabled\|(Reading database ...\| package architecture (hurd-i386) does not match system\|is not installed.\|but has never been configured.\|dpkg-deb: building package' ${log}`
+errors=`grep -v 'trying to overwrite\|but is unpacked but not configured\|Preparing to replace\|Unpacking\|pre-dependency problem\|Selecting previously deselected package\|pre-depends on\|overriding problem because --force enabled\|(Reading database ...\| package architecture (hurd-i386) does not match system\|is not installed.\|but has never been configured.\|dpkg-deb: building package' ${log}`
 set -e
 
 if [ ! "x${errors}" = x ] ; then
 	echo
 	echo dpkg did return unusual messages, please investigate:
 	echo
-	grep -v '^rm: /tmp/.*: Device or resource busy$\|trying to overwrite|dpkg - warning, overriding problems\|trying to override\|Preparing to replace\|Unpacking\|pre-dependency problem\|Selecting previously deselected package\|pre-depends on\|overriding problem because --force enabled\|(Reading database ...\| package architecture (hurd-i386) does not match system\|is not installed.\|but has never been configured.\|dpkg-deb: building package' ${log}
+	grep -v '^rm: /tmp/.*: Device or resource busy$\|dpkg - warning, overriding problems\|trying to override\|Preparing to replace\|Unpacking\|pre-dependency problem\|Selecting previously deselected package\|pre-depends on\|overriding problem because --force enabled\|(Reading database ...\| package architecture (hurd-i386) does not match system\|is not installed.\|but has never been configured.\|dpkg-deb: building package' ${log}
 	exit 1
 fi
 
@@ -276,7 +261,7 @@ _NIL_
 ##############################
 # Prepare initial translator.
 ##############################
-# FIX: Should be done in the Hurd?
+# FIX: Should be done in the Hurd preinst.
 echo
 echo Setting up initial translator hook.
 
@@ -299,6 +284,15 @@ else
         echo your next update of the hurd package, because your changes will be overriden.
 fi
 
+#####################################
+# Make sure libexec/runsystem exists
+#####################################
+# Explanation: It is managed by update-alternatives.
+#
+#if [ ! -e ${dest}/libexec/runsystem -a -e ${dest}/libexec/runsystem.gnu ] ; then
+#	echo Copying libexec/runsystem, so the system can boot.
+#
+
 ############################
 # Move perl in proper place
 ############################
@@ -310,8 +304,16 @@ if [ ! -e ${dest}/usr/bin/perl ] ; then
 		echo Moving perl into place.
 		mv ${dest}/usr/bin/perl.dist ${dest}/usr/bin/perl
 	else
+		if [ -e ${dest}/usr/bin/perl-5.005.dist ] ; then
 		echo
-		echo Warning, I couldn\'t find perl!
+		echo Found versioned perl.
+		# We only copy it here so the postinst does the right thing.
+		# A mv or ln won't work!
+		cp ${dest}/usr/bin/perl-5.005.dist ${dest}/usr/bin/perl
+		else
+			echo
+			echo Warning, I couldn\'t find perl!
+		fi
 	fi
 fi
 
@@ -348,7 +350,7 @@ fi
 ########################################################
 # make some essential directories for configure of dpkg
 ########################################################
-# FIX: Later.
+# FIX: In sysvutils, together with split-init
 if [ ! -e ${dest}/etc/rc0.d ] ; then
         echo
         echo Making etc/rc\?.d directories for dpkg
@@ -379,7 +381,7 @@ echo "127.0.0.1		localhost ${hostname}" > ${dest}/etc/hosts
 # Setup ttys.
 ##############
 
-if [ ! -e ${dest}/etc/ttys ] ; then
+if [ ! -e ${dest}/etc/ttys -a ! -e ${dest}/etc/ttys.dpkg-new ] ; then
 	echo
 	echo Setting up the terminal. Activate it with \"export TERM=mach\" if
 	echo booting single user mode.

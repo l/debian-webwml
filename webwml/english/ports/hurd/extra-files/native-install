@@ -31,12 +31,20 @@
 #        default. Requires hurd-19990529 at least.
 #        Make pfinet point to dummy interface, so localhost works. Does only
 #        work with Marks patch to GNU Mach.
-
+#   22 Jun 1999 - v2.1
+#        Set passive translator for /servers/exec, it doesn't harm and will
+#        be useful for people who boot a Hurd inside a file system.
+#        Add force-depends to dpkg. The perl situation requires this for
+#        dpkg and adduser.
+#        Fix tmp permission. Why is it bogus?
 
 # Make sure the filesystem is writeable
 
 echo I am just checking if your filesystem is really writeable.
 fsysopts / --writable
+
+echo Fixing permissions on /tmp.
+chmod -v 1777 /tmp
 
 # Set up standard passive translators
 echo
@@ -45,7 +53,7 @@ echo errors, you have forgotten to set the file system owner to \"hurd\"!
 
 /bin/settrans -c /servers/socket/1 /hurd/pflocal
 /bin/settrans -c /servers/socket/2 /hurd/pfinet --interface=dummy --address=192.168.0.1
-
+/bin/settrans -k /servers/exec /hurd/exec
 /bin/settrans -c /servers/crash-suspend /hurd/crash --suspend
 /bin/settrans -c /servers/crash-kill /hurd/crash --kill
 # Not functional yet:
@@ -96,8 +104,8 @@ echo
 echo Please press enter now to start configuration.
 read x
 
-dpkg --pending --configure || true
-dpkg --pending --configure || true
+dpkg --pending --configure --force-depends || true
+dpkg --pending --configure --force-depends || true
 
 echo The last step is to create /etc/fstab.
 
