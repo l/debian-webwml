@@ -31,7 +31,7 @@ my %trans = (
 		japanese   => "japanskom",
 		korean     => "korejskom",
 		spanish    => "¹panjolskom",
-		portuguese  => "Portuguese",
+		portuguese  => "portugalskom",
 	},
 	en => {
 		croatian => "Croatian",
@@ -80,7 +80,7 @@ my %trans = (
 		japanese => "japonais",
 		korean   => "coréen",
 		spanish  => "espagnol",
-		portuguese  => "Portuguese",
+		portuguese  => "portugais",
 	},
 	de => {
 		croatian => "Kroatisch",
@@ -92,7 +92,7 @@ my %trans = (
 		japanese => "Japanisch",
 		korean   => "Koreanisch",
 		spanish  => "Spanisch",
-		portuguese  => "Portuguese",
+		portuguese  => "Portugiesisch",
 	},
 	it => {
 		croatian => "croatian",
@@ -140,7 +140,7 @@ my %trans = (
 		japanese => "japonés",
 		korean   => "koreano",
 		spanish  => "español",
-		portuguese  => "Portuguese",
+		portuguese  => "portugués",
 	},
 );
 	
@@ -195,8 +195,14 @@ sub languages {
   # printf STDERR join(', ', @used_langs);
   if (@used_langs) {
      $str = "<hr>\n<langtext>:<BR>\n";
+     # Poor man's language sorting. create a hash going from the translation back to
+     # the english orig. Then work with the sorted keys.
      foreach (@used_langs) {
-        $str .= "<a href=\"$file.$langs{$_}.html\">$trans{$CUR_ISO_LANG}{$_}</a>&nbsp;\n";
+        $sorted_langs{$trans{$CUR_ISO_LANG}{$_}} = $_;
+     }
+     foreach (sort keys %sorted_langs) {
+        $cur_lang = $sorted_langs{$_};
+        $str .= "<a href=\"$file.$langs{$cur_lang}.html\">$trans{$CUR_ISO_LANG}{$cur_lang}</a>&nbsp;\n";
      }
      $str .= "\n<BR><a href=\"$base_url/intro/cn\"><setlang></a>\n";
   }
