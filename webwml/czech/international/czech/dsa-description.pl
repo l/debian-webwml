@@ -85,6 +85,9 @@ s{the ([pP])ortable ([dD])ocument ([fF])ormat \(PDF\) suite}
 s{the popular scripting language}
 {populárním skriptovacím jazyce}g;
 
+s{the general-purpose x86 assembler}
+{univerzálním x86 assembleru}g;
+
 #
 # other info
 #
@@ -113,6 +116,10 @@ s{these problems will be fixed soon.</p>}
 
 s{<p>This package is not present in the testing and unstable distributions.</p>}
 {<p>Tento balíèek není obsa¾en v testing a unstable distribuci.</p>}g;
+
+s{<p>The unstable distribution \(sid\) does not contain this package.</p>}
+{<p>Unstable distribuce (sid) neobsahuje tento balíèek.</p>}g;
+
 
 #
 # Upgrade it
