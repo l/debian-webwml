@@ -22,11 +22,31 @@
 
 
 # This should contain all languages
-@langs = ("arabic", "chinese", "croatian", "danish", "dutch", "english",
-	 "esperanto", "finnish", "french", "german", "hungarian",
-	 "italian", "japanese", "korean", "norwegian", "polish",
-	 "portuguese", "romanian", "russian", "spanish", "swedish",
-	 "turkish");
+%langs = (
+	"ar" => "arabic",
+	"zh" => "chinese",
+	"hr" => "croatian",
+	"da" => "danish",
+	"nl" => "dutch",
+	"en" => "english",
+	"eo" => "esperanto",
+	"fi" => "finnish",
+	"fr" => "french",
+	"de" => "german",
+	"hu" => "hungarian",
+	"it" => "italian",
+	"ja" => "japanese",
+	"ko" => "korean",
+	"no" => "norwegian",
+	"pl" => "polish",
+	"pt" => "portuguese",
+	"ro" => "romanian",
+	"ru" => "russian",
+	"es" => "spanish",
+	"sv" => "swedish",
+	"tr" => "turkish");
+
+@langs = values(%langs);
 
 # Set this to 1 for debugging
 $debug = 1;
@@ -75,7 +95,8 @@ sub when_forced {
 }
 
 $argfile = $ARGV[0] or die "Invalid number of arguments";
-$arglang = $ARGV[1] or die "Invalid number of arguments";
+die "Invalid number of arguments" unless $ARGV[1];
+$arglang = $langs{$ARGV[1]} or die "Invalid lang argument";
 $argfile =~ m+(.*)/(.*)\.wml+ or die "pattern does not match";
 my ($path, $file) = ($1, $2);
 
