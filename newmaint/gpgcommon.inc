@@ -126,7 +126,7 @@
         "LR" => "Liberia",
         "LI" => "Liechtenstein",
         "LT" => "Lithuania",
-        "LU" => "Luxemborg",
+        "LU" => "Luxembourg",
         "MO" => "Macau",
         "MG" => "Madagascar",
         "MW" => "Malawi",
