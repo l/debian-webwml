@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-#  Copyright (C) 1998 Christophe Le Bars
+#  Copyright (C) 1998-1999 Christophe Le Bars
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 use strict;
 
-use vars qw($translations $translation $translator $line);
+use vars qw($translations $key $translation $translator $line);
 
 do 'translations-bd.pl';
 
@@ -25,19 +25,19 @@ sub dump_html {
 
         my ($status, $ddp) = @_;
 
-foreach $translation (@$translations) {
+while (($key, $translation) = each %$translations) {
 	
 	next if ($translation->{'status'} ne $status);
 	next if ($ddp eq 'yes' && $translation->{'type'} ne 'DDP');
 
-	if ($translation->{'type'} eq 'DDP' && $translation->{'key'}) {
+	if ($translation->{'type'} eq 'DDP' && $key) {
 		$translation->{'url'} = 
 			'http://www.debian.org/~elphick/manuals.html/'
-			. $translation->{'key'} . '/'
+			. $key . '/'
 			if (!$translation->{'url'});
 		$translation->{'source_url'} = 
 			'http://www.debian.org/cgi-bin/cvsweb/debian-doc/ddp/manuals.sgml/'
-			. $translation->{'key'} . '/' . $translation->{'key'}
+			. $key . '/' . $key
 			. '.sgml'
 			if (!$translation->{'source_url'});
 		if ($translation->{'status'} ne 'non-disponible'
@@ -45,39 +45,39 @@ foreach $translation (@$translations) {
 			&& $translation->{'status'} ne 'en cours de traduction') {
 			$translation->{'translation_url'} = 
 				'http://www.debian.org/~clebars/f2dp/docs/'
-				. $translation->{'key'} . '.fr.html/'
+				. $key . '.fr.html/'
 				if (!$translation->{'translation_url'});
 			$translation->{'translation_source_url'} = 
 				'http://www.debian.org/~clebars/f2dp/docs/'
-				. $translation->{'key'} . '.fr.sgml'
+				. $key . '.fr.sgml'
 				if (!$translation->{'translation_source_url'});
 		}
 	}
 
-	if ($translation->{'type'} eq 'Web' && $translation->{'key'}) {
-		$translation->{'name'} = $translation->{'key'} . '.en.html'
+	if ($translation->{'type'} eq 'Web' && $key) {
+		$translation->{'name'} = $key . '.en.html'
 			if (!$translation->{'name'});
 		$translation->{'url'} = 
-			'http://www.fr.debian.org/'
-			. $translation->{'key'}
+			'http://www.debian.org/'
+			. $key
 			. '.en.html'
 			if (!$translation->{'url'});
 		 $translation->{'source_url'} = 
 			'http://www.debian.org/cgi-bin/cvsweb/webwml/webwml/english/'
-			. $translation->{'key'}
+			. $key
 			. '.wml'
 			if (!$translation->{'source_url'});
 		if ($translation->{'status'} ne 'à traduire' && $translation->{'status'} ne 'en cours de traduction') {
-			$translation->{'translation_name'} = $translation->{'key'} . '.fr.html'
+			$translation->{'translation_name'} = $key . '.fr.html'
 				if (!$translation->{'translation_name'});
 			$translation->{'translation_url'} = 
-				'http://www.fr.debian.org/'
-				. $translation->{'key'}
+				'http://www.debian.org/'
+				. $key
 				. '.fr.html'
 				if (!$translation->{'translation_url'});
 			$translation->{'translation_source_url'} = 
 				'http://www.debian.org/cgi-bin/cvsweb/webwml/webwml/french/'
-				. $translation->{'key'}
+				. $key
 				. '.wml'
 				if (!$translation->{'translation_source_url'});
 		}
