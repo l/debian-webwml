@@ -1,5 +1,5 @@
 #use wml::debian::template title="Prevoðenje Debian web stranica" BARETITLE=true
-#use wml::debian::translation-check translation="1.30"
+#use wml::debian::translation-check translation="1.34"
 
 <P>Da bi posao prevoditelja napravili ¹to lak¹im, stranice se generiraju
 malo drugaèije od onoga na ¹to su mnogi navikli. Web stranice se zapravo
@@ -41,80 +41,82 @@ po¹aljite nam e-mail (na engleskom) na
 stabla izvornih datoteka, kao ¹to je opisano u <a href="using_cvs">na¹oj
 stranici za uvod u CVS</a>.</p>
 
-<p>Prvu stvar koju treba uèiniti za novi prijevod je dodavanje
-<em>sliceova</em> za va¹ jezik u na¹e osnovne WML oznake. Stranica o
-<a href="using_wml">kori¹tenju WML-a</a> sadr¾i vi¹e informacija o
-sliceovima. Prvi sliceovi koje trebate prevesti su oni koji se pojavljuju na
-svim web stranicama, kao ¹to su kljuène rijeèi u zaglavlju, ALT oznake za
-slike, i podno¾je stranica.</p>
+<p>Nakon ¹to ste izvadili webwml/ direktorij i (makar) webwml/english/,
+poènite pravljenjem novog direktorija za va¹ prijevod, uz english/ i druge.
+Ime direktorija prijevoda mora biti na engleskom i u potpunosti pisano malim
+slovima (npr. "german", ne "Deutsch").</p>
 
-<p>Najsigurniji naèin kako zapoèeti je prevoðenje u datoteci
-<code>common_translation.wml</code>. Ne morate prevesti sve <i>sliceove</i>
-u svim predlo¹cima, samo one koje va¹e trenutno prevedene stranice doista i
-trebaju.</p>
+<p>Kopirajte datoteke <tt>Make.lang</tt> i <tt>.wmlrc</tt> iz english/
+direktorija u direktorij novog prijevoda. Ove datoteke su neophodne za
+izradu va¹eg prijevoda iz WML datoteka. One su dizajnirane tako da nakon ¹to
+ih iskopirate u direktorij novog jezika, morate promijeniti samo ove
+stvari:</p>
 
-<p>Neki od predlo¾aka ukljuèuju uz <i>sliceove</i> i Perl varijable:</p>
+<ol>
+  <li>Morate promijeniti varijablu LANGUAGE u datoteci <tt>Make.lang</tt>
 
-<ul>
-  <li><code>countries.wml</code> predlo¾ak sadr¾i imena dr¾ava, koja se
-      koriste npr. na vrhu svake stranice u popisu <i>mirrora</i>.
-      <br>
-      Ova datoteka ima varijable sliène <i>sliceovima</i>: ubacite
-      "<code>XY =&gt; "Neka Zemlja"</code>" retke u svaki od blokova,
-      zamjenjujuæi XY svojim dvoslovnim kodom jezika, velikim slovima,
-      te prevodeæi pojam u navodnicima desno od "<code>=&gt;</code>".
+  <li>Morate promijeniti varijable CUR_LANG, CUR_ISO_LANG i CHARSET u
+      datoteci <tt>.wmlrc</tt>. Dodajte tome i CUR_LOCALE ako je trebate za
+      sortiranje.
 
-  <li><code>language_names.wml</code> predlo¾ak sadr¾i imena jezika, koja
-      se koriste npr. na dnu svake stranice gdje je popis prijevoda.
-      <br>
-      Poènite tako da iskopirate <code>en =&gt; { <var>stuff...</var> }</code>
-      blok teksta i ubacite ga nakon zadnjeg sliènog bloka u datoteci.
-      Onda promijenite "en" na poèetku u va¹ dvoslovni kod jezika i
-      prevedite imena jezika u dvostrukim navodnicima desno od svakog 
-      "<code>=&gt;</code>".
-      <br>
-      Molimo obratite pa¾nju na to da ime va¹eg jezika na va¹em jeziku treba
-      sve ne-ASCII znakove imati preskoèene s &amp;name; ili s &amp;#broj;
-      entitetima, jer æe oni biti ukljuèeni na stranicama s puno razlièitih
-      kodiranja znakova.
-</ul>
+  <li>Neki jezici æe mo¾da trebati posebnu obradu za rukovanje setom
+      znakova. To se mo¾e napraviti koristeæi -prolog i --epilog wml opcije.
+      Da bi to postigli, koristite WMLPROLOG i WMLEPILOG varijable u
+      <tt>Make.lang</tt>
+
+  <li>Varijabla LANGUAGES mora biti promijenjena u vr¹noj
+      <tt>webwml/Makefile</tt> datoteci kako bi se va¹ jezik izraðivao skupa
+      s ostalima, na www.debian.orgu. Nama bi vi¹e odgovaralo da prepustite
+      ovu promjenu webmasterima, jer mo¾da niste svjesni da je va¹ prijevod
+      pokvaren kada se iznova izvadi iz CVS-a, ¹to bi moglo pokvariti proces
+      izrade ostatka web stranica.
+</ol>
+
+<p>Kad s tim budete gotovi, stavite sljedeæi redak u novu datoteku zvanu
+"Makefile" u tom direktoriju:
+
+<pre>
+<protect>include $(subst webwml/<var>dirva¹egjezika</var>,webwml/english,$(CURDIR))/Makefile</protect>
+</pre>
+
+<p>(Zamijenite <var>dirva¹egjezika</var> imenom direktorija va¹eg jezika,
+naravno.)</p>
+
+<p>Sad napravite poddirektorij unutar direktorija va¹eg jezika zvan "po",
+i kopirajte isti Makefile u taj poddirektorij (<kbd>cp ../Makefile .</kbd>).
+</p>
+
+<p>U po/ direktoriju, pokrenite <kbd>make init-po</kbd> kako bi napravili
+inicijalni skup *.po datoteka.</p>
+
+<p>Sad kada imate postavljen skelet, mo¾ete poèeti dodavati svoje prijevode
+u na¹e zajednièke WML oznake koje se koriste u predlo¹cima. Prvi predlo¹ci
+koje trebate prevesti su oni koji se pojavljuju na svim web stranicama, kao
+¹to su kljuène rijeèi u zaglavlju, ALT oznake za slike, i podno¾je
+stranica.</p>
+
+# Stranica o <a href="using_wml">kori¹tenju WML-a</a> sadr¾i vi¹e
+# informacija o ovome.
+
+<p>Poènite prevoditi u datoteci <code>po/templates.<var>xy</var>.po</code>
+(gdje je <var>xy</var> dvoslovni kôd va¹eg jezika). Za svaki 
+<code>msgid "<var>ne¹to</var>"</code> u poèetku postoji i
+<code>msgstr ""</code> gdje trebate unijeti prijevod za 
+<var>ne¹to</var> u dvostrukim navodnicima nakon <code>msgstr</code>.</p>
+
+<p>Ne morate prevesti sve nizove znakova u svim .po datotekama, samo one
+koje va¹e trenutno prevedene stranice trebaju. Kako bi vidjeli trebate li
+prevesti neki niz znakova, pogledajte komentare u .po datoteci odmah iznad
+svake <code>msgid</code> oznake. Ako je spomenuta datoteka u
+<tt>english/template/debian</tt>, tada vrlo vjerojatno trebate prevesti.
+Ako nije, mo¾ete odgoditi prevoðenje za kasnije, kada doista i prevedete
+relevantni dio web stranica koji trebaju taj niz znakova.</p>
 
 <p>Ako niste sigurni da ste sve napravili ispravno, pitajte na debian-www
-mailing listi prije nego ¹to po¹aljete datoteke.</p>
+mailing listi prije nego ¹to po¹aljete datoteke u CVS.</p>
 
 <p>Trebate <a href="navbar_images">prevesti i rijeèi na slikama</a> u
 crvenoj navigacijskoj traci.</p>
-
-<p>Nakon ¹to zavr¹ite skelet predlo¾aka, mo¾ete poèeti s prevoðenjem poèetne
-stranice. Za ovo trebate direktorij za va¹ prijevod, uz english/ i druge.
-Kopirajte <tt>Make*</tt> i <tt>.wmlrc</tt> iz english/ direktorija u
-direktorij novog prijevoda.
-
-<p><tt>Makefile</tt>ovi su napravljeni tako da se skoro ni¹ta ne treba
-mijenjati kada ih budete kopirali u direktorij novog jezika, pripremajuæi se
-za prevoðenje.
-
-<p>Predviðene su tek sljedeæe promjene:
-
-<ol>
-  <li>Morate promijeniti varijablu LANGUAGE u datoteci
-      webwml/&lt;language&gt;/Make.lang
-
-  <li>Morate promijeniti varijable CUR_LANG, CUR_ISO_LANG i CHARSET u
-      datoteci webwml/&lt;language&gt;/.wmlrc. Dodajte tome i CUR_LOCALE ako
-      trebate sortiranje.
-
-  <li>Neki jezici æe mo¾da trebati posebnu obradu za rukovanje setom
-      znakova. To se mo¾e napraviti koristeæi -prolog i --epilog wml
-      opcije. Koristite WMLPROLOG i WMLEPILOG varijable u Make.lang
-      da bi to postigli.
-
-  <li>Varijabla LANGUAGES u webwml/Makefile mora biti promijenjena kako bi
-      se va¹ jezik izraðivao skupa s ostalima, na www.debian.orgu. Nama bi
-      vi¹e odgovaralo da prepustite ovu promjenu webmasterima, jer mo¾da
-      niste svjesni da je va¹ prijevod pokvaren kada se iznova izvadi iz
-      CVS-a, ¹to bi moglo pokvariti proces izrade ostatka web stranica.
-</ol>
 
 <p>Komentari u datotekama æe vam pokazati ako postoje stvari koje ne trebaju
 biti prevedene; po¹tujte ih.
@@ -122,6 +124,9 @@ biti prevedene; po¹tujte ih.
 <p>Pa¾nja: ako naðete mjesto gdje trebate napraviti neke druge promjene,
 po¹aljite e-mail na debian-www listu i recite ¹to ste i gdje promijenili,
 tako da mo¾emo ispraviti problem.
+
+<p>Nakon ¹to zavr¹ite skelet predlo¾aka, mo¾ete poèeti s prevoðenjem poèetne
+stranice.</p>
 
 <p>Mo¾ete ignorirati poddirektorije popisane u SUBS varijabli Makefile
 datoteka èak i ako oni ne postoje u direktoriju prijevoda. Kad prevedete
@@ -138,6 +143,8 @@ i kad zavr¹ite, po¹aljite je <a href="using_cvs">u CVS</a>. Molimo
 provjerite da se va¹ prijevod mo¾e izraditi (s make), jer ako se ne mo¾e, to
 bi moglo pokvariti proces izrade svih ostalih web stranica.
 
+# XXX replace with copypage.pl use
+
 <p>Kada budete kopirali datoteke, nemojte kopirati CVS direktorije ili
 datoteke u njima iz english/ direktorija u va¹. Ako to nehotice uèinite i
 kasnije po¹aljete promjene u CVS, cvs æe osvje¾iti engleske datoteke va¹im
@@ -147,9 +154,6 @@ prijevodima, ¹to æe zbuniti/uznemiriti puno ljudi.
 HTML datoteke se ne zovu <tt>datoteka.html</tt> nego
 <tt>datoteka.&lt;jezik&gt;.html</tt>, gdje je <tt>&lt;jezik&gt;</tt>
 dvoslovni kod jezika, prema ISO 639 (npr. <tt>fr</tt> za francuski).
-
-<p>Pa¾nja: kada se stranica prvi put prevede, ostali jezici neæe kreirati
-veze na va¹u stranicu prije nego se sami regeneriraju.
 
 <h3>Ostatak prièe</h3>
 
