@@ -1,9 +1,9 @@
-# This Makefile should need no changes from webwml/chinese/international/chinese/Makefile
+# This Makefile should need no changes from webwml/chinese/international/Chinese/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
 WMLBASE=../..
-CUR_DIR=international/chinese
+CUR_DIR=international/Chinese
 SUBS=devel doc faq News screenshot
 ZHTEMPLATE=$(WMLBASE)/template/debian-zh/template.tmpl
 
