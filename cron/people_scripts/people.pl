@@ -35,9 +35,16 @@ my @special_maintainer = (
 
 # put the auxilliary functions first to shut up perl >= 5.6
 
+my %ppl_ref = ();
+
 sub print_maintainer {
 	my ($names) = @_;
-	print "<dt><strong><a name=\"$lastname\">$lastname</a>";
+	if ($ppl_ref{$lastname}) {
+           print "<dt><strong>$lastname";
+	} else {
+	   print "<dt><strong><a name=\"$lastname\">$lastname</a>";
+           $ppl_ref{$lastname} = 1;
+	}
 	if ($lastname ne "Wookey") {
 		if ($firstname) { print ", $firstname"; }
 	}
