@@ -215,6 +215,11 @@ $translations_status = {
 	'base_revision'		=> '1.5',
 },
 
+'securing-debian-howto' => {
+	'status'		=> 2,
+	'translation_maintainer'=> ['Gaetan Ryckeboer <gryckeboer@virtual-net.fr>'],
+},
+
 #'making-deb' => {
 #	'status'		=> 4,
 #	'since'			=> '25/09/1998',
