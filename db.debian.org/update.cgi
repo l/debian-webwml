@@ -43,7 +43,7 @@ $auth = ($mesg->code == LDAP_SUCCESS);
 
 if (!$auth) {
   $ldap->unbind;
-  &Util::HTMLError("You have not been authenticated. Please <a href=\"$proto://$ENV{SERVER_NAME}/$config{webloginurl}\">Login</a>");
+  &Util::HTMLError("You have not been authenticated. Please <a href=\"https://$ENV{SERVER_NAME}/$config{webloginurl}\">Login</a>");
 }
 
 # Authenticated....

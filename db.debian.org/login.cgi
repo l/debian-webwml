@@ -17,8 +17,8 @@ my %config = &Util::ReadConfigFile;
 my $query = new CGI;
 my $proto = ($ENV{HTTPS} ? "https" : "http");
 
-if (!($query->param('username')) || !($query->param('password'))) {
-  print "Location: $proto://$ENV{SERVER_NAME}/$config{webloginurl}\n\n";
+if ($proto eq "http" || !($query->param('username')) || !($query->param('password'))) {
+  print "Location: https://$ENV{SERVER_NAME}/$config{webloginurl}\n\n";
   exit;
 }
 
