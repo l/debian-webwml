@@ -27,6 +27,13 @@ all:\
 	$(HTMLDIR)/devel/people.html.$(LANG) \
 	$(HTMLDIR)/devel/release_info.html.$(LANG) \
 	$(HTMLDIR)/devel/rsync_examples.html.$(LANG) \
+	$(HTMLDIR)/intro/about.html.$(LANG) \
+	$(HTMLDIR)/intro/cooperation.html.$(LANG) \
+	$(HTMLDIR)/intro/international.html.$(LANG) \
+	$(HTMLDIR)/intro/license_disc.html.$(LANG) \
+	$(HTMLDIR)/intro/cn.html.$(LANG) \
+	$(HTMLDIR)/intro/free.html.$(LANG) \
+	$(HTMLDIR)/intro/why_debian.html.$(LANG) \
 	$(HTMLDIR)/logos/index.html.$(LANG) \
 #    $(HTMLDIR)/devel/mirror_submit.html.$(LANG) \
 #    $(HTMLDIR)/devel/ports.html.$(LANG) \
@@ -43,12 +50,6 @@ all:\
 #    $(HTMLDIR)/distrib/ftplist.html.$(LANG) \
 #    $(HTMLDIR)/distrib/packages.html.$(LANG) \
 #    $(HTMLDIR)/distrib/vendors.html.$(LANG) \
-#    $(HTMLDIR)/intro/about.html.$(LANG) \
-#    $(HTMLDIR)/intro/cooperation.html.$(LANG) \
-#    $(HTMLDIR)/intro/license_disc.html.$(LANG) \
-#    $(HTMLDIR)/intro/cn.html.$(LANG) \
-#    $(HTMLDIR)/intro/free.html.$(LANG) \
-#    $(HTMLDIR)/intro/why_debian.html.$(LANG) \
 #    $(HTMLDIR)/security/index.html.$(LANG) \
 #    $(HTMLDIR)/
 
