@@ -1,110 +1,170 @@
-#use wml::debian::template title="異なる言語のDebianウェブサイト" BARETITLE=true
-#use wml::debian::translation-check translation="1.32"
+#use wml::debian::template title="別言語でのDebianウェブサイト" BARETITLE=true
+#use wml::debian::translation-check translation="1.42"
 
-<P>明らかに、世界中の誰もが同じ言語を使っているわけではありません。
-また、ウェブが広まるにつれて、
+<P>当然のことながら、世界中の誰もが同じ言語を使っているわけではありません。
+ウェブが広まるにつれて、
 複数の言語で読めるページもよく見かけるようになりました。
-そのため、content negotiation (内容交渉) と呼ばれる
-標準的な手法が導入されています。
-この手法を用いれば、どの言語で書かれた文書を受け取りたいか、その優先順位を
-設定することが可能です。
+このため、content negotiation (内容交渉) と呼ばれる
+標準的な手法が導入されてました。
+この手法を用いれば、どの言語で書かれた文書を受け取りたいか、
+その優先順位を設定できます。
 実際にどのページが配信されるかは、ブラウザとサーバの間で交渉されます。
 ブラウザが設定された言語の優先順位を送信すると、
 サーバは送られてきた優先順位や、サーバ自体の設定、
-どの言語で書かれたページが存在するかどのバージョンのドキュメントが利用可能か
-などを調べて配信するページを決定します。</p>
+どの言語で書かれたページが存在するか、
+どのバージョンのドキュメントが利用可能かなどを調べて、
+配信するページを決定します。</p>
 
 <ul>
-<li><a href="#fix">もし別の言語のDebianウェブページになったら…</a>
-<li><a href="#setting">ブラウザに好みの言語を設定するには</a>
-<li><a href="#cache">プロキシサーバの潜在的な問題</a>
+
+<li><a href="#fix">間違った言語のDebianウェブページになったら…</a>
+<li><a href="#howtoset">言語設定のセットアップのしかた</a>
 </ul>
 
-<h3><a name="fix">もし別の言語のDebianウェブページになったら…</a></h3>
+<hr>
 
-<p>Debianのサイトで違った言語のドキュメントが見えるのには、三つの理由が
-あります。一つは、ブラウザの設定が間違っていることです。これが一番よく
-ありがちです。これを修正するには
-<a href="#setting">ブラウザに好みの言語を設定する方法</a>を見てください。</p>
+<h2><a name="fix">間違った言語のDebianウェブページになったら…</a></h2>
 
-<p>二つ目の問題は、壊れたキャッシュや設定の間違ったキャッシュです。
-これはISPがキャッシュをネットワークのトラフィックを減らす方法として
-採用すればするほど、この問題は大きくなってきます。
-もしキャッシュなんか使ってないと思っていても、
-<a href="#cache">ウェブサーバのキャッシュについての文書</a>を
+<p>Debian ウェブサーバから受けとった文書が間違った言語になってしまう場合、
+まずひとつめの、かつ最もよくある原因は、ブラウザの設定が正しくない、です。
+<a href="#howtoset">好みの言語に設定する方法</a>についての節を
 読んでください。</p>
 
-<p>三つめの問題は<a href="http://www.debian.org/">www.debian.org</a>
-それ自身の問題です。
-ここ二年で受けた違う言語のページが見えるという報告で、我々の問題だったのは
-たった一つだけです。よって、我々に報告する前に上記の最初の二つの原因を
-調べることをお薦めします。
+<p>二つ目の原因は、キャッシュが壊れていたり、設定が違っている、です。
+ネットワークのトラフィックを減らす方法として、
+多くの ISP がキャッシュを採用するにつれて、この問題は大きくなってきています。
+キャッシュなんか使ってないと思っていても、
+<a href="#cache">ウェブサーバのキャッシュについての注意</a>
+を読んでください。</p>
+
+<p>三つめの原因は、
+<a href="http://www.debian.org/">www.debian.org</a> の方の問題です。
+ここ数年で受けた、違う言語のページが見えるという報告のうち、
+我々の問題だったのは指折り数えられるほどに過ぎませんでした。
+ですので、我々に報告する前に上記の最初の二つの原因をよく調べてください。
 <a href="http://www.debian.org/">http://www.debian.org/</a>は問題ないのに、
 ミラーサイトにおかしなところを発見したら我々に報告してください。
 我々がミラーの管理者に連絡します。</p>
 
-<p>問題を修正した後は、もう一度そのページを見る前にブラウザのローカル
-キャッシュ(ディスクもメモリも両方)を消してください。
-テストするのにlynxを使うことをお薦めします。content negotiaion (内容交渉)
+<p>これらのいずれかの問題を修正した後は、再びそのページを見る前に、
+ブラウザのローカルキャッシュ(ディスクもメモリも両方)を消してください。
+テストには
+<a href="http://packages.debian.org/stable/web/lynx.html">lynx</a>
+を使うことをお薦めします。これは content negotiaion (内容交渉)
 に関するHTTPの仕様に100%従っているとわかっている唯一のブラウザです。</p>
 
-<h3><a name="setting">ブラウザに好みの言語を設定するには</a></h3>
+<h3><a name="cache">プロキシサーバによる潜在的な問題</a></h3>
 
-<p>注: 以下のリストは完全ではありません。もし以下の一覧にあげられていない
-ブラウザに関する設定をご存知であれば、 
-<a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>
-までお知らせください。
+<p>プロキシサーバは基本的にはウェブサーバですが、
+それ自身のコンテンツを持っていません。
+プロキシサーバはユーザと本当のウェブサーバの間に置かれます。
+ウェブページの要求をうけとり、そのページを取得します。
+その後、ページをあなたに送ると同時に、以降にまた要求されるときに備えて、
+ローカルにキャッシュ用のコピーを作成します。
+多くのユーザが同じページを要求すると、
+ネットワークのトラフィックを軽減できます。</p>
 
-<P>ブラウザのデフォルトの言語を設定するためには、
-ウェブサーバに送信される変数を設定しなければなりません。
-こちらをどのように設定するかは、ご利用のブラウザによって異なります。
+<p>これはほとんどの場合にとってすばらしいアイディアですが、キャッシュが
+バグっている時におかしなことになります。
+特に、古いプロキシサーバは content negotiation (内容交渉)を理解して
+いません。そのようなキャッシュサーバは、ある言語でキャッシュすると、
+あとで違う言語で要求されても、キャッシュしていたページを返してしまいます。
+唯一の解決方法はそのキャッシュソフトウェアをアップグレードするか、
+おきかえることです。</p>
+
+<p>歴史的には、プロキシはブラウザで設定されたときに限って利用されました。
+しかし、もはやこれは正しくありません。
+ISP は透過的プロキシ(transparent proxy)を使って、
+すべてのHTTPリクエストをリダイレクトしているかもしれません。
+もしプロキシが content negotiation (内容交渉) を正しく扱えないと、
+キャッシュされていた違う言語のページを受けとってしまうことがあります。
+これを直すためにあなたができることは、ISP に文句を言って、
+それらをアップグレードするかおきかえてくれるよう頼むことだけです。</p>
+
+<hr>
+
+<h2><a name="howtoset">言語設定のセットアップのしかた</a></h2>
+
+<P>好みの言語には、あなたが使えるすべての言語を、好きな順序で指定しましょう。
+英語 ('en') を予備として (リストの最後に) 追加しておくといいでしょう。
+Debian ウェブページのオリジナル言語は英語であり、
+すべての文書があなたのお好みの言語に翻訳されているとは限りませんので。</p>
+
+# translators can modify the below example to mention their language
+
+<p>例えば母国語が日本語の人は、言語の変数に日本語
+(言語コード '<code>ja</code>') を置いて、その次英語
+(言語コード '<code>en</code>') を置くといいでしょう。</p>
+
+<p>それぞれのブラウザでこれを行う方法の実際については、
+<a href="#setting">以下</a>を見てください。
+
+<p>なお、言語のサブカテゴリの指定には注意を払ってください。
+例えば 'en-GB, ja' と指定すると、
+たいていの (HTTP 仕様書を読んだことのない) 人にとって、
+予想とは異なる結果をもたらします。</p>
+
+<p><strong>特に理由がない限り、
+言語には国別の拡張指定を加えないことをおすすめします</strong>。
+どうしても追加するならば、
+拡張指定のない言語指定も忘れずに加えておくようにしてください。</p>
+
+<p>説明: サーバがある文書への要求を、
+優先言語 'en-GB, ja' とともに受け取ると、
+英語 ('en') 版の文書は日本語版よりも優先されません。
+サーバは言語拡張として 'en-gb' がつけられた版のファイルがある場合に限って、
+日本語よりも英語を優先して提供します。</p>
+
+<p>すなわち、ブラウザの設定は 'en-GB, en, fr' とするか、
+あるいは単に 'en, fr' を送るようにすべきです。
+この場合は異なる動作をし、例えば en が要求された時にサーバは
+en-us を送信することができます。</p>
+
+<P>preferred_language 変数の設定に関するより詳しい情報は、
+<a href="http://httpd.apache.org/docs/content-negotiation.html">content
+negotiation (内容交渉) に関する Apache のドキュメント</a>を
+参照してください。</p>
+
+<h3><a name="setting">ブラウザで優先言語を設定する</a></h3>
+
+<p>ブラウザでデフォルトの言語を設定するには、
+ウェブサーバに渡される変数を設定しなければなりません。
+この方法は、あなたがどのブラウザ使っているかによって異なります。
 
 <DL compact>
-<DT><strong>lynx</strong>
-<DD><kbd>.lynxrc</kbd> にある <kbd>preferred_language</kbd>
-の値を編集するか、lynx 上で 'O' コマンドを使いその値を設定してください。
-<DT><strong>netscape 3.x</strong>
-<DD>Netscape の app-defaults file か <kbd>~/.Xresources</kbd> に
-<pre>
-     *httpAcceptLanguage: [preferred_language string]
-</pre>
-を追加してください。
-<DT><strong>netscape 4.x</strong>
-<DD>メニューから
-<pre>
-     Edit -&gt; Preferences -&gt; Navigator -&gt; Languages
-</pre>
-を開きます。言語の選択は必ずこちらのメニューから行ってください。
-設定ファイルに直接変更を加えたために問題が発生したとの報告が、
-多くの方から寄せられています。
 
-<DT><strong>Mozilla</strong>
+<DT><strong>Mozilla / Netscape 4.x and later versions</strong>
 <DD>
 <pre>
      Edit -&gt; Preferences -&gt; Navigator -&gt; Languages
 </pre>
 
-<DT><strong>W3</strong> (emacs ベースのウェブブラウザ)
+注意: Netscape 4.x では、提供されている選択肢の中から言語を
+選ばなければなりません。言語を手で入力したために問題が生じたとの報告が、
+たくさんの人から寄せられています。
+
+<DT><strong>Netscape 3.x</strong>
+
 <DD>
 <pre>
-     (setq url-mime-language-string  "preferred_language=fr; q=1.0, en; q=0.5")
-</pre>
-と設定するか、custom パッケージを使って
-(URL version p4.0pre.14 なら) 以下のメニューから設定してください。
+      *httpAcceptLanguage: [preferred_language string]
+ </pre>
+
+を Netscape の app-defaults ファイルか
+<kbd>~/.Xresources</kdb> に追加します。
+
+<DT><strong>Internet Explorer 5.x and later versions</strong>
+<DD>
 <pre>
-     Hypermedia -&gt; URL -&gt; Mime -&gt; Mime Language String...
+     Tools (or Extras) -&gt; Internet Options -&gt; Languages
 </pre>
 
-<DT><strong>IE ??</strong>
+<DT><strong>Internet Explorer 4.x</strong>
 <DD>
 <pre>
-     View -> Internet Options -> General/Languages
+     View -&gt; Internet Options -&gt; General/Languages
 </pre>
-<DT><strong>IE 5</strong>
-<DD>
-<pre>
-     Menu Extras -> Internet Options -> Languages
-</pre>
+
 <DT><strong>Opera</strong>
 <DD>Windows:
 <pre>
@@ -114,80 +174,40 @@
 <pre>
      File -&gt; Preferences -&gt; Document -&gt; Languages
 </pre>
-<DT><strong>iCab</strong>
-<DD>
-<pre>
-     Edit -&gt; Preferences -&gt; Browser -&gt; Fonts,Languages
-</pre>
-<DT><strong>W3M</strong>
-<DD>
-<pre>
-     Options (o) -&gt; Other Behavior -&gt; Accept-Language
-</pre>
-</DL>
 
-<H3>何を変数に設定すればよいのか?</H3>
+<DT><strong>lynx</strong>
 
-<P>Debian ウェブページのオリジナル言語は英語であり、
-すべての文書があなたのお好みの言語に翻訳されているとは限りませんので、
-予備としてデフォルトの言語に英語も設定しておくとよいでしょう。
-例えば、母国語がフランス語である方が
-lynx を利用される場合は <kbd>.lynxrc</kbd> に次の行を付け加えます。</p>
+<DD><kbd>.lynxrc</kbd> にある <kbd>preferred_language</kbd>
+の値を編集するか、lynx 上で 'O' コマンドを使いその値を設定してください。
+
+<p>例えば次の行を自分の <kbd>.lynxrc</kbd> で用いてください。</p>
 
 <pre>
 preferred_language=fr; q=1.0, en; q=0.5
 </pre>
 
-<p>このように設定した場合、
-サーバにフランス語で書かれたドキュメントがあればそれを、
-なければ英語のドキュメントを要求します。</p>
+<DT><strong>W3</strong> (emacs ベースのウェブブラウザ)
+<DD>
+<pre>(setq url-mime-language-string  "preferred_language=fr; q=1.0, en; q=0.5")</pre>
 
-<p>なお、言語のサブカテゴリの指定には注意を払ってください。
-例えば 'en-GB, fr' と指定することは、
-(HTTP 仕様書を読んだことのない)
-たいていの人にとっては予期せぬ結果をもたらします。
-お好みの言語の優先順位として 'en-GB, fr' という要求を受け取ったサーバは、
-'en' と 'fr' の両バージョンのドキュメントが存在する場合、
-フランス語のドキュメントを送信します。
-フランス語のドキュメントではなく英語のドキュメントを送信するのは、
-言語拡張子 .en-gb をもつファイルのバージョンが存在する場合のみです。
-そのため、お使いのブラウザが 'en-GB, en, fr' か、あるいは単純に 'en, fr'
-を送信するように設定するべきです。この場合は逆にうまくいき、例えば
-サーバは en が要求された時に en-us を送信することができます。</p>
+あるいはカスタムパッケージを用いて (URL バージョン p4.0pre.14 の場合)
+<pre>Hypermedia -&gt; URL -&gt; Mime -&gt; Mime Language String...</pre>
 
-<p><strong>特に理由がない限り、
-言語識別子には国識別子を追加しないことを強くお勧めします。
-</strong>
-もしこちらを追加する場合は、
-その国識別子を省いた言語識別子もあわせて設定してください。</p>
+<DT><strong>iCab</strong>
+<DD>
+<pre>
+     Edit -&gt; Preferences -&gt; Browser -&gt; Fonts,Languages
+</pre>
 
-<P>preferred_language 変数の設定に関するより詳しい情報は、
-<a href="http://httpd.apache.org/docs/content-negotiation.html">content
-negotiation (内容交渉) に関する Apache のドキュメント</a>を
-参照してください。</p>
+<DT><strong>W3M</strong>
+<DD>
+<pre>
+     Options (o) -&gt; Other Behavior -&gt; Accept-Language
+</pre>
 
-<h3><a name="cache">プロキシサーバの潜在的な問題</a></h3>
+</DL>
 
-<p>プロキシサーバは基本的にはそれ自身でコンテンツをもっていないウェブ
-サーバです。プロキシサーバはユーザと本当のウェブサーバの間にはいりこみ
-ます。ウェブページの要求をうけとり、そのページをとりにいきます。その後、
-ページをあなたに送ると同時に、また要求されることにそなえて
-ローカルにキャッシュされたコピーを作成します。
-多くのユーザが同じページを要求するとネットワークのトラフィックを軽減
-することができます。</p>
-
-<p>これはほとんどの場合にとってすばらしいアイディアですが、キャッシュが
-バグっている時におかしなことになります。
-特に、古いプロキシサーバは content negotiation (内容交渉)を理解して
-いません。そのようなキャッシュサーバは、ある言語でキャッシュすると
-あとで違う言語で要求されても、キャッシュしていたページをかえして
-しまいます。唯一の解決方法はそのキャッシュソフトウェアをアップグレードするか
-おきかえることです。</p>
-
-<p>歴史的には、ブラウザでプロキシを設定していた時のみ利用していました。
-しかし、もはやそれは正しくありません。ISPは透過的プロキシ(transparent proxy)
-を使ってすべてのHTTPリクエストをリダイレクトしているかもしれません。
-もしプロキシがcontent negotiation(内容交渉)を正しく扱えないと
-キャッシュされていた違う言語のページをうけとってしまうことがあります。
-これを直すためにあなたができることはそれらをアップグレードするか
-おきかえてくれるようにISPに文句をいうことです。</p>
+<p>以上にリストされているもの以外のブラウザにおける設定について
+情報をお持ちのかたは、その情報を
+<a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>
+までお寄せください。</p>
