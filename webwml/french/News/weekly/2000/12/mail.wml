@@ -1,0 +1,190 @@
+#use wml::debian::weeklynews::header PAGENAME="Courriel"
+#use wml::debian::translation-check translation="1.4" maintainer="Thomas Huriaux"
+
+Un peu plus de courriels que d'habitude&nbsp;; les archives des listes
+sont partiellement cassées.
+
+<p>
+
+<a name=1></a>
+<pre>
+Date : Mar. 18 avr. 2000 13 h 47 ' 46 " +0200
+De : Richard Braakman &lt;dark@xs4all.nl&gt;
+À : debian-release@lists.debian.org
+Sujet : Préparation du premier cycle de tests
+
+Sera-t-il possible de commencer le premier cycle de tests aux environs
+du 2 mai ? C'est dans deux semaines.
+
+Cela signifie que le 2 mai sera le dernier jour pour mes changements dans
+Potato, à l'exception de ceux nécessaires pour avoir des disquettes
+de démarrage et des images de cédérom qui fonctionnent. Il y aura
+quelques jours prévus pour cela.
+
+Après une période de tests de durée déterminée, nous évaluerons les
+résultats et déciderons de publier ou pas ce que nous avons.
+
+Richard Braakman
+</pre>
+
+<hr>
+
+<a name=2></a>
+<pre>
+Date : Sam. 15 avr. 2000 17 h 41 ' 55 " -0400
+De : Wichert Akkerman &lt;wichert@mors.wiggy.net&gt;
+À : debian-dpkg@lists.debian.org
+Cc : debian-devel@lists.debian.org
+Sujet: mise à jour de l'état du code de dpkg
+
+--IS0zKkzwUGydFO0o
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+
+
+Une mise à jour de l'état pour les personnes qui se demandent ce qui va
+se passer avec dpkg dans Woody.
+
+Les changements suivants ont déjà été faits dans le CVS :
+
+* Le format des .changes a été mis à jour pour séparer les champs
+  Changed-By et Maintainer. Changed-By est la dernière personne qui a
+  modifié le paquet, comme signifié dans le fichier debian/changelog,
+  et Maintainer est le responsable actuel comme signifié dans le
+  le fichier debian/control.
+* dpkg-deb a été modifié pour réorganiser les fichiers lors de la
+  construction d'un paquet. Cela signifie que vous n'avez plus à créer
+  les liens symboliques après leur cible, et rend possible la construction
+  des paquets sur des systèmes de fichiers avec différents comportements
+  des répertoires, comme reiserfs.
+* Utilisation d'objdump à la place de ldd pour obtenir la liste des
+  bibliothèques qu'un binaire utilise.
+* Mises à jour de la portabilité. À l'exception de l'utilisation de
+  ENOENT dans les scripts perl, dpkg se compile désormais sur hurd sans
+  changement. Les problèmes avec ENOENT sont un bogue dans perl-base
+  qui a été soumis il y a des mois.
+* Les variables de substitution dpkg:UpstreamVersion et dpkg:Version
+  peuvent être utilisées dans les fichiers control et changes.
+
+Les choses suivantes sont encore à faire et apparaîtront certainement
+dans Woody :
+* signatures dans les paquets ;
+* réessayer de supprimer les répertoires après la suppression des fichiers
+  de configuration ;
+* support de Enhances dans dselect, verifier si cela fonctionne dans dpkg ;
+* enregistrement des actions ;
+* intégrer suidmanager ;
+* intégrer debconf
+* autoriser des dessertes versionnées dans dpkg et dselect.
+(Ces points sont globalement triés aléatoirement)
+
+Il y a bien plus d'autres choses à faire. Certaines d'entre elles
+pourront être implémentées à temps pour Woody, d'autres non. Si vous
+voulez les voir entrer dans Woody, veuillez proposer un correctif,
+sinon elles ne seront probablement pas incluses.
+
+Wichert.
+
+--=20
+  _________________________________________________________________
+ / Signature généralement sans intérêt - ignorez-la sans crainte    \\
+| wichert@liacs.nl                    http://www.liacs.nl/~wichert/ |
+| 1024D/2FA3BC2D 576E 100B 518D 2F16 36B0  2805 3CB8 9250 2FA3 BC2D |
+
+--IS0zKkzwUGydFO0o
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.1 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
+
+iEYEARECAAYFAjj44iMACgkQPLiSUC+jvC1IjQCeIfeHJRDciGkU3dM221gy2m4Y
+7ZcAn2vM7CmWk/nIq8TS7bPgLu6T4hfl
+=6CHF
+-----END PGP SIGNATURE-----
+
+--IS0zKkzwUGydFO0o--
+</pre>
+
+<hr>
+
+<a name=3></a>
+<pre>
+De : Wichert Akkerman &lt;wichert@mors.wiggy.net&gt;
+Date : Sam 15 avr. 2000 20 h 50 ' 45 " -0400
+À : debian-devel@lists.debian.org, debian-policy@lists.debian.org
+Sujet : Registre de documentation
+
+J'ai un peu réfléchi à comment la documentation est actuellement
+enregistrée dans Debian, et il semble que nous le faisons mal. Pour
+l'instant, il y a quelques façons d'enregistrer la documentation :
+
+* appeler install-info ;
+* utiliser un modèle doc-base et appeler install-docs ;
+* mettre un fichier .dhelp dans le répertoire de documentation.
+
+Je pense que nous devrions utiliser une seule méthode pour enregistrer
+la documentation, et l'utiliser pour tous les paquets. Le registre
+actuel de doc-base semble être une bonne méthode pour le faire. Il y a
+cependant quelques problèmes :
+
+* la manière de gérer les frontaux comme dhelp et dwww ne fonctionne pas,
+  et il faut que cela fasse quelque chose qui ressemble plus à ce que
+  update-menus fait ;
+* cela ne gère pas les traductions.
+
+Je pense que nous devrions faire quelque chose comme cela :
+* tous les paquets enregistrent la documentation dans un fichier
+  d'enregistrement ajouté au répertoire /usr/share/doc-registry/ ;
+* le fichier d'enregistrement liste le titre, l'auteur, le résumé et
+  les différents formats dans lesquels le document est disponible. Il
+  peut lister cela pour différentes langues, si cela est nécessaire ;
+* les paquets appellent un outil appelé update-docs à partir de postinst
+  et postrm ;
+* les paquets qui implémentent un frontal pour les documentations peuvent
+  ajouter une méthode de documentation dans le répertoire /etc/doc-methods/.
+
+Pour le format du fichier d'enregistrement, XML semble être une bonne
+stratégie. En utilisant la balise LANG, nous pouvons facilement supporter
+différentes langues. Il y a de bons outils de traitement du XML pour
+tous les langages de scripts et la plupart des autres langages. Cela
+ressemblerait alors à :
+
+&lt;doc&gt;
+  &lt;id&gt;bzip2&lt;/id&gt;
+  &lt;author&gt;
+    &lt;name&gt;Julian Seward&lt;/name&gt;
+    &lt;email&gt;jseward@acm.org&lt;/email&gt;
+  &lt;/author&gt;
+  &lt;title&gt;bzip and libzip2: a program and library for data compression&lt;/title&gt;
+  &lt;title lang=FR&gt;bzip et libzip2: programme et bibliothèque pour la compression
+                 des données&lt;/title&gt;
+  &lt;section&gt;apps/tools&lt;/section&gt;
+  &lt;format type=html&gt;
+    &lt;index&gt;/usr/share/doc/libbz2/manul_toc.html&lt;/title&gt;
+    &lt;files&gt;/usr/share/doc/libz2/manual_*.html&lt;/files&gt;
+  &lt;/format&gt;
+  &lt;format type=postscript&gt;
+    &lt;index&gt;/usr/share/doc/libbz2/manual.ps.gz&lt;/title&gt;
+  &lt;/format&gt;
+  &lt;format type=postscript lang=FR&gt;
+    &lt;index&gt;/usr/share/doc/libbz2/manual-fr.ps.gz&lt;/title&gt;
+  &lt;/format&gt;
+  &lt;format type=texinfo&gt;
+    &lt;index&gt;/usr/share/doc/libbz2/manual.texi.gz&lt;/title&gt;
+  &lt;/format&gt;
+  &lt;format type=texinfo lang=FR&gt;
+  &lt;index&gt;/usr/share/doc/libbz2/manual-fr.texi.gz&lt;/title&gt;
+  &lt;/format&gt;
+&lt;/doc&gt;
+
+Wichert.
+
+-- 
+  _________________________________________________________________
+ / Signature généralement sans intérêt - ignorez-la sans crainte    \\
+| wichert@liacs.nl                    http://www.liacs.nl/~wichert/ |
+| 1024D/2FA3BC2D 576E 100B 518D 2F16 36B0  2805 3CB8 9250 2FA3 BC2D |
+</pre>
+
+#use wml::debian::weeklynews::footer translator="Thomas Huriaux"
