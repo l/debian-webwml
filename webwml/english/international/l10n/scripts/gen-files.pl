@@ -85,7 +85,8 @@ sub get_stats_po {
         my ($section, $packages) = @_;
         my ($pkg, $line, $lang, %list);
 
-        my %incl  = ();
+        my %done  = ();
+        my %todo  = ();
         my %excl  = ();
         my $none  = '';
         $total{$section} = 0;
@@ -125,18 +126,25 @@ sub get_stats_po {
                         }
                         $lang = uc($lang) || 'UNKNOWN';
                         $list{$lang} = 1;
-                        $incl{$lang}  = '' unless defined($incl{$lang});
-                        $incl{$lang} .= "<tr bgcolor=\"".
+		        my $str= '';
+                        $str .= "<tr bgcolor=\"".
                               get_color(percent_stat($stat)).
                               "\"><td>".$pkg."</td>".
                               "<td>".show_stat($stat)."</td><td><a href=\"";
-                        $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
-                        $incl{$lang} .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>";
-		        $incl{$lang} .= "<td>$translator</td><td>$team</td>".
+                        $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
+                        $str .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>";
+		        $str .= "<td>$translator</td><td>$team</td>".
                               "</tr>\n";
                         if ($stat =~ m/(\d+)t/) {
                                 $score{$lang} += $1;
                         }
+		        if (percent_stat($stat) eq "100%") {
+                           $done{$lang}  = '' unless defined($done{$lang});
+			   $done{$lang} .= $str;
+ 			} else {
+                           $todo{$lang}  = '' unless defined($todo{$lang});
+			   $todo{$lang} .= $str;
+			}
                 }
                 foreach $lang (@po_langs) {
                         my $l = uc($lang) || 'UNKNOWN';
@@ -146,10 +154,17 @@ sub get_stats_po {
                 }
         }
         foreach $lang (@po_langs) {
-                next unless defined $incl{uc $lang};
-                open (GEN, "> $opt_l/po/gen/$section-$lang.inc")
-                        || die "Unable to write into $opt_l/po/gen/$section-$lang.inc";
-                print GEN $incl{uc $lang};
+                next unless defined $done{uc $lang};
+                open (GEN, "> $opt_l/po/gen/$section-$lang.ok")
+                        || die "Unable to write into $opt_l/po/gen/$section-$lang.ok";
+                print GEN $done{uc $lang};
+                close (GEN);
+        }
+        foreach $lang (@po_langs) {
+                next unless defined $todo{uc $lang};
+                open (GEN, "> $opt_l/po/gen/$section-$lang.todo")
+                        || die "Unable to write into $opt_l/po/gen/$section-$lang.todo";
+                print GEN $todo{uc $lang};
                 close (GEN);
         }
         foreach $lang (@po_langs) {
@@ -204,7 +219,8 @@ sub get_stats_templates {
         my ($section, $packages) = @_;
         my ($pkg, $line, $lang, $maint, %list);
 
-        my %incl = ();
+        my %done  = ();
+        my %todo  = ();
         my %excl = ();
         my $none = '';
         my $tmpl_errors = {};
@@ -235,22 +251,29 @@ sub get_stats_templates {
 
                         $lang = uc($lang) || 'UNKNOWN';
                         $list{$lang} = 1;
-                        $incl{$lang}  = '' unless defined($incl{$lang});
-                        $incl{$lang} .= "<tr bgcolor=\"".
+		        my $str = '';
+                        $str .= "<tr bgcolor=\"".
                               get_color(percent_stat($stat)).
                               "\"><td>".$pkg."</td>".
                               "<td>".show_stat($stat)."</td><td><a href=\"";
-                        $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "templates/unstable/";
-                        $incl{$lang} .= $data->pooldir($pkg)."/$link_trans.gz\">$template</a></td><td>";
+                        $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "templates/unstable/";
+                        $str .= $data->pooldir($pkg)."/$link_trans.gz\">$template</a></td><td>";
                         if ($link_orig ne '') {
-                                $incl{$lang} .= "<a href=\"";
-                                $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "templates/unstable/";
-                                $incl{$lang} .= $data->pooldir($pkg)."/$link_orig.gz\">templates</a>";
+                                $str .= "<a href=\"";
+                                $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "templates/unstable/";
+                                $str .= $data->pooldir($pkg)."/$link_orig.gz\">templates</a>";
                         }
-                        $incl{$lang} .= "</td></tr>\n";
+                        $str .= "</td></tr>\n";
                         if ($stat =~ m/(\d+)t/) {
                                 $score{$lang} += $1;
                         }
+		    	if (percent_stat($stat) eq "100%") {
+                           $done{$lang}  = '' unless defined($done{$lang});
+			   $done{$lang} .= $str;
+ 			} else {
+                           $todo{$lang}  = '' unless defined($todo{$lang});
+			   $todo{$lang} .= $str;
+			}
                 }
                 #   Ensure $ftemp is defined
                 my $ftemp = shift @untranslated || $link_trans;
@@ -289,10 +312,17 @@ sub get_stats_templates {
                 }
         }
         foreach $lang (@td_langs) {
-                next unless defined $incl{uc $lang};
-                open (GEN, "> $opt_l/templates/gen/$section-$lang.inc")
-                        || die "Unable to write into $opt_l/templates/gen/$section-$lang.inc";
-                print GEN $incl{uc $lang};
+                next unless defined $done{uc $lang};
+                open (GEN, "> $opt_l/templates/gen/$section-$lang.ok")
+                        || die "Unable to write into $opt_l/templates/gen/$section-$lang.ok";
+                print GEN $done{uc $lang};
+                close (GEN);
+        }
+        foreach $lang (@td_langs) {
+                next unless defined $todo{uc $lang};
+                open (GEN, "> $opt_l/templates/gen/$section-$lang.todo")
+                        || die "Unable to write into $opt_l/templates/gen/$section-$lang.todo";
+                print GEN $todo{uc $lang};
                 close (GEN);
         }
         foreach $lang (@td_langs) {
@@ -397,7 +427,8 @@ sub get_stats_podebconf {
         my ($pkg, $line, $lang, %list);
 
         $total{$section} = 0;
-        my %incl  = ();
+        my %done  = ();
+        my %todo  = ();
         my %excl  = ();
         my $orig  = '';
         foreach $pkg (sort @{$packages}) {
@@ -440,20 +471,28 @@ sub get_stats_podebconf {
                         $link =~ s/:/\%3a/g;
                         $lang = uc($lang) || 'UNKNOWN';
                         $list{$lang} = 1;
-                        $incl{$lang}  = '' unless defined($incl{$lang});
-                        $incl{$lang} .= "<tr bgcolor=\"".
+		        my $str = '';
+                        $str .= "<tr bgcolor=\"".
                               get_color(percent_stat($stat)).
                               "\"><td>".$pkg."</td>".
                               "<td>".show_stat($stat)."</td><td><a href=\"";
-                        $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
-                        $incl{$lang} .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>";
-		        $incl{$lang} .= "<td>$translator</td><td>$team</td>".
+                        $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/unstable/";
+                        $str .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>";
+		        $str .= "<td>$translator</td><td>$team</td>".
                               "</tr>\n";
                         if ($stat =~ m/^(\d+)t(\d+)f(\d+)u$/) {
                                 $score{$lang} += $1;
                                 $addtotal = $1 + $2 + $3
                                         if $1 + $2 + $3 > 0;
                         }
+		    	if (percent_stat($stat) eq "100%") {
+                           $done{$lang}  = '' unless defined($done{$lang});
+			   $done{$lang} .= $str;
+ 			} else {
+                           $todo{$lang}  = '' unless defined($todo{$lang});
+			   $todo{$lang} .= $str;
+			}
+
                 }
                 $total{$section} += $addtotal;
 
@@ -465,10 +504,17 @@ sub get_stats_podebconf {
                 }
         }
         foreach $lang (@pd_langs) {
-                next unless defined $incl{uc $lang};
-                open (GEN, "> $opt_l/po-debconf/gen/$section-$lang.inc")
-                        || die "Unable to write into $opt_l/po-debconf/gen/$section-$lang.inc";
-                print GEN $incl{uc $lang};
+                next unless defined $todo{uc $lang};
+                open (GEN, "> $opt_l/po-debconf/gen/$section-$lang.todo")
+                        || die "Unable to write into $opt_l/po-debconf/gen/$section-$lang.todo";
+                print GEN $todo{uc $lang};
+                close (GEN);
+        }
+        foreach $lang (@pd_langs) {
+                next unless defined $done{uc $lang};
+                open (GEN, "> $opt_l/po-debconf/gen/$section-$lang.ok")
+                        || die "Unable to write into $opt_l/po-debconf/gen/$section-$lang.ok";
+                print GEN $done{uc $lang};
                 close (GEN);
         }
         foreach $lang (@pd_langs) {
