@@ -69,11 +69,25 @@
     $email = trim(strip_tags($email));
     $adate = strftime('%Y-%m-%d');
 
-			if ($forename == "" || $surname == "" || $email == "") {
-	?>
-	You have not filled in all the fields in the form.
-	<?
-			} else { # fields are there
+        $errors = "";
+	if ( ! $dfsgcheck ) {
+	   $errors .= "<LI>You have not checked the box saying you have read and agreed to the Debian Social Contract and the DFSG.\n";
+	}
+	if ( ! $idcheck ) {
+	   $errors .= "<LI>You have not checked the box saying you either have a signed GPG or a scanned and signed photo ID.\n";
+	}
+	if ( ! $tnscheck ) {
+	  $errors .= "<LI>You have not checked the box saying you have either a package built or some other proof of experience in other Debian activites.\n";
+	}
+	if ( ! $doccheck ) {
+	  $errors .= "<LI>You have not checked the box saying you have read the Debian developers documentation.\n";
+	}
+	if ($forename == "") { $errors .= "<LI>You did not supply a first name.\n"; }
+	if ($surname == "") { $errors .= "<LI>You did not supply a surname.\n"; }
+	if ($email == "") { $errors .= "<LI>You did not supply an email address.\n"; }
+	if ($errors != "") {
+	 echo "<P>There were problems with your application:<UL>$errors</UL><BR>\n";
+	} else { # fields are there
 				if (!check_user($db, $email)) {
 	?>
 	<P>There is something wrong with the database, or this email address is already
@@ -113,10 +127,37 @@ be quick, but it helps if you are patient.
 <HR>
 <FORM method="post" action="newnm.php">
 <INPUT type="hidden" name="what" value="new">
-<TABLE>
-<TR><TD>First Name:</TD><TD><INPUT name="forename" type=text>
-<TR><TD>Surname:</TD><TD><INPUT name="surname" type=text>
-<TR><TD>Email Address:</TD><TD><INPUT name="email" type=text>
+<TABLE width="90%">
+<TR><TD colspan="3" ><P>
+Have you read the Social Contract and DFSG and agree to abide by them
+in your Debian-related work? (You can read them 
+<a href="http://www.debian.org/social_contract">here</a>.)</TD>
+<TD><INPUT name="dfsgcheck" type="checkbox"></TD></TR>
+<TR><TD colspan="3" ><P>
+Do you yet have a GPG key signed by a current developer or some
+other photo ID scanned in and signed with your GPG key? (Click
+<a href=" http://www.debian.org/devel/join/nm-step2">here</a> 
+for more information on this.) </TD>
+<TD><INPUT name="idcheck" type="checkbox"></TD></TR>
+<TR><TD colspan="3" ><P>
+If you intend to package software, do you have a Debian package you
+have adopted or created ready to show your AM?  And if you intend to
+do other things (e.g. port Debian to other architectures, help with
+documentation, Quality Assurance or Security), do you have experience
+in those things which you can tell your AM about?  (You may want to
+get sponsorship to achieve this goal.  Click 
+<a href="http://www.internatif.org/bortzmeyer/debian/sponsor">here</a> 
+for more information on the sponsorship system.)</TD>
+<TD><INPUT name="tnscheck" type="checkbox"></TD></TR>
+<TR><TD colspan="3" ><P>
+Have you read the relevant documentation (Debian Policy,
+Developers' Reference, New Maintainers' Guide, Packaging Manual,
+found <a href="http://www.debian.org/devel/">here</a>?</TD>
+<TD><INPUT name="doccheck" type="checkbox"></TD></TR>
+</TABLE><HR><TABLE width="90%">
+<TR><TD>First Name:</TD><TD><INPUT name="forename" type=text></TD></TR>
+<TR><TD>Surname:</TD> <TD><INPUT name="surname" type=text></TD></TR>
+<TR><TD>Email Address:</TD> <TD><INPUT name="email" type=text></TD></TR>
 <TR><TD>&nbsp;</TD><TD><INPUT type="submit" value="Apply!"></TD></TR>
 </TABLE>
 </FORM>
