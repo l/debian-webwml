@@ -1,17 +1,14 @@
-#use wml::debian::template title="Setting up an FTP Mirror"
+#use wml::debian::template title="Setting up a Debian archive mirror"
 #use wml::debian::toc
+#include "$(ENGLISHDIR)/releases/woody/release.data"
 
-<p>Mirroring is the same for both unofficial and
-<a href="official">official</a> sites.
+<toc-display/>
 
-<p>Once a mirror is set up the mirror should be <a href="submit">registered with Debian</a>
+<p>Once a mirror is set up, it should be <a href="submit">registered with Debian</a>
 in order to get included in the <a href="list">mirror list</a>.
 Submissions can be done using our <A href="submit">simple web form</a>.
 
-<p>Any problems or enquiries can be sent to <A href="mailto:mirrors@debian.org">mirrors@debian.org</A>.
-</p>
-
-<toc-display/>
+<p>Any problems or enquiries can be sent to <email mirrors@debian.org>.</p>
 
 <toc-add-entry name="wherefrom">Where to mirror from</toc-add-entry>
 
@@ -25,22 +22,51 @@ updated from an internal Debian server.</p>
 that have the '<kbd>Type: Push-Primary</kbd>' tag should be good to mirror
 from.</p>
 
-<p>For you, there is practically no difference between mirroring from that
-server and mirroring from another <em>Push-Primary</em> mirror. On the other
+<p>There is no real difference between different <em>Push-Primary</em>
+mirror servers as far as mirroring is concerned. On the other
 hand, if many people use ftp.debian.org (and unfortunately, they do), this
-wastes the donated bandwidth.</p>
+needlessly wastes the donated bandwidth.</p>
 
-<toc-add-entry name="methods">Methods of mirroring</toc-add-entry>
+<toc-add-entry name="how">How to mirror</toc-add-entry>
 
-<p>The recommended method of mirroring is with rsync.
+<p>The recommended method of mirroring is with
+<a href="http://packages.debian.org/stable/net/rsync.html">rsync</a>.</p>
 
 <p>Note: while <kbd>wget</kbd> works well for mirroring small sites, it is
-not as configurable as rsync or 'mirror' so is not recommended for this job.
+not as configurable as rsync so is not recommended for this job.</p>
 
 <h3>Anonymous rsync</h3>
 
 <p>You can use <a href="anonftpsync">this script</a> to mirror the archive.
 Follow the directions in the script to set up mirroring.
+
+<p>Here are some advices for those who prefer different methods:
+
+<ul>
+  <li>Run rsync with at least these options: <kbd>--recursive --times
+      --links --hard-links --delete</kbd>.
+
+  <li>If you have extra disk space, also use the <kbd>--delete-after</kbd>
+      option to avoid some of the temporary update problems.
+
+  <li>If you don't have enough disk space to mirror everything, use the
+      <kbd>--exclude</kbd> option to exclude portions of the archive from
+      mirroring. Commonly this includes various architectures you might not
+      want; for example, this would exclude <em>all</em> architectures:
+      <br>
+<: 
+print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
+  foreach (sort keys %arches);
+:>
+
+  <li>After rsync is done mirroring, add a time stamp file to the
+      <code>project/trace/</code> subdirectory of the Debian mirror
+      named after your server. This means running
+      <kbd>date -u &gt; .../debian/project/trace/<var>your.server</var></kbd>
+      after your daily rsync is finished; and
+      <kbd>date -u &gt; .../debian-non-US/project/trace/<var>your.server</var></kbd>
+      after the non-US daily rsync is finished, if you mirror debian-non-US.
+</ul>
 
 <h3>Rsync with authentication, from a push mirror</h3>
 
@@ -97,15 +123,19 @@ users.</p>
 
 <p>The main archive gets updated every 24 hours.
 
-<p>If your site is being push mirrored, then you don't need to worry about this.
-If not, and the site you choose to mirror uses rsync, then you should take a
-look in <kbd>project/trace/</kbd> in the Debian archive of the mirror site
-for a file with the name of that site. The file should contain the time that
-the mirror last finished. Add some time, say 1 hour, to that time and mirror
-then.
+<p>The mirrors commonly start updating around 00:00 UTC, but this is is not
+a fixed time. We recommend mirroring every day, several hours after that; in
+fact, you should check if the site you're mirroring from leaves a time stamp
+file in their <kbd>project/trace/</kbd> subdirectory. The file should be
+named like that site and contain the time that their mirror run last
+finished. Add a couple of hours to that time (to be safe) and mirror
+then.</p>
 
 <p>The easiest way to automatically have the mirror run every day is to use
 cron. See <kbd>man crontab</kbd> for details.
+
+<p>Note that if your site is being triggered with a push mechanism, then you
+don't need to worry about any of this.</p>
 
 <toc-add-entry name="settings">Recommended additional settings</toc-add-entry>
 
