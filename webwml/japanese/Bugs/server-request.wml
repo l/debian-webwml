@@ -1,0 +1,208 @@
+#use wml::debian::template title="Debian バグ追跡システム" NOHEADER=yes WEBMASTER=bugs
+<!--original_revision: 1.4 :-->
+
+<A name="introduction">
+<h1>バグシステムリクエストサーバ入門</h1>
+</A>
+
+バグ追跡システムでは、要求に応じて平文でバグ報告を送付してくれる
+メールサーバを運用している。
+<p>
+
+<A href="mailto:request@bugs.debian.org"><code>request@bugs.debian.org</code></A>
+宛に電子メールを送ることで利用できる。<code>Subject</code> は
+無視されるが、返信メールの <code>Subject</code> に利用される。
+<p>
+
+本文には一行に一つのコマンドを書いて送らなければならない。メール
+発信者が受けとる返信には、自分のメッセージの写しとそれぞれのコマ
+ンドに対する返事が書かれる。ほとんどのコマンドでは、誰かに通知が
+送られることはない。しかし、メッセージは記録に残され、WWW ページ
+で参照することができる。
+<p>
+
+ハッシュ記号 <code>#</code> で始まる行は無視される。
+(署名が処理されてしまうのを避けるために)サーバは
+<code>quit</code>、<code>stop</code>、<code>thank</code>、
+<code>--</code> (2つのハイフン) で始まる行で処理を中止する。
+また、認識不能なコマンドや不正な形式を持つコマンドが多くある場合も、
+処理を中止する。正常な処理を行ったコマンドがひとつもない場合、サー
+バは help 文書を送る。
+
+<h1>利用可能なコマンド</h1>
+
+<dl>
+<dt><code>send</code> <var>bugnumber</var>
+<dt><code>send-detail</code> <var>bugnumber</var>
+<dd>
+
+引数で指定したバグ報告の写しを要求する。
+<code>send-detail</code>コマンドでは自動通知など全ての
+メッセージが送られる(通常必要となる情報は <code>send-detail</code>
+では送られないので、普通は <code>send</code> を利用すればよい)。
+
+<dt><code>index</code> [<code>full</code>]
+<dt><code>index-summary by-package</code>
+<dt><code>index-summary by-number</code>
+<dd>
+
+それぞれ、
+(full をつけると解決済、転送済バグ報告も含む)完全なインデックス
+パッケージ名順のサマリ、バグ番号順のサマリを要求する。
+
+<dt><code>index-maint</code>
+<dd>
+
+バグ追跡システムで(未解決または最近クローズされた)バグを持つ
+メンテナーリストのインデックスページを要求する。
+
+<dt><code>index maint</code> <var>maintainer</var>
+<dd>
+
+文字列 <var>maintainer</var> を含む全てのメンテナが持つ
+バグのインデックスページを要求する。
+検索語は大文字小文字を区別しない部分文字列比較によって検索される。
+該当したメンテナーそれぞれに対してバグインデックスが個別のメール
+で送られる。
+
+<dt><code>index-packages</code>
+<dd>
+
+バグ追跡システムで(未解決または最近クローズされた)バグを持つ
+パッケージリストのインデックスページを要求する。
+
+<dt><code>index packages</code> <var>package</var>
+<dd>
+
+文字列 <code>package</code> を含む全てのパッケージに対する
+バグ一覧を要求する。
+検索語は大文字小文字を区別しない部分文字列比較によって検索される。
+該当するパッケージそれぞれについてバグ一覧がが個別のメールで送られる。
+
+<dt><code>send-unmatched</code> [<code>this</code>|<code>0</code>]
+<dt><code>send-unmatched</code> <code>last</code>|<code>-1</code>
+<dt><code>send-unmatched</code> <code>old</code>|<code>-2</code>
+<dd>
+
+それぞれ今週、先週、先々週の間に送られた特定のバグ報告に
+該当しないメッセージのログを要求する(水曜日を週末として扱う)
+
+<dt><code>getinfo</code> <var>filename</var>
+<dd>
+
+パッケージやメンテナの情報を含むファイルを要求する。
+利用可能なファイルを以下に示す。
+<dl compact>
+<dt><code>maintainers</code>
+<dd>
+バグ追跡システムで利用されるパッケージメンテナー一覧。
+これは <code>Packages</code> ファイル、override ファイルおよび
+擬似パッケージファイル中の情報から作られる。
+
+
+<dt><code>override.</code><var>distribution</var>
+<dt><code>override.</code><var>distribution</var><code>.non-free</code>
+<dt><code>override.</code><var>distribution</var><code>.contrib</code>
+<dt><code>override.experimental</code>
+<dd>
+パッケージの重要度(priority)とセクション(section)の情報やメンテナー
+の修正情報。この情報は FTP アーカイブ上の <code>Packages</code> ファイル
+を生成する際に利用される。ディストリビューションツリーそれぞれに
+ついてこの情報が利用可能である。また、現在の安定版と開発版ツリーでは、
+そのリリース状態名以外にコード名でも利用することができる。
+
+
+<dt><code>pseudo-packages.description</code>
+<dt><code>pseudo-packages.maintainers</code>
+<dd>
+それぞれ、擬似パッケージに対する説明とメンテナーの一覧
+</dl>
+
+<dt><code>refcard</code>
+<dd>
+メールサーバリファレンスカードを平文で送るよう要求する。
+
+<dt><code>help</code>
+<dd>
+このヘルプ文書を平文で送るよう要求する。
+
+<dt><code>quit</code>
+<dt><code>stop</code>
+<dt><code>thank</code>...
+<dt><code>--</code>...
+<dd>
+
+この行でメッセージの処理を中止する。
+この行の後に任意の文書を含めることができるが、メールサーバはそれを
+処理しない。例えば、あなたのメッセージを(バグ追跡システムのログや
+<code>CC</code> または <code>BCC</code> で)読む人のために、
+長いコメントを含める時には <code>#</code> よりもこれを使用する方が
+適切である。
+
+<dt><code>#</code>...
+<dd>
+
+コメント行。<code>#</code> は行頭になければならない。
+
+<dt><code>debug</code> <var>level</var>
+<dd>
+
+デバッグレベルを<var>level</var>に設定する。<var>level</var>には
+負でない整数が使用できる。0 はデバッグを行わない。通常のデバッグ
+には 1 で十分である。デバッグ出力は写しに書き出されるが、これば
+バグシステムの一般ユーザに役立つ情報ではない。
+</dl>
+
+この他、メールサーバの<A href="server-refcard">リファレンスカード</A>
+が用意されている。利用には WWW 上や 
+<code>bug-mailserver-refcard.txt</code>、
+電子メールで <code>refcard</code> コマンドを使う。
+(上記を参照のこと)。
+<p>
+
+バグ報告を操作したい場合は、<code>control@bugs.debian.or.jp</code>
+アドレスを使用しなければならない。このアドレスは<A href="server-control">
+上記のコマンド群のスーパーセット</A>を解釈する。詳細は別の文書で
+記述されており、WWW</A> 上や <code>bug-maint-mailcontrol.txt</code>
+、または <code>control@bugs</code> に <code>help</code> コマンドを
+送ることで参照できる。
+<p>
+
+この文書を平文ファイル、もしくは電子メールで読んでいる場合は、
+バグ追跡システムトップページ <code>http://www.debian.org/Bugs/</code>
+から HTML 版が利用できる。
+<p>
+
+<hr>
+他のページ
+<ul>
+<li><A href="./">バグ追跡システムトップページ</A>
+<li><A href="Reporting">Debian にバグを報告する方法</A>
+<li><A href="Access">バグ追跡システムに記録されているバグ報告の調べ方</A>
+<li><A href="Developer">バグ処理システムに関する開発者情報</A>
+<li><A href="server-control">電子メールコントロールインターフェース
+を利用してバグを操作するための開発者情報</A>
+<li><A href="server-refcard">メールサーバリファレンスカード</A>
+<li><A href="db/ix/full.html">未解決バグ、最近報告されたバグ一覧</A>
+<li><A href="db/ix/packages.html">バグ報告を受けているパッケージ</A>
+<li><A href="db/ix/maintainers.html">>バグ報告を受けているパッケージメンテナー</A>
+ <li><A href="../">Debian GNU/Linux トップページ</A>
+
+</ul>
+
+<hr>
+<address>
+<A href="http://www.chiark.greenend.org.uk/~ijackson/">Ian Jackson</A>
+ /
+<A href="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>.
+20 Jan 1998.
+<p>
+Debian bug tracking system
+copyright 1994-1997 Ian Jackson, copyright 1997 nCipher Corporation Ltd,
+copyright 1995 Steven Brenner.
+<A href="http://www.chiark.greenend.org.uk/~ian/debbugs/">Available
+under the GPL.</A>
+
+</address>
+
+

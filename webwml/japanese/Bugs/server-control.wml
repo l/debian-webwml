@@ -1,0 +1,209 @@
+#use wml::debian::template title="Debian bug tracking system" NOHEADER=yes WEBMASTER=bugs
+<!--original_revision: 1.3 :-->
+
+<h1>バグコントロールメールサーバ入門</h1>
+
+電子メールによってバグ報告記録や関連文書を取り寄せることができる
+メールサーバが <code>request@bugs.debian.org</code> にありますが、
+更にバグ報告をいろいろな方法で操作できるメールサーバが
+<code>control@bugs.debian.org</code> で運用されています。
+<p>
+
+コントロールサーバは、いくつかの追加コマンドがある以外はリクエスト
+サーバと同じ動作をします。実際に、2つのサーバは同じプログラムなのです。
+アドレスを2つにした理由は、ユーザが単に情報を要求しているだけである
+場合に、 誤って問題が起きるのを避けるためです。
+<p>
+
+どちらかのアドレスにメールを送る場合のメールサーバの基本操作と
+利用可能な共通コマンドの詳細については WWW上の
+<A href="server-request#introduction">リクエストサーバ入門</A>、
+ファイル <code>bug-log-mailserver.txt</code>、または
+どちらかのメールサーバに <code>help</code> を送ることで参照できます。
+<p>
+
+メールサーバの <A href="server-refcard">リファレンスカード</A>
+を WWW 上やファイル <code>bug-mailserver-refcard.txt</code> で参照
+できます。または、電子メールで <code>refcard</code> コマンドを送る
+ことでも利用できます)。
+
+<h1>コントロールメールサーバのみで利用可能なコマンド</h1>
+
+<dl>
+
+<dt><code>close</code> <var>bugnumber</var>
+<dd>
+
+バグ報告 #<var>bugnumber</var> をクローズする。
+<p>
+
+バグを報告したユーザに通知が送られる。しかし、
+(<var>bugnumber</var><code>-done@bugs</code> にメールを送った場合と
+違い)バグをクローズしたメールの本文はその通知に<em>添付されない</em>。
+バグ報告をクローズしたメンテナーは、別にメッセージを送るなどして、
+バグを報告したユーザがなぜそのバグがクローズされたか確実に分かる
+ようにしなければならない。
+
+<dt><code>reassign</code> <var>bugnumber</var> <var>package</var>
+<dd>
+
+バグ報告 #<var>bugnumber</var> が <var>package</var> のバグであること
+を記録する。このコマンドは、ユーザが擬似ヘッダをつけ忘れた場合に
+パッケージを設定したり、以前のパッケージ設定を変更するために利用される。
+この変更による通知は(処理中の写しの通常情報以外に)誰にも送られない。
+
+<dt><code>reopen</code> <var>bugnumber</var>
+ [ <var>originator-address</var> | <code>=</code> | <code>!</code> ]
+<dd>
+
+バグ報告 #<var>bugnumber</var> がクローズされている場合、再オープンする。
+<p>
+
+デフォルトで、または <code>=</code> を指定することで、元々の報告者が
+そのまま再オープンされたバグ報告の報告者となる。そのため、元々の報告者は
+そのバグ報告が再びクローズされる時に通知を受け取ることになる。
+<p>
+
+<var>originator-address</var> を指定した場合、バグ報告者のアドレス
+を設定できる。自分が再オープンしたバグ報告の新しい報告者になる場合は、
+<code>!</code> を使用するか、または自分の電子メールアドレスを指定する。
+<p>
+
+通常は、記録しようとする人がバグ報告を再オープンする報告者になる
+と良いであろう。その場合、バグが再びクローズされる時に通知を受け
+取ることができる。
+<p>
+
+バグがクローズされていない場合、reopen は何もせず、報告者の変更も行わない。
+未解決バグ報告の報告者を変更する方法はない
+(これは意図的であり、報告したバグについて誰からも何の発言も無いうちに
+バグがクローズされ28日後にバグが消去されてしまうことを防ぐ)。
+
+<dt><code>forwarded</code> <var>bugnumber</var> <var>address</var>
+<dd>
+
+バグ報告 <var>bugnumber</var> がパッケージの原作者のアドレス
+<var>address</var> に転送されていることを記録する。バグ報告自体は
+実際に転送されない。このコマンドは、間違った forwarded-to アドレス
+を変更したり、転送済であることが記録されていないバグに対して
+新しいアドレスを指定したりするのに使用できる。
+
+<dt><code>notforwarded</code> <var>bugnumber</var>
+<dd>
+
+<var>bugnumber</var> が任意のパッケージ原作者に転送済である
+という記録を抹消する。バグ報告が転送済でない場合、
+このコマンドは何もしない。
+
+<dt><code>retitle</code> <var>bugnumber</var> <var>new-title</var>
+<dd>
+
+指定したバグ報告のタイトルを変更する
+(デフォルトは元々のバグ報告の <code>Subject</code> メールヘッダが
+使われる)。
+<p>
+
+他の多くのバグ操作コマンドと異なり、このコマンドをマージされたバグ報告
+のひとつに用いた場合、変更を要求したバグ報告のタイトルのみが変更され、
+マージされている全てのバグ報告のタイトルは変更されない。
+
+<dt><code>severity</code> <var>bugnumber</var> <var>severity</var>
+<dd>
+
+バグ報告 #<var>bugnumber</var> の severity (重要度)レベルを
+<var>severity</var> に設定する。この変更はバグを報告したユーザには
+通知されない。
+<p>
+
+severity には 
+<code>critical(致命的)</code>、<code>grave(重大)</code>、
+<code>normal(通常)</code>、<code>important(重要)</code>、
+<code>wishlist(要望)</code> がある。
+
+<A href="Developer#severities">これらの意味</A>については、
+バグシステムの一般開発者文書で調べること。
+
+<dt><code>merge</code> <var>bugnumber</var> <var>bugnumber</var> ...
+<dd>
+
+2つ、またはそれ以上のバグ報告をマージする。
+バグ報告がマージされると、マージされたバグ報告の任意の一つに対して
+オープン、クローズ、転送済としてマーク・マーク解除したり、新しい
+パッケージに再指定したりした場合に、マージされたバグ報告全てに同
+じ操作がなされる。
+<p>
+
+バグ報告をマージするためには、それらが厳密に同じ状態でなければならない。
+つまり、すべてのバグがオープンであるかクローズであり、すべて同じ原作者
+のアドレスに転送済となっているか未転送になっていて、更に、すべて
+同じパッケージ(群)に指定されていなければならない
+(バグが指定されているパッケージについて完全文字列比較が行われる)。
+それらのバグが同じ状態でない場合、<code>merge</code> コマンドを使用
+する前に、<code>reassign</code>、<code>reopen</code> 等を使って
+同じ状態にしなければならない。
+
+<p>
+
+<code>merge</code> コマンドで与えられた任意のバグが既に別のバグに
+マージされている場合、コマンドに与えられた任意のバグにマージされ
+ているすべてのバグがマージされる。「マージ」は(数学の)等号に似て
+おり、再帰性、推移性、対称性を持つ。
+<p>
+
+マージされたバグ報告は、それぞれの報告のログに注意書きがなされる。
+WWWページ上では、マージされている他のバグへのリンクが含められる。
+<p>
+
+マージされたバグ報告は、それぞれ個別の抹消期限がすべてのバグ
+報告について満了した後、すべて同時に抹消される。
+
+<dt><code>unmerge</code> <var>bugnumber</var>
+<dd>
+
+指定したバグ報告を、これにマージされていた他のバグ報告から分離する。
+指定したバグ報告が複数のバグ報告にマージされていた場合は、指定したバグ
+報告以外はすべてマージされたままとなる。
+明示的に指定したバグのみが結合を取り除かれる。
+<p>
+
+ひとつにマージされた多くのバグ報告を 2 つのグループに分けたい場合は、
+新しいグループに移したいバグ報告をそれぞれ個別にアンマージし、それから
+新しいグループに merge しなければならない。
+<p>
+
+<code>unmerge</code> コマンド一回でバグ報告をひとつだけアンマージする
+ことができる。複数のバグ報告を分離したい場合は、メール本文に複数の
+<code>unmerge</code> コマンドを含めなければならない。
+
+</dl>
+
+<hr>
+他のページ
+<ul>
+<li><A href="./">バグ追跡システムトップページ</A>
+<li><A href="Reporting">Debian にバグを報告する方法</A>
+<li><A href="Access">バグ追跡システムに記録されているバグ報告の調べ方</A>
+<li><A href="Developer">バグ処理システムに関する開発者情報</A>
+<li><A href="server-request">メールサーバの基本とバグ情報を取得するためのコマンド</A>
+<li><A href="server-refcard">メールサーバリファレンスカード</A>
+<li><A href="db/ix/full.html">未解決バグ、最近報告されたバグ一覧</A>
+<li><A href="db/ix/packages.html">バグ報告を受けているパッケージ</A>
+<li><A href="db/ix/maintainers.html">>バグ報告を受けているパッケージメンテナー</A>
+ <li><A href="../">Debian GNU/Linux トップページ</A>
+
+</ul>
+
+<hr>
+<address>
+<A href="http://www.chiark.greenend.org.uk/~ijackson/">Ian Jackson</A>
+ /
+<A href="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>.
+29 Mar 1998.
+<p>
+Debian bug tracking system
+copyright 1994-1997 Ian Jackson, copyright 1997 nCipher Corporation Ltd,
+copyright 1995 Steven Brenner.
+<A href="http://www.chiark.greenend.org.uk/~ian/debbugs/">Available
+under the GPL.</A>
+
+</address>
