@@ -103,6 +103,7 @@ $moreinfo =~ s/(- )?-+\n//g;
 $moreinfo =~ s/\n\n$/\n/s;
 $moreinfo =~ s/\n<p>\n$//;
 $moreinfo =~ s/\n\n/<\/p>\n\n/sg;
+$moreinfo =~ s|(Refer to Debian )(bug #)([0-9]{6,})\.|$1<a href="http://bugs.debian.org/$3">$2$3</a>.|g;
 chomp ($moreinfo);
 $files =~ s/(- )?-+\n//g;
 $files =~ s/\n\n$/\n/s;
