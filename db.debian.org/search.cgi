@@ -154,7 +154,7 @@ if (!$dosearch) {
     $created =  &Util::FormatTimestamp($data->{createtimestamp}->[0]);
 
     # Last seen information (Echelon)
-    $lastseen = &Util::FormatLastSeen($data->{"activity-pgp"}->[0] || 
+    $lastseen = &Util::FormatLastSeen($data->{"activity-pgp"}->[0],
                                       $data->{"activity-from"}->[0]);
 
     # Link in the debian login id 
