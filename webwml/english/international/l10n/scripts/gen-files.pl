@@ -479,7 +479,7 @@ sub get_stats_podebconf {
                         $addorig .= " [<a href=\"".
                                 ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root).
                                 ($pofile eq 'templates.pot' ? 'po' : 'templates').
-                                '/$opt_d/'.$data->pooldir($pkg).
+                                "/$opt_d/".$data->pooldir($pkg).
                                 "/$link.gz\">$pofile</a>]";
                 }
                 $orig .= "<li><a name=\"$pkg\" href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>$addorig</li>\n"
