@@ -4,7 +4,7 @@
 # so the problem can be fixed.
 
 WMLBASE=../../../..
-CUR_DIR=devel/debian-med/talks/200210_lux_internal
+CUR_DIR=devel/debian-med/talks/internal
 SUBS=News
 
 include $(WMLBASE)/Make.lang

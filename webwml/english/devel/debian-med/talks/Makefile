@@ -5,13 +5,15 @@
 
 WMLBASE=../../..
 CUR_DIR=devel/debian-med/talks
-SUBS=200210_lux_med 200210_lux_internal
+SUBS=200210_lux_med internal med
 
 include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
   $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/200210_lux_med/*.wml) \
-  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/200210_lux_internal/*.wml)
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/internal/*.wml) \
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/med/*.wml)
+  
 
 install::
 ifeq ($(LANGUAGE),en)
