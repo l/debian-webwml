@@ -1,56 +1,35 @@
 #use wml::debian::submenu
+#include "$(ENGLISHDIR)/ports/menu.defs"
 
 # Please keep slices sorted alphabetically so it's easier to detect
 # languages in them (except english ones).
 
-<menu-item basename="../index">
-[EN:Ports:]
-[AR:Ports:]
-[DA:Tilpasninger:]
-[DE:Ports:]
-[EL:Ports:]
-[EO:Ports:]
-[ES:Migraciones:]
-[FI:Ports:]
-[FR:Ports:]
-[HR:Ports:]
-[HU:Ports:]
-[IT:Ports:]
-[JA:Ports:]
-[KO:Ports:]
-[NL:Ports:]
-[NO:Porteringer:]
-[PL:Ports:]
-[PT:Ports:]
-[RO:Ports:]
-[RU:Ports:]
-[SV:Anpassningar:]
-[TR:Ports:]
-[ZH:Ports:]
-</menu-item>
+<define-menu-item name="beowulf">
+   [EN:Debian for Beowulf:]
+   [AR:Debian for Beowulf:]
+   [DA:Debian til Beowulf:]
+   [DE:Debian für Beowulf:]
+   [EL:Debian for Beowulf:]
+   [EO:Debian for Beowulf:]
+   [ES:Debian para Beowulf:]
+   [FI:Debian for Beowulf:]
+   [FR:Debian for Beowulf:]
+   [HR:Debian for Beowulf:]
+   [HU:Debian for Beowulf:]
+   [IT:Debian per Beowulf:]
+   [JA:Debian for Beowulf:]
+   [KO:Debian for Beowulf:]
+   [NL:Debian for Beowulf:]
+   [NO:Debian for Beowulf:]
+   [PL:Debian for Beowulf:]
+   [PT:Debian para Beowulf:]
+   [RO:Debian for Beowulf:]
+   [RU:Debian for Beowulf:]
+   [SV:Debian för Beowulf:]
+   [TR:Debian for Beowulf:]
+   [ZH:Debian for Beowulf:]
+</define-menu-item>
 
-<menu-item basename="index">
-[EN:Debian for Beowulf:]
-[AR:Debian for Beowulf:]
-[DA:Debian til Beowulf:]
-[DE:Debian für Beowulf:]
-[EL:Debian for Beowulf:]
-[EO:Debian for Beowulf:]
-[ES:Debian para Beowulf:]
-[FI:Debian for Beowulf:]
-[FR:Debian for Beowulf:]
-[HR:Debian for Beowulf:]
-[HU:Debian for Beowulf:]
-[IT:Debian per Beowulf:]
-[JA:Debian for Beowulf:]
-[KO:Debian for Beowulf:]
-[NL:Debian for Beowulf:]
-[NO:Debian for Beowulf:]
-[PL:Debian for Beowulf:]
-[PT:Debian para Beowulf:]
-[RO:Debian for Beowulf:]
-[RU:Debian for Beowulf:]
-[SV:Debian för Beowulf:]
-[TR:Debian for Beowulf:]
-[ZH:Debian for Beowulf:]
-</menu-item>
+<menu-item name="ports"         basename="../index">
+<menu-item name="beowulf"       basename="index">
+

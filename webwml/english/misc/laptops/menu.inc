@@ -1,56 +1,35 @@
 #use wml::debian::submenu
+#include "$(ENGLISHDIR)/ports/menu.defs"
 
 # Please keep slices sorted alphabetically so it's easier to detect
 # languages in them (except english ones).
 
-<menu-item basename="../index">
-[EN:Ports:]
-[AR:Ports:]
-[DA:Tilpasninger:]
-[DE:Ports:]
-[EL:Ports:]
-[EO:Ports:]
-[ES:Migraciones:]
-[FI:Ports:]
-[FR:Ports:]
-[HR:Ports:]
-[HU:Ports:]
-[IT:Ports:]
-[JA:Ports:]
-[KO:Ports:]
-[NL:Ports:]
-[NO:Porteringer:]
-[PL:Ports:]
-[PT:Ports:]
-[RO:Ports:]
-[RU:Ports:]
-[SV:Anpassningar:]
-[TR:Ports:]
-[ZH:Ports:]
-</menu-item>
+<define-menu-item name="laptops">
+   [EN:Debian for Laptops:]
+   [AR:Debian for Laptops:]
+   [DA:Debian til bærbare:]
+   [DE:Debian für Laptops:]
+   [EL:Debian for Laptops:]
+   [EO:Debian for Laptops:]
+   [ES:Debian para portátiles:]
+   [FI:Debian for Laptops:]
+   [FR:Debian for Laptops:]
+   [HR:Debian for Laptops:]
+   [HU:Debian for Laptops:]
+   [IT:Debian per Laptops:]
+   [JA:Debian for Laptops:]
+   [KO:Debian for Laptops:]
+   [NL:Debian for Laptops:]
+   [NO:Debian for Laptops:]
+   [PL:Debian for Laptops:]
+   [PT:Debian para Laptops:]
+   [RO:Debian for Laptops:]
+   [RU:Debian for Laptops:]
+   [SV:Debian för bärbara:]
+   [TR:Debian for Laptops:]
+   [ZH:Debian for Laptops:]
+</define-menu-item>
 
-<menu-item basename="index">
-[EN:Debian for Laptops:]
-[AR:Debian for Laptops:]
-[DA:Debian til bærbare:]
-[DE:Debian für Laptops:]
-[EL:Debian for Laptops:]
-[EO:Debian for Laptops:]
-[ES:Debian para portátiles:]
-[FI:Debian for Laptops:]
-[FR:Debian for Laptops:]
-[HR:Debian for Laptops:]
-[HU:Debian for Laptops:]
-[IT:Debian per Laptops:]
-[JA:Debian for Laptops:]
-[KO:Debian for Laptops:]
-[NL:Debian for Laptops:]
-[NO:Debian for Laptops:]
-[PL:Debian for Laptops:]
-[PT:Debian para Laptops:]
-[RO:Debian for Laptops:]
-[RU:Debian for Laptops:]
-[SV:Debian för bärbara:]
-[TR:Debian for Laptops:]
-[ZH:Debian for Laptops:]
-</menu-item>
+<menu-item name="ports"         basename="../index">
+<menu-item name="laptops"       basename="index">
+
