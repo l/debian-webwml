@@ -1,0 +1,60 @@
+<HTML>
+<HEAD>
+<TITLE>How Does SRM Boot an OS?</TITLE>
+</HEAD>
+<BODY>
+<H1>1. <A NAME="s1"></A>How Does SRM Boot an OS?</H1>
+<P>
+<A HREF="srm.html#toc1">Contents of this section</A></P>
+
+<P> All versions of SRM can boot from SCSI disks and the versions for
+recent platforms, such as the Noname or AlphaStations can boot from
+floppy disks as well.  Network booting via <CODE>bootp</CODE> is supported.
+Note that older SRM versions (notably the one for the Jensen)
+<EM>cannot</EM> boot from floppy disks.  Also, booting from IDE disk
+drives is unsupported.</P>
+<P></P>
+<P> Booting Linux with SRM is a two step process: first, SRM loads and
+transfers control to the secondary bootstrap loader.  Then the
+secondary bootstrap loader sets up the environment for Linux, reads
+the kernel image from a disk filesystem and finally transfers control
+to Linux.</P>
+<P></P>
+<P> Currently, there are two secondary bootstrap loaders for Linux:
+the <EM>raw</EM> loader that comes with the Linux kernel and <CODE>aboot</CODE>
+which is distributed separately.  These two loaders are described in
+more detail below.</P>
+<P></P>
+<P></P>
+<H2>1.1 <A NAME="ss1.1"></A> Loading The Secondary Bootstrap Loader</H2>
+
+<P> SRM knows nothing about filesystems or disk-partitions.  It simply
+expects that the secondary bootstrap loader occupies a consecutive
+range of physical disk sector, starting from a given offset.  The
+information on the size of the secondary bootstrap loader and the
+offset of its first disk sector is stored in the first 512 byte
+sector.  Specifically, the long integer at offset 480 stores the
+<EM>size</EM> of the secondary bootstrap loader (in 512-byte blocks) and
+the long at offset 488 gives the <EM>sector number</EM> at which the
+secondary bootstrap loader starts.  The first sector also stores a
+flag-word at offset 496 which is always 0 and a checksum at offset
+504.  The checksum is simply the sum of the first 63 long integers in
+the first sector.</P>
+<P></P>
+<P> If the checksum in the first sector is correct, SRM goes ahead and
+reads the <EM>size</EM> sectors starting from the sector given in the
+<EM>sector number</EM> field and places them in <EM>virtual</EM> memory at
+address <CODE>0x20000000</CODE>.  If the reading completes successfully,
+SRM performs a jump to address <CODE>0x20000000</CODE>.</P>
+<P></P>
+
+<HR>
+<P>
+<A HREF="srm-2.html">Next</A> Chapter<P>
+Table of contents of <A HREF="srm.html#toc1">this chapter</A>,
+ General <A HREF="srm.html#toc">table of contents</A></P>
+<P>
+<A HREF="srm.html">Top</A> of the document,
+ <A HREF="#0"> Beginning of this Chapter</A></P>
+</BODY>
+</HTML>

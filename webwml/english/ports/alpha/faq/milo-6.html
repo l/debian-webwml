@@ -1,0 +1,209 @@
+<HTML>
+<HEAD>
+<TITLE>Alpha Miniloader Howto: MILO's User Interface</TITLE>
+</HEAD>
+<BODY>
+<A HREF="milo-5.html">Previous</A>
+<A HREF="milo-7.html">Next</A>
+<A HREF="milo.html#toc6">Table of Contents</A>
+<HR>
+<H2><A NAME="MILO-if-section"></A> <A NAME="s6">6. MILO's User Interface</A></H2>
+
+<P>Once you have correctly installed/loaded/run MILO you will see 
+the MILO (for MIniLOader) prompt displayed on your screen.  There is a very
+simple interface that you must use in order to boot a particular Linux 
+kernel image.  Typing "help" is a good idea as it gives a useful summary
+of the commands.</P>
+
+<H2><A NAME="MILO-help-section"></A> <A NAME="ss6.1">6.1 The ''help'' Command</A></H2>
+
+<P>Probably the most useful command that MILO has:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+
+MILO&gt; help
+MILO command summary:
+
+ls [-t fs] [dev:[dir]] 
+                    - List files in directory on device
+boot [-t fs] [dev:file] [boot string] 
+                    - Boot Linux from the specified device and file
+run [-t fs] dev:file 
+                    - Run the standalone program dev:file
+show                - Display all known devices and file systems
+set VAR VALUE       - Set the variable VAR to the specified VALUE
+unset VAR           - Delete the specified variable
+reset               - Delete all variables
+print               - Display current variable settings
+help [var]          - Print this help text
+
+Devices are specified as: fd0, hda1, hda2, sda1...
+Use the '-t filesystem-name' option if you want to use
+  anything but the default filesystem  ('ext2').
+Use the 'show' command to show known devices and filesystems.
+Type 'help var' for a list of variables.
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+<P><B>Note</B> that the <CODE>bootopt</CODE> command only appears on AlphaPC64 
+(and similar) systems.  
+Refer to the board's dcoumentation to find out just what it means.</P>
+
+<P><B>Devices.</B>  Until you
+use a command that needs to make use of a device, no device
+inititalisation will take place.   The first <CODE>show</CODE>, 
+<CODE>ls</CODE>, <CODE>boot</CODE> or <CODE>run</CODE>
+commands all cause the devices within MILO to be initialised.
+Devices are named
+in the same way (exactly) that Linux itself will name them.  So, the
+first IDE disk will be called 'hda' and it's first partition will be 'hda1'.
+Use the <CODE>show</CODE> command to show what devices are available.</P>
+
+<P><B>File Systems.</B>   MILO supports three file systems, 
+MSDOS, EXT2 and ISO9660.  So long as a device is available to it, 
+MILO can <CODE>list</CODE><CODE>boot</CODE> or <CODE>run</CODE> an image stored on 
+one of these file systems.
+MILO's default file system is <CODE>EXT2</CODE> and so you have tell MILO that
+the file system is something other than that.
+All of the commands that use filenames 
+allow you to pass the file system using the <CODE>-t [filesystem]</CODE>option.
+So, if you wanted to list the contents of a SCSI CD ROM, you might type the
+following:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+     MILO&gt; ls -t iso9660 scd0:
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+<P><B>Variables.</B>  MILO contains some settable variables that help
+the boot process.  If you are loading via the Windows NT ARC firmware, then
+MILO makes use of the boot option environment variables set up by that
+firmware.  
+For some systems, MILO (for example, the AlphaPC64) maintains
+its own set of environment variables that do not change from boot to boot.
+These variables are:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+
+MILO&gt; help var
+Variables that MILO cares about:
+  MEMORY_SIZE      - System memory size in megabytes
+  BOOT_DEV         - Specifies the default boot device
+  BOOT_FILE        - Specifies the default boot file
+  BOOT_STRING      - Specifies the boot string to pass to the kernel
+  SCSIn_HOSTID     - Specifies the host id of the n-th SCSI controller.
+  AUTOBOOT         - If set, MILO attempts to boot on powerup
+                     and enters command loop only on failure.
+  AUTOBOOT_TIMEOUT - Seconds to wait before auto-booting on powerup.
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+
+<H2><A NAME="MILO-boot-section"></A> <A NAME="ss6.2">6.2 Booting Linux </A></H2>
+
+<P>The <CODE>boot</CODE> command boots a linux kernel from a device.
+You will need to have a linux kernel image on
+an EXT2 formated disk (SCSI, IDE or floppy) or an ISO9660 formatted CD 
+available to MILO.  
+The image can be gzip'd and in this case 
+MILO will recognise that it is gzip'd by the .gz suffix.</P>
+
+<P>You should note that the version of MILO does not usually have to match
+the version of the Linux kernel that you are loading.
+You boot Linux using the following command syntax:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+     MILO&gt; boot [-t file-system] device-name:file-name [[boot-option] [boot-option] ...]
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+<P>Where <CODE>device-name</CODE> is the name of the device that you wish to
+use and <CODE>file-name</CODE> is the name of the file containing the Linux
+kernel.   All arguments supplied after the file name are passed directly
+to the Linux kernel. </P>
+
+<P>If you are installing Red Hat, then you will need to specify a root
+device and so on.  So you would use:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+     MILO&gt; boot fd0:vmlinux.gz root=/dev/fd0 load_ramdisk=1
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+<P> MILO will automatically contain the block devices that
+you configure into your vmlinux.  I have tested the floppy driver, the IDE
+driver and a number of SCSI drivers (for example, the NCR 810), and these work fine.  
+Also, it is important to set the host id of the SCSI controller
+to a reasonable value.  By default, MILO will initialize it to the
+highest possible value (7) which should normally work just fine.
+However, if you wish, you can explicitly set the host id of the
+<EM>n</EM>-th SCSI controller in the system by setting environment
+variable <CODE>SCSI</CODE><EM>n</EM><CODE>_HOSTID</CODE> to the appropriate
+value.  For example, to set the hostid of the first SCSI controller to
+7, you can issue the following command at the MILO prompt:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+     setenv SCSI0_HOSTID 7
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+
+<H2><A NAME="MILO-reboot-section"></A> <A NAME="ss6.3">6.3 Rebooting Linux </A></H2>
+
+<P>You may want to reboot a running Linux system using the
+<CODE>shutdown -r now</CODE> command.  In this case, the Linux kernel
+returns control to MILO (via the HALT CallPAL entrypoint).
+MILO leaves a compressed copy of itself in memory for just this
+reason and detects that the system is being rebooted from information
+held in the HWRPB (Hardware Restart Parameter Block).
+In this case it starts to reboot using exactly the same command that
+was used to boot the Linux kernel the last time.
+There is a 30 second timeout that allows you to interrupt this 
+process and boot whatever kernel you wish in whatever way you wish.</P>
+
+
+<H2><A NAME="MILO-bootopt-section"></A> <A NAME="ss6.4">6.4 The ''bootopt'' command </A></H2>
+
+<P>For flash based systems such as the AlphaPC64, EB164 and the EB66+, there
+are a number of possible boot options and these are changed using the 
+<CODE>bootopt</CODE> command.  
+This has one argument, a decimal number which is the type of the
+image to be booted the next time the system is power cycled or reset:</P>
+
+<P><B>0</B> Boot the Evaluation Board Debug Monitor,</P>
+<P><B>1</B> Boot the Windows NT ARC firmware.</P>
+
+<P>In order to tell the boot code to boot the MILO firmware from flash
+then you need a boot option that means boot the N'th image.  
+For this, you need to 128 plus N, so if MILO is the third image, you 
+would use the command:</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+     MILO&gt; bootopt 131
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+<P><CODE>Note:</CODE> Be very careful with this command.   A good rule is never to
+set bootopt to 0 (the Evaluation Board Debug Monitor), but instead use the 
+system's jumpers to achieve the same thing.  </P>
+
+
+<HR>
+<A HREF="milo-5.html">Previous</A>
+<A HREF="milo-7.html">Next</A>
+<A HREF="milo.html#toc6">Table of Contents</A>
+</BODY>
+</HTML>

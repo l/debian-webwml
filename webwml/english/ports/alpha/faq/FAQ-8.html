@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+ <META NAME="GENERATOR" CONTENT="SGML-Tools 1.0.7">
+ <TITLE>Linux/Alpha Frequently Asked Questions: Noname (AXPpci33) and Multia (UDB) </TITLE>
+ <LINK HREF="FAQ-9.html" REL=next>
+ <LINK HREF="FAQ-7.html" REL=previous>
+ <LINK HREF="FAQ.html#toc8" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="FAQ-9.html">Next</A>
+<A HREF="FAQ-7.html">Previous</A>
+<A HREF="FAQ.html#toc8">Contents</A>
+<HR>
+<H2><A NAME="Noname (AXPpci33)"></A> <A NAME="s8">8. Noname (AXPpci33) and Multia (UDB) </A></H2>
+
+<P> This section provides some more information on the Noname motherboard.
+There are some hints and tips that you might be interested in if you're
+considering putting together a system on your own.
+<P>First off, here is what the Noname board looks like: 
+<A HREF="http://ftp.digital.com/pub/DEC/axppci/small_pci33.gif">picture of Noname board</A>.
+<P>This section also includes standard benchmark performance results,
+which might help give you an idea of how a Noname system performs.
+<P>Before going out and purchasing such a machine, please be aware that
+the Noname really is a low-end machine and as such is relatively low
+performance. The Noname <EM>can</EM> make for a nice machine (especially
+together with a TGA graphics card), but be sure to run the
+applications you care about before making a purchase decision.  Rather
+then putting together a system based on this board, it is currently
+much cheaper to get a Universal Desktop Box (
+<A HREF="http://www.annex.co.uk/systems/udb.html">UDB</A>).  That box is basically a
+Noname with lots of very nice builtin hardware. The last UDB's are now
+being sold at $ 99,-.
+<P>
+<H2><A NAME="ss8.1">8.1 What Firmware Does Linux/Alpha Require?</A>
+</H2>
+
+<P> You will need the OSF/1 PALcode to run Linux.  Digital has made
+the firmware available for ftp so you can download the SRM console
+from 
+<A HREF="ftp://ftp.digital.com/pub/DEC/axppci">Digital's ftp site</A>. There are two serious
+drawbacks with the SRM console: it eats away 2-3MB of RAM and it
+<B>cannot</B> boot from IDE drives.  Fortunately, the free 
+<A HREF="milo.html">MILO</A> replacement firmware doesn't suffer from
+these problems.  Plus with MILO, you get all the sources!
+<P>
+<P>
+<H2><A NAME="ss8.2">8.2 What Do I Need To Watch Out For?</A>
+</H2>
+
+<P>
+<UL>
+<LI> <B> Keyboard </B>
+
+<P>If you plan on running DEC Unix (formerly known as OSF/1), you have
+to get a board with a PS/2 style connector.  On the other hand, it
+seems a lot easier/cheaper to find cases and keyboards for AT-style
+connectors.  (Nekotech seems to be shipping Noname motherboards with
+the PS/2 connectors on a slot-bracket which allows you to have the
+best of both worlds: a regular (cheap) AT-case without having to tie
+up a serial port for the mouse.)
+<P>The only difference between the PS/2 and AT-style keyboard
+interface is the keyboard <B>connector</B>. The electrical interface
+is identical.  In fact, you can buy AT to PS/2 converters in any
+computer shop for a few bucks.  The advantage of PS/2-style board is
+that there is a second connector that can be used for a PS/2 mouse
+(i.e., no need to tie up a serial port with a serial mouse).  But then
+again: economy of scale currently works in the direction that serial
+mice are dirt cheap and omni-present, which can't be said about PS/2
+mice.
+<P>
+</LI>
+<LI><B>Memory</B>
+
+<P> Be careful about what kind of SIMMs you get.  In particular,
+"logical parity" SIMMs <B>do not</B> work.  What you should get is
+70ns memory with 36bits/SIMM.  These are also known as ECC SIMMs.
+Please refer to the OEM Design Guide for details.
+<P>Also notice that some of the firmware simply <EM>refuses</EM> to boot with
+anything less than 16MB of RAM installed.  Older versions of the SRM
+console used to do that and the ARC console apparently has the same
+bad habit.  MILO and any reasonably recent release of the SRM console
+should boot fine in 8MB, however.
+<P>
+</LI>
+</UL>
+<P>
+<P>
+<H2><A NAME="ss8.3">8.3 Will Normal ISA Cards Work?</A>
+</H2>
+
+<P> They should and, as far as we can tell, they really do work.
+Besides the drivers for the on-board interfaces, several other ISA
+cards are known to work already (e.g., depca and ne2000 Ethernet
+cards, sound cards, internal modems, etc.).  Notice that the SRM
+console includes a configuration command called "isacfg" that allows
+to setup the PCI/ISA bridge.  That command has an undocumented option
+<CODE>enadev</CODE> that allows to enable the ISA card.
+<P>
+<P>
+<H2><A NAME="ss8.4">8.4 What's Performance Like?</A>
+</H2>
+
+<P> Notice that the numbers below are for DEC Unix.  Linux/Alpha is
+likely to be less tuned at this point, but it gives you an idea of
+where the hardware stands.  
+<P>
+<H3>233MHz, 1MB Second-level Cache</H3>
+
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+-------------------------------------------------
+DRAFT 0.02 Performance Flash    AXPpci33, 233MHz
+Digital UNIX 3.2                1MB BCache
+-------------------------------------------------
+SPEC CINT92
+        SPECint92               100.2
+        SPECbase_int92           91.2
+SPEC CFP92
+        SPECfp92                112.7
+        SPECbase_fp92           107.8
+LINKPACK
+64-bit Double-Precision
+        100x100 MFLOPS           17.32
+        1000x1000 MFLOPS         93.95
+Dhrystone
+        V1.1 instructions/sec   263.012
+        v2.1 instructions/sec   250.000
+Whetstone
+        Single-precision KWIPS  249.292
+        Double-precision KWIPS  211.255
+DN and R Labs CPU2      
+        MVUPS                   274.47
+SLALOM
+        Patches                  5,686
+        MFLOPS                   40.07
+Livermore Loops
+        Geo. mean MFLOPS         21.95
+CERN    
+        CERNS units              28.99
+-------------------------------------------------
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>
+<H2><A NAME="ss8.5">8.5 To Probe Further</A>
+</H2>
+
+<P> A lot of useful and detailed information is available at 
+<A HREF="http://ftp.digital.com/pub/DEC/axppci/read_me.html">Digital's ftp server</A>.
+<P>
+<P>
+<HR>
+<A HREF="FAQ-9.html">Next</A>
+<A HREF="FAQ-7.html">Previous</A>
+<A HREF="FAQ.html#toc8">Contents</A>
+</BODY>
+</HTML>

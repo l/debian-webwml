@@ -1,0 +1,97 @@
+<HTML>
+<HEAD>
+<TITLE>Alpha Miniloader Howto: How To Build MILO </TITLE>
+</HEAD>
+<BODY>
+<A HREF="milo-3.html">Previous</A>
+<A HREF="milo-5.html">Next</A>
+<A HREF="milo.html#toc4">Table of Contents</A>
+<HR>
+<H2><A NAME="build-section"></A> <A NAME="s4">4. How To Build MILO </A></H2>
+
+<P> You build MILO 
+seperately from the Kernel.  As MILO requires parts of the kernel
+to function (for example interrupt handling) you must first 
+configure and build the
+kernel that matches with MILO that you want to build.  Mostly this
+means building the kernel with the same version number.  
+So, MILO-2.0.25.tar.gz will build against linux-2.0.25.tar.gz.  
+MILO <CODE>may</CODE> build against a higher version of the kernel, but there 
+again it may not.
+Also, now that ELF shared libraries are fully supported, there are two
+versions of the MILO sources.
+To build under an ELF system you must first unpack the standard MILO sources
+and then patch those sources with the same version numbered ELF patch.
+In the remainder of this discussion,
+I assume that your kernel sources and object files are stored in the
+subtree at <CODE>/usr/src/linux</CODE> and that the linux kernel has been fully
+built with the command <CODE>make boot</CODE></P>
+
+
+<P>To build MILO, 
+change your working directory to the MILO source directory and
+invoke <CODE>make</CODE> with:
+<BLOCKQUOTE><CODE>
+<PRE>
+$    make KSRC=/usr/src/linux config
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+<P>Just like the Linux kernel, you will be asked a series of questions</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+     Echo output to the serial port (MINI_SERIAL_ECHO) [y]
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+<P> It's a good idea to echo kernel printk to <CODE>/dev/ttyS0</CODE> if you can.
+If you can (and want to), then type "y", otherwise "n".  
+All of the standard, pre-built, MILO images include serial port I/O using COM1.</P>
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+     Use Digital's BIOS emulation code (not free) (MINI_DIGITAL_BIOS_EMU) [y]
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+<P> This code is included as a library which is freely distributable
+so long as it is used on an Alpha based system.  The sources are
+not available.   If you answer <CODE>n</CODE> then the freeware 
+alternative BIOS emulation will be built.  It's sources are included
+with MILO.
+Note that you cannot right now build choose Digital's BIOS emulation code in
+an ELF system (the library is not yet ready) and so you must answer no to this
+question.</P>
+
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+     Build PALcode from sources (Warning this is dangerous) (MINI_BUILD_PALCODE_FROM_SOURCES) [n]     
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+<P>You should only do this if you have changed the PALcode sources, otherwise use the standard,
+pre-built PALcode included with MILO.</P>
+
+<P>You are now all set to build the MILO image itself:
+<BLOCKQUOTE><CODE>
+<PRE>
+$    make KSRC=/usr/src/linux
+</PRE>
+</CODE></BLOCKQUOTE>
+</P>
+
+<P>When the build has successfully completed, the MILO image is in the file called <CODE>milo</CODE>.
+There are a lot of images called <CODE>milo.*</CODE>, these should be ignored.</P>
+
+<HR>
+<A HREF="milo-3.html">Previous</A>
+<A HREF="milo-5.html">Next</A>
+<A HREF="milo.html#toc4">Table of Contents</A>
+</BODY>
+</HTML>
