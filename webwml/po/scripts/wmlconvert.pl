@@ -32,7 +32,7 @@ sub processFile {
         $out =~ s/\n# *Please keep slices sorted alphabetically.*//;
 
         if ($file eq 'template/debian/common_translation.wml') {
-                my $initgettext = <<'EOT';
+                my $replgettext = <<'EOT';
 <use name="intl:gettext" />
 
 <mp4h-l10n LC_MESSAGES="$(CUR_LOCALE:-C)" />
@@ -42,7 +42,21 @@ sub processFile {
   <bind_textdomain_codeset domain="templates" codeset="$(CHARSET)" />
 </when>
 EOT
-                $out =~ s/#use wml::debian::common_tags/$initgettext/;
+                $out =~ s/#use wml::debian::common_tags/$replgettext/;
+        } elsif ($file eq 'template/debian/countries.wml') {
+                my $replgettext = <<'EOT';
+if ('$(DUMMY_VAR_DO_NOT_REMOVE)' ne '') {
+    open(GEN, "> countries.def");
+    print GEN "#   File generated automatically.  Do not edit!\n";
+    foreach my $c (sort keys %countries) {
+        print GEN "<"."define-tag ".$c."c endtag=delete whitespace=delete>\n";
+        print GEN "    <"."gettext>".$countries{$c}{EN}."<"."/gettext>\n";
+        print GEN "<"."/define-tag>\n";
+    }
+}
+:>
+EOT
+                $out =~ s/\n[^\n]*DUMMY_VAR_DO_NOT_REMOVE.*$/\n$replgettext/s;
         }
         open(OUT, "> $file") || die "Unable to write $file\n";
         print OUT $out;

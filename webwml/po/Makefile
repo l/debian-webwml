@@ -4,8 +4,7 @@ langs = ar ca da de el eo es fi fr hr hu id it ja ko nl no pl pt ro ru sv tr zh
 LOCALEROOT = $(CURDIR)/locale
 TEMPLDIR   = template/debian
 
-TMPL_FILES = $(wildcard $(TEMPLDIR)/*.wml) \
-    $(TEMPLDIR)/countries.def $(TEMPLDIR)/language_names.def
+TMPL_FILES = $(wildcard $(TEMPLDIR)/*.wml) $(TEMPLDIR)/countries.def
 POFILES    = $(addprefix po-files/templates., $(addsuffix .po, $(langs)))
 UPOFILES   = $(POFILES:.po=.upo)
 GMOFILES   = $(POFILES:.po=.gmo)
@@ -56,7 +55,7 @@ clean:
 	-@rm -f $(POTFILES)
 
 #   Extract PO files from slices
-init-po:
+init-po: $(TEMPLDIR)/countries.def
 	langs='$(langs)'; \
    for l in $${langs}; do ./scripts/wml2po.pl $$l $(TMPL_FILES) > po-files/templates.$$l.po; done
 
@@ -83,6 +82,8 @@ fix-po:
 #   In WML files, replace slices with <gettext> tags
 convert-templates:
 	./scripts/wmlconvert.pl $(TMPL_FILES)
+	-rm -f $(TEMPLDIR)/countries.def
+	$(MAKE) $(TEMPLDIR)/countries.def
 
 gen-def: $(TEMPLDIR)/countries.def $(TEMPLDIR)/language_names.def
 
