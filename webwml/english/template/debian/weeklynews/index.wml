@@ -9,12 +9,12 @@ sub get_weeklynews_list {
 	
 	opendir(DIR, "$eng_dir/$year");
 	@files = grep { /^$match$/ && -f "$eng_dir/$year/$_/index.wml" } readdir(DIR);
-	@files = sort {$a cmp $b} @files;
 	closedir DIR;
 	
 	$count=0;
-	foreach (sort {$a <=> $b} @files) {
+	foreach (sort {$b <=> $a} @files) {
 		$count++;
+		my $num=$_;
 		$_="$_/index.wml";
 		$trans_title = $_;
 		$trans_title =~ s/wml/title/;
@@ -26,7 +26,10 @@ sub get_weeklynews_list {
 			$title=$1;
 		}
 		if ($title) {
-			$str.="<li><a href=\"$year/$base\">$title</a>\n";
+			if (length $num == 1) {
+				$num="&nbsp;$num";
+			}
+			$str.="$num.\t<a href=\"$year/$base\">$title</a><br>\n";
 		}
 		close FILE;
 		if ($count eq $number) { last; }
