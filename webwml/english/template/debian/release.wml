@@ -197,5 +197,91 @@ sub permute_as_matrix {
     }
 }
 
+sub permute_as_matrix_new {
+    my %options = @_;
+    my $file = $options{file}
+        or die "permute_as_matrix: file argument is required";
+    my $html_file = $options{html_file} || $file;
+    my %langs = %{$options{langs}}
+        or die "permute_as_matrix: langs argument is required";
+    my %arches = %{$options{arches}}
+        or die "permute_as_matrix: arches argument is required";
+    my %formats = %{$options{formats}}
+        or die "permute_as_matrix: formats argument is required";
+    my %missing = map { $_ => 1 } @{$options{missing}};
+
+    my $altcolor = $options{altcolor} || 'white';
+    my $namingscheme = $options{namingscheme} || '%s.%s.%s'; # name, lang, ext
+    my $dirmode = $options{dirmode};
+    my $check_if_file_exists = exists $options{checkfiles} ?
+	$options{checkfiles} : 1;
+
+    my ($ext, $arch, $lang, $l10nlang, @cur_dir, $release);
+    @cur_dir = split('/', '$(WML_SRC_DIRNAME)');
+    $release = pop @cur_dir;
+
+    my $ctr = 0;
+
+    my %sorted_langs = ();
+    foreach (keys %langs) {
+      $sorted_langs{$trans{$(CUR_ISO_LANG)}{$_}} = $_;
+    }
+    foreach $arch (sort keys %arches) {
+	$ctr++;
+	my $first = 1;
+
+	foreach $ext (keys %formats) {
+	    if ($check_if_file_exists && 
+                ! -f sprintf( $namingscheme,
+			      "$(HTMLDIR)/releases/$release/$arch/".
+			      (($ext eq 'html') ? $html_file : $file),
+			      'en', $ext ) ) {
+	        next;
+	    }
+	    # alternate the row color
+	    if ( $ctr % 2 ) {
+		print "\n<tr>\n";
+	    } else {
+		print "\n<tr style=\"background: $altcolor\">\n";
+	    }
+	    # only print the arch name on the first row
+	    if ( $first == 1 ) {
+		print "  <td align=\"left\"><a href=\"$arch/$html_file\">" . $arches{$arch} . "</a></td>\n";
+		$first = 0;
+	    } else {
+		print "  <td>&nbsp;</td>\n";
+	    }
+	    print "  <td align=\"left\">" . $formats{$ext} . "</td>\n";
+	    # permute over languages
+	    print "  <td>";
+	    foreach $l10nlang (sort langcmp keys %sorted_langs) {
+	        $lang = $sorted_langs{$l10nlang};
+	        next if exists $missing{"$lang:$ext"};
+	        $file_version = sprintf( $namingscheme, "$arch/$file",
+					 $langsinstall{$lang}, $ext );
+	        if ( $ext eq "html" ) {
+		   # convert languages with sublangs (zh_TW -> zh-tw)
+		   (my $html_lang = $langs{$lang}) =~ s/(\w\w)_(\w\w)/"$1-".lc($2)/e;
+	           $file_version = sprintf( $namingscheme, "$arch/$html_file",
+					    $html_lang, $ext );
+	        }
+	        if (! $check_if_file_exists || 
+                    -f "$(HTMLDIR)/releases/$release/$file_version") {
+	            # all languages should be defined in %trans. Add missing entries 
+	            # in English if this is not the case
+		    print "<strong>" if $lang eq lc($CUR_LANG);
+	            print "<a href=\"$file_version\">" . $trans{$CUR_ISO_LANG}{$lang} . "</a>";
+		    print "</strong>" if $lang eq lc($CUR_LANG);
+		    print " \n";
+	        }
+	    }
+	    print "  </td>";
+	    print "</tr>\n";
+	    
+	}
+    }
+}
+
+
 </protect>
 </perl>
