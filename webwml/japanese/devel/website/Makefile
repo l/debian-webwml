@@ -8,4 +8,6 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+translation_coordinators.$(LANGUAGE).html: translation_coordinators.wml \
+  $(ENGLISHDIR)/$(CUR_DIR)/tc.data
 
