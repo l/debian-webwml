@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debians frågor och svar om säkerhet"
-#use wml::debian::translation-check translation="1.18"
+#use wml::debian::translation-check translation="1.20"
 #include "$(ENGLISHDIR)/security/faq.inc"
 
 <p>Vi får följande frågor lite för ofta i dagsläget, så därför har vi
@@ -35,6 +35,35 @@ Slutligen testas rättelsen och nya paket förbereds, vilka sedan kompileras
 på alla arkitekturer i den stabila distributionen och sedan sänds in.
 När allt detta är gjort publiceras en bulletin.
 
+<toc-add-entry name=oldversion>Varför håller ni på med en gammal version av
+det där paketet?</toc-add-entry>
+
+<p>
+Den viktigaste riktlinjen att följa när man skall skapa nya paket som
+rättar säkerhetsproblem är att göra så få ändringar som möjligt.
+Våra användare och utvecklare är beroende av att en utgåva fungerar på ett
+givet sätt när den väl har släppts, så alla ändringar vi gör kan i resultera
+i att någons system slutar fungera.
+Detta gäller speciellt för bibliotek:
+se till att du aldrig ändrar programmeringsgränssnittet (API) eller
+binärgränssnittet (ABI), oavsett hur liten ändringen är.
+</p>
+
+<p>
+Detta innebär att det inte är en bra idé att gå över på en ny
+uppströmsversion, utan att de relevanta ändringarna istället måste
+bakåtanpassas.
+Oftast är uppströmsförfattarna villiga att hjälpa till om det är nödvändigt,
+om inte kan Debians säkerhetsgrupp hjälpa till.
+</p>
+
+<p>
+I vissa fall är det inte möjligt att bakåtanpassa en säkerhetsrättelse, till
+exempel när stora mängder källkod måste ändras eller skrivas om.
+Om det sker kan det vara nödvändigt att gå över till en ny uppströmsversion,
+men detta måste samordnas med säkerhetsgruppen på förhand.
+</p>
+
 <toc-add-entry name=policy>Vad krävs för att ett rättat paket skall dyka upp på
 security.debian.org?</toc-add-entry>
 
@@ -45,7 +74,9 @@ Storleken på säkerhetshålet har ingen betydelse i detta fal.
 Vanligtvis skapar säkerhetsgruppen paket tillsammans med den paketansvarige;
 förutsatt att någon (betrodd) person spårar problemet och får alla paket
 kompilerade och sänder dem till säkerhetsgruppen kan även rättelser till
-väldigt enkla säkerhetsproblem dyka upp på security.debian.org.</p>
+väldigt enkla säkerhetsproblem dyka upp på security.debian.org.
+Se nedan.
+</p>
 
 <toc-add-entry name=version>Versionsnumret för ett paket tyder på att jag fortfarande kör en
 sårbar version!</toc-add-entry>
@@ -67,6 +98,9 @@ Dessa två distributioner är mål som rör sig fort, och säkerhetsgruppen har
 inte de resurser som behövs för att ge dessa fullgott stöd.
 Om du vill ha en säker (och stabil) server rekommenderas det starkt att du
 behåller den stabila distributionen, <tt lang=en>stable</tt>.
+Säkerhetssekreteraren kommer dock försöka rätta problemen i den instabila
+samt i uttestningsutgåvan när den stabila utgåvan rättats.
+</p>
 
 <toc-add-entry name=mirror>Varför finns det inte några officiella speglar av
 security.debian.org?</toc-add-entry>
@@ -96,7 +130,23 @@ vilken läses av samtliga Debianutvecklare.
 Om du har känslig information ber vi dig använda team@security.debian.org,
 vilken bara läses av medlemmar av säkerhetsgruppen.
 Om så önskas kan e-post krypteras med Debians säkerhetskontaktsnyckel
-(nyckel-id 0x363CCD95).
+(nyckel-id
+<a href="http://blackhole.pca.dfn.de:11371/pks/lookup?op=get&exact=on&search=0x363CCD95">
+0x363CCD95</a>).
+</p>
+
+<toc-add-entry name=discover>Det verkar som jag upptäckt ett
+säkerhetsproblem, vad skall jag göra nu?</toc-add-entry>
+
+<p>
+S: Om du får kännedom om ett säkerhetsproblem, antingen i ditt paket
+eller i någon annans, skall du alltid ta kontakt med säkerhetsgruppen.
+Om Debians säkerhetsgrupp bekräftar sårbarheten och det är sannolikt att
+även andra distributioner är sårbara kontaktar de vanligen de som ansvarar
+för dessa.
+Om sårbarheten ännu inte är allmänt känd kommer de försöka samordna
+säkerhetsbulletinerna med de andra distributionerna så att alla större
+distributioner hålls synkroniserade.
 </p>
 
 <toc-add-entry name=care>Vad skall jag göra om jag har säkerhetsproblem i ett av mina
@@ -136,13 +186,41 @@ Arkivet på security.debian.org underhålls av säkerhetsgruppen, som
 godkänner alla paket.
 Du bör istället sända patchar eller hela källkodspaket till säkerhetsgruppen
 på team@security.debian.org.
-Om du är helt säker på att inget gick sönder, paketets beteende inte
-förändrades trots det motsvarande säkerhetsproblemet och kompilerade det för
-rätt utgåva kan du sända filerna direkt till
-<a href="ftp://security.debian.org/pub/SecurityUploadQueue/">incoming</a>-katalogen.
-Läs även Wichers
-<a href="http://lists.debian.org/debian-devel-announce/2002/debian-devel-announce-200206/msg00004.html">
-beskrivning</a>.
+De kommer genomgås av säkerhetsgruppen och sedan sändas in, antingen med
+eller utan ändringar.
+</p>
+
+<p>
+Om du inte är van vid att sända in säkerhetsrättelser och inte är 100% säker
+på att ditt paket är korrekt ber vi dig använda denna metod och inte sända
+in till incoming-katalogen.
+Säkerhetsgruppen har endast begränsade möjligheter att hanterae trasiga
+paket, speciellt om de inte har vettiga versionsnummer.
+Paket kan för närvarande inte spärras och buildd skulle bli konfunderade om
+det var möjligt.
+Använd därför e-post och hjälp till genom att inte göra livet svårt för
+säkerhetsgruppen.
+</p> 
+
+<toc-add-entry name=SecurityUploadQueue>Jag är rätt säker på att mina paket
+är okej, hur sänder jag in dem?</toc-add-entry>
+
+<p>S: Om du är helt säker på att inget gick sönder, att verisonsnumret är
+vettigt (dvs. större än versionen i den stabila utgåvan och mindre än det i
+uttestnings-/den instabila utgåvan), att paketets beteende inte
+förändrades trots det motsvarande säkerhetsproblemet, att du kompilerade det
+mot rätt utgåva (alltså <code>oldstable-security</code> eller
+<code>stable-security</code>), att paketet innehåller den ursprungliga
+källkoden om paketet är nytt för security.debian.org, att du kan bekräfta
+att ändringen mot den senaste versionen är ren och bara ändrar det
+motsvarande säkerhetsproblemet (kontrollera med <code>interdiff -z</code>
+och de båda <code>.diff.gz</code>-filerna), att du korrekturläst ändringen
+åtminstone tre gånger, och att <code>debdiff</code> inte visar några ändringar
+så kan du sända filerna direkt till incoming-katalogen
+<code>/org/ftp.root/pub/SecurityUploadQueue</code> direkt på
+security.debian.org.
+Sänd dessutom en bekräftelse med alla detaljer och länkar till
+team@security.debian.org.
 </p>
 
 <toc-add-entry name=help>Hur kan jag hjälpa till med säkerheten?</toc-add-entry>
