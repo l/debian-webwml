@@ -1,0 +1,190 @@
+#use wml::debian::template title="Sistema de seguimiento de fallos de Debian" NOHEADER=yes NOCOPYRIGHT=true
+
+<h1>Información para desarrolladores sobre cómo manipular fallos utilizando el interfaz de correo electrónico.</h1>
+
+<P>Además del servidor de correo que hay en
+<code>request@bugs.debian.org</code> y que permite obtener datos de fallos
+y documentación mediante correo electrónic, hay otro servidor en
+<code>control@bugs.debian.org</code> que permite manipular los informes de
+erroes de varias maneras.</P>
+
+<P>El servidor "control" trabaja igual que el servidor "request", excepto
+en que tiene algunas órdenes más; en realidad, es el mismo programa. Las
+dos direcciones están separadas sólo para evitar que los usuarios cometan
+errores y causen problemas si sólo intentan pedir información.</P>
+
+<P>Si desea obtener detalles de operación básica de los servidores de
+correo y las órdenes comunes a ambos su disposición, lea por favor la
+página <A href="server-request#introduction">Cómo pedir informes de
+error por correo</A> disponible en el World Wide Web, en el fichero
+<code>bug-log-mailserver.txt</code>, o envíe <code>help</code> a
+cualquiera de los servidores de correo.</P>
+
+<P>La <A href="server-refcard">tarjeta de referencia</A> de los
+servidores de correo está disponible mediante WWW, en
+<code>bug-mailserver-refcard.txt</code> o mediante correo electrónico
+usando la orden <code>refcard</code>.</P>
+
+<H1>Ordenes disponibles sólo en el servidor de correo "control"</H1>
+
+<dl>
+
+<dt><code>close</code> <var>número de fallo</var>
+<dd>
+
+Cierra el informe de fallo #<var>número de fallo</var>.
+
+<p>Se envía una notificación al usuario que informó del fallo, pero (en
+contraste a enviar <var>número de fallo</var><code>-done@bugs</code>)
+<em>no</em> se incluirá en la notificación el texto del mensaje que causó
+el cierre del fallo. El mantenedor que cierra el fallo debería asegurarse,
+probablemente enviando un mensaje aparte, de que el usuario que informó
+del fallo sabe por qué ha sido cerrado.
+
+<dt><code>reassign</code> <var>número de fallo</var> <var>paquete</var>
+<dd>
+
+Registra que el fallo #<var>número de fallo</var> pertenece al
+<var>paquete</var>. Puede usarse para establecer el paquete si el usuario
+lo olvidó en la pseudocabecera, o para cambiar una asignación previa. No
+se enviarán notificaciones a nadie (excepto la información normal en la
+transcripción del proceso).
+
+<dt><code>reopen</code> <var>número de fallo</var>
+ [ <var>dirección del descubridor</var> | <code>=</code> | <code>!</code> ]
+<dd>
+
+Reabre el #<var>número de fallo</var> en caso de que estuviera cerrado.
+
+<p>Por defecto, o si especifica <code>=</code>, se mantendrá el informador
+original del fallo tal cual, de manera que obtendrá una notificación
+cuando vuelva a ser cerrado.</p>
+
+<p>Si proporciona una <var>dirección del descubridor</var> entonces se
+cambiará la dirección de correo del informador del fallo por esta otra. Si
+desea ser el nuevo informador del informe reabierto, puede usar el atajo
+<code>!</code> o especificar su propia dirección de correo.</p>
+
+<p>Suele ser buena idea decirle a la persona que va a ser registrada como
+descubridor que está usted reabriendo el informe, de manera que sepa que
+recibirá una notificación cuando vuelva a ser cerrado.</p>
+
+<p>Si el fallo no estaba cerrado, <I>reopen</I> no hará nada, ni siquiera
+cambiar el descubridor. No hay manera de cambiar el descubridor de un
+fallo abierto (esto es así de forma deliberada, de manera que no se pueda
+cerrar un fallo y eliminarlo 28 días después sin indicárselo a nadie).
+
+<dt><code>forwarded</code> <var>número de fallo</var> <var>dirección</var>
+<dd>
+
+Indica que <var>número de fallo</var> ha sido informado al mantenedor
+oficial en <var>address</var>. En sí, esto no reenvía el informe. Se
+puede usar para cambiar una dirección <I>forwarded-to</I> incorrecta, o
+para registrar una nueva para un fallo del que no se había indicado que
+fue reenviado.
+
+<dt><code>notforwarded</code> <var>número de fallo</var>
+<dd>
+
+Elimina cualquier registro de que <var>número de fallo</var> haya sido
+reenviado a algún mantenedor oficial. Si este fallo no tenía registros
+que indicasen tal reenvío, entonces no sucederá nada.
+
+<dt><code>retitle</code> <var>número de fallo</var> <var>nuevo título</var>
+<dd>
+
+Cambia el título del informe de fallo por el que se especifica (por
+defecto se toma la cabecera <code>Asunto</code> del mensaje original.
+
+<p>Al contrario que la mayoría de las otras órdenes de manipulación de
+fallos, cuando se usa en un conjunto de mensajes fusionados, sólo cambiará
+el título del número de fallo solicitado, y no el de aquellos con los que
+fue fusionado (<i>merged</i>).
+
+<dt><code>severity</code> <var>número de fallo</var> <var>gravedad</var>
+<dd>
+
+<p>Establece el nivel de severidad del informe de fallos
+#<var>número de fallo</var>. No se enviará notificación alguna al usuario
+que informó de él.</p>
+
+<p>Las posibles gravedades son <code>critical</code>, <code>grave</code>,
+<code>serious</code>, <code>important</code>, <code>normal</code>,
+<code>minor</code>, and <code>wishlist</code>.
+
+<p>Si desea saber <A href="Developer#severities">sus significados</A>,
+sírvase consultar la documentación general para desarrolladores sobre el
+sistema de fallos.
+
+<dt><code>merge</code> <var>número de fallo</var> <var>número de fallo</var> ...
+<dd>
+
+Fusiona dos o más informes de fallos. Cuando se fusionan informes, las
+operaciones de apertura apertura y cierre; marcado y desmarcado como
+reenviados; y la reasignación de cualquiera de los informes a un nuevo
+paquete, tendrán un efecto idéntico en el resto de los informes
+fusionados.
+
+<p>Antes de que se puedan fusionar mensajes, deben encontrarse
+exactamente en el mismo estado: todos abiertos, o todos cerrados; indicando
+la misma dirección de reenvío al autor original, o sin marcar; y todos
+asignados al mismo paquete o paquetes (se realiza una comparación exacta
+sobre el nombre del paquete al que se asignó el fallo). Si no comienzan en
+el mismo estado, usted debería usar <code>reassign</code>,
+<code>reopen</code>, etc., para asegurarse de que lo están antes usar
+<code>merge</code>.</p>
+
+<P>Si cualquiera de los informes listados en una orden <code>merge</code>
+ya se encuentra fusionado con eotro fallo, entonces todos los informes
+fusionados con cualquiera de los indicados entrará en la fusión. La fusión
+es como la igualdad: es reflexiva, transitiva y simétrica.</p>
+
+<P>Fusionar informes hace que aparezca una nota en cada uno de ellos; en
+la página WWW se reflejan como enlaces a los otros.</p>
+
+<P>Los informes fusionados expiran todos a la vez, y sólo cuando todos y
+cada uno, por se parado, cumplan el criterio de expiración.
+
+<dt><code>unmerge</code> <var>número de fallo</var>
+<dd>
+
+Desconecta un informe de fallos de cualquier otro informe con el que esté
+fusionado. El resto de los paquetes con los que estuviera fusionado quedan
+unidos; sólo se elimina su asociación con el informe indicado
+explícitamente.
+
+<p>Si tiene muchos informes fusionados y desea separarlos en dos grupos,
+deberá separar cada uno de los mensajes que quiera poner en otro grupo,
+para luego fusionarlos en el nuevo grupo que se desea.</p>
+
+<p>Sólo puede separar un informe con cada orden <code>unmerge</code>. Si
+desea desconectar más de un informe, no tiene más que incluir varias
+órdenes <code>unmerge</code> en su mensaje.
+
+<dt><code>tags</code> <var>número de fallo</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>etiqueta</var>
+
+  <dd>Establece una etiqueta particular para el informe de fallo
+  #<var>número de fallo</var> con el valor <var>etiqueta</var>. No se
+  enviará notificación alguna al usuario que informó del fallo.
+  <code>+</code> indica adición, <code>-</code> indica sustracción, y
+  <code>=</code> indica que se han de ignorar las etiquetas que hayan
+  en este momento, y que la cosa debe quedar como estamos indicando ahora.
+  La acción en su defecto es añadir. Se precisa que haya un espacio entre
+  el caracter +/-/= y el número de etiqueta.
+
+  <p>Entre las etiquetas disponibles en este momento se incluyen
+  <code>patch</code>, <code>wontfix</code>, <code>moreinfo</code>,
+  <code>unreproducible</code>, <code>fixed</code>, <code>security</code>,
+  <code>potato</code>, <code>woody</code> y <code>sid</code>.
+
+  <p>Consulte la documentación general para desarrolladores sobre el
+  sistema de fallos si desea conocer <a href="Developer#tags">sus
+  significados</a>.
+
+</dl>
+
+<hr>
+
+#use "otherpages.inc"
+
+#use "footer.inc"
