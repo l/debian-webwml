@@ -436,9 +436,9 @@ sub process_podebconf {
         print GEN "</dl>\n";
         open (GEN, "> $opt_l/po-debconf/gen/total")
                 || die "Unable to write into $opt_l/po-debconf/gen/total";
-        print GEN "<set-var podebconf-total=\"".
+        print GEN "<define-tag podebconf-total-strings>".
                 ($total{main}+$total{contrib}+$total{'non-free'}).
-                "\" />\n";
+                "</define-tag>\n";
         close (GEN);
 }
 
