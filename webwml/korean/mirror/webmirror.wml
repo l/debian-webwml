@@ -1,0 +1,152 @@
+#use wml::debian::template title="웹 미러 설정"
+
+미러링은 공식 싸이트와 비공식 싸이트 모두 동일하다. 일단 미러를
+설정하면 <a href="../misc/README.mirrors">미러 목록</a>에 포함시키기
+위해 <a href="submit">데비안에 등록해야 한다</a>. 질문이 있으면 <A
+href="mailto:mirrors@debian.org">mirrors@debian.org</A>로 메일을 보내라.
+
+
+<H2>미러의 후원자 광고하기</H2>
+sponsor.html과 sponsor_img.jpg는 바꿀 수 있고 바꿔야 한다. 후원자들은
+여러분을 위해 여러분의 싸이트를 광고하므로 사람들이 후원자가
+누구인지를 알아야 한다. 원본은 sponsor.deb.html과 sponsor.deb.jpg 밑에
+있고 미러하는 싸이트가 데비안이 예로 제공한 원본을 교체할
+것이다. 추천하는 로고의 크기는 최대 120x60이다. 
+
+<p><a href="#cn">content negotiation</a>이 웹페이지에서 언어
+우선순위를 선택할 수 있도록 사용되기 때문에 sponsor.html을 서로 다른
+언어로 제공할 수도 있다. 그렇게 하려면 단순히 좋아하는 각각의
+<lang>을 위한 sponsor.<lang>.html을 만들면 된다.
+
+<p>Make sure you add any files you don't want overwritten to the exclude list for mirroring.
+
+<H2>미러링의 도구</H2>
+<h3>Anonymous rsync</h3>
+추천하는 미러링 도구는 rsync를 사용하는 것이다.
+
+<p>아카이브를 미러하기 위해 <a href="anonwebsync">이 스크립트</a>를
+사용할 수 있다. 미러링을 설정하기 위해 스크립트에 있는 지시를
+따른다. '<kbd>Type: Push-*</kbd>'를 사용하는 <a
+href="mirrors_full">전체 미러 목록</a>에 있는 싸이트가 미러하기에 좋을
+것이다. 
+
+<h3>Push Mirror</h3>
+Push mirroring은 rsync를 사용하는 미러의 한 형태로 아카이브를 변경하기
+위해 미러에 도달하는데 걸리는 시간을 최소화하기 위해 개발한
+것이다. Push mirroring은 클라이언트 미러에게 자신을 갱신할 시간을
+알려주기 위해 ssh trigger를 사용한다. ssh를 단일 명령으로 실행하도록
+설정하기 때문에 이 도구는 매우 안전하다. 또한 미러링은 여전히
+'당기기' 때문에 위조한 push mirror를 통해 아카이브의 내용을 변조하는
+것을 불가능하다.
+
+<p>몇몇 미러의 관리자들은 이 도구가 그들의 기계를 침입에 대해
+개방할 수도 있다는 것 때문에 이 미러링 도구를 사용하는 것을 내키지
+않아 한다. 이것은 사실이 아니다. 이 도구가 작동하는 방법과 안전한
+이유에 대한 세부 사항은 <a href="explain">이 페이지</a>를 보라. 
+
+<p>Push mirroring은 upstream과 downstream 미러 관리자가 서로 정보를
+교환해야 하기 때문에 설정하는 데 큰 수고를 할 필요가 없다. 이익은
+upstream mirror가 자신의 아카이브를 갱신한 후 즉시 미러 과정을
+시작한다는 것이다. 이것은 아카이브 변경이 매우 빨리 전달될 수 있도록
+한다. 
+
+<p>root가 아닌 일반 사용자의 계정으로 이것을 설정하는 것이 가장
+좋다. upstream mirror가 준 공개 ssh 열쇠의 내용은
+<kbd>~<user>/.ssh/authorized_keys</kbd>에 위치해야 한다. 
+
+<p><a href="websync">websync</a>와 <a
+href="websync.conf">websync.conf</a> 파일이 필요할
+것이다. websync.conf를 편집하고 upstream mirror가 제공한 정보를
+이용해서 지시를 따른다.
+
+<p>Push-Primary가 되고자 한다면 <a
+href="identity.pub.master.web">public ssh key for the web</a>이 필요할
+것이다. 
+
+<h3>'미러'를 사용하는 Anonymous FTP</h3>
+<p>데비안 웹 페이지에서 '미러'를 사용하는 것은 추천하지 않는다. 거대한
+디렉토리 때문에 메모리 사용이 터무니없어진다. 한 미러 관리자는 96MB의
+RAM이 필요하다고 말했다. 그보다 적은 RAM을 가지고 있다면 기계가
+지나치게 스와핑을 하고 있다는 것을 발견할 것이다. 
+
+<h3>wget</h3>
+wget이 작은 싸이트의 미러에서는 잘 동작하기는 하지만 mirror나
+rsync처럼 설정가능한 것은 아니기 때문에 이 작업을 위해 추천하지는
+않는다. 
+
+<H2>웹 서버 설정</H2>
+<a name="cn"><h3>Content Negotiation</h3>
+Content Negotiation은 제공되는 문서의 형태를 서버와
+협상하게(negotiate) 하는 도구이다. 많은 용도가 있지만 가장 보편적인
+것은 문서가 어떤 언어로 제공될 것인가를 협상하는 것이다. 이것을
+사용해서 데비안은 (기술적으로) 매우 우아한 형태로 데비안 웹페이지를
+다국어로 제공한다. 
+
+<P>아파치를 사용하는 사람들에게 변경은 매우 하찮은 것이다. 단지 다음과
+같은 절을 <kbd>/etc/apache/access.conf</kbd>에 추가하고(substitute the
+directory containing the web pages for <kbd>/debian/web</kbd>) 서버를
+다시 시작하라(이 예는 아파치 1.3 베타 릴리즈와 그 이상에서 잘 동작한다):
+<blockquote><pre>
+&lt;Directory /debian/web&gt;
+Options +Multiviews   
+&lt;/Directory&gt;
+</pre></blockquote>
+
+<h3>다른 웹 서버 변경</h3>
+<p>If your machine is running Debian, it was decided to break Debian policy and
+use <kbd>/doc</kbd> in the web pages.  This means you should comment out
+'<kbd>Alias /doc/ /usr/doc/</kbd>' from <kbd>srm.conf</kbd>.
+
+<p>directory index 파일을 정확하게 제공하기 위해
+<kbd>/etc/apache/srm.conf</kbd>의 <kbd>DirectoryIndex</kbd> 엔트리를
+수정할 필요가 있다. 다음과 같이 수정하면 충분할 것이다:
+<pre>
+DirectoryIndex index
+</pre>
+추가적으로 서버가 웹 싸이트에 있을 모든 언어를 다룰 수 있는지를 확인할
+필요가 있다. <kbd>AddLanguage</kbd> 태그를 사용하면 된다. 다음은 이미
+사용하는 언어의 목록이다-나중에 더 추가되기를 기대한다.
+
+<pre>
+AddLanguage en .en
+AddLanguage fr .fr 
+AddLanguage de .de
+AddLanguage da .da
+AddLanguage it .it
+AddLanguage es .es
+AddLanguage ja .ja
+AddLanguage pl .pl
+AddLanguage ko .ko
+AddLanguage hr .hr
+AddLanguage pt .pt
+AddLanguage fi .fi
+AddLanguage zh-CN .zh-cn
+AddLanguage zh-TW .zh-tw
+AddLanguage cs .cs
+AddLanguage sv .sv
+AddLanguage no .no 
+AddLanguage ru .ru
+</pre>
+
+<p>아파치의 버그 때문에 LanguagePriority 옵션에 제공할 모든 언어를
+추가하는 것은 좋은 생각이다. 그렇지 않으면 어떤 환경에서는 잘못된
+언어가 제공될 것이다.
+
+<pre>
+LanguagePriority en fr de it es ja pl hr da pt fi zh-cn zh-tw cs sv ko no ru
+</pre>
+
+<h3>리스트 아카이브 미러링</h3>
+<p>몇몇 미러들은 크기 때문에(대략 1GB가 160,000 파일을 사용함) 리스트
+아카이브를 미러하지 않으려 한다. 다른 싸이트로 재지정을 하고 링크가
+깨지지 않는 한 리스트 아카이브를 미러하지 않아도
+된다. <kbd>/etc/apache/srm.conf</kbd>에서 설정하면 된다. 예를 들면,
+
+<pre>
+Redirect /Lists-Archives http://www.debian.org/Lists-Archives
+</pre>
+
+그 디렉토리가 미러되는 것을 막기 위해 websync.conf의
+<kbd>EXCLUDE</kbd> 변수에 <kbd>--exclude Lists-Archives</kbd>를
+추가하라. 
+
