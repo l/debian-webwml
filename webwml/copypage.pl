@@ -50,14 +50,14 @@ if ($#ARGV == -1)
 }
 
 # Check destination character encoding
-my $charset = 'iso-8859-1';
+my $recode = 0;
 if (open WMLRC, "$language/.wmlrc")
 {
 	while (<WMLRC>)
 	{
-		if (/^-D CHARSET=(.*)$/)
+		if (s/^-D CHARSET=//)
 		{
-			$charset = lc($1);
+			$recode = 1 unless /^iso-8859-15?$/i;
 			last;
 		}
 	}
@@ -89,7 +89,7 @@ foreach $page (@ARGV)
 	# Check if valid source
 	if ($page =~ /wml$/)
 	{
-		&copy($page, $charset ne 'iso-8859-1');
+		&copy($page, $recode);
 	}
 	else
 	{
