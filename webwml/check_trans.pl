@@ -491,12 +491,14 @@ sub check_file {
 
 	my $str;
 	my $status = 8;
+	my ($numrev)  = ($revision =~ m/^1\.(\d+)$/);
+	my ($numoldr) = ($oldr =~ m/^1\.(\d+)$/);
 	if (!$oldr) {
 	  $oldr = '1.1';
 	  $str = "Unknown status of $name (revision should be $revision)";
 	} elsif ($oldr eq $revision) {
 	  $status = 4;
-	} elsif ($oldr > $revision) {
+	} elsif ($numoldr > $numrev) {
 	  $str = "Broken revision number $oldr for $name, it should be $revision";
 	} else {
 	  $str = "NeedToUpdate $name from version $oldr to version $revision";
