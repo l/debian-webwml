@@ -28,10 +28,48 @@ the original file that was translated, so that <a href="uptodate">updating is
 easier</a>. The line looks like this:
 <kbd>#use wml::debian::translation-check translation="<var>x.y</var>"</kbd>
 
-<p>All this can be easily accomplished by using the <tt>copypage.pl</tt>
-script in the webwml root directory. The script will copy the page to the
-right place, create directories and makefiles if necessary, and add the
-required header automatically.</p>
+<p>Some translation team also use this line to mark the official
+translator of each web page. Doing so, you will get automatic mails
+when the pages you maintain are updated in english, and need your
+attention to update the translation. For that, simply add your name as
+maintainer at the end of the <code>#use</code> line to make it look
+like this:
+<kbd>#use wml::debian::translation-check translation="<var>x.y</var>" maintainer="<var>your name</var>"</kbd>
+
+<p>You also need to explain to the robot who you are, how often you
+want to get automatic mails and their content. For that, edit (or let
+your coordinator edit) the file
+<var>language</var>/international/<var>language</var>/translator.db.pl
+in the CVS.  The syntax should be quite understandable, and you can
+use the file of the french team as template if it does not exist for
+your language yet. The robot can send several kind of information, and
+for each of them, you can choose the frequency at which it will be
+sent to you. The different kind of information are: <ul>
+ <li><b>summary</b>:  a summary of which documents are outdated</li>
+ <li><b>logs</b>: the `cvs log' between the translated and current versions</li>
+ <li><b>diff</b>: `cvs diff'</li>
+ <li><b>tdiff</b>: the script will try to find the part of the translated text modified by the english patch</li>
+ <li><b>file</b>: add the current version of the file to translate</li>
+</ul>
+
+<p>Then, for each of them, the value should be one of: 0 (never), 1 (monthly), 2 (weekly) or 3 (daily).</p>
+
+<p>An example could be:
+<pre>
+                'Martin Quinson' => {
+                        email       => 'martin.quinson@tuxfamily.org',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 0,
+                        file        => 0
+                },
+</pre></p>
+
+<p>The header of the web page can be easily produced by using the
+<tt>copypage.pl</tt> script in the webwml root directory. The script
+will copy the page to the right place, create directories and
+makefiles if necessary, and add the required header automatically.</p>
 
 <p>After you have run e.g. <kbd>./copypage.pl <var>file</var>.wml</kbd>,
 translate the original text within the file. Comments in files will indicate
