@@ -2,6 +2,8 @@
 
 # grabs the date and title of the last $number news items from directory $year.
 # If $number is zero then all the news items are shown.
+# example usage:
+# get_recent_list ('1998', '0', '$(ENGLISHDIR)/News', '', '\d+\w*')
 
 sub get_recent_list {
   my ($year, $number, $eng_dir, $format, $match) = @_;
@@ -39,11 +41,36 @@ sub get_recent_list {
   closedir DIR;
 
   $count = 0;
+  grab_titles($year, $number, $eng_dir, $format, $match);
+
+  if ($count < $number && $number ne 0) {
+     @tmp = split('/', $year);
+     $tmp[$#tmp]--;
+     # $year--;
+     $year = join('/', @tmp);
+     if (-d "$eng_dir/$year") {
+        opendir(DIR, "$eng_dir/$year") or printf stderr "couldn't open dir $eng_dir/$year\n";
+        @files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
+        @files = sort {$b cmp $a} @files;
+        closedir DIR;
+     }
+     grab_titles($year, $number, $eng_dir, $format, $match);
+  }
+  if ($count eq 0) {
+     $str .= "No news items for this year\n";
+  }
+$str .= $listfoot;
+return $str;
+}
+
+sub grab_titles {
+  my ($year, $number, $eng_dir, $format, $match) = @_;
   foreach (@files) {
      $trans_title = $_;
      $trans_title =~ s/wml/title/;
      $count++;
-     open(FILE, "<$year/$_") || open(FILE, "<$year/$trans_title") || open(FILE, "<$eng_dir/$year/$_");
+     open(FILE, "<$year/$_") || open(FILE, "<$year/$trans_title") || open(FILE, "<$eng_dir/$year/$_") or
+          printf stderr "ACK: can't open $year/$_\n";
      if (/($match).wml/) {
         $base = $1;
      }
@@ -76,9 +103,7 @@ sub get_recent_list {
      close FILE;
      if ($count eq $number) { last; }
   }
-close DIR;
-$str .= $listfoot;
-return $str;
+  return $str;
 }
 
 </perl>
