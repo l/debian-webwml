@@ -37,7 +37,7 @@
     return TRUE;
   }
 
-  function log($db, $who, $manager, $action, $name, $email) {
+  function logger($db, $who, $manager, $action, $name, $email) {
       $sql = "INSERT INTO log (who, manager, action, name, email) VALUES ('$who', '$manager', '$action', '$name', '$email')";
       if (! ($result = pg_exec($db, $sql))) {
           echo "Problem with interrogating database: ", pg_ErrorMessage($db), "<BR>\n";
