@@ -37,7 +37,7 @@ my %lang2charset = (
 
 sub get_locale {
     my $lang = shift;
-    my $locale;
+    my $locale = $lang;
 
     return "$lang2loc{default}.".get_charset() unless $lang;
 
