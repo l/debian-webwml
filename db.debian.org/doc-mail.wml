@@ -1,0 +1,111 @@
+#use wml::debian::template title="LDAP Gateway"
+
+The LDAP directory has a PGP secured mail gateway that
+allows users to safely and conviently effect changes to their entries. It
+makes use of PGP signed input messages to positivly identify the user and
+to confirm the validity of the request. Furthermore it implements a replay
+cache that prevents the gateway from accepting the same message more than
+once.
+
+<p>
+There are three functions logically split into 3 sperate email addresses
+that are implemented by the gateway: <b>ping</b>, <b>new password</b> and
+<b>changes</b>. The function to act on is the first argument to the program.
+
+<p>
+Error handling is currently done by generating a bounce message and passing
+descriptive error text to the mailer. This can generate a somewhat hard to 
+read error message, but it does have all the relevent information.
+
+<h1>Ping</h1>
+The ping command simply returns the users public record. It is usefull for
+testing the gateway and for the requester to get a basic dump of their
+record. In future this address might 'freshen' the record to indicate the
+user is alive. Any PGP signed message will produce a reply.
+
+<h1>New Password</h1>
+If a user looses their password they can request that a new one be generated 
+for them. This is done by sending the phrase "Please change my Debian 
+password" to chpasswd@db.debian.org. The phrase is required to prevent the 
+daemon from triggering on arbitary signed email. The best way to invoke this
+feature is with 
+<pre>echo "Please change my Debian password" | gpg --clearsign | mail chpasswd@db.debian.org</pre>
+After validating the request the daemon will generate a new random password,
+set it in the directory and respond with an ecrpyted message containing the
+new password. The password can be changed using one of the other interface
+methods.
+
+<h1>Changes</h1>
+An address is provided for making almost arbitary changes to the contents of
+the record. The daemon parse its input line by line and acts on each line in
+a command oriented manner. Anything, except for passwords, can be changed
+using this mechanism. Note however that because this is a mail gateway it
+does stringent checking on its input. The other tools allow fields to be set
+to virtually anything, the gateway requires specific field formats to be met.
+
+<ul>
+<li>A line of the form <tt>'field: value'</tt> will change the contents of 
+the field to value. Some simple checks are performed on value to make sure 
+that it is not sent to nonsense. The values that can be changed are: 
+<b>c</b>, <b>l</b>, <b>facsimiletelephonenumber</b>, <b>telephonenumber</b>, 
+<b>postaladdress</b>, <b>postalcode</b>,
+<b>loginshell</b>, <b>emailforward</b>, <b>ircnick</b>, <b>onvacation</b>, 
+and <b>labledurl</b>
+
+<li>The daemon has a special parser to help changing latitude and longitude
+values. It accepts several common formats for position information and
+converts them to one of the standard forms. The permitted types are 
+<pre>D = Degrees, M = Minutes, S = Seconds, x = n,s,e,w
++-DDD.DDDDD, +- DDDMM.MMMM, +-DDDMMSS.SSSS [standard forms]
+DDxMM.MMMM, DD:MM.MMMM x, DD:MM:SS.SSS X)</pre>
+and the request format is <tt>'Lat: xxx Long: xxx'</tt> where <tt>xxx</tt> 
+is one of the permitted types. The resulting response will include how the 
+input was parsed and the value in decimal degrees.
+
+<li>
+Part of the replicated dataset is a virtual .ssh/authorized_keys file for
+each user. The change address is the simplest way to set the RSA key(s) you
+intend to use. Simply place a key on a line by itself, the full SSH key
+format specification is supported, see sshd(8). Probably the most common way
+to use this function will be 
+<pre>cat .ssh/identity.pub | gpg --clearsign | mail change@db.debian.org</pre>
+which will set the authentication key to the identity you are using.
+
+Multiple keys per user are supported, but they must all be sent at once.
+
+<li>Debian.net DNS Zone Entry. The only way to get a debian.net address is
+to use the mail gateway. It
+will verify the request and prevent name collisions automatically. Requests
+can take two forms: <tt>'foo in a 1.2.3.4'</tt> or <tt>'foo in cname
+foo.bar.'</tt> The precise form is critical and must not be deviated from.
+
+Like the SSH function above, multiple hosts are supported, but they must all
+be sent at once. The debian.net zone is only reloaded once per day at
+midnight -0700.
+
+<li>If the single word <b>show</b> appears on a line then a PGP encrypted version
+of the entire record will be attached to the result email.
+</ul>
+
+After processing the requests the daemon will generate a report which contains
+each input command and the action taken. If there are any parsing errors 
+processing stops immediately, but valid changes up to that point are
+processed. 
+
+<h2>Notes</h2>
+<p>
+In this document PGP refers to any message or key that GnuPG is
+able to generate or parse, specificaly it includes both PGP2.x and OpenPGP
+(aka GnuPG) keys. 
+<p>
+Due to the replay cache the clock on the computer that generates the
+signatures has to be accurate to at least one day. If it is off by several
+months or more then the deamon will outright reject all messages.
+<p>
+Examples are given using GnuPG, but PGP 2.x can also be used. The correct
+options to generate a clear signed ascii armored message in 'filter' mode
+are <tt>pgp -fast</tt> which does the same as <tt>gpg --clearsign</tt>
+<p>
+Debian.org machines rely on secured replication to transfer login data out
+of the database. Replication is performed at 15 min intervals so it can take
+a short while before any changes made take effect.

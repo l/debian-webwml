@@ -1,0 +1,59 @@
+#use wml::debian::template title="Direct LDAP Access"
+<p>
+The LDAP utilities package provides a program called ldapsearch that can be
+used to exectute direct queries to the database. Generally this is done by
+putting
+<pre>
+HOST db.debian.org
+BASE dc=debian,dc=org
+</pre>
+in ~/.ldaprc. Then queries can be performed, for instance
+<pre>
+samosa{jgg}~#ldapsearch uid=wakkerma keyfingerprint
+uid=wakkerma,ou=users,dc=debian,dc=org
+keyfingerprint=38444C2CA6AD756EB4A2E5FA612AFF59
+keyfingerprint=576E100B518D2F1636B028053CB892502FA3BC2D
+</pre>
+Shows the PGP key finger prints for the <tt>wakkerma</tt> user. The first word
+in the command is the query to perform, the rest of command line are the 
+attributes to return, if omitted then all readable attributes are returned. 
+More complicated queries are possible, for instance:
+<pre>
+samosa{jgg}~#ldapsearch '(&(!(loginshell=/bin/bash))(uid=*))' loginshell
+uid=admin,ou=users,dc=debian,dc=org
+
+uid=mryan,ou=users,dc=debian,dc=org
+loginshell=/usr/bin/tcsh
+
+uid=jkominek,ou=users,dc=debian,dc=org
+loginshell=/usr/bin/zsh
+
+uid=caelum,ou=users,dc=debian,dc=org
+loginshell=/usr/bin/zsh
+[..]
+</pre>
+Shows users that do not use bash as their shell. Some other interesting
+queries are:
+<ul>
+<li>Count the number of developers <tt>(&(keyfingerprint=*)(gidnumber=800))</tt>
+<li>Show people in a certain group <tt>gidmembership=adm</tt>
+<li>People named james <tt>cn=james</tt>
+<li>Someone whos last name phonetically sounds like 'Ackerma' <tt>sn~=ackerm</tt>
+<li>All the sparcs <tt>host=sparc</tt>
+</ul>
+<a href="http://info.internet.isi.edu:80/in-notes/rfc/files/rfc2254.txt">RFC 2254</a>
+has more information about the filter expressions.
+
+<h1>Other LDAP Browsers</h1>
+<p>
+The GQ package has a graphical LDAP browser that can browse the debian.org
+tree. It is somewhat ungainly with the large number of entries in our
+directory, but it does work nonetheless. Configuration is similar, use the
+preferences dialog to add a new host with the information given above.
+<p>
+Netscape has a browser for their mailer, but I have never been able to get
+it to work, please email if you have any luck.
+<p>
+To my knowledge there are no interfaces for popular mailers like mutt and
+gnus. Such an interface would allow using the directory as an enhanced address
+book.
