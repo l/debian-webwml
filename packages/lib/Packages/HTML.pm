@@ -65,6 +65,12 @@ sub header {
 	$search_in_header = <<MENU;
 <td align="left" valign="middle">
 <form method="GET" action="http://packages.debian.org/cgi-bin/search_packages.pl">
+<input type="hidden" name="version" value="$values{version}" />
+<input type="hidden" name="subword" value="$values{subword}" />
+<input type="hidden" name="exact" value="$values{exact}" />
+<input type="hidden" name="arch" value="$values{arch}" />
+<input type="hidden" name="releases" value="$values{releases}" />
+<input type="hidden" name="case" value="$values{case}" />
 <input type="text" size="30" name="keywords" value="$values{keywords}" id="kw" />
 <input type="submit" value="Search">
 <span style="font-size: 60%"><a href="http://packages.debian.org/#search_packages">Full options</a></span>
@@ -93,6 +99,9 @@ MENU
 	$search_in_header = <<MENU;
 <td align="left" valign="middle">
 <form method="GET" action="http://packages.debian.org/cgi-bin/search_contents.pl">
+<input type="hidden" name="version" value="$values{version}" />
+<input type="hidden" name="arch" value="$values{arch}" />
+<input type="hidden" name="case" value="$values{case}" />
 <input type="text" size="30" name="word" id="keyword" value="$values{keyword}">&nbsp;
 <input type="submit" value="Search">
 <span style="font-size: 60%"><a href="http://packages.debian.org/#search_contents">Full options</a></span>

@@ -73,6 +73,9 @@ print Packages::HTML::header( title => 'Package Contents Search Results' ,
 			      search_field_values => { 
 				  keyword => $keyword_enc,
 				  searchmode => $searchmode,
+				  arch => $arch_enc,
+				  version => $version_enc,
+				  case => $case,
 			      },
 			      );
 
