@@ -6,7 +6,7 @@ Secure SHell protocol). They are refusing to provide any details on
 the vulnerability but instead are advising everyone to upgrade to
 the latest release, version 3.3.</p>
 
-<p>This version was released 3 days ago and introduced a new feature
+<p>This version was released on June 22, 2002 and it introduced a new feature
 to reduce the effect of exploits in the network handling code
 called privilege separation.  Unfortunately this release has a few
 known problems:</p>
@@ -34,8 +34,9 @@ vulnerability, instead by using the new privilege separation code
 it merely reduces the risk since the attacker can only gain access
 to a special account restricted in a chroot.</p>
 
-<p>Since details of the problem have not been released we were forced
-to move to the latest release of OpenSSH portable, version 3.3p1.</p>
+<p>Since details of the problem have not been released, the move to the
+latest release of OpenSSH portable, version 3.3p1, is the only known
+method of mitigating the risk of the reported vulnerability.</p>
 
 <p>Please note that we have not had the time to do proper QA on these
 packages; they might contain bugs or break things unexpectedly. If you
@@ -57,18 +58,63 @@ please file a bug-report so we can investigate.</p>
 
 <li>(relevant for potato only) This update defaults to using version 2
     of the SSH protocol. This can break existing setups where RSA
-    authentication is used. You will either have to add -1 to the ssh
-    invocation to keep using SSH protocol 1 and your existing keys, or
-    create new keys for SSH protocol 2.</li>
+    authentication is used. You will either have to
+    <ul>
+      <li>add -1 to the ssh invocation to keep using SSH protocol 1 and
+          your existing keys, or 
+      <li>change the Protocol line in <tt>/etc/ssh/ssh_config</tt> and/or
+          <tt>/etc/ssh/sshd_config</tt> to "Protocol 1,2" to try protocol 1
+          before protocol 2, or
+      <li>create new rsa or dsa keys for SSH protocol 2
+    </ul>
+    </li>
 
 <li>sshd defaults to enabling privilege seperation, even if you do not
-    explicitly enable it in <tt>/etc/ssh/sshd_config</tt>.</li>
+    explicitly enable it in <tt>/etc/ssh/sshd_config</tt>. Again, unless you
+    have "UsePrivilegeSeparation no" in your sshd_config, you will be using
+    privilege seperation with this package.</li>
 
 <li>If ssh does not work for you you can try to disable compression. We
     already included a patch from Solar Designer which fixes the problem
     with Linux 2.2 kernels, but there might be a few cases where this is
     not sufficient.</li>
+
+<li>(relevant for potato only) Privilege seperation does not currently
+    work with Linux 2.0 kernels</li>
+
+<li>If for some reason you cannot use privilege seperation (e.g.,
+    because you are running a 2.0 kernel) but have already installed the
+    openssh 3.3p1 package, you can revert to previous behavior by adding
+    "UsePrivilegeSeparation no" to your /etc/ssh/sshd_config file.
+    <strong>Note that disabling privilege seperation will leave you
+    vulnerable to the security problem described in this advisory and
+    should only be done on an emergency basis.</strong></li>
 </ul>
+
+<p>Some issues from previous openssh 3.3p1 packages corrected in this
+advisory (not a complete changelog):</p>
+
+<ul>
+<li>(relevant for potato only) the installation question, "[do you want
+    to allow protocol 2 only" no longer defaults to "yes". Users who
+    answered yes to this question and also chose to regenerate their
+    sshd_config file found that they could no longer connect to their
+    server via protocol 1. See <tt>/usr/doc/ssh/README.Debian</tt> for
+    instructions on how to enable protocol 1 if caught in this situation.</li>
+
+<li>(relevant for potato only) the ssh package no longer conflicts with
+    rsh-server, nor does it provide an rsh alternative</li>
+
+<li>installation will no longer fail if users choose to generate
+    protocol 1 keys</li>
+</ul>
+
+<p>Again, we regret having to release packages with larger changes and
+less testing than is our usual practice; given the potential severity
+and non-specific nature of the threat we decided that our users were
+best served by having packages available for evaluation as quickly as
+possible. We will send additional information as it comes to us, and
+will continue to work on the outstanding issues.</p>
 
 <p>Please note that packages for the m68k architecture for woody are not
 available yet.</p>
