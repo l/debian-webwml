@@ -14,7 +14,7 @@
    [ES:Debian para Sparc64:]
    [FI:Debian for Sparc64:]
    [FR:Debian pour Sparc64:]
-   [HR:Debian for Sparc64:]
+   [HR:Debian za Sparc64:]
    [HU:Debian for Sparc64:]
    [IT:Debian per Sparc64:]
    [JA:Debian for Sparc64:]
