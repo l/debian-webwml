@@ -48,7 +48,7 @@ $opt_p =~ s/$/\$/g;
 	   'wmlpat'  => $opt_p,
 	   'title'   => $opt_t,
 	   'verbose' => $opt_v,
-	   'diff'    => $opt_d,
+	   'difftype'=> $opt_d,
 	   );
 
 my $l = Webwml::Langs->new($opt_w);
@@ -233,7 +233,7 @@ foreach $lang (@search_in) {
 			$o_body .= sprintf "<td>%s</td>", $transversion{"$lang/$file"};
 			$o_body .= sprintf "<td>%s</td>", $version{"$orig/$file"};
 			$o_body .= sprintf "<td>%s</td>", $msg;
-			$o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/$orig/%s.wml.diff\?r1=%s\&r2=%s\&cvsroot=webwml\&diff_format=%s\">%s -> %s</a></td>", $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $config{'diff_type'}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+			$o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/$orig/%s.wml.diff\?r1=%s\&r2=%s\&cvsroot=webwml\&diff_format=%s\">%s -> %s</a></td>", $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $config{'difftype'}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
 			$o_body .= "</tr>\n";
     			$outdated{$lang}++;
 		# Up-to-date translations
