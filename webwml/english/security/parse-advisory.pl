@@ -20,7 +20,7 @@ my $mlURL = "http://lists.debian.org/debian-security-announce/debian-security-an
 
 open ADV, $adv;
 foreach $l (<ADV>) {
-  if ($l =~ /^Debian Security Advisory (DSA-\d+-\d+)/) {
+  if ($l =~ /^Debian Security Advisory (DSA[- ]\d+-\d+)/) {
     $dsa = $1;
   }
   if ($l =~ /^(\w+)\s+(\d+)(\D\D)?, (\d+)/) {
@@ -89,7 +89,7 @@ print WML "<define-tag description>$desc</define-tag>\n";
 print WML "<define-tag moreinfo>$moreinfo</define-tag>\n";
 print WML "\n# do not modify the following line\n";
 print WML "#include \"\$(ENGLISHDIR)/security/$curyear/$data\"\n";
-print WML "# \$Id$wml,v 1.1 2001/08/09 13:07:41 alfie Exp \$\n";
+printf WML "# %sId: \$\n", "\$";
 close WML;
 
 print "Now edit $data and remove any English-specific stuff from it.\n";
