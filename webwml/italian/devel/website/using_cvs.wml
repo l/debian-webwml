@@ -1,0 +1,96 @@
+#use wml::debian::template title="Usare il CVS"
+<!--translation 1.1-->
+
+<p>CVS è un programma che aiuta molte persone che a lavorare sullo stesso
+materiale allo stesso tempo. Ogni utente si crea una copia locale
+dell'originale. La copia locale può essere sulla stessa macchina o sparsa per
+il mondo. Gli utenti possono quindi modificare la copia locale fino ad avere
+un materiale completo per essere usato. Allora possono portare tutte le loro
+modifiche sull'originale (commit.)
+
+<p>CVS non permette di definire una modifica sull'originale se nel frattempo
+altri l'hanno già cambiato. Questo di norma non è un grosso problema poiché
+si può sempre aggiornare la copia locale. Se invece le modifiche erano su
+avvenute su varie parti non toccate da te allora queste avverranno senza
+problemi. Se le modifiche hanno a che fare con la stessa parte sulla quale
+stai lavorando allora sarai avvisato del conflitto e dovrai modificare i file
+prima di poter fare il commit.
+
+<P>Per quanto segue l'accesso anonimo verrà usato come esempio. Se hai accesso
+ad un altro account che permette l'accesso in scrittura allora dovresti usare
+quell'accout. Se pensi di apportare delle modifiche allora dovresti procurarti
+un account con i diritti di scrittura prima di continuare poiché l'account
+anonimo non permette la modifica.
+
+<p>Se sei uno sviluppatore Debian leggi la sezione
+<a href="#cvsfordevelopers">CVS Access for Debian Developers</a>
+
+<p>Per comiciare ad usare CVS devi prima effettuare il <code>login</code> sul
+server CVS
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml login
+</pre>
+(puoi semplicemente premere return quando ti sarà chiesta la password)
+
+<P>Per ottenere una copia dei file wml sulla tua macchina locale, devi fare
+così
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/&lt;lang&gt;
+</pre>
+dove <code>&lt;lang&gt;</code> è la lingua che tu vuoi. Molto probabilmente
+vorrai la lingua inglese oltre a quella sulla quale lavori.
+Se ti serve solo un sottoinsieme di pagine puoi scaricare solo quelle, vale a
+dire:
+<pre>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</pre>.
+oppure, se hai uno username/password, inserirli al posto dell'account anonimo:
+<pre>cvs -d :pserver:username@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</pre>.
+
+<P>Da questo momento in poi non avrai bisogno di inserire la parte <code>'-d :pserver:...'</code>.
+Ogni due--tre giorni esegui il comando
+<pre>
+   cvs update -d
+</pre>
+per avere la nuova versione dei file cambiati sull'originale. Il parametro
+<code>-d</code> permette di aggiungere le nuove directory automaticamente.
+
+<P>La parte seguente è per chi ha accesso in scrittura sull'originale.
+Quando hai finito con una pagina, puoi copiare le tue modifiche sull'originale
+tramite
+<pre>
+   cvs commit &lt;file&gt;.wml
+</pre>
+o
+<pre>
+   cvs commit &lt;dir&gt;   (per tutte le modifiche in &lt;dir&gt;)
+</pre>
+o
+<pre>
+   cvs commit          (per tutte le modifiche dalla directory corrente in poi)
+</pre>
+
+<P>Se sei il primo che traduce una pagina devi anche eseguire
+<pre>
+   cvs add &lt;file&gt;.wml
+</pre>
+prima che tu possa farne il commit. Nota che <code>cvs add</code> non è
+ricorsivo e quindi devi farlo per ogni singola directory che devi aggiungere e
+per il suo contenuto.
+
+<P>Per amggiorni informazioni su CVS, dai il comando <code>info cvs</code>.
+
+<a name="cvsfordevelopers">
+<H3>Accesso al CVs per gli sviluppatori</H3>
+<P>Poiché tutti gli sviluppatori Debian hanno già un account in
+cvs.debain.org, si può usare un meccanismo più sicuro per l'accesso
+all'originale. Questo metodo è da preferirsi al :pserver: descritto sopra.
+Dovresti scrivere a webmaster@debian.org chiedendo di avere accesso al CVS.
+una volta che sei stato aggiunto al gruppo sarà sufficiente dare alla
+variabile CVS_RSH il valore ssh ('export CVS_RSH=ssh' nel tuo .bashrc) e
+scaricare la copia dell'originale tramite
+<pre>
+   cvs -d :ext:&lt;account_name&gt;@cvs.debian.org:/cvs/webwml checkout webwml/english/
+</pre>
+
+Una volta fatto questo fatto questo tutto il resto si può fare come descritto
+sopra.
+
