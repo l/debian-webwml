@@ -98,7 +98,7 @@ sub getwmlfiles
     my $cutfrom = length ($config{'wmldir'})+length($lang)+2;
     my $count = 0;
     my $is_english = ($lang eq "english")?1:0;
-    my $file, $v;
+    my ( $file, $v );
     my @listfiles;
 
     print "$lang " if ($config{verbose});
@@ -135,7 +135,6 @@ sub getwmlfiles
 	}
 	$count++;
     }
-    close (FIND);
     $wmlfiles{$lang} .= " ";
     $wml{$lang} = $count;
 }
@@ -154,18 +153,18 @@ sub get_color
 sub check_translation
 {
     my ($translation, $version, $file) = @_;
-    my @version_numbers, $major_number, $last_number;
-    my @translation_numbers, $major_translated_number, $last_translated_number;
+    my ( @version_numbers, $major_number, $last_number );
+    my ( @translation_numbers, $major_translated_number, $last_translated_number );
 
-    if ($version ne "" && $translation ne "") {
+    if ( $version && $translation ) {
 	@version_numbers = split /\./,$version;
-	$major_number = @version_numbers[0];
+	$major_number = $version_numbers[0];
 	$last_number = pop @version_numbers;
 	die "Invalid CVS revision for $file: $version\n"
 	    unless ($major_number =~ /\d+/ && $last_number =~ /\d+/);
 
 	@translation_numbers = split /\./,$translation;
-	$major_translated_number = @translation_numbers[0];
+	$major_translated_number = $translation_numbers[0];
 	$last_translated_number = pop @translation_numbers;
 	die "Invalid translation revision for $file: $translation\n"
 	    unless ($major_translated_number =~ /\d+/ && $last_translated_number =~ /\d+/);
@@ -174,15 +173,15 @@ sub check_translation
 	# a note for the user if their first or last numbers are too far apart
 	# From translation-check.wml
 
-	if ($version eq "") {
-	    return "The original no longer exists";
-	} elsif ( $major_number != $major_translated_number ) {
+	if ( $major_number != $major_translated_number ) {
 	    return "This translation is too out of date";
 	} elsif ( $last_number - $last_translated_number >= $max_versions ) {
 	    return "This translation is too out of date";
 	} elsif ( $last_number - $last_translated_number >= $min_versions ) {
 	    return "The original is newer than this translation";
 	}
+    } elsif ( !$version && $transversion) {
+	return "The original no longer exists";
     }
     return "";
 }
@@ -207,8 +206,8 @@ if ($opt_l) {
 
 # Compute stats about gettext files
 print "Computing statistics in gettext files... " if ($config{'verbose'});
-my %po_translated,%po_fuzzy,%po_untranslated,%po_total;
-my %percent_po_t,%percent_po_u,%percent_po_f;
+my ( %po_translated, %po_fuzzy, %po_untranslated, %po_total );
+my ( %percent_po_t, %percent_po_u, %percent_po_f );
 foreach $lang (@search_in) {
     next if $lang eq 'english';
     $l = $langs{$lang};
