@@ -234,74 +234,70 @@
 # Events will be sorted in normal order instead of reverse
 
 sub get_recent_list {
-	my ($year, $number, $eng_dir, $format, $match) = @_;
+  my ($year, $number, $eng_dir, $format, $match) = @_;
 
-	if ($format =~ order) {
-		$listhead = '<ol>';
-		$listfoot = '</ol>';
-		$elemhead = '<li>';
-		$elemfoot = '- ';
-	}
-	elsif ($format =~ bullet) {
-		$listhead = '<ul>';
-		$listfoot = '</ul>';
-		$elemhead = '<li>';
-		$elemfoot = '- ';
-	}
-	elsif ($format =~ list) {
-		$listhead = '<dl>';
-		$listfoot = '</dl>';
-		$elemhead = '<dt>';
-		$elemfoot = '<dd>';
-	}
-	elsif ($format =~ table) {
-		$listhead = '<table>';
-		$listfoot = '</table>';
-		$elemhead = '<tr><td>';
-		$elemdate = '</td><td>';
-		$elemfoot = '';
-	}
-	else {
-		$listhead = '';
-		$listfoot = '';
-		$elemhead = '';
-		$elemfoot = '- ';
-	}
+  if ($format =~ order) {
+    $listhead = '<ol>';
+    $listfoot = '</ol>';
+    $elemhead = '<li>';
+    $elemfoot = '- ';
+  } elsif ($format =~ bullet) {
+    $listhead = '<ul>';
+    $listfoot = '</ul>';
+    $elemhead = '<li>';
+    $elemfoot = '- ';
+  } elsif ($format =~ list) {
+    $listhead = '<dl>';
+    $listfoot = '</dl>';
+    $elemhead = '<dt>';
+    $elemfoot = '<dd>';
+  } elsif ($format =~ table) {
+    $listhead = '<table>';
+    $listfoot = '</table>';
+    $elemhead = '<tr><td>';
+    $elemdate = '</td><td>';
+    $elemfoot = '';
+  } else {
+    $listhead = '';
+    $listfoot = '';
+    $elemhead = '';
+    $elemfoot = '- ';
+  }
 
-	my $str = $listhead;
+  my $str = $listhead;
 
-	opendir(DIR, "$eng_dir/$year");
-	@files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
-	@files = sort {$b cmp $a} @files;
-	@files = reverse @files if ($eng_dir =~ /\/events\/\d{4}$/);
-	closedir DIR;
+  opendir DIR, "$eng_dir/$year";
+  @files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
+  @files = sort {$b cmp $a} @files;
+  @files = reverse @files if ($eng_dir =~ m,/events/\d{4}$,);
+  closedir DIR;
 
-#	print STDERR "files: " . join " ", @files; print STDERR "\n";
-#	print STDERR "year=$year number=$number eng_dir=$eng_dir format=$format match=$match\n";
-	$count = 0;
-	$str .= grab_titles($year, $number, $eng_dir, $format, $match);
+#  print STDERR "files: " . join " ", @files; print STDERR "\n";
+#  print STDERR "year=$year number=$number eng_dir=$eng_dir format=$format match=$match\n";
+  $count = 0;
+  $str .= grab_titles($year, $number, $eng_dir, $format, $match);
 
-	if ($count < $number && $number ne 0) {
-		@tmp = split('/', $year);
-		$tmp[$#tmp]--;
-		# $year--;
-		$year = join('/', @tmp);
-		if (-d "$eng_dir/$year") {
-			opendir(DIR, "$eng_dir/$year") or printf stderr "couldn't open dir $eng_dir/$year\n";
-			@files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
-			@files = sort {$b cmp $a} @files;
-			closedir DIR;
-			$str .= grab_titles($year, $number, $eng_dir, $format, $match);
-		}
-	}
-	if ($count eq 0) {
-		$str .= "<noitemsforthisyear/>\n";
-	}
-	$str .= $listfoot;
-	# these two lines are a dumb kludge, happens with events/
-	$str =~ s/$listhead(.+)\n$listhead/$1\n$listhead/;
-	$str =~ s/$listfoot\n$listfoot/$listfoot/;
-	return $str;
+  if ($count < $number && $number ne 0) {
+    @tmp = split('/', $year);
+    $tmp[$#tmp]--;
+    # $year--;
+    $year = join('/', @tmp);
+    if (-d "$eng_dir/$year") {
+      opendir DIR, "$eng_dir/$year" or warn "couldn't open dir $eng_dir/$year\n";
+      @files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
+      @files = sort {$b cmp $a} @files;
+      closedir DIR;
+      $str .= grab_titles($year, $number, $eng_dir, $format, $match);
+    }
+  }
+  if ($count eq 0) {
+    $str .= "<noitemsforthisyear/>\n";
+  }
+  $str .= $listfoot;
+  # these two lines are a dumb kludge, happens with events/
+  $str =~ s/$listhead(.+)\n$listhead/$1\n$listhead/;
+  $str =~ s/$listfoot\n$listfoot/$listfoot/;
+  return $str;
 }
 
 sub grab_titles {
