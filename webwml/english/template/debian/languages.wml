@@ -95,27 +95,38 @@ my %langs = ( english    => "en",
               chinese    => "zh",
 );
 
+# If your language name contains entirely of non-latin characters, you
+# might wish to give a latin transliteration of the name here, to aid
+# those that have browser that cannot show different character sets at
+# once.
+my %translit = (
+  arabic   => "Arbytm",
+  chinese  => "Zhongzu",
+  hellas   => "Ellynika",
+  japanese => "Nihongo",
+  korean   => "Hangul", # Not sure. "Hanguk-Mal" (=Spoken Korean)?
+  russian  => "Russkij",
+);
+
 # DO NOT translate anything below here.
 # If you feel something needs to be modified, write to debian-www first.
 
 sub langcmp {
   my ($first, $second) = ($a, $b);
+
   # Handle sorting of non-latin characters
-  # Language names based on Latin, Greek or Cyrillic letters are sorted
-  # first, then other names, sorted on Unicode numbers.
+  # If there is a transliteration for this language available, use it
+  $first = $translit{$sorted_langs{$a}} if defined $translit{$sorted_langs{$a}};
+  $second = $translit{$sorted_langs{$b}} if defined $translit{$sorted_langs{$b}};
+
+  # Put remaining entity-only names last in the list
   if (substr($first,0,1) eq '&')
   {
-    $first =~ s/&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;/RUSSKIJ/; # er u es es ka i short-i
-#   $first =~ s/&#1593;&#1585;&#1576;&#1610;&#1577;/ARBYTM/; # ain reh beh yeh teh-marbuta
-    $first =~ s/&#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940;/ELLYNIKA/; # epsilon lambda lambda eta nu iota kappa alpha-with-tonos
-    $first =~ s/^&/_&/; # put remaining entities last in the list
+    $first =~ s/^&/ZZZ&/;
   }
   if (substr($second,0,1) eq '&')
   {
-    $second =~ s/&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;/RUSSKIJ/;
-#   $second =~ s/&#1593;&#1585;&#1576;&#1610;&#1577;/ARBYTM/;
-    $second =~ s/&#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940;/ELLYNIKA/; # epsilon lambda lambda eta nu iota kappa alpha-with-tonos
-    $second =~ s/^&/_&/; # put remaining entities last in the list
+    $second =~ s/^&/ZZZ&/;
   }
   #    There seems to be a bug with localization in
   #    Perl 5.005 so we need those extra variables.
@@ -154,6 +165,7 @@ sub languages {
         $str = '<hrline>';
         $str .= "\n";
      }
+     $str .= "<!--UdmComment-->\n";
      $str .= "<langtext>:\n<BR>\n";
      # Language sorting. Create a hash going from the language's own name
      # for itself to the language's ISO keys. Then work with the sorted
@@ -167,7 +179,9 @@ sub languages {
         $cur_lang = $sorted_langs{$_};
         $tooltip = $trans{$CUR_ISO_LANG}{$cur_lang};
         if ($cur_lang ne "chinese") {
-           $str .= "<A href=\"$file.$langs{$cur_lang}.html\" title=\"$tooltip\">$_</A>&nbsp;\n";
+           $str .= "<A href=\"$file.$langs{$cur_lang}.html\" title=\"$tooltip\">$_";
+        $str .= " ($translit{$cur_lang})" if defined $translit{$cur_lang};
+           $str .= "</A>&nbsp;\n";
         } else {
            $str .= "<A href=\"$file.$langs{$cur_lang}-cn.html\" title=\"$tooltip (<CNc>)\">$_&nbsp;(CN)</A>&nbsp;\n";
            $str .= "<A href=\"$file.$langs{$cur_lang}-hk.html\" title=\"$tooltip (<HKc>)\">$_&nbsp;(HK)</A>&nbsp;\n";
@@ -175,10 +189,12 @@ sub languages {
         }
      }
      $str .= "\n<BR><A href=\"$base_url/intro/cn\"><setlang></A>\n";
+     $str .= "<!--/UdmComment-->\n";
   }
   if ($rel_dir eq "" && $file eq "sitemap") {
     $str = '<hrline>';
     $str .= "\n";
+    $str .= "<!--UdmComment-->\n";
     $str .= "<langtext>:\n<BR>\n";
     foreach (keys %langs) {
       if ($_ ne lc($cur_lang) or $cur_lang eq "Chinese") {
@@ -187,14 +203,18 @@ sub languages {
     }
     foreach (sort langcmp keys %sorted_langs) {
       $cur_lang = $sorted_langs{$_};
+      $tooltip = $trans{$CUR_ISO_LANG}{$cur_lang};
       if ($cur_lang ne "chinese") {
-        $str .= "<A href=\"$file.$langs{$cur_lang}.html\">$_</A>&nbsp;\n";
+        $str .= "<A href=\"$file.$langs{$cur_lang}.html\" title=\"$tooltip\">$_";
+        $str .= " ($translit{$cur_lang})" if defined $translit{$cur_lang};
+        $str .= "</A>&nbsp;\n";
       } else {
-        $str .= "<A href=\"$file.$langs{$cur_lang}-cn.html\">$_&nbsp;(CN)</A>&nbsp;\n";
-        $str .= "<A href=\"$file.$langs{$cur_lang}-hk.html\">$_&nbsp;(HK)</A>&nbsp;\n";
-        $str .= "<A href=\"$file.$langs{$cur_lang}-tw.html\">$_&nbsp;(TW)</A>&nbsp;\n";
+        $str .= "<A href=\"$file.$langs{$cur_lang}-cn.html\" title=\"$tooltip (<CNc>)\">$_&nbsp;(CN)</A>&nbsp;\n";
+        $str .= "<A href=\"$file.$langs{$cur_lang}-hk.html\" title=\"$tooltip (<HKc>)\">$_&nbsp;(HK)</A>&nbsp;\n";
+        $str .= "<A href=\"$file.$langs{$cur_lang}-tw.html\" title=\"$tooltip (<TWc>)\">$_&nbsp;(TW)</A>&nbsp;\n";
       }
     }
+     $str .= "<!--/UdmComment-->\n";
   }
 
   return $str;
