@@ -20,5 +20,7 @@ include $(BASE)/Make.templ.inc
 
 $(HTMLDIR)/people.html.$(LANGUAGE): people.wml $(ENGLISHSRCDIR)/devel/people.names
 
+$(HTMLDIR)/ltcp.html.$(LANGUAGE): ltcp.wml translations-bd.pl
+
 people: people.wml
 	wml -q people.wml

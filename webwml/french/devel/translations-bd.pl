@@ -558,7 +558,7 @@ $translations = [
 
 {
 	'type'			=> 'Web',
-	'key'			=> 'distrib/distrib',
+	'key'			=> 'distrib/index',
 	'status'		=> 'non-traduit',
 	'since'			=> '01/08/1998',
 },
@@ -622,10 +622,11 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'intro/why_debian',
-	'status'		=> 'en cours de traduction',
-	'since'			=> '25/09/1998',
+	'status'		=> 'en relecture',
+	'since'			=> '11/10/1998',
 	'translation_version'	=> '1.3',
 	'translators'		=> ['"Philippe Paillé" <valvert@club-internet.fr>'],
+	'last_translated'	=> '11/10/1998',
 },
 
 {
@@ -665,7 +666,7 @@ $translations = [
 
 {
 	'type'			=> 'Web',
-	'key'			=> 'developers_corner',
+	'key'			=> 'devel/index',
 	'status'		=> 'en cours de traduction',
 	'since'			=> '11/08/1998',
 	'translators'		=> ['Christophe Le Bars <clebars@debian.org>'],
@@ -683,9 +684,10 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/help',
-	'status'		=> 'en cours de traduction',
-	'since'			=> '20/08/1998',
+	'status'		=> 'en relecture',
+	'since'			=> '12/10/1998',
 	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'last_translated'	=> '12/10/1998',
 },
 
 {
