@@ -19,6 +19,9 @@
       	text-transform: capitalize;
         text-shadow: 0.3em 0.3em 0.1em #F00;
       }
+      div.center {text-align: center}
+      p.x-small {font-size: x-small}
+      ul.spacey li {padding-top: 0.5ex; padding-bottom: 0.5ex}
 
       .titletext               {
       	 color: black;
