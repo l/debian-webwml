@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-eval `cat check_trans.status`;
+do 'check_trans.status';
 
 # This file should modify the %translations database to include
 # all information regarding the translation status for a fixed 
@@ -8,7 +8,7 @@ eval `cat check_trans.status`;
 
 #       'key' => {
 #               'status'        => '',
-#use numbers instead of text since it makes translations easier
+#     use numbers instead of text since it makes translations easier
 #                      'not-available'                 0
 #                      'not translated'                1
 #                      'being translated'              2
@@ -45,22 +45,30 @@ eval `cat check_trans.status`;
 #       'old_translators'       => []
 
 
-# ########################################################################################
+###################################################################
 #
-# Livres GPL
+# Put here documents who need to be manually handled
 #
-# ########################################################################################
+###################################################################
 
-$translations = {
-
-%$automatic,
-
-'international/French' => {
-	'status'		=> 4,
-	'type'			=> 'Web',
-	'note'			=> 'Version originale en français',
-	'translation_maintainer'=> ['Christian Couder'],
-},
-
+$special_translations = {
+        'international/French' => {
+	        'type'			=> 'Web',
+	        'status'		=> 4,
+	        'note'			=> 'Version originale en français',
+	        'translation_maintainer'=> ['Christian Couder'],
+        },
 };
+
+###################################################################
+#
+# Merge databases
+#
+###################################################################
+
+#foreach my $k (keys %$special_translations) {
+#        $translations->{$k} = $special_translations->{$k};
+#}
+
+1;
 
