@@ -6,7 +6,7 @@
 
 %config = (
 	   'wmldir'  => '/org/www.debian.org/webwml',
-	   'datadir' => '/org/www.debian.org/cron/scripts_daily',
+	   'datadir' => '/org/www.debian.org/cron/datafiles',
 	   );
 
 sub make_listing
