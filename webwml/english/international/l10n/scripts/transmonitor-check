@@ -651,7 +651,6 @@ sub process_po_file {
         my $type = shift;
         $type = 'podebconf' unless $type eq 'po';
         $type = 'add_'.$type;
-        my $potfile = shift;
 
         my $filename; #the po file name to be archived
         my $lang=""; # the identified code language
@@ -686,11 +685,7 @@ sub process_po_file {
         }
         if ($lang ne "") {
                 # stats the file
-                if (defined $potfile) {
-                        ($this_stat, $err_msg) = read_stats("msgmerge $PO_DIR/$filename $PO_DIR/$potfile 2>/dev/null | msgfmt --statistics -o /dev/null - 2>&1 1>/dev/null");
-                } else {
-                        ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$filename 2>&1 1>/dev/null");
-                }
+                ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$filename 2>&1 1>/dev/null");
                 if ($err_msg ne '') {
                         $err_msg =~ s,\Q$PO_DIR/$filename\E,$file,g;
                         $data->add_errors($pkg, "gettext: ".$err_msg);
@@ -902,7 +897,7 @@ sub search_podebconf {
 
         my $potfile = store_disk_po($pkg, "debian/po/templates.pot");
         my $PO_DIR = $PO_ROOT."/".$data->pooldir($pkg);
-        my ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$potfile 2>&1 1>/dev/null");
+        my ($this_stat, $err_msg) = read_stats("msgfmt --statistics -o /dev/null $PO_DIR/$potfile 2>&1");
 
         $data->add_podebconf($pkg, 'templates.pot', '_', $this_stat, $potfile);
         @_ = split(/\n/, $deb->file_content("debian/po/POTFILES.in"));
@@ -925,7 +920,10 @@ sub search_podebconf {
         my @pofiles = $deb->file_matches("^debian/po/.*\\.po\$");
 
         foreach my $file (@pofiles) {
-                process_po_file($pkg, $file, 'podebconf', $potfile);
+                my $filename = store_disk_po($pkg, $file);
+                system ("msgmerge -o $TMP_DIR/temp $PO_DIR/$filename $PO_DIR/$potfile 2>/dev/null") == 0 && system ("cp -f $TMP_DIR/temp $PO_DIR/$filename");
+                unlink "$TMP_DIR/temp";
+                process_po_file($pkg, $file, 'podebconf');
         }
         if (system("gzip -9f $PO_DIR/$potfile")) {
                 warn "Can't gzip $PO_DIR/$potfile $!\n";
