@@ -16,5 +16,8 @@ $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml
 
 all: $(HTMLFILES)
 	( cd sparc; $(MAKE) )
+	( cd alpha; $(MAKE) )
+	( cd arm; $(MAKE) )
+	( cd powerpc; $(MAKE) )
 
 include $(BASE)/Make.templ.inc
