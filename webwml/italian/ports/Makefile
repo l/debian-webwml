@@ -1,19 +1,15 @@
-BASE=..
-CUR_DIR=ports/sparc
+# This Makefile should need no changes from webwml/english/ports/Makefile
+# Please send a message to debian-www if you need to modify anything
+# so the problem can be fixed.
 
-HTMLDIR=$(BASE)/../../debian.org/$(CUR_DIR)
-TEMPLDIR=$(BASE)/template/debian
-ENGLISHSRCDIR=$(BASE)/../english
+WMLBASE=..
+CUR_DIR=ports
+# list any subdirectories in the following variable. Any directories listed
+# must exist or the make will not work
+SUBS=sparc alpha arm powerpc mips sparc64
 
-include $(BASE)/Make.lang
+include $(WMLBASE)/Make.lang
+include $(WMLBASE)/Make.common
 
-# EPILOG=--epilog=weblint
-$(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
-	wml -q $(EPILOG) $(<F)
-
-all: $(HTMLFILES)
-
-include $(BASE)/Make.templ.inc
-
-WMLFILES := $(wildcard *.wml)
-HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
+include $(WMLBASE)/Make.dep.templ    
+include $(WMLBASE)/Make.dep.generic
