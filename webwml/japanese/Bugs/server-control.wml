@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - コントロールサーバ" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.21"
+#use wml::debian::translation-check translation="1.23"
 
 <h1>バグコントロールメールサーバ入門</h1>
 
@@ -102,6 +102,31 @@
 
 <p><A href="Developer#severities">これらの意味</A>については、
 バグシステムの一般開発者文書で調べてください。
+
+
+<dt><code>clone</code> <var>bugnumber</var> [ <var>new IDs</var> ]
+
+  <dd>clone コントロールコマンドは、バグ報告を複製します。
+  これは、ひとつの報告が実際には複数のバグを指し示している
+  ような場合に便利です。"<var>New IDs</var>" はスペースで区切られた
+  マイナスの値で、以下に続くコマンドが新しく複製されたバグを参照
+  するときに使うことができます。新しいバグ報告は、それぞれの
+  new ID に対して作成されます。
+
+  <p>以下のようにして使います:</p>
+
+  <pre>
+        clone 12345 -1 -2
+        reassign -1 foo
+        retitle -1 foo: foo sucks
+        reassign -2 bar
+        retitle -2 bar: bar sucks when used with foo
+        severity -2 wishlist
+        clone 123456 -2
+        reassign -2 foo
+        retitle -2 foo: foo sucks
+        merge -1 -2
+  </pre>
 
 <dt><code>merge</code> <var>bugnumber</var> <var>bugnumber</var> ...
 <dd>
