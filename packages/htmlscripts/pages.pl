@@ -253,8 +253,11 @@ sub package_pages_walker {
 	}
 	progress() if $env->{opts}{progress};
 
-	$maintainer = $maintainers{max_unique};
-	$sourcepackage = $sources{max_unique};
+	$maintainer = $pkg->get_newest( 'maintainer' );
+	$maintainer = $maintainers{max_unique} if $maintainer eq 'CONFLICT';
+	$sourcepackage = $pkg->get_newest( 'source' );
+	$sourcepackage = $sources{max_unique} if $sourcepackage eq 'CONFLICT';
+
 	if ( $sourcepackage =~ s/\s*\((.*)\)\s*$//o ) {
 	    $src_version = $1;
 	} else {
