@@ -1,8 +1,7 @@
-#use wml::debian::template title="Le Système de Gestion des Bogues Debian" NOHEADER=yes WEBMASTER=bugs
+#use wml::debian::template title="Le Système de Gestion des Bogues Debian" NOHEADER=yes
 
-<!--translation 1.7-->
+#use wml::debian::translation-check translation="1.18" translation_maintainer="Christian Couder <chcouder@club-internet.fr>"
 
-<!-- traduction en français par Christian Couder <chcouder@club-internet.fr> -->
 
 <H1><A name="developers">Les informations pour les Développeurs 
 concernant le système de traitement des bogues</A></H1>
@@ -36,46 +35,52 @@ et modifier le champ <CODE>To</CODE> pour y inscrire
 dans le champs <CODE>To</CODE> par défaut, parce que le système de
 gestion des bogues l'a inclus dans le <CODE>Reply-To</CODE>.</P>
 
-<P>Les messages `Done' ne sont pas automatiquement envoyés à la liste de 
-diffusion, donc il peut être parfois utile d'inclure la liste de diffusion
-<CODE>debian-devel@lists.debian.org</CODE> si d'autres développeurs
-sont susceptibles d'être intéressés.</P>
+<P>Les messages `Done' sont automatiquement envoyés à la liste 
+de diffusion <CODE>debian-bugs-closed</CODE> uniquement.
+Si d'autres développeurs sont susceptibles d'être intéressés il 
+peut être parfois utile d'inclure la liste de diffusion
+<CODE>debian-devel@lists.debian.org</CODE>.</P>
 
 <P>La personne fermant le bogue et la personne l'ayant soumis recevront
 une notification du changement de statut du rapport.</P>
 
 <h2>Les messages suivants</h2>
 
-<P>Si un développeur souhaite répondre à un rapport de bogue sans marquer le
-bogue comme traité il peut simplement répondre au message. Sa réponse
-sera (par défaut) envoyé à <var>nnn</var><CODE>@bugs</CODE> et à celui 
-qui a soumis le rapport de bogue. Le système de gestion des bogues enregistrera
-la réponse avec le reste des enregistrements correspondant à ce rapport de bogue et 
-l'enverra à
-<CODE>debian-bugs-dist</CODE>. Le bogue ne sera pas marqué comme étant traité. 
-Un développeur pourra explicitement envoyer un message à celui qui a soumis
+<P>Si un développeur souhaite répondre à un rapport de bogue, il peut
+simplement répondre au message (cela <b>ne marquera pas</b> le bogue comme
+ayant été traité). Sa réponse ira (par défaut s'il respecte le champs
+Reply-To:) à <VAR>nnn</VAR><CODE>@bugs</CODE>, et à celui qui a
+soumis le rapport de bogue original (note: ce sont deux adresses
+distinctes). Le système de gestion des bogues recevra le message à
+<VAR>nnn</VAR><CODE>@bugs</CODE>, le transmettra au mainteneur du
+paquet, enregistrera la réponse avec le reste des autres enregistrements
+de ce rapport de bogue et le transmettra à <CODE>debian-bugs-dist</CODE>.</P>
+
+<P>Un développeur pourra explicitement envoyer un message à celui qui a soumis
 le bogue en envoyant un message à
 <var>nnn</var><CODE>-submitter@bugs</CODE>.</P>
 
 <P>Si vous souhaitez envoyer un message de réponse qui n'est pas approprié pour
 <CODE>debian-bugs-dist</CODE> vous pouvez le faire en l'envoyant à
 <var>nnn</var><CODE>-quiet@bugs</CODE> ou
-<var>nnn</var><CODE>-maintonly@bugs</CODE>, qui ne font que l'enregistrer 
-(aucun transfert) ou l'envoyer uniquement au mainteneur du paquet en question, 
-respectivement.</P>
+<VAR>nnn</VAR><CODE>-maintonly@bugs</CODE>.
+Un message envoyé à <VAR>nnn</VAR><CODE>-quiet@bugs</CODE> est
+enregistré dans le Système de Gestion des Bogues 
+mais n'est transmis à aucun individu ni aucune liste de diffusion.
+Un message envoyé à <VAR>nnn</VAR><CODE>-maintonly@bugs</CODE> 
+est enregistré dans le Système de Gestion des Bogues
+et est transmis au mainteneur du paquet en question.</P>
 
-<P>N'utilisez <em>pas</em> les fonctions `répondre à tous les destinataires' ou 
-`transférer' de votre logiciel de courrier sauf si vous avez l'intention d'éditer
-la liste des destinataires de manière substantielle. En particulier, ne transférez
-pas un message à la fois à 
-<var>nnn</var><CODE>@bugs.debian.org</CODE> et à
-<CODE>submit@bugs.debian.org</CODE>, parce que le système de gestion des bogues
-recevra alors deux copies de celui ci et chacune sera transférée séparément à
-<CODE>debian-bugs-dist</CODE>.</P>
+<P>N'utilisez <em>pas</em> les fonctions `répondre à tous les destinataires' 
+ou `transférer' de votre logiciel de courrier sauf si vous avez l'intention 
+d'éditer la liste des destinataires de manière substantielle.
+En particulier, vérifiez que vous n'envoyez pas de réponse à
+<CODE>submit@bugs.debian.org</CODE>.</P>
 
 <h2><A name="severities">Les Niveaux de Gravité</A></h2>
 
-<P>Le système de bogues enregistre un niveau de gravité avec chaque rapport de bogue. 
+<P>Le système de bogues enregistre un niveau de gravité avec chaque rapport 
+de bogue. 
 Celui ci est mis à <CODE>normal</CODE> par défaut, mais peut être écrasé soit 
 en fournissant une ligne <CODE>Severity</CODE> dans le pseudo en-tête quand le
 bogue est soumis (voir 
@@ -93,27 +98,112 @@ une faille dans la sécurité du système sur lequel le paquet est installé.
 
 <DT><CODE>grave</CODE> (grave)
 <DD>rend le paquet en question inutilisable ou presque, ou cause
-des pertes de données, ou introduit une faille de sécurité permettant l'accès aux
-comptes des utilisateurs qui se servent du paquet.
+des pertes de données, ou introduit une faille de sécurité permettant l'accès 
+aux comptes des utilisateurs qui se servent du paquet.
+
+<DT><CODE>serious</CODE> (sérieux)
+<DD>est une sévère violation de la politique Debian (c'est à dire qu'il
+viole une directive "must" ou "required"), ou, dans l'esprit du mainteneur
+du paquet, rend le paquet inadapté à la livraison.
 
 <DT><CODE>important</CODE> (important)
-<DD>N'importe quel autre bogue qui rend le paquet inadapté à la 
-livraison.
+<DD>est un bogue ayant un effet majeur sur l'utilisabilité du paquet, tout
+en ne le rendant pas complètement inutilisable par n'importe qui.
 
 <DT><CODE>normal</CODE> (normal)
-<DD>la valeur par défaut, pour les bogues normaux.
+<DD>la valeur par défaut, applicable à la pluspart des bogues.
  
+<DT><CODE>minor</CODE> (mineur)
+<DD>un problème qui n'affecte pas l'utilité du paquet, et qui est à priori
+simple à résoudre.
+
 <DT><CODE>wishlist</CODE> (liste de souhaits)
-<DD>pour n'importe quelle demande d'une fonctionnalité, et aussi pour n'importe 
-quel bogue très difficile à résoudre du fait de la conception du paquet.
+<DD>pour n'importe quelle demande d'une fonctionnalité, et aussi pour 
+n'importe quel bogue très difficile à résoudre du fait de la conception du 
+paquet.
 
 <DT><CODE>fixed</CODE> (corrigé)
-
-<DD>pour les bogues qui ont été corrigés mais ne devraient pas encore être fermés.
-Les bogues corrigés par des mises à jour de non-mainteneurs voient leur gravité mise
-à 'fixed' (corrigé).
+<DD>pour les bogues qui ont été corrigés mais ne devraient pas encore être 
+fermés. C'est une exception faite pour les bogues résolus par des
+envois de non-mainteneurs. Note: le tag "fixed" devrait être utilisé à
+la place.
 </DL>
 
+<H2><a name="tags">Les tags des rapports de bogues</a></H2>
+
+<p>Chaque bogue peut avoir zero, un ou plusieurs ensemble de certains tags. 
+Ces tags sont affichés dans la liste des bogues quand vous regardez la page
+d'un paquet, et quand vous regardez l'enregistrement complet du bogue.
+
+<p>Les tags peuvent être indiqués en fournissant une ligne <code>Tags</code> 
+dans le pseudo-entête quand le bogue est soumis (voyez les
+<a href="Reporting#pseudoheader">instructions pour signaler des bogues</a>),
+ou en utilisant la commande <code>tags</code> avec le
+<a href="#requestserv">serveur de requêtes de contrôle</a>.
+
+<p>Les tags actuels pour les bogues sont:
+
+<dl>
+
+<dt><code>patch</code> (patch)
+  <dd>Un patch ou une procédure facile à suivre pour résoudre le bogue
+  est include dans les enregistrements du bogue. S'il y a un patch
+  mais qu'il ne résoud pas le bogue correctement ou cause d'autres
+  problèmes, ce tag ne devrait pas être utilisé.
+
+<dt><code>wontfix</code> (ne va pas être résolu)
+  <dd>Ce bogue ne sera pas résolu. Peut être parce que c'est un choix
+  entre deux façons arbitraires de faire les choses et le mainteneur
+  et celui qui a soumis le bogue préfèrent des façons différentes de
+  faire les choses, peut être parce que changer le fonctionnement
+  causera d'autres problèmes, pires à d'autres, ou peut être pour
+  d'autres raisons.
+
+<dt><code>moreinfo</code> (plus d'info)
+  <dd>Ce bogue ne peut pas être résolu tant que des informations 
+  supplémentaires n'ont pas été fournies par celui qui a soumis le bogue.
+  Ce bogue sera fermé si celui qui l'a soumis ne fournit pas plus
+  d'informations pendant une période de temps raisonnable (quelques
+  mois). C'est pour les bogues du type "Ca ne marche pas". Qu'est
+  ce qui ne marche pas?
+  
+<dt><code>unreproducible</code> (non reproductible)
+  <dd>Ce bogue ne peut pas être reproduit sur le système du mainteneur.
+  De l'assistance d'un tiers est nécessaire pour diagnostiquer les
+  causes du problème.
+
+<dt><code>fixed</code> (résolu)
+  <dd>Ce bogue a été résolu ou contourné (par un envoi d'un non-mainteneur,
+  par exemple), mais il reste un problème qui doit être résolu. Ce tag
+  remplace la veille sévérité "fixed".
+
+<dt><code>security</code> (sécurité)
+  <dd>Ce bogue décrit un problème de sécurité dans un paquet (par
+  exemple, mauvaises permissions permettant l'accès à des données
+  qui ne devraient pas être accessibles; dépassement de limite de
+  tampon permettant à des gens de prendre le contrôle d'un système
+  de façons dont ils ne devraient pas; attaques par dénis de service
+  qui devraient être résolues, etc). La pluspart des bogues de sécurité
+  devraient aussi être indiquées par une sévérité critique (critical) 
+  ou grave (grave). 
+
+<dt><code>potato</code>
+  <dd>Ce bogue s'applique particulièrement à la version potato de Debian.
+
+<dt><code>woody</code>
+  <dd>Ce bogue s'applique particulièrement à la version woody (non encore
+  livrée) de woody.
+
+<dt><code>sid</code>
+  <dd>Ce bogue s'applique particulièrement à une architecture qui est
+  pour l'instant non disponible (c'est à dire dans la distribution sid).
+</dl>
+
+<p>Les trois tags qui suivent sont destinés à être utilisés principalement 
+pour les bogues critiques pour la sortie de la version, pour lesquels
+il est important de savoir quelles distributions sont affectées afin 
+d'appliquer les corrections (ou les suppressions) au bon endroit.
+  
 <h2><A name="forward">Enregistrer que vous avez traité un rapport de bogue</A></h2>
 
 <P>Quand un développeur envoie un rapport de bogue au développeur du 
@@ -193,12 +283,6 @@ de bogue dans l'adresse - et sans numéro de bogue dans l'Objet seront
 enregistrés sous `junk' et gardés pendant quelques semaines, mais 
 à part cela ignorés.</P>
 
-<H2><A name="future">Les plans pour l'avenir</A></H2>
-
-<P>Dans quelques temps le champ d'en-tête secondaire <CODE>Package:</CODE> 
-pourra devenir obligatoire - pour le moment l'omettre produit simplement 
-un message d'alerte.</P>
-
 <H2>La fonctionnalité obsolète <CODE>X-Debian-PR: quiet</CODE></H2>
 
 <P>Il était possible d'empêcher le système de gestion des bogues de
@@ -210,21 +294,7 @@ du message.</P>
 message à <CODE>quiet</CODE> ou <var>nnn</var><CODE>-quiet</CODE> (ou
 <CODE>maintonly</CODE> ou <var>nnn</var><CODE>-maintonly</CODE>).</P>
 
-<HR>
-Autres pages:
-<UL>
-<LI><A href="./">La page principale du système de gestion des bogues.</A>
-<LI><A href="Reporting">Les instructions pour rapporter des bogues.</A>
-<LI><A href="Access">Accéder aux enregistrements de gestion des bogues autrement 
-que par WWW.</A>
-<LI><A href="server-refcard">La carte de référence des serveurs de messages.</A>
-<LI><A href="db/ix/full.html">La liste complète des rapports de bogues 
-remarquables et récents.</A>
-<LI><A href="db/ix/packages.html">Les paquets ayant des rapports de bogues.</A>
-<LI><A href="db/ix/maintainers.html">Les mainteneurs de paquets ayant des rapports 
-de bogues.</A>
-<LI><A href="../">La page principale de Debian GNU/Linux.</A>
-</UL>
-
-#use 'footer.inc'
+#use "otherpages.inc"
+ 
+#use "footer.inc"
 
