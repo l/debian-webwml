@@ -1,39 +1,40 @@
 #use wml::debian::template title="Kako raditi na Debian Web stranicama"
-#use wml::debian::translation-check translation="1.2"
+#use wml::debian::translation-check translation="1.3"
 
-<p>Debian web stranice se generiraju na jedan od tri naèina: dokumentacija
-se mirrora sa 
-<a href="http://www.debian.org/~elphick/ddp/">Debian Documentation Project (DDP)</a>
-stranica, dijelovi web site-a se generiraju putem skripti (stranice bugova
-i arhiva mailing lista su dva dobra primjera), i ostatak se generira putem
-WML-a.
-
-Za one koji nisu upoznati s programima, mo¾ete proèitati stranice koje smo
-napisali da vam pomognemo zapoèeti s
+<p>Debian web stranice se generiraju na jedan od tri naèina:
 <ul>
-<li><a href="using_wml">kori¹tenjem WML-a</a>
-<li><a href="using_cvs">kori¹tenjem CVS-a</a>
+  <li>veæina se generira putem WML-a, iz `webwml' CVS stabla
+  <li>dokumentacija se generira putem DebianDoc-SGML-a, iz `debian-doc' CVS
+      stabla
+  <li>dijelovi web site-a se generiraju putem skripti, npr. stranice za
+      prijavljivanje/odjavu s mailing lista
 </ul>
 
-<h3>Dodavanje novih stranica</h3>
-Nemojte napraviti direktorij s imenom <code>install</code>. Ovo æe zbuniti
-make i stranice u tom direktoriju se neæe automatski obnavljati.
+<p>Za one koji nisu upoznati s programima, mo¾ete proèitati stranice koje
+smo napisali da vam pomognemo zapoèeti s
+<ul>
+  <li><a href="using_wml">kori¹tenjem WML-a</a>
+  <li><a href="using_cvs">kori¹tenjem CVS-a</a>
+</ul>
 
-<p>Dodavanje novih stranica je vrlo jednostavno. Sav
-posao dodavanja potrebnog zaglavlja i dna stranice obavlja WML. Sve ¹to
-trebate napraviti je ukljuèiti ovakvu liniju na vrh nove datoteke:
+<h2>Dodavanje novih stranica</h2>
+
+<p>Dodavanje novih stranica je vrlo jednostavno. Sav posao dodavanja
+potrebnog zaglavlja i dna stranice obavlja WML. Sve ¹to trebate napraviti
+je ukljuèiti ovakvu liniju na vrh nove datoteke:
+
 <pre><protect>
 #use wml::debian::template title="NASLOV STRANICE"
 </protect></pre>
-nakon kojeg je tijelo teksta. Sve stranice trebaju koristiti
-wml::debian::template datoteku predlo¹ka osim ako ne koriste neku posebnu
-stvorenu ba¹ za tu sekciju, npr. News/ ili security/ stranice.
 
-<p>Taj predlo¾ak, wml::debian::template, vam dopu¹ta da definirate odreðene
-varijable koje æe utjecati na generirane stranice. Ovo treba zaobiæi potrebu
-za kreiranjem razlièitih predlo¾aka za svaku situaciju i dozvoljava lak¹e
-implementiranje pobolj¹anja. Ovo su trenutno dostupne varijable i njihova
-svrha:
+<p>nakon kojeg je tijelo teksta. Sve stranice trebaju koristiti
+<code>wml::debian::template</code> datoteku predlo¹ka osim ako ne koriste
+neku posebnu stvorenu ba¹ za tu sekciju, npr. News/ ili security/ stranice.
+
+<p>Predlo¹ci koje imamo vam dopu¹taju da definirate odreðene varijable koje
+æe utjecati na generirane stranice. Ovo treba zaobiæi potrebu za kreiranjem
+razlièitih predlo¾aka za svaku situaciju i dozvoljava lak¹e implementiranje
+pobolj¹anja. Ovo su trenutno dostupne varijable i njihova svrha:
 <dl>
 <dt>NOHEADER="yes"
 	<dd>Mièe osnovno zaglavlje sa stranice. Posebno zaglavlje se naravno
@@ -48,7 +49,7 @@ svrha:
 </dl>
 
 <p>Primjer upotrebe ovoga je na stranicama portova koje imaju vlastita
-zaglavlja. ports/arm/index.wml koristi:
+zaglavlja. <code>ports/arm/index.wml</code> koristi:
 <pre><protect>
 #use wml::debian::template title="ARM Port" NOHEADER="yes"
 </protect></pre>
@@ -68,17 +69,21 @@ stranicu i dodatak æe se generirati za svaki jezik automatski.
 <kbd>vendors.wml</kbd> ukljuèuje <kbd>vendors.CD</kbd> koji ustvari sadr¾i
 pravu listu prodavaèa. Ova datoteka usto ukljuèuje i <kbd>distrib/vendors.CD.def</kbd>
 koja sadr¾i definicije svih fraza u <kbd>vendors.CD</kbd>.
-Prevoditelji jednostavno trebaju dodati prijevode gdje god je 'odrezak'
-(slice), npr.:
+
+<p>Prevoditelji jednostavno trebaju dodati prijevode gdje god je `odrezak'
+(slice), npr.
 <pre><protect>
-	[EN:Country:]\
-	[ES:Pa-is:]\
-	[DE:Land:]\
+	[EN:Country:]
+	[ES:Pa-is:]
+	[DE:Land:]
+	[HR:Zemlja:]
 </protect></pre>
 
-<h3>Dodavanje novog direktorija</h3>
-Nemojte kreirati direktorij s imenom <code>install</code>. To æe zbuniti
-make i stranice u tom direktoriju neæe biti automatski obnovljene.
+<h2>Dodavanje novog direktorija</h2>
+
+<p><strong>Nemojte</strong> napraviti direktorij s imenom
+<code>install</code>. To æe zbuniti make i stranice u tom direktoriju se
+neæe automatski obnavljati.
 
 <p>Ispod je primjer dodavanja novog direktorija na web site:
 <pre>
@@ -88,15 +93,12 @@ make i stranice u tom direktoriju neæe biti automatski obnovljene.
    cp ../intro/Makefile .
    cvs add Makefile
 </pre>
-Uredite Makefile datoteku. WMLBASE treba biti lokacija vrha engleskog
-direktorija relativnog ovome. CUR_DIR je lokacija trenutnog direktorija
-relativnog WMLBASE-u. Onda:
-<pre>
-   cd ..
-</pre>
-Uredite Makefile datoteku i dodajte direktorij koji ste upravo napravili
-u SUBDIR varijablu. To æe dodati direktorij meðu one koji se generiraju
-kada se pokrene make.
 
-<p>Na kraju, <code>cvs commit Makefile bla</code>
-da u glavni repository po¹aljete sve promjene upravo napravljene.
+<p>Uredite Makefile datoteku u direktoriju odmah iznad novoga, i dodajte
+direktorij koji ste upravo napravili u <code>SUBS</code> varijablu. To æe
+dodati direktorij meðu one koji se generiraju kada se pokrene make.
+
+<p>Na kraju, po¹aljite sve upravo napravljene promjene u glavni repository s
+<pre>
+  cvs commit Makefile bla
+</pre>
