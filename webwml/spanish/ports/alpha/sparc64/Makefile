@@ -7,4 +7,3 @@ CUR_DIR=ports/sparc64
 SUBS=
 
 include $(WMLBASE)/Make.lang
-
