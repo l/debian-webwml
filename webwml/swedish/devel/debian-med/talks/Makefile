@@ -14,4 +14,7 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
   $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/200210_lux_internal/*.wml)
 
 install::
-	install -m 664 -p *.mgp $(HTMLDIR)
+ifeq ($(LANGUAGE),en)
+	@echo install MGP
+	-@install -m 664 -p *.mgp $(HTMLDIR)
+endif
