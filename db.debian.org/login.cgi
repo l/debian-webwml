@@ -39,11 +39,11 @@ if ($mesg->code == LDAP_SUCCESS) {
   my $cryptid = &Util::SavePasswordToFile($username, $password, $cipher);
 
   if ($query->param('update')) {
-    my $url = "$proto://$ENV{SERVER_NAME}/$config{webupdateurl}?id=$username&authtoken=$cryptid:$hrkey&editdn=";
+    my $url = "$proto://$ENV{SERVER_NAME}/$config{webupdateurl}?id=$username&authtoken=$cryptid,$hrkey&editdn=";
     $url .= uri_escape("uid=$username,$config{basedn}", "\x00-\x40\x7f-\xff");
     print "Location: $url\n\n";
   } else {
-    print "Location: $proto://$ENV{SERVER_NAME}/$config{websearchurl}?id=$username&authtoken=$cryptid:$hrkey\n\n";
+    print "Location: $proto://$ENV{SERVER_NAME}/$config{websearchurl}?id=$username&authtoken=$cryptid,$hrkey\n\n";
   }
 
   $ldap->unbind;

@@ -120,15 +120,15 @@ sub ReadPasswordFromFile {
 }
 
 sub CheckAuthToken {
-  my ($id, $hrkey) = split(/:/, shift, 2);
+  my ($id, $hrkey) = split(/,/, shift, 2);
   return undef if (!$id || !$hrkey);
   my $key = pack("H".(length($hrkey)), $hrkey);
   my $cipher = new Crypt::Blowfish $key;
   my $r = ReadPasswordFromFile($id, $cipher);
   if ($r) {
-    UpdateAuthToken("$id:$hrkey", $r);
+    UpdateAuthToken("$id,$hrkey", $r);
   } else {    
-    ClearAuthToken("$id:$hrkey")
+    ClearAuthToken("$id,$hrkey")
   }
   return $r;
 }
