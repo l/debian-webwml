@@ -1,0 +1,514 @@
+#!/usr/bin/perl -w
+
+#   mklist - create some list documentation
+#   Copyright (c) 1998  Martin Schulze <joey@debian.org>
+#                 1998  James Treacy <treacy@debian.org>
+
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111, USA.
+
+$progname = "mklist";
+
+# ----- Begin of Customisation
+#
+# -t | --text
+$def_mlists = "mailing-lists.txt";
+#
+# -w | --web
+$def_weblists = $ENV{'HOME'} . "/lib/web/debian/mailing-lists.html";
+#
+# -s | --subscribe
+$def_subscribe = "subscribe.wml";
+#
+# -u | --unsubscribe
+$def_unsubscribe = "unsubscribe.wml";
+#
+# ----- End of Customisation
+
+@fieldlist = ('Language','Digest','Moderated','Subscription');
+@specialist = ('Section','Description','Websubscribe');
+@globlist = ('List','Introduction','Subscription','Advertising');
+
+# This refers to @grouptitle from Guy's updatemail
+@sections = ('user','devel','int','ports','bugs','other','foreign');
+
+sub usage()
+{
+    printf "Maintain mailing lists  - Copyright (c) 1998 by Joey and Jay Treacy\n";
+    printf "Usage: $progname [options]\n";
+    printf "       -f cfg\t\t\tUse a different configuration file\n";
+    printf "       -t|--text [fname]\tCreate mailing-lists.txt\n";
+    printf "       -w|--web [fname]\t\tCreate mailing-lists.html (wmt format)\n";
+    printf "       -s|--subscribe [fname]\tCreate subscribe.wml\n";
+    printf "       -u|--unsubscribe [fname]\tCreate subscribe.wml\n";
+}
+
+sub fieldname
+{
+    my $field;
+
+    foreach $field (@fieldlist,@specialist,@globlist,@sections) {
+	return $field if ($_[0] =~ /$field/i);
+    }
+}
+
+sub read_config
+{
+    my $conf = shift;
+    my $field;
+    my $mylist = "";
+
+    if (open(CONF, $conf)) {
+	%list = ();		# Reset global structure
+	while (<CONF>) {
+	    next if (/^\#/);
+	    next if (/^\s*$/);
+
+	    # select multiline fields
+	    if (/^\s+/) {
+		s/^\s+//;
+		$list{$mylist}->{$field} .= $_;
+	    } else {
+		if (/^([a-z]+)\s*:\s*(.*)$/i) {
+		    $field = &fieldname($1);
+		    if ($field eq "List") {
+			$mylist = $2;
+		    } else {
+			$list{$mylist}->{$field} = $2;
+		    }
+		}
+	    }
+	}
+	close (CONF);
+    }
+}
+
+sub print_multiline_txt
+{
+    my $space = shift;
+    my $lines = shift;
+    my @lines = @$lines;
+    my $i;
+
+    $i=1;
+    while ($i <= $#lines) {
+	if ($lines[$i] eq ".") {
+	    print OUT "\n";
+	} else {
+	    printf OUT "%s%s\n", $space, $lines[$i];
+	}
+	$i++;
+    }
+}
+
+sub print_multiline_html
+{
+    my $space = shift;
+    my $lines = shift;
+    my @lines = @$lines;
+    my $i;
+
+    $i=1;
+    while ($i <= $#lines) {
+	if ($lines[$i] eq ".") {
+	    printf OUT "%s<p>\n", $space;
+	} else {
+	    printf OUT "%s%s\n", $space, $lines[$i];
+	}
+	$i++;
+    }
+}
+
+sub write_mailing_lists_txt
+{
+    my @lines;
+    my $amount;
+    my $space;
+    my $section;
+    my $field;
+    my @lists;
+
+    if (open(OUT, ">$_[0]")) {
+#    if (open(OUT, ">-")) {
+	@lines = split(/\n/,$list{''}->{'Introduction'});
+
+	$amount = (76 - length($lines[0])) / 2;
+	$space = " " x $amount;
+	printf OUT "%s%s\n%s", $space, $lines[0], $space;
+	$space = "=" x length($lines[0]);
+	printf OUT "%s\n\n", $space;
+	&print_multiline_txt("  ",\@lines);
+
+	@lines = split(/\n/,$list{''}->{'Subscription'});
+	$space = "-" x length($lines[0]);
+	printf OUT "\n%s\n%s\n\n", $lines[0], $space;
+	&print_multiline_txt("  ",\@lines);
+
+	foreach $section (@sections) {
+	    @lists = ();
+	    foreach $l (keys(%list)) {
+		next if (!$l || ($list{$l}->{'Section'} ne $section));
+		push(@lists, $l);
+	    }
+
+	    if ($#lists > -1) {
+		if (exists $list{''}->{$section}) {
+		    @lines = split(/\n/,$list{''}->{$section});
+		    printf OUT "\n%s\n\n", $lines[0];
+		    &print_multiline_txt("  ",\@lines);
+		}
+
+		foreach $l (@lists) {
+		    printf OUT "\n  %s\n\n", $l;
+		    if (exists $list{$l}->{'Description'}) {
+			@lines = split(/\n/,$list{$l}->{'Description'});
+			printf OUT "      Description : %s\n", $lines[0];
+			&print_multiline_txt("                    ",\@lines);
+		    }
+
+		    foreach $field (@fieldlist) {
+			printf OUT "      %-12s: %s\n", $field, $list{$l}->{$field}
+			if (exists $list{$l}->{$field});
+		    }
+		}
+	    }
+	}
+
+	@lines = split(/\n/,$list{''}->{'Advertising'});
+	$space = "-" x length($lines[0]);
+	printf OUT "\n\n%s\n%s\n\n", $lines[0], $space;
+	&print_multiline_txt("  ",\@lines);
+    }
+
+}
+
+sub write_mailing_lists_html
+{
+    my @lines;
+    my $amount;
+    my $space;
+    my $section;
+    my $field;
+    my @lists;
+
+    if (open(OUT, ">$_[0]")) {
+#    if (open(OUT, ">-")) {
+	print OUT <<"EOF";
+wm::destination=~/public_html/Linux/Debian/master/mailing-lists.html
+wm::template=debian.wmt
+meta::description=Mailing lists served by Debian GNU/Linux, the universal operating system.
+meta::keywords=Debian, Linux, GNU, Mailing list
+link::US=http://www.debian.org/~joey/
+link::Europe=http://www.infodrom.north.de/~joey/Linux/Debian/master/
+
+head::title=Mailing lists served by the Debian Project
+body::title=Mailing lists served by the Debian Project
+body::links=
+<font face="Arial,Helvetica"><b><a href="http://www.infodrom.north.de/Debian/user.html">#Debian</a></b></font><p>
+<font face="Arial,Helvetica"><b><a href="pr/">Public Relations</a></b></font><p>
+<font face="Arial,Helvetica"><b><a href="goals/">Our Goals</a></b></font><p>
+<font face="Arial,Helvetica"><b><a href="links.html">Links</a></b></font><br>
+<font face="Arial,Helvetica"><b><a href="machines.html">Machines</a></b></font><br>
+<p><br><p>
+<b>Sections</b><br>
+EOF
+        foreach $section (@sections) {
+	    printf OUT "&nbsp;<a href=\"#%s\">%s</a><br>\n", $section, $section;
+	}
+
+	print OUT "body::text=\n";
+	@lines = split(/\n/,$list{''}->{'Introduction'});
+
+	printf OUT "<h1>%s</h1>\n", $lines[0];
+	&print_multiline_html("  ",\@lines);
+
+	@lines = split(/\n/,$list{''}->{'Subscription'});
+	printf OUT "\n<h2>%s</h2>\n\n", $lines[0];
+	&print_multiline_html("  ",\@lines);
+
+	foreach $section (@sections) {
+	    @lists = ();
+	    foreach $l (keys(%list)) {
+		next if (!$l || ($list{$l}->{'Section'} ne $section));
+		next if (! exists $list{$l}->{'Description'});
+		push(@lists, $l);
+	    }
+
+	    if ($#lists > -1) {
+		if (exists $list{''}->{$section}) {
+		    @lines = split(/\n/,$list{''}->{$section});
+		    printf OUT "\n<hr><h3><a name=\"%s\">%s</a></h3>\n\n", $section, $lines[0];
+		    &print_multiline_html("  ",\@lines);
+		}
+
+		foreach $l (@lists) {
+		    printf OUT "\n<p><b>%s</b><p>\n\n", $l;
+		    @lines = split(/\n/,$list{$l}->{'Description'});
+		    printf OUT "      Description :<br>\n<blockquote>\n  %s\n", $lines[0];
+		    &print_multiline_html("  ",\@lines);
+		    print  OUT "</blockquote>\n";
+
+		    foreach $field (@fieldlist) {
+			printf OUT "      %-12s: %s<br>\n", $field, $list{$l}->{$field}
+			if (exists $list{$l}->{$field});
+		    }
+		}
+	    }
+	}
+
+	@lines = split(/\n/,$list{''}->{'Advertising'});
+	printf OUT "\n\n<hr><h2>%s</h2>\n\n", $lines[0];
+	&print_multiline_html("  ",\@lines);
+
+	print OUT "\nbody::address=<address>&#169; automatically generated</address>\n";
+    }
+}
+
+sub write_mailing_lists_subscribe
+{
+    my @lines;
+    my $amount;
+    my $space;
+    my $section;
+    my $field;
+    my @lists;
+    my $slist;
+
+    if (open(OUT, ">$_[0]")) {
+#    if (open(OUT, ">-")) {
+	print OUT <<"EOF";
+#!wml -o ../../../debian.org/MailingLists/%BASE.html.en --epilog=weblint
+#use wml::debian::template title="Debian GNU/Linux &mdash; Mailing List Subscription"
+
+<!-- This page is generated automatically by a script -->
+
+EOF
+        @lines = split(/\n/,$list{''}->{'Introduction'});
+
+	printf OUT "<h1>%s</h1>\n", $lines[0];
+	&print_multiline_html("  ",\@lines);
+
+	$list{''}->{'Subscription'} =~ s/>/&gt;/g;
+	$list{''}->{'Subscription'} =~ s/</&lt;/g;
+	$list{''}->{'Subscription'} =~ s,(http://[\w.\-~/]*),<a href="$1">$1</a>,g;
+	$list{''}->{'Subscription'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1/</a>,g;
+	$list{''}->{'Subscription'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1/</a>,g;
+	@lines = split(/\n/,$list{''}->{'Subscription'});
+	printf OUT "\n<h2>%s</h2>\n\n", $lines[0];
+	&print_multiline_html("  ",\@lines);
+
+	print OUT "\n<HR>\n<FORM METHOD=POST ACTION=\"http://cgi.debian.org/cgi-bin/subscribe.pl\">\n";
+	print OUT "Please select which lists you want to subscribe to:\n\n";
+
+	foreach $section (@sections) {
+	    @lists = ();
+	    foreach $l (keys(%list)) {
+		next if (!$l || ($list{$l}->{'Section'} ne $section));
+		next if (! exists $list{$l}->{'Description'});
+		# next if (exists $list{$l}->{'Websubscribe'} && $list{$l}->{'Websubscribe'} eq "no");
+		push(@lists, $l);
+	    }
+
+	    if ($#lists > -1) {
+		if (exists $list{''}->{$section}) {
+		    @lines = split(/\n/,$list{''}->{$section});
+		    printf OUT "\n<h3><a name=\"%s\">%s</a></h3>\n\n", $section, $lines[0];
+		    &print_multiline_html("  ",\@lines);
+		}
+
+		print OUT "<DL>\n";
+
+		foreach $l (@lists) {
+		    $slist = $l; $slist =~ s/@.*//;
+		    if (exists $list{$l}->{'Websubscribe'} && $list{$l}->{'Websubscribe'} eq "no") {
+			printf OUT "<DT>\n";
+		    }
+		    else {
+			printf OUT "<DT><INPUT TYPE=\"checkbox\" NAME=\"subscribe\" VALUE=\"%s\">\n", $slist;
+		    }
+		    printf OUT "    <STRONG>%s</STRONG>", $slist;
+
+		    $list{$l}->{'Description'} =~ s/>/&gt;/g;
+		    $list{$l}->{'Description'} =~ s/</&lt;/g;
+		    $list{$l}->{'Description'} =~ s,(http://[\w.\-~/]*),<a href="$1">$1</a>,g;
+		    $list{$l}->{'Description'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1/</a>,g;
+		    $list{$l}->{'Description'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1/</a>,g;
+		    @lines = split(/\n/,$list{$l}->{'Description'});
+		    printf OUT "<DD>%s\n", $lines[0];
+		    &print_multiline_html("    ",\@lines);
+		    printf OUT "<BR>Moderated: <em>%s</em>&#160;&#160;&#160;&#160;\n", $list{$l}->{'Moderated'};
+		    printf OUT "    Subscription: <em>%s</em>\n", $list{$l}->{'Subscription'};
+
+		    if (exists $list{$l}->{'Digest'}) {
+			$slist = $list{$l}->{'Digest'}; $slist =~ s/@.*//;
+			printf OUT "    <BR><INPUT TYPE=\"checkbox\" NAME=\"subscribe\" VALUE=\"%s\">\n", $slist;
+			printf OUT "    <STRONG>%s</STRONG> is a read-only, digestified version.\n", $slist;
+		    }
+		    print OUT "\n";
+		}
+		print OUT "</DL>\n";
+	    }
+	}
+	print OUT "<HR><STRONG>Your E-Mail address:</STRONG>\n";
+	print OUT "<BR><INPUT TYPE=\"text\" NAME=\"user_email\" SIZE=\"60\"><BR>\n";
+	print OUT "<INPUT TYPE=\"SUBMIT\"> <INPUT TYPE=\"RESET\">\n";
+	print OUT "</FORM>\n\n";
+
+	@lines = split(/\n/,$list{''}->{'Advertising'});
+	printf OUT "\n\n<hr><h2>%s</h2>\n\n", $lines[0];
+	&print_multiline_html("  ",\@lines);
+
+	print OUT "\n<HR>\n<P>Back to the <A HREF=\"../\">Debian GNU/Linux homepage</A>.\n\n";
+	print OUT "<:= languages (\"\$(HOME)\", \".\", \"\$(WML_SRC_BASENAME)\", \"\$(CUR_LANG)\") :>\n";
+    }
+}
+
+sub write_mailing_lists_unsubscribe
+{
+    my @lines;
+    my $amount;
+    my $space;
+    my $section;
+    my $field;
+    my @lists;
+    my $slist;
+
+    if (open(OUT, ">$_[0]")) {
+	print OUT <<"EOF";
+#!wml -o ../../../debian.org/MailingLists/%BASE.html.en --epilog=weblint
+#use wml::debian::template title="Debian GNU/Linux &mdash; Mailing List Unsubscription"
+
+<!-- This page is generated automatically by a script -->
+
+EOF
+	@lines = split(/\n/,$list{''}->{'Subscription'});
+	printf OUT "\n<h2>%s</h2>\n\n", $lines[0];
+	&print_multiline_html("  ",\@lines);
+
+	print OUT "\n<HR>\n<FORM METHOD=POST ACTION=\"http://cgi.debian.org/cgi-bin/subscribe.pl\">\n";
+	print OUT "Please select which lists you want to unsubscribe to:\n\n";
+
+	foreach $section (@sections) {
+	    @lists = ();
+	    foreach $l (keys(%list)) {
+		next if (!$l || ($list{$l}->{'Section'} ne $section));
+		next if (! exists $list{$l}->{'Description'});
+		next if (exists $list{$l}->{'Websubscribe'} && $list{$l}->{'Websubscribe'} eq "no");
+		push(@lists, $l);
+	    }
+
+	    if ($#lists > -1) {
+		if (exists $list{''}->{$section}) {
+		    @lines = split(/\n/,$list{''}->{$section});
+		    printf OUT "\n<h3><a name=\"%s\">%s</a></h3>\n\n", $section, $lines[0];
+		    # &print_multiline_html("  ",\@lines);
+		}
+
+                print OUT "<table><tr>\n";
+                $count = 1;
+		foreach $l (@lists) {
+		    $slist = $l; $slist =~ s/@.*//;
+		    printf OUT "\t<td><input type=\"checkbox\" name=\"unsubscribe\" ".
+                               "value=\"%s\">\n\t<strong>%s</strong><br>\n", $slist, $slist;
+		    if (! ($count++ % 3) ) {
+			print OUT "\n<tr>\n";
+		    }
+		    if (exists $list{$l}->{'Digest'}) {
+			$slist = $list{$l}->{'Digest'}; $slist =~ s/@.*//;
+			printf OUT "\t<td><input type=\"checkbox\" name=\"unsubscribe\" ".
+			           "value=\"%s\">\n\t<strong>%s</strong><br>\n", $slist, $slist;
+			if (! ($count++ % 3) ) {
+			    print OUT "\n<tr>\n";
+			}
+		    }
+		    print OUT "\n";
+		}
+                print OUT "</table>\n";
+	    }
+	}
+	print OUT "<HR><STRONG>Your E-Mail address:</STRONG>\n";
+	print OUT "<BR><INPUT TYPE=\"text\" NAME=\"user_email\" SIZE=\"60\"><BR>\n";
+	print OUT "<INPUT TYPE=\"SUBMIT\"> <INPUT TYPE=\"RESET\">\n";
+	print OUT "</FORM>\n\n";
+
+	print OUT "\n<HR>\n<P>Back to the <A HREF=\"../\">Debian GNU/Linux homepage</A>.\n\n";
+	print OUT "<:= languages (\"\$(HOME)\", \".\", \"\$(WML_SRC_BASENAME)\", \"\$(CUR_LANG)\") :>\n";
+    }
+}
+
+# First check our arguments
+#
+if ($#ARGV == -1) {
+    &usage();
+    exit;
+}
+$opt_conf = "lists.cfg";
+@opt_files = ();
+$opt_mlists = "";
+$opt_weblists = "";
+$opt_subscribe = "";
+$i = 0;
+while ($i <= $#ARGV) {
+    if ($ARGV[$i] eq "-h" || $ARGV[$i] eq "--help") {
+        &usage();
+        exit;
+    } elsif ($ARGV[$i] eq "-f") {
+	if ($i+1 <= $#ARGV) {
+	    $i++;
+	    $opt_conf = $ARGV[$i];
+	}
+    } elsif ($ARGV[$i] eq "-t" || $ARGV[$i] eq "--text") {
+	if ($i+1 <= $#ARGV && $ARGV[$i+1] !~ /^-/) {
+	    $i++;
+	    $opt_mlists = $ARGV[$i];
+	} else {
+	    $opt_mlists = $def_mlists;
+	}
+    } elsif ($ARGV[$i] eq "-s" || $ARGV[$i] eq "--subscribe") {
+	if ($i+1 <= $#ARGV && $ARGV[$i+1] !~ /^-/) {
+	    $i++;
+	    $opt_subscribe = $ARGV[$i];
+	} else {
+	    $opt_subscribe = $def_subscribe;
+	}
+    } elsif ($ARGV[$i] eq "-u" || $ARGV[$i] eq "--unsubscribe") {
+	if ($i+1 <= $#ARGV && $ARGV[$i+1] !~ /^-/) {
+	    $i++;
+	    $opt_unsubscribe = $ARGV[$i];
+	} else {
+	    $opt_unsubscribe = $def_unsubscribe;
+	}
+    } elsif ($ARGV[$i] eq "-w" || $ARGV[$i] eq "--web") {
+	if ($i+1 <= $#ARGV && $ARGV[$i+1] !~ /^-/) {
+	    $i++;
+	    $opt_weblists = $ARGV[$i];
+	} else {
+	    $opt_weblists = $def_weblists;
+	}
+    } elsif ($ARGV[$i] eq "-m") {
+	if ($i+1 <= $#ARGV && $ARGV[$i+1] !~ /^-/) {
+	    $i++;
+	    $opt_mlists = $ARGV[$i];
+	}
+    } else {
+	push(@opt_files, $ARGV[$i]);
+    }
+    $i++;
+}
+
+&read_config($opt_conf) if ( -r $opt_conf );
+&write_mailing_lists_txt($opt_mlists) if ($opt_mlists);
+&write_mailing_lists_html($opt_weblists) if ($opt_weblists);
+&write_mailing_lists_subscribe($opt_subscribe) if ($opt_subscribe);
+&write_mailing_lists_unsubscribe($opt_unsubscribe) if ($opt_unsubscribe);
