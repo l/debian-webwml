@@ -1,14 +1,15 @@
 #use wml::debian::template title="Oversættelse af Debians websider" BARETITLE=true
-#use wml::debian::translation-check translation="1.23"
+#use wml::debian::translation-check translation="1.26"
 
-<P>For at gøre oversætternes arbejde så let som muligt, genereres siderne lidt
+<p>For at gøre oversætternes arbejde så let som muligt, genereres siderne lidt
 anderledes end mange af dem du måske er vant til. Websiderne genereres faktisk
 ved hjælp af kildekode indeholdende 
 <a href="http://www.engelschall.com/sw/wml/"><tt>wml</tt></a>-kommandoer.
-Der er separate directories til hvert sprog.
+Der er separate directories til hvert sprog.</p>
 
 <p>Hvis du planlægger at begynde på en helt ny oversættelse af Debians websted,
-så se <a href="#completenew">afsnittet om at starte på en ny oversættelse</a>.
+så se <a href="#completenew">afsnittet om at starte på en ny 
+oversættelse</a>.</p>
 
 <h2>Oversættelse af individuelle sider</h2>
 
@@ -16,7 +17,7 @@ så se <a href="#completenew">afsnittet om at starte på en ny oversættelse</a>.
 fælles elementer opbevares særskilt. Hvis du vil hjælpe til med en bestemt 
 oversættelse, så <a href="using_cvs">anvend CVS</a> til at overføres den 
 aktuelle kildekode.  Du skal overføres mindst to directories, <tt>english/</tt> 
-og <tt>&lt;sprog&gt;/</tt>.
+og <tt>&lt;sprog&gt;/</tt>.</p>
 
 <p>For at oversætte en enkelt side fra engelsk til dit sprog, skal du kopiere
 den originale .wml-fil fra <tt>english/foo/bar</tt> til 
@@ -28,104 +29,114 @@ automatisk at kopiere og tilføje den nødvendige linie.
 Når det er gjort, oversættes hele siden og sendes til 
 <a href="translation_coordinators">en eller anden</a> med skriveadgang til 
 repository'et.  Du skulle kunne teste siden ved at udføre kommadoen
-<tt>make file.&lt;lang&gt;.html</tt>.
+<tt>make file.&lt;lang&gt;.html</tt>.</p>
 
 <h2><a name="completenew">Begynde på en ny oversættelse</a></h2>
 
 <p>Hvis du vil begynde på en oversættelse af Debians websider til et nyt sprog,
 send en e-mail (på engelsk) til os på
-<a href="mailto:webmaster@debian.org">webmaster@debian.org</a>.
+<a href="mailto:webmaster@debian.org">webmaster@debian.org</a>.</p>
 
-<p>For at begynde på en ny oversættelse, skal en eller anden redigere i 
-skabeloner (templates) og datafiler, og tilføje oversættelses-"slices" i dit 
-sprog. Siden om <a href="using_wml">brug af wml</a> indeholder oplysninger om 
-"slices", som du vil have nytte af ved oversættelse af skabelonerne.
-Den bedste måde at finde alle filer som anvender "slices", er at køre
-<protect><code>grep '\[EN:' `find -type f`|cut -d: -f1|uniq</code></protect> i
-kataloget english.
+<p>Først og fremmest skal du sikre dig at du har foretaget en korrekte 
+"checkout" af vores kildekode-træ, som beskrevet <a href="using_cvs">på vores 
+side med introduktion til CVS</a>.</p>
 
-<p>Det næste du skal gøre er at oprette et nyt katalog til oversættelsen, og
-kopiere <tt>Make*</tt>- og <tt>.wmlrc</tt>-filerne fra english/-kataloget til
-det nye oversættelseskatalog.
+<p>Det første der skal gøres for at begynde på en ny oversættelse, 
+er at tilføje dit sprogs "<em>slices</em>" til vores basale WML-mærker (tags).
+Siden om <a href="using_wml">brug af wml</a> indeholder flere oplysninger om 
+"slices". De første "slices" som du skal oversætte er dem der viser sig på alle
+websider, så som nøgleord på sidehoveder, ALT-mærker til billeder, og 
+sidefoden. Den sikreste måde at begynde at oversætte på, er i filen
+<code>common_translation.wml</code>.</p>
+
+<p>Du skal også <a href="navbar_images">oversætte teksten til billeder</a> i 
+den røde navigationsbjælke.</p>
+ 
+<p>Når skabelonsskelettet er færdigt kan du begynde at oversætte forsiden.
+Du skal bruge et katalog til din oversættelse, på samme niveau som english/ og
+de andre sprog. Kopiér filerne <tt>Make*</tt> og <tt>.wmlrc</tt> fra kataloget
+english/ til det nye oversættelseskatalog.</p>
 
 <p>Make-filerne er designet således at næsten intet skal ændres når de kopieres 
-til et nyt sprogkatalog som forberedelse til en ny oversættelse.
+til et nyt sprogkatalog som forberedelse til en ny oversættelse.</p>
 
-<p>Følgende ændringer er de eneste, der forventes:
+<p>Følgende ændringer er de eneste, der forventes:</p>
 
 <ol>
-  <li>Variablen LANGUAGE skal ændres i webwml/&lt;sprog&gt;/Make.lang-filen.
+  <li>Variablen LANGUAGE skal ændres i webwml/&lt;sprog&gt;/Make.lang-filen.</li>
 
   <li>Variablerne CUR_LANG, CUR_ISO_LANG og CHARSET skal ændres i 
       webwml/&lt;sprog&gt;/.wmlrc-filen. Tilføj CUR_LOCALE til filen, hvis du 
-      har brug for den ved sortering.
+      har brug for den ved sortering.</li>
 
   <li>Nogle sprog kan kræve ekstra behandling for at håndtere tegnsættet. Dette
       kan gøres ved hjælp af wml-parametrene --prolog og --epilog. Brug
-      WMLPROLOG- og WMLEPILOG-variablerne i Make.lang for at gøre dette.
+      WMLPROLOG- og WMLEPILOG-variablerne i Make.lang for at gøre dette.</li>
 
   <li>Variablen LANGUAGES skal ændres i webwml/Makefile-filen således at dit 
       sprog vil blive oversat sammen med de andre på www.debian.org. Vi 
       foretrækker at du overlader denne specifikke ændring til webmaster, da 
       du måske ikke er opmærksom på at din oversættelse ikke vil fungere når
       den overføres fra CVS igen, hvilket kan forhindre opbygningen af resten
-      af webstedet.
+      af webstedet.</li>
 </ol>
 
 <p>Kommentarer i filerne vil angive om der er ting som ikke skal oversættes; 
-respektér dem.
+respektér dem.</p>
 
 <p>Bemærk: hvis du opdager at det er nødvendigt at foretage andre ændringer, 
 så send en e-mail på engelsk til debian-www, hvor du forklarer hvad du har 
-ændret og hvorfor, således at problemet kan blive afhjulpet.
+ændret og hvorfor, således at problemet kan blive afhjulpet.</p>
 
 <p>Du kan ignorere underkataologer anført i SUBS-variabelen i en Makefile, 
 selvom de ikke eksisterer i oversættelseskataloget. Når du oversætter et
 underkatalog, så forvis dig om at det optræder i SUBS-variablen i Makefilen
-i det overordnede katalog, ellers vil det ikke blive opbygget.
+i det overordnede katalog, ellers vil det ikke blive opbygget.</p>
 
-<p>Du kan nu begynde at oversætte *.wml-filer. Kopiér hver enkelt fil fra 
-../english/, oversæt dem, test dem med <tt>make file.&lt;sprog&gt;.html</tt> 
-(og <tt>weblint file.wml</tt>), og når du er færdig kan du commit'e dem
-<a href="using_cvs">til CVS</a>.  Sørg for at din oversættelse kan behandles,
-hvis den ikke kan det, kan den måske risikere at stoppe opbygningen af hele 
-webstedet.
+<p>Du kan nu begynde at oversætte *.wml-filer. For en liste over filer som 
+først bør oversættesm, se <a href="translation_hints">siden med tips</a>.</p>
+
+<p>Kopiér hver enkelt fil fra ../english/, oversæt den, test den med 
+<tt>make file.&lt;sprog&gt;.html</tt> (og <tt>weblint file.wml</tt>), og når du 
+er færdig, "commit" den <a href="using_cvs">til CVS</a>.  Sørg for at din 
+oversættelse kan behandles, hvis den ikke kan det kan den måske risikere at 
+stoppe opbygningen af hele webstedet.</p>
 
 <p>Når du kopierer filer, skal du ikke kopiere CVS-kataloger eller filene i 
 dem fra kataloget english/ ind i dit eget katalog.  Hvis du ved en fejl gør 
 det, og senere commit'er oversættelser, vil CVS opdatere de engelske filer med 
-dine oversættelser, hvilket vil forvirre/irritere mange mennesker.
+dine oversættelser, hvilket vil forvirre/irritere mange mennesker.</p>
 
 <p>Da vi bruger <a href="$(HOME)/intro/cn">indholdsforhandling</a> ("content 
 negotiation") vil HTML-filer ikke komme til at hedde <tt>file.html</tt>, men 
 <tt>file.&lt;sprog&gt;.html</tt>, hvor <tt>&lt;sprog&gt;</tt> er sprogets 
 kode på to bogstaver, jævnfør ISO 639 (for eksempel <tt>da</tt>
-for dansk).
+for dansk).</p>
 
 <p>Bemærk: når en side oversættes første gang, vil de andre sprog ikke oprette
-links til din side før de bliver genereret igen.
+links til din side før de bliver genereret igen.</p>
 
 <h3>Resten af historien</h3>
 
-<p>Beskrivelsen ovenfor er sikkert ikke nok til at du kan komme i gang. 
-Nedenfor er der et antal links som vil forklare ovenstående trin mere 
-detaljeret, og give flere nyttige oplysninger.
+<p>Beskrivelsen ovenfor vil sikkert være nok til at du kan komme i gang. 
+Bagefter bør du læse følgende dokumenter som giver mere detaljerede 
+oplysninger flere nyttige oplysninger.</p>
 
 <ul>
 <li>Et antal <a href="examples">eksempler</a> stilles til rådighed for at give
-    dig et bedre indtryk af hvordan man kommer i gang.
+    dig et bedre indtryk af hvordan man kommer i gang.</li>
 <li>Et antal ofte stillede spørgsmål besvares og der gives nyttige tips på 
-    siden med <a href="translation_hints">tips til oversættelser</a>.
+    siden med <a href="translation_hints">tips til oversættelser</a>.</li>
 <li>For at give dine sider et professionelt udseende, skal du
-    <a href="navbar_images">oversætte billederne i navigationsbjælken</a>.
+    <a href="navbar_images">oversætte billederne i navigationsbjælken</a>.</li>
 <li>De fleste oversættere bruger programmet <a href="uptodate">check_trans</a>
-    som en hjælp til at holde oversættelser ajour.
+    som en hjælp til at holde oversættelser ajour.</li>
 <li>Se <a href="stats/">statistikssiden</a> for en sammenligning af hvordan din 
     oversættelse klarer sig i forhold til de andre, målt på antallet af 
-    oversatte filer.
+    oversatte filer.</li>
 </ul>
 
 <P>Vi håber at du synes, at vi har gjort arbejdet med at oversætte så let som 
 muligt. Som det allerede er blevet nævnt, hvis du har nogen spørgsmål kan du
 stille dem på postlisten 
-<a href="mailto:debian-www@lists.debian.org">debian-www</a>.
+<a href="mailto:debian-www@lists.debian.org">debian-www</a>.</p>
