@@ -1,5 +1,5 @@
 #use wml::debian::template title="Sätta upp en ftp-spegel"
-#use wml::debian::translation-check translation="1.13"
+#use wml::debian::translation-check translation="1.15"
 
 <p>Spegling görs på samma sätt på både officiella och inofficiella servrar
 (<a href="types">ytterligare information om speglingstyper</a>).
@@ -35,52 +35,24 @@ Platser i den <a href="mirrors_full">kompletta spegellistan</a> märkta
 <h3>Rsync med autentisering, från en "push"-spegling</h3>
 
 <p>
-"Push"-spegling är en variant på spegling med hjälp av rsync som vi har
-utvecklat för att minimera den tid det tar för ändringar att nå
-speglingarna.
-"Push"-spegling använder en ssh-utlösare för att tala om för klientspegeln
-när den ska uppdatera sig.
+"Push"-spegling är en form av spegling med rsync vi har utvecklat
+som minimerar tiden det tar för ändringar i huvudarkivet att nå speglingarna.
+Den servande spegeln använder en utlösarmekanism för att informera
+klientspeglingen om att den måste uppdateras.
+
+<p>
 Denna metod är relativt säker eftersom ssh konfigureras för att köra ett
 enda kommando.
-Dessutom är speglingen fortfarande "pull", så det är inte möjligt att
-förstöra innehållet i arkivet via en förfalskad "push"-spegel.
-
-<p>Vissa spegeladministratörer har uppvisat viss motvillighet mot att
+Dessutom är speglingen fortfarande "pull", så det är <strong>inte</strong>
+möjligt att förstöra innehållet i arkivet via en förfalskad "push"-spegel.
+Vissa spegeladministratörer har uppvisat viss motvillighet mot att
 använda denna typ av spegling på grund av oro för att metoden öppnar deras
-maskin för invasion, något som inte är sant.
-För en mer utförlig beskrivning av hur det fungerar, och varför det är
-säkert, se <a href="explain">den här sidan</a>.
+maskin för intrång, något som <strong>inte</strong> är sant.
 
-<p>"Push"-spegling tar lite mer arbete i anspråk att sätta upp, eftersom de
-som är ansvariga för upp- och nedströmsspeglingarna måste utbyta
-information.
-Fördelen är att uppströmsspegeln är den som påbörjar speglingsprocessen
-direkt efter att dess eget arkiv har uppdateras, vilket gör att ändringar i
-arkivet propageras extremt snabbt.
-Se <a href="push_server">förklaringssidan</a> för detaljerad information.
-
-<p>Det är bäst att sätta upp detta med ett konto för en vanlig användare,
-inte root.
-Innehållet i den publika ssh-nyckeln som du får från spegeln uppströms ska
-placeras i <kbd>~&lt;användare&gt;/.ssh/authorized_keys</kbd>.
-
-<p>Filerna <a href="ftpsync">ftpsync</a> och
-<a href="ftpsync.conf">ftpsync.conf</a> kommer att användas.
-Redigera ftpsync.conf och följ anvisningarna i den tillsammans med den
-information som du får från spegeln uppströms.
-
-<p>Om din plats blir en primär "push"-spegel behöver du
-<a href="identity.pub.master.ftp">den öppna ssh-nyckeln för
-archvsync@ftp-master.debian.org</a>.
-
-<p>För att "push"-spegla non-US-arkivet behöver du filerna
-<a href="ftpsync-non-US">ftpsync-non-US</a> samt
-<a href="ftpsync-non-US.conf">ftpsync-non-US.conf</a>.
-Filerna har olika namn så att du kan använda samma konto för att spegla
-båda arkiven.
-Om din plats blir en primär "push"-spegel för non-US behöver du
-<a href="identity.pub.non-US.ftp">öppna ssh-nyckeln för
-archvsync@non-us.debian.org</a>.
+<p>
+För en mer utförlig beskrivning av hur det fungerar, varför det är
+säkert, och hur man sätter upp en "push"-spegling, se
+<a href="push_mirroring">den kompletta förklaringen</a>.
 
 <h3>Anonym ftp med "mirror"</h3>
 
