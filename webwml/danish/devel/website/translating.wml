@@ -1,5 +1,5 @@
 #use wml::debian::template title="Oversættelse af Debians websider" BARETITLE=true
-#use wml::debian::translation-check translation="1.36"
+#use wml::debian::translation-check translation="1.38"
 
 <p>For at gøre oversætternes arbejde så let som muligt, genereres siderne lidt
 anderledes end mange af dem du måske er vant til. Websiderne genereres faktisk
@@ -30,10 +30,50 @@ oversat, så vil <a href="uptodate">opdateringer være nemmere</a>).  Linien ser
 således ud: 
 <kbd>#use wml::debian::translation-check translation="<var>x.y</var>"</kbd></p>
 
-<p>Alt dette klares nemt ved at bruge bruge scriptet <tt>copypage.pl</tt> fra 
-webwml-rodmappen.  Scriptet kopierer siden til dens rette placering, 
-opretter mapper og makefiler om nødvendigt, og tilføjer automatisk den 
-påkrævede linie til headeren.</p>
+<p>Nogle oversætterhold anvender også denne linie til at angive den officielle
+oversætter af hver side.  På den måde vil man automatisk modtage e-mails, når 
+den engelske udgave af en side man vedligeholder er blevet opdateret og hvor
+oversættelsen nu skal opdateres.  Til det formål tilføjes blot oversætterens 
+navn som vedligeholder, sidst på <code>#use</code>-linien, så den kommer til at
+ligne denne:
+<kbd>#use wml::debian::translation-check translation="<var>x.y</var>" maintainer="<var>dit navn</var>"</kbd>
+
+<p>Man kan også fortælle robotten, hvem man er, hvor ofte man ønsker at modtage
+automatiske e-mails og deres indhold.  Til det formål kan du (eller din 
+koordinator) redigere filen 
+webwml/<var>language</var>/international/<var>sprog</var>/translator.db.pl
+i CVS.  Syntaksen skulle være til at forstå og man kan det franske 
+oversætterholds fil som udgangspunkt, hvis den ikke findes i ens eget sprog 
+endnu.  Robotten kan sende flere forskellige former for oplysninger og for hver
+af dem, kan man angive hvor ofte det skal sendes.  De forskellige oplysninger 
+er:
+<ul>
+ <li><b>summary</b>: et resume af hvilke dokumenter som er blevet forældede</li>
+ <li><b>logs</b>: en "cvs log" mellem den oversatte og aktuelle versioner</li>
+ <li><b>diff</b>: "cvs diff"</li>
+ <li><b>tdiff</b>: skriptet vil prøve at finde den oversatte tekst, som svarer til den ændrede engelske tekst</li>
+ <li><b>file</b>: tilføj den akulle version af filen der skal oversættes</li>
+</ul>
+
+<p>Dernæst, for hver af dem, kan værdierne være: 0 (nyere), 1 (månedlig), 2 
+(ugentlig) or 3 (daglig).</p>
+
+<p>Et eksempel:</p>
+<pre>
+                'Martin Quinson' => {
+                        email       => 'martin.quinson@tuxfamily.org',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 0,
+                        file        => 0
+                },
+</pre>
+
+<p>Header'en på websiderne kan nemt fremstilles ved hjælp af skriptet 
+<tt>copypage.pl</tt> i webwmls root-mappe.  Skriptet kopierer siden til dens
+rette placering, opretter mapper og makefiler om nødvendigt, samt tilføjer
+automatisk den nødvendige header.</p>
 
 <p>Når du har kørt for eksempel <kbd>./copypage.pl <var>fil</var>.wml</kbd>,
 oversættes den originale tekst i filen.  Kommentarer i filen angiver hvorvidt
