@@ -4,7 +4,7 @@
 # Copyright 2000 Martin Quinson <mquinson@ens-lyon.fr>
 
 # Little utility to keep track of translations in the debian CVS repo.
-# Invoke as check_trans.pl [-v] [-d] [-l] [-q] [-s subtree] [language] 
+# Invoke as check_trans.pl [-v] [-d] [-l] [-q] [-M] [-s subtree] [language]
 # from the webwml directory, eg:
 # $ check_trans.pl -v italian
 # You may also check only some subtrees as in:
@@ -12,22 +12,23 @@
 
 # Option:
 # 	-v	enable verbose mode
-#       -Q      enable quiet mode
+#	-Q	enable quiet mode
 #	-d	output diff 
 #	-l	output log messages
 #	-q	don't whine about missing files
-#       -p      include only files matching <value>
-#       -s      check only subtree <value>
+#	-p	include only files matching <value>
+#	-s	check only subtree <value>
+#	-M	display differences for all 'Makefile's
 
 # Options usefull when sending mails:
-#       -g      debuG
-#       -m      makes mails to translation maintainers
-#               PLEASE READ CARFULLY THE TEXT BELOW ABOUT MAKING MAILS !!
-#               (if -m is given, it must be followed by the default recipient)
-#               (it should be the list used for organisation)
-#               (I sent it to debian-l10n-french@lists.debian.org)
-#       -n      send mails of priority upper or equal to <value> 
-#               (ie, <value> must be 1 (monthly), 2 (weekly) or 3 (daily)
+#	-g	debuG
+#	-m	makes mails to translation maintainers
+#		PLEASE READ CARFULLY THE TEXT BELOW ABOUT MAKING MAILS !!
+#		(if -m is given, it must be followed by the default recipient)
+#		(it should be the list used for organisation)
+#		(I sent it to debian-l10n-french@lists.debian.org)
+#	-n	send mails of priority upper or equal to <value> 
+#		(ie, <value> must be 1 (monthly), 2 (weekly) or 3 (daily)
 
 # Making Mails
 #  If you want to, this script send mails to the maintainer of the mails.
@@ -83,6 +84,7 @@ $opt_l = 0;
 $opt_g = 0; 
 $opt_m = undef;
 $opt_n = 5;
+$opt_M = 0;
 # our $opt_v;
 # our $opt_q;
 # our $opt_Q;
@@ -104,7 +106,18 @@ my $showlog; # boolean
 #$maintainer = "debian-www\@lists.debian.org"; #adress of maintainer of this script
 my $maintainer = "mquinson\@ens-lyon.fr"; #adress of maintainer of this script
 
-getopts('vgdqQm:s:p:ln:');
+unless (getopts('vgdqQm:s:p:ln:M'))
+{
+	open SELF, "<$0" or die "Unable to display help: $!\n";
+	HELP: while (<SELF>)
+	{
+		print, next if /^$/;
+		last HELP if (/^use/);
+		s/^# ?//;
+		print;
+	}
+	exit;
+}
 
 warn "Checking subtree $opt_s only\n" if $opt_v;
 
@@ -178,6 +191,20 @@ foreach (@en) {
 }
 
 send_mails();
+
+if ($opt_M)
+{
+	@makefile= split(/\n/, `find $from -name Makefile -print`);
+	foreach $makefile (@makefile) {
+		my $destination = $makefile;
+		$destination =~ s/^$from/$to/o;
+		if (-e $destination) {
+			STDOUT->flush;
+			system("diff -u $destination $makefile");
+			STDOUT->flush;
+		}
+	}
+}
 
 sub verify_send {
     return 1 unless ($opt_m);
