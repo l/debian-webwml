@@ -14,17 +14,23 @@ index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.data) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
 
-# additional files, English-only (for now at least)
-ifeq "$(LANGUAGE)" "en"
-
-dsa.rdf: dsa.rdf.in $(wildcard $(CUR_YEAR)/dsa-*.wml) \
+dsa.$(LANGUAGE).rdf: dsa.rdf.in $(wildcard $(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.data) \
   $(TEMPLDIR)/recent_list.wml
-	wml $(WMLOPTIONS) -o dsa.rdf dsa.rdf.in
+	wml $(WMLOPTIONS) -o dsa.$(LANGUAGE).rdf dsa.rdf.in
 
-install:: $(HTMLDIR)/keys.txt $(HTMLDIR)/dsa.rdf
+install:: $(HTMLDIR)/dsa.$(LANGUAGE).rdf
 
-$(HTMLDIR)/keys.txt $(HTMLDIR)/dsa.rdf: $(HTMLDIR)/%: %
+$(HTMLDIR)/dsa.$(LANGUAGE).rdf: $(HTMLDIR)/%: %
+	install -m 664 -p $< $(HTMLDIR)
+ifeq "$(LANGUAGE)" "en"
+	ln -sf dsa.en.rdf $(HTMLDIR)/dsa.rdf
+endif
+
+ifeq "$(LANGUAGE)" "en"
+install:: $(HTMLDIR)/keys.txt
+
+$(HTMLDIR)/keys.txt: $(HTMLDIR)/%: %
 	install -m 664 -p $< $(HTMLDIR)
 endif
