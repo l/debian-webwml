@@ -71,6 +71,7 @@ while (1) {
 foreach $path (@paths) {
   my $events = '';
   my @files = ();
+  my $upcoming = 0;
 
   opendir DIR, "$current_dir/$path" || die "Can't open $current_dir/$path: $!";
   @files = grep { /^\d+.*.wml$/ && -f "$current_dir/$path/$_" } readdir DIR;
@@ -106,6 +107,7 @@ foreach $path (@paths) {
     close FILE;
     if ($past ne 'yes') {
        if ($title && $when && $where) {
+          $upcoming++;
           $events .= "
 <TR>\n
   <TD><TT>[$when]</TT></TD>\n
@@ -123,7 +125,8 @@ foreach $path (@paths) {
        }
     }
   }
-  $str .= sprintf "<TABLE>\n<TR><TH><event_year></TH></TR>\n$events\n</TABLE>\n", $path;
+  $str .= sprintf "<TABLE>\n<TR><TH align=\"left\"><event_year></TH></TR>\n$events\n</TABLE>\n", $path
+	if ($upcoming);
 }
 
 return $str;
