@@ -15,7 +15,8 @@ index.$(LANGUAGE).html: index.wml $(wildcard vote_*.wml) \
 ifeq "$(LANGUAGE)" "en"
 
 textfiles := dpl-debate.log dpl-discuss.log leader2003_voters.txt \
-             leader2003_tally.txt gr_voting_tally.txt gr_voting_voters.txt
+             leader2003_tally.txt gr_voting_tally.txt gr_voting_voters.txt \
+             gr_sec415_quorum.err  gr_sec415_quorum.log  gr_sec415_quorum.txt
 desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
 
 install:: $(desttextfiles)
