@@ -220,7 +220,7 @@ END
 my $dir;
 foreach $dir (@file_components) { print "$dir/"; };
 print "</tt> subdirectory at";
-print $type ne 'security' ? "any of these sites:" : ":";
+print $type ne 'security' ? " any of these sites:" : ":";
 
 if ($type eq 'security') {
 
