@@ -4,7 +4,16 @@
 
 WMLBASE=..
 CUR_DIR=CD
-SUBS=images vendors
+SUBS=artwork faq http-ftp jigdo-cd mirroring netinst pictures pik releases vendors
 
+NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml releases/index.wml
+	$(WML) $(<F)
+
+misc.$(LANGUAGE).html: misc.wml $(TEMPLDIR)/cdimage.wml
+	$(WML) $(<F)
+
+install::
+	[ -L $(HTMLDIR)/images ] || ln -sf . $(HTMLDIR)/images
