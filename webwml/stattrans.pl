@@ -202,18 +202,28 @@ if ($opt_l) {
   @search_in = sort keys %langs;
 }
 
+# Compute stats about gettext files
+print "Compute statistics about gettext files... " if ($config{'verbose'});
+my %po_translated,%po_fuzzy,%po_untranslated,%po_total;
+my %percent_po_t,%percent_po_u,%percent_po_f;
 foreach $lang (@search_in) {
     next if $lang eq 'english';
     $l = $langs{$lang};
-    my @status = qx,make -C $opt_w/$lang/po stats 2>&1 1>/dev/null,;
+    $po_translated{"total"}{$lang} = $po_fuzzy{"total"}{$lang} = $po_untranslated{"total"}{$lang} = 0;
+    my @status = qx,LC_ALL=C make -C $opt_w/$lang/po stats 2>&1 1>/dev/null,;
     foreach $line (@status) {
         chomp $line;
         ($domain = $line) =~ s/\..*//;
         $po_translated{$domain}{$lang} = ($line =~ /(\d+) translated/ ? $1 : "0");
         $po_fuzzy{$domain}{$lang} = ($line =~ /(\d+) fuzzy/ ? $1 : "0");
         $po_untranslated{$domain}{$lang} = ($line =~ /(\d+) untranslated/ ? $1 : "0");
-        $po_total{$domain} = $po_translated{$domain}{$lang} + $po_fuzzy{$domain}{$lang} + $po_untranslated{$domain}{$lang};
 
+        $po_total{$domain} = $po_translated{$domain}{$lang} + $po_fuzzy{$domain}{$lang} + $po_untranslated{$domain}{$lang};
+	
+        $po_translated{"total"}{$lang} += $po_translated{$domain}{$lang};
+	$po_fuzzy{"total"}{$lang} += $po_fuzzy{$domain}{$lang};
+	$po_untranslated{"total"}{$lang} += $po_untranslated{$domain}{$lang};
+	
         if ($po_total{$domain} > 0) {
             $percent_po_t{$domain}{$lang} = int ($po_translated{$domain}{$lang}/$po_total{$domain} * 100 + .5);
             $percent_po_f{$domain}{$lang} = int ($po_fuzzy{$domain}{$lang}/$po_total{$domain} * 100 + .5);
@@ -224,7 +234,19 @@ foreach $lang (@search_in) {
             $percent_po_u{$domain}{$lang} = 0;
         }
     }
+    $po_total{"total"} = $po_translated{"total"}{$lang} + $po_fuzzy{"total"}{$lang} + $po_untranslated{"total"}{$lang};
+    
+    if ($po_total{'total'} > 0) {
+	$percent_po_t{'total'}{$lang} = int ($po_translated{'total'}{$lang}/$po_total{'total'} * 100 + .5);
+	$percent_po_f{'total'}{$lang} = int ($po_fuzzy{'total'}{$lang}/$po_total{'total'} * 100 + .5);
+	$percent_po_u{'total'}{$lang} = int ($po_untranslated{'total'}{$lang}/$po_total{'total'} * 100 + .5);
+    } else {
+	$percent_po_t{'total'}{$lang} = 0;
+	$percent_po_f{'total'}{$lang} = 0;
+	$percent_po_u{'total'}{$lang} = 0;
+    }
 }
+print "done.\n" if ($config{'verbose'});
 
 # =============== Create HTML files ===============
 mkdir ($config{'htmldir'}, 02775) if (! -d $config{'htmldir'});
@@ -240,6 +262,7 @@ foreach $lang (@search_in) {
 
     $t_body = $u_body = $o_body = "";
 
+    # get stats about files
     foreach $file (@filenames) {
 	next if ($file eq "");
 	# Translated pages
@@ -280,7 +303,8 @@ foreach $lang (@search_in) {
     		$untranslated{$lang}++;
 	}
     }
-
+    
+    
 # this is where we discard the files that the translation directory contains
 # but which don't exist in the English directory
 #   print "extra files: ".$wml{$lang}-$translated{$lang}."\n";
@@ -297,6 +321,7 @@ foreach $lang (@search_in) {
 
 	$color = get_color ($percent_a{$lang});
 
+	print HTML "<a name='top'>\n";
 	printf HTML "<table width=\"100%%\" cellpadding=2 cellspacing=0 bgcolor=\"%s\">\n", $color;
 
 	printf HTML "<tr><td colspan=4><h1 align=\"center\">%s: %s</h1></td></tr>", $config{'title'}, ucfirst $lang;
@@ -309,11 +334,26 @@ foreach $lang (@search_in) {
 	print HTML "</tr>\n";
 	print HTML "</table>\n";
 
-	print HTML "<p><a href=\"./\">Index</a><p>\n";
-	print HTML "<p><a href=\"../\">Working on the website</a><p>\n";
-
+	# Make the table of content
+	print HTML "<h3>Table of Contents</h3>\n";
+	print HTML "<p><a href=\"./\">Back to index of languages</a></p>\n";
+	print HTML "<p><a href=\"../\">Working on the website</a></p>\n";
 	if ($o_body) {
-	    print HTML "<h3>Outdated translations:</h3>";
+	    print HTML "<p><a href=\"#outdated\">Outdated translation</a></p>\n";
+	}
+	if ($u_body) {
+	    print HTML "<p><a href=\"#untranslated\">Pages not translated</a></p>\n";
+	}
+	if ($t_body) {
+	    print HTML "<p><a href=\"#outdated\">Translations up to date</a></p>\n";
+	}
+	if ($lang ne 'english') {
+	    print HTML "<p><a href=\"#gettext\">Stats on gettext files</a></p>\n";
+	}
+	
+	# outputs the content
+	if ($o_body) {
+	    print HTML "<a name='#outdated'><h3>Outdated translations: <a href='#top'>(top)</a></h3>\n";
 	    print HTML "<table border=0 cellpadding=1 cellspacing=1>\n";
 	    print HTML "<tr><th>File</th><th>Translated</th><th>Origin</th><th>Comment</th>";
 	    if ($opt_d eq "u") { print HTML "<th>Unified diff</th>"; }
@@ -324,14 +364,50 @@ foreach $lang (@search_in) {
 	    print HTML "</table>\n";
 	}
 	if ($u_body) {
-	    print HTML "<h3>Pages not translated:</h3>";
+	    print HTML "<a name='#untranslated'><h3>Pages not translated: <a href='#top'>(top)</a></h3>\n";
 	    print HTML $u_body;
 	}
 	if ($t_body) {
-	    print HTML "<h3>Translations up to date:</h3>";
+	    print HTML "<a name='#uptodate'><h3>Translations up to date: <a href='#top'>(top)</a></h3>\n";
 	    print HTML $t_body;
 	}
-
+	# outputs the gettext stats
+	if ($lang ne 'english') {
+	    print HTML "<a name='gettext'><h3>Stats on gettext files: <a href='#top'>(top)</a></h3>\n";
+#	    print HTML $border_head;
+	    print HTML "<table width=\"100%\" border=0>\n";
+	    print HTML "<tr><th>File</th><th>Up to date</th><th>Fuzzy</th><th>Untranslated</th><th>Total</th></tr>\n";
+	    $l = $langs{$lang};
+	    $l = "zh-cn" if ($l eq "zh"); # kludge
+	    
+	    foreach my $domain (sort keys %po_total) {
+		next if $domain eq 'total';
+		print HTML "<tr>";
+		
+		$color_t = get_color ($percent_po_t{$domain}{$lang});
+		$color_f = get_color (100 - $percent_po_f{$domain}{$lang});
+		$color_u = get_color (100 - $percent_po_u{$domain}{$lang});
+		
+		print HTML "<td>$domain.$langs{$lang}.po</td>";
+		printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_t, $po_translated{$domain}{$lang}, $percent_po_t{$domain}{$lang};
+		printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_f, $po_fuzzy{$domain}{$lang}, $percent_po_f{$domain}{$lang};
+		printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $po_untranslated{$domain}{$lang}, $percent_po_u{$domain}{$lang};
+		printf HTML "<td align=right>%d</td>", $po_total{$domain};
+		print HTML "</tr>\n";
+	    }
+	    print HTML "<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><th>Total:</th>";
+            $color_t = get_color ($percent_po_t{'total'}{$lang});
+            $color_f = get_color (100 - $percent_po_f{'total'}{$lang});
+	    $color_u = get_color (100 - $percent_po_u{'total'}{$lang});
+	    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_t, $po_translated{'total'}{$lang}, $percent_po_t{'total'}{$lang};
+	    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_f, $po_fuzzy{'total'}{$lang}, $percent_po_f{'total'}{$lang};
+	    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $po_untranslated{'total'}{$lang}, $percent_po_u{'total'}{$lang};
+	    printf HTML "<td align=right>%d</td>", $po_total{'total'};
+	    print HTML "</tr>\n";
+	}
+	print HTML "</table>\n";
+	
+	# outputs footer
 	print HTML "<hr><address>Compiled at $date</address>\n";
 	print HTML "</body></html>";
 	close (HTML);
@@ -347,6 +423,8 @@ open (HTML, ">$config{'htmldir'}/index.html")
 
 printf HTML "<html>\n<head><title>%s</title></head>\n<body bgcolor=\"#ffffff\">\n", $config{'title'};
 printf HTML "<h1 align=\"center\">%s</h1>\n", $config{'title'};
+
+print HTML "<h2>Statistics about pages</h2>\n";
 
 print HTML $border_head;
 print HTML "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
@@ -371,36 +449,27 @@ foreach $lang (@search_in) {
 print HTML "</table>\n";
 print HTML $border_foot;
 
+print HTML "<h2>Statistics about gettext files (remplacement of slices)</h2>\n";
 print HTML $border_head;
 print HTML "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
-print HTML "<tr><th>Language</th><th>File</th><th>Up to date</th><th>Fuzzy</th><th>Untranslated</th><th>Total</th></tr>\n";
+print HTML "<tr><th>Language</th><th>Up to date</th><th>Fuzzy</th><th>Untranslated</th><th>Total</th></tr>\n";
 foreach $lang (@search_in) {
     next if $lang eq 'english';
     $l = $langs{$lang};
     $l = "zh-cn" if ($l eq "zh"); # kludge
 
-    my $first = 1;
-    foreach my $domain (sort keys %po_total) {
-        print HTML "<tr>";
-        if ($first) {
-            printf HTML "<td>%s (%s)</td>", ucfirst $lang, $l;
-        } else {
-            printf HTML "<td>&nbsp;</td>";
-        }
-        $first = 0;
-
-        $color_t = get_color ($percent_po_t{$domain}{$lang});
-        $color_f = get_color (100 - $percent_po_f{$domain}{$lang});
-        $color_u = get_color (100 - $percent_po_u{$domain}{$lang});
-
-        print HTML "<td>$domain.$langs{$lang}.po</td>";
-        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_t, $po_translated{$domain}{$lang}, $percent_po_t{$domain}{$lang};
-        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_f, $po_fuzzy{$domain}{$lang}, $percent_po_f{$domain}{$lang};
-        printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $po_untranslated{$domain}{$lang}, $percent_po_u{$domain}{$lang};
-        printf HTML "<td align=right>%d</td>", $po_total{$domain};
-        print HTML "</tr>\n";
-    }
+    print HTML "<tr>";
+    printf HTML "<td><a href=\"%s.html#gettext\">%s</a> (%s)</td>", $l, ucfirst $lang, $l;
+    $color_t = get_color ($percent_po_t{'total'}{$lang});
+    $color_f = get_color (100 - $percent_po_f{'total'}{$lang});
+    $color_u = get_color (100 - $percent_po_u{'total'}{$lang});
+    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_t, $po_translated{'total'}{$lang}, $percent_po_t{'total'}{$lang};
+    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_f, $po_fuzzy{'total'}{$lang}, $percent_po_f{'total'}{$lang};
+    printf HTML "<td bgcolor=\"%s\" align=right>%d (%d%%)</td>", $color_u, $po_untranslated{'total'}{$lang}, $percent_po_u{'total'}{$lang};
+    printf HTML "<td align=right>%d</td>", $po_total{'total'};
+    print HTML "</tr>\n";
 }
+
 print HTML "</table>\n";
 print HTML $border_foot;
 
