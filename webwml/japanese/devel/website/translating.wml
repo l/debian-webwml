@@ -1,19 +1,46 @@
 #use wml::debian::template title="翻訳に関するページ"
-#use wml::debian::translation-check translation="1.3"
+#use wml::debian::translation-check translation="1.16"
 
 <P>翻訳者の作業をできるだけ簡単にするため、私たちのページは普段多くの人が
 行なっているのとは少し違った方法でページを生成しています。ウェブページは
-実際には <tt>wml</tt> でマークアップされたソースを使って生成されます。
+実際には <a href="http://www.engelschall.com/sw/wml/"><tt>wml</tt></a>
+でマークアップされたソースを使って生成されます。
 各言語毎にわかれたディレクトリが存在します。
 
-<h3>概要</h3>
+<p>もし Debian ウェブサイトの新規言語翻訳を開始したい場合は、
+<a href="#completenew">新規言語の翻訳を始める</a> の節をご覧ください。
 
-<p>新規言語の翻訳を始めるには、まず初めに誰かが
-<tt>english/template/debian/*.wml</tt> にある wml テンプレートファイルを
-編集し、その言語用に翻訳スライスを追加しなければなりません。
+<h2>個々のページの翻訳</h2>
+
+<p>HTML ページは翻訳しないでください。私たちは WML ソースファイルを
+使い、内容と共通する要素を分けて保存しています。ある言語の翻訳作業を
+手伝いたい場合は、<a href="using_cvs">CVS を利用</a> し現在のソースを
+入手してください。少なくても <tt>english/</tt> と <tt>&lt;language&gt;/</tt>
+の  2 つのディレクトリを  check out する必要があります。
+
+<p>あるページを英語からあなたの言語へ翻訳するためには、まずオリジナルの
+.wml ファイルを <tt>english/foo/bar</tt> から
+<tt>&lt;language&gt;/foo/bar</tt> へコピーします。
+<kbd>#use wml::debian::translation-check translation="x.y"</kbd>
+を最後の #use 行の次の行に追加します
+(<a href="uptodate">translation-check について</a> をご覧ください) 。
+webwml のルートディレクトリにある <tt>copypage.pl</tt> スクリプトを
+使い、ページのコピー及び上記ヘッダの追加を自動的に行なうこともできます。
+ここまで終った後、ページを翻訳して、リポジトリに write アクセス権を持つ
+<a href="translation_coordinators">誰か</a> へ送ってください。<tt>make
+file.&lt;lang&gt;.html</tt> でページが作成されるかテストするように
+してください。
+
+<h2><a name="completenew">新規言語の翻訳を始める</a></h2>
+
+<p>新規言語の翻訳を始めるには、まず初めに誰かが wml テンプレートや
+データファイルを編集し、その言語用に翻訳スライスを追加しなければなりません。
 <a href="using_wml">wml の利用方法</a> のページにはスライスに関する情報が
 あるので、テンプレートファイルを翻訳するときに役立つ情報が見つかるで
-しょう。
+しょう。スライスを使ったすべてのファイルを見つける一番良い方法は
+english ディレクトリで
+<protect><code>grep '\[EN:' `find -type f`|cut -d: -f1|uniq</code></protect>
+を実行することです。
 
 <p>次に行なうことは翻訳のために新しくディレクトリを作成し、この新規
 翻訳ディレクトリに english/ ディレクトリから <tt>Make*</tt> と
@@ -49,9 +76,24 @@
 の SUBS 変数に追加してください。そうしないとそのファイルは生成されません。
 
 <p>さぁ、これで *.wml ファイルの翻訳が始められます。../english/ から
-各ファイルをコピーして翻訳し、<tt>make</tt> (と <tt>weblint
-file.wml</tt>) でテストを行ない、終ったら <a href="using_cvs">CVS</a>
-で commit してください。
+各ファイルをコピーして翻訳し、<tt>make file.&lt;lang&gt;.html</tt>
+(と <tt>weblint file.wml</tt>) でテストを行ない、終ったら
+<a href="using_cvs">CVS</a> で commit してください。あなたの
+翻訳したものが生成可能であることは必ず確認してください。さもないと
+ウェブサイト全体の生成プロセスを壊してしまうことになるかもしれません。
+
+<p>ファイルをコピーする時に、english/ ディレクトリ中の
+CVS ディレクトリやその中のファイルは、あなたが翻訳している
+ディレクトリへコピーしないようにしてください。誤ってそのような
+ことをし、後で翻訳したものを commit してしまうと、cvs は
+翻訳したものと一緒に英語のファイルも更新してしまい、多くの人にとって
+困惑/不快になります。
+
+<p>私たちは <a href="$(HOME)/intro/cn">内容交渉</a> を使っているので
+HTML ファィルの名前は <tt>file.html</tt> ではなく
+<tt>file.&lt;lang&gt;.html</tt> の様になります。
+<tt>&lt;lang&gt;</tt> の部分は言語を表す 2 文字のコードで、ISO 639
+に従っています (例えば <tt>ja</tt> は日本語を表します)。
 
 <p>注意: あるページを初めて翻訳したとき、他言語のページは、再生成される
 までそのページへのリンクを作成しません。
@@ -72,9 +114,12 @@ file.wml</tt>) でテストを行ない、終ったら <a href="using_cvs">CVS</a>
     <a href="navbar_images">ナビバーイメージを翻訳</a> したくなるでしょう。
 <li>多くの翻訳者が翻訳ページを最新にしておくために
     <a href="uptodate">check_trans</a> プログラムを使っています。
+<li><a href="http://people.debian.org/~joey/webwml/">ウェブサイト
+    翻訳統計</a> には翻訳されている全言語について公開レポートがあります。
 </ul>
 
 <P>ウェブページの翻訳作業をできるだけ簡単にしていくよう、これまで
 行なってきた作業を見つけてくれれば幸いです。これまでも気にとめるように
-していましたが、もしなにか質問があれば debian-www メーリングリストで
+していましたが、もしなにか質問があれば  <a
+href="mailto:debian-www@lists.debian.org">debian-www</a> メーリングリストで
 聞いてください。
