@@ -1,0 +1,206 @@
+#use wml::debian::template title="Debian BTS - server di controllo" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.17"
+
+<h1>Introduzione al server di posta di controllo e gestione bug</h1>
+
+<P>In aggiunta al server di posta su <code>request@bugs.debian.org</code>
+che consente il recupero dei dati e documentazione sui bug via email,
+c'è un altro server su <code>control@bugs.debian.org</code>
+che permette anche di manipolare in vari modi i rapporti sui bug.
+</P>
+
+<P>Il server di controllo lavora proprio come il server di richiesta,
+tranne per alcuni comandi addizionali; di fatto, è lo stesso programma.
+I due indirizzi sono separati solo per evitare che gli utenti commettano
+degli errori e causino problemi mentre provano solo a richiedere informazioni.
+</P>
+
+<P>Leggi la 
+<A href="server-request#introduction">introduzione al server di richiesta</A>
+disponibile sul World Wide Web, 
+nel file
+<code>bug-log-mailserver.txt</code>, o invia
+<code>help</code> a uno dei server di posta, per i dettagli sulle basi
+operative dei server di posta e i comandi comuni disponibili inviando
+mail a entrambi gli indirizzi.</P>
+
+<P>La <A href="server-refcard">scheda di riferimento</A>
+per i server di posta è disponibile via WWW, in
+<code>bug-mailserver-refcard.txt</code> o inviando una mail e usando il
+comando <code>refcard</code>.</P>
+
+<H1>Comandi disponibili solo sul server di posta di controllo</H1>
+
+<dl>
+
+<dt><code>close</code> <var>bugnumber</var>
+<dd>
+
+Chiude il rapporto sul bug #<var>bugnumber</var>.
+
+<p>Una notifica viene inviata all'utente che ha riportato il bug,
+ma (in
+contrasto all'invio di una mail a <var>bugnumber</var><code>-done@bugs</code>) the
+il testo della mail che ha causato la chiusura del bug <em>non</em> è
+includo in questa notifica. Il manutentore che chiude un rapporto
+dovrebbe assicurarsi, probabilmente inviando un messaggio separato,
+che l'utente che ha riportato il bug sappia del perchè sia stato
+chiuso.
+
+<dt><code>reassign</code> <var>bugnumber</var> <var>pacchetto</var>
+<dd>
+
+Registra che il bug #<var>bugnumber</var> è un bug in <var>pacchetto</var>.
+Questo può essere usato per impostare il pacchetto se l'utente ha dimenticato
+la pseudo-intestazione, o per modificare una assegnazione precedente.
+Nessuna notifica è inviata ad alcuno (a parte l'usuale informazione
+nella trascrizione di processamento).
+
+<dt><code>reopen</code> <var>bugnumber</var>
+ [ <var>originator-address</var> | <code>=</code> | <code>!</code> ]
+<dd>
+
+Riapre #<var>bugnumber</var> se è stato chiuso.
+
+<p>Per default, o se specifichi <code>=</code>, 
+il mittente originale è ancora l'originatore del rapporto,
+cosicché otterrà la notifica quando sarà chiuso nuovamente.
+</p>
+
+<p>Se fornisci un <var>originator-address</var> l'originatore 
+sarà impostato all'indirizzo fornito. Se volessi diventare il
+nuovo originatore del rapporto riaperto puoi usare la forma abbreviata
+<code>!</code> o specificare il tuo indirizzo email.</p>
+
+<p>È generalmente una buona idea dire alla persona che viene registrata
+come originatore che stai riaprendo il rapporto del bug, cosicché sappia
+di doversi aspettare una notifica quando sarà chiuso di nuovo.
+</p>
+
+<p>Se il bug non è chiuso, la reopen non farà nulla, nemmeno
+il cambio di originatore. Non c'è modo di modificare l'originatore
+di un rapporto di bug aperto (questo è voluto, in modo che tu non
+possa avere un bug chiuso e quindi cancellato 28 giorni più tardi
+senza che nessuno ne sappia niente).
+
+<dt><code>forwarded</code> <var>bugnumber</var> <var>indirizzo</var>
+<dd>
+
+Notifica che <var>bugnumber</var> è stato reinviato per conoscenza
+al upstream maintainer
+presso <var>indirizzo</var>. Questo non invia materialmente
+il rapporto. Può essere usato per modificare un esistente indirizzo
+di forwarded-to, o registrarne uno nuovo per un bug che non era stato
+in precedenza annotato come inviato per conoscenza.
+
+<dt><code>notforwarded</code> <var>bugnumber</var>
+<dd>
+
+Dimentica qualsiasi idea che <var>bugnumber</var> 
+sia stato inviato per conoscenza a un qualche
+upstream maintainer. Se il bug non era stato registrato come inviato
+per conoscenza, non farà nulla.
+
+<dt><code>retitle</code> <var>bugnumber</var> <var>nuovo-titolo</var>
+<dd>
+
+Modifica il titolo di un rapporto di bug in quello specificato
+(il default è l'intestazione <code>Subject</code> dal rapporto originale.
+
+<p>Contrariamente alla maggior parte degli altri comandi di gestione
+dei bug, quando usato su uno dei rapporti di un insieme di rapporti
+collegati (merged), 
+questo cambierà solo il titolo del bug individuale richiesto
+e non tutti quelli collegati con esso.
+
+<dt><code>severity</code> <var>bugnumber</var> <var>severità</var>
+<dd>
+
+<p>Imposta il livello di severità del rapporto bug #<var>bugnumber</var> a
+<var>severità</var>. Nessuna notifica viene inviata all'utente che ha riportato
+il bug.</p>
+
+<p>Le severità sono <code>critical</code>, <code>grave</code>,
+<code>serious</code>, <code>important</code>, <code>normal</code>,
+<code>minor</code>, e <code>wishlist</code>.
+
+<p>Per <A href="Developer#severities">il loro significato</A> 
+consulta la documentazione generale dello sviluppatore
+per il sistema dei bug.
+
+<dt><code>merge</code> <var>bugnumber</var> <var>bugnumber</var> ...
+<dd>
+
+Collega due o più rapporti su bug. Quando i rapporti sono collegati aperture,
+chiusure, marcature e demarcature come reinviati e riassegnazioni di uno
+dei bug a un nuovo pacchetto avranno un identico effetto su tutti gli
+altri collegati.
+
+<p>Prima che dei bug possano essere collegati devono trovarsi esattamente
+nello stesso stato: tutti aperti o tutti chiusi, con il reinvio allo 
+stesso indirizzo di autore upstream o tutti non marcati come reinviati,
+tutti assegnati allo stesso pacchetto o pacchetti (un confronto di stringa
+esatto viene fatto su tutti i pacchetti ai quali il bug è assegnato), e tutti
+con la medesima severità.
+Se non partissero tutti dallo stesso stato dovresti usare 
+<code>reassign</code>, <code>reopen</code> e così via 
+per essere sicuro che lo siano prima di usare <code>merge</code>.</p>
+
+<P>Se uno dei bug elencati in un comando <code>merge</code>
+è già collegato con un altro bug, tutti i rapporti collegati con
+uno qualsiasi di quelli elencati saranno collegati insieme. Il collegamento
+è come l'uguaglianza: è riflessiva, transitiva e simmetrica.
+</p>
+
+<P>Il collegamento di rapporti causa l'apparizione di una nota in
+ciascun log di rapporto; sulle pagine WWW questo causa l'inclusione 
+dei link agli altri bug.</p>
+
+<P>I rapporti collegati sono tutti fatti spirare contemporaneamente,
+e solo quando tutti i rapporti rispettano i criteri di eliminazione
+ciascuno separatamente.
+
+<dt><code>unmerge</code> <var>bugnumber</var>
+<dd>
+
+Disconnette un rapporto su bug da qualsiasi altro con il quale possa
+essere stato collegato. Se il rapporto indicato è collegato con diversi
+altri questi sono lasciati tutti collegati fra loro; solo le loro 
+associazioni con il bug esplicitamente indicato sono rimosse.
+
+<p>Se molti rapporti su bug sono collegati e vuoi separarli in due
+gruppi di rapporti collegati devi scollegare ciascun rapporto in
+uno dei nuovi gruppi separatamente e quindi collegarli nel richiesto
+gruppo nuovo.</p>
+
+<p>Puoi scollegare un solo rapporto con ogni comando <code>unmerge</code>; 
+se vuoi scollegare più di un bug semplicemente includi un serie di comandi
+<code>unmerge</code> nel tuo messaggio.
+
+<dt><code>tags</code> <var>bugnumber</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var>
+
+  <dd>Imposta un particolare tag per il rapporto su bug 
+  #<var>bugnumber</var> al valore
+  <var>tag</var>. Nessuna notifica è inviata all'utente che ha riportato
+  il bug. <code>+</code> significa aggiungi, 
+  <code>-</code> significa sottrai, e
+  <code>=</code> significa ignora i tag correnti e impostali da zero.
+  L'azione di default è aggiungi. Uno spazio è richiesto fra i caratteri
+  +/-/= e il nome del tag.
+
+  <p>I tag correntemente disponibili includono <code>patch</code>, 
+  <code>wontfix</code>,
+  <code>moreinfo</code>, <code>unreproducible</code>, <code>fixed</code>,
+  <code>security</code>, <code>potato</code>, <code>woody</code> e
+  <code>sid</code>.
+
+  <p>Per <a href="Developer#tags">i loro significati</a> consulta 
+  la documentazione generale dello sviluppatore per il sistema bug.
+
+</dl>
+
+<hr>
+
+#use "otherpages.inc"
+
+#use "footer.inc"
