@@ -220,7 +220,7 @@ sub check_file {
 	open(F, $name) || die $!;
 	while(<F>) {
 		if (/\s+translation_maintainer=\"(.*)?\"\s+/oi) {
-			$translations->{$k}->{'translation_maintainer'} = $1;
+			$translations->{$k}->{'translation_maintainer'} = [ $1 ];
 		}
 		if (/<!--\s*translation\s+(.*)?\s*-->\s*$/oi || /\s+base_revision=\"(.*)?\"\s+/oi) {
 			$oldr = $1;
