@@ -1,0 +1,92 @@
+#use wml::debian::template title="Kori¹tenje CVS-a"
+
+<p>CVS je program koji poma¾e upravljanju vi¹e ljudi koji simultano rade 
+na istom materijalu. Svaki korisnik kreira lokalnu kopiju glavnog
+repository-a. Lokalne kopije mogu biti na istom stroju, ili na drugom kraju
+svijeta. Korisnici tako mogu mijenjati lokalnu kopiju kako ¾ele i kada je
+promijenjeni materijal spreman, poslati promjene u glavni repository.
+
+<p>CVS vam neæe dati da po¹aljete datoteku ako je kopija u glavnom
+repository-u mijenjana od va¹eg zadnjeg obnavljanja informacija. Ovo obièno
+nije problem jer jo¹ uvijek mo¾ete obnoviti va¹u lokalnu kopiju. Ako su te
+promjene uèinjene na drugom dijelu od onoga na kojem ste vi radili, promjene
+se tiho stope. Ako promjene zahvaæaju isto podruèje na kojem ste vi radili,
+bit æete upozoreni da postoji konflikt i da prije slanja trebate urediti
+datoteku i popraviti problem.
+
+<P>U ovome ¹to slijedi, anonimni pristup ('anonymous') æe biti kori¹ten kao
+primjer. Ako imate pristup drugom korisnièkom raèunu, koji vam daje pravo
+pisanje po repository-u, onda trebate koristiti taj korisnièki raèun. Ako
+planirate praviti promjene, trebate pribaviti korisnièki raèun prije
+poèetka, buduæi da anonimni korisnici ne mogu poslati promjene.
+
+<p>Ako ste Debian razvijatelj, proèitajte odjeljak o
+<a href="#cvsfordevelopers">CVS pristupu za Debian razvijatelje</a>.
+
+<p>Da biste poèeli koristiti CVS, morate napraviti <code>login</code> u CVS
+server:
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml login
+</pre>
+(samo pritisnite enter za lozinku anonymous-a)
+
+<P>Da biste izvadili kopiju WML datoteka na va¹ stroj, trebate koristiti:
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/&lt;jezik&gt;
+</pre>
+gdje <code>&lt;jezik&gt;</code> je jezik koji ¾elite. Vjerojatno æete
+¾eljeti i englesku verziju, uz jezik na kojem radite. Ako trebate samo
+dio stranica, mo¾ete izvaditi samo te koje trebate, npr.
+<pre>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</pre>.
+ili ako imate korisnièko ime (i lozinku), ubacite ga umjesto anonymous,
+<pre>cvs -d :pserver:korisnik@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</pre>.
+
+<P>Od tog trenutka, vi¹e neæete trebati koristiti <code>'-d :pserver:...'</code>
+dio.
+Svako par dana ¾eljet æete napraviti:
+<pre>
+   cvs update -d
+</pre>
+da biste skinuli sve datoteke iz repository-a koje su se promijenile.
+Opcija <code>-d</code> æe dodati i sve nove direktorije, automatski.
+
+<P>Slijedi uputa za one koji imaju pravo pisanja po repository-u. Kada
+zavr¹ite sa nekom stranicom, ovako mo¾ete poslati svoje promjene u repository:
+<pre>
+   cvs commit &lt;datoteka&gt;.wml
+</pre>
+ili:
+<pre>
+   cvs commit &lt;direktorij&gt;   (da po¹aljete promjene u &lt;direktorij&gt;u)
+</pre>
+or
+<pre>
+   cvs commit          (da po¹aljete sve promjene u ovom direktoriju i ispod njega)
+</pre>
+
+<P>Ako ste prva osoba koja prevodi stranicu, trebate napraviti:
+<pre>
+   cvs add &lt;file&gt;.wml
+</pre>
+prije nego ¹to je po¹aljete. Primijetite da <code>cvs add</code> nije
+rekurzivan tako da morate dodati direktorij prije nego dodate njegov
+sadr¾aj.
+
+<P>Za vi¹e informacija o CVS-u, koristite <code>info cvs</code>.
+
+<a name="cvsfordevelopers">
+<H3>CVS pristup za Debian razvijatelje</H3>
+<P>Buduæi da Debian razvijatelji veæ imaju korisnièki raèun na
+cvs.debian.org, postoji sigurniji mehanizam za pristup CVS repository-u.
+Ovaj naèin se preferira nasuprot :pserver: naèinu opisanom iznad.
+
+Morate pisati na webmaster@debian.org i zatra¾iti CVS pristup. Jednom kad
+budete dodani u grupu, jednostavno podesite varijablu CVS_RSH na ssh
+('export CVS_RSH=ssh' u va¹em .bashrc) i izvadite datoteke iz repository-a
+koristeæi sljedeæe:
+<pre>
+   cvs -d :ext:&lt;korisnièko_ime&gt;@cvs.debian.org:/cvs/webwml checkout webwml/english/
+</pre>
+
+Jednom kad ste izvadili datoteke iz repository-a, sve ostalo radi kao i
+u prethodnom poglavlju.

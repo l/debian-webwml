@@ -1,0 +1,98 @@
+#use wml::debian::template title="Kako raditi na Debian Web stranicama"
+
+<p>Debian web stranice se generiraju na jedan od tri naèina: dokumentacija
+se mirrora sa 
+<a href="http://www.debian.org/~elphick/ddp/">Debian Documentation Project (DDP)</a>
+stranica, dijelovi web site-a se generiraju putem skripti (stranice bugova
+i arhiva mailing lista su dva dobra primjera), i ostatak se generira putem
+WML-a.
+
+Za one koji nisu upoznati s programima, mo¾ete proèitati stranice koje smo
+napisali da vam pomognemo zapoèeti s
+<ul>
+<li><a href="using_wml">kori¹tenjem WML-a</a>
+<li><a href="using_cvs">kori¹tenjem CVS-a</a>
+</ul>
+
+<h3>Dodavanje novih stranica</h3>
+<p>Dodavanje novih stranica je vrlo jednostavno. Sav
+posao dodavanja potrebnog zaglavlja i dna stranice obavlja WML. Sve ¹to
+trebate napraviti je ukljuèiti ovakvu liniju na vrh nove datoteke:
+<pre><protect>
+#use wml::debian::template title="NASLOV STRANICE"
+</protect></pre>
+nakon kojeg je tijelo teksta. Sve stranice trebaju koristiti
+wml::debian::template datoteku predlo¹ka osim ako ne koriste neku posebnu
+stvorenu ba¹ za tu sekciju, npr. News/ ili security/ stranice.
+
+<p>Taj predlo¾ak, wml::debian::template, vam dopu¹ta da definirate odreðene
+varijable koje æe utjecati na generirane stranice. Ovo treba zaobiæi potrebu
+za kreiranjem razlièitih predlo¾aka za svaku situaciju i dozvoljava lak¹e
+implementiranje pobolj¹anja. Ovo su trenutno dostupne varijable i njihova
+svrha:
+<dl>
+<dt>NOHEADER="yes"
+	<dd>Mièe osnovno zaglavlje sa stranice. Posebno zaglavlje se naravno
+        mo¾e ukljuèiti u tijelo teksta.
+<dt>NOHOMELINK="yes"
+	<dd>Mièe link na dnu stranice koji upuæuje na glavnu Debian stranicu.
+<dt>NOLANGUAGES="yes"
+	<dd>Mièe linkove na dnu stranice koji upuæuju na verzije na drugim
+        jezicima.
+<dt>NOCOPYRIGHT="yes"
+	<dd>S dna stranice uklanja obavijest o autorskim pravima.
+</dl>
+
+<p>Primjer upotrebe ovoga je na stranicama portova koje imaju vlastita
+zaglavlja. ports/arm/index.wml koristi:
+<pre><protect>
+#use wml::debian::template title="ARM Port" NOHEADER="yes"
+</protect></pre>
+
+<p>Ako ¾elite ne¹to napraviti ¹to se ne mo¾e izvr¹iti kori¹tenjem postojeæih
+predlo¾aka, prvo razmislite o pro¹irivanju jednog od njih. Ako nije moguæe
+pro¹iriti jedan od njih, u smislu da je kompatibilan s ranijima, probajte
+napraviti novi predlo¾ak kao nadogradnju na postojeæi tako da æe se stranice
+moæi konvertirati na njega u sljedeæoj glavnoj nadogradnji (nadajmo se nikad
+daljoj od svako 6 mjeseci).
+
+<p>Ako pi¹ete stranicu koja se generira pomoæu skripte ili ima malo pravog
+teksta, razmislite o upotrebi filtera 'odrezaka' (slices) unutar WML-a da bi
+olak¹ali zadatak odr¾avanja prijevoda a¾urnima. Dobar primjer ovoga je u 
+<kbd>distrib/vendors.wml</kbd>. Novi prodavaèi se mogu dodati na ovu
+stranicu i dodatak æe se generirati za svaki jezik automatski.
+<kbd>vendors.wml</kbd> ukljuèuje <kbd>vendors.CD</kbd> koji ustvari sadr¾i
+pravu listu prodavaèa. Ova datoteka usto ukljuèuje i <kbd>distrib/vendors.CD.def</kbd>
+koja sadr¾i definicije svih fraza u <kbd>vendors.CD</kbd>.
+Prevoditelji jednostavno trebaju dodati prijevode gdje god je 'odrezak'
+(slice), npr.:
+<pre><protect>
+	[EN:Country:]\
+	[ES:Pa-is:]\
+	[DE:Land:]\
+</protect></pre>
+
+<h3>Dodavanje novog direktorija</h3>
+Nemojte kreirati direktorij s imenom <code>install</code>. To æe zbuniti
+make i stranice u tom direktoriju neæe biti automatski obnovljene.
+
+<p>Ispod je primjer dodavanja novog direktorija na web site:
+<pre>
+   mkdir bla
+   cvs add bla
+   cd bla
+   cp ../intro/Makefile .
+   cvs add Makefile
+</pre>
+Uredite Makefile datoteku. WMLBASE treba biti lokacija vrha engleskog
+direktorija relativnog ovome. CUR_DIR je lokacija trenutnog direktorija
+relativnog WMLBASE-u. Onda:
+<pre>
+   cd ..
+</pre>
+Uredite Makefile datoteku i dodajte direktorij koji ste upravo napravili
+u SUBDIR varijablu. To æe dodati direktorij meðu one koji se generiraju
+kada se pokrene make.
+
+<p>Na kraju, <code>cvs commit Makefile bla</code>
+da u glavni repository po¹aljete sve promjene upravo napravljene.
