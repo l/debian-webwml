@@ -10,4 +10,3 @@ include $(WMLBASE)/Make.lang
 
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml ../../english/logos/index.data
-
