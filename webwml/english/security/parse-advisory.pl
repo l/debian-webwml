@@ -14,8 +14,8 @@ my %longmoy = (	en => [
   'July', 'August', 'September', 'October', 'November', 'December' ]
 );
 
-my $mlURL = "http://lists.debian.org/debian-security-announce-";
-$mlURL .= qx "date +%y";
+my $mlURL = "http://lists.debian.org/debian-security-announce/debian-security-announce-";
+$mlURL .= qx "date +%Y";
 chomp $mlURL;
 $mlURL .= "/";
 
