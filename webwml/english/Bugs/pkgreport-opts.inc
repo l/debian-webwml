@@ -1,74 +1,98 @@
 <define-tag active_bugs whitespace=delete>
 	[EN:active bugs:]
+	[SV:aktiva fel:]
 </define-tag>
 <define-tag archived_bugs whitespace=delete>
 	[EN:archived bugs:]
+	[SV:arkiverade fel:]
 </define-tag>
 <define-tag no_status whitespace=delete>
 	[EN:No status/severity ordering:]
+	[SV:Ingen sortering på status/allvarlighetsgrad:]
 </define-tag>
 <define-tag reverse_order whitespace=delete>
 	[EN:Reverse order of: :]
+	[SV:Omvänd ordning för: :]
 </define-tag>
 <define-tag status whitespace=delete>
 	[EN:status:]
+	[SV:status:]
 </define-tag>
 <define-tag severities whitespace=delete>
 	[EN:severities:]
+	[SV:allvarlighetsgrader:]
 </define-tag>
 <define-tag bugs whitespace=delete>
 	[EN:bugs:]
+	[SV:fel:]
 </define-tag>
 <define-tag status_include whitespace=delete>
 	[EN:Status Include: :]
+	[SV:Inkludera status: :]
 </define-tag>
 <define-tag status_exclude whitespace=delete>
 	[EN:Status Exclude: :]
+	[SV:Exkludera status: :]
 </define-tag>
 <define-tag severity_include whitespace=delete>
 	[EN:Severity Include: :]
+	[SV:Inkludera allvarlighetsgrader: :]
 </define-tag>
 <define-tag severity_exclude whitespace=delete>
 	[EN:Severity Exclude: :]
+	[SV:Exkludera allvarlighetsgrader: :]
 </define-tag>
 <define-tag open whitespace=delete>
 	[EN:Open:]
+	[SV:Öppna:]
 </define-tag>
 <define-tag forwarded whitespace=delete>
 	[EN:Forwarded:]
+	[SV:Vidaresända:]
 </define-tag>
 <define-tag pending whitespace=delete>
 	[EN:Pending:]
+	[SV:På gång:]
 </define-tag>
 <define-tag fixed whitespace=delete>
 	[EN:Fixed:]
+	[SV:Rättat:]
 </define-tag>
 <define-tag done whitespace=delete>
 	[EN:Done:]
+	[SV:Klara:]
 </define-tag>
 <define-tag critical whitespace=delete>
 	[EN:Critical:]
+	[SV:Kritiska:]
 </define-tag>
 <define-tag grave whitespace=delete>
 	[EN:Grave:]
+	[SV:Grava:]
 </define-tag>
 <define-tag serious whitespace=delete>
 	[EN:Serious:]
+	[SV:Allvarliga:]
 </define-tag>
 <define-tag important whitespace=delete>
 	[EN:Important:]
+	[SV:Viktiga:]
 </define-tag>
 <define-tag normal whitespace=delete>
 	[EN:Normal:]
+	[SV:Normala:]
 </define-tag>
 <define-tag minor whitespace=delete>
 	[EN:Minor:]
+	[SV:Mindre:]
 </define-tag>
 <define-tag wishlist whitespace=delete>
 	[EN:Wishlist:]
+	[SV:Önskelista:]
 </define-tag>
 <define-tag fixed whitespace=delete>
 	[EN:Fixed:]
+	[SV:Rättat:]
 </define-tag>
   <small>
   <ul>
