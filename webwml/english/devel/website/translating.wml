@@ -39,87 +39,80 @@ a new language, send us e-mail (in English) at
 <p>First of all, make sure you have made a proper checkout of our source
 tree, as described <a href="using_cvs">on our CVS introduction page</a>.</p>
 
-<p>The first thing that needs to be done for a new translation is
-adding your language's <em>slices</em> in our basic WML tags. The page on
-<a href="using_wml">using WML</a> has more information on slices. The first
-slices that you should translate are those that appear on all of the web
-pages, like the header keywords, the ALT tags for the images, and the
-footer.</p>
+<p>After you have checked out the webwml/ directory and (at least)
+webwml/english/, start by creating a new directory for your translation,
+next to english/ and others. The name of the translation directory must
+be in English and entirely lowercase (e.g. "german", not "Deutsch").</p>
 
-<p>The safest way to start is translating in the
-<code>common_translation.wml</code> file. You don't have to translate
-all of the slices in all of the templates, just those that your currently
-translated pages actually need.</p>
-
-<p>Some of the templates include Perl variables in addition to slices:</p>
-
-<ul>
-  <li>The <code>countries.wml</code> template contains country names, used
-      e.g. at the top of each page where there's a list of mirrors.
-      <br>
-      This file has variables similar to slices: insert "<code>XY =&gt;
-      "Some Country"</code>" lines in each of the blocks, replacing XY for
-      your uppercased two-letter language code and translating the quoted
-      string to the right of "<code>=&gt;</code>".
-
-  <li>The <code>language_names.wml</code> template contains language names,
-      used e.g. at the bottom of each page where there's a list of
-      translations.
-      <br>
-      You should start by copying the <code>en =&gt; { <var>stuff...</var>
-      }</code> block of text and pasting it after the last similar block in
-      the file. Then change the "en" at the beginning to your two-letter
-      language code and then translate the language names in double quotes
-      on the right hand side of each "<code>=&gt;</code>".
-      <br>
-      Please note that your language's name for its own language needs to
-      have any non-ASCII characters escaped with either &amp;name; or
-      &amp;#number; entities, since they will be included on pages with
-      several different character encodings.
-</ul>
-
-<p>If you aren't sure if you did it properly, ask on the debian-www mailing
-list before committing.</p>
-
-<p>You should <a href="navbar_images">translate the text on the images</a>
-in the red navigation bar, too.
-
-<p>After the template skeleton is done, you can start with translating the
-front page. For this, you need a directory for your translation, next to
-english/ and others. Copy <tt>Make*</tt> and <tt>.wmlrc</tt> files from the
-english/ directory to the new translation directory.
-
-<p>The Makefiles have been designed so that almost nothing needs to be
-modified when copying them to a new language directory in preparation for
-translation.
-
-<p>The following are the only changes anticipated:
+<p>Copy the <tt>Make.lang</tt> and <tt>.wmlrc</tt> files from the english/
+directory to the new translation directory. These files are essential for
+building your translation from WML files. They have been designed so that
+after you copy them to a new language directory, you only have to change
+these things:</p>
 
 <ol>
-  <li>The variable LANGUAGE must be changed in webwml/&lt;language&gt;/Make.lang
-      file.
+  <li>The variable LANGUAGE must be changed in the file <tt>Make.lang</tt>.
 
   <li>The variables CUR_LANG, CUR_ISO_LANG and CHARSET must be changed in
-      webwml/&lt;language&gt;/.wmlrc file. Add CUR_LOCALE to that, if you
-      need it for sorting.
+      the <tt>.wmlrc</tt> file. Add CUR_LOCALE to that, if you need it for
+      sorting.
 
   <li>Some languages may need extra processing to handle the charset. This
       can be done using the --prolog and --epilog options to wml. Use the
-      WMLPROLOG and WMLEPILOG variables in Make.lang to do this.
+      WMLPROLOG and WMLEPILOG variables in <tt>Make.lang</tt> to do this.
 
-  <li>The variable LANGUAGES must be changed in webwml/Makefile file so that
-      your language will get built along with the other ones, on
-      www.debian.org. We would prefer if you left this particular change up
-      to the webmasters, because you may not be aware that your translation
-      is broken when checked out of CVS afresh, which could break the
-      building process of the rest of our web site.
+  <li>The variable LANGUAGES must be changed in top-level
+      <tt>webwml/Makefile</tt> file so that your language will get built
+      along with the other ones, on www.debian.org. We would prefer if you
+      left this particular change up to the webmasters, because you may not
+      be aware that your translation is broken when checked out of CVS
+      afresh, which could break the building process of the rest of our web
+      site.
 </ol>
+
+<p>After that is done, put the following line in a new file called
+"Makefile" in that directory:
+
+<pre>
+include $(subst webwml/<var>yourlanguagedir</var>,webwml/english,$(CURDIR))/Makefile
+</pre>
+
+<p>(Replace <var>yourlanguagedir</var> with the name of your language's
+directory, of course.)</p>
+
+<p>Now create a subdirectory inside your language's directory called "po",
+and copy the same Makefile to that subdirectory (<kbd>cp ../Makefile .</kbd>).
+</p>
+
+# insert missing stuff about how to generate initial po files
+
+<p>Now that you have the skeleton of makefiles et al set up, you can start
+adding your translations in our shared WML tags used in templates.
+The first templates that you should translate are those that appear
+on all of the web pages, like the header keywords, the ALT tags for
+the images, and the footer.</p>
+
+# The page on <a href="using_wml">using WML</a> has more information on this.
+
+<p>Start translating in the
+<code>po/templates.xy.po</code> file. You don't have to translate
+all of the slices in all of the templates, just those that your currently
+translated pages actually need.</p>
+
+<p>If you aren't sure if you did something properly, ask on the debian-www
+mailing list before committing.</p>
+
+<p>You should <a href="navbar_images">translate the text on the images</a>
+in the red navigation bar, too.
 
 <p>Comments in files will indicate if there are items that should not be
 translated; respect them.
 
 <p>Note: if you find you need to make any other changes, send mail to
 debian-www saying what you changed and why, so the problem can be corrected.
+
+<p>After the template skeleton is done, you can start with translating the
+front page.</p>
 
 <p>You can ignore subdirectories listed in the SUBS variable of a Makefile
 even if they don't exist in the translation directory. When you translate a
@@ -136,6 +129,8 @@ file.wml</tt>), and when you're finished, commit it <a href="using_cvs">to
 CVS</a>.  Please ensure that your translation is buildable, because if
 not, it might break the build process of the entire web site.
 
+# XXX replace with copypage.pl use
+
 <p>When copying files, do not copy CVS directories or files in them from
 the english/ directory into your own.  If you do so accidentally and
 commit translations later, cvs will update the english files with your
@@ -146,9 +141,6 @@ HTML files are not named <tt>file.html</tt> but
 <tt>file.&lt;lang&gt;.html</tt>, where <tt>&lt;lang&gt;</tt> is the
 two letter code of the language, according to ISO 639 (e.g. <tt>fr</tt>
 for French).
-
-<p>Note: when a page is first translated, the other languages will not
-create links to your page until they are regenerated.
 
 <h3>The rest of the story</h3>
 
