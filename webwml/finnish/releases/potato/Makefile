@@ -4,11 +4,14 @@
 
 WMLBASE=../..
 CUR_DIR=releases/potato
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
-SUBS=
+SUBS=installguide
 
 include $(WMLBASE)/Make.lang
 
+
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/release.wml \
-  $(ENGLISHSRCDIR)/releases/potato/release.data
+  $(ENGLISHDIR)/releases/potato/release.data $(ENGLISHDIR)/releases/info
+installmanual.$(LANGUAGE).html: installmanual.wml $(TEMPLDIR)/release.wml \
+  $(ENGLISHDIR)/releases/potato/release.data
+releasenotes.$(LANGUAGE).html: releasenotes.wml $(TEMPLDIR)/release.wml \
+  $(ENGLISHDIR)/releases/potato/release.data
