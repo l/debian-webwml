@@ -1,0 +1,219 @@
+#use wml::debian::template title="PowerPC Port (PReP)" NOHEADER="yes"
+[ <a href="../..">Ports</a> ]
+[ <a href="../">Debian PowerPC</a> ]
+[ <a href="../news">Magazine</a> ]
+[ <a href="../devel">Entwicklung</a> ]
+[ <a href="../docu">Dokumentation</a> ]
+[ <a href="../supply">Bezugsquellen</a> ]<p>
+
+<center> 
+<h1>Debian GNU/Linux PowerPC PReP Seite</h1>
+</center>
+ 
+<h2>Download</h2>
+
+Um Debian GNU/Linux auf einem PReP-System zu installieren, laden Sie bitte die folgenden Dateien:<br>
+<br>
+<ul>
+<li><a href="http://master.debian.org/~porter/download/bootprep.bin">bootprep.bin</a></li>
+<li><a href="http://master.debian.org/~porter/download/resc1440.bin">resc1440.bin</a></li>
+<li><a href="http://master.debian.org/~porter/download/drv1440.bin">drv1440.bin</a></li>
+<li><a href="http://master.debian.org/~porter/download/base2_2.tgz">base2_2.tgz</a></li>
+</ul>
+
+<p>
+ Disketten-Installation ist momentan nicht vorhanden, dies liegt an der Gröesse des Boot-Images und der
+ Rescue-Disk. bootprep.bin muss via tftp gebootet werden und die Installations-Images müssen per
+ nfs installiert werden.
+</p>
+
+
+<h2>Dokumentation</h2>
+<h3>Intro</h3>
+<p>
+ IBM und Motorola haben oder hatten PReP Architektur basierte Maschienen gebaut.
+ Zum jetzigen Zeitpunkt ist nur die PReP Version von Motorola getestet, auf folgenden
+ Maschinen: PowerStack(tm) (Blackhawk, Comet, Utah motherboard) Systeme und die
+ momentant erhältlichen 'Embedded Solution' der PowerPlus(tm) Familie. Diese bestehen aus
+ MTX, MTX+, MVME2300(sc)/2400/2600/2700/3600/4600 und MCP(n)750. IBM baut eine Reihe
+ von Desktop Workstation, welche den PowerPC PReP Spezifikationen entsprechen.
+ Wenn Sie die Modellnamen wissen, senden Sie uns eine kurze Notiz bitte.
+</p> 
+
+
+<h3>Bekannte Probleme</h3>
+<p>
+ Interrupt handling is broken in the included kernel image on Motorola legacy systems.
+ I have a fix tested, but haven't yet rolled it back into the installer images. Don't
+ attempt to install to a PowerStack until I have updated these, you will be wasting i
+ your time.
+</p>
+<p>
+ MTX+ (7 PCI Slot MTX System) kann diesen Kernel nicht booten, es stoppt während der
+ IDE Treiber initialisation. An diesem Problem wird gearbeitet.
+</p>
+<p>
+ Alle Motorola PowerPlus Systeme haben einen kaputten IDE Support im Kernel.
+ Dies wurde auf einigen Maschinen behoben, sind aber noch nicht in den Debian Images enthalten.
+ Bitte benutzen Sie SCSI, damit ergeben sich keine Probleme.
+</p>
+
+
+<h3>Firmware</h3>
+<p>
+ Depending on the age and/or maker of your PReP system you will have either PPCBUG
+ (Motorola) or Open Firmware (IBM or Motorola). The boot commands are slightly
+ different but both systems implement PReP style booting and provide residual data
+ to the boot image as detailed in the PReP and Residual Data standards. A complete
+ explanation of firmware commands is out of the scope of this document but some 
+ information will be provided where necessary.
+</p>
+
+
+<h3>Setup for installation</h3>
+<p>
+ You need a tftp/nfs server to do the install at this point as the boot and rescue disks 
+ are too big for a 1.44MB floppy. I have bootable PReP base install CD's but things need 
+ to be cleaned up a bit before I post an ISO image for public consumption. Place the rescue,
+ drivers, and base tarball image in your exported nfs directory. Place the bootprep.bin 
+ image in your tftp directory. On Motorola PPCBUG systems you may boot and install using 
+ either VGA console or serial console. PPCBUG and Linux will fall back to serial console 
+ mode if no VGA or keyboard is detected.
+</p>
+
+
+<h3>Booting</h3>
+<dl>
+<dt> PPCBUG
+<dd> Use the "ENV" command and turn on the "Network PReP boot enable" option.
+<dd>
+<dd> Use the "NIOT" command to configure the client, server, and optional gateway IP addr
+     that will be used to tftp the kernel. If it is a brand new board, be sure to
+     "SET <date/time>" to start the hwclock or networking and other things will not function.
+<dd>
+<dd> Boot the image with "NBO 0 0 ,,, bootprep.bin"
+<dd>
+<dt> OF
+<dd>
+<dd> Use the following command to tftp boot a PReP image:
+<dd>
+<dd> "boot &#139server_ipaddr&#155,&#139file&#155,&#139client_ipaddr&#155"
+</dl>
+
+
+
+<h2>Debian Installation</h2>
+<ol>
+<li> Configure the keyboard
+<p>
+ If on serial console, the configure keyboard step is skipped.
+</p>
+
+<li> Partition the harddrive
+<p>
+ On a Motorola system the default is for the kernel to root from /dev/sda2.
+ So, partition the harddrive to have a type 41 PReP boot partition as
+ /dev/sda1 and the root partition as /dev/sda2. After that you may choose
+ any configuration you like.  
+</p>
+
+<p>
+ On an IBM system the default is for the kernel to root from /dev/hda1.
+ Parition the harddrive to have a type 41 PReP boot partition as /dev/sda2
+ and the root partition as /dev/hda1. AFter that you may choose any
+ configuration you like.
+</p>
+
+<li> Install Rescue and Driver disks
+<p>
+ STOP!  First skip down to "Configure Network". Configure your network as it asks.
+</p>
+<p>
+ Now, when you select "Install Rescue and Driver disks" a new NFS install
+ method will appear. Choose it and point it at the NFS directory you set
+ up earlier. Choose the defaults for the rest of the question and it will
+ install the rescue and driver images.
+</p>
+
+<li> Configure Driver modules
+<p>
+ For now, important modules are built in the kernel so just choose "Exit".
+</p>
+
+<li> Install Base System
+<p>
+ Again, choose the NFS option. Point it at the NFS install directory and
+ choose the defaults to install the Debian base system.
+</p>
+
+<li> Configure Base System
+<p>
+ Answer prompts.
+</p>
+
+<li> Make bootable from harddrive:
+<p>
+ Will write a kernel image to the type 41 PReP boot partition. If you didn't make one your should get an error here.
+</p>
+
+<li> Make boot floppy
+<p>
+ Will write a kernel image to a floppy in the drive.
+</p>
+
+<li> Reboot
+<p>
+ Choose this to reboot and continue installation.
+</p>
+</ol>
+
+<h2>Debian Base System boot</h2>
+<p>
+ If you configured a type 41 PReP boot partition and had the installtion
+ program make the system bootable from the hard drive then you can simply
+ issue a firmware boot command to have it boot from hard disk (PPCBUG and
+ OF both have autoboot options you may also turn on).
+</p>
+
+<dt>PPCBUG
+<dd>
+<dd>"PBOOT 0" (assumes SCSI disk on controller 0, SCSI ID 0)
+<dd>"PBOOT 0 x0" (boots from SCSI disk on controller 0, SCSI ID x)
+<dd>
+<dt>OF
+<dd>
+<dd>"boot disk0" (for installed IDE/SCSI disk aliased to disk0)
+<dd>"boot hdisk0" (for installed IDE/SCSI disk aliased to hdisk0)
+</dl>
+<p>
+ Now the kernel boots from the hard disk.
+</p>
+
+<h2>Debian Final Installation</h2>
+<p>
+ Answer the remaining configuration questions. The keyboard configuration
+ will moan and complain if you are on a serial console. Ignore it, it is
+ harmless and will be skipped in a future version if on serial console.
+</p>
+
+<p>
+ Choose a system profile if you like. It is best to choose a small one
+ since there are dependency problems in potato since it is the unstable
+ development tree. When you enter dselect, choose [A]ccess and select the
+ apt method. Keep the default URI to the master debian site, change the
+ distribution to "unstable" and keep the default sections. Now [U]pdate
+ the package list to get the latest list from the Debian master site.
+ Choose [I]nstall and all the package will be installed. You will be
+ required to answer a good number of questions when it goes through the
+ configuration phase.
+</p>
+
+<p>
+ After this completes you should be present with a login prompt and your
+ installation is complete.
+</p>
+
+<hr>
+Please email with any suggestions/complaints/problems with the installation
+and this documentation to <a href="mailto:porter@debian.org">Matt Porter</a>
+
