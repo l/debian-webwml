@@ -9,9 +9,7 @@ CUR_DIR=News/1998
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
 
 # Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(wildcard 1998*.wml) \

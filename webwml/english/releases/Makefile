@@ -9,10 +9,7 @@ CUR_DIR=releases
 SUBS=hamm slink potato woody
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 # unfortunately, I have to force this since it checks whether directories exist
 index.$(LANGUAGE).html: FORCE

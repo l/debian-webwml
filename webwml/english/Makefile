@@ -11,10 +11,7 @@ international logos mirror misc partners ports releases security vote y2k \
 chinese
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.generic
-include $(WMLBASE)/Make.dep.templ
 
 # Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \

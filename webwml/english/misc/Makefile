@@ -9,10 +9,7 @@ CUR_DIR=misc
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ
-include $(WMLBASE)/Make.dep.generic
 
 merchandise.$(LANGUAGE).html: ../../english/misc/merchandise.data \
 		../../english/misc/merchandise.def

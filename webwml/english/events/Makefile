@@ -9,10 +9,7 @@ CUR_DIR=events
 SUBS=1998 1999 2000
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 # Do Not modify the following lines
 index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*/*.wml) \

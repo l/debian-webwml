@@ -6,10 +6,7 @@ CUR_DIR	:= $(subst $(shell cd $(WMLBASE); pwd -P)/,,$(shell pwd))
 SUBS	:=# remove subdirectories that you don't want built from this variable
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 ddp.$(LANGUAGE).html: ddp.wml $(TEMPLDIR)/ddp.wml
 	$(WML) -Dmlmonth=$(shell date '+%y%m') $(<F)

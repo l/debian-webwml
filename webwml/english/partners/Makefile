@@ -9,10 +9,7 @@ CUR_DIR=partners
 SUBS=images
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
                         $(ENGLISHSRCDIR)/partners/index.include

@@ -9,10 +9,7 @@ CUR_DIR=international/spanish
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.generic
-include $(WMLBASE)/Make.dep.templ
 
 # Do Not modify the following line
 

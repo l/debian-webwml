@@ -9,9 +9,7 @@ CUR_DIR=vote/1999
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
 
 # Do Not modify the following lines
 index.$(LANGUAGE).html: index.wml $(wildcard vote*.wml) $(TEMPLDIR)/basic.wml $(TEMPLDIR)/recent_list.wml
