@@ -1,0 +1,125 @@
+#use wml::debian::cdimage title="Spegla Debians cd-avbildningar" BARETITLE=true
+#use wml::debian::translation-check translation="1.3"
+
+<p>För att spegla Debians cd-avbildningar behöver du en Linux- eller
+Unixliknande maskin.
+Att hämta avbildningarna och göra dem tillgängliga kan göras på flera olika
+sätt, beroende på vilka möjligheter du har.</p>
+
+<p>Du bör <em>inte</em> använda ftp eller http för att hämta avbildningarna.
+Dessa överföringsmetoder har en hög misslyckandepotential på grund av filernas
+enorma storlekar.
+Dessutom måste allt data hämtas på nytt även om avbildningarna bara ändras
+minimalt (såsom sker för underutgåvor), något som medför hög belastning på våra
+datorer och nätverksanslutningar.</p>
+
+<p>Av dessa orsaker använder vi programmet
+<a href="http://rsync.samba.org/"><tt>rsync</tt></a> vilket, kortfattat,
+genomför fjärrbinärpatchning.
+Med <tt>rsync</tt> kan avbildningar för underutgåvor uppdateras mycket
+effektivt, eftersom endast de förändrade delarna sänds över nätverket; de
+oförändrade delarna kopieras från den gamla avbildningen.</p>
+
+<p><tt>rsync</tt> i sig självt utför fortfarande kompletta hämtningar av
+&rdquo;helt nya&rdquo; utgåvor, eftersom de avbildningarna i stort sett inte
+innehåller några oförändrade delar.
+Med &rdquo;<span lang=en>pseudo image kit</span>&rdquo; kan vi dock skapa
+&rdquo;pseudo&rdquo;-cd-avbildningsfiler från data som redan är tillgänglig på
+närmaste ftp-spegling av Debian &ndash; kanske din egen lokala hårddisk.
+<tt>Rsync</tt> kan sedan binärpatcha dessa &rdquo;pseudo-avbildningar&rdquo;
+till officiella, något som till och med kan vara mer effektivt än att patcha
+gamla avbildningar för nya underutgåvor.</p>
+
+<p><span lang=en>Pseudo image kit</span> är huvudsakligen skrivet för att bara
+hämta en eller ett par avbildningar, så som de allra flesta gör.
+Förutom det finns även skriptet <tt>debcdmirror</tt> som gör speglingen
+<em>riktigt</em> enkel eftersom automatiskt använder <span lang=en>pseudo image
+kit</span> och <tt>rsync</tt> för att hålla din spegling à jour &ndash; till den
+grad att den automatiskt kontrollerar MD5-kontrollsumman för varje hämtad
+avbildning.
+Med <tt>debcdmirror</tt> kan du ange exakt vad du vill spegla.</p>
+
+<p>Så vi har följande möjligheter för att hämta avbildningarna och hålla dem à
+jour:</p>
+
+<ul>
+  <li>Med ftp eller http: Detta bör <em>inte</em> göras.</li>
+  <li>Genom att använda endast <tt>rsync</tt> (dagligt cron-jobb):
+      Detta rekommenderas endast för platser som inte har tillgång till
+      en näraliggande/snabb Debian-ftp-spegel.</li>
+  <li>Manuellt med <span lang=en>pseudo image kit</span> (kanske tillsammans
+      med <tt>rsync</tt> för att uppdatera underutgåvor).
+      En massa arbete och problem.</li>
+  <li>Med skriptet <tt>debcdmirror</tt> (vilket &rdquo;internt&rdquo; använder
+      <span lang=en>pseudo image kit</span> och <tt>rsync</tt>) (dagligt
+      cron-jobb).
+      <strong>Detta</strong> är vad du gör göra! :-)</li>
+</ul>
+
+<p>Senaste versionen av
+<a href="http://cdimage.debian.org/~costar/pseudo-image-kit/" lang=en>pseudo
+image kit</a> och skriptet
+<a href="http://cdimage.debian.org/~costar/debcdmirror/"><tt>debcdmirror</tt></a>
+är tillgängliga från författarens webbplats.
+Läs README-filerna i de båda arkiven för omfattande information om hur de
+fungerar.</p>
+
+<p><strong>Observera:</strong>
+
+<p>För skriptet <tt>debcdmirror</tt> måste du välja en <tt>rsync</tt>-spegel
+som gör en &rdquo;<tt>ls-lR</tt>&rdquo; fil tillgänglig.
+Adresser finns på <a href="rsync-mirrors">rsync-spegellistan</a>.
+Officiella öppna speglar tillåts göra rsync direkt mot huvudservern,
+cdimage.debian.org; du behöver troligen ett lösenord för den, fråga
+<a href="mailto:phil@hands.com">dess administratör</a>.</p>
+
+<p>Om du inte har en lokal
+<a href="$(HOME)/mirror/">&rdquo;vanlig&rdquo; Debian-ftp-spegel</a>, se
+<a href="$(HOME)/distrib/ftplist">listan över ftp-platser</a>.
+
+<p><tt>debcdmirror</tt> kräver <tt>bash</tt> version 2 eller högre.
+Om så krävs kan du installera det på en icke-förvald plats, men då måste du se
+till att ändra sökvägen till <tt>bash</tt> på första raden i skriptet.</p>
+
+<p>Om du bara använder <tt>rsync</tt>: se åtminstone till att använda flaggorna
+<b><tt>--times --links --hard-links --block-size=8192</tt></b>.
+Detta kommer att bevara modifieringstid, symboliska länkar och hårda länkar, och
+använda en blockstorlek om 8192 byte (mest effektivt för cd-avbildningar).
+När modifieringstider och storlekar är desamma kommer <tt>rsync</tt> helt enkelt
+att lämna filerna som de är, så <tt>--times</tt> är verkligen obligatoriskt.</p>
+
+<p>Katalogen &rdquo;<tt><i>kodnamn</i>_test</tt>&rdquo; innehåller avbildningar
+som är hårdlänkade mot de i katalogerna meed versionsnummer (t.ex
+<tt>2.2_r4</tt>).
+Versionskatalogen kommer att ändras mellan (under)utgåvorna, men namnen i
+&rdquo;<tt>test</tt>&rdquo;-katalogerna kommer bevaras.
+Så, om <tt>rsync</tt> används självt, är spegling av både katalogerna med
+versionsnummer och lämpliga &rdquo;<tt>test</tt>&rdquo;-kataloger, <em>och</em>
+använda flaggan <tt>--hard-links</tt> det enda sättet för rsync att uppdatera
+underutgåvor ordentligt.
+[Du bör <em>inte</em> inkludera &rdquo;<tt>test</tt>&rdquo;-katalogerna med
+<tt>debcdmirror</tt>, eftersom <tt>debcdmirror</tt> hanterar situationen på ett
+annat och mer effektivt sätt.]</p>
+
+<p><tt>ls-lR</tt>-filen beskriver katalogstrukturen på den spegel den ligger på.
+Spegla <strong>inte</tt> <tt>ls-lR</tt>-filen; skapa antingen en egen (med det
+bifogade &rdquo;<tt>Makels-lR</tt>&rdquo; varje timme via <tt>cron</tt>) eller
+ha helt enkelt inte någon <tt>ls-lR</tt>-fil alls.
+[<tt>debcdmirror</tt> kommer automatiskt skapa en lokal <tt>ls-lR</tt>-fil efter
+varje spegling.]</p>
+
+<p>När du har hämtat de cd-avbildningar du vill spegla (i386- och
+källkodsskivorna är de mest populära) bör du köra
+<tt>rsync</tt>-serverprogrammet.
+Detta kommer inte att belasta din maskin speciellt mycket, och kommer generera
+betydligt mindre nätverkstrafik än en ftp-/http-tjänst.
+Instruktioner för hur detta ställs in finns i README-filen i
+<span lang=en>pseudo image kit</span>.</p>
+
+<p>Om du inte har något emot flera gigabyte nätverkstrafik varje dag skulle
+vi uppskatta ytterligare ftp-/http-speglar.
+Vi är glada för allt du har råd att bidra med.
+Skriv till
+<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;debian-cd&#64;lists.debian.org">debian-cd&#64;lists.debian.org</a>
+och berätta att du kör en spegel så att vi kan uppdatera lämpliga sidor.
+Tack på förhand!</p>
