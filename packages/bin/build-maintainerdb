@@ -1,0 +1,142 @@
+#! /usr/bin/perl
+
+#   pkg-convert - convert several Packages files to maintainer database
+#   Copyright (c) 1998,9,2001  Martin Schulze <joey@debian.org>
+
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+#   Todo:
+#    . Read maintainer changes from overrides file(s), need to rub
+#      out all existing entries
+
+$hostname = `hostname`;chomp $hostname;
+if ($hostname eq "master") {
+    $indexdir = "/org/packages.debian.org/etc";
+    $etcdir = "/debian/home/joey/etc";
+    $etcdir = "/org/packages.debian.org/etc";
+} elsif ($hostname eq "finlandia") {
+    $indexdir = "/pub/debian/indices";
+    $etcdir = "/home/users/joey/tmp/debian/home/etc";
+} else {
+    die "Unknown host: $hostname";
+}
+$maintainerfile = "$indexdir/Maintainers";
+$maintainerdb = "$etcdir/maintainerdb";
+$overridefile = "$etcdir/maintainerdb.override";
+
+sub package_maintainer
+{
+    my $pkg = shift;
+    my $login = shift;
+    my $addr = shift;
+    my $home = "/debian/home/$login";
+
+    if (-d $home) {
+	if (-f "$home/.forward-$pkg") {
+	    return "$login-$pkg\@master.debian.org";
+	}
+    }
+    return $addr;
+}
+
+sub read_maintainer
+{
+    my $file = shift;
+    my $package;
+    my $maintainer;
+    my $maint;
+
+    open (F, "$file") || die "Can't open $file, $!";
+    printf "Reading %s\n", $file if ($opt_verbose);
+    while (<F>) {
+	next if (/^#/);
+	next if (/^$/);
+	/(\S+)\s+(.*)/;
+	$package=$1; $maintainer=$2;
+	if (! exists $maint{$package}) {
+	    foreach $maint (split(/,/,$maintainer)) {
+		$maint{$package} .= " " if (exists $maint{$package});
+		if (/.*<(.*)>/) {
+		    $maint{$package} .= $1;
+		} elsif (/\s*(\S+)\s+\(.*\)/) {
+		    $maint{$package} .= $1;
+		} else {
+		    $maint{$package} .= $maint;
+		}
+	    }
+	    printf "  %s: %s\n", $package, $maint{$package} if ($opt_verbose > 1);
+	    $pkgshort = "";
+	    if ($package =~ /(.*[^\d\.]+)([\d\.]*\d)$/) {
+		$pkgshort = $1;
+		$maint{$pkgshort} = $maint{$package} if (! exists $maint{$pkgshort});
+		printf "  %s: %s\n", $pkgshort, $maint{$package} if ($opt_verbose > 1);
+	    }
+	    if ($maint{$package} =~ /([^\@]+)\@(master\.)?debian\.org/) {
+		$addrsave = $maint{$package} if ($opt_verbose > 1);
+		$maint{$package} = package_maintainer ($package, $1, $maint{$package});
+		printf "  Changed to %s\n", $maint{$package} if ($opt_verbose > 1 && ($addrsave ne $maint{$package}));
+		if (length ($pkgshort) > 0) {
+		    $maint{$pkgshort} = package_maintainer ($pkg, $1, $maint{$pkgshort});
+		}
+	    }
+	}
+    }
+    close (F);
+}
+
+sub write_maintainer
+{
+    my $file = shift;
+
+    printf "Writing to %s.new\n", $file if ($opt_verbose > 0);
+    open (CONF, ">$file.new") || die "Can't open $file.new, $!";
+    foreach $package (sort(keys(%maint))) {
+	printf "%s -> %s\n", $package, $maint{$package} if ($opt_verbose > 1);
+	printf CONF "%s:%s\n", $package, $maint{$package};
+    }
+    close (CONF);
+    printf "Renaming to %s\n", $file if ($opt_verbose > 0);
+    system "mv -f $file.new $file";
+}
+
+sub help
+{
+    print "Help not yet implemented.\n";
+}
+
+# 
+# Main program
+#
+$opt_verbose = 0;
+while ($#ARGV > -1) {
+    if ($ARGV[0] eq "-v") {
+	$opt_verbose++;
+    } elsif ($ARGV[0] eq "-vv") {
+	$opt_verbose+= 2;
+    } elsif ($ARGV[0] eq "-vvv") {
+	$opt_verbose+= 3;
+    } elsif ($ARGV[0] eq "-h") {
+	help();
+    } elsif ($ARGV[0] eq "-d") {
+	$maintainerdb = "./maintainerdb";
+    }
+    shift;
+}
+
+&read_maintainer ($overridefile);
+&read_maintainer ($maintainerfile);
+
+&write_maintainer ($maintainerdb);
+
