@@ -13,5 +13,7 @@ include $(WMLBASE)/Make.lang
 index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*.wml) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
 
-%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/security.wml
+%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/basic.wml $(TEMPLDIR)/footer.wml \
+		$(TEMPLDIR)/languages.wml $(TEMPLDIR)/security.wml \
+		$(TEMPLDIR)/fixes_link.wml $(ENGLISHSRCDIR)/security/2000/%.data
 	$(WML) $(<F)
