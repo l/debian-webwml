@@ -560,6 +560,7 @@ sub write_pages {
 			setlocale( LC_ALL, get_locale() ) 
 			    or do {
 			    	warn "W: could not set locale, using C\n" unless $opts->{quiet};
+				next if ($lang ne 'en');
 				setlocale( LC_ALL, "C" );
 			};
 		    };
