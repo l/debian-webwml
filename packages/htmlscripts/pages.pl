@@ -362,7 +362,8 @@ sub package_pages_walker {
 	#
 	# Source package download
 	#
-	$package_page .= gettext( "<small>Source Code:\n" );
+	$package_page .= "<small>".gettext( "Source Package:" );
+	$package_page .= " <a href=\"../source/$sourcepackage\">$sourcepackage</a>, ".gettext( "Download" ).":\n";
 
 	if ( $src_pkg ) {
 	    my $sf = $src_pkg->{versions}->{$src_version}->{files};
