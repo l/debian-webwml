@@ -82,7 +82,7 @@ foreach $entry ($mesg->entries) {
     } elsif ($subject =~ m/^RFP:\s*/) {
         $rfp{$bugid} = join(": ", split(/\s+-+\s+/, $',2)); 
     } else {
-    	print STDERR "What is this ($bugid): $subject\n";
+    	print STDERR "What is this ($bugid): $subject\n" if ( $host ne "master.debian.org" );
     }
 }
 
