@@ -6,7 +6,7 @@ BASE=..
 THISDIR=ipv6
 
 HTMLFILES= deadsite.html 
-PHPFILES=index.php main.php ammain.php amnew.php amnew2.php amprofile.php exit.php amstatus.php amupdate.php todo.php amlist.php fddelete.php leaderboard.php amlogin2.php login2.php nmlist.php whoisam.php newnm.php newnm2.php nmelist.php deletenm.php nmstatus.php stats.php nmadvocate.php maintainers.php gpg.php gpgmain.php gpglogin2.php gpglogin.php gpgpasswd.php gpgregister.php gpgplace.php
+PHPFILES=index.php main.php ammain.php amnew.php amnew2.php amprofile.php exit.php amstatus.php amupdate.php todo.php amlist.php fddelete.php leaderboard.php amlogin2.php login2.php nmlist.php whoisam.php newnm.php newnm2.php nmelist.php deletenm.php nmstatus.php stats.php nmadvocate.php maintainers.php gpg.php gpgmain.php gpglogin2.php gpglogin.php gpgpasswd.php gpgregister.php gpgplace.php gpguserdel.php
 INCFILES=config.inc common.inc gpgcommon.inc gpgconfig.inc
 WMLFILES=$(wildcard *.wml)
 IMAGES=$(wildcard *.gif) $(wildcard *.jpg)
