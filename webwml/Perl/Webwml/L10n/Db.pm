@@ -231,7 +231,7 @@ sub write {
                 || die "Unable to write to $file\n";
 
         printf DB "%d-%02d-%02d\n\n", Time::localtime::localtime->year() + 1900, Time::localtime::localtime->mon() + 1, Time::localtime::localtime->mday;
-        foreach my $pkg (keys %{$self->{data}}) {
+        foreach my $pkg (sort keys %{$self->{data}}) {
                 foreach (@{$self->{scalar}}) {
                         next unless defined($self->{data}->{$pkg}->{$_});
                         print DB $_.": ".$self->{data}->{$pkg}->{$_}."\n";
