@@ -1,6 +1,6 @@
 #use wml::debian::template title="Opsætning af et Debian-arkivspejl"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.30"
+#use wml::debian::translation-check translation="1.33"
 #include "$(ENGLISHDIR)/releases/woody/release.data"
 
 <toc-display/>
@@ -146,14 +146,17 @@ dag, er at bruge cron.  Se <kbd>man crontab</kbd> for flere oplysninger.</p>
 
 <p>Hvis du ønsker at gøre et Debian-filspejl tilgængeligt via HTTP, tilføj da
 følgende indstillinger til din opsætning af Apache (naturligvis forudsat at du
-bruger Apache) til katalog-indekserne:</p>
+bruger Apache) i blokken <code>&lt;Directory 
+<var>/sti/til/dit/debian/spejl</var>&gt;</code>, hvor 
+<var>/sti/til/dit/debian/spejl</var> ændres til navnet på det katalog, hvor
+dit filspejl ligger:</p>
 
 <pre>
-&lt;directory /org/ftp.debian.org/ftp&gt;
+   Options +Indexes +FollowSymlinksIfOwnerMatch
    IndexOptions NameWidth=* +SuppressDescription
    DirectoryIndex .
-&lt;/directory&gt;
 </pre>
 
-<p>(udskift <code>/org/ftp.debian.org/ftp</code> med navnet på kataloget hvor
-du har dit filspejl).</p>
+<p>Dette slår katalogindeksering til og sikrer at man kan følge symbolske 
+links.  Filnavnene i katalogerne bliver ikke forkortet, og beskrivelserne 
+(overvejende ikke-eksisterende) vises ikke.</p>
