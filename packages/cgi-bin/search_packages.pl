@@ -99,7 +99,11 @@ sub find_desc
 
     my @results = qx( $cmd );
 
-    return @results ? $results[0] : "";
+    if (@results) {
+	@results = split (/\t/, $results[0], 3);
+	$desc =  $results[2] if ($#results >= 2);
+    }
+    return $desc;
 }
 
 # The keyword needs to be modified for the actual search, but left alone
