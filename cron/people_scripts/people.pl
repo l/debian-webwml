@@ -14,11 +14,8 @@ my @special_maintainer = (
 	"Debian QA Group",
 	"Debian Install System Team",
 	"Debian Policy List",
-	"Debian GCC maintainers",
-	"Debian GNUstep maintainers",
 	"GNU Hurd Maintainers",
 	"GNU Libc Maintainers",
-	"Debian Apache Maintainers",
 	"Debbugs developers",
 	"Dpkg Development",
 	"teTeX maintainers",
@@ -27,9 +24,6 @@ my @special_maintainer = (
 	"Dynamic DNS Tools and Services",
 	"Debian OpenOffice Team",
 	"Cdbs Hackers",
-	"Debian Java Maintainers",
-	"Debian OCaml Maintainers",
-	"Debian SDL maintainers",
 );
 
 
@@ -218,7 +212,10 @@ sub process_name {
 		}
 		$maintainer = from_utf8_or_iso88591_to_sgml($maintainer);
 # Take care of the annoying cases and exceptions and overrides and stuff
-		if ($maintainer =~ /Debian Quality Assurance.*<(.+)>/) {
+		if ($maintainer =~ /(Debian \S+ [Mm]aintainers).*<(.+)>/) {
+			$lastname = $1; $firstname = ''; $email = $2;
+		}
+		elsif ($maintainer =~ /Debian Quality Assurance.*<(.+)>/) {
 			$lastname = 'Debian QA Group'; $firstname = ''; $email = $1;
 		}
 		elsif ($maintainer =~ /Boot Floppies Team <(.+)>/) {
@@ -552,6 +549,15 @@ foreach (@special_maintainer) {
 	$names = $_.":";
 	$lastname = $_; $firstname = "";
 	if (exists $People{$names}) {
+		print_maintainer($names);
+		delete $People{$names};
+	}
+}
+
+@nameslist = sort { lc($a) cmp lc($b) } keys %People;
+foreach $names (@nameslist) {
+	($lastname,$firstname) = split(/:/, $names);
+	if ($lastname =~ /Debian \S+ [Mm]aintainers/) {
 		print_maintainer($names);
 		delete $People{$names};
 	}
