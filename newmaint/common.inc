@@ -21,6 +21,22 @@
     return $db;
   }
 
+  function find_applicant($db, $email) {
+    global $row, $query;
+    # start looking at stuff
+    $sql = "SELECT * from applicant WHERE email='$email'";
+    if (! ($query = pg_exec($db, $sql))) {
+      echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+      return FALSE;
+    }
+    if ( pg_numRows($query) < 1) {
+      echo "Could not find $email in the database.  You can find a full list of applicants <A href=\"nmlist.php\">here</A>.<BR>";
+      return FALSE;
+    }
+    $row = pg_Fetch_Array($query, 0);
+    return TRUE;
+  }
+
   function print_bool($title, $name, $value, $editable)
   {
     echo "<TR><TD width=\"200\"><B>$title</B> </TD><TD width=\"200\">";
