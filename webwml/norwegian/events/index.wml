@@ -1,0 +1,277 @@
+#use wml::debian::basic title="Upcoming Attractions"
+#use wml::debian::languages
+#<!--translation 1.17-->
+<!-- Oversatt til norsk av Tor Slettnes (tor@slett.net) -->
+
+#words and phrases to translate
+<define-tag intro>
+
+Denne siden inneholder en rekke begivenheter fra rundtomkring i
+samfunnet.  Den beskriver også hvorvidt Debian er involvert, og
+hvordan.  Om du vil hjelpe til med en begivenhet, send en melding
+direkte til koordinatoren for denne.  Om ingen koordinator er oppgitt
+og du er interessert i å koordinere begivenheten, eller om du vet om
+flere begivenheter du syns vi bør vite om, send en melding til &lt;<A
+HREF="mailto:events@debian.org">events@debian.org</A>&gt;
+
+
+<p>
+
+Denne siden er fortsatt under utvikling, så alle kommentarer/forslag
+osv. er velkomne!
+
+</define-tag>
+<define-tag event_word>Begivenheter</define-tag>
+<define-tag past_words>tidligere begivenheter</define-tag>
+<define-tag none_word>ingen</define-tag>
+
+<perl>
+sub get_event_list {
+	my ( $path, $number, $current_dir ) = @_;
+
+
+	$str=""; $over=""; $current=""; $unknown="";
+
+	opendir(DIR, "$current_dir/$path");
+  	@files = grep { /^\d+.*.wml$/ && -f "$current_dir/$path/$_" } readdir(DIR);
+  	@files = sort @files;
+  	closedir DIR;
+
+  $count = 0;
+  foreach (@files) {
+     $count++;
+     open(FILE, "<$path/$_") || open(FILE, "<$current_dir/$path/$_");
+     if ( /(\d+.*).wml/ ) {
+        $base = $1;
+     }
+     $title = ''; $when = ''; $where = ''; $desc = ''; $past = '';
+     foreach $line (<FILE>) {
+        if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
+           $title = $1;
+        }
+        elsif ($line =~ /^#use wml::debian::past_event$/) {
+           $past = 'yes';
+        }
+        elsif ($line =~ /^#use wml::debian::event$/) {
+           $past = 'no';
+        }
+        elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) {
+           $when = $1;
+        }
+        elsif ($line =~ /^<define-tag where>(.*)<\/define-tag>$/) {
+           $where = $1;
+        }
+        elsif ($line =~ /^<define-tag desc>(.*)<\/define-tag>$/) {
+           $desc = $1;
+        }
+
+		if ($title && $when && $where) {
+           $str1 = "<TR><TD width=120><TT>[$when]</TT></TD><TD><STRONG><A HREF=\"$path/$base\">$title</A></STRONG> ($where)</TD></TR>\n";
+		}
+		elsif ($title && $when) {
+           $str1 = "<TR><TD width=120><TT>[$when]</TT></TD><TD><STRONG><A HREF=\"$path/$base\">$title</A></STRONG></TD></TR>\n";
+		}
+
+		if ($past && $title && $when && $where ) {
+			last;
+		}
+     }
+	 if ( $past eq "yes" )
+	 {
+	 	$over .= $str1;
+	 }
+	 elsif ( $past eq "no" )
+	 {
+	 	$current .= $str1;
+	 }
+	 else
+	 {
+	 	$unknown .= $str1;
+	 }
+     close FILE;
+     if ($count eq $number) { last; }
+  }
+if ( $over eq "" && $current eq "" && $unknown eq "" )
+{
+	$str = "$path - [<none_word>]<BR>";
+}
+else
+{
+	$str = "";
+	if ( $current ne "" ) { $str .= "<H3>$path <event_word></H3><TABLE>$current</TABLE>"; }
+	if ( $over ne "" ) { $str .= "<A HREF=\"./$path/\">$path - <past_words></A><BR>"; }
+	if ( $unknown ne "" ) { $str .= "<H3>$path Unknown (indicates bug)</H3><TABLE>$unknown</TABLE>"; }
+}
+return $str;
+}
+
+# get_past_event_list
+# This finds out if the given year (or any years if none are given) has any
+# events that have past.  If there are it provides links.
+#
+# Sun Aug  1 18:11:02 EDT 1999
+# Added.  Code is mostly stolen from get_event_list();
+# - blackie@sfcc.net
+
+
+sub get_past_event_list {
+my $str = '';
+my @paths = ();
+my ($current_dir, $path, $monthorder, $yearorder ) = @_;
+if ($path ne '') {
+  push(@paths,$path);
+}
+
+if ($path eq '') {
+  ($sec,$min,$hour,$mday,$month,$year,$wday,$yday,$isdst) = localtime(time);
+  # This is not a y2k bug.
+  $year += '1900';
+  $path = $year;
+  while (1) {
+    if ( -d "$current_dir/$path") {
+      push(@paths,$path);
+      $path--;
+    } else {
+      last;
+    }
+  }
+  if ($yearorder ne 'futurefirst') {
+    @paths =  reverse @paths;
+  }
+}
+
+foreach $path (@paths) {
+  opendir(DIR, "$current_dir/$path") || last;
+  @files = grep { /^\d+.*.wml$/ && -f "$current_dir/$path/$_" } readdir(DIR);
+  @files = sort @files;
+  closedir DIR;
+  foreach (@files) {
+    open(FILE, "<$path/$_") || open(FILE, "<$current_dir/$path/$_");
+    if ( /(\d+.*).wml/ ) {
+       $base = $1;
+    }
+    my $past = '';
+    foreach $line (<FILE>) {
+       if ($line =~ /^#use wml::debian::past_event$/) {
+           $past = 'yes';
+           last;
+       }
+    }
+    if ($past eq 'yes') {
+    $str .= "<A HREF=\"./$path/\">$path - <past_words></A><BR>"; 
+    last;
+    }
+  close FILE;
+  }
+}
+return $str;
+}
+
+
+# get_future_event_list
+# This displays future events in whatever order the translator asks.
+#
+# Sun Aug  1 18:11:02 EDT 1999
+# Added.  Code is mostly stolen from get_event_list();
+# - blackie@sfcc.net  
+
+sub get_future_event_list {
+my $str;
+my @paths;
+my ($current_dir, $path, $monthorder, $yearorder ) = @_;
+
+if ($path ne '') {
+  push(@paths,$path);
+}
+if ($path eq '') {
+  ($sec,$min,$hour,$mday,$month,$year,$wday,$yday,$isdst) = localtime(time);
+  # This is not a y2k bug.  
+  $year += '1900';
+  $path = $year;
+  while (1) {
+    if ( -d "$current_dir/$path") {
+      push(@paths,$path);
+      $path++;
+    } else {
+      last;
+    }
+  } 
+  if ($yearorder eq 'futurefirst') {
+    @paths =  reverse @paths;
+  }
+}
+
+foreach $path (@paths) {
+my $events = '';
+my @files = ();
+opendir(DIR, "$current_dir/$path") || last;
+@files = grep { /^\d+.*.wml$/ && -f "$current_dir/$path/$_" } readdir(DIR);
+@files = sort @files;
+if ($monthorder eq 'decfirst') {
+  @files =  reverse @files;
+}
+
+closedir DIR;
+foreach (@files) {
+open(FILE, "<$path/$_") || open(FILE, "<$current_dir/$path/$_");
+  if ( /(\d+.*).wml/ ) {
+     $base = $1;
+  }
+my $title = ''; my $when = ''; my $where = ''; my $desc = ''; my $past = '';
+  foreach $line (<FILE>) {     
+     if ($line =~ /^#use wml::debian::past_event$/) {
+         $past = 'yes';
+         last;
+     }
+     if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
+         $title = $1;
+     }
+     elsif ($line =~ /^<define-tag date>(.*)<\/define-tag>$/) {
+        $when = $1;
+     }
+     elsif ($line =~ /^<define-tag where>(.*)<\/define-tag>$/) {
+        $where = $1;
+     }
+     elsif ($line =~ /^<define-tag desc>(.*)<\/define-tag>$/) {
+        $desc = $1;
+     }
+  }
+if ($past ne 'yes') {
+   if ($title && $when && $where) {
+      $events .= "<TR><TD width=120><TT>[$when]</TT></TD><TD><STRONG> <A HREF=\"$path/$base\">$title</A></STRONG> ($where)</TD></TR>\n";
+   }
+   elsif ($title && $when) {
+      $events .= "<TR><TD width=120><TT>[$when]</TT></TD><TD><STRONG> <A HREF=\"$path/$base\">$title</A></STRONG></TD></TR>\n";   
+   }
+}
+close FILE;
+}
+$str .= "<H3>$path <event_word></H3><TABLE>$events</TABLE>";
+}
+
+return $str;
+}
+
+</perl>
+
+<p>
+<intro>
+
+#
+# This has been redone.  See index.wml.README for details.  Email me if
+# you have any difficulties.
+#
+# - blackie@sfcc.net
+
+<:= get_future_event_list('$(ENGLISHDIR)/events','','','futurefirst') :>
+
+#<:= get_event_list ('1999', '0', '$(ENGLISHDIR)/events' ) :>
+
+#<:= get_event_list ('2000', '0', '$(ENGLISHDIR)/events' ) :>
+
+#<:= get_event_list ('1998', '0', '$(ENGLISHDIR)/events' ) :>
+
+<:= get_past_event_list('$(ENGLISHDIR)/events','','','futurefirst') :>
+
+<:= languages() :>
+#use wml::debian::footer
