@@ -254,19 +254,21 @@ sub _read_dispatched {
                                 goto SKIP;
                         }
                         $lang = $2;
-                        warn "$file:$line: lang-mismatch-in-translated-templates\n"
-                                if $lang ne $ext;
-                        unless (defined($self->{langs}->{$lang})) {
-                                $self->{langs}->{$lang} = 1;
-                                $self->{trans}->{$lang}->{count} = 0;
-                                $self->{trans}->{$lang}->{fuzzy} = 0;
-                        }
-                        if ($status_c) {
-                                $self->{trans}->{$lang}->{$status_c} ++;
+                        if ($lang ne $ext) {
+                                warn "$file:$line: lang-mismatch-in-translated-templates\n"
                         } else {
-                                warn "$file:$line: original-fields-removed-in-translated-templates\n";
+                                unless (defined($self->{langs}->{$lang})) {
+                                        $self->{langs}->{$lang} = 1;
+                                        $self->{trans}->{$lang}->{count} = 0;
+                                        $self->{trans}->{$lang}->{fuzzy} = 0;
+                                }
+                                if ($status_c) {
+                                        $self->{trans}->{$lang}->{$status_c} ++;
+                                } else {
+                                        warn "$file:$line: original-fields-removed-in-translated-templates\n";
+                                }
+                                $status_c = '';
                         }
-                        $status_c = '';
                 } elsif (s/^(Description):\s*//) {
                         if ($tmpl eq '') {
                                 warn "$file:$line: \`$1' field found before \`Template'\n";
@@ -297,29 +299,35 @@ sub _read_dispatched {
                                 goto SKIP;
                         }
                         $lang = $2;
-                        warn "$file:$line: lang-mismatch-in-translated-templates\n"
-                                if $lang ne $ext;
-                        if (defined($self->{files}->{$lang})) {
-                                die "Lang \`$lang' found in \`$file' and \`$self->{files}->{$lang}'\n"
-                                        unless $self->{files}->{$lang} eq $file;
+                        if ($lang ne $ext) {
+                                warn "$file:$line: lang-mismatch-in-translated-templates\n";
+                                do {
+                                        $_ = <TMPL>;
+                                        $line ++;
+                                } until (!defined($_) || m/^\S/ || m/^$/m);
                         } else {
-                                $self->{files}->{$lang} = $file;
+                                if (defined($self->{files}->{$lang})) {
+                                        die "Lang \`$lang' found in \`$file' and \`$self->{files}->{$lang}'\n"
+                                                unless $self->{files}->{$lang} eq $file;
+                                } else {
+                                        $self->{files}->{$lang} = $file;
+                                }
+                                unless (defined($self->{langs}->{$lang})) {
+                                        $self->{langs}->{$lang} = 1;
+                                        $self->{trans}->{$lang}->{count} = 0;
+                                        $self->{trans}->{$lang}->{fuzzy} = 0;
+                                }
+                                do {
+                                        $_ = <TMPL>;
+                                        $line ++;
+                                } until (!defined($_) || m/^\S/ || m/^$/m);
+                                if ($status_d) {
+                                        $self->{trans}->{$lang}->{$status_d} ++;
+                                } else {
+                                        warn "$file:$line: original-fields-removed-in-translated-templates\n";
+                                }
+                                $status_d = '';
                         }
-                        unless (defined($self->{langs}->{$lang})) {
-                                $self->{langs}->{$lang} = 1;
-                                $self->{trans}->{$lang}->{count} = 0;
-                                $self->{trans}->{$lang}->{fuzzy} = 0;
-                        }
-                        do {
-                                $_ = <TMPL>;
-                                $line ++;
-                        } until (!defined($_) || m/^\S/ || m/^$/m);
-                        if ($status_d) {
-                                $self->{trans}->{$lang}->{$status_d} ++;
-                        } else {
-                                warn "$file:$line: original-fields-removed-in-translated-templates\n";
-                        }
-                        $status_d = '';
                         last unless defined($_);
                         $line --;
                         redo;
