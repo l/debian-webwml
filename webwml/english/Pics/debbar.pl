@@ -13,6 +13,13 @@ sub debian_button {
 	my ($words, $antialias, $fontface, $fontsize, $fonttype, $fontcolor, $bgcolor, $fontregistry, $fontencoding) = @_;
 	my ($image,$layer,$text,$width);
 	my $height = 18;
+	my $top = 3;
+	if ($words =~ s/@(.*)//) {
+		my $pos = $1;
+		if ($pos =~ m/y=(\d+)/) {
+			$top = $1;
+		}
+	}
 
 	gimp_palette_set_foreground($fontcolor);
 	gimp_palette_set_background($bgcolor);
@@ -20,7 +27,7 @@ sub debian_button {
 
 	$image = gimp_image_new(80, $height, RGB);
 	$layer = gimp_layer_new($image, 80, $height, RGBA_IMAGE, "Button", 100, NORMAL_MODE);
-	$text = gimp_text($image, $layer, 9, 3, $words, 0, $antialias, $fontsize, PIXELS, "*", $fontface, $fonttype, "r", "*", "*", $fontregistry, $fontencoding);
+	$text = gimp_text($image, $layer, 9, $top, $words, 0, $antialias, $fontsize, PIXELS, "*", $fontface, $fonttype, "r", "*", "*", $fontregistry, $fontencoding);
 
 
 	$width = gimp_drawable_width($text);
