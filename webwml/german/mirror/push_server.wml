@@ -1,27 +1,23 @@
 #use wml::debian::template title="Einrichten eines Push-Spiegel"
-#use wml::debian::translation-check translation="1.4"
+#use wml::debian::translation-check translation="1.9"
 
-# Translator: Martin Schulze <joey@debian.org>
+<p>Einen Push-Spiegel aufzusetzen besteht aus zwei Aufgaben:
+Einrichten von rsync-Zugang (für normales, "Pull"-Spiegeln) und
+Einrichtung des Trigger-Mechanismusses (für den "pushing"-Teil des
+"pull"-Spiegelns).
 
-<p>Aufgrund der Anzahl an Spiegeln und der Gr&ouml;&szlig;e des Debian-Archives
-ist es nicht m&ouml;glich, da&szlig; alle Spiegel den gleichen Haupt-Server als
-Quelle f&uuml;r ihr Archiv nutzen.  Es ist viel effizienter, wenn die Last
-auf eine Anzahl von Push-Spiegeln &uuml;ber den Globus verteilt wird.
+<p><small>(Wenn Sie genauere Informationen darüber erhalten möchten,
+was ein Push-Spiegel ist, lesen Sie bitte <a href="push_mirroring">die
+Beschreibung des Push-Spiegelns</a>.)</small>
 
-<p>Bitte beachten Sie, da&szlig; wir die Site-Betreiber ansprechen
-werden, ein Push-Server zu werden.  Wenn Ihr Server
-<strong>sehr</strong> gut angebunden ist (sowohl sehr gute Bandbreite
-hat als auch an an wichtige Backbones angeschlossen ist) und Sie
-willens sind, andere Server von Ihrem spiegeln zu lassen, m&ouml;chten
-Sie uns das vielleicht mitteilen, damit wir &uuml;berlegen
-k&ouml;nnen, Ihren Rechner als Push-Server zu verwenden.
+<h2>rsync einrichten</h2>
 
-<p>Push-Server sollten Maschinen sein, die das gesamte Debian-Archiv
-spiegeln, selbst Push-Spiegel des Hauptarchivs sind und gute
-Bandbreite haben.
-<ul>
-  <li>installieren Sie <kbd>rsync</kbd> 2.1.1 oder neuer
-  <li>erzeugen Sie <kbd>rsyncd.conf</kbd> und f&uuml;gen folgendes hinzu:
+<p>Installieren Sie <code>rsync</code> 2.1.1 oder neuer.  Wenn Ihr
+Rechner unter Debian läuft, installiesieren Sie einfach das neueste
+<a href="http://packages.debian.org/stable/net/rsync.html">rsync</a>-Paket.
+
+<p>Erzeugen Sie die Datei <code>rsyncd.conf</code> und schreiben Sie
+etwas ähnliches wie das folgende hinein:
 
 <pre>
 uid = nobody
@@ -30,106 +26,119 @@ max connections = 25
 syslog facility = daemon
 socket options = SO_KEEPALIVE
 
-[ftp]
+[debian]
   path = /org/ftp.debian.org/ftp
-  comment = Debian FTP Archive (~16 GB)
+  comment = Debian FTP Archive (~24 GB)
   auth users = authorized_account1,authorized_account2,authorized_accountN
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
-[web.debian.org]
+[debian-web]
   path = /org/www.debian.org/debian.org
-  comment = Debian Web Site
+  comment = Debian Web Site (~400 MB)
   auth users = authorized_account1,authorized_account2,authorized_accountN
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
 </pre>
 
-  <li>F&uuml;r jeden Rechner, der Ihren spiegelt, wird ein Eintrag zu
-  <kbd>/etc/rsyncd/debian.secrets</kbd> hinzugef&uuml;gt:
+<p>
+
+<p>Fügen Sie einen Eintrag für jeden Rechner zur Datei
+<code>/etc/rsyncd/debian.secrets</code> hinzu, bei dem Sie das
+Spiegeln einleiten:
 
 <pre>
-account1:ein_Pa&szlig;wort
-account2:ein_anderes_Pa&szlig;wort
+authorized_account1:ein_paßwort
+authorized_account2:noch_ein_paßwort
+authorized_accountN:paßwort
 </pre>
 
-  <li>Sie m&ouml;chten den rsync-Daemon wahrscheinlich via inetd starten.
-  Dazu f&uuml;gen Sie
+<p>Sie haben jetzt den in der Hierarchie tiefergelegenen Spiegeln
+Zugriff zu Ihrem Rechner erlaubt.
+
+<p>Sie möchten wahrscheinlich den rsync Daemon von inetd aufrufen
+lassen.  Um dieses zu erledigen, müssen Sie den rsync-Dienst in die
+Datei <code>/etc/services</code> eintragen (falls er dort noch nicht
+steht), ungefähr wie folgt:
 
 <pre>
 rsync           873/tcp
 </pre>
 
-	zu <kbd>/etc/services</kbd> hinzu und das folgende zu <kbd>/etc/inetd.conf</kbd>:
+<p>Um den Daemon per inetd anzusprechen, fügen Sie das folgende zu
+Ihrer Datei <code>/etc/inetd.conf</code> hinzu:
 
 <pre>
 rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daemon
 </pre>
 
-	Sie m&uuml;ssen dem inetd anschlie&szlig;end ein HUP-Signal schicken, um
-  ihm mitzuteilen, da&szlig; die Konfiguration neu eingelesen werden soll.
-  <li>Erzeugen Sie einen neuen ssh-Schl&uuml;ssel f&uuml;r den Account, den Sie
-  f&uuml;r diesen Zweck verwenden.  Stellen Sie sicher, da&szlig; Sie nicht Ihren
-  originalen Schl&uuml;ssel &uuml;berschreiben, indem Sie die Option -f verwenden:
-	<kbd>ssh-keygen -f ~/.ssh/&lt;filename&gt;</kbd>.
-</ul>
+(Sie m&uuml;ssen dem inetd anschlie&szlig;end ein HUP-Signal schicken, um
+ihm mitzuteilen, da&szlig; die Konfiguration neu eingelesen werden soll).
 
-<p>F&uuml;r jeden Server, der von Ihrem spiegelt, m&uuml;ssen Sie einen
-Benutzernamen und ein Pa&szlig;wort in <kbd>/etc/rsyncd/debian.secrets</kbd>
-eintragen und anschlie&szlig;end den Benutzernamen zur Zugriffsliste
-in <kbd>/etc/rsyncd.conf</kbd> hinzuf&uuml;gen.
+<h2>Einrichten des SSH-Trigger-Mechanismusses</h2>
 
-<p>
-Um die Dinge zu vereinfachen, k&ouml;nnen Sie den Benutzernamen auf dem
-Downstream-Server verwenden, dem Sie das Spiegeln signalisieren.  Sie
-haben dem Server nun Zugang zu Ihrem Archiv gegeben.  Der Benutzername
-und das Pa&szlig;wort werden dem Downstream-Server geschickt.
+<p>Erzeugen Sie einen neuen SSH-Schlüssel für den Account, den Sie
+verwenden, um Debian zu spiegeln.  Stellen Sie sicher, daß sie den
+eigentlichen SSH-Schlüssel nicht überschreiben, indem Sie die Option
+-f verwenden, beispielsweise:
 
-# Caveat: This looks confusing to me, not sure if it's translated
-#         properly.  -Joey
-# To simplify things you may want to use the account name you are pushing to on the downstream
-# mirror. You have now given the downstream mirror access to the archive on your
-# machine. The username and password are sent to the downstream site.
-
-<p>Sie m&uuml;ssen noch das Skript einrichten, das die anderen Server
-benachrichtigt.  Erzeugen Sie die Dateien <kbd>runmirrors</kbd>:
-<protect>
 <pre>
-#! /bin/sh
-
-HOME=/home/archvsync
-LOGNAME="archvsync"
-USER="archvsync"
-MAIL=
-PATH="/bin:/usr/bin"
-
-# id
-
-cd $HOME
-
-./signal some.other.site archvsync
+ssh-keygen -f ~/.ssh/identity.mysite
 </pre>
-</protect>
 
-und <kbd>signal</kbd>:
+<p>Stellen Sie sicher, daß der neue öffentliche Schlüssel
+(~/.ssh/identity.mysite.pub) folgendes am Dateianfang enthält:
+
+<pre>
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/websync &"
+</pre>
+
+<p>(Ersetzen Sie "websync" durch "ftpsync", oder "ftpsync-non-US",
+oder wie auch immer der Befehl genannt ist, der das Spiegeln beginnt.)
+
+<p>Sie müssen ein Skript einrichten, das die tiefergelegenen Spiegel
+kontaktiert.  Erzeugen Sie eine Datei mit dem Namen
+<code>signal</code>, die folgendes enthält:
 
 <protect>
 <pre>
 #!/bin/sh
 
 # This script is called to signal the remote host that it is time to
-# mirror the archive. This is done in the most secure way I can think of,
-# a ssh trigger. The remote end has an entry for this key allowing it to
-# run a single program - ftpsync.
+# mirror the archive.
 
 echo Signalling $1
-ssh  -o"BatchMode yes" -q -o"user $2" "$1" sleep 1
+ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
 </pre>
 </protect>
 
-F&uuml;r jeden von Ihnen versorgten Spiegel m&uuml;ssen Sie <code>./signal &lt;site&gt; &lt;username&gt;</code> in 
-<code>runmirrors</code> schreiben:
+<p>Dieses Skript wird sich mit dem speziellen SSH-Schlüssel, den Sie
+oben erstellt haben, auf einem entfernten Rechner einloggen.  Das
+Skript selbst wird nichts sinnvolles auf dem entfernten Rechner
+machen, das Programm ~/websync (oder ~/ftpsync, oder ~/ftpsync-non-US)
+wird von diesem Schlüssel aus aufgerufen.
 
-<p>Zum Schlu&szlig; f&uuml;gen Sie noch eine Zeile ans Ende von
-<kbd>ftpsync</kbd>, die <kbd>runmirrors</kbd> aufruft.  Sobald Ihr
-System das Debian-Archiv gespiegelt hat, wird es die anderen Server
-benachrichtigen.
+<p>Um einen Spiegel tatsächlich zu triggern, müssen Sie Zeilen mit
+<code>./signal &lt;site&gt; &lt;username&gt;</code> ans Ende des
+eigenen Skripts <code>websync</code> anfügen, oder falls es bequemer
+für Sie ist, in ein neues Skript und dieses von <code>websync</code>
+aufrufen lassen.
+
+<p>Das neue Skript, <code>runmirrors</code>, würde so etwas wie das
+folgende enthalten:
+
+<protect>
+<pre>
+#!/bin/sh
+
+# This script is called by websync to signal the downstream mirrors.
+
+./signal some.other.site archvsync
+./signal and.another.site othersiteaccount
+</pre>
+</protect>
+
+<p>Sobald Ihr Rechner das Spiegeln vom höhergelegenen Rechner beendet
+hat, wird der Rechner die tiefergelegenen Spiegel kontaktieren.
+
+<p>Wenn sie irgendwelche Probleme damit haben, <a href="mailto:mirrors@debian.org">kontaktieren</a>
+Sie uns (auf Englisch).
