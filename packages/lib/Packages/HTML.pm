@@ -3,15 +3,20 @@ package Packages::HTML;
 use strict;
 use warnings;
 
+use Locale::gettext;
+use Digest::MD5;
+use Fcntl;
+
 use Packages::I18N::Locale;
 use Packages::I18N::Languages;
 use Packages::I18N::LanguageNames;
 
 our @ISA = qw( Exporter );
-our @EXPORT = qw( header footer );
+our @EXPORT = qw( header trailer file_changed time_stamp
+		  read_md5_hash write_md5_hash );
 
 our $HOME = "http://www.debian.org/";
-our $CN_HELP_URL = "$HOMEintro/cn";
+our $CN_HELP_URL = "${HOME}intro/cn";
 
 my %img_trans = ( pt_BR => "pt", pt_PT => "pt", sv_SE => "sv" );
 
@@ -158,19 +163,18 @@ sub languages {
 	$str .= gettext( "This page is also available in the following languages:\n" );
 	$str .= "<br>\n";
 	
-	%sorted_langs = ();
+	my @printed_langs = ();
 	foreach (@used_langs) {
 	    next if $_ eq $lang; # Never print the current language
-	    unless ($selflang{$_}) { warn "missing language $_"; next } #DEBUG
-	    $sorted_langs{$selflang{$_}} = $_;
+	    unless (get_selfname($_)) { warn "missing language $_"; next } #DEBUG
+	    push @printed_langs, $_;
 	}
-	return "" unless scalar keys %sorted_langs;
+	return "" unless scalar @printed_langs;
 	# Sort on uppercase to work with languages which use lowercase initial
 	# letters.
-	foreach (sort langcmp keys %sorted_langs) {
-	    my $cur_lang = $sorted_langs{$_};
+	foreach my $cur_lang (sort langcmp @printed_langs) {
 	    my $tooltip = dgettext( "langs", get_language_name($cur_lang) );
-	    $str .= "<a href=\"$name.$cur_lang.html\" title=\"$tooltip\" hreflang=\"$cur_lang\" lang=\"$cur_lang\" rel=\"alternate\">$_";
+	    $str .= "<a href=\"$name.$cur_lang.html\" title=\"$tooltip\" hreflang=\"$cur_lang\" lang=\"$cur_lang\" rel=\"alternate\">".get_selfname($cur_lang);
 	    $str .= "&nbsp;(get_transliteration($cur_lang))" if defined get_transliteration($cur_lang);
 	    $str .= "</a>&nbsp;\n";
 	}
@@ -181,5 +185,61 @@ sub languages {
     
     return $str;
 }
+
+sub file_changed {
+    my ($md5s, $file, $text) = @_;
+    
+    my $md5string = Digest::MD5::md5_hex( $text );
+    if ( exists $md5s->{$file} 
+	 && ($md5s->{$file} eq $md5string) 
+	 && (-f $file)) {
+	return 0;
+    }
+    else {
+	$md5s->{$file} = $md5string;
+	return 1;
+    }
+}
+
+sub read_md5_hash {
+    my $md5file = shift;
+    my %md5s;
+    if (open(MD5H, "<", $md5file)) {
+	foreach(<MD5H>) {
+	    chomp;
+	    next unless /(\w+)\s*(.+)/;
+	    $md5s{$2} = $1;
+	}
+	close MD5H;
+    }
+    else {
+	# ok if open does not work. Every file will be re-generated and
+	# the file will be generated later.
+    }
+    return \%md5s;
+}
+
+sub write_md5_hash {
+    my ( $md5file, $md5s ) = @_;
+    sysopen(MD5H, $md5file, O_WRONLY | O_TRUNC | O_CREAT, 0664) 
+	|| warn "Can\'t open $md5file: $!";
+    foreach ( keys %$md5s ) {
+	print MD5H "$md5s->{$_} $_\n";
+    }
+    close MD5H;
+}
+
+sub time_stamp {
+    my ($sec,$min,$hour,$mday,undef,$year) = gmtime();
+    my $time_str = gmtime();
+    my ($wday, $month) = ($time_str =~ /^(\w{3})\s+(\w+)/);
+
+    $year += 1900;
+    $time_str = sprintf( "$wday, $mday $month $year %02d:%02d:%02d +0000", 
+			 $hour, $min, $sec );
+
+    return $time_str;
+}
+
 
 1;
