@@ -1,0 +1,88 @@
+#use wml::debian::template title="Sätta upp en ftp-spegel"
+# <!--translation 1.9-->
+
+<p>Spegling görs på samma sätt på både officiella och inofficiella servrar.
+När en spegel satts upp bör den <a href="submit">registreras hos Debian</a>
+så att den kan läggas in i
+<a href="../misc/README.mirrors">spegellistan</a>.
+Registrering kan göras via vårt <A href="submit">enkla webbformulär</a>.
+Problem eller frågor kan ställas till
+<A href="mailto:mirrors@debian.org">mirrors@debian.org</A>.
+
+<h3>Anonym rsync</h3>
+Den rekommenderade metoden för att spegla är via rsync.
+
+<p>Du kan använda <a href="anonftpsync">detta skript</a> för att spegla
+arkivet.
+Följ instruktionerna i skriptet för att sätta upp speglingen.
+Platser i den <a href="mirrors_full">kompletta spegellistan</a> som använder
+'<kbd>Type: Push-*</kbd>' bör vara bra val att spegla från.
+
+<h3>"Push"-spegling</h3>
+"Push"-spegling är en variant på spegling med hjälp av rsync som vi har
+utvecklat för att minimera den tid det tar för ändringar att nå
+speglingarna.
+"Push"-spegling använder en ssh-utlösare för att tala om för klientspegeln
+när den ska uppdatera sig.
+Denna metod är relativt säker eftersom ssh konfigureras för att köra ett
+enda kommando.
+Dessutom är speglingen fortfarande "pull", så det är inte möjligt att
+förstöra innehållet i arkivet via en förfalskad "push"-spegel.
+
+<p>Vissa spegeladministratörer har uppvisat viss motvillighet mot att
+använda denna typ av spegling på grund av oro för att metoden öppnar deras
+maskin för invasion, något som inte är sant.
+För en mer utförlig beskrivning av hur det fungerar, och varför det är
+säkert, se <a href="explain">den här sidan</a>.
+
+<p>"Push"-spegling tar lite mer arbete i anspråk att sätta upp, eftersom de
+som är ansvariga för upp- och nedströmsspeglingarna måste utbyta
+information.
+Fördelen är att uppströmsspegeln är den som påbörjar speglingsprocessen
+direkt efter att dess eget arkiv har uppdateras, vilket gör att ändringar i
+arkivet propageras extremt snabbt.
+
+<p>Det är bäst att sätta upp detta med ett konto för en vanlig användare,
+inte root.
+Innehållet i den publika ssh-nyckeln som du får från spegeln uppströms ska
+placeras i <kbd>~&lt;användare&gt;/.ssh/authorized_keys</kbd>.
+
+<p>Filerna <a href="ftpsync">ftpsync</a> och
+<a href="ftpsync.conf">ftpsync.conf</a> kommer att användas.
+Redigera ftpsync.conf och följ anvisningarna i den tillsammans med den
+information som du får från spegeln uppströms.
+
+<p>Om du vill bli en primär "push"-spegel behöver du
+<a href="identity.pub.master.ftp">ftp-arkivets publika ssh-nyckel</a>.
+
+<p>För att "push"-spegla non-US-arkivet behöver du filerna
+<a href="ftpsync-non-US">ftpsync-non-US</a> samt
+<a href="ftpsync-non-US.conf">ftpsync-non-US.conf</a>.
+Filerna har olika namn så att du kan använda samma konto för att spegla
+båda arkiven.
+Om du vill bli en primär "push"-spegel för non-US behöver du
+<a href="identity.pub.non-US.ftp">non-US-ftp-arkivets publika ssh-nyckel</a>.
+
+<h3>Anonym ftp med "mirror"</h3>
+<p>Anonym med ftp var länge det vanligaste sättet att spegla.
+För att göra detta på Debianarkivet fungerar programmet "mirror" bra,
+och som du antagligen har gissat, så finns "mirror" som ett Debianpaket.
+Om du har installerat Debianpaketet finns det ett exempelskript för att
+spegla ftp-arkivet i filen /etc/mirror/packages/ftp.debian.org
+
+<h3>wget</h3>
+Trots att <kbd>wget</kbd> fungerar bra för att spegla små arkiv är det inte
+lika konfigurerbart som mirror eller rsync, så det rekommenderas inte för
+detta.
+
+<h3>När du bör spegla</h3>
+Om du har ställt in en "push"-spegel behöver du inte oroa dig om detta.
+Om inte, och platsen du valt att spegla använder rsync, bör du leta i
+<kbd>project/trace/</kbd> i Debianarkivet på spegelplatsen efter en fil med
+namnet på den platsen.
+Filen bör innehålla tiden speglingen senast blev klar.
+Lägg till en viss tid, säg en timme, till den tiden och spegla då.
+
+<p>Det enklaste sättet att automatiskt köra spegeln varje dag är att använda
+cron.
+Se <kbd>man crontab</kbd> för detaljer.

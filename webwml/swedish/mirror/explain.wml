@@ -1,0 +1,37 @@
+#use wml::debian::template title="Förklaring av &quot;push&quot;-spegling"
+# <!--translation 1.4-->
+
+<p>Först en kort förklaring av ssh:
+Ssh gör det möjligt att koppla upp sig mot konto på olika maskiner på ett
+säkert sätt.
+Förutom att lösenord aldrig sänds i klartext, så är du även i stora drag
+garanterad att så fort du gjort en uppkoppling mot en maskin att framtida
+uppkopplingar verkligen sker mot samma maskin, något som förhindra många
+attacker av typen "man-in-the-middle", alltså att någon på vägen
+avlyssnar/förändrar kommunikationen.
+
+<p>En funktionalitet som finns i ssh är möjligheten för användaren att lägga
+den publika identitetsnyckeln för en användare på en annan maskin och lägga
+den bland de auktoriserade nycklarna på sin egen maskin.
+Standardinställningen är då att användaren på den andra maskinen (som har
+den privata identitetsnyckeln som hör ihop med den publika identitetsnyckeln
+som du fått) då får inloggningsbehörighet på ditt konto.
+Det är dock möjligt att lägga in en text till en auktoriserad nyckel som
+begränsar den typ av åtkomstbehörighet som den person som använder den
+nyckeln för att komma åt ditt konto får.
+
+<p>Därför, för att skydda spegeln nedströms, har nyckeln som fås av spegeln
+uppströms en sådan begränsning som bara tillåter personen som använder ditt
+konto att göra en sak - att starta programmet på din maskin som uppdaterar
+din spegling.
+Även om någon (en elak tredje part) lyckats knäcka nyckel så är det enda de
+kan göra att starta speglingsprogrammet på din maskin.
+Du behöver inte ens oroa dig för att flera kopior av programmets startas,
+eftersom en låsfil används.
+
+<p>Rsync på maskinen uppströms kan konfigureras att begränsa vilka som kan
+spegla en viss avdelning medelst användarnamn och lösenord.
+Dessa är helt separerade från <kbd>/etc/passwd</kbd> så en "push"-server
+behöver inte oroa sig för att ge andra tillgång till sin maskin.
+Detta bör dock inte vara ett problem, eftersom det värsta som kan hända är
+att en tredje part får möjlighet att spegla Debiansidorna från den platsen.

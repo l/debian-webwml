@@ -1,0 +1,108 @@
+#use wml::debian::template title="Sätta upp en &quot;push&quot;-server"
+
+<p>Givet det stora antalet speglar och storleken på Debianarkivet är det
+inte lämpligt att alla speglar använder huvudarkiven som sin
+uppströmskälla för Debian.
+Det är mycket mer effektivt om lasten distribueras på ett antal
+"push"-speglar utspridda över jordklotet.
+
+<p>"Push"-servrar bör vara maskiner som speglar hela Debianarkivet, och är
+själva "push"-speglar av huvudarkivet, och har tillgång till en hyfsad
+bandbredd.
+Att sätta upp en "push"-server är rätt enkelt:
+<ul>
+<li>installera <kbd>rsync</kbd> 2.1.1 eller senare.
+<li>skapa <kbd>rsyncd.conf</kbd> och lägg in något i stil med detta:
+	<pre>
+uid = nobody
+gid = nogroup
+max connections = 25
+syslog facility = daemon
+socket options = SO_KEEPALIVE
+
+[ftp]
+  path = /debian/debian
+  comment = Debians ftp-arkiv (~5 Gbyte)
+  auth users = lista_över_auktoriserade_konton
+  read only = true
+  secrets file = /etc/rsyncd/debian.secrets
+[web.debian.org]
+  path = /debian2/web/debian.org
+  comment = Debians webbplats
+  auth users = lista_över_auktoriserade_konton
+  read only = true
+  secrets file = /etc/rsyncd/debian.secrets
+	</pre>
+<li>För varje plats som hämtar från dig med "push" lägger du in en rad i
+<kbd>/etc/rsyncd/debian.secrets</kbd>:
+	<pre>
+konto1:ett_lösenord
+konto2:annat_lösenord
+	</pre>
+<li>Du vill antagligen starta rsyncprocessen från inetd. För att göra detta,
+lägg till
+	<pre>
+rsync           873/tcp
+	</pre>
+	i <kbd>/etc/services</kbd>, och följande i <kbd>/etc/inetd.conf</kbd>
+	<pre>
+rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daemon
+	</pre>
+    Du måste sedan sända HUP-signalen till inetd för att tala om för det
+    att läsa om sin inställningsfil.
+<li>skapa en ny ssh-nyckel för kontot som du använder för att spegla Debian.
+    Se till att du inte skriver över din riktiga ssh-nyckel genom att
+    använda flaggan -f,
+    <kbd>ssh-keygen -f ~/.ssh/&lt;filnamn&gt;</kbd>.
+</ul>
+
+<p>För varje plats du kommer att "push"-spegla måste du lägga in ett
+användarnamn och lösenrod för i <kbd>/etc/rsyncd/debian.secrets</kbd> och
+sedan lägga in detta användarnamn till åtkomstlistan i
+<kbd>/etc/rsyncd.conf</kbd>. 
+För att förenkla det hela kan du vilja använda det kontonamn du använder för
+att "push":a spegeln nedströms.
+Du har nu gett spegeln nedströmst spegelåtkomstbehörighet till arkivet på
+din maskin.
+Användarnamnet och lösenordet sänds till servern nedströms.
+
+<p>Du måste fortfarande ställa in skriptet så att det kontaktar speglingar
+nedströms.
+Skapa filerna <kbd>runmirrors</kbd>:
+<blockquote><pre>
+#! /bin/sh
+
+HOME=/home/archvsync
+LOGNAME="archvsync"
+USER="archvsync"
+MAIL=
+PATH="/bin:/usr/bin"
+
+id
+
+cd $HOME
+
+./signal va.debian.org archvsync
+</pre></blockquote>
+och <kbd>signal</kbd>:
+<blockquote><pre>
+\#! /bin/sh
+
+\# Detta skript anropas för att signera fjärrvärden att det är dags att
+\# spegla arkivet. Detta görs på det säkraste sätt jag kan komma på, en
+\# ssh-utlösare. Den andra sidan har en post för denna nyckel som tillåter
+\# den att köra ett enda kommando - ftpsync.
+
+echo Signalerar $1
+ssh  -o batchmode=yes -q -o user="$2" "$1" sleep 1
+</pre></blockquote>
+För varje plats du skickar till måste du skapa en rad
+<pre>
+./signal &lt;plats&gt; &lt;användarnamn&gt;
+</pre>
+i <kbd>runmirrors</kbd>.
+
+<p>Lägg slutligen till en rad i slutet av <kbd>ftpsync</kbd> som anropar
+<kbd>runmirrors</kbd>.
+På det sättet kommer du att börja skicka data till de som finns nedströms
+från dig räknat så fort du speglat färdigt din uppströmsplats.
