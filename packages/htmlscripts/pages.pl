@@ -785,6 +785,7 @@ sub write_src_index {
     my $title = sprintf( gettext ( "Source Packages in \"%s\"" ), 
 			 $distro, $_ );
     $source_index = header( title => $title,
+			    title_keywords => "debian, $distro, source",
 			    desc => encode_entities( $title, '"' ),
                             lang => $lang,
 			    print_title_below => 1 );
