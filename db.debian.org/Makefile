@@ -1,16 +1,40 @@
-# This Makefile should need no changes from webwml/english/Makefile
-# Please send a message to debian-www if you need to modify anything
-# so the problem can be fixed.
+# special Makefile
+# requires a checkout of webwml/template/debian from the webwml tree!
 
-WMLBASE=.
-CUR_DIR=
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
-SUBS=
+TEMPLDIR := ../../webwml/english/template/debian
+DEBTEMPLATES := $(wildcard $(TEMPLDIR)/*.wml) \
+                $(TEMPLDIR)/countries.def \
+                $(TEMPLDIR)/language_names.def \
+                $(wildcard template/*.wml) \
+                .wmlrc
+TARGETDIR := /var/www/userdir-ldap
 
-include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
+WMLFILES := $(wildcard *.wml)
+HTMLFILES := $(subst .wml,.html,$(WMLFILES))
+DESTHTMLFILES := $(patsubst %.wml,$(TARGETDIR)/%.html,$(WMLFILES))
+OTHERFILES := $(wildcard *.cgi) $(wildcard *.cfg) $(wildcard *.tab)
+DESTOTHERFILES := $(patsubst %,$(TARGETDIR)/%,$(OTHERFILES))
 
-include $(WMLBASE)/Make.dep.generic
-include $(WMLBASE)/Make.dep.templ
+WML_DEFS := -I $(subst /debian,,$(TEMPLDIR))
 
+all: $(HTMLFILES)
+
+%.html: %.wml $(DEBTEMPLATES)
+	wml $(WML_DEFS) $< -o UNDEFuEN:$@
+
+install: $(DESTHTMLFILES) $(DESTOTHERFILES)
+
+$(DESTHTMLFILES) $(DESTOTHERFILES): $(TARGETDIR)/%: %
+	@test -d $(TARGETDIR) || mkdir -p $(TARGETDIR)
+	install -m 644 -p $(@F) $(TARGETDIR)
+
+clean:
+	rm -f $(HTMLFILES)
+
+$(TEMPLDIR)/countries.def: $(TEMPLDIR)/countries.wml
+	cd $(TEMPLDIR) && sed -e /^#/d countries.wml | eperl -B '<:' -E ':>' - >/dev/null
+
+$(TEMPLDIR)/language_names.def: $(TEMPLDIR)/language_names.wml
+	cd $(TEMPLDIR) && sed -e '/^#/d' -e '/^<:/,/^:>/!d' language_names.wml  | eperl -B '<:' -E ':>' - >/dev/null
+
+.SUFFIXES:
