@@ -124,7 +124,8 @@ unless (getopts('vgdqQC:m:c:s:Tt:p:ln:MVa'))
 
 if ($opt_a)
 {
-    use Date::Manip;
+    require Date::Manip;
+    import Date::Manip;
 }
 
 die "you can't have both verbose and quiet, doh!\n" if (($opt_v) && ($opt_Q));
