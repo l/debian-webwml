@@ -62,6 +62,7 @@ $searchmode = "" unless (defined $searchmode);
 my $arch = "i386";
 if (defined $input->param('arch') && $input->param('arch') =~ m/^([\w-]+)$/) {
   $arch = $1; # $arch now untainted
+  $arch = 'i386' if $arch eq 'all'; # there is no Contents-all file
 }
 my $page = 1;
 $page = $input->param('page') if (defined $input->param('page'));
@@ -141,9 +142,6 @@ print <<END;
 </tr>
 </table>
 END
-
-# TODO: tail +32 the contents file in order to skip the opening lines
-# not sure if running zcat | tail | grep will waste too much resources
 
 # now grep the contents file appropriately
 my $grep = "grep -h ";
