@@ -1082,7 +1082,13 @@ sub print_src_deps {
 	    my $p_version = $or_dep->[1] ? "(".encode_entities( $or_dep->[1] ).
 		" $or_dep->[2]) " : "";
 	    my $not = gettext( "not" );
-	    $or_dep->[3] =~ s/!\s*/$not /go if $or_dep->[3];
+	    if ($or_dep->[3]) {
+		$or_dep->[3] =~ s/\s+/, /go;
+		# as either all or no archs have to be prepended with
+		# exlamation marks, convert the first and delete the others
+		$or_dep->[3] =~ s/!\s*/$not /o;
+		$or_dep->[3] =~ s/!\s*//go;
+	    }
 	    my $arch_str = $or_dep->[3] ? " [$or_dep->[3]]" : "";
 	    if ( $p ) {
 		if ( $p->is_virtual ) {
