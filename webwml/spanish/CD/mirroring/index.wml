@@ -1,0 +1,130 @@
+#use wml::debian::cdimage title="Convertirse en un sitio de réplica de imágenes de CDs de Debian" BARETITLE=true
+#use wml::debian::translation-check translation="1.3"
+
+<p>Para llegar a ser un sitio de réplica de imágenes de CDs de Debian,
+necesita una máquina Linux o de tipo UNIX. Obtener las imágenes y
+hacerlas accesibles se puede hacer de varias maneras, dependiendo
+de sus posibilidades.</p>
+
+<p><em>No</em> debería usar FTP ni HTTP para obtener las imágenes. Estos
+métodos de transferencia tienen una alta probabilidad de fallo debido al
+enorme tamaño de los archivos. Además, si las imágenes cambian sólo
+ligeramente (como en el caso de las subversiones), se han de bajar todos
+los datos de nuevo. Esto hace aumentar el estrés en nuestras
+computadoras y conexiones de red.</p>
+
+<p>Por estos motivos, utilizamos el programa
+<a href="http://rsync.samba.org/"><tt>rsync</tt></a> que esencialmente
+realiza el parcheo remoto de binarios. Con <tt>rsync</tt>, las imágenes
+de las subversiones se actualizan muy eficientemente, tan sólo se
+transfieren las partes cambiadas por la red; las partes no cambiadas se
+copian de la imagen antigua.</p>
+
+<p><tt>rsync</tt> no descarga por sí solo las versiones "completamente
+nuevas", ya que esas imágenes contienen virtualmente partes sin cambios.
+Sin embargo, con el kit de pseudo imagen podemos crear "pseudo" imágenes
+de CDs de los datos que están disponibles ya en el sitio de réplica de
+Debian FTP más cercano - puede que en su propio disco duro local. Luego
+<tt>rsync</tt> puede parchear el binario de esas "pseudo-imágenes" para
+convertirlas en las oficiales. E incluso para la mayoría de las imágenes
+de las subversiones se comprueba que es más eficiente que parchear la
+imagen antigua.</p>
+
+<p>El kit de pseudo imagen está diseñado principalmente para descargar sólo
+una o unas pocas imágenes, como hace la mayoría de la gente. También hay
+el script <tt>debcdmirror</tt> que hace la réplica <em>realmente</em> fácil
+porque utiliza automáticamente el kit de pseudo imagen y <tt>rsync</tt>
+para mantener su réplica actualizada -- hasta el punto de verificar la suma
+MD5 de cada imagen descargada automáticamente. Con <tt>debcdmirror</tt>,
+puede espeficar exactamente lo que desea replicar.</p>
+
+<p>Así que tenemos las siguientes posibilidades para obtener las imágenes y
+mantenerlas actualizadas:</p>
+
+<ul>
+
+  <li>Por FTP o HTTP: Esto <em>no</em> se debería hacer.</li>
+
+  <li>Usando sólo <tt>rsync</tt> (tarea diaria de cron): Esto es
+  preferible sólo para sitios que no tienen un sitio de réplica FTP de
+  Debian cercano/rápido.</li>
+
+  <li>Usando el kit de pseudo imagen manualmente (puede que con
+  <tt>rsync</tt> para actualizar las subversiones. Mucho trabajo y muchos
+  problemas.</li>
+
+  <li>Usando el script <tt>debcdmirror</tt> (que "internamente" usa el Kit
+  de Pseudo Imagen y <tt>rsync</tt>) (tarea diaria de cron).
+  <strong>Esto</strong> es lo que debería hacer ;-)</li>
+
+</ul>
+
+<p>La última versión del
+<a href="http://cdimage.debian.org/~costar/pseudo-image-kit/">kit de
+pseudo imagen</a> y el script de
+<a href="http://cdimage.debian.org/~costar/debcdmirror/"><tt>debcdmirror</tt></a>
+están disponibles en las páginas de sus autores. Lea los READMEs (LÉEMEs) de
+ambos paquetes para información extensa sobre los procedimientos.</p>
+
+<p><strong>Notas:</strong>
+
+<p>Para el script <tt>debcdmirror</tt>, debe seleccionar un sitio de
+réplica de <tt>rsync</tt> que ofrezca un archivo "<tt>ls-lR</tt>". Las
+direcciones están en la <a href="rsync-mirrors">lista de sitios de réplica
+de rsync</a>. Los sitios de réplica públicos oficiales pueden hacer rsync
+directamente desde el servidor maestro, cdimage.debian.org; probablemente
+necesite una contraseña para este, pregunte a
+<a href="mailto:phil@hands.com">su administrador</a>.</p>
+
+<p>Si no tiene u
+<p>Si no tiene un<a href="$(HOME)/mirror/">sitio de réplica "regular" de
+Debian</a>, verifique la <a href="$(HOME)/distrib/ftplist" >lista de sitios
+de FTP</a>.
+
+<p><tt>debcdmirror</tt> requiere la versión de <tt>bash</tt> 2 o superior.
+Si es necesario, puede instalarlo en una ubicación distinta a la
+predeterminada, pero asegúrese de actualizar la ruta a <tt>bash</tt> en
+la primera línea del script.</p>
+
+<p>Si utiliza <tt>rsync</tt> sólo, utilice al menos las opciones
+<b><tt>--times --links --hard-links --block-size=8192</tt></b>. Esto
+guardará el tiempo de modificación, enlaces simbólicos y duros, y
+usa un tamaño de bloque de 8192 bytes (lo más eficiente para imágenes
+de CD). Cuando el tiempo de modificación y el tamaño son el mismo,
+<tt>rsync</tt> simplemente dejará el archivo tranquilo, de tal forma
+que <tt>--times</tt> es realmente obligatorio.</p>
+
+<p>El directorio "<tt><i>codename</i>_test</tt>" contiene imágenes que son
+enlaces duros a los directorios versionados (por ejemplo, <tt>2.2_r6)</tt>).
+El nombre del directorio versionado cambiará entre las (sub)versiones, pero
+los nombres de los directorios de "<tt>test</tt>" permanecerán iguales.
+Así, en la situación de sólo <tt>rsync</tt>, los directorios "<tt>test</tt>"
+y el versionado apropiado se replicarán, <em>y</em> usar la opción
+<tt>--hard-links</tt> es la única manera para que rsync actualice las
+subversiones adecuadamente. [<em>No</em> debería incluir los directorios
+"<tt>test</tt>" con <tt>debcdmirror</tt>, porque <tt>debcdmirror</tt>
+manejará las cosas de forma diferente y más eficientemente.]</p>
+
+<p>El archivo <tt>ls-lR</tt> describe la estructura de directorio de la
+réplica en sí misma. <strong>No debe</strong> replicar el archivo
+<tt>ls-lR</tt>; bien haga uno por sí mismo (con el "<tt>Makels-lR</tt>",
+cada hora vía <tt>cron</tt>) o simplemente no tenga ningún archivo
+<tt>ls-lR</tt>, [<tt>debcdmirror</tt> creará un <tt>ls-lR</tt> local
+automáticamente tras hacer la réplica.]</p>
+
+<p>Una vez que haya adquirido las imágenes del CD que quiera replicar (las
+más populares son i386 y source), debería ejecutar el programa servidor de
+<tt>rsync</tt>. Esto no supondrá una carga pesada en su máquina, y generará
+mucho menos tráfico de red que un servicio FTP/HTTP. Las instrucciones
+para configurarlo están en el README - LÉAME - del kit de pseudo
+imagen.</p>
+
+<p>Por supuesto, si no tiene problemas con muchos gigabytes de
+tráfico de red por día, apreciaríamos mucho tener otro sitio de
+réplica FTP/HTTP. Nos haría felices cualquier cosa que pudiera
+afrontar. Por favor, notifique a
+<a
+href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;debian-cd&#64;lists.debian.org"
+>debian-cd&#64;lists.debian.org</a> que está ejecutando un sitio
+de réplica, para que podamos actualizar las páginas apropiadas.
+Muchas gracias.</p>
