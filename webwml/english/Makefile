@@ -5,6 +5,9 @@ ENGLISHSRCDIR=$(BASE)/../english
 
 include $(BASE)/Make.lang
 
+WMLFILES := $(wildcard *.wml)
+HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
+
 # EPILOG=--epilog=weblint
 $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml
 	wml -q $(EPILOG) $(<F)
@@ -23,9 +26,6 @@ all: $(HTMLFILES)
 	( cd security; $(MAKE) )
 
 include $(BASE)/Make.templ.inc
-
-WMLFILES := $(wildcard *.wml)
-HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
 
 $(HTMLDIR)/index.html.$(LANGUAGE): index.wml news.wml $(TEMPLDIR)/mainpage.wml $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_news.wml
 	wml -q index.wml
