@@ -1,6 +1,7 @@
 <perl>
 use Time::Local;
 
+# List of weekday names (used in modification dates)
 %dow = (
 	en => [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ],
 	fi => [ 'Su', 'Ma', 'Ti', 'Ke', 'To', 'Pe', 'La' ],
@@ -18,6 +19,9 @@ use Time::Local;
 	sv => [ 'Sön', 'Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör' ],
 	ko => [ 'ìí', 'êÅ', 'ûý', 'â©', 'ÙÊ', 'ÐÝ', '÷Ï' ],
 );
+
+# List of month names (used in modification dates, and may be used in news 
+# listings)
 %moy = (
 	en => [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ],
@@ -49,6 +53,9 @@ use Time::Local;
          'jul', 'aug', 'sep', 'okt', 'nov', 'dec' ],
 	ko => [ '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12' ],
 );
+
+# Date format (sprintf) for modification dates. If none is supplied, the
+# standard format "Www, Mmm Dd HH:MM:SS UTC Yyyy" is used instead.
 %dateform = (
 	hr => '"%s, %2d. %s %s., %02d:%02d:%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
 	fr => '"%s, %2d. %s %s., %02d:%02d:%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
@@ -57,6 +64,12 @@ use Time::Local;
 	no => '"%s %2d. %s %s kl. %02d.%02d.%02d %s", $wday, $mday, $mon, $year, $hour, $min, $sec, "UTC"',
 	ja => '"%s Ç¯ %s ·î %s Æü %s %02d:%02d:%02d %s", 1900+$year, $mon, $mday, $wday, $hour, $min, $sec, "UTC"',
 #	pl => '""',
+);
+
+# Date format (sprintf) for news items. If none is supplied, the standard
+# format "Dd Mmm Yyyy" is used instead.
+%newsdateform = (
+	sv => '"%4d-%02d-%02d", $year, $mon, $mday'
 );
 
 sub ctime {
@@ -75,10 +88,20 @@ sub ctime {
 	$mon = $moy{$CUR_ISO_LANG}[$mon];
 	$str = defined($dateform{$CUR_ISO_LANG}) ? 
 		eval("sprintf($dateform{$CUR_ISO_LANG})") :
-		sprintf("%s, %s %2d %02d:%02d:%02d %s 19%s",
-			$wday, $mon, $mday, $hour, $min, $sec, "UTC", $year);
+		sprintf("%s, %s %2d %02d:%02d:%02d %s %04d",
+			$wday, $mon, $mday, $hour, $min, $sec, "UTC", 1900+$year);
 	return $str;
 }
+
+sub newsdate {
+	my ($year, $mon, $mday) = split /-/, $_[0];
+	# Make sure the date is in the YYYY-MM-DD format
+	return $_[0] unless $mday;
+	return $_[0] if ($year < 1900);
+
+	$mon_str = $moy{$CUR_ISO_LANG}[$mon - 1];
+	return defined($newsdateform{$CUR_ISO_LANG}) ?
+	       eval("sprintf($newsdateform{$CUR_ISO_LANG})") :
+	       sprintf("%02d %s %04d", $mday, $mon_str, $year);
+}
 </perl>
-
-
