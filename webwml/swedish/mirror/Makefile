@@ -25,10 +25,10 @@ ftpmirror.$(LANGUAGE).html: ftpmirror.wml $(TEMPLDIR)/template.wml \
 ifeq "$(LANGUAGE)" "en"
 
 # Note: the masterlist file is kept private since it contains e-mail addresses
-mirrorstuff := ftpsync ftpsync.conf websync websync.conf \
-	identity.pub.master.ftp identity.pub.master.web \
-	anonftpsync \
-	ftpsync-non-US ftpsync-non-US.conf identity.pub.non-US.ftp
+mirrorstuff := anonftpsync ftpsync ftpsync.conf id_rsa.pub.ftp-master \
+	ftpsync-non-US ftpsync-non-US.conf id_dsa.pub.non-US \
+	websync websync.conf id_dsa.pub.www-master
+	
 destmirrorstuff := $(patsubst %,$(HTMLDIR)/%,$(mirrorstuff))
 
 install:: $(destmirrorstuff)
