@@ -1,7 +1,6 @@
-<:
 #!/usr/bin/perl -w
 
-# di18n-utils.pl -- some utilities for di18n
+# utils.pl -- some utilities for transmonitor
 # file of subs :
 # - is_cat(name) : returns true if name is a catalog for catgets
 # - fail : to display nice errors
@@ -641,5 +640,3 @@ sub parse_dpkg_control  {
     
     return @data;
 }
-
-:>
