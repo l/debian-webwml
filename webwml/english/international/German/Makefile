@@ -9,4 +9,4 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 
-index.$(LANGUAGE).html: index.wml $(ENGLISHSRCDIR)/international/German/credits.tags
+credits_website.$(LANGUAGE).html: credits_website.wml $(ENGLISHSRCDIR)/../german/international/German/credits.tags
