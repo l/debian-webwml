@@ -57,6 +57,9 @@ my %params_def = ( keywords => { default => undef, match => '^\s*([-+\@\w\/.:]+)
 my %params = Packages::Search::parse_params( $input, \%params_def );
 
 my $format = $params{values}{format}{final};
+#XXX: Don't use alternative output formats yet
+$format = 'html';
+
 if ($format eq 'html') {
     print $input->header;
 } elsif ($format eq 'xml') {
