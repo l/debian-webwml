@@ -43,10 +43,14 @@ endif
 # so wml gets all the relative links right.
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml $(GETTEXTDEP)
-ifneq "$(LANGUAGE)" "ja"
-	cd $(@D) && $(WML) $(notdir $(<))
-else
+ifeq "$(LANGUAGE)" "ja"
 	cd $(@D) && $(subst ../../convert,$(ABS_DIR)/../../convert,$(WML)) $(notdir $(<))
+else
+ifeq "$(LANGUAGE)" "pl"
+	cd $(@D) && $(subst ../../znaczki.sh,$(CURDIR)/../../znaczki.sh,$(WML)) $(notdir $(<))
+else
+	cd $(@D) && $(WML) $(notdir $(<))
+endif
 endif
 
 # Special case for Chinese
