@@ -41,16 +41,16 @@ sub print_maintainer {
 	if ($People{$names}{email} =~ /\@debian.org$/) {
 	   $userid = $People{$names}{email};
 	   $userid =~ s/@.*//;
-	   if (!$ppl_ref{$userid}) {
+	   if (!$ppl_ref{lc($userid)}) {
 	      print "<a name=\"$userid\"></a>";
-	      $ppl_ref{$userid} = 1;
+	      $ppl_ref{lc($userid)} = 1;
 	   }
         }
-	if ($ppl_ref{$lastname}) {
+	if ($ppl_ref{lc($lastname)}) {
            print "$lastname";
 	} else {
  	   print "<a name=\"$lastname\">$lastname</a>";
-           $ppl_ref{$lastname} = 1;
+           $ppl_ref{lc($lastname)} = 1;
 	}
 	if ($lastname ne "Wookey") {
 		if ($firstname) { print ", $firstname"; }
