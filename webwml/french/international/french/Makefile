@@ -28,7 +28,7 @@ GENDESTFILES = $(patsubst %.$(LANGUAGE).html,$(HTMLDIR)/%.$(LANGUAGE).html,$(GEN
 all:: $(CTDOCFILES) $(CTWEBFILES)
 
 check_trans.status: FORCE
-	perl create_status.pl > check_trans.status.new
+	../../../check_trans.pl -C ../../.. -t perl french > check_trans.status.new
 	if [ -f check_trans.status ]; then \
 		cmp check_trans.status check_trans.status.new >/dev/null 2>&1 \
 		|| mv check_trans.status.new check_trans.status; \
