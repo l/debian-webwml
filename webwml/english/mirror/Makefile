@@ -13,8 +13,9 @@ include $(WMLBASE)/Make.common
 
 MFILES := ftpsync ftpsync.conf websync websync.conf \
 	identity.pub.master.ftp identity.pub.master.web \
-	anonftpsync anonwebsync Mirrors.masterlist \
+	anonftpsync anonwebsync \
 	ftpsync-non-US ftpsync-non-US.conf identity.pub.non-US.ftp
+#	anonftpsync anonwebsync Mirrors.masterlist \
 MIRROR_FILES := $(patsubst %,$(HTMLDIR)/%,$(MFILES))
 
 install:: $(MIRROR_FILES)
@@ -50,6 +51,8 @@ $(HTMLDIR)/anonftpsync: anonftpsync
 	cp anonftpsync $(HTMLDIR)
 $(HTMLDIR)/anonwebsync: anonwebsync
 	cp anonwebsync $(HTMLDIR)
-$(HTMLDIR)/Mirrors.masterlist: Mirrors.masterlist
-	cp Mirrors.masterlist $(HTMLDIR)
+# the masterlist is kept private since it contains email addresses
+# Don't like this decision? Discuss it on debian-www
+#$(HTMLDIR)/Mirrors.masterlist: Mirrors.masterlist
+#	cp Mirrors.masterlist $(HTMLDIR)
 endif
