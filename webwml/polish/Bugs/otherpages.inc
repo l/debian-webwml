@@ -7,7 +7,7 @@
   <li><a href="Developer">Instrukcje u¿ycia systemu dla rozwijaj±cych.</a>
   <li><a href="server-control">Instrukcje dla rozwijaj±cych dotycz±ce
       manipulacji na zg³oszeniach przy pomocy poczty elektronicznej.</a>
-  <li><a href="server-refcard">Komendy serwera pocztowego.</a>
+  <li><a href="server-refcard">Polecenia serwera pocztowego.</a>
   <li><a href="server-request">Otrzymywanie zg³oszeñ poczt± elektroniczn±.</a>
 #  <li><a href="db/ix/full.html">Full list of outstanding and recent bug
 #      reports.</a>
