@@ -19,7 +19,7 @@
 <p>Per approfondire l'argomento traduttori si usa come esempio i normali
 filesystem, un filesystem è supporto di memorizzazione con un albero
 gerarchico di directory e file. Per accedere alle directory e ai file si
-usa una speciale stringa di caratteri, il percorso. Inoltre, esistono link
+usa una speciale stringa di caratteri, il percorso. Inoltre esistono link
 simbolici per rimandare a uno stesso file da diversi punti dell'albero delle
 directory e hard link per dare a uno stesso file più nomi. Ci sono dei file
 speciali detti device per comunicare con i driver per il kernel dei
@@ -27,7 +27,7 @@ dispositivi hardware e ci sono i mount point per includere altri supporti di
 memorizzazione nell'albero delle directory. Infine esistono anche altri strani
 oggetti come le fifo.</p>
 
-<p>Sebbene questi oggetti siano molto diversi, condividono alcune proprietà
+<p>Sebbene questi oggetti siano molto diversi condividono alcune proprietà
 comuni, ad esempio hanno un proprietario, sono associati a un gruppo e hanno
 dei diritti di accesso (permessi); tutte queste informazioni sono scritte
 negli inode. Un'altra cosa fondamentale: ogni oggetto è associato a
@@ -36,10 +36,10 @@ condividono lo stesso inode). In alcuni casi nell'inode sono memorizzate
 anche informazioni differenti, per esempio possono contenere la destinazione
 di un link simbolico.</p>
 
-<p>Comunque queste cose comuni di solito non sono sfruttate nelle
+<p>Comunque queste funzionalità comuni di solito non sono sfruttate nelle
 implementazioni e sono rimandandate alla loro interfaccia di programmazione
 che è standard. Infatti si può accedere a tutti gli inode usando le chiamate
-standard POSIX come <code>read()</code> e <code>write()</code> Per esempio,
+standard POSIX come <code>read()</code> e <code>write()</code>. Per esempio,
 per aggiungere un nuovo tipo di oggetto (un nuovo tipo di link) a un kernel
 unix monolitico si deve modificare il codice per ogni filesystem.</p>
 
@@ -58,10 +58,10 @@ Hurd che fornisce l'interfaccia verso il filesystem sottostante.</p>
 <p>I traduttori hanno delle proprietà molto interessanti. Dal punto di vista
 del kernel i traduttori sono dei normali processi dell'utente, questo
 significa che i tradutori possono essere eseguiti da qualsiasi utente, che
-non sono necessari i privilegi dell'utente root per installare o modificare
-un traduttore e che invece sono sufficienti i giusti permessi di accesso
-all'inode su cui è collegato il traduttore. Molti traduttori non richiedono
-un reale file per funzionare, infatti possono fornire informazioni per proprio
+non sono necessari i privilegi dell'utente root per installare o modificare un
+traduttore e che invece sono sufficienti i giusti permessi di accesso
+all'inode su cui è collegato il traduttore. Molti traduttori non richiedono un
+reale file per funzionare, infatti possono fornire informazioni per proprio
 conto, questo perché le informazioni sui traduttori sono memorizzate
 nell'inode.</p>
 
@@ -118,10 +118,10 @@ sotto per una spiegazione di che cosa è un traduttore passivo).</p>
 
 <p>Dato che fa parte dell'Hurd anche un traduttore per i link simbolici,
 qualsiasi servente per filesystem che ha il supporto per i traduttori
-automaticamente ha il supporto per i link simbolici (per i link statici, per
-i file device, ecc.)! Questo significa che si può avere un filesystem
-funzionante molto rapidamente e aggiungere il supporto per i link simbolici
-e altre funzionalità successivamente.</p>
+automaticamente ha il supporto per i link simbolici (per i link statici, per i
+file device, ecc.)! Questo significa che si può avere un filesystem
+funzionante molto rapidamente e aggiungere il supporto per i link simbolici e
+altre funzionalità successivamente.</p>
 
 <h3><a href="#TOC_actpas" name="actpas">Taduttori passivi e taduttori attivi</a></h3>
 
@@ -217,8 +217,8 @@ per condizionare i suoi effetti. Qui sono riportati alcuni comuni usi:
 
 <p>Si può usare il comando
 <a href="hurd-doc-utils#showtrans"><code>showtrans</code></a> per vedere se
-un traduttore è collegato a un inode. Purtroppo questo comando mostra solo
-i traduttori passivi.</p>
+un traduttore è collegato a un inode. Purtroppo questo comando mostra solo i
+traduttori passivi.</p>
 
 <p>Si possono cambiare le opzioni di un traduttore (per filesystem) attivo
 con <code>fsysopts</code> senza riavviarlo, è veramente molto comodo. Per
@@ -234,7 +234,7 @@ comportamento in base alle richieste se è possibile. <code>fsysopts
 è solo un piccolo script dato che l'impostazione dei traduttori per i
 filesystem è simile al montare le partizioni, si può facilmente comprendere
 il concetto. Creare una immagine di un filesystem con <code>dd if=/dev/zero
-of=dummy.fs bs?1024k count=8; mke2fs dummy.fs</code> e montarlo con
+of=dummy.fs bs=1024k count=8; mke2fs dummy.fs</code> e montarlo con
 <code>settrans -c dummy /hurd/ext2fs `pwd`/dummy.fs</code>. Notare che il
 traduttore ancora non è partito, non c'è un processo <code>ext2fs</code> in
 esecuzione (lo si può verificare con <code>ps Aux</code>). Controllare che
@@ -242,7 +242,7 @@ tutto sia apposto con <code>showtrans</code>.</p>
 
 <p>Adesso digitare <code>ls dummy</code>, noterete un piccolo ritardo
 necessario all'avvio del traduttore. In futuro non ci dovrebbero essere altri
-ritardi a accedere a dummy, sotto Linux si potrebbe dire che è stato fatto
+ritardi per accedere a dummy, sotto Linux si potrebbe dire che è stato fatto
 l'automount di un filesystem di loop. Controllare con <code>ps Aux</code> che
 c'è un processo <code>ext2fs</code> attivo e in esecuzione. Adesso aggiungere
 alcuni file nella nuova directory. Provare a rendere il filesystem di sola
@@ -250,11 +250,11 @@ lettura con <code>fsysopts</code>, i successivi tentativi di scrittura
 falliranno. Provare a uccidere il traduttore attivo con <code>settrans
 -g</code>.</p>
 
-<p>Adesso si dovrebbe aver chiaro cosa succede, ricordarsi che questo era
-solo <em>un</em> servente, il servente Hurd ext2fs. Ci sono molti altri
-serventi nella directory <code>hurd</code>, alcuni di essi sono per i
-filesystem, alcuni sono necessari per le funzionalità del filesystem come i
-link, alcuni sono necessari per i file device, alcuni per la rete. Si immagini
-di montare un server FTP con <code>settrans</code> e di scaricare i file
-semplicemente con il normale comando <code>cp</code> o modificare il vostro
-sito web con <code>emacs /ftp/homepage.my.server.org/index.html</code>!</p>
+<p>Adesso si dovrebbe aver chiaro cosa succede, ricordarsi che questo era solo
+<em>un</em> servente, il servente Hurd ext2fs. Ci sono molti altri serventi
+nella directory <code>hurd</code>, alcuni di essi sono per i filesystem,
+alcuni sono necessari per le funzionalità del filesystem come i link, alcuni
+sono necessari per i file device, alcuni per la rete. Si immagini di montare
+un server FTP con <code>settrans</code> e di scaricare i file semplicemente
+con il normale comando <code>cp</code> o modificare il vostro sito web con
+<code>emacs /ftp/homepage.my.server.org/index.html</code>!</p>
