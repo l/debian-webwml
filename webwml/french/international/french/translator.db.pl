@@ -18,7 +18,13 @@
 #  * summary:  a summary of which documents are outdated
 #  * logs:     the `cvs log' between the translated and current versions
 #  * diff:     idem with diff
+#  * tdiff:    try to find the part of the translated text modified by the
+#              patch
 #  * file:     add current version of translated file
+
+# The possible frenquencies are:
+# 0 (never), 1 (monthly), 2 (weekly) or 3 (daily)
+
 
 sub init_translators {
         my $translators = {
@@ -185,11 +191,11 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Martin Quinson' => {
-                        email       => 'martin.quinson@ens-lyon.fr',
+                        email       => 'martin.quinson@tuxfamily.org',
                         summary     => 3,
                         logs        => 3,
                         diff        => 3,
-                        tdiff       => 3,
+                        tdiff       => 0,
                         file        => 0,
                         compress    => 'none'
                 },
