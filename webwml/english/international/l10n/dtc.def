@@ -1320,3 +1320,115 @@ $slice{'err-guess-text'} = $slices;
 </table>
 </define-tag>
 
+
+#use wml::debian::language_names
+
+<:
+use lib '$(ENGLISHDIR)/../Perl';
+use Locale::Language;
+use Locale::Country;
+
+sub language_name {
+        my $lang=shift;
+        my $country=undef;
+
+        if ($lang =~ m,^(..)_(..)$,) {
+                $lang=$1;
+                $country=$2;
+        }
+        # Looking for something like $trans{'de'}{'finnish'}
+        # Translations in wml::debian::language_names
+        if (defined ($trans{language2code($(CUR_LANG))}{lc(code2language($lang))})) {
+	        $lang = ucfirst($trans{language2code($(CUR_LANG))}{lc(code2language($lang))});
+        } else {
+                $lang = code2language($lang);
+        }
+        if (defined $country) {
+	        $country=uc($country);
+	        # Looking for something like $countries{'AT'}{'FI'} (for _AT in finnish
+                if (defined ($countries{$country}{uc(language2code($(CUR_LANG)))})) {
+		        $country=$countries{$country}{uc(language2code($(CUR_LANG)))};
+                } elsif (defined ($countries{$country}{'EN'})) {
+	                $country=$countries{$country}{'EN'};
+                } elsif (defined (code2country($country))) {
+	 	        $country=code2country($country);
+                }
+	        return "<langcountryoutput $lang $country>";
+        } else {
+                return "[".uc('$(CUR_ISO_LANG)').":$lang:".uc('$(CUR_ISO_LANG)')."]";
+        }
+}
+:>
+
+<define-tag po-langs-long>
+<:
+@polangs = ();
+open(LANGS, "< $(ENGLISHDIR)/international/l10n/data/langs")
+        || die "Unable to read $(ENGLISHDIR)/international/l10n/data/langs";
+while (<LANGS>) {
+        if (s/^po:\s+//) {
+                @polangs = split(' ', $_);
+                last;
+        }
+}
+close(LANGS);
+print "<ul>\n";
+foreach my $l (sort @polangs) {
+        print "<li><a href=\"$l\">".language_name($l)."</a> ($l)</li>\n";
+}
+print "</ul>\n";
+:>
+</define-tag>
+
+<define-tag po-langs-short>
+<:
+open(LANGS, "< $(ENGLISHDIR)/international/l10n/data/langs")
+        || die "Unable to read $(ENGLISHDIR)/international/l10n/data/langs";
+while (<LANGS>) {
+        if (s/^po:\s+//) {
+                foreach my $code (split(' ', $_)) {
+                        print " [<a href=\"$code\">$code</a>] ";
+                }
+                last;
+        }
+}
+close(LANGS);
+:>
+</define-tag>
+
+<define-tag templates-langs-long>
+<:
+@templateslangs = ();
+open(LANGS, "< $(ENGLISHDIR)/international/l10n/data/langs")
+        || die "Unable to read $(ENGLISHDIR)/international/l10n/data/langs";
+while (<LANGS>) {
+        if (s/^templates:\s+//) {
+                @templateslangs = split(' ', $_);
+                last;
+        }
+}
+close(LANGS);
+print "<ul>\n";
+foreach my $l (sort @templateslangs) {
+        print "<li><a href=\"$l\">".language_name($l)."</a> ($l)</li>\n";
+}
+print "</ul>\n";
+:>
+</define-tag>
+
+<define-tag templates-langs-short>
+<:
+open(LANGS, "< $(ENGLISHDIR)/international/l10n/data/langs")
+        || die "Unable to read $(ENGLISHDIR)/international/l10n/data/langs";
+while (<LANGS>) {
+        if (s/^templates:\s+//) {
+                foreach my $code (split(' ', $_)) {
+                        print " [<a href=\"$code\">$code</a>] ";
+                }
+                last;
+        }
+}
+close(LANGS);
+:>
+</define-tag>
+
