@@ -203,7 +203,7 @@ do 'documents-bd.pl';
 	'status'		=> 2,
 	'base_revision'		=> '0.9',
 	'translation_maintainer' => ['Lluís Vilanova <xscript.geo@yahoo.com>'],
-	'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/meta/meta.es.sgml?cvsroot=debian-doc'
+	'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/meta/meta.es.sgml?cvsroot=debian-doc',
 	'since'			=> '08/02/2000'
 },
 

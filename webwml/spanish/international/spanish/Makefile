@@ -15,7 +15,6 @@ include $(WMLBASE)/Make.dep.generic
 include $(WMLBASE)/Make.dep.templ
 
 # Do Not modify the following line
-
-a-releer.es.html a-revisar.es.html a-traducir.es.html \
-en-curso.es.html no-disponible.es.html www-a-revisar.es.html \
-www-ok.es.html www-nok.es.html www.es.html : ltcp.pl current_status.pl documents-bd.pl
+%.$(LANGUAGE).html: %.wml $(WMLBASE)/../spanish/ltcp.pl $(WMLBASE)/../spanish/current_status.pl $(WMLBASE)/../spanish/documents-bd.pl
+# As a matter of fact the www pages should depend on all the www tree..
+# ¿How to make this run always?
