@@ -447,13 +447,22 @@ sub _parse_cache {
         $self->_debug("Checking in memory representation");
 
         $self->_io_open();
-        foreach $name (sort {$self->{data}->{files}->{$a}->{offset} <=> $self->{data}->{files}->{$b}->{offset}} @{$self->{data}->{list_files}}) {
+        foreach $name (@{$self->{data}->{list_files}}) {
                 $maxlength = &$matchfiles($name) || 0;
                 $path = '';
                 if ($maxlength =~ s/^://) {
                         $path = $maxlength;
-                        next if -r $path;
-                        $maxlength = -1;
+                        unless (-r $path) {
+                                my $dir = File::Basename::dirname($path);
+                                File::Path::mkpath($dir, 0, 0755);
+                                open(DISK, "> ".$path)
+                                        || warn "Unable to write to $path\n";
+                                print DISK $self->{data}->{files}->{$name}->{data};
+                                close(DISK);
+                                $self->{data}->{files}->{$name}->{data} = '';
+                                $self->{data}->{files}->{$name}->{read} = 0;
+                                next;
+                        }
                 } elsif ($maxlength !~ m/^-?[0-9]+$/) {
                         $maxlength = 0;
                 }
@@ -728,7 +737,6 @@ sub bind_patch {
         foreach ($self->{patch}->list_new_files()) {
                 $self->_debug("New file added to archive: $_");
                 my $data = $self->{patch}->{data}->{files}->{$_}->{data};
-                $data =~ s/^[^\n]*\n//s;
                 $data =~ s/^\+//mg;
                 $self->{data}->{files}->{$_} = {
                         offset => -1,
@@ -739,6 +747,7 @@ sub bind_patch {
                         dchars => length($data),
                         patch  => 1,
                 };
+                push (@{$self->{data}->{list_files}}, $_);
         }
 }
 

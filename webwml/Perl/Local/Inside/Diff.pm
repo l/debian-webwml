@@ -550,7 +550,6 @@ sub apply_patch {
                 Carp::carp "In ".__PACKAGE__."::apply_patch, patch new file with non-empty text"
                         if $text ne '';
                 $text = $self->{data}->{files}->{$name}->{patch_list}->[0]->{data};
-                $text =~ s/^[^\n]+\n//s;
                 $text =~ s/^\+//mg;
                 return $text;
         } else {
