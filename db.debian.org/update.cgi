@@ -130,6 +130,7 @@ if (!($query->param('doupdate'))) {
   LDAPUpdate($ldap, $editdn, 'emailForward', $query->param('email'));
   LDAPUpdate($ldap, $editdn, 'privatesub', $query->param('privatesub'));
   LDAPUpdate($ldap, $editdn, 'ircNick', $query->param('ircnick'));
+  LDAPUpdate($ldap, $editdn, 'icquin', $query->param('icquin'));
   LDAPUpdate($ldap, $editdn, 'labeledUrl', $query->param('labeledurl'));
   LDAPUpdate($ldap, $editdn, 'onvacation', $query->param('onvacation'));
 

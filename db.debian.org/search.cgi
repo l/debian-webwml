@@ -116,7 +116,7 @@ if (!$dosearch) {
     $data = $entries->{$dn};
 
     # These are local variables.. i have enough global vars as it is... <sigh>
-    my ($ufdn, $login, $name, $email, $fingerprint, $address, $latlong, $vacation, $created, $modified, $lastseen) = undef;
+    my ($ufdn, $login, $name, $icquin, $email, $fingerprint, $address, $latlong, $vacation, $created, $modified, $lastseen) = undef;
     
     $ufdn = $dn; # Net::LDAP does not have a dn2ufn function, but this is close enough :)
     
@@ -132,6 +132,11 @@ if (!$dosearch) {
       $email .= "<a href=\"mailto:$_\">$_</a>";
     }
 
+    # ICQ 
+    if ($data->{icquin}->[0]) {
+      $icquin = sprintf("<a href=\"http://wwp.icq.com/?icqnumber=%s\">%s</a>", $data->{icquin}->[0], $data->{icquin}->[0]);
+    }
+    
     # Format PGP/GPG key fingerprints
     my $fi;
     foreach (@{$data->{keyfingerprint}}) {
@@ -177,6 +182,9 @@ if (!$dosearch) {
     $outsub{searchresults} .= FormatEntry($dataspecref->{ircnick}, $data->{ircnick}->[0]);
     $outsub{searchresults} .= FormatEntry($dataspecref->{loginshell}, $data->{loginshell}->[0]);
     $outsub{searchresults} .= FormatEntry($dataspecref->{fingerprint}, $fingerprint);
+    if ($icquin) {
+      $outsub{searchresults} .= FormatEntry($dataspecref->{icquin}, $icquin);
+    }
     
     if ($auth) {
       # Some data should only be available to authorized users...
