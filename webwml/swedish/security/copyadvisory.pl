@@ -90,6 +90,7 @@ while (<SRC>)
 	s/We recommend that you upgrade your (.*) package/Vi rekommenderar att ni uppgraderar ert $1-paket/;
 	s/buffer overflows?/buffertspill/;
 	s/format string vulnerability/formatsträngssårbarhet/;
+	s/format string vulnerabilities/formatsträngssårbarheter/;
 	s/insecure temporary files/osäkra temporära filer/;
 	s/This problem has been fixed/Detta problem har rättats/;
 	s/These problems have been fixed/Dessa problem har rättats/;
