@@ -504,8 +504,9 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'todo',
-	'status'		=> 'à traduire',
-	'since'			=> '16/12/1998',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '10/07/1999',
+	'translation_maintainer'=> ['magloire@multimania.com'],
 },
 
 {
@@ -610,9 +611,10 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/release_info',
-	'status'		=> 'en cours de traduction',
-	'since'			=> '13/10/1998',
+	'status'		=> 'à relire',
+	'since'			=> '13/07/1999',
 	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'last_translated'	=> '13/07/1999',
 },
 
 {
@@ -645,8 +647,10 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'distrib/ftplist',
-	'status'		=> 'à traduire',
-	'since'			=> '01/08/1998',
+	'status'		=> 'à relire',
+	'since'			=> '11/07/1999',
+	'translation_maintainer'=> ['magloire@multimania.com'],
+	'last_translated'	=> '11/07/1999',
 },
 
 {
