@@ -86,7 +86,13 @@ sub new {
     return $self;
 }
 
+=pod
 
+=item C<copy>
+
+Return (using L<Storable> modul) a copy of the Pkg object.
+
+=cut
 
 sub copy {
     my $self = shift;
@@ -95,6 +101,19 @@ sub copy {
     return bless( $ret, ref $self );
 }
 
+=pod
+
+=item C<lock>,C<unlock>
+
+Locks/unlocks the object. All attempts to change a locked object
+through a member function will result in an exception.
+
+=item C<is_locked>
+
+Returns a true value, if the object is locked and a false one
+otherwise.
+
+=cut
 
 sub lock {
     my $self = shift;
@@ -113,6 +132,14 @@ sub is_locked {
 
     return $self->{locked};
 }
+
+=pod
+
+=item C<build_cache>
+
+FIXME
+
+=cut
 
 sub build_cache {
     my $self = shift;
@@ -136,6 +163,16 @@ sub build_cache {
     }
     $self->{cached} = 1;
 }
+
+=pod
+
+=item C<add_version>
+
+Add data for a particular version to the package object.
+Expects a hash ref a parameter, with the fieldnames as keys
+of the array.
+
+=cut
 
 sub add_version {
     my ( $self, $data ) = @_;
@@ -180,6 +217,8 @@ sub add_version {
     unless ( exists $data->{source} ) {
 	$data->{source} = $name;
     }
+
+    my $old_newest = ($self->get_version_list)[0] || "";
 
     $self->{versions}->{$data->{version}} ||= {};
     my $v_self = $self->{versions}->{$data->{version}};
@@ -231,8 +270,20 @@ sub add_version {
 	$v_self->{$data->{architecture}} = $data;
     }
 
+    if (($self->get_version_list)[0] ne $old_newest) {
+    	$self->_update_newest;
+    }
+
     return 1;
 }
+
+=pod
+
+=item C<add_provided_by>,C<add_enhanced_by>
+
+FIXME
+
+=cut
 
 sub add_provided_by {
     my $self = shift;
@@ -246,10 +297,10 @@ sub add_provided_by {
     $self->_debug( "add provided_by( $pkg ) to $self->{package}" );
     $self->{provided_by} = [] unless exists $self->{provided_by};
     push @{$self->{provided_by}}, $pkg 
-	if not_member( $pkg, $self->{provided_by} );
+	if _not_member( $pkg, $self->{provided_by} );
 }
 
-sub not_member {
+sub _not_member {
     my ( $str, $array ) = @_;
 
     foreach ( @$array ) {
@@ -375,6 +426,12 @@ sub get_most_used {
 	}
     }
     return $most_used;
+}
+
+sub get_newest {
+    my ( $self, $field ) = @_;
+
+    return $self->{newest}->{$field};
 }
 
 sub get_arch_versions {
@@ -539,6 +596,49 @@ sub _preprocess_section {
 	}
     }
     return 1;
+}
+
+sub _update_newest {
+    my $self = shift;
+    
+    my $version = ($self->get_version_list)[0];
+    $self->{newest}{version} = $version;
+
+    my @all_archs = $self->get_used_archs;
+    my %all_versions = $self->get_arch_versions(\@all_archs);
+    if (!defined $all_versions{v2a}{$version}) {
+    	$self->_error( "No information about the newest version ($version) available", Dumper($self);
+    }
+    my @archs = @{$all_versions{v2a}{$version}};
+
+    foreach my $f ( qw( archive section uploaders
+			size installed-size distribution subdistribution 
+			maintainer source filename md5sum ) ) {
+	my %values = ();
+	foreach my $a (@archs) {
+		if (exists $self->{versions}{$version}{$a}{$f}
+	  	    && defined $self->{versions}{$version}{$a}{$f}) {
+			$values{$self->{versions}{$version}{$a}{$f}}++;
+		}
+	}
+	if (scalar( keys %values ) == 1) {
+		$self->{newest}{$f} = (values %values)[0];
+	} elsif (scalar( keys %values ) > 1) {
+		$self->{newest}{$f} = "CONFLICT";
+	}
+    }
+}
+
+sub get_used_archs {
+	my $self = shift;
+
+	my %archs = ();
+	foreach (values %{$self->{versions}}) {
+		foreach (keys %$_) {
+			$archs{$_}++;
+		}
+	}
+	return keys %archs;
 }
 
 1;
