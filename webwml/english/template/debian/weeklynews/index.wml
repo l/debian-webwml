@@ -1,11 +1,12 @@
 <perl>
 
 # Very similar to get_recent_list except it looks for the .wml files
-# inside subdirectories of the given directory.
+# inside subdirectories of the given directory, and if it finds less than
+# 10, falls back to last year's news for the rest.
 sub get_weeklynews_list {
-	my ($year, $eng_dir, $match, $noyear) = @_;
+	my ($year, $eng_dir, $match, $noyear, $count, $stopat) = @_;
 	
-	$str="";
+	my $str="";
 
 	open(CURRENT, "CURRENT-ISSUE-IS") or open(CURRENT, "$eng_dir/CURRENT-ISSUE-IS");
 	my $currentissue=<CURRENT>;
@@ -42,8 +43,16 @@ sub get_weeklynews_list {
 			$str.="$num.\t<a href=\"". ($noyear ? "" : "$year/" )."$base\">$title</a> $summary<br>\n";
 		}
 		close FILE;
+		$count++;
+		last if ($stopat ne '' && $count >= $stopat);
 	}
 	close DIR;
+
+	# Get more if necessary.
+	if ($count < 10) {
+		$str.=get_weeklynews_list($year - 1, $eng_dir, $match, $noyear, $count, 10);
+	}
+	
 	return $str;
 }
 
