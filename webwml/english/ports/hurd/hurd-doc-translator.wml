@@ -10,9 +10,15 @@
 [ <a href="hurd-contact">Contact</a> ]<p>
 
 <h1>Debian GNU/Hurd</h1>
-<h2>Translator</h2>
+<h2>Translators</h2>
+<ul>
+<li><a href="#concept" name="TOC_concept">Concept</a></li>
+<li><a href="#examples" name="TOC_examples">Examples</a></li>
+<li><a href="#actpas" name="TOC_actpas">Passive Translators, Active Translators</a></li>
+<li><a href="#manage" name="TOC_manage">Managing Translators</a></li>
 
-<h3>Concept</h3>
+
+<a href="#TOC_concept" name="concept"><h3>Concept</h3></a>
 <p>
 Before we take a closer look at translators, let us consider regular
 filesystems. A filesystem is store for a hierarchical tree of directories
@@ -49,7 +55,8 @@ general interface to add such features without modifying existing code.</p>
 The trick is to allow a program to be inserted between the actual content of
 a file and the user accessing this file. Such a program is called a
 translator, because it is able to process the incoming requests in many
-different ways.</p>
+different ways. In other words, a translator is a Hurd server which provides
+the basic filesystem interface.</p>
 <p>
 Translators have very interesting properties. From the kernels point of
 view, they are just another user process. This means, translators can be run
@@ -67,8 +74,7 @@ behaves like a directory when accessed by <code>cd</code> or
 <code>ls</code> and at the same time behaves like a file when accessed by
 <code>cat</code>.</p>
 
-<h3>Examples</h3>
-
+<a href="#TOC_examples" name="examples"><h3>Examples</h3></a>
 <h4>Mount Points</h4>
 <p>
 A mount point can be seen as an inode that has a special translator attached
@@ -102,9 +108,9 @@ A symbolic link can be seen as a translator. Accesing the symbolic link
 would start up the translator, which would forward the request to the
 filesystem that contains the file the link points to.</p>
 <p>
-However, for better performance, filesystem servers that have native support
-for symbolic links, can take advantage of this feature and implement
-symbolic links differently. Internally, accesing the symbolic link would not
+However, for better performance, filesystems that have native support
+for symbolic links can take advantage of this feature and implement
+symbolic links differently. Internally, accessing a symbolic link would not
 start a new translator process. However, to the user, it would still look
 as if a passive translator is involved (see below for an explanation what a
 passsive translator is).</p>
@@ -115,7 +121,7 @@ firmlinks, and device files etc)! This means, you can get a working
 filesystem very fast, and add native support for symlinks and other features
 later.</p>
 
-<h3>Passive Translators, Active Translators</h3>
+<a href="#TOC_actpas" name="actpas"><h3>Passive Translators, Active Translators</h3></a>
 <p>
 There are two types of translators, passive and active. They are really
 completely different things, so don't mix them up, but they havea close
@@ -185,7 +191,7 @@ set a different active translator. Only if the translator is automatically
 started because there was no active translator the time the inode was
 accessed the passive translator is considered.</p>
 
-<h3>Managing Translators</h3>
+<a href="#TOC_manage" name="manage"><h3>Managing Translators</h3></a>
 <p>
 As mentioned above, you can use
 <a href="reference-manual/hurd_7.html#SEC49"><code>settrans</code></a>
