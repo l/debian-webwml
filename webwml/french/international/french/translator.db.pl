@@ -40,6 +40,15 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
+                'Laurence Bock' => {
+                        email       => 'ybecker@mindspring.com',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 3,
+                        file        => 3,
+                        compress    => 'none'
+                },
                 'Norbert Bottlaender-Prier' => {
                         email       => 'norbert@globenet.org',
                         summary     => 1,
