@@ -164,6 +164,12 @@
 <define-tag wontfix whitespace=delete>
   <gettext domain="bugs">wontfix</gettext>
 </define-tag>
+<define-tag ipv6 whitespace=delete>
+  <gettext domain="bugs">ipv6</gettext>
+</define-tag>
+<define-tag lfs whitespace=delete>
+  <gettext domain="bugs">lfs</gettext>
+</define-tag>
 
   <li><small><gettext domain="bugs">Include tag:</gettext>
   <label><input type="checkbox" name="include" value="potato"><potato></label>
@@ -186,6 +192,8 @@
   <label><input type="checkbox" name="include" value="unreproducible"><unreproducible></label>
   <label><input type="checkbox" name="include" value="upstream"><upstream></label>
   <label><input type="checkbox" name="include" value="wontfix"><wontfix></label>
+  <label><input type="checkbox" name="include" value="ipv6"><ipv6></label>
+  <label><input type="checkbox" name="include" value="lfs"><lfs></label>
   </small></li>
 
   <li><small><gettext domain="bugs">Exclude tag:</gettext>
@@ -209,6 +217,8 @@
   <label><input type="checkbox" name="exclude" value="unreproducible"><unreproducible></label>
   <label><input type="checkbox" name="exclude" value="upstream"><upstream></label>
   <label><input type="checkbox" name="exclude" value="wontfix"><wontfix></label>
+  <label><input type="checkbox" name="exclude" value="ipv6"><ipv6></label>
+  <label><input type="checkbox" name="exclude" value="lfs"><lfs></label>
   </small></li>
 
 </ul>
