@@ -67,13 +67,15 @@ sub update_file {
     if ( $self->file_is_changed( $filename, $text ) ) {
 
 	$self->{files}{$filename}{md5} = Digest::MD5::md5_hex( $text );
-	$self->{files}{$filename}{time} = time(); # we don't care about seconds
+	$self->{files}{$filename}{time} = time();
 	sysopen( my $fh, $filename,
 		 O_WRONLY | O_TRUNC | O_CREAT, 0664) 
 	    || die "Can\'t open file $filename: $!";
 	$text =~ s/LAST_MODIFIED_DATE/$now_time/;
 	print $fh $text;
 	close $fh or warn "Couldn\'t close file $filename: $!\n";
+    } else { # only update timestamp of last update
+	$self->{files}{$filename}{time} = time();
     }
 }
 
@@ -89,7 +91,7 @@ sub update_gz_file {
     if ( $self->file_is_changed( $filename, $text ) ) {
 
 	$self->{files}{$filename}{md5} = Digest::MD5::md5_hex( $text );
-	$self->{files}{$filename}{time} = time(); # we don't care about seconds
+	$self->{files}{$filename}{time} = time();
 	sysopen( my $fh, $filename,
 		 O_WRONLY | O_TRUNC | O_CREAT, 0664) 
 	    || die "Can\'t open file $filename: $!";
@@ -99,6 +101,8 @@ sub update_gz_file {
 	$gz->gzwrite( $text )
 	    or die "Error while writing $filename: ".$gz->gzerror();
 	$gz->gzclose();
+    } else { # only update timestamp of last update
+	$self->{files}{$filename}{time} = time();
     }
 }
 
