@@ -10,3 +10,6 @@ include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/release.wml \
   $(ENGLISHDIR)/releases/sarge/release.data $(ENGLISHDIR)/releases/info
+
+releasenotes.$(LANGUAGE).html: releasenotes.wml $(TEMPLDIR)/release.wml \
+  $(ENGLISHDIR)/releases/sarge/release.data $(ENGLISHDIR)/releases/info
