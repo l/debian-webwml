@@ -220,7 +220,7 @@ $translations = {
 'policy' => {
 	'type'			=> 'DDP',
 	'name'			=> 'Debian Policy Manual',
-	'revision'		=> '2.5.0.0',
+	'revision'		=> '3.5.4.0',
 	'url'			=> 'http://www.debian.org/doc/debian-policy/',
 	'cvs_url'		=> 'http://cvs.debian.org/ddp/debian-policy/debian-policy/debian-policy.sgml?cvsroot=debian-doc',
 	'package'		=> 'debian-policy',
