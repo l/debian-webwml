@@ -69,4 +69,7 @@ archive.mirrors: ../mirror/Mirrors.masterlist
 	done
 	echo "</ul>" >> $@
 	echo "</define-tag>" >> $@
+
+.DELETE_ON_ERROR:
+
 endif
