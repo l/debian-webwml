@@ -18,7 +18,6 @@ all:\
     $(HTMLDIR)/news1997.html.$(LANG) \
     $(HTMLDIR)/related_links.html.$(LANG) \
     $(HTMLDIR)/social_contract.html.$(LANG) \
-    $(HTMLDIR)/sponsor.html \
     $(HTMLDIR)/support.html.$(LANG) \
     $(HTMLDIR)/2.0/errata.html.$(LANG) \
     $(HTMLDIR)/2.0/2.0beta_CD.html.$(LANG) \
