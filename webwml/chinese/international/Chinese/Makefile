@@ -1,9 +1,9 @@
-# This Makefile should need no changes from webwml/chinese/chinese/Makefile
+# This Makefile should need no changes from webwml/chinese/international/chinese/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
-WMLBASE=..
-CUR_DIR=chinese
+WMLBASE=../..
+CUR_DIR=international/chinese
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
 SUBS=devel
@@ -13,4 +13,3 @@ include $(WMLBASE)/Make.common
 
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
-
