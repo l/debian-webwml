@@ -1,6 +1,6 @@
 #use wml::debian::template title="Port su MIPS" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/mips/menu.inc"
-#use wml::debian::translation-check translation="1.83" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.84" maintainer="Luca Monducci"
 
 <h1>Debian-MIPS e Debian-MIPSEL</h1>
 
@@ -14,12 +14,39 @@ dei binari. Le CPU Mips sono capaci di eseguire entrambe le endianness,
 ma dato che non è possibile modificare il modo di funzionamento via software
 si hanno di fatto due architetture. Le macchine SGI (Indy e Indigo2) eseguono
 in <a href="http://www.foldoc.org/foldoc/foldoc.cgi?query=big-endian">\
-big-endian</a>, debian-mips, invece le Decstation della Digital eseguono in
+big-endian</a>, debian-mips, invece le Decstation della Digital e le
+Cobalt Cube/RaQ eseguono in
 <a href="http://www.foldoc.org/foldoc/foldoc.cgi?query=little-endian">\
-little-endian</a>, debian-mipsel.</p>
+little-endian</a>, debian-mipsel. Invece le BCM91250A (note come SWARM)
+pososno funzionare in entrambe le modalità in base a un ponticello sulla
+scheda.</p>
 
 
 <h2>Problemi noti</h2>
+
+<ul>
+    <li>
+	O2 R10000 NON è supportato.</li>
+
+    <li>
+	O2 R5000 - SPERIMENTALE, framebuffer fragile.</li>
+
+    <li>
+	Indigo 2 R8000/R10000 non sono supportate.</li>
+
+    <li>
+	Framebuffer su Indigo 2, eccetto XL, non è supportato.</li>
+
+    <li>
+	Challenge S extra Ethernet/SCSI non è supportato (dispositivo
+	GIO64).</li>
+
+    <li>
+	Slot EISA delle Indigo 2 non sono supportati.</li>
+</ul>
+
+
+<h2>Problemi noti (risolti)</h2>
 
 <ul>
     <li>
@@ -34,70 +61,17 @@ little-endian</a>, debian-mipsel.</p>
 	R4600 V1.7 non funziona con l'attuale CVS. Vari problemi.</li>
 
     <li>
-	O2 R10000 NON è supportato.</li>
-
-    <li>
-	O2 R5000 - SPERIMENTALE senza framebuffer.</li>
-
-    <li>
-	Indigo 2 R8000/R10000 non sono supportate.</li>
-
-    <li>
-	Framebuffer su Indigo 2 non è supportato.</li>
-
-    <li>
-	Challenge S extra Ethernet/SCSI non è supportato (dispositivo
-	GIO64).</li>
-
-    <li>
-	Slot EISA delle Indigo 2 non sono supportati.</li>
-
-    <li>
 	R3000 Decstation va in crash con la versione del kernel attualmente
 	nel CVS.</li>
-</ul>
 
-
-<h2>Problemi noti (risolti)</h2>
-
-<ul>
     <li>
 	Indigo2 va in crash se è abilitato il Framebuffer/Newport.</li>
-
-    <li>
-	XFree XShm non funziona, le pixmap vengono corrotte. Attualmente
-	la correzione è contenuta nel CVS.</li>
-
-    <li>
-	Qualche volta "sleep" non vuole uscire dall'inattività, strace
-	mostra periodi di inattività anche di 22 anni. Sembra che sia
-	qualcosa che dipende da librt/fpu. Non si è più manifestato da
-	un paio di mesi, pare che il problema sia stato risolto con la
-	coppia kernel 2.4.17/glibc 2.2.5-3.</li>
-
-    <li>
-	update-menus provoca un SIGBUS, sembra essere la gestione di una
-	eccezione del C++. Per ora si sta usando il linkaggio statico per
-	risolvere il problema.</li>
-
-    <li>
-	La versione 3.0.22 di boot-floppies che probabilmente sarà rilasciata
-	con woody ha il nome del kernel nel volume-header sbagliato. Il nome
-	corretto è "linux.bi" e non "linux". Provare a usare "arcboot", che
-	sarà il prossimo boot-loader per SGI, ma si presti attenzione perché
-	è necessario installare una immagine del kernel recente che contenga
-	un kernel ELF. Woody sarà rilasciata con 3.0.23.</li>
 </ul>
 
 
 <h2>Macchine pubbliche</h2>
 
 <ul>
-    <li>
-	pongo.verwaltung.uni-mainz.de.<br />
-	Una SGI Indy - R4000SC con 256MB di RAM<br />
-	<email martin@uni-mainz.de /></li>
-
     <li>
 	remake.rfc822.org<br />
 	Una Masquerade Pro donata da Lasat.
@@ -147,28 +121,24 @@ particolare di Debian/Mips.</p>
 	<a href="http://lists.debian.org/debian-mips/">lists.debian.org</a>.</li>
 
     <li>
-	linux-mips@oss.sgi.com - Linux/Mips e Linux/Mipsel per tutte le
-	architetture, non solo SGI.<br />
-	Per iscriversi inviare una email a <email majordomo@oss.sgi.com />
+	linux-mips@linux-mips.org - Sviluppo del kernel per Linux/Mips e
+	Linux/Mipsel<br />
+	Per iscriversi inviare una email a <email ecartis@linux-mips.org />
 	contenente "subscribe linux-mips".</li>
-
-    <li>
-	cobalt-22@devel.alal.com - Port 2.2/2.4 su Cobalt Qube/RaQ.<br />
-	<a href="http://devel.alal.com/mailman/listinfo/cobalt-22">http://devel.alal.com/mailman/listinfo/cobalt-22</a>.</li>
 </ul>
 
 
 <h2>Riferimenti</h2>
 
 <dl>
-    <dt>Decstation Linux - Pagine dedicate agli utilizzatori di Decstation, un po' vecchie</dt>
-    <dd><a href="http://decstation.unix-ag.org/">decstation.unix-ag.org</a></dd>
+    <dt>Sviluppo del kenel Linux/MIPS - Molta documentazione riguardo MIPS</dt>
+    <dd><a href="http://www.linux-mips.org/">linux-mips.org</a></dd>
 
     <dt>Costruttore delle CPU</dt>
     <dd><a href="http://www.mips.com/">www.mips.com</a></dd>
 
-    <dt>Pagine su Linux/Mips ospitate da SGI</dt>
-    <dd><a href="http://oss.sgi.com/mips/">oss.sgi.com/mips</a></dd>
+    <dt>Decstation Linux - Pagine dedicate agli utilizzatori di Decstation, decisamente vecchie</dt>
+    <dd><a href="http://decstation.unix-ag.org/">decstation.unix-ag.org</a></dd>
 
     <dt>Archivio dei pacchetti RPM di Karsten Merker per MIPS little-endian</dt>
     <dd><a href="ftp://bolug.uni-bonn.de/mips/">bolug.uni-bonn.de/mips/</a></dd>
@@ -185,7 +155,7 @@ particolare di Debian/Mips.</p>
     <dt>Linux-Mips crossdev HOWTO</dt>
     <dd><a href="http://foobazco.org/~wesolows/mips-cross.html">http://foobazco.org/~wesolows/mips-cross.html</a></dd>
 
-    <dt>HOWTO per installare Debian/Mips su Indy</dt>
+    <dt>Debian/Mips Indy install HOWTO</dt>
     <dd><a href="http://www.linux-debian.de/howto/debian-mips-woody-install.html">http://www.linux-debian.de/howto/debian-mips-woody-install.html</a></dd>
 
     <dt>GNU/Linux sul Philips Nino</dt>
