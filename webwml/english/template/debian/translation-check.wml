@@ -20,6 +20,11 @@ my ($translation, $file) = @_;
 # document and the original before printing the warning
 $max_versions = 5;
 
+# Turn this to '1' to set debugging ouput
+# ¡Only do this if you know what you are doing!
+# If you checkin to CVS this should be set to 0
+$debug = 0;
+
 # This is the directory where the original source is kept
 # maybe it could be a parameter, since sometimes the original
 # language is NOT english
@@ -51,7 +56,7 @@ open (CVS_ENTRY,"<$wmlbase/$original_dir/$current_dir/CVS/Entries");
 while ( $line =<CVS_ENTRY> )
 {
         chomp $line;
-        print "Reading $line \n";
+        print "Reading $line \n" if $debug;
         if ( $line =~ /\/\Q$file\E\/([\d\.]*)/ ) {
                 $version = $1;
         }
@@ -75,17 +80,18 @@ if ( $translation =~ /\.(\d*)$/ )
 { $last_translated_number = $1;}
 else
 { print STDERR "Call to the subroutine has not been made as expected:
-$translation not in expected format\n";
+'$translation' not in expected format\n";
   return 1;
 }
-print "Comparing original $version to translation version $translation\n";
-print "Comparing minor $last_number to minor $last_translated_number\n";
+print "Comparing original $version to translation version $translation\n" if $debug;
+# TODO: check also major numbers
+print "Comparing minor $last_number to minor $last_translated_number\n" if $debug;
 
 if ( $last_number - $last_translated_number > $max_versions ) 
 {
-# TODO:This should be printed using tags in order to tell the
+# TODO:This should be printed using slices in order to tell the
 # user in his language
-        print "<B>This translations is too out of date<B><BR>";
+        print "<B>Warning!: This translations is too out of date<B><BR>";
 }
 close CVS_ENTRY;
 }
@@ -93,4 +99,4 @@ close CVS_ENTRY;
 
 
 #The call to the subroutine is done here
-<: check_translation ($(translation),"$WML_SRC_FILENAME)" :>
+<: check_translation ("$(translation)","$WML_SRC_FILENAME") :>
