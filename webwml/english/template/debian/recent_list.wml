@@ -352,7 +352,19 @@ foreach $file (@files) {
 #      print STDERR "title: $title rdate: $rdate\n";
       $rdate = newsdate($rdate);
       $title =~ s/(DSA-\d{3})-\d{1}/$1/; # strip off the revision in the DSA number
-      $str1 = "$elemhead<tt>[$rdate]</tt> <strong><a href=\"$year/$base\">$title</a></strong> $elemfoot$desc<br />\n";
+      if ($format =~ rdf) {
+        $str1 = "
+<item rdf:about=\"http://www.debian.org/security/$year/$base\">
+  <title>$title</title>
+  <link>http://www.debian.org/security/$year/$base</link>
+  <description>
+$desc
+  </description>
+</item>
+";
+      } else {
+        $str1 = "$elemhead<tt>[$rdate]</tt> <strong><a href=\"$year/$base\">$title</a></strong> $elemfoot$desc<br />\n";
+      }
       last;
     }
     elsif ($title && $date && !$is_events) { # for News/ and not events/
@@ -394,6 +406,44 @@ if ($WML_SRC_DIRNAME =~ /events/) {
 }
 
 return $str;
+}
+
+sub rdf_item_list {
+  my ($year, $number, $eng_dir, $match) = @_;
+  my $count = 0;
+
+  opendir DIR, "$eng_dir/$year" or warn "couldn't open dir $eng_dir/$year\n";
+  @files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
+  @files = sort {$b cmp $a} @files;
+  @files = reverse @files if ($eng_dir =~ /\/events\/\d{4}$/);
+  closedir DIR;
+
+  $count += scalar @files;
+
+  foreach my $file (@files) {
+    $n++;
+    last if ($n > $number && $number ne 0);
+    (my $f = $file) =~ s/.wml$//;
+    print "<rdf:li resource=\"http://www.debian.org/security/$year/$f\" />\n";
+  }
+
+  if ($count < $number && $number ne 0) {
+    @tmp = split('/', $year);
+    $tmp[$#tmp]--;
+    $year = join('/', @tmp);
+    if (-d "$eng_dir/$year") {
+      opendir DIR, "$eng_dir/$year" or warn "couldn't open dir $eng_dir/$year\n";
+      @files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
+      @files = sort {$b cmp $a} @files;
+      closedir DIR;
+      foreach my $file (@files) {
+        $n++;
+        last if ($n > $number && $number ne 0);
+        (my $f = $file) =~ s/.wml$//;
+        print "<rdf:li resource=\"http://www.debian.org/security/$year/$f\" />\n";
+      }
+    }
+  }
 }
 
 </perl>
