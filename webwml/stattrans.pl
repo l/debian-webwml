@@ -431,7 +431,7 @@ printf HTML "<html>\n<head><title>%s</title></head>\n<body bgcolor=\"#ffffff\">\
 printf HTML "<h1 align=\"center\">%s</h1>\n", $config{'title'};
 
 print HTML "<h2>Translated web pages</h2>\n";
-printf HTML "<p>There is %d pages to translate.</p>\n",($wml{'english'}+$untranslated{'english'});
+printf HTML "<p>There are %d pages to translate.</p>\n",($wml{'english'}+$untranslated{'english'});
 
 print HTML $border_head;
 print HTML "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
@@ -457,7 +457,7 @@ print HTML "</table>\n";
 print HTML $border_foot;
 
 print HTML "<h2>Translated templates (gettext files)</h2>\n";
-printf HTML "<p>There is %d strings to translate.</p>\n",$po_total{'total'};
+printf HTML "<p>There are %d strings to translate.</p>\n",$po_total{'total'};
 print HTML $border_head;
 print HTML "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
 print HTML "<tr><th>Language</th><th>Up to date</th><th>Fuzzy</th><th>Not translated</th></tr>\n";
