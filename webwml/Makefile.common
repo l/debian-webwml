@@ -3,19 +3,9 @@
 
 CUR_YEAR := $(shell date +%Y)
 
-ifeq "$(findstring SPI,$(CURDIR))" "SPI"
-SPI := true
-endif
-
-ifdef SPI
-RELHTMLBASE := ../../../debian.org/SPI
-ENGLISHSRCDIR := $(WMLBASE)/../../english/SPI
-TEMPLDIR := $(ENGLISHSRCDIR)/template
-else
 RELHTMLBASE := ../../debian.org
 ENGLISHSRCDIR := $(WMLBASE)/../english
 TEMPLDIR := $(ENGLISHSRCDIR)/template/debian
-endif
 
 ENGLISHDIR := $(ENGLISHSRCDIR)
 # ^ just an alias ^
@@ -108,15 +98,14 @@ endif
 
 # the rule for every wml file
 ifndef NOGENERICDEP
-ifdef SPI
-%.$(LANGUAGE).html : %.wml \
-  $(WMLBASE)/../../.wmlrc $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
-  $(TEMPLDIR)/template.wml $(HTMLDEP)
-	$(WML) $(<F)
-else
 %.$(LANGUAGE).html : %.wml $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml $(HTMLDEP)
 	$(WML) $(<F)
+ifeq "$(LANGUAGE)" "en"
+	$(WMLBASE)/../touch_translations.pl $(CURDIR)/$(<F) $(LANGUAGE)
+endif
+ifneq "$(findstring /international/,$(CURDIR))" ""
+	$(WMLBASE)/../touch_translations.pl $(CURDIR)/$(<F) $(LANGUAGE)
 endif
 endif
 
@@ -137,13 +126,6 @@ ifeq "$(LANGUAGE)" "en"
 endif
 
 # template dependencies
-ifdef SPI
-$(TEMPLDIR)/template.wml: $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml
-	touch $(TEMPLDIR)/template.wml
-
-$(TEMPLDIR)/footer.wml: $(TEMPLDIR)/ctime.wml
-	touch $(TEMPLDIR)/footer.wml
-else
 $(TEMPLDIR)/basic.wml: $(TEMPLDIR)/navbar.wml
 	touch $(TEMPLDIR)/basic.wml
 
@@ -182,7 +164,6 @@ $(TEMPLDIR)/security.wml: $(TEMPLDIR)/common_translation.wml \
 $(TEMPLDIR)/ddp.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml \
 		$(TEMPLDIR)/footer.wml
 	touch $(TEMPLDIR)/ddp.wml
-endif
 
 .SUFFIXES: 
 .PHONY: all $(existing-SUBS) install $(existing-SUBS-install)
