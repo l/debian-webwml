@@ -1,0 +1,126 @@
+#use wml::debian::cdimage title="Becoming a mirror for Debian CD images" BARETITLE=true
+#use wml::debian::translation-check translation="1.3"
+# Translator: Gerfried Fuchs <alfie@debian.org> 2002-01-20
+# $Id$
+
+<p>Um eine Debian-CD-Image Spiegel-Seite zu werden, benötigen Sie einen Linux
+oder UNIX-ähnlichen Rechner. Sich die Images zu besorgen und diese verfügbar
+zu machen kann auf verschiedene Arten bewerkstelligt werden, abhängig von
+Ihren Möglichkeiten.</p>
+
+<p>Sie sollten <em>nicht</em> FTP oder HTTP verwenden, um die Images zu
+bekommen. Diese Transfer-Methoden haben eine hohe Fehlerquote wegen der
+enormen Grösse der Dateien. Außerdem, falls sich das Image nur leicht ändert
+(wie im Fall eines Sub-Releases), werden die kompletten Daten erneut
+heruntergeladen. Das belegt unsere Computer und Netzwerk-Verbindungen mit
+hoher Last.</p>
+
+<p>Wegen diesen Gründen verwenden Wir das <a href="http://rsync.samba.org/">\
+<tt>rsync</tt></a> Programm, das im wesentlichen ein entferntes Binär-Patchen
+durchführt. Mit <tt>rsync</tt> werden Sub-Release-Images sehr effizient
+aktualisiert, da nur die geänderten Teile über das Netzwerk transferiert
+werden muss; die unveränderten Teile werden vom alten Image kopiert.</p>
+
+<p><tt>rsync</tt> alleine ladet immer noch alles herunter für "alle neuen"
+Releases, da diese Images praktisch keine unveränderten Teile beinhalten.
+Jedoch können wir mit dem Pseudo-Image-Kit ein "Pseudo"-CD-Image aus den Daten
+erstellen, die bereits auf dem nächsten Debian-FTP-Spiegel verfügbar sind -
+eventuell auf Ihrer lokalen Festplatte. Dann kann <tt>rsync</tt> diese
+"Pseudo-Images" binär zu den offiziellen patchen. Und selbst für die meisten
+Sub-Release-Images ist das effizienter als das alte Image zu patchen.</p>
+
+<p>Das Pseudo-Image-Kit ist hauptsächlich dafür entworfen, nur eines oder
+wenige Images herunterzuladen, wie es die meisten Leute tun. Es gibt auch das
+<tt>debcdmirror</tt> Skript, das das Spiegeln <em>wirklich</em> einfach macht,
+da es das Pseudo-Image-Kit und <tt>rsync</tt> verwendet, um Ihren Spiegel
+aktuell zu halten -- sogar bis zu dem Punkt der automatischen Prüfens der
+MD5-Prüfsume für jedes heruntergeladene Image. Mit <tt>debcdmirror</tt> können
+Sie auch exakt spezifizieren, was Sie spiegeln wollen.</p>
+
+<p>Daher haben wir die folgenden Möglichkeiten, sich die Images zu besorgen
+und sie aktuell zu halten:</p>
+
+<ul>
+
+  <li>Mit FTP oder HTTP: Das sollte <em>nicht</em> getan werden.</li>
+
+  <li>Nur mit <tt>rsync</tt> (täglicher Cron-Job): Das ist nur für Rechnern
+  zu bevorzugen, die keinen nahen/schnellen Debian-FTP-Spiegel haben.</li>
+
+  <li>Durch händische Verwendung vom Pseudo-Image-Kit (eventuell mit
+  <tt>rsync</tt>, um Sub-Releases zu aktualisieren). Viel Arbeit und viele
+  Probleme.</li>
+
+  <li>Mit dem <tt>debcdmirror</tt> Skript (das "intern" das Pseudo-Image-Kit
+  und <tt>rsync</tt> verwendet) (täglicher Cron-Job).  <strong>Das</strong>
+  ist es, was Sie tun sollten! :-)</li>
+
+</ul>
+
+<p>Die neueste Version des
+<a href="http://cdimage.debian.org/~costar/pseudo-image-kit/">\
+Pseudo-Image-Kit</a> und des
+<a href="http://cdimage.debian.org/~costar/debcdmirror/">\
+<tt>debcdmirror</tt></a> Skripts sind auf der Homepage ihres Autors
+erhältlich. Lesen Sie die READMEs in beiden Paketen für umfassende
+Informationen über die Prozeduren.</p>
+
+<p><strong>Beachten Sie:</strong></p>
+
+<p>Für das <tt>debcdmirror</tt> Skript müssen Sie einen <tt>rsync</tt>-Spiegel
+verwenden, der eine "<tt>ls-lR</tt>" Datei bietet. Adressen gibt es auf der
+<a href="rsync-mirrors">rsync-Spiegel-Liste</a>. Offizielle öffentliche
+Spiegeln ist es erlaubt, rsync direkt zum Master-Server zu verwenden,
+cdimage.debian.org; Sie benötigen dafür wohl ein Passwort, fragen Sie
+<a href="mailto:phil@hands.com">den Administrator</a>.</p>
+
+<p>Falls Sie nicht einen lokalen <a href="$(HOME)/mirror/">"regulären"
+Debian-FTP-Spiegel</a> haben, prüfen Sie die
+<a href="$(HOME)/distrib/ftplist">Liste der FTP-Sites</a>.</p>
+
+<p><tt>debcdmirror</tt> benötigt <tt>bash</tt> Version 2 oder höher. Falls
+nötig können Sie diese an einem Platz installieren, der nicht dem Standard
+entspricht, aber vergessen Sie dann nicht, den Pfad zur <tt>bash</tt> in der
+ersten Zeile des Skripts anzupassen.</p>
+
+<p>Wenn Sie nur <tt>rsync</tt> verwenden, verwenden Sie zumindest die Optionen
+<b><tt>--times --links --hard-links --block-size=8192</tt></b>. Das wird die
+Modifizierungs-Zeit, symbolische und harte Links erhalten, und eine
+Block-Grösse von 8192 Bytes verwenden (am Effizientesten für CD-Images). Falls
+die Modifizierungs-Zeit und die Grösse die gleiche sind, wird <tt>rsync</tt>
+die Datei in Ruhe lassen, daher ist <tt>--times</tt> wirklich Pflicht.</p>
+
+<p>Das "<tt><i>codename</i>_test</tt>" Verzeichnis beinhaltet Images, die hart
+verlinkt mit denen in den versionisierten (z.B. <tt>2.2_r4</tt>)
+Verzeichnissen sind. Der Name des versionisierten Verzeichnisses wird sich
+zwischen den (Sub-)Releases ändern, aber die Namen in den "<tt>test</tt>"
+Verzeichnissen werden die gleichen bleiben. Daher, falls Sie nur
+<tt>rsync</tt> verwenden, ist die einzige Möglichkeit für rsync die
+Sub-Releases ordentlich zu aktualisieren, sowohl die versionisierten als auch
+die entsprechenden "<tt>test</tt>" Verzeichnisse zu spiegeln <em>und</em> die
+<tt>--hard-links</tt> Option zu verwenden. [Sie sollten <em>nicht</em> die
+"<tt>test</tt>" Verzeichnisse bei <tt>debcdmirror</tt> inkludieren, da
+<tt>debcdmirror</tt> diese Dinge anders und effizienter handhabt.]</p>
+
+<p>Die <tt>ls-lR</tt> Datei beschreibt die Verzeichnis-Struktur des Spiegel,
+auf dem sie liegt. Spiegeln Sie <strong>nicht</strong> die <tt>ls-lR</tt>
+Datei; entweder erstellen Sie sie selbst (mit dem verfügbaren
+"<tt>Makels-lR</tt>" jede Stunde über <tt>cron</tt>) oder haben Sie einfach
+keine <tt>ls-lR</tt> Datei. [<tt>debcdmirror</tt> wird automatisch ein lokales
+<tt>ls-lR</tt> erstellen, nach dem Spiegeln.]</p>
+
+<p>Wenn Sie das CD-Image, das Sie spiegeln wollen (i386 und Source-CDs sind
+die beliebtesten), erworben haben, sollten Sie das <tt>rsync</tt>
+Server-Programm laufen lassen. Das wird Ihren Rechner nicht mit einer hohen
+Last überfordern, und wird viel weniger Netzwerk-Verkehr als ein
+FTP/HTTP-Service benötigen. Anleitungen, wie man dieses aufsetzt, finden sich
+im README des Pseudo-Image-Kit.</p>
+
+<p>Falls Sie natürlich keine Probleme mit vielen Gigabyte an Netzwerk-Verkehr
+pro Tag haben, würden wir uns sehr über einen weiteren FTP/HHTP-Spiegel
+freuen. Wir sind mit allem glücklich, was Sie sich leisten können. Bitte
+berichten Sie auf
+<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;debian-cd&#64;lists.debian.org">\
+debian-cd&#64;lists.debian.org</a>, dass Sie einen Spiegel am laufen haben,
+damit wir die entsprechenten Seiten aktualisieren können. Vielen Dank im
+Vorhinein!</p>
