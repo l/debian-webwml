@@ -324,11 +324,11 @@ sub package_pages_walker {
 	    $data_sheet .= ds_item(gettext( "Maintainer" ),
 				   "<a href=\"$DDPO_URL".
 				   uri_escape($maint_email).
-				   "\">".encode_entities($maint_name)."</a>" );
+				   "\">".encode_entities($maint_name, '&<>')."</a>" );
 	    if (@uploaders) {
 		my @uploaders_str;
 		foreach (@uploaders) {
-		    push @uploaders_str, "<a href=\"$DDPO_URL".uri_escape($_->[1])."\">".encode_entities($_->[0])."</a>";
+		    push @uploaders_str, "<a href=\"$DDPO_URL".uri_escape($_->[1])."\">".encode_entities($_->[0], '&<>')."</a>";
 		}
 		$data_sheet .= ds_item(gettext( "Uploaders" ),
 				       join( ", ", @uploaders_str ));
