@@ -29,6 +29,7 @@ my $thisscript = "search_packages.pl";
 my $HOME = "http://www.debian.org";
 my $ROOT = "";
 my $SEARCHPAGE = "http://packages.debian.org/";
+my @DISTS = qw( stable testing unstable experimental );
 
 $ENV{PATH} = "/bin:/usr/bin";
 
@@ -296,7 +297,7 @@ unless ($search_on_sources) {
 	    next if $count < $start or $count > $end;
 	    printf "<h3>Package %s</h3>\n", $pkg;
 	    print "<ul>\n";
-	    foreach $ver (('stable','testing','unstable','experimental')) {
+	    foreach $ver (@DISTS) {
 		if (exists $pkgs{$pkg}{$ver}) {
 		    my @versions = version_sort keys %{$pkgs{$pkg}{$ver}};
 		    my $part_str = "";
@@ -321,7 +322,7 @@ unless ($search_on_sources) {
 	$rdf->addns( debpkg => 'http://packages.debian.org/xml/01-debian-packages-rdf' );
 	my @triples;
 	foreach my $pkg (sort keys %pkgs) {
-	    foreach $ver (('stable','testing','unstable','experimental')) {
+	    foreach $ver (@DISTS) {
 		if (exists $pkgs{$pkg}{$ver}) {
 		    my @versions = version_sort keys %{$pkgs{$pkg}{$ver}};
 		    foreach my $version (@versions) {
@@ -369,7 +370,7 @@ unless ($search_on_sources) {
 	    next if ($count < $start) or ($count > $end);
 	    printf "<h3>Source package %s</h3>\n", $pkg;
 	    print "<ul>\n";
-	    foreach $ver (('stable','testing','unstable','experimental')) {
+	    foreach $ver (@DISTS) {
 		if (exists $pkgs{$pkg}{$ver}) {
 		    my $part_str = "";
 		    if ($part{$pkg}{$ver}{source}) {
@@ -401,7 +402,7 @@ unless ($search_on_sources) {
 	$rdf->addns( debpkg => 'http://packages.debian.org/xml/01-debian-packages-rdf' );
 	my @triples;
 	foreach my $pkg (sort keys %pkgs) {
-	    foreach $ver (('stable','testing','unstable','experimental')) {
+	    foreach $ver (@DISTS) {
 		if (exists $pkgs{$pkg}{$ver}) {
 		    my $id = "$ROOT/$ver/source/$pkg";
 
