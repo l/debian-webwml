@@ -11,8 +11,8 @@
 <name>Javier Fernández-Sanguino Peña</name>
 <email>jfs@computer.org</email>
 </author>
-<version>2.7
-<date>Fri, 15 Nov 2002 16:26:23 +0100
+<version>2.8
+<date>Mon, 18 Nov 2002 23:13:42 +0100
 
 <abstract>
 Ce document décrit comment sécuriser l'installation d'un système Debian
@@ -328,6 +328,20 @@ en production tels que /usr/share/doc, /usr/share/man
 
 <sect>Changelog/Historique
  <p>
+<sect1>Version 2.8 (novembre 2002)
+<p>Modifications de Javier Fern'ndez-Sanguino Pen~a (moi).
+<list>
+<item>Application de rustines de Carlo Perassi, corrections incluant :
+modification de la longueur de lignes, correction d'URL, et correction de
+certains FIXMES.
+<item>Mise à jour du contenu de la FAQ de l'équipe de sécurité Debian.
+<item>Ajout d'un lien vers la FAQ de l'équipe de sécurité Debian et la 
+référence du développeur Debian, les sections dupliquées pourraient (juste
+pourraient) être supprimées à l'avenir.
+<item>Correction de la section d'audit manuel avec les commentaires de 
+Michal Zielinski.
+<item>Ajout d'un lien vers des dictionnaires (contribution de Carlo Perassi).
+</list>
 
 <sect1>Version 2.7 (octobre 2002)
 <p>Modifications de Javier Ferna'ndez-Sanguino Pen~a (moi).  Note: j'ai
@@ -498,7 +512,7 @@ commentaire d'Andreas Wohlfeld.
 <item>Inclusion des rustines fournies par Alfred E. Heggestad corrigeant
 beaucoup de fautes de frappes encore présentes dans le document.
 
-<item>Ajout d'un lien vers le changelog dans la section des Remerciements
+<item>Ajout d'un lien vers le changelog dans la section des remerciements
 comme beaucoup des personnes qui ont contribué sont listées ici (et pas
 là bas).
 
@@ -948,14 +962,13 @@ nombreuses bonnes idées.
 <item>Era Eriksson qui a éliminé les fautes de langage et qui a contribué à
 l'annexe «&nbsp;pense-bête&nbsp;».
 
-
 <item>Philipe Gaspar qui a écrit les informations concernant LKM.
 
 <item>Yotam Rubin qui a contribué à régulariser toutes les fautes de frappes ainsi que 
 les informations liées aux versions de Bin et aux mots de passes md5.
 
 <item>Toutes les personnes qui m'ont suggéré des améliorations qui
-(éventuellement) ont été incluses ici.
+(éventuellement) ont été incluses ici (voir <ref id="changelog">).
 
 <item>Tout le monde qui m'a encouragé (Alexander) à écrire ce HOWTO (qui plus tard a évolué vers le Manuel).
 
@@ -2175,14 +2188,14 @@ libcrypto.so.0.9.6
 <sect1>Audit d'utilisateur à la main 
 
 <p>
-Si vous êtes paranoïaque, il se peut que vous vouliez ajouter aux 
-utilisateurs un <file>.profile</file> qui configure son environnement 
-de telle façon qu'ils ne peuvent pas retirer les capacités d'audit du 
-shell (les commandes sont déposées dans <tt>$HISTFILE</tt>. Le 
+Si vous êtes paranoïaque, il se peut que vous vouliez configurer 
+pour le système un <file>/etc/profile</file> qui configure l'environnement 
+de telle façon que les utilisateurs ne puissent pas retirer les capacités 
+d'audit du shell (les commandes sont déposées dans <tt>$HISTFILE</tt>. Le 
 <file>.profile</file> ne peut être paramétré ainsi :
 
 <example>
-HISTFILE=/home/_user_/.bash_history
+HISTFILE=~/.bash_history
 HISTSIZE=100000000000000000
 HISTFILESIZE=10000000000000000
 set -o HISTFILE
@@ -2194,14 +2207,23 @@ export HISTFILE HISTSIZE HISTFILESIZE
 <p>NB: l'attribut -o place la variable en lecture seule dans bash.
 
 <p>
-Afin que cela fonctionne, l'utilisateur ne doit pas être capable de 
-modifier le <file>.profile</file> ou <file>.bash_history</file> mais 
-doit avoir la possibilité de lire le premier et d'écrire dans le second.
-Vous pouvez y parvenir facilement en changeant ces fichiers ainsi que le 
-répertoire dans lequel ils sont de propriétaire (root) et en donnant les 
-droits d'écriture aux utilisateurs du groupe du fichier des historiques.
-Une autre option est l'utilisation du programme <prgn>chattr</prgn>.
-     
+Afin que cela fonctionne, l'utilisateur doit être seulement capable d'ajouter 
+des informations à <file>.bash_history</file>. Vous devez <em>aussi</em>
+positionner l'attribut <em>ajout-uniquement</em> en utilisant le programme
+<prgn>chattr</prgn> sur <file>.bash_history</file> pour tous les utilisateurs.
+<footnote>
+Sans l'attribut ajout-uniquement les utilisateurs auraient été capable de
+vider le contenu du fichier des historiques en exécutant le programme
+<prgn>. .bash_history</prgn>.
+</footnote>
+Notez que vous pouvez faire cela grâce au fichier utilisateur 
+<file>.profile</file>. Mais alors vous devriez configurer les permissions
+correctement : pour que le répertoire des utilisateurs ne leur appartiennent
+<em>PAS</em> mais qu'ils aient le droit de lire le fichier de configuration
+<file>.profile</file>  et d'écrire le <file>.bash_history</file>. Il serait
+bon de configurer l'attribut <em>immuable</em> (aussi en utilisant 
+<prgn>chattr</prgn>) pour le <file>.profile</file> aussi si vous procédez
+ainsi.
 <p>
 Si vous êtes complètement paranoïaque et que vous voulez auditer toutes 
 les commandes des utilisateurs, vous pouvez prendre les codes sources du 
