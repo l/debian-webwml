@@ -57,10 +57,10 @@ $translations_status = {
 'book-gtiau' => {
 	'status' 		=> 2,
 	'since'			=> '13/09/1999',
-	'translation_maintainer'=> ['Patrice Karatchentzeff <pkarat@club-internet.fr>'],
+	'translation_maintainer'=> ['Patrice Karatchentzeff <pkarat@club-internet.fr>' ],
 	'translation_name'	=> 'Debian GNU/Linux: guide d\'installation et d\'utilisation',
-	'translation_url'	=> 'http://www.ens-lyon.fr/~mquinson/debian/guide/',
-	'translation_dev_url'   => 'http://www.newriders.com/debian/debian-guide.tar.bz2',
+	'translation_url'	=> '',
+	'translation_dev_url'   => '',
 	'old_translators'	=> [	'Martin Quinson <mquinson@zeppelin-cb.de>',
 					'Fabien Ninoles <fabien@Nightbird.TZoNE.ORG>'],
 },
