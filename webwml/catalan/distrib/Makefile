@@ -10,40 +10,11 @@ include $(WMLBASE)/Make.lang
 
 archive.$(LANGUAGE).html: archive.wml $(ENGLISHDIR)/distrib/archive.mirrors \
   $(TEMPLDIR)/countries.wml
-ftplist.$(LANGUAGE).html: ftplist.wml $(ENGLISHSRCDIR)/distrib/ftplist.data \
-  $(TEMPLDIR)/countries.wml
 packages.$(LANGUAGE).html: packages.wml $(ENGLISHSRCDIR)/releases/info
 pre-installed.$(LANGUAGE).html: pre-installed.wml $(TEMPLDIR)/countries.wml \
   $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/CD/vendors/vendors.CD.def
 
 ifeq "$(LANGUAGE)" "en"
-$(ENGLISHSRCDIR)/distrib/ftplist.data: ftplist.data
-ftplist.data: ../mirror/Mirrors.masterlist
-	echo "#use wml::debian::countries" > $@
-	echo "<define-tag ftpmirrors>" >> $@
-	echo "<ul>" >> $@
-	for i in `grep-dctrl -n -F Site -s Site -r 'ftp\...\.debian.org' ../mirror/Mirrors.masterlist | sort`; do \
-          xy=`echo $$i | sed -e s/^ftp.// -e s/.debian.org$$// | tr a-z A-Z`; \
-	  echo "<li><a href=\"http://$${i}`grep-dctrl -n -F Site -s Archive-http -X $$i ../mirror/Mirrors.masterlist`\"><$${xy}c></a>" >> $@; \
-	  echo " (<a href=\"ftp://$${i}`grep-dctrl -n -F Site -s Archive-ftp -X $$i ../mirror/Mirrors.masterlist`\">FTP</a>)" >> $@; \
-	done
-	echo "</ul>" >> $@
-	echo "</define-tag>" >> $@
-	echo "<define-tag nonusmirrors>" >> $@
-	echo "<ul>" >> $@
-	for i in `grep-dctrl -n -F Site -s Site -r 'ftp\...\.debian.org' ../mirror/Mirrors.masterlist | sort`; do \
-          ch=`grep-dctrl -n -F Site -s NonUS-http -X $$i ../mirror/Mirrors.masterlist`; \
-          cf=`grep-dctrl -n -F Site -s NonUS-ftp -X $$i ../mirror/Mirrors.masterlist`; \
-          xy=`echo $$i | sed -e s/^ftp.// -e s/.debian.org$$// | tr a-z A-Z`; \
-          if [ "$$ch" ]; then \
-            echo "<li><a href=\"http://$${i}$${ch}\"><$${xy}c></a>" >> $@; \
-            if [ "$$cf" ]; then \
-              echo " (<a href=\"ftp://$${i}$${cf}\">FTP</a>)" >> $@; \
-            fi; \
-          fi; \
-        done
-	echo "</ul>" >> $@
-	echo "</define-tag>" >> $@
 
 $(ENGLISHSRCDIR)/distrib/archive.mirrors: archive.mirrors
 archive.mirrors: ../mirror/Mirrors.masterlist
@@ -69,4 +40,7 @@ archive.mirrors: ../mirror/Mirrors.masterlist
 	done
 	echo "</ul>" >> $@
 	echo "</define-tag>" >> $@
+
+.DELETE_ON_ERROR:
+
 endif
