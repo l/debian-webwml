@@ -24,7 +24,8 @@ HTMLMAP = $(patsubst %.html,$(HTMLDIR)/%.html,$(SITEMAP))
 endif
 
 ifeq "$(LANGUAGE)" "en"
-IMGDESTFILES += favicon.ico
+IMGFILES += favicon.ico
+IMGDESTFILES += $(HTMLDIR)/favicon.ico
 endif
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
