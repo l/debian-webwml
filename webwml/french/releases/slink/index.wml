@@ -1,46 +1,45 @@
-#use wml::debian::template title="Informations relatives au lancement de la Debian 2.1 (slink)"
-<!--translation 1.10-->
+#use wml::debian::template title="Informations relatives à la Debian 2.1 (slink)" BARETITLE=yes
+#use wml::debian::release
+#include "$(ENGLISHDIR)/releases/slink/formats_and_architectures.wmh"
+
+<!--translation 1.43-->
 
   <!--
-  Translate by         : Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>
+  Translate by         : Denis Barbier <barbier@debian.org>
   -->
 
 <:
-# list of architectures
-%arches = ( i386   => 'Intel x86',
-	    m68k   => 'Motorola 680x0',
-	    sparc  => 'SPARC',
-	    alpha  => 'Alpha',
-	  );
 
-# language specific name for output formats
-%formats = ( html => "HTML",
-	     pdf  => "PDF",
-	     txt  => "ASCII",
-           );
+$about_lang_setting = "Si vous avez correctement configuré les options
+de langues de votre navigateur, vous pouvez utiliser le lien ci-dessus
+pour avoir automatiquement la bonne page HTML -- voir explications sur
+<A href=\"$base_url/intro/cn\"><setlang></A>.
+Sinon, choisissez l'architecture adéquate, la langue, et le format que
+vous souhaitez dans le tableau ci-dessous.\n";
 
-sub permute_file {
-    my($file, $name, @exts) = @_;
-    my($ext, $arch);
+:>
 
-    foreach $arch (keys %arches) {
-        print "<li> <a href=\"./$arch/$file\">$name pour " . $arches{$arch} . "</a>";
-	if ( $#exts != -1 ) {
-	    foreach $ext (@exts) {
-	        print " (<a href=\"./$arch/$file.$ext\"><em>" . 
-			$formats{$ext} . "</em></a>)";
-	    }
-	}
-	print "\n";
-    }
-}
- :>
+<ul>    
+        <li><a href="#release-notes">Release Notes</a>
+        <li><a href="#new-inst">New Installations</a>
+        <li><a href="#errata">Errata</a>
+        <li><a href="#unofficial-updates">Unofficial Updates</a>
+        <li><a href="#acquiring">Getting Debian 2.1</a>
+      </ul>
 
 <p>
 
-La Debian 2.1, aussi connue sous le nom de « slink », est maintenant disponible.
-La Debian 2.1 fonctionne avec les architectures suivantes :
+<strong>Debian 2.1 est obsolète.</strong>
 
+<p>
+Depuis la sortie des <a href="../">nouvelles distributions</a>, la
+version 2.1 de Debian n'est plus à jour. Ces pages sont conservées
+telles qu'elles étaient écrites à l'époque où cette distribution était
+la plus récente, mais vous devez prendre conscience que la distribution
+Debian 2.1 n'est plus maintenue.
+
+<p>
+Les architectures suivantes sont connues par la Debian 2.1 :
 
 <ul>
 <: foreach $arch (keys %arches) {
@@ -49,7 +48,7 @@ La Debian 2.1 fonctionne avec les architectures suivantes :
 </ul>
 
 
-<h2>Notes de la version Debian 2.1</h2>
+<h2><a name="release-notes">Notes de la version Debian 2.1</a></h2>
 
 <p>
 
@@ -59,26 +58,68 @@ Ces informations contiennent aussi des indications pour les utilisateurs
 qui mettent à niveau leur distribution depuis une version antérieure.
 
 <ul>
-<: &permute_file('release-notes', 'Notes de version', 'html', 'txt'); :>
+<: &permute_as_list('release-notes/', 'Notes de version'); :>
 </ul>
 
+<: print $about_lang_setting; :>
 
-Les notes de version sont disponibles en anglais, croate et japonais.
 
-<P>
+<p>
+<center>
+<table border=2 cellspacing=0 cellpadding=3 bgcolor="#DDDDDD">
+<tr bgcolor="#44CCCC">
+  <th align="left"><strong>Architecture</strong></th>
+  <th align="left"><strong>Format</strong></th>
+  <th align="left"><strong>Langues</strong></th>
+</tr>
+<: &permute_as_matrix('release-notes', 'english', 'croatian', 'czech',
+                      'japanese', 'portuguese', 'russian'); 
+:>
+</table>
+</center>
+
+
+<p>
 
 Pour l'architecture i386, un <a href="i386/reports">rapport détaillé</a>
 sur les paquets ayant changés depuis les deux dernières versions
 est disponible.
 
-<h2>Nouvelles installations</h2>
+<h2><a name="new-inst">Nouvelles installations</a></h2>
 
 <p>
 
 Les instructions d'installation, accompagnées de fichiers téléchargeables, sont réparties suivant les architectures :
 <ul>
-<: &permute_file('install', 'Manuel d\'installation', 'fr.html', 'fr.pdf', 'fr.txt'); :>
+<: &permute_as_list('install', 'Manuel d\'installation'); :>
 </ul>
+
+<: print $about_lang_setting; :>
+
+<p>
+
+<center>
+<table border=2 cellspacing=0 cellpadding=3 bgcolor="#DDDDDD">
+<tr bgcolor="#44CCCC">
+  <th align="left"><strong>Architecture</strong></th>
+  <th align="left"><strong>Format</strong></th>
+  <th align="left"><strong>Langues</strong></th>
+</tr>
+<:= &permute_as_matrix('install', 'english', 'croatian', 'czech',
+                      'finnish', 'french',
+                      'japanese', 'portuguese', 'russian', 'spanish');
+:>
+</table>
+</center>
+
+<p>
+Notez que la documentation est aussi disponible en allemand, mais
+seulement pour l'architecture i386 ; vous pouvez les voir en formats
+<a href="i386/install.de.txt">ASCII</a>,
+<a href="i386/install.de.pdf">PDF</a>, ou
+<a href="i386/install.de.html">HTML</a>.
+
+<p>
 
 Beaucoup d'efforts se sont concentrés sur le manuel d'installation de Debian
 afin d'accepter les distributions non-i386. Cependant, quelques architectures
@@ -88,19 +129,105 @@ document lui-même pour savoir comment vous pouvez y participer.
 <p>
 
 Ces pages Web seront mises à jour dès que les nouvelles versions des manuels d'installation de la slink seront disponibles. Si vous souhaitez contribuer aux modifications, regardez la partie correspondante du manuel ; 
-vous pouvez aussi retrouver les <a href="source/">SGML sources</a> -- Les patchs sont la meilleure manière de nous faire parvenir vos commentaires.
+vous pouvez aussi retrouver les <a href="source/">sources SGML</a> -- Les patchs sont la meilleure manière de nous faire parvenir vos commentaires. Les contributeurs ou lecteurs désireux de savoir ce qui est nouveau exactement peuvent regarder dans le fichier <a href="source/ChangeLog">ChangeLog</a>.
 
 <p>
 
-Le manuel d'installation est disponible en anglais, croate, finlandais,
-français et japonais.
 
-<h3>Erratum</h3>
+<h2><a name="errata">Errata</a></h2>
+
+<p>
+
+Parfois, dans le cas de problèmes critiques ou de mises à jour liées à
+des problèmes de sécurité, la distribution actuelle (slink, dans le cas
+présent) est mise à jour. Celles-ci sont généralement indiquées comme
+des versions ayant un numéro supplémentaire. La toute dernière version
+est actuellement Debian 2.1r5.  La liste des changements est disponible
+dans le fichier <a
+href="ftp://ftp.debian.org/debian/dists/slink/ChangeLog">ChangeLog</a>
+sur n'importe quel miroir de Debian.
+
+<p>
+
+Les correctifs aux versions stables passent souvent par une longue phase
+de tests avant d'être intégrés. Ceux-ci sont néanmoins accessibles dans
+le répertoire <a
+href="ftp://ftp.debian.org/debian/dists/slink-proposed-updates/">
+dists/slink-proposed-updates</a> de n'importe quel miroir Debian. Si
+vous utilisez <tt>apt</tt> pour mettre à jour vos paquets, vous pouvez
+installer ces propositions de mise à jour en ajoutant la ligne suivante
+au fichier <tt>/etc/apt/sources.list</tt>:
+<pre>
+  deb http://http.us.debian.org/debian dists/proposed-updates/
+</pre>
+Ensuite, lancez <kbd>apt-get update; apt-get upgrade</kbd>.
 
 <p>
 
 La slink est certifiée pour une utilisation avec les noyaux Linux de la série 2.0.x. Si vous désirez utiliser la slink avec un noyau 2.2.x, regardez la <a href="running-kernel-2.2">liste des problèmes connus</a>.
 
+
+<h2><a name="unofficial-updates">Mises à jour non-officielles</a></h2>
+
+<p>
+
+Les versions de Debian officielles ne sont mises à jour qu'en cas de
+problèmes critiques ou pour des raisons de sécurité. Cependant, pour le
+confort de l'utilisateur, certains programmes sont mis à jour de façon
+non officielle par d'autres utilisateurs ou développeurs. Tout ce qui
+est dans cette section n'est pas officiellement soutenu par Debian.
+
+<h3>Disquettes d'installation traduites</h3>
+
+<p>
+
+Des disquettes d'installation en portugais sont disponibles sur <a
+href="ftp://ftp2.escelsanet.com.br/debian/">ftp://ftp2.escelsanet.com.br/debian/</a>.
+
+<h3>Disquette de secours</h3>
+
+Les utilisateurs de cartes Adaptec 2940 SCSI, edt d'autres contrôleurs
+SCSI avec le chipset aic7xxx, vont certainement rencontrer des problèmes
+avec les disquettes d'installation. Un aimable utilisateur a fait
+quelques expériences, qui peuvent s'avérer utiles à de nombreuses
+personnes. Il y a deux disquettes de secours de rechange pour
+l'architecture i386 sur <a
+href="ftp://kalle.csb.ki.se/pub/">ftp://kalle.csb.ki.se/pub/</a>.
+On y trouve aussi des noyaux de remplacement, qui peuvent être utilisés
+à la place de ceux présents dans les disquettes d'installation. Vous
+aurez alors besoin des disquettes de pilotes fournies avec Debian.
+
+<p>
+
+Un jeu de disquettes encore  plus recent pour les utilisateurs d'Adaptec
+peut être trouvé sur <a
+href="http://www.debian.org/~adric/aic7xxx/">http://www.debian.org/~adric/aic7xxx/</a>.
+
+<h3>Gnome</h3>
+
+<p>
+
+Si vous voulez lancer le dernier Gnome à partir de slink, lisez
+<a href="http://www.gnome.org/start/debian-readme.html">
+la mise à jour GNOME pour Debian 2.1</a>
+
+<h3>APT</h3>
+
+<p>
+
+Une version plus récente d'<code>apt</code> est disponible dans Debian
+depuis 2.1r3.  Les avantages de cette version sont principalement
+qu'elle permet une installation à partir de plusieurs CD-ROM, ce qui
+rend la phase d'acquisition de <code>dpkg-multicd</code> dans
+<code>dselect</code> inutile. Cependant, vos CD-ROM 2.1 peuvent contenir
+une vieille version de <code>apt</code>, et vous aurez certainement
+envie de mettre votre distribution à niveau.
+
+<h2><a name="acquiring">Acquérir Debian 2.1</a></h2>
+
+<p>
+
+Debian est disponible sur internet, ou chez des revendeurs de CDs.
 
 <h3>Acheter un CD Debian</h3>
 
