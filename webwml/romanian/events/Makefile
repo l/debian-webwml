@@ -18,4 +18,4 @@ include $(WMLBASE)/Make.dep.generic
 index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*/*.wml) \
      $(ENGLISHSRCDIR)/events/index.include \
      $(wildcard $(ENGLISHSRCDIR)/events/[0-9]*/*.wml) \
-     $(TEMPLDIR)/template.wml $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml
+     $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml
