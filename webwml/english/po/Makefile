@@ -149,5 +149,11 @@ stats: $(POTFILES)
         done
 endif
 
+todo:
+	-@for d in $(DOMAINS); do \
+          echo "##############  $$d.$(LANGUAGE).po: " ; \
+	  msgattrib --untranslated $$d.$(LANGUAGE).po; \
+	done
+
 cvsupdate:
 	-@echo 'cd $(WMLBASE)/..;' `echo cvs update $(SOURCEFILES) | sed -e 's/ [^ ]*\/\.\.\// /g'`
