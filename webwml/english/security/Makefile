@@ -21,10 +21,10 @@ faq.$(LANGUAGE).html: faq.wml \
   $(ENGLISHSRCDIR)/security/faq.wml \
   $(ENGLISHSRCDIR)/security/faq.inc $(GETTEXTDEP)
 
-ref-table.inc: make-ref-table.pl $(wildcard $(ENGLISHSRCDIR)/security/*/*.data) 
-	perl make-ref-table.pl -p -a >ref-table.inc
+$(ENGLISHSRCDIR)/security/ref-table.inc: $(ENGLISHSRCDIR)/security/make-ref-table.pl $(wildcard $(ENGLISHSRCDIR)/security/*/*.data) 
+	perl $(ENGLISHSRCDIR)/security/make-ref-table.pl -p -a >$(ENGLISHSRCDIR)/security/ref-table.inc
 
-crossreferences.$(LANGUAGE).html:: ref-table.inc \
+crossreferences.$(LANGUAGE).html:: $(ENGLISHSRCDIR)/security/ref-table.inc \
 	$(ENGLISHDIR)/template/debian/securityreferences.wml 
 
 clean::
