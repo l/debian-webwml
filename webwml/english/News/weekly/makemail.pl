@@ -19,8 +19,8 @@ my $highlink=0;
 open (IN, "lynx -dump $url |");
 if ($url =~ m,\d\d\d\d/\d\d?/,) {
      # This is a local URL - fix the output
-     $url =~ s,^\./,http://www.debian.org/News/weekly/,;
-     $url =~ s/index\.\w\w\.html$/index.html/;
+     $url =~ s,^,http://www.debian.org/News/weekly/,;
+     $url =~ s/index\.\w\w\.html$//;
 }
 
 while (<IN>) {
