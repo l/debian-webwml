@@ -280,15 +280,15 @@ sub header {
 				 sourcenames => "", );
 	$checked_searchon{$values{searchon}} = "checked=\"checked\"";
 	$search_in_header = <<MENU;
-<div id="hpacketsearch">
 <form method="GET" action="$CGI_ROOT/search_packages.pl">
-<input type="hidden" name="version" value="$values{version}" />
-<input type="hidden" name="subword" value="$values{subword}" />
-<input type="hidden" name="exact" value="$values{exact}" />
-<input type="hidden" name="arch" value="$values{arch}" />
-<input type="hidden" name="releases" value="$values{releases}" />
-<input type="hidden" name="case" value="$values{case}" />
-<input type="text" size="30" name="keywords" value="$values{keywords}" id="kw" />
+<div id="hpacketsearch">
+<input type="hidden" name="version" value="$values{version}">
+<input type="hidden" name="subword" value="$values{subword}">
+<input type="hidden" name="exact" value="$values{exact}">
+<input type="hidden" name="arch" value="$values{arch}">
+<input type="hidden" name="releases" value="$values{releases}">
+<input type="hidden" name="case" value="$values{case}">
+<input type="text" size="30" name="keywords" value="$values{keywords}" id="kw">
 <input type="submit" value="Search">
 <span style="font-size: 60%"><a href="$SEARCH_PAGE#search_packages">Full options</a></span>
 <br>
@@ -301,8 +301,8 @@ sub header {
 <input type="radio" name="searchon" value="sourcenames" id="src" $checked_searchon{sourcenames}>
 <label for="src">Source package names</label>
 </div>
-</form>
 </div> <!-- end hpacketsearch -->
+</form>
 MENU
 ;
     } elsif ($params{print_search_field} eq 'contents') {
@@ -313,8 +313,8 @@ MENU
 				   filelist => "", );
 	$checked_searchmode{$values{searchmode}} = "checked=\"checked\"";
 	$search_in_header = <<MENU;
-<div id="hpacketsearch">
 <form method="GET" action="$CGI_ROOT/search_contents.pl">
+<div id="hpacketsearch">
 <input type="hidden" name="version" value="$values{version}" />
 <input type="hidden" name="arch" value="$values{arch}" />
 <input type="hidden" name="case" value="$values{case}" />
@@ -333,8 +333,8 @@ MENU
 <input type=radio name="searchmode" value="filelist" id="filelist" $checked_searchmode{filelist}>
 <label for="filelist">content list</label>
 </div>
-</form>
 </div> <!-- end hpacketsearch -->
+</form>
 MENU
 ;
     }
