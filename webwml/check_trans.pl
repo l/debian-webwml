@@ -146,7 +146,7 @@ else
 $from = 'english';
 $to = shift || $defaultlanguage;
 
-$langfrom=$from;
+#$langfrom=$from;
 
 # Remove slash from end
 $to =~ s%/$%%;
@@ -434,7 +434,7 @@ sub check_file {
 		if (/wml::debian::translation-check/i) {
 			if (/translation="([^"]+)"/i) {
 				$oldr = $1;
-				warn "Found revision $oldr\n" if $opt_v;
+				warn "Found translation for $oldr\n" if $opt_v;
 			}
 			if (/maintainer="([^"]+)"/i) {
 				$translator = $1;
@@ -449,7 +449,7 @@ sub check_file {
 		# the following old style cases should be removed eventually
 		if (/translation\s+([.0-9]*)\s*-->/oi) {
 			$oldr = $1;
-			warn "Found revision $oldr\n" if $opt_v;
+			warn "Found translation for $oldr\n" if $opt_v;
 		}
 		if (/Translat(.*?): (.*)$/i) {
 		    $translator=$2 if ($translator eq "");
@@ -466,7 +466,7 @@ sub check_file {
 		if (/wml::debian::translation-check/i) {
 		    if (/translation="([^"]+)"/i) {
 			$oldr = $1;
-			warn "Found revision $1\n" if $opt_v;
+			warn "Found translation for $1\n" if $opt_v;
 		    }
 		    if (/original="([^"]+)"/i) {
 			$original = $1;
