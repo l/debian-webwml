@@ -87,7 +87,7 @@ my $searchkeyword = $keyword;
 $searchkeyword =~ s/[.]/[.]/;
 
 # check if the Contents file is there
-if (!-f $file) {
+if (!-r $file) {
 # XXX has to be updated for post-woody
   if ($version eq "stable" and $arch =~ /^(hurd|sh)$/) {
     print "Error: the $arch architecture didn't exist in $version.<br>\n"
