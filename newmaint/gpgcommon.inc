@@ -302,7 +302,7 @@
 
     function show_by_country($db, $offer) {
         global $iso;
-        $sql = "SELECT country, begin, finish, city, forename, surname, email FROM places, people WHERE ";
+        $sql = "SELECT country, who, begin, finish, city, forename, surname, email FROM places, people WHERE ";
         if ($offer) {
             $sql .= "offer is TRUE";
         } else {
@@ -316,9 +316,13 @@
         }
         $rows = pg_NumRows($query);
         $old_country = "";
+        $old_who = "";
         for ($i = 0; $i < $rows; $i++) {
             $row = pg_Fetch_Array($query, $i);
             if ($row["country"] != $old_country) {
+                if ($old_who != "") {
+                    echo " </UL>\n\n";
+                }
                 if ($old_country != "") {
                     echo "</UL>\n\n";
                 }
@@ -327,15 +331,21 @@
                 echo "<UL>\n";
             }
 
-            echo "<LI>", $row["forename"], " ", $row["surname"];
-            echo " &lt;", $row["email"], "&gt;";
-            echo "\n";
-            echo " <UL>";
+            if ($row["who"] != $old_who) {
+                if ($old_who != "") {
+                    echo " </UL>\n"; # to close the last person's place UL
+                }
+                echo "<LI>", $row["forename"], " ", $row["surname"];
+                echo " &lt;", $row["email"], "&gt;";
+                echo "\n";
+                echo " <UL>"; # being of person's place UL
+            }
             print_place($row["begin"], $row["finish"], $row["city"], $row["country"]);
-            echo "</UL>\n";
 
             $old_country = $row["country"];
+            $old_who = $row["who"];
         }
+        echo " </UL>\n";
         echo "</UL>\n";
     }
 
