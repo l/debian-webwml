@@ -32,4 +32,8 @@ text: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t text
 html: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t html
+full: mirror_list.pl Mirrors.masterlist
+	@./mirror_list.pl -m Mirrors.masterlist -t methods
+nonus: mirror_list.pl Mirrors.masterlist
+	@./mirror_list.pl -m Mirrors.masterlist -t nonus
 endif
