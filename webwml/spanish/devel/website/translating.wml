@@ -1,5 +1,6 @@
 #use wml::debian::template title="Traducción de las Páginas web de Debian" BARETITLE=true
-#use wml::debian::translation-check translation="1.36"
+#use wml::fmt::verbatim
+#use wml::debian::translation-check translation="1.43"
 
 <P>Para hacer el trabajo de los traductores tan fácil como sea posible, las
 páginas se generan de forma algo diferente a como muchos de ustedes
@@ -18,13 +19,16 @@ comienzo de una nueva traducción</a>.
 elementos comunes a múltiples páginas. Esto significa que uno debe
 editar ciertos ficheros fuente WML en lugar de ficheros HTML. Por favor,
 <a href="using_cvs">utilice CVS</a> para obtener los fuentes actuales.
-Necesitrá descargar al menos dos directorios: <tt>english/</tt> e
-<tt><var>&lt;idioma&gt;</var>/</tt>.</p>
+Necesitrá descargar al menos dos directorios: <tt>webwml/english/</tt> y
+<tt><var>webwml/&lt;idioma&gt;</var>/</tt>.</p>
 
 <p>Para traducir una única página del inglés a su idioma, deberá traducir
 el fichero .wml y colocarlo dentro del directorio del otro idioma. El
 nombre y el path relativo deben ser los mismos que el del directorio
-inglés, para que los enlaces sigan funcionando. También recomendamos
+inglés, para que los enlaces sigan funcionando.<p>
+
+<h3>Cabeceras de traducción</h3>
+<p>También recomendamos
 encarecidamente que el traductor añada una línea adicional a las cabeceras
 tras la última sentencia <code>#use</code> para registrar la revisión
 exacta del fichero original que se tradujo, de manera que
@@ -32,11 +36,59 @@ exacta del fichero original que se tradujo, de manera que
 La línea sería algo como:
 <kbd>#use wml::debian::translation-check translation="<var>x.y</var>"</kbd>
 
-<p>Todo esto se puede conseguir de forma sencilla usando el script
-<tt>copypage.pl</tt> que hay en el directorio raíz de webwml. El script
-copiará la página en el lugar correcto, creará directorios y ficheros
-makefile de ser necesario, y añadirá las cabeceras precisas de forma
-automática.</p>
+<p>Algunos equipos de traducción usan también esta línea para marcar el
+traductor oficial de cada página web. Haciéndolo, le llegarán mensajes
+automáticametne cada vez que las páginas que mantiene sean actualizadas en
+inglés, y necesitan su atención para actualizar la traducción. Para ello,
+simplemente añada su njombre como mantenedor al final de la línea
+<code>#use</code> de manera que quede así:
+<kbd>#use wml::debian::translation-check translation="<var>x.y</var>"
+maintainer="<var>su nombre</var>"</kbd>
+</p>
+
+<p>También hace falta explicarle al robot quién es usted, con qué
+frecuencia quiere que le lleguen mensajes automáticos y su contenido. Para
+ello, edite (o dígaselo a su coordinador) el fichero
+webwml/<var>idioma</var>/international/<var>idioma</var>/translator.db.pl
+en el CVS. Debería entender la sintaxis fácilmente, y puede usar el
+fichero del equipo francés como plantilla si no existe aún el de su
+idioma. El robot puede enviar varios tipos de información, y para cada
+tipo, puede escoger la frecuencia con que le será enviada. Los tipos
+disponibles son:
+</p>
+
+<ul>
+ <li><b>summary</b>:  resumen de qué documentos están obsoletos</li>
+ <li><b>logs</b>: los "cvs log" entre las versiones traducidas y las
+ actuales</li>
+ <li><b>diff</b>: "cvs diff"</li>
+ <li><b>tdiff</b>: el script intentará encontrar la parte del texto
+ traducido modificado por el parche en inglés</li>
+ <li><b>file</b>: añade la versión actual del fichero a traducir</li>
+</ul>
+
+<p>Luego, para cada tipo, el valor debe ser: 0 (nunca), 1 (mensual),
+2 (semanal) o 3 (diario).</p>
+
+<p>Un ejemplo podría ser:
+</p>
+
+<verbatim>
+                'Martin Quinson' => {
+                        email       => 'martin.quinson@tuxfamily.org',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 0,
+                        file        => 0
+                },
+</verbatim>
+
+<p>
+<p>La cabecera de la página web puede producirla fácilmente usando el
+script <tt>copypage.pl</tt> del directorio raíz de webwml. El script
+copiará la página en el lugar correcto, creará directorios y makefiles si
+fuera necesario, y añadirá la cabecera adecuada de forma automática.</p>
 
 <p>Después de haber ejecutado, digamos, <kbd>./copypage.pl
 <var>fichero</var>.wml</kbd>, traduzca el texto original que hay dentro
@@ -44,6 +96,8 @@ del fichero. Encontrará comentarios en los ficheros indicando si hay
 elementos que no deberían ser traducidos: respételos. No haga cambios
 innecesarios al formato; si hay que arreglar algo, debería hacerse en el
 fichero original.</p>
+
+<h3>Creación y publicación de páginas</h3>
 
 <p>Ya que usamos <a href="content_negotiation">negociación de
 contenido</a>, los ficheros HTML no se llaman
