@@ -1,25 +1,26 @@
-# This Makefile should need no changes from webwml/english/logos/Makefile
-# Please send a message to debian-www if you need to modify anything
-# so the problem can be fixed.
+# Makefile to build HTML + PHP files from WML files
+# requires a checkout of webwml/template/debian from the webwml tree!
 
-BASE=..
-THISDIR=ipv6
-
-HTMLFILES= deadsite.html 
-PHPFILES=index.php main.php ammain.php amnew.php amnew2.php amprofile.php exit.php amstatus.php amupdate.php todo.php amlist.php fddelete.php leaderboard.php amlogin2.php login2.php nmlist.php whoisam.php newnm.php newnm2.php nmelist.php deletenm.php nmstatus.php stats.php nmadvocate.php maintainers.php gpg.php gpg_need.php gpg_offer.php gpgmain.php gpglogin2.php gpglogin.php gpgpasswd.php gpgregister.php gpgplace.php gpguserdel.php
-INCFILES=config.inc common.inc gpgcommon.inc gpgconfig.inc
-WMLFILES=$(wildcard *.wml)
-IMAGES=$(wildcard *.gif) $(wildcard *.jpg)
 ifneq "$(wildcard ${HOME}/web-source/webwml/english/template)" ""
-DEBTEMPLATEDIR := ${HOME}/web-source/webwml/english/template
+TEMPLDIR := ${HOME}/web-source/webwml/english/template/debian
 else
-DEBTEMPLATEDIR := ../webwml/english/template
+TEMPLDIR := ../webwml/english/template/debian
 endif
-DEBTEMPLATES=$(wildcard $(DEBTEMPLATEDIR)/debian/*.wml) $(DEBTEMPLATEDIR)/debian/countries.def $(DEBTEMPLATEDIR)/debian/language_names.def $(wildcard template/*.wml)
-#WML_DEFS= -DINTRO="http://www.debian.org/intro" -DDISTRIB="http://www.debian.org/distrib" -DHOME="http://www.debian.org" -DPICS="http://www.debian.org/Pics" -DCUR_ISO_LANG="en" -I $(DEBTEMPLATEDIR) -I template -DSEARCH="http://search.debian.org/"
-TARGETDIR=../../web
+DEBTEMPLATES := $(wildcard $(TEMPLDIR)/*.wml) \
+                $(TEMPLDIR)/countries.def \
+                $(TEMPLDIR)/language_names.def \
+                $(wildcard template/*.wml)
+TARGETDIR := ../../web
 
-WML_DEFS= -I $(DEBTEMPLATEDIR)
+WMLFILES := $(wildcard *.wml)
+HTMLFILES := $(subst .wml,.html,$(shell grep -L \<\? $(WMLFILES)))
+PHPFILES := $(subst .wml,.php,$(shell grep -l \<\? $(WMLFILES)))
+INCFILES := $(wildcard *.inc)
+DESTHTMLFILES := $(patsubst %,$(TARGETDIR)/%,$(HTMLFILES))
+DESTPHPFILES := $(patsubst %,$(TARGETDIR)/%,$(PHPFILES))
+DESTINCFILES := $(patsubst %,$(TARGETDIR)/%,$(INCFILES))
+
+WML_DEFS := -I $(subst /debian,,$(TEMPLDIR))
 
 all: $(HTMLFILES) $(PHPFILES)
 
@@ -29,21 +30,25 @@ all: $(HTMLFILES) $(PHPFILES)
 %.php: %.wml $(DEBTEMPLATES)
 	wml $(WML_DEFS) $< -o UNDEFuEN:$@
 
-rsync: $(HTMLFILES) $(PHPFILES) 
-	rsync -e ssh $(HTMLFILES) $(PHPFILES) $(IMAGES) $(INCFILES) pandora.debian.org:/org/nm.debian.org/web
+install: $(DESTHTMLFILES) $(DESTPHPFILES) 
+
+$(DESTHTMLFILES) $(DESTPHPFILES) $(DESTINCFILES): $(TARGETDIR)/%: %
+	@test -d $(TARGETDIR) || mkdir -p $(TARGETDIR)
+	install -m 644 -p $(@F) $(TARGETDIR)
+
+rsync: $(HTMLFILES) $(PHPFILES)
+	rsync -e ssh $(HTMLFILES) $(PHPFILES) $(INCFILES) nm.debian.org:/org/nm.debian.org/web
 
 backup:
-	rsync -e ssh -r template $(WMLFILES) $(INCFILES) Makefile pandora.debian.org:/org/nm.debian.org/wml
-
-install: $(HTMLFILES) $(PHPFILES) 
-	cp $(HTMLFILES) $(PHPFILES) $(IMAGES) $(INCFILES) $(TARGETDIR)
+	rsync -e ssh -r template $(WMLFILES) $(INCFILES) Makefile nm.debian.org:/org/nm.debian.org/wml
 
 clean:
-	rm -f $(PHPFILES) $(HTMLFILES)
+	rm -f $(HTMLFILES) $(PHPFILES)
 
-$(DEBTEMPLATEDIR)/debian/countries.def: $(DEBTEMPLATEDIR)/debian/countries.wml
-	cd $(DEBTEMPLATEDIR)/debian && sed -e /^#/d countries.wml | eperl -B '<:' -E ':>' - >/dev/null
+$(TEMPLDIR)/countries.def: $(TEMPLDIR)/countries.wml
+	cd $(TEMPLDIR) && sed -e /^#/d countries.wml | eperl -B '<:' -E ':>' - >/dev/null
 
-$(DEBTEMPLATEDIR)/debian/language_names.def: $(DEBTEMPLATEDIR)/debian/language_names.wml
-	cd $(DEBTEMPLATEDIR)/debian && sed -e '/^#/d' -e '/^<:/,/^:>/!d' language_names.wml  | eperl -B '<:' -E ':>' - >/dev/null
+$(TEMPLDIR)/language_names.def: $(TEMPLDIR)/language_names.wml
+	cd $(TEMPLDIR) && sed -e '/^#/d' -e '/^<:/,/^:>/!d' language_names.wml  | eperl -B '<:' -E ':>' - >/dev/null
 
+.SUFFIXES:
