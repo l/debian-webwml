@@ -61,7 +61,7 @@ my $searchon = $input->param('searchon');
 $searchon = 'all' unless (defined $searchon);
 my $exact = $input->param('exact');
 $exact = 0 unless (defined $exact);
-my $releases = $input->param('releases');
+my $releases = $input->param('release');
 $releases = '*' unless (defined $releases);
 $releases = '*' if ($releases eq 'all');
 
@@ -97,7 +97,7 @@ if ($searchon eq 'names') {
     }
 } else {
     if ($subword != 1) {
-	$searchkeyword = "\" ".$searchkeyword." \"";
+	$searchkeyword = "\"\\(^\\| \\)".$searchkeyword." \"";
     }
 }
 
@@ -182,7 +182,7 @@ if (!@results) {
   exit
 }
 
-my (%pkgs, %sect);
+my (%pkgs, %sect, %desc);
 my (@colon, $package, $section, $ver, $foo);
 foreach my $line (@results) {
     @colon = split (/:/, $line);
@@ -191,8 +191,12 @@ foreach my $line (@results) {
     $section =~ s,^non-US.*$,non-US,,;
     $colon[0] =~ m,.*/([^/]+)/([^/]+)/Packages-([^\.]+)\.,; #$1=stable, $2=main, $3=alpha
 
-    $pkgs{$package}{$1}{$ver}{$3} = 1;
-    $sect{$package}{$1} = $section;
+    my $suite = $1;
+    $pkgs{$package}{$suite}{$ver}{$3} = 1;
+    $sect{$package}{$suite} = $section;
+
+    $foo =~ m/(.*)\t/;
+    $desc{$package}{$suite} = $1;
 }
 
 foreach my $pkg (sort keys %pkgs) {
@@ -200,8 +204,8 @@ foreach my $pkg (sort keys %pkgs) {
     print "<ul>\n";
     foreach $ver (('stable','testing','unstable','experimental')) {
 	if (exists $pkgs{$pkg}{$ver}) {
-	    printf "<li><a href=\"http://packages.debian.org/%s/%s/%s\">%s</a>\n",
-	    $ver, $sect{$pkg}{$ver}, $pkg, $ver;
+	    printf "<li><a href=\"http://packages.debian.org/%s/%s/%s\">%s</a> (%s): %s\n",
+	    $ver, $sect{$pkg}{$ver}, $pkg, $ver, $sect{$pkg}{$ver}, $desc{$pkg}{$ver};
 
 	    foreach my $v (sort keys %{$pkgs{$pkg}{$ver}}) {
 		printf "<br>%s: %s\n",
