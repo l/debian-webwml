@@ -100,9 +100,9 @@ sub printallkeys {
 sub printtableheader {
 	my ($key) = @_;
 	if (defined $reference{$key}{url}) {
-			print "<td><a href=\"$reference{$key}{url}\">$reference{$key}{name}</A></td>\n";
+			print "<th><a href=\"$reference{$key}{url}\">$reference{$key}{name}</A></th>\n";
 		} else {
-			print "<td>$reference{$key}{name}</td>\n";
+			print "<th>$reference{$key}{name}</th>\n";
 		}
 	return 0;
 }
@@ -120,6 +120,7 @@ sub getreferences {
 		}
 	}
 	print STDERR "References for $dsa of $type: $text\n" if $opt_v;
+	$text = "&nbsp;" if $text eq "";
 	$text = "<td>$text</td>" if $opt_p;
 	$dsaref{$dsa}{'printtext'} .= $text;
 	return 0;
@@ -129,7 +130,7 @@ sub printrefs {
 	if ( ! $opt_p ) {
 		print "DSA\t$text\n";
 	} else { 
-		print "<table BORDER=\"2\" CELLPADDING=\"2\" CELLSPACING=\"2\"><tr VALIGN=\"TOP\">\n<td>DEBIAN DSA</td>\n";
+		print "<table BORDER=\"2\" CELLPADDING=\"2\" CELLSPACING=\"2\"><tr VALIGN=\"TOP\"><th>DEBIAN DSA</th>";
 		printtableheader("mitre") if $opt_m;
 		printtableheader("bid") if $opt_b;
 		printtableheader("cert") if $opt_c;
