@@ -1,0 +1,234 @@
+#use wml::debian::template title="Sistema de seguimiento de fallos de Debian" NOHEADER=yes
+
+<h1>Cómo informar de un fallo en Debian</h1>
+
+<P>Envíe un mensaje a
+<A href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></A>,
+tal como se describe más adelante.</P>
+
+<p>Por favor, no informe de varios fallos que no estén relacionados entre
+sí en un solo mensaje (especialmente si se refieren a diferentes
+paquetes). Además, procure no enviar mensajes con el informe de fallos a
+ninguna lista de correo o a destinatarios que no sean
+<code>submit@bugs</code> (si desea ver detalles de cómo hacerlo
+correctamente, lea <A href="#xcc">aquí</A>).</P>
+
+<P>Hay disponibles listas de los fallos imprescindibles aún no arreglados
+<A href="./">en la World Wide Web</A> y <A href="Access">en otros
+sitios</A> (vea otros documentos si desea más detalle.</P>
+
+<P>Necesita poner una pseudocabecera al principio del cuerpo del mensaje,
+con los renglones <code>Package:</code> y <code>Version:</code> indicando
+el nombre y versión del paquete que contiene el fallo. (Los campos de la
+pseudocabecera deberían comenzar en la primera línea del mensaje. El
+sistema de fallos no comprende correctamente partes MIME o PGP por el
+momento y puede que no reconozca la pseudocabecera en tales mensajes.)
+Puede conseguir los datos de la cabecera usando
+<code>dpkg --search</code> y <code>dpkg --list</code>; vea
+<code>dpkg --help</code>.
+
+<em>Lea más adelante <A href="#details">otros requerimientos</A></em>.</P>
+
+<P>Se pueden indicar algunos pseudopaquetes en el renglón de
+<code>Package</code> al informar de un fallo en algo que no sea un
+verdadero paquete software de Debian.
+Hay <A HREF="pseudo-packages">una lista</A> en las páginas web de
+fallos.</P>
+
+
+<h2><A name="example">Ejemplo</A></h2>
+
+<P>Un informe de fallos, con la cabecera del mensaje, tiene este aspecto:
+
+<PRE>
+  To: submit@bugs.debian.org
+  From: diligente@prueba.linux.org
+  Subject: Hello tells `goodbye'
+
+  <A name="pseudoheader">Package: hello</A>
+  Version: 1.3-16
+
+  When I invoke `hello' without arguments from an ordinary shell
+  prompt it prints `goodbye', rather than the expected `hello, world'.
+  Here is a transcript:
+
+  $ hello
+  goodbye
+  $ /usr/bin/hello
+  goodbye
+  $
+
+  I suggest that the output string, in hello.c, be corrected.
+
+  I am using Debian GNU/Linux 2.2, kernel 2.2.17-pre-patch-13
+  and libc6 2.1.3-10.
+</PRE>
+
+<strong>Nota:</strong> Se ha dejado en el inglés original, puesto que éste
+será el idioma en el que se envíen los informes de fallos.
+
+<h2><A name="details">Por favor, incluya en si informe:</A></h2>
+
+<ul>
+<li>El texto <em>exacto</em> y <em>completo</em> de cualquier mensaje de
+error impreso o registrardo. ¡Es muy importante!
+<li>Qué escribió o hizo exactamente para mostrar el problema.
+<li>Una descripción del comportamiento incorrecto: qué era exactamente lo
+que usted esperaba, y qué fue lo que observó. Una transcripción de una
+sesión de ejemplo es una buena manera de mostrarlo.
+<li>Una sugerencia de correción, si es que la tiene.
+<li>Detalles de la configuración del programa con el problema. Incluya el
+texto completo de sus ficheros de configuración.
+<li>La versión de cualquier paquete del que dependa el que tiene fallos.
+<li>Qué versión del núcleo está usando (escriba <code>uname -a</code>), su
+versión de la biblioteca compartida de C (escriba
+<code>ls -l /lib/libc.so.6</code> o
+<code>dpkg -s libc6 | grep ^Version</code>), y cualquier otro detalle
+sobre su sistema Debian, si parece apropiado. Por ejemplo, si tiene un
+problema con un <I>script</I> en Perl, puede que quiera incluir la versión
+del ejecutable `perl' (escriba <code>perl -v</code> o
+<code>dpkg -s perl-5.005 | grep ^Version:</code>).
+<li>Detalles apropiados sobre el hardware de su sistema. Si está
+informando sobre un problema con un controlador de dispositivo, incluya
+una lista de <em>todo</em> el hardware de su sistema, ya que los problemas
+pueden venir a causa de conflictos de dirección E/S o de IRQ.
+</ul>
+
+<P>Incluya cualquier detalle que crea relevante (no crea que su informe
+será demasiado largo por incluir demasiada información). Si son pequeños,
+incluya en su informe cualquier fichero que esté usando para reproducir el
+problema (codificándolos con uuencode si contienen caracteres extraños,
+etc).</P>
+
+<P>Por supuesto, como en cualquier otro mensaje, puede incluir un
+<code>Subject</code> (Asunto) claro y descriptivo en la cabecera principal
+de su mensaje. El <I>subject</I> que indique será utilizado como el título
+inicial para el fallo en el sistema de seguimiento, ¡de manera que intente
+que sea informativo!</P>
+
+<h2><A name="xcc">Enviar copias de un informe de fallos a otra dirección</A></h2>
+
+<P>Algunas veces es necesario enviar una copia de un informe de fallos a
+algún otro sitio aparte de <code>debian-bugs-dist</code> y al mantenedor
+del paquete, donde es enviado normalmente.</P>
+
+<P>Podría hacerlo indicando otras direcciones en el CC de su informe de
+fallos, pero entonces las copias no tendrán indicado el número del fallo
+en el campo <code>Reply-To</code> ni en la línea <code>Subject</code>.
+Cuando los destinatarios contesten, posiblemente conserven la entrada
+<code>submit@bugs.debian.org</code> en la cabecera y su mensaje aparecerá
+como un nuevo informe de fallo. Esto lleva a muchos informes
+duplicados.</P>
+
+<P>La forma <em>correcta</em> de hacerlo es usar la cabecera
+<code>X-Debbugs-CC</code>. Añada una línea como esta a la cabecera de su
+mensaje (no en la pseudo cabecera con el campo
+<code>Package</code>):</P>
+<pre>
+ X-Debbugs-CC: other-list@cosmic.edu
+</pre>
+<P>Esto hará que el sistema de seguimiento de fallos envíe una copia de su
+informe a las direcciones que haya en la línea <code>X-Debbugs-CC</code>
+al igual que a la lista <code>debian-bugs-dist</code>.</P>
+
+<P>Esta característica a menudo puede ser combinada enviando un mensaje
+<code>quiet</code> (lea más adelante).</P>
+
+<h2><A name="severities">Niveles de importancia</A></h2>
+
+<P>Si un informe se refiere a un fallo particularmente serio, o es
+meramente una petición de características, puede indicar la importancia
+del fallo al informarlo. No es algo obligatorio, y los desarrolladores
+asignarán el nivel de importancia adecuado a su informe si usted no lo
+hace.</P>
+
+<P>Para asignar un nivel de importancia ponga una línea
+<code>Severity: <var>importancia</var></code> en la pseudocabecera, junto
+con <code>Package</code> y <code>Version</code>. El niveles disponibles
+están descritos en la
+<A href="Developer#severities">documentación del desarrollador</A>.</P>
+
+
+<h2>No enviar a la lista de correo informes de fallos sin importancia</h2>
+
+<P>Si un informe trata de un fallo menor (por ejemplo, una errata en la
+documentación o cualquier otro problema trivial), o si está enviando
+varios mensajes a la vez, envíelos a <code>maintonly@bugs</code> o
+<code>quiet@bugs</code>. <code>maintonly</code> enviará el informe a el
+mantenedor del paquete (siempre que haya indicado correctamente
+<code>Package</code> en la pseudocabecera y se conozca al mantenedor), y
+<code>quiet</code> no lo enviará a ningún lado, y se limitará a archivarlo
+como fallo (útil para, por ejemplo, enviar muchos fallos similares y que
+se publique sólo un sumario con todos ellos).</P>
+
+<P>Si hace esto, el sistema de fallos construirá el <code>Reply-To</code>
+de cualquier mensaje reenviado de manera que las respuestas sean
+procesadas por defecto de la misma manera que el informe original.</P>
+
+<h3>Informe de fallos sobre paquetes desconocidos</h3>
+
+<P>Si el sistema de seguimiento de fallos no conoce al mantenedor del
+paquete, reenviará el informe a <code>debian-bugs-dist</code> incluso si
+se usó <code>maintonly</code>.</P>
+
+<P>Cuando envíe a <code>maintonly@bugs</code> o
+<var>nnn</var><code>-maintonly@bugs</code> debería asegurarse que el
+informe de fallo queda asignado al paquete correcto, poniendo un renglón
+<code>Package</code> adecuado al principio de el envío original de un
+informe, o usando <A href="server-control">el servicio
+<code>control@bugs</code></A> para (re)asignar el informe apropiadamente
+si no lo estaba ya.</P>
+
+<h2>Usar <code>dpkg</code> para averiguar el paquete y la versión a usar
+en el informe</h2>
+
+<P>Si está enviando en fallo en una orden, puede encontrar qué paquete la
+instaló usando <code>dpkg --search</code>. Puede averiguar la versión del
+paquete que instaló usando <code>dpkg --list</code> o <code>dpkg
+--status</code>.
+</P>
+
+<P>Por ejemplo:
+<pre>
+$ which apt-get
+/usr/bin/apt-get
+$ type apt-get
+apt-get is /usr/bin/apt-get
+$ dpkg --search /usr/bin/apt-get
+apt: /usr/bin/apt-get
+$ dpkg --list apt
+Desired=Unknown/Install/Remove/Purge/Hold
+| Status=Not/Installed/Config-files/Unpacked/Failed-config/Half-installed
+|/ Err?=(none)/Hold/Reinst-required/X=both-problems (Status,Err: uppercase=bad)
+||/ Name           Version        Description
++++-==============-==============-============================================
+ii  apt            0.3.19         Advanced front-end for dpkg
+$ dpkg --status apt
+Package: apt
+Status: install ok installed
+Priority: standard
+Section: base
+Installed-Size: 1391
+Maintainer: APT Development Team &lt;deity@lists.debian.org&gt;
+Version: 0.3.19
+Replaces: deity, libapt-pkg-doc (&lt;&lt; 0.3.7), libapt-pkg-dev (&lt;&lt; 0.3.7)
+Provides: libapt-pkg2.7
+Depends: libapt-pkg2.7, libc6 (&gt;= 2.1.2), libstdc++2.10
+Suggests: dpkg-dev
+Conflicts: deity
+Description: Advanced front-end for dpkg
+ This is Debian's next generation front-end for the dpkg package manager.
+ It provides the apt-get utility and APT dselect method that provides a
+ simpler, safer way to install and upgrade packages.
+ .
+ APT features complete installation ordering, multiple source capability
+ and several other unique features, see the Users Guide in
+ /usr/doc/apt/guide.text.gz
+
+</pre>
+
+<hr>
+
+#use "otherpages.inc"
+
+#use "footer.inc"
