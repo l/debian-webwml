@@ -9,11 +9,14 @@ SUBS=
 NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
-                        $(ENGLISHSRCDIR)/consultants/consultant.data
 ifeq ($(LANGUAGE),en)
+$(ENGLISHSRCDIR)/consultants/consultant.inc: consultant.data
 	$(ENGLISHSRCDIR)/consultants/count
 endif
+
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
+                        $(ENGLISHSRCDIR)/consultants/consultant.inc \
+                        $(ENGLISHSRCDIR)/consultants/consultant.data
 	$(WML) $(<F)
 
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/consultant.wml
