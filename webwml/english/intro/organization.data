@@ -3,6 +3,7 @@
 # parts are in organization.wml and organization.tags
 
 #include "$(ENGLISHDIR)/intro/organization.tags"
+#use wml::debian::language_names
 
 <define-tag spaces>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</define-tag>
 <define-tag job><li>%attributes --</define-tag>
@@ -158,7 +159,31 @@
 <h3><support></h3>
 
 <ul>
-  <job <a href="$(HOME)/support"><mailinglist></a>> <genericemail debian-user@lists.debian.org>
+  <job <a href="$(HOME)/support"><usersupport></a>>
+    <ul>
+<set-var file-contents=<include ../../english/MailingLists/lists.cfg verbatim=true>>
+<perl>
+  my %userlists = (
+  #   Read line by line and builds hash array
+  #      'xx' => '<XXc>'  where <XXc> is expanded
+  <foreach m file-contents>\
+    <when <match <get-var m> "List: debian-user-.*@lists.debian.org">>\
+      <set-var n=<subst-in-string <get-var m> ".*List: (debian-user-.*)@lists.debian.org.*" "\\1">>\
+      <set-var o=<subst-in-string <get-var m> ".*List: debian-user-(.*)@lists.debian.org.*" "\\1">>\
+      '<get-var o>' => q{<get-var n>},\
+    </when>\
+  </foreach>
+  );
+  my $userlists_lang = {};
+  $userlists_lang{$trans{$CUR_ISO_LANG}{english}} = "debian-user\@lists.debian.org";
+  foreach my $list (keys %userlists) {
+    $userlists_lang{$trans{$CUR_ISO_LANG}{$list}} = "$userlists{$list}\@lists.debian.org";
+  }
+  foreach my $list (sort langcmp keys %userlists_lang) {
+    print "<li>$list -- &lt;<a href=\"mailto:$userlists_lang{$list}\">$userlists_lang{$list}</a>&gt;</li>\n";
+  }
+</perl>
+    </ul>
   <job <a href="http://bugs.debian.org/"><bts></a>> <genericemail owner@bugs.debian.org>
     <member>Darren Benham
     <member>Adam Heath
