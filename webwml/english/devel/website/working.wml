@@ -81,6 +81,68 @@ such mixed changes, you can see the mess for yourself.</p>
 XHTML/XML-compliant shouldn't be done in the same commit with other changes.
 (New stuff can and should be done properly from the start, of course.)</p>
 
+
+<h3>Update translations, too, if possible.</h3>
+
+<p>Some changes are language independent, most notably changes to
+urls or embedded perl code. Fixing of typos also falls in the
+category, since it normally requires no changes to the
+translated files except bumping the translation-check headers. 
+You obviously can do such changes in all
+translations without knowing the specific languages.</p>
+
+<p>But since there are so many languages, you will likely avoid this
+work and leave it to the translators even if you could make the change
+more quickly then they can. This can be somewhat annoying.</p>
+
+<p>However, to make such changes more easy to apply, you can use the
+<code>smart_change.pl</code> script from the webwml cvs root
+directory.</p>
+
+<h4>Usage of smart_change.pl</h4>
+
+<pre>smart_change.pl [options] origfile</pre>
+
+<p>Currently only files in <code>/english/</code> are allowed as
+<var>origfile</var>. <code>smart_change.pl</code> takes the 
+following arguments:</p>
+
+<dl>
+      <dt><code>-s, --substitute=<var>REGEXP</var></code></dt>
+      <dd>Specify a Perl regexp applied to source files (may be used
+	more than once).
+	<pre>
+	  Example: ./smart_change.pl -s "s,http://oldurl/,http://newurl/,g" english/index.wml
+	</pre>
+      </dd>
+
+      <dt><code>-l, --lang=<var>STRING</var></code></dt>
+      <dd>Process this language (may be used more than once). If no
+	language is specified, all available ones are processed.</dd>
+
+      <dt><code>-n, --no-bump</code></dt>
+      <dd>Do not bump translation-check headers. Normally, the cvs
+	revision of <var>origfile</var> is used as reference and 
+	in all translated files that are up-to-date, the
+	translation-check header is updated. In outdated files 
+	it remains unchanged. If this option is specified, no 
+	translation-check headers are touched. See "keeping
+	translations up to date" for an <a href="uptodate">\
+	  explanation on translation-check headers</a>.
+      </dd>
+
+      <dt><code>-p, --previous</code></dt>
+      <dd>Get previous CVS revision. This is mainly useful, if the
+	english file is already committed and you want to check the
+	translation-check headers against the previous version.</dd>
+
+      <dt><code>-h, --help</code></dt>
+      <dd>Display short usage informations.</dd>
+
+      <dt><code>-v, --verbose</code></dt>
+      <dd>Run verbosely.</dd>
+</dl>
+
 <toc-add-entry name="links">Links</toc-add-entry>
 
 <h3>"This link doesn't look right. Should I change it?"</h3>
