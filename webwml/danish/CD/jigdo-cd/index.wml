@@ -1,5 +1,5 @@
 #use wml::debian::cdimage title="Hent Debians cd-aftryk med jigdo" BARETITLE=true
-#use wml::debian::translation-check translation="1.3"
+#use wml::debian::translation-check translation="1.4"
 
 <p>Jigsaw Download, forkortet <a href="http://atterer.net/jigdo/">jigdo</a>
 har til formål at blive den primære måde at distribuere Debians cd-aftryk på
@@ -16,11 +16,10 @@ vil også være overbelastet, specielt lige efter en udgivelse.</p>
 
 <p>Selvfølgelig har et "normalt" Debian-filspejl ikke cd-aftryk, så hvordan kan
 jigdo hente dem derfra? jigdo gør det ved at individuelt at hente alle filerne
-som er på cd'en. Dernæst samles alle disse filer til én stor fil som (hvis det
-er fuldmåne og du har stået på et ben mens du messede ældgamle, næsten glemte
-besværgelser) er en nøjagtig kopi af cd-aftrykket. Dog sker alt dette i 
-baggrunden - alt hvad <em>du</em> behøver at gøre er at fortælle 
-overførselsværktøjet placeringen af den "<tt>.jigdo</tt>"-fil den skal 
+som er på cd'en. Dernæst samles alle disse filer til én stor fil som er en 
+nøjagtig kopi af cd-aftrykket. Dog sker alt dette i baggrunden - alt hvad 
+<em>du</em> behøver at gøre er at fortælle overførselsværktøjet placeringen af 
+den "<tt>.jigdo</tt>"-fil den skal 
 behandle.</p>
 
 <p><strong>Hvilke aftryk er tilgængelige?</strong> 
@@ -39,10 +38,9 @@ behandle.</p>
       "ustabile" distribution</a>, <em>genereres dagligt</em></li>
 </ul>
 
-For tiden er kun den seneste 
-<em>stabile</em> udgivelse af alle arkitekturer er tilgængelig via jigdo - hvis
-du har brug for "test"-cd'er, er du nødt til at hente dem ved hjælp af 
-<a href="../http-ftp/#testing">HTTP/FTP</a>.
+<p>For tiden er kun den seneste <em>stabile</em> udgivelse af alle arkitekturer 
+tilgængelig via jigdo - hvis du har brug for "test"-cd'er, er du nødt til at 
+hente dem ved hjælp af <a href="../http-ftp/#testing">HTTP/FTP</a>.</p>
 
 <p><strong>Hvad skal der til for at hente et cd-aftryk med jigdo?</strong></p>
 
@@ -83,9 +81,29 @@ megebyte til ingen verdens nytte?!</strong></p>
 <p>Dette burde selvfølgelig Ikke Ske(tm), men af forskellige grunde kan du 
 ende med at en stor "<tt>.iso.tmp</tt>"-fil allerede er blevet genereret og
 <tt>jigdo-lite</tt> lader til at have problemer, og bliver ved med at bede dig
-om at prøve at genstarte overførslen. For øjeblikket er den eneste løsning som
-<em>ikke</em> kræver at alle data skal hentes igen, er at falde tilbage til en<tt><a
-href="http://rsync.samba.org/">rsync</a></tt>. Omdøb <tt>jigdo-lite</tt>s 
-midlertidige fil for at fjerne udvidelsen "<tt>.tmp</tt>", brug dernæst et af 
-<a href="../mirroring/rsync-mirrors">rsync-filspejlene</a> til at hente de 
-manglende dele af aftrykket.</p>
+om at prøve at genstarte overførslen. Der er flere forskellige ting man kan 
+gøre i denne situation:</p>
+
+<ul>
+  <li>Prøv et andet filspejl.  Nogle Debian-filspejle er lidt ude af 
+      synkronisation - måske indeholder et andet filspejl stadig de filer, som
+      er blevet slettet fra det filspejl du angav, eller det er allerede blevet
+      opdateret med filer som ikke findes på dit filspejl.</li>
+  <li>Hent de manglende dele af cd-aftrykket med <tt>
+      <a href="http://rsync.samba.org/">rsync</a></tt>. Først skal du finde ud 
+      af hvad den korrekte rsync-URL til cd-aftrykket du er ved at hente, er.  
+      Vælg en server som tilbyder rsync-adgang til det
+      <a href="../mirroring/rsync-mirrors">stabile</a> cd-aftryk eller
+      <a href="../http-ftp/#testing">test-</a>cd-aftrykket, afgør dernæst den 
+      korrekte sti og filnavn. Kataloglister kan vises med kommandoer som
+      <tt>rsync&nbsp;rsync://cdimage.debian.org/debian-cd/</tt>
+      
+      <br>Fjern derefter udvidelsen "<tt>.tmp</tt>" fra <tt>jigdo-lite</tt>s 
+      midlertidige fil ved at omdøbe den, og overfør både fjern-URL'en og det
+      lokale filnavn til rsync:
+      <tt>rsync&nbsp;rsync://server.org/path/binary-i386-1.iso 
+      binary-i386-1.iso</tt>
+      
+      <br>Kig eventuelt også på rsyncs parametre <tt>--verbose</tt> og 
+      <tt>--progress</tt>.</li>
+</ul>
