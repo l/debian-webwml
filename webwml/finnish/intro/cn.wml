@@ -2,7 +2,7 @@
 # Updated by Antti-Juhani Kaijanaho on 1999-12-05 
 # Updated by Tommi Vainikainen on 2000-07-20
 #use wml::debian::template title="Tietoa sivujen saatavuudesta useilla kielill‰"
-#use wml::debian::translation-check translation="1.32"
+#use wml::debian::translation-check translation="1.33"
 
 <P>Tietenk‰‰n kaikki eiv‰t k‰yt‰ maailmassa samaa kielt‰.
 Kun World Wide Web kasvaa, tulee yh‰ tavallisemmaksi lˆyt‰‰ sivuja, jotka
@@ -53,11 +53,77 @@ kokeilemaan sivuja Lynxill‰, se on n‰et ainoa selain jonka olemme
 todenneet olevan 100 % HTTP-m‰‰rittelyjen mukainen
 sis‰ltˆneuvottelussa (content negotiation).</p>
 
+<h3>Mik‰ arvo muttujalle asetetaan?</h3>
+
+<p>Koska Debianin www-sivujen peruskieli on englanti, ja kaikkia dokumentteja
+ei ehk‰ ole k‰‰nnetty etusijalle asettamallesi kielelle, on j‰rkev‰‰
+antaa kielivalintamuuttujan k‰ytt‰‰ englantia varalla.
+Esimerkiksi, jos ‰idinkielesi on suomi, ja k‰yt‰t lynxi‰, oletettavasti
+laitat seuraavan rivin  
+<kbd>.lynxrc</kbd>-tiedostoosi.</p>
+
+<pre>
+preferred_language=fi; q=1.0, en; q=0.5
+</pre>
+
+<p>
+T‰m‰ kertoo palvelimelle, ett‰ haluat suomenkielisen version dokumentista,
+jos sellainen on olemassa, muuten englanninkielisen.</p>
+
+<p>Kielten alakategorioiden valinnassa tulee olla varovainen. 
+'en-GB, fr'-valinta esimerkiksi, ei tuota sit‰ tulosta, mit‰ useimmat
+luulisivat (jolleiv‰t he ole lukeneet HTTP-spesifikaatiota).
+Palvelin, joka ottaa vastaan kielivalinnalla 'en-GB, fr' varustetun
+dokumenttipyynnˆn, l‰hett‰‰ ranskankielisen version, jos sek‰ 'en'- ett‰
+'fr'-versiot ovat olemassa.
+Se l‰hett‰‰ englanninkielisen dokumentin ranskankielisen sijaan vain, jos
+tiedostosta on 'en-GB'-versio.
+Siksi pit‰isi konfiguroida www-selain l‰hett‰m‰‰n 'en-GB, en, fr' tai
+pelk‰st‰‰n 'en, fr'.
+Toisinp‰in t‰m‰ kyll‰ toimii, palvelin pystyy l‰hett‰m‰‰n 'en-us',
+kun 'en' pyydet‰‰n.</p>
+
+<p><strong>Suositamme erityisesti, ettet lis‰isi 
+maaosaa kielivalintaan, jollei sinulla ole siihen erityisen painavaa syyt‰
+</strong>.
+Jos lis‰‰t sellaisen, varmistu siit‰, ett‰ lis‰‰t myˆs kielivalinnan ilman
+maata.</p>
+
+<p>Lis‰tietoja preferred_language-muuttujan asettamisesta saat
+t‰‰lt‰,
+<a href="http://httpd.apache.org/docs/content-negotiation.html">Apachen
+"content negotiation"-menetelm‰n dokumentointi</a>.</p>
+
+<h3><a name="cache">Mahdollisia ongelmia v‰lityspalvelimissa
+(engl. proxy)</a></h3>
+
+<p>
+V‰lityspalvelin on k‰yt‰nnˆss‰ www-palvelin, jolla ei ole omaa
+sis‰ltˆ‰.  Se toimii k‰ytt‰jien ja oikeiden www-palvelimien v‰liss‰.
+V‰lityspalvelin ottaa vastaan hakupyyntˆj‰ www-sivuista, hakee
+www-sivun ja ottaa siit‰ talteen paikallisen kopion.  T‰m‰ voi
+v‰hent‰‰ verkkoliikennett‰ huomattavasti jos useat k‰ytt‰j‰t pyyt‰v‰t
+samaa sivua.  (T‰m‰ tekniikka tunnetaan englanniksi nimill‰ cache ja proxy.)</p>
+
+<p>T‰m‰ on useimmissa tapauksissa aivan loistava idea, mutta ongelmia
+syntyy jos v‰lityspalvelimessa on vikaa.  Erityisesti mainittakoon,
+ett‰ jotkut vanhemmat v‰lityspalvelimet eiv‰t ymm‰rr‰ sis‰ltˆneuvottelusta.
+T‰m‰n vuoksi palvelin tallentaa sivun yhdell‰ kielell‰ ja n‰ytt‰‰
+t‰m‰n version kaikille k‰ytt‰jille, myˆs silloin kun pyydet‰‰n jotain
+muuta kielt‰.  Ainoa vaihtoehto on p‰ivitt‰‰ tai korvata
+v‰lityspalvelin.</p>
+
+<p>Aikoinaan ihmiset ainoastaan k‰yttiv‰t v‰lityspalvelimia
+k‰skiess‰‰n selaintaan k‰ytt‰‰ jotain palvelinta.  Nyky‰‰n ei en‰‰
+aina ole n‰in.  Palveluntarjoajasi voi ohjata kaikki HTTP-pyynnˆt
+l‰pin‰kyv‰n v‰lityspalvelimensa kautta.  Ja jos v‰lityspalvelin ei ymm‰rr‰
+sis‰ltˆneuvottelusta, k‰ytt‰j‰t saavat v‰‰r‰nkielisi‰ sivuja.  
+Ainoa korjaus t‰h‰n on valittaa palveluntarjoajallesi pyyt‰en heit‰
+p‰ivitt‰m‰‰n tai korvaamaan ohjelmistonsa.</p>
+
 <h3><a name="setting">Oletuskielen asettaminen selaimessa</a></h3>
 
-<P>Huom!
-T‰m‰ sivu ei ole viel‰ t‰ydellinen.
-Jos tied‰t sellaisista selainasetuksista, mit‰ ei ole lueteltu alla,
+<p>Jos tied‰t sellaisista selainasetuksista, mit‰ ei ole lueteltu alla,
 ole hyv‰, ja l‰het‰ asetukset osoitteeseen
 <a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>.</p>
 
@@ -124,71 +190,3 @@ tai k‰yt‰ custom-pakettia (kuvattu URL-versiolle p4.0pre.14):
 </pre>
 </dd>
 </DL>
-
-<H3>Mik‰ arvo muttujalle asetetaan?</H3>
-
-<P>Koska Debianin www-sivujen peruskieli on englanti, ja kaikkia dokumentteja
-ei ehk‰ ole k‰‰nnetty etusijalle asettamallesi kielelle, on j‰rkev‰‰
-antaa kielivalintamuuttujan k‰ytt‰‰ englantia varalla.
-Esimerkiksi, jos ‰idinkielesi on suomi, ja k‰yt‰t lynxi‰, oletettavasti
-laitat seuraavan rivin  
-<kbd>.lynxrc</kbd>-tiedostoosi.</p>
-
-<pre>
-preferred_language=fi; q=1.0, en; q=0.5
-</pre>
-
-<p>
-T‰m‰ kertoo palvelimelle, ett‰ haluat suomenkielisen version dokumentista,
-jos sellainen on olemassa, muuten englanninkielisen.</p>
-
-<p>Kielten alakategorioiden valinnassa tulee olla varovainen. 
-'en-GB, fr'-valinta esimerkiksi, ei tuota sit‰ tulosta, mit‰ useimmat
-luulisivat (jolleiv‰t he ole lukeneet HTTP-spesifikaatiota).
-Palvelin, joka ottaa vastaan kielivalinnalla 'en-GB, fr' varustetun
-dokumenttipyynnˆn, l‰hett‰‰ ranskankielisen version, jos sek‰ 'en'- ett‰
-'fr'-versiot ovat olemassa.
-Se l‰hett‰‰ englanninkielisen dokumentin ranskankielisen sijaan vain, jos
-tiedostosta on 'en-GB'-versio.
-Siksi pit‰isi konfiguroida www-selain l‰hett‰m‰‰n 'en-GB, en, fr' tai
-pelk‰st‰‰n 'en, fr'.
-Toisinp‰in t‰m‰ kyll‰ toimii, palvelin pystyy l‰hett‰m‰‰n 'en-us',
-kun 'en' pyydet‰‰n.</p>
-
-<p><strong>Suositamme erityisesti, ettet lis‰isi 
-maaosaa kielivalintaan, jollei sinulla ole siihen erityisen painavaa syyt‰
-</strong>.
-Jos lis‰‰t sellaisen, varmistu siit‰, ett‰ lis‰‰t myˆs kielivalinnan ilman
-maata.</p>
-
-<P>Lis‰tietoja preferred_language-muuttujan asettamisesta saat
-t‰‰lt‰,
-<a href="http://httpd.apache.org/docs/content-negotiation.html">Apachen
-"content negotiation"-menetelm‰n dokumentointi</a>.</p>
-
-<h3><a name="cache">Mahdollisia ongelmia v‰lityspalvelimissa
-(engl. proxy)</a></h3>
-
-<p>
-V‰lityspalvelin on k‰yt‰nnˆss‰ www-palvelin, jolla ei ole omaa
-sis‰ltˆ‰.  Se toimii k‰ytt‰jien ja oikeiden www-palvelimien v‰liss‰.
-V‰lityspalvelin ottaa vastaan hakupyyntˆj‰ www-sivuista, hakee
-www-sivun ja ottaa siit‰ talteen paikallisen kopion.  T‰m‰ voi
-v‰hent‰‰ verkkoliikennett‰ huomattavasti jos useat k‰ytt‰j‰t pyyt‰v‰t
-samaa sivua.  (T‰m‰ tekniikka tunnetaan englanniksi nimill‰ cache ja proxy.)</p>
-
-<p>T‰m‰ on useimmissa tapauksissa aivan loistava idea, mutta ongelmia
-syntyy jos v‰lityspalvelimessa on vikaa.  Erityisesti mainittakoon,
-ett‰ jotkut vanhemmat v‰lityspalvelimet eiv‰t ymm‰rr‰ sis‰ltˆneuvottelusta.
-T‰m‰n vuoksi palvelin tallentaa sivun yhdell‰ kielell‰ ja n‰ytt‰‰
-t‰m‰n version kaikille k‰ytt‰jille, myˆs silloin kun pyydet‰‰n jotain
-muuta kielt‰.  Ainoa vaihtoehto on p‰ivitt‰‰ tai korvata
-v‰lityspalvelin.</p>
-
-<p>Aikoinaan ihmiset ainoastaan k‰yttiv‰t v‰lityspalvelimia
-k‰skiess‰‰n selaintaan k‰ytt‰‰ jotain palvelinta.  Nyky‰‰n ei en‰‰
-aina ole n‰in.  Palveluntarjoajasi voi ohjata kaikki HTTP-pyynnˆt
-l‰pin‰kyv‰n v‰lityspalvelimensa kautta.  Ja jos v‰lityspalvelin ei ymm‰rr‰
-sis‰ltˆneuvottelusta, k‰ytt‰j‰t saavat v‰‰r‰nkielisi‰ sivuja.  
-Ainoa korjaus t‰h‰n on valittaa palveluntarjoajallesi pyyt‰en heit‰
-p‰ivitt‰m‰‰n tai korvaamaan ohjelmistonsa.</p>
