@@ -12,6 +12,11 @@
 <h1>Debian GNU/Hurd</h1>
 <h2>Frequently Asked Questions (FAQ)</h2>
 
+<p>
+Note that this FAQ will not only contain FAQ's, but probably all interesting
+talk on the Hurd mailing lists. I am going to use this as a catch all bucket
+until the various information is in its proper place.
+
 <h3>"General"</h3>
 <p>
 <b>Question</b>:
@@ -20,7 +25,7 @@ Is the Hurd under development, or is it a dead project?</p>
 It is under active development these days. We are fixing bugs to get more
 stability and port many common software packages. We also add small to
 medium sized features. We would like to get more developers on board, too.
-There are a lot of very interesting features tobe implemented, and you
+There are a lot of very interesting features to be implemented, and you
 seldom get the chance to design and implement parts of an exciting
 operating system!</p>
 
@@ -110,7 +115,7 @@ Hurd". You can do this with <code>mke2fs -o hurd /dev/XXX</code> when
 creating the partition or afterwards using the <code>e2os</code> script.</p>
 
 <p><b>Question</b>:
-Why is <code>/usr</code> a symbolic link to <code>.</code>?
+Why is <code>/usr</code> a symbolic link to <code>.</code>?</p>
 <p><b>Answer</b>:
 The distinction between <code>/</code> and <code>/usr</code> has historical
 reasons, back when Unix systems were booted from two tapes, a small root
@@ -118,6 +123,21 @@ tapes an big user tape. Today, we like to use different partitions for these
 two spaces. The Hurd throws this historical garbage away, as we think that
 we have found a more flexible solution, shadow filesystems. Unfortunately,
 shadowfs is not yet implemented.</P>
+
+<p><b>Question</b>:
+How do I set up my network card? It was autodetected by GNU Mach.</p>
+<p><b>Answer</b>:
+<code>settrans -fgc /servers/socket/2 /hurd/pfinet --interface=eth0
+--address=AA.BB.CC.DD --netmask=EE.FF.GG.HH --gateway=II.JJ.KK.LL</code>
+where the various <code>WW.XX.YY.ZZ</code> are your IP number, your netmask
+and your gateway address respectively. Also don't forget to set up
+<code>/etc/resolv.conf</code>, <code>/etc/hosts</code> and so on.</p>
+
+<p><b>Question</b>:
+Pipes don't work!</p>
+<p><b>Answer</b>:
+<code>settrans -fgc /servers/socket/1 /hurd/pflocal</code> will help
+you.</p>
 
 <p><b>Question</b>:
 What about X?
@@ -142,122 +162,25 @@ The Hurd systems wants to use <code>RPATH</code>, and Debian does avoid
 setting <code>LD_LIBRARY_PATH</code> to a list of all libraries in unusual
 places.</p>
 
-<h3>Translators</h3>
+<h3>Using the Hurd</h3>
 
 <p><b>Question</b>:
 What's a translator?</p>
 <p><b>Answer</b>:
-The translator concept is what makes the Hurd different from other operating
-systems. It is really powerful. Think of a translator as a program that sits
-between you and the rest of the system, on top of a directory entry (inode).
-Whenever you access the directory entry through the C library, the
-translator gets notified and asked what to return back. This will happen
-completely transparently, the program accessing the inode won't see a
-difference to a normal file or directory.</p>
-<p>
-For example, file system server are really translators in the Hurd. Imagine
-someone listing the directory content below the mount point. The
-<code>ls</code> program will ask the C library about it, which in turn
-asks the file system translator of the root file system about it. This
-program returns whatever it finds in the file system of the partition in
-question.</p>
-<p>
-Device files are another example. If you use them, you really communicate
-with the translator behind them. You can see which translator belongs to an
-inode with the <a href="hurd-doc-utils#showtrans"><code>showtrans</code></a>
-command. This will only show you the passive translator though.</p>
+There is a <a href="hurd-doc-translator">text about translators</a> available.
+</p>
 
 <p><b>Question</b>:
-Passive translator?</p>
+How can I pass options to serverboot from the GRUB command line?</p>
 <p><b>Answer</b>:
-Yep. The passive translator is simply the command which shall be run when an
-inode is accessed. The command is written down verbatim in the inode,
-including all options it shall be started with. As long as the inode is not
-accessed, the command is not run, it will simply be static data in the file
-system. Only when the inode is accessed, the passive translator will be read
-and the command executed.</p>
-<p>
-As an example, think of the automounter feature. An automounter is a piece
-of software that can mount file systems automatically when needed.
-Unmounting is usually implemented with a timeout. On the Hurd, you don't
-need special software for this (an automounter is usually a kernel extension
-in monolithic kernels). It's all there as an integral part of the system.
-You set the passive translator using
-<a href="reference-manual/hurd_7.html#SEC49"><code>settrans</code></a>, and
-when you access the mount point by any file system operation, an active
-translator will be started.</p>
-<p>
-Because the passive translator is written directly into the file system, it
-is transient, that means, it will stay during reboots.</p>
+Just give them to the kernel and it will pass them down to serverboot.
+</p>
 
 <p><b>Question</b>:
-Active Translator?</p>
+Can I use the Linux version of <code>e2fsck</code> on my Hurd partition?</p>
 <p><b>Answer</b>:
-Yep again. The active translator is simply the currently running translator.
-Don't mix them up, they can be completely different or can have different
-command line options (configuration). You can change the options of an
-active translator with <code>fsysopts</code> without actually
-restarting it. This is very convenient. For example, you can do what is
-called "remounting a partition read-only" under Linux simply by running
-<code>fsysopts /mntpoint --readonly</code>. The running active translator
-will change its behaviour according to your wish dynamically.
-<code>fsysopts</code> without a parameter shows you the current
-settings.</p>
-<p>
-You can start up an active translator again using the
-<code>settrans</code> command, but with the <code>-a</code> option. Because
-an active translator is only a running task, it will be lost when the
-machine is rebooted.</p>
-
-<p><b>Question</b>:
-What was a translator again?
-<p><b>Answer</b>:
-Do you mean a passive or an active translator? <tt>:)</tt></p>
-<p>
-A <em>passive translator</em> is a command line, consisting of the server
-to be started and necessary options. It is stored transiently inside an inode
-of the file system. This command is not run until the passive translator is
-used to start an active translator. You can write and read passive translators
-to an inode with <code>settrans</code> and <code>showtrans</code>
-respectively.</p>
-<p>
-An <em>active translator</em> is a running translator task that is currently
-serving an inode. It can be different from the underlying passive
-translator, but if there isn't an active translator already it will be
-started using the command line that is actually the passive translator.
-You can query and change the current options of an active translator using
-the <code>fsysopts</code> command, and you can set active translators with
-<code>settrans -a</code>.</p>
-
-<p><b>Question</b>:
-How can I play with translators without breaking anything?
-<p><b>Answer</b>:
-I recommend that you start by reading the <code>/bin/mount</code> command,
-it is only a small script. Because setting file system translators is
-similar to mounting partitions, you can easily grasp the concept this way.
-Make a file system image with <code>dd if=/dev/zero of=dummy.fs bs=1024k
-count=8; mke2fs dummy.fs</code> and "mount" it with <code>settrans -c dummy
-/hurd/ext2fs `pwd`/dummy.fs</code>. Note that the translator is not started
-yet, no new <code>ext2fs</code> process is running (verify with <code>ps
-Aux</code>). Check that everything is correct using <code>showtrans</code></p>
-<p>
-Now type <code>ls dummy</code> and you will notice the short delay that
-occurs while the translator is started. After that, there will be no more
-delays accessing dummy. Under Linux, one would say that you automounted a
-loop file system. Check with <code>ps Aux</code> that there is an <code>ext2fs
-dummy</code> process up and running now. Now put some files into the new
-directory. Try to make the filesystem read-only with <code>fsysopts</code>.
-Note how further write attempts fail now. Try to kill the active translator
-with <code>settrans -g</code>.</p>
-<p>
-You should have some understanding of what is going on now. Now remember
-that this was only <em>one</em> special server, the Hurd Ext2fs server.
-There are many more server in the <code/hurd</code> directory. Some of them
-are for filesystems. Some are needed for file system features like links.
-Some are needed for device files. Some are useful for networking. Imagine
-"mounting" an FTP Server with <code>settrans</code> and downloading files
-simply with the standard <code>cp</code> command. Or editing your web sites
-with <code>emacs /ftp/homepage.my.server.org/index.html</code>!</p>
+Yes, you can since <code>e2fsprogs-1.05</code>. Check with <code>e2fsck
+-V</code> first.</p>
 
 <h3>... When Something Breaks</h3>
 
