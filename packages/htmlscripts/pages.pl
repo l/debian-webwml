@@ -411,7 +411,7 @@ sub package_pages_walker {
 	    $source_dir =~ s,pool/updates,pool,o;
 	    $source_dir =~ s,pool/non-US,pool,o;
 	    $package_page .= "<br><small>".sprintf( gettext( "View the <a href=\"%s\">Debian changelog</a>" ), "$CHANGELOG_URL/$source_dir/$src_basename/changelog" )."</small><br>\n";
-	    $package_page .= "<small>".sprintf( gettext( "View the <a href=\"%s\">copyright file</a>" ), "$CHANGELOG_URL/$source_dir/$src_basename/copyright" )."</small><br>\n";
+	    $package_page .= "<small>".sprintf( gettext( "View the <a href=\"%s\">copyright file</a>" ), "$COPYRIGHT_URL/$source_dir/$src_basename/$name.copyright" )."</small><br>\n";
 	}
 					    
 	#
