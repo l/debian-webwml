@@ -1,6 +1,18 @@
-<!doctype debiandoc system [
-   <!entity % untranslated "IGNORE">
-]>
+<!doctype debiandoc system>
+
+<!--
+# TODO list:
+# - Shorten overlong lines - there are lots of sections (by jfs?) where
+#   lines are routinely longer than 80 characters. Actually it makes sense
+#   to author SGML with much shorter lines, because it makes editing simpler
+#   (while the internal line length of the SGML source is obviously not
+#   visible in any way to the end user).
+#   (occur (make-string 80 ?.))   ;  C-x C-e here
+# - Remove gratuitous trailing whitespace; M-x occur " +$"
+# - add prgn tags
+# JFS reminders :) 
+#   setup is a noun, set up is a verb
+-->
 
 <book>
 
@@ -15,19 +27,24 @@
 <date>Mon, 18 Nov 2002 23:13:42 +0100
 
 <abstract>
-Ce document décrit comment sécuriser l'installation d'un système Debian
-standard. Il couvre quelques tâches courantes telles que la sécurisation d'un
-réseau qui utilise Debian GNU/Linux et il donne également des informations
-complémentaires sur les outils de sécurisation disponibles ainsi que sur
-le travail accompli par l'équipe Debian consacrée à la sécurité.
+Ce document décrit la sécurité dans le projet Debian. En commençant
+par sécuriser et renforcer l'installation standard d'une distribution
+Debian GNU/Linux. Il couvre quelques tâches courantes telles que la 
+sécurisation d'un réseau qui utilise Debian GNU/Linux et il donne 
+également des informations complémentaires sur les outils de sécurisation
+disponibles ainsi que sur le travail accompli par l'équipe en charge
+de la sécurité chez Debian.
 </abstract>
 
 <copyright> <copyrightsummary>Copyright &copy;  2002 Javier Fernández-Sanguino Peña
 <p>Copyright &copy;  2001  Alexander Reelsen, Javier Fernández-Sanguino Peña
 <p>Copyright &copy;  2000  Alexander Reelsen
-<p>This document is distributed under the terms of the GNU
-Free Documentation License. It is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY.
+
+<p>Il vous est permis de copier, de distribuer et/ou de modifier ce
+document d'après le termes de la <url id="http://www.fsf.org/copyleft/fdl.html"
+name="licence de documentation libre GNU, Version&nbsp;1.1"> ou toute version
+postérieure publiée par la Free Software Foundation. Nous le distribuons car
+nous pensons qu'il peut vous être utile, mais SANS AUCUNE GARANTIE.
 </copyright>
 
 </titlepag>
@@ -43,77 +60,72 @@ L'une des choses les plus difficiles dans l'écriture de documents liés à la
 sécurité est que chaque cas est unique. Il faut prêter attention à deux
 choses&nbsp;: la menace que constitue l'environnement et les besoins de
 sécurité liés à un site individuel, une machine ou un réseau. Par exemple,
-les besoins d'une utilisation familiale sont complètement différents de
-ceux liés à un réseau de banque. Alors que la première menace à laquelle un
-utilisateur quelconque doit faire face est le «&nbsp;script kiddie&nbsp;»,
-un réseau de banque doit se soucier des attaques directes. De plus, la banque
-se doit de protéger les données de ses clients avec une précision
-arithmétique. En résumé, chaque utilisateur
-doit faire un compromis entre facilité d'utilisation et sécurité virant
-à la paranoïa.
-<!-- Is this metaphor really appropriate? Sounds like rounding errors to me, era -->
+les exigences que l'on a pour une utilisation familiale n'ont rien de comparable 
+aux exigences que l'on trouve dans le réseau d'une banque. Alors que dans le
+premier cas, l'utilisateur aura à affonter de simples scripts d'attaque,
+le réseau d'une banque sera, lui, sous la menace d'attaques directes.
+De plus, la banque se doit de protéger l'exactitude des données clients. 
+Il faudra donc que chaque utilisateur trouve le bon compromis entre
+facilité d'utilisation et une sécurité outrancière.
+
 <p>
-Notez que ce manuel couvre seulement les questions liées aux logiciels.
-Le meilleur programme au monde ne pourra vous protéger si quelqu'un peut 
-accéder physiquement à la machine. Vous pouvez la mettre sous votre bureau ou
-dans un bunker protégé par une armée. Néanmoins, l'ordinateur sera beaucoup
-plus sûr (d'un point de vue logiciel) que celui protégé physiquement s'il est
-configuré correctement et que les logiciels de l'autre sont pleins de trous
-de sécurité.
+Prennez conscience que cet ouvrage traite uniquement des questions liées
+aux logiciels. Le meilleur programme du monde ne pourra pas vous protéger 
+contre quelqu'un qui aura un accès physique à la machine. Vous pouvez mettre
+votre machines vous votre bureau ou dans un bunker protégé par une armée. 
+Pourtant, un ordinateur de bureau avec une bonne configuration sera beaucoup 
+plus sûr (d'un point de vue logiciel) qu'un ordinateur protégé physiquement 
+si son disque dur est truffé de logiciels connus pour avoir des failles de
+sécurité.
 Bien entendu, vous devez prendre en compte les deux aspects.
 
 <p>
-Ce document donne un aperçu de ce que vous pouvez faire pour augmenter la
-sécurité de votre système Debian GNU/Linux. Si vous avez lu des documents 
-concernant la sécurité sur Linux, vous trouverez des similitudes avec ce
-document. Cependant, ce manuel ne se veut pas l'ultime source d'informations
-que vous utiliserez, il essaye seulement d'adapter ces informations au
-système Debian GNU/Linux.
-D'autres distributions procèdent de manière différente pour certaines
-questions (le démarrage de démons est un exemple courant)&nbsp;; ici, vous
-trouverez ce qui convient aux procédures et aux outils Debian.
-<!-- 
-# Does this approximate the intent of the original author? (FIXME: check)
-# Original text said: "you will find here [sic] a different approach,
-# using Debian's tools, regarding security." era
--->
-<!-- IMHO yes, jfs -->
+Ce document donne simplement un aperçu de ce qu'il est possible de
+faire pour accroître la sécurité de votre système Debian GNU/Linux. 
+Si vous avez d'ores et déjà lu des ouvrages traitant de la sécurité 
+sous Linux, vous trouverez des similitudes avec ce document. Ce manuel 
+ne prétend pas être l'ultime source d'informations à laquelle vous devez
+vous référer. Il essaye seulement d'adapter ces informations pour le
+système Debian GNU/Linux. D'autres distributions procèdent de manière 
+différente pour certaines questions (le démarrage de démons est un 
+exemple courant)&nbsp;; vous trouverez dans cet ouvrage les éléments
+propres aux procédures et aux outils de Debian.
 
 <p>
 Si vous avez des commentaires, des éléments à ajouter ou des suggestions,
-envoyez-les à
+envoyez-les (en anglais) à
 <!-- <url name="Alexander Reelsen" id="mailto:ar@rhwd.de"> et  -->
 <url name="Javier Fernández-Sanguino" id="mailto:jfs@computer.org">
 (autre adresse&nbsp;: jfs@debian.org) et ils seront intégrés dans ce manuel.
-<!-- j'ai mis à jour sur version 2.6, pb -->
+
 <sect>Télécharger ce manuel 
 <p>
-Vous pouvez télécharger ou lire la nouvelle version du manuel de sécurisation
-Debian à l'adresse <url name="Debian Documentation Project" 
+Vous pouvez télécharger ou lire la dernière version du manuel de sécurisation
+Debian sur le site du <url name="projet de documentation de debian" 
 id="http://www.debian.org/doc/manuals/securing-debian-howto/">.  
-Jetez un oeil également à la version CVS sur <url name="CVS server" 
+Jetez un oeil également à la version contenue dans le <url name="serveur CVS" 
 id="http://cvs.debian.org/ddp/manuals.sgml/securing-howto/?cvsroot=debian-doc">.
 
 <p>
-Vous pouvez télécharger le document dans une
-<url
-id="http://www.debian.org/doc/manuals/securing-debian-howto/securing-debian-howto.txt" name="version texte"> sur le site du Projet de Documentation
-Debian. Cependant, vous pouvez installer le paquet
-<url id="http://packages.debian.org/harden-doc" name="harden-doc"> qui offre
-ce même document dans les formats HTML, txt et PDF.
-<!-- j'ai mis à jour sur version 2.6, pb -->
-
+Vous pouvez, également, télécharger le document dans le <url
+id="http://www.debian.org/doc/manuals/securing-debian-howto/securing-debian-howto.txt" 
+name="format texte pur"> sur le site du projet de documentation
+Debian. D'autres formats, tel que le PDF, ne sont pas encore
+fournis. Cependant, vous pouvez télécharger ou installer le paquet
+<url id="http://packages.debian.org/harden-doc" name="harden-doc"> qui 
+offre ce même document dans les formats HTML, txt et PDF (en langue
+anglaise).
 
 <!-- 
 <p>
-Les anciennes versions (non maintenues) de ce HOWTO peuvent être trouvées ici :
+Les anciennes versions (non maintenues) de ce HOWTO peuvent être trouvées ici&nbsp;:
 
 <list>
-<item><url name="Text-only"
+<item><url name="Uniquement en texte"
 id="http://joker.rhwd.de/doc/Securing-Debian-HOWTO/Securing-Debian-HOWTO.txt">
 <item><url name="HTML"
 id="http://joker.rhwd.de/doc/Securing-Debian-HOWTO/Securing-Debian-HOWTO.html">
-<item><url name="HTML, tarred and gzipped"
+<item><url name="HTML, tarball and gzippée"
 id="http://joker.rhwd.de/doc/Securing-Debian-HOWTO/Securing-Debian-HOWTO.tar.gz">
 <item><url name="SGML"
 id="http://joker.rhwd.de/doc/Securing-Debian-HOWTO/Securing-Debian-HOWTO.sgml">
@@ -122,27 +134,27 @@ id="http://joker.rhwd.de/doc/Securing-Debian-HOWTO/Securing-Debian-HOWTO.sgml">
 <!-- TODO: remove these stale links rather than leave references to -->
 <!-- the old versions hanging around? era -->
 
-<sect> Avis et Réactions
+
+<sect>Avis et Réactions
 <p>
 Maintenant, la partie officielle. Pour l'instant, c'est moi
-(Alexander Reelsen) qui a écrit la plupart des paragraphes de ce manuel
-mais, à mon avis, il ne faudrait pas que cela reste ainsi. J'ai grandi et
-vécu avec les logiciels libres, c'est
-une part de ma vie de tous les jours et j'espère de la vôtre aussi.
-J'encourage chacun à m'envoyer ses réactions, astuces ou suggestions.
+(Alexander Reelsen) qui ait écrit la plupart des paragraphes de ce manuel
+mais, à mon avis, il ne faudrait pas que cela reste ainsi. J'ai grandi 
+et vécu avec les logiciels libres, c'est une part de ma vie de tous les jours 
+et j'espère de la vôtre aussi. J'encourage chacun à m'envoyer ses réactions, astuces 
+ou suggestions.
 
 <p>
-Si vous pensez que vous pouvez améliorer une section ou un paragraphe,
-écrivez au responsable du document. Cela sera apprécié !
+Si vous pensez que pouvez vous occuper d'une partie en particulier
+ou d'un paragraphe, écrivez au responsable du document. Cela sera apprécié&nbsp;!
 En particulier, si vous trouvez une section estampillée «&nbsp;FIXME&nbsp;»,
-qui signifie que l'auteur n'a pas eu le temps ou les connaissances nécessaires
-pour terminer le sujet, envoyez-lui un courrier immédiatement.
+qui signifie que les auteurs n'ont pas eu le temps ou les connaissances 
+requises pour s'en occuper, envoyez-leur un courrier immédiatement.
 
 <p>
-Le thème de ce manuel fait comprendre qu'il est important de garder ce manuel
-à jour&nbsp;; vous pouvez apporter votre pierre à l'édifice. S'il vous plaît,
-aidez-nous.
- 
+Le thème de ce manuel fait clairement comprendre qu'il est 
+important de tenir ce manuel à jour&nbsp;; vous pouvez apporter 
+votre pierre à l'édifice. S'il vous plaît, aidez-nous.
 
 <sect>Connaissances requises
 <p>
@@ -157,15 +169,16 @@ Si vous n'êtes pas si familier que cela, vous pouvez consulter
 approfondies sur le sujet.
  
 
-<sect>Choses à écrire (FIXME/TODO)
+<sect>Éléments restant à écrire (FIXME/TODO)
 <p>
 <list>
-<item>Écrire sur les outils de surveillance distante (pour vérifier la
-disponibilité du système) tels que monit, daemontools et mon. Voir <url
+
+<item>Écrire sur les outils de surveillance à distance (pour vérifier 
+la disponibilité du système) tels que monit, daemontools et mon. Voir <url
 id="http://linux.oreillynet.com/pub/a/linux/2002/05/09/sysadminguide.html">.
 
-<item>Envisager la rédaction d'une section sur la construction de 
-"network appliances" basées sur une Debian (avec des informations telles que
+<item>Envisager la rédaction d'une section sur la construction d'application
+orrientée réseau pour Debian (avec des informations telles que
 le système de base, <package>equivs</package> et FAI).
 
 <item>Vérifier si <url id="http://rr.sans.org/linux/hardening.php"> n'a pas
@@ -179,65 +192,71 @@ Debian GNU/Linux. La section sur les pare-feux concerne un système isolé
 (pas de protection d'autres machines...). Comment tester la configuration.
 
 <item>Paramétrage d'un serveur mandataire pare-feu avec Debian
-GNU/Linux et liste des paquets fournissant des services
-<em>proxy</em>
-(tels que <package>xfwp</package>,
-<package>xproxy</package>, <package>ftp-proxy</package>, 
-<package>redir</package>,
-<package>smtpd</package>, <package>nntp-cache</package>, <package>dnrd</package>,
-<package>jftpgw</package>,<package>oops</package>,<package>pnsd</package>,
-<package>perdition</package>,<package>transproxy</package>,
-<package>tsocks</package>). Renvoi au manuel pour toute autre information.
-<!-- sup. avec version 2.6 -->
+GNU/Linux et faire un état des lieux des paquets fournissant des 
+services <em>proxy</em> (tels que 
+<package>xfwp</package>,<package>xproxy</package>, 
+<package>ftp-proxy</package>, <package>redir</package>,
+<package>smtpd</package>, <package>nntp-cache</package>, 
+<package>dnrd</package>, <package>jftpgw</package>, <package>oops</package>,
+<package>pnsd</package>, <package>perdition</package>,
+<package>transproxy</package>, <package>tsocks</package>). Renvoi au manuel 
+pour toute autre information. Considérer également que le 
+paquet Debian zorp n'est pas (encore) disponible mais qu'il 
+<em>s'agit</em> d'un mandataire pare-feu (Il existe des paquets
+Debian fournis par les auteurs).
+
 <item>Informations sur la configuration de services avec file-rc
-<item>Vérification de toutes les URLs et suppression ou correction de celles
+
+<item>Vérification de toutes les URLs et supprimer ou corriger celles
 qui ne sont plus disponibles.
 
-<item>Informations sur les substituts de serveurs communs (disponibles dans
-Debian) à fonctionnalité restreinte. Par exemple&nbsp;:
+<item>Ajouter des informations sur les substituts de serveurs 
+typiques (disponibles dans Debian) qui fournissent des
+fonctionnalisés restreintes. Par exemple&nbsp;:
 
 	<list>
-<item>local lpr with cups (paquet)?
+	<item>lpr local avec cups (paquet)&nbsp;?&nbsp;;
 
-	<item>remote lrp avec lpr
+	<item>lrp distant avec lpr&nbsp;;
 
-	<item>bind avec dnrd/maradns
+	<item>bind avec dnrd/maradns&nbsp;;
 
-	<item>apache avec dhttpd/thttpd/wn (tux?)
+	<item>apache avec dhttpd/thttpd/wn (tux?)&nbsp;;
 
-	<item>exim/sendmail avec ssmtpd/smtpd/postfix
+	<item>exim/sendmail avec ssmtpd/smtpd/postfix&nbsp;;
 
-	<item>squid avec tinyproxy
+	<item>squid avec tinyproxy&nbsp;;
 
-	<item>ftpd avec oftpd/vsftp
+	<item>ftpd avec oftpd/vsftp&nbsp;;
 
 	<item>...
 
 	</list>
 
 
-<item>Plus d'informations concernant les rustines pour noyaux 
-liées à la sécurité dans Debian, incluant celles montrées 
-ci-dessus et informations sur leur activation dans un système
-Debian.
+<item>Plus plus amples informations concernant les 
+rustines spécialisées dans la sécurité du noyaux dans 
+Debian, incluant celles montrées ci-dessus et ajouter
+des informations sur la façon de s'en servir dans un 
+système Debian.
 
 <list>
 
-<item>Linux Intrusion Detection (<package>lids-2.2.19</package>)
+<item>Linux Intrusion Detection (<package>lids-2.2.19</package>)&nbsp;;
 
-<item>Linux Trustees (paquet <package>trustees</package>)
+<item>Linux Trustees (paquet <package>trustees</package>)&nbsp;;
 
 <item><url name="NSA Enhanced Linux"
-id="http://www.coker.com.au/selinux/">
+id="http://www.coker.com.au/selinux/">&nbsp;;
 
 <item><url name="kernel-patch-2.2.18-openwall"
-id="http://packages.debian.org/kernel-patch-2.2.18-openwall">
+id="http://packages.debian.org/kernel-patch-2.2.18-openwall">&nbsp;;
 
-<item><package>kernel-patch-2.2.19-harden</package>
+<item><package>kernel-patch-2.2.19-harden</package>&nbsp;;
 
-<item>Linux capabilities (paquet <package>lcap</package>
+<item>Linux capabilities (paquet <package>lcap</package>&nbsp;;
 
-<item><package>kernel-patch-freeswan,kernel-patch-int</package>
+<item><package>kernel-patch-freeswan,kernel-patch-int</package>.
 
 </list>
 
@@ -248,68 +267,70 @@ elle peut être élargie un petit peu.
 <item>Informations sur le renouvellement des mots de passes&nbsp;;
 c'est étroitement lié à la politique mise en place.
 
-<item>Politique de sécurité et éducation des utilisateurs.
+<item>Politique de sécurité et formation des utilisateurs.
 
 <item>Davantage à propos de tcpwrappers, et des wrappers en général&nbsp;?
 
 <item><file>hosts.equiv</file> et d'autres trous de sécurités majeurs.
 
 <item>Problèmes avec les serveurs de partage de fichiers tels que Samba
-et NFS ?
+et NFS&nbsp;?
 
 <item>suidmanager/dpkg-statoverrides.
 
 <item>lpr et lprng.
 
-<item>Déconnecter les trucs Gnome sur IP ou les tucs IP de Gnome.
+<item>Déconnecter les outils Gnome qui utilisent IP.
 
 <item>Parler de pam_chroot (voir <url
 id="http://http://lists.debian.org/debian-security/2002/debian-security-200205/msg00011.html">)
 et de son utilité pour restreindre les utilisateurs. Introduire les 
 informations relatives à
 <url id="http://online.securityfocus.com/infocus/1575">.
-<package>Pdmenu</package>, par exemple est disponible dans la Debian (alors
-que flash ne l'est pas).
+<package>Pdmenu</package>, par exemple est disponible dans la 
+Debian (alors que flash ne l'est pas).
 
-<item>Parler des services "chrootés", plus d'informations sur
+<item>Parler des services «&nbsp;chrootés&nbsp;», plus d'informations sur
 <url id="http://www.linuxfocus.org/English/January2002/aritcle225.shtml">,
-<url id="http://www.networkdweebs.com/chroot.html"> et 
+<url id="http://www.networkdweebs.com/chroot.html"> et
 <url id="http://www.linuxsecurity.com/feature_stories/feature_story-99.html">
 
-<item>Parler des programmes pour faire des prisons chroot. 
+<item>Parler des programmes pour faire des «&nbsp;prisons&nbsp;» chroot. 
 <package>Compartment</package> et <package>chrootuid</package>
 attendent dans incoming. D'autres (makejail, jailer) pourraient aussi être
 présentés.
 
 <item>Ajouter les informations fournies par Karl Hegbloom concernant la 
-configuration de Bind 9 "chrooté", voir
+configuration de Bind&nbsp;9 «&nbsp;chrooté&nbsp;», voir
 <url id="http://people.pdxlinux.org/~karlheg/Secure_Bind9_uHOWTO/Secure_Bind_9_uHOWTO.xhtml">.
 
-<item>Ajouter les informations fournies par Pedro Zornenon pour chrooter Bind 8
-,pour la potato uniquement cependant :(, voir
+<item>Ajouter les informations fournies par Pedro Zornenon pour chrooter Bind&nbsp;8,
+malheureusement pour la potato uniquement&nbsp;:(, voir
 <url id="http://people.debian.org/~pzn/howto/chroot-bind.sh.txt"> 
-(inclure le script en entier ?).
+(inclure le script en entier&nbsp;?).
 
 <item>Plus d'informations concernant les logiciels d'analyse de journaux
 (i.e. logcheck et colorize).
 
-<item>Routage 'avancé' (la politique de trafic concerne la sécurité)
+<item>Routage «&nbsp;avancé&nbsp;» (la politique de trafic concerne la sécurité)
 
-<item>Limiter <prgn>ssh</prgn> dans son exécution de certaines commandes.
+<item>Restreindre <prgn>ssh</prgn> pour qu'il puisse uniquement exécuter de certaines 
+commandes.
 
 <item>Utilisation de dpkg-statoverride.
 
 <item>Moyens sûrs de partager un graveur de CD parmi les utilisateurs.
 
 <item>Moyens sûrs de fournir du son en réseau en plus des possibilités
-d'affichage en réseau (pour que le son des clients X soient jouées sur le
+d'affichage en réseau (pour que le son des clients X soient envoyées sur le
 périphérique son du serveur X)
 
 <item>Sécurisation des navigateurs web.
 
-<item>Configurer ftp sur <prgn>ssh</prgn>.
+<item>Configurer ftp au travers de <prgn>ssh</prgn>.
 
-<item>Utilisation des systèmes de fichiers "loopback" cryptés.
+<item>Utilisation des systèmes de fichiers «&nbsp;loopback&nbsp;» 
+chiffrés.
 
 <item>Chiffrement entier du système de fichiers.
 
@@ -320,436 +341,467 @@ périphérique son du serveur X)
 <item>Utiliser LDAP pour gérer les utilisateurs. Il y a un HOWTO de 
 ldap+kerberos pour Debian à www.bayour.com écrit par Turbo Fredrikson.
 
-<item>Comment enlever des informations d'utilité réduite sur les systèmes
-en production tels que /usr/share/doc, /usr/share/man 
-(oui, sécurité par obscurité).
+<item>Comment enlever des informations non-essentielles sur les systèmes
+de production tels que /usr/share/doc, /usr/share/man (oui, sécurité par 
+obscurité).
 	
 </list>
 
-<sect>Changelog/Historique
+<sect id="changelog">Changelog/Historique
  <p>
-<sect1>Version 2.8 (novembre 2002)
-<p>Modifications de Javier Fern'ndez-Sanguino Pen~a (moi).
+<sect1>Version&nbsp;2.8 (novembre 2002)
+<p>Modifications de Javier Fernández-Sanguino Peña (moi).
 <list>
-<item>Application de rustines de Carlo Perassi, corrections incluant :
-modification de la longueur de lignes, correction d'URL, et correction de
-certains FIXMES.
-<item>Mise à jour du contenu de la FAQ de l'équipe de sécurité Debian.
-<item>Ajout d'un lien vers la FAQ de l'équipe de sécurité Debian et la 
-référence du développeur Debian, les sections dupliquées pourraient (juste
-pourraient) être supprimées à l'avenir.
+<item>Application des rustines de Carlo Perassi, corrections incluant&nbsp;:
+modification de la longueur de lignes, correction d'URL, et 
+correction de certains FIXMES&nbsp;;
+<item>Mise à jour du contenu de la FAQ de l'équipe en charge de la
+sécurité de Debian&nbsp;;
+<item>Ajout d'un lien vers la FAQ de l'équipe en charge de la sécurité
+de Debian et la référence du développeur Debian, les sections dupliquées 
+pourraient (juste pourraient) être supprimées à l'aveni&nbsp;;
 <item>Correction de la section d'audit manuel avec les commentaires de 
-Michal Zielinski.
+Michal Zielinski&nbsp;;
 <item>Ajout d'un lien vers des dictionnaires (contribution de Carlo Perassi).
 </list>
 
-<sect1>Version 2.7 (octobre 2002)
-<p>Modifications de Javier Ferna'ndez-Sanguino Pen~a (moi).  Note: j'ai
-encore beaucoup de modifications à intégrer dans ma boîte aux lettres (qui
-a actuellement une taille de 5 Mo).
+<sect1>Version&nbsp;2.7 (octobre 2002)
+<p>Modifications de Javier Fernández-Sanguino Peña (moi).  Note&nbsp;: 
+j'ai encore beaucoup de modifications qui sont stockées dans ma boîte de
+réception (ce qui représente en ce moment environ 5 Mo) à intégrer.
 <list>
-<item>Correction de quelques fautes de frappe corrigées rapportées par 
-Tuyen Dinh, Bartek Golenko et Daniel K. Gebhart.
-<item>Note concernant les rootkits utilisant /dev/kmem transmise par Laurent 
-Bonnaud
-<item>Correction de fautes de frappes rapportées par Carlo Perassi.
+<item>Correction de quelques fautes qui ont été signalées par 
+Tuyen Dinh, Bartek Golenko et Daniel K. Gebhart&nbsp;;
+<item>Note concernant les rootkits utilisant /dev/kmem suggérées
+par Laurent Bonnaud&nbsp;;
+<item>Correction de fautes et de FIXMes par Carlo Perassi.
 </list>
 
-<sect1>Version 2.6 (septembre 2002)
+<sect1>Version&nbsp;2.6 (septembre 2002)
 <p>Modifications de Chris Tillman, tillman@voicetrak.com. 
 <list>
-<item>Modifications pour améliorer la grammaire/l'orthographe.
-<item>s/host.deny/hosts.deny/ (1 endroit)
-<item>Application de la rustine de Larry Holish (assez grosse, corrige beaucoup
-de FIXMEs)
+<item>Modifications pour améliorer la grammaire/l'orthographe&nbsp;;
+<item>s/host.deny/hosts.deny/ (1 endroit)&nbsp;;
+<item>Application de la rustine de Larry Holish (assez grosse, corrige 
+de nombreux FIXMEs).
 </list>
 
-<sect1>Version 2.5 (septembre 2002)
-<p>Modifications de Javier Ferna'ndez-Sanguino Pen~a (moi). 
+<sect1>Version&nbsp;2.5 (septembre 2002)
+<p>Modifications de Javier Fernández-Sanguino Peña (moi). 
 <list>
-<item>Corrections de fautes de frappe mineures rapportées par Thiemo Nagel.
-<item>Ajout d'une note de bas de page suggérée par Thiemo Nagel.
-<item>Correction un lien URL.
+<item>Corrections de quelques fautes signalées par Thiemo Nagel&nbsp;;
+<item>Ajout d'une note de bas de page sur les conseils de 
+Thiemo Nagel&nbsp;;
+<item>Corrige un lien URL.
 </list>
 
-<sect1>Version 2.5 (août 2002)
+<sect1>Version&nbsp;;2.5 (août 2002)
 
-<p>Modifications de Javier Ferna'ndez-Sanguino Pen~a (moi). Il y avait
-beaucoup de choses attendant dans ma boîte de réception (depuis février) 
-d'être incluses, je vais donc appeler ceci la version <em>retour de lune 
-de miel</em> :)
+<p>Modifications de Javier Fernández-Sanguino Peña (moi). Il y avait
+beaucoup de choses en attente dans ma boîte de réception (depuis février), 
+je vais donc appeler ceci la version <em>retour de lune de miel</em>&nbsp;:)
 
 <list>
 
-<item>Application d'un rustine fournie par Philipe Gaspar concernant Squid
-qui supprime aussi un FIXME.
+<item>Application d'une rustine fournie par Philipe Gaspar concernant Squid
+qui supprime aussi un FIXME&nbsp;;
 
 <item>Encore une autre FAQ concernant les bannières de services provenant de
-la liste de diffusion debian-security (discussion "Telnet information" 
-démarrée le 26 juillet 2002).
+la liste de diffusion debian-security (discussion «&nbsp;Telnet information&nbsp;»
+démarrée le 26 juillet 2002)&nbsp;;
 
 <item>Ajout d'une note concernant l'utilisation des références croisée CVE
-dans l'élément de la FAQ
-<em>En combien de temps l'équipe de sécurité Debian...</em>
+dans l'élément de la FAQ <em>En combien de temps l'équipe en charge de 
+la sécurité de Debian...</em>&nbsp;;
 
 <item>Ajout d'une nouvelle section concernant les attaques ARP fournie par
-Arnaud "Arhuman" Assad.
+Arnaud «&nbsp;Arhuman&nbsp;» Assad&nbsp;;
 
-<item>Nouvelle FAQ concernant dmesg et le login console par le noyau.
+<item>Nouvelle FAQ concernant dmesg et le démarrage en mode console par 
+le noyau&nbsp;;
 
 <item>Petites parcelles d'informations sur les problèmes de vérification
 de signature dans les paquets (il semble qu'ils n'aient pas passé le stade
-de la version béta).
+de la version béta)&nbsp;;
 
 <item>Nouvelle FAQ concernant les faux positifs des outils d'évaluation
-de vulnérabilité.
+de vulnérabilité&nbsp;;
 
 <item>Ajout de nouvelles sections au chapitre qui contient des informations
 sur les signatures de paquet et réorganisation en un nouveau chapitre
-<em>Infrastructure de sécurité Debian</em>.
+<em>Infrastructure de sécurité Debian</em>&nbsp;;
 
-<item>Nouvel élément de FAQ concernant Debian contre les autres distributions
-Linux.
+<item>Nouvel élément de FAQ concernant Debian et les autres distributions
+Linux&nbsp;;
 
 <item>Nouvelle section sur les clients de mail avec des fonctionnalités
-GPG/PGP dans le chapitre outils de sécurité.
+GPG/PGP dans le chapitre outils de sécurité&nbsp;;
 
 <item>Clarification sur la manière d'activer les mots de passe MD5 dans
-la woody, ajout d'une lien vers PAM ainsi qu'une note concernant la définition
-de max dans PAM.
+la <em>Woody</em>, ajout d'une lien vers PAM ainsi qu'une note concernant la 
+définition de max dans PAM&nbsp;;
 
-<item>Ajout d'une nouvelle annexe sur comment créer des environnements chroot
-(après avoir joué un peu avec makejail et avoir corrigé, aussi, quelques-un
-de ses bogues), intégration des informations dupliquées dans toutes les annexes.
+<item>Ajout d'une nouvelle annexe sur comment créer des environnements 
+«&nbsp;chroot&nbsp;» (après avoir joué un peu avec makejail et avoir corrigé, 
+aussi, quelques-un de ses bogues), intégration des informations dupliquées 
+dans toutes les annexes&nbsp;;
 
-<item>Ajout d'informations complémentaires concernant le "chrootage" de 
-<PRGN>SSH</PRGN> et de son impact sur les transferts de fichiers sécurisés.
+<item>Ajout d'informations complémentaires concernant le «&nbsp;chrootage&nbsp;» 
+de <PRGN>SSH</PRGN> et de son impact sur les transferts sécurisés de fichiers.
 Certaines informations ont été récupérées de la liste de diffusion
-debian-security (Juin 2002 discussion:<em>Secure file transfers</em>).
+debian-security (Juin 2002 discussion&nbsp;;:<em>Secure file 
+transfers</em>)&nbsp;;
 
 <item>Nouvelles sections sur la mise à jour automatique des systèmes Debian
-ainsi que les dangers d'utiliser la "testing" ou l'"unstable" du point de vue
-des mises à jour de sécurité.
+ainsi que les dangers d'utiliser la distribution «&nbsp;testing&nbsp;» ou 
+la distribution «&nbsp;unstable&nbsp;» du point de vue des mises à jour de 
+sécurité&nbsp;;
 
-<item>Nouvelle section concernant la manière de rester à jour dans ses mises
-à jour de sécurité dans la section <em>avant la compromission</em> ainsi
-qu'une nouvelle section sur la liste de diffusion debian-security-announce.
+<item>Nouvelle section, concernant la manière de rester à jour avec
+la mise en place de rustines de sécurité, dans la section 
+<em>avant la compromission</em> ainsi qu'une nouvelle section sur la liste de 
+diffusion debian-security-announce&nbsp;;
 
-<item>Ajouts d'informations sur la manière de générer des mots de passe sûrs.
+<item>Ajouts d'informations sur la manière de générer 
+automatiquement des mots de passe sûrs&nbsp;;
 
-<item>Nouvelle section relative au login des utilisateurs oisifs (idle).
+<item>Nouvelle section relative à la connexion des utilisateurs 
+oisifs (<em>idle</em>)&nbsp;;
 
-<item>Réorganisation de la section sécurisation du serveur de mail basée sur
-la discussion <em>Secure/hardened/minimal Debian (or "Why is the base system
-the way it is?")</em> de la liste de diffusion debian-security (Mai 2002).
+<item>Réorganisation de la section sécurisation du serveur de mail suite
+à la discussion <em>Secure/hardened/minimal Debian (ou "Why is the base system
+the way it is?")</em> sur la liste de diffusion debian-security 
+(Mai 2002)&nbsp;;
 
 <item>Réorganisation de la section sur les paramètres réseaux du noyau, avec
 les informations fournies par la liste de diffusion debian-security
 (Mai 2002, discussion <em>syn flood attacked?</em>) et ajout d'un nouvel
-élément de FAQ aussi.
+élément de FAQ&nbsp;;
 
 <item>Nouvelle section sur la manière de vérifier les mots de passe des
-utilisateurs et quels paquets utiliser pour cela.
+utilisateurs et quels paquets utiliser pour cela&nbsp;;
 
 <item>Nouvelle section sur le chiffrement PPTP avec les clients Microsoft
-discuté sur la liste de diffusion debian-security (Avril 2002).
+discuté sur la liste de diffusion debian-security (Avril 2002)&nbsp;;
 
-<item>Ajout d'une nouvelle section décrivant les problèmes liés à la liaison
-d'un service donné à une adresse IP spécifique, cette information a été écrite
-sur la base d'une discussion de la liste de diffusion bugtraq :
+<item>Ajout d'une nouvelle section décrivant les problèmes qui peuvent
+survenir lorsque l'on attribue une adresse IP spécifique pour chaque service,
+cette information a été écrite d'après d'une discussion qui s'est
+tennue sur de la liste de diffusion bugtraq&nbsp;:
 <em>Linux kernel 2.4 "weak end host" issue (discuté précédemment sur
-debian-security comme as "arp problem")</em> (démarré le 9 mai 2002 par
-Felix von Leitner).
+debian-security sous le titre «&nbsp;arp problem&nbsp;»)</em> (démarré 
+le 9 mai 2002 par Felix von Leitner)&nbsp;;
 
-<item>Ajout d'informations sur le protocole <prgn>ssh</prgn> version 2.
+<item>Ajout d'informations sur le protocole <prgn>ssh</prgn> 
+version&nbsp;2&nbsp;;
 
-<item>Ajout de deux sous-sections relatives à la configuration sûre d'Apache
-(C'est à dire, les choses spécifiques à la Debian)
+<item>Ajout de deux sous-sections relatives à la configuration sécurisée 
+d'Apache (C'est à dire, les choses spécifiques à la Debian)&nbsp;;
 
-<item>Ajout d'une nouvelle FAQ relative aux "raw sockets", une relative à
-/root, un élément relatif aux groupes d'utilisateurs et un autre relatif à
-la journalisation et aux droits des fichiers de configurations.
+<item>Ajout d'une nouvelle FAQ traitant des «&nbsp;raw sockets&nbsp;», 
+une relative à /root, une partie traitant des groupes d'utilisateurs et 
+une autre traitant des permissions des journanaux et des permission des 
+fichiers de configuration&nbsp;;
 
 <item>Ajout d'un lien vers un bogue dans libpam-cracklib qui pourrait encore
-être présent... (besoin de vérifier)
+être présent... (besoin de vérifier)&nbsp;;
 
-<item>Ajout de plus d'informations concernant l'analyse post-mortem (en suspend
+<item>Ajout de plus d'informations sur l'analyse avancée (en suspend,
 plus d'information sur les outils d'inspection de paquet tels que 
-<prgn>tcpflow</prgn>).
+<prgn>tcpflow</prgn>)&nbsp;;
 
-<item>Transformation de "Que dois je faire concernant la compromission" en une
-liste en incluant plus d'éléments.
+<item>Transformation de «&nbsp;Que dois je faire concernant la 
+compromission&nbsp;» en une série d'énumération et en y ajoutant
+plus d'éléments&nbsp;;
 
 <item>Ajout d'informations sur la configuration de Xscreensaver pour
-verrouiller l'écran automatiquement après une durée donnée.
+verrouiller l'écran automatiquement après une durée donnée&nbsp;;
 
-<item>Ajout d'une note relative aux utilitaires que vous ne devriez pas
+<item>Ajout d'une note sur les utilitaires que vous ne devriez pas
 installer sur un système. Inclus une note concernant Perl et pourquoi il
 ne peut pas être retiré facilement de la Debian. L'idée vient de la lecture
-des documents d'Intersect concernant le durcissement de Linux.
+des documents d'Intersect concernant le renforcement de Linux&nbsp;;
 
-<item>Ajout d'informations sur lvm et le systèmes de fichiers journalisés,
-ext3 recommandé. Les informations pourraient y être trop générique, cependant.
+<item>Ajout d'informations sur lvm et les systèmes de fichiers journalisés,
+ext3 est préconisé. Les informations pourraient cependant y être trop 
+génériques&nbsp;;
 
-<item>Ajout d'une lien sur la version texte enligne (vérifier).
+<item>Ajout d'une lien sur la version texte disponible en ligne 
+(à vérifier)&nbsp;;
 
 <item>Ajout d'informations additionnelles sur la protection par pare-feu
-d'un système local, déclenché par un commentaire fait par Hubert Chan sur
-la liste de diffusion.
+d'un système local, faisant suite à un commentaire d'Hubert Chan sur
+la liste de diffusion&nbsp;;
 
 <item>Ajout d'informations additionnelles sur les limites PAM et de liens
 vers les documents de Kurt Seifried (relatifs à un de ses posts sur
-bugtraq le 4 avril 2002 répondant à une personne qui avait "découvert" une
-vulnérabilité dans la Debian GNU/Linux relative à la privation de ressource).
+bugtraq le 4 avril 2002 répondant à une personne qui avait «&nbsp;découvert&nbsp;» 
+une vulnérabilité dans Debian GNU/Linux relative à la privation de ressource)&nbsp;;
 
-<item>Comme suggéré par Julia'n Mun~oz, fourniture de plus d'information
+<item>Comme suggéré par Julián Muñoz, ajout de plus d'information
 sur l'umask par défaut de la Debian et ce à quoi un utilisateur peut accéder
-si on lui a donné un shell sur le système (effrayant, hein?)
+si on lui a donné un shell sur le système (effrayant, hein?)&nbsp;;
 
 <item>Inclusion d'une note dans la section du mot de passe BIOS suite à un
-commentaire d'Andreas Wohlfeld.
+commentaire d'Andreas Wohlfeld&nbsp;;
 
 <item>Inclusion des rustines fournies par Alfred E. Heggestad corrigeant
-beaucoup de fautes de frappes encore présentes dans le document.
+beaucoup de fautes encore présentes dans le document&nbsp;;
 
 <item>Ajout d'un lien vers le changelog dans la section des remerciements
 comme beaucoup des personnes qui ont contribué sont listées ici (et pas
-là bas).
+là bas)&nbsp;;
 
-<item>Ajout de quelques notes additionnelles à la section de chattr et
+<item>Ajout de quelques notes complémentaires dans la section de chattr et
 d'une nouvelle section après l'installation qui parle des images systèmes.
-Les 2 idées sont la contribution de Kurt Pomeroy.
+Les deux idées sont la contribution de Kurt Pomeroy&nbsp;;
 
 <item>Ajout d'une nouvelle section après l'installation juste pour rappeler
-aux utilisateurs de changer la séquence de boot.
+aux utilisateurs de changer la séquence de démarrage&nbsp;;
 
-<item>Ajout d'éléments restant à faire (TODO) fournis par Korn Andras.
+<item>Ajout d'éléments restant à faire (TODO) fournis par Korn Andras&nbsp;;
 
-<item>Ajout d'une lien vers les recommandations du NIST sur la manière de
-sécuriser un DNS fournit par Daniel Quinlan.
+<item>Ajout d'un lien vers les recommandations du NIST sur la manière de
+sécuriser un DNS. Cette contribution nous est fournie par Daniel Quinlan&nbsp;;
 
 <item>Ajout d'un petit paragraphe concernant l'infrastructure des certificats
-SSL de la Debian.
+SSL de la Debian&nbsp;;
 
 <item>Ajout des suggestions de Daniel Quinlan concernant l'authentification 
-<prgn>ssh</prgn> et la configuration d'exim en relai.
+<prgn>ssh</prgn> et la configuration d'exim en relai&nbsp;;
 
 <item>Ajout de plus d'information concernant la sécurisation de bind incluant
 les modifications suggérées par Daniel Quinlan et une annexe avec un script
-pour faire quelques un des changements commentés dans cette section.
+pour faire quelques un des changements commentés dans cette section&nbsp;;
 
-<item>Ajout d'un lien vers un autre élément concernant le chrootage de Bind
-(nécessite d'être réuni).
+<item>Ajout d'un lien vers un autre élément concernant le «&nbsp;chrootage&nbsp;» 
+de Bind (a besoin d'être fusionné)&nbsp;;
 
-<item>Ajout d'un uneligne ("one liner") contribué par Cristian Ionescu-Idbohrn
-pour récupérer les paquets avec support des tcpwrappers.
+<item>Ajout d'un une ligne de Cristian Ionescu-Idbohrn pour récupérer les paquets 
+avec support des tcpwrappers&nbsp;;
 
 <item>Ajout d'un peu plus d'information sur la configuration PAM par défaut de
-la Debian.
+la Debian&nbsp;;
 
 <item>Inclusion d'une question dans la FAQ au sujet de l'utilisation de PAM
-pour fournir des services sans comptes shell.
+pour fournir des services sans comptes shell&nbsp;;
 
 <item>Déplacement de deux éléments de la FAQ dans une autre section et ajout
-d'une nouvelle FAQ concernant la détection des attaques (et systèmes compromis).
+d'une nouvelle FAQ concernant la détection des attaques 
+(et des systèmes corrompus)&nbsp;;
 
 <item>Inclusion d'information sur configurer un pont pare-feu (incluant une
-annexe d'exemple). Merci à Francois Bayar qui m'a envoyé ça en Mars.
+annexe d'exemple). Merci à Francois Bayar qui m'a envoyé ça en Mars&nbsp;;
 
-<item>Ajout d'une FAQ concernant le <em>battement(heartbeat)</em> <em>MARK</em> 
-de syslogd d'après une question à laquelle Noah Meyerhans et Alain Tesio ont
-répondu en décembre 2001.
+<item>Ajout d'une FAQ concernant les <em>MARK</em> d'heartbeat dans
+le syslogd d'après une question à laquelle Noah Meyerhans et Alain Tesio ont
+répondu en décembre 2001&nbsp;;
 
-<item>Inclusion d'information sur la protection contre le débordement de
-tampon ainsi que quelques informations sur les rustines noyau.
+<item>Inclusion d'information sur la protection contre les débordements de
+tampons ainsi que quelques informations sur les rustines du noyau&nbsp;;
 
-<item>Ajout d'informations (et réorganisation) de la section pare-feu.
-Mise à jour des informations concernant le paquet iptables et les générateurs
-de pare-feu disponibles.
+<item>Ajout d'informations supplémentaires (et réorganisation) de la section 
+pare-feu. Mise à jour des informations concernant le paquet iptables et les 
+générateurs de pare-feu disponibles&nbsp;;
 
 <item>Réorganisation des informations concernant la vérification des journaux,
-déplacement des informations sur logcheck de la détection d'intrusion machine
-vers cette section.
+déplacement des informations de logcheck sur la détection d'intrusion machine
+vers cette section&nbsp;;
 
 <item>Ajout d'informations sur la manière de préparer un paquet statique pour
-bind dans l'optique d'un chrootage (non testé).
+bind dans l'optique d'un «&nbsp;chrootage&nbsp;» (non testé)&nbsp;;
 
 <item>Ajout d'un élément de FAQ concernant certains serveurs/services 
-spécifiques (pourrait être étendu avec quelques une des recommandations de la 
-liste debian-security).
+spécifiques (pourrait être développé avec quelques une des recommandations de la 
+liste de diffusion debian-security)&nbsp;;
 
-<item>Ajout d'informations sur les services RPC (et quand ils sont nécessaires).
+<item>Ajout d'informations sur les services RPC (et quand ils 
+sont nécessaires)&nbsp;;
 
-<item>Ajout de plus d'informations sur les capacités (et ce que fait lcap).
-Il y a-t-il une bonne documentation sur ce sujet? Je n'ai trouvé aucune
-documentation sur mon noyau 2.4.
+<item>Ajout de plus d'informations sur les possibilité d'amélioration 
+(et ce que fait lcap). Y a-t-il une bonne documentation sur ce sujet&nbsp;? 
+Je n'ai trouvé aucune documentation sur mon noyau&nbsp;2.4&nbsp;;
 
-<item>Correction de fautes de frappes.
+<item>Correction de fautes.
 
 </list>
 
-<sect1>Version 2.4
-<p>Modifications de Javier Ferna'ndez-Sanguino Pen~a.
+<sect1>Version&nbsp;2.4
+<p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
 <item>Réécriture d'une partie de la section BIOS.
 </list>
 
-<sect1>Version 2.3
-<p>Modifications de Javier Ferna'ndez-Sanguino Pen~a.
+<sect1>Version&nbsp;2.3
+<p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
-<item>Encadrement de la plupart des emplacements de fichiers par le marqueur 
-file.
-<item>Correction de fautes de frappes remarquées par Edi Stojicevi.
-<item>Modification légère de la section des outils d'audit distant.
-<item>Ajout d'éléments à faire (todo).
-<item>Ajout d'information concernant les imprimantes et du fichier de
-configuration de cups (tiré d'une discussion sur debian-security).
+<item>Encadrement de la plupart des emplacements de fichiers par la
+balise «&nbsp;file&nbsp;»&nbsp;;
+<item>Correction de fautes rapportées par Edi Stojicevi&nbsp;;
+<item>Légère modification de la section des outils d'audit distant&nbsp;;
+<item>Ajout d'éléments à faire (todo)&nbsp;;
+<item>Ajout d'informations concernant les imprimantes et du fichier de
+configuration de cups (tiré d'une discussion sur debian-security)&nbsp;;
 <item>Ajout d'une rustine soumise par Jesus Climent concernant l'accès
 d'utilisateurs valides du système à proftpd quand il est configuré en
-serveur anonyme.
-<item>Petite modification aux schémas de partitionnement pour le cas spécial
-des serveurs de mails.
-<item>Ajout de Hacking Linux Exposed à la section des livres.
-<item>Correction d'une faute de frappe sur un répertoire notée par 
-Eduardo Pe'rez Ureta.
-<item>Correction d'une coquille sur /etc/ssh dans la liste de contrôle
-notée par Edi Stojicevi.
+serveur anonyme&nbsp;;
+<item>Petite modification aux schémas de partitionnement dans le
+cas particulier des serveurs de mails&nbsp;;
+<item>Ajout du livre «&nbsp;Hacking Linux Exposed&nbsp;» à la section 
+des livres&nsbp;;
+<item>Correction d'une faute de frappe sur un répertoire rapportée par 
+Eduardo Pérez Ureta&nbsp;;
+<item>Correction d'une coquille daus /etc/ssh dans la liste de contrôle
+signalée par Edi Stojicevi.
 </list>
-<sect1>Version 2.3
-<p>Modifications de Javier Ferna'ndez-Sanguino Pen~a.
-<list>
-<item>Correction de l'emplacement du fichier de configuration de dpkg.
-<item>Suppression d'Alexander des informations sur les contacts.
-<item>Ajout d'une autre adresse mail.
-<item>Correction de l'adresse mail d'Alexander (même si elle est commentée).
-<item>Correction de l'emplacement des clés de versions (merci à Pedro Zorzenon
-pour avoir relevé)
-</list>
-<sect1>Version 2.2
+<sect1>Version&nbsp;2.3
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
-<item>Corrections de fautes de frappes, remerciements à Jamin W. Collins.
-<item>Ajout d'une référence à la page de man de  apt-extracttemplate
-(documentation sur la configuration de APT::ExtracTemplate)
+<item>Correction de l'emplacement du fichier de configuration de dpkg&nbsp;;
+<item>Suppression d'Alexander des informations sur les contacts&nbsp;;
+<item>Ajout d'une autre adresse mail&nbsp;;
+<item>Correction de l'adresse mail d'Alexander (même si elle est commentée)&nbsp;;
+<item>Correction de l'emplacement des clés de versions (merci à 
+Pedro Zorzenon pour avoir relevé cette erreur).
+</list>
+
+<sect1>Version&nbsp;;2.2
+<p>Modifications de Javier Fernández-Sanguino Peña.
+<list>
+<item>Corrections de fautes, merci à Jamin W. Collins pour ces 
+corrections&nbsp;;
+<item>Ajout d'une référence à la page de manuel d'apt-extracttemplate
+(documentation sur la configuration de APT::ExtractTemplate)&nbsp;;
 <item>Ajout d'une section concernant la limitation de SSH. Informations 
-basées sur les mails de Mark Janssen, Christian G. Warden et Emmanuel Lacour
-sur la liste de discussion debian-security.
+basées sur celles qui ont été postées par Mark Janssen, Christian G. Warden 
+et Emmanuel Lacour sur la liste de diffusion debian-security&nbsp;;
 <item>Ajout d'informations sur les logiciels antivirus.
-<item>Ajout d'une FAQ&nbsp;:journaux de su provenant du fait que cron fonctionnesous root.
+<item>Ajout d'une FAQ&nbsp;: journaux de su provenant du fait que cron 
+fonctionne entant que root.
 </list>
-<sect1>Version 2.1
+
+<sect1>Version&nbsp;2.1
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
-<item>Modifications du "FIXME" de lshell
-<item>Ajout d'un paquet sXid et retrait du commentaire depuis qu'il est disponible.
-<item>Nombre de fautes de frappes découvertes par Oohara Yuuma ont été corrigées.
-<item>ACID est maintenant disponible dans Debian (dans le paquet acidlab).
-<item>Liens de LinuxSecurity réglés (merci à Dave Wreski).
+<item>Modifications du «&nbsp;FIXME&nbsp;» de lshell, merci à Oohara
+Yuuma&nbsp;;
+<item>Ajout d'un paquet sXid et retrait du commentaire étant donné
+qu'il est disponible&nbsp;;
+<item>De nombreuses fautes relevées par Oohara Yuuma ont été corrigées&nbsp;;
+<item>ACID est maintenant disponible dans Debian (dans le paquet acidlab)&nbsp;;
+<item>Liens de LinuxSecurity corrigés (merci à Dave Wreski de nous l'avoir
+signalé).
 </list>
-<sect1>Version 2.0
+<sect1>Version&nbsp;2.0
 <p>Modifications de Javier Fernández-Sanguino Peña. Je voulais passer à
-2.0 quand tous les "FIXME" auraient été supprimés mais j' ai manqué de numéro
-dans la série 1.9X :(
+2.0 quand tous les «&nbsp;FIXME&nbsp;» auraient été supprimés mais 
+j'ai manqué de numéro dans la série 1.9X&nbsp;:(
 <list>
-<item>Transformation du HOWTO en Manuel (maintenant je peux dire RTFM !)
+<item>Transformation du HOWTO en Manuel (maintenant je peux 
+dire RTFM&nbsp;!)&nbsp;;
 
 <item>Ajout d'informations concernant les tcp wrappers et Debian
-(maintenant plusieurs services sont compilés avec le support adéquat&nbsp;;
-ainsi ceci n'est plus un problème inetd).
+(maintenant plusieurs services sont compilés avec le support 
+adéquat&nbsp;; ainsi ceci n'est plus un problème 
+d'<prgn>inetd</prgn>)&nbsp;;
 
-<item>Clarification d'une information sur la désactivation de services pour la
-rendre
-plus rigoureuse (les infos sur rpc se réferent toujours à update-rc.d)
+<item>Clarification des informations sur la désactivation des 
+services pour la rendre plus cohérente (les infos sur rpc se 
+réferent toujours à update-rc.d)&nbsp;;
 
-<item>Ajout d'une petite note sur lprng.
+<item>Ajout d'une petite note sur lprn&nsbp;;
 
-<item>Ajout de quelques infos sur les serveurs compromis (toujours aussi
-approximatif)
+<item>Ajout de quelques infos sur les serveurs corrompus 
+(toujours très approximatif)&nbsp;;
 
-<item>Corrections des fautes de frappes rapportées par Mark Bucciarelli.
+<item>Corrections des fautes signalées par Mark Bucciarelli&nbsp;;
 
 <item>Ajout d'étapes supplémentaires sur la récupération des mots de
-passe quand l'admin a paramétré paranoid-mode=on.
+passe lorsque l'admin a paramétré paranoid-mode=on&nbsp;;
 
-<item>Informations pour paramétrer paranoid-mode=on lorsque l'on se connecte
-en console.
+<item>Ajout d'informations pour paramétrer paranoid-mode=on lorsque l'on 
+se connecte en mode console&nbsp;;
 
-<item>Nouveau paragraphe pour présenter la configuration de service.
+<item>Nouveau paragraphe pour présenter la configuration des 
+services&nbsp;;
 
-<item>Réorganisation de la section <em>Après l'installation</em> afin de permettre 
-une lecture plus aisée du document.
+<item>Réorganisation de la section <em>Après l'installation</em> afin de 
+permettre une lecture plus aisée du document&nbsp;;
 
 <item>Informations sur la manière de paramétrer des pare-feux avec
-l'installation standard Debian&nbsp;3.0 (paquet iptables).
+l'installation standard de Debian&nbsp;3.0 (paquet iptables)&nbsp;;
 
-<item>Petit paragraphe expliquant pour quelles raisons l'installation
-par le réseau
-n'est pas une bonne idée et comment éviter cela en utilisant les outils Debian.
+<item>Petit paragraphe détaillant pourquoi l'installation par le réseau
+n'est pas une bonne idée et comment on peut l'éviter en utilisant les 
+outils Debian&nbsp;;
 
+<item>Petit paragraphe sur un article de l'IEEE qui souligne l'importance
+d'une application rapide des rustines&nbsp;;
 
-<item>Petit paragraphe sur un article de l'IEEE relatant de l'opportunité du patchage par référence.
-<--! A verifier si je trouve le paragraphe plus bas. jpg ?! -->
-<!-- et c'est vérifié ?  pB -->
-<item>Appendice sur la manière de paramétrer une bécane snort Debian, basé sur 
-ce que Vladimir a envoyé à la liste de discussion debian-security 
-(3 septembre 2001)
+<item>Annexe sur la manière de paramétrer une bécane snort Debian, basé sur 
+ce que Vladimir a envoyé à la liste de diffussion debian-security (le 3 
+septembre 2001)&nbsp;;
 
 <item>Information sur la manière dont est configurée logcheck dans Debian et
-comment il peut être utilisé pour paramétrer HIDS.
+comment il peut être utilisé pour paramétrer HIDS&nbsp;;
 
-<item>Informations sur les comptes utilisateurs et sur les analyses de profile.
+<item>Informations sur les comptes utilisateurs et sur les analyses 
+de profils&nbsp;;
 
 <item>Inclusion de la configuration de apt.conf pour un /usr uniquement
-lisible&nbsp;; copié à partir du courrier de Olaf Meeuwissen envoyé
-à la liste de discussion debian-security.
+lisible&nbsp;; copié à partir du courrier d'Olaf Meeuwissen envoyé
+à la liste de diffusion debian-security&nbsp;;
 
-<item>Nouvelles sections sur le VPN ainsi que les paquets disponibles dans 
-Debian (besoin de contenu concernant l'installation de VPN et les problèmes
-spécifiques à Debian) basé sur les courriers de Jaroslaw Tabor et
-Samuli Suonpaa postés sur la liste de discussion debian-security.
+<item>Nouvelle section sur le VPN qui contient quelques liens ainsi que 
+les paquets disponibles dans Debian (besoin de contenu concernant 
+l'installation de VPN et les problèmes spécifiques à Debian) basé sur les 
+courriers de Jaroslaw Tabor et Samuli Suonpaa postés sur la liste de 
+diffusion debian-security&nbsp;;
 
-<item>Petite note concernant les programmes pour construire automatiquement
-des prisons <em>chroot</em>.
+<item>Petite note concernant quelques programmes pour construire automatiquement
+des prisons «&nbsp;chrootées&nbsp;»&nbsp;;
 
 <item>Nouveau sujet de FAQ concernant identd d'après une discussion sur la liste de 
-discussion debian-security (février 2002, commencé par Johannes Weiss).
+diffusion debian-security (février 2002, commencé par Johannes Weiss)&nbsp;;
 
-<item>Nouveau sujet de FAQ concernant inetd  d'après une discussion sur la liste de 
-discussion debian-security (février 2002).
+<item>Nouveau sujet de FAQ concernant <prgn>inetd</prgn> d'après une discussion 
+sur la liste de diffusion debian-security (février 2002)&nbsp;;
 
-<item>Note d'introduction sur rcconf dans la section "désactivation de services".
+<item>Note d'introduction sur rcconf dans la section 
+«&nbsp;désactivation de services&nbsp;»&nbsp;;
 
-<item>Diverses approches concernant le LKM. Remerciements à Philipe Gaspar.
+<item>Diverses approches concernant le LKM. Remerciements à Philipe Gaspar&nbsp;;
 
-<item>Indications sur les documents CERT et les ressources Couterpane.
+<item>Ajouts de liens vers les documents du CERT et les ressources Couterpane.
 </list>
 
-<sect1>Version 1.99
+<sect1>Version&nbsp;1.99
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
-<item>Ajout d'un nouveau sujet de FAQ concernant le temps à résoudre les vulnérabilités 
-liées à la sécurité.
-<item>Réorganisation des sections de la FAQ.
+<item>Ajout d'un nouveau sujet de FAQ concernant le temps de réaction
+à avoir pour corriger les failles de sécurité&nbsp;;
+<item>Réorganisation des sections de la FAQ&nbsp;;
 <item>Début d'une section concernant les pare-feux dans Debian
-GNU/Linux (pourrait être élargi un peu).
-<item>Corrections de fautes de frappes envoyées par Matt Kraai.
-<item>Correction sur les informations DNS.
-<item>Ajout d'informations sur whisker et nbtscan à la section audit.
-<item>Correction d'URL fausses.
+GNU/Linux (pourrait être un peu élargi)&nbsp;;
+<item>Corrections de fautes signalées par Matt Kraai&nbsp;;
+<item>Correction sur les informations DNS&nbsp;;
+<item>Ajout d'informations sur whisker et nbtscan à la section audit&nbsp;;
+<item>Correction d'URL erronées.
 </list>
-<sect1>Version 1.98
+<sect1>Version&nbsp;1.98
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
 <item>Ajout d'une nouvelle section concernant l'utilisation de la 
-Debian GNU/Linux pour réaliser des audits. 
+Debian GNU/Linux pour réaliser des audits&nbsp;;
 <item>Ajout d'infos concernant le démon finger depuis la liste de 
-discussion debian-security.
+diffusion debian-security.
 </list>
-<sect1>Version 1.97
+<sect1>Version&nbsp;1.97
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
-<item>Correction du lien pour Linux Trustees.
-<item>Fautes de frappes (rustines de Oohara Yuuma et Pedro Zorzenon).
+<item>Correction du lien pour Linux Trustees&nbsp;;
+<item>Correction de fautes (rustines d'Oohara Yuuma 
+et Pedro Zorzenon).
 </list>
 
 <sect1>Version 1.96
@@ -757,121 +809,125 @@ discussion debian-security.
 <list>
 
 <item>Réorganisation de la section installation et suppression de services et
-ajout de nouvelles notes.
+ajout de nouvelles notes&nbsp;;
 
 <item>Ajout de quelques notes concernant l'utilisation d'outils tels que
-les outils de détection d'intrusion.
+les outils de détection d'intrusion&nbsp;;
 
 <item>Ajout d'un chapitre concernant la signature de paquets.
 
 </list>
 
-<sect1>Version 1.95
+<sect1>Version&nbsp;1.95
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
 
-<item>Ajout de notes concernant la sécurité de Squid envoyés par Philipe Gaspar.
+<item>Ajout de notes concernant la sécurité de Squid envoyés par 
+Philipe Gaspar&nbsp;;
 
-<item>Correction de liens rootkit. Remerciements à Philipe Gaspar.
+<item>Correction de liens rootkit. Merci à Philipe Gaspar.
 
 </list>
 
-<sect1>Version 1.94
+<sect1>Version&nbsp;1.94
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
 
-<item>Ajout de quelques notes concernant Apache et Lpr/lpng.
+<item>Ajout de quelques notes concernant Apache et Lpr/lpng&nbsp;;
 
-<item>Ajout d'informations concernant les partitions noexec et readonly.
+<item>Ajout d'informations concernant les partitions noexec et readonly&nbsp;;
 
 <item>Réécriture de la manière dont les utilisateurs peuvent aider 
 aux problèmes liés à la sécurité Debian (sujet d'une FAQ).
 </list>
 
-<sect1>Version 1.93
+<sect1>Version&nbsp;1.93
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
 
-<item>Correction de l'emplacement du programme mail.
+<item>Correction de l'emplacement du programme mail&nbsp;;
 
 <item>Ajout de nouveaux sujets à la FAQ.
 </list>
 
-<sect1>Version 1.92
+<sect1>Version&nbsp;1.92
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
 
-<item>Ajout d'une petite section sur la manière dont Debian traite la sécurité.
+<item>Ajout d'une petite section sur la manière dont Debian 
+s'occupe de la sécurité&nbsp;;
 
-<item>Clarification sur les mots de passes MD5 (merci à «&nbsp;rocky&nbsp;»)
+<item>Clarification sur les mots de passe 
+MD5 (merci à «&nbsp;rocky&nbsp;»)&nbsp;;
 
-<item>Ajout d'informations concernant la consolidation de X
-par Stephen van Egmond.
+<item>Ajout d'informations concernant le renforcement de X
+par Stephen van Egmond&nbsp;;
 
 <item>Ajout de nouveaux sujets à la FAQ.
 
 </list>
 
-<sect1>Version 1.91
+<sect1>Version &nbsp;.91
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
 
-<item>Ajout d'informations légales envoyées par Yotam Rubin.
+<item>Ajout d'informations détaillées envoyées par Yotam Rubin&nbsp;;
 
 <item>Ajout de renseignements sur la manière de mettre en place un 
-«&nbsp;honeynet&nbsp;» en utilisant Debian GNU/Linux.
+«&nbsp;honeynet&nbsp;» en utilisant Debian GNU/Linux&nbsp;;
 
-<item>Ajout de TODOS supplémentaires.
+<item>Ajout de TODOS supplémentaires&nbsp;;
 
-<item>Fautes de frappes corrigées (merci Yotam&nbsp;!)
+<item>Correction de nouvelles fautes (merci Yotam&nbsp;!).
 
 </list>
 
-<sect1>Version 1.9
+<sect1>Version&nbsp;1.9
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
 
-<item>Ajout d'une rustine pour corriger des «&nbsp;fautes d'orthographe&nbsp;»
-et nouvelles informations (contributions de Yotam Rubin)
+<item>Ajout d'une rustine pour corriger des «&nbsp;fautes 
+d'orthographe&nbsp;» et nouvelles informations (contributions de 
+Yotam Rubin)&nbsp;;
 
-<item>Ajout de liens vers d'autres documents en ligne (et hors ligne) tous deux 
-figurant dans la section (voir <ref id="references">).
+<item>Ajout de liens vers d'autres documents en ligne (et hors 
+ligne) tous deux figurant dans la section (voir <ref id="references">)&nbsp;;
 
 <item>Ajout d'informations sur la configuration d'options de Bind pour restreindre 
-l'accès au serveur DNS.
+l'accès au serveur DNS&nbsp;;
 
 <item>Ajout d'informations sur la consolidation automatique d'un système Debian
-(par référence aux paquets harden et bastille).
+(par référence aux paquets harden et bastille)&nbsp;;
 
 <item>Suppression de quelques TODOs terminés et ajout de nouveaux.
 
 </list>
 
-<sect1>Version 1.8
+<sect1>Version&nbsp;1.8
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
 
 <item>Ajout de la liste des utilisateurs et des groupes standard, donnée
-par Joey Hess à la liste de discussion debian-security.
+par Joey Hess à la liste de discussion debian-security&nbsp;;
 
-<item>Ajout d'informations sur les rootkits LKM (<ref id="LKM">) avec la 
-contribution de Philipe Gaspar.
+<item>Ajout d'informations sur les «&nbsp;rootkits&nbsp;» LKM 
+(<ref id="LKM">) avec la contribution de Philipe Gaspar&nbsp;;
 
-<item>Ajout d'informations sur Proftp avec la contribution de Emmanuel Lacour.
+<item>Ajout d'informations sur Proftp avec la contribution 
+d'Emmanuel Lacour&nbsp;;
 
-<item>Rajout de l'annexe «&nbsp;pense-bête&nbsp;» de Era Eriksson.
+<item>Rajout de l'annexe «&nbsp;pense-bête&nbsp;» d'Era Eriksson&nbsp;;
 
-<item>Ajout de nouveaux TODOs et retrait de ceux terminés.
+<item>Ajout de nouveaux TODOs et retrait de ceux terminés&nbsp;;
 
 <item>Ajout manuel des rustines d'Era car elles n'ont pas été incluses dans
 la version précédente.
 
 </list>
-<sect1>Version 1.7
-<p>Modifications de Era Eriksson.
+<sect1>Version&nbsp;1.7
+<p>Modifications d'Era Eriksson.
 <list>
-<item>Fautes de frappes et changements de formulation<!-- FIXME: new checklist has not
-been included yet, era, please send it back -->
+<item>Fautes de frappes et changements de formulation
 </list>
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
@@ -879,68 +935,77 @@ been included yet, era, please send it back -->
 tt et les remplacer par les balises prgn/package.
 </list>
 
-<sect1>Version 1.6 
+<sect1>Version&nbsp;1.6 
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
-<item>Ajout d'un pointeur sur le document publié dans le DDP (devrait
-à terme remplacer l'original).
+<item>Ajout d'un lien sur le document publié dans le DDP (devrait
+à terme remplacer l'original)&nbsp;;
 <item>Démarrage d'une mini-FAQ
-(qui devrait être élargie) avec quelques questions récupérées depuis ma boite
-aux lettres.
-<item>Ajout d'informations générales concernant la sécurisation.
-<item>Ajout d'un paragraphe au sujet de la distribution de courriers locaux.
-<item>Ajout de quelques pointeurs vers d'autres sources d'information.
-<item>Ajout d'informations sur le service d'impression.
-<item>Ajout d'une liste de tâches sur le renforcement de la sécurité.
-<item>Réorganisation des informations sur NIS et RPC.
-<item>Ajout de quelques notes lors de la lecture de ce document sur mon nouveau 
-Visor :) 
-<item>Correction de certaines lignes mal formattées.
-<item>Fautes de frappes corrigées.
+(qui devrait être élargie) avec quelques questions 
+récupérées depuis ma boite de réception&nbsp;;
+<item>Ajout d'informations générales concernant la sécurisation&nbsp;;
+<item>Ajout d'un paragraphe au sujet de la distribution de 
+courriers locaux&nbsp;;
+<item>Ajout de quelques liens vers d'autres sources 
+d'informations&nbsp;;
+<item>Ajout d'informations sur le service d'impression&nbsp;;
+<item>Ajout d'une liste de tâches sur le renforcement de la 
+sécurité&nbsp;;
+<item>Réorganisation des informations sur NIS et RPC&nbsp;;
+<item>Ajout de quelques notes lors de la lecture de ce document 
+sur mon nouveau Visor&nbsp;:) 
+<item>Correction de certaines lignes mal formattées&nbsp;;
+<item>Fautes de frappes corrigées&nbsp;;
 <item>Ajout d'une idée Géniale/Paranoïaque avec la contribution de Gaby
 Schilders.
 </list>
-<sect1>Version 1.5 
+<sect1>Version&nbsp;1.5 
 
-<p>Modifications de Josip Rodin and Javier Fernández-Sanguino Peña.
+<p>Modifications de Josip Rodin et Javier Fernández-Sanguino Peña.
 
 <list>
-<item>Ajout de paragraphes apparentés à BIND et quelques FIXMEs.  <!-- Removed
+<item>Ajout de paragraphes concernant BIND et quelques FIXMEs.  <!-- Removed
 this because I found no evidence for it in the diffs. // era Rewrote
 style in order to make it more formal.  -->
 </list>
-<sect1>Version 1.4
+<sect1>Version&nbsp;1.4
     <p>
 <list>
-<item>Petit paragraphe sur la vérification des setuid
-    <item>Différents nettoyages mineurs
+<item>Petit paragraphe sur la vérification des «&nbsp;setuid&nbsp;»
+    <item>Différents nettoyages mineurs&nbsp;;
     <item>Découverte sur la manière d'utiliser <tt>sgml2txt -f</tt> pour la 
-    version txt</item>
+    version txt</item>.
 </list>
-<sect1>Version 1.3
+<sect1>Version&nbsp;1.3
     <p>
-<list>
-<item>Ajout de mise à jour de sécurité après le paragraphe "après installation".
-    <item>Ajout d'un paragraphe proftpd 
-    <item> Cette fois, quelque chose concernant XDM a réellement été écrit. 
+    <list>
+    <item>Ajout de mise à jour de sécurité après le paragraphe 
+    «&nbsp;après installation&nbsp;»&nbsp;;
+    <item>Ajout d'un paragraphe proftpd&nbsp;;
+    <item>Cette fois, quelque chose concernant XDM a réellement été écrit. 
     Désolé pour la dernière fois.
     </list>
-<sect1>Version 1.2
+<sect1>Version&nbsp;1.2
     <p>
-<list>
-<item>Beaucoup de corrections grammaticales de James Treacy, nouveau 
-    paragraphe XDM
+    <list>
+    <item>Beaucoup de corrections grammaticales de 
+     James Treacy, nouveau paragraphe XDM.
     </list>
-<sect1>Version 1.1
+<sect1>Version&nbsp;1.1
     <p>
-<list>
-<item>Correction de fautes de frappes, divers ajouts
+    <list>
+    <item>Corrections de fautes de frappes, divers ajouts.
     </list>
-<sect1>Version 1.0
+<sect1>Version&nbsp;1.0
     <p>
-<list>
-<item>Première publication.
-    </list>
+    <list>
+   <item>Première publication.
+   </list>
+<!-- Fin M-a-j 1er Dec 2002, Pierre Machard. Tout ce qui est au dessus de ce
+commentaire est à jour à la date du 1er Dec. C'est à dire == à la version dans 
+le cvs anglais à cette date. Normalement c'est relu, affiné, uniformisé. -->
+
+
 
 <sect>Remerciements à&nbsp;:
 <p>
