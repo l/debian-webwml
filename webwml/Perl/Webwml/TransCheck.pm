@@ -64,7 +64,7 @@ sub _read {
         my $file = shift
                 or croak "Missing argument in Webwml::TransCheck->new";
         my ($line, $key, $value);
-        open(FILE, "< $file") or croak "Unable to read $file\n";
+        open(FILE, "< $file") or return;
         while ($line = <FILE>) {
                 if ($line =~ m/^\#use\s+wml::debian::translation-check/) {
                         #   There may be continuation lines
