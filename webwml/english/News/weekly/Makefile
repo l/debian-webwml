@@ -36,8 +36,13 @@ install:: $(HTMLDESTFILES)
 	@# will still work. Bleargh.
 ifeq ($(LANGUAGE),en)
 	@install -d $(HTMLDIR)/current
-	@-rm -f $(HTMLDIR)/current/issue
-	-ln -sf ../$(YEAR)/$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
+	@rm -f $(HTMLDIR)/current/issue
+	@# Detect year boundries and keep the link working.
+	@if [ -d "../$(YEAR)/$(shell cat CURRENT-ISSUE-IS)" ]; then \
+		ln -sf ../$(YEAR)/$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue ; \
+	else \
+		ln -sf ../$(shell expr $(YEAR) - 1)/$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue ; \
+	fi
 endif
 
 # This is used by the install rule, and I had to hack on it, overriding
@@ -68,4 +73,4 @@ index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
 mail:	
 	@cat mail-header
 	@lynx -dump http://www.debian.org/News/weekly/current/issue/ | \
-       	perl -pe 's/^\s\s?\s?//'
+       		perl -pe 's/^\s\s?\s?//'
