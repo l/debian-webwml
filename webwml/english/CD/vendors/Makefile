@@ -6,7 +6,10 @@ WMLBASE=../..
 CUR_DIR=CD/vendors
 SUBS=
 
+GETTEXTFILES += vendors.mo
+
 include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml $(TEMPLDIR)/countries.wml \
-  $(ENGLISHDIR)/CD/vendors/vendors.CD $(ENGLISHDIR)/CD/vendors/vendors.CD.def
+  $(ENGLISHDIR)/CD/vendors/vendors.CD $(ENGLISHDIR)/CD/vendors/vendors.CD.def \
+  $(GETTEXTDEP)
