@@ -23,3 +23,9 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
 	$(WML) index.wml
 
+# Special case for Chinese
+index.zh-cn.html index.zh-tw.html: index.wml $(TEMPLDIR)/mainpage.wml \
+	$(wildcard News/2000/2000*.wml) $(wildcard News/2000/2000*.title) \
+	$(wildcard $(ENGLISHSRCDIR)/News/2000/2000*.wml) \
+	$(wildcard security/2000/2000*.wml) $(wildcard $(ENGLISHSRCDIR)/security/2000/2000*.wml) \
+	$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
