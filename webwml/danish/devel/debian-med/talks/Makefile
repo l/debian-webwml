@@ -18,4 +18,3 @@ ifeq ($(LANGUAGE),en)
 	@echo install MGP
 	-@install -m 664 -p *.mgp $(HTMLDIR)
 endif
-		
