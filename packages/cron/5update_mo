@@ -1,0 +1,49 @@
+#! /bin/bash
+
+. `dirname $0`/../config.sh
+
+gettextfiles="${scriptdir}/pages.pl ${scriptdir}/html.pl"
+podomains="pdo sections langs"
+
+# Update pot
+#
+xgettext -L C -d pdo -o ${podir}/pdo.pot ${gettextfiles}
+xgettext -L C -a -d sections -o ${podir}/sections.pot ${scriptdir}/sections.pl
+xgettext -L C -a -d langs -o ${podir}/langs.pot ${libdir}/Packages/I18N/LanguageNames.pm
+
+cd $podir
+
+# Create missing po files
+#
+for lang in ${polangs}
+do
+  for domain in ${podomains}
+  do
+    test -f ${domain}.${lang}.po || cp ${domain}.pot ${domain}.${lang}.po
+  done
+done
+
+# Update po
+#
+for lang in ${polangs} 
+do
+  for domain in ${podomains}
+  do
+    mv ${domain}.${lang}.po ${domain}.${lang}.po.tmp
+    msgmerge -q -F -o ${domain}.${lang}.po ${domain}.${lang}.po.tmp ${domain}.pot
+    rm ${domain}.${lang}.po.tmp
+  done
+done
+
+# Update mo
+#
+test -d ${localedir} || mkdir -p ${localedir}
+for lang in ${polangs}
+do 
+  test -d ${localedir}/${lang}/LC_MESSAGES \
+      || mkdir -p ${localedir}/${lang}/LC_MESSAGES
+  for domain in ${podomains}
+  do
+    msgfmt -o ${localedir}/${lang}/LC_MESSAGES/${domain}.mo ${domain}.${lang}.po
+  done
+done
