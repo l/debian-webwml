@@ -105,6 +105,7 @@ if ($searchmode eq "searchfiles") {
   $grep .= '"[^ ]"';
 } elsif ($searchmode eq "filelist") {
   $searchkeyword = lc $searchkeyword; # just in case
+  $searchkeyword =~ s/\+/\\\\+/g;
   $grep = "zegrep -h /$searchkeyword".'"(,[^ ]+)?$"';
 }
 
