@@ -33,7 +33,7 @@ PNGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(PNGSOURCE))
 IMGFILES := $(JPGSOURCE) $(GIFSOURCE) $(PNGSOURCE)
 IMGDESTFILES := $(JPGDESTFILES) $(GIFDESTFILES) $(PNGDESTFILES)
 
-all:: $(INT_HTMLFILES) $(HTMLFILES)
+all:: $(HTMLFILES)
 	@for i in $(SUBS) ''; do \
 		if [ -d "$$i" ]; then \
 			$(MAKE) -C $$i ; \
@@ -55,7 +55,8 @@ $(IMGDESTFILES): $(IMGFILES)
 clean::
 	-rm -f *.$(LANGUAGE).html
 ifeq ($(LANGUAGE),zh)
-	-rm -f $(foreach i, cn tw, *.$(LANGUAGE)-$(i).html)
+	rm -f $(foreach i, cn tw, *.$(LANGUAGE)-$(i).html)
+	rm -f $(foreach i, cn tw, *.$(LANGUAGE)-$(i).html.tmp)
 endif
 	@for i in $(SUBS) ''; do \
 		if [ -d "$$i" ]; then \
@@ -64,9 +65,9 @@ endif
 	done
 
 cleandest::
-	-rm -f $(HTMLDIR)/*.$(LANGUAGE).html
+	rm -f $(HTMLDIR)/*.$(LANGUAGE).html
 ifeq ($(LANGUAGE),zh)
-	-rm -f $(foreach i, cn tw, $(HTMLDIR)/*.$(LANGUAGE)-$(i).html)
+	rm -f $(foreach i, cn tw, $(HTMLDIR)/*.$(LANGUAGE)-$(i).html)
 endif
 	@for i in $(SUBS) ''; do \
 		if [ -d "$$i" ]; then \

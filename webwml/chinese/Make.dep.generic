@@ -1,9 +1,24 @@
-%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
-	$(WML) $(<F)
-	@if [ $@ = 'index.zh.html' ]; then \
-		if [ -f index.imgdot-1x1-transp.gif ]; then \
-			mv -f index.imgdot-1x1-transp.gif i.imgdot-1x1-transp.gif; \
-			sed 's/index.imgdot-1x1-tran/i.imgdot-1x1-tran/g' index.$(LANGUAGE).html > index.$(LANGUAGE).html.tmp; \
-			mv -f index.$(LANGUAGE).html.tmp index.$(LANGUAGE).html; \
-		fi; \
+%.$(LANGUAGE)-cn.html %.$(LANGUAGE)-tw.html : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml $(TOCN) $(TOTW)
+#	$(WML) $(<F)
+# temporary hack; see Make.lang.  (foka, 1999-12-28)
+	$(WML)
+
+	@if [ -f index.imgdot-1x1-transp.gif ]; then \
+	    mv -f index.imgdot-1x1-transp.gif i.imgdot-1x1-transp.gif; \
 	fi
+
+ifeq (index, $*)
+	@for i in $(wildcard index.$(LANGUAGE)-??.html); do \
+	    perl -pi -e 's/index.imgdot-1x1-tran/i.imgdot-1x1-tran/g' $$i; \
+	done
+endif
+
+	@echo "Converting $*.zh-cn.html.tmp to $*.zh-cn.html (zh_CN.GB2312)..."
+	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
+	rm -f $*.zh-cn.html.tmp
+	@$(TOCN) $*.zh-cn.html
+
+	@echo "Converting $*.zh-tw.html.tmp to $*.zh-tw.html (zh_TW.Big5)..."
+#	@$(U8TOB5) < $*.zh-tw.html > $*.zh-tw.html.tmp
+	mv -f $*.zh-tw.html.tmp $*.zh-tw.html
+	@$(TOTW) $*.zh-tw.html
