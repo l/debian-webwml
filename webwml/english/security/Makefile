@@ -6,7 +6,7 @@ WMLBASE=..
 CUR_DIR=security
 SUBS=undated $(wildcard [12][0-9][0-9][0-9])
 
-GETTEXTFILES += others.mo
+GETTEXTFILES += security.mo
 
 include $(WMLBASE)/Make.lang
 

@@ -6,6 +6,8 @@ WMLBASE=../..
 CUR_DIR=security/2001
 SUBS=
 
+GETTEXTFILES += security.mo
+
 include $(WMLBASE)/Make.lang
 
 
