@@ -3,3 +3,5 @@ ordlista: ../international/Swedish.wml
 	test -e /usr/bin/w3m-en && \
 	/usr/bin/w3m-en -dump ../international/Swedish.sv.html | \
 	grep '^[|+]' > ordlista || true
+
+install: ordlista
