@@ -9,4 +9,4 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 
-search.$(LANGUAGE).htm: search.wml
+search.$(LANGUAGE).html: search.wml
