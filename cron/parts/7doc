@@ -16,56 +16,48 @@ echo -n "Installing documents:"
 test -d $webdocdir/packaging-manuals || install -d -g debwww -m 2775 $webdocdir/packaging-manuals
 
 echo -n " debian-faq"
-test -d $webdocdir/FAQ || install -d -g debwww -m 2775 $webdocdir/FAQ
-tar -C $webdocdir/FAQ -xzf $ftpdocdir/FAQ/debian-faq.en.html.tar.gz
+ln -s manuals/debian-faq $webdocdir/FAQ
+
+# the next few are from the same debian-policy .deb package
+dpdeb=`ls -1 $ftpdir/pool/main/d/debian-policy/debian-policy_*.deb | tail -1`
+dpkg-deb -x $dpdeb dp
 
 echo -n " policy-manual"
-tar xzf $ftpdocdir/package-developer/policy.html.tar.gz
 test -d $webdocdir/debian-policy || install -d -g debwww -m 2775 $webdocdir/debian-policy
-install -p -g debwww -m 664 policy.html/* $webdocdir/debian-policy/
-rm -rf policy.html
+install -p -g debwww -m 664 dp/usr/share/doc/debian-policy/policy.html/* $webdocdir/debian-policy/
 
 echo -n " fhs"
-tar xzf $ftpdocdir/package-developer/fhs-2.1.html.tar.gz
 test -d $webdocdir/packaging-manuals/fhs || install -d -g debwww -m 2775 $webdocdir/packaging-manuals/fhs
-install -p -g debwww -m 664 fhs.html/* $webdocdir/packaging-manuals/fhs
-rm -rf fhs.html
-
-# echo -n " packaging-manual"
-# tar xzf $ftpdocdir/package-developer/packaging.html.tar.gz
-# test -d $webdocdir/packaging-manuals/packaging.html || install -d -g debwww -m 2775 $webdocdir/packaging-manuals/packaging.html
-# install -p -g debwww -m 664 packaging.html/* $webdocdir/packaging-manuals/packaging.html/
-# rm -rf packaging.html
-
-echo -n " developers-reference"
-tar xzf $ftpdocdir/package-developer/developers-reference.html.tar.gz
-test -d $webdocdir/developers-reference || install -d -g debwww -m 2775 $webdocdir/developers-reference
-install -p -g debwww -m 664 developers-reference.html/* $webdocdir/developers-reference/
-rm -rf developers-reference.html
-
-echo -n " maint-guide"
-test -d $webdocdir/maint-guide || install -d -g debwww -m 2775 $webdocdir/maint-guide
-for i in $ftpdocdir/package-developer/maint-guide*.html.tar.gz; do
-  tar xzf $i
-  lang=`echo $i | perl -pe 's,^.*/maint-guide(.*).html.tar.gz$,$1,'`
-  if [ -z "$lang" ]; then
-    (cd maint-guide.en.html; for file in *; do
-      justfile=${file/.en.html/.html}
-      install -p -g debwww -m 664 $file $webdocdir/maint-guide/
-      ln -sf $file $webdocdir/maint-guide/$justfile
-    done)
-    rm -rf maint-guide.en.html
-  elif [ "$lang" != ".pt" ]; then
-    install -p -g debwww -m 664 maint-guide$lang.html/* $webdocdir/maint-guide/
-    rm -rf maint-guide$lang.html
-  else
-    install -p -g debwww -m 664 maint-guide.pt_BR.html/* $webdocdir/maint-guide/
-    rm -rf maint-guide.pt_BR.html
-  fi
-done
+install -p -g debwww -m 664 dp/usr/share/doc/debian-policy/fhs.html/* $webdocdir/packaging-manuals/fhs/
 
 echo -n " virtual-package-names"
-install -p -g debwww -m 664 $ftpdocdir/package-developer/virtual-package-names-list.txt $webdocdir/packaging-manuals
+install -p -g debwww -m 664 dp/usr/share/doc/debian-policy/virtual-package-names-list.txt.gz $webdocdir/packaging-manuals
+gunzip $webdocdir/packaging-manuals/virtual-package-names-list.txt.gz
+
+echo -n " menu-policy"
+test -d $webdocdir/packaging-manuals/menu-policy || install -d -g debwww -m 2775 $webdocdir/packaging-manuals/menu-policy
+install -p -g debwww -m 664 dp/usr/share/doc/debian-policy/menu-policy.html/* $webdocdir/packaging-manuals/menu-policy/
+
+echo -n " perl-policy"
+test -d $webdocdir/packaging-manuals/perl-policy || install -d -g debwww -m 2775 $webdocdir/packaging-manuals/perl-policy
+install -p -g debwww -m 664 dp/usr/share/doc/debian-policy/perl-policy.html/* $webdocdir/packaging-manuals/perl-policy/
+
+echo -n " mime-policy"
+test -d $webdocdir/packaging-manuals/mime-policy || install -d -g debwww -m 2775 $webdocdir/packaging-manuals/mime-policy
+install -p -g debwww -m 664 dp/usr/share/doc/debian-policy/mime-policy.html/* $webdocdir/packaging-manuals/mime-policy/
+
+echo -n " libc6-migration"
+install -p -g debwww -m 664 dp/usr/share/doc/debian-policy/libc6-migration.txt.gz $webdocdir/packaging-manuals/
+gunzip $webdocdir/packaging-manuals/libc6-migration.txt.gz
+
+# done with the debian-policy package stuff
+rm -rf dp
+
+echo -n " developers-reference"
+ln -s manuals/developers-reference $webdocdir/developers-reference
+
+echo -n " maint-guide"
+ln -s manuals/maint-guide $webdocdir/maint-guide
 
 echo -n " build-essential"
 bedeb=`ls -1 $ftpdir/pool/main/b/build-essential/build-essential_*.deb | tail -1`
@@ -79,24 +71,6 @@ dpkg-deb -x $medeb me
 test -d $webdocdir/packaging-manuals/menu.html || install -d -g debwww -m 2775 $webdocdir/packaging-manuals/menu.html
 install -p -g debwww -m 664 me/usr/share/doc/menu/html/* $webdocdir/packaging-manuals/menu.html/
 rm -rf me
-
-echo -n " menu-policy"
-tar xzf $ftpdocdir/package-developer/menu-policy.html.tar.gz
-test -d $webdocdir/packaging-manuals/menu-policy || install -d -g debwww -m 2775 $webdocdir/packaging-manuals/menu-policy
-install -p -g debwww -m 664 menu-policy.html/* $webdocdir/packaging-manuals/menu-policy
-rm -rf menu-policy.html
-
-echo -n " perl-policy"
-tar xzf $ftpdocdir/package-developer/perl-policy.html.tar.gz
-test -d $webdocdir/packaging-manuals/perl-policy || install -d -g debwww -m 2775 $webdocdir/packaging-manuals/perl-policy
-install -p -g debwww -m 664 perl-policy.html/* $webdocdir/packaging-manuals/perl-policy
-rm -rf perl-policy.html
-
-echo -n " mime-policy"
-tar xzf $ftpdocdir/package-developer/mime-policy.html.tar.gz
-test -d $webdocdir/packaging-manuals/mime-policy || install -d -g debwww -m 2775 $webdocdir/packaging-manuals/mime-policy
-install -p -g debwww -m 664 mime-policy.html/* $webdocdir/packaging-manuals/mime-policy
-rm -rf mime-policy.html
 
 echo -n " emacsen-policy"
 epdeb=`ls -1 $ftpdir/pool/main/e/emacsen-common/emacsen-common_*.deb | tail -1`
@@ -118,9 +92,6 @@ dpkg-deb -x $dddeb dd
 test -d $webdocdir/packaging-manuals/dpkg-internals || install -d -g debwww -m 2775 $webdocdir/packaging-manuals/dpkg-internals
 install -p -g debwww -m 664 dd/usr/share/doc/dpkg/internals/* $webdocdir/packaging-manuals/dpkg-internals/
 rm -rf dd
-
-echo -n " libc6-migration"
-install -p -g debwww -m 664 $ftpdocdir/package-developer/libc6-migration.txt $webdocdir/packaging-manuals/
 
 # still not accounted for: libc5-libc6-Mini-HOWTO
 # joy has sent a mail to Craig Sanders asking about that and the rest of the
