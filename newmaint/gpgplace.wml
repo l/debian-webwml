@@ -1,0 +1,67 @@
+<?
+  session_start();
+  include("gpgconfig.inc");
+  include("common.inc");
+  include("gpgcommon.inc");
+
+?>
+#use wml::gpgpage title="GPG Signing Coordination - Your profile"
+<?
+  if (!session_is_registered("s_username")) {
+?>
+<STRONG>
+You should not be here!</STRONG>
+<? } else {
+  session_register("s_username");
+  }
+?>
+
+<?
+    if (! ($db = open_db())) {
+        echo "<P>Cannot open database.</P>";
+        return FALSE;
+    }
+
+    $sql = "SELECT id FROM people WHERE email = '$s_username'";
+    if (! ($result = pg_exec($db, $sql))) {
+        echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+        return FALSE;
+    }
+    if (pg_NumRows($result) != 1) {
+        echo "That e-mail address is wicked.";
+        return FALSE;
+    }
+    $row = pg_Fetch_Array($result, 0);
+    $who = $row["id"];
+
+
+    # begin, finish
+
+    # city, country
+
+
+    # modify an entry (if $id exists), or add a new one)
+    if ($id) {
+        $sql = "SELECT begin, finish, city, country FROM places WHERE id = '$id'";
+        if (! ($result = pg_exec($db, $sql))) {
+            echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+            return FALSE;
+        }
+
+        if (pg_NumRows($result) != 1) {
+            echo "Not enough or too many results.  That should not happen.";
+            return FALSE;
+        }
+
+        $row = pg_Fetch_Array($result, 0);
+        $begin = $row["begin"];
+        $finish = $row["finish"];
+        $city = $row["city"];
+        $country = $row["country"];
+    } else {
+        $begin = "NULL";
+        $finish = "NULL";
+        # FIXME badly
+    }
+?>
+
