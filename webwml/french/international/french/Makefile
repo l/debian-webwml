@@ -28,14 +28,18 @@ GENDESTFILES = $(patsubst %.$(LANGUAGE).html,$(HTMLDIR)/%.$(LANGUAGE).html,$(GEN
 all:: $(CTDOCFILES) $(CTWEBFILES)
 
 check_trans.status: FORCE
-	../../../check_trans.pl -C ../../.. -t perl french > check_trans.status.new
-	if [ -f check_trans.status ]; then \
-		cmp check_trans.status check_trans.status.new >/dev/null 2>&1 \
-		|| mv check_trans.status.new check_trans.status; \
+	:> $@.new
+	echo '#  File automatically generated with the following command:' >> $@.new
+	echo '#    ../../../check_trans.pl -C ../../.. -t perl french > $@' >> $@.new
+	echo '#  DO NOT EDIT!' >> $@.new
+	../../../check_trans.pl -C ../../.. -t perl french >> $@.new
+	if [ -f $@ ]; then \
+		cmp $@ $@.new >/dev/null 2>&1 \
+		|| mv $@.new $@; \
 	else \
-		mv check_trans.status.new check_trans.status; \
+		mv $@.new $@; \
 	fi
-	-rm -f check_trans.status.new >/dev/null 2>&1
+	-rm -f $@.new >/dev/null 2>&1
 
 FORCE:
 	@:
