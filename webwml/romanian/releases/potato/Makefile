@@ -14,5 +14,5 @@ include $(WMLBASE)/Make.common
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
 
-index.$(LANGUAGE).html: $(TEMPLDIR)/install_manual.wml \
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/install_manual.wml \
   $(ENGLISHSRCDIR)/releases/potato/formats_and_architectures.wmh
