@@ -77,6 +77,9 @@ if (!($query->param('doupdate'))) {
   $data{staddress} = $entry->{postaladdress}->[0];
   $data{staddress} =~ s/\$/\n/;
   $data{countryname} = &Util::LookupCountry($data{c});
+  if ($data{labeledurl} !~ /^https?:\/\//i) {
+    &Util::HTMLError("Malformed URL entered");
+  }
   
   $data{email} = join(", ", @{$entry->{emailforward}});  
 
