@@ -9,30 +9,107 @@
 <?
   if (!session_is_registered("s_username")) {
 ?>
-<STRONG>
-You should not be here!</STRONG>
+<STRONG>You should not be here!</STRONG>
+There's no session registered for you. Please relogin.
 <? } else {
   session_register("s_username");
-  }
 ?>
 
 <?
     if (($db = open_db())) {
-        $sql = "SELECT id, forename, surname FROM people WHERE email = '$s_username'";
-        if (! ($result = pg_exec($db, $sql))) {
-            echo "Problem with query", pg_ErrorMessage($db), "<BR>";
-            return FALSE;
-        }
+        
+	$sql = "SELECT id, forename, surname, email, offer, last_update FROM people WHERE email = '$s_username'";
+	if (! ($result = pg_exec($db, $sql))) {
+		echo "Problem with query", pg_ErrorMessage($db), "<BR>";
+		return FALSE;
+	}
 
-        if (pg_NumRows($result) != 1) {
-            echo "That e-mail address is wicked.";
-            return FALSE;
-        }
+	if (pg_NumRows($result) != 1) {
+		echo "That e-mail address is wicked.";
+		return FALSE;
+	}
 
-        $row = pg_Fetch_Array($result, 0);
-        print_all_places($row["id"], TRUE);
-    }
+	$row = pg_Fetch_Array($result, 0);
+	$luser_error = "";
+
+	if ($update) {
+		$email = $row["email"];
+		#$forename =  # no filtering done
+		#$surname =  # no filtering done
+		$offer = ($offer == "on") ? "TRUE" : "FALSE";
+		$id = $row["id"];
+		$last_update = $row["last_update"];
+
+		if ($passwd1 != $passwd2) {
+			$luser_error = "Passwords do not match, please try again";
+		} else {
+			if ($passwd1 != "") {
+				$passwd = $passwd1;
+				$sql = "UPDATE people SET forename = '$forename', surname = '$surname', email = '$email' , passwd = '$passwd', offer = '$offer', last_update = 'now' WHERE id=$id";
+			} else  {
+				$sql = "UPDATE people SET forename = '$forename', surname = '$surname', email = '$email' ,                     offer = '$offer', last_update = 'now' WHERE id=$id";
+			};
+			
+			if (! ($result = pg_exec($db, $sql))) {
+				$luser_error = "Some error updating the database.";
+
+				$email = $row["email"];
+				$forename = $row["forename"];
+				$surname = $row["surname"];
+				$offer = ($offer == "t") ? "TRUE" : "FALSE";
+				$id = $row["id"];
+			};
+		};
+	} else {
+		$email = $row["email"];
+		$forename = $row["forename"];
+		$surname = $row["surname"];
+		$offer = ($offer == "t") ? "TRUE" : "FALSE";
+		$id = $row["id"];
+		$last_update = $row["last_update"];
+	};
+
 ?>
 
+<FORM action="gpgmain.php" method="POST">
+<INPUT TYPE="hidden" NAME="update" VALUE="1">
+<H2>Your info</H2>
+<TABLE>
+<?
+if ($luser_error) {
+	printf ('<TR><TD colspan="2"><FONT color="red">%s</FONT></TD></TR>', $luser_error);
+};
+?>
+<TR bgcolor="#eeeeee"><TD>Forename:</TD><TD><INPUT TYPE="text" NAME="forename" VALUE="<? echo $forename; ?>"></TD></TR>
+<TR bgcolor="#eeeeee"><TD>Surname:</TD><TD><INPUT TYPE="text" NAME="surname" VALUE="<? echo $surname; ?>"></TD></TR>
+<TR bgcolor="#eeeeee"><TD>email:</TD><TD><? echo $email; ?></TD></TR>
+# <TR bgcolor="#eeeeee"><TD>email:</TD><TD><INPUT TYPE="text" NAME="email" VALUE="<? echo $email; ?>"></TD></TR>
+<TR bgcolor="#eeeeee"><TD>Last update:</TD><TD><? echo $last_update; ?></TD></TR>
+
+<TR><TD colspan="2">Change password:</TD></TR>
+<TR bgcolor="#eeeeee"><TD>New Password:</TD><TD><INPUT TYPE="password" NAME="passwd1"></TD></TR>
+<TR bgcolor="#eeeeee"><TD>Confirm:</TD><TD><INPUT TYPE="password" NAME="passwd2"></TD></TR>
+
+<TR><TD colspan="2">Switch offer / require signatures (If you are a Debian developer, this should be <em>checked</em>)</TD></TR>
+<TR bgcolor="#eeeeee"><TD>Offer to sign key:</TD><TD><INPUT TYPE="checkbox" NAME="offer" <? if ($offer == "TRUE") { echo "checked"; }; ?>></TD></TR>
+</TABLE>
+<INPUT TYPE="submit"> <INPUT TYPE="reset">
+</FORM>
+
+<P><A HREF="gpguserdel.php">Remove</A> yourself from the database.</P>
+
+<H2>Your places</H2>
+<?
+        print_all_places($id, TRUE);
+
+?>
 <P>Add <A HREF = "gpgplace.php">a new entry</A>.</P>
+<?
+    } else {
+?>
+	Could not open the Database. You'r out of luck. Pester someone to get it fixed.
+<?
+    }; #dbopen
+    }; #session_register
+?>
 
