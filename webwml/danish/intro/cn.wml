@@ -1,0 +1,182 @@
+#use wml::debian::template title="Information om sider der er tilgængelige på flere sprog"
+#use wml::debian::translation-check translation="1.27"
+
+<P>Naturligvis bruger alle mennesker i verden det samme sprog. Efterhånden 
+som Internet vokser bliver det mere almindeligt at støde på sider der er 
+tilgængelige på flere sprog. Man introducerede derfor en standard, kaldet 
+indholdsforhandling ('content negotiation'), der giver en person mulighed for 
+at vælge de(t) sprog som vedkommende foretrækker at modtage dokumenter i.
+Hvilken version der rent faktisk overføres, forhandler din browser og 
+server'en om; din browser sender sine præferencer og serveren beslutter 
+udfra dine præferencer og hvilke versioner der er tilgængelige, hvilken 
+version den skal returnere.</p>
+
+<p><ul>
+<li><a href="#fix">Hvad man gør hvis en af Debians websider er på et forkert sprog</a>
+<li><a href="#setting">Opsætning af foretrukent sprog i en browser</a>
+<li><a href="#cache">Notits om cache'nde webservere</a>
+</ul>
+
+<h3><a name="fix">Hvad man gør hvis en af Debians websider er på et forkert sprog</a></h3>
+
+<p>Der er tre årsager til at et dokument modtages i et forkert sprog fra 
+Debians websted. Første årsag, og mest almindeligt, er en fejlopsat browser. 
+Læs i afsnittet <a href="#setting">opsætning af foretrukent sprog i en browser</a> 
+om hvordan dette rettes.</p>
+
+<p>Den anden årsag er en fejlbehæftiget eller fejlopsat cache. Dette er et 
+stigende problem da flere og flere Internetudbydere anser caching som en måde 
+at nedbringe Internet-trafikken på. Læs 
+<a href="#cache">notits om cache'nde webservers</a> også selvom du mener, at 
+du ikke bruger en.</p>
+
+<p>Den tredie årsag er et problem med <a href="http://www.debian.org/">www.debian.org</a>.
+I de sidste to år skyldtes kun et problem med modtagelse af et dokument på det 
+forkerte sprog, et problem hos os. Vi foreslåer derfor at du undersøger de to 
+første mulige fejlkilder grundigt, før du kontakter os.
+Finder du ud af at <a href="http://www.debian.org/">http://www.debian.org/</a>
+fungerer, men et af mirror'ene ikke gør det, så giv os besked og vi vil 
+kontakte den ansvarlige for mirror'et.</p>
+
+<p>Efter at have rettet et hvilket som helst problem, er det en god ide at 
+tømme den lokale cache (både harddisk og hukommelse) i din browser, før du 
+prøver at se websider igen. Vi foreslår også at bruge Lynx mens et problem 
+undersøges. Det er den eneste browser vi har kunnet finde, som opfylder 
+HTTP-specifikationerne vedr. indholdsforhandling 100 procent.</p>
+
+<h3><a name="setting">Opsætning af foretrukent sprog i en browser</a></h3>
+
+<P>Bemærk: den følgende liste er ikke udtømmende. Hvis du har oplysninger om 
+en opsætning af en browser som ikke er nævnt her, så send oplysningerne til 
+<a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>.</p>
+
+<P>For at opsætte standardsproget i din browser skal du sætte en variabel 
+som bliver fortolket af webserveren. Hvordan dette gøres afhænger af browseren 
+du bruger.</p>
+
+<DL compact>
+<DT><strong>lynx</strong></dt>
+<DD>Du kan enten redigere <kbd>preferred_language</kbd>-variablen i din 
+<kbd>.lynxrc</kbd>-fil eller sætte det ved hjælp af 'O'-kommandoen i lynx.</dd>
+
+<DT><strong>netscape 3.x</strong></dt>
+<DD>Tilføj
+<pre>
+     *httpAcceptLanguage: [sprogvalgsstreng]
+</pre>
+til Netscapes app-defaults-fil eller <kbd>~/.Xresources</kbd>-filen.</dd>
+
+<DT><strong>netscape 4.x</strong></dt>
+<DD>Brug
+<pre>
+     Edit -&gt; Preferences -&gt; Navigator -&gt; Languages
+</pre>
+Sørg for at vælge sproget fra valgmulighederne. Flere har rapporteret 
+problemer hvis de indtaster sprogvalget manuelt.</dd>
+
+<DT><strong>W3</strong> (emacs-baseret webbrowser)</dt>
+<DD>
+<pre>(setq url-mime-language-string  "preferred_language=da; q=1.0, en; q=0.5")</pre>
+eller brug custom-pakken (forudsætter URL-version p4.0pre.14):
+<pre>Hypermedia -&gt; URL -&gt; Mime -&gt; Mime Language String...</pre></dd>
+
+<DT><strong>IE ??</strong></dt>
+<DD>
+<pre>
+     View -&gt; Internet Options -&gt; General/Languages
+</pre></dd>
+
+<DT><strong>IE 5</strong></dt>
+<DD>
+<pre>
+     Tools (or Extras) -&gt; Internet Options -&gt; Languages
+</pre></dd>
+
+<DT><strong>Opera</strong></dt>
+<DD>4.0 og senere (Windows): File -&gt; Preferences -&gt; Languages<br>
+    4.0TP (Linux): 
+    I <tt>opera.ini</tt>, under <tt>[Adv User Prefs]</tt>, indsættes 
+    <tt>HTTP Accept Language=</tt><var>indstilling</var>
+<DT><strong>iCab</strong></dt>
+<DD>
+<pre>
+     Edit -&gt; Preferences -&gt; Browser -&gt; Fonts,Languages
+</pre></dd>
+
+<DT><strong>W3M</strong></dt>
+<DD>
+<pre>
+     Options (o) -&gt; Other Behavior -&gt; Accept-Language
+</pre></dd>
+</DL>
+
+<H3>Hvad skal jeg sætte variablen til?</H3>
+
+<P>Da originalsproget på Debians websider er engelsk og alle dokumenter ikke 
+er oversat til dit foretrukne sprog, vil det være en god ide at opsætte 
+variablen til at acceptere engelsk som et alternativt sprog.
+Har du for eksempel dansk som modersmål og bruger lynx, skal du bruge følgende 
+linie i din <kbd>.lynxrc</kbd>-fil
+<pre>
+preferred_language=da; q=1.0, en; q=0.5
+</pre>
+Dette fortæller serveren at du ønsker den danske version af dokumentet, hvis 
+denne er tilgængelig, ellers den engelsk version.</p>
+
+# -- Recommendation to Scandinavian users
+<p>Eftersom Debians websider også oversættes til norsk og svensk, og
+de dokumenter som oversættes til disse sprog måske ikke oversættes til
+dansk, kan det være en god idé at tilføje norsk og svensk før
+engelsk i dit sprogvalg. Eksempel, i Lynx:
+<pre>
+preferred_language=da; q=1.0, no; q=0.9, sv; q=0.8, en; q=0.5
+</pre></p>
+# --
+
+<p>Noget du bør være forsigtig med er at anvende underkategorier for sprog.
+At anvende 'en-GB, da', for eksempel, gør ikke hvad de fleste tror
+(hvis de ikke har læst HTTP-specifikationen).
+En server der tager imod en forespørgsel om et dokument med sprogvalget sat
+til 'en-GB, da' når der både findes 'en'- og 'da'-versioner vil returnere den 
+danske version.
+Den vil kun returnere et engelsk dokument i stedet for det danske hvis der 
+findes en version af filen med en-GB som sprogindstilling.
+Derfor bør du sætte din webbrowser op til at sende 'en-GB, en, da', eller blot 
+'en, da'.
+Den anden vej virker det dog, en server kan returnere 'en-US' når der bedes 
+om 'en'.</p>
+
+<p><strong>Vi anbefaler på det kraftigste at du ikke føjer landevalg til 
+et sprogvalg med mindre du har en god grund til det</strong>.
+Hvis du tilføjer et sådant, så sørg for også at tilføje sproget uden landet.</p>
+
+<P>For flere oplysninger om at opsætte preferred_language-variablen, se
+<a href="http://httpd.apache.org/docs/content-negotiation.html">Apaches
+dokumentation angående indholdsforhandling</a> ('content negotiation').</p>
+
+
+<h3><a name="cache">Notits om cache'nde webservere (også kendt som 
+proxy-servere)</a></h3>
+
+<p>Mange sender deres webtrafik gennem en cache, hvilket i grund og bund er 
+en webserver uden eget indhold. 
+Den befinder sig mellem brugeren og den rigtige webserver. 
+Cachen læser websideforespørgslør, henter siden og opretter en lokal kopi, 
+noget der kan mindske mængden af netværkstrafik radikalt hvis mange brugere 
+henter den samme side.
+(Teknikken er også kendt som "<span lang=en>proxying</span>".)</p>
+
+<p>Som regel er det en udmærket idé, men hvis cachen ikke fungerer korrekt 
+kan det give problemer.
+Specielt forstår mange cache'r ikke indholdsforhandling, hvilket leder til 
+at de cache'r en side på et sprog, og returnerer den selvom der senere bedes 
+om siden på andet sprog.
+Den eneste løsning på dette problem er at opgradere eller udskifte 
+cache-programmet.</p>
+
+<p>Historisk set benyttes cache-programmer kun når det eksplicit opsættes i 
+webbrowseren, men det er ikke længere tilfældet.
+Din Internetudbyder kan omdirigere al HTTP-trafik gennem en cache, og hvis 
+cachen ikke håndterer indholdsforhandling korrekt, kan du risikere at modtage 
+sider på et forkert sprog.
+(Teknikken er også kendt som "<span lang=en>transparent proxying</span>".)</p>
