@@ -108,7 +108,7 @@ do 'documents-bd.pl';
 	'translation_name'	=> 'Manual de instalación de Debian',
 	'translation_maintainer'=> ['Enrique Zanardi <ezanardi@debian.org>'],
 	'base_revision'		=> '2.1',
-	'translation_url'	=> 'http://www.debian.org/releases/source/install.es.sgml',
+	'translation_url'	=> 'http://www.debian.org/releases/stable/source/install.es.sgml',
 	'translation_cvs_url'   => 'http://cvs.debian.org/debian-boot/boot-floppies/documentation/install.es.sgml?cvsroot=debian-boot',
 	'translation_package'	=> 'boot-floppies',
 	'last_translated'	=> '16/03/1999'
