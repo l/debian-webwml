@@ -150,6 +150,12 @@ while (<SRC>)
 			$_ .= "Följande paket har nyligen lagts till Debianarkivet eller innehåller\n";
 			$_ .= "viktiga uppdateringar.</p>\n"
 		}
+        elsif ($next eq "added to the unstable Debian archive recently or contain important updates.</p>\n")
+        {
+			$_ =  "<p><strong>Nya eller anmärkningsvärda paket.</strong>\n";
+			$_ .= "Följande paket har nyligen lagts till det instabila Debianarkivet eller innehåller\n";
+			$_ .= "viktiga uppdateringar.</p>\n";
+        }
 		else
 		{
 			$_ .= $next;
