@@ -1,7 +1,7 @@
 #include "../../english/international/l10n/dtc.def"
 <perl>
-#include "../../english/international/l10n/init.pl"
-#include "../../english/international/l10n/ranking.pl"
+#include "../../english/international/l10n/scripts/init.pl"
+#include "../../english/international/l10n/scripts/ranking.pl"
 $cur_lang = "$(CUR_LANG)";
 
 sub output_details {
