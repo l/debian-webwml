@@ -175,7 +175,7 @@ sub languages {
 	foreach my $cur_lang (sort langcmp @printed_langs) {
 	    my $tooltip = dgettext( "langs", get_language_name($cur_lang) );
 	    $str .= "<a href=\"$name.$cur_lang.html\" title=\"$tooltip\" hreflang=\"$cur_lang\" lang=\"$cur_lang\" rel=\"alternate\">".get_selfname($cur_lang);
-	    $str .= "&nbsp;(get_transliteration($cur_lang))" if defined get_transliteration($cur_lang);
+	    $str .= "&nbsp;(".get_transliteration($cur_lang).")" if defined get_transliteration($cur_lang);
 	    $str .= "</a>&nbsp;\n";
 	}
 	$str .= "\n<br />\n";
