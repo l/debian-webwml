@@ -4,6 +4,7 @@
 #
 # Copyright (C) 1998 (?) James Treacy
 # Copyright (C) 2001 Josip Rodin
+# Copyright (C) 2004 Frank Lichtenheld
 #
 # Licensed under the GPL or something.
 
@@ -142,19 +143,6 @@ my %arches = (
         s390    => 'IBM S/390',
 );
 
-
-#if (exists $ENV{'HTTP_REFERER'}) {
-#	$urlbase= $ENV{'HTTP_REFERER'};
-#}
-#else {
-#	$urlbase = '';
-#}
-#if ($urlbase =~ m,(http://www\.(..\.)?debian.org),) {
-#	$urlbase = $1;
-#}
-#else {
-#	$urlbase = "http://www.debian.org";
-#}
 my $urlbase = "http://www.debian.org";
 
 $ENV{PATH} = "/bin:/usr/bin";
@@ -168,34 +156,18 @@ print $input->header;
 # exit;
 
 $file = $input->param('file');
-unless (defined $file) {
-  print "<p>Internal error: Required parameter \"file\" is missing.\n";
-  print "<p>If the problem persists, please inform $ENV{SERVER_ADMIN}.\n";
-  exit;
-}
+param_error( "file" ) unless defined $file;
 @file_components = split('/', $file);
 $filen = pop(@file_components);
 
 $md5sum = $input->param('md5sum');
-unless (defined $md5sum) {
-  print "<p>Internal error: Required parameter \"md5sum\" is missing.\n";
-  print "<p>If the problem persists, please inform $ENV{SERVER_ADMIN}.\n";
-  exit;
-}
+param_error( "md5sum" ) unless defined $md5sum;
 
 $type = $input->param('type');
-unless (defined $type) {
-  print "<p>Internal error: Required parameter \"type\" is missing.\n";
-  print "<p>If the problem persists, please inform $ENV{SERVER_ADMIN}.\n";
-  exit;
-}
+param_error( "type" ) unless defined $type;
 
 $arch = $input->param('arch');
-unless (defined $arch) {
-  print "<p>Internal error: Required parameter \"arch\" is missing.\n";
-  print "<p>If the problem persists, please inform $ENV{SERVER_ADMIN}.\n";
-  exit;
-}
+param_error( "arch" ) unless defined $arch;
 
 my $arch_string = $arch ne 'all' ? "on $arches{$arch} machines" : "";
 
@@ -208,12 +180,13 @@ my $dir;
 foreach $dir (@file_components) { print "$dir/"; };
 print "</tt> subdirectory at";
 print $type ne 'security' ? " any of these sites:" : ":";
+print "</p>\n";
 
 if ($type eq 'security') {
 
 	print <<END;
 <ul>
-  <li><a href="http://security.debian.org/debian-security/$file">security.debian.org/debian-security</a>
+  <li><a href="http://security.debian.org/debian-security/$file">security.debian.org/debian-security</a></li>
 </ul>
 
 <p>Debian security updates are currently officially distributed only via
@@ -222,116 +195,46 @@ END
 
 } elsif ($type eq 'nonus') {
 
-	print "<p><em>North America</em>";
-	print "<ul>";
-	foreach (@nonus_north_american_sites) {
-		print "<li><a href=\"http://$_/$file\">$_</a>\n";
-		# print "<li><a href=\"ftp://$_/$file\">$_</a>\n";
-	}
-	print "</ul>";
+    print_links( "North America", $file, @nonus_north_american_sites );
+    print_links( "Europe", $file, @nonus_european_sites );
+    print_links( "Australia and New Zealand", $file,
+		 @nonus_australian_sites );
+    print_links( "Asia", $file, @nonus_asian_sites );
+    print_links( "South America", $file, @nonus_south_american_sites );
 
-	print "<p><em>Europe</em>";
-	print "<ul>";
-	foreach (@nonus_european_sites) {
-		print "<li><a href=\"http://$_/$file\">$_</a>\n";
-		# print "<li><a href=\"ftp://$_/$file\">$_</a>\n";
-	}
-	print "</ul>";
-
-	print "<p><em>Australia and New Zealand</em>";
-	print "<ul>";
-	foreach (@nonus_australian_sites) {
-		print "<li><a href=\"http://$_/$file\">$_</a>\n";
-		# print "<li><a href=\"ftp://$_/$file\">$_</a>\n";
-	}
-	print "</ul>";
-
-	print "<p><em>Asia</em>";
-	print "<ul>";
-	foreach (@nonus_asian_sites) {
-		print "<li><a href=\"http://$_/$file\">$_</a>\n";
-		# print "<li><a href=\"ftp://$_/$file\">$_</a>\n";
-	}
-	print "</ul>";
-
-	print "<p><em>South America</em>";
-	print "<ul>";
-	foreach (@nonus_south_american_sites) {
-		print "<li><a href=\"http://$_/$file\">$_</a>\n";
-		# print "<li><a href=\"ftp://$_/$file\">$_</a>\n";
-	}
-	print "</ul>";
-
-	print <<END;
+    print <<END;
 <p>If none of the above sites are fast enough for you, please see our
-<a href="http://www.debian.org/mirror/list-non-US">complete mirror list</a>.
+<a href="http://www.debian.org/mirror/list-non-US">complete mirror list</a>.</p>
 END
 
 } elsif ($type eq 'main') {
 
-	print "<table border=0><tr><td valign=top>";
-	print "<p><em>North America</em>";
-	print "<ul>";
-	foreach (@north_american_sites) {
-		print "<li><a href=\"http://$_/$file\">$_</a>\n";
-		# print "<li><a href=\"ftp://$_/$file\">$_</a>\n";
-	}
-	print "</ul>";
-	print "</td>";
+    print '<table border="0"><tr><td valign="top">';
+    print_links( "North America", $file, @north_american_sites );
+    print "</td><td>";
+    print_links( "Europe", $file, @european_sites );
+    print "</td></tr><tr><td>";
+    print_links( "Australia and New Zealand", $file, @australian_sites );
+    print "</td><td>";
+    print_links( "Asia", $file, @asian_sites );
+    print "</td></tr><tr><td>";
+    print_links( "South America", $file, @south_american_sites );
+    print "</td></tr></table>";
 
-	print "<td>";
-	print "<p><em>Europe</em>";
-	print "<ul>";
-	foreach (@european_sites) {
-		print "<li><a href=\"http://$_/$file\">$_</a>\n";
-		# print "<li><a href=\"ftp://$_/$file\">$_</a>\n";
-	}
-	print "</ul>";
-	print "</td></tr>";
-
-	print "<tr><td>";
-	print "<p><em>Australia and New Zealand</em>";
-	print "<ul>";
-	foreach (@australian_sites) {
-		print "<li><a href=\"http://$_/$file\">$_</a>\n";
-		# print "<li><a href=\"ftp://$_/$file\">$_</a>\n";
-	}
-	print "</ul>";
-	print "</td>";
-
-	print "<td>";
-	print "<p><em>Asia</em>";
-	print "<ul>";
-	foreach (@asian_sites) {
-		print "<li><a href=\"http://$_/$file\">$_</a>\n";
-		# print "<li><a href=\"ftp://$_/$file\">$_</a>\n";
-	}
-	print "</ul>";
-	print "</td></tr>";
-
-	print "<tr><td>";
-	print "<p><em>South America</em>";
-	print "<ul>";
-	foreach (@south_american_sites) {
-		print "<li><a href=\"http://$_/$file\">$_</a>\n";
-		# print "<li><a href=\"ftp://$_/$file\">$_</a>\n";
-	}
-	print "</ul>";
-	print "</td></tr></table>";
-
-	print <<END;
+    print <<END;
 <p>If none of the above sites are fast enough for you, please see our
-<a href="http://www.debian.org/mirror/list">complete mirror list</a>.
+<a href="http://www.debian.org/mirror/list">complete mirror list</a>.</p>
 END
 }
 
 print <<END;
 <p>Note that in some browsers you will need to tell your browser you want
 the file saved to a file. For example, in Netscape or Mozilla, you should
-hold the Shift key when you click on the URL.
+hold the Shift key when you click on the URL.</p>
 END
 
-print "<p>The MD5sum for <tt>$filen</tt> is <strong>$md5sum</strong>\n" if ($md5sum);
+print "<p>The MD5sum for <tt>$filen</tt> is <strong>$md5sum</strong></p>\n"
+    if $md5sum;
 
 # compute modification date
 my $delta_time = -M $0;
@@ -341,3 +244,26 @@ my $time_str = gmtime($mod_time)." +0000";
 my $trailer = Packages::HTML::trailer( ".." );
 $trailer =~ s/LAST_MODIFIED_DATE/$time_str/;
 print $trailer;
+
+exit;
+
+sub print_links {
+    my ( $title, $file, @servers ) = @_;
+
+    print "<p><em>$title</em></p>";
+    print "<ul>";
+    foreach (@servers) {
+	print "<li><a href=\"http://$_/$file\">$_</a></li>\n";
+	# print "<li><a href=\"ftp://$_/$file\">$_</a></li>\n";
+    }
+    print "</ul>";
+
+}
+
+sub param_error {
+    my $param = shift;
+
+    print "<p>Internal error: Required parameter \"$param\" is missing.</p>\n";
+    print "<p>If the problem persists, please inform $ENV{SERVER_ADMIN}.</p>\n";
+    exit;
+}
