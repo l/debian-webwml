@@ -139,6 +139,15 @@ sub init_translators {
 	                'file'      => 3,
                         'compress'  => 'none' 
                 },
+                'Jérôme Schell' =>  {
+ 	                'email'     => 'jschell@noos.fr',
+                        'summary'   => 2,
+                        'logs'      => 2,
+                        'diff'      => 2,
+                        'tdiff'     => 0,
+	                'file'      => 0,
+                        'compress'  => 'none'
+                },
                 'list' => {
                 # this is a special name containing the default addressee
                         'email'      => 'debian-l10n-french@lists.debian.org',
