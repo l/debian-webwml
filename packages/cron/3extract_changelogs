@@ -52,7 +52,7 @@ for DEBFILE in ${localdir}/pool/*/*/*/*.dsc; do
 #echo "Updating $PACKAGE"
 	test -d $tmpdir || mkdir -p $tmpdir
 	cd ${tmpdir}
-	chmod -f -R +w ${tmpdir}/*
+	chmod -f -R +w ${tmpdir}/* 2>/dev/null
 	rm -rf ${tmpdir}/*
 	out=`dpkg-source -x $DEBFILE`
 	dir=${out##* }
@@ -94,24 +94,28 @@ for DEBFILE in ${localdir}/pool/*/*/*/*.dsc; do
 		    fi
 		done
 		if [ -z "$BINFILE" ]; then
-		    echo "No file found for package $BINPKG"
+		    echo "No file found for package ${BINPKG}_$VERSION"
 		else
-#echo "Extract copyright file from $BINPKG ($BINFILE)"
-		    if ar p $BINFILE data.tar.gz | tar -C $TARGETDIR --no-recursion -tvzf - ./usr/share/doc/$BINPKG | grep -q ^l; then
-#		    	echo -n "documentation dir is symlink "
-			PKGL=`ar p $BINFILE data.tar.gz | tar -C $TARGETDIR --no-recursion -tvzf - ./usr/share/doc/$BINPKG | perl -pe 's/.*-> ([\w.+-]+)$/$1/'`
-#			echo "to $PKGL"
+echo "Extract copyright file from $BINPKG ($BINFILE)"
+		    PKGL=`dpkg-deb -c $BINFILE | grep "^l.*\\./usr/share/doc/$BINPKG ->" | perl -pe 's/.*-> ([\w.+-]+)$/$1/' | head -n 1`
+		    if [ ! -z "$PKGL" ]; then
+		    	echo "documentation dir is symlink to $PKGL"
 			ln -sf $PKGL.copyright $TARGETDIR/$BINPKG.copyright
 			if [ ! -f $PKGL.copyright ]; then
 			     echo "$PKGL.copyright doesn't exists (yet)! Possible broken link."
 			fi
 		    else
-		    	ar p $BINFILE data.tar.gz | tar -C $TARGETDIR -xzOf - ./usr/share/doc/$BINPKG/copyright > $TARGETDIR/$BINPKG.copyright
-	    	    	if [ ! -f $TARGETDIR/$BINPKG.copyright ]; then
+			mkdir -p $tmpdir/`basename $BINFILE`
+			dpkg-deb -x $BINFILE $tmpdir/`basename $BINFILE`
+			XCOPYRIGHT=$tmpdir/`basename $BINFILE`/usr/share/doc/$BINPKG/copyright
+	    	    	if [ ! -f "$XCOPYRIGHT" ]; then
 			    echo "No copyright found in binary $BINPKG"
+			else
+			    echo "Successful extracted"
+			    mv $XCOPYRIGHT $TARGETDIR/$BINPKG.copyright
 	    	    	fi
 		    fi
-		    unset BINFILE
+		    unset BINFILE PKGL
 		fi
 	    fi
 	done
@@ -125,8 +129,8 @@ for DEBFILE in ${localdir}/pool/*/*/*/*.dsc; do
 	rm -rf ${tmpdir}/*
     fi
 
-    unset TARGET PACKAGE VERSION TARGETDIR ORIGDIR BINARIES
+    unset TARGET PACKAGE VERSION TARGETDIR ORIGDIR BINARIES dir out
 done
 
 date
-) > $log
+) > $log 2>&1
