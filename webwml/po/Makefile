@@ -13,7 +13,7 @@ TEMPLATES_MO    = $(TEMPLATES_PO:.po=.mo)
 
 PORTSDIR   = ports
 
-PORTS_FILES     = $(PORTSDIR)/menu.defs $(wildcard $(PORTSDIR)/*/menu.inc)
+PORTS_FILES     = $(PORTSDIR)/menu.defs $(PORTSDIR)/mips/cpu.data $(wildcard $(PORTSDIR)/*/menu.inc)
 PORTS_POT       = po-files/ports.pot
 PORTS_PO        = $(addprefix po-files/ports., $(addsuffix .po, $(langs)))
 PORTS_UPO       = $(PORTS_PO:.po=.upo)
