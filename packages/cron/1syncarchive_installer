@@ -5,12 +5,18 @@
 test -d ${archivedir} || mkdir -p ${archivedir}
 cd ${archivedir}
 
+set -x
+
 # Main archive
 #
 if [ -z "${localdir}" ]
 then
-    for dist in testing unstable
+    for dist in ${dists}
     do
+
+      if [ $dist = stable ]; then
+	  continue
+      fi
 
 	foo=\$arch_${dist//-/_}
 	for arch in `eval echo $foo`
@@ -24,8 +30,13 @@ then
 	done
     done
 else
-    for dist in testing unstable
+    for dist in ${dists}
     do
+
+      if [ $dist = stable ]; then
+	  continue
+      fi
+
 	foo=\$arch_${dist//-/_}
 	for arch in `eval echo $foo`
 	do
