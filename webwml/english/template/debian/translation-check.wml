@@ -134,35 +134,31 @@ $link =~ s/\.wml$//;
 $link .= ".$original_lang.html";
 
 # This is the directory where the original source is kept
-$original_dir = $original ? "../$original" : "../english";
+$original_dir = $original ? "$original" : "english";
 
-# Open the original Makefile
-open (MAKE,"<Makefile")
-	or die "Couldn't open Makefile: $!\n";
-
-# We could also do this same grepping faster (?)
-# Or we could use also $WML_SRC_DIRNAME and then cut out to the root
-while (<MAKE>) {
-  $wmlbase = $1 if /^WMLBASE\s*=\s*(.*)/;
-  $current_dir = $1 if /^CUR_DIR\s*=\s*(.*)/;
-  last if $wmlbase and $current_dir;
+# some brown paper bag code to generate path to the original CVS/Entries
+@full_directory_name = split '/', $WML_SRC_DIRNAME;
+$dir = pop @full_directory_name;
+while ($dir) {
+	if ($dir ne "webwml") { $level++; } else { last; }
+	push @relative_dir, $dir;
+	$dir = pop @full_directory_name;
 }
-close MAKE;
+for (; $level > 0; $level--) { $parents .= "../"; }
+pop @relative_dir;
+@relative_dir = reverse @relative_dir;
+$relative_dir = join '/', @relative_dir;
 
-# Read the original CVS/Entries file end extract version from it
-
-open (CVS_ENTRY,"<$wmlbase/$original_dir/$current_dir/CVS/Entries")
-	or die "Couldn't open $wmlbase/$original_dir/$current_dir/CVS/Entries file: $!\n";
-
+# Read the original CVS/Entries file and extract version from it
+open (CVS_ENTRY,"<$parents/$original_dir/$relative_dir/CVS/Entries")
+	or die "Couldn't open $parents/$original_dir/$relative_dir/CVS/Entries: $!\n";
 while (<CVS_ENTRY>) {
-        chomp;
-# really useless -- print "Reading $line \n" if $debug;
-        ($version) = $_ =~ /\/\Q$file\E\/([\d\.]*)/;
-        last if $version;
+	($version) = $_ =~ m,/\Q$file\E/([\d\.]*),;
+	last if $version;
 }
 close CVS_ENTRY;
-
-print ${file} . "'s CVS revision is: $version\n" if ($debug >= 1);
+if ($version eq "") { die "It seems the original $file no longer exists."; }
+print ${file} . "'s original CVS revision is: $version\n" if ($debug >= 1);
 
 @version_numbers = split /\./,$version;
 $major_number = @version_numbers[0];
