@@ -86,18 +86,23 @@
 #                      Only set up /etc/ttys if it is not a conffile.
 #                      Really fix the overwrite stuff now (blech).
 #    6 Aug 1999 - v3.1 Add base/perl-base dummy package.
+#    7 Sep 1999 - v3.2 Add base/libwrap0, base/tcpd, base/dpkg-mountable,
+#                      base/dpkg-multicd, base/libnet-perl.
+#                      Apply patch to support download and option parsing by
+#                      Daniel Burrows.
 
-plist="base/ae base/adduser base/base-files base/base-passwd base/bash \
-       base/bsdutils \
-       base/debianutils base/diff base/dpkg base/e2fsprogs base/fileutils \
-       base/findutils base/gnumach base/grep base/grub base/gzip \
-       base/hostname base/hurd net/inetutils base/libc0.2 base/libgdbmg1 \
-       base/libncurses4 base/libreadlineg2 base/libstdc++2.9 base/mawk \
-       base/ncurses-base base/ncurses-bin base/passwd base/perl-5.005-base \
-       base/sed base/perl-base \
-       base/shellutils base/slang1 base/syslogd base/tar base/textutils \
-       interpreters/perl-5.005"
-oplist="admin/locales text/less editors/ed"
+plist="base/adduser base/ae base/base-files base/base-passwd base/bash \
+       base/bsdutils base/debianutils base/diff base/dpkg-ftp \
+       base/dpkg-mountable base/dpkg-multicd base/dpkg base/e2fsprogs \
+       base/fileutils base/findutils base/gnumach base/grep base/grub \
+       base/gzip base/hostname base/hurd net/inetutils base/libc0.2 \
+       base/libgdbmg1 base/libncurses4 base/libnet-perl \
+       base/libreadlineg2 base/libstdc++2.9 base/libwrap0 \
+       base/mawk base/ncurses-base base/ncurses-bin base/passwd \
+       base/perl-5.005-base base/perl-base base/sed \
+       base/shellutils base/slang1 base/syslogd base/tar base/tcpd \
+       base/textutils interpreters/perl-5.005"
+oplist="admin/locales text/less editors/ed libs/gconv-modules"
 #oplist=""
 
 # If you only want a minimal base system, leave out packages listed in
@@ -111,6 +116,7 @@ oplist="admin/locales text/less editors/ed"
 #  ./cross-install /gnu
 # where /gnu is the mount point of your hurd partition.
 
+
 #
 # CONFIGURATION
 #
@@ -118,10 +124,64 @@ hostname="hurd"
 dpkghurd="`pwd`/dpkg-hurd"
 nativeinstall="`pwd`/native-install"
 log="`pwd`/install.log"
+download=""
+dest=""
+repository="`pwd`"
 
-# END OF CONFIGURATION
+while [ "$#" -ne 0 ]
+do
+  case "$1" in
+    "--hostname"|"--dpkghurd"|"--nativeinstall"|"--log"|"--download"|"--repository")
+      if [ "$#" -lt 2 ]
+      then
+        echo "$1 needs an argument"
+	exit 1
+      fi
+      case "$1" in
+        "--hostname") hostname="$2";;
+	"--dpkghurd") dpkghurd="$2";;
+	"--nativeinstall") nativeinstall="$2";;
+	"--log") log="$2";;
+	"--download") download="$2";;
+	"--repository") repository="$2";;
+      esac
+      shift 2
+      ;;
+   "--help" | "--hel" | "--hel" | "-h")
+     echo "Usage: cross-install DEST-DIR [OPTION]..."
+     echo "Cross-installation script for Debian GNU/Hurd"
+     echo
+     echo "   Options:"
+     echo " --hostname      name      Set the hostname of the new system"
+     echo " --dpkghurd      file      Give the filename of the dpkg-hurd script"
+     echo " --nativeinstall file      Give the filename of the native-install script"
+     echo " --log           file      Give the filename of the generated output log"
+     echo " --download      server    Download missing files from the given Debian mirror"
+     exit 0
+     ;;
+    -*)
+     echo "Bad option: $1"
+     exit 1
+     ;;
+    *)
+     dest="$1"
+     shift
+     ;;
+  esac
+done
+
+echo "Determining destination directory."
+expr "${dest}" > /dev/null : / \
+ && { echo "You are using an absolute path, fine." ; \
+      dest="${dest}"; } \
+ || { echo "You are using a relative path, prepending working directory." ; \
+      dest="`pwd`/${dest}"; }
 
 set -u -e
+
+echo "Creating a Debian GNU/Hurd system in ${dest},"
+echo "logging dpkg output in ${log}."
+cat > ${log} < /dev/null
 
 PS4='+$LINENO: '
 
@@ -130,23 +190,6 @@ err ()
     echo "$0: $1" 1>&2
     exit 1
 }
-
-if [ ! "$#" = 1 ] ; then
-  err "exactly one argument is required, the destination directory"
-fi
-
-repository="`pwd`"
-
-echo Determining destination directory.
-expr "${1}" > /dev/null : / \
- && { echo You are using an absolute path, fine. ; \
-      dest="${1}"; } \
- || { echo You are using a relative path, prepending working directory. ; \
-      dest="`pwd`/${1}"; }
-echo dest = ${dest}
-echo log = ${log}
-cat > ${log} < /dev/null
-
 
 #############################
 # Comply to Hurd philosophy.
@@ -173,12 +216,18 @@ touch ${dest}/var/lib/dpkg/{status,available}
 # cross-install packages.
 ##########################
 echo
-echo I will now install packages. If you have multiple versions of the
-echo same package available, it may be that I don\'t recognize the latest. 
-echo Please remove the offending old version in this case and start from
-echo scratch.
+echo "I will now install packages. If you have multiple versions of the"
+echo "same package available, it may be that I don't recognize the latest."
+echo "Please remove the offending old version in this case and start from"
+echo -n "scratch."
+
+if [ "x${download}" != x ] ; then
+	echo "Missing packages will be downloaded from ${download}"
+else
+	echo
+fi
 echo
-echo Installing necessary packages, this may take some time.
+echo "Installing necessary packages, this may take some time."
 
 cd ${dest}
 for pname in ${plist}
@@ -187,40 +236,66 @@ do
 	matches=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | wc -l`
 
 	if [ ${matches} = 0 ] ; then
-		pname=`basename ${pname}`
-		package=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | tail -n 1`
-		matches=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | wc -l`
+		newpname=`basename ${pname}`
+		package=`ls -1 ${repository}/${newpname}_*.deb 2> /dev/null | tail -n 1`
+		matches=`ls -1 ${repository}/${newpname}_*.deb 2> /dev/null | wc -l`
 	fi
+
+	if [ ${matches} = 0 ] ; then
+		if ! [ -z "$download" ]; then
+			echo "- ${pname} not found, downloading from ${download}."
+			mkdir -p ${repository}/partial
+			wget --retr-symlinks -cqP ${repository}/partial ftp://${download}/debian/dists/unstable/main/binary-hurd-i386/${pname}_\*.deb
+			mv ${repository}/partial/`basename ${pname}`_*.deb ${repository}/`dirname ${pname}`
+			package=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | tail -n 1`
+			matches=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | wc -l`
+		fi
+	fi
+
+	pname=`basename $pname`
 
 	if [ ${matches} = 0 ] ; then
 		echo - ${pname} could not be found, but it is needed.
 		exit 1
 	else
 		if [ ${matches} != 1 ] ; then
-			echo There is more than one version of package ${pname} available, choosing the alphabetically last.
+			echo "More than one version of package ${pname} available, choosing the alphabetically last."
 		fi
 		echo - ${package}
 		${dpkghurd} --unpack ${package} --force-depends --force-overwrite >> ${log} 2>&1 || break
 	fi
 done
 echo
-echo Installing optional packages, this may take some time.
+echo "Installing optional packages, this may take some time."
 for pname in ${oplist}
 do
 	package=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | tail -n 1`
 	matches=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | wc -l`
 
 	if [ ${matches} = 0 ] ; then
-		pname=`basename ${pname}`
-		package=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | tail -n 1`
-		matches=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | wc -l`
+		newpname=`basename ${pname}`
+		package=`ls -1 ${repository}/${newpname}_*.deb 2> /dev/null | tail -n 1`
+		matches=`ls -1 ${repository}/${newpname}_*.deb 2> /dev/null | wc -l`
 	fi
 
 	if [ ${matches} = 0 ] ; then
-		echo - ${pname} could not be found, let us hope it is not vital.
+		if ! [ -z "$download" ]; then
+			echo "- ${pname} not found, downloading from ${download}."
+			mkdir -p ${repository}/partial
+			wget --retr-symlinks -cqP ${repository}/partial ftp://${download}/debian/dists/unstable/main/binary-hurd-i386/${pname}_\*.deb
+			mv ${repository}/partial/`basename ${pname}`_*.deb ${repository}/`dirname ${pname}`
+			package=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | tail -n 1`
+			matches=`ls -1 ${repository}/${pname}_*.deb 2> /dev/null | wc -l`
+		fi
+	fi
+
+	pname=`basename $pname`
+
+	if [ ${matches} = 0 ] ; then
+		echo "- ${pname} could not be found, let us hope it is not vital."
 	else
 		if [ ${matches} != 1 ] ; then
-			echo There is more than one version of package ${pname} available, choosing the alphabetically last.
+			echo "More than one version of package ${pname} available, choosing the alphabetically last."
 		fi
 		echo - ${package}
 		${dpkghurd} --unpack ${package} --force-depends --force-overwrite >> ${log} 2>&1 || break
@@ -233,7 +308,7 @@ set -e
 
 if [ ! "x${errors}" = x ] ; then
 	echo
-	echo dpkg did return unusual messages, please investigate:
+	echo "ERROR: dpkg did return unusual messages, please investigate:"
 	echo
 	grep -v '^rm: /tmp/.*: Device or resource busy$\|dpkg - warning, overriding problems\|trying to override\|Preparing to replace\|Unpacking\|pre-dependency problem\|Selecting previously deselected package\|pre-depends on\|overriding problem because --force enabled\|(Reading database ...\| package architecture (hurd-i386) does not match system\|is not installed.\|but has never been configured.\|dpkg-deb: building package' ${log}
 	exit 1
@@ -243,7 +318,7 @@ fi
 # Change /etc/motd
 ##############################
 echo
-echo Writing /etc/motd.
+echo "Writing /etc/motd."
 
 cat > ${dest}/etc/motd << _NIL_
 Debian GNU/Hurd
@@ -264,7 +339,7 @@ _NIL_
 ##############################
 # FIX: Should be done in the Hurd preinst.
 echo
-echo Setting up initial translator hook.
+echo "Setting up initial translator hook."
 
 install -d -m 755 -o root -g root ${dest}/servers/socket
 touch ${dest}/servers/exec
@@ -275,14 +350,14 @@ touch ${dest}/servers/exec
 # Explanation: It is a conf file in some versions of Hurd.
 
 echo
-echo Latest Hurd packages declare boot/servers.boot as a conffile, let me check.
+echo "Latest Hurd packages declare boot/servers.boot as a conffile, let me check."
 
 if [ -e ${dest}/boot/servers.boot.dpkg-new ] ; then
-	echo Yes, found it. I will copy boot/servers.boot.dpkg-new to boot/servers.boot
+	echo "Yes, found it. I will copy boot/servers.boot.dpkg-new to boot/servers.boot"
 	cp ${dest}/boot/servers.boot.dpkg-new ${dest}/boot/servers.boot
 else
-	echo Nope, not your version. Please make sure that you check boot/servers.boot after
-        echo your next update of the hurd package, because your changes will be overriden.
+	echo "Nope, not your version. Please make sure that you check boot/servers.boot after"
+        echo "your next update of the hurd package, because your changes will be overriden."
 fi
 
 #####################################
@@ -291,7 +366,7 @@ fi
 # Explanation: It is managed by update-alternatives.
 #
 if [ ! -e ${dest}/libexec/runsystem -a -e ${dest}/libexec/runsystem.gnu ] ; then
-	echo Copying libexec/runsystem, so the system can boot.
+	echo "Copying libexec/runsystem, so the system can boot."
 	cp ${dest}/libexec/runsystem.gnu ${dest}/libexec/runsystem
 fi
 
@@ -303,18 +378,18 @@ fi
 if [ ! -e ${dest}/usr/bin/perl ] ; then
 	if [ -e ${dest}/usr/bin/perl.dist ] ; then
 		echo
-		echo Moving perl into place.
+		echo "Moving perl into place."
 		mv ${dest}/usr/bin/perl.dist ${dest}/usr/bin/perl
 	else
 		if [ -e ${dest}/usr/bin/perl-5.005.dist ] ; then
 		echo
-		echo Found versioned perl.
+		echo "Found versioned perl."
 		# We only copy it here so the postinst does the right thing.
 		# A mv or ln won't work!
 		cp ${dest}/usr/bin/perl-5.005.dist ${dest}/usr/bin/perl
 		else
 			echo
-			echo Warning, I couldn\'t find perl!
+			echo "Warning, I could not find perl!"
 		fi
 	fi
 fi
@@ -323,7 +398,7 @@ fi
 # Copy native install script
 #############################
 echo
-echo Copying the native install script and dpkg-hurd.
+echo "Copying the scripts native-install and dpkg-hurd."
 
 cp ${nativeinstall} ${dest}
 cp ${dpkghurd} ${dest}
@@ -333,11 +408,12 @@ cp ${dpkghurd} ${dest}
 #####################
 # Is this really needed?
 # Update: apr 99: Currently, yes. Too many packages require it.
+# But we're coming close to a "libc6" free distribution.
 
 if [ ! -e ${dest}/var/lib/dpkg/info/libc6.list ] ; then
 	echo
-	echo Although we have libc0.2 packages, we need an entry for libc6 because
-	echo of dpkg\'s dependency system.
+	echo "Although we have libc0.2 packages, we need an entry for libc6 because"
+	echo "of dpkg's dependency system."
 
 cat >> ${dest}/var/lib/dpkg/status << '_NIL_'
 Package: libc6
@@ -355,7 +431,7 @@ fi
 # FIX: In sysvutils, together with split-init
 if [ ! -e ${dest}/etc/rc0.d ] ; then
         echo
-        echo Making etc/rc\?.d directories for dpkg
+        echo "Making etc/rc?.d directories for dpkg."
         for nr in 0 1 2 3 4 5 6 S
         do
                 install -d -m 755 -o root -g root ${dest}/etc/rc${nr}.d
@@ -367,7 +443,7 @@ fi
 # Setup hostname.
 ##################
 echo
-echo Hey, ${hostname} is really a nice hostname for your machine!
+echo "Hey, ${hostname} is really a nice hostname for your machine!"
 
 echo ${hostname} > ${dest}/etc/hostname
 
@@ -375,7 +451,7 @@ echo ${hostname} > ${dest}/etc/hostname
 # Setup /etc/hosts
 ###################
 echo
-echo Preparing /etc/hosts.
+echo "Preparing /etc/hosts."
 
 echo "127.0.0.1		localhost ${hostname}" > ${dest}/etc/hosts
 
@@ -454,6 +530,6 @@ _NIL_
 fi
 
 echo
-echo Now boot the Hurd and run
-echo ./native-install
+echo "Now boot the Hurd and run"
+echo "./native-install"
 echo
