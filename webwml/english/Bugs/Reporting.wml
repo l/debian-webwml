@@ -16,7 +16,7 @@ report to any mailing lists or recipients other than
 the World Wide Web</A> and <A href="Access">elsewhere</A> - see
 other documents for details.</P>
 
-<P>You should put a pseudo-header at the start of the body of the
+<P>You need to put a pseudo-header at the start of the body of the
 message, with the <code>Package:</code> and <code>Version:</code>
 lines giving the name and version of the package which has the bug.
 (The pseudo-header fields must start at the very start of their lines,
@@ -44,7 +44,7 @@ on the bugs WWW pages.</P>
   Subject: Hello says `goodbye'
 
   <A name="pseudoheader">Package: hello</A>
-  Version: 1.3-2
+  Version: 1.3-16
 
   When I invoke `hello' without arguments from an ordinary shell
   prompt it prints `goodbye', rather than the expected `hello, world'.
@@ -58,8 +58,8 @@ on the bugs WWW pages.</P>
 
   I suggest that the output string, in hello.c, be corrected.
 
-  I am using Debian 1.1, kernel version 1.3.99.15z
-  and libc 5.2.18.3.2.1.3-beta.
+  I am using Debian GNU/Linux 2.2, kernel 2.2.17-pre-patch-13
+  and libc6 2.1.3-10.
 </PRE>
 
 <h2><A name="details">Please include in your report:</A></h2>
@@ -75,11 +75,13 @@ example session is a good way of showing this.
 <li>Details of the configuration of the program with the problem.
 Include the complete text of its configuration files.
 <li>The versions of any packages on which the buggy package depends.
-<li>What kernel version you're using (type <code>uname -a</code>).
-<li>What shared C library you're using (type <code>ls -l /lib/libc.so.6</code>).
-<li>Any other details of your Linux system, if it seems appropriate.  For
-example, if you had a problem with a Debian Perl script, you would want
-to provide the version of the `perl' binary (<code>perl -v</code>).
+<li>What kernel version you're using (type <code>uname -a</code>), your
+shared C library (type <code>ls -l /lib/libc.so.6</code> or
+<code>dpkg -s libc6 | grep ^Version</code>), and any other details about
+your Debian system, if it seems appropriate.  For example, if you had a
+problem with a Perl script, you would want to provide the version of the
+`perl' binary (type <code>perl -v</code> or <code>dpkg -s perl-5.005 | grep
+^Version:</code>).
 <li>Appropriate details of the hardware in your system.  If you're
 reporting a problem with a device driver please list <em>all</em> the
 hardware in your system, as problems are often caused by IRQ and I/O
@@ -156,7 +158,7 @@ only a summary).</P>
 any forwarded message so that replies will by default be processed in
 the same way as the original report.</P>
 
-<h3>Unknown packages or bugs with no <code>Package</code> key</h3>
+<h3>Bug reports against unknown packages</h3>
 
 <P>If the bug tracking system doesn't know who the maintainer of the
 relevant package is it'll forward the report to
@@ -180,45 +182,41 @@ find out which version of a package you have installed by using
 
 <P>For example:
 <pre>
-$ which dpkg
-/usr/bin/dpkg
-$ type dpkg
-dpkg is hashed (/usr/bin/dpkg)
+$ which apt-get
+/usr/bin/apt-get
+$ type apt-get
+apt-get is /usr/bin/apt-get
 $ dpkg --search /usr/bin/dpkg
-dpkg: /usr/bin/dpkg
-$ dpkg --search '*/dpkg'
-dpkg: /usr/doc/copyright/dpkg
-dpkg: /var/lib/dpkg
-dpkg: /usr/bin/dpkg
-dpkg: /usr/lib/dpkg
-dpkg: /usr/doc/dpkg
-$ dpkg --list dpkg
-Desired=Unknown/Install/Remove/Purge
+apt: /usr/bin/apt-get
+$ dpkg --list apt
+Desired=Unknown/Install/Remove/Purge/Hold
 | Status=Not/Installed/Config-files/Unpacked/Failed-config/Half-installed
 |/ Err?=(none)/Hold/Reinst-required/X=both-problems (Status,Err: uppercase=bad)
-||/ Name            Version        Description
-+++-===============-==============-============================================
-ii  dpkg            1.2.9elf       Package maintenance system for Debian GNU/Linux
-$ dpkg --status dpkg
-Package: dpkg
-Essential: yes
+||/ Name           Version        Description
++++-==============-==============-============================================
+ii  apt            0.3.19         Advanced front-end for dpkg
+$ dpkg --status apt
+Package: apt
 Status: install ok installed
-Priority: required
+Priority: standard
 Section: base
-Maintainer: Ian Jackson &lt;ian@chiark.chu.cam.ac.uk&gt;
-Version: 1.2.9elf
-Replaces: dpkgname
-Pre-Depends: libc5 (&gt;= 5.2.18-2), ncurses3.0
-Conflicts: dpkgname
-Description: Package maintenance system for Debian GNU/Linux
- This package contains the programs which handle the installation and
- removal of packages on your system.
+Installed-Size: 1391
+Maintainer: APT Development Team &lt;deity@lists.debian.org&gt;
+Version: 0.3.19
+Replaces: deity, libapt-pkg-doc (&lt;&lt; 0.3.7), libapt-pkg-dev (&lt;&lt; 0.3.7)
+Provides: libapt-pkg2.7
+Depends: libapt-pkg2.7, libc6 (&gt;= 2.1.2), libstdc++2.10
+Suggests: dpkg-dev
+Conflicts: deity
+Description: Advanced front-end for dpkg
+ This is Debian's next generation front-end for the dpkg package manager.
+ It provides the apt-get utility and APT dselect method that provides a
+ simpler, safer way to install and upgrade packages.
  .
- The primary interface for the dpkg suite is the `dselect' program;
- a more low-level and less user-friendly interface is available in
- the form of the `dpkg' command.
+ APT features complete installation ordering, multiple source capability
+ and several other unique features, see the Users Guide in
+ /usr/doc/apt/guide.text.gz
 
-$
 </pre>
 
 
