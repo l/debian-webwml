@@ -62,7 +62,7 @@ foreach $translation (@$translations) {
 			. $translation->{'key'}
 			. '.en.html'
 			if (!$translation->{'url'});
-		$translation->{'source_url'} = 
+		 $translation->{'source_url'} = 
 			'http://www.debian.org/cgi-bin/cvsweb/webwml/webwml/english/'
 			. $translation->{'key'}
 			. '.wml'
