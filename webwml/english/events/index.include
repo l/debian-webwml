@@ -22,7 +22,7 @@ opendir DIR, "$current_dir/$path" || die "Can't open $current_dir/$path: $!";
 @files = sort @files;
 closedir DIR;
 foreach (@files) {
-  open FILE, "$current_dir/$path/$_" || die "something went wrong, check permissions on $current_dir/$path/$_";
+  open FILE, "$path/$_" or open FILE, "$current_dir/$path/$_" or die "something went wrong, check permissions on $current_dir/$path/$_";
   foreach (<FILE>) { if (/^#use wml::debian::past_event$/) { $past = 'yes'; last; } }
   close FILE;
   if ($past eq 'yes') {
@@ -78,7 +78,7 @@ foreach $path (@paths) {
   closedir DIR;
 
   foreach (@files) {
-    open FILE, "$current_dir/$path/$_" || die "something went wrong, check permissions on $current_dir/$path/$_";
+    open FILE, "$path/$_" or open FILE, "$current_dir/$path/$_" or die "something went wrong, check permissions on $current_dir/$path/$_";
     if ( /(\d+.*).wml/ ) {
        $base = $1;
     }
