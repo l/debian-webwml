@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #  Copyright 2000 Javier Fernández-Sanguino Peña <jfs@computer.org>
-#  Copyright 1998-1999 Christophe Le Bars <clebars@debian.org>
+#  Copyright 1998-2000 Christophe Le Bars <clebars@debian.org>
 #  Copyright 1998 Paolo Molaro <lupus@debian.org> for update_db_CVS load_entries check_file
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -124,11 +124,13 @@ $types = {
 					"$DDPWEB/$k/" },
 	'cvs_url'		=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
 					"$CVSWEB/ddp/manuals.sgml/$k/?cvsroot=debian-doc" },
-	'translation_url'	=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
+	'source_url'		=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
+					"$CVSWEB/ddp/manuals.sgml/$k/$k.sgml?cvsroot=debian-doc" },
+	'translation_url'	=> sub {my($t, $k, $f)=@_; return ($t->{$f} || $t->{'status'} == 0 || $t->{'status'} == 1 || $t->{'status'} == 2 || $t->{'status'} == 8) ? $t->{$f} :
 					"$TRANSWEB/$k.fr.html/" },
 	'translation_source_name'=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
 					"$k.fr.sgml" },
-	'translation_source_url'=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
+	'translation_source_url'=> sub {my($t, $k, $f)=@_; return ($t->{$f} || $t->{'status'} == 0 || $t->{'status'} == 1 || $t->{'status'} == 2 || $t->{'status'} == 8) ? $t->{$f} :
 					"$TRANSWEB/$k.fr.sgml" },
 },
 
@@ -241,19 +243,6 @@ sub update_db_format {
 
 while (($k, $t) = each %$translations) {
 	
-	#if (uc $t->{'type'} eq 'DDP' && $k) {
-	#	if ($t->{'status'} != 0
-	#		&& $t->{'status'} != 1
-	#		&& $t->{'status'} != 2) {
-	#		$t->{'translation_url'} = 
-	#			$TRANSWEB . '/' . $k . $to_abr.'.html/'
-	#			if (!$t->{'translation_url'});
-	#		$t->{'translation_cvs_url'} = 
-	#			$TRANSWEB . '/' . $k . $to_abr. '.sgml'
-	#			if (!$t->{'translation_cvs_url'});
-	#	}
-	#}
-
 	next unless ($k);
 
 	foreach my $f (keys %{$types->{$t->{'type'}}}) {
