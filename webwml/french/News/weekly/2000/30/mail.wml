@@ -1,0 +1,86 @@
+#use wml::debian::weeklynews::header PAGENAME="Courriel"
+#use wml::debian::translation-check translation="1.3" maintainer="Thomas Huriaux"
+
+<a name="1"></a>
+
+<pre>
+De : Jason Gunthorpe &lt;jgg@ualberta.ca&gt;
+Date : Lun. 18 sep. 2000 22 h 15 ' 45 " -0600 (MDT)
+À : debian-policy@lists.debian.org
+Cc : joeyh@debian.org
+Sujet : Une pensée sur l'urgence
+
+Voici une pensée (reformulée) que Joey Hess a exprimée :
+
+Maintenant qu'APT a un mécanisme de priorité, il serait bien si on pouvait
+installer les mises à niveau urgentes, et laisser les autres de côté.
+
+Actuellement, nous avons un champ pour l'urgence dans le changelog,
+mais ce n'est ni une information convenable, ni la place idéale pour
+une telle fonctionnalité.
+
+L'idée que nous avons eue était d'avoir pour chaque paquet un « numéro de
+série pour l'urgence » qui appartient à l'intervalle [0...N]. La
+différence entre les numéros de série pour la priorité de deux paquets
+quelconques montre combien la mise à niveau est urgente.
+
+Nous pouvons lier notre schéma actuel avec les strates formées par la
+différence d'urgence entre deux versions :
+
+&gt;100 correction de sécurité très urgente
+&gt;50  correction urgente
+&gt;25  correction moyennement urgente
+dans les autres cas, correction peu urgente
+
+Pour implémenter cela, chaque paquet devra contenir un nouveau champ
+double Urgency-Serial qui sera mis à 0 si ce champ est omis. Nous aimerions
+utiliser une arithmétique modulaire sur [0...4G] (pour gérer les
+enveloppes) et comme pour les versions, chaque responsable s'occuperait
+d'incrémenter ce champ si cela se justifie.
+
+Les utilisateurs d'APT pourraient alors spécifier s'ils désirent installer
+tous les paquets très urgents (apt-get install-high-urgency) ou utiliser
+le mécanisme de priorité pour mettre à jour doucement une distribution :
+
+Package: *
+Pin: urgency &gt;50
+Priority: 900
+
+Package: *
+Pin: release *
+Priority: 50
+
+Ce qui en pratique signifie de « seulement mettre à niveau les paquets
+s'il y a une raison urgente de le faire ».
+
+Une autre option serait de faire un hybride entre les distributions
+stable et instable de manière à ce que les paquets ne soient installés
+que s'il y a une raison urgente de le faire.
+[Il y a en général quelques problèmes avec cela, puisque la résolution
+des problèmes de multiversion n'est pas quelque chose que j'ai l'intention
+d'implémenter, mais à première vue, je pense que c'est faisable.]
+
+Les interfaces graphiques auraient à disposition un moyen de trier et
+de montrer à l'utilisateur ce qui est vraiment urgent d'installer, et
+l'importance de la différence montrerait la gravité.
+
+Exemple : 3 bogues de sécurité sont trouvés dans le paquet foo. Il
+aurait une séquence de version qui ressemble à :
+
+Ver=1.0   Urgency=0
+Ver=1.1   Urgency=100
+Ver=1.2   Urgency=200
+Ver=1.3   Urgency=300
+Ver=1.4   Urgency=300
+
+Un utilisateur qui n'utiliserait pas la version 1.3 ou 1.4 serait
+capable de détecter qu'il y a une véritable raison de se mettre à niveau
+de 1.0, 1.1 ou 1.2 mais que le changement entre les versions 1.3 et 1.4
+n'est pas urgent.
+
+Pensez-vous à quelque chose d'autre ?
+
+Jason
+</pre>
+
+#use wml::debian::weeklynews::footer translator="Thomas Huriaux"
