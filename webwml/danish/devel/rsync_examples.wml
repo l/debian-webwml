@@ -1,0 +1,53 @@
+#use wml::debian::template title="Eksempel på brug af rsync, og hvordan ssh sættes op uden kodeord" NOHEADER=yes
+#use wml::debian::translation-check translation="1.5"
+
+<H3>Eksempel på brug af rsync</H3>
+
+<P>Følgende er et eksempel som vil spejle både web- og ftp-stedet.
+Du skal ændre maskinnavnet og de involverede directories så de passer til dine 
+forhold.
+
+<P>lockfile-programmet opretter en låsfil som er nyttig hvis du kører 
+spejlingen som et crob-job. Hvis spejlingen af en eller anden grund ikke 
+fuldføres, vil du modtage en e-mail næste gang spejlingen kører. Dermed kan du 
+finde ud af hvor fejlen opstod, rette den, slette låsfilen og spejlingen vil 
+fungere korrekt ved næste kørsel.
+
+<blockquote>
+<pre>
+\#!/bin/sh -e
+
+lockfile -r 1 rsync.master.lock || exit 23
+
+rsync -avz -e ssh --exclude sponsor.* --delete &lt;maskine&gt;:/web/debian.org/ debian.org
+
+echo Færdig med opdateringen af webspejlet. Arbejder nu på ftp-spejlet...
+
+rsync -avz --delete -e ssh &lt;maskine&gt;:/debian debian
+
+rm -f rsync.master.lock
+</pre>
+</blockquote>
+
+<p>Scriptet ovenfor vil bede om et kodeord med mindre du opsætter ssh som 
+beskrevet herunder.
+
+<H3><a name="paswordlessssh">Hvordan ssh sættes op så du ikke bliver bedt om et kodeord</a>:</H3>
+
+<p>Du kan oprette en RSA-ægthedsnøgle (authentication key) for at kunne logge 
+på et fjernsted fra din konto, uden at skulle skrive dit kodeord.
+
+<p>Bemærk, at når du har opsat dette, vil en angriber der bryder ind i dit 
+system også få fri adgang til det sted du spejler! Derfor må dette 
+<strong>aldrig</strong> gøres fra root-kontoen.
+
+<ul>
+  <li>Kør <code>ssh-keygen</code> på din maskine, og tryk blot på enter-tasten
+      når du bliver bedt om et kodeord.
+  <li>Kopier dernæst indholdet fra <code>~/.ssh/identity.pub</code> på din
+      maskine til <code>~/.ssh/authorized_keys</code> på spejltstedet
+      (filen bør have rettigheden 600).
+</ul>
+
+<p>Du skulle nu kunne bruge ssh til at logge på fjern-spejlstedet uden at 
+blive bedt om et kodeord.
