@@ -57,7 +57,7 @@ def get_owner(db, place):
 def cache_places(db):
     places_cache.clear()
     q = db.query("SELECT people.email, places.id FROM places, people WHERE people.id = places.who ORDER BY country, UPPER(city)")
-    for email, place in [x[:] for x in q.getresult()]:
+    for email, place in q.getresult():
         if not places_cache.has_key(email):
             places_cache[email] = []
         places_cache[email].append(place)
@@ -66,11 +66,11 @@ def get_places(db, email):
     if places_cache.has_key(email):
         return places_cache[email]
     q = db.query("SELECT places.id FROM places, people WHERE people.id = places.who AND people.email = '%s' ORDER BY country, UPPER(city)" % email)
-    return [x[0] for x in q.getresult()]
+    return q.getresult()
 
 def cache_names(db):
     q = db.query("SELECT email, forename, surname FROM people")
-    for email, forename, surname in [x[:] for x in q.getresult()]:
+    for email, forename, surname in q.getresult():
         if not name_cache.has_key(email):
             name_cache[email] = (forename, surname)
 
@@ -79,8 +79,7 @@ def get_name(db, email):
         return name_cache[email]
     q = db.query("SELECT forename, surname FROM people WHERE email = '%s'" % email)
     if q.getresult():
-        ql = q.getresult()
-        name_cache[email] = ql[0]
+        name_cache[email] = q.getresult()[0]
         return name_cache[email]
     else:
         return None, None
