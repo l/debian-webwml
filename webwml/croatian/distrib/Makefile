@@ -1,4 +1,4 @@
-# This Makefile should need no changes from webwml/english/2.0/Makefile
+# This Makefile should need no changes from webwml/english/distrib/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
@@ -8,14 +8,12 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-
-vendors.$(LANGUAGE).html: ../../english/distrib/vendors.CD \
-		../../english/distrib/vendors.CD.def $(TEMPLDIR)/countries.wml
-pre-installed.$(LANGUAGE).html: ../../english/distrib/pre-installed.data
-ftplist.$(LANGUAGE).html: ../../english/distrib/ftplist.data \
-		../../english/distrib/ftplist.data $(TEMPLDIR)/countries.wml
-books.$(LANGUAGE).html: ../../english/distrib/books.def \
-		../../english/distrib/books.def $(TEMPLDIR)/countries.wml
-pre-installed.$(LANGUAGE).html: ../../english/distrib/pre-installed.data \
-		../../english/distrib/pre-installed.data $(TEMPLDIR)/countries.wml
-packages.$(LANGUAGE).html: ../../english/releases/info
+books.$(LANGUAGE).html: books.wml $(ENGLISHSRCDIR)/distrib/books.def \
+  $(TEMPLDIR)/countries.wml
+ftplist.$(LANGUAGE).html: ftplist.wml $(ENGLISHSRCDIR)/distrib/ftplist.data \
+  $(TEMPLDIR)/countries.wml
+packages.$(LANGUAGE).html: packages.wml $(ENGLISHSRCDIR)/releases/info
+pre-installed.$(LANGUAGE).html: pre-installed.wml $(TEMPLDIR)/countries.wml \
+  $(ENGLISHSRCDIR)/distrib/pre-installed.data $(ENGLISHSRCDIR)/distrib/vendors.CD.def
+vendors.$(LANGUAGE).html: vendors.wml $(TEMPLDIR)/countries.wml \
+  $(ENGLISHSRCDIR)/distrib/vendors.CD $(ENGLISHSRCDIR)/distrib/vendors.CD.def
