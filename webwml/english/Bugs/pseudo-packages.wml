@@ -15,15 +15,13 @@ my $file = "pseudo-packages.description";
 my $host = `hostname -f`; chop $host;
 $file = "/org/www.debian.org/cron/scripts_daily/$file" if ($host eq "klecker.debian.org");
 open I, "$file" or die "Can't find $file file at $host: $!\n";
-while (<I>) {
-  if (/^(\S+)\s+(.*)$/) {
-    $pseudos{$1} = $2;
-  }
-}
+while (<I>) { if (/^(\S+)\s+(.*)$/) { $pseudos{$1} = $2; } }
 close I;
 %pseudos || die "%pseudos is not set -- empty pseudo-packages.description file?\n";
 foreach $a (sort keys %pseudos) {
-  print "<p><code>$a</code> &mdash; $pseudos{$a}\n";
+  if ($a ne "dpkg-iwj" && $a ne "spam") {
+    print "<p><code>$a</code> &mdash; $pseudos{$a}\n";
+  }
 }
 :>
 
