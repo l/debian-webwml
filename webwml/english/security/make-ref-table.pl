@@ -62,14 +62,14 @@ $reference{mitre}{name}='<gettext domain="security">Mitre CVE dictionary</gettex
 $reference{mitre}{perlre}="(CVE|CAN)";
 
 $reference{bid}{name}='<gettext domain="security">Securityfocus Bugtraq database</gettext>';
-$reference{bid}{url}="http://online.securityfocus.com/bid";
+$reference{bid}{url}="http://www.securityfocus.com/bid";
 $reference{bid}{perlre}="BID";
 
-$reference{cert}{name}='<gettext domain="security">CERT alerts</gettext>';
+$reference{cert}{name}='<gettext domain="security">CERT Advisories</gettext>';
 $reference{cert}{url}="http://www.cert.org/advisories/";
 $reference{cert}{perlre}="CA-";
 
-$reference{certvu}{name}='<gettext domain="security">CERT vulnerabilities</gettext>';
+$reference{certvu}{name}='<gettext domain="security">US-CERT vulnerabilities Notes</gettext>';
 $reference{certvu}{url}="http://www.kb.cert.org/vuls";
 $reference{certvu}{perlre}="VU";
 
