@@ -103,15 +103,15 @@ endif
 $(HTMLDIR)/%.zh-cn.html: %.zh-cn.html
 	test -d $(@D) || install -d $(@D)
 	@echo copying $(@F) to $(@D)
-	-@cp $(<) $(@D)
+	-@install -m 664 -p $(<) $(@D)
 $(HTMLDIR)/%.zh-hk.html: %.zh-hk.html
 	test -d $(@D) || install -d $(@D)
 	@echo copying $(@F) to $(@D)
-	-@cp $(<) $(@D)
+	-@install -m 664 -p $(<) $(@D)
 $(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
 	test -d $(@D) || install -d $(@D)
 	@echo copying $(@F) to $(@D)
-	-@cp $(<) $(@D)
+	-@install -m 664 -p $(<) $(@D)
 
 # Have to add to the default clean rule to clean up all the html the
 # above target produces.
