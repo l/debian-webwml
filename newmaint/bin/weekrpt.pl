@@ -197,7 +197,7 @@ sub fd_checks($)
     print "Random checks\n";
     print "===============\n";
 
-    my $sql = "SELECT email, manager FROM applicant WHERE id_ok AND pnp_ok AND tns_ok AND decision is NULL";
+    my $sql = "SELECT email, manager FROM applicant WHERE id_ok AND pnp_ok AND tns_ok AND decision is NULL ORDER BY manager";
 
     print "The following applicants have completed all checks but are not\napproved by their AM:\n\n";
     $sth = $dbh->prepare($sql);
@@ -209,7 +209,7 @@ sub fd_checks($)
 
     print "\n";
 
-    my $sql = "SELECT a.email, m.login FROM applicant a, manager m WHERE (a.approved = 'f' OR a.approved IS NULL) AND a.manager = m.login AND m.is_active = 'f'";
+    my $sql = "SELECT a.email, m.login FROM applicant a, manager m WHERE (a.approved = 'f' OR a.approved IS NULL) AND a.manager = m.login AND m.is_active = 'f' ORDER BY m.login";
     print "The following applicants are not AM approved but have an inactive AM:\n\n";
     $sth = $dbh->prepare($sql);
     $sth->execute();
