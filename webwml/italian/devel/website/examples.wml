@@ -1,5 +1,5 @@
 #use wml::debian::template title="Examples"
-#use wml::debian::translation-check translation="1.5"
+#use wml::debian::translation-check translation="1.7" maintainer="Giuseppe Sacco"
 
 <H3>Esempio di come cominciare una nuova traduzione</H3>
 
@@ -11,8 +11,12 @@
    mkdir french
    cvs add french
    cd french
-   cp ../english/.wmlrc ../english/Make.* ../english/Makefile .
-   cvs add Make* .wmlrc
+   cp ../english/.wmlrc ../english/Make.* .
+   echo '<protect>include $(subst webwml/french,webwml/english,$(CURDIR))/Makefile</protect>' &gt; Makefile
+   mkdir po
+   cvs add Make* .wmlrc po
+   make -C po init-po
+   cvs add po/Makefile po/*.fr.po
 </pre>
 
 <p>Edita il file <tt>.wmlrc</tt> e cambia:
@@ -32,8 +36,8 @@ dovresti cambiare anche altre variabili in quel file, per maggiorni
 informazioni leggi ../Makefile.common e forse altri esempi funzionanti come la
 traduzione cinese.
 
-<p>Edita english/template/debian/*.wml and e aggiungi le traduzioni a tutti i
-&lt;define-tag ...&gt; . Questo dovrebbe essere abbastanza facile.
+<p>Vai nella directory french/po e traduci tutto quello che è nei file PO.
+Questo dovrebbe essere abbastanza facile.
 
 <p> Sii sempre sicuro di aver copiato il Makefile dentro ad ogni directory che
 hai intenzione di tradurre. Ciò è necessario poichè il programma <code>make</code> viene
@@ -72,7 +76,7 @@ lista debian-www. Quando hai finito, esegui
    mkdir intro
    cvs add intro
    cd intro
-   cp ../english/intro/Makefile .
+   cp ../Makefile .
 </pre>
 
 Assicurati che la nuova directory abbia il Makefile e sia stata isnerita
