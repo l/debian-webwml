@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+# see README for more information
+
+umask 002
+. /org/www.debian.org/cron/common.sh
+
+# locking
+if lockfile -! -l 43200 -r 0 "$crondir/often.lock"; then
+  echo `hostname` is unable to start update, lock file exists.
+  exit 1
+fi
+trap "rm -f $crondir/often.lock" exit
+
+# rotate the previous log file
+savelog -g debwww -m 664 $crondir/often.log &> /dev/null
+
+cd $crondir/parts
+run-parts --verbose $crondir/parts &> $crondir/often.log
+
+echo " *** the often cron job is done *** " >> $crondir/often.log
