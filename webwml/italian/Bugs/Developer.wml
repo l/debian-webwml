@@ -1,7 +1,7 @@
 #use wml::debian::template title="Debian BTS - informazioni per lo sviluppatore" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.23"
+#use wml::debian::translation-check translation="1.29"
 
-<h1><A name="developers">Informazioni sul sistema per la gestione delle anomalie a uso degli sviluppatori</A></h1>
+<h1>Informazioni sul sistema per la gestione delle anomalie a uso degli sviluppatori</h1>
 
 <P>All'inizio la descrizione dell'anomalia è inviata da un qualsiasi utente
 come un normale messaggio a <CODE>submit@bugs.debian.org</CODE>.
@@ -17,21 +17,47 @@ anch'egli riceverà il messaggio.</p>
 segnala il problema, sia il gestore, sia
 <VAR>nnn</VAR><CODE>@bugs.debian.org</CODE>.</p>
 
-<H2>Chiusura delle segnalazioni</H2>
+<hrline>
 
-<P>Uno sviluppatore che riceva una segnalazione dal sistema automatico,
-o che lo legga in <CODE>debian-bugs-dist</CODE>, può prenderselo
-in carico rispondendo al messaggio tramite il proprio
-programma di posta. Si deve solo cambiare il campo
-<CODE>To</CODE> per inserire
+<ul>
+  <li><a href="#closing">Chiusura delle segnalazioni</a></li>
+  <li><a href="#followup">Followup dei messaggi</a></li>
+  <li><a href="#severities">Livelli di criticità</a></li>
+  <li><a href="#tags">Tags per le segnalazioni</a></li>
+  <li><a href="#forward">Registrare di essere passati da una segnalazione</a></li>
+  <li><a href="#maintincorrect">Manutentori di pacchetto elencati erroneamente</a></li>
+  <li><a href="#requestserv">Riaprire, riassegnare e manipole anomalie</a></li>
+  <li><a href="#subjectscan">Feature pi\xf9 o meno vecchie riguardo all'analisi dell'oggetto</a></li>
+  <li><a href="#x-debian-pr">Caratteristica vecchia: <code>X-Debian-PR: quiet</code></a></li>
+</ul>
+
+<hrline>
+
+<h2>Chiusura delle segnalazioni</h2>
+
+<p>Le segnalazioni di anomalia dovrebbero essere chiuse quando si elimina
+il problema. Un problema si considera risolto quando il pacchetto che
+include la soluzione viene immesso nell'archivio Debian.</p>
+
+<p>Normalmente gli unici che possono chiudere una segnalazione sono
+la persona che ha fatto la segnalazione e il manutentore del pacchetto
+verso il quale è stata inviata la segnalazione.
+Ci sono eccezioni a questa regola, per esempio quando il pacchetto non 
+è specificato oppure per certi pseudo-pacchetti.
+Se si è in dubbio anziché chiudere la segnalazione conviene chiedere
+nella lista di messaggi debian-devel.</p>
+
+<p>Le segnalazioni dovrebbero essere chiuse inviando un email a 
+<var>nnn</var><code>-done@bugs.debian.org</code>. Il testo del messaggio
+deve contenere una spiegazione di come il problema è stato risolto.</p>
+
+<p>Con tutti i messaggi inviati dal sistema di tracciamento, per chiudere
+una segnalazione è sufficiente rispondere al messaggio con un qualsiasi
+programma di posta elettronica e modificare il campo <code>To</code> per dire
 <VAR>nnn</VAR><CODE>-done@bugs.debian.org</CODE> al posto di
 <VAR>nnn</VAR><CODE>@bugs</CODE>
 (<VAR>nnn</VAR><CODE>-close</CODE> è fornito come alias per
 <VAR>nnn</VAR><CODE>-done</CODE>).</P>
-
-<P>L'indirizzo di chi segnala il problema sarà automaticamente inserito
-come <CODE>destinatario</CODE> della risposta perché il sistema lo ha inserito
-nel campo <CODE>Reply-To</CODE>.</p>
 
 <P>Questi messaggi `Done' (Fatto) sono automaticamente inviati solo
 alla lista di messaggi <CODE>debian-bugs-closed</CODE>. Se altri sviluppatori
@@ -41,22 +67,27 @@ sono interessati allo potrebbe essere meglio includere anche la lista
 <P>Sia la persona che corregge l'anomalia, sia chi l'ha segnalata riceverà
 una notifica del cambio di stato della segnalazione.</P>
 
-<H2>Messaggi di Followup</H2>
+<h2><a name="followup">Messaggi di Followup</a></h2>
 
-<P>Se uno sviluppatore vuole rispondere ad una segnalazione egli può
-semplicemente rispodere al messaggio (ma questo <b>non</b> marcherà l'anomalia
-come corretta.) La sua risposta sarà (se rispettano il campo Reply-To:
-dell'intestazione) inviata a <VAR>nnn</VAR><CODE>@bugs</CODE> e a chi ha
-inviato la segnalazione (sono due indirizzi diversi.) Il sistema del
-tracciamento delle segnalazioni  riceverà il messaggio a
+<p>Il sistema di tracciamento dei bug includerà l'indirizzo del
+segnalatore e quello dell'anomalia (<var>nnn</var><code>@bugs</code>) nel
+campo <code>Reply-To</code> dopo aver rigirato la segnalazione. Nota che
+questi sono due indirizzi diversi.</p>
+
+<p>Se uno sviluppatore vuole rispondere ad una segnalazione egli può
+semplicemente rispodere al messaggio, senza cambiare il campo
+<code>Reply-To</code>. Questo <strong>non</strong> chiuderà la
+segnalazione.</p>
+
+<p>Il sistema di tracciamento riceverà il messaggio a
 <VAR>nnn</VAR><CODE>@bugs</CODE>, lo passerà a chi mantiene il pacchetto, lo
 memorizzerà con tutti gil altri log per quella anomalia e lo invierà a
 <CODE>debian-bugs-dist</CODE>.</P>
 
 <P>Uno sviluppatore può inviare specificatamente un messaggio a chi ha fatto
-la segnalazione tramite l'indirizzo <VAR>nnn</VAR><CODE>-submitter@bugs</CODE>.</p>
+la segnalazione tramite l'indirizzo <var>nnn</var><code>-submitter@bugs</code>.</p>
 
-<P>Se voui spedire un messaggio followup che non consideri appropriato
+<P>Se vuoi spedire un messaggio followup che non consideri appropriato
 per <CODE>debian-bugs-dist</CODE> puoi spedirlo a
 <VAR>nnn</VAR><CODE>-quiet@bugs</CODE> o
 <VAR>nnn</VAR><CODE>-maintonly@bugs</CODE>.
@@ -122,6 +153,12 @@ corrette da sviluppatori che non sono i gestori del pacchetto. Nota: per
 questa situazione dovrebbe invece essere usato il <strong>tag</strong>
 "fixed".
 </DL>
+
+<p>Alcuni livelli sono considerati <em><a
+href="http://bugs.debian.org/release-critical/">release-critical</a></em>, vale
+a dire che il problema avrà un certo impatto nell'inserire il pacchetto
+nella versione stabile di Debian. Attualmente questi livelli sono
+<strong>critical</strong>, <strong>grave</strong> e <strong>serious</strong>.</p>
 
 <H2><a name="tags">Tag per le segnalazioni</a></H2>
  
@@ -224,15 +261,10 @@ che riceve.</P>
 <P>Puoi modificare quest'ultima informazione spedendo un messaggio
 a <A href="server-control"><code>control@bugs.debian.org</code></A>.</P>
 
-<H2>Invio di riassunti a <code>debian-bugs-reports</code></H2>
+<H2><a name="maintincorrect">Manutentori di pacchetto elencati erroneamente</a></H2>
 
-<P>Ogni venerdì la lista dei bug non risolti viene inviata a
-<CODE>debian-bugs-reports</CODE>, ordinata per data della segnalazione
-Ogni martedì una lista di anomalie non risolte per troppo tempo è
-creata e inviata, ordinata per gestore di pacchetto.</P>
-
-<P><A name="maintincorrect">Se il gestore di un pacchetto è erroneamente
-nella lista</A> il fatto è normalmente spiegato da un recente cambio di
+<p>Se il gestore di un pacchetto è erroneamente
+nella lista il fatto è normalmente spiegato da un recente cambio di
 gestore, e il nuovo gestore non ha ancora inserito una nuova versione del
 pacchetto con la segnalazione del cambio nel campo
 <CODE>Maintainer</CODE> del file di controllo.
@@ -261,7 +293,7 @@ documento in solo testo è ottenibile inviando un messaggio
 con il solo testo <CODE>help</CODE> al server all'indirizzo
 di cui sopra.</P>
 
-<H2>Feature più o meno vecchie riguardo all'analisi dell'oggetto</H2>
+<h2><a name="subjectscan">Feature più o meno vecchie riguardo all'analisi dell'oggetto</a></h2>
 
 <P>I messaggi che arrivano a <CODE>submit</CODE> o <CODE>bugs</CODE> e il
 cui Oggetto comincia con <CODE>Bug#</CODE><VAR>nnn</VAR> verranno trattati
@@ -281,7 +313,8 @@ di prima. Questi messaggi vengono riinviati all'indirizzo
 nell'indirizzo - e senza numero di anomalia nell'oggetto saranno
 scartati mantenuti solo per alcune settimane.</P>
 
-<H2>Feature <CODE>X-Debian-PR: quiet</CODE> obsoleta</H2>
+
+<h2>Caratteristica vecchia: <code>X-Debian-PR: quiet</code></a></h2>
 
 <P>Una volta era possibile impedire al sistema di fare il
 forward di un messaggio ricevuto all'indirizzo
