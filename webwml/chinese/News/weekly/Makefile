@@ -1,7 +1,3 @@
-# The chinses build is broken (hangs forever), so I have disabled it with
-# a crude hack. When fixed, you can remove this ifeq -- joeyh.
-ifeq ($(NOT_BROKEN_BUILD), 1)
-
 # This Makefile should need no changes from webwml/english/News/weekly/Makefile
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
@@ -42,16 +38,16 @@ endif
 %.$(LANGUAGE)-cn.html %.$(LANGUAGE)-tw.html: \
                            %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml
-	cd $(@D) && WMLOPTS="-DWML_SRC_REALNAME=\"Joey Hess\" -DWML_SRC_USERNAME=joeyh" $(WML)
+	cd $(@D) && WMLOPTS="-DWML_SRC_REALNAME=\"Joey Hess\" -DWML_SRC_USERNAME=joeyh" $(WML) $(notdir $(<))
 
-	@echo "Converting $*.zh-cn.html.tmp to $*.zh-cn.html (zh_CN.GB2312)..."
+	@echo "Converting $*.zh-cn.html to (zh_CN.GB2312)..."
+	mv -f $*.zh-cn.html $*.zh-cn.html.tmp
 	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
-	rm -f $*.zh-cn.html.tmp
 	@$(TOCN) $*.zh-cn.html
 
-	@echo "Converting $*.zh-tw.html.tmp to $*.zh-tw.html (zh_TW.Big5)..."
+	@echo "Converting $*.zh-cn.html to $*.zh-tw.html (zh_TW.Big5)..."
 	#       @$(U8TOB5) < $*.zh-tw.html > $*.zh-tw.html.tmp
-	mv -f $*.zh-tw.html.tmp $*.zh-tw.html
+	mv -f $*.zh-cn.html.tmp $*.zh-tw.html
 	@$(TOTW) $*.zh-tw.html
 
 
@@ -100,11 +96,3 @@ mail:
 	@cat mail-header
 	@lynx -dump  http://www.debian.org/News/weekly/$(YEAR)/$(shell cat CURRENT-ISSUE-IS)/ | \
 		perl -pe 's/^\s\s?\s?//'
-
-# Remove this when the chinese build is fixed.
-else
-all:
-	true
-%:
-	true
-endif
