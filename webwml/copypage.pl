@@ -6,7 +6,7 @@
 # Makefile from the source.
 
 # Written on 2000-02-26 by peter karlsson <peter@softwolves.pp.se>
-# © Copyright 2000 Software in the public intereset, Inc.
+# © Copyright 2000 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -95,7 +95,7 @@ open DST, ">$dstfile"
 # Retrieve CVS revision number
 while (<CVS>)
 {
-	if (m[^/$filename/([0-9]*\.[0-9])*/]o)
+	if (m[^/$filename/([0-9]*\.[0-9]*)/]o)
 	{
 		$revision = $1;
 	}
@@ -103,7 +103,11 @@ while (<CVS>)
 
 close CVS;
 
-print "Could not get revision number\n" unless $revision;
+unless ($revision)
+{
+	print "Could not get revision number - bug in script?\n";
+	revision = '1.1';
+}
 
 # Copy the file and insert the revision number
 $insertedrevision = 0;
