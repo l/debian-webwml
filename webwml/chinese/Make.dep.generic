@@ -1,2 +1,15 @@
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
 	$(WML) $(<F)
+
+%.$(LANGUAGE)-cn.html: %.$(LANGUAGE).html
+	@echo "Converting $< to $@ (zh_CN.GB2312)..."
+	@$(B5TOGB) < $< > $@
+#	ccf -bg $< $@
+	@perl -pi -e 's|^(<HTML lang="zh)">|$$1-CN">|;' \
+		-e 's|^(<META http-equiv=.*charset)=Big5">|$$1=GB2312">|;' \
+		-e 's/(\.zh)\.(gif|jpg|png)/$$1-cn.$$2/g;' $@
+
+%.$(LANGUAGE)-tw.html: %.$(LANGUAGE).html
+	@echo "Converting $< to $@ (zh_TW.Big5)..."
+	@perl -p -e 's|^(<HTML lang="zh)">|$$1-TW">|;' \
+		-e 's/(\.zh)\.(gif|jpg|png)/$$1-tw.$$2/g;' $< > $@

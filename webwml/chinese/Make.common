@@ -12,8 +12,19 @@ TEMPLDIR=$(WMLBASE)/$(RELTEMPLDIR)
 ENGLISHSRCDIR=$(WMLBASE)/../english
 
 WMLFILES := $(wildcard *.wml)
-HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
-HTMLDESTFILES := $(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE).html,$(WMLFILES))
+
+# Intermediate HTML files (.zh.html)
+# to be converted to .zh-tw.html and .zh-cn.html
+#
+INT_HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
+#HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
+HTMLFILES := $(foreach i, $(SUBLANG), \
+	$(patsubst %.wml,%.$(LANGUAGE)-$(i).html,$(WMLFILES)))
+
+#HTMLDESTFILES := $(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE).html,$(WMLFILES))
+HTMLDESTFILES := $(foreach i, $(SUBLANG), \
+	$(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE)-$(i).html,$(WMLFILES)))
+
 JPGSOURCE := $(wildcard *.jpg)
 JPGDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(JPGSOURCE))
 GIFSOURCE := $(wildcard *.gif)
@@ -21,7 +32,7 @@ GIFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(GIFSOURCE))
 IMGFILES := $(JPGSOURCE) $(GIFSOURCE)
 IMGDESTFILES := $(JPGDESTFILES) $(GIFDESTFILES)
 
-all:: $(HTMLFILES)
+all:: $(INT_HTMLFILES) $(HTMLFILES)
 	@for i in $(SUBS) ''; do \
 		if [ -d "$$i" ]; then \
 			$(MAKE) -C $$i ; \
@@ -38,7 +49,8 @@ install:: $(HTMLDESTFILES) $(IMGDESTFILES)
 	done
 
 clean::
-	-rm -f *.$(LANGUAGE).html
+	rm -f *.$(LANGUAGE).html \
+		$(foreach i, cn tw, *.$(LANGUAGE)-$(i).html)
 	@for i in $(SUBS) ''; do \
 		if [ -d "$$i" ]; then \
 			$(MAKE) -C $$i clean; \
@@ -46,14 +58,25 @@ clean::
 	done
 
 cleandest::
-	-rm -f $(HTMLDIR)/*.$(LANGUAGE).html
+	rm -f $(HTMLDIR)/*.$(LANGUAGE).html $(foreach i, cn tw, \
+		$(HTMLDIR)/*.$(LANGUAGE)-$(i).html)
 	@for i in $(SUBS) ''; do \
 		if [ -d "$$i" ]; then \
-			$(MAKE) -C $$i clean; \
+			$(MAKE) -C $$i cleandest; \
 		fi ; \
 	done
 
-$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
+# Is there anyway to combine the following two rules into one?
+
+$(HTMLDIR)/%.$(LANGUAGE)-cn.html: $(@F)
+	@echo copying $(@F) to $(HTMLDIR)
+	-@cp $(@F) $(HTMLDIR)
+ifeq ($(LANGUAGE),en)
+	@echo making a link $(@D)/$(*F).html -\> $(@F)
+	-@ln -f -s $(@F) $(@D)/$(*F).html
+endif
+
+$(HTMLDIR)/%.$(LANGUAGE)-tw.html: $(@F)
 	@echo copying $(@F) to $(HTMLDIR)
 	-@cp $(@F) $(HTMLDIR)
 ifeq ($(LANGUAGE),en)
