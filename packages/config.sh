@@ -4,10 +4,14 @@
 topdir=/org/packages.debian.org
 
 bindir=${topdir}/bin
+scriptdir=${topdir}/htmlscripts
+libdir=${topdir}/lib
 filesdir=${topdir}/files
 swishdir=${topdir}/swish++
 htmldir=${topdir}/www
 archivedir=${topdir}/archive
+podir=${topdir}/po
+localedir=${topdir}/locale
 
 # unset this if packages.debian.org moves somewhere where the packages files
 # cannot be obtained locally
@@ -20,6 +24,7 @@ security_ftpsite=http://security.debian.org/debian-security
 
 # Architectures
 #
+polangs="de"
 parts="main contrib non-free"
 dists="stable testing unstable"
 arch_stable="alpha arm hppa i386 ia64 m68k mips mipsel powerpc s390 sparc"
