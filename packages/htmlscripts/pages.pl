@@ -132,6 +132,10 @@ sub package_pages_walker {
 					       $env->{archs} );
 	my %sections = $pkg->get_arch_fields( 'section', 
 					      $env->{archs} );
+	my %priorities = $pkg->get_arch_fields( 'priority', 
+						$env->{archs} );
+	my %essential = $pkg->get_arch_fields( 'essential', 
+					       $env->{archs} );
 	my %archives = $pkg->get_arch_fields( 'archive', 
 					      $env->{archs} );
 	my %subdists = $pkg->get_arch_fields( 'subdistribution', 
@@ -148,9 +152,11 @@ sub package_pages_walker {
 						$env->{archs} );
 	my %inst_sizes = $pkg->get_arch_fields( 'installed-size',
 						$env->{archs} );
-	my ( $section, $archive, 
+	my ( $section, $archive, $priority, $essential,
 	     $sourcepackage, $src_version, $subdist, $maintainer );
 	$section = $sections{max_unique};
+	$priority = $priorities{max_unique} || "";
+	$essential = $essential{max_unique} || "";
 
 	my $dirname = "$env->{dest_dir}/$section";
 	my $filename = "$dirname/$name.$env->{lang}.html";
@@ -460,7 +466,7 @@ sub package_pages_walker {
 	#
 	# create data sheet
 	#
-	if ($env->{lang} eq "en") {
+	if ($env->{lang} eq 'en') {
 
 	    my $data_sheet = header( title => "$name -- Data sheet",
 				     lang => "en",
@@ -480,11 +486,17 @@ sub package_pages_walker {
 		"<td>$v_str</td></tr>";
 	    $data_sheet .= "<tr><td>".gettext( "Section" ).":</td>\n".
 		"<td>$section</td></tr>";
+	    $data_sheet .= "<tr><td>".gettext( "Priority" ).":</td>\n".
+		"<td>$priority</td></tr>";
+	    $data_sheet .= "<tr><td>".gettext( "Essential" ).":</td>\n".
+		"<td>".gettext("Yes")."</td></tr>"
+		if $essential && ( $essential =~ /yes/i );
 	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Depends' );
 	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Recommends' );
 	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Suggests' );
-	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Conflicts' );
 	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Enhances' );
+	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Conflicts' );
+	    $data_sheet .= print_deps_ds( $env, $pkg, \%versions, 'Provides' );
 
 	    $data_sheet .= "</tbody></table>";
 	    
