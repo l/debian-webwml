@@ -7,6 +7,7 @@ CUR_DIR=chinese/debian-doc
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
 SUBS=FAQ
+ZHTEMPLATE=$(WMLBASE)/template/debian-zh/template.tmpl
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
