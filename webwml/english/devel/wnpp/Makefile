@@ -29,7 +29,8 @@ ifeq "$(LANGUAGE)" "en"
 endif
 
 MAKE_LINK =  [ -f $(2).wml ] && [ ! -f $(HTMLDIR)/$(1).$(LANGUAGE).html ] && \
-		ln -sf $(2).$(LANGUAGE).html $(HTMLDIR)/$(1).$(LANGUAGE).html
+		ln -sf $(2).$(LANGUAGE).html $(HTMLDIR)/$(1).$(LANGUAGE).html \
+			|| true
 
 install::
 	$(call MAKE_LINK,o,orphaned)
