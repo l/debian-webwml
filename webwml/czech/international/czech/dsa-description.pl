@@ -160,6 +160,9 @@ s{A maliciously crafted ([\w-]+) file could exploit this problem, leading to the
 # Fixed in packages
 #
 
+s{For the unstable distribution \(sid\) these problems should already be fixed since they were backported from current versions.}
+{V&nbsp;unstable distribuci (sid) by ji¾ mìly být tyto problémy\nopraveny, proto¾e byly vzaty z&nbsp;aktuálních verzí.}g;
+
 s{<p>For the (stable|unstable) distribution}
 {<p>Pro $1 distribuci}g;
 
