@@ -25,7 +25,7 @@ VENDORS_FILES   = $(ENGLISHDIR)/CD/vendors/vendors.CD.def
 OTHERS_FILES    = $(ENGLISHDIR)/News/press/press.tags $(ENGLISHDIR)/MailingLists/mklist.tags $(ENGLISHDIR)/banners/index.tags $(ENGLISHDIR)/consultants/consultant.defs $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/logos/index.tags $(ENGLISHDIR)/misc/laptops/menu.inc $(ENGLISHDIR)/misc/merchandise.def $(ENGLISHDIR)/security/faq.inc $(ENGLISHDIR)/y2k/l10n.data
 
 ifeq "$(LANGUAGE)" "en"
-all:: $(POTFILES)
+all install:: $(POTFILES)
 else
 all:: $(MOFILES)
 install:: install-mo
@@ -85,15 +85,14 @@ install-mo: $(MOFILES)
 clean::
 	-rm -f *.pot *.mo
 
-stats:
-
 ifeq "$(LANGUAGE)" "en"
 stats:
 else
 stats:
 	-@for d in $(DOMAINS); do \
           echo -n "$$d.$(LANGUAGE).po: "; \
-          msgfmt -o /dev/null --statistics $$d.$(LANGUAGE).po; \
+          msgmerge -q $$d.$(LANGUAGE).po $(ENGLISHDIR)/po/$$d.pot |\
+             msgfmt -o /dev/null --statistics -; \
         done
 endif
 
