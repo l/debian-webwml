@@ -473,10 +473,12 @@ sub package_pages_walker {
 	#
 	if ( $src_pkg && ($env->{distribution} ne 'experimental')) {
 	    my $source_dir = $src_pkg->{versions}->{$src_version}->{directory};
+	    (my $src_basename = $src_version) =~ s,^\d+:,,; # strip epoche
+	    $src_basename = "${sourcepackage}_$src_basename";
 	    $source_dir =~ s,pool/updates,pool,o;
 	    $source_dir =~ s,pool/non-US,pool,o;
-	    $package_page .= "<br><small>".sprintf( gettext( "View the <a href=\"%s\">Debian changelog</a>" ), "$CHANGELOG_URL/$source_dir/${sourcepackage}_$src_version/changelog" )."</small><br>\n";
-	    $package_page .= "<small>".sprintf( gettext( "View the <a href=\"%s\">copyright file</a>" ), "$CHANGELOG_URL/$source_dir/${sourcepackage}_$src_version/copyright" )."</small><br>\n";
+	    $package_page .= "<br><small>".sprintf( gettext( "View the <a href=\"%s\">Debian changelog</a>" ), "$CHANGELOG_URL/$source_dir/$src_basename/changelog" )."</small><br>\n";
+	    $package_page .= "<small>".sprintf( gettext( "View the <a href=\"%s\">copyright file</a>" ), "$CHANGELOG_URL/$source_dir/$src_basename/copyright" )."</small><br>\n";
 	}
 					    
 	#
