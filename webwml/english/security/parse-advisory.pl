@@ -40,8 +40,8 @@ foreach $l (<ADV>) {
   if ($l =~ /^(Problem type|Vulnerability)\s*: (.+)/) {
     $desc = $2;
   }
-  if ($l =~ /^(CVE name|CERT advisory)\s*: (.+)/) {
-    push @dbids, $2;
+  if ($l =~ /^(CVE (name|id)?|CERT advisory)\s*: (.+)/i) {
+    push @dbids, $3;
   }
   $mi = 0 if ($l =~ /^wget url/);
   $moreinfo .= "<p>" if ($mi && $nl);
