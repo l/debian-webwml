@@ -15,8 +15,9 @@ $(ENGLISHSRCDIR)/consultants/consultant.inc: consultant.data
 endif
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
+                        $(ENGLISHSRCDIR)/consultants/consultant.data \
                         $(ENGLISHSRCDIR)/consultants/consultant.inc \
-                        $(ENGLISHSRCDIR)/consultants/consultant.data
+                        $(ENGLISHSRCDIR)/consultants/consultant.defs
 	$(WML) $(<F)
 
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/consultant.wml
