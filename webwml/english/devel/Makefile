@@ -12,4 +12,4 @@ include $(WMLBASE)/Make.lang
 
 people.$(LANGUAGE).html: people.wml $(TEMPLDIR)/template.wml \
  $(ENGLISHSRCDIR)/devel/people.names
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/card.wml $(TEMPLDIR)/template.wml
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml
