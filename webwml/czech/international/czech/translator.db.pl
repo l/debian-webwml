@@ -37,6 +37,15 @@ sub init_translators {
                         file        => 2,
                         compress    => 'none'
                 },
+                'Vitezslav Kotrla' => {
+                        email       => 'vitko@post.cz',
+                        summary     => 2,
+                        logs        => 2,
+                        diff        => 2,
+                        tdiff       => 2,
+                        file        => 2,
+                        compress    => 'none'
+                },
         };
         return $translators;
 }
