@@ -1,0 +1,367 @@
+#use wml::debian::template title="Debian 2.1 (slink) における GNOME のアップデート"
+<!--original_revision: 1.3 :-->
+
+<h2>はじめに</h2>
+
+<p>こちらの最新版は、Debian の開発版ツリーのパッケージから構成されています。
+これは Debian 2.1 で行なわれた
+フリーズや広範なテストなどといったリリース手続きを経たものではありません。
+そのためこのパッケージの最新版は他の Debian 2.1
+パッケージに比べると安定していない可能性があります。
+これらのパッケージの glibc2.1 バージョンは
+Debian 開発者や好奇心旺盛なユーザによって利用されていますので、
+動作はします。
+ただ十分に注意はしてください。</p>
+
+<p>また i386 アーキテクチャの最新版以外は不完全なものです。</p>
+
+<h2>新たにインストールする</h2>
+
+<p>Debian slink に GNOME の最新版をインストールするのに最もよい方法は、
+dselect で <tt>apt</tt> メソッドを利用する方法です。</p>
+
+<ol>
+
+<li><p>まず最初に <tt>/etc/apt/sources.list</tt>
+に次の一行を追加してください。</p> 
+<blockquote>
+deb http://www.debian.org/~jim/debian-gtk-gnome/gnome-stage-slink slink main
+</blockquote>
+
+<!--
+<p>いずれかの GNOME ミラーも利用可能です。
+その sources.list に関しては
+<a href="http://www.gnome.org/start/getting_debian.shtml#mirrors">Debian 用
+GNOME</a> のページをご覧ください。</p>
+-->
+
+<li><p>次に <tt>dselect</tt> を起動し、
+<tt>[A]ccess</tt> の項目を確認して、
+アクセスメソッドとして apt を利用してください。
+さらに <tt>[U]pdate</tt> でパッケージ一覧を更新し、
+<tt>[S]elect</tt> を選択してください。</p></li>
+	
+<li><p>これで GNOME パッケージ群を選択できるようになりました。
+お好みのパッケージを選択するか、
+私たちが用意したメタパッケージのいずれかを選択してください。
+一覧の中からそれらを検索するには
+"<tt>/</tt>" キーを利用してください。
+なおメタパッケージは、
+一般的な GNOME デスクトップの利用を希望されながらも
+パッケージの手動選択に自信のないユーザ向けに、
+パッケージセットをインストールします。
+メタパッケージには以下のものがあります。</p> 
+
+<p>
+<dl>
+
+  <dt>task-gnome-desktop</dt> 
+  <dd>このパッケージを用いれば、
+    <a href="http://www.gnome.org/users-guide/project.shtml">GNOME
+    ユーザーズガイド</a>どおりの
+    GNOME デスクトップ環境を構築できるように、
+    基本コンポーネントをインストールすることができます。</dd>
+
+  <dt>task-gnome-apps</dt>
+  <dd>このパッケージを用いることで、 GNOME
+    プログラムおよびユーティリティがほぼ完全にインストールされます。</dd>
+
+  <dt>task-gnome-net</dt>
+  <dd>こちらは、メールリーダや irc
+    クライアントのようなネットワークを利用するプログラム用です。</dd>
+
+  <dt>task-gnome-wm</dt>
+  <dd>GNOME はいずれのウインドウマネージャでも利用できますが、
+    GNOME 対応のものは、操作の上でいくつか有利な点があります。
+    このパッケージは、利用可能な GNOME
+    対応ウインドウマネージャを試せるよう、それをインストールします。</dd>
+
+  <dt>task-gnome-games</dt>
+  <dd>このパッケージを用いれば、GNOME
+    ゲームのフルセットがインストールできます。</dd>
+
+</dl>
+</p>
+</li>
+
+<li>パッケージを選択したら、apt を実行させるために
+<tt>[I]nstall</tt> を選択してください。</li>
+
+</ol>
+<p>インストール後、これらのメタパッケージを削除することは可能です。
+この場合もこれらのメタパッケージによって選択されたパッケージ群は
+削除されませんが、
+この時に自動的にインストールされたパッケージ群すべてを
+アンインストールすることも可能です。</p>
+
+<p>もうひとつは、これらのパッケージをインストールするのに
+dselect の代わりに apt-get を用いる方法です。
+
+こちらの方法を用いる場合は、以下のコマンドを利用してください。</p>
+<blockquote><pre>
+apt-get update
+apt-get install task-gnome-apps task-gnome-net
+</pre></blockquote>
+
+<h2>既にインストールされている古い GNOME をアップグレードする</h2>
+
+<p>Debian 2.1 にてインストールされた古い GNOME 0.3 をアップグレードするには、
+上記のとおりに <tt>sources.list</tt> 
+にパッケージのある場所を付け加えてください。
+この場合は以下のコマンドを実行します。</p>
+
+<blockquote><pre>
+apt-get update
+apt-get dselect-upgrade
+</pre></blockquote>
+
+<p>こうすれば、既にインストールされているパッケージが更新され、
+ご自分で選択されたパッケージは必要以上には置き換えられはしません。
+もちろん、前述のように apt メソッドを dselect で利用することも可能です。
+また、通常どおり追加パッケージを 
+<tt>apt-get install &lt;packagename&gt;</tt> や dselect、dpkg 
+を利用して追加することもできます。
+</p>
+
+<!--    
+<p>
+Debian slink リリースからインストールした既存の GNOME 0.3
+をアップデートする手続きは、前述した最初のインストール方法と同じです。
+もちろん、選択済の現行パッケージで十分な場合は、
+追加パッケージを選択する必要はありません。
+この場合は、dselect は使わずに
+<tt>apt-get update &amp;&amp; apt-get dist-upgrade</tt>
+として、現行パッケージの最新バージョンをインストールしてください。
+</p>
+-->
+
+<h2>GNOME を実行する</h2>
+
+<p>GNOME デスクトップを実行する方法には次の二つの方法がお勧めです。
+どちらの方法でも、ご自分のホームディレクトリにある 
+<tt>.xsession</tt> ファイルを編集する必要があります。
+このファイルがまだ用意されていない場合は作る必要があるでしょう。</p>
+
+<ul>
+
+<li>このファイルに <blockquote>exec gnome-session</blockquote>
+という一行のみを記述します。
+この方法は GNOME 開発者によって推奨されている方法です。
+gnome-session は、利用するウインドウマネージャはもちろん、
+スタートアップ時に起動するプログラムも管理します。
+詳細は、gnome-help-browser からアクセスできる
+<a href="http://www.gnome.org/users-guide/project.shtml">GNOME
+ユーザーズガイド</a>をご覧ください。
+なお私たちは、gnome-session が時々デスクトップをリセットし、
+カスタマイズ情報を紛失してしまうことがあるとの報告を受けています。
+このセーブをちゃんと行ないたい場合には、
+次の二番目の方法を用いることが望ましいでしょう。</li>
+
+<li>gnome-session を利用せず、以下のようにして
+panel を直接呼び出すことも可能です。
+
+<blockquote><pre>
+xterm &         # xterm を起動する
+wmaker-gnome &  # window maker ウインドウマネージャを起動する
+panel           # gnome panel を起動する
+</pre></blockquote>
+
+この設定方法は最も安全なものですが、
+こうすると GNOME コントロールセンタから
+ウインドウマネージャを変更することはできなくなります。</li>
+
+</ul>
+
+<h2>注意</h2>
+
+<p>日常的な利用に関して言えば GNOME は十分に安定していますが、
+パッケージによっては問題が発生する可能性もあります。</p>
+
+<dl>
+<dt>gnome-session</dt> 
+<dd>時々 gnome session はデスクトップの設定を忘れてしまい、
+パネルや他の設定事項をリセットしてしまいます。</dd>
+
+<dt>gdm</dt>
+<dd>gdm は xdm に置き換わるもので、ログインサービスを受け持ちます。
+ただこのパッケージはまだ業務利用などに使える段階にはありません。
+これは xdm と干渉し、時々画面のフリーズを引き起こします。
+そのためこちらを利用する場合は、/var/state 配下のログファイルが、
+エラーメッセージのために
+/var パーティションを溢れさせないように注意してください。
+ちょっとしたアドバイスですが、
+何か問題が起きた場合、例えばブート時にマシンが固まってしまう場合などは、
+gdm を無効にしてください。
+この場合は、lilo プロンプトで <tt>linux single</tt> と入力して
+シングルユーザモードに入ります。
+そうしたら <tt>chmod -x /etc/init.d/gdm</tt>
+として gdm を無効にしてください。
+また NIS を用いた大規模環境では、gdm 
+がユーザセレクションで全ユーザマップを表示するために
+それをすべて取り寄せようとするので、
+その利用には大変な時間がかかるかも知れません。
+もちろんこのパッケージは何の問題もなく動作するでしょう。
+それが有用かどうかは利用者次第です。
+なおセキュリティの処置に関してですが、gdm はディスプレイを管理したり、xdmcp 
+に対応したりはしないでしょう。
+これらの機能を有効にするには <tt>/etc/gdm/gdm.conf</tt> を編集してください。
+</dd>
+      
+<dt>gmc</dt>
+<dd>その安定性はかなり向上していますが、
+特殊な状況下で gmc がクラッシュする可能性はまだあります。
+また大規模 NIS 環境や オートマウント環境では、
+gmc が ユーザホームディレクトリ配下の現サブディレクトリを調べるために、
+それを全て読み込みますので、
+起動に時間がかかることもあります。</dd>
+
+<dt>imlib</dt>
+<dd>Imlib は設定ファイルの位置を /etc/im/ から
+/etc/imlib/ に変更します。
+このことは、imlib 設定エディタで <tt>Force Palette</tt> 
+を選択したユーザや、.imrc で <tt>PaletteOverride</tt>
+を有効にしているユーザに影響があるでしょう。
+またその際に以下のエラーが発生するかもしれません。
+
+<blockquote>
+<pre>
+GImLib ERROR: Cannot find file : /etc/im/im_palette.pal
+gdk_imlib : Cannot find Palette. A Palette file is required for this mode
+</pre>
+</blockquote>
+        この問題を修正するためには、ホームディレクトリにある .imrc
+        ファイルを編集して、最初の行にある
+<pre>
+PaletteFile /etc/im/im_palette.pal                                              
+PaletteOverride yes      
+</pre>
+	を
+<pre>
+PaletteFile /etc/imlib/im_palette.pal                                              
+PaletteOverride yes      
+</pre>
+        に変更してください。
+</dd>
+</dl>
+
+<h2>ヘルプとインフォメーション</h2>
+
+<p>GNOME に関する情報の一次ソースは
+<a href="http://www.gnome.org/">GNOME ホームページ</a>です。
+GNOME ユーザーズガイドは
+<tt>gnome-users-manual-en</tt> パッケージにてご利用いただけます。
+またこちらは gnome-meta-desktop プロファイルの一部でもあります。
+こちらは GNOME ヘルプシステムを通して利用できます。</p>
+
+<p>利用方法やユーザレベルの質問は、
+<a href="mailto:debian-user@lists.debian.org">debian-users
+メーリングリスト</a>にてお願いします。
+また、コンポーネントのパッケージ化に関する質問は
+<a href="mailto:debian-gtk-gnome@lists.debian.org">debian-gtk-gnome
+メーリングリスト</a>にて受け付けています。</p>
+
+<h3>新しいパッケージの一覧</h3> 
+
+<p>こちらの最新版には新たなパッケージも含まれており、
+それらは Debian 2.1 には含まれていません。
+ただ <tt>gnome-users-guide-en</tt> パッケージの
+<a href="http://www.gnome.org/users-guide/project.shtml">GNOME
+ユーザーズガイド</a>などはインストールされたいでしょう。
+なお以下の一覧にライブラリや開発用パッケージは含まれません。
+
+<dl>
+  <dt>enlightenment-conf
+  <dd>Enlightenment 設定プログラム
+  <dt>enlightenment-nosound
+  <dd>Enlightenment ウインドウマネージャ (サウンドサポートなし)
+  <dt>enlightenment-theme-brushedmetal
+  <dd>Tigert の Enlightenment 用 BrushedMetal テーマ
+  <dt>enlightenment-theme-clean
+  <dd>Raster の Enlightenment 用 Clean テーマ
+  <dt>enlightenment-theme-cleanbig
+  <dd>Raster の Enlightenment 用 CleanBig テーマ
+  <dt>enlightenment-theme-estepclassic
+  <dd>Enlightenment 用 eSteP_Classic テーマ
+  <dt>enlightenment-theme-estepnew
+  <dd>Enlightenment 用 eStep_New テーマ
+  <dt>enlightenment-theme-ice
+  <dd>Raster の Enlightenment 用 icE テーマ
+  <dt>enlightenment-theme-shinymetal
+  <dd>Raster の Enlightenment 用 ShinyMetal テーマ
+  <dt>gdm
+  <dd>GNOME ディスプレイマネージャ
+  <dt>gnome-audio
+  <dd>Gnome 用のオーディオファイル
+  <dt>gnome-bin
+  <dd>Gnome が用いるさまざまなバイナリ集
+  <dt>gnome-dev-doc
+  <dd>Gnome デベロッパーズドキュメント
+  <dt>gnome-games-locale
+  <dd>GNOME ゲームパッケージ用のロカールデータベース
+  <dt>gnome-gnibbles
+  <dd>キュートで小さなゲーム (解説なし)
+  <dt>gnome-gnobots2
+  <dd>BSD ゲームコレクション用ロボットゲームの Gnome 第二版
+  <dt>gnome-gnometris
+  <dd>テトリスのクローン
+  <dt>gnome-gnotravex
+  <dd>Tetravex をベースとしたゲーム
+  <dt>gnome-metatris
+  <dd>テーマをサポートしたテトリスのクローン
+  <dt>gnome-network
+  <dd>GNOME ネットワークユーティリティ
+  <dt>gnome-pim
+  <dd>GNOME 用カレンダーとアドレス帳
+  <dt>gnome-users-guide-en
+  <dd>GNOME ユーザーズガイド
+  <dt>gnomehack
+  <dd>Gnome 用 NetHack (コンソール版含む) -- D&amp;D スタイルアドベンチャーゲーム
+  <dt>gnomeicu
+  <dd>Mirabilis' ICQ の小さくて速くて機能的なクローン
+  <dt>gtk-engines-gtkstep
+  <dd>GTK+ 1.2 用 N*XTStep テーマ
+  <dt>gtk-engines-metal
+  <dd>GTK+ 1.1 用 Metallic テーマ
+  <dt>gtk-engines-notif
+  <dd>GTK+ 1.1 用 Motif ライクテーマ
+  <dt>gtk-engines-pixmap
+  <dd>GTK+ 1.1 用 Pixmap ベーステーマ
+  <dt>gtk-engines-redmond95
+  <dd>GTK+ 1.1 用 Windows ライクテーマ
+  <dt>gtk-engines-thinice
+  <dd>GTK+ 1.2 用 ThinIce テーマ
+  <dt>gtksamba-gnome
+  <dd>Samba 用 gnomified 設定ユーティリティ
+  <dt>guitar
+  <dd>GTK+ アーカイブ 展開/閲覧 ツール
+  <dt>gxsnmp
+  <dd>SNMP を用いたネットワーク管理ツール
+  <dt>icewm-themes
+  <dd>Ice ウインドウマネージャ用テーマファイル
+  <dt>irssi
+  <dd>Gnome irc クライアント
+  <dt>libgtk1.2
+  <dd>X 用ウィジェット GIMP Toolkit セット
+  <dt>qiv
+  <dd>X 用の簡易イメージビューワ
+  <dt>sound-monitor
+  <dd>Esound モニタアプレット
+  <dt>task-gnome-apps
+  <dd>GNOME アプリケーションとユーティリティ (インストールヘルパー)
+  <dt>task-gnome-desktop
+  <dd>GNOME 基本デスクトップ (インストールヘルパー)
+  <dt>task-gnome-games
+  <dd>GNOME ゲーム集 (インストールヘルパー)
+  <dt>task-gnome-net
+  <dd>GNOME ネットワークアプリケーション (インストールヘルパー)
+  <dt>task-gnome-wm
+  <dd>GNOME ウインドウマネージャ (インストールヘルパー)
+  <dt>wallp
+  <dd>X の ルートウインドウを定期的に更新する GTK+ および Imlib ベースアプリケーション
+  <dt>wmaker-gnome
+  <dd>GNOME サポート付きでコンパイルされた Window Maker
+  <dt>xchat-gnome
+  <dd>AmIRC に似た GNOME 用 IRC クライアント
+</dl>
+
+<p><strong>さあ、新しい GNOME デスクトップを楽しんでみましょう!</strong></p>    
