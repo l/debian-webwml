@@ -9,11 +9,11 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 
-index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*.wml) \
-  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/[0-9]*.data) \
-  $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
+%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/security.wml \
+  $(ENGLISHSRCDIR)/$(CUR_DIR)/%.data $(GETTEXTDEP)
 	$(WML) $(<F)
 
-%.$(LANGUAGE).html: %.wml $(ENGLISHSRCDIR)/$(CUR_DIR)/%.data \
-  $(TEMPLDIR)/security.wml
+index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*.wml) \
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/[0-9]*.data) \
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
 	$(WML) $(<F)

@@ -15,7 +15,7 @@ index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.data) \
   $(ENGLISHSRCDIR)/releases/info \
-  $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
 
 faq.$(LANGUAGE).html: faq.wml \
   $(ENGLISHSRCDIR)/security/faq.wml \
@@ -33,7 +33,7 @@ $(DSARDF): $(ENGLISHDIR)/security/dsa.rdf.in \
   $(wildcard $(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHDIR)/security/$(CUR_YEAR)/dsa-*.data) \
-  $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/security_tags.wml
+  $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/security_tags.wml $(GETTEXTDEP)
 ifeq "$(LANGUAGE)" "zh"
 	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:dsa.zh-$$1.rdf,g') \
           $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
