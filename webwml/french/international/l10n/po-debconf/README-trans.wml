@@ -1,14 +1,29 @@
 #use wml::debian::template title="Localisation des questionnaires Debconf avec les fichiers PO -- Conseils pour les traducteurs"
 #include "$(ENGLISHDIR)/international/l10n/dtc.def"
-#use wml::debian::translation-check translation="1.4" maintainer="Pierre Machard"
+#use wml::debian::translation-check translation="1.5" maintainer="Pierre Machard"
 
 <p>
 #include "$(ENGLISHDIR)/international/l10n/po-debconf/menu.inc"
 </p>
 
-<p>Voici quelques conseils pratiques.</p>
+<p>Informations générales pour les traducteurs.</p>
 
 <ol>
+  <li>
+         Avant de commencer une traduction, vérifiez toujours auprès
+	 des autres traducteurs sur la liste de diffusion
+         debian-l10n-&lt;<i>langue</i>&gt;@lists.debian.org
+         (si celle-ci existe) que personne d'autre ne travaille sur
+	 cette même traduction, et lisez les rapports de bogue ouverts
+	 sur les paquets que vous allez traduire pour savoir si une
+	 traduction a déjà été envoyée.
+   </li>
+   <li>
+         Si vous voulez mettre à jour une traduction, contactez toujours
+	 le traducteur précédent de façon à éviter le chevauchement du
+	 travail. Vous trouverez les adresses électroniques dans le
+	 fichier PO.
+  </li>
   <li>
          Pour commencer une nouvelle traduction, copiez le fichier 
 	 <tt>templates.pot</tt> dans <tt><i>xx</i>.po</tt>, où <i>xx</i> 
@@ -20,6 +35,67 @@
 	 informations pratiques.
   </li>
 
+         N'importe quel éditeur de texte peut être utilisé pour les fichiers
+	 PO. Certains utilitaires spécifiques comme
+         <a href="http://packages.debian.org/unstable/text/gtranslator">\
+         gtranslator</a> ou
+         <a href="http://packages.debian.org/unstable/devel/kbabel">\
+         kbabel</a> peuvent être utiles si vous n'êtes pas habitués aux
+	 fichiers PO. La
+         <a href="http://www.gnu.org/software/gettext/manual/html_node/gettext_toc.html">\
+	 documentation</a> de
+         <a href="http://packages.debian.org/unstable/devel/gettext">\
+         Gettext</a> contient des explications sur le format des
+	 fichiers PO, et vous devriez lire aux moins les sections expliquant
+	 comment
+         <a href="http://www.gnu.org/software/gettext/manual/html_node/gettext_35.html#SEC35">\
+         compléter les en-têtes</a> et sur
+         <a href="http://www.gnu.org/software/gettext/manual/html_node/gettext_9.html#SEC9">\
+         le format des fichiers PO</a>.
+  </li>
+
+  <li>
+         Quand vous avez fini votre traduction, relisez toujours votre
+	 fichier au moins une fois pour corriger les erreurs de sens,
+	 d'orthographe, de grammaire, de syntaxe, etc. (Votre éditeur de
+	 fichiers PO peut inclure un vérificateur orthographique ou
+	 un assistant à la traduction comme acheck).
+	 Ensuite, lancez
+         <pre>
+            msgfmt -c -v -o /dev/null <i>LE_CODE_DE_VOTRE_LANGUE</i>.po
+         </pre>
+	 pour vérifier que votre fichier est valide et pourra être
+	 intégré sans problème. En fonction de la politique de votre
+	 équipe de traduction, vous pouvez envoyer votre traduction
+	 sur la liste l10n dédiée afin qu'elle soit relue et commentée.
+  </li>
+
+  <li>
+         Quand votre traduction est finie et valide, envoyez un
+         <a href="$(HOME)/Bugs/Reporting">rapport de bogue</a> sur
+	 le paquet traduit, avec un niveau de gravité mis à
+         <a href="$(HOME)/Bugs/Developer#severities">minor</a>. Marquez
+	 votre rapport avec les
+         <a href="$(HOME)/Bugs/Developer#tags">étiquettes</a>
+         <tt>l10n</tt> et <tt>patch</tt>, ajoutez
+         <tt><protect>[INTL:</protect><i>xx</i>]</tt> (où
+         <i>xx</i> est le
+	 <a href="http://www.loc.gov/standards/iso639-2/langcodes.html">code
+	 ISO</a> de votre langue) au sujet afin de faciliter les prochaines
+	 recherches, demandez poliment que votre traduction soit incluse,
+	 donnez au responsable les instructions sur ce qu'il doit faire
+	 avec ce fichier (par exemple, 
+         <b>Veuillez copier le fichier joint dans debian/po/cs.po</b>) et
+	 n'oubliez pas de joindre votre traduction. Cette étape peut être
+	 très facilement réalisée avec l'utilitaire
+         <a href="http://packages.debian.org/unstable/utils/reportbug">\
+         reportbug</a>.
+  </li>
+</ol>
+
+<h2>Informations spécifiques à po-debconf</h2>
+
+<ol>
   <li>
          Le nom du champ est affiché dans les commentaires avant
 	 <tt>msgid</tt>. Les valeurs des champs <tt>Default</tt> sont
@@ -35,6 +111,17 @@
 	 Dans le questionnaire généré, <tt>Default</tt> sera bien
 	 évidemment affiché étant donné que debconf ne connait pas ce
 	 champ <tt>DefaultChoice</tt>.
+  </li>
+
+  <li>
+         Étant donné que les instructions pour les traducteurs peuvent
+	 être insérées par les développeurs, vous devez vous assurez
+	 que l'utilitaire que vous utilisez est capable d'afficher
+	 (sans modification) ces commentaires. Par exemple, référez-vous
+	 aux instructions pour la gestion de la sélection de la langue
+	 dans le paquet
+         <a href="http://packages.debian.org/unstable/misc/geneweb">\
+         geneweb</a>.
   </li>
 
   <li>
@@ -54,6 +141,32 @@
 	   Cela s'applique également aux chaînes <tt>msgstr</tt>, ce qui permet
 	   aux traducteurs d'utiliser une chaîne vide.
   </li>
+
+  <li>
+         Les lignes sont formattées par debconf, sauf lorsqu'elles
+	 commencent par une espace. De telles lignes sont souvent
+	 utilisées pour formatter les listes, mais chaque frontal a ses
+	 propres limitations. Il semble que de telles lignes ne peuvent
+	 pas dépasser les 72&nbsp;caractères de façon à être affichées
+	 correctement dans tous les frontals.
+  </li>
+
+  <li>
+         Le script <tt>podebconf-display-po</tt> (tiré de
+	 po-debconf&nbsp;&gt;=&nbsp;0.8.3) est capable d'afficher
+	 votre traduction de la même façon qu'elle le sera par debconf
+	 au moment de la configuration. Lancez
+         <pre>
+            podebconf-display-po -fdialog debian/po/<i>LE_CODE_DE_VOTRE_LANGUE</i>.po
+         </pre>
+	 pour vous faire une idée de ce à quoi ressemblera votre traduction.
+	 Cependant, cela ne marche que pour les fichiers de configuration
+	 simple, le rendu pouvant être modifié en cas d'opérations complexes
+	 (comme une utilisation avancée de substitution de texte).
+	 Les frontals à debconf disponibles (qui peuvent être
+	 sélectionnés avec l'option <tt>-f</tt>) sont listés dans
+         debconf(7).
+ </li>
 </ol>
 
 <podebconf-langs-short>
