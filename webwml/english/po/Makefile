@@ -59,7 +59,7 @@ $(ENGLISHDIR)/po/others.pot: $(OTHERS_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl -p $(WMLBASE)/../= $(OTHERS_FILES) > $@
 
 %.mo: %.$(LANGUAGE).po
-	msgfmt --statistics -o $@ $*.$(LANGUAGE).po
+	msgfmt --use-fuzzy --statistics -o $@ $*.$(LANGUAGE).po
 
 init-po:
 	for d in $(DOMAINS); do \
