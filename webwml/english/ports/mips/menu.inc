@@ -1,33 +1,9 @@
 #use wml::debian::submenu
 #include "$(ENGLISHDIR)/ports/menu.defs"
 
-# Please keep slices sorted alphabetically so it's easier to detect
-# languages in them (except english ones).
 
 <define-menu-item name="mips">
-   [EN:Debian for MIPS:]
-   [AR:Debian for MIPS:]
-   [DA:Debian til MIPS:]
-   [DE:Debian für MIPS:]
-   [EL:Debian for MIPS:]
-   [EO:Debian for MIPS:]
-   [ES:Debian para MIPS:]
-   [FI:Debian for MIPS:]
-   [FR:Debian pour MIPS:]
-   [HR:Debian for MIPS:]
-   [HU:Debian for MIPS:]
-   [IT:Debian per MIPS:]
-   [JA:Debian for MIPS:]
-   [KO:Debian for MIPS:]
-   [NL:Debian for MIPS:]
-   [NO:Debian for MIPS:]
-   [PL:Debian for MIPS:]
-   [PT:Debian para MIPS:]
-   [RO:Debian for MIPS:]
-   [RU:Debian for MIPS:]
-   [SV:Debian för MIPS:]
-   [TR:Debian for MIPS:]
-   [ZH:Debian for MIPS:]
+  <gettext domain="ports">Debian for MIPS</gettext>
 </define-menu-item>
 
 <define-tag email>&lt;<A href="mailto:%0">%0</A>&gt;</define-tag>
