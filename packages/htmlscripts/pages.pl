@@ -382,7 +382,7 @@ sub package_pages_walker {
 	$package_page .= "\n<tr><td></td>\n";
 	foreach my $a ( @all_archs ) {
 	    if ( exists $versions{a2v}->{$a} ) {
-		$package_page .=  "<td align=\"center\"><form action=\"$DL_URL\" method=\"post\">\n";
+		$package_page .=  "<td align=\"center\" valign=\"top\"><form action=\"$DL_URL\" method=\"post\">\n";
 		$package_page .=  "<input type=\"hidden\" name=\"file\" value=\"$filenames{a2f}->{$a}\">\n";
 		$package_page .=  "<input type=\"hidden\" name=\"md5sum\" value=\"$file_md5s{a2f}->{$a}\">\n";
 		$package_page .=  "<input type=\"hidden\" name=\"arch\" value=\"$a\">\n";
@@ -406,7 +406,7 @@ sub package_pages_walker {
 	foreach my $a ( @all_archs ) {
 	    if ( exists $versions{a2v}->{$a} ) {
 		my $size = floor(($file_sizes{a2f}->{$a}/102.4)+0.5)/10;
-		$package_page .=  "<td align=\"center\"><small>$size kBytes</small></td>";
+		$package_page .=  "<td align=\"center\" valign=\"top\"><small>$size kBytes</small></td>";
 	    }
 	}
 	$package_page .= "</tr><tr>\n";
@@ -414,7 +414,7 @@ sub package_pages_walker {
 	foreach my $a ( @all_archs ) {
 	    if ( exists $versions{a2v}->{$a} ) {
 		my $inst_size = $inst_sizes{a2f}->{$a};
-		$package_page .=  "<td align=\"center\"><small>$inst_size kBytes</small></td>";
+		$package_page .=  "<td align=\"center\" valign=\"top\"><small>$inst_size kBytes</small></td>";
 	    }
 	}
 	$package_page .= "</tr></table>\n";
