@@ -19,8 +19,6 @@ all:\
         $(HTMLDIR)/2.0/2.0beta_CD.html.$(LANG) \
         $(HTMLDIR)/2.0/HOWTO.upgrade.html.$(LANG) \
 	$(HTMLDIR)/MailingLists/debian-announce.html.$(LANG) \
-	$(HTMLDIR)/MailingLists/subscribe.html.$(LANG) \
-	$(HTMLDIR)/MailingLists/unsubscribe.html.$(LANG) \
 	$(HTMLDIR)/devel/HOWTO_translate.html.$(LANG) \
 	$(HTMLDIR)/devel/extract_key.html.$(LANG) \
 	$(HTMLDIR)/devel/help.html.$(LANG) \
@@ -39,6 +37,8 @@ all:\
 	$(HTMLDIR)/intro/why_debian.html.$(LANG) \
 	$(HTMLDIR)/logos/index.html.$(LANG) \
 	$(HTMLDIR)/security/index.html.$(LANG) \
+#    $(HTMLDIR)/MailingLists/subscribe.html.$(LANG) \
+#    $(HTMLDIR)/MailingLists/unsubscribe.html.$(LANG) \		
 #    $(HTMLDIR)/devel/mirror_submit.html.$(LANG) \
 #    $(HTMLDIR)/devel/ports.html.$(LANG) \
 #    $(HTMLDIR)/donations.html.$(LANG) \
