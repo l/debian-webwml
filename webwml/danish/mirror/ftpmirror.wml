@@ -1,0 +1,95 @@
+#use wml::debian::template title="Opsætning af ftp-filspejl"
+#use wml::debian::translation-check translation="1.17"
+
+<p>Der er ingen forskel på <a href="official">officielle</a> og uofficielle 
+filspejle.</p>
+
+<p>Når et filspejl er blevet sat up, bør det 
+<a href="submit">registereres hos Debian</a> for at blive optaget på
+<a href="../misc/README.mirrors">listen over filspejle</a>.
+Det gøres ved at benytte vores <a href="submit">simple webformular</a>.</p>
+
+<p>Problemer eller forespørgsler stilles til 
+<a href="mailto:mirrors@debian.org">mirrors@debian.org</a>.</p>
+
+<H2>Filspejlingsmetoder</H2>
+
+<p>Den anbefalede filspejlingsmetode er at benytte rsync.</p>
+
+<p>Bemærk: mens <kbd>wget</kbd> fungerer fint ved filspejling af små steder, er
+det ikke så konfigurérbart som rsync eller 'mirror' og anbefales ikke til denne
+opgave.</p>
+
+<h3>Anonym rsync</h3>
+
+<p>Du kan bruge <a href="anonftpsync">dette script</a> til at lave et filspejl
+af arkivet. Følg instruktionerne i script'et for at sætte filspejlingen op.
+Steder i den <a href="mirrors_full">fuldstændige liste over filspejle</a> som
+har '<kbd>Type: Push-Primary</kbd>'-flaget skulle være gode at basere filspejlet
+på.</p>
+
+<h3>Rsync med godkendelse fra et 'push'-filspejl</h3>
+
+<p>'Push'-filspejling er en form for spejling ved hjælp af rsync vi har 
+udviklet for at minimere den tid det tager ændringer i arkivet at nå ud til 
+filspejlene. Server-filspejlet anvender en ssh-udløser til at fortælle 
+klient-filspejlet at det sker opdatere sig selv.</p>
+
+<p>Denne metode er ganske sikker da ssh er sat op til kun at køre en enkelt 
+kommando. Desuden er spejlingen stadig 'pull' så det er <strong>ikke</strong>
+muligt at ødelægge indholdet af arkivet ved hjælp af et forfalsket 
+'push'-filspejl. Nogle administratorer af filspejle har vist sig utilbøjelige 
+til at anvende denne form for filspejl af frygt for at deres maskiner vil være
+åbne for angreb. Det er simpelthen <strong>ikke</strong> korrekt.</p>
+
+<p>For en mere detaljeret beskrivelse af hvordan dette fungerer, hvorfor det er
+sikkert, og hvordan man opsætter et 'push'-filspejl, se 
+<a href="push_mirroring">den komplette beskrivelse</a>.</p>
+
+<h3>Anonym ftp ved hjælp af 'mirror'</h3>
+
+<p>Anonym ftp var i lang tid den gængske filspejlningsmetode. Til dette formål
+fungerer programmet 'mirror' fint i forbindelse med Debians arkiv. Som du nok
+har gættet er 'mirror' tilgængelig som en Debian-pakke. Hvis du har installeret
+Debian-pakken, er der et eksempel på et script til filspejl af ftp-arkivet i
+/etc/mirror/packages/ftp.debian.org .</p>
+
+<h2>Delvis filspejling</h2>
+
+<p>Det allerede store Debian-arkiv taget i betragtning, foretrækker nogle kun
+at spejle de dele som de har brug for. Til det formål anvendes specielle 
+scripts som dem af 
+<a href="http://cvs.kitenet.net/~checkout~/joey-cvs/bin/debmirror?tag=HEAD&content-type=text/plain">Joey Hess</a> og
+<a href="http://people.debian.org/~absurd/">Stephan Suerken</a>. Hvis du mener
+at noget bør føjes til dem, så kontakt forfatterne (kontaktoplysninger skulle
+være at finde i scriptene selv).</p>
+
+<h2>Hvornår man skal filspejle</h2>
+
+<p>Hovedarkivet opdateres en gang i døgnet.</p>
+
+<p>Hvis dit netsted 'push'-filspejles behøver du ikke bekymre dig om det. Hvis
+ikke, og stedet du har valgt af filspejle bruger rsync, bør du tage et kig i
+<kbd>project/trace/</kbd> det pågældende steds Debians arkiv, efter en fil med
+samme navn som filspejlet. Filen skulle indeholde klokkeslettet på hvornår en
+filspejlning sidst blev afsluttet. Læg noget tid til, for eksempel en time, og
+start din filspejl på det tidspunkt.</p>
+
+<p>Den nemmeste måde, automatisk at få filspejlet opdateret hver dag er at 
+anvende cron. Se <kbd>man crontab</kbd> for flere oplysninger.</p>
+
+<h2>Yderligere anbefalet opsætning</h2>
+
+<p>Hvis du ønsker at gøre et Debian-filspejl tilgængeligt via HTTP, tilføj da
+følgende indstillinger til din opsætning af Apache (naturligvis forudsat at du
+bruger Apache) til katalog-indekserne:
+
+<pre>
+&lt;directory /org/ftp.debian.org/ftp&gt;
+   IndexOptions NameWidth=* +SuppressDescription
+   DirectoryIndex .
+&lt;/directory&gt;
+</pre></p>
+
+<p>(udskift <code>/org/ftp.debian.org/ftp</code> med navnet på kataloget hvor
+du har dit filspejl).</p>
