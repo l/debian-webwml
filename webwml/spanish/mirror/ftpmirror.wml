@@ -1,0 +1,101 @@
+#use wml::debian::template title="Configuración de una réplica FTP"
+#use wml::translation-check translation="1.16"
+
+<p>El replicado es el mismo tanto para sitios oficiales como no oficiales
+(<a href="types">más información sobre los tipos de réplicas</a>).
+
+<p>Una vez ponga en marcha una réplica, debería <a
+href="submit">registrarla en Debian</a> de manera que sea incluida en la
+<a href="../misc/README.mirrors">lista de réplicas</a>. Puede hacerlo
+mediante nuestro <A href="submit">sencillo formulario web</A>.
+
+<p>Puede consultar cualquier problema o pregunta la puede enviar a
+<A href="mailto:mirrors@debian.org">mirrors@debian.org</A>.
+
+<H2>Métodos de replicado</H2>
+
+<p>El método recomendado para hacer réplicas es usando rsync.
+
+<p>Nota: mientras que <kbd>wget</kbd> funciona bien cuando se replican
+sitios pequeños, no es tan configurable como rsync o 'mirror', de manera
+que no lo recomendamos para estas tareas.
+
+<h3>Rsync anónimo</h3>
+
+<p>Puede usar <a href="anonftpsync">este script</a> para replicar el
+archivo. Siga las instrucciones que contiene el script para configurar la
+réplica. Los sitios que hay en la <a href="mirrors_full">lista completa de
+réplicas</a> que tienen la etiqueta '<kbd>Type: Push-Primary</kbd>'
+deberían ser buenos sitios de los que replicar.
+
+<h3>Rsync con autenticación, de un sitio `push'</h3>
+
+<p>El replicado `push' es una forma de réplica que usa rsync que hemos
+desarrollado para minimizar el tiempo que tardan en llegar los cambios en
+el archivo hasta las réplicas. El servidor replicado utiliza un disparador
+mediante ssh para indicarle al cliente replicador que debe actualizarse.
+
+<p>Este método es bastante seguro ya que ssh se configura para ejecutar
+sólo una orden. Además, el replicado sigue siendo `pull', de manera que
+<strong>no</strong> es posible corromper el contenido del archivo mediante
+un servidor `push' falso. Algunos administradores de réplicas han mostrado
+cierta reluctancia a la hora de usar este método de replicado debido a que
+temen que el método pueda abrir sus máquinas ante una invasión. Esto,
+sencillamente, <strong>no</strong> es cierto.
+
+<p>Si desea una descripcción más detallada de cómo funciona esto, por qué
+es seguro, y cómo configurar un servidor `push', por favor lea <a
+href="push_mirroring">la explicación completa</a>.
+
+<h3>FTP anónimo usando 'mirror'</h3>
+
+<p>El FTP anónimo fue el método estándar de replicado durante mucho
+tiempo. Por tanto, el programa 'mirror' funciona bien con el archivo de
+Debian. Como posiblemente haya adivinad, 'mirror' está disponible como
+paquete de Debian. Si ha instalado el paquete de Debian, hay un script de
+ejemplo para replicar el archivo ftp en
+/etc/mirror/packages/ftp.debian.org .
+
+
+<h2>Replicado parcial</h2>
+
+<p>Considerando el ya bantante gran tamaño del archivo de Debian, hay
+gente que prefiere replicar sólo las partes que necesitan. Para esto se
+necesitan scripts escritos especialmente, como los de
+<a href="http://cvs.kitenet.net/~checkout~/joey-cvs/bin/debmirror?tag=HEAD&content-type=text/plain">
+Joey Hess</a> y
+<a href="http://people.debian.org/~absurd/">Stephan Suerken</a>. Si cree
+que debería añadírseles algo, contacte por favor con los autores (la
+información de contacto debería venir en los propios scripts).
+
+<h2>Cuándo replicar</h2>
+
+<p>El archivo principal se actualiza cada 24 horas.
+
+<p>Si su sitio está siendo replicado de forma `push', entonces no tiene
+que preocuparse. En caso contrario, y si el sitio que ha escogido replicar
+usa rsync, entonces debería echar un vistazo a <kbd>project/trace/</kbd>
+en el archivo Debian de la réplica, en busca de un fichero que se llame
+igual que el sitio. El fichero debería contener la hora en la que terminó
+de hacerse la última réplica. Añada algo de tiempo, pongamos una hora o
+así, al que obtenga, y haga la réplica entonces.
+
+<p>La manera más sencilla de hacer que la réplica se ejecute diariamente
+de forma automática es usar cron. Lea <kbd>man crontab</kbd> si desea más
+detalles.
+
+<h2>Configuración adicional recomendada</h2>
+
+<p>Si va a dejar disponible mediante HTTP su réplica de Debian, añada por
+favor estas opciones a la configuración de su Apache (presumiendo, por
+supuesto, que use Apache) para los índices de los directorios:
+
+<pre>
+&lt;directory /org/ftp.debian.org/ftp&gt;
+   IndexOptions NameWidth=* +SuppressDescription
+   DirectoryIndex .
+&lt;/directory&gt;
+</pre>
+
+<p>(cambie <code>/org/ftp.debian.org/ftp</code> por el nombre del
+directorio en el que guarde la réplica)
