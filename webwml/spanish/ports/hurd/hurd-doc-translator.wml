@@ -1,14 +1,6 @@
 #use wml::debian::template title="Debian GNU/Hurd --- Documentación" NOHEADER="yes"
-#use wml::debian::translation-check translation="1.6"
-[ <a href="..">Arquitecturas</a> ]
-[ <a href="index">Debian GNU/Hurd</a> ]
-[ <a href="hurd-news">Noticias</a> ]
-[ <a href="hurd-install">Instalación</a> ]
-[ <a href="hurd-cd">CDes del Hurd</a> ]
-[ <a href="hurd-doc">Documentación</a> ]
-[ <a href="hurd-devel">Desarrollo</a> ]
-[ <a href="hurd-links">Enlaces</a> ]
-[ <a href="hurd-contact">Contacto</a> ]<p>
+#use wml::debian::translation-check translation="1.8"
+#include "$(ENGLISHDIR)/ports/hurd/menu.inc"
 
 <h1>Debian GNU/Hurd</h1>
 <h2>Traductores</h2>
@@ -22,7 +14,7 @@
 <h3><a href="#TOC_concept" name="concept">Concepto</a></h3>
 <p>
 Antes de analizar más de cerca los traductores, consideremos los
-sistemas de archivo habituales. Un sistema de archivos es el almacén
+sistemas de ficheros habituales. Un sistema de ficheros es el almacén
 para un árbol jerárquico de directorios y archivos. Se accede a los
 directorios y archivos por medio de una cadena de caracteres especial,
 el camino. Adicionalmente, hay enlaces simbólicos para hacer referencia
@@ -35,25 +27,25 @@ y enlaces fijos (hard links).</p>
 <p>
 Aunque estos objetos son muy diferentes, comparten propiedades comunes,
 por ejemplo, todos tienen un propietario y un grupo asociados así como
-derechos de acceso (permisos). Esta información se escribe en los nodos-i.
+derechos de acceso (permisos). Esta información se escribe en los inodos.
 Esto es realmente una característica en común adicional: cada objeto 
-tiene exactamente un nodo-i asociado (los enlaces fijos son en cierto
-modo especiales, ya que comparten el mismo nodo-i). Algunas veces, 
-el nodo-i contiene información adicional. Por ejemplo, el nodo-i puede
+tiene exactamente un inodo asociado (los enlaces fijos son en cierto
+modo especiales, ya que comparten el mismo inodo). Algunas veces, 
+el inodo contiene información adicional. Por ejemplo, el inodo puede
 contener el destino de un enlace simbólico.</p>
 <p>
 No obstante, estas características en común no se explotan habitualmente
 en las implementaciones, a pesar de sus interfaces de programación 
-comunes. Se puede acceder a todos los nodos-i a través de las llamadas
+comunes. Se puede acceder a todos los inodos a través de las llamadas
 POSIX estándar, por ejemplo
 <code>read()</code> y <code>write()</code>. Por ejemplo, para añadir
 un nuevo tipo de objeto (por ejemplo un nuevo tipo de enlace) a un 
 núcleo unix monolítico común, se necesitaría modificar el código
-de cada sistema de archivos por separado.</p>
+de cada sistema de ficheros por separado.</p>
 <p>
 En el Hurd las cosas funcionan de un modo distinto. Aunque en el Hurd
-un servidor de sistema de archivos especial puede explotar las propiedades
-especiales de tipos objeto estándar como enlaces (en el sistema de archivos
+un servidor de sistema de ficheros especial puede explotar las propiedades
+especiales de tipos objeto estándar como enlaces (en el sistema de ficheros
 ext2 con enlaces rápidos, por ejemplo), se tiene una interfaz general
 para añadir tales características sin modificar el código existente.</p>
 <p>
@@ -61,20 +53,20 @@ El truco está en permitir que un programa se inserte entre el contenido
 real de un archivo y el usuario que accede al archivo. Este programa se
 llama traductor, porque es capaz de procesar la solicitud de entrada de 
 muchas formas diferentes. En otras palabras, un traductor es un servidor de
-Hurd que proporciona la interfaz básica del sistema de archivos.</p>
+Hurd que proporciona la interfaz básica del sistema de ficheros.</p>
 <p>
 Los traductores tienen propiedades muy interesantes. Desde el punto de 
 vista de los núcleo, son sólo otro proceso de usuario. Esto significa que
 los traductores los puede ejecutar cualquier usuario. No se necesitan
 privilegios de superusurio para instalar o modificar un traductor, sólo
-los derechos de acceso para el nodo-i subyacente al cual está
+los derechos de acceso para el inodo subyacente al cual está
 asociado el traductor. Muchos traductores no requieren un archivo
 real para operar, pueden proporcionar información por sus propios medios.
 Por esto es por lo que la información acerca de los traductores se 
-almacena en los nodos-i.</p>
+almacena en los inodos.</p>
 <p>
 Los traductores son responsables de servir todas las operaciones del sistema
-de archivos relacionadas con el nodo-i al cual están asociados. Puesto que
+de archivos relacionadas con el inodo al cual están asociados. Puesto que
 no están restringidos al conjunto habitual de objetos (archivo de dispositivo,
 enlace, etc), tienen la libertad de devolver cualquier cosa que tenga 
 sentido para el programador. Uno se puede imaginar un traductor que se
@@ -85,16 +77,16 @@ accede a él mediante <code>cat</code>.</p>
 <h3><a href="#TOC_examples" name="examples">Ejemplos</a></h3>
 <h4>Puntos de Montaje</h4>
 <p>
-Un punto se montaje se puede ver como un nodo-i que tiene asociado un
+Un punto se montaje se puede ver como un inodo que tiene asociado un
 traductor especial. Su finalidad podría ser traducir operaciones de
-sistemas de archivo realizadas sobre el punto de montaje a operaciones
-de sistemas de archivo sobre otro elemento de almacenamiento, digamos,
+sistemas de ficheros realizadas sobre el punto de montaje a operaciones
+de sistemas de ficheros sobre otro elemento de almacenamiento, digamos,
 otra partición.</p>
 <p>
-De hecho, así es como se implementan los sistemas de archivo en el Hurd.
-Un sistema de archivos es un traductor. Este traductor toma un elemento
+De hecho, así es como se implementan los sistemas de ficheros en el Hurd.
+Un sistema de ficheros es un traductor. Este traductor toma un elemento
 de almacenamiento como argumento, y es capaz de servir todas las operaciones
-de sistemas de archivo de forma transparente.</p>
+de sistemas de ficheros de forma transparente.</p>
 
 <h4>Archivos de Dispositivo</h4>
 <p>
@@ -119,9 +111,9 @@ puede implementarse completamente en espacio de usuario.</p>
 <p>
 Un enlace simbólico se puede ver como un traductor. Acceder al enlace
 simbólico iniciaría el traductor, que reenviaría la petición al
-sistema de archivos que contiene el archivo al cual apunta el enlace.</p>
+sistema de ficheros que contiene el archivo al cual apunta el enlace.</p>
 <p>
-Sin embargo, para mejorar las prestaciones, los sistemas de archivo que
+Sin embargo, para mejorar las prestaciones, los sistemas de ficheros que
 dan de forma nativa soporte para enlaces simbólico pueden sacar ventaja
 de esta característica e implementar los enlaces simbólicos de forma
 distinta. Internamente, el acceso a un enlace simbólico no
@@ -130,10 +122,10 @@ todavía parecería que se ha visto envuelto un traductor pasivo (véase más abajo
 una explicación de qué es un traductor pasivo).</p>
 <p>
 Dado que el Hurd se distribuye con un traductor de enlaces simbólicos, 
-¡cualquier servidor de sistemas de archivo que de soporte para traductores,
-tiene soporte para enlaces simbólicos automáticamente (y enlaces fijos,
+¡cualquier servidor de sistemas de ficheros que dé soporte para traductores,
+tiene soporte para enlaces simbólicos automáticamente (y enlaces duros,
 y archivos de dispositivos, etc)! Esto significa que puede conseguirse
-un sistema de archivo operativo muy rápidamente, y añadir soporte nativo para
+un sistema de ficheros operativo muy rápidamente, y añadir soporte nativo para
 enlaces simbólicos y otras características más adelante.</p>
 
 <h3><a href="#TOC_actpas" name="actpas">Traductores Pasivos, Traductores Activos</a></h3>
@@ -154,9 +146,9 @@ La orden <code>settrans</code> recibe tres tipos de argumentos. Primero,
 se pueden establecer opciones para la propia orden <code>settrans</code>,
 como 
 <code>-a</code>, para modificar el traductor activo. Luego, se establece
-el nodo-i que se quiere modificar. Recuerde que un traductor siempre está
-asociado con un nodo-i de la jerarquía de directorios. Sólo se puede 
-modificar un nodo-i al mismo tiempo. Si no especifica ningún argumento
+el inodo que se quiere modificar. Recuerde que un traductor siempre está
+asociado con un inodo de la jerarquía de directorios. Sólo se puede 
+modificar un inodo al mismo tiempo. Si no especifica ningún argumento
 más, <code>settrans</code> intentará eliminar el traductor existente.
 La firmeza con que lo intente dependerá de la fuerza de las opciones
 que especifique (si otro proceso está usando el traductor, obtendrá
@@ -189,28 +181,28 @@ esa partición. No se quiere activar la red a menos que haya tráfico, y
 así sucesivamente.</p>
 <p>
 En su lugar, la primera vez que se accede al traducotr pasivo, se carga
-de forma automática desde el nodo-i y se inicia un traductor activo encima
-de él utilizando la línea de orden que se ha almacenado en el nodo-i. Esto
+de forma automática desde el inodo y se inicia un traductor activo encima
+de él utilizando la línea de orden que se ha almacenado en el inodo. Esto
 es similar a las funciones de automontaje de Linux. Sin embargo, no viene
 como bonificación adicional que haya que configurar manualmente, sino
 como parte integral del sistema. Así que establecer traductores pasivos
 difiere el inicio de la tarea traductora hasta que realmente se 
 necesite. Por cierto, si el traductor activo muere por cualquier razón,
-la siguiente vez que se accede al nodo-i el traductor se reinicia.</p>
+la siguiente vez que se accede al inodo el traductor se reinicia.</p>
 <p>
 Hay una diferencia más: los traductores activos pueden morir o perderse.
 Tan pronto como se mata al traductor activo (por ejemplo, porque 
 se rearranque la máquina) se pierde para siempre. Los traductores activos
-no son transitorios y permanecen en el nodo-i durante los rearranques
+no son transitorios y permanecen en el inodo durante los rearranques
 hasta que se modifiquen con el programa
-<code>settrans</code> o se borren los nodos-i a los cuales está asociado.
+<code>settrans</code> o se borren los inodos a los cuales está asociado.
 Esto significa que no es necesario mantener un archivo de configuración
 con los puntos de montaje.</p>
 <p>
 Un último punto: Incluso si tiene establecido un traductor pasivo, todavía
 puede establecer un traductor activo distinto. Sólo se considera el
 traductor pasivo si se inicia de forma automática porque no exista
- traductor activo cuando se accede al nodo-i.</p>
+ traductor activo cuando se accede al inodo.</p>
 
 <h3><a href="#TOC_manage" name="manage">Gestión de los Traductores</a></h3>
 <p>
@@ -223,16 +215,16 @@ He aquí algunos usos comunes:</p>
 <ul><li><code>settrans -c /mnt /hurd/ext2fs /dev/hd2s5</code> monta una
 partición, el traductor permanecerá tras rearrancar.</li>
 <li><code>settrans -a /mnt /hurd/ext2fs ~/dummy.fs</code> monta un
-sistema de archivos dentro de un archivo de datos, el traductor 
+sistema de ficheros dentro de un archivo de datos, el traductor 
 se irá si muere.</li>
 <li><code>settrans -fg /nfs-data</code> fuerza la desaparición de un traductor.</li>
 </ul>
 <p>
 Se puede usar la orden <a href="hurd-doc-utils#showtrans"><code>showtrans</code></a>
-para ver si se ha asociado un traductor a un nodo-i. Aunque esto sólo le 
+para ver si se ha asociado un traductor a un inodo. Aunque esto sólo le 
 mostrará el traductor pasivo.</p>
 <p>
-Es posible cambiar las opciones de un traductor (sistema de archivos)
+Es posible cambiar las opciones de un traductor (sistema de ficheros)
 activo con
 <code>fsysopts</code> sin reiniciarlo realmente. Esto es muy cómodo. Por 
 ejemplo, puede hacer lo que en Linux se llama "remontar una partición sólo
@@ -247,27 +239,30 @@ configuración actual.</p>
 Le recomiendo que empiece leyendo la orden <code>/bin/mount</code>,
 sólo es un pequeño guión. Dado que establecer traductores de sistemas de
 archivo es parecido a montar particiones, puede captar el concepto
-de este modo. Construya un sistema de archivo con <code>dd if=/dev/zero of=dummy.fs bs=1024k count=8; mke2fs dummy.fs</code> y "móntelo" con
- <code>settrans -c dummy /hurd/ext2fs `pwd`/dummy.fs</code>. Nótese que
-el traductor no se inicia todavía, no hay ningún proceso <code>ext2fs</code>
-nuevo en ejecución (verifíquelo con <code>ps Aux</code>). Compruebe que
-todo es correcto utilizando <code>showtrans</code></p>.
+de este modo. Construya un sistema de ficheros con
+<code>dd if=/dev/zero of=dummy.fs bs=1024k count=8; mke2fs dummy.fs</code>
+y "móntelo" con
+<code>settrans -c dummy /hurd/ext2fs `pwd`/dummy.fs</code>.
+Nótese que el traductor no se inicia todavía, no hay ningún proceso
+<code>ext2fs</code> nuevo en ejecución (verifíquelo con <code>ps
+Aux</code>). Compruebe que todo es correcto utilizando
+<code>showtrans</code></p>.
 <p>
 Ahora teclee <code>ls dummy</code> y notará el pequeño retraso que
 tiene lugar mientras se inicia el traductor. Después de eso, no habrá
 mas retrasos al acceder a dummy. En Linux, uno podría decir que ha
-automontado un sistema de archivos en bucle. Compruebe, con <code>ps Aux</code>, 
+automontado un sistema de ficheros en bucle. Compruebe, con <code>ps Aux</code>,
 que ahora hay un proceso <code>ext2fs dummy</code> activo y en ejecución.
 Ahora ponga algunos archivos en el nuevo directorio. Intente hacer que
-el sistema de archivos sea de sólo lectura con <code>fsysopts</code>.
+el sistema de ficheros sea de sólo lectura con <code>fsysopts</code>.
 Observe que ahora fallan los intentos de escritura posteriores. 
 Intente matar el traductor activo con <code>settrans -g</code>.</p>
 <p>
 Debería tener alguna idea de lo que pasa ahora. Recuerde
 que este es sólo <em>un</em> servidor especial, el servidor ext2fs del Hurd.
 Hay muchos servidores más en el directorio <code>hurd</code>. Algunos de ellos
-son para sistemas de archivo. Algunos son necesarios para características
-de los sistemas de archivo, tales como enlaces. Algunos son necesarios
+son para sistemas de ficheros. Algunos son necesarios para características
+de los sistemas de ficheros, tales como enlaces. Algunos son necesarios
 para los archivos de dispositivo. Algunos son útiles para redes. Imagine
 "montar" un servidor FTP con <code>settrans</code> y descargar archivos
 simplemente con la orden <code>cp</code> estándar. ¡O editar sus
