@@ -24,6 +24,7 @@ HTMLFILES := $(foreach i, cn tw, \
 	$(patsubst %.wml,%.$(LANGUAGE)-$(i).html,$(WMLFILES)))
 HTMLDESTFILES := $(foreach i, cn tw, \
 	$(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE)-$(i).html,$(WMLFILES)))
+all:: index.$(LANGUAGE)-cn.html index.$(LANGUAGE)-tw.html $(HTMLFILES)
 else
 HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
 HTMLDESTFILES := $(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE).html,$(WMLFILES))
@@ -32,10 +33,23 @@ endif
 
 # When building the html files we have to change into the right directory
 # so wml gets all the relative links right.
-%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
+#%.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
+
+%.$(LANGUAGE)-cn.html %.$(LANGUAGE)-tw.html: \
+                           %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml
-	cd $(@D) && $(WML) $(notdir $(<)) \
-		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
+	cd $(@D) && WMLOPTS="-DWML_SRC_REALNAME=\"Joey Hess\" -DWML_SRC_USERNAME=joeyh" $(WML)
+
+	@echo "Converting $*.zh-cn.html.tmp to $*.zh-cn.html (zh_CN.GB2312)..."
+	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
+	rm -f $*.zh-cn.html.tmp
+	@$(TOCN) $*.zh-cn.html
+
+	@echo "Converting $*.zh-tw.html.tmp to $*.zh-tw.html (zh_TW.Big5)..."
+	#       @$(U8TOB5) < $*.zh-tw.html > $*.zh-tw.html.tmp
+	mv -f $*.zh-tw.html.tmp $*.zh-tw.html
+	@$(TOTW) $*.zh-tw.html
+
 
 install:: $(HTMLDESTFILES)
 	@# Set up current issue symlink. In case you're wondering, the only
@@ -50,7 +64,8 @@ endif
 
 # This is used by the install rule, and I had to hack on it, overriding
 # Make.common to allow installation of files into subdirectories.
-$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
+$(HTMLDIR)/%.$(LANGUAGE)-cn.html $(HTMLDIR)/%.$(LANGUAGE)-tw.html: \
+							%.$(LANGUAGE).html
 	install -d $(@D)
 	@echo copying $(@F) to $(@D)
 	-@cp $(<) $(@D)
@@ -62,10 +77,15 @@ endif
 # Have to add to the default clean rule to clean up all the html the
 # above target produces.
 clean::
-	-find . -type f -name \*.$(LANGUAGE).html | xargs rm -f
+	-find . -type f \( -name \*.$(LANGUAGE).html -o \
+			   -name \*.$(LANGUAGE)-tw.html -o \
+			   -name \*.$(LANGUAGE)-cn.html \) | xargs rm -f
 
 # Need to rebuild the index when anything changes.
-index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
+#index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
+
+index.$(LANGUAGE)-cn.html index.$(LANGUAGE)-tw.html: \
+					$(wildcard $(YEAR)/*/index.wml) \
       $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(YEAR)/*) \
       $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
       $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml
