@@ -20,6 +20,7 @@
 # (at your option) any later version.
 
 use strict;
+use File::Find;
 use File::Path;
 use Getopt::Long;
 
@@ -62,6 +63,7 @@ my @debug;
 my $force = 0; # if true, rescan package even if already in db
 my $force_material = 0;# if true, rescan package containing material even if already in db
 my $remove_unused = 0;# if true, remove packages not found in Packages file
+my $mark_obsolete = 0;# if true, mark files as obsolete instead of removing it
 my $careful = 0; # if true, save the db after each package
 
 my @pkg_list; #were we put the list of packages we are required to test
@@ -100,6 +102,8 @@ Behaviour options:
     -f, --force               force check even if packages are up-to-date in db
     --force-material          force check for any package containing material
     -u, --remove-unused       remove packages not found in Packages files
+    --mark-obsolete           when extracting package data, add a .old suffix
+                              instead of deletiog old files
 Configuration options:
     -F, --files-from=FILE     reads dsc filenames from FILE
     --db=DB_FILE              use DB_FILE as database file
@@ -147,6 +151,7 @@ my %opthash = (
         "help|h" => \&syntax_msg,
         "version|V" => \&banner,
         "print-version" => \&banner,
+        "mark-obsolete" => \$mark_obsolete,
 
         "verbose|v" => \$verbose,
         "debug|d" => \@debug,     # Count the -d flags
@@ -505,11 +510,23 @@ sub parse_tarball {
         }
 
         #   Move files to their definitive location
-        foreach (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT,$MAN_ROOT)) {
-                File::Path::rmtree($_."/".$pooldir."/".$pkg);
-                if (-d $_."/_tmp") {
-                        File::Path::mkpath($_."/".$pooldir, 0, 0755);
-                        qx(mv $_/_tmp $_/$pooldir/$pkg);
+        foreach my $root (($PO_ROOT,$TEMPLATES_ROOT,$MENU_ROOT,$MAN_ROOT)) {
+                my $dir = $root."/".$pooldir."/".$pkg;
+                if ($mark_obsolete && -d $dir) {
+                        sub add_old_suffix {
+                                if (-f && $_ !~ m/\.old/) {
+                                        open(OLD, "> $_.old");
+                                        close(OLD);
+                                }
+                        }
+                        File::Find::find(\&add_old_suffix, $dir);
+                } else {
+                        File::Path::rmtree($dir);
+                }
+                if (-d $root."/_tmp") {
+                        File::Path::mkpath($dir, 0, 0755);
+                        qx{tar cf - -C $root/_tmp . | tar xf - -C $dir};
+                        File::Path::rmtree("$root/_tmp");
                 }
         }
 
@@ -592,7 +609,7 @@ sub search_nls {
 sub search_po {
         my $pkg = shift;
 
-        my @pofiles = $deb->file_matches("\\.po\$");
+        my @pofiles = $deb->file_matches("\\.pot?\$");
 
         foreach my $file (@pofiles) {
                 next if $file =~ m,^debian/po/,;
@@ -656,7 +673,7 @@ sub process_po_file {
         } else {
                 $data->add_podebconf($pkg, $file, normalize_lang($lang), $this_stat, $filename);
         }
-        if (system("gzip -9 $PO_DIR/$filename")) {
+        if (system("gzip -9f $PO_DIR/$filename")) {
                 warn "Can't gzip $PO_DIR/$filename: $!\n";
         }
 }
@@ -671,7 +688,7 @@ sub search_menu {
                 # Add this file to the data
                 $filename = store_disk_menu($pkg, $file);
                 $data->add_menu($pkg, $file, $filename.".gz");
-                if (system("gzip -9 $MENU_ROOT/".$data->pooldir($pkg)."/$filename")){
+                if (system("gzip -9f $MENU_ROOT/".$data->pooldir($pkg)."/$filename")){
                         warn "Can't gzip $MENU_ROOT/".$data->pooldir($pkg)."/$filename: $!\n";
                 }
         }
@@ -702,7 +719,7 @@ sub search_docbase {
                 print DOCBASE;
                 close DOCBASE;
                 $data->add_menu($pkg, $file, $filename.".gz");
-                if (system("gzip -9 $MENU_ROOT/".$data->pooldir($pkg)."/$filename")) {
+                if (system("gzip -9f $MENU_ROOT/".$data->pooldir($pkg)."/$filename")) {
                         warn "Can't gzip $MENU_ROOT/".$data->pooldir($pkg)."/$filename: $!\n";
                 }
         }
@@ -718,7 +735,7 @@ sub search_man {
                 my ($man, $lang, $link) = @{$line};
                 my $filename = store_disk_man($pkg, $lang.'_'.$man);
                 $data->add_man($pkg, $man, $filename.".gz");
-                if (system("gzip -9 $MAN_ROOT/".$data->pooldir($pkg)."/$filename")){
+                if (system("gzip -9f $MAN_ROOT/".$data->pooldir($pkg)."/$filename")){
                         warn "Can't gzip $MAN_ROOT/".$data->pooldir($pkg)."/$filename: $!\n";
                 }
         }
@@ -755,7 +772,7 @@ sub search_templates {
                         $this_stat = $tmpl_stats{$_}->[0].'t'.$tmpl_stats{$_}->[1].'f'.$tmpl_stats{$_}->[2].'u';
                         $data->add_templates($pkg, $file, normalize_lang($_), $this_stat, $filename);
                 }
-                if (system("gzip -9 $storedfile")){
+                if (system("gzip -9f $storedfile")){
                         warn "Can't gzip $storedfile: $!\n";
                 }
         }
@@ -791,11 +808,11 @@ sub search_templates {
                 foreach (keys %tmpl_stats) {
                         $this_stat = $tmpl_stats{$_}->[0].'t'.$tmpl_stats{$_}->[1].'f'.$tmpl_stats{$_}->[2].'u';
                         $data->add_templates($pkg, $origfile{$tmpl->filename($_)}, normalize_lang($_), $this_stat, $storedfile{$tmpl->filename($_)}, $filename);
-                        if (system("gzip -9 $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$storedfile{$tmpl->filename($_)})) {
+                        if (system("gzip -9f $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$storedfile{$tmpl->filename($_)})) {
                                 warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$storedfile{$tmpl->filename($_)}.": $!\n";
                         }
                 }
-                if (system("gzip -9 $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename)) {
+                if (system("gzip -9f $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename)) {
                         warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename.": $!\n";
                 }
         }
@@ -809,7 +826,7 @@ sub search_podebconf {
                      && $deb->file_exists("debian/po/POTFILES.in");
 
         my $filename = store_disk_po($pkg, "debian/po/templates.pot");
-        if (system("gzip -9 $PO_ROOT/".$data->pooldir($pkg)."/".$filename)) {
+        if (system("gzip -9f $PO_ROOT/".$data->pooldir($pkg)."/".$filename)) {
                 warn "Can't gzip $PO_ROOT/".$data->pooldir($pkg)."/".$filename.": $!\n";
         }
 
@@ -821,7 +838,7 @@ sub search_podebconf {
                 if ($deb->file_exists($_)) {
                         $filename = store_disk_templates($pkg, $_);
                         $data->add_podebconf($pkg, $_, '_', '', $filename);
-                        if (system("gzip -9 $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename)) {
+                        if (system("gzip -9f $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename)) {
                                 warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/".$filename.": $!\n";
                         }
 
