@@ -9,7 +9,7 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 
-index.$(LANGUAGE).html: $(TEMPLDIR)/template.wml pkgreport-opts.inc footer.inc
+index.$(LANGUAGE).html: $(TEMPLDIR)/template.wml footer.inc
 Access.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc footer.inc
 Developer.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc footer.inc
 Reporting.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc footer.inc
