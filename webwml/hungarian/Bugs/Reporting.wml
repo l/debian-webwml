@@ -1,0 +1,334 @@
+#use wml::debian::template title="A Debian hibakövetõ rendszere" NOHEADER=yes WEBMASTER=bugs
+
+#<!--translation 1.7-->
+
+<h1>Hogyan jelentsünk be egy Debianban talált hibát</h1>
+
+Küldj levelet ("hibalapot") a
+<A href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></A>
+címre, az alább részletezett módon.
+
+<p>
+
+Kérünk, hogy ne jelents be több, egymáshoz nem
+kapcsolódó hibát - fõleg
+különbözõ csomagokét - egy levélben.
+Szintén kérünk, hogy ne küldd el hibalapod semmilyen
+más levelzõlistár a vagy címzettnek, mint a
+<code>submit@bugs</code> (a részletekrõl, hogy hogyan teheted
+meg ezt helyesen, lásd <a href="#xcc">alább</a>).
+<p>
+
+A jelenlegi kiemelkedõ ("outstanding") hibák felsorolása elérhetõ <A
+href="./">a Világhálón</A> és <A href="Access">máshol</A> - a részletek
+iránt lásd egyéb doksik.
+
+<p>
+
+Egy ál-fejlécet kell helyezned a leveled törzsének
+az elejére, melyben a <code>Package:</code> és a
+<code>Version:</code> sorok megadják a hibát tartalmazó
+csomagnak a nevét és a változatát ("version").
+(Az ál-fejlécben a mezõknek a sorok legelején
+kell elhelyezkedniük és a hibakövetõ rendszer ("bug
+system") nem érti meg õket,
+ha MIME- vagy PGP-kódolt levélben küldöd.) (A szüks
+éges adatokat a <code>dpkg --search</code> és a <code>dpkg --list</code>
+paranccsal tudod kinyerni; lásd <code>dpkg --help</code>.
+
+<em>Lásd alább
+a <a href="#details">további követelményeket</a>.</em>)
+<p>
+
+Használható néhány ál-csomag, amelyeket a
+<code>Package</code> sorba tehetsz, hogy ha egy olyan hibát
+szeretnél jelenteni, amit olyan valamiben tapasztaltál, ami
+nem Debian alkalmazás-csomag.
+<A href="db/ix/pseudopackages.html">Egy
+lista ezekrõl</A>elérhetõ a hibák WWW-oldalain.
+
+
+<h2><A name="example">Példa</A></h2>
+
+Egy hibalap ("bug report"), a levél fejlécével együtt,
+valahogy így néz ki:
+<pre>
+  To: submit@bugs.debian.org
+  From: diligent@testing.linux.org
+  Subject: Hello says `goodbye'
+
+  <A name="pseudoheader">Package: hello</A>
+  Version: 1.3-2
+
+  When I invoke `hello' without arguments from an ordinary shell
+  prompt it prints `goodbye', rather than the expected `hello, world'.
+  Here is a transcript:
+
+  $ hello
+  goodbye
+  $ /usr/bin/hello
+  goodbye
+  $
+
+  I suggest that the output string, in hello.c, be corrected.
+
+  I am using Debian 1.1, kernel version 1.3.99.15z
+  and libc 5.2.18.3.2.1.3-beta.
+</pre>
+
+<h2><A name="details">Kérünk, hogy add meg a hibalapodban a
+következõket:</A></h2>
+
+<ul>
+<li>
+A <em>pontos</em> és <em>teljes</em> szövegét
+minden és bármilyen kiírt vagy naplózott
+("logolt") hibaüzenetnek. Ez nagyon fontos!
+<li>
+Pontosan azt, hogy mit gépeltél be vagy tettél, hogy
+bemutasd a problémát.
+<li>
+A helytelen viselkedés körülírását:
+hogy pontosan milyen viselkedést vártál és
+mit figyeltél meg. Egy példa-munkafolyamat másolata
+egy kiváló módja ennek a bemutatására.
+<li>
+Egy javasolt javítást, vagy éppenséggel egy
+foltot ("patch"), ha rendelkezésedre áll.
+<li>
+A hibában érintett program konfigurációjának
+a részleteit. Szerepeltesd a konfigurációs fájljainak
+teljes szövegét.
+<li>
+Azon csomagok változatait ("version"), amelyektõl hibás
+csomag függ ("depends").
+<li>
+A használt kernel változatát (írd: <code>uname -a</code>).
+<li>
+Hogy milyen megosztott C-könyvtárat ("shared C library") használsz
+(írd: <code>ls -l /lib/libc.so.6</code>).
+<li>
+Linux rendszered bármilyen más részének jellemzõit,
+ha odaillik. Például, ha egy Debian Perl irománnyal
+("script") akadna gondod, akkor megírnád a 'perl' végrehajtható
+binárisnak a verzióját (<code>perl -v</code>).
+<li>
+A rendszered hardverének odaillõ részleteit. Ha
+eszközmeghajtóv al ("device driver") kapcsolatos hibát
+jelentesz, kérünk, hogy hibalapod tartalmazza a rendszered
+<em>összes</em> hardverének felsorolását, mivel a
+problémát gyakran IRQ-
+és I/O-átfedések idézik elõ.
+</ul>
+
+Hibalapod tartalmazzon bármilyen olyan részletet, amit odaillõnek
+ítélsz meg - nagyon kicsi annak a veszélye, hogy
+hibalapod túl hosszúra nyúlna, mert túl sok
+információt tartalmaz. Ha rövidek, akkor
+kérünk, hogy szerepeltesd azon fájlokat, amelyekek
+használva jutottál a hibához (uuencode-olva, ha
+szükséges - pl. egyébként
+megjeleníthetetlen karaktereket tartalmaznak).
+
+<p>
+
+Természetesen, mint bármely email esetén, hibalapodnak
+egy leíró, világos és érthetõ
+<code>Tárgy ("Subject")</code> sort kell tartalmaznia. A leveled
+tárgyát fogjuk használni a hibád elõzetes
+beazonosításásra, címére, tehát
+kérünk, hogy az legyen tájékoztató
+(informatív)!
+
+
+<h2><A name="xcc">Hibalapod másolatainak küldése más
+címekre</A></h2>
+
+Néha szükséges, hogy elküldd a hibalapodnak másolatát
+valamely más címre a <code>debian-bugs-dist</code> és
+a csomag karbantartóján kívül (amely címzetteknek
+egyébként amúgy is eljut).
+<p>
+
+Megteheted ezt úgy, hogy CC-zed a hibalapod a többi
+címre, de ekkor a többi másolat <code>Reply-To</code>
+és <code>Subject</code> sorai nem fogják tartalmazni a hibalap
+számát. Amikor a címzettek válaszolnak,
+valószínûleg meghagyják a
+<code>submit@bugs.debian.org</code> címet címzettként, ami
+új hibaként fog bejelentkezni. Ez számos
+hibalap-sokszorozódáshoz fog vezetni.
+<p>
+
+A <em>helyes</em> mód az <code>X-Debbugs-CC</code> használata
+a levél fejlécben. Add hozzá ezt a sort a leveled
+fejlécéhez (nem a <code>Package</code> sort tartaémazó
+ál-fejléchez):
+<pre>
+ X-Debbugs-CC: másik-lista@akármi.ott
+</pre>
+Ennek a hatása az lesz, hogy a hibakövetõ rendszer elküld
+egy példányt a hibalapodból az <code>X-Debbugs-CC</code>
+sorban található cím(ek)re is ugyanúgy, mint
+a <code>debian-bugs-dist</code> címre.
+<p>
+
+Ez a jellegzetesség gyakran társítható hasznosan
+a <code>quiet</code> levelezéssel - lásd alább.
+
+
+<h2><A name="severities">Súlyossági szintek</A></h2>
+
+Ha a jelentésed egy kiváltképpen komoly hibáról
+szól, vagy csupán egy jellegzetesség kérés
+miatt, beállíthatod a hiba súlyossági szintjét
+a kezdeti jelentéskor. Habár ez nem szükséges.
+és a fejlesztõk hozzárendelnek majd egy megfelelõ
+súlyossági szintet a hibalapodhoz, ha te nem teszed meg.
+<p>
+
+A súlyossági szint hozzárendeléséhez tenned
+kell egy <code>Severity: <var>súlyosság</var></code> sort az
+ál-fejlécbe, szorosan a <code>Package</code> és a
+<code>Version</code> sorok után. A felhasználható
+súlyossági szintek leírását a
+<a href="Developer#severities">fejlesztõi
+leírásban</a> találod meg.
+
+<h2>A levelezõ listára való nem továbbítás
+- kis súlyosságú (minor) hibalapok</h2>
+
+Ha egy hibalap kis súlyosságú (minor,
+például, egy dokumentációs sajtóhiba vagy
+más triviális hiba), vagy ha egyszerre több hibalapot
+küldesz be, akkor küldd a <code>maintonly@bugs</code> vagy a
+<code>quiet@bugs</code> címre. <code>maintonly</code> a csomag
+karbantartójának küldi a hibalapot (feltéve, hogy
+egy helyes <code>Package</code> sort adsz meg az ál-fejlécben
+illetve a karbantartó ismert), és <code>quiet</code> semmilyen
+címre nem továbbítja a hibalapot, hanem csupán
+hibaként veszi nyilvántartásba (hasznos, ha
+például sok hasonló hibát jelentesz, és
+csak az összegzést akarod szétküldeni).
+<p>
+
+Ha így jársz el, akkor a hibakövetõ rendszer minden
+továbbított ("forward") üzenetnek beállítja
+a <code>Reply-To</code> sorát úgy, hogy a válaszok
+("reply") alapértelmezetten ugyanúgy lesznek kezelve, mint az
+eredeti hibajelentés.
+
+<h3>Ismeretlen csomagok vagy <code>Package</code> kulcs nélküli
+hibák</h3>
+
+Ha a hibakövetõ rendszer nem tudja, hogy ki a karbantartója
+az adott csomagnak, akkor a <code>debian-bugs-dist</code> címre fogja
+továbbítani a jelentést még akkor is, ha <code>maintonly</code>
+volt megjelölve.
+<p>
+
+A <code>maintonly@bugs</code> vagy a <var>nnn</var><code>-maintonly@bugs</code>
+címre való küldés esetén
+gyõzõdj meg arról, hogy a hibajelentés a
+megfelelõ csomaghoz lesz rendelve úgy, hogy a helyes
+<code>Package</code> sort helyezed az eredetileg elküldött
+jelentés levéltörzsének elejére, vagy
+úgy, hogy használod <a href="server-control">a
+<code>control@bugs</code> szolgáltatást</a> hogy megfelelõ
+csomaghoz rendeld hozzá újra elõször, ha
+már eleve nem megfelelõ.
+
+<h2>
+A <code>dpkg</code> használata a jelentéshez szükséges
+csomagnév (<code>Package</code>) és változat (<code>Version</code>)
+megállapításához</h2>
+
+Ha egy parancs hibáját jelented, megtudhatod, hogy melyik
+csomag telepítette azt a <code>dpkg --search</code>
+használatával. Azt, hogy egy csomag melyik
+változatát telepítetted, a <code>dpkg --list</code>
+vagy a <code>dpkg --status</code> parancsokkal tudhatod meg.
+
+<p>
+
+Például:
+
+<pre>
+$ which dpkg
+/usr/bin/dpkg
+$ type dpkg
+dpkg is hashed (/usr/bin/dpkg)
+$ dpkg --search /usr/bin/dpkg
+dpkg: /usr/bin/dpkg
+$ dpkg --search '*/dpkg'
+dpkg: /usr/doc/copyright/dpkg
+dpkg: /var/lib/dpkg
+dpkg: /usr/bin/dpkg
+dpkg: /usr/lib/dpkg
+dpkg: /usr/doc/dpkg
+$ dpkg --list dpkg
+Desired=Unknown/Install/Remove/Purge
+| Status=Not/Installed/Config-files/Unpacked/Failed-config/Half-installed
+|/ Err?=(none)/Hold/Reinst-required/X=both-problems (Status,Err: uppercase=bad)
+||/ Name            Version        Description
++++-===============-==============-============================================
+ii  dpkg            1.2.9elf       Package maintenance system for Debian GNU/Linux
+$ dpkg --status dpkg
+Package: dpkg
+Essential: yes
+Status: install ok installed
+Priority: required
+Section: base
+Maintainer: Ian Jackson &lt;ian@chiark.chu.cam.ac.uk&gt;
+Version: 1.2.9elf
+Replaces: dpkgname
+Pre-Depends: libc5 (&gt;= 5.2.18-2), ncurses3.0
+Conflicts: dpkgname
+Description: Package maintenance system for Debian GNU/Linux
+ This package contains the programs which handle the installation and
+ removal of packages on your system.
+ .
+ The primary interface for the dpkg suite is the `dselect' program;
+ a more low-level and less user-friendly interface is available in
+ the form of the `dpkg' command.
+
+$
+</pre>
+
+
+
+<hr>
+További oldalak:
+<ul>
+
+<li><A href="./">Hibakövetõ rendszer fõ oldala</A>
+<li><A href="Developer">Információk a hibafeldolgozó
+rendszerrõl fejlesztõk részére </A>
+<li><A href="Access">WWW-tõl eltérõ módok a
+hibakövetõ rendszer naplóinak
+elérésére</A>
+<li><A href="db/ix/full.html">A kiemelkedõ ("outstanding") és
+legújabb ("recent") hibalapok teljes felsorolása</A>
+
+<li><A href="db/ix/packages.html">Csomagok hibalappal</A>
+
+<li><A href="db/ix/maintainers.html">Hibalapos csomagok
+karbantartói</A>
+
+<li><A href="../">A Debian GNU/Linux kezdõoldala.</A>
+
+</ul>
+
+<hr>
+<address>
+Darren Benham
+ /
+<A href="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>.
+1999. szeptember 12.
+<p>
+Debian bug tracking system<BR>
+copyright 1999 Darren O. Benham,
+1994-7 Ian Jackson, 1997 nCipher Corporation Ltd,
+1995 Steven Brenner.<BR>
+<A href="http://www.benham.net/debbugs/">A szoftver GPL-es, és letölthetõ.</A>
+</address>
