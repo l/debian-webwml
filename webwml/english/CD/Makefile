@@ -14,3 +14,6 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml
 
 misc.$(LANGUAGE).html: misc.wml $(TEMPLDIR)/cdimage.wml
 	$(WML) $(<F)
+
+install::
+	[ -L $(HTMLDIR)/images ] || ln -sf . $(HTMLDIR)/images
