@@ -63,10 +63,11 @@ $version = '*' if ($version eq 'all');
 $case = "insensitive" unless (defined $case);
 (my $subword) = $input->param('subword') =~ m/^(\w+)$/;
 $subword = 0 unless (defined $subword);
+my $exact = !$subword; # use subword as default for exact
 (my $searchon) = $input->param('searchon') =~ m/^(\w+)$/;
 $searchon = 'all' unless (defined $searchon);
-(my $exact) = $input->param('exact') =~ m/^(\w+)$/;
-$exact = 0 unless (defined $exact);
+(my $exact_param) = $input->param('exact') =~ m/^(\w+)$/;
+$exact = $exact_param if (defined $exact_param);
 (my $releases) = $input->param('release') =~ m/^(\w+)$/;
 my $releases_param = $releases || 'all';
 $releases = '*' unless (defined $releases);
