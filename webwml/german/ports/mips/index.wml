@@ -1,6 +1,6 @@
 #use wml::debian::template title="MIPS-Portierung" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/mips/menu.inc"
-#use wml::debian::translation-check translation="1.83"
+#use wml::debian::translation-check translation="1.84"
 # $Id$
 
 <h1>debian-mips und debian-mipsel</h1>
@@ -15,11 +15,23 @@ Endianess laufen, da dieses jedoch normalerweise nicht von Software
 geändert werden kann, benötigen wir beide Architekturen.
 SGI-Maschinen (SGI Indy und Indigo2) laufen als <a
 href="http://www.foldoc.org/foldoc/foldoc.cgi?query=big-endian">big-endian</a>,
-was debian-mips ist.  Digital Decstations laufen als <a
+was debian-mips ist.  Digital Decstations und Cobalt Cube/RaQ laufen als <a
 href="http://www.foldoc.org/foldoc/foldoc.cgi?query=little-endian">little-endian</a>,
-was binary-mipsel ist.</p>
+was binary-mipsel ist. Die BCM91250A (auch bekannt als SWARM) kann in beiden
+Modi laufen, dies kann per Schalter auf dem Board ausgewählt werden.</p>
 
 <h2>Bekannte Probleme</h2>
+<ul>
+  <li>O2 R10000 ist NICHT unterstützt</li>
+  <li>O2 R5000 - EXPERIMENTELL, instabiler Framebuffer</li>
+  <li>Indigo 2 R8000/R10000 sind nicht unterstützt</li>
+  <li>Indigo 2 Framebuffer (außer XL) sind nicht unterstützt</li>
+  <li>Challenge S extra Ethernet/SCSI ist nicht unterstützt (GIO64
+    Devices)</li>
+  <li>EISA slots im Indigo 2 sind nicht unterstützt</li>
+</ul>
+
+<h2>Bekannte Probleme (behoben)</h2>
 <ul>
   <li>Keine funktionierende X-Keymap für XFree 4 auf Decstations</li>
   <li>R4600 CPUs dürfte im Moment einen nicht behobenen Fehler haben, der sich
@@ -27,44 +39,13 @@ was binary-mipsel ist.</p>
     LD_BIND_NOW=1</code> das Problem beheben dürfte.</li>
   <li>R4600 V1.7 funktioniert mit dem aktuellen CVS nicht. Zufällige
     Hänger.</li>
-  <li>O2 R10000 ist NICHT unterstützt</li>
-  <li>O2 R5000 - EXPERIMENTELL ohne Framebuffer</li>
-  <li>Indigo 2 R8000/R10000 sind nicht unterstützt</li>
-  <li>Indigo 2 Framebuffer sind nicht unterstützt</li>
-  <li>Challenge S extra Ethernet/SCSI ist nicht unterstützt (GIO64
-    Devices)</li>
-  <li>EISA slots im Indigo 2 sind nicht unterstützt</li>
   <li>R3000-Decstation stürzt mit dem aktuellen CVS-Kernel ab</li>
-</ul>
-
-<h2>Bekannte Probleme (behoben)</h2>
-<ul>
   <li>Früher Zusammenbruch auf Indigo2, wenn Framebuffer/Newport aufgedreht
     ist</li>
-  <li>XFree XShm ist kaputt - Pixmaps werden zerstört - Behebung im aktuellen
-    CVS enthalten.</li>
-  <li>"sleep" kehrt manchmal nicht von sleeps zurück - strace zeigt ein 22
-    Jahre altes sleep an - dürfte mit librt/fpu zusammenhängen - habe das Problem
-    seit einigen Monaten nicht mehr gesehen. Dürfte seit Kernel 2.4.17 / glibc
-    2.2.5-3 behoben ein.</li>
-  <li>update-menus wirft einen SIGBUS - dürfte eine C++ Ausnahme-Behandlung
-    sein - Wir linken für den Augenblick statisch, was das Problem beheben
-    dürfte.</li>
-  <li>Die 3.0.22 Boot-Floppies, die wahrscheinlich mit Woody freigegeben
-    werden, benennen den Kernel im Volume-Kopf falsch. Sein Name ist
-    "linux.bi" und nicht bloß "linux" - Versuchen Sie, "arcboot" zu
-    verwenden, was die nächste Generation eines boot-loaders für SGIs ist,
-    aber seien Sie vorsichtig - Sie müssen ein neueres Kernel-Image
-    installieren, das einen ELF-Kernel beinhaltet. Woody wird mit 3.0.23
-    freigegeben.</li>
 </ul>
 
 <h2>Öffentliche Rechner</h2>
 <ul>
-	<li>pongo.verwaltung.uni-mainz.de<br>
-	Eine SGI Indy - R4000SC 256MB RAM<br>
-	<email martin@uni-mainz.de></li>
-
 	<li>remake.rfc822.org<br>
 	Ein Masquerade Pro, gespendet von Lasat.
 	Eine little-endian R5000@250Mhz, auf der debian-mipsel und der
@@ -105,26 +86,20 @@ speziell Debian/Mips befassen.</p>
 	Tragen Sie sich per Mail an <email debian-mips-request@lists.debian.org> ein.<br>
 	Das Archiv ist auf <a href="http://lists.debian.org/debian-mips/">lists.debian.org</a>.</li>
 
-	<li>linux-mips@oss.sgi.com - Linux/Mips und Linux/Mipsel für
-	alle Architekturen, nicht nur die von SGI.<br>
-	Tragen Sie sich per Mail an <email majordomo@oss.sgi.com> mit "subscribe linux-mips" ein.<br></li>
-
-  <li>cobalt-22@devel.alal.com - 2.2/2.4 auf den Cobalt Qube/RaQ portieren.<br>
-  <a href="http://devel.alal.com/mailman/listinfo/cobalt-22">\
-  http://devel.alal.com/mailman/listinfo/cobalt-22</a>
+	<li>linux-mips@linux-mips.org - Linux/Mips und Linux/Mipsel Kernel-Entwicklung.<br>
+	Tragen Sie sich per Mail an <email ecartis@linux-mips.org> mit »subscribe linux-mips« ein.
 
 </ul>
 
 <h2>Links</h2>
 
 <dl>
-  <dt>Decstation Linux - Seiten speziell für Benutzer von Decstation - leicht
-    veraltet</dt>
-    <dd><a href="http://decstation.unix-ag.org/">decstation.unix-ag.org</a></dd>
+  <dt>Linux/MIPS-Kernel-Entwicklung &ndash; viel zugehörige Information über MIPS
+    <dd><a href="http://www.linux-mips.org/">linux-mips.org</a>
   <dt>CPU-Hersteller</dt>
     <dd><a href="http://www.mips.com/">www.mips.com</a></dd>
-  <dt>Linux/Mips-Webseiten bei SGI</dt>
-    <dd><a href="http://oss.sgi.com/mips/">oss.sgi.com/mips</a></dd>
+  <dt>Decstation Linux - Seiten speziell für Benutzer von Decstation &ndash; veraltet</dt>
+    <dd><a href="http://decstation.unix-ag.org/">decstation.unix-ag.org</a></dd>
   <dt>Little endian MIPS RPM-Paket-Archiv von Karsten Merker</dt>
     <dd><a href="ftp://bolug.uni-bonn.de/mips/">bolug.uni-bonn.de/mips/</a></dd>
   <dt>Archiv von Maciej W. Rozycki</dt>
