@@ -10,6 +10,7 @@ CUR_DIR=News/weekly
 NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 CUR_YEAR ?= $(shell date +%Y)
+WMLOPTIONS += -DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
 
 # This Makefile will handle converting all .wml files in this directory
 # and all subdirectories to .html files. It does it this way so I don't need
@@ -23,8 +24,7 @@ all:: index.$(LANGUAGE).html $(HTMLFILES)
 # so wml gets all the relative links right.
 %.$(LANGUAGE).html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml
-	cd $(@D) && $(WML) $(notdir $(<)) \
-		-DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
+	cd $(@D) && $(WML) $(notdir $(<))
 
 install:: $(HTMLDESTFILES)
 	@# Set up current issue symlink. In case you're wondering, the only
