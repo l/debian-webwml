@@ -1,0 +1,98 @@
+#use wml::debian::template title="Schéma des opérations réalisées par le réseau de serveurs d'empaquetage automatique" BARETITLE="true"
+#use wml::debian::translation-check translation="1.4" maintainer="Mohammed Adnène Trojette" 
+
+<p>Au c&oelig;ur du système se trouve la base de données
+<tt>wanna-build</tt>, qui suit les versions et les états des paquets.
+<tt>quinn-diff</tt> compare chaque jour les listes de paquets pour les
+architectures cibles avec la liste des paquets sources et alimente la
+base de données avec la liste des paquets qui nécessitent un nouvel
+empaquetage et se retrouvent dans l'état <tt>Needs-Build</tt>.</p>
+
+<p>Tous les services d'empaquetage (il peut y en avoir plus d'un) font
+régulièrement des requêtes à la base de données à la recherche de ces
+paquets et en prennent quelques uns qui se retrouvent dans l'état
+<tt>Building</tt>. Évidemment, des personnes peuvent aussi prendre
+elles-mêmes des paquets, par exemple dans le cas particulier où
+l'empaquetage automatique n'est pas possible. C'est là qu'apparaît le
+deuxième objectif de <tt>wanna-build</tt>&nbsp;: il assure que la même
+version d'un paquet ne sera pas empaquetée deux fois.</p>
+
+<div align="center"><a name="34"></a>
+<table>
+<caption><strong>Figure&nbsp;:</strong>
+États et Transitions des Paquets</caption>
+<tr><td><img src="scheme.png" alt="Autobuilder scheme"></td></tr>
+</table>
+</div>
+
+<p>Si tout se passe bien, un paquet terminé peut être envoyé plus tard,
+ce qui constitue un autre état <tt>Uploaded</tt>. Après cela il sera
+finalement installé dans l'archive Debian afin qu'il apparaisse dans la
+liste mise à jour des paquets de l'architecture cible. Cette liste sera
+intégrée à la base de données, tandis que le paquet se retrouvera dans
+l'état <tt>Installed</tt> et y restera jusqu'à la version suivante du
+paquet source.</p>
+
+<p>Il existe de nombreux autres états&nbsp;; par exemple&nbsp;:
+<tt>Failed</tt> correspond aux paquets dont l'empaquetage a échoué
+à cause d'erreurs dans les sources, erreurs qui sont censées être
+réparées dans une version suivante (après rapport du problème,
+évidemment). Ainsi une nouvelle version entrera directement dans l'état
+<tt>Needs-Build</tt>, mais avec l'avertissement qu'il s'est produit
+une erreur dans la version précédente. Dans cet état, une description
+de l'erreur est stockée. L'état <tt>Dep-Wait</tt> est utilisé quand un
+paquet a besoin d'autres paquets pour être empaqueté mais que ceux-ci ne
+sont pas encore disponibles et doivent être empaquetés d'abord. Cet état
+stocke une liste des paquets requis et leurs versions si besoin est, et
+dès que ceux-ci sont dans l'état <tt>Installed</tt>, le paquet initial
+reprend l'état <tt>Needs-Build</tt>.</p>
+
+<p>Comme nous l'avons déjà vu, le service d'empaquetage récupère des
+paquets de la base de données afin de les empaqueter. Regardons ce qui
+se passe de plus près&nbsp;: s'il a quelques paquets à empaqueter,
+il utilise <tt>sbuild</tt> pour le processus effectif d'empaquetage,
+et pour chaque empaquetage, un journal est envoyé par courriel au
+responsable du service. Celui-ci vérifie le journal et décide ce
+qu'il faut faire avec le paquet &nbsp;: soit l'envoyer, soit le
+passer à l'état <tt>Failed</tt> ou <tt>Dep-Wait</tt>, soit réaliser
+quelques ajouts à la liste des dépendances du paquet source et retenter
+l'empaquetage, etc. Si un avis positif est reçu, le service transfère
+le paquet dans une répertoire d'envoi, d'où tous les paquets sont
+régulièrement et automatiquement envoyés.</p>
+
+<p>Lire les fichiers de journaux représente la seule intervention
+humaine de tout le système si aucune erreur ne se produit. Il y a deux
+bonnes raisons pour ne pas automatiser cela encore plus&nbsp;: d'abord,
+les empaquetages se terminent parfois par un résultat «&nbsp;OK&nbsp;»,
+l'empaquetage ayant néanmoins échoué pour des raisons qui sont
+invisibles à la machine. Ensuite, un envoi direct nécessiterait de
+signer automatiquement avec PGP les fichiers obtenus avec une clé sans
+mot de passe («&nbsp;passphrase&nbsp;») sur la machine d'empaquetage.
+Cela serait considéré comme une faille de sécurité inacceptable.</p>
+
+<p>Le script d'empaquetage <tt>sbuild</tt> ne fait plus ou moins
+qu'appeler quelques outils standards de Debian pour compiler les
+sources. Il aide aussi lors de certaines tâches communes et lors
+de certains comptes, mais il se différencie surtout par la gestion
+des dépendances des paquets sources. Souvent des paquets ont besoin
+d'autres paquets installés, comme des compilateurs et des librairies,
+pour pouvoir être compilés. Il n'est pas pratique que ces paquets
+soient installés en permanence, et souvent, cela n'est pas possible
+pour des raisons de conflits. Maintenant, les dépendances des paquets
+sources disent simplement à <tt>sbuild</tt> quels sont les paquets
+nécessaires pour chaque paquet à empaqueter. Il peut alors les installer
+automatiquement avant l'empaquetage et les supprimer juste après.</p>
+
+<p>La liste de dépendances du paquet source peut aussi en partie
+être générée automatiquement, en regardant les dépendances du
+paquet binaire générées par le paquet source. C'est le boulot
+d'<tt>andrea</tt>, qui analyse la liste des paquets i386 afin d'obtenir
+les dépendances et d'associer les paquets de librairie aux noms des
+paquets de développement. Il fusionne aussi les résultats avec les
+additions manuelles, pour les choses qui ne peuvent pas être générées
+automatiquement, comme les compilateurs ou des outils particuliers.</p>
+
+<hr>
+
+<p><small>Contenu développé par Roman Hodek pour le 6&nbsp;ème
+International Linux-Kongress de&nbsp;1999</small></p>
