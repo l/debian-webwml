@@ -10,8 +10,15 @@ include $(WMLBASE)/Make.lang
 
 
 # Do Not modify the following line
-index.$(LANGUAGE).html: index.wml $(wildcard 1997*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
+index.$(LANGUAGE).html: index.wml $(wildcard 1997*.wml) \
+                        $(wildcard 1997*.title) \
+                        $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
 	$(WML) index.wml
 
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/news.wml
 	$(WML) $(<F)
+
+ifeq ($(LANGUAGE),en)
+install::
+	install -p -m664 common_library linux_press_book.txt $(HTMLDIR)
+endif

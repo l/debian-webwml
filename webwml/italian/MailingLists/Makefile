@@ -8,3 +8,10 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+ifeq "$(LANGUAGE)" "en"
+subscribe.wml: mklist
+	./mklist -s
+
+unsubscribe.wml: mklist
+	./mklist -u
+endif

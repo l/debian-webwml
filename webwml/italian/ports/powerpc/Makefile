@@ -4,7 +4,7 @@
 
 WMLBASE=../..
 CUR_DIR=ports/powerpc
-SUBS=
+SUBS=inst pics
 
 include $(WMLBASE)/Make.lang
 
