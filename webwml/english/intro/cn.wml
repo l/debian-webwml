@@ -41,9 +41,66 @@ cache (both disk and memory) in your browser before trying to view pages again.
 We also suggest you use lynx when testing. It is the only browser we have
 found to comply 100% with the HTTP specifications for content negotiation.</p>
 
+<H3>What should I set the variable to?</H3>
+
+<P>Since the original language of the Debian web pages is English and
+not all documents may be translated into your preferred language, it
+is a good idea to set your preferred language variable to allow English
+as a backup. For example, if you are a native French speaker using
+lynx, you would want the following line in your <kbd>.lynxrc</kbd></p>
+
+<pre>
+preferred_language=fr; q=1.0, en; q=0.5
+</pre>
+
+<p>
+This tells the server that you would like the French version of the
+document if available, otherwise use the English one.</p>
+
+<p>One thing you need to be careful of is using sub-categories of languages.
+Using 'en-GB, fr', for example,  does not do what most people expect (if they have
+not read the HTTP specification).
+A server that receives a request for a document with a preferred language of
+'en-GB, fr' when both an 'en' and 'fr' version exist will serve the French one.
+It will only serve the English document before the French one if there is
+a version of the file with en-gb for the language extension.
+Thus, you should configure your browser to send 'en-GB, en, fr' or simply 'en, fr'.
+It does work the other way though, e.g. a server can return en-us when en is
+requested.</p>
+
+<p><strong>We strongly recommend that you do not add country extensions to a language
+unless you have good reason</strong>. If you do add one, make sure you also include
+the language without the extension.</p>
+
+<P>For more information about setting the preferred_language variable see the
+<a href="http://httpd.apache.org/docs/content-negotiation.html">Apache
+documentation on content negotiation</a>.</p>
+
+<h3><a name="cache">Potential problems with proxy servers</a></h3>
+
+<p>Proxy servers are essentially web servers that have no content of their
+own. They sit in the middle between users and real web servers. They grab
+your requests for web pages and fetch the page. After that, they forward the
+page to you but also make a local, cached copy, for later requests. This
+can really cut down on network traffic when many users request the same
+page.</p>
+
+<p>This is a great idea most of the time, but it fails when the cache is buggy.
+In particular, some older proxy servers do not understand content negotiation. This results
+in them caching a page in one language and serving that, even if a different
+language is requested later. The only solution is to upgrade or replace the
+caching software.</p>
+
+<p>Historically, people only used a proxy when they configured their browser
+to use one. This is no longer the case. Your ISP may be redirecting all HTTP
+requests through a transparent proxy. If the proxy doesn't handle content
+negotiation properly, then users can receive cached pages in the wrong
+language. The only way you can fix this is to complain to your ISP in order
+for them to upgrade or replace their software.</p>
+
 <h3><a name="setting">Setting the preferred language in a browser</a></h3>
 
-<P>Note: the following list is not complete. If you have information on
+<P>If you have information on
 configuring a browser that isn't listed below, please send it to
 <a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>.</p>
 
@@ -108,60 +165,3 @@ or using the custom package (assuming URL version p4.0pre.14):
      Options (o) -&gt; Other Behavior -&gt; Accept-Language
 </pre>
 </DL>
-
-<H3>What should I set the variable to?</H3>
-
-<P>Since the original language of the Debian web pages is English and
-not all documents may be translated into your preferred language, it
-is a good idea to set your preferred language variable to allow English
-as a backup. For example, if you are a native French speaker using
-lynx, you would want the following line in your <kbd>.lynxrc</kbd></p>
-
-<pre>
-preferred_language=fr; q=1.0, en; q=0.5
-</pre>
-
-<p>
-This tells the server that you would like the French version of the
-document if available, otherwise use the English one.</p>
-
-<p>One thing you need to be careful of is using sub-categories of languages.
-Using 'en-GB, fr', for example,  does not do what most people expect (if they have
-not read the HTTP specification).
-A server that receives a request for a document with a preferred language of
-'en-GB, fr' when both an 'en' and 'fr' version exist will serve the French one.
-It will only serve the English document before the French one if there is
-a version of the file with en-gb for the language extension.
-Thus, you should configure your browser to send 'en-GB, en, fr' or simply 'en, fr'.
-It does work the other way though, e.g. a server can return en-us when en is
-requested.</p>
-
-<p><strong>We strongly recommend that you do not add country extensions to a language
-unless you have good reason</strong>. If you do add one, make sure you also include
-the language without the extension.</p>
-
-<P>For more information about setting the preferred_language variable see the
-<a href="http://httpd.apache.org/docs/content-negotiation.html">Apache
-documentation on content negotiation</a>.</p>
-
-<h3><a name="cache">Potential problems with proxy servers</a></h3>
-
-<p>Proxy servers are essentially web servers that have no content of their
-own. They sit in the middle between users and real web servers. They grab
-your requests for web pages and fetch the page. After that, they forward the
-page to you but also make a local, cached copy, for later requests. This
-can really cut down on network traffic when many users request the same
-page.</p>
-
-<p>This is a great idea most of the time, but it fails when the cache is buggy.
-In particular, some older proxy servers do not understand content negotiation. This results
-in them caching a page in one language and serving that, even if a different
-language is requested later. The only solution is to upgrade or replace the
-caching software.</p>
-
-<p>Historically, people only used a proxy when they configured their browser
-to use one. This is no longer the case. Your ISP may be redirecting all HTTP
-requests through a transparent proxy. If the proxy doesn't handle content
-negotiation properly, then users can receive cached pages in the wrong
-language. The only way you can fix this is to complain to your ISP in order
-for them to upgrade or replace their software.</p>
