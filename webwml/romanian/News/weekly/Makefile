@@ -36,8 +36,8 @@ install:: $(HTMLDESTFILES)
 	@# will still work. Bleargh.
 ifeq ($(LANGUAGE),en)
 	@install -d $(HTMLDIR)/current
-	@-rm -f $(HTMLDIR)/current/issue
-	-ln -sf ../$(YEAR)/$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
+	@rm -f $(HTMLDIR)/current/issue
+	@ln -sf ../$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
 endif
 
 # This is used by the install rule, and I had to hack on it, overriding
@@ -68,4 +68,4 @@ index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
 mail:	
 	@cat mail-header
 	@lynx -dump http://www.debian.org/News/weekly/current/issue/ | \
-       	perl -pe 's/^\s\s?\s?//'
+       		perl -pe 's/^\s\s?\s?//'
