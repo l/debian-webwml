@@ -3,11 +3,8 @@
   include("config.inc");
   include("common.inc");
 
-  function delete_applicant($email) {
+  function delete_applicant($db, $email) {
   global $row, $query;
-  if (! ($db = open_db())) {
-    return FALSE;
-  }
   $sql = "DELETE from applicant WHERE email='$email'";
   if (! ($query = pg_exec($db, $sql))) {
     echo "Problem with query", pg_ErrorMessage($db), "<BR>";
@@ -33,12 +30,17 @@ You should not be here!!</STRONG>
   session_register("s_isdam");
   # Strip guff
   $email = strip_tags($email);
+
+  if (! ($db = open_db())) {
+    echo "<P>Cannot open SQL database</P>";
+    return FALSE;
+  }
 ?>
 <H1>Debian New Maintainer Status</H1><BR>
 <? if ($s_isfd == 't' && $email != "") { ?>
 <H3>Deleting Applicant</H3>
 <?
-    if (delete_applicant($email)) {
+    if (delete_applicant($db, $email)) {
 ?>
 <P>Successfully deleted <? echo $email; ?> from the list of applicants.
 <? } else { ?>
