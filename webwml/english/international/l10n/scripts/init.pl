@@ -5,14 +5,13 @@
 ##########
 my $DB_FILE="data/transmonitor";
 my $PO_ROOT="http://www.ens-lyon.fr/~mquinson/debian/po";
-:>
 
 ##########
 # Init
 ##########
-#include "../../../english/international/l10n/scripts/utils.pl"
+push (@INC,"../../../english/international/l10n/scripts/");
+require 'utils.pl';
 
-<:
 my %data;
 my %sections;
 my %priorities;
