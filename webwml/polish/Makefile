@@ -6,8 +6,8 @@ WMLBASE=.
 CUR_DIR=
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
-SUBS=2.0 MailingLists News SPI devel distrib doc events intro logos mirror \
-ports security Pics vote
+SUBS=Bugs MailingLists News Pics SPI consultants devel distrib doc events intro \
+logos mirror partners ports releases security vote y2k
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
