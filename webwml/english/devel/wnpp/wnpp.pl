@@ -34,9 +34,7 @@ sub htmlsanit {
 }
 
 # The maintainers flat database
-$MAINTAINERS = "/org/www.debian.org/cron/ftpfiles/Maintainers";
-my $host = `hostname -f`; chop $host;
-$MAINTAINERS = "$(ENGLISHDIR)/devel/wnpp/Maintainers" if ( $host ne "gluck.debian.org" );
+$MAINTAINERS = "$(ENGLISHDIR)/devel/wnpp/Maintainers";
 
 open MAINTAINERS or die "Can't find $MAINTAINERS file at $host: $!\n";
 while (<MAINTAINERS>) {
