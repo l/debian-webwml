@@ -22,6 +22,12 @@ endif
 ifneq "$(FONTTYPE)" ""
 debbar.pl += -fonttype $(FONTTYPE)
 endif
+ifneq "$(FONTREGISTRY)" ""
+debbar.pl += -fontregistry $(FONTREGISTRY)
+endif
+ifneq "$(FONTENCODING)" ""
+debbar.pl += -fontencoding $(FONTENCODING)
+endif
 
 about.$(LANGUAGE).gif: $(debbar.pl)
 	$(debbar.pl) -words $(ABOUT_TEXT) -o $@
