@@ -1,62 +1,100 @@
 #use wml::debian::cdimage title="Spegla Debians cd-avbildningar" BARETITLE=true
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.8"
+#use wml::debian::translation-check translation="1.10"
 
 <p>
 För att spegla Debians cd-avbildningar behöver du en Linux- eller
 Unixliknande maskin med en permanent, pålitlig Internetanslutning.
+Debians speglar har <tt>.iso</tt>-avbildningar för cd och dvd i olika
+storlekar, filer för
+<a href="http://atterer.net/jigdo/">jigdo</a> (<tt>.jigdo</tt> och
+<tt>.template</tt>),
+<a href="http://bitconjurer.org/BitTorrent/">BitTorrent</a>-filer
+(<tt>.torrent</tt>) samt MD5-kontrollsummor för avbildningarna
+(<tt>MD5SUMS*</tt>).
 </p>
 
-<p>
-CD-speglarna innehåller oftast jigdomallarna och vissa har även färdigbyggda
-avbildningar.
-Mallarna uppdateras vanligtvis via rsync från
-<a href="../jigdo-cd/#which">en av de officiella platserna</a> och de
-kompletta avbildningarna uppdateras med <kbd>jigdo-mirror</kbd>.
-</p>
-
-<toc-display>
+<toc-display/>
 
 <hr>
 
-<toc-add-entry name="httpftp">Varför ftp och http <strong>inte</strong> är
-lämpliga</toc-add-entry>
+#______________________________________________________________________
 
-<p>Du bör <em>inte</em> använda ftp eller http för att hämta avbildningarna.
+<toc-add-entry name="master">Huvudserver</toc-add-entry>
+
+<p>
+Det finns två platser att spegla, en för de stabila avbildningarna och en
+för beta/instabila/testningsavbildningar.
+URL:erna för huvudservrarna visas nedan &ndash; vi ber dig dock att
+<em>vänligen</em> överväga att spegla från en närbelägen spegel
+(spegellista: <a href="../http-ftp/">HTTP/FTP</a>,
+<a href="rsync-mirrors">rsync</a>) om möjligt.
+Åtkomsten till huvudservern kan vara begränsat runt publiceringsdatum.
+</p>
+
+<p>
+Notera även att en <strong>stor</strong> mängd data är lagrad i dessa
+kataloger &ndash; läs <a href="#exclude">avsnittet nedan</a> för detaljerad
+information om hur du begränsar storleken genom att exkludera vissa filer.
+</p>
+
+<ul>
+ <li>
+  Stabila avbildningar (uppdateras för varje stabil utgivning):
+  <br>
+  <a href="http://cdimage.debian.org/debian-cd/"><tt>http://cdimage.debian.org/debian-cd/</tt></a>
+  <br>
+  <a href="ftp://cdimage.debian.org/debian-cd/"><tt>ftp://cdimage.debian.org/debian-cd/</tt></a>
+  <br>
+  <tt>rsync://cdimage.debian.org/debian-cd/</tt>
+ </li>
+
+ <li>
+  Beta/instabila/testningsavbildningar (de flesta delarna uppdateras varje
+  vecka):
+  <br>
+  <a href="http://cdimage.debian.org/pub/cdimage-testing/"><tt>http://cdimage.debian.org/pub/cdimage-testing/</tt></a>
+  <br>
+  <a href="ftp://cdimage.debian.org/pub/cdimage-testing/"><tt>ftp://cdimage.debian.org/pub/cdimage-testing/</tt></a>
+  <br>
+  <tt>rsync://cdimage.debian.org/cdimage-testing/</tt>
+ </li>
+</ul>
+
+#______________________________________________________________________
+
+<toc-add-entry name="httpftp">Spegling med http/ftp rekommenderas ej
+</toc-add-entry>
+
+<p>
+Du bör inte använda ftp eller http för att uppdatera din spegel.
 Dessa överföringsmetoder har en hög misslyckandepotential på grund av filernas
 enorma storlekar.
 </p>
 
 <p>
-Dessutom måste allt data hämtas på nytt även om avbildningarna bara ändras
-minimalt (såsom sker för underutgåvor), något som medför hög belastning på våra
-datorer och nätverksanslutningar.</p>
-
-<toc-add-entry name="download">Hämta med rsync</toc-add-entry>
-
-<p>
-Av de orsaker som beskrivs ovan användere vi programmet
-<a href="http://rsync.samba.org/"><tt>rsync</tt></a> vilket, kortfattat,
-genomför fjärrbinärpatchning.
-Med <tt>rsync</tt> kan avbildningar för underutgåvor uppdateras mycket
-effektivt, eftersom endast de förändrade delarna sänds över nätverket; de
-oförändrade delarna kopieras från den gamla avbildningen.</p>
-
-<p>
-För de som endast vill ha cd-avbildningar av Debian (och inte någon annan
-sorts Debianspegel) och som inte har en näraliggande/snabb Debianspegel
-(<kbd>debian/</kbd>) föreslår vi att <kbd>rsync</kbd> används i ett dagligt
-cron-jobb.
+Dessutom görs inte några integritetskontroller av den data hämtas via http
+eller ftp, vilket innebär att det är mer troligt att en avbruten hämtning
+inte kommer att upptäckas.
 </p>
 
+#______________________________________________________________________
+
+<toc-add-entry name="download">Spegling med rsync är acceptabelt</toc-add-entry>
+
 <p>
-Diu kan spegla från alla platser i
-<a href="rsync-mirrors">denna spegellista</a>.
+Programmet
+<a href="http://rsync.samba.org/"><kbd>rsync</kbd></a>
+är en bra lösning för speglingen.
+Det är inte lika effektivt som de övriga, Debianspecifika, metoder som anges
+nedan, men kan vara enklare att få på plats.
+Dessutom försäkrar den att alla filer överförs korrekt, samt att metadata
+(t.ex tidsstämplar) hålls i synk på samma sätt som filinnehållet.
 </p>
 
 <p>
 Använd åtminstone flaggorna
-<strong><kbd>--times --links --hard-links --block-size=8192</kbd></strong>.
+<strong><kbd>--times --links --hard-links --partial --block-size=8192</kbd></strong>.
 Detta kommer att bevara modifieringstid, symboliska länkar och hårda länkar, och
 använda en blockstorlek om 8192 byte (mest effektivt för cd-avbildningar).
 När modifieringstider och storlekar är desamma kommer <kbd>rsync</kbd> helt
@@ -64,8 +102,35 @@ enkelt att lämna filerna som de är, så <kbd>--times</kbd> är verkligen
 obligatoriskt.
 </p>
 
-<toc-add-entry name="jigdomirror">Generera avbildningar med
-jigdo-mirror</toc-add-entry>
+#______________________________________________________________________
+
+<toc-add-entry name="jigdolite">Spegling med jigdo-lite rekommenderas ej
+</toc-add-entry>
+
+<p>
+Aktuella versioner av programmet
+<a href="http://atterer.net/jigdo/"><kbd>jigdo-lite</kbd></a> gör det
+möjligt att hämta flera avbildningar i ett svep.
+Vi rekommenderar dock inte att <kbd>jigdo-lite</kbd> används för att skapa
+Debian-cd-speglar, använd <kbd>jigdo-mirror</kbd> istället.
+</p>
+
+#______________________________________________________________________
+
+<toc-add-entry name="jigdomirror">Spegling med jigdo-mirror rekommenderas
+</toc-add-entry>
+
+<p>
+Detta betyder i praktiken:
+Spegla <tt>.iso</tt>-filen med
+<a href="http://atterer.net/jigdo/"><kbd>jigdo-mirror</kbd></a>, sedan
+(om du även vill spegla andra typer av filer, t.ex <tt>.jigdo</tt>- och
+<tt>.template</tt>-filerna) kör du rsync över katalogen för att hämta
+resten.
+Skripten på
+<a href="http://www.acc.umu.se/~maswan/debian-push/cdimage/">denna sida</a>
+kan vara till hjälp om du vill ställa in detta.
+</p>
 
 <p>
 Många har &rdquo;vanliga&rdquo; Debianspeglar (<kbd>debian/</kbd>), eller
@@ -79,13 +144,6 @@ cd-avbildningarna?
 <kbd>jigdo-mirror</kbd> är ett program som gör det möjligt att skapa en
 Debian-cd-avbildning med filerna från en &rdquo;vanlig&rdquo; Debianspegel,
 plus några få extra jigdo-mallfiler.
-</p>
-
-<p>
-Observera att <kbd>jigdo-mirror</kbd> medföljer jigdo 0.6.8, men att denna
-version inte finns i Debian 3.0 (&rdquo;Woody&rdquo;).
-Det innebär bara att du måste hämta det separat, programmet fungerar utan
-problem på &rdquo;Woody&rdquo;.
 </p>
 
 <p>
@@ -111,16 +169,16 @@ Detta är ett exempel:
 </p>
 
 <pre>
-jigdoDir="/where/you/keep/mirrors/debian-cd/current/jigdo"
-imageDir="/where/you/keep/mirrors/debian-cd/current/images"
-tmpDir="/where/you/keep/mirrors/debian-cd/current/images"
-debianMirror="file:/where/you/keep/mirrors/debian"
-nonusMirror="file:/where/you/keep/mirrors/debian-non-US"
+jigdoDir="/var/du/har/speglar/debian-cd/current/jigdo"
+imageDir="/var/du/har/speglar/debian-cd/current/images"
+tmpDir="/var/du/har/speglar/debian-cd/current/images"
+debianMirror="file:/var/du/har/speglar/debian"
+nonusMirror="file:/var/du/har/speglar/debian-non-US"
 include='i386/|sparc/|powerpc/|source/'; exclude='-1\.'
 </pre>
 
 <p>
-Variablenra <i>include</i> och <i>exclude</i> innehåller listan över
+Variablerna <i>include</i> och <i>exclude</i> innehåller listan över
 arkitekturer du vill skapa avbildningar för (eller snarare reguljära
 uttryck).
 För ytterligare information, se manualsidan för <kbd>jigdo-mirror</kbd>
@@ -135,120 +193,148 @@ föreslår att du gör vad som krävs för att hantera detta (kör det i screen,
 omdirigera utdata till en fil, osv).
 </p>
 
-<toc-add-entry name="pik">Generera avbildningar med pseudo-image kit och
-debcdmirror</toc-add-entry>
+#______________________________________________________________________
 
-<p><tt>rsync</tt> i sig självt utför fortfarande kompletta hämtningar av
-&rdquo;helt nya&rdquo; utgåvor, eftersom de avbildningarna i stort sett inte
-innehåller några oförändrade delar.
-Med &rdquo;<span lang=en>pseudo-image kit</span>&rdquo; kan vi dock skapa
-&rdquo;pseudo&rdquo;-cd-avbildningsfiler från data som redan är tillgänglig på
-närmaste ftp-spegeln av Debian &ndash; kanske din egen lokala hårddisk.
-<tt>Rsync</tt> kan sedan binärpatcha dessa &rdquo;pseudo-avbildningar&rdquo;
-till officiella, något som till och med kan vara mer effektivt än att patcha
-gamla avbildningar för nya underutgåvor.</p>
+<toc-add-entry name="pushmirror">Hur man blir &rdquo;push&rdquo;-spegel
+</toc-add-entry>
 
 <p>
-Informationen här kan vara föråldrad!
-Vi rekommenderar att du antingen använder vanlig rsync eller testar
-jigdo-mirror.
-</p>
-
-<p><span lang=en>Pseudo image kit</span> är huvudsakligen skrivet för att bara
-hämta en eller ett par avbildningar, så som de allra flesta gör.
-Förutom det finns även skriptet <tt>debcdmirror</tt> som gör speglingen
-<em>riktigt</em> enkel eftersom automatiskt använder <span lang=en>pseudo image
-kit</span> och <tt>rsync</tt> för att hålla din spegel à jour &ndash; till den
-grad att den automatiskt kontrollerar MD5-kontrollsumman för varje hämtad
-avbildning.
-Med <tt>debcdmirror</tt> kan du ange exakt vad du vill spegla.</p>
-
-<p>
-Manuell användning av <span lang=en>pseudo image kit</span> (kanske
-tillsammans med <tt>rsync</tt> för att uppdatera underutgåvor) betyder en
-massa arbete och problem, så vi rekommenderar det inte.
+När nya avbildningar blir tillgängliga kan huvudservern sända ett meddelande
+till sina speglar för att få dem att direkt påbörja uppdateringen.
+På detta sätt &rdquo;trycks&rdquo; (push) nya data ut istället för att
+&rdquo;dras&rdquo; (pull) in av speglingarna vid nästa dagliga uppdatering,
+vilket ger att de nya avbildningarna sprids snabbare.
 </p>
 
 <p>
-I stället rekommenderar vi skriptet <tt>debcdmirror</tt> (vilket
-&rdquo;internt&rdquo; använder <span lang=en>pseudo image kit</span> och
-<tt>rsync</tt>) (dagligt cron-jobb).
+Om du vill att din spegel skall delta i detta uppdateringssystem, se
+<a href="http://www.acc.umu.se/~maswan/debian-push/cdimage/">denna sida</a>.
 </p>
 
-<p>Senaste versionen av
-<a href="http://cdimage.debian.org/~costar/pseudo-image-kit/" lang=en>pseudo
-image kit</a> och skriptet
-<a href="http://cdimage.debian.org/~costar/debcdmirror/"><tt>debcdmirror</tt></a>
-är tillgängliga från författarens webbplats.
-Läs README-filerna i de båda arkiven för omfattande information om hur de
-fungerar.</p>
+#______________________________________________________________________
 
-<p><strong>Observera:</strong>
-
-<p>För skriptet <tt>debcdmirror</tt> måste du välja en <tt>rsync</tt>-spegel
-som gör en &rdquo;<tt>ls-lR</tt>&rdquo; fil tillgänglig.
-Adresser finns på <a href="rsync-mirrors">rsync-spegellistan</a>.
-</p>
-
-<p>Om du inte har en lokal
-<a href="$(HOME)/mirror/">&rdquo;vanlig&rdquo; Debian-ftp-spegel</a>, se
-<a href="$(HOME)/mirror/list">listan över speglar</a>.
-</p>
+<toc-add-entry name="exclude">Undanta filer från spegling</toc-add-entry>
 
 <p>
-<tt>debcdmirror</tt> kräver <tt>bash</tt> version 2 eller högre, vilket 
-inte är något problem på ett modernt Debiansystem.
-Om så krävs kan du installera det på en icke-förvald plats, men då måste du se
-till att ändra sökvägen till <tt>bash</tt> på första raden i skriptet.</p>
-
-<toc-add-entry name="test">Testavbildningar</toc-add-entry>
-
-<p>Katalogerna &rdquo;<tt><i>kodnamn</i>_test</tt>&rdquo; innehåller avbildningar
-som är hårdlänkade mot de i katalogerna med versionsnummer (t.ex
-<tt>2.2_r4</tt>).
-Versionskatalogen kommer att ändras mellan (under)utgåvorna, men namnen i
-&rdquo;<tt>test</tt>&rdquo;-katalogerna kommer bevaras.
+För att minska mängden lagringsutrymme som krävs av din Debian-cd-spegling
+kan du undanta vissa filer från att speglas.
+Följande instruktioner innehåller kommandoradsflaggor till
+<kbd>rsync</kbd>, men kan kanske även vara till hjälp om du använder andra
+verktyg för speglingen.
+I <kbd>rsync</kbd> tolkas <kbd>--include</kbd> och <kbd>--exclude</kbd> i
+den ordning de anges, den första flaggan vars mönster motsvarar filen
+bestämmer huruvida filen undantas eller inkluderas.
 </p>
+
+<ul>
+ <li>
+  <strong>Undanta källkod:</strong>
+  <kbd>--exclude=source/</kbd>
+  <br>
+  Detta kommer förhindra avbildningar med källkod från att speglas.
+  Observera att vissa personer anser det opassande att tillhandahålla
+  binärer för GPL-licensierade program på en server utan att samtidigt
+  tillhandahålla programmens källkod
+  <em>på samma server</em>.
+ </li>
+
+ <li>
+  <strong>Undanta kompletta avbildningar:</strong>
+  <kbd>--include='*businesscard*.iso' --include='*netinst*.iso'
+       --exclude='*.iso'</kbd>
+  <br>
+  Undantar de kompletta uppsättningarna av cd-/dvd-avbildningar för samtliga
+  arkitekturer, <em>men</em> speglar <tt>.iso</tt>-avbildningarna i
+  visitkortsstorlek och nätverksinstallationsavbildningarna.
+  Vi rekommenderar att dessa små avbildningar alltid speglas:
+  Jämfört med deras storlek är de extremt användbara!
+ </li>
+
+ <li>
+  <strong>Undanta kompletta avbildningar för andra arkitekturer än i386:</strong>
+  <kbd>--include='*businesscard*.iso' --include='*netinst*.iso'
+       --include='i386/**.iso' --exclude='*.iso'</kbd>
+  <br>
+  Som ovan, men <em>tar med</em> alla cd-/dvd-avbildningar för
+  i386-arkitekturen.
+ </li>
+
+ <li>
+  <strong>Undanta kompletta avbildningar förutom i386-cd 1 till 3:</strong>
+  <kbd>--include='*netinst*.iso' --include='i386/**-[1-3].iso'
+       --exclude='*.iso'</kbd>
+  <br>
+  Den kompletta uppsättningen i386-avbildningar kanske fortfarande tar för
+  stor plats för dig om du tar med dvd- och tvålagers-dvd-avbildningarna.
+  Detta undantar alla <tt>.iso</tt>-avbildningar förutom
+  nätverksinstallationsavbildningen samt de tre första i386-cd:arna.
+ </li>
+
+ <li>
+  <strong>Undanta alla arkitekturer förutom i386:</strong>
+  <kbd>--exclude=alpha/ --exclude=arm/ --exclude=hppa/ --exclude=hurd/
+       --exclude=ia64/ --exclude=m68k/ --exclude=mips/ --exclude=mipsel/
+       --exclude=powerpc/ --exclude=s390/ --exclude=sh/
+       --exclude=sparc/</kbd>
+  <br>
+  Ta endast med den kompletta uppsättningen filer för i386, ta inte med
+  några <tt>.jigdo</tt>- eller <tt>.iso</tt>-filer, osv., oavsett vilka
+  för de andra arkitekturerna.
+ </li>
+</ul>
+
+#______________________________________________________________________
+
+<toc-add-entry name="names">Namnkonventioner och utrymmeskrav för
+<tt>.iso</tt>-filer</toc-add-entry>
 
 <p>
-Så, om <tt>rsync</tt> används självt, är spegling av både katalogerna med
-versionsnummer och lämpliga &rdquo;<tt>test</tt>&rdquo;-kataloger, <em>och</em>
-använda flaggan <tt>--hard-links</tt> det enda sättet för rsync att uppdatera
-underutgåvor ordentligt.
-[Du bör <em>inte</em> inkludera &rdquo;<tt>test</tt>&rdquo;-katalogerna med
-<tt>debcdmirror</tt>, eftersom <tt>debcdmirror</tt> hanterar situationen på ett
-annat och mer effektivt sätt.]</p>
-
-<toc-add-entry name="ls-lR">ls-lR-filer</toc-add-entry>
-
-<p><tt>ls-lR</tt>-filen beskriver katalogstrukturen på den spegel den ligger på.
-Spegla <strong>inte</strong> <tt>ls-lR</tt>-filen; skapa antingen en egen (med det
-bifogade &rdquo;<tt>Makels-lR</tt>&rdquo; varje timme via <tt>cron</tt>) eller
-ha helt enkelt inte någon <tt>ls-lR</tt>-fil alls.
-[<tt>debcdmirror</tt> kommer automatiskt skapa en lokal <tt>ls-lR</tt>-fil efter
-varje spegling.]</p>
-
-<toc-add-entry name="serve">Dela ut filerna</toc-add-entry>
-
-<p>När du har hämtat de cd-avbildningar du vill spegla (i386- och
-källkodsskivorna är de mest populära) bör du köra
-<tt>rsync</tt>-serverprogrammet.
-Detta kommer inte att belasta din maskin speciellt mycket, och kommer generera
-betydligt mindre nätverkstrafik än en ftp-/http-tjänst.
+De olika varianterna av <tt>.iso</tt>-avbildningar kan skiljas åt på namnet,
+vilket gör att du kan begränsa vilka typer av avbildningar du speglar:
 </p>
 
-<p>
-Instruktioner för hur detta ställs in finns i README-filen i
-<span lang=en>pseudo image kit</span>.
-Kortfattat innebär du att du lägger till <kbd>rsync --daemon</kbd> i din
-<i>inetd</i>-konfiguration och ställer in <kbd>rsyncd.conf</kbd> så att den
-passar dig.
-Vi rekommenderar att du begränsar tillgången till ett fåtal anslutningar per
-IP-adress, och som mest ett tvåsiffrigt tal som total mängd anslutningar.
-</p>
+<ul>
+ <li>
+  <strong><tt>*-businesscard.iso</tt></strong>:
+  En avbildning för var och en av de
+  <a href="/ports/#released">stödda arkitekturerna</a>, 50 Mbyte
+ </li>
 
-<toc-add-entry name="register">Registrera spegeln i vår
-lista</toc-add-entry>
+ <li>
+  <strong><tt>*-netinst.iso</tt></strong>:
+  En avbildning för varje arkitektur, 110 Mbyte
+ </li>
+
+ <li>
+  <strong><tt>*-dvd.iso</tt></strong> (enlagers-dvd):
+  Flera avbildningar endast för i386, var och en upp till 4482 Mbyte stor.
+  För Sarge är den totala storleken för i386-avbildningarna omkring
+  9000 Mbyte.
+ </li>
+
+ <li>
+  <strong><tt>*-dldvd.iso</tt></strong> (tvålagers-dvd):
+  Som ovan, förutom att varje avbildning är upp till 8106 Mbyte stor.
+  För Sarge är inga <tt>.iso</tt>-avbildningar tillgängliga, endast
+  jigdo-filer.
+ </li>
+
+ <li>
+  <strong><tt>*.iso</tt></strong>:
+  Samtliga kvarvarande <tt>.iso</tt>-filer som inte motsvarar något av
+  mönstren ovan är cd-avbildningar.
+  Det är flera avbildningar för varje arkitektur, var och en upp till
+  650 Mbyte stor.
+  Den totala storleken av samtliga avbildningar och arkitekturer är densamma
+  som
+  <a href="/mirror/size">storleken för en komplett Debianspegel</a>
+  (100 Gbyte när detta skrivs).
+ </li>
+</ul>
+
+#______________________________________________________________________
+
+<toc-add-entry name="register">Registrera spegeln</toc-add-entry>
 
 <p>
 För att göra din cd-avbildningsspegel användbar för en större målgrupp kan
@@ -256,7 +342,7 @@ du registrera den i vår spegellista, till exempel
 <a href="../http-ftp/">denna</a> eller <a href="rsync-mirrors">denna</a>.
 Eftersom de kompletta avbildningarna är stora filer kan detta skapa
 flera gigabyte nätverkstrafik varje dag.
-</p>
+</p> 
 
 <p>
 Du kan registrera dig antingen genom att fylla i
