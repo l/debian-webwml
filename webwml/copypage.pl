@@ -6,7 +6,7 @@
 # Makefile from the source.
 
 # Written on 2000-02-26 by peter karlsson <peter@softwolves.pp.se>
-# © Copyright 2000 Software in the public interest, Inc.
+# © Copyright 2000-2001 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -124,15 +124,24 @@ sub copy
 
 	# Copy the file and insert the revision number
 	my $insertedrevision = 0;
+	my $isdefinetag = 0;
+	my $ignorews = 0;
 
 	while (<SRC>)
 	{
-		unless ($insertedrevision || /^#/ || /^<define/)
+		$isdefinetag = 1 if /<define-tag/;
+		$ignorews = 1 if $isdefinetag;
+
+		unless ($insertedrevision || /^#/ || $isdefinetag ||
+		        ($ignorews && /^$/))
 		{
 			print DST qq'#use wml::debian::translation-check translation="$revision"\n';
 			$insertedrevision = 1;
 		}
 		print DST $_;
+
+		$isdefinetag = 0 if m'</define-tag>';
+		$ignorews = 0 if /^#/;
 	}
 
 	close SRC;
