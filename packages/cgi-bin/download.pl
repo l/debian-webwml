@@ -9,7 +9,11 @@
 
 require 5.001;
 use strict;
-use CGI;
+use CGI ();
+
+use lib "../lib";
+
+use Packages::HTML ();
 
 my ($input,   # The CGI data
     $file, $filen, $md5sum, @file_components, $type, $arch);
@@ -195,61 +199,11 @@ unless (defined $arch) {
 
 my $arch_string = $arch ne 'all' ? "on $arches{$arch} machines" : "";
 
-print <<END;
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html lang="en">
-<head>
-  <title>Debian GNU/Linux -- Download Page</title>
-  <link rev="made" href="mailto:webmaster\@debian.org">
-  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-  <meta name="Author" content="Debian Webmaster, webmaster\@debian.org">
-  <meta name="Language" content="English">
-</head>
-<body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#800080" alink="#FF0000">
+print Packages::HTML::header( title => "Package Download Selection", lang => "en",
+	      print_title_above => 1 );
 
-<table border="0" cellpadding="3" cellspacing="0" width="100%" summary="">
-<tr>
-<td align="left" valign="middle">
-<a href="$urlbase/"><img src="$urlbase/logos/openlogo-nd-50.png" border="0" hspace="0" vspace="0" alt="" width="50" height="61"></a>
-<a href="$urlbase/" rel="start"><img src="$urlbase/Pics/debian.jpg" border="0" hspace="0" vspace="0" alt="Debian Project" width="179" height="61"></a>
-</td>
-<td align="right" valign="middle">
-<h1>Package Download Selection</h1>
-</td>
-</tr>
-</table>
-<table bgcolor="#DF0451" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
-<tr>
-<td valign="top">
-<img src="$urlbase/Pics/red-upperleft.png" align="left" border="0" hspace="0" vspace="0" alt="" width="15" height="16">
-</td>
-<td rowspan="2" align="center">
-<a href="$urlbase/intro/about"><img src="$urlbase/Pics/about.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="About&nbsp;Debian" width="58" height="18"></A>
-<a href="$urlbase/News/"><img src="$urlbase/Pics/news.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="News" width="53" height="18"></A>
-<a href="$urlbase/distrib/"><img src="$urlbase/Pics/getting.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="Getting Debian" width="117" height="18"></A>
-<a href="$urlbase/support"><img src="$urlbase/Pics/support.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="Support" width="72" height="18"></A>
-<a href="$urlbase/devel/"><img src="$urlbase/Pics/devel.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="Developers'&nbsp;Corner" width="105" height="18"></A>
-<a href="$urlbase/sitemap"><img src="$urlbase/Pics/sitemap.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="Site map" width="76" height="18"></A>
-<a href="http://search.debian.org/"><img src="$urlbase/Pics/search.en.gif" align="middle" border="0" hspace="4" vspace="7" alt="Search" width="64" height="18"></A>
-</td>
-<td valign="top">
-<img src="$urlbase/Pics/red-upperright.png" align="right" border="0" hspace="0" vspace="0" alt="" width="16" height="16">
-</td>
-</tr>
-<tr>
-<td valign="bottom">
-<img src="$urlbase/Pics/red-lowerleft.png" align="left" border="0" hspace="0" vspace="0" alt="" width="16" height="16">
-</td>
-<td valign="bottom">
-<img src="$urlbase/Pics/red-lowerright.png" align="right" border="0" hspace="0" vspace="0" alt="" width="15" height="16">
-</td>
-</tr>
-</table>
-
-<h2>Download Page for <kbd>$filen</kbd> $arch_string</h2>
-
-<p>You can download the requested file from the <tt>
-END
+print "<h2>Download Page for <kbd>$filen</kbd> $arch_string</h2>\n".
+    "<p>You can download the requested file from the <tt>";
 my $dir;
 foreach $dir (@file_components) { print "$dir/"; };
 print "</tt> subdirectory at";
@@ -384,20 +338,6 @@ my $delta_time = -M $0;
 my $mod_time = $^T - ($delta_time * 86400);
 my $time_str = gmtime($mod_time)." +0000";
 
-print <<END;
-<div align="center">
-<hr>
-<p><a href="http://www.debian.org/">Debian Project homepage</a> || 
-<a href="http://packages.debian.org/">Packages search page</a>
-
-<p><small>See the Debian <a href="http://www.debian.org/contact">contact page</A>
-for information on contacting us.</small>
-
-<p><small>Last modified: $time_str
-<br>
-Copyright &copy; 1997-2004 <A href="http://www.spi-inc.org/">SPI</a>;
-See <a href="http://www.debian.org/license">license terms</a></small>
-</div>
-END
-
-print $input->end_html;
+my $trailer = Packages::HTML::trailer( "../" );
+$trailer =~ s/LAST_MODIFIED_DATE/$time_str/;
+print $trailer;
