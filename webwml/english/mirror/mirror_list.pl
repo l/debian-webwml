@@ -46,10 +46,6 @@ sub process_line {
 	}
 
 	if ($field eq 'country') {
-		$mirror{$site}{country} =~ s/^USA$/US/;
-		$mirror{$site}{country} =~ s/^United States$/US/;
-		$mirror{$site}{country} =~ s/^United Kingdom$/UK/;
-		$mirror{$site}{country} =~ s/^England$/UK/;
 		push @{ $countries{$mirror{$site}{country}} }, $site;
 	}
 }
