@@ -10,14 +10,14 @@ $(HTMLDIR)/%.html.$(LANG) : %.wml $(TEMPLDIR)/template.wml
 # translators should comment out the line for any file they haven't translated.
 all:\
     $(HTMLDIR)/contact.html.$(LANG) \
+    $(HTMLDIR)/social_contract.html.$(LANG) \
+    $(HTMLDIR)/index.html.$(LANG) \
 #    $(HTMLDIR)/developers_corner.html.$(LANG) \
 #    $(HTMLDIR)/donations.html.$(LANG) \
-#    $(HTMLDIR)/index.html.$(LANG) \
 #    $(HTMLDIR)/license.html.$(LANG) \
 #    $(HTMLDIR)/news.html.$(LANG) \
 #    $(HTMLDIR)/news1997.html.$(LANG) \
 #    $(HTMLDIR)/related_links.html.$(LANG) \
-#    $(HTMLDIR)/social_contract.html.$(LANG) \
 #    $(HTMLDIR)/sponsor.html \
 #    $(HTMLDIR)/support.html.$(LANG) \
 #    $(HTMLDIR)/2.0/errata.html.$(LANG) \
@@ -57,7 +57,7 @@ all:\
 # TRANSLATORS SHOULD NOT HAVE TO TOUCH ANYTHING BELOW THIS LINE
 #
 
-$(HTMLDIR)/index.html.$(LANG): index.wml news.wml $(TEMPLDIR)/mainpage.wml $(TEMPLDIR)/ctime.wml
+$(HTMLDIR)/index.html.$(LANG): index.wml ../english/news.wml $(TEMPLDIR)/mainpage.wml $(TEMPLDIR)/ctime.wml
 	wml index.wml
 
 # with no rule, the default ruleset (at the top) is used
