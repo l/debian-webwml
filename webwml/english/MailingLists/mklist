@@ -288,8 +288,7 @@ sub write_mailing_lists_subscribe
     if (open(OUT, ">$_[0]")) {
 #    if (open(OUT, ">-")) {
 	print OUT <<"EOF";
-#!wml -o ../../../debian.org/MailingLists/%BASE.html.en --epilog=weblint
-#use wml::debian::template title="Debian GNU/Linux &mdash; Mailing List Subscription"
+#use wml::debian::template title="Mailing List Subscription"
 
 <!-- This page is generated automatically by a script -->
 
@@ -302,8 +301,8 @@ EOF
 	$list{''}->{'Subscription'} =~ s/>/&gt;/g;
 	$list{''}->{'Subscription'} =~ s/</&lt;/g;
 	$list{''}->{'Subscription'} =~ s,(http://[\w.\-~/]*),<a href="$1">$1</a>,g;
-	$list{''}->{'Subscription'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1/</a>,g;
-	$list{''}->{'Subscription'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1/</a>,g;
+	$list{''}->{'Subscription'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1</a>,g;
+	$list{''}->{'Subscription'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1</a>,g;
 	@lines = split(/\n/,$list{''}->{'Subscription'});
 	printf OUT "\n<h2>%s</h2>\n\n", $lines[0];
 	&print_multiline_html("  ",\@lines);
@@ -342,8 +341,8 @@ EOF
 		    $list{$l}->{'Description'} =~ s/>/&gt;/g;
 		    $list{$l}->{'Description'} =~ s/</&lt;/g;
 		    $list{$l}->{'Description'} =~ s,(http://[\w.\-~/]*),<a href="$1">$1</a>,g;
-		    $list{$l}->{'Description'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1/</a>,g;
-		    $list{$l}->{'Description'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1/</a>,g;
+		    $list{$l}->{'Description'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1</a>,g;
+		    $list{$l}->{'Description'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1</a>,g;
 		    @lines = split(/\n/,$list{$l}->{'Description'});
 		    printf OUT "<DD>%s\n", $lines[0];
 		    &print_multiline_html("    ",\@lines);
@@ -368,9 +367,6 @@ EOF
 	@lines = split(/\n/,$list{''}->{'Advertising'});
 	printf OUT "\n\n<hr><h2>%s</h2>\n\n", $lines[0];
 	&print_multiline_html("  ",\@lines);
-
-	print OUT "\n<HR>\n<P>Back to the <A HREF=\"../\">Debian GNU/Linux homepage</A>.\n\n";
-	print OUT "<:= languages (\"\$(HOME)\", \".\", \"\$(WML_SRC_BASENAME)\", \"\$(CUR_LANG)\") :>\n";
     }
 }
 
@@ -386,12 +382,16 @@ sub write_mailing_lists_unsubscribe
 
     if (open(OUT, ">$_[0]")) {
 	print OUT <<"EOF";
-#!wml -o ../../../debian.org/MailingLists/%BASE.html.en --epilog=weblint
-#use wml::debian::template title="Debian GNU/Linux &mdash; Mailing List Unsubscription"
+#use wml::debian::template title="Mailing List Unsubscription"
 
 <!-- This page is generated automatically by a script -->
 
 EOF
+	$list{''}->{'Subscription'} =~ s/>/&gt;/g;
+	$list{''}->{'Subscription'} =~ s/</&lt;/g;
+	$list{''}->{'Subscription'} =~ s,(http://[\w.\-~/]*),<a href="$1">$1</a>,g;
+	$list{''}->{'Subscription'} =~ s,(listmaster@[\w.-]*),<a href="mailto:$1">$1</a>,g;
+	$list{''}->{'Subscription'} =~ s,(majordomo@[\w.-]*),<a href="mailto:$1">$1</a>,g;
 	@lines = split(/\n/,$list{''}->{'Subscription'});
 	printf OUT "\n<h2>%s</h2>\n\n", $lines[0];
 	&print_multiline_html("  ",\@lines);
@@ -415,22 +415,22 @@ EOF
 		    # &print_multiline_html("  ",\@lines);
 		}
 
-                print OUT "<table><tr>\n";
-                $count = 1;
+                print OUT "<table>\n";
+                $count = 0;
 		foreach $l (@lists) {
 		    $slist = $l; $slist =~ s/@.*//;
-		    printf OUT "\t<td><input type=\"checkbox\" name=\"unsubscribe\" ".
-                               "value=\"%s\">\n\t<strong>%s</strong><br>\n", $slist, $slist;
 		    if (! ($count++ % 3) ) {
 			print OUT "\n<tr>\n";
 		    }
+		    printf OUT "\t<td><input type=\"checkbox\" name=\"unsubscribe\" ".
+                               "value=\"%s\">\n\t<strong>%s</strong><br>\n", $slist, $slist;
 		    if (exists $list{$l}->{'Digest'}) {
 			$slist = $list{$l}->{'Digest'}; $slist =~ s/@.*//;
-			printf OUT "\t<td><input type=\"checkbox\" name=\"unsubscribe\" ".
-			           "value=\"%s\">\n\t<strong>%s</strong><br>\n", $slist, $slist;
 			if (! ($count++ % 3) ) {
 			    print OUT "\n<tr>\n";
 			}
+			printf OUT "\t<td><input type=\"checkbox\" name=\"unsubscribe\" ".
+			           "value=\"%s\">\n\t<strong>%s</strong><br>\n", $slist, $slist;
 		    }
 		    print OUT "\n";
 		}
@@ -441,9 +441,6 @@ EOF
 	print OUT "<BR><INPUT TYPE=\"text\" NAME=\"user_email\" SIZE=\"60\"><BR>\n";
 	print OUT "<INPUT TYPE=\"SUBMIT\"> <INPUT TYPE=\"RESET\">\n";
 	print OUT "</FORM>\n\n";
-
-	print OUT "\n<HR>\n<P>Back to the <A HREF=\"../\">Debian GNU/Linux homepage</A>.\n\n";
-	print OUT "<:= languages (\"\$(HOME)\", \".\", \"\$(WML_SRC_BASENAME)\", \"\$(CUR_LANG)\") :>\n";
     }
 }
 
