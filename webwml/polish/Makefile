@@ -24,8 +24,7 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 
 sitemap.$(LANGUAGE).html: $(ENGLISHDIR)/sitemap.wml \
   $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/template.wml \
-  $(ENGLISHDIR)/releases/info
-	make -C MailingLists subscribe.$(LANGUAGE).html unsubscribe.$(LANGUAGE).html
+  $(ENGLISHDIR)/releases/info $(ENGLISHDIR)/MailingLists/mklist.tags
 ifeq "$(LANGUAGE)" "zh"
 	$(shell echo $(WML) | sed s/:.zh/:sitemap.zh/g) \
           $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml \
