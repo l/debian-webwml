@@ -1,291 +1,424 @@
 #use wml::debian::template title="Debians feilrapportsystem - utviklerinfo" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.23"
-
-<H1><A name="developers">Utviklerinformasjon om feilrapportsystemet</A></H1>
-
-<P>Feilrapporter blir først sendt som en vanlig epost til
-<CODE>submit@bugs.debian.org</CODE>.  Rapporten får deretter et
-nummer, kvittering sendt til innsenderen og rapporten blir videresendt
-til <CODE>debian-bugs-dist</CODE>.  Hvis innsenderen inkluderte en
-<CODE>Package</CODE>-linje, og utvikleren for pakken er kjent så
-sendes det en kopi til utvikleren også.</P>
-
-<P><CODE>Emne</CODE>-feltet vil få lagt til
-<CODE>Bug#</CODE><VAR>nnn</VAR><CODE>:</CODE> og <CODE>Reply-To</CODE>
-settes slik at den inkluderer både innsenderen og
-<VAR>nnn</VAR><CODE>@bugs.debian.org</CODE>.</P>
-
-<H2>Lukke feilrapporter</H2>
-
-<P>En utvikler som får en feilrapport fra feilrapportsystem,
-eller ser den på <CODE>debian-bugs-dist</CODE>, og tar ansvar for
-rapporten skal trykke Svar i epostleseren sin, og endre
-<CODE>Til</CODE>-feltet fra <VAR>nnn</VAR><CODE>@bugs</CODE> til
-<VAR>nnn</VAR><CODE>-done@bugs.debian.org</CODE>.
-(<VAR>nnn</VAR><CODE>-close</CODE> er et alias for
-<VAR>nnn</VAR><CODE>-done</CODE>).</P>
-
-<P>Adressen til innsenderen blir inkludert i <CODE>Til</CODE>-feltet
-fordi feilrapportsystemet inkluderte den i <CODE>Reply-To</CODE>-feltet.</P>
-
-<P>«Done»-meldinger blir automatisk videresendt til epostlisten
-<CODE>debian-bugs-closed</CODE>.  Hvis andre de utviklerne
-sannsynligvis er interessert så kan det være greit å inkludere
-epostlisten <CODE>debian-devel@lists.debian.org</CODE>.</P>
-
-<P>Den som lukker feilrapporten og innsenderen får begge en rapport om
-at feilrapportens status er endret.</P>
-
-<H2>Oppfølging av feilrapporter</H2>
-
-Hvis en utvikler ønsker å svare på en feilrapport så kan bare svare på
-meldingen (det vil <b>ikke</b> lukke feilrapporten).  Svaret deres vil
-(vanligvis, dersom epostklienten respekterer
-<code>Reply-To</code>-feltet) gå til både
-<VAR>nnn</VAR><CODE>@bugs</CODE>, og til innsenderen av feilrapporten.
-Merk at dette er to forskjellige adresser.  Feilrapportsystemet tar i
-mot meldingen på <VAR>nnn</VAR><CODE>@bugs</CODE>, videresende
-informasjonen til utvikleren og <CODE>debian-bugs-dist</CODE> samt
-lagre svaret sammen med resten av informasjonen som hører til
-feilrapporten.</P>
-
-<P>En utvikler kan eksplisitt sende epost til innsenderen med en epost
-til <VAR>nnn</VAR><CODE>-submitter@bugs</CODE>.</P>
-
-<P>Hvis du ønsker å sende en oppfølgingsmelding som ikke er passende
-for 
-<CODE>debian-bugs-dist</CODE> så kan du gjøre det ved å sende til
-<VAR>nnn</VAR><CODE>-quiet@bugs</CODE> eller
-<VAR>nnn</VAR><CODE>-maintonly@bugs</CODE>.
-
-Epost til <VAR>nnn</VAR><CODE>-quiet@bugs</CODE>
-blir lagret i feilrapportsystemet, men blir ikke levert til noen
-personer eller epostlister.  Epost til 
-<VAR>nnn</VAR><CODE>-maintonly@bugs</CODE> blir lagret i
-feilrapportsystemet og videresendt kun til utvikleren som
-vedlikeholder pakken det dreier seg om.</P>
-
-<P><EM>Ikke</EM> bruk «svar til alle» eller «followup» dersom du ikke
-har til hensikt å redigere på mottakerlisten.  Pass spesielt på at du
-ikke sender oppfølgingsepost til
-<CODE>submit@bugs.debian.org</CODE>.</P>
-
-<H2><A name="severities">Alvorlighetsgrader</A></H2>
-
-<P>Feilrapportsystemet lagrer en alvorlighetsgrad sammen med hver
-feilrapport.  Denne settes til <CODE>normal</CODE> til vanlig, men kan
-overstyres, enten ved å ha en <CODE>Severity</CODE>-linje i
-pseudo-hodet på eposten når den sendes inn (se <A
-href="Reporting#pseudoheader">instruksjoner for feilrapportering</A>),
-eller ved å bruke <CODE>severity</CODE>-kommandoen med <A
-href="#requestserv">kontrolltjeneren</A>.</P>
-
-<P>Alvorlighetsgradene er:
-
-<DL>
-<DT><CODE>critical</CODE> (kritisk)
-<DD>annen urelatert programvare på systemet (eller hele systemet)
-slutter å fungere, eller forårsaker alvorlig datatap, eller
-lager et sikkerhetshull på systemer der pakken installeres.
-
-<DT><CODE>grave</CODE> (graverende)
-<DD>gjør pakken det er snakk om helt eller for det meste ubrukelig,
-forårsaker datatap eller lager et sikkerhetshull som gir tilgang til
-kontoene til brukerne som bruker pakken.
-
-<DT><CODE>serious</CODE>  (alvorlig)
-<DD>et alvorlig brudd på Debians policy (det vil si, pakken bryter mot
-et «må» eller «påkrevd»-krav) eller, i følge pakkeutvikleren, gjør
-pakken uegnet for å slippes.
-
-<DT><CODE>important</CODE> (viktig)
-<DD>en feil som har gjør at pakken ikke virker skikkelig, uten å gjøre
-den fullstendig ubrukelig.
-
-<DT><CODE>normal</CODE> (vanlig)
-<DD>standardverdien og den mest vanlige
-
-<DT><CODE>minor</CODE> (liten)
-<DD>et problem som ikke påvirker pakkens nytteverdi, og som
-sannsynligvis er trivielt å rette.
-
-<DT><CODE>wishlist</CODE> (ønske)
-<DD>for spørsmål om nye funksjoner og feil som er vanskelige å rette
-på grunn av designvalg.
-
-<dt><code>help</code> (hjelp)
-  <dd>utvikleren ber om hjelp med å håndtere denne feil.
-
-<dt><code>pending</code> (på gang)
-  <dd>problemet beskrevet i feilen arbeides det på aktivt, dvs. en
-      rettelse er på gang.
-
-<DT><CODE>fixed</CODE> (rettet)
-<DD>for feil som er rettet, men ikke lukket.  Dette er et unntak for
-feil som er rettet av andre utviklere enn pakkens egen.  Merk!
-<strong>Merkelappen</strong> «fixed» bør brukes i stedet.
-
-</DL>
-
-<H2><a name="tags">Merkelapper for feilrapporter</a></H2>
-
-<p>Hver rapport kan ha null eller flere merkelapper påhengt.  Disse
-blir vist både i listen over feil på pakkens egen side, og på de
-enkelte feilrapportsidene.
-
-<p>Merkelapper kan settes ved å bruk en <code>Tags</code>-linje i
-pseudo-hodet når feilen meldes inn (se <a
-href="Reporting#pseudoheader">instruksjoner for feilrapportering</a>),
-eller ved å bruke <code>tags</code>-kommandoen til 
-<a href="#requestserv">kontrolltjeneren</a>.
-
-<p>Nåværende merkelapper er:
-
-<dl>
-
-<dt><code>patch</code> (lapp)
-  <dd>En lapp eller annen enkel prosedyre for å rette feilen er
-  inkludert i feilrapporten.  Hvis det er en lapp tilgjengelig, men
-  den ikke retter feilen ordentlig eller forårsaker et annet problem
-  skal ikke denne merkelappen brukes.
-
-<dt><code>wontfix</code> (kommer ikke til å rettes)
-  <dd>Denne feilen kommer ikke til å bli rettet.  Dette kan skyldes at
-  man har valgt en av to likeverdige måter å gjøre noe på og
-  utvikleren og innsenderen foretrekker to forskjellige måter, 
-  fordi endring av oppførselen vil forårsake andre, verre problemer
-  for andre, eller av andre grunner.
-
-<dt><code>moreinfo</code> (mer informasjon trengs)
-  <dd>Denne feilen kan ikke rettes før mer informasjon blir gjort
-  tilgjengelig.  Feilrapporten kommer til å bli lukket dersom ny
-  informasjon ikke kommer i løpet av noe tid (et par måneder).  Denne
-  merkelappen er for feilrapporter av typen «Dette virker ikke!».  Hva
-  virker ikke?
-
-<dt><code>unreproducible</code> (ikke reproduserbar)
-  <dd>Denne feilen kan ikke reproduseres på utviklerens system.
-  Assistanse fra tredjepart trengs for å diagnostisere problemet.
-
-<dt><code>fixed</code> (rettet)
-  <dd>Denne feilen er rettet eller jobbet seg rundt (ved en opplasting
-  av pakken av en annen utvikler enn den som er ansvarlig for den,
-  f.eks), men problemet må fremdeles løses av utvikleren.  Denne
-  merkelappen erstatter den gamle «fixed» alvorlighetsgraden.
-
-<dt><code>security</code> (sikkerhet)
-  <dd>Denne rapporten beskriver et sikkerhetsproblem i en pakke (f.eks
-  gale rettigheter som gir tilgang til data som ikke skal være
-  tilgjengelig; bufferoverflyt som kan gi uautorisert tilgang til
-  systemet, etc).  De fleste sikkerhetsrelaterte feil bør også ha
-  alvorlighetsgrad critical eller grave.
-
-<dt><code>upstream</code> (oppstrøms)
-  <dd>Denne rapporten gjelder oppstrømsdelen av pakken.
-
-<dt><code>potato</code> 
-  <dd>Denne feilen gjelder potato-utgaven av Debian.
-
-<dt><code>woody</code>
-  <dd>Denne feilen gjelder den ennå ikke utgitte woody-utgaven av Debian.
-
-<dt><code>sid</code>
-  <dd>Denne feilen gjelder en arkitektur som ennå ikke er gitt ut, det
-  vil si, en som finnes i sid-distribusjonen.
-</dl>
-
-<p>De siste tre merkelappene er hovedsakelig til bruk for
-utgavekritiske feil, der det er viktig å vite hvilke distribusjoner
-som er omfattet av feilen, slik at feilrettinger (eller fjerning av
-pakker) blir gjort på rett plass.
-
-<H2><A name="forward">Informere om at du har videresendt en feilrapport</A></H2>
-
-<P>Når en Debian-utvikler videresender en feilrapport til den som
-er «oppstrøm» for pakken skal dette lagres i feilrapportsystemet som følger:</P>
-
-<P>Pass på at <CODE>Til</CODE>-feltet på meldingen kun har adressen(e)
-til forfatteren(e).  Legg både personen som rapporterte feilen, og 
-<VAR>nnn</VAR><CODE>-forwarded@bugs.debian.org</CODE> i 
-<CODE>Cc</CODE>-feltet.</P>
-
-<P>Be forfatteren om å bevare <CODE>Cc</CODE>-feltet til
-<VAR>nnn</VAR><CODE>-forwarded@bugs</CODE> når de svarer slik at
-feilrapportsystemet lagrer svaret deres sammen med den opprinnelige
-rapporten.</P>
-
-<P>Når feilrapportsystemet får en epost på adressen
-<VAR>nnn</VAR><CODE>-forwarded</CODE> så vil den merke den aktuelle
-feilrapporten med at den har blitt videresendt til adressene
-i<CODE>Til</CODE>-feltet på meldingen den får.</P>
-
-<P>Do kan også endre på «forwarded to»-informasjonen ved å sende
-meldinger til <A
-href="server-control"><CODE>control@bugs.debian.org</CODE></A>.</P>
-
-<H2>Oppsummeringer til <CODE>debian-bugs-reports</CODE></H2>
-
-<P>Hver fredag sendes det en liste med åpne feilrapporter til
-<CODE>debian-bugs-reports</CODE>, sortert etter alder på
-feilrapporten.  Hver tirsdag blir en liste over feilrapporter som har
-vært ubesvart for lenge sendt, sortert etter pakkeansvarlig.</P>
-
-<P><A name="maintincorrect">
-Hvis gal person angis som ansvarlig for en pakke</A>, 
-
-dette er vanligvis fordi pakkeansvarlig har skiftet nylig, og den nye
-ansvarlige har ikke lastet opp en ny versjon av pakken med endret
-<CODE>Maintainer</CODE>-felt i kontrollfilen.  Dette blir rettet når
-pakken lastes opp, alternativt kan de arkivansvarlige overstyre dette
-manuelt.  Særlig gjelder dette dersom det ikke forventes at pakken
-kommer til å bli lastet opp snarlig.  Kontakt
-<CODE>override-change@debian.org</CODE> for endringer.</P>
-
-<H2><A name="requestserv">Gjenåpne, flytte og endre på feilrapporter</A></H2>
-
-<P>Det er mulig å endre hvilken pakke en feilrapport gjelder, åpne
-rapporter som ikke skulle vært lukket, endre på informasjonen om hvor
-(hvis noe sted) feilrapporten er videresendt, endre alvorlighetsgrad
-og titler på feilrapporter, samt slå sammen og ta fra hverandre
-feilrapporter.  Dette gjøres ved å sende epost
-til <CODE>control@bugs.debian.org</CODE>.</P>
-
-<P><A href="server-control">Formatet på disse meldingene</A> er
-beskrevet i et annet dokument tilgjengelig på WWW, eller i filen
-<CODE>bug-maint-mailcontrol.txt</CODE>.  En ren tekst-utgave kan fåes
-ved å sende <CODE>help</CODE> til adressen over.</P>
-
-<H2>Mer eller mindre utdatert tittelfelt-søk</H2>
-
-<P>Meldinger som kommer til <CODE>submit</CODE> eller
-<CODE>bugs</CODE> og hvis tittelfelt starter med
-<CODE>Bug#</CODE><VAR>nnn</VAR> blir behandlet som om de hadde blitt
-sendt til <VAR>nnn</VAR><CODE>@bugs</CODE>.  Dette er både av hensyn
-til bakoverkompatibilitet og for å hindre at oppfølginger på
-feilrapporter havner som nye feilrapporter ved en feil (f.eks at noen
-har brukt svar til alle).
-
-<P>Meldinger sendt til <CODE>maintonly</CODE>,
-<CODE>done</CODE>, <CODE>quiet</CODE> og <CODE>forwarded</CODE>
-behandles på en tilsvarende måte.</P>
-
-<P>Meldinger som kommer til <CODE>forwarded</CODE> og
-<CODE>done</CODE> - uten feilrapportnummer i adressen eller
-tittelfeltet blir lagret under «junk» (søppel) og bevart i noen uker,
-men ellers ignorert.</P>
-
-<H2>Utdatert <CODE>X-Debian-PR: quiet</CODE>-egenskap</H2>
-
-<P>Tidligere kunne man unngå at feilrapportsystemet videresendte
-innkomne meldinger til <CODE>debian-bugs</CODE>, ved å legge til en
-<CODE>X-Debian-PR: quiet</CODE>-linje i hodet på eposten.</P>
-
-<P>Denne linjen blir nå ignorert.  I stedet, send meldingen til 
-<CODE>quiet</CODE> eller <VAR>nnn</VAR><CODE>-quiet</CODE> (eller
-<CODE>maintonly</CODE> eller <VAR>nnn</VAR><CODE>-maintonly</CODE>).</P>
-
-<HR>
+#use wml::debian::translation-check translation="1.30"
+<!--Oversatt til norsk av Tollef Fog Heen (tfheen@debian.org)-->
+#<!--Oppdatert 2001-12-29 av Tor Slettnes (tor@slett.net)-->
+
+
+  <H1>Utviklerinformasjon om feilrapportsystemet</H1>
+
+  <P>
+    Feilrapporter blir først sendt som en vanlig epost til
+    <CODE>submit@bugs.debian.org</CODE>.  Rapporten får deretter et
+    nummer, kvittering sendt til innsenderen og rapporten blir
+    videresendt til <CODE>debian-bugs-dist</CODE>.  Hvis innsenderen
+    inkluderte en <CODE>Package</CODE>-linje, og utvikleren for pakken
+    er kjent så sendes det en kopi til utvikleren også.</P>
+
+  <P>
+    <CODE>Emne</CODE>-feltet vil få lagt til
+    <CODE>Bug#</CODE><VAR>nnn</VAR><CODE>:</CODE> og
+    <CODE>Reply-To</CODE> settes slik at den inkluderer både
+    innsenderen og <VAR>nnn</VAR><CODE>@bugs.debian.org</CODE>.</P>
+
+  <HRLINE>
+# </HRLINE>
+
+  <ul>
+    <li><a href="#closing">Lukke feilrapporter</a></li>
+    <li><a href="#followup">Oppfølgingsmeldinger</a></li>
+    <li><a href="#severities">Alvorlighetsgrader</a></li>
+    <li><a href="#tags">Merkelapper for feilrapporter</a></li>
+    <li><a href="#forward">Informere om at du har videresendt en
+	feilrapport</a></li>
+    <li><a href="#maintincorrect">Feilangitte pakkeutviklere</a></li>
+    <li><a href="#requestserv">Gjenåpne, flytte og endre på
+	feilrapporter</a></li> 
+    <li><a href="#subjectscan">Mer eller mindre avlegs
+	tittelfelt-søk</a></li> 
+    <li><a href="#x-debian-pr">Avlegs <CODE>X-Debian-PR:
+	  quiet</CODE>-egenskap</a></li> 
+  </ul>
+
+  <hrline>
+# </hrline>
+
+
+  <H2><a name="closing">Lukke feilrapporter</a></H2>
+
+  <P>
+    Debians feilrapporter skal lukkes når feilen er rettet.  Problemer
+    i pakkene kan kun anses som rettet etter at en pakke som retter på
+    feilen er lastet inn i Debian-arkivet.</P>
+
+  <P>
+    Vanligvis er de eneste personene som kan lukke en feilrapport
+    innsenderen av rapporten og vedlikeholderen/-ne av pakken
+    rapporten var sendt inn mot.  Det fins unntak til denne regelen,
+    f.eks. for feilrapporter som er sendt inn mot ukjente pakker eller
+    visse generelle pseudo-pakker.  Hvis du er i tvil, ikke lukk
+    feilrapporten uten å spørre om råd i postlisten debian-devel.</P>
+
+  <P>
+    Feilrapporter lukkes ved å sende en epost til
+    <var>nnn</var><code>-done@bugs.debian.org</code>.  Kroppen av
+    meldingen må inneholde en forklaring av hvordan feilen var rettet
+    på.</p>
+
+  <P>
+    Med en melding du har mottatt fra feilrapportsystemet er alt du
+    trenger å gjøre for å lukke en feilrapport å svare på meldingen i
+    e-postleseren din, og endre <code>To</code>- eller
+    <code>Til</code>-feltet til 
+    <VAR>nnn</VAR><CODE>-done@bugs.debian.org</CODE> i stedet for
+    <VAR>nnn</VAR><CODE>@bugs</CODE>
+    (<VAR>nnn</VAR><CODE>-close</CODE> er et alias for
+    <VAR>nnn</VAR><CODE>-done</CODE>).</P>
+
+
+  <P>
+    «Done»-meldinger blir automatisk videresendt til epostlisten
+    <CODE>debian-bugs-closed</CODE>.  Hvis andre de utviklerne
+    sannsynligvis er interessert så kan det være greit å inkludere
+    epostlisten <CODE>debian-devel@lists.debian.org</CODE>.</P>
+
+  <P>
+    Den som lukker feilrapporten og innsenderen får begge en rapport
+    om at feilrapportens status er endret.</P>
+
+  <H2><A NAME="followup">Oppfølgingsmeldinger</A></H2>
+
+  <P>
+    Feilrapportsystemet vil inkludere innsenderen's adresse og
+    feilrapports-adressen
+    (<VAR>nnn</VAR><CODE>@bugs.debian.org</CODE>) i
+    <code>Reply-To</code>-feltet når feilrapporten videresendes til
+    pakkeutvikleren.  Merk at disse er to adskilte adresser.</P>
+
+  <P>
+    Om en utvikler ønsker å svare på en feilmelding kan de rett og
+    slett svare på e-posten i samsvar med «Reply-To»-feltet.
+    Dette vil <b>ikke</b> markere feilrapporten som lukket.</P>
+
+  <p>
+    Feilrapportsystemet tar i mot meldingen på
+    <VAR>nnn</VAR><CODE>@bugs</CODE>, videresende den til
+    pakkeutvikleren, arkivere svaret sammen med resten av loggene for
+    den feilrapporten, og sende dette sammendraget til
+    <CODE>debian-bugs-dist</CODE>.</P>
+
+  <P>
+    En utvikler kan eksplisitt sende epost til innsenderen med en
+    epost til <VAR>nnn</VAR><CODE>-submitter@bugs</CODE>.</P>
+
+  <P>
+    Hvis du ønsker å sende en oppfølgingsmelding som ikke er passende
+    for <CODE>debian-bugs-dist</CODE> så kan du gjøre det ved å sende
+    til <VAR>nnn</VAR><CODE>-quiet@bugs</CODE> eller
+    <VAR>nnn</VAR><CODE>-maintonly@bugs</CODE>.</p>
+
+  <p>
+    Epost til <VAR>nnn</VAR><CODE>-quiet@bugs</CODE> blir lagret i
+    feilrapportsystemet, men blir ikke levert til noen personer eller
+    epostlister.  Epost til <VAR>nnn</VAR><CODE>-maintonly@bugs</CODE>
+    blir lagret i feilrapportsystemet og videresendt kun til
+    utvikleren som vedlikeholder pakken det dreier seg om.</P>
+
+  <P>
+    <EM>Ikke</EM> bruk «svar til alle» eller «followup» dersom du ikke
+    har til hensikt å redigere på mottakerlisten.  Pass spesielt på at
+    du ikke sender oppfølgingsepost til
+    <CODE>submit@bugs.debian.org</CODE>.</P>
+
+
+  <H2><A NAME="severities">Alvorlighetsgrader</A></H2>
+
+  <P>
+    Feilrapportsystemet lagrer en alvorlighetsgrad sammen med hver
+    feilrapport.  Denne settes til <CODE>normal</CODE> til vanlig, men
+    kan overstyres, enten ved å ha en <CODE>Severity</CODE>-linje i
+    pseudo-hodet på eposten når den sendes inn (se
+    <A HREF="Reporting#pseudoheader">instruksjonene for
+    feilrapportering</A>), eller ved å bruke
+    <CODE>severity</CODE>-kommandoen med <A
+    href="#requestserv">kontrolltjeneren</A>.</P>
+
+  <P>
+    Alvorlighetsgradene er:
+
+    <DL>
+      <DT><CODE>critical</CODE> (kritisk)</DT>
+      <DD>
+	en feil som får annen ubeslektet programvare på systemet
+	(eller hele systemet) til å slutte å fungere, eller forårsaker
+	alvorlig datatap, eller lager et sikkerhetshull på systemer
+	der pakken installeres.</DD>
+      
+
+      <DT><CODE>grave</CODE> (graverende)</DT>
+      <DD>
+	gjør pakken det er snakk om helt eller for det meste
+	ubrukelig, forårsaker datatap eller lager et sikkerhetshull
+	som gir tilgang til kontoene til brukerne som bruker pakken.</DD>
+
+      <DT><CODE>serious</CODE> (alvorlig)</DT>
+      <DD>
+	et alvorlig brudd på Debians policy (det vil si, pakken bryter
+	mot et «må» eller «påkrevd»-krav) eller, i følge
+	pakkeutvikleren, gjør pakken uegnet for å slippes.</DD>
+
+
+      <DT><CODE>important</CODE> (viktig)</DT>
+      <DD>
+	en feil som har gjør at pakken ikke virker skikkelig, uten å
+	gjøre den fullstendig ubrukelig.</DD>
+
+      <DT><CODE>normal</CODE> (vanlig)</DT>
+      <DD>
+	standardverdien og den mest vanlige</DD>
+
+
+      <DT><CODE>minor</CODE> (liten)</DT>
+      <DD>
+	et problem som ikke påvirker pakkens nytteverdi, og som
+	sannsynligvis er trivielt å rette.</DD>
+
+      <DT><CODE>wishlist</CODE> (ønske)</DT>
+      <DD>
+	for spørsmål om nye funksjoner og feil som er vanskelige å
+	rette på grunn av designvalg.</DD>
+
+      <DT><CODE>help</CODE> (hjelp)</DT>
+      <DD>
+	utvikleren ber om hjelp med å håndtere denne feilen.</DD>
+
+      <DT><CODE>pending</CODE> (på gang)</DT>
+      <DD>
+	problemet beskrevet i feilen arbeides det på aktivt, dvs. en
+	rettelse er på gang.</DD>
+
+      <DT><CODE>fixed</CODE> (rettet)</DT>
+      <DD>
+	for feil som er rettet, men ikke lukket.  Dette er et unntak
+	for feil som er rettet av andre utviklere enn pakkens egen.
+	Merk!  <strong>Merkelappen</strong> «fixed» bør brukes i
+	stedet.</DD>
+
+    </DL>
+  </P>
+
+  <P>
+    Visse alvorlighetsgrader anses som
+    <em><a href="http://bugs.debian.org/release-critical/">utgavekritiske</a></em>,
+    noe som betyr at feilen vil bestemme om pakken blir utgitt sammen
+    med den stabile utgaven av Debian.  For tiden er disse gradene
+    <strong>critical</strong>, <strong>grave</strong>, og
+    <strong>serious</strong>.</p>
+
+
+  <H2><A NAME="tags">Merkelapper for feilrapporter</A></H2>
+
+  <P>
+    Hver rapport kan ha null eller flere merkelapper påhengt.  Disse
+    blir vist både i listen over feil på pakkens egen side, og på de
+    enkelte feilrapportsidene.</P>
+
+  <P>
+    Merkelapper kan settes ved å bruk en <CODE>Tags</CODE>-linje i
+    pseudo-hodet når feilen meldes inn (se <a
+    href="Reporting#pseudoheader">instruksjoner for
+    feilrapportering</a>), eller ved å bruke
+    <CODE>tags</CODE>-kommandoen til <a
+    href="#requestserv">kontrolltjeneren</a>.</P>
+
+  <P>Nåværende merkelapper er:
+
+    <dl>
+      <dt><CODE>patch</CODE> (lapp)</dt>
+      <dd>
+	En lapp eller annen enkel prosedyre for å rette feilen er
+	inkludert i feilrapporten.  Hvis det er en lapp tilgjengelig,
+	men den ikke retter feilen ordentlig eller forårsaker et annet
+	problem skal ikke denne merkelappen brukes.</dd>
+
+      <dt><CODE>wontfix</CODE> (kommer ikke til å rettes)</dt>
+      <dd>
+	Denne feilen kommer ikke til å bli rettet.  Dette kan skyldes
+	at man har valgt en av to likeverdige måter å gjøre noe på og
+	utvikleren og innsenderen foretrekker to forskjellige måter,
+	fordi endring av oppførselen vil forårsake andre, verre
+	problemer for andre, eller av andre grunner.</dd>
+
+      <dt><CODE>moreinfo</CODE> (mer informasjon trengs)</dt>
+      <dd>
+	Denne feilen kan ikke rettes før mer informasjon blir gjort
+	tilgjengelig.  Feilrapporten kommer til å bli lukket dersom ny
+	informasjon ikke kommer i løpet av noe tid (et par måneder).
+	Denne merkelappen er for feilrapporter av typen «Dette virker
+	ikke!».  Hva virker ikke?</dd>
+
+      <dt><CODE>unreproducible</CODE> (ikke reproduserbar)</dt>
+      <dd>
+	Denne feilen kan ikke reproduseres på utviklerens system.
+	Assistanse fra tredjepart trengs for å diagnostisere
+	problemet.</dd>
+
+      <dt><CODE>fixed</CODE> (rettet)</dt>
+      <dd>
+	Denne feilen er rettet eller jobbet seg rundt (ved en
+	opplasting av pakken av en annen utvikler enn den som er
+	ansvarlig for den, f.eks), men problemet må fremdeles løses av
+	utvikleren.  Denne merkelappen erstatter den gamle «fixed»
+	alvorlighetsgraden.</dd>
+
+      <dt><CODE>security</CODE> (sikkerhet)</dt>
+      <dd>
+	Denne rapporten beskriver et sikkerhetsproblem i en pakke
+	(f.eks gale rettigheter som gir tilgang til data som ikke skal
+	være tilgjengelig; bufferoverflyt som kan gi uautorisert
+	tilgang til systemet, etc).  De fleste sikkerhetsrelaterte
+	feil bør også ha alvorlighetsgrad critical eller grave.</dd>
+
+      <dt><CODE>upstream</CODE> (oppstrøms)</dt>
+      <dd>
+	Denne rapporten gjelder oppstrømsdelen av pakken.</dd>
+
+
+      <dt><CODE>potato</CODE> </dt>
+      <dd>
+	Denne feilen gjelder potato-utgaven av Debian.</dd>
+
+      <dt><CODE>woody</CODE></dt>
+      <dd>
+	Denne feilen gjelder den ennå ikke utgitte woody-utgaven av
+	Debian.</dd>
+
+      <dt><CODE>sid</CODE></dt>
+      <dd>
+	Denne feilen gjelder en arkitektur som ennå ikke er gitt ut,
+	det vil si, en som finnes i sid-distribusjonen.</dt>
+    </DL>
+  </P>
+  
+
+  <P>
+    De siste tre merkelappene er hovedsakelig til bruk for
+    utgavekritiske feil, der det er viktig å vite hvilke
+    distribusjoner som er omfattet av feilen, slik at feilrettinger
+    (eller fjerning av pakker) blir gjort på rett plass.</P>
+
+
+
+  <H2>
+    <A NAME="forward">Informere om at du har videresendt en
+      feilrapport</A></H2> 
+
+  <P>
+    Når en Debian-utvikler videresender en feilrapport til utvikleren
+    av den orginale kildekoden som gav opphav til Debian-pakken, skal
+    dette lagres i feilrapportsystemet som følger:</P>
+
+  <P>
+    Pass på at <CODE>Til</CODE>-feltet på meldingen kun har
+    adressen(e) til forfatteren(e).  Legg både personen som
+    rapporterte feilen, og
+    <VAR>nnn</VAR><CODE>-forwarded@bugs.debian.org</CODE> i
+    <CODE>Cc</CODE>-feltet.</P>
+
+  <P>
+    Be forfatteren om å bevare <CODE>Cc</CODE>-feltet til
+    <VAR>nnn</VAR><CODE>-forwarded@bugs</CODE> når de svarer slik at
+    feilrapportsystemet lagrer svaret deres sammen med den
+    opprinnelige rapporten.</P>
+
+  <P>
+    Når feilrapportsystemet får en epost på adressen
+    <VAR>nnn</VAR><CODE>-forwarded</CODE> så vil den merke den
+    aktuelle feilrapporten med at den har blitt videresendt til
+    adressene i<CODE>Til</CODE>-feltet på meldingen den får.</P>
+
+  <P>
+    Do kan også endre på «forwarded to»-informasjonen ved å sende
+    meldinger til
+    <A HREF="server-control"><CODE>control@bugs.debian.org</CODE></A>.</P>
+
+
+
+  <H2><A name="maintincorrect">Feilangitte pakkeutviklere</A></H2>
+
+  <P>
+    Hvis gal person angis som ansvarlig for en pakke, er dette
+    vanligvis fordi pakkeansvarlig har skiftet nylig, og den nye
+    ansvarlige har ikke lastet opp en ny versjon av pakken med endret
+    <CODE>Maintainer</CODE>-felt i kontrollfilen.  Dette blir rettet
+    når pakken lastes opp, alternativt kan de arkivansvarlige
+    overstyre dette manuelt.  Særlig gjelder dette dersom det ikke
+    forventes at pakken kommer til å bli lastet opp snarlig.  Kontakt
+    <CODE>override-change@debian.org</CODE> for endringer.</P>
+
+
+  <H2><A name="requestserv">Gjenåpne, flytte og endre på feilrapporter</A></H2>
+
+  <P>
+    Det er mulig å endre hvilken pakke en feilrapport gjelder, åpne
+    rapporter som ikke skulle vært lukket, endre på informasjonen om
+    hvor (hvis noe sted) feilrapporten er videresendt, endre
+    alvorlighetsgrad og titler på feilrapporter, samt slå sammen og ta
+    fra hverandre feilrapporter.  Dette gjøres ved å sende epost til
+    <CODE>control@bugs.debian.org</CODE>.</P>
+
+  <P>
+    <A href="server-control">Formatet på disse meldingene</A> er
+    beskrevet i et annet dokument tilgjengelig på WWW, eller i filen
+    <CODE>bug-maint-mailcontrol.txt</CODE>.  En ren tekst-utgave kan
+    fåes ved å sende <CODE>help</CODE> til adressen over.</P>
+
+  <H2><A NAME="subjectscan">Mer eller mindre avlegs tittelfelt-søk</A></H2>
+
+  <P>
+    Meldinger som kommer til <CODE>submit</CODE> eller
+    <CODE>bugs</CODE> og hvis tittelfelt starter med
+    <CODE>Bug#</CODE><VAR>nnn</VAR> blir behandlet som om de hadde
+    blitt sendt til <VAR>nnn</VAR><CODE>@bugs</CODE>.  Dette er både
+    av hensyn til bakoverkompatibilitet og for å hindre at
+    oppfølginger på feilrapporter havner som nye feilrapporter ved en
+    feil (f.eks at noen har brukt svar til alle).</P>
+  
+  <P>
+    Meldinger sendt til <CODE>maintonly</CODE>, <CODE>done</CODE>,
+    <CODE>quiet</CODE> og <CODE>forwarded</CODE> behandles på en
+    tilsvarende måte.</P>
+
+  <P>
+    Meldinger som kommer til <CODE>forwarded</CODE> og
+    <CODE>done</CODE> - uten feilrapportnummer i adressen eller
+    tittelfeltet blir lagret under «junk» (søppel) og bevart i noen
+    uker, men ellers ignorert.</P>
+
+
+  <H2><A NAME="x-debian-pr">Avlegs <CODE>X-Debian-PR: quiet</CODE>-egenskap</A></H2>
+
+  <P>
+    Tidligere kunne man unngå at feilrapportsystemet videresendte
+    innkomne meldinger til <CODE>debian-bugs</CODE>, ved å legge til
+    en <CODE>X-Debian-PR: quiet</CODE>-linje i hodet på eposten.</P>
+
+  <P>
+    Denne linjen blir nå ignorert.  Send i stedet meldingen til
+    <CODE>quiet</CODE> eller <VAR>nnn</VAR><CODE>-quiet</CODE> (eller
+    <CODE>maintonly</CODE> eller
+    <VAR>nnn</VAR><CODE>-maintonly</CODE>).</P>
+
+  <HR>
+# </HR>
+  
+
 
 #use "otherpages.inc"
 
 #use "footer.inc"
+
+# Local variables:
+# mode: sgml
+# sgml-indent-data:t
+# sgml-doctype:"../.doctype"
+# End:
