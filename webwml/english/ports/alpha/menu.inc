@@ -7,6 +7,7 @@
 <define-menu-item name="alpha">
    [EN:Debian for Alpha:]
    [AR:Debian for Alpha:]
+   [CA:Debian per a Alpha:]
    [DA:Debian til Alpha:]
    [DE:Debian für Alpha:]
    [EL:Debian for Alpha:]
