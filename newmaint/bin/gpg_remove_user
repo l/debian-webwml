@@ -59,7 +59,10 @@ def remove_user(db, email):
 removals = parse_args()
 db = pg.connect(Cnf["MyDB"])
 for email in removals:
-    remove_user(db, email)
+    if gpg_utils.find_email(db, email):
+        remove_user(db, email)
+    else:
+        print "No user with the email address %s" % email
 
 # vim:set ts=4:
 # vim:set expandtab:

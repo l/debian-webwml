@@ -35,6 +35,11 @@ def print_places(begin, finish, city, country):
 
     return out
 
+def find_email(db, email):
+    q = db.query("SELECT email FROM people WHERE email = '%s'" % email)
+    if q.getresult():
+        return 1
+
 def get_name(db, email):
     if name_cache.has_key(email):
         return name_cache[email]
