@@ -6,8 +6,7 @@ WMLBASE=..
 CUR_DIR=international
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
-SUBS=spanish l10n
-
+SUBS=chinese spanish l10n
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
