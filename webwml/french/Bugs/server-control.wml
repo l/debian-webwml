@@ -1,6 +1,6 @@
 #use wml::debian::template title="Gestion des bogues Debian - serveur de contrôle" NOHEADER=yes NOCOPYRIGHT=true
 
-#use wml::debian::translation-check translation="1.34" translation_maintainer="Christian Couder"
+#use wml::debian::translation-check translation="1.40" translation_maintainer="Christian Couder"
 
 
 <H1>Introduction au serveur de messages de contrôle et de manipulation des 
@@ -82,7 +82,7 @@ utiliser le raccourci <code>!</code> ou bien spécifier votre propre
 adresse électronique.</p>
 
 <p>Tandis que la commande <code>reopen</code> remplace l'origine des
-autres bogues fusionnés avec celui qui est réouvert,
+autres bogues fusionnés avec celui qui est rouvert,
 <code>submitter</code> n'affecte pas les bogues fusionnés.</p>
 
 <dt><code>forwarded</code> <var>NuméroDeBogue</var> <var>Adresse</var>
@@ -173,7 +173,9 @@ paquet(s) (une comparaison exacte de chaîne de caractères est faite sur
 le paquet auquel le bogue est assigné), et tous de la même gravité.
 S'ils ne sont pas tous dans le même état au début vous devriez
 utiliser <code>reassign</code>, <code>reopen</code> et ainsi de suite
-pour être sûr qu'ils le sont avant d'utiliser <code>merge</code>.</P>
+pour être sûr qu'ils le sont avant d'utiliser <code>merge</code>. Les titres
+n'ont pas besoin de correspondre et ne seront pas affectés pas la fusion.
+</P>
 
 <P>Si des bogues contenus dans une commande <code>merge</code> sont déjà 
 fusionnés avec d'autre bogues, alors tous les rapports fusionnés avec l'un 
@@ -206,16 +208,35 @@ fusionner dans le nouveau groupe.</P>
 incluez simplement plusieurs commandes <code>unmerge</code> dans votre 
 message.</P>
 
-<dt><code>tags</code> <var>NuméroDeBogue</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>Marque</var>
+<dt><code>tags</code> <var>NuméroDeBogue</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>Marque</var> [ <var>Marque</var> ... ]
 
-  <dd>Traite la marque particulière <var>Marque</var> sur le rapport de 
-	bogue numéro <var>NuméroDeBogue</var>. Aucune notification n'est envoyée à
-  l'utilisateur qui a signalé le bogue.
-  <code>+</code> signifie ajouter la marque, 
-  <code>-</code> signifie supprimer la marque, et
+  <dd>Traite des marques sur le rapport de bogue numéro
+  <var>NuméroDeBogue</var>. Aucune notification n'est envoyée à l'utilisateur
+  qui a signalé le bogue. Utiliser l'action
+  <code>+</code> signifie ajouter chaque <var>Marque</var>,
+  <code>-</code> signifie supprimer chaque <var>Marque</var>, et
   <code>=</code> signifie ignorer les marques courantes et les mettre en
-  repartant de zéro.
+  fonction de la liste fournie.
   L'action par défaut est l'ajout.
+
+  <p>Exemple d'utilisation&nbsp;:</p>
+
+  <pre>
+        \# comme « tags 123456 + patch »
+        tags 123456 patch
+
+        \# comme « tags 123456 + help security »
+        tags 123456 help security
+
+        \# ajoute les marques « fixed » et « pending »
+        tags 123456 + fixed pending
+
+        \# supprime la marque « unreproducible »
+        tags 123456 - unreproducible
+
+        \# met exactement les marques à « moreinfo » et « unreproducible »
+        tags 123456 = moreinfo unreproducible
+  </pre>
 
   <p>Les marques courantes sont
  
@@ -226,15 +247,16 @@ message.</P>
 	<code>help</code> (aide demandée),
 	<code>pending</code> (en cours),
 	<code>fixed</code> (corrigé), 
-	<code>security</code> (sécurité), 
 	<code>upstream</code> (paquet original),
 	<code>confirmed</code> (confirmé), 
 	<code>d-i</code> (installateur Debian), 
 	<code>ipv6</code> (IPv6), 
 	<code>lfs</code> (support des gros fichiers), 
+	<code>l10n</code> (localisation), 
 	<code>potato</code> (Potato), 
 	<code>woody</code> (Woody),
 	<code>sarge</code> (Sarge),
+	<code>sarge-ignore</code>,
 	<code>sid</code> (Sid) et
 	<code>experimental</code> (expérimentale).
 
@@ -242,7 +264,7 @@ message.</P>
   consulter la documentation des développeurs sur le système de
   gestion des bogues.
 
-<dt><code>close</code> <var>NuméroDeBogue</var>
+<dt><code>close</code> <var>NuméroDeBogue</var> (dépréciée)
 <dd>
 
 <P>Ferme le rapport de bogue ayant le numéro <var>NuméroDeBogue</var>.</P>
