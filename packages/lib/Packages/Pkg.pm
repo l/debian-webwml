@@ -607,7 +607,7 @@ sub _update_newest {
     my @all_archs = $self->get_used_archs;
     my %all_versions = $self->get_arch_versions(\@all_archs);
     if (!defined $all_versions{v2a}{$version}) {
-    	$self->_error( "No information about the newest version ($version) available", Dumper($self);
+    	$self->_error( "No information about the newest version ($version) available", Dumper($self));
     }
     my @archs = @{$all_versions{v2a}{$version}};
 
