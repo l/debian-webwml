@@ -1,0 +1,72 @@
+#use wml::debian::template title="Primjeri"
+
+<H3>Primjer zapoèinjanja prijevoda</H3>
+Francuski jezik æemo koristiti za primjer:
+<pre>
+   cvs checkout webwml/english
+   cd webwml
+   mkdir french
+   cvs add french
+   cd french
+   cp ../english/.wmlrc .
+   cvs add .wmlrc
+</pre>
+Editirajte i promijenite '-D CUR_LANG=English' u '-D CUR_LANG=French'
+                       i '-D CUR_ISO_LANG=en' u '-D CUR_ISO_LANG=fr'
+                         'CHARSET=iso-8859-1' ako je potrebno
+Nemojte ni¹ta drugo mijenjati u .wmlrc.
+Editirajte english/template/debian/*.wml i dodajte prijevode za sve define-tag unose.
+Ovo bi trebalo biti sasvim izravno
+   cp ../english/Make.* ../english/Makefile .
+   cvs add Make*
+editirajte Make.lang, promijenite 'LANG=en' u 'LANG=fr' te 'LANGUAGECAP=EN'
+u 'LANGUAGECAP=FR'. Ne biste trebali uèiniti nikakve druge promjene u
+datoteci Makefile osim ako prevodite na jezik koji koristi multi-byte
+charset.
+
+<p>Makefile u svakom direktoriju æe kompajlirati svaku .wml datoteku koju naðe.
+
+<p>Kad zavr¹ite s dodavanjem stranica, napravite
+<pre>
+   cvs commit
+</pre>
+iz webwml direktorija. Sada mo¾ete poèeti prevoditi stranice.
+
+<H3>Primjer prevoðenja jedne stranice</H3>
+Kao primjer æemo koristiti francuski prijevod Dru¹tvenog ugovora:
+<pre>
+   cvs checkout webwml/english webwml/french   (ako veæ niste)
+   cd webwml/french
+   cp ../english/social_contract.wml .
+   cvs add social_contract.wml
+</pre>
+editirajte social_contract.wml i prevedite tekst. Ni u kojem sluèaju nemojte
+poku¹avati prevesti veze ili ih mijenjati. Kada zavr¹ite, napi¹ite
+<pre>
+   cvs commit -m "short description of the changes you made" social_contract.wml
+</pre>
+
+<H3>Primjer dodavanja novog direktorija</H3>
+Ovaj primjer pokazuje dodavanje francuskog prijevoda intro/ direktorija
+<pre>
+   cd webwml/french
+   mkdir intro
+   cvs add intro
+   cd intro
+   cp ../english/intro/Makefile .
+</pre>
+Provjerite da novi direktorij sadr¾i Makefile. Inaèe æe pokretanje make-a
+dati gre¹ku.
+<pre>
+   cvs add Makefile
+   cd ..
+   cvs commit -m"added the intro dir to CVS" intro
+</pre>
+
+#example not finished
+# <H3>Example of a Conflict</H3>
+# This example shows a commit that won't work because the copy in the repository
+# has been modified since your last <kbd>cvs update -d</kbd>.
+# <pre>
+#    cvs commit -m"fixed a broken link" foo.wml
+# </pre>
