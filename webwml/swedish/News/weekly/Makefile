@@ -60,11 +60,5 @@ clean::
 index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
       $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(YEAR)/*) \
       $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
-      $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml
-
-# Generate the mail for posting to debian-news. Requires the web page already
-# be updated. The mail still requires slight edits.
-mail:	
-	@cat mail-header
-	@lynx -dump  http://www.debian.org/News/weekly/$(YEAR)/$(shell cat CURRENT-ISSUE-IS)/ | \
-		perl -pe 's/^\s\s?\s?//'
+      $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml \
+      CURRENT-ISSUE-IS $(ENGLISHSRCDIR)/News/weekly/CURRENT-ISSUE-IS
