@@ -8,13 +8,20 @@
   <gettext><a href="../../">Back issues</a> of this newsletter are available.</gettext>
 </define-tag>
 
-<define-tag editor_form whitespace=delete>
-  <gettext>Debian Weekly News is edited by <a href="mailto:dwn@debian.org">%s</a>.</gettext>
+<define-tag editor_form_singular whitespace=delete>
+# One editor name only
+  <gettext><void id="singular" />Debian Weekly News is edited by <a href="mailto:dwn@debian.org">%s</a>.</gettext>
+</define-tag>
+
+<define-tag editor_form_plural whitespace=delete>
+# Two or more editors
+  <gettext><void id="plural" />Debian Weekly News is edited by <a href="mailto:dwn@debian.org">%s</a>.</gettext>
 </define-tag>
 
 <define-tag editor whitespace=delete>
 <:{
    my $editor = "$(editor)";
+   my $plural = 0;
    if (!length ($editor)) {
      my $path = q|<get-var WML_SRC_DIRNAME>|;
      my ($issue, $year, $null) = split /\//, scalar reverse $path;
@@ -31,7 +38,7 @@
 	  $year = 9999;
 	  $issue = 0;
      }
-     
+
      if (($year > 2002) or (($year == 2002) and ($issue >= 31))) {
 	  $editor = "Martin 'Joey' Schulze";
      } elsif (($year > 2002) or (($year == 2002) and ($issue >= 2))) {
@@ -44,6 +51,8 @@
 	  $editor = "Joey Hess";
      }
    }
+
+   $plural = 1 if $editor =~ /,/;
 
    if ($CUR_ISO_LANG eq 'en') {
      $editor =~ s/,([^,]+)$/ and $1/;
@@ -64,7 +73,8 @@
      $editor =~ s/,/, /g;
    }
 
-    printf q{<editor_form>}, $editor;
+   printf q{<editor_form_singular>}, $editor unless $plural;
+   printf q{<editor_form_plural>}, $editor if $plural;
 }:>
 </define-tag>
 
