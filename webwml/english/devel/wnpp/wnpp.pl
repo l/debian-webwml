@@ -26,7 +26,7 @@ sub htmlsanit {
     %escape = ('<' => 'lt', '>' => 'gt', '&' => 'amp', '"' => 'quot');
     my $in = shift;
     my $out;
-    while ($in =~ m/^(.*?)([<>&"])(.*)/s) {
+    while ($in =~ m/^(.*?)([<>&"])(.*)$/s) {
         $out .= $1.'&'.$escape{$2}.';';
         $in=$3;
     }
@@ -40,7 +40,7 @@ $MAINTAINERS = "Maintainers" if ( $host ne "klecker.debian.org" );
 
 open MAINTAINERS or die "Can't find $MAINTAINERS file at $host: $!\n";
 while (<MAINTAINERS>) {
-    if (/^(\S+)\s+(.*)/) {
+    if (/^(\S+)\s+(.*)$/) {
     	$maintainer{$1} = $2;
     }
 }
@@ -63,22 +63,22 @@ foreach $entry ($mesg->entries) {
     chomp $subject;
     $subject = htmlsanit($subject);    
     # Make order out of chaos    
-    if ($subject =~ m/^(?:ITO|RFA):\s*(\S+)(?:\s+-+\s+)?(.*)/) {
+    if ($subject =~ m/^(?:ITO|RFA):\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
         $rfa{$bugid} = $1 . ($2?": ":"") . $2;
 	if (defined($maintainer{$1})) {
 	    push @{$rfabymaint{$maintainer{$1}}}, $bugid;
 	} else {
 	    push @{$rfabymaint{"Unknown"}}, $bugid;
 	}
-    } elsif ($subject =~ m/^O:\s*(\S+)(?:\s+-+\s+)?(.*)/) {
+    } elsif ($subject =~ m/^O:\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
         $orphaned{$bugid} = $1 . ($2?": ":"") . $2;
-    } elsif ($subject =~ m/^W:\s*(\S+)(?:\s+-+\s+)?(.*)/) {
+    } elsif ($subject =~ m/^W:\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
         $withdrawn{$bugid} = $1 . ($2?": ":"") . $2;
-    } elsif ($subject =~ m/^ITA:(?:\s*(?:ITO|RFA|O|W):)?\s*(\S+)(?:\s+-+\s+)?(.*)/) {
+    } elsif ($subject =~ m/^ITA:(?:\s*(?:ITO|RFA|O|W):)?\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
         $ita{$bugid} = $1 . ($2?": ":"") . $2;
-    } elsif ($subject =~ m/^ITP:(?:\s*RFP:)?\s*(.*)/) {
+    } elsif ($subject =~ m/^ITP:(?:\s*RFP:)?\s*(.*)$/) {
         $itp{$bugid} = join(": ", split(/\s+-+\s+/, $2,2));
-    } elsif ($subject =~ m/^RFP:\s*(.*)/) {
+    } elsif ($subject =~ m/^RFP:\s*(.*)$/) {
         $rfp{$bugid} = join(": ", split(/\s+-+\s+/, $2,2)); 
     } else {
     	print STDERR "What is this ($bugid): $subject\n" if ( $host ne "klecker.debian.org" );
@@ -92,6 +92,7 @@ my (@being_adopted_html, @being_packaged_html, @requested_html);
 
 foreach (sort { $rfa{$a} cmp $rfa{$b} } keys %rfa) {
     push @rfa_bypackage_html, "\n<li><a href=\"http://bugs.debian.org/$_\">$rfa{$_}</a>";
+    push @rfa_bypackage_html, "\n";
 }
 
 foreach $maint (sort keys %rfabymaint) {
@@ -101,14 +102,17 @@ foreach $maint (sort keys %rfabymaint) {
         push @rfa_bymaint_html, "<li><a href=\"http://bugs.debian.org/$_\">$rfa{$_}</a>";
     }
     push @rfa_bymaint_html, "</ul>";
+    push @rfa_bymaint_html, "\n";
 }
 
 foreach (sort { $orphaned{$a} cmp $orphaned{$b} } keys %orphaned) {
     push @orphaned_html, "<li><a href=\"http://bugs.debian.org/$_\">$orphaned{$_}</a>";
+    push @orphaned_html, "\n";
 }
 
 foreach (sort { $withdrawn{$a} cmp $withdrawn{$b} } keys %withdrawn) {
     push @withdrawn_html, "<li><a href=\"http://bugs.debian.org/$_\">$withdrawn{$_}</a>";
+    push @withdrawn_html, "\n";
 }
 
 foreach (sort { $ita{$a} cmp $ita{$b} } keys %ita) {
@@ -118,6 +122,7 @@ foreach (sort { $ita{$a} cmp $ita{$b} } keys %ita) {
     elsif ( $age{$_} == 1 ) { push @being_adopted_html, "in adoption since yesterday." }
     else { push @being_adopted_html, "$age{$_} days in adoption." };
          "$age{$_} days in adoption\n";
+    push @being_adopted_html, "\n";
 }
 
 foreach (sort { $itp{$a} cmp $itp{$b} } keys %itp) {
@@ -127,6 +132,7 @@ foreach (sort { $itp{$a} cmp $itp{$b} } keys %itp) {
     elsif ( $age{$_} == 1 ) { push @being_packaged_html, "in preparation since yesterday." }
     else { push @being_packaged_html, "$age{$_} days in preparation." };
          "$age{$_} days in preparation\n";
+    push @being_packaged_html, "\n";
 }
 
 foreach (sort { $rfp{$a} cmp $rfp{$b} } keys %rfp) {
@@ -135,6 +141,7 @@ foreach (sort { $rfp{$a} cmp $rfp{$b} } keys %rfp) {
     if ( $age{$_} == 0 ) { push @requested_html, "requested today." }
     elsif ( $age{$_} == 1 ) { push @requested_html, "requested yesterday." }
     else { push @requested_html, "requested $age{$_} days ago.\n" };
+    push @requested_html, "\n";
 }
 
 </perl>
