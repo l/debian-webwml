@@ -476,14 +476,19 @@ sub get_desc {
 sub get_short_desc {
     my $self = shift;
     my $desc = $self->get_desc( @_ );
-    my ( $short_desc ) = ( $desc =~ /^(.*?)$/m );
+    my $short_desc;
+    if ($desc) {
+	( $short_desc ) = ( $desc =~ /^(.*?)$/m );
+    }
     return $short_desc;
 }
 
 sub get_long_desc {
     my $self = shift;
     my $desc = $self->get_desc( @_ );
-    $desc =~ s/^.*?$//m;
+    if ($desc) {
+	$desc =~ s/^.*?$//m;
+    }
     return $desc;
 }
 
