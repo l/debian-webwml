@@ -2,6 +2,7 @@
 langs = ar ca da de el eo es fi fr hr hu id it ja ko nl no pl pt ro ru sv tr zh
 
 LOCALEROOT = $(CURDIR)/locale
+TEMPLDIR   = template/debian
 
 tmpl_files = $(wildcard template/debian/*.wml)
 
@@ -72,4 +73,12 @@ fix-po:
 #   In WML files, replace slices with <gettext> tags
 convert-templates:
 	./scripts/wmlconvert.pl $(tmpl_files)
+
+gen-def: $(TEMPLDIR)/countries.def $(TEMPLDIR)/language_names.def
+
+$(TEMPLDIR)/countries.def: $(TEMPLDIR)/countries.wml
+	cd $(TEMPLDIR) && sed -e /^#/d countries.wml | eperl -B '<:' -E ':>' - >/dev/null
+
+$(TEMPLDIR)/language_names.def: $(TEMPLDIR)/language_names.wml
+	cd $(TEMPLDIR) && sed -e '/^#/d' -e '/^<perl>/,/^<\/perl>/!d' language_names.wml  | eperl -B '<perl>' -E '</perl>' - >/dev/null
 
