@@ -40,6 +40,7 @@ foreach $pkg ($data->list_packages()) {
         if ($data->has_po($pkg) && !defined($skip_po{$pkg})) {
                 foreach $line (@{$data->po($pkg)}) {
                         ($file, $lang) = @{$line};
+                        next unless $lang ne '' && $lang ne '_';
                         $langs->{po}->{$lang}  = 1;
                         $langs->{all}->{$lang} = 1;
                 }

@@ -73,8 +73,13 @@ my %total = ();
 my $tmpl_errors_maint = {};
 
 foreach my $pkg ($data->list_packages()) {
+        next unless (length $pkg); # skip headers
         #   Populate arrays
         my $section = $data->section($pkg);
+        unless (defined $section) {
+                warn "Package without section: $pkg\n";
+                next;
+        }
         if ($section =~ m#^(non-us/)?contrib/#) {
                 push (@contrib, $pkg);
         } elsif ($section =~ m#^(non-us/)?non-free/#) {
@@ -113,6 +118,8 @@ sub get_stats_po {
         my %todo  = ();
         my %excl  = ();
         my $none  = '';
+        my $orig  = '';
+
         $total{$section} = 0;
         foreach $pkg (sort @{$packages}) {
                 if ($data->upstream($pkg) eq 'dbs') {
@@ -128,19 +135,21 @@ sub get_stats_po {
                 foreach (@po_langs) {
                         $list{uc $_}  = 0;
                 }
+                my $addorig = '';
                 foreach $line (@{$data->po($pkg)}) {
                         my ($pofile, $lang, $stat, $link,$translator,$team) = @{$line};
                         $link =~ s/:/\%3a/g;
                         $translator = transform_translator($translator);
                         $team = transform_team($team);
                         if ($lang eq '_') {
-			        # FIXME: This wont work since the stats about the pot files are not in the DB
-			        if ($stat =~ m/(\d+)u/) {
+                                if ($stat =~ m/(\d+)u/) {
                                         $total{$section} += $1;
                                 }
-			        # FIXME: Uncommenting the next line would prevent to use '_' as a 
-			        #        regular lang code, but I'm not sure of the implications
-#                                next;
+                                $addorig .= " [<a href=\"".
+                                        ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root).
+                                        "po/$opt_d/".$data->pooldir($pkg).
+                                        "/$link.gz\">$pofile</a>]";
+                                next;
                         }
                         $lang = uc($lang) || 'UNKNOWN';
                         $list{$lang} = 1;
@@ -163,6 +172,8 @@ sub get_stats_po {
                                 $todo{$lang} = ($todo{$lang} || '') . $str;
                         }
                 }
+                $orig .= "<li><a name=\"$pkg\" href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>$addorig</li>\n"
+                        if $addorig;
                 foreach $lang (@po_langs) {
                         my $l = uc($lang) || 'UNKNOWN';
                         next if $list{$l};
@@ -195,6 +206,10 @@ sub get_stats_po {
         open (GEN, "> $opt_l/po/gen/$section.exc")
                 || die "Unable to write into $opt_l/po/gen/$section.exc";
         print GEN "<ul>\n".$none."</ul>\n" if $none ne '';
+        close (GEN);
+        open (GEN, "> $opt_l/po/gen/$section.orig")
+                || die "Unable to write into $opt_l/po/gen/$section.orig";
+        print GEN "<ul>\n".$orig."</ul>\n" if $orig ne '';
         close (GEN);
 }
 
@@ -617,7 +632,7 @@ sub process_langs {
                 if ($data->has_po($pkg) && !defined($skip_po{$pkg})) {
                         foreach $line (@{$data->po($pkg)}) {
                                 ($file, $lang) = @{$line};
-                                next unless $lang ne '';
+                                next unless $lang ne '' && $lang ne '_';
                                 $langs->{po}->{$lang}  = 1;
                                 $langs->{all}->{$lang} = 1;
                         }
