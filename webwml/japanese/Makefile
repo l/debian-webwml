@@ -13,9 +13,32 @@ include $(WMLBASE)/Make.lang
 
 ifneq "$(LANGUAGE)" "en"
 sitemap.$(LANGUAGE).html: $(ENGLISHDIR)/sitemap.wml
-	$(shell echo $(WML) | sed s/index/sitemap/) \
+ifeq "$(LANGUAGE)" "zh"
+	$(shell echo $(WML) | sed s/:.zh/:sitemap.zh/g) \
           $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml \
             $(shell egrep '^-D (CUR_|CHAR)' .wmlrc)
+	@echo -n " * Converting: [zh_CN.GB2312], "
+	@$(B5TOGB) < sitemap.zh-cn.html.tmp > sitemap.zh-cn.html
+	@rm -f sitemap.zh-cn.html.tmp
+	@$(TOCN) sitemap.zh-cn.html
+	@echo -n "[zh_HK.Big5], "
+	@mv -f sitemap.zh-hk.html.tmp sitemap.zh-hk.html
+	@$(TOHK) sitemap.zh-hk.html
+	@echo "[zh_TW.Big5]."
+	@mv -f sitemap.zh-tw.html.tmp sitemap.zh-tw.html
+	@$(TOTW) sitemap.zh-tw.html
+else
+ifeq "$(LANGUAGE)" "ja"
+	wml -q -D CUR_YEAR=2001 -o UNDEFuJA:sitemap.ja.html.tmp@g+w \
+          --prolog="/usr/bin/kcc -e -" --epilog="./convert sitemap.ja.html" \
+            ../english/sitemap.wml \
+              -D CUR_LANG=Japanese -D CUR_ISO_LANG=ja -D CHARSET=iso-2022-jp
+else
+	$(shell sed $(WML) | sed s/index/sitemap/) \
+          $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml \
+            $(shell egrep '^-D (CUR_|CHAR)' .wmlrc)
+endif
+endif
 endif
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
@@ -28,5 +51,5 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 install::
 	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
 ifneq "$(LANGUAGE)" "en"
-	-install -m 664 -p sitemap.$(LANGUAGE).html $(HTMLDIR)
+	-install -m 664 -p sitemap.$(LANGUAGE)*.html $(HTMLDIR)
 endif
