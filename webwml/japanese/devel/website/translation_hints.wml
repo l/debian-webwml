@@ -1,11 +1,11 @@
 #use wml::debian::template title="翻訳に役立つ情報"
-#use wml::debian::translation-check translation="1.20"
+#use wml::debian::translation-check translation="1.26"
 #include "$(ENGLISHDIR)/releases/info"
 
 <p>翻訳だけに限らず、守るべき一般的な事柄について書いてある<a
 href="working">ウェブページの作業</a>についてのページを読んでください。
 
-<h3>どこから翻訳すればいいですか ?</h3>
+<h2>どこから翻訳すればいいですか ?</h2>
 
 <p>まずは、<a href="translating#completenew">新規言語の翻訳を始める</a>
 の節をご覧ください。</p>
@@ -24,7 +24,7 @@ href="working">ウェブページの作業</a>についてのページを読んでください。
     <li>releases/ ディレクトリ: index.wml</li>
     <li>releases/<current_release_name>/ ディレクトリ: index.wml,
         installmanual.wml, releasenotes.wml</li>
-    <li>distrib/ ディレクトリ: index.wml, packages.wml, ftplist.wml</li>
+    <li>distrib/ ディレクトリ: index.wml, packages.wml, cd.wml, netinst.wml</li>
     <li>CD/ ディレクトリ: index.wml</li>
     <li>doc/ ディレクトリ: index.wml</li>
     <li>MailingLists/ ディレクトリ: index.wml</li>
@@ -74,7 +74,7 @@ href="working">ウェブページの作業</a>についてのページを読んでください。
 たくさんの古いページよりは少なくてもちゃんとメンテナンスされているペー
 ジのほうが役に立ちます。</strong>
 
-<h3>どのくらい正確に翻訳すればいいですか ?</h3>
+<h2>どのくらい正確に翻訳すればいいですか ?</h2>
 
 <p>翻訳していると、内容を変更したくなるような時があります。一例をあげ
 るとサポートページがありますが、例えばフランス語訳のページでは
@@ -94,32 +94,32 @@ international/&lt;Language&gt;.wml はその言語を話すビジタが
 <p>もしすべてのユーザに役立つ情報を知っていたら、debian-www で
 提供してください。
 
-<h3>翻訳者が更新の必要なファイルを知るにはどうすればいいですか ?</h3>
+<h2>翻訳者が更新の必要なファイルを知るにはどうすればいいですか ?</h2>
 
 <P>翻訳者が<a href="uptodate">ウェブサイトを最新状態に保つ</a>ために
 利用できる仕組があります。
 
-<h3>スライスを最新状態に保つにはどうすればいいですか?</h3>
+<h2>gettext テンプレートの翻訳を最新状態に保つにはどうすればいいですか?</h2>
 
-<p>一般に、スライス付きのタグが作成されたら、その値が変わることはあり
-ません。何らかの理由で変更する必要がある場合は、代わりに新しいスライス
-が作成されるでしょう。したがって、既存のスライスを更新するのは問題では
-ありません。一方、新たに導入されたスライスを見つける自動的なメカニズム
-はありません。タグを手動でチェックする必要があるでしょう。
-debian-www-cvs メーリングリストのログメッセージも助けになるかもしれま
-せん。</p>
+<p>英語ファイルが更新された後で、あなたの言語の <code>po/</code>
+サブディレクトリ中で <kbd>make update-po</kbd> を実行し、
+.po ファイルをオリジナルに追随させてください。
+debian-www-cvs メーリングリストに流れるログを監視しておけば、
+この作業をするべきタイミングを知ることができます。単に、
+定期的にこの作業をするだけでもかまいません。</p>
 
-<p>スライスを使用しているすべてのファイルを見つける最良の方法は、
-<protect><code>find -type f -print0|xargs -0 grep '\[EN:'|cut -d: -f1|uniq</code></protect>
-を english/ ディレクトリで実行することです。</p>
+<p><kbd>make stats</kbd> を使うと、変更の概略を知ることができます。
+gettext は、その内容を推測しなければならないようなタグに、
+「<code>#, fuzzy</code>」という印をつけ、
+新規タグにはただ単に <code>msgstr</code> の後に空文字列を置きます。</p>
 
-<h3>ユーザが翻訳ページの内容が古いことを知るにはどうすればいいですか ?</h3>
+<h2>ユーザが翻訳ページの内容が古いことを知るにはどうすればいいですか ?</h2>
 
 <P><a href="uptodate">翻訳を最新状態に保つ</a>ために使われる
 <code>translation-check</code> テンプレートが、翻訳内容が古くなった
 ことを教えてくれます。
 
-<h3>翻訳時に気をつけること</h3>
+<h2>翻訳時に気をつけること</h2>
 
 <p>以下は翻訳時に特に注意を払わなければならないページやディレクトリの一覧です。
 
@@ -144,8 +144,9 @@ debian-www-cvs メーリングリストのログメッセージも助けになるかもしれま
 
 <dt><tt>intro/organization.wml</tt>
 
-   <dd>翻訳できる内容を含む<tt>organization.tags</tt>と翻訳すべきでな
-   い内容を含む<tt>organization.data</tt>があります。
+   <dd>異なる言語のあいだで共有される、<tt>organization.data</tt>
+   を include しています。文字列は gettext を用いて翻訳されます。コードは
+   (当然のことながら) 訳すべきではありません。</dd>
 
 <dt><tt>MailingLists/{un,}subscribe.wml</tt>
 
@@ -155,8 +156,11 @@ debian-www-cvs メーリングリストのログメッセージも助けになるかもしれま
    webwml/english/MailingLists/mklist.tags ファイルにあります。</dd>
 
 <dt><tt>devel/people.wml</tt>
-   <dd>パッケージファイルおよび開発者データベースを分析するスクリプトに
-   よって毎日生成される <tt>../../english/devel/people.names</tt> を
+
+   <dd><a
+   href="http://cvs.debian.org/cron/people_scripts/?cvsroot=webwml">Packages
+   ファイルと開発者データベースを分析するスクリプト</a>によって毎日生成される
+   <tt>../../english/devel/people.names</tt> を
    include しています。people.xy.html を作成したいときは、people.names
    ファイルは touch するだけにしてください。</dd>
 
@@ -164,7 +168,7 @@ debian-www-cvs メーリングリストのログメッセージも助けになるかもしれま
    <dd><tt>../../english/consultants/consultant.data</tt> を include
    しています。これは各パートの先頭に追加される語句の翻訳が必要です。
    
-<dt><tt>releases/potato/index.wml</tt>
+<dt><tt>releases/*/{installmanual,releasenotes}.wml</tt>
    <dd>Perl コード (&lt;: :&gt; で囲まれた部分) 以外は
    すべて翻訳してください。ただし、Perl コードのなかで、
    permulate_as_list の第 2 引数は翻訳してください。</dd>
