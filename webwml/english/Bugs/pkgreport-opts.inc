@@ -6,24 +6,24 @@
 <ul>
 
   <li><small><gettext domain="bugs">Flags:</gettext>
-  <input type="radio" name="archive" value="no" checked>
-    <gettext domain="bugs">active bugs</gettext>
-  <input type="radio" name="archive" value="yes">
-     <gettext domain="bugs">archived bugs</gettext>
+  <label><input type="radio" name="archive" value="no" checked>
+    <gettext domain="bugs">active bugs</gettext></label>
+  <label><input type="radio" name="archive" value="yes">
+     <gettext domain="bugs">archived bugs</gettext></label>
   <br>
-  <input type="checkbox" name="repeatmerged" value="no">
-     <gettext domain="bugs">display merged bugs only once</gettext>
-  <input type="checkbox" name="raw" value="yes">
-     <gettext domain="bugs">no ordering by status or severity</gettext>
+  <label><input type="checkbox" name="repeatmerged" value="no">
+     <gettext domain="bugs">display merged bugs only once</gettext></label>
+  <label><input type="checkbox" name="raw" value="yes">
+     <gettext domain="bugs">no ordering by status or severity</gettext></label>
   </small>
 
   <li><small><gettext domain="bugs">Reverse order of:</gettext>
-  <input type="checkbox" name="pend-rev" value="yes">
-    <gettext domain="bugs">status</gettext>
-  <input type="checkbox" name="sev-rev" value="yes">
-    <gettext domain="bugs">severities</gettext>
-  <input type="checkbox" name="bug-rev" value="yes">
-    <gettext domain="bugs">bugs</gettext>
+  <label><input type="checkbox" name="pend-rev" value="yes">
+    <gettext domain="bugs">status</gettext></label>
+  <label><input type="checkbox" name="sev-rev" value="yes">
+    <gettext domain="bugs">severities</gettext></label>
+  <label><input type="checkbox" name="bug-rev" value="yes">
+    <gettext domain="bugs">bugs</gettext></label>
   </small></li>
 
 <define-tag open whitespace=delete>
@@ -43,19 +43,19 @@
 </define-tag>
 
   <li><small><gettext domain="bugs">Include status:</gettext>
-  <input type="checkbox" name="pend-inc" value="pending"><open>
-  <input type="checkbox" name="pend-inc" value="forwarded"><forwarded>
-  <input type="checkbox" name="pend-inc" value="pending-fixed"><pending>
-  <input type="checkbox" name="pend-inc" value="fixed"><fixed>
-  <input type="checkbox" name="pend-exc" value="done"><done>
+  <label><input type="checkbox" name="pend-inc" value="pending"><open></label>
+  <label><input type="checkbox" name="pend-inc" value="forwarded"><forwarded></label>
+  <label><input type="checkbox" name="pend-inc" value="pending-fixed"><pending></label>
+  <label><input type="checkbox" name="pend-inc" value="fixed"><fixed></label>
+  <label><input type="checkbox" name="pend-exc" value="done"><done></label>
   </small></li>
 
   <li><small><gettext domain="bugs">Exclude status:</gettext>
-  <input type="checkbox" name="pend-exc" value="pending"><open>
-  <input type="checkbox" name="pend-exc" value="forwarded"><forwarded>
-  <input type="checkbox" name="pend-exc" value="pending-fixed"><pending>
-  <input type="checkbox" name="pend-exc" value="fixed"><fixed>
-  <input type="checkbox" name="pend-exc" value="done"><done>
+  <label><input type="checkbox" name="pend-exc" value="pending"><open></label>
+  <label><input type="checkbox" name="pend-exc" value="forwarded"><forwarded></label>
+  <label><input type="checkbox" name="pend-exc" value="pending-fixed"><pending></label>
+  <label><input type="checkbox" name="pend-exc" value="fixed"><fixed></label>
+  <label><input type="checkbox" name="pend-exc" value="done"><done></label>
   </small></li>
 
 <define-tag critical whitespace=delete>
@@ -81,25 +81,25 @@
 </define-tag>
 
   <li><small><gettext domain="bugs">Include severity:</gettext>
-  <input type="checkbox" name="sev-inc" value="critical"><critical>
-  <input type="checkbox" name="sev-inc" value="grave"><grave>
-  <input type="checkbox" name="sev-inc" value="serious"><serious>
-  <input type="checkbox" name="sev-inc" value="important"><important>
-  <input type="checkbox" name="sev-inc" value="normal"><normal>
-  <input type="checkbox" name="sev-inc" value="minor"><minor>
-  <input type="checkbox" name="sev-inc" value="wishlist"><wishlist>
-  <input type="checkbox" name="sev-inc" value="fixed"><fixed>
+  <label><input type="checkbox" name="sev-inc" value="critical"><critical></label>
+  <label><input type="checkbox" name="sev-inc" value="grave"><grave></label>
+  <label><input type="checkbox" name="sev-inc" value="serious"><serious></label>
+  <label><input type="checkbox" name="sev-inc" value="important"><important></label>
+  <label><input type="checkbox" name="sev-inc" value="normal"><normal></label>
+  <label><input type="checkbox" name="sev-inc" value="minor"><minor></label>
+  <label><input type="checkbox" name="sev-inc" value="wishlist"><wishlist></label>
+  <label><input type="checkbox" name="sev-inc" value="fixed"><fixed></label>
   </small></li>
 
   <li><small><gettext domain="bugs">Exclude severity:</gettext>
-  <input type="checkbox" name="sev-exc" value="critical"><critical>
-  <input type="checkbox" name="sev-exc" value="grave"><grave>
-  <input type="checkbox" name="sev-exc" value="serious"><serious>
-  <input type="checkbox" name="sev-exc" value="important"><important>
-  <input type="checkbox" name="sev-exc" value="normal"><normal>
-  <input type="checkbox" name="sev-exc" value="minor"><minor>
-  <input type="checkbox" name="sev-exc" value="wishlist"><wishlist>
-  <input type="checkbox" name="sev-exc" value="fixed"><fixed>
+  <label><input type="checkbox" name="sev-exc" value="critical"><critical></label>
+  <label><input type="checkbox" name="sev-exc" value="grave"><grave></label>
+  <label><input type="checkbox" name="sev-exc" value="serious"><serious></label>
+  <label><input type="checkbox" name="sev-exc" value="important"><important></label>
+  <label><input type="checkbox" name="sev-exc" value="normal"><normal></label>
+  <label><input type="checkbox" name="sev-exc" value="minor"><minor></label>
+  <label><input type="checkbox" name="sev-exc" value="wishlist"><wishlist></label>
+  <label><input type="checkbox" name="sev-exc" value="fixed"><fixed></label>
   </small></li>
 
 # distributions in the usual order, then other tags alphabetically
@@ -149,41 +149,41 @@
 </define-tag>
 
   <li><small><gettext domain="bugs">Include tag:</gettext>
-  <input type="checkbox" name="include" value="potato"><potato>
-  <input type="checkbox" name="include" value="woody"><woody>
-  <input type="checkbox" name="include" value="sarge"><sarge>
-  <input type="checkbox" name="include" value="sid"><sid>
-  <input type="checkbox" name="include" value="experimental"><experimental>
-  <input type="checkbox" name="include" value="confirmed"><confirmed>
-  <input type="checkbox" name="include" value="d-i"><d-i>
-  <input type="checkbox" name="include" value="fixed"><fixed>
-  <input type="checkbox" name="include" value="help"><help>
-  <input type="checkbox" name="include" value="moreinfo"><moreinfo>
-  <input type="checkbox" name="include" value="patch"><patch>
-  <input type="checkbox" name="include" value="pending"><pending>
-  <input type="checkbox" name="include" value="security"><security>
-  <input type="checkbox" name="include" value="unreproducible"><unreproducible>
-  <input type="checkbox" name="include" value="upstream"><upstream>
-  <input type="checkbox" name="include" value="wontfix"><wontfix>
+  <label><input type="checkbox" name="include" value="potato"><potato></label>
+  <label><input type="checkbox" name="include" value="woody"><woody></label>
+  <label><input type="checkbox" name="include" value="sarge"><sarge></label>
+  <label><input type="checkbox" name="include" value="sid"><sid></label>
+  <label><input type="checkbox" name="include" value="experimental"><experimental></label>
+  <label><input type="checkbox" name="include" value="confirmed"><confirmed></label>
+  <label><input type="checkbox" name="include" value="d-i"><d-i></label>
+  <label><input type="checkbox" name="include" value="fixed"><fixed></label>
+  <label><input type="checkbox" name="include" value="help"><help></label>
+  <label><input type="checkbox" name="include" value="moreinfo"><moreinfo></label>
+  <label><input type="checkbox" name="include" value="patch"><patch></label>
+  <label><input type="checkbox" name="include" value="pending"><pending></label>
+  <label><input type="checkbox" name="include" value="security"><security></label>
+  <label><input type="checkbox" name="include" value="unreproducible"><unreproducible></label>
+  <label><input type="checkbox" name="include" value="upstream"><upstream></label>
+  <label><input type="checkbox" name="include" value="wontfix"><wontfix></label>
   </small></li>
 
   <li><small><gettext domain="bugs">Exclude tag:</gettext>
-  <input type="checkbox" name="exclude" value="potato"><potato>
-  <input type="checkbox" name="exclude" value="woody"><woody>
-  <input type="checkbox" name="exclude" value="sarge"><sarge>
-  <input type="checkbox" name="exclude" value="sid"><sid>
-  <input type="checkbox" name="exclude" value="experimental"><experimental>
-  <input type="checkbox" name="exclude" value="confirmed"><confirmed>
-  <input type="checkbox" name="exclude" value="d-i"><d-i>
-  <input type="checkbox" name="exclude" value="fixed"><fixed>
-  <input type="checkbox" name="exclude" value="help"><help>
-  <input type="checkbox" name="exclude" value="moreinfo"><moreinfo>
-  <input type="checkbox" name="exclude" value="patch"><patch>
-  <input type="checkbox" name="exclude" value="pending"><pending>
-  <input type="checkbox" name="exclude" value="security"><security>
-  <input type="checkbox" name="exclude" value="unreproducible"><unreproducible>
-  <input type="checkbox" name="exclude" value="upstream"><upstream>
-  <input type="checkbox" name="exclude" value="wontfix"><wontfix>
+  <label><input type="checkbox" name="exclude" value="potato"><potato></label>
+  <label><input type="checkbox" name="exclude" value="woody"><woody></label>
+  <label><input type="checkbox" name="exclude" value="sarge"><sarge></label>
+  <label><input type="checkbox" name="exclude" value="sid"><sid></label>
+  <label><input type="checkbox" name="exclude" value="experimental"><experimental></label>
+  <label><input type="checkbox" name="exclude" value="confirmed"><confirmed></label>
+  <label><input type="checkbox" name="exclude" value="d-i"><d-i></label>
+  <label><input type="checkbox" name="exclude" value="fixed"><fixed></label>
+  <label><input type="checkbox" name="exclude" value="help"><help></label>
+  <label><input type="checkbox" name="exclude" value="moreinfo"><moreinfo></label>
+  <label><input type="checkbox" name="exclude" value="patch"><patch></label>
+  <label><input type="checkbox" name="exclude" value="pending"><pending></label>
+  <label><input type="checkbox" name="exclude" value="security"><security></label>
+  <label><input type="checkbox" name="exclude" value="unreproducible"><unreproducible></label>
+  <label><input type="checkbox" name="exclude" value="upstream"><upstream></label>
+  <label><input type="checkbox" name="exclude" value="wontfix"><wontfix></label>
   </small></li>
 
 </ul>
