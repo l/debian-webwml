@@ -14,3 +14,4 @@ include $(WMLBASE)/Make.common
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
 
+index.$(LANGUAGE).html: ../../english/international/index.data
