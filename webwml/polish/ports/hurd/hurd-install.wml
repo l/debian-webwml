@@ -1,0 +1,120 @@
+#use wml::debian::template title="Debian GNU/Hurd --- Instalacja" NOHEADER="yes"
+#include "$(ENGLISHDIR)/ports/hurd/menu.inc"
+#use wml::debian:translation-check translation="1.19"
+
+<h1>
+Debian GNU/Hurd</h1>
+
+<h2>
+Instalacja</h2>
+
+<h3>
+Sprzêt</h3>
+<p>
+Sprawd¼ listê <a
+href="http://www.urbanophile.com/arenn/hacking/hurd/hurd-hardware.html">zgodnego
+z Hurdem sprzêtu</a> by dowiedzieæ siê wiêcej o dzia³aj±cych w tym systemie
+urz±dzeniach.</p>
+
+<h3>
+System operacyjny</h3>
+<p>
+<a href="http://www.gnu.org/software/hurd/install.html">The Hurd
+Installation Guide</a></p>
+
+<p>
+Istniej± dwa sposoby instalacji Debiana GNU/Hurd. Pierwszy z nich pozwala
+na istalacjê bezpo¶rednio z pakietów Debiana. Wymaga to jednak
+<code>dpkg</code>, debianowego programu do zarz±dzania pakietami, którego
+u¿ycie mo¿e byæ niewygodne w dystrybucjach innych ni¿ Debian, a zgo³a
+niemo¿liwe je¶li Linuksa nie masz zainstalowanego w ogóle. Istnieje wiêc
+drugi sposób, w którym wykorzystuje siê archiwum <code>tar</code> z gotowym
+systemem podstawowym. Po instalacji Hurda mo¿na go uaktualniæ z pomoc± jego
+w³asnych narzêdzi. Poni¿ej opisano dok³adnie oba sposoby.</p>
+
+<h4>
+Przygotowania</h4>
+<p>
+By rozpocz±æ instalacjê musisz stworzyæ partycjê dla Hurda, najlepiej
+u¿ywaj±c komendy <code>mke2fs -O sparse_super -o hurd /dev/PARTYCJA</code>,
+gdzie <code>PARTYCJA</code> jest t± któr± chcesz przeznaczyæ dla Hurda. We¼
+pod uwagê, ¿e jak na razie jej rozmiar nie powinien przekroczyæ 1
+gigabajta (z powodu jeszcze nie usuniêtego ograniczenia Hurda).</p>
+<p>
+Zamontuj tak przygotowan± partycjê. Sam jako miejsca montowania u¿ywam
+<code>/gnu</code>, g³ównie dlatego, ¿e jest ono domy¶lne dla
+kros-kompilacji. Dowolne inne jest równie dobre, w³±czaj±c w to obraz dysku
+w pliku ("loop mount" od <code>mount -o loop</code>). W instrukcji tej
+zak³adam, ¿e u¿ywasz <code>/gnu</code>, wiêc je¶li u¿yte zosta³o inne
+miejsce, trzeba zmieniæ odpowiednio tre¶æ komend.</p>
+
+<h4>
+Dwie drogi</h4>
+
+<h5>
+Instalacja z pomoc± pakietów Debiana</h5>
+<p>
+By zainstalowaæ Debiana GNU/Hurd potrzebowaæ bêdziesz odpowiednie pakiety
+Debiana i moje skrypty instalacyjne. Najpierw ¶ci±gnij te ostatnie:
+<ul>
+<li>
+<a href="extra-files/cross-install"><code>cross-install</code></a> -
+Instaluje gar¶æ pakietów spod Linuksa
+</li>
+<li>
+<a href="extra-files/native-install"><code>native-install</code></a> -
+Konfiguruje nowy system
+</li>
+<li>
+<a href="extra-files/dpkg-hurd"><code>dpkg-hurd</code></a> - Pozwala pod
+Linuksem operowaæ dpkg na partycji Hurda
+</li></ul>
+<p>
+Je¶li nie masz Debiana, bêdziesz potrzebowaæ <code>dpkg</code> w wersji dla
+Twojego systemu.</p>
+<p>
+Na koniec rzecz bardzo potrzebna - pakiety. Znajduj± siê na ka¿dym z <a
+href="../../distrib/ftplist">serwerów lustrzanych Debiana</a>, w kartotece
+<code>debian/dists/unstable/main/binary-hurd-i386/</code>. Potrzebne Ci
+bêd± pakiety wymienione na pocz±tku skryptu <code>dpkg-hurd</code>.
+Ostatnie wersje skryptu <code>corss-install</code> mog± ¶ci±gn±æ je
+automatycznie przy pomocy narzêdzia <code>wget</code>, oczywi¶cie pod
+warunkiem, ¿e masz po³±czenie z sieci±. Je¶li nie skorzystasz z tej
+mo¿liwo¶ci, mo¿esz sci±gn±æ pakiety rêcznie i zachowaæ je w pojedynczej
+kartotece, lub w drzewie podkartotek identycznym ze znajduj±cym siê na
+serwerze z którego by³y ¶ci±gniête.</p>
+<p>
+Teraz przejd¼ do kartoteki w której znajduj± siê skrypty i ¶ci±gniête
+pakiety. Je¶li korzystasz z pojedynczego katalogu, musz± w nim byæ
+wszystkie pliki, je¶li za¶ korzystasz z podkartotek, w najwy¿szej powinny
+byæ skrypty, tak by mog³y one odnale¼æ pakiety z <code>base/</code> etc.
+Wykonaj <code>./coross-install /gnu</code>. Je¶li wszystko pójdzie dobrze,
+pakiety zostan± zainstalowane. Ponadto dodane zostanie kilka poprawek, by
+skorygowaæ znane problemy. Nastêpny krok to <a href="#reboot">prze³adowanie
+systemu</a>.</p>
+
+<h5>
+Instalacja z pomoc± archiwum <code>tar</code></h5>
+<p>
+Co jaki¶ czas kopiujê na
+<code><a href="ftp://alpha.gnu.org/pub/gnu/hurd/contrib/marcus/">
+ftp://alpha.gnu.org/pub/gnu/hurd/contrib/marcus/</a></code>
+skompresowane obrazy aktualnego sytemu podstawowego. Pliki te nazywaj± siê
+<code>gnu-RRRRMMDD.tar.gz</code>, gdzie <code>RRRRMMDD</code> to data
+wykonania kopii. Mo¿na ich u¿yæ do zainstalowania Hurda je¶li nie posiadasz
+dzia³aj±cego <code>dpkg</code>.</p>
+<p>
+¦ci±gnij archiwum o naj¶wierzszej dacie. Wraz z GRUBem stanowi± one
+wszystko co potrzebne by mieæ dzia³aj±cy system. Przejd¼ do
+<code>/gnu</code> i rozpakuj tam zawarto¶æ archiwum u¿ywaj±c komendy
+<code>tar --same-owner -xpzf /kartoteka/do/ktorej/sciagnales/gnu-RRRRMMDD.tar.gz</code>,
+podmieniaj±c oczywi¶cie odpowiednie fragmenty w ¶cie¿ce i nazwie pliku.</p>
+
+<h4><a name="reboot">
+Prze³adowanie systemu</a></h4>
+<p>
+Zrestartuj teraz komputer i za³aduj Hurda u¿ywaj±c GRUBa. Dok³adniejsze
+informacje jak to zrobiæ znajduj± siê w podrêczniku do GRUBa.</p>
+<p>
+Po uruchomieniu Hurda pozostaje jedynie uruchomiæ
+<tt>./native-install</tt>, a instalacja bêdzie skoñczona. Powodzenia!</p>
