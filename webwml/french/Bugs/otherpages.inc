@@ -1,4 +1,4 @@
-<p>Autre pages concernant le système de gestion des bogues (SGB ou BTS pour <i>Bug Tracking System</i> en anglais) :
+<p>Autres pages concernant le système de gestion des bogues (SGB ou BTS pour <i>Bug Tracking System</i> en anglais)&nbsp;:
 
 <ul>
   <li><a href="./">Page principale du système de gestion des bogues.</a>
