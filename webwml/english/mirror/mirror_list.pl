@@ -426,7 +426,7 @@ of material available are listed, along with the access method for each type.
 	<dd>The file transfer protocol.
 <dt><strong>rsync</strong>
 	<dd>An efficient means of mirroring.
-<dt><strong>nfs</strong>
+<dt><strong>NFS</strong>
 	<dd>Network file system (if you don't know what it is, you don't need it).
 </dl>
 
@@ -441,6 +441,9 @@ of material available are listed, along with the access method for each type.
 
 <pre>
 END
+}
+
+sub full_listing {
 	foreach $country (sort keys %countries) {
 		if ($html) {
 			print "\n<strong>$country</strong>\n";
@@ -551,9 +554,35 @@ Last modified: $last_modify             Number of sites listed: $nonuscount
 _END_
 }
 
+sub footer_stuff() {
+  if ($html) {
+	print <<END;
+<hr>
+<table border="0" width="100%"><tr>
+  <td align="left"><small>Last modified: $last_modify</small></td>
+  <td align="right"><small>Number of sites listed: $count</small></td>
+</tr></table>
+END
+  } else {
+	print <<END;
+
+-------------------------------------------------------------------------------
+Last modified: $last_modify             Number of sites listed: $count
+END
+  }
+}
+
 ######### Begin main routine ###########################
 Getopt::Long::config('no_getopt_compat', 'no_auto_abbrev');
 GetOptions(%opthash) or die "error parsing options";
+
+$output_type = 'html' if (! defined $output_type);
+
+if (!defined $mirror_source && !defined $help) {
+	warn "Error: No --mirror option given.\n\n";
+	$help = '';
+}
+
 if (defined $help) {
 	print <<END;
 Usage: $0 -m|--mirror mirror_list_source [-t|--type type]
@@ -563,18 +592,10 @@ Usage: $0 -m|--mirror mirror_list_source [-t|--type type]
 END
 	exit;
 }
-if (! defined $mirror_source) {
-	die "Error: No --mirror option given\n";
-}
-# $mirror_source = "Mirrors";
-if (! defined $output_type) { # choices are wml, html or text
-	$output_type = 'html';
-}
 
 open(SRC, "<$mirror_source") || die "Error: problem opening mirror source file, $mirror_source\n";
 
 $current = '';
-$count = 0;
 foreach (<SRC>) {
 	chop;
 	if (/^$/ && $current eq '') {
@@ -605,6 +626,7 @@ if ($current ne "") {
 
 # count the number of mirrors
 @tmp = keys %mirror;
+$count = 0;
 $count = $#tmp + 1;
 
 @stat = stat($mirror_source);
@@ -617,13 +639,7 @@ if ($output_type eq 'html') {
 	intro();
 	primary_mirrors();
 	table_archive();
-	print <<END;
-<hr>
-<table border="0" width="100%"><tr>
-  <td align="left"><small>Last modified: $last_modify</small></td>
-  <td align="right"><small>Number of sites listed: $count</small></td>
-</tr></table>
-END
+	footer_stuff();
 	trailer();
 }
 elsif ($output_type eq 'text') {
@@ -632,11 +648,7 @@ elsif ($output_type eq 'text') {
 	intro();
 	primary_mirrors();
 	table_archive();
-	print <<END;
-
--------------------------------------------------------------------------------
-Last modified: $last_modify             Number of sites listed: $count
-END
+	footer_stuff();
 }
 elsif ($output_type eq 'apt') {
 	# print "http://www.debian.org/mirror/submit\n\n";
@@ -650,6 +662,8 @@ elsif ($output_type eq 'methods') {
 	$html=1;
 	header();
 	access_methods();
+	full_listing();
+	footer_stuff();
 	trailer();
 }
 elsif ($output_type eq 'nonus') {
