@@ -145,6 +145,17 @@
 </table>
 </define-tag>
 
+<define-tag podebconf-table endtag=required>
+<table border=1>
+<tr>
+  <th><package></th>
+  <th><score></th>
+  <th><file></th>
+</tr>
+%body
+</table>
+</define-tag>
+
 
 #use wml::debian::language_names
 
@@ -251,6 +262,42 @@ open(LANGS, "< $(ENGLISHDIR)/international/l10n/data/langs")
         || die "Unable to read $(ENGLISHDIR)/international/l10n/data/langs";
 while (<LANGS>) {
         if (s/^templates:\s+//) {
+                foreach my $code (split(' ', $_)) {
+                        print " [<a href=\"$code\">$code</a>] ";
+                }
+                last;
+        }
+}
+close(LANGS);
+:>
+</define-tag>
+
+<define-tag podebconf-langs-long>
+<:
+@podebconflangs = ();
+open(LANGS, "< $(ENGLISHDIR)/international/l10n/data/langs")
+        || die "Unable to read $(ENGLISHDIR)/international/l10n/data/langs";
+while (<LANGS>) {
+        if (s/^podebconf:\s+//) {
+                @podebconflangs = split(' ', $_);
+                last;
+        }
+}
+close(LANGS);
+print "<ul>\n";
+foreach my $l (sort @podebconflangs) {
+        print "<li>$l (<a href=\"$l\">".language_name($l)."</a>)</li>\n";
+}
+print "</ul>\n";
+:>
+</define-tag>
+
+<define-tag podebconf-langs-short>
+<:
+open(LANGS, "< $(ENGLISHDIR)/international/l10n/data/langs")
+        || die "Unable to read $(ENGLISHDIR)/international/l10n/data/langs";
+while (<LANGS>) {
+        if (s/^podebconf:\s+//) {
                 foreach my $code (split(' ', $_)) {
                         print " [<a href=\"$code\">$code</a>] ";
                 }
