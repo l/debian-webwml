@@ -11,7 +11,7 @@ my $PO_ROOT="http://www.ens-lyon.fr/~mquinson/debian/po";
 my %data;
 my %sections;
 my %priorities;
-my %langs;
+my %l10nlangs;
 my $pkg;
 my $lang;
 my %stats;
@@ -39,7 +39,7 @@ foreach $pkg (keys %data) {
     $priorities{$data{$pkg}{"priority"}}=1;
     if (defined($data{$pkg}{"stats"})) {
 	foreach $lang(keys %{$data{$pkg}{"stats"}}) {
-	    $langs{$lang} = 1;
+	    $l10nlangs{$lang} = 1;
 	}
     }
 }

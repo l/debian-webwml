@@ -13,7 +13,7 @@ my $header; # header of the table
 my $since_header=0;
 
 my $header = "<tr><td><package><td><orgAbrev>";
-foreach $lang (sort keys %langs) {
+foreach $lang (sort keys %l10nlangs) {
     $header .= "<td>$lang";
 }
 $header .= "\n";
@@ -30,7 +30,7 @@ foreach $pkg (sort keys %data) {
 	    print "$pkg";
 	}
 	print "<td>$data{$pkg}{'type'}";
-	foreach $lang (sort keys %langs) {
+	foreach $lang (sort keys %l10nlangs) {
 	    print "<td>";
 	    if (defined($data{$pkg}{'stats'}{$lang})) {
 		print  l10n_output($data{$pkg}{'stats'}{$lang});
@@ -50,14 +50,14 @@ foreach $pkg (sort keys %data) {
 print $header;
 # output the average l10n of each language
 $str = "<tr><td colspan=2 align=center><AVG>";
-foreach $lang (sort keys %langs) {
+foreach $lang (sort keys %l10nlangs) {
     $str .= "<td>".l10n_output($average{$lang});
 }
 $str =~ s/>([^<>]+?)</><b>$1<\/b></g;  #change to bold
 print $str;
 # output the number of package l10n in each language
 $str = "<tr><td colspan=2 align=center><nbpkg>";
-foreach $lang (sort keys %langs) {
+foreach $lang (sort keys %l10nlangs) {
     $str .= "<td align=center>".$nb_per_lang{$lang};
 }
 $str .= "</td>"; # to have the next regexp matching the last cell
@@ -65,7 +65,7 @@ $str =~ s/>([^<>]+?)</><b>$1<\/b></g;  #change to bold
 print $str;
 #output the score of each language
 $str = "<tr><td colspan=2 align=center><b><SCORE></b>";
-foreach $lang (sort keys %langs) {
+foreach $lang (sort keys %l10nlangs) {
     $str .= "<td align=center>".score_output($lang);
 }
 print $str;
