@@ -10,4 +10,4 @@ ZHTEMPLATE=$(WMLBASE)/template/debian-zh/template.tmpl
 include $(WMLBASE)/Make.lang
 
 
-index.zh-cn.html index.zh-tw.html: index.wml News/index.wml
+index.zh-cn.html index.zh-hk.html index.zh-tw.html: index.wml News/index.wml
