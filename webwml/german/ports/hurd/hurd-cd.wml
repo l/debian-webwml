@@ -1,0 +1,336 @@
+#use wml::debian::template title="Debian GNU/Hurd --- Dokumentation" NOHEADER="yes"
+#include "$(ENGLISHDIR)/ports/hurd/menu.inc"
+#use wml::debian::translation-check translation="1.12"
+# Translator: Gerfried Fuchs <alfie@debian.org>  2001-09-07
+# $Id$
+
+<h1>Debian GNU/Hurd</h1>
+
+<h2>Verwendung der inoffiziellen Debian GNU/Hurd Installation-CD-ROMs</h2>
+
+
+<p>Es gibt zwei CDs.  Das meiste Chaos, das mit einem
+Entwicklungsbetriebssystem einher geht, ist auf der zweiten CD zu finden, um
+die erste CD relativ sauber und konsistent zu halten.  Aber es könnten einige
+wichtige Pakete auf der zweiten CD vorhanden sein.</p>
+
+<h3>Wichtiger Hinweis zu F3</h3>
+
+<p>Nach dem ersten mounten der CD starten Sie <code>/cdrom/upgrade/initial.sh
+</code> um das tar-Archiv zu aktualisieren.</p>
+
+<h3>Download.</h3>
+
+<p>Die aktuellen CD-Isos sind hurd-F3-Main.iso und hurd-F3-extra.iso
+und hier sind einige der Sites, die üblicherweise das aktuelle Image haben.
+Überprüfen Sie die Version vor dem Download.</p>
+
+<ul>
+<li>
+<a href="ftp://ftp.planetmirror.com/pub/debian-cd/unofficial">ftp.planetmirror.com/pub/debian-cd/unofficial</a> - Australien
+<li>
+<a href="ftp://ftp.acc.umu.se/pub/cd-images/debian-unofficial">ftp.acc.umu.se/pub/cd-images/debian-unofficial</a> - Schweden
+<li>
+<a href="ftp://omega.elte.hu/mirror/debian-unofficial">ftp://omega.elte.hu/mirror/debian-unofficial</a> - Ungarn
+<li>
+<a href="ftp://ftp.fsn.hu/pub/CDROM-Images/debian-unofficial/hurd">ftp.fsn.hu/pub/CDROM-Images/debian-unofficial</a> -  Ungarn (primäre Site)
+<li>
+<a href="ftp://www.che.iitm.ac.in/pub/hurd-cd">ftp://www.che.iitm.ac.in/pub/hurd-cd</a> - Bitte nur der indische Sub-Kontinent.
+</ul>
+
+<p>Eine <a href="http://ftpsearch.lycos.com/?form=medium">ftp-Suche</a>
+nach hurd-F3 könnte eine nähere Site finden.</p>
+
+<p>Anweisungen um eine CD von den Images zu brennen, können auf <a
+href="http://cdimage.debian.org/faq.html">http://cdimage.debian.org/faq.html</a>
+nachgelesen werden.</p>
+
+<h3>CD-ROMs</h3>
+
+<p>Lesen Sie <a href="../../distrib/vendors">diese Seite für Hurd-CD
+Händler</a>.
+Suchen Sie nach <code>hurd</code> mit der Suchfunktion Ihres Browsers.</p>
+
+<h3>Wie die Installations-Disc funktioniert</h3>
+
+<P>Die potato  Debian GNU/Linux Installations-CDs verwenden die Cross-Install
+Methode um das Basis-System zu installieren. Eine Ramdisk wird im Speicher
+erstellt und ein mini GNU/Linux System in diese Disk installiert. Dieses
+mini-System wird dazu verwendet, um die Festplatten zu partitionieren und
+formatieren, und um den Ziel-Rechner auf die Haupt-Installation vorzubereiten.
+Die kritische Phase ist das tar-Archiv mit den notwendigen base-Paketen auf
+die Festplatten des Ziel-Systems auszupacken. Das neue System wird dann mit
+den auf die Fetplatte entpackten Paketen neu gestartet. Weitere Pakete werden
+anschliessend installierd und konfiguriert, um das gewünschte System zu
+erhalten.</p>
+
+<p>Da der Hurd auch die cross-Installations-Methode verwendet, bedeutet das,
+dass die Skripte um die Hurd Installtions-CDs zu bauen vom Debian GNU/Linux
+boot-Vorgang und CD-Skripten übernommen werden könnte um den Hurd statt dem
+Linux tar-Archiv auszupacken.</p>
+
+<p>Den Hurd mit einem Satz CDs zu installieren hat verschiedene Vorteile.</p>
+
+<ul>
+<li>Da das Linux-System in einer Ram-Disk läuft und das tar-Verzeichnis auf
+der CD-Rom ist, kann der Hurd auf eine leeren Rechner installiert werden,
+oder auf ein System wo die Leute das installierte Betriebssystem nicht
+verwenden wollen.</li>
+
+<li>Das auf der CD verwendete File-System zum speichern der Pakete kann
+umorganisiert werden, um Problemumgehungen zu vereinigen.</li>
+
+<li>Es gibt (zur Zeit) keine Partitioniertungs-Werkzeuge für den Hurd, daher
+kann die Installations-CD verwendet werden, um die Festplatten während der
+Installation zu partitionieren.</li>
+
+<li>Es ist schneller, weniger herumpfuschend und die meisten Leute sind mit
+dem Vorgang vertraut.</li>
+</ul>
+
+
+<h3>Hurd Partitionen</h3>
+
+<p>Der Hurd unterstützt keine Partionen, die größer als ungefähr 1Gb sind.
+Wie auch immer, mehrere Partitonen können während der Installation
+angelegt werden.  Der Hurd verwendet auch eine Erweiterung zum ext2
+File-System, der Aufruf ist "mke2fs -O sparse_super -o hurd /dev/*".  Die
+Installations-CDs verwenden das standardmäßig.</p>
+
+
+<h3>Verwendung derInstallations-CD</h3>
+
+<h4>Vorbereitung.</h4>
+
+<ol>
+<li><p><em>Erstellen Sie eine GRUB boot-Diskette</em></p>
+<p>
+Die image-Datei ist /install/grub-boot-0.5.95.image auf der CD-Rom.  Sie
+können "dd" verwenden wenn Sie mit Linux arbeiten, oder rawrite wenn Sie
+mit MS arbeiten.</p>
+
+<li><p>Vergewissern Sie sich dass Sie Linux, die GRUB und Hurd Methoden der
+Benennung der Laufwerke und Partitionen verstehen. Sie werden alle drei
+verwenden und der Zusammenhang zwischen ihnen kann verwirrend sein.</p>
+</ol>
+
+<p>Hurd verwendet andere Partitions-Namen als Linux, also seien Sie
+vorsichtig. IDE Festplatten sind der Reihe nach nummeriert, von hd0
+beginnend. Die zweite IDE-Platte ist hd1, unabhängig ob sie slave oder
+der zweite master ist. SCSI-Platten werden auch in absoluter Reihenfolge
+nummeriert. Sie sind immer sd0, sd1 und so weiter benannt unabhängig davon,
+ob Sie SCSI id 4 oder 5 oder sonst was sind. Die Erfahrung hat gezeigt dass
+CD-Rom Laufwerke verzwickt sein können.  Mehr darüber etwas später.</p>
+
+<p>Partitionen im Linux-Stil werden vom Hurd immer sn genannt, wobei n die
+Partitions-Nummer ist, so dass die erste Partition auf der ersten IDE-Platte
+hd0s1 ist, die dritte Partion auf der zweiten SCSI-Platte sd1s3 ist, und so
+weiter.</p>
+
+<p>GRUB hat noch eine andere Partitions-Benennung.  Es nennt Partitionen
+(hdN,n), aber dieses Mal beginnen die Disk-Nummer und Partitions-Nummer
+beide bei null, und die Platten sind fortlaufend nummeriert, alle IDE-Platte
+zuerst, und die SCSI anschliessend.  Um die Verwirrung komplett zu machen,
+könnte (hd1,2) auf die erste SCSI-Platte verweisen wenn Sie nur eine
+IDE-Platte haben, oder es könnte die zweite IDE-Platte sein.  Deshalb ist
+es wichtig, dass Sie die verschiedenen Namen Ihrer Partitionen ausgearbeitet
+haben, bevor Sie beginnen.</p>
+
+<h4>Installation</h4>
+
+<ol>
+<li><em>Die CD booten.</em>
+<p>
+Jede der Methoden, um eine Debian 2.2 (potato) CD zu booten, funktioniert,
+zum Beispiel von der CD, von MS und von jeder der boot/root Disketten-Images.
+Ein kompletter Satz von basis-Disketten kann erstellt werden, falls kein
+CD-Rom Laufwerk vorhanden ist.</p>
+</li>
+
+<li><em>Nach dem Eröffnungs-Schirm, öffen Sie "Partition a Hard Disk".</em>
+<p>
+Wenn Sie die .deb Pakete auf die Festplatte kopieren wollen, benötigen Sie
+andere Partitionen, eine für jede CD.  Da es kein Partitionierungs-Werkzeug
+für den Hurd gibt, müssen Sie diese Möglichkeit verwenden. Um die 500 Mb
+werden genügen, um mit dem Haupt-System zu beginnen.  Wenn Sie weitere
+Partitionen benötigen, können Sie die CD neu starten und die Werkzeuge in
+der Linux-Ram-Disk verwenden, um dies zu tun.</p>
+</li>
+
+<li><em>Arbeiten sie die GRUB- und Hurd-Namen der Partitionen, die Sie
+verwenden werden.</em>
+</li>
+
+<li><em>Bereiten Sie Ihre Partitionen durch "Partition a Hard Disk" vor</em>
+und vergewissern Sie sich, dass Sie eine Swap-Partition haben.  Hurd ist
+heikel bezüglich Swap.
+</li>
+
+<li><em>Formatieren Sie Ihre Hurd-Partition</em>
+durch "Initialize a Hurd or Linux Partition" und mounten sie auf <code>/</code>.
+Mounten Sie keine anderen Partionen.
+</li>
+
+<li><em>Installieren Sie das Basis-System durch "Install the Base System".</em>
+</li>
+
+<li><em>Legen Sie einen GRUB-Diskette in das Laufwerk und starten Sie mit
+"Reboot the System" neu</em>
+(vergessen Sie nicht, das Bios zurück zusetzen).  Das ist es!
+[Erster Neustart]
+</li>
+</ol>
+
+<p>Wenn Ihre Hurd-Partition <code>(hd0,0)</code> [GRUB Namensgebung]
+und <code>sd0s1</code> [Hurd] ist, was übersetzt bedeutet, die erste
+Partition der ersten Festplatte welche eine SCSI-Platte ist und keine
+IDE-Platten vorhanden sind, dann wird das System ohne Änderung booten
+können.<br>
+
+Wenn Ihre Hurd-Partition <code>(hd0,0)</code> [GRUB nomenclature] und
+<code>hd0s1</code> [Hurd] ist, was übersetzt bedeutet, die erste Partition
+der ersten Festplatte welche eine IDE-Platte ist, dann wird lediglich GRUB
+etwas verwirrt sein.  Es wird Ihnen mitteilen dass es <code>sd0s1</code>
+nicht finden kann und Sie nachach fragen, das zu korrigieren.  Falls Sie
+die unterschiedlichen Namenschemen durch und durch verstanden haben, wissen
+Sie sofort dass die richtige Antwort hd0s1 lautet.  GRUB wird dann danach
+fragen, ob es <code>/boot/serverboot.gz</code> verwenden soll, antworten
+Sie mit "Enter".<br>
+
+Es wird nicht viel schlimmer.  Wenn Ihre Partition keines der oberen
+Beispiele ist, bietet GRUB sowohl ein Menü als auch eine Tab-Ergänzung,
+also verwenden Sie sie.</p>
+
+<h5>Beispiel</h5>
+
+<P>"Press any key to continue"  Machen Sie, was hier steht (eine Taste drücken)
+und es wird ein Menü erscheinen.  Oft ist das, was Sie benötigen, nicht dabei.
+
+<p>
+"c"  gibt Ihnen eine Kommando-Zeile.</p>
+
+<p>Ein Schritt-für-Schritt Vorgang kann nun verwendet werden.
+</p>
+<p>+++++<br>
+grub$ root "TAB"    [Ihr Eintrag - TAB ist die Tabulator-Taste]<br>
+Possible commands are: root rootnoverify   [GRUB's Antwort]<br>
++++++<br>
+grub$ root "(TAB"   - - - - "(TAB" ist Ihre Antwort.<br>
+Possible disks are:   fd0 hd0 hd1<br>
++++++<br>
+grub$ root ("hd0,TAB"    (unter der Annahme dass auf hd0 das tar-Archiv
+installiert wurde)<br>
+Possible partitions are:<br>
+Partition num: 0, Filesystem type is unknown, partition type 0x82<br>
+Partition num: 1, Filesystem type is ext2fs, partition type 0x83<br>
+Partition num: 2, Filesystem type is ext2fs, partition type 0x83<br>
+Partition num: 4, Filesystem type is ext2fs, partition type 0x83<br>
+Partition num: 5, Filesystem type is ext2fs, partition type 0x83<br>
+Partition num: 6, Filesystem type is ext2fs, partition type 0x83<br>
++++++<br>
+grub$ root (hd0,"4)ENTER"	(annehmend, dass der Hurd auf der 5. Partition liegt.)
+ - - "ENTER" ist die Enter-Taste.<br>
+Filesystem type is ext2fs, partition type 0x83<br>
++++++</p>
+
+<p>GRUB weiss nun was zu tun ist, und wir müssen Hurd das selbe in Hurdisch
+erklären.</p>
+
++++++<br>
+grub$ "kernel /boot/gnumach.gz root=hd0s5 -s  ENTER"       (Hurd-Benennung verwenden)<br>
+Multiboot-elf,.....<br>
++++++</p>
+
+<p>gnumach ist der Kernel und er liegt auf hd0s5 im /boot Verzeichnis.
+  -s = Einzel-Benutzer-Modus.</p>
+
+<p>+++++<br>
+grub$ "module /boot/serverboot.gz  ENTER"<br>
+Mulltiboot-module, ........<br>
++++++</p>
+
+<p>Serverboot ladet nun den Kernel.  Alles ist jetzt bereit, also können wir
+booten.</p>
+
+<p>++++<br>
+grub$ "boot ENTER"<br>
++++++</p>
+
+<p>Nehmen Sie die Finger von der Tastatur bis der boot-Prozess beendet ist.</p>
+
+<p>"/boot/grub/menu.lst" auf der GRUB-Diskette kann editiert werden, damit
+Sie das System ohne diese Eingriffe starten können.</p>
+
+
+<h3>Die nächsten Schritte.</h3>
+
+<ol>
+<li><em>Nach dem das System gestartet hat, führen Sie ./native-install aus.</em>
+Starten Sie das System mittels "reboot" neu.  DAS IST WICHTIG - beachten Sie
+die Start-Meldungen und merken Sie sich sorgfältig, wo das CD-Rom Laufwerk
+liegt.  [Zweiter Neustart]</p></li>
+
+<li><em>Nach dem Neustart führen Sie ./native-install ein zweites Mal aus.</em>
+Dieses mal wird eine ganze Reihe von Paketen konfiguriert.  Starten Sie jetzt
+neu [Dritter Neustart].  Sie werden nun ein System zu konfigurieren haben.<br>
+Melden Sie sich als root an, "login root".</p></li>
+
+<li><em>Wechslen Sie mit cd /dev das Verzeichnis.  Legen Sie die notwendigen
+Devices an.</em> Das ist das CD-Rom Laufwerk, die swap-Partition und alle
+anderen Festplatten-Partitionen.
+
+<p> Z.B.
+"MAKEDEV hd2 hd0s2 hd0s3"</p></li>
+
+<li><em>Editieren Sie /etc/fstab, "ae /etc/fstab"</em>.
+ae ist kein so schlechter Editor für seine Größe.<p>
+Fügen Sie die Festplatten-Partitionen ein, z.B.<br>
+/dev/[Hurd-Partitions-Name]   none    swap    sw    0       0<br>
+/dev/[Hurd-Partitions-Name]   /CD1    ext2    rw    1       1</p>
+
+<p>Der Hurd verwendet das ext2 Dateisystem.  "/CD1" ist ein vorgeschlagener
+mount-Punkt für die Partition, die die Pakete von hurd-F3-main beinhaltet.
+Swap kann mit Linux mitbenutzt werden.</p></li>
+
+<li><em>Aktivieren Sie den Swap mit "swapon -a".</em>
+Überprüfen Sie, ob das funktioniert hat.  Swap ist STARK empfohlen für
+dem Hurd.</p></li>
+
+<li><em>Setzen Sie den Übersetzer, der auf das CD-Rom Laufwerk zugreift,
+auf.</em> z.B.
+<p>
+settrans -a /cdrom /hurd/isofs /dev/[Hurd-Laufwerksname]</p></li>
+
+<li><em>Starten Sie "/cdrom/upgrade/initial.sh"</em>.
+<p>Das wird das tar-Archiv (baseHurd.tgz) aktualisieren.  Da dies eine radikale
+Aktualisierung ist, wäre es klug anschliessend neu zu booten.</p></li>
+
+<li><em>Setzen Sie den Übersetzer für das CD-Rom Laufwerk erneut auf und
+starten Sie /cdrom/upgrade/second.sh.</em>
+<p>Das wird einige nützliche(?) Pakete installieren.</p></li>
+
+<li><em>Weitere Pakete können mit "apt" oder "dselect" installiert werden.</em>
+<p>Wenn Sie mit diesen Debian-Werkzeugen unvertraut sind, lesen Sie
+"man apt" und "man dselect".</p></li>
+
+<li><em>Unmounten der CD-Rom</em>
+<P>Das CD-Rom Laufwerk muss in zwei Schritten ungemounted werden,<br>
+<code>settrans -g /cdrom</code><br>
+<code>settrans -g /dev/[Hurd-Laufwerksname]</code><br>
+Die CD-Rom Laufwerkslade sollte dann entsprerrt sein.<br>
+Wenn das nicht funktioniert, wird ein reboot das Problem beheben.  Für mich
+war es nach dem Aufruf von <code>initial.sh</code> und
+<code>second.sh</code> notwendig.</p></li>
+
+<li><em>Kopieren der CDs auf die Partitionen.</em>
+<p>Wenn Sie die CDs auf Partitionen kopieren, fügen Sie das Verzeichnis
+"dist-extra" nicht zu Ihrer <code>/etc/apt/sources.list</code>, das sich
+auf der extra-CD befindet, hinzu da es Pakete enthält die Ihr System
+zusammenbrechen lassen können.</p></li>
+
+</ol>
+
+<p>Das ist das Ende der Anleitung und der Anfang Ihrer eigenen Erkundungen.
+Geniessen Sie den Hurd.</p>
+<p>Kommentare zu den CDs sind willkommen.<br>
+Philip Charles, philipc@debian.org</p>
