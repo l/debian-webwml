@@ -4,17 +4,18 @@
 
 WMLBASE=..
 CUR_DIR=misc
-SUBS=
+SUBS=laptops
 
 include $(WMLBASE)/Make.lang
 
 
 merchandise.$(LANGUAGE).html: merchandise.wml $(TEMPLDIR)/template.wml \
-  $(ENGLISHSRCDIR)/misc/merchandise.data $(ENGLISHSRCDIR)/misc/merchandise.def
+  $(TEMPLDIR)/url.wml $(ENGLISHSRCDIR)/misc/merchandise.data \
+  $(ENGLISHSRCDIR)/misc/merchandise.def \
 
 ifeq "$(LANGUAGE)" "en"
 $(HTMLDIR)/bsd.license: bsd.license
-	cp -p $(@F) $(HTMLDIR)
+	install -m 664 -p $(@F) $(HTMLDIR)
 
 install:: $(HTMLDIR)/bsd.license
 
