@@ -10,23 +10,19 @@ The kernel is GNU mach not the Hurd.  The Hurd is a series of servers which
 run on top of the microkernel, GNU mach.  Both the Hurd and GNU mach are 
 part of the GNU project while the Linux kernel is an independent project.</p> 
 
-<P>Current series, hurd-J2. 700 MB media will be needed for discs 2 and 3.</P>
+<P>Current series, hurd-K1.</P>
 
-<P>There are four CD images.  The "unstable-extra" tree has not been included 
-as this would have needed a fifth CD.</P>
+<H3>Warning. The K1 series has a serious bug which can corrupt the filesystem</H3>
 
-<P>baseHurd.tgz (a tarball of the base GNU system) has been specially 
+<P>Only the first of five images has been release for this series. 
+
+<P>baseGNU.tgz (a tarball of the base GNU system) has been specially 
 built for this CD set.</P>
-
-<H3>Note.</H3>
-
-<P>apt used to lock up when installing packages from the cdrom on some hardware.  
-It seems that this problem has been solved.</P>
 
 <H3>Download.</H3>
 
-<P>The current iso images are hurd-J2-CD[1,2,3,4].iso and most of the binaries 
-specific to a GNU system are found on the first CD, but all the games, 
+<P>The current iso image is hurd-K1-CD1.iso and most of the binaries 
+specific to a GNU system are found on this first CD, but all the games, 
 graphics and some other packages are found on the second CD.  A basic GNU 
 system can be installed using the first CD.</P>
 
@@ -48,7 +44,7 @@ also be fetched from some of its mirrors.</P>
 
 <P>A search at 
 <a href="http://www.filesearching.com/">http://www.filesearching.com</a> 
-for hurd-J2 could find a closer site.</P>
+for hurd-K1 could find a closer site.</P>
 
 <p> Instructions for burning CDs from the images can be found at <A
 HREF="http://cdimage.debian.org/faq.html">http://cdimage.debian.org/faq.html</A>
@@ -56,12 +52,12 @@ HREF="http://cdimage.debian.org/faq.html">http://cdimage.debian.org/faq.html</A>
 
 <H3>CD-ROMs</H3>
 
-<P>See <A HREF="../../CD/vendors/"> this page for Hurd CD vendors</A>.  
+<P>See <A HREF="../../CD/vendors/"> this page for GNU/Hurd CD vendors</A>.  
 Look for <code>hurd</code> using your browser's search facility.</P>
 
 <H3>How the Installation Disc works</H3>
 
-<P>The potato Debian GNU/Linux installation CDs uses the cross
+<P>The potato Debian GNU/Linux installation CDs used the cross
 install method to install the base system.  A ramdisk is created in
 memory and a mini GNU/Linux system installed into this disk.  This
 mini system is used to partition and format drives, and to prepare the
@@ -78,11 +74,7 @@ GNU/Linux tarball would be unpacked.</P>
 
 <P>Installing a GNU system using a cd-rom set has several advantages.
 
-<ul><li>
-Hurd specific documentation is found in ./doc/hurd.  hurd-install-guide
-is a "must read" document before you start.
 <li>
-
 As the GNU/Linux system runs in a ramdisk and the tarball is on the cdrom,
 a GNU system can be installed onto a bare machine, or onto a machine where
 people do not want to use the installed operating system.
@@ -92,8 +84,8 @@ The file system storing the packages on the CDs could be reorganised
 to incorporate work-arounds.
 
 <li>
-There are no partitioning tools for the GNU operating system (yet) so the 
-installation CD can be used to partition HDDs during the installation.
+While a GNU/Hurd version of <code>parted</code> is available, some people 
+may prefer to use the GNU/Linux <code>cfdisk</code> in the boot-disks.
 
 <li>
 It is faster, less fiddle and most people are familiar with the process.
@@ -112,6 +104,11 @@ use this by default.</P>
 <H3>Using the Installation CD</H3>
 
 <H4>Preparation.</H4>
+
+<ul><li>
+Hurd specific documentation is found in ./doc/hurd.  hurd-install-guide
+and Cook-book are "must read" documents before you start.
+
 
 <ol>
 <li><P><em>Make a GRUB boot-disk</em>
@@ -180,8 +177,8 @@ Do not mount  any other partitions.
 (don't forget to reset the bios).  That is it!  [First reboot]
 </ol>   
 
-<P>If your Hurd partition is <code>(hd0,0)</code> [GRUB nomenclature]
-and <code>sd0s1</code> [Hurd], which being interpreted means the first
+<P>If your GNU/Hurd partition is <code>(hd0,0)</code> [GRUB nomenclature]
+and <code>sd0s1</code> [GNU/Hurd], which being interpreted means the first
 partition on the first HDD which is SCSI and there are no IDE drives,
 then the system will boot with no intervention.<BR>
 
@@ -223,26 +220,30 @@ cdrom, the swap partition and any other HDD partitions.
 nano is not a bad editor.<p>
 Add the HDD partitions, eg,<br>
 /dev/[Hurd partition name]   none    swap    sw    0       0<BR>
-/dev/[Hurd partition name]   /CD1     ext2    rw    1       1</P>
+/dev/[Hurd partition name]   /CD1     ext2    rw    1       1<BR>
+/dev/[GNU drive name]   /cdrom iso9660fs   ro,noauto  1    1</p>  
 
 <P>The Hurd uses the ext2 fs.  "/CD1" is a suggested mount-point for 
 the partition which contains the packages from hurd-H3-CD1. 
 Swap can be shared with Linux.</P>
 					
-<li><em> Activate the swap "swapon -a".</em>
+<li><em> Activate the swap <code>swapon -a</code>.</em>
 Check to see that is has worked.  Swap is HIGHLY recommended with the Hurd.
 
 <li><em>Set up the translator that accesses the cdrom,</em> eg
 <p>
-settrans -a /cdrom /hurd/isofs /dev/[Hurd drive name]</P>
+<code>settrans -a /cdrom /hurd/isofs /dev/[Hurd drive name]</code><br>
+While this is the GNU way of doing it, <code>mount /cdrom</code> will also work.
 	
-<li><em>Run "/cdrom/upgrade/initial.sh"</em>.
+<li><em>Run <code>/cdrom/upgrade/total.sh</code></em>.
 <p>This will install some useful packages.<BR>
-developer.sh and gui.sh are also provided.</p>
+The cdrom is automatically unmounted when this script is completed to avoid
+damage to the file system.</p>
 				
 <li><em> Further packages can be installed using "apt or "dselect".</em>
 <p>If you are unfamiliar with these Debian tools, see 
-"info apt" and "info dselect".</p>
+"info apt" and "info dselect".<br>
+Be careful of your file-system may be trashed.</p>
 
 <li><em>Unmounting the cdrom</em>
 <P>The cdrom drive is unmounted with <code>settrans -agf /cdrom</code><BR>
