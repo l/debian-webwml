@@ -3,17 +3,17 @@
 LANGUAGES := arabic chinese croatian danish dutch english esperanto finnish \
              french german hungarian italian japanese korean norwegian \
              polish portuguese romanian russian spanish swedish turkish
-LANGUAGES-install := $(addsuffix -install,${LANGUAGES})
+LANGUAGES-install := $(addsuffix -install,$(LANGUAGES))
 
 .SUFFIXES: 
-.PHONY: install all ${LANGUAGES} ${LANGUAGES-install}
+.PHONY: install all $(LANGUAGES) $(LANGUAGES-install)
 
-install: ${LANGUAGES-install}
+install: $(LANGUAGES-install)
 
-all: ${LANGUAGES}
+all: $(LANGUAGES)
 
-${LANGUAGES-install}:
-	${MAKE} -C $(subst -install,,$@) install
+$(LANGUAGES-install):
+	$(MAKE) -C $(subst -install,,$@) install
 
-${LANGUAGES}:
-	${MAKE} -C $@
+$(LANGUAGES):
+	$(MAKE) -C $@
