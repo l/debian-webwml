@@ -9,7 +9,8 @@ SUBS=installguide
 include $(WMLBASE)/Make.lang
 
 
-index.$(LANGUAGE).html: index.wml $(ENGLISHDIR)/releases/info
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/release.wml \
+  $(ENGLISHDIR)/releases/potato/release.data $(ENGLISHDIR)/releases/info
 installmanual.$(LANGUAGE).html: installmanual.wml $(TEMPLDIR)/release.wml \
   $(ENGLISHDIR)/releases/potato/release.data
 releasenotes.$(LANGUAGE).html: releasenotes.wml $(TEMPLDIR)/release.wml \
