@@ -241,7 +241,7 @@ foreach $lang (@search_in) {
         next if ($file eq "");
 	# Translated pages
 	if (index ($wmlfiles{$lang}, " $file ") >= 0) {
-		if ($file =~ /devel\/wnpp\/wnpp\.wml/) {
+		if ($file eq "devel/wnpp/wnpp") {
 			$t_body .= sprintf "%s<br>\n", $file;
 		} else {
 		    	$t_body .= sprintf "<a href=\"/%s.%s.html\">%s</a><br>\n", $file, $l, $file;
@@ -252,7 +252,7 @@ foreach $lang (@search_in) {
 		$msg = check_translation ($version{"$lang/$file"}, $version{"english/$file"}, "$lang/$file");
 		if (length ($msg)) {
 			$o_body .= "<tr>";
-			if ($file =~ /devel\/wnpp\/wnpp\.wml/) {
+			if ($file eq "devel/wnpp/wnpp") {
 				$o_body .= sprintf "<td>%s</td>", $file;
 			} else {
 				$o_body .= sprintf "<td><a href=\"/%s.%s.html\">%s</a></td>", $file, $l, $file;
@@ -267,7 +267,7 @@ foreach $lang (@search_in) {
 	}
 	# Untranslated pages
 	else {
-		if ($file =~ /devel\/wnpp\/wnpp\.wml/) {
+		if ($file eq "devel/wnpp/wnpp") {
 			$u_body .= sprintf "%s<br>\n", $file;
 		} else {
 		    	$u_body .= sprintf "<a href=\"/%s\">%s</a><br>\n", $file, $file;
