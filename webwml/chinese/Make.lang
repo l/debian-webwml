@@ -1,12 +1,14 @@
-SHELL=/bin/bash
+# The two-letter code for the language
+LANGUAGE := zh
+SUBLANG := cn tw
 
-# The LANGUAGE variable needs to be set for each language.
-# LANGUAGECAP is just the capitalization of LANGUAGE (this is needed for wml slices)
-LANGUAGE=zh
-LANGUAGECAP=ZH
+include $(WMLBASE)/../Makefile.common
+
+# If you need to modify that is already defined in ../Makefile.common
+# you can put it below
 
 # Experimental tag by the Debian Chinese Translation Team
-SUBLANG = cn tw
+SHELL = /bin/bash
 BIN = $(WMLBASE)/bin
 B5TOU8 = $(BIN)/b5tou8
 U8TOB5 = $(BIN)/u8tob5
@@ -16,32 +18,82 @@ TOCN = $(BIN)/tocn.pl
 TOTW = $(BIN)/totw.pl
 FIX_BIG5 = $(BIN)/fix_big5.pl
 
-# The '-q' forces wml to be quiet. Very useful in scripts.
-# It is sometimes useful to add '--epilog=weblint' to check for errors
-# in the html generated.
-# Other languages may want to change the wml command to execute programs
-# that get run before or after wml. For example,
-#    WML="wml -q --prolog="/usr/bin/tcs <options here>" \
-#                --epilog="/usr/bin/tcs <options here> > $(@D)/$(@F)" \
-#                -o $(@F)
-# If you use --epilog as above, then you will want to add a line to
-# Make.templ.inc to remove $(@F) after WML is done.
-WMLOPTIONS=-q -D CUR_YEAR=$(shell date +%Y)
-#WMLOUTFILE=$(@F)
-WMLOUTPUT=-o UNDEFuZH@uCN:$(*F).zh-cn.html.tmp -o UNDEFuZH@uTW:$(*F).zh-tw.html.tmp
-#WMLPROLOG=--prolog='/usr/bin/perl -pe "s/^(([\\x00-\\x7F]|([\\x80-\\xFF].))+[\\x80-\\xFF]\\\\)$$/\$$1\\\\\\\\/;"'
-WMLPROLOG=--prolog=$(FIX_BIG5)
-WMLEPILOG=
-
-# This is the WML definition for the non-buggy WML.
-WML=wml $(WMLOPTIONS) $(WMLOUTPUT) $(WMLPROLOG) $(WMLEPILOG)
+WMLOUTPUT = -o UNDEFuZH@uCN:$(*F).zh-cn.html.tmp@g+w \
+	-o UNDEFuZH@uTW:$(*F).zh-tw.html.tmp@g+w
+WMLPROLOG = --prolog=$(FIX_BIG5)
+WML = wml $(WMLOPTIONS) $(WMLOUTPUT) $(WMLPROLOG) $(WMLEPILOG)
 
 # These are the relevant WML and WMLOPTIONS definition for the old buggy WML.
 # Please DO NOT remove the following comments, in case they're needed again.
 # July 11, 2000
-#
 #WMLOPTIONS += -p1-8
 #WML = ( wml $(WMLOPTIONS) $(WMLPROLOG) $(WMLEPILOG) \
 #	| /usr/lib/wml/exec/wml_p9_slice $(WMLOUTPUT) ) <
 #WMLEPILOG=--epilog='/usr/lib/wml/exec/wml_p9_slice $(WMLOUTPUT)'
 #WML=wml $(WMLOPTIONS) $(WMLPROLOG) $(WMLEPILOG)
+
+install::
+	@rm -f $(HTMLDIR)/*.imgdot-1x1-transp.gif
+
+clean::
+	rm -f *.$(LANGUAGE)-??.html
+	rm -f *.$(LANGUAGE)-??.html.tmp
+
+cleandest::
+	rm -f $(HTMLDIR)/*.$(LANGUAGE)-??.html
+
+
+# Is there anyway to combine the following two rules into one?
+$(HTMLDIR)/%.zh-cn.html: %.zh-cn.html
+	@echo copying $(@F) to $(HTMLDIR)
+	-@cp $(@F) $(HTMLDIR)
+$(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
+	@echo copying $(@F) to $(HTMLDIR)
+	-@cp $(@F) $(HTMLDIR)
+# Create %.html -> %.zh-tw.html symlink if no English version of %.wml exists
+	@if [ ! -f "$(WMLBASE)/../english/$(CUR_DIR)/$(*F).wml" ]; then \
+		echo "Making a link $(@D)/$(*F).html -> $(@F)"; \
+		ln -f -s $(@F) $(@D)/$(*F).html; \
+	fi
+
+ifndef NOGENERICDEP
+%.$(LANGUAGE)-cn.html %.$(LANGUAGE)-tw.html: %.wml \
+		$(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
+		$(TOCN) $(TOTW) $(ZHTEMPLATE)
+
+	$(WML) $(<F)
+
+#	@if [ -f index.imgdot-1x1-transp.gif ]; then \
+#	    mv -f index.imgdot-1x1-transp.gif i.imgdot-1x1-transp.gif; \
+#	fi
+
+# *.imgdot-1x1-transp.gif is evil!  Get rid of them!
+# Must set nullglob or else the following fails - foka, June 2000
+	@shopt -s nullglob; \
+	for i in *.imgdot-1x1-transp.gif; do \
+	    rm -f $$i; \
+	    j=`basename $$i .imgdot-1x1-transp.gif` ; \
+	    for k in $$j.$(LANGUAGE)-??.html.tmp; do \
+		perl -pi -e "s|$$j\\.(?=imgdot-1x1-transp\\.gif)|$(WMLBASE)/Pics/|g" $$k; \
+	    done; \
+	done
+
+#	@echo "* Converting $*.zh-cn.html.tmp to $*.zh-cn.html (zh_CN.GB2312)..."
+	@echo -n " * Converting: [zh_CN.GB2312], "
+	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
+	@rm -f $*.zh-cn.html.tmp
+	@$(TOCN) $*.zh-cn.html
+
+#	@echo "* Converting $*.zh-tw.html.tmp to $*.zh-tw.html (zh_TW.Big5)..."
+	@echo "[zh_TW.Big5]."
+#	@$(U8TOB5) < $*.zh-tw.html > $*.zh-tw.html.tmp
+	@mv -f $*.zh-tw.html.tmp $*.zh-tw.html
+	@$(TOTW) $*.zh-tw.html
+endif
+
+# template dependencies
+
+$(WMLBASE)/template/debian-zh/template.tmpl: $(TEMPLDIR)/template.wml \
+		$(WMLBASE)/template/debian-zh/macros.tmpl \
+		$(WMLBASE)/template/debian-zh/navbar.tmpl
+	touch $@
