@@ -20,91 +20,91 @@ HTML_TMPL := $(foreach lang,$(LANGS_TMPL),templates-$(lang).$(LANGUAGE).html)
 all:: $(HTML_PO) $(HTML_TMPL)
 
 po-%.$(LANGUAGE).html:\
-	$(ENGLISHDIR)/international/l10n/scripts/init.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/ranking.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/team-po.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/l10nheader.wml\
-	$(ENGLISHDIR)/international/l10n/team-po.wml\
-	$(ENGLISHDIR)/international/l10n/data/countries.wml\
-	$(TEMPLDIR)/language_names.wml\
-	$(ENGLISHDIR)/international/l10n/dtc.def \
-	$(ENGLISHDIR)/international/l10n/data/unstable
+  $(ENGLISHDIR)/international/l10n/scripts/init.pl\
+  $(ENGLISHDIR)/international/l10n/scripts/ranking.pl\
+  $(ENGLISHDIR)/international/l10n/scripts/team-po.pl\
+  $(ENGLISHDIR)/international/l10n/scripts/l10nheader.wml\
+  $(ENGLISHDIR)/international/l10n/team-po.wml\
+  $(ENGLISHDIR)/international/l10n/data/countries.wml\
+  $(TEMPLDIR)/language_names.wml\
+  $(ENGLISHDIR)/international/l10n/dtc.def \
+  $(ENGLISHDIR)/international/l10n/data/unstable
 	$(WML) -D TEAM=$* team-po.wml
 
 templates-%.$(LANGUAGE).html:\
-	$(ENGLISHDIR)/international/l10n/scripts/init.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/ranking.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/team-templates.pl\
-	$(ENGLISHDIR)/international/l10n/team-templates.wml\
-	$(ENGLISHDIR)/international/l10n/dtc.def \
-	$(ENGLISHDIR)/international/l10n/data/unstable
+  $(ENGLISHDIR)/international/l10n/scripts/init.pl\
+  $(ENGLISHDIR)/international/l10n/scripts/ranking.pl\
+  $(ENGLISHDIR)/international/l10n/scripts/team-templates.pl\
+  $(ENGLISHDIR)/international/l10n/team-templates.wml\
+  $(ENGLISHDIR)/international/l10n/dtc.def \
+  $(ENGLISHDIR)/international/l10n/data/unstable
 	$(WML) -D TEAM=$* team-templates.wml
 
 team-po.$(LANGUAGE).html:\
-	$(ENGLISHDIR)/international/l10n/data/langs\
-	$(ENGLISHDIR)/international/l10n/data/countries.wml\
-	$(ENGLISHDIR)/international/l10n/scripts/init.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/ranking.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/team-po.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/l10nheader.wml\
-	$(ENGLISHDIR)/international/l10n/team-po.wml\
-	$(TEMPLDIR)/language_names.wml\
-	$(ENGLISHDIR)/international/l10n/dtc.def \
-	$(ENGLISHDIR)/international/l10n/data/unstable
+  $(ENGLISHDIR)/international/l10n/data/langs\
+  $(ENGLISHDIR)/international/l10n/data/countries.wml\
+  $(ENGLISHDIR)/international/l10n/scripts/init.pl\
+  $(ENGLISHDIR)/international/l10n/scripts/ranking.pl\
+  $(ENGLISHDIR)/international/l10n/scripts/team-po.pl\
+  $(ENGLISHDIR)/international/l10n/scripts/l10nheader.wml\
+  $(ENGLISHDIR)/international/l10n/team-po.wml\
+  $(TEMPLDIR)/language_names.wml\
+  $(ENGLISHDIR)/international/l10n/dtc.def \
+  $(ENGLISHDIR)/international/l10n/data/unstable
 
 team-templates.$(LANGUAGE).html:\
-	$(ENGLISHDIR)/international/l10n/data/langs\
-	$(ENGLISHDIR)/international/l10n/scripts/init.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/ranking.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/team-templates.pl\
-	$(ENGLISHDIR)/international/l10n/team-templates.wml\
-	$(ENGLISHDIR)/international/l10n/dtc.def \
-	$(ENGLISHDIR)/international/l10n/data/unstable
+  $(ENGLISHDIR)/international/l10n/data/langs\
+  $(ENGLISHDIR)/international/l10n/scripts/init.pl\
+  $(ENGLISHDIR)/international/l10n/scripts/ranking.pl\
+  $(ENGLISHDIR)/international/l10n/scripts/team-templates.pl\
+  $(ENGLISHDIR)/international/l10n/team-templates.wml\
+  $(ENGLISHDIR)/international/l10n/dtc.def \
+  $(ENGLISHDIR)/international/l10n/data/unstable
 
 l10n-lang.$(LANGUAGE).html: $(ENGLISHDIR)/international/l10n/scripts/init.pl\
-	$(ENGLISHDIR)/international/l10n/data/langs\
-	$(ENGLISHDIR)/international/l10n/scripts/ranking.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/l10n-lang.pl\
-	$(ENGLISHDIR)/international/l10n/l10n-lang.wml\
-	$(ENGLISHDIR)/international/l10n/scripts/l10nheader.wml\
-	$(ENGLISHDIR)/international/l10n/dtc.def \
-	$(ENGLISHDIR)/international/l10n/data/unstable
+  $(ENGLISHDIR)/international/l10n/data/langs\
+  $(ENGLISHDIR)/international/l10n/scripts/ranking.pl\
+  $(ENGLISHDIR)/international/l10n/scripts/l10n-lang.pl\
+  $(ENGLISHDIR)/international/l10n/l10n-lang.wml\
+  $(ENGLISHDIR)/international/l10n/scripts/l10nheader.wml\
+  $(ENGLISHDIR)/international/l10n/dtc.def \
+  $(ENGLISHDIR)/international/l10n/data/unstable
 
 i18n.$(LANGUAGE).html: $(ENGLISHDIR)/international/l10n/scripts/init.pl\
-	$(ENGLISHDIR)/international/l10n/data/langs\
-	$(ENGLISHDIR)/international/l10n/scripts/i18n.pl\
-	$(ENGLISHDIR)/international/l10n/i18n.wml\
-	$(ENGLISHDIR)/international/l10n/dtc.def\
-	$(ENGLISHDIR)/international/l10n/data/unstable
+  $(ENGLISHDIR)/international/l10n/data/langs\
+  $(ENGLISHDIR)/international/l10n/scripts/i18n.pl\
+  $(ENGLISHDIR)/international/l10n/i18n.wml\
+  $(ENGLISHDIR)/international/l10n/dtc.def\
+  $(ENGLISHDIR)/international/l10n/data/unstable
 
 l10n.$(LANGUAGE).html: $(ENGLISHDIR)/international/l10n/scripts/init.pl\
-	$(ENGLISHDIR)/international/l10n/data/langs\
-	$(ENGLISHDIR)/international/l10n/scripts/ranking.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/l10n.pl\
-	$(ENGLISHDIR)/international/l10n/l10n.wml\
-	$(ENGLISHDIR)/international/l10n/dtc.def\
-	$(ENGLISHDIR)/international/l10n/data/unstable
+  $(ENGLISHDIR)/international/l10n/data/langs\
+  $(ENGLISHDIR)/international/l10n/scripts/ranking.pl\
+  $(ENGLISHDIR)/international/l10n/scripts/l10n.pl\
+  $(ENGLISHDIR)/international/l10n/l10n.wml\
+  $(ENGLISHDIR)/international/l10n/dtc.def\
+  $(ENGLISHDIR)/international/l10n/data/unstable
 
 l10n-packages.$(LANGUAGE).html: $(ENGLISHDIR)/international/l10n/scripts/init.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/l10n-packages.pl\
-	$(ENGLISHDIR)/international/l10n/l10n-packages.wml\
-	$(ENGLISHDIR)/international/l10n/dtc.def\
-	$(ENGLISHDIR)/international/l10n/data/unstable
+  $(ENGLISHDIR)/international/l10n/scripts/l10n-packages.pl\
+  $(ENGLISHDIR)/international/l10n/l10n-packages.wml\
+  $(ENGLISHDIR)/international/l10n/dtc.def\
+  $(ENGLISHDIR)/international/l10n/data/unstable
 
 l10n-errors.$(LANGUAGE).html: $(ENGLISHDIR)/international/l10n/scripts/init.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/l10n-errors.pl\
-	$(ENGLISHDIR)/international/l10n/l10n-errors.wml\
-	$(ENGLISHDIR)/international/l10n/dtc.def\
-	$(ENGLISHDIR)/international/l10n/data/unstable
+  $(ENGLISHDIR)/international/l10n/scripts/l10n-errors.pl\
+  $(ENGLISHDIR)/international/l10n/l10n-errors.wml\
+  $(ENGLISHDIR)/international/l10n/dtc.def\
+  $(ENGLISHDIR)/international/l10n/data/unstable
 
 l10n-rank.$(LANGUAGE).html: $(ENGLISHDIR)/international/l10n/scripts/init.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/ranking.pl\
-	$(ENGLISHDIR)/international/l10n/scripts/l10n-rank.pl\
-	$(ENGLISHDIR)/international/l10n/l10n-rank.wml\
-	$(ENGLISHDIR)/international/l10n/scripts/l10nheader.wml\
-	$(ENGLISHDIR)/international/l10n/dtc.def \
-	$(TEMPLDIR)/language_names.wml\
-	$(ENGLISHDIR)/international/l10n/data/unstable
+  $(ENGLISHDIR)/international/l10n/scripts/ranking.pl\
+  $(ENGLISHDIR)/international/l10n/scripts/l10n-rank.pl\
+  $(ENGLISHDIR)/international/l10n/l10n-rank.wml\
+  $(ENGLISHDIR)/international/l10n/scripts/l10nheader.wml\
+  $(ENGLISHDIR)/international/l10n/dtc.def \
+  $(TEMPLDIR)/language_names.wml\
+  $(ENGLISHDIR)/international/l10n/data/unstable
 
 # these wml files are generated by l10n-lang
 #l10n-lang-*.wml:l10n-lang.$(LANGUAGE).html l10n-lang.wml\
