@@ -871,7 +871,10 @@ sub write_all_package {
 	    }
 	    my $title = sprintf( gettext ( "Software Packages in \"%s\", priority %s" ), 
 				 $distro, $_ );
-	    $pi{$_} = header( title => $title, lang => $lang );
+	    $pi{$_} = header( title => $title,
+			      title_keywords => "debian, $distro, $_",
+			      desc => encode_entities( $title, '"' ),
+			      lang => $lang );
 	    $pi{$_} .= "$priority_header\n";
 	    $pi{$_} .= "<h1>$title</h1>\n";
 	    if ($distro eq "experimental") {
@@ -883,14 +886,20 @@ sub write_all_package {
             # no index of essential packages for experimental
 	    my $title = sprintf( gettext ( "Software Packages in \"%s\", essential packages" ), 
 				 $distro );
-	    $ei .= header( title => $title, lang => $lang,
+	    $ei .= header( title => $title,
+			   title_keywords => "debian, $distro, essential",
+			   desc => encode_entities( $title, '"' ),
+			   lang => $lang,
 			   print_title_below => 1 );
 	    $ei .= "<dl>\n";
 	}
 
 	my $all_title = sprintf( gettext( "All Debian Packages in \"%s\"" ),
 				 $distro );
-	my $all_package = header( title => $all_title, lang => $lang,
+	my $all_package = header( title => $all_title,
+				  title_keywords => "debian, $distro",
+				  desc => encode_entities( $title, '"' ),
+				  lang => $lang,
 				  print_title_below => 1 );
 	if ($distro eq "experimental") {
 	    $all_package .= $experimental_note;
