@@ -2,9 +2,12 @@
 #include "$(ENGLISHDIR)/ports/menu.defs"
 
 #   Arch specific menu entries
-<define-menu-item name="freebsd">
+<define-menu-item name="kfreebsd-gnu">
   <gettext domain="ports">Main</gettext>
+</define-menu-item>
+<define-menu-item name="index">
+  <gettext domain="ports">Debian GNU/FreeBSD</gettext>
 </define-menu-item>
 
 <menu-item name="ports"         basename="../index">
-<menu-item name="freebsd"       basename="index">
+<menu-item name="kfreebsd-gnu"       basename="index">
