@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # Test the print_places function from gpg_utils
-# Copyright (C) 2002  Martin Michlmayr <tbm@cyrius.com>
+# Copyright (C) 2002, 2003  Martin Michlmayr <tbm@cyrius.com>
 # $Id$
 
 # This program is free software; you can redistribute it and/or modify
@@ -20,21 +20,39 @@
 
 import os, sys
 sys.path.append(os.path.abspath(".."));
+import gpg_utils, sqlite2pg
+import sqlite
 
-import gpg_utils
+# Open fake database
+cx = sqlite.connect(":memory:", autocommit=1)
+db = sqlite2pg.db(cx)
+db.query("""
+CREATE TABLE places (
+    id integer,
+    who integer,
+    begin date,
+    finish date,
+    city text,
+    country text,
+    state text,
+    url text
+)""")
 
-testcases = []
-testcases.append('print_places("", "", "Innsbruck", "AT")')
-testcases.append('print_places("2002-07-28", "", "Innsbruck", "AT")')
-testcases.append('print_places("", "2002-07-28", "Innsbruck", "AT")')
-testcases.append('print_places("1982-07-28", "2002-07-28", "Innsbruck", "AT")')
-testcases.append('print_places("1982-07-28", "2002-07-28", "", "AT")')
+# Populate database with some test cases
+db.query("insert into places VALUES (1, 1, null, null, 'Innsbruck', 'AT', null, 'http://www.ibk.at/')")
+db.query("insert into places VALUES (2, 1, '2002-07-28', null, 'Innsbruck', 'AT', null, 'http://www.ibk.at/')")
+db.query("insert into places VALUES (3, 1, null, '2002-07-28', 'Innsbruck', 'AT', null, 'http://www.ibk.at/')")
+db.query("insert into places VALUES (4, 1, '1982-07-28', '2002-07-28', 'Innsbruck', 'AT', null, 'http://www.ibk.at/')")
+db.query("insert into places VALUES (5, 1, '1982-07-28', '2002-07-28', null, 'AT', null, 'http://www.ibk.at/')")
 
-for test in testcases:
-    command = "output = gpg_utils.%s" % test
-    exec command
-    print "The result of %s is:" % test
-    print output
+# Do some tests
+q = db.query("SELECT id, begin, finish, city, country, url FROM places")
+for i in q.getresult():
+    (id, begin, finish, city, country, url) = i
+    print "begin = '%s', finish = '%s', city = '%s', country = '%s', url = '%s'" % (begin, finish, city, country, url)
+    print gpg_utils.print_place(db, id)
+    print gpg_utils.print_place(db, id, 1)
+    print
 
 # vim:set ts=4:
 # vim:set expandtab:
