@@ -48,7 +48,7 @@ text: mirror_list.pl Mirrors.masterlist
 html: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t html
 full: mirror_list.pl Mirrors.masterlist
-	@./mirror_list.pl -m Mirrors.masterlist -t methods
+	@./mirror_list.pl -m Mirrors.masterlist -t fullmethods
 nonus: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t nonus
 nonushtml: mirror_list.pl Mirrors.masterlist
