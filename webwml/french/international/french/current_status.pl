@@ -62,6 +62,8 @@ do 'documents-bd.pl';
 	'since'			=> '13/09/1999',
 	'translation_maintainer'=> ['Martin Quinson <mquinson@zeppelin-cb.de>'],
 	'translation_name'	=> 'Debian GNU/Linux: guide d\'installation et d\'utilisation',
+	'translation_url'	=> 'http://www.ens-lyon.fr/~mquinson/debian/guide/',
+	'translation_dev_url'   => 'http://www.newriders.com/debian/debian-guide.tar.bz2',
 	'old_translators'	=> ['Fabien Ninoles <fabien@Nightbird.TZoNE.ORG>'],
 },
 
@@ -117,7 +119,7 @@ do 'documents-bd.pl';
 	'status'		=> 3,
 	'since'			=> '13/03/2000',
 	'translation_name'	=> 'Guide de dselect pour les débutants',
-	'translation_maintainer'=> ['Laurent Picouleau <lcrpic@a2points.com>'],
+	'translation_maintainer'=> ['Laurent Picouleau <laurent.picouleau@wanadoo.fr>'],
 	'base_revision'		=> '2.1',
 	'translation_url'	=> 'http://www.debian.org/releases/stable/source/dselect-beginner.fr.sgml',
 	'translation_cvs_url'   => 'http://cvs.debian.org/boot-floppies/documentation/dselect-beginner.fr.sgml?cvsroot=debian-boot',
@@ -136,9 +138,9 @@ do 'documents-bd.pl';
 
 'maint-guide' => {
 	'status'		=> 4,
-	'since'			=> '19/10/1999',
-	'translation_name'	=> 'Nouveau Guide du Responsable Debian',
-	'translation_maintainer'=> ['Frederic Dumont <Frederic.Dumont@gate71.be>'],
+	'since'			=> '30/03/2000',
+	'translation_name'	=> 'Guide du nouveau responsable Debian',
+	'translation_maintainer'=> ['Frederic Dumont <frederic.dumont@freeworld.be>'],
 	'translation_url'	=> 'http://www.info.fundp.ac.be/~fdumont/maint-guide_fr.html/index.html',
 	'translation_dev_url'   => 'http://www.info.fundp.ac.be/~fdumont/maint-guide_fr.sgml',
 	'translation_cvs_url'   => 'http://cvs.debian.org/ddp/manuals.sgml/maint-guide/maint-guide.fr.sgml?cvsroot=debian-doc',
@@ -198,7 +200,7 @@ do 'documents-bd.pl';
 	'status'		=> '5',
 	'since'			=> '01/07/1998',
 	'translation_name'	=> 'Guide de Référence du Développeur Debian',
-	'translation_maintainer'=> ['Laurent Picouleau <lcrpic@a2points.com>'],
+	'translation_maintainer'=> ['Laurent Picouleau <laurent.picouleau@wanadoo.fr>'],
 	'base_revision'		=> '0.1',
 	'translation_package'	=> '',
 	'old_translators'	=> ['Herve Floch <Herve.Floch@linux.eu.org>'],
@@ -220,6 +222,13 @@ do 'documents-bd.pl';
 	'translation_name'	=> 'Introduction : Créer un paquet Debian',
 	'translation_maintainer'=> ['Frederic Dumont <frederic.dumont@gate71.be>'],
 	'last_translated'	=> '01/07/1998',
+},
+
+'sgml-howto' => {
+	'status'		=> 2,
+	'since'			=> '30/03/2000',
+	'translation_name'	=> 'The Debian SGML/XML HOWTO',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
 },
 
 'markup' => {

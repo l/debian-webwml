@@ -293,6 +293,13 @@ $translations = {
 },
 
 
+'sgml-howto' => {
+	'type'			=> 'DDP',
+	'name'			=> 'The Debian SGML/XML HOWTO',
+	'status'		=> 1,
+},
+
+
 # How to get started on a new SGML-based manual
 # Debian Documentation Guidelines
 
