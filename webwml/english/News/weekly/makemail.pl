@@ -66,6 +66,10 @@ while (<IN>) {
 		if ($1 > $skippedlinks && $1 <= $highlink) {
 			# Print line, fixing link number.
 			s/^(\d+)/$1 - $skippedlinks/e;
+
+			# Fix local links
+			s,file://localhost/.*/webwml/[^/]*/,http://www.debian.org/,g;
+
 			print "  $_";
 		}
 	}
