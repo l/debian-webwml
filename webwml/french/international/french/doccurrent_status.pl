@@ -71,7 +71,7 @@ $translations_status = {
 ######################################################################
 
 'policy' => {
-	'status'		=> 4,
+	'status'		=> 5,
 	'since'			=> '06/08/2001',
 	'translation_name'	=> 'La charte Debian',
 	'translation_maintainer'=> ['philippe batailler <pbatailler@teaser.fr>'],
@@ -177,7 +177,9 @@ $translations_status = {
 'meta' => {
         'status'                => 4,
 	'since'			=> '29/11/2000',
-	'translation_maintainer'=> ['Mickael Simon <simon.mickael@wanadoo.fr>'],
+	'translation_url'	=> 'http://mickaelsimon.free.fr/debian/traduction/meta/',
+	'translation_source_url'	=> 'http://mickaelsimon.free.fr/debian/traduction/meta/meta.sgml',
+	'translation_maintainer'=> ['Mickael Simon'],
 },
 
 'packaging-manual' => {
