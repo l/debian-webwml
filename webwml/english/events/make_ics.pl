@@ -7,10 +7,12 @@
 # names as parameters to create the .ics file
 
 # Originally written 2002-12-29 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2002 Software in the public interest, Inc.
+# © Copyright 2002-2003 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
+
+# FIXME: Handle character entities in input?
 
 use Time::Local;
 use integer;
@@ -106,13 +108,14 @@ $endstring   = sprintf("%04d%02d%02dT235959", split(/-/, $enddate));
 
 # Figure out the language and  encoding of the text, by recursing upwards
 # until we find a .wmlrc file
+$maxlevel = 5; # Upper bound on recursion
 $encoding = '';
 $language = '';
 $wmlrcdir = '.';
 while (! -e $wmlrcdir . '/.wmlrc')
 {
 	$wmlrcdir .= '/..';
-	die "Unable to find .wmlrc file\n" if $wmlrcdir eq '';
+	die "Unable to find .wmlrc file\n" if 0 == -- $maxlevel;
 }
 open WMLRC, $wmlrcdir . '/.wmlrc'
 	or die "Unable to read $wmlrcdir/.wmlrc: $!\n";
@@ -154,7 +157,8 @@ open ICS, '>' . $icsfile or die "Cannot create $icsfile: $!\n";
 &calline(ICS, 'URL:' . $url);
 &calline(ICS, 'SUMMARY' . $charsetlanguage . ':' . $pagetitle); ###
 &calline(ICS, 'DESCRIPTION' . $charsetlanguage . ':' . $pagetitle . ' - ' . $intro);
-&calline(ICS, 'CONTACT:' . $coord) unless $coord eq 'none';
+&calline(ICS, 'CONTACT' . $charsetlanguage . ':' . $coord)
+	unless $coord eq 'none';
 &calline(ICS, 'CLASS:PUBLIC');
 &calline(ICS, 'CATEGORIES:CONFERENCE');
 &calline(ICS, 'X-EPOCAGENDAENTRYTYPE:EVENT'); # My Revo+ adds this on export
