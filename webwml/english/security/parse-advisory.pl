@@ -7,10 +7,15 @@
 # and makes wmls out of them
 # 
 # Copyright (C) 2001 Josip Rodin
-# Copyright (c) 2002 Josip Rodin, Martin Schulze
+# Copyright (c) 2002,3 Josip Rodin, Martin Schulze
 # Licensed under the GNU General Public License version 2.
 
+my $debug = 0;
 my $adv = $ARGV[0];
+if ($adv eq "-d") {
+    $debug = 1;
+    $adv = $ARGV[1];
+}
 
 $adv || die "you must specify a parameter (original advisory file)!\n";
 die "that advisory file either ain't there or doesn't have anything in it!\n" unless -s $adv;
@@ -114,10 +119,11 @@ $wml = "$curyear/dsa-$1.wml";
 $data = "$curyear/dsa-$1.data";
 $pagetitle = "DSA-$1-$2 $3";
 
+$data = $wml = "-" if ($debug);
+
 die "$wml already exists!\n" if (-f $wml);
 die "$data already exists!\n" if (-f $data);
 
-# $data = $wml = "-";
 $files =~ s,^</dl>\n\n,,;
 open DATA, ">$data";
 print DATA "<define-tag pagetitle>$pagetitle</define-tag>\n";
