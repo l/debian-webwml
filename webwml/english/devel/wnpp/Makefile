@@ -6,39 +6,20 @@ WMLBASE=../..
 CUR_DIR=devel/wnpp
 SUBS=
 
-NOGENERICINSTDEP := true
+NOGENERICDEP = true
 include $(WMLBASE)/Make.lang
 
-ifneq "$(wildcard wnpp.wml)" ""
-WNPP_FILES := being_adopted.$(LANGUAGE).html being_packaged.$(LANGUAGE).html orphaned.$(LANGUAGE).html \
-	prospective.$(LANGUAGE).html requested.$(LANGUAGE).html rfa_bymaint.$(LANGUAGE).html \
-	rfa_bypackage.$(LANGUAGE).html work_needing.$(LANGUAGE).html
-endif
+DATADIR = $(ENGLISHSRCDIR)/$(CUR_DIR)
 
-$(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
-	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
-	@echo copying $*.$(LANGUAGE).html to $(HTMLDIR)
-	-@install -m 664 -p $*.$(LANGUAGE).html $(HTMLDIR)
-ifeq ($(LANGUAGE),en)
-	@echo making a link $(HTMLDIR)/$*.html -\> $*.$(LANGUAGE).html
-	@ln -sf $*.$(LANGUAGE).html $(HTMLDIR)/$*.html
-endif
+%.$(LANGUAGE).html: %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
+  $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc $(DATADIR)/wnpp.data \
+  $(GETTEXTDEP)
+	$(WML) $(<F)
 
-# There is no wnpp.XY.html destination. This will be run every time,
-# which is what we want
-wnpp.$(LANGUAGE).html: wnpp.wml
-	wml -q $(WMLPROLOG) wnpp.wml
-ifeq "$(LANGUAGE)" "ja"
-	$(foreach file,$(WNPP_FILES),$(WMLBASE)/convert $(file) $(file).tmp;)
-endif
-
-$(HTMLDIR)/wnpp.$(LANGUAGE).html: wnpp.$(LANGUAGE).html
-	@:
-
-install:: $(WNPP_FILES)
-ifneq "$(WNPP_FILES)" ""
-	install -m 664 -p $(WNPP_FILES) $(HTMLDIR)
 ifeq "$(LANGUAGE)" "en"
-	$(foreach file,$(WNPP_FILES),ln -sf $(file) $(HTMLDIR)/$(basename $(basename $(file))).html;)
+$(DATADIR)/wnpp.data:
+	$(WML) $(DATADIR)/wnpp.pl
 endif
-endif
+
+.PHONY: $(DATADIR)/wnpp.data
+.DELETE_ON_ERROR: $(DATADIR)/wnpp.data

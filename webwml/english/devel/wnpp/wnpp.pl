@@ -1,4 +1,6 @@
 # originally written by Marcello Magallon
+# for <perl>
+#use wml::std::tags
 
 <perl>
 
@@ -7,14 +9,15 @@ chomp($host);
 
 use Net::LDAP;
 use Date::Parse;
+use HTML::Entities;
 
 # this is ok this way.  It says which server to query, on which port and what
 # to fetch from it.  The attribs array could be reduced.
 
-$server = "bugs.debian.org";
-$port = "10101";
-$base   = "dc=current,dc=bugs,dc=debian,dc=org";
-$attrs  = [
+my $server = "bugs.debian.org";
+my $port = "10101";
+my $base   = "dc=current,dc=bugs,dc=debian,dc=org";
+my $attrs  = [
     'debbugsID',
     'debbugsTitle',
     'debbugsSubmitter',
@@ -26,74 +29,66 @@ $attrs  = [
     'debbugsMergedWith',
 ];
 
-sub htmlsanit {
-    %escape = ('<' => 'lt', '>' => 'gt', '&' => 'amp', '"' => 'quot');
-    my $in = shift;
-    my $out;
-    while ($in =~ m/^(.*?)([<>&"])(.*)$/s) { #"
-        $out .= $1.'&'.$escape{$2}.';';
-        $in=$3;
-    }
-    return $out . $in;
-}
-
 # The maintainers flat database
-$MAINTAINERS = "$(ENGLISHDIR)/devel/wnpp/Maintainers";
+my $maintainers_file = "$(ENGLISHDIR)/devel/wnpp/Maintainers";
 
-open MAINTAINERS or die "Can't find $MAINTAINERS file at $host: $!\n";
+my %maintainer;
+open MAINTAINERS, $maintainers_file or die "Can't find $maintainers_file file at $host: $!\n";
 while (<MAINTAINERS>) {
     if (/^(\S+)\s+(.*)$/) {
-      $pack = $1;
-		$maint = $2;
-		$maint =~ s/</&lt;/;
-		$maint =~ s/>/&gt;/;
-		$maintainer{$pack} = $maint;
+        my $pack = $1;
+        my $maint = $2;
+        $maint =~ s/</&lt;/;
+        $maint =~ s/>/&gt;/;
+        $maintainer{$pack} = $maint;
     }
 }
 close MAINTAINERS;
 
-$ldap = Net::LDAP->new($server, 'port' => $port) or die "Couldn't make connection to ldap server: $@";
+my $ldap = Net::LDAP->new($server, 'port' => $port) or die "Couldn't make connection to ldap server: $@";
 $ldap->bind;
-$mesg = $ldap->search('base' => $base,
+my $mesg = $ldap->search('base' => $base,
                       'filter' => "(debbugsPackage=wnpp)",
                       'attrs' => $attrs) or die;
 
-$curdate = time;
+my $curdate = time;
 
-ALLPKG: foreach $entry ($mesg->entries) {
-    use integer;
-    my $bugid = @{$entry->get('debbugsID')}[0];
-    next if @{$entry->get('debbugsState')}[0] eq 'done';
-    my $subject = @{$entry->get('debbugsTitle')}[0];
-    # If a bug is merged with another, then only consider the youngest
-    # bug and throw the others away.  This will weed out duplicates.
-    my @mergedwith = @{$entry->get('debbugsMergedWith')};
-    foreach my $merged (@mergedwith) {
-        next ALLPKG if int($merged) < int($bugid);
-    }
-    $age{$bugid} = ($curdate - @{$entry->get('debbugsDate')}[0])/86400;    
-    chomp $subject;
-    $subject = htmlsanit($subject);    
-    # Make order out of chaos    
-    if ($subject =~ m/^(?:ITO|RFA):\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
-        $rfa{$bugid} = $1 . ($2?": ":"") . $2;
-	if (defined($maintainer{$1})) {
-	    push @{$rfabymaint{$maintainer{$1}}}, $bugid;
-	} else {
-	    push @{$rfabymaint{"Unknown"}}, $bugid;
-	}
-    } elsif ($subject =~ m/^O:\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
-        $orphaned{$bugid} = $1 . ($2?": ":"") . $2;
-    } elsif ($subject =~ m/^ITA:(?:\s*(?:ITO|RFA|O|W):)?\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
-        $ita{$bugid} = $1 . ($2?": ":"") . $2;
-    } elsif ($subject =~ m/^ITP:(?:\s*RFP:)?\s*(.*)/) {
-        $itp{$bugid} = join(": ", split(/\s+-+\s+/, $1,2));
-    } elsif ($subject =~ m/^RFP:\s*(.*)/) {
-        $rfp{$bugid} = join(": ", split(/\s+-+\s+/, $1,2)); 
-    } else {
-    	print STDERR "What is this ($bugid): $subject\n" if ( $host ne "klecker.debian.org" );
-    }
-}
+my ( %rfa, %orphaned, %rfabymaint, %rfp, %ita, %itp, %age );
+ ALLPKG: foreach my $entry ($mesg->entries) {
+     use integer;
+     my $bugid = @{$entry->get('debbugsID')}[0];
+     next if @{$entry->get('debbugsState')}[0] eq 'done';
+     my $subject = @{$entry->get('debbugsTitle')}[0];
+     # If a bug is merged with another, then only consider the youngest
+     # bug and throw the others away.  This will weed out duplicates.
+     my @mergedwith = ();
+     @mergedwith = @{$entry->get('debbugsMergedWith')} if $entry->get('debbugsMergedWith');
+     foreach my $merged (@mergedwith) {
+         next ALLPKG if int($merged) < int($bugid);
+     }
+     $age{$bugid} = ($curdate - @{$entry->get('debbugsDate')}[0])/86400;    
+     chomp $subject;
+     $subject = encode_entities($subject);    
+     # Make order out of chaos    
+     if ($subject =~ m/^(?:ITO|RFA):\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
+         $rfa{$bugid} = $1 . ($2?": ":"") . $2;
+         if (defined($maintainer{$1})) {
+             push @{$rfabymaint{$maintainer{$1}}}, $bugid;
+         } else {
+             push @{$rfabymaint{"Unknown"}}, $bugid;
+         }
+     } elsif ($subject =~ m/^O:\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
+         $orphaned{$bugid} = $1 . ($2?": ":"") . $2;
+     } elsif ($subject =~ m/^ITA:(?:\s*(?:ITO|RFA|O|W):)?\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
+         $ita{$bugid} = $1 . ($2?": ":"") . $2;
+     } elsif ($subject =~ m/^ITP:(?:\s*RFP:)?\s*(.*)/) {
+         $itp{$bugid} = join(": ", split(/\s+-+\s+/, $1,2));
+     } elsif ($subject =~ m/^RFP:\s*(.*)/) {
+         $rfp{$bugid} = join(": ", split(/\s+-+\s+/, $1,2)); 
+     } else {
+#         print STDERR "What is this ($bugid): $subject\n" if ( $host ne "klecker.debian.org" );
+     }
+ }
 
 $ldap->unbind;
 
@@ -101,67 +96,75 @@ my (@rfa_bypackage_html, @rfa_bymaint_html, @orphaned_html);
 my (@being_adopted_html, @being_packaged_html, @requested_html);
 
 foreach my $bug (sort { $rfa{$a} cmp $rfa{$b} } keys %rfa) {
-    push @rfa_bypackage_html, "\n<li><a href=\"http://bugs.debian.org/$bug\">$rfa{$bug}</a>";
+    push @rfa_bypackage_html, "\n<li><btsurl bugnr=\"$bug\">$rfa{$bug}</btsurl>";
     (my $pkg = $rfa{$bug}) =~ s/^(.+):\s+.*$/$1/;
-    push @rfa_bypackage_html, " (<a href=\"http://packages.debian.org/$pkg\">package info</a>)";
-    push @rfa_bypackage_html, "\n";
+    push @rfa_bypackage_html, " <pdolink \"$pkg\" />";
+    push @rfa_bypackage_html, "</li>\n";
 }
-if ($#rfa_bypackage_html == -1) { @rfa_bypackage_html = ('<li>No requests for adoption') }
+if ($#rfa_bypackage_html == -1) { @rfa_bypackage_html = ('<li><norfa /></li>') }
 
-foreach $maint (sort keys %rfabymaint) {
+foreach my $maint (sort keys %rfabymaint) {
     push @rfa_bymaint_html, "<li>$maint";
     push @rfa_bymaint_html, "<ul>";
     foreach my $bug (sort { $rfa{$a} cmp $rfa{$b} } @{$rfabymaint{$maint}}) {
-        push @rfa_bymaint_html, "<li><a href=\"http://bugs.debian.org/$bug\">$rfa{$bug}</a>";
+        push @rfa_bymaint_html, "<li><btsurl bugnr=\"$bug\">$rfa{$bug}</btsurl>";
         (my $pkg = $rfa{$bug}) =~ s/^(.+):\s+.*$/$1/;
-        push @rfa_bymaint_html, " (<a href=\"http://packages.debian.org/$pkg\">package info</a>)";
+        push @rfa_bymaint_html, " <pdolink \"$pkg\" /></li>\n";
     }
     push @rfa_bymaint_html, "</ul>";
-    push @rfa_bymaint_html, "\n";
+    push @rfa_bymaint_html, "</li>\n";
 }
-if ($#rfa_bymaint_html == -1) { @rfa_bymaint_html = ('<li>No requests for adoption') }
+if ($#rfa_bymaint_html == -1) { @rfa_bymaint_html = ('<li><norfa /></li>') }
 
 foreach my $bug (sort { $orphaned{$a} cmp $orphaned{$b} } keys %orphaned) {
-    push @orphaned_html, "<li><a href=\"http://bugs.debian.org/$bug\">$orphaned{$bug}</a>";
+    push @orphaned_html, "<li><btsurl bugnr=\"$bug\">$orphaned{$bug}</btsurl>";
     (my $pkg = $orphaned{$bug}) =~ s/^(.+):\s+.*$/$1/;
-    push @orphaned_html, " (<a href=\"http://packages.debian.org/$pkg\">package info</a>)";
-    push @orphaned_html, "\n";
+    push @orphaned_html, " <pdolink \"$pkg\" />";
+    push @orphaned_html, "</li>\n";
 }
-if ($#orphaned_html == -1) { @orphaned_html = ('<li>No orphaned packages') }
+if ($#orphaned_html == -1) { @orphaned_html = ('<li><noo /></li>') }
 
 foreach my $bug (sort { $ita{$a} cmp $ita{$b} } keys %ita) {
     (my $pkg = $ita{$bug}) =~ s/^(.+):\s+.*$/$1/;
     push @being_adopted_html, 
-         "<li><a href=\"http://bugs.debian.org/$bug\">$ita{$bug}</a>";
+         "<li><btsurl bugnr=\"$bug\">$ita{$bug}</btsurl>";
     push @being_adopted_html,
-         " (<a href=\"http://packages.debian.org/$pkg\">package info</a>), ";
-    if ( $age{$bug} == 0 ) { push @being_adopted_html, "in adoption since today." }
-    elsif ( $age{$bug} == 1 ) { push @being_adopted_html, "in adoption since yesterday." }
-    else { push @being_adopted_html, "$age{$bug} days in adoption." };
-         "$age{$bug} days in adoption\n";
-    push @being_adopted_html, "\n";
+         " <pdolink \"$pkg\" />, ";
+    if ( $age{$bug} == 0 ) { push @being_adopted_html, '<adoption-today />' }
+    elsif ( $age{$bug} == 1 ) { push @being_adopted_html, '<adoption-yesterday />' }
+    else { push @being_adopted_html, "<adoption-days \"$age{$bug}\" />" };
+    push @being_adopted_html, "</li>\n";
 }
-if ($#being_adopted_html == -1) { @being_adopted_html = ('<li>No packages waiting to be adopted') }
+if ($#being_adopted_html == -1) { @being_adopted_html = ('<li><noita /></li>') }
 
 foreach (sort { $itp{$a} cmp $itp{$b} } keys %itp) {
     push @being_packaged_html, 
-         "<li><a href=\"http://bugs.debian.org/$_\">$itp{$_}</a>, ";
-    if ( $age{$_} == 0 ) { push @being_packaged_html, "in preparation since today." }
-    elsif ( $age{$_} == 1 ) { push @being_packaged_html, "in preparation since yesterday." }
-    else { push @being_packaged_html, "$age{$_} days in preparation." };
-         "$age{$_} days in preparation\n";
-    push @being_packaged_html, "\n";
+         "<li><btsurl bugnr=\"$_\">$itp{$_}</btsurl>, ";
+    if ( $age{$_} == 0 ) { push @being_packaged_html, '<prep-today />' }
+    elsif ( $age{$_} == 1 ) { push @being_packaged_html, '<prep-yesterday />' }
+    else { push @being_packaged_html, "<prep-days \"$age{$_}\" />" };
+    push @being_packaged_html, "</li>\n";
 }
-if ($#being_packaged_html == -1) { @being_packaged_html = ('<li>No packages waiting to be packaged') }
+if ($#being_packaged_html == -1) { @being_packaged_html = ('<li><noitp /></li>') }
 
 foreach (sort { $rfp{$a} cmp $rfp{$b} } keys %rfp) {
     push @requested_html, 
-         "<li><a href=\"http://bugs.debian.org/$_\">$rfp{$_}</a>, ";
-    if ( $age{$_} == 0 ) { push @requested_html, "requested today." }
-    elsif ( $age{$_} == 1 ) { push @requested_html, "requested yesterday." }
-    else { push @requested_html, "requested $age{$_} days ago.\n" };
-    push @requested_html, "\n";
+         "<li><btsurl bugnr=\"$_\">$rfp{$_}</btsurl>, ";
+    if ( $age{$_} == 0 ) { push @requested_html, '<req-today />' }
+    elsif ( $age{$_} == 1 ) { push @requested_html, '<req-yesterday />' }
+    else { push @requested_html, "<req-days \"$age{$_}\" />" };
+    push @requested_html, "</li>\n";
 }
-if ($#requested_html == -1) { @requested_html = ('<li>No Requested packages') }
+if ($#requested_html == -1) { @requested_html = ('<li><norfp /></li>') }
+
+<protect pass="2">
+print "\\#use wml::debian::wnpp\n";
+print "<define-tag rfa_bypackage><ul>@rfa_bypackage_html</ul></define-tag>\n";
+print "<define-tag rfa_bymaint><ul>@rfa_bymaint_html</ul></define-tag>\n";
+print "<define-tag orphaned><ul>@orphaned_html</ul></define-tag>\n";
+print "<define-tag being_adopted><ul>@being_adopted_html</ul></define-tag>\n";
+print "<define-tag being_packaged><ul>@being_packaged_html</ul></define-tag>\n";
+print "<define-tag requested><ul>@requested_html</ul></define-tag>\n";
+</protect>
 
 </perl>
