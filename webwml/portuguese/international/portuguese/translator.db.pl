@@ -86,7 +86,7 @@ sub init_translators {
 	    diff        => 0,
 	    tdiff       => 0,
 	    file        => 0,
-	    frequency   => ['never', 'monthly', 'weekly', 'daily'],
+	    frequency   => ['nunca', 'mensalmente', 'semanalmente', 'diariamente'],
 	    mailsubject => 'Páginas desatualizadas',
 	    mailbody    => 'portuguese/international/portuguese/mail_user.txt',
 	    compress    => 'none'
