@@ -14,7 +14,10 @@ index.$(LANGUAGE).html: index.wml $(wildcard vote_*.wml) \
 
 ifeq "$(LANGUAGE)" "en"
 
-textfiles := vote_001.quorum.err vote_001.quorum.log vote_001.quorum.txt
+textfiles := vote_001.quorum.err vote_001.quorum.log vote_001.quorum.txt  \
+             Log-debian-dpl-debate.txt  Log-debian-dpl-replies.txt        \
+             Log-debian-dpl-discuss.txt Log-debian-dpl-moderator.txt
+
 desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
 
 install:: $(desttextfiles)
