@@ -29,6 +29,11 @@ RSYNC_HOST=
 RSYNC_DIR=debian/
 EXCLUDE=
 
+# Note: on some non-Debian systems, hostname doesn't accept -f option.
+# If that's the case on your system, make sure hostname prints the full
+# hostname, and remove the -f option. If there's no hostname command,
+# replace `hostname -f` with the hostname manually below.
+
 LOCK="${TO}/Archive-Update-in-Progress-`hostname -f`"
 
 # Get in the right directory and set the umask to be group writable
@@ -41,6 +46,8 @@ if lockfile -! -l 43200 -r 0 "$LOCK"; then
   echo `hostname` is unable to start rsync, lock file exists
   exit 1
 fi
+# Note: on some non-Debian systems, trap doesn't accept "exit" as signal
+# specification. If that's the case on your system, try using "0".
 trap "rm -f $LOCK > /dev/null 2>&1" exit  
 
 set +e
