@@ -1,5 +1,5 @@
 #use wml::debian::template title="Ejemplos"
-#use wml::debian::translation-check translation="1.5"
+#use wml::debian::translation-check translation="1.6"
 
 <H3>Ejemplo de Cómo se Comienza una Traducción</H3>
 
@@ -11,8 +11,13 @@
    mkdir french
    cvs add french
    cd french
-   cp ../english/.wmlrc ../english/Make.* ../english/Makefile .
-   cvs add Make* .wmlrc
+   cp ../english/.wmlrc ../english/Make.* .
+   sed -e 's/german/french/' ../german/Makefile &gt; Makefile
+   mkdir po
+   cvs add Make* .wmlrc po
+   cp Makefile po
+   make -C po init-po
+   cvs add po/Makefile po/*.fr.po
 </pre>
 
 <p>Edite el fichero <tt>.wmlrc</tt> y modifique:
@@ -32,8 +37,8 @@ puede que tenga que cambiar algunas otras variables en ese fichero, para más
 información lea ../Makefile.common y a lo mejor otros ejemplos de trabajo
 (traducciones como la china).
 
-<p>Edite english/template/debian/*.wml y añada traducciones a todos los apartados
-&lt;define-tag ...&gt;. Ésto debería ser simple.
+<p>Vaya al directorio french/po y traduzca las cadenas de los ficheros PO.
+Esto debería ser bastante intuitivo.
 
 <p>Asegúrese siempre de que copia el Makefile a cada directorio que
 traduce. Es necesario porque el programa <code>make</code> es el que
