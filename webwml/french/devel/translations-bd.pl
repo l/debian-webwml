@@ -255,12 +255,12 @@ $translations = {
 'maint-guide' => {
 	'type'			=> 'DDP',
 	'name'			=> 'Debian New Maintainer\'s Guide',
-	'status'		=> 'à relire',
-	'since'			=> '02/07/1999',
+	'status'		=> 'traduction à jour',
+	'since'			=> '31/08/1999',
+	'translation_name'	=> 'Nouveau Guide du Responsable Debian',
 	'translation_maintainer'=> ['Frederic Dumont <Frederic.Dumont@gate71.be>'],
 	'translation_url'	=> 'http://www.info.fundp.ac.be/~fdumont/maint-guide_fr.html/index.html',
 	'translation_dev_url'   => 'http://www.info.fundp.ac.be/~fdumont/maint-guide_fr.sgml',
-	'translation_package'	=> '',
 	'last_translated'	=> '02/07/1998',
 },
 
@@ -748,7 +748,7 @@ $translations = {
 'intro/about' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '25/05/1999',
+	'since'			=> '14/08/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '25/05/1999',
 },
@@ -779,7 +779,7 @@ $translations = {
 
 'international/index' => {
 	'type'			=> 'Web',
-	'status'		=> 'à relire',
+	'status'		=> 'traduction à jour',
 	'since'			=> '13/08/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '13/08/1999',
@@ -898,7 +898,7 @@ $translations = {
 'mirror/ftpmirror' => {
 	'type'			=> 'Web',
 	'status'		=> 'traduction à jour',
-	'since'			=> '13/08/1999',
+	'since'			=> '14/08/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '02/08/1999',
 },
@@ -914,7 +914,7 @@ $translations = {
 'mirror/submit' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '02/06/1999',
+	'since'			=> '15/08/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '02/06/1999',
 },
@@ -922,7 +922,7 @@ $translations = {
 'mirror/types' => {
 	'type'			=> 'Web',
 	'status'		=> 'traduction à jour',
-	'since'			=> '13/08/1999',
+	'since'			=> '14/08/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '02/08/1999',
 },
@@ -930,7 +930,7 @@ $translations = {
 'mirror/webmirror' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '02/08/1999',
+	'since'			=> '15/08/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '02/08/1999',
 },
@@ -1121,4 +1121,70 @@ $translations = {
 	'last_translated'	=> '10/08/1999',
 },
 
+'ports/hurd/hurd-doc-translator' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '31/08/1999',
+	'translation_maintainer'=> ['Jérôme Abela <Jerome.Abela@solsoft.fr>'],
+	'last_translated'	=> '31/08/1999',
+},
+
+'ports/hurd/hurd-doc' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '31/08/1999',
+	'translation_maintainer'=> ['Jérôme Abela <Jerome.Abela@solsoft.fr>'],
+	'last_translated'	=> '31/08/1999',
+},
+
+'ports/hurd/hurd-faq' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '31/08/1999',
+	'translation_maintainer'=> ['Jérôme Abela <Jerome.Abela@solsoft.fr>'],
+	'last_translated'	=> '31/08/1999',
+},
+
+'ports/hurd/hurd-install' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '31/08/1999',
+	'translation_maintainer'=> ['Jérôme Abela <Jerome.Abela@solsoft.fr>'],
+	'last_translated'	=> '31/08/1999',
+},
+
+'ports/hurd/hurd-links' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '31/08/1999',
+	'translation_maintainer'=> ['Jérôme Abela <Jerome.Abela@solsoft.fr>'],
+	'last_translated'	=> '31/08/1999',
+},
+
+'ports/hurd/hurd-news' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '31/08/1999',
+	'translation_maintainer'=> ['Jérôme Abela <Jerome.Abela@solsoft.fr>'],
+	'last_translated'	=> '31/08/1999',
+},
+
+'ports/hurd/index' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '31/08/1999',
+	'translation_maintainer'=> ['Jérôme Abela <Jerome.Abela@solsoft.fr>'],
+	'last_translated'	=> '31/08/1999',
+},
+
 };
+
+#  ports/hurd/hurd-contact.wml (version 1.8)
+#  ports/hurd/hurd-devel-debian.wml (version 1.1)
+#  ports/hurd/hurd-devel-ports.wml (version 1.1)
+#  ports/hurd/hurd-devel-tasks.wml (version 1.1)
+#  ports/hurd/hurd-devel.wml (version 1.1)
+#  ports/hurd/hurd-doc-server.wml (version 1.6)
+#  ports/hurd/hurd-doc-utils.wml (version 1.3)
+
+

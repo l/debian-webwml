@@ -168,6 +168,19 @@ while (($k, $t) = each %$translations) {
 		$t->{$f} = &{$types->{$t->{'type'}}->{$f}}($t, $k, $f);
 	} 
 
+	if ($k eq 'international/French') {
+
+		foreach my $f ('name', 'sub_name', 'revision', 'url', 'cvs_url', 'source_url', 'package') {
+			my $tmp = $t->{$f};
+			$t->{$f} = $t->{'translation_'.$f};
+			$t->{'translation_'.$f} = $tmp;
+		}
+		
+		$t->{'diff'} = '';
+		$t->{'base_revision'} = '';
+		check_file($k, "$root/$from/international/French.wml", $t->{'translation_revision'});
+		$t->{'diff'} = "http://www.debian.org/cgi-bin/cvsweb/webwml/webwml/french/$k.wml$t->{$f}".$t->{'diff'} if ($t->{'diff'});
+	}
 }
 }
 
