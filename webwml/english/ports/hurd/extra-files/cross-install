@@ -33,7 +33,7 @@
 # for example: cross-install /gnu
 #
 #    1 Jan 1999 - v0.0 <Marcus.Brinkmann@ruhr-uni-bochum.de>
-#        Original created by Marcus Brinkmann.
+#                      Original created by Marcus Brinkmann.
 #                 v0.1 Added etc/login and terminal support.
 #                 v0.2 Fixed typo in passwd file.
 #    4 Jan 1999 - v1.0 Added logging and verbose messages.
@@ -92,6 +92,11 @@
 #                      Daniel Burrows.
 #   19 Sep 1999 - v3.3 Create subdirectories when downloading files
 #                      (reported by Peter Hung <peter@wahoo.com.tw>).
+#   27 Sep 1999 - v4.0 Remove terminfo for mach console, use with latest
+#                      ncurses package! Remove /etc/ttys, it is in hurd
+#                      package since a long time. Add new option
+#                      domainname. Don't create /etc/motd.
+#   15 Oct 1999 - v4.1 Add bash symlink *sigh*
 
 plist="base/adduser base/ae base/base-files base/base-passwd base/bash \
        base/bsdutils base/debianutils base/diff base/dpkg-ftp \
@@ -123,6 +128,7 @@ oplist="admin/locales text/less editors/ed libs/gconv-modules"
 # CONFIGURATION
 #
 hostname="hurd"
+domainname="hurdnet.org"
 dpkghurd="`pwd`/dpkg-hurd"
 nativeinstall="`pwd`/native-install"
 log="`pwd`/install.log"
@@ -140,7 +146,8 @@ do
 	exit 1
       fi
       case "$1" in
-        "--hostname") hostname="$2";;
+        "--host"|"--hostname") hostname="$2";;
+	"--domain") domainname="$2";;
 	"--dpkghurd") dpkghurd="$2";;
 	"--nativeinstall") nativeinstall="$2";;
 	"--log") log="$2";;
@@ -154,7 +161,8 @@ do
      echo "Cross-installation script for Debian GNU/Hurd"
      echo
      echo "   Options:"
-     echo " --hostname      name      Set the hostname of the new system"
+     echo " --host          name      Set the hostname of the new system"
+     echo " --domain        name      Set the domainname of the new system"
      echo " --dpkghurd      file      Give the filename of the dpkg-hurd script"
      echo " --nativeinstall file      Give the filename of the native-install script"
      echo " --log           file      Give the filename of the generated output log"
@@ -319,26 +327,6 @@ if [ ! "x${errors}" = x ] ; then
 fi
 
 ##############################
-# Change /etc/motd
-##############################
-echo
-echo "Writing /etc/motd."
-
-cat > ${dest}/etc/motd << _NIL_
-Debian GNU/Hurd
-
-Copyright (C) 1993-1999 Software in the Public Interest,
-                    the Free Software Foundation, and others
-
-Most of the programs included with the Debian GNU/Hurd system are
-freely redistributable; the exact distribution terms for each program
-are described in the individual files in /usr/doc/*/copyright
-
-Debian GNU/Hurd comes with ABSOLUTELY NO WARRANTY, to the extent
-permitted by applicable law.
-_NIL_
-
-##############################
 # Prepare initial translator.
 ##############################
 # FIX: Should be done in the Hurd preinst.
@@ -372,6 +360,15 @@ fi
 if [ ! -e ${dest}/libexec/runsystem -a -e ${dest}/libexec/runsystem.gnu ] ; then
 	echo "Copying libexec/runsystem, so the system can boot."
 	cp ${dest}/libexec/runsystem.gnu ${dest}/libexec/runsystem
+fi
+
+#########################
+# Make sure sh exists
+#########################
+# Explanation: Thorsten did a strange bash NMU.
+if [ ! -e ${dest}/bin/sh ] ; then
+	echo "Creating symlink /bin/sh."
+	ln -s bash ${dest}/bin/sh
 fi
 
 ############################
@@ -459,78 +456,21 @@ echo "Preparing /etc/hosts."
 
 echo "127.0.0.1		localhost ${hostname}" > ${dest}/etc/hosts
 
-##############
-# Setup ttys.
-##############
+#########################
+# Setup /etc/resolv.conf
+#########################
+echo
+echo "Preparing /etc/resolv.conf."
 
-if [ ! -e ${dest}/etc/ttys -a ! -e ${dest}/etc/ttys.dpkg-new ] ; then
-	echo
-	echo Setting up the terminal. Activate it with \"export TERM=mach\" if
-	echo booting single user mode.
-
-	cat << '_NIL_' > ${dest}/etc/ttys
-console "/libexec/getty 9600"           mach    on      secure trusted console
-_NIL_
-
-fi
-
-##################
-# Setup terminal. 
-##################
-# FIX: WILL BE IN NCURSES-BASE.
-# #30109, #31375
-
-if [ ! -e ${dest}/usr/share/terminfo/m ] ; then
-	echo Installing terminfo directory.
-	install -d -m 755 -o root -g root ${dest}/share/terminfo/m
-fi
-
-if [ ! -e ${dest}/usr/share/terminfo/m/mach ] ; then
-	echo Installing terminfo entry for mach.
-	cd ${dest}
-uudecode << '_NIL_'
-begin 666 usr/share/terminfo/m/mach
-M&@$2``D``P"E`.D`;6%C:'Q-86-H($-O;G-O;&4```$````````!`%``"``9
-M`/__```"`/____\$``<`"P#_____#P`@`"(`__\F`/____\H`/__+`#_____
-M,`#_______\T`#D`________________/@!#`/_______T@`________30#_
-M______________________]2`/__5@#_______]8`/__7`#__________V``
-M9`!H`&P`<`!T`'@`?`"``(0`B`",`/__D`"4`)@`G`"@`/_______Z0`____
-M____________________________________J`#_____JP"T`/____^]`,8`
-MSP#__]@`_____________________________________^$`___________C
-M`/__________________________________________________________
-M___________________E``<`#0`;8P`;6TL`&UM*`!M;)6DE<#$E9#LE<#(E
-M9$@`"@`;6T@`"``;6T,`&UM!`!M;30`;6S5M`!M;,6T`&ULW;0`;6S=M`!M;
-M,&T`&ULP;0`;6TP`"``;6SD`&UM"`!M/4``;3UD`&T]1`!M/4@`;3U,`&T]4
-M`!M/50`;3U8`&T]7`!M/6``;6T@`&UM``!M;1``;6T8`&UM5`!M;5@`;6T,`
-M&UM!``T*`!M;)7`Q)61-`!M;)7`Q)61"`!M;)7`Q)61,`!M;)7`Q)61$`!M;
-8)7`Q)61#`!M;)7`Q)61!``H`"0`;6UD`
-`
-end
-_NIL_
-fi
-if [ ! -e ${dest}/usr/share/terminfo/m/mach-bold ] ; then
-        echo Installing terminfo entry for mach-bold.
-        cd ${dest}
-uudecode << '_NIL_'
-begin 666 usr/share/terminfo/m/mach-bold
-M&@$V``D``P"E`.\`;6%C:"UB;VQD?$UA8V@@0V]N<V]L92!W:71H(&)O;&0@
-M:6YS=&5A9"!O9B!U;F1E<FQI;F4```$````````!`%``"``9`/__```"`/__
-M__\$``<`"P#_____#P`@`"(`__\F`/____\H`/__+`#_____,`#_______\T
-M`#D`________________/@!#`$@`_____TT`________4@!7`/__________
-M__________]<`/__8`#_______]B`/__9@#__________V@`;`!P`'0`>`!\
-M`(``A`"(`(P`D`"4`/__F`":`)X`H@"F`/_______ZH`________________
-M________________________K@#_____L0"Z`/_____#`,P`U0#__]X`____
-M_________________________________^<`___________I`/__________
-M____________________________________________________________
-M_______K``<`#0`;8P`;6TL`&UM*`!M;)6DE<#$E9#LE<#(E9$@`"@`;6T@`
-M"``;6T,`&UM!`!M;30`;6S5M`!M;,6T`&ULW;0`;6S=M`!M;,6T`&ULP;0`;
-M6S!M`!M;,&T`&UM,``@`&ULY``H`&T]0`!M/60`;3U$`&T]2`!M/4P`;3U0`
-M&T]5`!M/5@`;3U<`&T]8`!M;2``;6T``"``;6T8`&UM5`!M;5@`;6T,`&UM!
-M``T*`!M;)7`Q)61-`!M;)7`Q)61"`!M;)7`Q)61,`!M;)7`Q)61$`!M;)7`Q
-5)61#`!M;)7`Q)61!``H`"0`;6UD`
-`
-end
-_NIL_
+if [ -e /etc/resolv.conf ] ; then
+	echo Copying this machines resolv.conf to the Hurd parition.
+	echo If this is not correct, please edit.
+	cp /etc/resolv.conf ${dest}/etc/resolv.conf
+else
+	echo Setting up bogus file, please edit.
+	echo "domain ${domainname}" > ${dest}/etc/resolv.conf
+	echo "search localnet" >> ${dest}/etc/resolv.conf
+	echo "nameserver WWW.XXX.YYY.ZZZ" >> ${dest}/etc/resolv.conf
 fi
 
 echo
