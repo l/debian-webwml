@@ -8,7 +8,7 @@
 
 # This is GPL'ed code.
 # Copyright 1998 Paolo Molaro <lupus@debian.org>.
-# Copyright 1999-2002 Peter Karlsson <peterk@debian.org>.
+# Copyright 1999-2003 Peter Karlsson <peterk@debian.org>.
 # Copyright 2000,2001 Martin Quinson <mquinson@ens-lyon.fr>.
 
 # Invocation:
@@ -161,7 +161,7 @@ $to =~ s%/$%%; # Remove slash from the end
 
 if ($to eq '')
 {
-	die "Language not defined in DWW_LANG, language.conf or on command line\n";
+	die "Language not defined in DWWW_LANG, language.conf or on command line\n";
 }
 
 my $langto = $to;
