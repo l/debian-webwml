@@ -36,7 +36,7 @@ $opt_t = "Debian Web site Translation Statistics";
 $opt_v = 0;
 $opt_d = "u";
 $opt_l = undef;
-getopts('h:w:p:t:vd:l:');
+getopts('h:w:p:t:vd:l:') || die;
 #  Replace filename globbing by Perl regexps
 $opt_p =~ s/\,/\\./g;
 $opt_p =~ s/\?/./g;
