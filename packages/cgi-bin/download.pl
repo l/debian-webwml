@@ -141,6 +141,7 @@ my %arches = (
         mips    => 'MIPS',
         mipsel  => 'MIPS (DEC)',
         s390    => 'IBM S/390',
+	hurd-i386 => 'Hurd (i386)',
 );
 
 my $urlbase = "http://www.debian.org";
