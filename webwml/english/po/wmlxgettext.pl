@@ -4,6 +4,7 @@ use strict;
 use Getopt::Std;
 
 use vars qw($opt_p);
+delete @ENV{qw(LANGUAGE LANG LC_ALL LC_COLLATE)};
 
 my $messages = {};
 my @msgids = ();
