@@ -73,8 +73,30 @@ use Time::Local;
          'éÀÌ', 'á×Ç', 'óÅÎ', 'ïËÔ', 'îÏÑ', 'äÅË' ],
 );
 
+# List of long month names (may be used in "spoken" dates).
+%longmoy = (
+	en => [ 'January', 'February', 'March', 'April', 'May', 'June',
+         'July', 'August', 'Septemper', 'October', 'November', 'December' ],
+	ro => [ 'Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie',
+         'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie' ],
+	fi => [ 'tammi', 'helmi', 'maalis', 'huhti', 'touko',
+         'kesä', 'heinä', 'elo', 'syys', 'loka', 'marras', 'joulu' ],
+	hr => [ 'sijeènja', 'veljaèe', 'o¾ujka', 'travnja', 'svibnja', 'lipnja',
+         'srpnja', 'kolovoza', 'rujna', 'listopada', 'studenog', 'prosinca' ],
+	de => [ 'Januar', 'Februar', 'M&auml;rz', 'April', 'Mai', 'Juni', 'Juli',
+         'August', 'September', 'Oktober', 'November', 'Dezember' ],
+	no => [ 'januar', 'februar', 'mars', 'april', 'mai', 'juni',
+         'juli', 'august', 'september', 'oktober', 'november', 'desember' ],
+	sv => [ 'januari', 'februari', 'mars', 'april', 'maj', 'juni',
+         'juli', 'augusti', 'september', 'oktober', 'november', 'december' ],
+	hu => [ 'január', 'február', 'március', 'április', 'május', 'június',
+         'július', 'augusztus', 'szeptember', 'október', 'november', 'december' ],
+);
+
 # Date format (sprintf) for modification dates. If none is supplied, the
 # standard format "Www, Mmm Dd HH:MM:SS UTC Yyyy" is used instead.
+# Available variables are: $mday = day-of-month, $monnr = month number,
+# $mon = month string (from %moy), $year = year number.
 %dateform = (
 	hr => '"%s, %2d. %s %s., %02d:%02d:%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
 	ro => '"%s, %2d. %s %s., %02d:%02d:%02d %s", $wday, $mday, $mon, 1900+$year, $hour, $min, $sec, "UTC"',
@@ -93,6 +115,8 @@ use Time::Local;
 
 # Date format (sprintf) for news items. If none is supplied, the standard
 # format "Dd Mmm Yyyy" is used instead.
+# Available variables are: $mday = day-of-month, $mon = month number,
+# $mon_str = month string (from %moy), $year = year number.
 %newsdateform = (
 	sv => '"%4d-%02d-%02d", $year, $mon, $mday',
 	fi => '"%02d.%02d.%04d", $mday, $mon, $year',
@@ -106,6 +130,22 @@ use Time::Local;
 	ru => '"%02d.%02d.%04d", $mday, $mon, $year',
 );
 
+# Date format (sprintf) for "spoken" dates (such as the current release date).
+# If none is supplied, the date will be converted according to the
+# newsdateform as specified above (i.e, if you want the same format for
+# both, you only need to specify that. Any special cases (such as the
+# st/nd/rd/th suffixes in English) are handled in the spokendate subroutine
+# below.
+# Available variables are: $mday = day-of-month, $mon = month number,
+# $mon_str = month string (from %longmoy), $year = year number.
+%spokendateform = (
+	sv => '"%d %s %d", $mday, $mon_str, $year',
+	no => '"%d. %s %d", $mday, $mon_str, $year',
+#	da => '"%d. %s %d", $mday, $mon_str, $year',	# Missing %longmoy definition!
+	de => '"%d. %s %d", $mday, $mon_str, $year',
+);
+
+# This function creates a last modification time stamp for the web pages.
 sub ctime {
 	my ($time, $sec, $min, $hour, $mday, $monnr, $year, $wday, $yday, $isdst, $mon);
 	# The last modification time of inputfile in ISO dd-mm-yyyy hh:mm:ss format.
@@ -141,15 +181,58 @@ sub ctime {
 	return $str;
 }
 
+# This function creates a terse date string for use in news articles.
+# Input: A date in ISO format (YYYY-MM-DD).
 sub newsdate {
 	my ($year, $mon, $mday) = split /-/, $_[0];
 	# Make sure the date is in the YYYY-MM-DD format
 	return $_[0] unless $mday;
 	return $_[0] if ($year < 1900);
 
+	# Expand month number to string
 	$mon_str = $moy{$CUR_ISO_LANG}[$mon - 1];
+
+	# Return translated date
 	return defined($newsdateform{$CUR_ISO_LANG}) ?
 	       eval("sprintf($newsdateform{$CUR_ISO_LANG})") :
 	       sprintf("%02d %s %04d", $mday, $mon_str, $year);
+}
+
+# This function creates a "spoken" date string for use in text, for example
+# the date of the previous release.
+# Input: A date in ISO format (YYYY-MM-DD).
+sub spokendate {
+	my ($year, $mon, $mday) = split /-/, $_[0];
+	# Make sure the date is in the YYYY-MM-DD format
+	return $_[0] unless $mday;
+	return $_[0] if ($year < 1900);
+
+	# Expand month string
+	$mon_str = $longmoy{$CUR_ISO_LANG}[$mon - 1];
+
+	# Return translated date
+	if ($CUR_ISO_LANG eq "en")
+	{
+		# Special handling of English: suffix the date with "st", "nd", "rd"
+		# or "th", according to the numeric date.
+
+		SWITCH: {
+			$mday .= "st", last SWITCH if ($date % 10 == 1);
+			$mday .= "nd", last SWITCH if ($date % 10 == 2);
+			$mday .= "rd", last SWITCH if ($date % 10 == 3);
+			$mday .= "th";
+		}
+
+		return sprintf("%s %s %d", $mon_str, $mday, $year);
+	}
+	# Add any other special cases here as elsif cases
+	else
+	{
+		# Return translated date, fall back to newsdate if no
+		# spokendateform was defined
+		return defined($spokendateform{$CUR_ISO_LANG}) ?
+		       eval("sprintf($spokendateform{$CUR_ISO_LANG})") :
+		       newsdate($_[0]);
+	}
 }
 </perl>
