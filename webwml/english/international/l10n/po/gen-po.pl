@@ -1,6 +1,7 @@
 #! /usr/bin/perl -w
 
-use lib '../../../../Perl';
+use lib ($0 =~ m|(.*)/|, $1 or ".") ."/../../../../Perl";
+
 use Webwml::L10n::Db;
 
 my $data = Webwml::L10n::Db->new();
@@ -73,8 +74,8 @@ sub get_stats {
                         $list{$lang} = 1;
                         $incl{$lang}  = '' unless defined($incl{$lang});
                         $incl{$lang} .= "<tr><td>".$pkg."</td>".
-                              "<td>".percent_stat($stat)."</td>".
-                              "<td>".show_stat($stat)."</td><td><a href=\"";
+                              "<td>".percent_stat($stat).
+                              " (".show_stat($stat).")</td><td><a href=\"";
                         $incl{$lang} .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root);
                         $incl{$lang} .= $data->pooldir($pkg)."/$link.gz\">$pofile</a></td>".
                               "</tr>\n";
@@ -88,28 +89,28 @@ sub get_stats {
         }
         foreach $lang (@langs) {
                 next unless defined $incl{uc $lang};
-                open (PO, "> gen/$section-$lang.inc")
+                open (GEN, "> gen/$section-$lang.inc")
                         || die "Unable to write $section-$lang.inc";
-                print PO $incl{uc $lang};
-                close (PO);
+                print GEN $incl{uc $lang};
+                close (GEN);
         }
         foreach $lang (@langs) {
                 next unless defined $excl{uc $lang};
-                open (PO, "> gen/$section-$lang.exc")
+                open (GEN, "> gen/$section-$lang.exc")
                         || die "Unable to write $section-$lang.exc";
-                print PO "<ul>\n".$excl{uc $lang}."</ul>\n";
-                close (PO);
+                print GEN "<ul>\n".$excl{uc $lang}."</ul>\n";
+                close (GEN);
         }
-        open (PO, "> gen/$section.exc")
+        open (GEN, "> gen/$section.exc")
                 || die "Unable to write $section.exc";
-        print PO "<ul>\n".$none."</ul>\n" if $none ne '';
-        close (PO);
+        print GEN "<ul>\n".$none."</ul>\n" if $none ne '';
+        close (GEN);
 }
 
 sub show_stat {
         my $stat = shift;
         if ($stat =~ m/^(\d+)t(\d+)f(\d+)u$/) {
-                return "$1 t; $2 f; $3 u;";
+                return "$1t;$2f;$3u";
         } else {
                 return $stat;
         }

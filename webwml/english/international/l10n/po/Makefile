@@ -10,24 +10,20 @@ NOGENERICDEP := true
 
 include $(WMLBASE)/Make.lang
 
-LANGS_PO  := $(shell grep 'po:'        $(ENGLISHDIR)/international/l10n/data/langs|sed 's/po://')
+LANGS_PO  := $(shell grep 'po:' $(ENGLISHDIR)/international/l10n/data/langs | sed -e 's/po: *//')
 
 HTML_PO   := $(foreach lang,$(LANGS_PO),$(lang).$(LANGUAGE).html)
 
 all:: $(HTML_PO)
 
-tmpl.$(LANGUAGE).tmpl: tmpl.src $(ENGLISHDIR)/$(CUR_DIR)/../dtc.def $(ENGLISHDIR)/$(CUR_DIR)/gen/main-en.inc
+tmpl.$(LANGUAGE).tmpl: tmpl.src $(ENGLISHDIR)/$(CUR_DIR)/../dtc.def $(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc
 	wml -o UNDEFu$(LANGUAGECAP):tmpl.$(LANGUAGE).tmpl@g+w tmpl.src
 
 todo.$(LANGUAGE).html: todo.wml $(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc
 	wml -o UNDEFu$(LANGUAGECAP):todo.$(LANGUAGE).html@g+w todo.wml
 	$(WMLBASE)/../touch_translations.pl $(CURDIR)/todo.$(LANGUAGE).html $(LANGUAGE)
 
-index.$(LANGUAGE).html: index.wml
-	wml -o UNDEFu$(LANGUAGECAP):index.$(LANGUAGE).html@g+w index.wml
-	$(WMLBASE)/../touch_translations.pl $(CURDIR)/index.$(LANGUAGE).html $(LANGUAGE)
-
-$(HTML_PO): tmpl.$(LANGUAGE).tmpl $(ENGLISHDIR)/$(CUR_DIR)/gen/main-en.inc
+$(HTML_PO): tmpl.$(LANGUAGE).tmpl $(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc
 	langs='$(LANGS_PO)'; for l in $$langs; do \
    test -f gen/main-$$l.inc || :> gen/main-$$l.inc; \
    test -f gen/contrib-$$l.inc || :> gen/contrib-$$l.inc; \
@@ -45,7 +41,7 @@ $(HTML_PO): tmpl.$(LANGUAGE).tmpl $(ENGLISHDIR)/$(CUR_DIR)/gen/main-en.inc
        tmpl.$(LANGUAGE).tmpl > $$l.$(LANGUAGE).html; \
    done
 
-$(ENGLISHDIR)/$(CUR_DIR)/gen/main-en.inc $(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc: $(ENGLISHDIR)/$(CUR_DIR)/../data/unstable.ftp-master $(ENGLISHDIR)/$(CUR_DIR)/../data/unstable.non-US
+$(ENGLISHDIR)/$(CUR_DIR)/gen/main.exc: $(ENGLISHDIR)/$(CUR_DIR)/gen-po.pl $(ENGLISHDIR)/$(CUR_DIR)/../data/unstable.ftp-master $(ENGLISHDIR)/$(CUR_DIR)/../data/unstable.non-US
 	cd $(ENGLISHDIR)/$(CUR_DIR) && perl gen-po.pl
 
 $(ENGLISHDIR)/$(CUR_DIR)/../data/langs: $(ENGLISHDIR)/$(CUR_DIR)/../data/unstable.ftp-master $(ENGLISHDIR)/$(CUR_DIR)/../data/unstable.non-US
