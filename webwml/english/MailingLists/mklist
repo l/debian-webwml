@@ -355,8 +355,9 @@ END
 		@lists = ();
 		foreach $l (keys(%list)) {
 			next if (!$l || ($list{$l}->{'Section'} ne $section));
-			next if (! exists $list{$l}->{'Description'});
-			# next if (exists $list{$l}->{'Websubscribe'} && $list{$l}->{'Websubscribe'} eq "no");
+			die "$l has no description!\n" unless exists $list{$l}->{'Description'};
+			next unless exists $list{$l}->{'Moderated'}; # weeds out external lists
+			next if (exists $list{$l}->{'Websubscribe'} && $list{$l}->{'Websubscribe'} ne "yes");
 			push(@lists, $l);
 		}
 		@lists = sort @lists;
