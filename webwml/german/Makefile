@@ -26,7 +26,7 @@ all: $(HTMLFILES) $(IMGDEST)
 	( cd logos; $(MAKE) )
 	( cd ports; $(MAKE) )
 	( cd security; $(MAKE) )
-	( cd events; $(MAKE) )
+	# ( cd events; $(MAKE) )
 
 include $(BASE)/Make.dep.generic
 include $(BASE)/Make.dep.templ
