@@ -11,7 +11,7 @@ use Date::Parse;
 # this is ok this way.  It says which server to query, on which port and what
 # to fetch from it.  The attribs array could be reduced.
 
-$server = "master.debian.org";
+$server = "bugs.debian.org";
 $port = "10101";
 $base   = "dc=current,dc=bugs,dc=debian,dc=org";
 $attrs  = [
