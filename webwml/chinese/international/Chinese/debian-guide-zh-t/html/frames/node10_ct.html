@@ -1,0 +1,604 @@
+
+<!--Converted with LaTeX2HTML 99.2beta6 (1.42)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Contents of 6 Using the Shell</TITLE>
+<META NAME="description" CONTENT="Contents of 6 Using the Shell">
+<META NAME="keywords" CONTENT="debian-tutorial-zh_TW-html">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=big5">
+<META NAME="Generator" CONTENT="LaTeX2HTML v99.2beta6">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="debian-tutorial-zh_TW-html.css">
+
+<LINK REL="next" HREF="node11_mn.html">
+<LINK REL="previous" HREF="node9_mn.html">
+<LINK REL="up" HREF="node4_mn.html">
+<LINK REL="next" HREF="node11_mn.html">
+</HEAD>
+ 
+<BODY bgcolor="#ffffff" text="#000000" link="#9944EE" vlink="#0000ff" alink="#00ff00">
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html742" HREF="node10_ct.html#SECTION04610000000000000000" TARGET="contents"><SPAN CLASS="arabic">1</SPAN> Environment Variables</A>
+<LI><A NAME="tex2html743" HREF="node10_ct.html#SECTION04620000000000000000" TARGET="contents"><SPAN CLASS="arabic">2</SPAN> Where Commands Reside: The <TT>PATH</TT> Variable</A>
+<LI><A NAME="tex2html744" HREF="node10_ct.html#SECTION04630000000000000000" TARGET="contents"><SPAN CLASS="arabic">3</SPAN> Configuration Files</A>
+<UL>
+<LI><A NAME="tex2html745" HREF="node10_ct.html#SECTION04631000000000000000" TARGET="contents"><SPAN CLASS="arabic">1</SPAN> System-Wide Versus User-Specific
+<BR>
+Configuration</A>
+</UL>
+<LI><A NAME="tex2html746" HREF="node10_ct.html#SECTION04640000000000000000" TARGET="contents"><SPAN CLASS="arabic">4</SPAN> Aliases </A>
+<LI><A NAME="tex2html747" HREF="node10_ct.html#SECTION04650000000000000000" TARGET="contents"><SPAN CLASS="arabic">5</SPAN> Controlling Input and Output</A>
+<UL>
+<LI><A NAME="tex2html748" HREF="node10_ct.html#SECTION04651000000000000000" TARGET="contents"><SPAN CLASS="arabic">1</SPAN> <TT>stdin</TT>, <TT>stdout</TT>, Pipelines, and Redirection</A>
+</UL>
+<LI><A NAME="tex2html749" HREF="node10_ct.html#SECTION04660000000000000000" TARGET="contents"><SPAN CLASS="arabic">6</SPAN> Filename Expansion</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A NAME="SECTION04600000000000000000"></A><A NAME="shell"></A><A NAME="2183"></A>
+<BR>
+<SPAN CLASS="arabic">6</SPAN> Using the Shell
+</H1>
+
+<P>
+As you have been reading this book, you've been interacting with the shell already.
+The shell is the program that reads your commands and then does what you ask
+it to. In this chapter, you explore the shell in greater detail, with a special
+eye towards customizing the shell to work as you want it to.
+
+<P>
+
+<H1><A NAME="SECTION04610000000000000000"></A><A NAME="2184"></A>
+<BR>
+<SPAN CLASS="arabic">1</SPAN> Environment Variables
+</H1>
+
+<P>
+<A NAME="2185"></A><A NAME="2186"></A><A NAME="2187"></A><A NAME="2188"></A><A NAME="2189"></A>Every process has an <SPAN  CLASS="textit">environment</SPAN> associated with it. An environment
+is a collection of <SPAN  CLASS="textit">environment variables</SPAN>. A variable is a changeable
+value with a fixed name. For example, the name <TT>EMAIL</TT> could refer to
+the value <TT>joe@nowhere.com</TT>. The value can vary; <TT>EMAIL</TT> could
+also refer to <TT>jane@somewhere.com</TT>.
+
+<P>
+Because your shell is a process like any other, it has an environment. You can
+view your shell's environment by entering the <TT>printenv</TT> command.
+
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="Sample_printenv_output"></A><A NAME="4561"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 6.1:</STRONG>
+Sample <TT>printenv</TT> output<A NAME="2200"></A></CAPTION>
+<TR><TD><IMG
+ WIDTH="331" HEIGHT="426" BORDER="0"
+ SRC="img5.png"
+ ALT="\begin{figure}\par\par\begin{list}{}{
+\setlength{\rightmargin}{\leftmargin} \ra...
+...ables}\index{shells!environments}
+\par\_=/usr/bin/printenv\end{list}\end{figure}"></TD></TR>
+</TABLE>
+</DIV><P></P>
+Figure <A HREF="node10_ct.html#Sample_printenv_output">6.1</A> on page <A HREF="node10_ct.html#Sample_printenv_output"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>
+has some sample output from <TT>printenv</TT>. On your system, the output will
+be different but similar.
+
+<P>
+Environment variables are one way to configure the system. For example, the
+<TT>EDITOR</TT> variable lets you select your preferred editor for posting news,
+writing e-mail, and so on.
+
+<P>
+Setting environment variables is simple. For practice, try customizing your
+shell's prompt and your text file viewer with environment variables. First,
+let's get a bit of background information.
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>man&nbsp;less
+</DD>
+</DL><A NAME="2215"></A><A NAME="2216"></A><A NAME="2217"></A><A NAME="2218"></A><A NAME="2219"></A><A NAME="2220"></A><A NAME="2221"></A>This command lets you view the online manual for the <TT>less</TT> command.
+In order to show you the text one screenful at a time, <TT>man</TT> invokes
+a <SPAN  CLASS="textit">pager</SPAN> that shows you a new page of text each time you press the space
+bar. By default, it uses the pager called <TT>more</TT>. 
+
+<P>
+<A NAME="2226"></A>Go ahead and glance over the man page for
+<TT>less</TT>, which is an enhanced pager. Scroll to a new page by pressing
+space; press <TT>q</TT> to quit. <TT>more</TT> will also quit automatically
+when you reach the end of the man page. 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>export&nbsp;PAGER=less
+</DD>
+</DL>After reading about the advantages of <TT>less</TT>, you might want to use it
+to read man pages. To do this, you set the environment variable <TT>PAGER</TT>. 
+
+<P>
+<A NAME="2234"></A><A NAME="2235"></A>The command to set an environment variable within <TT>bash</TT> always has this
+format:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>export&nbsp;NAME=value
+</DD>
+</DL><TT>export</TT> means to move the variable from the shell into the environment.
+This means that programs other than the shell (for instance, a file
+viewer) will be able to access it. <A NAME="2240"></A><A NAME="2241"></A><A NAME="2242"></A><A NAME="2243"></A><A NAME="2244"></A><A NAME="2245"></A>
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>echo&nbsp;$PAGER
+</DD>
+</DL>This is the easiest way to see the value of a variable. <TT>$PAGER</TT> tells
+the shell to insert the value of the <TT>PAGER</TT> variable <SPAN  CLASS="textit">before</SPAN>
+invoking the command. <TT>echo</TT> echoes back its argument: in this case,
+it echoes the current <TT>PAGER</TT> value, <TT>less</TT>. 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>man&nbsp;more
+</DD>
+</DL>Displays the <TT>more</TT> manual. This time, <TT>man</TT> should have invoked
+the <TT>less</TT> pager. 
+
+<P>
+<TT>less</TT> has lots of features that <TT>more</TT> lacks. For example, you
+can scroll backward with the <TT>b</TT> key. You can also move up and down (even
+sideways) with the arrow keys. <TT>less</TT> won't exit when it reaches the
+end of the man page; it will wait for you to press <TT>q</TT>.
+
+<P>
+You can try out some <TT>less</TT>-specific commands, like <TT>b</TT>, to verify
+that they don't work with <TT>more</TT> and that you are indeed using <TT>more</TT>. 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>unset&nbsp;PAGER
+</DD>
+</DL>If you don't want to specify a pager anymore, you can <TT>unset</TT> the variable.
+<TT>man</TT> will then use <TT>more</TT> by default, just as it did before you
+set the variable. 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>echo&nbsp;$PAGER
+</DD>
+</DL>Because <TT>PAGER</TT> has been unset, <TT>echo</TT> won't print anything. 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>PS1=hello:
+</DD>
+</DL>
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="FIG:_changing_shell_prompt"></A><A NAME="4562"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 6.2:</STRONG>
+Changing the prompt<A NAME="2281"></A><A NAME="2282"></A></CAPTION>
+<TR><TD><IMG
+ WIDTH="232" HEIGHT="127" BORDER="0"
+ SRC="img6.png"
+ ALT="\begin{figure}\par\par\begin{list}{}{
+\setlength{\rightmargin}{\leftmargin} \ra...
+...o~My~prompt~is~\$PS1}
+\par My~prompt~is~hello:
+\par hello:\end{list}\end{figure}"></TD></TR>
+</TABLE>
+</DIV><P></P>
+Just for fun, change your shell prompt. <TT>$</TT> should now change; see Figure
+<A HREF="node10_ct.html#FIG:_changing_shell_prompt">6.2</A> for details.
+
+<P>
+<TT>export</TT> is not necessary, because you're changing the shell's own behavior.
+There's no reason to export the variable into the environment for other programs
+to see. Technically, <TT>PS1</TT> is a <SPAN  CLASS="textit">shell variable</SPAN> rather than an
+environment variable. 
+
+<P>
+If you wanted to, you could <TT>export</TT> the shell variable, transforming
+it into an environment variable. If you do this, programs you run from the shell
+can see it. <A NAME="2295"></A><A NAME="2296"></A><A NAME="2297"></A>
+
+<P>
+
+<H1><A NAME="SECTION04620000000000000000"></A><A NAME="2299"></A>
+<BR>
+<SPAN CLASS="arabic">2</SPAN> Where Commands Reside: The <TT>PATH</TT> Variable
+</H1>
+
+<P>
+<A NAME="2300"></A><A NAME="2301"></A><A NAME="2302"></A><A NAME="2303"></A><A NAME="2304"></A><A NAME="2305"></A>
+When you type a command into the shell, it has to find the program on your hard
+disk before executing it. If the shell had to look all over the disk, it would
+be very slow; instead, it looks in a list of directories contained in the <TT>PATH</TT>
+environment variable. This list of directories makes up the shell's <SPAN  CLASS="textit">search
+path</SPAN>; when you enter a command, it goes through each one in turn looking for
+the program you asked to run. 
+
+<P>
+You may need to change the <TT>PATH</TT> variable if you install programs yourself
+in a non-standard location. The value of <TT>PATH</TT> is a colon-separated
+list of directories. The default value on Debian systems is as follows:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><SMALL CLASS="SMALL">/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games</SMALL>
+<P>
+
+</DD>
+</DL>This value is defined in the file <TT>/etc/profile</TT> and applies to all users.
+You can easily change the value, just as you can change any environment variable. 
+If you type the command <TT>ls</TT>, the shell will first look in <TT>/usr/local/bin</TT>;
+<TT>ls</TT> isn't there, so it will try <TT>/usr/bin</TT>; when that fails,
+it will check <TT>/bin</TT>. There it will discover <TT>/bin/ls</TT>, stop its
+search, and execute the program <TT>/bin/ls</TT>. If <TT>/usr/bin/X11/ls</TT>
+existed (it doesn't, but pretend), it would be ignored.
+
+<P>
+You can see which <TT>ls</TT> the shell is going to use with the <TT>type<A NAME="2324"></A></TT>
+command. <TT>type&nbsp;ls</TT> will give you the answer <TT>/bin/ls</TT>. Try it
+yourself. <A NAME="2327"></A><A NAME="2328"></A><A NAME="2329"></A><A NAME="2330"></A><A NAME="2331"></A><A NAME="2332"></A>
+
+<P>
+Try asking where <TT>type</TT> itself resides:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$&nbsp;type&nbsp;type
+
+<P>
+type&nbsp;is&nbsp;a&nbsp;shell&nbsp;builtin&nbsp;
+</DD>
+</DL><TT>type</TT> isn't actually a program; it's a function provided by the shell.
+However, you use it just like an external program.
+
+<P>
+<A NAME="2337"></A><A NAME="2338"></A><A NAME="2339"></A><A NAME="2340"></A>There are a number of commands like this; type <TT>man&nbsp;builtins</TT> to read
+the man page describing them. In general, you don't need to know whether a command
+is a builtin or a real program; however, builtins will not show up in the output
+of <TT>ps</TT> or <TT>top</TT> because they aren't separate processes. They're
+just part of the shell. 
+
+<P>
+
+<H1><A NAME="SECTION04630000000000000000">
+<SPAN CLASS="arabic">3</SPAN> Configuration Files</A>
+</H1>
+
+<P>
+<A NAME="2345"></A><A NAME="2346"></A>Many applications on Linux systems allow you to alter how they behave at certain
+times by altering files containing configuration information. These configuration
+files may contain application start-up information, run-time settings and application
+shutdown settings. In general, a configuration filename is based on the name
+of the application for which it contains settings. Such a naming convention
+allows you to more readily determine which configuration file contains settings
+for a given application.
+
+<P>
+
+<H2><A NAME="SECTION04631000000000000000">
+<SPAN CLASS="arabic">1</SPAN> System-Wide Versus User-Specific
+<BR>
+Configuration</A>
+</H2>
+
+<P>
+<A NAME="2348"></A><A NAME="2349"></A><A NAME="2350"></A><A NAME="2351"></A><A NAME="2352"></A><A NAME="2353"></A>It's important to remember that there are two different kinds of configurations
+on a Debian system. <SPAN  CLASS="textit">System-wide configuration</SPAN> affects all users. System-wide
+settings are made in the <TT>/etc</TT> directory, so you generally must be root
+in order to change system-wide settings. You might configure the way the system
+connects to the Internet, for example, or have web browsers on the system always
+start on the company home page. Since you want these settings to apply to all
+users, you make the changes in <TT>/etc</TT>. Sample configuration files in
+<TT>/etc</TT> include <TT>/etc/X11/XF86Config</TT>, <TT>/etc/lynx.cfg</TT>,
+and <TT>/etc/ppp/options</TT>. In fact, nearly all the files in <TT>/etc</TT>
+are configuration files. 
+
+<P>
+<A NAME="2362"></A><A NAME="2363"></A><A NAME="2364"></A><A NAME="2365"></A><A NAME="2366"></A><A NAME="2367"></A><SPAN  CLASS="textit">User configuration</SPAN> affects only a single user. Dotfiles <A NAME="2369"></A><A NAME="2370"></A><A NAME="2371"></A><A NAME="2372"></A>are used for
+user configuration. For example, the file <TT>~/.newsrc</TT> stores a list
+of which USENET (discussion group) articles you have read and which groups you
+subscribe to. This allows news readers such as&nbsp;<TT>trn</TT> or GNUS to display
+unread articles in the groups you're interested in. This information will be
+different for every user on the system, so each user has his own <TT>.newsrc</TT>
+file in his home directory.
+
+<P>
+
+<H1><A NAME="SECTION04640000000000000000">
+<SPAN CLASS="arabic">4</SPAN> Aliases </A>
+</H1>
+
+<P>
+<A NAME="2377"></A><A NAME="2378"></A><A NAME="2379"></A><A NAME="2380"></A><A NAME="2381"></A><A NAME="2382"></A><A NAME="2383"></A>If you use the same command often, you might get tired of typing it. <TT>bash</TT>
+lets you write shorter <SPAN  CLASS="textit">aliases</SPAN> for your commands.
+
+<P>
+Say you always use the <TT>-almost-all</TT> and <TT>-color=auto</TT> options
+to <TT>ls</TT>. You quickly get tired of typing <TT>ls&nbsp;-almost-all&nbsp;-color=auto</TT>.
+So you make an alias<A NAME="2391"></A>:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>alias&nbsp;myls='ls&nbsp;-almost-all&nbsp;-color=auto'&nbsp;
+</DD>
+</DL>Now you can type <TT>myls</TT> instead of the full command. To see what <TT>myls</TT>
+really is, run the command <TT>type&nbsp;myls</TT>. To see a list of aliases you've
+defined, simply type <TT>alias</TT> on a line by itself.
+
+<P>
+
+<H1><A NAME="SECTION04650000000000000000">
+<SPAN CLASS="arabic">5</SPAN> Controlling Input and Output</A>
+</H1>
+
+<P>
+Throughout your experiences with Linux, you will most likely find that manipulating
+application input and output can be a very powerful thing to do. This section
+describes some of the things that controlling input and output can do for you.
+
+<P>
+
+<H2><A NAME="SECTION04651000000000000000"></A><A NAME="2403"></A><A NAME="2404"></A><A NAME="2405"></A>
+<BR>
+<SPAN CLASS="arabic">1</SPAN> <TT>stdin</TT>, <TT>stdout</TT>, Pipelines, and Redirection
+</H2>
+
+<P>
+<A NAME="2406"></A><A NAME="2407"></A><A NAME="2408"></A><A NAME="2409"></A><A NAME="2410"></A><A NAME="2411"></A><A NAME="2412"></A><A NAME="2413"></A><A NAME="2414"></A>Every process has at least three connections to the outside world. The <SPAN  CLASS="textit">standard
+input</SPAN> is one source of the process's data; the <SPAN  CLASS="textit">standard output</SPAN> is
+one place the process sends data; and the <SPAN  CLASS="textit">standard error</SPAN> is a place
+the process can send error messages. (These are often abbreviated <TT>stdin</TT>,
+<TT>stdout</TT>, and <TT>stderr</TT>.) 
+
+<P>
+The words ``source'' and ``place'' are intentionally vague. These standard
+input and output locations can be changed by the user; they could be the screen,
+the keyboard, a file, even a network connection. You can specify which locations
+to use. 
+
+<P>
+When you run a program from the shell, usually standard input comes from your
+keyboard, and standard output and error both go to your screen. However, you
+can ask the shell to change these defaults. 
+
+<P>
+For example, the <TT>echo</TT> command sends it output to standard output, normally
+the screen. <A NAME="2422"></A><A NAME="2423"></A><A NAME="2424"></A><A NAME="2425"></A><A NAME="2426"></A><A NAME="2427"></A>But you can send it to a file instead with the <SPAN  CLASS="textit">output redirection
+operator</SPAN>, <TT>&gt;</TT>. For example, to put the word ``Hello'' in the file
+<TT>myfile</TT>, use this command:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>echo&nbsp;Hello&nbsp;&gt;&nbsp;myfile
+</DD>
+</DL>Use <TT>cat</TT> or your text file pager (<TT>more</TT> or <TT>less</TT>) to
+view <TT>myfile</TT>'s contents; see Figure <A HREF="node10_ct.html#FIG:_Redirecting_Output">6.3</A> on
+page <A HREF="node10_ct.html#FIG:_Redirecting_Output"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>.
+
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="FIG:_Redirecting_Output"></A><A NAME="4570"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 6.3:</STRONG>
+Redirecting output</CAPTION>
+<TR><TD><IMG
+ WIDTH="175" HEIGHT="83" BORDER="0"
+ SRC="img7.png"
+ ALT="\begin{figure}\par\par\begin{list}{}{
+\setlength{\rightmargin}{\leftmargin} \ra...
+...llo~&gt;~myfile}
+\par\$~\textbf{cat~myfile}
+\par Hello
+\par\$\end{list}\end{figure}"></TD></TR>
+</TABLE>
+</DIV><P></P>
+
+<P>
+You can change the standard input of a command with the <SPAN  CLASS="textit">input redirection
+operator</SPAN>, <TT>&lt;</TT>. For example,&nbsp;<TT>cat&nbsp;&lt;&nbsp;myfile</TT> will display the contents
+of <TT>myfile</TT>. This is not useful in practice; for convenience, the <TT>cat</TT>
+command accepts a filename argument. So you can simply say <TT>cat&nbsp;myfile</TT>,
+and the effect will be the same. redirection operators<A NAME="2453"></A><A NAME="2454"></A><A NAME="2455"></A><A NAME="2456"></A><A NAME="2457"></A>
+
+<P>
+Under the hood, <TT>cat&nbsp;&lt;&nbsp;myfile</TT> means that the shell opens <TT>myfile</TT>
+and then feeds its contents to the standard input of <TT>cat</TT>.&nbsp;<TT>cat
+myfile</TT>, without the redirection operator, means that the <TT>cat</TT> command
+receives one argument (<TT>myfile</TT>) opens the file itself, and then displays
+the file.
+
+<P>
+There's a reason for the double functionality, however. For example, you can
+connect the standard output of one command to the standard input of another.
+<A NAME="2464"></A><A NAME="2465"></A><A NAME="2466"></A><A NAME="2467"></A><A NAME="2468"></A>This is called a <SPAN  CLASS="textit">pipeline</SPAN>, and it uses the <SPAN  CLASS="textit">pipe operator</SPAN><A NAME="tex2html36" HREF="footnode_mn.html#foot4735" TARGET="footer"><SUP><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="footnote.png"></SUP></A>, <TT>|</TT>.
+
+<P>
+<A NAME="2473"></A><A NAME="2474"></A><A NAME="2475"></A><A NAME="2476"></A><A NAME="2477"></A><A NAME="2478"></A>Perhaps you want to see the GNU General Public License in reverse. To do this,
+you use the <TT>tac</TT> command (it's <TT>cat</TT>, only backward). Try it
+out:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>tac&nbsp;/usr/doc/copyright/GPL&nbsp;
+</DD>
+</DL>Unfortunately, it goes by too quickly to read. So you only get to see a couple
+of paragraphs. The solution is a pipeline:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>tac&nbsp;/usr/doc/copyright/GPL&nbsp;|&nbsp;less
+</DD>
+</DL>This takes the standard output of <TT>tac</TT>, which is the GPL in reverse,
+and sends it to the standard input of <TT>less</TT>. 
+
+<P>
+You can chain as many commands together as you like. Say you have an inexplicable
+desire to replace every <TT>G</TT> with <TT>Q</TT>. For this you use the command
+<TT>tr&nbsp;G&nbsp;Q</TT>, like this: 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>tac&nbsp;/usr/doc/copyright/GPL&nbsp;|&nbsp;tr&nbsp;G&nbsp;Q&nbsp;|&nbsp;less&nbsp;
+</DD>
+</DL>You could get the same effect using temporary files and redirection, for example:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>tac&nbsp;/usr/doc/copyright/GPL&nbsp;&gt;&nbsp;tmpfile
+
+<P>
+tr&nbsp;G&nbsp;Q&nbsp;&lt;&nbsp;tmpfile&nbsp;&gt;&nbsp;tmpfile2
+
+<P>
+less&nbsp;&lt;&nbsp;tmpfile2
+
+<P>
+rm&nbsp;tmpfile&nbsp;tmpfile2&nbsp;
+</DD>
+</DL>Clearly a pipeline is more convenient. 
+
+<P>
+
+<H1><A NAME="SECTION04660000000000000000"></A><A NAME="2494"></A><A NAME="expansion"></A>
+<BR>
+<SPAN CLASS="arabic">6</SPAN> Filename Expansion
+</H1>
+
+<P>
+<A NAME="2496"></A><A NAME="2497"></A><A NAME="2498"></A><A NAME="2499"></A><A NAME="2500"></A><A NAME="2501"></A><A NAME="2502"></A>Often you want a command to work with a group of files. <SPAN  CLASS="textit">Wildcards</SPAN> are
+used to create a <SPAN  CLASS="textit">filename expansion pattern</SPAN>: a series of characters
+and wildcards that expands to a list of filenames. For example, the pattern
+<TT>/etc/*</TT> expands to a list of all<A NAME="tex2html37" HREF="footnode_mn.html#foot4736" TARGET="footer"><SUP><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="footnote.png"></SUP></A> the files in <TT>/etc</TT>.
+
+<P>
+<TT>*</TT> is a <A NAME="2510"></A><A NAME="2511"></A><A NAME="2512"></A><A NAME="2513"></A><A NAME="2514"></A><A NAME="2515"></A>wildcard that can stand for any series of characters, so the
+pattern <TT>/etc/*</TT> will expand to a list of all the filenames beginning
+with <TT>/etc/</TT>.
+
+<P>
+This filename list is most useful as a set of arguments for a command. For example,
+the <TT>/etc</TT> directory contains a series of subdirectories called <TT>rc0.d</TT>,
+<TT>rc1.d</TT>, etc. Normally to view the contents of these, you would type
+the following:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>ls&nbsp;/etc/rc0.d&nbsp;/etc/rc1.d&nbsp;/etc/rc2.d&nbsp;/etc/rc3.d
+
+<P>
+ls&nbsp;/etc/rc4.d&nbsp;/etc/rc5.d&nbsp;/etc/rc6.d&nbsp;/etc/rcS.d
+</DD>
+</DL><A NAME="2523"></A><A NAME="2524"></A><A NAME="2525"></A><A NAME="2526"></A>This is tedious. Instead, you can use the <TT>?</TT> wildcard as shown here:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>ls&nbsp;/etc/rc?.d
+</DD>
+</DL><TT>/etc/rc?.d</TT> expands to a list of filenames that begin with <TT>rc</TT>,
+followed by any single character, followed by <TT>.d</TT>.
+
+<P>
+Available wildcards include the following:
+
+<P>
+<DL>
+<DT><STRONG>*</STRONG></DT>
+<DD>Matches any group of 0 or more characters.
+</DD>
+<DT><STRONG>?</STRONG></DT>
+<DD>Matches exactly one character.
+</DD>
+<DT><STRONG>[...]</STRONG></DT>
+<DD>If you enclose some characters in brackets, the result is a wildcard<A NAME="2537"></A><A NAME="2538"></A><A NAME="2539"></A><A NAME="2540"></A><A NAME="2541"></A><A NAME="2542"></A>
+that matches those characters. For example, <TT>[abc]</TT> matches either
+a, or b, or c. If you add a <TT>^</TT> after the first bracket, the sense
+is reversed; so <TT>[^abc]</TT> matches any character that is not a,
+b, or c. You can include a range, such as <TT>[a-j]</TT>, which matches
+anything between a and j. The match is case sensitive, so to allow any letter,
+you must use <TT>[a-zA-Z]</TT>. 
+</DD>
+</DL>
+Expansion patterns are simple once you see some concrete examples:
+
+<P>
+<DL>
+<DT><STRONG>*.txt</STRONG></DT>
+<DD>This will give you a list of all filenames that end in <TT>.txt</TT>,
+since the <TT>*</TT> matches anything at all. 
+</DD>
+<DT><STRONG>*.[hc]</STRONG></DT>
+<DD>This gives a list of filenames that end in either <TT>.h</TT>
+or <TT>.c</TT>. 
+</DD>
+<DT><STRONG>a??</STRONG></DT>
+<DD>This gives you all three-letter filenames that begin with <TT>a</TT>. 
+</DD>
+<DT><STRONG>[^a]??</STRONG></DT>
+<DD>This gives you all three-letter filenames that do <SPAN  CLASS="textit">not
+begin</SPAN> with <TT>a</TT>. 
+</DD>
+<DT><STRONG>a*</STRONG></DT>
+<DD>This gives you every filename that starts with <TT>a</TT>, regardless
+of how many letters it has. 
+</DD>
+</DL>
+
+<P>
+
+<P>
+
+<HR>
+<ADDRESS>
+John Goerzen / Ossama Othman / Debian 中文計劃
+</ADDRESS>
+</BODY>
+</HTML>
