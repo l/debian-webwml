@@ -7,21 +7,21 @@ CUR_DIR=devel/wnpp
 SUBS=
 
 NOGENERICINSTDEP := true
-WNPP_FILES := being_adopted.html being_packaged.html orphaned.html \
-	prospective.html requested.html rfa_bymaint.html \
-	rfa_bypackage.html withdrawn.html work_needing.html
-
 include $(WMLBASE)/Make.lang
+
+WNPP_FILES := being_adopted.$(LANGUAGE).html being_packaged.$(LANGUAGE).html orphaned.$(LANGUAGE).html \
+	prospective.$(LANGUAGE).html requested.$(LANGUAGE).html rfa_bymaint.$(LANGUAGE).html \
+	rfa_bypackage.$(LANGUAGE).html withdrawn.$(LANGUAGE).html work_needing.$(LANGUAGE).html
 
 $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
 	@echo copying $*.$(LANGUAGE).html to $(HTMLDIR)
-	-@cp $*.$(LANGUAGE).html $(HTMLDIR)
+	-@install -m 664 -p $*.$(LANGUAGE).html $(HTMLDIR)
 ifeq ($(LANGUAGE),en)
 	@echo making a link $(HTMLDIR)/$*.html -\> $*.$(LANGUAGE).html
 	@ln -sf $*.$(LANGUAGE).html $(HTMLDIR)/$*.html
 endif
 
-# There is no wnpp.en.html destination. This will be run every time,
+# There is no wnpp.XY.html destination. This will be run every time,
 # which is what we want
 wnpp.$(LANGUAGE).html: wnpp.wml
 	wml -q wnpp.wml
@@ -30,12 +30,7 @@ $(HTMLDIR)/wnpp.$(LANGUAGE).html: wnpp.$(LANGUAGE).html
 	@:
 
 install:: $(WNPP_FILES)
-	install being_adopted.html $(HTMLDIR)/being_adopted.sv.html
-	install being_packaged.html $(HTMLDIR)/being_packaged.sv.html
-	install orphaned.html $(HTMLDIR)/orphaned.sv.html
-	install prospective.html $(HTMLDIR)/prospective.sv.html
-	install requested.html $(HTMLDIR)/requested.sv.html
-	install rfa_bymaint.html $(HTMLDIR)/rfa_bymaint.sv.html
-	install rfa_bypackage.html $(HTMLDIR)/rfa_bypackage.sv.html
-	install withdrawn.html $(HTMLDIR)/withdrawn.sv.html
-	install work_needing.html $(HTMLDIR)/work_needing.sv.html
+	install -m 664 -p $(WNPP_FILES) $(HTMLDIR)
+ifeq "$(LANGUAGE)" "en"
+	$(foreach file,$(WNPP_FILES),ln -sf $(file) $(HTMLDIR)/$(basename $(basename $(file))).html;)
+endif
