@@ -153,6 +153,9 @@ $intro =~ s/^\s+//g;
 $intro =~ s/&[mn]dash;/--/g;
 $intro =~ s/&[rl]dquo;/"/g;
 $intro =~ s/&[rl]squo;/'/g;
+$intro =~ s/&amp;/&/g;
+$pagetitle =~ s/&amp;/&/g;
+$coord =~ s/&amp;/&/g;
 
 # If this is an ISO 8859-1 page, decode any character entities used
 # in the input to raw binary data.
