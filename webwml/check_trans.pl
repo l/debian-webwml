@@ -31,7 +31,7 @@
 #	-C <dir>	go to <dir> directory before running this script
 #	-d		output CVS diffs
 #	-l		output CVS log messages
-#	-t		output translated diffs
+#	-T		output translated diffs
 #	-p <pattern>	include only files matching <pattern>,
 #			default is *.html|*.wml
 #	-s <subtree>	check only that subtree
@@ -97,13 +97,13 @@ my %translators;# the real hash
 my $maintainer = "mquinson\@ens-lyon.fr"; # the default e-mail at which to bitch :-)
 
 # options (note: with perl 5.6, this could change to our())
-use vars qw($opt_C $opt_M $opt_Q $opt_d $opt_g $opt_l $opt_m $opt_n $opt_p $opt_q $opt_s $opt_t $opt_v);
+use vars qw($opt_C $opt_M $opt_Q $opt_d $opt_g $opt_l $opt_m $opt_n $opt_p $opt_q $opt_s $opt_t $opt_T $opt_v);
 $opt_n = 5; # an invalid default
 $opt_s = '';
 $opt_C = '.';
 $opt_t = 'text';
 
-unless (getopts('vgdqQC:m:s:t:p:ln:M'))
+unless (getopts('vgdqQC:m:s:Tt:p:ln:M'))
 {
 	open SELF, "<$0" or die "Unable to display help: $!\n";
 	HELP: while (<SELF>)
@@ -380,7 +380,7 @@ sub add_sub_part {
     my $txt = shift;
     $name =~ s,<.*?>,,;
     $name =~ s,^ *(.*?) *$,$1,;
-    print "add_sub_part($name)(part=$part)($subpart):$txt";
+#    print "add_sub_part($name)(part=$part)($subpart):$txt" if $opt_v;
     STDOUT->flush;
     if (verify_send($name,$part)) {
 #	print "YES\n";
@@ -395,13 +395,12 @@ sub get_diff_txt {
   my $cmd;
 
   # Get old revision file
-  $cmd = "cvs -z3 update -r $oldr -p $oldname";
+  $cmd = "cvs -z3 update -r $oldr -p $oldname 2>/dev/null";
 #  print "!get_diff_txt: cvs -z3 update -r ".$oldr." -p ".$oldname."\n";
   my @old_rev_file_lines = qx($cmd);
 
   # Get translation file
   open (FILE,"$name") || die ("Can't open `$name' for read");
-#  warn "get_diff_txt: cat $name\n";
   my @translation_file_lines;
   while (<FILE>) {
       $translation_file_lines[scalar @translation_file_lines] = $_;
@@ -409,15 +408,14 @@ sub get_diff_txt {
   close FILE || die ("Can't close $name after reading");
 
   # Get diff lines
-  $cmd = "cvs -z3 diff -u -r$oldr -r $revision $oldname";
-  warn "!get_diff_txt: $cmd: cvs -z3 diff -u -r$oldr -r $revision $oldname\n";
+  $cmd = "cvs -z3 diff -u -r$oldr -r $revision $oldname 2>/dev/null";
+#  print "get_diff_txt: $cmd: cvs -z3 diff -u -r$oldr -r $revision $oldname\n";
   my @diff_lines = qx($cmd);
 
   my $txt = Local::WmlDiffTrans::find_trans_parts(\@old_rev_file_lines,
 						  \@translation_file_lines,
 						  \@diff_lines);
 
-  warn "get_diff_txt: $txt\n";
   return $txt;
 }
 
@@ -541,7 +539,7 @@ sub check_file {
 		STDOUT->flush;
 	} 
 
-	if ($opt_t) {
+	if ($opt_T) {
 	    print get_diff_txt("$oldr", "$revision", "$oldname", "$name")."\n";
 	}
 }
