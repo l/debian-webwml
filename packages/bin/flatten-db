@@ -25,12 +25,14 @@ use Getopt::Long;
 my %config = (
 	      'db' => undef,
 	      'output' => undef,
+	      'descr' => undef,
 	      'verbose' => 0,
 	      );
 
 my %options = (
 	       'db=s' => \$config{db},
 	       'output=s' => \$config{output},
+	       'descriptions=s' => \$config{descr},
 	       'verbose+' => \$config{verbose},
 	       'help' => \&help,
 	       );
@@ -75,8 +77,13 @@ if ($config{output}) {
     open (OUT, ">-");
 }
 
+if ($config{descr}) {
+    open (DESC, ">$config{descr}") || die "Can't open $config{desc} for writing, $!";
+}
+
 my %info = ();
 my $foo;
+my $descr;
 while (<DB>) {
     chomp;
 
@@ -84,6 +91,7 @@ while (<DB>) {
 	$foo = $1;
 	if ($info{Package}) {
 	    printf OUT "%s %s %s %s \n", $info{Package}, $info{Section}, $info{Version}, strip ($info{Description});
+	    printf DESC "%s\t%s\n", $info{Package}, $descr if ($config{descr});
 	    %info = ();
 	}
 	$info{Package} = $foo;
@@ -91,12 +99,17 @@ while (<DB>) {
 
     $info{Section} = $1 if (/^Section: (.*)$/);
     $info{Version} = $1 if (/^Version: (.*)$/);
-    $info{Description} = "$1\t" if (/^Description: (.*)$/);
+    if (/^Description: (.*)$/) {
+	$info{Description} = "$1";
+	$descr = "$1";
+    }
     if ($info{Description} && !/^Description:/) {
 	$info{Description} .= " " . $_;
     }
 }
 printf OUT "%s %s %s %s \n", $info{Package}, $info{Section}, $info{Version}, strip ($info{Description}) if ($info{Package});
+printf DESC "%s\t%s\n", $info{Package}, $descr if ($info{Package} && $config{descr});
 
 close (DB);
 close (OUT);
+close (DESC) if ($config{descr});
