@@ -115,12 +115,22 @@ application, click
   }
 ?>
 </TD></TR>
+<TR><TD>FD checks completeness of report</TD><TD>
 <?
-  if ($row["application_ok"] == '') {
-      $whattodo .= "<LI>The Front Desk has to review application\n";
+  if (pg_FieldIsNull($query, 0, "application_ok")) {
+    echo "Not checked";
+    $whattodo .= "<LI>The Front Desk has to review application\n";
+  } else {
+    if ($row["application_ok"] == 't') {
+      echo "Approved on ", $row["application_ok_date"];
+    } else {
+      echo "Not approved on ", $row["application_ok_date"];
+      $whattodo .= "<LI>Front Desk found report incomplete; AM has to re-submit\n";
+    }
   }
 ?>
 <TR><TD>DAM Phone Contact</TD><TD>
+</TD></TR>
 <?
   if ($row["da_phone_required"] == 't') { 
     if (pg_FieldIsNull($query, 0, "da_phone") ) {
