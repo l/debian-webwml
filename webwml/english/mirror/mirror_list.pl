@@ -386,12 +386,11 @@ of material available are listed, along with the access method for each type.
 	<dd>These sites mirror directly from the master archive site (which is
 	not publicly accessible).
 </dl>
-
-<pre>
 END
 
 	print <<END;
-The authoritative copy of this list can always be found at:
+
+<p>The authoritative copy of this list can always be found at:
 <a href="http://www.debian.org/mirror/mirrors_full">
 http://www.debian.org/mirror/mirrors_full</a>.
 <br>
@@ -402,6 +401,7 @@ END
 }
 
 sub full_listing {
+	print "<pre>\n";
 	foreach $country (sort keys %countries) {
 		if ($html) {
 			print "\n<strong>$country</strong>\n";
