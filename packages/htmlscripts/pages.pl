@@ -413,7 +413,7 @@ sub package_pages_walker {
 	#
 	# Changelog and copyright
 	#
-	if ( $src_pkg ) {
+	if ( $src_pkg && !$is_nonus) {
 	    my $source_dir = $src_pkg->{versions}->{$src_version}->{directory};
 	    (my $src_basename = $src_version) =~ s,^\d+:,,; # strip epoche
 	    $src_basename = "${sourcepackage}_$src_basename";
