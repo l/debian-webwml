@@ -76,6 +76,12 @@ use Getopt::Std;
 use IO::Handle;
 use Date::Parse;
 
+#    These modules reside under webwml/Perl
+use lib ($0 =~ m|(.*)/|, $1 or ".") ."/Perl";
+use Local::Cvsinfo;
+use Webwml::TransCheck;
+use Webwml::TransIgnore;
+
 # TODO:
 # get the revisions from $lang/intl/$lang so diffing works
 # need to quote dirnames?
@@ -88,13 +94,6 @@ my %translators;# the real hash
 
 # misc hardcoded things
 my $maintainer = "mquinson\@ens-lyon.fr"; # the default e-mail at which to bitch :-)
-my $ignorables = " "
-		."/sitemap.wml "
-		."/MailingLists/subscribe.wml "
-		."/MailingLists/unsubscribe.wml "
-		."/international/l10n/data/countries.wml "
-		."/international/l10n/scripts/l10nheader.wml "
-		; # $ignorables must begin and end with a space!
 
 # options (note: with perl 5.6, this could change to our())
 use vars qw($opt_C $opt_M $opt_Q $opt_d $opt_g $opt_l $opt_m $opt_n $opt_p $opt_q $opt_s $opt_t $opt_v);
@@ -122,7 +121,20 @@ die "you can't have both verbose and quiet, doh!\n" if (($opt_v) && ($opt_Q));
 warn "Checking subtree $opt_s only\n" if (($opt_v) && ($opt_s));
 
 # include only files matching $filename
-my $filename = $opt_p || '(\.wml$)|(\.html$)';
+my $filename = $opt_p || '\.(w|ht)ml$';
+
+my $cvs = Local::Cvsinfo->new();
+$cvs->options(
+	recursive => 1,
+	matchfile => [ $filename ],
+	skipdir   => [ "template" ],
+);
+#   This object is used to retrieve information when original is
+#   not English
+my $altcvs = $cvs->new();
+
+#   Global .transignore
+my $globtrans = Webwml::TransIgnore->new(".");
 
 # Go to desired directory
 chdir($opt_C) || die "Cannot go to $opt_C\n";
@@ -172,22 +184,28 @@ init_mails();
 
 print "\$translations = {\n" if $opt_t eq 'perl';
 
-foreach (split(/\n/, `find $from -name Entries -print`)) {
-	next if $_ =~ "template/debian"; # hardcoded
+$cvs->readinfo($from);
+foreach my $path (@{$cvs->dirs()}) {
+	my $tpath = $path;
+	$tpath =~ s/^$from/$to/o;
+	my $transignore = Webwml::TransIgnore->new($tpath);
+	next unless $transignore->found();
+	warn "Loading $tpath/.transignore\n" if $opt_v;
+	foreach (@{$transignore->local()}) {
+		s/^$to/$from/o;
+		$cvs->removefile($_);
+	}
+}
+
+foreach (sort @{$cvs->files()}) {
 	my ($path, $tpath);
 	$path = $_;
-	$path =~ s,CVS/Entries$,,;
 	$tpath = $path;
 	$tpath =~ s/^$from/$to/o;
-	my $d = load_entries($_);
-	my $ignore = load_ignorelist($tpath);
-	foreach my $f (keys %$d) {
-	    check_file("${tpath}$f", 
-		       $d->{$f}->{'rev'},
-		       $d->{$f}->{'mtime'},
-		       get_translators_from_db("$tpath$f"))
-		unless $$ignore{"${tpath}$f"};
-	}
+	check_file($tpath, 
+		       $cvs->revision($path),
+		       str2time($cvs->date($path)),
+		       get_translators_from_db($tpath));
 }
 
 print "}; 1;\n" if $opt_t eq 'perl';
@@ -345,40 +363,6 @@ sub send_mails {
     }	
 }
 
-sub load_entries {
-	my ($list) = shift;
-	my $data = {};
-	my ($name, $rev, $date);
-	warn "Loading $list\n" if $opt_v;
-	open(F, $list) || die $!;
-	while(<F>) {
-		next unless m,^/,;
-		if (($name, $rev, $date) = (m,^/([^/]+)/([^/]+)/([^/]+)/,)) {
-			if ($name =~ /$filename/o) {
-				$data->{$name} = {
-				    rev     => $rev,
-				    mtime   => str2time($date),
-				};
-			}
-		}
-	}
-	close (F);
-	return $data;
-}
-
-sub load_ignorelist {
-	my ($dir) = shift;
-	my (%data);
-	open(F, "${dir}.transignore") || return \%data;
-	warn "Loading ${dir}.transignore\n" if $opt_v;
-	while(<F>) {
-		chomp;
-		$data{"$dir$_"} = 1;
-	}
-	close (F);
-	return \%data;
-}
-
 sub add_part {
     my $name = shift;
     my $part = shift;
@@ -418,8 +402,8 @@ sub check_file {
         $docname =~ s#^$langto/##;
         $docname =~ s#\.wml$##;
 	unless (-r $name) {
-		(my $iname = $name) =~ s/$to//;
-		if (index($ignorables, " $iname ") < 0) {
+		(my $iname = $name) =~ s/^$to\///;
+		if ($globtrans->is_global($iname)) {
 		  unless (($opt_q) || ($opt_Q)) {
                      if ($opt_t eq 'perl') {
   	               print "'$docname' => {\n\t'type' => 'Web',\n";
@@ -437,57 +421,30 @@ sub check_file {
 		}
 		return;
 	}
-	open(F, $name) || die $!;
-	while(<F>) {
-		if (/wml::debian::translation-check/) {
-			if (/translation="([^"]+)"/) {
-				$oldr = $1;
-				warn "Found translation for $oldr\n" if $opt_v;
-			}
-			if (/maintainer="([^"]+)"/) {
-				$translator = $1;
-				warn "Translated by $translator\n" if $opt_v;
-			}
-			if (/original="([^"]+)"/) {
-				$original = $1;
-				warn "Original is $original\n" if $opt_v;
-			}
-			last;
-		}
-		# the following old style cases should be removed eventually
-		if (/translation\s+([.0-9]*)\s*-->/i) {
-			$oldr = $1;
-			warn "Found translation for $oldr\n" if $opt_v;
-		}
-		if (/Translat(.*?): (.*)$/i) {
-		    $translator=$2 if ($translator eq "");
-		    warn "Translated by $translator\n" if $opt_v;
-		}
-		last if (($oldr) && ($translator));
-	}
-	close(F);
-
-	if ((!$oldr) && ($name =~ /$langto\/international\/$langto/i)) {
-	    (my $ename = $name) =~ s/$to/$from/;
-	    open FE, $ename || die $!;
-	    while (<FE>) {
-		if (/wml::debian::translation-check/) {
-		    if (/translation="([^"]+)"/) {
-			$oldr = $1;
-			warn "Found translation for $1\n" if $opt_v;
-		    }
-		    if (/original="([^"]+)"/) {
-			$original = $1;
-			warn "Original is $1\n" if $opt_v;
-		    }
-		    last;
-		}
-	    }
-	    close FE;
+	my $transcheck = Webwml::TransCheck->new($name);
+	$oldr       = $transcheck->revision();
+	$translator = $transcheck->maintainer() || "";
+	$original   = $transcheck->original();
+	warn "Found translation for $oldr\n" if $opt_v and $oldr;
+	warn "Translated by $translator\n"   if $opt_v and $translator;
+	warn "Original is $original\n"       if $opt_v and $original;
+	#  The following test was in check_trans.pl and has been
+	#  removed, I do not understand what it was intended for
+	#  if ((!$oldr) && ($name =~ /$langto\/international\/$langto/i))
+	if ($original) {
+		my ($fromname, $fromdir);
+		$fromname = $name;
+		$fromname =~ s{^[^/]+}{$original};
+		$fromdir  = $fromname;
+		$fromdir  =~ s{/+[^/]+$}{};
+		$altcvs->reset();
+		$altcvs->readinfo($fromdir, matchfile => [$fromname]);
+		$revision = $altcvs->revision($fromname);
+		warn "Original is $original, revision $revision\n" if $opt_v;
 	}
 
-        $translator =~ s/^\s+//;
-        $translator =~ s/\s+$//;
+	$translator =~ s/^\s+//;
+	$translator =~ s/\s+$//;
 
 	my $str;
 	my $status = 8;
