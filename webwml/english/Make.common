@@ -21,7 +21,7 @@ GIFDESTFILES := $(patsubst %,$(HTMLDIR)/%,$(GIFSOURCE))
 IMGFILES := $(JPGSOURCE) $(GIFSOURCE)
 IMGDESTFILES := $(JPGDESTFILES) $(GIFDESTFILES)
 
-all:: $(HTMLFILES)
+all:: $(HTMLFILES) $(IMGDESTFILES)
 	@for i in $(SUBS) ''; do \
 		if [ -d "$$i" ]; then \
 			$(MAKE) -C $$i ; \
@@ -54,12 +54,12 @@ cleandest::
 	done
 
 $(HTMLDIR)/%.html.$(LANGUAGE): %.html.$(LANGUAGE)
-	cp -a $(@F) $(HTMLDIR)
+	@echo copying $(@F) to $(HTMLDIR)
+	-@cp $(@F) $(HTMLDIR)
 ifeq ($(LANGUAGE),en)
 	echo making a link $(@D)/$(*F).html -> $(@F)
 	-@ln -f -s $(@F) $(@D)/$(*F).html
 endif
 
 $(IMGDESTFILES):
-	echo a=$(IMGDESTFILES)
-	cp -a $(@F) $(HTMLDIR)
+	cp $(@F) $(HTMLDIR)
