@@ -106,7 +106,7 @@ while (<IN>) {
 		$skippedlinks++ while m/\[\d+\]/g;
 	}
 		# See if it's time to stop skipping.
-	if ($skip && /^\s+Debian Weekly News - /) {
+	if ($skip && /^\s*Debian Weekly News - /) {
 		# Title found, stop skipping. But first, print the header.
 		s/^\s*//;
 		print $divider,
