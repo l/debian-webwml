@@ -165,26 +165,57 @@
 <ul>
   <job <a href="$(HOME)/support"><gettext domain="organization">User support</gettext></a>>
     <ul>
-<set-var file-contents=<include $(HOME)/../english/MailingLists/lists.cfg verbatim=true>>
 <perl>
-  my %userlists = (
-  #   Read line by line and builds hash array
-  <foreach m file-contents>\
-    <when <match <get-var m> "List: debian-user-.*@lists.debian.org">>\
-      <set-var n=<subst-in-string <get-var m> ".*List: (debian-user-.*)@lists.debian.org.*" "\\1">>\
-      <set-var o=<subst-in-string <get-var m> ".*List: debian-user-(.*)@lists.debian.org.*" "\\1">>\
-      '<get-var o>' => q{<get-var n>},\
-    </when>\
-  </foreach>
-  );
-  my $userlists_lang = {};
-  $userlists_lang{$trans{$CUR_ISO_LANG}{english}} = "debian-user\@lists.debian.org";
-  foreach my $list (keys %userlists) {
-    $userlists_lang{$trans{$CUR_ISO_LANG}{$list}} = "$userlists{$list}\@lists.debian.org";
-  }
-  foreach my $list (sort langcmp keys %userlists_lang) {
-    print "<li>$list -- &lt;<a href=\"mailto:$userlists_lang{$list}\">$userlists_lang{$list}</a>&gt;</li>\n";
-  }
+	open LISTS, "<", "$(HOME)/../english/MailingLists/lists.cfg"
+		or die "Can't open lists.cfg: $!\n";
+
+	my ( %entry, %userlists );
+	while (<LISTS>) {
+		next if /^#/;
+		if (/^\s*$/) {
+			process_entry( %entry );
+			%entry = ();
+			next;
+		}
+		if (/^([^:]+):\s*(.*)$/) {
+			$entry{$1} = $2;
+		}
+	}
+	close LISTS;
+	if (keys %entry) { process_entry( %entry ); }
+
+	sub process_entry {
+		my %entry = @_;
+
+		return unless $entry{List};
+		return unless $entry{Section};
+		$entry{Language} ||= 'English';
+		
+		if ($entry{List} =~ /(debian-user-(.*)\@lists.debian.org)/) {
+			$userlists{$2} = $1;
+#			warn "$2: $1\n";
+			return;
+		}
+
+		if (($entry{List} =~ /(debian-([^-]+)\@lists.debian.org)/)
+		    && ($entry{Section} eq 'user')
+                    && ($entry{Language} ne 'English')) {
+			$userlists{$2} = $1;
+#			warn "$2: $1\n";
+			return;
+		}
+	}
+
+	my $userlists_lang = {};
+ 
+	$userlists_lang{$trans{$CUR_ISO_LANG}{english}} = "debian-user\@lists.debian.org";
+	foreach my $list (keys %userlists) {
+ 		$userlists_lang{$trans{$CUR_ISO_LANG}{$list}} = "$userlists{$list}\@lists.debian.org";
+	}
+
+	foreach my $list (sort langcmp keys %userlists_lang) {
+		print "<li>$list -- &lt;<a href=\"mailto:$userlists_lang{$list}\">$userlists_lang{$list}</a>&gt;</li>\n";
+	}
 </perl>
     </ul>
   <job <a href="http://bugs.debian.org/"><gettext domain="organization">Bug Tracking System</gettext></a>> <genericemail owner@bugs.debian.org>
