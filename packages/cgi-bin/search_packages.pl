@@ -40,11 +40,6 @@ print $input->header;
 # print $input->dump;
 # exit;
 
-print Packages::HTML::header( title => 'Package Search Results' ,
-			      lang => 'en',
-			      title_tag => 'Debian Package Search Results',
-			      print_title_above => 1 );
-
 my %params_def = ( keywords => { default => undef, match => '^\s*([-+\@\w\/.:]+)\s*$' },
 		   version => { default => 'stable', match => '^(\w+)$',
 				replace => { all => '*' } },
@@ -79,6 +74,24 @@ my $results_per_page = $params{values}{number}{final};
 my $version_param = $params{values}{version}{no_replace};
 my $releases_param = $params{values}{release}{no_replace};
 my $arch_param = $params{values}{arch}{no_replace};
+
+# for output
+my $keyword_enc = encode_entities $keyword;
+my $searchon_enc = encode_entities $searchon;
+my $version_enc = encode_entities $version_param;
+my $releases_enc = encode_entities $releases_param;
+my $arch_enc = encode_entities $arch_param;
+
+print Packages::HTML::header( title => 'Package Search Results' ,
+			      lang => 'en',
+			      title_tag => 'Debian Package Search Results',
+			      print_title_above => 1,
+			      print_search_field => 'packages',
+			      search_field_values => { 
+				  keywords => $keyword_enc,
+				  searchon => $searchon,
+				  },
+			      );
 
 # read the configuration
 my $topdir;
@@ -165,11 +178,6 @@ my $command = "find $fdir -name $file|xargs ".$grep;
 #print "<br>".$command."<br>\n"; # just for debugging
 
 my @results = qx( $command );
-
-my $keyword_enc = encode_entities $keyword;
-my $version_enc = encode_entities $version_param;
-my $releases_enc = encode_entities $releases_param;
-my $arch_enc = encode_entities $arch_param;
 
 my $dist_wording = $version_param eq "all" ? "all distributions"
     : "distribution <em>$version_enc</em>";
@@ -357,7 +365,7 @@ sub multipageheader {
 	print "<p>Results per page: ";
 	my @resperpagelinks;
 	for (50, 100, 200) {
-	    if ($params{values}{number}{final} == $_) {
+	    if ($results_per_page == $_) {
 		push @resperpagelinks, $_;
 	    } else {
 		push @resperpagelinks, resperpagelink($input,\%params,$_);

@@ -53,6 +53,36 @@ sub header {
 	$title_in_header = '';
     }
 
+    my $search_in_header = '';
+    if ($params{print_search_field} eq 'packages') {
+	my %values = %{$params{search_field_values}};
+	$logo_align ='left';
+	my %checked_searchon = ( names => "",
+				 all => "",
+				 sourcenames => "", );
+	$checked_searchon{$values{searchon}} = "checked=\"checked\"";
+	$search_in_header = <<MENU;
+<td align="center" valign="middle">
+<form method="GET" action="http://packages.debian.org/cgi-bin/search_packages.pl">
+<input type="text" size="30" name="keywords" value="$values{keywords}" id="kw" />
+<input type="submit" value="Search">
+<span style="font-size: 60%"><a href="http://packages.debian.org">Full options</a></span>
+<br>
+<div style="font-size: 80%">Search on:
+<input type="radio" name="searchon" value="names" id="onlynames" $checked_searchon{names}>
+<label for="onlynames">Package names only</label>&nbsp;&nbsp;
+<input type="radio" name="searchon" value="all" id="descs" $checked_searchon{all}>
+<label for="descs">Descriptions</label>
+<input type="radio" name="searchon" value="sourcenames" id="src" $checked_searchon{sourcenames}>
+<label for="src">Source package names</label>
+</div>
+</form>
+</td>
+MENU
+;
+    }
+
+
     my $keywords = $params{keywords} || '';
     my $KEYWORDS_LINE = "<meta name=\"Keywords\" content=\"debian, $keywords $title_keywords\">";
     
@@ -82,6 +112,7 @@ HEAD
 		 width => 179, height => 61 );
     $txt .= <<NAVBEGIN;
 </td>
+$search_in_header
 $title_in_header
 </tr>
 </table>
