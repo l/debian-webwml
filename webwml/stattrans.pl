@@ -29,7 +29,7 @@ use Webwml::TransIgnore;
 
 $| = 1;
 
-$opt_h = "/org/www.debian.org/debian.org/devel/website/stats";
+$opt_h = "/org/www.debian.org/www/devel/website/stats";
 $opt_w = "/org/www.debian.org/webwml";
 $opt_p = "*.wml";
 $opt_t = "Debian Web site Translation Statistics";

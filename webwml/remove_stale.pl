@@ -121,7 +121,7 @@ sub recurse
 
 				# Name of file installed by make install.
 				my $installed = $direntry;
-				$installed =~ s(^\./[^/]*/)(../debian.org/);
+				$installed =~ s(^\./[^/]*/)(../www/);
 
 				# Remove or report.
 				if ($opt_d)
