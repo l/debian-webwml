@@ -4,7 +4,26 @@
 <define-tag description>standard buffer overrun(s) in minicom</define-tag>
 <define-tag isvulnerable>no</define-tag>
 <define-tag fixed></define-tag>
-<define-tag moreinfo></define-tag>
+<define-tag moreinfo>
+<p>Original submitter of the report: Dmitry E. Kim &lt;jason@redline.ru&gt;.
+
+<p>Vulnerability in minicom allows (certain) local users to obtain group
+"uucp" privileges and, in certain cases, root privileges.
+
+<p>Minicom binary is usually owned by user "root" and group "uucp", and it
+is "-rwxr-sr-x" or, in some old distributions, "-rwsr-sr-x". Actually,
+minicom has *alot* of arbitrary size buffers and it is really easy to
+overrun some of them. At least one of these overrunable buffers is
+automatic -- an argument to "-d" option of minicom is copied into 128 bytes
+long automatic array. Thus, it is possible to overwrite the function return
+address and to execute an arbitrary code (as usually).
+
+<p>If minicom is installed suid root, any user which is permitted to use
+minicom can obtain root shell. If minicom is installed sgid uucp, any
+minicom user can obtain uucp group privileges (please don't think it's
+nothing -- at least on Slackware machines /usr/lib/uucp is group-writeable.
+This means you can easily substitute uucico/uuxqt/etc with your scripts).
+</define-tag>
 
 #use wml::debian::security
 
