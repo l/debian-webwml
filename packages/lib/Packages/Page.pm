@@ -205,14 +205,16 @@ sub set_data {
     #
     # process maintainer and uploaders
     #
+    push @uploaders, [ split_name_mail( $maintainer ) ];
     if ($src_pkg && exists $src_pkg->{versions}{$src_version}{uploaders}) {
-	@uploaders = split( /\s*,\s*/, 
+	my @up_tmp = split( /\s*,\s*/, 
 			    $src_pkg->{versions}{$src_version}{uploaders} );
-	foreach (@uploaders) {
-	    $_ = [ split_name_mail( $_ ) ];
+	foreach my $up (@up_tmp) {
+	    if ($up ne $maintainer) { # weed out duplicates
+		push @uploaders, [ split_name_mail( $up ) ];
+	    }
 	}
     }
-    unshift @uploaders, [ split_name_mail( $maintainer ) ];
     
     my ( $is_security, $is_nonus ) = ( 0, 0 );
     if ( $subsuite ) {

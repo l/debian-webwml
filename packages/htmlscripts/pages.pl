@@ -405,10 +405,12 @@ sub src_package_pages_walker {
     my ( $maint_name, $maint_email ) = split_name_mail( $v_pkg->{maintainer} );
     my @uploaders;
     if (exists $v_pkg->{uploaders}) {
-	@uploaders = split( /\s*,\s*/, 
+	my @up_tmp = split( /\s*,\s*/, 
 			    $v_pkg->{uploaders} );
-	foreach (@uploaders) {
-	    $_ = [ split_name_mail( $_ ) ];
+	foreach my $up (@up_tmp) {
+	    if ($up ne $v_pkg->{maintainer}) {
+		push @uploaders, [ split_name_mail( $up ) ];
+	    }
 	}
     }
 
@@ -420,9 +422,12 @@ sub src_package_pages_walker {
     
     my $package_page = header( title => $name, lang => 'en',
 			       keywords => "$env->{distribution}, $subdist_kw, $archive, $v_str" );
-    $package_page .= "[&nbsp;".gettext( "Distribution:" )." <a title=\"".gettext( "Overview over this distribution" )."\" href=\"../\">$env->{distribution}</a>&nbsp;]\n";
-#	$package_page .= "[&nbsp;".gettext( "Section:" )." <a title=\"".gettext( "All packages in this section" )."\" href=\"../$section/\">$section</a>&nbsp;]\n";
-    
+    $package_page .= simple_menu( [ gettext( "Distribution:" ),
+				    gettext( "Overview over this distribution" ),
+				    "../",
+				    $env->{distribution} ],
+				  );
+
     my $title .= sprintf( gettext( "Source package: %s (%s)" ),
 			  $name, $v_str );
     
@@ -620,13 +625,21 @@ sub write_all_package {
 	my %si = ();
 	foreach ( keys %$sections ) {
 	    next if $_ eq 'virtual' and $lang ne 'en';
+
 	    my $title = sprintf( gettext ( "Software Packages in \"%s\", %s section" ), 
 				 $distro, $_ );
 	    $si{$_} = header( title => $title,
 			      title_keywords => "debian, $distro, $_",
 			      desc => encode_entities( $title, '"' ),
-			      lang => $lang,
-			      print_title_below => 1 );
+			      lang => $lang );
+	    $si{$_} .= simple_menu( [ gettext( "Distribution:" ),
+				      gettext( "Overview over this distribution" ),
+				      "../",
+				      $distro ],
+				    );
+
+	    $si{$_} .= title( $title );
+
 	    if ($distro eq "experimental") {
 		$si{$_} .= $experimental_note;
 	    }
@@ -638,7 +651,7 @@ sub write_all_package {
 		$si{$_} .= $si_l{$lang}{$_};
 		$si{$_} .= "</dl>\n";
 	    } else {
-		$si{$_} .= note( gettext( "No packages in this section in suite" ) );
+		$si{$_} .= note( gettext( "No packages in this section in this suite" ) );
 	    }
 	    $si{$_} .= trailer( '..', 'index', $lang, @$langs );
 	    my $dirname = "$dest_dir/$_";
@@ -666,6 +679,11 @@ sub write_all_package {
 			      title_keywords => "debian, $distro, $_",
 			      desc => encode_entities( $title, '"' ),
 			      lang => $lang );
+	    $pi{$_} .= simple_menu( [ gettext( "Distribution:" ),
+				      gettext( "Overview over this distribution" ),
+				      "./",
+				      $distro ],
+				    );
 	    $pi{$_} .= "$priority_header\n";
 	    $pi{$_} .= title( $title );
 	    if ($distro eq "experimental") {
@@ -695,8 +713,14 @@ sub write_all_package {
 	    $ei .= header( title => $title,
 			   title_keywords => "debian, $distro, essential",
 			   desc => encode_entities( $title, '"' ),
-			   lang => $lang,
-			   print_title_below => 1 );
+			   lang => $lang );
+	    $ei .= simple_menu( [ gettext( "Distribution:" ),
+				  gettext( "Overview over this distribution" ),
+				  "./",
+				  $distro ],
+				);
+
+	    $ei .= title( $title );
 	    if ($ei_l{$lang}) {
 		$ei .= "<dl>\n";
 		$ei .= $ei_l{$lang};
@@ -718,8 +742,14 @@ sub write_all_package {
 	my $all_package = header( title => $all_title,
 				  title_keywords => "debian, $distro",
 				  desc => encode_entities( $all_title, '"' ),
-				  lang => $lang,
-				  print_title_below => 1 );
+				  lang => $lang );
+	$all_package .= simple_menu( [ gettext( "Distribution:" ),
+				       gettext( "Overview over this distribution" ),
+				       "./",
+				       $distro ],
+				     );
+	$all_package .= title( $all_title );
+
 	if ($distro eq "experimental") {
 	    $all_package .= $experimental_note;
 	}
@@ -754,7 +784,8 @@ sub write_src_index {
     
     my $title = sprintf( gettext ( "Source Packages in \"%s\"" ), 
 			 $distro, $_ );
-    $source_index = header( title => encode_entities( $title, '"' ),
+    $source_index = header( title => $title,
+			    desc => encode_entities( $title, '"' ),
                             lang => $lang,
 			    print_title_below => 1 );
     if ($distro eq "experimental") {
