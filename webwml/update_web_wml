@@ -1,0 +1,32 @@
+#!/usr/bin/perl -w
+
+# This script must be setuid and owned by treacy:distmnt
+
+# update the webwml repository and run a make on all the language
+# directories
+
+$WML_DIR = '/debian2/web/webwml';
+
+$ENV{PATH} = "/bin:/usr/bin";
+$< = $>;
+
+chdir $WML_DIR;
+system("cvs update");
+
+opendir(DIR, ".") || die "can't open wml directory";
+@dir_list = grep{ /\w+/ && -d $_ } readdir(DIR);
+closedir DIR;
+
+foreach (@dir_list) {
+   if (/CVS/) {
+      # do nothing
+   }
+   else {
+		($dir) = /(.*)/;
+      chdir $dir;
+      print "Doing a make in ".`pwd`."\n";
+      # system("make -s");
+      system("make");
+      chdir '..';
+   }
+}
