@@ -70,7 +70,7 @@ endif
 	@$(TOCN) $*.zh-cn.html
 
 	@echo -n "[zh_HK.Big5], "
-	@cp -f $*.zh-tw.html.tmp $*.zh-hk.html
+	@mv -f $*.zh-hk.html.tmp $*.zh-hk.html
 	@$(TOHK) $*.zh-hk.html
 
 	@echo "[zh_TW.Big5]."
