@@ -13,5 +13,5 @@ translation_coordinators.$(LANGUAGE).html: translation_coordinators.wml \
 
 ifeq "$(LANGUAGE)" "en"
 todo.en.html: todo.wml
-	$(WML) -p 7,8 $<
+	$(WML) -p 1,2,5,7,8 $<
 endif
