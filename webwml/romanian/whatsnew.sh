@@ -17,6 +17,7 @@ cvs update Makefile.common
 cvs update check_trans.pl
 cvs update -d Perl
 cvs update -d english/template
+cvs update -d italian/po
 
 cvs update -d $translation
   rm -rf $translation/CD
