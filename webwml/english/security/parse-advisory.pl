@@ -63,6 +63,7 @@ foreach $l (<ADV>) {
 
   $f++ if ($l =~ /^  Source archives:/);
   $f = 0 if ($l =~ /^  These (files|packages) will (probably )?be moved/);
+  $f = 0 if ($l =~ /^(- )?-- $/);
   $files .= $l if ($f);
 }
 close ADV;
@@ -70,9 +71,10 @@ close ADV;
 $moreinfo =~ s/\n\n$/\n/s;
 $files =~ s/\n\n$/\n/s;
 
-$files =~ s/      MD5 checksum: (\w{32})\n//sg;
+$files =~ s/      (Size\/)?MD5 checksum: (\s*\d+ )?\w{32}\n//sg;
 $files =~ s/  Source archives:/<dt><source>/s;
 $files =~ s/  Architecture.independent.\w+:\n/<dt><arch-indep>\n/s;
+$files =~ s/  (\w+) architecture \(([\w -()\/]+)\)/<dt>$1 ($2):/sg;
 $files =~ s/  ([\w -]+) architecture:/<dt>$1:/sg;
 $files =~ s/    (http:\S+)/  <dd><fileurl $1>/sg;
 
