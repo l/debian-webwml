@@ -8,7 +8,6 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/news.wml
 	$(WML) $(<F)
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
