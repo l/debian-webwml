@@ -15,6 +15,11 @@ sub escape {
         } else {
                 $text =~ s/\\/\\\\/g;
         }
+        if ($lang eq 'ZH' || $lang eq 'JA') {
+                $text =~ s/[ \t]*\n[ \t]*//g;
+        } else {
+                $text =~ s/[ \t]*\n[ \t]*/ /g;
+        }
         $text =~ s/"/\\"/g;
         $text =~ s/\n/\\n/g;
         $text =~ s/\t/\\t/g;
@@ -47,7 +52,7 @@ sub processFile {
                         $lineno += countNewline ($1);
                         $nextlineno = countNewline ($2.$3);
                         $msgstr = '';
-                        if ($lang ne '' && $msg =~ m/\[${lang}:(.*?):\]\n/s) {
+                        if ($lang ne '' && $msg =~ m/\[${lang}:(.*?):\][ \t]*\n/s) {
                                 $msgstr = escape($lang, $1);
                         }
                         $msgstr = '' if $msgid eq $msgstr;
