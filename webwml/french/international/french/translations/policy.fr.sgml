@@ -6,7 +6,7 @@
 <debiandoc>
 
   <!--
-  Debian GNU/Linux Policy Manual./policy.sgml /1.66 25 août 2001
+  Debian GNU/Linux Policy Manual.
   Copyright (C)1996,1997,1998 Ian Jackson and Christian Schwarz;
   released under the terms of the GNU
   General Public License, version 2 or (at your option) any later.
@@ -40,7 +40,7 @@
 	<name>La liste de diffusion «&nbsp;Debian Policy&nbsp;»</name>
 	<email>debian-policy@lists.debian.org</email>
       </author>
-      <version>version 3.5.6.1  cvs 1.68 03/2002</version>
+      <version>version 3.5.7.0  cvs 1.71 08/2002</version>
 
       <abstract>
 	Ce manuel est la charte de la distribution Debian
@@ -532,20 +532,21 @@ cas.</p>
       <sect1>
 	<heading>Les sections  «&nbsp;non-US&nbsp;»</heading>
 	<p>
-	  Certains programmes qui contiennent du code source utilisant
-la cryptographie doivent être déposés sur le serveur <em>non-US</em> à cause 
-des limitations US à l'exportation. De tels programmes doivent être
-distribués dans les sections <em>non-US</em> appropriées : 
-<em>non-US/main</em>, <em>non-US/contrib</em> ou <em>non-US/non-free</em>.
+	  Certains programmes non libres qui contiennent du code source 
+utilisant la cryptographie doivent être déposés sur le serveur 
+<em>non-us</em> à cause des limitations des U.S.A sur l'exportation.
 </p>
 	<p>
-	  Ceci ne s'applique qu'aux paquets qui contiennent du code source
-utilisant la cryptographie. Un paquet qui contient un programme interfacé
-avec un programme de cryptographie ou lié dynamiquement à une bibliothèque
-de cryptographie ne sera pas distribué par le serveur <em>non-us</em>
-s'il peut fonctionner sans le programme ou la bibliothèque de cryptographie.
+	  On doit aussi déposer sur <em>non-us</em> les programmes qui
+utilisent des algorithmes brevetés et dont la licence est restrictive&nbsp;;
+il est situé en effet dans un pays où on ne peut pas breveter les algorithmes.
 	</p>
-      </sect1>
+<p>
+Un paquet qui dépend d'un paquet distribué sur le serveur <em>non-us</em>
+doit être aussi déposé sur ce serveur.
+</p>
+             
+ </sect1>
       <sect1>
 	<heading>Considérations supplémentaires sur le copyright</heading>
 	<p>
@@ -780,7 +781,8 @@ Chaque paquet doit avoir un nom unique dans l'archive Debian.
 Un nom de paquet ne doit comporter que des lettres minuscules (<tt>a-z</tt>),
 des chiffres (<tt>0-9</tt>), les signes plus (<tt>+</tt>), moins (<tt>-</tt>) 
 ou point (<tt>.</tt>). Il doit
-contenir au moins deux caractères, dont l'un est une lettre.
+contenir au moins deux caractères et doit commencer par un caractère
+alphanumérique.
 </p>
 	    
 	  <p>
@@ -882,7 +884,7 @@ pour un paquet avant qu'une discussion dans la liste de diffusion
 </sect1>
 	    
 	    
-	<sect1>
+	<sect1 id="virtual_pkg_sect">
 	  <heading>Les paquets virtuels</heading>
 	    
 	  <p>
@@ -903,6 +905,7 @@ nouveaux quand ce sera nécessaire. On n'utilisera que les paquets
 virtuels qui ont été acceptés et qui apparaissent dans la liste des noms de 
 paquets virtuels 
 (sauf de manière privée, pour un ensemble local de paquets corrélés).
+(Voir aussi <ref id="virtual">)
 </p>
 	    
 	  <p>
@@ -974,6 +977,32 @@ discussion dans la liste de diffusion <tt>debian-devel</tt>
 n'ait abouti à un consensus sur le sujet.
 </p>
 </sect1>
+         <sect1>
+          <heading>Les tâches</heading>
+
+<p>
+Grâce à la procédure d'installation, un utilisateur peut choisir parmi
+plusieurs tâches qui peuvent être exécutées sur un système Debian. Le programme
+<prgn>tasksel</prgn> permet de choisir une tâche et il installe l'ensemble des
+programmes nécessaires à l'exécution de cette tâche.
+</p>
+<p>
+Cet ensemble comprend tous les paquets qui possèdent, dans le champ
+<tt>Task</tt> de leur fichier <em>control</em>, le nom de la tâche choisie.
+Le format de ce champ est une liste de tâches séparées par une virgule.
+	  </p>
+<p>
+Vous ne devez pas étiqueter un paquet comme appartenant à une tâche avant 
+qu'une discussion dans la liste de diffusion <tt>debian-devel</tt>
+n'ait abouti à un consensus sur le sujet.
+</p>
+<p>
+Pour les tiers, (et aussi pour des raisons historiques), taksel permet aussi
+de construire des tâches basées sur <em>task packages</em>. Les noms de ces
+paquets commencent par <em>task-</em>. Les <em>task packages</em> ne doivent
+pas être inclus dans l'archive Debian.
+</p>
+	</sect1>
 	    
 	    
 	<sect1 id="maintscripts">
@@ -1122,7 +1151,7 @@ On indiquera la version la plus récente de la <em>Charte Debian</em> à
 laquelle s'est conformé le paquet lors de sa mise à jour la plus récente. Cela 
 se précise dans le champ
 de contrôle <tt>Standards-Version</tt> du paquet source. La version actuelle
-est la version 3.5.6.0.
+est la version 3.5.7.0.
 </p>
 	  <p>
 On peut utiliser cette valeur pour remplir automatiquement des rapports de 
@@ -1149,11 +1178,10 @@ de donner soit les trois chiffres, soit la formule complète
 	      <p>
 Par le passé, on devait donner la formule complète à quatre chiffres,
 par exemple : «&nbsp;2.3.0.0&nbsp;». Mais comme un changement de niveau de 
-«&nbsp;patch&nbsp;»
-n'introduit pas une nouvelle norme, on a trouvé préférable d'assouplir la 
-règle et de ne demander qu'une formule à trois chiffres, dans ce cas : 
-«&nbsp;2.3.0&nbsp;». (On peut toujours
-utiliser la formule complète si l'on veut.)
+patch n'introduit pas une nouvelle norme, on a trouvé préférable d'assouplir 
+la règle et de ne demander qu'une formule à trois chiffres, dans ce cas : 
+«&nbsp;2.3.0&nbsp;». (On peut toujours utiliser la formule complète si l'on 
+veut.)
 	      </p>
 	    </footnote>.
 	  </p>
@@ -1205,7 +1233,7 @@ moins de contrôle que la Charte) ;
 <p>
 Un paquet distinct permet l'installation des paquets 
 «&nbsp;build-essential&nbsp;» sur une machine, et permet aussi que d'autres 
-paquets tels que les paquets «&nbsp;task&nbsp;» installent les paquets 
+paquets tels que les tâches installent les paquets 
 «&nbsp;build-essential&nbsp;» à travers une relation de dépendance ;
 		    </p>
 		  </item>
@@ -1428,14 +1456,14 @@ Cette liste n'est pas supposée être complète. La plupart des champs sont
 
 <p>
 Le nom du paquet binaire. Les noms de paquet sont constitués de
-caractères alphanumériques et des caractères <tt>+</tt>, <tt>-</tt>, <tt>.</tt>
-(plus, moins, point).
+lettres minuscules (<tt>a-z</tt>), de chiffres (<tt>0-9</tt>), et des 
+caractères plus (<tt>+</tt>), moins (<tt>-</tt>), ainsi que du point
+(<tt>.</tt>).
 	  </p>
 
 	  <p>	    
-Ils doivent contenir au moins deux caractères, commencer par un caractère
-alphanumérique et ne pas contenir que des chiffres. Il est fortement 
-recommandé de les écrire en minuscules
+Ils doivent contenir au moins deux caractères et commencer par un caractère
+alphanumérique. On doit les écrire en minuscules
 à moins que le paquet que l'on construit ou auquel on se réfère (par exemple,
 dans d'autres champs) n'utilise déjà des majuscules.
 </p>
@@ -3131,20 +3159,20 @@ Un paquet «&nbsp;virtuel&nbsp;» est un paquet qui apparaît dans le champ
 <tt>Provides</tt> du fichier «&nbsp;control&nbsp;» d'un autre paquet. L'effet 
 est le même que si le ou les paquets qui fournissent un paquet virtuel 
 particulier avaient été listés par leur nom partout où le nom du paquet virtuel
-apparaît.
+apparaît.(Voir aussi <ref id="virtual_pkg_sect">.)
 	</p>
 
 <p>
-Quand un paquet réel et un paquet virtuel ont le même nom, la
-dépendance peut être satisfaite (ou le conflit provoqué) soit par le
-paquet réel soit par n'importe quel paquet fournissant le paquet virtuel et 
-qui indique cette dépendance.
+Quand un paquet concret et un paquet virtuel ont le même nom, la dépendance 
+peut être satisfaite (ou le conflit provoqué) soit par le paquet concret du 
+même nom soit par tout autre paquet concret fournissant le paquet virtuel du
+même nom.
 Par exemple, en supposant que nous ayons :
 <example compact="compact">
 Package: foo
 Depends: bar
 </example>
-Et que quelqu'un d'autre sorte un paquet <tt>bar</tt> amélioré (p.ex. une
+et que quelqu'un d'autre sorte un paquet <tt>bar</tt> amélioré (p.ex. une
 variante non-US), il peut dire :
 <example compact="compact">
 Package: bar-plus
@@ -3275,7 +3303,31 @@ des champs <tt>Build-Depends</tt>,
 <tt>Build-Conflicts-Indep</tt> du fichier <em>control</em>. Les dépendances 
 ou les conflits qu'ils définissent doivent être résolus (comme ça a été 
 défini plus haut pour les paquets binaires) pour pouvoir appeler les cibles 
-de <tt>debian/rules</tt> comme suit&nbsp;:
+de <tt>debian/rules</tt><footnote>
+<p>
+Si vous construisez «&nbsp;build-arch&nbsp;» ou «&nbsp;binary-arch&nbsp;», 
+vous avez besoin de Build-Depends. Si vous construisez 
+«&nbsp;build-indep&nbsp;» ou «&nbsp;binary-indep&nbsp;», vous avez besoin de 
+Build-Depends et de Build-Depends-Indep. Si vous construisez 
+«&nbsp;build&nbsp;» ou «&nbsp;binary&nbsp;», vous avez besoin des deux.
+	    </p>
+<p>
+	      «&nbsp;Build-Depends-Arch&nbsp;» n'existe pas&nbsp;; les
+constructeurs automatiques (<em>autobuilders</em>) ont seulement besoin de 
+Build-Depends quand ils savent comment construire uniquement build-arch et 
+binary-arch. Il est supposé que celui qui veut construire les cibles 
+build-indep et binary-indep veut construire le paquet dans son entier et 
+qu'il installe donc toutes les dépendances de construction.
+</p>
+<p>
+Le but de cette séparation, je m'en rappelle,  était que les constructeurs
+automatiques n'aient pas besoin d'installer les paquets supplémentaires
+requis par les cibles binary-indep. Mais, sans la séparation
+build-arch/build-indep, cela ne marchait pas, car le plus gros du travail
+était fait par la cible build et non pas par la cible binary.
+           </p>
+         </footnote>
+comme suit&nbsp;:
 
 <taglist>
             <tag><tt>Build-Depends</tt>, <tt>Build-Conflicts</tt></tag>
@@ -3283,16 +3335,17 @@ de <tt>debian/rules</tt> comme suit&nbsp;:
               <p>
 Les champs <tt>Build-Depends</tt> et <tt>Build-Conflicts</tt> doivent être
 satisfaits quand l'une des cibles suivantes est appelée :
-<tt>build</tt>, <tt>binary</tt>, <tt>binary-arch</tt>
-                et <tt>binary-indep</tt>.
+<tt>build</tt>, <tt>binary</tt>, <tt>binary-arch</tt>, <tt>build-arch</tt>, 
+<tt>build-indep</tt> et <tt>binary-indep</tt>.
               </p>
             </item>
- <tag><tt>Build-Depends-Indep</tt>, <tt>Build-Conflicts-Indep</tt></tag>
+ <tag><tt>Build-Depends-Indep</tt>, 
+<tt>Build-Conflicts-Indep</tt></tag>
             <item>
               <p>
 Les champs <tt>Build-Depends-Indep</tt> et <tt>Build-Conflicts-Indep</tt> 
 doivent être satisfaits quand l'une des cibles suivantes est appelée :
-<tt>binary</tt> et <tt>binary-indep</tt>.
+<tt>build</tt> et <tt>build-indep</tt>.
               </p>
             </item>
           </taglist>
@@ -3382,20 +3435,46 @@ Les voici :
            </list>
          </p>
 	</footnote>
-doit appeler <prgn>ldconfig</prgn> dans son script 
-<prgn>postinst</prgn> si le premier argument est <tt>configure</tt>, et 
-l'appellera dans le script <prgn>postrm</prgn> si le
-premier argument est <tt>remove</tt>.
-      </p>
-
+doit utiliser <prgn>ldconfig</prgn> pour mettre à jour le système des
+bibliothèques partagées. Le paquet doit appeler <prgn>ldconfig</prgn> 
+dans son script <prgn>postinst</prgn> si le premier argument est 
+<tt>configure</tt>&nbsp;; dans les autres cas, le script <prgn>postinst</prgn>
+peut appeler <prgn>ldconfig</prgn> s'il le souhaite. Quand le premier 
+argument est <tt>remove</tt>, le paquet appellera <prgn>ldconfig</prgn>
+dans le script <prgn>postrm</prgn>. Les scripts du responsable de paquet
+ne doivent appeler <prgn>ldconfig</prgn> dans aucune autre circonstance
+que celles définies dans ce paragraphe <footnote>
 <p>
-Cependant, les scripts <prgn>postrm</prgn> et <prgn>preinst</prgn> <em>ne
-doivent pas</em> appeler <prgn>ldconfig</prgn> dans le cas où le paquet est 
-mis à jour (voir <ref id="unpackphase">) ; en effet <prgn>ldconfig</prgn> 
-voit les noms temporaires que <prgn>dpkg</prgn> donne à ces fichiers lors de 
-l'installation ; et il fait pointer les liens des bibliothèques partagées sur 
-ces noms, juste avant que <prgn>dpkg</prgn>, continuant l'installation, ne
-change le nom de ces fichiers temporaires !
+Pendant une installation ou une mise à jour, le script preinst est appelé
+avant que de nouveaux fichiers ne soient installés&nbsp;: appeler
+«&nbsp;ldconfig&nbsp;» est inutile. Le script preinst d'un paquet existant
+peut aussi être appelé en cas d'échec de la mise à jour. Cela arrive cependant
+au moment crtique où une bibliothèque partagée existe sur le disque sous un
+nom temporaire. Ainsi, il est dangereux, et c'est interdit par la Charte, 
+d'appeler «&nbsp;ldconfig&nbsp;» à ce moment. Lors de l'installation ou la 
+mise à jour d'un paquet, «&nbsp;postinst configure&nbsp;» s'exécute après que
+les nouveaux fichiers ont été installés de façon certaine sur le disque. Le
+script postinst peut aussi être appelé lors d'un essai de récupération après
+l'échec d'une mise à jour. Cela arrive avant que les nouveaux fichiers ne 
+soient dépaquetés&nbsp;: il n'y a donc pas besoin d'appeler 
+«&nbsp;ldconfig&nbsp;» à ce moment.
+Lors de la suppression d'un paquet, le script prerm est appelé alors que tous 
+les fichiers sont intacts&nbsp;: appeler «&nbsp;ldconfig&nbsp;» est inutile. 
+Les autres appels de «&nbsp;prerm&nbsp;» se passent lors d'une mise à jour, 
+quand tous les fichiers de l'ancien paquet sont sur le disque, et, encore une 
+fois, appeler «&nbsp;ldconfig&nbsp;» est inutile. Quand une bibliothèque
+partagée a été supprimée du système juste avant que ne soit exécuté
+«&nbsp;postrm remove&nbsp;», c'est le moment idéal pour appeler 
+«&nbsp;ldconfig&nbsp;» et notifier ainsi au système cette suppression. Le
+script postrm peut être appelé à plusieurs moments. Aux moments de
+«&nbsp;postrm purge&nbsp;», «&nbsp;postrm abort-install&nbsp;» ou 
+ «&nbsp;postrm abort-upgrade&nbsp;», appeler «&nbsp;ldconfig&nbsp;» est
+inutile parce que les fichiers de la bibliothèque partagée ne sont pas sur
+le disque. Cependant, lorsque le script postrm est appelé avec les arguments
+«&nbsp;upgrade&nbsp;», «&nbsp;failed-upgrade&nbsp;» ou «&nbsp;disappear&nbsp;»,
+la bibliothèque partagée peut exister sur le disque sous un nom temporaire.
+         </p>
+       </footnote>.
       </p>
 
     
@@ -4188,51 +4267,64 @@ quand le fichier <tt>/etc/default</tt> est supprimé.
 
 	  
 	<sect1>
-	  <heading>La gestion des liens</heading>
-	    
-	  <p>
+	  <heading>L'interfaçage avec le système d'initialisation par script</heading>
+	    <p>
+Les responsables de paquet utiliseront le modèle abstrait donné par les
+programmes <prgn>update-rc.d</prgn> et <prgn>invoke-rc.d</prgn> pour gérer
+la façon dont leurs scripts <prgn>postinst</prgn>, <prgn>prerm</prgn> ou 
+<prgn>postrm</prgn> gèrent les scripts d'initialisation.
+	  </p>
+<p>
+La gestion directe des liens dans «&nbsp;/etc/rc?.d&nbsp;» et l'appel des 
+scripts dans <file>/etc/init.d/</file> seront faits seulement par les paquets 
+qui fournissent le sous-système d'initialisation (<prgn>sysvinit</prgn> et
+<prgn>file-rc</prgn>).
+	  </p>
+         <sect2>
+           <heading>La gestion des liens</heading>
+<p>
 Avec le programme <prgn>update-rc.d</prgn>, les responsables de paquet peuvent
-gérer la création et la suppression des liens symboliques dans 
+gérer la création et la suppression des liens symboliques dans
 <tt>/etc/rc<var>n</var>.d</tt>, ou de leurs équivalents fonctionnels quand une
 autre méthode est employée.
-Les responsables de paquet peuvent s'en servir dans leurs scripts 
-<prgn>postinst</prgn> et <prgn>postrm</prgn>.</p>
-
-	  <p>
-On ne doit pas inclure des liens symboliques dans le 
-<tt>/etc/rc<var>n</var>.d</tt> du système réel, ni en créer ou en supprimer 
-directement dans les scripts du responsable de paquet (cela échouera si le 
-système d'information sur les niveaux de fonctionnement utilise une autre 
+Les responsables de paquet peuvent s'en servir dans leurs scripts
+<prgn>postinst</prgn> et <prgn>postrm</prgn>.
+</p>
+  <p>
+On ne doit pas inclure des liens symboliques dans le
+<tt>/etc/rc<var>n</var>.d</tt> du système réel, ni en créer ou en supprimer
+directement dans les scripts du responsable de paquet (cela échouera si le
+système d'information sur les niveaux de fonctionnement utilise une autre
 méthode)&nbsp;: on doit utiliser le programme <prgn>update-rc.d</prgn>. On ne
-doit pas non plus inclure les répertoires <tt>/etc/rc<var>n</var>.d</tt> dans 
+doit pas non plus inclure les répertoires <tt>/etc/rc<var>n</var>.d</tt> dans
 l'archive. (Seul le paquet <tt>sysvinit</tt> peut le faire.)
 </p>
-	  <p>
+<p>
 Par défaut, <prgn>update-rc.d</prgn> démarrera les serveurs
 dans chacun des niveaux de fonctionnement du système (2, 3, 4 et 5) pour le
 mode multi-utilisateurs et les arrêtera dans le niveau (0) mode halt,
 le niveau (1) mode mono-utilisateur  et le niveau (6) mode reboot.
 L'administrateur système pourra paramétrer les
 niveaux de fonctionnement soit en ajoutant, supprimant ou déplaçant
-les liens symboliques contenus dans <tt>/etc/rc<var>n</var>.d</tt> si la 
-méthode des liens symboliques est utilisée, soit en modifiant 
-<tt>/etc/runlevel.conf</tt> quand on utilise la méthode <tt>file-rc</tt>.</p>
-
-	  <p>
+les liens symboliques contenus dans <tt>/etc/rc<var>n</var>.d</tt> si la
+méthode des liens symboliques est utilisée, soit en modifiant
+<tt>/etc/runlevel.conf</tt> quand on utilise la méthode <tt>file-rc</tt>.
+</p>
+          <p>
 Pour obtenir le comportement par défaut pour votre paquet,
 mettez dans le script <prgn>postinst</prgn> :
-	   
-	    <example compact="compact">
+
+            <example compact="compact">
 update-rc.d <var>paquet</var> defaults &gt;/dev/null
-	    </example>
-	    et dans votre <prgn>postrm</prgn>
-	    <example compact="compact">
+            </example>
+            et dans votre <prgn>postrm</prgn>
+            <example compact="compact">
 if [ "$1" = purge ]; then
 update-rc.d <var>paquet</var> remove &gt;/dev/null
 fi
-	    </example></p>
-	    
-	  <p>
+            </example>
+</p>
+          <p>
 Le numéro d'ordre d'exécution par défaut sera égal à 20. Si l'ordre ou
 le moment d'exécution du script <tt>init.d</tt> sont indifférents, utilisez
 cette valeur par défaut. S'ils sont importants, vous devez en discuter avec le
@@ -4240,13 +4332,54 @@ responsable du paquet <prgn>sysvinit</prgn> ou envoyer
 un message à <tt>debian-devel</tt>. Ceci devrait vous
 aider à déterminer le numéro d'ordre d'exécution.
 </p>
-	    
-	  <p>
+          <p>
 Pour plus d'informations sur l'utilisation d'<tt>update-rc.d</tt>,
 veuillez consulter sa page de manuel
 <manref name="update-rc.d" section="8">.
 </p>
-
+	  </sect2>
+         <sect2>
+           <heading>Comment utiliser les scripts d'initialisation</heading>
+           <p>
+Le programme <prgn>invoke-rc.d</prgn> facilite l'appel correct d'un script
+d'initialisation par les responsables de paquet&nbsp;; cela comprend le
+respect du niveau de fonctionnement et des contraintes définies localement
+qui pourraient limiter le droit au démarrage d'un paquet, ainsi que la gestion
+d'autres services. Les responsables de paquets peuvent utiliser ce programme 
+dans leurs scripts.
+	    </p>
+<p>
+L'utilisation de <prgn>invoke-rc.d</prgn>  pour l'appel des scripts dans
+<file>/etc/init.d/*</file> est fortement conseillé <footnote>
+               <p>
+À l'avenir, l'utilisation de <prgn>invoke-rc.d</prgn> pour appeler les
+scripts d'initialisation sera rendu obligatoire. Il est conseillé de passer
+à <em>invoke-rc.d</em> aussi tôt que possible.</p>
+	      </footnote>, au lieu de l'appel direct.
+	    </p>
+           <p>
+Par défaut, <prgn>invoke-rc.d</prgn> passera toute demande d'action (start, 
+stop, reload, restart...) au script <file>/etc/init.d</file> et filtrera les
+demandes de démarrage ou re démarrage d'un service selon ses niveaux de
+fonctionnement prévus.
+	    </p>
+           <p>
+La plupart des paquets auront simplement à changer
+<example compact="compact">/etc/init.d/&lt;package&gt; &lt;action&gt;</example>
+dans leurs scripts <prgn>postinst</prgn> et <prgn>prerm</prgn> pour&nbsp;:
+<example compact="compact">
+          if [ -x /usr/sbin/invoke-rc.d ] ; then
+               invoke-rc.d <var>package</var> &lt;action&gt;
+          else
+             /etc/init.d/<var>package</var> &lt;action&gt;
+          fi
+             </example>
+</p>
+           <p>
+Davantage d'informations sur l'utilisation de <prgn>invoke-rc.d</prgn> se
+trouvent dans sa page de manuel <manref name="invoke-rc.d" section="8">.
+	    </p>
+	  </sect2>
 </sect1>
 	    
 	    
@@ -4867,12 +5000,18 @@ changés.
 </p>
 	    
 	  <p>
-Généralement on utilisera les paramètres de compilation suivants :
+Par défaut, lors de la construction d'un paquet, tous les binaires créés
+incluront des informations pour le débogage et seront compilés avec 
+optimisation. Vous mettrez aussi tous les avertissements de compilation
+qui vous semblent raisonnables&nbsp;: cela facilite la vie des responsable
+de portage qui peuvent consulter les journaux de construction en cas de
+problèmes. Pour le cas de la programmation en C, 
+on utilisera les paramètres de compilation suivants :
               <example compact="compact">
 CC = gcc 
-CFLAGS = -O2 -g -Wall # sane warning options vary between programs 
-LDFLAGS = # none 
-install -s # (or use strip on the files in debian/tmp)
+CFLAGS = -O2 -g -Wall # les bonnes options peuvent différer selon les programmes 
+LDFLAGS = # aucun 
+install -s # (ou bien utiliser strip sur les fichiers dans debian/tmp)
              </example>
 </p>
 	  <p>
@@ -4882,46 +5021,54 @@ soit en appliquant le programme <prgn>strip</prgn> sur les binaires
 après qu'ils ont été copiés dans <tt>debian/tmp</tt> mais avant
 qu'une arborescence ne soit faite pour le paquet.
 </p>
-	  <p>
-L'option <tt>-N</tt> ne sera pas utilisée. Dans les systèmes <tt>a.out</tt> 
-cela pouvait être utile pour de tout petits binaires, mais cela n'a pas 
-d'intérêt dans les systèmes «&nbsp;ELF&nbsp;».
-</p>
-
 <p>
-Les symboles de débogage sont utiles pour la détection des erreurs, la 
-recherche dans un «&nbsp;core dump&nbsp;» (envoyé par un utilisateur pour un 
-rapport de bogue), ou bien dans la phase de développement d'un logiciel. C'est
-pourquoi on construira un paquet avec des instructions pour le débogage de la
-manière suivante : si la variable d'environnement <tt>DEB_BUILD_OPTIONS</tt>
-contient la chaîne <tt>debug</tt>, on compile le logiciel avec les 
-informations de débogage (habituellement on ajoute le drapeau <tt>-g</tt> à
-<tt>CFLAGS</tt>). Cela permet la construction d'une arborescence avec les
-informations de débogage. Si la variable d'environnement 
-<tt>DEB_BUILD_OPTIONS</tt> contient <tt>nostrip</tt>, on n'épure pas les
-fichiers durant la phase d'installation. Cela permet de produire un paquet
-avec des informations de débogage <footnote><p> Argument : compiler
-par défaut avec l'option -g gaspille davantage de cycles CPU puisque les
-informations sont de toute manière enlevées ; cela peut avoir un impact 
-significatif sur l'efficacité des <em>autobuilders</em>. Une façon standard
-de construire des variantes avec des informations de débogage facilite 
-la construction de binaires ou de bibliothèques  puisqu'elle permet
-de documenter la façon d'obtenir ce genre de compilation&nbsp;; on ne doit pas
-avoir à modifier «&nbsp; à la main&nbsp;» <tt>debian/rules</tt> ou des
-<tt>Makefile</tt>s.
-</p></footnote>.
-Le petit makefile suivant explique comment tester chaque condition ; vous
-aurez sans doute à l'adapter aux conditions de votre paquet. 
+Bien que les binaires dans l'arbre de construction soient compilés par 
+défaut avec des informations pour le débogage, il est souvent difficile de
+déboguer les programmes qui sont soumis à des optimisations pour compilateur.
+Pour cette raison, il est conseillé de reconnaître la variable d'environnement
+standard <tt>DEB_BUILD_OPTIONS</tt>. Cette variable peut contenir plusieurs
+drapeaux de manière à pouvoir modifier la construction et la compilation
+d'un paquet.
+	</p>
+       <p>
+         <taglist>
+           <tag>noopt</tag>
+           <item>
+             <p>
+La présence de cette chaîne signifie que le paquet ne sera soumis qu'à un
+minimum d'optimisation. Pour les les programmes en C, il vaut mieux ajouter
+<tt>-O0</tt> à <tt>CFLAGS</tt> (bien que ce soit le défaut). Il peut
+arriver que quelques programmes ne se construisent pas ou ne fonctionnent pas
+à ce niveau d'optimisation&nbsp;: il peut être nécessaire, par exemple, 
+d'utiliser <tt>-O1</tt>.
+             </p>
+           </item>
+           <tag>nostrip</tag>
+           <item>
+             <p>
+Cette chaîne signifie que les symboles de débogage ne seront pas enlevés
+du binaire pendanr l'installation de manière à ce que les informations
+pour le débogage puissent être incluses dans le paquet.
+             </p>
+           </item>
+         </taglist>
+	</p>
+<p>
+Le petit makefile suivant explique comment implémenter les options de 
+construction&nbsp;; vous aurez sans doute à l'adapter aux conditions de votre 
+paquet. 
              <example compact="compact">
-CFLAGS = -O2 -Wall
+CFLAGS = -Wall -g
 INSTALL = install
 INSTALL_FILE    = $(INSTALL) -p    -o root -g root  -m  644
 INSTALL_PROGRAM = $(INSTALL) -p    -o root -g root  -m  755
 INSTALL_SCRIPT  = $(INSTALL) -p    -o root -g root  -m  755
 INSTALL_DIR     = $(INSTALL) -p -d -o root -g root  -m  755
 
-ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-CFLAGS += -g
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+CFLAGS += -O0
+else
+CFLAGS += -O2
 endif
 ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 INSTALL_PROGRAM += -s
@@ -4941,7 +5088,41 @@ programme original : elles sont souvent inappropriées dans votre environnement.
 	    
 	<sect>
 	  <heading>Les bibliothèques</heading>
-	    
+       <p>
+De façon générale, une bibliothèque doit avoir une version partagée dans le
+paquet de la bibliothèque et une version statique dans le paquet de 
+développement. La version partagée doit être compilée avec <tt>-fPIC</tt>,
+mais pas la version statique. Autrement dit, chaque source 
+(<tt>*.c</tt>, pour le cas des fichiers en C) devra être compilé deux fois.
+	</p>
+       <p>
+Dans les cas suivants, il est acceptable qu'une bibliothèque ne soit 
+disponible que sous sa forme statique&nbsp;:
+         <list>
+           <item>
+<p>
+bibliothèque pour langage dont la version partagée est immature ou 
+instable&nbsp;;</p>
+           </item>
+           <item>
+             <p>
+bibliothèque dont l'interface change constamment ou est en développement 
+(c'est le cas pour une bibliothèque dont le numéro majeur de version est zéro,
+ou dont la compatibilité binaire (<em>ABI</em>) n'est pas assurée pour des 
+niveaux de patch différents)&nbsp;;
+             </p>
+           </item>
+           <item>
+             <p>
+bibliothèque explicitement prévue pour n'être disponible que sous une forme
+statique par ses auteurs.
+	      </p>
+           </item>
+        </list>
+
+Quand une bibliothèque est disponible seulement sous une forme statique, elle
+doit suivre les conventions applicables à un paquet de développement.
+       </p>
 	  <p>
 Toutes les bibliothèques doivent avoir une version partagée dans le paquet 
 <tt>lib</tt> et une version statique dans le paquet <tt>lib-dev</tt>.
@@ -5067,6 +5248,12 @@ marcher le programme. Par exemple, si le nom-so de la bibliothèque est
 <tt>libfoo6</tt>.</p>
 	  </footnote>
 et <tt><var>nom-de-bibliothèque</var><var>version-so</var>-dev</tt>.
+Quand cela amène de la confusion d'ajouter directement <var>version-so</var>
+à <var>nom-de-bibliothèque</var> (par exemple, quand 
+<var>nom-de-bibliothèque</var> se termine lui-même par un numéro), on peut 
+aussi utiliser à la place 
+<tt><var>nom-de-bibliothèque</var>-<var>version-so</var></tt> et
+<tt><var>nom-de-bibliothèque</var>-<var>version-so</var>-dev</tt>.
 </p>
 
 	  <p>
@@ -5251,7 +5438,12 @@ dans son arborescence.
 Si un paquet a besoin d'un fichier de périphérique particulier
 qui n'est pas inclus dans le système de base, il doit
 appeler <prgn>MAKEDEV</prgn> dans le script <prgn>postinst</prgn>,
-après en avoir demandé l'autorisation à l'utilisateur.
+après avoir prévenu l'utilisateur <footnote>
+           <p>
+On peut prévenir l'utilisateur par un message de debconf dont la
+priorité sera basse, ou bien par un <em>echo</em> (printf).
+	    </p>
+         </footnote>.
 </p>
 	  <p>
 Un paquet ne doit pas supprimer de fichier de périphérique
@@ -5656,7 +5848,7 @@ possible&nbsp;; sinon, on aura besoin d'une pré-dépendance envers le paquet
 	    
 	  <p>
 D'un autre coté, un programme peut être capable, en fonctionnement, de 
-'administrateur-systèmedéterminer l'«&nbsp;uid&nbsp;» ou le «&nbsp;gid&nbsp;» à partir du nom d'un 
+déterminer l'«&nbsp;uid&nbsp;» ou le «&nbsp;gid&nbsp;» à partir du nom d'un 
 groupe de façon à utiliser un identifiant attribué de façon dynamique. Dans 
 ce cas vous choisirez un nom d'utilisateur ou de groupe approprié, vous en 
 discuterez dans <prgn>debian-devel</prgn>, vous vérifierez avec le responsable
@@ -6172,6 +6364,16 @@ de modifier des fichiers de configuration appartenant au système ou à
 l'utilisateur) ; si l'on doit modifier des fichiers de configuration , on
 ajoutera seulement 10 points.</p>
 </item>
+              <item>
+                <p>
+Si le gestionnaire de fenêtres est conforme au 
+<url id="http://www.freedesktop.org/standards/wm-spec.html"
+                    name="Projet pour la spécification des gestionnaires de fenêtres (The Window Manager Specification Project)">, écrit par le 
+                  <url id="http://www.freedesktop.org"
+                    name="Free Desktop Group">, on ajoutera 20 points.
+                </p>
+              </item>
+
 <item>
 <p>
 Si le gestionnaire de fenêtres autorise, dans sa configuration par défaut, le 
@@ -6701,36 +6903,15 @@ en tant que documentation indépendante utile sera installé dans
 
        <p>
 Les précédentes versions de Debian plaçaient toute la documentation 
-supplémentaire dans <tt>/usr/doc/<var>paquet</var></tt>. Afin de migrer
-en douceur vers <tt>/usr/share/doc/<var>paquet</var></tt>, chaque paquet
-doit maintenir un lien symbolique <tt>/usr/doc/<var>paquet</var></tt> qui
-pointe vers <tt>/usr/share/doc/<var>paquet</var></tt>, qui est la place réelle 
-de sa documentation<footnote><p>Ces liens symboliques seront détruits un jour,
-mais ils doivent exister pour des raisons de compatibilité jusqu'à ce que tous
-les paquets aient pris en compte cette règle et que la charte debian soit
-changée en conséquence.</p></footnote>. Le lien symbolique doit être créé au 
-moment de l'installation du paquet ; il ne peut être contenu dans le paquet
-lui-même à cause de problèmes avec <prgn>dpkg</prgn>. Une façon raisonnable
-de faire est de mettre, dans le script <prgn>postinst</prgn><footnote>
+supplémentaire dans <file>/usr/doc/<var>package</var></file>. C'est maintenant
+<file>/usr/share/doc/<var>package</var></file>, et les paquets ne doivent pas
+mettre de la dicumentation dans le répertoire 
+<file>/usr/doc/<var>package</var></file> <footnote>
 <p>
-Le script de <tt>debhelper</tt>, <prgn>dh_installdocs</prgn> fait ça 
-automatiquement.</p>
-	  </footnote>, ce qui suit&nbsp;:
-          <example compact="compact">
-if [ "$1" = "configure" ]; then
- if [ -d /usr/doc -a ! -e /usr/doc/<var>paquet</var> \
-    -a -d /usr/share/doc/<var>paquet</var> ]; then
- ln -sf ../share/doc/<var>paquet</var> /usr/doc/<var>paquet</var>
- fi
-fi
-          </example>
-et dans le script <prgn>prerm</prgn>:
-          <example compact="compact">
-if [ \( "$1" = "upgrade" -o "$1" = "remove" \) \
-  -a -L /usr/doc/<var>paquet</var> ]; then
-  rm -f /usr/doc/<var>paquet</var>
-fi
-          </example>
+À ce moment de la transition, nous n'avons plus besoin d'un lien symbolique
+vers <file>/usr/doc/</file>. Plus tard, la charte transformera ces liens
+symboliques en bogues.</p>
+	  </footnote>.
 	</p>
       </sect>
      
@@ -7429,7 +7610,7 @@ Recommends: ${shlibs:Recommends}
 Les sources qui produisent plusieurs paquets binaires avec des exigences 
 différentes pour les dépendances envers les bibliothèques partagées peuvent 
 utiliser l'option <tt>-p<var>varnameprefix</var></tt> pour annuler le préfixe 
-<tt>shlib:</tt> par défaut (un seul appel à <prgn>dpkg-shlibdeps</prgn>
+<tt>shlibs:</tt> par défaut (un seul appel à <prgn>dpkg-shlibdeps</prgn>
 par réglage de cette option). Ils peuvent ainsi produire plusieurs ensembles 
 de variables de dépendance, chacune de la forme 
 <tt><var>varnameprefix</var>:<var>dependencyfield</var></tt>, auxquelles 
