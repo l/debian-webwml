@@ -1,129 +1,113 @@
-#use wml::debian::template title="Debian bug tracking system" NOHEADER=yes WEBMASTER=bugs
-#use wml::debian::translation-check translation="1.1"
+#use wml::debian::template title="Debian 錯誤追蹤系統" NOHEADER=yes BARETITLE=true NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.12"
 
-<h1><A name="introduction">Introduction to the bug system request server</A></h1>
+<h1><A name="introduction">錯誤追蹤系統服務伺服器簡介</A></h1>
 
-<p>There is a mailserver which can send the bug reports and
-indices as plain text on request.</p>
+<p>這是一個可以依要求以純文字格式送出錯誤報告以及索引的郵件伺服器。</p>
 
-<p>To use it you send a mail message to
-<A href="mailto:request@bugs.debian.org"><code>request@bugs.debian.org</code></A>.
-The <code>Subject</code> of the message is ignored, except
-for generating the <code>Subject</code> of the reply.</p>
+<p>如果要使用這項服務的話，請寄一封電子郵件給 \
+<A href="mailto:request@bugs.debian.org"><code>request@bugs.debian.org</code></A>。
+信件中的 <code>Subject</code>（標題）將被忽視，而只作為產生回信的 \
+<code>Subject</code> 之用。</p>
 
-<p>The body you send should be a series of commands, one per line.
-You'll receive a reply which looks like a transcript of your message
-being interpreted, with a response to each command.  No notifications
-are sent to anyone for most commands; however, the messages are logged
-and made available in the WWW pages.</p>
+<p>信件的內文應該包含一連串，每行一個的指令。您所收到的回信看起來會像是\
+您的信件被處理的過程紀錄，其中會包含每一個指令處理後的結果。大部分的指令\
+並不會產生會送給其他人的通知，但這些信件還是會被紀錄並發佈在網頁上。</p>
 
-<p>Any text on a line starting with a hash sign <code>#</code> is
-ignored; the server will stop processing when it finds a line starting
-with <code>quit</code>, <code>stop</code>, <code>thank</code> or two
-hyphens (to avoid parsing a signature).  It will also stop if it
-encounters too many unrecognised or badly-formatted commands.  If no
-commands are successfully handled it will send the help text for the
-server.</p>
+<p>任何以 <code>#</code> 開始的行都會被忽略，而系統將會一直處理信件中\
+的指令，直到遇到一個以 <code>quit</code>，<code>stop</code>，\
+<code>thank</code>，或兩個短線 <code>--</code>（以避免讀到簽名檔）開頭\
+的行為止。系統在遇到太多它無法辨識或格式不正確的指定時也會停止處理。如果\
+系統沒有成功的處理任何的指令的話，它就會以說明文件作為回信的內容。</p>
 
-<h1>Commands available</h1>
+<h1>可使用的指令</h1>
 
 <dl>
-<dt><code>send</code> <var>bugnumber</var>
-<dt><code>send-detail</code> <var>bugnumber</var>
+<dt><code>send</code> <var>錯誤識別碼</var>
+<dt><code>send-detail</code> <var>錯誤識別碼</var>
 <dd>
 
-Requests the transcript for the bug report in question.
-<code>send-detail</code> sends all of the `boring' messages in the
-transcript, such as the various auto-acks (you should usually use
-<code>send</code> as well, as the interesting messages are not sent by
-<code>send-detail</code>).
+索取錯誤識別碼所代表的錯誤報告。<code>send-detail</code> 指令會把所有\
+像是各種自動回覆等等的“無關緊要”訊息都附在回信之中（您也應該同使下達 \
+<code>send</code> 指令，因為 <code>send-detail</code> 的回覆並不會包含\
+那些“有趣”的訊息）。
 
 <dt><code>index</code> [<code>full</code>]
 <dt><code>index-summary by-package</code>
 <dt><code>index-summary by-number</code>
 <dd>
 
-Request the full index (with full details, and including done and
-forwarded reports), or the summary sorted by package or by number,
-respectively.
+索取完整的錯誤索引（包含全部的細節，以及已修正及已轉寄給原作者的錯誤\
+報告），或者是依套件名稱或錯誤識別碼排序的摘要。
 
 <dt><code>index-maint</code>
 <dd>
 
-Requests the index page giving the list of maintainers with bugs (open
-and recently-closed) in the tracking sytem.
+索取所維護套件在追蹤系統中有相關錯誤報告（尚未解決或最近才解決的）的\
+維護者索引。
 
-<dt><code>index maint</code> <var>maintainer</var>
+<dt><code>index maint</code> <var>套件維護者</var>
 <dd>
 
-Requests the index pages of bugs in the system for all maintainers
-containing the string <var>maintainer</var>.  The search term is a
-case insensitive substring.  The bug index for each matching
-maintainer will be sent in a separate message.
+索取所有和名稱中包含“<var>套件維護者</var>”字串的維護者相關的錯誤報\
+告索引，其中所給的搜索參數將會被視為一個不管大小寫的子字串。和每一個\
+不同套件維護者相關的錯誤索引將會包含在不同的回信之中。
 
 <dt><code>index-packages</code>
 <dd>
 
-Requests the index page giving the list of packages with bugs (open
-and recently-closed) in the tracking sytem.
+索取所有追蹤系統中有（尚未解決或最近才解決的）錯誤的套件。
 
-<dt><code>index packages</code> <var>package</var>
+<dt><code>index packages</code> <var>套件名稱</var>
 <dd>
 
-Requests the index pages of bugs in the system for all packages
-containing the string <var>package</var>.  The search term is a case
-insensitive substring.  The bug index for each matching package will
-be sent in a separate message.
+索取所有名稱中和包含“<var>package</var>”字串的套件相關的錯誤索引，\
+其中所給的搜索參數將會被視為一個不管大小寫的子字串。和每一個不同套件\
+相關的錯誤索引將會包含在不同的回信之中。
 
 <dt><code>send-unmatched</code> [<code>this</code>|<code>0</code>]
 <dt><code>send-unmatched</code> <code>last</code>|<code>-1</code>
 <dt><code>send-unmatched</code> <code>old</code>|<code>-2</code>
 <dd>
 
-Requests logs of messages not matched to a particular bug report, for
-this week, last week and the week before.  (Each week ends on a
-Wednesday.)
+索取這個星期，上個星期，或前個星期中，沒有和任何特定錯誤報告相關的信\
+件的紀錄。（每個星期在星期三結束。）
 
-<dt><code>getinfo</code> <var>filename</var>
+<dt><code>getinfo</code> <var>檔案名稱</var>
 <dd>
 
-Request a file containing information about package(s) and or
-maintainer(s) - the files available are:
+索取一個包含和套件以及維護者相關訊息的檔案。可供索取的檔案包括：
+
 <dl compact>
 <dt><code>maintainers</code>
 <dd>
-The unified list of packages' maintainers, as used by the tracking
-system.
-This is derived from information in the <code>Packages</code>
-files, override files and pseudo-packages files.
+錯誤追蹤系統所使用的所有套件維護者的統一列表。這是由 <code>Packages</code>
+檔案，override 檔案，以及擬套件檔中的資訊整合而成的。
 
 
-<dt><code>override.</code><var>distribution</var>
-<dt><code>override.</code><var>distribution</var><code>.non-free</code>
-<dt><code>override.</code><var>distribution</var><code>.contrib</code>
+<dt><code>override.</code><var>發佈</var>
+<dt><code>override.</code><var>發佈</var><code>.non-free</code>
+<dt><code>override.</code><var>發佈</var><code>.contrib</code>
 <dt><code>override.experimental</code>
 <dd>
-Information about the priorities and sections of packages and
-overriding values for the maintainers.  This information is used by
-the process which generates the <code>Packages</code> files in the FTP
-archive.  Information is available for each of the main distribution
-trees available; the current stable and development trees are
-available by their codewords as well as by their release status.
+關於套件的重要性以，分區，以及維護者 override 值的相關資訊。這些資訊\
+會被用來產生 FTP 檔案庫中的 <code>Packages</code> 檔案。您可以利用每\
+一個主發佈的代碼來取得和它相關的資訊。
 
 
 <dt><code>pseudo-packages.description</code>
 <dt><code>pseudo-packages.maintainers</code>
 <dd>
-List of descriptions and maintainers respectively for pseudo-packages.
+擬套件的說明以及維護者表列。
 </dl>
 
 <dt><code>refcard</code>
 <dd>
-Requests that the mailservers' reference card be sent in plain ASCII.
+索取純 ASCII 文字格式的英文郵件伺服器參考文件。
 
 <dt><code>help</code>
 <dd>
-Requests that this help document be sent by email in plain ASCII.
+索取純 ASCII 文字格式的這個英文說明訊息。
 
 <dt><code>quit</code>
 <dt><code>stop</code>
@@ -131,62 +115,44 @@ Requests that this help document be sent by email in plain ASCII.
 <dt><code>--</code>...
 <dd>
 
-Stops processing at this point of the message.  After this you may
-include any text you like, and it will be ignored.  You can use this
-to include longer comments than are suitable for <code>#</code>, for
-example for the benefit of human readers of your message (reading it
-via the tracking system logs or due to a <code>CC</code> or
-<code>BCC</code>).
+在這個地方停止處理剩下的信件內容。在之後您可以在信件中附上任何內容，\
+系統將會完全忽視其中的資訊。您可以用這個方式來加入太長而不適合用 \
+<code>#</code> 引入的註解，以幫助（透過錯誤追蹤系統紀錄或 \
+<code>CC</code> 或 <code>BCC</code> 複本）讀到這封信件的人瞭解它的內容。
 
 <dt><code>#</code>...
 <dd>
 
-One-line comment.  The <code>#</code> must be at the start of the
-line.
+只有一行的註解。<code>#</code> 字元必須出現在一行的開始。
 
-<dt><code>debug</code> <var>level</var>
+<dt><code>debug</code> <var>等級</var>
 <dd>
 
-Sets the debugging level to <var>level</var>, which should be a
-nonnegative integer.  0 is no debugging; 1 is usually sufficient.  The
-debugging output appears in the transcript.  It is not likely to be
-useful to general users of the bug system.
+把除錯層級設定為一個非負整數“<var>等級</var>”。0 表示不必加入任何的\
+除錯訊息，1 通常就足夠了。除錯的結果將會出現在信件的處理紀錄之中。大部\
+分的使用者應該都不會用到這個功能。
 
 </dl>
 
-<p>There is a <A href="server-refcard">reference card</A> for the
-mailservers, available via the WWW, in
-<code>bug-mailserver-refcard.txt</code> or by email using the
-<code>refcard</code> command (see above).</p>
+<p>我們也有可從 WWW 上取得的<A href="server-refcard">\
+郵件伺服器參考文件</A>，在 <code>bug-mailserver-refcard.txt</code> \
+之中，或利用電子郵件以 <code>refcard</code> 指令取得（請參閱以上的\
+說明）。</p>
 
-<p>If you wish to manipulate bug reports you should use the
-<code>control@bugs.debian.org</code> address, which understands a
-<A href="server-control">superset of the commands listed
-above</A>.  This is described in another document, available on the
-<A href="server-control">WWW</A>,
-in the file <code>bug-maint-mailcontrol.txt</code>, or by
-sending <code>help</code> to <code>control@bugs</code>.</p>
+<p>如果您想要改變錯誤報告的狀態的話，請使用 \
+<code>control@bugs.debian.org</code> 這個能夠處理\
+<A href="server-control">更多指令</A>的電子郵件位址。您可以在 \
+<A href="server-control">WWW</A> 上，\
+<code>bug-maint-mailcontrol.txt</code> 檔案中，或透過對 \
+<code>control@bugs</code> 下達 <code>help</code> 指令來取得它的\
+說明。</p>
 
-<p>In case you are reading this as a plain text file or via email: an
-HTML version is available via the bug system main contents page
-<code>http://www.debian.org/Bugs/</code>.</p>
+<p>如果您是透過純文字檔案或電子郵件取得這份文件的話，提醒您您也可以\
+經由錯誤追蹤系統的主目錄頁 <code>http://www.debian.org/Bugs/</code> \
+上找到 HTML 的版本。</p>
 
 <hr>
-<P>Other pages:
-<ul>
-<li><A href="./">Bug tracking system main contents page.</A>
-<li><A href="Reporting">Instructions for reporting bugs.</A>
-<li><A href="Access">Accessing the bug tracking logs other than by WWW.</A>
-<li><A href="Developer">Developers'
-information regarding the bug processing system.</A>
-<li><A href="server-control">Developers'
-information - bug manipulation using the email control interface.</A>
-<li><A href="server-refcard">Mailservers' reference card.</A>
-<li><A href="db/ix/full.html">Full list of outstanding and recent bug reports.</A>
-<li><A href="db/ix/packages.html">Packages with bug reports.</A>
-<li><A href="db/ix/maintainers.html">Maintainers of packages with bug reports.</A>
-<li><A href="$(HOME)/">Debian GNU/Linux home page.</A>
 
-</ul>
+#use "otherpages.inc"
 
 #use 'footer.inc'
