@@ -6,8 +6,7 @@ do 'documents-bd.pl';
 # all information regarding the translation status for a fixed 
 # language
 
-#%translations_status = (
-#  'key' => {
+#  	'key' => {
 #	'status'		=> '',
 #use numbers instead of text since it makes translations easier
 #               'not-available' - 0
@@ -45,8 +44,6 @@ do 'documents-bd.pl';
 #	'translation_package'	=> '',
 #	'last_translated'	=> '',
 #	'old_translators'	=> []
-#},
-#);
 
 
 # ########################################################################################
@@ -55,7 +52,7 @@ do 'documents-bd.pl';
 #
 # ########################################################################################
 
-%translations_status = (
+$translations_status = {
 
 'book-gtiau' => {
 	'status' 		=> 2,
@@ -252,4 +249,405 @@ do 'documents-bd.pl';
 	'last_translated'	=> '10/08/1998',
 },
 
-);
+# ########################################################################################
+#
+# Pages web particulières
+#
+# ########################################################################################
+
+'international/French' => {
+	'status'		=> '4',
+	'note'			=> 'Version originale en français',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+# Génération automatique (Ne pas traduire!)
+
+'MailingLists/subscribe' => {
+	'status'		=> '0',
+},
+
+'MailingLists/unsubscribe' => {
+	'status'		=> '0',
+},
+
+'devel/maintainer_contacts' => {
+	'status'		=> '0',
+},
+
+# En cours
+
+'News/1997/index' => {
+	'status'		=> '2',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'News/1998/index' => {
+	'status'		=> '2',
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'News/weekly/contributing' => {
+	'status'		=> '2',
+	'since'			=> '24/07/1999',
+	'translation_maintainer'=> ['Laurent Le Guillou <leguillo@hep.saclay.cea.fr>'],
+},
+
+'devel/help' => {
+	'status'		=> '2',
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+},
+
+'intro/why_debian' => {
+	'status'		=> '2',
+	'translation_maintainer'=> ['"Philippe Paillé" <valvert@club-internet.fr>'],
+},
+
+# Traducteurs
+
+'News/index' => {
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+},
+
+'News/1999/index' => {
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'News/1999/19990204' => {
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'News/1999/19990212' => {
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'News/1999/19990222' => {
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'News/1999/19990225a' => {
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'News/1999/19990225b' => {
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'News/1999/19990302' => {
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'News/1999/19990309' => {
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'News/1999/19990330' => {
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'News/1999/19990421a' => {
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'contact' => {
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+},
+
+'donations' => {
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+},
+
+'index' => {
+	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
+},
+
+'license' => {
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+},
+
+'related_links' => {
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+},
+
+'social_contract' => {
+	'translation_maintainer'=> ['Antoine Martin <amartin@atos-group.com>'],
+},
+
+'support' => {
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+},
+
+'todo' => {
+	'translation_maintainer'=> ['Severin Hatt <magloire@multimania.com>'],
+},
+
+'MailingLists/debian-announce' => {
+	'translation_maintainer'=> ['Sebastien Kalt <ustilago@bigfoot.com>'],
+},
+
+'devel/HOWTO_translate' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'devel/extract_key' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'devel/incoming_mirrors' => {
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+},
+
+'devel/index' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'devel/machines' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'devel/people' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'devel/release_info' => {
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+},
+
+'devel/rsync_examples' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'devel/HOWTO_work_on_website' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'devel/constitution' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'distrib/ftplist' => {
+	'translation_maintainer'=> ['Severin Hatt <magloire@multimania.com>'],
+},
+
+'distrib/index' => {
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+},
+
+'distrib/packages' => {
+	'translation_maintainer'=> ['Marilleau Hugues <marillea@wotan.iie.cnam.fr>'],
+},
+
+'distrib/vendors' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'distrib/cdinfo' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'distrib/books' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'doc/index' => {
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+},
+
+'events/index' => {
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+},
+
+'intro/about' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'intro/cn' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'intro/cooperation' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'intro/free' => {
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+},
+
+'international/index' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'international/Chinese' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'international/Finnish' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'international/German' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'international/Italian' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'international/Japanese' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'international/Korean' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'international/Spanish' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'international/Turkish' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'intro/license_disc' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'intro/organization' => {
+	'translation_maintainer'=> ['Marilleau Hugues <marillea@wotan.iie.cnam.fr>'],
+},
+
+'mirror/explain' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'mirror/ftpmirror' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'mirror/index' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'mirror/submit' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'mirror/types' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'mirror/webmirror' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'mirror/push_server' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'mirror/size' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'security/index' => {
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+},
+
+'vote/index' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'Bugs/Access' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'Bugs/Developer' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'Bugs/Reporting' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'Bugs/index' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'Bugs/server-control' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'Bugs/server-refcard' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'Bugs/server-request' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'vote/howto_proposal' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'vote/howto_result' => {
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+},
+
+'releases/hamm/HOWTO.upgrade' => {
+	'translation_maintainer'=> ['Philippe Caillaud <pcaillaud@infini.fr>'],
+},
+
+'releases/hamm/errata' => {
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+},
+
+'releases/slink/index' => {
+	'translation_maintainer'=> ['Frederic Pascal <frederic.pascal@maisel-gw.enst-bretagne.fr>'],
+},
+
+'releases/slink/running-kernel-2.2' => {
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'releases/potato/index' => {
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'releases/index' => {
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'search' => {
+	'translation_maintainer'=> ['Jérôme Marant <jerome_marant@hotmail.com>'],
+},
+
+'ports/hurd/hurd-doc-translator' => {
+	'translation_maintainer'=> ['Jérôme Abela <Jerome.Abela@solsoft.fr>'],
+},
+
+'ports/hurd/hurd-doc' => {
+	'translation_maintainer'=> ['Jérôme Abela <Jerome.Abela@solsoft.fr>'],
+},
+
+'ports/hurd/hurd-faq' => {
+	'translation_maintainer'=> ['Jérôme Abela <Jerome.Abela@solsoft.fr>'],
+},
+
+'ports/hurd/hurd-install' => {
+	'translation_maintainer'=> ['Jérôme Abela <Jerome.Abela@solsoft.fr>'],
+},
+
+'ports/hurd/hurd-links' => {
+	'translation_maintainer'=> ['Jérôme Abela <Jerome.Abela@solsoft.fr>'],
+},
+
+'ports/hurd/hurd-news' => {
+	'translation_maintainer'=> ['Jérôme Abela <Jerome.Abela@solsoft.fr>'],
+},
+
+'ports/hurd/index' => {
+	'translation_maintainer'=> ['Jérôme Abela <Jerome.Abela@solsoft.fr>'],
+},
+
+
+};
