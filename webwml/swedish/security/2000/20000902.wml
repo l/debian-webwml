@@ -1,0 +1,115 @@
+# <!--translation 1.4-->
+<define-tag pagetitle>glibc</define-tag>
+<define-tag report_date>2000-09-02</define-tag>
+<define-tag packages>libc6/libc6.1 och stödpaket</define-tag>
+<define-tag description>lokal möjlighet att få rootbehörighet</define-tag>
+<define-tag isvulnerable>yes</define-tag>
+<define-tag fixed>yes</define-tag>
+<define-tag moreinfo>
+Nyligen har två problem upptäckts i glibc-sviten vilka kan användas för att
+lura "setuid"-program att köra valfri kod.
+
+<p>Det första problemet är det sätt på vilket ld.so hanterar miljövariabler:
+för att tillhandahålla en säker miljö för "setuid"-program tas vissa
+miljövariabler som kan inverka på hur programmet körs bort, såsom LD_PRELOAD
+och LD_LIBRARY_PATH.
+Tyvärr fanns det ett fel i ld.so som gjorde så att de inte togs bort under
+vissa omständigheter, något som skulle påverka "setuid"-program som
+exekverar andra binärer utan att släppa från sig privilegier eller själva
+rensa i miljön.
+
+<p>Det andra problemet är "lokal"-hanteringen i glibc.
+Glibc söker efter vissa tecken, såsom "/", i miljövariablerna LANG och LC_*
+för att se om någon försöker lura programmet att läsa valfria filer.
+Tyvärr fanns det vissa logiska fel i dessa kontroller, vilka skulle kunna
+användas för att göra så att "setuid"-program använder valfria filer för
+lokalinställningar, något som kan utnyttjas för att lura det att exekvera
+valfri kod.
+
+<p>Dessa problem har rättats i version 2.0.7.19981211-6.3 för Debian 2.1
+(slink) och 2.1.3-13 för Debian 2.2 (potato).
+Vi rekommenderar att du uppgraderar dina glibc-paket omedelbart.
+</define-tag>
+
+#use wml::debian::security
+
+<h4>Debian 2.1 (slink)</h4>
+<dl>Källkod:
+<dd><a href=http://security.debian.org/dists/slink/updates/source/glibc_2.0.7.19981211-6.3.diff.gz>http://security.debian.org/dists/slink/updates/source/glibc_2.0.7.19981211-6.3.diff.gz</a>
+<dd><a href=http://security.debian.org/dists/slink/updates/source/glibc_2.0.7.19981211-6.3.dsc>http://security.debian.org/dists/slink/updates/source/glibc_2.0.7.19981211-6.3.dsc</a>
+<dd><a href=http://security.debian.org/dists/slink/updates/source/glibc_2.0.7.19981211.orig.tar.gz>http://security.debian.org/dists/slink/updates/source/glibc_2.0.7.19981211.orig.tar.gz</a>
+</dl>
+
+<dl>i386:
+<dd><a href=http://security.debian.org/dists/slink/updates/binary-i386/libc6-dbg_2.0.7.19981211-6.3_i386.deb>http://security.debian.org/dists/slink/updates/binary-i386/libc6-dbg_2.0.7.19981211-6.3_i386.deb</a>
+<dd><a href=http://security.debian.org/dists/slink/updates/binary-i386/libc6-dev_2.0.7.19981211-6.3_i386.deb>http://security.debian.org/dists/slink/updates/binary-i386/libc6-dev_2.0.7.19981211-6.3_i386.deb</a>
+<dd><a href=http://security.debian.org/dists/slink/updates/binary-i386/libc6-pic_2.0.7.19981211-6.3_i386.deb>http://security.debian.org/dists/slink/updates/binary-i386/libc6-pic_2.0.7.19981211-6.3_i386.deb</a>
+<dd><a href=http://security.debian.org/dists/slink/updates/binary-i386/libc6_2.0.7.19981211-6.3_i386.deb>http://security.debian.org/dists/slink/updates/binary-i386/libc6_2.0.7.19981211-6.3_i386.deb</a>
+<dd><a href=http://security.debian.org/dists/slink/updates/binary-i386/locales_2.0.7.19981211-6.3_i386.deb>http://security.debian.org/dists/slink/updates/binary-i386/locales_2.0.7.19981211-6.3_i386.deb</a>
+<dd><a href=http://security.debian.org/dists/slink/updates/binary-i386/timezones_2.0.7.19981211-6.3_i386.deb>http://security.debian.org/dists/slink/updates/binary-i386/timezones_2.0.7.19981211-6.3_i386.deb</a>
+</dl>
+
+<h4>Debian 2.2 (potato)</h4>
+<dl>Källkod:
+<dd><a href=http://security.debian.org/dists/potato/updates/main/source/glibc_2.1.3-13.diff.gz>http://security.debian.org/dists/potato/updates/main/source/glibc_2.1.3-13.diff.gz</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/source/glibc_2.1.3-13.dsc>http://security.debian.org/dists/potato/updates/main/source/glibc_2.1.3-13.dsc</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/source/glibc_2.1.3.orig.tar.gz>http://security.debian.org/dists/potato/updates/main/source/glibc_2.1.3.orig.tar.gz</a>
+</dl>
+
+<dl>Maskinvaruarkitekturoberoende paket:
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-all/glibc-doc_2.1.3-13_all.deb>http://security.debian.org/dists/potato/updates/main/binary-all/glibc-doc_2.1.3-13_all.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-all/i18ndata_2.1.3-13_all.deb>http://security.debian.org/dists/potato/updates/main/binary-all/i18ndata_2.1.3-13_all.deb</a>
+</dl>
+
+<dl>alpha:
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-alpha/libc6.1-dbg_2.1.3-13_alpha.deb>http://security.debian.org/dists/potato/updates/main/binary-alpha/libc6.1-dbg_2.1.3-13_alpha.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-alpha/libc6.1-dev_2.1.3-13_alpha.deb>http://security.debian.org/dists/potato/updates/main/binary-alpha/libc6.1-dev_2.1.3-13_alpha.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-alpha/libc6.1-pic_2.1.3-13_alpha.deb>http://security.debian.org/dists/potato/updates/main/binary-alpha/libc6.1-pic_2.1.3-13_alpha.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-alpha/libc6.1-prof_2.1.3-13_alpha.deb>http://security.debian.org/dists/potato/updates/main/binary-alpha/libc6.1-prof_2.1.3-13_alpha.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-alpha/libc6.1_2.1.3-13_alpha.deb>http://security.debian.org/dists/potato/updates/main/binary-alpha/libc6.1_2.1.3-13_alpha.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-alpha/libnss1-compat_2.1.3-13_alpha.deb>http://security.debian.org/dists/potato/updates/main/binary-alpha/libnss1-compat_2.1.3-13_alpha.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-alpha/locales_2.1.3-13_alpha.deb>http://security.debian.org/dists/potato/updates/main/binary-alpha/locales_2.1.3-13_alpha.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-alpha/nscd_2.1.3-13_alpha.deb>http://security.debian.org/dists/potato/updates/main/binary-alpha/nscd_2.1.3-13_alpha.deb</a>
+</dl>
+
+<dl>arm:
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-arm/libc6-dbg_2.1.3-13_arm.deb>http://security.debian.org/dists/potato/updates/main/binary-arm/libc6-dbg_2.1.3-13_arm.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-arm/libc6-dev_2.1.3-13_arm.deb>http://security.debian.org/dists/potato/updates/main/binary-arm/libc6-dev_2.1.3-13_arm.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-arm/libc6-pic_2.1.3-13_arm.deb>http://security.debian.org/dists/potato/updates/main/binary-arm/libc6-pic_2.1.3-13_arm.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-arm/libc6-prof_2.1.3-13_arm.deb>http://security.debian.org/dists/potato/updates/main/binary-arm/libc6-prof_2.1.3-13_arm.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-arm/libc6_2.1.3-13_arm.deb>http://security.debian.org/dists/potato/updates/main/binary-arm/libc6_2.1.3-13_arm.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-arm/locales_2.1.3-13_arm.deb>http://security.debian.org/dists/potato/updates/main/binary-arm/locales_2.1.3-13_arm.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-arm/nscd_2.1.3-13_arm.deb>http://security.debian.org/dists/potato/updates/main/binary-arm/nscd_2.1.3-13_arm.deb</a>
+</dl>
+
+<dl>i386:
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-i386/libc6-dbg_2.1.3-13_i386.deb>http://security.debian.org/dists/potato/updates/main/binary-i386/libc6-dbg_2.1.3-13_i386.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-i386/libc6-dev_2.1.3-13_i386.deb>http://security.debian.org/dists/potato/updates/main/binary-i386/libc6-dev_2.1.3-13_i386.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-i386/libc6-pic_2.1.3-13_i386.deb>http://security.debian.org/dists/potato/updates/main/binary-i386/libc6-pic_2.1.3-13_i386.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-i386/libc6-prof_2.1.3-13_i386.deb>http://security.debian.org/dists/potato/updates/main/binary-i386/libc6-prof_2.1.3-13_i386.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-i386/libc6_2.1.3-13_i386.deb>http://security.debian.org/dists/potato/updates/main/binary-i386/libc6_2.1.3-13_i386.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-i386/libnss1-compat_2.1.3-13_i386.deb>http://security.debian.org/dists/potato/updates/main/binary-i386/libnss1-compat_2.1.3-13_i386.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-i386/locales_2.1.3-13_i386.deb>http://security.debian.org/dists/potato/updates/main/binary-i386/locales_2.1.3-13_i386.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-i386/nscd_2.1.3-13_i386.deb>http://security.debian.org/dists/potato/updates/main/binary-i386/nscd_2.1.3-13_i386.deb</a>
+</dl>
+
+<dl>powerpc:
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-powerpc/libc6-dbg_2.1.3-13_powerpc.deb>http://security.debian.org/dists/potato/updates/main/binary-powerpc/libc6-dbg_2.1.3-13_powerpc.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-powerpc/libc6-dev_2.1.3-13_powerpc.deb>http://security.debian.org/dists/potato/updates/main/binary-powerpc/libc6-dev_2.1.3-13_powerpc.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-powerpc/libc6-pic_2.1.3-13_powerpc.deb>http://security.debian.org/dists/potato/updates/main/binary-powerpc/libc6-pic_2.1.3-13_powerpc.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-powerpc/libc6-prof_2.1.3-13_powerpc.deb>http://security.debian.org/dists/potato/updates/main/binary-powerpc/libc6-prof_2.1.3-13_powerpc.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-powerpc/libc6_2.1.3-13_powerpc.deb>http://security.debian.org/dists/potato/updates/main/binary-powerpc/libc6_2.1.3-13_powerpc.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-powerpc/locales_2.1.3-13_powerpc.deb>http://security.debian.org/dists/potato/updates/main/binary-powerpc/locales_2.1.3-13_powerpc.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-powerpc/nscd_2.1.3-13_powerpc.deb>http://security.debian.org/dists/potato/updates/main/binary-powerpc/nscd_2.1.3-13_powerpc.deb</a>
+</dl>
+
+<dl>sparc:
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-sparc/libc6-dbg_2.1.3-13_sparc.deb>http://security.debian.org/dists/potato/updates/main/binary-sparc/libc6-dbg_2.1.3-13_sparc.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-sparc/libc6-dev_2.1.3-13_sparc.deb>http://security.debian.org/dists/potato/updates/main/binary-sparc/libc6-dev_2.1.3-13_sparc.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-sparc/libc6-pic_2.1.3-13_sparc.deb>http://security.debian.org/dists/potato/updates/main/binary-sparc/libc6-pic_2.1.3-13_sparc.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-sparc/libc6-prof_2.1.3-13_sparc.deb>http://security.debian.org/dists/potato/updates/main/binary-sparc/libc6-prof_2.1.3-13_sparc.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-sparc/libc6_2.1.3-13_sparc.deb>http://security.debian.org/dists/potato/updates/main/binary-sparc/libc6_2.1.3-13_sparc.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-sparc/locales_2.1.3-13_sparc.deb>http://security.debian.org/dists/potato/updates/main/binary-sparc/locales_2.1.3-13_sparc.deb</a>
+<dd><a href=http://security.debian.org/dists/potato/updates/main/binary-sparc/nscd_2.1.3-13_sparc.deb>http://security.debian.org/dists/potato/updates/main/binary-sparc/nscd_2.1.3-13_sparc.deb</a>
+</dl>
+
