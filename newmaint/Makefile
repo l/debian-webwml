@@ -1,7 +1,7 @@
 # Makefile to build HTML + PHP files from WML files
 # requires a checkout of webwml/template/debian from the webwml tree!
 
-TEMPLDIR := ../webwml/po/template/debian
+TEMPLDIR := ../webwml/english/template/debian
 DEBTEMPLATES := $(wildcard $(TEMPLDIR)/*.wml) \
                 $(TEMPLDIR)/countries.def \
                 $(TEMPLDIR)/language_names.def \
