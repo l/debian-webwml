@@ -8,8 +8,13 @@ my $messages = {};
 my @msgids = ();
 
 sub escape {
+        my $lang = shift;
         my $text = shift;
-        $text =~ s/\\/\\\\/g;
+        if ($lang eq 'ZH') {
+                $text =~ s/\\/\\x5c/g;
+        } else {
+                $text =~ s/\\/\\\\/g;
+        }
         $text =~ s/"/\\"/g;
         $text =~ s/\n/\\n/g;
         $text =~ s/\t/\\t/g;
@@ -38,12 +43,12 @@ sub processFile {
                 $lineno += countNewline ($1.$2);
                 $nextlineno = countNewline ($3);
                 if ($msg =~ m/(.*?)\[EN:(.*?):\](\n.*)/s) {
-                        $msgid = escape($2);
+                        $msgid = escape('EN', $2);
                         $lineno += countNewline ($1);
                         $nextlineno = countNewline ($2.$3);
                         $msgstr = '';
                         if ($lang ne '' && $msg =~ m/\[${lang}:(.*?):\]\n/s) {
-                                $msgstr = escape($1);
+                                $msgstr = escape($lang, $1);
                         }
                         $msgstr = '' if $msgid eq $msgstr;
                         push (@msgids, $msgid);
