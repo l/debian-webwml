@@ -6,6 +6,8 @@ WMLBASE=..
 CUR_DIR=Bugs
 SUBS=
 
+GETTEXTFILES = bugs.mo
+
 include $(WMLBASE)/Make.lang
 
 
