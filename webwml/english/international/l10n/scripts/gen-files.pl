@@ -214,12 +214,12 @@ sub get_stats_templates {
                         $excl{$l} .= ", ";
                 }
                 if ($data->has_errors($pkg)) {
-                        $tmpl_errors->{$pkg} = { unknown => [], master => [], fuzzy => [], mismatch => [], };
+                        $tmpl_errors->{$pkg} = { noorig => [], master => [], fuzzy => [], mismatch => [], };
                         my $found = 0;
                         foreach (@{$data->errors($pkg)}) {
                                 next unless s/debconf: //;
                                 if (m/([^:]+):(\d+): original-fields-removed-in-translated-templates/) {
-                                        push(@{$tmpl_errors->{$pkg}->{unknown}}, "$1:$2");
+                                        push(@{$tmpl_errors->{$pkg}->{noorig}}, "$1:$2");
                                         $found = 1;
                                 } elsif (m/([^:]+):(\d+): translated-fields-in-master-templates/) {
                                         push(@{$tmpl_errors->{$pkg}->{master}}, "$1:$2");
@@ -263,9 +263,9 @@ sub get_stats_templates {
                 if (@{$tmpl_errors->{$pkg}->{master}}) {
                         $errors_pkg .= "<li><a href=\"errors#master\">translated-fields-in-master-templates</a><br>\n".${$tmpl_errors->{$pkg}->{master}}[0]."</li>\n";
                 }
-                if (@{$tmpl_errors->{$pkg}->{unknown}}) {
-                        $errors_pkg .= "<li><a href=\"errors#unknown\">translated-templates-not-in-original</a><br>\n";
-                        foreach (@{$tmpl_errors->{$pkg}->{unknown}}) {
+                if (@{$tmpl_errors->{$pkg}->{noorig}}) {
+                        $errors_pkg .= "<li><a href=\"errors#noorig\">original-fields-removed-in-translated-templates</a><br>\n";
+                        foreach (@{$tmpl_errors->{$pkg}->{noorig}}) {
                                 $errors_pkg .= "$_<br>\n";
                         }
                         $errors_pkg .= "</li>\n";
