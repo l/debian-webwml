@@ -1,6 +1,6 @@
 # Top-level Makefile for the Debian Web pages
 
-languages := english
+languages := english polish
 
 languages-install := $(addsuffix -install,$(languages))
 
