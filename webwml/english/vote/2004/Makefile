@@ -35,6 +35,7 @@ desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
 install:: $(desttextfiles)
 
 $(desttextfiles): $(HTMLDIR)/%: %
+	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
 	install -m 664 -p $< $(HTMLDIR)
 
 cleandest::
