@@ -207,14 +207,15 @@ To contact the maintainer of this page, write to
 
 <p><pre><small><b>Primary ISO Mirror Sites</b>
 ------------------------         	<b>/debian?</b>	<b>/debian-non-US?</b>
-Australia     -   <a href="ftp://ftp.au.debian.org/debian/">ftp.au.debian.org</a>	Yes		<a
-href="ftp://ftp.au.debian.org/debian-non-US">Yes</a>
-Austria       -   <a href="ftp://ftp.at.debian.org/debian/">ftp.at.debian.org</a>	Yes		<a
-href="ftp://ftp.at.debian.org/debian-non-US">Yes</a>
-Germany       -   <a href="ftp://ftp.de.debian.org/debian/">ftp.de.debian.org</a>	Yes		<a
-href="ftp://ftp.de.debian.org/debian-non-US">Yes</a>
+Australia     -   <a href="ftp://ftp.au.debian.org/debian/">ftp.au.debian.org</a>	Yes		<a href="ftp://ftp.au.debian.org/debian-non-US">Yes</a>
+Austria       -   <a href="ftp://ftp.at.debian.org/debian/">ftp.at.debian.org</a>	Yes		<a href="ftp://ftp.at.debian.org/debian-non-US">Yes</a>
+Canada        -   <a href="ftp://ftp.ca.debian.org/debian/">ftp.ca.debian.org</a>	Yes		<a href="ftp://ftp.ca.debian.org/debian-non-US">Yes</a>
+Germany       -   <a href="ftp://ftp.de.debian.org/debian/">ftp.de.debian.org</a>	Yes		<a href="ftp://ftp.de.debian.org/debian-non-US">Yes</a>
+France        -   <a href="ftp://ftp.fr.debian.org/debian/">ftp.fr.debian.org</a>	Yes		<a href="ftp://ftp.fr.debian.org/debian-non-US">Yes</a>
 Japan         -   <a href="ftp://ftp.jp.debian.org/debian/">ftp.jp.debian.org</a>	Yes		No
 Korea         -   <a href="ftp://ftp.kr.debian.org/debian/">ftp.kr.debian.org</a>	Yes		No
+Sweden        -   <a href="ftp://ftp.se.debian.org/debian/">ftp.se.debian.org</a>	Yes		<a href="ftp://ftp.se.debian.org/debian-non-US">Yes</a>
+United Kingdom-   <a href="ftp://ftp.uk.debian.org/debian/">ftp.uk.debian.org</a>	Yes		<a href="ftp://ftp.uk.debian.org/debian-non-US">Yes</a>
 United States -   <a href="ftp://ftp.debian.org/debian/">ftp.debian.org</a>   	Yes		No
    
 </small></pre>
@@ -230,9 +231,13 @@ Primary ISO Mirror Sites
 ------------------------         	/debian?	/debian-non-US?
 Australia     -   ftp.au.debian.org	Yes		Yes
 Austria       -   ftp.at.debian.org	Yes		Yes
+Canada        -   ftp.ca.debian.org	Yes		Yes
 Germany       -   ftp.de.debian.org	Yes		Yes
-Japan         -   ftp.jp.debian.org	Yes		No
-Korea         -   ftp.kr.debian.org	Yes		No
+France        -   ftp.fr.debian.org	Yes		Yes
+Japan         -   ftp.jp.debian.org	Yes		Yes
+Korea         -   ftp.kr.debian.org	Yes		Yes
+Sweden        -   ftp.se.debian.org	Yes		Yes
+United Kingdom-   ftp.uk.debian.org	Yes		Yes
 United States -   ftp.debian.org   	Yes		No
    
 END
@@ -265,28 +270,39 @@ of material available are listed, along with the access method for each type.
 
 <p>The following things are mirrored:
 <dl>
-<dt><b>Archive</b><dd>The Debian archive.
-<dt><b>nonUS</b><dd>The nonUS portion of the Debian archive. Software is placed here if
+<dt><b>Archive</b>
+	<dd>The Debian archive.
+<dt><b>nonUS</b>
+	<dd>The nonUS portion of the Debian archive. Software is placed here if
 	it can't be distributed in the US due to software patents or uses encryption.
-<dt><b>Incoming</b><dd>The Incoming directory for packages destined to go into the archive.
+<dt><b>Incoming</b>
+	<dd>The Incoming directory for packages destined to go into the archive.
 	These packages are untested so you should only use these if you like living on the edge.
-<dt><b>WWW</b><dd>The Debian web pages.
-<dt><b>CDimage</b><dd>Official Debian CD Images. See
+<dt><b>WWW</b>
+	<dd>The Debian web pages.
+<dt><b>CDimage</b>
+	<dd>Official Debian CD Images. See
 	<a href="http://cdimage.debian.org/">http://cdimage.debian.org/</a> for details.
 </dl>
 
 <p>The following access methods are available:
 <dl compact>
-<dt><b>http</b><dd>Standard web access.
-<dt><b>ftp</b><dd>File Transfer Protocol
-<dt><b>rsync</b><dd>An efficient means of mirroring
-<dt><b>nfs</b><dd>If you don't know what it is, you don't need it.
+<dt><b>http</b>
+	<dd>Standard web access.
+<dt><b>ftp</b>
+	<dd>File Transfer Protocol
+<dt><b>rsync</b>
+	<dd>An efficient means of mirroring
+<dt><b>nfs</b>
+	<dd>If you don't know what it is, you don't need it.
 </dl>
 
 <p>The 'Type' entry is one of:
 <dl compact>
-<dt><b>leaf</b><dd>These comprise the bulk of the mirrors. Most of them mirror from a Push-Primary.
-<dt><b>Push-Primary</b><dd>These sites mirror directly from the master archive site (which is
+<dt><b>leaf</b>
+	<dd>These comprise the bulk of the mirrors. Most of them mirror from a Push-Primary.
+<dt><b>Push-Primary</b>
+	<dd>These sites mirror directly from the master archive site (which is
 	not publicly accessable).
 </dl>
 
