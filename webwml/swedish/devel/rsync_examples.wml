@@ -1,5 +1,7 @@
-#use wml::debian::template title="Exempel på hur rsync används"
-#use wml::debian::translation-check translation="1.3"
+#use wml::debian::template title="Exempel på hur rsync används, och hur man sätter upp lösenordslös ssh" NOHEADER=yes
+#use wml::debian::translation-check translation="1.4"
+
+<H3>Exempel på hur rsync används</H3>
 
 <P>Nedan finns exempelkod som speglar både webb- och ftp-platsen.
 Du måste modifiera maskinnamnet och de sökvägar som används för att passa
@@ -10,17 +12,17 @@ Om speglingen av någon orsak skulle misslyckas kommer nästa försök att
 generera ett e-postmeddelande.
 Det gör att du kan spåra problemet, rätta till det och radera låsfilen,
 varefter speglingen kan fungera korrekt nästa gång det körs.
+
 <blockquote>
 <pre>
-#!/bin/bash
-set -e
+\#!/bin/bash -e
 
 lockfile -r 1 rsync.master.lock || exit 23
 
 rsync -avz -e ssh --exclude .glbuild --delete &lt;maskin&gt;:/web/debian.org/ debian.org
 rsync -avz -e ssh --delete &lt;maskin&gt;:/web/debian.org-local/ debian.org-local
 
-echo FÄRDIG MED UPPDATERING AV WEBBEN. ÖVERGÅR NU TILL FTP.
+echo Färdig med uppdatering av webbspeglingen. Övergår nu till ftp-speglingen...
 
 rsync -avz --delete -e ssh &lt;maskin&gt;:/debian debian
 
@@ -28,19 +30,28 @@ rm -f rsync.master.lock
 </pre>
 </blockquote>
 
-<H3>Hur du sätter upp ssh så att du slipper frågas efter lösenord:</H3>
+<P>Skriptet ovan kommer att fråga dig efter ett lösenord om du inte har ställt
+in ssh på enligt nedan.
 
-Skriptet ovan kommer att fråga dig efter ett lösenord om du inte har ställt
-in ssh på ett speciellt sätt.
-Skapa en nyckel med ssh-keygen som inte har något lösenord, tryck bara
-return när det frågar efter ett [1].
-Därefter lägger du till innehållet i ~/.ssh/identity.pub till
-~/.ssh/authorized_keys på spegeln (filen bör ha rättigheten 600).
-Det ska nu gå att logga in till spegeln med ssh utan att du blir efterfrågad
-om ett lösenord.
+<H3><a name="passwordlessssh">Hur du sätter upp ssh så att du slipper frågas
+efter lösenord</a>:</H3>
+
+<p>Du kan skapa en RSA-autentiseringsnyckel som kan användas för att logga
+in på en fjärrserver från ditt konto, utan att du behöver ange lösenordet.
 
 <P>
-[1] Notera att om du sätter upp ssh med ett tomt lösenord så kan du ge en
-inkräktare fri åtkomst till webbplatsen du speglar om de har lyckats bryta
-sig in i din dator.
-Av den anledningen bör du aldrig göra så här från root-kontot.
+Observera att när du väl satt upp detta kan en inkräktare som bryter sig in
+på ditt konto/din server även få fri tillgång till webbplatsen du speglar!
+Därför bör detta <strong>aldrig</strong> göras från root-kontot.
+
+<ul>
+  <li>Kör <code>ssh-keygen</code> på din maskin, och tryck bara
+      return när du ombeds ange ett lösenord.
+  <li>Lägg därefter innehållet i <code>~/.ssh/identity.pub</code> från din
+      maskin till <code>~/.ssh/authorized_keys</code> på spegeln
+      (filen bör ha rättigheten 600).
+</ul>
+
+<p>
+Det ska nu gå att logga in till spegeln med ssh utan att du blir efterfrågad
+om ett lösenord.
