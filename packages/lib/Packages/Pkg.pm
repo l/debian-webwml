@@ -260,12 +260,12 @@ sub add_version {
 		 || ( ! $a_self->{$k} )
 		 || ( $a_self->{$k} ne $data->{$k} ) ) {
 		my $oldval = $a_self->{$k} ? $a_self->{$k} : ""; # supress warning
-		#unless( $name && $k && $oldval ) {
-		#    print Dumper( $data );
-		#    die;
-		#}
+#		unless( $name && $k && defined($oldval) && $data->{$k} ) {
+#		    print Dumper( $data, $name, $k, $oldval );
+#		    die;
+#		}
 		$self->_debug( "add_version:$name: replacing $k\n"
-		    . "\t$oldval => $data->{$k}" );
+			       . "\t$oldval => $data->{$k}" );
 		$a_self->{$k} = $data->{$k};
 	    }
 	}
@@ -282,52 +282,37 @@ sub add_version {
 
 =pod
 
-=item C<add_provided_by>,C<add_enhanced_by>
+=item C<add_reverse_rel>
 
 FIXME
 
 =cut
 
-sub add_provided_by {
-    my $self = shift;
-    my $pkg = shift;
+sub add_reverse_rel {
+    my ( $self, $rel, $pkg, $version, $constraint ) = @_;
+
+    $constraint ||= "";
 
     if ( $self->is_locked ) {
 	$self->_error( "add_provided_by: db is locked" );
 	return 0;
     }
 
-    $self->_debug( "add provided_by( $pkg ) to $self->{package}" );
-    $self->{provided_by} = [] unless exists $self->{provided_by};
-    push @{$self->{provided_by}}, $pkg 
-	if _not_member( $pkg, $self->{provided_by} );
+    $self->_debug( "add reverse rel $rel from $self->{package} to $pkg" );
+
+    $self->{rr}{$rel} = {} unless exists $self->{rr}{$rel};
+    $self->{rr}{$rel}{$pkg}{$version} = []
+	unless exists $self->{rr}{$rel}{$pkg}{$version};
+    push @{$self->{rr}{$rel}{$pkg}{$version}}, $constraint;
 }
 
-sub _not_member {
-    my ( $str, $array ) = @_;
+=pod
 
-    foreach ( @$array ) {
-	if ( $_ eq $str ) {
-	    return 0;
-	}
-    }
-    return 1;
-}
+=item C<delete_version>
 
-sub add_enhanced_by {
-    my $self = shift;
-    my $pkg = shift;
-    my $version = shift;
+FIXME
 
-    if ( $self->is_locked ) {
-	$self->_error( "add_enhanced_by: db is locked" );
-	return 0;
-    }
-
-    $self->_debug( "add enhanced_by( $pkg ) to $self->{package}" );
-    $self->{enhanced_by} = {} unless exists $self->{enhanced_by};
-    $self->{enhanced_by}->{$pkg} = $version;
-}
+=cut
 
 sub delete_version {
     my $self = shift;
@@ -338,7 +323,7 @@ sub delete_version {
 	return 0;
     }
 
-    return delete $self->{versions}->{$version};
+    return delete $self->{versions}{$version};
 }
 
 # ======================
@@ -354,8 +339,8 @@ sub is_virtual {
     my $self = shift;
 
     if ( ! %{$self->{versions}}
-	 && ( exists $self->{provided_by}
-	      || exists $self->{enhanced_by} ) ) {
+	 && ( exists $self->{rr}{provides}
+	      || exists $self->{rr}{enhances} ) ) {
 	return 1;
     }
     return 0;
