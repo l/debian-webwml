@@ -9,10 +9,7 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 
-$(HTMLFILES): otherpages.inc footer.inc
+$(HTMLFILES): $(TEMPLDIR)/template.wml otherpages.inc footer.inc
 
-# this needs to be forced, because the pseudo-packages.description list
-# may change any time
-pseudo-packages.$(LANGUAGE).html: FORCE
-
-FORCE:
+pseudo-packages.$(LANGUAGE).html: $(ENGLISHDIR)/Bugs/pseudo-packages.description \
+  $(TEMPLDIR)/template.wml otherpages.inc footer.inc
