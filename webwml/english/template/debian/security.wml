@@ -39,7 +39,19 @@
 <dt><gettext domain="security">Date Reported</gettext>:</dt>
 	<dd><:= newsdate('<report_date/>') :></dd>
 <dt><gettext domain="security">Affected Packages</gettext>:</dt>
-	<dd><packages/></dd>
+	<dd>
+<perl>
+my @pkg_links;
+foreach my $pkg (split /\s*,\s*/, "<packages/>") {
+    push @pkg_links, "<a href=\"http://packages.debian.org/src:$pkg\">$pkg</a>";
+}
+if ($#pkg_links > 1) {
+      print join "<br />", @pkg_links;
+} else {
+      print join ", ", @pkg_links;
+}
+</perl>
+</dd>
 <dt><gettext domain="security">Vulnerable</gettext>:</dt>
 	<dd>
 	<ifeq "<isvulnerable/>" "yes" "<font color="#FF0000"><yes/></font>" />
