@@ -1,34 +1,9 @@
 #use wml::debian::submenu
 #include "$(ENGLISHDIR)/ports/menu.defs"
 
-# Please keep slices sorted alphabetically so it's easier to detect
-# languages in them (except english ones).
 
 <define-menu-item name="alpha">
-   [EN:Debian for Alpha:]
-   [AR:Debian for Alpha:]
-   [CA:Debian per a Alpha:]
-   [DA:Debian til Alpha:]
-   [DE:Debian für Alpha:]
-   [EL:Debian for Alpha:]
-   [EO:Debian for Alpha:]
-   [ES:Debian para Alpha:]
-   [FI:Debian for Alpha:]
-   [FR:Debian pour Alpha:]
-   [HR:Debian za Alphu:]
-   [HU:Debian for Alpha:]
-   [IT:Debian per Alpha:]
-   [JA:Debian for Alpha:]
-   [KO:Debian for Alpha:]
-   [NL:Debian for Alpha:]
-   [NO:Debian for Alpha:]
-   [PL:Debian for Alpha:]
-   [PT:Debian para Alpha:]
-   [RO:Debian for Alpha:]
-   [RU:Debian for Alpha:]
-   [SV:Debian för Alpha:]
-   [TR:Debian for Alpha:]
-   [ZH:Debian for Alpha:]
+  <gettext domain="ports">Debian for Alpha</gettext>
 </define-menu-item>
 
 <menu-item name="ports"         basename="../index">
