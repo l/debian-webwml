@@ -197,7 +197,7 @@ use Time::Local;
 # Available variables are: $mday = day-of-month, $mon = month number,
 # $mon_str = month string (from %longmoy), $year = year number.
 %spokendateform = (
-  ca => '"%d de %s de %d", $mday, $mon_str, $year',
+# ca => '"%d de %s de %d", $mday, $mon_str, $year', # see below
   da => '"%d. %s %d", $mday, $mon_str, $year',
   de => '"%d. %s %d", $mday, $mon_str, $year',
   es => '"%d de %s de %d", $mday, $mon_str, $year',
@@ -293,6 +293,15 @@ sub spokendate {
 		}
 
 		return sprintf("%s %d%s, %d", $mon_str, $mday, $appday, $year);
+	}
+	elsif ($CUR_ISO_LANG eq "ca")
+	{
+		# Special handling of Catalan: "de " followed by a vowel should be
+		# contracted to "d'" in the spoken date form
+
+		my $date = sprintf("%d de %s de %d", $mday, $mon_str, $year);
+		$date =~ s/\bde ([aáàeéèiïíoóòuúü])/d'$1/g;
+		return $date;
 	}
 	# Add any other special cases here as elsif cases
 	else
