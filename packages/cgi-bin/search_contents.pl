@@ -198,8 +198,6 @@ for (my $i = 0; $i < $results_per_page; $i++) {
     $line{$i} =~ s,non-US/non-free,non-US,;
     $line{$i} =~ s,non-free/(.+)$,$1,;
     $line{$i} =~ s,contrib/(.+)$,$1,;
-    # hopefully this won't ruin (too m)any real file names
-    $line{$i} =~ s,non-US/,non-us/,g;
     # make an HTML anchor to the file for the package
     my $list = '';
     if ($line{$i} =~ /(\S*)\s*$/) {
