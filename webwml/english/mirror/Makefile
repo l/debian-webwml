@@ -21,8 +21,8 @@ destmirrorstuff := $(patsubst %,$(HTMLDIR)/%,$(mirrorstuff))
 
 install:: $(destmirrorstuff)
 
-$(destmirrorstuff): $(mirrorstuff)
-	install -m 664 -p $(@F) $(HTMLDIR)
+$(destmirrorstuff): $(HTMLDIR)/%: %
+	install -m 664 -p $< $(HTMLDIR)
 
 cleandest::
 	rm -f $(destmirrorstuff)

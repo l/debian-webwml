@@ -15,6 +15,8 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
 # there is no reason to translate the file partners-form.txt 
 # so don't modify the following
 ifeq ($(LANGUAGE),en)
-install::
-	install -m664 partners-form.txt $(HTMLDIR)
+$(HTMLDIR)/partners-form.txt: partners-form.txt
+	install -m 664 -p $< $(HTMLDIR)
+
+install:: $(HTMLDIR)/partners-form.txt
 endif

@@ -9,6 +9,8 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 ifeq "$(LANGUAGE)" "en"
-install::
-	install -m 664 -p informal.txt transcript.txt $(HTMLDIR)
+$(HTMLDIR)/informal.txt $(HTMLDIR)/transcript.txt: $(HTMLDIR)/%: %
+	install -m 664 -p $< $(HTMLDIR)
+
+install:: $(HTMLDIR)/informal.txt $(HTMLDIR)/transcript.txt
 endif
