@@ -31,7 +31,7 @@ sub process_line {
 	elsif ($line =~ /^Alias(?:es)?:\s*(.+)\s*$/is) {
 		push @{ $mirror{$site}{aliases} }, $_ foreach (split("\n", $1));
 	}
-	elsif ($line=~ /^((Archive|nonUS|WWW|Incoming|CDimage|Old)-(\w*)):\s*(.*)\s*$/i) {
+	elsif ($line=~ /^((Archive|NonUS|Security|WWW|CDimage|Old)-(\w*)):\s*(.*)\s*$/i) {
 		$type = lc $1;
 		$mirror{$site}{method}{$type} = $4;
 		if (!defined($longest{$type}) || length($4) > $longest{$type}) {
@@ -626,6 +626,7 @@ sub full_listing {
 				my $display = $method;
 				$display =~ s/archive-/Packages /;
 				$display =~ s/nonus-/Non-US packages /;
+				$display =~ s/security-/Security updates /;
 				$display =~ s/www-/WWW pages /;
 				$display =~ s/cdimage-/CD Images /;
 				$display =~ s/old-/Old releases /;
@@ -662,6 +663,7 @@ sub full_listing {
 				my $display = $method;
 				$display =~ s/archive-/Packages /;
 				$display =~ s/nonus-/Non-US packages /;
+				$display =~ s/security-/Security updates /;
 				$display =~ s/www-/WWW pages /;
 				$display =~ s/cdimage-/CD Images /;
 				$display =~ s/old-/Old releases /;
