@@ -4,10 +4,13 @@
 
 WMLBASE=..
 CUR_DIR=CD
-SUBS=artwork images jigdo-cd pictures pik vendors
+SUBS=artwork faq http-ftp jigdo-cd mirroring netinst pictures pik releases vendors
 
 NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml
+	$(WML) $(<F)
+
+misc.$(LANGUAGE).html: misc.wml $(TEMPLDIR)/cdimage.wml
 	$(WML) $(<F)
