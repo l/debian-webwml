@@ -542,7 +542,7 @@ of material available are listed, along with the access method for each type.
 	<dd>These sites mirror directly from the master archive site (which
 	is not publicly accessible), using push mirroring.
 </dl>
-(See <a href="http://www.debian.org/mirror/push_mirroring">the page on push
+(See <a href="http://www.debian.org/mirror/push_mirroring">the page about push
 mirroring</a> for details on that.)
 END
 
@@ -570,19 +570,14 @@ sub full_listing {
 		$under = ''; for (my $i=0; $i<length($country); $i++) { $under .= "-";}
 		print "$under\n";
 		foreach $site (@{ $countries{$country} }) {
+			next if ($site =~ /^(gluck|raff).debian.org$/);
 			print "Site: $site";
 			if (exists $mirror{$site}{'aliases'}) {
-				print ", ".join(", ", @{ $mirror{$site}{'aliases'} })."\n";
+				print ", ".join(", ", @{ $mirror{$site}{'aliases'} });
 			}
-			else {
-				print "\n";
-			}
-			if (! defined $mirror{$site}{'type'}) {
-				print "Type: undefined\n";
-			}
-			else {
-				print "Type: $mirror{$site}{'type'}\n";
-			}
+			print "\n";
+			die "undefined type for $mirror{$site}!\n" unless defined $mirror{$site}{'type'};
+			print "Type: $mirror{$site}{'type'}\n";
 			foreach ( sort keys %{ $mirror{$site}{method} } ) {
 				my $display = $_;
 				$display =~ s/archive-/Packages /;
