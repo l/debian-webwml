@@ -6,6 +6,7 @@ use warnings;
 use POSIX;
 use HTML::Entities;
 use Data::Dumper;
+# $Data::Dumper::Maxdepth = 3;
 use URI::Escape;
 use Text::Iconv;
 Text::Iconv->raise_error(0); # do not throw exeptions
@@ -153,6 +154,30 @@ sub package_index_walker {
 	${$env->{all_pkg_txt}} .= $txt_str;
 	$env->{si}->{$section} .= $sect_str if $section;
     }
+
+sub src_package_index_walker {
+    my $pkg = shift;
+    my $env = shift;
+ 
+    progress() if $env->{opts}{progress};
+    my $name = $pkg->get_name;
+    
+    my ( $version, $v_pkg, $archive, $subdist, $str );
+    $version = ($pkg->get_version_list)[0];
+    $v_pkg = $pkg->get_version( $version );
+    $archive = $v_pkg->{archive};
+    $subdist = $v_pkg->{subdistribution};
+
+    $str = "<dt><a href=\"$name\">".
+	"$name</a> $version";
+    if ( $archive && ( $archive ne 'main' ) ) {
+	$str .=  " [<font color=\"red\">$archive</font>]\n";
+    }
+    if ( $subdist ) {
+	$str .=  " [<font color=\"red\">$subdist</font>]\n";
+    }
+    ${$env->{source_index}} .= $str;
+}
 
 sub print_virt_pack {
     my ( $pkg, $env ) = @_;
@@ -804,7 +829,12 @@ sub write_pages {
 				opts => $opts } );
 	    print "\n" if $opts->{progress};
 	    if ($l eq 'en') {
-		print "writing pages for source packages\n" unless $opts->{quiet};
+		print "writing source package index\n" unless $opts->{quiet};
+		$p_counter = 0;
+		write_src_index( $db, $dest_dir, $dist, $l, $opts, $langs );
+		print "\n" if $opts->{progress};
+		
+		print "writing pages for individual source packages\n" unless $opts->{quiet};
 		$p_counter = 0;
 		walk_db_src_packages( $db, &src_package_pages_walker,
 				      { db => $db,
@@ -873,6 +903,32 @@ sub write_all_package {
 	$files->update_file( $filename, $all_package );
 	$filename = "$dest_dir/allpackages.$lang.txt.gz";
 	$files->update_gz_file( $filename, $all_pkg_txt );
+}
+
+sub write_src_index {
+    my ( $db, $dest_dir, $distro, $lang, $opts, $langs ) = @_;
+    
+    my $source_index;
+    my $experimental_note = gettext( "<p>Warning: The <font color=\"red\">experimental</font> distribution contains software that is likely unstable or buggy and may even cause data loss. If you ignore this warning and install it nevertheless, you do it on your own risk.</p>\n" );
+    
+    my $title = sprintf( gettext ( "Source Packages in \"%s\"" ), 
+			 $distro, $_ );
+    $source_index = header( title => $title, lang => $lang,
+			    print_title_below => 1 );
+    if ($distro eq "experimental") {
+	$source_index .= $experimental_note;
+    }
+    $source_index .= "<dl>\n";
+    
+    walk_db_src_packages( $db, &src_package_index_walker, 
+			  { source_index => \$source_index, db => $db,
+			    opts => $opts, lang => $lang } );
+
+    $source_index .= "</dl>\n";
+    $source_index .= trailer( '..', 'index', $lang, @$langs );
+    my $dirname = "$dest_dir/source";
+    my $filename = "$dirname/index.$lang.html";
+    $files->update_file( $filename, $source_index );
 }
 
 sub print_deps {
