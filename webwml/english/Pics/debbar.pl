@@ -33,15 +33,15 @@ sub debian_button {
 	gimp_selection_all($image);
 	gimp_edit_clear($layer);
 
-        gimp_rect_select($image, 9, 0, $width, $height, SELECTION_REPLACE, 0, 0);
-	gimp_ellipse_select($image, (9-($height/2)), 0, $height, $height, SELECTION_ADD, 0, 0, 0);
-	gimp_ellipse_select($image, ((9+$width) - ($height/2)), 0, $height, $height, SELECTION_ADD, 0,0,0);
+        gimp_rect_select($image, 9, 0, $width, $height, REPLACE, 0, 0);
+	gimp_ellipse_select($image, (9-($height/2)), 0, $height, $height, ADD, 0, 0, 0);
+	gimp_ellipse_select($image, ((9+$width) - ($height/2)), 0, $height, $height, ADD, 0,0,0);
 	gimp_bucket_fill($layer, BG_BUCKET_FILL, NORMAL_MODE, 100, 0, 0, 5, 5);
 	gimp_selection_none($image);
 
 	gimp_floating_sel_anchor($text);
 
-	gimp_convert_indexed_palette($image, 0, 0, 8, "");
+	gimp_convert_indexed($image, 0, 0, 8, 0, 0, "");
 
 	return $image;
 }
