@@ -1,8 +1,8 @@
 #!/usr/bin/perl -w
 #
-# Perl script to use Gimp to make the Debian toolbar icons
-# written by Craig Small <csmall@debian.org>
-#
+# Perl scripts to generate the Debian toolbar icons
+# This needs gimp 1.1 and gimp1.1-nonfree to work!!
+# By Craig Small <csmall@debian.org>
 
 use Gimp qw( :auto ); 
 use Gimp::Fu; 
@@ -18,7 +18,7 @@ sub debian_button {
 
 	$image = gimp_image_new(80, $height, RGB);
 	$layer = gimp_layer_new($image, 80, $height, RGBA_IMAGE, "Button", 100, NORMAL_MODE);
-	$text = gimp_text($image, $layer, 9, 3, $words, 0, 0, "15", PIXELS, "*", "Lucida", "bold", "r", "*", "*");
+	$text = gimp_text($image, $layer, 9, 3, $words, 0, 0, "15", PIXELS, "*", "Lucida", "bold", "r", "*", "*", "*", "*");
 	
 
 	$width = gimp_drawable_width($text);
@@ -31,12 +31,12 @@ sub debian_button {
 
 
 	gimp_selection_all($image);
-	gimp_edit_clear($image, $layer);
+	gimp_edit_clear($layer);
 
         gimp_rect_select($image, 9, 0, $width, $height, SELECTION_REPLACE, 0, 0);
 	gimp_ellipse_select($image, (9-($height/2)), 0, $height, $height, SELECTION_ADD, 0, 0, 0);
 	gimp_ellipse_select($image, ((9+$width) - ($height/2)), 0, $height, $height, SELECTION_ADD, 0,0,0);
-	gimp_bucket_fill($image, $layer, BG_BUCKET_FILL, NORMAL_MODE, 100, 0, 0, 5, 5);
+	gimp_bucket_fill($layer, BG_BUCKET_FILL, NORMAL_MODE, 100, 0, 0, 5, 5);
 	gimp_selection_none($image);
 
 	gimp_floating_sel_anchor($text);
