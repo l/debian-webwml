@@ -9,9 +9,9 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 ifeq "$(LANGUAGE)" "en"
-subscribe.wml: $(ENGLISHSRCDIR)/$(CUR_DIR)/lists.cfg $(ENGLISHSRCDIR)/$(CUR_DIR)/mklist
+subscribe.wml: mklist
 	./mklist -s
 
-unsubscribe.wml: $(ENGLISHSRCDIR)/$(CUR_DIR)/lists.cfg $(ENGLISHSRCDIR)/$(CUR_DIR)/mklist
+unsubscribe.wml: mklist
 	./mklist -u
 endif
