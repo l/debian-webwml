@@ -191,7 +191,7 @@ if ($no_results > $results_per_page) {
 
     $index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $no_results)." | ".nextlink($input,\%params, $no_results);
 
-    print "<center>$index_line</center>";
+    print "<p style=\"text-align:center\">$index_line</p>";
 }
 
 if ($no_results > 100) {
@@ -247,7 +247,7 @@ print <<END;
 </pre>
 <hr class="hidecss">
 END
-print "<center>$index_line</center>" if $index_line;
+print "<p style=\"text-align:center\">$index_line</p>" if $index_line;
 
 &printfooter( $file );
 
@@ -267,11 +267,11 @@ sub printfooter {
 	$time_str = sprintf( "$wday, $mday $month $year %02d:%02d:%02d +0000", 
 			     $hour, $min, $sec );
 
-	print "<p style=\"text-align:left;font-size:small;font-stlye:italic\">The used contents file was last updated $time_str</p>\n";
+	print "<p style=\"text-align:left;font-size:small;font-style:italic\">The used contents file was last updated $time_str</p>\n";
     }
 
     print <<END;
-<p style="text-align:right;font-size:small;font-stlye:italic"><a href="http://packages.debian.net/">Packages search page</a></p>
+<p style="text-align:right;font-size:small;font-style:italic"><a href="http://packages.debian.net/">Packages search page</a></p>
 
 </div>
 END
