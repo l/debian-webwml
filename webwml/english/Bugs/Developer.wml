@@ -1,0 +1,249 @@
+#use wml::debian::template title="Debian bug tracking system" NOHEADER=yes WEBMASTER=vote
+<h1><A name="developers">Developers' information regarding the bug processing system</A></h1>
+
+Initially, a bug report is submitted by a user as an ordinary mail
+message to <code>submit@bugs.debian.org</code>.  This will then be
+given a number, acknowledged to the user, and forwarded to
+<code>debian-bugs-dist</code>.  If the submitter included a
+<code>Package</code> line listing a package with a known maintainer
+the maintainer will get a copy too.
+<p>
+
+The <code>Subject</code> line will have
+<code>Bug#</code><var>nnn</var><code>:</code> added, and the
+<code>Reply-To</code> will be set to include both the submitter of the
+report and <var>nnn</var><code>@bugs.debian.org</code>.
+<p>
+
+<h2>Closing bug reports</h2>
+
+A developer who receives a bug from the tracking system, or sees it on
+<code>debian-bugs-dist</code>, and takes
+responsibility for it should hit Reply in their favourite mailreader,
+and then edit the <code>To</code> field to say
+<var>nnn</var><code>-done@bugs.debian.org</code> instead of
+<var>nnn</var><code>@bugs</code>
+(<var>nnn</var><code>-close</code> is provided as an alias for
+<var>nnn</var><code>-done</code>).
+<p>
+
+The address of the original submitter of the bug report will be
+included in the default <code>To</code> field, because the bug system
+included it in the <code>Reply-To</code>.
+<p>
+
+`Done' messages are not automatically forwarded to the mailing list,
+so it may sometimes be worthwhile including the
+<code>debian-devel@lists.debian.org</code> mailing list if the other developers are
+likely to be interested.
+<p>
+
+The person closing the bug and the person who submitted it will each
+get a notification about the change in status of the report.
+
+<h2>Followup messages</h2>
+
+If a developer wishes to reply to a bug report without marking the bug
+as done they may simply reply to the message.  Their reply will (by
+default) go to <var>nnn</var><code>@bugs</code> and to the original
+submitter of the bug report.  The bug tracking system will file the
+reply with the rest of the logs for that bug report and forward it to
+<code>debian-bugs-dist</code>.  The bug will not be marked as done.  A
+developer may explicitly mail the bug's submitter with an email to
+<var>nnn</var><code>-submitter@bugs</code>.
+<p>
+
+If you wish to send a followup message which is not appropriate for
+<code>debian-bugs-dist</code> you can do so by sending it to
+<var>nnn</var><code>-quiet@bugs</code> or
+<var>nnn</var><code>-maintonly@bugs</code>, which only file it (not
+forwarding it anywhere) and send it on only to the maintainer of the
+package in question, respectively.
+<p>
+
+Do <em>not</em> use the `reply to all recipients' or `followup'
+feature of your mailer unless you intend to edit down the recipients
+substantially.  In particular, don't send a followup message both to
+<var>nnn</var><code>@bugs.debian.org</code> and to
+<code>submit@bugs.debian.org</code>, because the bug system will then
+get two copies of it and each one will be forwarded to
+<code>debian-bugs-dist</code> separately.
+<p>
+
+<h2><A name="severities">Severity levels</A></h2>
+
+The bug system records a severity level with each bug report.  This is
+set to <code>normal</code> by default, but can be overridden either by
+supplying a <code>Severity</code> line in the psuedo-header when the
+bug is submitted (see the
+<A href="Reporting.html#psuedoheader">instructions for reporting
+bugs</A>), or by using the <code>severity</code> command with the
+<A href="#requestserv">control request server</A>.
+
+<p>
+
+The severity levels are:
+
+<dl>
+<dt><code>critical</code>
+<dd>makes unrelated software on the system (or the whole system)
+break, or causes serious data loss, or introduces a security hole on
+systems where you install the package.
+
+<dt><code>grave</code>
+<dd>makes the package in question unuseable or mostly so, or causes
+data loss, or introduces a security hole allowing access to the
+accounts of users who use the package.
+
+<dt><code>important</code>
+<dd>any other bug which makes the package unsuitable for release.
+
+<dt><code>normal</code>
+<dd>the default value, for normal bugs.
+ 
+<dt><code>wishlist</code>
+<dd>for any feature request, and also for any bugs that are
+very difficult to fix due to major design considerations.
+
+<dt><code>fixed</code>
+
+<dd>for bugs that are fixed but should not yet be closed.
+Bugs fixed by non-maintainer-uploads have their severity set to fixed.
+
+</dl>
+
+<h2><A name="forward">Recording that you have passed on a bug report</A></h2>
+
+When a developer forwards a bug report to the developer of the
+upstream source package from which the Debian package is derived,
+they should note this in the bug tracking system as follows:
+<p>
+
+Make sure that the <code>To</code> field of your message to the author
+to has only the author(s) address(es) in it; put both the person who
+reported the bug and
+<var>nnn</var><code>-forwarded@bugs.debian.org</code> in the
+<code>CC</code> field.
+<p>
+
+Ask the author to preserve the <code>CC</code> to
+<var>nnn</var><code>-forwarded@bugs</code> when they reply, so that
+the bug tracking system will file their reply with the original
+report.
+<p>
+
+When the bug tracking system gets a message at
+<var>nnn</var><code>-forwarded</code> it will mark the relevant bug as
+having been forwarded to the address(es) in the <code>To</code> field
+of the message it gets.
+<p>
+
+You can also manipulate the `forwarded to' information by sending
+messages to <A href="server-control.html"><code>control@bugs.debian.org</code></A>.
+
+<h2>Summary postings to <code>debian-bugs-reports</code></h2>
+
+Every Friday a list of outstanding bug reports is posted to
+<code>debian-bugs-reports</code>, sorted by age of report.
+Every Tuesday a list of bug reports that have gone unanswered too long
+is posted, sorted by package maintainer.
+<p>
+
+<A name="maintincorrect">
+If the maintainer of a package is listed incorrectly</A> this is
+usually because the maintainer has changed recently, and the new
+maintainer hasn't yet uploaded a new version of the package with a
+changed <code>Maintainer</code> control file field.  This will be
+fixed when the package is uploaded; alternatively, there is an
+override file which the distribution maintainers can edit to record
+the change in maintainer, for example if a rebuild and reupload of the
+package is not expected to be needed soon.  Contact
+<code>override-change@debian.org</code> for changes to the
+override file.
+
+
+<h2><A name="requestserv">Reopening, reassigning and manipulating bugs</A></h2>
+
+It is possible to reassign bug reports to other packages, to reopen
+erroneously-closed ones, to modify the information saying to where, if
+anywhere, a bug report has been forwarded, to change the severities
+and titles of reports and to merge and unmerge bug reports.  This is
+done by sending mail to <code>control@bugs.debian.org</code>.
+<p>
+
+The <A href="server-control.html">format of these messages</A> is
+described in another document available on the World Wide Web or in
+the file <code>bug-maint-mailcontrol.txt</code>.  A plain text version
+can also be obtained by mailing the word <code>help</code> to the
+server at the address above.
+
+<h2>More-or-less obsolete subject-scanning feature</h2>
+
+Messages that arrive at <code>submit</code> or <code>bugs</code> whose
+Subject starts <code>Bug#</code><var>nnn</var> will be treated as
+having been sent to <var>nnn</var><code>@bugs</code>.  This is both
+for backwards compatibility with mail forwarded from the old
+addresses, and to catch followup mail sent to <code>submit</code> by
+mistake (for example, by using reply to all recipients).
+
+<p>
+
+A similar scheme operates for <code>maintonly</code>,
+<code>done</code>, <code>quiet</code> and <code>forwarded</code>,
+which treat mail arriving with a Subject tag as having been sent to
+the corresponding <var>nnn-whatever</var><code>@bugs</code> address.
+
+<p>
+
+Messages arriving at plain <code>forwarded</code> and
+<code>done</code> - ie, with no bug report number in the address - and
+without a bug number in the Subject will be filed under `junk' and
+kept for a few weeks, but otherwise ignored.
+
+<h2><A name="future">Future plans</A></h2>
+
+At some point the <code>Package:</code> secondary header field may
+become mandatory - at the moment omitting it just produces a warning
+message.
+
+<h2>Obsolete <code>X-Debian-PR: quiet</code> feature</h2>
+
+It used to be possible to prevent the bug tracking system from
+forwarding anywhere messages it received at <code>debian-bugs</code>,
+by putting an <code>X-Debian-PR: quiet</code> line in the actual mail
+header.
+<p>
+
+This header line is now ignored.  Instead, send your message to
+<code>quiet</code> or <var>nnn</var><code>-quiet</code> (or
+<code>maintonly</code> or <var>nnn</var><code>-maintonly</code>).
+
+
+<hr>
+Other pages:
+<ul>
+<li><A href="./">Bug tracking system main contents page.</A>
+<li><A href="Reporting.html">Instructions for reporting bugs.</A>
+<li><A href="Access.html">Accessing the bug tracking logs other than by WWW.</A>
+<li><A href="server-refcard.html">Mailservers' reference card.</A>
+<li><A href="db/ix/full.html">Full list of outstanding and recent bug reports.</A>
+<li><A href="db/ix/packages.html">Packages with bug reports.</A>
+<li><A href="db/ix/maintainers.html">Maintainers of packages with bug reports.</A>
+ <li><A href="../">Debian GNU/Linux home page.</A>
+
+</ul>
+
+<hr>
+<address>
+<A href="http://www.chiark.greenend.org.uk/~ijackson/">Ian Jackson</A>
+ /
+<A href="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>.
+20 Jan 1998.
+<p>
+Debian bug tracking system
+copyright 1994-1997 Ian Jackson, copyright 1997 nCipher Corporation Ltd,
+copyright 1995 Steven Brenner.
+<A href="http://www.chiark.greenend.org.uk/~ian/debbugs/">Available
+under the GPL.</A>
+
+</address>
