@@ -212,8 +212,8 @@ Austria       -   <a href="ftp://ftp.at.debian.org/debian/">ftp.at.debian.org</a
 Canada        -   <a href="ftp://ftp.ca.debian.org/debian/">ftp.ca.debian.org</a>	Yes		<a href="ftp://ftp.ca.debian.org/debian-non-US">Yes</a>
 Germany       -   <a href="ftp://ftp.de.debian.org/debian/">ftp.de.debian.org</a>	Yes		<a href="ftp://ftp.de.debian.org/debian-non-US">Yes</a>
 France        -   <a href="ftp://ftp.fr.debian.org/debian/">ftp.fr.debian.org</a>	Yes		<a href="ftp://ftp.fr.debian.org/debian-non-US">Yes</a>
-Japan         -   <a href="ftp://ftp.jp.debian.org/debian/">ftp.jp.debian.org</a>	Yes		No
-Korea         -   <a href="ftp://ftp.kr.debian.org/debian/">ftp.kr.debian.org</a>	Yes		No
+Japan         -   <a href="ftp://ftp.jp.debian.org/debian/">ftp.jp.debian.org</a>	Yes		<a href="ftp://ftp.ja.debian.org/debian-non-US">Yes</a>
+Korea         -   <a href="ftp://ftp.kr.debian.org/debian/">ftp.kr.debian.org</a>	Yes		<a href="ftp://ftp.kr.debian.org/debian-non-US">Yes</a>
 Sweden        -   <a href="ftp://ftp.se.debian.org/debian/">ftp.se.debian.org</a>	Yes		<a href="ftp://ftp.se.debian.org/debian-non-US">Yes</a>
 United Kingdom-   <a href="ftp://ftp.uk.debian.org/debian/">ftp.uk.debian.org</a>	Yes		<a href="ftp://ftp.uk.debian.org/debian-non-US">Yes</a>
 United States -   <a href="ftp://ftp.debian.org/debian/">ftp.debian.org</a>   	Yes		No
