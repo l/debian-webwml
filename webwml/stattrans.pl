@@ -19,6 +19,14 @@
 
 use POSIX qw(strftime);
 use Getopt::Std;
+
+#    These modules reside under webwml/Perl
+use lib ($0 =~ m|(.*)/|, $1 or ".") ."/Perl";
+use Local::Cvsinfo;
+use Webwml::Langs;
+use Webwml::TransCheck;
+use Webwml::TransIgnore;
+
 $| = 1;
 
 $opt_h = "/org/www.debian.org/debian.org/devel/website/stats";
@@ -29,6 +37,11 @@ $opt_v = 0;
 $opt_d = "u";
 $opt_l = undef;
 getopts('h:w:p:t:vd:l:');
+#  Replace filename globbing by Perl regexps
+$opt_p =~ s/\,/\\./g;
+$opt_p =~ s/\?/./g;
+$opt_p =~ s/\*/.*/g;
+$opt_p =~ s/$/\$/g;
 %config = (
 	   'htmldir' => $opt_h,
 	   'wmldir'  => $opt_w,
@@ -38,36 +51,31 @@ getopts('h:w:p:t:vd:l:');
 	   'diff'    => $opt_d,
 	   );
 
+my $l = Webwml::Langs->new($opt_w);
+my %langs = $l->name_iso();
+
+my $transignore = Webwml::TransIgnore->new($opt_w);
+
+my $cvs = Local::Cvsinfo->new();
+$cvs->options(
+        recursive => 1,
+        matchfile => [ $config{'wmlpat'} ],
+        skipdir   => [ "template" ],
+);
+$cvs->readinfo("$config{'wmldir'}/english");
+foreach (@{$transignore->global()}) {
+        $cvs->removefile("$config{'wmldir'}/english/$_");
+}
+
+my $altcvs = Local::Cvsinfo->new();
+$altcvs->options(
+        recursive => 1,
+        matchfile => [ $config{'wmlpat'} ],
+        skipdir   => [ "template" ],
+);
+
 $max_versions = 5;
 $min_versions = 1;
-
-# from english/template/debian/languages.wml
-# TODO: Needs to be synced frequently or fixed so it's automatic
-my %langs = ( english    => "en",
-#             arabic     => "ar",
-              catalan    => "ca",
-              danish     => "da",
-              german     => "de",
-              greek      => "el",
-              esperanto  => "eo",
-              spanish    => "es",
-              finnish    => "fi",
-              french     => "fr",
-              croatian   => "hr",
-              hungarian  => "hu",
-              italian    => "it",
-              japanese   => "ja",
-              korean     => "ko",
-              dutch      => "nl",
-              norwegian  => "no",
-              polish     => "pl",
-              portuguese => "pt",
-              romanian   => "ro",
-              russian    => "ru",
-              swedish    => "sv",
-              turkish    => "tr",
-              chinese    => "zh",
-);
 
 $border_head = "<table width=95% align=center border=0 cellpadding=0 cellspacing=0><tr bgcolor=#000000><td>"
               ."<table width=100% border=0 cellpadding=0 cellspacing=1><tr bgcolor=#ffffff><td>";
@@ -76,49 +84,7 @@ $border_foot = "</td></tr></table></td></tr></table>";
 
 $date = strftime "%a %b %e %H:%M:%S %Y %z", localtime;
 
-sub get_cvs_version
-{
-    my ($dir, $wmlfile) = @_;
-    my $file;
-    my @comp;
-    my $version;
-
-    @comp = split (/\//, "$dir/$wmlfile");
-    pop @comp;
-    $dir = join ("/", @comp);
-
-    @comp = split (/\//, "$wmlfile");
-    $file = pop @comp;
-
-    if (open (CVS,"$dir/CVS/Entries")) {
-	while (<CVS>) {
-	    ($version) = $_ =~ m,/\Q$file\E/([\d\.]*),;
-	    last if $version;
-	}
-    }
-
-    return $version;
-}
-
-sub get_translation_version
-{
-    my ($dir, $file) = @_;
-    my $checktrans;
-
-    if (open (F, "$dir/$file")) {
-	$checktrans = 0;
-	while (<F>) {
-	    chomp;
-	    if (/^\#use wml::debian::translation-check/) {
-		$checktrans = 1;
-		return $1 if ($_ =~ /translation="([^\" ]+)"/);
-		last;
-	    }
-	}
-	close (F);
-    }
-    return "";
-}
+my %original;
 
 # Count wml files in given directory
 #
@@ -126,30 +92,43 @@ sub getwmlfiles
 {
     my $lang = shift;
     my $dir = "$config{'wmldir'}/$lang";
-    my $cmd = "find $dir -name \"$config{'wmlpat'}\"";
     my $cutfrom = length ($config{'wmldir'})+length($lang)+2;
     my $count = 0;
     my $is_english = ($lang eq "english")?1:0;
     my $file, $v;
+    my @listfiles;
 
     print "$lang " if ($config{verbose});
     die "$0: can't find $dir!\n" if (! -d "$dir");
-    open (FIND, "$cmd|") || die "Can't read from $cmd";
-    while (<FIND>) {
- 	# XXX this list of exceptions needs to be maintained XXX
-	next if (/\/sitemap\.wml/);
-	next if (/\/template\//);
-	next if (/\/MailingLists\/(un)?subscribe\.wml/);
-	next if (/\/international\/l10n\/scripts\/l10nheader\.wml/);
-	chomp;
-	$file = substr ($_, $cutfrom);
+    if ($is_english) {
+        @listfiles = @{$cvs->files()};
+    } else {
+        $altcvs->reset();
+        $altcvs->readinfo($dir);
+        @listfiles = @{$altcvs->files()};
+    }
+    foreach my $f (@listfiles) {
+	$file = substr ($f, $cutfrom);
+	next if $transignore->is_global($file);
 	$file =~ s/\.wml$//;
 	$wmlfiles{$lang} .= " " . $file;
+	my $transcheck = Webwml::TransCheck->new("$dir/$file.wml");
 	if ($is_english) {
-	    $version{"$lang/$file"} = get_cvs_version ($dir, "$file.wml");
+	    if ($original{$file}) {
+	        $version{"$lang/$file"} = $transcheck->revision();
+	    } else {
+	        $version{"$lang/$file"} = $cvs->revision($f);
+	    }
 	} else {
-	    $version{"$lang/$file"} = get_translation_version ($dir, "$file.wml");
+	    if ($transcheck->revision()) {
+	        $version{"$lang/$file"} = $transcheck->revision();
+	        $original{$file} ||= $transcheck->original();
+	    } else {
+	        $version{"$lang/$file"} = $altcvs->revision($f);
+                $original{$file} = $lang;
+            }
 	}
+	$version{"$lang/$file"} ||= "1.1";
 	$count++;
     }
     close (FIND);
@@ -206,14 +185,14 @@ sub check_translation
 
 print "Collecting data in: " if ($config{'verbose'});
 if ($opt_l) {
-  getwmlfiles ('english');
   getwmlfiles ($opt_l);
-} else {
   getwmlfiles ('english');
+} else {
   foreach $lang (keys %langs) {
     next if ($lang eq "english");
     getwmlfiles ($lang);
   }
+  getwmlfiles ('english');
 }
 print "\n" if ($config{'verbose'});
 
@@ -223,10 +202,9 @@ mkdir ($config{'htmldir'}, 02775) if (! -d $config{'htmldir'});
 @sorted_english = sort (split (/ /, $wmlfiles{'english'}));
 
 print "Creating files: " if ($config{'verbose'});
-my @search_in = ();
+my @search_in;
 if ($opt_l) {
-  push @search_in, 'english';
-  push @search_in, $opt_l;
+  @search_in = ( 'english', $opt_l );
 } else {
   @search_in = sort keys %langs;
 }
@@ -238,7 +216,7 @@ foreach $lang (@search_in) {
     $t_body = $u_body = $o_body = "";
 
     foreach $file (@sorted_english) {
-        next if ($file eq "");
+	next if ($file eq "");
 	# Translated pages
 	if (index ($wmlfiles{$lang}, " $file ") >= 0) {
 		if ($file eq "devel/wnpp/wnpp") {
@@ -246,10 +224,10 @@ foreach $lang (@search_in) {
 		} else {
 		    	$t_body .= sprintf "<a href=\"/%s.%s.html\">%s</a><br>\n", $file, $l, $file;
 		}
-    		$translated{$lang}++;
-		next if ($lang eq "english");
+		$translated{$lang}++;
+		$orig = $original{$file} || "english";
 		# Outdated translations
-		$msg = check_translation ($version{"$lang/$file"}, $version{"english/$file"}, "$lang/$file");
+		$msg = check_translation ($version{"$lang/$file"}, $version{"$orig/$file"}, "$lang/$file");
 		if (length ($msg)) {
 			$o_body .= "<tr>";
 			if ($file eq "devel/wnpp/wnpp") {
@@ -258,9 +236,9 @@ foreach $lang (@search_in) {
 				$o_body .= sprintf "<td><a href=\"/%s.%s.html\">%s</a></td>", $file, $l, $file;
 			}
 			$o_body .= sprintf "<td>%s</td>", $version{"$lang/$file"};
-			$o_body .= sprintf "<td>%s</td>", $version{"english/$file"};
+			$o_body .= sprintf "<td>%s</td>", $version{"$orig/$file"};
 			$o_body .= sprintf "<td>%s</td>", $msg;
-			$o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/english/%s.wml.diff\?r1=%s\&r2=%s\&cvsroot=webwml\&diff_format=%s\">%s -> %s</a></td>", $file, $version{"$lang/$file"}, $version{"english/$file"}, $config{'diff_type'}, $version{"$lang/$file"}, $version{"english/$file"};
+			$o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/$orig/%s.wml.diff\?r1=%s\&r2=%s\&cvsroot=webwml\&diff_format=%s\">%s -> %s</a></td>", $file, $version{"$lang/$file"}, $version{"$orig/$file"}, $config{'diff_type'}, $version{"$lang/$file"}, $version{"$orig/$file"};
 			$o_body .= "</tr>\n";
     			$outdated{$lang}++;
 		}

@@ -20,37 +20,11 @@
 #	- compare both major and minor revision number
 #	- think of a better way to check when the file has been rebuilt last
 
-
-# This should contain all languages
-%langs = (
-#	"ar" => "arabic",
-	"ca" => "catalan",
-	"zh" => "chinese",
-	"hr" => "croatian",
-	"cs" => "czech",
-	"da" => "danish",
-	"nl" => "dutch",
-	"en" => "english",
-	"eo" => "esperanto",
-	"fi" => "finnish",
-	"fr" => "french",
-	"de" => "german",
-	"el" => "greek",
-	"hu" => "hungarian",
-	"it" => "italian",
-	"ja" => "japanese",
-	"ko" => "korean",
-	"no" => "norwegian",
-	"pl" => "polish",
-	"pt" => "portuguese",
-	"ro" => "romanian",
-	"ru" => "russian",
-	"sk" => "slovak",
-	"es" => "spanish",
-	"sv" => "swedish",
-	"tr" => "turkish");
-
-@langs = values(%langs);
+#    These modules reside under webwml/Perl
+use lib ($0 =~ m|(.*)/|, $1 or ".") ."/Perl";
+use Local::Cvsinfo;
+use Webwml::Langs;
+use Webwml::TransCheck;
 
 # Set this to 1 for debugging
 $debug = 0;
@@ -98,24 +72,22 @@ sub when_forced {
     }
 }
 
+#   We call constructor without argument.  It means there must be a
+#   CVS/Repository file or program will abort.
+my $l = Webwml::Langs->new();
+my %langs = $l->iso_name();
+my @langs = $l->names();
+
 $argfile = $ARGV[0] or die "Invalid number of arguments";
 die "Invalid number of arguments" unless $ARGV[1];
 $arglang = $langs{$ARGV[1]} or die "Invalid lang argument: $ARGV[1]";
-$argfile =~ m+(.*)/(.*)\.wml+ or die "pattern does not match";
+$argfile =~ m+(.*)/(.*\.wml)+ or die "pattern does not match";
 my ($path, $file) = ($1, $2);
 
-# Get the revision of the original file
-my $origrev;
-if (open FILE, "${path}/CVS/Entries") {
-  while (<FILE>) {
-    if (m,^/$file.wml/([^/]+)/,) {
-        $origrev = $1;
-        last;
-    }
-  }
-} else {
-    $origrev = "1.0";
-}
+my $cvs = Local::Cvsinfo->new();
+$cvs->options(matchfile => [ $file ]);
+$cvs->readinfo($path);
+my $origrev = $cvs->revision($argfile) || "1.0";
 
 foreach $lang (@langs) {
     next if ($lang eq $arglang);
@@ -126,25 +98,12 @@ foreach $lang (@langs) {
     $transfile =~ s+$arglang+$lang+ or die "wrong argument: pattern does not match file: $transfile";
 
     # Parse the translated file
-    open FILE, "$transfile" or next;
-    while (<FILE>) { 
-        if (/translation-check translation="([.0-9]*)"\s*(.*)/oi) {
-            $langrev = $1;
-            my $stuff = $2;
-            if ($stuff =~ /original="([^"]+)"/) {
-                $original = $1;
-            }
-            if ($stuff =~ /maxdelta="([^"]+)"/) {
-                $maxdelta = $1;
-            }
-            if ($stuff =~ /mindelta="([^"]+)"/) {
-                $mindelta = $1;
-            }
-            last;
-        }
-    }
-    close FILE;
-    next if not defined $langrev;
+    my $transcheck = Webwml::TransCheck->new($transfile);
+    next unless $transcheck->revision();
+    $langrev  = $transcheck->revision();
+    $original = $transcheck->original();
+    $maxdelta = $transcheck->maxdelta() if $transcheck->maxdelta();
+    $mindelta = $transcheck->mindelta() if $transcheck->mindelta();
     # TODO - would cause unspecified results if 1. changed to 2.
     $origrev =~ s/1\.//;
     $langrev =~ s/1\.//;
