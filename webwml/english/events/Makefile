@@ -4,7 +4,8 @@
 
 WMLBASE=..
 CUR_DIR=events
-SUBS=1998 1999 2000 2001
+YEARS=$(wildcard [12][0-9][0-9][0-9])
+SUBS=$(YEARS) weekly press
 
 include $(WMLBASE)/Make.lang
 
