@@ -30,9 +30,9 @@ sub init_translators {
  $translators = {
     'Denis Barbier' => {
          'email'     => 'barbier@imacs.polytechnique.fr',
-	 'summary'   => 2,
-	 'logs'      => 0,
-         'diff'      => 0,
+	 'summary'   => 3,
+	 'logs'      => 3,
+         'diff'      => 3,
          'tdiff'     => 0,
          'file'      => 0,
 	 'compress'  => 'none'
