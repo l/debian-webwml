@@ -20,4 +20,4 @@ all: $(HTMLFILES)
 $(HTMLDIR)/index.html.$(LANGUAGE): index.wml $(wildcard undated*.wml) $(TEMPLDIR)/basic.wml $(TEMPLDIR)/recent_list.wml
 
 $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/basic.wml $(TEMPLDIR)/footer.wml $(TEMPLDIR)/languages.wml $(TEMPLDIR)/security.wml $(TEMPLDIR)/fixes_link.wml
-	$(WML) $(EPILOG) $(<F)
+	$(WML) $(<F)
