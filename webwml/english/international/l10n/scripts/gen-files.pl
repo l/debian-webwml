@@ -36,7 +36,8 @@ $data->read("$opt_l/data/unstable.gluck");
 my $date1 = $data->get_date();
 $data->read("$opt_l/data/unstable.non-US");
 my $date2 = $data->get_date();
-my $date = ($date1 lt $date2 ? $date1 : $date2);
+my $date = $date1; #   Ignore non-US for now
+# my $date = ($date1 lt $date2 ? $date1 : $date2);
 
 my $root = 'http://gluck.debian.org/~barbier/l10n/material/';
 my $rootnonus = 'http://nonus.debian.org/~barbier/l10n/material/';
