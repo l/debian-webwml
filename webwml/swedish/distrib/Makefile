@@ -16,4 +16,4 @@ include $(WMLBASE)/Make.dep.generic
 
 vendors.$(LANGUAGE).html: vendors.wml ../../english/distrib/vendors.CD \
 		../../english/distrib/vendors.CD.def $(TEMPLDIR)/template.wml $(TEMPLDIR)/countries.wml
-#	wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG) $(WMLEPILOG) $(<F)
+pre-installed.$(LANGUAGE).html: ../../english/distrib/pre-installed.data
