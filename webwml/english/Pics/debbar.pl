@@ -5,11 +5,12 @@
 #
 # See webwml/english/Pics/README for more information.
 
+use strict;
 use Gimp qw( :auto ); 
 use Gimp::Fu; 
    
 sub debian_button {
-	my ($words, $fontface, $fontsize, $fonttype, $fontcolor, $bgcolor, $fontregistry, $fontencoding) = @_;
+	my ($words, $antialias, $fontface, $fontsize, $fonttype, $fontcolor, $bgcolor, $fontregistry, $fontencoding) = @_;
 	my ($image,$layer,$text,$width);
 	my $height = 18;
 
@@ -19,8 +20,8 @@ sub debian_button {
 
 	$image = gimp_image_new(80, $height, RGB);
 	$layer = gimp_layer_new($image, 80, $height, RGBA_IMAGE, "Button", 100, NORMAL_MODE);
-	$text = gimp_text($image, $layer, 9, 3, $words, 0, 0, $fontsize, PIXELS, "*", $fontface, $fonttype, "r", "*", "*", $fontregistry, $fontencoding);
-	
+	$text = gimp_text($image, $layer, 9, 3, $words, 0, $antialias, $fontsize, PIXELS, "*", $fontface, $fonttype, "r", "*", "*", $fontregistry, $fontencoding);
+
 
 	$width = gimp_drawable_width($text);
 
@@ -55,19 +56,20 @@ register
       "Create Debian Toolbar button",            # a small description 
       "A script to generate Debian navbar",      # a help text
       "Craig Small",
-      "Copyright (c) 1998, 2001 SPI Inc.",
+      "Copyright (c) 1998, 2001  SPI Inc.",
       "2001-06-10",
       "<Toolbox>/Xtns/Perl-Fu/Debian/Toolbar",   # menu path
       "*",                                       # Image types
       [ 
-       [PF_STRING, "words", "words to put in button", "About"], 
-       [PF_STRING, "fontface", "font face", "Lucida"], 
-       [PF_STRING, "fontsize", "font size", "15"], 
-       [PF_STRING, "fonttype", "font type (bold, medium etc)", "bold"], 
+       [PF_STRING, "words", "Words to put in button", "About"], 
+       [PF_BOOL, "antialias", "Use anti-aliasing", 1], 
+       [PF_STRING, "fontface", "Font face", "Arial"], 
+       [PF_INT, "fontsize", "Font size", "14"], 
+       [PF_STRING, "fonttype", "Font type (e.g. bold, medium)", "bold"], 
        [PF_COLOR, "fontcolor", "Font color", [255,255,255]] ,
        [PF_COLOR, "bgcolor", "Background color", [0,0,132]],
-       [PF_STRING, "fontregistry", "font registry (iso8859 etc)", "*"], 
-       [PF_STRING, "fontencoding", "font encoding (1 etc)", "*"]
+       [PF_STRING, "fontregistry", "Font registry (e.g. iso8859)", "*"], 
+       [PF_STRING, "fontencoding", "Font encoding (e.g. 1)", "*"]
       ], 
       \&debian_button; 
    
