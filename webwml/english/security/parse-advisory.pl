@@ -89,6 +89,7 @@ print WML "<define-tag description>$desc</define-tag>\n";
 print WML "<define-tag moreinfo>$moreinfo</define-tag>\n";
 print WML "\n# do not modify the following line\n";
 print WML "#include \"\$(ENGLISHDIR)/security/$curyear/$data\"\n";
+print WML "# \$Id$wml,v 1.1 2001/08/09 13:07:41 alfie Exp \$\n";
 close WML;
 
 print "Now edit $data and remove any English-specific stuff from it.\n";
