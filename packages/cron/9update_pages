@@ -9,13 +9,19 @@ do
   foo=\$arch_${dist//-/_}
   test -d ${htmldir}/${dist} || mkdir -p ${htmldir}/${dist}
   rm -f ${filesdir}/*dbfile
+  if [ "$dist" == "stable" ]; then
+    realparts=$parts
+  else
+    realparts="${parts} debian-installer"
+  fi
+  
   ${scriptdir}/create_package_pages --html_root="${htmldir}/${dist}" \
       --locales=${localedir} --langs="${ddtplangs}" --quiet \
       --md5file="${filesdir}/md5sums.${dist}" --distribution=${dist} \
       --indices=${filesdir}/archive --debian_site=${ftpsite} \
       --nonus_site=${nonus_ftpsite} --security_site=${security_ftpsite} \
       --subdists="security non-US" --archs="`eval echo $foo`" \
-      --parts="${parts}" --dbfile="${filesdir}/dbfile" \
+      --parts="${realparts}" --dbfile="${filesdir}/dbfile" \
       --srcdbfile="${filesdir}/srcdbfile"
 done
 
