@@ -22,6 +22,12 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(ENGLISHSRCDIR)/releases/info
 	$(WML) index.wml
 
+ifeq "$(LANGUAGE)" "zh"
+SITEMAP = sitemap.zh-cn.html sitemap.zh-hk.html sitemap.zh-tw.html
+else
+SITEMAP = sitemap.$(LANGUAGE).html
+endif
+
 sitemap.$(LANGUAGE).html: $(ENGLISHDIR)/sitemap.wml \
   $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/releases/info $(ENGLISHDIR)/MailingLists/mklist.tags
@@ -52,7 +58,7 @@ else
 endif
 endif
 
-all:: sitemap.$(LANGUAGE).html
+all:: $(SITEMAP)
 
 install:: $(HTMLDIR)/sitemap.$(LANGUAGE).html
 	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
