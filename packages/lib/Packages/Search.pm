@@ -48,7 +48,7 @@ use CGI;
 
 use Deb::Versions;
 
-our $VERSION = 0.1;
+our $VERSION = 0.01;
 our $RCS_VERSION = '$Revision$';
 
 my $debug = 0;
@@ -68,7 +68,7 @@ sub parse_params {
 	print "DEBUG: Value (Orig) $p_value_orig<br>" if $debug;
 
 	if ($params_def->{$param}{match} && defined $p_value_orig) {
-	    ($p_value) = ($p_value_orig =~ m/($params_def->{$param}{match})/);
+	    ($p_value) = ($p_value_orig =~ m/$params_def->{$param}{match}/);
 	}
 
 	print "DEBUG: Value (Match) $p_value<br>" if $debug;
