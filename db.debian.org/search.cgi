@@ -116,7 +116,7 @@ if (!$dosearch) {
     $data = $entries->{$dn};
 
     # These are local variables.. i have enough global vars as it is... <sigh>
-    my ($ufdn, $login, $name, $email, $fingerprint, $address, $latlong, $vacation, $created, $modified) = undef;
+    my ($ufdn, $login, $name, $email, $fingerprint, $address, $latlong, $vacation, $created, $modified, $lastseen) = undef;
     
     $ufdn = $dn; # Net::LDAP does not have a dn2ufn function, but this is close enough :)
     
@@ -153,6 +153,10 @@ if (!$dosearch) {
     $modified = &Util::FormatTimestamp($data->{modifytimestamp}->[0]);
     $created =  &Util::FormatTimestamp($data->{createtimestamp}->[0]);
 
+    # Last seen information (Echelon)
+    $lastseen = &Util::FormatLastSeen($data->{"activity-pgp"}->[0] || 
+                                      $data->{"activity-from"}->[0]);
+
     # Link in the debian login id 
     $login = $data->{uid}->[0]."\@debian.org";
     $login = "<a href=\"mailto:$login\">$login</a>";
@@ -183,6 +187,7 @@ if (!$dosearch) {
       $outsub{searchresults} .= FormatEntry($dataspecref->{latlong}, $latlong);
       $outsub{searchresults} .= FormatEntry($dataspecref->{phone}, $data->{telephonenumber}->[0] || "- unlisted -");
       $outsub{searchresults} .= FormatEntry($dataspecref->{fax}, $data->{fascimiletelephonenumber}->[0] || "- unlisted -");
+      $outsub{searchresults} .= FormatEntry($dataspecref->{lastseen}, $lastseen);
     }
     $outsub{searchresults} .= FormatEntry($dataspecref->{created}, $created);
     $outsub{searchresults} .= FormatEntry($dataspecref->{modified}, $modified);

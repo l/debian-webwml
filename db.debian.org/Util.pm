@@ -203,6 +203,18 @@ sub FormatTimestamp {
   return sprintf("%04d/%02d/%02d %02d:%02d:%02d UTC", $1,$2,$3,$4,$5,$6);
 }
 
+sub FormatLastSeen {
+# Format:
+# [Tue, 11 Jan 2000 02:37:18] "Joey Hess <joeyh@debian.org>" "<debian-boot@lists.debian.org> archive/latest/7130" "<20000110181924.H19910@kitenet.net>"
+# [Mon, 10 Jan 2000 21:48:19] "9E1E 1052 F8BB A351  0606 5527 50BB 2974 2D59 A7D2" "<debian-devel-changes@lists.debian.org> archive/latest/58632" "<20000110200506.13257.qmail@master.debian.org>"
+  my $lastseen = shift;
+  return "<b>No activity detected</b>" if (!$lastseen);
+
+  my ($date,$user,$list,$msgid) = ($lastseen =~ /^\[(.+?)\]\s+"(.+?)"\s+"<(.+?)>.+?"\s+"<(.+?)>"/);
+ 
+  return "<b>$list</b><br>Message ID: $msgid";
+}
+
 sub LookupCountry {
   my $in = shift;
   my ($abbrev, $country);
