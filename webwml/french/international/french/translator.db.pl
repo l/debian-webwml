@@ -136,6 +136,15 @@ sub init_translators {
                         file        => 2,
                         compress    => 'none'
                 },
+                'Thomas Huriaux' => {
+                        email       => 'thomas.huriaux@enst-bretagne.fr',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
+                },
                 'Sébastien Kalt' => {
                         email       => 'ustilago@bigfoot.com',
                         summary     => 2,
