@@ -18,10 +18,40 @@ pre-installed.$(LANGUAGE).html: pre-installed.wml $(TEMPLDIR)/countries.wml \
 vendors.$(LANGUAGE).html: vendors.wml $(TEMPLDIR)/countries.wml \
   $(ENGLISHSRCDIR)/distrib/vendors.CD $(ENGLISHSRCDIR)/distrib/vendors.CD.def
 
+ifeq "$(LANGUAGE)" "en"
+$(ENGLISHSRCDIR)/distrib/ftplist.data: ftplist.data
 ftplist.data: ../mirror/Mirrors.masterlist
 	echo -e "#use wml::debian::countries\n<define-tag ftpmirrors>\n<ul>" > $@
 	for i in `grep-dctrl -n -F Site -s Site -r 'ftp\...\.debian.org' ../mirror/Mirrors.masterlist | sort`; do \
-	  echo -e "<li><a href=\"http://$${i}`grep-dctrl -n -F Site -s Archive-http -X $$i ../mirror/Mirrors.masterlist`\"><`echo $$i | sed -e s/^ftp.// -e s/.debian.org$$// | tr a-z A-Z`c></a>" >> $@; \
+          xy=`echo $$i | sed -e s/^ftp.// -e s/.debian.org$$// | tr a-z A-Z`; \
+	  echo -e "<li><a href=\"http://$${i}`grep-dctrl -n -F Site -s Archive-http -X $$i ../mirror/Mirrors.masterlist`\"><$${xy}c></a>" >> $@; \
 	  echo -e " (<a href=\"ftp://$${i}`grep-dctrl -n -F Site -s Archive-ftp -X $$i ../mirror/Mirrors.masterlist`\">FTP</a>)" >> $@; \
 	done
 	echo -e "</ul>\n</define-tag>" >> $@
+	echo -e "<define-tag cdimagemirrors>\n<ul>" >> $@
+	for i in `grep-dctrl -n -F Site -s Site -r 'ftp\...\.debian.org' ../mirror/Mirrors.masterlist | sort`; do \
+          ch=`grep-dctrl -n -F Site -s CDImage-http -X $$i ../mirror/Mirrors.masterlist`; \
+          cf=`grep-dctrl -n -F Site -s CDImage-ftp -X $$i ../mirror/Mirrors.masterlist`; \
+          xy=`echo $$i | sed -e s/^ftp.// -e s/.debian.org$$// | tr a-z A-Z`; \
+          if [ "$$ch" ]; then \
+            echo -e "<li><a href=\"http://$${i}$${ch}\"><$${xy}c></a>" >> $@; \
+            if [ "$$cf" ]; then \
+              echo -e " (<a href=\"ftp://$${i}$${cf}\">FTP</a>)" >> $@; \
+            fi; \
+          fi; \
+        done
+	echo -e "</ul>\n</define-tag>" >> $@
+	echo -e "<define-tag nonusmirrors>\n<ul>" >> $@
+	for i in `grep-dctrl -n -F Site -s Site -r 'ftp\...\.debian.org' ../mirror/Mirrors.masterlist | sort`; do \
+          ch=`grep-dctrl -n -F Site -s NonUS-http -X $$i ../mirror/Mirrors.masterlist`; \
+          cf=`grep-dctrl -n -F Site -s NonUS-ftp -X $$i ../mirror/Mirrors.masterlist`; \
+          xy=`echo $$i | sed -e s/^ftp.// -e s/.debian.org$$// | tr a-z A-Z`; \
+          if [ "$$ch" ]; then \
+            echo -e "<li><a href=\"http://$${i}$${ch}\"><$${xy}c></a>" >> $@; \
+            if [ "$$cf" ]; then \
+              echo -e " (<a href=\"ftp://$${i}$${cf}\">FTP</a>)" >> $@; \
+            fi; \
+          fi; \
+        done
+	echo -e "</ul>\n</define-tag>" >> $@
+endif
