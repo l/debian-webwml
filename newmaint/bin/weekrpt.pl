@@ -176,15 +176,17 @@ sub get_new_maintainers($)
     my $sth;
     my $sql = "SELECT forename, surname, email FROM applicant WHERE da_approved = 't' AND CURRENT_TIMESTAMP - newmaint < '7 days' ORDER BY surname";
 
-    print "New Maintainers\n";
-    print "===============\n";
-    print "The following applicants became new maintainers last week:\n";
 
     $sth = $dbh->prepare($sql);
     $sth->execute();
     $sth->bind_columns(\$firstname, \$surname, \$email);
-    while($sth->fetch()) {
-        print "$firstname $surname <$email>\n";
+    if ($sth->rows > 0) {
+        print "New Maintainers\n";
+        print "===============\n";
+        print "The following applicants became new maintainers last week:\n";
+        while($sth->fetch()) {
+            print "$firstname $surname <$email>\n";
+        }
     }
 }
 
@@ -242,21 +244,23 @@ sub get_warn_maintainers($)
 
     print "\nApplicants with no advocate\n";
     print "===========================\n";
-    print "The following applicants have no advocate and have been waiting in the queue\n";
-    print "for longer than 3 weeks but less than 6 weeks:\n";
 
     $sth = $dbh->prepare($sql);
     $sth->execute();
     $sth->bind_columns(\$firstname, \$surname, \$email, \$apply_date);
-    while($sth->fetch()) {
-        print "$firstname $surname <$email>\n";
-        if ($main::enable_email != 0) {
-            print_warn_email($firstname, $email, $apply_date);
+    if ($sth->rows > 0) {
+        print "The following applicants have no advocate and have been waiting in the queue\n";
+        print "for longer than 3 weeks but less than 6 weeks:\n";
+        while($sth->fetch()) {
+            print "$firstname $surname <$email>\n";
+            if ($main::enable_email != 0) {
+                print_warn_email($firstname, $email, $apply_date);
+            }
         }
+        print "Email will ";
+        if ($main::enable_email == 0) { print "NOT "; }
+        print "be sent to the applicants.\n";
     }
-    print "Email will ";
-    if ($main::enable_email == 0) { print "NOT "; }
-    print "be sent to the applicants.\n";
 }
 
 sub get_err_maintainers($)
@@ -266,30 +270,31 @@ sub get_err_maintainers($)
     my $sth;
     my $sql = "SELECT forename, surname, email, apply_date, manager FROM applicant WHERE CURRENT_TIMESTAMP - apply_date > '6 weeks' AND advocate_ok is NULL AND (advocate_date IS NULL OR CURRENT_TIMESTAMP - advocate_date > '1 week') ORDER BY surname";
 
-    print "\nThe following applicants will be deleted as they have been waiting in the\n";
-    print "the queue for longer than 6 weeks with no advocate:\n";
-
     $sth = $dbh->prepare($sql);
     $sth->execute();
     $sth->bind_columns(\$firstname, \$surname, \$email, \$apply_date, \$manager);
-    while($sth->fetch()) {
-        print "$firstname $surname <$email>\n";
-        if ($main::enable_email != 0) {
-            print_err_email($firstname, $email, $apply_date);
-            my $sql1 = "DELETE FROM applicant WHERE email = '$email'";
-            $sth1 = $dbh->prepare($sql1);
-            $sth1->execute();
-            # log this removal
-            my $fullname = $firstname . " " . $surname;
-            my $sql2 = "INSERT INTO log (who, manager, action, name, email) VALUES ('auto', '$manager', 'REMOVE', '$fullname', '$email')";
-            $sth2 = $dbh->prepare($sql2);
-            $sth2->execute();
+    if ($sth->rows > 0) {
+        print "\nThe following applicants will be deleted as they have been waiting in the\n";
+        print "the queue for longer than 6 weeks with no advocate:\n";
+        while($sth->fetch()) {
+            print "$firstname $surname <$email>\n";
+            if ($main::enable_email != 0) {
+                print_err_email($firstname, $email, $apply_date);
+                my $sql1 = "DELETE FROM applicant WHERE email = '$email'";
+                $sth1 = $dbh->prepare($sql1);
+                $sth1->execute();
+                # log this removal
+                my $fullname = $firstname . " " . $surname;
+                my $sql2 = "INSERT INTO log (who, manager, action, name, email) VALUES ('auto', '$manager', 'REMOVE', '$fullname', '$email')";
+                $sth2 = $dbh->prepare($sql2);
+                $sth2->execute();
+            }
         }
+        print "Email will ";
+        if ($main::enable_email == 0) { print "NOT "; }
+        print "be sent to the applicants.\n";
+        print "\n";
     }
-    print "Email will ";
-    if ($main::enable_email == 0) { print "NOT "; }
-    print "be sent to the applicants.\n";
-    print "\n";
 }
 
 my $dbh = DBI->connect("dbi:Pg:dbname=$DBNAME", $DBUSER, "", "");
