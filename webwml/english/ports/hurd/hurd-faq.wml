@@ -149,6 +149,13 @@ Pipes don't work!</p>
 you.</p>
 
 <p><b>Question</b>:
+When the APM support in the BIOS spins down my disk drives, the Hurd is
+unable to wake up!</p>
+<p><b>Answer</b>:
+APM is not supported in the current version of GNU Mach, sorry. Please
+disable APM in your BIOS setup.</p>
+
+<p><b>Question</b>:
 What about X?
 <p><b>Answer</b>:
 Don't ask.</p>
@@ -171,6 +178,7 @@ The Hurd systems wants to use <code>RPATH</code>, and Debian does avoid
 setting <code>LD_LIBRARY_PATH</code> to a list of all libraries in unusual
 places.</p>
 
+
 <h3>Using the Hurd</h3>
 
 <p><b>Question</b>:
@@ -190,6 +198,39 @@ Can I use the Linux version of <code>e2fsck</code> on my Hurd partition?</p>
 <p><b>Answer</b>:
 Yes, you can since <code>e2fsprogs-1.05</code>. Check with <code>e2fsck
 -V</code> first.</p>
+
+<p><b>Question</b>:
+<code>ps aux</code> does not give the output I'd expect.</p>
+<p><b>Answer</b>:
+Try <code>ps Aux</code>.</p>
+
+<p><b>Question</b>:
+Whenever I do a <code>ls -l /dev/</code>, it shows <code>fd: Gratuitous
+error</code>. What is happening?</p>
+<p><b>Answer</b>:
+The <code>magic</code> server has no support for the filesystem operations
+in questions. Ideally, it would act like a directory (probably an empty
+one), and that needs to be implemented. For now, you can safely ignore the
+error message, it is not harmful. For more information, see also the
+information on the <a href="hurd-doc-server#magic"><code>magic</code>
+server</a>.</p>
+
+<p><b>Question</b>:
+Where is ...</p>
+<p><b>Answer</b>:
+<ul><li><code>fdisk</code>, <code>dmesg</code> are not yet ported.</li>
+<li>instead <code>free</code>, use <code>vmstat</code> and <code>vminfo</code>
+</ul></p>
+
+<p><b>Question</b>:
+Is there a <code>/proc</code> filesystem?</p>
+<p><b>Answer</b>:
+No. Maybe there will be an emulation some day for
+programs that need it. If you wonder about the empty <code>/proc</code>
+directory, that is a relict from a Debian GNU/Linux package
+(<tt>base-files</tt>).</p>
+
+
 
 <h3>... When Something Breaks</h3>
 
@@ -231,19 +272,13 @@ filesystem, but this doesn't work with some versions of
 does not work).</p>
 
 <p><b>Question</b>:
-Where is ...</p>
+When something crashes, GNU Mach reboots automatically. But it does it too
+fast, and I can't write the error message.</p>
 <p><b>Answer</b>:
-<ul><li><code>fdisk</code>, <code>dmesg</code> are not yet ported.</li>
-<li>instead <code>free</code>, use <code>vmstat</code> and <code>vminfo</code>
-</ul></p>
-
-<p><b>Question</b>:
-Is there a <code>/proc</code> filesystem?</p>
-<p><b>Answer</b>:
-No. Maybe there will be an emulation some day for
-programs that need it. If you wonder about the empty <code>/proc</code>
-directory, that is a relict from a Debian GNU/Linux package
-(<tt>base-files</tt>).</p>
+Give the <code>-H</code> option to init (add it to the boot command line), and
+init will tell Mach to enter the kernel debugger instead to reboot. At the
+debugger prompt, you can type <code>db> reboot</code> any time to reboot the
+system.</p>
 
 <p><b>Question</b>:
 <h3>Development</h3>
@@ -261,5 +296,11 @@ Hurd, there is also
 Where should I start reading the Hurd source code?</p>
 <p><b>Answer</b>:
 Probably start with the <code>auth</code> server.</p>
+
+<p><b>Question</b>:
+Are there example programs that make use of special Hurd features?</p>
+<p><b>Answer</b>:
+Have a look at the <code>utils/</code> directory in the Hurd source
+tree.</p>
 
 
