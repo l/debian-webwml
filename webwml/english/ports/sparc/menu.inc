@@ -102,7 +102,7 @@
 [PT:Porting:]
 [RO:Porting:]
 [RU:Porting:]
-[SV:Porting:]
+[SV:Anpassa:]
 [TR:Porting:]
 [ZH:Porting:]
 </menu-item>
