@@ -99,6 +99,8 @@ $types = {
 					"$CVSWEB/webwml/$to/$k.wml?cvsroot=webwml" },
 	'translation_source_url'=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
 					"$CVSWEB/webwml/$to/$k.wml?rev=$t->{'translation_revision'}&cvsroot=webwml" },
+	'translation_source_name'=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
+					"$k.wml" },
 	'diff'			=> sub {my($t, $k, $f)=@_; return (!$t->{$f} || !$t->{'translation_revision'}) ? undef :
 					"$CVSWEB/webwml/$from/$k.wml$t->{$f}" },
 	'lines'			=> sub {my($t, $k, $f)=@_; my $file= $root."/".$from."/".$k.".wml"; my $line_string=`wc -l $file`; $line_string=~s/\Q$file\E//; return $line_string;},
@@ -216,7 +218,7 @@ sub check_file {
 			$translations->{$k}->{'translation_maintainer'} = [ $1 ];
 			print STDERR "(check_file) found translation_maintainer $1 in WML vars\n" if $debug;
 		}
-		if (/<!--\s*translation\s+(.*)?\s*-->\s*$/oi || /\s+base_revision=\"([\d\.]+)?\"\s+/oi) {
+		if (/<!--\s*translation\s+(.*)?\s*-->\s*$/oi || /\s+translation=\"([\d\.]+)?\"\s+/oi) {
 			$oldr = $1;
 			$translations->{$k}->{'base_revision'} = $oldr;
 			print STDERR "(check_file) found base_revision $oldr in WML vars\n" if $debug;
@@ -302,8 +304,6 @@ foreach $k (sort keys %$translations) {
 	print "$tag{'no url'}" if !$t->{'translation_url'};
 	print "</A>" if $t->{'translation_url'};
 #	print "<BLOCKQUOTE>";
-	my $translation_source_name = $t->{'translation_cvs_url'};
-	$translation_source_name =~ s/.*\/([^\/]+)$/$1/;
 	print "<BR>$tag{'Source'} : <A HREF=\"$t->{'translation_source_url'}\">$t->{'translation_source_name'}</A>"
 		if ($t->{'translation_source_url'} && uc $type ne 'DDP');
 	print " (<A HREF=\"$t->{'translation_cvs_url'}\">$tag{'CVSpage'}</A>)"
