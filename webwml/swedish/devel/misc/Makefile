@@ -10,10 +10,10 @@ include $(WMLBASE)/Make.lang
 
 
 # Do Not modify the following line
-index.$(LANGUAGE).html: card.ps
-
-card.ps:  card.dvi
-	dvips card.dvi -o card.ps
-
-card.dvi: card.tex bottle.eps
-	latex card.tex
+#index.$(LANGUAGE).html: card.ps
+#
+#card.ps:  card.dvi
+#	dvips card.dvi -o card.ps
+#
+#card.dvi: card.tex bottle.eps
+#	latex card.tex
