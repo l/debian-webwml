@@ -172,7 +172,7 @@ $translations = [
 
 {
 	'type'			=> 'DDP',
-	'key'			=> '',
+	'key'			=> 'policy',
 	'name'			=> 'Debian Policy Manual',
 	'sub_name'		=> 'chapter 0 to 3',
 	'version'		=> '2.5.0.0',
@@ -190,7 +190,7 @@ $translations = [
 
 {
 	'type'			=> 'DDP',
-	'key'			=> '',
+	'key'			=> 'policy',
 	'name'			=> 'Debian Policy Manual',
 	'sub_name'		=> 'chapter 4 and 5',
 	'version'		=> '2.5.0.0',
@@ -218,7 +218,7 @@ $translations = [
 	'since'			=> '01/07/1998',
 	'translation_name'	=> 'Guide de Référence du Développeur Debian',
 	'translation_sub_name'	=> 'parties 0 à 4',
-	'translators'		=> ['?'],
+	'translators'		=> ['Laurent Picouleau <lcrpic@a2points.com>'],
 	'translation_version'	=> '0.1',
 	'translation_package'	=> '',
 	'old_translators'	=> ['Herve Floch <Herve.Floch@linux.eu.org>'],
