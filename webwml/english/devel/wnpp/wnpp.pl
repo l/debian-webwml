@@ -34,9 +34,9 @@ sub htmlsanit {
 }
 
 # The maintainers flat database
-$MAINTAINERS = "/org/ftp.debian.org/ftp/indices/Maintainers";
+$MAINTAINERS = "/org/www.debian.org/cron/ftpfiles/Maintainers";
 my $host = `hostname -f`; chop $host;
-$MAINTAINERS = "Maintainers" if ( $host ne "master.debian.org" );
+$MAINTAINERS = "Maintainers" if ( $host ne "klecker.debian.org" );
 
 open MAINTAINERS or die "Can't find $MAINTAINERS file at $host: $!\n";
 while (<MAINTAINERS>) {
@@ -81,7 +81,7 @@ foreach $entry ($mesg->entries) {
     } elsif ($subject =~ m/^RFP:\s*(.*)/) {
         $rfp{$bugid} = join(": ", split(/\s+-+\s+/, $2,2)); 
     } else {
-    	print STDERR "What is this ($bugid): $subject\n" if ( $host ne "master.debian.org" );
+    	print STDERR "What is this ($bugid): $subject\n" if ( $host ne "klecker.debian.org" );
     }
 }
 
