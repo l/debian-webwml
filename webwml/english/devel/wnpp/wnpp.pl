@@ -76,10 +76,10 @@ foreach $entry ($mesg->entries) {
         $withdrawn{$bugid} = $1 . ($2?": ":"") . $2;
     } elsif ($subject =~ m/^ITA:(?:\s*(?:ITO|RFA|O|W):)?\s*(\S+)(?:\s+-+\s+)?(.*)$/) {
         $ita{$bugid} = $1 . ($2?": ":"") . $2;
-    } elsif ($subject =~ m/^ITP:(?:\s*RFP:)?\s*(.*)$/) {
-        $itp{$bugid} = join(": ", split(/\s+-+\s+/, $2,2));
-    } elsif ($subject =~ m/^RFP:\s*(.*)$/) {
-        $rfp{$bugid} = join(": ", split(/\s+-+\s+/, $2,2)); 
+    } elsif ($subject =~ m/^ITP:(?:\s*RFP:)?\s*(.*)/) {
+        $itp{$bugid} = join(": ", split(/\s+-+\s+/, $1,2));
+    } elsif ($subject =~ m/^RFP:\s*(.*)/) {
+        $rfp{$bugid} = join(": ", split(/\s+-+\s+/, $1,2)); 
     } else {
     	print STDERR "What is this ($bugid): $subject\n" if ( $host ne "klecker.debian.org" );
     }
