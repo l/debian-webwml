@@ -32,3 +32,5 @@ $(XCFDESTFILES): $(XCFSOURCE)
 $(PSDESTFILES): $(PSSOURCE)
 	cp $(@F) $(HTMLDIR)
 
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml ../../english/logos/index.data
+
