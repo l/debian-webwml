@@ -1,14 +1,15 @@
 #!/usr/bin/perl -w
 #
-# Perl scripts to generate the Debian toolbar icons
-# This needs gimp 1.1 and gimp1.1-nonfree to work!!
-# By Craig Small <csmall@debian.org>
+# Perl script to generate the Debian toolbar icons
+# By Craig Small <csmall@debian.org>, modified by various people
+#
+# See webwml/english/Pics/README for more information.
 
 use Gimp qw( :auto ); 
 use Gimp::Fu; 
    
 sub debian_button {
-	my ($words, $fontcolor, $bgcolor) = @_;
+	my ($words, $fontface, $fontsize, $fonttype, $fontcolor, $bgcolor, $fontregistry, $fontencoding) = @_;
 	my ($image,$layer,$text,$width);
 	my $height = 18;
 
@@ -18,7 +19,7 @@ sub debian_button {
 
 	$image = gimp_image_new(80, $height, RGB);
 	$layer = gimp_layer_new($image, 80, $height, RGBA_IMAGE, "Button", 100, NORMAL_MODE);
-	$text = gimp_text($image, $layer, 9, 3, $words, 0, 0, "15", PIXELS, "*", "Lucida", "bold", "r", "*", "*", "*", "*");
+	$text = gimp_text($image, $layer, 9, 3, $words, 0, 0, $fontsize, PIXELS, "*", $fontface, $fonttype, "r", "*", "*", $fontregistry, $fontencoding);
 	
 
 	$width = gimp_drawable_width($text);
@@ -41,6 +42,8 @@ sub debian_button {
 
 	gimp_floating_sel_anchor($text);
 
+	gimp_palette_set_background("#df0451");
+
 	gimp_convert_indexed_palette($image, 0, 0, 8, "");
 
 	return $image;
@@ -48,18 +51,23 @@ sub debian_button {
  
    
 register 
-      "debian_button",                 # fill in name 
-      "Create Debian Toolbar button",  # a small description 
-      "A tutorial script",       # a help text 
-      "Craig Small",            # Your name 
-      "(c) SPI Inc",        # Your copyright 
-      "1998-05-18",              # Date 
-      "<Toolbox>/Xtns/Perl-Fu/Debian/Toolbar",   # menu path 
-      "*",                       # Image types 
+      "debian_button",
+      "Create Debian Toolbar button",            # a small description 
+      "A script to generate Debian navbar",      # a help text
+      "Craig Small",
+      "Copyright (c) 1998, 2001 SPI Inc.",
+      "2001-06-10",
+      "<Toolbox>/Xtns/Perl-Fu/Debian/Toolbar",   # menu path
+      "*",                                       # Image types
       [ 
-       [PF_STRING,   "words", "words to put in button", "Home"], 
+       [PF_STRING, "words", "words to put in button", "About"], 
+       [PF_STRING, "fontface", "font face", "Lucida"], 
+       [PF_STRING, "fontsize", "font size", "14"], 
+       [PF_STRING, "fonttype", "font type (bold, medium etc)", "bold"], 
        [PF_COLOR, "fontcolor", "Font color", [255,255,255]] ,
        [PF_COLOR, "bgcolor", "Background color", [0,0,132]] 
+       [PF_STRING, "fontregistry", "font registry (iso8859 etc)", "*"], 
+       [PF_STRING, "fonttype", "font encoding (1 etc)", "*"], 
       ], 
       \&debian_button; 
    
