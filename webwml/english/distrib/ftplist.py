@@ -116,6 +116,7 @@ lines = f.readlines()
 sitep = ''
 http = ''
 ftp = ''
+site = '';
 for line in lines:
 	sitep = re.findall('^Site: ftp\.(..)\.debian.org', line)
 	httpl = re.findall('^Archive-http: (.*)$', line)
