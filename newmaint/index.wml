@@ -6,7 +6,7 @@
 <?
   function print_days($db, $startdate, $stopdate)
   {
-    $where = " WHERE " . $stopdate . " IS NOT NULL AND age('now'::date, " . $stopdate . ") < '2 months' AND " . $stopdate . " >= " . $startdate;
+    $where = " WHERE " . $stopdate . " IS NOT NULL AND CURRENT_TIMESTAMP - $stopdate < '2 months' AND " . $stopdate . " >= " . $startdate;
 
     #
     # Mode - the most "popular" number
@@ -38,7 +38,7 @@
     }
     $row = pg_Fetch_Row($query, 0);
     $medcount= intval($row[0]/2);
-    $sql = "SELECT " . $stopdate . "::date - " . $startdate . "::date as median FROM applicant " . $where;
+    $sql = "SELECT $stopdate - $startdate AS median FROM applicant " . $where;
     $sql .= " ORDER by median";
     $sql .= " LIMIT 1 OFFSET " . $medcount;
     if (! ($query = pg_exec($db, $sql))) {
