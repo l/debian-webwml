@@ -15,8 +15,8 @@ WMLFILES := $(wildcard *.wml)
 HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
 
 all: $(HTMLFILES)
-	( cd 1998 ; $(MAKE) )
-#	( cd 1997 ; $(MAKE) )
+	# ( cd 1998 ; $(MAKE) )
+	# ( cd 1997 ; $(MAKE) )
 
 include $(BASE)/Make.templ.inc
 
