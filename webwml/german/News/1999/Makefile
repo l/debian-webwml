@@ -10,7 +10,9 @@ include $(WMLBASE)/Make.lang
 
 
 # Do Not modify the following line
-index.$(LANGUAGE).html: index.wml $(wildcard 1999*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
+index.$(LANGUAGE).html: index.wml $(wildcard 1999*.wml) \
+                        $(wildcard 1999*.title)\
+                        $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
 	$(WML) index.wml
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/news.wml
 	$(WML) $(<F)

@@ -1,12 +1,8 @@
-# This Makefile should need no changes from webwml/english/News/1998/Makefile
-# Please send a message to debian-www if you need to modify anything
-# so the problem can be fixed.
+# Considering webwml/english/partners/images/* shouldn't be in translations,
+# there should be no need to copy this file to translation directories.
 
 WMLBASE=../..
 CUR_DIR=partners/images
 SUBS=
 
 include $(WMLBASE)/Make.lang
-
-
-# Do Not modify the following line
