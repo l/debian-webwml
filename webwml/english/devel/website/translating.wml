@@ -10,25 +10,58 @@ There are separate directories for each language.
 please see the <a href="#completenew">section on starting a new
 translation</a>.
 
-<h2>Translating individual pages</h2>
+<h2><a name="singlepages">Translating individual pages</a></h2>
 
-<p>Please don't translate the HTML pages. We use WML source files and
-the content and common elements are stored separately.  If you want to
-help with a particular translation, please <a href="using_cvs">use CVS</a>
+<p>We use WML to separate the specific content of a page from the elements
+common to multiple pages. This means that one needs to edit certain WML
+source files instead of HTML files. Please <a href="using_cvs">use CVS</a>
 to acquire the current sources.  You'll need to check out at least two
-directories: <tt>english/</tt> and <tt>&lt;language&gt;/</tt>.
+directories: <tt>english/</tt> and <tt><var>&lt;language&gt;</var>/</tt>.</p>
 
-<p>To translate a single page from English into your language, copy the
-original .wml file from <tt>english/foo/bar</tt>
-into <tt>&lt;language&gt;/foo/bar</tt>.  Add 
-<kbd>#use wml::debian::translation-check translation="x.y"</kbd> after the
-last #use statement (see <a href="uptodate">about translation-check</a>).
-You may also use the <tt>copypage.pl</tt> script in the webwml root
-directory to copy the page and add the required header automatically.
-After this is done, translate the entire page and send it to <a
-href="translation_coordinators">somebody</a> with write access to the
-repository.  You should be able to test the page by issuing <tt>make
-file.&lt;lang&gt;.html</tt>.
+<p>To translate a single page from English into your language, the original
+.wml file needs to be translated and placed within the other language's
+directory. The relative path and name need to be the same as in the English
+directory in order for the links to continue to work. It is also strongly
+recommended that the translator adds an additional line to the headers
+after the last #use statement to record the exact revision of the original
+file that was translated, so that <a href="uptodate">updating is easier</a>.
+The line looks like this:
+<kbd>#use wml::debian::translation-check translation="<var>x.y</var>"</kbd>
+
+<p>All this can be easily accomplished by using the <tt>copypage.pl</tt>
+script in the webwml root directory. The script will copy the page to the
+right place, create directories and makefiles if necessary, and add the
+required header automatically.</p>
+
+<p>After you have run e.g. <kbd>./copypage.pl <var>file</var>.wml</kbd>,
+translate the original text within the file. Comments in files will indicate
+if there are items that should not be translated; respect them. Don't do any
+unnecessary changes to the formatting; if something needs to be fixed, it
+should likely be done in the original file.</p>
+
+<p>Since we use <a href="content_negotiation">content negotiation</a>,
+HTML files are not named <tt><var>file</var>.html</tt> but
+<tt><var>file</var>.<var>&lt;lang&gt;</var>.html</tt>, where <var>&lt;lang&gt;</var>
+is the two letter code of the language, according to
+<a href="http://ftp.ics.uci.edu/pub/ietf/http/related/iso639.txt">ISO 639</a>
+(e.g. <tt>fr</tt> for French).</p>
+
+<p>You can build HTML from WML by running
+<kbd>make <var>file</var>.<var>&lt;lang&gt;</var>.html</kbd>.
+If that works, check if the syntax is fully valid with
+<kbd>weblint <var>file</var>.<var>&lt;lang&gt;</var>.html</kbd>.</p>
+
+<p>The web pages will get rebuilt from CVS on the www-master server, and
+this process is for the most part impervious to errors. However, if you
+commit a broken file in the top level of your translation (e.g. the
+top-level index.wml file), it will break the build process and stall all
+the other updates to the web site. Please pay special attention to these
+files.</p>
+
+<p>Once the page is good to go, you can commit it into CVS. If you have
+the permissions to do this yourself, run <kbd>cvs commit</kbd>; if not,
+send it to <a href="translation_coordinators">somebody with write
+access to the repository</a>.</p>
 
 <h2><a name="completenew">Starting a new translation</a></h2>
 
@@ -115,42 +148,14 @@ mailing list before committing.</p>
 <p>You should <a href="navbar_images">translate the text on the images</a>
 in the red navigation bar, too.
 
-<p>Comments in files will indicate if there are items that should not be
-translated; respect them.
-
 <p>Note: if you find you need to make any other changes, send mail to
 debian-www saying what you changed and why, so the problem can be corrected.
 
 <p>After the template skeleton is done, you can start with translating the
-front page.</p>
-
-<p>You can ignore subdirectories listed in the SUBS variable of a Makefile
-even if they don't exist in the translation directory. When you translate a
-sub-directory, make sure that it's mentioned in the SUBS variable of the
-Makefile in its parent directory, otherwise it won't get built.
-
-<p>You can now start translating *.wml files. For a list of files that
+front page and the other *.wml files. For a list of files that
 should be translated first, check <a href="translation_hints">the hints
-page</a>.</p>
-
-<p>Copy each file from ../english/, translate it, test it with
-<tt>make file.&lt;lang&gt;.html</tt> (and <tt>weblint
-file.wml</tt>), and when you're finished, commit it <a href="using_cvs">to
-CVS</a>.  Please ensure that your translation is buildable, because if
-not, it might break the build process of the entire web site.
-
-# XXX replace with copypage.pl use
-
-<p>When copying files, do not copy CVS directories or files in them from
-the english/ directory into your own.  If you do so accidentally and
-commit translations later, cvs will update the english files with your
-translation, which will confuse/annoy a lot of people.
-
-<p>Since we use <a href="content_negotiation">content negotiation</a>
-HTML files are not named <tt>file.html</tt> but
-<tt>file.&lt;lang&gt;.html</tt>, where <tt>&lt;lang&gt;</tt> is the
-two letter code of the language, according to ISO 639 (e.g. <tt>fr</tt>
-for French).
+page</a>. Translate *.wml pages as described <a href="#singlepages">at
+the top of this page</a>.</p>
 
 <h3>The rest of the story</h3>
 
