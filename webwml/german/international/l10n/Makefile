@@ -14,8 +14,12 @@ LANGS_TMPL := $(shell grep 'templates:' $(ENGLISHDIR)/international/l10n/data/la
 LANGS_PO   := $(shell grep 'po:'        $(ENGLISHDIR)/international/l10n/data/langs|sed 's/po://')
 LANGS_ALL  := $(shell grep 'all:'       $(ENGLISHDIR)/international/l10n/data/langs|sed 's/all://')
 
+ifneq "$(wildcard team-po.wml)" ""
 HTML_PO   := $(foreach lang,$(LANGS_PO)  ,po-$(lang).$(LANGUAGE).html)
+endif
+ifneq "$(wildcard team-templates.wml)" ""
 HTML_TMPL := $(foreach lang,$(LANGS_TMPL),templates-$(lang).$(LANGUAGE).html)
+endif
 
 all:: $(HTML_PO) $(HTML_TMPL)
 
