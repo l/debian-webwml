@@ -4,7 +4,7 @@
 # the translation-check header to it. It also will create the
 # destination directory if necessary, and copy the Makefile from the source.
 
-# Written in 2000-2002 by peter karlsson <peterk@debian.org>
+# Written in 2000-2002 by Peter Karlsson <peterk@debian.org>
 # © Copyright 2000-2002 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
@@ -92,6 +92,8 @@ while (<SRC>)
 	s/format string vulnerability/formatsträngssårbarhet/;
 	s/insecure temporary files/osäkra temporära filer/;
 	s/This problem has been fixed/Detta problem har rättats/;
+	s/These problems have been fixed/Dessa problem har rättats/;
+	s/\bin version\b/i version/;
 	s/>local root exploit</>lokal rootattack</;
 	s/>remote root exploit</>fjärr-rootattack</;
 	s/>symlink attack</>attack mot symboliska länkar</;
