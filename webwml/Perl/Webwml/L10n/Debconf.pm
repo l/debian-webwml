@@ -25,7 +25,7 @@ Webwml::L10n::Debconf - translation status of Debconf templates
 =head1 DESCRIPTION
 
 This module extracts informations about translation status of Debconf
-templates.
+templates files.
 
 =head1 METHODS
 
@@ -66,7 +66,11 @@ sub _init {
 
 =item read_compact
 
-Read a template containing all translations.
+Read a templates file containing all translations.  An optional second
+argument may be used, any non-zero value tells that this file comes with
+translations in other files.  In such a case no warning is raised if this
+file contains translated fields, because maintainer is assumed to be
+responsible for such translations.
 
    $tmpl->read_compact($file);
 
@@ -75,6 +79,7 @@ Read a template containing all translations.
 sub read_compact {
         my $self = shift;
         my $file = shift;
+        my $safe = shift || 0;
         my ($lang, $msg);
 
         $self->_init();
@@ -83,7 +88,6 @@ sub read_compact {
 
         my $tmpl = '';
         my $line = 0;
-        my $once = 1;
         while (<TMPL>) {
                 chomp;
                 $line ++;
@@ -91,10 +95,10 @@ sub read_compact {
                         warn "$file:$line: fuzzy-fields-in-templates\n";
                         goto SKIP;
                 }
-                if ($once && m/^[A-Z][a-z]*-[A-Za-z_]+:/) {
+                if ((!$safe) && m/^[A-Z][a-z]*-[A-Za-z_]+:/) {
                         warn "$file:$line: translated-fields-in-master-templates\n";
                         #   Display this message only once
-                        $once = 0;
+                        $safe = 1;
                         goto SKIP;
                 }
                 if (s/^Template:\s*//) {
@@ -181,7 +185,7 @@ sub read_compact {
 =item read_dispatched
 
 Read templates contained in several files.  First argument is the English file,
-all other arguments are translated template files.
+all other arguments are translated templates files.
 
    @trans = qw(templates.de templates.fr templates.ja templates.nl);
    $tmpl->read_dispatched('templates', @trans);
@@ -344,7 +348,7 @@ sub _read_dispatched {
 
 =item langs
 
-Return the languages in which this template is translated.
+Return the languages in which this templates file is translated.
 
    my @list = $tmpl->langs();
 
@@ -373,7 +377,7 @@ sub filename {
 
 =item count
 
-Return the number of translatable strings in this template.
+Return the number of translatable strings in this templates file.
 
    my $number = $tmpl->count();
 
@@ -432,7 +436,7 @@ sub stats {
 
 =item entries
 
-Return an array containing all Debconf ids found in this template.
+Return an array containing all Debconf ids found in this templates file.
 
    my @ids = $tmpl->entries();
 
