@@ -1,0 +1,114 @@
+#use wml::debian::cdimage title="Becoming a mirror for Debian CD images" BARETITLE=true
+
+<p>To become a Debian CD Image mirror site, you need a Linux or
+UNIX-like machine. Getting the images and making them accessible
+can be done in several ways, depending on your possibilities.</p>
+
+<p>You should <em>not</em> use FTP or HTTP to get the images. These transfer
+methods have a high failure probability because of the enormous size of the
+files. Moreover, if the images change only slightly (as is the case with
+subreleases), the entire data is downloaded again. This puts a high stress
+on our computers and network connections.</p>
+
+<p>For these reasons, we use the <a href="http://rsync.samba.org/">\
+<tt>rsync</tt></a> program that essentially performs remote binary patching.
+With <tt>rsync</tt>, subrelease images are updated very efficiently, as only
+the changed parts are transferred over the network; the unchanged parts are
+copied from the old image.</p>
+
+<p><tt>rsync</tt> alone still does full downloads for "all new" releases, as
+those images contain virtually no unchanged parts. However, with the pseudo
+image kit we can create "pseudo" CD images from data that is available
+already on the nearest Debian FTP mirror - maybe on your own local hard
+disc. Then <tt>rsync</tt> can binary patch these "pseudo-images" to the
+official ones. And even for most subrelease images this is found to be more
+efficient than patching the old image.</p>
+
+<p>The pseudo image kit is designed mainly for downloading only one or a few
+images, like most people do. There is also the <tt>debcdmirror</tt> script
+which makes mirroring <em>really</em> easy because it automatically uses the
+pseudo image kit and <tt>rsync</tt> to keep your mirror up to date -- even
+to the point of automatically MD5-checksumming every downloaded image. With
+<tt>debcdmirror</tt>, you can also specify exactly what you want to
+mirror.</p>
+
+<p>So we have the following possibilities for getting the images and keeping
+them up to date:</p>
+
+<ul>
+
+  <li>By FTP or HTTP: This should <em>not</em> be done.</li>
+
+  <li>By using only <tt>rsync</tt> (daily cron job): This is preferable only
+  on sites that do not have a nearby/fast Debian FTP mirror.</li>
+
+  <li>By using the pseudo image kit manually (maybe with <tt>rsync</tt> to
+  update subreleases). Lots of work and lots of trouble.</li>
+
+  <li>By using the <tt>debcdmirror</tt> script (which "internally" uses the
+  Pseudo-Image Kit and <tt>rsync</tt>) (daily cron job). 
+  <strong>This</strong> is what you should do! :-)</li>
+
+</ul>
+
+<p>The latest version of the
+<a href="http://cdimage.debian.org/~costar/pseudo-image-kit/">pseudo
+image kit</a> and the
+<a href="http://cdimage.debian.org/~costar/debcdmirror/"><tt>debcdmirror</tt></a>
+script are available from their author's homepage. Read the READMEs in both
+packages for extensive information about the procedures.</p>
+
+<p><strong>Notes:</strong>
+
+<p>For the <tt>debcdmirror</tt> script, you must choose an <tt>rsync</tt>
+mirror that offers an "<tt>ls-lR</tt>" file. Addresses are on the
+<a href="rsync-mirrors.html">rsync mirror list</a>. Official public mirrors
+are allowed to rsync directly from the master server, cdimage.debian.org;
+you probably need a password for that one, ask
+<a href="mailto:phil@hands.com">its administrator</a>.</p>
+
+<p>If you do not have a local <a href="$(HOME)/mirror/">"regular" Debian
+FTP mirror</a>, check the <a href="$(HOME)/distrib/ftplist" >list of FTP
+sites</a>.
+
+<p><tt>debcdmirror</tt> requires <tt>bash</tt> version 2 or higher. If
+necessary you can install that in a non-default location, but then be sure
+to update the path to <tt>bash</tt> in the first line of the script.</p>
+
+<p>If you use <tt>rsync</tt> only, use at least the options <b><tt>--times
+--links --hard-links --block-size=8192</tt></b>. This will preserve
+modification time, symlinks and hardlinks, and use a block size of 8192
+bytes (most efficient for CD images). When modification time and size are
+the same, <tt>rsync</tt> will just leave the file alone, so <tt>--times</tt>
+is really obligatory.</p>
+
+<p>The "<tt><i>codename</i>_test</tt>" directory contains images that are
+hard-linked to the ones in the versioned (e.g. <tt>2.2_r4</tt>) directories.
+The versioned directory name will change between (sub)releases, but the
+names in the "<tt>test</tt>" directories will stay the same. So, in the
+<tt>rsync</tt>-only situation, mirroring both the versioned and the
+appropriate "<tt>test</tt>" directories, <em>and</em> using the
+<tt>--hard-links</tt> option is the only way for rsync to update subreleases
+properly. [You should <em>not</em> include "<tt>test</tt>" directories with
+<tt>debcdmirror</tt>, because <tt>debcdmirror</tt> will handle things
+differently and more efficiently.]</p>
+
+<p>The <tt>ls-lR</tt> file describes the directory structure of the mirror
+it is on. <strong>Do not</strong> mirror the <tt>ls-lR</tt> file; either
+make one yourself (with the provided "<tt>Makels-lR</tt>", every hour via
+<tt>cron</tt>) or simply have no <tt>ls-lR</tt> file at all.
+[<tt>debcdmirror</tt> will create a local <tt>ls-lR</tt> automatically after
+mirroring.]</p>
+
+<p>Once you have acquired the CD images you want to mirror (i386 and source
+CDs are most popular), you should run the <tt>rsync</tt> server program.
+This will not place a heavy load on your machine, and will generate much
+less network traffic than an FTP/HTTP service. Instructions for setting this
+up are in the README of the pseudo image kit.</p>
+
+<p>Of course, if you do not have problems with many gigabytes of network
+traffic per day, we'd very much appreciate another FTP/HTTP mirror. We'll be
+happy with everything you can afford. Please notify
+<a href="mailto:debian-cd@lists.debian.org">debian-cd@lists.debian.org</a>
+that you are running a mirror, so that we can update the appropriate pages.
+Thanks in advance!</p>
