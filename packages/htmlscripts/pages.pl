@@ -72,15 +72,15 @@ sub walk_db_packages ($\&;$) {
 sub package_index_walker {
 	my $pkg = shift;
 	my $env = shift;
-	my ( $str, $txt_str );
+	my ( $str, $sect_str, $txt_str );
 
 	progress() if $env->{opts}{progress};
 	my $name = $pkg->get_name;
 
 	if ( $pkg->is_virtual ) {
-	    $str = "<dt><a href=\"$name\">".
+	    $sect_str = "<dt><a href=\"$name\">".
 		"$name</a></dt>";
-	    $env->{si}->{virtual} .= $str;
+	    $env->{si}->{virtual} .= $sect_str;
 	    return;
 	}
 
@@ -103,11 +103,10 @@ sub package_index_walker {
 	$section = $sections{max_unique};
 	$archive = $archives{max_unique}
 	    if exists $archives{max_unique};
-	$subdist = $subdists{max_unique} 
+	$subdist = $subdists{max_unique}
 	    if exists $subdists{max_unique};
 
 	my ( @v_str, $v_str );
-#	foreach ( ( $pkg->get_version_list ) ) {
 	if ( scalar keys %{$versions{unique}} == 1 ) {
 	    $v_str = "($version)";
 	} else {
@@ -117,23 +116,27 @@ sub package_index_walker {
 	    $v_str = "(".join( ", ", @v_str ).")";
 	}
 
-
-	$str = "<dt><a href=\"$name\">".
+	$sect_str = "<dt><a href=\"$name\">".
+	    "$name</a> $v_str";
+	$str = "<dt><a href=\"$section/$name\">".
 	    "$name</a> $v_str";
 	$txt_str = "$name $v_str";
 	if ( $archive && ( $archive ne 'main' ) ) {
 	    $str .=  " [<font color=\"red\">$archive</font>]\n";
+	    $sect_str .=  " [<font color=\"red\">$archive</font>]\n";
 	    $txt_str .= " [$archive]";
 	}
 	if ( $subdist ) {
 	    $str .=  " [<font color=\"red\">$subdist</font>]\n";
+	    $sect_str .=  " [<font color=\"red\">$subdist</font>]\n";
 	    $txt_str .=  " [$subdist]";
 	}
 	$str .= "</dt>\n     <dd>$short_desc</dd>\n";
+	$sect_str .= "</dt>\n     <dd>$short_desc</dd>\n";
 	$txt_str .= " $short_desc_txt\n";
 	${$env->{all_package}} .= $str;
 	${$env->{all_pkg_txt}} .= $txt_str;
-	$env->{si}->{$section} .= $str if $section;
+	$env->{si}->{$section} .= $sect_str if $section;
     }
 
 sub print_virt_pack {
