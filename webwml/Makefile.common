@@ -121,7 +121,7 @@ $(TEMPLDIR)/%.wml:
 
 $(TEMPLDIR)/basic.wml: $(TEMPLDIR)/navbar.wml
 $(TEMPLDIR)/footer.wml: $(TEMPLDIR)/ctime.wml
-$(TEMPLDIR)/languages.wml: $(TEMPLDIR)/language_names.wml
+$(TEMPLDIR)/languages.wml: $(TEMPLDIR)/language_names.wml $(TEMPLDIR)/language_names.def
 $(TEMPLDIR)/mainpage.wml: $(TEMPLDIR)/basic.wml $(TEMPLDIR)/mirrors.wml \
   $(TEMPLDIR)/languages.wml $(TEMPLDIR)/footer.wml $(TEMPLDIR)/links.tags.wml \
   $(ENGLISHSRCDIR)/Pics/blue-upperleft.png $(ENGLISHSRCDIR)/Pics/blue-upperright.png \
@@ -178,6 +178,8 @@ $(TEMPLDIR)/weeklynews/header.wml: $(TEMPLDIR)/ctime.wml \
 $(TEMPLDIR)/countries.def: $(TEMPLDIR)/countries.wml
 	cd $(TEMPLDIR) && sed -e /^#/d countries.wml | eperl -B '<:' -E ':>' - >/dev/null
 
+$(TEMPLDIR)/language_names.def: $(TEMPLDIR)/language_names.wml
+	cd $(TEMPLDIR) && sed -e '/^#/d' -e '/^<perl>/,/^<\/perl>/!d' language_names.wml  | eperl -B '<perl>' -E '</perl>' - >/dev/null
 
 .SUFFIXES: 
 .PHONY: all $(existing-SUBS) install $(existing-SUBS-install)
