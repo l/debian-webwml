@@ -1,0 +1,98 @@
+<define-tag download whitespace=delete>
+        [EN:Download:]
+        [SV::]
+        [DE:Download:]
+        [IT::]
+        [HR::]
+        [JA::]
+        [AR::]
+        [DA::]
+        [EO::]
+        [ES::]
+        [FI::]
+        [FR::]
+        [HU::]
+        [KO::]
+        [NL::]
+        [NO::]
+        [PL::]
+        [PT::]
+        [RO::]
+        [RU::]
+        [TR::]
+        [ZH::]
+</define-tag>
+
+<define-tag oldbanner whitespace=delete>
+        [EN:Old banner ads:]
+        [SV::]
+        [DE:Alte Bannerwerbung:]
+        [IT::]
+        [HR::]
+        [JA::]
+        [AR::]
+        [DA::]
+        [EO::]
+        [ES::]
+        [FI::]
+        [FR::]
+        [HU::]
+        [KO::]
+        [NL::]
+        [NO::]
+        [PL::]
+        [PT::]
+        [RO::]
+        [RU::]
+        [TR::]
+        [ZH::]
+</define-tag>
+
+# display the actual banner
+<define-tag bannerad>
+<preserve width height file comment>
+<set-var %attributes>
+<if <not <get-var height>>
+    <set-var height="60">>
+<if <not <get-var width>>
+    <set-var width="468">>
+
+<center>
+<img src="<get-var file>" alt="[<get-var file>]" width="<get-var width>" height="<get-var height>">
+#<a href="<get-var file>"><download></a>
+<if <get-var comment>
+  "<p>(<get-var comment>)">
+</center><p>
+
+<restore width height file comment>
+</define-tag>
+
+<define-tag otherdists>
+<:
+    $name{"2.1"} = "Slink";
+    $name{"2.2"} = "Potato";
+
+    opendir (DIR, "$(ENGLISHDIR)/banners");
+    foreach $_ (readdir (DIR)) {
+	push (@dirs, $_) if (/^\d+\.\d+/ && -d "$(ENGLISHDIR)/banners/$_");
+    }
+    closedir (DIR);
+
+    if (@dirs) {
+        @dirs = sort (@dirs);
+	$first = 1;
+	print "<h3><oldbanner></h3>";
+	print "<center>";
+	foreach $_ (@dirs) {
+	    print " &nbsp; " if (!$first);
+	    $first = 0;
+	    if (exists $name{$_}) {
+	        printf "<a href=\"%s/\">%s (%s)</a>", $_, $_, $name{$_};
+	    } else {
+	        printf "<a href=\"%s/\">%s</a>", $_, $_;
+	    }
+	}
+	print "</center>";
+    }
+:>
+</define-tag>
