@@ -28,14 +28,15 @@ all:\
     $(HTMLDIR)/MailingLists/unsubscribe.html.$(LANG) \
     $(HTMLDIR)/devel/HOWTO_translate.html.$(LANG) \
     $(HTMLDIR)/devel/extract_key.html.$(LANG) \
-    $(HTMLDIR)/devel/people.html.$(LANG) \
     $(HTMLDIR)/devel/help.html.$(LANG) \
-    $(HTMLDIR)/devel/ports.html.$(LANG) \
     $(HTMLDIR)/devel/incoming_mirrors.html.$(LANG) \
-    $(HTMLDIR)/devel/release_info.html.$(LANG) \
     $(HTMLDIR)/devel/maintainer_contacts.html.$(LANG) \
-    $(HTMLDIR)/devel/rsync_examples.html.$(LANG) \
     $(HTMLDIR)/devel/mirror.html.$(LANG) \
+    $(HTMLDIR)/devel/mirror_submit.html.$(LANG) \
+    $(HTMLDIR)/devel/people.html.$(LANG) \
+    $(HTMLDIR)/devel/ports.html.$(LANG) \
+    $(HTMLDIR)/devel/release_info.html.$(LANG) \
+    $(HTMLDIR)/devel/rsync_examples.html.$(LANG) \
     $(HTMLDIR)/doc/index.html.$(LANG) \
     $(HTMLDIR)/distrib/distrib.html.$(LANG) \
     $(HTMLDIR)/distrib/ftplist.html.$(LANG) \
