@@ -15,12 +15,11 @@
 <date>Tue, 23 Apr 2002 20:56:15 +0200
 
 <abstract>
-Ce document décrit la procédure de sécurisation et de renforcement 
-pour une installation Debian par défaut. Il couvre quelques tâches 
-courantes telles que la sécurisation d'un réseau en utilisant 
-Debian GNU/Linux et donne également des informations complémentaires 
-sur les outils de sécurisation disponible ainsi que sur le travail 
-accompli par l'équipe Sécurité Debian.
+Ce document décrit comment sécuriser l'installation d'un système Debian
+standard. Il couvre quelques tâches courantes telles que la sécurisation d'un
+réseau qui utilise Debian GNU/Linux et il donne également des informations
+complémentaires sur les outils de sécurisation disponibles ainsi que sur
+le travail accompli par l'équipe Debian consacrée à la sécurité.
 </abstract>
 
 <copyright> <copyrightsummary>Copyright &copy;  2002 Javier Fernández-Sanguino Peña
@@ -40,35 +39,39 @@ but WITHOUT ANY WARRANTY.
 
 <chapt>Introduction
 <p>
-Une des choses les plus dures dans l'écriture de documents liés à la sécurité est 
-que chaque cas est unique. Deux choses auxquelles il faut prêter attention sont les 
-menaces pour un environnement et les besoins liés à un site individuel, un hôte ou 
-un réseau. Par exemple, les besoins pour une utilisation familiale sont complètement 
-différents de ceux liés à un réseau d'une banque. Alors que la première menace à laquelle un 
-utilisateur quelconque doit faire face est le "script kiddie", un réseau banquier 
-doit se soucier des attaques dont il peut être la cible. De plus, la banque se 
-doit de protéger les données de ses clients. En résumé, chaque utilisateur doit  
-faire un compromis entre disponibilité et sécurité/paranoïa.
+L'une des choses les plus difficiles dans l'écriture de documents liés à la
+sécurité est que chaque cas est unique. Il faut prêter attention à deux
+choses&nbsp;: la menace que constitue l'environnement et les besoins de
+sécurité liés à un site individuel, une machine ou un réseau. Par exemple,
+les besoins d'une utilisation familiale sont complètement différents de
+ceux liés à un réseau de banque. Alors que la première menace à laquelle un
+utilisateur quelconque doit faire face est le «&nbsp;script kiddie&nbsp;»",
+un réseau de banque doit se soucier des attaques directes. De plus, la banque
+se doit de protéger les données de ses clients avec une précision
+arithmétique. En résumé, chaque utilisateur
+doit faire un compromis entre facilité d'utilisation et sécurité virant
+à la paranoïa.
 <!-- Is this metaphor really appropriate? Sounds like rounding errors to me, era -->
 <p>
 Notez que ce manuel couvre seulement les questions liées aux logiciels.
 Le meilleur programme au monde ne pourra vous protéger si quelqu'un peut 
-accéder physiquement à la machine. Elle peut être sous votre bureau ou dans un 
-bunker avec une armée la protégeant. Malgré cela, l'ordinateur peut être plus 
-sécurisé (d'un point de vue logiciel) que celui protégé physiquement s'il est 
-configuré correctement et que l'autre est plein de trous de sécurité. 
-Bien entendu, vous devez prendre en compte les deux problèmes.
+accéder physiquement à la machine. Vous pouvez la mettre sous votre bureau ou
+dans un bunker protégé par une armée. Néammoins, l'ordinateur sera beaucoup
+plus sûr (d'un point de vue logiciel) que celui protégé physiquement s'il est
+configuré correctement et que les logiciels de l'autre sont pleins de trous
+de sécurité.
+Bien entendu, vous devez prendre en compte les deux aspects.
 
 <p>
-Ce document vous donne un aperçu de ce que vous pouvez faire pour augmenter la
+Ce document donne un aperçu de ce que vous pouvez faire pour augmenter la
 sécurité de votre système Debian GNU/Linux. Si vous avez lu des documents 
-concernant la sécurité Linux, vous trouverez des similitudes avec ce document.
-D'ailleurs, ce manuel n'essaye pas d'être la source d'information ultime que vous 
-utiliserez, il essaye seulement d'adapter les mêmes informations afin qu'elles soient 
-significatives au système Debian GNU/Linux.
-D'autres distributions procèdent de la même manière mais d'une façon différente 
-(le démarrage de daemons est un exemple courant); ici, vous trouverez matière appropriée 
-pour les procédures et les outils Debian.
+concernant la sécurité sur Linux, vous trouverez des similitudes avec ce
+document. Cependant, ce manuel ne se veut pas l'ultime source d'informations
+que vous utiliserez, il essaye seulement d'adapter ces informations au
+système Debian GNU/Linux.
+D'autres distributions procèdent de manière différente pour certaines
+questions (le démarrage de démons est un exemple courant)&nbsp;; ici, vous
+trouverez ce qui convient aux procédures et aux outils Debian.
 <!-- 
 # Does this approximate the intent of the original author? (FIXME: check)
 # Original text said: "you will find here [sic] a different approach,
@@ -77,24 +80,28 @@ pour les procédures et les outils Debian.
 <!-- IMHO yes, jfs -->
 
 <p>
-Si vous avez des commentaires, annexes ou suggestions, envoyez-moi un mail à
-<url name="Alexander Reelsen" id="mailto:alex@rhwd.owl.de"> et 
+Si vous avez des commentaires, des éléments à ajouter ou des suggestions,
+envoyez-les à
 <url name="Javier Fernández-Sanguino" id="mailto:jfs@computer.org">
-et ils seront introduits dans ce manuel.
-
+(autre adresse&nbsp;: jfs@debian.org) et ils seront intégrés dans ce manuel.
+<!-- j'ai mis à jour sur version 2.6, pb -->
 <sect>Télécharger ce manuel 
 <p>
-Vous pouvez télécharger ou visualiser la nouvelle version du manuel de Sécurisation
+Vous pouvez télécharger ou lire la nouvelle version du manuel de sécurisation
 Debian à l'adresse <url name="Debian Documentation Project" 
 id="http://www.debian.org/doc/manuals/securing-debian-howto/">.  
 Jetez un oeil également à la version CVS sur <url name="CVS server" 
 id="http://cvs.debian.org/ddp/manuals.sgml/securing-howto/?cvsroot=debian-doc">.
 
 <p>
-Vous ne pouvez pas télécharger le document dans d'autres formats (PDF ou txt) depuis
-le site du Projet de Documentation Debian. Cependant, vous pouvez le télécharger ou 
-installer le paquet <url id="http://packages.debian.org/harden-doc"
-name="harden-doc"> qui fourni le même document en format HTML, txt et PDF.
+Vous pouvez télécharger le document dans une
+<url
+id="http://www.debian.org/doc/manuals/securing-debian-howto/securing-debian-howto.txt" name="version texte"> sur le site du Projet de Documentation
+Debian. Cependant, vous pouvez installer le paquet
+<url id="http://packages.debian.org/harden-doc" name="harden-doc"> qui offre
+ce même document dans les formats HTML, txt et PDF.
+<!-- j'ai mis à jour sur version 2.6, pb -->
+
 
 <!-- 
 <p>
@@ -114,81 +121,81 @@ id="http://joker.rhwd.de/doc/Securing-Debian-HOWTO/Securing-Debian-HOWTO.sgml">
 <!-- TODO: remove these stale links rather than leave references to -->
 <!-- the old versions hanging around? era -->
 
-<sect> Avis/Réactions
+<sect> Avis et Réactions
 <p>
-Maintenant, la partie officielle. Actuellement, j'ai (Alexander Reelsen) écrit 
-la plupart des paragraphes de ce manuel mais à mon avis cela ne devrait plus 
-rester le cas. J'ai grandi et vécu avec les logiciels libres, c'est une part 
-de ma vie de tous les jours et j'espère de la vôtre aussi. J'encourage tout le monde 
-à m'envoyer leurs réactions, astuces ou tout autres suggestions dont vous 
-pourriez disposer.
+Maintenant, la partie officielle. Pour l'instant, c'est moi
+(Alexander Reelsen) qui a écrit la plupart des paragraphes de ce manuel
+mais, à mon avis, il ne faudrait pas que cela reste ainsi. J'ai grandi et
+vécu avec les logiciels libres, c'est
+une part de ma vie de tous les jours et j'espère de la vôtre aussi.
+J'encourage chacun à m'envoyer ses réactions, astuces ou suggestions.
 
 <p>
-Si vous pensez que vous pouvez maintenir une certaine section ou paragraphe d'une 
-meilleure façon, écrivez au responsable du document et vous serez le bienvenu 
-pour le faire. En particulier si vous trouvez une section estampillée avec "FIXME",
-qui signifie que l'auteur n'a pas eu le temps ou les connaissances nécessaires 
-concernant le sujet. Dans ce cas, laissez lui un mail immédiatement.
+Si vous pensez que vous pouvez améliorer une section ou un paragraphe,
+écrivez au responsable du document. Cela sera apprécié !
+En particulier, si vous trouvez une section estampillée «&nbsp;FIXME&nbsp;»,
+qui signifie que l'auteur n'a pas eu le temps ou les connaissances nécessaires
+pour terminer le sujet, envoyez-lui un courrier immédiatement.
 
 <p>
-Le thème de ce manuel est relativement clair et il est important de le 
-maintenir à jour, vous pouvez apporter votre pierre à l'édifice. S'il vous plaît,
+Le thème de ce manuel fait comprendre qu'il est important de garder ce manuel
+à jour&nbsp;; vous pouvez apporter votre pierre à l'édifice. S'il vous plaît,
 aidez-nous.
+ 
 
 <sect>Connaissances requises
 <p>
 L'installation de Debian GNU/Linux n'est pas très difficile et vous 
-devriez être capable de l'installer. Si vous disposez déjà de connaissances 
-concernant Linux ou d'autres Unices et si vous êtes quelque peu familier 
-avec les bases de sécurité, il vous sera plus facile de comprendre ce manuel, 
-étant donné que ce document ne peut pas en expliquer tous les petits détails 
-(sans quoi cela aurait été un livre plutôt qu'un manuel). Si vous 
-n'êtes pas si familier avec tout ceci et que, cependant, vous voudriez jeter 
-un coup d'oeil sur <ref id="references"> pour trouver des informations plus 
+avez été sans doute capable de l'installer. Si vous disposez déjà de
+connaissances concernant Linux ou d'autres Unices et si vous êtes quelque
+peu familier avec les problèmes élémentaires de sécurité, il vous sera plus
+facile de comprendre ce manuel, car ce document ne peut pas entrer dans tous
+les petits détails (sans quoi cela aurait été un livre plutôt qu'un manuel).
+Si vous n'êtes pas si familier que cela, vous pouvez consulter
+<ref id="references"> pour savoir où trouver des informations plus
 approfondies sur le sujet.
+ 
 
-
-<sect>Sections devant être écrites (FIXME/TODO)
+<sect>Choses à écrire (FIXME/TODO)
 <p>
 <list>
+<!-- version 2.6 à traduire, pb -->
+<item>Comment mettre en place un firewall en utilisant
+Debian GNU/Linux. La section sur les pare-feux concerne un système isolé
+(pas de protection d'autres machines...). Comment tester la configuration.
 
-<item>Ajout d'informations sur la manière de mettre en place un firewall en utilisant 
-Debian GNU/Linux. La section concernant les pares-feux est orientée actuellement 
-vers un système seul (pas de protection d'autres machines ...)
-
-<item>Ajout d'informations sur le paramétrage d'un proxy pare-feux avec Debian 
-GNU/Linux déclarant spécifiquement quels paquets fournissent des services proxy
-
-(tels <package>xfwp</package>,
+<item>Paramétrage d'un serveur mandataire pare-feux avec Debian
+GNU/Linux et liste des paquets fournissant des services
+<em>proxy</em>
+(tels que <package>xfwp</package>,
 <package>xproxy</package>, <package>ftp-proxy</package>, 
 <package>redir</package>,
 <package>smtpd</package>, <package>nntp-cache</package>, <package>dnrd</package>,
 <package>jftpgw</package>,<package>oops</package>,<package>pnsd</package>,
 <package>perdition</package>,<package>transproxy</package>,
-<package>tsocks</package>). Devrait pointer vers le manuel pour tout autre info.
+<package>tsocks</package>). Renvoi au manuel pour toute autre information.
+<!-- sup. avec version 2.6 -->
+<item>Informations sur la configuration de services avec file-rc
+<item>Vérification de toutes les URLs et suppression ou correction de celles
+qui ne sont plus disponibles.
 
-<item>Information sur la configuration de services avec file-rc
-
-<item>Vérifiez toutes les URLs et retirer/fixer celles qui ne sont plus disponibles.
-
-<item>Ajout d'information sur les substituts disponibles (dans Debian) pour les 
-serveurs communs qui sont utilisables pour des utilités pratiques limitées. Par 
-exemple :
+<item>Informations sur les substituts de serveurs communs (disponibles dans
+Debian) à fonctionnalité restreinte. Par exemple&nbsp;:
 
 	<list>
-<item>local lpr with cups (package)?
+<item>local lpr with cups (paquet)?
 
-	<item>remote lrp with lpr
+	<item>remote lrp avec lpr
 
-	<item>bind with dnrd/maradns
+	<item>bind avec dnrd/maradns
 
-	<item>apache with dhttpd/thttpd/wn (tux?)
+	<item>apache avec dhttpd/thttpd/wn (tux?)
 
-	<item>exim/sendmail with ssmtpd/smtpd/postfix
+	<item>exim/sendmail avec ssmtpd/smtpd/postfix
 
-	<item>squid with tinyproxy
+	<item>squid avec tinyproxy
 
-	<item>ftpd with oftpd/vsftp
+	<item>ftpd avec oftpd/vsftp
 
 	<item>...
 
@@ -197,14 +204,14 @@ exemple :
 
 <item>Plus d'informations concernant les rustines pour noyaux 
 liées à la sécurité dans Debian, incluant celles montrées 
-ci-dessus et le thème aborde leurs activations dans un système
+ci-dessus et informations sur leur activation dans un système
 Debian.
 
 <list>
 
 <item>Linux Intrusion Detection (<package>lids-2.2.19</package>)
 
-<item>Linux Trustees (in package <package>trustees</package>)
+<item>Linux Trustees (paquet <package>trustees</package>)
 
 <item><url name="NSA Enhanced Linux"
 id="http://www.coker.com.au/selinux/">
@@ -214,22 +221,22 @@ id="http://packages.debian.org/kernel-patch-2.2.18-openwall">
 
 <item><package>kernel-patch-2.2.19-harden</package>
 
-<item>Linux capabilities (in package <package>lcap</package>
+<item>Linux capabilities (paquet <package>lcap</package>
 
 <item><package>kernel-patch-freeswan,kernel-patch-int</package>
 
 </list>
 
-<item>Détails sur l'arrêt de certains services réseaux non nécessaires
-(outre inetd), ceci fait partie de la procédure de durcissement mais 
-peut être élargie un petit peu.
+<item>Précisions sur l'arrêt de certains services réseaux non nécessaires
+(outre inetd)&nbsp;; ceci fait partie de la procédure de consolidation mais
+elle peut être élargie un petit peu.
 
-<item>Informations au sujet du renouvellement des mots de passes qui 
-est profondément lié à la politique mise en place.
+<item>Informations sur le renouvellement des mots de passes&nbsp;;
+c'est étroitement lié à la politique mise en place.
 
-<item>Politique et éducation des utilisateurs concernant la politique.
+<item>Politique de sécurité et éducation des utilisateurs.
 
-<item>Davantage à propos de tcpwrappers, et des wrappers en général?
+<item>Davantage à propos de tcpwrappers, et des wrappers en général&nbsp;?
 
 <item><file>hosts.equiv</file> et d'autres trous de sécurités majeurs.
 
@@ -240,23 +247,28 @@ et NFS ?
 
 <item>lpr et lprng.
 
-<item>Déconnecter les trucs IP Gnome.
+<item>Déconnecter les trucs Gnome sur IP ou les tucs IP de Gnome.
 
 </list>
 
+<!-- pleins de choses en 2.6-->
+
 <sect>Changelog/Historique
  <p>
+
+<!-- pleins de choses en 2.6-->
+ 
 <sect1>Version 2.2
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
-<item>Fautes de frappes découvertes, remerciements à Jamin W. Collins.
-<item>Ajout d'une référence à la page de man de apt-extracttemplate 
-(valider la configuration de APT::ExtracTemplate).
+<item>Corrections de fautes de frappes, remerciements à Jamin W. Collins.
+<item>Ajout d'une référence à la page de man de  apt-extracttemplate
+(documentation sur la configuration de APT::ExtracTemplate)
 <item>Ajout d'une section concernant la limitation de SSH. Informations 
 basées sur les mails de Mark Janssen, Christian G. Warden et Emmanuel Lacour
 sur la liste de discussion debian-security.
 <item>Ajout d'informations sur les logiciels antivirus.
-<item>Ajout d'une FAQ: logs de su du au lancement de cron sous root.
+<item>Ajout d'une FAQ&nbsp;:journaux de su provenant du fait que cron fonctionnesous root.
 </list>
 <sect1>Version 2.1
 <p>Modifications de Javier Fernández-Sanguino Peña.
@@ -268,29 +280,31 @@ sur la liste de discussion debian-security.
 <item>Liens de LinuxSecurity réglés (merci à Dave Wreski).
 </list>
 <sect1>Version 2.0
-<p>Modifications de Javier Fernández-Sanguino Peña. Je voulais changer à 
-2.0 quand tous les "FIXME" étaient fixés mais je voulais finir tous les 
-1.9X :(
+<p>Modifications de Javier Fernández-Sanguino Peña. Je voulais passer à
+2.0 quand tous les "FIXME" auraient été supprimés mais j' ai manqué de numéro
+dans la série 1.9X :(
 <list>
-<item>Transformation du HOWTO en Manuel (maintenant je peux solidement dire RTFM)
+<item>Transformation du HOWTO en Manuel (maintenant je peux dire RTFM !)
 
-<item>Ajout de plus d'informations concernant les tcp wrappers et Debian 
-(maintenant plusieurs services sont compilés avec le support adéquat ainsi ceci 
-n'est plus un problème inetd).
+<item>Ajout d'informations concernant les tcp wrappers et Debian
+(maintenant plusieurs services sont compilés avec le support adéquat&nbsp;;
+ainsi ceci n'est plus un problème inetd).
 
-<item>Clarification d'une information sur la désactivation de services pour le rendre 
-plus rigoureux (les infos sur rpc se réferent toujours à update-rc.d)
+<item>Clarification d'une information sur la désactivation de services pour la
+rendre
+plus rigoureuse (les infos sur rpc se réferent toujours à update-rc.d)
 
 <item>Ajout d'une petite note sur lprng.
 
-<item>Ajout de quelques infos sur les services compromis (toujours aussi approximatif)
+<item>Ajout de quelques infos sur les serveurs compromis (toujours aussi
+approximatif)
 
-<item>Résolution concernant les fautes de frappes rapportées par Mark Bucciarelli.
+<item>Corrections des fautes de frappes rapportées par Mark Bucciarelli.
 
-<item>Ajout de quelques étapes supplémentaires dans la récupération de mot de passe 
-pour se protéger des cas lorsque l'admin a paramétré paranoid-mode=on.
+<item>Ajout d'étapes supplémentaires sur la récupération des mots de
+passe quand l'admin a paramétré paranoid-mode=on.
 
-<item>Ajout d'informations pour paramétrer paranoid-mode=on lorsque l'on se connecte 
+<item>Informations pour paramétrer paranoid-mode=on lorsque l'on se connecte
 en console.
 
 <item>Nouveau paragraphe pour présenter la configuration de service.
@@ -298,34 +312,37 @@ en console.
 <item>Réorganisation de la section <em>Après l'installation</em> afin de permettre 
 une lecture plus aisée du document.
 
-<item>Écriture d'information sur la manière de paramétrer des pares-feux avec 
-l'installation standard Debian 3.0 (paquet iptables).
+<item>Informations sur la manière de paramétrer des pare-feux avec
+l'installation standard Debian&nbsp;3.0 (paquet iptables).
 
-<item>Petit paragraphe expliquant pour quelles raisons l'installation étant connecté 
+<item>Petit paragraphe expliquant pour quelles raisons l'installation
+par le réseau
 n'est pas une bonne idée et comment éviter cela en utilisant les outils Debian.
 
 
 <item>Petit paragraphe sur un article de l'IEEE relatant de l'opportunité du patchage par référence.
 <--! A verifier si je trouve le paragraphe plus bas. jpg ?! -->
+<!-- et c'est vérifié ?  pB -->
+<item>Appendice sur la manière de paramétrer une bécane snort Debian, basé sur 
+ce que Vladimir a envoyé à la liste de discussion debian-security 
+(3 septembre 2001)
 
-<item>Appendice sur la manière de paramétrer une bécane snort Debian, basé sur ce que Vladimir
-a envoyé à la liste de discussion debian-security (3 septembre 2001)
+<item>Information sur la manière dont est configurée logcheck dans Debian et
+comment il peut être utilisé pour paramétrer HIDS.
 
-<item>Information sur la manière dont est configurée logcheck dans la Debian et comment 
-il peut être utilisé pour paramétrer HIDS.
+<item>Informations sur les comptes utilisateurs et sur les analyses de profile.
 
-<item>Information sur les comptes utilisateurs et sur les analyses de profile.
-
-<item>Inclus la configuration de apt.conf pour lecture uniquement sur /usr copié à partir 
-du courrier de Olaf Meeuwissen envoyé à la liste de discussion debian-security.
+<item>Inclusion de la configuration de apt.conf pour un /usr uniquement
+lisible&nbsp;; copié à partir du courrier de Olaf Meeuwissen envoyé
+à la liste de discussion debian-security.
 
 <item>Nouvelles sections sur le VPN ainsi que les paquets disponibles dans 
-la Debian (besoin de contenu concernant l'installation de VPN et les problèmes spécifiques 
-à Debian) basé sur les courriers de Jaroslaw Tabor et Samuli Suonpaa postés sur la liste de 
-discussion debian-security.
+Debian (besoin de contenu concernant l'installation de VPN et les problèmes
+spécifiques à Debian) basé sur les courriers de Jaroslaw Tabor et
+Samuli Suonpaa postés sur la liste de discussion debian-security.
 
-<item>Petite note concernant certains programmes pour construire automatiquement des prisons 
-chroot.
+<item>Petite note concernant les programmes pour construire automatiquement
+des prisons <em>chroot<em>.
 
 <item>Nouveau sujet de FAQ concernant identd d'après une discussion sur la liste de 
 discussion debian-security (février 2002, commencé par Johannes Weiss).
@@ -346,9 +363,9 @@ discussion debian-security (février 2002).
 <item>Ajout d'un nouveau sujet de FAQ concernant le temps à résoudre les vulnérabilités 
 liées à la sécurité.
 <item>Réorganisation des sections de la FAQ.
-<item>Début de l'écriture d'une section concernant les pares-feux dans la Debian 
+<item>Début d'une section concernant les pare-feux dans Debian
 GNU/Linux (pourrait être élargi un peu).
-<item>Fautes de frappes envoyées par Matt Kraai.
+<item>Corrections de fautes de frappes envoyées par Matt Kraai.
 <item>Correction sur les informations DNS.
 <item>Ajout d'informations sur whisker et nbtscan à la section audit.
 <item>Correction d'URL fausses.
@@ -358,7 +375,7 @@ GNU/Linux (pourrait être élargi un peu).
 <list>
 <item>Ajout d'une nouvelle section concernant l'utilisation de la 
 Debian GNU/Linux pour réaliser des audits. 
-<item>Ajout d'infos concernant le daemon finger depuis la liste de 
+<item>Ajout d'infos concernant le démon finger depuis la liste de 
 discussion debian-security.
 </list>
 <sect1>Version 1.97
@@ -372,10 +389,10 @@ discussion debian-security.
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
 
-<item>Réorganisation de la section installation et suppression de services et ajout 
-de quelques nouvelles notes.
+<item>Réorganisation de la section installation et suppression de services et
+ajout de nouvelles notes.
 
-<item>Ajout de quelques notes concernant l'utilisation d'outils tels que 
+<item>Ajout de quelques notes concernant l'utilisation d'outils tels que
 les outils de détection d'intrusion.
 
 <item>Ajout d'un chapitre concernant la signature de paquets.
@@ -410,7 +427,7 @@ aux problèmes liés à la sécurité Debian (sujet d'une FAQ).
 
 <item>Correction de l'emplacement du programme mail.
 
-<item>Ajout de quelques nouveaux sujets à la FAQ.
+<item>Ajout de nouveaux sujets à la FAQ.
 </list>
 
 <sect1>Version 1.92
@@ -419,9 +436,10 @@ aux problèmes liés à la sécurité Debian (sujet d'une FAQ).
 
 <item>Ajout d'une petite section sur la manière dont Debian traite la sécurité.
 
-<item>Clarification sur les mots de passes MD5 (merci à `rocky')
+<item>Clarification sur les mots de passes MD5 (merci à «&nbsp;rocky&nbsp;»)
 
-<item>Ajout de quelques informations concernant le durcissement de X de Stephen van Egmond.
+<item>Ajout d'informations concernant la consolidation de X
+par Stephen van Egmond.
 
 <item>Ajout de nouveaux sujets à la FAQ.
 
@@ -433,12 +451,12 @@ aux problèmes liés à la sécurité Debian (sujet d'une FAQ).
 
 <item>Ajout d'informations légales envoyées par Yotam Rubin.
 
-<item>Ajout de renseignements sur la manière de mettre en place un "honeynet" en 
-utilisant Debian GNU/Linux.
+<item>Ajout de renseignements sur la manière de mettre en place un 
+«&nbsp;honeynet&nbsp;» en utilisant Debian GNU/Linux.
 
 <item>Ajout de TODOS supplémentaires.
 
-<item>Fautes de frappes corrigées (merci Yotam!)
+<item>Fautes de frappes corrigées (merci Yotam&nbsp;!)
 
 </list>
 
@@ -446,8 +464,8 @@ utilisant Debian GNU/Linux.
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
 
-<item>Ajout d'une rustine pour corriger des "fautes d'orthographe" et quelques nouvelles
-informations (contributions de Yotam Rubin)
+<item>Ajout d'une rustine pour corriger des «&nbsp;fautes d'orthographe&nbsp;»
+et nouvelles informations (contributions de Yotam Rubin)
 
 <item>Ajout de liens vers d'autres documents en ligne (et hors ligne) tous deux 
 figurant dans la section (voir <ref id="references">).
@@ -455,8 +473,8 @@ figurant dans la section (voir <ref id="references">).
 <item>Ajout d'informations sur la configuration d'options de Bind pour restreindre 
 l'accès au serveur DNS.
 
-<item>Ajout d'information sur comment renforcer automatiquement un système Debian
-(Par référence aux paquets harden et bastille).
+<item>Ajout d'informations sur la consolidation automatique d'un système Debian
+(par référence aux paquets harden et bastille).
 
 <item>Suppression de quelques TODOs terminés et ajout de nouveaux.
 
@@ -466,20 +484,20 @@ l'accès au serveur DNS.
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
 
-<item>Ajout de la liste par défaut des utilisateurs/groupes fourni par Joey Hess à la 
-liste de discussion debian-security.
+<item>Ajout de la liste des utilisateurs et des groupes standard, donnée
+par Joey Hess à la liste de discussion debian-security.
 
 <item>Ajout d'informations sur les rootkits LKM (<ref id="LKM">) avec la 
 contribution de Philipe Gaspar.
 
-<item>Ajout d'information sur Proftp avec la contribution de Emmanuel Lacour. 
+<item>Ajout d'informations sur Proftp avec la contribution de Emmanuel Lacour.
 
-<item>Restauration de l'appendice des listes de tâches d'Era Eriksson.
+<item>Rajout de l'annexe «&nbsp;pense-bête&nbsp;» de Era Eriksson.
 
 <item>Ajout de nouveaux TODOs et retrait de ceux terminés.
 
-<item>Manually included Era's patches since they were not all included in 
-the previous version.
+<item>Ajout manuel des rustines d'Era car elles n'ont pas été incluses dans
+la version précédente.
 
 </list>
 <sect1>Version 1.7
@@ -490,22 +508,23 @@ been included yet, era, please send it back -->
 </list>
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
-<item>Changements sans importance de balises de façon à supprimer les balises tt et 
-les remplacer par les balises prgn/package.
+<item>Changements mineurs de balises&nbsp;: supprimer les balises
+tt et les remplacer par les balises prgn/package.
 </list>
 
 <sect1>Version 1.6 
 <p>Modifications de Javier Fernández-Sanguino Peña.
 <list>
-<item>Ajout d'un pointeur du document comme il est publié dans le DDP (devrait
-à terme remplacer la version existante) 
+<item>Ajout d'un pointeur sur le document publié dans le DDP (devrait
+à terme remplacer l'original).
 <item>Démarrage d'une mini-FAQ
-(qui devrait être élargi) avec quelques questions récupéré depuis ma boite aux lettres.
-<item>Ajout d'informations generales concernant la sécurisation.
-<item>Ajout d'un paragraphe au sujet de la livraison de courriers locaux.
+(qui devrait être élargie) avec quelques questions récupérées depuis ma boite
+aux lettres.
+<item>Ajout d'informations générales concernant la sécurisation.
+<item>Ajout d'un paragraphe au sujet de la distribution de courriers locaux.
 <item>Ajout de quelques pointeurs vers d'autres sources d'information.
 <item>Ajout d'informations sur le service d'impression.
-<item>Ajout d'une liste de tâche sur le renforcement de la sécurité.
+<item>Ajout d'une liste de tâches sur le renforcement de la sécurité.
 <item>Réorganisation des informations sur NIS et RPC.
 <item>Ajout de quelques notes lors de la lecture de ce document sur mon nouveau 
 Visor :) 
@@ -536,8 +555,8 @@ style in order to make it more formal.  -->
 <list>
 <item>Ajout de mise à jour de sécurité après le paragraphe "après installation".
     <item>Ajout d'un paragraphe proftpd 
-    <item> Cette fois, quelque chose concernant XDM a réellement été écrit et 
-    désolé pour la dernière fois.
+    <item> Cette fois, quelque chose concernant XDM a réellement été écrit. 
+    Désolé pour la dernière fois.
     </list>
 <sect1>Version 1.2
     <p>
@@ -548,22 +567,24 @@ style in order to make it more formal.  -->
 <sect1>Version 1.1
     <p>
 <list>
-<item>Correction de fautes de frappes, diverses ajouts
+<item>Correction de fautes de frappes, divers ajouts
     </list>
 <sect1>Version 1.0
     <p>
 <list>
-<item>Sortie initiale.
+<item>Première publication.
     </list>
 
-<sect>Remerciements à :
+<sect>Remerciements à&nbsp;:
 <p>
 <list>
 <item>Alexander Reelsen qui a écrit le document original. 
 
-<item>Javier Fernández-Sanguino qui a ajouté des infos supplémentaires au document original.
+<item>Javier Fernández-Sanguino qui a ajouté des informations
+au document original.
 
-<item>Robert van der Meulen avec les paragraphes sur les quotas ainsi que de nombreuses bonnes idées.
+<item>Robert van der Meulen pour les paragraphes sur les quotas ainsi que de
+nombreuses bonnes idées.
 
 <item>Ethan Benson qui a corrigé le paragraphe sur PAM et qui a eu quelques idées de qualité.
 
@@ -571,29 +592,31 @@ style in order to make it more formal.  -->
 
 <item>Gaby Schilders qui a eu une idée Géniale/Paranoïaque sympathique.
 
-<item>Era Eriksson qui a éliminé les fautes de langage et qui a contribué à l'appendice des listes de 
-tâches.
+<item>Era Eriksson qui a éliminé les fautes de langage et qui a contribué à
+l'annexe «&nbsp;pense-bête&nbsp;».
+
 
 <item>Philipe Gaspar qui a écrit les informations concernant LKM.
 
 <item>Yotam Rubin qui a contribué à régulariser toutes les fautes de frappes ainsi que 
 les informations liées aux versions de Bin et aux mots de passes md5.
 
-<item>Toutes les personnes qui m'ont suggérés des améliorations qui (éventuellement) ont été incluses ici.
+<item>Toutes les personnes qui m'ont suggéré des améliorations qui
+(éventuellement) ont été incluses ici.
 
 <item>Tout le monde qui m'a encouragé (Alexander) à écrire ce HOWTO (qui plus tard a évolué vers le Manuel).
 
 <item>Tout le projet Debian.
 </list>
 
-<chapt>Avant de commencer
+<chapt>Avant de commencer.
 
 
 <sect>Que voulez-vous faire de votre système ?
 
 <p>
-Sécuriser Debian n'est pas différent de la sécurisation d'un autre 
-système; de façon à procéder correctement, vous devez tout d'abord 
+Sécuriser un système Debian n'est pas différent de la sécurisation d'un autre
+système&nbsp;; de façon à procéder correctement, vous devez tout d'abord
 décider quelle en sera son utilisation. Après cela, vous devrez 
 envisager d'appliquer à la lettre les tâches qui vont suivre si vous
 désirez réellement sécuriser votre système.
@@ -601,8 +624,8 @@ désirez réellement sécuriser votre système.
 <p>
 Vous constaterez que ce manuel est écrit a posteriori, cela étant,
 vous trouverez des informations sur les tâches à réaliser avant,
-pendant et après l'installation de votre système Debian. Les tâches 
-peuvent aussi être découpées comme ceci:
+pendant et après l'installation de votre système Debian. Les tâches
+peuvent aussi être découpées comme ceci&nbsp;:
 
 <list>
 
@@ -635,7 +658,7 @@ nombreuses informations sur la sécurité UNIX en général concernant Linux
 peuvent être appliquées à d'autres distributions (même si les outils 
 utilisés ou les programmes disponibles diffèrent).
 
-<p>Quelques documents pratique :
+<p>Quelques documents pratique&nbsp;:
 
 <list>
 
@@ -670,8 +693,8 @@ peuvent s'appliquer à Debian.
 référence sur la manière de renforcer les serveurs linux, il est disponible sur
  <url id="http://www.intersectalliance.com/projects/index.html" name="their site">.
 
-<item>Pour les administrateurs réseaux, une bonne référence pour bâtir un réseau
-sécurisé est le <url name="Securing your Domain HOWTO"
+<item>Pour les administrateurs réseaux, une bonne référence pour bâtir un
+réseau sécurisé est le <url name="Securing your Domain HOWTO"
  id="http://www.linuxsecurity.com/docs/LDP/Securing-Domain-HOWTO/">.
 
 
@@ -706,13 +729,13 @@ ces documents seront disponibles dans, respectivement, les répertoires
 <file>/usr/share/doc/HOWTO/en-txt</file> et
 <file>/usr/share/doc/HOWTO/en-html</file>.
 
-<p>Autres livres Linux recommandés :
+<p>Autres livres Linux recommandés&nbsp;:
 
 <list>
 
 <item>Maximum Linux Security : A Hacker's Guide to Protecting Your Linux
   Server and Network.  Anonymous. Paperback - 829 pages. Sams Publishing.
-  ISBN: 0672313413.July 1999.
+  ISBN&nbsp;: 0672313413.July 1999.
 
 <item> Linux Security By John S. Flowers. New Riders; ISBN: 0735700354
 March 1999
@@ -720,7 +743,7 @@ March 1999
 </list>
 
 <p>Livres divers (qui peuvent se rapporter aux problèmes concernant UNIX
-ainsi que la sécurité mais spécifiquement à Linux) :
+ainsi que la sécurité mais spécifiquement à Linux)&nbsp;:
 
 <list>
 
@@ -756,7 +779,7 @@ le serveur qui héberge la base de données des vulnérabilités
 	administrer.
 </list>
 
-<sect>Comment Debian gère la sécurité ?
+<sect>Comment Debian gère la sécurité&nbsp;?
 <p>
 Afin d'avoir un aperçu général de la sécurité dans la Debian GNU/Linux,
 vous devriez prendre note de tous les différents problèmes que Debian 
@@ -1038,7 +1061,7 @@ fichiers de configurations, ils ne seront pas récris lors d'une mise à jour.
 les services dans la Debian ne peuvent être désactivés en modifiant les fichiers
 dans <file>/etc/default/_nomservice_</file>.
 
-<p>FIXME: Ajouter des informations sur les démons de manipulation utilisant file-rc
+<p>FIXME&nbsp;: Ajouter des informations sur les démons de manipulation utilisant file-rc
 <!-- J'ai utilisé démon au lieu de deamon. Quelle uniformisation? jpg -->
 
 <sect1 id="inetd">Désactivation des services inetd
@@ -1176,7 +1199,7 @@ disquette de démarrage. Ceci peut être utilisé pour obtenir un accès root
 au système.
 </list>
 
-<p>Ce comportement peut être modifié en entrant :
+<p>Ce comportement peut être modifié en entrant&nbsp;:
 
 <example>
 lilo -b /dev/hda
@@ -1184,7 +1207,7 @@ lilo -b /dev/hda
 
 <p>Maintenant LILO est mis dans le MBR. Ceci peut être fait également
 en ajoutant "boot=/dev/hda" au fichier lilo.conf. Il y a encore une 
-autre solution qui désactivera complètement le prompt MBR :
+autre solution qui désactivera complètement le prompt MBR&nbsp;:
 
 <example>
 install-mbr -i n /dev/hda
@@ -1329,7 +1352,7 @@ l'installation de paquets, ainsi vous pouvez avoir envie de le configurer correc
 
 
 <p>
-Pour réaliser ceci, modifiez le fichier <file>/etc/apt/apt.conf</file> et ajoutez :
+Pour réaliser ceci, modifiez le fichier <file>/etc/apt/apt.conf</file> et ajoutez&nbsp;:
 <example>
 DPkg
   {
@@ -1378,15 +1401,15 @@ Si vous voulez, vous pouvez ajouter également les lignes deb-src à apt. Voir
 Vous devriez procéder à des mises à jour fréquemment, la plupart des piratages 
 est le résultat de vulnérabilités connues mais qui n'ont pas été raccommodées à 
 temps, tel que le décrit le <url id="http://www.cs.umd.edu/~waa/vulnerability.html"
- name="texte de Bill Arbaugh"> (présenté  au Symposium IEEE 2001 sur la Sécurité et 
+ name="texte de Bill Arbaugh"> (présenté au Symposium IEEE 2001 sur la Sécurité et 
  la Vie Privé).
 
-<p>FIXME: Ajouter des informations sur comment est réalisé la signature des paquets, ce qui peut
+<p>FIXME&nbsp;: Ajouter des informations sur comment est réalisé la signature des paquets, ce qui peut
 être réalisé automatiquement par un cron job (Gros avertissement: DNS spoofing).
 
 <sect>Personnalisation des accès aux utilisateurs
 
-<sect1>Authentification utilisateur : PAM
+<sect1>Authentification utilisateur&nbsp;: PAM
 
 <p>PAM (Pluggable Authentication Modules) permet aux administrateurs systèmes de 
 choisir comment les applications authentifient les utilisateurs. Il est à noter 
@@ -1538,7 +1561,7 @@ définir les limites par utilisateur des ressources. Si vous utilisez
 PAM, le fichier <file>/etc/limits.conf</file> est ignoré et vous 
 devriez utiliser <file>/etc/security/limits.conf</file> à la place.
 
-<p>FIXME: Placer un fichier exemple de limits.conf ici
+<p>FIXME&nbsp;: Placer un fichier exemple de limits.conf ici
 
 <sect1>Editer /etc/login.defs
 
@@ -2110,9 +2133,9 @@ fait quelque chose de malveillant, la portée des dégâts sera limitée à la prison
 <p>Un bon exemple pour ce cas est, si vous n'authentifiez pas avec 
 <file>/etc/passwd</file> mais utilisez LDAP ou MySQL à la place. Donc votre
 daemon-ftp a seulement besoin d'un binaire et peut être de quelques librairies.
-Un environnement chrooté serait une excellent amélioration de la sécurité; si
-un nouvel exploit est découvert pour ce daemon-ftp, alors les attaquants pourront
-seulement exploiter l'UID de l'utilisateur-daemon-ftp et rien d'autre.
+Un environnement chrooté serait une excellent amélioration de la sécurité&nbsp;;
+si un nouvel exploit est découvert pour ce daemon-ftp, alors les attaquants 
+pourront seulement exploiter l'UID de l'utilisateur-daemon-ftp et rien d'autre.
 
 <p>Bien sur, beaucoup d'autres daemons pourraient bénéficier de ce genre
 d'aménagement aussi.
@@ -2157,7 +2180,7 @@ Plus d'information à <url id="http://www.floc.net/makejail/">. <prgn>Jailer</prg
 
 <sect1 id="kernel-conf">Configuration des options réseaux du noyau
 
-<p>FIXME: Pas de contenu
+<p>FIXME&nbsp;: Pas de contenu
 
 <p>
 Beaucoup de fonctionnalités du kernel peuvent être modifiées en cours
@@ -2174,8 +2197,8 @@ quelque chose ici, mais vous pouvez augmenter la sécurité de cette manière aussi
 net/ipv4/icmp_echo_ignore_broadcasts = 1
 </example>
 
-C'est un 'émulateur windows' parce que ça agit comme windows sur les ping de
-broadcast si celui-ci est positionné à 1.
+C'est un «&nbsp;émulateur windows&nbsp;» parce que ça agit comme windows sur 
+les ping de broadcast si celui-ci est positionné à 1.
 <!-- Ce qui veut dire quoi exactement? Simplement que ça ignore les broadcasts? FIXME -->
 Sinon, ça ne fait rien.
 
@@ -2357,7 +2380,7 @@ d'un système de quota :
 votre espace disque.
 
 <item>Garder les quotas suffisamment grands, ainsi les utilisateurs ne 
-se plainderont pas. Pensez aussi a leur réserver de la place pour qu'ils puissent
+se plainderont pas. Pensez aussi à leur réserver de la place pour qu'ils puissent
 conserver leurs mails sur une longue période.
 <item>Utilisez des quotas sur tous les espaces accessibles en écriture par les 
 utilisateurs, /home aussi bien que /tmp.
@@ -2447,9 +2470,9 @@ votre système.
 
 <p>
 Êtes-vous sûr que le /bin/login présent sur votre disque dur soit le même 
-que celui que vous aviez installé il y a de cela quelques mois ? Que faire 
+que celui que vous aviez installé il y a de cela quelques mois&nbsp;? Que faire 
 si c'est une version piratée, qui enregistre les mots de passe entrés 
-dans un fichier caché ou les envoi en clair à travers internet ?
+dans un fichier caché ou les envoi en clair à travers internet&nbsp;?
 
 <p>
 La seule méthode pour avoir un semblant de protection est de vérifier 
@@ -3230,7 +3253,7 @@ name="NIS-HOWTO" id="http://www.linuxdoc.org/HOWTO/NIS-HOWTO.html">
 (<file>/usr/share/doc/HOWTO/en-txt/NIS-HOWTO.txt.gz</file>).
 
 
-<p>FIXME (jfs): Ajouter des infos sur comment configurer cela dans la Debian
+<p>FIXME (jfs)&nbsp;: Ajouter des infos sur comment configurer cela dans la Debian
 
 <sect id="rpc">Désactivation des services RPC
 
@@ -3313,7 +3336,7 @@ ces scripts avec les règles de pare-feu que vous voulez activer.
 <p>
 Une fois ceci fait l'installation de votre pare-feu est sauvegardée dans 
 le répertoire <file>/var/lib/iptables/</file> et sera exécutée quand le 
-système démarrera (ou lorsque le script initd sera lancée avec les arguments 
+système démarrera (ou lorsque le script initd sera lancé avec les arguments 
 <em>start</em> et <em>stop</em>). Notez que l'installation par défaut de 
 Debian démarre le pare-feu dans le niveau d'exécution multi-utilisateurs 
 (2 à 5) bientôt (10). De plus, il est arrêté en mode mono-utilisateur (1),
@@ -4123,7 +4146,7 @@ name="CERT's Intrusion Detection Checklist">
 
 <p><package>snort</package> est un renifleur flexible de paquet ou un logueur
 qui détecte les attaques selon un dictionnaire de signature. Il détecte une variété 
-d'attaque et de vérifications, tels que des déplacement de capacité, les scans dissimulés 
+d'attaque et de vérifications, tels que des débordements de capacité, les scans dissimulés 
 de ports, les attaques CGI, les vérifications SMB, et bien d'autres. Snort a une capacité
 d'alerte en temps réel. C'est un outil qui peut être installé sur n'importe quel routeur
 pour garder un oeil sur le réseau. Installez le simplement via
