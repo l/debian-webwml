@@ -1,7 +1,6 @@
 #use wml::debian::ctime
 #use wml::debian::common_tags
 
-
 <define-tag noitemsforthisyear whitespace=delete>
   <gettext>No items for this year.</gettext>
 </define-tag>
@@ -32,244 +31,489 @@
   <gettext>Past events</gettext>
 </define-tag>
 
+<define-tag new_revision whitespace="delete">
+    <gettext>(new revision)</gettext>
+</define-tag>
+
 <perl>
 
-# get_recent_list grabs the date and title of the last $number special files
-# $from directory year. The special files can be news, events, security
-# advisories and vote summaries.
+# get_recent_list( $year, $number, $eng_dir, $format, $match)
 #
-# If $number is zero then all the news items are shown.
+# get_recent_list grabs the date and title of the last $number special
+# files from directory $year. 
+# The special files can be news, events, security
+# advisories and vote summaries.
 #
 # The format parameter specifies the type of output: numbered, definition
 # and bulleted list, a table, or a RDF file (rdf or rdflong).
 #
 # The match parameter is a regexp used to determine if the file is special,
 # i.e. that it should be parsed.
+#
+# When you specify 'bydate' in the format string (you can mix it with
+# all the other strings allowed there), the behavior is slightly
+# changed: You can specify instead of a year a time, since when
+# items should be shown. The format of this time specification
+# is \d+(d|w|m|y) for \d+ days/weeks/months/years. $number is then
+# only the minimum number of shown items.
+# This also enables parsing the report_date tag of security advisories
+# as a comma delimited list, so one advisory can have different
+# dates for his different revisions.
+#
+# The interface of this function has several flaws. Some tips:
+# As first parameter you must specify the relativ path from the site
+# on which the list should occour to the directory, that contains
+# the $year directories. After the last slash can either follow a year
+# or a time specification for bydate (see above).
+# As third parameter you must specify the path to the english directory
+# of the file you are in.
 # 
 # example usage:
-# get_recent_list ('1998', '0', '$(ENGLISHDIR)/News', '', '\d+\w*')
+# 1) /index.wml
+# get_recent_list( 'security/1m', 10, '$(ENGLISHDIR)', 'bydate', '(2000\d+\w+|dsa-\d+)' )
+# 2) News/index.wml
+# get_recent_list ('$(CUR_YEAR)', '0', '$(ENGLISHDIR)/News', '', '\d+\w*')
+# 3) News/2002/index.wml
+# get_recent_list ('.', '0', '$(ENGLISHDIR)/News/2002', '', '\d+\w*')
 
-# Events will be sorted in normal order instead of reverse
+my ($listhead, $listfoot, $elemhead, $elemdate, $elemfoot, $elemrealfoot);
+my $is_events = 0;
+my $is_by_date = 0;
 
 sub get_recent_list {
-  my ($year, $number, $eng_dir, $format, $match) = @_;
+    #clear up
+    $is_events = 0;
+    $is_by_date = 0;
 
-  if ($format =~ order) {
-    $listhead = '<ol>';
-    $listfoot = '</ol>';
-    $elemhead = '<li>';
-    $elemfoot = '- ';
-    $elemrealfoot = '';
-  } elsif ($format =~ bullet) {
-    $listhead = '<ul>';
-    $listfoot = '</ul>';
-    $elemhead = '<li>';
-    $elemfoot = '- ';
-    $elemrealfoot = '';
-  } elsif ($format =~ list) {
-    $listhead = '<dl>';
-    $listhead = '<dl compact>' if $format eq cdeflist;
-    $listfoot = '</dl>';
-    $elemhead = '<dt>';
-    $elemfoot = '<dd>';
-    $elemrealfoot = '';
-  } elsif ($format =~ table) {
-    $listhead = '<table>';
-    $listfoot = '</table>';
-    $elemhead = '<tr><td>';
-    $elemdate = '</td><td>';
-    $elemfoot = '';
-    $elemrealfoot = '</td></tr>';
-  } else {
-    $listhead = '';
-    $listfoot = '';
-    $elemhead = '';
-    $elemfoot = '- ';
-    $elemrealfoot = '';
-  }
+    my ($time, $minnum, $eng_dir, $format, $match) = @_;
+    # djpig: this is a hack for backward compatibility
+    # djpig: I would prefer a new argument $rel_path
+    # djpig: additionally to $eng_dir
+    my $rel_path = ($time =~ s|^(?:\./)?([[:alpha:]]+)/?||) ? $1 : '';
+    $rel_path .= '/' unless $rel_path eq '';
+    #warn "$rel_path\n";
+    my $open_by_path = 0;
+    my ($year, $since_year, $since_date);
+    # set open_by_path, if no year is specified at all
+    if ($time ne '.') {
+	$year = $time;
+	$since_year = $year;
+	$since_date = timegm(0, 0, 0, 1, 0, $year) if $year =~ /\d+/; 
+	if ($format =~ /bydate/) {
+	    $year = $(CUR_YEAR) unless $year =~ /\d{4}/;
+	    $since_date = parse_time($time);
+	    $since_year = (gmtime($since_date))[5] + 1900;
+	    if ($since_year > $year) {
+		warn "since_year > year ($since_year > $year)\n";
+	    }
+	    $is_by_date = 1;
+	}
+	warn "don't know, what to do: year=$year time=$time\n" 
+	    unless $since_date =~ /\d+/; 
+    } else { $open_by_path = 1; }
+    
+    #warn scalar gmtime($since_date) . " - " . scalar gmtime() . "\n";
 
-  my $str = $listhead;
-
-  opendir DIR, "$eng_dir/$year";
-  @files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
-  @files = sort {$b cmp $a} @files;
-  @files = reverse @files if ($eng_dir =~ m,/events/\d{4}$,);
-  closedir DIR;
-
-#  warn "files: " . join " ", @files; warn "\n";
-#  warn "year=$year number=$number eng_dir=$eng_dir format=$format match=$match\n";
-  $count = 0;
-  $str .= grab_titles($year, $number, $eng_dir, $format, $match);
-
-  if ($count < $number && $number ne 0) {
-    @tmp = split('/', $year);
-    $tmp[$#tmp]--;
-    # $year--;
-    $year = join('/', @tmp);
-    if (-d "$eng_dir/$year") {
-      opendir DIR, "$eng_dir/$year" or warn "couldn't open dir $eng_dir/$year\n";
-      @files = grep { /^$match.wml$/ && -f "$eng_dir/$year/$_" } readdir(DIR);
-      @files = sort {$b cmp $a} @files;
-      closedir DIR;
-      $str .= grab_titles($year, $number, $eng_dir, $format, $match);
+    if ($format =~ order) {
+	$listhead = '<ol>';
+	$listfoot = '</ol>';
+	$elemhead = '<li>';
+	$elemfoot = '- ';
+	$elemrealfoot = '';
+    } elsif ($format =~ bullet) {
+	$listhead = '<ul>';
+	$listfoot = '</ul>';
+	$elemhead = '<li>';
+	$elemfoot = '- ';
+	$elemrealfoot = '';
+    } elsif ($format =~ list) {
+	$listhead = '<dl>';
+	$listhead = '<dl compact>' if $format eq "cdeflist";
+	$listfoot = '</dl>';
+	$elemhead = '<dt>';
+	$elemfoot = '<dd>';
+	$elemrealfoot = '';
+    } elsif ($format =~ table) {
+	$listhead = '<table>';
+	$listfoot = '</table>';
+	$elemhead = '<tr><td>';
+	$elemdate = '</td><td>';
+	$elemfoot = '';
+	$elemrealfoot = '</td></tr>';
+    } else {
+	$listhead = '';
+	$listfoot = '';
+	$elemhead = '';
+	$elemfoot = '- ';
+	$elemrealfoot = '';
     }
-  }
-  if ($count eq 0) {
-    $str .= "<noitemsforthisyear/>\n";
-  }
-  $str .= $listfoot;
-  # these two lines are a dumb kludge, happens with events/
-  $str =~ s/$listhead(.+)\n$listhead/$1\n$listhead/;
-  $str =~ s/$listfoot\n$listfoot/$listfoot/;
-  return $str;
+
+    my @files;
+
+    # djpig: take $since_year-1, perhaps better define an $oldest_year?
+    # djpig: but there should be no more updates to an item after a year
+    # djpig: we're saving time so.
+    my @years;
+    if ( $open_by_path ) { push @years, $time; }
+    else { foreach (($since_year-1) .. $year) { push @years, $_; } }
+    for my $act_year (@years) {
+	opendir DIR, "$eng_dir/$rel_path$act_year" 
+	    or do {
+		# we could not warn here regulary 
+		# f.e. the actual year can be to new
+		#warn "couldn't open dir $eng_dir/$rel_path/$act_year: $!\n"; 
+		next; 
+	    };
+	my @new_files = grep { /^$match.wml$/ 
+				   && -f "$eng_dir/$rel_path$act_year/$_" 
+				   && ($_="$rel_path$act_year/$_") 
+			       } readdir(DIR);
+	closedir DIR;
+	@files = ( @files, @new_files );
+    }
+
+    @files = sort {$a cmp $b} @files;
+    
+    #warn "files: " . join " ", @files; warn "\n";
+    #warn "years: " . join " ", @years; warn "\n";
+    #warn "time=$time minnum=$minnum";
+    #warn "eng_dir=$eng_dir rel_path=$rel_path format=$format match=$match\n";
+    #warn "is_by_date=$is_by_date is_events=$is_events\n";
+    #warn "open_by_path=$open_by_path\n";
+    
+    my $str = grab_titles( $since_date, $minnum, 
+			   $eng_dir, $format, $match , @files);
+    
+    if ( !$is_events ) { # events already have their head and foot
+ 	$str = "$listhead$str$listfoot";
+    }
+
+    #warn "$str\n";
+    return $str;
 }
 
 # grab_titles is an auxiliary function to get_recent_list, which actually
-# does the real work. It is separated to avoid duplication.
-
+# does the real work.
 sub grab_titles {
-my ($year, $number, $eng_dir, $format, $match) = @_;
-my $over = $current = $base = $str1 = $str = "";
-my $is_events = 0;
+    my ($since_date, $minnum, $eng_dir, 
+	$format, $match, @files) = @_;
+    my ($over, $current, $str);
+    my (%str, %count, %over, %current);
+    
+    my $count = 0;
+    foreach $file (@files) {
+	(my $trans_title = $file) =~ s/wml/title/;
+	$count++;
+	my $str1 = "";
+	my @str1 = (); # for bydate
+	my $base = $1 if ($file =~ m|^([[:alpha:]./]*(\d{4})?/(?:$match)).wml|);
+	#warn "$file -> $base\n";
 
-foreach $file (@files) {
-  ($trans_title = $file) =~ s/wml/title/;
-  $count++;
-  open FILE, "$year/$file" or open FILE, "$year/$trans_title" or open FILE, "$eng_dir/$year/$file" or warn "couldn't open $eng_dir/$year/$file: $!\n";
-  $base = $1 if ($file =~ /($match).wml/);
-  my $content;
-  {
-    local $/;
-    $content = <FILE>;
-  }
-  close FILE;
+	# read file in
+	open FILE, "$file" 
+	    or open FILE, "$trans_title" 
+	    or open FILE, "$eng_dir/$file" 
+	    or die "couldn't open $eng_dir/$file: $!\n";
+	my $content;
+	{
+	    local $/;
+	    $content = <FILE>;
+	}
+	close FILE;
 
-  my $event = '';
+	# decide, if we reading a event file,
+	# and if it's a past or current event
+	my $event = '';
+	if ($WML_SRC_DIRNAME =~ /events/) { # shouldn't waste time if it's not events
+	    $is_events = 1;
+	    if ($base =~ /-report$/) { next; }
+	    <protect pass=2>
+		if ($content =~ /^#use wml::debian::past_event$/m) {
+		    $event = "past";
+		} elsif ($content =~ /^#use wml::debian::event$/m) {
+		    $event = "current";
+		}
+	    </protect>
+	 }
 
-  if ($WML_SRC_DIRNAME =~ /events/) { # shouldn't waste time if it's not events
-    $is_events = 1;
-<protect pass=2>
-    if ($content =~ /^#use wml::debian::past_event$/m) {
-      $event = "past";
-    } elsif ($content =~ /^#use wml::debian::event$/m) {
-      $event = "current";
-    }
-</protect>
-  }
-
-  $title = ''; $date = ''; $rdate = ''; $desc = ''; $status = ''; $where = '';
-  $moreinfo = ''; $startdate = ''; $enddate = '';
-  $repfile = '';
-<protect pass=2>
-  if ($content =~ /^<define-tag pagetitle>\s*(.*?)\s*<\/define-tag>$/ms) {
-    $title = qq/$1/; }      # all
-  if ($content =~ /^<define-tag release_date>(.*?)<\/define-tag>$/ms) {
-    $date = qq/$1/; }       # News
-  if ($content =~ /^<define-tag where>(.*?)<\/define-tag>$/ms) {
-    $where = qq/$1/; }      # events
-  if ($content =~ /^<define-tag date>(.*?)<\/define-tag>$/ms) {
-    $date = qq/$1/; }       # events
-  if ($content =~ /^<define-tag description>(.*?)<\/define-tag>$/ms) {
-    $desc = qq/$1/; }       # security
-  if ($content =~ /^<define-tag moreinfo>(?:(.*?<\/p>)|(.*?)<\/define-tag>)$/ms) {
-    $moreinfo = qq/$1/; }   # dsa-long.XX.rdf
-  if ($content =~ /^<define-tag status>(.*?)<\/define-tag>$/ms) {
-    $status = qq/$1/; }     # vote
-  if ($content =~ /^<define-tag startdate>(.*?)<\/define-tag>$/ms) {
-    $startdate = qq/$1/; }	# startdate (events)
-  if ($content =~ /^<define-tag enddate>(.*?)<\/define-tag>$/ms) {
-    $enddate = $1; }        # enddate (events)
-  my ($shortfile) = $file =~ /^(.*)\.wml$/;
-  if ($content =~ /<a\s+href="($shortfile-report)"\s*>/ms) {
-    $repfile = $1; }        # Report (events)
-  if ($content =~ /<report\s+href="([^"]*)"\s*\/?>/ms) {
-    $repfile = $1; }        # Report (events)
-</protect>
-  if ($startdate && $enddate) { # Convert date range into printable string
-    $date = &daterange($startdate, $enddate);
-  }
-  if ($title && $date && $where) { # for events/
-    $report = ($repfile)
-            ? " [<a href=\"$repfile\"><gettext>Report</gettext></a>]"
-            : '';
-    $str1 = "$elemhead<tt>[$date]</tt>$elemdate <strong><a href=\"$year/$base\">$title</a></strong>, $elemfoot$where$report<br />$elemrealfoot\n";
-  }
-  elsif ($desc) { # for security/
-    open DATAFILE, "$eng_dir/$year/$base.data" or warn "couldn't open $eng_dir/$year/$base.data: $!\n";
-<protect pass=2>
-    foreach $l (<DATAFILE>) {
-         if ($l =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) { $title = qq/$1/; }
-      elsif ($l =~ /^<define-tag report_date>(.*)<\/define-tag>$/) { $rdate = qq/$1/; }
-    }
-</protect>
-    close DATAFILE;
-#    warn "title: $title rdate: $rdate\n";
-    $rdate = newsdate($rdate);
-    $title =~ s/(DSA-\d{3})-\d{1}/$1/; # strip off the revision in the DSA number
-    if ($format eq 'rdf') {
-      $str1 = "
-<item rdf:about=\"http://www.debian.org/security/$year/$base\">
+	my ($title, $date, $rdate, $rvdate, $hdate, $desc, $status, 
+	    $where, $moreinfo, $startdate, $enddate, $repfile);
+	my (@hdate, @rdate) = ();
+	<protect pass=2>
+	if ($content =~ /^<define-tag pagetitle>\s*(.*?)\s*<\/define-tag>$/ms) {
+	    $title = qq/$1/; }      # all
+	if ($content =~ /^<define-tag release_date>(.*?)<\/define-tag>$/ms) {
+	    $date = qq/$1/; }       # News
+	if ($content =~ /^<define-tag where>(.*?)<\/define-tag>$/ms) {
+	    $where = qq/$1/; }      # events
+	if ($content =~ /^<define-tag date>(.*?)<\/define-tag>$/ms) {
+	    $date = qq/$1/; }       # events
+	if ($content =~ /^<define-tag description>(.*?)<\/define-tag>$/ms) {
+	    $desc = qq/$1/; }       # security
+	if ($content =~ /^<define-tag moreinfo>(?:(.*?<\/p>)|(.*?)<\/define-tag>)$/ms) {
+	    $moreinfo = qq/$1/; }   # dsa-long.XX.rdf
+	if ($content =~ /^<define-tag status>(.*?)<\/define-tag>$/ms) {
+	    $status = qq/$1/; }     # vote
+	if ($content =~ /^<define-tag startdate>(.*?)<\/define-tag>$/ms) {
+	    $startdate = qq/$1/; }	# startdate (events)
+	if ($content =~ /^<define-tag enddate>(.*?)<\/define-tag>$/ms) {
+	    $enddate = $1; }        # enddate (events)
+	my ($shortfile) = $file =~ /^(?:.*\/)?(.*)\.wml$/;
+	if ($content =~ /<a\s+href="($shortfile-report)"\s*>/ms) {
+	    $repfile = $1; }        # Report (events)
+	if ($content =~ /<report\s+href="([^"]*)\s*"\/?>/ms) { #"
+            $repfile = $1; }        # Report (events)
+	</protect>
+	$hdate = $date || $startdate;
+	#warn "file=$file hdate=$hdate date=$date rdate=$rdate\n";
+	if ($startdate && $enddate) { # Convert date range into printable string
+	    $date = &daterange($startdate, $enddate);
+	}
+	if ($title && $date && $where) { # for events/
+	    if ($date !~ /^[\d-\s]+$/ ) { # old events dates
+		$hdate = "";
+	    }
+	    my $report = ($repfile)
+		? " [<a href=\"$repfile\"><gettext>Report</gettext></a>]"
+		: '';
+	    $str1 = "$elemhead<tt>[$date]</tt>$elemdate <strong><a href=\"$base\">$title</a></strong>, $elemfoot$where$report<br />$elemrealfoot\n";
+	}
+	elsif ($desc) { # for security/
+	    # read in datafile
+	    open DATAFILE, "$eng_dir/$base.data" 
+		or do {
+		    warn "couldn't open $eng_dir/$base.data: $!\n";
+		    next;
+		};
+	    <protect pass=2>
+	     foreach my $l (<DATAFILE>) {
+		 if ($l =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) 
+		 { $title = qq/$1/; }
+		 elsif ($l =~ /^<define-tag report_date>(.*)<\/define-tag>$/) 
+		 { $rdate = qq/$1/; }
+	     }
+	    </protect>
+	    close DATAFILE;
+ 
+	    @hdate = split ',', $rdate;
+	    $hdate = $hdate[0];
+	    $rdate = newsdate($hdate);
+	    @rdate = map( newsdate($_), @hdate );
+	    $title =~ s/(DSA-\d{3})-\d{1}/$1/; # strip off the revision in the DSA number
+	    # we need absolut paths for rdf
+	    (my $rdfbase = $base) =~ s/^security\///; 
+	    if ($format eq 'rdf') {
+		$str1 = "
+<item rdf:about=\"http://www.debian.org/security/$rdfbase\">
   <title>$title</title>
-  <link>http://www.debian.org/security/$year/$base</link>
+  <link>http://www.debian.org/security/$rdfbase</link>
   <description>
     $desc
   </description>
 </item>
 ";
-    } elsif ($format eq 'rdflong') {
-      $str1 = "
-<item rdf:about=\"http://www.debian.org/security/$year/$base\">
+	    } elsif ($format eq 'rdflong') {
+		$str1 = "
+<item rdf:about=\"http://www.debian.org/security/$rdfbase\">
   <title>$title - $desc</title>
-  <link>http://www.debian.org/security/$year/$base</link>
+  <link>http://www.debian.org/security/$rdfbase</link>
   <description>
     $moreinfo
   </description>
 </item>
 ";
+	    } else {
+		foreach( @rdate ) {
+		    push @str1, "$elemhead<tt>[$_]</tt> " 
+			."<strong><a href=\"$base\">$title</a></strong> " 
+			."$elemfoot$desc NEW_REVISION<br />$elemrealfoot\n";
+		}
+		$str1 = $str1[0];
+	    }
+	}
+	elsif ($title && $date && !$is_events) { # for News/ and not events/
+	    $date = newsdate($date);
+	    $str1 = "$elemhead<tt>[$date]</tt> "
+		."<strong><a href=\"$base\">$title</a></strong><br />" 
+		."$elemrealfoot\n";
+	}
+	elsif ($title && $status) { # for vote/
+	    $str1 = "$elemhead<a href=\"$base\">$title</a> &mdash; ";
+	    if ( $status eq "P" ) { $str1 .= "<proposed/>"; }
+	    elsif ( $status eq "D" ) { $str1 .= "<discussed/>"; }
+	    elsif ( $status eq "V" ) { $str1 .= "<votedon/>"; }
+	    elsif ( $status eq "F" ) { $str1 .= "<finished/>"; }
+	    elsif ( $status eq "W" ) { $str1 .= "<withdrawn/>"; }
+	    else { $str1 .= "$status"; }
+	    $str1 .= "<br />$elemrealfoot\n";
+	}
+
+	if (!$is_by_date || ($hdate eq "")) {
+	    $hdate = $count;
+	} else {
+	    $hdate = iso2stamp( $hdate );
+	    @hdate = map(iso2stamp($_), @hdate); 
+	}
+	#warn "$file: hdate=$hdate\n";
+
+	if ($event ne "") { # this file was for an event
+	    if ( $event eq "past" ) { 
+		$over{$hdate} .= $str1; 
+		$count{$hdate}++;
+	    }
+	    elsif ( $event eq "current" ) { 
+		$current{$hdate} .= $str1;  
+		$count{$hdate}++;
+	    }
+	} else {
+	    #warn "$file: no event?" if $is_events;
+	    unless ( $#hdate && $is_by_date ) {
+		($str{$hdate} .= $str1) =~ s/NEW_REVISION//;
+		$count{$hdate}++;
+	    } else {
+		if ( $#hdate != $#str1 ) { warn '$#hdate != $#str1\n'; }
+		($str{$hdate[0]} .= $str1[0]) =~ s/NEW_REVISION//;
+		for (1..$#str1) {
+		    ($str{$hdate[$_]} .= $str1[$_]) 
+			=~ s/NEW_REVISION/<new_revision>/;
+		    $count{$hdate[$_]}++;
+		}
+	    }
+	}
+    } # for each file
+
+    if ($is_events) {
+	$str = "";
+	$over = pick_recent( $since_date, $minnum, \%over, \%count);
+	$current = pick_recent( $since_date, $minnum, \%current, \%count, "reverse:quietnull" );
+	if ($current) {
+	    $str = "<h2><future_events/></h2>\n$listhead\n$current\n$listfoot\n";
+	}
+	if ($over) {
+	    $str .= "<h2><past_events/></h2>\n$listhead\n$over\n$listfoot\n";
+	}
     } else {
-      $str1 = "$elemhead<tt>[$rdate]</tt> <strong><a href=\"$year/$base\">$title</a></strong> $elemfoot$desc<br />$elemrealfoot\n";
+	$str = pick_recent( $since_date, $minnum, \%str, \%count);
     }
-  }
-  elsif ($title && $date && !$is_events) { # for News/ and not events/
-    $date = newsdate($date);
-    $str1 = "$elemhead<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong><br />$elemrealfoot\n";
-  }
-  elsif ($title && $status) { # for vote/
-    $str1 = "$elemhead<a href=\"$year/$base\">$title</a> &mdash; ";
-       if ( $status eq "P" ) { $str1 .= "<proposed/>"; }
-    elsif ( $status eq "D" ) { $str1 .= "<discussed/>"; }
-    elsif ( $status eq "V" ) { $str1 .= "<votedon/>"; }
-    elsif ( $status eq "F" ) { $str1 .= "<finished/>"; }
-    elsif ( $status eq "W" ) { $str1 .= "<withdrawn/>"; }
-    else { $str1 .= "$status"; }
-    $str1 .= "<br />$elemrealfoot\n";
-  }
-
-  if ($event ne "") { # this file was for an event
-       if ( $event eq "past" ) { $over .= $str1; }
-    elsif ( $event eq "current" ) { $current .= $str1;  }
-  } else {
-    $str .= $str1;
-  }
-  if ($count eq $number) { last; }
-} # for each file
-
-if ($WML_SRC_DIRNAME =~ /events/) {
-  $str = "";
-  if ($current) {
-    $str .= "<h2><future_events/></h2>\n$listhead\n$current\n$listfoot\n";
-  }
-  if ($over) {
-    $str .= "<h2><past_events/></h2>\n$listhead\n$over\n$listfoot\n";
-  }
-}
 
 return $str;
+}
+
+# pick_recent picks the item from an hash and concenates them to a string.
+# Input: $since_date - integer timestamp
+#        $minnum - at least this number of items are picked
+#                  (if the hash is big enough)
+#        %str - hash with timestamps as keys and strings as values
+# Output: string with the concatenated values of the picked items
+#
+# pick_recent sorts the keys of the array newest to oldest and then picks
+# the first $minnum one and then until a key is lower then $since_date.
+sub pick_recent {
+    my ($since_date, $minnum, $str, $str_count, $sort) = @_;
+    my $out_str = '';
+    my $count = 0;
+    
+    my @keys;
+    if (defined($sort) && ($sort =~ /reverse/)) {
+	@keys = sort { $a <=> $b } keys %$str;
+    } else {
+	@keys = sort { $b <=> $a } keys %$str;
+    }
+    #warn "since_date: ".scalar gmtime($since_date)." minnum: $minnum\n";
+    foreach (@keys) {
+	#warn "date: ".scalar gmtime($_)." ($count >= $minnum) && ($_ < $since_date)\n";
+	if ($count >= $minnum) {
+	    if( (!$is_by_date && $minnum)
+		|| (($is_by_date || !$minnum) 
+		    && ($_ < $since_date)) ) {
+		last;
+	    }
+	}
+	$out_str .= ${$str}{$_};
+	$count += ${$str_count}{$_};
+	#warn "infinite loop?\n" unless $count % 1000;
+    }
+
+    if (($count eq 0) && ($sort !~ /quietnull/)) {
+	$out_str = "<noitemsforthisyear/>\n";
+    }
+    #warn "count: $count\n";
+    #warn "$out_str\n";
+
+    return $out_str;
+}
+
+# parse_time gets as argument a string and returns a unix timestamp
+# Input: $time_str - String with the following format
+#                    $time_str ::= <integer>(d|w|m|y)
+# Output: integer timestamp
+#
+# parse_time subtracts <integer> days/weeks/months from the actual time and 
+# returns the corresponding timestamp. Years are handled special: 1y means
+# "since January, 1st of atcual year", 2y means "since January, 1st of 
+# last year", etc.
+sub parse_time {
+    my $time_str = shift;
+    my $year = (gmtime())[5] + 1900;
+    my $time = time();
+    my $res;
+
+    for ($time_str) {
+	/\d{4}/ && do {
+	    $res = timegm(0,0,0,1,0,$year);
+	    last;
+	};
+
+	/(\d+)d/ && do {
+	    $res = $time - 86400 * $1;
+	    last;
+	};
+	
+	/(\d+)w/ && do {
+	    $res = $time - 86400 * 7 * $1;
+	    last;
+	};
+
+	/(\d+)m/ && do {
+	    # All months have 30 days, 
+	    # all other would be far more complicated
+	    $res = $time - 86400 * 30 * $1;
+	    last;
+	};
+
+	/(\d+)y/ && do {
+	    # years are handled special
+	    my $ryear = $year - $1 + 1; # the actual year count as a whole one
+	    $res = timegm(0,0,0,1,0,$ryear); # 01.01.$ryear 00:00:00
+	    last;
+	};
+
+    }
+
+    return $res;
+}
+
+# iso2stamp converts a date in ISO format (YYYY-MM-DD) to an
+# unix timestamp for 23:59:59 on the specified day
+# Input: $time - String with the ISO date
+# Output: integer timestamp
+sub iso2stamp {
+    my $time = shift;
+
+    if ($time =~ /undated/) {
+	return 0;
+    }
+    my ($year, $month, $day) = ($time =~ /(\d{4})-(\d{1,2})-(\d{1,2})/);
+    unless ($year && $month && $day) { warn "not a ISO date: $time\n"; }
+    
+    return timegm( 59, 59, 23, $day, $month-1, $year);
 }
 
 # rdf_item_list outputs stuff to be used in a <rdf:Seq> section of a RDF
 # file. Accepted parameters include all of get_recent_list's except for
 # the format, as that is not variable.
+# this function is not yet compatible with the 'bydate' format option!
+# Don't use 'bydate' in conjunction with rdf files.
 
 sub rdf_item_list {
   my ($year, $number, $eng_dir, $match) = @_;
