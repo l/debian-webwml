@@ -5,7 +5,8 @@
 WMLBASE=.
 CUR_DIR=
 SUBS=Bugs MailingLists News Pics SPI consultants devel distrib doc events intro \
-international logos mirror misc partners ports releases security vote y2k
+international logos mirror misc partners ports releases security vote y2k \
+searchtmpl
 
 include $(WMLBASE)/Make.lang
 
