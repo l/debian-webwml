@@ -5,28 +5,35 @@
 
 # Don't translate this file, it will only make you look stupid.
 
+#   title_of return values contain tags processed during pass 2,
+#   and ePerl will fail if double quotes are in expanded text.
+#   For this reason, tag content must be protected
+<define-tag escape endtag=required>\
+  <protect pass=3>%body</protect>\
+</define-tag>
+
 <perl>
 sub title_of {
   my ($page) = @_;
 
 # special cases
-  if ($page eq "http://lists.debian.org/") { return "<mailarchives>" }
-  if ($page eq "http://lists.debian.org/users.html") { return "<listarchives_users>" }
-  if ($page eq "http://lists.debian.org/devel.html") { return "<listarchives_devel>" }
-  if ($page eq "http://lists.debian.org/i18n.html") { return "<listarchives_i18n>" }
-  if ($page eq "http://lists.debian.org/ports.html") { return "<listarchives_ports>" }
-  if ($page eq "http://lists.debian.org/misc.html") { return "<listarchives_misc>" }
-  if ($page eq "http://search.debian.org/") { return "<search>" }
-  if ($page eq "http://db.debian.org/") { return "<developerdb>" }
-  if ($page eq "News/weekly/") { return "<debianweeklynews>" }
+  if ($page eq "http://lists.debian.org/") { return "<escape><mailarchives></escape>" }
+  if ($page eq "http://lists.debian.org/users.html") { return "<escape><listarchives_users></escape>" }
+  if ($page eq "http://lists.debian.org/devel.html") { return "<escape><listarchives_devel></escape>" }
+  if ($page eq "http://lists.debian.org/i18n.html") { return "<escape><listarchives_i18n></escape>" }
+  if ($page eq "http://lists.debian.org/ports.html") { return "<escape><listarchives_ports></escape>" }
+  if ($page eq "http://lists.debian.org/misc.html") { return "<escape><listarchives_misc></escape>" }
+  if ($page eq "http://search.debian.org/") { return "<escape><search></escape>" }
+  if ($page eq "http://db.debian.org/") { return "<escape><developerdb></escape>" }
+  if ($page eq "News/weekly/") { return "<escape><debianweeklynews></escape>" }
   if ($page eq "doc/FAQ/") { return "Debian FAQ" }
-  if ($page eq "doc/debian-policy/") { return "<policy_manual>" }
-  if ($page eq "doc/developers-reference/") { return "<devel_reference>" }
-  if ($page eq "doc/maint-guide/") { return "<new_maint_guide>" }
-  if ($page eq "http://bugs.debian.org/~wakkerma/bugs/") { return "<rc_bugs>" }
-  if ($page eq "http://lintian.debian.org/") { return "<lintian>" }
-  if ($page eq "MailingLists/subscribe") { return "<subscribe_title>" }
-  if ($page eq "MailingLists/unsubscribe") { return "<unsubscribe_title>" }
+  if ($page eq "doc/debian-policy/") { return "<escape><policy_manual></escape>" }
+  if ($page eq "doc/developers-reference/") { return "<escape><devel_reference></escape>" }
+  if ($page eq "doc/maint-guide/") { return "<escape><new_maint_guide></escape>" }
+  if ($page eq "http://bugs.debian.org/~wakkerma/bugs/") { return "<escape><rc_bugs></escape>" }
+  if ($page eq "http://lintian.debian.org/") { return "<escape><lintian></escape>" }
+  if ($page eq "MailingLists/subscribe") { return "<escape><subscribe_title></escape>" }
+  if ($page eq "MailingLists/unsubscribe") { return "<escape><unsubscribe_title></escape>" }
 
   $page =~ s/^(.+)#(.+)$/$1/; # remove anchors (will handle this later)
   $page =~ s,/stable/,/potato/,; # kludges,
