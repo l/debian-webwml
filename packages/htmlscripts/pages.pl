@@ -286,9 +286,11 @@ sub package_pages_walker {
 		gettext( "debian-installer udeb package")."</h2>\n<p>".
 		gettext( "Warning: This package is intended for the use in building <a href=\"http://www.debian.org/devel/debian-installer\">debian-installer</a> images only. Do not install it on a normal Debian system." )."</p>";
 	}
+	$package_page .= "<div id=\"pdesc\">\n";
 	$package_page .= "<h2><em>$short_desc</em></h2>\n";
 
-	$package_page .= "<p style=\"text-align: justify\">$long_desc</p>\n";
+	$package_page .= "<p>$long_desc</p>\n";
+	$package_page .= "</div> <!-- end pdesc -->\n";
 
 	#
 	# display dependencies
@@ -298,25 +300,28 @@ sub package_pages_walker {
 	$dep_list .= print_deps( $env, $pkg, \%versions, 'suggests' );
 
 	if ( $dep_list ) {
-	    $package_page .= sprintf( "\n<h2>".gettext( "Other packages related to %s:" )."</h2>\n", $name );
+	    $package_page .= "<div id=\"pdeps\">\n";
+	    $package_page .= sprintf( "<h2>".gettext( "Other packages related to %s:" )."</h2>\n", $name );
 	    if ($env->{distribution} eq "experimental") {
 		$package_page .= "<p>".gettext( "Note that the \"<font color=\"red\">experimental</font>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution." )."</p>";
 	    }
 
-	    $package_page .= "<center><table border=\"1\"><tr>\n";
-	    $package_page .= "<td><font size=\"-1\"><img src=\"../../Pics/dep.gif\" ALT=\"[dep]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'depends' )."</font>".
-		"<td><font size=\"-1\"><img src=\"../../Pics/rec.gif\" ALT=\"[rec]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'recommends' )."</font>".
-		"<td><font size=\"-1\"><img src=\"../../Pics/sug.gif\" ALT=\"[sug]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'suggests' )."</font>";
-	    $package_page .= "</table></center>\n";
-	    $package_page .= "<table cellspacing=\"0\" cellpadding=\"2\">";
+	    $package_page .= "<table border=\"1\" summary=\"legend\"><tr>\n";
+	    $package_page .= "<td><img src=\"../../Pics/dep.gif\" ALT=\"[dep]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'depends' ).
+		"<td><img src=\"../../Pics/rec.gif\" ALT=\"[rec]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'recommends' ).
+		"<td><img src=\"../../Pics/sug.gif\" ALT=\"[sug]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'suggests' );
+	    $package_page .= "\n</tr></table>\n";
+            $package_page .= "<ul>\n";
 	    $package_page .= $dep_list;
-	    $package_page .= "</table>";
+	    $package_page .= "</ul>\n";
+	    $package_page .= "</div> <!-- end pdeps -->\n";
 	}
 
 	#
 	# Download package
 	#
 	my $encodedpack = uri_escape( $name );
+	$package_page .= "<div id=\"pdownload\">";
 	$package_page .= sprintf( "<h2>".gettext( "Download %s\n" )."</h2>",
 				  $name ) ;
 	$package_page .= "<table border=\"0\" summary=\"\">\n";
@@ -365,19 +370,20 @@ sub package_pages_walker {
 	}
 	$package_page .= "</tr></table>\n";
 	$package_page .= "<p>".gettext ( "Size is measured in kBytes." )."</p>\n";
-
+        $package_page .= "</div> <!-- end pdownload -->\n";
 
 	#
 	# more information
 	#
+	$package_page .= "<div id=\"pmoreinfo\">";
 	$package_page .= sprintf( "<h2>".gettext( "More information on %s" )."</h2>", $name );
 	
-	$package_page .= sprintf( "<small>".gettext( "Check for <a href=\"%s\">bug reports</a> about %s." )."</small><br>\n", $BUG_URL.$name, $name );
+	$package_page .= sprintf( gettext( "Check for <a href=\"%s\">bug reports</a> about %s." )."<br>\n", $BUG_URL.$name, $name );
 	
 	#
 	# Source package download
 	#
-	$package_page .= "<small>".gettext( "Source Package:" );
+	$package_page .= gettext( "Source Package:" );
 	$package_page .= " <a href=\"../source/$sourcepackage\">$sourcepackage</a>, ".gettext( "Download" ).":\n";
 
 	my @source_files;
@@ -408,7 +414,7 @@ sub package_pages_walker {
 	    $package_page .= gettext( "Not found" );
 	    warn "W: no sources found for $name\n" if $env->{opts}{verbose};
 	}
-	$package_page .= "</small>\n";
+	$package_page .= "\n";
 
 	#
 	# Changelog and copyright
@@ -449,6 +455,7 @@ sub package_pages_walker {
 	
 	$package_page .= sprintf( "<p><small>".gettext( "Search for <a href=\"%s\">other versions of %s</a>" )."</small>\n", $SEARCH_URL.$encodedpack, $name );
 
+        $package_page .= "</div> <!-- end pmoreinfo -->\n";
 	#
 	# Trailer
 	#
@@ -605,7 +612,7 @@ sub src_package_pages_walker {
 	$package_page .=  " [<font color=\"red\">$archive</font>]\n";
     }
     $package_page .= "</h1>\n";
-
+    $package_page .= "<div id=\"pdesc\">\n";
     if ($env->{distribution} eq "experimental") {
 	$package_page .= "<h2 style=\"color: red\">".
 	    gettext( "Experimental package")."</h2>\n<p>".
@@ -627,7 +634,7 @@ sub src_package_pages_walker {
 	    # in their Binary field that are never built but
 	    # exist as virtual packages -- no commment...
 	    if ($p->is_virtual) {
-		push @bin_list, "<tr><td><a href=\"../virtual/$p_name\">$p_name</a></td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;".gettext("Virtual package")."</td></tr>";
+		push @bin_list, "<dt><a href=\"../virtual/$p_name\">$p_name</a></dt>\n<dd>".gettext("Virtual package")."</dd>";
 	    } else {
 		my %sections = $p->get_arch_fields( 'section',
 						    $env->{archs} );
@@ -635,16 +642,18 @@ sub src_package_pages_walker {
 		my %desc_md5s = $p->get_arch_fields( 'description-md5', 
 						     $env->{archs} );
 		my $short_desc = conv_desc( $env->{lang}, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" ) );
-		push @bin_list, "<tr><td><a href=\"../$section/$p_name\">$p_name</a></td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc</td></tr>";
+		push @bin_list, "<dd><a href=\"../$section/$p_name\">$p_name</a></dd>\n<dd>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc</dd>";
 	    }
 	}
     }
     if (@bin_list) {
 	$package_page .= gettext( "The following binary packages are built from this source package:" );
-	$package_page .= "<table cellspacing=\"0\" cellpadding=\"2\">";
+	$package_page .= "<dl>";
 	$package_page .= join "\n", @bin_list;
-	$package_page .= "</table>";
+	$package_page .= "</dl>";
     }
+    $package_page .= "</div> <!-- end pdesc -->\n";
+    $package_page .= "<div id=\"pdeps\">\n";
 
     #
     # display dependencies
@@ -658,14 +667,16 @@ sub src_package_pages_walker {
 	    $package_page .= "<p>".gettext( "Note that the \"<font color=\"red\">experimental</font>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution." )."</p>";
 	}
 
-	$package_page .= "<center><table border=\"1\"><tr>\n";
-	$package_page .= "<td><font size=\"-1\"><img src=\"../../Pics/dep.gif\" ALT=\"[req]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'build-depends' )."</font>".
-	    "<td><font size=\"-1\"><img src=\"../../Pics/rec.gif\" ALT=\"[rec]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'build-depends-indep' )."</font>";
-	$package_page .= "</table></center>\n";
-	$package_page .= "<table cellspacing=\"0\" cellpadding=\"2\">";
+	$package_page .= "<table border=\"1\" summary=\"legend\"><tr>\n";
+	$package_page .= "<td><img src=\"../../Pics/dep.gif\" ALT=\"[adep]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'build-depends' ).
+	    "<td><img src=\"../../Pics/rec.gif\" ALT=\"[idep]\" WIDTH=\"16\" HEIGHT=\"16\">= ".gettext( 'build-depends-indep' );
+	$package_page .= "</tr></table>\n";
+	$package_page .= "<ul>\n";
 	$package_page .= $dep_list;
-	$package_page .= "</table>";
+	$package_page .= "</ul>\n"; 
     }
+    $package_page .= "</div> <!-- end pdeps -->\n";
+    $package_page .= "<div id=\"pdownload\">\n";
 
     #
     # Source package download
@@ -697,7 +708,8 @@ sub src_package_pages_walker {
 	    ."<td>$src_file_md5</td></tr>";
     }
     $package_page .= "</table>\n";
-
+    $package_page .= "</div> <!-- end pdownload -->\n";
+    $package_page .= "<div id=\"pmoreinfo\">\n";
     #
     # more information
     #
@@ -742,6 +754,7 @@ sub src_package_pages_walker {
     $package_page .= sprintf( "<small>".gettext( "See the <a href=\"%s\">developer information for %s</a>." )."</small>\n", $QA_URL.$name, $name );
     
     $package_page .= sprintf( "<p><small>".gettext( "Search for <a href=\"%s\">other versions of %s</a>" )."</small>\n", $SRC_SEARCH_URL.$encodedpack, $name );
+    $package_page .= "</div> <!-- end pmoreinfo -->\n";
 
     #
     # Trailer

@@ -1,5 +1,9 @@
 use strict;
 use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use lib "$FindBin::Bin";
+use Deb::Versions;
 
 use HTML::Entities;
 
@@ -33,6 +37,7 @@ sub print_deps {
     
     if ( %dep_pkgs ) {
 #	$res .= "<h4>$type</h4>\n";
+        my $first = 1;
 	my $old_dp = "";
 	my $is_old_dp = 0;
 	foreach my $dp ( sort keys %dep_pkgs ) {
@@ -41,7 +46,7 @@ sub print_deps {
 	    my @pkgs = split /\|/, $dp;
 
 	    if ( $dp_v eq $old_dp ) {
-		$res .= "<tr><td></td><td>";
+		$res .= "<br>";
 		$is_old_dp = 1;
 		foreach ( @pkgs ) {
 		    s/\(.*\)$//o;
@@ -49,9 +54,14 @@ sub print_deps {
 	    } else {
 		$old_dp = $dp_v;
 		$is_old_dp = 0;
-	    
-		$res .= "<tr><td width=\"20\" valign=\"top\"><img src=\"../../Pics/$dep_type{$type}.gif\"". 
-		    " alt=\"[$dep_type{$type}]\" width=\"16\" height=\"16\"></td><td>";
+		if ($first) {
+		   $res .= "<li>";
+		   $first = 0;
+		} else {
+		   $res .= "</li>\n<li>";
+	        }
+		$res .= "<img src=\"../../Pics/$dep_type{$type}.gif\"". 
+		    " alt=\"[$dep_type{$type}]\" width=\"16\" height=\"16\"> ";
 	    }
 	    
 	    my $arch_str = compute_arch_str ( $dp, $versions, \%arch_deps,
@@ -94,7 +104,7 @@ sub print_deps {
 			push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $pkg_version$arch_str";
 		    } elsif ( $p->is_virtual ) {
 			my $short_desc = gettext( "Virtual package" );
-			push @res_pkgs, "<a href=\"../virtual/$p_name\">$p_name</a> $pkg_version$arch_str</td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+			push @res_pkgs, "<a href=\"../virtual/$p_name\">$p_name</a> $pkg_version$arch_str<br>\n&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
 		    } else {
 			my %sections = $p->get_arch_fields( 'section',
 							    $env->{archs} );
@@ -102,23 +112,23 @@ sub print_deps {
 			my %desc_md5s = $p->get_arch_fields( 'description-md5', 
 							     $env->{archs} );
 			my $short_desc = conv_desc( $env->{lang}, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" ) );
-			push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $pkg_version$arch_str</td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+			push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $pkg_version$arch_str<br>\n&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
 		    }
 		} elsif ( $is_old_dp ) {
 		    push @res_pkgs, "$p_name $pkg_version$arch_str";
 		} else {
 		    my $short_desc = gettext( "Package not available" );
-		    push @res_pkgs, "$p_name $pkg_version$arch_str</td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+		    push @res_pkgs, "$p_name $pkg_version$arch_str<br>\n&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
 		}
 		$pkg_ix++;
 #	    warn "$short_desc\n";
 	    }
-	    $res .= "<table>\n<tr><td>".join( "</td></tr>\n<tr><td> ".gettext( " or " )." ", @res_pkgs )."</td></tr>\n</table>";
-	    $res .= "</td>";
+	    $res .= "\n".join( "<br> ".gettext( " or " )." ", @res_pkgs )."\n";
+	    $res .= "\n";
 	    
 	}
+        $res .= "</li>\n";
     }
-    
     return $res;
 }
 
@@ -129,8 +139,8 @@ sub print_src_deps {
     
     foreach my $dep ( @{$pkg->{versions}{$version}{$type}} ) {
 	my @res_pkgs;
-	$res .= "<tr><td width=\"20\" valign=\"top\"><img src=\"../../Pics/$dep_type{$type}.gif\"". 
-	    " alt=\"[$dep_type{$type}]\" width=\"16\" height=\"16\"></td><td>";
+	$res .= "<li><img src=\"../../Pics/$dep_type{$type}.gif\"". 
+	    " alt=\"[$dep_type{$type}]\" width=\"16\" height=\"16\"> ";
 	foreach my $or_dep ( @$dep ) {
 	    my $p_name = $or_dep->[0];
 	    my $p = $env->{db}->get_pkg( $p_name );
@@ -148,7 +158,7 @@ sub print_src_deps {
 	    if ( $p ) {
 		if ( $p->is_virtual ) {
 		    my $short_desc = gettext( "Virtual package" );
-		    push @res_pkgs, "<a href=\"../virtual/$p_name\">$p_name</a> $p_version$arch_str</td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+		    push @res_pkgs, "<a href=\"../virtual/$p_name\">$p_name</a> $p_version$arch_str<br>\n&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
 		} else {
 		    my %sections = $p->get_arch_fields( 'section',
 							$env->{archs} );
@@ -156,17 +166,16 @@ sub print_src_deps {
 		    my %desc_md5s = $p->get_arch_fields( 'description-md5', 
 							 $env->{archs} );
 		    my $short_desc = conv_desc( $env->{lang}, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $env->{lang} ), "<>&\"" ) );
-		    push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $p_version$arch_str</td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+		    push @res_pkgs, "<a href=\"../$section/$p_name\">$p_name</a> $p_version$arch_str<br>\n&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
 		}
 	    } else {
 		my $short_desc = gettext( "Package not available" );
-		push @res_pkgs, "$p_name $p_version$arch_str</td></tr>\n<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
+		push @res_pkgs, "$p_name $p_version$arch_str<br>\n&nbsp;&nbsp;&nbsp;&nbsp;$short_desc";
 	    }
 	}
-	$res .= "<table>\n<tr><td>".join( "</td></tr>\n<tr><td> ".gettext( " or " )." ", @res_pkgs )."</td></tr>\n</table>";
-	$res .= "</td>";
+	$res .= "\n".join( "\n ".gettext( " or " )." ", @res_pkgs )."</li>\n";
     }
-
+    $res .= "\n";
     return $res;
 }
 
@@ -228,7 +237,9 @@ sub print_deps_ds {
     }
     
     if (@res) {
-	$res = "<tr><td valign=\"top\">$type:</td><td>".join( ", ", @res)."</td></tr>\n";
+        $res .= "<ul>\n";
+	$res = "<li>$type: ".join( ", ", @res)."</li>\n";
+        $res .= "</ul>\n";
     }
     return $res;
 }
@@ -246,7 +257,8 @@ sub print_reverse_rel_ds {
 
     my ( $save_p, $save_as ) = ( "", "" );
     my @save_vs = ();
-    foreach my $r_p ( sort keys %{$pkg->{rr}{$lc_type}} ) {
+    my $r_p;
+    foreach $r_p ( sort keys %{$pkg->{rr}{$lc_type}} ) {
 	foreach my $r_v ( version_sort keys %{$pkg->{rr}{$lc_type}{$r_p}} ) {
 	    my %arch_deps;
 	    foreach my $r_a ( keys %{$pkg->{rr}{$lc_type}{$r_p}{$r_v}} ) {
@@ -278,7 +290,7 @@ sub print_reverse_rel_ds {
     }
 
     if (@res) {
-	$res = "<tr><td valign=\"top\">Reverse $type:</td><td>".join( ", ", @res)."</td></tr>\n";
+	$res = "<li>Reverse $type: ".join( ", ", @res)."</li>\n";
     }
     return $res;
 }    

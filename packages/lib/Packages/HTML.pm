@@ -45,25 +45,22 @@ sub header {
     my $title_in_header = $params{page_title} || $params{title} || '';
     my $page_title = $params{page_title} || $params{title} || '';
 
-    my $logo_align = 'center';
     if ($params{print_title_above}) {
-	$logo_align = 'left';
-	$title_in_header = "<td align=\"right\" valign=\"middle\"><h1>$title_in_header</h1></td>";
+ 	$title_in_header = "<h1 align=\"center\">$title_in_header</h1>";
     } else {
-	$title_in_header = '';
+ 	$title_in_header = '';
     }
 
     my $search_in_header = '';
     $params{print_search_field} ||= "";
     if ($params{print_search_field} eq 'packages') {
 	my %values = %{$params{search_field_values}};
-	$logo_align ='left';
 	my %checked_searchon = ( names => "",
 				 all => "",
 				 sourcenames => "", );
 	$checked_searchon{$values{searchon}} = "checked=\"checked\"";
 	$search_in_header = <<MENU;
-<td align="left" valign="middle">
+<div id="hpacketsearch">
 <form method="GET" action="http://packages.debian.org/cgi-bin/search_packages.pl">
 <input type="hidden" name="version" value="$values{version}" />
 <input type="hidden" name="subword" value="$values{subword}" />
@@ -85,19 +82,18 @@ sub header {
 <label for="src">Source package names</label>
 </div>
 </form>
-</td>
+</div> <!-- end hpacketsearch -->
 MENU
 ;
     } elsif ($params{print_search_field} eq 'contents') {
 	my %values = %{$params{search_field_values}};
-	$logo_align ='left';
 	my %checked_searchmode = ( searchfiles => "",
 				   searchfilesanddirs => "",
 				   searchword => "",
 				   filelist => "", );
 	$checked_searchmode{$values{searchmode}} = "checked=\"checked\"";
 	$search_in_header = <<MENU;
-<td align="left" valign="middle">
+<div id="hpacketsearch">
 <form method="GET" action="http://packages.debian.org/cgi-bin/search_contents.pl">
 <input type="hidden" name="version" value="$values{version}" />
 <input type="hidden" name="arch" value="$values{arch}" />
@@ -118,7 +114,7 @@ MENU
 <label for="filelist">content list</label>
 </div>
 </form>
-</td>
+</div> <!-- end hpacketsearch -->
 MENU
 ;
     }
@@ -130,7 +126,7 @@ MENU
     my $img_lang = $img_trans{$LANG} || $LANG;
     my $charset = get_charset($LANG);
     my $txt = <<HEAD;
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="$LANG">
 <head>
 <title>Debian GNU/Linux -- $title_tag</title>
@@ -139,75 +135,75 @@ MENU
 <meta name="Author" content="Debian Webmaster, webmaster\@debian.org">
 $KEYWORDS_LINE
 $DESC_LINE
+<link href="/debian.css" rel="stylesheet" type="text/css">
+<style type="text/css" media="all">
+</style>
 </head>
-<body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#800080" alink="#FF0000">
-<table border="0" cellpadding="3" cellspacing="0" align="center" width="100%" summary="">
-<tr>
-<td align="$logo_align" valign="middle">
-<a href="$HOME/"><img src="$HOME/logos/openlogo-nd-50.png" border="0" hspace="0" vspace="0" alt="" width="50" height="61"></a>
+<body>
+<div id="header">
+   <div id="upperheader">
+   <div id="logo">
+  <a href="$HOME/"><img src="$HOME/logos/openlogo-nd-50.png" alt="" /></a>
 HEAD
 ;
 
     $txt .= img( "$HOME/", "", "Pics/debian.png", gettext( "Debian Project" ),
 		 width => 179, height => 61 );
-    $txt .= <<NAVBEGIN;
-</td>
-$search_in_header
-$title_in_header
-</tr>
-</table>
-<table bgcolor="#DF0451" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
-<tr>
-<td valign="top">
-<img src="$HOME/Pics/red-upperleft.png" align="left" border="0" hspace="0" vspace="0" alt="" width="15" height="16">
-</td>
-<td rowspan="2" align="center">
-NAVBEGIN
+    $txt .= <<HEADEND;
+
+</div> <!-- end logo -->
+HEADEND
 ;
 
-    $txt .= img( "$HOME/", "intro/about", "Pics/about.$img_lang.gif",
+    $txt .= <<NAVBEGIN;
+$search_in_header
+</div> <!-- end upperheader -->
+<div id="navbar">
+<p class="navpara">
+NAVBEGIN
+;
+# $title_in_header
+
+$txt .= " " . img( "$HOME/", "intro/about", "Pics/about.$img_lang.gif",
 		 gettext( "About&nbsp;Debian" ), 
-		 hspace => 4, vspace => 7 );
+		 ) . "\n ";
     $txt .= img( "$HOME/", "News/", "Pics/news.$img_lang.gif",
 		 gettext( "News" ), 
-		 hspace => 4, vspace => 7 );
+		 ) . "\n ";
     $txt .= img( "$HOME/", "distrib/", "Pics/getting.$img_lang.gif",
 		 gettext( "Getting&nbsp;Debian" ), 
-		 hspace => 4, vspace => 7 );
+		 ) . "\n ";
     $txt .= img( "$HOME/", "support", "Pics/support.$img_lang.gif",
 		 gettext( "Support" ), 
-		 hspace => 4, vspace => 7 );
+		 ) . "\n ";
     $txt .= img( "$HOME/", "devel/", "Pics/devel.$img_lang.gif",
 		 gettext( "Development" ), 
-		 hspace => 4, vspace => 7 );
+		 ) . "\n ";
     $txt .= img( "$HOME/", "sitemap", "Pics/sitemap.$img_lang.gif",
 		 gettext( "Site map" ), 
-		 hspace => 4, vspace => 7 );
+		 ) . "\n ";
     $txt .= img( "", "http://search.debian.org/", 
 		 "$HOME/Pics/search.$img_lang.gif",
 		 gettext( "Search" ), 
-		 hspace => 4, vspace => 7 );
+		 ) . "\n";
     
     $txt .= <<ENDNAV;
-</td>
-<td valign="top">
-<img src="$HOME/Pics/red-upperright.png" align="right" border="0" hspace="0" vspace="0" alt="" width="15" height="16">
-</td>
-</tr>
-<tr>
-<td valign="bottom">
-<img src="$HOME/Pics/red-lowerleft.png" align="left" border="0" hspace="0" vspace="0" alt="" width="16" height="16">
-</td>
-<td valign="bottom">
-<img src="$HOME/Pics/red-lowerright.png" align="right" border="0" hspace="0" vspace="0" alt="" width="15" height="16">
-</td>
-</tr>
-</table>
+</p>
+</div> <!-- end navbar -->
+</div> <!-- end header -->
 ENDNAV
 ;
+    $txt .= <<BEGINCONTENT;
+<div id="outer">
+<div id="inner">
 
+BEGINCONTENT
+;
+    if ($params{print_title_above}) {
+	$txt .= "<h1 align=\"center\">$page_title</h1>\n";
+    }
     if ($params{print_title_below}) {
-	$txt .= "<h1>$page_title</h1>\n\n";
+	$txt .= "<h1 align=\"center\">$page_title</h1>\n";
     }
 
     return $txt;
@@ -215,9 +211,10 @@ ENDNAV
 
 sub trailer {
     my ($ROOT, $NAME, $LANG, @USED_LANGS) = @_;
-    my $txt = languages( $NAME, $LANG, @USED_LANGS );
+    my $txt = "</div> <!-- end inner -->\n<div id=\"footer\">\n";
+    $txt .= languages( $NAME, $LANG, @USED_LANGS );
     $txt .=
-	"\n\n<hr noshade width=\"100%\" size=\"1\">" .
+	"\n\n<hr class=\"hidecss\">" .
 	sprintf( gettext( "Back to: <a href=\"%s/\">Debian Project homepage</a> || <a href=\"%s/\">Packages search page</a>" ), $HOME, $ROOT ).
 	"\n<hr noshade width=\"100%\" size=\"1\">\n".
 	"<p><small>".
@@ -228,6 +225,8 @@ sub trailer {
 	sprintf( gettext( "Copyright &copy; 1997-2004 <a href=\"http://www.spi-inc.org\">SPI</a>; See <a href=\"%s/license\">license terms</a>." ), "$HOME/" )."<br>\n".
 	gettext( "Debian is a registered trademark of Software in the Public Interest, Inc." ).
 	"</small>\n".
+	"</div> <!-- end footer -->\n".
+	"</div> <!-- end outer -->\n".
 	"</body>\n</html>\n";
 
     return $txt;
@@ -240,9 +239,9 @@ sub languages {
     
     if (@used_langs) {
 	$str .= "<hr>\n";
-	$str .= "<!--UdmComment-->\n";
+	$str .= "<!--UdmComment-->\n<p>\n";
 	$str .= gettext( "This page is also available in the following languages:\n" );
-	$str .= "<br>\n";
+	$str .= "</p><p class=\"navpara\">\n";
 	
 	my @printed_langs = ();
 	foreach (@used_langs) {
@@ -256,11 +255,11 @@ sub languages {
 	foreach my $cur_lang (sort langcmp @printed_langs) {
 	    my $tooltip = dgettext( "langs", get_language_name($cur_lang) );
 	    $str .= "<a href=\"$name.$cur_lang.html\" title=\"$tooltip\" hreflang=\"$cur_lang\" lang=\"$cur_lang\" rel=\"alternate\">".get_selfname($cur_lang);
-	    $str .= "&nbsp;(".get_transliteration($cur_lang).")" if defined get_transliteration($cur_lang);
-	    $str .= "</a>&nbsp;\n";
+	    $str .= " (".get_transliteration($cur_lang).")" if defined get_transliteration($cur_lang);
+	    $str .= "</a>\n";
 	}
-	$str .= "\n<br />\n";
-	$str .= gettext( "How to set <a href=\"$CN_HELP_URL\">the default document language</a>" );
+	$str .= "\n</p><p>\n";
+	$str .= gettext( "How to set <a href=\"$CN_HELP_URL\">the default document language</a></p>" );
 	$str .= "\n<!--/UdmComment-->\n";
     }
     
