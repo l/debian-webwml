@@ -37,13 +37,13 @@
 <define-tag severities whitespace=delete>
 	[EN:severities:]
 	[DA:alvorlighedsgrader:]
-	[HR:severitye:]
+	[HR:severityi:]
 	[SV:allvarlighetsgrader:]
 </define-tag>
 <define-tag bugs whitespace=delete>
 	[EN:bugs:]
 	[DA:fejl:]
-	[HR:bugova:]
+	[HR:bugovi:]
 	[SV:fel:]
 </define-tag>
 <define-tag status_include whitespace=delete>
