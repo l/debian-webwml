@@ -59,23 +59,26 @@ sub printreferences {
 	my ($dsa) = @_;
 	print "Printing references for $dsa\n" if $opt_v;
 	foreach $ref ( split(' ', $dsaref{$dsa}{'secrefs'}) ) {
-		print "INSERT INTO ";
+		my $query="INSERT INTO ";
 		if ( $ref =~ /((CVE|CAN)-[\d-]+)/i )  {
-			print "cvedsa (\"cve\", \"dsaid\") ";
-			print "VALUES ('$ref','$dsa');\n";
+			$query .= "cvedsa (\"cve\", \"dsaid\") ";
+			$query .= "VALUES ('$ref','$dsa');\n";
 		}
 		if ( $ref =~ /BID(\d+)/i ) {
-			print "biddsa (\"bid\", \"dsaid\") ";
-			print "VALUES ('$1','$dsa');\n";
+			$query .= "biddsa (\"bid\", \"dsaid\") ";
+			$query .= "VALUES ('$1','$dsa');\n";
 		}
 		if ( $ref =~ /CA-[\d-]+/i ) {
-			print "certcadsa (\"caid\", \"dsaid\") ";
-			print "VALUES ('$ref','$dsa');\n";
+			$query .= "certcadsa (\"caid\", \"dsaid\") ";
+			$query .= "VALUES ('$ref','$dsa');\n";
 		}
 		if ( $ref =~ /VU\#([\d-]+)/i ) {
-			print "certvudsa (\"vuid\", \"dsaid\") ";
-			print "VALUES ('$1','$dsa');\n";
+			$query .= "certvudsa (\"vuid\", \"dsaid\") ";
+			$query .= "VALUES ('$1','$dsa');\n";
 		}
+		# Since we don't support some references like  Bug#XXXXX
+		# exclude them
+		print $query if $query != "INSERT INTO ";
 	}
 	return 0;
 }
