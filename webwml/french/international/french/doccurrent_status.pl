@@ -194,7 +194,7 @@ $translations_status = {
 },
 
 'developers-reference' => {
-	'status'		=> 3,
+	'status'		=> 5,
 	'since'			=> '28/05/2001',
 	'translation_name'	=> 'Manuel de référence du développeur Debian',
 	'translation_maintainer'=> ['Antoine Hulin <antoine@origan.fdn.fr>'],
