@@ -34,9 +34,11 @@ install:: $(HTMLDESTFILES)
 	# reason I use ..../current/issue instead of ...../current is
 	# so it will be 2 directories deep and all the relative symlinks
 	# will still work. Bleargh.
+ifeq ($(LANGUAGE),en)
 	install -d $(HTMLDIR)/current
 	-rm -f $(HTMLDIR)/current/issue
 	-ln -sf ../$(YEAR)/$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
+endif
 
 # This is used by the install rule, and I had to hack on it, overriding
 # Make.common to allow installation of files into subdirectories.
