@@ -95,7 +95,7 @@ endif
 # This is used by the install rule, and I had to hack on it, overriding
 # Make.common to allow installation of files into subdirectories.
 $(HTMLDIR)/%.$(LANGUAGE).html: %.$(LANGUAGE).html
-	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
+	@test -d $(@D) || mkdir -m g+w -p $(@D)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
 ifeq "$(LANGUAGE)" "en"
@@ -105,21 +105,21 @@ endif
 
 # Handle images
 $(HTMLDIR)/%.png: %.png
-	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
+	@test -d $(@D) || mkdir -m g+w -p $(@D)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
 
 # Special case for Chinese
 $(HTMLDIR)/%.zh-cn.html: %.zh-cn.html
-	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
+	@test -d $(@D) || mkdir -m g+w -p $(@D)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
 $(HTMLDIR)/%.zh-hk.html: %.zh-hk.html
-	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
+	@test -d $(@D) || mkdir -m g+w -p $(@D)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
 $(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
-	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
+	@test -d $(@D) || mkdir -m g+w -p $(@D)
 	@echo copying $(@F) to $(@D)
 	-@install -m 664 -p $(<) $(@D)
 
