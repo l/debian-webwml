@@ -15,10 +15,11 @@ WNPP_FILES=being_adopted.html being_packaged.html orphaned.html \
 # There is no wnpp.en.html destination. This will be run every time,
 # which is what we want
 ifeq ($(LANGUAGE),en)
-wnpp.en.html: wnpp.wml
+wnpp.$(LANGUAGE).html: wnpp.wml
 	wml -q wnpp.wml
+
+$(HTMLDIR)/wnpp.$(LANGUAGE).html:
 
 install::
 	install $(WNPP_FILES) $(HTMLDIR)
 endif
-
