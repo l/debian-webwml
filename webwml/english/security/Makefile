@@ -27,7 +27,10 @@ $(ENGLISHSRCDIR)/security/ref-table.inc: $(ENGLISHSRCDIR)/security/make-ref-tabl
 crossreferences.$(LANGUAGE).html:: $(ENGLISHSRCDIR)/security/ref-table.inc \
 	$(ENGLISHDIR)/template/debian/securityreferences.wml 
 
-nonvulns-woody.$(LANGUAGE).html: nonvulns-woody.wml nonvulns-woody.src \
+
+# only depend on it if it exists
+translated_nonvulns=$(shell [ -f nonvulns-woody.src ] && echo nonvulns-woody.src)
+nonvulns-woody.$(LANGUAGE).html: nonvulns-woody.wml $(translated_nonvulns)  \
 	$(ENGLISHSRCDIR)/security/nonvulns-woody.src \
 	$(TEMPLDIR)/securityreferences.wml 
 
