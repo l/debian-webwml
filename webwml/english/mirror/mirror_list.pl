@@ -352,6 +352,62 @@ END
 	print "</pre>\n";
 }
 
+sub readmenonus {
+	print <<_END_;
+United States laws place restrictions on the export of defense articles,
+which, unfortunately, includes some types of cryptographic software.  PGP
+and ssh, among others, fall into this category.  It is legal however, to
+import such software into the US.
+
+To prevent anyone from taking unnecessary legal risks, some Debian
+packages are only available from a site in Leiden, The Netherlands.
+Available access methods are:
+	ftp://non-us.debian.org/debian-non-US/
+	http://non-us.debian.org/debian-non-US/
+	rsync://non-us.debian.org/debian-non-US/  (limited)
+
+To use these packages with APT, you can add the following lines to your
+sources.list file:
+
+  deb http://non-us.debian.org/debian-non-US stable/non-US main contrib non-free
+  deb-src http://non-us.debian.org/debian-non-US stable/non-US main contrib non-free
+
+Read sources.list(5) on your Debian system for more information.
+
+------------------------------------------------------------------------------
+
+Mirrors of the above site (all of them outside of US) include:
+
+_END_
+	my $hasmirrors = 0; my $nonuscount = 0;
+	foreach $country (sort keys %countries) {
+		$hasmirrors = 0;
+		foreach $id (@{ $countries{$country} }) {
+		  $hasmirrors++ if (defined $mirror{$id}{method}{'nonus-ftp'} || defined $mirror{$id}{method}{'nonus-http'});
+		}
+		if ($hasmirrors) { print "\n$country:\n"; } else { next; }
+		foreach $id (@{ $countries{$country} }) {
+		  if (defined $mirror{$id}{method}{'nonus-ftp'}) {
+		    print "  ftp://$id$mirror{$id}{method}{'nonus-ftp'}";
+		    if (defined $mirror{$id}{method}{'nonus-http'}) {
+		      print "\n    http://$id$mirror{$id}{method}{'nonus-http'}";
+		    }
+		    print "\n\n";
+		    $nonuscount++;
+		  } elsif (defined $mirror{$id}{method}{'nonus-http'}) {
+		    print "  http://$id$mirror{$id}{method}{'nonus-http'}";
+		    print "\n\n";
+		    $nonuscount++;
+		  }
+		}
+	}
+	print <<_END_;
+
+------------------------------------------------------------------------------
+Last modified: $last_modify             Number of sites listed: $nonuscount
+_END_
+}
+
 ######### Begin main routine ###########################
 Getopt::Long::config('no_getopt_compat', 'no_auto_abbrev');
 GetOptions(%opthash) or die "error parsing options";
@@ -360,7 +416,7 @@ if (defined $help) {
 Usage: $0 -m|--mirror mirror_list_source [-t|--type type]
 
 `mirror_list_source\' is usually Mirrors.masterlist file
-`type\' can be one of: "html", "text", "apt" or "methods".
+`type\' can be one of: "html", "text", "apt", "methods" or "nonus".
 END
 	exit;
 }
@@ -442,6 +498,9 @@ elsif ($output_type eq 'methods') {
 	header();
 	access_methods();
 	trailer();
+}
+elsif ($output_type eq 'nonus') {
+	readmenonus();
 }
 else {
 	die "Error: unknown output type requested, $output_type\n";
