@@ -1,3 +1,5 @@
+# $Id$
+
 # The two-letter code for the language
 LANGUAGE := zh
 SUBLANG := cn hk tw
@@ -90,6 +92,21 @@ $(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
 ifndef NOGENERICDEP
 %.zh-cn.html %.zh-hk.html %.zh-tw.html: %.wml \
 		$(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
+		$(TOCN) $(TOHK) $(TOTW) $(ZHTEMPLATE) $(GETTEXTDEP) \
+		$(COMMONPICS_ZH)
+	$(WML) $(<F)
+	@echo -n " * Converting: [zh_CN.GB2312], "
+	@$(B5TOGB) < $*.zh-cn.html.tmp > $*.zh-cn.html
+	@rm -f $*.zh-cn.html.tmp
+	@$(TOCN) $*.zh-cn.html
+	@echo -n "[zh_HK.Big5], "
+	@mv -f $*.zh-hk.html.tmp $*.zh-hk.html
+	@$(TOHK) $*.zh-hk.html
+	@echo "[zh_TW.Big5]."
+	@mv -f $*.zh-tw.html.tmp $*.zh-tw.html
+	@$(TOTW) $*.zh-tw.html
+else
+%.zh-cn.html %.zh-hk.html %.zh-tw.html: %.wml \
 		$(TOCN) $(TOHK) $(TOTW) $(ZHTEMPLATE) $(GETTEXTDEP) \
 		$(COMMONPICS_ZH)
 	$(WML) $(<F)
