@@ -97,6 +97,11 @@ while 1:
 			check_site(mirror, site['archive-http'] + 'project/')
 			if site.has_key('maintainer'):
 				print "  Maintainer: " + site['maintainer']
+		if site.has_key('site') and site.has_key('nonus-http') and official.search(site['site']):
+			mirror = 'http://' + site['site'] + site['nonus-http'] + 'project/trace/'
+			check_site(mirror, site['nonus-http'] + 'project/')
+			if site.has_key('maintainer'):
+				print "  Maintainer: " + site['maintainer']
 		site = {}
 		sitenotempty = 0
 	elif cont_line.match(newline):
