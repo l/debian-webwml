@@ -13,9 +13,9 @@ include $(WMLBASE)/Make.common
 
 include $(WMLBASE)/Make.dep.templ    
 
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml ../../english/consultants/consultant.data
-	./count
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml $(ENGLISHSRCDIR)/consultants/consultant.data
+# You might want to comment out the following two lines if it's a translation
+	$(ENGLISHSRCDIR)/consultants/count
 	$(WML) $(<F)
-#	wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG) $(WMLEPILOG) $(<F)
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/consultant.wml
 	$(WML) $(<F)
