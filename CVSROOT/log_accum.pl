@@ -270,7 +270,10 @@ Mail-Copies-To: never
 
 EOF
     print MAIL join("\n", @text), "\n";
-    close(MAIL);
+    close MAIL;
+    if ($debug) {
+	print STDERR "mail_notification(): name = ", $name, "; subject = ", $subject, ".\n";
+    }
 }
 
 sub write_commitlog {
