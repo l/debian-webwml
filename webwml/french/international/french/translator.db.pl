@@ -122,7 +122,7 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Thomas Marteau' => {
-                        email       => 'marteaut@esiee.fr',
+                        email       => 'marteaut@tuxfamily.org',
                         summary     => 2,
                         logs        => 1,
                         diff        => 1,
@@ -209,4 +209,5 @@ sub init_translators {
 }
 
 1;
+
 
