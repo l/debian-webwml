@@ -7,6 +7,7 @@
 <define-menu-item name="beowulf">
    [EN:Debian for Beowulf:]
    [AR:Debian for Beowulf:]
+   [CA:Debian per a Beowulf:]
    [DA:Debian til Beowulf:]
    [DE:Debian für Beowulf:]
    [EL:Debian for Beowulf:]
