@@ -191,12 +191,12 @@ END
 	if ($html) {
           print <<END;
   A <strong>Primary mirror</strong> site has good bandwidth, is available 24 hours a day,
-  and has an easy to remember names of the form ftp.&lt;country&gt;.debian.org.
+  and has an easy to remember name of the form ftp.&lt;country&gt;.debian.org.
 END
 	} else {
 	  print <<END;
   A Primary mirror site has good bandwidth, is available 24 hours a day,
-  and has an easy to remember names of the form ftp.<country>.debian.org.
+  and has an easy to remember name of the form ftp.<country>.debian.org.
 END
 	}
 
