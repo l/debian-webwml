@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 
-open(TRANS, '../../../check_trans.pl -v -C ../../.. 2>&1 |');
+open(TRANS, 'cd ../../.. && ./check_trans.pl -v french 2>&1 |');
 print "\$automatic = {\n";
 
 $line = <TRANS>;
