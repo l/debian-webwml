@@ -2,11 +2,10 @@
 
 # Usage: new_translation.pl <file1> <file2>...
 
-# 	This will update every version of <file?> so that they
-# 	know about the new translation. Each <file?> should be
-# 	the path to a .wml file (without the language directory).
+# 	This will update every version of <file?>, each of which should be
+#	the path to a .wml file (without the language directory).
 
-# Note: this script is replaced/obsoleted by touch_old_files.pl
+# Note: this script old functionality is replaced by touch_old_files.pl
 
 require 5.001;
 use strict;
@@ -58,29 +57,35 @@ opendir(DIR, ".") || die "can't open directory $!";
 closedir DIR;
 # print @languages;
 
+my $relhtmlbase = "../debian.org/";
+
 foreach $file (@ARGV) {
-   foreach $lang (@languages) {
+  $file =~ s,^english/,,;
+  my $level = 0;
+  my $destfile = "";
+  my @parts = split '/', $file;
+  my $dir = pop @parts;
+  my $path = join '/', @parts;
+# system ("mkdir -p $relhtmlbase$path");
+  while ($dir) { $destfile .= "../"; $dir = pop @parts; }
+  $destfile .= $relhtmlbase . $file;
+  foreach $lang (@languages) {
       next if ($lang eq "CVS");
-      @parts = split ?\/?,$file;
-      $filename = pop(@parts);
-      $path = join('/', @parts);
       if ( -f "$lang/$file" ) {
          $pid = fork;
          if ($pid) { # parent
             # do nothing
          }
          else {      # child
-	    $filename =~ s/.wml$/.$langs{$lang}.html/;
-	    if ($path eq '') { print "running 'make -C $lang $filename'\n" }
-	    else { print "running 'make -C $lang/$path $filename'\n" };
-            system("make -C $lang/$path $filename") == 0 or die "$!\n";
+	    $destfile =~ s/.wml$/.$langs{$lang}.html/;
+            print "Making the " . ucfirst $lang . " copy:\n";
+            system("make -C $lang/$path $destfile") == 0 or die "$!\n";
             exit 0;
          }
          waitpid($pid,0);
       }
       else {
-	 if ($path eq '') { print "$lang/$file doesn't exist\n" }
-	 else { print "$lang/$path/$file doesn't exist\n" };
+         print "The file isn't translated into " . ucfirst $lang . ".\n";
       }
-   }
+  }
 }
