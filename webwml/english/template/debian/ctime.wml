@@ -232,6 +232,7 @@ sub newsdate {
 # Input: A date in ISO format (YYYY-MM-DD).
 sub spokendate {
 	my ($year, $mon, $mday) = split /-/, $_[0];
+	my $appday;
 	# Make sure the date is in the YYYY-MM-DD format
 	return $_[0] unless $mday;
 	return $_[0] if ($year < 1900);
@@ -246,13 +247,13 @@ sub spokendate {
 		# or "th", according to the numeric date.
 
 		SWITCH: {
-			$mday .= "st", last SWITCH if ($mday % 10 == 1 && $mday != 11);
-			$mday .= "nd", last SWITCH if ($mday % 10 == 2 && $mday != 12);
-			$mday .= "rd", last SWITCH if ($mday % 10 == 3 && $mday !=13);
-			$mday .= "th";
+			$appday = "st", last SWITCH if ($mday % 10 == 1 && $mday != 11);
+			$appday = "nd", last SWITCH if ($mday % 10 == 2 && $mday != 12);
+			$appday = "rd", last SWITCH if ($mday % 10 == 3 && $mday != 13);
+			$appday = "th";
 		}
 
-		return sprintf("%s %s, %d", $mon_str, $mday, $year);
+		return sprintf("%s %d%s, %d", $mon_str, $mday, $appday, $year);
 	}
 	# Add any other special cases here as elsif cases
 	else
