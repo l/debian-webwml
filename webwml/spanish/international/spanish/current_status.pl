@@ -115,7 +115,7 @@ do 'documents-bd.pl';
 	'since'			=> '31/01/1999',
 	'translation_name'	=> 'Tutorial de Debian',
 	'translation_maintainer'=> ['Javier Fernández-Sanguino Peña <jfs@computer.org>'],
-	'translation_cvs_url' 	=>'http://cvs.debian.org/ddp/manuals.sgml/debian-tutorial.es.sgml?cvsroot=debian-doc'
+	'translation_cvs_url' 	=>'http://cvs.debian.org/ddp/manuals.sgml/tutorial/debian-tutorial.es.sgml?cvsroot=debian-doc'
 },
 
 
@@ -203,6 +203,7 @@ do 'documents-bd.pl';
 	'status'		=> 2,
 	'base_revision'		=> '0.9',
 	'translation_maintainer' => ['Lluís Vilanova <xscript.geo@yahoo.com>'],
+	'cvs-url'               => 'http://cvs.debian.org/ddp/manuals.sgml/meta/meta.es.sgml?cvsroot=debian-doc'
 	'since'			=> '08/02/2000'
 },
 
