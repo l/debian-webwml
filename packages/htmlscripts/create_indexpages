@@ -119,7 +119,9 @@ foreach my $lang ( @langs ) {
     setlocale ( LC_ALL, $locale )
 	or do { warn "W: couldn't set locale $locale, using default\n" ;
 		setlocale( LC_ALL, get_locale() ) 
-		    or next; 
+		    or do { warn "W: couldn't set default locale either\n";
+			    next if ($lang ne 'en');
+			  };
 	    };
     my $title = sprintf( gettext( "Software Packages in &ldquo;%s&rdquo;" ), 
 			 $distribution );
@@ -146,7 +148,8 @@ foreach my $lang ( @langs ) {
     $index_page .= trailer( '../..', 'index', $lang, @langs );
     my $dest_dir = "$html_root/$distribution";
     if(file_changed(\%md5s, "$dest_dir/index.$lang.html", $index_page)) {
-	sysopen(FILEH, "$dest_dir/index.$lang.html", 
+	print "Write to $dest_dir/index.$lang.html\n" if $verbose;
+	sysopen(FILEH, "$dest_dir/index.$lang.html",
 		O_WRONLY | O_TRUNC | O_CREAT, 0664)
 	    || die "E: Can\'t open $dest_dir/index.$lang.html: $!";
 	my $now_time = time_stamp();
