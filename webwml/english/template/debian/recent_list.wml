@@ -3,7 +3,7 @@
 # grabs the date and title of the last $number news items from directory $year.
 # If $number is zero then all the news items are shown.
 
-sub get_recent_news {
+sub get_recent_list {
   my ($year, $number, $eng_dir) = @_;
 
   opendir(DIR, "$eng_dir/$year");
@@ -18,7 +18,7 @@ sub get_recent_news {
      if (/(\d+\w?).wml/) {
         $base = $1;
      }
-     $date = ''; $title = '';
+     $date = ''; $title = ''; $desc = '';
      foreach $line (<FILE>) {
         if ($line =~ /^<define-tag pagetitle>(.*)<\/define-tag>$/) {
            $title = $1;
@@ -33,10 +33,13 @@ sub get_recent_news {
            $desc = $1;
         }
         if ($title && $date) {
-           $str .= "<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong> - $desc<br>\n";
+           $str1 = "<tt>[$date]</tt> <strong><a href=\"$year/$base\">$title</a></strong> - $desc<br>\n";
+		}
+        if ($title && $date && $desc) {
            last;
         }
      }
+	 $str .= $str1;
      close FILE;
      if ($count eq $number) { last; }
   }
