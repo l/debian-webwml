@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 
 # $Id$
 #
@@ -31,14 +31,14 @@ if ($ARGV[4]) { $nodir = $ARGV[4]; };
 
 #first update current branch, then the reference one
 printf "Updating from CVS repository **local branch**...\n";
-`cvs update`;
+`cvs update -d`;
 
 chdir $rdir || die "*** No such root dir: $rdir\n";
 chomp($rdir = `pwd`);
 
 chdir $odir || die "*** No such dir: $rdir + $odir\n";
 printf "\nUpdating from CVS repository **reference branch**...\n";
-`cvs update`;
+`cvs update -d`;
 
 chdir ".." || die "*** No such root dir: $rdir\n";
 @files  = `find "./$odir" -name '*' -print`;
