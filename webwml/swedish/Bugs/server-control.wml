@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debians felrapporteringssystem - kontrollservern" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.21"
+#use wml::debian::translation-check translation="1.23"
 
 <h1>Introduktion till e-postservern för felrapportskontroll och -manipulering</h1>
 
@@ -130,6 +130,32 @@ Tillgängliga allvarlighetsgrader är:
 <p>
 För <A href="Developer#severities">betydelser</A>, se
 den övergripande utvecklardokumentationen för felrapporteringssystemet.
+
+<dt><code>clone</code> <var>felnummer</var> [ <var>nya id</var> ]
+<dd>
+
+Klonkommandot låter dig duplicera en felrapport.
+Det är användbart när en enda felrapport faktiskt indikerar att flera olika
+fel har uppstått.
+&rdquo;<var>Nya id</var>&rdquo; är negativa värden, avdelade med blanksteg,
+vilka kan användas i följande styrkommandon för att nå de nyduplicerade
+felen.
+En ny rapport genereras för varje nytt id.
+
+<p>Exempel på användning:</p>
+
+<pre>
+       clone 12345 -1 -2
+       reassign -1 foo
+       retitle -1 foo: foo sucks
+       reassign -2 bar
+       retitle -2 bar: bar sucks when used with foo
+       severity -2 wishlist
+       clone 123456 -2
+       reassign -2 foo
+       retitle -2 foo: foo sucks
+       merge -1 -2
+</pre>
 
 <dt><code>merge</code> <var>felnummer</var> <var>felnummer</var> ...
 <dd>
