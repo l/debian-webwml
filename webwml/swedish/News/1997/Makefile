@@ -14,7 +14,9 @@ include $(WMLBASE)/Make.common
 include $(WMLBASE)/Make.dep.templ    
 
 # Do Not modify the following line
-index.$(LANGUAGE).html: index.wml $(wildcard 1997*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
+index.$(LANGUAGE).html: index.wml $(wildcard 1997*.wml) \
+                        $(wildcard 1997*.title) \
+                        $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
 	$(WML) index.wml
 
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/news.wml
