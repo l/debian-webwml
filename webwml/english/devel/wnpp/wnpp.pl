@@ -127,7 +127,7 @@ foreach my $bug (sort { $ita{$a} cmp $ita{$b} } keys %ita) {
     push @being_adopted_html, 
          "<li><a href=\"http://bugs.debian.org/$bug\">$ita{$bug}</a>";
     push @being_adopted_html,
-         " (<a href=\"http://packages.debian.org/$pkg\">package info</a>),";
+         " (<a href=\"http://packages.debian.org/$pkg\">package info</a>), ";
     if ( $age{$bug} == 0 ) { push @being_adopted_html, "in adoption since today." }
     elsif ( $age{$bug} == 1 ) { push @being_adopted_html, "in adoption since yesterday." }
     else { push @being_adopted_html, "$age{$bug} days in adoption." };
