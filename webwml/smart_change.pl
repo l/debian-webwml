@@ -103,9 +103,10 @@ foreach my $lang (@opt_l) {
                         s/(translation="?)($origrev|$nextrev)("?)/$1$nextrev$3/;
                         verbose("Bump version number to $nextrev");
                 }
-                $transtext .= &$substitute($_);
+		$transtext .= $_;
         }
         close (TRANS);
+	$transtext = &$substitute($transtext);
         if ($origtext ne $transtext) {
                 verbose("Writing $transfile");
                 open (TRANS, "> $transfile");
