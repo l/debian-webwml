@@ -158,7 +158,7 @@ my $grep = "grep -h ";
 if ($case =~ /^insensitive/) {
   $grep .= "-i ";
 }
-$grep .= "$searchkeyword";
+$grep .= "\"\\(^\\|/\\)\"$searchkeyword";
 if ($searchmode eq "searchfiles") {
   $grep .= "\"[ \t]\"";
 } elsif ($searchmode eq "searchfilesanddirs") {
