@@ -119,7 +119,7 @@ sub ReadPasswordFromFile {
   # check to make sure the time is positive, and that the auth token
   # has not expired
   my $tdiff = (time - $time);
-  &HTMLError("Your authentication token has expired. Please <a href=\"$config{webloginhtml}\">relogin</a>") if (($tdiff < 0) || ($tdiff > $config{authexpires}));
+  &HTMLError("Your authentication token has expired. Please <a href=\"https://$ENV{SERVER_NAME}/$config{webloginhtml}\">relogin</a>") if (($tdiff < 0) || ($tdiff > $config{authexpires}));
   
   return Decrypt($cipher, $passwd);
 }
