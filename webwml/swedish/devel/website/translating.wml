@@ -1,14 +1,17 @@
 #use wml::debian::template title="Översätta Debians webbsidor" BARETITLE=true
-#use wml::debian::translation-check translation="1.30"
+#use wml::debian::translation-check translation="1.34"
 
-<P>För att göra översättarnas jobb så enkelt som möjligt genereras sidorna
+<p>
+För att göra översättarnas jobb så enkelt som möjligt genereras sidorna
 på ett lite annorlunda sätt än de flesta av er är vana vid,
 webbsidorna genereras med källkod som är uppmärkt med
 <a href="http://www.engelschall.com/sw/wml/"><tt>wml</tt></a>.
 Det är separata kataloger för varje språk.
+</p>
 
 <p>Om du planerar att påbörja en helt ny översättning av Debians webbplats,
 se <a href="#completenew">sektionen om att påbörja en översättning</a>.
+</p>
 
 <h2>Översätta enskilda sidor</h2>
 
@@ -19,6 +22,7 @@ Om du vill hjälpa till med en specifik översättning,
 <a href="using_cvs">använd CVS</a> för att hämta de aktuella källfilerna.
 Du behöver åtminstone hämta ut två kataloger: <tt>english/</tt> och
 <tt>&lt;språk&gt;/</tt>.
+</p>
 
 <p>För att översätta en enskild sida från engelska till ditt språk,
 kopiera den ursprungliga .wml-filen från <tt>english/foo/bar</tt> till
@@ -33,114 +37,138 @@ När detta är gjort översätter du hela sidan och sänder den till
 CVS-servern.
 Du bör testa sidan genom att ge kommandot <tt>make
 fil.&lt;språk&gt;.html</tt>.
+</p>
 
 <h2><a name="completenew">Påbörja en ny översättning</a></h2>
 
 <p>Om du vill börja översätta Debians webbsidor till ett nytt språk,
 kontakta oss per e-post (på engelska) på adressen
 <a href="mailto:webmaster@debian.org">webmaster@debian.org</a>.
-
-<p>
-Det första som måste göras för en ny översättning är att lägga in ditt
-språks "<em>skivor</em>" (slices) i våra grundläggande WML-mallar.
-Sidan om <a href="using_wml">att använda wml</a> har mer information om
-skivor.
-De första skivor du bör översätta är de som visas på alla webbsidorna,
-såsom nyckelorden för sidhuvud, ALT-texter för bilder, samt sidfoten.
 </p>
 
 <p>
-Det säkraste stället att börja översätta är i filen 
-<code>common_translation.wml</code>.
-Du behöver inte översätta alla skivor i samtliga mallar, bara de som de
-sidor du hittills översatt faktiskt behöver.
+När du har hämtat ut webwml/-katalogen och (åtminstone) webwml/english/
+börjar du med att skapa en ny katalog för din översättning på samma nivå som
+english/ och de övriga.
+Namnet på översättningen måste vara på engelska och skrivet helt med små
+bokstäver (dvs. "swedish", inte "Svenska").
 </p>
 
 <p>
-Några av mallarna innehåller förutom skivor även Perlvariabler:
+Kopiera filerna <tt>Make.lang</tt> och <tt>.wmlrc</tt> från katalogen
+english/ till den nya översättningens katalog.
+Dessa filer krävs för att bygga din översättning från WML-filerna.
+De har formgivits så att du efter att ha kopierat dem till den nya
+språkkatalogen bara behöver ändra dessa punkter:
 </p>
 
-<ul>
-  <li>Mallen <code>countries.wml</code> innehåller namn på länder.
-      De används t.ex överst på varje sida där det finns en lista över
-      webbplatsspeglar.
-      <br>
-      Filen har variabler som liknar skivor:
-      lägg in rader på formen &rdquo;<code>XY =&gt; "Ett land"</code>&rdquo;
-      i varje block, där du XY är landskoden skriven med stora bokstäver och
-      den citerade strängen till höger om &rdquo;<code>=&gt;</code>&rdquo;
-      översätts.
+<ol>
+  <li>Variabeln LANGUAGE måste ändras i filen <tt>Make.lang</tt>
+  </li>
 
-  <li>Mallen <code>language_names.wml</code> innehåller namn på språk.
-      De används t.ex nederst på varje sida där det finns en lista över
-      översättningar.
-      <br>
-      Du bör börja genom att kopiera textblocket
-      <code>en =&gt; { <var>text...</var> }</code>
-      och klistra in det efter det sista liknande blocket i filen.
-      Ändra sedan det &rdquo;en&rdquo; som står före blocket till din
-      två bokstäver långa språkkod och översätt språknamnen inom
-      citattecken till höger om varje &rdquo;<code>=&gt;</code>&rdquo;.
-      <br>
-      Observera att om ditt språks ord för sitt eget språk måste skriva
-      eventuella icke-ASCII-tecken som entiteter, antingen på formen
-      &amp;namn eller &amp;#nummer;, eftersom de läggs in på sidor i
-      flera olika teckenkodningar.
-</ul>
+  <li>Variablerna CUR_LANG, CUR_ISO_LANG och CHARSET måste ändras i filen
+      <tt>.wmlrc</tt>.
+      Lägg till den listan även CUR_LOCALE om du behöver den för sortering.
+  </li>
+
+  <li>Vissa språk kan kräva extra hantering för att hantera
+      teckenuppsättningen.
+      Detta kan göras med wmls parametrar --prolog och --epilog.
+      Använd variablerna WMLPROLOG och WMLEPILOG i <tt>Make.lang</tt>
+      för att göra
+      detta.
+  </li>
+
+  <li>Variabeln LANGUAGES måste ändras i toppnivåfilen <tt>webwml/Makefile</tt>
+      så att ditt språk
+      byggs tillsammans med de andra på www.debian.org.
+      Vi föredrar om du låter en i webmastergruppen göra denna ändring,
+      eftersom du kanske inte vet om din översättning fungerar om den
+      hämtas ut från CVS på nytt, något som skulle kunna störa
+      byggprocessen för resten av webbplatsen.
+  </li>
+</ol>
+
+<p>
+När detta är gjort, lägger du in följande i en ny fil vid namn
+&rdquo;Makefile&rdquo; i katalogen:
+</p>
+
+<pre>
+<protect>include $(subst webwml/<var>dinspråkkatalog</var>,webwml/english,$(CURDIR))/Makefile</protect>
+</pre>
+
+<p>
+(Ersätt naturligtvis <var>dinspråkkatalog</var> med namnet på ditt språks
+katalog.)
+</p>
+
+<p>
+Skapa nu en underkatalog i din språkkatalog som du kallar för
+&rdquo;po&rdquo;, och kopiera samma Makefile till den katalogen
+(<kbd>cp ../Makefile .</kbd>).
+</p>
+
+<p>
+I po/-katalogen kör du <kbd>Make init-po</kbd> för att skapa den
+ursprungliga uppsättningen *.po-filer.
+</p>
+
+<p>
+Nu när du har stommen på plats kan du börja lägga till översättningar i våra
+delade WML-märken som används i mallarna.
+De första mallarna du bör översätta är de som förekommer på samtliga
+webbsidor, som nyckelorden i sidhuvudet, ALT-attributen för bilderna, och
+sidfoten.
+</p>
+
+<p>
+Börja översätta i filen <code>po/templates.<var>xy</var>.po</code> (där
+<var>xy</var> är ditt språks tvåbokstavskod).
+För varje <code>msgid "<var>någonting</var>"</code> finns det från början en
+<code>msgstr ""</code> där du skall fylla i översättningen av
+<var>something</var> innanför citationstecknen efter <code>msgstr</code>.
+</p>
+
+<p>
+Du behöver inte översätta alla strängarna i alla .po-filer, bara de som de
+sidor du för tillfället har översatt faktiskt behöver.
+För att avgöra om du behöver översätta en sträng, se kommentarerna i
+.po-filen precis ovanför varje <code>msgid</code>-post.
+Om den fil som åberopas finns i <tt>english/template/debian</tt> bör du
+med stor sannolikt översätta den.
+Om inte kan du skjuta upp den till senare när du faktiskt översätter den del
+av webbplatsen som behöver den.
+</p>
 
 <p>
 Om du inte är säker på om du gjorde rätt, fråga på sändlistan debian-www
 innan du lägger in ändringarna.
 </p>
 
-<p>Du bör även <a href="navbar_images">översätta texten på bilderna</a>
-i den röda navigationslisten.
+<p>
+Du bör även <a href="navbar_images">översätta texten på bilderna</a> i den
+röda navigationslisten.
 </p>
-
-<p>När mallskelettet är klart kan du börja översätta framsidan.
-För att göra detta behöver du en katalog för din översättning vid sidan av
-english/ och andra.
-Kopiera filerna <tt>Make*</tt> och <tt>.wmlrc</tt>
-från english/-katalogen till den nya översättningens katalog.
-</p>
-
-<p>Makefile:rna har skrivits så att nästan ingenting måste ändras för när de
-kopieras till en ny språkkatalog för att förbereda översättningen.
-
-<p>Endast följande ändringar förväntas behövas:
-
-<ol>
-  <li>Variabeln LANGUAGE måste ändras i filen webwml/&lt;språk&gt;/Make.lang
-
-  <li>Variablerna CUR_LANG, CUR_ISO_LANG och CHARSET måste ändras i filen
-      webwml/&lt;språk&gt;/.wmlrc.
-      Lägg till den listan även CUR_LOCALE om du behöver den för sortering.
-
-  <li>Vissa språk kan kräva extra hantering för att hantera
-      teckenuppsättningen.
-      Detta kan göras med wmls parametrar --prolog och --epilog.
-      Använd variablerna WMLPROLOG och WMLEPILOG i Make.lang för att göra
-      detta.
-
-  <li>Variabeln LANGUAGES måste ändras i webwml/Makefile så att ditt språk
-      byggs tillsammans med de andra på www.debian.org.
-      Vi föredrar om du låter en i webmastergruppen göra denna ändring,
-      eftersom du kanske inte vet om din översättning fungerar om den
-      hämtas ut från CVS på nytt, något som skulle kunna störa
-      byggprocessen för resten av webbplatsen.
-</ol>
 
 <p>Kommentarer i filerna indikerar om det finns saker som inte får
 översättas; respektera dem.
+</p>
 
 <p>Observera: Om du upptäcker att du måste göra andra ändringar ber vi dig
 kontakta debian-www med information om vad du ändrat, och varför, så att
 problemet kan avhjälpas.
+</p>
+
+<p>
+När mallstommen är färdig kan du börja översätta ingångssidan.
+</p>
 
 <p>Du behöver inte oroa dig för kataloger som listas i SUBS-variabeln i
 Makefile:n, även om de inte existerar i översättningskatalogen.
 När du översätter en underkatalog måste du se till att den omnämns i
 SUBS-variabeln för sin moderkatalog, annars byggs den inte.
+</p>
 
 <p>
 Kopiera varje fil från ../english/, översätt den, testa den med
@@ -149,12 +177,14 @@ och när du är klar,
 lägger du in den <a href="using_cvs">i CVS</a>.
 Se till att din översättning kan byggas korrekt, för om den inte göra det
 kan den störa byggprocessen för hela webbplatsen.
+</p>
 
 <p>När du kopierar filer, kopiera inte CVS-katalogerna eller filer i dem
 från den engelska katalogen till din egen.
 Om du gör så av misstag och senare sänder in dina ändringar kommer cvs att
 uppdatera de filerna under english/ med din översättning, vilket kommer att
 förvirra/reta många.
+</p>
 
 <p>
 Eftersom vi använder
@@ -163,9 +193,7 @@ Eftersom vi använder
 formen <tt>fil.html</tt> utan <tt>fil.&lt;språk&gt;.html</tt>, där
 <tt>&lt;språk&gt;</tt> är tvåbokstavskoden för språket enligt ISO 639
 (t.ex <tt>sv</tt> för svenska).
-
-<p>Observera: När en sida först översätts kommer inte de andra språken att
-skapa länkar till din sida förrän de skapas på nytt.
+</p>
 
 <h3>Sagans fortsättning</h3>
 
@@ -186,7 +214,9 @@ förklaringar och annan användbar information.
     antalet översatta filer, se <a href="stats/">statistiken</a>.
 </ul>
 
-<P>Förhoppningsvis kommer du att finna att det arbete vi har lagt ner kommer
+<p>
+Förhoppningsvis kommer du att finna att det arbete vi har lagt ner kommer
 att göra översättningen av sidorna så enkel som möjligt.
 Som sagt var, om du har några frågor kan du ställa dem på sändlistan
 <a href="mailto:debian-www@lists.debian.org">debian-www</a>.
+</p>
