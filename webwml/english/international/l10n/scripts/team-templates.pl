@@ -1,3 +1,5 @@
+#include "$(ENGLISHDIR)/international/l10n/scripts/l10nheader.wml"
+
 <: 
 sub output_details {
     my $data = shift;
