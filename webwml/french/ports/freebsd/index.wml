@@ -1,0 +1,100 @@
+#use wml::debian::template title="Debian GNU/FreeBSD" BARETITLE="true"
+#use wml::debian::translation-check translation="1.2" maintainer="Thomas Marteau"
+
+<p>Debian GNU/FreeBSD est le portage basé sur un noyau 
+<a href="http://www.freebsd.org/">FreeBSD</a>, les utilitaires liés au noyau, 
+la bibliothèque C et quelques utilitaires spécifiques, le tout couplé à 
+un espace utilisateur «&nbsp;normal&nbsp;» Debian (GNU). Le portage est en ce 
+moment orienté vers une architecture Intel x86 uniquement.</p>
+
+<p>Le premier responsable du portage est Nathan Hawkins.</p>
+
+<p>Les paquets actuellement disponibles sont téléchargeables depuis 
+<url "http://satie.debian.org/~utsl/freebsd-i386/">.</p>
+
+<p>Reportez-vous aux pages du portage <a href="../netbsd/">NetBSD</a> 
+qui lui est très proche pour plus d'informations d'ordre historique.</p>
+
+<h2>État d'avancement</h2>
+
+<p><i>Dernière mise à jour le 22 avril 2002</i></p>
+
+<p>Les principales parties de FreeBSD sont empaquetées et prêtes pour la 
+mise à disposition depuis les serveurs. Je les conserve jusqu'à ce que 
+crypto soit dans <i>main</i>. Dès lors, on les mettra à disposition en tant 
+qu'expérimentaux jusqu'à la sortie de <i>Woody</i>.</p>
+
+<p>Le système de base est opérationnel. Cependant, il persiste certains points 
+à régler&nbsp;:</p>
+
+<h3>Problèmes avec certains paquets</h3>
+
+<ul>
+    <li>sysvinit est patché et opérationnel mais des problèmes subsistent vu 
+	que l'état des modifications ne permet pas de l'inclure dans 
+	la version originale sans casser Linux&nbsp;;
+    </li>
+    <li>shadow est salement modifié et demande encore du travail.
+	<i><b>Mise à jour&nbsp;: une bonne partie du travail est faite. 
+	La situation est presque décente maintenant. Il faut encore pousser 
+	les tests.</b></i>&nbsp;;
+    </li>
+    <li>apt-get fait beaucoup d'erreurs de segmentation. Il a l'air de 
+	fonctionner la plupart du temps sur les paquets sources mais 
+	il a des problèmes avec les versions binaires. 
+	<i><b>Mise à jour&nbsp;: ceci est réglé maintenant.</b></i>&nbsp;;
+    </li>
+    <li>groff ne compile pas avec la version actuelle à cause des soucis 
+	d'internationalisation avec libc. 
+	<i><b>Mise à jour&nbsp;: ceci a été corrigé quand langinfo.h 
+	a été ajouté dans la version actuelle.</b></i>&nbsp;;
+    </li>
+    <li>gcc/binutils&nbsp;: quelque chose empêche gcc -g d'inclure les 
+	informations nécessaires au débogage. C'est probablement les binutils 
+	et ça cache peut-être autre choses. 
+	<i><b>Mise à jour&nbsp;: ceci fonctionnne maintenant. 
+	Bizarre...</b></i>&nbsp;;
+    </li>
+    <li>util-linux est une cause perdue. J'ai abandonné et j'ai fait un 
+	nouveau paquet, util-bsd&nbsp;;
+    </li>
+    <li>e2fsprogs ne compile pas et ce n'est pas prévu pour bientôt.
+    </li>
+</ul>
+
+<h3>Problèmes généraux avec le portage</h3>
+
+<ul>
+    <li>libc ne contient pas -lintl. Beaucoup de paquets ne le vérifient pas 
+	et il faut donc les modifier&nbsp;;
+    </li>
+    <li>getopt et d'autres fonctions -liberty ne sont pas dans libc. Beaucoup 
+	de paquets propres à Debian sont cassés ainsi. 
+	<i><b>Mise à jour&nbsp;: j'ai porté le getopt_long de NetBSD et cela 
+	fonctionne bien. Il semble que ce soit une solution.</b></i>&nbsp;;
+    </li>
+    <li>pas de fonction pour des caractères codés sur plusieurs octets. 
+	Ceci casse la fonctionnalité UTF dans libncurses et dans d'autres 
+	paquets. 
+	<i><b>Mise à jour&nbsp;: libiconv est empaqueté. Ceci change les 
+	choses.</b></i>&nbsp;;
+    </li>
+    <li>une implémentation totalement différente des mots de passe cachés. 
+	BSD&nbsp;4.4 a introduit apparemment un système incompatible. 
+	Il est peut-être meilleur mais il n'y a pas de fonctions de 
+	bibliothèque standard pour le gérer. getspnam et autres amis 
+	n'existent pas.	
+	<i><b>Mise à jour&nbsp;: ceci est corrigé. J'ai écrit la 
+	bibliothèque, libshadow et c'était bon.</b></i>&nbsp;;
+    </li>
+    <li>l'utilisation de la dépendance avec le paquet libc6-dev. Ceci est 
+	intolérable et doit être arrêté&nbsp;!&nbsp;;
+    </li>
+    <li>l'utilisation de gcc&nbsp;3.0. Ceci n'est pas critique vu que d'autres 
+	portages se basent dessus&nbsp;;
+    </li>
+    <li>il faut un unique identifiant pour <i>configure</i>. Les 
+	configurations de FreeBSD sont souvent fausses pour Debian et ce 
+	serait agréable que les changements pour Debian ne cassent pas 
+	FreeBSD. Le plus gros morceau est libtool.</li>
+</ul>
