@@ -85,7 +85,7 @@
 [EN:Porting:]
 [AR:Porting:]
 [DA:Porting:]
-[DE:Porting:]
+[DE:Portierung:]
 [EL:Porting:]
 [EO:Porting:]
 [ES:Porting:]
