@@ -43,7 +43,7 @@
   [ES:<P><EM>Note:</EM> The original is newer than this translation.</P>:]
   [FI:<P><EM>Note:</EM> The original is newer than this translation.</P>:]
   [FR:<P><EM>Note:</EM> The original is newer than this translation.</P>:]
-  [HR:<P><EM>Note:</EM> The original is newer than this translation.</P>:]
+  [HR:<P><EM>NB:</EM> Originalni dokument je noviji od ovog prijevoda.</P>:]
   [HU:<P><EM>Note:</EM> The original is newer than this translation.</P>:]
   [IT:<P><EM>Note:</EM> The original is newer than this translation.</P>:]
   [JA:<P><EM>Note:</EM> The original is newer than this translation.</P>:]
@@ -80,8 +80,8 @@
       please see the <A HREF="$link">original</A>.</STRONG></P>:]
   [FR:<P><STRONG>Attention : cette traduction n'est plus à jour, \
       please see the <A HREF="$link">original</A>.</STRONG></P>:]
-  [HR:<P><STRONG>Warning! This translation is too out of date, \
-      please see the <A HREF="$link">original</A>.</STRONG></P>:]
+  [HR:<P><STRONG>Pa¾nja! Ovaj prijevod je jako zastario, \
+      molimo pogledajte <A HREF="$link">original</A>.</STRONG></P>:]
   [HU:<P><STRONG>Warning! This translation is too out of date, \
       please see the <A HREF="$link">original</A>.</STRONG></P>:]
   [IT:<P><STRONG>Warning! This translation is too out of date, \
@@ -111,10 +111,8 @@
 <perl>
 
 sub check_translation {
-# Checks the current document (translated) with its original
-# version, receives as input the name of the document and
-# the CVS version it was translated from.
 
+# Input parameters:
 my ($translation, $file, $original, $mindelta, $maxdelta) = @_;
 
 # This is the maximum difference between a translated
@@ -125,9 +123,8 @@ $max_versions = $maxdelta || 5;
 # document and the original before considering it aged
 $min_versions = $mindelta || 2;
 
-# Turn this to '1' to set debugging ouput
-# ¡Only do this if you know what you are doing!
-# If you checkin to CVS this should be set to 0
+# Set this to >= 1 to get debugging output.
+# Remember, if you checkin to CVS this needs to be set to 0!
 $debug = 0;
 
 # This is the language code of the original (to make a link)
@@ -141,84 +138,64 @@ $original_dir = "../$original" || "../english";
 
 # Open the original Makefile
 open (MAKE,"<Makefile")
-	or return;
+	or die "Couldn't open Makefile: $!\n";
 
-# We could also do this same grepping ?faster?
+# We could also do this same grepping faster (?)
 # Or we could use also $WML_SRC_DIRNAME and then cut out to the root
-while ($line = <MAKE>) 
-{
-        chomp $line;
-        if ( $line =~ /^WMLBASE\s*=\s*(.*)/ )
-        {
-                $wmlbase = $1; 
-        }
-        if ( $line =~ /^CUR_DIR\s*=\s*(.*)/ )
-        {
-                $current_dir = $1; 
-        }
-        last if $wmlbase and $current_dir;
+while (<MAKE>) {
+  $wmlbase = $1 if /^WMLBASE\s*=\s*(.*)/;
+  $current_dir = $1 if /^CUR_DIR\s*=\s*(.*)/;
+  last if $wmlbase and $current_dir;
 }
 close MAKE;
 
-# Now read the original CVS file in by opening $wmlbase/$original_dir/$current_dir/CVS/Entries
-# It has to go "back" to the root dir and the "forward" to the same dir we are in
-# but in the language dir.
- 
-open (CVS_ENTRY,"<$wmlbase/$original_dir/$current_dir/CVS/Entries")
-	or return;
+# special case for top-level translations, which have $CUR_DIR empty
+if ($current_dir eq "") {
+	@full_directory_name = split '/', $WML_SRC_DIRNAME;
+	$current_dir = pop @full_directory_name;
+}
 
-while ( $line =<CVS_ENTRY> )
-{
-        chomp $line;
-        print "Reading $line \n" if $debug;
-        if ( $line =~ /\/\Q$file\E\/([\d\.]*)/ ) {
-                $version = $1;
-        }
+# Read the original CVS/Entries file end extract version from it
+
+open (CVS_ENTRY,"<$wmlbase/$original_dir/$current_dir/CVS/Entries")
+	or die "Couldn't open CVS/Entries file: $!\n";
+
+while (<CVS_ENTRY>) {
+        chomp;
+# really useless -- print "Reading $line \n" if $debug;
+        ($version) = $_ =~ /\/\Q$file\E\/([\d\.]*)/;
         last if $version;
 }
-# TODO: Should check if version not found (maybe yell?)
+close CVS_ENTRY;
 
-# Here we compare the original version with the translated one
-# and if their last numbers are too further apart report
-# to the user
+print ${file} . "'s CVS revision is: $version\n" if ($debug >= 1);
 
-# TODO: Also check major number
-if ( $version =~ /\.(\d*)$/ )
-{
-	$last_number = $1;
-}
-else
-{
-	print STDERR "CVS Entry $file version number not as expected: $version not in expected format\n";
-	return 1;
-}
+@version_numbers = split /\./,$version;
+$major_number = @version_numbers[0];
+$last_number = pop @version_numbers;
+die "Invalid CVS revision for $file: $version\n" unless ($major_number =~ /\d+/ && $last_number =~ /\d+/);
 
-if ( $translation =~ /\.(\d*)$/ )
-{
-	$last_translated_number = $1
-}
-else
-{
-	print STDERR "Call to the subroutine has not been made as expected: '$translation' not in expected format\n";
-	return 1;
-}
+@translation_numbers = split /\./,$translation;
+$major_translated_number = @translation_numbers[0];
+$last_translated_number = pop @translation_numbers;
+die "Invalid translation revision for $file: $translation\n" unless ($major_translated_number =~ /\d+/ && $last_translated_number =~ /\d+/);
 
-print "Comparing original $version to translation version $translation\n" if $debug;
-# TODO: check also major numbers
-print "Comparing minor $last_number to minor $last_translated_number\n" if $debug;
+# Here we compare the original version with the translated one and print
+# a note for the user if their first or last numbers are too far apart
 
-if ( $last_number - $last_translated_number >= $max_versions ) 
-{
+print "Comparing original $version to translation version $translation\n" if ($debug >= 1);
+
+if ( $major_number != $major_translated_number ) {
 	print qq(<translationoutofdate>)
 }
-elsif ( $last_number - $last_translated_number >= $min_versions ) 
-{
+elsif ( $last_number - $last_translated_number >= $max_versions ) {
+	print qq(<translationoutofdate>)
+}
+elsif ( $last_number - $last_translated_number >= $min_versions ) {
 	print qq(<translationaged>)
 }
-
-close CVS_ENTRY;
 }
 </perl>
 
-#The call to the subroutine is done here
+# The call to the subroutine is done here
 <: check_translation ("$(translation)","$WML_SRC_FILENAME","$(original)","$(mindelta)","$(maxdelta)") :>
