@@ -12,11 +12,19 @@ $translations = [
 	'url'			=> '',
 	'source_url'		=> '',
 	'package'		=> '',
-#	'status'		=> 'traduction à jour',
+#	'status'		=> '',
+#		'non-disponible'
+#		'à traduire'
+#		'en cours de traduction'
+#		'à relire'
+#		'traduction à jour',
+#		'à reviser'
+#		'en cours de révision'
+#
 	'since'			=> '',
 	'translation_name'	=> '',
 	'translation_sub_name'	=> '',
-	'translators'		=> [
+	'translation_maintainer'=> [
 					'', 
 				],
 	'translation_version'	=> '',
@@ -39,7 +47,11 @@ $translations = [
 	'type'			=> 'DDP',
 	'key'			=> 'project-history',
 	'name'			=> 'The Debian Project History',
-	'status'		=> 'non-traduit',
+	'status'		=> 'en cours de traduction',
+	'since'			=> '16/02/1999',
+	'translation_name'	=> 'Histoire du projet Debian',
+	'translation_maintainer'=> ['Jerome Rousselot <jerome.rousselot@mail.dotcom.fr>'],
+	'translation_version'	=> '1.2',
 },
 
 {
@@ -51,7 +63,7 @@ $translations = [
 	'status'		=> 'en cours de traduction',
 	'since'			=> '21/07/1998',
 	'translation_name'	=> 'FAQ Debian GNU/Linux',
-	'translators'		=> ['Philippe Caillaud <phil@penguin.infini.fr>'],
+	'translation_maintainer'=> ['Philippe Caillaud <phil@penguin.infini.fr>'],
 	'ping'			=> '28/11/1998',
 	'translation_version'	=> '',
 	'translation_package'	=> '',
@@ -96,7 +108,7 @@ $translations = [
 	'since'			=> '31/01/1999',
 	'translation_name'	=> 'Tutorial Debian',
 	'translation_sub_name'	=> '',
-	'translators'		=> ['Eric Jacoboni <jaco@titine.fr.eu.org>'],
+	'translation_maintainer'=> ['Eric Jacoboni <jaco@titine.fr.eu.org>'],
 	'ping'			=> '',
 	'translation_version'	=> '',
 	'translation_package'	=> '',
@@ -127,13 +139,13 @@ $translations = [
 	'key'			=> '',
 	'name'			=> 'Debian Installation Manual',
 	'version'		=> '2.0',
-	'url'			=> 'http://www.igoria.net/install/install.html',
-	'source_url'		=> 'http://www.igoria.net/install/install.sgml',
+	'url'			=> '',
+	'source_url'		=> '',
 	'package'		=> 'boot-floppies',
-	'status'		=> 'traduction à jour',
-	'since'			=> '28/10/1998',
+	'status'		=> 'en cours de révision',
+	'since'			=> '10/02/1999',
 	'translation_name'	=> 'Manuel d\'installation de Debian',
-	'translators'		=> ['Christophe Le Bars <clebars@debian.org>'],
+	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
 	'translation_version'	=> '2.0',
 	'translation_url'	=> 'http://www.debian.org/~clebars/docs-2.0/install.fr.html',
 	'translation_source_url'=> 'http://www.debian.org/~clebars/docs-2.0/install.fr.sgml',
@@ -168,11 +180,11 @@ $translations = [
 	'url'			=> 'http://www.fr.debian.org/doc/debian-policy/',
 	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-policy/debian-policy/policy.sgml',
 	'package'		=> 'debian-policy',
-	'status'		=> 'en relecture',
+	'status'		=> 'à relire',
 	'since'			=> '30/11/1998',
 	'translation_name'	=> 'Manuel des normes Debian',
 	'translation_sub_name'	=> 'parties 4 et 5',
-	'translators'		=> ['David Rocher <davroc@hplb.hpl.hp.com>'],
+	'translation_maintainer'=> ['David Rocher <davroc@hplb.hpl.hp.com>'],
 	'translation_version'	=> '2.5.0.0',
 	'translation_url'	=> 'http://savage.iut-blagnac.fr/projets/developpement/policy.fr/policy.fr.html/',
 	'translation_source_url'=> 'http://savage.iut-blagnac.fr/projets/developpement/policy.fr/policy.fr.sgml',
@@ -189,11 +201,11 @@ $translations = [
 	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/debian-policy/packaging-manual/packaging.sgml',
 #?!	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/dpkg/dpkg/doc/packaging.sgml',
 	'package'		=> 'packaging-manual',
-	'status'		=> 'en relecture',
+	'status'		=> 'à relire',
 	'since'			=> '01/07/1998',
 	'translation_name'	=> 'Manuel des paquets Debian',
 	'translation_sub_name'	=> 'parties 0 à 14',
-	'translators'		=> [
+	'translation_maintainer'		=> [
 					'David Cure <cure@cnam.fr>', 
 					'Christian Jacolot <jacolot@ubolib.univ-brest.fr>',
 				],
@@ -211,7 +223,7 @@ $translations = [
 	'status'		=> 'traduction à jour',
 	'since'			=> '01/07/1998',
 	'translation_name'	=> 'Guide de Référence du Développeur Debian',
-	'translators'		=> ['Laurent Picouleau <lcrpic@a2points.com>'],
+	'translation_maintainer'=> ['Laurent Picouleau <lcrpic@a2points.com>'],
 	'translation_version'	=> '0.1',
 	'translation_package'	=> '',
 	'old_translators'	=> ['Herve Floch <Herve.Floch@linux.eu.org>'],
@@ -232,7 +244,7 @@ $translations = [
 	'url'			=> 'http://www.fr.debian.org/doc/packaging-manuals/dpkg-internals/',
 	'source_url'		=> 'http://www.debian.org/cgi-bin/cvsweb/dpkg/dpkg/doc/internals.sgml',
 	'package'		=> 'dpkg-dev',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 	'translation_name'	=> '',
 	'translation_sub_name'	=> '',
@@ -246,7 +258,7 @@ $translations = [
 	'name'			=> 'Debian Menu System',
 	'version'		=> '',
 	'package'		=> '',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '14/09/1998',
 },
 
@@ -263,7 +275,7 @@ $translations = [
 	'status'		=> 'traduction à jour',
 	'since'			=> '25/09/1998',
 	'translation_name'	=> 'Introduction : Créer un paquet Debian',
-	'translators'		=> ['Frederic Dumont <frederic.dumont@gate71.be>'],
+	'translation_maintainer'=> ['Frederic Dumont <frederic.dumont@gate71.be>'],
 	'translation_version'	=> '',
 	'translation_url'	=> 'http://www.debian.org/~clebars/f2dp/docs/debian_package_intro.html/book1.html',
 	'translation_source_url'=> 'http://www.debian.org/~clebars/f2dp/docs/debian_package_intro.sgml',
@@ -288,7 +300,7 @@ $translations = [
 	'since'			=> '',
 	'translation_name'	=> 'Manuel de Debiandoc-SGML',
 	'translation_sub_name'	=> '',
-	'translators'		=> ['Christophe Le Bars <clebars@debian.org>'],
+	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
 	'translation_version'	=> '',
 	'translation_source_url'=> '',
 	'translation_package'	=> 'doc-debian-fr',
@@ -310,7 +322,7 @@ $translations = [
 	'name'			=> 'Debian\'s Bug Tracking System',
 	'version'		=> '0.2',
 	'package'		=> '',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
@@ -328,7 +340,7 @@ $translations = [
 	'since'			=> '',
 	'translation_name'	=> 'Dselect : le guide du débutant',
 	'translation_sub_name'	=> '',
-	'translators'		=> ['Laurent Picouleau <lcrpic@a2points.com>'],
+	'translation_maintainer'=> ['Laurent Picouleau <lcrpic@a2points.com>'],
 	'translation_version'	=> '',
 	'translation_url'	=> 'http://www.debian.org/~clebars/docs-1.3/dselect.beginner.6.fr.txt',
 	'translation_source_url'=> '',
@@ -350,7 +362,7 @@ $translations = [
 	'since'			=> '10/08/1998',
 	'translation_name'	=> 'libc5-libc6-Mini-HOWTO',
 	'translation_sub_name'	=> '',
-	'translators'		=> ['Philippe CAILLAUD <phil@penguin.infini.fr>'],
+	'translation_maintainer'		=> ['Philippe CAILLAUD <phil@penguin.infini.fr>'],
 	'translation_version'	=> '',
 	'translation_url'	=> 'http://www.debian.org/~clebars/f2dp/docs/libc5-libc6-Mini-HOWTO.fr.html',
 	'translation_source_url'=> 'http://www.debian.org/~clebars/f2dp/docs/libc5-libc6-Mini-HOWTO.fr.sgml',
@@ -366,11 +378,11 @@ $translations = [
 	'url'			=> 'http://www.chiark.greenend.org.uk/~ian/debian-organisation.html',
 	'source_url'		=> '',
 	'package'		=> '',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '26/09/1998',
 	'translation_name'	=> '',
-#	'translators'		=> ['Martin Quinson <mquinson@zeppelin-cb.de>'],
-	'translators'		=> [''],
+#	'translation_maintainer'=> ['Martin Quinson <mquinson@zeppelin-cb.de>'],
+	'translation_maintainer'=> [''],
 	'ping'			=> '28/11/1998',
 	'translation_version'	=> '0.8',
 	'translation_url'	=> '',
@@ -389,7 +401,7 @@ $translations = [
 	'key'			=> 'contact',
 	'status'		=> 'traduction à jour',
 	'since'			=> '28/11/1998',
-	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 	'last_translated'	=> '09/08/1998',
 },
 
@@ -398,7 +410,7 @@ $translations = [
 	'key'			=> 'donations',
 	'status'		=> 'traduction à jour',
 	'since'			=> '28/11/1998',
-	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 	'last_translated'	=> '11/08/1998',
 },
 
@@ -407,7 +419,7 @@ $translations = [
 	'key'			=> 'index',
 	'status'		=> 'traduction à jour',
 	'since'			=> '28/11/1998',
-	'translators'		=> ['Christophe Le Bars <clebars@debian.org>'],
+	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
 	'last_translated'	=> '27/07/1998',
 },
 
@@ -416,14 +428,14 @@ $translations = [
 	'key'			=> 'license',
 	'status'		=> 'traduction à jour',
 	'since'			=> '28/11/1998',
-	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 	'last_translated'	=> '11/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'related_links',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
@@ -432,7 +444,7 @@ $translations = [
 	'key'			=> 'social_contract',
 	'status'		=> 'traduction à jour',
 	'since'			=> '24/11/1998',
-	'translators'		=> ['Antoine Martin <amartin@atos-group.com>'],
+	'translation_maintainer'=> ['Antoine Martin <amartin@atos-group.com>'],
 	'last_translated'	=> '01/08/1998',
 },
 
@@ -441,30 +453,30 @@ $translations = [
 	'key'			=> 'support',
 	'status'		=> 'traduction à jour',
 	'since'			=> '28/11/1998',
-	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 	'last_translated'	=> '11/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'todo',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '16/12/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> '2.0/2.0beta_CD',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> '2.0/HOWTO.upgrade',
-	'status'		=> 'en relecture',
+	'status'		=> 'à relire',
 	'since'			=> '10/08/1998',
-	'translators'		=> ['Philippe Caillaud <pcaillaud@infini.fr>'],
+	'translation_maintainer'=> ['Philippe Caillaud <pcaillaud@infini.fr>'],
 	'last_translated'	=> '08/08/1998',
 },
 
@@ -473,42 +485,42 @@ $translations = [
 	'key'			=> '2.0/errata',
 	'status'		=> 'traduction à jour',
 	'since'			=> '28/11/1998',
-	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 	'last_translated'	=> '21/09/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> '2.0/index',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '16/12/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> '2.0/updates',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '16/12/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'News/index',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'News/1997/',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'News/1998/',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
@@ -517,7 +529,7 @@ $translations = [
 	'key'			=> 'MailingLists/debian-announce',
 	'status'		=> 'en cours de traduction',
 	'since'			=> '20/08/1998',
-	'translators'		=> ['Frederic Peters <fpeters@multimania.com>'],
+	'translation_maintainer'=> ['Frederic Peters <fpeters@multimania.com>'],
 },
 
 {
@@ -525,7 +537,7 @@ $translations = [
 	'key'			=> 'MailingLists/subscribe',
 	'status'		=> 'en cours de traduction',
 	'since'			=> '20/08/1998',
-	'translators'		=> ['Frederic Peters <fpeters@multimania.com>'],
+	'translation_maintainer'=> ['Frederic Peters <fpeters@multimania.com>'],
 },
 
 {
@@ -533,20 +545,20 @@ $translations = [
 	'key'			=> 'MailingLists/unsubscribe',
 	'status'		=> 'en cours de traduction',
 	'since'			=> '20/08/1998',
-	'translators'		=> ['Frederic Peters <fpeters@multimania.com>'],
+	'translation_maintainer'=> ['Frederic Peters <fpeters@multimania.com>'],
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/HOWTO_translate',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/extract_key',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
@@ -555,51 +567,51 @@ $translations = [
 	'key'			=> 'devel/help',
 	'status'		=> 'traduction à jour',
 	'since'			=> '28/11/1998',
-	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 	'last_translated'	=> '12/10/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/incoming_mirrors',
-	'status'		=> 'en relecture',
+	'status'		=> 'à relire',
 	'since'			=> '20/12/1998',
-	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/index',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '11/08/1998',
-	'translators'		=> ['Christophe Le Bars <clebars@debian.org>'],
+	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/maintainer_contacts',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/mirror',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/mirror_submit',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '16/12/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/people',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
@@ -608,177 +620,177 @@ $translations = [
 	'key'			=> 'devel/release_info',
 	'status'		=> 'en cours de traduction',
 	'since'			=> '13/10/1998',
-	'translators'		=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
+	'translation_maintainer'=> ['Norbert Bottlaender-Prier <norbert@uni.de>'],
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/rsync_examples',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/HOWTO_work.on.website',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '16/12/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/constitution',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '16/12/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'distrib/ftplist',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'distrib/index',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'distrib/packages',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'distrib/vendors',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'doc/index',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'events/index',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '16/12/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'events/1998/',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '16/12/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'events/1999/',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '16/12/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'intro/about',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'intro/cn',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'intro/cooperation',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'intro/free',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'intro/international',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'intro/license_disc',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'intro/why_debian',
-	'status'		=> 'en relecture',
+	'status'		=> 'à relire',
 	'since'			=> '11/10/1998',
 	'translation_version'	=> '1.3',
-	'translators'		=> ['"Philippe Paillé" <valvert@club-internet.fr>'],
+	'translation_maintainer'=> ['"Philippe Paillé" <valvert@club-internet.fr>'],
 	'last_translated'	=> '11/10/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'logos/index',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'logos/index',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'mirror/index',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '16/12/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'ports/index',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'security/index',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '01/08/1998',
 },
 
 {
 	'type'			=> 'Web',
 	'key'			=> 'vote/index',
-	'status'		=> 'non-traduit',
+	'status'		=> 'à traduire',
 	'since'			=> '12/16/1998',
 },
 
