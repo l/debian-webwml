@@ -111,7 +111,9 @@ sub printtableheader {
 
 sub getreferences {
 	my ($key,$dsa) = @_;
-	my (@references) = split(' ', $dsaref{$dsa}{'secrefs'});
+	return if ! defined ($dsaref{$dsa}{'secrefs'});
+	my @references;
+	my (@references) = split(' ', $dsaref{$dsa}{'secrefs'}); 
 	my $text = "";
 	my $type = $reference{$key}{perlre};
 	foreach $ref ( @references ) {
@@ -148,7 +150,7 @@ sub printrefs {
 		getreferences("mitre",$dsa) if ( $opt_m ) ;
 		getreferences("bid",$dsa)  if ( $opt_b ) ;
 		getreferences("cert",$dsa)  if ( $opt_c ) ;
-		$reft = getreferences("certvu",$dsa) if ( $opt_k );
+		getreferences("certvu",$dsa) if ( $opt_k );
 		# Print only if there is text _and_ it includes
 		# some numbers (otherwise there are no references)
 		if ( defined($dsaref{$dsa}{'printtext'} ) && $dsaref{$dsa}{'printtext'} =~ /\d/ ) {
@@ -188,6 +190,8 @@ sub parsefile {
 		if ( $line =~ /report_date\>(.*?)\<\/define-tag/ )  {
 			my $dsadate=$1;
 			# Just in case...
+			# Remove multiple dates, keep only the first one
+			$dsadate =~ s/,.*$//;
 			$dsadate =~ s/\-(\d)\-/-0$1-/;
 			$dsadate =~ s/\-(\d)$/-0$1/;
 			$dsaref{$dsa}{'date'}=str2time($dsadate) ;
@@ -200,6 +204,7 @@ sub parsefile {
 		$dsaref{$dsa}{'vulnerable'}=$1 if ( $line =~ /isvulnerable\>(.*?)\<\/define-tag/ ) ;
 		$dsaref{$dsa}{'fixed'}=$1 if ( $line =~ /fixed\>(.*?)\<\/define-tag/ ) ;
 	}
+	$dsaref{$dsa}{'date'} = 0 if ! defined $dsaref{$dsa}{'date'};
 	$dsaref{$dsa}{'location'}=$file;
 	$dsaref{$dsa}{'location'} =~ s/.data$//;
 	$dsaref{$dsa}{'location'} =~ s/^.\///;
@@ -244,7 +249,7 @@ to security issues and fixes in the Debian distribution.
 to include cross-references in DSAs (even after they have been published),
 however, some DSAs might not have proper references to some security
 information sources. If you find information lacking please
-<a href="mailto:security@debian.org?subject=DSA_cross_references_info">let us 
+<a href="mailto:security\@debian.org?subject=DSA_cross_references_info">let us 
 know</a>.
 
 <P><em>Note:</em> The data below is sorted in reverse chronological order.
