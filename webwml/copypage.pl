@@ -7,7 +7,7 @@
 # Makefiles are not supported anymore for they bear too much space for errors.
 
 # Originally written 2000-02-26 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2000-2003 Software in the public interest, Inc.
+# © Copyright 2000-2004 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -22,30 +22,47 @@ use vars qw(@iso_8859_2_compat  @iso_8859_3_compat  @iso_8859_4_compat
             @iso_8859_16_compat);
 
 # Get configuration
-if (exists $ENV{DWWW_LANG}) 
-{
-     $language = $ENV{DWWW_LANG};
-} 
-elsif (open CONF, "<language.conf")
+# Read first two valid lines from language.conf
+if (open CONF, "<language.conf")
 {
 	while (<CONF>)
 	{
 		next if /^#/;
 		chomp;
 		$language = $_, next unless defined $language;
+		$maintainer = $_, next unless defined $maintainer;
 	}
+	close CONF;
 }
 else
 {
-	die "Language not defined in DWWW_LANG or language.conf\n";
+	warn "Unable to open language.conf. Using environment variables...\n";
 }
+
+# Values are overwritten by environment variables
+if (exists $ENV{DWWW_LANG})
+{
+	$language = $ENV{DWWW_LANG};
+}
+if (exists $ENV{DWWW_MAINT})
+{
+	$maintainer = $ENV{DWWW_MAINT};
+}
+
+die "Language not defined in DWWW_LANG or language.conf\n"
+	if not defined $language;
+
+#warn "Maintainer name not defined in DWWW_MAINT or language.conf\n"
+#	if not defined $maintainer;
+
 
 # Check usage.
 if ($#ARGV == -1)
 {
 	print "Usage: $0 page ...\n\n";
 	print "Copies the page from the english/ directory to the $language/ directory\n";
-	print "and adds the translation-check header with the current revision.\n";
+	print "and adds the translation-check header with the current revision,\n";
+	print "optionally adds also the maintainer name.\n";
 	print "If the directory does not exist, it will be created, and the Makefile\n";
 	print "copied or created, depending on your language.conf setting.\n\n";
 	print "The 'english/' part of the input path is optional.\n";
@@ -240,7 +257,10 @@ sub copy
 
 		unless ($insertedrevision || /^#/)
 		{
-			print DST qq'#use wml::debian::translation-check translation="$revision"\n';
+			print DST qq'#use wml::debian::translation-check translation="$revision"';
+			print DST qq' maintainer="$maintainer"'
+				if defined $maintainer;
+			print DST qq'\n';
 			$insertedrevision = 1;
 		}
 		if (defined $pagetitle && /^<define-tag pagetitle>/)
@@ -279,7 +299,10 @@ sub copy
 
 	unless ($insertedrevision)
 	{
-		print DST qq'#use wml::debian::translation-check translation="$revision"\n';
+		print DST qq'#use wml::debian::translation-check translation="$revision"';
+		print DST qq' maintainer="$maintainer"'
+			if defined $maintainer;
+		print DST qq'\n';
 	}
 
 	close SRC;
