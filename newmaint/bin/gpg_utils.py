@@ -109,7 +109,4 @@ def remove_place(db, place):
 name_cache = {}
 places_cache = {}
 
-
-# vim:set ts=4:
-# vim:set expandtab:
-# vim:set shiftwidth=4:
+# vim: ts=4:expandtab:shiftwidth=4:
