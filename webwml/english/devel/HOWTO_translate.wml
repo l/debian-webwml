@@ -15,8 +15,8 @@ generated using wml. They are stored on www.debian.org using CVS.
 You will want to check out a local copy of the wml files to edit
 on your home machine. When you are done making changes, you can then
 release the changes back to www.debian.org. Once a day, the copy of
-the repository on master will be updated. A Makefile is then run
-on them to create the updated public web pages.
+the repository on cvs.debian.org will be updated. A Makefile is then
+run on them to create the updated public web pages.
 
 <H3>Using CVS</H3>
 <P>In what follows anonymous access will be used as an example. If
@@ -35,6 +35,8 @@ need to use
 </pre>
 where &lt;lang&gt; is the language you want. You will probably want
 the English version in addition to the language you are working on.
+If you only need a subset of the pages you can check out only those needed,
+e.g. cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI .
 
 <P>From then on, you will not need to use the '-d :pserver:...' part
 as the CVS/ directories contain the necessary information.
@@ -51,11 +53,11 @@ When you are done with the page, you can commit your changes to the repository u
 </pre>
 or
 <pre>
-   cvs commit &lt;dir&gt;
+   cvs commit &lt;dir&gt;   (to commit the changes in <dir>)
 </pre>
 or
 <pre>
-   cvs commit          (to commit all changes in your copy)
+   cvs commit          (to commit all changes from the current dir down)
 </pre>
 
 <P>If you are the first person translating a page, you need to do
@@ -131,17 +133,21 @@ French will be used for the example
    cd french
    cp ../english/.wmlrc .
 edit and change '-D CUR_LANG=English' to '-D CUR_LANG=French'
-   cp ../english/Makefile .
-edit and chenge 'LANG=en' to 'LANG=fr'
-Also comment out every target after 'all:' except for the files which are translated
    cp -r ../english/template .
-edit template/debian/* and translate any text
+edit template/debian/* and translate any text. This should be quite straightforward
+   cp ../english/Makefile .
+edit and change 'LANG=en' to 'LANG=fr'
+Also comment out every target after 'all:' except for the files which are translated
+The makefile in each directory will compile every .wml file it finds. If you
+do not want or have not created a sub-directory and its accompanying Makefile
+you will need to remove the appropriate line from the Makefile. You will
+probably find it easier to create all the directories and makefiles up front though.
 
-Finally, you can start translating the pages.
 </pre>
+Finally, you can start translating the pages.
 
 <H3>Example of Translating a Page</H3>
-A French of the social contract will be used for the example
+A French translation of the social contract will be used for the example
 <pre>
    cvs checkout webwml/english webwml/french
    cd webwml/french
@@ -150,7 +156,7 @@ A French of the social contract will be used for the example
 edit social_contract.wml and translate the text. Do not try to translate any
 links or change them in any way.
 When done
-   cvs commit social_contract.wml
+   cvs commit -m "short description of the changes you made" social_contract.wml
 </pre>
 
 <H3>Compiling wml</H3>
