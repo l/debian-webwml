@@ -112,7 +112,7 @@ if (open WMLRC, "$language/.wmlrc")
 foreach $page (@ARGV)
 {
 	# Check if valid source
-	if ($page =~ /wml$/)
+	if ($page =~ /wml$/ || $page =~ /src$/)
 	{
 		&copy($page, $recode, $compat);
 	}
