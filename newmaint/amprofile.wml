@@ -157,7 +157,7 @@
     echo " to '", $login, "'.<BR>\n";
   } #change_app_manager
 
-  function update_profile($db, $name, $email, $login, $loginkey, $max_applicants, $isfd, $isdam)
+  function update_profile($db, $name, $email, $login, $loginkey, $max_applicants, $isactive, $isfd, $isdam)
   {
     global $s_username, $s_isfd;
     # Check ze values, any bad things we abort
@@ -193,6 +193,11 @@
         if ($login != $loginkey) {
 	  $sql .= ", login = '". $login ."' ";
 	}
+        if ($isactive == "t") {
+          $sql .= ", is_active = TRUE ";
+        } else {
+          $sql .= ", is_active = FALSE ";
+        }
         if ($isfd == "t") {
 	  $sql .= ", is_frontdesk = TRUE ";
 	} else {
@@ -235,7 +240,7 @@ You should not be here!!</STRONG>
     update_password($db,$passwda, $passwdb, $login, $cpasswd);
   }
   if ($what == "cprofile") {
-    update_profile($db, $name, $email, $login, $loginkey, $max_applicants, $isfd, $isdam);
+    update_profile($db, $name, $email, $login, $loginkey, $max_applicants, $isactive, $isfd, $isdam);
   } 
   if ($what == "new") {
     $insok = insert_manager($db, $name, $email, $login, $passwda, $passwdb, $max_applicants, $isfd, $isdam);
@@ -277,7 +282,8 @@ FD and DAM groups.
   print_text("Name", "name", $row["name"], TRUE);
   print_text("Email", "email", $row["email"], TRUE );
   print_text("Maximum Applicants", "max_applicants", $row["max_applicants"], TRUE);
-  print_checkbox("FD Member", "isfd", $row["is_frontdesk"], ($s_isfd == 't'));
+  print_checkbox("Active", "isactive", $row["is_active"], ($s_isfd == 't'));
+  print_checkbox("FD Member", "isd", $row["is_frontdesk"], ($s_isfd == 't'));
   print_checkbox("DAM Member", "isdam", $row["is_dam"], ($s_isfd == 't'));
 ?>
 <TR><TD> </TD><TD><INPUT type="submit" value="Change Profile"></TD></TR>
