@@ -174,4 +174,25 @@ sub _time_stamp {
     return $time_str;
 }
 
+sub each {
+    my $self = shift;
+
+    my ($file, $data) = each %{$self->{files}};
+
+    return $file;
+}
+
+sub get_timestamp {
+    my ( $self, $file ) = @_;
+
+
+    return $self->{files}{$file}{time};
+}
+
+sub get_md5sum {
+    my ( $self, $file ) = @_;
+
+    return $self->{files}{$file}{md5};
+}
+
 1;
