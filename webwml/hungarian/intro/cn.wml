@@ -1,0 +1,87 @@
+#use wml::debian::template title="Az alapértelmezett nyelv beállítása"
+
+<P>Figyelem: ez az oldal nem teljes. Ha van információd olyan böngészõ
+beállításáról, amely alább nem szerepel, kérlek, küldd el a
+<a href="mailto:webmaster@debian.org">webmaster@debian.org</a> címre!
+
+<P>Nyilvánvaló, hogy a világon nem egy nyelvet beszél mindenki. A web
+növekedésével egyre természetesebb lesz, ha több nyelvû oldalakra lelünk.
+Ezért ismertetjük a szabványos tartalomegyeztetést, az ún. <I>content
+negotiation</I>-t, amely lehetõvé teszi, hogy a felhasználó beállítsa,
+milyen nyelv(ek)en szeretné olvasni a dokumentumokat. A ténylegesen lehívott
+oldal a böngészõ és a szerver közötti egyeztetés eredménye: a böngészõ
+elküldi a preferenciákat, a szerver pedig ezen preferenciák és a saját
+beállításai alapján, illetve attól függõen, hogy milyen verziók állnak a
+rendelkezésére, eldönti, hogy a dokumentum melyik verzióját küldje vissza.
+
+<P>Az alapértelmezett nyelv beállításához azt a változót kell beállítani, amit
+a böngészõ átad a szervernek. Hogy ez hogyan történik, az böngészõfüggõ.
+
+<DL compact>
+<DT><strong>lynx</strong>
+<DD>Állítsd be a <kbd>preferred_language</kbd> változót a <kbd>.lynxrc</kbd>
+fájlban, vagy nyomd le az 'O' billentyût a lynxben.
+<DT><strong>netscape 3.x</strong>
+<DD>Add hozzá a
+<pre>
+     *httpAcceptLanguage: [a nyelv kódja]
+</pre>
+sort a Netscape app-defaults fájljához vagy a <kbd>~/.Xresources</kbd>-hez.
+A magyar nyelv kódja hu.
+
+<DT><strong>netscape 4.x</strong>
+<DD>Menj be az
+<pre>
+     Edit -> Preferences -> Navigator -> Languages
+</pre>
+menüpontba, és kattints az <pre>Add</pre> gombra. Válaszd ki a nyelvet a
+listából. Néhányan jelezték, hogy problémák merültek fel, amikor kézzel
+írták be a nyelvet.
+
+<DT><strong>W3</strong> (Emacs-alapú böngészõ)
+<DD>
+<pre>(setq url-mime-language-string  "preferred_language=hu; q=1.0, en; q=0.5")</pre>
+vagy a custom csomagot használva (p4.0pre.14-es verziójú URL-t feltételezve)
+<pre>Hypermedia -> URL -> Mime -> Mime Language String...</pre>
+<DT><strong>IE</strong>
+<DD>
+<pre>
+     View -> Internet Options -> General/Languages
+</pre>
+<DT><strong>Opera</strong>
+<DD>???
+<DT><strong>iCab</strong>
+<DD>
+<pre>
+     Edit -> Preferences -> Browser -> Fonts,Languages
+</pre>
+</DL>
+
+<H3>Mire állítsam a változót?</H3>
+
+<P>Mivel a Debian-oldalak eredeti nyelve az angol, és valószínûleg nem
+minden dokumentum van lefordítva az általad preferált nyelvre, érdemes az
+angolt tartaléknyelvnek beállítani. Például ha magyar anyanyelvû vagy, és
+lynxet használsz, ezt írd a <kbd>.lynxrc</kbd>-dbe:
+<pre>
+preferred_language=hu; q=1.0, en; q=0.5
+</pre>
+Ez közli a szerverrel, hogy magyarul szeretnéd olvasni a dokumentumot,
+amennyiben létezik, egyébként pedig angolul.
+
+<p>Óvatosan kell bánni a nyelvek alkategóriáival. Az "en-GB, fr" beállítás
+hatása például nem az, amit a többség elvárna (mármint akik nem olvasták a
+HTTP-specifikációt). Ugyanis, ha az "en" és az "fr" verzió is létezik, a
+szerver a franciát küldi. Akkor küldi csak az angol dokumentumot, ha létezik
+egy .en-gb nyelvkiterjesztésû verzió. Ezért a böngészõben "en-GB, en, fr"-re
+vagy csak "en, fr"-re kell állítani a nyelvet. Ez utóbbinál azonban a
+szerver az "en-us" verziójú dokumentumokat is elküldi.
+
+<p><strong>Nem javasoljuk a nyelv melletti országkiterjesztések használatát,
+hacsak nincs valami különleges okod rá</strong>. Ha mégis használod,
+ellenõrizd, hogy kiterjesztés nélkül is beállítottad-e a nyelvet!
+
+<P>A preferred_language változó beállításáról bõvebb információt az
+<a href="http://www.apache.org/docs/content-negotiation.html">Apache
+documentation on content negotiation</a> oldalon találsz.
+
