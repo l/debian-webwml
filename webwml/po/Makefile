@@ -1,13 +1,24 @@
 
-langs = ar ca da de el eo es fi fr hr hu id it ja ko nl no pl pt ro ru sv tr zh
+#  Disable ja ko zh since these langs do not build
+langs = ar ca da de el eo es fi fr hr hu id it nl no pl pt ro ru sv tr
 
 LOCALEROOT = $(CURDIR)/locale
 TEMPLDIR   = template/debian
 
-tmpl_files = $(wildcard template/debian/*.wml)
+TMPL_FILES = $(wildcard $(TEMPLDIR)/*.wml) \
+    $(TEMPLDIR)/countries.def $(TEMPLDIR)/language_names.def
+POFILES    = $(addprefix po-files/templates., $(addsuffix .po, $(langs)))
+UPOFILES   = $(POFILES:.po=.upo)
+GMOFILES   = $(POFILES:.po=.gmo)
+POTFILES   = po-files/templates.pot
 
-pot:
-	./scripts/wmlxgettext.pl $(tmpl_files) > po-files/templates.pot.new
+#  Aliases
+pot: $(POTFILES)
+update-po: $(UPOFILES)
+gmo: $(GMOFILES)
+
+$(POTFILES): $(TMPL_FILES)
+	./scripts/wmlxgettext.pl $(TMPL_FILES) > po-files/templates.pot.new
 	cd po-files && \
 	  if [ -f templates.pot ]; then \
 	    cmp templates.pot templates.pot.new >/dev/null 2>&1 \
@@ -17,29 +28,22 @@ pot:
 	  fi
 	-@rm -f po-files/templates.pot.new
 
-merge-po:
-	cd po-files; langs='$(langs)'; \
-   for l in $${langs}; do \
-     if msgmerge templates.$$l.po templates.pot -o templates.$$l.po.new; then \
-       mv -f templates.$$l.po.new templates.$$l.po; \
-     else \
-       echo "Command failed: msgmerge templates.$$l.po templates.pot"; \
-       rm -f templates.$$l.po.new; \
-     fi; \
-   done
+po-files/templates.%.upo: $(POTFILES) po-files/templates.%.po
+	-@cd po-files; \
+   msgmerge templates.$*.po templates.pot -o templates.$*.upo \
+   || echo "Command failed: msgmerge templates.$*.po templates.pot"
 
-gmo:
-	cd po-files; langs='$(langs)'; \
-   for l in $${langs}; do \
-     msgfmt --statistics -o templates.$$l.gmo templates.$$l.po; \
-   done
+po-files/templates.%.gmo: $(POTFILES) po-files/templates.%.upo
+	-@echo Lang $*:
+	-@cd po-files; \
+   msgfmt --statistics -o templates.$*.gmo templates.$*.upo
 
 install-gmo:
 	cd po-files; langs='$(langs)'; \
    for l in $${langs}; do \
      [ -d $(LOCALEROOT)/$$l/LC_MESSAGES ] || mkdir -p $(LOCALEROOT)/$$l/LC_MESSAGES; \
      if [ -f $(LOCALEROOT)/$$l/LC_MESSAGES/templates.mo ]; then \
-       cmp templates.$$l.gmo $(LOCALEROOT)/$$l/LC_MESSAGES/templates.mo \
+       cmp templates.$$l.gmo $(LOCALEROOT)/$$l/LC_MESSAGES/templates.mo >/dev/null 2>&1 \
        || cp -f templates.$$l.gmo $(LOCALEROOT)/$$l/LC_MESSAGES/templates.mo; \
      else \
        cp -f templates.$$l.gmo $(LOCALEROOT)/$$l/LC_MESSAGES/templates.mo; \
@@ -47,12 +51,14 @@ install-gmo:
    done
 
 clean:
-	-rm -f po-files/*.gmo po-files/*.pot
+	-@rm -f $(UPOFILES)
+	-@rm -f $(GMOFILES)
+	-@rm -f $(POTFILES)
 
 #   Extract PO files from slices
 init-po:
 	langs='$(langs)'; \
-   for l in $${langs}; do ./scripts/wml2po.pl $$l $(tmpl_files) > po-files/templates.$$l.po; done
+   for l in $${langs}; do ./scripts/wml2po.pl $$l $(TMPL_FILES) > po-files/templates.$$l.po; done
 
 fix-po:
 	langs='$(langs)'; \
@@ -72,7 +78,7 @@ fix-po:
 
 #   In WML files, replace slices with <gettext> tags
 convert-templates:
-	./scripts/wmlconvert.pl $(tmpl_files)
+	./scripts/wmlconvert.pl $(TMPL_FILES)
 
 gen-def: $(TEMPLDIR)/countries.def $(TEMPLDIR)/language_names.def
 
