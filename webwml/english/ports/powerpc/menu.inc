@@ -14,7 +14,7 @@
    [ES:Debian para PowerPC:]
    [FI:Debian for PowerPC:]
    [FR:Debian pour PowerPC:]
-   [HR:Debian for PowerPC:]
+   [HR:Debian za PowerPC:]
    [HU:Debian for PowerPC:]
    [IT:Debian per PowerPC:]
    [JA:Debian for PowerPC:]
