@@ -80,15 +80,12 @@ while (<SRC>)
 {
 	next if /\$Id/;
 
-#	s/<h4>Source:/<h4>Källkod:/;
-#	s/<h4>Source archives:/<h4>Källkodsarkiv:/;
-#	s/ architecture:</</;
-#	s/<h4>Architech?ture-independent component:/<h4>Arkitekturoberoende arkiv:/;
 	s/We recommend that you upgrade your (.*) package immediately/Vi rekommenderar att ni uppgraderar ert $1-paket omedelbart/;
 	s/We recommend that you upgrade your (.*) packages immediately/Vi rekommenderar att ni uppgraderar era $1-paket omedelbart/;
 	s/We recommend that you upgrade your (.*) packages/Vi rekommenderar att ni uppgraderar era $1-paket/;
 	s/We recommend that you upgrade your (.*) package/Vi rekommenderar att ni uppgraderar ert $1-paket/;
 	s/buffer overflows?/buffertspill/;
+	s/integer overflow/heltalsspill/;
 	s/format string vulnerability/formatsträngssårbarhet/;
 	s/format string vulnerabilities/formatsträngssårbarheter/;
 	s/insecure temporary files/osäkra temporära filer/;
@@ -102,9 +99,15 @@ while (<SRC>)
 	s/This has been fixed in version/Detta har rättats i version/;
 	s/of the Debian package/av Debianpaketet/;
 	s/upstream version/uppströmsversion/;
+	s/for the old stable distribution/för den gamla stabila utgåvan/;
 	s/for the old stable/för den gamla stabila/;
+	s/for the current stable distribution/för den nuvarande stabila utgåvan/;
 	s/for the current stable/för den nuvarande stabila/;
+	s/for the unstable distribution/för den instabila utgåvan/;
 	s/for the unstable/för den instabila/;
+	s/distribution (\(potato|woody|sarge\))/utgåvan $1/;
+	s/privilege escalation/utökning av privilegier/;
+	s/cross site/serveröverskridande/;
 
 	print DST $_;
 }
