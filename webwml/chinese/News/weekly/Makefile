@@ -18,9 +18,17 @@ include $(WMLBASE)/Make.dep.templ
 # and all subdirectories to .html files. It does it this way so I don't need
 # a new Makefile for each new issue.
 WMLFILES=$(shell find . -type f -name \*.wml)
+ifeq ($(LANGUAGE),zh)
+#INT_HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
+HTMLFILES := $(foreach i, cn tw, \
+	$(patsubst %.wml,%.$(LANGUAGE)-$(i).html,$(WMLFILES)))
+HTMLDESTFILES := $(foreach i, cn tw, \
+	$(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE)-$(i).html,$(WMLFILES)))
+else
 HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
 HTMLDESTFILES := $(patsubst %.wml,$(HTMLDIR)/%.$(LANGUAGE).html,$(WMLFILES))
 all:: index.$(LANGUAGE).html $(HTMLFILES)
+endif
 
 # When building the html files we have to change into the right directory
 # so wml gets all the relative links right.

@@ -16,7 +16,6 @@ WMLFILES := $(wildcard *.wml)
 # Intermediate HTML files (.zh.html)
 # to be converted to .zh-tw.html and .zh-cn.html
 #
-INT_HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
 #HTMLFILES := $(patsubst %.wml,%.$(LANGUAGE).html,$(WMLFILES))
 HTMLFILES := $(foreach i, $(SUBLANG), \
 	$(patsubst %.wml,%.$(LANGUAGE)-$(i).html,$(WMLFILES)))
@@ -48,6 +47,33 @@ install:: $(HTMLDESTFILES) $(IMGDESTFILES)
 		fi ; \
 	done
 
+$(IMGDESTFILES): $(IMGFILES)
+	cp $(@F) $(HTMLDIR)
+
+clean::
+	rm -f *.$(LANGUAGE).html
+ifeq ($(LANGUAGE),zh)
+	rm -f $(foreach i, cn tw, *.$(LANGUAGE)-$(i).html)
+endif
+	@for i in $(SUBS) ''; do \
+		if [ -d "$$i" ]; then \
+			$(MAKE) -C $$i clean; \
+		fi ; \
+	done
+
+cleandest::
+	rm -f $(HTMLDIR)/*.$(LANGUAGE).html
+ifeq ($(LANGUAGE),zh)
+	rm -f $(foreach i, cn tw, $(HTMLDIR)/*.$(LANGUAGE)-$(i).html)
+endif
+	@for i in $(SUBS) ''; do \
+		if [ -d "$$i" ]; then \
+			$(MAKE) -C $$i cleandest; \
+		fi ; \
+	done
+
+
+ifeq ($(LANGUAGE),zh)
 cleansub::
 	rm -f $(foreach i, cn tw, *.$(LANGUAGE)-$(i).html)
 	@for i in $(SUBS) ''; do \
@@ -56,41 +82,12 @@ cleansub::
 		fi ; \
 	done
 
-clean::
-	rm -f *.$(LANGUAGE).html \
-		$(foreach i, cn tw, *.$(LANGUAGE)-$(i).html)
-	@for i in $(SUBS) ''; do \
-		if [ -d "$$i" ]; then \
-			$(MAKE) -C $$i clean; \
-		fi ; \
-	done
-
-cleandest::
-	rm -f $(HTMLDIR)/*.$(LANGUAGE).html $(foreach i, cn tw, \
-		$(HTMLDIR)/*.$(LANGUAGE)-$(i).html)
-	@for i in $(SUBS) ''; do \
-		if [ -d "$$i" ]; then \
-			$(MAKE) -C $$i cleandest; \
-		fi ; \
-	done
-
 # Is there anyway to combine the following two rules into one?
-
 $(HTMLDIR)/%.$(LANGUAGE)-cn.html: %.$(LANGUAGE)-cn.html
 	@echo copying $(@F) to $(HTMLDIR)
 	-@cp $(@F) $(HTMLDIR)
-ifeq ($(LANGUAGE),en)
-	@echo making a link $(@D)/$(*F).html -\> $(@F)
-	-@ln -f -s $(@F) $(@D)/$(*F).html
-endif
 
 $(HTMLDIR)/%.$(LANGUAGE)-tw.html: %.$(LANGUAGE)-tw.html
 	@echo copying $(@F) to $(HTMLDIR)
 	-@cp $(@F) $(HTMLDIR)
-ifeq ($(LANGUAGE),en)
-	@echo making a link $(@D)/$(*F).html -\> $(@F)
-	-@ln -f -s $(@F) $(@D)/$(*F).html
 endif
-
-$(IMGDESTFILES): $(IMGFILES)
-	cp $(@F) $(HTMLDIR)
