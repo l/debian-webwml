@@ -94,6 +94,8 @@ while (<SRC>)
 	s/>remote root exploit</>fjärr-rootattack</;
 	s/>symlink attack</>attack mot symboliska länkar</;
 	s/>remote exploit</>fjärrattack</;
+	s/Several vulnerabilities/Flera sårbarheter/;
+	s/>several</>flera</;
 	s/This has been fixed in version/Detta har rättats i version/;
 	s/this problem has been fixed in/har detta problem rättats i/;
 	s/this problem has been fixed$/har detta problem rättats/;
@@ -125,6 +127,10 @@ while (<SRC>)
 	s/privilege escalation/utökning av privilegier/;
 	s/cross site/serveröverskridande/;
 	s/\bis not affected/påverkas inte/;
+	s/does not contain ([[:word:]]*) packages?/innehåller inte $1-paket/;
+	s/does not contain any ([[:word:]]*) packages/innehåller inte några $1-paket/;
+	s/does not contain any ([[:word:]]*) package/innehåller inte något $1-paket/;
+	s/this problem will be fixed soon/kommer detta problem rättas inom kort/;
 	s/\(potato\)/(Potato)/;
 	s/\(woody\)/(Woody)/;
 	s/\(sarge\)/(Sarge)/;
