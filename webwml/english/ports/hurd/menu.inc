@@ -1,5 +1,8 @@
 #use wml::debian::submenu
 
+# Please keep slices sorted alphabetically so it's easier to detect
+# languages in them.
+
 <menu-item basename="../index">
 [AR:Ports:]
 [DA:Ports:]
@@ -12,6 +15,7 @@
 [FR:Ports:]
 [HR:Ports:]
 [HU:Ports:]
+[IT:Port:]
 [JA:Ports:]
 [KO:Ports:]
 [NL:Ports:]
@@ -23,7 +27,6 @@
 [SV:Anpassningar:]
 [TR:Ports:]
 [ZH:Ports:]
-[IT:Port:]
 </menu-item>
 
 <menu-item basename="index">
@@ -38,6 +41,7 @@
 [FR:Debian GNU/Hurd:]
 [HR:Debian GNU/Hurd:]
 [HU:Debian GNU/Hurd:]
+[IT:Debian GNU/Hurd:]
 [JA:Debian GNU/Hurd:]
 [KO:Debian GNU/Hurd:]
 [NL:Debian GNU/Hurd:]
@@ -49,7 +53,6 @@
 [SV:Debian GNU/Hurd:]
 [TR:Debian GNU/Hurd:]
 [ZH:Debian GNU/Hurd:]
-[IT:Debian GNU/Hurd:]
 </menu-item>
 
 <menu-item basename="hurd-news">
@@ -64,6 +67,7 @@
 [FR:News:]
 [HR:News:]
 [HU:News:]
+[IT:Novità:]
 [JA:News:]
 [KO:News:]
 [NL:News:]
@@ -75,7 +79,6 @@
 [SV:Nyheter:]
 [TR:News:]
 [ZH:News:]
-[IT:Novità:]
 </menu-item>
 
 <menu-item basename="hurd-install">
@@ -90,6 +93,7 @@
 [FR:Installation:]
 [HR:Installation:]
 [HU:Installation:]
+[IT:Installazione:]
 [JA:Installation:]
 [KO:Installasjon:]
 [NL:Installation:]
@@ -101,7 +105,6 @@
 [SV:Installation:]
 [TR:Installation:]
 [ZH:Installation:]
-[IT:Installazione:]
 </menu-item>
 
 <menu-item basename="hurd-cd">
@@ -116,6 +119,7 @@
 [FR:Hurd-CDs:]
 [HR:Hurd-CDs:]
 [HU:Hurd-CDs:]
+[IT:CD di Hurd:]
 [JA:Hurd-CDs:]
 [KO:Hurd-CDs:]
 [NL:Hurd-CDs:]
@@ -127,7 +131,6 @@
 [SV:Hurd på cd:]
 [TR:Hurd-CDs:]
 [ZH:Hurd-CDs:]
-[IT:CD di Hurd:]
 </menu-item>
 
 <menu-item basename="hurd-doc">
@@ -142,6 +145,7 @@
 [FR:Documentation:]
 [HR:Documentation:]
 [HU:Documentation:]
+[IT:Documentazione:]
 [JA:Documentation:]
 [KO:Documentation:]
 [NL:Documentation:]
@@ -153,7 +157,6 @@
 [SV:Dokumentation:]
 [TR:Documentation:]
 [ZH:Documentation:]
-[IT:Documentazione:]
 </menu-item>
 
 <menu-item basename="hurd-devel">
@@ -168,6 +171,7 @@
 [FR:Development:]
 [HR:Development:]
 [HU:Development:]
+[IT:Sviluppo:]
 [JA:Development:]
 [KO:Utvikling:]
 [NL:Development:]
@@ -179,7 +183,6 @@
 [SV:Utveckling:]
 [TR:Development:]
 [ZH:Development:]
-[IT:Sviluppo:]
 </menu-item>
 
 <menu-item basename="hurd-links">
@@ -194,6 +197,7 @@
 [FR:Links:]
 [HR:Links:]
 [HU:Links:]
+[IT:Collegamenti:]
 [JA:Links:]
 [KO:Links:]
 [NL:Links:]
@@ -205,7 +209,6 @@
 [SV:Länkar:]
 [TR:Links:]
 [ZH:Links:]
-[IT:Collegamenti:]
 </menu-item>
 
 <menu-item basename="hurd-contact">
@@ -220,6 +223,7 @@
 [FR:Contact:]
 [HR:Contact:]
 [HU:Contact:]
+[IT:Contatti:]
 [JA:Contact:]
 [KO:Contact:]
 [NL:Contact:]
@@ -231,5 +235,4 @@
 [SV:Kontakt:]
 [TR:Contact:]
 [ZH:Contact:]
-[IT:Contatti:]
 </menu-item>

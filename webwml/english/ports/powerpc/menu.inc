@@ -1,5 +1,8 @@
 #use wml::debian::submenu
 
+# Please keep slices sorted alphabetically so it's easier to detect
+# languages in them.
+
 <menu-item basename="../index">
 [AR:Ports:]
 [DA:Ports:]
@@ -12,6 +15,7 @@
 [FR:Ports:]
 [HR:Ports:]
 [HU:Ports:]
+[IT:Port:]
 [JA:Ports:]
 [KO:Ports:]
 [NL:Ports:]
@@ -23,7 +27,6 @@
 [SV:Anpassningar:]
 [TR:Ports:]
 [ZH:Ports:]
-[IT:Port:]
 </menu-item>
 
 <menu-item basename="index">
@@ -38,6 +41,7 @@
 [FR:Debian for PowerPC:]
 [HR:Debian for PowerPC:]
 [HU:Debian for PowerPC:]
+[IT:Debian per PowerPC:]
 [JA:Debian for PowerPC:]
 [KO:Debian for PowerPC:]
 [NL:Debian for PowerPC:]
@@ -49,7 +53,6 @@
 [SV:Debian för PowerPC:]
 [TR:Debian for PowerPC:]
 [ZH:Debian for PowerPC:]
-[IT:Debian per PowerPC:]
 </menu-item>
 
 <menu-item basename="news">
@@ -64,6 +67,7 @@
 [FR:News:]
 [HR:News:]
 [HU:News:]
+[IT:Novità:]
 [JA:News:]
 [KO:News:]
 [NL:News:]
@@ -75,7 +79,6 @@
 [SV:Nyheter:]
 [TR:News:]
 [ZH:News:]
-[IT:Novità:]
 </menu-item>
 
 <menu-item basename="devel">
@@ -90,6 +93,7 @@
 [FR:Development:]
 [HR:Development:]
 [HU:Development:]
+[IT:Sviluppo:]
 [JA:Development:]
 [KO:Development:]
 [NL:Development:]
@@ -101,7 +105,6 @@
 [SV:Utveckling:]
 [TR:Development:]
 [ZH:Development:]
-[IT:Sviluppo:]
 </menu-item>
 
 <menu-item basename="docu">
@@ -116,6 +119,7 @@
 [FR:Documentation:]
 [HR:Documentation:]
 [HU:Documentation:]
+[IT:Documentazione:]
 [JA:Documentation:]
 [KO:Documentation:]
 [NL:Documentation:]
@@ -127,7 +131,6 @@
 [SV:Dokumentation:]
 [TR:Documentation:]
 [ZH:Documentation:]
-[IT:Documentazione:]
 </menu-item>
 
 <menu-item basename="supply">
@@ -142,6 +145,7 @@
 [FR:Supply:]
 [HR:Supply:]
 [HU:Supply:]
+[IT:Fornitura:]
 [JA:Supply:]
 [KO:Supply:]
 [NL:Supply:]
@@ -153,7 +157,6 @@
 [SV:Tillgänglighet:]
 [TR:Supply:]
 [ZH:Supply:]
-[IT:Fornitura:]
 </menu-item>
 
 <menu-item basename="inst/install">
@@ -168,6 +171,7 @@
 [FR:Installation:]
 [HR:Installation:]
 [HU:Installation:]
+[IT:Installazione:]
 [JA:Installation:]
 [KO:Installation:]
 [NL:Installation:]
@@ -179,5 +183,4 @@
 [SV:Installation:]
 [TR:Installation:]
 [ZH:Installation:]
-[IT:Installazione:]
 </menu-item>
