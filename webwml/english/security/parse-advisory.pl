@@ -54,7 +54,7 @@ foreach $l (<ADV>) {
 	  push @dbids, "BID".$id;
       }
   }
-  $mi = 0 if ($l =~ /^(wget url|Obtaining updates)/);
+  $mi = 0 if ($l =~ /^(wget url|Obtaining updates|Upgrade Instructions)/);
   $moreinfo .= "<p>" if ($mi && $nl);
   $nl = 0;
   $nl = 1 if ($mi && ($l eq "\n") && $moreinfo);
@@ -127,7 +127,7 @@ print DATA "<define-tag packages>$package</define-tag>\n";
 print DATA "<define-tag isvulnerable>yes</define-tag>\n";
 print DATA "<define-tag fixed>yes</define-tag>\n";
 print DATA "\n#use wml::debian::security\n\n";
-print DATA "$files</dl>\n";
+print DATA "$files\n\n</dl>\n";
 print DATA "\n<p><md5sums $mlURL>\n";
 close DATA;
 
