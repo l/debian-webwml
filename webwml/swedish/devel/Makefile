@@ -16,4 +16,5 @@ include $(WMLBASE)/Make.dep.generic
 
 # Do Not modify the following line
 people.$(LANGUAGE).html: people.wml $(TEMPLDIR)/template.wml $(ENGLISHSRCDIR)/devel/people.names
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/develbar.wml $(TEMPLDIR)/develpage.wml
 
