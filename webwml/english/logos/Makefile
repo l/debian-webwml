@@ -12,7 +12,7 @@ include $(WMLBASE)/Make.lang
 
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
-  $(ENGLISHDIR)/logos/index.data $(ENGLISHDIR)/logos/index.tags \
+  $(ENGLISHDIR)/logos/index.data \
   $(GETTEXTDEP) \
   $(ENGLISHDIR)/logos/openlogo-25.jpg $(ENGLISHDIR)/logos/openlogo-nd-25.jpg \
   $(ENGLISHDIR)/logos/officiallogo-25.jpg $(ENGLISHDIR)/logos/officiallogo-nd-25.jpg \
