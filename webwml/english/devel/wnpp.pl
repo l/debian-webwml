@@ -23,10 +23,10 @@ $attrs  = [
 
 # The maintainers flat database
 $MAINTAINERS = "/org/ftp.debian.org/ftp/indices/Maintainers";
-my $host = `hostname -f`;
+my $host = `hostname -f`; chop $host;
 $MAINTAINERS = "Maintainers" if ( $host ne "master.debian.org" );
 
-open MAINTAINERS or die "Can't find Maintainers list: $!\n"; 
+open MAINTAINERS or die "Can't find $MAINTAINERS file at $host: $!\n";
 while (<MAINTAINERS>) {
     if (/^(\S+)\s+/) {
     	$maintainer{$1} = $';
