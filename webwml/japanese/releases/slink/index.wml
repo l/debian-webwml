@@ -1,95 +1,16 @@
 #use wml::debian::template title="Debian 2.1 (slink) リリース情報"
 #use wml::debian::languages
-<!--original_revision: 1.23 :-->
+#use wml::debian::install_manual
+#include '$(ENGLISHDIR)/releases/slink/formats_and_architectures.wmh'
+<!--original_revision: 1.32 :-->
 
 <:
-# list of architectures
-%arches = ( i386   => 'Intel x86',
-	    m68k   => 'Motorola 680x0',
-	    sparc  => 'SPARC',
-	    alpha  => 'Alpha',
-	  );
-
-# language specific name for output formats
-%formats = ( html => "HTML",
-	     pdf  => "PDF",
-	     txt  => "ASCII",
-           );
-
-# some languages aren't yet in debian/template files
-$langs{'russian'} = 'ru';
-$langs{'czech'} = 'cz';
 
 $about_lang_setting = "お使いのブラウザの言語設定が適切に行なわれていれば、
 上記のリンクから自動的に適切な文書が HTML 形式でご覧いただけるはずです。
 こちらに関しては <A href=\"$base_url/intro/cn\"><setlang></A> をご覧ください。
 あるいは、ご希望のアーキテクチャ、言語、形式の文書を
 以下の表から選んでいただいても結構です。\n";
-
-#
-# emits an bunch of li (list items)
-#
-sub permute_as_list {
-    my($file, $name, @exts) = @_;
-    my($ext, $arch);
-
-    foreach $arch (keys %arches) {
-        print "<li> <a href=\"./$arch/$file\">$name " . $arches{$arch} . " 用</a>";
-	if ( $#exts != -1 ) {
-	    foreach $ext (@exts) {
-	        print " (<a href=\"./$arch/$file.$ext\"><em>" . 
-			$formats{$ext} . "</em></a>)";
-	    }
-	}
-	print "\n";
-    }
-}
-
-#
-# emits an HTML table matrix:
-#   | arch | format | lang1, lang2, lang3 |
-#
-sub permute_as_matrix {
-    my($file, @langs) = @_;
-    my($ext, $arch, $lang);
-    my $altcolor = 'white';
-    my $ctr = 0;
-
-    foreach $arch (keys %arches) {
-	$ctr++;
-	my $first = 1;
-
-	foreach $ext (keys %formats) {
-	    # alternate the row color
-	    if ( $ctr % 2 ) {
-		print "\n<tr>\n";
-	    } else {
-		print "\n<tr bgcolor=\"$altcolor\">\n";
-	    }
-	    # only print the arch name on the first row
-	    if ( $first == 1 ) {
-		print "  <td align=\"left\"><a href=\"$arch/$file\">" . $arches{$arch} . "</a></td>\n";
-		$first = 0;
-	    } else {
-		print "  <td>&nbsp;</td>\n";
-	    }
-	    print "  <td align=\"left\">" . $formats{$ext} . "</td>\n";
-	    # permute over languages
-	    print "  <td>";
-	    foreach $lang (@langs) {
-		print "<a href=\"./$arch/$file." . $langs{$lang} . ".$ext\">";
-		# sometimes the language name isn't properly defined yet
-		my $workaroundlang = $trans{$CUR_ISO_LANG}{$lang};
-		( $workaroundlang = $lang ) =~ s/^(.)/\U$1/
-		    unless $workaroundlang;
-		print $workaroundlang . "</a> \n";
-	    }
-	    print "  </td>";
-	    print "</tr>\n";
-	    
-	}
-    }
-}
 
  :>
 
@@ -112,6 +33,7 @@ Debian 2.1 では、以下の各アーキテクチャがサポートされています。
    } :>
 </ul>
 
+
 <h2><a name="release-notes">リリースノート</a></h2>
 
 <p>
@@ -121,7 +43,7 @@ Debian 2.1 で何が新しいのかを知るためには、
 リリースノートには、以前のリリースからアップグレードするユーザのための
 手引きも含まれています。
 <ul>
-<: &permute_as_list('release-notes/index', 'リリースノート'); :>
+<: &permute_as_list('release-notes/', 'リリースノート'); :>
 </ul>
 
 <: print $about_lang_setting; :>
@@ -200,6 +122,7 @@ slink 用インストールマニュアルの最新版が利用できるように
 
 <p>
 
+
 <h2><a name="errata">エラッタ</a></h2>
 
 <p>
@@ -208,7 +131,7 @@ slink 用インストールマニュアルの最新版が利用できるように
 リリース済ディストリビューション (この場合 Slink)
 が更新されることがあります。
 一般的に、これらはリリースポイントとして示されています。
-現在のリリースポイントは Debian 2.1r2 です。
+現在のリリースポイントは Debian 2.1r4 です。
 なお、Debian アーカイブミラーにて
 <a href="ftp://ftp.debian.org/debian/dists/slink/ChangeLog">変更履歴</a>
 をご覧いただけます。
@@ -238,6 +161,7 @@ Slink を Linux カーネルの 2.0.x
 なお Slink で Linux 2.2.x カーネル をご利用されたい場合は、
 <a href="running-kernel-2.2">確認されている問題の一覧</a>
 をご覧ください。
+
 
 <h2><a name="unofficial-updates">非公式なアップデート</a></h2>
 
@@ -283,35 +207,29 @@ Adaptec ユーザ向けのレスキューフロッピーおよびドライバフロッピー
 
 <p>
 
-Gnome は複数のプログラムからなる重要なセットで、
-今や多くの人々によってその最新版が望まれているものです。
-そのため、多くの開発者が協力してこのソフトウェアの最新安定版を
-slink 向けに deb パッケージ化しています。
-その詳細は <A HREF="gnome">Slink/Gnome ページ</A>をご覧ください。
+最新安定版の Gnome を実行されたい方は
+<a href="http://www.gnome.org/start/debian-readme.html">
+Debian 2.1 向け GNOME アップデート</a>をご覧ください。
 
 <h3>Apt</h3>
 
 <p>
-
-potato 用の <tt>apt</tt> 最新版が、Slink
-でも使えるようコンパイルされています。
-<a href="http://netgod.net/x/apt_0.3.7slink0_i386.deb">
-http://netgod.net/x/apt_0.3.7slink0_i386.deb</a>
-からその Debian パッケージをダウンロードしてください。
-
-<p>
-
+<tt>apt</tt> のアップデートバージョンが、Debian 2.1r3 
+で利用できるようになっています。
 この最新版の利点は、まず第一に
 複数の CD-ROM から直接インストールが行なえることにあります。
 これを使えば、<tt>dselect</tt> の
 <tt>dpkg-multicd</tt> 取得オプションは必要なくなります。
+しかし、お手持ちの 2.1 CD-ROM には古い <code>apt</code>
+が収録されているかもしれませんので、Slink 
+の最新版にアップグレードされるとよいでしょう。
+
 
 <h2><a name="acquiring">Debian 2.1 の入手</a></h2>
 
 <p>
 
 Debian はネットワークや CD ベンダから入手することができます。
-
 
 <h3>Debian の CD を購入する</h3>
 
