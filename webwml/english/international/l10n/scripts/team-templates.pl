@@ -1,4 +1,4 @@
-#use wml::scripts::l10nheader
+#include "$(ENGLISHDIR)/international/l10n/scripts/l10nheader.wml"
 
 <: 
 
