@@ -1,0 +1,186 @@
+#use wml::debian::ddp title="DDP CVS 접근"
+
+<p>데비안 문서 프로젝트(Debian Documentation Project)는 웹 페이지와
+많은 매뉴얼 텍스트를 <b>cvs.debian.org</b>에 있는 데비안 CVS 서버에
+저장한다. 
+
+<p>데비안 문서 프로젝트에 참여하는 사람들만 CVS 서버의 파일을 갱신할
+수 있다. 나머지는 이 파일들을 내려받을 수만 있다.
+  
+<p><a
+href="http://cvs.debian.org/ddp/manuals.sgml/?cvsroot=debian-doc">CVSWeb</a>을
+통해 파일에 개별적으로 접근하고 파일의 변경 사항을 확인할 수 있다.
+
+<p>모든 매뉴얼을 내려받으려면 CVS 서버에 직접 접근하는 것이 더 좋은
+방법이다. <tt>cvs</tt> 패키지를 설치해야 한다.
+
+<h2>CVS 서버에 익명(읽기 전용)으로 접속하기</h2>
+
+<p>다음 명령을 실행한다.
+
+<p style="margin-left: 2em">
+  <code>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/debian-doc login</code>
+</p>
+
+<p>패스워드를 물어보면 엔터만 누르면 된다.
+
+<p>그리고 나서 일반적인 CVS 명령(CVS info 페이지 참고)으로 파일을
+꺼내올(check out) 수 있다. 하지만 파일을 수정하거나 커밋할 수는 없다.
+
+<p>파일을 처음 내려받는다면 파일을 보관할 디렉토리를 만들고 그
+디렉토리로 이동한다. <strong>CVS</strong>와 <strong>ddp</strong>가 이
+디렉토리 안에 만들어질 것이다.
+
+<p>다음 명령으로 모든 파일을 내려받는다.
+
+<p style="margin-left: 2em">
+  <code>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/debian-doc -z3 checkout ddp/manuals.sgml</code>
+</p>
+
+<p>This will recursively create the directories and populate them.
+
+<p>지역 복사본(local copy)을 갱신하려면
+<strong>ddp/manuals.sgml</strong> 디렉토리에서 다음 명령을 실행한다.
+
+<p style="margin-left: 2em">
+  <code>cvs -z3 update -d -P</code>
+</p>
+
+<p>CVS 원격 세션을 끝내려면 다음 명령을 실행한다.
+
+<p style="margin-left: 2em">
+  <code>cvs logout</code>
+</p>
+
+<h2>갱신 권한을 가지고 CVS 서버에 접속하기</h2>
+
+<p>이 방법으로 CVS 서버에 접근하기 전에 먼저 쓰기 권한을 받아야만
+한다. 갱신 권한 <a href="#obtaining">요청</a>에 대해 먼저 읽어보기
+바란다. 
+
+<p>다음 명령으로 접속한다.
+
+<p style="margin-left: 2em">
+  <code>cvs -d :pserver:userid@cvs.debian.org:/cvs/debian-doc login</code>
+</p>
+
+<p>문서 프로젝트 진행자(coordinator)와 상의해 받은 암호를
+입력한다. 위의 명령에서 <i>userid</i>를 CVS 패스워드 서버에 등록된 자신의
+사용자 이름으로 바꾼다. 이것은 <b>cvs.debian.org</b>의 로그인 이름과
+같은 필요는 없다.
+
+<p>그리고 나서 일반적인 CVS 명령(CVS info 페이지 참고)으로 파일을
+꺼내올(check out) 수 있다. 하지만 파일을 수정하거나 커밋할 수는 없다.
+
+<p>파일을 처음 내려받는다면 파일을 보관할 디렉토리를 만들고 그
+디렉토리로 이동한다. <strong>CVS</strong>와 <strong>ddp</strong>가 이
+디렉토리 안에 만들어질 것이다.
+
+<p>다음 명령으로 모든 파일을 내려받는다.
+
+<p style="margin-left: 2em">
+  <code>cvs -d :pserver:userid@cvs.debian.org:/cvs/debian-doc -z3 checkout ddp/manuals.sgml</code>
+</p>
+
+<p>This will recursively create the directories and populate them.
+
+<p>지역 복사본을 갱신하려면 <strong>ddp/manuals.sgml</strong>
+디렉토리에서 다음 명령을 실행한다. 
+
+<p style="margin-left: 2em">
+  <code>cvs -z3 update -d -P</code>
+</p>
+
+<p>CVS 원격 세션을 끝내려면 다음 명령을 실행한다.
+
+<p style="margin-left: 2em">
+  <code>cvs logout</code>
+</p>
+
+<h2>SSH를 사용해 갱신 권한을 가지고 CVS 서버에 접속하기</h2>
+
+<p>이 방법은 등록된 데비안 개발자만 사용할 수 있고 위의 pserver보다 더
+추천하는 방법이다. 최근에 데비안 개발자로 등록됐다면 문서 프로젝트
+진행자에게 pserver 계정을 삭제(nuke)해 달라고 알리기 바란다.
+
+<p>ssh로 접속하려면 먼저 CVS 서버에 알려야 한다.
+
+<p style="margin-left: 2em">
+  <code>export CVS_RSH=ssh</code>
+</p>
+
+<p>파일을 보관할 디렉토리를 만들고 그 디렉토리로 이동한다. 그리고 다음
+명령을 실행한다.
+
+<p style="margin-left: 2em">
+  <code>cvs -d :ext:<i>userid</i>@cvs.debian.org:/cvs/debian-doc -z3 checkout <i>module</i></code>
+</p>
+
+<p>위의 명령에서 <i>userid</i>는 CVS 서버에 등록된 자신의 사용자
+이름으로 바꾼다. 이것은 <b>cvs.debian.org</b>의 로그인 이름과
+같다. <i>module</i>은 꺼내려는 모듈 이름으로 바꾼다. 보통
+<tt>ddp/manuals.sgml</tt>이다. 그리고 나서 패스워드를 입력하는 프롬프트가
+나온다. 자신의 장비와 혼동하면 안 된다.
+
+<p><strong>CVS</strong>와 <strong>ddp</strong>, 두 디렉토리가 이
+디렉토리 안에 만들어질 것이다. CVS will recursively create any modules(i.e.
+directories) you requested and populate them with files.
+
+<p>그리고 나서 일반적인 CVS 명령(CVS info 페이지 참고)으로 파일을
+꺼내고 커밋할 수 있다.
+
+<p>지역 복사본을 갱신하려면 <strong>ddp/manuals.sgml</strong>
+디렉토리에서 다음 명령을 실행한다. 
+
+<p style="margin-left: 2em">
+  <code>cvs -z3 update -d -P</code>
+</p>
+
+<a name="obtaining">
+<h2>갱신 권한 얻기</h2>
+</a>
+
+<p>갱신 권한은 매뉴얼 작성에 참여하고 싶은 사람에게 주어진다.
+
+<p>갱신 권한을 얻으려면 pserver에서 사용할 사용자 이름, 다음 명령으로 생성한
+암호한 패스워드와 함께 <a href="mailto:aph@debian.org">문서 프로젝트
+진행자</a>에게 요청을 보낸다.
+
+<p style="margin-left: 2em">
+  <code>makepasswd --crypt --clear=<i>your_password</i></code>
+</p>
+
+<p>(<tt>makepasswd</tt>는 데비안 패키지다)
+
+<p>패스워드를 제공하지 않으면 임의로 하나가 만들어질 것이다. 그러나 그
+패스워드는 기억할 만한 것이 못 된다. 패스워드를 바꾸려면 진행자에게 전자우편을
+다시 보내 새로운 암호한 패스워드를 보내면 된다.
+
+<hr>
+
+<h1>파일의 구성(Organisation)</h1>
+
+<p>이 그림은 CVS 디렉토리의 구조를 보여준다.
+
+<p><img src="dirtree.jpg" align="middle" alt="DDP CVS directory tree">
+
+<p>Please note that the DDP web site is located in the webwml module of the
+Debian CVS repository, to be integrated with the rest of the Debian web
+pages.
+
+<hr>
+
+<h1>자동 갱신 절차(mechanism)</h1>
+
+<p>매뉴얼은 매일 7:00, 15:00, 23:00(Pacific time)에 www.debian.org에서
+수행되는 cron 작업에 의해 웹 페이지로 출판된다.
+
+<p>스크립트가 <kbd>cvs update -d -P</kbd>와 <kbd>make -C manuals.sgml
+clean publish</kbd>를 <code>ddp</code> 디렉토리에서 실행한다.
+
+<p>The makefile is set up to rebuild each subdirectory (that contains
+maintained documentation), and to install the files from each subdirectory
+in <code>doc/manuals/</code> subdirectory of the web site. The subdirectory
+makefiles are derived from <code>ddp/manuals.sgml/standard.makefile</code>.
+
+# <!-- Created: Mon Jul  6 19:58:09 BST 1998 -->
