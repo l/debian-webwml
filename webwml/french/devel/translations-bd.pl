@@ -609,9 +609,10 @@ $translations = [
 {
 	'type'			=> 'Web',
 	'key'			=> 'devel/index',
-	'status'		=> 'à traduire',
-	'since'			=> '11/08/1998',
-	'translation_maintainer'=> ['Christophe Le Bars <clebars@debian.org>'],
+	'status'		=> 'à relire',
+	'since'			=> '17/05/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '17/05/1999',
 },
 
 {
