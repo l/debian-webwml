@@ -3,8 +3,6 @@
 
 TEMPLDIR := ../webwml/english/template/debian
 DEBTEMPLATES := $(wildcard $(TEMPLDIR)/*.wml) \
-                $(TEMPLDIR)/countries.def \
-                $(TEMPLDIR)/language_names.def \
                 $(wildcard template/*.wml) \
                 .wmlrc
 TARGETDIR := ../../web
@@ -41,11 +39,5 @@ backup:
 
 clean:
 	rm -f $(HTMLFILES) $(PHPFILES)
-
-$(TEMPLDIR)/countries.def: $(TEMPLDIR)/countries.wml
-	cd $(TEMPLDIR) && sed -e /^#/d countries.wml | eperl -B '<:' -E ':>' - >/dev/null
-
-$(TEMPLDIR)/language_names.def: $(TEMPLDIR)/language_names.wml
-	cd $(TEMPLDIR) && sed -e '/^#/d' -e '/^<:/,/^:>/!d' language_names.wml  | eperl -B '<:' -E ':>' - >/dev/null
 
 .SUFFIXES:
