@@ -1,6 +1,6 @@
 #use wml::debian::template title="Een audit uitvoeren"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.10"
+#use wml::debian::translation-check translation="1.11"
 
 # Last Translation Update by $Author$
 # Last Translation Update at $Date$
@@ -50,24 +50,108 @@ van het pakket te lezen en het pakket te proberen installeren en gebruiken.</p>
 <p>Dit laat u misschien toe om manieren te bedenken om het programma te 
 misbruiken in haar typische operatie.</p>
 
-<h2>Problemen rapporteren</h2>
+<h2 name="reporting">Problemen rapporteren</h2>
 
 <p>Als u een probleem ontdekt in het pakket dat u aan het onderzoeken bent, dan
-kan u dit best rapporteren.</p>
+kan u dit best rapporteren. Wanneer u een veiligheidsprobleem rapporteert, 
+probeer er dan ook een patch aan te bieden zodat de ontwikkelaars het op tijd
+kunnen verhelpen. Het is niet nodig van een aanvalsvoorbeeld (veelal 
+<em>exploit</em> of <em>proof of concept</em> genoemd) aan te bieden omdat de
+patch voor zichzelf zou moeten spreken. Het is meestal beter om tijd te 
+investeren in het aanbieden van een geschikte patch, dan om een succesvolle
+aanval op de bug aan te bieden.</p>
 
-<p>Omdat veiligheidsbugs in het algemeen best niet worden vrijgegeven voordat
-ze zijn opgelost, rapporteer ze <i>niet</i> via het standaard 
-<a href="http://bugs.debian.org/">Debian Bug Traceer Systeem</a>, rapporteer
-in plaats daarvan het probleem rechtstreeks aan <a href="$(HOME)/security/">
-het Veiligheidsteam</a> die de release van een bijgewerkt pakket zal verzorgen.</p>
+<p>Hier is een lijst van te ondernemen stappen eens u een veiligheidsprobleem
+hebt gevonden in Debian:</p>
 
-<p>Idealiter bevat elk rapport een oplossing, voor het probleem dat is ontdekt, 
-die is uitgetest en waarvan is geverifieerd dat ze het probleem echt oplost.</p>
+<ol>
+
+<li>Probeer een patch aan te maken voor de bug of verkrijg voldoende informatie
+zodat anderen het bestaan van het probleem kunnen nagaan. Idealiter zou elk 
+rapport een oplossing moeten bieden ,voor het probleem dat u hebt ontdekt, die
+is getest en waarvoor is geverifieerd dat ze het probleem werkelijk oplost.
 
 <p>Hoe gedetailleerder u bent over de omvang van het probleem, het relatieve
 belang van het probleem en mogelijke pistes om het probleem te omzeilen, hoe 
-beter, als u geen oplossing hebt.</p>
+beter, als u geen oplossing hebt.</p></li>
 
-<p>Het veiligheidsteam zal met andere Linux-distributies coördineren indien
-nodig en zal contact opnemen met de pakketbeheerder in uw naam.</p>
+<li>Kijk eerst na of het veiligheidsprobleem aanwezig is in de stable Debian
+release en of het aanwezig is in andere distributies of in de versie aangeboden
+door de upstream beheerders.</li>
+
+<li>Gebaseerd op bovenstaand nazicht, rapporteert u het probleem:
+
+<ul>
+
+<li>naar de upstream beheerders via hun veiligheidscontact, geef de analyse en
+de patch.
+
+<li>naar het Debian Security Team als de fout aanwezig is is een gereleasde
+Debian-versie. Het Debian Security Team zal typisch een 
+<a href="$(HOME)/security/cve-compatibility">CVE-naam</a> toewijzen aan het
+veiligheidsprobleem. Het veiligheidsteam zal met andere Linux-distributies 
+coördineren indien nodig en zal contact opnemen met de pakketbeheerder in uw 
+naam. U kunt echter ook een kopie van de e-mail versturen naar de 
+pakketbeheerder. Doe dit echter enkel voor veiligheidsproblemen met een laag 
+risico (zie verder).</p>
+
+<li>Als het probleem zich niet voordoet in een gereleasde Debian-versie en de
+applicatie is misschien opgenomen in andere distributies of besturingssystemen,
+stuur dan een e-mail naar 
+<a href="https://www.lst.de/cgi-bin/mailman/listinfo/vendor-sec">vendor-sec</a>
+(een private mailinglijst die door de meeste vrije software-distributies wordt
+gebruikt om over veiligheidsproblemen te discussiëren). U hoeft dit niet te doen
+wanneer u het probleem al hebt doorgestuurd naar de Debian Security Team want
+zij zullen het ook naar deze lijst doorsturen.</li>
+
+<li>Als het probleem zich <strong>niet</strong> voordoet in een gereleasde 
+Debian-versie en u bent er absoluut zeker van dat de applicatie 
+<strong>niet</strong> is opgenomen in een andere distributie of 
+besturingssysteem, rapporteer het dan met het Bug Traceersysteem. 
+
+</ul>
+
+<li>Eens het probleem publiek is (wanneer het Debian Security Team of een andere
+distributie een advies heeft uitgebracht), dient er een bug met alle relevante
+informatie worden geöpend in het Debian Bug Traceer Systeem om het 
+veiligheidsprobleem te kunnen traceren in niet-gereleasde Debian-versies
+(<em>sid</em> en <em>testing</em>). Dit wordt gewoonlijk door het Security Team
+zelf gedaan. Als u denkt dat ze er één vergaten of u bent niet aan het Security
+Team aan het rapporteren, dan kunt u het zelf rapporteren. Zorg ervoor dat de 
+bug de gepaste tags heeft (gebruik de <em>security</em>-tag) en geef ze de 
+gepaste prioriteit (gewoonlijk <em>grave</em> of hoger). Zorg er ook voor dat de
+bugtitel de gepaste <a href="$(HOME)/security/cve-compatibility">CVE name</a> 
+bevat, als er één is toegewezen. Dit zorgt ervoor dat veiligheidsproblemen niet
+vergeten worden en dat ze opgelost worden in de gereleasde en niet-gereleasde 
+Debian-versies.
+
+<li>Als u dat wenst, dan kunt u deze informatie, eens ze publiek is, doorsturen
+naar publieke full disclosure mailinglijsten zoals  
+<a href="http://lists.netsys.com/full-disclosure-charter.html">full-disclosure</a>
+of <a href="http://www.securityfocus.com/archive/1">Bugtraq</a>.
+
+</ol>
+
+<p>Merk op dat deze stappen kunnen afhangen van het risico dat geassocieerd is
+met het gevonden veiligheidsprobleem. U moet het risico bepalen via:
+
+<ul>
+<li>lokaal veiligheidsprobleem of op het netwerk
+<li>de gevolgen als het veiligheidsprobleem wordt uitgebuit
+<li>veelgebruikte software aangetast door het probleem
+</ul>
+
+<p>Er moeten verschillende stappen worden gezet om bijvoorbeeld een lokale
+symbolische koppelingsaanval te rapporteren die enkel kan gebruikt worden 
+door geauthenticeerde gebruikers en die enkel het systeem kan beschadigen, dan
+om een bufferoverloop op het netwerk die beheersprivileges verschaft en 
+aanwezig is in veelgebruikte software te rapporteren.</p>
+
+<p>In de meeste gevallen, omdat veiligheidsproblemen niet mogen vrijgegeven 
+worden vooraleer ze zijn opgelost, rapporteert u ze <i>niet</i> via het 
+standaard <a href="http://bugs.debian.org/">Debian Bug Traceer Systeem</a>, 
+maar rapporteert u het probleem rechtstreeks naar het 
+<a href="$(HOME)/security/">the Security Team</a> die de release van een 
+bijgewerkt pakket zal verzorgen en het zal rapporteren in de BTS eens het is 
+opgelost.</p>
 
