@@ -48,17 +48,25 @@ def parse_args():
 
 parse_args()
 db = pg.connect(Cnf["MyDB"])
-q = db.query("SELECT email FROM people WHERE age('now', last_update::datetime) < '2 day'::timespan")
+q = db.query("SELECT email, offer FROM people WHERE age('now', last_update::datetime) < '2 day'::timespan ORDER BY offer")
 if not q.getresult():
     sys.exit(0)
 
 Subst = {}
 print utils.TemplateSubst(Subst, Cnf["Dir::Templates"]+"/gpg_show_changed.header"),
 
-for email in [x[0] for x in q.getresult()]:
+previous = ""
+for email, offer in [x[:] for x in q.getresult()]:
+    if offer != previous:
+        print
+        if offer == 't':
+            print "Key signing offers:"
+        else:
+            print "Key signing requests:"
+    previous = offer
     print
-    print "%s <%s>: " % (gpg_utils.get_fullname(db, email), email)
-    print gpg_utils.print_all_places(db, email, " "*4)
+    print "  %s <%s>" % (gpg_utils.get_fullname(db, email), email)
+    print gpg_utils.print_all_places(db, email, " "*6)
 
 # vim:set ts=4:
 # vim:set expandtab:
