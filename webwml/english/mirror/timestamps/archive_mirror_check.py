@@ -154,7 +154,7 @@ def check_site(hostname, loc):
 	else:
 		return 0
 
-ignored = re.compile('(ftp.us.debian.org|mirror.aarnet.edu.au|ibiblio.org|ftp.wa.au.debian.org)')
+ignored = re.compile('(ftp.us.debian.org|mirror.aarnet.edu.au|ibiblio.org|ftp.wa.au.debian.org|ftp.nz.debian.org)')
 def ignored_site(site, currentsite):
 	if ignored.match(site) and not currentsite:
 		print "Ignoring site " + site
