@@ -13,32 +13,50 @@
 #  * diff:     idem with diff
 #  * file:     add current version of translated file
 
-'Gustavo Noronha' => {
-    'email'     => 'kov@debian.org',
-    'summary'   => 3,
-    'logs'      => 3,
-    'diff'      => 0,
-    'tdiff'     => 0,
-    'file'      => 0,
-    'compress'  => 'none'
-},
+sub init_translators {
+    my $translators = {
+	'Gustavo Noronha' => {
+	    'email'     => 'kov@debian.org',
+	    'summary'   => 3,
+	    'logs'      => 3,
+	    'diff'      => 0,
+	    'tdiff'     => 0,
+	    'file'      => 0,
+	    'compress'  => 'none'
+	    },
+		
+		'Carlos Laviola' => {
+		    'email'     => 'claviola@debian.org',
+		    'summary'   => 3,
+		    'logs'      => 3,
+		    'diff'      => 0,
+		    'tdiff'     => 0,
+		    'file'      => 0,
+		    'compress'  => 'none'
+		    },
+			
+			'Eduardo Macan' => {
+			    'email'     => 'macan@debian.org',
+			    'summary'   => 3,
+			    'logs'      => 3,
+			    'diff'      => 0,
+			    'tdiff'     => 0,
+			    'file'      => 0,
+			    'compress'  => 'none'
+			    },
+				'list' => {
+				    # this is a special name containing the default addressee
+				    'email'     => 'debian-l10n-portuguese@lists.debian.org',
+				    'missing'   => 1,
+				    'summary'   => 2,
+				    'logs'      => 0,
+				    'diff'      => 0,
+				    'tdiff'     => 0,
+				    'file'      => 0,
+				    'compress'  => 'none'
+				    }
+    };
+    return $translators;
+}
 
-'Carlos Laviola' => {
-    'email'     => 'claviola@debian.org',
-    'summary'   => 3,
-    'logs'      => 3,
-    'diff'      => 0,
-    'tdiff'     => 0,
-    'file'      => 0,
-    'compress'  => 'none'
-},
-
-'Eduardo Macan' => {
-    'email'     => 'macan@debian.org',
-    'summary'   => 3,
-    'logs'      => 3,
-    'diff'      => 0,
-    'tdiff'     => 0,
-    'file'      => 0,
-    'compress'  => 'none'
-},
+1;
