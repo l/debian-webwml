@@ -203,7 +203,7 @@ if ($opt_l) {
 }
 
 # Compute stats about gettext files
-print "Compute statistics about gettext files... " if ($config{'verbose'});
+print "Computing statistics in gettext files... " if ($config{'verbose'});
 my %po_translated,%po_fuzzy,%po_untranslated,%po_total;
 my %percent_po_t,%percent_po_u,%percent_po_f;
 foreach $lang (@search_in) {
@@ -339,7 +339,7 @@ foreach $lang (@search_in) {
 	print HTML "<p><a href=\"./\">Back to index of languages</a></p>\n";
 	print HTML "<p><a href=\"../\">Working on the website</a></p>\n";
 	if ($o_body) {
-	    print HTML "<p><a href=\"#outdated\">Outdated translation</a></p>\n";
+	    print HTML "<p><a href=\"#outdated\">Outdated translations</a></p>\n";
 	}
 	if ($u_body) {
 	    print HTML "<p><a href=\"#untranslated\">Pages not translated</a></p>\n";
@@ -348,7 +348,7 @@ foreach $lang (@search_in) {
 	    print HTML "<p><a href=\"#outdated\">Translations up to date</a></p>\n";
 	}
 	if ($lang ne 'english') {
-	    print HTML "<p><a href=\"#gettext\">Stats on gettext files</a></p>\n";
+	    print HTML "<p><a href=\"#gettext\">Translations of templates (gettext files)</a></p>\n";
 	}
 	
 	# outputs the content
@@ -373,6 +373,7 @@ foreach $lang (@search_in) {
 	}
 	# outputs the gettext stats
 	if ($lang ne 'english') {
+	    print HTML "<h3><a name='gettext'>Translations of templates (gettext files)</a>: <a href='#top'>(top)</a></h3>\n";
 	    print HTML "<h3><a name='gettext'>Stats on gettext files</a>: <a href='#top'>(top)</a></h3>\n";
 #	    print HTML $border_head;
 	    print HTML "<table width=\"100%\" border=0>\n";
@@ -424,7 +425,7 @@ open (HTML, ">$config{'htmldir'}/index.html")
 printf HTML "<html>\n<head><title>%s</title></head>\n<body bgcolor=\"#ffffff\">\n", $config{'title'};
 printf HTML "<h1 align=\"center\">%s</h1>\n", $config{'title'};
 
-print HTML "<h2>Statistics about pages</h2>\n";
+print HTML "<h2>Translated web pages</h2>\n";
 
 print HTML $border_head;
 print HTML "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
@@ -449,10 +450,10 @@ foreach $lang (@search_in) {
 print HTML "</table>\n";
 print HTML $border_foot;
 
-print HTML "<h2>Statistics about gettext files (replacement of slices)</h2>\n";
+print HTML "<h2>Translated templates (gettext files)</h2>\n";
 print HTML $border_head;
 print HTML "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
-print HTML "<tr><th>Language</th><th>Up to date</th><th>Fuzzy</th><th>Untranslated</th><th>Total</th></tr>\n";
+print HTML "<tr><th>Language</th><th>Up to date</th><th>Fuzzy</th><th>Not translated</th><th>Total</th></tr>\n";
 foreach $lang (@search_in) {
     next if $lang eq 'english';
     $l = $langs{$lang};
