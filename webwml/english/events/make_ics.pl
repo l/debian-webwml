@@ -12,8 +12,9 @@
 
 # $Id$
 
-# FIXME: Handle character entities in input?
+# FIXME: Handle character entities for non-iso-8859-1 pages?
 
+# Import external code
 use Time::Local;
 use integer;
 use POSIX;
@@ -26,8 +27,28 @@ if ($#ARGV != 1)
 
 ($wmlfile, $icsfile) = @ARGV;
 
+# Table of entities used when decoding pages
+@entities = (
+	'&nbsp;', '&iexcl;', '&cent;', '&pound;', '&curren;', '&yen;',
+	'&brvbar;', '&sect;', '&uml;', '&copy;', '&ordf;', '&laquo;', '&not;',
+	'&shy;', '&reg;', '&macr;', '&deg;', '&plusmn;', '&sup2;', '&sup3;',
+	'&acute;', '&micro;', '&para;', '&middot;', '&cedil;', '&sup1;',
+	'&ordm;', '&raquo;', '&frac14;', '&frac12;', '&frac34;', '&iquest;',
+	'&Agrave;', '&Aacute;', '&Acirc;', '&Atilde;', '&Auml;', '&Aring;',
+	'&AElig;', '&Ccedil;', '&Egrave;', '&Eacute;', '&Ecirc;', '&Euml;',
+	'&Igrave;', '&Iacute;', '&Icirc;', '&Iuml;', '&ETH;', '&Ntilde;',
+	'&Ograve;', '&Oacute;', '&Ocirc;', '&Otilde;', '&Ouml;', '&times;',
+	'&Oslash;', '&Ugrave;', '&Uacute;', '&Ucirc;', '&Uuml;', '&Yacute;',
+	'&THORN;', '&szlig;', '&agrave;', '&aacute;', '&acirc;', '&atilde;',
+	'&auml;', '&aring;', '&aelig;', '&ccedil;', '&egrave;', '&eacute;',
+	'&ecirc;', '&euml;', '&igrave;', '&iacute;', '&icirc;', '&iuml;',
+	'&eth;', '&ntilde;', '&ograve;', '&oacute;', '&ocirc;', '&otilde;',
+	'&ouml;', '&divide;', '&oslash;', '&ugrave;', '&uacute;', '&ucirc;',
+	'&uuml;', '&yacute;', '&thorn;', '&yuml;'
+);
+
 # Gather data
-open INP, $wmlfile or die "Cannot read $wmlfile: $!\n";
+open INP, '<', $wmlfile or die "Cannot read $wmlfile: $!\n";
 
 $abbr = '';
 $pagetitle = '';
@@ -90,28 +111,6 @@ close INP;
 (undef, undef, undef, undef, undef, undef, undef, undef,
  undef, $mtime, undef, undef, undef) = stat $wmlfile;
 
-# Kill off HTML code
-$coord =~ s/<[^>]+>//g;
-$intro =~ s/<[^>]+>//g;
-
-# Collapse excessive spacing
-$intro =~ s/\s{2,}/ /g;
-$intro =~ s/^\s+//g;
-
-# Replace some common entities
-$intro =~ s/&[mn]dash;/--/g;
-$intro =~ s/&[rl]dquo;/"/g;
-$intro =~ s/&[rl]squo;/'/g;
-
-# Add backslashes in front of commas in the descriptive texts
-$intro =~ s/,/\\,/g;
-$pagetitle =~ s/,/\\,/g;
-$where =~ s/([,;])/\\$1/g;
-
-# Convert dates into correct representation
-$startstring = sprintf("%04d%02d%02dT000000", split(/-/, $startdate));
-$endstring   = sprintf("%04d%02d%02dT235959", split(/-/, $enddate));
-
 # Figure out the language and  encoding of the text, by recursing upwards
 # until we find a .wmlrc file
 $maxlevel = 5; # Upper bound on recursion
@@ -123,7 +122,7 @@ while (! -e $wmlrcdir . '/.wmlrc')
 	$wmlrcdir .= '/..';
 	die "Unable to find .wmlrc file\n" if 0 == -- $maxlevel;
 }
-open WMLRC, $wmlrcdir . '/.wmlrc'
+open WMLRC, '<', $wmlrcdir . '/.wmlrc'
 	or die "Unable to read $wmlrcdir/.wmlrc: $!\n";
 RCDATA: while (<WMLRC>)
 {
@@ -142,6 +141,38 @@ close WMLRC;
 die "Unable to find encoding in $wmlrcdir/.wmlrc\n" if $encoding eq '';
 die "Unable to find language in $wmlrcdir/.wmlrc\n" if $language eq '';
 
+# Kill off HTML code
+$coord =~ s/<[^>]+>//g;
+$intro =~ s/<[^>]+>//g;
+
+# Collapse excessive spacing
+$intro =~ s/\s{2,}/ /g;
+$intro =~ s/^\s+//g;
+
+# Replace some common entities
+$intro =~ s/&[mn]dash;/--/g;
+$intro =~ s/&[rl]dquo;/"/g;
+$intro =~ s/&[rl]squo;/'/g;
+
+# If this is an ISO 8859-1 page, decode any character entities used
+# in the input to raw binary data.
+if (lc($encoding) eq 'iso-8859-1')
+{
+	$pagetitle =~ s/(&[^#;]+;)/&decodeentity($1)/ge;
+	$intro     =~ s/(&[^#;]+;)/&decodeentity($1)/ge;
+	$coord     =~ s/(&[^#;]+;)/&decodeentity($1)/ge;
+	$where     =~ s/(&[^#;]+;)/&decodeentity($1)/ge;
+}
+
+# Add backslashes in front of commas in the descriptive texts
+$intro =~ s/,/\\,/g;
+$pagetitle =~ s/,/\\,/g;
+$where =~ s/([,;])/\\$1/g;
+
+# Convert dates into correct representation
+$startstring = sprintf("%04d%02d%02dT000000", split(/-/, $startdate));
+$endstring   = sprintf("%04d%02d%02dT235959", split(/-/, $enddate));
+
 # Construct the canonic URL to this file
 $filebase = $wmlfile;
 $filebase =~ s(^.*/([^/]+)$)($1);
@@ -152,7 +183,8 @@ $url = 'http://www.debian.org/events/' . $year . '/' . $filebase . '.' .
 # Write output
 $charsetlanguage = ';CHARSET=' . $encoding . ';LANGUAGE=' . $language;
 
-open ICS, '>' . $icsfile or die "Cannot create $icsfile: $!\n";
+open ICS, '>', $icsfile or die "Cannot create $icsfile: $!\n";
+binmode ICS;
 &calline(ICS, 'BEGIN:VCALENDAR');
 &calline(ICS, 'VERSION:2.0');
 &calline(ICS, 'PRODID:-//Debian//Events//' . uc($language));
@@ -191,6 +223,18 @@ sub calline
 		$line = substr($line, $len);
 	}
 	print $handle $line, "\r\n";
+}
+
+# Return the ISO-8859-1 character that corresponds to the given entity
+sub decodeentity
+{
+	my $ent = shift;
+	# Start at one to avoid decoding &nbsp;
+	for (my $i = 1; $i < $#entities; ++ $i)
+	{
+		return chr($i + 160) if $entities[$i] eq $ent;
+	}
+	return $ent;
 }
 
 __END__
