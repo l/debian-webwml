@@ -15,4 +15,4 @@ include $(WMLBASE)/Make.dep.templ
 include $(WMLBASE)/Make.dep.generic
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/install_manual.wml \
-  $(ENGLISHSRCDIR)/releases/potato/formats_and_architectures.wmh
+  $(ENGLISHSRCDIR)/releases/potato/release.data
