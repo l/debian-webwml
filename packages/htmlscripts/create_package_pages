@@ -32,7 +32,8 @@ require('pages.pl');
 my ( $debian_site, $nonus_site, $security_site, $version,
      $html_root, $md5file, $experimental, $debug, $help,
      $distribution, $indices_dir, $quiet, $parts,
-     $locale_dir, $progress, $verbose, $languages, $subdists, $archs );
+     $locale_dir, $progress, $verbose, $languages, $subdists, 
+     $archs, $dbfile, $srcdbfile );
 
 my %opthash = (
 	       "debian_site|d=s" => \$debian_site,
@@ -40,6 +41,8 @@ my %opthash = (
 	       "security_site|s=s" => \$security_site,
 	       "html_root|h=s" => \$html_root,
 	       "md5file|m=s" => \$md5file,
+	       "dbfile=s" => \$dbfile,
+	       "srcdbfile=s" => \$srcdbfile,
 	       "experimental|e!" => \$experimental,
 	       "debug!" => \$debug,
 	       "verbose|v" => \$verbose,
@@ -106,7 +109,7 @@ if (! defined $locale_dir) {
 $experimental ||= 0; $debug ||= 0; $verbose ||= 0; 
 $quiet ||= 0; $progress ||= 0; $distribution ||= "";
 $subdists ||= ""; $archs ||= ""; $languages ||= "";
-$parts ||= "";
+$parts ||= ""; $dbfile ||= 'dbfile'; $srcdbfile ||= 'srcdbfile';
 
 $verbose ||= $debug;
 $quiet &&= ! $verbose;
@@ -127,7 +130,10 @@ sub tofile ($) {
 # *     "Main"       *
 # ********************
 
-my $db = Packages::DB->init( { debug => $debug, verbose => $verbose } );
+my $db = Packages::DB->init( { debug => $debug, 
+			       verbose => $verbose,
+			       dbfile => $dbfile,
+			       srcdbfile => $srcdbfile } );
 my %langs = ( "en" => 1 );
 my %archs = ( "i386" => 1 );
 my %subdists = ( );
