@@ -1,4 +1,4 @@
-#use wml::debian::translation-check translation="1.1" mindelta="1"
+#use wml::debian::translation-check translation="1.5" mindelta="1"
 <define-tag description>fjärrattack</define-tag>
 <define-tag moreinfo>
 <p>Theo de Raadt tillkännagav att OpenBSD-gruppen samarbetar med ISS om en
@@ -9,10 +9,19 @@ att uppgradera till den senaste utgåvan, version 3.3.</p>
 <p>Denna version släpptes för tre dagar sedan och introducerade en ny funktion
 som skall reducera effekten av problem i nätverkshanteringskoden som kan
 utnyttjad, vilken kallas privilegiedelning.
-Tyvärr har denna utgåva en del kända problem: komprimering fungerar inte på alla
-operativsystem då denna kod beror på specifika mmap-funktioner, och dessutom har
-inte PAM-stödet fullförts.
-Det kan även finnas andra problem.</p>
+Tyvärr har denna utgåva en del kända problem:
+</p>
+
+<ul>
+ <li>komprimering fungerar inte på alla operativsystem då denna kod beror på
+    specifika mmap-funktioner,</li>
+ <li>PAM-stödet har inte fullförts och kan förstöra för vissa
+     PAM-moduler,</li>
+ <li>tangentbordsinteraktiv autentisering fungerar inte med privilegiedelning.
+     Debiananvändare märker detta i huvudsak eftersom detta förstör för
+     PAM-moduler som kräver PAMs konversationsfunktion (som
+     OPIE-modulen).</li>
+</ul>
 
 <p>Det nya stödet för privilegiedelning från Niels Provos ändrar ssh så att det
 använder en icke-privilegierad process för att hantera det mesta.
@@ -29,22 +38,43 @@ en chroot.</p>
 över till den senaste släppta versionen av den anpassningsbara versionen av
 OpenSSH, version 3.3p1.</p>
 
-<p>På grund av den begränsade tidsram vi har haft har vi ännu inte haft
-möjlighet att uppdatera ssh-paketet för Debian GNU/Linux 2.2 (potato).
-Paket för den kommande 3.0-utgåvan (woody) är tillgängliga för de flesta
-arkitekturer.</p>
-
 <p>Observera att vi inte har haft tid att utföra ordentlig kvalitetssäkring på
 dessa paket; de kan innehålla fel eller förstöra andra saker på ett oväntat
 sätt.
-Om du upptäckter några sådana problem ber vi dig sända in en felrapport så att
-vi kan undersöka det.</p>
+Om du upptäckter sådana problem, utöver vad som beskrivs i denna bulletin, ber
+vi dig sända in en felrapport så att vi kan undersöka det.</p>
 
-<p>Detta paket introducerar ett nytt konto vid namn &rdquo;sshd&rdquo; som
-används av privilegiedelningskoden.
-Om det inte finns något sshd-konto kommer paketet försöka skapa ett.
-Om kontot redan finns kommer det att återanvändas.
-Om du inte vill att detta skall ske måste du ändra det manuellt.</p>
+<p>Information om möjliga problem med denna uppgradering:</p>
+
+<ul>
+ <li>Paketet introducerar ett nytt konto vid namn &rdquo;sshd&rdquo; som
+     används av privilegiedelningskoden.
+     Om det inte finns något sshd-konto kommer paketet försöka skapa ett.
+     Om kontot redan finns kommer det att återanvändas.
+     Om du inte vill att detta skall ske måste du ändra det manuellt.</li>
+
+ <li>(gäller endast potato) Denna uppdatering lägger till en bakåtanpassad
+     version 0.9.6 av SSL-biblioteket. Detta betyder att du även måste
+     uppgradera ssl-paketet.</li>
+
+ <li>(gäller endast potato) Denna uppdatering använder som standard version
+     2 av SSH-protokollet, något som kan förstöra för existerande system där
+     RSA-autentisering används.
+     Du måste antingen lägga till -1 till ssh:s kommandorad för att
+     fortsätta använda SSH-protokoll 1 och dina existerande nycklar,
+     eller skapa nya nycklar för SSH-protokoll 2.</li>
+
+ <li>sshd använder privilegiedelning som standard, även om du inte explicit
+     aktiverar det i <tt>/etc/ssh/sshd_config</tt>.</li>
+
+ <li>Om ssh inte fungerar för dig kan du försöka inaktivera komprimering.
+     Vi inkluderar redan en patch från Solar Designer som rättar problemet
+     med Linux 2.2-kärnor, men det kan finnas några tillfällen när detta
+     inte är tillräckligt.</li>
+</ul>
+
+<p>Observera att paket för m68k-arkitekturen för Woody ännu inte är
+tillgängliga.</p>
 </define-tag>
 
 # do not modify the following line
