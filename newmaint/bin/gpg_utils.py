@@ -16,6 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import string
 import pg
 
 def print_place(db, place):
@@ -38,6 +39,12 @@ def print_place(db, place):
 
     return out
 
+def print_all_places(db, email, prefix=""):
+    out = []
+    for place in get_places(db, email):
+        out.append(prefix + print_place(db, place))
+    return string.join(out, "\n")
+
 def find_email(db, email):
     q = db.query("SELECT email FROM people WHERE email = '%s'" % email)
     if q.getresult():
@@ -46,6 +53,10 @@ def find_email(db, email):
 def get_owner(db, place):
     q = db.query("SELECT email FROM people, places WHERE people.id = places.who AND places.id = %s" % place)
     return q.getresult()[0][0]
+
+def get_places(db, email):
+    q = db.query("SELECT places.id FROM places, people WHERE people.id = places.who AND people.email = '%s'" % email)
+    return map(lambda x: x[0], q.getresult())
 
 def get_name(db, email):
     if name_cache.has_key(email):

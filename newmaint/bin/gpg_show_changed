@@ -1,0 +1,65 @@
+#!/usr/bin/python
+
+# Show all people and their entries who have registered newly or changed
+# their entries in the last day
+# Copyright (C) 2002  Martin Michlmayr <tbm@cyrius.com>
+# $Id$
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+import pg, string, sys
+import utils, gpg_utils
+import apt_pkg
+
+def help():
+    print """Usage: gpg_show_changed
+Show everyone who has made changes or registered newly in the last day
+"""
+    sys.exit(1)
+
+def parse_args():
+    global Cnf
+
+    apt_pkg.init()
+    Cnf = apt_pkg.newConfiguration()
+    apt_pkg.ReadConfigFileISC(Cnf, "gpg.conf")
+
+    Arguments = [("h", "help", "ShowChanged::Options::Help")]
+
+    apt_pkg.ParseCommandLine(Cnf, Arguments, sys.argv)
+
+    if Cnf["ShowChanged::Options::Help"]:
+        help()
+
+
+# main
+
+parse_args()
+db = pg.connect(Cnf["MyDB"])
+q = db.query("SELECT email FROM people WHERE age('now', last_update::datetime) < '2 day'::timespan")
+if not q.getresult():
+    sys.exit(0)
+
+Subst = {}
+print utils.TemplateSubst(Subst, Cnf["Dir::Templates"]+"/gpg_show_changed.header"),
+
+for email in map(lambda x: x[0], q.getresult()):
+    print
+    print "%s %s: " % (gpg_utils.get_name(db, email))
+    print gpg_utils.print_all_places(db, email, " "*4)
+
+# vim:set ts=4:
+# vim:set expandtab:
+# vim:set shiftwidth=4:
