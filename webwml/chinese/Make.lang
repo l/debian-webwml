@@ -10,6 +10,8 @@ B5TOU8 = $(BIN)/b5tou8
 U8TOB5 = $(BIN)/u8tob5
 U8TOGB = $(BIN)/u8togb
 B5TOGB = ( cat - | $(B5TOU8) | $(U8TOGB) )
+TOCN = $(BIN)/tocn.pl
+TOTW = $(BIN)/totw.pl
 
 # The '-q' forces wml to be quiet. Very useful in scripts.
 # It is sometimes useful to add '--epilog=weblint' to check for errors
@@ -27,46 +29,13 @@ WMLPROLOG=--prolog='/usr/bin/perl -pe "s/^(([\\x00-\\x7F]|([\\x80-\\xFF].))+[\\x
 WMLEPILOG=
 WML=wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG) $(WMLEPILOG)
 
-
 %.$(LANGUAGE)-cn.html: %.$(LANGUAGE).html
 	@echo "Converting $< to $@ (zh_CN.GB2312)..."
 	@$(B5TOGB) < $< > $@
-	@perl -pi -e 's|^(<HTML lang="zh)">|$$1-CN">|;' \
-		-e 's|^(<META http-equiv=.*charset)=Big5">|$$1=GB2312">|;' \
-		-e 's/(\.zh)\.(gif|jpg|png)/$$1-cn.$$2/g;' \
-		-e 's|^<A href=".*">(ÖÐÎÄ&nbsp;\(GB\))</A>(&nbsp;)|$$1$$2|;' \
-		-e 's/Èí¼þÌ×¼þ/Èí¼þ°ü/g; s/Ì×¼þ/Èí¼þ°ü/g;' \
-		-e 's/^(([\x00-\x7F]|([\x80-\xFF].))+)¡¸/$$1¡°/g;' \
-		-e 's/^(([\x00-\x7F]|([\x80-\xFF].))+)¡¹/$$1¡±/g;' \
-		-e 's/^(([\x00-\x7F]|([\x80-\xFF].))+)ÈíÌå/$$1Èí¼þ/g;' \
-		-e 's/^(([\x00-\x7F]|([\x80-\xFF].))+)³ÌÊ½/$$1³ÌÐò/g;' \
-		-e 's/^(([\x00-\x7F]|([\x80-\xFF].))+(Èí|Ó²|¹â))µú/$$1ÅÌ/g;' \
-		-e 's/^(([\x00-\x7F]|([\x80-\xFF].))+)ÏàÈÝ/$$1¼æÈÝ/g;' \
-		-e 's/^(([\x00-\x7F]|([\x80-\xFF].))+)µçÄÔ/$$1¼ÆËã»ú/g;' \
-		-e 's/Ô¤ÉèÓïÑÔ/È±Ê¡ÓïÑÔ/g;' \
-		-e 's/Ó³ÉäÕ¾/¾µÏñÕ¾/g;' \
-		-e 's/ËÅ·þÆ÷/·þÎñÆ÷/g;' \
-		$@
+	@$(TOCN) $@
 
 %.$(LANGUAGE)-tw.html: %.$(LANGUAGE).html
 	@echo "Converting $< to $@ (zh_TW.Big5)..."
 #	@$(U8TOB5) < $< > $@
 	@cp -a $< $@
-	@perl -pi -e 's|^(<HTML lang="zh)">|$$1-TW">|;' \
-		-e 's/(\.zh)\.(gif|jpg|png)/$$1-tw.$$2/g;' \
-		-e 's|^<A href=".*">(¤¤¤å&nbsp;\(Big5\))</A>(&nbsp;)|$$1$$2|;' \
-		-e 's/¾Þ§@¨t²Î/§@·~¨t²Î/g;' \
-		-e 's/ªA°È¾¹/¦øªA¾¹/g;' \
-		-e 's/·½¥N½X/­ì©l½X/g;' \
-		-e 's/¶l»¼¦Cªí/³q°T½×¾Â/g;' \
-		-e 's/Ãè¹³¯¸/¬M®g¯¸/g;' \
-		-e 's/§JÃ¹¦a¨È/§JÃ¹®J¦è¨È/g;' \
-		-e 's/ºôµ¸¹ï¶H¼Ò«¬Àô¹Ò/ºôµ¸ª«¥ó¼Ò«¬Àô¹Ò/g;' \
-		-e 's/^(([\x00-\x7F]|([\x80-\xFF].))+)¡§/$$1¡u/g;' \
-		-e 's/^(([\x00-\x7F]|([\x80-\xFF].))+)¡¨/$$1¡v/g;' \
-		-e 's/^(([\x00-\x7F]|([\x80-\xFF].))+(³n|µw))¥ó/$$1Åé/g;' \
-		-e 's/^(([\x00-\x7F]|([\x80-\xFF].))+(³n|µw|¥ú))½L/$$1ºÐ/g;' \
-		-e 's/^(([\x00-\x7F]|([\x80-\xFF].))+)­Ý®e/$$1¬Û®e/g;' \
-		$@
-
-#		-e 's/^(([\x00-\x7F]|([\x80-\xFF].))+)µ{§Ç/$$1µ{¦¡/g;' \
+	@$(TOTW) $@
