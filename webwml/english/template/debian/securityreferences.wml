@@ -103,6 +103,7 @@ sub secrefs
     my $bid = bid_secref($refstr);
     my $cve = cve_secref($refstr);
     my $cert = cert_secref($refstr);
+    my $bugs = bug_secref($refstr);
 
     $result .= $bid if (length ($bid));
 
@@ -113,6 +114,10 @@ sub secrefs
     if (length ($cert)) {
 	$result .= ", " if $result ne "";
 	$result .= $cert;
+    }
+    if (length ($bugs)) {
+	$result .= ", " if $result ne "";
+	$result .= $bugs;
     }
     return $result;
 }
@@ -125,7 +130,7 @@ sub secrefs
 	    next if (/^(#|\s)\s*$/);
 	    if (/^((CVE-|CAN-|VU#|CA-|BID)\S+)\s*/) {
 		$id = $1;
-	    } elsif (/^\s+((CVE-|CAN-|VU#|CA-|BID).*\S)\s*$/) {
+	    } elsif (/^\s+((CVE-|CAN-|VU#|CA-|BID|Bug#).*\S)\s*$/) {
 		$ref{$id} .= " " . $1;
 	    } elsif (/^\s+(.*)$/) {
 		$text{$id} .= $1 . "\n";
@@ -140,7 +145,7 @@ sub secrefs
 	    if (/^((CVE-|CAN-|VU#|CA-|BID)\S+)\s*/) {
 		$id = $1;
 		$text{$id} = '';
-	    } elsif (/^\s+((CVE-|CAN-|VU#|CA-|BID).*\S)\s*$/) {
+	    } elsif (/^\s+((CVE-|CAN-|VU#|CA-|BID|Bug#).*\S)\s*$/) {
 		# ignore
 	    } elsif (/^\s+(.*)$/) {
 		$text{$id} .= $1 . "\n";
@@ -151,7 +156,7 @@ sub secrefs
 
     my $url;
     my @urls;
-    my ($bid, $cve, $cert);
+    my ($bid, $cve, $cert, $bugs);
 <protect pass=2>
     foreach $id (sort keys %text) {
         $url = secrefs($id);
