@@ -37,7 +37,7 @@ install:: $(HTMLDESTFILES)
 ifeq ($(LANGUAGE),en)
 	@install -d $(HTMLDIR)/current
 	@rm -f $(HTMLDIR)/current/issue
-	@ln -sf ../$(shell cat CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
+	@ln -sf ../$(shell cat ../../../english/News/weekly/CURRENT-ISSUE-IS) $(HTMLDIR)/current/issue
 endif
 
 # This is used by the install rule, and I had to hack on it, overriding
@@ -61,7 +61,7 @@ index.$(LANGUAGE).html: $(wildcard $(YEAR)/*/index.wml) \
       $(wildcard $(ENGLISHSRCDIR)/News/weekly/$(YEAR)/*) \
       $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
       $(TEMPLDIR)/weeklynews/footer.wml $(TEMPLDIR)/weeklynews/index.wml \
-      CURRENT-ISSUE-IS
+      ../../../english/News/weekly/CURRENT-ISSUE-IS
 
 # Generate the mail for posting to debian-news. Requires the web page already
 # be updated. The mail still requires slight edits.
