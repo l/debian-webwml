@@ -1,5 +1,5 @@
 #use wml::debian::ddp title="DDP CVS-åtkomst"
-#use wml::debian::translation-check translation="1.4"
+#use wml::debian::translation-check translation="1.5"
 
 <h1>CVS-åtkomst till DDP-dokument</h1>
 
@@ -124,7 +124,7 @@ krypterade, lösenordet.
 
 <p>Denna figur visar strukturen på CVS-katalogträdet:
 
-<p><img src="dirtree.jpg" align="middle" alt="[Katalogträd]">
+<p><img src="dirtree.jpg" align="middle" alt="DDPs CVS-katalogträd">
 
 <p>Observera att DDPs webbplats befinner sig i webwml-modulen i Debians
 CVS-server, så att den kan integreras med resten av Debians webbsidor.
@@ -134,34 +134,16 @@ CVS-server, så att den kan integreras med resten av Debians webbsidor.
 <h1>Automatisk uppdateringsmekanism</h1>
 
 <p>De publicerade webbversionerna av manualtexterna genereras av ett cronjobb
-som körs på <b>va.debian.org</b> klockan 01:27 och 13:27 atlanttid varje dag.
+som körs på www.debian.org varje dag klockan 07:00, 15:00 och 23:00
+stillahavstid.
 
-<p>Manualerna uppdateras med "make" i katalogen
-<code>ddp/manuals.sgml</code>, vilket utför "make" i alla underkataloger.
-Underkatalogernas makefiler är symboliska länkar till (eller derivat av)
+<p>Skrptet utför kommandot <kbd>cvs update -d -P</kbd> och sedan
+<kbd>Make -C manuals.sgml clean publish</kbd>, båda i
+<code>ddp</code>-katalogen.
+
+<p><span lang=en>Makefile</span>n är skriven så att den bygger om varje
+katalog (som innehåller dokumentation som underhålls) och installerar
+filerna från varje katalog i underkatalogen <code>doc/manuals/</code> på
+webbplatsen.
+Underkatalogen makefiles bygger på
 <code>ddp/manuals.sgml/standard.makefile</code>.
-
-<p>Detta är innehållet i cron-skriptet:
-
-<pre style="margin-left: 2em">
-\#! /bin/bash
-\# Script for updating the DDP manuals and webpages
-
-echo "Debian Documentation Project
-
-Build run at `date`
-"
-
-export CVSROOT=/cvs/debian-doc
-
-(cd ddp/manuals.sgml; make clean)
-cvs update -d ddp
-
-cd ddp/manuals.sgml
-make
-
-echo "
-
-Build finished at `date`
-"
-</pre>
