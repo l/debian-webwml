@@ -44,11 +44,13 @@ endif
 ifndef SUBLANG
 DSARDF     := dsa.$(LANGUAGE).rdf
 DSALONGRDF := dsa-long.$(LANGUAGE).rdf
+DSAALLRDF := dsa-all.$(LANGUAGE).rdf
 DESTDSARDF     := $(HTMLDIR)/$(DSARDF)
 DESTDSALONGRDF := $(HTMLDIR)/$(DSALONGRDF)
 else
 DSARDF     := $(sort $(foreach i,$(SUBLANG),$(subst dsa,dsa.$(LANGUAGE)-$(i),dsa.rdf)))
 DSALONGRDF := $(sort $(foreach i,$(SUBLANG),$(subst dsa-long,dsa-long.$(LANGUAGE)-$(i),dsa-long.rdf)))
+DSAALLRDF := $(sort $(foreach i,$(SUBLANG),$(subst dsa-all,dsa-all.$(LANGUAGE)-$(i),dsa-all.rdf)))
 DESTDSARDF     := $(patsubst %.rdf,$(HTMLDIR)/%.rdf,$(DSARDF))
 DESTDSALONGRDF := $(patsubst %.rdf,$(HTMLDIR)/%.rdf,$(DSALONGRDF))
 endif
@@ -100,6 +102,31 @@ else
 	$(WML) $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
             $(ENGLISHDIR)/security/dsa-long.rdf.in
 endif
+
+$(DSAALLRDF): $(ENGLISHDIR)/security/dsa-all.rdf.in \
+  $(wildcard ????/dsa-*.wml) \
+  $(wildcard $(ENGLISHDIR)/security/????/dsa-*.wml) \
+  $(wildcard $(ENGLISHDIR)/security/????/dsa-*.data) \
+  $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
+ifeq "$(LANGUAGE)" "zh"
+	$(shell echo $(WML) | perl -pe 's,:.zh-(..)\.html,:dsa-all.zh-$$1.rdf,g') \
+          $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
+            $(ENGLISHDIR)/security/dsa-all.rdf.in
+	@echo -n " * Converting: [zh_CN.GB2312], "
+	@$(B5TOGB) < dsa-all.zh-cn.rdf.tmp > dsa-all.zh-cn.rdf
+	@rm -f dsa-all.zh-cn.rdf.tmp
+	@$(TOCN) dsa-all.zh-cn.rdf
+	@echo -n "[zh_HK.Big5], "
+	@mv -f dsa-all.zh-hk.rdf.tmp dsa-all.zh-hk.rdf
+	@$(TOHK) dsa-all.zh-hk.rdf
+	@echo "[zh_TW.Big5]."
+	@mv -f dsa-all.zh-tw.rdf.tmp dsa-all.zh-tw.rdf
+	@$(TOTW) dsa-all.zh-tw.rdf
+else
+	$(WML) $(shell egrep '^-D (CUR_|CHAR)' ../.wmlrc) \
+            $(ENGLISHDIR)/security/dsa-all.rdf.in
+endif
+
 
 all:: $(DSARDF) $(DSALONGRDF)
 
