@@ -52,7 +52,7 @@
   <label><input type="checkbox" name="pend-inc" value="forwarded"><forwarded></label>
   <label><input type="checkbox" name="pend-inc" value="pending-fixed"><pending></label>
   <label><input type="checkbox" name="pend-inc" value="fixed"><fixed></label>
-  <label><input type="checkbox" name="pend-exc" value="done"><done></label>
+  <label><input type="checkbox" name="pend-inc" value="done"><done></label>
   </small></li>
 
   <li><small><gettext domain="bugs">Exclude status:</gettext>
