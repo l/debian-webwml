@@ -159,6 +159,7 @@ foreach $file (@files) {
 
   $title = ''; $date = ''; $rdate = ''; $desc = ''; $status = ''; $where = '';
   $moreinfo = ''; $startdate = ''; $enddate = '';
+  $repfile = '';
 <protect pass=2>
   if ($content =~ /^<define-tag pagetitle>\s*(.*?)\s*<\/define-tag>$/ms) {
     $title = qq/$1/; }      # all
@@ -178,12 +179,20 @@ foreach $file (@files) {
     $startdate = qq/$1/; }	# startdate (events)
   if ($content =~ /^<define-tag enddate>(.*?)<\/define-tag>$/ms) {
     $enddate = $1; }        # enddate (events)
+  my ($shortfile) = $file =~ /^(.*)\.wml$/;
+  if ($content =~ /<a\s+href="($shortfile-report)"\s*>/ms) {
+    $repfile = $1; }        # Report (events)
+  if ($content =~ /<rep\s+href="([^"]*)"\s*\/?>/ms) {
+    $repfile = $1; }        # Report (events)
 </protect>
   if ($startdate && $enddate) { # Convert date range into printable string
     $date = &daterange($startdate, $enddate);
   }
   if ($title && $date && $where) { # for events/
-    $str1 = "$elemhead<tt>[$date]</tt>$elemdate <strong><a href=\"$year/$base\">$title</a></strong>, $elemfoot$where<br />$elemrealfoot\n";
+    $report = ($repfile)
+            ? " [<a href=\"$repfile\"><gettext>Report</gettext></a>]"
+            : '';
+    $str1 = "$elemhead<tt>[$date]</tt>$elemdate <strong><a href=\"$year/$base\">$title</a></strong>, $elemfoot$where$report<br />$elemrealfoot\n";
   }
   elsif ($desc) { # for security/
     open DATAFILE, "$eng_dir/$year/$base.data" or warn "couldn't open $eng_dir/$year/$base.data: $!\n";
