@@ -47,7 +47,7 @@ package_version.dsc</code> 명령으로 데비안 빌드 디렉토리를 만든다.
 
 <p>
 이제 데비안 빌드 디렉토리 <code>package-version</code>에서 <code>dpkg -B -rsudo
-"-mMyName <MyEmail>"</code> 명령어로 패키지를 만든다. 패키지의
+"-mMyName &lt;MyEmail&gt;"</code> 명령어로 패키지를 만든다. 패키지의
 아키텍처 독립적인 부분을 만들기를 원한다면 <code>-B</code> 대신
 <code>-b</code>를 사용할 수도 있다. fakeroot 패키지를 사용한다면
 <code>-rsudo</code> 대신 <code>-rfakeroot</code>를 사용할 수 있다. 
@@ -74,7 +74,7 @@ without the <code>-r</code> if you build as user root. 자신의 pgp
 <code>base/update</code>, because the Hurd does not need an update
 daemon (the filesystems sync themselves). To change to sync interval,
 you can use <code>fsysopts</code> to adjust the <code>--sync</code>
-option. You can set different sync intervals for each file system!</p>
+option. You can set different sync intervals for each file system!
 To do this manully, use the <a
 href="hurd-doc-utils#syncfs"><code>syncfs</code> utility</a>.</li>
 <li>
@@ -104,7 +104,8 @@ is probably Linux specific).</li>
 <li>
 <code>base/setserial</code>, because it is specific to the Linux
 kernel. However, with the port of Linux char drivers to GNU Mach, we
-might be able to use it.</li></p>
+might be able to use it.</li>
+</ul>
 
 <h4>수정 없이 깨끗하게 컴파일한 패키지들</h4>
 
@@ -130,7 +131,7 @@ might be able to use it.</li></p>
 <code>grep</code>,
 <code>grub</code>,
 
-de>gzip</code>,
+<code>gzip</code>,
 <code>hostname</code>,
 <code>hurd</code>,
 <code>libwrap0</code>,
@@ -328,7 +329,7 @@ href="http://bugs.debian.org/44381">Bug#44381</a>.</li>
 <li>
 <code>base/slang1</code> see <a
 href="http://bugs.debian.org/48814">Bug#48814</a>.</li>
-</ul></p>
+</ul>
 
 
 <h4>소스 NMU가 필요했던 패키지들</h4>
@@ -429,14 +430,14 @@ implementation을 사용하거나 실행시간(runtime) 길이를 질의하기 위해
 <p>If a program has only support for <code>sys_errlist[]</code> you will
 have to do some work to make it compile on the Hurd, which has dropped
 support for it and does only provide <code>strerror()</code>. Steinar Hamre
-writes about <code>strerror():</p>
+writes about <code>strerror()</code>:</p>
 <blockquote>
-<p><code>strerror()</code>가 사용되어야 한다. 왜냐하면,
+<p><code>strerror()</code>가 사용되어야 한다. 왜냐하면,</p>
 <ul><li>현대적이며 POSIX 방식이다.</li>
 <li>지역화되었다.</li>
 <li>잘못된 신호와 범위를 벗어난 숫자를 다룬다. (에러를 더 잘 다루고
  buffer-overflow를 잘 일으키지 않으며 보안 위험도 적다)</li>
-</ul></p>
+</ul>
 <p>
 가능하다면 <code>strerror()</code>를 항상 사용해야 한다.
 불행히도 여전히 몇몇 <em>오래된</em> 비POSIX 시스템은 
@@ -446,15 +447,15 @@ writes about <code>strerror():</p>
 오늘날 <code>strerror()</code>만 지원하는 것이  
 <code>sys_errlist[]</code>만 지원하는 것보다 더 좋다. 그렇지만 가장
 좋은 것은(이식성의 관점에서 보면) 둘 다 지원하는 것이다.
- For <code>configure.in</code>, you will need:
-</p>
+ For <code>configure.in</code>, you will need:</p>
+<p>
 <code>AC_CHECK_FUNCS(strerror)</code></p>
 <p>
 <code>config.h.in</code>:</p>
 <p>
 <code>#undef HAVE_STRERROR</code></p>
 <p>
-Then something like:
+Then something like:</p>
 <pre>
         #ifndef HAVE_STRERROR
         static char *
@@ -464,13 +465,13 @@ Then something like:
           extern char *sys_errlist[];
           extern int sys_nerr;
 
-          if (errnum > 0 && errnum <= sys_nerr)
+          if (errnum &gt; 0 &amp;&amp; errnum <= sys_nerr)
             return sys_errlist[errnum];
           return "Unknown system error";
         }
         #define strerror private_strerror
         #endif /* HAVE_STRERROR */
-</pre></p>
+</pre>
 <p>
 You can for example look in the latest fileutils (the above is a simplified
 version of what I found there.) Patches should of course be sent to upstream
