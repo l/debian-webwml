@@ -1,19 +1,19 @@
 #use wml::debian::template title="HOWTO translate Debian pages"
 
-<P>Thanks you for helping to translate the Debian web pages.
+<P>Thank you for helping to translate the Debian web pages.
 Instead of having a number of different sites hosting language
 specific versions of the web pages, it is hoped that people
-will concentrate on keeping a primary site which will host the
-translations of a common set of web pages.
+will concentrate on translating the  primary site which will host
+the translations of a common set of web pages.
 
 <H3>Background</H3>
-<P>All the hand written (non documentation) files on the web site are
+<P>All the hand written, non-documentation, html files on the web site are
 generated using wml. They are stored on cgi.debian.org using CVS.
 You will want to check out a local copy of the wml files to edit
 on your home machine. When you are done making changes, you can then
-release the changes back to cgi.debian.org. Once a day, the copy of
+commit the changes back to cgi.debian.org. Once a day, the copy of
 the repository on master.debian.org will be updated. A Makefile is then
-run on them to create the updated public web pages. Finaly, the pages are
+run on them to create the updated web pages. Finally, the pages are
 distributed to all the web mirrors.
 
 <H3>Current Translation Coordinators</H3>
@@ -28,8 +28,12 @@ distributed to all the web mirrors.
 <li>Italian: Marco d'Itri &lt;md@linux.it&gt;
 </ul>
 Contact them directly to get involved in a translation project.
-Send mail to <a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>
+Send mail to <a href="mailto:webmaster@debian.org">webmaster@debian.org</a>
 if you would like to coordinate the translation to a new language.
+Alternatively, you can join the Debian web mailing list,
+debian-www@lists.debian.org, and ask there. See
+<a href="http://www.debian.org/MailingLists/subscribe">
+http://www.debian.org/MailingLists/subscribe</a> for subscription information.
 
 <H3>Using CVS</H3>
 <P>In what follows anonymous access will be used as an example. If
@@ -59,7 +63,7 @@ Every few days you will want to do a
 to retrieve any files from the repository which have changed.
 
 <P>The following is for those who have write permission on the repository.
-When you are done with the page, you can commit your changes to the repository using
+When you are done with a page, you can commit your changes to the repository using
 <pre>
    cvs commit &lt;file&gt;.wml
 </pre>
@@ -76,7 +80,8 @@ or
 <pre>
    cvs add &lt;file&gt;.wml
 </pre>
-before you commit it.
+before you commit it. Note that 'cvs add' is not recursive so you need to
+add a directory before you can add its contents.
 
 <P>For more information on CVS, use 'info cvs'.
 
@@ -87,12 +92,12 @@ you will be used to. The web pages are actually generated
 using source that is marked up with wml. There are
 separate directories for each language. To translate to a
 new language, someone must first translate the wml template
-files (not a big job).<br>
-Important Note: do not modify the EN at the end of the DOCTYPE
-line in template/debian/basic.wml.
+files (not a big job). Please follow the comments as there
+are items that should not be translated. Comments may begin
+with a pound sign, '#', in wml.
 
-<P>Because of the way the web servers are set up, you should not
-have to change any of the internal links. There are times when
+<P>Because of the way the web servers are set up (using content negotiation),
+you should not have to change any of the internal links. There are times when
 you may want to make a change to the content when you are
 translating. One example is on the support page; you will
 probably want to include an example on subscribing to the
@@ -116,7 +121,7 @@ the pages as easy as possible.
 is because the server is using content negotation to decide
 which version of the document to deliver. When there is more
 than one choice, the server will make a list of all possible
-files to serve, e.g. if the request is for about, then the list
+files to serve, e.g. if the request is for 'about', then the list
 of completions might be about.html.en and about.html.de.
 The default for Debian servers will be to serve the English
 document, but it is configurable.
@@ -146,18 +151,24 @@ French will be used for the example
    cvs add french
    cd french
    cp ../english/.wmlrc .
+   cvs add .wmlrc
 edit and change '-D CUR_LANG=English' to '-D CUR_LANG=French'
             and '-D CUR_ISO_LANG=en' to '-D CUR_ISO_LANG=fr'
+Don't make any other changes to .wmlrc
    cp -r ../english/template .
+   cvs add template
+   cvs add template/debian
+   cvs add template/debian/*.wml
+cvs add is not recursive so you must add subdirectories recursively, as shown.
 edit template/debian/* and translate any text. This should be quite straightforward
-   cp ../english/Make* .
+   cp ../english/Make.* ../english/Makefile .
+   cvs add Make*
 edit Make.lang and change 'LANG=en' to 'LANG=fr'
 The makefile in each directory will compile every .wml file it finds. If you
 do not want or have not created a sub-directory and its accompanying Makefile
-you will need to remove the appropriate line from the Makefile. You will
-probably find it easier to create all the directories and makefiles up front though.
-Since most people will not need to make modifications to the makefiles, it is ok
-to let them be soft links to the English version.
+you will need to remove the name of the subdirectory from the SUBS variable in the Makefile.
+You will probably find it easier to create all the directories and makefiles up front
+though.
 
 When done adding pages, do a
    cvs commit
@@ -173,25 +184,24 @@ A French translation of the social contract will be used for the example
    cp ../english/social_contract.wml .
    cvs add social_contract.wml
 edit social_contract.wml and translate the text. Do not try to translate any
-links or change them in any way. The '.en' at the end of the first line is
-changed to '.fr'. When wml is fixed so that variables can be used on that line,
-it will be changed to '.$(CUR_ISO_LANG)'.
-When done, type
+links or change them in any way. When done, type
    cvs commit -m "short description of the changes you made" social_contract.wml
 </pre>
 
 <H3>Compiling wml</H3>
 This assumes that you have wml installed on your machine.
-Simply type <kbd>make</kbd>
-in webwml/&lt;lang&gt;. The pages will be made in ../../debian.org from the
-language directory. This is because that is where the .html files are relative
-to the wml source on the master site (this is done so the pages can be mirrord
-without the source). If any of the destination directories are missing, the
-<kbd>make</kbd> will fail.
+Simply type <kbd>make</kbd> in webwml/&lt;lang&gt;. If you prefer that the final
+pages be placed in a different directory, you can use
+<kbd>make RELHTMLBASE=loc install</kbd>, where 'loc' is the relative path to the
+top directory where you want the html files. The default for <kbd>RELHTMLBASE</kbd> is
+<kbd>../../debian.org</kbd>.
 
 <p>Some languages may need special pre- or post-processing of the wml files
-in order to handle the character set properly. This can be done by chaning
-the line for WML in <kbd>webwml/&lt;lang&gt;/Make.lang</kbd> appropriately.
+in order to handle the character set properly. This can be done by changing
+the variables <kbd>WMLPROLOG</kbd> and <kbd>WMLEPILOG</kbd>.
+in <kbd>webwml/&lt;lang&gt;/Make.lang</kbd> appropriately.
+Depending on how your <kbd>WMLEPILOG</kbd> program works, you may need to change
+the value of <kbd>WMLOUTFILE</kbd>.
 
 <H3>Special files and directories</H3>
 <ul>
@@ -222,15 +232,21 @@ Send mail to debian-www if you would like this done.
 
 <li><b>MailingLists/subscribe.wml and MailingLists/unsubscribe.wml</b><br>
 These pages are generated automatically from scripts. Do not bother
-translating these yet. A system for adding translations will be developerd.
+translating these yet. A system for adding translations will be developed.
 
-<li><b>distrib/vendors/wml</b><br>
-You may want to wait before translating this. A system is being developed
-where the list of vendors is kept in a seperate data file in the english
-directory. This file will contain the translations of the labels for each
-vendor entry and a feature of wml will be used so each translation uses
-the correct labels. This way, when the maintainer of the vendor list
-adds a new vendor, all translations will see it immediately.
+<li><b>distrib/vendors.wml</b><br>
+vendors.wml should be translated. It includes <kbd>../../english/devel/vendors.CD</kbd>
+which contains the actual list of vendors. This file does not contain any
+language specific information, but includes <kbd>vendors.CD.def</kbd> which contains
+the translation of all phrases needed in <kbd>vendors.CD</kbd>. You should add
+translations for all entries of the form <kbd><protect>[EN:...:]</protect></kbd>.
+For example,
+<pre>
+	<protect>[EN:Country:]\</protect>
+	<protect>[ES:Pa-is:]\</protect>
+	<protect>[DE:Land:]\</protect>
+</pre>
+Do not translate any other text on the page.
 
 </ul>
 
