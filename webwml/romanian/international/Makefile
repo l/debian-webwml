@@ -4,9 +4,9 @@
 
 WMLBASE=..
 CUR_DIR=international
-SUBS=
+SUBS=chinese spanish l10n
 
 include $(WMLBASE)/Make.lang
 
 
-index.$(LANGUAGE).html: ../../english/international/index.data
+index.$(LANGUAGE).html: index.wml $(ENGLISHSRCDIR)/international/index.data
