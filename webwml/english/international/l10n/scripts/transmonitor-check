@@ -286,13 +286,21 @@ PKG: while ($dsc = shift @pkg_list){
 	    $data{$pkg}=();
 	    if (-e "$PO_ROOT/$pkg") {
 	      File::Path::rmtree("$PO_ROOT/$pkg") 
-		  or &error ("Can't erase the tmp dir '$PO_ROOT/$pkg': $!");
+		  or &error ("Can't erase the dir '$PO_ROOT/$pkg': $!");
+	    }
+	    if (-e "$TEMPLATES_ROOT/$pkg") {
+	      File::Path::rmtree("$TEMPLATES_ROOT/$pkg") 
+		  or &error ("Can't erase the dir '$TEMPLATES_ROOT/$pkg': $!");
 	    }
 	}
     } else {
 	if (-e "$PO_ROOT/$pkg") {
 	  File::Path::rmtree("$PO_ROOT/$pkg") 
 	      or &error ("Can't erase the tmp dir '$PO_ROOT/$pkg': $!");
+	}
+	if (-e "$TEMPLATES_ROOT/$pkg") {
+	  File::Path::rmtree("$TEMPLATES_ROOT/$pkg") 
+	      or &error ("Can't erase the dir '$TEMPLATES_ROOT/$pkg': $!");
 	}
     }
     $tosave=1;#ok, we've done something, we have to save the db
@@ -665,6 +673,7 @@ The message was $msg\n");
 #	print "Test file $file\n";
       File::Path::mkpath(File::Basename::dirname("$PO_ROOT/$pkg/$file"));
 	$filename = "${pkg}_$data{$pkg}{'version'}/$file";
+	$filename = s,:,\%3a,;
 	$filename =~ s,/,_,g;
 	$filename = File::Basename::dirname("$file")."/".$filename;
 
@@ -776,6 +785,7 @@ The message was $msg\n");
       File::Path::mkpath(File::Basename::dirname("$TEMPLATES_ROOT/$pkg/$file"));
 	$filename = "${pkg}_$data{$pkg}{'version'}/$file";
 	$filename =~ s,/,_,g;
+	$filename = s,:,\%3a,;
 	$filename = File::Basename::dirname("$file")."/".$filename;
 	$filename =~ s,^debian/(.*),$1,;
 
