@@ -1,0 +1,285 @@
+#use wml::debian::template title="HOWTO: Översätta Debians webbsidor"
+
+<P>Tack för att du hjälper till att översätta Debians webbsidor.
+Istället för att ha ett antal olika webbplatser med olika språkspecifika
+versioner av webbsidorna, hoppas vi att folk koncentrerar sig på att
+översätta den primära webbplatsen vilken tillhandahåller en gemensam
+uppsättning webbsidor.
+
+<H3>Bakgrund</H3>
+<P>Alla html-filer som är handskrivna, förutom dokumentationen, på
+webbplatsen genereras med wml och lagras på cvs.debian.org med hjälp av CVS.
+Du kommer att vilja hämta ut ("check out") en lokal kopia av wml-filerna för
+att redigera på din hemmadator, och sedan sända in dina ändringar ("commit")
+till cvs.debian.org när du har ändrat klart.
+En gång om dagen så uppdateras master.debian.org, varpå en Makefile körs för
+att skapa de uppdaterade webbsidorna.
+Slutligen distribueras alla sidorna till webbspeglingarna.
+
+<H3>Samordnare för översättningarna</H3>
+<ul>
+<li>Franska: Christophe Le Bars &lt;clebars@teaser.fr&gt;
+    <br>Se <a href="http://www.debian.org/~clebars/f2dp/ltcp.html">
+    http://www.debian.org/~clebars/f2dp/ltcp.html</a> för mer information.
+<li>Spanska: Javier Fdz-Sanguino Pe&ntilde;a &lt;jfs@ieeesb.etsit.upm.es&gt;
+<li>Danska: Flemming Mahler Larsen &lt;mahler@DK.net&gt;                                                 
+    <br>Se <a href="http://www.netfactory.dk/debian/">http://www.netfactory.dk/debian/</a>
+    för mer information.
+<li>Japanska: Keita Maehara &lt;maehara@debian.org&gt;
+<li>Tyska: Thimo Neubauer &lt;thimo@debian.org&gt;
+<li>Italienska: Giuseppe Sacco &lt;gsacco@hsomail.com&gt;
+<li>Ryska: D'jinnie &lt;jinn@irony.org&gt;
+<li>Kroatiska: Matej Vela &lt;mvela@public.srce.hr&gt;
+<li>Polska: Marcin Owsiany &lt;porridge@lo4.ids.bielsko.pl&gt;
+<li>Nederländska: Both Florus NTC/Zurich &lt;florus.both@usa.net&gt;
+<li>Portugisiska: Eduardo Marcel Macan &lt;thecore@thecore.com.br&gt;
+<li>Kinesiska: Anthony Wong &lt;ypwong@debian.org&gt;
+<li>Finska: Antti-Juhani Kaijanaho &lt;gaia@iki.fi&gt;
+<li>Svenska: peter karlsson &lt;pk@mds.mdh.se&gt;
+<li>Norska: Tor Slettnes &lt;tor@slett.net&gt;
+<li>Koreanska: Seongtae Yoo &lt;alloying@nownuri.net&gt;
+</ul>
+Kontakta dem direkt om du vill medverka i ett översättningsprojekt.
+Sänd e-post till <a href="mailto:webmaster@debian.org">webmaster@debian.org</a>
+om du vill koordinera översättningen till ett nytt språk.
+Alternativt kan du prenumerera på Debians sändlista om webbsidorna,
+debian-www@lists.debian.org,och fråga där.
+Se
+<a href="http://www.debian.org/MailingLists/subscribe">
+http://www.debian.org/MailingLists/subscribe</a>
+för information om hur du prenumererar.
+
+<H3>Använda CVS</H3>
+<P>I texten nedan används det anonyma kontot ("anonymous") som exempel.
+Om du har tillgång till ett konto som ger dig skrivrättigheter så bör
+du använda det istället.
+För att börja använda CVS måste du först logga in på CVS-servern:
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml login
+</pre>
+(tryck bara return när lösenordet för anonymous efterfrågas)
+
+<P>För att hämta en kopia av wml-filerna till din lokala dator skriver du
+<pre>
+   cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/&lt;språk&gt;
+</pre>
+där &lt;språk&gt; är det språk du vill.
+Du vill antagligen hämta den engelska versionen förutom det språk du arbetar
+på.
+Om du bara behöver en delmängd av sidorna kan du hämta bara de som behövs,
+t.ex
+<kbd>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</kbd>.
+eller om du har fått ett användarnamn och lösenord använder du det istället
+för anonymous:
+<kbd>cvs -d :pserver:användarnamn@cvs.debian.org:/cvs/webwml checkout webwml/english/SPI</kbd>.
+
+<P>Från och med nu behöver du inte använda '-d :pserver:...' längre.
+Med några dagars mellanrum bör du köra
+<pre>
+   cvs update -d
+</pre>
+för att hämta de filer som eventuellt har ändrats.
+-d gör att nya kataloger läggs till automatiskt.
+
+<P>Följande information är för de som har skrivrättigheter till servern.
+När du är klar med en sida kan du sända in dina ändringar ("commit") genom
+att använda
+<pre>
+   cvs commit &lt;fil&gt;.wml
+</pre>
+eller
+<pre>
+   cvs commit &lt;kat&gt;   (för att skicka in ändringar i &lt;kat&gt;)
+</pre>
+eller
+<pre>
+   cvs commit          (för att skicka in ändringar i alla underkataloger)
+</pre>
+
+<P>Om du är den första personen som översätter en sida måste du göra
+<pre>
+   cvs add &lt;file&gt;.wml
+</pre>
+innan du sänder in den.
+Observera att "cvs add" inte är rekursiv, så du måste lägga till en katalog
+innan du kan lägga till dess innehåll.
+
+<P>För mer information om CVS, använd "info cvs".
+
+<H3>Översätta sidor</H3>
+<P>För att göra översättarnas jobb så enkelt som möjligt genereras sidorna
+på ett lite annorlunda sätt än de flesta av er är vana vid,
+webbsidorna genereras med källkod som är uppmärkt med wml.
+Det är separata kataloger för varje språk.
+För att påbörja en ny översättning måste någon först översätta
+wml-mallfilerna i english/template/debian/*.wml (inte så jättemycket
+arbete).
+Följ anvisningarna i kommentarerna, eftersom det finns saker som inte ska
+översättas.
+Kommentarer i wml börjar med ett nummertecken ("#").
+
+<P>På grund av det sätt som webbservrarna är konfigurerade (med "content
+negotiation") så behöver du inte ändra någon av de interna länkarna,
+skriv till debian-www om du anser att en länk är felaktig innan du ändrar
+den.
+Det finns tillfällen då du kan komma att vilja ändra innehållet när du
+översätter, exempelvis på supportsidan där du antagligen vill lägga till ett
+exempel på hur man prenumererar på den språkspecifika sändlistan, t.ex
+debian-french för den franska versionen av sidan.
+Om du gör andra ändringar, kontakta
+<a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>,
+då vi eftersträvar att hålla innehållet så likartat som möjligt mellan de
+olika versionerna.
+
+<P>Jag hoppas att det arbete vi har gjort kommer att göra
+översättningsarbetet så lätt som möjligt.
+
+<p>Kom ihåg att när en sida först översätts kommer de andra sidorna inte att
+generera länkar till din sida förren de omskapas.
+
+<H3>Lägga till nya kataloger</H3>
+<P>Man bör ha viss omsorg vad det gäller att lägga till nya kataloger till
+CVS-trädet.
+Om den nya katalogen listas i SUBS-variabeln i Makefile:n för katalogen
+ovanför den måste den nya katalogen också innehålla en Makefile, annars
+kommer 'make' att generera felmeddelanden.
+Du behöver inte oroa dig för icke-existerande kataloger som listas i en
+SUBS-variabel, eftersom make är tillräckligt intelligent för att hoppa över
+dessa.
+
+<H3>Hur vet servern vilken fil den ska skicka?</H3>
+<P>Du kommer att upptäcka att interna länkar inte slutar med .html.
+Detta beror på att servern använder "content negotiation" för att bestämma
+vilken version av dokumentet som ska skickas ut.
+När det finns mer än ett val kommer servern att göra upp en lista över alla
+filer som kan skickas, t.ex om sidan "about" frågas så är listan över filer
+kanske "about.en.html" och "about.de.html".
+Standardvalet för Debianservrarna är att skicka det engelska dokumentet, men
+det är konfigurerbart.
+
+<P>Om klienten har den korrekta variabeln satt, t.ex för att få tyska
+dokument, så kommer "about.de.html" att skickas i exemplet ovan.
+Det som är trevligt med detta är att om det önskade språket inte är
+tillgängligt, så kan en annan språkversion istället att skickas (vilket
+förhoppningsvis är bättre än ingenting).
+Valet av vilket dokument som ska skickas är kan vara lite förvirrande, så
+istället för att beskriva det här så kan du hitta information på
+<a href="http://www.apache.org/docs/content-negotiation.html">http://www.apache.org/docs/content-negotiation.html</a>
+om du är intresserad.
+
+<P>Eftersom många användare inte ens vet vad "content negotiation" är
+finns det länkar nederst på varje sida som pekar direkt på alla andra
+tillgängliga språkversioner.
+Dessa länkas skapas av ett perl-skript som anropas av wml när sidan
+genereras.
+
+<H3>Exempel på att påbörja en översättning</H3>
+Vi använder här franska som exempel
+<pre>
+   cvs checkout webwml/english
+   cd webwml
+   mkdir french
+   cvs add french
+   cd french
+   cp ../english/.wmlrc .
+   cvs add .wmlrc
+ändra: '-D CUR_LANG=English' till '-D CUR_LANG=French'
+       '-D CUR_ISO_LANG=en' till '-D CUR_ISO_LANG=fr'
+       'CHARSET=iso-8859-1' if needed
+Gör inga andra ändringar till .wmlrc
+Redigera english/template/debian/*.wml och lägg till översättningar för alla define-tag.
+Detta bör vara rätt så enkelt
+   cp ../english/Make.* ../english/Makefile .
+   cvs add Make*
+öppna Make.lang, ändra 'LANG=en' till 'LANG=fr' och 'LANGUAGECAP=EN' till
+'LANGUAGECAP=FR'. Du bör inte behöva göra några andra ändringar till Makefilerna
+såvida inte du översätter till ett språk som använder en multibyteteckenuppsättning.
+
+Varje katalogs makefile kompilerar alla .wml-filer som hittas.
+
+När du har lagt till alla sidor kör
+   cvs commit
+från webwml-katalogen.
+</pre>
+Du kan nu börja översätta sidorna.
+
+<H3>Exempel på att översätta sidor</H3>
+En fransk översättning av det sociala kontraktet används i exemplet
+<pre>
+   cvs checkout webwml/english webwml/french   (om du inte redan gjort det)
+   cd webwml/french
+   cp ../english/social_contract.wml .
+   cvs add social_contract.wml
+översätt texten i social_contract.wml. Försök inte att översätta länkar eller
+att ändra dem på något sätt. När du är klar, skriv
+   cvs commit -m "kort beskrivning av ändringarna" social_contract.wml
+</pre>
+
+<H3>Kompilera wml</H3>
+Detta antar att du har wml installerat på din dator.
+Skriv bara <kbd>make</kbd> i webwml/&lt;språk&gt;.
+Om du gör <kbd>make install</kbd> kommer html-filerna att placeras i
+katalogen <kbd>../../debian.org/</kbd>.
+
+<p>Språk som använder multibyteteckenuppsättningar kan behöva för- eller
+efterprocessning av wml-filerna för att hantera teckenuppsättningen korrekt.
+Detta kan göras genom att ändra variablerna <kbd>WMLPROLOG</kbd> och
+<kbd>WMLEPILOG</kbd> i <kbd>webwml/&lt;lang&gt;/Make.lang</kbd>
+motsvarande.
+Beroende på hur ditt <kbd>WMLEPILOG</kbd>-program arbetar kan du behöva
+ändra värdet på <kbd>WMLOUTFILE</kbd>.
+
+<H3>Speciella filer och kataloger</H3>
+<ul>
+<li><b>News/</b><br>
+Den här katalogen innehåller alla nyheter som sänts till debian-announce.
+Nyheterna används också för att skapa en lista över titlarna på de nyaste
+nyheterna på huvudsidan.
+Detta görs automatiskt med skript.
+
+<p>Du kan översätta vilka nyheter du vill.
+Förmodligen kommer du bara att ha tid att översätta speciella nyheter, såsom
+när nya versioner utannonseras, det är helt upp till dig vilka du
+översätter.
+Skriptet som hämtar nyhetsrubrikerna vid genereringen av indexsidan och för
+framsidan letar efter översättningar av nyheterna, och om den inte hittar en
+sådan används den engelska översättningen.
+
+<li><b>security/</b><br>
+Denna katalog innehåller information om säkerhetsrelaterade problem som
+har rapporterats för Debian.
+Index skapas på samma sätt som för News/-katalogen, och vilka du översätter
+är upp till dig.
+
+<li><b>devel/people.wml</b><br>
+Denna innehåller listan över vilka utvecklare som hanterar vilka paket.
+Listan över namn och paket genereras automatiskt och sparas i
+webwml/english/devel/people.names.
+Den enda text som är specifik för engelska här är 'main', 'non-free',
+'non-us', 'contrib' och 'homepage'.
+Om översättarna tycker det är nödvändigt kan 'homepage' översättas.
+Skicka e-post till debian-www om du vill att detta ska göras.
+
+<li><b>MailingLists/subscribe.wml och MailingLists/unsubscribe.wml</b><br>
+De här sidorna skapas automatiskt från skript, så bry er inte om att
+översätta de här sidorna än.
+Ett system för att lägga till översättningar kommer att utvecklas.
+
+<li><b>distrib/vendors.wml</b><br>
+vendors.wml bör översättas.
+Den inkluderar <kbd>../../english/devel/vendors.CD</kbd>, vilken innehåller
+själva distributörslistan.
+Filen innehåller ingen språkspecifik information, utan inkluderar
+<kbd>vendors.CD.def</kbd> som innehåller översättningar av alla fraser som
+behövs i <kbd>vendors.CD</kbd>.
+Du bör lägga in översättningar för alla posterna på formen
+<kbd><protect>[EN:...:]</protect></kbd>, t.ex:
+<pre>
+	<protect>[EN:Country:]\</protect>
+	<protect>[ES:Pa-is:]\</protect>
+	<protect>[DE:Land:]\</protect>
+</pre>
+Översätt ingen annan text på sidan.
+
+</ul>
+

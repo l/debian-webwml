@@ -1,0 +1,103 @@
+#use wml::debian::template title="HOWTO: Arbeta med Debians webbsidor"
+
+<p>Debians webbsidor genereras på ett av tre sätt:
+Dokumentation speglas från
+<a href="http://www.debian.org/~elphick/ddp/">Debian Documentation Project (DDP)</a>,
+delar av webbplatsen genereras av skript (felrapporteringssidorna och
+sändlistearkivet är två bra exempel), och resten genereras med hjälp av wml.
+
+<h3>Vad är wml?</h3>
+WML ser till väldigt stor del mycket ut som html, men har ett antal filter
+som det körs genom innan den slutgiltiga html-koden genereras.
+Detta låter oss ha statiska sidor (vilket är ett krav för att webbsidorna
+ska kunna speglas), men fortfarande få de flesta av dynamiskt genererade
+sidors fördelar.
+
+<p>En av funktionerna i wml vi till stor grad använder är dess möjlighet att
+använda perl.
+Kom ihåg, detta är inte dynamiska sidor, perl används när html-sidorna
+genereras för att göra, tja, vad du vill.
+Två bra exempel är hur vi använder perl för att generera listan över de
+senaste nyheterna på förstasidan, och för att generera länkar till
+översättningar i slutet på sidan.
+
+<p>Wml:s dokumentation är inte så lätt att lära från.
+Den är förvisso rätt så komplett, men innan du har börjat förstå hur det
+fungerar (och det är ganska kraftfullt) så är det enklast att helt enkelt
+använda existerande sidor som exempel.
+
+<h3>Komma åt wml-källkoden: använda CVS</h3>
+Webbsidornas wml-källkod sparas i CVS.
+I CVS finns det en central plats där huvudkällkoden lagras, och det är från
+den man hämtar ut ("checkout") en kopia från lagringsplatsen ("repository")
+för att skapa en lokal kopia.
+Det är till och med så att kopiorna på huvudservern, från vilka de faktiska
+webbsidorna genereras, dagligen uppdateras genom att utföra en
+'<kbd>cvs update</kbd>' från den centrala lagringsplatsen.
+
+<h3>Lägga till nya sidor</h3>
+<p>Att lägga till nya sidor till Debian är rätt så enkelt, allt arbete med
+att få sidhuvud och -fot rätt görs med wml.
+Allt du behöver göra är att inkludera en rad ungefär som denna överst i den
+nya filen:
+<pre><protect>
+#use wml::debian::template title="SIDTITEL" 
+</protect></pre>
+följd av sidkroppen.
+Alla sidor bör använda mallen wml::debian::template, såvida de inte använder
+en specialmall för just den sektionen, t.ex nyhets- eller säkerhetssidorna.
+
+<p>Mallen, wml::debian::template, tillåter dig definiera vissa variabler som
+påverkar sidan som skapas, vilket bör minska nödvändigheten av att skapa
+olika mallar för varje situation, och gör det enklare att implementera
+förbättringar.
+De variabler som för närvarande finns tillgängliga är:
+<dl>
+ <dt>NOHEADER="yes"
+ <dd>Tar bort det inledande sidhuvudet från sidan.
+     Ett speciellt sidhuvud kan naturligtvis inkluderas i sidkroppen.
+
+ <dt>NOHOMELINK="yes"
+ <dd>Tar bort länken tillbaka till Debians hemsida nederst på sidan.
+
+
+ <dt>NOLANGUAGES="yes"
+ <dd>Tar bort länken till de olika språkversionerna nederst på sidan.
+
+ <dt>NOCOPYRIGHT="yes"
+ <dd>Tar bort upphovsrättsinformationen nederst på sidan.
+</dl>
+
+<p>Ett exempel på hur detta används finns på porteringssidorna vilka
+har sina egna sidhuvuden.
+ports/arm/index.wml använder:
+<pre><protect>
+#use wml::debian::template title="ARM Port" NOHEADER="yes"
+</protect></pre>
+
+<p>Om du vill göra något som inte kan göras med de existerande mallarna bör
+du först överväga om det går att utöka en existerande.
+Om det inte är möjligt att göra det på ett bakåtkompatibelt sätt, försök
+göra en ny mall som har en existerande som delmängd, så att de sidor som
+använder den gamla kan konverteras till den nya vid nästa större uppdatering
+(vilket förhoppningsvis inte behöver ske oftare än var sjätte månad).
+
+<p>Om du skapar en sida som genereras av ett skript, eller som inte har så
+mycket brödtext bör du överväga att använda wml:s "slices"-filter för att
+göra det enklare att hålla översättningarna uppdaterade.
+Ett bra exempel på detta är i <kbd>distrib/vendors.wml</kbd>, där nya
+distributörer kan läggas till, vilket får till följd att tillägget
+inkluderas i alla språkversioner automatiskt.
+<kbd>vendors.wml</kbd> inkluderar <kbd>vendors.CD</kbd>, vilken innehåller
+den faktiska listan.
+Den filen inkluderar i sin tur <kbd>distrib/vendors.CD.def</kbd> som
+innehåller definitionen av alla fraser i <kbd>vendors.CD</kbd>.
+Översättare behöver bara lägga till översättningar för varje "slice", t.ex
+
+<pre><protect>
+	[EN:Country:]\
+	[ES:Pa-is:]\
+	[DE:Land:]\
+</protect></pre>
+
+
