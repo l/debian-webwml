@@ -13,10 +13,7 @@
       h1.center                { text-align: center;  }
       h1.title                 {
       	text-align: center; 
-      	font-variant: small-caps;
-      	font-family: helvetica, Verdana, Myriad Web, Syntax, sans-serif; 
       	font-weight: bold; 
-      	text-transform: capitalize;
         text-shadow: 0.3em 0.3em 0.1em #F00;
       }
       div.center {text-align: center}
@@ -60,7 +57,6 @@
           }
      .Ignored { 
        color: rgb(136, 125, 107);
-       background-color: Bisque;
        text-align: center;
          }
 
