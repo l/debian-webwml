@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 
 # This script copies a DWN issue as given on the command line to the
-# translation named in copypage.conf, translates the dates and a few
-# strings, and adds the <!--translation x.x--> string to it. It also will
-# create the destination directory if necessary.
+# translation named in copypage.conf, translates a few strings,
+# adds the translation-check header to it. It will also create the
+# destination directory if necessary.
 
 # Written in 2000 by peter karlsson <peter@softwolves.pp.se>
 # © Copyright 2000 Software in the public interest, Inc.
@@ -19,7 +19,7 @@ unless ($year && $issue)
 {
 	print "Usage: $0 year issue\n\n";
 	print "Copies the issue from the English directory to the local one and adds\n";
-	print "the  translation  string\n";
+	print "the translation-check header\n";
 	exit;
 }
 
@@ -69,26 +69,6 @@ $insertedrevision = 0;
 
 while (<SRC>)
 {
-	if (/PAGENAME="([A-Za-z]*) ([0-9]*)[a-z]*, ([0-9]*)"/)
-	{
-		# Translate date
-		$date = "$2 $1 $3";
-		$date =~ s/January/januari/;
-		$date =~ s/February/februari/;
-		$date =~ s/March/mars/;
-		$date =~ s/April/april/;
-		$date =~ s/May/maj/;
-		$date =~ s/June/juni/;
-		$date =~ s/July/juli/;
-		$date =~ s/August/augusti/;
-		$date =~ s/September/september/;
-		$date =~ s/October/oktober/;
-		$date =~ s/November/november/;
-		$date =~ s/December/december/;
-
-		s/PAGENAME=".*" SUMMARY/PAGENAME="$date" SUMMARY/;
-	}
-
 	if ($_ eq "<b>Welcome</b> to Debian Weekly News, a newsletter for the Debian developer\n")
 	{
 		# Translate intro
@@ -110,7 +90,7 @@ while (<SRC>)
 
 	unless ($insertedrevision || /^#/)
 	{
-		print DST "# <!--translation $revision-->\n";
+		print DST qq'#use wml::debian::translation-check translation="$revision"\n';
 		$insertedrevision = 1;
 	}
 	print DST $_;

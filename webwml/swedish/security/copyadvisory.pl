@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This script copies a security advisory named on the command line, and adds
-# the <!--translation x.x--> string to it. It also will create the
+# the translation-check header to it. It also will create the
 # destination directory if necessary, and copy the Makefile from the source.
 
 # Written in 2000 by peter karlsson <peter@softwolves.pp.se>
@@ -18,7 +18,7 @@ unless ($date)
 {
 	print "Usage: $0 advisorydate\n\n";
 	print "Copies the advisory from the English directory to the local one and adds\n";
-	print "the  translation  string\n";
+	print "the translation-check header\n";
 	exit;
 }
 
@@ -70,7 +70,7 @@ while (<SRC>)
 {
 	unless ($insertedrevision || /^#/)
 	{
-		print DST "# <!--translation $revision-->\n";
+		print DST qq'#use wml::debian::translation-check translation="$revision"\n';
 		$insertedrevision = 1;
 	}
 	print DST $_;
