@@ -52,22 +52,71 @@ and get someone to sign the wrong key.
      sign it.  The following may help:
 
 <pre>
-       gpg --keyserver keyring.debian.org --recv-keys 0xDEADBEAF
+       gpg --keyserver keyring.debian.org --recv-keys 0xDEADBEEF
 </pre>
+
+     <p>If the person whose key you  want to sign is not in the Debian
+     keyring, replace <code>keyring.debian.org</code> with a public
+     keyserver like <code>pgpkeys.pgp.net</code> (which despite the name
+     also stores GnuPG keys.)</p>
+
+     <p>Note we can use the last eight hex digits of the key in this and
+     other GnuPG operations. The <tt>0x</tt> in front is also optional.</p>
+
+     </li>
 
 <li> To sign the key, enter the edit menu with
 
 <pre>
-       gpg --edit-key 0xDEADBEAF
+       gpg --edit-key 0xDEADBEEF
 </pre>
 
-<li> In GnuPG select all uids to sign with <code>uid n</code>.
+<li> In GnuPG select all uids to sign with <code>uid n</code>, where
+     <code>n</code> is the number of the uid shown in the menu.  You can
+     also press enter to sign all the uids. </li>
 
 <li> To sign a key, enter <code>sign</code>.  You will then be shown
      the fingerprint of they key which you have to compare with the
      one you've got from the person you met.
 
 <li> Quit GnuPG with <code>quit</code>
+
+<li> To verify you have signed the key correctly, you can do:
+
+<pre>
+       gpg --list-sigs 0xDEADBEEF
+</pre>
+
+     <p>You should see your own name and fingerprint (in short form) in the
+     output.</p>
+
+     </li>
+
+<li> Once you make sure everything went fine, you can send the signed key to
+     its recipient by doing:
+
+<pre>
+       gpg --export -a 0xDEADBEEF > someguys.key
+</pre>
+
+     <p>The <code>-a</code> option exports the key in ASCII format so it can
+     be emailed without possibility of corruption.</p>
+
+     </li>
+
+<li> If someone signs your key in this manner, you can add it to the Debian
+     keyring by doing:
+
+<pre>
+       gpg --import mysigned.key
+       gpg --keyserver keyring.debian.org --send-keys <var>&lt;your key id&gt;</var>
+</pre>
+
+     <p>It may take a while for the keying maintainers to update your key so
+     be patient.  You should also upload your updated key to the public
+     keyservers.</p>
+
+     </li>
 
 </ul>
 
