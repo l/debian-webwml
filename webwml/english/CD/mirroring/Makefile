@@ -2,8 +2,8 @@
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
-WMLBASE=../../..
-CUR_DIR=CD/images/mirroring
+WMLBASE=../..
+CUR_DIR=CD/mirroring
 SUBS=
 
 include $(WMLBASE)/Make.lang
