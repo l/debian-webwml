@@ -8,7 +8,9 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-all:: subscribe.wml unsubscribe.wml
+all:: subscribe.$(LANGUAGE).html unsubscribe.$(LANGUAGE).html
+clean::
+	rm -f subscribe.wml unsubscribe.wml
 install:: $(HTMLDIR)/subscribe.$(LANGUAGE).html $(HTMLDIR)/unsubscribe.$(LANGUAGE).html
 
 mklist := $(ENGLISHDIR)/$(CUR_DIR)/mklist
