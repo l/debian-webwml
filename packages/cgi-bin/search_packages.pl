@@ -236,10 +236,10 @@ my (@colon, $package, $pkg_t, $section, $ver, $foo, $binaries);
 unless ($search_on_sources) {
     foreach my $line (@results) {
 	@colon = split (/:/, $line);
-	($pkg_t, $section, $ver, $foo) = split (/ /, $#colon >1 ? $colon[1].":".$colon[2]:$colon[1], 4);
+	($pkg_t, $section, $ver, $arch, $foo) = split (/ /, $#colon >1 ? $colon[1].":".$colon[2]:$colon[1], 5);
 	$section =~ s,^(non-free|contrib)/,,;
 	$section =~ s,^non-US.*$,non-US,,;
-	my ($dist,$part,$arch) = $colon[0] =~ m,.*/([^/]+)/([^/]+)/Packages-([^\.]+)\.,; #$1=stable, $2=main, $3=alpha
+	my ($dist,$part,undef) = $colon[0] =~ m,.*/([^/]+)/([^/]+)/Packages-([^\.]+)\.,; #$1=stable, $2=main, $3=alpha
 
 	($package) = $pkg_t =~ m/^(.+)/; # untaint
 	$pkgs{$package}{$dist}{$ver}{$arch} = 1;
@@ -247,7 +247,7 @@ unless ($search_on_sources) {
 	$part{$package}{$dist}{$ver} = $part unless $part eq 'main';
 
 	$desc{$package}{$dist}{$ver} = find_desc ($package, $dist, $part) if (! exists $desc{$package}{$dist}{$ver});
-	
+
     }
 
     my ( $start, $end) = multipageheader( scalar keys %pkgs );
