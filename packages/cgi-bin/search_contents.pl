@@ -25,7 +25,12 @@ $ENV{PATH} = "/bin:/usr/bin";
 my $input = new CGI;
 
 print $input->header;
-print $input->start_html(-title=>'Debian package contents search results');
+print $input->start_html(-title=>'Debian package contents search results',
+			 -text=>'#000000',
+			 -bgcolor=>'#FFFFFF',
+			 -link=>'#0000FF',
+			 -vlink=>'#800080',
+			 -alink=>'#FF0000');
 
 # If you want, just print out a list of all of the variables and exit.
 # print $input->dump;
