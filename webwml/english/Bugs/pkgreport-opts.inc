@@ -1,6 +1,6 @@
 <define-tag flags whitespace=delete>
 	[EN:Flags::]
-	[IT:Flag::]
+	[IT:Opzioni::]
 	[FI:Liput::]
 	[DA:Flag::]
 	[HR:Oznake::]
@@ -96,7 +96,7 @@
 </define-tag>
 <define-tag open whitespace=delete>
 	[EN:open:]
-	[IT:aperto:]
+	[IT:open:]
 	[FI:avoin:]
 	[DA:åben:]
 	[HR:otvoreni:]
@@ -104,7 +104,7 @@
 </define-tag>
 <define-tag forwarded whitespace=delete>
 	[EN:forwarded:]
-	[IT:Inoltrato:]
+	[IT:forwarded:]
 	[FI:siirretty eteenpäin:]
 	[DA:videresendt:]
 	[HR:proslijeðeni:]
@@ -112,7 +112,7 @@
 </define-tag>
 <define-tag pending whitespace=delete>
 	[EN:pending:]
-	[IT:in attesa:]
+	[IT:pending:]
 	[FI:ratkaisematon:]
 	[DA:i gang:]
 	[HR:u radu:]
@@ -120,7 +120,7 @@
 </define-tag>
 <define-tag fixed whitespace=delete>
 	[EN:fixed:]
-	[IT:corretto:]
+	[IT:fixed:]
 	[FI:korjattu:]
 	[DA:rettet:]
 	[HR:rije¹eni:]
@@ -128,7 +128,7 @@
 </define-tag>
 <define-tag done whitespace=delete>
 	[EN:done:]
-	[IT:fatto:]
+	[IT:done:]
 	[FI:valmis:]
 	[DA:færdig:]
 	[HR:gotovi:]
@@ -136,7 +136,7 @@
 </define-tag>
 <define-tag critical whitespace=delete>
 	[EN:critical:]
-	[IT:critico:]
+	[IT:critical:]
 	[FI:kriittinen:]
 	[DA:kritisk:]
 	[HR:kritièni:]
@@ -152,7 +152,7 @@
 </define-tag>
 <define-tag serious whitespace=delete>
 	[EN:serious:]
-	[IT:serio:]
+	[IT:serious:]
 	[FI:vakava:]
 	[DA:alvorlig:]
 	[HR:ozbiljni:]
@@ -160,7 +160,7 @@
 </define-tag>
 <define-tag important whitespace=delete>
 	[EN:important:]
-	[IT:importante:]
+	[IT:important:]
 	[FI:tärkeä:]
 	[DA:vigtig:]
 	[HR:va¾ni:]
@@ -168,7 +168,7 @@
 </define-tag>
 <define-tag normal whitespace=delete>
 	[EN:normal:]
-	[IT:normale:]
+	[IT:normal:]
 	[FI:normaali:]
 	[DA:normal:]
 	[HR:normalni:]
@@ -176,7 +176,7 @@
 </define-tag>
 <define-tag minor whitespace=delete>
 	[EN:minor:]
-	[IT:minore:]
+	[IT:minor:]
 	[FI:vähäpätöinen:]
 	[DA:mindre:]
 	[HR:maleni:]
@@ -184,7 +184,7 @@
 </define-tag>
 <define-tag wishlist whitespace=delete>
 	[EN:wishlist:]
-	[IT:desiderio:]
+	[IT:wishlist:]
 	[FI:toive:]
 	[DA:ønskeliste:]
 	[HR:¾elje:]
