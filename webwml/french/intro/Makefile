@@ -1,19 +1,15 @@
-BASE=..
-CUR_DIR=intro
+# This Makefile should need no changes from webwml/english/doc/Makefile
+# Please send a message to debian-www if you need to modify anything
+# so the problem can be fixed.
 
-HTMLDIR=$(BASE)/../../debian.org/$(CUR_DIR)
-TEMPLDIR=$(BASE)/template/debian
-ENGLISHSRCDIR=$(BASE)/../english
+WMLBASE=..
+CUR_DIR=doc
+# list any subdirectories in the following variable. Any directories listed
+# must exist or the make will not work
+SUBS=
 
-include $(BASE)/Make.lang
+include $(WMLBASE)/Make.lang
+include $(WMLBASE)/Make.common
 
-WMLFILES := $(wildcard *.wml)
-HTMLFILES := $(patsubst %.wml,$(HTMLDIR)/%.html.$(LANGUAGE),$(WMLFILES))
-
-# EPILOG=--epilog=weblint
-$(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml
-	wml -q $(EPILOG) $(<F)
-
-all: $(HTMLFILES)
-
-include $(BASE)/Make.templ.inc
+include $(WMLBASE)/Make.dep.templ    
+include $(WMLBASE)/Make.dep.generic

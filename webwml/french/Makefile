@@ -6,8 +6,10 @@ WMLBASE=.
 CUR_DIR=
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
-SUBS=2.0 MailingLists News SPI devel distrib doc events intro logos mirror \
-ports security 
+SUBS=2.0 MailingLists News devel distrib doc events logos mirror \
+security 
+# à corriger why_debian! 
+# SPI intro ports 
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
