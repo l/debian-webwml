@@ -20,6 +20,7 @@ use Locale::gettext;
 use Pod::Usage;
 use POSIX;
 
+use Packages::OutputFiles;
 use Packages::HTML;
 use Packages::I18N::Locale;
 require('sections.pl');
@@ -61,9 +62,9 @@ pod2usage(-exitval => 0, -verbose => 1) if $help;
 if ($version) {
     print <<EOV;
 create_indexpages $revision
-Copyright (C) 2003 Frank Lichtenheld
+Copyright (C) 2003,2004 Frank Lichtenheld
 Based on the original packages scripts
-    Copyright 1998 James Treacy
+    Copyright (C) 1998 James Treacy
 EOV
     exit;
 }
@@ -89,7 +90,8 @@ $languages ||= "en";
 
 $quiet &&= ! $verbose;
 
-my %md5s = %{ read_md5_hash( $md5_file ) };
+my $files = Packages::OutputFiles->init();
+$files->load_file_list( $md5_file );
 
 bindtextdomain ( "pdo", $locale_dir );
 bindtextdomain ( "sections", $locale_dir );
@@ -149,19 +151,10 @@ foreach my $lang ( @langs ) {
 	gettext( "compact compressed textlist" )."</a>)</small></center>\n";
     $index_page .= trailer( '../..', 'index', $lang, @langs );
     my $dest_dir = "$html_root/$distribution";
-    if(file_changed(\%md5s, "$dest_dir/index.$lang.html", $index_page)) {
-	print "Write to $dest_dir/index.$lang.html\n" if $verbose;
-	sysopen(FILEH, "$dest_dir/index.$lang.html",
-		O_WRONLY | O_TRUNC | O_CREAT, 0664)
-	    || die "E: Can\'t open $dest_dir/index.$lang.html: $!";
-	my $now_time = time_stamp();
-	$index_page =~ s/LAST_MODIFIED_DATE/$now_time/g;
-	print FILEH $index_page;
-	close FILEH;
-    }
+    $files->update_file( "$dest_dir/index.$lang.html", $index_page);
 }
 
-write_md5_hash( $md5_file, \%md5s );
+$files->write_file_list( $md5_file );
 
 __END__
 

@@ -4,8 +4,6 @@ use strict;
 use warnings;
 
 use Locale::gettext;
-use Digest::MD5;
-use Fcntl;
 
 use Packages::I18N::Locale;
 use Packages::I18N::Languages;
@@ -143,7 +141,7 @@ sub trailer {
 	"</small>".
 	"<p><small>". gettext( "Last Modified: " ). "LAST_MODIFIED_DATE".
 	"<br>".
-	sprintf( gettext( "Copyright &copy; 1997-2003 <a href=\"http://www.spi-inc.org\">SPI</a>; See <a href=\"%s/license\">license terms</a>." ), "$HOME/" )."<br>".
+	sprintf( gettext( "Copyright &copy; 1997-2004 <a href=\"http://www.spi-inc.org\">SPI</a>; See <a href=\"%s/license\">license terms</a>." ), "$HOME/" )."<br>".
 	gettext( "Debian is a registered trademark of Software in the Public Interest, Inc." ).
 	"</small>".
 	"</body>\n</html>\n";
@@ -184,61 +182,5 @@ sub languages {
     
     return $str;
 }
-
-sub file_changed {
-    my ($md5s, $file, $text) = @_;
-    
-    my $md5string = Digest::MD5::md5_hex( $text );
-    if ( exists $md5s->{$file} 
-	 && ($md5s->{$file} eq $md5string) 
-	 && (-f $file)) {
-	return 0;
-    }
-    else {
-	$md5s->{$file} = $md5string;
-	return 1;
-    }
-}
-
-sub read_md5_hash {
-    my $md5file = shift;
-    my %md5s;
-    if (open(MD5H, "<", $md5file)) {
-	foreach(<MD5H>) {
-	    chomp;
-	    next unless /(\w+)\s*(.+)/;
-	    $md5s{$2} = $1;
-	}
-	close MD5H;
-    }
-    else {
-	# ok if open does not work. Every file will be re-generated and
-	# the file will be generated later.
-    }
-    return \%md5s;
-}
-
-sub write_md5_hash {
-    my ( $md5file, $md5s ) = @_;
-    sysopen(MD5H, $md5file, O_WRONLY | O_TRUNC | O_CREAT, 0664) 
-	|| warn "Can\'t open $md5file: $!";
-    foreach ( keys %$md5s ) {
-	print MD5H "$md5s->{$_} $_\n";
-    }
-    close MD5H;
-}
-
-sub time_stamp {
-    my ($sec,$min,$hour,$mday,undef,$year) = gmtime();
-    my $time_str = gmtime();
-    my ($wday, $month) = ($time_str =~ /^(\w{3})\s+(\w+)/);
-
-    $year += 1900;
-    $time_str = sprintf( "$wday, $mday $month $year %02d:%02d:%02d +0000", 
-			 $hour, $min, $sec );
-
-    return $time_str;
-}
-
 
 1;
