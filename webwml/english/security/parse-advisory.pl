@@ -14,6 +14,11 @@ my %longmoy = (	en => [
   'July', 'August', 'September', 'October', 'November', 'December' ]
 );
 
+my $mlURL = "http://lists.debian.org/debian-security-announce-";
+$mlURL .= qx "date +%y";
+chomp $mlURL;
+$mlURL .= "/";
+
 open ADV, $adv;
 foreach $l (<ADV>) {
   if ($l =~ /^Debian Security Advisory (DSA-\d+-\d+)/) {
@@ -77,6 +82,7 @@ print DATA "<define-tag fixed>yes</define-tag>\n";
 print DATA "\n#use wml::debian::security\n\n";
 print DATA "<h3>Debian GNU/Linux 2.2 (potato)</h3>\n\n";
 print DATA "<dl>\n$files</dl>\n";
+print DATA "\n<p><md5sums $mlURL>\n";
 close DATA;
 
 open WML, ">$wml";
@@ -87,5 +93,6 @@ print WML "#include \"\$(ENGLISHDIR)/security/2001/$data\"\n";
 close WML;
 
 print "Now edit $data and remove any English-specific stuff from it.\n";
-print "Also, go to http://lists.debian.org/debian-security-announce-".`date +%y`;
-print "find $dsa, then put a link to that page in $wml.\n";
+print "\n";
+print "Also, go to $mlURL\n";
+print "find $dsa, then put a link to that page on the last line of $data.\n";
