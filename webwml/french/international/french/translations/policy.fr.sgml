@@ -1,4 +1,9 @@
-<!doctype debiandoc system>
+<!doctype debiandoc system [
+<!-- include version information so we don't have to hard code it
+     within the document -->
+<!--entity % versiondata SYSTEM "version.ent"> %versiondata; -->
+]>
+<debiandoc>
   <!--
   Debian GNU/Linux Policy Manual.
   Copyright (C)1996,1997,1998 Ian Jackson and Christian Schwarz;
@@ -12,672 +17,3788 @@
   Christoph Lameter contributed the "Web Standard"
   The debian-policy mailing list has taken responsibility for the
   contents of this document since September 1998, with the package
-  maintainers responsible for packagingn adminstrivia only.
+  maintainers responsible for packaging adminstrivia only.
   -->
   
   <book>
     <titlepag>
-      <title>Debian Policy Manual</title>
+      <title>La Charte Debian </title>
       <author>
-        <name>Ian Jackson </name>
-        <email>ijackson@gnu.ai.mit.edu</email>
+	<name>Ian Jackson </name>
+	<email>ijackson@gnu.ai.mit.edu</email>
       </author>
       <author>
-        <name>Christian Schwarz</name> 
-        <email>schwarz@debian.org</email>
+	<name>Christian Schwarz</name> 
+	<email>schwarz@debian.org</email>
       </author>
       <author>
-        <name>revised: David A. Morris</name> 
-        <email>bweaver@debian.org</email>
+	<name>révision: David A. Morris</name> 
+	<email>bweaver@debian.org</email>
       </author>
       <author>
-        <name>The Debian Policy mailing List</name>
-        <email>debian-policy@lists.debian.org</email>
+	<name>La liste de diffusion « Debian Policy »</name>
+	<email>debian-policy@lists.debian.org</email>
       </author>
-      <version>version </version>
+      <version>version 3.2.1.1, 28 novembre 2000</version>
 
       <abstract>
-        This manual describes the policy requirements for the Debian
-        GNU/Linux distribution. This includes the structure and
-        contents of the Debian archive, several design issues of the
-        operating system, as well as technical requirements that each
-        package must satisfy to be included in the distribution.
+	Ce manuel est la charte de la distribution Debian
+GNU-Linux. On y aborde la structure et le contenu d'une archive Debian,
+quelques questions sur la conception du système d'exploitation,
+ainsi que les exigences techniques que chaque paquet doit satisfaire afin
+d'être inclus dans la distribution. Le paquet «&nbsp;debian-policy&nbsp;» 
+quant à lui est maintenu par un groupe de responsables sans pouvoirs 
+rédactionnels, dont voici la liste actuelle :
+	<enumlist>
+	  <item>
+	    <p>Michael Alan Dorman <email>mdorman@debian.org</email></p>
+	  </item>
+	  <item>
+	    <p>Richard Braakman <email>dark@xs4all.nl</email></p>
+	  </item>
+	  <item>
+	    <p>Philip Hands <email>phil@hands.com</email></p>
+	  </item>
+	  <item>
+	  <p>Julian Gilbey <email>J.D.Gilbey@qmw.ac.uk</email></p>
+          </item>
+         <item>
+          <p>Manoj Srivastava <email>srivasta@debian.org</email></p>
+	  </item>
+	</enumlist>
       </abstract>
 
-      <copyright>
-        <copyrightsummary>
-          Copyright &copy;1996,1997,1998 Ian Jackson
-          and Christian Schwarz.
-        </copyrightsummary>
-        <p>
-          This manual is free software; you may redistribute it and/or
-          modify it under the terms of the GNU General Public License
-          as published by the Free Software Foundation; either version
-          2, or (at your option) any later version.
-        </p>
 
-        <p>
-          This is distributed in the hope that it will be useful, but
-          <em>without any warranty</em>; without even the implied
-          warranty of merchantability or fitness for a particular
-          purpose.  See the GNU General Public License for more
-          details.
-          </p>
-        <p>
-          A copy of the GNU General Public License is available as
-          <tt>/usr/doc/copyright/GPL</tt> in the Debian GNU/Linux
-          distribution or on the World Wide Web at 
-          <url id="http://www.gnu.org/copyleft/gpl.html"
-          name="&urlname">. You can also obtain it by writing to the
-          Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-          Boston, MA 02111-1307, USA.
-        </p>
+      <copyright>
+	<copyrightsummary>
+	  Copyright &copy;1996,1997,1998 Ian Jackson
+	  and Christian Schwarz.
+	</copyrightsummary>
+	<p>
+	  Ce manuel est un logiciel libre ; il peut être redistribué 
+et/ou  modifié selon les termes de la «&nbsp;GNU General Public License&nbsp; », telle que publiée par la «&nbsp;Free Software Foundation&nbsp;» ; version 2 
+ou toute version suivante (au choix).
+	</p>
+
+	<p>
+	  Il est distribué dans l'espoir qu'il sera utile, mais <em>sans aucune
+garantie</em>; sans même la garantie implicite d'une possible 
+commercialisation ou d'une adéquation avec la satisfaction d'un but précis. 
+Consultez la «&nbsp;GNU General Public License&nbsp;» pour plus de détails.
+	</p>
+
+	<p>
+	  Une copie de la « GNU General Public License » est disponible à
+<tt>/usr/share/common-licences/GPL</tt> dans la distribution Debian GNU-Linux
+	  ou sur le World Wide Web à
+<url id="http://www.gnu.org/copyleft/gpl.html" name="&urlname">.
+Vous pouvez également l'obtenir en écrivant à la
+Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA 02111-1307, USA.
+	</p>
       </copyright>
     </titlepag>
 
-<chapt>
-<heading>Programmes personnalisé</heading>
-
-<sect id="arch-spec">
-<heading>Chaînes de spécification d'architecture</heading> 
-
+    <toc detail="sect">
+    
+    <chapt id="scope">
+      <heading>À propos de ce manuel</heading>
+      <sect>
+	<heading>Les objectifs de ce manuel</heading>
+	<p>
+	  Ce manuel est la charte de la distribution 
+Debian GNU-Linux. On y aborde la structure et le contenu d'une archive 
+Debian, quelques questions sur la conception du système d'exploitation,
+ainsi que les exigences techniques que chaque paquet doit satisfaire afin
+d'être inclus dans la distribution.
+	  </p>
+	
 <p>
-Si un programme doit fournir une <em>chaîne de spécification 
-d'architecture</em> quelque part, le format suivant doit être utilisé:
-	<example>
-	  &lt;arch&gt;-linux
-	</example>
-où `&lt;arch&gt;' est l'une des valeurs suivantes: i386, alpha, arm,
-m68k, powerpc, sparc et `&lt;os&gt;' est l'une des valeurs suivantes:
-linux, gnu.  L'utilisation de <em>gnu</em> dans cette chaîne est
-réservé pour le système d'exploitation GNU/Hurd.
+Les mots <em>must</em>, <em>should</em>, <em>may</em> et les adjectifs
+<em>required</em>, <em>recommended</em> et <em>optional</em> servent à
+distinguer la signification des diverses directives contenues dans cette
+charte. La distribution Debian ne considérera généralement pas comme
+acceptables les paquets qui ne se conforment pas aux directives dénotées par
+<em>must</em> (ou <em>required</em>)<footnote><p>
+En français, nous employons le verbe « devoir » et ses déclinaisons.
+</footnote>. Une non conformité à une directive
+dénotée par <em>should</em> (ou <em>recommended</em>) sera en général
+considérée comme un bogue, mais cela ne rendra pas nécessairement le
+paquet indistribuable<footnote><p>
+En français, nous employons le futur de l'indicatif et jamais le verbe
+« devoir ».</footnote>.
+ Les directives dénotées par <em>may</em> (ou
+<em>optional</em>) sont véritablement facultatives et sont laissées à
+l'appréciation du responsable de paquet.
+</p>
+<p>
+Ce classement est en gros équivalent à celui des bogues : <em>important</em>
+(pour des violations des directives <em>must</em> ou <em>required</em>),
+<em>normal</em> (pour des violations des directives <em>should</em> ou
+<em>recommended</em>) et <em>wishlist</em> (pour les éléments 
+<em>optional</em>)<footnote><p>voir aussi le RFC 2119.</footnote>.
+</p>
+<p>
+	  Ce manuel <em>ne décrit pas</em> les mécanismes techniques
+liés à la création, l'installation ou la suppression des paquets. On peut
+touver ces informations dans le <em>Manuel des paquets Debian</em> et dans 
+le <em>Manuel d'administration système Debian</em>. Veuillez noter que les
+notes en bas des pages de cette charte ne font pas partie de la politique
+Debian : elles sont simplement instructives.
+	  </p>
+	<p>
+	  Ce document suppose une certaine familiarité avec ces deux autres
+manuels. Malheureusement, le <em>Manuel d'administration système Debian</em>
+n'existe pas encore.
+	</p>
+	<p>
+	  La plupart des informations de ce manuel seront également utiles
+pour la création de paquets qu'on distribuera d'une autre façon
+ou qui sont destinés à un usage local.
+	</p>
+      </sect>
+      <sect>
+	
+<heading>Nouvelles versions de ce document</heading>
+	<p>
+	  La version actuelle de ce document est toujours accessible depuis
+	  le serveur FTP de Debian <ftpsite>ftp.debian.org</ftpsite> à
+	  <ftppath>/debian/doc/manuals/debian-policy.html.tar.gz</ftppath>
+	  ou sur le serveur WWW de Debian à
+«&nbsp;The Debian Policy Manual&nbsp;»
+	  (<url id="http://www.debian.org/doc/debian-policy/"
+	  name="&urlname">).</p>
+
+	<p>
+	 De plus, ce manuel est distribué avec le
+paquet <tt>debian-policy</tt>.
+	</p>
+      </sect>
+      <sect>
+	<heading>Avis et critiques</heading>
+
+	<p>
+	  Comme le système Debian GNU-Linux est en constante évolution, ce
+manuel change avec le temps.
+	</p>
+	<p>
+	Bien que les auteurs de ce document aient veillé à ne pas introduire
+des typos et autres erreurs, il en reste toujours.
+Si vous découvrez des erreurs dans la version de ce manuel ou si
+vous voulez nous faire part de vos commentaires, suggestions ou
+critiques, veuillez envoyer un courrier électronique sur la liste de diffusion
+«&nbsp;Debian Policy&nbsp;», <email>debian-policy@lists.debian.org</email>,
+ou envoyer un rapport de bogue concernant le paquet <tt>debian-policy</tt>.
+	</p>
+</sect>
+<sect>
+<heading>À propos de la traduction</heading>
+<p>
+Serge Stinckwich et David Rocher ont initié cette traduction et ils furent 
+rejoints par Christophe Le Bars, Benjamin Drieu, Laurent Pelecq, Christophe 
+Mertz, Olivier Ripoll, Georges Mariano, Hugues Marilleau,
+Michel Court et les relecteurs de la liste de diffusion debian-l10n-french,
+<email>debian-l10n-french@lists.debian.org</email>.
+Si vous voulez faire part de vos commentaires, suggestions ou critiques,
+vous pouvez envoyer un mél à Philippe Batailler <email>
+pbatailler@teaser.fr</email>.
+</p>
+	      </sect>
+    </chapt>
+    <chapt>
+      <heading>L'archive Debian</heading>
+      <p>
+	Le système Debian GNU/Linux est maintenu et distribué sous la forme
+d'un ensemble de <em>paquets</em>. Comme ils sont très nombreux
+(plus de 2600), ils sont répartis en plusieurs <em>sections</em>
+et <em>priorités</em> de manière à simplifier leur traitement.
+      </p>
+      <p>
+	Le projet Debian s'efforce de construire un système
+d'exploitation libre, mais tous les paquets que nous voulons rendre
+accessibles ne sont pas <em>libres</em> selon notre définition
+(voir plus loin les Directives Debian pour le logiciel libre) ou ne peuvent
+pas être importés ou exportés sans restrictions. L'archive a donc été
+séparée suivant les sections <em>main</em>, <em>non-free</em>,
+<em>contrib</em>, <em>non-US/main</em>, <em>non-US/non-free</em> et 
+<em>non-US/contrib</em>.
+      <p>
+	Les sections <em>main</em> et <em>non-US/main</em> constituent la 
+<em>distribution Debian GNU-Linux</em>.
+      <p>
+	Les paquets des autres sections ne sont pas considérés comme faisant
+partie de la distribution Debian, bien que nous soutenions leur utilisation
+à travers notre infrastructure (comme notre système
+de suivi des bogues et nos listes de diffusion). La <em>Charte de Debian</em> 
+s'applique aussi à ces paquets.
 </p>
 
-<p>
-Notez que nous n'utilisons pas `&lt;arch&gt;-debian-linux' dans la 
-chaîne `architecture-vendor-os' car cela rendrait nos programmes 
-incompatibles avec les autres distributions Linux. Notez aussi que
-nous n'utilisons pas `&lt;arch&gt;-unknown-linux', car le `unknown' 
-ne sonne pas très bien.
-<p>
+      <sect id="pkgcopyright">
+	<heading>Le copyright des paquets et les sections</heading>
+	<p>
+	  Voici les objectifs de cette charte :
 
-<sect>
-<heading>Daemons</heading>
+	  <list compact="compact">
+	    <item>
+<p>nous voulons mettre à disposition le plus grand nombre possible de 
+logiciels ;</p>
+	    </item>
+	    <item>
+	  <p>nous voulons encourager chacun à écrire des logiciels libres ;</p>
+	    </item>
+	    <item>
+		<p>nous voulons faciliter la production des cédéroms
+ de notre système sans craindre la violation de licences, ou de restrictions
+ d'importation/exportation ou de toutes autres lois.
+		</p>
+	    </item>
+	  </list>
+	</p>
+      <sect1>
+	<heading>Les directives Debian pour le logiciel libre</heading>
+	<p>
+	  Les directives Debian pour le logiciel libre (DFSG : 
+«&nbsp;Debian Free Software Guidelines&nbsp;») suivantes constituent notre 
+définition du logiciel «&nbsp;libre&nbsp;».
+	  <taglist>
+	    <tag>Redistribution autorisée
+	    </tag>
+	    <item>
+	      <p>
+		La licence d'un composant Debian ne doit pas empêcher quiconque
+ de vendre ou de donner ce logiciel en tant qu'élément d'une distribution
+ logicielle qui regroupe des programmes de différentes sources. La licence
+ ne doit pas demander le paiement de droits ou autres redevances
+ pour une telle vente.
+	      </p>
+	    </item>
+	    <tag>Code source
+	    </tag>
+	    <item>
+	      <p>
+		Le programme doit inclure son code source et doit permettre sa
+ distribution en tant que code source et comme forme compilée.
+	      </p>
+	    </item>
+	    <tag>Travaux dérivés
+	    </tag>
+	    <item>
+	      <p>
+		La licence doit autoriser les modifications et les travaux 
+dérivés. Elle doit autoriser leur distribution selon les termes mêmes de
+la licence du logiciel original.
+	      </p>
+	    </item>
+	    <tag>Intégrité du code source de l'auteur
+	    </tag>
+	    <item>
+	      <p>
+		La distribution d'un code source modifié peut être limitée
+par la licence <em>seulement</em> si des fichiers «&nbsp;patch&nbsp;», joints 
+avec le code source, permettent de modifier le programme au moment de sa 
+compilation. La licence doit explicitement permettre la redistribution de 
+logiciels construits à partir de code source modifié. La licence peut exiger 
+que les travaux dérivés portent un nom différent ou un numéro de version 
+différent du logiciel initial. (C'est un  compromis. Le groupe Debian 
+encourage tous les auteurs à ne pas limiter les modifications de fichier, 
+source ou binaire.)
+	      </p>
+	    </item>
+	    <tag>Non-discrimination envers des personnes ou groupes 
+de personnes
+	    </tag>
+	    <item>
+	      <p>
+		La licence ne doit faire aucune discrimination à l'encontre 
+d'une personne ou d'un groupe de personnes.
+	      </p>
+	    </item>
+	    <tag>Non-discrimination envers des champs d'activités
+	    </tag>
+	    <item>
+	      <p>
+		La licence ne doit pas empêcher l'usage du programme dans un
+ champ spécifique d'activité. Par exemple, elle ne doit pas empêcher 
+ l'utilisation du programme dans le cadre d'une activité commerciale ou
+ pour faire de la recherche génétique.
+	      </p>
+	    </item>
+	    <tag>Distribution de licence
+	    </tag>
+	    <item>
+	      <p>
+		Les droits attachés au programme doivent s'appliquer à tous 
+ceux à qui le logiciel est redistribué sans que ceux-ci aient besoin 
+d'une licence supplémentaire.
+	      </p>
+	    </item>
+	    <tag>La licence ne doit pas être spécifique à Debian
+	    </tag>
+	    <item>
+	      <p>
+		Les droits attachés à un programme ne doivent pas être liés
+à l'appartenance de ce programme à un système Debian. Si ce programme
+est extrait de Debian et est utilisé ou distribué sans Debian mais
+dans les termes de la licence du programme, toutes les parties à
+qui ce programme a été redistribué doivent avoir les mêmes droits
+que ceux qui sont accordés avec le système Debian.
+	      </p>
+	    </item>
+	    <tag>La licence ne doit pas contaminer d'autres logiciels
+	    </tag>
+	    <item>
+	      <p>
+		La licence ne doit pas apporter des restrictions à d'autres 
+logiciels distribués avec le logiciel en question. Par exemple, la licence ne
+doit pas exiger que tous les autres programmes distribués sur le même
+support soient des logiciels libres.
+	      </p>
+	    </item>
+	    <tag>Exemples de licence
+	    </tag>
+	    <item>
+	      <p>
+		Les licences «&nbsp;GPL&nbsp;», «&nbsp;BSD&nbsp;» et 
+«&nbsp;Artistic&nbsp;» sont des exemples de licence que nous considérons 
+comme <em>libres</em>.
+	      </p>
+	    </item>
+	  </taglist>
+	</p>
+      </sect1>
+      <sect1>
+	<heading>La section « main »</heading>
+	<p>
+	  Tous les paquets dans « main » doivent se conformer aux <em>DFSG</em>
+(«&nbsp;Debian Free Software Guidelines&nbsp;» -- Les directives Debian pour 
+le logiciel libre).
+	</p>
 
+	<p>
+	  De plus, les paquets dans « main »
+	  <list compact="compact">
+	    <item>
+	      <p>
+ne doivent pas demander un paquet extérieur à «&nbsp;main&nbsp;»
+pour leur compilation ou leur exécution (ainsi les paquets ne doivent pas 
+déclarer de relation « Depends » ou « Recommends » avec un paquet 
+qui n'est pas contenu dans « main ») ;
+	      </p>
+	    </item>
+	    <item>
+	      <p>
+		ne seront pas si bogués que nous refusions de les 
+soutenir ;
+	      </p>
+	    </item>
+	    <item>
+	      <p>
+		se conformeront à toutes les règles énoncées 
+dans ce manuel.
+	      </p>
+	    </item>
+	  </list>
+	</p>
+      </sect1>
+      <sect1>
+	<heading>La section « contrib »</heading>
+	<p>
+	 Tous les paquets dans « contrib » doivent se conformer aux « DFSG ».
+	</p>
+
+	<p>
+	  Voici des exemples de paquets qu'on peut inclure dans la section
+« contrib » :
+	  <list compact="compact">
+	    <item>
+	      <p>
+		des paquets libres qui demandent pour leur compilation ou 
+leur exécution des paquets appartenant aux sections « contrib », « non-free » 
+ou « non-US », ou des paquets qui ne sont pas contenus dans notre archive ;
+	      </p>
+	    </item>
+	    <item>
+	      <p>
+des paquets « wrapper », et d'autres accessoires libres pour des programmes 
+non libres.
+	      </p>
+	    </item>
+	  </list>
+	</p>
+      </sect1>
+      <sect1>
+	<heading>La section « non-free »</heading>
+	<p>
+	  La section « non-free » contient les paquets qui ne se conforment 
+pas aux «&nbsp;DFSG&nbsp;».
+		<p>
+	Tous les paquets de la section « non-free » doivent être distribuables
+électroniquement à travers les frontières internationales.
+	</p>
+      </sect1>
+      <sect1>
+	<heading>Le serveur « non-us »</heading>
+	<p>
+	  Certains programmes qui contiennent du code source utilisant
+la cryptographie doivent être déposés sur le serveur « non-us » à cause 
+des limitations US. à l'exportation.
+</p>
+	<p>
+	  Ceci ne s'applique qu'aux paquets qui contiennent du code source
+utilisant la cryptographie. Un paquet qui contient un programme interfacé
+avec un programme de cryptographie ou lié dynamiquement à une bibliothèque
+de cryptographie ne sera pas distribué par le serveur «&nbsp;non-us&nbsp;» 
+s'il peut fonctionner sans le programme ou la bibliothèque cryptographique.
+	</p>
+      </sect1>
+      <sect1>
+	<heading>Considérations supplémentaires sur le copyright</heading>
+	<p>
+Tous les paquets doivent être accompagnés d'une copie <em>verbatim</em>
+de leur copyright et de leur licence dans le fichier
+	  <tt>/usr/share/doc/&lt;package-name&gt;/copyright</tt> (voir <ref
+	  id="copyrightfile"> pour les détails).</p>
+	<p>
+	  Nous nous réservons le droit d'empêcher l'inclusion de fichiers 
+dans nos archives si
+	  <list compact="compact">
+	    <item>
+	      <p>
+		 leur utilisation ou leur distribution violent une loi ;
+	      </p>
+	    </item>
+	    <item>
+	      <p>
+	leur utilisation ou leur distribution créent un conflit éthique ;
+		      </p>
+	    </item>
+	    <item>
+	      <p>
+		nous sommes obligés de signer une licence pour les utiliser ;
+	      </p>
+	    </item>
+	    <item>
+	      <p>
+		leur distribution entre en conflit avec des politiques 
+du projet Debian.
+	      </p>
+	    </item>
+	  </list>
+	</p>
+
+	<p>
+	  Les programmes dont les auteurs encouragent l'utilisateur à faire des
+dons conviennent très bien à la section « main », sauf si les auteurs
+affirment que ne pas faire de don est immoral, non-éthique, illégal 
+ou quelque chose de similaire ; dans ce cas, ces programmes 
+doivent être placés dans la section «&nbsp;non-free&nbsp;».
+</p>
+
+	<p>
+	  Les paquets dont les notices de copyright (ou des problèmes de 
+brevet) ne permettent pas la redistribution, même sous forme binaire, 
+et pour lesquels aucune permission spéciale n'a été obtenue, ne doivent pas 
+être placés sur le site FTP de Debian et ses miroirs.</p>
+
+	<p>
+On notera que dans la loi internationale du copyright (ceci s'applique aussi
+aux US), <em>aucune</em> distribution ou modification d'un travail n'est
+autorisée sans une mention explicite. C'est pourquoi un programme sans
+notice de copyright <em>est</em> protégé et vous ne pouvez rien en faire
+sans risquer d'être poursuivi. De même, un programme avec une notice
+de copyright qui n'énoncerait pas explicitement ce qui est permis
+interdit tout.
+</p>
+
+	<p>
+Beaucoup d'auteurs de soi-disant logiciels libres ignorent les problèmes
+posés aux utilisateurs par des copyrights restrictifs (ou l'absence
+de notice de copyright). Il est souvent intéressant de contacter
+diplomatiquement de tels auteurs pour leur demander de modifier les
+termes de leur licence. Cependant cela est politiquement difficile
+et vous devriez au préalable demander conseil sur la liste
+de diffusion <tt>debian-legal</tt>.
+</p>
+
+	<p>
+	 Dans le doute, envoyez un courrier électronique à
+<email>debian-legal@lists.debian.org</email>. Soyez prêt à nous donner
+le copyright complet. Les logiciels couverts par la « GPL », les logiciels
+du domaine public et les copyrights de type « BSD » sont sûrs ; méfiez vous
+d'expressions comme «&nbsp;utilisation commerciale interdite&nbsp;»
+et «&nbsp;distribution limitée&nbsp;».
+</p>
+      </sect1>
+      <sect1>
+	<heading>Les sous-sections</heading>
+
+	<p>
+	  Les paquets des sections (<em>main</em>,
+	  <em>contrib</em>, <em>non-US/main</em>, <em>non-free</em>,
+	  <em>non-US/contrib</em>, and <em>non-US/non-free</em>) sont 
+regroupés en <em>sous-sections</em> pour simplifier leur traitement.
+</p>
+
+	<p>
+	  La section de chaque paquet sera spécifiée dans le
+<em>fichier de contrôle</em> du paquet. Toutefois, le responsable de
+l'archive Debian peut changer cette sélection afin d'assurer la
+cohérence de la distribution Debian.
+</p>
+	<p>
+	Veuillez consulter la distribution Debian en cours pour connaître
+les sections présentes.</p>
+      </sect1>
+      <sect>
+	<heading>Les priorités</heading>
+	  
+	<p>
+	  Chaque paquet aura une <em>priorité</em>, spécifiée dans son
+<em>fichier de contrôle</em>. Cette information, utilisée par l'outil
+de gestion des paquets Debian, permet de séparer les paquets prioritaires
+de ceux qui le sont moins.
+</p>
+	<p>
+	  Le système Debian de gestion de paquet, <prgn>dpkg</prgn>, comprend
+les <em>niveaux de priorités</em> suivants :
+
+	  <taglist>
+	    <tag><tt>required</tt></tag>
+	    <item>
+	      <p>
+ Les paquets <tt>required</tt> sont nécessaires au bon fonctionnement
+ du système. Vous ne devez pas les enlever sous peine de rendre votre système 
+ complètement inutilisable ; vous ne pourrez probablement
+ même plus utiliser <prgn>dpkg</prgn> pour remettre les choses en
+ place. Les systèmes composés uniquement de paquets <tt>required</tt>
+ sont probablement inutilisables, mais ils disposent des fonctionnalités
+ suffisantes pour permettre à l'administrateur système de <em>booter</em> et
+ d'installer d'autres logiciels.
+ </p>
+	    </item>
+	    <tag><tt>important</tt></tag>
+	    <item>
+	      <p>
+Les paquets <tt>important</tt> incluent ceux que l'on s'attend
+à trouver  sur un système de type Unix. Si l'on pense qu'un expert
+Unix, détectant l'absence d'un programme s'exclamera : «&nbsp;Mille Tonnerres 
+de Brest ! Mais où est passé ce fichu programme ?&nbsp;»,  alors celui-ci doit 
+être dans <tt>important</tt>. C'est un critère fort, car nous cherchons
+à produire, entre autres choses, un Unix libre. Les autres paquets sans
+lesquels le système ne fonctionne pas bien ou est inutilisable
+doivent avoir cette priorité. Cela <em>n'inclut pas</em>
+«&nbsp;Emacs&nbsp;» ou «&nbsp;X11&nbsp;» ou «&nbsp;TeX&nbsp;» ou tout autre grosse application. Les paquets
+<tt>important</tt> constituent simplement un ensemble minimal d'outils 
+nécessaires et communément attendus.
+ </p>
+	    </item>
+	    <tag><tt>standard</tt></tag>
+	    <item>
+	      <p>		
+Ces paquets fournissent un système en mode caractère, relativement
+petit mais pas trop limité. Ils seront installés par défaut si
+l'utilisateur ne sélectionne rien d'autre. Ce niveau n'inclut pas
+de nombreuses grosses applications, mais contient «&nbsp;Emacs&nbsp;» 
+(considéré comme une partie de l'infrastructure, plutôt qu'une application)
+et un sous-ensemble raisonnable de «&nbsp;TeX&nbsp;» et «&nbsp;LaTeX&nbsp;» 
+(si c'est possible en l'absence de «&nbsp;X&nbsp;»).
+</p>
+	    </item>
+	    <tag><tt>optional</tt></tag>
+	    <item>
+	      <p>		
+(En un sens, est optionnel ce qui n'est pas obligatoire, mais
+ici «&nbsp;optional&nbsp;» ne doit pas être compris ainsi.) Ce sont tous les
+logiciels qu'on pourrait raisonnablement vouloir installer quand on ne les
+connaît pas et qu'on a pas d'exigences particulières. Cela constitue un 
+système nettement plus gros et contient «&nbsp;X11&nbsp;», la distribution 
+complète de «&nbsp;TeX&nbsp;» et de nombreuses applications. Notez qu'il ne
+doit pas y avoir de conflit entre les paquets optionnels.
+</p>
+	    </item>
+	    <tag><tt>extra</tt></tag>
+	    <item>
+	      <p>
+Sont regroupés là les paquets qui sont en conflit avec d'autres
+paquets dont les priorités sont «&nbsp;required&nbsp;», «&nbsp;important&nbsp;», «&nbsp;standard&nbsp;»
+ou «&nbsp;optional&nbsp;», ou bien les paquets utiles uniquement
+si vous savez déjà ce qu'ils font, ou bien les paquets qui ont des
+exigences spécifiques.	
+	      </p>
+	    </item>
+	  </taglist></p>
+	  
+	<p>
+	Les paquets ne doivent pas dépendre de paquets dont les priorités 
+sont de valeur inférieure (hors dépendances pour la construction).
+Pour cela, on doit ajuster les priorités d'un ou de plusieurs paquets.
+	</p>
+      </sect>
+	  
+      <sect>
+	<heading>Les paquets binaires</heading>
+	  
+	<p>
+La distribution Debian GNU-Linux est fondée sur le système Debian de gestion de
+paquets, appelé <prgn>dpkg</prgn>. Par conséquent, tous les
+paquets de la distribution Debian doivent être fournis au format de
+fichier <tt>.deb</tt>.
+</p>
+	
+	<sect1>
+	  <heading>Le nom d'un paquet</heading>
+	    
+	  <p>
+Chaque paquet doit avoir un nom unique dans l'archive Debian.
+</p>
+	    
+	  <p>
+Un nom de paquet ne doit comporter que des lettres minuscules,
+des chiffres (0-9), les signes plus (+), moins (-) ou point (.).
+</p>
+	    
+	  <p>
+Le nom d'un paquet fait partie du nom du fichier <tt>.deb</tt> et est
+inclus dans le <em>fichier de contrôle</em> du paquet.
+	  </p>
+	</sect1>
+	        
+	<sect1>
+	  <heading>Le responsable d'un paquet</heading>
+	    
+	  <p>
+	    Chaque paquet aura un seul responsable à un instant donné.
+Cette personne est responsable du fait que la licence du logiciel du
+paquet suit les règles de la distribution à laquelle il appartient.
+</p>
+	  <p>
+Le responsable doit être indiqué dans le champ de
+contrôle <tt>Maintainer</tt> avec son nom correct et une adresse
+électronique valide. Quand une personne s'occupe de plusieurs paquets,
+elle essaiera d'éviter d'avoir différents noms ou adresses dans les champs 
+<tt>Maintainer</tt> des différents
+paquets.
+</p>
+	    
+	  <p>
+Quand la personne en charge d'un paquet quitte le projet Debian,
+c'est le groupe Debian QA<email>debian-qa@lists.debian.org</email>
+qui reprend la maintenance du paquet jusqu'à ce qu'un volontaire 
+se propose pour cette tâche.
+Ces paquets sont appelés <em>paquets orphelins</em>.
+</p>
+	</sect1>
+	    
+	    
+	<sect1>
+	  <heading>La description d'un paquet</heading>
+	    
+	  <p>
+Chaque paquet Debian doit avoir une description complète et enregistrée
+dans les champs <em>ad hoc</em> de son <em>fichier de contrôle</em>.
+</p>
 <p>
+La description apportera à l'utilisateur les informations dont il a besoin
+pour décider d'installer ou non le paquet. La description ne reprendra pas
+simplement le baratin publicitaire du programme.
+Les instructions de configuration ou d'utilisation du paquet ne
+doivent pas en faire partie -- c'est le rôle des scripts d'installation,
+des pages de man, des fichiers infos, etc. -- et
+les notices de copyright et autres écrits administratifs non plus --
+c'est le rôle des fichiers de copyright.
+</p>
+	</sect1>
+	    
+	    
+	<sect1>
+	  <heading>Les dépendances</heading>
+	    
+	  <p>
+Chaque paquet doit indiquer ses relations de dépendance avec les
+paquets dont il a besoin pour fonctionner correctement.
+</p>
+	  <p>
+Par exemple, une relation de dépendance doit être déclarée pour toute 
+bibliothèque partagée qui est demandée par l'exécutable 
+dynamiquement lié d'un paquet.
+</p>
+	    
+	  <p>
+Il n'est pas nécessaire d'indiquer les dépendances d'un paquet envers
+des paquets marqués comme <tt>Essential</tt> (voir ci-dessous), et on ne doit 
+pas le faire, à moins que ce ne soit une dépendance pour une version
+précise de tel paquet. 
+</p>
+	  <p>
+Dans certains cas, l'installation d'un paquet exige l'installation 
+<em>et</em> la configuration préalables d'un
+autre paquet. Il faut alors déclarer 
+une relation <tt>Pre-Depends</tt> pour ce paquet.</p>
+	    
+	  <p>
+Vous ne déclarerez pas une relation <tt>Pre-Depends</tt>
+pour un paquet avant d'en avoir débattu dans la liste de diffusion
+<tt>debian-devel</tt> et qu'un consensus favorable se soit dégagé.
+</p>
+</sect1>
+	    
+	    
+	<sect1>
+	  <heading>Les paquets virtuels</heading>
+	    
+	  <p>
+Parfois il y a des paquets qui font plus ou moins la même chose.
+Dans ce cas, il est utile de définir un <em>paquet virtuel</em> dont
+le nom décrit la fonction de ces paquets. (Les paquets virtuels existent
+de manière logique et non physique, c'est pour cela qu'ils sont appelés
+<em>virtuels</em>.) Les paquets assurant cette fonction viendront 
+<em>remplir</em> ce paquet virtuel. Ainsi, tout autre paquet qui a besoin 
+de cette fonction pourra simplement dépendre du paquet virtuel, sans
+avoir à énumérer tous les paquets possibles.
+</p>
+	    
+	  <p>
+Tous les paquets utiliseront les noms de paquets virtuels
+quand il convient de le faire ; ils s'arrangeront pour en créer de
+nouveaux quand c'est nécessaire. On n'utilisera que les paquets 
+virtuels qui ont été acceptés et qui apparaissent dans la liste des noms de 
+paquets virtuels 
+(sauf de manière privée, pour un ensemble local de paquets corrélés).
+</p>
+	    
+	  <p>
+La plus récente version de la liste officielle des paquets virtuels se trouve 
+sur <ftpsite>ftp.debian.org</ftpsite> dans
+<ftppath>/debian/doc/package-developer/virtual-package-names-list.text</ftppath>
+ou sur votre miroir local. De plus, elle est dans le paquet
+<tt>debian-policy</tt>. La procédure de mise à jour de la liste est
+décrite au début du fichier.
+</p>
+</sect1>
+	    
+	<sect1>
+	  <heading>Les paquets dans «&nbsp;base&nbsp;»</heading>
+	    
+	  <p>
+Les paquets inclus dans la section <tt>base</tt> ont une fonction
+particulière. Ils forment le sous-ensemble minimal du système Debian
+GNU-Linux qui est installé, avant tout autre chose, sur un nouveau système.
+Ainsi, seulement un tout petit nombre de paquets peut aller dans
+la section <tt>base</tt> afin de minimiser la quantité d'espace disque
+nécessaire à une installation.
+</p>	    
+	  <p>
+La plupart de ces paquets auront le niveau de priorité
+<tt>required</tt> ou au moins <tt>important</tt> et beaucoup d'entre eux
+seront étiquetés <tt>essential</tt> (voir ci-dessous).
+</p>
+	    
+	  <p>
+Vous ne devez placer aucun paquet dans la section <tt>base</tt> avant
+qu'une discussion dans la liste de diffusion <tt>debian-devel</tt>
+n'ait abouti à un consensus sur le sujet.
+</p>
+</sect1>
+	    
+	<sect1>
+	  <heading>les paquets «&nbsp;essential&nbsp;»</heading>
+	    
+	  <p>
+Certains paquets sont marqués <tt>essential</tt>. (Ils ont
+<tt>Essential: yes</tt> dans leur champ de contrôle.)
+Cet indicateur est utilisé pour les paquets qui sont <tt>indispensables</tt> à
+un système.
+</p>
+	    
+	  <p>
+Comme ces paquets ne peuvent pas être facilement supprimés
+(il faut ajouter une option de <em>forçage</em> de <prgn>dpkg</prgn>)
+l'indicateur <tt>essential</tt> ne doit être utilisé que si
+c'est absolument nécessaire.
+Un paquet comprenant une bibliothèque partagée ne doit pas être étiquetée
+<em>essential</em> --les dépendances empêchent sa suppression
+prématurée, or il doit être possible de la supprimer quand elle est
+périmée.
+</p>
+<p>
+Comme <prgn>dpkg</prgn> n'empêche pas la mise à jour de paquets alors qu'un 
+paquet <em>essential</em> est non configuré, tous les paquets 
+<em>essential</em> doivent fournir l'essentiel de leurs fonctions même s'ils
+ne sont pas configurés. Quand un paquet ne peut pas satisfaire cette
+exigence, il ne doit pas être étiqueté <em>essential</em> ; et tous les paquets
+qui en dépendent doivent, comme il est de règle, expliciter leurs dépendances.
+</p>
+	    
+	  <p>
+Vous ne devez pas étiqueter un paquet comme <tt>essential</tt> avant qu'une
+discussion dans la liste de diffusion <tt>debian-devel</tt>
+n'ait abouti à un consensus sur le sujet.
+</p>
+</sect1>
+	    
+	    
+	<sect1>
+	  <heading>Les scripts du responsable de paquet</heading>
+	    
+	  <p>
+Les scripts d'installation d'un paquet éviteront d'afficher des
+messages que l'utilisateur n'a pas besoin de voir et s'appuieront
+sur <prgn>dpkg</prgn> pour sauver de l'ennui un utilisateur qui
+installe de nombreux paquets. Cela signifie entre autres choses qu'il faut
+utiliser l'option <tt>--quiet</tt> de <prgn>install-info</prgn>.
+</p>
+	    
+	  <p>
+Les paquets essaieront de minimiser le nombre de questions
+posées et s'assureront que chaque question ne sera posée qu'une
+seule fois. Cela signifie que les paquets doivent
+essayer d'utiliser les fichiers de configuration partagés (comme
+<tt>/etc/papersize</tt> ou <tt>/etc/nntpserver</tt>),
+plutôt que de redemander, chacun, le même morceau d'information.
+</p>
+	    
+	  <p>
+Cela signifie aussi qu'une  mise à jour ne reposera pas les mêmes
+questions, sauf si l'utilisateur a utilisé <tt>dpkg --purge</tt> pour
+supprimer la configuration du paquet. Les réponses aux questions de
+configuration seront enregistrées dans un emplacement approprié
+de <tt>/etc</tt> afin que l'utilisateur puisse les modifier.
+De plus, la manière de faire ces modifications sera documentée.
+</p>
+	    
+	  <p>
+Si un paquet doit donner une information importante à l'utilisateur
+(comme «&nbsp;ne pas exécuter directement ce programme, vous devez d'abord
+modifier les fichiers de configuration suivants sinon votre système
+émettra des messages mal formatés&nbsp;»), il affichera ce message
+dans le script de post-installation (script <prgn>postinst</prgn>).
+Il demandera ensuite à l'utilisateur de taper sur la touche
+«&nbsp;retour-chariot&nbsp;» quand il a pris connaissance du message. Les 
+messages de copyright et les instructions d'utilisation ne sont pas considérés
+comme des messages vitaux. Ils doivent apparaître respectivement
+dans <tt>/usr/share/doc/<var>package</var>/copyright</tt> et dans la
+documentation en ligne, où tous les utilisateurs peuvent les consulter.
+</p>
+	    
+	  <p>
+ Presque toujours, seul le script de post-installation doit poser les
+questions nécessaires ; et il doit empêcher, par une condition quelconque,
+qu'elles soient posées en cas d'échec de l'installation d'un paquet  ou s'il
+est appelé avec <tt>abort-upgrade</tt>, <tt>abort-remove</tt> ou
+<tt>abort-deconfigure</tt>.</p>
+	    
+<p> Le script d'installation détectera toute erreur qui se produit et
+arrêtera immédiatement l'installation.</p>
+	  <p>
+On remarquera que la section <ref id="scripts">, s'applique généralement
+aussi aux scripts des responsables de paquet.
+</p>
+	    
+	  <p>
+On ne doit pas utiliser <prgn>dpkg-divert</prgn> sur un fichier appartenant à 
+un autre paquet sans consulter au préalable le responsable du paquet en 
+question.
+</p>
+	  <p>
+Tous les paquets qui donnent une valeur au nom «&nbsp;partagé&nbsp;» d'une 
+commande (en général, c'est un nom de fichier), utiliseront en général
+<prgn>update-alternatives</prgn>, de manière à rendre possible leur
+installation simultanée. Quand on n'emploie pas 
+<prgn>update-alternatives</prgn>, chaque paquet doit utiliser 
+<tt>Conflicts</tt> pour s'assurer que les autres paquets ne sont pas
+installés. (On peut spécifier dans ce cas un conflit avec quelques
+versions antérieures d'un paquet qui n'utilisait pas
+<prgn>update-alternatives</prgn> -- c'est une exception à la règle
+habituelle qui l'interdit.)
+</p>
+	</sect1>
+      </sect>
+      <sect>
+	<heading>Les paquets source </heading>
+	  
+	<sect1>
+	  <heading>La conformité aux manuels Debian </heading>
+	    
+	  <p>
+Vous indiquerez la version la plus récente de la <em>Charte Debian</em> à 
+laquelle se conforme le paquet. Cela se précise dans le champ
+de contrôle <tt>Standards-Version</tt>.
+</p>
+	  <p>
+On utilise cette valeur pour remplir automatiquement des rapports de bogue
+quand le paquet est vraiment trop vieux.
+</p>
+	    
+	  <p>
+Cette valeur correspond à une version des manuels Debian. On
+peut la trouver sur la page de titre ou bien en haut des pages (en bas,
+selon le format).
+</p>
+	    
+	  <p>
+Le numéro de version est composé de quatre parties : un numéro majeur
+et un mineur, un niveau de patch majeur et un mineur. Quand les normes
+changent, exigeant des modifications dans tous les paquets, le numéro
+majeur est changé.
+Les changements significatifs, exigeant des évolutions
+dans de nombreux paquets, sont signalés par un changement du
+numéro mineur.
+Le niveau majeur de patch sera modifié pour tout changement
+limité de la signification des standards. Le niveau de
+patch mineur sera changé pour toute amélioration légère (typographique, ou
+autres...) qui ne modifie pas le sens, ou pour des changements qui
+n'affectent pas le contenu des paquets.
+</p>
+	  <p>
+Seuls les trois premiers chiffres sont significatifs pour le champ
+<em>Standards-Version</em>, et les responsables de paquet peuvent choisir
+de donner soit les trois chiffres, soit la formule complète.
+	    <footnote>
+	      <p>
+Par le passé, on devait donner la formule complète à quatre chiffres,
+par exemple : «&nbsp;2.3.0.0&nbsp;». Mais comme un changement de niveau de 
+«&nbsp;patch&nbsp;»
+n'introduit pas une nouvelle norme, on a trouvé préférable d'assouplir la 
+règle et de ne demander qu'une formule à trois chiffres. (On peut toujours
+utiliser la formule complète si l'on veut.)
+	      </p>
+	    </footnote>
+	  </p>
+	    
+	  <p>
+Vous consulterez régulièrement, et notamment si votre paquet est obsolète,
+la plus récente version de la <em>Charte Debian</em>, et vous mettrez à jour 
+votre paquet si nécessaire.
+Lorsque le paquet est conforme à la nouvelle norme,
+vous mettrez à jour le champ <tt>Standards-Version</tt>
+du paquet source et vous le diffuserez.
+</p>
+</sect1>
+	    
+         <sect1>
+           <heading>Les relations entre paquets</heading>
+ 
+           <p>
+Les paquets source préciseront les paquets binaires qui doivent être 
+installés et ceux qui ne doivent pas l'être, pour que l'installation 
+réussisse.
+Si l'on doit, par exemple, compiler un paquet avec tel compilateur particulier,
+une dépendance de compilation sera déclarée envers ce paquet.
+           </p>
+ 
+           <p>
+Pour un très petit nombre de paquets , ceux dont on a toujours besoin pour 
+compiler, lier et insérer dans un paquet debian un programme classique écrit 
+en C ou C++ comme «&nbsp;Hello world!&nbsp;», il n'est pas nécessaire de déclarer 
+explicitement des relations de dépendance. Ces paquets, sur lesquels
+on peut trouver des renseignements dans la
+liste <tt>/usr/share/doc/build-essential/list</tt> (contenue dans le
+paquet <tt>build-essential</tt>), sont marqués <em>build-essential</em>.
+           </p>
+ 
+           <p>
+La liste des dépendances de compilation ne contiendra que les paquets
+explicitement nécessaires à la compilation. Les paquets simplement demandés
+parce qu'un paquet de cette liste dépend d'eux ne doivent pas être déclarés.
+La raison en est que les relations de dépendance changent et vous ne 
+déclarerez que <em>ce</em> dont vous avez besoin. Ce dont les autres ont 
+besoin est leur affaire.
+           </p>
+ 
+           <p>
+Quand les relations de dépendance de compilation sont indiquées, on doit
+pouvoir compiler un paquet et produire un binaire opérationnel sur un
+système où les paquets <tt>build-essential</tt> sont installés et où
+les relations de dépendance de compilation sont satisfaites (y compris les 
+implicites). Cela signifie en particulier que, dans les relations de 
+dépendance de compilation, on doit traiter rigoureusement les questions de
+version de manière à éviter les paquets mal ou stupidement configurés quand
+les relations de dépendances sont correctement satisfaites.
+</p>
+ 
+	<sect1>
+	  <heading>Les modifications dans les «&nbsp;sources&nbsp;» originaux</heading>
+	    
+	  <p>
+Si vous modifiez d'une façon généralisable le code source, vous enverrez 
+ces changements aux auteurs, dans la forme qu'ils préféreront, de manière à
+ce qu'ils puissent être intégrés dans la version originale.
+</p>
+	    
+	  <p>
+Si vous avez besoin de configurer le paquet de façon différente sous 
+Debian et sous Linux et si les sources originaux ne proposent pas de manière
+de le faire, veuillez ajouter ces moyens de configuration.
+C'est par exemple un nouveau test d'<prgn>autoconf</prgn> ou un
+<tt>#define</tt>. Envoyez ensuite le «&nbsp;patch&nbsp;» aux auteurs,
+en choisissant comme valeur par défaut la configuration qu'ils
+avaient choisie.  Vous pouvez facilement remplacer la valeur par défaut
+dans votre <tt>debian/rules</tt> ou à tout autre endroit approprié.
+</p>
+	  <p>
+Vous vérifierez que l'outil <prgn>configure</prgn>
+détecte la bonne déclaration d'architecture (reportez
+vous à la section <ref id="arch-spec"> pour plus de détails).
+</p>
+	  <p>
+Si vous avez besoin de modifier un <prgn>Makefile</prgn> qui utilise
+des scripts <prgn>configure</prgn> de style «&nbsp;GNU&nbsp;», vous modifierez
+les fichiers <tt>.in</tt>, plutôt que directement le
+<prgn>Makefile</prgn>. Cela permet à l'utilisateur de reconfigurer
+le paquet si nécessaire. Vous <em>ne devez pas</em>
+configurer le paquet et modifier le <prgn>Makefile</prgn> produit !
+Cela rend impossible la reconfiguration ultérieure du paquet par
+un autre utilisateur.
+</p>
+</sect1>
+	    
+	<sect1>
+	  <heading>Comment documenter vos modifications ? </heading>
+	    
+	  <p>
+Vous documenterez vos modifications et vos mises à jour des sources du paquet
+dans le fichier <em>ad hoc</em> <tt>debian/changelog</tt>. (Plutôt que
+de «&nbsp;réécrire l'histoire&nbsp;» en modifiant les vieilles entrées,
+il vaut mieux corriger les erreurs en créant une 
+nouvelle entrée dans le «&nbsp;changelog&nbsp;».
+</p>
+	    
+	  <p>
+Une copie du fichier qui est installé dans
+<tt>/usr/share/doc/<var>package</var>/copyright</tt> sera mise dans
+<tt>debian/copyright</tt>.
+</p>
+	    
+	  <p>
+Dans les paquets définitifs, vous ne devez utiliser, 
+pour <tt>debian/changelog</tt>, qu'un format supporté par la version la plus 
+récente de <prgn>dpkg</prgn>. Si votre format n'est pas supporté par 
+<prgn>dpkg</prgn>, mais qu'il est suffisamment commun, vous contacterez le 
+responsable de <prgn>dpkg</prgn> afin qu'il ajoute le script analyseur de 
+votre format dans le paquet <prgn>dpkg</prgn>. (Vous accepterez ainsi que 
+l'analyseur et ses pages de manuel soient distribués sous la licence 
+«&nbsp;GNU GPL&nbsp;», comme l'est le reste du paquet <prgn>dpkg</prgn>.)
+</p>
+</sect1>
+	    
+	<sect1>
+	  <heading>La détection des erreurs dans les makefiles</heading>
+	    
+	  <p>
+Quand <prgn>make</prgn> appelle une commande dans un
+makefile (incluant les makefiles originaux de votre
+paquet et <tt>debian/rules</tt>), cela se fait par
+<tt>sh</tt>. Or <tt>sh</tt> traite mal les erreurs :
+si vous incluez un mini-script shell en tant que
+commande dans votre makefile, vous constaterez que si
+vous n'avez pas de mécanisme de détection d'erreur, <prgn>make</prgn> 
+continuera aveuglément malgré les problèmes rencontrés.
+</p>
+	    
+	  <p>
+Chaque fois que vous mettez plus d'une commande shell (cela
+inclut l'utilisation d'une boucle) dans une commande
+du makefile, vous devez vous assurer que les erreurs
+sont détectées. Pour de simples commandes composées comme changer de 
+répertoire et exécuter un programme,
+il est suffisant d'utiliser «&nbsp;<tt>&amp;&amp;</tt>&nbsp;» à la place
+du point-virgule.
+Pour des commandes plus complexes incluant la plupart des boucles et 
+des conditionnelles, vous ajouterez la commande <tt>set -e</tt> au début de 
+chacun de ces mini-scripts shell que sont les commandes d'un makefile.
+</p>
+</sect1>
+	<sect1>
+	  <heading>Les constructions obsolètes et les bibliothèques</heading>
+	    
+	  <p>
+Le fichier d'«&nbsp;include&nbsp;» <prgn>&lt;varargs.h&gt;</prgn> est fourni 
+pour les utilisateurs qui compilent des logiciels très anciens; la bibliothèque
+<tt>libtermcap</tt> est fournie pour l'exécution de programmes qui ont
+été liés avec elle (soit de vieux programmes, soit des programmes comme
+Netscape disponibles uniquement sous forme binaire).
+</p>
+	  <p>
+Les paquets Debian doivent inclurent
+<prgn>&lt;stdarg.h&gt;</prgn> et <tt>ncurses</tt> au moment de leur construction.
+</p>
+</sect1>
+</sect>
+</chapt>
+
+    <chapt><heading>Le système d'exploitation</heading>
+	
+      
+      <sect>
+	<heading>La hiérarchie du système de fichiers</heading>
+	  
+	
+	<sect1>
+	  <heading>La structure du système de fichiers Linux</heading>
+	    
+	  <p>
+L'emplacement de tous les répertoires et fichiers installés
+doit être conforme au standard Linux sur la hiérarchie du système de fichier 
+(FHS). On peut trouver la plus récente version de ce document avec ce manuel 
+ou sur <url id="http://www.pathname.com/fhs/"><footnote>
+La distribution Debian donne actuellement une version préliminaire de la version
+2.1 du «&nbsp;FHS&nbsp;» parce que plusieurs détails significatifs ont changé entre
+la version actuelle 2.0 et la version à venir 2.1.</footnote>.
+Toute question relative à la manière de suivre ce standard
+peut-être posée dans la liste de diffusion
+<prgn>debian-devel</prgn> ou à Daniel Quinlan, le coordinateur
+FHS à l'adresse <email>quinlan@pathname.com</email>.
+</p>
+</sect1>
+	    
+	<sect1>
+	  <heading>Les programmes spécifiques à un site</heading>
+	    
+	  <p>
+Conformément au «&nbsp;FHS&nbsp;», aucun paquet ne doit placer de fichiers
+dans<tt>/usr/local</tt>, que ce soit en les mettant dans l'archive 
+qui doit être dépaquetée par <prgn>dpkg</prgn> ou que ce
+soit en les manipulant dans les scripts d'installation.
+</p>
+	  <p>
+Cependant, un paquet peut créer des répertoires vides sous <tt>/usr/local</tt>
+de manière que l'administrateur système ait un endroit où placer
+des fichiers locaux. S'ils sont vides, ces répertoires
+seront supprimés quand on supprime le paquet.
+</p>
+	    
+	  <p>
+On notera que cela ne s'applique qu'aux répertoires <em>sous</em>
+<tt>/usr/local</tt> et non pas <em>dans</em> <tt>/usr/local</tt>. 
+Le répertoire <tt>/usr/local</tt> ne doit
+contenir lui-même que les répertoires listés dans le FHS,
+section 4.6. Cependant vous pouvez créer autant de répertoires que vous voulez
+sous ces répertoires. Vous ne devez pas supprimer
+les répertoires listés à la section 4.6, même si vous les avez créés.
+</p>
+	  <p>
+Comme <tt>/usr/local</tt> peut être monté en lecture seule depuis
+un serveur distant, on doit créer ces répertoires avec
+les scripts de post-installation, <tt>postinst</tt> et on doit les
+supprimer avec les scripts de pré-désinstallation, <tt>prerm</tt>.
+Ces scripts ne doivent pas échouer si l'une de ces opérations échoue.
+(À l'avenir, il sera possible d'indiquer à <prgn>dpkg</prgn> de
+ne pas extraire tel fichier correspondant à tels critères ;
+ce qui permettra d'inclure ces répertoires dans le paquet
+<tt>.deb</tt>. Les administrateurs système qui le désirent,
+pourront alors empêcher l'installation de ces répertoires
+dans <tt>/usr/local</tt>.)
+</p>
+	    
+	  <p>
+Par exemple, le paquet <prgn>emacs</prgn> contiendra
+<example>
+   mkdir -p /usr/local/lib/emacs/site-lisp || true
+</example>
+dans le script <tt>postinst</tt>, et
+<example>
+    rmdir /usr/local/lib/emacs/site-lisp && \
+    rmdir /usr/local/lib/emacs || \
+    true
+</example>
+dans le script <tt>prerm</tt>.
+</p>
+	    
+	  <p>
+Si vous créez un répertoire dans <tt>/usr/local</tt> pour 
+«&nbsp;localiser&nbsp;» un paquet, vous vous assurerez que le paramétrage 
+dans <tt>/usr/local</tt> sera prioritaire par rapport à celui dans 
+<tt>/usr</tt>.
+</p>
+
+	  <p>
+Cependant, puisque «&nbsp;/usr/local&nbsp;» et son contenu sont réservés à 
+l'administrateur local, un paquet ne doit pas compter sur la présence ou 
+l'absence de fichiers ou répertoires dans «&nbsp;/usr/local&nbsp;»  
+pour toute opération normale.
+</p>
+<p>Le répertoire <tt>/usr/local</tt> lui-même et tous les sous-répertoires
+créés par un paquet, auront (par défaut) les droits 2775 (modifiable et 
+exécutable par le groupe (bit «&nbsp;set-group-id&nbsp;» positionné)). Ils 
+doivent appartenir à <tt>root.staff</tt>.
+</p>
+</sect1>
+      </sect>
+	
+      <sect>
+	<heading>Les utilisateurs et les groupes</heading>
+	  
+	<p>
+Le système Debian est configuré pour utiliser soit les mots de passe
+ordinaires soit les mots de passe masqués («&nbsp;shadow password&nbsp;»).
+</p>
+	  
+	<p>
+L'utilisation de quelques identifiants d'utilisateur (UIDs) et de groupe 
+(GIDs) est réservée à certains paquets. Ces paquets ont besoin
+d'inclure des fichiers appartenant à ces utilisateurs ou à ces groupes,
+ou bien ont besoin de compiler des binaires avec ces identifiants ; c'est 
+pourquoi, sur tout système Debian, ces identifiants ne pourront être utilisés 
+que dans ce cadre prédéfini.
+C'est une restriction importante, et on évitera d'interférer avec des 
+politiques particulières d'administration système. De nombreux sites 
+notamment allouent des utilisateurs et/ou des groupes systèmes spécifiques 
+à partir de 100.
+</p>
+	  
+	<p>
+En dehors de cet aspect, les identifiants seront attribués dynamiquement et
+seront rangés selon un ordre raisonnable mais qui peut être redéfini.
+</p>
+	<p>
+Seul le paquet <tt>base-passwd</tt> a le droit de modifier
+	  <tt>/etc/passwd</tt>, <tt>/etc/shadow</tt>, ou
+	  <tt>/etc/group</tt>.</p>
+	  
+	<p>
+L'ordre des «&nbsp;UID&nbsp;» et des «&nbsp;GID&nbsp;» est le suivant :
+	  <taglist>
+	    <tag>0-99:</tag>
+	    <item>
+	      <p>
+Attribués en bloc par le projet Debian, ils doivent être identiques sur tout 
+système Debian. Ces identifiants apparaîtront dans les fichiers 
+<tt>passwd</tt> et <tt>group</tt> de tout système Debian, tout nouvel
+identifiant dans cet intervalle étant automatiquement ajouté quand le paquet 
+<tt>base-passwd</tt> est mis à jour.
+ </p>
+		
+	      <p>
+Un paquet qui a besoin d'un identifiant UID ou GID unique et attribué de
+manière fixe utilisera cet intervalle ; le responsable demandera
+son obtention au responsable de <tt>base-passwd</tt>.
+ </p>
+	    </item>
+		
+	    <tag>100-999:</tag>
+	    <item>
+	      <p>
+Utilisateurs et groupes-système attribués dynamiquement. Les paquets qui 
+ont besoin d'un utilisateur ou d'un groupe et qui
+tolèrent que cet identifiant soit attribué dynamiquement et différemment
+sur chaque système, utiliseront <tt>adduser --system</tt>
+pour la création d'un tel groupe et/ou utilisateur.
+Le programme <prgn>adduser</prgn> vérifie qu'un tel groupe ou utilisateur
+n'existe pas déjà et utilise si nécessaire un autre identifiant dans l'
+intervalle spécifié par <tt>adduser.conf</tt>.
+ </p>
+</item>
+
+	    <tag>1000-29999:</tag>
+	    <item>
+	      <p>
+Comptes utilisateurs attribués dynamiquement. Par défaut, <prgn>adduser</prgn> 
+choisit  les «&nbsp;UIDs&nbsp;» et les «&nbsp;GIDs&nbsp;» pour les comptes utilisateurs 
+dans cet intervalle, bien que <tt>adduser.conf</tt> puisse 
+modifier ce comportement.
+ </p>
+</item>
+
+	    <tag>30000-59999:</tag>
+	    <item>
+	      <p>Usage réservé.</p></item>
+		
+		
+	    <tag>60000-64999:</tag>
+	    <item>
+	      <p>
+Attribués en bloc par le projet Debian, mais ils ne sont créés
+qu'à la demande. Les identifiants sont attribués de manière fixe et centralisée
+mais les comptes ne sont effectivement créés sur le système qu'à la demande.
+ </p>
+		
+	      <p>
+Ces identifiants sont réservés à des paquets obscurs ou à des paquets qui 
+demandent de nombreux identifiants attribués de manière fixe. Ces paquets 
+doivent s'assurer de l'inexistence de ces comptes dans <tt>/etc/passwd</tt> 
+ou dans <tt>/etc/group</tt> et les créer eux-mêmes si nécessaire (en utilisant
+si possible <prgn>adduser</prgn>).
+Les paquets qui risquent d'avoir besoin de davantage d'identifiants, 
+se réserveront un intervalle d'attribution plus large que de besoin, laissant
+ainsi des possibilités de développement.
+</p></item>
+		
+		
+	    <tag>65000-65533:</tag>
+	    <item>
+	      <p>Usage réservé.</p></item>
+		
+		
+	    <tag>65534:</tag>
+	    <item>
+	      <p>Utilisateur «&nbsp;<tt>nobody</tt>&nbsp;».</p></item>
+		
+		
+	    <tag>65535:</tag>
+	    <item>
+	      <p>
+		<tt>(uid_t)(-1) == (gid_t)(-1)</tt>. NE DOIT PAS ÊTRE UTILISÉ,
+car il s'agit de la valeur sentinelle pour retourner une erreur.
+ </p>
+	    </item>
+	  </taglist>
+	</p>
+      </sect>
+      <sect id="sysvinit">
+	<heading>Les niveaux de fonctionnement du système</heading>
+	  
+	
+	<sect1 id="/etc/init.d">
+	  <heading>Introduction</heading>
+	    
+	  <p>
+Le répertoire <tt>/etc/init.d</tt> contient les scripts exécutés
+par <prgn>init</prgn> quand le système démarre et quand l'état
+de <prgn>init</prgn> (son «&nbsp;niveau de fonctionnement&nbsp;») est modifié 
+(voir <manref name="init" section="8">).
+</p>
+
+          <p>
+Il y a au moins deux façons, différentes mais fonctionnellement équivalentes,
+de se servir de ces scripts. Pour rester simple, on décrit ici la méthode des
+liens symboliques. On ne doit cependant pas présumer que cette méthode est
+utilisée, et toute manipulation sur le comportement des différents niveaux 
+de fonctionnement doit être faite avec le programme <prgn>update-rc.d</prgn> 
+comme décrit plus bas, et non pas en  créant soi même les liens symboliques.
+Voyez la documentation du paquet <tt>file-rc</tt> pour des renseignements sur 
+la mise en oeuvre de l'autre méthode.
+</p>
+
+          <p>
+Ces scripts sont référencés par des liens symboliques dans les
+répertoires <tt>/etc/rc<var>n</var>.d</tt>. Lorsque le niveau
+de fonctionnement change, <prgn>init</prgn> recherche les scripts qu'il doit 
+exécuter dans le répertoire <tt>/etc/rc<var>n</var>.d</tt>, où <var>n</var> 
+est soit le niveau de fonctionnement demandé soit «&nbsp;S&nbsp;» pour le démarrage. 
+</p>
+          <p>
+Les noms de ces liens sont tous de la forme 
+<tt>S<var>mm</var><var>script</var></tt> ou de la forme
+<tt>K<var>mm</var><var>script</var></tt> ;
+<var>mm</var> est un nombre à deux chiffres et <var>script</var>
+est le nom du script (qui sera le même que le
+véritable script dans <tt>/etc/init.d</tt>).
+</p>
+	    
+          <p>
+Lorsque <prgn>init</prgn> change de niveau de fonctionnement, il exécute
+d'abord les scripts référencés par les liens dont le nom commence
+par <tt>K</tt>, chacun avec un seul argument: <tt>stop</tt>. Puis
+<prgn>init</prgn> exécute les scripts préfixés par <tt>S</tt>, avec pour 
+chacun un seul argument: <tt>start</tt>.
+Les liens <tt>K</tt> sont chargés d'arrêter les services et les
+liens <tt>S</tt> de démarrer les services au démarrage du
+niveau de fonctionnement.
+</p>
+	  <p>
+Par exemple, pour passer du niveau 2 au niveau 3, <prgn>init</prgn>
+exécutera d'abord tous les scripts préfixés par <tt>K</tt> qu'il trouve dans
+<tt>/etc/rc3.d</tt>, puis tous les scripts préfixés par <tt>S</tt>.
+Les liens qui commencent par <tt>K</tt> entraîneront l'exécution
+des scripts qu'ils référencent avec l'argument <tt>stop</tt> alors que les
+liens <tt>S</tt> entraîneront l'exécution des scripts avec
+l'argument <tt>start</tt>.
+</p>
+	    
+	  <p>
+Le nombre à deux chiffres <var>mm</var> est utilisé pour
+décider de l'ordre d'exécution des scripts de démarrage
+et d'arrêt. Les scripts de numéros les plus faibles sont
+exécutés en priorité. Par exemple les scripts <tt>K20</tt>
+seront exécutés avant les scripts <tt>K30</tt>.
+Cela sert quand un service doit être démarré avant
+un autre. Par exemple, il peut être nécessaire de démarrer le serveur de 
+noms <prgn>bind</prgn> avant le serveur de news
+<prgn>inn</prgn> afin que <prgn>inn</prgn> puisse
+positionner ses listes d'accès.
+Dans ce cas, le script de démarrage de <prgn>bind</prgn> doit
+avoir un numéro plus faible que le script qui démarre <prgn>inn</prgn>:
+<example>
+    /etc/rc2.d/S17bind
+    /etc/rc2.d/S70inn
+</example>
+</p>
+
+	</sect1>
+	  
+	<sect1>
+	  <heading>L'écriture des scripts</heading>
+	    
+	  <p>
+Les paquets qui mettent en service des «&nbsp;démons&nbsp;» mettront des 
+scripts dans <tt>/etc/init.d</tt> pour démarrer ou arrêter des services au 
+moment de l'amorçage ou pour un changement du niveau de fonctionnement.
+Ces scripts seront nommés <tt>/etc/init.d/<var>package</var></tt> et ne 
+doivent prendre qu'un seul argument, lequel indique ce qu'il faut faire :
+	    
+	    <taglist>
+	      <tag><tt>start</tt></tag>
+	      <item><p>démarrer le service,</p></item>
+		  
+	      <tag><tt>stop</tt></tag>
+	      <item><p>arrêter le service,</p></item>
+		  
+	      <tag><tt>restart</tt></tag>
+	      <item><p>arrêter et redémarrer le service,</p></item>
+		  
+	      <tag><tt>reload</tt></tag>
+	      <item><p>chargement d'une nouvelle configuration 
+du service sans réellement arrêter et redémarrer le service,
+ </p>
+</item>
+		  
+	      <tag><tt>force-reload</tt></tag> <item><p> 
+chargement d'une nouvelle configuration si le service le permet,
+sinon redémarrer le service.
+ </p>
+</item>
+	    </taglist>
+	    
+	    Les options <tt>start</tt>, <tt>stop</tt>, <tt>restart</tt>, et
+<tt>force-reload</tt> seront acceptés par tous les scripts
+de <tt>/etc/init.d</tt> ; l'option <tt>reload</tt> est facultative.
+</p>
+	    
+	  <p>
+Les scripts de <tt>/etc/init.d</tt> auront un comportement raisonnable quand 
+ils sont appelés avec l'option <tt>start</tt> alors que le service tourne 
+déjà. Il en est de même pour l'option <tt>stop</tt> quand le service
+ne tourne pas. Ils ne doivent pas tuer des processus utilisateurs
+appelés par mégarde.
+Le meilleur moyen est généralement d'utiliser <prgn>start-stop-daemon</prgn>.
+</p>
+<p>
+Quand un service recharge automatiquement sa configuration (comme
+c'est le cas de <prgn>cron</prgn> par exemple),
+l'option <tt>reload</tt> du script dans <tt>/etc/init.d</tt> 
+se comportera comme si la configuration avait été rechargée avec succès.
+</p>	    
+	    
+	  <p>
+Ces scripts ne doivent pas échouer de façon obscure quand ils trouvent dans
+le système les fichiers de configuration d'un paquet supprimé ; en effet par
+défaut, <prgn>dpkg</prgn> conserve ces fichiers de configuration et ne les 
+supprime qu'avec l'option <tt>--purge</tt>. En particulier, le script «&nbsp;init&nbsp;»
+lui même est un fichier de configuration (voir <ref id="init.d notes">) et
+reste sur le système quand le paquet est supprimé avec l'option «&nbsp;remove&nbsp;»
+et non pas avec l'option «&nbsp;purge&nbsp;».
+C'est pourquoi vous inclurez une instruction <tt>test</tt> au début 
+du script, comme par exemple :
+	    <example>
+  test -f <var>program-executed-later-in-script</var> || exit 0
+	    </example></p>
+	</sect1>
+	  
+	<sect1>
+	  <heading>La gestion des liens</heading>
+	    
+	  <p>
+Le programme <prgn>update-rc.d</prgn> facilite la création et la suppression 
+des liens symboliques dans <tt>/etc/rc<var>n</var>.d</tt>, ou de leurs
+équivalents fonctionnels quand on utilise une autre méthode.
+Les responsables de paquet peuvent s'en servir dans leurs scripts 
+<tt>postinst</tt> et <tt>postrm</tt>.</p>
+
+	  <p>
+On doit utiliser ce programme pour faire des modifications dans le
+répertoire <tt>/etc/rc<var>n</var>.d</tt> et ne <em>jamais</em> inclure
+des liens symboliques  dans le <tt>/etc/rc<var>n</var>.d</tt>
+du système réel, ni en créer ou en supprimer directement dans les scripts
+du responsable de paquet. (Dans ce dernier cas, cela échouera si le système
+d'information sur les niveaux de fonctionnement utilise une autre méthode.)
+</p>
+	  <p>
+Par défaut, <prgn>update-rc.d</prgn> démarrera les serveurs
+dans chacun des niveaux de fonctionnement du système (2, 3, 4 et 5) pour le
+mode multi-utilisateurs et les arrêtera dans le niveau (0) mode halt,
+le niveau (1) mode mono-utilisateur  et le niveau (6) mode reboot.
+L'administrateur système pourra paramétrer les
+niveaux de fonctionnement soit en ajoutant, supprimant ou déplaçant
+les liens symboliques contenus dans <tt>/etc/rc<var>n</var>.d</tt> si la 
+méthode des liens symboliques est utilisée, soit en modifiant 
+<tt>/etc/runlevel.conf</tt> quand on utilise la méthode <tt>file-rc</tt>.</p>
+
+	  <p>
+Pour obtenir le comportement par défaut pour votre paquet,
+mettez dans le script <tt>postinst</tt> :
+	   
+	    <example>
+	      update-rc.d <var>package</var> defaults &gt;/dev/null
+	    </example>
+	    et dans votre <tt>postrm</tt>
+	    <example>
+	      if [ purge = "$1" ]; then
+	      update-rc.d <var>package</var> remove &gt;/dev/null
+	      fi
+	    </example></p>
+	    
+	  <p>
+Le numéro d'ordre d'exécution par défaut sera égal à 20. Si l'ordre ou
+le moment d'exécution du script sont indifférents, utilisez
+cette valeur par défaut. S'ils sont importants, vous devez en discuter avec le
+responsable du paquet <prgn>sysvinit</prgn> ou envoyer
+un message à <tt>debian-devel</tt>. Ceci devrait vous
+aider à déterminer le numéro d'ordre d'exécution.
+</p>
+	    
+	  <p>
+Pour plus d'informations sur l'utilisation d'<tt>update-rc.d</tt>,
+veuillez consulter sa page de manuel
+<manref name="update-rc.d" section="8">.
+</p>
+
+</sect1>
+	    
+	    
+	<sect1>
+	  <heading>L'initialisation au moment de l'amorçage</heading>
+	    
+          <p>
+Classiquement, un autre répertoire, <tt>/etc/rc.boot</tt>, contenait les
+scripts exécutés seulement au démarrage. Mais on préfère maintenant
+se servir de liens de <tt>/etc/rcS.d</tt> vers les fichiers dans
+<tt>/etc/init.d</tt>, comme décrit dans <ref id="/etc/init.d">.
+Aucun paquet ne doit placer de fichiers dans <tt>/etc/rc.boot</tt>.</p>
+</sect1>
+
+	<sect1 id="init.d notes">
+	  <heading>Notes</heading>
+	    
+	  <p>
+<em>N'incluez pas</em> les liens symboliques de
+<tt>/etc/rc<var>n</var>.d/*</tt> dans l'archivage produisant un fichier 
+<tt>.deb</tt> ! <em>C'est une source de problèmes !</em> Vous devez les créer 
+avec <prgn>update-rc.d</prgn>, comme il est dit plus haut.</p>
+	
+	  <p>
+<em>N'incluez pas</em> les liens symboliques de
+<tt>/etc/rc<var>n</var>.d/*</tt> dans la liste de fichiers de configuration
+de <prgn>dpkg</prgn> ! <em>C'est une source de problèmes !</em> Mais
+vous considérerez les scripts de <tt>/etc/init.d</tt> comme des fichiers de
+configuration, soit en les marquant comme fichiers de configuration soit
+en les traitant correctement dans les scripts du responsable de paquet 
+(voir <ref id="config files">).
+(C'est important car nous voulons laisser à l'administrateur
+système la possibilité d'adapter ces scripts à son système local
+-- par exemple, désactiver un service sans désinstaller le paquet,
+ou  bien spécifier des options particulières sur la ligne de commande au
+démarrage d'un service -- tout en assurant que ses modifications ne seront
+pas perdues lors de la prochaine mise à jour du paquet.)
+</p>
+</sect1>
+	    
+	<sect1>
+	  <heading>Exemple</heading>
+	    
+	  <p>
+Le paquet <prgn>bind</prgn>, un serveur de noms de domaine (DNS),
+veut s'assurer que le serveur de noms s'exécute
+à un niveau de fonctionnement multi-utilisateurs et qu'il est
+correctement fermé à l'arrêt du système.
+Il place un script dans <tt>/etc/init.d</tt> et le nomme
+judicieusement <tt>bind</tt>.  Comme vous pouvez le constater,
+le script interprète l'argument <tt>reload</tt> pour envoyer
+le signal <tt>HUP</tt> au serveur de nom (ce qui provoque
+le rechargement de sa configuration) ;
+de cette manière, l'utilisateur peut utiliser la commande
+<tt>/etc/init.d/bind reload</tt> pour recharger la configuration
+du serveur de noms.
+</p>
+	    
+	  <p>
+	    <example>
+	      #!/bin/sh
+	      #
+	      # Original version by Robert Leslie
+	      # &lt;rob@mars.org&gt;, edited by iwj and cs
+	      
+	      test -x /usr/sbin/named || exit 0
+	      
+	      case "$1" in
+	      start)
+	      echo -n "Starting domain name service: named"
+	      start-stop-daemon --start --quiet --exec /usr/sbin/named
+	      echo "."
+	      ;;
+	      stop)
+	      echo -n "Stopping domain name service: named"
+	      start-stop-daemon --stop --quiet  \
+	      --pidfile /var/run/named.pid --exec /usr/sbin/named
+	      echo "."
+	      ;;
+	      restart)
+	      echo -n "Restarting domain name service: named"
+	      start-stop-daemon --stop --quiet  \
+	      --pidfile /var/run/named.pid --exec /usr/sbin/named
+	      start-stop-daemon --start --verbose --exec /usr/sbin/named
+	      echo "."
+	      ;;
+	      force-reload|reload)
+	      echo -n "Reloading configuration of domain name service: named"
+	      start-stop-daemon --stop --signal 1 --quiet  \
+	      --pidfile /var/run/named.pid --exec /usr/sbin/named
+	      echo "."
+	      ;;
+	      *)
+	      echo "Usage: /etc/init.d/bind {start|stop|restart|reload|force-reload}" >&2
+	      exit 1
+	      ;;
+	      esac
+	      
+	      exit 0
+	    </example></p>
+	    
+	  <p>
+Un autre exemple sur lequel baser
+les scripts de <tt>/etc/init.d</tt> se trouve dans
+<tt>/etc/init.d/skeleton</tt>.
+</p>
+	    
+	  <p>
+Si ce paquet se satisfait des valeurs par défaut
+de <prgn>update-rc.d</prgn>, en l'occurence un numéro
+d'ordre d'exécution égal à 20 et l'exécution dans tous les niveaux
+de fonctionnement, il peut indiquer dans son script
+<tt>postinst</tt>:
+	    <example>
+	      update-rc.d bind defaults >/dev/null
+	    </example>
+et dans son script <tt>postrm</tt>, pour supprimer les liens
+quand le paquet est <em>purgé</em> :
+	    <example>
+	      if [ purge = "$1" ]; then
+	      update-rc.d bind remove >/dev/null
+	      fi
+	    </example></p>
+	</sect1></sect>
+	
+      <sect>
+	<heading>Les travaux de «&nbsp;Cron&nbsp;»</heading>
+	  
+	<p>
+Les paquets ne doivent pas modifier le fichier de configuration
+<tt>/etc/crontab</tt>, ni les fichiers contenus dans
+<tt>/var/spool/cron/crontabs</tt>.
+</p>
+	  
+	<p>
+Quand un paquet veut confier une tâche au programme <prgn>cron</prgn>,
+il doit placer un fichier de même nom que lui dans l'un des répertoires
+suivants :
+	  <example>
+	    /etc/cron.daily
+	    /etc/cron.weekly
+	    /etc/cron.monthly
+	  </example>
+Comme l'indique le nom de ces répertoires,
+les fichiers  sont exécutés une fois par jour, une fois par semaine ou 
+une fois par mois.
+Le rythme exact est contenu dans <tt>/etc/crontab</tt>.</p>
+	<p>
+Tous les fichiers installés dans l'un de ces répertoires
+doivent être des scripts (scripts shell, perl, etc.)
+pour que l'administrateur du système local puisse facilement les modifier.
+De plus ils seront traités comme des fichiers de configuration.
+</p>
+<p>
+Quand une tâche doit s'exécuter plus souvent
+que quotidiennement, le paquet installera un fichier 
+<tt>/etc/cron.d/<var>nom-du-paquet</var></tt>. Ce fichier a la même 
+syntaxe que le fichier <tt>/etc/crontab</tt> et est traité automatiquement
+par <prgn>cron</prgn>. Il doit aussi être considéré comme un fichier de 
+configuration. (On remarquera que le programme <prgn>anacron</prgn> ne se sert
+pas des scripts dans le répertoire <tt>/etc/cron.d</tt>. Vous ne 
+l'utiliserez donc que pour des tâches qui peuvent être omises si le système
+ne tourne pas.)
+</p>
+	<p>
+
+Les scripts ou les entrées de la «&nbsp;crontab&nbsp;» dans ces répertoires 
+doivent vérifier d'abord la présence de tous les fichiers nécessaires à
+leur exécution. Sinon, il y aura des problèmes avec les paquets 
+qui ont été supprimés sans l'option «&nbsp;purge&nbsp;»,
+car, dans ce cas, les fichiers de configuration sont conservés.
+</p>
+</sect>
+
+      <sect>
+	<heading>Les messages de la console</heading>
+	  
+	<p>
+Cette section décrit les formats des différents messages que les scripts du
+répertoire <tt>/etc/init.d</tt> écrivent sur la sortie standard.
+L'objectif est d'améliorer la cohérence du style Debian
+en matière de séquences de démarrage et d'arrêt d'un système.
+</p>
+	<p>
+Veuillez faire très attention aux détails. Nous voulons que les messages
+fassent une utilisation identique des espaces, de la ponctuation et de
+la casse des lettres.
+</p>	  
+	<p>
+Voici une liste des règles générales à respecter pour la création
+de messages en sortie. Elles peuvent être utiles si vous avez des messages non
+standards qui ne sont pas abordés par les sections suivantes.
+</p>
+	<p>
+	  <list>
+	    <item>
+	      <p>
+ Tous les messages tiendront sur une ligne. Ils commenceront par une
+ capitale et se termineront par un point «&nbsp;.&nbsp;».
+ </p>
+</item>		
+
+		
+<item>
+	      <p>
+Quand vous voulez signaler que l'ordinateur est occupé (exécution d'une
+tâche particulière et non pas le démarrage ou la fermeture d'un programme),
+utilisez une «&nbsp;ellipse&nbsp;», à savoir trois points «&nbsp;...&nbsp;». 
+Vous remarquerez que nous n'insérons pas d'espace avant ou après les points. 
+Quand la tâche est terminée nous écrivons «&nbsp;done.&nbsp;» et un retour à 
+la ligne.
+ </p>
+</item>
+		
+	    <item>
+	      <p>
+Concevez vos messages comme si l'ordinateur vous disait ce qu'il fait
+(rendez-le poli :-), mais n'en faites pas un personnage.
+Par exemple, si vous voulez dire :
+		<example>
+		  I'm starting network daemons: nfsd mountd.
+		</example>
+		dites simplement :
+		<example>
+		  Starting network daemons: nfsd mountd.
+		</example></p></item>
+	  </list></p>
+	  
+	<p>
+Les formats suivants seront utilisés :
+</p>
+	  
+	<p>
+	  <list>
+	    <item>
+	      <p>au lancement d'un démon.</p>
+		
+	      <p>
+Utilisez ce format si votre script démarre un ou plusieurs démons.
+Le message en sortie (une seule ligne, sans espaces en fin de ligne)
+doit ressembler à ceci :
+		<example>
+		  Starting &lt;description&gt;: &lt;daemon-1&gt; &lt;daemon-2&gt; &lt;...&gt; &lt;daemon-n&gt;.
+		</example>
+	L'élément &lt;description&gt; décrira le sous-système dont fait partie le ou les démons alors que les éléments de &lt;daemon-1&gt; jusqu'à &lt;daemon-n&gt;
+indiqueront chacun le nom du démon (typiquement le nom du fichier programme).
+</p>			
+	      <p>
+Par exemple, la sortie de <prgn>/etc/init.d/lpd</prgn> ressemble à :
+		<example>
+		  Starting printer spooler: lpd.
+		</example></p>
+		
+	      <p>
+Ce qui peut être obtenu en écrivant dans le script :
+		<example>
+		  echo -n "Starting printer spooler: lpd"
+		  start-stop-daemon --start --quiet lpd
+		  echo "."
+		</example>
+Si vous avez plusieurs démons à démarrer, vous pouvez écrire le code
+suivant :
+		<example>
+		  echo -n "Starting remote file system services:"
+		  echo -n " nfsd"; start-stop-daemon --start --quiet nfsd
+		  echo -n " mountd"; start-stop-daemon --start --quiet mountd
+		  echo -n " ugidd"; start-stop-daemon --start --quiet ugidd
+		  echo "."
+		</example>
+L'utilisateur peut savoir ainsi ce qui prend tant de temps et quand
+le dernier démon a été démarré. Vous serez précis avec les espaces : dans 
+l'exemple précédent un administrateur système
+peut facilement commenter une ligne s'il ne veut pas lancer un démon
+particulier; le message affiché reste correct.
+ </p>
+</item>
+		
+	    <item>
+	      <p>quand quelque chose doit être configuré.</p>
+		
+	      <p>
+Si vous devez positionner différents paramètres au démarrage du système,
+vous utiliserez ce format :
+		<example>
+		  Setting &lt;parameter&gt; to `&lt;value&gt;'.
+		</example></p>
+		
+	      <p>
+vous pouvez utiliser le message suivant qui place correctement les
+guillemets :
+		<example>
+		  echo "Setting DNS domainname to \`"value"'."
+		</example></p>
+		
+	      <p>
+
+Il faut noter que l'apostrophe à gauche (`) est différente de l'apostrophe à 
+droite (').
+		</p></item> 
+	      
+	    <item>
+	      <p>quand on arrête un démon.</p>
+		
+	      <p>
+Quand vous arrêtez un démon, vous devez afficher un message similaire
+à celui du démarrage en remplaçant «&nbsp;Starting&nbsp;» par 
+«&nbsp;Stopping&nbsp;».
+ </p>
+		
+	      <p>
+Le message à l'arrêt du démon printer sera :
+		<example>
+		  Stopping printer spooler: lpd.
+		</example></p></item>
+	      
+	    <item>
+	      <p>quand on exécute un programme.</p>
+		
+	      <p>
+Il y a plusieurs cas où vous devez lancer un programme soit au démarrage
+soit à l'arrêt du système pour exécuter des tâches spécifiques. Par
+exemple, initialiser l'heure système à l'aide de «&nbsp;netdate&nbsp;» ou 
+bien tuer tous les processus à l'arrêt du système. Vos messages suivront
+cet exemple :
+		<example>
+		  Doing something very useful...done.
+		</example>
+Vous afficherez le «&nbsp;done.&nbsp;» immédiatement après la fin de la tâche
+de manière que l'utilisateur soit renseigné sur le pourquoi de son attente.
+Pour cela, mettez dans votre script :
+		<example>
+		  echo -n "Doing something very useful..."
+		  do_something
+		  echo "done."
+		</example>
+</p></item>
+	      
+	    <item>
+	      <p>quand la configuration est rechargée.</p>
+		
+	      <p>
+Quand un démon est forcé de recharger ses fichiers de configuration,
+vous utiliserez des messages qui suivent le format suivant :
+		<example>
+		  Reloading &lt;daemon's-name&gt; configuration...done.
+		</example></p></item>
+	      
+	    <item>
+	      <p>quand aucune des règles précédentes ne s'applique.</p>
+		
+	      <p>
+Si vous devez imprimer un message qui n'entre dans aucune des catégories
+précédentes, vous pouvez l'écrire comme vous l'entendez, mais veuillez
+prendre en compte les règles générales énoncées plus haut.
+</p></item>
+	  </list></p></sect>
+	  
+	  
+      <sect>
+	<heading>Les menus</heading>
+
+	<p>
+Les rubriques d'un menu suivront la politique exposée dans le fichier
+<ftppath>/debian/doc/package-developer/menu-policy.txt</ftppath>
+qu'on peut trouver sur <ftpsite>ftp.debian.org</ftpsite>
+ou un miroir local. Il est aussi dans le paquet <tt>debian-policy</tt>.
+	</p>
+
+	<p>
+Le paquet Debian <tt>menu</tt> propose une interface remarquable entre les
+paquets qui fournissent des applications ou des documents et
+<em>les programmes offrant des menus </em> (aussi bien des gestionnaires de
+fenêtres sous X  que des programmes qui fournissent des menus en mode
+texte, comme par exemple <prgn>pdmenu</prgn>).
+</p>
+	  
+	<p>
+Les paquets renseigneront une rubrique de menu pour toutes les 
+applications qui, pour leur usage normal, n'ont pas besoin 
+de recevoir d'argument particulier depuis la ligne de commande.
+Ainsi les utilisateurs du paquet <em>menu</em> auront automatiquement des 
+rubriques de menu pour ces applications dans leurs 
+gestionnaires de fenêtre et dans des shells comme <tt>pdmenu</tt>.
+</p>
+	  
+	<p>
+Veuillez vous référer au document <em>Debian Menu System</em>
+livré avec le paquet <tt>menu</tt> pour plus d'information
+sur la manière de déclarer vos applications et vos documents web.
+</p>
+</sect>
+	
+      <sect>
+	<heading>Outils pour le multimédia </heading>
+	
+	<p>
+Les paquets qui proposent des solutions pour lire-afficher-jouer, composer,
+modifier ou imprimer les types «&nbsp;MIME&nbsp;» déclareront cette 
+capacité, et se conformeront ainsi à l'actuelle politique concernant
+«&nbsp;MIME&nbsp;», telle qu'elle est définie dans le fichier 
+<ftppath>/debian/doc/package-developer/mime_policy.txt</ftppath> ; fichier 
+qu'on peut trouver sur <ftpsite>ftp.debian.org</ftpsite>
+ou sur un miroir local. Ce fichier est aussi dans le paquet <tt>debian-policy</tt>.	</p>
+
+	<p>
+	  MIME (Multipurpose Internet Mail Extensions, RFC 1521) est un
+manière de coder les fichiers et les flux de données et de donner des
+informations supplémentaires, telles que, par exemple, leur type (c.-à-d. 
+audio ou vidéo) et leur format (c.-à-d. PNG, HTML, MP3).
+
+	</p>
+	
+	<p>
+La déclaration de cette capacité à traiter les types «&nbsp;MIME&nbsp;» 
+permet à des programmes comme les logiciels de courrier (mua) ou les butineurs
+web de faire appel à ces outils pour lire, éditer ou afficher les types 
+«&nbsp;MIME&nbsp;» qu'ils ne supportent pas directement.
+	</p>
+      </sect>
+
+      <sect>
+	<heading>La configuration du clavier</heading>
+	  
+	<p>
+Pour obtenir une configuration cohérente du clavier (c.-à-d. que tous
+les programmes interprètent les événements clavier de la même manière), 
+tous les programmes de la distribution
+Debian doivent suivre les directives suivantes :
+</p>
+	  
+	<p>
+Voici une liste de quelques touches avec leur interprétation :
+	  
+	  <taglist>
+	    <tag><tt>&lt;--</tt></tag>
+	    <item><p>supprime le caractère à gauche du curseur</p></item>
+		
+	    <tag><tt>Delete</tt></tag>
+	    <item><p>supprime le caractère à droite du curseur</p></item>
+		
+	    <tag><tt>Control+H</tt></tag>
+	    <item><p>emacs: le préfixe d'aide</p></item>
+	  </taglist>
+	  
+L'interprétation des événements clavier sera indépendante du terminal utilisé 
+(la console, X Window, une session rlogin ou telnet, etc.).
+</p>
+	  
+	<p>
+La liste suivante explique comment les différents programmes
+seront configurés pour y arriver :
+</p>
+	  
+	<p>
+	  <list compact="compact">
+	    <item><p>`<tt>&lt;--</tt>' génère KB_Backspace sous X.</p></item> 
+		
+	    <item><p>`<tt>Delete</tt>' génère KB_Backspace sous X.</p></item>
+		
+	    <item>
+	      <p>
+Le mécanisme «&nbsp;X translations&nbsp;» est configuré pour que KB_Backspace
+déclenche ASCII DEL et que KB_Delete déclenche <tt>ESC [ 3 ~</tt> (c'est 
+la séquence d'échappement du vt220 pour la touche  «&nbsp;delete character&nbsp;»).
+Il faut charger les ressources sur tous les serveurs
+locaux «&nbsp;X&nbsp;» à l'aide de <prgn>xrdb</prgn> et ne pas utiliser les «&nbsp;défauts&nbsp;» 
+des applications pour que les ressources de
+translation correspondent aux choix de <prgn>xmodmap</prgn>.
+</p>
+</item>
+		
+	    <item>
+	      <p>
+	La console Linux est configurée pour que la touche <tt>&lt;--</tt>
+déclenche DEL et «&nbsp;Delete&nbsp;» déclenche <tt>ESC [ 3 ~</tt> 
+(c'est actuellement le cas).
+</p></item>
+		
+	    <item><p>
+Les applications X sont configurées pour que «&nbsp;Backspace&nbsp;» efface 
+à gauche et «&nbsp;Delete&nbsp;» efface à droite. Les applications Motif 
+fonctionnent déjà de cette manière.
+ </p>
+</item>
+		
+	    <item><p>stty erase <tt>^?</tt> .</p></item>
+		
+	    <item><p>
+L'entrée «&nbsp;xterm&nbsp;» dans terminfo doit avoir <tt>ESC [ 3~</tt> 
+pour kdch1, tout comme TERM=linux et TERM=vt220.
+ </p>
+</item>	
+		
+	    <item><p>
+Emacs est programmé pour associer «&nbsp;KB_ckspace&nbsp;» ou le caractère
+«&nbsp;stty erase&nbsp;» à «&nbsp;delete-backward-char&nbsp;». Il associe 
+«&nbsp;KB_Delete&nbsp;» ou «&nbsp;kdch1&nbsp;»
+à «&nbsp;delete-forward-char&nbsp;» et associe <tt>^H</tt> à help comme toujours.
+ </p>
+</item>
+		
+	    <item><p>
+D'autres applications utilisent le caractère «&nbsp;stty erase&nbsp;» et kdch1
+comme deux touches d'effacement. ASCII DEL est la «&nbsp;suppression du
+caractère précédent&nbsp;». kdch1 est la «&nbsp;suppression du caractère sous
+le curseur&nbsp;».
+ </p>
+</item>
+	  </list></p>
+	  
+	<p>
+Tout ceci résout le problème sauf dans les cas suivants :
+	</p>
+	  
+	<p>
+	  <list compact="compact">
+	    <item><p>
+Certains terminaux ont une touche <tt>&lt;--</tt> qui ne peut pas
+produire autre chose que <tt>^H</tt>. Sur ces terminaux l'aide
+d'Emacs ne sera pas accessible à partir de <tt>^H</tt> (en supposant
+que le caractère «&nbsp;stty erase&nbsp;» est prioritaire dans Emacs et qu'il 
+ait été bien configuré). Les touches «&nbsp;M-x help&nbsp;» ou 
+«&nbsp;F1&nbsp;» (si elles sont disponibles) peuvent être utilisées en 
+remplacement.
+ </p>
+</item>
+			
+	    <item><p>
+Certains systèmes utilisent <tt>^H</tt> pour «&nbsp;stty erase&nbsp;». 
+Cependant les versions modernes de <prgn>telnet</prgn> et toutes les versions
+de <prgn>rlogin</prgn> diffusent les configurations «&nbsp;stty&nbsp;». Presque
+toutes les versions d'UNIX acceptent «&nbsp;stty erase&nbsp;». Quand la 
+configuration «&nbsp;stty&nbsp;»
+n'est pas reproduite correctement, on peut résoudre le problème
+en utilisant «&nbsp;stty&nbsp;» manuellement.
+</p></item>
+		
+	    <item><p>
+Certains systèmes (notamment des versions antérieures de Debian) utilisent
+<prgn>xmodmap</prgn> pour que <tt>&lt;--</tt> et «&nbsp;Delete&nbsp;» 
+déclenchent «&nbsp;KB_Delete&nbsp;». Nous pouvons changer le comportement de 
+leurs clients X à 
+l'aide des mêmes ressources que nous avons utilisées ou bien 
+configurer nos propres clients avec les ressources de ces systèmes dans le cas
+inverse. Sur des serveurs configurés de cette manière, <tt>&lt;--</tt>
+fonctionnera mais pas «&nbsp;Delete&nbsp;».
+ </p>
+</item>
+		
+	    <item><p>
+Certains systèmes d'exploitation ont d'autres configurations pour 
+«&nbsp;kdch1&nbsp;» dans leur terminfo pour xterm et consort. Sur ces 
+systèmes, la touche «&nbsp;Delete&nbsp;» ne fonctionnera pas quand vous vous 
+connecterez depuis un système qui suit notre politique. 
+<tt>&lt;--</tt> fonctionnera.
+ </p>
+</item>
+</list>
+</p>
+</sect>
+	  
+      <sect>
+	<heading>Les variables d'environnement</heading>
+	  
+	<p>
+Un programme ne doit pas dépendre des variables d'environnement
+pour déterminer des valeurs par défaut
+(cela impliquerait de définir ces variables globalement au niveau
+du système par exemple dans <tt>/etc/profile</tt>, ce que tous les shells 
+ne permettent pas).
+</p>
+	<p>
+Quand un programme dépend de variables d'environnement
+pour sa configuration, il doit prévoir, en leur absence, une configuration
+raisonnable par défaut.
+Si c'est difficile à faire (p.ex. quand le code source d'un programme non 
+libre n'est pas disponible), le programme doit être remplacé par un petit 
+shell script enveloppant («&nbsp;wrapper&nbsp;») qui positionne les variables 
+d'environnement et appelle le programme initial.
+</p>
+	<p>
+Voici un exemple de script enveloppant écrit dans ce but :
+	  
+	  <example>
+	    #!/bin/sh
+	    BAR=${BAR:-/var/lib/fubar}
+	    export BAR
+	    exec /usr/lib/foo/foo "$@"
+	  </example></p>
+	  
+	<p>
+De plus, comme <tt>/etc/profile</tt> est un fichier de configuration
+du paquet <prgn>bash</prgn>, aucun autre paquet ne peut y ajouter
+des variables d'environnement ou des commandes.
+</p>
+</sect>
+</chapt>
+
+    <chapt>
+	<heading>Les fichiers</heading>
+	  
+	
+	<sect>
+	  <heading>Les fichiers binaires</heading>
+	    
+	  <p>
+Deux paquets ne doivent pas installer des programmes qui ont des
+fonctions différentes tout en ayant le même nom.
+(Le cas de deux programmes avec les mêmes fonctionnalités
+mais des implémentations différentes est traité via 
+«&nbsp;alternatives&nbsp;».)
+Si ce cas se produit, un des deux programmes doit changer de nom.
+Les responsables rapporteront ce problème sur la liste de distribution
+<tt>debian-devel</tt> pour essayer de trouver un consensus. Si aucun 
+consensus n'est trouvé, le nom des deux programmes doit être changé.
+</p>
+	    
+	  <p>
+Généralement on utilisera les paramètres de compilation suivants :
+<example>
+	      CC = gcc 
+	      CFLAGS = -O2 -g -Wall # sane warning options vary between programs 
+	      LDFLAGS = # none 
+	      install -s # (or use strip on the files in debian/tmp)
+	    </example></p>
+	    
+	  <p>
+On remarquera que tous les binaires installés sont épurés de tout
+symbole, soit en utilisant l'option <tt>-s</tt> de <prgn>install</prgn>,
+soit en appliquant le programme <prgn>strip</prgn> sur les binaires
+après qu'ils ont été copiés dans <tt>debian/tmp</tt> mais avant
+qu'une arborescence ne soit faite pour le paquet.
+</p>
+
+	  <p>
+L'option <tt>-N</tt> ne sera pas utilisée. Dans les
+systèmes «&nbsp;a.out&nbsp;» cela pouvait être utile pour de tout
+petits binaires, mais cela n'a pas d'intérêt dans les systèmes «&nbsp;ELF&nbsp;».
+</p>
+<p>
+Les symboles de débogage sont utiles pour la détection des erreurs, la 
+recherche dans un «&nbsp;core dump&nbsp;» (envoyé par un utilisateur pour un 
+rapport de bogue), ou bien dans la phase de développement d'un logiciel. C'est
+pourquoi on construira un paquet avec des instructions pour le débogage de la
+manière suivante : si la variable d'environnement <em>DEB_BUILD_OPTIONS</em>
+contient la chaîne <em>debug</em>, on compile le logiciel avec les 
+informations de débogage (habituellement on ajoute le drapeau <em>-g</em> à
+<em>CFLAGS</em>). Cela permet la construction d'une arborescence avec les
+informations de débogage. Si la variable d'environnement 
+<em>DEB_BUILD_OPTIONS</em> contient <em>nostrip</em>, on n'épure pas les
+fichiers durant la phase d'installation. Cela permet de produire un paquet
+avec des informations de débogage. Le bout de makefile suivant est une des 
+façons de tester l'une et l'autre condition <footnote><p> Argument : compiler
+par défaut avec l'option -g gaspille davantage de cycles CPU puisque les
+informations sont de toute manière enlevées. Le paquet peut être compilé
+sans l'option -g s'il fournit un mécanisme qui facilite sa recompilation
+avec les informations de débogage. Il faut pour cela fournir une cible de
+«&nbsp;make&nbsp;» appelée «&nbsp;build-debug&nbsp;», ou bien permettre à
+l'utilisateur de spécifier «&nbsp;DEB_BUILD_OPTIONS=debug&nbsp;» pour
+l'environnement de compilation du paquet. Et cela offre quelques
+avantages supplémentaires :
+<list>
+                <item>
+                  <p>
+C'est réellement plus facile de construire des binaires ou des bibliothèques
+avec des informations de débogage de cette manière (plus besoin de modifier
+debian/rules et autres) car cela donne une façon documentée d'obtenir ce 
+genre de compilation.
+</p>
+                </item>
+<item>
+                  <p>
+Beaucoup moins de temps CPU sera gaspillé par les « autobuilders&nbsp;»
+puisque ne pas avoir les informations de débogage (et donc ne pas avoir à
+les enlever) accélérera la vitesse de compilation. Cela saute une passe
+entière du compilateur.</p>
+                </item></list>
+</footnote>:
+<example>
+             CFLAGS = -O2 -Wall
+             INSTALL = install
+
+             ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+               CFLAGS += -g
+             endif
+             ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+               INSTALL += -s
+             endif
+           </example></p>
+	  
+<p>
+C'est au responsable du paquet de décider des meilleures options
+de compilation. Certains binaires (comme ceux qui font des 
+calculs intensifs) fonctionnent mieux avec certaines options 
+(p.ex. <tt>-O3</tt>) ; faites comme vous voulez. Utilisez ces options avec 
+discernement ; pour de bonnes raisons, pas seulement pour elles-mêmes.
+Ne craignez pas de remplacer les options qu'avait choisies l'auteur du 
+programme original : elles sont souvent inappropriées dans votre environnement.
+</p>
+</sect>
+	    
+	<sect>
+	  <heading>Les bibliothèques</heading>
+	    
+	  <p>
+Toutes les bibliothèques doivent avoir une version partagée dans le paquet 
+«&nbsp;lib&nbsp;» et une version statique dans le paquet «&nbsp;lib-dev&nbsp;».
+La version partagée doit être compilée avec les options <tt>-fPIC</tt>
+mais pas la version statique. En d'autres termes, tous les fichiers
+<tt>*.c</tt> doivent être compilés deux fois.
+</p>
+		    
+	  <p>
+Vous devez indiquer l'option <tt>-D_REENTRANT</tt> de <prgn>gcc</prgn>
+quand vous compilez une bibliothèque (statique ou dynamique) pour qu'elle
+soit compatible avec les «&nbsp;threads&nbsp;» Linux.
+</p>
+	    
+	  <p>
+On remarquera que toutes les bibliothèques partagées qu'on installe doivent 
+être épurées de tout symbole par :
+	    <example>
+	      strip --strip-unneeded &lt;your-lib&gt;
+	    </example> 
+(L'option «&nbsp;--strip-unneeded&nbsp;» fait que <tt>strip</tt> enlève 
+uniquement les symboles qui ne sont pas utiles au mécanisme de réallocation.)
+Les bibliothèques partagées fonctionnent parfaitement bien quand elles
+sont épurées, car les symboles de liens dynamiques
+sont dans une autre partie du fichier objet «&nbsp;ELF&nbsp;».
+</p>
+
+	  <p>
+Il faut noter que dans certaines circonstances, il peut être utile d'installer
+une bibliothèque non épurée, p.ex. pour la construction d'un paquet d'aide au 
+débogage.
+</p>
+	
+	<p>
+Un nombre toujours croissant de paquets utilisent «&nbsp;libtool&nbsp;» pour 
+l'édition de liens. La plus récente version de «&nbsp;GNU libtools 
+(>= 1.3a)&nbsp;» peut se servir avantageusement des meta-données contenues 
+dans les fichiers ( «&nbsp;*.la&nbsp;») de «&nbsp;libtool&nbsp;». Le principal
+avantage de ces fichiers est que «&nbsp;libtool&nbsp;» peut conserver ces 
+meta-données et donc y accéder en fonction des bibliothèques qu'il construit. 
+«&nbsp;Libtool&nbsp;» cherche ces fichiers et les renseignements
+utiles qu'ils contiennent à propos des bibliothèques (p.ex. les bibliothèques 
+nécessaires pour une édition de liens statique).Ils sont aussi 
+<em>indispensables</em> aux programmes utilisant «&nbsp;libltdl&nbsp;».
+	</p>
+
+	<p>
+Sans doute, «&nbsp;libtool&nbsp;» peut faire de l'édition de liens avec des 
+bibliothèques qui n'ont pas de fichier «&nbsp;.la&nbsp;» ; mais, n'étant qu'un 
+simple script shell, il peut augmenter considérablement le temps de 
+compilation d'un paquet s'il doit, pour chaque bibliothèque et chaque 
+fois qu'elle est liée, déduire tous ces renseignements des premiers principes.
+Avec l'apparition de «&nbsp;libtool-1.4&nbsp;» (et dans une moindre mesure de 
+«&nbsp;libtool-1.3&nbsp;»), les fichiers «&nbsp;.la&nbsp;» garderont des 
+renseignements sur les dépendances entre bibliothèques qui ne peuvent pas 
+être nécessairement déduits une fois détruit le fichier «&nbsp;.la&nbsp;».
+	</p>
+
+	<p>
+Les paquets qui se servent de «&nbsp;libtool&nbsp;» pour créer des 
+bibliothèques partagées mettront les fichiers <em>.la</em> dans les 
+paquets <em>-dev</em> ; dans le cas où un paquet compte sur la bibliothèque
+<em>libltdl</em> de «&nbsp;libtool&nbsp;», les fichiers <em>.la</em> iront dans
+le paquet de la bibliothèque. En général c'est une bonne idée, et 
+particulièrement pour les questions d'édition de liens statiques.
+	</p>
+	
+	<p>
+Vous devez vous assurer que vous n'utilisez que les versions diffusées des 
+bibliothèques partagées pour construire vos paquets ; dans le cas contraire, 
+les autres utilisateurs ne pourront pas exécuter vos binaires correctement.
+Produire des paquets sources qui dépendent de compilateurs
+non autorisés est habituellement une mauvaise idée.
+</p>
+</sect>
+	<sect>
+	  <heading>Les bibliothèques partagées</heading>
+	    
+	  <p>
+Un paquet qui contient des bibliothèques partagées sera séparé
+en plusieurs paquets binaires.
+</p>
+	  <p>
+Pour une bibliothèque classique constituée d'un environnement de développement
+ et d'un kit fonctionnel comprenant simplement des bibliothèques partagées, 
+vous devez créer deux paquets : 
+<tt><var>nom-de-bibliothèque</var><var>so-nom</var></tt> et
+<tt><var>nom-de-bibliothèque</var><var>so-nom</var>-dev</tt>
+(où <var>so-nom</var> est le nom du fichier objet partagé de la
+bibliothèque partagée -- c'est ce qui, entre le moment de la construction de
+l'exécutable et celui de son fonctionnement, doit être exactement le même
+pour que l'éditeur de liens dynamiques soit capable de faire
+marcher le programme ; habituellement <var>so-nom</var> est le numéro majeur 
+de la bibliothèque).
+</p>
+	  <p>
+Si vous préférez ne gérer qu'une version de développement à la fois, vous 
+pouvez nommer le paquet de développement 
+<tt><var>nom-de-bibliothèque</var>-dev</tt> ; sinon, vous pouvez utiliser les 
+mécanismes de gestion de conflit de <prgn>dpkg</prgn> pour vous assurer que 
+l'utilisateur ne peut installer qu'une seule version de développement à la 
+fois. (Après tout ! plusieurs versions de développement auront sans doute les 
+mêmes fichiers d'en-tête, ce qui créera un conflit de nom.) En général, la 
+version de développement aura une dépendance vers la bonne version de la 
+bibliothèque fonctionnelle, afin que la compilation et l'édition de liens 
+s'effectuent correctement.
+</p>
+	  <p>
+Un paquet qui utilise une bibliothèque partagée aura une dépendance 
+vers le nom du paquet de la bibliothèque partagée,
+<tt><var>nom-de-bibliothèque</var><var>so-nom</var></tt>. 
+Quand <var>so-nom</var> est modifié, les deux versions de la bibliothèque
+peuvent cohabiter pendant le passage de l'ancienne à la nouvelle.
+</p>
+	  <p>
+Si votre paquet contient des programmes d'aide au fonctionnement
+qui utilisent la bibliothèque partagée, vous <em>ne devez
+pas</em> les mettre dans le paquet de la bibliothèque
+partagée. Si vous le faites, vous ne pourrez pas installer
+plusieurs versions de la bibliothèque sans créer des conflits
+de noms de fichiers. À la place, vous pouvez soit créer un
+troisième paquet pour ces binaires fonctionnels (le paquet doit
+typiquement s'appeler <tt><var>nom-de-bibliothèque</var>-runtime</tt>
+-- notez l'absence de <var>so-nom</var> dans le nom du paquet), soit inclure 
+ces binaires dans le paquet de développement si celui-ci est petit.
+</p>
+	  <p>
+Si vous construisez plusieurs bibliothèques partagées à partir d'un même 
+arbre de sources, vous pouvez les regrouper dans le même paquet de 
+bibliothèques, sachant que vous devrez changer tous leurs <var>so-nom</var> 
+simultanément (pour éviter des conflits de noms de fichiers lors de
+l'installation de différentes versions de ce paquet).
+</p>
+	  <p>
+Vous suivrez les recommandations du <em>manuel des paquets
+Debian</em> pour faire le paquet d'une bibliothèque partagée ; 
+vous devez inclure le fichier de contrôle <tt>shlibs</tt> avec le détail des 
+dépendances pour les paquets qui utilisent la bibliothèque.
+</p>
+<p>
+Les bibliothèques partagées ne doivent pas être
+installées comme exécutables, puisque <prgn>ld.so</prgn> ne
+le demande pas et que tenter d'exécuter une bibliothèque
+partagée se traduit pas un «&nbsp;core dump&nbsp;».
+</p>
+</sect>
+	    
+	<sect id="scripts">
+	  <heading>Les scripts</heading>
+	    
+	  <p>
+Tous les scripts de commandes, y compris les scripts inclus dans un paquet 
+par le responsable et utilisés par <prgn>dpkg</prgn>, commenceront 
+par «&nbsp;<tt>#!</tt>&nbsp;» et le nom du shell interpréteur.
+</p>
+	    
+	  <p>
+	Pour les scripts Perl, c'est «&nbsp;<tt>#!/usr/bin/perl</tt>&nbsp;».</p>
+	    
+	  <p>
+Les scripts shell (<prgn>sh</prgn> et <prgn>bash</prgn>) commenceront presque 
+systématiquement par <tt>set -e</tt> pour que les erreurs soient 
+détectées. Tous les scripts utiliseront <tt>set -e</tt> ou 
+vérifieront l'état de sortie de <em>toutes</em> les commandes.
+</p>
+	    
+	  <p>
+L'interpréteur shell de base «&nbsp;<tt>/bin/sh</tt>&nbsp;» peut être
+un lien symbolique vers n'importe quel shell compatible POSIX, si 
+<tt>echo -n</tt> ne produit pas une nouvelle ligne <footnote><p>
+La politique de Debian indique que /bin/sh suit la norme POSIX, mais
+echo -n est largement utilisé dans la communauté Linux (tout particulièrement
+la politique Debian, les sources du noyau Linux, beaucoup de scripts
+Debian, etc.). Ce mécanisme est valable mais n'est pas demandé par POSIX,
+d'où cet ajout explicite. D'autre part, la rumeur dit que ce mécanisme
+doit devenir de toute façon obligatoire sous LSB.</footnote>. 
+Les scripts shell indiquant «&nbsp;<tt>/bin/sh</tt>&nbsp;»
+comme interpréteur n'utiliseront donc que des caractéristiques
+POSIX. Si un script a besoin des caractéristiques non-POSIX
+d'un interpréteur, celui-ci doit être spécifié dans la première
+ligne du script (par exemple «&nbsp;<tt>#!/bin/bash</tt>&nbsp;»). Son paquet
+doit dépendre du paquet qui fournit le shell (à moins que le
+paquet ne soit marqué «&nbsp;Essential&nbsp;», comme par exemple pour
+<prgn>bash</prgn>).
+</p>
+	  <p>
+Quand c'est possible, on peut vouloir limiter les scripts aux 
+caractéristiques POSIX de manière à utiliser l'interpréteur <tt>/bin/sh</tt>. 
+Si votre script fonctionne avec <prgn>ash</prgn>, il est probablement 
+conforme à POSIX, mais en cas de doute, utilisez <tt>/bin/bash</tt>.
+</p>
+	  <p>
+Les scripts Perl détecteront les erreurs survenant lors de tous les 
+appels système, comme <tt>open</tt>, <tt>print</tt>, <tt>close</tt>, 
+<tt>rename</tt> et <tt>system</tt>.
+</p>
+<p>
+Les shells <prgn>csh</prgn> et <prgn>tcsh</prgn> devraient
+être évités comme langage de script. Référez vous au
+document <em>Csh Programming Considered Harmful</em> (NdT: Pourquoi
+programmer en Csh est risqué), l'une des FAQs du groupe
+usenet <tt>comp.unix.*</tt>.  Il peut être trouvé sur
+<url id="http://language.perl.com/versus/csh.whynot">, ou
+          <url id="http://www.cpan.org/doc/FMTEYEWTK/versus/csh.whynot">
+          ou même sur <ftpsite>ftp.cpan.org</ftpsite> dans
+          <ftppath>/pub/perl/CPAN/doc/FMTEYEWTK/versus/csh.whynot</ftppath>.
+Si un paquet original utilise des scripts <prgn>csh</prgn>
+vous devez vous assurer qu'ils commencent par
+«&nbsp;<tt>#!/bin/csh</tt>&nbsp;» et vous devez rendre votre paquet
+dépendant du paquet virtuel <prgn>c-shell</prgn>
+</p>
+	  <p>
+Tout script qui crée des fichiers dans des répertoires où tout le monde peut 
+écrire, (p.ex. dans <tt>/tmp</tt>) doit utiliser un mécanisme qui 
+provoquera une erreur si un fichier de même nom existe déjà.
+</p>
+	    
+	  <p>
+À cet usage, la distribution Debian de base fournit
+les utilitaires <prgn>tempfile</prgn> et <prgn>mktemp</prgn>.
+</p></sect>
+	    
+	<sect>
+	  <heading>Les liens symboliques</heading>
+	    
+	  <p>
+En général, les liens symboliques à l'intérieur d'un répertoire de premier 
+niveau seront relatifs alors que les liens symboliques qui pointent 
+d'un répertoire de premier niveau vers un autre répertoire de premier niveau 
+seront absolus. (Un répertoire de premier niveau est un sous-répertoire
+du répertoire racine «&nbsp;/&nbsp;».)
+</p>
+
+	  <p>
+De plus, les liens symboliques doivent utiliser un nom de chemin le plus 
+court possible; on évitera par exemple le chemin «&nbsp;foo/../bar&nbsp;».
+</p>
+	  <p>
+On remarquera que pour créer un lien relatif avec <prgn>ln</prgn>
+il n'est pas nécessaire que le fichier cible soit relatif au répertoire où est 
+exécuté <prgn>ln</prgn> ; de même il n'est pas nécessaire de se déplacer dans 
+le répertoire où vous désirez créer le lien.
+Donnez simplement à <prgn>ln</prgn> comme premier argument
+la chaîne de caractères qui représentera la cible du lien (cette
+chaîne doit être un chemin relatif au répertoire contenant le lien).
+</p>
+	  <p>
+Par exemple, dans votre <prgn>Makefile</prgn> ou
+dans <tt>debian/rules</tt>, écrivez:
+	    <example>
+	      ln -fs gcc $(prefix)/bin/cc 
+	      ln -fs gcc debian/tmp/usr/bin/cc 
+	      ln -fs ../sbin/sendmail $(prefix)/bin/runq 
+	      ln -fs ../sbin/sendmail debian/tmp/usr/bin/runq
+	    </example></p>
+	    
+	  <p>
+Un lien symbolique vers un fichier comprimé aura toujours
+le même suffixe que le fichier référencé.
+(Par exemple, si le fichier «&nbsp;<tt>foo.gz</tt>&nbsp;» est
+référencé par un lien symbolique, le nom du lien doit
+aussi se terminer par «&nbsp;<tt>.gz</tt>&nbsp;», comme par exemple
+«&nbsp;bar.gz&nbsp;».)
+</p></sect>
+	    
+	<sect>
+	  <heading>Les fichiers de périphérique</heading>
+	    
+	  <p>
+Un paquet ne doit pas contenir de fichiers de périphérique
+dans son arborescence.
+</p>
+	  <p>
+Si un paquet a besoin d'un fichier de périphérique particulier
+qui n'est pas inclus dans le système de base, il doit
+appeler <prgn>makedev</prgn> dans le script <tt>postinst</tt>,
+après en avoir demandé l'autorisation à l'utilisateur.
+</p>
+	  <p>
+Un paquet ne doit pas supprimer de fichier de périphérique
+dans le script <tt>postrm</tt> ou dans un autre script.
+Ceci doit être laissé à l'initiative de l'administrateur système.
+</p>
+	  <p>
+Debian utilise les périphériques série <tt>/dev/ttyS*</tt>. Les programmes qui 
+utilisent les anciens périphériques <tt>/dev/cu*</tt> seront
+modifiés pour utiliser <tt>/dev/ttyS*</tt>.
+</p></sect>
+	    
+      <sect id="config files">
+	  <heading>Les fichiers de configuration </heading>
+	<sect1>
+	  <heading>Définitions</heading>
+	  <p>
+	    <taglist>
+	      <tag>fichier de configuration </tag>
+	      <item><p>
+C'est un fichier qui influe sur le fonctionnement d'un programme,
+ou bien  qui donne des renseignements particuliers à un site ou un
+hôte, autrement dit un fichier qui singularise le comportement d'un programme.
+Classiquement, les fichiers de configuration sont faits pour être modifiés
+par l'administrateur système (s'il en a besoin ou s'il le souhaite) pour
+se conformer ainsi à une politique locale ou bien pour obtenir un
+fonctionnement plus utile à ce site.
+</p>
+              </item>
+
+
+	      <tag><tt>conffile</tt></tag>
+	      <item><p>
+C'est un fichier répertorié dans le fichier <tt>conffiles</tt>
+d'un paquet ; et <prgn>dpkg</prgn> en fait un usage particulier
+(voir le <em>Debian Packaging Manual</em>).</p>
+              </item>
+            </taglist>
+	  </p>
+
+	  <p>
+Cette distinction est importante ; ce ne sont pas des concepts
+interchangeables. Presque tous les <tt>conffiles</tt> sont des fichiers de
+configuration, mais beaucoup de fichiers de configuration ne sont pas des
+<tt>conffiles</tt>.
+
+	  <p>
+Il faut noter que les scripts qui renferment des informations de configuration
+(ainsi la plupart des fichiers de <tt>/etc/init.d</tt> et de
+<tt>/etc/cron.{daily,weekly,monthly}</tt>) sont <em>de facto</em> des 
+fichiers de configuration et seront traités comme tels.</p>
+	</sect1>
+
+	<sect1>
+	  <heading>Emplacement</heading>
+	  <p>
+Tous les fichiers de configuration créés ou utilisés par votre paquet se 
+trouveront dans <tt>/etc</tt>. S'il y en a plusieurs, vous envisagerez de 
+créer un sous-répertoire de <tt>/etc</tt> de même nom que votre paquet.
+</p>
+	  <p>
+Quand votre paquet se sert de fichiers de configuration qui sont hors de
+<tt>/etc</tt>, et qu'il n'est pas possible  de le modifier pour qu'il utilise
+<tt>/etc</tt>, vous placerez quand même les fichiers de configuration dans
+<tt>/etc</tt> et vous créerez des liens symboliques vers l'endroit réclamé par
+le paquet.
+</p>
+	</sect1>
+
+	<sect1>
+	  <heading>Fonctionnement</heading>
+	  <p>
+Le traitement des fichiers de configuration doit se faire selon les règles
+suivantes :
+	    <list>
+	      <item>
+		<p>les changements locaux doivent être préservés pendant
+la mise à jour d'un paquet ;</p>
+	      </item>
+	      <item>
+		<p>les  fichiers de configuration doivent être préservés
+quand le paquet est supprimé ; ils ne sont détruits que si le paquet est
+supprimé avec «&nbsp;purge&nbsp;».
+</p>	      </item>
+	    </list></p>
+
+	  <p>
+La façon simple d'obtenir cela, c'est que le fichier de configuration soit
+un <tt>conffile</tt>. C'est parfait quand on peut distribuer une version par
+défaut qui marche pour la plupart des installations, bien que quelques
+administrateurs puissent vouloir la modifier. Cela suppose que la version par
+défaut fasse partie du paquet et que les scripts du responsable du paquet
+ne la modifient pas pendant l'installation (ou à quelque autre moment).
+</p>
+<p>
+Pour faire que les changements locaux soient préservés correctement, nul
+paquet ne peut contenir des liens « en dur », ou en créer, vers des 
+«&nbsp;conffiles&nbsp;»<footnote><p>
+Argument : Il y a deux problèmes avec les liens « en dur ». Le premier, c'est
+que certains « éditeurs » casse le lien quand ils modifient l'un des fichiers,
+et les deux fichiers peuvent devenir involontairement différents. Le second,
+c'est qu'il arrive que <prgn>dpkg</prgn> casse le lien pendant une mise à
+jour de <tt>conffile</tt>s.</p>
+          </footnote>.
+	  <p>
+L'autre façon, c'est d'utiliser les scripts du responsable de paquet.
+Dans ce cas, le fichier de configuration ne doit pas être un <tt>conffile</tt>
+et ne doit pas faire partie du paquet. Si la configuration correcte d'un paquet
+demande un fichier, c'est au responsable du paquet,
+via ses scripts, de créer, mettre à jour, maintenir et supprimer un tel
+fichier. Ces scripts doivent être idempotents (c.-à-d. ils doivent fonctionner
+correctement si <prgn>dpkg</prgn> a besoin de les relancer à cause d'erreurs
+survenant pendant l'installation ou la suppression) ; ils doivent 
+comprendre toutes les manières de <prgn>dpkg</prgn> en ce qui 
+concerne l'appel des scripts ; ils ne doivent pas remplacer, autrement dit
+massacrer, la configuration de l'utilisateur sans lui demander ; ils ne 
+doivent pas poser des questions sans intérêt (surtout pendant les mises à
+jour) ; bref, ils doivent être de bons citoyens.
+</p>
+	  <p>
+Ces scripts n'ont pas à configurer toutes les options possibles d'un paquet,
+mais seulement celles qui sont nécessaires à son bon fonctionnement sur un
+système donné. Idéalement, un sysadmin ne devrait faire aucune autre
+configuration que celle faite presque automatiquement par le script
+<tt>postinst</tt>.</p>
+	  <p>
+Une manière commune de faire est de créer un script 
+<tt><var>package</var>-configure</tt> qu'appellera le script <tt>postinst</tt>
+du paquet si et seulement si le fichier de configuration n'existe pas déjà.
+Parfois, il est bon d'avoir un fichier d'exemple ou un fichier modèle 
+utilisable par les scripts du responsable. On mettra les fichiers
+d'exemple dans <tt>/usr/share/doc</tt> et les fichiers de modèle dans
+<tt>/usr/lib</tt> ; ces fichiers sont des fichiers parfaitement ordinaires pour
+<prgn>dpkg</prgn> (ce <em>ne sont pas </em> des <tt>conffiles</tt>).</p>
+
+	  <p>
+On ne doit pas mélanger ces deux manières de gérer les fichiers de
+configuration car alors la folie guette : <prgn>dpkg</prgn> voudra
+remplacer le fichier à chaque mise à jour du paquet.
+</p>
+	</sect1>
+
+	<sect1>
+	  <heading>Le partage des fichiers de configuration </heading>
+	  <p>
+Les paquets qui ne sont pas en <em>conflit</em> ne doivent pas spécifier le 
+même fichier <tt>conffile</tt>.</p>
+
+	  <p>
+Les scripts d'un responsable de paquet ne doivent modifier le 
+<tt>conffile</tt> d'<em>aucun</em> paquet, même celui du paquet auquel ils
+appartiennent.</p>
+
+	  <p>
+Quand deux paquets ou plus ont le même fichier de configuration et qu'il est
+raisonnable d'installer les deux paquets, on doit définir l'un des
+paquets comme le <em>propriétaire</em> du fichier de configuration, et
+ce sera le paquet qui distribue ce fichier et le répertorie comme un 
+<tt>conffile</tt>. Les autres paquets qui utilisent le fichier de
+configuration doivent déclarer une dépendance envers ce paquet s'ils ont
+besoin de ce fichier de configuration pour leur fonctionnement. Quand
+ils ne l'utilisent que s'il est présent et qu'ils sont capables de
+fonctionner sans lui, ces paquets n'ont pas besoin de déclarer de
+dépendance.</p>
+
+	  <p>
+Si l'on veut que deux ou plusieurs paquets apparentés partagent un fichier de
+configuration <em>et</em> que chacun d'eux soit capable de le modifier, il
+faut faire ce qui suit :
+
+	    <enumlist>
+	      <item>
+		<p>
+l'un des paquets apparentés (le «&nbsp;coeur&nbsp;») doit gérer le fichier de
+configuration avec les scripts du responsable de paquet comme c'est décrit
+dans les sections précédentes :</p>
+	      </item>
+	      <item><p>
+le «&nbsp;coeur&nbsp;» fournira aussi un programme que les autres paquets 
+utiliseront pour modifier le fichier de configuration ;</p>
+	      </item>
+	      <item>
+		<p>
+les paquets apparentés doivent se servir de ce programme pour faire
+des modifications sur le fichier de configuration. Ils dépendront alors
+de la garantie donnée quant à la disponibilité de ce programme, 
+ou bien ils accepteront avec élégance de ne pouvoir modifier 
+le fichier de configuration si ce programme n'est pas disponible.</p>
+	      </item>
+	    </enumlist></p>
+
+	  <p>
+Quelques fois, il convient de créer un nouveau paquet qui fournit
+l'infrastructure de base pour les autres paquets et qui gère les fichiers
+de configuration partagés (on peut consulter le paquet <tt>sgml-base</tt>
+comme exemple).</p>
+	</sect1>
+
+	<sect1>
+	  <heading>Les fichiers de configuration de l'utilisateur («&nbsp;dotfiles&nbsp;»)</heading>
+
+	  <p>
+Les fichiers dans <tt>/etc/skel</tt> sont copiés automatiquement dans les 
+comptes des nouveaux utilisateurs par <prgn>adduser</prgn>. Aucun programme
+ne renverra à la présence de ces fichiers dans ces comptes.
+</p>
+
+	  <p>
+Ainsi, quand un programme, pour fonctionner correctement, a besoin
+qu'un fichier «&nbsp;.fichier&nbsp;» existe par avance dans <tt>$HOME</tt>, 
+le paquet installera ce fichier dans <tt>/etc/skel</tt> (et le 
+déclarera dans le fichier «&nbsp;conffiles&nbsp;» s'il n'est pas crée et 
+modifié automatiquement par les scripts d'installation).
+</p>
+
+	  <p>
+Cependant, avoir un programme qui, pour fonctionner correctement, a besoin 
+de fichiers «&nbsp;.fichier&nbsp;» (des fichiers qu'il ne crée pas lui même, 
+j'entends), est une mauvaise idée. Et l'installation par défaut de Debian
+devrait configurer les programmes d'une manière aussi raisonnable que possible.
+</p>
+	  <p>
+Ainsi, le programme d'un paquet Debian, qui a besoin d'une quelconque
+configuration pour fonctionner correctement, sera configuré globalement pour 
+le système à l'aide d'un fichier placé dans <tt>/etc</tt>. C'est uniquement 
+dans le cas où le programme n'accepte pas de configuration globale au site, 
+et si le responsable du paquet n'a pas le temps d'ajouter un fichier de 
+configuration par défaut qu'un tel fichier pourra être placé dans 
+<tt>/etc/skel</tt>.
+</p>
+	  <p>
+<tt>/etc/skel</tt> sera aussi vide que possible. C'est d'autant plus 
+nécessaire qu'il n'existe pas de mécanisme simple pour s'assurer que les 
+fichiers «&nbsp;.fichier&nbsp;» nécessaires sont copiés dans les comptes des 
+utilisateurs existants à l'installation du paquet.
+</p>
+
+	</sect1>
+      </sect>
+      
+      <sect>
+	<heading>Les fichiers d'écoute («&nbsp;log file&nbsp;»)</heading>
+	<p>
+L'approche traditionnelle pour les fichiers d'écoute était d'utiliser 
+«&nbsp;cron&nbsp;» et de simples shell scripts pour monter des combines 
+<em>ad hoc</em> pour la rotation des fichiers d'écoute. Cette 
+approche, grandement paramétrable, demandait beaucoup de travail au 
+«&nbsp;sysadmin&nbsp;». Bien que le premier système Debian ait apporté une 
+aide en installant automatiquement un système qui pouvait être pris 
+comme modèle, cela ne fut pas considéré comme suffisant.</p>  
+
+	<p>
+Une meilleure idée est d'utiliser «&nbsp;logrotate&nbsp;», un programme 
+«&nbsp;GPL&nbsp;», développé par Red Hat, qui centralise la gestion de 
+l'écoute. Il possède à la fois un fichier de configuration 
+(<tt>/etc/logrotate.conf</tt>) et un répertoire où les paquets peuvent 
+déposer les résultats de leur écoute, (<tt>/etc/logrotate.d</tt>).
+        </p>
+	<p>
+Les fichiers d'écoute se nomment habituellement
+<tt>/var/log/<var>package</var>.log</tt>. Si vous avez de nombreux fichiers 
+d'écoute ou si vous avez besoin d'un répertoire pour des raisons de droits 
+(<tt>/var/log</tt> ne peut être modifié que par <tt>root</tt>), vous créerez 
+habituellement un répertoire nommé <tt>/var/log/<var>package</var></tt>.
+</p>
+	<p>
+Une rotation des fichiers d'écoute doit être assurée de manière qu'ils
+ne grandissent pas indéfiniment ;
+la meilleure façon de procéder est de mettre un script dans le répertoire
+<tt>/etc/logrotate.d</tt> et d'utiliser les facilités apportées par
+«&nbsp;logrotate&nbsp;».
+Voici un bon exemple de fichier de configuration de «&nbsp;logrotate&nbsp;» 
+(pour plus de renseignements voir <manref name="logrotate " section="8">) :
+	  <example>
+        /var/log/foo/* {
+                rotate 12
+                weekly
+                compress
+                postrotate
+                        /etc/init.d/foo force-reload
+                endscript
+        }
+	  </example> 	  
+	  qui fait tourner tous les fichiers sous «&nbsp;/var/log/foo&nbsp;», sauve 12
+	  compressions, et envoie un signal HUP à la fin de la rotation.
+
+	</p>
+	
+	<p>
+Les fichiers d'écoute seront supprimés quand le paquet est 
+«&nbsp;purgé&nbsp;» (mais pas quand le paquet est simplement supprimé) en 
+testant le paramètre du script <tt>postrm</tt> 
+(voir le <em>Debian Packaging Manual</em> pour plus de détails).</p>
+      </sect>
+     	    
+	    
+	<sect>
+	  <heading>Permissions et propriétaires</heading>
+	    
+	  <p>
+Les règles de cette section sont des directives pour une utilisation commune.
+Quand c'est nécessaire, vous pouvez vous écarter de certains détails ci-après.
+Cependant, dans ce cas, sécurisez ce que vous
+faites et restez aussi cohérent que possible avec le système. Vous devriez
+probablement en discuter aussi dans <prgn>debian-devel</prgn>.
+</p>
+	  <p>
+Les fichiers appartiendront à <tt>root.root</tt>. Ils seront
+modifiables uniquement par le propriétaire et seront lisibles 
+par tous (exécutables si nécessaire).
+</p>
+	  <p>
+Les répertoires auront le mode 755 ou, pour ceux qui doivent être 
+modifiables par un groupe, le mode 2775. La propriété du répertoire sera 
+cohérente avec le mode -- si le répertoire a comme mode 2775, il 
+appartiendra au groupe qui a besoin d'y accéder.</p>
+	    
+	  <p>
+Les exécutables qui sont «&nbsp;setuid&nbsp;» et «&nbsp;setgid&nbsp;» auront 
+respectivement les modes 4755 et 2755, et ils appartiendront à l'utilisateur 
+ou au groupe approprié. On n'interdira leur lecture (par des modes 
+comme 4711 ou 2711 ou même 4111) ; en effet cela n'apporte aucun gain de 
+sécurité puisque n'importe qui peut obtenir les binaires dans les paquets 
+Debian qui sont librement disponibles -- c'est simplement gênant. Pour la même 
+raison vous ne restreindrez pas les droits en lecture ou en exécution 
+des exécutables «&nbsp;non-set-id&nbsp;».
+</p>
+	  <p> 
+Certains programmes «&nbsp;setuid&nbsp;» doivent être restreints à certains 
+groupes d'utilisateurs en se servant des permissions sur les fichiers. Dans 
+ce cas, ils appartiendront à «&nbsp;l'uid&nbsp;» pour lesquels ils sont 
+«&nbsp;set-id&nbsp;» et au groupe qui aura des droits d'exécution. Ils auront
+le mode 4754 ; cela ne sert à rien de les rendre
+illisibles aux utilisateurs qui n'ont pas les droits d'exécution.
+</p>
+	  <p>
+Vous devez évitez que l'administrateur système ne puisse reconfigurer
+un paquet selon sa politique locale de sécurité qu'en changeant
+les permissions des fichiers binaires. Les fichiers ordinaires installés par 
+<prgn>dpkg</prgn> (à l'exception des conffiles et d'autres fichiers 
+similaires) auront leurs droits réinitialisés avec les droits de la 
+distribution lors de la réinstallation d'un paquet. Vous penserez plutôt 
+à créer un groupe d'utilisateurs autorisés à utiliser les
+programmes et à rendre les exécutables «&nbsp;setuid&nbsp;» exécutables
+uniquement par ce groupe.
+</p>
+	  <p>
+Si vous avez besoin d'un nouvel utilisateur ou groupe pour votre paquet, vous 
+avez deux possibilités. La première est de rendre cet utilisateur ou ce 
+groupe propriétaire d'un ou plusieurs fichiers de votre paquet. La deuxième
+est de compiler l'identifiant (plutôt que le nom) d'utilisateur ou de groupe 
+dans le binaire. Dans ce cas vous avez besoin d'un identifiant attribué de 
+façon fixe.
+</p>
+	  <p>
+Si vous avez besoin d'un identifiant attribué de façon fixe, vous devez alors 
+demander un identifiant d'utilisateur ou de groupe au 
+responsable du système de base. Vous ne devez pas livrer votre paquet avant 
+d'avoir reçu un tel identifiant. Quand vous l'avez reçu, vous devez faire 
+dépendre votre paquet d'une version du système de base dans laquelle 
+l'identifiant est présent dans <tt>/etc/passwd</tt> ou dans 
+<tt>/etc/group</tt>. Alternativement, vous pouvez modifier votre paquet pour 
+qu'il crée lui-même l'utilisateur ou le groupe avec le bon identifiant 
+(en utilisant <tt>adduser</tt>) dans les scripts de pré ou post-installation 
+(ces derniers seront choisis quand c'est possible).
+</p>
+	    
+	  <p>
+D'un autre coté, un programme peut être capable, en fonctionnement, de 
+déterminer l'«&nbsp;uid&nbsp;» ou le «&nbsp;gid&nbsp;» à partir du nom d'un 
+groupe de façon à utiliser un identifiant attribué de façon dynamique. Dans 
+ce cas vous choisirez un nom d'utilisateur ou de groupe approprié, vous en 
+discuterez dans <prgn>debian-devel</prgn>, vous vérifierez avec le responsable
+du système de base que ce nom est unique et vous vous assurerez qu'ils 
+(la liste <prgn>debian-devel</prgn>) ne préfèrent pas un identifiant attribué 
+de manière fixe. Quand tout cela a été vérifié, vous devez modifier votre 
+paquet pour qu'il crée, si nécessaire, l'utilisateur ou le groupe avec 
+<prgn>adduser</prgn> dans les scripts de pré ou post-installation (à nouveau, 
+ces derniers sont préférables si c'est possible).
+</p>	   
+	  <p>
+Il faut noter que changer la valeur numérique d'un identifiant associé
+à un nom est une opération très difficile. Elle implique de rechercher
+dans le système de fichier tous les fichiers concernés. Réfléchissez
+sérieusement au meilleur choix entre «&nbsp;id&nbsp;» statique ou dynamique,
+car modifier votre choix ultérieurement posera des problèmes.
+</p>
+	</sect>
+    </chapt>
+
+    <chapt>
+       <heading>Programmes personnalisés</heading>
+	
+      <sect id="arch-spec">
+	<heading>Les chaînes de spécification d'architecture</heading>
+	  
+	<p>
+Quand un programme doit fournir une <em>chaîne de spécification
+d'architecture</em>, le format suivant sera utilisé :
+	  <example>
+	    &lt;arch&gt;-&lt;os&gt;
+	  </example>
+où «&nbsp;&lt;arch&gt;&nbsp;» est l'une des valeurs suivantes : i386, alpha, 
+arm, m68k, powerpc, sparc et où «&nbsp;&lt;os&gt;&nbsp;» est linux ou gnu.
+L'emploi de <em>gnu</em> dans cette chaîne est
+réservé pour le système d'exploitation «&nbsp;GNU-Hurd&nbsp;».
+</p>
+	<p>
+On remarquera que nous n'utilisons pas «&nbsp;&lt;arch&gt;-debian-linux&nbsp;»
+dans la chaîne «&nbsp;architecture-vendor-os&nbsp;» car cela rendrait nos 
+programmes incompatibles avec les autres distributions Linux. Notez aussi que
+nous n'utilisons pas «&nbsp;&lt;arch&gt;-unknown-linux&nbsp;», car 
+«&nbsp;unknown&nbsp;» ne sonne pas très bien.
+</p></sect>
+	  
+	  
+      <sect>
+	<heading>Les «&nbsp;démons&nbsp;»</heading>
+	  
+	<p>
 Les fichiers de configuration <tt>/etc/services</tt>,
 <tt>/etc/protocols</tt> et <tt>/etc/rpc</tt> sont gérés par le paquet
-<prgn>netbase</prgn> et ne peuvent être modifiés par d'autres paquets.
+<prgn>netbase</prgn> et ne doivent pas être modifiés par d'autres paquets.
 </p>
-
-<p>
-Si un paquet nécessite une nouvelle entrée dans l'un de ces fichiers,
-son responsable doit contacter celui du paquet <prgn>netbase</prgn>,
+	  
+	<p>
+Quand un paquet a besoin d'une nouvelle entrée dans l'un de ces fichiers,
+son responsable contactera le responsable du paquet <prgn>netbase</prgn>,
 qui ajoutera cette entrée et produira une nouvelle version du paquet
 <prgn>netbase</prgn>.
 </p>
-
-<p>
-Le fichier de configuration <tt>/etc/inetd.conf</tt> peut être 
-modifié par les scripts d'un paquet uniquement via le script 
+	  
+	<p>
+Le fichier de configuration <tt>/etc/inetd.conf</tt> ne doit pas être modifié 
+par les scripts d'un paquet sauf si c'est via le script 
 <prgn>update-inetd</prgn> ou le module Perl <prgn>DebianNet.pm</prgn>.
 </p>
-
-<p>
-Si un paquet veut installer une entrée à titre d'exemple dans
-<tt>/etc/inetd.conf</tt>, cette entrée doit être précédée par 
-exactement un caractère dièse (#). De telles lignes sont traitées
-comme des `commentaires utilisateur' par le script 
-<prgn>update-inetd</prgn> et ne seront pas modifiées ou activées 
-durant les mises à jour des paquets.
+	<p>
+Quand un paquet veut ajouter un exemple d'entrée dans
+<tt>/etc/inetd.conf</tt>, cette entrée doit être précédée par un seul
+caractère «&nbsp;#&nbsp;». De telles lignes sont traitées comme des
+commentaires de l'utilisateur  par le script <prgn>update-inetd</prgn> et
+ne seront pas modifiées ou activées lors des mises à jour des paquets.
 </p>
 </sect>
+	  
+      <sect>
+<heading>L'utilisation des pseudo-ttys et la modification de «&nbsp;wtmp&nbsp;», 
+«&nbsp;utmp&nbsp;» et «&nbsp;lastlog&nbsp;»</heading>
+	  
+	<p>
+Certains programmes ont besoin de créer des pseudo-ttys.
+On doit le faire avec les «&nbsp;Unix98&nbsp;» ptys si la bibliothèque 
+«&nbsp;C&nbsp;» le permet. Le programme résultant ne doit pas être installé 
+«&nbsp;setuid root&nbsp;», à moins que d'autres fonctions ne le demandent.</p>
+	
+	<p>
+Les fichiers <tt>/var/run/utmp</tt>, <tt>/var/log/wtmp</tt> et
+<tt>/var/log/lastlog</tt> doivent être modifiables par le groupe utmp. Les 
+programmes qui ont besoin de modifier ces fichiers 
+doivent appartenir au groupe utmp.
+	</p>
+      </sect>
 
-<sect>
-<heading>Éditeurs et pagers</heading>
-
-<p>
-Certains programmes offrent la possibilité d'exécuter un éditeur 
-ou un pager pour éditer ou visualiser un document texte. Comme 
-il existe beaucoup d'éditeurs et de pagers disponibles dans la
-distribution Debian, l'administrateur système et chaque 
-utilisateur doivent avoir la possibilité de choisir leur éditeur
-ou pager préféré.
+      <sect>
+	<heading>Les éditeurs de texte et les pagineurs</heading>
+	  
+	<p>
+Certains programmes appellent un éditeur ou un pagineur pour modifier
+ou afficher un document texte. Comme de nombreux éditeurs et pagineurs sont
+disponibles dans la distribution Debian, l'administrateur système et les
+utilisateurs pourront choisir leur éditeur ou leur pagineur préféré.
 </p>
-
-<p>
-De plus, chaque programme devrait choisir un bon éditeur ou pager
-par défaut si aucun n'est sélectionné par l'utilisateur ou
-l'administrateur système.
+	<p>
+De plus, chaque programme choisira un éditeur et/ou un pagineur 
+par défaut si l'utilisateur ou l'administrateur système n'en a pas choisi un.
 </p>
-
-<p>
-Ainsi, chaque programme qui exécute un éditeur ou un pager doit
-utilisé les variables d'environnement EDITOR ou PAGER pour déterminer 
-l'éditeur ou le pager que l'utilisateur souhaite employer. Si ces 
+	  
+	<p>
+Ainsi chaque programme qui appelle un éditeur ou un pagineur doit
+utiliser les variables d'environnement EDITOR ou PAGER pour déterminer
+l'éditeur et/ou le pagineur que l'utilisateur souhaite employer. Si ces
 variables ne sont pas définies, les programmes <tt>/usr/bin/editor</tt>
-et <tt>/usr/bin/pager</tt> doivent être utiliser respectivement.
+et <tt>/usr/bin/pager</tt> seront, respectivement, utilisés.
 </p>
-
-<p>
-Ces deux fichiers sont gérés par `alternatives'. Tout paquet,
-fournissant un éditeur ou un pager, doit employé le script
-`update-alternatives' pour enregistrer ses programmes.
+	<p>
+Ces deux fichiers sont gérés par «&nbsp;alternatives&nbsp;». Tout paquet,
+fournissant un éditeur ou un pagineur, doit employer le script
+«&nbsp;update-alternatives&nbsp;» pour déclarer ces programmes.
 </p>
-
-<p>
-S'il est très difficile d'adapter un programme pour qu'il emploie
-les variables EDITOR et PAGER, ce programme doit être configuré pour
-utiliser <tt>/usr/bin/sensible-editor</tt> et 
-<tt>/usr/bin/sensible-pager</tt> comme éditeur ou pager 
-respectivement. Ce sont deux scripts fournis par le système de base 
-Debian qui vérifient les variables EDITOR et PAGER, lancent les 
-programmes appropriés ou exécutent <tt>/usr/bin/editor</tt> et
-<tt>/usr/bin/pager</tt> automatiquement.
+	  
+	<p>
+Lorsqu'il est très difficile d'adapter un programme pour qu'il utilise
+les variables EDITOR et PAGER, ce programme peut être configuré
+pour utiliser respectivement <tt>/usr/bin/sensible-editor</tt> et
+<tt>/usr/bin/sensible-pager</tt> comme éditeur ou pagineur. Ce sont
+deux scripts fournis par le système Debian de base qui testent les
+variables EDITOR ou PAGER et lancent les programmes appropriés ou bien
+exécutent par défaut <tt>/usr/bin/editor</tt> ou <tt>/usr/bin/pager</tt>
+automatiquement.
 </p>
+	<p>
+Un programme peut aussi se servir de la variable d'environnement VISUAL
+pour connaître l'éditeur choisi par l'utilisateur. Si elle existe, elle
+prend le pas sur la variable EDITOR. Et c'est ce que fait
+<tt>/usr/bin/sensible-editor</tt>.</p>
 
-<p>
-Comme le système de base Debian fournit déjà un éditeur et
-un pager, il n'y a pas besoin pour un paquet de dépendre d'un
-éditeur ou d'un pager, ni pour un paquet de fournir de tels
-paquets virtuels.
+
+	<p>
+Comme le système Debian de base fournit déjà un éditeur et
+un pagineur, un paquet n'a pas besoin de dépendre d'un éditeur
+ou d'un pagineur, et il n'y a pas besoin de paquets virtuels pour cela.
 </p>
-</sect>
-
-<sect id="web-appl">
-<heading>Serveurs et applications Web</heading>
-
-<p>
-Cette section décrit les emplacements et les URL qui doivent être
-employées par tous les serveurs et applications Web dans un système
-Debian.
+	  
+      <sect id="web-appl">
+	<heading>Serveurs et applications Web</heading>
+	  
+	<p>
+Cette section décrit les emplacements et les «&nbsp;URL&nbsp;» qui seront
+employés par tous les serveurs et applications Web dans le système Debian.
 </p>
-
-<p>
-<enumlist>
-<item>
- <p>
- Les fichiers exécutables cgi-bin sont installés dans le répertoire
- <example>
-   /usr/lib/cgi-bin/&lt;cgi-bin-name&gt;
- </example>
- et peuvent être référencés comme suit
- <example>
-   http://localhost/cgi-bin/&lt;cgi-bin-name&gt;
- </example>
- </p>
-</item>
-<item>
- <p> Accès aux documents HTML </p>
- <p>
- Les documents HTML d'un paquet sont stockés dans /usr/doc/&lt;package&gt;
- et peuvent être référencés par
- <example>
-   http://localhost/doc/&lt;package&gt;/&lt;filename&gt;
- </example>
- </p>
-</item>
-<item>
- <p> Racine des documents Web </p>
- <p>
- Les applications Web doivent éviter de stocker des fichiers
- dans la racine des documents Web. A la place, utiliser le répertoire
- <tt>/usr/doc/<var>package</var></tt> pour les documents et enregistrer 
- l'application Web via le paquet menu. Si l'accès à la racine des 
- documents Web est  inévitable alors utiliser
- <example>
-   /var/www
- </example>
- comme racine des documents. Ce peut être juste un lien symbolique 
- vers  l'emplacement où l'administrateur a mis la véritable racine 
- des documents.
+	  
+	<p>
+	  <enumlist>
+	    <item>
+<p>Les fichiers exécutables cgi-bin sont installés dans le répertoire
+		<example>
+		  /usr/lib/cgi-bin/&lt;cgi-bin-name&gt;
+		</example>
+et seront référencés par
+		<example>
+		  http://localhost/cgi-bin/&lt;cgi-bin-name&gt;
+		</example></p></item>
+		
+		
+	    <item><p>L'accès aux documents HTML</p>
+		
+	      <p>
+Les documents HTML d'un paquet sont conservés dans 
+<tt>/usr/share/doc/<var>package</var></tt> et doivent être accessibles dans
+<tt>/usr/doc/<var>package</var></tt><footnote> Pour des raisons de 
+compatibilité descendante, voir<ref id="usrdoc">.</footnote> et
+peuvent être référencés par
+		<example>
+		  http://localhost/doc/&lt;package&gt;/&lt;filename&gt;
+		</example></p></item>
+		
+		
+	    <item><p>La racine des documents Web</p>
+		
+	      <p>
+Les applications Web éviteront de conserver des fichiers dans la racine
+des documents Web. Il faut utiliser, à la place, le répertoire
+/usr/share/doc/&lt;package&gt; pour les documents et déclarer
+l'application Web via le paquet menu. Si l'accès à la racine des
+documents Web est indispensable alors il faut utiliser
+		<example>
+		  /var/www
+		</example> 
+comme racine des documents. Cela peut être juste un lien symbolique
+vers l'emplacement où l'administrateur a mis la véritable racine
+des documents.
  </p>
 </item>
 </enumlist>
 </p>
 </sect>
-
-<sect>
-<heading>Agents de transport de messages</heading>
-
-<p>
-Les paquets Debian qui traitent du courrier électronique, que 
-ce soient les agents utilisateurs (MUA: Mail User Agents) ou les 
-agents de transport (MTA: Mail Transport Agent), <em>doivent</em>  
-être compatibles avec les décisions de configuration suivantes.
-Le non respect de celles-ci peut entraîner la perte de messages, 
-rompre les lignes <tt>From:</tt> ainsi que d'autres dommages sérieux !
+	  
+	  
+      <sect>
+	<heading>Les agents de transport des courriers électroniques</heading>
+	  
+	<p>
+Les paquets Debian qui traitent le courrier électronique, que ce soient les 
+agents utilisateurs (MUA: Mail User Agents) ou les agents de transport 
+(MTA: Mail Transport Agent), doivent respecter les directives de 
+configuration qui suivent. Le non respect de celles-ci peut entraîner la 
+perte de messages, la présence de lignes <tt>From :</tt> incorrectes et 
+d'autres dommages sérieux !
 </p>
-
-<p>
-La file d'attente du courrier est <tt>/var/spool/mail</tt> et 
-l'interface pour envoyer des courriers est <tt>/usr/sbin/sendmail</tt>
-(suivant le FSSTND). La file d'attente du courrier fait partie du 
+	  
+	<p>
+La file d'attente du courrier est <tt>/var/spool/mail</tt> et l'interface 
+pour envoyer des courriers est <tt>/usr/sbin/sendmail</tt> (conformément au 
+FHS). La file d'attente du courrier fait partie du
 système de base et non du paquet MTA.
 </p>
-
+	  
 <p>
-Tous les MUA et MTA Debian doivent utiliser les fonctions 
-<tt>maillock</tt> et <tt>mailunlock</tt> fournies par le paquet 
-<tt>liblockfile</tt> pour vérouiller et dévérouiller les boites 
-aux lettres. Ces fonctions implémentent un mécanisme de vérouillage 
-NFS-safe. (les MUA et MTA  peuvent ne pas utiliser liblockfile à 
-condition d'employer un mécanisme <em>compatible</em> . 
-S'il vous plaît, comparer les mécanismes très attentivement !)
+Dans le système Debian, tous les MUAs, MTAs, MDAs et autres programmes de 
+gestions des boites aux lettres (comme les démons IMAP) doivent verrouiller
+les boites aux lettres de façon à permettre l'usage de NFS. Cela signifie
+que le verrouillage de type <tt>fcntl()</tt> doit être associé avec celui
+de type point («&nbsp;dot locking&nbsp;»). Pour éviter les situations inextricables, un programme utilisera d'abord <tt>fcntl()</tt> et ensuite le
+verrouillage «&nbsp;point&nbsp;» ou bien implantera si possible les deux 
+méthodes à la fois<footnote><p>Quand il n'est pas possible d'établir les deux 
+modes de verrouillage, le système ne doit pas attendre que le second mode soit
+mis en place, mais doit enlever le premier mode, attendre un certain temps
+et recommencer le verrouillage.</footnote>. Pour faire cela, il est
+conseillé d'employer les fonctions <tt>maillock</tt> et <tt>mailunlock</tt> 
+données dans le paquet <tt>liblockfile*</tt><footnote>
+            <p>
+              <tt>liblockfile</tt> version &gt;&gt;1.01</p>
+          </footnote>.
+        </p>
+
+
+	<p>
+Les boîtes aux lettres ont généralement le mode 660
+<tt><var>utilisateur</var>.mail</tt> à moins que l'utilisateur n'en
+ait décidé autrement. Un MUA peut supprimer une boîte aux lettres (sauf
+si elle n'a pas les permissions standards). Dans ce cas, le MTA ou
+un autre MUA doit la recréer au besoin. Le groupe «&nbsp;mail&nbsp;» doit 
+pouvoir modifier les boîtes aux lettres.
 </p>
-
-<p>
-Les boites aux lettres ont généralement les permissions 660
-<tt><var>user</var>.mail</tt> à moins que l'utilisateur en ai décidé
-autrement. Un MUA peut supprimer une boite aux lettres (sauf si elle 
-n'a pas les permissions standards). Dans ce cas, le MTA ou un autre 
-MUA doit la recréer si besoin. Les boites aux lettres doivent être 
-autorisées en écriture pour le groupe mail.
-</p>
-
-<p>
-Les permissions de la file d'attente du courrier sont 2775
-<tt>mail.mail</tt> et les MUA doivent être setgid mail pour effectuer 
-le vérouillage mentionné précédemment (et doivent évidemment 
-interdire l'accès aux boites aux lettres des autres utilisateurs 
+	<p>
+La file d'attente du courrier a le mode 2775
+<tt>root.mail</tt> et les MUAs doivent appartenir au groupe mail pour effectuer
+le verrouillage mentionné précédemment (et doivent évidemment
+s'interdire l'accès aux boîtes aux lettres des autres utilisateurs
 en employant ce privilège).
 </p>
-
-<p>
-<tt>/etc/aliases</tt> est le fichier source pour les alias du système 
-de messagerie (e.g. postmaster, usenet, etc.) -- c'est l'un des 
+	<p>
+<tt>/etc/aliases</tt> est le fichier contenant les alias du système
+de messagerie (par exemple postmaster, usenet, etc.) -- c'est l'un des
 fichiers que l'administrateur système et les scripts <tt>postinst</tt>
-peuvent éditer. Après avoir modifié <tt>/etc/aliases</tt>, le programme 
-ou l'administrateur doit appeler <prgn>newaliases</prgn>. Tous les 
-paquets MTA devraient contenir un programme <prgn>newaliases</prgn>, 
-même s'il ne fait rien, cependant les anciens paquets MTA ne le 
-faisaient pas donc les programmes ne devraient pas échouer si 
+peuvent modifier. Après avoir modifié <tt>/etc/aliases</tt>, le programme
+ou l'administrateur doit exécuter <prgn>newaliases</prgn>. Tous les
+paquets MTAs doivent contenir un programme <prgn>newaliases</prgn>,
+même s'il ne fait rien. Cependant les anciens paquets MTA ne le
+faisant pas, les programmes ne doivent pas échouer si
 <prgn>newaliases</prgn> ne peut être trouvé.
 </p>
-
-<p>
-La convention d'écriture <tt>forward to <var>address</var></tt>
-dans la boîte aux lettres elle-même n'est pas supportée. Utiliser 
+	  
+	<p>
+La convention consistant à écrire <tt>forward to <var>adresse</var></tt>
+dans la boîte aux lettres elle-même n'est pas supportée. Utilisez
 un fichier <tt>.forward</tt> à la place.
 </p>
-
-<p>
-L'emplacement pour le programme <prgn>rmail</prgn> utilisé par UUCP
-pour les messages entrants est <tt>/usr/sbin/rmail</tt>, suivant le 
-FSSTND. De même <prgn>rsmtp</prgn>, qui reçoit des lots SMTP via UUCP,
-est dans <tt>/usr/sbin/rsmtp</tt> s'il est supporté.
+	<p>
+L'emplacement du programme <prgn>rmail</prgn> utilisé par UUCP pour
+les messages entrants sera <tt>/usr/sbin/rmail</tt>, conformément au FHS.
+De même le programme <prgn>rsmtp</prgn>, qui reçoit des lots SMTP via UUCP,
+sera placé dans <tt>/usr/sbin/rsmtp</tt> s'il est supporté.
 </p>
-
-<p>
-Si vous devez connaître le nom à employer (par exemple) pour les
-messages (mail et news) sortants qui sont générés localement, 
-vous devriez utilisé le fichier <tt>/etc/mailname</tt>. Il contient
-la portion après le nom d'utilisateur et le signe <tt>@</tt> (at)
-des adresses électroniques des utilisateurs de la machine (suivi 
+	<p>
+Quand un programme veut savoir quel nom  employer, par exemple, pour les
+messages sortants (mail et news) qui sont crées localement,
+il utilisera le fichier <tt>/etc/mailname</tt>. Il contient
+la partie située après le nom d'utilisateur et le signe <tt>@</tt> (at)
+des adresses électroniques des utilisateurs de la machine (suivi
 par un retour à la ligne).
 </p>
-
-<p>
-Un paquet devrait vérifier l'éxistance de ce fichier. S'il existe,
-il devrait être employé sans commentaires (Le script de configuration
+	  
+	<p>
+Tout paquet s'assurera de l'existence de ce fichier. S'il existe,
+il sera employé sans commentaire (le script de configuration
 d'un MTA peut vouloir interroger l'utilisateur même s'il trouve
-ce fichier). S'il n'existe pas, il devrait interrogé l'utilisateur
-pour une valeur et la stocker dans <tt>/etc/mailname</tt> ainsi que
-l'employer pour la configuration du paquet. Le message d'invite
-doit être explicite afin d'indiquer que ce nom ne sera pas utilisé
-uniquement par ce paquet. E.g. dans cette situation, le paquet INN dit:
-<example>
-   Please enter the `mail name' of your system. This is the hostname
-   portion of the address to be shown on outgoing news and mail messages.
-   The default is <var>syshostname</var>, your system's host name.
-   Mail name [`<var>syshostname</var>']:
-</example>
-où <var>syshostname</var> est la sortie de <tt>hostname --fqdn</tt>.
+ce fichier). S'il n'existe pas, il demandera une valeur à
+l'utilisateur et la stockera dans <tt>/etc/mailname</tt> puis
+l'emploiera pour la configuration du paquet. Le message d'invite
+sera explicite afin d'indiquer que ce nom ne sera pas utilisé
+seulement par ce paquet. Par exemple dans cette situation, le paquet INN dit:
+	  <example>
+	    Please enter the `mail name' of your system.  This is the
+	    hostname portion of the address to be shown on outgoing
+	    news and mail messages.  The default is
+	    <var>syshostname</var>, your system's host name.  Mail
+	    name [`<var>syshostname</var>']:
+	  </example>
+	  où <var>syshostname</var> est la sortie de  <tt>hostname
+	    --fqdn</tt>.</p></sect> 
+	  
+	  
+      <sect>
+	<heading>La configuration du système de « News »</heading>
+	  
+	<p>
+Tous les fichiers de configuration relatifs aux serveurs et aux
+clients NNTP (news) seront placés dans le répertoire <tt>/etc/news</tt>.
 </p>
-</sect>
+	  
+	<p>
+Quelques points de configuration s'appliquent à de nombreux paquets
+concernant les news (clients et serveurs) sur la machine :
 
-<sect>
-<heading>Configuration du système de News</heading>
-
-<p>
-Tous les fichiers de configurations relatifs aux serveurs et aux
-clients NNTP (news) doivent être placés dans <tt>/etc/news</tt>.
-</p>
-
-<p>
-Il y a certains points de configuration qui s'appliquent à
-l'ensemble des paquets clients et serveurs de news sur la
-machine. Ce sont:
-
-<taglist>
-<tag>/etc/news/organization</tag>
-<item>
- <p>
- Chaîne apparaissant dans le champ organization de l'en tête
- de chaque messages postés par les clients NNTP de la machine.
+	  <taglist>
+	    <tag>/etc/news/organization</tag>
+	    <item><p>c'est une chaîne qui apparaîtra dans le champ 
+organisation de l'en-tête de chaque
+message posté par les clients NNTP de la machine.
  </p>
 </item>
-<tag>/etc/news/server</tag>
-<item>
- <p>
- Contient le FQDN du serveur NNTP principal ou localhost
- si la machine locale est un serveur NNTP.
+		
+	    <tag>/etc/news/server</tag>
+	    <item><p>Contient soit le FQDN du serveur NNTP principal soit
+localhost si la machine locale est un serveur NNTP.
  </p>
 </item>
-</taglist>
-
-D'autres fichiers globaux peuvent être ajoutés s'ils sont requis
-pour la configuration inter-paquets de news.
+	  </taglist>
+	  
+D'autres fichiers de portée générale peuvent être ajoutés s'ils sont requis 
+pour la configuration commune à plusieurs paquets concernant les news.
 </p>
 </sect>
-
-<sect>
-<heading>Programmes pour le système X Window</heading>
-
-<p>
-Certains programmes peuvent être configurés avec ou sans support 
-pour X Window. Typiquement ces exécutables, lorsque configurés
-pour X, nécessitent les librairies partagées X pour fonctionner.
+	  
+      <sect>
+	<heading>Les programmes pour le système X Window</heading>
+	  
+	<p>
+On doit configurer pour le système X Window les programmes qui peuvent l'être,
+et on doit déclarer toutes les dépendances nécessaires à leur fonctionnement
+sous «&nbsp;X&nbsp;», à moins que ces dépendances ne soient pour un paquet
+dont la priorité est «&nbsp;standard&nbsp;» ou une priorité supérieure ; dans
+ce cas les binaires spécifiques à «&nbsp;X&nbsp;» peuvent être mis dans un
+paquet distinct, ou bien des versions alternatives du paquet avec support de
+«&nbsp;X&nbsp;» peuvent être fournies <footnote><p>
+<strong>NOTE</strong> : la prochaine grande version du système X Window va 
+certainement bouleverser cela. Et c'est ce que les gens semblent vouloir. Des 
+paquets comme vim-tty seront licites s'ils obtiennent la priorité
+«&nbsp;standard&nbsp;». Et aussi tel client «&nbsp;X&nbsp;» dans 
+«&nbsp;mtools&nbsp;» pourra être mis dans un paquet avec une priorité
+«&nbsp;optional&nbsp;». Cela ouvre la voie pour un changement des priorités
+de «&nbsp;standard&nbsp;» à «&nbsp;optional&nbsp;» pour les paquets
+«&nbsp;xlib6g&nbsp;» et «&nbsp;xfree-common&nbsp;», <strong>si</strong> tous
+les paquets dépendant de «&nbsp;xlib6g&nbsp;» passent d'une priorité
+«&nbsp;standard&nbsp;» à une priorité «&nbsp;optional&nbsp;» (ou bien si
+les versions non liées avec «&nbsp;xlib&nbsp;» restent avec une priorité
+«&nbsp;standard&nbsp;»). Cela, cependant, reste l'affaire des responsables
+des paquets concernés et des responsables de l'archive et n'est pas
+exigé par cette charte.</footnote>. 
 </p>
-
 <p>
-De tels programmes devraient être configurés <em>avec</em>  le 
-support X et devraient déclarer une dépendance <tt>xlib6g</tt> 
-(pour les librairies X11R6). Les utilisateurs qui souhaitent 
-utiliser ces programmes, peuvent simplement installer le petit 
-paquet <tt>xlib6g</tt> et n'ont pas besoin d'installer tout X.
+<em>Les paquets qui fournissent un serveur «&nbsp;X&nbsp;» </em> et qui,
+directement ou indirectement, communiquent avec le matériel d'entrée et
+d'affichage, déclareront dans leurs données de contrôle qu'ils fournissent
+le paquet virtuel <tt>xserver</tt>
+          <footnote>
+            <p>
+Argument : cela met en oeuvre la pratique actuelle, et cela offre une
+vraie politique pour l'utilisation du paquet virtuel <tt>xserver</tt>,
+lequel apparaît dans la liste des paquets virtuels. En résumé, les serveurs
+«&nbsp;X&nbsp;» qui communiquent directement avec le matériel d'entrée et 
+d'affichage ou via un autre sous-système (p.ex. GGI) fourniront
+<tt>xserver</tt>. Des choses comme «&nbsp;Xvfb&nbsp;», «&nbsp;Xnest&nbsp;»
+et «&nbsp;Xprt&nbsp;» ne doivent pas le faire. <strong>NOTE</strong> : la 
+prochaine grande version du système X Window va certainement bouleverser cela.
+</footnote>
+<p>
+<em>Les paquets qui fournissent un émulateur de terminal</em> pour le
+système X Window, émulateur qui offre un type de terminal avec une
+description «&nbsp;terminfo&nbsp;» fourni avec le paquet <tt>ncurses-base</tt>,
+déclareront dans leurs données de contrôle qu'ils fournissent le paquet
+virtuel <tt>x-terminal-emulator</tt>. Ils se déclareront comme une
+alternative pour <tt>/usr/bin/x-terminal-emulator</tt>, avec une priorité
+égale à 20.
 </p>
-
 <p>
-Ne créer pas deux versions (une avec support X et l'autre sans) de 
-votre paquet.
-</p>
-
+<em>Les paquets qui fournissent des gestionnaires de fenêtres</em>
+déclareront dans leurs données de contrôle qu'ils fournissent le paquet
+virtuel <tt>x-window-manager</tt>. Ils se déclareront comme une
+alternative pour <tt>/usr/bin/x-window-manager</tt>, avec une priorité
+qu'on calculera ainsi :
+<list>
+            <item>Commencez avec une priorité égale à 20.</item>
+            <item>
+ Si le gestionnaire de fenêtres permet le système des menus de Debian, on
+ajoutera 20 points si cela se fait avec la configuration par défaut du
+paquet (c.-à-d. qu'il n'y a pas besoin, pour obtenir cette fonctionnalité,
+de modifier des fichiers de configuration appartenant au système ou à l'
+utilisateur) ; si l'on doit modifier des fichiers de configuration , on
+ajoutera seulement 10 points.</item>
+<item>
+Si le gestionnaire de fenêtres autorise, dans sa configuration par défaut, le 
+ré-démarrage d'une session X avec un <em>nouveau</em> gestionnaire de fenêtres 
+(sans tuer le serveur X), on ajoutera 10 points ; sinon, rien.</item>
+</list>
 <p>
-Les fichiers <em>Application defaults</em> doivent être installés dans 
-le répertoire <tt>/usr/X11R6/lib/X11/app-defaults/</tt>. Ils sont 
-considérés comme faisant partie du code du programme. Ainsi, ils ne 
-devraient pas être modifiés et ne doivent pas être marqués comme 
-<em>conffile</em>. Si l'administrateur système souhaite personnaliser 
-globalement une application X, le fichier <tt>/etc/X11/Xresources</tt> 
-devrait être utilisé.
-</p>
+<em>Les paquets qui fournissent des fontes pour le système X Window</em>
+doivent faire un certain nombre de choses pour s'assurer à la fois qu'ils 
+sont disponibles sans avoir à modifier la configuration du serveur 
+X ou du serveur de fontes, et qu'ils n'abîment pas les fichiers qu'utilisent
+d'autres paquets pour déclarer les renseignements qui les concernent.
+<enumlist>
+           <item>
+Les fontes de tout type offert par le système X Window seront dans des
+paquets distincts des binaires, bibliothèques ou de la documentation (sauf
+celle liée à la fonte fournie). Quand un programme ou une bibliothèque
+est <em>inutilisable</em> en l'absence d'une ou plusieurs fontes, le paquet 
+qui contient ce programme ou cette bibliothèque déclarera une dépendance
+envers le(s) paquet(s) contenant la(les) fonte(s) qu'il demande.</item>
+           <item>
+Les fontes BDF seront converties en fontes PCF avec le programme
+<tt>bdftopcf</tt> (disponible dans le paquet <tt>xbase-clients</tt>),
+<tt>gzip</tt>ées, et placées dans un répertoire qui correspond à leur
+définition : 
+<list>
+                  <item>
+                      Les fontes à 100 dpi seront mises dans
+<tt>/usr/X11R6/lib/X11/fonts/100dpi/</tt> ;
+</item>
+                  <item>
+                      Les fontes à 75 dpi seront mises dans
+                      <tt>/usr/X11R6/lib/X11/fonts/75dpi/</tt> ;
+                  </item>
+                  <item>
+ les fontes à chasse fixe, les fontes pour le curseur, ainsi que
+d'autres fontes de faible définition seront mises dans
+                      <tt>/usr/X11R6/lib/X11/fonts/misc/</tt>.
+</item>
+                </list>
+            </item>
+            <item>
+les fontes «&nbsp;Speedo&nbsp;» seront mises dans
+<tt>/usr/X11R6/lib/X11/fonts/Speedo/</tt>.
+            </item>
+<item>
+les fontes «&nbsp;Type 1&nbsp;» seront mises dans
+                <tt>/usr/X11R6/lib/X11/fonts/Type1/</tt>.
+Si des fichiers de métrique sont disponibles, ils peuvent aussi être placés 
+là.
+            </item>
+            <item>
+On ne doit pas créer ni utiliser d'autres répertoires dans 
+<tt>/usr/X11R6/lib/X11/fonts/</tt> que ceux répertoriés dans la liste qui 
+précède. (Les répertoires <tt>PEX</tt> et <tt>cyrillic</tt> font exceptions 
+pour des raisons historiques, mais l'installation de fichiers dans ces 
+répertoires reste déconseillée.) </item>
+            <item>
+Au lieu de mettre directement des fichiers dans les répertoires cités dans
+la liste qui précède, les paquets peuvent fournir des liens symboliques 
+dans le répertoire des fontes pointant vers l'emplacement réels des fichiers 
+dans l'arborescence. Un tel emplacement se conformera au «&nbsp;FHS&nbsp;».
+</item>
+            <item>
+Les paquets ne contiendront pas à la fois les versions à 75dpi et les versions
+à 100dpi d'une fonte. Si les deux sont disponibles, elles seront fournies
+dans des paquets distincts dont les noms seront étiquetés «&nbsp;-75dpi&nbsp;»
+ou «&nbsp;-100dpi&nbsp;».</item>
+            <item>
+Les fontes destinées au répertoire <tt>misc</tt> ne doivent pas être mises
+dans les mêmes paquets que ceux des fontes à 75dpi ou 100dpi mais elles 
+seront fournies dans un paquet distinct étiqueté «&nbsp;-misc&nbsp;».</item>
+            <item>
+Les paquets <em>ne doivent pas</em> fournir les fichiers <tt>fonts.dir</tt>,
+<tt>fonts.alias</tt>  ou <tt>fonts.scale</tt> dans un répertoire de fontes.
+<list>
+                  <item>
+les fichiers <tt>fonts.dir</tt> ne doivent en aucun cas être fournis ;
+                  </item>
+                  <item>
+si besoin est, les fichiers <tt>fonts.alias</tt> et <tt>fonts.scale</tt>
+seront fournis dans le répertoire
+<tt>/etc/X11/fonts/<em>fontdir</em>/<em>package</em>.<em>extension</em></tt>
+où <em>fontdir</em> est le nom du répertoire de
+<tt>/usr/X11R6/lib/X11/fonts/</tt> dans lequel sont conservées les fontes
+du paquet correspondant (p.ex.<tt>75dpi</tt> ou <tt>misc</tt>), où
+<em>package</em> est le nom du paquet qui fournit ces fontes, et où
+<em>extension</em> correspond au contenu du fichier, soit <tt>scale</tt>
+soit <tt>alias</tt>.</item>
+                </list>
+            </item>
+            <item>
+Les paquets doivent déclarer une dépendance envers le paquet 
+<tt>xbase-clients</tt> et lancer, dans les scripts de post-installation et 
+de post-désinstallation du paquet, la commande <tt>mkfontdir</tt> pour
+chaque répertoire où est installée une fonte.</item>
+            <item>
+Les paquets qui fournissent un ou plusieurs de ces fichiers 
+<tt>fonts.scale</tt> dont on vient de parler, doivent déclarer une dépendance
+de version pour <tt>xbase-clients (&gt;=3.3.3.1-5)</tt> et doivent
+appeler <tt>update-fonts-scale</tt> pour chaque répertoire où est installée 
+une fonte <em>avant</em> d'appeler <tt>mkfontdir</tt> pour ce répertoire.
+On doit faire cet appel à la fois dans les scripts de post-installation et
+ceux de post-désinstallation.</item>
+            <item>
+Les paquets qui fournissent un ou plusieurs de ces fichiers
+<tt>fonts.alias</tt> dont on vient de parler, doivent déclarer une dépendance
+de version pour <tt>xbase-clients (&gt;=3.3.3.1-5)</tt> et doivent
+appeler, dans les scripts de post-installation et ceux de post-désinstallation
+, <tt>update-fonts-alias</tt> pour chaque répertoire où est installée
+une fonte.</item>
+            <item>
+Les paquets ne doivent pas proposer, pour les noms des fontes qu'ils
+fournissent, des alias qui entrent en conflit avec les alias déjà en
+usage de noms de fontes déjà fournies.</item>
+<item>
+Les paquets ne doivent pas fournir des fontes qui ont le même nom pour
+l'enregistrement XLFD que celui donné par une fonte déjà en usage.</item>
+          </enumlist>
+        </p>
+	<p>
+Les fichiers «&nbsp;<em>application defaults</em>&nbsp;» doivent être 
+installés dans le répertoire <tt>/usr/X11R6/lib/X11/app-defaults/</tt> 
+<footnote><p>
+Note : Cela changera très prochainement.</p></footnote>.
+On ne les déclarera pas comme des <em>conffile</em>s et on ne les
+traitera pas non plus comme des fichiers de configuration.
+Un fichier, dont le nom sera le même que celui du paquet et qui sera mis dans 
+le répertoire <tt>/etc/X11/Xresources/</tt>, pourra assurer la
+paramétrisation des ressources X d'un paquet ; il doit être déclarer
+comme <em>conffile</em>. <em>Important :</em> les paquets qui
+installent des fichiers dans le répertoire <tt>/etc/X11/Xresources/</tt> 
+<em>doivent</em> déclarer un conflit avec le paquet <tt>xbase 
+(&lt;&lt;3.3.2.3a-2)</tt> ; si ce n'est pas fait, le paquet peut détruire un 
+<em>fichier</em> <tt>/etc/X11/Xresources</tt> pré-existant qui a pu être
+paramétré par l'administrateur système<footnote><p>
+Argument : cela clarifie le langage pour s'adresser au responsable
+de paquet et non pas à l'administrateur système pour savoir comment gérer
+/etc/X11/Xresources.</p>
+          </footnote>.
+       </p>
+<p><em>Les paquets qui utilisent le système X Window s'en tiendront autant que 
+possible au «&nbsp;FHS&nbsp;»</em>. Ils installeront autant que possible les 
+binaires, les bibliothèques, les pages de manuel ou d'autres fichiers aux 
+endroits demandés par le «&nbsp;FHS&nbsp;». Cela signifie qu'on ne doit pas 
+installer de fichiers dans <tt>/usr/X11R6/bin/</tt>, <tt>/usr/X11R6/lib/</tt>,
+ou <tt>/usr/X11R6/man/</tt> à moins que le fonctionnement correct d'un paquet 
+ne l'exige. On placera les fichiers de configuration des gestionnaires de
+fenêtres et des gestionnaires d'affichage dans un sous-répertoire de
+<tt>/etc/X11/</tt> correspondant au nom du paquet ; cela est du à 
+l'interpénétration étroite de ces programmes et du mécanisme du système
+X Window. Les programmes applicatifs utiliseront le répertoire <tt>/etc/</tt>
+sauf si cette charte impose autre chose. L'installation de fichiers dans des 
+sous-répertoires de <tt>/usr/X11R6/include/X11/</tt> et de 
+<tt>/usr/X11R6/lib/X11/</tt> est autorisée mais déconseillée ; les 
+responsables de paquet détermineront s'ils peuvent utiliser des sous-
+répertoires de <tt>/usr/lib/</tt> et de <tt>/usr/share/</tt>. (On encourage
+l'usage de liens symboliques des répertoires de X11R6 vers des endroits
+conformes au «&nbsp;FHS&nbsp;» si les programmes ne sont pas facilement
+configurables pour chercher ailleurs leurs fichiers.) Les paquets ne
+doivent pas fournir -- ou  y installer des fichiers -- les répertoires
+<tt>/usr/bin/X11/</tt>, <tt>/usr/include/X11/</tt> ou
+<tt>/usr/lib/X11/</tt>. Les fichiers d'un paquet feront cependant
+référence à ces répertoires plutôt qu'à leurs homologues de X11R6, 
+<tt>/usr/X11R6/bin/</tt>, <tt>/usr/X11R6/include/X11/</tt> et
+<tt>/usr/X11R6/lib/X11/</tt> quand les ressources qui sont référencées
+n'ont pas été placées dans des endroits conformes au «&nbsp;FHS&nbsp;».</p>
 
-<p>
-Si vous packagez un programme qui requièrent une librairie Motif non
-libre, il serait bien de fournir un paquet "foo-smotif" et un paquet 
-"foo-dmotif" contenant (concernant les librairies Motif) une version 
-liée statiquement et dynamiquement respectivement. Ainsi les 
-utilisateurs sans Motif pourront utiliser le paquet aussi, et les 
-utilisateurs avec Motif installé bénéficieront des avantages
-d'une version liée dynamiquement.
-</p>
-
-<p>
-Cependant si votre paquet fonctionne de manière fiable avec Lesstif, 
-vous devriez le packager avec Lesstif et non avec Motif.
-</p>
-
-<p>
-Noter que les paquets qui requièrent une librairie Motif non libre
-ne peuvent aller dans la section main. Cependant si votre paquet 
-est libre, il ira dans contrib sinon il sera placé dans non-free.
-</p>
-
-
-<sect>
-<heading>Programmes emacs lisp</heading>
-
-<p>
-SVP, consultez le `Debian Emacs Policy' (documenté dans
+ 	<p>
+<em>Les programmes qui demandent la bibliothèque «&nbsp;OSF-Motif&nbsp;»,
+bibliothèque non conforme aux «&nbsp;DFSG&nbsp;»</em>, seront compilés et 
+testés avec «&nbsp;LessTif&nbsp;» (une libre ré-implémentation de 
+«&nbsp;Motif&nbsp;»). Quand le responsable du paquet juge que 
+le programme ne fonctionne pas suffisamment bien avec «&nbsp;LessTif&nbsp;»
+pour être distribué et supporté, mais qu'il fonctionne correctement quand
+il est compilé avec «&nbsp;Motif&nbsp;», il créera alors deux versions du
+paquet ; l'une qui sera liée de façon statique à «&nbsp;Motif&nbsp;» et
+dont le nom sera étiqueté «&nbsp;-smotif&nbsp;», et l'autre qui sera liée
+de façon dynamique à «&nbsp;Motif&nbsp;» et dont le nom sera étiqueté 
+«&nbsp;-dmotif&nbsp;». Les deux versions liées à «&nbsp;Motif&nbsp;» sont
+dépendantes de logiciels non conformes aux «&nbsp;DFSG&nbsp;» et donc ne
+peuvent être mis dans la section «&nbsp;main&nbsp;» de la distribution ; si 
+le logiciel lui-même est conforme aux «&nbsp;DFSG&nbsp;»  il peut être mis 
+dans la section «&nbsp;contrib&nbsp;».Toutes les versions connues de
+«&nbsp;OSF-Motif&nbsp;» autorisent la redistribution sans restrictions de 
+binaires liés de façon statique ou dynamique à cette bibliothèque, mais 
+c'est au responsable de paquet de déterminer si la licence  
+de la version de «&nbsp;OSF-Motif&nbsp;» qu'il possède le permet.
+	</p>
+      </sect>
+	  
+	  
+      <sect>
+	<heading>Les programmes emacs lisp</heading>
+	  
+	<p>
+Veuillez consulter le «&nbsp;Debian Emacs Policy&nbsp;» (documenté dans
 <tt>debian-emacs-policy.gz</tt> du paquet <prgn>emacsen-common</prgn>)
 pour les détails concernant la création de paquets de programmes
 emacs lisp.
 </p>
 </sect>
-
-<sect>
-<heading>Jeux</heading>
-
-<p>
-les permissions sur /var/lib/games sont 755 <tt>root.root</tt>.
-</p>
-
-<p>
+	  
+	  
+      <sect>
+	<heading>Les jeux</heading>
+	  
+	<p>
+Les permissions de <tt>/var/lib/games</tt> sont 755 <tt>root.root</tt>.</p>
+	  
+	<p>
 Chaque jeu décide de ses propres règles de sécurité.
 </p>
-
-<p>
-Les jeux qui nécessitent des accès privilégiés et protégés à des
-fichiers de scores, sauvegardes de parties, etc.., doivent être
-set-<em>group</em> -id (mode 2755), avoir pour propriétaire 
-<tt>root.games</tt> et utiliser des fichiers et des répertoires avec 
-des permissions appropriées (770 <tt>root.games</tt> par exemple). 
-Ils <em>ne</em> doivent <em>pas</em> être set-<em>user</em> -id, 
-car cela entraîne des problèmes de sécurité. (Si un attaquant arrive 
-à corrompre un jeu set-user-id, il peut alors remplacer l'executable 
-d'autres jeux, forçant les autres joueurs de ces jeux à exécuter 
-un cheval de Troie. Avec un programme set-group-id game, l'attaquant 
-a accès uniquement aux données les moins importantes du jeu. S'il 
-voulait accéder aux comptes des autres joueurs, cela lui demandera 
-des efforts considérablement plus importants).
+	  
+	<p>
+Les jeux qui demandent des accès privilégiés et protégés à des
+fichiers de scores, de sauvegardes de parties, etc., peuvent appartenir
+à <tt>root.games</tt> et être exécutables par le groupe <tt>games</tt> 
+(mode 2755) et doivent utiliser des fichiers et des répertoires avec
+des permissions appropriées (770 <tt>root.games</tt> par exemple).
+Ils ne doivent pas être exécutable par un utilisateur (set-user-id),
+car cela entraîne des problèmes de sécurité. (Si un attaquant arrive
+à corrompre un jeu «&nbsp;set-user-id&nbsp:», il peut alors remplacer 
+l'exécutable d'autres utilisateurs, forçant les autres joueurs de ces jeux à 
+exécuter un cheval de Troie. Avec un programme «&nbsp;set-group-id&nbsp:»,
+l'attaquant n'a accès qu'à des données de jeu moins 
+importantes. S'il veut accéder aux comptes des autres joueurs, cela lui 
+demandera des efforts beaucoup plus importants).
 </p>
-
-<p>
-Certains paquets, comme les programmes fortune cookie, sont configurés
-par leurs auteurs originaux pour s'installer avec leurs fichiers
-de données ou autres informations statiques non consultables en lecture,
-ils ne peuvent être accessibles que par les programmes set-id fournis.
-Ne faites pas ça dans un paquet Debian: n'importe qui peut télécharger
-le fichier <tt>.deb</tt> et y lire les données, ainsi il n'y a pas 
-d'avantages à avoir des fichiers non lisibles. Ne pas créer de fichiers 
-non accessibles en lecture implique aussi que vous n'avez pas à 
-construire des programmes set-id, ce qui réduit le risque de trous 
-de sécurité.
+	  
+	<p>
+Certains paquets, comme les programmes «&nbsp;fortune&nbsp», sont configurés
+par leurs auteurs originaux pour interdire la lecture de leurs fichiers
+de données ou d'autres informations statiques,
+de manière qu'ils ne puissent être accessibles que par les programmes 
+«&nbsp;set-id&nbsp;» fournis. Vous ne ferez pas de même dans un paquet 
+Debian : n'importe qui peut télécharger le fichier <tt>.deb</tt> et y lire 
+les données, cela n'a donc pas de sens d'avoir des fichiers non lisibles. 
+Créer des fichiers accessibles en lecture implique aussi que vous n'avez pas 
+à construire des programmes «&nbsp;set-id&nbsp;», ce qui réduit le risque de 
+trous de sécurité.
 </p>
-
-<p>
-Comme décrit dans le FSSTND, les binaires des jeux devraient être 
-installés dans le répertoire <tt>/usr/games</tt>. Cela s'applique 
-aussi aux jeux utilisant le système X Window. les pages de manuel 
-des jeux (X et non-X) devraient être installés dans 
-<tt>/usr/man/man6</tt>.
+	<p>
+	  Conformément au «&nbsp;FHS&nbsp;», les binaires des jeux seront
+installés dans le répertoire <tt>/usr/games</tt>. Cela s'applique
+aussi aux jeux utilisant le système <em>X Window</em>. On installera les 
+pages de manuel des jeux («&nbsp;X&nbsp;» et «&nbsp;non-X&nbsp;») dans
+<tt>/usr/share/man/man6</tt>.
 </p>
 </sect>
-
-
-<chapt>
-<heading>Documentation</heading>
-
-<sect>
-<heading>Pages de manuel</heading>
-
-<p>
-Vous devez installer les pages de manuel au format source 
-<prgn>nroff</prgn>, à l'emplacement approprié sous <tt>/usr/man</tt>.
-Vous devez seulement utiliser les section 1 à 9 (voir le FSSTND pour 
-plus de détails). Vous <em>ne</em>  devez <em>pas</em>  installer de 
-pages préformatées `cat page'.
+</chapt>
+      
+    <chapt><heading>La documentation</heading>
+	
+      
+      <sect>
+	<heading>Les pages du manuel</heading>
+	  
+	<p>
+On installera les pages de manuel sous la forme d'un source
+<prgn>nroff</prgn>, à l'emplacement approprié dans <tt>/usr/share/man</tt>.
+Vous utiliserez uniquement les sections 1 à 9 (voir le FHS pour
+plus de détails). Vous ne devez pas installer de
+pages «&nbsp;cat&nbsp;» préformatées.
 </p>
-
 <p>
-Si aucune page de manuel n'est disponible pour un programme, un 
-utilitaire ou une fonction particulière et qu'un bug est reporté 
-sur debian-bugs, un lien symbolique de la page de manuel en question 
-vers la page de manuel <manref name="undocumented" section="7"> doit
-être fournit. Ce lien symbolique peut être créé à partir de
-<tt>debian/rules</tt> comme suit :
-<example>
-   ln -s ../man7/undocumented.7.gz \
-    debian/tmp/usr/man/man[1-9]/the_requested_manpage.[1-9].gz
-</example>
-Cette page de manuel indique que l'absence d'une page de manuel a déjà
-été signalée comme un bug, aussi vous avez seulement à le faire que si
-c'est le cas (vous pouvez le reporter vous-même si vous le souhaitez).
-Ne fermez pas le rapport du bug tant qu'une page de manuel adéquate 
+Chaque programme, utilitaire ou fonction aura une page de manuel associée
+dans le même paquet. On suggère aussi que chaque fichier de configuration
+ait une page de manuel associée.
+</p>	  
+	<p>
+Quand il n'y a pas de page de manuel pour un programme, un utilitaire, une 
+fonction particulière ou un fichier de configuration  et qu'un bogue a été 
+rapporté sur «&nbsp;debian-bugs&nbsp;», on créera un lien symbolique de cette 
+page vers la page de manuel <manref name="undocumented" section="7">. Ce lien 
+symbolique peut être créé à partir de <tt>debian/rules</tt> comme suit :
+	  <example>
+	    ln -s ../man7/undocumented.7.gz \
+	    debian/tmp/usr/share/man/man[1-9]/the_requested_manpage.[1-9].gz
+	  </example> 
+Cette page de manuel indique que l'absence de page de manuel a déjà
+été signalée comme un bogue, ainsi vous ne pouvez faire le lien que si tel
+est le cas (vous pouvez le rapporter vous même si vous le souhaitez).
+Ne fermez pas le rapport de bogue tant qu'une page de manuel adéquate
 n'est pas disponible.
 </p>
-
-<p>
-Vous pouvez envoyer une requête concernant l'absence d'une page de manuel
-aux auteurs originaux, et marquer le bug comme transféré dans le système 
-Debian de traques des bugs. Cependant le projet GNU ne considère pas en
-général l'absence d'une page de manuel comme un bug, nous oui - s'ils vous
-répondent qu'ils ne le considèrent pas comme un bug, vous devez cependant 
-laisser le bug ouvert dans notre système Debian de traques des bugs.
+	  
+	<p>
+Vous pouvez faire suivre une plainte concernant l'absence d'une page du manuel
+aux auteurs originaux, et signaler qu'un rapport de bogue a été envoyé au 
+système Debian de suivi des bogues. Même si le projet GNU ne considère pas en
+général l'absence d'une page du manuel comme un bogue, nous oui. S'ils vous
+répondent qu'ils ne considèrent pas cela comme un bogue, laissez quand même 
+le bogue ouvert dans notre système de suivi.
 </p>
-
-<p>
-Les pages de manuel doivent être installées compressées via <tt>gzip -9</tt>.
+	  
+	<p>
+Les pages de manuel seront installées comprimées via <tt>gzip -9</tt>.
 </p>
-
-<p>
-Si une page de manuel doit être accessible via différents noms, il est 
+	<p>
+Si une page de manuel doit être accessible via différents noms, il est
 préférable d'utiliser un lien symbolique plutôt que la fonctionnalité
-<tt>.so</tt>, mais il n'est pas nécessaire de bricoler les parties 
-incriminées dans les sources originaux pour changer les <tt>.so</tt> 
-en liens symboliques - à moins que ce soit trivial.
-Ne créez pas de lien physique dans les répertoires des pages de manuel
-et ne mettez pas de chemin absolu dans les directives <tt>.so</tt>. 
-Le nom du fichier dans le <tt>.so</tt> d'une page de manuel doit être 
-relatif à la racine des pages de manuel (usuellement <tt>/usr/man</tt>).
+<tt>.so</tt>, mais il est inutile de bricoler les parties
+incriminées dans les sources originaux pour changer les <tt>.so</tt>
+en liens symboliques (à moins que ce soit trivial).
+Ne créez pas de lien physique dans les répertoires des pages du manuel
+et ne mettez pas de chemin absolu dans les directives <tt>.so</tt>.
+Le nom du fichier dans le <tt>.so</tt> d'une page du manuel sera
+relatif à la racine des pages (habituellement <tt>/usr/share/man</tt>).
 </p>
 </sect>
+	  
+      <sect>
+	<heading>Les documents «&nbsp;Info&nbsp;»</heading>
+	  
+	<p>
 
-<sect>
-<heading>Documents Info</heading>
-
-<p>
-Les documents Info devraient être installés dans <tt>/usr/info</tt>. 
-Ils devraient être compressés avec <tt>gzip -9</tt>.
+On installera les documents «&nbsp;Info&nbsp;» dans <tt>/usr/share/info</tt>.
+Ils seront comprimés avec <tt>gzip -9</tt>.
 </p>
-
-<p>
-Votre paquet doit appelé <prgn>install-info</prgn> pour mettre à jour 
-le fichier <tt>dir</tt> dans son script de post-installation :
-<example>
-   install-info --quiet --section Development Development \
-     /usr/info/foobar.info
-</example>
+	<p>
+Votre paquet appellera <prgn>install-info</prgn> dans son script d'installation
+pour mettre à jour le fichier <tt>dir</tt> de «&nbsp;Info&nbsp;» :
+	  <example>
+	    install-info --quiet --section Development Development \
+	    /usr/share/info/foobar.info
+	  </example></p>
+	  
+	<p>
+Il est judicieux de spécifier une section pour l'emplacement de votre
+programme ; cela se fait avec l'option <tt>--section</tt>.
+Pour déterminer la section à utiliser, vous devez consulter
+<tt>/usr/share/info/dir</tt> sur votre système et choisir la plus adéquate
+(ou créer une nouvelle section si aucune des sections actuelles n'est
+adaptée). Notez que l'option <tt>--section</tt> prend deux arguments ;
+le premier est une expression régulière pour rechercher une section
+existante (indépendamment de la casse), le second est utilisé pour la création
+d'une nouvelle section.
 </p>
-
-<p>
-C'est une bonne idée de spécifier une section pour l'emplacement de 
-votre programme ; cela se fait avec l'option <tt>--section</tt>. Pour 
-déterminer la section à utiliser, vous devriez consulter 
-<tt>/usr/info/dir</tt> sur votre système et choisir la plus adéquat 
-(ou créer une nouvelle section si aucunes des sections courantes ne 
-sont adaptées). Notez que l'option <tt>--section</tt> prends deux 
-arguments ; le premier est une expression régulière pour rechercher
-(insensible à la casse ;-) une section existante, le second est utilisé 
-lorsqu'une nouvelle section est à créer.
-</p>
-
-<p>
-Vous devez retirer les entrées dans le script de pré-désintallation :
-<example>
-   install-info --quiet --remove /usr/info/foobar.info
-</example>
-</p>
-
-<p>
-Si <prgn>install-info</prgn> ne peut trouvé une entrée description dans 
-le fichier Info, vous aurez à en fournir une. Voir 
+	<p>
+Vous retirerez les entrées dans le script de pré-désintallation :
+	  <example>
+	    install-info --quiet --remove /usr/share/info/foobar.info
+	  </example></p>
+	  
+	<p>
+Si <prgn>install-info</prgn> ne trouve pas une entrée descriptive dans
+le fichier Info, vous devrez en fournir une. Voir
 <manref name="install-info" section="8"> pour plus de détails.
 </p>
 </sect>
-
-<sect>
-<heading>Documentations additionnelles</heading>
-
-<p>
-Toute documentation additionnelle fournie avec le programme peut être 
-installée à la discrétion du responsable du paquet. Les documents texte 
-devraient être placés dans le répertoire <tt>/usr/doc/<var>package</var></tt>,
-où <var>package</var> est le nom du paquet et compressés avec 
-<tt>gzip -9</tt> à moins qu'ils soient petits.
+      
+      <sect>
+	<heading>Documentations supplémentaires</heading>
+	
+	<p>
+Le responsable d'un paquet peut installer toute documentation supplémentaire 
+qui viendrait avec ce paquet. Les documents texte seront placés dans le 
+répertoire <tt>/usr/share/doc/<var>package</var></tt>,
+et comprimés avec <tt>gzip -9</tt> à moins qu'ils soient petits.
+</p>
+	
+	<p>
+Si un paquet contient une importante documentation dont la majorité des
+utilisateurs du paquet n'a pas besoin, vous la mettrez dans un paquet binaire
+distinct. Ainsi elle ne prendra pas d'espace disque sur
+les machines d'utilisateurs qui n'en ont pas besoin ou qui ne veulent
+pas l'installer.
 </p>
 
-<p>
-Si un paquet contient une large documentation que la majorité des 
-utilisateurs du paquet ne requièrent pas, vous devriez créer un paquet 
-sépare la contenant, ainsi elle ne prendra pas d'espace disque sur les 
-machines des utilisateurs ne la nécessitant pas ou ne voulant pas l'installer.
-</p>
-
-<p>
-Il est souvent une bonne idée de mettre les fichiers d'informations 
-textuelles (<tt>README</tt>, changelogs, et autres) provenant du paquet 
-source dans <tt>/usr/doc/<var>package</var></tt> au sien des paquets 
-binaires. Bien entendu, vous n'avez pas besoin de fournir les instructions 
-pour la création et l'installation du logiciel.
+	
+	<p>
+Il est souvent judicieux de mettre les fichiers texte d'informations
+(<tt>README</tt>, changelogs et autres) provenant du paquet source
+dans <tt>/usr/share/doc/<var>package</var></tt> au sein des paquets binaires.
+Bien entendu, vous n'avez pas besoin de fournir les instructions
+de compilation et d'installation.
 </p>
 </sect>
+ 
+      <sect id="usrdoc">
+      <heading>L'accès à la documentation</heading>
 
-<sect>
-<heading>Formats de documentation préférés</heading>
-
-<p>
+       <p>
+Les précédentes versions de Debian placaient toute la documentation 
+supplémentaire dans <tt>/usr/doc/<var>package</var></tt>. Afin de migrer
+en douceur vers <tt>/usr/share/doc/<var>package</var></tt>, chaque paquet
+doit maintenir un lien symbolique <tt>/usr/doc/<var>package</var></tt> qui
+pointe vers <tt>/usr/share/doc/<var>package</var></tt>, qui est la place réelle 
+de sa documentation<footnote> Ces liens symboliques seront détruits un jour,
+mais ils doivent exister pour des raisons de compatibilité jusqu'à ce que tous
+les paquets aient pris en compte cette règle et que la charte debian soit
+changée en conséquence.</footnote>. Le lien symbolique doit être crée au 
+moment de l'installation du paquet ; il ne peut être contenu dans le paquet
+lui même à cause de problèmes avec <prgn>dpkg</prgn>. Une façon raisonnable
+de faire est de mettre, dans le script <prgn>postinst</prgn>, ce qui suit :
+          <example>
+  if [ "$1" = "configure" ]; then
+        if [ -d /usr/doc -a ! -e /usr/doc/#PACKAGE# \
+            -a -d /usr/share/doc/#PACKAGE# ]; then
+                ln -sf ../share/doc/#PACKAGE# /usr/doc/#PACKAGE#
+        fi
+  fi
+          </example>
+et dans le script <prgn>prerm</prgn>:
+          <example>
+  if [ \( "$1" = "upgrade" -o "$1" = "remove" \) \
+       -a -L /usr/doc/#PACKAGE# ]; then
+        rm -f /usr/doc/#PACKAGE#
+  fi
+          </example>
+	</p>
+      </sect>
+     
+    
+  <sect>
+	<heading>Les formats préférés pour la documentation </heading>
+	
+	<p>
 L'unification de la documentation Debian se fait autour d'HTML.
 </p>
-
-<p>
-Si votre paquet fourni une vaste documentation dans un markup format
-qui puisse être convertible en d'autres formats, vous devriez si possible
-livrer la version HTML dans le paquet binaire, dans le répertoire
-<tt>/usr/doc/<var>package</var></tt> ou un de ces sous-repertoires.
+	
+	<p>
+Si votre paquet comprend une importante documentation dans un format balisé
+qui peut être converti en d'autres formats, vous livrerez
+si possible la version HTML dans le paquet binaire, dans le répertoire
+<tt>/usr/doc/<var>package</var></tt> ou un de ces sous-répertoires
 <footnote>
  <p> 
- Le raisonnement: La chose importante ici que les documents HTML 
- devraient être disponible dans <em>certains</em>  paquets, et pas
+ Le raisonnement: ce qui importe ici, c'est que les documents HTML 
+ soient disponibles dans <em>certains</em> paquets, et pas
  nécessairement dans le paquet binaire principal.
  </p>
-</footnote>
-</p>
+</footnote>.
 
-<p>
-D'autres formats comme PostScript peuvent être fournis en option.
+</p>
+	<p>
+Vous pouvez fournir d'autres formats comme PostScript.
 </p>
 </sect>
-
-<sect id="copyrightfile">
-<heading>Informations sur les Copyright</heading>
-
-<p>
-Chaque paquet doit être accompagné avec une copie textuelle de son 
+      
+      <sect id="copyrightfile">
+	<heading>Les informations de copyright</heading>
+	
+	<p>
+Chaque paquet doit être accompagné d'une copie <em>verbatim</em> de son 
 copyright ainsi que de sa licence de distribution dans le fichier
-<tt>/usr/doc/<var>package</var>/copyright</tt>. Ce fichier ne doit ni 
-être compressé ni être un lien symbolique.
+<tt>/usr/share/doc/<var>package-name</var>/copyright</tt>. Ce fichier ne doit 
+pas être comprimé ni être un lien symbolique.
 </p>
-
-<p>
-De plus, le fichier copyright doit préciser où les fichiers sources 
-originaux (s'ils existent) ont été obtenu et expliquer brièvement 
-quelles modifications ont été faite dans la version Debian du paquet 
-par rapport à l'original. IL doit indiquer les auteurs originaux du 
-paquet et le(s) responsable(s) Debian qui ont oeuvré à sa création.
+	<p>
+De plus, le fichier de copyright doit préciser où ont été obtenus
+les fichiers sources originaux (s'ils existent) et expliquera brièvement 
+quelles modifications ont été faites à ces fichiers dans la version Debian. Il
+nommera les auteurs originaux  et le(s) responsable(s) Debian 
+qui ont oeuvré à la création du paquet.
 </p>
-
-<p>
-<tt>/usr/doc/<var>package</var></tt> peut être un lien symbolique vers un 
-répertoire de /usr/doc seulement si les deux paquets proviennent de la
-même source et que le premier paquet possède une relation "Depends" 
-avec le second. Ces règles sont importantes car les copyrights doivent
-être ectractible par des moyens automatiques.
+	<p>
+<tt>/usr/share/doc/<var>package-name</var></tt> peut être un lien symbolique 
+vers un répertoire de <tt>/usr/share/doc</tt> seulement si, de deux paquets 
+provenant tous les deux de la même source, le premier possède une relation 
+«&nbsp;Depends&nbsp;» avec le second. Ces règles sont importantes car 
+on doit pouvoir extraire les copyrights par des moyens automatiques.
 </p>
-
-<p>
-Les paquets distribués sous la licence UCB BSD, la licence Artistic, 
-la GNU GPL ou la GNU LGPL doivent faire référence aux fichiers
-<tt>/usr/doc/copyright/BSD</tt>, <tt>/usr/doc/copyright/Artistic</tt>,
-<tt>/usr/doc/copyright/GPL</tt> ou <tt>/usr/doc/copyright/LGPL</tt>. 
-</p>
-
-<p>
-N'utiliser pas le fichier copyright comme un fichier <tt>README</tt> 
-général. Si votre paquet a un tel fichier, il devrait être installé dans 
-<tt>/usr/doc/<var>package</var>/README</tt> ou <tt>README.Debian</tt> 
-ou une autre place appropriée.
+	<p>
+Les paquets distribués sous la licence «&nbsp;UCB BSD&nbsp;», la licence 
+«&nbsp;Artistic&nbsp;», la licence «&nbsp;GNU GPL&nbsp;» ou la licence 
+«&nbsp;GNU LGPL&nbsp;» feront référence aux fichiers 
+<<tt>/usr/share/common-licenses/BSD</tt>,
+	  <tt>/usr/share/common-licenses/Artistic</tt>,
+	  <tt>/usr/share/common-licenses/GPL</tt> et
+	  <tt>/usr/share/common-licenses/LGPL</tt>
+	  <footnote>
+	    <p>
+Pourquoi «&nbsp;licence&nbsp;» et pas «&nbsp;copyright&nbsp;» ? Parce que jusqu'à présent
+<tt>/usr/doc/copyright</tt> contenait tous les fichiers de copyright, plus 
+les quatre licences classiques GPL, LGPL, Artistic et BSD. Maintenant
+les fichiers qui donnent aux paquets des copyrights particuliers ne sont plus
+dans un répertoire commun. Une fois que <tt>/usr/doc/copyright</tt> est
+presque vide, il est sensé de changer «&nbsp;copyright&nbsp;» en «&nbsp;license&nbsp;». Pourquoi
+«&nbsp;licences communes&nbsp;» et pas  «&nbsp;licenses&nbsp;» ? Parce que si je mets simplement
+«&nbsp;licenses&nbsp;», je suis sûr de recevoir un rapport de bogue disant «&nbsp;la
+licence foo n'est pas dans le répertoire des licences.&nbsp;» Il n'y a pas toutes 
+les licences, seulement les plus communes. Je pourrais utiliser
+/usr/share/doc/common-licenses, mais je pense que c'est trop long, et puis,
+la licence GPL ne dit pas tout, c'est simplement une licence.
+	    </p>
+	  </footnote>.
+	</p>
+	
+	<p>
+Vous ne devez pas utiliser le fichier copyright comme un fichier 
+<tt>README</tt> général. Si votre paquet possède un tel fichier, vous 
+l'installerez dans <tt>/usr/doc/<var>package</var>/README</tt> ou 
+<tt>README.Debian</tt> ou dans un autre endroit approprié.
 </p>
 </sect>
 
@@ -685,46 +3806,62 @@ ou une autre place appropriée.
 <heading>Exemples</heading>
 
 <p>
-Tous les exemples (configuration, fichiers source, autres) doivent être
-installés dans un répertoire <tt>/usr/doc/<var>package</var>/examples</tt>.
-Ces fichiers ne doivent pas être utilisés par un quelconque programme
--- ils sont ici pour le bénéfice de l'administrateur système et des 
-utilisateurs comme documentation seulement.
+On installera tous les exemples (configuration, fichiers source, autres) dans 
+un répertoire <tt>/usr/share/doc/<var>package</var>/examples</tt>.
+Ces fichiers ne seront pas utilisés par un quelconque programme.
+Ils ne sont là qu'en tant que documentation, et pour le seul bénéfice de 
+l'administrateur système et des utilisateurs.
+On installera les exemples concernant une architecture particulière dans un 
+répertoire <tt>/usr/lib/<var>package</var>/examples</tt> et les fichiers dans
+<tt>/usr/share/doc/<var>package</var>/examples</tt> seront des liens 
+symboliques. Ou bien, ce dernier répertoire sera un lien vers le premier.
 </p>
 </sect>
 
 <sect id="instchangelog">
-<heading>Fichiers Changelog</heading>
+<heading>Les fichiers «&nbsp;Changelog&nbsp;»</heading>
 
 <p>
-Ces fichiers doivent contenir une copie du fichier <tt>debian/changelog</tt>
-de votre racine source Debian, et une copie du fichier changelog
-source s'il existe. Le fichier debian/changelog devrait être installé dans 
-<tt>/usr/doc/<var>package</var></tt> comme <tt>changelog.Debian.gz</tt>.
-Si le changelog source est un fichier texte, il doit être accessible à
-<tt>/usr/doc/<var>package</var>/changelog.gz</tt>. Si le changelog 
-source est un fichier HTML, il doit être accessible à
-<tt>/usr/doc/<var>package</var>/changelog.html.gz</tt>. Si le changelog
-source n'est pas déjà conforme à cette convention de nommage, alors
-cela doit être réalisé soit en supprimant ce fichier ou en ajoutant
-des liens symboliques, à la discrétion du responsable du paquet.
+Les paquets qui ne sont pas originaires de Debian doivent contenir,
+dans <tt>/usr/share/doc/<var>package</var></tt>, une copie nommée
+<tt>changelog.Debian.gz</tt> du fichier <tt>debian/changelog</tt> qui est dans
+l'arborescence des sources.
+S'il existe un «&nbsp;changelog&nbsp;» original, il sera accessible en fichier
+texte comme <tt>/usr/share/doc/<var>package</var>/changelog.gz</tt>.
+Si le «&nbsp;changelog&nbsp;» original est distribué comme fichier HTML,
+il sera rendu disponible en tant que
+<tt>/usr/share/doc/<var>package</var>/changelog.html.gz</tt> et le
+<tt>changelog.gz</tt> sera produit en utilisant p.ex.
+<tt>lynx -dump -nolist</tt>.
+Si le changelog original n'est pas déjà conforme 
+à cette convention, alors cela peut être réalisé soit en renommant ce fichier 
+soit en créant un lien symbolique, c'est à la convenance du responsable
+du paquet<footnote><p> Argument : on n'a pas à chercher dans deux endroits
+les «&nbsp;changelogs&nbsp;» originaux simplement parce qu'ils sont dans un
+format HTML.</footnote>.
 </p>
 
 <p>
-Tout deux doivent être installés compressés par <tt>gzip -9</tt>, car 
-ils deviendront imposants avec le temps même s'ils débutent petit.
+Ces fichiers seront installés comprimés par <tt>gzip -9</tt>, car 
+ils grossissent avec le temps même s'ils commencent petitement.
 </p>
 
 <p>
-Si un paquet a seulement un changelog qui est utilisé à la fois comme
-changelog Debian et source car il n'y a pas de responsable original
-séparé alors ce changelog devrait habituellement être installé sous
-<tt>/usr/doc/<var>package</var>/changelog.gz</tt>. S'il existe un 
-responsable principal mais pas de changelog source alors le changelog 
-Debian devrait être toujours appelé <tt>changelog.Debian.gz</tt>.
+Quand un paquet a un seul changelog, utilisé à la fois comme
+changelog Debian et changelog original car le responsable principal est le même
+que le responsable Debian, on appellera alors ce changelog de façon ordinaire :
+<tt>/usr/share/doc/<var>package</var>/changelog.gz</tt>. S'il y a un 
+responsable principal mais pas de changelog source, on appellera toujours le 
+changelog Debian <tt>changelog.Debian.gz</tt>.
 </p>
 </sect>
 </chapt>
 
 </book>
+</debiandoc>
+
+
+
+
+
 
