@@ -21,7 +21,7 @@
 #   13 May 1999 - v1.3
 #        Add -v option to MAKEDEV, so we can watch progress.
 #   17 May 1999 - v1.4
-#        Shufle around the order of initial commands. Esp, copy
+#        Shuffle around the order of initial commands. Esp, copy
 #        the password file before invoking MAKEDEV fd, before
 #        calling dpkg first time.
 #        Also, insert special calls to dpkg for missing dependencies.
@@ -56,6 +56,9 @@
 #        Don't attempt to remove /var/mail.
 #        Don't fix /tmp, it's okay.
 #        [Kill sucking console process if it exists.] Commented out.
+#    6 Mar 2001 -v 2.7
+#        Add force depends to libc0.2 configuration because of "hurd".
+#        Add force depends to dpkg configuration because of "sysvinit".
 
 # Make sure the filesystem is writeable
 
@@ -103,8 +106,8 @@ if [ ! -e /dev/console ] ; then
 	cd /dev
 	/bin/sh ./MAKEDEV -v fd
 
-	# Configure libc very soon.
-	/bin/dpkg --configure libc0.2
+	# Configure libc very soon. Ignore dependency on the Hurd.
+	/bin/dpkg --force-depends --configure libc0.2
 
 	# Configure packages with missing dependencies:
 	if [ -e /var/lib/dpkg/info/bsdutils.list ] ; then
@@ -139,6 +142,7 @@ dpkg --configure mawk
 dpkg --configure base-passwd
 dpkg --configure base-files
 dpkg --configure libdb2
+dpkg --force-depends --configure dpkg
 dpkg --pending --configure
 
 echo I just make sure that /libexec/runsystem is properly updated.
