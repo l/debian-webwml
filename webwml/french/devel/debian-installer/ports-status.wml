@@ -1,6 +1,6 @@
 #use wml::debian::template title="État des portages de l'installateur Debian" NOHEADER="true"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.4" maintainer="Nicolas Bertolissio"
+#use wml::debian::translation-check translation="1.9" maintainer="Nicolas Bertolissio"
 
 <define-tag buglink><a href="http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=%0">#%0</a></define-tag>
 
@@ -26,6 +26,8 @@ href="getting_started">Comment participer à l'installateur Debian</a>.</p>
 <h2>Brèves</h2>
 
 <ul>
+  <li><b>30&nbsp;septembre&nbsp;2003</b>&nbsp;:
+    mise à jour de Richard Hirst pour l'architecture ia64&nbsp;;
   <li><b>1er&nbsp;août&nbsp;2003</b>&nbsp;:
     mise à jour de états des architectures alpha et mips&nbsp;;</li>
   <li><b>1er&nbsp;juillet&nbsp;2003</b>&nbsp;:
@@ -133,7 +135,7 @@ href="getting_started">Comment participer à l'installateur Debian</a>.</p>
    <td>non disponible</td>
    <td><a href="mailto:jbailey@nisa.net">Jeff Bailey</a></td>
    <td>travail non commencé&nbsp;; nécessite de terminer le portage de
-   deboostrap</td>
+   debootstrap</td>
    <td>cdrom<br>
        net floppy</td>
    <td>non disponible</td>
@@ -162,10 +164,10 @@ href="getting_started">Comment participer à l'installateur Debian</a>.</p>
   <td>2.4.20</td>
   <td><a href="mailto:bdale@debian.org">Bdale Garbee</a>,<br>
       <a href="mailto:rhirst@linuxcare.com">Richard Hirst</a></td>
-  <td>une installation réussie&nbsp;:-)</td>
-  <td>cdrom<br>
-      pxelinux</td>
-  <td>non disponible</td>
+  <td><a href="#ia64">voir les notes détaillées</a></td>
+#  <td>cdrom<br>
+#      pxelinux</td>
+#  <td>non disponible</td>
   </tr>
 
 <tr bgcolor="#f7ff60">
@@ -302,6 +304,55 @@ href="getting_started">Comment participer à l'installateur Debian</a>.</p>
       la semaine.</li>
 </ul>
 
+<h3><a name="ia64">ia64</a></h3>
+<ul>
+  <li>30&nbsp;septembre&nbsp;2003</li> (Richard Hirst sur debian-boot)&nbsp;:
+      quelques entrées de menus (la détection du cdrom, et celle du matériel
+      complète, autant que je me souvienne) affichaient des messages indiquant
+      que quelque chose s'était mal passé avec «&nbsp;modprobe floppy&nbsp;».
+      L'architecture ia64 a besoin d'exécuter «&nbsp;modprobe ide-floppy&nbsp;»
+      à la place, et l'architecture hppa ne gère pas les disquettes pour le
+      moment. <!-- atm = at the moment ? --> Impossible de savoir quelle est la
+      meilleure façon de traiter la spécificité de cette architecture. <!-- Not
+      sure of the best way to make this arch specific. --><br>
+      L'option de configuration des partitions affiche un message sur l'échec
+      de chargement du module xfs &mdash;&nbsp;je n'en ai pas, il ne faudrait
+      donc pas essayer de le charger, ou échouer silencieusement. Actuellement,
+      j'ai la priorité moyenne.</br>
+      J'ai aussi essayé avec succès une installation par le réseau (en fait en
+      chargeant le noyau et le disque virtuel initial à partir d'une disquette,
+      mais en utilisant l'image TYPE=netboot).</br>
+      J'utilise le frontal newt, qui a l'air pas mal, sauf pour quelques noms
+      de paquets qui sortent du bord de l'écran pendant l'installation de base.
+      Le code du frontal devrait peut-être couper le début du chemin du
+      fichier, en conservant intact le premier mot de la ligne, comme
+      ceci&nbsp;:<br>
+      Récupération&nbsp;: ...ebian/pool/main/f/foobar_1.2_ia64.deb<br>
+      Ce problème est spécifique au frontal, bien sûr, puisque c'est l'élément
+      qui connaît la largeur de la fenêtre.</li>
+  <li><b>27&nbsp;septembre&nbsp;2003</b> (Richard Hirst sur debian-boot)&nbsp;:
+      L'installation à partir de CD fonctionne, bien que mon système de
+      construction ait des corrections locales de quelques bogues pour lesquels
+      j'attends de nouvelles versions des paquets suivants&nbsp;:
+  <ul>
+    <li><buglink 210570>&nbsp;&mdash;
+	discover-data, correction du module utilisé pour diverses cartes
+	QLogic,</li>
+    <li><buglink 210359>&nbsp;&mdash;
+	kernel-patch-2.4.20-ia64, problème avec les en-têtes du noyau de
+	CONFIG_TR kernel headers problem, casse busybox-cvs,</li>
+    <li><buglink 212328>&nbsp;&mdash;
+	kernel-patch-2.4.20-ia64, inclusion d'ide-probe-mod.o,</li>
+    <li><buglink 211088>&nbsp;&mdash;
+	module-init-tools, échec de l'installation à cause de
+	«&nbsp;<i>arch/generic</i>&nbsp;» manquant.</li>
+	<!-- because arch/generic missing -->
+  </ul>
+      Je sais que Bdale est en voyage, et je m'occuperai des bogues des
+      rustines du noyau bientôt.</li>
+</ul>
+
+
 <h3><a name="m68k">m68k</a></h3>
 <ul>
   <li><b>9&nbsp;mars&nbsp;2003</b>&nbsp;:
@@ -328,6 +379,25 @@ href="getting_started">Comment participer à l'installateur Debian</a>.</p>
       le bogue <buglink 172828> affecte aussi l'architecture mipsel.</li>
 </ul>
 
+<h3><a name="powerpc">powerpc</a></h3>
+<ul>
+  <li><b>30&nbsp;septembre&nbsp;2003</b>&nbsp;:
+      Gaudenz Steinlin construit désormais des images quotidiennement et les
+      télécharge dans le répertoire powerpc sur <a
+      href="http://gluck.debian.org/cdimage/testing/">gluck.debian.org</a>.
+      Certaines permettent même de démarrer des machines&nbsp;!</li>
+  <li><b>1er&nbsp;juillet&nbsp;2003</b>&nbsp;:
+      Gaudenz Steinlin a écrit une page documentant des trucs et astuces pour
+      <a href="http://www.soziologie.ch/users/steinlin/d-i/">faire fonctionner
+      l'installateur Debian sur powerpc</a>&nbsp;;</li>
+  <li><b>9&nbsp;mars&nbsp;2003</b>&nbsp;:
+      C. Walters ne travaille pas dessus actuellement&nbsp;; C. Tillman
+      commence&nbsp;;<br> Rolf Brudeseth teste des premières constructions sur
+      IBM 43p&nbsp;;<br> amck annonce des images d'installation à
+      télécharger&nbsp;; il y a du travail à faire pour créer des CD de
+      démarrage.</li>
+</ul>
+
 <h3><a name="s390">s390</a></h3>
 <ul>
   <li><b>26&nbsp;mars&nbsp;2003</b>&nbsp;:
@@ -344,20 +414,6 @@ href="getting_started">Comment participer à l'installateur Debian</a>.</p>
       construction des noyaux de l'architecture sparc64&nbsp;; des tests sont
       en cours actuellement&nbsp;; s'ils sont concluants, les micro-paquets du
       noyau seront téléchargés.</li>
-</ul>
-
-<h3><a name="powerpc">powerpc</a></h3>
-<ul>
-  <li><b>1er&nbsp;juillet&nbsp;2003</b>&nbsp;:
-      Gaudenz Steinlin a écrit une page documentant des trucs et astuces pour
-      <a href="http://www.soziologie.ch/users/steinlin/d-i/">faire fonctionner
-      l'installateur Debian sur powerpc</a>&nbsp;;</li>
-  <li><b>9&nbsp;mars&nbsp;2003</b>&nbsp;:
-      C. Walters ne travaille pas dessus actuellement&nbsp;; C. Tillman
-      commence&nbsp;;<br> Rolf Brudeseth teste des premières constructions sur
-      IBM 43p&nbsp;;<br> amck annonce des images d'installation à
-      télécharger&nbsp;; il y a du travail à faire pour créer des CD de
-      démarrage.</li>
 </ul>
 
 <hrline>
