@@ -1,0 +1,145 @@
+#use wml::debian::template title="Debian GNU/Hurd --- Instalación" NOHEADER="yes"
+#use wml::debian::translation-check translation="1.15"
+[ <a href="..">Arquitecturas</a> ]
+[ <a href="index">Debian GNU/Hurd</a> ]
+[ <a href="hurd-news">Noticias</a> ]
+[ <b>Instalación</b> ]
+[ <a href="hurd-cd">CDes del Hurd</a> ]
+[ <a href="hurd-doc">Documentación</a> ]
+[ <a href="hurd-devel">Desarrollo</a> ]
+[ <a href="hurd-links">Enlaces</a> ]
+[ <a href="hurd-contact">Contaco</a> ]<p>
+
+<h1>
+Debian GNU/Hurd</h1>
+
+<h2>
+Instalación</h2>
+
+<h3>
+Hardware</h3>
+<p>
+Por favor, compruebe la <a
+href="http://www.urbanophile.com/arenn/hacking/hurd/hurd-hardware.html">Guía de Compatibilidad del Hardware</a> para saber que hardware tiene soporte en el Hurd.</p>
+
+<h3>
+Software</h3>
+<p>
+Hay disponible un documento excelente, la <a
+href="http://www.pick.ucam.org/~mcv21/hurd.html">Guía Fácil</A>, de
+Matthew Vernon, que debería leer sin duda (pero vaya con cuidado, Matthew
+no siempre tiene tiempo para mantenerla actualizada. No se confunda con
+instrucciones ligeramente anticuadas). Abajo puede encontrar todo lo que
+necesita para obtener un sistema operativo, pero la Guía Fácil tiene
+probablemente algún detalle de interés que le proporciona más información
+acerca de la instalación.</p>
+
+<p>
+Hay dos maneras de instalar el sistema Debian GNU/Hurd. La primera hace
+posible instalar directamente desde los paquetes debian, pero requiere
+ <code>dpkg</code>, el gestor de paquetes de Debian. Esto puede ser
+difícil si usa una distribución de Linux que no sea Debian, o si ni 
+siquiera usa Linux. Por tanto, hay un segundo método que utiliza
+un archivo <code>tar</code> preparado. Después de instalarlo, puede 
+actualizar su sitema a la versión más actual de los paquetes Debian 
+de forma nativa. Abajo se describen ambos métodos con más detalle.</p>
+
+<h4>
+Preparativos Comunes</h4>
+<p>
+Para comenzar la instalación, construya la partición del Hurd con <code>mke2fs
+-O sparse_super -o hurd /dev/PARTICION</code>, donde <code>PARTICION</code> es
+la partición del disco duro que quiere dedicar al Hurd. Nótese que actualmente
+ el tamaño de la partición no debería exceder alrededor de 1 GigaByte, 
+debido a una limitación conocida del Hurd.
+<p>
+Luego monte su partición en algún lugar seguro. Yo uso <code>/gnu</code> como
+punto de montaje, principalmente porque lo usamos por defecto para compilación
+cruzada. Cualquier otro lugar es bueno, así como hacer esto dentro de una
+imagen de disco contenida en un fichero (montaje en bucle). A partir de aquí,
+supondré que utiliza <code>/gnu</code>. Por favor, cambie las órdenes 
+adecuadamente si usa otro lugar.</p>
+
+<h4>
+Dos Alternativas</h4>
+
+<h5>
+Instalación Usando los Paquetes Debian</h5>
+<p>
+Para instalar el Debian GNU/Hurd, necesita encontrar los paquetes 
+de software Debian y mis guiones de instalación. Primero obtenga los
+siguientes guiones:
+<ul>
+<li>
+<a href="extra-files/cross-install"><code>cross-install</code></a> -
+Instalación de un grupo de paquetes desde Linux</li>
+<li>
+<a href="extra-files/native-install"><code>native-install</code></a> -
+Configuración del sistema</li>
+<li>
+<a href="extra-files/dpkg-hurd"><code>dpkg-hurd</code></a> - Usa dpkg
+sobre la partición del Hurd desde Linux</li></ul></p>
+<p>
+Si no tiene Debian, también va a necesitar una versión de 
+<code>dpkg</code> para su sistema.</p>
+<p>
+Lo último pero no menos importante, se necesitan los paquetes Debian.
+Están en cualquier <a href="../../distrib/ftplist">réplica FTP de Debian</a>, 
+en el directorio <code>debian/dists/unstable/main/binary-hurd-i386/</code>.
+Necesita un cierto conjunto, que se especifica al principio del guión
+<code>dpkg-hurd</code>. Las versiones recientes de
+<code>cross-install</code> ofrecen la posibilidad de descargar de forma
+automática para su comodidad. Esta opción requiere una conexión de red
+y la utilidad
+<code>wget</code>. Sin embargo, puede descargar de forma manual los
+paquetes y guardarlos en un único directorio o distribuirlos en 
+subdirectorios del modo que están organizados en el sitio FTP.</p>
+<p>
+Ahora cambie el directorio actual, <code>cd</code>, al directorio donde
+tiene los guiones y los paquetes Debian. Si utiliza un único directorio,
+debe contener todos los archivos. Si usa la organización del FTP para 
+los paquetes, asegúrese de que los guiones están en el directorio más
+alto, de modo que puedan encontrar los paquetes que están en 
+<code>base/</code> etc.  Ejecute <code>./cross-install /gnu</code>. Si todo
+va bien, los paquetes se instalarán y se aplicarán algunos parches para
+solucionar problemas conocidos. Ahora continúe con <a
+href="#reboot">Rearrancando el Sistema</a>.</p>
+
+<h5>
+Instalación usando el Archivo <code>tar</code></h5>
+<p>
+Algunas veces subo instantáneas del sistema base actual a <code><a
+href="ftp://alpha.gnu.org/pub/gnu/hurd/contrib/marcus/">ftp://alpha.gnu.org/pub/gnu/hurd/contrib/marcus/</a></code>
+Esos archivos se llaman <code>gnu-YYYYMMDD.tar.gz</code>, donde
+<code>YYYYMMDD</code> es la fecha de la instantánea. Esos ficheros se 
+pueden usar para instalar el Hurd incluso aunque no tenga disponible
+ una versión operativa del gestor de paquetes <code>dpkg</code>.
+<p>
+Descargue el archivo tar con fecha más reciente. Este es el único archivo
+que va a necesitar para obtener un sistema operativo (junto con GRUB). 
+Pase al directorio /gnu, <code>cd /gnu</code>, para ir a la raiz de la
+partición del Hurd. Ahora extraiga el archivo tar con la orden
+ <code>tar --same-owner -xpzf
+/somewhere/gnu-YYYYMMDD.tar.gz</code> usando el camino y la 
+fecha correctas.</p>
+
+<h4><a name="reboot">
+Rearrancando el Sistema</a></h4>
+<p>
+Ahora rearranque el sistema y use GRUB para arrancar desde la partición
+del Hurd. No daré aquí información detallada sobre GRUB y los esquemas
+de nomenclatura de particiones, esto se trata en otro lugar. Encontrará
+esto y otra información útil en la <a
+href="http://www.pick.ucam.org/~mcv21/hurd.html">Guía Fácil</a>, de
+M. C. Vernon.</p>
+<p>
+Después de volver a arrancar, sólo necesita ejecutar 
+<tt>./native-install</tt> para finalizar la instalación. ¡Diviértase!</p>
+
+
+
+
+
+
+
+
