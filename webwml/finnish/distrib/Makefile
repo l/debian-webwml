@@ -19,3 +19,4 @@ books.$(LANGUAGE).html: ../../english/distrib/books.def \
 		../../english/distrib/books.def $(TEMPLDIR)/countries.wml
 pre-installed.$(LANGUAGE).html: ../../english/distrib/pre-installed.data \
 		../../english/distrib/pre-installed.data $(TEMPLDIR)/countries.wml
+packages.$(LANGUAGE).html: ../../english/releases/info
