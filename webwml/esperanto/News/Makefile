@@ -17,3 +17,4 @@ index.$(LANGUAGE).html: index.wml $(wildcard 1998/1998*.wml) \
      $(wildcard $(ENGLISHSRCDIR)/News/1999/1999*.wml) \
      $(wildcard 1999/1999*.title) \
      $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml
+	$(WML) -Dmlyear=$(shell date '+%y') $(<F)
