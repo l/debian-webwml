@@ -3,6 +3,7 @@
 <perl>
 
 use Net::LDAP;
+use Date::Parse;
 
 # this is ok this way.  It says which server to query, on which port and what
 # to fetch from it.  The attribs array could be reduced.
@@ -20,6 +21,18 @@ $attrs  = [
     'done',
     'mergedwith'
 ];
+
+sub htmlsanit {
+    %escape = ('<' => 'lt', '>' => 'gt', '&' => 'amp', '"' => 'quot');
+    my $in = shift;
+    my $out;
+    while ($in =~ m/[<>&"]/) {
+        $out.= $`. '&'. $escape{$&}. ';';
+        $in=$';
+    }
+    $out .= $in;
+    return $out;
+}
 
 # The maintainers flat database
 $MAINTAINERS = "/org/ftp.debian.org/ftp/indices/Maintainers";
@@ -40,11 +53,16 @@ $mesg = $ldap->search('base' => $base,
                       'filter' => "(package=wnpp)",
                       'attrs' => $attrs) or die;
 
+$curdate = time;
+
 foreach $entry ($mesg->entries) {
+    use integer;
     next if defined ($entry->get('done'));
     my $subject = @{$entry->get('subject')}[0];
     my $bugid = @{$entry->get('bugid')}[0];
+    $age{$bugid} = ($curdate - str2time(@{$entry->get('date')}[0]))/86400;    
     chomp $subject;
+    $subject = htmlsanit($subject);    
     # Make order out of chaos    
     if ($subject =~ m/^(?:ITO|RFA):\s*(\S+)(?:\s+-+\s+)?/) {
         $rfa{$bugid} = $1 . ($'?": ":"") . $';
@@ -59,18 +77,16 @@ foreach $entry ($mesg->entries) {
         $withdrawn{$bugid} = $1 . ($'?": ":"") . $';
     } elsif ($subject =~ m/^ITA:(?:\s*(?:ITO|RFA|O|W):)?\s*(\S+)(?:\s+-+\s+)?/) {
         $ita{$bugid} = $1 . ($'?": ":"") . $';
-    } elsif ($subject =~ m/^ITP:(?:\s*RFP:)?\s*(\S+)(?:\s+-+\s+)?/) {
-        $itp{$bugid} = $1 . ($'?": ":"") . $';
-    } elsif ($subject =~ m/^RFP:\s*(\S+)(?:\s+-+\s+)?/) {
-        $rfp{$bugid} = $1 . ($'?": ":"") . $';
+    } elsif ($subject =~ m/^ITP:(?:\s*RFP:)?\s*/) {
+        $itp{$bugid} = join(": ", split(/\s+-+\s+/, $',2));
+    } elsif ($subject =~ m/^RFP:\s*/) {
+        $rfp{$bugid} = join(": ", split(/\s+-+\s+/, $',2)); 
     } else {
     	print STDERR "What is this ($bugid): $subject\n";
     }
 }
 
 $ldap->unbind;
-
-$\ = "\n";
 
 my (@rfa_bypackage_html, @rfa_bymaint_html, @orphaned_html, @withdrawn_html);
 my (@being_adopted_html, @being_packaged_html, @requested_html);
@@ -97,15 +113,21 @@ foreach (sort { $withdrawn{$a} cmp $withdrawn{$b} } keys %withdrawn) {
 }
 
 foreach (sort { $ita{$a} cmp $ita{$b} } keys %ita) {
-    push @being_adopted_html, "<li><a href=\"http://bugs.debian.org/$_\">$ita{$_}</a>";
+    push @being_adopted_html, 
+         "<li><a href=\"http://bugs.debian.org/$_\">$ita{$_}</a>, ",
+         "$age{$_} days in adoption.";
 }
 
 foreach (sort { $itp{$a} cmp $itp{$b} } keys %itp) {
-    push @being_packaged_html, "<li><a href=\"http://bugs.debian.org/$_\">$itp{$_}</a>";
+    push @being_packaged_html, 
+         "<li><a href=\"http://bugs.debian.org/$_\">$itp{$_}</a>, ",
+         "$age{$_} days in preparation";
 }
 
 foreach (sort { $rfp{$a} cmp $rfp{$b} } keys %rfp) {
-    push @requested_html, "<li><a href=\"http://bugs.debian.org/$_\">$rfp{$_}</a>";
+    push @requested_html, 
+         "<li><a href=\"http://bugs.debian.org/$_\">$rfp{$_}</a>, ",
+         "requested $age{$_} days ago.";
 }
 
 </perl>
