@@ -124,6 +124,9 @@ warn "Checking subtree $opt_s only\n" if (($opt_v) && ($opt_s));
 # include only files matching $filename
 my $filename = $opt_p || '(\.wml$)|(\.html$)';
 
+# Go to desired directory
+chdir($opt_C) || die "Cannot go to $opt_C\n";
+
 my $cvs = Local::Cvsinfo->new();
 $cvs->options(
 	recursive => 1,
@@ -136,9 +139,6 @@ my $altcvs = $cvs->new();
 
 #   Global .transignore
 my $globtrans = Webwml::TransIgnore->new(".");
-
-# Go to desired directory
-chdir($opt_C) || die "Cannot go to $opt_C\n";
 
 # language configuration
 my $defaultlanguage = 'italian';
