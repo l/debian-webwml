@@ -32,7 +32,6 @@
 
 <menu-item name="ports"         basename="../index">
 <menu-item name="powerpc"       basename="index">
-<menu-item name="devel"         basename="devel">
-<menu-item name="doc"           basename="docu">
 <menu-item name="install"       basename="inst/install">
-
+<menu-item name="doc"           basename="docu">
+<menu-item name="devel"         basename="devel">
