@@ -63,6 +63,26 @@ if (open WMLRC, "$language/.wmlrc")
 	}
 }
 
+# Table of entities used when copying to non-latin1 encodings
+@entities = (
+	'&nbsp;', '&iexcl;', '&cent;', '&pound;', '&curren;', '&yen;',
+	'&brvbar;', '&sect;', '&uml;', '&copy;', '&ordf;', '&laquo;', '&not;',
+	'&shy;', '&reg;', '&macr;', '&deg;', '&plusmn;', '&sup2;', '&sup3;',
+	'&acute;', '&micro;', '&para;', '&middot;', '&cedil;', '&sup1;',
+	'&ordm;', '&raquo;', '&frac14;', '&frac12;', '&frac34;', '&iquest;',
+	'&Agrave;', '&Aacute;', '&Acirc;', '&Atilde;', '&Auml;', '&Aring;',
+	'&AElig;', '&Ccedil;', '&Egrave;', '&Eacute;', '&Ecirc;', '&Euml;',
+	'&Igrave;', '&Iacute;', '&Icirc;', '&Iuml;', '&ETH;', '&Ntilde;',
+	'&Ograve;', '&Oacute;', '&Ocirc;', '&Otilde;', '&Ouml;', '&times;',
+	'&Oslash;', '&Ugrave;', '&Uacute;', '&Ucirc;', '&Uuml;', '&Yacute;',
+	'&THORN;', '&szlig;', '&agrave;', '&aacute;', '&acirc;', '&atilde;',
+	'&auml;', '&aring;', '&aelig;', '&ccedil;', '&egrave;', '&eacute;',
+	'&ecirc;', '&euml;', '&igrave;', '&iacute;', '&icirc;', '&iuml;',
+	'&eth;', '&ntilde;', '&ograve;', '&oacute;', '&ocirc;', '&otilde;',
+	'&ouml;', '&divide;', '&oslash;', '&ugrave;', '&uacute;', '&ucirc;',
+	'&uuml;', '&yacute;', '&thorn;', '&yuml;'
+);
+
 # Loop over command line
 foreach $page (@ARGV)
 {
@@ -210,7 +230,7 @@ sub copy
 			if ($recodelatin1)
 			{
 				# Recode any non-ASCII characters as entities
-				s/([\xA0-\xFF])/&entity($1)/ge;
+				s/([\xA0-\xFF])/$entities[ord($1)-160]/ge;
 			}
 
 			print DST $_;
@@ -229,11 +249,4 @@ sub copy
 	print "Copied $page, remember to edit $dstfile\n";
 	print "and to remove $dsttitle when finished\n"
 		if defined $dsttitle;
-}
-
-# Subroutine to encode a latin-1 character as a HTML entity
-sub entity
-{
-	# Exploiting the fact that latin-1 is a subset of Unicode
-	return '&#' . ord(shift) . ';'
 }
