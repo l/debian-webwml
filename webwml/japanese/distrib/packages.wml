@@ -1,6 +1,6 @@
 #use wml::debian::template title="パッケージ"
 #include "$(ENGLISHDIR)/releases/info"
-#use wml::debian::translation-check translation="1.31"
+#use wml::debian::translation-check translation="1.41"
 
 <DL>
 
@@ -11,11 +11,10 @@
   リーソフトウェアガイドライン</A>にしたがい、自由な利用およびパッケージ
   とそのソースの再配布が保証されています。
 
-  <P><EM>main</EM>ディストリビューションに加え、Debian GNU/Linux のよう
-  なフリーソフトウェアディストリビューションの一部とすることができない、
-  何らかの制約を持ったものもあります。しかし、これらもユーザへのサービス
-  として提供されており、以下のようなものがあります:
-
+  <P>ユーザへのサービスとして、フリーではないライセンスや法律上の問題の
+  ために<EM>main</EM>ディストリビューションに含むことができないパッケージを、
+  独立したセクションとして提供します。セクションには以下のようなものが
+  あります。
     <BLOCKQUOTE><DL>
     <DT><EM>Contrib</EM></DT>
       <DD>このディレクトリにあるパッケージは、それ自体はフリーですが、他
@@ -37,10 +36,9 @@
   </DD>
 
 <: if ( $frozen_release_exists ) { _:>
-<DT><A href="http://packages.debian.org/frozen/"><STRONG>フリーズ版</STRONG>のディストリビューションのパッケージを見る</A></DT>
-
-  <DD>これは、新しい安定版ディストリビューションとしてリリースされる直前、
-  テスト段階の間の一時的な呼称です。
+<DT><A HREF="http://packages.debian.org/frozen/"><STRONG>フリーズ版</STRONG>のディストリビューションのパッケージを見る</A></DT>
+  <DD>これは、新しい安定版ディストリビューションとしてリリースされる直前の
+  一時的な呼称です。
 
   <P>さらなる情報については、<a href="$(HOME)/releases/frozen/">フリーズ
   版ディストリビューションページ</A>を御覧ください。
@@ -49,12 +47,10 @@
 </DD>
 <: } :>
 
-<DT><A href="http://packages.debian.org/testing/"><STRONG>テスト版</STRONG>のディストリビューションのパッケージを見る</A></DT>
-
-  <DD>ここには、上記の安定版ディストリビューションの一部となることを予定
-  しているパッケージがあります。十分にテストされていない(したがって、未
-  発見の重大なバグを持っている可能性がある)か、安定版に取り込めるほどの
-  長い間公開されていないものです。
+<DT><A HREF="http://packages.debian.org/testing/"><STRONG>テスト版</STRONG>のディストリビューションのパッケージを見る</A></DT>
+  <DD>ここには、次の安定版ディストリビューションの一部になる予定の
+  パッケージがあります。開発版(下記参照)のパッケージがテスト版に
+  加わるためには、従わなくてはいけない厳密な基準があります。
 
   <P>さらなる情報については、<a href="$(HOME)/releases/testing/">テスト
   版ディストリビューションページ</A>を御覧ください。
@@ -62,11 +58,14 @@
   <br>&nbsp;
   </DD>
 
-<DT><A href="http://packages.debian.org/unstable/"><STRONG>開発版</STRONG>
+<DT><A HREF="http://packages.debian.org/unstable/"><STRONG>開発版</STRONG>
 ディストリビューションのパッケージを見る</A></DT>
-
-  <DD>ここには、十分なテストを経ていないものや深刻なバグを持ったパッケー
-  ジがあります(システムにダメージを与えるものもあるかもしれません)。</DD>
+  <DD>ここには、Debianで最新のパッケージがあります。パッケージが
+  安定性と品質の基準を満たせば、テスト版に含まれるようになります。
+  <p>開発版のパッケージは、ほとんどテストされてなく、そしてシステムの
+  安定性に影響するほどの問題があるかもしれません。
+  このディストリビューションは、経験豊かなユーザだけが、よく考えてから
+  使うべきです。</DD>
 
 </DL>
 
@@ -75,23 +74,21 @@
 
 <HR>
 
-<H2>パッケージディレクトリを検索</H2>
-
-<P>この検索エンジンは、パッケージのヘッダや説明の中の特定のキーワードを
-検索します。
-
-<BR>
+<H2><A NAME="search_packages">パッケージディレクトリを検索</A></H2>
 
 <FORM METHOD="GET" ACTION="http://packages.debian.org/cgi-bin/search_packages.pl">
-<LABEL>キーワード:</LABEL>
+<LABEL FOR="kw">キーワード:</LABEL>
 <INPUT TYPE="text" SIZE="30" NAME="keywords" ID="kw">
 <INPUT TYPE="submit" VALUE="検索"> <INPUT TYPE="reset" VALUE="リセット">
 <BR>
 検索対象:
-<INPUT TYPE=RADIO NAME="searchon" VALUE="names" CHECKED>
+<INPUT TYPE=RADIO NAME="searchon" VALUE="names" ID="onlynames" CHECKED>
 <LABEL FOR="onlynames">パッケージ名のみ</LABEL>&nbsp;&nbsp;
 <INPUT TYPE=RADIO NAME="searchon" VALUE="all" ID="descs">
 <LABEL FOR="descs">パッケージ説明文</LABEL>
+<BR>
+単語の部分検索:
+<INPUT TYPE="checkbox" NAME="subword" VALUE="1" CHECKED>
 <BR>
 ディストリビューション:
 <SELECT NAME="version">
@@ -99,12 +96,12 @@
   <OPTION VALUE="testing">テスト版</OPTION>
   <OPTION VALUE="stable" SELECTED>安定版</OPTION>
 <: if ( $frozen_release_exists ) { _:>
-  <OPTION VALUE="testing">フリーズ版</OPTION>
+  <OPTION VALUE="frozen">フリーズ版</OPTION>
 <: } :>
   <OPTION VALUE="all">すべて</OPTION>
 </SELECT>
-<BR>セクション:
-  <SELECT NAME="release">
+セクション:
+<SELECT NAME="release">
   <OPTION VALUE="main">main</OPTION>
   <OPTION VALUE="contrib">contrib</OPTION>
   <OPTION VALUE="non-free">non-free</OPTION>
@@ -113,15 +110,18 @@
 </SELECT>
 </FORM>
 
-<P>パッケージ名を検索するには、少なくとも単語を一つ入力しなければなりま
-せん。アスタリスク '*' は各単語の<b>最後</b>に置くことで、ワイルドカード
-として用いることができます。パッケージ説明文の検索では、'and' および '
-or' に続いてキーワードを付加するなどして、標準的な論理演算子が利用できま
-す。
-
+<p>検索はとてもわかりやすく、しかも柔軟です。
+<ul>
+<li>パッケージ名のみの検索では、単語 1 つだけを指定してください。
+<li>標準的な論理演算子 'and' と 'or' を使うことができます。
+<li>単語の部分検索にチェックが入っていなくても、キーワードの最後に
+アスタリスク '*' をつけることで、その単語の部分検索をすることができます。
+<li>単語の部分検索にチェックをすると、前方一致する単語を調べます
+(後方一致ではありません)。
+</ul>
 <HR>
 
-<H2>最新リリースの内容を検索</H2>
+<H2><A NAME="search_contents">最新リリースの内容を検索</A></H2>
 
 <P>この検索エンジンでは、Debian ディストリビューションの中からパッケージ
 の一部である、いかなるファイル(あるいはファイル名の一部)でも検索すること
