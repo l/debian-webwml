@@ -1,88 +1,190 @@
 #use wml::debian::template title="원하는 언어로 웹페이지를 보기 위한 브라우저 설정 방법"
-#use wml::debian::translation-check translation="1.1"
-
-<P>알림: 이 페이지는 아직 공사중입니다. 아래에 설명되어 있는 브라우저 이외의
-다른 브라우저에 대한 설정 방법을 알고 있다면,
-<a href="mailto:webmaster@debian.org">webmaster@debian.org</a>로 알려 주시기
-바랍니다.
+#use wml::debian::translation-check translation="1.43"
 
 <P>전 세계의 모든 사람이 같은 언어를 사용하지 않음은 명백한 사실이다.
 웹이 성장함에 따라, 여러가지 언어로 작성된 웹 페이지를 보게 되는 것은
-자연스러운 현상이다. 그래서 'content negotiation'이 도입되었으며,
-여러분은 언어 설정을 통하여 웹페이지를 해당 언어로 볼 수 있게 되는 것이다.
+자연스러운 현상이다. 그래서 'content negotiation'이라고 불리는 표준이
+도입되었으며, 여러분은 언어 설정을 통하여 웹페이지를 해당 언어로 볼 수 있게
+되는 것이다.
 브라우저와 서버 간의 협상에 의하여 여러분에게 전달될 실제 웹페이지 버전이
 결정된다; 브라우저가 설정 사항을 서버에게 전달하면, 서버는 그것을
-바탕으로 하여 전달할 웹페이지 버전을 결정하는 것이다.
+바탕으로 하여 전달할 웹페이지 버전과 어떤 버전의 문서가 가능한지를 결정하는
+것이다.
 
-<P>웹서버에 원하는 언어가 무엇인지 전달하려면, 브라우저에서 변수를
-설정하여야 한다. 그 방법은 브라우저에 따라 다르다.
+<ul>
+<li><a href="#fix">데비안 웹 페이지가 다른 언어로 보일 경우 해야할 일</a>
+<li><a href="#howtoset">언어 설정을 바꾸는 방법</a>
+</ul>
+
+<h2><a name="fix">데비안 웹 페이지가 잘못된 언어로 보일 경우 해야할 일</a></h2>
+
+<p>데비안 웹 서버로부터 다른 언어의 문서가 전달되는 첫번째 그리고 가장 흔한
+이유는 브라우저 설정이 잘못된 경우이다.
+이 문제를 해결하는 방법은 <a href="#howtoset">적절한 언어로 설정하기</a>
+절을 읽어보기 바란다.</p>
+
+<p>두번째 이유는 깨지거나 혹은 잘못 설정된 캐시 때문이다. 이 문제는 점점 더
+많은 ISP들이 네트웍 트래픽을 줄이는 방법으로 캐시를 사용하면서 늘어나는
+문제이다. 이러한 캐시를 사용하지 않는다고 생각하더라도 <a href="#cache">웹 서버
+캐시에 대한 주의 사항</a>을 읽어보기 바란다.</p>
+
+<p>세번째 이유는 <a href="http://www.debian.org/">www.debian.org</a>에 문제가
+있기 때문이다. 지난 몇년 동안 보고된 문제점 중에서 단지 몇몇 문제만이 서버의
+버그 때문에 일어난 것이었다. 따라서 우리에게 연락하기 전에 먼저 위의 두 문제에
+대해 좀더 조사해보기를 제안한다.
+<a href="http://www.debian.org/">http://www.debian.org/</a>은 동작하지만 미러
+사이트 중 하나가 동작하지 않는다면, 우리에게 알려주기 바란다. 그럼 우리가 미러
+사이트 관리자에게 알려주도록 하겠다.</p>
+
+<p>이러한 문제들을 수정한 후, 다시 페이지를 보기 전에 브라우저의 로컬 캐시
+(디스크와 메모리 상의 캐시 모두)를 지우기 바란다.
+그리고, 확인할 때는
+<a href="http://packages.debian.org/stable/web/lynx.html">lynx</a>를
+사용하기 바란다. 이 브라우저가 우리가 확인한 것 중 유일하게 
+'content negotiation'에 대한 HTTP 명세 사항을 100% 준수하는 브라우저이다.</p>
+
+<h3><a name="cache">프락시 서버의 잠재적인 문제점</a></h3>
+
+<p>프락시 서버는 기본적으로 아무런 자신의 내용을 가지고 있지 않는 웹 서버이다.
+이 서버들은 사용자와 실제 웹 서버 사이에 위치한다. 이들은 웹 페이지에 대한
+사용자의 요구를 가로채고 그 페이지를 가지고 온다. 그런 다음 사용자에게 전달하고,
+또한 다음 요구에 대비해서 로컬에 복사본을 만들어놓는다. 이것은 많은 사용자들이
+같은 페이지를 요구할 때 네트웍 트래픽을 줄여줄 수 있다.</p>
+
+이것은 대부분의 경우 아주 훌륭한 생각이다. 하지만, 캐시에 문제가 있을 때는
+문제가 발생한다. 특히 몇몇 오래된 프락시 서버는 'content negotiation'를 이해하지
+못한다. 이것은 나중에 다른 언어의 페이지를 요구하더라도, 하나의 언어에 대한
+페이지를 저장해두고 이것을 제공하게 된다. 이런 경우 오직 한가지 해결 방법은
+캐시 소프트웨어를 업그레이드하거나 바꾸는 것이다.</p>
+
+역사적으로 사람들은 자신의 브라우저를 하나의 언어로 설정할 때 프락시를 사용했다.
+하지만, 이제는 그렇지 않다. 여러분의 ISP는 모든 HTTP 협상 요구를 투명한
+프락시를 통해 재전송할 것이다. 만약 프락시가 'content negotiation'을 제대로
+다루지 못한다면, 사용자는 잘못된 언어로 저장된 페이지를 받게 될 것이다.
+이런 경우 해결할 수 있는 방법은 ISP가 캐시 소프트웨어를 업그레이드하거나
+바꾸도록 요구하는 것이다.</p>
+
+<hr>
+
+<h2><a name="howtoset">언어 설정을 바꾸는 방법</a></h2>
+
+<p>말할 수 있는 모든 언어로 기본 언어를 설정할 수 있다. 그리고, 목록의
+제일 마지막에 백업 언어로 영어('en')를 추가하는 것은 좋은 생각이다.
+데비안 웹 페이지의 원래 언어는 모두 영어이고 모든 문서들이 여러분이 원하는
+언어로 번역된 것은 아니기 때문이다.</p>
+
+# translators can modify the below example to mention their language
+
+<p>예를 들어, 한국어 사용자라면 언어 변수의 처음에 한국어(언어 코드로 'ko')를
+설정하고 그 다음에 영어(언어 코드로 'en')을 설정하면 된다.</p>
+
+<p><a href="#setting">특정 브라우저에서 언어 설정하는 방법에 대한 상세한
+설명</a>을 보기 바란다.</p>
+
+<p>한가지 주의할 것은 언어의 하위 분류를 사용할 때이다. 예를 들어,
+'ko-KR, en'이라고 사용하는 것은 HTTP 명세 사항을 읽지 않은 대부분의 사람들이
+예상하는 데로 동작하지 않는다.</p>
+
+<p><strong>특별한 이유가 없다면 언어에 국가 코드를 붙이지 않기를 강력히
+권고한다.</strong> 붙여야 한다면, 국가 코드 없이 언어 코드만을 따로 추가해줘야
+한다.</p>
+
+<p>설명: 서버가 'ko-KR, en'이라는 기본 언어 설정으로 문서 요청을 받게 되면,
+영어('en') 버전보다 한국어('ko') 버전을 먼저 제공하지 않을 것이다. 서버는
+오직 언어 확장자로 'ko-kr'을 가지는 파일의 버전이 있을 경우에 한국어 버전을
+전송할 것이다.</p>
+
+<p>따라서, 기본 언어를 'ko-KR, ko, en'으로 설정하던지, 아니면 간단히
+'ko, en'으로 설정해야 한다.</p>
+
+<p>기본 언어 설정에 대한 더 자세한 정보는
+<a href="http://httpd.apache.org/docs/content-negotiation.html">'content
+negotiation'에 대한 Apache 문서</a>를 참고하기 바란다.</p>
+
+<h3><a name="setting">브라우저에서 기본 언어 설정</a></h3>
+
+
+<p>브라우저에 기본 언어를 설정하기 위해서는 웹 서버에 전달할 변수를 설정해줘야
+한다. 이것은 여러분의 사용하는 브라우저에 따라 설정 방법이 달라진다.</p>
 
 <DL compact>
-<DT><strong>lynx</strong>
-<DD><kbd>.lynxrc</kbd> 파일에서 <kbd>preferred_language</kbd> 변수를
-설정하거나 lynx를 실행한 후 'O' 명령으로 설정한다. 
-<DT><strong>netscape 3.x</strong>
-<DD>넷스케이프 app-defaults 파일 또는 <kbd>~/.Xresources</kbd> 파일에
-다음을 추가한다.
+
+<DT><strong>Mozilla / Netscape 4.x 혹은 이후 버전</strong>
+<DD>
+<pre>
+     Edit -&gt; Preferences -&gt; Navigator -&gt; Languages
+</pre>
+주의 사항: Netscape 4.x 버전에서는 언어 선택할 때 리스트 상자에 나오는
+언어를 선택해야 한다. 직접 언어를 입력해서 적는 경우에는 문제점이 생긴다는
+보고가 있다.
+
+<DT><strong>Netscape 3.x</strong>
+<DD>다음을 Netscape app-defaults 파일 혹은 <kbd>~/.Xresources</kbd> 파일에
+추가하라.
 <pre>
      *httpAcceptLanguage: [preferred_language string]
 </pre>
-<DT><strong>netscape 4.x</strong>
-<DD>다음의 순서대로 선택한다.
-<pre>
-     Edit -> Preferences -> Navigator -> Languages
-</pre>
-제공되는 언어 목록에서 원하는 언어를 선택한다. 그렇게 하지 않고
-원하는 언어를 직접 손으로 입력해 넣는다면 문제가 일어날 가능성이 많다.
-<DT><strong>W3</strong> (emacs based web browser)
-<DD>
-<pre>(setq url-mime-language-string  "preferred_language=fr; q=1.0, en; q=0.5")</pre>
-또는 custom package (assuming URL version p4.0pre.14)를 이용한다면:
-<pre>Hypermedia -> URL -> Mime -> Mime Language String...</pre>
-<DT><strong>IE</strong>
+
+<DT><strong>Internet Explorer 5.x and later versions</strong>
 <DD>
 <pre>
-     View -> Internet Options -> General/Languages
+     Tools (or Extras) -&gt; Internet Options -&gt; Languages
 </pre>
+
+<DT><strong>Internet Explorer 4.x</strong>
+<DD>
+<pre>
+     View -&gt; Internet Options -&gt; General/Languages
+</pre>
+
+<dt><strong>Internet Explorer 5.x for MacOS</strong></dt>
+<dd>
+<pre>
+     Edit -&gt; Preferences -&gt; Web Browser -&gt; Language/Fonts
+</pre>
+</dd>
+
 <DT><strong>Opera</strong>
-<DD>???
+<DD>Windows:
+<pre>
+     File -&gt; Preferences -&gt; Languages
+</pre>
+<DD>Linux:
+<pre>
+     File -&gt; Preferences -&gt; Document -&gt; Languages
+</pre>
+
+<DT><strong>lynx</strong>
+<DD><kbd>.lynxrc</kbd> 파일의 <kbd>preferred_language</kbd> 변수를 편집하거나
+lynx 실행 중 'O' 명령을 사용해서 설정할 수 있다.
+
+<p>예를 들어, <kbd>.lynxrc</kbd> 파일에 다음 줄을 추가하라.</p>
+
+<pre>
+preferred_language=ko; q=1.0, en; q=0.5
+</pre>
+
+<DT><strong>W3</strong> (emacs 기반의 웹 브라우저)
+<DD>
+<pre>(setq url-mime-language-string  "preferred_language=ko; q=1.0, en; q=0.5")</pre>
+또는 맞춤 패키지를 사용한다면 (URL 버전 p4.0pre.14이라고 가정하고)
+<pre>Hypermedia -&gt; URL -&gt; Mime -&gt; Mime Language String...</pre>
+
 <DT><strong>iCab</strong>
 <DD>
 <pre>
-     Edit -> Preferences -> Browser -> Fonts,Languages
+     Edit -&gt; Preferences -&gt; Browser -&gt; Fonts,Languages
 </pre>
+
+<DT><strong>W3M</strong>
+<DD>
+<pre>
+     Options (o) -&gt; Other Behavior -&gt; Accept-Language
+</pre>
+
 </DL>
 
-<H3>변수 값으로 무엇을 설정해야 하나?</H3>
-
-<P>데비안 웹 페이지는 영어이며, 모든 자료가 여러분이 원하는 언어로
-번역되어 있지 않을 수도 있다. 따라서 해당 자료가 여러분이 원하는 언어로
-변역되어 있지 않을 경우 영어 자료를 보여주도록 변수를 설정하는 것이 좋다.
-예를 들어 lynx의 경우, 여러분이 프랑스어를 사용한다면 <kbd>.lynxrc</kbd>
-파일에 다음 한 줄을 넣어주면 된다.
-<pre>
-preferred_language=fr; q=1.0, en; q=0.5
-</pre>
-이것은 해당 자료의 프랑스어 버전이 있다면 그것을 보여주고, 없다면 영어
-버전을 보여달라고 서버에게 말하는 것과 같다.
-
-<p>조심해야 할 것은 어떤 언어를 지정할 때 그 언어의 하위 분류를 사용해서는
-안된다는 것이다. 예를 들어, 'en-GB, fr'을 사용한다면 기대했던 것을 얻지는
-못할 것이다 (http 스펙을 읽어 보기 바란다).
-예를 들어, 'en-GB, fr'의 순서로 자료를 보여달라는 요청을 받았다고 하자.
-그런데 이 서버에 있는 자료가 'en'과 'fr' 버전이라면 프랑스어 자료를
-보여주게 된다. 즉, 해당 자료의 파일 이름에 .en-gb 라는 언어 표시 확장자가
-붙어 있다면, 프랑스어 자료가 아닌 영어 자료를 보여주었을 것이다. 따라서
-영어 자료를 우선적으로 보고 싶다면, 브라우저가 서버에 변수를 보낼 때
-'en-GB, en, fr' 또는 간단히 'en, fr'으로 보내도록 설정해야 한다.
-비록 서버가 다르게 반응하지만, 예를 들어 en을 요청하면 en-us를 돌려 줄 수도
-있다.
-
-<p><strong>합당한 이유가 아니라면, 어떤 언어에 국가 표시 확장자를 붙이지
-않기 바린다</strong>. 만일, 어떤 언어에 국가 표시 확장자를 붙여서 추가한다면
-국가 표시 확장자가 붙지 않은 것도 같이 포함시켜야 할 것이다.
-
-<P>preferred_language 변수 설정에 대한 더 자세한 것은
-<a href="http://httpd.apache.org/docs/content-negotiation.html">Apache의
-content negotiation에 대한 문서</a>를 참고하기 바란다.
+만약 여기에 나오지 않은 다른 브라우저의 설정에 대한 정보를 가지고 있다면,
+<a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>로
+알려주기 바란다.
 
