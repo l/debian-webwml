@@ -1,0 +1,278 @@
+#use wml::debian::template title="Debian GNU/Hurd --- Documentation" NOHEADER="yes"
+[ <a href="../">Ports</a> ]
+[ <a href="./">Debian GNU/Hurd</a> ]
+[ <a href="hurd-news">News</a> ]
+[ <a href="hurd-install">Installation</a> ]
+[ <b>Hurd-CDs</b> ] 
+[ <a href=hurd-doc">Documentation</a> ]
+[ <a href="hurd-devel">Development</a> ]
+[ <a href="hurd-links">Links</a> ]
+[ <a href="hurd-contact">Contact</a> ]<p>
+
+
+<H1>Using the unofficial Debian GNU/HURD installation CD-ROMs</H1>
+
+
+<H2>The images.</H2>
+
+<P>There are two CD images.  Most of the mess that is associated with a 
+developing os will be found on the second CD leaving the first CD relatively 
+clean and consistent. 
+But there are a considerable number of important packages on the second CD and 
+this will be needed unless you plan to install these packages over a network.</P>
+
+<P><H2>Download.</H2></P>
+
+<P>The current iso images are hurd-E1-main.iso and hurd-E1-extra.iso and 
+these are some of the sites that have the current images.</P>
+
+<P><A HREF="ftp://ftp.planetmirror.com/pub/debian-cd/unofficial">ftp.planetmirror.com/pub/debian-cd/unofficial</A> -  Australia<BR>
+<A HREF="ftp://ftp.acc.umu.se/pub/cd-images/debian-unofficial">ftp.acc.umu.se/pub/cd-images/debian-unofficial</A> -  Sweden<BR>
+<A HREF="ftp://omega.elite.hu/mirror/debian-unofficial">ftp://omega.elte.hu/mirror/debian-unofficial</A> -  Hungary<BR>
+<A HREF="ftp://ftp.fsn.hu/pub/CDROM-Images/debian-unofficial">ftp.fsn.hu/pub/CDROM-Images/debian-unofficial</A> -  Hungary (Primary site)<BR>
+<A HREF="ftp://www.che.iitm.ac.in/pub/hurd-cd">ftp://www.che.iitm.ac.in/pub/hurd-cd</A> - The Indian sub-continent only please.<BR>
+<A HREF="ftp://debian.co.nz/hurd">ftp://debian.co.nz/hurd</A> -  New Zealand only  (Relay site)</P>
+
+<P>An <a href="http://ftpsearch.lycos.com/?form=medium">ftp search</a> for hurd-E1 could find a closer site, but 
+check that the site you have chosen has the current images.</P>
+Instructions for burning CDs from the images can be found at <A HREF="http://cdimage.debian.org/faq.html">http://cdimage.debian.org/faq.html
+</A></P>
+
+<P><H2>CD-ROMs
+</H2></P>
+
+<P>A supplier of CD-ROMs:- <A HREF="http://www.copyleft.co.nz/hurd.html">http://www.copyleft.co.nz/hurd.html
+</A> Links to other vendors would be welcome.</P>
+<P><H2>How the Installation Disc works.
+</H2></P>
+
+<P>The standard Debian GNU/Linux installation CDs uses the cross install method 
+to install the base system.  A ramdisk is created in memory and a mini 
+GNU/Linux system installed into this disk.  This mini system is used to 
+partition and format drives, and to prepare the target machine for the main 
+installation.  The critical phase is to unpack a tarball with the essential base 
+packages onto the drives of the target system.  The new system is then 
+rebooted using the packages installed onto the HDD.  Further packages are then 
+installed and configured to create the desired system.</P>
+
+<P>As the HURD also uses the cross install method, this meant that the scripts to 
+build the HURD installation CDs could be adapted from the Debian GNU/Linux 
+boot and CD scripts.</P> 
+
+<P>Installing the HURD using a cd-rom set has several advantages.<BR>
+
+As the Linux system runs in a ramdisk and the tarball is on the cdrom, the 
+HURD can be installed onto a bare machine, or onto a system where people do 
+not want to use the installed operating system.<BR>
+
+The file system storing the packages on the CDs could be reorganised to 
+incorporate work-arounds.<BR>
+
+There are no partitioning tools for the HURD (yet) so the installation CD 
+can be used to partition HDDs during the installation.<BR>
+
+It is faster, less fiddle and most people are familiar with the process.</P>
+
+
+<P><H2>HURD Partitions.</H2>
+</P>
+
+<P>The HURD does not support partition sizes greater than about 1 Gb.  However,
+several partitions can be created during the installation process.  
+The HURD also uses a special variant of the ext2 file system, the call is
+"mke2fs -O sparse_super -o hurd /dev/*".  The installation CDs use this by 
+default.</P>
+
+
+<P><H2>Using the Installation CD.
+</H2></P>
+
+<P><H3>Preparation.</H3>
+</P>
+
+<P>1.  <I>Make a GRUB boot-disk.</I><BR>
+    The image file is /install/grub-boot-0.5.95.image on the CDROM.
+    You can use "dd" if you are working in Linux or rawrite if you are working
+    in MS.</P>
+	    
+<P>2.  Make certain that you understand Linux, GRUB and HURD methods of naming
+    drives and partitions. You will be using all three and the relationship
+    between them can be confusing.<BR>  
+
+Hurd uses different partition names to Linux, so be careful. IDE hard disks 
+are numbered in order, beginning from hd0. The second IDE drive will be hd1, 
+regardless of whether it is a slave or a second master. SCSI drives are also 
+numbered in absolute order.  They will always be sd0, sd1, and so on regardless 
+of whether the two drives are SCSI id 4 and 5 or whatever. Experience has 
+shown that CD-ROM drives can be tricky.  More about this later.<BR>
+		     
+Linux-style partitions are always called sn when using the HURD, where n is 
+the partition number, so the first partition on the first IDE drive will be 
+hd0s1, the third partition on the second SCSI drive will be sd1s3, and so on.<BR>
+				 
+GRUB has yet another partition naming system. It calls partitions (hdN,n), 
+but this time the disk number and partition number are both zero indexed, and 
+the disks run in order, all the IDE disks first, and the SCSI ones second. 
+This time, the first partition on the first IDE drive will be (hd0,0). 
+To really cause a confusion, (hd1,2) could refer to the first SCSI drive if you 
+only have one IDE drive, or it could refer to the second IDE drive.  So it is 
+important that you have worked out the various names of your partitions before 
+you start.</P>
+						      
+				
+<P><H3>Installation.</H3>
+</P>
+				
+<P>1.  <I>Boot the CD.</I><BR>
+Any of the methods of booting a Debian 2.2 (potato) CD will
+work, ie. from the CD, from MS and by any of the boot/root floppy images.
+A complete set of base floppies can created if there is no cdrom drive.</P>
+					
+<P>2.  <I>After the opening screens, open "Partition a Hard Disk".</I><BR>
+If you are going to copy the .deb packages onto the HDD then you will need 
+to create to other partitions, one for each CD. As there are no 
+partitioning tools for the HURD so you have to use this facility. About 
+500 Mb will be enough to start with for them main system.  If you need to 
+create another partition then you can reboot the CD and use the tools in 
+the Linux ramdisk to do this.</P>
+			    
+<P>3. <I> Work out the GRUB and HURD names of the partition you will be using.</I></P>
+    
+<P>4.  <I>Prepare your partitions using "Partition a Hard Disk"</I><BR>
+ and make certain that you have a swap partition.  Hurd is fussy about swap.</P>
+				
+<P>5. <I> Format your Hurd partition</I><BR>
+ using "Initialize a Hurd or Linux Partition" and mount it on / . Do not mount 
+ any other partitions. (I need to correct this in hurd-F1).</P>
+				    
+<P>6.  <I>Install the base system using "Install the Base System".</I></P>
+				    
+<P>7.  <I>Insert a GRUB floppy in the drive and reboot with "Reboot the System"</I><BR>.
+(don't forget to reset the bios).  That is it!  [First reboot]</P>
+    
+
+<P>If your HURD partition is (hd0,0) [GRUB nomenclature] and sd0s1 [HURD], 
+which being interpreted means the first partition on the first HDD which is 
+SCSI and there are no IDE drives, then the system will boot with no 
+intervention.<BR>
+
+If your HURD partition is (hd0,0) [GRUB nomenclature] and hd0s1 [HURD], which 
+being interpreted means the first partition on the first HDD which is IDE, then 
+GRUB will only be slightly confused.  It will tell you that it cannot find 
+sd0s1 and ask you to correct it.  Having thoroughly understood the different 
+naming schemes you know instantly that the correct answer is hd0s1.  GRUB will 
+then ask if it should use /boot/serverboot.gz, reply with "Enter".<BR>
+
+It does not get much worse.  If your partition is not either of the above GRUB 
+has both a menu and tab completion, so use them.</P>
+
+<P>Example.</P>
+
+<P>"Press any key to continue"  Do the obvious and a menu will be presented.
+The chances are that what you need will not be there.<BR>
+
+"c"  gets you to a command line.</P>
+
+<P>A step by step process can now be used.
+</P>
+<P>+++++<BR>
+grub$ root "TAB"    [your entry - TAB is the TAB key]<BR>
+Possible commands are: root rootnoverify   [GRUB's response]<BR>
++++++<BR>
+grub$ root "(TAB"   - - - - "(TAB" is your responce.<BR>
+Possible disks are:   fd0 hd0 hd1<BR>
++++++<BR>		  
+grub$ root ("hd0,TAB"    (assuming hd0 is where the tarball has been installed)<BR>
+Possible partitions are:<BR>
+Partition num: 0, Filesystem type is unknown, partition type 0x82<BR>
+Partition num: 1, Filesystem type is ext2fs, partition type 0x83<BR>
+Partition num: 2, Filesystem type is ext2fs, partition type 0x83<BR>
+Partition num: 4, Filesystem type is ext2fs, partition type 0x83<BR>
+Partition num: 5, Filesystem type is ext2fs, partition type 0x83<BR>
+Partition num: 6, Filesystem type is ext2fs, partition type 0x83<BR>
++++++<BR>
+grub$ root (hd0,"4)ENTER"	(assuming the HURD is on the 5th partition.)
+ - - "ENTER" is the enter key.<BR>
+Filesystem type is ext2fs, partition type 0x83<BR>
++++++</P>
+
+<P>GRUB now knows where to go and now HURD has to be told where to go 
+in HURDish.</P>
+
++++++<BR>
+grub$ "kernel /boot/gnumach.gz root=hd0s5 -s  ENTER"       (Using HURD naming)<BR>
+Multiboot-elf,.....<BR>
++++++</P>
+
+<P>gnumach is the kernel and it is on hd0s5 in the /boot directory.
+  -s = single user mode.</P>
+
+<P>+++++<BR>
+grub$ "module /boot/serverboot.gz  ENTER"<BR>
+Mulltiboot-module, ........<BR>
++++++</P>
+
+<P>Serverboot will load the kernel.  Everything is now ready, so we can boot.</P>
+
+<P>++++<BR>
+grub$ "boot ENTER"<BR>
++++++</P>
+
+<P>Keep you hands off the keyboard until the boot process has completed.</P>
+
+<P>"/boot/grub/menu.lst" on the GRUB floppy can be edited so you system will boot 
+without manual intervention.</P>
+
+
+<P><H2>The next steps.</H2>
+</P>
+
+<P>1.  <I>After the system has booted run ./native-install.</I> <BR>
+ Reboot the system using "reboot".  THIS IS IMPORTANT watch the boot messages 
+ and note carefully where the cdrom is.  [Second reboot]</P>
+    
+<P>2.  <I>After the reboot has completed run ./native-install a second time.</I> 
+<BR> 
+This time a whole bundle of packages will be configured.  Reboot yet again. 
+[Third reboot]. You will now have a system to configure.<BR> 
+Login as root, "login root".</P>
+	    
+<P>3.  <I>cd to /dev.  Make the necessary devices.</I>  
+Ie, for the cdrom, the swap partition and any other HDD partitions.<BR>
+Eg "MAKEDEV hd2 hd0s2 hd0s3"</P>
+		
+<P>4.  <I>Edit /etc/fstab, "ae /etc/fstab"</I>. 
+ae is not a bad editor for it's size.<BR>
+Add the HDD partitions, eg,<BR>
+/dev/[Hurd partition name]   none    swap    sw    0       0<BR>
+/dev/[Hurd partition name]   /CD1     ext2    rw    1       1</P>
+			    
+<P>The HURD uses the ext2 fs.  "/CD1" is a suggested mount-point for 
+the partition which contains the packages from hurd-E1-main. 
+Swap can be shared with Linux.</P>
+					
+<P>5. <I> Activate the swap "swapon -a".</I><BR>  
+Check to see that is has worked.  Swap is NOT optional with the HURD.</P>
+
+<P>6.  <I>Set up the translator that accesses the cdrom,</I> eg<BR>
+settrans /cdrom /hurd/isofs /dev/[Hurd drive name]</P>
+	
+<P>7.  <I>cd to /cdrom.</I> (The drive will not be able to be opened again 
+until you reboot)<BR>
+Run "./perl-upgrade" which is in the root directory of the cdrom.</P>
+		
+<P>8. <I> Run "dselect"</I>.<BR>
+Choose the "Mounted filesystem" for access (the cdrom is
+jammed, remember).  "/cdrom/dists/unstable" should find the Debian
+installation tree.  There is only the ../main/binary-hurd-i386 tree, so
+don't worry if dselect makes rude noises at you because it can't find
+contrib. contrib, non-US and non-free are incorporated into this single 
+file system.</P>
+				
+<P>9. <I> "Update" next.</I> <BR>
+Using the "Select" menu, unselect the tetex packages. Run "install" and think 
+of something else to do. File access is slow. The installation run should be 
+clean except for a trivial comment at the end.</P>
+
+
+<P>This is where this guide finishes and you start exploring.  Enjoy the HURD.</P>
