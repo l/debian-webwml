@@ -2,16 +2,14 @@
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
-BASE=..
+WMLBASE=..
 CUR_DIR=intro
+# list any subdirectories in the following variable. Any directories listed
+# must exist or the make will not work
+SUBS=
 
-HTMLDIR=$(BASE)/../../debian.org/$(CUR_DIR)
-TEMPLDIR=$(BASE)/template/debian
-# Do Not Modify
-ENGLISHSRCDIR=$(BASE)/../english
+include $(WMLBASE)/Make.lang
+include $(WMLBASE)/Make.common
 
-include $(BASE)/Make.lang
-
-all: $(HTMLFILES) $(JPGDEST)
-
-include $(BASE)/Make.templ.inc
+include $(WMLBASE)/Make.dep.templ    
+include $(WMLBASE)/Make.dep.generic
