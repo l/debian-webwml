@@ -331,6 +331,12 @@ sub canonical_names {
 		elsif ($maintainer =~ /Taku YASUI <(.+)>/) {
 			$lastname = 'Yasui'; $firstname = 'Taku'; $email = $1;
 		}
+		elsif ($maintainer =~ /(?:Hatta|HATTA) Shuzo <(.+)>/) {
+			$lastname = 'Hatta'; $firstname = 'Shuzo'; $email = $1;
+		}
+		elsif ($maintainer =~ /Oohara Yuuma <(.+)>/) {
+			$lastname = 'Oohara'; $firstname = 'Yuuma'; $email = $1;
+		}
 
 #
 # The following should handle almost everyone
