@@ -1,12 +1,12 @@
 #use wml::debian::template title="Suggerimenti utili per la traduzione"
 #include "$(ENGLISHDIR)/releases/info"
-#use wml::debian::translation-check translation="1.20" maintainer="Giuseppe Sacco"
+#use wml::debian::translation-check translation="1.29" maintainer="Giuseppe Sacco"
 
 <p>Vedi anche le pagine <a href="working">lavorare sulle pagine web</a>
 che descrive alcune regole generali da osservare, non solo limitatamente
 alle traduzioni.
 
-<h3>Cosa tradurre?</h3>
+<h2>Cosa tradurre?</h2>
 
 <p>Vedi le <a href="translating#completenew">istruzioni per iniziale una
 nuova traduzione</a> per una introduzione.</p>
@@ -27,7 +27,7 @@ ordine di importanza, sono più o meno):
     <li>la directory releases/: index.wml</li>
     <li>la directory releases/<current_release_name>/: index.wml,
         installmanual.wml, releasenotes.wml</li>
-    <li>la directory distrib/: index.wml, packages.wml, ftplist.wml</li>
+    <li>la directory distrib/: index.wml, packages.wml, cd-wml, netinst.wml</li>
     <li>la directory CD/: index.wml</li>
     <li>la directory doc/: index.wml</li>
     <li>la directory MailingLists/: index.wml</li>
@@ -78,12 +78,12 @@ ordine di importanza, sono più o meno):
 di mantenere aggiornate. Un numero minore di pagine mantenute è preferibile
 ad una maggior quantità di pagine tradotte e non aggiornate.</strong>
 
-<h3>Quanto dovrebbero essere simili le traduzioni?</h3>
+<h2>Quanto dovrebbero essere simili le traduzioni?</h2>
 
 <p>A volte capita di volere cambiare il testo mentre si traduce
 una pagina. Un esempio è quello della pagina di supporto: potresti
-voler includere un esempio di come ci si sottoscrive alla lista
-dei messaggi della lingua in cui traduci.
+voler includere un esempio di come ci si iscrive alla lista
+dei messaggi della lingua in cui traduci, cioé debian-italian.
 
 <p>Se però fai delle traduzioni sostanziali dovresti mandarne avviso
 a <a href="mailto:debian-www@lists.debian.org">debian-www@lists.debian.org</a>
@@ -92,33 +92,32 @@ più simile possibile.
 
 <p>Le pagine dovrebbero essere utili. Se hai informazioni che
 potrebbero aiutare gli utenti della tua lingua, aggiungile pure.
-Puoi usare international/&lt;Language&gt;.wml per tutte quelle cose che
+Puoi usare international/&lt;lingua&gt;.wml per tutte quelle cose che
 riguardano i visitatori che parlano quella lingua.
 
 <p>Se trovi informazioni che potrebbero essere utili a tutti,
 allora fallo sapere a debian-www.
 
-<h3>Come teniamo aggiornate le slice?</h3>
+<h2>Come teniamo aggiornati i modelli tradotti di gettext?</h2>
 
-<p>Di norma, una volta che il tag è stato aggiunto non si dovrebbe mai
-cambiarne il valore. Se per qualche motivo questo dovesse avvenire si avrebbe
-un nuovo tag che andrebbe a sostituire il precedente.
-Per questo motivo non serve aggiornare i vecchi tag; d'altro canto non c'è
-alcun meccanismo automatico per verificare l'esistenza di nuovi tag.
-Devi necessariamente gestire la cosa con un controllo manuale.
-Controllando i messaggi di log nella lista di messaggi debian-www-cvs.</p>
+<p>Una volta che i file in inglese vengono aggiornati, si esegua
+<kbd>make update-po</kbd> nella sottodirectory <code>po/</code>
+della propria traduzione al fine di aggiornare i file .po con
+quelli originali. Leggere i messaggi di log nella
+<a href="http://lists.debian.org/debian-www-cvs/">lista debian-www-cvs</a>
+può essere utile per capire quando dovrebbe essere fatto; oppure lo si può
+semplicemente eseguire periodicamente.</p>
 
-<p>Il metodo migliore per trovare tutti i file che usano slice è
-quello di eseguire <protect>
-<code>find -type f -print0|xargs -0 grep '\[EN:'|cut -d: -f1|uniq</code>
-</protect> nella directory english/.</p>
+<p>Si usi il comando <kbd>make stats</kbd> per avere una idea dei cambiamenti.
+Gettext segnerà i tag che ha ipotizzato con "<code>#, fuzzy</code>"
+mentre i nuovi tag non avranno alcuna traduzione dopo <code>msgstr</code>.</p>
 
-<h3>Come fanno i traduttori a sapere quando devono aggiornare certe pagine?</h3>
+<h2>Come fanno i traduttori a sapere quando devono aggiornare certe pagine?</h2>
 
 <P>C'è un meccanismo che i traduttori possono utilizzare per <a href="uptodate">
 tenere aggiornate le traduzione del sito web</a>.
 
-<h3>Come fanno gli utenti a sapere se una traduzione non è aggiornata?</h3>
+<h2>Come fanno gli utenti a sapere se una traduzione non è aggiornata?</h2>
 
 <P>Il modello <code>translation-check</code> che viene utilizzato per
 <a href="uptodate">tenere aggiornate le traduzioni</a> inserirà una note
@@ -139,52 +138,43 @@ particolare quando si traduce:
    <dd>Questa directory è simile alla News/ . L'unica differenza è che ci
    sono dei file di dati che <em>non</em> devi tradurre.</dd>
 
-<dt><tt>CD/vendors/index.wml</tt> include <tt>vendors.CD</tt> che include <tt>vendors.CD.def</tt>
-   <dd>CD/vendors/index.wml dovrebbe essere tradotto.</br>
-   CD/vendors/vendors.CD.def deve avere delle traduzioni aggiunte all'interno. In
-   altre parole c'è una sola copia del file.Il formato dovrebbe essere chiaro
-   dal file.<br>
-   CD/vendors/vendors.CD contiene la lista dei venditori. I traduttori non
-   dovrebbero avere ragione di toccare questo file.</dd>
+<dt><tt>CD/vendors/</tt>
+   <dd>Solo i file *wml in CD/vendors/ vanno tradotti.
+   Le traduzioni dei tag sono aggiunte tramite gettext nel file
+   po/vendors.<var>xy</var>.po file.</dd>
 
 <dt><tt>intro/organization.wml</tt>
-
-   <dd>Include <tt>organization.tags</tt> che contiene quanto può essere
-   tradotto e <tt>organization.data</tt> checontiene quanto non deve essere
-   tradotto.</dd>
+   <dd>Le traduzioni dei tag sono aggiunte tramite gettext nel file
+   po/organization.<var>xy</var>.po file.</dd>
 
 <dt><tt>MailingLists/{un,}subscribe.wml</tt>
-
    <dd>Questi due file sono generati dallo script <tt>mklist</tt>, quindi non
    puoi editarli direttamente. Puoi tradurre i file nella directory
    desc/ che invece contengono le descrizioni delle liste di messaggi.
-   Le ``slice'' per la parte restante sono nel file
-   webwml/english/MailingLists/mklist.tags .</dd>
+   Le traduzioni dei tag sono aggiunte tramite gettext nel file
+   po/others.<var>xy</var>.po file.</dd>
 
 <dt><tt>devel/people.wml</tt>
    <dd>Include <tt>../../english/devel/people.names</tt> che è generato ogni
-   giorno da uno script che fa il parse dei file Packages e dal database degli
-   sviluppatori. Se vuoi rifare il file people.xy.html, sarà sufficiente
+   giorno da
+   <a href="http://cvs.debian.org/cron/people_scripts/?cvsroot=webwml">uno script
+   che fa il parse dei file Packages e dal database degli
+   sviluppatori</a>. Se vuoi rifare il file people.xy.html, sarà sufficiente
    'touch people.names' .</dd>
 
 <dt><tt>consultants/index.wml</tt>
-   <dd>Include <tt>../../english/consultants/consultants.data</tt> che
-   richiede la traduzione delle frasi in cima al file.</dd>
+   <dd>Le traduzioni dei tag sono aggiunte tramite gettext nel file
+   po/others.<var>xy</var>.po file.</dd>
 
-<dt><tt>releases/potato/index.wml</tt>
+<dt><tt>releases/*/{installmanual,releasenotes}.wml</tt>
    <dd>Traduci tutto ma non il codice Perl (incluso tr &lt;: :&gt;), escluso il
-   secondo argomento di permute_as_list.</dd>
+   <strong>secondo</strong> argomento di permute_as_list.</dd>
 
 <dt><tt>ports/</tt>
-   <dd>Sono tuttora in via di sviluppo. Dovresti tradurre solo quelli per i
-   quali sei in grado di mantenere aggiornata la traduzione.</dd>
+   <dd>Le pagine dei port sono modificate spesso. Dovresti tradurre solo
+   quelli per i quali sei in grado di mantenere aggiornata la traduzione.</dd>
 
-<dt><tt>mirror/</tt>
-   <dd>Questo è solo per coloro che configurano un mirror, quindi ha una
-   priorità relativamente bassa.
-
-<dt><tt>devel/website</tt>
+<dt><tt>devel/website/</tt>
    <dd>Questa directory è per persone che effettuano le traduzioni delle
    pagine web, quindi ha probabilmente una priorità molto bassa.</dd>
-
 </dl>
