@@ -154,19 +154,26 @@ print <<END;
 END
 
 # now grep the contents file appropriately
-my $grep = "grep -h ";
-if ($case =~ /^insensitive/) {
-  $grep .= "-i ";
-}
-$grep .= "\"\\(^\\|/\\)\"$searchkeyword";
-if ($searchmode eq "searchfiles") {
-  $grep .= "\"[ \t]\"";
-} elsif ($searchmode eq "searchfilesanddirs") {
-  $grep .= "\"[/ \t]\"";
-} elsif ($searchmode eq "filelist") {
+    my $grep;
+if ($searchmode eq "filelist") {
   $searchkeyword = lc $searchkeyword; # just in case
   $searchkeyword =~ s/\+/\\\\+/g;
-  $grep = "zegrep -h /$searchkeyword".'"(,[^ ]+)?$"';
+  $grep = "egrep -h /$searchkeyword".'"(,[^ ]+)?$"';
+} else {
+    $grep = "grep -h ";
+    if ($case =~ /^insensitive/) {
+	$grep .= "-i ";
+    }
+    if ($searchmode eq "searchword") {
+	$grep .= "$searchkeyword.* ";
+    } else {
+	$grep .= "\"\\(^\\|/\\)\"$searchkeyword";
+	if ($searchmode eq "searchfiles") {
+	    $grep .= "\"[ \t]\"";
+	} elsif ($searchmode eq "searchfilesanddirs") {
+	    $grep .= "\"[/ \t]\"";
+	} 
+    }
 }
 
 my $command = $grep." ".$file." ".$file_nonus;
