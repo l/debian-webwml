@@ -186,7 +186,7 @@
           $row["forename"], " ", $row["surname"], " &lt;",
           $row["email"], "&gt;</A></TD>\n";
         if ($show_am) {
-            print "<TD>", $row["manager"], "</TD>";
+            echo "<TD>", $row["manager"], "</TD>";
         }
         echo "</TR>\n";
       }
