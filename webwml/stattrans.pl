@@ -20,7 +20,7 @@
 use POSIX qw(strftime);
 
 %config = (
-	   'htmldir' => '/org/home/joey/public_html/webwml/', #fixme
+	   'htmldir' => '/org/www.debian.org/debian.org/devel/website/stats', #fixme
 	   #'htmldir' => '/home/users/joey/public_html/webwml/', #fixme
 	   #'wmldir'  => '/home/project/Debian/CVS/webwml', #fixme
 	   'wmldir'  => '/org/www.debian.org/webwml', #fixme
