@@ -1,6 +1,6 @@
 #use wml::debian::template title="Sätta upp en spegel av Debianarkivet"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.30"
+#use wml::debian::translation-check translation="1.32"
 
 <toc-display/>
 
@@ -186,14 +186,20 @@ Om din plats blir "push"-speglad behöver du inte bry dig om något av detta.
 
 <p>Om du planerar att göra Debianspegeln tillgänglig över HTTP ber vi dig
 lägga till följande inställningar till Apaches konfiguration (förutsatt,
-naturligtvis, att du använder Apache) för katalogindex:
+naturligtvis, att du använder Apache), innanför blocket
+<code>&lt;Directory /org/ftp.debian.org/ftp&gt;</code>,
+där <code>/org/ftp.debian.org/ftp</code> skall ersätts med namnet den
+katalog du har spegeln i:
+</p>
 
 <pre>
-&lt;directory /org/ftp.debian.org/ftp&gt;
+   Options +Indexes +FollowSymlinksIfOwnerMatch
    IndexOptions NameWidth=* +SuppressDescription
    DirectoryIndex .
-&lt;/directory&gt;
 </pre>
 
-<p>(ersätt <code>/org/ftp.debian.org/ftp</code> med namnet med katalogen där
-du har spegeln)
+<p>
+Detta aktiverar katalogindex och försäkrar att symboliska länkar fungerar.
+Filnamnen i katalogindexen kommer inte trunkeras och (de huvudsakligen
+icke-existerande) beskrivningarna kommer inte att visas.
+</p>
