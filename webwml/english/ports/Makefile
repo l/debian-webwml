@@ -7,8 +7,9 @@ CUR_DIR=ports
 SUBS=alpha arm beowulf freebsd hppa hurd i386 ia64 m68k mips netbsd powerpc sparc sparc64 s390
 # java parisc ultrasparc
 
-include $(WMLBASE)/Make.lang
+GETTEXTFILES = ports.mo
 
+include $(WMLBASE)/Make.lang
 
 ifeq "$(LANGUAGE)" "en"
 install::
