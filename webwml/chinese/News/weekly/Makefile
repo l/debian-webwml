@@ -21,6 +21,9 @@ include $(WMLBASE)/Make.dep.templ
 
 WMLOPTIONS += -DWML_SRC_REALNAME="Joey Hess" -DWML_SRC_USERNAME=joeyh
 
+# Ugly hack to handle the "cd" just before wml...
+FIX_BIG5 := $(shell pwd)/$(FIX_BIG5)
+
 # This Makefile will handle converting all .wml files in this directory
 # and all subdirectories to .html files. It does it this way so I don't need
 # a new Makefile for each new issue.
@@ -48,7 +51,6 @@ endif
 	cd $(@D) && $(WML) $(notdir $(<))
 
 # Special case for Chinese
-%.zh-cn.html %.zh-tw.html : FIX_BIG5 := $(shell pwd)/$(FIX_BIG5)
 %.zh-cn.html %.zh-tw.html : %.wml $(TEMPLDIR)/weeklynews/footer.wml \
 	                   $(TEMPLDIR)/weeklynews/header.wml \
 			   $(TOCN) $(TOTW)
