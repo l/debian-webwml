@@ -21,7 +21,7 @@
 
 =head1 NAME
 
-Packages::DB - handle Debian package informations
+Packages::DB - handle Debian package information
 
 =head1 SYNOPSIS
 
@@ -144,7 +144,7 @@ sub read_file {
 
     unless ( -r $file ) {
 	warn "\nW: read_file: file $file doesn't exist\n"
-	    unless $self->{config}{nowarn};
+	    if $self->{config}{verbose};
 	return;
     }
     unless ( -z _ ) {
@@ -152,12 +152,12 @@ sub read_file {
 					      { discardCase => 1,
 						verbMultiLine => 1 } ) ) {
 	    warn "\nW: read_file: parser failed for file $file\n"
-		unless $self->{config}{nowarn};
+		if $self->{config}{verbose};
 	    return;
 	}
     } else {
 	warn "\nW: init: file $file is empty\n" 
-	    unless $self->{config}{nowarn};
+	    if $self->{config}{verbose};
     }
 
     $self->merge_in( $data, $dbdata );
@@ -182,7 +182,7 @@ sub lock {
 
     print "D: lock db, " if $self->{config}->{debug};
     $self->{locked} = 1;
-    print " packages, "  if $self->{config}->{debug};
+    print "packages, "  if $self->{config}->{debug};
     foreach my $p ( keys %{$self->{db}} ) {
 	my $pkg = $self->{db}->{$p};
 	$pkg->lock;
@@ -515,7 +515,8 @@ sub merge_in {
 		$entry->{$_} = $db_data->{$_}; 
 	    }
 	    unless ( exists $entry->{package} ) {
-		warn "W: merge_in: key package is missing\n";
+		warn "W: merge_in: key package is missing\n"
+		    if $self->{config}{verbose};
 		next PKG;
 	    }
 	    my $new_pkg = 0;
@@ -529,7 +530,8 @@ sub merge_in {
 	    } elsif ( $db_data->{type} eq "trans" ) {
 		unless ( exists $entry->{'description-md5'} ) {
 		    warn "W: missing description-md5 for translation"
-			. " of package $entry->{package}\n";
+			. " of package $entry->{package}\n"
+			if $self->{config}{verbose};
 		    next PKG;
 		}
 		my $e_self = $self->{desc}->{$entry->{'description-md5'}};
@@ -561,7 +563,8 @@ sub merge_in {
 		}
 		if ( exists $entry->{enhances} ) {
 		    if ($entry->{enhances} =~ /\|/) {
-			warn "W: `|' in Enhaces field for $entry->{package}\n";
+			warn "W: `|' in Enhaces field for $entry->{package}\n"
+			    if $self->{config}{verbose};
 		    } else {
 			foreach my $p ( split /\s*,\s*/, $entry->{enhances} ) {
 			    my $wv = ( $p =~ s/\s*\((.*)\)\s*//o );
@@ -830,4 +833,4 @@ License, Version 2. See the source code for more details.
 
 =head1 SEE ALSO
 
-perlfunc, Packages::Pkg, Packages::SrcPkg, Packages::Parser
+perlfunc, Packages::Pkg, Packages::SrcPkg
