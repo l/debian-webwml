@@ -227,7 +227,7 @@ sub init_translators {
                         compress    => 'none'
                 }, 
                 'Jérôme Schell' =>  {
-                        email       => 'jerome@myreseau.org',
+                        email       => 'martin.quinson@tuxfamily.org',
                         summary     => 2,
                         logs        => 2,
                         diff        => 2,
