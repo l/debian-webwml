@@ -19,10 +19,13 @@ foreach $l (<ADV>) {
   }
   if ($l =~ /^(\w+) (\d+), (\d+)/) {
     $month = $1; $day = $2; $year = $3;
-    for ($i = 0; $i < 12; $i++) {
+    while ($i < 12) {
       if ($month eq $longmoy{en}[$i]) {
-        $date = "$year-$i-$day";
+        $month = $i + 1;
+        $date = "$year-$month-$day";
+        $i = 12;
       }
+      $i++
     }
   }
   if ($l =~ /^Package        : (.+)/) {
