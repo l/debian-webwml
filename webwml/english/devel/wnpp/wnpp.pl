@@ -103,7 +103,7 @@ my (@rfh_html, @oth_html);
 
 foreach my $bug (sort { $rfa{$a} cmp $rfa{$b} } keys %rfa) {
     push @rfa_bypackage_html, "\n<li><btsurl bugnr=\"$bug\">$rfa{$bug}</btsurl>";
-    (my $pkg = $rfa{$bug}) =~ s/^(.+):\s+.*$/$1/;
+    (my $pkg = $rfa{$bug}) =~ s/^(.+?):\s+.*$/$1/;
     push @rfa_bypackage_html, " <pdolink \"$pkg\" />";
     push @rfa_bypackage_html, "</li>\n";
 }
@@ -114,7 +114,7 @@ foreach my $maint (sort keys %rfabymaint) {
     push @rfa_bymaint_html, "<ul>";
     foreach my $bug (sort { $rfa{$a} cmp $rfa{$b} } @{$rfabymaint{$maint}}) {
         push @rfa_bymaint_html, "<li><btsurl bugnr=\"$bug\">$rfa{$bug}</btsurl>";
-        (my $pkg = $rfa{$bug}) =~ s/^(.+):\s+.*$/$1/;
+        (my $pkg = $rfa{$bug}) =~ s/^(.+?):\s+.*$/$1/;
         push @rfa_bymaint_html, " <pdolink \"$pkg\" /></li>\n";
     }
     push @rfa_bymaint_html, "</ul>";
@@ -124,14 +124,14 @@ if ($#rfa_bymaint_html == -1) { @rfa_bymaint_html = ('<li><norfa /></li>') }
 
 foreach my $bug (sort { $orphaned{$a} cmp $orphaned{$b} } keys %orphaned) {
     push @orphaned_html, "<li><btsurl bugnr=\"$bug\">$orphaned{$bug}</btsurl>";
-    (my $pkg = $orphaned{$bug}) =~ s/^(.+):\s+.*$/$1/;
+    (my $pkg = $orphaned{$bug}) =~ s/^(.+?):\s+.*$/$1/;
     push @orphaned_html, " <pdolink \"$pkg\" />";
     push @orphaned_html, "</li>\n";
 }
 if ($#orphaned_html == -1) { @orphaned_html = ('<li><noo /></li>') }
 
 foreach my $bug (sort { $ita{$a} cmp $ita{$b} } keys %ita) {
-    (my $pkg = $ita{$bug}) =~ s/^(.+):\s+.*$/$1/;
+    (my $pkg = $ita{$bug}) =~ s/^(.+?):\s+.*$/$1/;
     push @being_adopted_html, 
          "<li><btsurl bugnr=\"$bug\">$ita{$bug}</btsurl>";
     push @being_adopted_html,
@@ -164,7 +164,7 @@ foreach (sort { $rfp{$a} cmp $rfp{$b} } keys %rfp) {
 if ($#requested_html == -1) { @requested_html = ('<li><norfp /></li>') }
 
 foreach (sort { $rfh{$a} cmp $rfh{$b} } keys %rfh) {
-    (my $pkg = $rfh{$_}) =~ s/^(.+):\s+.*$/$1/;
+    (my $pkg = $rfh{$_}) =~ s/^(.+?):\s+.*$/$1/;
     push @rfh_html, 
          "<li><btsurl bugnr=\"$_\">$rfh{$_}</btsurl>, ";
     push @rfh_html,
