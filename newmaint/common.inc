@@ -23,6 +23,10 @@
 
   function find_applicant($db, $email) {
     global $row, $query;
+    if (! $email) {
+        echo "Please choose an applicant from <A href=\"nmlist.php\">this</A> list.<BR>";
+	return FALSE;
+    }
     # start looking at stuff
     $sql = "SELECT * from applicant WHERE email='$email'";
     if (! ($query = pg_exec($db, $sql))) {
