@@ -6,7 +6,7 @@ WMLBASE=.
 CUR_DIR=
 SUBS=Bugs MailingLists News Pics consultants devel distrib doc events intro \
 international logos mirror misc partners ports releases security vote y2k \
-chinese searchtmpl
+chinese searchtmpl banners
 
 include $(WMLBASE)/Make.lang
 
@@ -19,6 +19,14 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
 		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
 		$(ENGLISHSRCDIR)/releases/info
 	$(WML) index.wml
+ifneq "$(LANGUAGE)" "en"
+	$(shell echo $(WML) | sed s/index/sitemap/) \
+          $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml \
+            $(shell egrep '^-D (CUR_|CHAR)' .wmlrc)
+endif
 
 install::
 	test -L $(HTMLDIR)/intl || ln -sf international $(HTMLDIR)/intl
+ifneq "$(LANGUAGE)" "en"
+	-install -m 664 -p sitemap.$(LANGUAGE).html $(HTMLDIR)
+endif
