@@ -13,3 +13,9 @@ include $(WMLBASE)/Make.common
 
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
+
+install:: $(HTMLDIR)/postgresql-noopt.diff.gz
+
+$(HTMLDIR)/postgresql-noopt.diff.gz: postgresql-noopt.diff.gz
+	cp postgresql-noopt.diff.gz $(HTMLDIR)
+
