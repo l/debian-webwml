@@ -1,0 +1,157 @@
+#!wml -o ../../../debian.org/devel/%BASE.html.es
+#use wml::debian::template title="Debian GNU/Linux - Mirroring"
+
+<H1>Replicación (Mirroring)</H1>
+
+<P>El mundo es un sitio muy grande y sin el gran número de
+sitios espejo (réplicas) alrededor del mundo mucha gente tendría
+dificultades para adquirir Debian.
+
+<P>Por supuesto, esto significa que necesitamos gente para crear y mantener
+estas estas réplicas. Con esto queremos decirle que si está en posición de donar
+espacio en disco o conectividad para hacer Debian mas accesible, entonces esta
+página es para usted.
+
+<P>Debian tiene tanto archivos ftp como sitios web. El archivo ftp contiene
+todos los paquetes, los fuentes y el material de intalación. El sitio web
+contiene información básica sobre Debian, documentación, material para
+desarrolladores y enlaces a sitios relacionados. Puede elegir entre replicar 
+el sitio web, el ftp o ambos. Incluso puede guardar una réplica privada, aunque la
+mayoría de la gente elige añadir los sitios ftp a la<A HREF="../misc/README.mirrors">lista de réplicas</A>.
+
+<H2>Replicas oficiales</H2>
+<P>Adicionalmente, puede elegir convertirse en un sitio oficial Debian.
+Los sitios oficiales tienen una dirección de la forma ftp.&lt;país&gt;.debian.org
+o www.&lt;país&gt;.debian.org. Estos son los sitios más anunciados y 
+más usados; son la cara de Debian para la mayoría de la gente. Por eso
+hay ciertos requerimientos mínimos para los sitios oficiales:
+
+<UL>
+<LI>El sitio debe ser seguro y funcionar 24 horas al día. La máquina no
+    debe esta muy cargada.
+<LI>Debe tener una conectividad decente (relativa al respectivo país).
+   Se prefieren anchos de banda equivalentes a una conexión T1.
+<LI>Para ftp: la jerarquía ftp de debian debe estar disponible bajo /debian
+   Esto se hace para mantener la consistencia entre sitios.
+<LI>Para ftp: estamos pidiendo que todos los nuevos sitios ftp oficiales también hagan
+   asequibles los archivos ftp usando http. Con transferencias http/1.1 potencialmente podemos ser
+   más eficientes que con ftp por tanto estamos intentando movernos en esa dirección.
+   Por supuesto, agradeceríamos que todas las réplicas permitieran acceso http.
+<LI>Para www: un servidor virtual real con su propia dirección IP. Si es posible
+            debería rplicarse también los archivos de listas y errores (véa las notas
+            sobre replicación más abajo).
+<LI>Para www: los scripts cgi se ejecutan centralmente en cgi.debian.org por tanto
+   no necesita preocuparse de ellos.
+<LI>Para www: debe permitirse la negociación de contenido. Esto es para permitirnos servir
+   las páginas web en lenguajes múltiples de forma transparente (para los que tengan
+   su navegador ajustado adecuadamente). Apache soporta esto muy bien. Si tiene
+   preguntas sobre esto, por favor envie un mensaje a 
+   <A HREF="mailto:webmaster@debian.org">webmaster@debian.org</A>
+<LI>Compromisos de espacio en disco (con sitio para ampliación):
+            1+GB para www (incluye archivos de listas y errores),
+            3+GB para ftp
+<LI>La réplica debe actualizarse al menos una vez al día. Si es posible, replicar los
+    archivos de erro más frecuentemente.
+</UL>
+Por favor, dese cuenta que esto son sólo directrices. Si no esta seguro de algo,
+envie una nota a <A HREF="mailto:webmaster@debian.org">webmaster@debian.org</A>
+con sus preguntas.
+
+<P>Si quisiera convertirse en un sitio espejo oficial, mande el nombre y
+dirección de la máquina junto con el nombre y dirección de correo de la persona
+que vaya a mantener la réplica a
+<A HREF="mailto:webmaster@debian.org">webmaster@debian.org</A>. El webmaster
+establecerá la DNS, y si es un sitio ftp lo agregará a la lista de réplicas.
+Cuando todo funcione, su sitio será agregado a las páginas web.
+
+<P>Actualmente se ha establecido sólo un sitio oficial por país. Si su
+país ya tiene uno, aún puede establecer un sitio espejo no oficial. 
+Debian aún está buscando réplicas oficiales en América del sur y Africa
+(objetivos a largo plazo incluyen la Antártica y una réplica en el espacio. No se ria,
+ya hemos realizado experimentos en la lanzadera espacial).
+
+<H2>Replicación</H2>
+La replicación es igual tanto para los sitios oficiales como para los no oficiales.
+Para los sitios ftp simplemente replique
+<A HREF="ftp://debian.crosslink.net/pub/debian">ftp://debian.crosslink.net/pub/debian</A>.
+Para los sitios web replique
+<A HREF="ftp://debian.crosslink.net/www/debian.org">ftp://debian.crosslink.net/www/debian.org</A>
+y
+<A HREF="ftp://debian.crosslink.net/www/debian.org-local">ftp://debian.crosslink.net/www/debian.org-local</A>.
+Por supuesto puede elegir replicar un sitio mas cercano a usted.
+
+<P>Las réplicas FTP deberían registrarse en Debian para que fueran incluidas en la
+lista de réplicas. Envíe un mensaje a<A HREF="mailto:mirrors@debian.org">mirrors@debian.org</A>
+con el nombre del responsable de la réplica, el sitio espejo, y el camino hasta el
+archivo debian.
+
+<P> Sólo unas notas para las réplicas web: debian.org tiene enlaces a debian.org-local
+por tanto su servidor web debe permitir enlaces simbólicos. Además, si su máquina ejecuta
+Debian, se ha decidido romper la política Debian y usar /doc en las páginas web.
+Quiere decirse que en srm.conf debería comentar 'Alias /doc/ /usr/doc/' .
+Usted puede y debe remplazar sponsor.html y sponsor_img.jpg. Son para que
+usted ponga un anuncio en su sitio de forma  que la gente sepa quien es el patrocinador.
+Los originales están en sponsor.deb.html y sponsor.deb.jpg ya que el sitio que está
+replicando puede haber remplazado los suministrados por Debian como ejemplos.
+El tamaño máximo sugerido para su logotipo es 120x60.
+
+<H2>Programas para replicar</H2>
+La mayoría de la gente replica usando ftp anónimo. Para esto, el programa 'mirror' funciona
+bien sobre el archivo ftp. well on the ftp archive. A menos que tenga un montón de RAM (con 75MB se ha informado
+que funciana), 'mirror' tiene problemas replicando debian.org-local porque las listas de error
+tienen un gran número de archivos. El creador de mirror es consciente del problema y
+se supone que lo solucionará en una futura versión.
+Como probablemente ha supuesto,  'mirror' está disponible como paquete Debian.
+Si ha instalado el paquete Debian, tendrá un script de ejemplo para replicar
+el archivo ftp en /etc/mirror/packages/ftp.debian.org .
+
+<P>Si tiene una cuenta en la máquiena que está replicando, mucha
+gente prefiere rsync. Además de funcionar mejor con archivos grandes,
+le permite usar ssh para una conexión segura.
+Puede encontrar util mirar un <A HREF="rsync_examples">ejemplo</A>
+sobre el uso de rsync par replicar Debian. Use la versión 1.7.4 de rsync o posterior
+ya que las versiones anteriores usaban mucha más memoria.
+
+<P>Mientras que wget funciona bien para replicar sitios pequeños, no es tan eficiente
+como mirror o rsync por lo que no es recomendable para esta tarea.
+
+<H2>Negociación de contenido</H2>
+La negociación de contenido es un método que permite a un navegador negociar con
+un servidor el tipo de documento que debe servirse. Aunque hay un número de
+usos para esto, el más común es negociar en que lenguaje debe servirse
+un documento. Usar esto permitirá a Debian servir sus páginas en
+multiples lenguajes de una forma (técnicamente) muy elegante.
+
+<P>Para los que están usando Apache, el cambio es casi trivial. Simplemente
+añada a /etc/apache/access.conf una sección similar a la siquiente (substituya
+el directorio que contiene las páginas web por /debian/web) y reinicie
+el servidor (este ejemplo funciona con las versiones de apache 1.3 beta y posteriores):
+<blockquote><pre>
+&lt;Directory /debian/web&gt;
+Options +Multiviews   
+&lt;/Directory&gt;
+</pre></blockquote>
+
+<H2>Otros cambios en el servidor web</H2>
+Para servir correctamente archivos índice de directorios, probablemente necesitará
+modificar la entrada DirectoryIndex en /etc/apache/srm.conf. Lo siguiente debería
+ser suficiente:
+<pre>
+   DirectoryIndex index index.html index.shtml index.htm
+</pre>
+Adicionalmente, necesita asegurarse de que el servidor puede manejar todos los idiomas
+en que estará el sitio web. Esto se hace usando la etiqueta AddLanguage. Lo
+siguiente es sólo un ejemplo - se espera añadir más posteriormente:
+<pre>
+   AddLanguage en .en
+   AddLanguage fr .fr                                                       
+   AddLanguage de .de                         
+   AddLanguage it .it
+   AddLanguage es .es
+</pre>
+
+
+<HR>
+<P>Volver a la <A href="../">página principal de Debian GNU/Linux</A>.
+
+<:= languages ("$(HOME)", "devel", "$(WML_SRC_BASENAME)", "$(CUR_LANG)") :>

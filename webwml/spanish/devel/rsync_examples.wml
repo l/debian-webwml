@@ -1,0 +1,47 @@
+#!wml -o ../../../debian.org/devel/%BASE.html.es              
+#use wml::debian::template title="Debian GNU/Linux - Example rsync usage"
+
+<H1>Ejemplo de uso de rsync</H1>
+
+<P>Lo siguiente es un ejemplo que creará una réplica (mirror) tanto del sitio web como del sitio ftp.
+Tedrá que modificar el nombre de la máquina y de los directorios involucrados
+para ajustarse a su situación.
+
+<P>El archivo cerradura (lockfile) es útil si ejecuta esto usando un trabajo cron. Si, por cualquier razón,
+la copia no se completa, la próxima vez que intente ejecutar la copia obtendrá un
+mensaje de correo. Entonces podrá investigar donde reside el problema, fijarlo, borrar el
+archivo de cierre y la copia funcionará adecuadamente la próxima vez que la ejecutemos.
+<blockquote>
+<pre>
+#!/bin/bash
+set -e
+
+lockfile -r 1 rsync.master.lock || exit 23
+
+rsync -avz -e ssh --exclude .glbuild --delete &lt;machine&gt;:/web/debian.org/ debian.org
+rsync -avz -e ssh --delete &lt;machine&gt;:/web/debian.org-local/ debian.org-local
+
+echo ACTUALIZACIÓN WEB TERMINADA. TRABAJANDO EN FTP AHORA.
+
+rsync -avz --delete -e ssh &lt;machine&gt;:/debian debian
+
+rm -f rsync.master.lock
+</pre>
+</blockquote>
+
+<H3>Como establecer ssh de forma que no se nos pida la contraseña:</H3>
+
+El script dado arriba le preguntará por una contraseña a menos que establezca
+ssh de cierta forma. Primero, cuando use ssh-keygen, simplemente presione retorno cuando
+le pregunten una contraseña [1]. Luego, agrege el contenido
+de ~/.ssh/identity.pub a ~/.ssh/authorized_keys en el sitio espejo (el
+archivo debería tener modo 600).
+Entonces, debería poder usar ssh para entrar en el sitio espejo sin
+ser preguntado por una contraseña.
+
+<P>
+[1] Dese cuenta que establecer ssh con una contraseña vacía da a cualquier intrusoNote that setting up ssh with a blank password gives an intruder free access
+libre acceso al sitio que está duplicando (mirroring) una vez que hayan forzado la entrada a su sitio.
+Por esta razón, esto no debería hacerse nunca como root.
+
+<:= languages ("$(HOME)", "devel", "$(WML_SRC_BASENAME)", "$(CUR_LANG)") :>
