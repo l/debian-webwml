@@ -1,4 +1,5 @@
 #!/bin/sh
+# <!--translation 1.1-->
 
 # This script makes the Debian buttons, it is often a good idea
 # to have gimp perl up and running so it is a lot faster.
