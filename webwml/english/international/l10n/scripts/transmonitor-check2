@@ -637,15 +637,24 @@ sub search_templates {
 
                 # Add this file to data
                 $filename = store_disk_templates($pkg, $file);
+                my $storedfile = $TEMPLATES_ROOT."/".$data->pooldir($pkg)."/$filename";
 
-                $tmpl->read_compact($TEMPLATES_ROOT."/".$data->pooldir($pkg)."/$filename");
+                #  Trap warnings from Webwml::L10n::Debconf and reword them
+                {
+                        local $SIG{__WARN__} = sub {
+                                my $msg = $_[0];
+                                $msg =~ s,^$storedfile,debconf: $file,;
+                                $data->add_errors($pkg, $msg);
+                        };
+                        eval { $tmpl->read_compact($storedfile) };
+                }
                 %tmpl_stats = $tmpl->stats();
                 foreach (keys %tmpl_stats) {
                         $this_stat = $tmpl_stats{$_}->[0].'t'.$tmpl_stats{$_}->[1].'f'.$tmpl_stats{$_}->[2].'u';
                         $data->add_templates($pkg, $file, normalize_lang($_), $this_stat, $filename);
                 }
-                if (system("gzip -9 $TEMPLATES_ROOT/".$data->pooldir($pkg)."/$filename")){
-                        warn "Can't gzip $TEMPLATES_ROOT/".$data->pooldir($pkg)."/$filename: $!\n";
+                if (system("gzip -9 $storedfile")){
+                        warn "Can't gzip $storedfile: $!\n";
                 }
         }
         foreach my $file (@debconffiles) {
@@ -664,7 +673,16 @@ sub search_templates {
                         $origfile{$relfile} = $_;
                         push (@list2, $relfile);
                 }
-                $tmpl->read_dispatched($TEMPLATES_ROOT."/".$data->pooldir($pkg)."/".$filename, @list2);
+                #  Trap warnings from Webwml::L10n::Debconf and reword them
+                {
+                        local $SIG{__WARN__} = sub {
+                                my $msg = $_[0];
+                                my $disk = $TEMPLATES_ROOT."/".$data->pooldir($pkg)."/$filename";
+                                $msg =~ s,^$disk,debconf: $file,;
+                                $data->add_errors($pkg, $msg);
+                        };
+                        eval { $tmpl->read_dispatched($TEMPLATES_ROOT."/".$data->pooldir($pkg)."/".$filename, @list2) };
+                }
                 %tmpl_stats = $tmpl->stats();
                 foreach (keys %tmpl_stats) {
                         $this_stat = $tmpl_stats{$_}->[0].'t'.$tmpl_stats{$_}->[1].'f'.$tmpl_stats{$_}->[2].'u';
