@@ -18,6 +18,7 @@
   for ($i = 0 ;   $i < $rows ; $i++) {
     $row = pg_Fetch_Array($query, $i);
     echo "<TR>";
+    print_flag($row["advocate_ok"],"<TD><IMG src=\"/images/adv.png\" alt=\"V\"></TD>","<TD> </TD>");
     print_flag($row["id_ok"],"<TD><IMG src=\"/images/mag.png\" alt=\"I\"></TD>","<TD> </TD>");
     print_flag($row["pnp_ok"],"<TD><IMG src=\"/images/dfsg.png\" alt=\"P\"></TD>","<TD> </TD>");
     print_flag($row["tns_ok"],"<TD><IMG src=\"/images/hammer.png\" alt=\"T\"></TD>","<TD> </TD>");
@@ -65,12 +66,12 @@ You should not be here!!</STRONG>
 assigned (only the first <? echo $FD_MAX_APPLICANTS; ?> have been 
 displayed here).<BR>
 <? 
-   $sql = "SELECT * from applicant WHERE manager IS NULL OR manager = '' ORDER BY apply_date";
+   $sql = "SELECT * from applicant WHERE ( manager IS NULL OR manager = '' ) AND advocate_checked IS NOT NULL ORDER BY apply_date";
    print_applicants($db, $sql,$FD_MAX_APPLICANTS);
 ?>
 <P>Applicants assigned to AM but AM has not confirmed:<BR>
 <? 
-   $sql = "SELECT * from applicant WHERE manager IS NOT NULL AND am_confirm IS NULL ORDER BY apply_date";
+   $sql = "SELECT * from applicant WHERE manager IS NOT NULL AND am_confirm_date IS NULL ORDER BY apply_date";
    print_applicants($db, $sql,0);
 ?>
 <P>Applicants assigned to AM but AM has rejected assignment:<BR>
@@ -144,6 +145,7 @@ put temporarily or permanently on hold.<BR>
 ?>
 <H3>Key</H3>
 <UL>
+<LI><IMG src="/images/adv.png" alt="V"> : Advocate Check ok
 <LI><IMG src="/images/mag.png" alt="I"> : Identification complete
 <LI><IMG src="/images/dfsg.png" alt="P"> : Philosopy and Procedures complete
 <LI><IMG src="/images/hammer.png" alt="T"> : Tasks and Skills complete

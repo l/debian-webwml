@@ -28,6 +28,20 @@
       echo "<B>$title</B><BR>$value<HR><BR>\n";
     }
   }
+  function print_boolcheck($title, $bool, $date, $nulltext, $failtext)
+  {
+    echo "<TR><TD>$title</TD><TD>";
+    if ($bool == '') {
+      echo "Not Checked</TD></TR>\n";
+      return $nulltext;
+    }
+    if ($bool == 't') {
+      echo "Passed at $date</TD></TR>\n";
+      return "";
+    }
+    echo "Failed at  $date</TD></TR>\n";
+    return $failtext;
+  }
 ?>
 #use wml::nmpage title="Debian New Maintainer - Applicant Status"
 <?
@@ -36,10 +50,32 @@
     $whattodo = "";
 ?>
 <H1>Status Page for applicant: <? echo $row["forename"], " ", $row["surname"], " &lt;", $row["email"], "&gt;"; ?> </H1><BR>
+
+<?
+  if (pg_FieldIsNull($query, 0, "advocate_checked")) {
+?>
+<H3>Advocate application</H3>
+<P>If you are an existing Debian developer and would like to advocate this
+application, click 
+<? echo "<A href=\"nmadvocate.php?email=", urlencode($row["email"]), "\">here</A>";
+ } ?>
+<BR>
+<H3>Applicant Status</H3>
 <TABLE width=100%>
 <TR><TD>Received application</TD><TD><? echo $row["apply_date"]?></TD></TR>
-
-<TR><TD>Membership Type</TD><TD><? ?></TD></TR>
+<TR><TD>Advocate</TD><TD>
+<?
+  if ($row["advocate"] == "") { 
+    echo "None";
+    $whattodo .= "<LI>Find an advocate to approve your application.\n";
+  } else {
+    echo $row["advocate"];
+  }
+  $whattodo .= print_boolcheck("Advocate Check", $row["advocate_ok"], $row["advocate_checked"],
+                 "<LI>Advocate has to verify application.\n",
+		 "<LI>Advocate rejected application.\n");
+?>
+</TD></TR>
 <TR><TD>Application Manager Assigned</TD><TD>
 <?
   if (pg_FieldIsNull($query, 0, "manager") || pg_FieldIsNull($query, 0, "manager_date")) {
@@ -50,34 +86,14 @@
   }
 ?>
 </TD></TR>
-<TR><TD>ID Check</TD><TD>
 <?
-  if (pg_FieldIsNull($query, 0, "id_ok") || pg_FieldIsNull($query, 0, "id_checked")) {
-    echo "Not Checked";
-    $whattodo .= "<LI>ID to be checked by AM\n";
-  } else {
-    if ($row["id_ok"] == 't') {
-      echo "Passed at ", $row["id_checked"];
-    } else {
-      echo "Failed at ", $row["id_checked"];
-      $whattodo .= "<LI>The ID check failed, talk to your AM to see why and how to pass this check.\n";
-    }
-  }
-?>
-</TD></TR>
-<TR><TD>Philosophy and Procedures Check</TD><TD>
-<?
-  if (pg_FieldIsNull($query, 0, "pnp_ok") || pg_FieldIsNull($query, 0, "pnp_checked")) {
-    echo "Not Checked";
-    $whattodo .= "<LI>Philosophy and Procedures to be checked by AM.\n";
-  } else {
-    if ($row["pnp_ok"] == 't') {
-      echo "Passed at ", $row["pnp_checked"];
-    } else {
-      echo "Failed at ", $row["pnp_checked"];
-      $whattodo .= "<LI>Resubmit for Philosophy and Procedures check.\n";
-    }
-  }
+  $whattodo .= print_boolcheck("ID Check", $row["id_ok"], $row["id_checked"],
+                 "<LI>ID to be checked by AM", 
+		 "<LI>ID checked failed, you should ask your AM why.");
+  
+  $whattodo .= print_boolcheck("Philosophy and Procedures Check", $row["pnp_ok"], $row["pnp_checked"],
+                 "<LI>Philosophy and Procedures to be checked by AM.\n",
+                 "<LI>Resubmit for Philosophy and Procedures check.\n");
 ?>
 </TD></TR>
 <TR><TD>Tasks and Skills Check</TD><TD>
