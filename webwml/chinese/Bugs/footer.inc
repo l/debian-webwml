@@ -8,5 +8,5 @@ Darren Benham / <A href="mailto:owner@bugs.debian.org">owner@bugs.debian.org</A>
 1994-97 Ian Jackson, 1997 nCipher Corporation Ltd,
 1995 Steven Brenner.
 <br>
-<A href="http://www.benham.net/debbugs/">GPL 執照授權使用。</A></p>
+<A href="http://www.benham.net/debbugs/">GPL 執照授權使用。</A>
 </ADDRESS>
