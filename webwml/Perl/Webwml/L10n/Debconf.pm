@@ -175,10 +175,13 @@ sub _read_dispatched {
                 chomp;
                 if (s/^Template:\s*//) {
                         $tmpl = $_;
-                        $status = ''
+                        $status = '';
+                        warn "$file: template $_ does not appear in original!\n"
+                                unless defined $self->{orig}->{$tmpl};
                 } elsif (s/^Choices:\s*//) {
                         die "\`Choices' field found before \`Template'\n"
                                 unless $tmpl ne '';
+                        next unless defined $self->{orig}->{$tmpl};
                         if ($_ eq $self->{orig}->{$tmpl}->{choices}) {
                                 $status = 'count';
                         } else {
@@ -197,6 +200,7 @@ sub _read_dispatched {
                 } elsif (s/^Description:\s*//) {
                         die "\`Description' field found before \`Template'\n"
                                 unless $tmpl ne '';
+                        next unless defined $self->{orig}->{$tmpl};
                         $msg = $_ . "\n";
                         while (<TMPL>) {
                                 last if (!defined($_) || m/^\S/ || m/^$/m);
