@@ -82,11 +82,20 @@ s{a picture viewer for X11 with a thumbnail-based selector}
 s{the ([pP])ortable ([dD])ocument ([fF])ormat \(PDF\) suite}
 {sestavì ${1}ortable ${2}ocument ${3}ormat (PDF)}g;
 
+# perl
 s{the popular scripting language}
 {populárním skriptovacím jazyce}g;
 
 s{the general-purpose x86 assembler}
 {univerzálním x86 assembleru}g;
+
+# zip
+s{the archiver for .zip files}
+{správce .zip archívù}g;
+
+# pcal
+s{a program to generate Post([sS])cript calendars}
+{programu generujícího Post${1}cript kalendáøe}g;
 
 #
 # other info
