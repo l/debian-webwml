@@ -6,7 +6,7 @@ WMLBASE=..
 CUR_DIR=News
 # list any subdirectories in the following variable. Any directories listed
 # must exist or the make will not work
-SUBS=
+SUBS=1998 1999
 
 include $(WMLBASE)/Make.lang
 include $(WMLBASE)/Make.common
