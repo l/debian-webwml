@@ -50,8 +50,11 @@ sub recurse
 	closedir THISDIR;
 
 	# Read through the CVS/Entries file.
-	open ENTRIES, "$directory/CVS/Entries"
-		or die "Not a CVS directory: $directory\n";
+	if (!open ENTRIES, "$directory/CVS/Entries")
+	{
+		warn "Not a CVS directory, ignoring $directory\n";
+		return 0;
+	}
 
 	my @wmlfiles = ();
 	my @htmlfiles = ();
