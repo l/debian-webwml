@@ -108,9 +108,11 @@ my %translators = (
 
 sub list_translators {
   print "<ul>";
-  foreach $lang (sort keys %langs) {
+  my %translang = map { $trans{$CUR_ISO_LANG}{$_} => $_ } keys %langs;
+  foreach $tlang (sort langcmp keys %translang) {
+    $lang = $translang{$tlang};
     next if ($lang eq "english");
-    print "<li>$trans{$CUR_ISO_LANG}{$lang}: ";
+    print "<li>$tlang: ";
     if (defined $translators{$lang}) {
       my $num = scalar keys %{$translators{$lang}};
       foreach $person (keys %{$translators{$lang}}) {
