@@ -5,7 +5,7 @@
   <li><a href="Reporting">Instruções para reportar bugs.</a>
   <li><a href="Access">Acessando os logs do sistema de gerenciamento de bugs.</a>
   <li><a href="Developer">Informações para desenvolvedor no sistema de gerenciamento 
-  de bugs.<a/>
+  de bugs.</a>
   <li><a href="server-control">Informações do desenvolvedor na manipulação
       de bugs usando a interface de controle de e-mail.</a>
   <li><a href="server-refcard">Cartão de referência de servidores de mail.</a>

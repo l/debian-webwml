@@ -1,155 +1,140 @@
-#use wml::debian::template title="Debian-Med"
-#use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.17"
-{#style#:<link rel="stylesheet" href="talks.css" type="text/css" />:#style#}
+#use wml::debian::cdimage title="Como se tornar um servidor espelho ('mirror') para as imagens de CD do Debian" BARETITLE=true
+#use wml::debian::toc
+#use wml::debian::translation-check translation="1.7"
 
-<h2>Descrição do projeto</h2>
+<p>Para se tornar um servidor espelho de imagens do CD do Debian, você precisa de uma máquina Linux ou compatível com Unix e de uma conexão com a Internet permanente e confiável.</p>
 
-<p>O Debian-Med é um projeto interno do Debian que visa desenvolver um
-sistema operacional que seja particularmente adequado para as
-necessidades da prática e pesquisa em medicina.
-O objetivo do Debian-Med é um sistema completo para todas as
-atividades médicas que seja constituído completamente de softwares
-livres.
-</p>
+<p>Os servidores espelho de imagens do CD geralmente contém os arquivos de template para o jigdo e alguns possuem até mesmo imagens completas pré-construídas. Os arquivos de template são geralmente atualizados via rsync a partir de <a href="../jigdo-cd/#which">um dos locais oficiais</a> e as imagens completas são atualizadas usando o <kbd>jigdo-mirror</kbd>.</p>
 
-<p>A idéia geral para este tipo de projeto foi adotada do projeto
-   <a href="$(HOME)/devel/debian-jr/">Debian Junior</a>.
-</p>
+<toc-display/>
 
-<p>O Debian-Med contem um conjunto de meta pacotes que declaram
-dependências em outros pacotes Debian, e desta forma o sistema completo
-é preparado para resolver determinadas tarefas.
-</p>
+<hr>
 
-<a id="news" name="news"></a>
-<h2>Notícias</h2>
+<toc-add-entry name="httpftp">Por que FTP e HTTP <strong>não</strong> são confiáveis</toc-add-entry>
 
-<p><:= get_recent_list('News/$(CUR_YEAR)', '6',
-'$(ENGLISHDIR)/devel/debian-med', '', '\d+\w*' ) :>
-# '../../../german/devel/debian-med', '', '\d+\w*' ) :>
-</p>
+<p>Você <em>não</em> deve usar FTP ou HTTP para obter as imagens. Estes métodos de transferência têm uma alta probabilidade de falha por causa do enorme tamanho dos arquivos.</p>
 
-<p>Para notícias antigas, veja a <a href="$(HOME)/devel/debian-med/News/">página
-de notícias do Debian-Med</a>.</p>
+<p>Além disso, se as imagens mudarem mesmo que em poucos detalhes - como no caso de um sublançamento  ('subreleases') de uma distribuição -, todos os dados serão baixados novamente. Isto sobrecarrega nossos computadores e conexões de rede.</p>
 
+<toc-add-entry name="download">Baixando via rsync</toc-add-entry>
 
-<a id="email-list" name="email-list"></a>
-<h2>Lista de discussão</h2>
+<p>Pelas razões descritas acima nós usamos o programa <a href="http://rsync.samba.org/">\<tt>rsync</tt></a> que realiza, essencialmente, um "remendo" binário remoto. Com <tt>rsync</tt>, a atualização das imagens de sublançamentos são realizadas de maneira muito eficiente, uma vez que somente as partes que mudaram são transferidas pela rede; as partes não modificadas são copiadas da imagem antiga.</p>
 
-<p>O Debian criou uma lista de discussão para este grupo. Você pode
-assiná-la a partir da <A href="$(HOME)/MailingLists/subscribe">página de
-Listas de Discussão</A> ou ler os <A
-   href="http://lists.debian.org/debian-med/">arquivos das listas</A>.
-</p>
+<p>Aqueles sites que desejam incluir apenas as imagens do CD do Debian (e nenhum outro tipo de espelhamento) e não possuem nenhum servidor espelho do Debian (<kbd>debian/</kbd>) próximo/rápido, nós sugerimos o uso do <kbd>rsync</kbd> em uma tarefa diária do cron</p>
 
-<a id="projects" name="projects"></a>
-<h2>Projetos de softwares a incluir</h2>
+<p>Você pode fazer o espelhamento a partir de qualquer um dos sites da <a href="rsync-mirrors">lista de servidores espelho</a>.</p>
 
-<p>A primeira tentativa de colocar os projetos em categorias pode não
-ser a melhor. Nos envie sugestões de melhora para a lista de discussão,
-ou para <a href="mailto:tille@debian.org">Andreas Tille</a>.
-</p>
+<p>Use ao menos as opções <strong><kbd>--times --links --hard-links --block-size=8192</kbd></strong>. Isto irá preservar a data/hora da modificação, os symlinks e os hardlinks e irá usar blocos com o tamanho de 8192 bytes (mais eficientes para imagens de CD). Quanto a data/hora de modificação e o tamanho são os mesmos, <kbd>rsync</kbd> não irá se importar com o arquivo, por isso <tt>--times</tt> é realmente obrigatório.</p>
 
-<ul>
-  <li><a href="practice">Prática Médica</a></li>
-  <li><a href="research">Pesquisa Médica</a></li>
-  <li><a href="his">Sistemas de Informação Hospitalar</a></li>
-  <li><a href="microbio">Microbiologia</a></li>
-  <li><a href="imaging">Imagens Médicas</a></li>
-  <li><a href="dental">Prática Odontológica</a></li>
-  <li><a href="veterinary">Medicina Veterinária</a></li>
-  <li><a href="drugdb">Banco de Dados de Drogas</a></li>
-  <li><a href="record">Registro Médico</a></li>
-  <li><a href="device">Controle de Dispositivos Médicos</a></li>
-  <li><a href="pharma">Farmácia</a></li>
-  <li><a href="physiotherapy">Fisioterapia</a></li>
-  <li><a href="doc">Documentação e Pesquisa</a></li>
-  <li><a href="other">Outros</a></li>
+<toc-add-entry name="jigdomirror">Gerando imagens com o jigdo-mirror</toc-add-entry>
+
+<p>Várias pessoas mantém servidores espelho "regulares" (<kbd>debian/</kbd>), ou simplesmente possuem algum deles por perto. Isto significa que elas já tem os .debs que são incluídos nas imagens de CD. A questão óbvia é: por que nós não podemos usar esses mesmos arquivos nas imagens de CD?</p> 
+
+<p>O <kbd>jigdo-mirror</kbd> é um programa que possibilita gerar imagens do CD do Debian usando arquivos de um servidor espelho "normal", mais alguns poucos arquivos de template do jigdo.</p>
+
+<p>Note que o <kbd>jigdo-mirror</kbd> está incluído no jigdo 0.6.8, mas esta versão não vai junto com o Debian 3.0 ("woody"). Isto apenas significa que você tem que pegá-lo separadamente, não existe nenhum problema em usar a nova versão no "woody".</p>
+
+<p>Em primeiro lugar, você precisa dos arquivos de template do jigdo. Estes podem ser obtidos em vários sites oficiais, mas os dois locais primários são:
+
+<ul compact>
+  <li><kbd>rsync us.cdimage.debian.org::jigdo-area/</kbd> (servidor norte-americano)
+  <li><kbd>rsync non-us.cdimage.debian.org::jigdo-area/</kbd> (servidor europeu)
 </ul>
 
+<p>Pegue os arquivos a partir do subdiretório &lt;<var>versão</var>&gt;/jigdo/&lt<var>arquitetura</var>&gt;, para cada arquitetura da qual você queira construir as imagens.
 
-<h2><a id="goals" name="goals">Objetivos do Projeto</a></h2>
+<p>Crie um arquivo <kbd>~/.jigdo-mirror</kbd> para configurar o programa. Este é um exemplo:</p>
 
-<ul>
-  <li>Construir uma base sólida de softwares para a medicina com ênfase
-  nas facilidades de instalação e manutenção e na segurança.</li>
-  <li>Unir autores de projetos diferentes com objetivos similares.</li>
-# "Encourage the co-operation of authors of different software projects with
-#  similar goals" would be more in line with the German text /peterk
-  <li>Um conjunto de testes para facilitar a avaliação da qualidade de
-  softwares médicos.</li>
-  <li>Fornecer informações e documentação de softwares médicos.</li>
-  <li>Ajudar os autores originais a conseguir empacotar seus produtos
-  para o Debian.</li>
-  <li>Demonstrar às empresas de software comerciais a força de um sistema
-  com base sólida e fazê-los considerar a conversão de seus softwares
-  para o Linux ou mesmo mudá-los para Código Aberto.</li>
-</ul>
+<pre>
+jigdoDir="/onde/você/mantém/espelhamentos/debian-cd/current/jigdo"
+imageDir="/onde/você/mantém/espelhamentos/debian-cd/current/images"
+tmpDir="/onde/você/mantém/espelhamentos/debian-cd/current/images"
+debianMirror="file:/onde/você/mantém/espelhamentos/debian"
+nonusMirror="file:/onde/você/mantém/espelhamentos/debian-non-US"
+include='i386/|sparc/|powerpc/|source/'; exclude='-1\.'
+</pre>
 
-<a id="talks" name="talks"></a>
-<h2>Apresentações sobre o Debian-Med</h2>
+<p>As variáveis <i>include</i> e <i>exclude</i> contém a lista das arquiteturas das quais você deseja criar imagens (semelhante a expressões regulares). Para mais informações, veja o manual do <kbd>jigdo-mirror</kbd> ou mesmo o código-fonte (ele é um script shell com vários comentários).</p>
 
-Existem algumas <a href="talks/">apresentações sobre o Debian-Med</a> disponíveis
-on-line como lâminas (as fontes e pré-formatações). Pode ser uma boa
-idéia acessar estas páginas para tentar encontrar alguma informação
-interessante sobre o projeto.
+<p>Depois que você configurá-lo, simplesmente execute <kbd>jigdo-mirror</kbd> e ele fará tudo sozinho. Ele irá gerar muitas informações e demorar um pouco, por isso sugerimos que você tome algumas precauções quanto a isso (execute-o na tela, redirecione a saída para um arquivo, etc.).</p>
 
+<toc-add-entry name="pik">Gerando imagens com o kit de pseudo-imagem e o debcdmirror</toc-add-entry>
 
-<a id="help" name="help"></a>
-<h2>O que eu posso fazer para ajudar?</h2>
+<p><tt>rsync</tt> sem nenhum parâmetro ainda é capaz de fazer downloads completos para versões "totalmente novas", uma vez que estas imagens não contém virtualmente nenhuma parte não mudada. Entretanto, com o kit de pseudo-imagem nós podemos criar "pseudo" imagens de CD a partir de dados que podem estar disponíveis no servidor espelho de FTP do Debian mais próximo - talvez até mesmo no seu próprio disco rígido. Então <tt>rsync</tt> poderá remendar binariamente estas "pseudo-imagens" nas oficiais. E mesmo para as imagens de sublançamentos isto é considerado mais eficiente do que remendar as antigas imagens.</p>
 
-<ul>
-  <li>Trabalhar em melhoramentos e tradução destas páginas.</li>
-  <li>Criar um logotipo. Algumas <a
-      href="http://people.debian.org/~tille/debian-med/logos/">sugestões
-      de possíveis logos</a> estão disponíveis. Novas propostas de artistas habilidosos 
-      são bem-vindas. 
-  </li>
-  <li>Empacotar os projetos de softwares mencionados acima para o Debian.</li>
-  <li>Construir meta-pacotes para diferentes tarefas.</li>
-  <li>Documentação e tradução.</li>
-  <li>Internacionalização (que é mais que traduzir por causa dos
-  diferentes  sistemas de saúde).</li>
-  <li>Montar um CD operacional (talvez baseado no <a
-      href="http://www.knoppix.de">Knoppix</a>).</li>
-</ul>
+<p><strong>As informações deta seção podem estar desatualizadas! É recomendável que você use ou o rsync ou tente o jigdo-mirror.</strong></p>
 
+<p>O kit de pseudo-imagem foi projetado primariamente para baixar apenas uma ou algumas poucas imagens, como a maioria das pessoas faz. Existe também o script <tt>debcdmirror</tt> que torna o espelhamento <em>realmente</em> fácil porque ele automaticamente usa o kit de pseudo-imagem e <tt>rsync</tt> para manter o seu servidor espelho atualizado - até mesmo checando automaticamente a soma MD5 de cada imagem baixada. Com <tt>debcdmirror</tt>,  você ainda pode especificar exatamente o que quer se seja espelhado.</p>
 
-<a id="marketing" name="marketing"></a>
-<h2>Propaganda &amp; PR</h2>
+<p>O uso manual do kit de pseudo-imagem (talvez com <tt>rsync</tt> para fazer a atualização de sublançamentos) significa uma grande quantidade de trabalho e muitos problemas, assim nós não o recomendamos</p>
 
-<p>A partir do momento que tivermos alguma coisa para mostrar neste
-projeto, e mesmo nos estágios iniciais do mesmo, estaremos sendo
-observados pelo mundo todo. Necessariamente teremos que trabalhar com o
-press@debian.org para divulgar e expôr este projeto da maneira que
-desejamos. Para este propósito criaremos uma coleção de lâminas para
-palestras sobre o Debian-Med.
-</p>
+Ao invés disso, você pode usar o script <tt>debcdmirror</tt> (que usa o kit de pseudo-imagem  e o rsync "internamente").</p>
 
+<p>A última versão do <a href="http://cdimage.debian.org/~costar/pseudo-image-kit/">kit de pseudo-imagem</a> e do script <a href="http://cdimage.debian.org/~costar/debcdmirror/"><tt>debcdmirror</tt></a> estão disponíveis nas páginas dos seus autores. Leia os arquivos README em ambos os pacotes para informações amplas sobre os procedimentos.</p>
 
-<a id="links" name="links"></a>
-<h2>Links</h2>
+<p><strong>Notas:</strong>
 
-<ul>
-  <li><a href="http://www.euspirit.org/">Minoru Development</a> dá um
-  forte apoio à iniciativa do Debian-Med.
-   <a href ="mailto:brianbr@openhealth.com">Brian Bray</a> anunciou que
-   a distribuição Debian-Med será uma peça-chave do CD Openhealth e será
-   orgulhosamente distribuído a partir do <a
-   href="http://www.euspirit.org/">portal de saúde de Código Aberto</a>
-   Spirit.
-   <br />
-   A maior parte das informações sobre os projetos mencionados acima foi
-   obtida a partir da página do EU Spirit.</li>
-  <li><a href="http://www.TxOutcome.Org/scripts/zope/library">Biblioteca OIO</a>
-   projetos de Código Aberto/Conteúdo Livre, materiais de leitura e
-   banco de dados de revisões de usuários</li>
-  <li>Notícias sobre projetos médicos em <a
-   href="http://www.linuxmednews.com/projects/">Linux Mednews</a></li>
-  <li><a href="http://www.openhealth.com/en/healthlinks.html">http://www.openhealth.com/en/healthlinks.html</a></li>
-  <li><a
-  href="http://resmedicinae.sourceforge.net/model/analysis">Coleção de
-  exigências para uma solução em software médico</a></li>
-  <li><a href="http://www.openmed.org">Agumas informações extras</a></li>
-</ul>
+<<<<<<< index.wml
+<p>Para o script <tt>debcdmirror</tt>, você deve escolher um servidor espelho <tt>rsync</tt> que ofereça um arquivo "<tt>ls-lR</tt>". Os endereços estão na <a href="rsync-mirrors">lista de servidores espelho rsync</a>.</p>
+
+<p>Se você não possui um <a href="$(HOME)/mirror/">servidor espelho de FTP do Debian "regular"</a> local, verifique  <a href="$(HOME)/mirror/list">lista de sites espelho</a>.</p>
+
+<p>O <tt>debcdmirror</tt> requer a versão 2 ou superior do <tt>bash</tt>. Isto não representa nenhum problema em qualquer distribuição moderna do Debian. Se necessário, você pode instalá-la em um local não-padrão, mas, neste caso, certifique-se de atualizar o caminho para o <tt>bash</tt> na primeira linha do script.</p>
+
+<toc-add-entry name="test">Imagens de teste</toc-add-entry>
+
+<p>O diretório "<tt><i>codename</i>_test</tt>" contém imagens que possuem um hardlink para aquelas nos diretórios de versões (ex. <tt>2.2_r4</tt>). Os nomes dos diretórios de versões irá mudar ao longo dos (sub)lançamentos, mas os nomes nos diretórios de "<tt>test</tt>" permanecerão os mesmos.</p>
+
+<p>Com isso, nos caso em que <tt>rsync</tt> é utilizado sozinho, a única forma de fazer o rsync atualizar os sublançamentos de forma correta é espelhar tanto os diretórios de versões quanto os diretórios "<tt>test</tt>" apropriados <em>e</em> usar a opção <tt>--hard-links</tt>. [Você <em>não</em> deve incluir os diretórios "<tt>test</tt>" com
+<tt>debcdmirror</tt>, porque <tt>debcdmirror</tt> irá manipular as coisas de forma diferente e mais eficiente.]</p>
+
+<toc-add-entry name="ls-lR">Arquivos ls-lR</toc-add-entry>
+
+<p>O arquivo <tt>ls-lR</tt> descreve a estrutura de diretórios do servidor espelho onde ele se encontra. <strong>Não</strong> faça o espelhamento do arquivo <tt>ls-lR</tt> ; ao invés disso ou faça um você mesmo (com "<tt>Makels-lR</tt>", de hora em hora, via <tt>cron</tt>) ou simplesmente não mantenha nenhum arquivo <tt>ls-lR</tt> .
+[<tt>debcdmirror</tt> irá criar um <tt>ls-lR</tt> local automaticamente após o espelhamento.]</p>
+
+<toc-add-entry name="serve">Oferecendo os arquivos</toc-add-entry>
+
+<p>Uma vez que você obteve as imagens de CD que você quer espelhar (i386 e CD's de fontes são as mais populares), você deve executar o programa servidor <tt>rsync</tt>. Isto não irá provocar uma carga alta na sua máquina e irá gerar muito menos tráfego de rede do que um serviço FTP/HTTP.</p>
+
+<p>Instruções de como configurá-lo estão no arquivo README do kit de pseudo-imagem. Resumidamente, adicione <kbd>rsync --daemon</kbd> na sua configuração <i>inetd</i>, e modifique o arquivo <kbd>rsyncd.conf</kbd> de acordo com a sua preferência. Nós recomendamos que se limite o acesso a um pequeno número de conexões por endereço IP e, no máximo, dobre o número total.</p>
+
+<toc-add-entry name="register">Registrando o servidor espelho em nossas listas</toc-add-entry>
+
+<p>Para tornar o seu servidor espelho útil para a mais ampla audiência, você pode registrá-lo em nossa lista de servidores espelho, como <a href="../http-ftp/">esta</a> ou <a href="rsync-mirrors">esta</a>. Entretanto, uma vez que imagens completas são arquivos grandes, isso pode fazer com que você tenha muitos gigabytes de tráfego de rede por dia.</p>
+
+<p>Você pode registrar o seu servidor espelho tanto preenchendo <a href="$(HOME)/mirror/submit">o formulário de submissão de servidores espelho</a> (note que os campos CDImage-* são os importantes), quanto enviando um e-mail para <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;debian-cd&#64;lists.debian.org">\debian-cd&#64;lists.debian.org</a>.</p>
+
+<p>Nós apreciamos todos os novos servidores espelho de imagens de CD. Obrigado antecipadamente!</p>=======
+<p>Para o script <tt>debcdmirror</tt>, você deve escolher um servidor espelho <tt>rsync</tt> que ofereça um arquivo "<tt>ls-lR</tt>". Os endereços estão na <a href="rsync-mirrors">lista de servidores espelho rsync</a>.</p>
+
+<p>Se você não possui um <a href="$(HOME)/mirror/">servidor espelho de FTP do Debian "regular"</a> local, verifique  <a href="$(HOME)/mirror/list">lista de sites espelho</a>.</p>
+
+<p>O <tt>debcdmirror</tt> requer a versão 2 ou superior do <tt>bash</tt>. Isto não representa nenhum problema em qualquer distribuição moderna do Debian. Se necessário, você pode instalá-la em um local não-padrão, mas, neste caso, certifique-se de atualizar o caminho para o <tt>bash</tt> na primeira linha do script.</p>
+
+<toc-add-entry name="test">Imagens de teste</toc-add-entry>
+
+<p>O diretório "<tt><i>codename</i>_test</tt>" contém imagens que possuem um hardlink para aquelas nos diretórios de versões (ex. <tt>2.2_r4</tt>). Os nomes dos diretórios de versões irá mudar ao longo dos (sub)lançamentos, mas os nomes nos diretórios de "<tt>test</tt>" permanecerão os mesmos.</p>
+
+<p>Com isso, nos caso em que <tt>rsync</tt> é utilizado sozinho, a única forma de fazer o rsync atualizar os sublançamentos de forma correta é espelhar tanto os diretórios de versões quanto os diretórios "<tt>test</tt>" apropriados <em>e</em> usar a opção <tt>--hard-links</tt>. [Você <em>não</em> deve incluir os diretórios "<tt>test</tt>" com
+<tt>debcdmirror</tt>, porque <tt>debcdmirror</tt> irá manipular as coisas de forma diferente e mais eficiente.]</p>
+
+<toc-add-entry name="ls-lR">Arquivos ls-lR</toc-add-entry>
+
+<p>O arquivo <tt>ls-lR</tt> descreve a estrutura de diretórios do servidor espelho onde ele se encontra. <strong>Não</strong> faça o espelhamento do arquivo <tt>ls-lR</tt> ; ao invés disso ou faça um você mesmo (com "<tt>Makels-lR</tt>", de hora em hora, via <tt>cron</tt>) ou simplesmente não mantenha nenhum arquivo <tt>ls-lR</tt> .
+[<tt>debcdmirror</tt> irá criar um <tt>ls-lR</tt> local automaticamente após o espelhamento.]</p>
+
+<toc-add-entry name="serve">Oferecendo os arquivos</toc-add-entry>
+
+<p>Uma vez que você obteve as imagens de CD que você quer espelhar (i386 e CD's de fontes são as mais populares), você deve executar o programa servidor <tt>rsync</tt>. Isto não irá provocar uma carga alta na sua máquina e irá gerar muito menos tráfego de rede do que um serviço FTP/HTTP.</p>
+
+<p>Instruções de como configurá-lo estão no arquivo README do kit de pseudo-imagem. Resumidamente, adicione <kbd>rsync --daemon</kbd> na sua configuração <i>inetd</i>, e modifique o arquivo <kbd>rsyncd.conf</kbd> de acordo com a sua preferência. Nós recomendamos que se limite o acesso a um pequeno número de conexões por endereço IP e, no máximo, dobre o número total.</p>
+
+<toc-add-entry name="register">Registrando o servidor espelho em nossas listas</toc-add-entry>
+
+<p>Para tornar o seu servidor espelho útil para a mais ampla audiência, você pode registrá-lo em nossa lista de servidores espelho, como <a href="../http-ftp/">esta</a> ou <a href="rsync-mirrors">esta</a>. Entretanto, uma vez que imagens completas são arquivos grandes, isso pode fazer com que você tenha muitos gigabytes de tráfego de rede por dia.</p>
+
+<p>Você pode registrar o seu servidor espelho tanto preenchendo <a href="$(HOME)/mirror/submit">o formulário de submissão de servidores espelho</a> (note que os campos CDImage-* são os importantes), quanto enviando um e-mail para <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;debian-cd&#64;lists.debian.org">\debian-cd&#64;lists.debian.org</a>.</p>
+
+<p>Nós apreciamos todos os novos servidores espelho de imagens de CD. Obrigado antecipadamente!</p>
+>>>>>>> 1.4
