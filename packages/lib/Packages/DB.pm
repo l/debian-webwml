@@ -269,13 +269,13 @@ Self explanatory.
 sub pkg_exists {
     my ( $self, $pkg ) = @_;
     
-    return (exists $self->{db}{$pkg} && defined $self->{db}{$pkg});
+    return (exists($self->{db}{$pkg}) && defined($self->{db}{$pkg}));
 }
 
 sub src_pkg_exists {
     my ( $self, $pkg ) = @_;
     
-    return (exists $self->{srcdb}{$pkg} && defined $self->{srcdb}{$pkg});
+    return (exists($self->{srcdb}{$pkg}) && defined($self->{srcdb}{$pkg}));
 }
 
 
@@ -570,7 +570,7 @@ sub merge_in {
 	    } else {
 		$new_pkg = $self->new_pkg( $entry->{package} );
 		my $tmp_pkg = $self->{db}->{$entry->{package}};
-		
+
 		$success = $tmp_pkg->add_version( $entry );
 		$self->{db}->{$entry->{package}} = $tmp_pkg;
 	    }
@@ -580,7 +580,7 @@ sub merge_in {
 		    foreach my $p ( split /\s*,\s*/o, $entry->{provides} ) {
 			$self->new_pkg( $p );
 			my $tmp_pkg = $self->{db}->{$p}; 
-			$tmp_pkg->add_provided_by( $entry->{package} );
+			$tmp_pkg->add_reverse_rel( $entry->{package}, $entry->{version} );
 			$self->{db}->{$p} = $tmp_pkg;
 		    }
 		}
@@ -593,7 +593,7 @@ sub merge_in {
 			    my $wv = ( $p =~ s/\s*\((.*)\)\s*//o );
 			    $self->new_pkg( $p );
 			    my $tmp_pkg = $self->{db}->{$p}; 
-			    $tmp_pkg->add_enhanced_by( $entry->{package},
+			    $tmp_pkg->add_reverse_rel( $entry->{package}, $entry->{version},
 						       $wv ? $1 : undef );
 			    $self->{db}->{$p} = $tmp_pkg;
 			}
@@ -870,7 +870,7 @@ of carriage return characters.
 
 =head1 COPYRIGHT
 
-Copyright 2003 Frank Lichtenheld <frank@lichtenheld.de>
+Copyright 2003, 2004 Frank Lichtenheld <frank@lichtenheld.de>
 
 This file is distributed under the terms of the GNU Public
 License, Version 2. See the source code for more details.
