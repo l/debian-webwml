@@ -186,29 +186,29 @@
 </define-tag>
 
 <define-tag langcountryoutput whitespace=delete>
-	[EN: %0, as spoken in %1:]
-	[AR: %0, as spoken in %1:]
-	[DA: %0, som det tales i %1:]
-	[DE: %0, wie in %1 gesprochen:]
-	[EL: %0, as spoken in %1:]
-	[EO: %0, as spoken in %1:]
-	[ES: %0, as spoken in %1:]
-	[FI: %0, as spoken in %1:]
-	[FR: %0, tel qu'on le parle en %1:]
-	[HR: %0, as spoken in %1:]
-	[HU: %0, as spoken in %1:]
-	[IT: %0, mentre siamo a %1:]
-	[JA: %0, as spoken in %1:]
-	[KO: %0, as spoken in %1:]
-	[NL: %0, as spoken in %1:]
-	[NO: %0, som det snakkes i %1:]
-	[PL: %0, as spoken in %1:]
-	[PT: %0, as spoken in %1:]
-	[RO: %0, as spoken in %1:]
-	[RU: %0, as spoken in %1:]
-	[SV: %0, som det talas i %1:]
-	[TR: %0, as spoken in %1:]
-	[ZH: %0, as spoken in %1:]
+	[EN:%0, as spoken in %1:]
+	[AR:%0, as spoken in %1:]
+	[DA:%0, som det tales i %1:]
+	[DE:%0, wie in %1 gesprochen:]
+	[EL:%0, as spoken in %1:]
+	[EO:%0, as spoken in %1:]
+	[ES:%0, as spoken in %1:]
+	[FI:%0, as spoken in %1:]
+	[FR:%0, tel qu'on le parle en %1:]
+	[HR:%0, as spoken in %1:]
+	[HU:%0, as spoken in %1:]
+	[IT:%0, mentre siamo a %1:]
+	[JA:%0, as spoken in %1:]
+	[KO:%0, as spoken in %1:]
+	[NL:%0, as spoken in %1:]
+	[NO:%0, som det snakkes i %1:]
+	[PL:%0, as spoken in %1:]
+	[PT:%0, as spoken in %1:]
+	[RO:%0, as spoken in %1:]
+	[RU:%0, as spoken in %1:]
+	[SV:%0, som det talas i %1:]
+	[TR:%0, as spoken in %1:]
+	[ZH:%0, as spoken in %1:]
 </define-tag>
 
 #
@@ -1144,6 +1144,32 @@ $slice{'err-guess-text'} = $slices;
 	[ZH:Language:]
 </define-tag>
 
+<define-tag Unknown_Language whitespace=delete>
+	[EN:Unknown language:]
+	[AR:Unknown language:]
+	[DA:Unknown language:]
+	[DE:Unknown language:]
+	[EL:Unknown language:]
+	[EO:Unknown language:]
+	[ES:Unknown language:]
+	[FI:Unknown language:]
+	[FR:Unknown language:]
+	[HR:Unknown language:]
+	[HU:Unknown language:]
+	[IT:Unknown language:]
+	[JA:Unknown language:]
+	[KO:Unknown language:]
+	[NL:Unknown language:]
+	[NO:Unknown language:]
+	[PL:Unknown language:]
+	[PT:Unknown language:]
+	[RO:Unknown language:]
+	[RU:Unknown language:]
+	[SV:Unknown language:]
+	[TR:Unknown language:]
+	[ZH:Unknown language:]
+</define-tag>
+
 <define-tag Score whitespace=delete>
 	[EN:Score:]
 	[AR:Score:]
@@ -1343,7 +1369,7 @@ sub language_name {
         if (defined ($trans{language2code($(CUR_LANG))}{lc(code2language($lang))})) {
 	        $lang = ucfirst($trans{language2code($(CUR_LANG))}{lc(code2language($lang))});
         } else {
-                $lang = code2language($lang);
+                $lang = code2language($lang) or return qq(<Unknown_Language>);
         }
         if (defined $country) {
 	        $country=uc($country);
@@ -1357,10 +1383,14 @@ sub language_name {
                 }
 	        return "<langcountryoutput $lang $country>";
         } else {
-                return "[".uc('$(CUR_ISO_LANG)').":$lang:".uc('$(CUR_ISO_LANG)')."]";
+                return $lang;
         }
 }
 :>
+
+<define-tag language-name whitespace=delete>
+<:=language_name('%0'):>
+</define-tag>
 
 <define-tag po-langs-long>
 <:
@@ -1376,7 +1406,7 @@ while (<LANGS>) {
 close(LANGS);
 print "<ul>\n";
 foreach my $l (sort @polangs) {
-        print "<li><a href=\"$l\">".language_name($l)."</a> ($l)</li>\n";
+        print "<li>$l (<a href=\"$l\">".language_name($l)."</a>)</li>\n";
 }
 print "</ul>\n";
 :>
@@ -1412,7 +1442,7 @@ while (<LANGS>) {
 close(LANGS);
 print "<ul>\n";
 foreach my $l (sort @templateslangs) {
-        print "<li><a href=\"$l\">".language_name($l)."</a> ($l)</li>\n";
+        print "<li>$l (<a href=\"$l\">".language_name($l)."</a>)</li>\n";
 }
 print "</ul>\n";
 :>
