@@ -14,6 +14,12 @@ include $(WMLBASE)/Make.common
 include $(WMLBASE)/Make.dep.templ    
 include $(WMLBASE)/Make.dep.generic
 
-vendors.$(LANGUAGE).html: vendors.wml ../../english/distrib/vendors.CD \
-		../../english/distrib/vendors.CD.def $(TEMPLDIR)/template.wml $(TEMPLDIR)/countries.wml
+vendors.$(LANGUAGE).html: ../../english/distrib/vendors.CD \
+		../../english/distrib/vendors.CD.def $(TEMPLDIR)/countries.wml
 pre-installed.$(LANGUAGE).html: ../../english/distrib/pre-installed.data
+ftplist.$(LANGUAGE).html: ../../english/distrib/ftplist.data \
+		../../english/distrib/ftplist.data $(TEMPLDIR)/countries.wml
+books.$(LANGUAGE).html: ../../english/distrib/books.def \
+		../../english/distrib/books.def $(TEMPLDIR)/countries.wml
+pre-installed.$(LANGUAGE).html: ../../english/distrib/pre-installed.data \
+		../../english/distrib/pre-installed.data $(TEMPLDIR)/countries.wml
