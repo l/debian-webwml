@@ -777,12 +777,84 @@ $translations = {
 	'last_translated'	=> '22/03/1999',
 },
 
-'intro/international' => {
+'international/index' => {
 	'type'			=> 'Web',
 	'status'		=> 'à relire',
-	'since'			=> '25/05/1999',
+	'since'			=> '13/08/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
-	'last_translated'	=> '25/05/1999',
+	'last_translated'	=> '13/08/1999',
+},
+
+'international/Chinese' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'international/Finnish' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'international/French' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'international/German' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'international/Italian' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'international/Japanese' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'international/Korean' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'international/Spanish' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '13/08/1999',
+},
+
+'international/Turkish' => {
+	'type'			=> 'Web',
+	'status'		=> 'à relire',
+	'since'			=> '13/08/1999',
+	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
+	'last_translated'	=> '13/08/1999',
 },
 
 'intro/license_disc' => {
@@ -817,16 +889,16 @@ $translations = {
 
 'mirror/explain' => {
 	'type'			=> 'Web',
-	'status'		=> 'à relire',
-	'since'			=> '02/08/1999',
+	'status'		=> 'traduction à jour',
+	'since'			=> '13/08/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '02/08/1999',
 },
 
 'mirror/ftpmirror' => {
 	'type'			=> 'Web',
-	'status'		=> 'à relire',
-	'since'			=> '02/08/1999',
+	'status'		=> 'traduction à jour',
+	'since'			=> '13/08/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '02/08/1999',
 },
@@ -849,8 +921,8 @@ $translations = {
 
 'mirror/types' => {
 	'type'			=> 'Web',
-	'status'		=> 'à relire',
-	'since'			=> '02/08/1999',
+	'status'		=> 'traduction à jour',
+	'since'			=> '13/08/1999',
 	'translation_maintainer'=> ['Christian Couder <chcouder@mail.club-internet.fr>'],
 	'last_translated'	=> '02/08/1999',
 },
