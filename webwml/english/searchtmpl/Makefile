@@ -6,9 +6,12 @@ WMLBASE=..
 CUR_DIR=searchtmpl
 SUBS=
 
+GETTEXTFILES = search.mo
+
 include $(WMLBASE)/Make.lang
 
 
 search.$(LANGUAGE).html: search.wml $(ENGLISHSRCDIR)/searchtmpl/search.data \
   $(ENGLISHSRCDIR)/searchtmpl/search.def $(TEMPLDIR)/common_translation.wml \
-  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml $(TEMPLDIR)/footer.wml
+  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml $(TEMPLDIR)/footer.wml \
+  $(GETTEXTDEP)
