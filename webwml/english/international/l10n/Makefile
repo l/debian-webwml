@@ -10,9 +10,9 @@ include $(WMLBASE)/Make.lang
 
 all::data/langs
 
-LANGS_TMPL=$(shell cat data/langs |grep 'templates:'|sed 's/templates://')
-LANGS_PO  =$(shell cat data/langs |grep 'po:'       |sed 's/po://')
-LANGS_ALL =$(shell cat data/langs |grep 'all:'      |sed 's/all://')
+LANGS_TMPL=$(shell grep 'templates:' data/langs|sed 's/templates://')
+LANGS_PO  =$(shell grep 'po:'        data/langs|sed 's/po://')
+LANGS_ALL =$(shell grep 'all:'       data/langs|sed 's/all://')
 
 HTML_PO  =$(foreach lang,$(LANGS_PO)  ,po-$(lang).$(LANGUAGE).html)
 HTML_TMPL=$(foreach lang,$(LANGS_TMPL),templates-$(lang).$(LANGUAGE).html)
