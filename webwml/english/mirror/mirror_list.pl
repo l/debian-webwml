@@ -34,6 +34,13 @@ sub process_line {
 			$longest{$type} = length($4);
 		}
 	}
+	elsif ($line =~ /^Includes:\s*(.*)\s*$/i) {
+		@tmp = split(" ", $1);
+		$mirror{$site}{includes} = [ @tmp ];
+	}
+	elsif ($line =~ /^Sponsor:\s*(.*)\s*$/i) {
+		push @{ $mirror{$site}{sponsor} }, $1;
+	}
 	elsif ($line =~ /^([\w-]+):\s*(.*?)\s*$/s) {
 		$field = lc $1;
 		$mirror{$site}{$field} = $2;
@@ -326,6 +333,67 @@ END
   print "</table>\n" if $html;
 }
 
+# meant to be output into a file which is then included into a .wml file
+# and processed by WML
+sub primary_mirror_sponsors {
+  return unless $html;
+  print <<END;
+<tr><td colspan="3"><hr></td></tr>
+END
+  foreach $country (sort keys %countries) {
+    foreach $site (sort @{ $countries{$country} }) {
+      if ($site =~ /^ftp\d?\...\.debian.org$/) {
+        (my $countrycode = $country) =~ s/^(..).*/$1/;
+	print <<END;
+<tr>
+  <td valign="top"><${countrycode}c></td>
+  <td valign="top" align="center"><a href="ftp://$site$mirror{$site}{method}{'archive-ftp'}">$site</a></td>
+  <td>
+END
+	if ($site eq "ftp.us.debian.org") {
+	  die unless exists $mirror{$site}{includes}; # must be an error
+	  my $numsubsites = @{ $mirror{$site}{includes} };
+	  my $snum = 0;
+	  foreach my $subsite (@{ $mirror{$site}{includes} }) {
+	    die "$subsite\n" unless exists $mirror{$subsite}{sponsor}; # must be an error
+	    my $numsponsors = @{ $mirror{$subsite}{sponsor} };
+	    my $num = 0;
+	    foreach my $sponsor (@{ $mirror{$subsite}{sponsor} }) {
+	      if ($sponsor =~ /^(.+) (http:.*)$/) {
+	        $sponsorname = $1;
+	        $sponsorurl = $2;
+	      }
+	      print "<a href=\"$sponsorurl\">$sponsorname</a>";
+	      $num++;
+	      print ", " unless ($num >= $numsponsors);
+	    }
+	    $snum++;
+	    print ", " unless ($snum >= $numsubsites);
+	  }
+	} else {
+	  die "$site\n" unless exists $mirror{$site}{sponsor}; # must be an error
+	  my $numsponsors = @{ $mirror{$site}{sponsor} };
+	  my $num = 0;
+	  foreach my $sponsor (@{ $mirror{$site}{sponsor} }) {
+	    if ($sponsor =~ /^(.+) (http:.*)$/) {
+	      $sponsorname = $1;
+	      $sponsorurl = $2;
+	    }
+	    print "<a href=\"$sponsorurl\">$sponsorname</a>";
+	    $num++;
+	    print ", " unless ($num >= $numsponsors);
+	  }
+	}
+        print <<END;
+
+  </td>
+</tr>
+END
+      }
+    }
+  }
+  print "</table>\n";
+}
 
 sub header {
 	print <<END;
@@ -562,7 +630,7 @@ if (defined $help) {
 Usage: $0 -m|--mirror mirror_list_source [-t|--type type]
 
 `mirror_list_source\' is usually Mirrors.masterlist file
-`type\' can be one of: "html", "text", "apt", "methods" or "nonus".
+`type\' can be one of: "html", "text", "apt", "methods", "nonus" or "sponsors".
 END
 	exit;
 }
@@ -642,6 +710,10 @@ elsif ($output_type eq 'methods') {
 }
 elsif ($output_type eq 'nonus') {
 	readmenonus();
+}
+elsif ($output_type eq 'sponsors') {
+	$html=1;
+	primary_mirror_sponsors();
 }
 else {
 	die "Error: unknown output type requested, $output_type\n";
