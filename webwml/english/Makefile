@@ -54,6 +54,11 @@ else
           $(shell echo $(ENGLISHDIR) | sed s,./,,)/sitemap.wml
 endif
 
+ifneq "$(LANGUAGE)" "en"
+contact.$(LANGUAGE).html : contact.wml $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml $(LOCALEDIR)/others.mo
+endif
+
 all:: $(SITEMAP)
 
 install:: $(DESTSITEMAP)
