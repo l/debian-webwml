@@ -765,7 +765,7 @@ sub write_all_package {
 	# Complete list (txt)
 	my $all_pkg_txt = sprintf( gettext( "All Debian Packages in \"%s\"" )."\n\n", $distro );
 	$all_pkg_txt .=  gettext( "Last Modified: " ). "LAST_MODIFIED_DATE\n".
-	    gettext( "Copyright (C) 1997-2004 SPI;\nSee <URL:http://www.debian.org/license> for the license terms.\n\n" );
+	    gettext( "Copyright (C) 1997-2005 SPI;\nSee <URL:http://www.debian.org/license> for the license terms.\n\n" );
 	$all_pkg_txt .= $all_pkg_txt_l{$lang}; 
 	
 	$filename = "$dest_dir/allpackages.$lang.txt.gz";
