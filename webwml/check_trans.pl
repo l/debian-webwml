@@ -69,19 +69,23 @@
 
 use Getopt::Std;
 use IO::Handle;
-use strict;
+# Well, uncommenting the next line implies to define the opt_blah with 'our'
+# in perl 5.6, which is not a valid keyword in older version. So, we can't 
+# use strict for now, what is, IMHO, a bad think. 
+# Let's wait for perl 5.6 in testing..
+#use strict;
 
 # options
-our $opt_d = 0;
-our $opt_s = '';
-our $opt_p = undef;
-our $opt_l = 0;
-our $opt_g = 0; 
-our $opt_m = '';
-our $opt_n = 5;
-our $opt_v;
-our $opt_q;
-our $opt_Q;
+$opt_d = 0;
+$opt_s = '';
+$opt_p = undef;
+$opt_l = 0;
+$opt_g = 0; 
+$opt_m = '';
+$opt_n = 5;
+# our $opt_v;
+# our $opt_q;
+# our $opt_Q;
 
 # languages
 my $defaultlanguage;
