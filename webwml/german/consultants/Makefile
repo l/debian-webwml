@@ -14,6 +14,7 @@ include $(WMLBASE)/Make.common
 include $(WMLBASE)/Make.dep.templ    
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml ../../english/consultants/consultant.data
-	wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG) $(WMLEPILOG) $(<F)
+	$(WML) $(<F)
+#	wml $(WMLOPTIONS) -o UNDEFu$(LANGUAGECAP):$(WMLOUTFILE) $(WMLPROLOG) $(WMLEPILOG) $(<F)
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/consultant.wml
 	$(WML) $(<F)
