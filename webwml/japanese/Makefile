@@ -15,7 +15,7 @@ $(HTMLDIR)/%.html.$(LANGUAGE) : %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/langu
 all: $(HTMLFILES)
 #	( cd 2.0; $(MAKE) )
 #	( cd MailingLists; $(MAKE) )
-#	( cd News; $(MAKE) )
+	( cd News; $(MAKE) )
 #	( cd SPI; $(MAKE) )
 #	( cd devel; $(MAKE) )
 #	( cd distrib; $(MAKE) )
