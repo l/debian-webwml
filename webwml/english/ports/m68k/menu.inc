@@ -6,7 +6,7 @@
 <menu-item basename="../index">
 [EN:Ports:]
 [AR:Ports:]
-[DA:Ports:]
+[DA:Tilpasninger:]
 [DE:Ports:]
 [EL:Ports:]
 [EO:Ports:]
@@ -47,7 +47,7 @@
 [NL:Debian for Motorola 680x0:]
 [NO:Debian for Motorola 680x0:]
 [PL:Debian for Motorola 680x0:]
-[PT:Debian for Motorola 680x0:]
+[PT:Debian paraMotorola 680x0:]
 [RO:Debian for Motorola 680x0:]
 [RU:Debian for Motorola 680x0:]
 [SV:Debian för Motorola 680x0:]
