@@ -81,7 +81,7 @@ $opt_s = '';
 $opt_p = undef;
 $opt_l = 0;
 $opt_g = 0; 
-$opt_m = '';
+$opt_m = undef;
 $opt_n = 5;
 # our $opt_v;
 # our $opt_q;
@@ -146,7 +146,6 @@ if (-e "./$langto/international/$langto/current_status.pl" &&
 }
 
 if ($opt_m) {
-    use MIME::Lite;
     unless ($opt_n =~ m,[123],) {
 	die "Invalid priority. Please set -n value to 1, 2 or 3.\n".
 	    "(assuming you know what you're doing)\n";
@@ -181,6 +180,7 @@ foreach (@en) {
 send_mails();
 
 sub verify_send {
+    return 1 unless ($opt_m);
     # returns true whether we have to send this part to this guy
     my $name=shift;
     my $part=shift;
