@@ -9,5 +9,15 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 
-merchandise.$(LANGUAGE).html: ../../english/misc/merchandise.data \
-		../../english/misc/merchandise.def
+merchandise.$(LANGUAGE).html: merchandise.wml $(TEMPLDIR)/template.wml \
+  $(ENGLISHSRCDIR)/misc/merchandise.data $(ENGLISHSRCDIR)/misc/merchandise.def
+
+ifeq "$(LANGUAGE)" "en"
+$(HTMLDIR)/bsd.license: bsd.license
+	cp -p $(@F) $(HTMLDIR)
+
+install:: $(HTMLDIR)/bsd.license
+
+cleandest::
+	rm -f $(HTMLDIR)/bsd.license
+endif
