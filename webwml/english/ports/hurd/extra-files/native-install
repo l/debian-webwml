@@ -37,6 +37,11 @@
 #        Add force-depends to dpkg. The perl situation requires this for
 #        dpkg and adduser.
 #        Fix tmp permission. Why is it bogus?
+#    7 Sep 1999 - v2.2
+#        Set passive translator for /servers/password.
+#        Don't configure mawk or passwd early.
+#        Don't make use of dummy interface.
+#        Remove libexec/runsystem before configuring hurd.
 
 # Make sure the filesystem is writeable
 
@@ -52,10 +57,12 @@ echo Now I set up the translators. If you get Operation not supported
 echo errors, you have forgotten to set the file system owner to \"hurd\"!
 
 /bin/settrans -c /servers/socket/1 /hurd/pflocal
-/bin/settrans -c /servers/socket/2 /hurd/pfinet --interface=dummy --address=192.168.0.1
+/bin/settrans -c /servers/socket/2 /hurd/pfinet --interface=eth0 --address=192.168.0.1
 /bin/settrans -k /servers/exec /hurd/exec
 /bin/settrans -c /servers/crash-suspend /hurd/crash --suspend
 /bin/settrans -c /servers/crash-kill /hurd/crash --kill
+/bin/settrans -c /servers/password /hurd/password
+
 # Not functional yet:
 /bin/settrans -c /servers/crash-dump-core /hurd/crash --dump-core
 if [ ! -e /servers/crash ] ; then
@@ -78,13 +85,9 @@ cd /dev
 /bin/sh ./MAKEDEV -v fd
 
 # Configure libc very soon.
-/bin/dpkg --configure mawk
 /bin/dpkg --configure libc0.2
 
 # Configure packages with missing dependencies:
-if [ -e /var/lib/dpkg/info/passwd.list ] ; then
-	/bin/dpkg --configure --force-depends passwd
-fi
 if [ -e /var/lib/dpkg/info/bsdutils.list ] ; then
 	/bin/dpkg --configure --force-depends bsdutils
 fi
@@ -161,6 +164,13 @@ echo translators come into place.
 echo
 echo All packages should be configured now. If there are errors\,
 echo let me know.
+echo
+echo PS: There is a bug somewhere that can corrupt the terminal after
+echo running native-install.
+echo If it seems that only every second character you type is passed on
+echo to the shell, try typing every character twice. For example, type
+echo \"llss\<enter\>\<enter\>\" instead \"ls\<enter\>\".
+echo A \"rreebboooott\<enter\>\<enter\>\" fixes this problem.
 echo
 echo Have fun exploring the Hurd, Marcus Brinkmann \<brinkmd\@debian.org\>
 echo
