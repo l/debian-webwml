@@ -37,7 +37,7 @@ $def_unsubscribe = "unsubscribe.wml";
 # ----- End of Customisation
 
 @fieldlist = ('Language','Digest','Moderated','Subscription');
-@specialist = ('Section','Description','Websubscribe');
+@specialist = ('Section','Description');
 @globlist = ('List','Introduction','Subscription','Advertising');
 
 # This refers to @grouptitle from master:/org/lists.debian.org/scripts/conf.pl
@@ -356,8 +356,9 @@ END
 		foreach $l (keys(%list)) {
 			next if (!$l || ($list{$l}->{'Section'} ne $section));
 			die "$l has no description!\n" unless exists $list{$l}->{'Description'};
+			die "$l has no subscription policy!\n" unless exists $list{$l}->{'Subscription'};
 			next unless exists $list{$l}->{'Moderated'}; # weeds out external lists
-			next if (exists $list{$l}->{'Websubscribe'} && $list{$l}->{'Websubscribe'} ne "yes");
+			next unless $list{$l}->{'Subscription'} =~ /^open/;
 			push(@lists, $l);
 		}
 		@lists = sort @lists;
@@ -373,12 +374,7 @@ END
 
 			foreach $l (@lists) {
 				$slist = $l; $slist =~ s/@.*//;
-				if (exists $list{$l}->{'Websubscribe'} && $list{$l}->{'Websubscribe'} eq "no") {
-					printf OUT "<DT>\n";
-				}
-				else {
-					printf OUT "<DT><INPUT TYPE=\"checkbox\" NAME=\"subscribe\" VALUE=\"%s\">\n", $slist;
-				}
+				printf OUT "<DT><INPUT TYPE=\"checkbox\" NAME=\"subscribe\" VALUE=\"%s\">\n", $slist;
 				printf OUT "	<STRONG><a name=\"%s\">%s</a></STRONG>", $slist, $slist;
 
 				$list{$l}->{'Description'} =~ s/&/&amp;/g;
@@ -401,20 +397,7 @@ END
 					printf OUT "	<BR><moderated> <em><no></em>&nbsp;&nbsp;&nbsp;&nbsp;\n";
 				} else { die "unknown moderated value for $l" }
 				die "no subscription policy for $l\n" unless defined $list{$l}{'Subscription'};
-				if ($list{$l}->{'Subscription'} eq "open") {
-					printf OUT "	<subscription> <em><open></em>\n";
-				} elsif ($list{$l}->{'Subscription'} eq "closed") {
-					printf OUT "	<subscription> <em><closed></em>\n";
-				} elsif ($list{$l}->{'Subscription'} eq "developers only") {
-					printf OUT "	<subscription> <em><developers_only></em>\n";
-				} elsif ($list{$l}->{'Subscription'} eq "deity-developers only") {
-					printf OUT "	<subscription> <em><deity_developers_only></em>\n";
-				} elsif ($list{$l}->{'Subscription'} eq "Debian Technical Committee only") {
-					printf OUT "	<subscription> <em><Debian_Technical_Committee_only></em>\n";
-				} else {
-					printf OUT "	<subscription> <em>%s</em>\n", $list{$l}->{'Subscription'};
-				}
-
+				printf OUT "	<subscription> <em><open></em>\n";
 				if (exists $list{$l}->{'Digest'}) {
 					$slist = $list{$l}->{'Digest'}; $slist =~ s/@.*//;
 					printf OUT "	<BR><INPUT TYPE=\"checkbox\" NAME=\"subscribe\" VALUE=\"%s\">\n", $slist;
@@ -481,8 +464,10 @@ END
 	    @lists = ();
 	    foreach $l (keys(%list)) {
 		next if (!$l || ($list{$l}->{'Section'} ne $section));
-		next if (! exists $list{$l}->{'Description'});
-		next if (exists $list{$l}->{'Websubscribe'} && $list{$l}->{'Websubscribe'} eq "no");
+		next unless exists $list{$l}->{'Description'};
+		next unless exists $list{$l}->{'Moderated'}; # weeds out external lists
+		die "$l has no subscription policy!\n" unless exists $list{$l}->{'Subscription'};
+		next unless $list{$l}->{'Subscription'} =~ /^open/;
 		push(@lists, $l);
 	    }
 	    @lists = sort @lists;
