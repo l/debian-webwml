@@ -4,12 +4,7 @@
 
 WMLBASE=../..
 CUR_DIR=ports/hurd
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=reference-manual extra-files
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic

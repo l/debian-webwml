@@ -4,15 +4,10 @@
 
 WMLBASE=../..
 CUR_DIR=releases/slink
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
-include $(WMLBASE)/Make.dep.generic
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/release.wml \
   $(ENGLISHSRCDIR)/releases/slink/formats_and_architectures.wmh

@@ -4,15 +4,10 @@
 
 WMLBASE=..
 CUR_DIR=misc
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ
-include $(WMLBASE)/Make.dep.generic
 
 merchandise.$(LANGUAGE).html: ../../english/misc/merchandise.data \
 		../../english/misc/merchandise.def

@@ -4,14 +4,10 @@
 
 WMLBASE=../..
 CUR_DIR=security/undated
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
 
 # Do Not modify the following lines
 index.$(LANGUAGE).html: index.wml $(wildcard undated*.wml) $(TEMPLDIR)/basic.wml $(TEMPLDIR)/recent_list.wml

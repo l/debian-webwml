@@ -4,14 +4,10 @@
 
 WMLBASE=../..
 CUR_DIR=events/2000
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=expo vatech-if
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.templ    
 
 # Do Not modify the following lines
 index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*\-*.wml) $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml

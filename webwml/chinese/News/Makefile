@@ -10,10 +10,7 @@ YEARS:=$(wildcard [12][0-9][0-9][0-9])
 SUBS=$(YEARS) weekly
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.generic
-include $(WMLBASE)/Make.dep.templ
 
 # Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.wml) \

@@ -4,17 +4,12 @@
 
 WMLBASE=.
 CUR_DIR=
-# list any subdirectories in the following variable. Any directories listed
-# must exist or the make will not work
 SUBS=Bugs MailingLists News Pics SPI consultants devel distrib doc events \
 international intro logos mirror misc partners ports releases security vote \
 y2k
 
 include $(WMLBASE)/Make.lang
-include $(WMLBASE)/Make.common
 
-include $(WMLBASE)/Make.dep.generic
-include $(WMLBASE)/Make.dep.templ
 
 # Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml \
