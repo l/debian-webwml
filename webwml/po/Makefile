@@ -1,5 +1,5 @@
 
-langs = ar ca da de el eo es fi fr hr hu id it ja ko nl no pl pt ro ru sv tr zh
+langs = ar ca da de el eo es fi fr hr hu id it ja ko lt nl no pl pt ro ru sv tr zh
 
 LOCALEROOT = $(CURDIR)/locale
 TEMPLDIR   = template/debian
@@ -74,7 +74,7 @@ fix-po:
      if [ "x$${charset}" = x ]; then \
        echo Unknown encoding for language $$l; \
      else \
-       sed -e "3s/charset=\\([^\"\\\\]*\\)/charset=$${charset}/" po-files/templates.$$l.po > po-files/templates.$$l.po.new \
+       sed -e "3s/charset=\\([^\"\\\\]*\\)/charset=$${charset}/" -e 's/"\$$([A-Z]*)[^"]*"/"%s\\"/' po-files/templates.$$l.po > po-files/templates.$$l.po.new \
        && mv po-files/templates.$$l.po.new po-files/templates.$$l.po; \
      fi; \
    done
@@ -82,14 +82,13 @@ fix-po:
 #   In WML files, replace slices with <gettext> tags
 convert-templates:
 	./scripts/wmlconvert.pl $(TMPL_FILES)
-	-rm -f $(TEMPLDIR)/countries.def
-	$(MAKE) $(TEMPLDIR)/countries.def
-
-gen-def: $(TEMPLDIR)/countries.def $(TEMPLDIR)/language_names.def
+	for p in template/patches/*.patch; do patch -p0 < $$p; done
+	-rm -f $(TEMPLDIR)/countries.def $(TEMPLDIR)/language_names.def
+	$(MAKE) $(TEMPLDIR)/countries.def $(TEMPLDIR)/language_names.def
 
 $(TEMPLDIR)/countries.def: $(TEMPLDIR)/countries.wml
 	cd $(TEMPLDIR) && sed -e /^#/d countries.wml | eperl -B '<:' -E ':>' - >/dev/null
 
 $(TEMPLDIR)/language_names.def: $(TEMPLDIR)/language_names.wml
-	cd $(TEMPLDIR) && sed -e '/^#/d' -e '/^<perl>/,/^<\/perl>/!d' language_names.wml  | eperl -B '<perl>' -E '</perl>' - >/dev/null
+	cd $(TEMPLDIR) && sed -e '/^#/d' -e '/^<:/,/^:>/!d' language_names.wml  | eperl -B '<:' -E ':>' - >/dev/null
 
