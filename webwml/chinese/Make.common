@@ -103,11 +103,9 @@ $(HTMLDIR)/%.zh-cn.html: %.zh-cn.html
 $(HTMLDIR)/%.zh-tw.html: %.zh-tw.html
 	@echo copying $(@F) to $(HTMLDIR)
 	-@cp $(@F) $(HTMLDIR)
-
-# kludge by ypwong; commented by foka on 2000-06-07
-#ifeq ($(CUR_DIR),chinese)
-#	@echo making a link $(@D)/$(*F).html -\> $(@F)
-#	    -@ln -f -s $(@F) $(@D)/$(*F).html
-#endif
-
+# Create %.html -> %.zh-tw.html symlink if no English version of %.wml exists
+	@if [ ! -f "$(WMLBASE)/../english/$(CUR_DIR)/$(*F).wml" ]; then \
+		echo "Making a link $(@D)/$(*F).html -> $(@F)"; \
+		ln -f -s $(@F) $(@D)/$(*F).html; \
+	fi
 endif
