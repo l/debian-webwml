@@ -344,7 +344,7 @@ foreach $k (sort keys %$translations) {
 	print "<BR>$tag{'translation_revision'}: $t->{'translation_revision'}" if ($t->{'translation_revision'});
 	print "<BR>$tag{'base_revision'} : $t->{'base_revision'}" if ($t->{'base_revision'});
 	print "<BR>$tag{'diff'}: <A HREF=\"$t->{'diff'}\">$tag{'diff'}</A>" if ($t->{'diff'});
-	print "<BR>$tag{'available'} <A HREF=\"http://packages.debian.org/$t->{'translation_package'}\">$t->{'translation_package'}</A>}" if ($t->{'translation_package'});
+	print "<BR>$tag{'available'} <A HREF=\"http://packages.debian.org/$t->{'translation_package'}\">$t->{'translation_package'}</A>" if ($t->{'translation_package'});
 	if ($t->{'translation_name'} !~ /original/) {
 	print "<BR>$tag{'originaldoc'} : <A HREF=\"$t->{'url'}\"> <I>$t->{'name'}</I> $t->{'sub_name'}</A>";
 	}
