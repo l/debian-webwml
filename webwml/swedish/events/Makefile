@@ -5,7 +5,7 @@
 WMLBASE=..
 CUR_DIR=events
 YEARS=$(wildcard [12][0-9][0-9][0-9])
-SUBS=$(YEARS) weekly press
+SUBS=$(YEARS) weekly press materials
 
 include $(WMLBASE)/Make.lang
 
