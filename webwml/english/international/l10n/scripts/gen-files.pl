@@ -88,6 +88,7 @@ sub get_stats_po {
         my %incl  = ();
         my %excl  = ();
         my $none  = '';
+        $total{$section} = 0;
         foreach $pkg (sort @{$packages}) {
                 if ($data->upstream($pkg) eq 'dbs') {
                         $none .= "<li>".$pkg." (*)</li>\n";
@@ -105,6 +106,16 @@ sub get_stats_po {
                 foreach $line (@{$data->po($pkg)}) {
                         my ($pofile, $lang, $stat, $link) = @{$line};
                         $link =~ s/:/\%3a/g;
+                        if ($lang eq '_') {
+			    
+			        # FIXME: This wont work since the stats about the pot files are not in the DB
+			        if ($stat =~ m/(\d+)u/) {
+                                        $total{$section} += $1;
+                                }
+			        # FIXME: Uncommenting the next line would prevent to use '_' as a 
+			        #        regular lang code, but I'm not sure of the implications
+#                                next;
+                        }
                         $lang = uc($lang) || 'UNKNOWN';
                         $list{$lang} = 1;
                         $incl{$lang}  = '' unless defined($incl{$lang});
@@ -166,6 +177,18 @@ sub process_po {
                 print GEN "<dd><language-name $lang /></dd>\n";
         }
         print GEN "</dl>\n";
+        close (GEN);
+        open (GEN, "> $opt_l/po/gen/total")
+                || die "Unable to write into $opt_l/po/gen/total";
+        print GEN "<define-tag po-total-strings>".
+                ($total{main}+$total{contrib}+$total{'non-free'}).
+                "</define-tag>\n";
+        close (GEN);
+        open (GEN, "> $opt_l/po/gen/stats")
+                || die "Unable to write into $opt_l/templates/gen/stats";
+        foreach my $lang (@po_langs) {
+	            print GEN "$lang:".$score{uc $lang}."\n" if defined ($score{uc $lang});
+	        }
         close (GEN);
 }
 
@@ -353,6 +376,12 @@ sub process_templates {
                 ($total{main}+$total{contrib}+$total{'non-free'}).
                 "</define-tag>\n";
         close (GEN);
+        open (GEN, "> $opt_l/templates/gen/stats")
+                || die "Unable to write into $opt_l/templates/gen/stats";
+        foreach my $lang (@td_langs) {
+	    print GEN "$lang:".$score{uc $lang}."\n";
+	}
+        close (GEN);
 }
 
 sub get_stats_podebconf {
@@ -473,6 +502,12 @@ sub process_podebconf {
         print GEN "<define-tag podebconf-total-strings>".
                 ($total{main}+$total{contrib}+$total{'non-free'}).
                 "</define-tag>\n";
+        close (GEN);
+        open (GEN, "> $opt_l/po-debconf/gen/stats")
+                || die "Unable to write into $opt_l/po-debconf/gen/stats";
+        foreach my $lang (@pd_langs) {
+	            print GEN "$lang:".$score{uc $lang}."\n";
+	        }
         close (GEN);
 }
 

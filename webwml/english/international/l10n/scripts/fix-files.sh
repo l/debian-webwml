@@ -15,7 +15,10 @@ do
     test -f $dir/contrib-$code.exc  || echo 'DELETE-ME' > $dir/contrib-$code.exc
     test -f $dir/non-free-$code.exc || echo 'DELETE-ME' > $dir/non-free-$code.exc
 
+    stat=`grep "^$code:" $dir/stats|sed 's/^.*://'`
+
     sed -e "s/@tmpl_lang@/$code/" \
+        -e "s/@tmpl_lang_stats@/$stat/" \
         -e "s/href=\"tmpl\\./href=\"$code./" \
         -e "/LINE: inc-main/r     $dir/main-$code.inc" \
         -e "/LINE: inc-contrib/r  $dir/contrib-$code.inc" \
