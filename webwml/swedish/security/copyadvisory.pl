@@ -77,6 +77,8 @@ while (<SRC>)
 	else
 	{
 		s/<h4>Source:/<h4>Källkod:/;
+        s/<h4>Source archives:/<h4>Källkodsarkiv:/;
+        s/ architecture:</</;
 		s/<h4>Architechture-independent component:/<h4>Arkitekturoberoende arkiv:/;
 		print DST $_;
 	}
