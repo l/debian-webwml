@@ -342,7 +342,7 @@ sub multipageheader {
 	
 	$index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $number)." | ".nextlink($input,\%params, $number);
 	
-	print "<center>$start|$end|$results_per_page|$index_line</center>";
+	print "<center>$index_line</center>";
     }
 
     if ($number > 100) {
