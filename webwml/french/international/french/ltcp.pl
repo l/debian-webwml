@@ -18,128 +18,63 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 use strict;
+no strict "refs";
 
 use vars qw(
-	$CVSWEB $DDPWEB $TRANSWEB
-	$translations $translations_status
+	$CVSWEB $TRANSWEB
+	$translations
 	$types $root $from $to $from_abr $to_abr
 	@status %tag $debug
 	);
 
-# Read the database status
-do 'current_status.pl';
-
-# Global variables
-$root = '../../..'; #This should be take from the Makefile
-$from = 'english';
-$to = 'french'; # And this would be better used in the command line
-$from_abr = 'en';
-$to_abr = 'fr' ;
-$CVSWEB = 'http://cvs.debian.org' ; 
-$DDPWEB = 'http://www.debian.org/~elphick/manuals.html' ;
-# The place were translation documents are kept while working on them
-$TRANSWEB = 'http://cvs.debian.org/webwml/french/international/french/translations/?cvsroot=webwml';
-
-# This matrix has all the values for the $status
-# This way we do not have to put it in the %translation database
-$status[0]= 'non disponible';
-$status[1]= 'à traduire';
-$status[2]= 'en cours de traduction';
-$status[3]= 'à relire';
-$status[4]= 'traduction à jour';
-$status[5]= 'à reviser';
-$status[6]= 'en cours de révision';
-$status[7]= 'obsolète';
-$status[8]= 'inconnu';
-
-# We cannot do this with tags!
-# Wml goes through pass2 before perl substituion in pass3, either make
-# the file outside of wml and parse it afterwards or do it this way
-$tag{'Source'}= 'Source';
-$tag{'CVSpage'}='page CVS';
-$tag{'devel-url'}='URL de développement de la traduction';
-$tag{'translation_maintainer'}='Responsable de la traduction';
-$tag{'status'}='État';
-$tag{'translation_revision'}='Revision de la traduction';
-$tag{'since'}='depuis';
-$tag{'base_revision'}='Révision du document original sur laquelle se base la traduction';
-$tag{'diff'}='Différence entre la révision traduite et la dernière';
-$tag{'diff-file'}='fichier diff CVS';
-$tag{'available'}='Disponible dans le paquet';
-$tag{'originaldoc'}='Document original';
-$tag{'revision'}='révision';
-$tag{'included'}='inclus dans le paquet';
-$tag{'lines'}='Nombre de lignes du document original';
-$tag{'no url'}='(pas d\'url)';
-
-# Turn this to '1' for debugging purposes
-$debug=0;
-#$debug=1;
+# Read config file
+do 'ltcp.conf';
 
 # $t : current document record
 # $k : current document key
 # $f : current document field
 
 $types = {
-
-'Web' => {
-	'name'			=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
-					"$k.en.html" },
-	'url'			=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
-					"http://www.debian.org/$k.en.html" },
-	'cvs_url'		=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
-					"$CVSWEB/webwml/$from/$k.wml?cvsroot=webwml" },
-	'source_url'		=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
-					"$CVSWEB/webwml/$from/$k.wml?rev=$t->{'revision'}&cvsroot=webwml" },
-	'translation_name'	=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
-					"$k.$to_abr.html" },
-	'translation_url'	=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
-					"http://www.debian.org/$k.$to_abr.html" },
-	'translation_cvs_url'	=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
-					"$CVSWEB/webwml/$to/$k.wml?cvsroot=webwml" },
-	'translation_source_url'=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
-					"$CVSWEB/webwml/$to/$k.wml?rev=$t->{'translation_revision'}&cvsroot=webwml" },
-	'translation_source_name'=> sub {my($t, $k, $f)=@_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} :
-					"$k.wml" },
-	'diff'			=> sub {my($t, $k, $f)=@_; return (!$t->{$f} || !$t->{'translation_revision'}) ? undef :
-					"$CVSWEB/webwml/$from/$k.wml$t->{$f}" },
-	'lines'			=> sub {my($t, $k, $f)=@_; my $file= $root."/".$from."/".$k.".wml"; my $line_string=`wc -l $file`; $line_string=~s/\Q$file\E//; return $line_string;},
-
+        'Web' => {
+                'name'          => sub {
+my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "$k.en.html" },
+                'url'           => sub {
+my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "http://www.debian.org/$k.en.html" },
+                'cvs_url'       => sub {
+my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "$CVSWEB/webwml/$from/$k.wml?cvsroot=webwml" },
+                'source_url'    => sub {
+my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "$CVSWEB/webwml/$from/$k.wml?cvsroot=webwml&rev=$t->{'revision'}" },
+                'translation_name'      => sub {
+my($t, $k, $f) = @_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} : "$k.$to_abr.html" },
+                'translation_url'       => sub {
+my($t, $k, $f) = @_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} : "http://www.debian.org/$k.$to_abr.html" },
+                'translation_cvs_url'   => sub {
+my($t, $k, $f) = @_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} : "$CVSWEB/webwml/$to/$k.wml?cvsroot=webwml" },
+                'translation_source_url'=> sub {
+my($t, $k, $f) = @_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} : "$CVSWEB/webwml/$to/$k.wml?cvsroot=webwml&rev=$t->{'translation_revision'}" },
+                'translation_source_name'=> sub {
+my($t, $k, $f) = @_; return ($t->{$f} || !$t->{'translation_revision'}) ? $t->{$f} : "$k.wml" },
+                'diff'          => sub {
+my($t, $k, $f) = @_; return (!$t->{$f} || !$t->{'translation_revision'}) ? undef : "$CVSWEB/webwml/$from/$k.wml$t->{$f}" },
+                'lines'         => sub {
+my($t, $k, $f) = @_; my $file = $root."/".$from."/".$k.".wml"; my $line_string=`wc -l $file`; $line_string=~s/\Q$file\E//; return $line_string;},
 },
 
-#					"$TRANSWEB/$k.fr.html/" },
-'DDP' => {
-	'url'			=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
-					"$DDPWEB/$k/" },
-	'cvs_url'		=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
-					"$CVSWEB/ddp/manuals.sgml/$k/?cvsroot=debian-doc" },
-	'source_url'		=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
-					"$CVSWEB/ddp/manuals.sgml/$k/$k.sgml?cvsroot=debian-doc" },
-	'translation_url'	=> sub {my($t, $k, $f)=@_; return ($t->{$f} || $t->{'status'} == 0 || $t->{'status'} == 1 || $t->{'status'} == 2 || $t->{'status'} == 8) ? $t->{$f} :
-					"#" },
-	'translation_source_name'=> sub {my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} :
-					"$k.fr.sgml" },
-	'translation_source_url'=> sub {my($t, $k, $f)=@_; return ($t->{$f} || $t->{'status'} == 0 || $t->{'status'} == 1 || $t->{'status'} == 2 || $t->{'status'} == 8) ? $t->{$f} :
-					"$CVSWEB/ddp/manuals.sgml/$k/$k.fr.sgml?cvsroot=debian-doc" },
-},
-
+        'DDP' => {
+                'url'           => sub {
+my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "http://www.debian.org/doc/manuals/$k/" },
+                'cvs_url'       => sub {
+my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "$CVSWEB/ddp/manuals.sgml/$k/?cvsroot=debian-doc" },
+                'source_url'    => sub {
+my($t, $k, $f) = @_; return $t->{$f} ? $t->{$f} : "$CVSWEB/ddp/manuals.sgml/$k/$k.sgml?cvsroot=debian-doc" },
+                'translation_url'       => sub {
+my($t, $k, $f) = @_; return ($t->{$f} || $t->{'status'} == 0 || $t->{'status'} == 1 || $t->{'status'} == 2 || $t->{'status'} == 8) ? $t->{$f} : "#" },
+                'translation_source_name'       => sub {
+my($t, $k, $f)=@_; return $t->{$f} ? $t->{$f} : "$k.fr.sgml" },
+                'translation_source_url'        => sub {
+my($t, $k, $f)=@_; return ($t->{$f} || $t->{'status'} == 0 || $t->{'status'} == 1 || $t->{'status'} == 2 || $t->{'status'} == 8) ? $t->{$f} : "$CVSWEB/ddp/manuals.sgml/$k/$k.fr.sgml?cvsroot=debian-doc" },
+        },
 };
-
-sub merge_db {
-# Merges the $translation and the $translation_status database
-	foreach my $key (keys %{ $translations }) {
-       		print STDERR "(merge_db) Merging key $key\n" if $debug;
-       		foreach my $current (keys  %{ $translations_status->{$key} } ) {
-       			print STDERR "(merge_db) Adding information $current into $key\n" if $debug;
-	       		 $translations->{$key}->{$current}=$translations_status->{$key}->{$current};
-        	}
-		delete $translations_status->{$key};
-	}
-	foreach my $key (keys %{ $translations_status }) {
-       		print STDERR "(merge_db) Adding key $key\n" if $debug;
-		$translations->{$key} = $translations_status->{$key};
-	}
-}
 
 
 sub update_db_CVS {
@@ -235,7 +170,7 @@ sub check_file {
 	close(F);
 	$translations->{$k}->{'status'} = 5 if ($translations->{$k}->{'status'} == 8);
 	print STDERR "(check_file) set status to 5\n" if ($debug && $translations->{$k}->{'status'} == 8);
-	$translations->{$k}->{'diff'} = "?r1=$oldr&r2=$revision&cvsroot=webwml";
+	$translations->{$k}->{'diff'} = "?cvsroot=webwml&r1=$oldr&r2=$revision";
 	print STDERR "(check_file) set diff args\n" if $debug;
 }
 
@@ -245,30 +180,30 @@ sub update_db_format {
 # not included there but easy to extract
 	my ($k, $t);
 
-while (($k, $t) = each %$translations) {
+	while (($k, $t) = each %$translations) {
 	
-	next unless ($k);
+		next unless ($k);
 
-	foreach my $f (keys %{$types->{$t->{'type'}}}) {
-		$t->{$f} = &{$types->{$t->{'type'}}->{$f}}($t, $k, $f);
-	} 
+		foreach my $f (keys %{$types->{$t->{'type'}}}) {
+			$t->{$f} = &{$types->{$t->{'type'}}->{$f}}($t, $k, $f);
+		} 
 
-	if ($k eq 'international/French') {
-		my $f;
+		if ($k eq 'international/French') {
+			my $f;
 
-		foreach $f ('name', 'sub_name', 'revision', 'url', 'cvs_url', 'source_url', 'package') {
-			my $tmp = $t->{$f};
-			$t->{$f} = $t->{'translation_'.$f};
-			$t->{'translation_'.$f} = $tmp;
-		}
+			foreach $f ('name', 'sub_name', 'revision', 'url', 'cvs_url', 'source_url', 'package') {
+				my $tmp = $t->{$f};
+				$t->{$f} = $t->{'translation_'.$f};
+				$t->{'translation_'.$f} = $tmp;
+			}
 		
-		$t->{'diff'} = '';
-		$t->{'base_revision'} = '';
-		my $file = "$root/$from/international/".ucfirst($to).".wml";
-		check_file($k, $file , $t->{'revision'});
-		$t->{'diff'} = "$CVSWEB/$to/$k.wml$t->{$f}".$t->{'diff'} if ($t->{'diff'});
+			$t->{'diff'} = '';
+			$t->{'base_revision'} = '';
+			my $file = "$root/$from/international/".ucfirst($to).".wml";
+			check_file($k, $file , $t->{'revision'});
+			$t->{'diff'} = "$CVSWEB/$to/$k.wml$t->{$f}".$t->{'diff'} if ($t->{'diff'});
+		}
 	}
-}
 }
 
 #TODO: the html should be wml and should use tags instead of 
@@ -348,7 +283,7 @@ foreach $k (sort keys %$translations) {
 	print(" $tag{'since'} $t->{'since'}") if ($t->{'since'});
 	print "<BR>$tag{'translation_revision'}: $t->{'translation_revision'}" if ($t->{'translation_revision'});
 	print "<BR>$tag{'base_revision'} : $t->{'base_revision'}" if ($t->{'base_revision'});
-	print "<BR>$tag{'diff'}: <A HREF=\"$t->{'diff'}\">$tag{'diff'}</A>" if ($t->{'diff'});
+	print "<BR><A HREF=\"$t->{'diff'}\">$tag{'diff'}</A>" if ($t->{'diff'});
 	print "<BR>$tag{'available'} <A HREF=\"http://packages.debian.org/$t->{'translation_package'}\">$t->{'translation_package'}</A>" if ($t->{'translation_package'});
 	if ($t->{'translation_name'} !~ /original/) {
 	print "<BR>$tag{'originaldoc'} : <A HREF=\"$t->{'url'}\"> <I>$t->{'name'}</I> $t->{'sub_name'}</A>";
@@ -366,11 +301,9 @@ foreach $k (sort keys %$translations) {
 
 }
 
-merge_db();
-
-
 # This is for debugging purposes
 # Turn this on to be able to run this program standalone
+#do 'doccurrent_status.pl';
 #update_db_CVS();
 #update_db_format();
-#dump_html(2,"web");
+#dump_html(3);
