@@ -309,8 +309,7 @@ sub canonical_names {
 			$_ = $1;
 			print "$_ X\n";
 			die "Unknown maintainer format:\n$_\n";
-			# send mail to webmaster@debian.org
-			# cron/weekly script has been fixed to annoy joy about these errors
+			# this error ends up being sent via cron mail
 		}
 
 		$package{$pack}{lastname} = $lastname;
