@@ -238,6 +238,7 @@
         "ZW" => "Zimbabwe");
 
     function print_place($begin, $finish, $city, $country) {
+        global $iso;
         $country = $iso[$country];
         if ($city) {
             echo "<LI>$city, $country: ";
