@@ -43,7 +43,7 @@ printdsas();
 exit 0;
 
 sub printdsas {
-	foreach $dsa ( keys %dsaref) {
+	foreach $dsa ( sort { $dsaref{$a} <=> $dsaref{$b} } keys %dsaref) {
 
 	# XML entries
 	print "<definition id=\"OVAL-DSA-$dsa\">\n";
@@ -134,7 +134,7 @@ sub parsefile {
 			if ( ! defined ($dsaref{$dsa}{'bpackages'}) ) {
 				$dsaref{$dsa}{'bpackages'} = $binary;
 				$dsaref{$dsa}{'versions'} = $version;
-			} elsif ( $binary !~ /\Q$dsaref{$dsa}{'bpackages'}\E/ ) {
+			} elsif ( $dsaref{$dsa}{'bpackages'} !~ /\Q$binary\E/ ) {
 				$dsaref{$dsa}{'bpackages'} = $dsaref{$dsa}{'bpackages'}." ".$binary;
 				$dsaref{$dsa}{'versions'} = $dsaref{$dsa}{'versions'}." ".$version;
 			}
