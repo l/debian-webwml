@@ -31,21 +31,6 @@ ftplist.data: ../mirror/Mirrors.masterlist
 	done
 	echo "</ul>" >> $@
 	echo "</define-tag>" >> $@
-	echo "<define-tag cdimagemirrors>" >> $@
-	echo "<ul>" >> $@
-	for i in `grep-dctrl -n -F Site -s Site -r 'ftp\...\.debian.org' ../mirror/Mirrors.masterlist | sort`; do \
-          ch=`grep-dctrl -n -F Site -s CDImage-http -X $$i ../mirror/Mirrors.masterlist`; \
-          cf=`grep-dctrl -n -F Site -s CDImage-ftp -X $$i ../mirror/Mirrors.masterlist`; \
-          xy=`echo $$i | sed -e s/^ftp.// -e s/.debian.org$$// | tr a-z A-Z`; \
-          if [ "$$ch" ]; then \
-            echo "<li><a href=\"http://$${i}$${ch}\"><$${xy}c></a>" >> $@; \
-            if [ "$$cf" ]; then \
-              echo " (<a href=\"ftp://$${i}$${cf}\">FTP</a>)" >> $@; \
-            fi; \
-          fi; \
-        done
-	echo "</ul>" >> $@
-	echo "</define-tag>" >> $@
 	echo "<define-tag nonusmirrors>" >> $@
 	echo "<ul>" >> $@
 	for i in `grep-dctrl -n -F Site -s Site -r 'ftp\...\.debian.org' ../mirror/Mirrors.masterlist | sort`; do \
