@@ -1,21 +1,126 @@
-[ <a href="../">Ports</a> ]
+#use wml::debian::submenu
 
-[ <ifneq <get-var WML_SRC_BASENAME> "index"
-  "<a href="index">Debian SPARC</a>"
-  "<b>Debian SPARC</b>"
-> ]
+<menu-item basename="../index">
+[AR:Ports:]
+[DA:Ports:]
+[DE:Ports:]
+[EL:Ports:]
+[EN:Ports:]
+[EO:Ports:]
+[ES:Ports:]
+[FI:Ports:]
+[FR:Ports:]
+[HR:Ports:]
+[HU:Ports:]
+[JA:Ports:]
+[KO:Ports:]
+[NL:Ports:]
+[NO:Ports:]
+[PL:Ports:]
+[PT:Ports:]
+[RO:Ports:]
+[RU:Ports:]
+[SV:Ports:]
+[TR:Ports:]
+[ZH:Ports:]
+</menu-item>
 
-[ <ifneq <get-var WML_SRC_BASENAME> "credits"
-  "<a href="credits">Credits</a>"
-  "<b>Credits</b>"
-> ]
+<menu-item basename="index">
+[AR:Debian for Sparc:]
+[DA:Debian for Sparc:]
+[DE:Debian für Sparc:]
+[EL:Debian for Sparc:]
+[EN:Debian for Sparc:]
+[EO:Debian for Sparc:]
+[ES:Debian for Sparc:]
+[FI:Debian for Sparc:]
+[FR:Debian for Sparc:]
+[HR:Debian for Sparc:]
+[HU:Debian for Sparc:]
+[JA:Debian for Sparc:]
+[KO:Debian for Sparc:]
+[NL:Debian for Sparc:]
+[NO:Debian for Sparc:]
+[PL:Debian for Sparc:]
+[PT:Debian for Sparc:]
+[RO:Debian for Sparc:]
+[RU:Debian for Sparc:]
+[SV:Debian for Sparc:]
+[TR:Debian for Sparc:]
+[ZH:Debian for Sparc:]
+</menu-item>
 
-[ <ifneq <get-var WML_SRC_BASENAME> "porting"
-  "<a href="porting">Documentation</a>"
-  "<b>Documentation</b>"
-> ]
+<menu-item basename="credits">
+[AR:Credits:]
+[DA:Credits:]
+[DE:Danksagung:]
+[EL:Credits:]
+[EN:Credits:]
+[EO:Credits:]
+[ES:Credits:]
+[FI:Credits:]
+[FR:Credits:]
+[HR:Credits:]
+[HU:Credits:]
+[JA:Credits:]
+[KO:Credits:]
+[NL:Credits:]
+[NO:Credits:]
+[PL:Credits:]
+[PT:Credits:]
+[RO:Credits:]
+[RU:Credits:]
+[SV:Credits:]
+[TR:Credits:]
+[ZH:Credits:]
+</menu-item>
 
-[ <ifneq <get-var WML_SRC_BASENAME> "problems"
-  "<a href="problems">Problems</a>"
-  "<b>Problems</b>"
-> ]
+<menu-item basename="porting">
+[AR:Documentation:]
+[DA:Documentation:]
+[DE:Dokumentation:]
+[EL:Documentation:]
+[EN:Documentation:]
+[EO:Documentation:]
+[ES:Documentation:]
+[FI:Documentation:]
+[FR:Documentation:]
+[HR:Documentation:]
+[HU:Documentation:]
+[JA:Documentation:]
+[KO:Documentation:]
+[NL:Documentation:]
+[NO:Documentation:]
+[PL:Documentation:]
+[PT:Documentation:]
+[RO:Documentation:]
+[RU:Documentation:]
+[SV:Documentation:]
+[TR:Documentation:]
+[ZH:Documentation:]
+</menu-item>
+
+<menu-item basename="problems">
+[AR:Problems:]
+[DA:Problems:]
+[DE:Probleme:]
+[EL:Problems:]
+[EN:Problems:]
+[EO:Problems:]
+[ES:Problems:]
+[FI:Problems:]
+[FR:Problems:]
+[HR:Problems:]
+[HU:Problems:]
+[JA:Problems:]
+[KO:Problems:]
+[NL:Problems:]
+[NO:Problems:]
+[PL:Problems:]
+[PT:Problems:]
+[RO:Problems:]
+[RU:Problems:]
+[SV:Problems:]
+[TR:Problems:]
+[ZH:Problems:]
+</menu-item>

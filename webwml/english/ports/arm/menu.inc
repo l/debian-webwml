@@ -1,12 +1,76 @@
-[ <a href="../">Ports</a> ]
+#use wml::debian::submenu
 
-[ <ifneq <get-var WML_SRC_BASENAME> "index"
-  "<a href="index">Debian for ARM</a>"
-  "<b>Debian for ARM</b>"
-> ]
+<menu-item basename="../index">
+[AR:Ports:]
+[DA:Ports:]
+[DE:Ports:]
+[EL:Ports:]
+[EN:Ports:]
+[EO:Ports:]
+[ES:Ports:]
+[FI:Ports:]
+[FR:Ports:]
+[HR:Ports:]
+[HU:Ports:]
+[JA:Ports:]
+[KO:Ports:]
+[NL:Ports:]
+[NO:Ports:]
+[PL:Ports:]
+[PT:Ports:]
+[RO:Ports:]
+[RU:Ports:]
+[SV:Ports:]
+[TR:Ports:]
+[ZH:Ports:]
+</menu-item>
 
-[ <ifneq <get-var WML_SRC_BASENAME> "softwaremap"
-  "<a href="softwaremap">Software Map</a>"
-  "<b>Software Map</b>"
-> ]
+<menu-item basename="index">
+[AR:Debian for ARM:]
+[DA:Debian for ARM:]
+[DE:Debian für ARM:]
+[EL:Debian for ARM:]
+[EN:Debian for ARM:]
+[EO:Debian for ARM:]
+[ES:Debian for ARM:]
+[FI:Debian for ARM:]
+[FR:Debian for ARM:]
+[HR:Debian for ARM:]
+[HU:Debian for ARM:]
+[JA:Debian for ARM:]
+[KO:Debian for ARM:]
+[NL:Debian for ARM:]
+[NO:Debian for ARM:]
+[PL:Debian for ARM:]
+[PT:Debian for ARM:]
+[RO:Debian for ARM:]
+[RU:Debian for ARM:]
+[SV:Debian for ARM:]
+[TR:Debian for ARM:]
+[ZH:Debian for ARM:]
+</menu-item>
 
+<menu-item basename="softwaremap">
+[AR:Software Map:]
+[DA:Software Map:]
+[DE:Software-Verzeichnis:]
+[EL:Software Map:]
+[EN:Software Map:]
+[EO:Software Map:]
+[ES:Software Map:]
+[FI:Software Map:]
+[FR:Software Map:]
+[HR:Software Map:]
+[HU:Software Map:]
+[JA:Software Map:]
+[KO:Software Map:]
+[NL:Software Map:]
+[NO:Software Map:]
+[PL:Software Map:]
+[PT:Software Map:]
+[RO:Software Map:]
+[RU:Software Map:]
+[SV:Software Map:]
+[TR:Software Map:]
+[ZH:Software Map:]
+</menu-item>

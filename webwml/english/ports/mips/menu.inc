@@ -1,13 +1,101 @@
-[ <a href="../">Ports</a> ]
-[ <ifneq <get-var WML_SRC_BASENAME> "index"
-  "<a href="index">Debian MIPS</a>"
-  "<b>Debian MIPS</b>"
-> ]
-[ <ifneq <get-var WML_SRC_BASENAME> "cpu"
-  "<a href="cpu">CPUs</a>"
-  "<b>CPUs</b>"
-> ]
-[ <ifneq <get-var WML_SRC_BASENAME> "system"
-  "<a href="system">Systems</a>"
-  "<b>Systems</b>"
-> ]
+#use wml::debian::submenu
+
+<menu-item basename="../index">
+[AR:Ports:]
+[DA:Ports:]
+[DE:Ports:]
+[EL:Ports:]
+[EN:Ports:]
+[EO:Ports:]
+[ES:Ports:]
+[FI:Ports:]
+[FR:Ports:]
+[HR:Ports:]
+[HU:Ports:]
+[JA:Ports:]
+[KO:Ports:]
+[NL:Ports:]
+[NO:Ports:]
+[PL:Ports:]
+[PT:Ports:]
+[RO:Ports:]
+[RU:Ports:]
+[SV:Ports:]
+[TR:Ports:]
+[ZH:Ports:]
+</menu-item>
+
+<menu-item basename="index">
+[AR:Debian for MIPS:]
+[DA:Debian for MIPS:]
+[DE:Debian für MIPS:]
+[EL:Debian for MIPS:]
+[EN:Debian for MIPS:]
+[EO:Debian for MIPS:]
+[ES:Debian for MIPS:]
+[FI:Debian for MIPS:]
+[FR:Debian for MIPS:]
+[HR:Debian for MIPS:]
+[HU:Debian for MIPS:]
+[JA:Debian for MIPS:]
+[KO:Debian for MIPS:]
+[NL:Debian for MIPS:]
+[NO:Debian for MIPS:]
+[PL:Debian for MIPS:]
+[PT:Debian for MIPS:]
+[RO:Debian for MIPS:]
+[RU:Debian for MIPS:]
+[SV:Debian for MIPS:]
+[TR:Debian for MIPS:]
+[ZH:Debian for MIPS:]
+</menu-item>
+
+<menu-item basename="cpu">
+[AR:CPUs:]
+[DA:CPUs:]
+[DE:CPUs:]
+[EL:CPUs:]
+[EN:CPUs:]
+[EO:CPUs:]
+[ES:CPUs:]
+[FI:CPUs:]
+[FR:CPUs:]
+[HR:CPUs:]
+[HU:CPUs:]
+[JA:CPUs:]
+[KO:CPUs:]
+[NL:CPUs:]
+[NO:CPUs:]
+[PL:CPUs:]
+[PT:CPUs:]
+[RO:CPUs:]
+[RU:CPUs:]
+[SV:CPUs:]
+[TR:CPUs:]
+[ZH:CPUs:]
+</menu-item>
+
+<menu-item basename="system">
+[AR:Systems:]
+[DA:Systems:]
+[DE:Systeme:]
+[EL:Systems:]
+[EN:Systems:]
+[EO:Systems:]
+[ES:Systems:]
+[FI:Systems:]
+[FR:Systems:]
+[HR:Systems:]
+[HU:Systems:]
+[JA:Systems:]
+[KO:Systems:]
+[NL:Systems:]
+[NO:Systems:]
+[PL:Systems:]
+[PT:Systems:]
+[RO:Systems:]
+[RU:Systems:]
+[SV:Systems:]
+[TR:Systems:]
+[ZH:Systems:]
+</menu-item>

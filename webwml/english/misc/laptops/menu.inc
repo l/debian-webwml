@@ -1,6 +1,51 @@
-[ <a href="../">Ports</a> ]
+#use wml::debian::submenu
 
-[ <ifneq <get-var WML_SRC_BASENAME> "index"
-  "<a href="index">Debian-Laptops</a>"
-  "<b>Debian-Laptops</b>"
-> ]
+<menu-item basename="../index">
+[AR:Ports:]
+[DA:Ports:]
+[DE:Ports:]
+[EL:Ports:]
+[EN:Ports:]
+[EO:Ports:]
+[ES:Ports:]
+[FI:Ports:]
+[FR:Ports:]
+[HR:Ports:]
+[HU:Ports:]
+[JA:Ports:]
+[KO:Ports:]
+[NL:Ports:]
+[NO:Ports:]
+[PL:Ports:]
+[PT:Ports:]
+[RO:Ports:]
+[RU:Ports:]
+[SV:Ports:]
+[TR:Ports:]
+[ZH:Ports:]
+</menu-item>
+
+<menu-item basename="index">
+[AR:Debian for Laptops:]
+[DA:Debian for Laptops:]
+[DE:Debian für Laptops:]
+[EL:Debian for Laptops:]
+[EN:Debian for Laptops:]
+[EO:Debian for Laptops:]
+[ES:Debian for Laptops:]
+[FI:Debian for Laptops:]
+[FR:Debian for Laptops:]
+[HR:Debian for Laptops:]
+[HU:Debian for Laptops:]
+[JA:Debian for Laptops:]
+[KO:Debian for Laptops:]
+[NL:Debian for Laptops:]
+[NO:Debian for Laptops:]
+[PL:Debian for Laptops:]
+[PT:Debian for Laptops:]
+[RO:Debian for Laptops:]
+[RU:Debian for Laptops:]
+[SV:Debian for Laptops:]
+[TR:Debian for Laptops:]
+[ZH:Debian for Laptops:]
+</menu-item>
