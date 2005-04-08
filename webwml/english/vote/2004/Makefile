@@ -15,6 +15,7 @@ index.$(LANGUAGE).html: index.wml $(wildcard vote_*.wml) \
 ifeq "$(LANGUAGE)" "en"
 
 textfiles := vote_001.quorum.err vote_001.quorum.log vote_001.quorum.txt \
+             vote_001_results.dot  vote_001_results.png                  \
              vote_002.quorum.err vote_002.quorum.log vote_002.quorum.txt \
              vote_003.quorum.err vote_003.quorum.log vote_003.quorum.txt \
              vote_004.quorum.err vote_004.quorum.log vote_004.quorum.txt \
@@ -29,7 +30,7 @@ textfiles := vote_001.quorum.err vote_001.quorum.log vote_001.quorum.txt \
              gr_editorial_voters.txt                                     \
              leader2004_results.txt       leader2004_tally.txt           \
              leader2004_vote.png          leader2004_vote_detailed.png   \
-             leader2004_voters.txt        social_contract_reform.3
+             leader2004_voters.txt        social_contract_reform.3       
 desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
 
 install:: $(desttextfiles)
