@@ -15,6 +15,9 @@ index.$(LANGUAGE).html: index.wml $(wildcard vote_*.wml) \
 ifeq "$(LANGUAGE)" "en"
 
 textfiles := vote_001.quorum.err vote_001.quorum.log vote_001.quorum.txt  \
+             vote_001_results.dot vote_001_results.png                    \
+             leader2005_results.txt leader2005_tally.txt                  \
+             leader2005_vote.png leader2005_vote_detailed.png             \
              Log-debian-dpl-debate.txt  Log-debian-dpl-replies.txt        \
              Log-debian-dpl-discuss.txt Log-debian-dpl-moderator.txt
 
