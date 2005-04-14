@@ -1,0 +1,153 @@
+#use wml::debian::weeklynews::header PAGENAME="Courriel"
+#use wml::debian::translation-check translation="1.3" maintainer="Thomas Huriaux"
+
+<a name=1></a>
+<pre>
+De : Klee Dienes &lt;kdienes@apple.com&gt;
+À : Wichert Akkerman &lt;wichert@cs.leidenuniv.nl&gt;
+Cc : debian-dpkg@lists.debian.org 
+Sujet : Re : nouveau format du source
+Date : Lun. 15 mars 1999 21 h 37 ' 07 " -0800
+
+&gt; Quelqu'un peut-il me dire si le nouveau format mystérieux du source
+&gt; des paquets de Klee gère également les archives tar de sources
+&gt; multiples ? J'en ai besoin pour la nouvelle publication de vim...
+
+Je n'utiliserais pas le mot « gère », car je pense que le format doit être
+un peu retravaillé avant que nous le finalisions. La réponse rapide est,
+cependant, « oui ». Il gère à la fois les archives tar de sources multiples
+et les fichiers multiples de correctifs, ainsi que quelques autres
+fonctionnalités spéciales (correctifs de fichiers tar, déplacement et
+copie des fichiers, etc.).
+
+J'ai attaché un exemple de fichier de contrôle que j'ai utilisé à un
+moment pour compiler netatalk. Je ne suis pas tout à fait satisfait du
+format pour le moment, mais il devrait pouvoir faire sentir les
+différentes choses qui sont possibles.
+
+--------------------------------------------
+
+Paquet : netatalk
+Section : net
+Priorité : optionel
+Version : 1.4b2-6
+Version standard : 2.2.0.0
+Responsable : Klee Dienes &lt;klee@debian.org&gt;
+Date d'empaquetage : Mar. 30 oct. 1997 10 h 19 ' 55 " -0500
+Dépendances de compilation : gcc, make, tar
+Dépendances de désempaquetage : tar, cpio, patch, gzip
+Commandes de désempaquetage :
+ extract "netatalk-1.4b2" from "netatalk-1.4b2.tar.gz" as "."
+ extract "debian" from "debian.tar.gz" as "debian"
+ patch with "1.4b2-a17.diff.gz" istrip "netatalk-1.4b2" ostrip "netatalk-1.4b2+asun2.0a17"
+ patch with "lprng.diff" istrip "netatalk-1.4b2.orig" ostrip "netatalk-1.4b2"
+ patch with "ppr.diff" istrip "netatalk-1.4b2.orig" ostrip "netatalk-1.4b2"
+ patch with "shlib.diff"
+ patch with "makefiles.diff" reversed
+ patch with "filext.diff"
+ patch with "linux.diff"
+ patch with "solariseagain.diff"
+
+Paquet : netatalk
+Architecture : toutes
+Dépend de : netbase (&gt;= 2.02), ${shlibs:Depends}
+Description : binaires utilisateur d'Appletalk pour Linux
+ Netatalk est une implémentation de la suite de protocoles AppleTalk pour
+ les systèmes dérivés de BSD. La publication actuelle gère les phases I et II
+ de EtherTalk, DDP, RTMP, NBP, ZIP, AEP, ATP, PAP, ASP et AFP.
+
+Paquet : netatalk-doc
+Architecture : toutes
+Dépend de :
+Description : Services Appletalk pour Linux (documentation)
+ Netatalk est une implémentation de la suite de protocoles AppleTalk pour
+ les systèmes dérivés de BSD. La publication actuelle gère les phases I et II
+ de EtherTalk, DDP, RTMP, NBP, ZIP, AEP, ATP, PAP, ASP et AFP.
+
+Paquet : libatalk14g
+Architecture : toutes
+En conflit avec : netatalk (&lt;&lt; 1.4b2-3)
+Dépend de : ${shlibs:Depends} 
+Description : Bibliothèque Appletalk pour Linux
+ Netatalk est une implémentation de la suite de protocoles AppleTalk pour
+ les systèmes dérivés de BSD. La publication actuelle gère les phases I et II
+ de EtherTalk, DDP, RTMP, NBP, ZIP, AEP, ATP, PAP, ASP et AFP.
+
+Paquet : libatalk-dev
+Architecture : toutes
+En conflit avec : netatalk (&lt;&lt; 1.4b2-3)
+Dépend de : libatalk14g (= ${Source-Version})
+Description : Bibliothèque Appletalk pour Linux (fichiers de développement)
+ Netatalk est une implémentation de la suite de protocoles AppleTalk pour
+ les systèmes dérivés de BSD. La publication actuelle gère les phases I et II
+ de EtherTalk, DDP, RTMP, NBP, ZIP, AEP, ATP, PAP, ASP et AFP.
+
+
+--  
+Pour vous désinscrire, envoyez un courriel à
+debian-dpkg-request@lists.debian.org avec comme sujet « unsubscribe ».
+Des problèmes ? Contactez listmaster@lists.debian.org.
+</pre>
+
+<hr>
+
+<a name=2></a>
+<pre>
+À : debian-devel@lists.debian.org 
+Cc : deity@lists.debian.org, scoop@freshmeat.net, malda@slashdot.org 
+Sujet : [ANNONCE] APT 0.3.2 publié ! 
+De : Ben Gertzfield &lt;che@debian.org&gt; 
+Date : 16 mars 1999 12 h 04 ' 32 " -0800
+
+C'est encore l'heure !
+
+L'équipe d'APT de Debian a l'honneur de vous annoncer l'arrivée de la
+version 0.3.2 d'APT, le gestionnaire de paquet de prochaine génération
+pour Debian GNU/Linux. Cette publication contient une avancée considérable
+dans la façon de séparer en couche APT et de les assembler ; l'architecture
+de greffons a été radicalement modifiée (pour le meilleur !) et il y a
+maintenant un fichier /etc/apt/apt.conf pour modifier tout ce qui est
+possible sur le comportement d'APT.
+
+APT est également accompagné d'un paquet de documentations pour l'aide ; un
+guide de l'utilisateur, un guide de configuration, et toutes sortes
+de merveilleuses informations sont incluses dans le paquet « apt »
+principal. Si vous êtes plus intéressés par l'apprentissage des dessous
+du fonctionnement d'APT, ou si vous voulez apprendre comment créer un
+greffon, voyez les nouveaux paquets libapt-pkg-doc et libapt-pkg-dev.
+
+Avec cette publication d'APT viendra également le nouveau frontal graphique
+de Gnome, appelé logiquement Gnome Apt. Gnome Apt est en développement
+depuis quelques mois et fonctionne parfaitement. Nous espérons que Gnome
+Apt facilitera et rendra plus agréable la gestion de notre système
+de paquets Debian.
+
+Plus d'informations sur Gnome Apt sont disponibles sur
+http://www.debian.org/~hp/gnome-apt.html.
+
+Si vous voulez essayer Gnome Apt, vous pourriez avoir envie de consulter
+l'« espace de travail » de Debian Gnome, où les développeurs Debian
+coordonnent les différentes étapes des paquets Gnome 1.0 pour les
+publications stable et instable de Debian. Plus d'informations sur
+l'espace de travail Gnome sont sur
+http://www.debian.org/~jim/debian-gtk-gnome/README
+
+Bon APT !
+
+Ben Gertzfield
+
+-- 
+Apporté chez vous par les lettres I et B et le nombre 19.
+« Plus de testicules signifie plus de fer. »
+Responsable Debian GNU/Linux de Gimp et GTK+ -- http://www.debian.org/
+Je suis sur FurryMUCK sous Che, et sur l'IRC des projets EFNet/Open sous
+Che_Fox.
+
+
+-- 
+Pour vous désinscrire, envoyez un courriel à
+debian-devel-request@lists.debian.org avec comme sujet « unsubscribe ».
+Des problèmes ? Contactez listmaster@lists.debian.org.
+</pre>
+
+#use wml::debian::weeklynews::footer translator="Thomas Huriaux"
