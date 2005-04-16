@@ -262,6 +262,7 @@ foreach $lang (@search_in) {
         print "$l.html " if ($config{'verbose'});
 
         $t_body = $u_body = $o_body = "";
+        $translated{$lang} = $outdated{$lang} = $untranslated{$lang} = 0;
 
         # get stats about files
         foreach $file (@filenames) {
