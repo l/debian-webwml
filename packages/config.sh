@@ -1,14 +1,13 @@
 # Configuration for packages.debian.org
 #
 
-topdir=/org/packages.debian.org
+topdir=/home/djpig/debian/www.d.o/packages
 
 tmpdir=${topdir}/tmp
 bindir=${topdir}/bin
 scriptdir=${topdir}/htmlscripts
 libdir=${topdir}/lib
 filesdir=${topdir}/files
-swishdir=${topdir}/swish++
 htmldir=${topdir}/www
 archivedir=${topdir}/archive
 podir=${topdir}/po
@@ -17,7 +16,7 @@ localedir=${topdir}/locale
 # unset this if packages.debian.org moves somewhere where the packages files
 # cannot be obtained locally
 #
-localdir=/org/ftp.debian.org/ftp
+#localdir=/org/ftp.debian.org/ftp
 
 # path to private ftp directory
 ftproot=/org/ftp.root
@@ -42,4 +41,4 @@ arch_stable_proposed_updates="${arch_stable}"
 
 # Miscellaneous
 #
-admin_email="djpig@debian.org,joey@infodrom.org"
+admin_email="djpig@debian.org"
