@@ -70,7 +70,7 @@ sub print_deps {
 	    } else {
 		$res .= "</dl></li>\n<li>";
 	    }
-	    $res .= "<dl><dt><img class=\"hidecss\" src=\"/Pics/$dep_type{$type}.gif\" alt=\"[$dep_type{$type}]\"> ";
+	    $res .= "<dl><dt><img class=\"hidecss\" src=\"../../Pics/$dep_type{$type}.gif\" alt=\"[$dep_type{$type}]\"> ";
 	}
 
 	foreach my $rel_alt ( @$rel ) {
@@ -97,7 +97,7 @@ sub print_deps {
 		} else {
 		    my %desc_md5s = $p->get_arch_fields( 'description-md5', 
 							 $env->{archs} );
-		    my $short_desc = conv_desc( $env->{lang}, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $lang ), "<>&\"" ) );
+		    my $short_desc = conv_desc( $lang, encode_entities( $env->{db}->get_short_desc( $desc_md5s{max_unique}, $lang ), "<>&\"" ) );
 		    push @res_pkgs, dep_item( "../$subsection/$p_name", $p_name, "$pkg_version$arch_str", $short_desc );
 		    }
 	    } elsif ( $is_old_pkgs ) {
@@ -128,7 +128,7 @@ sub print_src_deps {
     foreach my $dep ( @{$pkg->{versions}{$version}{$type}} ) {
         $found = 1;
 	my @res_pkgs;
-	$res .= "<li><dl><dt><img class=\"hidecss\" src=\"/Pics/$dep_type{$type}.gif\" alt=\"[$dep_type{$type}]\"> ";
+	$res .= "<li><dl><dt><img class=\"hidecss\" src=\"../../Pics/$dep_type{$type}.gif\" alt=\"[$dep_type{$type}]\"> ";
 	foreach my $or_dep ( @$dep ) {
 	    my $p_name = $or_dep->[0];
 	    my $p = $env->{db}->get_pkg( $p_name );

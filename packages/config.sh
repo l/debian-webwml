@@ -19,6 +19,9 @@ localedir=${topdir}/locale
 #
 localdir=/org/ftp.debian.org/ftp
 
+# path to private ftp directory
+ftproot=/org/ftp.root
+
 ftpsite=http://ftp.debian.org/debian
 nonus_ftpsite=http://ftp.uk.debian.org/debian-non-US
 security_ftpsite=http://security.debian.org/debian-security
@@ -36,3 +39,7 @@ arch_unstable="alpha arm hppa hurd-i386 i386 ia64 m68k mips mipsel powerpc s390 
 arch_experimental="${arch_unstable}"
 arch_testing_proposed_updates="${arch_testing}"
 arch_stable_proposed_updates="${arch_stable}"
+
+# Miscellaneous
+#
+admin_email="djpig@debian.org,joey@infodrom.org"

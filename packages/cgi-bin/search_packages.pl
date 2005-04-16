@@ -433,10 +433,23 @@ unless ($search_on_sources) {
 }
 
 if ($format eq 'html') {
+    &printindexline( scalar keys %pkgs );
     &printfooter;
 }
 
 exit;
+
+sub printindexline {
+    my $no_results = shift;
+
+    my $index_line;
+    if ($no_results > $results_per_page) {
+	
+	$index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $no_results)." | ".nextlink($input,\%params, $no_results);
+	
+	print "<p style=\"text-align:center\">$index_line</p>";
+    }
+}
 
 sub multipageheader {
     my $no_results = shift;
@@ -459,13 +472,7 @@ sub multipageheader {
 	print " displaying packages $start to $end.</p>";
     }
 
-    my $index_line;
-    if ($no_results > $results_per_page) {
-	
-	$index_line = prevlink($input,\%params)." | ".indexline( $input, \%params, $no_results)." | ".nextlink($input,\%params, $no_results);
-	
-	print "<p style=\"text-align:center\">$index_line</p>";
-    }
+    printindexline( $no_results );
 
     if ($no_results > 100) {
 	print "<p>Results per page: ";

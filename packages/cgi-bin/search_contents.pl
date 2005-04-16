@@ -271,7 +271,7 @@ sub printfooter {
     }
 
     print <<END;
-<p style="text-align:right;font-size:small;font-style:italic"><a href="http://packages.debian.net/">Packages search page</a></p>
+<p style="text-align:right;font-size:small;font-style:italic"><a href="http://packages.debian.org/">Packages search page</a></p>
 
 </div>
 END
