@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# Searchs in all *.data files it founds for security advisory files and checks how often the
+# fixed package occurs in it. This is useful to avoid references to wrong advisories.
+#
+# Jens Seidel (jensseidel@users.sf.net), (c) 2005, GPL
+
+for file in $(find -name "*.data"); do
+  packages=$(cat $file | sed -n 's,<define-tag packages>\([^<]*\)</define-tag>.*$,\1,p')
+  for package in $(echo $packages | sed 's/,/ /g' | tr [A-Z] [a-z]); do
+    for md5sums in "md5sums" "revised-md5sums"; do
+      emails=$(cat $file | sed -n "s,^.*<$md5sums \([^ ]*\).*$,\1,p" | sed 's,/*> *$,,')
+      if [ -z "$emails" ]; then
+        grep --silent "< *$md5sums" $file && echo "Error: advisory for $file not found"
+      else
+        for email in $emails; do
+	  # FIXME: evaluate <!--X-MsgBody-End--> to search only in message of mail, 
+	  #        -hiddenlinks=ignore doesn't work
+          found=$(wget -q -O - $email | lynx -width=100000 -hiddenlinks=ignore -dump -stdin | grep "$package" | wc -l)
+          [ $found -lt 8 ] && echo URL $(basename $email) from $file contains only $found references to package $package
+	done  
+      fi
+    done
+  done
+done
