@@ -19,6 +19,7 @@ textfiles := vote_001.quorum.err vote_001.quorum.log vote_001.quorum.txt \
              vote_002.quorum.err vote_002.quorum.log vote_002.quorum.txt \
              vote_003.quorum.err vote_003.quorum.log vote_003.quorum.txt \
              vote_004.quorum.err vote_004.quorum.log vote_004.quorum.txt \
+             vote_004_results.dot         vote_004_results.png           \
              gr_sarge_results.txt         gr_sarge_tally.txt             \
              gr_sarge_vote.png            gr_sarge_vote_detailed.png     \
              gr_sarge_voters.txt                                         \
