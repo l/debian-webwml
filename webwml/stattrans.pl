@@ -125,8 +125,14 @@ sub getwmlfiles
 	} else {
 	    $version{"$lang/$file"} = $altcvs->revision($f);
 	    if (!$transcheck->revision()) {
-		$original{"english/$file"} = $lang;
-		$transversion{"english/$file"} ||= "1.1";
+	        $transcheckenglish = Webwml::TransCheck->new("english/$file");
+		if (!$transcheckenglish->revision() and (-e "english/$file")) {
+		    $transversion{"$lang/$file"} = "1.1";
+		    $original{"$lang/$file"} = "english";
+		} else {
+		    $original{"english/$file"} = $lang;
+		    $transversion{"english/$file"} ||= "1.1";
+		}
 	    }
 	}
 	if ($transcheck->maintainer()) {
@@ -174,12 +180,14 @@ sub check_translation
 
 	if ( $major_number != $major_translated_number ) {
 	    return "This translation is too out of date";
+	} elsif ( $last_number - $last_translated_number < 0 ) {
+	    return "Wrong translation version";
 	} elsif ( $last_number - $last_translated_number >= $max_versions ) {
 	    return "This translation is too out of date";
 	} elsif ( $last_number - $last_translated_number >= $min_versions ) {
 	    return "The original is newer than this translation";
 	}
-    } elsif ( !$version && $transversion) {
+    } elsif ( !$version && $translation) {
 	return "The original no longer exists";
     }
     return "";
@@ -285,8 +293,12 @@ foreach $lang (@search_in) {
                     $o_body .= sprintf "<td>%s</td>", $transversion{"$lang/$file"};
                     $o_body .= sprintf "<td>%s</td>", $version{"$orig/$file"};
                     $o_body .= sprintf "<td>%s</td>", $msg;
-                    $o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/$orig/%s.diff\?r1=%s\&amp;r2=%s\&amp;cvsroot=webwml\&amp;diff_format=%s\">%s -> %s</a></td>", $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $config{'difftype'}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
-                    $o_body .= sprintf "<td><a href=\"http://cvs.debian.org/webwml/$orig/%s?cvsroot=webwml#rev%s\">[L]</a></td>", $file, $version{"$orig/$file"};
+		    if ($msg eq "Wrong translation version" || $msg eq "The original no longer exists") {
+		        $o_body .= "<td></td><td></td>";
+		    } else {
+		        $o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/$orig/%s.diff\?r1=%s\&amp;r2=%s\&amp;cvsroot=webwml\&amp;diff_format=%s\">%s -> %s</a></td>", $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $config{'difftype'}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+                        $o_body .= sprintf "<td><a href=\"http://cvs.debian.org/webwml/$orig/%s?cvsroot=webwml#rev%s\">[L]</a></td>", $file, $version{"$orig/$file"};
+		    }
                     $o_body .= sprintf "<td align=center>%s</td>", $maintainer{"$lang/$file"} || "";
                     $o_body .= "</tr>\n";
                     $outdated{$lang}++;
