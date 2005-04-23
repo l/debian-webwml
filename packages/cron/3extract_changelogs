@@ -41,111 +41,16 @@ fi
 (
 date
 
-for DEBFILE in ${localdir}/pool/*/*/*/*.dsc; do
-    
-    TARGET=`echo $DEBFILE|perl -pe "s,^${localdir}/(.*)/.*.dsc,\1,"`
-    PACKAGE=`basename "$DEBFILE" .dsc`
-    VERSION=`echo $PACKAGE|perl -pe 's,\S+_,,'`
-    TARGETDIR=${htmldir}/changelogs/$TARGET/$PACKAGE
-    ORIGDIR=`dirname $DEBFILE`
-    BINARIES=`grep ^Binary: $DEBFILE | perl -pe 's{^Binary:\s*(.*?)\s*$}{join(" ",split(/,/,$1))}e'`
-    
-# debugging
-#echo "DEBFILE (.dsc): $DEBFILE"
-#echo "TARGET        : $TARGET"
-#echo "PACKAGE       : $PACKAGE"
-#echo "VERSION       : $VERSION"
-#echo "TARGETDIR     : $TARGETDIR"
-#echo "ORIGDIR       : $ORIGDIR"
-#echo "BINARIES      : $BINARIES"
+for part in $parts; do
+	${bindir}/extract_files -v -d ${localdir}/pool/$parts/ \
+		-t ${htmldir}/changelogs/$parts/
+done
 
-# If the target directory doesn't exist yet or
-# if the DEBFILE is newer than the target directory,
-# unpack the package
-    if [ ! -d $TARGETDIR -o $DEBFILE -nt $TARGETDIR ]; then
-	
-#echo "Updating $PACKAGE"
-	test -d $tmpdir || mkdir -p $tmpdir
-	cd ${tmpdir}
-	chmod -f -R +w ${tmpdir}/* 2>/dev/null
-	rm -rf ${tmpdir}/*
-	out=`dpkg-source -x $DEBFILE`
-	dir=${out##* }
-
-	test -d $TARGETDIR || mkdir -p $TARGETDIR/
-	
-	if [ -f ${dir}/debian/copyright -o -f ${dir}/debian/changelog ]
-	then
-	    if [ -f ${dir}/debian/copyright ]
-	    then
-		mv */debian/copyright $TARGETDIR/
-	    else
-		echo "No copyright found in $PACKAGE"
-	    fi
-	    if [ -f ${dir}/debian/changelog ]
-	    then
-		mv */debian/changelog $TARGETDIR/
-	    else
-		echo "No changelog found in $PACKAGE"
-	    fi
-
-	else
-	    echo "No copyright and changelog found in `basename $DEBFILE`"
-	fi
-
-	for BINPKG in $BINARIES; do
-	    if [ -f $TARGETDIR/copyright ]; then
-#echo "Create link $TARGETDIR/$BINPKG.copyright -> copyright"
-	        ln -sf copyright $TARGETDIR/$BINPKG.copyright
-	    else
-	        # brute force
-		# there must be a more elegant solution
-		# this still doesn't work with packages where the
-		# version number differs between source and binary
-	        for arch in $arch_unstable all; do
-		    if [ -f $ORIGDIR/${BINPKG}_${VERSION}_$arch.deb ]; then
-		        BINFILE=$ORIGDIR/${BINPKG}_${VERSION}_$arch.deb
-			break
-		    fi
-		done
-		if [ -z "$BINFILE" ]; then
-		    echo "No file found for package ${BINPKG}_$VERSION"
-		else
-echo "Extract copyright file from $BINPKG ($BINFILE)"
-		    PKGL=`dpkg-deb -c $BINFILE | grep "^l.*\\./usr/share/doc/$BINPKG ->" | perl -pe 's/.*-> ([\w.+-]+)$/$1/' | head -n 1`
-		    if [ ! -z "$PKGL" ]; then
-		    	echo "documentation dir is symlink to $PKGL"
-			ln -sf $PKGL.copyright $TARGETDIR/$BINPKG.copyright
-			if [ ! -f $PKGL.copyright ]; then
-			     echo "$PKGL.copyright doesn't exists (yet)! Possible broken link."
-			fi
-		    else
-			mkdir -p $tmpdir/`basename $BINFILE`
-			dpkg-deb -x $BINFILE $tmpdir/`basename $BINFILE`
-			XCOPYRIGHT=$tmpdir/`basename $BINFILE`/usr/share/doc/$BINPKG/copyright
-	    	    	if [ ! -f "$XCOPYRIGHT" ]; then
-			    echo "No copyright found in binary $BINPKG"
-			    cp $NOCPY_BIN_TEMPLATE $TARGETDIR/$BINPKG.copyright
-			else
-			    echo "Successful extracted"
-			    mv $XCOPYRIGHT $TARGETDIR/$BINPKG.copyright
-	    	    	fi
-		    fi
-		    unset BINFILE PKGL
-		fi
-	    fi
-	done
-
-	if [ ! -f $TARGETDIR/copyright ]; then
-	     cp $NOCPY_TEMPLATE $TARGETDIR/copyright
-	fi
-	
-	chmod -f 644 $TARGETDIR/*
-	chmod -f -R +w ${tmpdir}/*
-	rm -rf ${tmpdir}/*
-    fi
-
-    unset TARGET PACKAGE VERSION TARGETDIR ORIGDIR BINARIES dir out
+find ${htmldir}/changelogs/ -name log -cmin +3600 \
+ | while read logfile; do
+ 	dir=$(dirname "$logfile")
+	echo deleting $dir
+ 	rm -r "$dir"
 done
 
 date
