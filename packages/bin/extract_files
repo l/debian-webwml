@@ -33,8 +33,8 @@ use HTML::TextToHTML;
 use File::Temp qw( tempdir );
 use File::Path;
 use File::Copy;
+use File::Basename;
 use Digest::SHA1;
-use MLDBM;
 use Parse::DebControl;
 use Cwd;
 use Fcntl qw(:DEFAULT :flock);
@@ -183,13 +183,18 @@ sub pkg_pool_directory {
 
     my $name = $pkg_data->{src_name};
     my $version = $pkg_data->{src_version};
+    my $dscname = $pkg_data->{dsc};
 
     my $dir = "";
 
+# I would prefer $name_$version but lets be backward compatible
+# in case someone depends on the naming
     if ($name =~ /^(lib.)/o) {
-	$dir .= "$1/$name/${name}_$version";
+#	$dir .= "$1/$name/${name}_$version";
+	$dir .= "$1/$name/".basename($dsc, '.dsc');
     } else {
-	$dir .= substr($name,0,1)."/$name/${name}_$version";
+#	$dir .= substr($name,0,1)."/$name/${name}_$version";
+	$dir .= substr($name,0,1)."/$name/".basename($dsc, '.dsc');
     }
 
     return $dir;
