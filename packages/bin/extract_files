@@ -1,8 +1,25 @@
 #!/usr/bin/perl
 #
+# Script to extract files from Debian packages
 # Copyright 2004 Frank Lichtenheld
 #
-# Script to extract files from Debian packages
+# based on a shell script which was
+# Copyright 2003 Noel Köthe
+# Copyright 2004 Martin Schulze <joey@debian.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 use strict;
 use warnings;
@@ -152,6 +169,8 @@ sub cleanup_binpkg {
     my ($pkg_data) = @_;
 
     foreach my $pkg (keys %{$pkg_data->{bin_list}}) {
+	# rmtree should do that itself, but there seems to be a bug somewhere
+	system( "chmod", "-R", "u+rwx", "$TEMPDIR/$pkg" );
 	rmtree( "$TEMPDIR/$pkg" );	
     }
 }
