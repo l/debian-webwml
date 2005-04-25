@@ -13,7 +13,7 @@ index.$(LANGUAGE).html: index.wml $(wildcard vote_*.wml) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
 
 ifeq "$(LANGUAGE)" "en"
-textfiles := tally.txt voters.txt
+textfiles := tally.txt voters.txt vote_0001_results.png vote_0001_results.dot
 desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
 
 install:: $(desttextfiles)
