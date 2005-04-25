@@ -11,3 +11,16 @@ include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(wildcard vote_*.wml) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
+
+ifeq "$(LANGUAGE)" "en"
+textfiles := vote_0001_results.png vote_0001_results.dot
+desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
+
+install:: $(desttextfiles)
+
+$(desttextfiles): $(HTMLDIR)/%: %
+	install -m 664 -p $< $(HTMLDIR)
+
+cleandest::
+	rm -f $(desttextfiles)
+endif
