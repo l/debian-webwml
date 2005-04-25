@@ -366,7 +366,7 @@ foreach $lang (@search_in) {
     
             # Make the table of content
             print HTML "<h3>Table of Contents</h3>\n";
-            print HTML "<p><a href=\"./\">Back to index of languages</a></p>\n";
+            print HTML "<p><a href=\"./\">Back to index of languages</a>\n";
             print HTML "<br /><a href=\"../\">Working on the website</a>\n";
             if ($o_body) {
                 print HTML "<br /><a href=\"#outdated\">Outdated translations</a>\n";
