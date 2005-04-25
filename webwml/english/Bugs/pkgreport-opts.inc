@@ -120,6 +120,9 @@
 <define-tag sarge-ignore whitespace=delete>
   <gettext domain="bugs">sarge-ignore</gettext>
 </define-tag>
+<define-tag etch whitespace=delete>
+  <gettext domain="bugs">etch</gettext>
+</define-tag>
 <define-tag sid whitespace=delete>
   <gettext domain="bugs">sid</gettext>
 </define-tag>
