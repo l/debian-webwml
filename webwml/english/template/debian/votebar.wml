@@ -62,15 +62,14 @@ closedir (DIR);
 $count = 0;
 foreach $year (sort @years) {
 
-  $path = $year;
-  opendir(DIR, "$current_dir/$path");
-  @files = grep { /^vote.*.wml$/ && -f "$current_dir/$path/$_" } readdir(DIR);
+  opendir(DIR, "$current_dir/$year");
+  @files = grep { /^vote.*.wml$/ && -f "$current_dir/$year/$_" } readdir(DIR);
   @files = sort @files;
   closedir DIR;
 
   foreach (@files) {
     $count++;
-    my $fh = openrecode("$path/$_", "$current_dir/$path/$_");
+    my $fh = openrecode("$year/$_", "$current_dir/$year/$_");
     if ( /(vote.*).wml/ ) {
       $base = $1;
     }
@@ -83,11 +82,12 @@ foreach $year (sort @years) {
         $status = $1;
       }
 </protect>
+      
       if ( $title && $status ) {
-         $str1 = "&nbsp;<a href=\"$path/$base\">$title</a><br />\n";
+         $str1 = "&nbsp;<a href=\"/vote/$year/$base\">$title</a><br />\n";
          last;
       } elsif ( $title ) {
-         $str1 = "&nbsp;<a href=\"$path/$base\">$title</a><br />\n";
+         $str1 = "&nbsp;<a href=\"/vote/$year/$base\">$title</a><br />\n";
       }
     }
     if ( $status eq "P" ) {
