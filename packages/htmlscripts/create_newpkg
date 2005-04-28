@@ -148,17 +148,12 @@ foreach my $lang ( @langs ) {
 	    ." <a href=\"newpkg_$config{component}.$lang.rdf\"><img src=\"http://planet.debian.org/rss10.png\" alt=\"[RSS 1.0 Feed]\"></a></p>";
 	$rss_description = sprintf( gettext ( "Packages that were added to the \"%s\" component next to the unstable Debian archive during the last 7 days." ),  $config{component} );
     }
-    $page .= "\n<ul>\n";
-
-    my @months = ("January","February", "March", "April",
-	       "May", "June", "July", "August", "September",
-	       "October", "November", "December");
+    $page .= "\n<ul>\n" if @newpkg;
+    
     # ($date_sec,$date_min,$date_hour,$date_mday,$date_mon,$date_year,$date_wday,$date_isdst)
-    (my @date)= localtime();
-    my $now_time = sprintf ("%s %02d, %04d", $months[$date[4]], $date[3], $date[5]+1900);
-    my $rss_time = sprintf ("%04d-%02d-%02dT%02d:%02d+00:00",
-			    $date[5]+1900, $date[4]+1, $date[3], $date[2],
-			    $date[1] );
+    (my @date)= gmtime();
+    my $now_time = strftime ("%B %d, %Y", @date);
+    my $rss_time = strftime ("%Y-%m-%dT%H:%M+00:00", @date);
 
     my $rss = new XML::RSS (version => '1.0');
     $rss_link = "http://packages.debian.org/unstable/$fname";
@@ -169,7 +164,7 @@ foreach my $lang ( @langs ) {
 		  dc => {
 		      date       => $rss_time,
 		      publisher  => 'debian-www@lists.debian.org',
-		      rights     => 'Copyright 2005, SPI Inc.',
+		      rights     => 'Copyright '.($date[5]+1900).', SPI Inc.',
 		      language   => $lang,
 		  },
 		  syn => {
@@ -177,7 +172,7 @@ foreach my $lang ( @langs ) {
 		      updateFrequency  => "2",
 #		      updateBase       => "1901-01-01T00:00+00:00",
 		  } );
-
+    
     foreach my $pkg (sort @newpkg) {
 	$page .= sprintf ("<li><a href=\"%s/%s\">%s</a>\n    -- %s",
 			  norm_section($db{section}{$pkg}), $pkg, $pkg,
@@ -190,8 +185,8 @@ foreach my $lang ( @langs ) {
 			   subject  => $db{section}{$pkg},
 		       } );
     }
-    $page .= "\n</ul>\n";
-
+    $page .= "\n</ul>\n" if @newpkg;
+       
     my $clist = '';
     foreach my $c (('main','contrib','non-free')) {
 	$clist .= ", " if ($clist);
