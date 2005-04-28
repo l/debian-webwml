@@ -84,7 +84,7 @@ sub print_virt_pack {
     $package_page .= note( sprintf( gettext( "This is a <em>virtual package</em>. See the <a href=\"%s\">Debian policy</a> for a <a href=\"%sch-binary.html#s-virtual_pkg\">definition of virtual packages</a>." ),
 				    $POLICY_URL, $POLICY_URL ) );
 
-    $package_page .= sprintf( "<h2>".gettext( "Packages providing %s:" )."</h2>",
+    $package_page .= sprintf( "<h2>".gettext( "Packages providing %s" )."</h2>",
 			      $name );
     $package_page .= pkg_list( [ keys %{$pkg->{rr}{provides}} ], 'en', $env );
     $package_page .= trailer( '../..' );
@@ -204,7 +204,7 @@ sub package_pages_walker {
 	
 	if ( $dep_list ) {
 	    $package_page .= "<div id=\"pdeps\">\n";
-	    $package_page .= sprintf( "<h2>".gettext( "Other packages related to %s:" )."</h2>\n", $name );
+	    $package_page .= sprintf( "<h2>".gettext( "Other Packages Related to %s" )."</h2>\n", $name );
 	    if ($env->{distribution} eq "experimental") {
 		$package_page .= note( gettext( "Note that the \"<span class=\"pred\">experimental</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution." ) );
 	    }
@@ -224,56 +224,50 @@ sub package_pages_walker {
 	$package_page .= "<div id=\"pdownload\">";
 	$package_page .= sprintf( "<h2>".gettext( "Download %s\n" )."</h2>",
 				  $name ) ;
-	$package_page .= "<table border=\"0\" summary=\"Download for all available architectures\">\n";
-	$package_page .= "\n<tr><th></th>\n";
+	$package_page .= "<table border=\"1\" summary=\"".gettext("The download table links to the download of the package and a file overview. In addition it gives information about the package size and the installed size.")."\">\n";
+	$package_page .= "<caption class=\"hidecss\">".gettext("Download for all available architectures")."</caption>\n";
+	$package_page .= "<tr>\n";
+	$package_page .= "<th>".gettext("Architecture")."</th><th>".gettext("Files")."</th><th>".gettext( "Package Size")."</th><th>".gettext("Installed Size")."</th></tr>\n";
 	foreach my $a ( @all_archs ) {
 	    if ( exists $versions{a2v}{$a} ) {
-		$package_page .=  "<td align=\"center\"><form action=\"$DL_URL\" method=\"post\">\n<div>";
-		$package_page .=  "<input type=\"hidden\" name=\"file\" value=\"$filenames{a2f}->{$a}\">\n";
-		$package_page .=  "<input type=\"hidden\" name=\"md5sum\" value=\"$file_md5s{a2f}->{$a}\">\n";
-		$package_page .=  "<input type=\"hidden\" name=\"arch\" value=\"$a\">\n";
+	        $package_page .= "<tr>\n";
+		$package_page .=  "<th><a href=\"$DL_URL?arch=$a";
+		# \&amp\;file=\" method=\"post\">\n<p>";
+		$package_page .=  "&amp;file=$filenames{a2f}->{$a}";
+		$package_page .=  "&amp;md5sum=$file_md5s{a2f}->{$a}";
+		$package_page .=  "&amp;arch=$a";
 		# there was at least one package with two
 		# different source packages on different
-		# arches where one had a security update
+		# archs where one had a security update
 		# and the other one not
 		if ($subsuites{a2f}{$a}
 		    && ($subsuites{a2f}{$a} =~ /security/o) ) {
-		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"security\">\n";
+		    $package_page .=  "&amp;type=security";
 		} elsif ($subsuites{a2f}{$a}
 			 && ($subsuites{a2f}{$a} =~ /volatile/o) ) {
-		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"volatile\">\n";
-
+		    $package_page .=  "&amp;type=volatile";
 		} elsif ($d->{is_nonus}) {
-		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"nonus\">\n";
+		    $package_page .=  "&amp;type=nonus";
 		} else {
-		    $package_page .=  "<input type=\"hidden\" name=\"type\" value=\"main\">\n";
+		    $package_page .=  "&amp;type=main";
 		}
-		$package_page .=  "<input type=\"submit\" value=\" $a \">\n";
+		$package_page .=  "\">$a</a></th>\n";
+		$package_page .= "<td>";
 		if ( $env->{distribution} ne "experimental" ) {
-		    $package_page .= "<br>".sprintf( "[<a href=\"%s\">".gettext( "list of files" )."</a>]\n", "$FILELIST_URL$encodedpack&amp;version=$env->{distribution}&amp;arch=$a", $name );
+		    $package_page .= sprintf( "[<a href=\"%s\">".gettext( "list of files" )."</a>]\n", "$FILELIST_URL$encodedpack&amp;version=$env->{distribution}&amp;arch=$a", $name );
+		} else {
+		    $package_page .= "no files";
 		}
-		$package_page .= "</div></form>\n";
-		$package_page .= "</td>\n";
-	    }
-	}
-	$package_page .= "</tr><tr>\n";
-	$package_page .= "<th>".gettext( "Size:" )."</th>";
-	foreach my $a ( @all_archs ) {
-	    if ( exists $versions{a2v}{$a} ) {
+		$package_page .= "</td>\n<td>";
 		my $size = $d->{sizes_deb}{$a};
-		$package_page .=  "<td align=\"center\">$size</td>";
-	    }
-	}
-	$package_page .= "</tr><tr>\n";
-	$package_page .= "<th>".gettext( "Installed size:" )."</th>";
-	foreach my $a ( @all_archs ) {
-	    if ( exists $versions{a2v}->{$a} ) {
+		$package_page .=  "$size";
+		$package_page .= "</td>\n<td>";
 		my $inst_size = $d->{sizes_inst}{$a};
-		$package_page .=  "<td align=\"center\">$inst_size</td>";
+		$package_page .=  "$inst_size";
+		$package_page .= "</td>\n</tr>";
 	    }
 	}
-	$package_page .= "</tr></table>\n";
-	$package_page .= "<p>".gettext ( "Size is measured in kBytes." )."</p>\n";
+	$package_page .= "</table><p>".gettext ( "Size is measured in kBytes." )."</p>\n";
 	$package_page .= "</div> <!-- end pdownload -->\n";
 	
 	#
@@ -335,7 +329,7 @@ sub package_pages_walker {
 		    push @uploaders_str, "<a href=\"$DDPO_URL".uri_escape($_->[1])."\">".encode_entities($_->[0], '&<>')."</a>";
 		}
 		$data_sheet .= ds_item(gettext( "Uploaders" ),
-				       join( ", ", @uploaders_str ));
+				       join( ",\n ", @uploaders_str ));
 	    }
 	    $data_sheet .= ds_item(gettext( "Section" ),
 				   "<a href=\"../$d->{subsection}/\">$d->{subsection}</a>");
@@ -486,7 +480,7 @@ sub src_package_pages_walker {
 
     if ( $dep_list ) {
 	$package_page .= "<div id=\"pdeps\">\n";
-	$package_page .= sprintf( "\n<h2>".gettext( "Other packages related to %s:" )."</h2>\n", $name );
+	$package_page .= sprintf( "\n<h2>".gettext( "Other Packages Related to %s" )."</h2>\n", $name );
 	if ($env->{distribution} eq "experimental") {
 	    $package_page .= note( gettext( "Note that the \"<span class=\"pred\">experimental</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution." ) );
 	}
