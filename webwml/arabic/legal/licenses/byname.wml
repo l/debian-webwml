@@ -1,0 +1,26 @@
+<define-tag pagetitle>فهارس رخص ديبيان&nbsp;&mdash;&nbsp;حسب الإسم</define-tag>
+#use wml::debian::template title="<pagetitle>" GEN_TIME="yes"
+#use wml::debian::legal_lists
+
+
+<dls-lists-page-header />
+
+<h2>DLS &ndash; مصنفة حسب اسم الرخصة</h2>
+
+<perl>
+    my %str = get_alphabetical_list( '', 'list' );
+my ( $toc, $content );
+
+foreach my $letter (sort keys %str) {
+    if (($letter eq 'foot') || ($letter eq 'head')) {
+        next;
+    }
+    if (scalar keys %str > 10) {
+        $toc .= " [&nbsp;<a href=\"#$letter\">$letter</a>&nbsp;]";
+        $content .= "<h3><a id=\"$letter\">$letter</a></h3>\n";
+    }
+    $content .= "$str{head}$str{$letter}$str{foot}\n";
+}
+print "<p>$toc</p>" if $toc;
+print $content;
+</perl>
