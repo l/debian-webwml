@@ -1,0 +1,52 @@
+#use wml::debian::translation-check translation="1.4" maintainer="Simon Paillard"
+#use wml::debian::template title="Exemple d'audit automatisé&nbsp;: pscan"
+#use wml::debian::recent_list
+
+<p><a href="http://packages.debian.org/pscan">pscan</a> est un paquet destiné à
+auditer des fichiers de code source C et C++ à la recherche de vulnérabilités
+sur le format des chaînes de caractères.</p>
+<p>Ce n'est pas un outil d'audit à but général.</p>
+
+<h2>Utiliser pscan</h2>
+<p>Utiliser pscan revient tout simplement à l'invoquer avec le nom du ou des
+fichiers à vérifier. Par exemple&nbsp;:</p>
+<pre>
+pscan <a href="test.c.html">test.c</a>
+</pre>
+<p>Le résultat sera directement affiché dans la console&nbsp;:</p>
+<hr />
+<pre>
+test.c:42 SECURITY: printf call should have "%s" as argument 0
+</pre>
+<hr />
+
+<h2>Le résultat</h2>
+<p>Le résultat dans ce cas est facile à comprendre. Il a correctement identifié
+le fait que l'appel <tt>printf</tt> ne citait pas ses arguments
+correctement.</p>
+<p>Le résultat nous montre également comment corriger le problème, en changeant
+le code qui lit&nbsp;:
+<pre>
+printf( buff );
+</pre>
+<p>Pour lire&nbsp;:</p>
+<pre>
+printf( "%s", buff );
+</pre>
+<p>Ne pas faire ainsi permettrait à un attaquant pouvant contrôler la sortie de
+<tt>ls</tt> d'attaquer le programme, en créant un fichier nommé "%s", ou
+similaire.</p>
+<p>Les attaques sur le format des chaînes de caractères sont traitées dans
+cette <a href="http://www.securityfocus.com/guest/3342">introduction de
+Security Focus</a>.</p>
+<p>Le guide <a href="http://www.dwheeler.com/secure-programs/">Secure
+Programming for Linux and Unix HOWTO</a> explique comment se protéger des
+attaques dans les fonctions variadiques habituelles, telles que&nbsp;:</p>
+<ul>
+<li>printf</li>
+<li>fprintf</li>
+<li>syslog</li>
+</ul>
+<hr />
+<p><a href="..">Retour à la page du projet d'audit</a> | <a href="index">Retour
+à la page des exemples d'audit</a></p>
