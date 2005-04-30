@@ -1,0 +1,103 @@
+#use wml::debian::translation-check translation="1.6" maintainer="Simon Paillard"
+#use wml::debian::template title="Exemple d'audit automatisé&nbsp;: flawfinder"
+#use wml::debian::recent_list
+
+<p><a href="http://packages.debian.org/flawfinder">flawfinder</a> est un outil
+généraliste pour trouver et rapporter des défauts potentiels dans du code
+source C et C++.</p>
+
+
+<h2>Utiliser flawfinder</h2>
+<p>Utiliser flawfinder est simple, cela se résume à l'invoquer avec le nom des
+répertoires ou des fichiers à examiner. Pour un répertoire donné, l'outil
+traitera tous les fichiers source qu'il trouvera dans le répertoire.</p>
+<p>En plus de la liste des fichiers ou répertoires, il existe des options de
+ligne de commande permettant de contrôler le comportement de l'outil.</p>
+<p>Chacune des options est expliquée dans la page du manuel, mais les options
+suivantes sont particulièrement utiles et seront utilisées dans notre
+exemple&nbsp;:</p>
+<ul>
+<li>--minlevel=X
+<ul>
+<li>Règle à X le niveau minimum de risque d'affichage du défaut. Le niveau va
+de 1&nbsp;à&nbsp;5, 1 pour le faible risque, à 5 pour le risque élevé.</li>
+</ul></li>
+<li>--html
+<ul>
+<li>Formate le résultat en HTML au lieu de texte simple</li>
+</ul></li>
+<li>--context
+<ul>
+<li>Affiche le contexte, i.e., les lignes concernées par le défaut
+potentiel.</li>
+</ul></li>
+</ul>
+
+<p>Pour obtenir dans un fichier HTML les résultats du programme, restreints aux
+fonctions à haut risque, il faudrait utiliser quelque chose comme
+cela&nbsp;:</p>
+<pre>
+flawfinder --html --context --minlevel=4 test.c &gt; output.html
+</pre>
+
+<h2>Les résultats</h2>
+<p>Voici les résultat du traitement par flawfinder de notre <a href="test.c.html">code d'exemple</a>&nbsp;:</p>
+
+<hr />
+<blockquote>
+<p>
+Examining test.c <br>
+<ul>
+<li>test.c:18: <b>  [4] </b> (buffer) <i> strcpy:
+  Does not check for buffer overflows when copying to destination.
+  Consider using strncpy or strlcpy (warning, strncpy is easily misused).  </i>
+<pre>
+      strcpy( dir, argv[ 1 ] );
+</pre>
+<li>test.c:24: <b>  [4] </b> (buffer) <i> sprintf:
+  Does not check for buffer overflows. Use snprintf or vsnprintf.  </i>
+
+<pre>
+	sprintf( dir, "%s", getenv( "HOME" ) );
+</pre>
+<li>test.c:33: <b>  [4] </b> (shell) <i> popen:
+  This causes a new program to execute and is difficult to use safely.
+  try using a library call that implements the same functionality if
+  available.  </i>
+<pre>
+    fp = popen( cmd, "r" );
+</pre>
+<li>test.c:42: <b>  [4] </b> (format) <i> printf:
+  If format strings can be influenced by an attacker, they can be
+  exploited. Use a constant for the format specification.  </i>
+
+<pre>
+      printf( buff );
+</pre>
+</ul>
+<p>
+Number of hits = 4
+<br>
+Number of Lines Analyzed = 48 in 0.53 seconds (1392 lines/second)
+<br>
+</blockquote>
+<hr />
+
+<h2>Comprendre les résultats</h2>
+<p>De la même façon que pour <a href="RATS">RATS</a>, ce rapport est très
+simple à lire. Il montre clairement quelles fonctions ont été détectées comme
+potentiellement dangereuses, ainsi que la description du problème.</p>
+
+<p>L'inclusion des informations de contexte est également très utile
+puisqu'elle attire immédiatement l'attention sur les zones concernées, et
+exclue les autres rapports comme étant invalides.</p>
+
+<p>L'analyse de notre <a href="test.c">code d'exemple</a> est assez
+intelligente, dans le sens où elle n'avertit pas de <i>toute</i> utilisation de
+la fonction <tt>strcpy</tt> qui peut s'avérer ennuyeuse - mais seulement celles
+repérées comme potentiellement dangereuses.</p>
+<p>De cette façon, flawfinder a réussi à mettre en évidence tous les défauts de
+notre code, sans faux positifs.</p>
+<hr />
+<p><a href="..">Retour à la page du projet d'audit</a> | <a href="index">Retour
+à la page des exemples d'audit</a></p>
