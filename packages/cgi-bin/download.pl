@@ -147,6 +147,7 @@ my %arches = (
         mipsel  => 'MIPS (DEC)',
         s390    => 'IBM S/390',
 	"hurd-i386" => 'Hurd (i386)',
+	amd64   => 'AMD64',
 );
 
 my $urlbase = "http://www.debian.org";
@@ -197,6 +198,20 @@ if ($type eq 'security') {
 
 <p>Debian security updates are currently officially distributed only via
 security.debian.org.</p>
+END
+
+} elsif ($arch eq 'amd64') {
+
+	print <<END;
+<ul>
+  <li><a href="http://amd64.debian.net/debian/$file">amd64.debian.net</a></li>
+</ul>
+
+  <p>Note that AMD64 is not officialy included in the Debian archive
+  yet, but the AMD64 porter group keeps their archive in sync with
+  the official archive as close as possible. See the
+  <a href="http://www.debian.org/ports/amd64/">AMD64 ports page</a> for
+  current information.</p>
 END
 
 } elsif ($type eq 'nonus') {
