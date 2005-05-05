@@ -5,12 +5,17 @@
 WMLBASE=../..
 CUR_DIR=vote/2001
 SUBS=
+VOTE=$(basename $(wildcard vote_*.wml))
 
 include $(WMLBASE)/Make.lang
 
 
+$(foreach i, $(VOTE), $(i).$(LANGUAGE).html): %.$(LANGUAGE).html: %.wml \
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml
+	$(WML) $(<F)
 index.$(LANGUAGE).html: index.wml $(wildcard vote_*.wml) \
-  $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml \
+  $(TEMPLDIR)/votebar.wml
 
 ifeq "$(LANGUAGE)" "en"
 textfiles := vote_0001_results.png vote_0001_results.dot
