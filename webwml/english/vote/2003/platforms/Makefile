@@ -8,5 +8,8 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+index.$(LANGUAGE).html: index.wml \
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml
+
 index.$(LANGUAGE).html: index.wml $(wildcard vote_*.wml) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
