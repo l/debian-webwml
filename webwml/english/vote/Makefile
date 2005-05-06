@@ -11,12 +11,12 @@ include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*/vote_*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/[0-9]*/vote_*.wml) \
-  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml
 
 howto_follow.$(LANGUAGE).html: howto_follow.wml \
-  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml
 howto_proposal.$(LANGUAGE).html: howto_proposal.wml \
-  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml
 # howto_result.$(LANGUAGE).html: howto_result.wml \
 #   $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
 # howto_vote.$(LANGUAGE).html: howto_vote.wml \
