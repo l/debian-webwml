@@ -9,4 +9,5 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml \
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/../../[0-9]*/vote_*.wml) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml
