@@ -14,8 +14,10 @@ index.$(LANGUAGE).html: index.wml \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml
 
 howto_follow.$(LANGUAGE).html: howto_follow.wml \
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/[0-9]*/vote_*.wml) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml
 howto_proposal.$(LANGUAGE).html: howto_proposal.wml \
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/[0-9]*/vote_*.wml) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml
 # howto_result.$(LANGUAGE).html: howto_result.wml \
 #   $(TEMPLDIR)/basic.wml $(TEMPLDIR)/votebar.wml
