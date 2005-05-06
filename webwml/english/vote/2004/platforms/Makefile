@@ -6,6 +6,9 @@ WMLBASE=../../..
 CUR_DIR=vote/2004/platforms
 SUBS=
 
+index.$(LANGUAGE).html: index.wml \
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml
+
 include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(wildcard vote_*.wml) \

@@ -8,6 +8,9 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+index.$(LANGUAGE).html: index.wml \
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml
+
 ifeq "$(LANGUAGE)" "en"
 $(HTMLDIR)/informal.txt $(HTMLDIR)/transcript.txt: $(HTMLDIR)/%: %
 	install -m 664 -p $< $(HTMLDIR)
