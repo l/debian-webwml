@@ -9,8 +9,8 @@ SUBS=$(wildcard [12][0-9][0-9][0-9])
 include $(WMLBASE)/Make.lang
 
 
-index.$(LANGUAGE).html: howto_follow.wml howto_proposal.wml \
-  index.wml $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/[0-9]*/vote_*.wml) \
+index.$(LANGUAGE).html: index.wml \
+  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/[0-9]*/vote_*.wml) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml
 
 howto_follow.$(LANGUAGE).html: howto_follow.wml \
