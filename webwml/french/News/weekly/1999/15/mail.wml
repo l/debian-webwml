@@ -1,0 +1,261 @@
+#use wml::debian::weeklynews::header PAGENAME="Courriel"
+#use wml::debian::translation-check translation="1.3" maintainer="Thomas Huriaux"
+
+<a name=1></a>
+<pre>
+Client : Mutt 0.95.3i 
+Date : Lun. 5 avr. 1999 19 h 53 ' 35 " +0300 
+De : Andrei D. Caraman &lt;adc@KILI.MEDIASAT.RO&gt; 
+Sujet : Une question sur Apache sur Debian 
+À : BUGTRAQ@NETSPACE.ORG    
+
+[ Premier avertissement,
+
+Je ne me souviens pas avoir vu ceci posté sur Bugtraq, mais n'hésitez pas
+à le supprimer, si c'est une nouvelle ancienne. ]
+
+
+Cela concerne la configuration d'Apache telle qu'elle est fournie avec
+Debian 2.1 (surnommée Slink).
+
+La configuration par défaut d'Apache (apache_1.3.3-7.deb) rend le répertoire
+/usr/doc disponible pour tout le monde sur http://un.hôte/doc/. La ligne
+incriminée est dans le fichier srm.conf :
+
+	Alias /doc/ /usr/doc/
+
+Ceci permettrait à tous les utilisateurs sur le réseau (malveillant ou
+pas) de connaître la version exacte de tous les paquets installés sur une
+machine Debian. Cela semble être plus une question de vie privée que de
+sécurité. Cependant, si une vulnérabilité affectant l'un de ces paquets
+est trouvée, les attaquants pourraient déjà connaître les cibles potentielles
+(et peut-être celles à éviter).
+
+Tout d'abord, j'ai pensé que alias pouvait être désactivé, mais en lisant
+les lignes ci-dessous (« la ligne ci-dessus est pour les standards du
+web 3.0 de Debian, qui spécifient que /doc renvoie à /usr/doc. Certains
+paquets peuvent ne pas marcher autrement »), je dirais que l'accès à cet
+endroit ne devrait être autorisé qu'au localhost (notez qu'un serveur
+mandataire web sur la même machine pourrait rendre inutile cette limitation).
+L'administrateur du site peut facilement changer cela s'il en a besoin.
+
+
+Johnie Ingram (le responsable Debian d'Apache) a été averti, et a répondu
+que cela avait déjà été formellement signalé sur le système de suivi des
+bogues par un autre utilisateur Debian (les détails sont disponibles ici :
+
+	http://www.debian.org/Bugs/db/34/34099.html
+
+incluant la correction suggérée :
+
+	&lt;Directory /usr/doc&gt;
+	AllowOverride None
+	order deny,allow
+	deny from all
+	allow from localhost
+	&lt;/Directory&gt;
+).
+
+Johnie a dit qu'il avait l'intention de changer l'ancienne valeur par défaut
+dans la prochaine publication.
+
+Le 26 mars, il a ainsi déclaré qu'un nouveau paquet Apache allait être
+envoyé dans les prochains jours, donc je suppose qu'il est déjà sur les
+miroirs Debian.
+
+&lt;propagande&gt;
+
+Ce n'est pas un bogue sérieux, puisque Debian est la distribution Linux
+la plus sécurisée. C'est pourquoi je l'utilise.
+
+&lt;/propagande&gt;
+
+Je ne me suis pas ennuyé à vérifier les autres distributions...
+
+
+
+Cordialement,
+------------------------------------------------------------------------
+Andrei D. Caraman			    Tél. : +40 (1) 2050 637
+Ingénieur réseau			     Fax : +40 (1) 2050 655
+Mediasat SA			Heures de bureau : 10 h 00 - 18 h 00 GMT
+</pre>
+
+<hr>
+
+<a name=2></a>
+<pre>
+À : Chris McKillop &lt;cdmckill@warg.uwaterloo.ca&gt;
+Cc : debian-mentors@lists.debian.org
+Sujet : Re : Devenir un nouveau développeur
+De : James Troup &lt;james@nocrew.org&gt;
+Date : 12 avr. 1999 20 h 02 ' 51 " +0100
+
+Chris McKillop &lt;cdmckill@warg.uwaterloo.ca&gt; a écrit :
+
+&gt; Combien de temps faut-il habituellement pour remplir la procédure de
+&gt; candidature pour les développeurs ? J'ai lu des commentaires
+&gt; déprimants sur irc parlant de plus de 10 mois. Quelqu'un peut-il
+&gt; me confirmer cela ?
+
+Quelques commentaires aléatoires sans ordre particulier, car je ne veux
+pas m'ennuyer à prendre le temps d'écrire une réponse propre à tous les
+courriels de cette discussion.
+
+La procédure peut durer 10 minutes comme elle peut durer plus d'un an
+et demi. La première situation est rare, mais a déjà été vue deux ou trois
+fois, la deuxième est, bizarrement, habituelle, mais c'est toujours car
+nous attendons que les candidats viennent vers <u>nous</u> et pas le
+contraire.
+
+Ne crois pas tout ce que tu entends sur IRC, en particulier ce qui vient
+de certaines personnes.
+
+Le processus pour les nouveaux responsables est incroyablement
+ennuyeux pour bien trop de raisons pour les lister, mais un problème
+particulier est que les attentes des candidats au niveau de la durée
+du processus varient fortement. J'ai téléphoné à des personnes avec un
+retard inexcusable, et ils ont calmement répondu : « Tout va bien, je
+n'ai même pas encore commencé mon paquet, et je ne le ferai sûrement pas
+avant un moment ». Ou alors, vous avez des personnes qui vous harcèlent
+sans arrêt pour une procédure rapide puis ne font rien en tant que
+développeur pendant des semaines voire des mois après leur intégration.
+
+Tu peux accélérer ta candidature en fournissant les informations
+pertinentes, comme cela est indiqué dans la référence des développeurs.
+C'est déprimant de voir combien de personnes ne le font toujours pas
+malgré l'excellent travail de Christian et Adam.
+
+Non, je n'ai pas envisagé de mettre un répondeur automatique sur
+l'adresse new-maintainer@debian.org. Fais juste confiance au fait
+que c'est arrivé, et si tu n'es pas sûr, envoie-nous une petite note.
+Nous n'attachons pas d'importance au fait que les personnes nous
+harcèlent avec de petits messages après un délai raisonnable.
+Je m'oppose violemment aux personnes qui renvoient de grosses images
+scannées, je paie pour mes appels à la minute et je n'ai qu'un lent
+modem 28.8 (et en dehors de tout ça, c'est une chose importante).
+Dans un domaine similaire, veuillez réduire vos images scannées.
+En général, 500 Ko sont aussi utiles que 5 Mo.
+
+Je suis désolé pour toutes les personnes qui ont attendu si longtemps.
+Je vais essayer de me réoccuper de vous le plus tôt possible, mais
+continuez à lire.
+
+Les appels téléphoniques provoquent souvent des retards. Je pense qu'ils
+sont nécessaires, et je ne pense pas les arrêter. Non, je ne peux
+pas vous envoyer de courriel avant d'appeler, simplement parce que je
+ne sais jamais quand j'aurai le temps et l'énergie [1] d'appeler
+jusqu'à la dernière minute. Cela n'a alors plus d'intérêt.
+
+Les appels téléphoniques deviennent de moins en moins un problème, puisque
+j'ai commencé à donner mes informations pour que les personnes puissent
+<u>optionnellement</u> me téléphoner, quand cela <b>les</b> arrange
+(avec quelques simples exception [Salut, Ed :p]). Cela sera entièrement
+optionnel, ne coûtera pas beaucoup au candidat (je les rappellerai
+immédiatement, si je peux), et évitera, je l'espère, les problèmes
+des personnes manquantes ou de ceux qui donnent des numéros de téléphone
+pour une ligne dédiée virtuellement au modem. J'ai essayé ceci la semaine
+dernière, et, à une seule exception (Salut, Ed :p), cela a bien fonctionné,
+et les candidats semblent répondre favorablement à l'idée.
+
+Bon, je pense que j'ai assez râlé.
+
+-- 
+James
+
+« L'astuce est de continuer à respirer. »
+
+[1] La majorité des appels sont soit fait (pour mon fuseau horaire)
+tard la nuit, très tôt le matin (Salut, Ed :p) ou tôt le matin.
+J'ai un emploi demandant une charge de travail énorme, ce qui m'empêche
+de participer à Debian plus que je ne le voudrais et qui me demande une
+certaine quantité de sommeil chaque nuit.
+
+
+--  
+Pour vous désinscrire, envoyez un courriel à
+debian-mentors-request@lists.debian.org avec comme sujet « unsubscribe ».
+Des problèmes ? Contactez listmaster@lists.debian.org.
+</pre>
+
+<a name=3></a>
+<pre>
+De debian-vote-request@lists.debian.org Dim. 11 avr. 1999 18 h 07 ' 26 "
+Date : Dim. 11 avr. 1999 11 h 07 ' 10 " -0700
+De : Darren O. Benham &lt;gecko@debian.org&gt;
+À : Martin Schulze &lt;joey@infodrom.north.de&gt;
+Cc : Marcus Brinkmann &lt;Marcus.Brinkmann@ruhr-uni-bochum.de&gt;,
+  debian-vote@lists.debian.org
+Sujet : Re : le logo : sélection des logos maintenant disponible !
+
+
+--xo44VMWPx7vlQ2+2
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+
+Le dim. 11 avr. 1999 à 11 h 44 ' 21 " +0200, Martin Schulze a écrit:
+&gt; Marcus Brinkmann a écrit :
+&gt; &gt; Le sam. 10 avr. 1999 à 12 h 33 ' 51 " +0200, Martin Schulze a écrit :
+&gt; &gt; &gt; 
+&gt; &gt; &gt; Je suis désolé, mais le premier concours pour le logo n'a été
+&gt; &gt; &gt; ni public, ni ouvert aux responsables, donc doogie n'a pas eu
+&gt; &gt; &gt; l'occasion d'intervenir avant
+&gt; 
+&gt; Apparemment, ça n'a pas été formulé correctement et j'étais pressé.
+&gt; 
+&gt; Le concours officiel pour le logo (le deuxième) s'est tenu en public.
+&gt; 
+&gt; Mais les logos que nous pouvons choisir n'ont pas été choisis en public
+&gt; mais derrière des portes fermées pour que ni doogie ni moi-même ne
+&gt; puissent intervenir.
+&gt; 
+&gt; Après cela, le vote est public.
+&gt; 
+&gt; Vous savez déjà que j'ai essayer de conduire la totalité du concours
+&gt; dans la bonne direction. Puisque je ne peux pas décider de ce que fait
+&gt; l'équipe du logo, c'est tout ce que je peux faire - en dehors de
+&gt; provoquer une révolution, ce qui n'est pas ce que je veux.
+
+Il y a autre chose... sans révolution. S'il y a un logo que vous aimez,
+proposez-le en amendement... si soit Wichert, soit le comité technique,
+soit cinq autres développeurs sont d'accord pour ajouter le logo à la liste
+des choix (sponsor), il sera ajouté au bulletin sans relancer la période
+de discussion.
+
+
+-- 
+Veuillez m'envoyer une copie de toutes vos réponses aux listes de diffusion.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+* http://benham.net/index.html        &lt;gecko@benham.net&gt;           &lt;&gt;&lt;  *
+* -------------------- * -----------------------------------------------*
+* Développeur Debian, Secrétaire du projet, Concepteur du site web      *
+* &lt;gecko@debian.org&gt; &lt;secretary@debian.org&gt; &lt;lintian-maint@debian.org&gt;  *
+* &lt;webmaster@debian.org&gt; &lt;gecko@fortunet.com&gt; &lt;webmaster@spi-inc.org&gt;   *
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+--xo44VMWPx7vlQ2+2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GNUPG v0.4.3 (GNU/Linux)
+Comment: For info finger gcrypt@ftp.guug.de
+
+iD8DBQE3EOTObbwt//gBAIoRAVweAKCBMIqcNMLORxD8a0nCxq+W8T8o6gCfRl6O
+pkFvJNuNNqewx3HneUj3Nyc=
+=0BOB
+-----END PGP SIGNATURE-----
+
+--xo44VMWPx7vlQ2+2--
+
+
+--  
+Pour vous désinscrire, envoyez un courriel à
+debian-vote-request@lists.debian.org avec comme sujet « unsubscribe ».
+Des problèmes ? Contactez listmaster@lists.debian.org.
+</pre>
+
+#use wml::debian::weeklynews::footer translator="Thomas Huriaux"
