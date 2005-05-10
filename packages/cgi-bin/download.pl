@@ -89,6 +89,20 @@ my @volatile_european_sites = (
         "ftp2.de.debian.org/debian-volatile",
         "ftp.sk.debian.org/debian-volatile",
 			       );
+my @amd64_european_sites = (
+        "amd64.debian.net/debian-amd64/debian",
+        "ftp.de.debian.org/debian-amd64/debian",
+        "bach.hpc2n.umu.se/debian-amd64/debian",
+        "bytekeeper.as28747.net/debian-amd64/debian",
+	"mirror.switch.ch/debian-amd64/debian",
+        "ftp.nl.debian.org/debian-amd64/debian",
+			    );
+my @amd64_asian_sites = (
+        "hanzubon.jp/debian-amd64/debian",
+			    );
+my @amd64_north_american_sites = (
+        "mirror.espri.arizona.edu/debian-amd64/debian",
+			    );
 my @nonus_north_american_sites = (
 #	"ftp.ca.debian.org/debian-non-US",
 	"debian.yorku.ca/debian/non-US",
@@ -202,11 +216,14 @@ END
 
 } elsif ($arch eq 'amd64') {
 
-	print <<END;
-<ul>
-  <li><a href="http://amd64.debian.net/debian/$file">amd64.debian.net</a></li>
-</ul>
+    print_links( "North America", $file, @amd64_north_american_sites );
+    print_links( "Europe", $file, @amd64_european_sites );
+#    print_links( "Australia and New Zealand", $file,
+#		 @nonus_australian_sites );
+    print_links( "Asia", $file, @amd64_asian_sites );
+#    print_links( "South America", $file, @nonus_south_american_sites );
 
+	print <<END;
   <p>Note that AMD64 is not officialy included in the Debian archive
   yet, but the AMD64 porter group keeps their archive in sync with
   the official archive as close as possible. See the
