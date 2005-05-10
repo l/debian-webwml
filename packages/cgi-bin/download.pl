@@ -161,7 +161,6 @@ my %arches = (
         mipsel  => 'MIPS (DEC)',
         s390    => 'IBM S/390',
 	"hurd-i386" => 'Hurd (i386)',
-	"hurd-i386" => 'Hurd (i386)',
 	amd64   => 'AMD64',
 );
 
