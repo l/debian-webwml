@@ -507,7 +507,7 @@ merging ('binary' [default], 'source' or 'trans').
     merge_in( $data, { distribution => 'stable', archive => 'main' }
 
 You can also specify a 'subdistribution', allowed values are
-'updates' and 'non-US'.
+'security', 'volatile' and 'non-US'.
 
 Dies if object is locked.
 

@@ -84,6 +84,11 @@ my @asian_sites = (
 	"linux.cdpa.nsysu.edu.tw/debian",
 	); 
 
+my @volatile_european_sites = (
+        "volatile.debian.net/debian-volatile",
+        "ftp2.de.debian.org/debian-volatile",
+        "ftp.sk.debian.org/debian-volatile",
+			       );
 my @nonus_north_american_sites = (
 #	"ftp.ca.debian.org/debian-non-US",
 	"debian.yorku.ca/debian/non-US",
@@ -142,6 +147,8 @@ my %arches = (
         mipsel  => 'MIPS (DEC)',
         s390    => 'IBM S/390',
 	"hurd-i386" => 'Hurd (i386)',
+	"hurd-i386" => 'Hurd (i386)',
+	amd64   => 'AMD64',
 );
 
 my $urlbase = "http://www.debian.org";
@@ -194,6 +201,20 @@ if ($type eq 'security') {
 security.debian.org.</p>
 END
 
+} elsif ($arch eq 'amd64') {
+
+	print <<END;
+<ul>
+  <li><a href="http://amd64.debian.net/debian/$file">amd64.debian.net</a></li>
+</ul>
+
+  <p>Note that AMD64 is not officialy included in the Debian archive
+  yet, but the AMD64 porter group keeps their archive in sync with
+  the official archive as close as possible. See the
+  <a href="http://www.debian.org/ports/amd64/">AMD64 ports page</a> for
+  current information.</p>
+END
+
 } elsif ($type eq 'nonus') {
 
     print_links( "North America", $file, @nonus_north_american_sites );
@@ -206,6 +227,20 @@ END
     print <<END;
 <p>If none of the above sites are fast enough for you, please see our
 <a href="http://www.debian.org/mirror/list-non-US">complete mirror list</a>.</p>
+END
+
+} elsif ($type eq 'volatile') {
+
+#    print_links( "North America", $file, @nonus_north_american_sites );
+    print_links( "Europe", $file, @volatile_european_sites );
+#    print_links( "Australia and New Zealand", $file,
+#		 @nonus_australian_sites );
+#    print_links( "Asia", $file, @nonus_asian_sites );
+#    print_links( "South America", $file, @nonus_south_american_sites );
+
+    print <<END;
+<p>If none of the above sites are fast enough for you, please see our
+<a href="http://volatile.debian.net/mirrors.html">complete mirror list</a>.</p>
 END
 
 } elsif ($type eq 'main') {

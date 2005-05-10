@@ -141,13 +141,13 @@ sub pmoreinfo {
     my $is_source = $info{is_source};
 
     my $str = "<div id=\"pmoreinfo\">";
-    $str .= sprintf( "<h2>".gettext( "More information on %s" )."</h2>",
+    $str .= sprintf( "<h2>".gettext( "More Information on %s" )."</h2>",
 		     $name );
 	
     
     if ($info{bugreports}) {
 	my $bug_url = $is_source ? $SRC_BUG_URL : $BUG_URL; 
-	$str .= "<p>\n".sprintf( gettext( "Check for <a href=\"%s\">bug reports</a> about %s." )."<br>\n",
+	$str .= "<p>\n".sprintf( gettext( "Check for <a href=\"%s\">Bug Reports</a> about %s." )."<br>\n",
 			 $bug_url.$name, $name );
     }
 	
@@ -163,6 +163,8 @@ sub pmoreinfo {
 		my ($src_file_md5, $src_file_size, $src_file_name) = @$_;
 		if ($d->{is_security}) {
 		    $str .= "<a href=\"$env->{opts}{security_site}/$d->{src_directory}/$src_file_name\">[";
+		} elsif ($d->{is_volatile}) {
+		    $str .= "<a href=\"$env->{opts}{volatile_site}/$d->{src_directory}/$src_file_name\">[";
 		} elsif ($d->{is_nonus}) {
 		    $str .= "<a href=\"$env->{opts}{nonus_site}/$d->{src_directory}/$src_file_name\">[";
 		} else {
@@ -381,11 +383,12 @@ HEADEND
 $search_in_header
 </div> <!-- end upperheader -->
 <div id="navbar">
-<p class="navpara">
+
 NAVBEGIN
 ;
 # $title_in_header
-
+$txt .= "<p class=\"hidecss\"><a href=\"\#inner\">" . gettext("Skip Site Navigation")."</a></p>\n";
+$txt .= "<p class=\"navpara\">\n";
 $txt .= " " . img( "$HOME/", "intro/about", "Pics/about.$img_lang.gif",
 		 gettext( "About&nbsp;Debian" ), 
 		 ) . "\n ";
