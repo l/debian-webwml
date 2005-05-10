@@ -39,6 +39,7 @@
   <option value="i386" selected="selected"><gettext domain="distrib">Intel x86</gettext></option>
   <option value="m68k"><gettext domain="distrib">Motorola 680x0</gettext></option>
   <option value="alpha"><gettext domain="distrib">Alpha</gettext></option>
+  <option value="amd64"><gettext domain="distrib">AMD64</gettext></option>
   <option value="sparc"><gettext domain="distrib">SPARC</gettext></option>
   <option value="powerpc"><gettext domain="distrib">PowerPC</gettext></option>
   <option value="arm"><gettext domain="distrib">ARM</gettext></option>
