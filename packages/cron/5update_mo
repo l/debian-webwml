@@ -18,6 +18,12 @@ xgettext $xgettext_opts -a -d langs -o ${podir}/langs.pot ${libdir}/Packages/I18
 
 cd $podir
 
+# normalize paths in .pot files
+for domain in ${podomains}
+do
+  perl -p -i -e "s,^#:\s*\Q${topdir}\E,#: .,go" ${domain}.pot
+done
+
 # Create missing po files
 #
 for lang in ${polangs}
@@ -37,6 +43,8 @@ do
     mv ${domain}.${lang}.po ${domain}.${lang}.po.tmp
     msgmerge -q -F -o ${domain}.${lang}.po ${domain}.${lang}.po.tmp ${domain}.pot
     rm ${domain}.${lang}.po.tmp
+    # normalize paths in .po files
+    perl -p -i -e "s,^#:\s*\Q${topdir}\E,#: .,go" ${domain}.${lang}.po
   done
 done
 
