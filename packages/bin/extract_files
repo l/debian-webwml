@@ -44,11 +44,11 @@ use constant DIGESTPOOL => 2;
 
 my $PROGNAME = 'extract_files';
 my $MAXWARN = 100;
-my $TEMPDIR = tempdir( 'pdo_extract_file.XXXXXX',
-		       DIR => cwd()."/tmp", CLEANUP => 1 );
+my $TEMPDIR;
 
 my $directory = cwd()."/pool";
 my $target = cwd()."/extracted_files";
+my $workdir = '';
 my $link_dict = "$FindBin::Bin/../etc/link.dict";
 my ( $verbose, $version, $help, $debug, $force );
 
@@ -57,6 +57,7 @@ my %opthash = (
 	       'force|f' => \$force,
 	       'directory|d=s' => \$directory,
 	       'target|t=s' => \$target,
+	       'workdir|w=s' => \$workdir,
 	       'link-dict|l=s' => \$link_dict,
 	       'version' => \$version,
 	       'debug' => \$debug,
@@ -74,6 +75,13 @@ $directory =~ s,/+$,,o;
 my $txt2html = new HTML::TextToHTML(
 				    links_dictionaries => [ $link_dict ],
 				    );
+if ($workdir) {
+    $TEMPDIR = tempdir( 'pdo_extract_file.XXXXXX',
+			DIR => $workdir, CLEANUP => 1 );
+} else {
+    $TEMPDIR = tempdir( 'pdo_extract_file.XXXXXX',
+		        CLEANUP => 1 );
+}
 
 ##################################################
 # OUTPUT/LOGGING
