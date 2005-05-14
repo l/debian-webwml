@@ -1,0 +1,150 @@
+#use wml::debian::template title="L10n Debconf テンプレートと PO ファイル -- 翻訳のためのヒント"
+#include "$(ENGLISHDIR)/international/l10n/dtc.def"
+#use wml::debian::translation-check translation="1.5"
+<p>
+#include "$(ENGLISHDIR)/international/l10n/po-debconf/menu.inc"
+</p>
+
+<h2>翻訳者のための一般的な注意</h2>
+
+<ol>
+  <li>
+         翻訳を始める前に、(もし存在するなら) debian-l10n-&lt;<i>language</i>&gt;@lists.debian.org
+	の他の翻訳者の人々に、誰も同じ翻訳に手を付けていないことを確認してください。
+	そしてあなたが翻訳しようとしているパッケージの現在のバグ報告を読んで、
+	翻訳が既に報告されていないことを確認してください。
+  </li>
+
+  <li>
+	もし翻訳を更新したいなら、作業が重複するのを避けるために、
+	前の翻訳者に連絡を取ってください。メールアドレスは PO ファイル
+	から見つけることができます。
+  </li>
+
+  <li>
+	新しい翻訳を始めるために、<tt>templates.pot</tt> ファイルを
+	<tt><i>xx</i>.po</tt> にコピーしてください。ここで <i>xx</i>
+	はあなたの言語の <a href="http://www.loc.gov/standards/iso639-2/langcodes.html">ISO コード</a>
+	です。そして最初の <tt>msgstr</tt> に翻訳した文に使われる文字セットを
+	指定して、他の有用な情報も書き加えてください。
+  </li>
+  <li>
+	一般的なテキストエディタであればどれでも PO ファイルを編集するのに
+	使うことができます。そして、
+         <a href="http://packages.debian.org/unstable/text/gtranslator">\
+         gtranslator</a> や
+         <a href="http://packages.debian.org/unstable/devel/kbabel">\
+         kbabel</a>  のような、もしあなたが PO ファイルに精通していないのなら
+	助けになるような特別なツールもあります。
+         <a href="http://packages.debian.org/unstable/devel/gettext">\
+         Gettext</a>
+         <a href="http://www.gnu.org/software/gettext/manual/html_node/gettext_toc.html">\
+         ドキュメンテーション</a> には PO ファイルの書式についての説明があります。そして少なくとも、
+         <a href="http://www.gnu.org/software/gettext/manual/html_node/gettext_35.html#SEC35">\
+         ヘッダエントリの埋め方</a> と
+         <a href="http://www.gnu.org/software/gettext/manual/html_node/gettext_9.html#SEC9">\
+         PO ファイルの書式</a> の章は読んだ方が良いでしょう。
+  </li>
+
+  <li>
+	翻訳が終わったら、全ての意味、綴り、文法、打ち間違いや他の失敗を
+	直すために、最低一回はファイルを読み直しましょう。(たぶん
+	あなたが使っている PO エディタはスペルチェッカや acheck のような
+	翻訳補助機能を含んでいるでしょう)。
+	次に、ファイルが有効であり、問題なく統合できることを調べるために
+         <pre>
+            msgfmt -c -v -o /dev/null <i>あなたの言語コード</i>.po
+         </pre>
+	を実行してください。
+	あなたの言語チームのポリシーによっては、あなたは翻訳を査読してもらうために、翻訳を専門の 
+	l10n メーリングリストにも送るかもしれません。
+  </li>
+
+  <li>
+	もし翻訳が終わって有効であれば、
+	翻訳したパッケージに対して
+         <a href="$(HOME)/Bugs/Reporting">バグ報告</a>
+	を、深刻度
+         <a href="$(HOME)/Bugs/Developer#severities">minor</a>
+	で提出しましょう。バグ報告には <tt>l10n</tt> と <tt>patch</tt>
+	<a href="$(HOME)/Bugs/Developer#tags">マーク</a> をタグ付けして、
+	後から検索する人のために
+	<tt><protect>[INTL:</protect><i>xx</i>]</tt> (ここで
+         <i>xx</i> はあなたの言語の
+         <a href="http://www.loc.gov/standards/iso639-2/langcodes.html">ISO
+         コード</a> です) を件名にして、ていねいに翻訳を含めてくれる
+	ようお願いし、このファイルをどのように処理したら良いかについて
+	メンテナに指示を出しましょう (例えば <b>debian/po/cs.po に添付ファイルをコピーしてください</b>)。
+	そして翻訳を添付するのを忘れないようにしましょう。このステップは
+	<a href="http://packages.debian.org/unstable/utils/reportbug">\
+         reportbug</a> ユーティリティを使うと簡単に達成できます。
+  </li>
+</ol>
+
+<h2>po-debconf 特有の注意</h2>
+
+<ol>
+  <li>
+	フィールド名は <tt>msgid</tt> の前のコメントに表示され、
+         <tt>Default</tt> 値は debconf にとっては特別です。なぜなら
+	テンプレートのタイプが <tt>Select</tt> や <tt>Multiselect</tt>
+	であったときに、それらは翻訳されては <strong>いけません</strong> が、
+	それらの値は (稀な環境では) 英語の <tt>Choices</tt> フィールドの
+	別の文字列に変更されることがあるからです。この理由により、
+	開発者は混乱を避けるために <tt>Default</tt>  の変わりに
+	<tt>DefaultChoice</tt> を使うべきです。
+         <strong>これは po-debconf 拡張です。</strong>
+	生成されたテンプレートファイルでは、<tt>Default</tt> は
+	当然表示されます。なぜなら debconf は <tt>DefaultChoice</tt>
+	フィールドを定義していないからです。
+  </li>
+
+  <li>
+	翻訳者への指示が開発者により挿入されるかもしれないので、
+	使用しているツールがこれらのコメントを (誤りなく) 表示
+	できることを確認しなければなりません。例えば
+         <a href="http://packages.debian.org/unstable/misc/geneweb">\
+         geneweb</a> パッケージの言語選択の扱い方の指示を見てください。
+  </li>
+
+  <li>
+	ときどき msgstr が異なる値であるのに msgid が同じであることが
+	あります。 
+	msgid を一意的にするために、ある特殊なテキストが文字列の終わりに
+	挿入されることがあります。より正確には、文字列の終わりの
+         <ul>
+             <li>左鉤括弧: <tt>[</tt></li>
+             <li>空白</li>
+             <li>0個以上の左鉤括弧以外の文字と、右鉤括弧と改行</li>
+             <li>右鉤括弧: <tt>]</tt></li>
+         </ul>
+	の連続は <tt>msgid</tt> 文字列から取り除かれます。翻訳者が空の文字列
+	を挿入できるように、これは <tt>msgstr</tt> にも当てはまります。
+  </li>
+
+  <li>
+	行は debconf により折り返されますが、空白から始まるときは例外です。
+	そのような行はリストを整形するのに使われますが、それぞれの
+	フロントエンドに独自の制限があります。全てのフロントエンドで
+	満足に表示されるためには、そのような行は 72 文字を超えては
+	ならないようです。
+  </li>
+
+  <li>
+	<tt>podebconf-display-po</tt> スクリプト (po-debconf &gt;= 0.8.3 から)
+	は設定時に debconf に表示されるような形であなたの翻訳を表示することができます。
+	翻訳がどのように見えるかについておおまかな構想を持つためには
+         <pre>
+            podebconf-display-po -fdialog debian/po/<i>あなたの言語コード</i>.po
+         </pre>
+	を実行してください。しかし、これは基本的な設定ファイルでしか
+	動作せず、もし複雑な操作(たとえば大量のテキスト置換のような)
+	が実行されれば表示は変化するかもしれません。利用可能な
+	debconf のフロントエンド(これは <tt>-f</tt> フラグで選択できます)
+	は debconf(7) に列挙されています。
+  </li>
+</ol>
+
+<podebconf-langs-short>
+
+#include "$(ENGLISHDIR)/international/l10n/date.gen"
