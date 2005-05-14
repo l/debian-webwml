@@ -191,8 +191,11 @@ sub pmoreinfo {
 	    $src_dir =~ s,pool/non-US,pool,o;
 	    $str .= "<br>".sprintf( gettext( "View the <a href=\"%s\">Debian changelog</a>" ),
 				    "$CHANGELOG_URL/$src_dir/$src_basename/changelog" )."<br>\n";
+	    my $copyright_url = "$COPYRIGHT_URL/$src_dir/$src_basename/";
+	    $copyright_url .= ( $is_source ? 'copyright' : "$name.copyright" );
+
 	    $str .= sprintf( gettext( "View the <a href=\"%s\">copyright file</a>" ),
-			     "$COPYRIGHT_URL/$src_dir/$src_basename/$name.copyright" )."</p>";
+			     $copyright_url )."</p>";
 	}
     }
 
