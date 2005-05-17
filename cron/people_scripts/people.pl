@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
-require 5.001;
-#use strict;
+require 5.005;
+
+use strict;
 
 # people.pl -- generate http://www.debian.org/devel/people
 # Copyright (C) 1998, ... James Treacy
@@ -9,7 +10,7 @@ require 5.001;
 # the global variables!
 
 my ($firstname, $lastname, $email, $pname);
-my (%People, @nameslist, , $names, $file);
+my (%People, %package, @nameslist, , $names, $file);
 my @special_maintainer = (
 	"Debian QA Group",
 	"Debian Install System Team",
@@ -56,7 +57,7 @@ sub print_maintainer {
 	my ($names) = @_;
 	print "<dt><strong>";
 	if ($People{$names}{email} =~ /\@debian.org$/) {
-	   $userid = $People{$names}{email};
+	   my $userid = $People{$names}{email};
 	   $userid =~ s/@.*//;
 	   if (!$ppl_ref{lc($userid)}) {
 	      print "<a name=\"$userid\"></a>";
@@ -116,12 +117,12 @@ sub print_package_list {
 
 sub process_package_file {
 	my ($filename,$distribution) = @_;
-	my ($temp, $member, $name, $nname);
+	my ($temp, $member, $name, $nname, $package_info);
 
 	open (PKG, $filename) or return;
 	while (<PKG>) {
 		if (/^$/) {
-			process_package($distribution);
+			process_package($distribution, $package_info);
 			$package_info = "";
 		}
 		else {
@@ -132,12 +133,12 @@ sub process_package_file {
 
 sub process_source_file {
 	my ($filename,$distribution) = @_;
-	my ($temp, $member, $name, $nname);
+	my ($temp, $member, $name, $nname, $package_info);
 
 	open (PKG, $filename) or return;
 	while (<PKG>) {
 		if (/^$/) {
-			process_src_package($distribution);
+			process_src_package($distribution, $package_info);
 			$package_info = "";
 		}
 		else {
@@ -147,9 +148,10 @@ sub process_source_file {
 }
 
 sub process_package {
-	my ($distribution) = @_;
-	chop $package_info;
-	@package_pieces = split(/\n\b/, $package_info);
+	my ($distribution, $package_info) = @_;
+	chomp $package_info;
+	my @package_pieces = split(/\n\b/, $package_info);
+	my ($pack, $maintainer);
 	foreach (@package_pieces) {
 		if (/^Package:\s+(.+)$/o) {
 			$pack =$1;
@@ -165,11 +167,11 @@ sub process_package {
 }
 
 sub process_src_package {
-	my ($distribution) = @_;
+	my ($distribution, $package_info) = @_;
 	my (@packages, $maintainer, @uploaders);
 
-	chop $package_info;
-	@package_pieces = split(/\n\b/, $package_info);
+	chomp $package_info;
+	my @package_pieces = split(/\n\b/, $package_info);
 	foreach (@package_pieces) {
 		if (/^binary:\s+(.+)$/io) {
 			@packages = split /\s*,\s*/, $1;
@@ -350,8 +352,14 @@ sub process_name {
 		elsif ($maintainer =~ /Lenart Janos <(.+)>/) {
 			$lastname = 'Lenart'; $firstname = 'Janos'; $email = $1;
 		}
-		elsif ($maintainer =~ /Bruno Barrera C. <(.+)>/) {
+		elsif ($maintainer =~ /Bruno Barrera C\. <(.+)>/) {
 			$lastname = 'Barrera C.'; $firstname = 'Bruno'; $email = $1;
+		}
+		elsif ($maintainer =~ /Alejandro Rios P\. <(.+)>/) {
+			$lastname = 'Rios P.'; $firstname = 'Alejandro'; $email = $1;
+		}
+		elsif ($maintainer =~ /Elrond <(.+)>/) {
+			$lastname = 'Elrond'; $firstname = ''; $email = $1;
 		}
 
 #
@@ -398,8 +406,8 @@ sub process_name {
 }
 
 sub canonical_names {
-	PACK: foreach $pack (keys %package) {
-		$maintainer = $package{$pack}{maintainer};
+	PACK: foreach my $pack (keys %package) {
+		my $maintainer = $package{$pack}{maintainer};
 
 		my ($lastname, $firstname, $email) = process_name($maintainer);
 
@@ -429,10 +437,10 @@ sub insert_maintainer {
     my ($lastname, $firstname, $email, $distribution, $pack) =@_;
 
 		if (!exists $People{"$lastname:$firstname"}) {
-			@namelist = keys %People;
-			@prev_name = grep (/$lastname:$firstname/i, @namelist);
+			@nameslist = keys %People;
+			my @prev_name = grep (/$lastname:$firstname/i, @nameslist);
 			if (@prev_name) {
-				$prev_name = $prev_name[0];
+				my $prev_name = $prev_name[0];
 				# printf STDERR "found $prev_name ($lastname:$firstname) when ingnoring capitalization\n";
 				($lastname, $firstname) = $prev_name =~ /(.*):(.*)/;
 			}
@@ -476,11 +484,12 @@ sub process_homepages {
   my $filename = @_;
 
   my (%uid, %page, $name);
+  my ($ldap_cn, $ldap_sn);
 
   # get the stuff from the LDAP database
   # option -B required on potato, -P 2 -x on woody
   foreach (`ldapsearch -P 2 -x -h db.debian.org -b dc=debian,dc=org uid=\* cn mn sn labeledURI`) {
-    chop; $line = $_;
+    chomp; my $line = $_;
     if ($line =~ /^(dn: )?uid=(.+),.+$/) { $name = $2; }
     elsif ($line =~ /^cn(=|: )(.+)$/) { $ldap_cn = from_utf8_or_iso88591_to_sgml($2); }
     elsif ($line =~ /^mn(=|: )(.+)$/) { next; }
@@ -497,11 +506,11 @@ sub process_homepages {
 #      warn "had to decode: $worddata\n";
     }
     elsif ($line =~ /^labeledURI(=|: )(.+)$/) {
-	$homepageurl = $2;
+	my $homepageurl = $2;
 	$homepageurl =~ s,^www,http://www,;
 	# warn $ldap_cn." ".$ldap_sn." ".$homepageurl."\n";
-	$has_package = 0;
-	foreach $person (keys %People) {
+	my $has_package = 0;
+	foreach my $person (keys %People) {
 		if ($person =~ /(.*):(.*)/) {
 			($firstname,$lastname) = ($2,$1);
 			# the following looks wierd, but you really do need to check first
