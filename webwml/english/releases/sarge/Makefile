@@ -12,7 +12,8 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/release.wml \
   $(ENGLISHDIR)/releases/sarge/release.data $(ENGLISHDIR)/releases/info
 
 releasenotes.$(LANGUAGE).html: releasenotes.wml $(TEMPLDIR)/release.wml \
-  $(ENGLISHDIR)/releases/sarge/release.data $(ENGLISHDIR)/releases/info
+  $(ENGLISHDIR)/releases/sarge/release.data $(ENGLISHDIR)/releases/info \
+  $(wildcard $(HTMLDIR)/*/release-notes*)
 
 installmanual.$(LANGUAGE).html: installmanual.wml $(TEMPLDIR)/release.wml \
   $(ENGLISHDIR)/releases/sarge/release.data $(ENGLISHDIR)/releases/info \
