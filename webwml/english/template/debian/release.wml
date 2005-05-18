@@ -226,6 +226,7 @@ sub permute_as_matrix_new {
     $release = pop @cur_dir;
 
     my $ctr = 0;
+    my $targetdir = "$(HTMLDIR)/releases/$release";
 
     my %sorted_langs = ();
     foreach (keys %langs) {
@@ -236,10 +237,9 @@ sub permute_as_matrix_new {
 	my $first = 1;
 
 	foreach $ext (keys %formats) {
+	    my $targetfile = "$arch/".(($ext eq 'html') ? $html_file : $file);
 	    if ($check_if_file_exists && 
-                ! -f &$namingscheme( "$(HTMLDIR)/releases/$release/$arch/".
-				     (($ext eq 'html') ? $html_file : $file),
-				     'en', $ext ) ) {
+                ! -f &$namingscheme( "$targetdir/$targetfile", 'en', $ext ) ) {
 	        next;
 	    }
 	    # alternate the row color
@@ -261,17 +261,19 @@ sub permute_as_matrix_new {
 	    foreach $l10nlang (sort langcmp keys %sorted_langs) {
 	        $lang = $sorted_langs{$l10nlang};
 	        next if exists $missing{"$lang:$ext"};
-	        $file_version = &$namingscheme( "$arch/$file",
+	        $file_version = &$namingscheme( $targetfile,
 						$langs{$lang}, $ext );
-	        if ( $ext eq "html" ) {
-		   # convert languages with sublangs (zh_TW -> zh-tw)
-		   #(my $html_lang = $langsinstall{$lang}) =~ s/(\w\w)_(\w\w)/"$1-".lc($2)/e;
-		   my $html_lang = $langs{$lang};
-	           $file_version = &$namingscheme( "$arch/$html_file",
-						   $html_lang, $ext );
-	        }
+		# convert languages with sublangs (zh_TW -> zh-tw)
+		(my $lang_alt = $langs{$lang}) =~ s/(\w\w)_(\w\w)/"$1-".lc($2)/e;
+	        my $file_version_alt = &$namingscheme( $targetfile,
+						       $lang_alt, $ext );
+		if( $check_if_file_exists &&
+		    ! -f "$targetdir/$file_version" &&
+		    -f "$targetdir/$file_version_alt" ) {
+		    $file_version = $file_version_alt;
+		}
 	        if (! $check_if_file_exists || 
-                    -f "$(HTMLDIR)/releases/$release/$file_version") {
+                    -f "$targetdir/$file_version") {
 	            # all languages should be defined in %trans. Add missing entries 
 	            # in English if this is not the case
 		    print "<strong>" if $lang eq lc($CUR_LANG);
