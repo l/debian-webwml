@@ -4,7 +4,7 @@
 
 WMLBASE=../..
 CUR_DIR=releases/sarge
-SUBS=
+SUBS=debian-installer
 
 include $(WMLBASE)/Make.lang
 
