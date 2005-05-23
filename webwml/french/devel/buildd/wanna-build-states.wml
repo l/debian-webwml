@@ -1,0 +1,314 @@
+#use wml::debian::template title="Les états de wanna-build&nbsp;: une explication" BARETITLE="true"
+#use wml::debian::translation-check translation="1.11" maintainer="Mohammed Adnène Trojette"
+
+    <p>Cette page tente d'expliquer ce que chaque état
+      <tt>wanna-build</tt> signifie et ce qui arrivera à un paquet
+      quand il sera dans cet état. Son audience cible est constituée
+      des responsables de paquets Debian qui essaient de comprendre
+      pourquoi leur paquet a, ou n'a pas, été empaqueté pour une
+      architecture spécifique. Une explication des différents résultats
+      de journalisation est aussi fournie.</p>
+
+    <p>Finalement, un diagramme des états de <tt>wanna-build</tt> est 
+      <a href="#graphlink">disponible</a>, mais veuillez noter qu'il ne
+      parle pas de tout ce qui est mentionné dans ce document.</p>
+
+<h2>Les états de <tt>wanna-build</tt></h2>
+
+<p>Pour chaque architecture supportée par Debian, une base de données
+<tt>wanna-build</tt> est installée sur buildd.debian.org, avec tous les
+paquets et leur état actuel de compilation. Il y a 7&nbsp;états&nbsp;:
+<em>needs-build</em>, <em>building</em>, <em>uploaded</em>,
+<em>dep-wait</em>, <em>failed</em>, <em>not-for-us</em>, et
+<em>installed</em>.</p>
+
+<p>Voici leurs significations&nbsp;:</p>
+    <dl>
+      <dt><a name="needs-build">needs-build</a></dt>
+      <dd>Un paquet marqué <em>needs-build</em> a vu un envoi de sa
+        nouvelle version par son responsable, mais pour une
+        architecture différente de celle de la base de données
+        <tt>wanna-build</tt>&nbsp;; dans ce cas, un réempaquetage
+        est nécessaire. Si l'état est <em>needs-build</em>, aucun
+        serveur d'empaquetage automatique ne l'a récupéré, mais il
+        le sera (une fois qu'un serveur sera disponible alors que
+        le paquet sera proche du haut de la liste). Les gens ont
+        l'habitude de dire qu'«&nbsp;un paquet fait la queue pour un
+        réempaquetage&nbsp;» quand ils parlent d'un paquet dans l'état
+        <em>needs-build</em>.<br> Il peut &ecirc;tre intéressant de
+        noter que la file d'attente <em>needs-build</em> n'est pas une
+        liste FIFO (premier entré premier servi)&nbsp;; en fait, l'ordre
+        utilisé se base sur les critères suivants&nbsp;:
+	<ol>
+          <li>les états des précédentes compilations des paquets&nbsp;;
+            les paquets qui ont été précédemment empaquetés obtiennent
+            une priorité plus grande que les nouveaux paquets&nbsp;;
+          </li>
+          <li>les priorités (les paquets avec priorité
+            <em>required</em> sont empaquetés avant les paquets avec
+            priorité <em>extra</em>)&nbsp;;
+          </li>
+          <li>la section dans laquelle se trouve le paquet. Cette ordre
+            est basé sur l'importance donnée aux paquets&nbsp;; par
+            exemple, la section <em>games</em> est empaquetée après la
+            section <em>base</em>, et la section <em>libs</em> avant
+            <em>devel</em>&nbsp;;
+          </li>
+          <li>l'ordre croissant de code ASCII des lettres du nom du
+            paquet.
+          </li>
+	</ol>
+        De plus, dans certaines conditions, il peut arriver qu'un
+        serveur d'empaquetage ne prenne pas les paquets du haut de la
+        file d'attente&nbsp; par exemple, quand un serveur d'empaquetage
+        ne peut pas trouver les sources d'un paquet donné, il le
+        rétrogradera dans la file (où il reprendra son ancien rang,
+        à savoir le haut de la file), mais il ignorera le paquet
+        pendant quelques heures. Un autre exemple où cela peut arriver
+        est au moment où une architecture possède plusieurs serveurs
+        d'empaquetage automatique&nbsp;; dans ce cas, les portages
+        de cette architecture peuvent choisir d'empaqueter les gros
+        paquets sur leurs serveurs d'empaquetage automatique les plus
+        rapides, et laisser les paquets plus petits aux machines les
+        plus lentes du parc. Un serveur d'empaquetage peut aussi
+        théoriquement demander explicitement un ordre de section
+        différent, mais ce n'est pas fait d'habitude.<br>
+      </dd>
+      <dt><a name="building">building</a></dt>
+      <dd>Un paquet est marqué <em>building</em> à partir du moment où
+        un serveur d'empaquetage automatique le récupère du haut de la
+        file d'attente de <tt>wanna-build</tt> jusqu'au moment où un
+        administrateur du serveur d'empaquetage automatique répond au
+        journal. Comme les paquets ne sont pas récupérés un par un, cela
+        signifie qu'un paquet peut (et c'est habituellement le cas)
+        &ecirc;tre marqué <em>building</em> avant que l'empaquetage
+        ait effectivement démarré&nbsp;; cependant, comme le service
+        d'empaquetage empaquète dans ses files d'attente locales
+        sur la base d'une liste FIFO, cela ne devrait plus mettre
+        très longtemps. Veuillez aussi noter que l'état d'un paquet
+        <strong>n'</strong>est <strong>pas</strong> modifié une
+        fois l'empaquetage terminé&nbsp; cela ne se fera que lorsque
+        l'administrateur du serveur d'empaquetage automatique aura
+        répondu au journal.</dd>
+      <dt><a name="uploaded">uploaded</a></dt>
+      <dd>Quand une tentative d'empaquetage réussit, un journal
+        d'empaquetage est envoyé à l'administrateur du serveur
+        d'empaquetage automatique et à buildd.debian.org. Le responsable
+        du serveur d'empaquetage automatique signera alors le fichier
+        .changes qui se trouve dans le journal d'empaquetage, et
+        l'envoie au serveur d'empaquetage automatique. Par conséquent,
+        le serveur d'empaquetage automatique enverra le paquet et
+        le mettra dans l'état <em>uploaded</em>. Dans ce cas, un
+        paquet dans cet état peut se trouver (quelque part) dans la
+        file d'entrée, ou «&nbsp;incoming&nbsp;».<br> Un serveur
+        d'empaquetage automatique ne touchera plus un paquet une
+        fois que son état est <em>uploaded</em>, tout du moins pas
+        avant l'envoi suivant, ou avant qu'un porteur ne modifie
+        lui-m&ecirc;me l'état du paquet.
+      </dd>
+      <dt><a name="dep-wait">dep-wait</a></dt>
+      <dd>Quand un empaquetage échoue à cause de dépendances manquantes
+        au moment de la construction, le responsable du serveur
+        d'empaquetage automatique enverra un courriel au serveur
+        d'empaquetage automatique, lui donnant comme instruction de
+        supprimer les sources du paquet et de marquer le paquet comme
+        <em>dep-wait</em> sur les dépendances manquantes. Un paquet dans
+        un tel état sera automatiquement, sans intervention humaine,
+        marqué <em>needs-build</em> une fois que les dépendances seront
+        disponibles.<br> Alors, dans deux cas spécifiques; il
+        se peut qu'un paquet soit définitivement marqué comme
+        <em>dep-wait</em>&nbsp;; cela se produit quand on fait une
+        faute de frappe en spécifiant les dépendances <em>dep-wait</em>
+        (si bien que le paquet est marqué <em>dep-wait</em> par
+        rapport à un paquet qui n'existe pas et n'existera jamais)
+        et quand une dépendance est déclarée par rapport à un paquet
+        qui est marqué <em>not-for-us</em>, ou qui est dans la liste
+        <em>packages-arch-specific</em>.<br>
+        Dans ce dernier cas, par exemple, considérons trois
+        paquets&nbsp;: un paquet <tt>foo</tt>, qui n'existe que sur
+        <tt>i386</tt>&nbsp;; un paquet <tt>bar</tt>, qui n'existe
+        que pour <tt>m68k</tt> (et qui fait à peu près la même
+        chose)&nbsp;; et un paquet <tt>baz</tt>, qui peut être empaqueté
+        avec soit <tt>foo</tt> soit <tt>bar</tt>. Le responsable du
+        paquet <tt>baz</tt> devant omettre l'ajout de <tt>bar</tt>
+        aux dépendances d'empaquetage (<em>Build-Depends</em>), et
+        l'ajouter quand quand il est précisé que <tt>baz</tt> attend
+        (<em>dep-wait</em>) un paquet <tt>foo</tt> inexistant pour
+        <tt>m68k</tt>, l'état <em>dep-wait</em> devra alors être modifié
+        par les responsables du portage <tt>m68k</tt> eux-mêmes.
+      </dd>
+      <dt><a name="wanna-build-state-failed">failed</a></dt>
+      <dd>Si une tentative d'empaquetage échoue et que le responsable
+        du serveur d'empaquetage automatique décide que cela constitue
+        réellement un échec qui ne doit pas être reproduit, le paquet est
+        marqué <em>failed</em> Un paquet ne quittera jamais cet état tant
+        qu'un responsable de portage décide qu'il devrait le faire, ou avant
+        qu'une nouvelle version ne soit disponible. Cependant, quand une
+        nouvelle version d'un paquet anciennement marqué <em>failed</em> sera
+        disponible, le serveur d'empaquetage automatique demandera à son
+        administrateur si l'empaquetage doit être retenté&nbsp;; c'est ainsi
+        de telle manière que les empaquetages qui écoueront inévitablement
+        ne vont pas faire perdre du temps au serveur d'empaquetage. Même
+        si le fait de mettre un paquet dans l'état <em>failed</em> avant
+        même d'essayer l'empaquetage n'est pas forcément la bonne chose à
+        faire, cette option reste disponible à l'administrateur du serveur
+        d'empaquetage automatique.<br> Veuillez noter qu'un paquet ne sera
+        <strong>jamais</strong> marqué <em>failed</em> sans intervention
+        humaine.
+     </dd>
+      <dt><a name="not-for-us">not-for-us</a></dt> <dd>Certains paquets
+        spécifiques ne sont pas dédiées à toutes les architectures&nbsp;;
+        par exemple, <tt>lilo</tt>, un gestionnaire d'amorçage pour i386,
+        ne doit pas être empaqueté pour alpha, m68k, ou s390. Cependant,
+        <em>wanna-build</em> ne regarde pas dans le fichier de contrôle
+        (debian/control) d'un paquet en créant sa base de données&nbsp;;
+        seuls les noms, section, urgence et priorité sont examinés. Ainsi,
+        avec le premier déchargement d'un paquet spécifique à une ou
+        des architectures qui ne doit pas être empaqueté sur d'autres
+        architectures, une tentative d'empaquetage est néanmoins lancée
+        (mais échoue avant même que les dépendances d'empaquetage ne
+        soient téléchargées et/ou installées).<br>
+        Comme les serveurs d'empaquetage automatique ne devraient pas
+        perdre de temps à essayer d'empaqueter des paquets qui ne
+        sont pas requis par leur architecture, un moyen de lister les
+        paquets pour lesquels une tentative d'empaquetage ne sert à
+        rien est nécessaire. La première solution à ce problème était
+        <em>not-for-us</em>&nbsp;; cependant, comme il est difficile à
+        entretenir, <em>not-for-us</em> est désormais déprécié&nbsp;;
+        les responsables des serveurs d'empaquetage automatique doivent
+        plutôt utiliser <em>packages-arch-specific</em>, qui est une
+        liste des paquets spécifiques à une ou plusieurs architecture
+        plutôt qu'un état wanna-build.<br>
+        Un paquet dans l'état <em>not-for-us</em> ou dans l'état
+        <em>packages-arch-specific</em> <strong>ne</strong> quittera
+        <strong>pas</strong> cet état automatiquement&nbsp;; si votre paquet
+        a précédemment exclu une architecture donnée dans son fichier de
+        contrôle, alors qu'elle inclut aujourd'hui plus d'architectures, il
+        doit être rempilé sur la queue <strong>à la main</strong>.
+      </dd>
+      <dt><a name="installed">installed</a></dt>
+      <dd>Comme le nom le suggère, un paquet marqué <em>installé</em>
+        est compilé pour l'architecture à laquelle est dédiée la base
+	de données wanna-build. Avant la publication de Woody, l'état
+	d'un paquet passait d'<em>uploaded</em> à <em>installed</em>
+	après l'exécution quotidienne de katie. Avec l'implémentation
+	de <a
+	href="http://lists.debian.org/debian-devel-announce/2002/debian-devel-announce-200206/msg00002.html">Accepted-autobuild</a>,
+	toutefois, cela n'est plus vrai&nbsp;; aujourd'hui, un paquet
+	passe de l'état <em>uploaded</em> à l'état <em>installed</em>
+	quand il a été accepté dans l'archive. Cela veut dire qu'un
+	paquet est habituellement marqué <em>installed</em> au bout de
+	quinze minutes, en moyenne.
+      </dd>
+    </dl>
+    <p>En plus de ces sept états, <em>wanna-build</em> connaît aussi
+    deux états de suppression («&nbsp;-removed&nbsp;;»), qui sont
+    vraiment des cas marginaux. Ces deux états sont
+    <em>dep-wait-removed</em> et <em>failed-removed</em>. Ils
+    correspondent à leurs alter-ego respectifs sans
+    «&nbsp;-removed&nbsp;;» comme suit&nbsp;: quand un paquet dans
+    l'état <em>failed</em> ou <em>dep-wait</em> n'apparaît pas dans un
+    nouveau fichier Packages qui est alimenté par
+    <em>wanna-build</em>&nbsp;&ndash;&nbsp;quand il se trouve qu'il a
+    été supprimé&nbsp;&ndash;&nbsp;l'information au sujet de ce paquet
+    n'est pas supprimée, parce qu'il se pourrait que le paquet qui
+    n'apparaît pas dans le fichier Packages n'est que temporairement
+    sauté, ou que le paquet est temporairement supprimé pour une raison
+    ou pour une autre (mais qu'il réapparaîtra dans l'archive, au bout
+    d'un certain temps). Au lieu de cela, dans un tel cas, un paquet
+    passe à un état <em>-removed</em>, afin que l'information concernant
+    les raisons de son échec ou ce qu'il attend puisse être récupérée.
+    Dut le paquet réapparaître dans un fichier Packages lié à
+    wanna-build suivant, il repassera alors de <em>failed-removed</em>
+    à <em>failed</em>, ou de <em>dep-wait-removed</em> à
+    <em>dep-wait</em> avant traitement ultérieur.</p>
+    <p>
+      Il n'est pas possible d'accéder à la base de données wanna-build
+      directement&nbsp;; cette base de données est installée sur
+      ftp-master.debian.org, qui est une hôte restreint, et seuls les
+      serveurs d'empaquetage automatiques ont une clé SSH qui leur
+      permet d'accéder à la base de données wanna-build correspondant
+      à leur architecture. C'était le cas bien avant que ftp-master
+      ne soit restreint&nbsp;; comme wanna-build pose un verrou au
+      niveau de la base de données pendant un accès, ne serait-ce qu'en
+      lecture, aux données, vous deviez être dans le bon groupe
+      (wb-&lt;arch&gt;) pour pouvoir accéder directement à la base de
+      données wanna-build.
+    </p>
+    <p>Cela étant dit, vous pouvez voir l'état d'un paquet en allant
+      sur <a href="http://buildd.debian.org/stats/">la page de
+      statistiques du service d'empaquetage</a>; sauf s'il est dans
+      l'état <em>installed</em> (enfin, pas si vous ne répugnez pas à
+      cracher à travers les fichiers &lt;arch&gt;-all.txt
+      gros de plusieurs méga-octets). Autrement,
+      certaines pages accessibles par le biais de <a
+      href="http://crest.debian.org/">crest.debian.org</a> sont basées
+      sur la lecture des fichiers &lt;arch&gt;-all.txt et
+      donne un moyen plus lisible (au moins pour les humains) de voir
+      l'état dans lequel se trouve un paquet.
+    </p>
+    <h2>Le résultat des journaux d'empaquetage</h2>
+    <p>
+      Quand un paquet est empaqueté par sbuild (le composant du
+      service d'empaquetage qui effectue l'empaquetage proprement dit),
+      une journal avec le résultat de l'empaquetage est envoyé par mail
+      à l'administrateur du serveur d'empaquetage automatique et à
+      logs@buildd.debian.org (afin qu'il puisse atterrir sur
+      http://buildd.debian.org). Le résultat du journal d'empaquetage
+      peut être <em>successful</em>, <em>failed</em>,
+      <em>given-back</em>, ou <em>skipped</em>. Veuillez noter que, sur
+      <a href="http://buildd.debian.org/">la page résumant le journal
+      du service d'empaquetage</a>, le préfixe <em>maybe-</em> est
+      ajouté, entre autres à cause du fait qu'un empaquetage peut y être
+      marqué <em>failed</em> pour des raisons qui ne sont pas vraiment
+      un échec, et que cela a provoqué de la confusion par le passé.
+    </p>
+    <p>
+      La signification des résultats de journal est la suivante&nbsp;:
+    </p>
+    <dl>
+      <dt><a name="successful">successful</a></dt>
+      <dd>L'empaquetage a réussi. Quand le responsable du
+        serveur d'empaquetage recevra le journal, il extraira le fichier
+        <code>.change</code> embarqué, le signera et le renerra au serveur
+        d'empaquetage automatique, ce qui provoquera le déchargement le
+        paquet.
+      </dd>
+      <dt><a name="failed">failed</a></dt>
+      <dd>L'empaquetage a échoué. Comme il peut y avoir un grand nombre
+        de raisons pour qu'un empaquetage échoue, les énumérer tous serait
+        ennuyeux, alors ce ne sera pas fait ici. Si l'un de vos paquets est
+        marqué <em>(maybe-)failed</em>, vous devrez lire ce qui précède et
+        vérifier son état wanna-build actuel.
+      </dd>
+      <dt><a name="given-back">given-back</a></dt>
+      <dd>L'empaquetage a échoué à cause d'un problème temporaire avec
+        le serveur d'empaquetage automatique&nbsp;; ce sont par exemple
+        des problèmes de réseau, l'inaccessibilité du source des paquets
+        avec le source.list actuel, un espace disque faible, etc.<br> Un
+        paquet qui est <em>given-back</em> est à nouveau marqué comme <em><a
+        href="#needs-build">needs-build</a></em>&nbsp;; en tant que tel, il
+        sera automatiquement pris par un serveur d'empaquetage automatique
+        différent quand celui-ci sera prêt.
+      </dd>
+      <dt><a name="skipped">skipped</a></dt>
+      <dd>Entre le temps où le paquet a été par le/un serveur
+        d'empaquetage automatique et marqué <em><a
+        href="#building">building</a></em>, et où l'empaquetage a été
+        tenté, une nouvelle version pour ce paquet a été déchargée, ou
+        un responsable de portage a lui-même modifié l'état wanna-build
+        pour une raison ou pour une autre. Quand cela est fait, un mail
+        est envoyé au serveur d'empaquetage, qui marquera le paquet
+        comme ne devant pas être empaqueté&nbsp;; sbuild voit cela, et
+        sautera l'étape d'empaquetage (même si un journal d'empaquetage
+        contenant ce résultat est envoyé, pour décrire le fait que cela
+        s'est produit).
+      </dd>
+    </dl>
+
+<h2><a name="graphlink">Version graphique</a></h2>
+<p>Afin d'illustrer ce qui précède, nous fournissons une <a
+href="wanna-build.png">version graphique</a> de cette procédure.
+Veuillez bien noter une nouvelle fois qu'il ne contient pas tout ce qui
+est mentionné dans ce document.
+</p>
