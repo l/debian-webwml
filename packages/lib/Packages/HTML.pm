@@ -382,36 +382,20 @@ HEADEND
     $txt .= <<NAVBEGIN;
 $search_in_header
 </div> <!-- end upperheader -->
-<div id="navbar">
 
 NAVBEGIN
 ;
 # $title_in_header
-$txt .= "<p class=\"hidecss\"><a href=\"\#inner\">" . gettext("Skip Site Navigation")."</a></p>\n";
-$txt .= "<p class=\"navpara\">\n";
-$txt .= " " . img( "$HOME/", "intro/about", "Pics/about.$img_lang.gif",
-		 gettext( "About&nbsp;Debian" ), 
-		 ) . "\n ";
-    $txt .= img( "$HOME/", "News/", "Pics/news.$img_lang.gif",
-		 gettext( "News" ), 
-		 ) . "\n ";
-    $txt .= img( "$HOME/", "distrib/", "Pics/getting.$img_lang.gif",
-		 gettext( "Getting&nbsp;Debian" ), 
-		 ) . "\n ";
-    $txt .= img( "$HOME/", "support", "Pics/support.$img_lang.gif",
-		 gettext( "Support" ), 
-		 ) . "\n ";
-    $txt .= img( "$HOME/", "devel/", "Pics/devel.$img_lang.gif",
-		 gettext( "Development" ), 
-		 ) . "\n ";
-    $txt .= img( "$HOME/", "sitemap", "Pics/sitemap.$img_lang.gif",
-		 gettext( "Site map" ), 
-		 ) . "\n ";
-    $txt .= img( "", "http://search.debian.org/", 
-		 "$HOME/Pics/search.$img_lang.gif",
-		 gettext( "Search" ), 
-		 ) . "\n";
-    
+    $txt .= "<p class=\"hidecss\"><a href=\"\#inner\">" . gettext("Skip Site Navigation")."</a></p>\n";
+    $txt .= "<div id=\"navbar3\">\n<ul>".
+	"<li><a href=\"$(HOME)/intro/about\">".gettext( "About&nbsp;Debian" )."</a></li>\n".
+	"<li><a href=\"$(HOME)/News/\">".gettext( "News" )."</a></li>\n".
+	"<li><a href=\"$(HOME)/distrib/\">".gettext( "Getting&nbsp;Debian" )."</a></li>\n".
+	"<li><a href=\"$(HOME)/support\">".gettext( "Support" )."</a></li>\n".
+	"<li><a href=\"$(HOME)/devel/\">".gettext( "Development" )."</a></li>\n".
+	"<li><a href=\"$(HOME)/sitemap\">".gettext( "Site map" )."</a></li>\n".
+	"<li><a href=\"http://search.debian.org/\">".gettext( "Search" )."</a></li>\n";
+    $txt .= "</ul>\n";
     $txt .= <<ENDNAV;
 </p>
 </div> <!-- end navbar -->
