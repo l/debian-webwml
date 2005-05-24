@@ -388,16 +388,15 @@ NAVBEGIN
 # $title_in_header
     $txt .= "<p class=\"hidecss\"><a href=\"\#inner\">" . gettext("Skip Site Navigation")."</a></p>\n";
     $txt .= "<div id=\"navbar3\">\n<ul>".
-	"<li><a href=\"$(HOME)/intro/about\">".gettext( "About&nbsp;Debian" )."</a></li>\n".
-	"<li><a href=\"$(HOME)/News/\">".gettext( "News" )."</a></li>\n".
-	"<li><a href=\"$(HOME)/distrib/\">".gettext( "Getting&nbsp;Debian" )."</a></li>\n".
-	"<li><a href=\"$(HOME)/support\">".gettext( "Support" )."</a></li>\n".
-	"<li><a href=\"$(HOME)/devel/\">".gettext( "Development" )."</a></li>\n".
-	"<li><a href=\"$(HOME)/sitemap\">".gettext( "Site map" )."</a></li>\n".
+	"<li><a href=\"$HOME/intro/about\">".gettext( "About&nbsp;Debian" )."</a></li>\n".
+	"<li><a href=\"$HOME/News/\">".gettext( "News" )."</a></li>\n".
+	"<li><a href=\"$HOME/distrib/\">".gettext( "Getting&nbsp;Debian" )."</a></li>\n".
+	"<li><a href=\"$HOME/support\">".gettext( "Support" )."</a></li>\n".
+	"<li><a href=\"$HOME/devel/\">".gettext( "Development" )."</a></li>\n".
+	"<li><a href=\"$HOME/sitemap\">".gettext( "Site map" )."</a></li>\n".
 	"<li><a href=\"http://search.debian.org/\">".gettext( "Search" )."</a></li>\n";
     $txt .= "</ul>\n";
     $txt .= <<ENDNAV;
-</p>
 </div> <!-- end navbar -->
 </div> <!-- end header -->
 ENDNAV
