@@ -1,0 +1,449 @@
+#use wml::debian::weeklynews::header PAGENAME="Courriel"
+#use wml::debian::translation-check translation="1.8" maintainer="Thomas Huriaux"
+
+<a name=1></a>
+<pre>
+Date : Lun. 12 juil. 1999 18 h 11 ' 11 " -0300
+De : Lalo Martins &lt;lalo@webcom.com&gt;
+À : debian-devel-announce@lists.debian.org
+Cc : debian-user-portuguese@lists.debian.org
+Sujet : Traduction des scripts d'initialisation
+
+Ce week-end, je me suis assis devant gettext pour réfléchir à la traduction
+des messages des scripts d'initialisation. Il s'agit d'une proposition de
+solution plus pratique, donc j'envoie ce courriel à -devel-announce, mais
+veuillez répondre sur -devel (et m'envoyer une copie, puisque je n'ai pas
+l'intention de me réinscrire à -devel). De même, veuillez retirer
+-user-portuguese des réponses ; je leur envoie une copie car je l'ai
+promis :-)
+
+Le paquet gettext est accompagné d'un outil « gettext » indépendant,
+qui peut servir de remplaçant à « echo ». Avec ceci et un fichier
+« debian-init-script.mo » dans le répertoire local convenable, nous
+pouvons obtenir des messages traduits. Je me demande pourquoi nous n'avons
+pas commencé cela plus tôt, en voyant debian-jp, etc., et la quantité de
+développeurs allemands, espagnols ou français. Je pense que c'est une
+fonctionnalité importante.
+
+
+  Comment 
+***********
+
+Ce problème contient quatre niveaux :
+
+1. la sélection de la langue ;
+
+2. l'affichage des messages, en conservant la compatibilité avec les
+versions existantes ;
+
+3. les paquets et dépendances impliqués ;
+
+4. les traductions.
+
+
+Niveau 1 : choisir la langue
+============================
+
+La langue est sélectionnée par les variables d'environnement LANG, LC_ALL
+ou LC_MESSAGES. La plupart des sites configurent l'une d'entre elles
+globalement dans /etc/environment ou /etc/profile, avec la possibilités
+de configurations personnalisées par utilisateur dans les scripts de
+chargement du shell (par exemple sur les sites qui offrent des comptes
+telnet ou ssh).
+
+Cependant, je ne suis pas tout à fait confiant sur le fait de récupérer
+les données de /etc/environment dans les scripts d'initialisation.
+Cela peut provoquer d'autres choses potentiellement mauvaises. Ainsi,
+vous pourriez vouloir garder la langue par défaut de votre système
+définie à C (anglais), mais avoir le démarrage dans votre langue,
+puisque vous êtes le seul qui va le voir. Je pense donc que la meilleure
+solution serait l'une des deux suivantes :
+
+a. /etc/defaults/language, utilisé par les scripts d'initialisation
+   « parents » (/etc/init.d/rc, par exemple - tous les scripts lancés à
+   l'initialisation et pas par d'autres scripts) ;
+b. bidouiller directement l'initialisation pour fixer l'une des variables,
+   en lisant la valeur dans inittab voire par un autre paramètre de démarrage
+   (/proc/cmdline).
+
+Ces solutions ont en plus le fait que la langue d'initialisation n'est
+pas obligatoirement la même que la langue par défaut du système ; donc
+si votre site est hébergé en Hongrie mais propose des comptes telnet ou
+ssh, vous pouvez fixer votre langue d'initialisation à hr et avoir
+« LANG=C; export LANG » dans /etc/environment.
+
+Ensuite, si vous faites « /etc/init.d/quelque_chose reload », les messages
+seront dans la langue par défaut du système. Magique :-)
+
+
+Niveau 2 : afficher les messages
+================================
+
+Toutes les commandes « echo » dans les scripts doivent appeler d'une
+certaine manière quelque chose internationalisé - « gettext -s » ou
+quelque chose spécifique à Debian.
+Voyez les niveaux 3 et 4 pour les avantages et inconvénients de chaque
+méthode.
+
+Pour mes tests du week-end, j'ai édité tous les scripts qui affichaient
+quelque chose dans /etc/init.d et /etc/rc.boot ; avant qu'ils n'affichent
+quoi que ce soit, ajoutez :
+
+SETLANG=/etc/init.d/setlang.sh
+if [ -f $SETLANG ]; then
+  . $SETLANG
+else
+  echo='echo -e'
+fi
+
+AMHA, ce n'est pas la meilleure méthode, comme je l'ai dit au niveau 1,
+mais c'est suffisant pour le moment. Bien sûr, j'ai réalisé plus tard que
+je pouvais récupérer la valeur $SETLANG seulement dans les scripts
+« parents ».
+
+Le script setlang.sh ne fait actuellement que :
+
+. /etc/default/language
+export TEXTDOMAIN=debian-init-scripts
+echo="/usr/bin/gettext -s -e"
+
+Puis j'ai remplacé tous les « echo » par « $echo ». Ouah, ça marche.
+
+La raison pour avoir /etc/init.d/setlang.sh est qu'il peut être inclus
+dans le paquet « gettext » ; ainsi, si « gettext » n'est pas installé,
+les choses se passent comme d'habitude.
+
+Une deuxième approche est de séparer le programme « gettext » indépendant
+dans son propre paquet et de l'ajouter dans base/required. Ensuite, changer
+tous les « echo » en « gettext -s » - ce n'est pas plus un problème
+que de les changer en « $echo ».
+
+Une troisième approche est d'utiliser un programme internationalisé semblable
+à « printf », et de l'empaqueter dans base/required. Les « raisons » sont
+expliquées au niveau 4.
+
+
+Niveau 3 : paquets et dépendances
+=================================
+
+C'est ce sur quoi j'étais en train de parler ; il devrait y avoir un minimum
+de rétrocompatibilité. Chacune des trois approches ci-dessus a ses propres
+problèmes et solutions.
+
+La première approche ($echo) résout déjà son propre problème. Si gettext
+n'est pas installé, il n'est pas utilisé. Il me semble que cela soit à peu
+près la manière habituelle de procéder pour Debian.
+
+Les deuxième et troisième approches ajoutent les paquets nécessaires dans
+la section « base » et les marquent avec une priorité « nécessaire ».
+Mais la priorité ne fonctionne que si dpkg connaît le paquet ! Donc,
+peut-être que pendant un moment, les paquets mis à jour devraient
+prédépendre du nouveau paquet.
+
+Et juste parce que je suis sûr que quelqu'un va le demander : tant que le
+programme existe, il fonctionnera convenablement s'il ne trouve pas de
+message traduit. Il les affichera tout simplement en anglais.
+
+
+Niveau 4 : traduire les messages
+================================
+
+Cela pose un problème. Bien sûr nos équipes de traduction et même des
+utilisateurs se porteraient rapidement volontaires, mais nous devrions faire
+de notre mieux pour faciliter le travail - après tout, il doit y avoir
+<strong>beaucoup</strong> de scripts à traduire. Si les gens doivent traduire tous les
+
+« Starting server machin chose: machin »
+« Stopping server machin chose: machin »
+« Starting time waster: twt »
+« Stopping time waster: twt »
+
+le travail est plus important que si nous leur demandons de traduire
+seulement :
+
+« Starting »
+« Stopping »
+« server machin chose »
+« time waster »
+
+Correct ?
+
+La plupart des paquets (à en croire la charte actuelle) ont quelque chose
+comme :
+« Starting ma_description: mon_démon » (plus tard) « . »
+« Stopping ma_description: mon_démon » (plus tard) « . »
+« Restarting ma_description: mon_démon » (plus tard) « . »
+« Reloading ma_description fichiers de configuration » (plus tard) « . »
+
+Pour que gettext ait moins de champs à ce sujet, nous devrions séparer
+la première partie de cela (la période reste telle quelle) de la manière
+suivante :
+« Starting » « ma_description: » « mon_démon »
+« Stopping » « ma_description: » « mon_démon »
+« Restarting » « ma_description: » « mon_démon »
+« Reloading » « ma_description » « fichiers_de_configuration »
+
+Les anciens paquets ont à la place :
+
+« Starting ma_description... » (plus tard) « done. »
+
+Cela deviendrait :
+
+« Starting » « ma_description... » (plus tard) « done. »
+
+Mais bien sûr, si quelqu'un modifie le script, cela devrait être également
+ajouté à la nouvelle charte.
+
+Mais cela nous impose des bidouillages importants, à cause de ces deux
+situations :
+
+Situation 1 : les deux points, les points de suspension, etc.
+-------------------------------------------------------------
+
+Comme vous pouvez le voir dans l'exemple ci-dessus, le traducteur devrait
+traduire à la fois « ma_description » et « ma_description: ». Ce n'est
+pas bon. Non pas car il s'agit de plus de travail - cela ne serait en
+fait que du copier-coller plusieurs fois - mais car il s'agit d'un
+gaspillage d'espace, et les bidouilleurs n'aiment pas ce genre de choses.
+
+Le contournement que j'ai fait ressemble à ceci :
+
+« Starting » « ma_description » « \b: mon_démon »
+
+Mais je dois alors soit changer « $echo » en « $echo -e » ou le fixer
+à « echo="echo -e" » sans gettext et « echo="gettext -s -e" » avec
+gettext. C'est bien sûr également horrible.
+
+Situation 2 : les messages « Reloading fichiers de configuration »
+------------------------------------------------------------------
+
+Quand vous faites « /etc/quelque_chose reload », la nouvelle charte dit
+que cela doit afficher quelque chose comme :
+
+« Reloading ma_description fichiers de configuration » (plus tard) « . »
+
+qui devrait être changé en :
+
+« Reloading » « ma_description » « fichiers de configuration »
+
+pour gettext. Le problème est que cela établi l'ordre dans la phrase ; dans
+beaucoup de langues, il n'y a aucune manière de donner du sens à cette phrase.
+Le portugais (ma langue) en fait partie.
+
+En C, nous aurions quelque chose comme :
+
+printf("Reloading %s configuration files", description);
+
+et ensuite, la traduction pourrait faire quelque chose comme :
+
+msgid "Reloading %s configuration files"
+msgstr "Reloading configuration files for %s"
+
+ou en français
+
+msgstr "Rechargement des fichiers de configuration de %s"
+
+et cela fonctionne.
+
+Solutions
+---------
+
+La situation 1 peut être résolue avec un remplaçant de « echo » qui
+n'insère pas d'espace entre les paramètres ; la chaîne deviendrait ainsi :
+
+« Starting » « » « ma_description » « : mon_démon »
+
+mais cela ne fait rien pour la situation 2.
+
+Un remplaçant d'echo fonctionnerait pour les deux, mais serait difficile
+à implémenter et une chose de plus à apprendre et à laquelle penser pour les
+responsables.
+
+Donc je n'ai pas de réponse :-)
+
+Les fichiers pot
+----------------
+
+Dans tous les cas, je propose que tous les messages soient gardés dans un
+seul fichier pot spécifique à Debian, appelé « debian-init-scripts.mo ».
+
+Les fichiers compilés et traduits (« *.mo ») devraient, AMHA, aller dans
+les paquets « locales-XX » (« locales-de », « locales-es », etc.),
+puisqu'ils existent déjà. Cela sauve de l'espace pour les utilisateurs
+- ils ne reçoivent que la (les) langue(s) nécessaire(s).
+
+Je peux vous envoyer le fichier .pot avec les quelques messages que j'ai
+déjà (récupérés chez moi, scripts d'installation de Debian de 150 Mo).
+Mais je préférerais le garder pour plus tard lorsque nous aurons pris
+une décision.
+
+Oh... et enfin, je pense que chaque équipe de traduction et chaque
+responsable de locales-XX doivent prendre une décision en fonction de
+la gestion des traductions. Certains voudront envoyer des diff au
+responsable, d'autres préféreront CVS, peut-être même utiliser les listes.
+Dans tous les cas, ce n'est pas mon problème.
+
+[]s,
+                                               |alo
+                                               +----
+--
+      Je suis Lalo de deB-org. Vous allez être libéré.
+                 Toute résistance est inutile.
+
+http://www.webcom.com/lalo      mailto:lalo@webcom.com
+                 clé gpg sur la page web
+
+Debian GNU/Linux       --        http://www.debian.org
+</pre>
+<hr>
+<a name=2></a>
+<pre>
+Date : Mar. 13 juil. 1999 11 h 44 ' 12 " -0700
+De : Joey Hess &lt;dwn@debian.org&gt;
+À : Bart Schuller &lt;schuller@lunatech.com&gt;
+Cc : debian-devel@lists.debian.org, lalo@webcom.com,
+  Peter Kaas &lt;Peter.Kaas@lunatech.com&gt;
+Sujet : Re : Traduction des scripts d'initialisation
+
+Bart Schuller a écrit :
+&gt; Nous voudrions faire un démarrage graphique, un peu comme à la manière
+&gt; de Macintosh, où tous les sous-systèmes affichent une icône. Ou peut-être
+&gt; comme Red Hat, qui, je pense, affiche maintenant un [ OK ] en couleur
+&gt; pour chaque démon lancé.
+&gt; 
+&gt; Ce qui nous intéresse est de changer les scripts de façon à ce que soit
+&gt; leurs sorties puissent être traitées (ce qui devrait être possible
+&gt; maintenant s'ils respectent tous la charte), soit leurs sorties soient
+&gt; générées par des commandes qui peuvent être remplacées par des choses
+&gt; plus amusantes.
+
+Cela est conforme avec ma réaction. Regarde les scripts d'initialisation
+actuels. Nous avons ce programme start-stop-daemon program, qui peut
+afficher des choses quand cela fonctionne. C'est globalement une
+couche d'abstraction. Nous l'utilisons en conséquence. Et même si
+nous disons de ne rien afficher, chaque script d'initialisation gère lui-même
+ses propres sorties.
+
+Est-ce que personne d'autre ne pense que c'est vraiment une mauvaise
+conception ?
+
+Je propose :
+
+- de rendre start-stop-daemon compatible avec la charte qui précise ce qu'un
+  script d'initialisation doit afficher. Cela peut nécessiter une
+  modification de son interface. Par exemple, nous aurons à lui passer une
+  description du démon en cours de chargement ;
+
+- d'internationaliser start-stop-daemon. Ainsi, les messages « Starting »,
+  « Stopping », etc. seront traduits ;
+
+- d'internationaliser tous les scripts d'initialisation de manière à ce que
+  le texte envoyé à start-stop-daemon (« server machin chose », « time
+  waster », « portmap daemon », etc.) puisse être traduit. Utiliser la
+  proposition de Lalo pour cela ;
+
+- de permettre à start-stop-daemon d'être remplacé par d'autres utilitaires
+  si des personnes le désirent, qui puissent afficher d'autres types de
+  choses. Ou de juste le modifier pour pouvoir générer certains de ces types
+  de sorties. Si Debian dans son ensemble décide que nous voulons les
+  messages colorés dans le style de Red Hat, une fois que nous aurons cela,
+  les ajouter ne nécessitera que la modification de start-stop-daemon et
+  pas de tous les scripts d'initialisation.
+
+-- 
+see shy jo
+</pre>
+
+<hr>
+
+<a name=3></a>
+<pre>
+À : dwn@debian.org 
+Cc : shishamo@osk2.3web.ne.jp 
+Sujet : [Gazette hebdomadaire] Nouvelles de Debian JP 6/7/1999 - 12/7/1999 
+Date : Mar. 13 juil. 1999 02 h 08 ' 51 " +0900 
+De : Katsura S. Yoshio &lt;shishamo@osk2.3web.ne.jp&gt;
+
+Salut,
+
+Voici les dernières nouvelles [du 6/7/1999 au 12/7/1999] du projet
+Debian JP.
+
+* Correctif à appliquer à JVIM pour conserver le titre de la fenêtre
+  (debian-users)
+  La conservation du titre de la fenêtre fonction si JVIM n'est pas compilé
+  avec -DUSE_X11. La version de JVIM est Vim 3.0 + le correctif japonais 1.5.
+  Ken Nakagaki l'a envoyé.
+
+  http://lists.debian.org/debian-users/199907/msg00079.html
+
+* Changement de responsable pour packaging-manual-ja (debian-{devel,doc})
+  Shigenori Hayase a repris le travail de traduction du manuel d'empaquetage.
+
+  Page web d'Hayase-san :
+  http://www3.tky.3web.ne.jp/~shayase/debian/index.html
+  
+  http://lists.debian.org/debian-devel/199907/msg00056.html
+
+* Intention d'empaqueter siag-office ja (debian-devel)
+  Koichi Honda a été en contact avec l'auteur de Siag Office-ja.
+
+  http://lists.debian.org/debian-devel/199907/msg00058.html
+
+* Envoi de lynx-ja (debian-devel)
+  Atsuhito Kohda a envoyé un lynx internationalisé.
+  Il peut gérer le français, l'allemand, l'italien, le chinois, le coréen
+  et le japonais en utilisant la variable LANG.
+
+  http://lists.debian.org/debian-devel/199907/msg00082.html
+
+* Traduction des droits d'auteur (debian-devel)
+  Nous avons beaucoup de logiciels documentés uniquement en japonais. Pour
+  les fusionner dans Debian, nous devons traduire au moins le fichier des
+  droits d'auteurs. Pour les fichiers README et README.debian, cela est-il
+  nécessaire ou n'est-ce qu'un souhait ? Une décision doit être prise à
+  ce sujet.
+
+  http://lists.debian.org/debian-devel/199907/msg00064.html
+
+* Opération de fusion avec Debian (debian-devel)
+  Le souhait reste de tout envoyer à Debian.
+
+  http://lists.debian.org/debian-devel/199907/msg00067.html
+
+* Responsables officiels Debian (debian-www)
+  16 sont enregistrés et 12 sont en attente.
+
+  http://www.debian.or.jp/devel/official-maintainer.html
+
+* Traduction des pages web de Debian (debian-www)
+  Yoshizumi Endoh continue de créer des pages web en japonais.
+
+  (Récemment ajoutées)
+  consultants/index.wml
+  english/consultants/consultant.data
+  events/2000/0111-linworldexpo-fr.wml
+  events/2000/0201-linworldexpo-us.wml
+  events/2000/0202-linexpo-fr.wml
+  events/2000/0618-usenix.wml
+  events/2000/0912-linworldexpo-fr.wml
+  events/2000/index.wml
+
+  (Mises à jour)
+  donations.wml
+  related_links.wml
+  events/index.wml
+  support.wml
+  english/donations.wml
+  japanese/donations.wml
+  releases/index.wml
+  distrib/index.wml
+  releases/potato/index.wml
+  devel/extract_key.wml
+
+Cordialement,  K.S.Yoshio
+         http://www2.osk.3web.ne.jp/~shishamo/ 
+Empreinte de clé = 3C 3C 1C E6 B1 65 53 58  A3 B3 6A ED BA E4 54 52
+</pre>
+
+#use wml::debian::weeklynews::footer translator="Thomas Huriaux"
