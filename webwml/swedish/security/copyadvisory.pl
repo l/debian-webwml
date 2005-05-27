@@ -133,6 +133,7 @@ while (<SRC>)
 	s/([Ff])or the Debian stable distribution/$1ör Debians stabila utgåva/;
 	s/([Ff])or the stable distribution/$1ör den stabila utgåvan/;
 	s/([Ff])or the stable/$1ör den stabila/;
+	s/([Ff])or the testing distribution/$1ör uttestningsutgåvan/;
 	s/([Ff])or the Debian unstable distribution/$1ör Debians instabila utgåva/;
 	s/([Ff])or the unstable distribution/$1ör den instabila utgåvan/;
 	s/([Ff])or the unstable/$1ör den instabila/;
