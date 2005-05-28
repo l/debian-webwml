@@ -1,0 +1,222 @@
+#use wml::debian::template title="Debian GNU/Hurd&nbsp;&ndash;&nbsp;Development" NOHEADER="yes"
+#include "$(ENGLISHDIR)/ports/hurd/menu.inc"
+#use wml::debian::translation-check translation="1.29" maintainer="Mohammed Adnène Trojette"
+
+<h1>
+Debian&nbsp;GNU/Hurd</h1>
+<h2>
+Developpement de la distribution</h2>
+<h3>
+Disques d'amorçage</h3>
+<p>
+Actuellement, nous ne travaillons pas sur des disques d'amorçages
+natifs. Nous nous reposons toutefois sur certaines des bases nécessaires
+à ceci, et portons parfois individuellement des paquets nécessaires à
+cet effet. Si vous voulez aider, travaillez sur le projet d'installateur
+Debian et être sûr que ses composants fonctionnent sur le Hurd.</p>
+
+<h3>
+Porter des paquets Debian</h3>
+<p>
+Si vous souhaitez le portage Debian&nbsp;GNU/Hurd, vous devriez
+vous familiariser avec le système d'empaquetage de Debian. Une fois
+que vous l'aurez fait en lisant la documentation disponible et en
+visitant le <ahref="../../devel/">Coin du développeur</a>, vous devriez
+savoir comment extraire les paquets source Debian et empaqueter
+un paquet Debian. Voici un cours intensif pour les personnes très
+paresseuses&nbsp;:</p>
+
+<h3>
+Obtenir le source et empaqueter des paquets</h3>
+<p>
+Extraire un paquet source Debian requiert le fichier
+<code>package_version.dsc</code> et les fichiers qui y sont listés.
+Vous créez le répertoire d'empaquetage Debian avec la commande
+<code>dpkg-source -x package_version.dsc</code></p>
+
+<p>
+La construction du paquet se fait dans le nouveau répertoire
+d'empaquetage Debian <code>package-version</code> avec
+la commande <code>dpkg-buildpackage -B -rsudo "-mMonNom
+&lt;MonCourrierÉlectronique&gt;"</code>. Vous pouvez utiliser
+<code>-b</code> au lieu de <code>-B</code> si vous voulez aussi compiler
+les parties indépendantes de l'architecture du paquet. Vous pouvez
+utiliser <code>-rfakeroot</code> au lieu de <code>-rsudo</code> si vous
+utilisez le paquet fakeroot. Vous pouvez le faire sans <code>-r</code>
+si vous empaqueter en tant que superutilisateur. Vous pouvez ajouter
+<code>-uc</code> pour éviter de signer le paquet avec votre clé pgp.</p>
+
+<h3>
+Pick One</h3>
+<p>
+Which package needs to be worked on?  Well, every package that is not
+yet ported, but needs to be ported.  This changes constantly, so
+either pick one of the missing packages at random, or watch out for
+information about the autobuilding process on the debian-hurd mailing
+list.
+
+<h4>
+Paquets qui ne seront pas portés</h4>
+<p>
+Quelques paquets parmi ceux qui suivent, ou des parties de ces paquets,
+seront peut-être portables plus tard, mais ils sont actuellement
+considérés comme non portables au moins.</p>
+
+<ul>
+<li>
+<code>base/update</code>, parce que le Hurd n'a pas besoin d'un démon
+de mise à jour (les systèmes de fichiers se synchronisent eux-mêmes).
+Pour changer l'intervalle de synchronisation, vous pouvez utiliser
+<code>fsysopts</code> pour ajuster l'option <code>--sync</code>. Vous
+pouvez choisir des intervalles de synchronisation différents pour chaque
+système de fichiers&nbsp;!
+Pour le faire vous-mêmes, utilisez l'utilitaire <a
+href="hurd-doc-utils#syncfs"><code>syncfs</code></a>.</li>
+<li>
+<code>base/makedev</code>, parce que le Hurd apporte ses propres version de ce script. Le paquet source Debian ne contient qu'une version spécifique à Linux.</li>
+<li>
+<code>base/ld.so</code>, parce que le Hurd utilise l'éditeur de liens
+qui est fourni par la bibliothèque GNU&nbsp;C.</li>
+<li>
+<code>base/modconf</code> and <code>base/modutils</code>, parce que
+les modules sont un concept specifique à Linux.</li>
+<li>
+<code>base/netbase</code>, parce que le reste qui s'y trouve
+est hautement spécifique au noyaux Linux. Le Hurd utilise
+<code>inetutils</code> à la place.</li>
+<li>
+<code>base/pcmcia-cs</code>, parce que le Hurd ne gère pas le PCMCIA
+(et même s'il le faisait, ce paquet est probablement spécifique à
+Linux).</li>
+<li>
+<code>base/procps</code>, parce que ce code est spécifique au système de
+fichiers «&nbsp;proc&nbsp;» de Linux.</li>
+<li>
+<code>base/ppp</code> et <code>base/pppconfig</code>, parce que le Hurd
+ne gère pas le PPP (et même s'il le faisait, ce paquet est probablement
+spécifique à Linux).</li>
+<li>
+<code>base/setserial</code>, parce que c'est spécifique au noyau Linux.
+Cependant, avec le portage des pilotes de caractères Linux sur GNU Mach,
+nous pourrons peut-être les utiliser.</li>
+</ul>
+
+<h3>
+Problèmes généraux de portage</h3>
+<p>
+Voici une liste d'incompatibilités communes que vous pouvez rencontrer
+en compilant certains logiciels insuffisamment portables sur le
+Hurd.</p>
+
+<ul>
+<li>
+<code>Mauvais descripteur de fichier</code>
+<p>
+Si vous obtenez l'erreur <code>Bad File Descriptor</code> lorsque vous essayez de lire depuis un fichier (ou en y accédant seulement), vérifiez l'invocation de <code>open()</code>. Le second argument est la méthode d'accès. Si c'est un nombre codé en dur au lieu d'un symbole défini dans les fichiers d'en-tête standard, le code est foutu et devrait être réparé pour utilisé <code>O_RDONLY</code>, <code>O_WRONLY</code> ou
+<code>O_RDWR</code>. Ce bogue a été observé dans les paquets
+<code>fortunes</code> et <code>mtools</code> par exemple.</p></li>
+<li>
+<code>PATH_MAX</code>
+<p>
+Toute utilisation sans condition de <code>PATH_MAX</code> est une
+incompatibilité de POSIX. S'il n'y a pas de limite supérieure sur la
+longueur d'un chemin, ce symbole n'est pas défini dans le fichier
+d'en-tête. À la place, vous devez soit utiliser une implémentation
+différente qui ne se repose pas sur la longueur d'une chaîne de
+caractères, soit utiliser <code>sysconf()</code> pour demander la
+longueur au moment du lancement. Si <code>sysconf()</code> renvoie
+<code>-1</code>, vous devez utiliser <code>realloc()</code> pour allouer
+dynamiquement la mémoire nécessaire.</p></li>
+<li>
+<code>MAXHOSTNAMELEN</code>
+<p>
+voir <code>PATH_MAX</code></p></li>
+<li>
+<code>MAXPATHLEN</code>
+<p>
+voir <code>PATH_MAX</code></p></li>
+<li>
+<code>NOFILE</code>
+<p>
+voir <code>PATH_MAX</code></p></li>
+<li>
+<code>#define</code> spécifique au Hurd
+<p>
+Si vous avez besoin d'inclure du code spécifique au Hurd en utilisant
+<code>#if...#endif</code>, alors vous pouvez pour ce faire utiliser le
+symbole <code>__GNU__</code>. Mais pensez-y (au moins) à trois fois (!)
+avant de le faire. Dans <em>la plupart</em> des cas, c'est complètement
+inutile et créera plus de problèmes que ça n'en résoudra. Il vaut mieux
+demander sur la liste de diffusion comment le faire correctement si vous
+ne voyez pas de meilleure solution.</p></li>
+<li>
+<code>sys_errlist[]</code> vs. <code>strerror()</code>
+<p>
+Si un programme ne gère que <code>sys_errlist[]</code> vous devrez
+travailler un peu pour le faire compiler sur le Hurd, qui a abandonné sa
+gestion et ne fournit que <code>strerror()</code>. Steinar Hamre écrit,
+à propos de <code>strerror()</code>&nbsp;:</p>
+<blockquote>
+<p>
+<code>strerror()</code> devrait être utilisé parce que&nbsp;:
+<ul>
+<li>
+C'est la méthode moderne, la méthode POSIX.</li>
+<li>
+C'est localisé.</li>
+<li>
+Il gère les signaux/nombres hors de portée et invalides (ce qui est
+mieux que de le gérer comme une erreur et qui n'est pas un risque de
+débordement de tampon/sécurité).</li></ul>
+
+<p>
+<code>strerror()</code> devrait toujours être utilisé s'il est
+disponible. Malheureusement, certaines <em>anciens</em> systèmes non
+POSIX ne gèrent pas encore <code>strerror()</code>, mais seulement
+<code>sys_errlist[]</code>.</p>
+<p>
+Aujourd'hui, gérer <code>strerror()</code> est bien mieux que
+ne gérer que <code>sys_errlist[]</code>. Le mieux (du point de
+vue de la portabilité) est toutefois de gérer les deux. Pour
+<code>configure.in</code>, vous aurez besoin de &nbsp;:</p>
+<p>
+<code>AC_CHECK_FUNCS(strerror)</code></p>
+<p>
+Pour <code>config.h.in</code>, il faudra ajouter&nbsp;:</p>
+<p>
+<code>#undef HAVE_STRERROR</code></p>
+<p>
+Et quelque chose comme&nbsp;:
+<pre>
+        \#ifndef HAVE_STRERROR
+        static char *
+        private_strerror (errnum)
+             int errnum;
+        {
+          extern char *sys_errlist[];
+          extern int sys_nerr;
+
+          if (errnum &gt; 0 &amp;&amp; errnum &lt;= sys_nerr)
+            return sys_errlist[errnum];
+          return "Unknown system error";
+        }
+        \#define strerror private_strerror
+        \#endif /* HAVE_STRERROR */
+</pre>
+<p>
+Vous pouvez par exemple regarder dans le dernier <code>fileutils</code>
+(celui qui précède est une version modifiée ce que j'ai trouvé là).
+Les rustines doivent bien sûr être envoyées aux responsables en
+amont, ce qui est très utile, même pour les systèmes qui ont un
+<code>sys_errlist[]</code> fonctionnel.</blockquote>
+<li>
+Noms de fichiers se finissant par slash «&nbsp;/&nbsp;»
+<p>
+C'est terrible s'ils n'existent pas et que vous souhaitez appelez un
+répertoire ainsi. Par exemple, <code>mkdir foobar/</code> <em>ne</em>
+marchera <em>pas</em> sous Hurd. C'est compatible POSIX. POSIX dit que
+le chemin d'un répertoire peut avoir des slash en fin de nom. Mais
+le répertoire n'existant pas encore, le chemin ne fait pas référence
+à un répertoire, et il n'est pas garanti que les slash en fin de nom
+fonctionneront. Laissez tomber les slash, et tout ira bien.</p>
+</ul>
