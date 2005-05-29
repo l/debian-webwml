@@ -1,0 +1,319 @@
+#use wml::debian::weeklynews::header PAGENAME="Courriel"
+#use wml::debian::translation-check translation="1.5" maintainer="Thomas Huriaux"
+
+<a name=1></a>
+<pre>
+À : Raphaël Hertzog &lt;rhertzog@hrnet.fr&gt;
+Cc : Zephaniah E. Hull &lt;warp@whitestar.soark.net&gt;,
+  debian-perl@lists.debian.org
+Sujet : Re : Plans de publication (10 mai 1999)
+References: &lt;19990510191255.A3990@whitestar.soark.net&gt; &lt;19990511075131.A824@k6.resI.insa-lyon.fr&gt; &lt;19990513091611.B21331@whitestar.soark.net&gt; &lt;19990513183200.A25881@p200.hrnet.fr&gt; &lt;19990513194357.A26441@p200.hrnet.fr&gt; &lt;19990513210946.A30591@whitestar.soark.net&gt; &lt;19990514084507.A1914@p200.hrnet.fr&gt; &lt;19990514032844.B30591@whitestar.soark.net&gt; &lt;19990514111249.A2979@p200.hrnet.fr&gt; &lt;19990514074520.C30591@whitestar.soark.net&gt; &lt;19990514150503.A16797@p200.hrnet.fr&gt;
+Répondre-à : torin@daft.com
+De : Darren Stalder &lt;darren@u.washington.edu&gt;
+Date : 14 mai 1999 15 h 44 ' 54 " -0700
+
+Raphaël Hertzog, dans une manifestation immanente de perspicacité, a écrit :
+&gt; Nous devrions faire pareil pour perl : tous les modules doivent
+&gt; utiliser la dernière version de perl, mais peuvent fournir des perl
+&gt; plus anciens pour les personnes qui en ont besoin (mais il n'y a pas
+&gt; de raison de leur fournir des modules, de la même manière que nous ne
+&gt; fournissons pas d'applications compilées avec libc5).
+
+&gt; perl5.005 devrait être le perl officiel de Debian, mais perl5.004
+&gt; devrait toujours être fourni pour aider les développeurs perl.
+
+&gt; Cela est vrai s'ils font une mise à niveau partielle. Mais pouvez-vous
+&gt; m'expliquer comment vous comptez résoudre ce problème ? Et pas
+&gt; seulement pour Potato en disant simplement que ce ne sera pas un
+&gt; problème puisque perl5.004 sera utilisé ! Comment allez-vous le gérer
+&gt; au moment où nous passerons à perl5.005 ?
+
+&gt; La <strong>seule</strong> façon de gérer complètement les mises à niveau partielles
+&gt; serait de :
+&gt;
+&gt; - reconstruire tous les modules avec le nouveau perl5.004 (donc en
+&gt;   ayant une dépendance avec perl5.004) ;
+&gt; - attendre que les gens les utilisent et les mettent <strong>tous</strong> à niveau
+&gt;   (et vous ne pouvez pas en être certain car ils peuvent très bien faire
+&gt;   des mises à niveau partielles !) ;
+&gt; - installer perl5.005 et reconstruire tous les modules pour perl5.005
+&gt;   avec les dépendances appropriées.
+
+Il y a un meilleur plan pour cela. Un paquet perl vide qui dépend de
+perl-5.004 est envoyé. Quand quelqu'un met à niveau Perl, cela installe
+automatiquement perl-5.004. Le paquet perl-5.004 fournit perl et perl5.
+Cela signifie que l'ancien paquet perl peut être retiré. Ainsi, nous
+avons une variété de modules qui dépendent de perl. Nous envoyons
+un paquet perl-5.005. Il fournit perl5 mais est en conflit avec perl.
+Pour que quelqu'un installe ce paquet (sans utiliser --force), il doit
+mettre à niveau tous ses modules qui dépendent de l'ancien paquet perl.
+Tous les nouveaux modules dépendront de perl5.
+
+Ainsi, nous avons des Perl versionnés qui peuvent être mis à niveau
+partiellement sans problème (je suppose).
+
+Les paquets peuvent toujours dépendre d'une version particulière de
+perl-5.* s'il le faut. La dernière version de Perl sera la version
+préférée par défaut avec update-alternatives. Cela rend mes scripts
+base.{postinst,prerm} bien plus simple. Ainsi, si à la fois perl-5.004 et
+perl-5.005 sont installés, /usr/bin/perl référera à 5.005 si l'utilisateur
+ne change rien. Quand perl-5.006 sera publié, il y aura eu un précédent.
+
+Raphaël Hertzog, dans une manifestation immanente de perspicacité, a écrit :
+&gt; Donc, Darren, qu'en penses-tu ? La conclusion finale que j'ai tirée est
+&gt; que :
+&gt; - nous devrions avoir un répertoire commun pour les modules non binaires.
+&gt;   Je ne sais pas si cela devrait être /usr/lib/perl5 ou un de ses
+&gt;   sous-répertoires ;
+
+Cela peut être /usr/lib/perl5 pour tous les modules Perl non binaires
+qui ne viennent pas avec le paquet Perl. Tous les modules qui viennent
+avec perl-5.\d+ iront toujours dans des répertoires versionnés.
+
+Je ne vois pas de raison pour que cela soit autre chose que /usr/lib/perl5.
+
+&gt; - nous devrions toujours gérer le dernier perl, tout en laissant un
+&gt;   un ancien disponible pour les développeurs. Tous les modules devraient
+&gt;   être compilés avec le dernier perl. Si pour une raison ou pour une
+&gt;   autre il y a besoin d'un module pour un ancien perl, nous devrions
+&gt;   le nommer libmodule-perl-&lt;ancienne_version_de_perl&gt;. Cette
+&gt;   situation peut uniquement se produire pour des modules binaires,
+&gt;   puisque les modules non binaires partagent un répertoire non
+&gt;   versionné commun à tous les perl.
+
+Je suis d'accord avec cela...
+
+&gt; Si le répertoire commun dont on parle n'est pas /usr/lib/perl5, alors
+&gt; nous en aurons toujours besoin dans @INC pour perl5.005 dans Potato.
+
+Actuellement, il ne le faudrait que dans perl-5.004 en raison de la
+méthode que j'ai mentionnée ci-dessus.
+
+Darren
+- -- 
+&lt;torin@daft.com&gt; &lt;http://www.daft.com/~torin&gt; &lt;torin@debian.org&gt; &lt;torin@io.com&gt;
+Darren Stalder/2608 Second Ave, @282/Seattle, WA 98121-1212/USA/+1-800-921-4996
+@ Administrateur système, créateur de sites web, postmaster à louer.          @
+Programmateur/enseignant C/Perl/CGI/Pilot                                     @
+@		     Mettez un peu de chaleur dans votre esprit.	      @
+</pre>
+
+<hr>
+
+<a name=2></a>
+<pre>
+Date : Lun. 17 mai 1999 22 h 14 ' 50 " +0200
+De : Stefan Gybas &lt;cab@studbox.uni-stuttgart.de&gt;
+À : linuxconf@xc.org, debian-devel@lists.debian.org,
+  debian-admintool@lists.debian.org
+Sujet : FAQ et appel à l'aide : Linuxconf et Debian
+
+Salut !
+
+Je reçois plein de courriels remplis de questions sur mon paquet Debian
+Linuxconf, donc je les ai rassemblées dans une petite FAQ (attachée).
+
+Je désire également continuer à intégrer Linuxconf dans Debian mais
+cela demande beaucoup de travail. Si vous voulez m'aider, veuillez me
+contacter.
+
+Si vous voulez répondre à ce courriel, veuillez choisir la liste de
+diffusion appropriée. Pour les questions générales à propos de Linuxconf,
+utilisez linuxconf@xc.org, pour les questions spécifiques à Debian,
+utilisez debian-admintool@lists.debian.org.
+
+-- 
+Stefan Gybas
+
+1. Qu'est-ce que Linuxconf ?
+
+   Linuxconf est un programme pour les systèmes Linux avec trois fonctions
+   majeures :
+
+   (a) Utilitaire de configuration
+
+       Avec Linuxconf, vous pouvez faire de l'administration et de la
+       configuration système basique et avancée. Linuxconf possède quelques
+       fonctionnalités de base (comme créer et gérer les utilisateurs,
+       les groupes et les systèmes de fichiers) et quelques autres modules
+       pour d'autres composants systèmes, par exemple bind, apache, sendmail,
+       samba et squid. Actuellement, il y a plus de 20 modules disponibles.
+
+       La configuration est faite au travers d'une interface graphique
+       contenant beaucoup de texte d'aide, qui peut être visualisé avec une
+       interface textuelle, graphique ou web.
+
+       Linuxconf n'utilise pas de base de données pour enregistrer la
+       configuration. À la place, il utilise les fichiers normaux de
+       configuration du système, comme /etc/fstab, /etc/hosts - tout en
+       essayant fortement de conserver la structure (comme les commentaires
+       ajoutés manuellement). Donc vous pouvez toujours choisir entre un
+       éditeur texte et Linuxconf.
+   
+   (b) Activateur et gestionnaire de configuration
+
+       Linuxconf peut garder la trace des changements faits aux fichiers
+       de configuration (en utilisant Linuxconf ou un éditeur texte) puis
+       mettre à jour le système pour refléter ces changements. Un exemple
+       peut être :
+
+       vi /etc/inetd.conf
+       vi /etc/apache/httpd.conf
+       linuxconf --update         # Cela provoquera le rechargement des
+                                  \# fichiers de configuration d'inetd et
+				  \# d'apache
+
+       Une autre fonctionnalité est la possibilité d'archiver et de
+       récupérer les fichiers de configuration (en utilisant RCS si
+       disponible) :
+
+       linuxconf --archive
+       linuxconf --diff
+       linuxconf --extract
+       
+   (c) Sélectionneur de démarrage
+
+       La troisième fonctionnalité principale de Linuxconf est appelée
+       askrunlevel et c'est exactement ce que cela fait. Il montre un petit
+       menu au démarrage où vous pouvez sélectionner le niveau de lancement
+       du système et le profil.
+
+       Un profil est le nom d'une configuration archivée (en utilisant la
+       section b) comme « bureau » ou « maison », donc, par exemple, vous
+       pouvez avoir des adresses IP ou des configurations de XFree
+       différentes sur votre ordinateur portable en fonction de votre
+       emplacement.
+
+   Chacune de ces fonctionnalités peut être activée ou arrêtée indépendamment,
+   ce qui signifie que vous n'avez pas besoin d'activer le sélectionneur
+   de démarrage si vous voulez seulement faire la configuration de Samba.
+   Et vous pouvez toujours désinstaller le paquet Linuxconf et tout redevient
+   comme avant.
+
+
+2. Où puis-je obtenir le paquet Debian Linuxconf ?
+
+   J'ai divisé Linuxconf en quatre paquets Debian séparés :
+
+   linuxconf         Le binaire principale de Linuxconf (interfaces texte
+                     et web seulement, avec tous les modules).
+
+   linuxconf-x       L'interface graphique pour Linuxconf (c'est dans un
+                     paquet séparé de manière à ce que le paquet principal
+		     ne dépende pas de xlib6g, wxxt1 et xpm4g).
+
+   linuxconf-locale  Les fichiers d'internationalisation (tout sauf l'anglais).
+
+   linuxconf-boot    Le sélectionneur de démarrage (voyez la section 1c) - si
+                     vous ne voulez pas activer cette fonctionnalité,
+		     n'installez tout simplement pas ce paquet et Linuxconf
+		     ne fera aucune modification importante à votre système.
+
+   Tous les paquets sont dans la distribution « experimental » disponible
+   sur tous les miroirs de Debian dans project/experimental/. Ils peuvent
+   être installés sur un système Debian 2.1 (Slink) mais nécessitent
+   un paquet netbase plus récent.
+
+
+3. Qu'est-ce qui fonctionne sur Debian GNU/Linux ? Et qu'est-ce qui ne
+   fonctionne pas ?
+
+   Tout ce qui concerne la configuration (voyez 1a) à l'exception de la
+   configuration du réseau fonctionne sur Debian. L'activateur de
+   configuration (1b) et le sélectionneur de démarrage (1c) fonctionnent
+   partiellement (voyez la question 4).
+
+
+4. Que faut-il faire pour activer les autres fonctionnalités ?
+
+   Le problème avec la configuration du réseau est que cela se fait
+   différemment sur chaque distribution Linux, donc Linuxconf ne sait pas
+   où enregistrer le nom d'hôte, les adresses IP et la table de routage.
+   C'est pourquoi des modules spécifiques aux distributions ont été écrits,
+   mais malheureusement il n'y en a pas encore de disponible pour Debian.
+
+   Pour l'activateur de configuration, Linuxconf doit savoir quel fichier
+   de configuration appartient à quel service/démon et comment faire
+   pour que le démon recharge sa configuration. Encore une fois, c'est
+   spécifique aux distributions, mais Linuxconf a quelques connaissances
+   basiques, par exemple, il sait que inetd utilise /etc/inetd.conf et
+   peut être redémarré en utilisant « kill -HUP ».
+
+   Mais comme vous le savez probablement, Debian utilise les scripts
+   d'initialisation SysV dans /etc/init.d/ qui peut forcer un démon à
+   recharger sa configuration, comme dans « /etc/init.d/proftpd reload ».
+   Ainsi, cela serait une bonne idée de dire à Linuxconf quel script
+   d'initialisation lance quel(s) démon(s) et quel(s) fichier(s) de
+   configuration il(s) utilise(nt). Cela est fait en utilisant des marques
+   spéciales dans ces scripts d'initialisation. Veuillez lire
+   http://www.solucorp.qc.ca/linuxconf/tech/sysvenh/index.html pour plus
+   de détails.
+
+   Dans les versions récentes de Linuxconf, ces « marques des scripts
+   d'initialisation » peuvent également être enregistrées dans des fichiers
+   différents, donc ils ne doivent pas être enregistrés dans les scripts
+   d'initialisation fournis par les responsables de paquet, même si
+   cette solution permettrait plus de consistance (et c'est la manière
+   dont c'est fait dans Red Hat).
+
+   Pour résumer ce qu'il faut faire :
+
+   (a) Créer les marques nécessaires pour tous les scripts d'initialisation
+       possible, pour que Linuxconf puisse utiliser ces scripts pour recharger
+       une configuration, plutôt que d'utiliser ses propres règles.
+       Peut-être que plus tard, ces marques pourront être ajoutées à
+       l'intérieur de ces scripts d'initialisation si cela devenait une
+       règle.
+
+   (b) Écrire un module Debian pour gérer la configuration du réseau. Ce
+       module aurait à lire l'actuelle configuration réseau dans
+       /etc/init.d/network et enregistrer les changements dans ce fichier.
+       Malheureusement, ce fichier est actuellement difficile à parcourir
+       (comme c'est un script shell qui peut utiliser des variables
+       et des commandes sans ordre particulier), donc ce module
+       serait très compliqué si vous voulez conserver la structure de
+       ce fichier.
+
+       Une proposition a été faite sur debian-devel pour passer à un
+       schéma différent de configuration réseau utilisant des fichiers
+       faciles à parcourir (voyez par exemple
+       http://lists.debian.org/debian-devel-9902/msg01420.html).
+       Je pense que la seule façon pour Linuxconf (et tout autre outil de
+       configuration) de gérer la configuration du réseau sur Debian est
+       d'utiliser ce nouveau schéma ou celui de Red Hat, donc nous pourrions
+       utiliser tout simplement des parties du module Red Hat de Linuxconf.
+
+
+5. Quels sont les prochains objectifs pour le paquet Linuxconf ?
+
+   J'ai l'intention d'envoyer l'une de mes prochaines publications dans
+   la distribution instable (Potato) au lieu de l'expérimentale. Je ne
+   vais pas inclure le paquet linuxconf-boot (qui fournit le sélectionneur
+   de démarrage - voyez 1c) dans cet envoi, puisque cela peut causer des
+   problèmes en raison de la configuration réseau qui ne fonctionne pas.
+   Il n'est également pas très utile dans Debian car les niveaux de
+   démarrage de 2 à 5 sont tous égaux et la configuration du réseau
+   est faite au niveau S, donc Linuxconf n'a pas de solution pour désactiver
+   la configuration du réseau si l'utilisateur choisit cette option
+   dans askrunlevel.
+
+   Le module Red Hat gère le PAM, donc vous pouvez par exemple changer
+   le mot de passe d'un utilisateur en l'utilisant. Je vais copier cette
+   partie dans un module Debian que j'espère créer bientôt.
+
+   Mais la première étape serait de créer des fichiers avec les marques
+   pour les scripts d'initialisation SysV (voyez la question 4) - cela
+   peut être fait pas à pas. Une fois que nous aurons des marques pour la
+   plupart des scripts, nous pourrons dire à Linuxconf d'oublier ses
+   propres règles et de n'utiliser que les informations contenues dans les
+   marques. Je recherche de l'aide, dons si vous désirez aider, veuillez
+   lire http://www.solucorp.qc.ca/linuxconf/tech/index.html (et en particulier
+   http://www.solucorp.qc.ca/linuxconf/tech/sysvenh/index.html) puis
+   m'envoyer un courriel si vous êtes toujours intéressé.
+
+   La prochaine étape serait de faire fonctionner la configuration du
+   réseau, mais comme cela a été expliqué dans la question 4 ci-dessus,
+   Debian devra d'abord adopter un nouveau /etc/init.d/network.
+</pre>
+
+#use wml::debian::weeklynews::footer translator="Thomas Huriaux"
