@@ -54,6 +54,11 @@ $opt_p =~ s/$/\$/g;
 my $l = Webwml::Langs->new($opt_w);
 my %langs = $l->name_iso();
 
+delete ( $langs{"chinese_hk"} );
+delete ( $langs{"portuguese_br"} );
+delete ( $langs{"chinese_cn"} );
+delete ( $langs{"chinese_tw"} );
+
 my $transignore = Webwml::TransIgnore->new($opt_w);
 
 my $cvs = Local::Cvsinfo->new();
