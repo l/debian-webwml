@@ -27,7 +27,7 @@ archive.mirrors: ../mirror/Mirrors.masterlist
 	echo "<define-tag archivemirrors>" >> $@
 	echo "<ul>" >> $@
 	for i in `grep-dctrl -n -F Old-http,Old-ftp,Old-rsync -s Site -r '.' ../mirror/Mirrors.masterlist | sort`; do \
-          xy=`grep-dctrl -n -F Site -s Country -X $$i ../mirror/Mirrors.masterlist | perl -pe 's/^(..) .*$$/$$1/'`; \
+          xy=`grep-dctrl -n -F Site -s Country -X $$i ../mirror/Mirrors.masterlist | perl -pe 's/^(..) .*$$/$$1/' | head -1`; \
 	  echo "<li>$$i (<$${xy}c>): " >> $@; \
           http=`grep-dctrl -n -F Site -s Old-http -X $$i ../mirror/Mirrors.masterlist`; \
           if [ "$$http" != "" ]; then \
