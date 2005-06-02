@@ -1,0 +1,33 @@
+<define-tag stable-images-arches>alpha\narm\nhppa\ni386\nia64\nm68k\nmips\nmipsel\npowerpc\nsparc\ns390</define-tag>
+
+<define-tag devel-images-arches><stable-images-arches /></define-tag>
+
+<define-tag strip-arches whitespace=delete>
+
+<set-var strip="%1" />
+<set-var arch="%0" />
+<subst-in-var strip " " "\n" />
+
+<foreach s strip>
+<subst-in-var arch "\n<get-var s />(\n|$)" "" reflags="s" >
+</foreach>
+<get-var arch />
+
+</define-tag>
+
+<define-tag images-list whitespace=delete>
+<preserve url arch format />
+<set-var %attributes />
+
+<when <not <get-var format />/>>
+<set-var format="[<a href="<get-var url />">@ARCH@</a>]" />
+</when>
+<when <not <get-var arch />/>>
+<set-var arch="<stable-images-arches/>" />
+</when>
+<subst-in-var arch " " "\n" />
+
+<foreach a arch><subst-in-string "<get-var format />" "@ARCH@" "<get-var a />"> </foreach>
+
+<restore url arch format />
+</define-tag>
