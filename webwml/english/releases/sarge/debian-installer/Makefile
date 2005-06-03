@@ -7,3 +7,5 @@ CUR_DIR=releases/sarge/debian-installer
 SUBS=
 
 include $(WMLBASE)/Make.lang
+
+index.$(LANGUAGE).html:: $(ENGLISHDIR)/releases/sarge/release.data $(ENGLISHDIR)/releases/info $(TEMPLDIR)/installer.wml
