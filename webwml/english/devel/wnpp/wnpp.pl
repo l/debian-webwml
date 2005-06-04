@@ -15,8 +15,8 @@ use HTML::Entities;
 # to fetch from it.  The attribs array could be reduced.
 
 my $server = "bugs.debian.org";
-my $port = "389";
-my $base   = "dc=bugs,dc=debian,dc=org";
+my $port = "10101";
+my $base   = "dc=current,dc=bugs,dc=debian,dc=org";
 my $attrs  = [
     'debbugsID',
     'debbugsTitle',
