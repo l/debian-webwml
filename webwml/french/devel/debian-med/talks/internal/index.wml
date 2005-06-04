@@ -1,0 +1,920 @@
+#use wml::debian::template title="Projets internes de Debian"
+#use wml::fmt::verbatim
+#use wml::debian::translation-check translation="1.14" maintainer="Thomas Huriaux"
+{#style#:<link rel="stylesheet" href="../../talks.css" type="text/css" />:#style#}
+
+<define-tag pagetitle>Projets internes de Debian</define-tag>
+<h2>Exposé lors du <a
+href="http://www.tu-chemnitz.de/linux/tag/lt5/">5e&nbsp;LinuxTag de Chemnitz</a></h2>
+
+<h3>2&nbsp;mars&nbsp;2003</h3>
+
+<h3>Résumé</h3>
+<p>
+Cet exposé s'adresse aux personnes qui s'intéressent à la philosophie
+des projets internes de Debian et à la technique utilisée pour gérer
+ces projets. Il y est expliqué en détail pourquoi ceux-ci ne sont
+pas des clones de Debian, mais restent complètement au sein de la
+distribution Debian GNU/Linux, et quels sont les avantages générés
+par cette approche. Les concepts de métapaquet et de menus basés sur le
+role de l'utilisateur sont expliqués.
+</p><p>
+Cet exposé s'adresse à une audience techniquement intéressée.
+</p><p>
+Exposés liés&nbsp;: <a href="../med/">Debian-Med</a>
+</p><p>
+Vous pouvez trouver ici le
+<a href="internal.en.mgp">source MagicPoint</a>, qui n'est pas vraiment
+à jour, mais consiste principalement en une traduction de la
+<a href="internal.de.mgp">version allemande</a>, incluant le
+<a href="../style.mgp">style MagicPoint</a> nécessaire pour l'exposé.</p>
+
+<table width="100%">
+ <tr>
+  <td class="slide">
+<h2 class="title">Projets internes de Debian</h2>
+<h3 class="subtitle"><a class="slideheading3"
+    href="$(HOME)/devel/debian-jr/">Debian-Junior</a></h3>
+<h3 class="subtitle"><a class="slideheading3"
+    href="$(HOME)/devel/debian-med/">Debian-Med</a></h3>
+<h3 class="subtitle">Debian-Edu</h3>
+<h3 class="subtitle">DeMuDi</h3>
+<h3 class="subtitle"><a class="slideheading3"
+    href="$(HOME)/devel/debian-desktop/">Debian-Desktop</a></h3>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page1" name="page1">(Page&nbsp;1)</a></td>
+ </tr>
+ <tr>
+  <td class="slide">
+<h2>Vue d'ensemble</h2>
+<ul class="slide">
+  <li>Qu'est-ce que Debian&nbsp;?</li>
+  <li>Que sont les projets internes de Debian&nbsp;?</li>
+  <li>Debian &ndash; adaptable à tout objectif&nbsp;?</li>
+  <li>Technologies&nbsp;:
+     <ul class="sub1">
+       <li>métapaquets&nbsp;;</li>
+       <li>menus de l'utilisateur.</li>
+     </ul>
+  </li>
+  <li>Documentation.</li>
+  <li>Futur.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page2" name="page2">(Page&nbsp;2)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Qu'est-ce que Debian&nbsp;?</h2>
+<ul class="slide">
+  <li>Linux n'est que le noyau de votre système d'exploitation.</li>
+  <li>Vous avez besoin en plus de beaucoup d'applications.</li>
+  <li>Ces collections de logiciels ajoutées au noyau Linux sont appelées
+  des distributions.</li>
+  <li>Les entreprises qui construisent de telles distributions sont
+  appelées des distributeurs.</li>
+  <li>Ils font des affaires en vendant leur distribution dans des packs,
+  en fournissant de l'aide et des formations.</li>
+  <li>Vous connaissez peut-être Mandrake, Red Hat, Suse ou d'autres.</li>
+  <li>Debian est juste l'une d'entre elles.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page3" name="page3">(Page&nbsp;3)</a></td>
+ </tr><tr>
+  <td class="verybig">
+Désolé.<br>
+C'était faux.
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page4" name="page4">(Page&nbsp;4)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2><a class="slideheading" href="$(HOME)/intro/about">Qu'est ce
+    que Debian&nbsp;? (deuxième essai)</a></h2>
+
+<span class="slide">
+Le projet Debian est une association d'individus qui ont pour cause commune
+de créer un système d'exploitation libre. Ce système d'exploitation
+que nous avons créé est appelé</span>
+<div class="center">Debian GNU/Linux,</div>
+<span class="slide">ou tout simplement Debian.<br>
+De plus, du travail est en cours pour fournir Debian pour d'autres noyaux
+que Linux, en particulier pour le Hurd. D'autres noyaux possibles seraient
+ceux de la famille BSD, sachant que même des portages sur MS Windows
+sont prévus.
+</span>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page5" name="page5">(Page&nbsp;5)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Réseau de confiance</h2>
+
+<div class="center"><img src="../earthkeyring800.png"
+     alt="Trousseau des développeurs Debian"></div>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page6" name="page6">(Page&nbsp;6)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Différences par rapport aux autres distributions</h2>
+<ul class="slide">
+  <li>Debian n'est pas une entreprise mais une organisation.</li>
+  <li>Elle ne vend rien.</li>
+  <li>Les membres de Debian (les responsables) sont des bénévoles.</li>
+  <li>Les responsables travaillent avec un objectif commun&nbsp;: construire
+      le meilleur système d'exploitation possible.</li>
+  <li>La plus grande collection de logiciels libres prêts à être installés
+      sur Internet.</li>
+  <li>Deux façons d'obtenir Debian GNU/Linux&nbsp;:
+    <ul class="sub1">
+      <li>l'acheter sur cédéroms chez un <em>autre</em> distributeur&nbsp;;</li>
+      <li>la télécharger gratuitement sur le web.</li>
+    </ul>
+  </li>
+  <li>Cette dernière méthode est la façon habituelle de faire, grâce à
+      d'excellents outils.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page7" name="page7">(Page&nbsp;7)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Que sont les projets internes de Debian&nbsp;?</h2>
+<ul class="slide">
+   <li>Debian contient près de 10&nbsp;0000&nbsp;paquets.</li>
+   <li>Les utilisateurs normaux ne sont intéressés que par un sous-ensemble
+       de ces paquets.</li>
+   <li>Attention portée aux groupes spéciaux d'utilisateurs
+       avec des compétences et des intérêts différents.</li>
+   <li>Non seulement des collections pratiques de paquets spécifiques,
+       mais aussi une attention portée à la facilité d'installation et
+       de configuration pour l'objectif concerné.</li>
+   <li><span class="bold">Pas de clone</span> de Debian</li>
+</ul>
+<p class="conclusion">&rarr; Idée basique&nbsp;: ne pas faire de distribution
+     séparée, mais adapter Debian pour un objectif spécifique.</p>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page8" name="page8">(Page&nbsp;8)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Motivation</h2>
+<ul class="slide">
+   <li>Profil des utilisateurs ciblés&nbsp;:
+       <ul class="sub1">
+          <li>moins de compétences techniques&nbsp;;</li>
+          <li>incapables d'installer des programmes amont sans des efforts
+	      démesurés&nbsp;;</li>
+          <li>pas d'intérêt pour l'administration&nbsp;;</li>
+          <li>intérêt uniquement pour un sous-ensemble défini de logiciels
+	      libres disponibles&nbsp;;</li>
+          <li>besoin d'un usage facile&nbsp;;</li>
+          <li>profil de sécurité défini.</li>
+       </ul>
+   </li>
+   <li>Autres projets possibles&nbsp;:
+       <ul class="sub1">
+         <li>autorités&nbsp;;</li>
+         <li>bureau&nbsp;;</li>
+         <li>entreprise / comptabilité&nbsp;;</li>
+         <li>...</li>
+       </ul>
+   </li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page9" name="page9">(Page&nbsp;9)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>État des logiciels libres spécialisés</h2>
+<ul class="slide">
+   <li>Difficiles à installer.</li>
+   <li>Difficiles à maintenir.</li>
+   <li>Difficiles à utiliser en raison d'un manque d'interfaces graphiques</li>
+   <li>Licences étranges.</li>
+   <li>Rendus orphelins en amont.</li>
+   <li>Problèmes de portages (architectures, ordre des octets, 32 et
+       64&nbsp;bits).</li>
+   <li>Format des données non échangeable.</li>
+   <li>Développements en parallèle des mêmes fonctionnalités.</li>
+   <li>Les outils utilisés ou les rétroportages ne sont pas destinés
+       à ces applications.</li>
+</ul>
+<p class="conclusion">&rarr; Manque de cadre de travail intégré</p>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page10" name="page10">(Page&nbsp;10)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Histoire des projets internes de Debian (1)</h2>
+<ul class="slide">
+   <li>Debian-Junior&nbsp;:
+      <ul class="sub1">
+         <li>début&nbsp;: début&nbsp;2000&nbsp;;</li>
+         <li>initiateur&nbsp;:
+	     <a class="slide" href="mailto:synrg@debian.org">Ben Armstrong</a>
+	     <span class="tt">&lt;synrg@debian.org&gt;</span>&nbsp;;</li>
+         <li>premier projet interne &ndash;&nbsp;il s'agit en fait de la
+	     naissance de l'idée de projet interne&nbsp;;</li>
+         <li>publié dans la distribution Debian actuellement stable,
+	     surnommée <em>Woody</em>.</li>
+      </ul>
+   </li>
+   <li>Debian-Med&nbsp;:
+      <ul class="sub1">
+         <li>début&nbsp;: début&nbsp;2002&nbsp;;</li>
+         <li>initiateur&nbsp;:
+	     <a class="slide" href="mailto:tille@debian.org">Andreas Tille</a>
+	     <span class="tt">&lt;tille@debian.org&gt;</span>&nbsp;;</li>
+         <li>idées adaptées de Debian-Junior et ajout de quelques choses
+	     supplémentaires.</li>
+     </ul>
+   </li>
+   <li>Debian-Edu&nbsp;:
+       <ul class="sub1">
+         <li>début&nbsp;: vient de commencer&nbsp;;</li>
+         <li>initiateur&nbsp;:
+	     <a class="slide" href="mailto:hertzog@debian.org">Raphaël
+	     Hertzog</a>
+	     <span class="tt">&lt;hertzog@debian.org&gt;</span>&nbsp;;</li>
+         <li>réintégrer un clone de Debian.</li>
+       </ul>
+   </li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page11" name="page11">(Page&nbsp;11)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Histoire des projets internes de Debian (2)</h2>
+<ul class="slide">
+   <li>Demudi&nbsp;:
+      <ul class="sub1">
+        <li>début&nbsp;: pas encore vraiment commencé&nbsp;;</li>
+        <li>initiateur&nbsp;:
+	<a class="slide" href="mailto:marco@centrotemporeale.it">Marco
+        Trevisani</a>
+	<span class="tt">&lt;marco@centrotemporeale.it&gt;</span>&nbsp;;</li>
+        <li>réintégrer un clone de Debian.</li>
+      </ul>
+   </li>
+   <li>Debian-Desktop&nbsp;:
+      <ul class="sub1">
+        <li>début&nbsp;: octobre&nbsp;2002&nbsp;;</li>
+        <li>initiateur&nbsp;:
+	<a class="slide" href="mailto:walters@debian.org">Colin Walters</a>
+	<span class="tt">&lt;walters@debian.org&gt;</span>&nbsp;;</li>
+        <li>beaucoup de questions communes avec les autres projets
+	internes.</li>
+      </ul>
+   </li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page12" name="page12">(Page&nbsp;12)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Debian-Junior</h2>
+Debian pour les enfants de 1 à 99&nbsp;ans
+<ul class="slide">
+   <li>Faire de Debian un système d'exploitation que les enfants de tout âge
+       <em>veulent</em> utiliser.</li>
+   <li>La rendre si jolie qu'ils l'aiment.</li>
+   <li>En faire une zone de jeu pour les expériences des enfants.</li>
+   <li>Ne pas fournir que des jeux, mais aussi faire attention à leur
+       qualité.</li>
+   <li>Les jeunes enfants sont la cible principale, les adolescents devraient
+       pouvoir utiliser sans problème Debian sans aucune modification
+       spéciale.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page13" name="page13">(Page&nbsp;13)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Debian-Med</h2>
+Debian dans le milieu médical
+<div class="center">
+<a class="slide" href="../med/">Publicité&nbsp;: venez à mon exposé
+     au même endroit aujourd'hui à 15&nbsp;h&nbsp;45&nbsp;:-)</a></div>
+<ul class="slide">
+  <li>Environnement logiciel intégré pour toutes les tâches médicales.</li>
+  <li>Attention spéciale portée sur la qualité des paquets liés à la
+      médecine qui sont déjà intégrés dans Debian.</li>
+  <li>Construire des paquets de logiciels médicaux qui manquent au sein
+      de Debian et inclure ces paquets.</li>
+  <li>Attention portée sur une infrastructure générale pour les utilisateurs
+      du domaine médical.</li>
+  <li>Efforts pour améliorer la qualité des logiciels extérieurs.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page14" name="page14">(Page&nbsp;14)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Debian-Edu</h2>
+Debian pour les objectifs éducatifs
+<ul class="slide">
+   <li>Faire de Debian la meilleure distribution disponible pour une
+     utilisation éducative.</li>
+   <li>Rassembler beaucoup d'initiatives concernant l'éducation (qui sont
+     en partie basées sur des clones de Debian).</li>
+   <li>Intégrer les changements de la distribution française Debian Education
+       dans Debian.</li>
+   <li>Coopérer avec la distribution SkoleLinux basée sur Debian en
+       Norvège.</li>
+   <li>Coopérer avec d'autres projets liés à l'éducation (comme Seul, Ofset,
+       KdeEdu).</li>
+   <li>Vient de commencer, la liste de diffusion et le site web sont en
+       préparation.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page15" name="page15">(Page&nbsp;15)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>DeMuDi</h2>
+Distribution Debian pour le multimédia
+<ul class="slide">
+   <li>Pas encore annoncée officiellement comme un projet interne officiel,
+     mais le coordinateur est en train de s'en occuper.</li>
+   <li>Orientée pour la musique et le multimédia.</li>
+   <li>Fait de GNU/Linux une plate-forme de choix pour le musicien et
+       l'artiste multimédia.</li>
+   <li>Partie d'un projet financé par la communauté européenne, appelé
+     <a class="slide" href="http://www.agnula.org/">AGNULA</a>.</li>
+   <li>L'initiateur n'est pas encore un développeur Debian, mais vous
+     pouvez travailler sur Debian sans être un développeur officiel.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page16" name="page16">(Page&nbsp;16)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Debian-Desktop</h2>
+
+Debian GNU/Linux pour tout le monde
+
+<ul class="slide">
+   <li>Le système d'exploitation le meilleur possible pour la maison ou
+       pour les stations de travail en entreprise.</li>
+   <li>Devise&nbsp;: «&nbsp;du logiciel qui marche&nbsp;».</li>
+   <li>Des bureaux comme Gnome et KDE devraient coexister dans Debian et
+       fonctionner au mieux.</li>
+   <li>Utilisation facile pour les débutants, sans restriction de
+       flexibilité pour les utilisateurs avancés.</li>
+   <li>Configuration facile (détection du matériel).</li>
+   <li>Internationalisation.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page17" name="page17">(Page&nbsp;17)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Pourquoi ne pas juste faire des clones de Debian&nbsp;?</h2>
+<ul class="slide">
+   <li>Une distribution séparée demanderait des efforts supplémentaires&nbsp;:
+      <ul class="sub1">
+         <li>serait à peine mieux que Debian&nbsp;;</li>
+         <li>travail continu pour garder à jour le système de base, les
+	    disquettes de démarrage, etc.&nbsp;;
+         <li>Quasiment impossible d'obtenir des corrections de sécurité
+	     aussi rapidement que Debian.</li>
+      </ul>
+      <div class="bold">&rarr; Faire des clones serait une mauvaise idée.</div>
+   </li>
+   <li>L'intégration dans Debian a des avantages&nbsp;:
+      <ul class="sub1">
+         <li>base utilisateur énorme dans le monde entier, donc devenir
+	     public en se servant de Debian&nbsp;;</li>
+         <li>système sécurisé et stable sans effort supplémentaire&nbsp;;</li>
+         <li>système de suivi des bogues gratuit&nbsp;;</li>
+         <li>infrastructure gratuite (HTTP-, FTP-, serveur de messagerie,
+	     PKI, ...).</li>
+      </ul>
+   </li>
+   <li>Réintégrer quelque chose dans Debian&nbsp;:
+      <ul class="sub1">
+        <li>améliorer la qualité des paquets en les rendant plus
+	conviviaux.</li>
+      </ul>
+   </li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page18" name="page18">(Page&nbsp;18)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Debian &ndash; adaptable à tout objectif&nbsp;?</h2>
+<ul class="slide">
+   <li>Développée par environ 1000&nbsp;bénévoles.</li>
+   <li>Flexible, pas liée à des intérêts commerciaux.</li>
+   <li>Règles strictes (charte) qui maintiennent la cohésion.</li>
+   <li>Intérêt commun de tous les développeurs d'obtenir le meilleur
+       système d'exploitation pour eux.</li>
+   <li>Les développeurs ont des enfants dans la vrai vie ou travaillent dans
+       le domaine médical, etc.</li>
+   <li>Au contraire des employés des entreprises, tout développeur Debian
+       a la liberté et la possibilité de réaliser sa vision des choses.</li>
+   <li>Ainsi, de simples développeurs ont de l'influence sur le
+       développement &ndash;&nbsp;ils n'ont qu'à le
+       <span class="bold">faire</span>.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page19" name="page19">(Page&nbsp;19)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Raisons techniques pour l'adaptabilité</h2>
+<ul class="slide">
+   <li>Accent mis sur&nbsp;:
+      <ul class="sub1">
+         <li>la sécurité&nbsp;;</li>
+         <li>la stabilité&nbsp;;</li>
+         <li>la qualité&nbsp;;</li>
+         <li>les tests pointilleux (BTS)&nbsp;;</li>
+         <li>la continuité (prendre en compte les anciennes configurations).</li>
+      </ul>
+   <li>Outils puissants pour l'empaquetage.</li>
+   <li>Gère 11&nbsp;architectures matérielles
+       <span class="small">(compilateurs automatiques&nbsp;:
+       alpha, arm, hppa, i386, ia64, m68k, mips, mipsel,
+       powerpc, s390, sparc)</span>.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page20" name="page20">(Page&nbsp;20)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Technologies (1)&nbsp;: métapaquets</h2>
+<ul class="slide">
+   <li>Collection de logiciels spécifiques&nbsp;:
+      <ul class="sub1">
+        <li>aucune recherche nécessaire des paquets disponibles&nbsp;;</li>
+	<li>l'utilisateur n'est pas obligé de parcourir la totalité de la
+	    liste des paquets de Debian&nbsp;;</li>
+	<li>comparaison facile entre les logiciels qui font la même
+	    chose&nbsp;;</li>
+	<li>sécurité contre le retrait accidentel de dépendances&nbsp;;</li>
+	<li>conflits avec les paquets incompatibles&nbsp;;</li>
+	<li>installation facile&nbsp;;</li>
+	<li>peu d'efforts nécessaires pour l'administration.</li>
+      </ul>
+   </li>
+   <li>Configuration adaptée au sein des métapaquets&nbsp;:
+      <ul class="sub1">
+        <li>fait attention aux besoins spéciaux des utilisateurs du
+	    projet.</li>
+      </ul>
+   </li>
+   <li>Paquets de documentation&nbsp;:
+      <ul class="sub1">
+         <li>empaquetage et création de la documentation pertinente&nbsp;;</li>
+	 <li>traduction.</li>
+      </ul>
+   </li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page21" name="page21">(Page&nbsp;21)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Gestion des métapaquets</h2>
+<ul class="slide">
+   <li>Vue d'ensemble sur&nbsp;:
+      <ul class="sub1">
+         <li>les outils en ligne de commande&nbsp;;</li>
+         <li>les interfaces utilisateur textuelles&nbsp;;<br>
+             Vous connaissez <span class="tt">dselect</span>&nbsp;?
+             &nbsp;&nbsp; <span class="bold">&rarr; Oubliez-le&nbsp;!</span>
+         </li>
+         <li>les interfaces utilisateur graphiques&nbsp;;</li>
+         <li>les interfaces web.</li>
+     </ul>
+   </li>
+   <li>Pistes pour l'administration.</li>
+   <li>Développement futur.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page22" name="page22">(Page&nbsp;22)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Outils en ligne de commande (1)</h2>
+
+<div class="tt">apt-cache</div>
+Cherche les mots-clés pertinents dans les descriptions de paquets
+<table class="center">
+ <tr>
+  <td class="code">
+<verbatim>
+~> apt-cache search med | grep '^med-'
+med-bio - Debian-Med micro-biology packages
+med-common - Debian-Med Project common package
+med-common-dev - Debian-Med Project common files for developing meta packages
+med-dent - Debian-Med package for dental practice client
+med-doc - Debian Med documentation packages
+med-imaging-dev - Debian-Med packages for medical image development
+med-tools - Debian-Med several tools
+med-bio-contrib - Debian-Med bioinformatics packages (contrib and non-free)
+med-imaging - Debian-Med imaging packages
+</verbatim>
+  </td>
+ </tr>
+</table>
+<p class="conclusion">&rarr; Actuellement pas vraiment immédiat.</p>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page23" name="page23">(Page&nbsp;23)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Outils en ligne de commande (2)</h2>
+<div class="tt">grep-dctrl</div>
+<table class="center">
+ <tr>
+  <td class="code">
+<verbatim>
+~&gt; grep-dctrl -r ': med-' /var/lib/dpkg/available | grep -v '^[ SIMAVF]' | grep -v '^Pri'
+Package: med-dent
+Depends: odontolinux, galeon | www-browser
+Description: Debian-Med packages for dental practice
+
+Package: med-imaging-dev
+Depends: librumba-dev, libgtkimreg-dev
+Description: Debian-Med packages for medical image development
+
+Package: med-doc
+Depends: doc-linux-html | doc-linux-text, resmed-doc, galeon | www-browser
+Description: Debian-Med documentation packages
+
+Package: med-tools
+Depends: mencal
+Description: Debian-Med several tools
+
+Package: med-common-dev
+Depends: debconf (&gt;= 0.5)
+Description: Debian-Med Project common files for developing meta packages
+
+Package: med-imaging
+Depends: rumbaview, paul
+Description: Debian-Med imaging packages
+
+Package: med-common
+Depends: adduser, debconf (&gt;= 0.5), menu
+Description: Debian-Med Project common package
+
+Package: med-bio
+Depends: bugsx, fastdnaml, fastlink, garlic, njplot, readseq, tree-puzzle
+Description: Debian-Med bioinformatics packages
+
+Package: med-bio-contrib
+Depends: clustalw, clustalx, molphy, phylip, seaview, treetool
+Description: Debian-Med bioinformatics packages (contrib and non-free)
+</verbatim>
+  </td>
+ </tr>
+</table>
+<p class="conclusion">&rarr; Également assez obscure.</p>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page24" name="page24">(Page&nbsp;24)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Outils en ligne de commande (3)</h2>
+<div class="tt">auto-apt</div>
+<table class="center">
+ <tr>
+  <td class="code">
+<verbatim>
+~> sudo auto-apt update
+
+put: 880730 files,  1074158 entries
+put: 903018 files,  1101981 entries
+
+~> auto-apt -x -y run
+Entering auto-apt mode: /bin/bash
+Exit the command to leave auto-apt mode.
+bash-2.05b$ less /usr/share/doc/med-bio/copyright
+Reading Package Lists... Done
+Building Dependency Tree... Done
+The following extra packages will be installed:
+  bugsx fastlink readseq
+The following NEW packages will be installed:
+  bugsx fastlink med-bio readseq
+0 packages upgraded, 4 newly installed, 0 to remove and 183  not upgraded.
+Need to get 0B/1263kB of archives. After unpacking 2008kB will be used.
+Reading changelogs... Done
+Selecting previously deselected package bugsx.
+(Reading database ... 133094 files and directories currently installed.)
+Unpacking bugsx (from .../b/bugsx/bugsx_1.08-6_i386.deb) ...
+Selecting previously deselected package fastlink.
+Unpacking fastlink (from .../fastlink_4.1P-fix81-2_i386.deb) ...
+Selecting previously deselected package med-bio.
+Unpacking med-bio (from .../med-bio_0.4-1_all.deb) ...
+Setting up bugsx (1.08-6) ...
+
+Setting up fastlink (4.1P-fix81-2) ...
+
+Setting up med-bio (0.4-1) ...
+
+localepurge: checking for new locale files ...
+localepurge: processing locale files ...
+localepurge: processing man pages ...
+This package is Copyright 2002 by Andreas Tille &lt;tille@debian.org&gt;
+
+This software is licensed under the GPL.
+
+On Debian systems, the GPL can be found at /usr/share/common-licenses/GPL.
+/usr/share/doc/med-bio/copyright (END)
+</verbatim>
+  </td>
+ </tr>
+</table>
+<p class="conclusion">&rarr; N'est-ce pas génial&nbsp;?</p>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page25" name="page25">(Page&nbsp;25)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Interfaces utilisateur textuelles</h2>
+<div class="tt">tasksel</div>
+<div align="center">
+<img src="tasksel.png" alt="Capture d'écran de tasksel">
+</div>
+<ul class="sub1">
+   <li>Installateur Debian de Task.</li>
+   <li>La section pour l'utilisateur final contient une entrée pour chaque
+       projet interne.</li>
+   <li>Installation facile.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page26" name="page26">(Page&nbsp;26)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Interfaces utilisateur graphiques (1)</h2>
+<div class="tt">gnome-apt</div>
+<div align="center">
+<img src="gnome-apt_3.png" alt="Capture d'écran de gnome-apt">
+</div>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page27" name="page27">(Page&nbsp;27)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Interfaces utilisateur graphiques (2)</h2>
+<div class="tt">synaptic</div>
+<div align="center">
+<img src="synaptic.png" alt="Capture d'écran de synaptic">
+</div>
+<p class="conclusion">&rarr; Les filtres synaptiques sont ici de très bons
+       outils.</p>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page28" name="page28">(Page&nbsp;28)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Interfaces web (1)</h2>
+Recherche par le web
+<div class="center"><a class="slide"
+     href="http://packages.debian.org/cgi-bin/search_packages.pl?keywords=med-&amp;subword=1">http://packages.debian.org/cgi-bin/search_packages.pl?keywords=med-&amp;subword=1</a>
+<img src="package_search.png" alt="Capture d'écran de la recherche des paquets">
+</div>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page29" name="page29">(Page&nbsp;29)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Interfaces web (2)</h2>
+Système de suivi des paquets
+<div class="deft"><a class="slide"
+     href="http://qa.debian.org/developer.php?login=tille">http://qa.debian.org/developer.php?login=&lt;developer&gt;</a><br>
+Utiliser <span class="tt">synrg</span> pour les paquets junior
+et <span class="tt">tille</span> pour les paquets med.</div>
+<div class="deft"><a class="slide"
+     href="http://packages.qa.debian.org/">http://packages.qa.debian.org/&lt;letter&gt;</a><br>
+Entrer '<span class="tt">j</span>' ou '<span class="tt">m</span>' pour
+respectivement junior ou med.</div>
+
+<p class="conclusion">&rarr; Pas encore parfait actuellement, mais être
+   aisé avec le système de suivi des paquets est un avantage supplémentaire
+   ici&nbsp;;-)</p>
+
+<ul class="slide">
+   <li>Utilitaire web récemment développé.</li>
+   <li>Aide importante pour observer l'état d'un paquet.</li>
+   <li>Gère les inscriptions aux paquets intéressants.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page30" name="page30">(Page&nbsp;30)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Système de suivi des paquets</h2>
+<div class="center"><a class="slide"
+   href="http://qa.debian.org/developer.php?login=tille">http://qa.debian.org/developer.php?login=tille</a>
+<img src="package_tracking.png" alt="Capture d'écran du suivi des paquets">
+</div>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page31" name="page31">(Page&nbsp;31)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Interfaces web (3)</h2>
+<div
+   class="tt">/usr/share/doc/junior-doc/examples/scripts/list-junior</div>
+<div class="center">
+<img src="list-junior.png"
+   alt="Capture d'écran d'un exemple de /usr/share/doc/junior-doc/examples/scripts/list-junior">
+</div>
+<p class="conclusion">&rarr; Pas encore un outil, mais c'est un début.</p>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page32" name="page32">(Page&nbsp;32)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Gestion future des métapaquets</h2>
+<ul class="slide">
+   <li>Il est évident qu'il n'y a pas de joli utilitaire comme vous pourriez
+       en connaître parmi ceux disponibles dans Debian.</li>
+   <li>Les outils qui utilisent grep sur le cache d'apt directement
+       pour les métapaquets doivent être écrits.</li>
+   <li>Accords concernant la charte sur des marques additionnelles pour le
+       fichier <span class="tt">debian/control</span>.</li>
+   <li>Trouver un ensemble de mots clés pour chaque projet interne et
+       écrire un utilitaire pour rendre la recherche conviviale.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page33" name="page33">(Page&nbsp;33)</a></td>
+ </tr><tr><td class="slide">
+<h2>Outils pour développer des métapaquets</h2>
+<ul class="slide">
+   <li>Construire un métapaquet est toujours plus ou moins la même chose.</li>
+   <li>Ces choses doivent être paramétrisées et supportées par les outils
+       pour&nbsp;:
+       <ul class="sub1">
+          <li>les rendre plus faciles&nbsp;;</li>
+          <li>réduire la probabilité de présence de bogues.</li>
+       </ul>
+   </li>
+   <li>Il n'y a pas encore d'accord commun à ce sujet, mais au moins
+       Debian-Med utilise <span class="tt">med-common-dev</span> pour
+       l'empaquetage.</li>
+   <li>Tout paquet Debian-Med dépend de ce paquet lors de la construction,
+       ce qui fournit des modèles et des outils pour la construction de
+       métapaquets ainsi que quelques exemples.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page34" name="page34">(Page&nbsp;34)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Technologies (2)&nbsp;: menus de l'utilisateur</h2>
+<ul class="slide">
+   <li>Définir une liste des utilisateurs du sous-projet en utilisant
+       <span class="tt">debconf</span> pour gérer des groupes comme
+       <em>junior</em> et <em>med</em> dans
+       <span class="tt">/etc/group</span>.</li>
+   <li>Ces utilisateurs obtiennent un menu supplémentaire.</li>
+   <li>N'ennuie pas les autres utilisateurs avec ces menus supplémentaires.</li>
+   <li>Fournir un script <span class="tt">update-subproject</span> pour
+       mettre à jour les menus de l'utilisateur après l'installation d'un
+       nouveau paquet ou l'ajout d'utilisateurs à ces groupes.</li>
+   <li>Les paquets actuels de Debian-Med donnent une idée de ce à quoi cela
+       ressemble.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page35" name="page35">(Page&nbsp;35)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Outils pour les menus de l'utilisateur</h2>
+
+Le paquet <span class="tt">med-common</span> contient des scripts <span
+class="tt">debconf</span> pour configurer les utilisateurs du projet.
+
+<div class="center">
+<img src="med-common_debconf.png" alt="Capture d'écran de debconf de med-common">
+</div>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page36" name="page36">(Page&nbsp;36)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Réécriture des menus généraux</h2>
+<ul class="slide">
+   <li>Actuellement, le système de menus de Debian est complètement
+       réécrit.</li>
+   <li>Les paquets Debian mettent à jour les menus généraux automatiquement
+       après l'installation.</li>
+   <li>Des fonctionnalités clés comme les rôles de l'utilisateur et
+       les traductions seront ajoutées.</li>
+   <li>Objectifs&nbsp;: les métapaquets contiennent des entrées des menus
+       spécifiques à un rôle, celles-ci étant mises à jour en fonction de
+       chaque utilisateur.</li>
+   <li>Rend possible une administration propre de systèmes
+       multiutilisateurs.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page37" name="page37">(Page&nbsp;37)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Documentation</h2>
+<ul class="slide">
+   <li>Tous les projets internes de Debian font particulièrement attention
+       à la documentation et aux traductions, car les utilisateurs ciblés
+       en ont fortement besoin.</li>
+   <li>Regardez les paquets
+       <span class="tt">&lt;project&gt;-doc</span>&nbsp;!</li>
+   <li>Ben Armstrong a commencé un manuel sur les sous-projets de Debian&nbsp;:
+       <div align="center">
+       <a class="slide"
+          href="http://people.debian.org/~synrg/subproject-howto.html/">http://people.debian.org/~synrg/subproject-howto.html/</a></div>
+       Celui-ci explique comment commencer et maintenir un projet interne
+       de Debian en général.
+   </li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page38" name="page38">(Page&nbsp;38)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Futur</h2>
+<h3>Debian-Junior</h3>
+<ul class="slide">
+   <li>Première publication avec Debian <em>Woody</em>.</li>
+   <li>Inclus dans la liste de sélection des Task sur le cédérom
+       d'installation.</li>
+</ul>
+
+<h3>Debian-Med</h3>
+<ul class="slide">
+   <li>Premières étapes.</li>
+   <li>Certains métapaquets prêts.</li>
+   <li>Grand intérêt des développeurs et des utilisateurs.</li>
+   <li>Première version dans <em>Sarge</em>.</li>
+   <li>Disque actif basé sur
+   <a class="slide" href="http://www.knopper.net/knoppix/">Knoppix</a>.</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page39" name="page39">(Page&nbsp;39)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Futur</h2>
+<h3>Debian-Edu</h3>
+<ul class="slide">
+   <li>Créer un site web et des listes de diffusion.</li>
+   <li>Intégrer des choses qui ne sont pas encore dans Debian des
+       distributions éducatives.</li>
+   <li>S'occuper des cédéroms basés sur le nouvel installateur Debian.</li>
+</ul>
+
+<h3>DeMuDi</h3>
+<ul class="slide">
+   <li>La même chose que ci-dessus.</li>
+   <li>Faire attention à utiliser des logiciels multimédia réellement
+       libres (problèmes de brevet, licences, etc.).</li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page40" name="page40">(Page&nbsp;40)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Futur</h2>
+<h3>Debian-Desktop</h3>
+<ul class="slide">
+   <li>Impact sur tous les projets internes de Debian, puisqu'il est orienté
+       vers l'utilisateur final.</li>
+   <li>Participer au développement de l'installateur Debian.
+   </li>
+</ul>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page41" name="page41">(Page&nbsp;41)</a></td>
+ </tr><tr>
+  <td class="slide">
+<h2>Informations complémentaires</h2>
+
+<div class="boldcenter">
+    <a class="slideheading"
+     href="$(HOME)/devel/debian-jr/">Debian-Junior</a></div>
+<div class="boldcenter">
+    <a class="slideheading"
+     href="$(HOME)/devel/debian-med/">Debian-Med</a></div>
+<div class="boldcenter">
+    <a class="slideheading"
+    href="$(HOME)/devel/debian-desktop/">Debian-Desktop</a></div>
+
+<div class="center"><a class="slideheading3"
+     href="mailto:tille@debian.org">Andreas Tille</a></div>
+  </td>
+ </tr><tr>
+  <td class="pageno"><a id="page42" name="page42">(Page&nbsp;42)</a></td>
+ </tr>
+</table>
