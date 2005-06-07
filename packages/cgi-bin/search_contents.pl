@@ -102,8 +102,9 @@ $searchkeyword =~ s/[.]/[.]/;
 
 # check if the Contents file is there
 if (!-r $file) {
-# XXX has to be updated for post-woody
-  if ($version eq "stable" and $arch =~ /^(hurd|sh)$/) {
+# XXX has to be updated for new architecures
+  if (($version eq "stable" and $arch =~ /^(hurd|sh)$/)
+      || ($version eq "oldstable" and $arch =~ /^amd64$/)) {
     print "Error: the $arch architecture didn't exist in $version.<br>\n"
          ."Please go back and choose a different distribution.\n";
   } else {
