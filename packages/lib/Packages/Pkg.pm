@@ -570,13 +570,15 @@ sub _preprocess_section {
 		return 0;
 	    }
 	    $data->{section} = 'non-US';
-	} elsif ( $data->{section} =~ m,(contrib|non-free)/(.+)$,io ) {
+	} elsif ( $data->{section} =~ m,(contrib|non-free|universe|multiverse|restricted)/(.+)$,io ) {
 	    unless ( $data->{archive} eq $1 ) {
-                $self->_error( "add_version:$name:".
-		    "expected value $1 for".
-                    " field archive".
-                    " (was $data->{archive})" );
-                return 0;
+		unless ( $data->{archive} eq "universe" ) {
+		    $self->_error( "add_version:$name:".
+				   "expected value $1 for".
+				   " field archive".
+				   " (was $data->{archive})" );
+		    return 0;
+		}
             }
 	    $data->{section} = $2;
 	} elsif ( $data->{subdistribution}
