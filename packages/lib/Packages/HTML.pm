@@ -18,19 +18,21 @@ our @EXPORT = qw( header title trailer file_changed time_stamp
 		  ds_begin ds_item ds_end note title marker pdesc
 		  pdeplegend pkg_list pmoreinfo );
 
-our $HOME = "http://www.debian.org";
-our $CONTACT_MAIL = 'debian-www@lists.debian.org';
-our $WEBMASTER_MAIL = 'webmaster@debian.org';
-our $SEARCH_PAGE = "http://packages.debian.org/";
-our $CGI_ROOT = "http://packages.debian.org/cgi-bin";
-our $CN_HELP_URL = "${HOME}/intro/cn";
+our $HOME = "http://www.ubuntulinux.org";
+our $CONTACT_MAIL = 'frank@lichtenheld.de';
+our $WEBMASTER_MAIL = 'frank@lichtenheld.de';
+our $SEARCH_PAGE = "http://packages.ubuntu.com/";
+our $CGI_ROOT = "/cgi-bin/";
+our $CN_HELP_URL = "http://www.debian.org/intro/cn";
 our $CHANGELOG_URL = '/changelogs';
 our $COPYRIGHT_URL = '/changelogs';
 our $SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=names&amp;version=all&amp;exact=1&amp;keywords=';
 our $SRC_SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=sourcenames&amp;version=all&amp;exact=1&amp;keywords=';
-our $BUG_URL = 'http://bugs.debian.org/';
-our $SRC_BUG_URL = 'http://bugs.debian.org/src:';
+our $BUG_URL = 'http://bugzilla.ubuntu.com/buglist.cgi?query_format=advanced&amp;resolution=DUPLICATE&amp;resolution=---&amp;bugidtype=include&amp;cmdtype=doit&amp;component=';
+our $SRC_BUG_URL = $BUG_URL;
 our $QA_URL = 'http://packages.qa.debian.org/';
+our $BUILD_LOG_URL = 'http://people.ubuntu.com/~lamont/buildLogs';
+our $TEST_BUILD_LOG_URL = 'http://people.ubuntu.com/~lamont/buildLogs/Test';
 
 
 my %img_trans = ( pt_BR => "pt", pt_PT => "pt", sv_SE => "sv" );
@@ -113,7 +115,7 @@ sub pkg_list {
 	    } else {
 		my %subsections = $p_pkg->get_arch_fields( 'section',
 							   $env->{archs} );
-		my $subsection = $subsections{max_unique};
+		my $subsection = $subsections{max_unique} || 'unknown';
 		my %desc_md5s = $p_pkg->get_arch_fields( 'description-md5', 
 							 $env->{archs} );
 		my $short_desc = conv_desc( $lang,
@@ -144,6 +146,10 @@ sub pmoreinfo {
     $str .= sprintf( "<h2>".gettext( "More Information on %s" )."</h2>",
 		     $name );
 	
+    
+    if ($info{bugreports} || $info{sourcedownload} || $info{changesandcopy} || $info{buildlogs}) {
+    	$str .= "<p>\n";
+    }
     
     if ($info{bugreports}) {
 	my $bug_url = $is_source ? $SRC_BUG_URL : $BUG_URL; 
@@ -189,7 +195,7 @@ sub pmoreinfo {
 	    $src_basename = "$d->{src_name}_$src_basename";
 	    $src_dir =~ s,pool/updates,pool,o;
 	    $src_dir =~ s,pool/non-US,pool,o;
-	    $str .= "<br>".sprintf( gettext( "View the <a href=\"%s\">Debian changelog</a>" ),
+	    $str .= "\n<br>".sprintf( gettext( "View the <a href=\"%s\">Debian changelog</a>" ),
 				    "$CHANGELOG_URL/$src_dir/$src_basename/changelog" )."<br>\n";
 	    my $copyright_url = "$COPYRIGHT_URL/$src_dir/$src_basename/";
 	    $copyright_url .= ( $is_source ? 'copyright' : "$name.copyright" );
@@ -197,6 +203,21 @@ sub pmoreinfo {
 	    $str .= sprintf( gettext( "View the <a href=\"%s\">copyright file</a>" ),
 			     $copyright_url )."</p>";
 	}
+    }
+
+    if ($info{buildlogs}) {
+    	my $fl;
+	if ($d->{src_name} =~ /^lib/o) {
+    		$fl = substr $d->{src_name}, 0, 4;
+	} else {
+		$fl = substr $d->{src_name}, 0, 1;
+	}
+
+	$str .= "\n<br>".gettext( "Build Logs:" )." <a href=\"$BUILD_LOG_URL/$fl/$d->{src_name}/$d->{src_version}/\">$env->{distribution}</a> <a href=\"$TEST_BUILD_LOG_URL/$fl/$d->{src_name}/$d->{src_version}/\">$env->{distribution} (".gettext("regression test").")</a>";
+    }
+
+    if ($info{bugreports} || $info{sourcedownload} || $info{changesandcopy} || $info{buildlogs}) {
+    	$str .= "\n</p>\n";
     }
 
     if ($info{maintainers}) {
@@ -357,48 +378,33 @@ MENU
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="$LANG">
 <head>
-<title>Debian -- $title_tag</title>
+<title>Ubuntu -- $title_tag</title>
 <link rev="made" href="mailto:$WEBMASTER_MAIL">
 <meta http-equiv="Content-Type" content="text/html; charset=$charset">
-<meta name="Author" content="Debian Webmaster, $WEBMASTER_MAIL">
+<meta name="Author" content="Frank Lichtenheld, $WEBMASTER_MAIL">
 $KEYWORDS_LINE
 $DESC_LINE
 $meta
-<link href="$HOME/debian.css" rel="stylesheet" type="text/css" media="all">
+<link href="/debian.css" rel="stylesheet" type="text/css" media="all">
 </head>
+<!--<body text="#002B3D" bgcolor="#FAFFD2" link="#002B3D" vlink="#800080" alink="#002B3D">-->
 <body>
 <div id="header">
    <div id="upperheader">
    <div id="logo">
-  <a href="$HOME/"><img src="$HOME/logos/openlogo-nd-50.png" alt="" /></a>
-HEAD
-;
-
-    $txt .= img( "$HOME/", "", "Pics/debian.png", gettext( "Debian Project" ),
-		 width => 179, height => 61 );
-    $txt .= <<HEADEND;
-
+  <a href="$HOME/"><img src="http://www.ubuntulinux.org/logo.jpg" alt="Ubuntu"></a>
 </div> <!-- end logo -->
-HEADEND
+HEAD
 ;
 
     $txt .= <<NAVBEGIN;
 $search_in_header
 </div> <!-- end upperheader -->
+<div id="navbar">
 
 NAVBEGIN
 ;
 # $title_in_header
-    $txt .= "<p class=\"hidecss\"><a href=\"\#inner\">" . gettext("Skip Site Navigation")."</a></p>\n";
-    $txt .= "<div id=\"navbar3\">\n<ul>".
-	"<li><a href=\"$HOME/intro/about\">".gettext( "About&nbsp;Debian" )."</a></li>\n".
-	"<li><a href=\"$HOME/News/\">".gettext( "News" )."</a></li>\n".
-	"<li><a href=\"$HOME/distrib/\">".gettext( "Getting&nbsp;Debian" )."</a></li>\n".
-	"<li><a href=\"$HOME/support\">".gettext( "Support" )."</a></li>\n".
-	"<li><a href=\"$HOME/devel/\">".gettext( "Development" )."</a></li>\n".
-	"<li><a href=\"$HOME/sitemap\">".gettext( "Site map" )."</a></li>\n".
-	"<li><a href=\"http://search.debian.org/\">".gettext( "Search" )."</a></li>\n";
-    $txt .= "</ul>\n";
     $txt .= <<ENDNAV;
 </div> <!-- end navbar -->
 </div> <!-- end header -->
@@ -429,15 +435,16 @@ sub trailer {
 	$langs.
 	"\n<hr class=\"hidecss\">\n" .
 	"<p$bl_class>".
-	sprintf( gettext( "Back to: <a href=\"%s/\">Debian Project homepage</a> || <a href=\"%s/\">Packages search page</a>" ), $HOME, $ROOT ).
+	sprintf( gettext( "Back to: <a href=\"%s/\">Ubuntu homepage</a> || <a href=\"%s/\">Packages search page</a>" ), $HOME, $ROOT ).
 	"</p>\n<hr class=\"hidecss\">\n".
 	"<div id=\"fineprint\" class=\"bordertop\"><p>".
-	sprintf( gettext( "To report a problem with the web site, e-mail <a href=\"mailto:%s\">%s</a>. For other contact information, see the Debian <a href=\"%s/contact\">contact page</a>." ), $CONTACT_MAIL, $CONTACT_MAIL, $HOME).
+	sprintf( gettext( "To report a problem with the web site, e-mail <a href=\"mailto:%s\">%s</a>. For other support information, see the Ubuntu <a href=\"%s/support\">support page</a>." ), $CONTACT_MAIL, $CONTACT_MAIL, $HOME).
 	"</p>\n".
 	"<p>". gettext( "Last Modified: " ). "LAST_MODIFIED_DATE".
 	"<br>\n".
-	sprintf( gettext( "Copyright &copy; 1997-2005 <a href=\"http://www.spi-inc.org\">SPI</a>; See <a href=\"%s/license\">license terms</a>." ), "$HOME/" )."<br>\n".
-	gettext( "Debian is a registered trademark of Software in the Public Interest, Inc." ).
+#	sprintf( gettext( "Copyright &copy; 1997-2005 <a href=\"http://www.spi-inc.org\">SPI</a>; See <a href=\"%s/license\">license terms</a>." ), "$HOME/" )."<br>\n".
+#	gettext( "Debian is a registered trademark of Software in the Public Interest, Inc." ).
+	gettext( "Ubuntu is a registered trademark of Canonical Ltd." ).
 	"</div> <!-- end fineprint -->\n".
 	"</div> <!-- end footer -->\n".
 	"</div> <!-- end outer -->\n".
