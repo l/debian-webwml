@@ -65,6 +65,7 @@ return (
 		"The famous typesetting software and related programs." ],
 'text'		=> [ "Text Processing",
 		"Utilities to format and print text documents." ],
+'translations'  => [ "Translations", "Translation packages and language support meta packages." ],
 'utils'		=> [ "Utilities",
 		"Utilities for file/disk manipulation, backup and archive tools, system monitoring, input systems, etc." ],
 'virtual'	=> [ "Virtual packages",
