@@ -113,7 +113,7 @@ tie %{$db{section}}, 'DB_File', $config{sections}, O_RDONLY
     or die "Error while loading sections database $config{sections}: $!";
 
 sub norm_section {
-    my $section = shift;
+    my $section = shift || '';
 
     $section =~ s,^(non-free|contrib)/,,;
     $section =~ s,^non-US.*$,non-US,,;
@@ -130,23 +130,23 @@ foreach my $lang ( @langs ) {
     my $title = sprintf( gettext( "New Packages in \"%s\"" ), 
 			 $config{component} );
     my $page = header( title => $title,
-		       title_keywords => "debian, unstable, new packages, $config{component}",
+		       title_keywords => "ubuntu, breezy, new packages, $config{component}",
 		       meta => "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS\" href=\"newpkg_$config{component}.$lang.rdf\">",
 		       lang => $lang,
 		       print_title_below => 1 );
     my ( $rss_link, $rss_description, $rss_date );
     if ($config{component} eq 'main') {
 	$page .= "<p>"
-	    . gettext ( "The following packages were added to the unstable Debian archive during the last 7 days." )."</p>"
+	    . sprintf( gettext ( "The following packages were added to the %s Ubuntu archive during the last 7 days." ), 'breezy' )
 	    . "<p>".sprintf( gettext ( "This information is also available as an <a href=\"newpkg_%s.%s.rdf\">RSS feed</a>." ), 'main', $lang )
 	    ." <a href=\"newpkg_main.$lang.rdf\"><img src=\"http://planet.debian.org/rss10.png\" alt=\"[RSS 1.0 Feed]\"></a></p>";
-	$rss_description = gettext ( "Packages that were added to the unstable Debian archive during the last 7 days." );
+	$rss_description = sprintf( gettext ( "Packages that were added to the %s Ubuntu archive during the last 7 days." ), 'breezy' );
     } else {
 	$page .= "<p>"
-	    . sprintf ( gettext ( "The following packages were added to the \"%s\" component next to the Debian archive during the last 7 days." ), $config{component} )."</p>"
+	    . sprintf ( gettext ( "The following packages were added to the \"%s\" component next to the Ubuntu main archive during the last 7 days." ), $config{component} )
 	    . "<p>".sprintf( gettext ( "This information is also available as an <a href=\"newpkg_%s.%s.rdf\">RSS feed</a>." ), $config{component}, $lang )
 	    ." <a href=\"newpkg_$config{component}.$lang.rdf\"><img src=\"http://planet.debian.org/rss10.png\" alt=\"[RSS 1.0 Feed]\"></a></p>";
-	$rss_description = sprintf( gettext ( "Packages that were added to the \"%s\" component next to the unstable Debian archive during the last 7 days." ),  $config{component} );
+	$rss_description = sprintf( gettext ( "Packages that were added to the \"%s\" component next to the Ubuntu main archive during the last 7 days." ),  $config{component} );
     }
     $page .= "\n<ul>\n" if @newpkg;
     
@@ -156,15 +156,14 @@ foreach my $lang ( @langs ) {
     my $rss_time = strftime ("%Y-%m-%dT%H:%M+00:00", @date);
 
     my $rss = new XML::RSS (version => '1.0');
-    $rss_link = "http://packages.debian.org/unstable/$fname";
+    $rss_link = "http://packages.ubuntu.com/breezy/$fname";
     $rss->channel(
 		  title        => "New Debian Packages",
 		  link         => $rss_link,
 		  description  => $rss_description,
 		  dc => {
 		      date       => $rss_time,
-		      publisher  => 'debian-www@lists.debian.org',
-		      rights     => 'Copyright '.($date[5]+1900).', SPI Inc.',
+		      publisher  => 'frank@lichtenheld.de',
 		      language   => $lang,
 		  },
 		  syn => {
@@ -174,21 +173,22 @@ foreach my $lang ( @langs ) {
 		  } );
     
     foreach my $pkg (sort @newpkg) {
+    	my $section = $db{section}{$pkg} || 'unknown';
 	$page .= sprintf ("<li><a href=\"%s/%s\">%s</a>\n    -- %s",
-			  norm_section($db{section}{$pkg}), $pkg, $pkg,
-			  $db{description}{$pkg});
+			  norm_section($section), $pkg, $pkg,
+			  $db{description}{$pkg} || '');
 	$rss->add_item(
 		       title       => $pkg,
-		       link        => "http://packages.debian.org/unstable/$db{section}{$pkg}/$pkg",
+		       link        => "http://packages.ubuntu.com/breezy/$section/$pkg",
 		       description => $db{description}{$pkg},
 		       dc => {
-			   subject  => $db{section}{$pkg},
+			   subject  => $section,
 		       } );
     }
     $page .= "\n</ul>\n" if @newpkg;
        
     my $clist = '';
-    foreach my $c (('main','contrib','non-free')) {
+    foreach my $c (('main','universe','multiverse','restricted')) {
 	$clist .= ", " if ($clist);
 	$clist .= $config{component} eq $c ? $c : sprintf ("<a href=\"newpkg_%s\">%s</a>", $c, $c);
     }
