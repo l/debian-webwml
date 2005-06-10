@@ -26,10 +26,10 @@ use Packages::Search qw( :all );
 use Packages::HTML ();
 
 my $thisscript = "search_packages.pl";
-my $HOME = "http://www.debian.org";
+my $HOME = "http://www.ubuntulinux.org";
 my $ROOT = "";
-my $SEARCHPAGE = "http://packages.debian.org/";
-my @DISTS = qw( oldstable stable testing unstable experimental );
+my $SEARCHPAGE = "/";
+my @DISTS = qw( warty hoary breezy );
 
 $ENV{PATH} = "/bin:/usr/bin";
 
@@ -43,7 +43,7 @@ my $input = new CGI;
 # exit;
 
 my %params_def = ( keywords => { default => undef, match => '^\s*([-+\@\w\/.:]+)\s*$' },
-		   version => { default => 'stable', match => '^(\w+)$',
+		   version => { default => 'hoary', match => '^(\w+)$',
 				replace => { all => '*' } },
 		   case => { default => 'insensitive', match => '^(\w+)$' },
 		   subword => { default => 0, match => '^(\w+)$' },
@@ -105,7 +105,7 @@ my $arch_enc = encode_entities $arch_param;
 if ($format eq 'html') {
 print Packages::HTML::header( title => 'Package Search Results' ,
 			      lang => 'en',
-			      title_tag => 'Debian Package Search Results',
+			      title_tag => 'Package Search Results',
 			      print_title_above => 1,
 			      print_search_field => 'packages',
 			      search_field_values => { 
@@ -272,7 +272,7 @@ if (!@results) {
 		print "<p>You have searched only for words exactly matching your keywords. You can try to search <a href=\"$thisscript?subword=1&amp;searchon=$searchon&amp;version=$version_param&amp;case=$case&amp;release=$releases_param&amp;keywords=$keyword_esc&amp;arch=$arch_param\">allowing subword matching</a>.</p>";
 	    }
 	}
-	print "<p>".( $printed ? "Or you" : "You" )." can try a different search on the <a href=\"http://packages.debian.org/#search_packages\">Packages search page</a>.</p>";
+	print "<p>".( $printed ? "Or you" : "You" )." can try a different search on the <a href=\"http://packages.ubuntu.com/#search_packages\">Packages search page</a>.</p>";
 	
 	&printfooter;
     }
@@ -286,6 +286,7 @@ unless ($search_on_sources) {
     foreach my $line (@results) {
 	@colon = split (/:/, $line);
 	($pkg_t, $section, $ver, $arch, $foo) = split (/ /, $#colon >1 ? $colon[1].":".$colon[2]:$colon[1], 5);
+	$section =~ s,^(universe|multiverse|restricted)/,,;
 	$section =~ s,^(non-free|contrib)/,,;
 	$section =~ s,^non-US.*$,non-US,,;
 	my ($dist,$part,undef) = $colon[0] =~ m,.*/([^/]+)/([^/]+)/Packages-([^\.]+)\.,; #$1=stable, $2=main, $3=alpha
@@ -359,6 +360,7 @@ unless ($search_on_sources) {
 	chomp($line);
 	@colon = split (/:/, $line);
 	($package, $section, $ver, $binaries) = split (/ /, $#colon >1 ? $colon[1].":".$colon[2]:$colon[1], 4);
+	$section =~ s,^(universe|multiverse|restricted)/,,;
 	$section =~ s,^(non-free|contrib)/,,;
 	$section =~ s,^non-US.*$,non-US,,;
 	$colon[0] =~ m,.*/([^/]+)/([^/]+)/Sources\.,; #$1=stable, $2=main
@@ -503,7 +505,6 @@ print <<END;
 
 <hr class="hidecss">
 <p style="text-align:right;font-size:small;font-stlye:italic"><a href="$SEARCHPAGE">Packages search page</a></p>
-
 </div>
 END
 

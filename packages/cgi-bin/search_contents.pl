@@ -23,7 +23,7 @@ use Packages::Search qw( :all );
 use Packages::HTML ();
 
 my $thisscript = "search_contents.pl";
-my $HOME = "http://www.debian.org";
+my $HOME = "http://www.ubuntulinux.org";
 
 $ENV{PATH} = "/bin:/usr/bin";
 
@@ -38,7 +38,7 @@ print $input->header;
 
 
 my %params_def = ( word => { default => undef, match => '^\s*([-+\@\w\/.:]+)\s*$' },
-		   version => { default => 'stable', match => '^(\w+)$' },
+		   version => { default => 'hoary', match => '^(\w+)$' },
 		   case => { default => 'insensitive', match => '^(\w+)$' },
 		   searchmode => { default => "" },
 		   searchon => { default => 'all', match => '^(\w+)$' },
@@ -67,7 +67,7 @@ my $arch_enc = encode_entities $arch;
 
 print Packages::HTML::header( title => 'Package Contents Search Results' ,
 			      lang => 'en',
-			      title_tag => 'Debian package contents search results',
+			      title_tag => 'Package contents search results',
 			      print_title_above => 1,
 			      print_search_field => 'contents',
 			      search_field_values => { 
@@ -93,10 +93,6 @@ close (C);
 
 my $cdir = $topdir . "/files/contents";
 my $file = "$cdir/$version/Contents-$arch";
-my $file_nonus = "";
-if ($version eq 'oldstable') {
-    $file_nonus = "$cdir/$version/Contents-$arch.non-US";
-}
 
 # The keyword needs to be modified for the actual search, but left alone
 # for future reference, so we create a different variable for searching
@@ -141,7 +137,7 @@ if ($searchmode eq "filelist") {
     }
 }
 
-my $command = $grep." ".$file." ".$file_nonus;
+my $command = $grep." ".$file;
 #print $command."<br>\n"; # just for debugging
 
 my @results = qx( $command );
@@ -235,10 +231,13 @@ for (my $i = 0; $i < $results_per_page; $i++) {
 	  my $part = "";
 	  $part = "contrib" if $p =~ s,non-US/contrib,non-US,go;
 	  $part = "non-free" if $p =~ s,non-US/non-free,non-US,go;
-	  $part = "non-free" if $p =~ s,non-free/(.+)$,$1,g;
-	  $part = "contrib" if $p =~ s,contrib/(.+)$,$1,g;
+	  $p =~ s,contrib/(.+)$,$1,g;
+	  $p =~ s,non-free/(.+)$,$1,g;
+	  $part = "universe" if $p =~ s,universe/(.+)$,$1,g;
+	  $part = "multiverse" if $p =~ s,multiverse/(.+)$,$1,g;
+	  $part = "restricted" if $p =~ s,restricted/(.+)$,$1,g;
 	  $list .= "," if ($list);
-	  $list .= "<a href=\"http://packages.debian.org/$version/$p\">$p</a>";
+	  $list .= "<a href=\"/$version/$p\">$p</a>";
 	  $list .= " [<span style=\"color:red\">$part</span>]" if $part;
       }
       $line{$i} =~ s,(\S*\s*)$,$list,;
@@ -275,7 +274,7 @@ sub printfooter {
     }
 
     print <<END;
-<p style="text-align:right;font-size:small;font-style:italic"><a href="http://packages.debian.org/">Packages search page</a></p>
+<p style="text-align:right;font-size:small;font-style:italic"><a href="/">Packages search page</a></p>
 
 </div>
 END
