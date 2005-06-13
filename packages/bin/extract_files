@@ -29,13 +29,13 @@ use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin";
 
 use Getopt::Long;
-use HTML::TextToHTML;
 use File::Temp qw( tempdir );
 use File::Path;
 use File::Copy;
 use File::Basename;
 use Digest::SHA1;
 use Parse::DebControl;
+use Parse::DebianChangelog;
 use Cwd;
 use Fcntl qw(:DEFAULT :flock);
 
@@ -48,7 +48,6 @@ my $TEMPDIR = tempdir( CLEANUP => 1 );
 
 my $directory = cwd()."/pool";
 my $target = cwd()."/extracted_files";
-my $link_dict = "$FindBin::Bin/../etc/link.dict";
 my ( $verbose, $version, $help, $debug, $force );
 
 my %opthash = (
@@ -56,7 +55,6 @@ my %opthash = (
 	       'force|f' => \$force,
 	       'directory|d=s' => \$directory,
 	       'target|t=s' => \$target,
-	       'link-dict|l=s' => \$link_dict,
 	       'version' => \$version,
 	       'debug' => \$debug,
 	       'help' => \$help,
@@ -70,9 +68,6 @@ GetOptions(%opthash) or do_error( "couldn't parse commandline parameters" );
 
 $verbose ||= $debug;
 $directory =~ s,/+$,,o;
-my $txt2html = new HTML::TextToHTML(
-				    links_dictionaries => [ $link_dict ],
-				    );
 
 ##################################################
 # OUTPUT/LOGGING
@@ -191,10 +186,10 @@ sub pkg_pool_directory {
 # in case someone depends on the naming
     if ($name =~ /^(lib.)/o) {
 #	$dir .= "$1/$name/${name}_$version";
-	$dir .= "$1/$name/".basename($dsc, '.dsc');
+	$dir .= "$1/$name/".basename($dscname, '.dsc');
     } else {
 #	$dir .= substr($name,0,1)."/$name/${name}_$version";
-	$dir .= substr($name,0,1)."/$name/".basename($dsc, '.dsc');
+	$dir .= substr($name,0,1)."/$name/".basename($dscname, '.dsc');
     }
 
     return $dir;
@@ -316,10 +311,8 @@ sub extract_changelog_to_pkgpool {
     }
     
     add_log( $log, "create enhanced HTML version" );
-    $txt2html->txt2html( infile => [ "$source_dir/debian/changelog" ],
-			 outfile => "$target_dir/changelog.html",
-			 title => "Debian Changelog -- $pkg_data->{src_name} $pkg_data->{src_version}"
-			 );
+    my $chg = Parse::DebianChangelog->init( infile => "$source_dir/debian/changelog" );
+    $chg->html_out( outfile => "$target_dir/changelog.html" );
 
 }
 
