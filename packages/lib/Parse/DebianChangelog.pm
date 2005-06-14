@@ -321,7 +321,7 @@ sub html_out {
 	$entry->{Maintainer} ||= 'unkown';
 	$entry->{Date} ||= 'unkown';
 	push @{$navigation{$year}}, $cgi->a({-href=>"#version$entry->{Version}",
-					     -title=>"$entry->{Maintainer} $entry->{Date}"},
+					     -title=>encode_entities("$entry->{Maintainer} $entry->{Date}",'<>&"')},
 					    $entry->{Version});
     }
     print $fh $cgi->start_ul( { -class=>'outline' } );
@@ -364,7 +364,7 @@ sub html_out {
 			    $cgi->span( { -class=>$entry->{Urgency} },
 					$entry->{Urgency} ) );
 	
-	my $text = encode_entities( $entry->{Changes} ) || "";
+	my $text = encode_entities( $entry->{Changes}, '<>&"' ) || "";
 	$text=~ s|&lt;URL:([-\w\.\/:~_\@]+):([a-zA-Z0-9\'() ]+)&gt;
 	         |$cgi->a({ -href=>$1 }, $2)
 		 |xego;
@@ -409,7 +409,7 @@ sub html_out {
 
 	print $fh $cgi->pre($text);
 
-	my $maint = encode_entities( $entry->{Maintainer} );
+	my $maint = encode_entities( $entry->{Maintainer}, '<>&"' );
 	$maint =~ s|[a-zA-Z0-9_\+\-\.]+\@([a-zA-Z0-9][\w\.+\-]+\.[a-zA-Z]{2,})
 	           |$cgi->a({ -href=>"http://qa.debian.org/developer.php?login=$&" }, $&)
 		   |xego;
@@ -423,7 +423,7 @@ sub html_out {
 	print $fh $cgi->h2({ -class=>'year_header', -id=>'oldformat' },
 			   'Old changelog format(s), not parsed' );
 	print $fh $cgi->pre({ -class=>'oldformat' },
-			    encode_entities( $self->{oldformat} ) );
+			    encode_entities( $self->{oldformat}, '<>&"' ) );
     }
     print $fh $cgi->end_div; # content
     
