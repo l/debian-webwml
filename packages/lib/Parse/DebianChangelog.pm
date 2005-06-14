@@ -133,6 +133,17 @@ sub parse {
 	    }
 	    $expect= 'start of change data';
 	    $blanklines = 0;
+	} elsif (m/^Local variables:/) {
+	    last; # skip Emacs variables at end of file
+	} elsif (m/^\# /) {
+	    next; # skip comments, even that's not supported, should catch
+	          # vim stuff, too
+	} elsif (m/^(\w+\s+\w+\s+\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}\s+\d{4})\s+(.*)\s+<(.*)>/) {
+	    # save entries on old changelog format verbatim
+	    # we assume the rest of the file will be in old format once we
+	    # hit it for the first time
+	    $self->{oldformat} = "$_\n";
+	    $self->{oldformat} .= join "", <$fh>;
 	} elsif (m/^\S/) {
 	    warn("$file: badly formatted heading line");
 	} elsif (m/^ \-\- (.*) <(.*)>  ((\w+\,\s*)?\d{1,2}\s+\w+\s+\d{4}\s+\d{1,2}:\d\d:\d\d\s+[-+]\d{4}(\s+\([^\\\(\)]\))?)$/) {
@@ -250,8 +261,11 @@ sub html_out {
     print $fh $cgi->start_ul( { -class=>'outline' } );
     foreach my $y (reverse sort keys %navigation) {
 	print $fh $cgi->li(
-	    $cgi->a({ -href=>"#year$y" },$y).": ".
-	    $cgi->ul( $cgi->li( $navigation{$y} ) ) );
+			   $cgi->a({ -href=>"#year$y" },$y).": ".
+			   $cgi->ul( $cgi->li( $navigation{$y} ) ) );
+    }
+    if ($self->{oldformat}) {
+	print $fh $cgi->li($cgi->a({ -href=>'#oldformat' }, 'old format'));
     }
     print $fh $cgi->end_ul;
 	
@@ -333,6 +347,12 @@ sub html_out {
 	print $fh $cgi->p( { -class=>'trailer' }, "  -- $maint $entry->{Date}" );
 
 
+    }
+    if ($self->{oldformat}) {
+	print $fh $cgi->h2({ -class=>'year_header', -id=>'oldformat' },
+			   'Old changelog format, not parsed' );
+	print $fh $cgi->pre({ -class=>'oldformat' },
+			    encode_entities( $self->{oldformat} ) );
     }
     print $fh $cgi->end_div; # content
     
