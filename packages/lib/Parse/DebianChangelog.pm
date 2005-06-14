@@ -96,27 +96,30 @@ sub parse {
 	s/\s*\n$//;
 #	printf(STDERR "%-39.39s %-39.39s\n",$expect,$_);
 	if (m/^(\w[-+0-9a-z.]*) \(([^\(\) \t]+)\)((\s+[-0-9a-z]+)+)\;/i) {
-	    if ($expect eq 'first heading'
-		|| $expect eq 'next heading or eof') {
-		if (%entry) {
-		    my @closes;
-		    while ($entry{'Changes'} =~ /closes:\s*(?:bug)?\#?\s?\d+(?:,\s*(?:bug)?\#?\s?\d+)*/ig) {
-			push(@closes, $& =~ /\#?\s?(\d+)/g);
-		    }
-		    $entry{'Closes'} = [ sort { $a <=> $b } @closes ];
-
-#		    print STDERR, Dumper(%entry);
-		    push @{$self->{data}}, { %entry };
-		    %entry = ();
+	    unless ($expect eq 'first heading'
+		    || $expect eq 'next heading or eof') {
+		warn("$file: found start of entry where expected $expect");
+		$entry{ERROR} = "found start of entry where expected $expect";
+	    }
+	    if (%entry) {
+		my @closes;
+		while ($entry{'Changes'} && ($entry{'Changes'} =~ /closes:\s*(?:bug)?\#?\s?\d+(?:,\s*(?:bug)?\#?\s?\d+)*/ig)) {
+		    push(@closes, $& =~ /\#?\s?(\d+)/g);
 		}
+		$entry{'Closes'} = [ sort { $a <=> $b } @closes ];
+		
+#		    print STDERR, Dumper(%entry);
+		push @{$self->{data}}, { %entry };
+		%entry = ();
+	    }
+	    {
 		$entry{'Source'} = $1;
 		$entry{'Version'} = $2;
 		($entry{'Distribution'} = $3) =~ s/^\s+//;
-	    } else {
-		warn("$file: found start of entry where expected $expect");
 	    }
 	    (my $rhs = $POSTMATCH) =~ s/^\s+//;
 	    my %kvdone;
+#	    print STDERR "RHS: $rhs\n";
 	    for my $kv (split(/\s*,\s*/,$rhs)) {
 		$kv =~ m/^([-0-9a-z]+)\=\s*(.*\S)$/i ||
 		    warn("$file: bad key-value after \`;': \`$kv'");
@@ -135,10 +138,14 @@ sub parse {
 	    $blanklines = 0;
 	} elsif (m/^Local variables:/) {
 	    last; # skip Emacs variables at end of file
+	} elsif (m/^vim:/) {
+	    last; # skip vim variables at end of file
 	} elsif (m/^\# /) {
 	    next; # skip comments, even that's not supported, should catch
 	          # vim stuff, too
-	} elsif (m/^(\w+\s+\w+\s+\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}\s+\d{4})\s+(.*)\s+<(.*)>/) {
+	} elsif (m/^(\w+\s+\w+\s+\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}\s+\d{4})\s+(.*)\s+<(.*)>/
+		 || m/^(\w[-+0-9a-z.]*) \(([^\(\) \t]+)\)\;/i
+		 || m/^(\w+) (\S+) Debian (\S+)/i) {
 	    # save entries on old changelog format verbatim
 	    # we assume the rest of the file will be in old format once we
 	    # hit it for the first time
@@ -158,7 +165,25 @@ sub parse {
 	} elsif (m/^\s{2,}(\S)/) {
 	    $expect eq 'start of change data'
 		|| $expect eq 'more change data or trailer'
-		|| warn("$file: found change data where expected $expect");
+		|| do {
+		    warn("$file: found change data where expected $expect");
+		    if (($expect eq 'next heading or eof')
+			&& %entry) {
+			# lets assume we have missed the actual header line
+			my @closes;
+			while ($entry{'Changes'} && ($entry{'Changes'} =~ /closes:\s*(?:bug)?\#?\s?\d+(?:,\s*(?:bug)?\#?\s?\d+)*/ig)) {
+			    push(@closes, $& =~ /\#?\s?(\d+)/g);
+			}
+			$entry{'Closes'} = [ sort { $a <=> $b } @closes ];
+			
+#		    print STDERR, Dumper(%entry);
+			push @{$self->{data}}, { %entry };
+			%entry = ();
+			$entry{Source} = $entry{Version} =
+			    $entry{Distribution} = $entry{Urgency} = 'unkown';
+			$entry{ERROR} = "$file: found change data where expected $expect";
+		    }
+		};
 	    $entry{'Changes'} .= (" \n" x $blanklines)." $_\n";
 	    if (!$entry{'Items'} || ($1 eq '*')) {
 		$entry{'Items'} ||= [];
@@ -176,9 +201,29 @@ sub parse {
 	    $blanklines++;
 	} else {
 	    warn("$file: unrecognised line");
+	    ($expect eq 'start of change data'
+		|| $expect eq 'more change data or trailer')
+		&& do {
+		    # lets assume change data if we expected it
+		    $entry{'Changes'} .= (" \n" x $blanklines)." $_\n";
+		    if (!$entry{'Items'}) {
+			$entry{'Items'} ||= [];
+			push @{$entry{'Items'}}, "$_\n";
+		    } else {
+			$entry{'Items'}[-1] .= (" \n" x $blanklines)." $_\n";
+		    }
+		    $blanklines = 0;
+		    $expect = 'more change data or trailer';
+		    $entry{ERROR} = "$file: unrecognised line";
+		};
 	}
     }
 
+    $expect eq 'next heading or eof'
+	|| do {
+	    warn "$file: found eof where expected $expect";
+	    $entry{ERROR} = "found start of entry where expected $expect";
+	};
     if (%entry) {
 	my @closes;
 	while ($entry{'Changes'} =~ /closes:\s*(?:bug)?\#?\s?\d+(?:,\s*(?:bug)?\#?\s?\d+)*/ig) {
@@ -189,8 +234,6 @@ sub parse {
 	push @{$self->{data}}, \%entry;
     }
     
-    $expect eq 'next heading or eof'
-	|| warn "$file: found eof where expected $expect";
     close $fh or return undef;
 
 #    use Data::Dumper;
@@ -250,10 +293,17 @@ sub html_out {
 			|| "Debian Changelog $data->[0]{Source} ($data->[0]{Version})" );
 
     my %navigation;
+    my $last_year;
     foreach my $entry (@$data) {
-	my $year = (gmtime($entry->{Parsed_Date}))[5] + 1900;
+	my $year = $last_year; # try to deal gracefully with unparsable dates
+	if ($entry->{Parsed_Date}) {
+	    $year = (gmtime($entry->{Parsed_Date}))[5] + 1900;
+	    $last_year = $year;
+	}
 	
 	$navigation{$year} ||= [];
+	$entry->{Maintainer} ||= 'unkown';
+	$entry->{Date} ||= 'unkown';
 	push @{$navigation{$year}}, $cgi->a({-href=>"#version$entry->{Version}",
 					     -title=>"$entry->{Maintainer} $entry->{Date}"},
 					    $entry->{Version});
@@ -269,10 +319,13 @@ sub html_out {
     }
     print $fh $cgi->end_ul;
 	
-    my $last_year;
     print $fh $cgi->start_div({ -id=>'content'});
+    $last_year = undef;
     foreach my $entry (@$data) {
-	my $year = (gmtime($entry->{Parsed_Date}))[5] + 1900;
+	my $year = $last_year; # try to deal gracefully with unparsable dates
+	if ($entry->{Parsed_Date}) {
+	    $year = (gmtime($entry->{Parsed_Date}))[5] + 1900;
+	}
 	
 	if (!$last_year || ($year < $last_year)) {
 	    print $fh $cgi->h2( { -class=>'year_header',
@@ -294,7 +347,7 @@ sub html_out {
 			    $cgi->span( { -class=>$entry->{Urgency} },
 					$entry->{Urgency} ) );
 	
-	my $text = encode_entities( $entry->{Changes} );
+	my $text = encode_entities( $entry->{Changes} ) || "";
 	$text=~ s|&lt;URL:([-\w\.\/:~_\@]+):([a-zA-Z0-9\'() ]+)&gt;
 	         |$cgi->a({ -href=>$1 }, $2)
 		 |xego;
@@ -345,12 +398,13 @@ sub html_out {
 		   |xego;
 
 	print $fh $cgi->p( { -class=>'trailer' }, "  -- $maint $entry->{Date}" );
-
+	print $fh $cgi->p( { -class=>'parse_error' },
+			   "(There has been a parse error in the entry above, if some values don't make sense please check the original changelog)" ) if $entry->{ERROR};
 
     }
     if ($self->{oldformat}) {
 	print $fh $cgi->h2({ -class=>'year_header', -id=>'oldformat' },
-			   'Old changelog format, not parsed' );
+			   'Old changelog format(s), not parsed' );
 	print $fh $cgi->pre({ -class=>'oldformat' },
 			    encode_entities( $self->{oldformat} ) );
     }
