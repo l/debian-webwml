@@ -152,10 +152,12 @@ sub parse {
 	    last; # skip Emacs variables at end of file
 	} elsif (m/^vim:/i) {
 	    last; # skip vim variables at end of file
+	} elsif (m/^\$\w+:.*\$/) {
+	    next; # skip stuff that look like a CVS keyword
 	} elsif (m/^\# /) {
 	    next; # skip comments, even that's not supported, should catch
 	          # vim stuff, too
-	} elsif (m/^(\w+\s+\w+\s+\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}\s+[\w\s]*\d{4})\s+(.*)\s+<(.*)>/
+	} elsif (m/^(\w+\s+\w+\s+\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}\s+[\w\s]*\d{4})\s+(.*)\s+(<|\()(.*)(\)|>)/
 		 || m/^(\w[-+0-9a-z.]*) \(([^\(\) \t]+)\)\;?/i
 		 || m/^(\w+) (\S+) Debian (\S+)/i
 		 || m/^(?:\d+:)?[\w.+~-]+:?$/) {
