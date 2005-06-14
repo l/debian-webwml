@@ -74,6 +74,17 @@ sub init {
     return $self;
 }
 
+sub do_warn {
+    my ($file, $line_nr, $error, $line) = @_;
+
+    $file = substr $file, 0, 15;
+    if ($line) {
+	warn "WARN: $file(l$NR): $error\nLINE: $line\n";
+    } else {
+	warn "WARN: $file(l$NR): $error\n";
+    }
+}
+
 sub parse {
     my ($self, $config) = @_;
 
@@ -98,7 +109,8 @@ sub parse {
 	if (m/^(\w[-+0-9a-z.]*) \(([^\(\) \t]+)\)((\s+[-0-9a-z]+)+)\;/i) {
 	    unless ($expect eq 'first heading'
 		    || $expect eq 'next heading or eof') {
-		warn("$file: found start of entry where expected $expect");
+		do_warn($file, $NR,
+			"found start of entry where expected $expect", "$_");
 		$entry{ERROR} = "found start of entry where expected $expect";
 	    }
 	    if (%entry) {
@@ -122,13 +134,13 @@ sub parse {
 #	    print STDERR "RHS: $rhs\n";
 	    for my $kv (split(/\s*,\s*/,$rhs)) {
 		$kv =~ m/^([-0-9a-z]+)\=\s*(.*\S)$/i ||
-		    warn("$file: bad key-value after \`;': \`$kv'");
+		    do_warn($file, $NR, "bad key-value after \`;': \`$kv'");
 		my $k = ucfirst $1;
 		my $v = $2;
-		$kvdone{$k}++ && warn("$file: repeated key-value $k");
+		$kvdone{$k}++ && do_warn($file, $NR, "repeated key-value $k");
 		if ($k eq 'Urgency') {
 		    $v =~ m/^([-0-9a-z]+)((\s+.*)?)$/i ||
-			warn("$file: badly formatted urgency value, at changelog ");
+			do_warn($file, $NR, "badly formatted urgency value, at changelog");
 		    $entry{'Urgency'} = lc($1).$2;
 		} else {
 		    $entry{$k} = $v;
@@ -144,29 +156,32 @@ sub parse {
 	    next; # skip comments, even that's not supported, should catch
 	          # vim stuff, too
 	} elsif (m/^(\w+\s+\w+\s+\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}\s+\d{4})\s+(.*)\s+<(.*)>/
-		 || m/^(\w[-+0-9a-z.]*) \(([^\(\) \t]+)\)\;/i
-		 || m/^(\w+) (\S+) Debian (\S+)/i) {
+		 || m/^(\w[-+0-9a-z.]*) \(([^\(\) \t]+)\)\;?/i
+		 || m/^(\w+) (\S+) Debian (\S+)/i
+		 || m/^[\w.+~-]+:$/) {
 	    # save entries on old changelog format verbatim
 	    # we assume the rest of the file will be in old format once we
 	    # hit it for the first time
 	    $self->{oldformat} = "$_\n";
 	    $self->{oldformat} .= join "", <$fh>;
 	} elsif (m/^\S/) {
-	    warn("$file: badly formatted heading line");
+	    do_warn($file, $NR, "badly formatted heading line", "$_");
 	} elsif (m/^ \-\- (.*) <(.*)>  ((\w+\,\s*)?\d{1,2}\s+\w+\s+\d{4}\s+\d{1,2}:\d\d:\d\d\s+[-+]\d{4}(\s+\([^\\\(\)]\))?)$/) {
 	    $expect eq 'more change data or trailer' ||
-		warn("$file: found trailer where expected $expect");
+		do_warn($file, $NR,
+			"found trailer where expected $expect", "$_");
 	    $entry{'Maintainer'} = "$1 <$2>" unless defined($entry{'Maintainer'});
 	    $entry{'Date'} = $3 unless defined($entry{'Date'});
-	    $entry{'Parsed_Date'} = str2time($3) or warn "$file: couldn't parse date $3";
+	    $entry{'Parsed_Date'} = str2time($3) or do_warn $file, $NR, "couldn't parse date $3";
 	    $expect = 'next heading or eof';
 	} elsif (m/^ \-\-/) {
-	    warn("$file: badly formatted trailer line");
+	    do_warn($file, $NR, "badly formatted trailer line", "$_");
 	} elsif (m/^\s{2,}(\S)/) {
 	    $expect eq 'start of change data'
 		|| $expect eq 'more change data or trailer'
 		|| do {
-		    warn("$file: found change data where expected $expect");
+		    do_warn($file, $NR,
+			    "found change data where expected $expect", "$_");
 		    if (($expect eq 'next heading or eof')
 			&& %entry) {
 			# lets assume we have missed the actual header line
@@ -197,10 +212,10 @@ sub parse {
 	    next if $expect eq 'start of change data'
 		|| $expect eq 'next heading or eof';
 	    $expect eq 'more change data or trailer'
-		|| warn("$file: found blank line where expected $expect");
+		|| do_warn($file, $NR, "found blank line where expected $expect");
 	    $blanklines++;
 	} else {
-	    warn("$file: unrecognised line");
+	    do_warn($file, $NR, "unrecognised line", "$_");
 	    ($expect eq 'start of change data'
 		|| $expect eq 'more change data or trailer')
 		&& do {
@@ -221,7 +236,7 @@ sub parse {
 
     $expect eq 'next heading or eof'
 	|| do {
-	    warn "$file: found eof where expected $expect";
+	    do_warn $file, $NR, "found eof where expected $expect";
 	    $entry{ERROR} = "found start of entry where expected $expect";
 	};
     if (%entry) {
@@ -301,6 +316,7 @@ sub html_out {
 	    $last_year = $year;
 	}
 	
+	$year ||= (($entry->{Date} =~ /\s(\d{4})\s/) ? $1 : (gmtime)[5] + 1900);
 	$navigation{$year} ||= [];
 	$entry->{Maintainer} ||= 'unkown';
 	$entry->{Date} ||= 'unkown';
@@ -326,7 +342,8 @@ sub html_out {
 	if ($entry->{Parsed_Date}) {
 	    $year = (gmtime($entry->{Parsed_Date}))[5] + 1900;
 	}
-	
+	$year ||= (($entry->{Date} =~ /\s(\d{4})\s/) ? $1 : (gmtime)[5] + 1900);	
+
 	if (!$last_year || ($year < $last_year)) {
 	    print $fh $cgi->h2( { -class=>'year_header',
 				  -id=>"year$year" }, $year );
