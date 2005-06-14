@@ -1,0 +1,125 @@
+#use wml::debian::translation-check translation="1.7" maintainer="Simon Paillard"
+#use wml::debian::template title="Exemple d'audit automatisé&nbsp;: RATS"
+#use wml::debian::recent_list
+
+<p><a href="http://packages.debian.org/rats">RATS</a> est un scanner
+généraliste pour détecter des problèmes de sécurité potentiels dans de nombreux
+langages de programmation.</p>
+
+<h2>Utiliser RATS</h2>
+<p>Utiliser RATS est simple, cela se résume à l'invoquer avec le nom du
+répertoire à examiner. Chaque fichier source reconnu sera examiné. RATS
+comprend plusieurs langages de programmation&nbsp;: C, Perl, PHP et Python, et
+traitera tous les fichiers source reconnus.</p>
+<p>En plus de la liste du répertoire à examiner, il existe plusieurs options de
+ligne de commande qui sont décrites dans la page du manuel.</p>
+<p>Les options les plus utiles sont celles concernant la sortie, telles
+que&nbsp;:</p>
+<ul>
+<li>--warning &lt;niveau&gt; (règle le niveau de failles à rapporter)
+<ul>
+<li>1 inclue seulement les vulnérabilités à risque par défaut à de haut risque.</li>
+<li>2 inclue les vulnérabilité à risque moyen (niveau par défaut).</li>
+<li>3 inclue les vulnérabilités à risque faible.</li>
+</ul></li>
+<li>--xml  (sortie en XML)</li>
+<li>--html (sortie en HTML)</li>
+</ul>
+<p>En supposant que le <a href="test.c.html">fichier de test</a> situé dans le
+répertoire courant, sans autre fichier source nous pouvons invoquer le scanner
+par la commande suivante&nbsp;:</p>
+<pre>
+rats --warning 1 --html . &gt;sortie.html
+</pre>
+<p>Un fichier HTML contenant les résultats de l'examen sera produit, et pourra
+être chargé dans un navigateur.</p>
+
+<h2>Les résultats</h2>
+<p>Utiliser RATS sur notre <a href="test.c.html">code d'exemple</a> produit la
+sortie suivante&nbsp;:</p>
+<hr />
+<blockquote>
+  <b>Severity: High</b><br />
+  Issue: fixed size global buffer<br/>
+    Extra care should be taken to ensure that character arrays that are
+    allocated on the stack are used safely.  They are prime targets for
+    buffer overflow attacks.
+  <br/>
+<ul style="list-style-type: none;"><li>
+File: <b>./test.c</b><br/>Lines:
+10 11 12   </li></ul>
+  <b>Severity: High</b><br/>
+  Issue: strcpy<br/>
+    Check to be sure that argument 2 passed to this function call will not
+    copy more data than can be handled, resulting in a buffer overflow.
+  <br/>
+<ul style="list-style-type: none;"><li>
+File: <b>./test.c</b><br/>Lines:
+18   </li></ul>
+  <b>Severity: High</b><br/>
+  Issue: getenv<br/>
+    Environment variables are highly untrustable input. They may be of any length, and contain any data. Do not make any assumptions regarding content or length. If at all possible avoid using them, and if it is necessary, sanitize them and truncate them to a reasonable length.
+  <br/>
+<ul style="list-style-type: none;"><li>
+File: <b>./test.c</b><br/>Lines:
+22 24   </li></ul>
+  <b>Severity: High</b><br/>
+  Issue: sprintf<br/>
+    Check to be sure that the format string passed as argument 2 to this
+    function call does not come from an untrusted source that could have added
+    formatting characters that the code is not prepared to handle.
+    Additionally, the format string could contain `%s' without precision that
+    could result in a buffer overflow.
+  <br/>
+<ul style="list-style-type: none;"><li>
+File: <b>./test.c</b><br/>Lines:
+24   </li></ul>
+  <b>Severity: High</b><br/>
+  Issue: popen<br/>
+    Argument 1 to this function call should be checked to ensure that it does
+    not come from an untrusted source without first verifying that it contains
+    nothing dangerous.
+  <br/>
+<ul style="list-style-type: none;"><li>
+File: <b>./test.c</b><br/>Lines:
+33   </li></ul>
+  <b>Severity: High</b><br/>
+  Issue: printf<br/>
+    Check to be sure that the non-constant format string passed as argument 1
+    to this function call does not come from an untrusted source that could
+    have added formatting characters that the code is not prepared to handle.
+  <br/>
+<ul style="list-style-type: none;"><li>
+File: <b>./test.c</b><br/>Lines:
+42   </li></ul>
+Total lines analyzed: <b>49</b><br>
+Total time <b>0.001723</b> seconds<br>
+<b>28438</b> lines per second<br>
+</blockquote>
+<hr />
+<p>La sortie produite est plutôt volumineuse, bien que le code en lui-même soit
+très court. Cela montre un des reverts de l'examin automatique de code&nbsp;:
+le volume énorme des résultats produits.</p>
+
+<h2>Comprendre les résultats</h2>
+<p>La sortie produite est en fait constituée de la description de chacune des
+fonctions rencontrées, du numéro de la ligne où la faille a été détectée ainsi
+que d'une description du problème. (Puisque nous avons utilisé
+«&nbsp;--warning&nbsp;» pour restreindre la sortie aux fonctions à haut risque,
+nous avons quelque peu réduit la longueur de la sortie).</p>
+
+<p>Chacun des problèmes découverts devrait être examiné manuellement pour voir
+s'il y a vraiment un problème, ou si c'était un faux positif (ie. une fonction
+susceptible d'être mal utilisée mais pourtant utilisée correctement).</p>
+
+<p>Dans ce cas-là, nous pouvons voir que toutes les vulnérabilités de notre
+code ont été repérées, mais ce n'est pas vraiment clair sans parcourir le code
+avec un éditeur pour faire correspondre les lignes en question.</p>
+
+<p>Une omission importante est faite dans la sortie&nbsp;: en effet, celle-ci
+n'inclue pas les lignes concernées &ndash; un outil comme <a
+href="flawfinder">flawfinder</a> vous permet de les inclure.</p>
+
+<hr />
+<p><a href="..">Retour à la page du projet d'audit</a> | <a href="index">Retour
+à la page des exemples d'audit</a></p>
