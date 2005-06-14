@@ -38,6 +38,7 @@ use Parse::DebControl;
 use Parse::DebianChangelog;
 use Cwd;
 use Fcntl qw(:DEFAULT :flock);
+use Data::Dumper;
 
 use constant PKGPOOL => 1;
 use constant DIGESTPOOL => 2;
@@ -47,14 +48,17 @@ my $MAXWARN = 100;
 my $TEMPDIR = tempdir( CLEANUP => 1 );
 
 my $directory = cwd()."/pool";
+my $dumpfile = '';
 my $target = cwd()."/extracted_files";
-my ( $verbose, $version, $help, $debug, $force );
+my ( $verbose, $version, $help, $debug, $force, $use_dump );
 
 my %opthash = (
 	       'verbose|v' => \$verbose,
 	       'force|f' => \$force,
 	       'directory|d=s' => \$directory,
 	       'target|t=s' => \$target,
+	       'dumpfile=s' => \$dumpfile,
+	       'use_dump' => \$use_dump,
 	       'version' => \$version,
 	       'debug' => \$debug,
 	       'help' => \$help,
@@ -311,10 +315,10 @@ sub extract_changelog_to_pkgpool {
     }
     
     add_log( $log, "create enhanced HTML version" );
-    my $chg = Parse::DebianChangelog->init( infile => "$source_dir/debian/changelog" );
-    $chg->html_out( outfile => "$target_dir/changelog.html",
-		    style => "/changelogs.css",
-		    style_print => "/changelogs-print.css" );
+    my $chg = Parse::DebianChangelog->init( { infile => "$source_dir/debian/changelog" } );
+    $chg->html_out( { outfile => "$target_dir/changelog.html",
+		      style => "/changelogs.css",
+		      style_print => "/changelogs-print.css" } );
 
 }
 
@@ -546,9 +550,26 @@ sub read_sub {
 ##################################################
 # MAIN PROGRAM
 
-do_info( "collect information" );
-read_sub( $directory );
-do_info( "postprocess collected information" );
-merge_src_bin_packages( \%src_packages, \%bin_packages );
+if ($use_dump) {
+    do_info( "load information from dump file" );
+    open DUMP, '<', $dumpfile
+	or do_error( "couldn't open dump file $dumpfile: $!" );
+    my $info = join "", <DUMP>;
+    eval $info;
+    close DUMP or do_warning( "couldn't close dump file: $!" );    
+} else {
+    do_info( "collect information" );
+    read_sub( $directory );
+    do_info( "postprocess collected information" );
+    merge_src_bin_packages( \%src_packages, \%bin_packages );
+    if ($dumpfile) {
+	do_info( "dump backup of collected information" );
+	open DUMP, '>', $dumpfile
+	    or do_error( "couldn't open dump file $dumpfile: $!" );
+	print DUMP Data::Dumper->Dump( [ \%src_packages ],
+				       [ '*src_packages' ] );
+	close DUMP or do_warning( "couldn't close dump file: $!" );
+    }
+}
 do_info( "begin extracting files" );
 extract_from_all( \%src_packages );
