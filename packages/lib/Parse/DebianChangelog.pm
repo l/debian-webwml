@@ -158,7 +158,7 @@ sub parse {
 	} elsif (m/^(\w+\s+\w+\s+\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}\s+[\w\s]*\d{4})\s+(.*)\s+<(.*)>/
 		 || m/^(\w[-+0-9a-z.]*) \(([^\(\) \t]+)\)\;?/i
 		 || m/^(\w+) (\S+) Debian (\S+)/i
-		 || m/^[\w.+~-]+:$/) {
+		 || m/^(?:\d+:)?[\w.+~-]+:?$/) {
 	    # save entries on old changelog format verbatim
 	    # we assume the rest of the file will be in old format once we
 	    # hit it for the first time
