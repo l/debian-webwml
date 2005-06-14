@@ -113,19 +113,19 @@ sub parse {
 		$entry{'Version'} = $2;
 		($entry{'Distribution'} = $3) =~ s/^\s+//;
 	    } else {
-		warn("found start of entry where expected $expect");
+		warn("$file: found start of entry where expected $expect");
 	    }
 	    (my $rhs = $POSTMATCH) =~ s/^\s+//;
 	    my %kvdone;
 	    for my $kv (split(/\s*,\s*/,$rhs)) {
 		$kv =~ m/^([-0-9a-z]+)\=\s*(.*\S)$/i ||
-		    warn("bad key-value after \`;': \`$kv'");
+		    warn("$file: bad key-value after \`;': \`$kv'");
 		my $k = ucfirst $1;
 		my $v = $2;
-		$kvdone{$k}++ && warn("repeated key-value $k");
+		$kvdone{$k}++ && warn("$file: repeated key-value $k");
 		if ($k eq 'Urgency') {
 		    $v =~ m/^([-0-9a-z]+)((\s+.*)?)$/i ||
-			warn("badly formatted urgency value, at changelog ");
+			warn("$file: badly formatted urgency value, at changelog ");
 		    $entry{'Urgency'} = lc($1).$2;
 		} else {
 		    $entry{$k} = $v;
@@ -134,20 +134,20 @@ sub parse {
 	    $expect= 'start of change data';
 	    $blanklines = 0;
 	} elsif (m/^\S/) {
-	    warn("badly formatted heading line");
+	    warn("$file: badly formatted heading line");
 	} elsif (m/^ \-\- (.*) <(.*)>  ((\w+\,\s*)?\d{1,2}\s+\w+\s+\d{4}\s+\d{1,2}:\d\d:\d\d\s+[-+]\d{4}(\s+\([^\\\(\)]\))?)$/) {
 	    $expect eq 'more change data or trailer' ||
-		warn("found trailer where expected $expect");
+		warn("$file: found trailer where expected $expect");
 	    $entry{'Maintainer'} = "$1 <$2>" unless defined($entry{'Maintainer'});
 	    $entry{'Date'} = $3 unless defined($entry{'Date'});
-	    $entry{'Parsed_Date'} = str2time($3);
+	    $entry{'Parsed_Date'} = str2time($3) or warn "$file: couldn't parse date $3";
 	    $expect = 'next heading or eof';
 	} elsif (m/^ \-\-/) {
-	    warn("badly formatted trailer line");
+	    warn("$file: badly formatted trailer line");
 	} elsif (m/^\s{2,}(\S)/) {
 	    $expect eq 'start of change data'
 		|| $expect eq 'more change data or trailer'
-		|| warn("found change data where expected $expect");
+		|| warn("$file: found change data where expected $expect");
 	    $entry{'Changes'} .= (" \n" x $blanklines)." $_\n";
 	    if (!$entry{'Items'} || ($1 eq '*')) {
 		$entry{'Items'} ||= [];
@@ -161,10 +161,10 @@ sub parse {
 	    next if $expect eq 'start of change data'
 		|| $expect eq 'next heading or eof';
 	    $expect eq 'more change data or trailer'
-		|| warn("found blank line where expected $expect");
+		|| warn("$file: found blank line where expected $expect");
 	    $blanklines++;
 	} else {
-	    warn("unrecognised line");
+	    warn("$file: unrecognised line");
 	}
     }
 
@@ -179,7 +179,7 @@ sub parse {
     }
     
     $expect eq 'next heading or eof'
-	|| warn "found eof where expected $expect";
+	|| warn "$file: found eof where expected $expect";
     close $fh or return undef;
 
 #    use Data::Dumper;
