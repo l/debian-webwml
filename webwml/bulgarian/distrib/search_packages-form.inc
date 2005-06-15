@@ -1,6 +1,6 @@
 #use wml::debian::language_names
 #use wml::debian::common_tags
-#use wml::debian::translation-check translation="1.2"
+#use wml::debian::translation-check translation="1.3"
 
 <bind-gettext-domain domain="distrib" />
 
@@ -27,6 +27,7 @@
 <select name="version">
   <option value="unstable"><gettext domain="distrib">unstable</gettext></option>
   <option value="testing"><gettext domain="distrib">testing</gettext></option>
+  <option value="oldstable"><gettext domain="distrib">oldstable</gettext></option>
   <option value="stable" selected="selected"><gettext domain="distrib">stable</gettext></option>
   <option value="all"><gettext domain="distrib">any</gettext></option>
 </select>
