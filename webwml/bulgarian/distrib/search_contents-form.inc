@@ -1,6 +1,6 @@
 #use wml::debian::language_names
 #use wml::debian::common_tags
-#use wml::debian::translation-check translation="1.2"
+#use wml::debian::translation-check translation="1.5"
 
 <bind-gettext-domain domain="distrib" />
 
@@ -31,6 +31,7 @@
 </select>
 <label for="distro"><gettext domain="distrib">Дистрибуция</gettext>:</label>
 <select name="version" id="distro">
+<option value="oldstable"><gettext domain="distrib">oldstable</gettext></option>
   <option value="stable" selected="selected"><gettext domain="distrib">stable</gettext></option>
   <option value="testing"><gettext domain="distrib">testing</gettext></option>
   <option value="unstable"><gettext domain="distrib">unstable</gettext></option>
@@ -40,6 +41,7 @@
   <option value="i386" selected="selected"><gettext domain="distrib">Intel x86</gettext></option>
   <option value="m68k"><gettext domain="distrib">Motorola 680x0</gettext></option>
   <option value="alpha"><gettext domain="distrib">Alpha</gettext></option>
+  <option value="amd64"><gettext domain="distrib">AMD64</gettext></option>
   <option value="sparc"><gettext domain="distrib">SPARC</gettext></option>
   <option value="powerpc"><gettext domain="distrib">PowerPC</gettext></option>
   <option value="arm"><gettext domain="distrib">ARM</gettext></option>
