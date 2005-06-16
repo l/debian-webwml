@@ -90,7 +90,7 @@ my @volatile_european_sites = (
         "ftp.sk.debian.org/debian-volatile",
 			       );
 my @amd64_european_sites = (
-        "amd64.debian.net/debian-amd64/debian",
+        "amd64.debian.net/debian",
         "ftp.de.debian.org/debian-amd64/debian",
         "bach.hpc2n.umu.se/debian-amd64/debian",
         "bytekeeper.as28747.net/debian-amd64/debian",
