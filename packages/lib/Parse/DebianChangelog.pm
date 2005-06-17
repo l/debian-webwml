@@ -2,6 +2,7 @@
 # Parse::DebianChangelog
 # $Id$
 #
+# Copyright 1996 Ian Jackson
 # Copyright 2005 Frank Lichtenheld <frank@lichtenheld.de>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -34,7 +35,8 @@ Parse::DebianChangelog - parse Debian changelogs and output them in other format
     # the following is semantically equivalent
     my $chglog = Parse::DebianChangelog->init();
     $chglog->parse( { infile => 'debian/changelog' } );
-    $chglog->html_out( { config => 'changelog.html' } );
+    $chglog->html_out( { outfile => 'changelog.html' } );
+    $chglog->dpkg_out( { since => '1.0-1' } );
 
 
 =head1 DESCRIPTION
@@ -48,13 +50,10 @@ use warnings;
 
 use Fcntl qw( :flock );
 use English;
-use CGI qw( -no_xhtml -no_debug );
-use HTML::Entities;
-use URI::Escape;
 use Date::Parse;
 
 our $CLASSNAME = 'Parse::DebianChangelog';
-our $VERSION = 0.1;
+our $VERSION = 0.2;
 our $RCS_VERSION = '$Revision$';
 
 sub init {
@@ -74,15 +73,31 @@ sub init {
     return $self;
 }
 
-sub do_warn {
-    my ($file, $line_nr, $error, $line) = @_;
+sub reset_parse_errors {
+    my ($self) = @_;
 
-    $file = substr $file, 0, 15;
-    if ($line) {
-	warn "WARN: $file(l$NR): $error\nLINE: $line\n";
-    } else {
-	warn "WARN: $file(l$NR): $error\n";
+    $self->{errors}{parser} = [];
+}
+
+sub do_parse_error {
+    my ($self, $file, $line_nr, $error, $line) = @_;
+
+    push @{$self->{errors}{parser}}, [ @_ ];
+
+    $file = substr $file, 0, 20;
+    unless ($self->{config}{quiet}) {
+	if ($line) {
+	    warn "WARN: $file(l$NR): $error\nLINE: $line\n";
+	} else {
+	    warn "WARN: $file(l$NR): $error\n";
+	}
     }
+}
+
+sub get_parse_errors {
+    my ($self) = @_;
+
+    return [ $self->{errors}{parser} ];
 }
 
 sub parse {
@@ -92,6 +107,8 @@ sub parse {
 	$self->{config}{$c} = $config->{$c};
     }
     my $file = $self->{config}{infile} or return undef;
+
+    $self->reset_parse_errors;
 
     open my $fh, '<', $file or return undef;
     flock $fh, LOCK_SH or return undef;
@@ -109,7 +126,7 @@ sub parse {
 	if (m/^(\w[-+0-9a-z.]*) \(([^\(\) \t]+)\)((\s+[-0-9a-z]+)+)\;/i) {
 	    unless ($expect eq 'first heading'
 		    || $expect eq 'next heading or eof') {
-		do_warn($file, $NR,
+		$self->do_parse_error($file, $NR,
 			"found start of entry where expected $expect", "$_");
 		$entry{ERROR} = "found start of entry where expected $expect";
 	    }
@@ -127,6 +144,7 @@ sub parse {
 	    {
 		$entry{'Source'} = $1;
 		$entry{'Version'} = $2;
+		$entry{'Header'} = $_;
 		($entry{'Distribution'} = $3) =~ s/^\s+//;
 	    }
 	    (my $rhs = $POSTMATCH) =~ s/^\s+//;
@@ -134,16 +152,27 @@ sub parse {
 #	    print STDERR "RHS: $rhs\n";
 	    for my $kv (split(/\s*,\s*/,$rhs)) {
 		$kv =~ m/^([-0-9a-z]+)\=\s*(.*\S)$/i ||
-		    do_warn($file, $NR, "bad key-value after \`;': \`$kv'");
+		    $self->do_parse_error($file, $NR, "bad key-value after \`;': \`$kv'");
 		my $k = ucfirst $1;
 		my $v = $2;
-		$kvdone{$k}++ && do_warn($file, $NR, "repeated key-value $k");
+		$kvdone{$k}++ && $self->do_parse_error($file, $NR,
+						       "repeated key-value $k");
 		if ($k eq 'Urgency') {
 		    $v =~ m/^([-0-9a-z]+)((\s+.*)?)$/i ||
-			do_warn($file, $NR, "badly formatted urgency value, at changelog");
-		    $entry{'Urgency'} = lc($1).$2;
+			$self->do_parse_error($file, $NR,
+					      "badly formatted urgency value",
+					      $v);
+		    $entry{'Urgency'} = $1;
+		    $entry{'Urgency_LC'} = lc($1);
+		    $entry{'Urgency_Comment'} = $2;
+		} elsif ($k =~ m/^X[BCS]+-/i) {
+		    # Extensions - XB for putting in Binary,
+		    # XC for putting in Control, XS for putting in Source
+		    $entry{$k}= $v;
 		} else {
-		    $entry{$k} = $v;
+		    $self->do_parse_error($file, $NR,
+					  "unknown key-value key $k - copying to XS-$k");
+		    $entry{"XS-$k"} = $v;
 		}
 	    }
 	    $expect= 'start of change data';
@@ -167,22 +196,25 @@ sub parse {
 	    $self->{oldformat} = "$_\n";
 	    $self->{oldformat} .= join "", <$fh>;
 	} elsif (m/^\S/) {
-	    do_warn($file, $NR, "badly formatted heading line", "$_");
+	    $self->do_parse_error($file, $NR,
+				  "badly formatted heading line", "$_");
 	} elsif (m/^ \-\- (.*) <(.*)>  ((\w+\,\s*)?\d{1,2}\s+\w+\s+\d{4}\s+\d{1,2}:\d\d:\d\d\s+[-+]\d{4}(\s+\([^\\\(\)]\))?)$/) {
 	    $expect eq 'more change data or trailer' ||
-		do_warn($file, $NR,
+		$self->do_parse_error($file, $NR,
 			"found trailer where expected $expect", "$_");
 	    $entry{'Maintainer'} = "$1 <$2>" unless defined($entry{'Maintainer'});
 	    $entry{'Date'} = $3 unless defined($entry{'Date'});
-	    $entry{'Parsed_Date'} = str2time($3) or do_warn $file, $NR, "couldn't parse date $3";
+	    $entry{'Parsed_Date'} = str2time($3)
+		or $self->do_parse_error( $file, $NR, "couldn't parse date $3" );
 	    $expect = 'next heading or eof';
 	} elsif (m/^ \-\-/) {
-	    do_warn($file, $NR, "badly formatted trailer line", "$_");
+	    $self->do_parse_error($file, $NR,
+				  "badly formatted trailer line", "$_");
 	} elsif (m/^\s{2,}(\S)/) {
 	    $expect eq 'start of change data'
 		|| $expect eq 'more change data or trailer'
 		|| do {
-		    do_warn($file, $NR,
+		    $self->do_parse_error($file, $NR,
 			    "found change data where expected $expect", "$_");
 		    if (($expect eq 'next heading or eof')
 			&& %entry) {
@@ -214,10 +246,11 @@ sub parse {
 	    next if $expect eq 'start of change data'
 		|| $expect eq 'next heading or eof';
 	    $expect eq 'more change data or trailer'
-		|| do_warn($file, $NR, "found blank line where expected $expect");
+		|| $self->do_parse_error($file, $NR,
+					 "found blank line where expected $expect");
 	    $blanklines++;
 	} else {
-	    do_warn($file, $NR, "unrecognised line", "$_");
+	    $self->do_parse_error($file, $NR, "unrecognised line", "$_");
 	    ($expect eq 'start of change data'
 		|| $expect eq 'more change data or trailer')
 		&& do {
@@ -238,7 +271,9 @@ sub parse {
 
     $expect eq 'next heading or eof'
 	|| do {
-	    do_warn $file, $NR, "found eof where expected $expect";
+	    $self->do_parse_error( $file, $NR,
+				   "found eof where expected $expect"
+				   );
 	    $entry{ERROR} = "found start of entry where expected $expect";
 	};
     if (%entry) {
@@ -259,6 +294,65 @@ sub parse {
     return $self;
 }
 
+sub dpkg_out {
+    my ($self, $config) = @_;
+
+    $self->{config}{DPKG} = $config if $config;
+
+    $config = $self->{config}{DPKG} || {};
+    my $data = $self->{data} or return undef;
+    my $since = $config->{since} || '';
+
+    my $dpkglibdir="/usr/lib/dpkg";
+    push @INC, $dpkglibdir;
+    require 'controllib.pl';
+
+    our ( %fieldimps, %urgencies, %f );
+    my $i=100;
+    grep($fieldimps{$_}=$i--,
+	 qw(Source Version Distribution Urgency Maintainer Date Closes
+	    Changes));
+    $i=1;
+    grep($urgencies{$_}=$i++,
+	 qw(low medium high critical emergency));
+
+    foreach my $field (qw( Urgency Source Version
+			   Distribution Maintainer Date )) {
+	$f{$field} = $data->[0]{$field};
+    }
+
+    error( "-v<since> option specifies most recent version" )
+	if $f{Version} eq $since;
+
+    $f{Changes} = "\n $data->[0]{Header}\n .\n$data->[0]{Changes}";
+    chomp $f{Changes};
+    $f{Closes} = "@{$data->[0]{Closes}}";
+
+    my $first = 1;
+    foreach my $entry (@$data) {
+	$first = 0, next if $first;
+	last if !$since or $entry->{Version} eq $since;
+
+	my $oldurg = $f{Urgency} || '';
+	my $oldurgn = $urgencies{$f{Urgency}} || -1;
+	my $newurg = $entry->{Urgency_LC} || '';
+	my $newurgn = $urgencies{$entry->{Urgency_LC}} || -1;
+	$f{Urgency} = ($newurgn > $oldurgn) ? $newurg : $oldurg;
+	$f{Urgency_Comment} .= $entry->{Urgency_Comment};
+       
+	$f{Changes} .= "\n .\n $entry->{Header}\n .\n$entry->{Changes}";
+	chomp $f{Changes};
+	$f{Closes} .= " @{$entry->{Closes}}";
+
+    }
+
+    $f{Changes} =~ s/^ $/ ./mgo;
+    $f{Urgency} .= $f{Urgency_Comment};
+    delete $f{Urgency_Comment};
+
+    outputclose(0);
+}
+
 sub html_out {
     my ($self, $config) = @_;
     
@@ -266,8 +360,15 @@ sub html_out {
     $config = $self->{config}{HTML} || {};
     my $data = $self->{data} or return undef;
 
+    require CGI;
+    import CGI qw( -no_xhtml -no_debug );
+    require HTML::Entities;
+    import HTML::Entities;
+    require URI::Escape;
+    import URI::Escape;
+
     my $outfile = $config->{outfile} or return undef;
-    my $cgi = new CGI
+    my $cgi = new CGI;
 
     open my $fh, '>', $outfile or return undef;
     flock $fh, LOCK_EX or return undef;
@@ -363,8 +464,9 @@ sub html_out {
 			    $cgi->span( { -class=>$entry->{Distribution} },
 					$entry->{Distribution} ).
 			    "; urgency=".
-			    $cgi->span( { -class=>$entry->{Urgency} },
-					$entry->{Urgency} ) );
+			    $cgi->span( { -class=>$entry->{Urgency_LC} },
+					$entry->{Urgency}.
+					$entry->{Urgency_Comment} ) );
 	
 	my $text = encode_entities( $entry->{Changes}, '<>&"' ) || "";
 	$text=~ s|&lt;URL:([-\w\.\/:~_\@]+):([a-zA-Z0-9\'() ]+)&gt;
