@@ -81,6 +81,7 @@ sub reset_parse_errors {
 
 sub do_parse_error {
     my ($self, $file, $line_nr, $error, $line) = @_;
+    shift;
 
     push @{$self->{errors}{parser}}, [ @_ ];
 
@@ -97,7 +98,19 @@ sub do_parse_error {
 sub get_parse_errors {
     my ($self) = @_;
 
-    return [ $self->{errors}{parser} ];
+    if (wantarray) {
+	return [ $self->{errors}{parser} ];
+    } else {
+	my $res = "";
+	foreach my $e (@{$self->{errors}{parser}}) {
+	    if ($e->[3]) {
+		$res .= "WARN: $e->[0](l$e->[1]): $e->[2]\nLINE: $e->[3]\n";
+	    } else {
+		$res .= "WARN: $e->[0](l$e->[1]): $e->[2]\n";
+	    }
+	}
+	return $res;
+    }
 }
 
 sub parse {
@@ -126,9 +139,9 @@ sub parse {
 	if (m/^(\w[-+0-9a-z.]*) \(([^\(\) \t]+)\)((\s+[-0-9a-z]+)+)\;/i) {
 	    unless ($expect eq 'first heading'
 		    || $expect eq 'next heading or eof') {
-		$self->do_parse_error($file, $NR,
-			"found start of entry where expected $expect", "$_");
-		$entry{ERROR} = "found start of entry where expected $expect";
+		$entry{ERROR} = [ $file, $NR,
+				  "found start of entry where expected $expect", "$_" ];
+		$self->do_parse_error(@{$entry{ERROR}});
 	    }
 	    if (%entry) {
 		my @closes;
@@ -164,7 +177,7 @@ sub parse {
 					      $v);
 		    $entry{'Urgency'} = $1;
 		    $entry{'Urgency_LC'} = lc($1);
-		    $entry{'Urgency_Comment'} = $2;
+		    $entry{'Urgency_Comment'} = $2 || '';
 		} elsif ($k =~ m/^X[BCS]+-/i) {
 		    # Extensions - XB for putting in Binary,
 		    # XC for putting in Control, XS for putting in Source
@@ -177,19 +190,21 @@ sub parse {
 	    }
 	    $expect= 'start of change data';
 	    $blanklines = 0;
-	} elsif (m/^Local variables:/i) {
+	} elsif (m/^Local variables:/io) {
 	    last; # skip Emacs variables at end of file
-	} elsif (m/^vim:/i) {
+	} elsif (m/^vim:/io) {
 	    last; # skip vim variables at end of file
-	} elsif (m/^\$\w+:.*\$/) {
+	} elsif (m/^\$\w+:.*\$/o) {
 	    next; # skip stuff that look like a CVS keyword
-	} elsif (m/^\# /) {
-	    next; # skip comments, even that's not supported, should catch
-	          # vim stuff, too
-	} elsif (m/^(\w+\s+\w+\s+\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}\s+[\w\s]*\d{4})\s+(.*)\s+(<|\()(.*)(\)|>)/
-		 || m/^(\w[-+0-9a-z.]*) \(([^\(\) \t]+)\)\;?/i
-		 || m/^(\w+) (\S+) Debian (\S+)/i
-		 || m/^(?:\d+:)?[\w.+~-]+:?$/) {
+	} elsif (m/^\# /o) {
+	    next; # skip comments, even that's not supported
+	} elsif (m,^/\*.*\*/,o) {
+	    next; # more comments
+	} elsif (m/^(\w+\s+\w+\s+\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}\s+[\w\s]*\d{4})\s+(.*)\s+(<|\()(.*)(\)|>)/o
+		 || m/^(\w+\s+\w+\s+\d{1,2},?\s*\d{4})\s+(.*)\s+(<|\()(.*)(\)|>)/o
+		 || m/^(\w[-+0-9a-z.]*) \(([^\(\) \t]+)\)\;?/io
+		 || m/^(\w+) (\S+) Debian (\S+)/io
+		 || m/^(?:\d+:)?[\w.+~-]+:?$/o) {
 	    # save entries on old changelog format verbatim
 	    # we assume the rest of the file will be in old format once we
 	    # hit it for the first time
@@ -198,18 +213,26 @@ sub parse {
 	} elsif (m/^\S/) {
 	    $self->do_parse_error($file, $NR,
 				  "badly formatted heading line", "$_");
-	} elsif (m/^ \-\- (.*) <(.*)>  ((\w+\,\s*)?\d{1,2}\s+\w+\s+\d{4}\s+\d{1,2}:\d\d:\d\d\s+[-+]\d{4}(\s+\([^\\\(\)]\))?)$/) {
+	} elsif (m/^ \-\- (.*) <(.*)>(  ?)((\w+\,\s*)?\d{1,2}\s+\w+\s+\d{4}\s+\d{1,2}:\d\d:\d\d\s+[-+]\d{4}(\s+\([^\\\(\)]\))?)$/o) {
 	    $expect eq 'more change data or trailer' ||
 		$self->do_parse_error($file, $NR,
 			"found trailer where expected $expect", "$_");
-	    $entry{'Maintainer'} = "$1 <$2>" unless defined($entry{'Maintainer'});
-	    $entry{'Date'} = $3 unless defined($entry{'Date'});
-	    $entry{'Parsed_Date'} = str2time($3)
-		or $self->do_parse_error( $file, $NR, "couldn't parse date $3" );
+	    if ($3 ne '  ') {
+		$self->do_parse_error($file, $NR,
+				      "badly formatted trailer line", "$_");
+	    }
+	    $entry{'Trailer'} = $_;
+	    $entry{'Maintainer'} = "$1 <$2>" unless $entry{'Maintainer'};
+	    unless($entry{'Date'} && $entry{'Parsed_Date'}) {
+		$entry{'Date'} = $4;
+		$entry{'Parsed_Date'} = str2time($4)
+		    or $self->do_parse_error( $file, $NR, "couldn't parse date $4" );
+	    }
 	    $expect = 'next heading or eof';
 	} elsif (m/^ \-\-/) {
-	    $self->do_parse_error($file, $NR,
-				  "badly formatted trailer line", "$_");
+	    $entry{ERROR} = [ $file, $NR,
+			      "badly formatted trailer line", "$_" ];
+	    $self->do_parse_error(@{$entry{ERROR}});
 	} elsif (m/^\s{2,}(\S)/) {
 	    $expect eq 'start of change data'
 		|| $expect eq 'more change data or trailer'
@@ -220,7 +243,7 @@ sub parse {
 			&& %entry) {
 			# lets assume we have missed the actual header line
 			my @closes;
-			while ($entry{'Changes'} && ($entry{'Changes'} =~ /closes:\s*(?:bug)?\#?\s?\d+(?:,\s*(?:bug)?\#?\s?\d+)*/ig)) {
+			while ($entry{'Changes'} && ($entry{'Changes'} =~ /closes:\s*(?:bug)?\#?\s?\d+(?:,\s*(?:bug)?\#?\s?\d+)*/igo)) {
 			    push(@closes, $& =~ /\#?\s?(\d+)/g);
 			}
 			$entry{'Closes'} = [ sort { $a <=> $b } @closes ];
@@ -230,7 +253,8 @@ sub parse {
 			%entry = ();
 			$entry{Source} = $entry{Version} =
 			    $entry{Distribution} = $entry{Urgency} = 'unkown';
-			$entry{ERROR} = "$file: found change data where expected $expect";
+			$entry{ERROR} = [ $file, $NR,
+			    "found change data where expected $expect", "$_" ];
 		    }
 		};
 	    $entry{'Changes'} .= (" \n" x $blanklines)." $_\n";
@@ -264,17 +288,15 @@ sub parse {
 		    }
 		    $blanklines = 0;
 		    $expect = 'more change data or trailer';
-		    $entry{ERROR} = "$file: unrecognised line";
+		    $entry{ERROR} = [ $file, $NR, "unrecognised line", "$_" ];
 		};
 	}
     }
 
     $expect eq 'next heading or eof'
 	|| do {
-	    $self->do_parse_error( $file, $NR,
-				   "found eof where expected $expect"
-				   );
-	    $entry{ERROR} = "found start of entry where expected $expect";
+	    $entry{ERROR} = [ $file, $NR, "found eof where expected $expect" ];
+	    $self->do_parse_error( @{$entry{ERROR}} );
 	};
     if (%entry) {
 	my @closes;
