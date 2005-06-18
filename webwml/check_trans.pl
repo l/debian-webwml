@@ -57,11 +57,7 @@
 #  BEWARE, SOME PEOPLE DO NOT LIKE TO RECEIVE AUTOMATIC MAILS!
 
 #  PREREQUISITES:
-#   You will need two databases:
-#     - one in which to see which translator maintains which file
-#       it must be named "./$langto/international/$langto/current_status.pl"
-#       (where $langto equals "french", "italian" or so)
-#       See webwml/french/international/french/current_status.pl" for example.
+#   You will need one database:
 #     - one in which to get info about translators and the frequency at
 #       which they want to get mails. It must be named
 #       webwml/$langto/international/$langto/translator.db.pl
@@ -183,12 +179,8 @@ if ($to eq '')
 
 my $langto = $to;
 $langto =~ s,^([^/]*).*$,$1,;
-if (-e "./$langto/international/$langto/current_status.pl" &&
-    -e "./$langto/international/$langto/translator.db.pl") {
-    print "READ PAGES DB: $langto/international/$langto/current_status.pl\n"
-       if $opt_v;
+if (-e "./$langto/international/$langto/translator.db.pl") {
     push(@INC,"./$langto/international/$langto");
-    require 'current_status.pl';
     print "READ TRANSLATOR DB: $langto/international/$langto/translator.db.pl\n"
        if $opt_v;
     require 'translator.db.pl';
