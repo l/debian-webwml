@@ -1,6 +1,6 @@
 #use wml::debian::language_names
 #use wml::debian::common_tags
-#use wml::debian::translation-check translation="1.40"
+#use wml::debian::translation-check translation="1.41"
 
 <bind-gettext-domain domain="bugs" />
 
@@ -123,6 +123,9 @@
 </define-tag>
 <define-tag etch whitespace=delete>
   <gettext domain="bugs">etch</gettext>
+</define-tag>
+<define-tag etch-ignore whitespace=delete>
+  <gettext domain="bugs">etch-ignore</gettext>
 </define-tag>
 <define-tag sid whitespace=delete>
   <gettext domain="bugs">sid</gettext>
