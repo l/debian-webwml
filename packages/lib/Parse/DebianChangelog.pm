@@ -252,7 +252,9 @@ sub parse {
 			push @{$self->{data}}, { %entry };
 			%entry = ();
 			$entry{Source} = $entry{Version} =
-			    $entry{Distribution} = $entry{Urgency} = 'unkown';
+			    $entry{Distribution} = $entry{Urgency} = 
+			    $entry{Urgency_LC} = 'unknown';
+			$entry{Urgency_Comment} = '';
 			$entry{ERROR} = [ $file, $NR,
 			    "found change data where expected $expect", "$_" ];
 		    }
