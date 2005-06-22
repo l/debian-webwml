@@ -190,6 +190,15 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
+		'Eric Madesclair' => {
+           		email       => 'eric-m@wanadoo.fr',
+           		summary     => 2,
+           		logs        => 2,
+           		diff        => 2,
+           		tdiff       => 0,
+           		file        => 0,
+                        compress    => 'none'
+           	},
                 'Jérôme Marant' => {
                         email       => 'jerome.marant@free.fr',
                         summary     => 2,
