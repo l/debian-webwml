@@ -1,0 +1,114 @@
+#use wml::debian::template title="Automated Audit Example: flawfinder"
+#use wml::debian::recent_list
+#use wml::debian::translation-check translation="1.6"
+# $Id$
+# Translator: Helge Kreutzmann <kreutzm@itp.uni-hannover.de> 2005-06-22
+
+<p><a href="http://packages.debian.org/flawfinder">Flawfinder</a> ist ein 
+Allzweck-Durchsuchprogramm um potentielle Mängel sowohl in C- als auch 
+C++-Quellcode zu finden und zu berichten.
+</p>
+
+
+<h2>Flawfinder benutzen</h2>
+<p>Flawfinder zu benutzen ist so einfach wie der Aufruf des Befehls mit dem
+   Namen der zu untersuchenden Datei oder des zu untersuchenden Verzeichnises. 
+   Wenn ein Verzeichnisname übergeben wird, dann wird es alle gültigen
+   Quelldateien, die es in dem Verzeichnis finden kann, bearbeiten.
+</p>
+<p>Ergänzend zur Übergabe einer Liste von Dateien oder Verzeichnissen gibt es
+   mehrere Kommandozeilenoptionen, die zur Steuerung des Verhaltens des 
+   Werkzeuges verwendet werden können.
+</p>
+<p>Jede der Optionen ist in der Handbuchseite beschrieben, aber die folgenden
+   Optionen sind besonders nützlich und werden in unserem Beispiel verwendet:
+</p>
+<ul>
+<li>--minlevel=X
+<ul>
+<li>Setzt die Risikoeinstellung auf X für die Ausgabe im Bericht. Reicht von 1
+    bis 5, wobei 1 »niedriges Risiko« und 5 »hohes Risiko« bedeutet.
+</li>
+</ul></li>
+<li>--html
+<ul>
+<li>Formatiert die Ausgabe als HTML anstatt als einfachen Text.</li>
+</ul></li>
+<li>--context
+<ul>
+<li> Zusammenhang zeigen, beispielsweise die Zeilennummer, die den möglichen
+     Mangel enthält.</li>
+</ul></li>
+</ul>
+
+<p>Um das Ergebnis unseres Programms als eine HTML-Datei auszugeben, die sich
+   nur um Funktionen mit »hohem Risiko« kümmert, würden wir etwas wie folgt
+   ablaufen lassen:
+</p>
+<pre>
+flawfinder --html --context --minlevel=4 test.c &gt; output.html
+</pre>
+
+<h2>Das Ergebnis</h2>
+<p>Lassen wir Flawfinder gegen unseren <a href="test.c.html">Beispielcode</a> 
+   laufen, produziert er die folgende Ausgabe:</p>
+
+<hr />
+<blockquote>
+<p>
+Examining test.c <br>
+<ul>
+<li>test.c:18: <b>  [4] </b> (buffer) <i> strcpy:
+  Does not check for buffer overflows when copying to destination.
+  Consider using strncpy or strlcpy (warning, strncpy is easily misused).  </i>
+<pre>
+      strcpy( dir, argv[ 1 ] );
+</pre>
+<li>test.c:24: <b>  [4] </b> (buffer) <i> sprintf:
+  Does not check for buffer overflows. Use snprintf or vsnprintf.  </i>
+
+<pre>
+	sprintf( dir, "%s", getenv( "HOME" ) );
+</pre>
+<li>test.c:33: <b>  [4] </b> (shell) <i> popen:
+  This causes a new program to execute and is difficult to use safely.
+  try using a library call that implements the same functionality if
+  available.  </i>
+<pre>
+    fp = popen( cmd, "r" );
+</pre>
+<li>test.c:42: <b>  [4] </b> (format) <i> printf:
+  If format strings can be influenced by an attacker, they can be
+  exploited. Use a constant for the format specification.  </i>
+
+<pre>
+      printf( buff );
+</pre>
+</ul>
+<p>
+Number of hits = 4
+<br>
+Number of Lines Analyzed = 48 in 0.53 seconds (1392 lines/second)
+<br>
+</blockquote>
+<hr />
+
+<h2>Die Ausgabe verstehen</h2>
+<p>Sehr ähnlich zu der Ausgabe von <a href="RATS">RATS</a> ist diser Bericht
+   sehr einfach zu lesen. Er zeigt deutlich die erkannten Funktionen als
+   potentiell gefährlich, sowie eine Beschreibung des Problems.
+</p>
+<p>Die Hinzunahme von Zusammenhangs-Informationen ist auch sehr nützlich da
+   diese sofort die Aufmerksamkeit auf beunruhigende Bereiche hinlenken
+   oder andere Berichte als ungültig ausschließen können.
+</p>
+<p>Die Analyse <a href="test.c">unseres Beispielcodes</a> ist zimlich
+   intelligent, in dem Sinne, dass sie nicht über <i>jede</i> Verwendung
+   der besorgniserregenden <tt>strcpy</tt>-Funktion berichtete, sondern nur
+   über diejenigen, die es als potentiell gefährlich ansah.
+</p>
+<p>Auf diese Weise hat es es geschafft, alle Mängel unseres Codes hervorzuheben
+   und zugleich keine falschen positiven Meldungen zu erzeugen.
+</p>
+<hr />
+<p><a href="..">Zurück zum Audit-Projekt</a> | <a href="index">Zurück zur Beispiele-für-Audits-Seite</a></p>
