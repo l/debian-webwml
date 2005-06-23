@@ -788,16 +788,22 @@ END
   }
 	print "<p>" if $html;
 	print <<END;
-United States laws place restrictions on the export of certain defense
-articles, which, unfortunately, includes some types of cryptographic software.
-PGP and SSH, among others, fall into this category.  It is legal however, to
-import such software into the US.
+Prior to the release of Debian 3.1, United States laws placed restrictions on
+the export of certain defense articles, which, unfortunately, included some
+types of cryptographic software. PGP and SSH, among others, fell into this
+category.  It was legal however, to import such software into the US.
 
 END
 	print "<p>" if $html;
 	print <<END;
 To prevent anyone from taking unnecessary legal risks, some Debian
-packages are only available from a site in Leiden, The Netherlands.
+packages were only available from a site in Leiden, The Netherlands, until 
+the release of Debian 3.1, which incorporates this software thanks to
+changes in United States law.
+
+You should not need the non-US archive unless you are using a version of
+Debian from before Debian 3.1.
+
 Available access methods are:
 END
 	print "<blockquote>\n" if $html;
