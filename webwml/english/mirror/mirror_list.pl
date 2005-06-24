@@ -345,7 +345,6 @@ sub primary_mirrors {
   <th>Country</th>
   <th>Site</th>
   <th><b>Debian&nbsp;archive</b></th>
-  <th><b>Debian&nbsp;non-US&nbsp;archive</b></th>
   <th><b>Architectures</b></th>
 </tr>
 <tr><td colspan="5"><hr></td></tr>
@@ -357,7 +356,7 @@ END
                          Primary Debian mirror sites
                          ---------------------------
 
- Country         Site                  Debian archive  Debian non-US archive
+ Country         Site                  Debian archive  Architectures
  ---------------------------------------------------------------------------
 END
   }
@@ -366,43 +365,27 @@ END
       if ($mirror[$id]{site} =~ /^(?:ftp|http)\d?(?:\.wa)?\...\.debian.org$/) {
         (my $countryplain = $country) =~ s/^.. //;
 
+	next unless exists $mirror[$id]{method}{'archive-http'};
+	my $arches="all";
+	if (exists $mirror[$id]{'archive-architecture'}) {
+		$arches=join(" ", sort @{$mirror[$id]{'archive-architecture'}});
+	}
+	
 	if ($html) {
 	  $countryplain =~ s/ /&nbsp;/;
 	  print <<END;
 <tr>
-  <td width="20%">$countryplain</td>
-  <td width="20%" align="center"><code>$mirror[$id]{site}</code></td>
-  <td width="20%"><a href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{method}{'archive-http'}</a></td>
+  <td width="25%">$countryplain</td>
+  <td width="25%" align="center"><code>$mirror[$id]{site}</code></td>
+  <td width="25%"><a href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{method}{'archive-http'}</a></td>
+  <td width="25%">$arches</td>
 END
-          if (defined $mirror[$id]{method}{'nonus-http'}) {
-            print <<END;
-  <td width="20%"><a href="http://$mirror[$id]{site}$mirror[$id]{method}{'nonus-http'}">$mirror[$id]{method}{'nonus-http'}</a></td>
-END
-          } else {
-            print <<END;
-  <td width="20%">Not mirrored.</td>
-END
-          }
-          if (exists $mirror[$id]{'archive-architecture'}) {
-	    print '<td width="20%">'.join(" ", sort @{$mirror[$id]{'archive-architecture'}}).'</td>';
-	  }
-	  else {
-	    print '<td width="20%">all</td>';
-	  }
+
           print <<END;
 </tr>
 END
         } else {
-	  # FIXME available architectures are not included in the text
-	  # version because it would make the table too wide.
-	  my $nonusftp;
-          if (defined $mirror[$id]{method}{'nonus-ftp'}) {
-            $nonusftp = $mirror[$id]{method}{'nonus-ftp'};
-          } else {
-            $nonusftp = "Not mirrored."
-          }
-          printf " %-14s  %-20s  %-14s  %s\n", $countryplain, $mirror[$id]{site}, $mirror[$id]{method}{'archive-ftp'}, $nonusftp;
-#          print <<END;
+          printf " %-14s  %-20s  %-14s  %s\n", $countryplain, $mirror[$id]{site}, $mirror[$id]{method}{'archive-http'}, $arches;
 # $countryplain	-   $site		$mirror[$id]{method}{'archive-ftp'}	$mirror[$id]{method}{'nonus-ftp'}
 #END
         }
