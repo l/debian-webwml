@@ -1,0 +1,56 @@
+#use wml::debian::template title="Beispiel für automatisierte Audits: Pscan"
+#use wml::debian::recent_list
+#use wml::debian::translation-check translation="1.4"
+# $Id$
+# Translator: Helge Kreutzmann <kreutzm@itp.uni-hannover.de> 2005-06-23
+
+<p><a href="http://packages.debian.org/pscan">Pscan</a> ist ein Paket, das
+   für Audits von C und C++-Quelldateien hinsichtlich Formatzeichenketten-\
+   Verwundbarkeiten entworfen wurde.</p>
+<p>Es ist kein Allzweck-Audit-Werkzeug.</p>
+
+<h2>Pscan benutzen</h2>
+<p>Pscan zu benutzen ist so einfach wie es mit einem zu prüfenden Dateinamen
+   oder Dateien aufzurufen. Zum Beispiel:
+</p>
+<pre>
+pscan <a href="test.c.html">test.c</a>
+</pre>
+<p>Die Ausgabe wird direkt auf die Konsole geschrieben:</p>
+<hr />
+<pre>
+test.c:42 SECURITY: printf call should have "%s" as argument 0
+</pre>
+<hr />
+
+<h2>Die Ausgabe</h2>
+<p>Die Ausgabe ist in diesem Fall leicht zu verstehen. Es hat die Tatsache,
+   dass der <tt>printf</tt>-Aufruf seine Argumente nicht korrekt in 
+   Anführungszeichen einschließt, identifiziert.
+</p>
+<p>Die Ausgabe zeigt uns was mir tun müssen, um den Mangel zu beheben: den
+   Code, der lautet
+<pre>
+printf( buff );
+</pre>
+<p>so abändern, dass er lautet:</p>
+<pre>
+printf( "%s", buff );
+</pre>
+<p>Diese nicht zu machen könnte einem Angreifer, der die Ausgabe von
+   <tt>ls</tt> kontrollieren kann, erlauben, das Programm anzugreifen, 
+   indem er eine Datei mit dem Namen »%s« oder ähnlich erzeugt.</p>
+<p>Formatzeichenketten-Angriffe werden <a
+href="http://www.securityfocus.com/guest/3342">in dieser Einführung von Security
+Focus</a> beschrieben.</p>
+<p>Das <a href="http://www.dwheeler.com/secure-programs/">Secure Programming
+   for Linux and Unix HOWTO</a> erklärt, wie man sich gegen diese Angriffe in
+   häufig verwendeten variadischen Funktionen wie beispielsweise</p>
+<ul>
+<li>printf</li>
+<li>fprintf</li>
+<li>syslog</li>
+</ul>
+<p>schützen kann.</p>
+<hr />
+<p><a href="..">Zurück zum Audit-Projekt</a> | <a href="index">Zurück zur Beispiele-für-Audits-Seite</a></p>
