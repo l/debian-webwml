@@ -276,7 +276,7 @@ sub package_pages_walker {
 	my $buildlogs = $env->{distribution} eq 'breezy';
 	$package_page .= pmoreinfo( name => $name, env => $env, data => $d,
 				    bugreports => 1, sourcedownload => 1,
-				    changesandcopy => 1, maintainers => 1,
+				    changesandcopy => 1, maintainers => 0,
 				    search => 1, buildlogs => $buildlogs );
 	
 	#
@@ -536,7 +536,7 @@ sub src_package_pages_walker {
     my $buildlogs = $env->{distribution} eq 'breezy';
     $package_page .= pmoreinfo( name => $name, env => $env, data => $data,
 				bugreports => 1,
-				changesandcopy => 1, maintainers => 1,
+				changesandcopy => 1, maintainers => 0,
 				search => 1, is_source => 1,
 				buildlogs => $buildlogs );
 
