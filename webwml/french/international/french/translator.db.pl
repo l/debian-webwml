@@ -28,15 +28,6 @@
 
 sub init_translators {
         my $translators = {
-                'Jerome Abela' => {
-                        email       => 'Jerome.Abela@solsoft.fr',
-                        summary     => 2,
-                        logs        => 0,
-                        diff        => 0,
-                        tdiff       => 0,
-                        file        => 0,
-                        compress    => 'none'
-                },
                 'Mohammed Adnène Trojette' => {
                        email           => 'adn@via.ecp.fr',
                        summary         => 3,
@@ -91,15 +82,6 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
-                'Nicolas Boullis' => {
-                        email       => 'nboullis@debian.org',
-                        summary     => 2,
-                        logs        => 2,
-                        diff        => 2,
-                        tdiff       => 0,
-                        file        => 0,
-                        compress    => 'none'
-                },
                 'Olivier Bounhoure' =>  {
                         email       => 'olivier.bounhoure@club-internet.fr',
                         summary     => 3,
@@ -107,15 +89,6 @@ sub init_translators {
                         diff        => 3,
                         tdiff       => 3,
                         file        => 3,
-                        compress    => 'none'
-                },
-                'Philippe Caillaud' => {
-                        email       => 'pcaillaud@infini.fr',
-                        summary     => 2,
-                        logs        => 0,
-                        diff        => 0,
-                        file        => 0,
-                        tdiff       => 0,
                         compress    => 'none'
                 },
                 'Christian Couder' => {
@@ -128,12 +101,12 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Guillaume Estival' =>  {
-                        email       => 'estival@dspnet.claranet.fr',
-                        summary     => 2,
-                        logs        => 2,
-                        diff        => 2,
-                        tdiff       => 2,
-                        file        => 2,
+                        email       => 'thomas.huriaux@enst-bretagne.fr',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 0,
+                        file        => 0,
                         compress    => 'none'
                 },
                 'Arnaud Fontaine' => {
@@ -163,20 +136,11 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
-                'Christophe Le Bars' =>  {
-                        email       => 'clebars@debian.org',
-                        summary     => 2,
-                        logs        => 0,
-                        diff        => 0,
-                        tdiff       => 0,
-                        file        => 0,
-                        compress    => 'none'
-                },
 		'Guillaume Leclanche' => {
-			email       => 'mo-ize@nul-en.info',
-			summary     => 2,
-			logs        => 2,
-			diff        => 0,
+			email       => 'thomas.huriaux@enst-bretagne.fr',
+			summary     => 3,
+			logs        => 3,
+			diff        => 3,
 			tdiff       => 0,
 			file        => 0,
 			compress    => 'none'
@@ -217,20 +181,11 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
-                'Antoine Martin' => {
-                        email       => 'amartin@atos-group.com',
-                        summary     => 2,
-                        logs        => 0,
-                        diff        => 0,
-                        tdiff       => 0,
-                        file        => 0,
-                        compress    => 'none'
-                },
                 'Ghislain Mary' => {
-		        email       => 'ghismary@yahoo.fr',
+		        email       => 'thomas.huriaux@enst-bretagne.fr',
 		        summary     => 3,
-		        logs        => 2,
-		        diff        => 2,
+		        logs        => 3,
+		        diff        => 3,
 		        tdiff       => 0,
 		        file        => 0,
                         compress    => 'none'
@@ -245,21 +200,21 @@ sub init_translators {
                         compress    => 'none'
                 },
 	        'Willy Picard' =>  {
-                        email       => 'picard@kti.ae.poznan.pl',
-                        summary     => 2,
-                        logs        => 2,
-                        diff        => 2,
-                        tdiff       => 0,
-                        file        => 2,
-                        compress    => 'none'
-                },
-                'Martin Quinson' => {
-                        email       => 'frederic.bothamy@free.fr',
+                        email       => 'thomas.huriaux@enst-bretagne.fr',
                         summary     => 3,
                         logs        => 3,
                         diff        => 3,
                         tdiff       => 0,
                         file        => 0,
+                        compress    => 'none'
+                },
+                'Martin Quinson' => {
+                        email       => 'frederic.bothamy@free.fr',
+                        summary     => 2,
+                        logs        => 0,
+                        diff        => 1,
+                        tdiff       => 1,
+                        file        => 1,
                         compress    => 'none'
                 },
 		'Yannick Roehlly' => {
@@ -274,19 +229,19 @@ sub init_translators {
                 'Jérôme Schell' =>  {
                         email       => 'frederic.bothamy@free.fr',
                         summary     => 2,
-                        logs        => 2,
-                        diff        => 2,
-                        tdiff       => 0,
-                        file        => 0,
+                        logs        => 0,
+                        diff        => 1,
+                        tdiff       => 1,
+                        file        => 1,
                         compress    => 'none'
                 },
                 'Mickael Simon' =>  {
-                        email       => 'mickaelsimon@free.fr',
+                        email       => 'frederic.bothamy@free.fr',
                         summary     => 2,
                         logs        => 0,
-                        diff        => 2,
-                        tdiff       => 0,
-                        file        => 0,
+                        diff        => 1,
+                        tdiff       => 1,
+                        file        => 1,
                         compress    => 'none'
                 },
 		'Clément Stenac' => {
@@ -299,7 +254,7 @@ sub init_translators {
 		        compress        => 'none',
 		 },
                 'DFS Task Force' =>  {
-                        email       => 'dfstf@dsa.tuxfamily.org',
+                        email       => 'simon.paillard@resel.enst-bretagne.fr',
                         summary     => 2,
                         logs        => 2,
                         diff        => 2,
