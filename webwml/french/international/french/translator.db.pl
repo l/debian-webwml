@@ -82,15 +82,6 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
-                'Olivier Bounhoure' =>  {
-                        email       => 'olivier.bounhoure@club-internet.fr',
-                        summary     => 3,
-                        logs        => 3,
-                        diff        => 3,
-                        tdiff       => 3,
-                        file        => 3,
-                        compress    => 'none'
-                },
                 'Christian Couder' => {
                         email       => 'christian@couder.net',
                         summary     => 3,
@@ -136,15 +127,6 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
-		'Guillaume Leclanche' => {
-			email       => 'thomas.huriaux@enst-bretagne.fr',
-			summary     => 3,
-			logs        => 3,
-			diff        => 3,
-			tdiff       => 0,
-			file        => 0,
-			compress    => 'none'
-		},
                 'Pierre Machard' => {
                         email       => 'pmachard@tuxfamily.org',
                         summary     => 2,
@@ -164,10 +146,10 @@ sub init_translators {
                         compress    => 'none'
            	},
                 'Jérôme Marant' => {
-                        email       => 'jerome.marant@free.fr',
-                        summary     => 2,
-                        logs        => 0,
-                        diff        => 0,
+                        email       => 'thomas.huriaux@enst-bretagne.fr',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
                         tdiff       => 0,
                         file        => 0,
                         compress    => 'none'
