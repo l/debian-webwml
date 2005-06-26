@@ -1,395 +1,158 @@
-#use wml::debian::template title="Traduction des fichiers PO associés à debconf"
-#include "$(ENGLISHDIR)/security/faq.inc"
+#use wml::debian::template title="Traduction des questionnaires Debconf"
+#use wml::debian::toc
 
-<h2>Sommaire</h2>
+<define-tag toc-title-formatting endtag="required" whitespace="delete">
+<h3>%body</h3>
+</define-tag>
 
-<ul>
-  <li><a href="#format">Format des fichiers <tt>templates</tt> de debconf</a></li>
-  <li><a href="#po">Utilisation de po-debconf</a></li>
-  <li><a href="#list">Coordination des traductions sur debian-l10n-french</a></li>
-  <li><a href="#faq">Foire aux questions</a></li>
-</ul>
+<toc-display/>
 
+<toc-add-entry name="quoi">De quoi s'agit-il&nbsp;?</toc-add-entry>
 
+<p>Il s'agit des messages et questions affichés lors de l'installation des
+paquets utilisant Debconf.</p>
 
-<h2><a name="format">Format des fichiers <tt>templates</tt> de debconf</a></h2>
+<toc-add-entry name="responsable">Qui est responsable&nbsp;?</toc-add-entry>
+<p>Christian Perrier &lt;bubulle@debian.org&gt; est responsable de la
+traduction des questionnaires Debconf.</p>
 
-<p>
-Debconf fournit une interface cohérente pour la configuration des
-paquets et donne à l'utilisateur le choix entre plusieurs interfaces.
-Il peut configurer des paquets avant qu'ils ne soient installés, ce
-qui permet à des installations et des mises à niveau importantes de
-demander toutes les informations nécessaires au préalable, et de
-vous laisser faire ce que vous voulez pendant que les paquets
-s'installent. Debconf vous permet, si vous êtes pressé, de sauter les
-questions les moins importantes au moment de l'installation d'un
-paquet.
-</p>
+<toc-add-entry name="a-traduire">Que faut-il traduire&nbsp;?</toc-add-entry>
+<p>L'état de la traduction des questionnaires po-debconf est disponible
+sur la <a href="$(HOME)/international/l10n/po-debconf/fr">page de
+statistique</a>. Cependant, il a été décidé de <strong>ne pas
+l'utiliser</strong> pour le groupe francophone. À la place, Christian
+Perrier s'occupe de tout le travail de détection des fichiers non traduits,
+et le signale à la liste en envoyant un message ayant pour sujet
+<tt>[taf] po-debconf://...</tt>. Il faut donc attendre de tels messages
+pour savoir ce qu'il faut traduire, et suivre les instructions qui se
+trouvent dans ces messages.</p>
 
-<p>
-Les messages affichés par debconf sont mis dans un fichier appelé
-<tt>templates</tt>, dont le format est similaire à celui des fichiers
-<tt>debian/control</tt> des paquets source Debian &mdash; voir
-<tt>deb-control</tt>(5) et <tt>debconf-devel</tt>(7). Voici un exemple&nbsp;:
-</p>
+<toc-add-entry name="fichiers">Où récupérer les fichiers à
+traduire&nbsp;?</toc-add-entry>
+<p>Cela est normalement spécifié à l'intérieur du message [taf] envoyé
+à la liste, à savoir sur
+<a href="http://people.debian.org/~pmachard/intl/l10n/po-debconf/fr">\
+http://people.debian.org/~pmachard/intl/l10n/po-debconf/fr</a>.</p>
+
+<toc-add-entry name="format">Quel est le format des fichiers à
+traduire&nbsp;?</toc-add-entry>
+
+<p>Il s'agit du format PO. Nous vous conseillons de lire la
+<a href="http://www.gnu.org/software/gettext/manual/html_node/gettext_toc.html">\
+documentation de Gettext</a> ainsi que le <em>
+<a href="http://i18n.kde.org/translation-howto/index.html">KDE Translation
+HOWTO</a></em> pour bien le comprendre.</p>
+
+<toc-add-entry name="comment">Comment traduire&nbsp;?</toc-add-entry>
+<p>Tout cela est expliqué sur la page de
+<a href="$(HOME)/l10n/po-debconf/README-trans">localisation des questionnaires
+Debconf avec les fichiers PO</a>.</p>
+
+<toc-add-entry name="coordination">Procédure de coordination</toc-add-entry>
+
+<p>Le sous-projet concerné est la traduction des questionnaires Debconf,
+désignés par <tt>po-debconf</tt>.
+Le protocole à suivre est le suivant (référez vous à la page sur le
+<a href="format#etat">format des messages</a> pour des explications plus
+précises).</p>
+<dl>
+<dt>
+  <kbd>[taf] po-debconf://<var>paquet</var>/fr.po</kbd>
+</dt>
+<dd>
+Ce message est envoyé par un des coordinateurs (en l'occurrence, Christian
+Perrier). Ne les envoyez pas vous-même&nbsp;! Il signale que le paquet
+renseigné dans le sujet utilise po-debconf et que ses écrans ne sont pas
+encore traduits. Un traducteur peut donc s'en occuper.
+</dd>
+<dt>
+  <kbd>[itt] po-debconf://<var>paquet</var>/fr.po</kbd>
+</dt>
+<dd>
+Suite à la réception d'un <a href="format#etat"><tt>taf</tt></a>, vous avez
+décidé de traduire les écrans po-debconf de ce paquet, et vous l'annoncez
+à la liste.
+</dd>
+<dt>
+  <kbd>[rfr] po-debconf://<var>paquet</var>/fr.po</kbd>
+</dt>
+<dd>
+Vous avez traduit ce document, et vous demandez des relectures.
+</dd>
+<dt>
+  <kbd>[lcfc] po-debconf://<var>paquet</var>/fr.po</kbd>
+</dt>
+<dd>
+Vous avez intégré les relectures, et vous pensez que cette traduction est
+finie.
+</dd>
+<dt>
+  <kbd>[bts] po-debconf://<var>paquet</var>/fr.po #<var>NNNNNN</var></kbd>
+</dt>
+<dd>
+<p>Vous avez envoyé un rapport de bogue à l'auteur du paquet, et le numéro du
+bogue est <var>NNNNNN</var>. Pour ce faire, Christian Perrier propose le script
+<tt>bug-trad-debconf</tt> suivant à adapter en conséquence (modifiez le chemin
+du fichier patch-translate.txt)&nbsp;:</p>
 <pre>
-Template: debconf/frontend
-Type: select
-Choices: Dialog, Readline, Gnome, Editor, Noninteractive
-Description: What interface should be used for configuring packages?
- Packages that use debconf for configuration share a common look and feel.
- You can select the type of user interface they use.
- .
- The dialog frontend is a full-screen, character based interface, while the
- readline frontend uses a more traditional plain text interface, and the
- gnome frontend is a modern X interface. The editor frontend lets you
- configure things using your favorite text editor. The noninteractive
- frontend never asks you any questions.
+\#!/bin/sh
+
+reportbug --attach=fr.po \\
+  --include="$HOME/src/debian/translation/po-debconf/patch-translate.txt" \\
+  --offline -s "$1: French debconf templates translation" --severity=wishlist \\
+  --tag=patch --tag=l10n --no-config-files --package-version="N/A" $1
 </pre>
-
-<p>
-Le format est basé sur la RFC822 qui définit les en-têtes des
-courriels. Il suffit de savoir que chaque ligne est composé d'une
-paire «&nbsp;<i>Champ</i>: <i>Valeur</i>&nbsp;», et qu'une ligne 
-commençant par un espace continue la ligne précédente. L'exemple ci-dessus
-est donc composé de 4&nbsp;champs, le dernier étant disposé sur plusieurs
-lignes. S'il y a plusieurs messages, ils sont séparés par une ligne
-vide. Il existe deux conventions supplémentaires pour aider au
-formatage du texte&nbsp;:
-</p>
-<ol>
-  <li>dans un champ s'étalant sur plusieurs lignes, un point isolé
-      sur une ligne sépare deux paragraphes&nbsp;;</li>
-  <li>dans un champ s'étalant sur plusieurs lignes, si une ligne
-      commence par plus d'un espace, elle est affichée telle
-      quelle.</li>
-</ol>
-
-<p>
-Chaque bloc contient obligatoirement les champs <b>Template</b>
-(sa valeur est un identifiant permettant de distinguer les
-différents messages du paquet) et <b>Type</b> (qui indique
-le type de message à afficher). Les autres champs possibles sont
-<b>Choices</b>, <b>Default</b> et <b>Description</b>.
-</p>
-
-<p>
-Debconf a été conçu dès l'origine pour que les messages puissent être
-traduits facilement. Pour cela, on ajoute au nom du champ la langue
-dans laquelle ce champ est traduit&nbsp;; par exemple, un champ
-<b>Description-fr</b> désigne un champ <b>Description</b> traduit en français.
-Le fichier <tt>templates</tt> utilisé par debconf ressemble alors à&nbsp;:
-</p>
+<p>avec en contenu du fichier patch-translate.txt&nbsp;:</p>
 <pre>
-Template: debconf/frontend
-Type: select
-Choices: Dialog, Readline, Gnome, Editor, Noninteractive
-Choices-fr: Dialogue, Readline, Gnome, Éditeur, Non interactif
-Description: What interface should be used for configuring packages?
- Packages that use debconf for configuration share a common look and feel.
- You can select the type of user interface they use.
- .
- The dialog frontend is a full-screen, character based interface, while the
- readline frontend uses a more traditional plain text interface, and the
- gnome frontend is a modern X interface. The editor frontend lets you
- configure things using your favorite text editor. The noninteractive
- frontend never asks you any questions.
-Description-fr: Quelle interface utiliser pour configurer les paquets&nbsp;?
- Les paquets utilisant debconf pour leur configuration ont une interface et
- une ergonomie communes. Vous pouvez choisir leur interface utilisateur. 
- .
- «&nbsp;Dialogue&nbsp;» est une interface couleur en mode caractère et en plein
- écran. «&nbsp;Readline&nbsp;» est une interface plus traditionnelle en mode
- texte. «&nbsp;Gnome&nbsp;» est une interface X moderne. L'interface 
- «&nbsp;Éditeur&nbsp;» vous permet de faire vos configurations depuis votre
- éditeur favori. Si vous choisissez «&nbsp;Non interactif&nbsp;», le système
- ne vous posera jamais de question.
+Please find attached the french debconf templates translation, proofread by the
+debian-l10n-french mailing list contributors.
+
+This file should be put as debian/po/fr.po in your package build tree.
 </pre>
-<p>
-Le paquet <tt>debconf-utils</tt> contient les outils qui avaient été
-conçus pour manipuler les traductions de fichiers <tt>templates</tt>.
-</p>
+<p>Pour l'utiliser, il suffit de lancer
+<kbd>bug-trad-debconf&nbsp;<var>paquet</var></kbd>.</p>
+</dd>
+</dl>
 
-<p>
-Depuis debconf&nbsp;1.2, le nom du champ contient en plus le codage utilisé
-pour cette traduction. Ainsi dans l'exemple précédent, les champs
-<b>Choices-fr</b> et <b>Description-fr</b> seront désormais remplacés
-par <b>Choices-fr.iso-8859-15</b> et <b>Description-fr.iso-8859-15</b>.
-</p>
+<toc-add-entry name="publier">Quand et comment publier votre
+traduction&nbsp;?</toc-add-entry>
+<p>La publication de votre traduction se fait en l'envoyant avec le rapport
+de bogue. L'auteur du paquet se chargera du reste.</p>
 
-<h2><a name="po">Utilisation de po-debconf</a></h2>
+<toc-add-entry name="notification">Comment savoir si un document n'est plus à
+jour&nbsp;?</toc-add-entry>
+<p>Il suffit de suivre les <a href="format"><tt>taf</tt></a> envoyés
+par les coordinateurs sur la liste. Un paquet dont la traduction n'est
+plus à jour sera signalé par un message dont le titre sera&nbsp;:
+<kbd>[taf] po-debconf://<var>paquet</var>/fr.po [MAJ]</kbd>.
+Si vous aviez traduit ce paquet, vous devriez même recevoir ce message
+en copie. Donc, si vous lisez vos courriels, aucune chance de le rater.
 
-<p>
-Le format des fichiers utilisés par debconf pendant la configuration
-des paquets a été exposé dans la partie précédente. Ces fichiers ne
-doivent pas être écrits directement, car cela poserait plusieurs 
-problèmes&nbsp;:
-</p>
-<ul>
-  <li>chaque langue utilise un codage différent, et le mélange de
-      différents codages au sein d'un même fichier peut poser des
-      problèmes à certains éditeurs de texte&nbsp;;</li>
-  <li>si chaque traducteur devait envoyer des corrections sur le même fichier,
-      cela pourrait entraîner des conflits&nbsp;;</li>
-  <li>lorsqu'un champ en anglais est modifié, il faudrait mettre à jour en
-      même temps toutes ses traductions, ce qui n'est pas réalisable.</li>
-</ul>
-
-<p>
-Afin de remédier à tous ces inconvénients, les traductions sont mises
-dans des fichiers séparés, et le fichier <tt>templates</tt> final est
-généré pendant la compilation du paquet binaire.
-</p>
-
-<p>
-Auparavant le paquet <tt>debconf-utils</tt> contenait les outils
-permettant de gérer les traductions de fichiers <tt>templates</tt>,
-mais ces outils sont obsolètes et remplacés par <tt>po-debconf</tt>,
-qui est décrit ci-dessous.
-</p>
-
-<p>
-Le principe est exactement le même que pour gettext&nbsp;:
-</p>
-<ul>
-  <li>le développeur marque les champs à traduire dans son fichier
-      source&nbsp;;</li>
-  <li>un programme permet d'extraire ces chaînes et fournit un fichier
-      <tt>templates.pot</tt>&nbsp;;</li>
-  <li>le traducteur utilise ce fichier <tt>templates.pot</tt> comme
-      n'importe quel autre fichier POT de gettext&nbsp;: lors de la
-      première traduction, il le renomme en <tt>fr.po</tt> et traduit
-      toutes les chaînes disponibles. Pour les mises à jour, il peut
-      utiliser la commande <code>msgmerge</code>&nbsp;;</li>
-  <li>un programme permet, à partir du fichier <tt>templates</tt>
-      original et de tous les fichiers <tt>*.po</tt>, de générer le
-      fichier <tt>templates</tt> final contenant toutes les
-      traductions.</li>
-</ul>
-
-<p>
-Dans la pratique, c'est encore plus simple, car certaines étapes sont
-automatiques. En reprenant l'exemple précédent, le développeur a
-écrit le fichier <tt>debian/templates</tt> suivant&nbsp;:
-</p>
+<toc-add-entry name="maj">Comment mettre à jour votre
+traduction&nbsp;?</toc-add-entry>
+<p>Signalez à la liste que vous vous chargez de cette mise à jour en
+répondant au <a href="format#etat"><tt>taf</tt></a> par un
+<a href="format#etat"><tt>itt</tt></a> et reprenez le protocole ci-dessus.
+Si vous ne réagissez pas au bout d'une semaine, un nouveau
+<a href="format#etat"><tt>taf</tt></a> sera
+envoyé à la liste et n'importe qui pourra se charger de cette mise à
+jour.</p>
+<p>Au moment d'envoyer le rapport de bogue, Christian Perrier suggère
+d'utiliser le script <tt>bug-update-debconf</tt> au lieu de
+<tt>bug-trad-debconf</tt>.
+Adaptez-le également (modifiez le chemin du fichier patch-update.txt.</p>
 <pre>
-Template: debconf/frontend
-Type: select
-_Choices: Dialog, Readline, Gnome, Editor, Noninteractive
-Default: Dialog
-_Description: What interface should be used for configuring packages?
- Packages that use debconf for configuration share a common look and feel.
- You can select the type of user interface they use.
- .
- The dialog frontend is a full-screen, character based interface, while the
- readline frontend uses a more traditional plain text interface, and the
- gnome frontend is a modern X interface. The editor frontend lets you
- configure things using your favorite text editor. The noninteractive
- frontend never asks you any questions.
+\#!/bin/sh
+reportbug --attach=fr.po \\
+  --include="$HOME/src/debian/translation/po-debconf/patch-update.txt" \\
+  --offline -s "$1: French translation update" --severity=wishlist \\
+  --tag=patch --tag=l10n --no-config-files --package-version="N/A" $1 \\
 </pre>
-
-<p>
-Deux champs sont précédés du caractère souligné (<tt>_</tt>), ce qui
-signifie que le développeur demande aux traducteurs de traduire ces
-champs, et seulement ceux-là.
-</p>
-
-<p>
-Avant de construire son paquet, le développeur a exécuté la commande
-<code>debconf-updatepo</code>, qui génère un fichier
-<tt>debian/po/templates.pot</tt> contenant les chaînes marquées comme
-étant à traduire dans le fichier <tt>debian/templates</tt>, et met
-à jour les fichiers <tt>debian/po/*.po</tt> s'ils existent. Le
-même exemple fournit un fichier ressemblant à&nbsp;:
-</p>
+<p>avec en contenu du fichier patch-update.txt&nbsp;:</p>
 <pre>
-\#
-\#    Translators, if you are not familiar with the PO format, gettext
-\#    documentation is worth reading, especially sections dedicated to
-\#    this format, e.g. by running:
-\#         info -n '(gettext)PO Files'
-\#         info -n '(gettext)Header Entry'
-\#
-\#    Some information specific to po-debconf are available at
-\#            /usr/share/doc/po-debconf/README-trans
-\#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
-\#
-\#    Developers do not need to manually edit POT or PO files.
-\#
-\#, fuzzy
-msgid ""
-msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-05-22 22:47+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME &lt;EMAIL@ADDRESS&gt;\n"
-"Language-Team: LANGUAGE &lt;LL@li.org&gt;\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
-"Content-Transfer-Encoding: 8bit\n"
-
-\#. Choices
-\#: ../templates:3
-msgid "Dialog, Readline, Gnome, Editor, Noninteractive"
-msgstr ""
-
-\#. Description
-\#: ../templates:5
-msgid "What interface should be used for configuring packages?"
-msgstr ""
-
-\#. Description
-\#: ../templates:5
-msgid ""
-"Packages that use debconf for configuration share a common look and feel. "
-"You can select the type of user interface they use."
-msgstr ""
-
-\#. Description
-\#: ../templates:5
-msgid ""
-"The dialog frontend is a full-screen, character based interface, while the "
-"readline frontend uses a more traditional plain text interface, and the "
-"gnome frontend is a modern X interface. The editor frontend lets you "
-"configure things using your favorite text editor. The noninteractive "
-"frontend never asks you any questions."
-msgstr ""
+Please find attached the french debconf templates update, proofread by the
+debian-l10n-french mailing list contributors.
 </pre>
-
-<p>
-La documentation de gettext explique en détail le format de ce fichier.
-On voit cependant que le type de champ est indiqué (<b>Choices</b> et
-<b>Description</b> dans cet exemple), que le numéro de ligne dans le
-fichier <tt>templates</tt> permet de retrouver la chaîne dans son
-contexte, et que le champ <b>Description</b> a été coupé en
-3&nbsp;chaînes&nbsp;: une pour la première phrase (qui est comme un titre),
-et une pour chaque paragraphe.
+<p>Pour l'utiliser, il suffit de lancer
+<kbd>bug-update-debconf&nbsp;<var>paquet</var></kbd>.
 </p>
-
-<h2><a name="list">Coordination des traductions sur debian-l10n-french</a></h2>
-
-<p>
-La marche à suivre pour traduire ou mettre à jour un questionnaire
-debconf est assez simple.
-</p>
-<ol>
-  <li>Vous allez sur
-      <a href="http://www.fr.debian.org/intl/l10n/po-debconf/fr.fr.html">\
-      http://www.fr.debian.org/intl/l10n/po-debconf/fr.fr.html</a>
-      et sélectionnez un paquet (choisissez de préférence des paquets que
-      vous connaissez bien, afin d'éviter les contresens).</li>
-  <li>Vous postez un message sur la liste
-      <a href="mailto:debian-l10n-french@lists.debian.org">debian-l10n-french</a>
-      indiquant votre intention de traduire. Pour cela, vous mettez dans le
-      sujet <b><protect>[ITT] po-debconf://foo/fr.po</protect></b> où <i>foo</i> est à
-      remplacer par le nom du paquet (et <b>ITT</b> est l'acronyme de
-      «&nbsp;Intent To Translate&nbsp;»).</li>
-  <li>Vous attendez un jour ou deux, afin de laisser le temps aux autres
-      traducteurs de vous indiquer si quelqu'un est déjà en charge de cette
-      traduction.</li>
-  <li>Si personne ne s'est opposé à votre message, vous traduisez le
-      fichier PO comme décrit dans la section précédente, et l'envoyez en
-      relecture sur la liste
-      <a href="mailto:debian-l10n-french@lists.debian.org">debian-l10n-french</a>
-      en remplaçant dans le sujet <b>ITT</b> par <b>RFR</b> (est l'acronyme
-      de «&nbsp;Request For Review&nbsp;»).</li>
-  <li>Les relecteurs vont sauver ce fichier, et vous envoyer, soit en
-      privé, soit sur la liste, des suggestions de correction sous la
-      forme de rustine («&nbsp;patch&nbsp;», de préférence en utilisant 
-      <code>diff -u</code>).</li>
-  <li>Pendant un jour ou deux, vous collectez les commentaires des
-      différents relecteurs&nbsp;; si vous êtes d'accord avec les corrections
-      proposées, vous les incorporez puis envoyez un dernier message sur la
-      liste en remplaçant <b>RFR</b> par <b>LCFC</b> (est l'acronyme de
-      «&nbsp;Last Chance For Comments&nbsp;»). Cela indique aux autres
-      traducteurs et relecteurs que vous allez bientôt envoyer
-      cette traduction. Si des relecteurs ne se sont pas encore manifestés
-      ils sont avertis qu'ils doivent se dépêcher s'ils ont des 
-      modifications à suggérer. En cas de désaccord avec un relecteur,
-      vous essayez de trouver une solution, et si c'est impossible,
-      vous demandez un arbitrage sur la liste.</li>
-  <li>Un jour plus tard, il faut envoyer la traduction au responsable du 
-      paquet. Le plus simple est d'utiliser <code>reportbug</code>, en
-      choisissant une priorité («&nbsp;priority&nbsp;») <i>wishlist</i>, la marque
-      («&nbsp;tag&nbsp;») <i>l10n</i>, avec un sujet clair, qui commence
-      par <protect>[INTL:fr]</protect>. Par exemple&nbsp;: 
-      «&nbsp;<protect>[INTL:fr]</protect> French translation
-      for debconf templates&nbsp;». Il faut mettre le fichier
-      <tt>fr.po</tt> en attachement, le BTS sait maintenant bien les gérer.
-      Si la traduction française est nouvelle, il vaut mieux indiquer
-      dans le corps du message que le fichier attaché doit être mis dans
-      <tt>debian/po/fr.po</tt>, afin d'éviter les mauvaises
-      surprises. Vous pouvez également écrire l'entrée de changelog (par
-      exemple, ainsi «&nbsp;po/fr.po: Updated&nbsp;».</li>
-  <li>Enfin, envoyez un message sur la liste
-      <a href="mailto:debian-l10n-french@lists.debian.org">debian-l10n-french</a>
-      en indiquant que votre traduction est maintenant prise en compte dans
-      le système de suivi des bogues. Pour cela, vous mettez dans le sujet
-      <b><protect>[BTS#&lt;N°&nbsp;du&nbsp;Bogue&gt;]</protect></b>.
-</ol>
-
-<h2><a name="faq">Foire aux questions</a></h2>
-
-<maketoc />
-
-<toc-add-entry name="formalisme">Tout ce formalisme est bien complexe&nbsp;!</toc-add-entry>
-<p>Réponse&nbsp;: Tout ce formalisme est certes complexe à première vue,
-mais il s'avère assez simple a l'usage. De plus, il semblerait que ce 
-soit le prix a payer pour permettre au groupe de s'organiser malgré la
-quantité de traduction effectuée. Pour l'instant, une grande partie la
-gestion des traductions se fait à la main, mais à terme, nous allons 
-automatiser tout cela afin de simplifier encore la vie du traducteur.
-
-<p>Nous ne sommes pas la seule équipe de localisation à utiliser de telles 
-règles. L'équipe des Pays-Bas nous a incité à mettre en place les 
-pseudo-urls. Nicolas Bertolissio s'occupe de traiter les courriels pour obtenir
-<a href="http://people.debian.org/~bertol/fr.by_type.html">une page de suivi.</a>
-
-<p>Pour l'instant la page <url "$(HOME)/intl/l10n/po-debconf/fr">
-ne donne aucune information sur l'évolution des traductions. Entre le temps
-où le fichier po-debconf est listé en tant que traduction restant à faire
-(c'est-à-dire, lorsque le responsable du paquet ajoute un questionnaire et
-qu'il faut le traduire), et le temps où cette traduction est intégrée 
-dans le paquet, il peut s'écouler plusieurs semaines. Ainsi, lorsqu'une
-traduction a été envoyée au système de suivi des bogues, elle est toujours
-listée dans la catégorie des traductions restant à faire sur la précédente 
-page. Actuellement pour apparaître dans la catégorie traduction à jour, il 
-faut que le responsable du paquet mette en ligne un nouveau paquet en 
-prenant soin d'y intégrer votre traduction. Pour apporter une réponse à ce 
-problème, Martin Quinson a mis en place <a 
-href="http://graal.ens-lyon.fr/~mquinson/debian/po-debconf.fr.html">une 
-page</a> qui utilise justement les pseudo-urls pour avoir un suivi au
-plus près des fichiers po-debconf.
-
-<toc-add-entry name="error404">Des liens sont cassés&nbsp;!</toc-add-entry>
-<p>Réponse&nbsp;: Le processus pour générer la page
-<a href="http://www.fr.debian.org/intl/l10n/po-debconf/fr.fr.html">\
-http://www.fr.debian.org/intl/l10n/po-debconf/fr.fr.html</a>
-est complexe et nécessite plusieurs étapes. Quand un paquet est mis
-dans l'archive, ses fichiers en sont extraits et remplacent les
-précédents, mais les liens sur la page ne seront corrigés qu'après
-un délai pouvant aller jusqu'à deux jours. Si vous ne pouvez pas
-accéder à un fichier, il faut donc attendre un peu.
-
-<toc-add-entry name="defaultchoice">Faut-il traduire les champs <tt>Default</tt>&nbsp;?</toc-add-entry>
-<p>R.&nbsp;: Cela dépend. Quand le type de la question est <tt>Select</tt>
-ou <tt>Multiselect</tt>, il ne faut <b>jamais</b> traduire ce champ, car
-debconf attend en entrée une valeur qui se trouve dans le champ
-<tt>Choices</tt> en anglais&nbsp;; la traduction en français est faite
-automatiquement. En revanche, il est possible de choisir une valeur
-différente, par exemple s'il faut choisir la langue utilisée pour
-l'affichage. Afin d'aider le traducteur à ne pas faire d'erreur, le
-champ est marqué <tt>DefaultChoice</tt> dans le fichier PO, il faut
-alors donner comme valeur une des valeurs se trouvant dans le
-<i>msgid</i> du champ <tt>Choices</tt> précédent.
-
-<p>Pour les autres types de question, il est possible de traduire ce
-champ, mais c'est rarement une bonne idée&nbsp;; dans la majorité des cas,
-il s'agit d'une erreur du responsable du paquet, qui n'a pas fait
-attention que la valeur par défaut n'a pas à être modifiée par les
-traducteurs.
-
-<toc-add-entry name="new">Comment ajouter des entrées à cette FAQ&nbsp;?</toc-add-entry>
-<p>R.&nbsp;: Il suffit de les envoyer sur la liste de diffusion
-<a href="mailto:debian-l10n-french@lists.debian.org">\
-debian-l10n-french@lists.debian.org</a>.</p>
