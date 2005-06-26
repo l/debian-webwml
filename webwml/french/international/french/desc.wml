@@ -1,0 +1,158 @@
+#use wml::debian::template title="Traduction des descriptions des listes de diffusion et des paquets Debian JR"
+
+<p>
+Avertissement&nbsp;: avant de lire cette page, assurez-vous d'avoir bien
+compris les éléments de la <a href="web">traduction du site web</a>.
+</p>
+<p>
+Les descriptions des listes de diffusion
+(<tt>wml://www.debian.org/MailingLists/desc/*</tt>)
+et des paquets de Debian&nbsp;JR
+(<tt>wml://www.debian.org/devel/debian-jr/packaged/*</tt> et
+<tt>wml://www.debian.org/devel/debian-jr/packaged-non-free/*</tt>)
+sont de simples textes qui sont inclus automatiquement dans des fichiers wml
+générés totalement ou partiellement par des scripts (respectivement
+<tt>wml://www.debian.org/MailingLists/subscribe.wml</tt> et
+<tt>wml://www.debian.org/devel/debian-jr/packaged.wml</tt>).
+Comme il s'agit d'éléments à part entière du site web, le
+protocole de traduction est le même que pour les
+fichiers .wml. Cependant, en raison de la simplicité de ces fichiers, il
+n'y a pas de responsable attitré, les traductions et mises
+à jour se faisant lorsque cela est nécessaire. De plus, la procédure
+de suivi pour les mises à jour est un peu spéciale, l'absence de
+<tt>translation-check</tt> ne permettant pas de savoir facilement lorsque
+le fichier original est modifié.
+</p>
+
+<p>
+Pour pouvoir suivre les mises à jour, la première étape a été de créer
+dans le répertoire <tt>french/international/french/</tt> un
+fichier <tt>translated_txt.db</tt>. Au moment d'une traduction, il faut
+ajouter dans ce fichier une ligne au format suivant&nbsp;:
+<kbd><var>répertoire</var>/<var>fichier</var>&nbsp;\
+<var>version_cvs_du_fichier_original</var></kbd>, où la version
+cvs du fichier original est précédée par une ou plusieurs espaces ou
+tabulations. Par exemple&nbsp;:</p>
+<hr/>
+<pre>
+MailingLists/desc/user.heading			1.5
+MailingLists/desc/bugs/debian-bugs-closed	1.4
+
+devel/debian-jr/packaged/education/gcompris  1.2
+
+devel/debian-jr/packaged-non-free/games-arcade/xmame   1.1
+</pre>
+<hr/>
+<p>
+Si vous n'avez pas les droits en écriture dans le cvs, envoyez à la liste
+un diff de ce fichier avec vos traductions.
+</p>
+
+<p>
+Lorsque vous mettez à jour un fichier, il suffit de modifier en
+conséquence la version du cvs dans le fichier <tt>translated_txt.db</tt>.
+Envoyez également un diff de ce fichier si vous n'avez pas les droits.
+</p>
+
+<p>
+La suite de cette page affiche l'état actuel des traductions, montrant
+les fichiers traduits, non traduits et dépassés. La seule façon facile
+de savoir lorsqu'un fichier doit être mis à jour est de venir
+régulièrement sur cette page.
+</p>
+
+<h2>Statistiques de traduction des descriptions</h2>
+<perl>
+use lib "../../../Perl";
+use Local::Cvsinfo;
+
+$wmlroot="../../..";
+
+$language = "french";
+
+my $outofdate_message = "L'original est plus récent que la traduction";
+
+my $cvs = Local::Cvsinfo->new();
+my $untranslated=0;
+my $uptodate=0;
+my $outdated=0;
+
+my $outdated_string="";
+my $uptodate_string="";
+my $untranslated_string="";
+my %translated_files;
+
+open CHECK, "translated_txt.db" or die "You have to create a translated_txt.db in this directory";
+while (my $line = <CHECK>)
+{
+  if ($line =~ m#^([A-Za-z0-9\/\.-]*)[\ \t]*([0-9]+\.[0-9]+)$#)
+  {
+    $translated_files{$1} = $2;
+  }
+}
+
+process_dir("$wmlroot/english/MailingLists/desc");
+process_dir("$wmlroot/english/devel/debian-jr/packaged");
+process_dir("$wmlroot/english/devel/debian-jr/packaged-non-free");
+
+sub process_dir
+{
+  my $currentdir = shift;
+  opendir DIR, $currentdir or die "Cannot open directory $currentdir";
+  my @allfiles = grep !/^\.\.?$/, readdir DIR;
+  @allfiles = grep !/^CVS$/, @allfiles;
+  foreach $file (@allfiles) { $file = $currentdir . "/" . $file; }
+  closedir DIR;
+  foreach $file (grep -f, @allfiles) { process($file) }
+  foreach $dir (grep -d, @allfiles) { process_dir($dir) }
+}
+
+
+sub process
+{
+  my $file = shift;
+  return if ($file =~ /README/);
+  my $global_file = $file;
+  $global_file =~ s%$wmlroot/english/%%;
+  if (defined $translated_files{$global_file}) {
+    my $dir  = $file;
+    $dir  =~ s{/+[^/]+$}{};
+    my $version = get_version($dir, $file);
+    if ($version eq $translated_files{$global_file})
+    {
+      $uptodate_string .= "$global_file<br />\n";
+      $uptodate++;
+    } else {
+      $outdated_string .= "<tr><td>$global_file</td><td>$translated_files{$global_file}</td>";
+      $outdated_string .= "<td>$version</td><td>$outofdate_message</td>";
+      $outdated_string .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/english/%s.diff\?r1=%s\&amp;r2=%s\&amp;cvsroot=webwml\&amp;diff_format=%s\">%s -> %s</a></td>", $global_file, $translated_files{$global_file}, $version, "u", $translated_files{$global_file}, $version;
+      $outdated_string .= sprintf "<td><a href=\"http://cvs.debian.org/webwml/english/%s?cvsroot=webwml#rev%s\">[L]</a></td>", $global_file, $version;
+      $outdated_string .= "</tr>\n";
+      $outdated++;
+    }
+  } else {
+    $untranslated_string .= "$global_file<br />\n";
+    $untranslated++;
+  }
+}
+
+sub get_version
+{
+  my ($dir, $file) = @_;
+  $cvs->reset();
+  $cvs->readinfo($dir, matchfile => [$file]);
+  return $cvs->revision($file);
+}
+
+<perl:print>$uptodate traductions à jour, $outdated traductions dépassées, $untranslated descriptions non traduites\n</perl:print>
+if ($outdated > 0) {
+	<perl:print><h3>Traductions dépassées</h3>\n<table border="0" cellpadding="1" cellspacing="1">\n</perl:print>
+	<perl:print><tr><th>Fichier</th><th>Traduction</th><th>Original</th><th>Commentaire</th><th>Diff unifié</th><th>Log</th></tr></perl:print>
+	<perl:print>$outdated_string</perl:print>
+	<perl:print></table>\n</perl:print>
+}
+<perl:print><h3>Descriptions non traduites</h3>\n</perl:print>
+<perl:print>$untranslated_string</perl:print>
+<perl:print><h3>Traductions à jour</h3>\n</perl:print>
+<perl:print>$uptodate_string</perl:print>
+</perl>

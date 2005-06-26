@@ -1,0 +1,165 @@
+#use wml::debian::template title="Traduction des logiciels spécifiques à Debian"
+#use wml::debian::toc
+
+<define-tag toc-title-formatting endtag="required" whitespace="delete">
+<h3>%body</h3>
+</define-tag>
+
+<toc-display/>
+
+<toc-add-entry name="quoi">De quoi s'agit-il&nbsp;?</toc-add-entry>
+
+<p>Il s'agit des logiciels développés au sein de Debian.</p>
+
+<toc-add-entry name="responsable">Qui est responsable&nbsp;?</toc-add-entry>
+<p>Christian Perrier &lt;bubulle@debian.org&gt; est responsable de la
+traduction des logiciels spécifiques à Debian.</p>
+
+<toc-add-entry name="a-traduire">Que faut-il traduire&nbsp;?</toc-add-entry>
+<p>L'état de la traduction des logiciels spécifiques à Debian est disponible
+sur la <a href="$(HOME)/international/l10n/po/fr">page de statistique</a>.
+Cependant, il a été décidé de <strong>ne pas
+l'utiliser</strong> pour le groupe francophone. À la place, Christian
+Perrier s'occupe de tout le travail de détection des fichiers non traduits,
+et le signale à la liste en envoyant un message ayant pour sujet
+<tt>[taf] po://...</tt>. Il faut donc attendre de tels messages
+pour savoir ce qu'il faut traduire, et suivre les instructions qui se
+trouvent dans ces messages.</p>
+
+<toc-add-entry name="fichiers">Où récupérer les fichiers à
+traduire&nbsp;?</toc-add-entry>
+<p>Le fichier à traduire est normalement attaché au message
+<a href="format#etat"><tt>[taf]</tt></a> envoyé
+à la liste. Il suffit de le sauvegarder en local.</p>
+
+<toc-add-entry name="format">Quel est le format des fichiers à
+traduire&nbsp;?</toc-add-entry>
+
+<p>Il s'agit du format PO. Nous vous conseillons de lire la
+<a href="http://www.gnu.org/software/gettext/manual/html_node/gettext_toc.html">\
+documentation de Gettext</a> ainsi que le <em>
+<a href="http://i18n.kde.org/translation-howto/index.html">KDE Translation
+HOWTO</a></em> pour bien le comprendre.</p>
+
+<toc-add-entry name="comment">Comment traduire&nbsp;?</toc-add-entry>
+<p>Il faut copier le fichier récupéré (<var>paquet</var>.pot) sous
+le nom <tt>fr.po</tt>, puis l'éditer et le traduire, de préférence
+avec un outil dédié genre kbabel ou poedit.</p>
+<p>
+À la fin de votre traduction, il faut remplir les champs suivants&nbsp;:</p>
+<ul>
+<li>Project-Id-Version: nom du paquet et version au moment de la
+traduction</li>
+<li>Last-Translator: le plus souvent votre outil mettra tout seul
+<strong>votre</strong> adresse</li>
+<li>Language-Team: "French &lt;debian-l10n-french@lists.debian.org&gt;\n"</li>
+</ul>
+
+<toc-add-entry name="coordination">Procédure de coordination</toc-add-entry>
+
+<p>Le sous-projet concerné est la traduction des logiciels spécifiques à
+Debian, désignés par <tt>po</tt>.
+Le protocole à suivre est le suivant (référez vous à la page sur le
+<a href="format#etat">format des messages</a> pour des explications plus
+précises).</p>
+<dl>
+<dt>
+  <kbd>[taf] po://<var>paquet</var>/fr.po</kbd>
+</dt>
+<dd>
+Ce message est envoyé par un des coordinateurs (en l'occurrence, Christian
+Perrier). Ne les envoyez pas vous-même&nbsp;! Il signale que le paquet
+renseigné dans le sujet est spécifique à Debian et qu'il n'est pas
+encore traduit. Un traducteur peut donc s'en occuper.
+</dd>
+<dt>
+  <kbd>[itt] po://<var>paquet</var>/fr.po</kbd>
+</dt>
+<dd>
+Suite à la réception d'un <a href="format#etat"><tt>taf</tt></a>, vous
+avez décidé de traduire ce paquet, et vous l'annoncez à la liste.
+</dd>
+<dt>
+  <kbd>[rfr] po://<var>paquet</var>/fr.po</kbd>
+</dt>
+<dd>
+Vous avez traduit ce document, et vous demandez des relectures.
+</dd>
+<dt>
+  <kbd>[lcfc] po://<var>paquet</var>/fr.po</kbd>
+</dt>
+<dd>
+Vous avez intégré les relectures, et vous pensez que cette traduction est
+finie.
+</dd>
+<dt>
+  <kbd>[bts] po://<var>paquet</var>/fr.po #<var>NNNNNN</var></kbd>
+</dt>
+<dd>
+<p>Vous avez envoyé un rapport de bogue à l'auteur du paquet, et le numéro du
+bogue est <var>NNNNNN</var>. Pour ce faire, Christian Perrier propose le
+script <tt>bug-trad-po</tt> suivant à adapter en conséquence (modifiez le
+chemin du fichier patch-translate.txt)&nbsp;:</p>
+<pre>
+\#!/bin/sh
+
+reportbug --attach=fr.po \\
+  --include="$HOME/src/debian/translation/po/patch-translate.txt" \\
+  --offline -s "$1: French debconf templates translation" --severity=wishlist \\
+  --tag=patch --tag=l10n --no-config-files --package-version="N/A" $1
+</pre>
+<p>avec en contenu du fichier patch-translate.txt&nbsp;:</p>
+<pre>
+Please find attached the french translation, proofread by the
+debian-l10n-french mailing list contributors.
+
+This file should be put as fr.po in the appropriate place in
+your package build tree.
+</pre>
+<p>Pour l'utiliser, il suffit de lancer
+<kbd>bug-trad-po&nbsp;<var>paquet</var></kbd>.
+</p>
+</dd>
+</dl>
+
+<toc-add-entry name="publier">Quand et comment publier votre
+traduction&nbsp;?</toc-add-entry>
+<p>La publication de votre traduction se fait en l'envoyant avec le rapport
+de bogue. L'auteur du paquet se chargera du reste.</p>
+
+<toc-add-entry name="notification">Comment savoir si un document n'est plus à
+jour&nbsp;?</toc-add-entry>
+<p>Il suffit de suivre les <a href="format"><tt>taf</tt></a> envoyés
+par les coordinateurs sur la liste. Un paquet dont la traduction n'est
+plus à jour sera signalé par un message dont le titre sera&nbsp;:
+<kbd>[taf] po-debconf://<var>paquet</var>/fr.po [MAJ]</kbd>.
+Si vous aviez traduit ce paquet, vous devriez même recevoir ce message
+en copie. Donc, si vous lisez vos courriels, aucune chance de le rater.
+
+<toc-add-entry name="maj">Comment mettre à jour votre
+traduction&nbsp;?</toc-add-entry>
+<p>Signalez à la liste que vous vous chargez de cette mise à jour en
+répondant au <a href="format#etat"><tt>taf</tt></a> par un
+<a href="format#etat"><tt>itt</tt></a> et reprenez le protocole ci-dessus.
+Si vous ne réagissez pas au bout d'une semaine, un nouveau
+<a href="format#etat"><tt>taf</tt></a> sera
+envoyé à la liste et n'importe qui pourra se charger de cette mise à
+jour.</p>
+<p>Au moment d'envoyer le rapport de bogue, Christian Perrier suggère
+d'utiliser le script <tt>bug-update-po</tt> au lieu de <tt>bug-trad-po</tt>.
+Adaptez-le également (modifiez le chemin du fichier patch-update.txt.</p>
+<pre>
+\#!/bin/sh
+reportbug --attach=fr.po \\
+  --include="$HOME/src/debian/translation/po/patch-update.txt" \\
+  --offline -s "$1: French translation update" --severity=wishlist \\
+  --tag=patch --tag=l10n --no-config-files --package-version="N/A" $1 \\
+</pre>
+<p>avec en contenu du fichier patch-update.txt&nbsp;:</p>
+<pre>
+Please find attached the french translation update, proofread by the
+debian-l10n-french mailing list contributors.
+</pre>
+<p>Pour l'utiliser, il suffit de lancer
+<kbd>bug-update-po&nbsp;<var>paquet</var></kbd>.
+</p>
