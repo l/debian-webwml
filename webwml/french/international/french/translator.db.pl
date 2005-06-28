@@ -119,7 +119,7 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Sébastien Kalt' => {
-                        email       => 'ustilago@bigfoot.com',
+                        email       => 'ustilago@free.fr',
                         summary     => 2,
                         logs        => 0,
                         diff        => 2,
