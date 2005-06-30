@@ -132,6 +132,7 @@ sub parse {
     my $expect='first heading';
     my %entry = ();
     my $blanklines = 0;
+    my $unknowncounter = 1; # to make version unique, e.g. for using as id
 
     while (<$fh>) {
 	s/\s*\n$//;
@@ -204,6 +205,7 @@ sub parse {
 		 || m/^(\w+\s+\w+\s+\d{1,2},?\s*\d{4})\s+(.*)\s+(<|\()(.*)(\)|>)/o
 		 || m/^(\w[-+0-9a-z.]*) \(([^\(\) \t]+)\)\;?/io
 		 || m/^(\w+) (\S+) Debian (\S+)/io
+		 || m/^Changes from version (.*) to (.*):/io
 		 || m/^(?:\d+:)?[\w.+~-]+:?$/o) {
 	    # save entries on old changelog format verbatim
 	    # we assume the rest of the file will be in old format once we
@@ -233,6 +235,8 @@ sub parse {
 	    $entry{ERROR} = [ $file, $NR,
 			      "badly formatted trailer line", "$_" ];
 	    $self->do_parse_error(@{$entry{ERROR}});
+#	    $expect = 'next heading or eof'
+#		if $expect eq 'more change data or trailer';
 	} elsif (m/^\s{2,}(\S)/) {
 	    $expect eq 'start of change data'
 		|| $expect eq 'more change data or trailer'
@@ -251,9 +255,10 @@ sub parse {
 #		    print STDERR, Dumper(%entry);
 			push @{$self->{data}}, { %entry };
 			%entry = ();
-			$entry{Source} = $entry{Version} =
+			$entry{Source} =
 			    $entry{Distribution} = $entry{Urgency} = 
 			    $entry{Urgency_LC} = 'unknown';
+			$entry{Version} = 'unknown'.($unknowncounter++);
 			$entry{Urgency_Comment} = '';
 			$entry{ERROR} = [ $file, $NR,
 			    "found change data where expected $expect", "$_" ];
