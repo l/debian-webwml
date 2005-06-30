@@ -18,17 +18,50 @@
   <strong><gettext domain="others">Fax:</gettext></strong> %attributes<br>
 </define-tag>
 <define-tag URL whitespace=delete>
-  <strong><gettext domain="others">URL:</gettext></strong> 
+  <strong><gettext domain="others">URL:</gettext></strong>
   <a href="%0">%0</a><br>
 </define-tag>
 <define-tag or whitespace=delete>
   <gettext domain="others">or</gettext>
 </define-tag>
 <define-tag email whitespace=delete>
-  <strong><gettext domain="others">Email:</gettext></strong> 
-  <a href="mailto:%0">%0</a>
-  <: if (q{%1} ne "") { $tmp=q{%1}; print " <or> <a href=\"mailto:$tmp\">$tmp</a>"} :>
-  <br>
+  <strong><gettext domain="others">Email:</gettext></strong> <script type="text/javascript">
+    <:
+      my $email = q{%0};
+      my $charcode = '';
+
+      # these are the ASCII codes for '<a href="mailto:'
+      my $a_href_start = '60,97,32,104,114,101,102,61,34,109,97,105,108,116,111,58,';
+
+      # these are the ASCII codes for '">'
+      my $a_href_end = '34,62,';
+
+      # these are the ASCII codes for '</a>'
+      my $a_end = '60,47,97,62';
+
+      # generate list of email address char codes
+      for (my $tmp = 0; $tmp < length($email); $tmp++) {
+      	$charcode .= ord(substr($email, $tmp, 1)).',';
+      }
+      print 'document.write(String.fromCharCode(';
+      print $a_href_start;
+      print $charcode;
+      print $a_href_end;
+      print $charcode;
+      print $a_end;
+      print '));'
+    :></script><noscript><:
+      my @at = qw(-at- +at+ (at) [at] {at} *at*);
+      my @dot = qw(-dot- +dot+ (at) [dot] {dot} *dot*);
+      my $email = q{%0};
+      my $random = int(rand(@dot));
+
+      # this substitutes the at-sign and dots in the address for browsers
+      # without enabled JavaScript
+      $email =~ s/@/ $at[$random] /;
+      1 while $email =~ s/\./ $dot[$random] /;
+      print $email;
+    :></noscript><br />
 </define-tag>
 <define-tag rates whitespace=delete>
   <strong><gettext domain="others">Rates:</gettext></strong> %attributes<br>
