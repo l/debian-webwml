@@ -193,7 +193,7 @@ sub parse {
 	    }
 	    $expect= 'start of change data';
 	    $blanklines = 0;
-	} elsif (m/^Local variables:/io) {
+	} elsif (m/^(;;\s*)?Local variables:/io) {
 	    last; # skip Emacs variables at end of file
 	} elsif (m/^vim:/io) {
 	    last; # skip vim variables at end of file
