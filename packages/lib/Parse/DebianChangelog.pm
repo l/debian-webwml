@@ -206,9 +206,10 @@ sub parse {
 	} elsif (m/^(\w+\s+\w+\s+\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}\s+[\w\s]*\d{4})\s+(.*)\s+(<|\()(.*)(\)|>)/o
 		 || m/^(\w+\s+\w+\s+\d{1,2},?\s*\d{4})\s+(.*)\s+(<|\()(.*)(\)|>)/o
 		 || m/^(\w[-+0-9a-z.]*) \(([^\(\) \t]+)\)\;?/io
-		 || m/^(\w+) (\S+) Debian (\S+)/io
+		 || m/^([\w.+-]+)(-| )(\S+) Debian (\S+)/io
 		 || m/^Changes from version (.*) to (.*):/io
-		 || m/^Changes for \w+-[\w.-]+:?$/
+		 || m/^Changes for [\w.+-]+-[\w.+-]+:?$/io
+		 || m/^Old Changelog:$/io
 		 || m/^(?:\d+:)?[\w.+~-]+:?$/o) {
 	    # save entries on old changelog format verbatim
 	    # we assume the rest of the file will be in old format once we
