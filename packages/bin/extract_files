@@ -136,7 +136,13 @@ sub unpack_srcpkg {
 sub unpack_binpkg {
     my ( $pkgname, $debname, $log ) = @_;
 
-    mkdir( "$TEMPDIR/$pkgname" ) or do_error( "couldn't create directory $TEMPDIR/$pkgname" );
+    add_log( $log, "unpacking binary package $pkgname" );
+
+    mkdir( "$TEMPDIR/$pkgname" ) or do {
+	do_warning( "couldn't create directory $TEMPDIR/$pkgname" );
+	add_log( $log, "couldn't create directory $TEMPDIR/$pkgname" );
+	return;
+    };
 
     add_log( $log, "dpkg-deb --extract $debname $TEMPDIR/$pkgname" );
 
