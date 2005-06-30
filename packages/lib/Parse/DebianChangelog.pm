@@ -208,6 +208,7 @@ sub parse {
 		 || m/^(\w[-+0-9a-z.]*) \(([^\(\) \t]+)\)\;?/io
 		 || m/^(\w+) (\S+) Debian (\S+)/io
 		 || m/^Changes from version (.*) to (.*):/io
+		 || m/^Changes for \w+-[\w.-]+:?$/
 		 || m/^(?:\d+:)?[\w.+~-]+:?$/o) {
 	    # save entries on old changelog format verbatim
 	    # we assume the rest of the file will be in old format once we
