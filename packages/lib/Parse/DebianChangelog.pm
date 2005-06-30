@@ -160,6 +160,7 @@ sub parse {
 		$entry{'Version'} = $2;
 		$entry{'Header'} = $_;
 		($entry{'Distribution'} = $3) =~ s/^\s+//;
+		$entry{'Changes'} = '';
 	    }
 	    (my $rhs = $POSTMATCH) =~ s/^\s+//;
 	    my %kvdone;
