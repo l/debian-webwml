@@ -82,6 +82,14 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
+		'Cyril Brulebois' => {
+  	      		email       => 'cyril.brulebois@enst-bretagne.fr',
+		        summary     => 3,
+		        logs        => 3,
+		        diff        => 3,
+		        tdiff       => 0,
+		        file        => 0
+		},
                 'Christian Couder' => {
                         email       => 'christian@couder.net',
                         summary     => 3,
