@@ -55,15 +55,6 @@ sub init_translators {
 		        file        => 0,
 		        compress    => 'none'
 		},
-                'Laurence Bock' => {
-                        email       => 'ybecker@mindspring.com',
-                        summary     => 3,
-                        logs        => 3,
-                        diff        => 3,
-                        tdiff       => 3,
-                        file        => 3,
-                        compress    => 'none'
-                },
 		'Frédéric Bothamy' => {
                         email       => 'frederic.bothamy@free.fr',
                         summary     => 2,
@@ -185,6 +176,15 @@ sub init_translators {
                         summary     => 2,
                         logs        => 2,
                         diff        => 2,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
+                },
+	        'Pierre Pantaléon' =>  {
+                        email       => 'thomas.huriaux@enst-bretagne.fr',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
                         tdiff       => 0,
                         file        => 0,
                         compress    => 'none'
