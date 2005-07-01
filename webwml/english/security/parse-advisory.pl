@@ -79,7 +79,7 @@ foreach $l (<ADV>) {
 	  push @dbids, "BID".$id;
       }
   }
-  $mi = 0 if ($l =~ /^(wget url|Obtaining updates|Upgrade Instructions)/);
+  $mi = 0 if ($l =~ /^(wget url|Obtaining updates|Upgrade Instructions)/i);
   $moreinfo .= "<p>" if ($mi && $nl);
   $nl = 0;
   $nl = 1 if ($mi && ($l eq "\n") && $moreinfo);
