@@ -1,0 +1,93 @@
+#use wml::debian::weeklynews::header PAGENAME="Courriel"
+#use wml::debian::translation-check translation="1.2" maintainer="Thomas Huriaux"
+
+<a name=1></a>
+<pre>
+À : debian-perl@lists.debian.org
+Sujet : paquets Debian expérimentaux de Perl 5.6
+Répondre-à : torin@daft.com 
+De : Darren Stalder &lt;darren@u.washington.edu&gt;
+Date : 18 avr. 2000 18 h 01 ' 39 " -0700
+    
+Ajoutez les lignes suivantes à votre fichier /etc/apt/sources.list pour
+obtenir les derniers paquets Debian Perl-5.6.
+deb http://www.daft.com/pub/debian/experimental ./
+deb-src http://www.daft.com/pub/debian/experimental ./
+
+Veuillez noter que cela ne fera pas de perl-5.6 votre Perl préféré. Cela
+serait probablement une mauvaise idée, puisque cette version n'a pas été
+profondément testée avec tous les logiciels de Debian. J'ai lancé quelques
+tests qui semblent réussir, mais veuillez ne pas m'en vouloir si Perl 5.6
+met votre chatte enceinte.
+       
+J'imagine que vous pouvez trouver comment obtenir ces fichiers en
+utilisant un serveur web ou ftp.
+
+Voici le fichier des changements et la liste des choses à faire :
+perl-5.6 (5.6.0-0.1) instable ; urgence=faible
+
+  * Nouvelle version amont. Nouveau système de numérotation.
+  * Veuillez noter qu'il n'y a pas encore d'enfilage disponible avec
+    cette version. Le modèle d'enfilage de la version 5.6 (fils
+    interpréteurs) n'est actuellement pas utilisable à partir d'un espace
+    utilisateur. Les fils de 5.005 peuvent être compilés, mais
+    seulement si cela est demandé expressément puisque perl-5.005 est
+    disponible.
+
+ -- Darren Stalder &lt;torin@daft.com&gt;  Mer. 12 avr. 2000 01 h 12 ' 45 " -0700
+
+Liste des choses à faire pour la version 5.6 de Debian
+
+* Changer le fichier base.prerm pour manipuler la version de Perl
+  correctement :
+  La version apparaît actuellement partout en tant que 5.6.0 sauf lorsque
+  nous affichons $], où cela ressort comme la version 5.006.
+  Solution : exporter yes à partir de Perl au lieu d'exporter la version à
+  partir de Perl.
+* L'alternative à Perl 5.6 est mauvaise, elle apparaît comme 56, ce qui
+  est largement inférieur à 5005.
+* Nous devons écrire notre propre échangeur d'alternatives. Il y a les
+  problèmes suivants avec la solution actuelle :
+  - update-alternatives est écrit en Perl, donc nous devons trouver un
+    contournement dans le fichier base.postinst pour le faire fonctionner ;
+  - beaucoup de fichiers doivent être changés lorsqu'un utilisateur veut
+    utiliser un autre Perl par défaut. Que l'utilisateur doive changer tout
+    cela n'est pas raisonnable, et avoir autant de liens esclaves causait
+    des bogues à un moment dans update-alternatives ;
+  - il y a eu des comptes-rendus à propos de update-alternatives étant
+    mystérieusement configuré en manuel.
+  Inconvénients :
+  - encore une autre chose qui peut ne pas fonctionner (mais c'est
+    également vrai pour update-alternatives) ;
+  - différentes interfaces utilisateurs à gérer.
+* Obtenir un correctif pour utiliser une version de libperl.so partagée
+  avec un Perl lié statiquement.
+* Vérifier s'il n'y a pas de problème d'avoir /usr/lib/perl/5.6 ou si
+  ce n'est pas assez spécifique. (L'installation par défaut est dans le
+  répertoire 5.6.0.)
+* Vérifier et s'assurer que Perl ne crée plus de shell lors de
+  l'utilisation de caractères de remplacements.
+* @INC est aléatoire avec des répertoires dupliqués dans le chemin et
+  $venderlib à la fin du chemin de recherche plutôt qu'au début.
+  Peut-être réintroduire la rustine Debian pour mettre /usr/lib/perl5 au
+  début de @INC.
+* Réimplémenter le correctif MM::Unix qui n'inclut pas /lib ou /usr/lib
+  dans -rpath/LD_RUN_PATH pendant la période de création des liens.
+
+À faire à un moment ou l'autre (non nécessaire pour la publication non
+expérimentale de la version 5.6)
+
+* Les fichiers demandés par les disquettes de base devraient être
+  générés automatiquement plutôt qu'écrits à la main.
+* Construire perl-\d+-doc dans binary-indep.
+
+Darren
+- -- 
+&lt;torin@daft.com&gt; &lt;http://www.daft.com/~torin&gt; &lt;torin@debian.org&gt; &lt;torin@io.com&gt;
+Darren Stalder/2608 Second Ave, @282/Seattle, WA 98121-1212/USA/+1-800-921-4996
+@ Administrateur système, créateur de sites web, postmaster à louer.          @
+@ Programmateur/enseignant C/Perl/CGI/Pilot                                   @
+@                    Mettez un peu de chaleur dans votre esprit.              @
+</pre>
+
+#use wml::debian::weeklynews::footer translator="Thomas Huriaux"
