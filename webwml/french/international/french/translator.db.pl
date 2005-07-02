@@ -181,7 +181,7 @@ sub init_translators {
                         compress    => 'none'
                 },
 	        'Pierre Pantaléon' =>  {
-                        email       => 'thomas.huriaux@enst-bretagne.fr',
+                        email       => 'pierre.pantaleon@free.fr',
                         summary     => 3,
                         logs        => 3,
                         diff        => 3,
