@@ -25,8 +25,12 @@
   <gettext domain="others">or</gettext>
 </define-tag>
 <define-tag email whitespace=delete>
+<preserve scramble />
+<set-var %attributes />
   <strong><gettext domain="others">Email:</gettext></strong> 
-  <script type="text/javascript">
+  <ifeq <get-var scramble /> "" \
+  <a href="mailto:%0">%0</a> \
+  "<script type="text/javascript">\
     <:
       my $email = q{%0};
       my $charcode = '';
@@ -62,7 +66,9 @@
       $email =~ s/@/ $at[$random] /;
       1 while $email =~ s/\./ $dot[$random] /;
       print $email;
-    :></noscript><br />
+    :></noscript>" \
+    /><br />
+<restore scramble />
 </define-tag>
 <define-tag rates whitespace=delete>
   <strong><gettext domain="others">Rates:</gettext></strong> %attributes<br>
