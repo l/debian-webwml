@@ -1,0 +1,395 @@
+#use wml::debian::template title="Debian BTS- información para desarrolladores" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.54" maintainer="Fernando Cerezal"
+<H1>Información para desarrolladores sobre el sistema de seguimiento de errores</H1>
+
+<P>Inicialmente, un usuario remite un informe de error como un mensaje de correo
+a <CODE>submit@bugs.debian.org</CODE>. Entonces se le asigna un número,
+se confirma al usuario, y se reenvía a
+<CODE>debian-bugs-dist</CODE>. Si el remitente incluyó una linea 
+<CODE>Package</CODE> listando un paquete con responsable conocido,
+al responsable también le llegará una copia.</P>
+
+<P>La línea <CODE>Asunto</CODE> contendrá añadido
+<CODE>Bug#</CODE><VAR>nnn</VAR><CODE>:</CODE>, y el 
+<CODE>Reply-To</CODE> estará hecho para incluir al remitente del informe
+ y <VAR>nnn</VAR><CODE>@bugs.debian.org</CODE>.</P>
+
+<hrline>
+
+<ul>
+  <li><a href="#closing">Cerrar informes de errores</a></li>
+  <li><a href="#followup">Mensajes de respuesta</a></li>
+  <li><a href="#severities">Niveles de severidad</a></li>
+  <li><a href="#tags">Etiquetas para informes de errores</a></li>
+  <li><a href="#forward">Registrar que ha aprobado un informe de error</a></li>
+  <li><a href="#owner">Cambiar la propiedad del error</a></li>
+  <li><a href="#maintincorrect">Responsables de paquetes mal mostrados</a></li>
+  <li><a href="#requestserv">Reabrir, reasignar y manipular errores</a></li>
+  <li><a href="#subjectscan">Característica de escaneo de asunto más o menos obsoleto</a></li>
+  <li><a href="#x-debian-pr">Característica obsoleta <code>X-Debian-PR: quiet</code></a></li>
+</ul>
+
+<hrline>
+
+
+<h2><a name="closing">Cerrar informes de errores</a></h2>
+
+<p>Los informes de errores en Debian se deberían cerrar cuando el problema está
+resuelto. Los problemas en paquetes solo se pueden considerar arreglados una vez
+que un paquete incluya el arreglo del error y entre en el repositorio de Debian.</p>
+
+<p>Generalmente, las únicas personas a las que se le permite cerrar un informe 
+de error son el remitente del error y el(los) responsable(s) del paquete que lo
+contiene. Hay excepciones a esta regla, por ejemplo, los errores 
+contenidos en paquetes desconocidos o ciertos pseudo-paquetes genéricos. Cuando
+dude, no cierre errores, primero pregunte en la lista de correo debian-devel.</p>
+
+<p>Los informes de error se deberían cerrar enviando un correo a
+<var>nnn</var><code>-done@bugs.debian.org</code>. El cuerpo del mensaje tiene
+que contener una explicación de cómo se arregló el error.</p>
+
+<p>Con los correos recibidos del sistema de seguimiento de errores, todo lo 
+que necesita hacer para cerrar el error hacer un «Reply» en su gestor de 
+correo y editar el campo <code>To</code> para que diga
+<VAR>nnn</VAR><CODE>-done@bugs.debian.org</CODE> en lugar de
+<VAR>nnn</VAR><CODE>@bugs.debian.org</CODE>
+(<VAR>nnn</VAR><CODE>-close</CODE> se utiliza como un alias para
+<VAR>nnn</VAR><CODE>-done</CODE>).</P>
+
+<p>La persona que cierre el error, la que lo remitió y la lista de correo 
+<code>debian-bugs-closed</code> recibirán cada una una notificación sobre 
+el cambio de estado del informe. El remitente y la lista de correo también 
+recibirán el contenido del mensaje enviado a 
+<var>nnn</var><code>-done</code>.</p>
+
+
+<h2><a name="followup">Mensajes de respuesta</a></h2>
+
+<p>El sistema de seguimiento de errores incluirá la dirección del remitente
+y la dirección del error (<var>nnn</var><code>@bugs.debian.org</code>) en el
+ encabezado <code>Reply-To</code> tras reenviar el informe de error. Por 
+ favor dese cuenta que son dos direcciones distintas.</p>
+
+<p>Si un desarrollador desea contestar a un informe de error simplemente 
+debería contestar al mensaje, respetando el encabezado <code>Reply-To</code>.
+Esto <strong>no</strong> cerrará el error.</p>
+
+<p>El sistema de seguimiento de errores recibirá los mensajes en 
+<VAR>nnn</VAR><CODE>@bugs.debian.org</CODE>, lo pasará al responsable del 
+paquete, almacenará la respuesta con el resto de registros para ese informe y lo reenviará a <CODE>debian-bugs-dist</CODE>.</P>
+
+<P>Un desarrollador puede enviar un correo explícitamente al remitente del 
+error a <var>nnn</var><code>-submitter@bugs.debian.org</code>.</p>
+
+<P>Si desea enviar un mensaje de respuesta que no es apropiado para
+<CODE>debian-bugs-dist</CODE> puede hacerlo enviándolo a
+<VAR>nnn</VAR><CODE>-quiet@bugs.debian.org</CODE> o
+<VAR>nnn</VAR><CODE>-maintonly@bugs.debian.org</CODE>.
+EL correo enviado a <VAR>nnn</VAR><CODE>-quiet@bugs.debian.org</CODE> se 
+almacena en el sistema de seguimiento de errores pero no se envía a particulares
+o listas de correo. El correo enviado a 
+<VAR>nnn</VAR><CODE>-maintonly@bugs.debian.org</CODE> se almacena 
+en el sistema de seguimiento de errores y se entrega solo al responsable del 
+paquete en cuestión.</P>
+
+<P><EM>No</EM> use las capacidades «responder a todos los buzones» o «responder»
+ de su gestor de correo a menos que pretenda editar los buzones sustancialmente.
+  En concreto, mire que no envía mensajes de respuesta a
+ <CODE>submit@bugs.debian.org</CODE>.</P>
+
+<P>Para más información sobre los encabezados para suprimir los mensajes ACK
+y como enviar copias usando el sistema de seguimiento de errores, 
+mire las <a href="Reporting">instrucciones para informar de errores</a>.</P>
+
+
+<H2><A name="severities">Niveles de severidad</A></H2>
+
+<P>El sistema de seguimiento de errores registra un nivel de severidad con 
+cada informe de error. Este se establece como <CODE>normal</CODE> 
+por defecto, pero se puede corregir 
+incluyendo una linea <CODE>Severity</CODE> en el pseudo-encabezado cuando se 
+remite el error (mire las <A href="Reporting#pseudoheader">instrucciones para 
+informar de errores</A>), o usando el comando <CODE>severity</CODE> en el 
+<A href="#requestserv">servidor de peticiones de control</A>.</P>
+
+<P>Los niveles de severidad son:
+
+<DL>
+<DT><CODE>critical</CODE>
+<DD>hace que software no relacionado entre sí en el sistema (o el sistema 
+entero) falle, o cause serias pérdidas de datos, o introduzca un agujero 
+de seguridad en el sistema donde se instale el paquete.
+
+<DT><CODE>grave</CODE>
+<DD>hace que el paquete en cuestión no se pueda utilizar o no se pueda casi nunca, 
+o cause pérdida de datos, o introduce un agujero de seguridad que permita el acceso a 
+las cuentas de los usuarios que usen el paquete.
+
+<DT><CODE>serious</CODE>
+<DD>es una <a href="http://release.debian.org/sarge_rc_policy.txt">violación 
+severa de la política de Debian</a> (en pocas palabras, viola una directiva 
+«debe» (must) o «requerida» (required)), o, en opinión del responsable del paquete, 
+hace que el paquete no se pueda publicar.
+
+<DT><CODE>important</CODE>
+<DD>un error que tiene un efecto importante en la usabilidad de un paquete,
+sin hacerle completamente inútil para todo el mundo.
+
+<DT><CODE>normal</CODE>
+<DD>el valor por defecto, aplicable a la mayoría de los errores.
+ 
+<DT><CODE>minor</CODE>
+<DD>un problema que no afecta a la utilidad del paquete, y presumiblemente es
+trivial de arreglar.
+
+<DT><CODE>wishlist</CODE>
+<DD>para la petición de cualquier característica, y también para cualquier 
+error que sea muy difícil de arreglar debido a consideraciones de diseño 
+mayores.</DL>
+
+<p>Ciertas severidades se consideran
+<em><a href="http://bugs.debian.org/release-critical/">release-critical</a></em>,
+que significa que el error tendrá un impacto en la publicación del paquete 
+con la publicación estable de Debian. Actualmente, estos son <strong>critical</strong>,
+<strong>grave</strong> y <strong>serious</strong>. Para obtener unas reglas 
+completas y canónicas sobre qué asuntos merecen estas severidades, mire la
+lista de <a href="http://release.debian.org/sarge_rc_policy.txt">Asuntos de 
+Publicación-Críticos para Sarge</a>.</p>
+
+<H2><a name="tags">Etiquetas para informes de errores</a></H2>
+
+<p>Cada error puede tener cero o más de un conjunto de etiquetas dadas. Estas 
+etiquetas se muestran en la lista de errores cuando mire en la página del 
+paquete, y cuando mire el registro completo del error.
+
+<p>Las etiquetas se pueden establecer poniendo una linea <code>Tags</code> 
+en el pseudo-encabezado cuando se remite el error (mire las
+<a href="Reporting#pseudoheader">instrucciones para informar de errores</a>),
+o usando el comando <code>tags</code> en el <a href="#requestserv">servidor de 
+peticiones de control</a>. Separe varias etiquetas con comas, espacios, o ambos.
+
+<p>Las actuales etiquetas para errores son:
+
+<dl>
+
+<dt><code>patch</code>
+  <dd>Un parche o cualquier otro procedimiento fácil para arreglarlo se
+  incluye en el registro de error. Si hay un parche, pero no resuelve el error 
+  adecuadamente o causa algún otro problema, no se debería usar esta etiqueta.
+  
+<dt><code>wontfix</code>
+  <dd>Este error no se quiere arreglar. Posiblemente porque sea una elección
+  entre dos formas arbitrarias de hacer las cosas y el responsable y el 
+  remitente prefieren formas distintas de hacerlas, posiblemente porque 
+  cambiar el comportamiento causará otros, peores, problemas para otras personas,
+ o posiblemente por otras razones.
+
+<dt><code>moreinfo</code>
+  <dd>Este error no se puede tratar hasta que el remitente proporcione más 
+  información. El error se puede cerrar si el remitente no proporciona más 
+  información en un período de tiempo razonable (unos pocos meses). Esto es para 
+  errores como "No funciona". ¿Qué no funciona?
+
+<dt><code>unreproducible</code>
+  <dd>Este error no lo puede reproducir el responsable del sistema. Se necesita
+  la asistencia de terceras partes para diagnosticar las causa del problema.
+
+<dt><code>help</code>
+  <dd>El responsable está pidiendo ayuda para tratar este error.
+
+<dt><code>pending</code>
+  <dd>Se ha encontrado una solución a este error y se enviará pronto.
+
+<dt><code>fixed</code>
+  <dd>Este error está arreglado o hay un arreglo temporal (por un envío de una persona 
+que no es la responsable, por ejemplo), pero todavía hay un asunto que hay que resolver.
+  Esta etiqueta reemplaza la antigua severidad "fixed".
+
+<dt><code>security</code>
+  <dd>Este error describe un problema de seguridad en un paquete (e.g., malos
+  permisos permitiendo el acceso a datos que no deberían ser accesibles; 
+  sobre-ejecución de «buffer» permitiendo a la gente controlar un sistema de 
+  formas que no debería poder; denegación de servicio que se debería arreglar,
+  etc). La mayoría de los errores de seguridad también se deberían establecer en 
+  severidad critical o grave.
+
+<dt><code>upstream</code>
+  <dd>Este error se aplica a la parte del paquete que se envía.
+
+<dt><code>confirmed</code>
+  <dd>El responsable ha mirado, entiende, y básicamente está de acuerdo con 
+  el error, pero todavía no lo ha arreglado. (El Uso de esta etiqueta es 
+  opcional; se pretende que sea para los responsables de paquetes que 
+  necesitan gestionar un gran número de errores abiertos.)
+  
+<dt><code>fixed-upstream</code>
+  <dd>El error ha sido arreglado por el responsable principal, pero todavía 
+  no está en el paquete (por la razón que sea: quizás es muy complicado 
+  hacer el cambio compatible con versiones anteriores o tenga muy poco valor 
+  para tomarse la molestia).
+
+<dt><code>fixed-in-experimental</code>
+  <dd>El error ha sido arreglado en el paquete de la distribución experimental,
+  pero todavía no en la distribución inestable.
+
+<dt><code>d-i</code>
+  <dd>Este error es relevante para el desarrollo del instalador de Debian. Se
+  espera que se use cuando el error afecte al desarrollo del instalador, pero
+  no está en un paquete que forme parte directa del instalador mismo.
+
+<dt><code>ipv6</code>
+  <dd>Este error afecta al soporte de la versión 6 del Protocolo de Internet.
+
+<dt><code>lfs</code>
+  <dd>Este error afecta al soporte para archivos grandes (más de 2 gigabytes).
+
+<dt><code>l10n</code>
+  <dd>Este error es relevante para la localización del paquete.
+
+<dt><code>potato</code>
+  <dd>Este error afecta particularmente a la publicación potato de Debian.
+
+<dt><code>woody</code>
+  <dd>Este error afecta particularmente a la publicación woody de Debian.
+
+<dt><code>sarge</code>
+  <dd>Este error afecta particularmente a la publicación sarge de Debian.
+
+
+<dt><code>sarge-ignore</code>
+  <dd>Este error «release-critical» se va a ignorar para los propósitos de 
+  publicación de sarge. <strong>Esta etiqueta solo la deberían usar los 
+  gestores de publicación; no la ponga usted mismo sin autorización 
+  explícita de ellos.</strong>
+
+<dt><code>etch</code>
+  <dd>Este error afecta particularmente a la (no publicada) distribución etch.
+
+<dt><code>etch-ignore</code>
+  <dd>Este error «release-critical» se va a ignorar para los propósitos de 
+  publicación de etch. <strong>Esta etiqueta solo la deberían usar los 
+  gestores de publicación; no la ponga usted mismo sin autorización 
+  explícita de ellos.</strong>
+
+<dt><code>sid</code>
+  <dd>Este error afecta particularmente a una arquitectura que actualmente
+  no está publicada (que es, en la distribución sid).
+
+<dt><code>experimental</code>
+  <dd>Este error afecta particularmente a la distribución experimental.
+  
+</dl>
+
+<p>Las últimas cinco etiquetas se pretende que se usen principalmente para
+la publicación de errores críticos, para los que es importante saber a qué 
+distribuciones afectan para asegurarse de que se hacen los arreglos (o se 
+quita lo necesario) en los lugares adecuados.
+
+
+<H2><A name="forward">Registrar que ha aprobado un informe de error</A></H2>
+
+<P>Cuando un desarrollador reenvía un informe de error al responsable 
+principal del paquete fuente del cual deriva el paquete Debian,
+deberían anotarlo en el sistema de seguimiento de errores de la siguiente manera:</P>
+
+<P>Asegúrese de que el campo <CODE>To</CODE> de su mensaje al autor 
+tiene solo la(s) dirección(es) de el(los) autor(es); ponga en el campo 
+<CODE>CC</CODE>tanto la persona que informó del error como 
+<VAR>nnn</VAR><CODE>-forwarded@bugs.debian.org</CODE>.</P>
+
+<P>Pregunte al autor si conservar el <CODE>CC</CODE> a
+<VAR>nnn</VAR><CODE>-forwarded@bugs.debian.org</CODE> cuando contesten, de 
+forma que el sistema de seguimiento de errores almacene su respuesta con el 
+informe original.</P>
+
+<P>Cuando el sistema de seguimiento de errores reciba un mensaje en 
+<VAR>nnn</VAR><CODE>-forwarded</CODE> marcará el error como que ha sido 
+reenviado a la(s) dirección(es) en el campo <CODE>To</CODE>
+del mensaje recibido, si el error no se ha marcado ya como reenviado.</P>
+
+<P>También puede manipular la información «reenviado a» enviando mensajes a
+<A href="server-control"><CODE>control@bugs.debian.org</CODE></A>.</P>
+
+
+<h2><a name="owner">Cambiar la propiedad de un error</a></h2>
+
+<p>En los casos donde la persona responsable de arreglar un error no es el 
+responsable asignado al paquete asociado (por ejemplo, cuando el paquete es 
+mantenido por un equipo), puede ser útil registrar este hecho en el sistema 
+de seguimiento de errores. Para ayudar a esto, cada error puede opcionalmente 
+tener un propietario.
+
+<p>Se puede establecer el propietario incluyendo una linea <code>Owner</code>
+en el pseudo-encabezado cuando se remita el error (mire las
+<a href="Reporting#pseudoheader">instrucciones para informar de errores</a>),
+o usando los comandos <code>owner</code> y <code>noowner</code> en el 
+<a href="#requestserv">servidor de peticiones de control</a>.
+
+
+<H2><a name="maintincorrect">Responsables de paquetes mal mostrados</a></H2>
+
+<p>Si no es correcto el responsable de un paquete que se muestra, 
+normalmente es porque ha cambiado hace poco, y el nuevo responsable no ha 
+enviado una nueva versión todavía con el campo <CODE>Maintainer</CODE> de 
+control del archivo cambiado. Se arreglará cuando se envíe el paquete;
+alternativamente, los responsables del repositorio pueden reescribir el registro 
+responsable de un paquete manualmente, por ejemplo si no se espera que se 
+haga pronto una reconstrucción y reenvío del paquete.
+Contacte con <CODE>override-change@debian.org</CODE> para cambios de 
+reescritura en el archivo.</P>
+
+
+<H2><A name="requestserv">Reabrir, reasignar y manipular errores</A></H2>
+
+<P>Es posible reasignar los informes de errores a otros paquetes, reabrir 
+los cerrados erróneamente, modificar la información diciendo a donde, si 
+hay algún sitio, se debe reenviar un informe de errores, cambiar las 
+severidades y títulos de informes, establecer la propiedad de los errores y 
+unir y separar informes de errores. Esto se hace enviando un correo a
+<CODE>control@bugs.debian.org</CODE>.</P>
+
+<P>El <A href="server-control">formato de estos mensajes</A> se describe
+en otro documento disponible en la «World Wide Web» o en el archivo
+<CODE>bug-maint-mailcontrol.txt</CODE>. Una versión en texto en claro 
+se puede obtener enviando la palabra <CODE>help</CODE> a la dirección del 
+servidor de más arriba.</P>
+
+
+<h2><a name="subjectscan">Característica de escaneo de asunto más 
+o menos obsoleta</a></h2>
+
+<P>Los mensajes que lleguen a <CODE>submit</CODE> o <CODE>bugs</CODE> cuyo
+Asunto comience con <CODE>Bug#</CODE><VAR>nnn</VAR> se tratarán como si se 
+hubiesen enviado a <VAR>nnn</VAR><CODE>@bugs.debian.org</CODE>. Esto es 
+tanto por compatibilidad con correo reenviado desde las direcciones antiguas
+como para recoger los correos enviados a <CODE>submit</CODE> por error
+(por ejemplo, usando responder a todos los buzones).</P>
+
+<P>Funcionan de forma similar <CODE>maintonly</CODE>,
+<CODE>done</CODE>, <CODE>quiet</CODE> y <CODE>forwarded</CODE>,
+que tratan el correo que llegue con una etiqueta Asunto como si se
+hubiese enviado a la correspondiente dirección 
+<VAR>nnn-loquesea</VAR><CODE>@bugs.debian.org</CODE>.</P>
+
+<P>Los mensajes que lleguen tipo <CODE>forwarded</CODE> y
+<CODE>done</CODE> - ie, sin un número de error en la dirección - y sin un
+número de error en el Asunto se almacenará en `basura' y se guardará
+unas pocas semanas, si no se ignorará.</P>
+
+
+<h2><a name="x-debian-pr">Característica obsoleta <code>X-Debian-PR: quiet</code></a></h2>
+
+<P>Solía habilitar poder prevenir al sistema de seguimiento de errores de
+reenviar a ningún sitio los mensajes recibidos en <CODE>debian-bugs</CODE>,
+poniendo una linea <CODE>X-Debian-PR: quiet</CODE> en la cabecera real 
+del correo.</P>
+
+<P>Ahora se ignora esta linea. En su lugar, envíe su mensaje a 
+<CODE>quiet</CODE> o <VAR>nnn</VAR><CODE>-quiet</CODE> (o
+<CODE>maintonly</CODE> o <VAR>nnn</VAR><CODE>-maintonly</CODE>).</P>
+
+<HR>
+
+#use "otherpages.inc"
+
+#use "$(ENGLISHDIR)/Bugs/footer.inc"
