@@ -1,0 +1,180 @@
+#use wml::debian::template title="Red autoconstructora" BARETITLE="true"
+#use wml::debian::translation-check translation="1.6" maintainer="David Moreno Garza"
+
+<p>La red autoconstructora es un desarrollo de Debian que ayuda a 
+incrementar la velocidad de las recompilaciones de paquetes para
+todas las arquitecturas <a href="$(HOME)/ports/">soportadas actualmente 
+por Debian</a>. Esta red está constituida por varias máquinas que usan 
+un paquete de software específico denominado <em>buildd</em> para coger
+los paquetes del repositorio de Debian y reconstruirlos para la 
+arquitectura que se requiera.
+
+<h2>¿Por qué se necesita la red autoconstructora?</h2>
+
+<P>La distribución Debian soporta <a href="$(HOME)/ports/">en realidad
+unas pocas arquitecturas</a>, pero los responsables de los paquetes 
+generalmente solo compilan versiones binarias para una sola arquitectura
+(en general i386). Los desarrolladores para otras arquitecturas tienen 
+que vigilar cuando hay nuevas versiones y recompilarlos si quieren 
+permanecer actualizados con la distribución de Intel.
+
+<P>
+En el momento que empezó Debian/m68k (el primer portado a no-Intel), 
+todo esto se hizo manualmente: los desarrolladores miraban los nuevos 
+paquetes en la lista de correo de envíos y cogían algunos de ellos para 
+construirlos. La coordinación para que ningún paquete se construya dos 
+veces por personas distintas se hacía anunciándolo en una lista de correo.
+Es obvio que este procedimiento es propenso al error y consume mucho tiempo.
+Esta fue, sin embargo, la forma usual de mantener las distribuciones no 
+i386 actualizadas durante mucho tiempo.
+
+<P>
+El demonio de construcción del sistema automatiza la mayor parte de 
+este proceso. Consiste en un conjunto de guiones (escritos en Perl
+y Python) que se han mejorado con el tiempo para ayudar a los portadores
+con varias tareas. Finalmente han evolucionado en un sistema que puede 
+mantener las distribuciones no i386 de Debian actualizadas casi 
+automáticamente.
+
+
+<h2>¿Como funciona buildd?</h2>
+
+<P><em>Buildd</em> es el nombre que se da normalmente al software que
+utiliza la red autoconstructora, pero en realidad se compone 
+de diferentes partes:
+
+<dl>
+
+<dt><A href="http://m68k.debian.org/buildd/getting.html">wanna-build</A></dt>
+<dd>
+una herramienta que ayuda a coordinar la (re)construcción de paquetes a
+través de una base de datos que mantiene una lista de paquetes y su estado.
+Hay una base de datos central por arquitectura que almacena los estados,
+versiones, y alguna otra información de los paquetes.
+</dd>
+
+<dt><a href="http://m68k.debian.org/buildd/getting.html">buildd</a></dt>
+<dd>
+un demonio que comprueba periódicamente la base de datos mantenida por 
+<em>wanna-build</em> y llama a <em>sbuild</em> para construir los paquetes.
+Intenta mantener un seguimiento de las construcciones satisfactorias y 
+fallidas, y también enviará los paquetes una vez que el administrador 
+haya dado el visto bueno al registro de construcciones.
+</dd>
+
+<dt><A href="http://packages.debian.org/sbuild">sbuild</A></dt>
+<dd>
+es responsable de la compilación real de los paquetes en entornos 
+enjaulados aislados. Principalmente usa herramientas estándar de 
+Debian para esto, pero también tiene cuidado de las dependencias de 
+las fuentes y algunas otras rarezas menores.
+</dd>
+
+<dt><a href="http://packages.debian.org/quinn-diff">quinn-diff</a></dt>
+<dd>
+Alimenta la base de datos de wanna-build con paquetes nuevos. 
+Compara las versiones disponibles de los paquetes de dos arquitecturas 
+y saca las diferencias (comparando los archivos Sources y  Packages). 
+Más información sobre quinn-diff está disponible  
+<a href="http://buildd.debian.org/quinn-diff/">aquí</a>.
+</dd>
+
+<dt>andrea</dt>
+<dd>
+Una herramienta que genera algunas dependencias de las fuentes 
+automáticamente y fusiona estos datos con datos añadidos manualmente.
+</dd>
+
+</dl>
+
+<P>Todas estas partes <a href="operation">operan</a>
+juntas para hacer que la red constructora funciona.
+
+<h2>¿Qué tiene que hacer un desarrollador de Debian?</h2>
+
+<P>Realmente, un desarrollador medio de Debian no necesita usar 
+explícitamente la red buildd. Cuando envíe un paquete al repositorio
+(binario compilado para una determinada arquitectura) se añadirá a 
+la base de datos para todas las arquitecturas (en estado <em>Needs-Build</em>). 
+Las máquinas de construcción pedirán a la base de datos de construcciones 
+paquetes en este estado, y de forma rutinaria tomarán los paquetes 
+de esa lista. Esta está priorizada por el estado de compilación previo,
+prioridad, sección y finalmente nombre del paquete.
+
+<P>Si la construcción del paquete es satisfactoria para todas las 
+arquitecturas, el responsable no tendrá que hacer nada. Todos esos 
+paquetes binarios se enviarán a la arquitectura del sitio principal.
+Si la construcción no es satisfactoria el paquete entrará en un estado
+especial (<em>Failed</em> o <em>Dep-Wait</em>, si depende de las 
+dependencias de una construcción específica que no están disponibles).
+Los administradores de la autoconstrucción revisarán los paquetes cuya 
+construcción falla e informarán al responsable, normalmente, abriendo un
+error en el sistema de seguimiento de errores.
+
+<P>A veces un paquete se toma un largo período de tiempo para 
+construirlo para una arquitectura dada y eso bloquea al paquete la 
+entrada en <a href="$(HOME)/devel/testing">
+testing</A>. Desafortunadamente, el paquete necesitará esperar hasta 
+que una máquina lo escoja. Los administradores de buildd no aceptarán
+peticiones para acelerar la construcción de un paquete ya que la lista
+de prioridad ya está establecida. Un responsable, sin embargo, puede 
+acceder a una 
+<a href="http://db.debian.org/machines.cgi">máquina de desarrollo de Debian</a>
+y construir el paquete manualmente allí.
+
+<P>Puede comprobar el estado de los diferentes intentos de buildd 
+con los paquetes que pertenecen a un responsable dado revisando los
+<a href="http://buildd.debian.org/bymaint.php">registros de buildd</a>. 
+Estos registros también están enlazados desde la Panorámica de Responsables 
+de Paquetes.
+
+<P>Para más información sobre los diferentes estados en que puede 
+estar un paquete, por favor lea los 
+<a href="wanna-build-states">estados de wanna-build</a>.
+
+<h2>¿Dónde puedo encontrar información adicional?</h2>
+
+<P>Por supuesto, la documentación y el código fuente disponible para las 
+distintas herramientas son la mejor manera de averiguar como funciona la red buildd.
+Adicionalmente la sección
+<a href="$(HOME)/doc/manuals/developers-reference/ch-pkgs#s-porting">
+Portar y ser portado</a> de la
+<a href="$(HOME)/doc/manuals/developers-reference/">Referencia de 
+desarrolladores de Debian</a> proporciona información complementaria 
+sobre como funciona y también algo de información sobre 
+<a href="$(HOME)/doc/manuals/developers-reference/ap-tools#s-tools-builders">
+constructores de paquetes</a> y
+<a href="$(HOME)/doc/manuals/developers-reference/ap-tools#s-tools-porting">
+herramientas de portado</a> que están involucrados en el proceso de 
+configuración y mantenimiento de la red buildd.
+
+<P>Hay algunas estadísticas disponibles de la red autoconstructora en la
+<a href="http://buildd.debian.org/stats/">página de estadísticas de buildd</a>.
+
+<h2>¿Cómo puedo configurar mi propio nodo autoconstructor?</h2>
+
+<P>Hay varias razones por las que un desarrollador (o usuario)
+puede querer configurar y ejecutar un autoconstructor:
+
+<ul>
+<li>Probar localmente si el <tt>Build-Depends</tt> del paquete está
+definido apropiadamente (i.e. para compilar el paquete en el entorno 
+autoconstructor).
+<li>Ayudar en el desarrollo de un portado para una arquitectura dada
+(cuando se necesitan los autoconstructores)
+<li>Evaluar el impacto de una optimización del compilador o parche
+recompilando un gran subconjunto de paquetes.
+<li>Ejecutar herramientas que analicen los paquetes buscando errores 
+conocidos y necesitan ejecutarse sobre paquetes compilados. Esto incluso se
+necesita cuando se hagan análisis del código fuente, por ejemplo, como un
+arreglo temporal de los paquetes utilizando <tt>dpatch</tt>.
+</ul>
+
+<P>Puede leer más información sobre cómo puede 
+<a href="setting-up">configurar un autoconstructor</a>.
+
+<hrline/>
+<P><SMALL>Esta introducción a la red autoconstructora se escribió con 
+aportaciones y partes proporcionadas de Roman Hodez, 
+Christian T. Steigies, Wouter Verhelst, Andreas Barth, 
+Francesco Paolo Lovergine y Javier Fern&aacute;ndez-Sanguino</SMALL></P>
