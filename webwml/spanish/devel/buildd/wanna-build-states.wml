@@ -1,0 +1,277 @@
+#use wml::debian::template title="Estados de Wanna-build: una explicación" BARETITLE="true"
+#use wml::debian::translation-check translation="1.11" maintainer="Fernando Cerezal"
+
+    <p>Esta página intenta explicar lo que significa cada estado de 
+      wanna-build y que le pasará al paquete cuando esté en ese estado.
+      El público pretendido son los responsables de los paquetes de 
+      Debian que intentan entender porqué su paquete ha sido, o no, 
+      construido para una arquitectura específica. También una explicación
+      de los los distintos resultados del registro que se pueden obtener.</p>
+
+    <p>Finalmente, está <a href="#graphlink">disponible</a> una versión 
+	del diagrama de flujo entre los estados de wanna-build, pero tenga
+	en cuenta que no habla de todo lo que se menciona en este documento.</p>
+
+<h2>Estados de wanna-build</h2>
+<p>Para cada arquitectura soportada por Debian, hay una base de datos de 
+wanna-build instalada en buildd.debian.org, con todos los paquetes y su 
+estado de compilación actual. Hay 7 estados: <em>needs-build</em>,
+<em>building</em>, <em>uploaded</em>, <em>dep-wait</em>,
+<em>failed</em>, <em>not-for-us</em>, y
+<em>installed</em>.</p>
+
+<p>Sus significados son los siguientes:</p>
+    <dl>
+      <dt><a name="needs-build">needs-build</a></dt>
+      <dd>Un paquete marcado <em>needs-build</em> ha visto que su
+	responsable ha enviado una nueva versión, pero para una 
+	arquitectura diferente de la arquitectura para la que es 
+	esta base de datos de wanna-build; así que, necesita que se 
+	reconstruya. Si el estado es <em>needs-build</em>, no le 
+	ha escogido un autoconstructor todavía, pero lo hará (una vez
+	uno esté disponible en un momento en el que el paquete específico
+	esté cerca del principio de la lista). La gente comúnmente dice
+	dice que "un paquete está en la cola para la reconstrucción" cuando
+	hablan sobre un paquete en estado <em>needs-build</em>.<br>
+	Puede ser interesante darse cuenta de que la cola <em>needs-build</em>
+	no es una cola FIFO; más bien, el orden usado se basa en los 
+	siguientes criterios:
+	<ol>
+	  <li>Paquetes con estados previos de compilación; los paquetes
+	    que se han construido previamente se les da prioridad sobre los
+	    paquetes nuevos.
+	  </li>
+	  <li>prioridades (paquetes con prioridad <em>required</em> se
+	    construyen antes que los paquetes con prioridad <em>extra</em>)
+	  </li>
+	  <li>La sección en que esté un paquete. Este orden está basado sobre
+	    qué paquetes se consideran más importantes; e.g., la sección 
+	    <em>games</em> se construye más tarde que la sección <em>base</em>,
+	    y la sección <em>libs</em> se construye antes que <em>devel</em>.
+	  </li>
+	  <li>en orden asciibético en el nombre del paquete.</li>
+	</ol>
+	Adicionalmente, bajo ciertas condiciones, puede suceder que un 
+	buildd no tome paquetes del principio de la cola; por ejemplo,
+	cuando un buildd no puede encontrar las fuentes de un paquete dado,
+	lo pondrá de nuevo en la cola (donde ocupará de nuevo 
+	su posición anterior, i.e. la cabeza de la cola), pero ignorará 
+	el paquete durante unas pocas horas. Otro ejemplo donde puede 
+	suceder esto es cuando una arquitectura tiene autoconstructores 
+	múltiples; en ese caso, los portadores de arquitecturas pueden 
+	elegir construir los paquetes más grandes en sus autoconstructores
+	más rápidos, y dejar los más pequeños para las máquinas más lentas.
+	Un buildd teóricamente también puede pedir explícitamente un orden 
+	de secciones diferente, pero no se hace normalmente.<br>
+	Podría haber otras situaciones donde el orden de la cola parezca 
+	que se ignora; pero dese cuenta que todas son excepciones.
+      </dd>
+      <dt><a name="building">building</a></dt>
+      <dd>Un paquete se marca <em>building</em> desde el momento en
+        que un autoconstructor lo coja del principio de la cola de 
+	wanna-build hasta el momento en que el administrador del
+	autoconstructor contesta al registro. Como los paquetes no se 
+	cogen uno a uno, esto quiere decir que un paquete puede estar
+	(y normalmente lo está) marcado como <em>building</em> antes de
+	que la construcción haya comenzado en realidad; sin embargo, 
+	como buildd construye paquetes en su cola local en base a una 
+	FIFO, no debería tomar demasiado. También, tenga en cuenta
+	que el estado del paquete <strong>no</strong> se modifica una
+	vez que se complete la construcción; solo cuando el administrador
+	del autoconstructor venga a responder al registro.</dd>
+      <dt><a name="uploaded">uploaded</a></dt>
+      <dd>Cuando un intento de construcción es satisfactorio,
+        se envía un registro de construcción al administrador y a
+	buildd.debian.org. El responsable del autoconstructor firma 
+	el archivo .changes que está incluido dentro del registro 
+	de construcción, y lo envía al autoconstructor. Como 
+	consecuencia, el autoconstructor envía el paquete y pone su
+	estado como <em>uploaded</em>. Como tal, un paquete se puede 
+	encontrar en la cola de entrada (en cualquier sitio).<br>
+	Un autoconstructor no tocará un paquete más, una vez que su 
+	estado sea <em>uploaded</em>, al menos no hasta el siguiente 
+	envío o hasta que un portador modifique manualmente el estado 
+	del paquete.
+      </dd>
+      <dt><a name="dep-wait">dep-wait</a></dt>
+      <dd>Cuando un paquete falla debido a que no se encuentran 
+	dependencias en el momento de la construcción, el responsable del 
+	autoconstructor enviará un correo al autoconstructor, dándole
+	instrucciones para quitar las fuentes del paquete y marcarlo como
+	<em>dep-wait</em> esperando las dependencias de construcción no 
+	encontradas. Un paquete es ese estado, automáticamente,
+	sin intervención humana, se marcará como needs-build una vez 
+	dichas dependencias estén disponibles.<br>
+	Así, hay dos casos específicos en los que puede suceder que un 
+	paquete esté marcado como dep-wait para siempre; estas son cuando
+	halla un error de escritura al especificar las dependencias en 
+	<em>dep-wait</em> (así que el paquete se marca dep-wait esperando 
+	un paquete que no existe y nunca existirá) y cuando se declara una
+	dependencia en el momento de la construcción sobre un paquete que
+	está marcado como <em>not-for-us</em>, o que está en la lista 
+	<em>packages-arch-specific</em>.<br>
+	Como último ejemplo, considere tres paquetes: un paquete
+	<tt>foo</tt>, que existe solo para <tt>i386</tt>; un paquete
+	<tt>bar</tt>, que existe solo para <tt>m68k</tt> (y que aproximadamente
+	desarrolla la misma función); y un paquete <tt>baz</tt>, que se puede
+	construir con uno de ellos, <tt>foo</tt> o <tt>bar</tt>. El 
+	responsable del paquete <tt>baz</tt> olvida añadir <tt>bar</tt>
+	a las dependencias de construcción, y lo añade cuando se le 
+	avisa de que <tt>baz</tt> está en <em>dep-wait</em> esperando un 
+	inexistente <tt>foo</tt> para <tt>m68k</tt>, entonces el estado
+	<em>dep-wait</em> para <tt>m68k</tt> lo tendrán que cambiar 
+	manualmente los portadores de <tt>m68k</tt>.
+      </dd>
+      <dt><a name="wanna-build-state-failed">failed</a></dt>
+      <dd>Si un intento de construcción falló, el responsable del 
+        autoconstructor decide si realmente es un fallo que no se 
+	debería reintentar, y el paquete se marca como <em>failed</em>.
+	Un paquete no dejará este estado hasta que un portador decida
+	que debería hacerlo, o hasta que una nueva versión esté 
+	disponible. Sin embargo, cuando una nueva versión de un paquete
+	que se marcó como <em>failed</em> en la versión anteriorm,
+	el autoconstructor preguntará a su administrador si se debe o no 
+	reintentar construirlo; esto es así para que los paquetes que 
+	obviamente fallarán de nuevo no hagan perder el tiempo a
+	buildd. Aunque descartar un paquete antes de intentar construirlo
+	apenas alguna vez es la manera correcta de hacerlo, 
+	la opción está disponible para el administrador del autoconstructor.<br>
+	Dese cuenta de que un paquete<strong>nunca</strong> se marcará como
+	<em>failed</em> sin intervención humana.
+      </dd>
+      <dt><a name="not-for-us">not-for-us</a></dt>
+      <dd>Ciertos paquetes concretos son específicos de arquitecturas; por
+        ejemplo, <tt>lilo</tt>, un gestor de arranque para i386, no se 
+	debería reconstruir para alpha, m68k, o s390. Sin embargo, 
+	<em>wanna-build</em> no mira en el archivo de control de un paquete
+	cuando crea su base de datos; solo el nombre del paquete y sección,
+	su urgencia, y su prioridad. De esta forma, al enviar por primera 
+	vez un paquete específico de una arquitectura que no se debería 
+	construir para otras, no obstante se intenta (pero
+	falla incluso antes de que se descarguen y/o instalen las 
+	dependencias del momento de construcción)<br>
+	Ya que los autoconstructores no deberían perder tiempo intentado 
+	construir paquetes que no se necesitan para su arquitectura, se 
+	necesita una manera de listar los paquetes para los que no es 
+	necesario ni si quiera un intento de construcción. La primera 
+	solución a este problema fue <em>not-for-us</em>; sin embargo, como
+	eso es difícil de mantener, <em>not-for-us</em> está desaprobado 
+	hoy en día; los responsables de los autoconstructores deberían usar 
+	en su lugar <em>packages-arch-specific</em>, que es una lista de
+	paquetes específicos para una o más arquitecturas en lugar de un 
+	estado de wanna-build.<br>
+	Un paquete en <em>not-for-us</em> o
+	<em>packages-arch-specific</em> <strong>no</strong> dejará este
+	estado automáticamente; si su paquete excluye específicamente una
+	arquitectura dada previamente, pero ahora incluye más arquitecturas,
+	se debería reintroducir en la cola <strong>manualmente</strong>.
+      </dd>
+      <dt><a name="installed">installed</a></dt>
+      <dd>Como sugiere el nombre, un paquete marcado como <em>installed</em> 
+        está compilado para la arquitectura para la que es la base de datos 
+	de wanna-build. Antes de la publicación de Woody, el estado de
+	un paquete cambiaba de <em>uploaded</em> a <em>installed</em> tras
+	la ejecución diaria de katie. Con la implementación de <a
+	  href="http://lists.debian.org/debian-devel-announce/2002/debian-devel-announce-200206/msg00002.html">Accepted-autobuild</a>,
+	sin embargo, esto ya no es así; ahora, un paquete pasa del estado
+	<em>uploaded</em> a <em>installed</em> cuando se acepta en el 
+	repositorio. Esto significa que un paquete normalmente se marca 
+	como <em>installed</em> una media de tras 15 minutos.
+      </dd>
+    </dl>
+    <p>Además de estos siete estados, <em>wanna-build</em> también 
+    reconoce dos -estados eliminados, que en realidad son casos excepcionales.
+    Estos dos estados son <em>dep-wait-removed</em> y
+    <em>failed-removed</em>. Están relacionados con sus estados simples
+    de la siguiente manera: cuando un paquete en estado <em>failed</em> o
+    <em>dep-wait</em> no aparece en un nuevo archivo Packages 
+    que se le pasa a <em>wanna-build</em> &ndash; cuando parece que ha 
+    sido borrado &ndash; la información sobre ese paquete no se desecha,
+    ya que podría ser que el paquete no apareciese por un error temporal, 
+    o que esté borrado temporalmente por alguna razón (pero que reaparecerá
+    en el repositorio, pasado un tiempo). En vez de eso, en tal caso, un 
+    paquete se mueve al estado <em>-removed</em>, así la información sobre 
+    porqué falló o qué está esperando se puede retener. El paquete 
+    reaparecería en el siguiente archivo Packages que se le pasa a 
+    wanna-build, y se moverá de nuevo de <em>failed-removed</em> a 
+    <em>failed</em>, o de <em>dep-wait-removed</em> a <em>dep-wait</em> 
+    antes de seguir el proceso.</p>
+    <p>
+      No es posible acceder a la base de datos de wanna-build directamente;
+      esta base de datos está instalada en ftp-master.debian.org, que es
+      un servidor restringido, y solo los autoconstructores tienen una llave
+      ssh que les permite acceder a la base de datos de wanna-build de su 
+      arquitectura. Este ha sido el caso incluso antes de que ftp-master 
+      fuese restringido; como wanna-build hace un bloqueo a nivel de base 
+      de datos cuando accede, incluso solo para lectura, de los datos, tiene
+      que estar en el grupo adecuado (wb-&lt;arch&gt;) para poder acceder 
+      directamente a la base de datos de wanna-build.
+    </p>
+    <p>Dicho eso, puede ver en qué estado está un paquete llendo a la
+        <a href="http://buildd.debian.org/stats/">página de estadísticas 
+	de Debian</a>, excepto si está en estado <em>installed</em>
+	(bueno, no puede a menos que no le moleste escarbar en los archivos 
+	"&lt;arch&gt;-all.txt" de varios megabytes...).
+	Alternativamente, hay algunas páginas web disponibles a través de
+	<a href="http://crest.debian.org/">crest.debian.org</a>, que 
+	se basan en el análisis de los archivos &lt;arch&gt;-all.txt, y
+	dan una manera fácil de leer (al menos para los humanos) en qué 
+	estado está un paquete.
+    </p>
+    <h2>Los resultados del registro de construcción</h2>
+    <p>
+      Cuando sbuild construye un paquete (el componente de buildd 
+      que hace la construcción en realidad), se envía un correo 
+      con el registro del resultado, al administrador del 
+      autoconstructor y a logs@buildd.debian.org
+      (así que puede terminar en http://buildd.debian.org). El registro
+      que resulta de la construcción puede ser <em>successful</em>,
+      <em>failed</em>, <em>given-back</em>, o <em>skipped</em>. 
+      Dese cuenta que, en <a href="http://buildd.debian.org/">la página
+       que muestra el registro de buildd</a>, el prefijo <em>maybe-</em> 
+       se añade, porque entre otras cosas, el hecho de que una construcción 
+       se pueda marcar <em>failed</em> ahí para cosas que <em>realmente</em>
+       no son un fallo ha causado confusión en el pasado.</p> 
+	<p>El significado del registro de resultados es el siguiente:</p>
+    <dl>
+      <dt><a name="successful">successful</a></dt>
+      <dd>La construcción fue satisfactoria. Cuando el responsable
+        del autoconstructor recibe este registro, extraerá el archivo 
+	<code>.changes</code> incluido, lo firma, y lo envía de vuelta
+	al autoconstructor, lo que hará que se envíe el paquete.</dd>
+      <dt><a name="failed">failed</a></dt>
+      <dd>La construcción falló. Como puede haber un gran número de razones por 
+        las que falle, enumerarlos todos sería tedioso, así que no se
+	intentará hacer aquí. Si un paquete suyo se marca 
+	<em>(maybe-)failed</em>, querrá leer lo de más arriba, y comprobar
+	su estado en wanna-build.
+      </dd>
+      <dt><a name="given-back">given-back</a></dt>
+      <dd>La construcción falló debido a un problema temporal con el 
+        autoconstructor; como ejemplos hay problemas de red, la
+	no disponibilidad de los paquetes fuentes en el actual 
+	sources.list, poco espacio de disco, y otros.<br>
+	Un paquete que es <em>given-back</em> se marca como
+	<em><a href="#needs-build">needs-build</a></em> de nuevo; 
+	como tal, será automáticamente escogido por un autoconstructor 
+	diferente una vez esté preparado.
+      </dd>
+      <dt><a name="skipped">skipped</a></dt>
+      <dd>En el momento entre que el paquete es escogido por un 
+          autoconstructor y se marca como <em><a href="#building">
+	  building</a></em> y el intento de construcción, se envía 
+	  una nueva versión de este paquete, o un portador modifica 
+	  manualmente el estado en wanna-build por otra razón. Cuando
+	  se hace eso, se envía un correo al autoconstructor, que 
+	  marcará el paquete como que no va a ser construido; sbuild 
+	  ve esto, y se saltará la construcción (aunque se envía un 
+	  registro con ese resultado, describiendo el hecho que ocasionó
+	  esto).
+      </dd>
+    </dl>
+
+<h2><a name="graphlink">La versión gráfica</a></h2>
+<p>Para ilustrar lo de más arriba, también hemos proporcionado una <a
+href="wanna-build.png">versión de diagrama de flujo</a> de este procedimiento.
+De nuevo, tenga en cuenta que no contiene todo lo mencionado en este documento.
+</p>
