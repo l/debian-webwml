@@ -7,3 +7,6 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
+  $(ENGLISHDIR)/banners/index.tags
