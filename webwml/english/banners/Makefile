@@ -4,7 +4,7 @@
 
 WMLBASE=..
 CUR_DIR=banners
-SUBS=2.1 2.2 3.0
+SUBS=2.1 2.2 3.0 3.1
 
 GETTEXTFILES += others.mo
 
