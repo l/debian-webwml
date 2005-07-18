@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - control-Server" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.47"
+#use wml::debian::translation-check translation="1.48"
 # $Id$
 
 <h1>Einführung in den Mail-Server für die Kontrolle und Manipulation</h1>
@@ -42,7 +42,8 @@ des Befehls
 
 <dl>
 
-<dt><code>reassign</code> <var>Fehlernummer</var> <var>Paket</var></dt>
+<dt><code>reassign</code> <var>Fehlernummer</var> <var>Paket</var>
+    [ <var>version</var> ]</dt>
 <dd>
 
 Nimmt auf, dass der Fehler #<var>Fehlernummer</var> ein Fehler in
@@ -51,6 +52,9 @@ einen Fehler einem Paket zuzuordnen, wenn der Benutzer
 vergessen hat, den Pseudo-Header anzugeben, oder um eine frühere
 Zuweisung zu ändern. Keine Benachrichtigungen werden an jemanden
 geschickt (anders als die üblichen Informationen bei der Verarbeitung).</dd>
+
+<p>Falls Sie eine <var>version</var> angeben, wird die Fehlerdatenbank bemerken,
+dass der Fehler diese Version des frisch-zugewiesenen Pakets betrifft.</p>
 
 <dt><code>reopen</code> <var>Fehlernummer</var>
  [ <var>Urheber-Adresse</var> | <code>=</code> | <code>!</code> ]</dt>
@@ -78,7 +82,30 @@ wird.</p>
 <p>Wenn der Fehler nicht geschlossen wurde, wird reopen nichts tun,
 nicht einmal den Urheber ändern. Um den Urheber eines offenen Fehlerberichts
 zu ändern, verwenden Sie den <code>submitter</code> Befehl; beachten Sie, dass
-dies den ursprünglichen Urheber von der Änderung informiert.
+dies den ursprünglichen Urheber von der Änderung informiert.</p>
+
+<p>Falls der Fehler als in einer bestimmten Version eines Paketes geschlossen
+notiert wurde aber in einer späteren Version wieder aufgetaucht ist, ist es 
+besser, sattdessen den <code>found</code>-Befehl zu verwenden.</p>
+
+<dt><code>found</code> <var>Fehlernummer</var> [ <var>Version</var> ]
+
+<dd>Notiere, dass #<var>Fehlernummer</var> in der gegebenen <var>Version</var>
+des Pakets zu der sie zugewiesen wurde, angetroffen wurde.
+
+<p>Die Fehlerdatenbank verwendet diese Information in Verbindung mit
+korrigierten Versionen die beim Schließen notiert werden um Listen von
+offenen Fehlern in verschiedenen Versionen jedes Pakets anzuzeigen. Sie 
+betrachtet einen Fehler als offen, wenn sie keine korrigierte Version hat, oder
+wenn er gefunden wurde, nachdem er korrigiert wurde.</p>
+
+<p>Falls keine <var>Version</var> angegeben wurde, wird die Liste der
+korrigierten Versionen für diesen Fehler bereinigt. Dies ist identisch zu
+dem Verhalten von <code>reopen</code>.</p>
+
+<p>Dieser Befehl wurde als Präferenz für den <code>reopen</code> eingeführt,
+da es schwierig war, eine <var>Version</var> zu der Syntax dieses Befehls
+hinzuzufügen, ohne unter Mehrdeutigkeiten zu leiden.</p>
 
 <dt><code>submitter</code> <var>Fehlernummer</var>
 <var>Urheber-Adresse</var> | <code>!</code>
@@ -267,7 +294,7 @@ einer Gruppe herausziehen möchten, schreiben Sie einfach mehrere
   finden Sie in den allgemeinen Informationen zum Bug-System für
   Entwickler.</p></dd>
 
-<dt><code>close</code> <var>Fehlernummer</var> (nicht empfohlen)</dt>
+<dt><code>close</code> <var>Fehlernummer</var> [ <var>korrigierte-Version</var> ] (nicht empfohlen)</dt>
 <dd>
 
 Schließt den Fehlerbericht #<var>Fehlernummer</var>.
@@ -284,6 +311,10 @@ empfohlen. Siehe auch die Informationen für Entwickler über
 <a href="Developer#closing">das korrekte Schließen eines
 Fehlerberichts</a>.</p></dd>
 
+<p>Falls Sie eine <var>korrigierte-Version</var> angeben, wird die 
+Fehlerdatenbank vermerken, dass der Fehler in dieser Version des Pakets
+korrigiert wurde.</p>
+
 <dt><code>package</code> [ <var>Paketname</var> ... ]
 
   <dd>Beschränkt die folgenden Kommandos derart, dass sie nur auf Fehler
@@ -297,7 +328,7 @@ Fehlerberichts</a>.</p></dd>
 
   <pre>
         package foo
-        reassign 123456 bar
+        reassign 123456 bar 1.0-1
 
         package bar
         retitle 123456 bar: bar sucks
