@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debians fejlrapporteringssystem - kontrolserveren" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.47"
+#use wml::debian::translation-check translation="1.48"
 
 <h1>Introduktion til e-mailserveren til fejlrapportskontrol og -behandling</h1>
 
@@ -36,11 +36,15 @@ e-mail med kommandoen <code>refcard</code>.</p>
 
 <dl>
   <dt><code>reassign</code> <var>fejlnummer</var> <var>pakke</var>
+      [ <var>version</var> ]
   <dd>Angiver at fejlen med nummeret <var>fejlnummer</var> er en fejl i pakken
       <var>paket</var>.  Dette kan anvendes til at sætte pakkenavnet hvis
       afsenderen glemte pseudo-brevhovedet, eller til at ændre en tidligere
       tildeling.  Der sendes ikke besked til nogen (bortset fra normale 
       oplysninger om kommandofortolkningen).
+      
+      <p>Hvis du tilføjer en <var>version</var> vil fejlsporingssystemet
+      bemærke, at fejlen påvirker den version af den nyligt tildelte pakke.</p> 
       
   <dt><code>reopen</code> <var>fejlnummer</var>
       [ <var>oprindelsesadresse</var> | <code>=</code> | <code>!</code> ]
@@ -62,6 +66,29 @@ e-mail med kommandoen <code>refcard</code>.</p>
       oprindelsesadressen på en åben fejlrapport anvendes kommandoen 
       <code>submitter</code>; bemærk at dette ikke vil oplyse den oprindelige
       indsender om ændringen.
+
+      <p>Hvis fejlen er blevet registreret som lukket i en bestemt version af
+      en pakke, men dukker op igen i en senere version, det er bedre at 
+      anvende kommandoen <code>found</code> i stedet.</p>
+
+      <dt><code>found</code> <var>fejlnummer</var> [ <var>version</var> ]
+
+      <dd>Registrerer at #<var>fejlnummer</var> er opdaget i den angivne 
+      <var>version</var> af pakken som den er knyttet til.
+
+      <p>Fejlsporingssystemet anvender denne oplysning, sammen med rettede
+      versionerner, der registreres når fejl lukkes, for at vise en liste over
+      åbne fejl i forskellige udgaver af hver pakke.  Systemet anser en fejl
+      for at være åben når der ikke er en rettet version eller når den er 
+      fundet senere end den er rettet.</p>
+
+      <p>Hvis ingen <var>version</var> er angivet, tømmes fejlens liste over 
+      rettede versioner.  Dette svarer til hvordan <code>reopen</code> 
+      fungerer.</p>
+
+      <p>Denne kommando blev indført til fordel for <code>reopen</code>, fordi
+      det var svært at tilføje en <var>version</var> til den kommandos 
+      syntaks uden at lide af flertydighed.</p>
       
       <dt><code>submitter</code> <var>fejlnummer</var>
       <var>oprindelsesadresse</var> | <code>!</code>
