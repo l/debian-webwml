@@ -36,6 +36,7 @@ mailservers is available via the WWW, in
 <dl>
 
 <dt><code>reassign</code> <var>bugnumber</var> <var>package</var>
+ [ <var>version</var> ]
 <dd>
 
 Records that bug #<var>bugnumber</var> is a bug in <var>package</var>.
@@ -43,6 +44,9 @@ This can be used to set the package if the user forgot the
 pseudo-header, or to change an earlier assignment.  No notifications
 are sent to anyone (other than the usual information in the processing
 transcript).
+
+<p>If you supply a <var>version</var>, the bug tracking system will note
+that the bug affects that version of the newly-assigned package.
 
 <dt><code>reopen</code> <var>bugnumber</var>
  [ <var>originator-address</var> | <code>=</code> | <code>!</code> ]
@@ -68,6 +72,29 @@ again.</p>
 change the originator.  To change the originator of an open bug report,
 use the <code>submitter</code> command; note that this will inform the
 original submitter of the change.
+
+<p>If the bug was recorded as being closed in a particular version of a
+package but recurred in a later version, it is better to use the
+<code>found</code> command instead.
+
+<dt><code>found</code> <var>bugnumber</var> [ <var>version</var> ]
+
+<dd>Record that #<var>bugnumber</var> has been encountered in the given
+<var>version</var> of the package to which it is assigned.
+
+<p>The bug tracking system uses this information, in conjunction with
+fixed versions recorded when closing bugs, to display lists of bugs
+open in various versions of each package. It considers a bug to be open
+when it has no fixed version, or when it has been found more recently than
+it has been fixed.
+
+<p>If no <var>version</var> is given, then the list of fixed versions for
+the bug is cleared. This is identical to the behaviour of
+<code>reopen</code>.
+
+<p>This command was introduced in preference to <code>reopen</code>
+because it was difficult to add a <var>version</var> to that command's
+syntax without suffering ambiguity.
 
 <dt><code>submitter</code> <var>bugnumber</var>
 <var>originator-address</var> | <code>!</code>
@@ -236,7 +263,8 @@ several <code>unmerge</code> commands in your message.
   <p>For <a href="Developer#tags">their meanings</a> please consult the
   general developers' documentation for the bug system.
 
-<dt><code>close</code> <var>bugnumber</var> (deprecated)
+<dt><code>close</code> <var>bugnumber</var> [ <var>fixed-version</var> ]
+ (deprecated)
 <dd>
 
 Close bug report #<var>bugnumber</var>.
@@ -251,6 +279,9 @@ The use of this command is therefore deprecated. See the
 developer's information about <a href="Developer#closing">how to
 close a bug properly</a>.
 
+<p>If you supply a <var>fixed-version</var>, the bug tracking system
+will note that the bug was fixed in that version of the package.
+
 <dt><code>package</code> [ <var>packagename</var> ... ]
 
   <dd>Limits the following commands so that they will only apply to bugs
@@ -263,7 +294,7 @@ close a bug properly</a>.
 
   <pre>
         package foo
-        reassign 123456 bar
+        reassign 123456 bar 1.0-1
 
         package bar
         retitle 123456 bar: bar sucks
