@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debians felrapporteringssystem - styrservern" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.47"
+#use wml::debian::translation-check translation="1.48"
 
 <h1>Introduktion till e-postservern för felrapportsstyrning och -manipulering</h1>
 
@@ -49,6 +49,7 @@ tillgängligt via webben, i
 
 
 <dt><code>reassign</code> <var>felnummer</var> <var>paket</var>
+[ <var>version</var> ]
 <dd>
 
 Anger att fel nummer <var>felnummer</var> är ett fel i paketet
@@ -57,6 +58,11 @@ Detta kan användas för att sätta paketnamnet om användaren glömde
 pseudo-brevhuvudet, eller för att ändra en tidigare tilldelning.
 Inga notifikationer sänds till någon (förutom den normala information om
 kommandotydningen).
+
+<p>
+Om du inkluderear en <var>version</var> kommer felrapporteringssystemet
+notera att felet gäller den versionen av det paket det nyss tilldelats.
+</p>
 
 <dt><code>reopen</code> <var>felnummer</var>
  [ <var>ursprungsadress</var> | <code>=</code> | <code>!</code> ]
@@ -90,6 +96,37 @@ ens ändra avsändare.
 För att ändra avsändare för en öppen felrapport, använd kommandot
 <code>submitter</code>; observera att den ursprungliga avsändaren då kommer
 informeras om ändringen.
+</p>
+
+<p>
+Om det noterats att felet stängts i en specifik version av ett paket men
+återkommit i en senare version är det bättre att istället använda kommandot
+<code>found</code>.
+</p>
+
+<dt><code>found</code> <var>felnummer</var> [ <var>version</var> ]
+
+<dd>
+Notera det faktum att <var>felnummer</var> har upptäckts i
+<var>version</var> av det paket det tilldelats.
+
+<p>
+Felrapporteringssystemet använder denna information, tillsammans med rättade
+versioner som lagras när felrapporter stängs, till att visa en förteckning
+över fel som är öppna i olika versioner av varje paket.
+Det anser en fel att vara öppen när det inte finns någon rättad version,
+eller när den upptäckts i en nyare version än det rättats i.
+</p>
+
+<p>
+Om ingen <var>version</var> anges rensas listan över rättade versioner.
+Detta är samma beteende som <code>reopen</code>.
+</p>
+
+<p>
+Kommandot har introducerats framför <code>reopen</code> eftersom det var
+svårt att lägga till en <var>version</var> till det kommandots syntax utan
+att det blev tvetydigt.
 </p>
 
 <dt><code>submitter</code> <var>felnummer</var>
@@ -290,7 +327,8 @@ tags 123456 = moreinfo unreproducible
   För <a href="Developer#tags">betydelser</a>, se
   den övergripande utvecklardokumentationen för felrapporteringssystemet.
 
-<dt><code>close</code> <var>felnummer</var> (bör ej användas)
+<dt><code>close</code> <var>felnummer</var>[ <var>rättad-version</var> ]
+(bör ej användas)
 <dd>
 
 <p>
@@ -309,6 +347,11 @@ Se utvecklarinformationen om
 <a href="Developer#closing">hur man stänger en felrapport på rätt sätt</a>.
 </p>
 
+<p>
+Om du skickar med en <var>rättad-version</var> kommer
+felrapporteringsystemet notera att felet rättats i den versionen av paketet.
+</p>
+
 <dt><code>package</code> [ <var>paketnamn</var> ... ]
 
   <dd>
@@ -324,7 +367,7 @@ Se utvecklarinformationen om
 
   <pre>
         package foo
-        reassign 123456 bar
+        reassign 123456 bar 1.0-1
 
         package bar
         retitle 123456 bar: bar sucks
