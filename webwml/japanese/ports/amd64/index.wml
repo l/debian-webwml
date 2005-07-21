@@ -1,29 +1,99 @@
 #use wml::debian::template title="AMD64 移植版" NOHEADER="yes"
 #include "$(ENGLISHDIR)/ports/amd64/menu.inc"
-#use wml::debian::translation-check translation="1.13"
+#use wml::debian::translation-check translation="1.20"
 
 <h2>AMD64 上の Debian</h2>
 
 <p>このページは、AMD64 アーキテクチャ上で Debian GNU/Linux
-を起動しているユーザと、Debian 開発者の支援を目指しています。ここでは、
+を起動しているユーザと、Debian 開発者の支援を目的としています。ここでは、
 現在の移植状況、開発者が一般からアクセスできるマシン、移植に関する開発の議論の場、
 Debian 移植者についての詳細な情報のありか、
 さらなる情報へのポインタなどの情報が見つかるでしょう。</p>
 
+
 <h2>現在の状況</h2>
 
-<p>現在 AMD64 への移植は、公式の Debian アーカイブに含まれるのを待っています。
-開発中のアーカイブは、<a href="http://debian-amd64.alioth.debian.org/pure64/">Alioth</a>
-にて提供されています。この移植版には、amd64 拡張のついた AMD 64 ビット CPU
-および "em64t" 拡張のついた Intel CPU のすべてに対応したカーネルと、
-共通のユーザ空間が含まれています。</p>
+<p>Debian AMD64 移植版の非公式な安定版リリースは、2005 年 6 月 8 日に
+移植チームによってリリースされました。</p>
+
+<p>現在、AMD 64 移植版のテスト版および不安定版リリースは、公式の Debian
+アーカイブに含まれるのを待っています。今のところ Debian-amd64 アーカイブは、
+<a href="http://amd64.debian.net/">amd64.debian.net</a>
+上で公開されています。
+
+同移植版は、<i>AMD64</i> 拡張付きの AMD 64 ビット CPU および <i>EM64T</i>
+拡張付きの全 Intel CPU 用カーネルと、共通の 64 ビットユーザ空間で構成されています。</p>
+
+<p>非公式な移植版の安定版リリースは、パッチが適用されていない Sarge のソースを
+元にしており、Debian セキュリティチームによる完全なセキュリティサポートがあります。
+Debian-Backports および -Volatile サービスも完全に対応しています。</p>
 
 <h2>完全に 64 ビットのユーザランド</h2>
 
-<p>ユーザランドは完全に 64 ビットで、追加の CPU レジスタを利用し、
-下位と上位のメモリセグメントがなく、プロセス毎に 4GB 以上のアドレスが使えます。
-レガシーな 32 ビットバイナリのネイティブ実行はカーネルによりサポートされていて、
-コアライブラリは ia32-libs パッケージにより提供されています。</p>
+<p>AMD64 移植版は完全に 64 ビット化されており、ユーザは i386 と比べて同アーキテクチャ
+が備えているあらゆる利点を享受できます:
+</p>
+<ul>
+<li>低位および高位メモリにおいて、メモリセグメンテーションが無い</li>
+<li>プロセス当たり最大 512GiB の仮想アドレス空間 (従来は 2GiB)</li>
+<li>従来の 4GiB に対し 1TiB の実メモリ対応 (PAE 拡張付きの場合は 64GiB)</li>
+<li>CPU 内の汎用レジスタは従来の 8 個に対し 16 個</li>
+<li>gcc のデフォルトは 387 FPU の代わりに SSE2 math</li>
+<li>gcc で -O2 を指定した場合、デフォルトでフレームポインタを削除</li>
+<li>コンパイル時間の最適化には、古い i386 cruft の代わりに AMD64/EM64T 用の共通ベースを使用</li>
+<li>デフォルトでは、メモリページは実行不可</li>
+</ul>
+
+<p>32 ビットバイナリのネイティブでの実行はカーネルが対応しており、コアライブラリは
+ia32-libs パッケージで提供されています。</p>
+
+
+<h2>i386 用の最小限の AMD64 動作対応</h2>
+
+<p>公式の i386 ディストリビューションにも、実際には最小限の AMD64 対応が含まれて
+おり、64 ビットカーネル、64 ビットバイナリを作成可能な gcc-3.4、サードパーティ製の
+amd64 バイナリをネイティブの共有ライブラリで動作させるための amd64-libs パッケージ
+で構成されています。</p>
+
+
+<h2>非公式な Debian-AMD64 Sarge リリース</h2>
+
+<p>リリースノートは、
+<a href="http://amd64.debian.net/docs/release-notes/">on amd64.debian.net</a>
+にあります。</p>
+
+<p>非公式版 Sarge リリースの netinst や名刺サイズ ISO、完全な CD/DVD セットは、
+<a href="http://cdimage.debian.org/cdimage/unofficial/sarge-amd64/">cdimage.debian.org</a>
+で入手できます。</p>
+
+<p>既存のミラー一覧は、
+<a href="http://amd64.debian.net/README.mirrors.html">amd64.debian.net</a>
+にありますが、もっと多く存在するでしょう。</p>
+
+
+<h2>Debian-AMD64 の将来</h2>
+
+<p>AMD64 アーキテクチャは、Sarge のリリース後に公式アーカイブに追加される予定です。
+これにより、Debian の次期公式安定版リリース - コードネーム <b>Etch</b> - では、
+amd64 の完全なネイティブ対応が備わるでしょう。</p>
+
+<p>非公式版 Sarge ディストリビューションは、
+<a href="http://amd64.debian.net/">amd64.debian.net</a>
+上で公開されています。移植チームは、Debian による Sarge への公式なサポートと
+同じ期間、非公式版 Sarge をサポートすることを約束しています。</p>
+
+<p>Debian セキュリティチームは、非公式版 Sarge リリースのアップデートに対応
+しており、
+<a href="http://security.debian.org/">security.debian.org</a>
+上で入手できます。</p>
+
+
+<h2>メーリングリスト</h2>
+
+<p>この移植版に関する議論や開発は <a
+href="http://lists.debian.org/debian-amd64/">debian-amd64</a>
+メーリングリストで行なわれます。</p>
+
 
 <h2>公共のマシン</h2>
 
@@ -40,23 +110,19 @@ Debian 移植者についての詳細な情報のありか、
 
 </ul>
 
-<h2>メーリングリスト</h2>
-
-<p>この移植版に関する議論や開発は <a
-href="http://lists.debian.org/debian-amd64/">debian-amd64</a>
-メーリングリストで行われます。</p>
 
 <h2>リンク</h2>
 
 <ul>
+<li><a href="https://alioth.debian.org/docman/view.php/30192/21/debian-amd64-howto.html">debian-amd64 howto と FAQ</a></li>
 
-<li> <a href="https://alioth.debian.org/docman/?group_id=30192">\
-     文書 (HOWTO とハードウェア互換性リスト)</a>
+<li><a href="http://amd64.debian.net/">非公式版 debian-amd64 アーカイブ</a></li>
 
-<li> <a href='http://cvs.alioth.debian.org/cgi-bin/cvsweb.cgi/?cvsroot=debian-amd64'>\
-     CVS リポジトリ</a>
+<li><a href="http://amd64.ftbfs.de/">AMD64 buildd ログ</a></li>
 
-<li> <a href="http://alioth.debian.org/projects/debian-amd64/">Alioth</a>
+<li> <a href='http://cvs.alioth.debian.org/cgi-bin/cvsweb.cgi/?cvsroot=debian-amd64'>CVS リポジトリ</a>
 
-<li> <a href="http://wiki.debian.net/?DebianAMD64">Wiki</a>
+<li> <a href="http://alioth.debian.org/projects/debian-amd64/">debian-amd64 Alioth プロジェクト</a>
+
+<li> <a href="http://wiki.debian.net/?DebianAMD64">debian-amd64 Wiki</a>
 </ul>
