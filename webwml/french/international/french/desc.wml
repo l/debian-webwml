@@ -68,9 +68,27 @@ use Local::Cvsinfo;
 
 $wmlroot="../../..";
 
+# For potential use in other languages: just set your language directory
+# and change the strings to have it in your own language. I think it's
+# easy enough to guess what means what :-)
 $language = "french";
 
 my $outofdate_message = "L'original est plus récent que la traduction";
+my $nolongerexists_message = "L'original n'existe plus";
+my $uptodate_summary= "traductions à jour";
+my $outofdate_summary = "traductions dépassées";
+my $untranslated_summary = "descriptions non traduites";
+my $file_title = "Fichier";
+my $translated_title = "Traduction";
+my $original_title = "Original";
+my $comment_title = "Commentaire";
+my $unifieddiff_title = "Diff unifié";
+my $log_title = "Log";
+my $outdated_chapter = "Traductions dépassées";
+my $untranslated_chapter = "Descriptions non traduites";
+my $translated_chapter = "Traductions à jour";
+
+# There should be no need to change anything below.
 
 my $cvs = Local::Cvsinfo->new();
 my $untranslated=0;
@@ -85,7 +103,7 @@ my %translated_files;
 open CHECK, "translated_txt.db" or die "You have to create a translated_txt.db in this directory";
 while (my $line = <CHECK>)
 {
-  if ($line =~ m#^([A-Za-z0-9\/\.-]*)[\ \t]*([0-9]+\.[0-9]+)$#)
+  if ($line =~ m#^([A-Za-z0-9\/\.\-\_]*)[\ \t]*([0-9]+\.[0-9]+)$#)
   {
     $translated_files{$1} = $2;
   }
@@ -94,6 +112,10 @@ while (my $line = <CHECK>)
 process_dir("$wmlroot/english/MailingLists/desc");
 process_dir("$wmlroot/english/devel/debian-jr/packaged");
 process_dir("$wmlroot/english/devel/debian-jr/packaged-non-free");
+
+check_old_dir("$wmlroot/$language/MailingLists/desc");
+check_old_dir("$wmlroot/$language/devel/debian-jr/packaged");
+check_old_dir("$wmlroot/$language/devel/debian-jr/packaged-non-free");
 
 sub process_dir
 {
@@ -105,6 +127,27 @@ sub process_dir
   closedir DIR;
   foreach $file (grep -f, @allfiles) { process($file) }
   foreach $dir (grep -d, @allfiles) { process_dir($dir) }
+}
+
+sub check_old_dir
+{
+  my $currentdir = shift;
+  opendir DIR, $currentdir or die "Cannot open directory $currentdir";
+  my @allfiles = grep !/^\.\.?$/, readdir DIR;
+  @allfiles = grep !/^CVS$/, @allfiles;
+  foreach $file (@allfiles)
+  {
+    $file = $currentdir . "/" . $file;
+    $file =~ s%$language/%english/%;
+    if (! -e $file) {
+      $file =~ s%$wmlroot/english/%%;
+      $outdated_string .= "<tr><td>$file</td><td></td><td></td>";
+      $outdated_string .= "<td>$nolongerexists_message</td><td>";
+      $outdated_string .= "</td><td></td></tr>\n";
+    }
+  }
+  closedir DIR;
+  foreach $dir (grep -d, @allfiles) { check_old_dir($dir) }
 }
 
 
@@ -144,15 +187,15 @@ sub get_version
   return $cvs->revision($file);
 }
 
-<perl:print>$uptodate traductions à jour, $outdated traductions dépassées, $untranslated descriptions non traduites\n</perl:print>
+<perl:print>$uptodate $uptodate_summary, $outdated $outofdate_summary, $untranslated $untranslated_summary\n</perl:print>
 if ($outdated > 0) {
-	<perl:print><h3>Traductions dépassées</h3>\n<table border="0" cellpadding="1" cellspacing="1">\n</perl:print>
-	<perl:print><tr><th>Fichier</th><th>Traduction</th><th>Original</th><th>Commentaire</th><th>Diff unifié</th><th>Log</th></tr></perl:print>
+	<perl:print><h3>$outdated_chapter</h3>\n<table border="0" cellpadding="1" cellspacing="1">\n</perl:print>
+	<perl:print><tr><th>$file_title</th><th>$translated_title</th><th>$original_title</th><th>$comment_title</th><th>$unifieddiff_title</th><th>$log_title</th></tr></perl:print>
 	<perl:print>$outdated_string</perl:print>
 	<perl:print></table>\n</perl:print>
 }
-<perl:print><h3>Descriptions non traduites</h3>\n</perl:print>
+<perl:print><h3>$untranslated_chapter</h3>\n</perl:print>
 <perl:print>$untranslated_string</perl:print>
-<perl:print><h3>Traductions à jour</h3>\n</perl:print>
+<perl:print><h3>$translated_chapter</h3>\n</perl:print>
 <perl:print>$uptodate_string</perl:print>
 </perl>
