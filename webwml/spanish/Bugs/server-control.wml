@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - control del servidor" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.47" maintainer="Fernando Cerezal"
+#use wml::debian::translation-check translation="1.48" maintainer="Fernando Cerezal"
 
 <h1>Información para desarrolladores sobre cómo manipular fallos
 utilizando el interfaz de correo electrónico.</h1>
@@ -38,6 +38,7 @@ usando la orden <code>refcard</code>.</P>
 <dl>
 
 <dt><code>reassign</code> <var>número de fallo</var> <var>paquete</var>
+ [ <var>versión</var> ]
 <dd>
 
 Registra que el fallo #<var>número de fallo</var> pertenece al
@@ -45,6 +46,9 @@ Registra que el fallo #<var>número de fallo</var> pertenece al
 lo olvidó en la pseudocabecera, o para cambiar una asignación previa. No
 se enviarán notificaciones a nadie (excepto la información normal en la
 transcripción del proceso).
+
+<p>Si proporciona una <var>versión</var>, el sistema de seguimiento de 
+errores notará que el error afecta a esa versión del nuevo paquete asignado.</p>
 
 <dt><code>reopen</code> <var>número de fallo</var>
  [ <var>dirección del descubridor</var> | <code>=</code> | <code>!</code> ]
@@ -69,6 +73,30 @@ recibirá una notificación cuando vuelva a ser cerrado.</p>
 cambiar quién envió el fallo. Para cambiar esto de un informe de error 
 abierto, use la orden <code>submitter</code>; percátese de que esto informará 
 a la persona que envió el fallo en primer lugar del cambio.
+
+<p>Si el error se registró como que había sido cerrado en una versión 
+particular de un paquete pero reapareció en una versión posterior, es mejor
+usar el comando <code>found</code> en su lugar.
+
+<dt><code>found</code> <var>bugnumber</var> [ <var>versión</var> ]
+
+<dd>Registra que #<var>bugnumber</var> se ha encontrado en la versión dada en
+<var>versión</var> del paquete al que se asignó.
+
+<p>El sistema de seguimiento de errores utiliza esta información, junto con
+los registros de las versiones arregladas al cerrar los errores, para mostrar
+listas de errores abiertos en varias versiones de cada paquete. Considera abrir
+un error cuando no tiene versión arreglada, o cuando se ha encontrado mas 
+recientemente de lo que ha sido arreglado.
+
+<p>Si no se da una <var>versión</var>, entonces la lista de versiones 
+arregladas para el error está clara. Es idéntico al comportamiento de 
+<code>reopen</code>.
+
+<p>Este comando se introdujo prefiriéndose a <code>reopen</code>
+porque era difícil añadir una <var>versión</var> a ese sintaxis de comandos
+sin sufrir ambigüedad.
+
 
 <dt><code>submitter</code> <var>bugnumber</var>
 <var>dirección del informador</var> | <code>!</code>
@@ -244,7 +272,8 @@ desea desconectar más de un informe, no tiene más que incluir varias
   significados</a>.
 
 
-<dt><code>close</code> <var>número de fallo</var> (obsoleto)
+<dt><code>close</code> <var>número de fallo</var> [ <var>versión arreglada</var> ]
+(obsoleto)
 <dd>
 
 Cierra el informe de fallo #<var>número de fallo</var>.
@@ -259,6 +288,10 @@ Por tanto, el uso de esta orden es obsoleto.
 Consulte la información dirigida a mantenedores para ver 
 <a href="Developer#closing">cómo cerrar un fallo correctamente</a>.
 
+<p>Si proporciona una <var>versión arreglada</var>, el sistema de seguimiento 
+de errores se dará cuenta de que el error se arregló en esa versión del
+paquete.
+
 <dt><code>package</code> [ <var>nombredelpaquete</var> ... ]
 
   <dd>Limita las órdenes siguientes para que sólo se apliquen a los fallos
@@ -271,7 +304,7 @@ Consulte la información dirigida a mantenedores para ver
 
   <pre>
         package foo
-        reassign 123456 bar
+        reassign 123456 bar 1.0-1
 
         package bar
         retitle 123456 bar: bar apesta
