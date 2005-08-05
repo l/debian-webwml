@@ -1,6 +1,6 @@
 #use wml::debian::template title="Gestion des bogues Debian - informations pour les développeurs" NOHEADER=yes NOCOPYRIGHT=true
 
-#use wml::debian::translation-check translation="1.54" maintainer="Christian Couder"
+#use wml::debian::translation-check translation="1.59" maintainer="Christian Couder"
 
 
 <H1>Informations pour les développeurs 
@@ -32,6 +32,7 @@ a soumis le rapport et <var>nnn</var><CODE>@bugs.debian.org</CODE>.</P>
   <li><a href="#owner">Changer le propriétaire d'un bogue</a></li>
   <li><a href="#maintincorrect">Responsables de paquet mal énoncés</a></li>
   <li><a href="#requestserv">Rouvrir, réassigner ou utiliser un rapport de bogue</a></li>
+  <li><a href="#subscribe">S'inscrire à des bogues</a></li>
   <li><a href="#subjectscan">Possibilités plus ou moins obsolètes d'utiliser l'objet des messages</a></li>
   <li><a href="#x-debian-pr">Fonctionnalité obsolète <code>X-Debian-PR: quiet</code></a></li>
 </ul>
@@ -63,6 +64,13 @@ préféré, et de modifier le champ <CODE>To</CODE> pour y inscrire
 (<var>nnn</var><CODE>-close</CODE> est fourni comme alias pour
 <var>nnn</var><CODE>-done</CODE>).</p>
 
+<p>Quand cela est possible, veuillez fournir une ligne
+<code>Version</code> dans les <a
+href="Reporting.html#pseudoheader">pseudo-en-têtes</a> de votre message
+quand vous fermez un rapport de bogue, de façon à ce que le système
+de gestion des bogues connaisse la version du paquet qui contient le
+correctif.</p>
+
 <p>La personne qui a soumis le rapport de bogue, celle qui l'a fermé et la 
 liste <code>debian-bugs-closed</code> seront informées du changement d'état
 du rapport. La personne qui a soumis le rapport de bogue et la liste recevront
@@ -87,9 +95,11 @@ de paquet, enregistrera la réponse avec les autres enregistrements
 pour ce rapport de bogue et fera suivre à
 <CODE>debian-bugs-dist</CODE>.</p>
 
-<P>Un développeur pourra explicitement envoyer un message à celui qui a soumis
-le bogue en envoyant un message à
-<var>nnn</var><CODE>-submitter@bugs.debian.org</CODE>.</P>
+<p>Envoyer un courriel à
+<var>nnn</var><code>-submitter\@EmailDomain</code> enverra explicitement
+un courriel à la personne qui a soumis le bogue et en placera une copie
+dans le système de gestion des bogues. Le message ne sera pas envoyé au
+responsable du paquet.</p>
 
 <P>Si vous souhaitez envoyer un message de réponse qui n'est pas
 approprié pour <CODE>debian-bugs-dist</CODE> vous pouvez le faire en
@@ -382,11 +392,13 @@ de bogue</A></H2>
 
 <p>Il est possible de réassigner des rapports de bogues à d'autres
 paquets, de rouvrir des bogues fermés par erreur, de modifier, s'il y
-a lieu, l'information disant où un rapport de bogue a été transmis, de
-changer les niveaux de gravité et les titres des rapports, de déclarer
-le propriétaire d'un bogue et de fusionner et de diviser des rapports
-de bogue. Cela se fait en envoyant un message à
-<CODE>control@bugs.debian.org</CODE>.  </p>
+a lieu, l'information disant où un rapport de bogue a été transmis,
+de changer les niveaux de gravité et les titres des rapports, de
+déclarer le propriétaire d'un bogue, de fusionner et de diviser
+des rapports de bogue, et d'enregistrer les numéros de version
+des paquets dans lesquelles les bogues ont été trouvés et celles
+où ils ont été corrigés. Cela se fait en envoyant un message à
+<CODE>control@bugs.debian.org</CODE>.</p>
 
 <P>Le <A href="server-control">format de ces messages</A> est décrit
 dans un autre document disponible sur la Toile ou dans le fichier
@@ -394,6 +406,41 @@ dans un autre document disponible sur la Toile ou dans le fichier
 aussi être obtenue en envoyant le mot <CODE>help</CODE> au serveur à
 l'adresse ci-dessus.</P>
 
+<h2><a name="subscribe">S'inscrire à des bogues</a></h2>
+
+<p>Le système de gestion des bogues permet aussi à ceux qui ont soumis
+le bogue, aux développeurs et aux tiers intéressés de s'abonner à des
+bogues en particulier. Cette fonctionnalité peut être utilisée par ceux
+qui souhaitent garder un &oelig;il sur un bogue, sans avoir à s'inscrire
+à paquet par le biais du PTS. Tous les messages qui sont reçus sur
+<var>nnn</var><code>@debian.org</code> sont envoyés aux abonnés.</p>
+
+<p>S'abonner à un bogue se fait en envoyant un courriel à
+<var>nnn</var><code>-subscribe@bugs.debian.org</code>. L'objet et le
+corps du courriel sont ignorés par le système de gestion des bogues.
+Une fois le message traité, les utilisateurs reçoivent un message de
+confirmation auquel ils devront répondre avant de pouvoir recevoir les
+messages en relation avec ce bogue.</p>
+
+<p>Il est aussi possible de se désabonner d'un bogue.
+Se désabonner se fait en envoyant un courriel à
+<var>nnn</var><code>-unsubscribe@bugs.debian.org</code>. L'objet et le
+corps du courriel sont une fois encore ignorés par le système de gestion
+des bogues. Les utilisateurs recevront un message de confirmation auquel
+ils devront répondre s'ils souhaitent être désabonnés du bogue.</p>
+
+<p>Par défaut, l'adresse abonnée est celle qui se trouve
+dans l'en-tête <code>From</code>. Si vous souhaitez abonner
+une autre adresse à un bogue, vous devrez coder l'adresse à
+abonner dans le message d'abonnement. Cela ressemble à&nbsp;:
+<var>nnn</var><code>-subscribe-</code><var>adresse</var><code>=</code><var>exemple.com</var> <code>@bugs.debian.org</code>.
+Cet exemple enverrait un message d'abonnement au bogue
+<var>nnn</var> à <code>adresse@exemple.com</code>. Le signe
+arrobase <code>@</code> doit être codée par un signe égal
+<code>=</code>. De manière analogue, un désabonnement ressemble à
+<var>nnn</var><code>-unsubscribe-</code><var>adresse</var><code>=</code> <var>exemple.com</var> <code>@bugs.debian.org</code>.
+Dans les deux cas, l'objet et le corp du courriel seront transmis à
+l'adresse électronique dans la requête de confirmation.</p>
 
 <H2><a name="subjectscan">Possibilités plus ou moins obsolètes d'utiliser l'objet des messages</a></H2>
 
