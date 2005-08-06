@@ -1,6 +1,6 @@
 #use wml::debian::template title="Gestion des bogues Debian - serveur de contrôle" NOHEADER=yes NOCOPYRIGHT=true
 
-#use wml::debian::translation-check translation="1.47" translation_maintainer="Christian Couder"
+#use wml::debian::translation-check translation="1.49" translation_maintainer="Christian Couder"
 
 
 <H1>Introduction au serveur de messages de contrôle et de manipulation des 
@@ -43,6 +43,7 @@ en utilisant la commande <code>refcard</code>.</P>
 <dl>
 
 <dt><code>reassign</code> <var>NuméroDeBogue</var> <var>Paquet</var>
+[ <var>Version</var> ]
 <dd>
 
 <P>Enregistre le fait que le bogue n° <var>NuméroDeBogue</var> est un
@@ -52,6 +53,10 @@ bogue dans <var>Paquet</var>.</P>
 pseudo-en-tête, ou pour changer une assignation préalable. Aucune notification
 n'est envoyée à quiconque (autre que l'information habituelle lors de la 
 transcription en cours).</P>
+
+<p>Si vous fournissez une <var>Version</var>, le système de gestion
+des bogues enregistrera le fait que ce bogue affecte cette version du
+paquet.
 
 <dt><code>reopen</code> <var>NuméroDeBogue</var>
  [ <var>AdresseDOrigine</var> | <code>=</code> | <code>!</code> ]
@@ -77,6 +82,42 @@ nouveau fermé.</P>
 changer l'origine du rapport. Pour changer la personne à l'origine d'un
 rapport de bogue ouvert, utilisez la commande <code>submitter</code>;
 notez que celui qui est à l'origine sera informé du changement.
+
+<p>Si le bogue a été enregistré comme étant fermé pour une certaine
+version du paquet, mais réapparaît dans une version suivante, il vaut
+mieux utiliser la commande <code>found</code> à la place.
+
+<dt><code>found</code> <var>NuméroDeBogue</var> [ <var>Version</var> ]
+
+<dd>Enregistre le fait que <var>NuméroDeBogue</var> a été rencontré
+sur la <var>Version</var> donnée du paquet auquel il est assigné.
+
+<p>Le système de gestion des bogues utilise cette information, en
+conjonction avec les versions corrigées enregistrées lors de la
+fermeture des bogues, pour afficher des listes de bogues ouverts dans
+les différentes versions de chaque paquet. Il considère un bogue comme
+étant ouvert quand il n'a aucune version corrigée, ou s'il a été
+retrouvé plus récemment que lorsqu'il a été corrigé.
+
+<p>Si aucune <var>Version</var> n'est fournie, alors la liste des
+versions corrigées pour ce bogue est vidée. On a alors le même
+comportement que celui de la commande <code>reopen</code>.
+
+<p>Cette commande a été introduite pour être utilisée de préférence
+par rapport à <code>reopen</code>, car il était difficile d'ajouter
+sans ambiguïté une <var>Version</var> à la syntaxe de cette commande.
+
+<dt><code>notfound</code> <var>NuméroDeBogue</var> <var>Version</var>
+
+<dd>Supprime l'enregistrement indiquant que <var>NuméroDeBogue</var>
+est apparu sur la <var>Version</var> donnée du paquet auquel il est
+assigné.
+
+<p>Cela n'est pas la même chose que de fermer le bogue sur cette
+version, car le bogue n'est pas non plus considéré comme corrigé dans
+cette version&nbsp;; aucune information sur cette version ne sera
+connue. Ceci est destiné à corrigé des erreurs lors de
+l'enregistrement quand le bogue a été trouvé.
 
 <dt><code>submitter</code> <var>NuméroDeBogue</var>
 <var>AdresseDOrigine</var> | <code>!</code>
