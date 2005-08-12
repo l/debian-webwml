@@ -30,7 +30,7 @@ amd64_ftpsite=http://amd64.debian.net/debian
 
 # Architectures
 #
-polangs="de nl"
+polangs="de nl fr"
 ddtplangs="de cs da eo es fi fr hu it ja nl pl pt_BR pt_PT ru sk sv_SE uk"
 parts="main contrib non-free"
 dists="oldstable stable testing unstable"
