@@ -390,7 +390,7 @@ NAVBEGIN
 ;
 # $title_in_header
     $txt .= "<p class=\"hidecss\"><a href=\"\#inner\">" . gettext("Skip Site Navigation")."</a></p>\n";
-    $txt .= "<div id=\"navbar3\">\n<ul>".
+    $txt .= "<div id=\"navbar\">\n<ul>".
 	"<li><a href=\"$HOME/intro/about\">".gettext( "About&nbsp;Debian" )."</a></li>\n".
 	"<li><a href=\"$HOME/News/\">".gettext( "News" )."</a></li>\n".
 	"<li><a href=\"$HOME/distrib/\">".gettext( "Getting&nbsp;Debian" )."</a></li>\n".
