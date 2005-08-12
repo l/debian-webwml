@@ -454,8 +454,8 @@ sub html_out {
 	
 	$year ||= (($entry->{Date} =~ /\s(\d{4})\s/) ? $1 : (gmtime)[5] + 1900);
 	$navigation{$year} ||= [];
-	$entry->{Maintainer} ||= 'unkown';
-	$entry->{Date} ||= 'unkown';
+	$entry->{Maintainer} ||= 'unknown';
+	$entry->{Date} ||= 'unknown';
 	push @{$navigation{$year}}, $cgi->a({-href=>"#version$entry->{Version}",
 					     -title=>encode_entities("$entry->{Maintainer} $entry->{Date}",'<>&"')},
 					    $entry->{Version});
