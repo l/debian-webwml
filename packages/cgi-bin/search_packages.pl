@@ -29,7 +29,7 @@ my $thisscript = "search_packages.pl";
 my $HOME = "http://www.debian.org";
 my $ROOT = "";
 my $SEARCHPAGE = "http://packages.debian.org/";
-my @DISTS = qw( oldstable stable testing unstable experimental );
+my @DISTS = qw( oldstable stable testing testing-proposed-updates unstable experimental );
 
 $ENV{PATH} = "/bin:/usr/bin";
 
