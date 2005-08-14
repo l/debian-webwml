@@ -1,4 +1,7 @@
 <?
+// Copyright (C) 2001, 2002, 2003, 2004, 2005  Martin Michlmayr <tbm@cyrius.com>
+// This file may be distributed under the GPL v2 or higher.
+
     $iso = array("US" => "United States of America",
         "CA" => "Canada",
         "JP" => "Japan",
