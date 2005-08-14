@@ -35,7 +35,7 @@ You should not be here!</STRONG>
   session_register("s_isdam");
 
 
-  if ( (($db = open_db())) && (find_user($db, $user))) {
+  if ( (($db = open_db())) && (find_user($db, $_REQUEST['user']))) {
 ?>
 <H1>New Maintainer Applicant: <? echo $row["email"] ?></H1>
 <SMALL><B>Note:</B>The database will accept dates in the following formats:
@@ -45,16 +45,16 @@ today's date, you can type "today" (without the quotes).</SMALL>
 <INPUT name="emailkey" type="hidden" value="<? echo $row["email"] ?>">
 <TABLE valign="t">
 <?
-  if ($s_isdam == 't' || $s_isfd == 't') { $fd_only = TRUE; }
-  if ($s_isdam == 't' ) { $dam_only = TRUE; }
-  if ($s_username == trim($row["manager"]) || $s_isfd == 't' || $s_isdam == 't')
+  if ($_SESSION['s_isdam'] == 't' || $_SESSION['s_isfd'] == 't') { $fd_only = TRUE; }
+  if ($_SESSION['s_isdam'] == 't' ) { $dam_only = TRUE; }
+  if ($_SESSION['s_username'] == trim($row["manager"]) || $_SESSION['s_isfd'] == 't' || $_SESSION['s_isdam'] == 't')
   	{ $am_only = TRUE; }
   # Fill in some default values
-  if ($s_isfd == 't' && $row["fd_member"] == '') {
-      $row["fd_member"] = $s_username;
+  if ($_SESSION['s_isfd'] == 't' && $row["fd_member"] == '') {
+      $row["fd_member"] = $_SESSION['s_username'];
   }
-  if ($s_isdam == 't' && $row["da_member"] == '') {
-      $row["da_member"] = $s_username;
+  if ($_SESSION['s_isdam']== 't' && $row["da_member"] == '') {
+      $row["da_member"] = $_SESSION['s_username'];
   }
   # Print values
   #echo "Comparing '", $s_username, "' with '", trim($row["manager"], "'.";

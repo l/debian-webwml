@@ -47,9 +47,9 @@
 ?>
 #use wml::nmpage title="Debian New Maintainer - Applicant Advocate"
 <?
-  $email = trim(strip_tags($email));
+  $email = trim(strip_tags($_REQUEST['email']));
   if ( ($db = open_db())) {
-  if ($what == "") { #blank
+  if ($_REQUEST['what'] == "") { #blank
     if (find_applicant($db, $email)) {
 ?>
 <H1>Advocate Page for applicant: <? echo $row["forename"], " ", $row["surname"], " &lt;", $row["email"], "&gt;"; ?> </H1><BR>
@@ -76,7 +76,8 @@ Debian login: <INPUT name="advocate" type="text" size="16"> @debian.org
   <P><FONT color="#ff0000"><B>Cannot find applicant <? echo $email; ?> </B></FONT>
 <? } #canot find applicant
   } # blank what
-  if ($what == "send") {
+  if ($_REQUEST['what'] == "send") {
+    $advocate = trim(strip_tags($_REQUEST['advocate']));
     $authid = "nmauth" . md5(uniqid( rand()));
     $sql = "UPDATE applicant SET advocate='$advocate', advocate_key = '$authid', advocate_date = CURRENT_DATE WHERE email = '$email'";
     if (update_db($db, $sql)) {

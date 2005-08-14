@@ -10,14 +10,15 @@
 
 <?
 
-if ($email) {
-     if ($passwd != $passwd2) {
+if ($_REQUEST["email"]) {
+     if ($_REQUEST["passwd"] != $_REQUEST["passwd2"]) {
          echo "Passwords do not match, please try again";
      } else {
          if (! ($db = open_db())) {
              return FALSE;
          }
 
+         $email = trim(strip_tags($_REQUEST['email']));
          $sql = "SELECT id FROM people WHERE email = '$email'";
          if (! ($result = pg_exec($db, $sql))) {
              echo "Problem with query", pg_ErrorMessage($db), "<BR>";
@@ -28,14 +29,16 @@ if ($email) {
              return FALSE;
          }
 
-         if ($offer == "on") {
+         if ($_REQUEST["offer"] == "on") {
              $offer = "TRUE";
          } else {
              $offer = "FALSE";
          }
 
-         $passwd = passwd_crypt($passwd);
+         $passwd = passwd_crypt($_REQUEST["passwd"]);
 
+         $forename = $_REQUEST["forename"];
+         $surname = $_REQUEST["surname"];
          $now = strftime('%Y-%m-%d');
          $sql = "INSERT INTO people (forename, surname, email, passwd, offer, last_update) VALUES ('$forename', '$surname', '$email', '$passwd', $offer, '$now')";
          if (! ($result = pg_exec($db, $sql))) {
