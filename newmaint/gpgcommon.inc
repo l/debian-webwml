@@ -326,7 +326,7 @@
         } else {
             $sql .= "offer is FALSE";
         }
-        $sql .= " AND places.who = people.id ORDER BY country, state, to_ascii(city), UPPER(surname)";
+        $sql .= " AND places.who = people.id ORDER BY country, state, city, UPPER(surname)";
 
         if (! ($query = pg_exec($db, $sql))) {
             echo "Problem with query", pg_ErrorMessage($db), "<BR>";
