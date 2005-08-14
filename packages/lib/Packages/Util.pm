@@ -6,6 +6,7 @@ use Text::Iconv;
 Text::Iconv->raise_error(0); # do not throw exeptions
 
 use Packages::I18N::Locale;
+use Generated::Strings qw( gettext );
 
 our @ISA = qw( Exporter );
 

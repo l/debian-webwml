@@ -12,8 +12,8 @@ fi
 NOCPY_TEMPLATE=$topdir/etc/copyright_error
 NOCPY_BIN_TEMPLATE=$topdir/etc/copyright_error_bin
 
-logs=$topdir/files/logs
-log=${logs}/changelogs.log
+logs="$topdir/files/logs"
+log="${logs}/changelogs.log"
 
 test -d $logs || mkdir -p $logs
 
@@ -26,11 +26,12 @@ fi
 date
 
 for part in $parts; do
-	${bindir}/extract_files -v -d ${localdir}/pool/$parts/ \
-		-t ${htmldir}/changelogs/pool/$parts/
+    "${bindir}/extract_files" -v -d "${localdir}/pool/$part/" \
+	-t "${htmldir}/changelogs/pool/$part/" \
+	-w "$tmpdir" --dumpfile ${filesdir}/changelogs.$part.dump
 done
 
-find ${htmldir}/changelogs/ -name log -cmin +3600 \
+find "${htmldir}/changelogs/" -name log -cmin +3600 \
  | while read logfile; do
  	dir=$(dirname "$logfile")
 	echo deleting $dir

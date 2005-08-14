@@ -30,14 +30,15 @@ amd64_ftpsite=http://amd64.debian.net/debian
 
 # Architectures
 #
-polangs="de nl"
+polangs="de nl fr"
 ddtplangs="de cs da eo es fi fr hu it ja nl pl pt_BR pt_PT ru sk sv_SE uk"
 #ddtplangs="ja"
 parts="main contrib non-free"
-dists="stable stable-proposed-updates testing testing-proposed-updates unstable"
-arch_stable="alpha arm hppa i386 ia64 m68k mips mipsel powerpc s390 sparc"
-arch_testing="${arch_stable} amd64"
-arch_unstable="alpha arm hppa hurd-i386 i386 ia64 m68k mips mipsel powerpc s390 sparc amd64"
+dists="oldstable stable stable-proposed-updates testing testing-proposed-updates unstable"
+arch_oldstable="alpha arm hppa i386 ia64 m68k mips mipsel powerpc s390 sparc"
+arch_stable="${arch_oldstable} amd64"
+arch_testing="${arch_stable}"
+arch_unstable="${arch_stable} hurd-i386"
 arch_experimental="${arch_unstable}"
 arch_testing_proposed_updates="${arch_testing}"
 arch_stable_proposed_updates="${arch_stable}"

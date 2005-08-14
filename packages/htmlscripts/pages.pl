@@ -233,7 +233,7 @@ sub package_pages_walker {
 	        $package_page .= "<tr>\n";
 		$package_page .=  "<th><a href=\"$DL_URL?arch=$a";
 		# \&amp\;file=\" method=\"post\">\n<p>";
-		$package_page .=  "&amp;file=$filenames{a2f}->{$a}";
+		$package_page .=  "&amp;file=".uri_escape($filenames{a2f}->{$a});
 		$package_page .=  "&amp;md5sum=$file_md5s{a2f}->{$a}";
 		$package_page .=  "&amp;arch=$a";
 		# there was at least one package with two

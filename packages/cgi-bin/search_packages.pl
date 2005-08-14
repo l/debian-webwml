@@ -29,7 +29,7 @@ my $thisscript = "search_packages.pl";
 my $HOME = "http://www.debian.org";
 my $ROOT = "";
 my $SEARCHPAGE = "http://packages.debian.org/";
-my @DISTS = qw( stable testing unstable experimental );
+my @DISTS = qw( oldstable stable testing unstable experimental );
 
 $ENV{PATH} = "/bin:/usr/bin";
 
@@ -193,9 +193,10 @@ if (($searchon eq 'names') || ($searchon eq 'sourcenames')) {
 # check if the Packages files are there
 my @files = glob ("$fdir/$file");
 if ($#files == -1) {
-# XXX has to be updated for post-woody
+# XXX has to be updated for new architectures
     if ($format eq 'html') {
-	if ($version eq "stable" and $arch =~ /^(hurd|sh)$/) {
+	if (($version eq "stable" and $arch =~ /^(hurd|sh)$/)
+	    || ($version eq "oldstable" and $arch =~ /^amd64$/)) {
 	    print "Error: the $arch architecture didn't exist in $version.<br>\n"
 		."Please go back and choose a different distribution.\n";
 	} else {

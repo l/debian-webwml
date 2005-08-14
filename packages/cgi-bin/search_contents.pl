@@ -93,7 +93,10 @@ close (C);
 
 my $cdir = $topdir . "/files/contents";
 my $file = "$cdir/$version/Contents-$arch";
-my $file_nonus = "$cdir/$version/Contents-$arch.non-US";
+my $file_nonus = "";
+if ($version eq 'oldstable') {
+    $file_nonus = "$cdir/$version/Contents-$arch.non-US";
+}
 
 # The keyword needs to be modified for the actual search, but left alone
 # for future reference, so we create a different variable for searching
@@ -102,8 +105,9 @@ $searchkeyword =~ s/[.]/[.]/;
 
 # check if the Contents file is there
 if (!-r $file) {
-# XXX has to be updated for post-woody
-  if ($version eq "stable" and $arch =~ /^(hurd|sh)$/) {
+# XXX has to be updated for new architecures
+  if (($version eq "stable" and $arch =~ /^(hurd|sh)$/)
+      || ($version eq "oldstable" and $arch =~ /^amd64$/)) {
     print "Error: the $arch architecture didn't exist in $version.<br>\n"
          ."Please go back and choose a different distribution.\n";
   } else {
