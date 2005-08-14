@@ -167,51 +167,51 @@ You should not be here!</STRONG>
   # Check ze values, any bad things we abort
   if ( ($db = open_db())) {
   $errors = "";
-  if ($emailkey == "") { $errors .= "<LI><STRONG>Blank old email address, problem with script!</STRONG>"; }
-  if ($s_isdam == 't' || $s_isfd == 't') {
-    if ($email == "") { $errors .= "<LI>No new email address.\n"; }
-    if ($forename == "") { $errors .= "<LI>You must have a first name entered.\n"; }
-    if ($surname == "") { $errors .= "<LI>You must have a surname entered.\n"; }
-    if ($apply_date == "") { $errors .= "<LI>You must have a date of application.\n"; }
-    if ($manager != "" && $manager_date == "")
+  if ($_REQUEST['emailkey'] == "") { $errors .= "<LI><STRONG>Blank old email address, problem with script!</STRONG>"; }
+  if ($_SESSION['s_isdam'] == 't' || $_SESSION['s_isfd'] == 't') {
+    if ($_REQUEST['email'] == "") { $errors .= "<LI>No new email address.\n"; }
+    if ($_REQUEST['forename'] == "") { $errors .= "<LI>You must have a first name entered.\n"; }
+    if ($_REQUEST['surname'] == "") { $errors .= "<LI>You must have a surname entered.\n"; }
+    if ($_REQUEST['apply_date'] == "") { $errors .= "<LI>You must have a date of application.\n"; }
+    if ($_REQUEST['manager'] != "" && $_REQUEST['manager_date'] == "")
       { $errors .= "<LI>A manager has been assigned but with no date.\n"; }
-    if ($manager == "" && $manager_date != "")
+    if ($_REQUEST['manager'] == "" && $_REQUEST['manager_date'] != "")
       { $errors .= "<LI>A manager has not been assigned but there is a manager assigned date.\n"; }
-    if ($advocate_ok != "n" && $advocate_checked == "")
+    if ($_REQUEST['advocate_ok'] != "n" && $_REQUEST['advocate_checked'] == "")
       { $errors .= "<LI>Advocate check entered but no date given.\n"; }
-    if ($advocate_ok == "n" && $advocate_checked != "")
+    if ($_REQUEST['advocate_ok'] == "n" && $_REQUEST['advocate_checked'] != "")
       { $errors .= "<LI>Advocate Check Date given but Advocate check not changed.\n"; }
   } # end of fd or dam
 
-  if ($s_isfd == 't') {
-    if ($application_ok != "n" && $application_ok_date == "")
+  if ($_SESSION['s_isfd'] == 't') {
+    if ($_REQUEST['application_ok'] != "n" && $_REQUEST['application_ok_date'] == "")
       { $errors .= "<LI>FD has checked report but there is no date.\n"; }
-    if ($application_ok != "n" && $fd_member == "")
+    if ($_REQUEST['application_ok'] != "n" && $_REQUEST['fd_member'] == "")
       { $errors .= "<LI>FD has checked report but not specified their login (FD member).\n"; }
   } # end of fd only
 
-  if ($am_confirm != "n" && $am_confirm_date == "")
+  if ($_REQUEST['am_confirm'] != "n" && $_REQUEST['am_confirm_date'] == "")
     { $errors .= "<LI>AM has confirmed applicant but not put a date in.\n"; }
-  if ($am_confirm == "n" && $am_confirm_date != "")
+  if ($_REQUEST['am_confirm'] == "n" && $_REQUEST['am_confirm_date'] != "")
     { $errors .= "<LI>AM has not confirmed applicant but there is a date set.\n"; }
 
-  if ($id_ok != "n" && $id_checked == "")
+  if ($_REQUEST['id_ok'] != "n" && $_REQUEST['id_checked'] == "")
     { $errors .= "<LI>ID has been checked but there is no date of checking.\n"; }
-  if ($id_ok == "n" && $id_checked != "")
+  if ($_REQUEST['id_ok'] == "n" && $_REQUEST['id_checked'] != "")
     { $errors .= "<LI>ID has not been checked but there is a date of checking.\n"; }
-  if ($pnp_ok != "n" && $pnp_checked == "")
+  if ($_REQUEST['pnp_ok'] != "n" && $_REQUEST['pnp_checked'] == "")
     { $errors .= "<LI>Philosophy and Procedures have been checked but there is no date of checking.\n"; }
-  if ($pnp_ok == "n" && $pnp_checked != "")
+  if ($_REQUEST['pnp_ok'] == "n" && $_REQUEST['pnp_checked'] != "")
     { $errors .= "<LI>Philosophy and Procedures have not been checked but there is a date of checking.\n"; }
-  if ($tns_ok != "n" && $tns_checked == "")
+  if ($_REQUEST['tns_ok'] != "n" && $_REQUEST['tns_checked'] == "")
     { $errors .= "<LI>Tasks and Skills have been checked but there is no date of checking.\n"; }
-  if ($tns_ok == "n" && $tns_checked != "")
+  if ($_REQUEST['tns_ok'] == "n" && $_REQUEST['tns_checked'] != "")
     { $errors .= "<LI>Tasks and Skills have not been checked but there is a date of checking.\n"; }
-  if ($approved != "n" && $decision == "")
+  if ($_REQUEST['approved'] != "n" && $_REQUEST['decision'] == "")
     { $errors .= "<LI>AM has approved applicant but there is no date.\n"; }
-  if ($approved == "n" && $decision != "")
+  if ($_REQUEST['approved'] == "n" && $_REQUEST['decision'] != "")
     { $errors .= "<LI>AM has not yet approved applicant but there is a date.\n"; }
-  if (($manager != "") && !(find_manager($db, $manager)))
+  if (($_REQUEST['manager'] != "") && !(find_manager($db, $_REQUEST['manager'])))
     { $errors .= "<LI>I cannot find Application Manager $manager in the database.\n"; }
   # Possibly more checks later
   if ($errors != "") 
@@ -223,8 +223,8 @@ You should not be here!</STRONG>
     echo "<P>Submission has passed sanity checks.<BR>\n";
 
 
-    if ($s_isdam == 't') {
-        $sql = "SELECT * FROM applicant WHERE email ='$emailkey'";
+    if ($_SESSION['s_isdam'] == 't') {
+        $sql = "SELECT * FROM applicant WHERE email ='" . $_REQUEST['emailkey'] . "'";
         if (! ($result = pg_exec($db, $sql))) {
           echo "Problem with query: ", pg_ErrorMessage($db), "<BR>";
           echo "SQL was: $sql <BR>\n";
@@ -240,57 +240,57 @@ You should not be here!</STRONG>
     }
 
     $sql = "UPDATE applicant SET ";
-    if ($s_isdam == 't' || $s_isfd == 't') {
-      $sql .= get_text("surname", $surname) .
-              ", " . get_text("email", $email) .
-              ", " . get_text("forename", $forename) .
-	      ", " . get_text("apply_date", $apply_date) .
-	      ", " . get_text("advocate", $advocate) .
-	      ", " . get_text("advocate_date", $advocate_date) .
-	      ", " . get_bool("advocate_ok", $advocate_ok) .
-	      ", " . get_text("advocate_checked", $advocate_checked) .
-	      ", " . get_text("manager", $manager) .
-	      ", " . get_text("manager_date", $manager_date) .
-              ", " . get_bool("application_ok", $application_ok) .
-              ", " . get_text("application_ok_date", $application_ok_date) .
-              ", " . get_text("fd_member", $fd_member) .
-	      ", " . get_textarea("da_comment", $da_comment) . ", " ;
+    if ($_SESSION['s_isdam'] == 't' || $_SESSION['s_isfd'] == 't') {
+      $sql .= get_text("surname", $_REQUEST['surname']) .
+              ", " . get_text("email", $_REQUEST['email']) .
+              ", " . get_text("forename", $_REQUEST['forename']) .
+	      ", " . get_text("apply_date", $_REQUEST['apply_date']) .
+	      ", " . get_text("advocate", $_REQUEST['advocate']) .
+	      ", " . get_text("advocate_date", $_REQUEST['advocate_date']) .
+	      ", " . get_bool("advocate_ok", $_REQUEST['advocate_ok']) .
+	      ", " . get_text("advocate_checked", $_REQUEST['advocate_checked']) .
+	      ", " . get_text("manager", $_REQUEST['manager']) .
+	      ", " . get_text("manager_date", $_REQUEST['manager_date']) .
+              ", " . get_bool("application_ok", $_REQUEST['application_ok']) .
+              ", " . get_text("application_ok_date", $_REQUEST['application_ok_date']) .
+              ", " . get_text("fd_member", $_REQUEST['fd_member']) .
+	      ", " . get_textarea("da_comment", $_REQUEST['da_comment']) . ", " ;
     } 
-    $sql .=  get_bool("am_confirm", $am_confirm) . 
-	   ", " . get_text("am_confirm_date", $am_confirm_date) .
-	   ", " . get_text("am_contact", $am_contact) .
-           ", " . get_bool("id_ok", $id_ok) .
-	   ", " . get_text("id_checked", $id_checked) .
-	   ", " . get_bool("pnp_ok", $pnp_ok) .
-	   ", " . get_text("pnp_checked", $pnp_checked) .
-	   ", " . get_bool("tns_ok", $tns_ok) .
-	   ", " . get_text("tns_checked", $tns_checked) .
-	   ", " . get_bool("approved", $approved) .
-	   ", " . get_text("decision", $decision) .
-	   ", " . get_textarea("man_comment", $man_comment) ;
-    if ($s_isdam == 't') {
-      $sql .= ", " . get_bool("da_phone_required", $da_phone_required) .
-              ", " . get_text("da_phone", $da_phone) .
-	      ", " . get_bool("da_approved", $da_approved) .
-	      ", " . get_text("da_approved_date", $da_approved_date) .
-	      ", " . get_text("da_member", $da_member) .
-	      ", " . get_text("newmaint", $newmaint) ;
+    $sql .=  get_bool("am_confirm", $_REQUEST['am_confirm']) . 
+	   ", " . get_text("am_confirm_date", $_REQUEST['am_confirm_date']) .
+	   ", " . get_text("am_contact", $_REQUEST['am_contact']) .
+           ", " . get_bool("id_ok", $_REQUEST['id_ok']) .
+	   ", " . get_text("id_checked", $_REQUEST['id_checked']) .
+	   ", " . get_bool("pnp_ok", $_REQUEST['pnp_ok']) .
+	   ", " . get_text("pnp_checked", $_REQUEST['pnp_checked']) .
+	   ", " . get_bool("tns_ok", $_REQUEST['tns_ok']) .
+	   ", " . get_text("tns_checked", $_REQUEST['tns_checked']) .
+	   ", " . get_bool("approved", $_REQUEST['approved']) .
+	   ", " . get_text("decision", $_REQUEST['decision']) .
+	   ", " . get_textarea("man_comment", $_REQUEST['man_comment']) ;
+    if ($_SESSION['s_isdam'] == 't') {
+      $sql .= ", " . get_bool("da_phone_required", $_REQUEST['da_phone_required']) .
+              ", " . get_text("da_phone", $_REQUEST['da_phone']) .
+	      ", " . get_bool("da_approved", $_REQUEST['da_approved']) .
+	      ", " . get_text("da_approved_date", $_REQUEST['da_approved_date']) .
+	      ", " . get_text("da_member", $_REQUEST['da_member']) .
+	      ", " . get_text("newmaint", $_REQUEST['newmaint']) ;
      }
-     $sql .= " WHERE email = '$emailkey'";
-           if ($s_isfd == 't') {
-	     if (!(check_manager($db, trim($manager), $email))) {
+     $sql .= " WHERE email = '" . $_REQUEST['emailkey'] . "'";
+           if ($_SESSION['s_isfd'] == 't') {
+	     if (!(check_manager($db, trim($_REQUEST['manager']), $_REQUEST['email']))) {
 	       echo "<P>Problem emailling manager.\n";
 	     }
 	   }
 	   if (($erows = update_db($db, $sql)) > 0)
 	   {
 	     echo "<P>$erows rows updated in database.<BR>\n";
-             if ($s_isdam == 't') {
-                 if ($newmaint != '' && $old_newmaint == '') {
-                     $manager = trim($manager);
+             if ($_SESSION['s_isdam'] == 't') {
+                 if ($_REQUEST['newmaint'] != '' && $_REQUEST['old_newmaint'] == '') {
+                     $manager = trim($_REQUEST['manager']);
                      echo "Applicant got approved, mailing manager $manager<p>";
-                     email_manager_approved($db, $manager, $forename,
-                         $surname, $emailkey);
+                     email_manager_approved($db, $manager, $_REQUEST['forename'],
+                         $_REQUEST['surname'], $_REQUEST['emailkey']);
                  }
              }
 	   } 

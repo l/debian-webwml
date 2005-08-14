@@ -61,7 +61,6 @@
   }
   function update_password($db, $passwda, $passwdb, $login, $cpasswd)
   {
-    global $s_isfd;
     $passwda = trim($passwda);
     $passwdb = trim($passwdb);
     $cpasswd = trim($cpasswd);
@@ -72,9 +71,9 @@
       { $errors .= "<LI>You must type new password in both boxes.\n"; }
     if ($passwda != $passwdb )
       { $errors .= "<LI>New passwords do not match.\n"; }
-    if ($s_isfd != 't' && $cpasswd == "")
+    if ($_SESSION['s_isfd'] != 't' && $cpasswd == "")
       { $errors .= "<LI>You didn't type your old passwd.\n"; }
-    if ($s_isfd != 't' && $errors == "" && !check_manpasswd($db, $login, $cpasswd))
+    if ($_SESSION['s_isfd'] != 't' && $errors == "" && !check_manpasswd($db, $login, $cpasswd))
       { $errors .= "<LI>I cannot find that manager or you entered in wrong old passwd.\n"; }
     # Possibly more checks later
     if ($errors != "") 
@@ -97,7 +96,6 @@
 
   function insert_manager($db, $name, $email, $login, $passwda, $passwdb, $max_applicants, $isfd, $isdam)
   {
-    global $s_username, $s_isfd;
     # Check ze values, any bad things we abort
     $login = trim(strip_tags($login));
     $name = trim(strip_tags($name));
@@ -105,7 +103,7 @@
     $max_applicants = trim(strip_tags($max_applicants));
     $errors = "";
 
-    if ($s_isfd != 't')
+    if ($_SESSION['s_isfd'] != 't')
       { $errors .= "<LI>Only the front desk can add AMs."; }
     if ($name == "")
       { $errors .= "<LI>You need to supply a name."; }
@@ -159,7 +157,6 @@
 
   function update_profile($db, $name, $email, $login, $loginkey, $max_applicants, $isactive, $isfd, $isdam)
   {
-    global $s_username, $s_isfd;
     # Check ze values, any bad things we abort
     $login = trim(strip_tags($login));
     $loginkey = trim(strip_tags($loginkey));
@@ -176,8 +173,9 @@
       { $errors .= "<LI>You need to supply your email address."; }
     if ($max_applicants == "")
       { $errors .= "<LI>You need to supply the maximum number of applicants you can handle."; }
-    if ($s_isfd != 't' && $s_username != $loginkey)
-      { $errors .= "<LI>Form fails consistency test. You are not part of the front desk and '$s_username' cannot change '$loginkey' profile."; }
+    if ($_SESSION['s_isfd'] != 't' && $_SESSION['s_username'] != $loginkey)
+      { $errors .= "<LI>Form fails consistency test. You are not part of the front desk and '" .
+            $_SESSION['s_username'] . "' cannot change '$loginkey' profile."; }
     # Possibly more checks later
     if ($errors != "") 
     {
@@ -189,7 +187,7 @@
       $sql = "UPDATE manager SET name = '" . $name . "', " .
              "email = '" . $email . "', " .
 	     "max_applicants = " . $max_applicants ; 
-      if ($s_isfd == 't') {
+      if ($_SESSION['s_isfd'] == 't') {
         if ($login != $loginkey) {
 	  $sql .= ", login = '". $login ."' ";
 	}
@@ -213,14 +211,14 @@
       if (($erows = update_db($db, $sql)) > 0)
       {
         echo "<P>$erows rows updated in database.<BR>\n";
-        if ($s_isfd == 't' && $isactive != "t") {
+        if ($_SESSION['s_isfd'] == 't' && $isactive != "t") {
             # lock password
             $sql = "UPDATE manager SET passwd = '*LK*' WHERE login = '$loginkey'";
             if (($erows = update_db($db, $sql)) > 0) {
                 echo "Password locked.<BR>\n";
             }
         }
-	if ($login != $loginkey && $s_isfd == 't')
+	if ($login != $loginkey && $_SESSION['s_isfd'] == 't')
 	{
 	  change_app_manager($db, $login, $loginkey);
 	}
@@ -243,16 +241,21 @@ You should not be here!</STRONG>
 ?>
 <H1>Debian New Maintainer - Profile</H1><BR>
 <?
-  if ($what == "cpasswd") {
-    update_password($db,$passwda, $passwdb, $login, $cpasswd);
+  if ($_REQUEST['what'] == "cpasswd") {
+    update_password($db, $_REQUEST['passwda'], $_REQUEST['passwdb'],
+        $_REQUEST['login'], $_REQUEST['cpasswd']);
   }
-  if ($what == "cprofile") {
-    update_profile($db, $name, $email, $login, $loginkey, $max_applicants, $isactive, $isfd, $isdam);
+  if ($_REQUEST['what'] == "cprofile") {
+    update_profile($db, $_REQUEST['name'], $_REQUEST['email'], $_REQUEST['login'],
+        $_REQUEST['loginkey'], $_REQUEST['max_applicants'], $_REQUEST['isactive'],
+	$_REQUEST['isfd'], $_REQUEST['isdam']);
   } 
-  if ($what == "new") {
-    $insok = insert_manager($db, $name, $email, $login, $passwda, $passwdb, $max_applicants, $isfd, $isdam);
+  if ($_REQUEST['what'] == "new") {
+    $insok = insert_manager($db, $_REQUEST['name'], $_REQUEST['email'], $_REQUEST['login'],
+        $_REQUEST['passwda'], $_REQUEST['passwdb'], $_REQUEST['max_applicants'],
+	$_REQUEST['isfd'], $_REQUEST['isdam']);
   }
-  if ($what == "blank" && $s_isfd == 't') {
+  if ($_REQUEST['what'] == "blank" && $_SESSION['s_isfd'] == 't') {
 ?>
 <FORM method="post" action="amprofile.php?<?=SID?>">
 <INPUT type="hidden" name="what" value="new">
@@ -264,16 +267,17 @@ You should not be here!</STRONG>
   print_text("Maximum Applicants", "max_applicants", "1", TRUE);
   print_passwd("Password", "passwda");
   print_passwd("Password (again)", "passwdb");
-  print_checkbox("FD Member", "isfd", "f", ($s_isfd == 't'));
-  print_checkbox("DAM Member", "isdam", "f", ($s_isfd == 't'));
+  print_checkbox("FD Member", "isfd", "f", ($_SESSION['s_isfd'] == 't'));
+  print_checkbox("DAM Member", "isdam", "f", ($_SESSION['s_isfd'] == 't'));
 ?>
 <TR><TD> </TD><TD><INPUT type="submit" value="Add AM"></TD></TR>
 </TABLE>
 </FORM>
 <?
   } else {#blank
-  if ($s_isfd != "t" || $login == "") { $login = $s_username; }
-  if ($what != "new" || $insok) {
+  if ($_REQUEST['login']) { $login = $_REQUEST['login']; }
+  if ($_SESSION['s_isfd'] != "t" || $_REQUEST['login'] == "") { $login = $_SESSION['s_username']; }
+  if ($_REQUEST['what'] != "new" || $insok) {
     if (find_manager($db, $login)) {
 ?>
 <H3>Change AM Details</H3>
@@ -285,13 +289,13 @@ FD and DAM groups.
 <INPUT type="hidden" name="loginkey" value="<? echo $row["login"] ?>">
 <TABLE width=80%>
 <?
-  print_text("Login", "login", $row["login"], ($s_isfd == 't'));
+  print_text("Login", "login", $row["login"], ($_SESSION['s_isfd'] == 't'));
   print_text("Name", "name", $row["name"], TRUE);
   print_text("Email", "email", $row["email"], TRUE );
   print_text("Maximum Applicants", "max_applicants", $row["max_applicants"], TRUE);
-  print_checkbox("Active", "isactive", $row["is_active"], ($s_isfd == 't'));
-  print_checkbox("FD Member", "isfd", $row["is_frontdesk"], ($s_isfd == 't'));
-  print_checkbox("DAM Member", "isdam", $row["is_dam"], ($s_isfd == 't'));
+  print_checkbox("Active", "isactive", $row["is_active"], ($_SESSION['s_isfd'] == 't'));
+  print_checkbox("FD Member", "isfd", $row["is_frontdesk"], ($_SESSION['s_isfd'] == 't'));
+  print_checkbox("DAM Member", "isdam", $row["is_dam"], ($_SESSION['s_isfd'] == 't'));
 ?>
 <TR><TD> </TD><TD><INPUT type="submit" value="Change Profile"></TD></TR>
 </TABLE>
@@ -311,7 +315,7 @@ Use the form below to change it for the NM site.
 <TR><TD> </TD><TD><INPUT value="Change Password" type="submit"></TD></TR>
 </TABLE>
 </FORM>
-<? if ($s_isfd == 't') { ?>
+<? if ($_SESSION['s_isfd'] == 't') { ?>
 <H3>Delete AM</H3>
 <P>Front Desk members can delete Application Managers.
 <FORM method="post" action="fddelete.php?<?=SID?>">

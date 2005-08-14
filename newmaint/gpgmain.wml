@@ -17,6 +17,7 @@ There's no session registered for you. Please relogin.
 
 <?
     if (($db = open_db())) {
+        $s_username = $_SESSION['s_username'];
         $sql = "SELECT id, forename, surname, email, offer, last_update, url FROM people WHERE email = '$s_username'";
         if (! ($result = pg_exec($db, $sql))) {
             echo "Problem with query", pg_ErrorMessage($db), "<BR>";
@@ -31,19 +32,20 @@ There's no session registered for you. Please relogin.
         $row = pg_Fetch_Array($result, 0);
         $luser_error = "";
 
-        if ($update) {
+        if ($_REQUEST['update']) {
+            $forename = $_REQUEST["forename"];
+            $surname = $_REQUEST["surname"];
             $email = $row["email"];
-            #$forename =  # no filtering done
-            #$surname =  # no filtering done
-            $offer   = ($offer == "t") ? "t" : "f";
+            $offer   = ($_REQUEST["offer"] == "t") ? "t" : "f";
             $id = $row["id"];
             $last_update = $row["last_update"];
+	    $url = $_REQUEST["url"];
 
-            if ($passwd1 != $passwd2) {
+            if ($_REQUEST["passwd1"] != $_REQUEST["passwd2"]) {
                 $luser_error = "Passwords do not match, please try again";
             } else {
-                if ($passwd1 != "") {
-                    $passwd = passwd_crypt($passwd1);
+                if ($_REQUEST["passwd1"] != "") {
+                    $passwd = passwd_crypt($_REQUEST["passwd1"]);
                     $sql = "UPDATE people SET forename = '$forename', surname = '$surname', email = '$email' , passwd = '$passwd', offer = '$offer', last_update = 'now', url = '$url' WHERE id=$id";
                 } else  {
                     $sql = "UPDATE people SET forename = '$forename', surname = '$surname', email = '$email' ,                     offer = '$offer', last_update = 'now', url = '$url' WHERE id=$id";

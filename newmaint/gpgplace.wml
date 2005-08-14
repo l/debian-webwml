@@ -25,8 +25,14 @@ You should not be here!</STRONG>
         return FALSE;
     }
 
-    # user pressed submit
+    $id = $_REQUEST["id"];
+    $city = $_REQUEST["city"];
+    $country = $_REQUEST["country"];
+    $state = $_REQUEST["state"];
+    $url = $_REQUEST["url"];
+    $s_username = $_SESSION["s_username"];
 
+    # user pressed submit
     if ($city || $country) {
         $sql = "SELECT id FROM people WHERE email = '$s_username'";
         if (! ($result = pg_exec($db, $sql))) {
@@ -76,10 +82,11 @@ You should not be here!</STRONG>
 
         }
 
-        if ($begin_year == "always") {
+        if ($_REQUEST["begin_year"] == "always") {
             $begin = "";
         } else {
-            $begin = sprintf("%4d-%02d-%02d", $begin_year, $begin_month, $begin_day);
+            $begin = sprintf("%4d-%02d-%02d", $_REQUEST["begin_year"],
+	        $_REQUEST["begin_month"], $_REQUEST["begin_day"]);
         }
 
         if ($begin) {
@@ -92,10 +99,11 @@ You should not be here!</STRONG>
             return FALSE;
         }
 
-        if ($end_year == "always") {
+        if ($_REQUEST["end_year"] == "always") {
             $end = "";
         } else {
-            $end = sprintf("%4d-%02d-%02d", $end_year, $end_month, $end_day);
+            $end = sprintf("%4d-%02d-%02d", $_REQUEST["end_year"],
+	        $_REQUEST["end_month"], $_REQUEST["end_day"]);
         }
 
         if ($end) {
@@ -119,7 +127,7 @@ You should not be here!</STRONG>
     }
 
 
-    if ($remove && $id) {
+    if ($_REQUEST["remove"] && $id) {
         $sql = "DELETE FROM places WHERE id = '$id'";
         if (! ($result = pg_exec($db, $sql))) {
             echo "Problem with query", pg_ErrorMessage($db), "<BR>";
