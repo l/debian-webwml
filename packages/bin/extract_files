@@ -50,12 +50,14 @@ my $TEMPDIR = tempdir( CLEANUP => 1 );
 my $directory = cwd()."/pool";
 my $dumpfile = '';
 my $target = cwd()."/extracted_files";
+my $configdir = cwd()."/etc";
 my ( $verbose, $version, $help, $debug, $force, $use_dump );
 
 my %opthash = (
 	       'verbose|v' => \$verbose,
 	       'force|f' => \$force,
 	       'directory|d=s' => \$directory,
+	       'config|c=s' => \$configdir,
 	       'target|t=s' => \$target,
 	       'dumpfile=s' => \$dumpfile,
 	       'use_dump' => \$use_dump,
@@ -115,9 +117,9 @@ sub unpack_srcpkg {
 
     chdir( $TEMPDIR ) or do_error( "couldn't change working directory to $TEMPDIR" );
 
-    add_log( $log, "dpkg-source -x $dscname"  );
+    add_log( $log, "dpkg-source -sn -x $dscname"  );
 
-    my $out = qx/dpkg-source -x "$dscname" 2>&1/;
+    my $out = qx/dpkg-source -sn -x "$dscname" 2>&1/;
     my ($dir) = ($out =~ /(\S+)$/o);
 
     add_log( $log, "dpkg-source output: ", $out );
@@ -332,9 +334,8 @@ sub extract_changelog_to_pkgpool {
     
     add_log( $log, "create enhanced HTML version" );
     my $chg = Parse::DebianChangelog->init( { infile => "$source_dir/debian/changelog" } );
-    $chg->html_out( { outfile => "$target_dir/changelog.html",
-		      style => "/changelogs.css",
-		      style_print => "/changelogs-print.css" } );
+    $chg->html( { outfile => "$target_dir/changelog.html",
+	          template => "$configdir/tmpl/default.tmpl" } );
     add_log( $log, scalar $chg->get_parse_errors );
 
 }
@@ -567,6 +568,7 @@ sub read_sub {
 ##################################################
 # MAIN PROGRAM
 
+do_info( "Using working directory $TEMPDIR" );
 if ($use_dump) {
     do_info( "load information from dump file" );
     open DUMP, '<', $dumpfile
