@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - informazioni per lo sviluppatore" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.54" maintainer="Giuseppe Sacco"
+#use wml::debian::translation-check translation="1.59" maintainer="Giuseppe Sacco"
 
 <h1>Informazioni sul sistema per la gestione dei bug a uso degli sviluppatori</h1>
 
@@ -28,6 +28,7 @@ segnala il problema, sia il gestore, sia
   <li><a href="#owner">Cambiare il proprietario</a></li>
   <li><a href="#maintincorrect">Manutentori di pacchetto elencati erroneamente</a></li>
   <li><a href="#requestserv">Riaprire, riassegnare e manipolare segnalazioni</a></li>
+  <li><a href="#subscribe">Iscrive ad un bug</a></li>
   <li><a href="#subjectscan">Feature pi&ugrave; o meno vecchie riguardo all'analisi dell'oggetto</a></li>
   <li><a href="#x-debian-pr">Caratteristica vecchia: <code>X-Debian-PR: quiet</code></a></li>
 </ul>
@@ -60,6 +61,11 @@ programma di posta elettronica e modificare il campo <code>To</code> per dire
 (<VAR>nnn</VAR><CODE>-close</CODE> è fornito come alias per
 <VAR>nnn</VAR><CODE>-done</CODE>).</P>
 
+<p>Laddove possibile è meglio utilizzare la linea <code>Version</code>
+nello <a href="Reporting.html#pseudoheader">pseudo-header</a> del proprio
+messaggio quando si sta chiudendo una segnalazione, in modo che il
+sistema sappia quale versione contiene la correzione del problema.</p>
+
 <p>La persona che chiude un bug, la persona che l'ha aperta e la
 mailing list <code>debian-bugs-closed</code> riceveranno ciascuna una notifica
 riguardo il cambio dello status del bug. Colui che l'ha aperta e la
@@ -80,11 +86,13 @@ segnalazione.</p>
 
 <p>Il sistema di tracciamento riceverà il messaggio a
 <VAR>nnn</VAR><CODE>@bugs.debian.org</CODE>, lo passerà a chi mantiene il pacchetto, lo
-memorizzerà con tutti gil altri log per quel bug e lo invierà a
+memorizzerà con tutti gli altri log per quel bug e lo invierà a
 <CODE>debian-bugs-dist</CODE>.</P>
 
-<P>Uno sviluppatore può inviare specificatamente un messaggio a chi ha fatto
-la segnalazione tramite l'indirizzo <var>nnn</var><code>-submitter@bugs.debian.org</code>.</p>
+<P>Inviare un email a <var>nnn</var><code>-submitter\@EmailDomain</code>
+invier&agrave; esplicitamente l'email al segnalatore e memorizzer&agrave;
+una copia del messaggio nel sistema. Il messaggio non verr&agrave;
+inviato al manutentore del pacchetto.</p>
 
 <P>Se vuoi spedire un messaggio followup che non consideri appropriato
 per <CODE>debian-bugs-dist</CODE> puoi spedirlo a
@@ -358,12 +366,14 @@ questione.</P>
 <H2><A name="requestserv">Riapertura, diverso assegnamento
 e gestione delle segnalazioni</A></H2>
 
-<P>È possibile assegnare una segnalazione ad un altro pacchetto, o anche
+<P>&Egrave; possibile assegnare una segnalazione ad un altro pacchetto, o anche
 riaprire segnalazioni chiuse per errore, o ancora modificarne le
 informazioni relative a dove una certa segnalazione va inviata.
-È anche possibile cambiare il livello di gravità della segnalazione o
-il titolo stesso o cambiarne il proprietario. Infine è possibile fondere
-più segnalazioni in una sola. Tutto questo è fatto inviando un
+&Egrave; anche possibile cambiare il livello di gravit&agrave; della
+segnalazione o il titolo stesso, o cambiarne il proprietario, o
+fondere/separare delle segnalazioni, o inserire le versioni dei
+pacchetti che sono affette dal bug o che non lo sono.
+Tutto questo è fatto inviando un
 messaggio a <CODE>control@bugs.debian.org</CODE>.</P>
 
 <P>Il <A href="server-control">formato di questi messaggi</A> è
@@ -372,6 +382,40 @@ descritto in un altro documento disponibile sul web nel file
 documento in solo testo è ottenibile inviando un messaggio
 con il solo testo <CODE>help</CODE> al server all'indirizzo
 di cui sopra.</P>
+
+<h2><a name="subscribe">Iscrizione ad un bug</a></h2>
+
+<p>Il sistema di tracciamento dei bug permette ai segnalatori, agli
+sviluppatori e altrai interessati, di iscriversi a singole segnalazioni.
+Questa proprietà può essere utilizzata da quelli che vogliono dare
+un'occhiata al bug, senza che si debbano iscrivere al pacchetto tramite
+PTS. Tutti i messaggi inviati a <var>nnn</var><code>@debian.org</code>
+vengono spediti agli iscritti.</p>
+
+<p>Per iscriversi ad un bug si deve inviare un email a
+<var>nnn</var><code>-subscribe@bugs.debian.org</code>. L'oggetto e
+il corpo del messaggio sono ignorati dal BTS. Una volta che il
+messaggio &egrave; processato, all'utente viene inviato un messaggio
+di conferma al quale &egrave; necessario rispondere prima che che
+i messaggi del bug vengano inviati.</p>
+
+<p>&Egrave; anche possibile annullare l'iscrizione ad un bug. Lo si fa
+inviando un email a <var>nnn</var><code>-unsubscribe@bugs.debian.org</code>.
+L'oggetto e il corpo del messaggio sono ignorati dal BTS. Una volta che il
+messaggio &egrave; processato, all'utente viene inviato un messaggio
+nel quale si chiede la conferma dell'annullamento.</p>
+
+<p>Normalmente l'indirizzo utilizzato &egrave; quello che si trova
+nel campo <code>From</code> dell'intestazione del messaggio. Se si
+volesse iscrivere un altro indirizzo, lo si deve codificare nel
+messaggio di iscrizione secondo questo modello:
+<var>nnn</var><code>-subscribe-</code><var>localpart</var><code>=</code><var>example.com</var><code>@bugs.debian.org</code>.
+Questo esempio invier&agrave; a <code>localpart@example.com</code> il
+messaggio di conferma per il bug  <var>nnn</var>. Il simbolo <code>@</code>
+deve essere codificato cambiandolo in <code>=</code>. Analogamente gli
+annullamenti dell'iscrizione vanno fatti con un email a
+<var>nnn</var><code>-unsubscribe-</code><var>localpart</var><code>=</code><var>example.com</var><code>@bugs.debian.org</code>.
+In entrambi i casi l'oggetto e il corpo dell'email verranno copiati nel messaggio che richiede la conferma.</p>
 
 <h2><a name="subjectscan">Feature più o meno vecchie riguardo all'analisi dell'oggetto</a></h2>
 
