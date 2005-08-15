@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - server di controllo" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.47" maintainer="Giuseppe Sacco"
+#use wml::debian::translation-check translation="1.49" maintainer="Giuseppe Sacco"
 
 <h1>Introduzione al server di posta di controllo e gestione bug</h1>
 
@@ -40,6 +40,7 @@ comando <code>refcard</code>.</P>
 <dl>
 
 <dt><code>reassign</code> <var>bugnumber</var> <var>pacchetto</var>
+ [ <var>versione</var> ]
 <dd>
 
 Registra che il bug #<var>bugnumber</var> è un bug in <var>pacchetto</var>.
@@ -47,6 +48,10 @@ Questo può essere usato per impostare il pacchetto se l'utente ha dimenticato
 la pseudo-intestazione, o per modificare una assegnazione precedente.
 Nessuna notifica è inviata ad alcuno (a parte l'usuale informazione
 nella trascrizione di processamento).
+
+<p>Se si fornisce la <var>versione</var>, il sistema di tracciamento
+ricorder&agrave; che il bug &egrave; relativo a qualla versione
+del pacchetto al quale si sta facendo l'assegnamento.</p>
 
 <dt><code>reopen</code> <var>bugnumber</var>
  [ <var>originator-address</var> | <code>=</code> | <code>!</code> ]
@@ -73,6 +78,41 @@ di doversi aspettare una notifica quando sarà chiuso di nuovo.
 il cambio di originatore. Per cambiare l'originatore di una segnalazione
 aperta si deve usare il comando <code>submitter</code>; si noti che
 questo avviserà l'originatore precedente del cambio.
+
+<p>Se il bug &egrave; stato segnato per essere chiuso in una versione
+particolare del pacchetto, ma riappare in una successiva &egrave; meglio
+utilizzare il tag <code>found</code> anzich&eacute; questo.
+
+<dt><code>found</code> <var>bugnumber</var> [ <var>versione</var> ]
+
+<dd>Segna che il bug numero <var>bugnumber</var> &egrave; stato riscontrato
+in una certa versione del pacchetto al quale &egrave; assegnato.
+
+<p>Il sistema di tracciamento dei bug usa questa informazione con quella
+che riguarda la versione nel quale il bug è stato risolto, per mostrare
+l'elenco dei bug aperti nelle varie versioni del pacchetto. Un bug
+viene considerato aperto se nessuna versione lo risolve o quando &egrave;
+stato ritrovato in versioni pi&ugrave; recenti rispetto a quella di chiusura.
+
+<p>Se non viene specificata la <var>versione</var> allora l'elenco delle
+versioni corrette viene azzerato. Questo &egrave; lo stesso comportamento
+che si ha con <code>reopen</code>.
+
+<p>Questo comando &egrave; stato introdotto in sostituzione
+di <code>reopen</code> perch&eacute; non era possibile modificare
+quest'ultimo aggiungendogli il parametro <var>versione</var>
+senza ambiguit&agrave;.
+
+<dt><code>notfound</code> <var>bugnumber</var> <var>versione</var>
+
+<dd>Cancella la registrazione che il bug numero <var>bugnumber</var> sia
+presente nella versione <var>versione</var> del pacchetto al quale &egrave;
+assegnato.
+
+<p>Questo differisce rispetto alla chiusura del problema perch&eacute;
+il bug non risulta corretto nella versione specificata o in altre. In
+futuro non ci saranno informazioni sul bug in quella versione del pacchetto.
+&Egrave; stato pensato per correggere eventuali segnalazioni errate.
 
 <dt><code>submitter</code> <var>bugnumber</var>
 <var>indirizzo-di-originatore</var> | <code>!</code>
@@ -260,7 +300,8 @@ se vuoi scollegare più di un bug semplicemente includi un serie di comandi
   <p>Per <a href="Developer#tags">i loro significati</a> consulta 
   la documentazione generale dello sviluppatore per il sistema bug.
 
-<dt><code>close</code> <var>bugnumber</var> (sconsigliato)
+<dt><code>close</code> <var>bugnumber</var> [ <var>fixed-version</var> ]
+(sconsigliato)
 <dd>
 
 Chiude il rapporto sul bug #<var>bugnumber</var>.
@@ -276,6 +317,9 @@ L'uso di questo comando è pertanto sconsigliato. Vedere le altre
 informazioni per gli sviluppatori su <a href="Developer#closing">come
 chiudere una segnalazione correttamente</a>.
 
+<p>Se si fornisce una versione in <var>fixed-version</var>, il sistema di
+tracciamento noter&agrave; che il bug &egrave; stato corretto in quella
+versione.
 
 <dt><code>package</code> [ <var>nomepacchetto</var> ... ]
 
@@ -287,7 +331,7 @@ chiudere una segnalazione correttamente</a>.
 
   <pre>
         package foo
-        reassign 123456 bar
+        reassign 123456 bar 1.0-1
 
         package bar
         retitle 123456 bar: bar sucks
