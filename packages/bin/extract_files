@@ -33,7 +33,7 @@ use File::Temp qw( tempdir );
 use File::Path;
 use File::Copy;
 use File::Basename;
-use Digest::SHA1;
+#use Digest::SHA1;
 use Parse::DebControl;
 use Parse::DebianChangelog;
 use Cwd;
@@ -45,11 +45,12 @@ use constant DIGESTPOOL => 2;
 
 my $PROGNAME = 'extract_files';
 my $MAXWARN = 100;
-my $TEMPDIR = tempdir( CLEANUP => 1 );
+my $TEMPDIR;
 
 my $directory = cwd()."/pool";
 my $dumpfile = '';
 my $target = cwd()."/extracted_files";
+my $workdir = '';
 my $configdir = cwd()."/etc";
 my ( $verbose, $version, $help, $debug, $force, $use_dump );
 
@@ -59,6 +60,7 @@ my %opthash = (
 	       'directory|d=s' => \$directory,
 	       'config|c=s' => \$configdir,
 	       'target|t=s' => \$target,
+	       'workdir|w=s' => \$workdir,
 	       'dumpfile=s' => \$dumpfile,
 	       'use_dump' => \$use_dump,
 	       'version' => \$version,
@@ -74,6 +76,13 @@ GetOptions(%opthash) or do_error( "couldn't parse commandline parameters" );
 
 $verbose ||= $debug;
 $directory =~ s,/+$,,o;
+if ($workdir) {
+    $TEMPDIR = tempdir( 'pdo_extract_file.XXXXXX',
+			DIR => $workdir, CLEANUP => 1 );
+} else {
+    $TEMPDIR = tempdir( 'pdo_extract_file.XXXXXX',
+		        CLEANUP => 1 );
+}
 
 ##################################################
 # OUTPUT/LOGGING
@@ -151,7 +160,7 @@ sub unpack_binpkg {
     system("dpkg-deb", "--extract", $debname, "$TEMPDIR/$pkgname" ) == 0
 	or do {
 	    do_warning( "couldn't unpack $debname" );
-	    add_log( "couldn't unpack $debname" );
+	    add_log( $log, "couldn't unpack $debname" );
 	    return;
 	};
 
@@ -373,6 +382,8 @@ sub extract_files {
 	    do_error( "unknown pool structure $config_data->{structure}" );
 	}
 
+	# rmtree should do that itself, but there seems to be a bug somewhere
+	system( "chmod", "-R", "u+rwx", "$source_dir" );
 	rmtree( $source_dir );
 	cleanup_binpkg($pkg_data);
 	write_log( $target_dir, $log ); 
@@ -577,7 +588,7 @@ if ($use_dump) {
     eval $info;
     close DUMP or do_warning( "couldn't close dump file: $!" );    
 } else {
-    do_info( "collect information" );
+    do_info( "collect information (in $directory)" );
     read_sub( $directory );
     do_info( "postprocess collected information" );
     merge_src_bin_packages( \%src_packages, \%bin_packages );
