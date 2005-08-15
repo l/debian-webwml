@@ -22,10 +22,10 @@ index.$(LANGUAGE).html: index.wml $(wildcard dsa-[0-9]*.wml) \
 
 CAN-2004-0077.$(LANGUAGE).html: CAN-2004-0077.wml \
   $(ENGLISHSRCDIR)/$(CUR_DIR)/CAN-2004-0077.data \
-  $(GETTEXTDEP)
+  $(GETTEXTDEP) $(TEMPLDIR)/template.wml
 	$(WML) $(<F)
 
 CAN-2004-0109.$(LANGUAGE).html: CAN-2004-0109.wml \
   $(ENGLISHSRCDIR)/$(CUR_DIR)/CAN-2004-0109.data \
-  $(GETTEXTDEP)
+  $(GETTEXTDEP) $(TEMPLDIR)/template.wml
 	$(WML) $(<F)
