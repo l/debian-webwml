@@ -47,8 +47,8 @@ sub recurse
 	# Get parameter.
 	my $directory = shift;
 
-	# Don't try to do anything in l10n.
-	return 0 if $directory =~ /l10n$/;
+	# Don't try to do anything in sub directories of l10n.
+	return 0 if $directory =~ m'l10n/[^/]+$';
 
 	# Load all entries for this directory.
 	opendir THISDIR, $directory
