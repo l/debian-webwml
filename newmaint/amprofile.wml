@@ -44,7 +44,9 @@
       }
       $salt = substr($row["passwd"], 0, 2);
       /*echo "comparing '", trim($row["passwd"]), "' with '", crypt($password, $salt), "'<BR>";*/
-      if (trim($row["passwd"]) == crypt($password, $salt)) {
+      // try MD5 first, and fall back to DES
+      if (passwd_verify(trim($row["passwd"]), $password) ||
+          trim($row["passwd"]) == crypt($password, substr($row["passwd"], 0, 2))) {
 	return TRUE;
       }
     }
