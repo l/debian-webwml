@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - informações para desenvolvedores" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.55" 
+#use wml::debian::translation-check translation="1.59" 
 
 <H1>Informações para Desenvolvedores sobre o sistema de processamento de bugs</H1>
 
@@ -27,7 +27,8 @@ enviou o relatório e também
   <li><a href="#forward">Registrando que você passou adiante um relatório de bug</a></li>
   <li><a href="#owner">Alterando o responsável pelo bug</a></li>
   <li><a href="#maintincorrect">Mantenedores de pacotes incorretamente listados</a></li>
-  <li><a href="#requestserv">Reabrindo, redesignando e manipulando bugs</a></li>
+  <li><a href="#requestserv">Reabrindo, reatribuindo e manipulando bugs</a></li>
+  <li><a href="#subscribe">Inscrevendo-se em bug</a></li>
   <li><a href="#subjectscan">Recurso de procura-no-assunto mais-ou-menos obsoleto</a></li>
   <li><a href="#x-debian-pr">Recurso <code>X-Debian-PR: quiet</code> obsoleto</a></li>
 </ul>
@@ -43,10 +44,10 @@ quando um pacote que inclui a correção para o bug entra no repositório
 Debian.</p>
 
 <p>Normalmente, as únicas pessoas autorizadas a fechar um relatório
-de bug são o usuário que relatou o bug e o(s) mantendor(es) do pacote
+de bug são o usuário que relatou o bug e o(s) mantenedor(es) do pacote
 para o qual o bug foi enviado. Existem exceções para esta regra. Por
 exemplo, os bugs relatados para pacotes desconhecidos ou para certos
-pseudo-pacotes. Em caso de dúvidas, não feche o bug : peça primeiro
+pseudo-pacotes. Em caso de dúvidas, não feche o bug: peça primeiro
 por ajuda na lista de discussão debian-devel.</p>
 
 <p>Relatórios de bugs devem ser fechados através do envio de uma
@@ -63,15 +64,15 @@ invés de <VAR>nnn</VAR><CODE>@bugs.debian.org</CODE>
 <VAR>nnn</VAR><CODE>-done</CODE>).</P>
 
 <p>Onde aplicável, por favor forneça uma linha <code>Version</code> no
-<a href="Reporting#pseudoheader">pseudo-header</a> de sua
+<a href="Reporting.html#pseudoheader">pseudo-header</a> de sua
 mensagem quando fechar um bug, de forma que o sistema de gerenciamento
 de bugs saiba quais releases do pacote contém o conserto.</p>
 
 <p>A pessoa fechando o bug, a pessoa que o relatou e a lista de discussão
 <code>debian-bugs-closed</code> irão todos receber uma notificação sobre
-o status do relatório. A pessoa que enviou o relatório e a lista de
-discussão também receberão o conteúdo da mensagem enviada para
-<var>nnn</var><code>-done</code>.</p>
+a mudança do status do relatório. A pessoa que enviou o relatório e a
+lista de discussão também receberão o conteúdo da mensagem enviada
+para <var>nnn</var><code>-done</code>.</p>
 
 
 <h2><a name="followup">Mensagens de Acompanhamento</a></h2>
@@ -90,9 +91,11 @@ deve simplesmente responder a mensagem, respeitando o cabeçalho
 pacote, arquivar a resposta com o restante dos logs para este relatório
 de bugs e encaminhá-lo para <CODE>debian-bugs-dist</CODE>.</P>
 
-<p>Um desenvolvedor pode explicitamente enviar mensagens para a pessoa
-que relatou o bug com mensagens para
-<var>nnn</var><code>-submitter@bugs.debian.org</code>.</p>
+<p>Ao enviar uma mensagem para
+<var>nnn</var><code>-submitter\@EmailDomain</code> um email será
+explicitamente enviado à pessoa que relatou o bug e uma cópia será
+submetida ao sistema de gerenciamento de bugs. A mensagem não será
+enviada ao mantenedor.</p>
 
 <P>Caso você deseje enviar um acompanhamento para a mensagem que não seja
 apropriado para <CODE>debian-bugs-dist</CODE> você pode fazer isso
@@ -123,7 +126,6 @@ padrão, mas pode ser sobreescrito incluindo uma linha
 (consulte as <A href="Reporting#pseudoheader">instruções para reportar
 bugs</A>) ou usando o comando <CODE>severity</CODE> com o
 <A href="#requestserv">servidor de requisição de controle</A>.</P>
-Múltiplas tags separadas por vírgula, espaço ou ambos. 
 
 <P>Os níveis de severidade são :
 
@@ -146,10 +148,10 @@ pacote impróprio para o release.
 
 <DT><CODE>important</CODE>
 <DD>um bug que tem um efeito maior na usabilidade de um pacote, sem
-torná-lo completamente inutizável para todos.
+torná-lo completamente inutilizável para todos.
 
 <DT><CODE>normal</CODE>
-<DD>o valor padrão, aplicável a maioria dos bugs.
+<DD>o valor padrão, aplicável à maioria dos bugs.
  
 <DT><CODE>minor</CODE>
 <DD>um problema que não afeta a utilidade do pacote e de correção
@@ -166,8 +168,8 @@ considerações maiores de design.
 significando que o bug terá um impacto caso o pacote que o contém seja
 fornecido em uma versão estável do Debian. Atualmente, as severidades
 nesta categoria são <strong>critical</strong>, <strong>grave</strong> e
-<strong>serious</strong>. Para regras completas e canônicas sobre que questões
-merecem tais severidades, veja a lista 
+<strong>serious</strong>. Para regras completas e canônicas sobre que
+aspectos merecem tais severidades, veja a lista 
 <a href="http://release.debian.org/sarge_rc_policy.txt">Release-Critical
 Issues for Sarge</a></p>
 
@@ -181,23 +183,25 @@ você consulta o log completo do bug.
 pseudo-cabeçalho quando o bug é reportado (consulte as
 <a href="Reporting#pseudoheader">instruções para reportar bugs</a>)
 ou usando o comando <code>tags</code> com o
-<a href="#requestserv">servidor de requisição de controle</a>.
+<a href="#requestserv">servidor de requisição de controle</a>. Separe
+tags múltiplas com vírgula, espaço ou ambos.
 
-<p>As tags de bugs atuais são :
+<p>As tags de bugs atuais são:
 
 <dl>
 
 <dt><code>patch</code>
   <dd>Um patch ou outro procedimento fácil para corrigir o bug é incluído
-	nos logs do bug. Caso exista um patch, mas o mesmo não corrija o bug
+	nos logs do bug. Caso exista um patch, mas o mesmo não corrige o bug
 	adequadamente ou cause outros problemas, esta tag não deve ser usada.
 
 <dt><code>wontfix</code>
-  <dd>Este bug não será corrigido. Possivelmente porque esta é uma escolha
-	entre duas maneiras arbitrárias de corrigir o problema e o mantenedor e a
-	pessoa que relatou o bug preferem maneiras diferentes de corrigir o
-	problema, possivelmente porque a mudança de comportamento causará
-	outros problemas, piores, ou possivelmente por outras razões.
+  <dd>Este bug não será corrigido. Possivelmente porque esta é uma
+  escolha entre duas maneiras arbitrárias de corrigir o problema e o
+  mantenedor e a pessoa que relatou o bug preferem maneiras diferentes
+  de agir, possivelmente porque a mudança de comportamento causará
+  outros problemas, piores, para outros, ou possivelmente por outras
+  razões.
 
 <dt><code>moreinfo</code>
   <dd>Este bug não pode ser corrigido até que mais informações sejam
@@ -218,7 +222,7 @@ ou usando o comando <code>tags</code> com o
   <dd>Uma solução para este bug foi encontrada e um upload será feito em breve. 
 	
 <dt><code>fixed</code>
-  <dd>Este bug está corrigido (por um upload de não-mantenedor, por
+  <dd>Este bug está corrigido ou superado (por um upload de não-mantenedor, por
 	exemplo), mas ainda existe um problema que precisa ser resolvido. Esta
 	tag substitui a antiga severidade "fixed".
 
@@ -232,7 +236,7 @@ ou usando o comando <code>tags</code> com o
 	ser definidos para uma severidade crítica ou grave.
 
 <dt><code>upstream</code>
-  <dd>Este bug aplica-se a parte do pacote de responsabilidade do
+  <dd>Este bug aplica-se à parte do pacote de responsabilidade do
 	desenvolvedor original.
 
 <dt><code>confirmed</code>
@@ -241,8 +245,8 @@ ou usando o comando <code>tags</code> com o
   mantenedores que precisam gerenciar uma grande quantidade de bugs em aberto.)
 
 <dt><code>fixed-upstream</code>
-  <dd>O bug foi corrigido pelo autor, mas não no pacote ainda (por uma razão qualquer:
-  talvez seja muito complicado fazer o backport da mudança ou uma mudança muito pequena, que
+  <dd>O bug foi corrigido pelo autor original, mas não no pacote ainda (por uma razão qualquer:
+  talvez seja muito complicado fazer a migração da mudança ou uma mudança muito pequena, que
   não vale a pena).
  
 <dt><code>fixed-in-experimental</code>
@@ -279,13 +283,14 @@ ou usando o comando <code>tags</code> com o
   sem sua autorização explícita.</strong>
 
 <dt><code>etch</code>
-  <dd>Este bug se aplica particularmente à (ainda não lançada) distribuição etch.
+  <dd>Este bug se aplica particularmente à (ainda não lançada)
+  distribuição etch.
 
 <dt><code>etch-ignore</code>
-  <dd>Este bug crítico de lançamento será ignorado para permitir o lançamento do etch.
-  <strong>Esta tag deve ser usada somente pelo gerente de lançamento; não defina isso sozinho
-  sem sua autorização explícita.</strong>
-	
+  <dd>Este bug crítico ao lançamento será ignorado para o propósito do
+  lançamento do etch. <strong>Esta tag deve ser usada apenas pelo/pela gerente
+  de lançamento, não a ative sem sua autorização explícita.</strong>
+
 <dt><code>sid</code>
   <dd>Este bug particularmente aplica-se a uma arquitetura que atualmente
 	ainda não foi lançada (isto é, na distribuição sid).
@@ -305,7 +310,7 @@ aconteçam no local correto.
 <P>Quando um desenvolvedor encaminha um relatório de bugs para o
 desenvolvedor original do pacote fonte do qual o pacote Debian é
 derivado, o mesmo deve anotar isso no sistema de gerenciamento de
-bugs como abaixo :</P>
+bugs como abaixo:</P>
 
 <P>Certifique-se de que o campo <CODE>To</CODE> de sua mensagem possua
 apenas o(s) endereçõ(s) do(s) autor(es); coloque ambos a pessoa que
@@ -333,14 +338,14 @@ mensagens para
 <p>Em alguns casos onde a pessoa responsável por consertar o bug não é 
 necessariamente o mantenedor do pacote (por exemplo, quando o pacote é 
 mantido por um time de desenvolvedores), pode ser útil registrar esse
-fato no sistema de processamento de bugs. Para ajudar com isso, 
-cada bug pode opcionalmente ter um dono.
-  
+fato no sistema de processamento de bugs. Para facilitar, cada bug
+pode opcionalmente ter um dono.
+
 <p>O dono pode ser configurado adicionando a linha <code>Owner</code> no
 pseudo-header quando o bug é enviado (veja as 
 <a href="Reporting#pseudoheader">instruções para relatar bugs</a>),
 ou usando os comandos <code>owner</code> e <code>noowner</code> no
-with the <a href="#requestserv">servidor de requisição de controle</a>.
+<a href="#requestserv">servidor de requisição de controle</a>.
   
   
 <H2><a name="maintincorrect">Mantenedores de pacotes incorretamente listados</a></H2>
@@ -357,9 +362,9 @@ Contacte <CODE>override-change@debian.org</CODE> para mudanças no arquivo
 de sobreescrita (override file).</P>
 
 
-<H2><A name="requestserv">Reabrindo, redesignando e manipulando bugs</A></H2>
+<H2><A name="requestserv">Reabrindo, reatribuindo e manipulando bugs</A></H2>
 
-<P>É possível redesignar relatórios de bugs para outros pacotes para
+<P>É possível reatribuir relatórios de bugs para outros pacotes para
 reabrir bugs fechados erroneamente, para modificar a informação dizendo
 para onde, caso exista, um relatório de bug foi encaminhado, para mudar
 as severidades e títulos de relatórios, para configurar o responsável pelos 
@@ -374,12 +379,44 @@ outro documento disponível na World Wide Web ou no arquivo
 pode também ser obtida enviando uma mensagem com a palavra
 <CODE>help</CODE> para o servidor no endereço acima.</P>
 
+<h2><a name="subscribe">Inscrevendo-se em bugs</a></h2>
+
+<p>O sistema de gerenciamento de bugs também permite que a pessoa que relatou o bug,
+os desenvolvedores, ou qualquer outra parte interessada, inscrevam-se em um bug
+específico. Esse recurso pode ser útil para aqueles que desejam monitorar um bug, sem
+que seja necessário inscrever-se em um pacote através do PTS. Todas as mensagens
+recebidas em <var>nnn</var><code>@debian.org</code>, são enviadas aos inscritos.</p>
+
+<p>A inscrição em bugs pode ser feita através do envio de um email para
+<var>nnn</var><code>-subscribe@bugs.debian.org</code>. O assunto e o conteúdo
+do email são ignorados pelo BTS. Uma vez que a mensagem seja processada, o usuário
+receberá um email de confirmação que deve ser respondido para que ele comece
+a receber as mensagens relacionadas ao bug.</p>
+
+<p>Também é possível desinscrever-se de um bug. A desinscrição pode ser feita
+através do envio de um email para <var>nnn</var><code>-unsubscribe@bugs.debian.org</code>.
+O assunto e o conteúdo do email também são ignorados pelo BTS. Os usuários receberão
+uma mensagem de confirmação que deve ser respondida para que eles sejam desinscritos
+do bug.</p>
+
+<p>Por padrão, o endereço inscrito é aquele encontrado no campo <code>From</code>
+do cabeçalho da mensagem. Se você deseja inscrever um outro endereço em um bug,
+você terá que codificar o endereço a ser inscrito dentro da mensagem de inscrição.
+Eis é o formato utilizado para isso:
+<var>nnn</var><code>-subscribe-</code><var>localpart</var><code>=</code><var>example.com</var><code>@bugs.debian.org</code>.
+Esse exemplo, enviaria à <code>localpart@example.com</code> uma mensagem de inscrição
+no bug <var>nnn</var>. O símbolo <code>@</code> deve ser modificado para <code>=</code>.
+Similarmente, uma desincrição utilizaria o seguinte formato:
+<var>nnn</var><code>-unsubscribe-</code><var>localpart</var><code>=</code><var>example.com</var><code>@bugs.debian.org</code>.
+Em ambos os casos, o campo Assunto e o corpo do email serão encaminhados ao endereço
+de contido na requisição de confirmação.</p>
+
 <h2><a name="subjectscan">Recurso de procura-no-assunto mais-ou-menos obsoleto</a></h2>
 
-<P>Mensagens que chegam em <CODE>submit</CODE> ou <CODE>bugs</CODE> as
-quais o Assunto inicie com <CODE>Bug#</CODE><VAR>nnn</VAR> serão tratadas
+<P>Mensagens que chegam em <CODE>submit</CODE> ou <CODE>bugs</CODE>
+cujo Assunto inicie com <CODE>Bug#</CODE><VAR>nnn</VAR> serão tratadas
 como tendo sido enviadas para <VAR>nnn</VAR><CODE>@bugs.debian.org</CODE>. Isto é para
-compatibilidade anterior com mensagens encaminhadas a partir do endereço
+compatibilidade regressiva com mensagens encaminhadas a partir do endereço
 antigo e para pegar mensagens enviadas para <CODE>submit</CODE> por
 engano (por exemplo, usando responder para todos os destinatários).</P>
 
@@ -390,7 +427,7 @@ sido enviadas para o endereço
 <VAR>nnn-whatever</VAR><CODE>@bugs.debian.org</CODE> correspondente.</P>
 
 <P>Mensagens que chegam com <CODE>forwarded</CODE> puro e
-<CODE>done</CODE> - por exemplo, sem número do relatório de bugs no
+<CODE>done</CODE> - isto é, sem número do relatório de bugs no
 endereço - e sem um número de bug no Assunto serão arquivadas sob
 `junk' e mantidas por algumas poucas semanas, mas de outra forma
 ignoradas.</P>
