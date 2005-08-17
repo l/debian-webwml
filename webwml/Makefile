@@ -16,6 +16,7 @@ all: $(LANGUAGES)
 
 install: $(LANGUAGES-install)
 clean: $(LANGUAGES-clean)
+	rm -fr locale
 
 $(LANGUAGES-install):
 	$(MAKE) -C $(subst -install,,$@) install
