@@ -20,6 +20,8 @@ pre-installed.$(LANGUAGE).html: pre-installed.wml $(TEMPLDIR)/countries.wml \
 floppyinst.$(LANGUAGE).html: floppyinst.wml $(ENGLISHSRCDIR)/releases/info
 
 ifeq "$(LANGUAGE)" "en"
+clean::
+	rm -f archive.mirrors
 
 $(ENGLISHSRCDIR)/distrib/archive.mirrors: archive.mirrors
 archive.mirrors: ../mirror/Mirrors.masterlist
