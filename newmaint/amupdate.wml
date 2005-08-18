@@ -171,48 +171,73 @@ You should not be here!</STRONG>
   # Check ze values, any bad things we abort
   if ( ($db = open_db())) {
   $errors = "";
+  $warnings = "";
   if ($_REQUEST['emailkey'] == "") { $errors .= "<LI><STRONG>Blank old email address, problem with script!</STRONG>"; }
   if ($_SESSION['s_isdam'] == 't' || $_SESSION['s_isfd'] == 't') {
     if ($_REQUEST['email'] == "") { $errors .= "<LI>No new email address.\n"; }
     if ($_REQUEST['forename'] == "") { $errors .= "<LI>You must have a first name entered.\n"; }
     if ($_REQUEST['surname'] == "") { $errors .= "<LI>You must have a surname entered.\n"; }
     if ($_REQUEST['apply_date'] == "") { $errors .= "<LI>You must have a date of application.\n"; }
-    if ($_REQUEST['manager'] != "" && $_REQUEST['manager_date'] == "")
-      { $errors .= "<LI>A manager has been assigned but with no date.\n"; }
+    if ($_REQUEST['manager'] != "" && $_REQUEST['manager_date'] == "") {
+      _REQUEST['manager_date'] = "today";
+      $warnings .= "<LI>A manager has been assigned but with no date.\n";
+    }
     if ($_REQUEST['manager'] == "" && $_REQUEST['manager_date'] != "")
       { $errors .= "<LI>A manager has not been assigned but there is a manager assigned date.\n"; }
-    if ($_REQUEST['advocate_ok'] != "n" && $_REQUEST['advocate_checked'] == "")
-      { $errors .= "<LI>Advocate check entered but no date given.\n"; }
+    if ($_REQUEST['advocate_ok'] != "n" && $_REQUEST['advocate_checked'] == "") {
+      $_REQUEST['advocate_checked'] = "today";
+      $warnings .= "<LI>Advocate check entered but no date given.\n";
+    }
     if ($_REQUEST['advocate_ok'] == "n" && $_REQUEST['advocate_checked'] != "")
       { $errors .= "<LI>Advocate Check Date given but Advocate check not changed.\n"; }
+    if ($_REQUEST['da_phone_required'] != "n" && $_REQUEST['da_phone'] == "") {
+      $_REQUEST['da_phone'] = "today";
+      $warnings .= "<LI>DAM phone requirement set but no date given.\n";
+    }
+    if ($_REQUEST['da_approved'] != "n" && $_REQUEST['da_approved_date'] == "") {
+      $_REQUEST['da_approved_date'] = "today";
+      $warnings .= "<LI>DAM checked report but no date given.\n";
+    }
   } # end of fd or dam
 
   if ($_SESSION['s_isfd'] == 't') {
-    if ($_REQUEST['application_ok'] != "n" && $_REQUEST['application_ok_date'] == "")
-      { $errors .= "<LI>FD has checked report but there is no date.\n"; }
+    if ($_REQUEST['application_ok'] != "n" && $_REQUEST['application_ok_date'] == "") {
+      $_REQUEST['application_ok_date'] = "today";
+      $warnings .= "<LI>FD has checked report but there is no date.\n";
+    }
     if ($_REQUEST['application_ok'] != "n" && $_REQUEST['fd_member'] == "")
       { $errors .= "<LI>FD has checked report but not specified their login (FD member).\n"; }
   } # end of fd only
 
-  if ($_REQUEST['am_confirm'] != "n" && $_REQUEST['am_confirm_date'] == "")
-    { $errors .= "<LI>AM has confirmed applicant but not put a date in.\n"; }
+  if ($_REQUEST['am_confirm'] != "n" && $_REQUEST['am_confirm_date'] == "") {
+    $_REQUEST['am_confirm_date'] = "today";
+    $warnings .= "<LI>AM has confirmed applicant but not put a date in.\n";
+  }
   if ($_REQUEST['am_confirm'] == "n" && $_REQUEST['am_confirm_date'] != "")
     { $errors .= "<LI>AM has not confirmed applicant but there is a date set.\n"; }
 
-  if ($_REQUEST['id_ok'] != "n" && $_REQUEST['id_checked'] == "")
-    { $errors .= "<LI>ID has been checked but there is no date of checking.\n"; }
+  if ($_REQUEST['id_ok'] != "n" && $_REQUEST['id_checked'] == "") {
+    $_REQUEST['id_checked'] = "today";
+    $warnings .= "<LI>ID has been checked but there is no date of checking.\n";
+  }
   if ($_REQUEST['id_ok'] == "n" && $_REQUEST['id_checked'] != "")
     { $errors .= "<LI>ID has not been checked but there is a date of checking.\n"; }
-  if ($_REQUEST['pnp_ok'] != "n" && $_REQUEST['pnp_checked'] == "")
-    { $errors .= "<LI>Philosophy and Procedures have been checked but there is no date of checking.\n"; }
+  if ($_REQUEST['pnp_ok'] != "n" && $_REQUEST['pnp_checked'] == "") {
+    $_REQUEST['pnp_checked'] = "today";
+    $warnings .= "<LI>Philosophy and Procedures have been checked but there is no date of checking.\n";
+  }
   if ($_REQUEST['pnp_ok'] == "n" && $_REQUEST['pnp_checked'] != "")
     { $errors .= "<LI>Philosophy and Procedures have not been checked but there is a date of checking.\n"; }
-  if ($_REQUEST['tns_ok'] != "n" && $_REQUEST['tns_checked'] == "")
-    { $errors .= "<LI>Tasks and Skills have been checked but there is no date of checking.\n"; }
+  if ($_REQUEST['tns_ok'] != "n" && $_REQUEST['tns_checked'] == "") {
+    $_REQUEST['tns_checked'] = "today";
+    $warnings .= "<LI>Tasks and Skills have been checked but there is no date of checking.\n";
+  }
   if ($_REQUEST['tns_ok'] == "n" && $_REQUEST['tns_checked'] != "")
     { $errors .= "<LI>Tasks and Skills have not been checked but there is a date of checking.\n"; }
-  if ($_REQUEST['approved'] != "n" && $_REQUEST['decision'] == "")
-    { $errors .= "<LI>AM has approved applicant but there is no date.\n"; }
+  if ($_REQUEST['approved'] != "n" && $_REQUEST['decision'] == "") {
+    $_REQUEST['decision'] = "today";
+    $warnings .= "<LI>AM has approved applicant but there is no date.\n";
+  }
   if ($_REQUEST['approved'] == "n" && $_REQUEST['decision'] != "")
     { $errors .= "<LI>AM has not yet approved applicant but there is a date.\n"; }
   if (($_REQUEST['manager'] != "") && !(find_manager($db, $_REQUEST['manager'])))
@@ -224,8 +249,12 @@ You should not be here!</STRONG>
          "the back button and correct the following errors:",
 	 "<UL>$errors</UL>\n";
   } else {
-    echo "<P>Submission has passed sanity checks.<BR>\n";
-
+    if ($warninngs != "") {
+        echo "<P>There were several problems but they have been dealt with:\n";
+        echo "<UL>$warnings</UL>\n";
+    } else {
+        echo "<P>Submission has passed sanity checks.<BR>\n";
+    }
 
     if ($_SESSION['s_isdam'] == 't') {
         $sql = "SELECT * FROM applicant WHERE email ='" . $_REQUEST['emailkey'] . "'";
