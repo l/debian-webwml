@@ -238,6 +238,10 @@ while (<SRC>)
 
 	s/(\s+)--(\s+)/$1&ndash;$2/g;
 	s/>Bug#([0-9])/>rapport $1/g;
+	s/Request of QA/Efter fråga från QA/;
+	s/Request of [mM]aintainer/Efter fråga från ansvariga/;
+	s/orphaned for more than/övergivet i mer än/;
+	s/has never been part of a stable release/har aldrig ingått i en stabil utgåva/;
 
 	unless ($insertedrevision || /^#/)
 	{
