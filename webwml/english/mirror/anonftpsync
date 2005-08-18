@@ -2,6 +2,15 @@
 set -e
 
 # This script originates from http://www.debian.org/mirror/anonftpsync
+# modified by Martin Zobel-Helas <zobel@debian.org>, 2005-01-16
+# 	these modifications are published under the terms of the GNU GPL
+# Modifications:
+# + some more documentation about variables
+# + added ARCH_EXCLUDE
+# + mirror in a save way, first /pool, then /dists and the rest
+
+# Version: $Id$ 
+
 
 # Note: You MUST have rsync 2.0.16-1 or newer, which is available in slink
 # and all newer Debian releases, or at http://rsync.samba.org/
@@ -14,18 +23,42 @@ set -e
 
 # TO is the destination for the base of the Debian mirror directory
 # (the dir that holds dists/ and ls-lR).
+# (mandatory)
 
 TO=
 
 # RSYNC_HOST is the site you have chosen from the mirrors file.
 # (http://www.debian.org/mirror/list-full)
+# (mandatory)
 
 RSYNC_HOST=
 
 # RSYNC_DIR is the directory given in the "Packages over rsync:" line of
 # the mirrors file for the site you have chosen to mirror.
+# (mandatory)
 
 RSYNC_DIR=debian/
+
+# LOGDIR is the directory where the logs will be written to
+# (mandatory)
+
+LOGDIR=
+
+# ARCH_EXCLUDE can be used to exclude a complete architecture from
+# mirrorring. Please use as space seperated list.
+# Possible values are:
+# alpha, amd64, arm, hppa, hurd-i386, i386, ia64, m68k, mipsel, mips, powerpc, s390, sh and sparc
+#
+# There is one special value: source
+# This is not an architecture but will exclude all source code in /pool
+#
+# eg.
+# ARCH_EXCLUDE="alpha arm hppa hurd-i386 ia64 m68k mipsel mips s390 sparc"
+# 
+# With a blank ARCH_EXCLUDE you will mirror all availible architectures
+# (optional)
+
+ARCH_EXCLUDE=
 
 # EXCLUDE is a list of parameters listing patterns that rsync will exclude.
 # The following example would exclude mostly everything:
@@ -50,13 +83,32 @@ RSYNC_DIR=debian/
 # "
 
 # With a blank EXCLUDE you will mirror the entire archive.
+# (optional)
 
 EXCLUDE=
+
+# MAILTO is the address where to send logfile to
+# if not defined, no mail will be sent
+# (optional)
+
+MAILTO=
 
 # There should be no need to edit anything below this point, unless there
 # are problems.
 
 #-----------------------------------------------------------------------------#
+
+# Check for some enviroment variables
+if [ -z $TO ] || [ -z $RSYNC_HOST ] || [ -z $RSYNC_DIR ] || [ -z $LOGDIR ]; then
+	echo "One of the following variables seem to be empty:"
+	echo "TO, RSYNC_HOST, RSYNC_DIR or LOGDIR"
+	exit 2
+fi
+
+if ! [ -d ${TO}/project/trace/ ]; then
+	# we are running mirror script for the first time
+	mkdir -p ${TO}/project/trace
+fi
 
 # Note: on some non-Debian systems, hostname doesn't accept -f option.
 # If that's the case on your system, make sure hostname prints the full
@@ -65,6 +117,26 @@ EXCLUDE=
 HOSTNAME=`hostname -f`
 
 LOCK="${TO}/Archive-Update-in-Progress-${HOSTNAME}"
+
+# Exclude architectures defined in $ARCH_EXCLUDE
+for ARCH in $ARCH_EXCLUDE; do
+	EXCLUDE=$EXCLUDE"\
+		--exclude binary-$ARCH/ \
+		--exclude disks-$ARCH/ \
+		--exclude installer-$ARCH/ \
+		--exclude Contents-$ARCH.gz \
+		--exclude *_$ARCH.deb \
+		--exclude *_$ARCH.udeb "
+	if [ "$ARCH" == "source" ]; then
+		SOURCE_EXCLUDE="\
+		--exclude *.tar.gz \
+		--exclude *.diff.gz \
+		--exclude *.dsc "
+	fi
+done
+
+# Logfile
+LOGFILE=$LOGDIR/debian-mirror.log
 
 # Get in the right directory and set the umask to be group writable
 # 
@@ -81,13 +153,32 @@ fi
 trap "rm -f $LOCK > /dev/null 2>&1" exit
 
 set +e
-rsync --recursive --links --hard-links --times --verbose --compress --delete \
-     --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
-     --exclude "project/trace/${HOSTNAME}" \
-     $EXCLUDE \
-     $RSYNC_HOST::$RSYNC_DIR $TO > rsync.log 2>&1
-date -u > "${TO}/project/trace/${HOSTNAME}"
 
-# Note: if you don't have savelog, use any other log rotation facility, or
-# comment this out, the log will simply be overwritten each time.
-savelog rsync.log > /dev/null 2>&1
+# First sync /pool
+rsync --recursive --links --hard-links --times --verbose --delete \
+     $EXCLUDE $SOURCE_EXCLUDE \
+     $RSYNC_HOST::$RSYNC_DIR/pool/ $TO/pool/ >> $LOGFILE 2>&1
+result=$?
+
+if [ 0 = $result ]; then
+	# Now sync the remaining stuff
+	rsync --recursive --links --hard-links --times --verbose --delete-after \
+	     --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
+	     --exclude "project/trace/${HOSTNAME}" \
+	     --exclude "/pool/" \
+	     $EXCLUDE \
+	     $RSYNC_HOST::$RSYNC_DIR $TO >> $LOGFILE 2>&1
+
+	date -u > "${TO}/project/trace/${HOSTNAME}"
+else
+	echo "ERROR: Help, something wired happened" | tee -a $LOGFILE
+	echo "mirroring /pool exited with exitcode" $result | tee -a $LOGFILE
+fi
+
+
+if ! [ -z $MAILTO ]; then
+	mail -s "debian-volatile archive synced" $MAILTO < $LOGFILE
+fi
+
+savelog $LOGFILE
+
