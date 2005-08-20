@@ -68,6 +68,12 @@ use Local::Cvsinfo;
 
 $wmlroot="../../..";
 
+@list_dir = (
+  "MailingLists/desc",
+  "devel/debian-jr/packaged",
+  "devel/debian-jr/packaged-non-free"
+  );
+
 # For potential use in other languages: just set your language directory
 # and change the strings to have it in your own language. I think it's
 # easy enough to guess what means what :-)
@@ -103,24 +109,18 @@ my %translated_files;
 open CHECK, "translated_txt.db" or die "You have to create a translated_txt.db in this directory";
 while (my $line = <CHECK>)
 {
-  if ($line =~ m#^([A-Za-z0-9\/\.\-\_]*)[\ \t]*([0-9]+\.[0-9]+)$#)
+  if (($line =~ m%^([A-Za-z0-9\/\.\-\_]*)[\ \t]*([0-9]+\.[0-9]+)$%)
+    and (-e "$wmlroot/$language/$1"))
   {
     $translated_files{$1} = $2;
   }
 }
 
-process_dir("$wmlroot/english/MailingLists/desc");
-process_dir("$wmlroot/english/devel/debian-jr/packaged");
-process_dir("$wmlroot/english/devel/debian-jr/packaged-non-free");
-
-if (-e "$wmlroot/$language/devel/debian-jr/packaged") {
-  check_old_dir("$wmlroot/$language/MailingLists/desc");
-}
-if (-e "$wmlroot/$language/devel/debian-jr/packaged") {
-  check_old_dir("$wmlroot/$language/devel/debian-jr/packaged");
-}
-if (-e "$wmlroot/$language/devel/debian-jr/packaged-non-free") {
-  check_old_dir("$wmlroot/$language/devel/debian-jr/packaged-non-free");
+foreach my $dir (@list_dir) {
+  process_dir("$wmlroot/english/$dir");
+  if (-e "$wmlroot/$language/$dir") {
+    check_old_dir("$wmlroot/$language/$dir");
+  }
 }
 
 sub process_dir
