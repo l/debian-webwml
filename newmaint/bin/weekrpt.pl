@@ -298,7 +298,7 @@ sub get_err_maintainers($)
     }
 }
 
-my $dbh = DBI->connect("dbi:Pg:dbname=$DBNAME", $DBUSER, "", "");
+my $dbh = DBI->connect("dbi:Pg:dbname=$DBNAME", $DBUSER, "");
 
 print "          Weekly Report on Debian New Maintainers\n";
 print "          =======================================\n";
