@@ -7,7 +7,7 @@ use vars qw($enable_email);
 
 
 my $DBNAME="newmaint";
-my $DBUSER="tbm";
+my $DBUSER="nm";
 $enable_email = 0;
 
 sub send_email(@)
