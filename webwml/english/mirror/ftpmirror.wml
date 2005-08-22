@@ -17,15 +17,9 @@ mirroring.
 <br>
 Users will look for the debian/ archive to install Debian over
 the network, to build CDs from (with jigdo), and to upgrade already
-installed systems. Those interested in the few encumbered packages not
-available for mirroring in the United States will look for debian-non-US/.
-<br>
-The debian/ archive is very large while the debian-non-US/ archive is
-comparatively tiny. Please see <a href="size">the mirror size</a> page for
-more precise information.</p>
+installed systems.
 
-<p>NB: the debian-non-US/ archive is <strong>not</strong> a superset of the
-debian/ archive, rather, it is an optional add-on.</p>
+<p>NB: the debian-non-US/ archive is deprecated since release of sarge.</o>
 
 <p>debian-cd/ is an archive that isn't identical across all the different
 mirror servers. On some sites it contains jigdo templates to build CD images
@@ -46,6 +40,9 @@ up to date (or use <a href="push_mirroring">push mirroring</a>) so we do not
 recommend it. Debian makes every effort to maintain the high availability of
 security.debian.org instead.</p>
 
+<p>Please see <a href="size">the mirror size</a> page for
+more precise information about mirrro sizes.</p>
+
 <toc-add-entry name="wherefrom">Where to mirror from</toc-add-entry>
 
 <p>Many people seem to think that <code>ftp.debian.org</code> is the
@@ -56,7 +53,8 @@ updated from an internal Debian server.</p>
 
 <p>Any of the servers in the <a href="list-full">full list of mirrors</a>
 that have the '<kbd>Type: Push-Primary</kbd>' tag should be good to mirror
-from.</p>
+from.
+Please use one that is network-geographically close to you.</p>
 
 <p>There is no real difference between different <em>Push-Primary</em>
 mirror servers as far as mirroring is concerned. On the other
@@ -66,14 +64,16 @@ needlessly wastes the donated bandwidth.</p>
 <toc-add-entry name="how">How to mirror</toc-add-entry>
 
 <p>The recommended method of mirroring is with
+the so called <a href="anonftpsync">anonftpsync</a> script
+vis dnonymous
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>.</p>
 
-<p>Note: while <kbd>wget</kbd> works well for mirroring small sites, it is
-not as configurable as rsync so is not recommended for this job.</p>
+<p>Note: while <kbd>wget</kbd> and other ftp-tools seem to work well,
+there are some issues. We strongly recommend to use rsync.</p>
 
 <h3>Anonymous rsync</h3>
 
-<p>You can use <a href="anonftpsync">this script</a> to mirror the archive.
+<p>We recommend to use <a href="anonftpsync">this script</a> to mirror the archive.
 Follow the directions in the script to set up mirroring.
 
 <p>Here are some advices for those who prefer different methods:
@@ -103,6 +103,11 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
       after your daily rsync is finished; and
       <kbd>date -u &gt; .../debian-non-US/project/trace/<var>your.server</var></kbd>
       after the non-US daily rsync is finished, if you mirror debian-non-US.
+
+  <li>We strongly advise against excluding the <tt>project/</tt>, <tt>doc/</tt>
+      and other subdirectories. Usually these are minor in size and yet useful to
+      users.
+      Especially <tt>project/trace</tt>helps very much if there are any mirror issues.
 </ul>
 
 <h3>Rsync with authentication, from a push mirror</h3>
@@ -129,17 +134,6 @@ This is simply <strong>not</strong> true.
 how to set a push mirror, please see <a href="push_mirroring">the complete
 explanation</a>.
 
-<h3>Anonymous FTP</h3>
-
-<p>Anonymous FTP was the standard method of mirroring for a long time,
-but it has been deprecated in favour of rsync.</p>
-
-<p>If for some compelling reason you cannot use rsync, the program
-"<a href="http://packages.debian.org/mirror">mirror</a>" might be
-useful. Bear in mind that it relies on ls-lR files which prevents
-it from maintaining a proper mirror trace in the <kbd>project/trace/</kbd>
-subdirectory of Debian mirrors.</p>
-
 <toc-add-entry name="partial">Partial mirroring</toc-add-entry>
 
 <p>Considering the already <a href="size">large size of Debian archive</a>,
@@ -147,15 +141,15 @@ some people prefer to mirror only parts of it they need. If you want to
 exclude something, you should exclude architectures.</p>
 
 <p>With <a href="anonftpsync">anonftpsync</a>, this can be done by
-editing the EXCLUDE variable. You can also use specially written
-scripts, like <a href="http://packages.debian.org/unstable/net/debmirror">\
-debmirror</a> (by Joey Hess and Joerg Wendland).  If you feel that
-something should be added to these, please contact the authors (contact
-information should be enclosed in the scripts themselves). </p>
+editing the ARCH_EXCLUDE variable.
+There are also other specially written scripts.
+However, they are not suited for official mirrors.</p>
 
 <p>We strongly advise against excluding the <tt>project/</tt>, <tt>doc/</tt>
 and other subdirectories. Usually these are minor in size and yet useful to
-users.</p>
+users.
+Especially <tt>project/trace</tt>helps very much if there are any mirror issues.
+</p>
 
 <toc-add-entry name="when">When to mirror</toc-add-entry>
 
