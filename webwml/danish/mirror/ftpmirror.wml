@@ -1,13 +1,12 @@
 #use wml::debian::template title="Opsætning af et Debian-arkivspejl"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.40"
+#use wml::debian::translation-check translation="1.42"
 #include "$(ENGLISHDIR)/releases/woody/release.data"
 
 <toc-display/>
 
-<p>Når et filspejl er blevet sat up, bør det 
-<a href="submit">registereres hos Debian</a> for at blive optaget på
-<a href="list">listen over filspejle</a>.
+<p>Når et filspejl er blevet sat up, bør det <a href="submit">registereres hos 
+Debian</a> for at blive optaget på <a href="list">listen over filspejle</a>.
 Det gøres ved at benytte vores <a href="submit">simple webformular</a>.</p>
 
 <p>Problemer eller forespørgsler stilles til <email mirrors@debian.org>.</p>
@@ -19,14 +18,10 @@ spejles.
 <br>
 Brugere kigger efter arkivet debian/ for at installere Debian over netværket,
 til at opbygge cd'er fra (med jigdo) og til at opgradere allerede installerede
-systemer.  Dem, der er interesserede i de få "belastede" pakker, som ikke er
-tilgængelige for spejling i USA, kigger efter debian-non-US/.
-<br>
-Arkivet debian/ er meget stort, mens debian-non-US/ er forholdsvist lille.
-Se siden <a href="size">arkivstørrelser</a> for mere præcise oplysninger.</p>
+systemer.
 
-<p>Bemærk: Arkivet debian-non-US/ er <strong>ikke</strong> en del af debian/,
-men en valgfri tilføjelse.</p>
+<p>Bemærk: Arkivet debian-non-US/ er anvendes ikke længere siden udgivelsen af
+"sarge".</p>
 
 <p>Arkivet debian-cd/ er ikke identisk på tværs af alle de forskellige 
 spejlingservere.  Nogle steder indeholder det jigdo-skabeloner til opbygning
@@ -47,6 +42,9 @@ for at være ajour (eller bruge <a href="push_mirroring">push-spejling</a>),
 hvorfor vi ikke anbefaler det.  Debian gør i stedet meget ud af, at sørge for 
 en højtilgængelighed af security.debian.org.</p>
 
+<p>Se siden om <a href="size">størrelser på filspejle</a> for mere præcise 
+oplysninger om størrelser på filspejle.</p>
+
 <toc-add-entry name="wherefrom">Hvor der kan filspejles fra</toc-add-entry>
 
 <p>Mange lader til at tro, at <code>ftp.debian.org</code> er det kanoniske sted
@@ -56,7 +54,8 @@ flere servere som opdateres fra en intern Debian-server.</p>
 
 <p>En hvilken som helst server på den <a href="list-full">fuldstændige liste 
 over filspejle</a> som har flaget '<kbd>Type: Push-Primary</kbd>' skulle være 
-god at basere sit filspejl på.</p>
+god at basere sit filspejl på.  Anvend venligst det der er netværksgeografisk
+tættest på dig.</p>
 
 <p>Der er i praksis ikke nogen forskel på de forskellige 
 <em>Push-Primary</em>-filspejle, hvad angår spejlingen. På den anden siden, 
@@ -65,16 +64,18 @@ unødvendigt spild af den donerede båndbredde.</p>
 
 <toc-add-entry name="how">Hvordan man spejler</toc-add-entry>
 
-<p>Den anbefalede filspejlingsmetode er med
+<p>Den anbefalede filspejlingsmetode er med det såkaldte skript 
+<a href="anonftpsync">anonftpsync</a> via anonym
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>.</p>
 
-<p>Bemærk: mens <kbd>wget</kbd> fungerer fint ved filspejling af små steder, er
-det ikke så konfigurérbart som rsync og anbefales ikke til dette arbejde.</p>
+<p>Bemærk: mens <kbd>wget</kbd> og andre ftp-værktøjer lader til at fungere 
+fint, er der nogle problemer.  Vi anbefaler kraftigt at bruge rsync.</p>
 
 <h3>Anonym rsync</h3>
 
-<p>Du kan bruge <a href="anonftpsync">dette script</a> til at lave et filspejl
-af arkivet. Følg instruktionerne i script'et for at sætte filspejlingen op.</p>
+<p>Vi anbefaler at bruge <a href="anonftpsync">dette skript</a> til at lave et 
+filspejl af arkivet. Følg instruktionerne i skriptet for at sætte 
+filspejlingen op.</p>
 
 <p>Her er nogle råd til dem der foretrækker andre metoder:</p>
 
@@ -104,7 +105,11 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
       skal køres efter din daglige rsync er afsluttet; og 
       <kbd>date -u &gt; .../debian-non-US/project/trace/<var>din.server</var></kbd>
       efter den daglige non-US-rsync er afsluttet, hvis du spejler 
-      debian-non-US.</li>      
+      debian-non-US.</li>
+  <li>Vi fraråder kraftigt at fravælge <tt>project/</tt>, <tt>doc/</tt> og 
+      andre undermapper.  Normalt er disse mindre i størrelse og alligevel
+      nyttige for brugerne.  Særligt <tt>project/trace</tt> er meget nyttig
+      hvis der er problemer med et filspejl.
 </ul>
 
 
@@ -132,17 +137,6 @@ til at anvende denne form for filspejl af frygt for at deres maskiner vil være
 sikkert, og hvordan man opsætter et 'push'-filspejl, se 
 <a href="push_mirroring">den komplette beskrivelse</a>.</p>
 
-<h3>Anonym ftp</h3>
-
-<p>Anonym ftp var i lang tid den gængse filspejlningsmetode, men vi foretrækker
-nu rsync.</p>
-
-<p>Hvis du af en eller anden god grund ikke kan bruge rsync, kan programmet
-"<a href="http://packages.debian.org/mirror">mirror</a>" måske være nyttigt.
-Vær opmærksom på at det er afhængigt af ls-lR-filer, der forhindrer det i at
-vedligeholde et korrekt mirror-trace i undermappen <kbd>project/trace/</kbd>
-på Debian-spejle.</p>
-
 <toc-add-entry name="partial">Delvis filspejling</toc-add-entry>
 
 <p>Det allerede <a href="size">store Debian-arkiv</a> taget i betragtning, 
@@ -150,15 +144,13 @@ foretrækker nogle kun at spejle de dele som de har brug for. Hvis du ønsker at
 fravælge noget, bør du fravælge arkitekturer.</p>
 
 <p>Med <a href="anonftpsync">anonftpsync</a> kan dette gøres ved at ændre 
-EXCLUDE-variablen. Du kan også bruge specielt fremstillede scripts som 
-<a href="http://packages.debian.org/unstable/net/debmirror">debmirror</a>
-(af Joey Hess og Joerg Wendland).  Hvis du mener at noget bør føjes til disse 
-scripts, så kontakt forfatterne (kontaktoplysninger skulle være at finde i 
-scriptene selv).</p>
+ARCH EXCLUDE-variablen.  Der er også andre særligt fremstillede skripter.  De 
+er dog ikke velegnede til officielle filspejle.</p>
 
 <p>Vi advarer kraftigt imod at fravælge mapperne <tt>project/</tt>, 
 <tt>doc/</tt> og andre undermapper. Normalt er de ikke særligt store og 
-alligevel nyttige for brugerne.</p>
+alligevel nyttige for brugerne.  Særligt <tt>project/trace</tt> kan være meget
+nyttigt hvis der er problemer med et filspejl.</p>
 
 <toc-add-entry name="when">Hvornår man skal filspejle</toc-add-entry>
 
