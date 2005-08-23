@@ -2,7 +2,7 @@
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/woody/release.data"
 
-#use wml::debian::translation-check translation="1.40" maintainer="Christian Couder"
+#use wml::debian::translation-check translation="1.43" maintainer="Christian Couder"
 
 
 <toc-display/>
@@ -24,16 +24,10 @@ dupliquer disponibles.
 <br>
 Les utilisateurs cherchent l'archive dans debian/ pour installer Debian
 <i>via</i> le réseau, pour construire des CD (avec jigdo), ou pour mettre à
-jour des systèmes déjà installés. Ceux qui sont intéressés par les quelques
-paquets non disponibles dans les miroirs situés aux États-Unis cherchent dans
-debian-non-US/.
-<br>
-L'archive debian/ est très grosse alors que l'archive debian-non-US/ est
-comparativement petite. Veuillez voir la page des <a href="size">tailles des
-miroirs</a> pour des informations plus précises.</p>
+jour des systèmes déjà installés.</p>
 
-<p>N.B.&nbsp;: l'archive debian-non-US n'est <strong>pas</strong> un
-surensemble de l'archive debian/, mais plutôt un complément optionnel.</p>
+<p>N.B.&nbsp;: l'archive debian-non-US est obsolète depuis la sortie
+de Sarge.</p>
 
 <p>debian-cd/ est une archive qui n'est pas identique sur tous les différents
 serveurs miroirs. Sur certains sites, elle contient des modèles pour jigdo
@@ -56,6 +50,9 @@ href="push_mirroring">un miroir <i>push</i></a>) aussi nous ne recommandons pas
 de la dupliquer. Au lieu de cela, Debian fait tous les efforts possibles pour
 conserver la haute disponibilité de security.debian.org.</p>
 
+<p>Veuillez voir la page des <a href="size">tailles des miroirs</a>
+pour des informations plus précises sur les tailles des mirroirs.</p>
+
 <toc-add-entry name="wherefrom">À partir d'où faire un miroir&nbsp;?</toc-add-entry>
 
 <p>Beaucoup de gens pensent que <code>ftp.debian.org</code> est
@@ -67,7 +64,10 @@ ce site est ce qu'il y a de mieux. <strong>Ce n'est pas vrai</strong>.
 <p>Tout serveur parmi ceux qui se trouvent dans la <a
 href="list-full">liste complète des miroirs</a> portant la marque
 «&nbsp;<kbd>Type: Push-Primary</kbd>&nbsp;» est un bon candidat pour
-la source d'un miroir.</p>
+la source d'un miroir.
+
+Merci d'utiliser un mirroir qui soit proche de vous, au sens de la
+proximité réseau.</p>
 
 <p>Il n'y a pas de différences significatives entre différents miroirs
 serveurs <em>Push-Primary</em> comme origine du miroir. De plus, si
@@ -78,18 +78,19 @@ passante que l'on nous donne.</p>
 <toc-add-entry name="how">Comment faire un miroir</toc-add-entry>
 
 <p>La méthode recommandée pour faire tourner un miroir est d'utiliser
-<a
-href="http://packages.debian.org/stable/net/rsync">rsync</a>.</p>
+le script dénommé <a href="anonftpsync">anonftpsync</a> via
+<a href="http://packages.debian.org/stable/net/rsync">rsync</a> 
+anonyme.</p>
 
-<p>Note&nbsp;: bien que <kbd>wget</kbd> fonctionne correctement pour faire
-des miroirs de petits sites, il n'est pas aussi configurable que
-rsync, donc il n'est pas recommandé pour ce travail.</p>
+<p>Note&nbsp;: bien que <kbd>wget</kbd> et d'autres outils FTP
+semblent fonctionner correctement, il y a des problèmes avec ceux-ci.
+Nous recommandons fortement l'utilisation de rsync.</p>
 
 <h3>rsync anonyme</h3>
 
-<p>Vous pouvez utiliser <a href="anonftpsync">ce script</a> pour faire un 
-miroir de l'archive. Suivez les indications du script pour mettre en place 
-le miroir.
+<p>Nous recommandons l'utilisation de <a href="anonftpsync">ce
+script</a> pour faire un miroir de l'archive. Suivez les indications
+se trouvant dans le script pour mettre en place le mirroir.
 
 <p>Voici des conseils pour ceux qui préfèrent d'autres façons de faire
 un miroir.
@@ -126,6 +127,12 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
   une fois que le rsync journalier de non-US est terminé, si vous
   faites un miroir de debian-non-US.
 
+  <li>Nous déconseillons vivement d'exclure les sous-répertoires
+  <tt>project/</tt>, <tt>doc/</tt> et autres. Ils sont généralement
+  négligeables en terme de taille et cependant utiles aux utilisateurs.
+  En particulier <tt>project/trace</tt> aide beaucoup en cas de
+  problème de mirroir.
+
 </ul>
 
 <h3>rsync avec authentification, à partir d'un miroir «&nbsp;Push&nbsp;»</h3>
@@ -157,19 +164,6 @@ fonctionne, des raisons pour lesquelles elle est sûre et de la façon de
 la mettre en place, voyez <a href="push_mirroring">les explications
 complètes</a>.
 
-<h3>FTP anonyme</h3>
-
-<p>L'utilisation de FTP anonyme a été la méthode standard de création de
-miroir pendant longtemps, mais elle a été remplacée par l'utilisation de
-rsync.</p>
-
-<p>Si pour une raison valable vous ne pouvez pas utiliser rsync, le 
-programme «&nbsp;<a href="http://packages.debian.org/mirror">mirror</a>&nbsp;» peut
-être utile. Gardez à l'esprit le fait qu'il dépend de fichiers résultant
-de la commande «&nbsp;ls -lR&nbsp;» ce qui l'empêche de maintenir des traces miroir
-appropriées dans le sous-répertoire <kbd>project/trace/</kbd> des miroirs
-Debian.</p>
- 
 <toc-add-entry name="partial">Miroir partiel</toc-add-entry>
 
 <p>Considérant la <a href="size">taille déjà importante de l'archive
@@ -178,17 +172,15 @@ quelques parties dont ils ont besoin. Si vous voulez en
 exclure une partie, vous devriez exclure les architectures.</p>
 
 <p>Avec <a href="anonftpsync">anonftpsync</a>, cela peut se faire en
-modifiant la variable EXCLUDE. Vous pouvez aussi utiliser les scripts
-écrits spécialement pour cela, comme
-<a href="http://packages.debian.org/unstable/net/debmirror">debmirror</a>
-(par Joey Hess et Joerg Wendland). Si vous pensez que quelque chose devrait être
-ajouté à ceux-ci, merci de contacter les auteurs (les informations
-permettant de les contacter devraient être incluses dans les scripts
-eux-mêmes).
+modifiant la variable ARCH_EXCLUDE.
+Il existe aussi d'autres scripts écrits spécialement.
+Cependant, ils ne sont pas adaptés aux mirroirs officiels.</p>
 
-<p>Nous conseillons fortement de ne pas exclure <tt>project/</tt>,
-<tt>doc/</tt> et les autres sous-répertoires. En général ceux-ci sont
-insignifiants en terme de taille mais utiles aux utilisateurs.</p>
+<p>Nous déconseillons vivement d'exclure les sous-répertoires
+<tt>project/</tt>, <tt>doc/</tt> et autres. Ils sont généralement
+négligeables en terme de taille et cependant utiles aux utilisateurs.
+En particulier <tt>project/trace</tt> aide beaucoup en cas de
+problème de mirroir.<p>
 
 <toc-add-entry name="when">Quand rafraîchir les miroirs&nbsp;?</toc-add-entry>
 
