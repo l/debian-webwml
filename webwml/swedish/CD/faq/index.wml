@@ -1,6 +1,6 @@
 #use wml::debian::cdimage title="Ofta ställda frågor om Debian-cd" NOHEADER=true BARETITLE=true
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.52"
+#use wml::debian::translation-check translation="1.57"
 
 <define-tag toc-title-formatting endtag="required" whitespace="delete">
 <p><strong>%body</strong></p>
@@ -178,7 +178,13 @@ dvd-avbildningar &ndash; de två varianterna innehåller samma paket.
 Du behöver dessutom bara cd-/dvd-avbildningarna för din dators arkitektur.
 Arkitekturen är den sorts maskinvara din dator använder.
 Den populäraste är Intel-/AMD-arkitekturen, så de allra flesta behöver bara
-hämta avbildningarna för &rdquo;i386&rdquo;.</p>
+hämta avbildningarna för &rdquo;i386&rdquo;.
+Om din pc har en 64-bitars AMD- eller Intelprocessor behöver troligen
+&rdquo;<a href="../../ports/amd64/">amd64</a>&rdquo;-avbildningarna (även om
+&rdquo;i386&rdquo; också fungerar bra),
+&rdqou;<a href="../../ports/ia64/">ia64</a>&rdquo;-avbildningarna fungerar
+<em>inte</em>.
+</p>
 
 <p>Dessutom är det i de flesta fall inte nödvändigt att hämta alla
 avbildningarna för din arkitektur.
@@ -477,6 +483,32 @@ tillgängliga på olika platser:</p>
 <gototop>
 # ============================================================
 
+<toc-add-entry name="search-for-package">Vilken cd-/dvd-avbildning
+innehåller paketet XYZ?</toc-add-entry>
+
+<p>
+För att ta reda på vilken avbildning som innehåller en specifik fil använder
+du
+<a href="../jigdo-cd/#search">sökfunktionen för Debians
+<tt>.jigdo</tt>-filer</a>.
+På grund av sättet jigdo arbetar på innehåller en <tt>.jigdo</tt>-fil namnen
+på alla <tt>.deb</tt>-paketen samt de flesta andra filerna på en cd/dvd.
+Du kan använda sökskriptet för att hitta vilken avbildning du behöver.
+</p>
+
+# ============================================================
+
+<toc-add-entry name="list-image-contents">Kan jag få en förteckning över
+samtliga paket på en viss avbildning?</toc-add-entry>
+
+<p>
+Jag, men bara om det finns <tt>.jigdo</tt>-filer för avbildningen.
+Detta hanteras av samma skript som sökfunktionen som nämns ovan &ndash; se
+<a href="../jigdo-cd/#search">jigdosidan</a>.
+</p>
+
+# ============================================================
+
 <toc-add-entry name="outdated">
 Källkoden på de officiella cd-skivorna är föråldrad &ndash; varför släpper
 ni inte en ny version?</toc-add-entry>
@@ -494,7 +526,9 @@ blanda programvara från de olika utgåvorna.</p>
 <p>Alternativt kan du testa de cd-avbildningarna för
 uttestningsutgåvan (&rdquo;testing&rdquo;) som genereras automatiskt varje
 vecka.
-Notera dock att det inte finns <em>något stöd för säkerhetsproblem</em> för
+Notera dock att det inte finns
+<a href="../../security/faq#testing"><em>något stöd för
+säkerhetsproblem</em></a> för
 uttestningsutgåvan &ndash; i extrema fall kan det ta flera veckor innan
 säkerhetshål rättas.
 <em>Använd inte &rdquo;testing&rdquo; för servrar!</em></p>
@@ -829,6 +863,31 @@ Se den separata <a href="../artwork/">omslagssidan</a>.
 <gototop>
 # ============================================================
 
+<toc-add-entry name="old">Är äldre cd-/dvd-avbildningar fortfarande
+tillgängliga?</toc-add-entry>
+
+<p>
+Vissa äldre avbildningar är tillgängliga från
+<a href="http://cdimage.debian.org/cdimage/archive/images/">arkivsektionen
+på cdimage.debian.org</a>.
+Till exempel kan du testa äldre arkitekturer om du behöver stöd för en viss
+(under)arkitektur som inte stöds i en nyare utgåva.
+</p>
+
+<p>
+Observera att om du installerar från en gammal cd/dvd kommer innehållet i
+<tt>/etc/apt/sources.list</tt> normalt att peka på den <em>aktuell</em>
+stabila Debianutgåvan.
+Det innebär att en uppgradering över nätet kommer uppgradera till den
+aktuella stabila utgåvan.
+För att undvika detta, men fortfarande få säkerhetsuppdateringar för en
+gammal utgåva som fortfarande stöds, kan du ändra innehållet i filen.
+Ersätt &rdquo;stable&rdquo; med &rdquo;oldstable&rdquo;.
+</p>
+
+<gototop>
+# ============================================================
+
 <toc-add-entry name="lan-install">
 Vilket är bäste sättet att installera Debian på många sammankopplade
 datorer?
@@ -893,23 +952,16 @@ egna skivor. Hur går jag tillväga?</toc-add-entry>
 <p>Förutom en <a href="$(HOME)/mirror/">lokal Debianspegel</a> behöver du även
 en hel del diskutrymme.
 Cd-skaparskripten finns i paketet <em>debian-cd</em>.
-Det är dock vanligtvis bättre att använda den senaste koden från CVS.
+Det är dock vanligtvis bättre att använda den senaste koden från SVN.
 (Du bör dock se på paketets beroenden för att se till att du har alla verktyg
 som behövs.)</p>
 
-<p>För att få tag på den senaste CVS-versionen, se till att du har installerat
-CVS.
+<p>För att få tag på den senaste SVN-versionen, se till att du har installerat
+SVN.
 Från en tom katalog ger du följande kommandon:</p>
 
 <blockquote>
-<tt>
-$ export CVSROOT=:pserver:anonymous@cvs.debian.org:/cvs/debian-boot<br>
-$ cvs login<br>
-</tt>
-<i>[lämna lösenordet tomt &ndash; tryck Enter]</i><br>
-<tt>
-$ cvs checkout -AP debian-cd<br>
-$ cvs logout</tt>
+<tt>svn co svn://svn.debian.org/svn/debian-cd/trunk</tt>
 </blockquote>
 
 <p>Om du testar skripten, se
