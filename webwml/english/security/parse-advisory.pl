@@ -31,6 +31,7 @@ my $mlURL = "http://lists.debian.org/debian-security-announce/debian-security-an
 
 my %arch = (
 	    'alpha'   => 'Alpha',
+	    'amd64'   => 'AMD64',
 	    'hppa'    => 'HP Precision',
 	    'i386'    => 'Intel IA-32',
 	    'ia64'    => 'Intel IA-64',
@@ -144,6 +145,7 @@ $pagetitle = "DSA-$1-$2 $3";
 
 $data = $wml = "-" if ($debug);
 
+die "directory $curyear does not exist!\n" if (!(-d $curyear));
 die "$wml already exists!\n" if (-f $wml);
 die "$data already exists!\n" if (-f $data);
 
