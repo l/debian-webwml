@@ -207,6 +207,8 @@ sub package_pages_walker {
 	    $package_page .= sprintf( "<h2>".gettext( "Other Packages Related to %s" )."</h2>\n", $name );
 	    if ($env->{distribution} eq "experimental") {
 		$package_page .= note( gettext( "Note that the \"<span class=\"pred\">experimental</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution." ) );
+	    } elsif ($env->{distribution} eq "hoary-backports") {
+		$package_page .= note( gettext( "Note that the \"<span class=\"pred\">hoary-backports</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../hoary/\">hoary</a>\" distribution." ) );
 	    }
 	    
 	    $package_page .= pdeplegend( [ 'dep',  gettext( 'depends' ) ],
@@ -253,10 +255,10 @@ sub package_pages_walker {
 		}
 		$package_page .=  "\">$a</a></th>\n";
 		$package_page .= "<td>";
-		if ( $env->{distribution} ne "experimental" ) {
+		if ( $env->{distribution} eq "warty" ) {
 		    $package_page .= sprintf( "[<a href=\"%s\">".gettext( "list of files" )."</a>]\n", "$FILELIST_URL$encodedpack&amp;version=$env->{distribution}&amp;arch=$a", $name );
 		} else {
-		    $package_page .= "no files";
+		    $package_page .= gettext("no current information available");
 		}
 		$package_page .= "</td>\n<td>";
 		my $size = $d->{sizes_deb}{$a};
@@ -484,6 +486,8 @@ sub src_package_pages_walker {
 	$package_page .= sprintf( "\n<h2>".gettext( "Other Packages Related to %s" )."</h2>\n", $name );
 	if ($env->{distribution} eq "experimental") {
 	    $package_page .= note( gettext( "Note that the \"<span class=\"pred\">experimental</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution." ) );
+	} elsif ($env->{distribution} eq "hoary-backports") {
+	    $package_page .= note( gettext( "Note that the \"<span class=\"pred\">hoary-backports</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../hoary/\">hoary</a>\" distribution." ) );
 	}
 
 	$package_page .= pdeplegend( [ 'adep', gettext( 'build-depends' ) ],
