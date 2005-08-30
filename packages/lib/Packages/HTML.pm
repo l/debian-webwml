@@ -153,7 +153,7 @@ sub pmoreinfo {
     
     if ($info{bugreports}) {
 	my $bug_url = $is_source ? $SRC_BUG_URL : $BUG_URL; 
-	$str .= "<p>\n".sprintf( gettext( "Check for <a href=\"%s\">Bug Reports</a> about %s." )."<br>\n",
+	$str .= sprintf( gettext( "Check for <a href=\"%s\">Bug Reports</a> about %s." )."<br>\n",
 			 $bug_url.$name, $name );
     }
 	
