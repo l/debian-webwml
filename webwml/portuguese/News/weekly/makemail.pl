@@ -1,13 +1,42 @@
 #!/usr/bin/perl
 # Generates debian weekly news in text format, suitable for mailing to
 # debian-news, of the current issue that is on the web site. Or, if you
-# pass an url as the first parameter, will use the issue there instead.
+# pass a url as the first parameter, will use the issue there instead.
 
 use locale;
 
-my $current_issue=`cat /home/michelle/webwml/english/News/weekly/CURRENT-ISSUE-IS`;
+my $current_issue=`cat ../../../english/News/weekly/CURRENT-ISSUE-IS`;
 chomp $current_issue;
 my $url=shift || "http://www.debian.org/News/weekly/$current_issue/";
+
+my $tmpfile;
+my $tmpdir;
+
+# Remove the multibyte stuff
+if ($url =~ "^http://") {
+    open(IN, "wget -q -O - $url|") or die "Can't open $url: $!\n";
+
+    $tmpdir = "/tmp/dwn.$$";
+    mkdir $tmpdir || die "Can't mkdir, $!\n";
+    $tmpfile = "$tmpdir/dwn.html";
+} else {
+    open(IN, $url) or die "Can't open $url: $!\n";
+
+    my @foo = split (/\./, $url);
+    pop @foo;
+    $tmpfile = join (".", @foo) .".tmp.html";
+}
+
+open(OUT, ">$tmpfile") or die "Can't write to $tmpfile: $!\n";
+
+while (<IN>) {$all .= $_}
+
+# Remove old multibyte codes 
+$all =~	s/\((&#\d{3,5};\s*)+\)//sg;
+
+print OUT $all;
+close (IN);
+close (OUT);
 
 my $divider=("-" x 75). "\n";
 
@@ -25,7 +54,7 @@ my $highlink=0;
 # For beautifying
 my $lastlinecontainsstar=0;
 
-open (IN, "LC_ALL=C lynx -dump $url |");
+open (IN, "lynx -dump $tmpfile |") or die "Can't open $tmpfile or no lynx in path: $!\n";
 if ($url =~ m,\d\d\d\d/\d\d?/,) {
      # This is a local URL - fix the output
      $url =~ s,^,http://www.debian.org/News/weekly/,;
@@ -77,7 +106,7 @@ while (<IN>) {
 		$skippedlinks++ while m/\[\d+\]/g;
 	}
 		# See if it's time to stop skipping.
-	if ($skip && /^\s+Debian Weekly News - /) {
+	if ($skip && /^\s*Debian Weekly News - /) {
 		# Title found, stop skipping. But first, print the header.
 		s/^\s*//;
 		print $divider,
@@ -131,3 +160,6 @@ foreach $story (@stories) {
      }
      print "\n";
 }
+
+unlink ($tmpfile);
+rmdir ($tmpdir) if ($tmpdir);
