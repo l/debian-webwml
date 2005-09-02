@@ -1,7 +1,7 @@
 #use wml::debian::template title="Miroirs Debian officiels" BARETITLE=true
 #include "$(ENGLISHDIR)/mirror/official.data"
 
-#use wml::debian::translation-check translation="1.9" maintainer="Christian Couder"
+#use wml::debian::translation-check translation="1.11" maintainer="Christian Couder"
 
 <p>Les miroirs Debian officiels de l'archive reçoivent une adresse de
 la forme ftp.<var>&lt;pays&gt;</var>.debian.org. Ce sont les sites les
@@ -45,15 +45,10 @@ critères suivants&nbsp;:</p>
 	la croissance du site) -- voyez la <a href="size">page sur la 
 	taille des miroirs</a>.
 
-	<li>L'archive Debian complète devrait être présente, en
-	utilisant une solution qui préserve les dates
-	(<i>timestamps</i>) des fichiers sources (par exemple rsync)
-	de façon à ce que les dates des fichiers (UTC) correspondent à
-	celle sur ftp.debian.org.
+	<li>L'archive Debian complète devrait être présente.
 
 	<li>L'arborescence de fichier du miroir doit être disponible
-	dans <kbd>/debian</kbd> (et <kbd>/debian-non-US</kbd> si vous
-	faites aussi un miroir du site non-US).
+	dans <kbd>/debian</kbd>.
 	Raison&nbsp;: pour l'homogénéité entre les sites &mdash; vous
 	pouvez simplement utiliser un lien symbolique si vous voulez
 	garder le miroir ailleurs, ou mettre en place un hôte virtuel.
@@ -63,17 +58,17 @@ critères suivants&nbsp;:</p>
 
         <ul>
 
-            <li>FTP (ftp://<var>votre.serveur</var>/debian/)
-                <br>
-                FTP est le plus ancien protocole de transfert de
-                fichier et il est encore très largement utilisé.
-            </li>
-
             <li>HTTP (http://<var>votre.serveur</var>/debian/)
                 <br>
                 HTTP est utilisé car avec HTTP/1.1 les transferts web
                 peuvent potentiellement être plus efficaces qu'avec
                 FTP.
+            </li>
+
+            <li>FTP (ftp://<var>votre.serveur</var>/debian/)
+                <br>
+                Bien que FTP devienne de plus en plus obsolète,
+                il est encore très largement utilisé.
             </li>
 
             <li>rsync (rsync://<var>votre.serveur</var>::debian/)
@@ -86,22 +81,22 @@ critères suivants&nbsp;:</p>
 
         </ul>
 
-	<li>Le miroir doit être mis à jour au moins une fois par jour,
-	et la date de mise à jour devrait être notée avec un fichier
-	«&nbsp;timestamp&nbsp;» dans le sous-répertoire project/trace/ du miroir.
+	<li>Le miroir doit être mis à jour avec
+	<a href="anonftpsync">anonftpsync</a>.
+	Il faut mettre en place un <a href="push_mirroring">mirroir
+	«&nbsp;Push&nbsp;»</a>&nbsp;; n'hésitez pas à nous contacter
+	pour vous mettre en relation avec le responsable d'un autre
+	mirroir.
+	Les arborescences <kbd>/doc</kbd> et <kbd>/project</kbd>
+	doivent être incluses dans le mirroir.
+	Un fichier «&nbsp;timestamp&nbsp;» ayant le même nom que le
+	mirroir doit se trouver dans le sous-répertoire project/trace/
+	du mirroir.
         <br>
         Cela signifie qu'il faut lancer
-
         <kbd>date -u &gt;
-        .../debian/project/trace/<var>votre.serveur</var></kbd>
-
-        une fois que votre rsync journalier est terminé&nbsp;; et
-
-        <kbd>date -u &gt;
-        .../debian-non-US/project/trace/<var>votre.serveur</var></kbd>
-
-        une fois que le rsync journalier de non-US est terminé, si
-        vous faites un miroir de debian-non-US.
+	.../debian/project/trace/<var>votre.serveur</var></kbd>
+        une fois que votre rsync journalier est terminé.
         <br>
         C'est trivial à mettre en place, ne gaspille que peu de
         ressources, et est utile de façon à maintenir une trace du
