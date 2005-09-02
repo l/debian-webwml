@@ -1,6 +1,6 @@
 #use wml::debian::template title="Sätta upp en spegel av Debianarkivet"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.40"
+#use wml::debian::translation-check translation="1.44"
 
 <toc-display/>
 
@@ -24,18 +24,8 @@ vilka arkiv som är tillgängliga för spegling.
 Användarna kommer att leta efter debian/-arkivet för att installera Debian
 över nätverket, att bygga cd:ar (med jigdo) och att uppgradera redan
 installerade system.
-De som är intresserade av det fåtal paket som besväras av att inte kunna
-speglas inom Förenta staterna kommer att leta efter debian-non-US/.
-<br>
-Arkivet under debian/ är mycket stort medan debian-non-US/ jämförbart är
-väldigt litet.
-Se <a href="size">spegelstorlekssidan</a> för mer exakt information.
-</p>
-
-<p>
-# Vad heter "superset" på svenska? Jag vänder på beskrivningen så länge.
-Obs! Arkivet debian/ är <strong>inte</strong> en delmängd av debian-non-US/,
-det sistnämnda är istället en valfri tillsats.
+Obs! Arkivet debian-non-US/ används inte längre i och med utgivningen av
+Sarge.
 </p>
 
 <p>
@@ -65,6 +55,11 @@ Debian gör allt som står i vår makt för att istället vidmakthålla
 tillgängligheten hos security.debian.org.
 </p>
 
+<p>
+Se vår sida om <a href="size">storlek på spegeln</a> för mer detaljerad
+information om spegelstorlekar.
+</p>
+
 <toc-add-entry name="wherefrom">Platser att spegla</toc-add-entry>
 
 <p>Många tror att <code>ftp.debian.org</code> är &rdquo;rätt&rdquo; plats
@@ -75,7 +70,9 @@ en intern Debianserver.</p>
 
 <p>Alla servrar i den <a href="list-full">kompletta spegellistan</a> som
 är märkta &rdquo;<kbd>Type: Push-Primary</kbd>&rdquo; bör vara lämpade att
-spegla från.</p>
+spegla från.
+Välj en som är nära dig nätverksgeografiskt.
+</p>
 
 <p>
 Det är i praktiken ingen skillnad mellan olika <em>Push-Primary</em>-speglar
@@ -87,19 +84,22 @@ detta i onödan med donerad bandbredd.
 <toc-add-entry name="how">Hur man speglar</toc-add-entry>
 
 <p>
-Den rekommenderade metoden för att spegla är via
+Den rekommenderade metoden för att spegla är med det så kallade
+<a href="anonftpsync">anonftpsync</a>-skriptet via anonym
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>.
 </p>
 
 <p>Observera:
-Trots att <kbd>wget</kbd> fungerar bra för att spegla små arkiv är det inte
-lika konfigurerbart som rsync, så det rekommenderas inte för
-detta.
+Även om <kbd>wget</kbd> och andra ftp-verktyg verkar fungera bra finns det
+vissa problem.
+Vi rekommenderar å det bestämdaste att använda rsync.
 </p>
 
 <h3>Anonym rsync</h3>
 
-<p>Du kan använda <a href="anonftpsync">detta skript</a> för att spegla
+<p>
+Vi rekommenderar att du använder
+<a href="anonftpsync">detta skript</a> för att spegla
 arkivet.
 Följ instruktionerna i skriptet för att sätta upp spegeln.
 </p>
@@ -121,7 +121,7 @@ Här är några råd för de som föredrar andra arbetssätt:
  </li>
 
  <li>
-  Om du inte har tillräckligt mede diskutrymme att spegla allting, använd
+  Om du inte har tillräckligt med diskutrymme att spegla allting, använd
   flaggan <kbd>--exclude</kbd> för att utesluta delar av arkivet från
   spegeln.
   Det vanliga är att skriva in olika arkitekturer du inte önskar; till
@@ -139,10 +139,18 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
   underkatalogen <code>project/trace/</code> på Debianspegeln, med din
   server som namn.
   Det betyder att du bör köra
-  <kbd>date -u &gt; .../debian/project/trace/<var>din.servere</var></kbd>
+  <kbd>date -u &gt; .../debian/project/trace/<var>din.server</var></kbd>
   när din dagliga rsync är färdig; samt
   <kbd>date -u &gt; .../debian-non-US/project/trace/<var>din.server</var></kbd>
   när din dagliga rsync av non-US är färdig, om du speglar debian-non-US.
+ </li>
+
+ <li>
+  Vi avråder å det bestämdaste att exkludera <tt>project/</tt>,
+  <tt>doc/</tt> och andra kataloger.
+  Dessa är normalt mycket små, men väldigt användbara för användarna.
+  Speciellt <tt>project/trace</tt> är väldigt bra att ha om det är några
+  problem med speglingsprocessen.
  </li>
 </ul>
 
@@ -178,22 +186,6 @@ För en mer utförlig beskrivning av hur det fungerar, varför det är
 säkert, och hur man sätter upp en &rdquo;push&rdquo;-spegel, se
 <a href="push_mirroring">den kompletta förklaringen</a>.
 
-<h3>Anonym ftp</h3>
-
-<p>
-Anonym med ftp var länge det vanligaste sättet att spegla,
-men rekommenderas inte längre till förmån för rsync.
-</p>
-
-<p>
-Om du på övertygande grunder inte kan använda rsync kan programmet
-&rdquo;<a href="http://packages.debian.org/mirror">mirror</a>&rdquo;
-kanske vara användbart.
-Tänk på att det är beroende av ls-lR-filer vilket förhindrar det från
-att hålla en korrekt spegelspårning i underkatalogen
-<kbd>project/trace/</kbd> på Debianspeglarna.
-</p>
-
 <toc-add-entry name="partial">Spegla delmängder</toc-add-entry>
 
 <p>Med tanke på <a href="size">hur stort</a> Debianarkivet
@@ -201,16 +193,17 @@ redan är föredrar vissa att bara spegla de delar de behöver.
 Om du vill undvara något bör du undvara arkitekturer.</p>
 
 <p>Med <a href="anonftpsync">anonftpsync</a> kan detta göras genom att
-redigera EXCLUDE-variabeln.
-Du kan även använda specialskrivna skript, som
-<a href="http://packages.debian.org/unstable/net/debmirror">debmirror</a>
-(av Joey Hess och Jörg Wendland).
-Om du anser att något bör läggas in i dessa ber vi dig kontakta respektive
-författare (kontaktinformation bör finnas i skripten själva).
+redigera ARCH_EXCLUDE-variabeln.
+Det finns även andra specialskrivna skript, de är dock inte lämpliga för
+officiella speglar.
+</p>
 
 <p>Vi rekommenderar å det bestämdaste mot att exkludera <tt>project/</tt>,
 <tt>doc/</tt> och andra underkataloger.
 Vanligtvis är dessa inte speciellt stora men ändå användbara för användare.
+Speciellt <tt>project/trace</tt> är väldigt bra att ha om det är några
+problem med speglingsprocessen.
+</p>
 
 <toc-add-entry name="when">När du bör spegla</toc-add-entry>
 
