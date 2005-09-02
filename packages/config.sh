@@ -13,6 +13,7 @@ archivedir=${topdir}/archive
 podir=${topdir}/po
 localedir=${topdir}/locale
 staticdir=${topdir}/static
+configdir=${topdir}/etc
 
 # unset this if packages.debian.org moves somewhere where the packages files
 # cannot be obtained locally
