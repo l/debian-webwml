@@ -35,7 +35,7 @@
 #	-l		output CVS log messages
 #	-T		output translated diffs
 #	-p <pattern>	include only files matching <pattern>,
-#			default is *.html|*.wml
+#			default is *.src|*.wml
 #	-s <subtree>	check only that subtree
 #	-t <type>	choose output type  (default is `text')
 #	-M		display differences for all 'Makefile's
@@ -132,7 +132,7 @@ $opt_v = 1 if ($opt_V);
 warn "Checking subtree $opt_s only\n" if (($opt_v) && ($opt_s));
 
 # include only files matching $filename
-my $filename = $opt_p || '(\.wml$)|(\.html$)|(\.src$)';
+my $filename = $opt_p || '(\.wml$)|(\.src$)';
 
 # Go to desired directory
 chdir($opt_C) || die "Cannot go to $opt_C\n";
