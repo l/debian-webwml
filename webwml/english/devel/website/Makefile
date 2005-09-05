@@ -21,8 +21,3 @@ translation_coordinators.$(LANGUAGE).html : translation_coordinators.wml \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml \
   $(ENGLISHDIR)/$(CUR_DIR)/tc.data $(LOCALEDIR)/others.mo
 endif
-
-ifeq "$(LANGUAGE)" "en"
-todo.en.html: todo.wml
-	$(WML) -p 1,2,5,7,8,9 -W1,-N $< 
-endif
