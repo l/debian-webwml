@@ -1,6 +1,6 @@
 #use wml::debian::template title="オフィシャル Debian ミラー" BARETITLE=true
 #include "$(ENGLISHDIR)/mirror/official.data"
-#use wml::debian::translation-check translation="1.9"
+#use wml::debian::translation-check translation="1.11"
 
 <p>オフィシャルの Debian アーカイブのミラーのアドレスは、
 <var>&lt;国名&gt;</var>.debian.org となっています。これらのアドレスは非
@@ -30,25 +30,21 @@
         持たなければなりません。
     <li>ディスク容量(および拡張のための(物理的な)空間)の提供。<a
 	href="size">ミラーサイズのページ</a> を参照してください。
-    <li>(rsync などを利用して)ファイルのタイムスタンプを保持したまま、
-	Debian アーカイブ全体をミラーすること。これによりファイルのタイム
-	スタンプ(UTC)が ftp.debian.org のファイルと一致します。
-    <li><kbd>/debian</kbd> (non-US サイトもミラーする時には
-        <kbd>/debian-non-US</kbd> も) 配下に
+    <li>Debian アーカイブ全体をミラーすること。
+    <li><kbd>/debian</kbd> 配下に
 	ミラーしたファイル群を提供すること。理由: 各サイト間で一貫性を保つた
 	めです。ミラーファイルを他の場所に置いておきたい場合には、シンボリッ
 	クリンクを作成するか、仮想ホストを使ってもかまいません。
     <li>ミラーは、以下のプロトコルを利用できること。
         <ul>
-            <li>FTP (ftp://<var>your.server</var>/debian/)
-                <br>
-                FTP は最も古く、現在でも広く使われているファイル転送
-                プロトコルです。
-            </li>
             <li>HTTP (http://<var>your.server</var>/debian/)
                 <br>
                 HTTP/1.1 は FTP よりも効率的にファイルを転送できる
                 能力がありますので、HTTP が使われます。
+            </li>
+            <li>FTP (ftp://<var>your.server</var>/debian/)
+                <br>
+                FTP は非推奨になりましたが、まだ広く使われています。
             </li>
             <li>rsync (rsync://<var>your.server</var>::debian/)
                 <br>
@@ -59,12 +55,15 @@
         </ul>
     <li>ミラーは少なくとも一日一回は更新すること。また、更新時間をミラー
 	の project/trace ディレクトリのタイムスタンプファイルに記録すること。
+    <li><a href="anonftpsync">anonftpsync</a> を使ってミラーを更新すること。
+        <a href="push_mirroring">プッシュミラー</a>を設定する必要があります。
+        他のミラーの管理者と連絡を取るために、気軽に問い合わせてください。
+        <kbd>/doc</kbd> と <kbd>/project</kbd> ツリーもミラーする必要があります。
+        ミラーの名前を付けたタイムスタンプファイルを、ミラーの project/trace/
+        サブディレクトリに配置する必要があります。
         <br>
         つまり、毎日の rsync が終了した後で、
         <kbd>date -u &gt; .../debian/project/trace/<var>your.server</var></kbd>
-        を実行してください。また、debian-non-US をミラーする場合、
-        毎日の non-US の rsync が終了した後には
-        <kbd>date -u &gt; .../debian-non-US/project/trace/<var>your.server</var></kbd>
         を実行してください。
         <br>
         これは、簡単に設定でき、ほとんどリソースを無駄にせずに、
