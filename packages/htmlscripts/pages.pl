@@ -709,8 +709,8 @@ sub write_all_package {
 	# Essential
 	#
 	my $ei = "";
+        # no index of essential packages for experimental
 	if ($distro ne 'experimental') {
-            # no index of essential packages for experimental
 	    my $title = sprintf( gettext ( "Software Packages in \"%s\", essential packages" ), 
 				 $distro );
 	    $ei .= header( title => $title,
