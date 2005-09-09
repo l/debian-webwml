@@ -248,6 +248,12 @@ while (<SRC>)
 		print DST qq'#use wml::debian::translation-check translation="$revision"\n';
 		$insertedrevision = 1;
 	}
+
+	if (/wml::debian::weeklynews::footer/)
+	{
+		chomp;
+		$_ .= qq' translator="Peter Karlsson"\n';
+	}
 	print DST $_;
 }
 
