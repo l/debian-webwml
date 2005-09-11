@@ -540,7 +540,7 @@ foreach $lang (@search_in) {
 	printf HTML "<td bgcolor=\"%s\" align=right>%d</td><td>(%s%%)</td>", $color_a, $wml_s{$lang},                   format5($percent_as{$lang});
 	printf HTML "<td bgcolor=\"%s\" align=right>%d</td><td>(%s%%)</td>", $color_t, $translated_s{$lang},            format5($percent_ts{$lang});
 	printf HTML "<td bgcolor=\"%s\" align=right>%d</td><td>(%s%%)</td>", $color_o, $outdated_s{$lang},              format5($percent_os{$lang});
-	printf HTML "<td bgcolor=\"%s\" align=right>%d</td><td>(%s%%)</td>", $color_u, $wml_s{"english"}-$wml_s{$lang}, format5($percent_us{$lang});
+	printf HTML "<td bgcolor=\"%s\" align=right>%d</td><td>(%s%%)</td>", $color_u, $wml_s{"english"}+$untranslated_s{'english'}-$wml_s{$lang}, format5($percent_us{$lang});
 	print HTML "</tr>\n";
     }
 }
