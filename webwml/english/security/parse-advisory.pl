@@ -63,7 +63,7 @@ foreach $l (<ADV>) {
   if ($l =~ /^Package\s*: (.+)/) {
     $package = $1;
   }
-  if ($l =~ /^(Problem type|Vulnerability)\s*: (.+)/) {
+  if ($l =~ /^(Vulnerability)\s*: (.+)/) {
     $desc = $2;
     $desc .= ' vulnerabilities' if $desc =~ /(several|multiple)\s*$/;
   }
