@@ -63,7 +63,7 @@ foreach $l (<ADV>) {
   if ($l =~ /^Package\s*: (.+)/) {
     $package = $1;
   }
-  if ($l =~ /^(Problem type|Vulnerability)\s*: (.+)/) {
+  if ($l =~ /^(Vulnerability)\s*: (.+)/) {
     $desc = $2;
     $desc .= ' vulnerabilities' if $desc =~ /(several|multiple)\s*$/;
   }
@@ -93,7 +93,7 @@ foreach $l (<ADV>) {
     }
   }
   $headersnearingend++ if ($l =~ /^Debian-specific:/);
-  if ($headersnearingend && $l !~ /^..{15}:.*$/) {
+  if ($headersnearingend && $l !~ /^.{15}:.*$/) {
     $mi++;
     $headersnearingend = 0;
   }
@@ -114,9 +114,9 @@ $moreinfo =~ s|(CAN-\d+-\d+)|<a href="http://cve.mitre.org/cgi-bin/cvename.cgi?n
 $moreinfo =~ s|<p>(\s+)|$1<p>|g;
 $moreinfo =~ s|<p><p>|<p>|g;
 $moreinfo =~ s|</p>\n\n<li>|</p></li>\n\n<li>|g;
-$moreinfo =~ s|</li>\n\n<li>|\n\n<ul>\n<li>|;
-#$moreinfo =~ s|</p>\n\n<p>(\w* \w* stable)|</p></li>\n</ul>\n\n<p>$1|; 
-if ($moreinfo =~ /<ul>\n<li>/) { $moreinfo =~ s|</p>\n\n<p>(\w+ \w+ \w* ?stable)|</p></li>\n</ul>\n\n<p>$1|; }
+$moreinfo =~ s|</li>\n\n<li>|\n\n<ul>\n\n<li>|;
+#$moreinfo =~ s|</p>\n\n<p>(\w* \w* stable)|</p></li>\n\n</ul>\n\n<p>$1|; 
+if ($moreinfo =~ /<ul>\n\n<li>/) { $moreinfo =~ s|</p>\n\n<p>(\w+ \w+ \w* ?(stable\|testing))|</p></li>\n\n</ul>\n\n<p>$1|; }
 chomp ($moreinfo);
 $files =~ s/(- )?-+\n//g;
 $files =~ s/\n\n$/\n/s;
