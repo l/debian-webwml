@@ -41,7 +41,7 @@ my $date2 = $data->get_date();
 my $date = $date1; #   Ignore non-US for now
 # my $date = ($date1 lt $date2 ? $date1 : $date2);
 
-my $root = 'http://people.debian.org/~barbier/l10n/material/';
+my $root = 'http://merkel.debian.org/~barbier/l10n/material/';
 my $rootnonus = 'http://nonus.debian.org/~barbier/l10n/material/';
 
 my $langfile = $opt_l.'/data/langs';
