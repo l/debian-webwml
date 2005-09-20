@@ -1,7 +1,7 @@
 <!DOCTYPE debiandoc SYSTEM [
 <!-- include version information so we don't have to hard code it
      within the document -->
-<!-- cvs 1.148 -->
+<!-- arch devel--3.6--patch-6 -->
 <!--entity % versiondata SYSTEM "version.ent"> &versiondata; -->
 ]>
 <debiandoc>
@@ -143,7 +143,9 @@ ou qui sont destinés à un usage local.
 
 	<p>
 Ce document est distribué dans le paquet Debian 
-<package><url name="debian-policy" id="http://packages.debian.org/debian-policy"></package>.
+<package><url name="debian-policy" id="http://packages.debian.org/debian-policy"></package>
+          (<httpsite>packages.debian.org</httpsite> 
+         <httppath>/debian-policy</httppath>).
 	</p>
 
 	<p>
@@ -151,9 +153,17 @@ La dernière version de ce document est aussi disponible sur les miroirs web
 de Debian, 
 <tt><url name="/doc/debian-policy/"
                 id="http://www.debian.org/doc/debian-policy/"></tt>.
+(
+          <httpsite>www.debian.org</httpsite>
+          <httppath>/doc/debian-policy/</httppath>)
 Dans le même répertoire, d'autres formats existent&nbsp;: 
-<file>policy.html.tar.gz</file>, <file>policy.pdf.gz</file> et 
-<file>policy.ps.gz</file>.
+<file>policy.html.tar.gz</file>,
+(<httppath>/doc/debian-policy/policy.html.tar.gz</httppath>),
+ <file>policy.pdf.gz</file> 
+(<httppath>/doc/debian-policy/policy.pdf.gz</httppath>)
+et 
+<file>policy.ps.gz</file>
+(<httppath>/doc/debian-policy/policy.ps.gz</httppath>).
         </p>
 
 <p>
@@ -162,6 +172,7 @@ Le paquet <package>debian-policy</package> contient aussi le fichier
 de ce document.
 </p>
       </sect>
+
       <sect id="authors">
 	<heading>Auteurs et responsables</heading>
 
@@ -720,13 +731,14 @@ les <em>niveaux de priorité</em> suivants&nbsp;:
 	    <tag><tt>required</tt></tag>
 	    <item>
 	      <p>
-Ce sont les paquets nécessaires au bon fonctionnement du système. Vous ne 
-devez pas les enlever sous peine de rendre votre système complètement 
+Ce sont les paquets nécessaires au bon fonctionnement du système. 
+Cela signifie que les fonctionnalites de dpkg dépendent de ces paquets.
+Vous ne devez pas les enlever sous peine de rendre votre système complètement 
 inutilisable&nbsp;; vous ne pourrez probablement même plus utiliser 
 <prgn>dpkg</prgn> pour remettre les choses en place. Les systèmes composés 
 uniquement de paquets <tt>required</tt> sont probablement inutilisables, 
 mais ils disposent des fonctionnalités suffisantes pour permettre à 
-l'administrateur-système d'amorcer le système et d'installer d'autres logiciels.
+l'administrateur système d'amorcer le système et d'installer d'autres logiciels.
  </p>
 	    </item>
 	    <tag><tt>important</tt></tag>
@@ -1411,22 +1423,23 @@ un autre utilisateur sans perdre vos modififications.
 <heading>Changelog Debian : <file>debian/changelog</file></heading>
 <p>
 Ce fichier, <file>debian/changelog</file>, enregistre les modifications 
-apportées aux éléments Debian d'un paquet. Cela comprend les modifications
-du paquet Debian par rapport au paquet source amont ainsi que les autres
-changements et mises à jour concernant le paquet
-<footnote><p>Bien que rien n'empêche 
-un auteur qui est aussi le 
-responsable Debian d'utiliser ce fichier pour tous les changements, il faudra 
-modifier son nom si les responsables Debian et les auteurs deviennent 
-différents. Mais dans ce cas, il vaudrait mieux considérer le paquet comme
-n'étant pas un paquet «&nbsp;pure souche&nbsp;» Debian.
-	</p></footnote>.
-	</p>
+apportées à la version d'un paquet Debian. <footnote>
 <p>
 Plutôt que de <em>ré-écrire l'histoire</em> en rectifiant les entrées
 anciennes, il vaut mieux en écrire de nouvelles pour corriger les
-erreurs de ce fichier.
-        </p>
+erreurs de ce fichier.</p></footnote>
+Cela comprend les modifications
+du paquet Debian par rapport au paquet source ainsi que les autres
+changements et mises à jour concernant le paquet
+<footnote><p>
+Bien que rien n'empêche un auteur qui est aussi le 
+responsable Debian d'utiliser ce fichier pour tous les changements, il faudra 
+modifier son nom si les responsables Debian et les auteurs deviennent 
+différents. Mais dans ce cas, il vaudrait mieux considérer le paquet comme
+n'étant pas un paquet Debian «&nbsp;pure souche&nbsp;».
+	</p></footnote>.
+	</p>
+
 <p>
 Son format spécial permet aux outils de construction de paquets
 de découvrir quelle version du paquet est en train de se construire
@@ -3184,7 +3197,16 @@ Si le paquet est mis à jour, appel de&nbsp;:
 	<example compact="compact">
 <var>preinst-du-nouveau-paquet</var> upgrade <var>vieille-version</var>
         </example>
-		    </p>
+                      <example>
+<var>postrm-nouveau</var> abort-upgrade <var>vieille-version</var>
+                      </example>
+                      Si cela échoue encore, alors
+                      <example>
+<var>ancien-postinst</var> abort-upgrade <var>vieille-version</var>
+                      </example>
+                      est appelé.
+
+</p>
 		  </item>
 <item><p>
 Autrement si le paquet a des fichiers de configuration d'une
@@ -3193,6 +3215,10 @@ Autrement si le paquet a des fichiers de configuration d'une
 	<example compact="compact">
 <var>preinst-du-nouveau-paquet</var> install <var>vieille-version</var>
 	</example>
+		 Correction d'erreur :
+                      <example>
+<var>nouveau-postrm</var> abort-install <var>vieille-version</var>
+                      </example>   
 		    </p>
      </item>
 <item>
@@ -3203,10 +3229,8 @@ effacé)&nbsp;:
 <var>preinst-du-nouveau-paquet</var> install
 	</example>
 
-	Les corrections d'erreurs, respectivement&nbsp;:
+	Correction d'erreurs
 	<example compact="compact">
-<var>postrm-du-nouveau-paquet</var> abort-upgrade <var>vieille-version</var>
-<var>postrm-du-nouveau-paquet</var> abort-install <var>vieille-version</var>
 <var>postrm-du-nouveau-paquet</var> abort-install
 	</example>
 		    </p>
@@ -4013,8 +4037,17 @@ des paquets de bibliothèques partagées sont traitées dans
 
       <p>
 La bibliothèque partagée doit être placée dans un paquet
+dont le nom change chaque fois que la version objet partagée change.
+<footnote>
+<p>
+Puisqu'il est courant d'installer plusieurs versions d'un paquet qui fournit
+des bibliothèques partagées, c'est une bonne idée que la bibliothèque ne contienne
+pas des fichiers supplémentaires sans version, à moins qu'ils soient placés dans
+des répertoires qui ont une version.
+</p></footnote>
+Le mécanisme le plus courant est de mettre la bibliothèque dans un paquet
 appelé <package><var>nom-de-bibliothèque</var><var>version-so</var></package>,
-<file><var>version-so</var></file> est le numéro de version du nom-so de la 
+où <file><var>version-so</var></file> est le numéro de version du nom-so de la 
 bibliothèque partagée <footnote>
 <p>
 Le nom-so est le nom du fichier objet partagé&nbsp;: c'est ce qui, entre le moment
@@ -4031,6 +4064,19 @@ aussi utiliser à la place
 <package><var>nom-de-bibliothèque</var>-<var>version-so</var></package> et
 <package><var>nom-de-bibliothèque</var>-<var>version-so</var>-dev</package>.
 </p>
+
+     <p>                                                                 
+Si votre paquet comprend des programmes d'aide exécutables que les utilisateurs
+n'ont pas besoin d'appeler eux-mêmes, mais qui sont néammoins nécessaires au
+fonctionnement du paquet, il est recommandé de placer ces programmes 
+(s'ils sont des binaires) dans un répertoire de <file>/usr/lib</file>,
+de préférence sous <file>/usr/lib/</file><var>nom-de-paquet</var>.
+Si les programmes ne dépendent pas de l'architecture, il est recommandé de les placer
+dans un répertoire de <file>/usr/share</file>, de préférence sous
+          <file>/usr/share/</file><var>nom-de-paquet</var>.                     
+        </p>                                                                 
+                                                                            
+
           <p>
 Si vous construisez plusieurs bibliothèques partagées à partir d'un même
 arbre de sources, vous pouvez les regrouper dans le même paquet de
@@ -4736,9 +4782,9 @@ L'utilisation de quelques identifiants d'utilisateur (UID) et de groupe
 d'inclure des fichiers appartenant à ces utilisateurs ou à ces groupes,
 ou bien ont besoin de compiler des binaires avec ces identifiants&nbsp;; c'est 
 pourquoi, sur tout système Debian, ces identifiants ne pourront être utilisés 
-que dans ce cadre prédéfini.
+que dans un cadre prédéfini.
 C'est une restriction importante, et on évitera d'interférer avec des 
-politiques particulières d'administration-système. De nombreux sites 
+politiques particulières d'administration système. De nombreux sites 
 notamment attribuent des utilisateurs ou des groupes systèmes spécifiques 
 à partir de 100.
 </p>
@@ -4778,11 +4824,11 @@ son obtention au responsable de <tt>base-passwd</tt>.
 	    <tag>100-999 :</tag>
 	    <item>
 	      <p>
-Utilisateurs et groupes-système attribués dynamiquement. Les paquets qui 
+Utilisateurs et groupes système attribués dynamiquement. Les paquets qui 
 ont besoin d'un utilisateur ou d'un groupe et qui
 tolèrent que cet identifiant soit attribué dynamiquement et différemment
 sur chaque système, utiliseront <tt>adduser --system</tt>
-pour la création d'un tel groupe et/ou utilisateur.
+pour la création d'un tel groupe ou utilisateur.
 Le programme <prgn>adduser</prgn> vérifie qu'un tel groupe ou utilisateur
 n'existe pas déjà et utilise si nécessaire un autre identifiant dans 
 l'intervalle spécifié par <tt>adduser.conf</tt>.
@@ -4792,9 +4838,9 @@ l'intervalle spécifié par <tt>adduser.conf</tt>.
 	    <tag>1000-29999 :</tag>
 	    <item>
 	      <p>
-Comptes utilisateurs attribués dynamiquement. Par défaut, <prgn>adduser</prgn> 
-choisit  les «&nbsp;UID&nbsp;» et les «&nbsp;GID&nbsp;» pour les comptes 
-utilisateurs dans cet intervalle, bien que <tt>adduser.conf</tt> puisse 
+Comptes utilisateur attribués dynamiquement. Par défaut, <prgn>adduser</prgn> 
+choisit les «&nbsp;UID&nbsp;» et les «&nbsp;GID&nbsp;» pour les comptes 
+utilisateur dans cet intervalle, bien que <tt>adduser.conf</tt> puisse 
 modifier ce comportement.
  </p>
 </item>
@@ -5166,7 +5212,7 @@ La plupart des paquets auront simplement à changer
  &lt;action&gt;</example>
 dans leurs scripts <prgn>postinst</prgn> et <prgn>prerm</prgn> pour&nbsp;:
 <example compact="compact">
-          if command -v invoke-rc.d >/dev/null 2>&1; then
+          if which invoke-rc.d >/dev/null 2>&1; then
                invoke-rc.d <var>package</var> &lt;action&gt;
           else
                 /etc/init.d/<var>package</var> &lt;action&gt;
@@ -5319,8 +5365,7 @@ ponctuation et de la casse des lettres.
 </p>	  
 	<p>
 Voici une liste des règles générales à respecter pour la création
-de messages en sortie. Elles peuvent être utiles si vous avez des messages non
-standards qui ne sont pas abordés par les sections suivantes.
+de messages provenant des scripts de <file>/etc/init.d</file>.
 </p>
 	<p>
 	  <list>
@@ -5337,10 +5382,8 @@ et un saut de ligne (<tt>"\n"</tt>).
 	      <p>
 Quand vous voulez signaler que l'ordinateur est occupé (exécution d'une
 tâche particulière et non pas le démarrage ou l'arrêt d'un programme),
-utilisez une «&nbsp;ellipse&nbsp;», à savoir trois points <tt>...</tt>. 
-Vous remarquerez que nous n'insérons pas d'espace avant ou après les points. 
-Quand la tâche est terminée nous écrivons <tt>done.</tt> et un retour à 
-la ligne.
+utilisez une «&nbsp;ellipse&nbsp;», à savoir trois points <tt>...</tt>, 
+sans espace avant ou après les points ni de retour à la ligne.
  </p>
 </item>
 		
@@ -5397,7 +5440,7 @@ echo -n "Starting printer spooler: lpd"
 start-stop-daemon --start --quiet --exec /usr/sbin/lpd
 echo "."
 		</example>
-Si vous avez plusieurs démons à démarrer, vous pouvez écrire le code
+Si vous devez démarrer plusieurs démons, vous pouvez écrire le code
 suivant&nbsp;:
 		<example compact="compact">
 echo -n "Starting remote file system services:"
@@ -5408,9 +5451,9 @@ echo "."
 		</example>
 L'utilisateur peut savoir ainsi ce qui prend tant de temps et quand
 le dernier démon a été démarré. Vous serez précis avec les espaces&nbsp;: dans 
-l'exemple précédent un administrateur-système
+l'exemple précédent un administrateur système
 peut facilement commenter une ligne s'il ne veut pas lancer un démon
-particulier; le message affiché reste correct.
+particulier&nbsp;;; le message affiché reste correct.
  </p>
 </item>
 		
@@ -6835,6 +6878,20 @@ Quand le serveur ne peut contrôler les accès, il ne fournira aucun accès, ou
 questionnera, pendant l'installation, au sujet d'un tel accès.
 </p>
 </item>
+
+            <item>
+              <p>L'accés au images</p>
+              <p>
+Il est recommandé de mettre les images d'un paquet dans
+<tt>/usr/share/images/<var>paquet</var></tt> et de les référencer par un alias
+comme dans cet exemple&nbsp;:
+                <example>
+                  http://localhost/images/&lt;package&gt;/&lt;filename&gt;     
+                </example>
+                
+              </p>
+            </item>
+
 		
 		
 	    <item><p>La racine des documents Web</p>
@@ -6844,8 +6901,7 @@ Les applications Web éviteront de conserver des fichiers dans la racine
 des documents Web. Il faut utiliser, à la place, le répertoire
 /usr/share/doc/<var>paquet</var> pour les documents et déclarer
 l'application Web <em>via</em> le paquet <package>doc-base</package>. 
-Si l'accès à la racine des
-documents Web est inévitable alors il faut utiliser
+Si l'accès à la racine des documents Web est inévitable alors il faut utiliser
 		<example compact="compact">
 /var/www
 		</example> 
@@ -7646,7 +7702,7 @@ de compilation et d'installation.
 Aucun programme ne demandera, pour son fonctionnement, que des fichiers 
 existent dans <tt>/usr/share/doc</tt> <footnote>
 <p>
-L'administrateur-système pourra supprimer tout fichier dans 
+L'administrateur système pourra supprimer tout fichier dans 
 <file>/usr/share/doc/</file> sans craindre de <em>planter</em>
 un programme. 
 	    </p>
@@ -7660,7 +7716,17 @@ en tant que documentation indépendante sera installé dans
 <file>/usr/share/doc/<var>paquet</var></file> peut être un lien symbolique
 vers un autre répertoire de <file>/usr/share/doc</file> seulement si
 les deux paquets proviennent de la même source et si le premier paquet
-dépend du second.
+dépend du second. <footnote>
+            <p>
+
+Il faut remarquer que cela n'annule pas la section dans les fichiers
+changelog et le fichier  <file>/usr/share/<var>package</var>/changelog.Debian.gz</file>
+doit se référer au changelog de la version courante du <var>paquet</var>
+en question. En pratique, cela signifie que la source de la cible
+et la destination du lien symbolique doivent être identiques 
+(même paquet source et même version).
+            </p>
+          </footnote>
 </p>
        <p>
 Les précédentes versions de Debian plaçaient toute la documentation 
