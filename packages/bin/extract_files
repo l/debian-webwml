@@ -29,15 +29,16 @@ use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin";
 
 use Getopt::Long;
-use HTML::TextToHTML;
 use File::Temp qw( tempdir );
 use File::Path;
 use File::Copy;
 use File::Basename;
 #use Digest::SHA1;
 use Parse::DebControl;
+use Parse::DebianChangelog;
 use Cwd;
 use Fcntl qw(:DEFAULT :flock);
+use Data::Dumper;
 
 use constant PKGPOOL => 1;
 use constant DIGESTPOOL => 2;
@@ -47,18 +48,21 @@ my $MAXWARN = 100;
 my $TEMPDIR;
 
 my $directory = cwd()."/pool";
+my $dumpfile = '';
 my $target = cwd()."/extracted_files";
 my $workdir = '';
-my $link_dict = "$FindBin::Bin/../etc/link.dict";
-my ( $verbose, $version, $help, $debug, $force );
+my $configdir = cwd()."/etc";
+my ( $verbose, $version, $help, $debug, $force, $use_dump );
 
 my %opthash = (
 	       'verbose|v' => \$verbose,
 	       'force|f' => \$force,
 	       'directory|d=s' => \$directory,
+	       'config|c=s' => \$configdir,
 	       'target|t=s' => \$target,
 	       'workdir|w=s' => \$workdir,
-	       'link-dict|l=s' => \$link_dict,
+	       'dumpfile=s' => \$dumpfile,
+	       'use_dump' => \$use_dump,
 	       'version' => \$version,
 	       'debug' => \$debug,
 	       'help' => \$help,
@@ -72,9 +76,6 @@ GetOptions(%opthash) or do_error( "couldn't parse commandline parameters" );
 
 $verbose ||= $debug;
 $directory =~ s,/+$,,o;
-my $txt2html = new HTML::TextToHTML(
-				    links_dictionaries => [ $link_dict ],
-				    );
 if ($workdir) {
     $TEMPDIR = tempdir( 'pdo_extract_file.XXXXXX',
 			DIR => $workdir, CLEANUP => 1 );
@@ -128,7 +129,7 @@ sub unpack_srcpkg {
     add_log( $log, "dpkg-source -sn -x $dscname"  );
 
     my $out = qx/dpkg-source -sn -x "$dscname" 2>&1/;
-    my ($dir) = ($out =~ /(\S+)$/o);
+    my ($dir) = ($out =~ /(\S+)$/mo);
 
     add_log( $log, "dpkg-source output: ", $out );
 
@@ -145,6 +146,8 @@ sub unpack_srcpkg {
 
 sub unpack_binpkg {
     my ( $pkgname, $debname, $log ) = @_;
+
+    add_log( $log, "unpacking binary package $pkgname" );
 
     mkdir( "$TEMPDIR/$pkgname" ) or do {
 	do_warning( "couldn't create directory $TEMPDIR/$pkgname" );
@@ -302,11 +305,21 @@ sub extract_copyright_to_pkgpool {
     
     unless (-e $src_tgt) {
 	add_log( $log, "copyright file $src_tgt still doesn't exist" );
-	if (-e "$target_dir/$pkg_data->{src_name}.copyright") {
-	    add_log( $log, "copyright file $target_dir/$pkg_data->{src_name}.copyright seems like a good guess to me, make a symlink" );
-	    (system("ln", "-s", "$pkg_data->{src_name}.copyright", $src_tgt ) == 0)
-		or add_log( $log, "symlink generation failed" );
-	} else {
+	# take one of the binary packages, prefering one that has
+	# the same name as the source package
+	foreach my $bin_pkg (($pkg_data->{src_name},
+			      keys %{$pkg_data->{bin_list}})) {
+	    if (-e "$target_dir/$bin_pkg.copyright") {
+		add_log( $log, "copyright file $target_dir/$bin_pkg.copyright seems like a good guess to me, make a symlink" );
+		(system("ln", "-s", "$bin_pkg.copyright", $src_tgt ) == 0)
+		    or do {
+			add_log( $log, "symlink generation failed" );
+			next;
+		    };
+		last;
+	    }
+	}
+	unless (-e $src_tgt) {
 	    add_log( $log, "give up" );
 	    (system( "touch", "$src_tgt.ERROR" ) == 0) or
 		add_log( $log, "even the touch of $src_tgt.ERROR failed :(" );
@@ -329,10 +342,10 @@ sub extract_changelog_to_pkgpool {
     }
     
     add_log( $log, "create enhanced HTML version" );
-    $txt2html->txt2html( infile => [ "$source_dir/debian/changelog" ],
-			 outfile => "$target_dir/changelog.html",
-			 title => "Debian Changelog -- $pkg_data->{src_name} $pkg_data->{src_version}"
-			 );
+    my $chg = Parse::DebianChangelog->init( { infile => "$source_dir/debian/changelog" } );
+    $chg->html( { outfile => "$target_dir/changelog.html",
+	          template => "$configdir/tmpl/default.tmpl" } );
+    add_log( $log, scalar $chg->get_parse_errors );
 
 }
 
@@ -566,9 +579,27 @@ sub read_sub {
 ##################################################
 # MAIN PROGRAM
 
-do_info( "collect information (in $directory)" );
-read_sub( $directory );
-do_info( "postprocess collected information" );
-merge_src_bin_packages( \%src_packages, \%bin_packages );
+do_info( "Using working directory $TEMPDIR" );
+if ($use_dump) {
+    do_info( "load information from dump file" );
+    open DUMP, '<', $dumpfile
+	or do_error( "couldn't open dump file $dumpfile: $!" );
+    my $info = join "", <DUMP>;
+    eval $info;
+    close DUMP or do_warning( "couldn't close dump file: $!" );    
+} else {
+    do_info( "collect information (in $directory)" );
+    read_sub( $directory );
+    do_info( "postprocess collected information" );
+    merge_src_bin_packages( \%src_packages, \%bin_packages );
+    if ($dumpfile) {
+	do_info( "dump backup of collected information" );
+	open DUMP, '>', $dumpfile
+	    or do_error( "couldn't open dump file $dumpfile: $!" );
+	print DUMP Data::Dumper->Dump( [ \%src_packages ],
+				       [ '*src_packages' ] );
+	close DUMP or do_warning( "couldn't close dump file: $!" );
+    }
+}
 do_info( "begin extracting files" );
 extract_from_all( \%src_packages );

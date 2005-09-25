@@ -131,17 +131,17 @@ END
 
 } elsif ($type eq 'main') {
 
-    print '<table border="0"><tr><td valign="top">';
+    print '<div class="cardleft">';
     print_links( "North America", $file, @north_american_sites );
-    print "</td><td>";
+    print '</div><div class="cardright">';
     print_links( "Europe", $file, @european_sites );
-    print "</td></tr><tr><td>";
+    print '</div><div class="cardleft">';
     print_links( "Australia and New Zealand", $file, @australian_sites );
-    print "</td><td>";
+    print '</div><div class="cardright">';
     print_links( "Asia", $file, @asian_sites );
-    print "</td></tr><tr><td>";
+    print '</div><div class="cardleft">';
     print_links( "South America", $file, @south_american_sites );
-    print "</td></tr></table>";
+    print '</div>';
 
 	print <<END;
 <p>If none of the above sites are fast enough for you, please see the
