@@ -144,7 +144,7 @@ END
     print '</div>';
 
 	print <<END;
-<p>If none of the above sites are fast enough for you, please see the
+<p style="clear:both">If none of the above sites are fast enough for you, please see the
 <a href="http://www.ubuntulinux.org/wiki/Archive">complete mirror list</a>.<br>
 The list of mirrors used by this scripts was last synced with the mirror list
 <em>Wed, 22 Dec 2004 01:32:12 +0000</em>.</p>
