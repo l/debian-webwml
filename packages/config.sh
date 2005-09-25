@@ -2,7 +2,6 @@
 #
 
 topdir=/org/packages.ubuntu.com
-topdir=/home/djpig/debian/www.d.o/packages.ubuntu.com
 
 tmpdir=${topdir}/tmp
 bindir=${topdir}/bin
