@@ -4,7 +4,7 @@
 <bind-gettext-domain domain="others" />
 
 <define-menu-item name="newmaint">
-  <gettext domain="others">New maintainers' corner</gettext>
+  <gettext domain="others">New Maintainers' Corner</gettext>
 </define-menu-item>
 
 <define-menu-item name="step1"><gettext domain="others">Step 1</gettext></define-menu-item>
@@ -12,6 +12,8 @@
 <define-menu-item name="step3"><gettext domain="others">Step 3</gettext></define-menu-item>
 <define-menu-item name="step4"><gettext domain="others">Step 4</gettext></define-menu-item>
 <define-menu-item name="step5"><gettext domain="others">Step 5</gettext></define-menu-item>
+<define-menu-item name="step6"><gettext domain="others">Step 6</gettext></define-menu-item>
+<define-menu-item name="step7"><gettext domain="others">Step 7</gettext></define-menu-item>
 
 <define-menu-item name="nm-checklist">
   <gettext domain="others">Applicants' checklist</gettext>
@@ -24,3 +26,5 @@
 <menu-item name="step3" basename="nm-step3">
 <menu-item name="step4" basename="nm-step4">
 <menu-item name="step5" basename="nm-step5">
+<menu-item name="step6" basename="nm-step6">
+<menu-item name="step7" basename="nm-step7">
