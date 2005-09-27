@@ -198,6 +198,15 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
+               'Charles Plessy' => {
+                         email       => 'charles-traduction@plessy.org',
+                         summary     => 3,
+                         logs        => 3,
+                         diff        => 3,
+                         tdiff       => 0,
+                         file        => 0,
+                         compress    => 'none'
+                 },
                 'Martin Quinson' => {
                         email       => 'frederic.bothamy@free.fr',
                         summary     => 2,
