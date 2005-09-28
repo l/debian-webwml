@@ -50,10 +50,11 @@ sub img {
 }
 
 sub simple_menu {
-    my $str = "";
+    my $str = '<p id="extranav">';
     foreach my $entry (@_) {
 	$str .= "[&nbsp;$entry->[0] <a title=\"$entry->[1]\" href=\"$entry->[2]\">$entry->[3]</a>&nbsp;]\n";
     }
+    $str .= '</p>';
     return $str;
 }
 
@@ -328,13 +329,11 @@ sub header {
 <input type="text" size="30" name="keywords" value="$values{keywords}" id="kw">
 <input type="submit" value="Search">
 <span style="font-size: 60%"><a href="$SEARCH_PAGE#search_packages">Full options</a></span>
-<br>
-<div style="font-size: 80%">Search on:
+<div style="font-size: 80%">
 <input type="radio" name="searchon" value="names" id="onlynames" $checked_searchon{names}>
-<label for="onlynames">Package names only</label>&nbsp;&nbsp;
+<label for="onlynames">Package names</label>&nbsp;&nbsp;
 <input type="radio" name="searchon" value="all" id="descs" $checked_searchon{all}>
 <label for="descs">Descriptions</label>
-<br>
 <input type="radio" name="searchon" value="sourcenames" id="src" $checked_searchon{sourcenames}>
 <label for="src">Source package names</label>
 </div>
@@ -358,13 +357,11 @@ MENU
 <input type="text" size="30" name="word" id="keyword" value="$values{keyword}">&nbsp;
 <input type="submit" value="Search">
 <span style="font-size: 60%"><a href="$SEARCH_PAGE#search_contents">Full options</a></span>
-<br>
 <div style="font-size: 80%">Display:
 <input type=radio name="searchmode" value="searchfiles" id="searchfiles" $checked_searchmode{searchfiles}>
 <label for="searchfiles">files</label>
 <input type=radio name="searchmode" value="searchfilesanddirs" id="searchfilesanddirs" $checked_searchmode{searchfilesanddirs}>
 <label for="searchfilesanddirs">files &amp; directories</label>
-<br>
 <input type=radio name="searchmode" value="searchword" id="searchword" $checked_searchmode{searchword}>
 <label for="searchword">subword matching</label>
 <input type=radio name="searchmode" value="filelist" id="filelist" $checked_searchmode{filelist}>
@@ -394,40 +391,69 @@ $KEYWORDS_LINE
 $DESC_LINE
 $meta
 <link href="/debian.css" rel="stylesheet" type="text/css" media="all">
+<link href="http://www.ubuntu.com/plone.css" rel="stylesheet"
+type="text/css" media="all">
+<link href="/ubuntu/ubuntu.css" rel="stylesheet" type="text/css" media="all">
+<link href="/ubuntu/masthead.css" rel="stylesheet" type="text/css" media="all">
 </head>
 <body>
-<div id="header">
-   <div id="upperheader">
-   <div id="logo">
-  <a href="$HOME/"><img src="http://www.ubuntulinux.org/logo.jpg" alt="Ubuntu"></a>
-</div> <!-- end logo -->
+    <div id="pageWrapper">
+      <div id="mastWrapper">
+        <div id="masthead">
+          <a class="imageLink"
+             href="http://www.ubuntulinux.org">&nbsp;</a>
+
+          <a class="hiddenStructure"
+             href="http://www.ubuntulinux.org/#documentContent">Skip
+             to content</a>
+
+           <div id="search">
+	   $search_in_header
+	   </div>
+             
+     <!-- masthead content begin -->
+    <h5 class="hiddenStructure">Sections</h5>    
+    <div id="nav">
+      <ul>        
 HEAD
 ;
 
-    $txt .= <<NAVBEGIN;
-$search_in_header
-</div> <!-- end upperheader -->
-<div id="navbar">
+    my $current = 'home';
+    foreach my $dist (qw(warty hoary-backports hoary breezy)) {
+	if ($KEYWORDS_LINE =~ /\Q$dist\E/) {
+	    $current = $dist;
+	    last;
+	}
+    }
+    #TODO: what with backports?
+    foreach my $tab (qw(home warty hoary breezy)) {
+	my $url = $tab eq 'home' ? '' : "$tab/";
+	my $id = $tab eq $current ? 'current' : 'plain';
+	$txt .= "<li id=\"$id\"><a href=\"/$url\">".ucfirst($tab)."</a></li>";
+    }
 
-NAVBEGIN
-;
-# $title_in_header
-    $txt .= <<ENDNAV;
-</div> <!-- end navbar -->
-</div> <!-- end header -->
+$txt .= <<ENDNAV;        
+      </ul>
+    </div> <!-- nav -->
+    <!-- masthead content end -->
+    </div> <!-- masthead -->
+   </div>  <!-- mastWrapper -->
+
+<div class="visualClear"></div>
 ENDNAV
 ;
     $txt .= <<BEGINCONTENT;
-<div id="outer">
-<div id="inner">
-
+<div id="contentColumn">
+<div class="inside">
+<div id="content" class="">
+<div class="documentContent" id="region-content">
 BEGINCONTENT
 ;
     if ($params{print_title_above}) {
-	$txt .= "<h1>$page_title</h1>\n";
+	$txt .= "<h1 class=\"documentFirstHeading\">$page_title</h1>\n";
     }
     if ($params{print_title_below}) {
-	$txt .= "<h1>$page_title</h1>\n";
+	$txt .= "<h1 class=\"documentFirstHeading\">$page_title</h1>\n";
     }
 
     return $txt;
@@ -435,7 +461,7 @@ BEGINCONTENT
 
 sub trailer {
     my ($ROOT, $NAME, $LANG, @USED_LANGS) = @_;
-    my $txt = "</div> <!-- end inner -->\n<div id=\"footer\">\n";
+    my $txt = "</div></div></div></div> <!-- end inner -->\n<div class=\"clear mozclear\"></div><div id=\"prefooter\">\n";
     my $langs = languages( $NAME, $LANG, @USED_LANGS );
     my $bl_class = $langs ? ' class="bordertop"' : "";
     $txt .=
@@ -443,8 +469,10 @@ sub trailer {
 	"\n<hr class=\"hidecss\">\n" .
 	"<p$bl_class>".
 	sprintf( gettext( "Back to: <a href=\"%s/\">Ubuntu homepage</a> || <a href=\"%s/\">Packages search page</a>" ), $HOME, $ROOT ).
-	"</p>\n<hr class=\"hidecss\">\n".
-	"<div id=\"fineprint\" class=\"bordertop\"><p>".
+	"</p></div>\n<hr class=\"hidecss\">\n".
+	'<div id="footWrapper">'.
+	'<div id="footer" class="inside">'.
+	'<p>'.
 	sprintf( gettext( "To report a problem with the web site, e-mail <a href=\"mailto:%s\">%s</a>. For other support information, see the Ubuntu <a href=\"%s/support\">support page</a>." ), $CONTACT_MAIL, $CONTACT_MAIL, $HOME).
 	"</p>\n".
 	"<p>". gettext( "Last Modified: " ). "LAST_MODIFIED_DATE".
@@ -452,9 +480,9 @@ sub trailer {
 #	sprintf( gettext( "Copyright &copy; 1997-2005 <a href=\"http://www.spi-inc.org\">SPI</a>; See <a href=\"%s/license\">license terms</a>." ), "$HOME/" )."<br>\n".
 #	gettext( "Debian is a registered trademark of Software in the Public Interest, Inc." ).
 	gettext( "Ubuntu is a registered trademark of Canonical Ltd." ).
-	"</div> <!-- end fineprint -->\n".
-	"</div> <!-- end footer -->\n".
-	"</div> <!-- end outer -->\n".
+	"</div> <!-- end footer -->".
+	"</div> <!-- end footWrapper -->\n".
+	"</div> <!-- end pageWrapper -->\n".
 	"</body>\n</html>\n";
 
     return $txt;

@@ -69,11 +69,7 @@ sub print_virt_pack {
     my $package_page = header( title => $name, lang => 'en',
 			       desc => gettext( "virtual package" ),
 			       keywords => "$env->{distribution}, virtual, virtual, virtual, size:0 virtual" );
-    $package_page .= simple_menu( [ gettext( "Distribution:" ),
-				    gettext( "Overview over this distribution" ),
-				    "../",
-				    $env->{distribution} ],
-				  [ gettext( "Section:" ),
+    $package_page .= simple_menu(  [ gettext( "Section:" ),
 				    gettext( "All packages in this section" ),
 				    "../virtual/",
 				    'virtual' ], );
@@ -164,11 +160,7 @@ sub package_pages_walker {
 	my $package_page = header( title => $name, lang => $lang,
 				   desc => $short_desc,
 				   keywords => "$env->{distribution}, $subsuite_kw, $d->{section}, $d->{subsection}, size:$size_kw $d->{version}" );
-	$package_page .= simple_menu( [ gettext( "Distribution:" ),
-					gettext( "Overview over this distribution" ),
-					"../",
-					$env->{distribution} ],
-				      [ gettext( "Section:" ),
+	$package_page .= simple_menu( [ gettext( "Section:" ),
 					gettext( "All packages in this section" ),
 					"../$d->{subsection}/",
 					$d->{subsection} ],
@@ -423,11 +415,6 @@ sub src_package_pages_walker {
     
     my $package_page = header( title => $name, lang => 'en',
 			       keywords => "$env->{distribution}, $subdist_kw, $archive, $v_str" );
-    $package_page .= simple_menu( [ gettext( "Distribution:" ),
-				    gettext( "Overview over this distribution" ),
-				    "../",
-				    $env->{distribution} ],
-				  );
 
     my $title .= sprintf( gettext( "Source package: %s (%s)" ),
 			  $name, $v_str );
@@ -643,11 +630,6 @@ sub write_all_package {
 			      title_keywords => "debian, $distro, $_",
 			      desc => encode_entities( $title, '"' ),
 			      lang => $lang );
-	    $si{$_} .= simple_menu( [ gettext( "Distribution:" ),
-				      gettext( "Overview over this distribution" ),
-				      "../",
-				      $distro ],
-				    );
 
 	    $si{$_} .= title( $title );
 
@@ -690,11 +672,6 @@ sub write_all_package {
 			      title_keywords => "debian, $distro, $_",
 			      desc => encode_entities( $title, '"' ),
 			      lang => $lang );
-	    $pi{$_} .= simple_menu( [ gettext( "Distribution:" ),
-				      gettext( "Overview over this distribution" ),
-				      "./",
-				      $distro ],
-				    );
 	    $pi{$_} .= "$priority_header\n";
 	    $pi{$_} .= title( $title );
 	    if ($distro eq "experimental") {
@@ -725,11 +702,6 @@ sub write_all_package {
 			   title_keywords => "debian, $distro, essential",
 			   desc => encode_entities( $title, '"' ),
 			   lang => $lang );
-	    $ei .= simple_menu( [ gettext( "Distribution:" ),
-				  gettext( "Overview over this distribution" ),
-				  "./",
-				  $distro ],
-				);
 
 	    $ei .= title( $title );
 	    if ($ei_l{$lang}) {
@@ -754,11 +726,7 @@ sub write_all_package {
 				  title_keywords => "debian, $distro",
 				  desc => encode_entities( $all_title, '"' ),
 				  lang => $lang );
-	$all_package .= simple_menu( [ gettext( "Distribution:" ),
-				       gettext( "Overview over this distribution" ),
-				       "./",
-				       $distro ],
-				     );
+
 	$all_package .= title( $all_title );
 
 	if ($distro eq "experimental") {

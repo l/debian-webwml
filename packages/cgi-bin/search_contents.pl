@@ -259,7 +259,9 @@ exit;
 sub printfooter {
     my $stamp_file = shift;
 
-    print "</div>\n";
+    print ("</div>\n" x 6);
+    print '<div class="clear mozclear"></div>'.
+	'<div id="footWrapper"><div id="footer" class="inside">';
     if ($stamp_file) {
 	my $timestamp = time() - (-M $file) * 86_400;
 	my ($sec,$min,$hour,$mday,undef,$year) = gmtime($timestamp);
@@ -270,12 +272,14 @@ sub printfooter {
 	$time_str = sprintf( "$wday, $mday $month $year %02d:%02d:%02d +0000", 
 			     $hour, $min, $sec );
 
-	print "<p style=\"text-align:left;font-size:small;font-style:italic\">The used contents file was last updated $time_str</p>\n";
+	print "<p>The used contents file was last updated $time_str</p>\n";
     }
 
     print <<END;
-<p style="text-align:right;font-size:small;font-style:italic"><a href="/">Packages search page</a></p>
+<p><a href="/">Packages search page</a></p>
 
+</div>
+</div>
 </div>
 END
 

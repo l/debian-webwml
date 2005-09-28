@@ -501,11 +501,21 @@ sub multipageheader {
 
 sub printfooter {
 print <<END;
-</div>
+</div> <!-- documentContent -->
+</div> <!-- content -->
+</div> <!-- inside -->
+</div> <!-- contentColumn -->
+</div> <!-- innerColumnContainer -->
+</div> <!-- outerColumnContainer -->
 
+<div class="clear mozclear"></div>
+<div id="footWrapper">
+<div id="footer" class="inside">
 <hr class="hidecss">
-<p style="text-align:right;font-size:small;font-stlye:italic"><a href="$SEARCHPAGE">Packages search page</a></p>
-</div>
+<p><a href="$SEARCHPAGE">Packages search page</a></p>
+</div> <!-- footer -->
+</div> <!-- footWrapper -->
+</div> <!-- pageWrapper -->
 END
 
 print $input->end_html;
