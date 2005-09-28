@@ -29,6 +29,7 @@ our $COPYRIGHT_URL = '/changelogs';
 our $SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=names&amp;version=all&amp;exact=1&amp;keywords=';
 our $SRC_SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=sourcenames&amp;version=all&amp;exact=1&amp;keywords=';
 our $BUG_URL = 'http://bugzilla.ubuntu.com/buglist.cgi?query_format=advanced&amp;resolution=DUPLICATE&amp;resolution=---&amp;bugidtype=include&amp;cmdtype=doit&amp;component=';
+our $LAUNCHPAD_URL = 'http://launchpad.net/distros/ubuntu/+sources/';
 our $SRC_BUG_URL = $BUG_URL;
 our $QA_URL = 'http://packages.qa.debian.org/';
 our $BUILD_LOG_URL = 'http://people.ubuntu.com/~lamont/buildLogs';
@@ -152,9 +153,16 @@ sub pmoreinfo {
     }
     
     if ($info{bugreports}) {
+    	my $url_name = $name;
 	my $bug_url = $is_source ? $SRC_BUG_URL : $BUG_URL; 
+    	if (($d->{section} eq 'universe')
+	    || ($d->{section} eq 'multiverse')) {
+	    $bug_url = $LAUNCHPAD_URL;
+	    $url_name = "$name/+bugs";
+	    $url_name = "$d->{src_name}/+bugs" unless $is_source;
+	}
 	$str .= sprintf( gettext( "Check for <a href=\"%s\">Bug Reports</a> about %s." )."<br>\n",
-			 $bug_url.$name, $name );
+			 $bug_url.$url_name, $name );
     }
 	
     if ($info{sourcedownload}) {
@@ -387,7 +395,6 @@ $DESC_LINE
 $meta
 <link href="/debian.css" rel="stylesheet" type="text/css" media="all">
 </head>
-<!--<body text="#002B3D" bgcolor="#FAFFD2" link="#002B3D" vlink="#800080" alink="#002B3D">-->
 <body>
 <div id="header">
    <div id="upperheader">

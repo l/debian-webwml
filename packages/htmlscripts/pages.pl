@@ -255,7 +255,7 @@ sub package_pages_walker {
 		}
 		$package_page .=  "\">$a</a></th>\n";
 		$package_page .= "<td>";
-		if ( $env->{distribution} eq "warty" ) {
+		if ( $env->{distribution} ne "hoary-backports" ) {
 		    $package_page .= sprintf( "[<a href=\"%s\">".gettext( "list of files" )."</a>]\n", "$FILELIST_URL$encodedpack&amp;version=$env->{distribution}&amp;arch=$a", $name );
 		} else {
 		    $package_page .= gettext("no current information available");
@@ -536,7 +536,8 @@ sub src_package_pages_walker {
     #
     unshift @uploaders, [ $maint_name, $maint_email ];
     my $data = { src_directory => $source_dir, src_name => $name,
-		 src_version => $v_str, uploaders => \@uploaders };
+		 src_version => $v_str, uploaders => \@uploaders,
+	         section => $archive };
     my $buildlogs = $env->{distribution} eq 'breezy';
     $package_page .= pmoreinfo( name => $name, env => $env, data => $data,
 				bugreports => 1,
