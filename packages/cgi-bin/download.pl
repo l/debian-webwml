@@ -133,14 +133,11 @@ END
 
     print '<div class="cardleft">';
     print_links( "North America", $file, @north_american_sites );
+    print_links( "Australia and New Zealand", $file, @australian_sites );
+    print_links( "South America", $file, @south_american_sites );
+    print_links( "Asia", $file, @asian_sites );
     print '</div><div class="cardright">';
     print_links( "Europe", $file, @european_sites );
-    print '</div><div class="cardleft">';
-    print_links( "Australia and New Zealand", $file, @australian_sites );
-    print '</div><div class="cardright">';
-    print_links( "Asia", $file, @asian_sites );
-    print '</div><div class="cardleft">';
-    print_links( "South America", $file, @south_american_sites );
     print '</div>';
 
 	print <<END;
@@ -174,13 +171,14 @@ exit;
 sub print_links {
     my ( $title, $file, @servers ) = @_;
 
+    print '<div class="mirrorList">';
     print "<p><em>$title</em></p>";
     print "<ul>";
     foreach (@servers) {
 	print "<li><a href=\"http://$_/$file\">$_</a></li>\n";
 	# print "<li><a href=\"ftp://$_/$file\">$_</a></li>\n";
     }
-    print "</ul>";
+    print "</ul></div>";
 
 }
 
