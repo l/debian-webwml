@@ -67,6 +67,7 @@ my $arch_enc = encode_entities $arch;
 
 print Packages::HTML::header( title => 'Package Contents Search Results' ,
 			      lang => 'en',
+			      keywords => $version_enc,
 			      title_tag => 'Package contents search results',
 			      print_title_above => 1,
 			      print_search_field => 'contents',
