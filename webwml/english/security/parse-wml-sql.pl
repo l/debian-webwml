@@ -19,6 +19,7 @@ use Getopt::Std;
 use Time::gmtime;
 use IO::File;
 use Date::Parse;
+require 'parse_wml.pm';
 
 # Stdin options
 # -v verbose
@@ -30,9 +31,10 @@ if ( $opt_h ) {
 	print "\t-h\tthis help\n";
 	exit 0;
 }
+$VERBOSE=$opt_v;
 
 
-parsedirs (".", "data", 2);
+ParseDSA::parsedirs (".", "data", 2);
 
 
 # Data
@@ -89,62 +91,4 @@ sub printrefs {
 	}
 }
 
-sub parsefile {
-	my ($file,$filename) = @_ ;
-# The filename gives us the DSA we are parsing
-	if ( $filename =~ /dsa\-(\d+)/ || $filename =~ /(\d+\w+)/ ) {
-		$dsa=$1;
-	} else {
-		print STDERR "File $file does not look like a proper DSA, not checking\n" if $opt_v;
-		return 1;
-	}
-	print STDERR "Parsing DSA $dsa from file $file\n" if $opt_v;
-
-	open (DATAFILE , $file) || die ("Cannot read $file: $!");
-	while ($line=<DATAFILE>) {
-		chomp $line;
-#		print STDERR "Reading $line\n" if $opt_v;
-		if ( $line =~ /report_date\>([\d\-\/]+)\<\/define-tag/ )  {
-			my $dsadate=$1;
-			# Just in case...
-			$dsadate =~ s/\-(\d)\-/-0$1-/;
-			$dsadate =~ s/\-(\d)$/-0$1/;
-			$dsaref{$dsa}{'date'}=$dsadate ;
-		}
-		if ( $line =~ /secrefs\>(.*?)\<\/define-tag/ ) {
-			$dsaref{$dsa}{'secrefs'}=$1 ;
-			print STDERR "Extracted security references: $dsaref{$dsa}{'secrefs'}\n" if $opt_v;
-		}
-		$dsaref{$dsa}{'package'}=$1 if ( $line =~ /packages\>(.*?)\<\/define-tag/ ) ;
-		$dsaref{$dsa}{'vulnerable'}=$1 if ( $line =~ /isvulnerable\>(.*?)\<\/define-tag/ ) ;
-		$dsaref{$dsa}{'fixed'}=$1 if ( $line =~ /fixed\>(.*?)\<\/define-tag/ ) ;
-	}
-#	$dsaref{$dsa}{'location'}=$file;
-#	$dsaref{$dsa}{'location'} =~ s/.data$//;
-#	$dsaref{$dsa}{'location'} =~ s/^.\///;
-	close DATAFILE;
-	return 0;
-}
-
-sub parsedirs {
-	my ($directory, $postfix, $depth) = @_ ;
-	my $dir = new IO::File;
-	if ( $depth == 0 ) {
-		print STDERR "Maximum depth reached ($depth) at $directory\n" if $opt_v;
-		return 0;
-	}
-	opendir ($dir , $directory) || die ("Cannot read $directory: $!");
-	while ( my $file = readdir ($dir) ) {
-		print STDERR "Checking $file (for $postfix at $depth)\n" if $opt_v;
-		if ( -d "${directory}/${file}"  and ! -l "${directory}/${file}" && $file !~ /^\./ ) {
-			print STDERR "Entering directory ${directory}/${file}\n" if $opt_v;
-			parsedirs ( "${directory}/${file}", $postfix, $depth - 1 );
-		} 
-		if ( -r "${directory}/${file}" && $file =~ /$postfix/ && $file !~ /^[\.\#]/ ) {
-			parsefile($directory."/".$file,$file);
-		}
-	} # of the while
-	closedir $dir;
-	return 0;
-}
 
