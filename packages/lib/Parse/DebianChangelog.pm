@@ -16,7 +16,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
 =head1 NAME
@@ -41,7 +41,7 @@ Parse::DebianChangelog - parse Debian changelogs and output them in other format
 
 =head1 DESCRIPTION
 
-Parse::DebianChangelog parses Debian changelogs as desribed in the Debian
+Parse::DebianChangelog parses Debian changelogs as described in the Debian
 policy (version 3.6.2.1 at the time of this writing). See section
 L<"SEE ALSO"> for locations where to find this definition.
 
@@ -60,10 +60,10 @@ changelogs to various other formats. These are currently:
 
 =item dpkg
 
-Format as know from L<dpkg-parsechangelog(1)>. All requested entries
+Format as known from L<dpkg-parsechangelog(1)>. All requested entries
 (see L<"METHODS"> for an explanation what this means) are returned in
 the usual Debian control format, merged in one stanza, ready to be used
-a F<.changes> file.
+in a F<.changes> file.
 
 =item rfc822
 
@@ -71,10 +71,16 @@ Similar to the C<dpkg> format, but the requested entries are returned
 as one stanza each, i.e. they are not merged. This is probably the format
 to use if you want a machine-usable representation of the changelog.
 
+=item xml
+
+Just a simple XML dump of the changelog data. Without any schema or
+DTD currenlty, just some made up XML. The actual format might still
+change. Comments and Improvements welcome.
+
 =item html
 
 The changelog is converted to a somewhat nice looking HTML file with
-some niće features as a quicklink bar with direct links to every entry.
+some nice features as a quicklink bar with direct links to every entry.
 NOTE: This is not very configurable yet and was specifically designed
 to be used on L<http://packages.debian.org/>. This is planned to be
 changed until version 1.0.
@@ -97,7 +103,7 @@ use Parse::DebianChangelog::Util qw( :all );
 use Parse::DebianChangelog::Entry;
 
 our $CLASSNAME = 'Parse::DebianChangelog';
-our $VERSION = 0.6;
+our $VERSION = 0.9;
 
 =pod
 
@@ -128,7 +134,7 @@ sub init {
     $self->reset_parse_errors;
 
     if ($self->{config}{infile}) {
-	$self->parse;
+	defined($self->parse) or return undef;
     }
 
     return $self;
@@ -440,12 +446,94 @@ represent one entry of the changelog.
 This is currently merely a placeholder to enable users to get to the
 raw data, exepct changes to this API in the near future.
 
+This method supports the common output options described in
+section L<"COMMON OUTPUT OPTIONS">.
+
 =cut
 
 sub data {
-    my ($self) = @_;
-    return @{$self->{data}} if wantarray;
-    return $self->{data};
+    my ($self, $config) = @_;
+
+    my $data = $self->{data};
+    if ($config) {
+	$self->{config}{DATA} = $config if $config;
+	$data = $self->_data_range( $config ) or return undef;
+    }
+    return @$data if wantarray;
+    return $data;
+}
+
+sub __sanity_check_range {
+    my ( $data, $from, $to, $since, $until, $count ) = @_;
+
+    if ($$count && ($$from || $$since || $$to || $$until)) {
+	warn( "you can't combine 'count' with any other range option\n" );
+	$$from = $$since = $$to = $$until = '';
+    }
+    if ($$from && $$since) {
+	warn( "you can only specify one of 'from' and 'since'\n" );
+	$$from = '';
+    }
+    if ($$to && $$until) {
+	warn( "you can only specify one of 'to' and 'until'\n" );
+	$$to = '';
+    }
+    if ($data->[0]{Version} eq $$since) {
+	warn( "'since' option specifies most recent version\n" );
+	$$since = '';
+    }
+    if ($data->[$#{$data}]{Version} eq $$until) {
+	warn( "'until' option specifies oldest version\n" );
+	$$until = '';
+    }
+    if ($$count && ($$count > $#$data)) {
+	$$count = $#$data+1;
+    }
+    if ($$count && ($$count < -$#$data)) {
+	$$count = -($#$data+1);
+    }
+    #TODO: compare versions
+}
+
+sub _data_range {
+    my ($self, $config) = @_;
+
+    my $data = $self->data or return undef;
+    my $since = $config->{since} || '';
+    my $until = $config->{until} || '';
+    my $from = $config->{from} || '';
+    my $to = $config->{to} || '';
+    my $count = $config->{count} || 0;
+
+    return [ @$data ] if $config->{all};
+
+    __sanity_check_range( $data, \$from, \$to, \$since, \$until, \$count );
+    $count-- if $count > 0;
+
+    unless ($from or $to or $since or $until or $count) {
+	return [ @$data ] if $config->{default_all} && !$config->{count};
+	return [ $data->[0] ];
+    }
+
+    return [ @{$data}[0 .. $count] ] if $count > 0;
+    return [ reverse((reverse @$data)[0 .. -($count+1)]) ] if $count < 0;
+
+    my @result;
+
+    my $include = 1;
+    $include = 0 if $to or $until;
+    foreach (@$data) {
+	my $v = $_->{Version};
+	$include = 1 if $v eq $to;
+	last if $v eq $since;
+
+	push @result, $_ if $include;
+
+	$include = 1 if $v eq $until;
+	last if $v eq $from;
+    }
+
+    return \@result;
 }
 
 =pod
@@ -498,8 +586,8 @@ C<dpkg_str> returns a stringified version of this hash which should look
 exactly like the output of L<dpkg-parsechangelog(1)>. The fields are
 ordered like in the list above.
 
-Both methods support the configuration item C<since> which works exactly
-like the C<-v> option of dpkg-parsechangelog.
+Both methods only support the common output options described in
+section L<"COMMON OUTPUT OPTIONS">.
 
 =cut
 
@@ -520,8 +608,7 @@ sub dpkg {
     $self->{config}{DPKG} = $config if $config;
 
     $config = $self->{config}{DPKG} || {};
-    my $data = $self->{data} or return undef;
-    my $since = $config->{since} || '';
+    my $data = $self->_data_range( $config ) or return undef;
 
     my %f;
     foreach my $field (qw( Urgency Source Version
@@ -529,16 +616,12 @@ sub dpkg {
 	$f{$field} = $data->[0]{$field};
     }
 
-    warn( "-v<since> option specifies most recent version" )
-	if $f{Version} eq $since;
-
     $f{Changes} = get_dpkg_changes( $data->[0] );
     $f{Closes} = [ @{$data->[0]{Closes}} ];
 
     my $first = 1; my $urg_comment = '';
     foreach my $entry (@$data) {
 	$first = 0, next if $first;
-	last if !$since or $entry->{Version} eq $since;
 
 	my $oldurg = $f{Urgency} || '';
 	my $oldurgn = $URGENCIES{$f{Urgency}} || -1;
@@ -549,7 +632,6 @@ sub dpkg {
 
 	$f{Changes} .= "\n .".get_dpkg_changes( $entry );
 	push @{$f{Closes}}, @{$entry->{Closes}};
-
     }
 
     $f{Closes} = join " ", sort { $a <=> $b } @{$f{Closes}};
@@ -579,8 +661,8 @@ C<rfc822_str> returns a stringified version of this hash which looks
 similar to the output of dpkg-parsechangelog but instead of one
 stanza the output contains one stanza for each entry.
 
-Both methods support the configuration item C<since> which works exactly
-like the C<-v> option of dpkg-parsechangelog.
+Both methods only support the common output options described in
+section L<"COMMON OUTPUT OPTIONS">.
 
 =cut
 
@@ -590,18 +672,10 @@ sub rfc822 {
     $self->{config}{RFC822} = $config if $config;
 
     $config = $self->{config}{RFC822} || {};
-    my $data = $self->{data} or return undef;
-    my $since = $config->{since} || '';
-
+    my $data = $self->_data_range( $config ) or return undef;
     my @out_data;
-    warn( "-v<since> option specifies most recent version" )
-	if $data->[0]{Version} eq $since;
 
-    my $first = 1;
     foreach my $entry (@$data) {
-	last if (!$since and !$first) or $entry->{Version} eq $since;
-	$first = 0;
-
 	my %f;
 	foreach my $field (qw( Urgency Source Version
 			   Distribution Maintainer Date )) {
@@ -630,6 +704,81 @@ sub __version2id {
 
 =pod
 
+=head3 xml
+
+(and B<xml_str>)
+
+C<xml> converts the changelog to some free-form (i.e. there is neither
+a DTD or a schema for it) XML.
+
+The method C<xml_str> is an alias for C<xml>.
+
+Both methods support the common output options described in
+section L<"COMMON OUTPUT OPTIONS"> and additionally the following
+configuration options (as usual to give
+in a hash reference as parameter to the method call):
+
+=over 4
+
+=item outfile
+
+directly write the output to the file specified
+
+=back
+
+=cut
+
+sub xml {
+    my ($self, $config) = @_;
+
+    $self->{config}{XML} = $config if $config;
+    $config = $self->{config}{XML} || {};
+    $config->{default_all} = 1 unless exists $config->{all};
+    my $data = $self->_data_range( $config ) or return undef;
+    my %out_data;
+    $out_data{Entry} = [];
+
+    require XML::Simple;
+    import XML::Simple qw( :strict );
+
+    foreach my $entry (@$data) {
+	my %f;
+	foreach my $field (qw( Urgency Source Version
+			       Distribution Closes )) {
+	    $f{$field} = $entry->{$field};
+	}
+	foreach my $field (qw( Maintainer Changes )) {
+	    $f{$field} = [ $entry->{$field} ];
+	}
+
+	$f{Urgency} .= $entry->{Urgency_Comment};
+	$f{Date} = { timestamp => $entry->{Timestamp},
+		     content => $entry->{Date} };
+	push @{$out_data{Entry}}, \%f;
+    }
+
+    my $xml_str;
+    my %xml_opts = ( SuppressEmpty => 1, KeyAttr => {},
+		     RootName => 'Changelog' );
+    $xml_str = XMLout( \%out_data, %xml_opts );
+    if ($config->{outfile}) {
+	open my $fh, '>', $config->{outfile} or return undef;
+	flock $fh, LOCK_EX or return undef;
+
+	print $fh $xml_str;
+
+	close $fh or return undef;
+    }
+
+    return $xml_str;
+}
+
+sub xml_str {
+    return xml(@_);
+}
+
+=pod
+
 =head3 html
 
 (and B<html_str>)
@@ -643,7 +792,9 @@ how to edit it.
 
 The method C<html_str> is an alias for C<html>.
 
-Both methods support the following configuration items (as usual to give
+Both methods support the common output options described in
+section L<"COMMON OUTPUT OPTIONS"> and additionally the following
+configuration options (as usual to give
 in a hash reference as parameter to the method call):
 
 =over 4
@@ -679,7 +830,8 @@ sub html {
 
     $self->{config}{HTML} = $config if $config;
     $config = $self->{config}{HTML} || {};
-    my $data = $self->{data} or return undef;
+    $config->{default_all} = 1 unless exists $config->{all};
+    my $data = $self->_data_range( $config ) or return undef;
 
     require CGI;
     import CGI qw( -no_xhtml -no_debug );
@@ -702,6 +854,7 @@ sub html {
 	if $config->{print_style};
 
     my $cgi = new CGI;
+    $cgi->autoEscape(0);
 
     my %navigation;
     my $last_year;
@@ -749,14 +902,16 @@ sub html {
 	$years{$last_year}{CONTENT_VERSIONS} ||= [];
 	$years{$last_year}{CONTENT_YEAR} ||= $last_year;
 
-	my $text = $self->apply_filters( 'html::changes', $entry->{Changes}, $cgi );
+	my $text = $self->apply_filters( 'html::changes',
+					 $entry->{Changes}, $cgi );
 
 	(my $maint_name = $entry->{Maintainer} ) =~ s|<([a-zA-Z0-9_\+\-\.]+\@([a-zA-Z0-9][\w\.+\-]+\.[a-zA-Z]{2,}))>||o;
 	my $maint_mail = $1;
 
 	my $parse_error;
 	$parse_error = $cgi->p( { -class=>'parse_error' },
-				"(There has been a parse error in the entry above, if some values don't make sense please check the original changelog)" ) if $entry->{ERROR};
+				"(There has been a parse error in the entry above, if some values don't make sense please check the original changelog)" )
+	    if $entry->{ERROR};
 
 	push @{$years{$last_year}{CONTENT_VERSIONS}}, {
 	    CONTENT_VERSION => $entry->{Version},
@@ -909,6 +1064,71 @@ sub replace_filter {
 
 1;
 __END__
+
+=head1 COMMON OUTPUT OPTIONS
+
+The following options are supported by all output methods,
+all take a version number as value:
+
+=over 4
+
+=item since
+
+Causes changelog information from all versions strictly
+later than B<version> to be used.
+
+(works exactly like the C<-v> option of dpkg-parsechangelog).
+
+=item until
+
+Causes changelog information from all versions strictly
+ealier than B<version> to be used.
+
+=item from
+
+Similar to C<since> but also includes the information for the
+specified B<version> itself.
+
+=item to
+
+Similar to C<until> but also includes the information for the
+specified B<version> itself.
+
+=back
+
+The following options also supported by all output methods but
+don't take version numbers as values:
+
+=over 4
+
+=item all
+
+If set to a true value, all entries of the changelog are returned,
+this overrides all other options. While the XML and HTML formats
+default to all == true, this does of course not overwrite other
+options unless it is set explicetly with the call.
+
+=item count
+
+Expects a signed integer as value. Returns C<value> entries from the
+top of the changelog if set to a positve integer, and C<abs(value)>
+entries from the tail if set to a negative integer.
+
+=back
+
+Some examples for the above options. Imagine an example changelog with
+entries for the versions 1.2, 1.3, 2.0, 2.1, 2.2, 3.0 and 3.1.
+
+            Call                               Included entries
+ C<E<lt>formatE<gt>({ since =E<gt> '2.0' })>  2.2, 3.0, 3.1
+ C<E<lt>formatE<gt>({ until =E<gt> '2.0' })>  1.2, 1.3
+ C<E<lt>formatE<gt>({ from =E<gt> '2.0' })>   2.0, 2.2, 3.0, 3.1
+ C<E<lt>formatE<gt>({ to =E<gt> '2.0' })>     1.2, 1.3, 2.0
+
+Any combination of one option of C<since> and C<from> and one of
+C<until> and C<to> returns the intersection of the two results
+with only one of the options specified.
+
 =head1 SEE ALSO
 
 Parse::DebianChangelog::Entry, Parse::DebianChangelog::ChangesFilters
@@ -936,6 +1156,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 =cut

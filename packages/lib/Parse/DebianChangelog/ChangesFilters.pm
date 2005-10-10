@@ -15,7 +15,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
 =head1 NAME
@@ -41,6 +41,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 				   http_ftp_urls
 				   email_to_ddpo
 				   bugs_to_bts
+				   cve_to_mitre
 				   pseudo_markup
 				   common_licenses
 ) ] );
@@ -52,6 +53,7 @@ our @all_filters = (
 		    \&http_ftp_urls,
 		    \&email_to_ddpo,
 		    \&bugs_to_bts,
+		    \&cve_to_mitre,
 		    \&pseudo_markup,
 		    \&common_licenses,
 		    );
@@ -93,6 +95,15 @@ sub bugs_to_bts {
 			 $tmp =~ s@(Bug)?\#(\d+)@<a class="buglink" href="http://bugs.debian.org/$2">$1\#$2</a>@ig; }
     "$tmp"
 	|xiego;
+    return $text;
+}
+
+sub cve_to_mitre {
+    my ($text, $cgi) = @_;
+
+    $text =~ s!\b(?:CVE|CAN)-\d{4}-\d{4}\b
+        !$cgi->a({ -href=>"http://cve.mitre.org/cgi-bin/cvename.cgi?name=$&" }, $&)
+	!xego;
     return $text;
 }
 
@@ -141,6 +152,7 @@ sub all_filters {
     $text = http_ftp_urls( $text, $cgi );
     $text = email_to_ddpo( $text, $cgi );
     $text = bugs_to_bts( $text, $cgi );
+    $text = cve_to_mitre( $text, $cgi );
     $text = pseudo_markup( $text, $cgi );
     $text = common_licenses( $text, $cgi );
 
@@ -173,6 +185,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 =cut
