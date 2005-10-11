@@ -1,7 +1,7 @@
 #use wml::debian::template title="Creare un mirror dell'archivio Debian"
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/woody/release.data"
-#use wml::debian::translation-check translation="1.40" maintainer="Daniele Cortesi"
+#use wml::debian::translation-check translation="1.44" maintainer="Daniele Cortesi"
 
 <toc-display/>
 
@@ -20,15 +20,9 @@ disponibili.
 <br>
 Gli utenti cercheranno la directory debian/ per installare Debian via rete,
 per scaricare i CD (usando jigdo), e per aggiornare sistemi gi&agrave;
-installati. Gli interessati ai pochi pacchetti non disponibili per i mirror
-negli Stati Uniti cercheranno debian-non-US/.
-<br>
-La directory debian/ &egrave; molto grande confrontata con debian-non-US/ che
-&egrave; molto piccola. Controllate la pagina con <a href="size">la dimensione
-dei mirror</a> per informazioni pi&ugrave; precise.</p>
+installati.
 
-<p>NB: la directory debian-non-US/ <strong>non</strong> comprende
-debian/, al contrario &egrave; un'aggiunta opzionale.</p>
+<p>NB: la directory debian-non-US/ &egrave; deprecata dal rilascio di sarge</p>
 
 <p>debian-cd/ &egrave; una directory che non &egrave; identica su tutti i
 mirror. Da qualche parte conterr&agrave; i template di jigdo per produrre le
@@ -50,6 +44,9 @@ mirror molto spesso per essere aggiornati (o usare il
 raccomandato. Debian si sforza al massimo per mantenere disponibile
 security.debian.org.</p>
 
+<p>Visitate la pagina delle <a href="size">dimensioni dei mirror</a>per 
+informazioni pi&ugrave; precise riguardo la dimensione dei mirror.
+
 <toc-add-entry name="wherefrom">Da dove sincronizzarsi</toc-add-entry>
 
 <p>Molte persone sembrano pensare che <code>ftp.debian.org</code> sia la
@@ -60,7 +57,8 @@ aggiornati da un server interno di Debian.</p>
 
 <p>Uno qualsiasi dei server nella <a href="list-full">lista completa dei
 mirror</a> che ha il tag '<kbd>Type: Push-Primary</kbd>' dovrebbe essere una
-buona fonte per sincronizzarsi.</p>
+buona fonte per sincronizzarsi.
+Per favore utilizzatene uno rete-geograficamente vicino a voi.</p>
 
 <p>Non c'&egrave; nessuna differenza tra i vari mirror <em>Push-Primary</em>
 fintanto che il mirroring viene effettuato. D'altra parte, se molte persone
@@ -69,16 +67,16 @@ comporta uno spreco della banda che ci viene donata.</p>
 
 <toc-add-entry name="how">Come sincronizzarsi</toc-add-entry>
 
-<p>Il metodo raccomandato per sincronizzarsi &egrave;
+<p>Il metodo raccomandato per sincronizzarsi &egrave; lo script chiamato
+<a href="anonftpsync">anonftpsync</a> via anonymous
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>.</p>
 
-<p>Nota: mentre <kbd>wget</kbd> funziona bene per il mirroring di piccoli
-siti, non &egrave; configurabile come rsync, quindi non &egrave; raccomandato
-per questo lavoro.</p>
+<p>Nota: sebbene <kbd>wget</kbd> e altri ftp-tools sembrano funzionare bene,
+ci sono alcuni problemi. Si raccomanda caldamente l'utilizzo di rsync.</p>
 
 <h3>rsync anonimo</h3>
 
-<p>Si pu&ograve; utilizzare <a href="anonftpsync">questo script</a> per
+<p>Si raccomanda l'utilizzo di <a href="anonftpsync">questo script</a> per
 sincronizzarsi con l'archivio. Si seguano le indicazioni nello script per
 impostare il mirroring.
 
@@ -111,6 +109,12 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
       <kbd>date -u &gt; .../debian-non-US/project/trace/<var>vostro.server</var></kbd>
 	  dopo che la sincronizzazione giornaliera di non-US &egrave; terminata,
 	  se effettuate il mirror anche di debian-non-US.
+
+  <li>Si sconsiglia fortemente di escludere <tt>project/</tt>, <tt>doc/</tt> e
+      altre sotto-directory. Solitamente hanno una dimensione ridotta ma
+      risultano molto utili agli utenti.
+      Specialmente <tt>project/trace</tt> aiuta molto se ci sono dei problemi
+      con il mirror.
 </ul>
 
 <h3>Rsync con autorizzazione, da un push mirror</h3>
@@ -139,17 +143,6 @@ Semplicemente ci&ograve; <strong>non</strong> &egrave; vero.
 sicuro e per come creare un push mirror, consultate
 <a href="push_mirroring">la spiegazione completa</a>.
 
-<h3>Anonymous FTP</h3>
-
-<p>Anonymous FTP &egrave; stato il metodo standard di sincronizzazione per
-molto tempo, ma adesso &egrave; deprecato, in favore di rsync.</p>
-
-<p>Se per qualche ragione non si pu&ograve; usare rsync, il programma
-"<a href="http://packages.debian.org/mirror">mirror</a>" potrebbe essere
-utile. Si tenga in mente che fa affidamento a dei file ls-lR che gli
-permettono di mantenere il mirror correttamente aggiornato nella sottodirectory
-<kbd>project/trace/</kbd> dei mirror Debian.</p>
-
 <toc-add-entry name="partial">Mirroring parziale</toc-add-entry>
 
 <p>Considerando le gi&agrave;  <a href="size">grandi dimensioni dell'archivio
@@ -158,15 +151,14 @@ cui hanno bisogno. Se si vuole escludere qualcosa si dovrebbero escludere le
 architetture.</p>
 
 <p>Con <a href="anonftpsync">anonftpsync</a>, questo si pu&ograve; fare
-utilizzando la variabile EXCLUDE. Si possono anche usare script scritti
-appositamente, come <a href="http://packages.debian.org/unstable/net/debmirror">\
-debmirror</a> (di Joey Hess e Joerg Wendland).  Se vi sembra che qualcosa
-debba essere aggiunto a questi script, contattate gli autori (le informazioni
-per contattarli dovrebbero essere incluse negli script stessi).</p>
-
+utilizzando la variabile EXCLUDE.
+Esistono anche altri script scritti appositamente ma non sono adatti per i
+mirror ufficiali.</p>
 <p>Vi scoraggiamo fortemente ad escludere le directory <tt>project/</tt>, <tt>doc/</tt>
-e le altre sottodirectory. Di solito hanno una dimensione minore e sono ancora
-utili agli utenti.</p>
+e le altre sottodirectory. Di solito hanno una dimensione minore e sono
+comunque utili agli utenti.
+Specialmente <tt>project/trace</tt> aiuta molto in caso di problemi con il
+mirror.</p>
 
 <toc-add-entry name="when">Quando sincronizzarsi</toc-add-entry>
 
