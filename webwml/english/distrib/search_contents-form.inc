@@ -4,6 +4,7 @@
 <bind-gettext-domain domain="distrib" />
 
 <form method="GET" action="http://packages.debian.org/cgi-bin/search_contents.pl">
+<p>
 <label for="keyword"><gettext domain="distrib">Keyword</gettext>:</label>
 <input type="text" size="30" name="word" id="keyword" /> &nbsp;
 <input type="submit" value="<gettext domain="distrib">Search</gettext>" />
@@ -54,4 +55,5 @@
 # TODO: Hurd should be listed as a separate distribution
   <option value="hurd-i386"><gettext domain="distrib">Hurd (i386)</gettext></option>
 </select>
+</p>
 </form>
