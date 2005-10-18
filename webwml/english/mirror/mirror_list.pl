@@ -408,8 +408,8 @@ END
         (my $countrycode = $country) =~ s/^(..).*/$1/;
 	print <<END;
 <tr>
-  <td valign="top"><${countrycode}c></td>
-  <td valign="top" align="center"><a href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{site}</a></td>
+  <td><${countrycode}c></td>
+  <td><a href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{site}</a></td>
   <td>
 END
 	if ($mirror[$id]{site} eq "ftp.us.debian.org") {
@@ -490,8 +490,8 @@ END
         (my $countrycode = $country) =~ s/^(..).*/$1/;
 	print <<END;
 <tr>
-  <td valign="top">${countrycode} <${countrycode}c></td>
-  <td valign="top" align="center">$mirror[$id]{site}</td>
+  <td>${countrycode} <${countrycode}c></td>
+  <td>$mirror[$id]{site}</td>
   <td>
 END
 	if ($mirror[$id]{site} ne "ftp.us.debian.org") {
