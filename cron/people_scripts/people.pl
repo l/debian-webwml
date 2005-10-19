@@ -487,8 +487,7 @@ sub process_homepages {
   my ($ldap_cn, $ldap_sn);
 
   # get the stuff from the LDAP database
-  # option -B required on potato, -P 2 -x on woody
-  foreach (`ldapsearch -P 2 -x -h db.debian.org -b dc=debian,dc=org uid=\* cn mn sn labeledURI`) {
+  foreach (`ldapsearch -x -h db.debian.org -b dc=debian,dc=org uid=\* cn mn sn labeledURI`) {
     chomp; my $line = $_;
     if ($line =~ /^(dn: )?uid=(.+),.+$/) { $name = $2; }
     elsif ($line =~ /^cn(=|: )(.+)$/) { $ldap_cn = from_utf8_or_iso88591_to_sgml($2); }
