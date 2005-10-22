@@ -74,13 +74,13 @@ to use if you want a machine-usable representation of the changelog.
 =item xml
 
 Just a simple XML dump of the changelog data. Without any schema or
-DTD currenlty, just some made up XML. The actual format might still
+DTD currently, just some made up XML. The actual format might still
 change. Comments and Improvements welcome.
 
 =item html
 
 The changelog is converted to a somewhat nice looking HTML file with
-some nice features as a quicklink bar with direct links to every entry.
+some nice features as a quick-link bar with direct links to every entry.
 NOTE: This is not very configurable yet and was specifically designed
 to be used on L<http://packages.debian.org/>. This is planned to be
 changed until version 1.0.
@@ -102,8 +102,7 @@ use Date::Parse;
 use Parse::DebianChangelog::Util qw( :all );
 use Parse::DebianChangelog::Entry;
 
-our $CLASSNAME = 'Parse::DebianChangelog';
-our $VERSION = 0.9;
+our $VERSION = '1.0';
 
 =pod
 
@@ -112,11 +111,13 @@ our $VERSION = 0.9;
 Creates a new object instance. Takes a reference to a hash as
 optional argument, which is interpreted as configuration options.
 There are currently no supported general configuration options, but
-see the other methods for more specifc configuration options which
+see the other methods for more specific configuration options which
 can also specified to C<init>.
 
-If C<infile> is specified (see L<parse>), C<parse()> is called
-from C<init>.
+If C<infile> or C<instring> are specified (see L<parse>), C<parse()>
+is called from C<init>. If a fatal error is encountered during parsing
+(e.g. the file can't be opened), C<init> will not return a
+valid object but C<undef>!
 
 =cut
 
@@ -124,7 +125,6 @@ sub init {
     my $classname = shift;
     my $config = shift || {};
     my $self = {};
-    $CLASSNAME = $classname;
     bless( $self, $classname );
 
     $config->{verbose} = 1 if $config->{debug};
@@ -133,7 +133,7 @@ sub init {
     $self->init_filters;
     $self->reset_parse_errors;
 
-    if ($self->{config}{infile}) {
+    if ($self->{config}{infile} || $self->{config}{instring}) {
 	defined($self->parse) or return undef;
     }
 
@@ -177,18 +177,19 @@ sub _do_parse_error {
 
 Returns all error messages from the last L<parse> run.
 If called in scalar context returns a human readable
-string represenation. If called in list context returns
+string representation. If called in list context returns
 an array of arrays. Each of these arrays contains
 
 =over 4
 
 =item 1.
 
-the filename of the parsed file
+the filename of the parsed file or C<String> if a string was
+parsed directly
 
 =item 2.
 
-the line number where the error occoured
+the line number where the error occurred
 
 =item 3.
 
@@ -223,16 +224,39 @@ sub get_parse_errors {
     }
 }
 
+sub _do_fatal_error {
+    my ($self, @msg) = @_;
+
+    $self->{errors}{fatal} = "@msg";
+    warn "FATAL: @msg\n" unless $self->{config}{quiet};
+}
+
+=pod
+
+=head3 get_error
+
+Get the last non-parser error (e.g. the file to parse couldn't be opened).
+
+=cut
+
+sub get_error {
+    my ($self) = @_;
+
+    return $self->{errors}{fatal};
+}
+
 =pod
 
 =head3 parse
 
-Parses the file that is saved in the configuration item C<infile>.
-Accepts a hash ref as optional argument which can contains configuration
+Parses either the file named in configuration item C<infile> or the string
+saved in configuration item C<instring>.
+Accepts a hash ref as optional argument which can contain configuration
 items.
 
-Returns undef in case of error (e.g. "file not found", B<not> parse errors)
-and the object if successfull.
+Returns C<undef> in case of error (e.g. "file not found", B<not> parse
+errors) and the object if successful. If C<undef> was returned, you
+can get the reason for the failure by calling the L<get_error> method.
 
 =cut
 
@@ -242,12 +266,31 @@ sub parse {
     foreach my $c (keys %$config) {
 	$self->{config}{$c} = $config->{$c};
     }
-    my $file = $self->{config}{infile} or return undef;
+
+    my ($fh, $file);
+    if ($file = $self->{config}{infile}) {
+	open $fh, '<', $file or do {
+	    $self->_do_fatal_error( "can't open file $file: $!" );
+	    return undef;
+	};
+	flock $fh, LOCK_SH or do {
+	    $self->_do_fatal_error( "can't lock file $file: $!" );
+	    return undef;
+	};
+    } elsif (my $string = $self->{config}{instring}) {
+	eval { require IO::String };
+	if ($@) {
+	    $self->_do_fatal_error( "can't load IO::String: $@" );
+	    return undef;
+	}
+	$fh = IO::String->new( $string );
+	$file = 'String';
+    } else {
+	$self->_do_fatal_error( 'no changelog file specified' );
+	return undef;
+    }
 
     $self->reset_parse_errors;
-
-    open my $fh, '<', $file or return undef;
-    flock $fh, LOCK_SH or return undef;
 
     $self->{data} = [];
 
@@ -427,7 +470,12 @@ sub parse {
 	push @{$self->{data}}, $entry;
     }
 
-    close $fh or return undef;
+    if ($self->{config}{infile}) {
+	close $fh or do {
+	    $self->_do_fatal_error( "can't close file $file: $!" );
+	    return undef;
+	};
+    }
 
 #    use Data::Dumper;
 #    print Dumper( $self );
@@ -444,7 +492,7 @@ to an array of Parse::DebianChangelog::Entry objects which each
 represent one entry of the changelog.
 
 This is currently merely a placeholder to enable users to get to the
-raw data, exepct changes to this API in the near future.
+raw data, expect changes to this API in the near future.
 
 This method supports the common output options described in
 section L<"COMMON OUTPUT OPTIONS">.
@@ -464,10 +512,10 @@ sub data {
 }
 
 sub __sanity_check_range {
-    my ( $data, $from, $to, $since, $until, $count ) = @_;
+    my ( $data, $from, $to, $since, $until, $start, $end ) = @_;
 
-    if ($$count && ($$from || $$since || $$to || $$until)) {
-	warn( "you can't combine 'count' with any other range option\n" );
+    if (($$start || $$end) && ($$from || $$since || $$to || $$until)) {
+	warn( "you can't combine 'count' or 'offset' with any other range option\n" );
 	$$from = $$since = $$to = $$until = '';
     }
     if ($$from && $$since) {
@@ -486,37 +534,52 @@ sub __sanity_check_range {
 	warn( "'until' option specifies oldest version\n" );
 	$$until = '';
     }
-    if ($$count && ($$count > $#$data)) {
-	$$count = $#$data+1;
-    }
-    if ($$count && ($$count < -$#$data)) {
-	$$count = -($#$data+1);
-    }
+    $$start = 0 if $$start < 0;
+    return if $$start > $#$data;
+    $$end = $#$data if $$end > $#$data;
+    return if $$end < 0;
+    $$end = $$start if $$end < $$start;
     #TODO: compare versions
+    return 1;
 }
 
 sub _data_range {
     my ($self, $config) = @_;
 
     my $data = $self->data or return undef;
+
+    return [ @$data ] if $config->{all};
+
     my $since = $config->{since} || '';
     my $until = $config->{until} || '';
     my $from = $config->{from} || '';
     my $to = $config->{to} || '';
     my $count = $config->{count} || 0;
+    my $offset = $config->{offset} || 0;
 
-    return [ @$data ] if $config->{all};
+    return if $offset and not $count;
+    if ($offset > 0) {
+	$offset -= ($count < 0);
+    } elsif ($offset < 0) {
+	$offset = $#$data + ($count > 0) + $offset;
+    } else {
+	$offset = $#$data if $count < 0;
+    }
+    my $start = my $end = $offset;
+    $start += $count+1 if $count < 0;
+    $end += $count-1 if $count > 0;
 
-    __sanity_check_range( $data, \$from, \$to, \$since, \$until, \$count );
-    $count-- if $count > 0;
+    return unless __sanity_check_range( $data, \$from, \$to,
+					\$since, \$until,
+					\$start, \$end );
 
-    unless ($from or $to or $since or $until or $count) {
-	return [ @$data ] if $config->{default_all} && !$config->{count};
+    
+    unless ($from or $to or $since or $until or $start or $end) {
+	return [ @$data ] if $config->{default_all} and not $count;
 	return [ $data->[0] ];
     }
 
-    return [ @{$data}[0 .. $count] ] if $count > 0;
-    return [ reverse((reverse @$data)[0 .. -($count+1)]) ] if $count < 0;
+    return [ @{$data}[$start .. $end] ] if $start or $end;
 
     my @result;
 
@@ -588,6 +651,10 @@ ordered like in the list above.
 
 Both methods only support the common output options described in
 section L<"COMMON OUTPUT OPTIONS">.
+
+=head3 dpkg_str
+
+See L<dpkg>.
 
 =cut
 
@@ -664,6 +731,10 @@ stanza the output contains one stanza for each entry.
 Both methods only support the common output options described in
 section L<"COMMON OUTPUT OPTIONS">.
 
+=head3 rfc822_str
+
+See L<rfc822>.
+
 =cut
 
 sub rfc822 {
@@ -726,6 +797,10 @@ directly write the output to the file specified
 
 =back
 
+=head3 xml_str
+
+See L<xml>.
+
 =cut
 
 sub xml {
@@ -784,7 +859,7 @@ sub xml_str {
 (and B<html_str>)
 
 C<html> converts the changelog to a HTML file with some nice features
-such as a quicklink bar with direct links to every entry. The HTML
+such as a quick-link bar with direct links to every entry. The HTML
 is generated with the help of HTML::Template. If you want to change
 the output you should use the default template provided with this module
 as a base and read the documentation of HTML::Template to understand
@@ -823,6 +898,10 @@ C<style> about default values)
 
 =back
 
+=head3 html_str
+
+See L<html>.
+
 =cut
 
 sub html {
@@ -840,7 +919,7 @@ sub html {
     my $template = HTML::Template->new(filename => $config->{template}
 				       || '/usr/share/libparse-debianchangelog-perl/default.tmpl',
 				       die_on_bad_params => 0);
-    $template->param( MODULE_NAME => $CLASSNAME,
+    $template->param( MODULE_NAME => ref($self),
 		      MODULE_VERSION => $VERSION,
 		      GENERATED_DATE => gmtime()." UTC",
 		      SOURCE_NEWEST => $data->[0]{Source},
@@ -1082,7 +1161,7 @@ later than B<version> to be used.
 =item until
 
 Causes changelog information from all versions strictly
-ealier than B<version> to be used.
+earlier than B<version> to be used.
 
 =item from
 
@@ -1106,13 +1185,20 @@ don't take version numbers as values:
 If set to a true value, all entries of the changelog are returned,
 this overrides all other options. While the XML and HTML formats
 default to all == true, this does of course not overwrite other
-options unless it is set explicetly with the call.
+options unless it is set explicitly with the call.
 
 =item count
 
 Expects a signed integer as value. Returns C<value> entries from the
-top of the changelog if set to a positve integer, and C<abs(value)>
+top of the changelog if set to a positive integer, and C<abs(value)>
 entries from the tail if set to a negative integer.
+
+=item offset
+
+Expects a signed integer as value. Changes the starting point for
+C<count>, either counted from the top (positive integer) or from
+the tail (negative integer). C<offset> has no effect if C<count>
+wasn't given as well.
 
 =back
 
@@ -1120,10 +1206,20 @@ Some examples for the above options. Imagine an example changelog with
 entries for the versions 1.2, 1.3, 2.0, 2.1, 2.2, 3.0 and 3.1.
 
             Call                               Included entries
- C<E<lt>formatE<gt>({ since =E<gt> '2.0' })>  2.2, 3.0, 3.1
- C<E<lt>formatE<gt>({ until =E<gt> '2.0' })>  1.2, 1.3
- C<E<lt>formatE<gt>({ from =E<gt> '2.0' })>   2.0, 2.2, 3.0, 3.1
- C<E<lt>formatE<gt>({ to =E<gt> '2.0' })>     1.2, 1.3, 2.0
+ C<E<lt>formatE<gt>({ since =E<gt> '2.0' })>  3.1, 3.0, 2.2
+ C<E<lt>formatE<gt>({ until =E<gt> '2.0' })>  1.3, 1.2
+ C<E<lt>formatE<gt>({ from =E<gt> '2.0' })>   3.1, 3.0, 2.2, 2.1, 2.0
+ C<E<lt>formatE<gt>({ to =E<gt> '2.0' })>     2.0, 1.3, 1.2
+ C<E<lt>formatE<gt>({ count =E<gt> 2 }>>      3.1, 3.0
+ C<E<lt>formatE<gt>({ count =E<gt> -2 }>>     1.3, 1.2
+ C<E<lt>formatE<gt>({ count =E<gt> 3,
+		      offset=E<gt> 2 }>>      2.2, 2.1, 2.0
+ C<E<lt>formatE<gt>({ count =E<gt> 2,
+		      offset=E<gt> -3 }>>     2.0, 1.3
+ C<E<lt>formatE<gt>({ count =E<gt> -2,
+		      offset=E<gt> 3 }>>      3.0, 2.2
+ C<E<lt>formatE<gt>({ count =E<gt> -2,
+		      offset=E<gt> -3 }>>     2.2, 2.1
 
 Any combination of one option of C<since> and C<from> and one of
 C<until> and C<to> returns the intersection of the two results

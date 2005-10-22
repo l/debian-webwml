@@ -161,6 +161,7 @@ sub all_filters {
 
 1;
 __END__
+
 =head1 SEE ALSO
 
 Parse::DebianChangelog

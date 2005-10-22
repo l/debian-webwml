@@ -32,6 +32,10 @@ Parse::DebianChangelog::Entry - represents one entry in a Debian changelog
 
 Creates a new object, no options.
 
+=head3 new
+
+Alias for init.
+
 =head3 is_empty
 
 Checks if the object is actually initialized with data. Due to limitations
@@ -117,8 +121,6 @@ Parse::DebianChangelog::Entry->mk_accessors(qw( Closes Changes Maintainer
 						ExtraFields Header
 						Trailer Timestamp ));
 
-our $CLASSNAME = 'Parse::DebianChangelog::Entry';
-
 sub new {
     return init(@_);
 }
@@ -126,7 +128,6 @@ sub new {
 sub init {
     my $classname = shift;
     my $self = {};
-    $CLASSNAME = $classname;
     bless( $self, $classname );
 
     return $self;
@@ -144,6 +145,7 @@ sub is_empty {
 
 1;
 __END__
+
 =head1 SEE ALSO
 
 Parse::DebianChangelog
