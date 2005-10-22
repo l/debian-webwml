@@ -433,24 +433,20 @@ sub get_arch_versions {
     my ( $self, $archs ) = @_;
 
     if ( $self->{cached} ) {
-	return %{$self->{cache}->{arch_versions}};
+	return %{$self->{cache}{arch_versions}};
     }
 
     my @v_list = $self->get_version_list;
     my %versions;
   ARCH:
-    foreach my $a ( @$archs ) {
+    foreach my $a ( ( @$archs, 'all' ) ) {
 	foreach my $v ( @v_list ) {
-	    if ( exists $self->{versions}->{$v}->{$a} ) {
-		$versions{unique}->{$v}++;
-		$versions{a2v}->{$a} = $v;
-		push @{$versions{v2a}->{$v}}, $a; 
+	    if ( exists($self->{versions}{$v}{$a})
+		 && !exists($versions{a2v}{$a})) {
+		$versions{unique}{$v}++;
+		$versions{a2v}{$a} = $v;
+		push @{$versions{v2a}{$v}}, $a; 
 		next ARCH;
-	    } elsif ( exists $self->{versions}->{$v}->{'all'} ) {
-		$versions{unique}->{$v}++;
-		$versions{a2v}->{'all'} = $v;
-		push @{$versions{v2a}->{$v}}, 'all';
-		last ARCH;
 	    }
 	}
     }
@@ -464,7 +460,9 @@ sub get_arch_fields {
     my ( $self, $field, $archs, $cache_mode ) = @_;
 
     if ( $self->{cached} ) {
-	return exists $self->{cache}->{"arch_$field"} ? %{$self->{cache}->{"arch_$field"}} : undef;
+	return exists $self->{cache}{"arch_$field"} ?
+	    %{$self->{cache}{"arch_$field"}} :
+	    undef;
     }
 
     $cache_mode ||= 0;
@@ -477,22 +475,15 @@ sub get_arch_fields {
     my @v_list = $self->get_version_list;
     my %fields;
   ARCH:
-    foreach my $a ( @$archs ) {
+    foreach my $a ( ( @$archs, 'all' ) ) {
 	foreach my $v ( @v_list ) {
-	    if ( exists $self->{versions}->{$v}->{$a} ) {
-		if ( defined $self->{versions}->{$v}->{$a}->{$field} ) {
-		    $fields{unique}->{$self->{versions}->{$v}->{$a}->{$field}}++;
-		    $fields{a2f}->{$a} = $self->{versions}->{$v}->{$a}->{$field};
-		    push @{$fields{f2a}->{$self->{versions}->{$v}->{$a}->{$field}}}, $a;
-		    delete $self->{versions}->{$v}->{$a}->{$field} if $cache_mode;
-		}
-		next ARCH;
-	    } elsif ( exists $self->{versions}->{$v}->{'all'} ) {
-		if ( defined $self->{versions}->{$v}->{'all'}->{$field} ) {
-		    $fields{unique}->{$self->{versions}->{$v}->{'all'}->{$field}}++;
-		    $fields{a2f}->{'all'} = $self->{versions}->{$v}->{'all'}->{$field};
-		    push @{$fields{f2a}->{$self->{versions}->{$v}->{'all'}->{$field}}}, 'all';
-		    delete $self->{versions}->{$v}->{'all'}->{$field} if $cache_mode;
+	    if ( exists($self->{versions}{$v}{$a})
+		 && !exists($fields{a2f}{$a}) ) {
+		if ( defined(my $value = $self->{versions}{$v}{$a}{$field} )) {
+		    $fields{unique}{$value}++;
+		    $fields{a2f}{$a} = $value;
+		    push @{$fields{f2a}{$value}}, $a;
+		    delete $self->{versions}{$v}{$a}{$field} if $cache_mode;
 		}
 		next ARCH;
 	    }
