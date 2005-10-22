@@ -343,12 +343,17 @@ sub extract_changelog_to_pkgpool {
     }
 
     add_log( $log, "create enhanced HTML version" );
-    my $chg = Parse::DebianChangelog->init( { infile => "$source_dir/debian/changelog" } );
-    $chg->html( { outfile => "$target_dir/changelog.html",
-	          template => "$configdir/tmpl/default.tmpl" } );
-    add_log( $log, scalar $chg->get_parse_errors )
-	if $chg->get_parse_errors;
-
+    my $chg = Parse::DebianChangelog->init;
+    my $parsed = $chg->parse( { infile => "$source_dir/debian/changelog" } );
+    if ($parsed) {
+	$chg->html( { outfile => "$target_dir/changelog.html",
+		      template => "$configdir/tmpl/default.tmpl" } );
+	add_log( $log, scalar $chg->get_parse_errors )
+	    if $chg->get_parse_errors;
+    } else {
+	do_warning( $chg->get_error );
+	add_log( $log, $chg->get_error );
+    }
 }
 
 sub manage_current_link {
