@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - servidor de controle" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.47"
+#use wml::debian::translation-check translation="1.49"
 
 <h1>Introdução ao servidor de e-mail para controle e manipulação de bugs</h1>
 
@@ -32,17 +32,21 @@ ambos os endereços.</P>
 está disponível via WWW em <code>bug-mailserver-refcard.txt</code> ou por e-mail
 usando o comando <code>refcard</code>.</P>
 
-<H1>Comandos disponíveis somente no servidor de e-mail de controle</H1>
+<H1>Comandos disponíveis no servidor de e-mail de controle</H1>
 
 <dl>
 
 <dt><code>reassign</code> <var>número do bug</var> <var>pacote</var>
+ [ <var>versão</var> ]
 <dd>
 
 Registra que o bug #<var>número do bug</var> é um bug em <var>pacote</var>.
 Pode ser usado para definir o pacote caso o usuário esqueça o pseudo-cabeçalho
 ou para mudar a atribuição anterior. Nenhuma notificação é enviada para ninguém
 (a não ser a informação normal no processamento da transcrição).
+
+<p>Se você fornecer uma <var>versão</var>, o sistema de acompanhamento de bugs
+perceberá que o bug afeta aquela versão do pacote recém-atribuído.
 
 <dt><code>reopen</code> <var>número do bug</var>
  [ <var>endereço-de-origem</var> | <code>=</code> | <code>!</code> ]
@@ -67,6 +71,38 @@ novamente.</p>
 <p>Caso o bug não esteja fechado, reabrir o mesmo não resultará em nada, nem mesmo
 mudar a origem. Para alterar a origem de um relatório de bug aberto, use o 
 comando <code>submitter</code>; note que isto informará o endereço da pessoa que fez a mudança.
+
+<p>Se o bug foi registrado como fechado em determinada versão de um pacote
+mas reapareceu em uma versão posterior, utilize o comando <code>found</code>
+em vez disso.
+
+<dt><code>found</code> <var>número do bug</var> [ <var>versão</var> ]
+
+<dd>Registra que #<var>número do bug</var> foi encontrado em determinada
+<var>versão</var> do pacote ao qual ele está atribuído.
+
+<p>O sistema de acompanhamento de bugs utiliza essa informação, em conjunto
+com as versões corrigidas que são registradas quando bugs são fechados, para
+exibir listas de bugs abertos em várias versões de cada pacote. O sistema considera
+um bug como aberto quando não há uma versão corrigida, ou quando o bug é descoberto após
+ter sido corrigido.
+
+<p>Caso nenhuma <var>versão</var> seja fornecida, a lista de versões corrigidas para o bug
+é esvaziada. Isto é idêntico ao comportamento do <code>reopen</code>.
+
+<p>Este comando foi introduzido como substituto do <code>reopen</code> porque
+era difícil adicionar uma <var>versão</var> à sintaxe desse comando sem sofrer
+ambigüidade.
+
+<dt><code>notfound</code> <var>número do bug</var> <var>versão</var>
+
+<dd>Remove o registro de que #<var>número do bug</var> foi encontrado em determinada
+<var>versão</var> do pacote ao qual ele está atribuído.
+
+<p>Isso é diferente de fechar o bug na versão especificada, uma vez que o bug
+também não está listado como corrigido naquela versão; nenhuma informação sobre a
+versão será conhecida. O objetivo é corrigir erros no registro de um bug quando foi encontrado.
+
 <dt><code>submitter</code> <var>bugnumber</var>
 <var>originator-address</var> | <code>!</code>
 <dd>
@@ -110,7 +146,7 @@ está unido.
 <dd>
 
 <p>Define o nível de severidade para o relatório de bug #<var>número do bug</var>
-para <var>severidade</var>.  Menhuma notificação é enviada para o usuário que
+para <var>severidade</var>.  Nenhuma notificação é enviada para o usuário que
 reportou o bug.</p>
 
 <p>As severidades são <code>critical</code>, <code>grave</code>,
@@ -152,7 +188,7 @@ para um novo pacote terá o efeito idêntico em todos os relatórios que foram
 unidos.
 
 <p>Antes que os bugs possam ser unidos os mesmos precisam estar exatamente
-no mesmo estado : ou todos são bugs abertos ou todos são bugs fechados, com
+no mesmo estado: ou todos são bugs abertos ou todos são bugs fechados, com
 o mesmo endereço de encaminhamento para o autor original ou todos marcados
 como encaminhados, todos atribuídos para o mesmo pacote(s) (uma comparação
 exata de strings é feita no pacote para o qual o bug está sendo atribuído),
@@ -236,7 +272,8 @@ inclua diversos comandos <code>unmerge</code> em sua mensagem.
   <p>Para <a href="Developer#tags">os siginficados das tags</a> por favor consulte
 	a documentação geral para desenvolvedores do sistema de bugs.
 
-<dt><code>close</code> <var>número do bug</var> (ultrapassado)
+<dt><code>close</code> <var>número do bug</var> [ <var>versão-corrigida</var> ]
+ (ultrapassado)
 <dd>
 
 Fecha o relatório de bug #<var>número do bug</var>.
@@ -248,6 +285,9 @@ certificar-se, provavelmente enviando uma mensagem separada, que o usuário que
 reportou o bug fique sabendo a razão pela qual o bug está sendo fechado. O uso deste
 comando é portanto desencorajado. Veja as informações para desenvolvedores
 sobre <a href="Developer#closing">como fechar um relatório de bug</a>.
+
+<p>Se você fornecer uma <var>versão-corrigida</var>, o sistema de acompanhamento de bugs
+perceberá que o bug foi corrigido para aquela versão do pacote.
 
 <dt><code>package</code> [ <var>packagename</var> ... ]
 
@@ -261,10 +301,11 @@ sobre <a href="Developer#closing">como fechar um relatório de bug</a>.
 
   <pre>
         package foo
-	reassign 123456 bar
+	reassign 123456 bar 1.0-1
 
 	package bar
 	retitle 123456 bar: bar sucks
+	severity 123456 normal
 
 	package
 	severity 234567 wishlist
