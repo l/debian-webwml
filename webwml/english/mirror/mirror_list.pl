@@ -546,7 +546,7 @@ sub cdimage_mirrors {
         }
       } elsif ($which eq "rsync") {
         if (defined $mirror[$id]{method}{'cdimage-rsync'}) {
-          print qq(  '<${countrycode}c>: $mirror[$id]{site}: <font color="#6b1300">rsync $mirror[$id]{site}\:\:$mirror[$id]{method}{'cdimage-rsync'}</font>',\n);
+          print qq(  '<${countrycode}c>: $mirror[$id]{site}: <span class="cdrsync">rsync $mirror[$id]{site}\:\:$mirror[$id]{method}{'cdimage-rsync'}</span>',\n);
 END
         }
       }
