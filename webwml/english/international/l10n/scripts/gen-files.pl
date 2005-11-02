@@ -154,7 +154,7 @@ sub get_stats_po {
                         $lang = uc($lang) || 'UNKNOWN';
                         $list{$lang} = 1;
 		        my $str= '';
-                        $str .= "<tr bgcolor=\"".
+                        $str .= "<tr style=\"background-color: ".
                               get_color(percent_stat($stat)).
                               "\"><td>";
 		        $str .= (percent_stat($stat) eq "100%" ? $pkg : "<a href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>");
@@ -305,7 +305,7 @@ sub get_stats_templates {
                         $lang = uc($lang) || 'UNKNOWN';
                         $list{$lang} = 1;
 		        my $str = '';
-                        $str .= "<tr bgcolor=\"".
+                        $str .= "<tr style=\"background-color: ".
                               get_color(percent_stat($stat)).
                               "\"><td>";
 		        if (defined $tmpl_errors->{$pkg}) {
@@ -517,7 +517,7 @@ sub get_stats_podebconf {
                         $lang = uc($lang) || 'UNKNOWN';
                         $list{$lang} = 1;
 		        my $str = '';
-                        $str .= "<tr bgcolor=\"".
+                        $str .= "<tr style=\"background-color: ".
                               get_color(percent_stat($stat)).
 		              "\"><td>";
                         if ($stat =~ m/^(\d+)t(\d+)f(\d+)u$/) {
