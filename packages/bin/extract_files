@@ -34,6 +34,7 @@ use File::Path;
 use File::Copy;
 use File::Basename;
 #use Digest::SHA1;
+use Deb::Versions;
 use Parse::DebControl;
 use Parse::DebianChangelog;
 use Cwd;
@@ -113,7 +114,7 @@ sub do_debug {
 
 sub add_log {
     my $log  = shift;
-    
+
     do_debug( @_ );
     $$log .= localtime().": @_\n";
 }
@@ -174,7 +175,7 @@ sub unpack_allbinpkg {
 
     foreach my $pkg (@{$pkg_data->{bins}}) {
 	next if $already_seen{$pkg->{bin_name}}; # some assumptions about sane version numbers included
-	
+
 	unpack_binpkg($pkg->{bin_name}, $pkg->{deb}, $log );
 
 	$already_seen{$pkg->{bin_name}}++;
@@ -187,7 +188,7 @@ sub cleanup_binpkg {
     foreach my $pkg (keys %{$pkg_data->{bin_list}}) {
 	# rmtree should do that itself, but there seems to be a bug somewhere
 	system( "chmod", "-R", "u+rwx", "$TEMPDIR/$pkg" );
-	rmtree( "$TEMPDIR/$pkg" );	
+	rmtree( "$TEMPDIR/$pkg" );
     }
 }
 
@@ -241,7 +242,7 @@ sub write_log ($$) {
 
     open my $logfh, ">$dir/log" or do_error( "couldn't open log file $dir/log.\n$log" );
     flock $logfh, LOCK_EX or do_error( "couldn't lock log file $dir/log" );;
-    
+
     print $logfh $log;
 
     close $logfh or do_warning( "couldn't close log file $dir/log" );
@@ -257,7 +258,7 @@ sub extract_copyright_to_pkgpool {
 
     my $src_tgt = "$target_dir/copyright";
     copy( "$source_dir/debian/copyright", $src_tgt )
-	or add_log( $log, "seems to have been failed" );
+	or add_log( $log, "seems to have failed: $!" );
 
     foreach my $bin_pkg (keys %{$pkg_data->{bin_list}}) {
 
@@ -268,9 +269,9 @@ sub extract_copyright_to_pkgpool {
 	if (-f $cpy) {
 	    add_log( $log, "copy copyright file from binary package $bin_pkg" );
 	    copy( $cpy, $tgt )
-		or add_log( $log, "seems to have been failed" );
+		or add_log( $log, "seems to have failed: $!" );
 	} elsif (-l $cpy ) {
-	    add_log( $log, "copyright file $cpy is symlink, I can't handle that" );	    
+	    add_log( $log, "copyright file $cpy is symlink, I can't handle that" );
 	} elsif (-l $usd) {
 	    add_log( $log, "doc directory $usd is symlink" );
 	    my $link = readlink($usd) or add_log( $log, "readlink $usd failed" );
@@ -284,7 +285,7 @@ sub extract_copyright_to_pkgpool {
 		    add_log( $log, "symlink points to $pkg2, don't know what to do with that" );
 		}
 	    } else {
-	    	add_log( $log, "link seems fishy, not using" );
+		add_log( $log, "link seems fishy, not using" );
 	    }
 	}
 
@@ -302,7 +303,7 @@ sub extract_copyright_to_pkgpool {
 	}
 
     } #foreach $bin_pkg
-    
+
     unless (-e $src_tgt) {
 	add_log( $log, "copyright file $src_tgt still doesn't exist" );
 	# take one of the binary packages, prefering one that has
@@ -338,15 +339,51 @@ sub extract_changelog_to_pkgpool {
     if ($src_changelog) {
 	add_log( $log, "changelog file sucessfully copied" );
     } else {
-	add_log( $log, "seems to have been failed" );
+	add_log( $log, "seems to have failed: $!" );
     }
-    
-    add_log( $log, "create enhanced HTML version" );
-    my $chg = Parse::DebianChangelog->init( { infile => "$source_dir/debian/changelog" } );
-    $chg->html( { outfile => "$target_dir/changelog.html",
-	          template => "$configdir/tmpl/default.tmpl" } );
-    add_log( $log, scalar $chg->get_parse_errors );
 
+    add_log( $log, "create enhanced HTML version" );
+    my $chg = Parse::DebianChangelog->init;
+    my $parsed = $chg->parse( { infile => "$source_dir/debian/changelog" } );
+    if ($parsed) {
+	$chg->html( { outfile => "$target_dir/changelog.html",
+		      template => "$configdir/tmpl/default.tmpl" } );
+	add_log( $log, scalar $chg->get_parse_errors )
+	    if $chg->get_parse_errors;
+    } else {
+	do_warning( $chg->get_error );
+	add_log( $log, $chg->get_error );
+    }
+}
+
+sub manage_current_link {
+    my ($pkg_data, $config_data, $log, $source_dir, $target_dir) = @_;
+
+    my $parent_dir = dirname($target_dir);
+    my $dirname = basename($target_dir);
+    my $current_link = "$parent_dir/current";
+    add_log( $log, "parent_dir=$parent_dir; dirname=$dirname" );
+    unless (-l $current_link) {
+	add_log( $log, "create new current link" );
+	(chdir( $parent_dir ) and
+	 not system( 'ln', '-s', $dirname, 'current' )) or
+	 add_log( $log, "creating new current link failed: $!" );
+    } else {
+	my $old_target = readlink( $current_link );
+	(my $old_version = $old_target) =~ s/^[^_]*_//o;
+	if (version_cmp( $pkg_data->{src_version},
+			 $old_version) > 0) {
+	    add_log( $log,
+		     "old_version=$old_version; overwriting current link" );
+	    (chdir( $parent_dir ) and
+	     unlink( 'current' ) and
+	     not system( 'ln', '-s', $dirname, 'current' )) or
+	     add_log( $log, "overwriting current link failed: $!" );
+	} else {
+	    add_log( $log,
+		     "old_version=$old_version; not touching current link" );
+	}
+    }
 }
 
 sub extract_files {
@@ -368,7 +405,7 @@ sub extract_files {
 
 	my $target_dir = "$target/".pkg_pool_directory($pkg_data);
 	add_log( \$log, "source_dir=$source_dir; target_dir=$target_dir" );
-	
+
 	mkpath( $target_dir );
 
 	if ($config_data->{structure} == PKGPOOL) {
@@ -376,6 +413,8 @@ sub extract_files {
 					  $source_dir, $target_dir );
 	    extract_changelog_to_pkgpool( $pkg_data, $config_data, \$log,
 					  $source_dir, $target_dir );
+	    manage_current_link( $pkg_data, $config_data, \$log,
+				 $source_dir, $target_dir );
 	} elsif ($config_data->{structure} == DIGESTPOOL) {
 	    die "UNIMPLEMENTED!";
 	} else {
@@ -386,7 +425,7 @@ sub extract_files {
 	system( "chmod", "-R", "u+rwx", "$source_dir" );
 	rmtree( $source_dir );
 	cleanup_binpkg($pkg_data);
-	write_log( $target_dir, $log ); 
+	write_log( $target_dir, $log );
     }
 }
 
@@ -422,7 +461,7 @@ sub merge_src_bin_packages {
 		my %bin_data = %{$bin_packages->{$p}{$v}{$a}};
 
 		if (exists $src_packages->{$bin_data{bin_src}}{$bin_data{bin_src_version}}) {
-		    $src_packages->{$bin_data{bin_src}}{$bin_data{bin_src_version}}{bins} ||= []; 
+		    $src_packages->{$bin_data{bin_src}}{$bin_data{bin_src_version}}{bins} ||= [];
 		    push @{$src_packages->{$bin_data{bin_src}}{$bin_data{bin_src_version}}{bins}}, \%bin_data;
 		    $src_packages->{$bin_data{bin_src}}{$bin_data{bin_src_version}}{bin_list}{$p}++;
 		}
@@ -435,18 +474,18 @@ sub merge_src_bin_packages {
 
 sub read_dsc {
     my ( $dscname ) = @_;
-    
+
     my $parser = Parse::DebControl->new();
     my ( $raw_data, $pkg_data );
 
     open my $dscfh, "<", $dscname or do {
-    	do_warning( "reading file $dscname failed" );
+	do_warning( "reading file $dscname failed" );
 	return;
     };
 
     my $dsccontent = "";
     while (<$dscfh>) {
-    	next if /^\#/o;
+	next if /^\#/o;
 	if (/^-----BEGIN PGP SIGNED MESSAGE/o) {
 		while (<$dscfh> =~ /\S/) {}; # skip Hash: line and similar
 		next;
@@ -457,7 +496,7 @@ sub read_dsc {
 	$dsccontent .= $_;
     }
 
-    unless ( $raw_data = $parser->parse_mem( $dsccontent, 
+    unless ( $raw_data = $parser->parse_mem( $dsccontent,
 					     { discardCase => 1 } ) ) {
 	do_warning( "parsing file $dscname failed.\n$dsccontent" );
 	return;
@@ -476,13 +515,13 @@ sub read_dsc {
     };
 
     unless( $pkg_data->{src_name} && $pkg_data->{src_version}
-    	&& $pkg_data->{dsc} ) {
- 	use Data::Dumper;
- 	do_error( "something fishy happened.\n", Dumper( $pkg_data ) );
+	&& $pkg_data->{dsc} ) {
+	use Data::Dumper;
+	do_error( "something fishy happened.\n", Dumper( $pkg_data ) );
     }
-    
+
     do_debug( "found source package $pkg_data->{src_name}, version $pkg_data->{src_version}" );
-	
+
     return $pkg_data;
 }
 
@@ -494,7 +533,7 @@ sub read_deb {
 
     my $control = qx/dpkg-deb --info "$debname" control/;
 
-    unless ( $raw_data = $parser->parse_mem( $control, 
+    unless ( $raw_data = $parser->parse_mem( $control,
 					     { discardCase => 1 } ) ) {
 	do_warning( "parsing control information <<$control>> of file $debname failed" );
 	return;
@@ -519,9 +558,9 @@ sub read_deb {
 	$pkg_data->{bin_src} = $1;
 	$pkg_data->{bin_src_version} = $2;
     }
-    
+
     do_debug( "found binary package $pkg_data->{bin_name}, version $pkg_data->{bin_version}, architecture $pkg_data->{bin_arch}" );
-	
+
     return $pkg_data;
 }
 
@@ -586,7 +625,7 @@ if ($use_dump) {
 	or do_error( "couldn't open dump file $dumpfile: $!" );
     my $info = join "", <DUMP>;
     eval $info;
-    close DUMP or do_warning( "couldn't close dump file: $!" );    
+    close DUMP or do_warning( "couldn't close dump file: $!" );
 } else {
     do_info( "collect information (in $directory)" );
     read_sub( $directory );
