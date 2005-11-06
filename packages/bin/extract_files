@@ -40,6 +40,7 @@ use Parse::DebianChangelog;
 use Cwd;
 use Fcntl qw(:DEFAULT :flock);
 use Data::Dumper;
+use DB_File;
 
 use constant PKGPOOL => 1;
 use constant DIGESTPOOL => 2;
@@ -50,6 +51,7 @@ my $TEMPDIR;
 
 my $directory = cwd()."/pool";
 my $dumpfile = '';
+my $cachefile = '';
 my $target = cwd()."/extracted_files";
 my $workdir = '';
 my $configdir = cwd()."/etc";
@@ -62,6 +64,7 @@ my %opthash = (
 	       'config|c=s' => \$configdir,
 	       'target|t=s' => \$target,
 	       'workdir|w=s' => \$workdir,
+	       'cachefile=s' => \$cachefile,
 	       'dumpfile=s' => \$dumpfile,
 	       'use_dump' => \$use_dump,
 	       'version' => \$version,
@@ -69,7 +72,7 @@ my %opthash = (
 	       'help' => \$help,
 	       );
 
-my (%src_packages, %bin_packages);
+my (%src_packages, %bin_packages, %cache);
 
 Getopt::Long::config('no_getopt_compat', 'no_auto_abbrev');
 
@@ -478,22 +481,30 @@ sub read_dsc {
     my $parser = Parse::DebControl->new();
     my ( $raw_data, $pkg_data );
 
-    open my $dscfh, "<", $dscname or do {
-	do_warning( "reading file $dscname failed" );
-	return;
-    };
+    my $dsccontent = $cache{$dscname};
+    unless ($dsccontent) {
+	open my $dscfh, "<", $dscname or do {
+	    do_warning( "reading file $dscname failed" );
+	    return;
+	};
 
-    my $dsccontent = "";
-    while (<$dscfh>) {
-	next if /^\#/o;
-	if (/^-----BEGIN PGP SIGNED MESSAGE/o) {
+	$dsccontent = "";
+	while (<$dscfh>) {
+	    next if /^\#/o;
+	    if (/^-----BEGIN PGP SIGNED MESSAGE/o) {
 		while (<$dscfh> =~ /\S/) {}; # skip Hash: line and similar
 		next;
-	}
-	if (/^-----BEGIN PGP SIGNATURE/o) {
+	    }
+	    if (/^-----BEGIN PGP SIGNATURE/o) {
 		last; # stop reading
+	    }
+	    $dsccontent .= $_;
 	}
-	$dsccontent .= $_;
+
+	$cache{$dscname} = $dsccontent;
+    } elsif ($debug) {
+	(my $begin = substr($dsccontent,0,20)) =~ s/\n/\\n/go;
+	do_debug( "CACHE HIT: $dscname ($begin)" );
     }
 
     unless ( $raw_data = $parser->parse_mem( $dsccontent,
@@ -531,7 +542,12 @@ sub read_deb {
     my $parser = Parse::DebControl->new();
     my ( $raw_data, $pkg_data );
 
-    my $control = qx/dpkg-deb --info "$debname" control/;
+    if ($debug && $cache{$debname}) {
+	(my $begin = substr($cache{$debname},0,20)) =~ s/\n/\\n/go;
+	do_debug( "CACHE HIT: $debname ($begin)" );
+    }
+    $cache{$debname} ||= qx/dpkg-deb --info "$debname" control/;
+    my $control = $cache{$debname};
 
     unless ( $raw_data = $parser->parse_mem( $control,
 					     { discardCase => 1 } ) ) {
@@ -628,7 +644,14 @@ if ($use_dump) {
     close DUMP or do_warning( "couldn't close dump file: $!" );
 } else {
     do_info( "collect information (in $directory)" );
+    if ($cachefile) {
+	tie %cache, 'DB_File', $cachefile, O_CREAT|O_RDWR, 0640 
+	    or die "E: tie with file $cachefile failed: $!";
+    }
     read_sub( $directory );
+#FIXME: "untie attempted while 1 inner references still exist"
+#    untie %cache if tied %cache;
+    exit;
     do_info( "postprocess collected information" );
     merge_src_bin_packages( \%src_packages, \%bin_packages );
     if ($dumpfile) {
