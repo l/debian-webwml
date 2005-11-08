@@ -14,7 +14,7 @@ use HTML::Entities;
 # this is ok this way.  It says which server to query, on which port and what
 # to fetch from it.  The attribs array could be reduced.
 
-my $server = "master.debian.org";
+my $server = "bts2ldap.debian.net";
 my $port = "10101";
 my $base   = "dc=current,dc=bugs,dc=debian,dc=org";
 my $attrs  = [
