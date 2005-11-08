@@ -29,7 +29,7 @@ our $COPYRIGHT_URL = '/changelogs';
 our $SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=names&amp;version=all&amp;exact=1&amp;keywords=';
 our $SRC_SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=sourcenames&amp;version=all&amp;exact=1&amp;keywords=';
 our $BUG_URL = 'http://bugzilla.ubuntu.com/buglist.cgi?query_format=advanced&amp;resolution=DUPLICATE&amp;resolution=---&amp;bugidtype=include&amp;cmdtype=doit&amp;component=';
-our $LAUNCHPAD_URL = 'http://launchpad.net/distros/ubuntu/+sources/';
+our $LAUNCHPAD_URL = 'https://launchpad.net/distros/ubuntu/+source/';
 our $SRC_BUG_URL = $BUG_URL;
 our $QA_URL = 'http://packages.qa.debian.org/';
 our $BUILD_LOG_URL = 'http://people.ubuntu.com/~lamont/buildLogs';
