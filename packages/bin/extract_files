@@ -72,7 +72,7 @@ my %opthash = (
 	       'help' => \$help,
 	       );
 
-my (%src_packages, %bin_packages, %cache);
+my (%src_packages, %bin_packages, %cache, %stats);
 
 Getopt::Long::config('no_getopt_compat', 'no_auto_abbrev');
 
@@ -396,6 +396,7 @@ sub extract_files {
     add_log( \$log, "process source package $pkg_data->{src_name} ($pkg_data->{src_version})" );
 
     unless (to_update( $pkg_data, $config_data, \$log )) {
+	$stats{already_extracted}++;
 	do_debug( "source package $pkg_data->{src_name} ($pkg_data->{src_version}) doesn't need extracting" );
 	return;
     }
@@ -502,9 +503,12 @@ sub read_dsc {
 	}
 
 	$cache{$dscname} = $dsccontent;
-    } elsif ($debug) {
-	(my $begin = substr($dsccontent,0,20)) =~ s/\n/\\n/go;
-	do_debug( "CACHE HIT: $dscname ($begin)" );
+    } else {
+	$stats{src_cache}++;
+	if ($debug) {
+	    (my $begin = substr($dsccontent,0,20)) =~ s/\n/\\n/go;
+	    do_debug( "CACHE HIT: $dscname ($begin)" );
+	}
     }
 
     unless ( $raw_data = $parser->parse_mem( $dsccontent,
@@ -532,6 +536,7 @@ sub read_dsc {
     }
 
     do_debug( "found source package $pkg_data->{src_name}, version $pkg_data->{src_version}" );
+    $stats{src_pkgs}++;
 
     return $pkg_data;
 }
@@ -542,9 +547,12 @@ sub read_deb {
     my $parser = Parse::DebControl->new();
     my ( $raw_data, $pkg_data );
 
-    if ($debug && $cache{$debname}) {
-	(my $begin = substr($cache{$debname},0,20)) =~ s/\n/\\n/go;
-	do_debug( "CACHE HIT: $debname ($begin)" );
+    if ($cache{$debname}) {
+	$stats{bin_cache}++;
+	if ($debug) {
+	    (my $begin = substr($cache{$debname},0,20)) =~ s/\n/\\n/go;
+	    do_debug( "CACHE HIT: $debname ($begin)" );
+	}
     }
     $cache{$debname} ||= qx/dpkg-deb --info "$debname" control/;
     my $control = $cache{$debname};
@@ -570,12 +578,13 @@ sub read_deb {
 	deb => $debname,
     };
 
-    if ($pkg_data->{bin_src} =~ /^([\w.+-]+)\s*\(\s*=\s*([^\s)])\s*\)\s*$/) {
+    if ($pkg_data->{bin_src} =~ /^([\w.+-]+)\s*\(\s*=\s*([^\s\)])\s*\)\s*$/) {
 	$pkg_data->{bin_src} = $1;
 	$pkg_data->{bin_src_version} = $2;
     }
 
     do_debug( "found binary package $pkg_data->{bin_name}, version $pkg_data->{bin_version}, architecture $pkg_data->{bin_arch}" );
+    $stats{bin_pkgs}++;
 
     return $pkg_data;
 }
@@ -664,3 +673,11 @@ if ($use_dump) {
 }
 do_info( "begin extracting files" );
 extract_from_all( \%src_packages );
+do_info( <<STATS );
+Statistics:
+ Source Packages:   $stats{src_pkgs}
+ Cached Info:       $stats{src_cache}
+ Already Extracted: $stats{already_extracted}
+ Binary Packages:   $stats{bin_pkgs}
+ Cached Info:       $stats{bin_cache}
+STATS
