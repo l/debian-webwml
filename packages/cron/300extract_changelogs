@@ -15,28 +15,30 @@ NOCPY_BIN_TEMPLATE=$topdir/etc/copyright_error_bin
 logs="$topdir/files/logs"
 log="${logs}/changelogs.log"
 
-test -d $logs || mkdir -p $logs
+test -d "$logs" || mkdir -p "$logs"
+test -d "$tmpdir" || mkdir -p "$tmpdir"
 
-if [ -s $log ]
+if [ -s "$log" ]
 then
-    savelog -c 14 $log > /dev/null
+    savelog -c 14 "$log" > /dev/null
 fi
 
 (
 date
 
 for part in $parts; do
-    "${bindir}/extract_files" -v -d "${localdir}/pool/$part/" \
+    time "${bindir}/extract_files" -v -d "${localdir}/pool/$part/" \
 	-t "${htmldir}/changelogs/pool/$part/" \
-	-w "$tmpdir" --dumpfile ${filesdir}/changelogs.$part.dump \
-	-c "$configdir"
+	-w "$tmpdir" --dumpfile "${filesdir}/changelogs.$part.dump" \
+	--cachefile "${filesdir}/changelogs.cache"
 done
 
-find "${htmldir}/changelogs/" -name log -cmin +3600 \
+find "${htmldir}/changelogs/" -name log -cmin +7200 \
  | while read logfile; do
  	dir=$(dirname "$logfile")
 	echo deleting $dir
  	rm -r "$dir"
+	rmdir --ignore-fail-on-non-empty $(dirname "$dir")
 done
 
 date
