@@ -15,7 +15,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
 =head1 NAME
@@ -31,6 +31,10 @@ Parse::DebianChangelog::Entry - represents one entry in a Debian changelog
 =head3 init
 
 Creates a new object, no options.
+
+=head3 new
+
+Alias for init.
 
 =head3 is_empty
 
@@ -117,8 +121,6 @@ Parse::DebianChangelog::Entry->mk_accessors(qw( Closes Changes Maintainer
 						ExtraFields Header
 						Trailer Timestamp ));
 
-our $CLASSNAME = 'Parse::DebianChangelog::Entry';
-
 sub new {
     return init(@_);
 }
@@ -126,7 +128,6 @@ sub new {
 sub init {
     my $classname = shift;
     my $self = {};
-    $CLASSNAME = $classname;
     bless( $self, $classname );
 
     return $self;
@@ -144,6 +145,7 @@ sub is_empty {
 
 1;
 __END__
+
 =head1 SEE ALSO
 
 Parse::DebianChangelog
@@ -168,6 +170,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 =cut

@@ -31,13 +31,18 @@ security_ftpsite=$ftpsite
 polangs="de nl fr"
 ddtplangs="de cs da eo es fi fr hu it ja nl pl pt_BR pt_PT ru sk sv_SE uk"
 parts="main multiverse restricted universe"
-dists="hoary hoary-backports warty breezy"
+dists="hoary hoary-backports warty breezy breezy-backports dapper"
 arch_warty="i386 amd64 powerpc"
 arch_warty_updates="${arch_warty}"
 arch_hoary="${arch_warty}"
 arch_hoary_backports="${arch_hoary}"
 arch_hoary_updates="${arch_hoary}"
 arch_breezy="${arch_hoary}"
+arch_breezy_updates="${arch_breezy}"
+arch_breezy_backports="${arch_breezy}"
+arch_dapper="${arch_breezy}"
+arch_breezy_updates="${arch_dapper}"
+arch_breezy_backports="${arch_dapper}"
 
 # Miscellaneous
 #

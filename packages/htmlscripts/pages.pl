@@ -198,9 +198,9 @@ sub package_pages_walker {
 	    $package_page .= "<div id=\"pdeps\">\n";
 	    $package_page .= sprintf( "<h2>".gettext( "Other Packages Related to %s" )."</h2>\n", $name );
 	    if ($env->{distribution} eq "experimental") {
-		$package_page .= note( gettext( "Note that the \"<span class=\"pred\">experimental</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution." ) );
-	    } elsif ($env->{distribution} eq "hoary-backports") {
-		$package_page .= note( gettext( "Note that the \"<span class=\"pred\">hoary-backports</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../hoary/\">hoary</a>\" distribution." ) );
+		$package_page .= note( sprintf( gettext( "Note that the \"<span class=\"pred\">%s</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../%s/\">%s</a>\" distribution." ), 'experimental', 'unstable', 'unstable' ) );
+	    } elsif ($env->{distribution} =~ /(\w+)-backports/) {
+		$package_page .= note( sprintf( gettext( "Note that the \"<span class=\"pred\">%s</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../%s/\">%s</a>\" distribution." ), $env->{distribution}, $1, $1 ) );
 	    }
 	    
 	    $package_page .= pdeplegend( [ 'dep',  gettext( 'depends' ) ],
@@ -247,7 +247,7 @@ sub package_pages_walker {
 		}
 		$package_page .=  "\">$a</a></th>\n";
 		$package_page .= "<td>";
-		if ( $env->{distribution} ne "hoary-backports" ) {
+		if ( $env->{distribution} !~ /\w+-backports/ ) {
 		    $package_page .= sprintf( "[<a href=\"%s\">".gettext( "list of files" )."</a>]\n", "$FILELIST_URL$encodedpack&amp;version=$env->{distribution}&amp;arch=$a", $name );
 		} else {
 		    $package_page .= gettext("no current information available");
@@ -472,9 +472,9 @@ sub src_package_pages_walker {
 	$package_page .= "<div id=\"pdeps\">\n";
 	$package_page .= sprintf( "\n<h2>".gettext( "Other Packages Related to %s" )."</h2>\n", $name );
 	if ($env->{distribution} eq "experimental") {
-	    $package_page .= note( gettext( "Note that the \"<span class=\"pred\">experimental</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../unstable/\">unstable</a>\" distribution." ) );
-	} elsif ($env->{distribution} eq "hoary-backports") {
-	    $package_page .= note( gettext( "Note that the \"<span class=\"pred\">hoary-backports</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../hoary/\">hoary</a>\" distribution." ) );
+	    $package_page .= note( sprintf( gettext( "Note that the \"<span class=\"pred\">%s</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../%s/\">%s</a>\" distribution." ), 'experimental', 'unstable', 'unstable' ) );
+	} elsif ($env->{distribution} =~ /(\w+)-backports/) {
+	    $package_page .= note( sprintf( gettext( "Note that the \"<span class=\"pred\">%s</span>\" distribution is not self-contained; missing dependencies are likely found in the \"<a href=\"../../%s/\">%s</a>\" distribution." ), $env->{distribution}, $1, $1 ) );
 	}
 
 	$package_page .= pdeplegend( [ 'adep', gettext( 'build-depends' ) ],
@@ -732,11 +732,15 @@ sub write_all_package {
 	if ($distro eq "experimental") {
 	    $all_package .= $experimental_note;
 	}
-	$all_package .= "<dl>\n";
-	$all_package .= $all_pkg_l{$lang};
-	$all_package .= "</dl>\n";
+	if ($all_pkg_l{$lang}) {
+	    $all_package .= "<dl>\n";
+	    $all_package .= $all_pkg_l{$lang};
+	    $all_package .= "</dl>\n";
+	} else {
+	    $all_package .= note( gettext( 'No packages in this suite' ) );
+	}
 	$all_package .= trailer( '..', 'allpackages', $lang, @$langs );
-
+	    
 	my $filename = "$dest_dir/allpackages.$lang.html";
 	$files->update_file( $filename, $all_package );
 
@@ -745,7 +749,11 @@ sub write_all_package {
 	my $all_pkg_txt = sprintf( gettext( "All Debian Packages in \"%s\"" )."\n\n", $distro );
 	$all_pkg_txt .=  gettext( "Last Modified: " ). "LAST_MODIFIED_DATE\n".
 	    gettext( "Copyright (C) 1997-2005 SPI;\nSee <URL:http://www.debian.org/license> for the license terms.\n\n" );
-	$all_pkg_txt .= $all_pkg_txt_l{$lang}; 
+	if ($all_pkg_txt_l{$lang}) {
+	    $all_pkg_txt .= $all_pkg_txt_l{$lang};
+	} else {
+	    $all_pkg_txt .= gettext( 'No packages in this suite' );
+	}
 	
 	$filename = "$dest_dir/allpackages.$lang.txt.gz";
 	$files->update_gz_file( $filename, $all_pkg_txt );
