@@ -74,7 +74,7 @@ return (
 'x11'		=> [ "X Window System software",
 		"X servers, libraries, fonts, window managers, terminal emulators and many related applications." ],
 'debian-installer' => [ "debian-installer udeb packages",
-			"Special packages for building costumized debian-installer variants. Do not install them on a normal system!" ],
+			"Special packages for building customized debian-installer variants. Do not install them on a normal system!" ],
 );
 }
 

@@ -64,6 +64,8 @@ sub walk_db_src_packages ($\&;$) {
 sub print_virt_pack {
     my ( $pkg, $env ) = @_;
 
+    &Generated::Strings::string_lang('en');
+
     my $name = $pkg->get_name;
 
     my $package_page = header( title => $name, lang => 'en',

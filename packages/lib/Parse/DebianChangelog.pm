@@ -945,7 +945,6 @@ sub html {
 	}
 
 	$year ||= (($entry->{Date} =~ /\s(\d{4})\s/) ? $1 : (gmtime)[5] + 1900);
-
 	$navigation{$year}{NAV_VERSIONS} ||= [];
 	$navigation{$year}{NAV_YEAR} ||= $year;
 
