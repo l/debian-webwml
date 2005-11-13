@@ -1,10 +1,11 @@
 #use wml::debian::language_names
 #use wml::debian::common_tags
-#use wml::debian::translation-check translation="1.5"
+#use wml::debian::translation-check translation="1.6"
 
 <bind-gettext-domain domain="distrib" />
 
 <form method="GET" action="http://packages.debian.org/cgi-bin/search_contents.pl">
+<p>
 <label for="keyword"><gettext domain="distrib">Ключова дума</gettext>:</label>
 <input type="text" size="30" name="word" id="keyword" /> &nbsp;
 <input type="submit" value="<gettext domain="distrib">Търсене</gettext>" />
