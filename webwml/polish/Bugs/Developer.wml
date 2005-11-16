@@ -1,5 +1,5 @@
 #use wml::debian::template title="System ¶ledzenia b³êdów - informacje dla rozwijaj±cych" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.51"
+#use wml::debian::translation-check translation="1.61"
 
 <h1>Informacje dla rozwijaj±cych dotycz±ce systemu ¶ledzenia b³êdów</h1>
 
@@ -27,6 +27,7 @@ zg³aszaj±cego jak i <var>nnn</var><code>@bugs.debian.org</code>.</p>
   <li><a href="#maintincorrect">Nieprawid³owo przyporz±dkowani opiekunowie</a></li>
   <li><a href="#requestserv">Powtórne otwieranie, przekierowywanie i
   inne manipulacje na zg³oszeniach</a></li>
+  <li><a href="#subscribe">Subskrypcja b³êdów</a></li>
   <li><a href="#subjectscan">Czê¶ciowo wycofana opcja skanowania tematów</a></li>
   <li><a href="#x-debian-pr">Wycofana opcja <code>X-Debian-PR: quiet</code></a></li>
 </ul>
@@ -57,6 +58,11 @@ uprzedniej zmianie pola <code>To</code> na
 <var>nnn</var><code>@bugs.debian.org</code> (adres <var>nnn</var><code>-done</code> ma
 te¿ alias <var>nnn</var><code>-close</code>).</p>
 
+<p>Je¶li to mo¿liwe, proszê podaæ liniê <code>Version</code> w
+<a href="Reporting#pseudoheader">pseudo-nag³ówku</a> Twojej wiadomo¶ci podczas
+zamykania b³êdu, by system zarz±dzania b³êdami wiedzia³ które wydanie paczki
+zawiera poprawkê.</p>
+
 <p>Osoba zamykaj±ca zg³oszenie, osoba która zg³osi³a b³±d, oraz lista
 <code>debian-bugs-closed</code> otrzymaj± powiadomienie dotycz±ce zmiany stanu
 danego zg³oszenia. Do zg³aszaj±cego oraz na listê zostanie tak¿e wys³ana
@@ -80,9 +86,10 @@ b³êdu.</p>
 <var>nnn</var><code>@bugs.debian.org</code>, przeka¿e j± do opiekuna pakietu, dopisze do
 zg³oszenia, a tak¿e przeka¿e na listê <code>debian-bugs-dist</code>.</p>
 
-<p>Rozwijaj±cy mo¿e te¿ wys³aæ wiadomo¶æ e-mail do osoby, która zg³osi³a b³±d
-<var>nnn</var> pisz±c na adres
-<var>nnn</var><code>-submitter@bugs.debian.org</code>.</p>
+<p>Wysy³aj±c wiadomo¶ci do <var>nnn</var><code>-submitter@bugs.debian.org</code>
+nale¿y pamiêtaæ ¿e otrzyma go te¿ osoba, która zg³osi³a b³±d, oraz ¿e kopia
+wiadomo¶ci zostanie umieszczona w Systemie ¶ledzenia b³êdów. Wiadomo¶æ nie
+zostanie wys³ana do osoby przygotowuj±cej paczki.</p>
 
 <p>Je¶li chcesz wys³aæ wiadomo¶æ, która nie nadaje siê do przekazania na listê
 <code>debian-bugs-dist</code>, mo¿esz wys³aæ j± na adres
@@ -137,7 +144,7 @@ jednocze¶nie jego ca³kowitej bezu¿yteczno¶ci dla kogokolwiek. Aby poznaæ
 kompletne zasady dotycz±ce tego, jakie problemy zas³uguj± na te stopnie
 wa¿no¶ci, zobacz listê <a
 href="http://release.debian.org/sarge_rc_policy.txt">problemów
-krytycznych dla wydania Sarge</a>.
+krytycznych dla wydania Sarge</a>.</p>
 
 <dt><code>zwyk³y</code> (ang. <code>normal</code>)
 <dd>warto¶æ domy¶lna, pasuj±ca do wiêkszo¶ci b³êdów.
@@ -264,13 +271,22 @@ eksperymentalnej)
   kodowej &quot;woody&quot;.
 
 <dt><code>sarge</code>
-  <dd>Ten b³±d odnosi siê do wersji znajduj±cej siê w niewydanej jeszcze
-  wersji Debiana o nazwie kodowej &quot;sarge&quot;.
+<dd>Ten b³±d odnosi siê zw³aszcza do dystrybucji o nazwie kodowej &quot;sarge&quot;.
 
 <dt><code>sarge-ignore</code>
   <dd>Ten b³±d opó¼niaj±cy wydanie ma byæ ignorowany na potrzeby wydania
   sarge. <strong>Ten znacznik powinien byæ u¿ywany tylko przez mened¿era
   wydañ. Nie ustawiaj go samodzielnie bez jego wyra¼nej zgody.</strong>
+
+<dt><code>etch</code>
+  <dd>Ten b³±d odnosi siê zw³aszcza do dystrybucji (jeszcze nie wydanej)
+  o nazwie kodowej &quot;etch&quot;.
+
+<dt><code>etch-ignore</code>
+  <dd>Ten b³±d typu release-critical ma zostaæ pominiêty w celu
+  wydania dystrybucji etch. <strong>Ten znacznik powinien byæ u¿yty jedynie
+  przez menad¿era wydañ; nie ustawiaj go samodzielnie bez wyra¼nej zgody
+  z jego strony.</strong>
 
 <dt><code>sid</code>
   <dd>Ten b³±d odnosi siê do wersji znajduj±cej siê w niestabilnej wersji
@@ -340,15 +356,46 @@ adresem <code>override-change@debian.org</code>.
 <p>Mo¿liwa jest zmiana przyporz±dkowania b³êdu do pakietu, powtórne otwarcie
 omy³kowo zamkniêtego zg³oszenia, modyfikacja informacji mówi±cej o tym do
 kogo, o ile w ogóle, zosta³o przekazane zg³oszenie, zmiana stopnia wa¿no¶ci
-i tytu³u b³êdu, ustalenia w³a¶ciciela b³êdu a tak¿e ³±czenie i rozdzielanie
-poszczególnych zg³oszeñ. Mo¿na to zrobiæ wysy³aj±c odpowiedni± wiadomo¶æ na
-adres <code>control@bugs.debian.org</code>.</p>
+i tytu³u b³êdu, ustalenia w³a¶ciciela b³êdu, po³±czenie i ro¼dzielenie raportu
+b³edu oraz do zapisu wersji paczek w których b³êdy zosta³y znalezione,
+a tak¿e w których zosta³y poprawione. Mo¿na to zrobiæ wysy³aj±c odpowiedni±
+wiadomo¶æ na adres <code>control@bugs.debian.org</code>.</p>
 
 <p><a href="server-control">Format tej wiadomo¶ci</a> jest opisany w innym
 dokumencie dostêpnym na stronie WWW lub w pliku
 <code>bug-maint-mailcontrol.txt</code>. Wersjê tekstow± tego dokumentu mo¿na
 tak¿e uzyskaæ wysy³aj±c s³owo <code>help</code> na wymieniony wy¿ej adres.</p>
 
+<h2><a name="subscribe">Subskrypcja b³êdów</a></h2>
+
+<p>System ¶ledzenia b³êdów pozwala tak¿e osobom zg³aszaj±cym b³edy, deweloperom
+oraz innym zainteresowanym do do³±czenia do subskrypcji pojedyñczych b³edów.
+Ta opcja mo¿e byæ u¿yta przes osoby chc±ce mieæ podgl±d na dyskusjê b³edu bez
+konieczno¶ci subskrybcji paczki przez PTS. Wszystkie wiadomo¶ci wys³ane na
+<var>nnn</var><code>@debian.org</code> s± wysy³ane do osób w subskrybcji.</p>
+
+<p>Subskrybowanie do b³êdu mo¿e byæ wykonane przez wys³anie wiadomo¶ci pod adres
+<var>nnn</var><code>-subscribe@bugs.debian.org</code>. Temat oraz tre¶æ wiadomo¶ci
+s± ignorowane przez BTS. Kiedy tylko wiadomo¶æ zostanie przetworzona, u¿ytkownikowi
+jest wysy³ana wiadomo¶æ potwierdzaj±ca, na która trzeba odpowiedzieæ przed tym jak
+wiadomo¶ci dotycz±ce tego b³edu zostan± do niego wys³ane.</p>
+
+<p>Jest tak¿e mo¿liwe usuniêcie swojego adresu z listy subksybcji. Mo¿na to
+uczyniæ poprzez wys³anie wiadomo¶ci pod adres
+<var>nnn</var><code>-unsubscribe@bugs.debian.org</code>. Temat oraz tre¶æ
+wiadomo¶ci s± ignorowane przez BTS. U¿ytkownik musi odpowiedzieæ na wiadomo¶æ
+potwierdzaj±ca zanim zostanie usuniêty z listy.</p>
+
+<p>Domy¶lne, adres który chce zostaæ do³±czony do listy zasubskrybowanych jest
+znajdowany w nag³ówku <code>From</code>. Je¶li chcesz zapisaæ inny adres,
+musisz zakodowaæ adres, który ma zostaæ dopisany do listy. Przybiera to tak± postaæ:
+<var>nnn</var><code>-subscribe-</code><var>localpart</var><code>=</code><var>example.com</var><code>@bugs.debian.org</code>.
+Przyk³ad ten wys³a³by na adres <code>localpart@example.com</code> wiadomo¶c
+subskrybcji do b³edu. Czê¶æ <code>@</code> znaku musi zostaæ zakodowana poprzez
+zamienienie do postaci <code>=</code>. Podobnie, wypisanei z listy przybiera postaæ
+<var>nnn</var><code>-unsubscribe-</code><var>localpart</var><code>=</code><var>example.com</var><code>@bugs.debian.org</code>.
+W obu przypadkach temat oraz tre¶æ wiadomo¶ci zostan± przekazane na adres podany
+w potwierdzeniu wysy³anym przez system.</p>
 
 <h2><a name="subjectscan">Czê¶ciowo wycofana opcja skanowania tematów</a></h2>
 
