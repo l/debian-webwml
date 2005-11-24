@@ -1,0 +1,150 @@
+#use wml::debian::template title="debian-volatile"
+# #use wml::debian::recent_list
+
+#<h2>News</h2>
+#
+#<p><:= get_recent_list('News/$(CUR_YEAR)', '2',
+#'$(ENGLISHDIR)/devel/debian-volatile', '', '\d+\w*' ) :>
+#<a href="News">Older news</a>
+#</p>
+
+
+<h2>debian-volatile for end users</h2>
+
+<p><strong>What is debian-volatile?</strong><br />
+Some packages aim at fast moving targets like spam filtering and virus
+scanning, and even via using updated virus patterns, this doesn't really
+work for the full time of a stable release. The main issue of volatile
+is to allow system administrators to update their systems in a nice,
+consistent way without getting the drawbacks of using unstable, even
+without getting the drawback for the selected packages.
+</p>
+
+<p><strong>debian-volatile and security support?</strong><br />
+There is no support by the official security-team, but the volatile
+team will do support for volatile. Also a member of the debian-volatile
+team is also member of the
+<a href="http://secure-testing-master.debian.net/">Debian testing
+security team</a>.</p>
+
+<p><strong>Releases of debian-volatile?</strong><br />
+debian-volatile is separated into a staging and a release area. The
+staging area is only used by the build daemons. There is no guarantee
+that packages within this staging area are usable for end users. There
+might be no upgrade path for packages within the staging area.</p>
+
+<p>Packages are moved to the release area whenever a debian-volatile
+update announcement (VUA) is send to the
+<a href="http://lists.debian.org/debian-volatile-announce">debian-volatile
+announce mailing list</a>. The upgrade path of packages in this area is
+guaranteed, as well as the upgrade to the next stable release
+(etch).</p>
+
+<p><strong>Contact</strong><br />
+The generic contact address (new packages, mirror requests, ...) is
+<a href="mailto:debian-volatile@lists.debian.org">debian-volatile@lists.debian.org</a>.</p>
+<p>If you want to subscribe to that address, please see
+<a href="http://lists.debian.org/debian-volatile">http://lists.debian.org/debian-volatile</a>
+for details.</p>
+
+
+<h2>debian-volatile for developers</h2>
+
+<p><strong>Acceptance rules</strong><br />
+For a package to be included into debian-volatile, it has to meet the
+following criteria:</p>
+<ul>
+ <li>The packages should only go in in cooperation with the
+ maintainers.<br />
+ Means: A package should be uploaded to debian-volatile
+ only by its package maintainer(s). This is the only way we can guarantee
+ security support for packages in debian-volatile.</li>
+
+ <li>debian-volatile is not "just another place" for backports, but should only
+  contain changes to stable programs that are necessary to keep them
+  functional.</li>
+
+ <li>It should allow any administrator to "just use" volatile, as they "just
+   use" security.d.o, and they should be confident that nothing is broken by
+   that.</li>
+
+ <li>For bugs, the normal debian bug tracking system should be used.</li>
+
+ <li>Packages in main cannot require any software outside of main for
+   execution or compilation. Packages need to be autobuildable within the
+   same release.</li>
+
+ <li>Packages need to be policy-conformant; we usually take
+   <a href="http://release.debian.org/sarge_rc_policy.txt">\
+http://release.debian.org/sarge_rc_policy.txt</a>
+   as a hint what's not ok.</li>
+
+ <li>The upgrade path from volatile to the next stable release needs to be at
+  least as easy as from the current stable release; means e.g.
+  that the version in volatile must not be higher than in testing.</li>
+</ul>
+
+<p><strong>Procedure for a package to be included</strong><br />
+We experienced that the following procedure works quite well for new
+packages to be included to debian-volatile:</p>
+<ol>
+<li>Send a mail to debian-volatile@lists.debian.org<br />
+   This is for discussing your changes in public. It is also a good idea to
+   include a link to a unified diff. Please remember the debian-volatile
+   guidelines, i.e. make only necessary changes.<br />
+   I hereby encourage fellow developers to activly participate in this
+   discussion as the debian-volatile team wants to know which changes
+   the users want, and which not ... Everybody on the list is encouraged
+   to review the proposed changes.</li>
+
+<li>Upload to debian-volatile<br />
+   If you got the okay from the list, please upload at least
+   source and binary-all packages to volatile-master.debian.net
+   using FTP. Please document changes in debian/changelog.
+   Just saying<br />
+   <code>* Upload package to volatile</code><br />
+   is <em>NOT</em> okay.<br />
+   If it is not your first upload to volatile and your changes to the
+   previous version are security fixes, please tell us in advance. If
+   you already have, please put CAN numbers in the changelog. If you
+   do not have them, please tell us, we can obtain them for you. If you
+   want to contact the volatile-team private, then please speak with one
+   of its team members. Sometimes there are embargo dates on
+   publication of security bugs / fixes. We respect them.</li>
+
+<li>Packages are built automatically<br />
+   Now packages are built by the autobuilder network. No interaction is
+   needed here.</li>
+
+<li>volatile-announce-mail is being prepared<br />
+   While the package is autobuilt the debian-volatile team will contact
+   you about the content of the announce mail which is send via
+   debian-volatile-announce@lists.debian.org</li>
+
+<li>Package is released.<br />
+   The package is finally reviewed and released.</li>
+</ol>
+
+
+<p><strong>How to upload to volatile</strong><br />
+You should add the following sniplets to your ~/.dput.cf:</p>
+<pre>
+[volatile]
+method = ftp
+fqdn = volatile-master.debian.net
+incoming = /pub/UploadQueue/
+login = anonymous
+hash = md5
+</pre>
+
+<p>If you are using dupload, please add the following to
+your ~/.dupload.conf:</p>
+<pre>
+$cfg{'volatile'} = {
+        fqdn => "volatile-master.debian.net",
+        incoming => "/pub/UploadQueue/",
+        \# files pass on to dinstall on ftp-master which sends emails itself
+        dinstall_runs => 1,
+        passive => 1,
+};
+</pre>
