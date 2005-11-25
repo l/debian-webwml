@@ -6,10 +6,7 @@
       	margin-left: -2em;
       	text-align: right;
       }     
-      
-      h1.center                { text-align: center;  }
       h1.title                 {
-      	text-align: center; 
       	font-weight: bold; 
         text-shadow: 0.3em 0.3em 0.1em #F00;
       }
@@ -33,7 +30,6 @@
             margin-right: auto;
             margin-top: 1.5em;
             margin-bottom: 1.0em;
-            clear:                  both;
           }
      table.mainbody th {
             background:             #DEE7EC;
@@ -41,10 +37,10 @@
             border-bottom:          1px solid #8CACBB;
             border-right:           1px solid #8CACBB;
             color:                  Black;
-            font-weight:            normal;
-            padding:                         0em 1em 0em 1em;
-            white-space:            nowrap;
+            padding:                0.5em;
+            /* white-space:            nowrap; */
             text-align:             left;
+	    vertical-align:	    top;
           }
      table.mainbody td {
             border-right:           1px solid #8CACBB;
