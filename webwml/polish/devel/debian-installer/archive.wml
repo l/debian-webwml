@@ -1,0 +1,46 @@
+#use wml::debian::template title="Ustawianie apt-ftparchive" NOHEADER="true"
+#use wml::debian::recent_list
+#use wml::debian::translation-check translation="1.4"
+
+    <h1>Ustawianie apt-ftparchive do obs³ugi plików udeb</h1>
+
+    <p>apt-ftparchive wymaga pewnego dostrojenia by obs³ugiwa³ pliki udeb
+      poprawnie. U¿yj czego¶ takiego:</p>
+
+<pre>
+Dir {
+    ArchiveDir "/home/tfheen/public_html/d-i";
+    OverrideDir "indices";
+    CacheDir "indices";
+};
+
+TreeDefault {
+        Directory "pool/";
+};
+
+BinDirectory "pool/main" {
+     Packages "dists/sid/main/debian-installer/binary-i386/Packages";
+     BinOverride "override";
+     ExtraOverride "override.extra";
+};
+
+Default {
+        Packages {
+                 Extensions ".udeb";
+                 };
+};
+</pre>
+
+    <p>Oczywi¶cie bêdziesz musia³ dostosowaæ ¶cie¿ki do swoich potrzeb. By
+    wygenerowaæ pliki Packages:</p>
+    <ol> 
+      <li>Upewnij siê, ¿e wszystkie ¶cie¿ki i komponenty istniej±(<code>mkdir
+    -p dists/sid/main/debian-installer/binary-i386</code>)</li>
+      <li>u¿yj polecenia
+        <code>apt-ftparchive generate config</code> (je¶li powy¿sz±
+        konfiguracjê zapisa³e¶ w pliku o nazwie <kbd>config</kbd>)</li>
+    </ol>
+
+    <hrline>
+    <address><a href="mailto:tfheen@debian.org">Tollef Fog Heen</a></address>
+

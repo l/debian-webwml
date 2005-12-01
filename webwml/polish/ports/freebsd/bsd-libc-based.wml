@@ -1,0 +1,95 @@
+#pddp rafalm80
+#use wml::debian::template title="libc5-based Debian GNU/FreeBSD" BARETITLE="true" NOHEADER="yes"
+#include "$(ENGLISHDIR)/ports/freebsd/menu.inc"
+#use wml::debian::translation-check translation="1.3"
+
+<h1>Debian GNU/FreeBSD oparty na libc5</h1>
+
+<p>Debian GNU/FreeBSD oparty na libc5 jest architektur± z³o¿on± z j±dra
+<a href="http://www.freebsd.org/">FreeBSD</a>, powi±zanych z nim
+narzêdzi, biblioteki C i kilku specyficznych instrumentów, zebranych w
+,,normalny'' system Debian (GNU). Architektura ta obecnie jest oparta
+tylko na strukturze Intel x86.</p>
+
+<p>G³ównym opiekunem architektury jest Nathan Hawkins.</p>
+
+<p>Dostêpne by³y pakiety ale ich publiczna kopia ju¿ nie jest poniewa¿:
+<a href="$(HOME)/News/2002/20021122">serwer zosta³ stracony w po¿arze</a>. Z
+powodu tego i kilku innych nieszczê¶liwych wypadków prace nad
+architektur± zosta³y wstrzymane.</p>
+
+<p>Proszê odwo³aæ siê do strony najbli¿szego odpowiednika architektury
+<a href="../netbsd/">NetBSD</a> po wiêcej historycznych informacji.</p>
+
+<h2>Status</h2>
+
+<p><i>Ostatnia aktualizacja 22 kwiecieñ 2002 rok</i></p>
+
+<p>Kluczowe czêsci FreeBSD posiadaj± pakiety i system bazowy jest
+generalnie sprawny jednak¿e istnieje wiele problemów:</p>
+
+<h3>Problemy ze specyficznymi pakietami</h3>
+
+<ul>
+    <li>sysvinit jest za³atany i dzia³a, ale s± problemy z doprowadzeniem
+    ³±tek do takiego stanu kiedy bêd± mog³y zostaæ po³±czone bez
+    uszkadzania Linuksa.
+    </li>
+    <li>shadow jest ¼le przerobiony i wymaga du¿o pracy.
+	<i><b>Aktualizacja: Dokona³em du¿o zmian. Sytuacja jest ju¿
+	prawie dobra. Wymaga testowania.</b></i>
+    </li>
+    <li>apt-get segfaults a lot. It seems to work most of the time on source
+	packages, but fails reliably for binaries.
+	<i><b>Aktualizacja: ju¿ naprawione</b></i>
+    </li>
+    <li>groff: obecna wersja siê nie buduje, z powodu problemów zwi±zanych
+     z internacjonalizacj± libc.
+	<i><b>Update: fixed when langinfo.h was MFC'ed.</b></i>
+    </li>
+    <li>gcc/binutils: something is keeping gcc -g from actually including
+	debugging information. Prawdopodobnie to binutils i mo¿liwe,¿e co¶ 
+	jeszcze jest w nim z³ego. 
+	<i><b>Aktualizacja: teraz dzia³a. dziwne...</b></i>
+    </li>
+    <li>util-linux: ca³kowita klêska. Podda³em siê i napisa³em nowy
+	pakiet, util-bsd.
+    </li>
+    <li>e2fsprogs: doesn't build, probably isn't going to anytime soon.
+    </li>
+</ul>
+
+<h3>G³ówne problemy z architektur±</h3>
+
+<ul>
+    <li>libc nie zwiera -lintl. Wiele pakietów tego nie sprawdza i
+	ka¿dy wymaga ³atania.
+    </li>
+    <li>getopt i kilka innych funkcji -liberty nie znajduje siê w libc. 
+	Wiele specyficznych pakietów Debiana nie dzia³a z tego powodu.
+	<i><b>Aktualizacja: U¿y³em getopt_long architektury NetBSD i
+	wydaje siê, ¿e dzia³a dobrze. Wygl±da na to ¿e zosta³o to rozwi±zane.
+	</b></i>
+    </li>
+    <li>Brak mo¿liwo¶ci ustawienia finkcji multi-byte. Przerywa budowanie
+	wsparcia dla UTF w libncurses i kilku innych pakietach.
+	<i><b>Aktualizacja: libiconv is packaged. It may make a difference
+	here.</b></i>
+    </li>
+    <li>Zupe³nie inne wykonanie hase³ shadow. Najwidoczniej BSD 4.4
+	wprowadzi³o niewspó³pracuj±cy sposób dzia³ania. Aktualinie mo¿e
+	byæ lepiej, ale s± standardowe funkcje bibliotek, które sobie z
+	tym poradz±. Nie istniej± getspnam i friends.
+	<i><b>Aktualizacja: Ju¿ naprawione. Napisa³em bibliotekê,
+	libshadow i rozwi±za³o to problem.</b></i>
+    </li>
+    <li>U¿ycie libc6-dev w pakietach buduje zale¿no¶ci. Musi przestaæ!
+    </li>
+    <li>U¿ycie gcc 3.0. Nie powinno to stanowiæ problemu poniewa¿ inne
+	architektury s± na nim bazowane.
+    </li>
+    <li>Potrzebny unikatowy typ wêz³a do konfiguracji. Konfiguracje
+	FreeBSD s± czasami z³e dla Debiana i by³o by mi³o móc unikn±æ
+	rozbicia FreeBSD zmianami dla Debiana. Najwiêkszy problem
+	stanowi libtool.</li>
+</ul>
