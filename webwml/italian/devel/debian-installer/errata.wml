@@ -1,157 +1,84 @@
 #use wml::debian::template title="Errata Corrige del Debian-Installer"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.68" maintainer="Claudio Moratti"
+#use wml::debian::translation-check translation="1.77" maintainer="Claudio Moratti"
 
-<h1 id="rc3">Errata per la release candidate 3</h1>
-
+<h1 id="etch-beta1">Errata per etch beta 1</h1>
 <p>
-Questa è una lista di problemi conosciuti nella versione rc3 dell'installatore
+Questa è una lista di problemi conosciuti nella versione etch beta 1 dell'installatore
 Debian. Se il problema riscontrato non è presente in questa pagina, è possibile inviare un 
-<a href="report-template">report dell'installazione</a> descrivendo il problema
-oppure <a href="http://wiki.debian.net/DebianInstallerBrokenThings">controllare il wiki</a> 
-per altri problemi conosciuti.
+<a href="report-template">report dell'installazione</a> descrivendo il problema.
+</p>
+<p>
+Nota: Gli errata per l'installatore grafico sono elencati separatamente più in basso.
 </p>
 
 <ul>
-	<li><b>JFS non funzionante su ia64.</b>
-	Il filesystem JFS non funziona nell'installazione per ia64 utilizzando il
-	kernel 2.6 (predefinito). Evitare di utilizzare JFS oppure usare il
-	kernel 2.4.
+	<li>
+	<b>L'immagine iso netinst è troppo grande</b><br>
+	L'immagine iso netinst è troppo grande per essere contenuta in una penna USB da
+	128 mb. Funzionerà correttamente come una normale immagine CD o su una penna USB
+	più grande, per una installazione via USB.
+ 	</li>
+	<li>
+	<b>i386: sono richiesti più di 32mb per l'installazione</b><br>
+	La quantità minima di memoria necessaria per eseguire correttamente l'installazione
+	su un i386 è di 48 mb, al posto dei precedenti 32 mb. Ci auguriamo di ridurre la quantità
+	necessaria a 32 mb. I requisiti di memoria potrebbero aver subito cambiamenti anche per
+	le altre architetture.
 	</li>
-	<li><b>Schermata rossa durante il boot.</b>
-	Alcune volte l'installatore si avvia con una schermata rossa, al boot,
-	usando un kernel 2.6. L'installazione funziona correttamente,
-	non c'è nessun errore, ma lo sfondo dello schermo è semplicemente del 
-	colore sbagliato, rosso invece di blu. Questo è il bug #<a href="http://bugs.debian.org/273192">273192</a>.
+	<li>
+	<b>sparc:  i driver per i dispositivi sbus non vengono caricati automaticamente</b><br>
+	A causa di un bug in discover, i driver per i dispositivi su sbun non verranno caricati
+	automaticamente	(<a href="http://bugs.debian.org/339565">#339565</a>). Per caricare manualmente
+	i moduli del kernel necessari, è possibile usare il comando modprobe da VT2.
+ 	</li>
+	<li>
+	<b>sparc: 2.4 non entra correttamente in modalità lowmem</b><br>
+	A causa di un bug nell'installatore, quando viene eseguito con il kernel 2.4 per sparc,
+	questo entrerà in modalità "low memory" in tutti i sistemi, indipendentemente dalla quantità
+	di memoria. Si raccomanda di di usare il kernel 2.6, se possibile.
 	</li>
-	<li><b>Il driver SATA può bloccare l'accesso al dispositivo CD nell'installazione
-	da CD.</b>
-	Nei sistemi con un controller IDE SATA a cui è connesso il dispositivo CD, 
-	è possibile osservare l'installatore indugiare sul dispositivo CD durante il 
-	rilevamento dell'hardware o fallire la lettura del CD poco dopo. Una possibile causa
-	è che il driver SATA (ata_piix e forse altri) stia bloccando l'accesso al dispositivo
-	CD.<br>
-	È possibile aggirare questo problema avviando l'installatore in modalità esperto e, 
-	nel passo "Rileva e monta CD-ROM", selezionare solo i driver necessari per il
-	supporto al CD. Questi sono (ide-)generic, ide-cd e isofs.<br>
-	I driver necessari per l'accesso al disco saranno caricati lo stesso, ma 
-	in seguito. Caricando i driver del CD prima dei driver SATA in questo modo,
-	è possibile completare l'installazione. Bisogna notare che l'accesso al CD-ROM potrebbe
-	continuare ad essere un problema dopo il riavvio per entrare nel sistema installato.
+	<li>
+	<b>sparc: l'immagine netboot 2.4 necessita di parametri speciali al boot</b><br>
+	L'immagine netboot necessita del passaggio di ramdisk_size=16000 per avviare correttamente
+	il kernel 2.4.
 	</li>
-	<li><b>L'installatore fallisce l'avvio su alcuni sistemi HP PA-RISC.</b>
-	In alcuni sistemi il ramdisk configurato per l'installatore è troppo piccolo. 
-	Avviandolo con il parametro "ramdisk_size=21504" (oppure,
-	se fallisce anche con questo, con un valore più grande) dovrebbe risolvere il
-	problema. Questo problema è stato riscontrato anche per HP9000-712/60 e HP715/100XC.
+	<li>
+	<b>oldworld powerpc: dischetti floppy non avviabili</b><br>
+	I dischetti di avvio oldworld per powerpc non funzioneranno in quanto
+	miboot non è incluso.
 	</li>
-</ul>
-
-<h1 id="rc2">Errata vecchi per rc2</h1>
-
-<ul>
-	<li><b>Sparc32 fallisce nell'installazione da CD.</b>
-	I sistemi Sparc32 falliscono nell'installazione da CD a causa del modulo 
-	isofs mancante nel kernel. Questo è stato corretto nel build 
-	giornaliero.
+	<li>
+	<b>s390: Non supportato</b><br>
+	L'architettura s390 non è inclusa in questo rilascio a causo della mancanza di supporto in
+	parted.
 	</li>
-	<li><b>IA-64 con kernel 2.6, problemi con la tastiera USB</b>
-	L'installatore per ia64 ha un bug che impedisce il funzionamento delle
-	tastiere USB e altri dispositivi USB, durante il processo di installazione,
-	quando viene usato il kernel 2.6. Come alternativa usare il kernel 2.4,
-	installare utilizzando i build giornalieri, oppure usare una console seriale o 
-	una tastiera non USB per l'installazione.
-	</li>
-	<li><b>Kernel amiga m68k mancante.</b>
-	L'immagine "netinst" non include il kernel per amiga. Questo vuol dire 
-	che viene installato il kernel q40 ma non vengono installati i moduli
-	amiga e il riavvio potrebbe fallire, oppure concludersi senza il supporto alla rete o
-	altro. Come alternativa usare una immagine diversa, oppure un altro metodo di installazione 
-	per amiga. Questo è stato corretto nelle immagini giornaliere.
-	</li>
-	<li><b>Lo schema di partizionamento per le workstation multi-utente non è usabile su Alpha.</b>
-	Il programma di partizionamento partman ha un bug che provoca l'aggiunta
-	di una 9° partizione fantasma, quando viene usato questo sistema di 
-	partizionamento. Questo impedisce l'installazione del bootloader aboot 
-	con un messaggio riguardante la sovrapposizone delle partizioni.
-	Come alternativa usare un diverso profilo di partizionamento guidato oppure 
-	partizionare manualmente il disco. Questo problema è stato corretto nei build 
-	giornalieri.
-	</li>
-	<li><b>Tabella delle partizioni cancellata su Sparc.</b>
-	Su Sparc (e altre macchine con Sun disk label) gli utenti
-	<strong>non</strong> dovrebbero creare una partizione di swap, 
-	o partizioni per LVM o RAID, all'<em>inizio</em> del disco.  
-	Quando gli utenti fanno ciò, la tabella delle partizioni risiede nella 
-	prima partizione e viene successivamente completamente cancellata quando 
-	la partizione viene usata.
-	</li>
-	<li><b>L'installatore 2.6 può scombussolare il partizionamento di Windows.</b>
-	Le correzioni al problema del CHS del kernel 2.6 in parted sono apparentemente
-	incomplete e alcune persone hanno riferito che Windows non si avvia
-	dopo aver installato Debian. Questo problema non sembra affliggere tutti 
-	i sistemi, o la maggior parte, ma non si hanno abbastanza elementi per 
-	esserne sicuri. Se la partizione di Windows è importante, e non si vuole 
-	correre il rischio, non usare la modalità "linux26" per l'installazione ed 
-	installare con un kernel 2.4 (modalità "linux").
-	È possibile aggiornare in seguito alla versione 2.6 il kernel installato. 
-	Si ritiene che questo problema sia stato risolto nei build giornalieri.
+	<li>
+	<b>sparc32: kernel 2.6 non supportato</b><br>
+	Solo il kernel 2.4 funziona con la sotto architettura sparc32.
 	</li>
 </ul>
 
-<h1 id="pre-rc2">Errata vecchi per pre-rc2</h1>
-
+<h2 id="etch-beta1-gtk">Errata per il rilascio alpha dell'installatore grafico</h2>
 <ul>
-	<li><b>Il punto di montaggio del CDROM sparisce ad ogni avvio</b>
-	Se il punto di montaggio /media/cdrom è rimosso ad ogni avvio, probabilmente
-	è dovuto <a href="http://bugs.debian.org/255103">ad un bug in
-	discover1</a>. Si può risolvere il problema eseguendo <tt>dpkg-reconfigure discover1</tt>
-	ed indicando di non gestire i punti di montaggio dei CDROM. Questo 
-	problema è stato corretto in unstable e verrà corretto presto in testing.
+	<li>
+	<b>L'installatore grafico è di qualità alpha</b><br>
+	L'installatore grafico incluso in questo rilascio è di qualità alpha con bug conosciuti
+	e limitazioni. Da usarsi a proprio rischio. L'installatore grafico richiede almeno 92 mb 
+	di memoria per essere eseguito.
 	</li>
-	<li><b>La selezione del paese fallisce per lingue parlate in un solo un paese</b>
-	Le lingue come giapponese e finlandese, che sono probabilmente parlate
-	in una sola nazione, possono evidenziare dei problemi nell'installatore,
-	che si blocca dopo la selezione della lingua. Questo problema è stato corretto
-	nei build giornalieri.
+	<li>
+	<b>Si blocca nella fase conclusiva dell'installazione</b><br>
+	Durante il passaggio "Termina installazione", l'Installatore si fermerà quando proverà a
+	smontare tutti i filesystem. È possibile aggirare questo problema selezionando VT2
+	(usando ctrl-alt-F2) ed eseguire il comando 'reboot'.
 	</li>
-	<li><b>Directory <tt>/.aptitude</tt> dimenticata</b>
-	L'installazione lascia accidentalmente una directory <tt>/.aptitude</tt> nella
-	root, piuttosto che nella directory home dell'utente root. 
-	Questo problema è stato corretto nella nuova versione dell'installatore e la
-	directory più essere rimossa senza effetti collaterali.
-	</li>
-</ul>
-
-<h1 id="rc1">Errata vecchi per rc1</h1>
-
-<ul>
-	<li><b>Il partizionatore può confondere partizioni di uguale dimensione.</b>
-	In alcune circostanze, il partizionatore potrebbe confondere partizioni di 
-	dischi diversi che hanno la medesima dimensione. È necessario prestare attenzione,
-	lavorando con questo tipo di partizioni, che il partizionatore faccia quanto richiesto sulla
-	partizione indicata. (Questo problema è stato corretto nei build giornalieri.)</li>
-
-	<li><b>Almeno 64 mb richiesti per l'installazione su s390.</b>
-	Su s390, la macchina virtuale deve avere 64M per l'installazione.
-	(Questo problema viene risolto nei build giornalieri.)
-	</li>
-	
-	<li><b>Alcuni bug di hotplug portano a riavvii ciclici, monitor inutilizzabile.</b>
-	La versione di hotplug installata dalla rc1 potrebbe provare a caricare
-	i moduli watchdog che causano il riavvio del sistema circa 1 minuto dopo 
-	il loro caricamento. Oppure potrebbe caricare un driver per il frame buffer
-	che rende la console inusabile. Per aggirare questi problemi si può avviare
-	in modalità di emergenza e aggiungere i moduli non sicuri (come "i810-tco")
-	al file /etc/hotplug/blacklist, oppure disabilitare/rimuovere hotplug
-	(attenzione: disabilitare hotplug potrebbe rendere le tastiere USB inusabili).
-	Questi bug sono stati corretti nelle nuove versioni di hotplug.
-	</li>
-
-	<li><b>Immagini dei CD per sparc danneggiate.</b>
-	Le immagini CD "netinst" e quella completa sono danneggiate a causa di
-	un problema con mkisofs. Il CD businesscard è ok. Si sta lavorando per 
-	produrre delle immagini corrette. Se il comando "file" riporta un grande numero negativo
-	di blocchi nell'immagine ISO, questa è danneggiata e non si avvierà.
+	<li>
+	<b>eseguire una shell e cambiare console</b><br>
+	L'opzione "Esegui in una shell" nel menù principale non funziona nell'installatore
+	grafico. È presente anche un problema nel cambiare la console quando il frontend 
+	grafico è occupato. Per aggirare questo problema, assicurarsi che il frontend 
+	grafico sia in attesa di input e solo a questo punto cambiare verso VT2, VT3 o VT4.
+	VT2 da accesso ad una shell. Il frontend grafico si trova in VT5.
 	</li>
 </ul>
