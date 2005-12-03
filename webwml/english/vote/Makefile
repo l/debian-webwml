@@ -8,10 +8,11 @@ SUBS=$(wildcard [12][0-9][0-9][0-9])
 
 include $(WMLBASE)/Make.lang
 
+GETTEXTFILES += templates.mo
 
 index.$(LANGUAGE).html: index.wml \
   $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/[0-9]*/vote_*.wml) \
-  $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml $(GETTEXTDEP)
 
 howto_follow.$(LANGUAGE).html: howto_follow.wml \
   $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/[0-9]*/vote_*.wml) \
