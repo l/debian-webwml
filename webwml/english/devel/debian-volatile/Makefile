@@ -13,8 +13,9 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml
 volatile-mirrors.$(LANGUAGE).html: volatile-mirrors.wml $(TEMPLDIR)/template.wml volatile-mirrors.inc
 
 volatile-mirrors.inc: 
-	wget http://volatile.debian.net/debian-volatile/project/Mirrors.masterlist
-	perl -f volatile_mirror_list.pl >volatile-mirrors.inc
+	wget -O Mirrors.masterlist http://volatile.debian.net/debian-volatile/project/Mirrors.masterlist
+	if [ `grep -i volatile-http Mirrors.masterlist|wc -l` -ne 0 ]; then perl -f ./volatile_mirror_list.pl >volatile-mirrors.inc; fi
 
 team.$(LANGUAGE).html: team.wml $(TEMPLDIR)/template.wml
 
+.PHONY: volatile-mirrors.inc
