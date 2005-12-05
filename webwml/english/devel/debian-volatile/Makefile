@@ -5,12 +5,16 @@
 
 WMLBASE=../..
 CUR_DIR=devel/debian-volatile
-#SUBS=News
 
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
-  $(TEMPLDIR)/recent_list.wml
-#  $(TEMPLDIR)/recent_list.wml \
-#  $(wildcard News/[0-9]*/*.wml) \
-#  $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/News/[0-9]*/*.wml)
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml
+
+volatile-mirrors.$(LANGUAGE).html: volatile-mirrors.wml $(TEMPLDIR)/template.wml volatile-mirrors.inc
+
+volatile-mirrors.inc: 
+	wget http://volatile.debian.net/debian-volatile/project/Mirrors.masterlist
+	perl -f volatile_mirror_list.pl >volatile-mirrors.inc
+
+team.$(LANGUAGE).html: team.wml $(TEMPLDIR)/template.wml
+
