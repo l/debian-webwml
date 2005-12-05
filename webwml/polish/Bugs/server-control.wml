@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - serwer kontroli" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.45"
+#use wml::debian::translation-check translation="1.49"
 
 <h1>Wprowadzenie do serwera pocztowego kontroli i manipulacji b³êdów</h1>
 
@@ -37,6 +37,7 @@ jest na stronach WWW, w pliku
 <dl>
 
 <dt><code>reassign</code> <var>numer_b³êdu</var> <var>pakiet</var>
+ [ <var>wersja</var> ]
 <dd>
 
 Odnotowuje, ¿e b³±d nr <var>numer_b³êdu</var> jest b³êdem w pakiecie
@@ -44,6 +45,9 @@ Odnotowuje, ¿e b³±d nr <var>numer_b³êdu</var> jest b³êdem w pakiecie
 u¿ytkownik zapomnia³ o pseudo-nag³ówku, lub do zmiany wcze¶niejszego
 przydzia³u. ¯adne zawiadomienie nie jest wysy³ane do nikogo (oprócz zwyk³ej
 informacji o przetworzeniu polecenia).
+
+<p>Je¶li podasz <var>wersjê</var>, system kontroli b³êdów odnotuje to,
+¿e b³±d wp³ywa na tê wersjê nowo-przydzielonego pakietu.
 
 <dt><code>reopen</code> <var>numer_b³êdu</var>
  [ <var>adres_¼ród³a</var> | <code>=</code> | <code>!</code> ]
@@ -70,6 +74,39 @@ ponownie zamkniêty.</p>
 zmieni nawet ¼ród³a zg³oszenia. Aby zmieniæ ¼ród³o otwartego zawiadomienia
 u¿yj polecenia <code>submitter</code>. Zauwa¿, ¿e to polecenie
 zawiadomi oryginalnego autora zg³oszenia o zmianie.
+
+<p>Je¿eli b³±d zosta³ zarejestrowany jako zamkniêty w konkretnej wersji
+pakietu lecz powtórzy³ siê w nastêpnej wersji,
+lepiej jest u¿yæ komendy <code>found</code>.
+
+<dt><code>found</code> <var>numer_b³êdu</var> [ <var>wersja</var> ]
+
+<dt>Zauwa¿, ¿e #<var>numer_b³êdu</var> zosta³ zauwa¿ony w podanej
+<var>wersji</var> pakietu do którego zosta³ przydzielony.
+
+<p>System kontroli wersji u¿ywa informacji, w po³±czeniu
+z za³atan± wersj± zarejestrowan± podczas zamykania b³êdu, by wy¶wietliæ
+listê b³êdów otwartych w ró¿nych wersjach pakietów. Rozwa¿a otwarcie b³êdu,
+je¿eli nie posiada za³atanej wersji, lub je¶li zosta³ znaleziony wcze¶niej,
+ni¿ kiedy zosta³ za³atany.
+
+<p>Je¶li <var>wersja</var> nie zosta³± podana, wtedy lista za³atanych wersji
+b³edu jest czyszczona. Jest to identyczne z zachowaniem
+komendy <code>reopen</code>.
+
+<p>Komenda ta zosta³a wprowadzona z powodu polecenia <code>reopen</code>,
+poniewa¿ trudnym by³o dodanie <var>wersji</var> do sk³adni
+komendy bez wprowadzania niejasno¶ci.
+
+<dt><code>notfound</code> <var>numer_b³êdu</var> <var>wersja</var>
+
+<dd>Usuwa zapis o tym, ¿e #<var>numer_b³êdu</var> zosta³ zarejestrowny
+w podanej <var>wersji</var> pakietu, do którego zosta³ do³±czony.
+
+<p>Ró¿ni siê to od zamykania b³êdu w tej wersji tym, ¿e b³±d nie znajduje
+siê na li¶cie w tej wersji jako za³atany; ¿adna informacja o tej wersji
+bêdzie znana. Przeznaczone jest to do naprawiania pomy³ek w zapisie tego,
+kiedy b³±d zosta³ znaleziony.
 
 <dt><code>submitter</code> <var>numer_b³êdu</var>
 <var>adres_¼ród³a</var> | <code>!</code>
@@ -240,12 +277,13 @@ u¿yj wielu poleceñ <code>unmerge</code> w Twojej wiadomo¶ci.
   <code>upstream</code>, <code>confirmed</code>, <code>d-i</code>,
   <code>ipv6</code>, <code>lfs</code>, <code>l10n</code>,
   <code>potato</code>, <code>woody</code>, <code>sarge</code>,
-  <code>sarge-ignore</code>, <code>sid</code> i <code>experimental</code>.
+  <code>sarge-ignore</code>, <code>etch</code>, <code>etch-ignore</code>,
+  <code>sid</code>, oraz <code>experimental</code>.
 
   <p>Aby dowiedzieæ siê co <a href="Developer#tags">oznaczaj±</a> zajrzyj do
   ogólnej dokumentacji systemu ¶ledzenia b³êdów dla rozwijaj±cych. 
 
-<dt><code>close</code> <var>numer_b³êdu</var> (przestarza³e)
+<dt><code>close</code> <var>numer_b³êdu</var> [ <var>wersja_za³atania</var> ] (przestarza³e)
 <dd>
 
 Zamyka zawiadomienie o b³êdzie nr <var>numer_b³êdu</var>.
@@ -260,6 +298,9 @@ zawiadomienie o b³êdzie wie dlaczego jest on zamykany. Z tego powodu u¿ywanie
 tego polecenia jest przestarza³e. Zapoznaj siê z informacjami dla rozwijaj±cych
 o tym <a href="Developer#closing">jak poprawnie zamykaæ b³êdy</a>.
 
+<p>Je¶li podasz <var>numer_za³atania</var>, system kontroli b³êdów
+odnotuje, ¿e b³±d zosta³ naprawiony w tej wersji pakietu.
+
 <dt><code>package</code> [ <var>nazwa_pakietu</var> ... ]
 
   <dd>Ogranicza dalsze polecenia tak aby dzia³a³y wy³±czenie na b³êdach
@@ -272,7 +313,7 @@ o tym <a href="Developer#closing">jak poprawnie zamykaæ b³êdy</a>.
 
   <pre>
         package foo
-        reassign 123456 bar
+        reassign 123456 bar 1.0-1
 
         package bar
         retitle 123456 bar: bar sucks
