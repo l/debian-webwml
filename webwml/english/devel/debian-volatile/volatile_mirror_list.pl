@@ -688,7 +688,7 @@ $last_modify = gmtime($stat[9]);
 
 if ($output_type eq 'html') {
 	$html=1;
-	intro();
+#	intro();
 #	primary_mirrors();
 	secondary_mirrors();
 	footer_stuff();
