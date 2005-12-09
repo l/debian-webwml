@@ -1,60 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
 <head>
-  <title>test.c</title>
+	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+	<title>test.c</title>
+	<link rel="stylesheet" type="text/css" href="highlight.css">
 </head>
-<body bgcolor="#ffffff" text="#000000">
-<pre>
-<font color="#444444">/*
+<body>
+<pre><span class="com">/*
  * Sample code with a few buffer overflows. (<a href="test.c">Plain file here</a>)
- */</font>
+ */</span> 
 
-<font color="0000ff"><strong>#include <font color="#008000">&lt;stdio.h&gt;</font></strong></font>
-<font color="0000ff"><strong>#include <font color="#008000">&lt;stdlib.h&gt;</font></strong></font>
+<span class="dir">#include &lt;stdio.h&gt;
+</span><span class="dir">#include &lt;stdlib.h&gt;
+</span>
+<span class="kwb">int</span> main<span class="sym">(</span> <span class="kwb">int</span> argc<span class="sym">,</span> <span class="kwb">char</span> <span class="sym">*</span>argv<span class="sym">[] )
+{
+</span>    <span class="kwb">char</span> dir<span class="sym">[</span><span class="num">1024</span><span class="sym">];
+</span>    <span class="kwb">char</span> cmd<span class="sym">[</span><span class="num">1200</span><span class="sym">];
+</span>    <span class="kwb">char</span> buff<span class="sym">[</span><span class="num">1024</span><span class="sym">];
+</span>    <span class="kwb">FILE</span> <span class="sym">*</span>fp <span class="sym">=</span> NULL<span class="sym">;
+</span>    <span class="kwb">int</span> i <span class="sym">=</span> <span class="num">0</span><span class="sym">;
 
-<strong>int</strong> <font color="#2040a0">main</font><font color="4444FF">(</font> <strong>int</strong> <font color="#2040a0">argc</font>, <strong>char</strong> <font color="4444FF">*</font><font color="#2040a0">argv</font><font color="4444FF">[</font><font color="4444FF">]</font> <font color="4444FF">)</font>
-<font color="4444FF"><strong>{</strong></font>
-    <strong>char</strong> <font color="#2040a0">dir</font><font color="4444FF">[</font><font color="#FF0000">1024</font><font color="4444FF">]</font><font color="4444FF">;</font>
-    <strong>char</strong> <font color="#2040a0">cmd</font><font color="4444FF">[</font><font color="#FF0000">1200</font><font color="4444FF">]</font><font color="4444FF">;</font>
-    <strong>char</strong> <font color="#2040a0">buff</font><font color="4444FF">[</font><font color="#FF0000">1024</font><font color="4444FF">]</font><font color="4444FF">;</font>
-    <font color="#2040a0">FILE</font> <font color="4444FF">*</font><font color="#2040a0">fp</font> <font color="4444FF">=</font> <font color="#2040a0">NULL</font><font color="4444FF">;</font>
-    <strong>int</strong> <font color="#2040a0">i</font> <font color="4444FF">=</font> <font color="#FF0000">0</font><font color="4444FF">;</font>
+</span>    <span class="kwa">if</span> <span class="sym">(</span> argc <span class="sym">==</span> <span class="num">2</span> <span class="sym">)
+    {
+</span>      strcpy<span class="sym">(</span> dir<span class="sym">,</span> argv<span class="sym">[</span> <span class="num">1</span> <span class="sym">] );
+    }
+</span>    <span class="kwa">else
+</span>    <span class="sym">{
+</span>      <span class="kwa">if</span> <span class="sym">(</span> getenv<span class="sym">(</span> <span class="str">&quot;HOME&quot;</span> <span class="sym">) !=</span> NULL <span class="sym">)
+      {
+</span>	sprintf<span class="sym">(</span> dir<span class="sym">,</span> <span class="str">&quot;%s&quot;</span><span class="sym">,</span> getenv<span class="sym">(</span> <span class="str">&quot;HOME&quot;</span> <span class="sym">) );
+      }
+</span>      <span class="kwa">else
+</span>      <span class="sym">{
+</span>	strcpy<span class="sym">(</span> dir<span class="sym">,</span> <span class="str">&quot;/&quot;</span> <span class="sym">);
+      }
+    }
 
-    <strong>if</strong> <font color="4444FF">(</font> <font color="#2040a0">argc</font> <font color="4444FF">=</font><font color="4444FF">=</font> <font color="#FF0000">2</font> <font color="4444FF">)</font>
-    <font color="4444FF"><strong>{</strong></font>
-      <font color="#2040a0">strcpy</font><font color="4444FF">(</font> <font color="#2040a0">dir</font>, <font color="#2040a0">argv</font><font color="4444FF">[</font> <font color="#FF0000">1</font> <font color="4444FF">]</font> <font color="4444FF">)</font><font color="4444FF">;</font>
-    <font color="4444FF"><strong>}</strong></font>
-    <strong>else</strong>
-    <font color="4444FF"><strong>{</strong></font>
-      <strong>if</strong> <font color="4444FF">(</font> <font color="#2040a0">getenv</font><font color="4444FF">(</font> <font color="#008000">&quot;HOME&quot;</font> <font color="4444FF">)</font> <font color="4444FF">!</font><font color="4444FF">=</font> <font color="#2040a0">NULL</font> <font color="4444FF">)</font>
-      <font color="4444FF"><strong>{</strong></font>
-	<font color="#2040a0">sprintf</font><font color="4444FF">(</font> <font color="#2040a0">dir</font>, <font color="#008000">&quot;%s&quot;</font>, <font color="#2040a0">getenv</font><font color="4444FF">(</font> <font color="#008000">&quot;HOME&quot;</font> <font color="4444FF">)</font> <font color="4444FF">)</font><font color="4444FF">;</font>
-      <font color="4444FF"><strong>}</strong></font>
-      <strong>else</strong>
-      <font color="4444FF"><strong>{</strong></font>
-	<font color="#2040a0">strcpy</font><font color="4444FF">(</font> <font color="#2040a0">dir</font>, <font color="#008000">&quot;/&quot;</font> <font color="4444FF">)</font><font color="4444FF">;</font>
-      <font color="4444FF"><strong>}</strong></font>
-    <font color="4444FF"><strong>}</strong></font>
+</span>    snprintf<span class="sym">(</span>cmd<span class="sym">,</span> <span class="kwa">sizeof</span><span class="sym">(</span>cmd<span class="sym">)-</span><span class="num">1</span><span class="sym">,</span> <span class="str">&quot;%s %s&quot;</span><span class="sym">,</span> <span class="str">&quot;ls&quot;</span><span class="sym">,</span> dir <span class="sym">);
+</span>    fp <span class="sym">=</span> popen<span class="sym">(</span> cmd<span class="sym">,</span> <span class="str">&quot;r&quot;</span> <span class="sym">);
+</span>    <span class="kwa">if</span> <span class="sym">(</span> fp <span class="sym">==</span> NULL <span class="sym">)
+    {
+</span>      printf<span class="sym">(</span><span class="str">&quot;Failed to invoke: %s</span><span class="esc">\n</span><span class="str">&quot;</span><span class="sym">,</span> cmd <span class="sym">);
+</span>      <span class="kwa">return</span> <span class="num">-1</span><span class="sym">;
+    }
 
-    <font color="#2040a0">snprintf</font><font color="4444FF">(</font><font color="#2040a0">cmd</font>, <strong>sizeof</strong><font color="4444FF">(</font><font color="#2040a0">cmd</font><font color="4444FF">)</font><font color="4444FF">-</font><font color="#FF0000">1</font>, <font color="#008000">&quot;%s %s&quot;</font>, <font color="#008000">&quot;ls&quot;</font>, <font color="#2040a0">dir</font> <font color="4444FF">)</font><font color="4444FF">;</font>
-    <font color="#2040a0">fp</font> <font color="4444FF">=</font> <font color="#2040a0">popen</font><font color="4444FF">(</font> <font color="#2040a0">cmd</font>, <font color="#008000">&quot;r&quot;</font> <font color="4444FF">)</font><font color="4444FF">;</font>
-    <strong>if</strong> <font color="4444FF">(</font> <font color="#2040a0">fp</font> <font color="4444FF">=</font><font color="4444FF">=</font> <font color="#2040a0">NULL</font> <font color="4444FF">)</font>
-    <font color="4444FF"><strong>{</strong></font>
-      <font color="#2040a0">printf</font><font color="4444FF">(</font><font color="#008000">&quot;Failed to invoke: %s<font color="#77dd77">\n</font>&quot;</font>, <font color="#2040a0">cmd</font> <font color="4444FF">)</font><font color="4444FF">;</font>
-      <strong>return</strong> <font color="4444FF">-</font><font color="#FF0000">1</font><font color="4444FF">;</font>
-    <font color="4444FF"><strong>}</strong></font>
+</span>    <span class="kwa">while</span><span class="sym">(</span> i <span class="sym">=</span> fread<span class="sym">(</span> buff<span class="sym">,</span> <span class="num">1</span><span class="sym">,</span> <span class="kwa">sizeof</span><span class="sym">(</span>buff<span class="sym">),</span> fp <span class="sym">) )
+    {
+</span>      printf<span class="sym">(</span> buff <span class="sym">);
+    }
 
-    <strong>while</strong><font color="4444FF">(</font> <font color="#2040a0">i</font> <font color="4444FF">=</font> <font color="#2040a0">fread</font><font color="4444FF">(</font> <font color="#2040a0">buff</font>, <font color="#FF0000">1</font>, <strong>sizeof</strong><font color="4444FF">(</font><font color="#2040a0">buff</font><font color="4444FF">)</font>, <font color="#2040a0">fp</font> <font color="4444FF">)</font> <font color="4444FF">)</font>
-    <font color="4444FF"><strong>{</strong></font>
-      <font color="#2040a0">printf</font><font color="4444FF">(</font> <font color="#2040a0">buff</font> <font color="4444FF">)</font><font color="4444FF">;</font>
-    <font color="4444FF"><strong>}</strong></font>
-	
-    <font color="#2040a0">pclose</font><font color="4444FF">(</font> <font color="#2040a0">fp</font> <font color="4444FF">)</font><font color="4444FF">;</font>
-    
-    <strong>return</strong> <font color="#FF0000">0</font><font color="4444FF">;</font>
-<font color="4444FF"><strong>}</strong></font>
+</span>    pclose<span class="sym">(</span> fp <span class="sym">);
 
+</span>    <span class="kwa">return</span> <span class="num">0</span><span class="sym">;
+}</span>
 </pre>
 <hr>
-syntax highlighted by <a href="http://www.palfrader.org/code2html">Code2HTML</a>, v. 0.9.1
+<p>
+HTML generated by <a href="http://www.andre-simon.de/">highlight 2.2-8</a><br>
+<a href="http://packages.debian.org/highlight">Debian package highlight</a>
+</p>
 </body>
 </html>
+<!--HTML generated by highlight 2.2-8, http://www.andre-simon.de/-->
