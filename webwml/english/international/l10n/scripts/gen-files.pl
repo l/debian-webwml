@@ -485,9 +485,9 @@ sub get_stats_podebconf {
                 my $addorig = '';
                 foreach $line (@{$data->podebconf($pkg)}) {
                         my ($pofile, $lang, $stat, $link) = @{$line};
-                        last unless $lang eq '_';
+                        next unless $lang eq '_';
 
-                        $pofile =~ s#^debian/##;
+                        $pofile =~ s#^debian/(po/)?##;
                         $link =~ s/:/\%3a/g;
                         $addorig .= " [<a href=\"".
                                 ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root).
