@@ -78,10 +78,6 @@ $altcvs->options(
 $max_versions = 5;
 $min_versions = 1;
 
-# $border_head = "<table width=\"95%\" align=\"center\" border=0 cellpadding=0 cellspacing=0><tr bgcolor=\"#000000\"><td>"
-#              ."<table width=\"100%\" border=0 cellpadding=0 cellspacing=1><tr bgcolor=\"#ffffff\"><td>";
-# $border_foot = "</td></tr></table></td></tr></table>";
-
 
 $date = strftime "%a %b %e %H:%M:%S %Y %z", localtime;
 
@@ -389,7 +385,7 @@ foreach $lang (@search_in) {
     
             printf HTML "<h1 style=\"background-color: %s\; margin: 0\;\"><a name=\"top\"></a>", $color;
 	    printf HTML "%s: %s</h1>\n", $config{'title'}, ucfirst $lang;
-            printf HTML "<table style=\"background-color: %s\; width: 100%\; font-weight: bold\; margin: 0\; text-align: center\;\">\n", $color;
+            printf HTML "<table summary=\"Translation Summary for $lang\" style=\"background-color: %s\; width: 100%\; font-weight: bold\; margin: 0\; text-align: center\;\">\n", $color;
             print HTML "<colgroup span=\"4\" width=\"25%\"></colgroup>\n";
             # printf HTML "<tr><td colspan=4><h1 align=\"center\">%s: %s</h1></td></tr>", $config{'title'}, ucfirst $lang;
     
@@ -429,7 +425,7 @@ foreach $lang (@search_in) {
             # outputs the content
             if ($o_body) {
                 print HTML "<h3><a name='outdated'>Outdated translations</a>: <a href='#top'>(top)</a></h3>\n";
-                print HTML "<table border=0 cellpadding=1 cellspacing=1>\n";
+                print HTML "<table summary=\"Outdated Translations\" border=0 cellpadding=1 cellspacing=1>\n";
                 print HTML "<tr><th>File</th><th>Translated</th><th>Origin</th><th>Comment</th>";
                 if ($opt_d eq "u") { print HTML "<th>Unified diff</th>"; }
                 elsif ($opt_d eq "h") { print HTML "<th>Colored diff</th>"; }
@@ -442,7 +438,7 @@ foreach $lang (@search_in) {
             }
             if ($u_body) {
                 print HTML "<h3><a name='untranslated'>Pages not translated</a>: <a href='#top'>(top)</a></h3>\n";
-		print HTML "<table>\n";
+		print HTML "<table summary=\"Untranslated Pages\">\n";
                 print HTML $u_body;
 		print HTML "</table>\n";
             }
@@ -456,7 +452,7 @@ foreach $lang (@search_in) {
             if ($lang ne 'english') {
                 print HTML "<h3><a name='gettext'>Translations of templates (gettext files)</a>: <a href='#top'>(top)</a></h3>\n";
     #            print HTML $border_head;
-                print HTML "<table width=\"100%\">\n";
+                print HTML "<table summary=\"Gettext Statistics\" width=\"100%\">\n";
                 print HTML "<tr><th>File</th><th>Up to date</th><th>Fuzzy</th><th>Untranslated</th><th>Total</th></tr>\n";
                 foreach my $domain (sort keys %po_total) {
                     next if $domain eq 'total';
@@ -512,7 +508,7 @@ print HTMLI "<h2>Translated web pages</h2>\n";
 printf HTMLI "<p>There are %d pages to translate.</p>\n",($wml{'english'}+$untranslated{'english'});
 
 # print HTMLI $border_head;
-print HTMLI "<table class=\"stattrans\">\n";
+print HTMLI "<table summary=\"Translation Statistics by Page Count\" class=\"stattrans\">\n";
 print HTMLI "<colgroup width=\"20%\">\n";
 print HTMLI "<col>\n";
 print HTMLI "</colgroup>";
@@ -556,7 +552,7 @@ print HTMLI "<h2>Translated web pages (by size)</h2>\n";
 printf HTMLI "<p>There are %d bytes to translate.</p>\n",($wml_s{'english'}+$untranslated_s{'english'});
 
 # print HTMLI $border_head;
-print HTMLI "<table class=\"stattrans\">\n";
+print HTMLI "<table summary=\"Translation Statistics by Page Size\" class=\"stattrans\">\n";
 # print HTMLI "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
 print HTMLI "<colgroup span=\"1\">\n";
 print HTMLI "<col width=\"20%\">\n";
@@ -601,7 +597,7 @@ print HTMLI "</table>\n";
 print HTMLI "<h2>Translated templates (gettext files)</h2>\n";
 printf HTMLI "<p>There are %d strings to translate.</p>\n",$po_total{'total'};
 # print HTMLI $border_head;
-print HTMLI "<table class=\"stattrans\">\n";
+print HTMLI "<table summary=\"Gettext Translation Statistiks\"class=\"stattrans\">\n";
 # print HTMLI "<table width=\"100%\" border=0 bgcolor=\"#cdc9c9\">\n";
 print HTMLI "<colgroup span=\"1\"width=\"28%\">\n";
 print HTMLI "</colgroup>";
