@@ -11,7 +11,7 @@ GETTEXTFILES += others.mo
 include $(WMLBASE)/Make.lang
 
 ifeq "$(LANGUAGE)" "en"
-textfiles := test.c test.c.html
+textfiles := test.c test.c.html highlight.css
 desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
 
 install:: $(desttextfiles)
