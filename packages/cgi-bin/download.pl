@@ -99,10 +99,19 @@ my @amd64_european_sites = (
 			    );
 my @amd64_asian_sites = (
         "hanzubon.jp/debian-amd64/debian",
-			    );
+			 );
 my @amd64_north_american_sites = (
         "mirror.espri.arizona.edu/debian-amd64/debian",
-			    );
+				  );
+my @kfreebsd_north_american_sites = (
+	"www.gtlib.gatech.edu/pub/gnuab/debian",
+				     );
+my @kfreebsd_european_sites = (
+        # master site, aka ftp.gnuab.org
+        "kfreebsd-gnu.debian.net/debian",
+        "ftp.easynet.be/ftp/gnuab/debian",
+	"ftp.de.debian.org/debian-kfreebsd",
+			       );
 my @nonus_north_american_sites = (
 #	"ftp.ca.debian.org/debian-non-US",
 	"debian.yorku.ca/debian/non-US",
@@ -162,6 +171,7 @@ my %arches = (
         s390    => 'IBM S/390',
 	"hurd-i386" => 'Hurd (i386)',
 	amd64   => 'AMD64',
+	"kfreebsd-i386" => 'GNU/kFreeBSD (i386)'
 );
 
 my $urlbase = "http://www.debian.org";
@@ -228,6 +238,23 @@ END
   yet, but the AMD64 porter group keeps their archive in sync with
   the official archive as close as possible. See the
   <a href="http://www.debian.org/ports/amd64/">AMD64 ports page</a> for
+  current information.</p>
+END
+
+} elsif ($arch eq 'kfreebsd-i386') {
+
+    print_links( "North America", $file, @kfreebsd_north_american_sites );
+    print_links( "Europe", $file, @kfreebsd_european_sites );
+#    print_links( "Australia and New Zealand", $file,
+#		 @nonus_australian_sites );
+#    print_links( "Asia", $file, @amd64_asian_sites );
+#    print_links( "South America", $file, @nonus_south_american_sites );
+
+	print <<END;
+  <p>Note that GNU/kFreeBSD is not officialy included in the Debian archive
+  yet, but the GNU/kFreeBSD porter group keeps their archive in sync with
+  the official archive as close as possible. See the
+  <a href="http://www.debian.org/ports/kfreebsd-gnu/">GNU/kFreeBSD ports page</a> for
   current information.</p>
 END
 

@@ -28,6 +28,7 @@ nonus_ftpsite=http://ftp.uk.debian.org/debian-non-US
 security_ftpsite=http://security.debian.org/debian-security
 volatile_ftpsite=http://volatile.debian.net/debian-volatile
 amd64_ftpsite=http://amd64.debian.net/debian
+kfreebsd_ftpsite=http://kfreebsd-gnu.debian.net/debian
 
 # Architectures
 #
@@ -39,7 +40,7 @@ dists="oldstable stable stable-proposed-updates testing testing-proposed-updates
 arch_oldstable="alpha arm hppa i386 ia64 m68k mips mipsel powerpc s390 sparc"
 arch_stable="${arch_oldstable} amd64"
 arch_testing="${arch_stable}"
-arch_unstable="${arch_stable} hurd-i386"
+arch_unstable="${arch_stable} hurd-i386 kfreebsd-i386"
 arch_experimental="${arch_unstable}"
 arch_testing_proposed_updates="${arch_testing}"
 arch_stable_proposed_updates="${arch_stable}"
