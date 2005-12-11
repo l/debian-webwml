@@ -5,11 +5,13 @@
 <define-menu-item name="list"><menu-list></define-menu-item>
 <define-menu-item name="rank"><menu-rank></define-menu-item>
 <define-menu-item name="pot"><menu-pot></define-menu-item>
+<define-menu-item name="errors"><menu-errors></define-menu-item>
 <define-menu-item name="README-trans"><menu-README-trans></define-menu-item>
 
 <menu-item name="l10n"          basename="../">
 <menu-item name="list"          basename="./">
 <menu-item name="rank"          basename="rank">
 <menu-item name="pot"           basename="pot">
+<menu-item name="errors"        basename="errors">
 <menu-item name="README-trans"  basename="README-trans">
 

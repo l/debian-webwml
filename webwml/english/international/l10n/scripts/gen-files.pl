@@ -71,6 +71,7 @@ my @nonfree = ();
 my %score = ();
 my %total = ();
 my $tmpl_errors_maint = {};
+my $podebconf_errors_maint = {};
 
 foreach my $pkg ($data->list_packages()) {
         next unless (length $pkg); # skip headers
@@ -468,19 +469,53 @@ sub process_templates {
 
 sub get_stats_podebconf {
         my ($section, $packages) = @_;
-        my ($pkg, $line, $lang, %list);
+        my ($pkg, $line, $lang, $maint, %list);
 
         $total{$section} = 0;
         my %done  = ();
         my %todo  = ();
         my %excl  = ();
         my $orig  = '';
+	my $podebconf_errors = {};
         foreach $pkg (sort @{$packages}) {
                 next unless $data->has_podebconf($pkg);
 
                 my $list = {};
                 foreach (@pd_langs) {
                         $list{uc $_}  = 0;
+                }
+                if ($data->has_errors($pkg)) {
+                        $podebconf_errors->{$pkg} = { charsetname => [], invalidpo => [], charset => [], missingfile => [], unknownlanguage => [], outofdatetemplate => [], outofdatepo => [] };
+                        my $found = 0;
+                        foreach my $error (@{$data->errors($pkg)}) {
+				next unless ($error =~ /(podebconf|debian\/po\/)/);
+                                if ($error =~ m/gettext: msgfmt: debian\/po\/([^.]+\.po): warning: Charset (.*) is not a portable /) {
+                                        push(@{$podebconf_errors->{$pkg}->{charsetname}}, "$1: $2");
+                                        $found = 1;
+                                } elsif ($error =~ m/gettext: debian\/po\/([^.]+\.po):\d+:\d+: parse error/) {
+                                        push(@{$podebconf_errors->{$pkg}->{invalidpo}}, "$1");
+                                        $found = 1;
+                                } elsif ($error =~ m/gettext: debian\/po\/([^.]+\.po):\d+: `msgid' and `msgstr' entries/) {
+                                        push(@{$podebconf_errors->{$pkg}->{invalidpo}}, "$1");
+                                        $found = 1;
+                                } elsif ($error =~ m/gettext: debian\/po\/([^.]+\.po):\d+:\d+: invalid multibyte sequence/) {
+                                        push(@{$podebconf_errors->{$pkg}->{charset}}, "$1");
+                                        $found = 1;
+#                                } elsif ($error =~ m/gettext: debian\/po\/([^.]+\.po): can't guess language/) {
+#                                        push(@{$podebconf_errors->{$pkg}->{unknownlanguage}}, "$1");
+#                                        $found = 1;
+                                } elsif ($error =~ m/podebconf: file ([^ ]+) not found/) {
+                                        push(@{$podebconf_errors->{$pkg}->{missingfile}}, "$1");
+                                        $found = 1;
+                                } elsif ($error =~ m/podebconf: file debian\/po\/templates\.pot not up-to-date/) {
+                                        push(@{$podebconf_errors->{$pkg}->{outofdatetemplate}}, "templates.pot");
+                                        $found = 1;
+                                } elsif ($error =~ m/podebconf: file debian\/po\/([^.]+\.po) not up-to-date/) {
+                                        push(@{$podebconf_errors->{$pkg}->{outofdatepo}}, "$1");
+                                        $found = 1;
+				}
+                        }
+                        delete $podebconf_errors->{$pkg} unless $found;
                 }
                 my $addorig = '';
                 foreach $line (@{$data->podebconf($pkg)}) {
@@ -522,8 +557,12 @@ sub get_stats_podebconf {
 		              "\"><td>";
                         if ($stat =~ m/^(\d+)t(\d+)f(\d+)u$/) {
                                 $score{$lang} += $1;
-                                $str .= '*' if $curtotal != ($1 + $2 + $3);
                         }
+			if (defined $podebconf_errors->{$pkg}) {
+			    $str .= "<a href=\"errors-by-pkg#P$pkg\">!</a>&nbsp;";
+			} else {
+			    $str .= "&nbsp;&nbsp;";
+			}
 		        $str .= (percent_stat($stat) eq "100%" ? $pkg : "<a href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>");
 		        $str .= "</td><td>".show_stat($stat)."</td><td><a href=\"";
                         $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/$opt_d/";
@@ -545,6 +584,9 @@ sub get_stats_podebconf {
                         my $l = uc($lang) || 'UNKNOWN';
                         next if $list{$l};
                         $excl{$l}  = '' unless defined($excl{$l});
+			if (defined $podebconf_errors->{$pkg}) {
+			    $excl{$l} .= " (<a href=\"errors-by-pkg#P$pkg\">!</a>)";
+			}
                         $excl{$l} .= "<a href=\"pot#$pkg\">$pkg</a>, ";
                 }
         }
@@ -573,6 +615,67 @@ sub get_stats_podebconf {
         open (GEN, "> $opt_l/po-debconf/gen/$section.orig")
                 || die "Unable to write into $opt_l/po-debconf/gen/$section.orig";
         print GEN "<ul>\n".$orig."</ul>\n" if $orig ne '';
+	close (GEN);
+	open (GEN, "> $opt_l/po-debconf/gen/errors-by-pkg.$section.inc");
+        foreach $pkg (sort keys %$podebconf_errors) {
+                $maint = $data->maintainer($pkg);
+                $maint =~ s/\s*<.*>//;
+                $maint =~ s/&/&amp;/g;
+	        my $anchor_maint = lc $maint;
+                $anchor_maint =~ s/[^a-z0-9]/_/g;
+
+                print GEN "<li><a name=\"P$pkg\">$pkg</a> ".$data->version($pkg)." [<a href=\"errors-by-maint#M$anchor_maint\">$maint</a>]\n";
+                my $errors_pkg = "<ul>\n";
+                if (@{$podebconf_errors->{$pkg}->{charsetname}}) {
+                        $errors_pkg .= "<li><a href=\"errors#charsetname\">invalid-charset-name-in-po</a>\n";
+			foreach my $error (@{$podebconf_errors->{$pkg}->{charsetname}}) {
+			     $errors_pkg .= "<br>\n".$error."\n";
+			}
+			$errors_pkg .= "</li>\n";
+                }
+                if (@{$podebconf_errors->{$pkg}->{invalidpo}}) {
+                        $errors_pkg .= "<li><a href=\"errors#invalidpo\">invalid-po</a><br>\n";
+			foreach my $error (@{$podebconf_errors->{$pkg}->{invalidpo}}) {
+			     $errors_pkg .= " $error";
+			}
+			$errors_pkg .= "</li>\n";
+                }
+                if (@{$podebconf_errors->{$pkg}->{charset}}) {
+                        $errors_pkg .= "<li><a href=\"errors#charset\">wrong-charset</a><br>\n";
+			foreach my $error (@{$podebconf_errors->{$pkg}->{charset}}) {
+			     $errors_pkg .= " $error";
+			}
+			$errors_pkg .= "</li>\n";
+                }
+                if (@{$podebconf_errors->{$pkg}->{missingfile}}) {
+                        $errors_pkg .= "<li><a href=\"errors#missingfile\">missing-file-in-POTFILES.in</a>\n";
+			foreach my $error (@{$podebconf_errors->{$pkg}->{missingfile}}) {
+			     $errors_pkg .= "<br>\n".$error."\n";
+			}
+			$errors_pkg .= "</li>\n";
+                }
+                if (@{$podebconf_errors->{$pkg}->{outofdatetemplate}}) {
+                        $errors_pkg .= "<li><a href=\"errors#template\">not-up-to-date-templates.pot</a></li>\n";
+                }
+                if (@{$podebconf_errors->{$pkg}->{outofdatepo}}) {
+                        $errors_pkg .= "<li><a href=\"errors#po\">not-up-to-date-po-file</a><br>\n";
+			foreach my $error (@{$podebconf_errors->{$pkg}->{outofdatepo}}) {
+			     $errors_pkg .= " $error";
+			}
+			$errors_pkg .= "</li>\n";
+                }
+                if (@{$podebconf_errors->{$pkg}->{unknownlanguage}}) {
+                        $errors_pkg .= "<li><a href=\"errors#unknownlanguage\">unknown-language</a><br>\n";
+			foreach my $error (@{$podebconf_errors->{$pkg}->{unknownlanguage}}) {
+			     $errors_pkg .= " $error";
+			}
+			$errors_pkg .= "</li>\n";
+                }
+                $errors_pkg .= "</ul>\n";
+                print GEN $errors_pkg;
+                $podebconf_errors_maint->{$maint} = {} unless defined($podebconf_errors_maint->{$maint});
+                $podebconf_errors_maint->{$maint}->{$pkg} = "$pkg ".$data->version($pkg)."\n".$errors_pkg;
+        }
         close (GEN);
 }
 
@@ -605,6 +708,18 @@ sub process_podebconf {
                 print GEN "<dd><language-name $lang /></dd>\n";
         }
         print GEN "</dl>\n";
+        open (GEN, "> $opt_l/po-debconf/gen/errors-by-maint.inc");
+        foreach my $maint (sort keys %$podebconf_errors_maint) {
+                my $anchor_maint = lc $maint;
+                $anchor_maint =~ s/[^a-z0-9]/_/g;
+                $anchor_maint =~ s/&/&amp;/g;
+                print GEN "<li><a name=\"M$anchor_maint\">$maint</a>\n<ul>";
+                foreach my $pkg (sort keys %{$podebconf_errors_maint->{$maint}}) {
+                        print GEN "<li>".$podebconf_errors_maint->{$maint}->{$pkg}."</li>\n";
+                }
+                print GEN "</ul></li>\n";
+        }
+        close (GEN);
         open (GEN, "> $opt_l/po-debconf/gen/total")
                 || die "Unable to write into $opt_l/po-debconf/gen/total";
         print GEN "<define-tag podebconf-total-strings>$str_total</define-tag>\n";
