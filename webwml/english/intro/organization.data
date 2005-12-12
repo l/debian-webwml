@@ -206,6 +206,14 @@
 			return;
 		}
 
+		if ($entry{List} =~ /(debian-(chinese-(?:big5|gb))\@lists.debian.org)/) {
+			my ($lang,$list) = ($2,$1);
+			$lang =~ tr/-/_/;
+			$userlists{$lang} = $list;
+			#warn "$lang: $list\n";
+			return;
+		}
+
 		if (($entry{List} =~ /(debian-([^-]+)\@lists.debian.org)/)
 		    && ($entry{Section} eq 'user')
                     && ($entry{Language} ne 'English')) {
@@ -219,6 +227,10 @@
  
 	$userlists_lang{$trans{$CUR_ISO_LANG}{english}} = "debian-user\@lists.debian.org";
 	foreach my $list (keys %userlists) {
+		unless (exists($trans{$CUR_ISO_LANG}{$list}))
+		{
+			warn("Language `$list' not found in translation table'") 
+		}
  		$userlists_lang{$trans{$CUR_ISO_LANG}{$list}} = "$userlists{$list}";
 	}
 
