@@ -477,6 +477,7 @@ sub get_stats_podebconf {
         my %excl  = ();
         my $orig  = '';
 	my $podebconf_errors = {};
+	my $podebconf_errors_by_language = {};
         foreach $pkg (sort @{$packages}) {
                 next unless $data->has_podebconf($pkg);
 
@@ -489,30 +490,38 @@ sub get_stats_podebconf {
                         my $found = 0;
                         foreach my $error (@{$data->errors($pkg)}) {
 				next unless ($error =~ /(podebconf|debian\/po\/)/);
-                                if ($error =~ m/gettext: msgfmt: debian\/po\/([^.]+\.po): warning: Charset (.*) is not a portable /) {
-                                        push(@{$podebconf_errors->{$pkg}->{charsetname}}, "$1: $2");
+                                if ($error =~ m/gettext: msgfmt: debian\/po\/([^.]+)\.po: warning: Charset (.*) is not a portable /) {
+                                        push(@{$podebconf_errors->{$pkg}->{charsetname}}, "$1.po: $2");
                                         $found = 1;
-                                } elsif ($error =~ m/gettext: debian\/po\/([^.]+\.po):\d+:\d+: parse error/) {
-                                        push(@{$podebconf_errors->{$pkg}->{invalidpo}}, "$1");
+                                        $podebconf_errors_by_language->{$pkg}->{$1} = 1;
+                                } elsif ($error =~ m/gettext: debian\/po\/([^.]+)\.po:\d+:\d+: parse error/) {
+                                        push(@{$podebconf_errors->{$pkg}->{invalidpo}}, "$1.po");
                                         $found = 1;
-                                } elsif ($error =~ m/gettext: debian\/po\/([^.]+\.po):\d+: `msgid' and `msgstr' entries/) {
-                                        push(@{$podebconf_errors->{$pkg}->{invalidpo}}, "$1");
+                                        $podebconf_errors_by_language->{$pkg}->{$1} = 1;
+                                } elsif ($error =~ m/gettext: debian\/po\/([^.]+)\.po:\d+: `msgid' and `msgstr' entries/) {
+                                        push(@{$podebconf_errors->{$pkg}->{invalidpo}}, "$1.po");
                                         $found = 1;
-                                } elsif ($error =~ m/gettext: debian\/po\/([^.]+\.po):\d+:\d+: invalid multibyte sequence/) {
-                                        push(@{$podebconf_errors->{$pkg}->{charset}}, "$1");
+                                        $podebconf_errors_by_language->{$pkg}->{$1} = 1;
+                                } elsif ($error =~ m/gettext: debian\/po\/([^.]+)\.po:\d+:\d+: invalid multibyte sequence/) {
+                                        push(@{$podebconf_errors->{$pkg}->{charset}}, "$1.po");
                                         $found = 1;
+                                        $podebconf_errors_by_language->{$pkg}->{$1} = 1;
 #                                } elsif ($error =~ m/gettext: debian\/po\/([^.]+\.po): can't guess language/) {
 #                                        push(@{$podebconf_errors->{$pkg}->{unknownlanguage}}, "$1");
 #                                        $found = 1;
+#                                        $podebconf_errors_by_language->{$pkg}->{global} = 1;
                                 } elsif ($error =~ m/podebconf: file ([^ ]+) not found/) {
                                         push(@{$podebconf_errors->{$pkg}->{missingfile}}, "$1");
                                         $found = 1;
+                                        $podebconf_errors_by_language->{$pkg}->{global} = 1;
                                 } elsif ($error =~ m/podebconf: file debian\/po\/templates\.pot not up-to-date/) {
                                         push(@{$podebconf_errors->{$pkg}->{outofdatetemplate}}, "templates.pot");
                                         $found = 1;
-                                } elsif ($error =~ m/podebconf: file debian\/po\/([^.]+\.po) not up-to-date/) {
-                                        push(@{$podebconf_errors->{$pkg}->{outofdatepo}}, "$1");
+                                        $podebconf_errors_by_language->{$pkg}->{global} = 1;
+                                } elsif ($error =~ m/podebconf: file debian\/po\/([^.]+)\.po not up-to-date/) {
+                                        push(@{$podebconf_errors->{$pkg}->{outofdatepo}}, "$1.po");
                                         $found = 1;
+                                        $podebconf_errors_by_language->{$pkg}->{$1} = 1;
 				}
                         }
                         delete $podebconf_errors->{$pkg} unless $found;
@@ -558,7 +567,9 @@ sub get_stats_podebconf {
                         if ($stat =~ m/^(\d+)t(\d+)f(\d+)u$/) {
                                 $score{$lang} += $1;
                         }
-			if (defined $podebconf_errors->{$pkg}) {
+			if (defined $podebconf_errors_by_language->{$pkg}->{global}) {
+			    $str .= "<a href=\"errors-by-pkg#P$pkg\">!</a>&nbsp;";
+			} elsif (defined $podebconf_errors_by_language->{$pkg}->{$lang}) {
 			    $str .= "<a href=\"errors-by-pkg#P$pkg\">!</a>&nbsp;";
 			} else {
 			    $str .= "&nbsp;&nbsp;";
@@ -584,7 +595,9 @@ sub get_stats_podebconf {
                         my $l = uc($lang) || 'UNKNOWN';
                         next if $list{$l};
                         $excl{$l}  = '' unless defined($excl{$l});
-			if (defined $podebconf_errors->{$pkg}) {
+			if (defined $podebconf_errors_by_language->{$pkg}->{global}) {
+			    $excl{$l} .= " (<a href=\"errors-by-pkg#P$pkg\">!</a>)";
+			} elsif (defined $podebconf_errors_by_language->{$pkg}->{$lang}) {
 			    $excl{$l} .= " (<a href=\"errors-by-pkg#P$pkg\">!</a>)";
 			}
                         $excl{$l} .= "<a href=\"pot#$pkg\">$pkg</a>, ";
