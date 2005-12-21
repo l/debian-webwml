@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - servidor de control" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.47" maintainer="Jordi Mallach"
+#use wml::debian::translation-check translation="1.49" maintainer="Jordi Mallach"
 
 <h1>Introducció al servidor de correu de control i manipulació d'errors</h1>
 
@@ -40,6 +40,7 @@ servidors de correu està disponible via la WWW, en
 <dl>
 
 <dt><code>reassign</code> <var>número-d'error</var> <var>paquet</var>
+ [ <var>versió</var> ]
 <dd>
 
 Registra que l'error #<var>número-d'error</var> és de
@@ -47,6 +48,9 @@ Registra que l'error #<var>número-d'error</var> és de
 l'usuari se'n va oblidar d'afegir la pseudo-capçalera o per canviar
 una assignació anterior.  No s'enviaran notificacions a ningú
 (excepte la informació normal en el procés de transcripció).
+
+<p>Si proveïu una <var>versió</var>, el sistema de seguiment d'errors
+anotarà que l'error afecta aquesta versió del nou paquet assignat.
 
 <dt><code>reopen</code> <var>número-d'error</var>
  [ <var>adreça-originària</var> | <code>=</code> | <code>!</code> ]
@@ -74,7 +78,41 @@ canviar l'originador. Per a canviar l'originador d'un informe d'error obert
 utilitzeu l'ordre <code>submitter</code>; tingueu en compte que açò informarà
 a la persona que va enviar l'informe d'error originalment del canvi.
 
-<dt><code>submitter</code> <var>numero-d'error</var>
+<p>Si es va registrar l'informe d'error com a tancat en una versió
+particular d'un paquet però va reaparèixer en una versió posterior,
+és millor fer servir l'ordre <code>found</code>.
+
+<dt><code>found</code> <var>número-d'error</var> [ <var>versió</var> ]
+
+<dd>Registra que el #<var>número-d'error</var> s'ha trobat en la
+<var>versió</var> donada del paquet al que està assignat.
+
+<p>El sistema de seguiment d'errors fa servir aquesta informació,
+conjuntament amb el registre de les versions esmenades quan es tanquen
+els informes d'error per a mostrar llistes d'informes d'errors que estan
+oberts en varies versions de cada paquet. Considera un informe d'error
+obert quan no té una versió esmenada o quan s'ha trobat més recentment de
+quan va ser esmenada.
+
+<p>Si no es dona una <var>versió</var>, la llista de versions esmenades
+per aquest informe d'error es buidarà. Això té un comportament idèntic
+a <code>reopen</code>.
+
+<p>Aquesta ordre es va introduir en favor de <code>reopen</code>
+per què era difícil afegir una <var>versió</var> a la sintaxis d'aquesta
+ordre sense patir ambigüitats.
+
+<dt><code>notfound</code> <var>número-d'error</var> <var>versió</var>
+
+<dd>Esborra el registre que el #<var>número-d'error</var> es va trobar
+en la <var>versió</var> donada del paquet al que està assignat.
+
+<p>Això divergeix de tancar un informe d'error en aquesta versió en que
+l'informe d'error tampoc no es llista com a esmenat en aquesta versió,
+no es coneixerà informació sobre aquesta versió. Està pensat per arreglar
+equívocs en el registre de quan es va trobar un error.
+
+<dt><code>submitter</code> <var>número-d'error</var>
 <var>adreça-de-l'originador</var> | <code>!</code>
 <dd>
 
@@ -247,7 +285,8 @@ en el vostre missatge.
   plau consulteu la documentació general del sistema d'errors per als
   desenvolupadors.
 
-<dt><code>close</code> <var>número-d'error</var> (desaconsellat)
+<dt><code>close</code> <var>número-d'error</var> [ <var>versió-esmenada</var> ]
+ (desaconsellat)
 <dd>
 
 Tancar l'informe d'error #<var>número-d'error</var>.
@@ -262,6 +301,9 @@ de l'error sap que aquest ha estat tancat. Per això l'ús d'aquesta ordre
 estarà desaconsellat. Vegeu la informació del desenvolupador sobre
 <a href="Developer#closing">com tancar un informe d'error degudament</a>.
 
+<p>Si proveïu una <var>versió-esmenada</var>, el sistema de seguiment
+d'errors anotarà que l'error va ser esmenat en aquesta versió del paquet.
+
 <dt><code>package</code> [ <var>paquet</var> ... ]
 
   <dd>Limita les següents ordres de forma que només seran aplicables a
@@ -274,7 +316,7 @@ estarà desaconsellat. Vegeu la informació del desenvolupador sobre
 
   <pre>
         package foo
-        reassign 123456 bar
+        reassign 123456 bar 1.0-1
 
         package bar
         retitle 123456 bar: bar no funciona
