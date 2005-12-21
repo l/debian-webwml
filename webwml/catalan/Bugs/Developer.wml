@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS - informació per als desenvolupadors" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.54" maintainer="Jordi Mallach"
+#use wml::debian::translation-check translation="1.63" maintainer="Jordi Mallach"
 
 <H1>Informació per als desenvolupadors sobre el sistema de seguiment d'errors</H1>
 
@@ -25,7 +25,8 @@ s'inclourà el remitent original de l'informe i
   <li><a href="#forward">Registrant que heu passat un informe d'error</a></li>
   <li><a href="#owner">Canviant el propietari d'un informe d'error</a></li>
   <li><a href="#maintincorrect">Mantenidor del paquet incorrecte</a></li>
-  <li><a href="#requestserv">Reobrir, reassignar i manipular errors</a></li>
+  <li><a href="#requestserv">Reobrir, reassignar i manipular informes d'error</a></li>
+  <li><a href="#subscribe">Subscribint-se a informes d'error</a></li>
   <li><a href="#subjectscan">Característica més o menys obsoleta subject-scanning</a></li>
   <li><a href="#x-debian-pr">Característica obsoleta <code>X-Debian-PR: quiet</code></a></li>
 </ul>
@@ -60,6 +61,11 @@ de <VAR>nnn</VAR><CODE>@bugs.debian.org</CODE>
 (<VAR>nnn</VAR><CODE>-close</CODE> que és proporcionat com
 a un àlies per a <VAR>nnn</VAR><CODE>-done</CODE>).</P>
 
+<p>Quan sigui necessari, si us plau proveïu una línia <code>Version</code>
+en la <a href="Reporting#pseudoheader">pseudo-capçalera</a> del vostre
+missatge quan tanqueu un informe d'error, per tal que el sistema de seguiment
+d'errors conegui quins llençaments del paquet contenen l'esmena.</p>
+
 <p>La persona que tanca l'error, la persona que el va enviar
 i la llista de correu <code>debian-bugs-closed</code>, han
 de rebre cadascun una notificació sobre els canvis en l'estat
@@ -85,9 +91,10 @@ pas en qual el mantenidor del paquet, reenviarà el fitxer amb la
 resta de la bitàcola d'aquest informe d'error a
 <CODE>debian-bugs-dist</CODE>.</P>
 
-<P>Un desenvolupador pot enviar explícitament un correu a qui va
-enviar l'error amb un correu a
-<var>nnn</var><code>-submitter@bugs.debian.org</code>.</p>
+<P>Enviant un missatge a <var>nnn</var><code>-submitter@bugs.debian.org</code>
+s'enviarà un correu explícitament a qui va enviar l'informe d'error i posarà
+una còpia en el sistema de seguiment d'errors. El missatge no s'enviarà al
+mantenidor del paquet.</p>
 
 <P>Si desitgeu enviar un missatge de correu que no sigui apropiat
 per a <CODE>debian-bugs-dist</CODE> podeu enviar-lo a
@@ -135,7 +142,7 @@ pèrdues de dades, o introdueix un forat de seguretat pel qual
 es poden accedir als comptes dels usuaris que usen aquest paquet.
 
 <DT><CODE>serious</CODE>
-<DD>és una <a href="http://release.debian.org/sarge_rc_policy.txt">greu
+<DD>és una <a href="http://release.debian.org/etch_rc_policy.txt">greu
 violació de la política de Debian</a> (això serà, que
 viola una directriu «must» (de condició) o «required»
 (requeriment), o, en opinió del mantenidor del paquet, aquest no
@@ -166,8 +173,8 @@ de Debian.  Actualment, aquests són els <strong>critical</strong>,
 <strong>grave</strong> i <strong>serious</strong>. Per a la llista
 completa de regles canòniques de quins problemes mereixen aquesta
 gravetat, vegeu la llista de
-<a href="http://release.debian.org/sarge_rc_policy.txt">problemes
-crítics per a l'alliberació per a «sarge»</a>.
+<a href="http://release.debian.org/etch_rc_policy.txt">problemes
+crítics per al llençament d'«etch»</a>.
 </p>
 
 <H2><a name="tags">Etiquetes per als informes d'error</a></H2>
@@ -373,15 +380,52 @@ del fitxer.</P>
 aquells que han estat tancats erròniament, modificar la
 informació que indica a on (qualsevol lloc) ha estat
 reenviat un error, canviar els nivells de gravetat, canviar
-els títols dels informes, per especificar el propietari d'informes
-d'error o fusionar informes d'error i separar-los. Tot això es fa
-enviant correu a <CODE>control@bugs.debian.org</CODE>.</P>
+els títols dels informes, especificar el propietari d'informes
+d'error, fusionar i separar informes d'error i registrar les versions
+de paquets en que es van trobar errors i les que es van arreglar.
+Tot això es fa enviant correu a <CODE>control@bugs.debian.org</CODE>.</P>
 
 <P>El <A href="server-control">format d'aquests missatges</A> es
 descriu en un altre document disponible en la World Wide Web o en
 el fitxer <CODE>bug-maint-mailcontrol.txt</CODE>.  També es pot
 obtenir per correu una versió en text pla enviant la paraula
 <CODE>help</CODE> al servidor de l'anterior adreça.</P>
+
+
+<h2><a name="subscribe">Subscribint-se a informes d'error</a></h2>
+
+<p>El sistema de seguiments d'errors també permet als originadors dels
+informes d'error, desenvolupadors i altres terceres parts interessades
+subscriure's a informes d'error individuals. Aquesta funcionalitat pot ser
+usada per aquelles persones que no vulguin perdre de vista un informe d'error,
+sense haver de subscriure's a un paquet fent servir el PTS. Tots els
+missatges que es reben a <var>nnn</var><code>@debian.org</code> s'envien
+als subscriptors.</p>
+
+<p>Us podeu subscriure a un informe d'error enviant un correu a
+<var>nnn</var><code>-subscribe@bugs.debian.org</code>. L'assumpte i el
+cos del correu seran ignorats pel BTS. Un cop es processi aquest missatge,
+se us enviarà una confirmació que haureu de respondre abans de poder
+rebre els missatges relacionats amb aquest informe d'error.</p>
+
+<p>També és possible desubscriure's d'un informe d'error. Us podeu desubscriure
+enviant un correu a <var>nnn</var><code>-unsubscribe@bugs.debian.org</code>.
+L'assumpte i el cos del correu seran ignorats pel BTS. S'enviarà un missatge
+de confirmació que haureu de respondre si volen ser desubscrits de l'informe
+d'error.</p>
+
+<p>De manera predeterminada, l'adreça subscrita és la que es troba a la
+capçalera <code>From</code>. Si voleu subscriure una altra adreça a un
+informe d'error, necessitareu codificar l'adreça a subscriure en el missatge
+de subscripció. Això pren la forma de
+<var>nnn</var><code>-subscribe-</code><var>partlocal</var><code>=</code><var>exemple.com</var><code>@bugs.debian.org</code>.
+Aquest exemple enviaria un missatge de subscripció a <code>partlocal@exemple.com</code>
+per a l'informe d'error <var>nnn</var>. El símbol <code>@</code> s'ha de
+codificar canviant-lo al símbol <code>=</code>. De manera similar, una
+desubscripció pren la forma de
+<var>nnn</var><code>-unsubscribe-</code><var>partlocal</var><code>=</code><var>exemple.com</var><code>@bugs.debian.org</code>.
+En ambdós casos, l'assumpte i el cos del correu es reenviaran a l'adreça de
+correu continguda en la demanda de confirmació.</p>
 
 
 <h2><a name="subjectscan">Característica més o menys obsoleta subject-scanning</a></h2>
