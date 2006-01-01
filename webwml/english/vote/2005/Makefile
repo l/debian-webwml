@@ -28,7 +28,10 @@ textfiles := vote_001.quorum.err vote_001.quorum.log vote_001.quorum.txt  \
              Log-debian-dpl-debate.txt  Log-debian-dpl-replies.txt        \
              Log-debian-dpl-discuss.txt Log-debian-dpl-moderator.txt      \
              vote_002.quorum.err vote_002.quorum.log vote_002.quorum.txt  \
-             leader2005_voters.txt
+             leader2005_voters.txt vote_002_results.dot                   \
+             vote_002_results.png vote_002_results.txt                    \
+             vote_002_tally.txt vote_002_vote.png                         \
+             vote_002_vote_detailed.png vote_002_voters.txt
 
 desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
 
