@@ -11,17 +11,95 @@ a new (complete) submission and add a comment stating it is an update.
 
 <p>Not all information provided will be displayed in the mirror list, such
 as the mirror maintainer address.
-The email address will be displayed somewhere on our sites,
+The email address will be saved somewhere on our sites,
 so that mirror list editors can contact you with news and bug reports.
 
 <p>Please note that an official mirror must use rsync as the method to
-get current packages.
-We strongly recommend to use <a href="anonftpsync">anonftpsync</a> script.</p>
+get current packages. We strongly recommend to use our 
+<a href="http://volatile.debian.net/mirror-volatile.sh">mirror-volatile.sh</a> script.</p>
 
+To get listed, you need to respect the following criteria:
+<ul>
+  <li>You need to mirror the complete debian-volatile archive.</li>
+  <li>You need to mirror debian-volatile at least once a day </li>
+  <li>You need to put 'date -u' into /project/trace/$YOURHOSTNAME</li>
+  <li>You need to have an e-mail adress one can write to. <b>Entries will
+  be removed, if we won't be able to contact you.</b></li>
+</ul>
+We differentiate between push mirrors and normal mirrors.</p>
+
+<h2>What is a "Push" Mirror?</h2>
+<p>In brief it is a normal mirror, with the only difference that
+volatile.debian.net tells you when something has changed in the
+archive. So there is no need to try a sync periodically, your are
+notified when the archive changes.
+A good page describing it, and some parts of the setup, is
+<a href="http://www.debian.org/mirror/push_mirroring.en.html">available
+on the debian.org servers</a>. Please read it if you are not familiar
+with it.</p>
+
+<p>You are free to use any script you want, but please be sure to
+use a safe one. We do NOT accept mirrors that use debmirror or similar tools
+to mirror. These tools are fine for a private mirror, but not usable for full
+mirrors, as they exclude many of the useful files. This basically means: keep
+a full working mirror the whole time. The following options to rsync
+(besides what you normally have) do the trick:</p>
+
+<hr>
+
+<table>
+<tr>
+ <th>Run</th>
+
+ <th>Options</th>
+ <th>Affects</th>
+</tr>
+<tr>
+<td>1</td>
+<td>--exclude Packages* --exclude Sources* --exclude Release*</td>
+
+<td>You download new binary files, sources and Packages, but not the metadata
+for them that <code>apt-get</code> uses. Also note that no delete option is
+given.</td>
+
+</tr>
+<tr>
+<td>2</td>
+<td>--delete --delete-after</td>
+<td>The second run now fetches the files excluded in the first run and also
+deleted all files not any longer in the archive.</td>
+</tr>
+</table>
+
+<hr>
+
+<p>
+This two-way mirror approach makes sure that users with their apt-get can
+always fetch the files that are announced to be there (via the Packages files),
+even when your mirror is updating itself at the moment they try to download
+stuff.  You are free to use any other option to rsync you may like, but we
+strongly suggest to use at least -lH.</p>
+
+<p>Now you need to add <a
+href="http://volatile.debian.net/id_mirrorpush.pub">this ssh key</a> to the mirror-user's
+.ssh/authorized_keys file.  If you look into the key you see that it is limited
+to only one command.  This means that we are NOT able to log on to your system
+with this key. There is no way for us to do anything other to your
+system then to just trigger the mirror - so the only harm we can do
+would be to trigger your mirror every few seconds, but for that the
+script we provide as an example uses a lockfile to avoid multiple
+runs at the same time.  <b>You need to change that to whatever
+script you use, but do NOT delete the & at the end.</b> </p>
+
+<h2>Getting the push</h2> 
+
+<p> As soon as you finished setting it up you are ready to be added to the list
+of "pushed" servers.  For that please use the form in the following section.
+</p>
 
 <H2>Basic information</H2>
 
-<P>Please include the name under which you wish the mirror to be listed in
+<P>Please, include the name under which you wish the mirror to be listed in
 the <em>Site</em> field. If the server has other names, list them in the
 <em>Aliases</em> field, separated with commas (`,'). This is probably the
 reverse of the DNS entries.
@@ -33,7 +111,7 @@ Aliases: <input type="text" name="aliases" size="60">
 
 <H2>Types of mirrors and methods of accessing them</H2>
 
-<p>Enter the paths to the Debian mirror on your site in the fields below.
+<p>Enter the paths to the Volatile mirror on your site in the fields below.
 Leave non-relevant fields blank.
 
 <define-tag tablerow>
