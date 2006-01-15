@@ -1,0 +1,348 @@
+#pddp emil
+#root-kit? mo¿e to jako¶ t³umaczyæ?
+
+#use wml::debian::translation-check translation="1.6"
+<define-tag pagetitle>Raport Debiana ze ¶ledztwa dotycz±cego skompromitowanych serwerów</define-tag>
+<define-tag release_date>2003-12-02</define-tag>
+#use wml::debian::news
+
+<p>Administratorzy Debiana wraz z ekspertami ds. bezpieczeñstwa 
+poznali w koñcu szczegó³owo metodê któr± u¿yto do w³amania do 
+czterech serwerów projektu. Aczkolwiek sprawca ci±gle pozostaje 
+nieznany.</p>
+
+<h3>Archiwum z pakietami nie zosta³o zmodyfikowane przez intruza.</h3>
+
+<p>Archiwa (security, us, non-us) zosta³y sprawdzone przez 
+administratorów Debiana oraz zespó³ bezpieczeñstwa we wczesnym stadium 
+¶ledztwa. Dlatego projekt by³ w stanie otworzyæ archiwum bezpieczeñstwa 
+i potwierdziæ ¿e aktualizacja stabilnego wydania (3.0r2) nie zosta³a 
+skompromitowana.</p>
+
+#totalnie nie rozumiem tego akapitu:
+<p>If the project had anticipated to get compromised at the same time the
+stable update was implemented, the involved people would have
+postponed it.  However, the updated packages were already installed in
+the stable archive and mirror servers at the time the break-ins were
+discovered, so it wasn't possible to hold it back anymore.</p>
+
+<p>U¿yto kilku metod, wykorzystuj±cych porównywanie danych w celu
+zweryfikowania pakietów, oraz aby upewniæ siê czy archiwum nie 
+zosta³o zmodyfikowane przez w³amywacza:</p>
+
+<ul>
+<li> zewnêtrzna lista sum kontrolnych MD5 zgromadzona w ostatnich
+tygodniach na nieskompromitowanych maszynach 
+<li> cyfrowo podpisane pliki .changes z zewnêtrznego archiwum 
+debian-devel-changes znajduj±cego siê na nieskompromitowanych maszynach
+<li> cyfrowo podpisane pliki .changes z odpowiednich archiwów
+<li> zewnêtrznie przechowywane pliki dzienników serwerów lustrzanych
+</ul>
+
+<h3>Zestawienie chronologiczne</h3>
+
+<p>Poni¿ej znajduje siê zapis chronologiczny faktów zwi±zanych
+z ze skompromitowanymi serwerami. Zamieszczony czas (wg. strefy UTC) 
+niekiedy jest tylko warto¶ci± orientacyjn±.</p>
+
+<blockquote>
+   <br />Wrz 28  01:33  Linus Torvalds publikuje 2.6.0-test6 z poprawion± funkcj± do_brk()
+   <br />Pa¼ 02  05:18  Marcelo Tosatti dodaje sprawdzanie granicy dla do_brk()
+   <br />Pa¼ 19  17:00  W³amywacz loguje siê na komputerze klecker przy u¿yciu zesniffowanego has³a
+   <br />Pa¼ 19  17:08  Zostaje zainstalowany Root-kit na komputerze klecker
+   <br />Pa¼ 19  17:20  W³amywacz loguje siê na master za pomoc± tego samego has³a
+   <br />Pa¼ 19  17:47  Zostaje zainstalowany Root-kit na master
+   <br />Pa¼ 19  18:30  W³amywacz loguje siê na komputer murphy na koncie serwisowym z master
+   <br />Pa¼ 19  18:35  Root-kit installed on murphy
+   <br />Pa¼ 19  19:25  Rozpoczê³o siê dziwne zachowanie kernela na murphy
+   <br />Pa¼ 20  05:38  Rozpoczê³o siê dziwne zachowanie kernela na master
+   <br />Pa¼ 20  20:00  Odkryto b³êdy w pracy kernela na master i murphy
+   <br />Pa¼ 20  20:54  Zainstalowano Root-kit na serwerze gluck
+   <br />Pa¼ 20  22:00  Potwierdzenie, ¿e debian.org zosta³ skompromitowany
+   <br />Pa¼ 21  00:00  Deaktywacja wszystkich kont
+   <br />Pa¼ 21  00:34  Wy³±czenie security.debian.org
+   <br />Pa¼ 21  04:00  Wy³±czenie gluck (www, cvs, people, ddtp)
+   <br />Pa¼ 21  08:30  Przekierowanie www.debian.org na www.de.debian.org
+   <br />Pa¼ 21  10:45  Publiczne og³oszenie kompomitacji serwerów
+#   <br />Pa¼ 21  16:47  Developer information updated
+#hmm.. ??? Aktualizacja informacji deweloperskich [co to?]
+   <br />Pa¼ 21  17:10  Wy³±czenie serwera murphy (listy dyskusyjne) i master
+   <br />Pa¼ 22  02:41  W³±czenie security.debian.org
+   <br />Pa¼ 25  07:40  W³±czenie lists.debian.org
+   <br />Pa¼ 28  22:39  Wydanie Linuksa 2.4.23
+</blockquote>
+
+<h3>Odkrycie</h3>
+
+<p>W czwartek wieczorem (wg. czasu GMT), 20 listopada zespó³
+administratorów zauwa¿y³ dziwne zachowanie kernela na serwerze master.
+Poniewa¿ system ten dzia³a³ przez d³ugi czas bez jakichkolwiek problemów
+zak³adano, ¿e pojawi³y siê jakie¶ uszkodzenia sprzêtowe. Jednak¿e w tym
+samym czasie zauwa¿ono podobne problemy na komputerze murphy. Wzbudzi³o, 
+to podejrzenia administratorów.</p>
+
+<p>Na serwerach klecker, murphy i gluck zainstalowane jest zaawnsowane 
+¶rodowisko wykrywania intruzów ("Advanced Intrusion Detection
+Environment" - pakiet <a href="http://packages.debian.org/aide">aide</a>).
+Monitorowanie zmian w systemie plików wykry³o, ¿e w przybli¿eniu w tym samym
+czasie nast±pi³a podmiana pliku <code>/sbin/init</code> i uleg³y zmianie 
+warto¶ci mtime oraz ctime dla <code>/usr/lib/locale/en_US</code>.</p>
+
+<p>Dalsze ¶ledztwo wykaza³o, ¿e przyczyn± obu problemów by³ SucKIT 
+root-kit (1.3b). Zawiera on sniffera hase³, posiada mo¿liwo¶æ ukrywania
+przed wykryciem (np. narzêdzia do ukrywania procesów i plików), które s±
+instalowane bezpo¶rednio do j±dra systemu (by³o to przyczyn± dziwnych
+zachowañ kernela).</p>
+
+
+<h3>Szczegó³owa Analiza Ataku</h3>
+
+<p>W ¶rodê, 19 listopada, oko³o godziny 17 GMT, pods³uchane gdzie¶ 
+snifferem has³o zosta³o u¿yte do zalogowania siê na nieuprzywilejowane konto 
+jednego z deweloperów na serwerze klecker (.debian.org).
+Intruz za pomoc± protoko³u HTTP pobra³ kod ¼ród³owy expolita 
+(wówczas jeszcze nie znanego). Za jego pomoc± uzyska³  uprawnienia u¿ytkownika
+root. Nastêpnie zainstalowa³ wspomniany wcze¶niej root-kit SucKIT.</p>
+
+<p>Za pomoc± tego samego loginu i has³a zalogowa³ siê na serwer 
+master i tym samym explolitem uzyska³ uprawnienia roota. 
+Podobnie jak poprzednio zainstalowa³ równie¿ SucKIT root-kit.</p>
+
+<p>Nastêpnie intruz próbowa³ logowaæ siê za pomoc± tych samych danych
+co poprzednio na komputer murphy. Zakoñczy³o to siê niepowodzeniem
+poniewa¿ murphy posiada liczne ograniczenia, s³u¿y jako serwer list
+dyskusyjnych i tylko w±ska grupa deweloperów ma do niego dostêp. Poniewa¿
+pierwsza próba logowania siê nie powiod³a, intruz u¿y³ swoich uprawnieñ
+roota na komputerze master i uzyska³ dostêp do konta administracyjnego - 
+u¿ywanego do sporz±dzania kopii zapasowych. Tym sposobem uzyska³ dostêp
+do serwera murphy i podobnie jak poprzednio zainstalowa³ SucKIT root-kit.</p>
+
+<p>Nastêpnego dnia intruz u¿y³ has³a pods³uchanego na master do 
+zalogowania siê na maszynê gluck. Podobnie jak poprzednio uzyska³
+uprawnienia roota i zainstalowa³ SucKIT root-kit.</p>
+
+<p>Po szczegó³owej analizie odkryto dok³adne daty i czas nadpisania
+plików programu <code>/sbin/init</code> i zainstalowania root-kita.
+Znaleziono te¿ plik wykonywalny, który by³ u¿ywany do uzyskiwania praw
+u¿ytkownika root. Plik ten by³ zaszyfrowany za pomoc± Burneye. Za pomoc±
+disassemblera eksperci ds. bezpieczeñstwa odkryli, jaki b³±d
+kernela zosta³ wykorzystany.</p>
+
+<p>W wywo³aniu sytemowym brk wykorzystano przepe³nienie zmiennej integer
+#hmm...? mo¿e jako¶ inaczej?
+#An integer overflow in the brk system call was exploited to overwrite
+do nadpisania pamiêci j±dra (zmiany bitów zabezpieczaj±cych strony). Tym 
+sposobem intruz uzyska³ mo¿liwo¶æ zmiany ka¿dej warto¶ci znajduj±cej siê 
+w pamiêci.</p>
+
+<p>Naprawiony fragment kodu zosta³ ju¿ we wrze¶niu przys³any przez
+Andrewgo Mortona, a od pa¼dziernika poprawka by³a zaaplikowana
+w niewydanej wersji kernela. Nie rozwa¿ano jaki wp³yw mo¿e 
+mieæ brak wprowadzonej poprawki na bezpieczeñstwo. Dlatego te¿ nie 
+opublikowano ¿adnej porady zwi±zanej z bezpieczeñstwem. Dopiero po 
+odkryciu, ¿e b³±d ten mo¿na wykorzystaæ lokalnie do przejêcia 
+uprawnieñ roota projekt "Common Vulnerabilities and Exposures" 
+zaj±³ siê spraw± (przypisano jej oznaczenie CAN-2003-0961). 
+Poprawki zosta³y wprowadzone w wydanym w zesz³ym tygodniu 
+Linuksie 2.4.23 oraz w poradzie bezpieczeñstwa debiana 
+<a href="$(HOME)/security/2003/dsa-403">DSA 403</a>.</p>
+
+<p>Opisany problem nie dotyczy Linuksów 2.2.x poniewa¿ sprawdzanie
+granicy jest wykonywane wcze¶niej. Nie powinno byæ równie¿ problemów 
+na architekturach Sparc i PA-RISC, gdzie pamiêæ j±dra i pamiêæ u¿ytkownika 
+przechowywana jest w innych przestrzeniach adresowych.</p>
+
+<p>Prosimy o zrozumienie faktu i¿ program, który zosta³ u¿yty do 
+przejêcia uprawnieñ nie mo¿e byæ udostêpniony przypadkowym osobom. 
+Dlatego te¿ radzimy nie pytaæ nas o to.</p>
+
+
+<h3>Przywracanie</h3>
+
+<p>Po wy³±czeniu naszych serwerów, stworzono obrazy skompromitowanych
+twardych dysków i przechowywano je na oddzielonych komputerach. 
+Rozprowadzono kopie w¶ród ludzi zajmuj±cych siê szczegó³ow± analiz±. 
+Na trzech serwerach znajduj±cych siê w Stanach (master, murphy, gluck) 
+ca³kowicie prze-instalowano system, a pó¼niej administratorzy doinstalowali
+poszczególne us³ugi.</p>
+
+<p>Na komputerze klecker, ca³y ten proces zosta³ od³o¿ony na pó¼niej
+tak, aby archiwum bezpieczeñstwa by³o dostêpne jak najwcze¶niej.
+Nie mieli¶my bezpo¶redniego dostêpu do serwera klecker wiêc ca³y proces
+odzyskiwania musia³ byæ wykonany zdalnie. Obraz dysków zosta³ sporz±dzony
+za pomoc± konsoli szeregowej na komputerze za firewallem. Usuniêto root-kita
+przeinstalowano i zabezpieczono j±dro systemu. Pliki binarne zosta³y
+dla pewno¶ci dwa razy sprawdzone i zweryfikowane na podstawie kilku zewnêtrznych
+¼róde³. W najbli¿szych tygodniach planuje siê reinstalcjê oprogramowania na
+tym serwerze.</p>
+
+<p>Jako dodatkowe ¶rodki 
+W ramach dodatkowych ¶rodków ostro¿no¶ci zablokowano w LDAP wszystkie
+konta deweloperów i usuniêto klucze SSH z wa¿niejszych serwerów. Dziêki
+temu ¿aden kolejny serwer nie mo¿e ulec kompromitacji. Niestety tymczasowo 
+blokuje, to mo¿liwo¶æ jakiejkolwiek publicznej pracy w projekcie Debian, które
+wymaga przysy³ania plików i dostêpu do repozytoriów CVS.</p>
+
+<p>Podobnie wszystkie has³a u¿ywane na quantz (np. ca³e Aliothm 
+#niestety nie wiem co z tym quantz'em
+#All passwords used on quantz (i.e. all Alioth, arch and subversion
+arch i subversion) zosta³y uniewa¿nione. Wszystkie autoryzowane klucze 
+SSH zosta³y usuniête. Prosimy u¿ywaæ systemu odzyskiwania zapomnianych 
+hase³, aby <a href="https://alioth.debian.org/account/lostpw.php">
+otrzymaæ</a> nowe has³o.</p>
+   
+<p>Kiedy ju¿ wszystkie us³ugi bêd± ponownie dzia³a³y i serwery bêd±
+odpowiednio zabezpieczone LDAP zostanie uruchomiony ponownie, tak
+aby deweloperzy mogli <a href="http://db.debian.org/password.html">utworzyæ</a> 
+nowe has³a. W tej chwili jest to nie mo¿liwe, gdy¿ opisany proces
+w³a¶nie siê odbywa.</p>
+
+<p>Podczas odzyskiwania, us³uga SSH na skompromitowanych serwerach zosta³a
+przeinstalowana. Pojawi³y siê zatem nowe klucze RSA i nowe odciski klucza
+dla tych hostów. Klucze te pojawi± siê zaraz po w³±czeniu LDAP, mo¿na
+je pobraæ z <a href="http://db.debian.org/machines.cgi">tego miejsca</a>.</p>
+
+
+<h3>Konsekwencje</h3>
+
+<p><strong>Zmieñ swoje has³a!</strong></p>
+
+<p>Poniewa¿ has³a na skompromitowanych hostach by³y pods³uchiwane, to
+ka¿de po³±czenie wykorzystuj±ce has³o mo¿e byæ skompromitowane 
+(mo¿e ono byæ np. znane przez intruza). Nale¿y zatem jak najszybciej
+zmieniæ has³a.</p>
+
+<p>Ponadto je¿eli, kto¶ maj±cy dostêp do serwerów Debiana u¿ywa
+takiego samego has³a lub frazy na innych maszynach lub przy kluczach. 
+
+Osoby maj±ce dostêp do serwerów debiana powinny mieæ na uwadze, ¿e 
+je¶li u¿ywaj± tych samych hase³ lub fraz na innych maszynach 
+
+Additionally, if somebody had access to a Debian machine and was using
+the same password or passphrase on other machines or keys we strongly
+advise to change the password or passphrase respectively as soon as
+possible.</p>
+
+<p>Je¿eli klucz SSH zosta³ wygenerowany, lub by³ przechowywany na
+jednym z tych komputerów i by³ u¿ywany do logowania na inne maszyny
+(np. za pomoc± instalowania w <code>.ssh/authorized_keys</code>), 
+powinien byæ równie¿ usuniêty.</p>
+
+<p>Klucze GnuPG/PGP, które znajdowa³y siê na serwerach debian.org zosta³y
+usuniête ze zbioru kluczy Debiana - zosta³y dezaktywowane.</p>
+
+<p>Deweloperzy, którzy boj± siê o bezpieczeñstwo swoich komputerów
+powinni conajmniej uruchomiæ chrootkit i sprawdziæ nim swój system.
+Matt Taggart opiekuje siê najnowsz± wersj± i tworzy backporty dla woody'ego.
+Pakiety dostêpne s± pod adresami:</p>
+
+<blockquote>
+   <br />deb http://lackof.org/taggart/debian woody/chkrootkit main
+   <br />deb-src http://lackof.org/taggart/debian woody/chkrootkit main
+</blockquote>
+
+<p>Szczegó³owa lista dodatkowych<a href="http://www.wiggy.net/debian/developer-securing/">
+czynno¶ci zabezpieczaj±cych</a> zosta³a przygotowana przez Wicherta Akkermana i Matta Taggarta.
+
+
+<h3>SucKIT Root-Kit</h3>
+
+<p>SucKIT jest programem typu root-kit zaprezentowanym w 58 wydaniu Phrack,
+w artykule 0x07 ("Linux on-the-fly kernel patching without LKM", wg. sd &amp; devik).
+Jest to program wczytywany za pomoc± /dev/kmem (nie potrzebuje nawet
+j±dra z obs³ug± ³adowanych modu³ów), posiadaj±cy mo¿liwo¶æ
+uruchomienia us³ugi zdalnego logowania zabezpieczonego has³em, odrotnego
+nawi±zywania po³±czeñ inicjownego przez spreparowane pakiety (przechodz±ce
+przez wiêkszo¶æ firewalli), umo¿liwia ukrywanie procesów, plików i po³±czeñ.</p>
+
+<p>Zazwyczaj SucKIT jest uruchamiany za pomoc± /sbin/init przy starcie
+systemu. Tworzy procesy potomne instaluj±ce go w j±drze, uruchamia
+backdoora oraz kopie oryginalnego programu "init" z procesu macierzystego
+(z pid 1). Dalesze odwo³ania do <code>/sbin/init</code> s± przekierowania
+do orygina³u.</p>
+
+
+<h3>Zabezpieczenie TESO's Burneye</h3>
+
+<p>Zadaniem Burneye jest zamazywanie plików binarnych ELF na platformach
+UNIXowych. Narzêdzie to zosta³o zaprezentowane w 58 wydaniu Phrack, w
+artykule 0x05 ("Armouring the ELF: Binary encryption on the UNIX platform",
+wg grugq &amp; scut). Za pomoc± narzêdzi takich jak TESO Burneye, intruz
+mo¿e zmieniæ plik wykonywany tak, aby jego prawdziwe przeznaczenie by³o
+zaszyfrowane. Mo¿na tym sposobem ukryæ plik przed filtrami firewall, systemami
+detekcji intruzów, programami antywirusowymi i dociekliwymi badaczami systemów.</p>
+
+<h3>Podziêkowania</h3>
+
+<ul>
+  <li> James Troup i Ryan Murray za ca³± pracê jak± wykonali przy serwerach
+  <li> Adam Heath i Brian Wolfe za pracê na master i murphy
+  <li> Wichert Akkerman za pracê na klecker
+  <li> Dann Frazier i Matt Taggart za pracê na gluck
+  <li> Michael Stone i Robert van der Meulen za pracê przy inspekcji
+  <li> Marcus Meissner za disassemblacjê u¿ytego exploita
+  <li> Jaakko Niemi za jego pracê nad sprawdzaniem i przywróceniem do dzia³ania lists.debian.org
+  <li> Colin Watson za jego pracê nad sprawdzaniem i przywróceniem do dzia³ania bugs.debian.org
+  <li> Josip Rodin za jego pracê nad sprawdzaniem i przywróceniem do dzia³ania archiwów stron www
+</ul>
+
+<h3>Reakcja opinii publicznej</h3>
+#Press Resonse
+#chyba nie przesadzi³em? Bo przecie¿ te serwisy to nie jest ¿adna prasa.
+
+<ul>
+<li><a href="http://slashdot.org/articles/03/11/21/1314238.shtml">Slashdot</a>, 21 listopad, 2003
+<li><a href="http://www.eweek.com/print_article/0,3048,a=113091,00.asp">eWeek</a>, 21 listopad, 2003
+<li><a href="http://www.internetnews.com/dev-news/article.php/3112551">InternetNews</a>, 21 listopad, 2003
+<li><a href="http://www.heise.de/newsticker/data/odi-21.11.03-001/">Heise Newsticker</a>, 21 listopad, 2003 (Niemiecki)
+<li><a href="http://www.pro-linux.de/news/2003/6205.html">Pro-Linux</a>, 21 listopad, 2003 (Niemiecki)
+<li><a href="http://www.linux-community.de/Neues/story?storyid=10821">Linux-Community</a>, 21 listopad, 2003 (German)
+<li><a href="http://barrapunto.com/articles/03/11/21/1527220.shtml">BarraPunti</a>, 21 listopad, 2003 (Spanish)
+<li><a href="http://www.newsforge.com/article.pl?sid=03/11/21/1319258">Newsforge</a>, 21 listopad, 2003
+<li><a href="http://searchenterpriselinux.techtarget.com/originalContent/0,289142,sid39_gci938279,00.html">SearchEnterpriseLinux.com</a>, Nov 22, 2003
+<li><a href="http://www.debianplanet.org/node.php?id=1011">Debian Planet</a>, 22 listopada, 2003
+<li><a href="http://www.pcworld.com/news/article/0,aid,113636,00.asp">PC World</a>, listopad 24 listopada, 2003
+<li><a href="http://news.zdnet.co.uk/internet/security/0,39020375,39118062,00.htm">ZDNet UK</a>,24 listopada, 2003
+<li><a href="http://www.enterprise-linux-it.com/perl/story/22748.html">Enterprise Linux IT</a>, 24 listopada, 2003
+<li><a href="http://www.theage.com.au/articles/2003/11/24/1069522516071.html">The Age</a>, 24 listopada, 2003
+<li><a href="http://www.smh.com.au/articles/2003/11/24/1069522516071.html">Sydney Morning Herald</a>, Nov 24, 2003
+<li><a href="http://www.winnetmag.com/windowspaulthurrott/Article/ArticleID/40957/windowspaulthurrott_40957.html">Windows &amp; .NET Magazine</a>, 24 listopada, 2003
+<li><a href="http://www.infoworld.com/article/03/11/24/HNdebianhacked_1.html">Infoworld</a>, 24 listopad, 2003
+<li><a href="http://www.linuxinsider.com/perl/story/32240.html">Linux Insider</a>, 24 listopada, 2003
+<li><a href="http://www.ecommercetimes.com/perl/story/32240.html">eCommerce Times</a>, 24 listopada, 2003
+<li><a href="http://www.technewsworld.com/perl/story/32240.html">TechNewsWorld</a>, 24 listopada, 2003
+<li><a
+href="http://www.theregister.co.uk/2003/11/24/check_your_sums_debian_advises/">The Register</a>, 28 listopada, 2003
+<li><a href="http://newsvac.newsforge.com/article.pl?sid=03/11/28/1545237">Newsforge</a>, 28 listopada, 2003
+<li><a href="http://slashdot.org/articles/03/11/28/050232.shtml">Slashdot</a>, 28 listopada, 2003
+<li><a href="http://developers.slashdot.org/developers/03/12/01/2133249.shtml">Slashdot</a>, 1 grudnia, 2003
+<li><a href="http://www.theage.com.au/articles/2003/11/24/1069522516071.html">The Age</a>, 1 grudnia, 2003
+<li><a href="http://www.smh.com.au/articles/2003/12/01/1070127318372.html">Sydney Morning Herald</a>, 1 grudzieñ, 2003
+<li><a href="http://www.pro-linux.de/news/2003/6240.html">Pro-Linux</a>, 2 grudnia, 2003 (Niemiecki)
+<li><a href="http://www.heise.de/newsticker/data/jk-02.12.03-000/">Heise Newsticker</a>, 2 grudnia, 2003 (Niemiecki)
+<li><a href="http://www.golem.de/0312/28747.html">Golem</a>, 2 grudnia, 2003 (Niemiecki)
+<li><a href="http://lwn.net/Articles/60948/">LWN</a>, 2 grudnia, 2003
+<li><a
+href="http://www.theregister.co.uk/2003/12/02/hackers_used_unpatched_server/">The Register</a>, 2 grudnia, 2003
+<li><a href="http://www.zdnet.de/news/security/0,39023046,39117906,00.htm">ZDnet DE</a>, 2 grudnia, 2003 (Niemiecki)
+<li><a href="http://www.linux-community.de/Neues/story?storyid=11004">Linux-Community</a>, 2 grudnia, 2003 (Niemiecki)
+<li><a href="http://www.heise.de/security/artikel/42546">Heise</a>, 2 grudnia, 2003 (Niemiecki)
+<li><a href="http://www.heise.de/newsticker/data/anw-02.12.03-005/">Heise Newsticker</a>, 2 grudnia, 2003 (Niemiecki)
+<li><a href="http://www.symlink.ch/articles/03/12/02/1820248.shtml">Symlink</a>, 2 grudnia, 2003
+<li><a href="http://www.pro-linux.de/news/2003/6245.html">Pro-Linux</a>, 3 grudnia, 2003 (Niemiecki)
+<li><a href="http://www.heise.de/newsticker/data/ju-04.12.03-000/">Heise Newsticker</a>, 4 grudnia, 2003 (Niemiecki)
+<li><a href="http://www.symlink.ch/articles/03/12/04/0123247.shtml">Symlink</a>, 4 grudnia, 2003 (Niemiecki)
+<li><a href="http://www.internetnews.com/dev-news/article.php/3116231">Symlink</a>, 4 grudnia, 2003
+<li><a href="http://newsvac.newsforge.com/article.pl?sid=03/12/04/1448206">Newsforge</a>, 4 grudnia, 2003
+<li><a href="http://newsvac.newsforge.com/article.pl?sid=03/12/05/1635231">Newsforge</a>, 5 grudnia, 2003
+<li><a href="http://www.osnews.com/comment.php?news_id=5362">OSnews</a>, 10 grudnia, 2003
+<li><a href="http://news.com.com/2100-7344-5117271.html">Cnet</a>, 10 grudnia, 2003
+<li><a href="http://newsvac.newsforge.com/article.pl?sid=03/12/30/1435210">Newsforge</a>, 30 grudnia, 2003
+
+</ul>
+
+<h3>Informacje kontatkowe</h3>
+
+<p>Dok³adniejsze informacje mo¿na uzyskaæ odwiedzaj±c <a
+href="$(HOME)/">stronê internetow±</a> Debiana lub wysy³aj±c list na adres
+<email press@debian.org />.</p>
