@@ -391,8 +391,6 @@ $KEYWORDS_LINE
 $DESC_LINE
 $meta
 <link href="/debian.css" rel="stylesheet" type="text/css" media="all">
-<link href="http://www.ubuntu.com/plone.css" rel="stylesheet"
-type="text/css" media="all">
 <link href="/ubuntu/ubuntu.css" rel="stylesheet" type="text/css" media="all">
 <link href="/ubuntu/masthead.css" rel="stylesheet" type="text/css" media="all">
 </head>
