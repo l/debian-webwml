@@ -46,7 +46,7 @@ my $input = new CGI;
 
 my $pet0 = new Benchmark;
 # use this to disable debugging in production mode completly
-my $debug_allowed = 1;
+my $debug_allowed = 0;
 my $debug = $debug_allowed && $input->param("debug");
 $Search::Param::debug = 1 if $debug > 1;
 
