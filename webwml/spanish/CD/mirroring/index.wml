@@ -1,0 +1,272 @@
+#use wml::debian::cdimage title="Convertirse en una réplica de imágenes de CDs de Debian" BARETITLE=true
+#use wml::debian::toc
+#use wml::debian::translation-check translation="1.12" maintainer="Fernando Cerezal"
+
+<p>Para llegar a ser una réplica de imágenes de CDs de Debian,
+necesita una máquina Linux o de tipo UNIX con una conexión permanente y
+fiable a Internet. Los sitios réplica de CDs de Debian normalmente mantienen
+imágenes <tt>.iso</tt> de CD y DVD de varios tamaños, archivos para <a href=
+"http://atterer.net/jigdo/">jigdo</a> (<tt>.jigdo</tt> y <tt>.template</tt>),
+archivos para <a href="http://bitconjurer.org/BitTorrent/">BitTorrent</a>
+(<tt>.torrent</tt>) y las sumas MD5 de las imágenes(<tt>MD5SUMS*</tt>).</p>
+
+<toc-display/>
+
+<hr>
+
+<toc-add-entry name="master">Sitio maestro</toc-add-entry>
+
+<p>Hay dos emplazamientos a replicar, una para las imágenes de «estable» y
+una para las imágenes de «beta/inestable/en pruebas». Las URLs del sitio 
+maestro se muestran más adelante -sin embargo, <strong>por favor</strong>
+considere el replicar desde otro servidor más cercano (listas de réplicas: <a
+href="../http-ftp/">HTTP/FTP</a>, <a href="rsync-mirrors">rsync</a>)
+si fuese posible. El acceso al sitio maestro se puede restringir en el 
+momento de una publicación.</p>
+
+<p>También tenga en cuenta que se almacena una <strong>gran</strong> cantidad
+de datos en estos directorios - lea la <a href="#exclude">sección posterior</a>
+para informarse de los detalles sobre como recortar el tamaño excluyendo ciertos archivos.</p>
+
+<ul>
+
+ <li>Imágenes de «estable» (actualizadas con cada publicación estable):<br>
+
+   <a href="http://cdimage.debian.org/debian-cd/"
+    ><tt>http://cdimage.debian.org/debian-cd/</tt></a><br>
+
+    <a href="ftp://cdimage.debian.org/debian-cd/"
+    ><tt>ftp://cdimage.debian.org/debian-cd/</tt></a><br>
+
+    <tt>rsync://cdimage.debian.org/debian-cd/</tt>
+
+  </li>
+
+ <li>Imágenes de «Beta/inestable/en pruebas» (la mayoría de las secciones se 
+ actualizan semanalmente):<br>
+
+    <a href="http://cdimage.debian.org/pub/cdimage-testing/"
+    ><tt>http://cdimage.debian.org/pub/cdimage-testing/</tt></a><br>
+
+    <a href="ftp://cdimage.debian.org/pub/cdimage-testing/"
+    ><tt>ftp://cdimage.debian.org/pub/cdimage-testing/</tt></a><br>
+
+    <tt>rsync://cdimage.debian.org/cdimage-testing/</tt>
+
+  </li>
+
+</ul>
+#______________________________________________________________________
+
+<toc-add-entry name="httpftp">Se desaconseja la réplica usando HTTP/FTP</toc-add-entry>
+
+<p>No debería usar FTP o HTTP para actualizar su réplica. Estos métodos
+de transferencia tienen una probabilidad de fallo alta debido al enorme
+tamaño de los archivos.</p>
+
+<p>Además, HTTP y FTP no incluyen comprobación de la integridad de los 
+datos recibidos, así que es más probable que pasen desapercibidas descargas 
+abortadas o corrupción de datos.</p>
+#______________________________________________________________________
+
+<toc-add-entry name="rsync">Se acepta la réplica usando rsync</toc-add-entry>
+
+<p>El programa <a href="http://rsync.samba.org/"><kbd>rsync</kbd></a> es
+una buena solución para la réplica. Es menos eficiente que la otra, 
+solución de réplica específica de Debian que se detalla más adelante, pero puede ser más
+fácil de configurar. Además, asegura que todos los archivos se reciben
+correctamente y que los metadatos (e.g. marcas de tiempo) se guardan en
+la sincronización igual que el archivo de datos.</p>
+
+<p>Mire la sección <a href="#exclude">Exclusión de archivos de la réplica</a>
+para ver ejemplos de los modificadores <kbd>--include</kbd> y <kbd>--exclude</kbd>.
+La <a href="rsync-mirrors">lista de réplicas rsync</a> está disponible 
+en una página separada.</p>
+
+<p>Use al menos las opciones <strong><kbd>--times --links --hard-links --partial--block-size=8192</kbd></strong>. Esto mantendrá fechas de modificación,
+enlaces simbólicos y reales, y usará un tamaño de bloque de 8192 bytes
+(el más eficiente para imágenes de CD). Cuando la fecha de modificación y
+el tamaño son iguales, <kbd>rsync</kbd> no descargará el fichero, de
+manera que <kbd>--times</kbd> es realmente obligatorio.</p>
+#______________________________________________________________________
+
+<toc-add-entry name="jigdolite">Se desaconseja la réplica usando jigdo-lite</toc-add-entry>
+
+<p>Las versiones recientes del programa <a href="http://atterer.net/jigdo/">
+<kbd>jigdo-lite</kbd></a> soportan la descarga por partes de múltiples imágenes.
+Sin embargo, no recomendamos usar <kbd>jigdo-lite</kbd> para crear réplicas de
+CDs de Debian - use <kbd>jigdo-mirror</kbd> en su lugar.</p>
+#______________________________________________________________________
+
+<toc-add-entry name="jigdomirror">Se recomienda el uso de jigdo-mirror para 
+hacer la réplica</toc-add-entry>
+
+<p>Realmente, esto significa: Replique los archivos <tt>.iso</tt>usando <a
+href="http://atterer.net/jigdo/"><kbd>jigdo-mirror</kbd></a>, entonces (si
+quiere replicar otro tipo de archivos, e.g. <tt>.jigdo</tt> y <tt>.template
+</tt>) ejecute rsync sobre el directorio para obtener los demás. Los guiones 
+en <a href="http://www.acc.umu.se/~maswan/debian-push/cdimage/">esta
+página</a> puede ayudar al configurarlo.</p>
+ 
+<p>Mucha gente mantiene réplicas «regulares» de Debian
+(<kbd>debian/</kbd>), o tienen una de esas réplicas cerca. Esto significa
+que ya tienen los <tt>.deb</tt> que están incluidos en las imágenes de CD. La
+pregunta obvia es ¿por qué no podemos usar esos mismos ficheros en las
+imágenes de CD?</p>
+
+<p><kbd>jigdo-mirror</kbd> es un programa que le permite a uno generar
+imágenes de CD de Debian usando los ficheros de una réplica "normal", más
+unos pocos ficheros de plantilla de jigdo.</p>
+
+<p>Lo primero de todo, necesita las plantillas de jigdo. Mire la
+<a href="../jigdo-cd">página de información de jigdo</a> para encontrar
+enlaces. Descargue los ficheros por cada arquitectura para la que desee hacer imágenes.</p>
+
+<p>Cree el fichero <kbd>~/.jigdo-mirror</kbd> para configurar el programa.
+Un ejemplo:</p>
+
+<pre>
+jigdoDir="/where/you/keep/mirrors/debian-cd/current/jigdo"
+imageDir="/where/you/keep/mirrors/debian-cd/current/images"
+tmpDir="/where/you/keep/mirrors/debian-cd/current/images"
+debianMirror="file:/where/you/keep/mirrors/debian"
+include='i386/|sparc/|powerpc/|source/'; exclude='-1\.'
+</pre>
+
+<p>Las variables <i>include</i> y <i>exclude</i> contienen la lista de
+arquitecturas para las que usted desea crear imágenes (expresiones
+regulares, en realidad). Para más información, lea la página de manual de
+<kbd>jigdo-mirror</kbd> o el código fuente (es un guión de línea de
+ comandos con muchos comentarios).</p>
+
+<p>Tras haberlo configurado, simplemente ejecute <kbd>jigdo-mirror</kbd> y
+eso hará todo por su cuenta. Mostrará un montón de información y
+probablemente tarde mucho, de manera que le sugerimos que tome medidas al
+respecto (ejecutarlo en screen, redirigir la salida a un fichero,
+etc).</p>
+#______________________________________________________________________
+ 
+<toc-add-entry name="pushmirror">Cómo llegar a ser una réplica de empuje</toc-add-entry>
+
+<p>Cuando haya disponibles nuevas imágenes, el sitio maestro puede mandar
+un mensaje a sus réplicas y hacerlas empezar a replicar inmediatamente. De 
+esta manera, los datos nuevos son «empujados» al exterior mejor que «retirados» 
+desde las réplicas en su próxima actualización diaria, lo que lleva a una 
+propagación más rápida de las publicaciones de imágenes nuevas.
+
+<p>Si quiere que su réplica sea parte de este sistema de actualización, eche
+una mirada a <a href="http://www.acc.umu.se/~maswan/debian-push/cdimage/"
+>esta página</a>.</p>
+#______________________________________________________________________
+
+<toc-add-entry name="exclude">Exclusión de archivos del replicado</toc-add-entry>
+
+<p>Para reducir la capacidad de almacenaje que necesita su réplica de 
+CDs de Debian, puede excluir archivos de ser replicados. Las instrucciones
+siguientes incluyen modificadores de linea de comandos para <kbd>rsync</kbd>,
+pero puede ayudarle incluso si usa una herramienta distinta para el replicado. Con
+<kbd>rsync</kbd>, los modificadores <kbd>--include</kbd> y <kbd>--exclude</kbd>
+se consideran en orden de apariencia, y el primer modificador cuyo patrón 
+encaje determina si el archivo se excluye o incluye.</p>
+
+<ul>
+
+  <li><strong>Excluir código fuente:</strong>
+  <kbd>--exclude=source/</kbd><br>
+
+  Esto previene que se repliquen las imágenes que contengan código 
+  fuente. Note que hay gente que considera inapropiado ofrecer binarios
+  con licencia GPL en un servidor sin ofrecer también el código fuente 
+  de los programas <em>en el mismo servidor</em>.</li>
+
+  <li><strong>Excluir imágenes completas:</strong>
+  <kbd>--include='*businesscard*.iso' --include='*netinst*.iso'
+  --exclude='*.iso'</kbd><br>
+
+  Excluye todos los conjuntos de imágenes de CD/DVD para todas las
+  arquitecturas, <em>pero</em> replica las imágenes <tt>.iso</tt> de 
+  tamaño tarjeta de visita y de instalación por red. Siempre recomendamos
+  replicar estas pequeñas imágenes: Respecto a su tamaño, ¡son extremadamente
+  útiles!</li>
+  
+  <li><strong>Excluye las imágenes completas para arquitecturas no i386:</strong>
+  <kbd>--include='*businesscard*.iso' --include='*netinst*.iso'
+  --include='i386/**.iso' --exclude='*.iso'</kbd><br>
+
+  Como el anterior,pero <em>incluye</em> todas las imágenes de CD/DVD para la 
+  arquitectura i386.</li>
+
+  <li><strong>Excluye las imágenes completas, excepto los CDs 1 a 3 para i386:</strong>
+  <kbd>--include='*netinst*.iso' --include='i386/**-[1-3].iso'
+  --exclude='*.iso'</kbd><br>
+
+  El conjunto completo de imágenes para i386 aún puede necesitar demasiado
+  espacio para usted si incluye las imágenes de DVD y DVD de doble capa. 
+  Esto excluye todas las imágenes <tt>.iso</tt> excepto las de instalación
+  por red y los tres primeros CDs para i386.</li>
+
+  <li><strong>Excluye todas las arquitecturas excepto i386:</strong>
+  <kbd>--exclude=alpha/ --exclude=arm/ --exclude=hppa/ --exclude=hurd/
+  --exclude=ia64/ --exclude=m68k/ --exclude=mips/ --exclude=mipsel/
+  --exclude=powerpc/ --exclude=s390/ --exclude=sh/
+  --exclude=sparc/</kbd><br>
+
+  Solo incluye el conjunto completo de archivos para i386, no incluye ningún
+  archivo <tt>.jigdo</tt>, <tt>.iso</tt> etc o lo que sea para las demás 
+  arquitecturas.</li>
+ 
+</ul>
+#______________________________________________________________________
+
+<toc-add-entry name="names">Convenciones de nombres y requerimientos de tamaño
+para imágenes <tt>.iso</tt></toc-add-entry>
+
+<p>Las distintas variantes de las imágenes <tt>.iso</tt> se distinguen por 
+sus nombres, así se permite que restrinja los tipos de imágenes que replica:</p>
+
+<ul>
+
+  <li><strong><tt>*-businesscard.iso</tt></strong>: Una imagen por cada
+  una de las <a href="/ports/#released">arquitecturas soportadas</a>,
+  50&nbsp;MB</li>
+
+  <li><strong><tt>*-netinst.iso</tt></strong>: Una imagen por arquitectura,
+  110&nbsp;MB</li>
+
+  <li><strong><tt>*-dvd.iso</tt></strong> (DVDs de una sola capa):
+  Múltiples imágenes solo para i386, cada una de hasta 4482&nbsp;MB. 
+  Para sarge, el tamaño acumulado de las imágenes para i386 es de más de
+  9000&nbsp;MB.</li>
+
+  <li><strong><tt>*-dldvd.iso</tt></strong> (DVDs de doble capa): Como el 
+  anterior, excepto que las imágenes individuales tienen hasta 8106&nbsp;MB.
+  Para sarge, no hay imágenes <tt>.iso</tt> disponibles, solo archivos jigdo.</li>
+  
+  <li><strong><tt>*.iso</tt></strong>: Todos los demás archivos <tt>.iso</tt>
+  que no encajan en uno de los patrones anteriores son imágenes de CD. Hay
+  múltiples imágenes por cada arquitectura, cada una de hasta 650&nbsp;MB.
+  El tamaño acumulado de todas las imágenes y arquitecturas dan como 
+  resultado el <a href="/mirror/size">tamaño de una réplica completa de 
+  Debian</a> (100&nbsp;GB en el momento de este escrito).</li>
+
+</ul>
+#______________________________________________________________________
+ 
+
+<toc-add-entry name="register">Registrar la réplica</toc-add-entry>
+
+<p>Para hacer útil su réplica de imágenes de CD a una mayor audiencia,
+puede registrarla en nuestra lista de réplicas como
+<a href="../http-ftp/">ésta</a> o <a href="rsync-mirrors">esta otra</a>.
+Sin embargo, como las imágenes completas son ficheros grandes, esto podría
+suponerle muchos gigabytes de tráfico de red diarios.</p>
+
+<p>Puede registrar su réplica bien rellenando
+<a href="$(HOME)/mirror/submit">el formulario de inclusión de réplicas</a>
+(los campos CDImage-* son los importantes), o enviando un mensaje de
+correo a
+<a
+href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;debian-cd&#64;lists.debian.org">\
+debian-cd&#64;lists.debian.org</a>.</p>
+
+<p>Agradecemos todas las nuevas réplicas de imágenes de CD. ¡Gracias!</p>
