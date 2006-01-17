@@ -1,0 +1,187 @@
+#use wml::debian::template title="Cómo está hecho www.debian.org"
+#use wml::debian::toc
+#use wml::debian::translation-check translation="1.25"
+
+<p>El <em>«árbol web»</em> de Debian, la colección de directorios y
+archivos que comprende nuestro sitio web, está ubicado en el directorio
+<tt>/org/www.debian.org/www</tt> de www-master.debian.org. La mayor parte
+de las páginas son archivos HTML estáticos normales (esto es, no se han
+creado con algo dinámico como un script CGI o PHP), ya que existen réplicas
+del sitio web.
+
+<p>El sitio se genera de una de las tres formas siguientes:
+<ul>
+  <li>La mayor parte se genera utilizando WML, desde el árbol CVS de «webwml».
+  <li>La documentación se genera utilizando DebianDoc-SGML, desde el árbol
+      CVS de «debian-doc».
+  <li>Algunas partes del sitio se generan mediante scripts utilizando otras
+      fuentes, p. ej., las páginas de (de)suscripción de las listas de correo.
+</ul>
+
+<p>Seis veces al día se ejecuta una actualización automática (desde los
+repositorios del CVS y otras fuentes) del árbol.
+
+<p>Si quiere contribuir en este sitio, <strong>no</strong> empiece
+directamente añadiendo o editando elementos en el directorio <code>www/</code>.
+Contacte primero con <a href="mailto:webmaster@debian.org">los webmasters</a>.
+
+<p>Todos los archivos y directorios pertenecen al grupo debwww y son editables
+por sus miembros; de esta forma, el equipo del web puede modificar archivos
+ubicados en los directorios de ésta. El modo 2775 sobre directorios significa
+que todos los archivos creados bajo ese directorio heredarán el grupo (<i>debwww</i>
+en este caso). Se espera que alguien del grupo debwww establezca
+«<code>umask 002</code>», de forma que los archivos se creen con permisos de
+escritura.
+
+<toc-display />
+
+<hrline />
+
+<toc-add-entry name="look">Apariencia</toc-add-entry>
+
+<p>Dejando que <a href="http://packages.debian.org/unstable/web/wml">WML</a>
+se encargue del trabajo detallado de añadir cabeceras y pies de página, se
+obtiene en todas las páginas una misma apariencia. Aunque una página .wml
+puede parecer HTML a primera vista, HTML es únicamente uno de los tipos
+de información extra que puede utilizarse en .wml. Una vez que WML ha terminado
+de ejecutar varios filtros sobre un archivo, el producto final es HTML
+verdadero. Para darle una idea de la potencia de WML, usted puede incluir
+código Perl en una página para permitirle hacer, bueno, casi cualquier cosa.
+
+<p>Note sin embargo que WML comprueba (y algunas veces corrige
+«automágicamente») tan sólo de forma muy básica la validez de su código
+HTML. Debería instalar 
+<a href="http://packages.debian.org/unstable/web/weblint">weblint</a>
+y/o
+<a href="http://packages.debian.org/unstable/web/tidy">tidy</a>
+para validar su código HTML.
+
+<p>Nuestras páginas web cumplen actualmente el estándar
+<a href="http://www.w3.org/TR/html4/">HTML 4.01 Strict</a>. Sin embargo,
+intentamos avanzar hacia <a href="http://www.w3.org/TR/xhtml1/">XHTML</a>,
+por eso se anima con fuerza a los editores de web a escribir las etiquetas
+de HTML en minúsculas, situar las etiquetas finales en los lugares apropiados,
+etc., con objeto de hacer la transición tan suave como sea posible.
+
+<p>Todo el que esté trabajando sobre gran cantidad de páginas debería instalar
+WML, de forma que pueda asegurarse de que el resultado será el esperado. Si
+está ejecutando Debian, puede instalar fácilmente el paquete <code>wml</code>.
+Lea las páginas sobre <a href="using_wml">uso de WML</a> para más información.
+
+
+<toc-add-entry name="sources">Fuentes</toc-add-entry>
+
+<p>La fuente para las páginas web se almacena en CVS. CVS es un sistema de
+control de versiones, que nos permite mantener un registro de qué, quién, cuándo
+y por qué se produjeron los cambios. Es una forma segura de controlar la
+edición concurrente de archivos fuente por parte de múltiples autores, lo cual
+es crucial para nosotros, debido a que el equipo de la web de Debian es bastante
+numeroso.
+
+<p>Si no está familiarizado con este programa, querrá leer las páginas sobre
+<a href="using_cvs">uso de CVS</a>.
+
+<p>El directorio superior de webwml en el repositorio de CVS contiene
+directorios con los nombres de los idiomas propios de los lugares donde están
+ubicados los sitios web, dos «Makefiles» y varios scripts. La traducción de los
+nombres de los directorios debería ir en inglés y minúsculas (ej. «german»,
+y no «Deutsch»).
+
+<p>El más importante de los dos «Makefiles» es Makefile.common, el cual, como su
+nombre indica, contiene algunas reglas comunes que son aplicables mediante la
+inclusión de este archivo en otros «Makefiles».
+
+<p>Cada uno de los directorios de idioma contiene «Makefiles», archivos fuente
+de WML y subdirectorios. Los nombres de los archivos y directorios no varían,
+con objeto de mantener los vínculos correctos para todos los idiomas. Los
+directorios pueden también incluir archivos .wmlrc, que contienen alguna
+información útil para WML.
+
+<p>El directorio webwml/english/template contiene archivos WML especiales que
+llamamos plantillas, porque pueden ser referenciados desde todos los demás
+archivos utilizando la orden <code>#use</code>.
+
+<p>Con objeto de que los cambios en las plantillas se propaguen a los archivos
+que las usan, los archivos dependen de ellas en los «Makefiles». Puesto
+que una amplia mayoría de los archivos utilizan la plantilla «template»,
+teniendo la línea «<code>#use wml::debian::template</code>» en la parte
+superior del archivo, esa misma plantilla es una dependencia genérica (de
+todos los archivos). Por supuesto que hay excepciones a esta regla.
+
+<toc-add-entry name="scripts">Scripts</toc-add-entry>
+
+<p>Los scripts están escritos mayormente en código de shell o en Perl. Algunos
+de ellos son archivos independientes y otros están integrados en los archivos
+fuente de WML.</p>
+
+<p>Las fuentes de los scripts principales de actualización de www-master están
+en el <a href="http://cvs.debian.org/cron/?cvsroot=webwml">módulo cron de
+CVS</a>.</p>
+
+<p>Las fuentes de los scripts de actualización de packages.debian.org están
+en el <a href="http://cvs.debian.org/packages/?cvsroot=webwml">módulo packages
+de CVS</a>.</p>
+
+
+<toc-add-entry name="help">Cómo ayudar</toc-add-entry>
+
+<p>Invitamos a todo el mundo que esté interesado a que nos ayude a hacer que el sitio
+web de Debian sea tan bueno como se pueda. Si usted tiene alguna información
+valiosa relacionada con Debian, que piense que le falta a nuestras páginas,
+<a href="mailto:debian-www@lists.debian.org">compártala con nosotros</a>
+y la veremos incluida.
+
+<p>Siempre vendría bien la ayuda en el diseño de las páginas (en lo referente
+a los gráficos y a la estructura de dichas páginas), y también en mantener
+limpio nuestro HTML. Regularmente ejecutamos las siguiente comprobaciones sobre
+la totalidad del sitio web:</p>
+
+<ul>
+  <li><a href="http://people.debian.org/~djpig/urlcheck/">URL check</a>
+  <li><a href="http://people.debian.org/~alfie/validate/">wdg-html-validator</a>
+  <li><a href="http://people.debian.org/~alfie/tidy/">tidy</a>
+</ul>
+
+<p>La ayuda en la lectura de los registros anteriores y la reparación de los
+problemas siempre será bienvenida.</p>
+
+<p>Los registros actuales de construcción para el sitio web pueden
+localizarse en <url "http://www-master.debian.org/build-logs/">.</p>
+
+<p>Si usted habla inglés con fluidez, nos gustaría que probara a leer
+nuestras páginas y <a href="mailto:debian-www@lists.debian.org">nos informara</a> 
+de todos los errores encontrados.
+
+<p>Si habla otra lengua, puede querer ayudarnos a traducir las páginas a
+su idioma. Si una página ya se ha traducido, pero tiene errores, eche un
+vistazo en la lista de <a href="translation_coordinators">\
+coordinadores de traducción</a> y hable con el coordinador de su idioma para
+que se corrija. Si le gustaría traducir páginas por sí mismo vea la
+página sobre <a href="translating">ese tema</a> para más información.
+
+<p>También hay un <a href="todo">archivo de TODO (lo que queda por hacer)</a>,
+compruébelo.</p>
+
+<toc-add-entry name="nohelp">Cómo <strong>no</strong> ayudar</toc-add-entry>
+
+<p><em>[P] Quiero poner en la web de www.debian.org algún detalle vistoso o
+muy elaborado, ¿puedo?</em>
+
+<p>[R] No. Queremos que www.debian.org sea todo lo accesible que se pueda,
+por tanto
+<ul>
+    <li>no usamos extensiones específicas de un navegador.
+    <li>no dependemos únicamente de imágenes. Las imágenes pueden utilizarse
+	para clarificar, pero la información de www.debian.org tiene que
+	mantenerse accesible para navegadores de web de sólo texto, como
+	lynx.
+</ul>
+
+<p><em>[P] Tengo una buena idea. ¿Pueden habilitar LOQUESEA en el HTTPD de
+www.debian.org, por favor?</em>
+
+<p>[R] No. Queremos hacer la vida más fácil a los administradores de las
+réplicas de www.debian.org, por tanto: «no a las características especiales
+de HTTPD, por favor». No, ni siquiera SSI. Se ha hecho una única excepción
+con la negociación de contenido. Esto se debe a que es la única forma
+robusta de dar servicio en múltiples lenguas.
