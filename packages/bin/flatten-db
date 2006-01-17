@@ -28,6 +28,8 @@ my %config = (
 	      'output' => undef,
 	      'descr' => undef,
 	      'sections' => undef,
+	      'packages' => undef,
+	      'sources' => undef,
 	      'verbose' => 0,
 	      );
 
@@ -36,6 +38,8 @@ my %options = (
 	       'output=s' => \$config{output},
 	       'descriptions=s' => \$config{descr},
 	       'sections=s' => \$config{sections},
+	       'packages=s' => \$config{packages},
+	       'sources=s' => \$config{sources},
 	       'verbose+' => \$config{verbose},
 	       'help' => \&help,
 	       );
@@ -80,12 +84,39 @@ if ($config{output}) {
     open (OUT, ">-");
 }
 
-my ( %descr, %sections );
+my ( %descr, %sections, %packages, %sources );
 if ($config{descr}) {
     tie %descr, 'DB_File', $config{descr} or die "Couldn't tie description db $config{descr}: $!";
 }
 if ($config{sections}) {
-    tie %sections, 'DB_File', $config{sections} or die "Couldn't tie sections db $config{section}: $!";
+    tie %sections, 'DB_File', $config{sections} or die "Couldn't tie sections db $config{sections}: $!";
+}
+if ($config{packages}) {
+    tie %packages, 'DB_File', $config{packages} or die "Couldn't tie packages db $config{packages}: $!";
+}
+if ($config{sources}) {
+    tie %sources, 'DB_File', $config{sources} or die "Couldn't tie sources db $config{sources}: $!";
+}
+
+sub store_info {
+    my ($info, $descr) = shift;
+
+    if ($info->{Binary}) {
+	my $info_str = sprintf( "%s %s %s %s\n", $info->{Package},
+				$info->{Section},  $info->{Version},
+				$info->{Binary} );
+	$sources{$info->{Package}} = $info_str;
+	print OUT $info_str;
+    } else {
+	my $info_str = sprintf( "%s %s %s %s %s\n", $info->{Package},
+				$info->{Section}, $info->{Version},
+				$info->{Architecture},
+				strip($info->{Description}) );
+	$packages{$info->{Package}} = $info_str;
+	print OUT $info_str;
+	$descr{$info->{Package}} = $descr if $config{descr};
+	$sections{$info->{Package}} = $info->{Section} if $config{sections};
+    }
 }
 
 my %info = ();
@@ -97,13 +128,7 @@ while (<DB>) {
     if (/^Package: (.*)$/) {
 	$foo = $1;
 	if ($info{Package}) {
-	    if ($info{Binary}) {
-		printf OUT "%s %s %s %s\n", $info{Package}, $info{Section}, $info{Version}, $info{Binary};
-	    } else {
-		printf OUT "%s %s %s %s %s\n", $info{Package}, $info{Section}, $info{Version}, $info{Architecture}, strip ($info{Description});
-		$descr{$info{Package}} = $descr if $config{descr};
-		$sections{$info{Package}} = $info{Section} if $config{sections};
-	    }
+	    store_info \%info, $descr;
 	    %info = ();
 	}
 	$info{Package} = $foo;
@@ -123,13 +148,7 @@ while (<DB>) {
 }
 
 if ($info{Package}) {
-    if ($info{Binary}) {
-	printf OUT "%s %s %s %s\n", $info{Package}, $info{Section}, $info{Version}, $info{Binary};
-    } else {
-	printf OUT "%s %s %s %s %s \n", $info{Package}, $info{Section}, $info{Version}, $info{Architecture}, strip ($info{Description});
-	$descr{$info{Package}} = $descr if $config{descr};
-	$sections{$info{Package}} = $info{Section} if $config{sections};
-    }
+    store_info \%info, $descr;
 }
 
 close (DB);
