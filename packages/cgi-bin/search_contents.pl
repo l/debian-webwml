@@ -119,32 +119,32 @@ if (!-r $file) {
 }
 
 # now grep the contents file appropriately
-my $grep;
+my @grep = ( 'grep', '-h' );
 if ($searchmode eq "filelist") {
   $searchkeyword = lc $searchkeyword; # just in case
-  $searchkeyword =~ s/\+/\\\\+/g;
-  $grep = "egrep -h /$searchkeyword".'"(,[^ ]+)?$"';
+  $searchkeyword =~ s/\+/\\+/g;
+  push @grep, '-E', "/$searchkeyword(,[^ ]+)?\$";
 } else {
-    $grep = "grep -h ";
     if ($case =~ /^insensitive/) {
-	$grep .= "-i ";
+	push @grep, '-i';
     }
     if ($searchmode eq "searchword") {
-	$grep .= "$searchkeyword.* ";
+	push @grep, "$searchkeyword.*";
     } else {
-	$grep .= "\"\\(^\\|/\\)\"$searchkeyword";
+	push @grep, "\\(^\\|/\\)$searchkeyword";
 	if ($searchmode eq "searchfiles") {
-	    $grep .= "\"[ \t]\"";
+	    push @grep, "[ \t]";
 	} elsif ($searchmode eq "searchfilesanddirs") {
-	    $grep .= "\"[/ \t]\"";
+	    push @grep, "[/ \t]";
 	} 
     }
 }
 
-my $command = $grep." ".$file." ".$file_nonus;
-#print $command."<br>\n"; # just for debugging
+push @grep, $file, $file_nonus;
+#print "@grep<br>\n"; # just for debugging
 
-my @results = qx( $command );
+open my $grep_out, '-|', @grep or die "grep failed: $!";
+my @results = <$grep_out>;
 
 if ($searchmode eq "filelist") {
 	print "<p>You have searched for the contents of <em>$keyword_enc</em> in <em>$version_enc</em>, architecture <em>$arch_enc</em>.<br>";
