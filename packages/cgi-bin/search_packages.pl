@@ -14,10 +14,12 @@
 require 5.001;
 use strict;
 use CGI qw( -oldstyle_urls );
+#use CGI::Carp qw( fatalsToBrowser );
 use POSIX;
 use URI::Escape;
 use HTML::Entities;
 use DB_File;
+use Benchmark;
 
 use lib "../lib";
 
@@ -26,33 +28,52 @@ use Packages::Search qw( :all );
 use Packages::HTML ();
 
 my $thisscript = "search_packages.pl";
+my $use_grep = 1;
 my $HOME = "http://www.debian.org";
 my $ROOT = "";
 my $SEARCHPAGE = "http://packages.debian.org/";
-my @DISTS = qw( oldstable stable testing testing-proposed-updates unstable experimental );
+my @SUITES = qw( oldstable stable testing testing-proposed-updates unstable experimental );
+my @DISTS = @SUITES;
+my @SECTIONS = qw( main contrib non-free );
+my @ARCHIVES = qw( us security installer );
+my @ARCHITECTURES = qw( alpha amd64 arm hppa hurd-i386 i386 ia64
+			kfreebsd-i386 mips mipsel powerpc s390 sparc );
 
 $ENV{PATH} = "/bin:/usr/bin";
 
 # Read in all the variables set by the form
 my $input = new CGI;
 
+my $pet0 = new Benchmark;
+# use this to disable debugging in production mode completly
+my $debug_allowed = 1;
+my $debug = $debug_allowed && $input->param("debug");
+$Search::Param::debug = 1 if $debug > 1;
 
 # If you want, just print out a list of all of the variables and exit.
-# print $input->header;
+print $input->header if $debug;
 # print $input->dump;
 # exit;
 
 my %params_def = ( keywords => { default => undef, match => '^\s*([-+\@\w\/.:]+)\s*$' },
-		   version => { default => 'stable', match => '^(\w+)$',
-				replace => { all => '*' } },
+		   suite => { default => 'stable', match => '^(\w+)$',
+			      alias => 'version', array => ',',
+			      replace => { all => \@SUITES } },
 		   case => { default => 'insensitive', match => '^(\w+)$' },
+		   official => { default => 0, match => '^(\w+)$' },
+		   use_cache => { default => 1, match => '^(\w+)$' },
 		   subword => { default => 0, match => '^(\w+)$' },
 		   exact => { default => undef, match => '^(\w+)$' },
 		   searchon => { default => 'all', match => '^(\w+)$' },
-		   release => { default => 'all', match => '^([\w-]+)$',
-				replace => { all => '*'} },
+		   section => { default => 'all', match => '^([\w-]+)$',
+				alias => 'release', array => ',',
+				replace => { all => \@SECTIONS } },
 		   arch => { default => 'any', match => '^(\w+)$',
-			     replace => { any => '*'} },
+			     array => ',', replace =>
+			     { any => \@ARCHITECTURES } },
+		   archive => { default => 'all', match => '^(\w+)$',
+				array => ',', replace =>
+				{ all => \@ARCHIVES } },
 		   format => { default => 'html', match => '^(\w+)$' },
 		   );
 my %params = Packages::Search::parse_params( $input, \%params_def );
@@ -71,34 +92,34 @@ if ($params{errors}{keywords}) {
     exit 0;
 }
 my $keyword = $params{values}{keywords}{final};
-my $version = $params{values}{version}{final};
+my @suites = @{$params{values}{suite}{final}};
+my $official = $params{values}{official}{final};
+my $use_cache = $params{values}{use_cache}{final};
 my $case = $params{values}{case}{final};
+my $case_bool = ( $case !~ /insensitive/ );
 my $subword = $params{values}{subword}{final};
 my $exact = $params{values}{exact}{final};
 $exact = !$subword unless defined $exact;
 my $searchon = $params{values}{searchon}{final};
-my $releases = $params{values}{release}{final};
-# ugly hack -- djpig
-my $archive = '*';
-if ($releases =~ /non-US/i) {
-	$releases = '*';
-	$archive = 'non-US';
-}
-my $arch = $params{values}{arch}{final};
+my @sections = @{$params{values}{section}{final}};
+my @archs = @{$params{values}{arch}{final}};
 my $page = $params{values}{page}{final};
 my $results_per_page = $params{values}{number}{final};
 
 # for URL construction
-my $version_param = $params{values}{version}{no_replace};
-my $releases_param = $params{values}{release}{no_replace};
-my $arch_param = $params{values}{arch}{no_replace};
+my $suites_param = join ',', @{$params{values}{suite}{no_replace}};
+my $sections_param = join ',', @{$params{values}{section}{no_replace}};
+my $archs_param = join ',', @{$params{values}{arch}{no_replace}};
 
 # for output
 my $keyword_enc = encode_entities $keyword;
 my $searchon_enc = encode_entities $searchon;
-my $version_enc = encode_entities $version_param;
-my $releases_enc = encode_entities $releases_param;
-my $arch_enc = encode_entities $arch_param;
+my $suites_enc = encode_entities join ', ', @{$params{values}{suite}{no_replace}};
+my $sections_enc = encode_entities join ', ', @{$params{values}{section}{no_replace}};
+my $archs_enc = encode_entities join ', ',  @{$params{values}{arch}{no_replace}};
+my $pet1 = new Benchmark;
+my $petd = timediff($pet1, $pet0);
+print "DEBUG: Parameter evaluation took ".timestr($petd)."<br>" if $debug;
 
 if ($format eq 'html') {
 print Packages::HTML::header( title => 'Package Search Results' ,
@@ -109,9 +130,9 @@ print Packages::HTML::header( title => 'Package Search Results' ,
 			      search_field_values => { 
 				  keywords => $keyword_enc,
 				  searchon => $searchon,
-				  arch => $arch_enc,
-				  version => $version_enc,
-				  releases => $releases_enc,
+				  arch => $archs_enc,
+				  suite => $suites_enc,
+				  section => $sections_enc,
 				  subword => $subword,
 				  exact => $exact,
 				  case => $case,
@@ -130,9 +151,7 @@ while (<C>) {
 }
 close (C);
 
-my $fdir = $topdir . "/files/flat/$version/$releases";
-my $file = "Packages-$arch.$archive";
-my $srcfile = "Sources.$archive";
+my $FLATDIR = $topdir . "/files/flat";
 my $search_on_sources = 0;
 
 my %descr;
@@ -147,7 +166,7 @@ sub find_desc
 
     unless (exists $descr{$suite}{$part}) {
 	$descr{$suite}{$part} = {};
-	tie %{$descr{$suite}{$part}}, 'DB_File', "$topdir/files/flat/$suite/$part/Description", O_RDONLY
+	tie %{$descr{$suite}{$part}}, 'DB_File', "$FLATDIR/$suite/$part/Description", O_RDONLY
 	    or return "Error while loading descriptions database: $!";
     }
 
@@ -163,79 +182,161 @@ sub find_section
 
     unless (exists $sections{$suite}{$part}) {
 	$sections{$suite}{$part} = {};
-	tie %{$sections{$suite}{$part}}, 'DB_File', "$topdir/files/flat/$suite/$part/Section", O_RDONLY
+	tie %{$sections{$suite}{$part}}, 'DB_File', "$FLATDIR/$suite/$part/Section", O_RDONLY
 	    or return undef;
     }
 
     return $sections{$suite}{$part}{$pkg};
 }
 
-# The keyword needs to be modified for the actual search, but left alone
-# for future reference, so we create a different variable for searching
-my $searchkeyword = $keyword;
-$searchkeyword =~ s/[.]/[.]/;
-if (($searchon eq 'names') || ($searchon eq 'sourcenames')) {
-    if ($searchon eq 'sourcenames') {
-	$file = $srcfile;
-	$search_on_sources = 1;
-    }
-    if ($exact) {
-	$searchkeyword = "\"^".$searchkeyword." \"";
-    } else {
-	$searchkeyword = "\"^[^ ]*".$searchkeyword."[^ ]* \"";
-    }
+my $st0 = new Benchmark;
+tie my %cache, 'DB_File', "$topdir/files/search.cache/search.cache", O_RDWR|O_CREAT or $use_cache = 0;
+my $cached;
+my @results;
+my $cache_key = $keyword.$exact.$subword.$searchon.$suites_param.$sections_param.$archs_param;
+if ($use_cache && ($cached = $cache{$cache_key})) {
+    @results = split /\n/, $cached;
+    print "DEBUG: Used cached results<br><pre>$cached</pre>" if $debug;
 } else {
-    if ($subword != 1) {
-	$searchkeyword = "\"\\(^$searchkeyword\\b\\|\\b$searchkeyword\\b\\)\"";
-    }
-}
-
-# check if the Packages files are there
-my @files = glob ("$fdir/$file");
-if ($#files == -1) {
-# XXX has to be updated for new architectures
-    if ($format eq 'html') {
-	if (($version eq "stable" and $arch =~ /^(hurd|sh)$/)
-	    || ($version eq "oldstable" and $arch =~ /^amd64$/)) {
-	    print "Error: the $arch architecture didn't exist in $version.<br>\n"
-		."Please go back and choose a different distribution.\n";
-	} else {
-	    print "Error: Packages/Sources file not found.<br>\n"
-		."If the problem persists, please inform $ENV{SERVER_ADMIN}.\n";
-	    printf "<p>$file</p>";
+    my $searchkeyword = $keyword;
+    my $grep_searchkeyword = $keyword;
+    $searchkeyword =~ s/[.]/\\./;
+    if (($searchon eq 'names') || ($searchon eq 'sourcenames')) {
+	if ($searchon eq 'sourcenames') {
+	    $search_on_sources = 1;
 	}
-	&printfooter;
+	# asserting that all package names are lower case
+	$searchkeyword = lc($searchkeyword) unless $case_bool;
+	$case_bool = 1;
+	$grep_searchkeyword = "^[^ ]*$searchkeyword" unless $exact;
+	$searchkeyword = "^\\S*$searchkeyword" unless $exact;
+    } else {
+	$grep_searchkeyword = "\\(^$searchkeyword\\b\\|\\b$searchkeyword\\b\\)"
+	    if $subword != 1;
+	$searchkeyword = "\\b$searchkeyword\\b"
+	    if $subword != 1;
     }
-    exit;
+    
+# FIXME
+# check if the Packages files are there
+#my @files = glob ("$fdir/$file");
+#if ($#files == -1) {
+# XXX has to be updated for new architectures
+#    if ($format eq 'html') {
+#	if (($version eq "stable" and $arch =~ /^(hurd|sh)$/)
+#	    || ($version eq "oldstable" and $arch =~ /^amd64$/)) {
+#	    print "Error: the $arch architecture didn't exist in $version.<br>\n"
+#		."Please go back and choose a different distribution.\n";
+#	} else {
+#	    print "Error: Packages/Sources file not found.<br>\n"
+#		."If the problem persists, please inform $ENV{SERVER_ADMIN}.\n";
+#	    printf "<p>$file</p>";
+#	}
+#	&printfooter;
+#    }
+#    exit;
+#}
+
+    my @files;
+    foreach my $s (@suites) {
+	foreach my $sec (@sections) {
+	    foreach my $a (@archs) {
+		foreach my $archive (@ARCHIVES) {
+		    if (($searchon eq 'names' or $searchon eq 'sourcenames')
+			and $exact) {
+			my ( %packages, $file );
+			if ($search_on_sources) {
+			    $file = "$FLATDIR/$s/$sec/Sources.$archive.db";
+			} else {
+			    $file = "$FLATDIR/$s/$sec/Packages-$a.$archive.db";
+			}
+			if (-f $file) {
+			    print "DEBUG: Use file $file<br>"
+				if $debug > 1;
+			    
+			    tie %packages, 'DB_File', $file, O_RDONLY
+				or die "Couldn't open packages file $file: $!";
+			    
+			    if (my $data = $packages{$searchkeyword}) {
+				print "DEBUG: Found result $data<br>"
+				    if $debug > 1;		
+				push @results, "$file:$data";
+			    }
+			}
+		    } else {
+			my $file;
+			if ($search_on_sources) {
+			    $file = "$FLATDIR/$s/$sec/Sources.$archive";
+			} else {
+			    $file = "$FLATDIR/$s/$sec/Packages-$a.$archive";
+			}
+			if (-f $file) {
+			    print "DEBUG: Use file $file<br>"
+				if $debug > 1;
+			    
+			    # use_grep is currently way faster, though
+			    # I can't pinpoint exactly why, yet
+			    # most probably the perl regexes are
+			    # slow compared to the simpler grep
+			    # regexes
+			    unless ($use_grep) {
+				open my $pkg_fh, '<', $file
+				    or die "Couldn't open packages file $file: $!";
+				
+				foreach (<$pkg_fh>) {
+				    if (/$searchkeyword/o) {
+					print "DEBUG: Found result $_<br>"
+					    if $debug > 1;
+
+					push @results, "$file:$_";
+				    }
+				}
+			    } else {			    
+				push @files, $file;
+			    }
+			}
+		    }    
+		}
+	    }
+	}
+    }
+
+    if ($use_grep) {
+	if (@files) {
+	    my @grep = ( 'grep', '-H' );
+	    push @grep, '-i' unless $case_bool;
+	    push @grep, $grep_searchkeyword;
+	    push @grep, @files;
+	    
+	    print "DEBUG: starting grep command '".
+		substr("@grep",0,100)."[...]'<br>" if $debug;
+	    open my $grep_out, '-|', @grep or
+		die "grep failed: $!";
+	    @results = <$grep_out>;
+	}
+    }
+	
+    $cache{$cache_key} = "@results";
 }
 
-# now grep the packages file appropriately
-my $grep = "grep -H ";
-if ($case =~ /^insensitive/) {
-  $grep .= "-i ";
-}
-$grep .= "$searchkeyword";
-
-
-my $command = "find $fdir -name $file|xargs ".$grep;
-#print "<br>".$command."<br>\n"; # just for debugging
-
-my @results = qx( $command );
+my $st1 = new Benchmark;
+my $std = timediff($st1, $st0);
+print "DEBUG: Search took ".timestr($std)."<br>" if $debug;
 
 if ($format eq 'html') {
-    my $dist_wording = $version_param eq "all" ? "all distributions"
-	: "distribution <em>$version_enc</em>";
-    my $section_wording = $releases_param eq 'all' ? "all sections"
-	: "section <em>$releases_enc</em>";
-    my $arch_wording = $arch_param eq 'any' ? "all architectures"
-	: "architecture <em>$arch_enc</em>";
+    my $suite_wording = $suites_enc eq "all" ? "all suites"
+	: "suite(s) <em>$suites_enc</em>";
+    my $section_wording = $sections_enc eq 'all' ? "all sections"
+	: "section(s) <em>$sections_enc</em>";
+    my $arch_wording = $archs_enc eq 'any' ? "all architectures"
+	: "architecture(s) <em>$archs_enc</em>";
     if (($searchon eq "names") || ($searchon eq 'sourcenames')) {
 	my $source_wording = $search_on_sources ? "source " : "";
 	my $exact_wording = $exact ? "named" : "that names contain";
-	print "<p>You have searched for ${source_wording}packages $exact_wording <em>$keyword_enc</em> in $dist_wording, $section_wording, and $arch_wording.</p>";
+	print "<p>You have searched for ${source_wording}packages $exact_wording <em>$keyword_enc</em> in $suite_wording, $section_wording, and $arch_wording.</p>";
     } else {
 	my $exact_wording = $exact ? "" : " (including subword matching)";
-	print "<p>You have searched for <em>$keyword_enc</em> in packages names and descriptions in $dist_wording, $section_wording, and $arch_wording$exact_wording.</p>";
+	print "<p>You have searched for <em>$keyword_enc</em> in packages names and descriptions in $suite_wording, $section_wording, and $arch_wording$exact_wording.</p>";
     }
 }
 
@@ -244,33 +345,35 @@ if (!@results) {
 	my $keyword_esc = uri_escape( $keyword );
 	my $printed = 0;
 	if (($searchon eq "names") || ($searchon eq 'sourcenames')) {
-	    if (($version_param eq 'all')
-		&& ($arch_param eq 'any')
-		&& ($releases_param eq 'all')) {
+	    if (($suites_enc eq 'all')
+		&& ($archs_enc eq 'any')
+		&& ($sections_enc eq 'all')) {
 		print "<p><strong>Can't find that package.</strong></p>\n";
 	    } else {
-		print "<p><strong>Can't find that package, at least not in that distribution ".( $search_on_sources ? "" : " and on that architecture" ).".</strong></p>\n";
+		print "<p><strong>Can't find that package, at least not in that suite ".
+		    ( $search_on_sources ? "" : " and on that architecture" ).
+		    ".</strong></p>\n";
 	    }
 	    
 	    if ($exact) {
 		$printed = 1;
-		print "<p>You have searched only for exact matches of the package name. You can try to search for <a href=\"$thisscript?exact=0&amp;searchon=$searchon&amp;version=$version_param&amp;case=$case&amp;release=$releases_param&amp;keywords=$keyword_esc&amp;arch=$arch_param\">package names that contain your search string</a>.</p>";
+		print "<p>You have searched only for exact matches of the package name. You can try to search for <a href=\"$thisscript?exact=0&amp;searchon=$searchon&amp;suite=$suites_param&amp;case=$case&amp;section=$sections_param&amp;keywords=$keyword_esc&amp;arch=$archs_param\">package names that contain your search string</a>.</p>";
 	    }
 	} else {
-	    if (($version_param eq 'all')
-		&& ($arch_param eq 'any')
-		&& ($releases_param eq 'all')) {
+	    if (($suites_enc eq 'all')
+		&& ($archs_enc eq 'any')
+		&& ($sections_enc eq 'all')) {
 		print "<p><strong>Can't find that string.</strong></p>\n";
 	    } else {
-		print "<p><strong>Can't find that string, at least not in that distribution ($version_param, section $releases_param) and on that architecture ($arch_param).</strong></p>\n";
+		print "<p><strong>Can't find that string, at least not in that suite ($suites_enc, section $sections_enc) and on that architecture ($archs_enc).</strong></p>\n";
 	    }
 	    
 	    unless ($subword) {
 		$printed = 1;
-		print "<p>You have searched only for words exactly matching your keywords. You can try to search <a href=\"$thisscript?subword=1&amp;searchon=$searchon&amp;version=$version_param&amp;case=$case&amp;release=$releases_param&amp;keywords=$keyword_esc&amp;arch=$arch_param\">allowing subword matching</a>.</p>";
+		print "<p>You have searched only for words exactly matching your keywords. You can try to search <a href=\"$thisscript?subword=1&amp;searchon=$searchon&amp;suite=$suites_param&amp;case=$case&amp;section=$sections_param&amp;keywords=$keyword_esc&amp;arch=$archs_param\">allowing subword matching</a>.</p>";
 	    }
 	}
-	print "<p>".( $printed ? "Or you" : "You" )." can try a different search on the <a href=\"http://packages.debian.org/#search_packages\">Packages search page</a>.</p>";
+	print "<p>".( $printed ? "Or you" : "You" )." can try a different search on the <a href=\"$SEARCHPAGE#search_packages\">Packages search page</a>.</p>";
 	
 	&printfooter;
     }
@@ -278,7 +381,7 @@ if (!@results) {
 }
 
 my (%pkgs, %sect, %part, %desc, %binaries);
-my (@colon, $package, $pkg_t, $section, $ver, $foo, $binaries);
+my (@colon, $package, $pkg_t, $section, $ver, $arch, $foo, $binaries);
 
 unless ($search_on_sources) {
     foreach my $line (@results) {
@@ -306,7 +409,7 @@ unless ($search_on_sources) {
 	    next if $count < $start or $count > $end;
 	    printf "<h3>Package %s</h3>\n", $pkg;
 	    print "<ul>\n";
-	    foreach $ver (@DISTS) {
+	    foreach $ver (@SUITES) {
 		if (exists $pkgs{$pkg}{$ver}) {
 		    my @versions = version_sort keys %{$pkgs{$pkg}{$ver}};
 		    my $part_str = "";
