@@ -194,6 +194,9 @@ tie my %cache, 'DB_File', "$topdir/files/search.cache/search.cache", O_RDWR|O_CR
 my $cached;
 my @results;
 my $cache_key = $keyword.$exact.$subword.$searchon.$suites_param.$sections_param.$archs_param;
+if ($searchon eq 'sourcenames') {
+    $search_on_sources = 1;
+}
 if ($use_cache && ($cached = $cache{$cache_key})) {
     @results = split /\n/, $cached;
     print "DEBUG: Used cached results<br><pre>$cached</pre>" if $debug;
@@ -202,9 +205,6 @@ if ($use_cache && ($cached = $cache{$cache_key})) {
     my $grep_searchkeyword = $keyword;
     $searchkeyword =~ s/[.]/\\./;
     if (($searchon eq 'names') || ($searchon eq 'sourcenames')) {
-	if ($searchon eq 'sourcenames') {
-	    $search_on_sources = 1;
-	}
 	# asserting that all package names are lower case
 	$searchkeyword = lc($searchkeyword) unless $case_bool;
 	$case_bool = 1;
@@ -316,7 +316,7 @@ if ($use_cache && ($cached = $cache{$cache_key})) {
 	}
     }
 	
-    $cache{$cache_key} = "@results";
+    $cache{$cache_key} = join "", @results;
 }
 
 my $st1 = new Benchmark;
