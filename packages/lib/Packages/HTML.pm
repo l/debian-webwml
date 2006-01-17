@@ -290,11 +290,11 @@ sub header {
 	$search_in_header = <<MENU;
 <form method="GET" action="$CGI_ROOT/search_packages.pl">
 <div id="hpacketsearch">
-<input type="hidden" name="version" value="$values{version}">
+<input type="hidden" name="suite" value="$values{suite}">
 <input type="hidden" name="subword" value="$values{subword}">
 <input type="hidden" name="exact" value="$values{exact}">
 <input type="hidden" name="arch" value="$values{arch}">
-<input type="hidden" name="releases" value="$values{releases}">
+<input type="hidden" name="section" value="$values{section}">
 <input type="hidden" name="case" value="$values{case}">
 <input type="text" size="30" name="keywords" value="$values{keywords}" id="kw">
 <input type="submit" value="Search">

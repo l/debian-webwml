@@ -253,12 +253,15 @@ sub package_pages_walker {
 		} else {
 		    $package_page .=  "&amp;type=main";
 		}
-		$package_page .=  "\">$a</a></th>\n";
+		my $unofficial = ($a =~ /^(amd64|kfreebsd)/) ?
+		    ' '.gettext( '(unofficial port)' ) :
+		    '';
+		$package_page .=  "\">$a</a>$unofficial</th>\n";
 		$package_page .= "<td>";
 		if ( $env->{distribution} ne "experimental" ) {
 		    $package_page .= sprintf( "[<a href=\"%s\">".gettext( "list of files" )."</a>]\n", "$FILELIST_URL$encodedpack&amp;version=$env->{distribution}&amp;arch=$a", $name );
 		} else {
-		    $package_page .= "no files";
+		    $package_page .= gettext("no current information available");
 		}
 		$package_page .= "</td>\n<td>";
 		my $size = $d->{sizes_deb}{$a};

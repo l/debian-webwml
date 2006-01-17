@@ -50,7 +50,7 @@ our $SECTION_DEFAULT = 'main';
 our $SUBSECTION_DEFAULT = 'unknown';
 our $PRIORITY_DEFAULT = 'optional';
 our $ESSENTIAL_DEFAULT = 'no';
-our $MAINTAINER_DEFAULT = 'unkown <unknown@email.invalid>';
+our $MAINTAINER_DEFAULT = 'unknown <unknown@email.invalid>';
 
 # ===============
 # | Constructor |
@@ -196,7 +196,7 @@ sub set_data {
 	my @v_str_arch;
 	foreach ( @versions ) {
 	    push @v_str, [ $_, $versions{v2a}{$_} ];
-	    push @v_str_arch, "$_ [".join(',', @{$versions{v2a}{$_}})."]";
+	    push @v_str_arch, "$_ [".join(', ', @{$versions{v2a}{$_}})."]";
 	}
 	$v_str_arch = join( ", ", @v_str_arch );
 	$v_str = join( ", ",  version_sort( keys %{$versions{unique}} ) );
