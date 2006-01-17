@@ -68,7 +68,7 @@ our %page_params = ( page => { default => DEFAULT_PAGE,
                      number => { default => DEFAULT_RES_PER_PAGE,
                                  match => '(\d+)' } );
 
-my $debug = 0;
+our $debug = 0;
 
 sub parse_params {
     my ( $cgi, $params_def ) = @_;
@@ -88,46 +88,86 @@ sub parse_params {
 
     foreach my $param ( keys %params ) {
 	
-	print "DEBUG: Param $param<br>" if $debug;
+	print "<hr><p>DEBUG: Param <strong>$param</strong><br>" if $debug;
 
 	my $p_value_orig = $cgi->param($param);
-	my $p_value = $p_value_orig;
 
-        #TODO: do not produce "uninitialized value" warnings
-	print "DEBUG: Value (Orig) $p_value_orig<br>" if $debug;
-
-	if ($params_def->{$param}{match} && defined $p_value_orig) {
-	    ($p_value) = ($p_value_orig =~ m/$params_def->{$param}{match}/);
+	if (!defined($p_value_orig)
+	    && defined $params_def->{$param}{alias}
+	    && defined $cgi->param($params_def->{$param}{alias})) {
+	    $p_value_orig = $cgi->param($params_def->{$param}{alias});
+	    print "DEBUG: Used alias <strong>$params_def->{$param}{alias}</strong><br>"
+		if $debug;
 	}
 
-	print "DEBUG: Value (Match) $p_value<br>" if $debug;
+	my @p_value = ($p_value_orig);
 
-	unless (defined $p_value) {
+	print "DEBUG: Value (Orig) ".($p_value_orig||"")."<br>" if $debug;
+
+	if ($params_def->{$param}{array} && defined $p_value_orig) {
+	    @p_value = split /$params_def->{$param}{array}/, $p_value_orig;
+	    print "DEBUG: Value (Array Split) ".
+		join('##',@p_value)."<br>" if $debug;
+	}
+
+	if ($params_def->{$param}{match} && defined $p_value_orig) {
+	    @p_value = map
+	    { $_ =~ m/$params_def->{$param}{match}/; $_ = $1 }
+	    @p_value;
+	}
+	@p_value = grep { defined $_ } @p_value;
+
+	print "DEBUG: Value (Match) ".
+	    join('##',@p_value)."<br>" if $debug;
+
+	unless (@p_value) {
 	    if (defined $params{$param}{default}) {
-		$p_value = $params{$param}{default};
+		@p_value = ($params{$param}{default});
 	    } else {
+		@p_value = undef;
 		$params_ret{errors}{$param} = "undef";
 		next;
 	    }
 	}
 
-	print "DEBUG: Value (Default) $p_value<br>" if $debug;
-	my $p_value_no_replace = $p_value;
+	print "DEBUG: Value (Default) ".
+	    join('##',@p_value)."<br>" if $debug;
+	my @p_value_no_replace = @p_value;
 
-	if ($params{$param}{replace} && $p_value) {
-	    foreach (keys %{$params{$param}{replace}}) {
-		if ($p_value eq $_) {
-		    $p_value = $params{$param}{replace}{$_};
+	if ($params{$param}{replace} && @p_value) {
+	    @p_value = ();
+	    foreach my $pattern (keys %{$params{$param}{replace}}) {
+		foreach (@p_value_no_replace) {
+		    if ($_ eq $pattern) {
+			my $replacement = $params{$param}{replace}{$_};
+			if (ref $replacement) {
+			    push @p_value, @$replacement;
+			} else {
+			    push @p_value, $replacement;
+			}
+		    } else {
+			push @p_value, $_;
+		    }
 		}
 	    }
 	}
 	
-	print "DEBUG: Value (Final) $p_value<br>" if $debug;
-	$params_ret{values}{$param} = {
-	    orig => $p_value_orig,
-	    no_replace => $p_value_no_replace,
-	    final => $p_value,
-	};
+	print "DEBUG: Value (Final) ".
+	    join('##',@p_value)."<br>" if $debug;
+
+	if ($params_def->{$param}{array}) {
+	    $params_ret{values}{$param} = {
+		orig => $p_value_orig,
+		no_replace => \@p_value_no_replace,
+		final => \@p_value,
+	    };
+	} else {
+	    $params_ret{values}{$param} = {
+		orig => $p_value_orig,
+		no_replace => $p_value_no_replace[0],
+		final => $p_value[0],
+	    };
+	}
     }
 
     if ($USE_PAGED_MODE) {
