@@ -5,11 +5,9 @@
 <define-menu-item name="list"><menu-list></define-menu-item>
 <define-menu-item name="rank"><menu-rank></define-menu-item>
 <define-menu-item name="errors"><menu-errors></define-menu-item>
-<define-menu-item name="hints"><menu-hints></define-menu-item>
 
 <menu-item name="l10n"          basename="../">
 <menu-item name="list"          basename="./">
 <menu-item name="rank"          basename="rank">
 <menu-item name="errors"        basename="errors">
-<menu-item name="hints"         basename="hints">
 
