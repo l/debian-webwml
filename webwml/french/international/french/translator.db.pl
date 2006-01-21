@@ -244,7 +244,7 @@ sub init_translators {
                         compress    => 'none'
                 },
 		'Clément Stenac' => {
-        		email           => 'zorglub@via.ecp.fr',
+        		email           => 'zorglub@diwi.org',
 		        summary         => 3,
 		        logs            => 3,
 		        diff            => 3,
