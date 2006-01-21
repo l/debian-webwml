@@ -263,27 +263,22 @@ sub get_stats_templates {
                         $none .= "<li>".$pkg."</li>\n";
                         next;
                 }
+                $tmpl_errors->{$pkg} = { podebconf => [], noorig => [], master => [], fuzzy => [], mismatch => [], };
                 if ($data->has_errors($pkg)) {
-                        $tmpl_errors->{$pkg} = { noorig => [], master => [], fuzzy => [], mismatch => [], };
-                        my $found = 0;
                         foreach (@{$data->errors($pkg)}) {
                                 next unless s/debconf: //;
                                 if (m/([^:]+):(\d+): original-fields-removed-in-translated-templates/) {
                                         push(@{$tmpl_errors->{$pkg}->{noorig}}, "$1:$2");
-                                        $found = 1;
                                 } elsif (m/([^:]+):(\d+): translated-fields-in-master-templates/) {
                                         push(@{$tmpl_errors->{$pkg}->{master}}, "$1:$2");
-                                        $found = 1;
                                 } elsif (m/([^:]+):(\d+): fuzzy-fields-in-templates/) {
                                         push(@{$tmpl_errors->{$pkg}->{fuzzy}}, "$1:$2");
-                                        $found = 1;
                                 } elsif (m/([^:]+):(\d+): lang-mismatch-in-translated-templates/) {
                                         push(@{$tmpl_errors->{$pkg}->{mismatch}}, "$1:$2");
-                                        $found = 1;
                                 }
                         }
-                        delete $tmpl_errors->{$pkg} unless $found;
                 }
+                push(@{$tmpl_errors->{$pkg}->{podebconf}}, "not-using-po-debconf");
                 my $list = {};
                 foreach (@td_langs) {
                         $list{uc $_} = 0;
@@ -389,6 +384,9 @@ sub get_stats_templates {
 
                 print GEN "<li><a name=\"P$pkg\">$pkg</a> ".$data->version($pkg)." [<a href=\"errors-by-maint#M$anchor_maint\">$maint</a>]\n";
                 my $errors_pkg = "<ul>\n";
+                if (@{$tmpl_errors->{$pkg}->{podebconf}}) {
+                        $errors_pkg .= "<li><a href=\"errors#podebconf\">not-using-po-debconf</a></li>\n";
+                }
                 if (@{$tmpl_errors->{$pkg}->{master}}) {
                         $errors_pkg .= "<li><a href=\"errors#master\">translated-fields-in-master-templates</a><br>\n".${$tmpl_errors->{$pkg}->{master}}[0]."</li>\n";
                 }
