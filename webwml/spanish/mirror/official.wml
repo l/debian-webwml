@@ -1,9 +1,9 @@
 #use wml::debian::template title="Sitios de réplica oficiales de Debian" BARETITLE=true
-#use wml::debian::translation-check translation="1.9"
+#use wml::debian::translation-check translation="1.11" maintainer="Fernando Cerezal"
 #include "$(ENGLISHDIR)/mirror/official.data"
 
 <p>Los sitios de réplica FTP oficiales del archivo de Debian tienen una
-dirección de la forma ftp.<var>&lt;country&gt;</var>.debian.org. Estos son
+dirección de la forma ftp.<var>&lt;país&gt;</var>.debian.org. Estos son
 los sitios más publicitados y usados; la cara de Debian para la mayoría de
 la gente.</p>
 
@@ -23,11 +23,11 @@ los siguientes criterios:</p>
     <li>El sitio debe estar disponible las 24 horas del día. La máquina no
         debe estar demasiado cargada de trabajo.
     <li>Debe tener una conectividad decente (en relación con su respectivo
-        país). Son prefibles los anchos de banda equivalentes a conexiones de
+        país). Son preferibles los anchos de banda equivalentes a conexiones de
 	tipo T1;
 	tenga en cuenta que en países desarrollados, este mínimo es mucho
 	mayor.
-    <li>Los routers que haya delante del servidor no deberían tener
+    <li>Los enrutadores que haya delante del servidor no deberían tener
         bloqueos globales de acceso o grandes limitaciones de ancho de
 	banda.
     <li>El servidor debe ser capaz de sostener el tráfico, osea, tener
@@ -35,29 +35,24 @@ los siguientes criterios:</p>
 	el número máximo de conexiones en general y el número máximo de
 	conexiones desde una IP única.
 
-    <li>Espacio en disco suficiente (con espacio adicional para la expansión)
-        -- vea la <a href="size">página del tamaño del sitio de réplica</a>.
-    <li>Debería replicarse todo el archivo de Debian, usando un método
-        que mantenga la referencia temporal de los archivos replicados
-	(por ejemplo, rsync) para que las horas de los archivos (UTC)
-	coincidan con los de ftp.debian.org.
-    <li>La jerarquía de réplica debería estar bajo <kbd>/debian</kbd> (y
-        <kbd>/debian-non-US</kbd> si su sitio de réplica admite también non-US).
+    <li>Espacio en disco suficiente (con espacio adicional para la expansión);
+        vea la <a href="size">página del tamaño de las réplicas/a>.
+    <li>Debería replicarse todo el archivo de Debian.
+    <li>La jerarquía de réplica debería estar bajo <kbd>/debian</kbd>.
 	Fundamental: para la consistencia entre los sitios &mdash;
-	simplemente ponga un enlace simbóloco si desea mantener la réplica
+	simplemente ponga un enlace simbólico si desea mantener la réplica
 	en otro	sitio, o configurar un servidor virtual.
     <li>El sitio de réplica debería estar disponible al menos mediante los
         tres protocolos siguientes:
         <ul>
-            <li>FTP (ftp://<var>su.servidor</var>/debian/)
-                <br>
-	        FTP es el más veterano y aún se usa mucho como protocolo
-		de transferencia de ficheros.
-            </li>
             <li>HTTP (http://<var>su.servidor</var>/debian/)
                 <br>
 		Se usa HTTP porque las transferencias con HTTP/1.1 son
 		potencialmente más eficientes que con FTP.
+            </li>
+            <li>FTP (ftp://<var>su.servidor</var>/debian/)
+                <br>
+		Aunque el uso de FTP está llegando a estar desaprobado, todavía se usa muy ampliamente.
             </li>
             <li>rsync (rsync://<var>su.servidor</var>::debian/)
                 <br>
@@ -66,16 +61,17 @@ los siguientes criterios:</p>
 		la proliferación de secundarias.
             </li>
         </ul>
-    <li>El sitio de réplica se debe actualizar al menos una vez al día, y la
- 	hora de la actualización se debe anotar en un archivo timestamp en el
-	subdirectorio project/trace del sitio de réplica.
-	<br>Esto significa ejecutar
+    <li>El sitio de réplica se debe actualizar con <a href="anonftpsync">anonftpsync</a>.
+        <a href="push_mirroring">La réplica por empuje</a> necesita configurarse;
+	siéntase libre de contactar con nosotros para ponernos en contacto con el 
+	responsable de otra réplica.
+	Los árboles <kbd>/doc</kbd> y <kbd>/project</kbd> necesitan que se 
+	repliquen. Tiene que existir un archivo de registro temporal con el
+	nombre de la réplica en el subdirectorio project/trace de la réplica.
+    <br>Esto significa ejecutar
         <kbd>date -u &gt; .../debian/project/trace/<var>su.servidor</var></kbd>
-        tras acabar el rsync diario; y
-        <kbd>date -u &gt; .../debian-non-US/project/trace/<var>your.server</var></kbd>
-	tras acabar el rsync diario de non-US, si es que replica
-	debian-non-US.
-        <br>
+        tras acabar el rsync diario;
+	<br>
 	Es trivial configurarlo, no consume muchos recursos, y es útil
 	para mantener una traza de las réplicas.
     </li>
@@ -94,7 +90,7 @@ acerca de los límites de consumo de ancho de banda de su sitio a
 <a href="mailto:mirrors@debian.org">mirrors@debian.org</a>.</p>
 
 <p>Cuando fuera posible, quizá convenga configurar la
-<a href="push_mirroring">replicación push</a> desde otra réplica,
+<a href="push_mirroring">replicación por empuje</a> desde otra réplica,
 preferiblemente una que esté bien alto en la jerarquía (Push-Primary o
 Push-Secondary).</p>
 
