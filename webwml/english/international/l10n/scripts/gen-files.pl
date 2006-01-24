@@ -8,14 +8,15 @@ use lib ($0 =~ m|(.*)/|, $1 or ".") ."/../../../../Perl";
 
 use Debian::L10n::Db;
 
-use vars qw($opt_h $opt_d $opt_l $opt_D $opt_P $opt_T $opt_L);
+use vars qw($opt_h $opt_d $opt_l $opt_s $opt_D $opt_P $opt_T $opt_L);
 
 sub usage {
-        print "Usage:  gen-files.pl [--dist=DIST] [--l10ndir=DIR] [--po] [--templates] [--podebconf] [--langs]\n";
+        print "Usage:  gen-files.pl [--dist=DIST] [--l10ndir=DIR] [--sort=FILE] [--po] [--templates] [--podebconf] [--langs]\n";
         exit($_[0]);
 }
 
 $opt_h = $opt_D = $opt_P = $opt_T = $opt_L = 0;
+$opt_s = '';
 $opt_d = 'unstable';
 $opt_l = '.';
 
@@ -24,6 +25,7 @@ if (not Getopt::Long::GetOptions(qw(
         h|help
         l|l10ndir=s
         d|dist=s
+        s|sort=s
         D|podebconf
         P|po
         T|templates
@@ -40,6 +42,29 @@ my $date1 = $data->get_date();
 #my $date2 = $data->get_date();
 my $date = $date1; #   Ignore non-US for now
 # my $date = ($date1 lt $date2 ? $date1 : $date2);
+my %popcon = ();
+if ($opt_s ne '' && -r $opt_s) {
+        #  This file is in the same format as
+        #    http://popcon.debian.org/source/by_inst
+        open (POPCON, "< $opt_s") or die "Unable to open $opt_s: $!\n";
+        while (<POPCON>) {
+                next if m/^#/;
+                last unless m/^(\d+)\s+(\S+)/;
+                $popcon{$2} = $1;
+        }
+        close (POPCON) or die "Unable to close $opt_s: $!\n";
+}
+sub pkgsort ($$) {
+        if (!defined($popcon{$_[0]}) && !defined($popcon{$_[1]})) {
+                return $_[0] cmp $_[1];
+        } elsif (!defined($popcon{$_[0]})) {
+                return 1;
+        } elsif (!defined($popcon{$_[1]})) {
+                return -1;
+        } else {
+                return $popcon{$_[0]} <=> $popcon{$_[1]};
+        }
+}
 
 my $root = 'http://merkel.debian.org/~barbier/l10n/material/';
 my $rootnonus = 'http://merkel.debian.org/~barbier/l10n/material/';
@@ -122,7 +147,7 @@ sub get_stats_po {
         my $orig  = '';
 
         $total{$section} = 0;
-        foreach $pkg (sort @{$packages}) {
+        foreach $pkg (sort pkgsort @{$packages}) {
                 if ($data->upstream($pkg) eq 'dbs') {
                         $none .= "<li>".$pkg." (*)</li>\n";
                         next;
@@ -258,7 +283,7 @@ sub get_stats_templates {
         my $none = '';
         my $tmpl_errors = {};
 	$total{$section}=0;
-        foreach $pkg (sort @{$packages}) {
+        foreach $pkg (sort pkgsort @{$packages}) {
                 unless ($data->has_templates($pkg)) {
                         $none .= "<li>".$pkg."</li>\n";
                         next;
@@ -476,7 +501,7 @@ sub get_stats_podebconf {
         my $orig  = '';
 	my $podebconf_errors = {};
 	my $podebconf_errors_by_language = {};
-        foreach $pkg (sort @{$packages}) {
+        foreach $pkg (sort pkgsort @{$packages}) {
                 next unless $data->has_podebconf($pkg);
 
                 my $list = {};
