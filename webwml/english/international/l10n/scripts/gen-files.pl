@@ -43,16 +43,15 @@ my $date1 = $data->get_date();
 my $date = $date1; #   Ignore non-US for now
 # my $date = ($date1 lt $date2 ? $date1 : $date2);
 my %popcon = ();
-if ($opt_s ne '' && -r $opt_s) {
+if ($opt_s ne '' && -r $opt_s && open (POPCON, "< $opt_s")) {
         #  This file is in the same format as
         #    http://popcon.debian.org/source/by_inst
-        open (POPCON, "< $opt_s") or die "Unable to open $opt_s: $!\n";
         while (<POPCON>) {
                 next if m/^#/;
                 last unless m/^(\d+)\s+(\S+)/;
                 $popcon{$2} = $1;
         }
-        close (POPCON) or die "Unable to close $opt_s: $!\n";
+        close (POPCON);
 }
 sub pkgsort ($$) {
         if (!defined($popcon{$_[0]}) && !defined($popcon{$_[1]})) {
