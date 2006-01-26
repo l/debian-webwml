@@ -1,0 +1,36 @@
+<define-tag description>filedescriptor leak</define-tag>
+<define-tag moreinfo>
+<p>Stefan Pfetzing discovered that lshd, a Secure Shell v2 (SSH2)
+protocol server, leaks a couple of file descriptors, related to the
+randomness generator, to user shells which are started by lshd.  A
+local attacker can truncate the server's seed file, which may prevent
+the server from starting, and with some more effort, maybe also crack
+session keys.</p>
+
+<p>After applying this update, you should remove the server's seed file
+(/var/spool/lsh/yarrow-seed-file) and then regenerate it with
+"lsh-make-seed --server" as root.</p>
+
+<p>For security reasons, lsh-make-seed really needs to be run from the
+console of the system you are running it on.  If you run lsh-make-seed
+using a remote shell, the timing information lsh-make-seed uses for
+its random seed creation is likely to be screwed.  If need be, you can
+generate the random seed on a different system than that which it will
+eventually be on, by installing the lsh-utils package and running
+"lsh-make-seed -o my-other-server-seed-file".  You may then transfer
+the seed to the destination system as using a secure connection.</p>
+
+<p>The old stable distribution (woody) may not be affected by this problem.</p>
+
+<p>For the stable distribution (sarge) this problem has been fixed in
+version 2.0.1-3sarge1.</p>
+
+<p>For the unstable distribution (sid) this problem has been fixed in
+version 2.0.1cdbs-4.</p>
+
+<p>We recommend that you upgrade your lsh-server package.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2006/dsa-956.data"
+# $Id$
