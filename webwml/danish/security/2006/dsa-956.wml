@@ -1,0 +1,36 @@
+<define-tag description>filedescriptor-lækage</define-tag>
+<define-tag moreinfo>
+<p>Stefan Pfetzing har opdaget at lshd, en Secure Shell v2 
+(SSH2)-protokolserver, lækkede et par fil-descriptorer, i forbindelse med
+tilfældighedsgenerering, til bruger-shell'er startet af lshd.  En lokal
+angriber kunne trunkere serverens seed-fil, hvilket kunne forhindre serveren i
+at starte, og med noget mere arbejde, måske også bryde sessionsnøglen.</p>
+
+<p>Efter installering af denne opdatering, bør du fjerne serverens seed-fil
+(/var/spool/lsh/yarrow-seed-file) og som root regenerere den med 
+"lsh-make-seed --server".</p>
+
+<p>Af sikkerhedsgrunde skal lsh-make-seed køres fra konsollen på det system, 
+som du kører den på.  Hvis du kører lsh-make-seed via en fjern shell, er det
+meget muligt at timing-oplysningerne som lsh-make-seed anvender til oprettelsen
+af sin tilfældigheds-seed kan være dårlige.  Om nødvendigt kan du generere
+tilfældigheds-seed'en på et andet system, end der hvor den egentlig skal køre,
+ved at installere pakken lsh-utils og køre 
+"lsh-make-seed -o my-other-server-seed-file".  Derefter kan du overføre 
+seed-filen til det oprindelige system via en sikker forbindelse.</p>
+
+<p>Den gamle stabile distribution (woody) er måske ikke påvirket af dette 
+problem.</p>
+
+<p>I den stabile distribution (sarge) er dette problem rettet i
+version 2.0.1-3sarge1.</p>
+
+<p>I den ustabile distribution (sid) er dette problem rettet i
+version 2.0.1cdbs-4.</p>
+
+<p>Vi anbefaler at du opgraderer din lsh-server-pakke.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2006/dsa-956.data"
+#use wml::debian::translation-check translation="1.1" mindelta="1"
