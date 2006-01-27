@@ -1,0 +1,48 @@
+#use wml::debian::translation-check translation="1.1" mindelta="1"
+<define-tag description>läcker filidentifierare</define-tag>
+<define-tag moreinfo>
+<p>
+Stefan Pfetzing upptäckte att lshd, en server för Secure Shell v2-protokollet
+(SSH2), läckte några filidentifierare som hör till slumptalsgeneratorn, till
+användarskal som startas av lshd.
+En lokal angripare kan klippa av serverns fröfil, vilket kan hindra servern
+från att starta, och med lite mer arbete kanske även knäcka
+sessionsnycklarna.
+</p>
+
+<p>
+Efter att dessa uppdateringar installerats bör du ta bort serverns fröfil
+(/var/spool/lsh/yarrow-seed-file) och sedan skapa den på nytt genom att köra
+&rdquo;lsh-make-seed --server&rdquo; som root.</p>
+
+<p>
+Av säkerhetsskäl måste lsh-make-seed verkligen köra från konsolen på det
+system du kör det på.
+Om du kör lsh-make-seed från ett fjärrskal kommer den timinginformation som
+lsh-make-seed använder för att generera sitt slumptalsfrö antagligen att vara
+trasigt.
+Om du måste kan du generera slumptalsfröet på en annat system än det som det
+skall ligga på, genom att installera paketet lsh-utils och köra
+&rdquo;lsh-make-seed -o seed-fil-för-min-andra-server&rdquo;.
+Du kan sedan överföra fröet till målsystemet över en säker anslutning.
+</p>
+
+<p>
+Den gamla stabila utgåvan (Woody) påverkas troligtvis inte av detta problem.
+</p>
+
+<p>
+För den stabila utgåvan (Sarge) har detta problem rättats i version
+2.0.1-3sarge1.
+</p>
+
+<p>
+För den instabila utgåvan (Sid) har detta problem rättats i version
+2.0.1cdbs-4.
+</p>
+
+<p>Vi rekommenderar att ni uppgraderar ert lsh-server-paket.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2006/dsa-956.data"
