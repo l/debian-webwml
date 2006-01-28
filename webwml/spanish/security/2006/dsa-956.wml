@@ -1,0 +1,41 @@
+#use wml::debian::translation-check translation="1.1" maintainer="Juan M. Garcia"
+<define-tag description>debilidad en descriptor de archivo</define-tag>
+<define-tag moreinfo>
+<p>Stefan Pfetzing descubrió que lshd, un servidor para el protocolo
+  Secure Shell v2 (SSH2), sufría una debilidad ante varios descriptores
+  de archivos, relacionados con el generador de aleatoriedad, para las
+  shells de los usuarios que se hubieran iniciado con lshd.  Un atacante
+  local podía truncar el archivo de semilla del servidor, lo que podía
+  evitar que el servidor se iniciase, y con algo más de esfuerzo,
+  posiblemente también pudiese romper las claves de la sesión.</p>
+
+<p>Después de aplicar esta actualización, debería eliminar el archivo
+  de semilla del servidor
+  (/var/spool/lsh/yarrow-seed-file) y luego regenerarlo con la orden
+  "lsh-make-seed --server" como root.</p>
+
+<p>Por motivos de seguridad, lsh-make-seed se tiene que hacer funcionar
+  obligatoriamente desde la consola del sistema en el que esté trabajando. 
+  Si hace funcionar lsh-make-seed usando una shell remota, la información
+  de la temporización que utiliza lsh-make-seed para la creación de la
+  semilla aleatoria puede ser algo confusa.  Si fuese necesario, podría
+  generar la semilla aleatoria en un sistema diferente y luego instalar el
+  paquete lsh-utils y hacer funcionar
+  "lsh-make-seed -o el-otro-archivo-con-la-semilla".  Entonces puede
+  transferir la semilla al sistema destino usando una conexión segura.</p>
+
+<p>La distribución estable anterior (woody) parece no verse afectada por
+  este problema.</p>
+
+<p>Para la distribución estable (sarge), este problema se ha corregido
+  en la versión 2.0.1-3sarge1.</p>
+
+<p>Para la distribución inestable (sid), este problema se ha corregido en
+  la versión 2.0.1cdbs-4.</p>
+
+<p>Le recomendamos que actualice el paquete lsh-server.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2006/dsa-956.data"
+# $Id$
