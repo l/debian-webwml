@@ -1,0 +1,38 @@
+#use wml::debian::translation-check translation="1.1" maintainer="Marco Carvalho"
+<define-tag description>perda do descritor de arquivo</define-tag>
+<define-tag moreinfo>
+<p>Stefan Pfetzing descobriu que o lshd, um servidor de protocolo
+"Secure Shell v2 (SSH2)", perde um grupo de descritores de arquivos,
+relacionados ao gerador randômico, para o shell do usuário que foi
+iniciado pelo lshd. Um atacante local pode truncar o arquivo "seed",
+o que pode impedir a inicialização do servidor, e com mais algum esforço,
+talvez possa também quebrar as chaves de sessão.</p>
+
+<p>Após aplicar esta atualização, você deverá remover o arquivo "seed"
+do servidor (/var/spool/lsh/yarrow-seed-file) e gerá-lo novamente com
+"lsh-make-seed --server" como root.</p>
+
+<p>Por razões de segurança, lsh-make-seed realmente precisa se executado
+a partir do console do sistema onde você o está executando. Se você executar
+o lsh-make-seed usando um shell remoto, a informação de temporização que
+o lsh-make-seed usa para a criação do "seed" randômico provavelmente será
+distorcida.  Se precisar, você pode gerar o "seed" randômico em um sistema
+diferente de onde ele eventualmente estará, instalando o pacote lsh-utils
+e executando "lsh-make-seed -o meu-arquivo-seed-para-outro-servidor".
+Você poderá transferir o arquivo "seed" para o sistema destino usando uma
+conexão segura.</p>
+
+<p>A antiga distribuição estável ("woody") pode não ser afetada por este
+problema.</p>
+
+<p>Para a distribuição estável ("sarge") este problema foi corrigido na
+versão 2.0.1-3sarge1.</p>
+
+<p>Para a distribuição instável ("sid") este problema foi corrigido na
+versão 2.0.1cdbs-4.</p>
+
+<p>Recomendamos que você atualize seu pacote lsh-server.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2006/dsa-956.data"
