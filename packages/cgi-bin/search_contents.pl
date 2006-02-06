@@ -131,17 +131,19 @@ if ($searchmode eq "filelist") {
     if ($searchmode eq "searchword") {
 	push @grep, "$searchkeyword.*";
     } else {
-	push @grep, "\\(^\\|/\\)$searchkeyword";
+	my $grepsearch = "\\(^\\|/\\)$searchkeyword";
 	if ($searchmode eq "searchfiles") {
-	    push @grep, "[ \t]";
+	    $grepsearch .= "[ \t]";
 	} elsif ($searchmode eq "searchfilesanddirs") {
-	    push @grep, "[/ \t]";
-	} 
+	    $grepsearch .= "[/ \t]";
+	}
+	push @grep, $grepsearch;
     }
 }
 
-push @grep, $file, $file_nonus;
-#print "@grep<br>\n"; # just for debugging
+push @grep, $file;
+push @grep, $file_nonus if $file_nonus;
+#print STDERR "@grep<br>\n"; # just for debugging
 
 open my $grep_out, '-|', @grep or die "grep failed: $!";
 my @results = <$grep_out>;
