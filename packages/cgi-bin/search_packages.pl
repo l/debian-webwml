@@ -48,7 +48,7 @@ my $pet0 = new Benchmark;
 # use this to disable debugging in production mode completly
 my $debug_allowed = 0;
 my $debug = $debug_allowed && $input->param("debug");
-$Search::Param::debug = 1 if $debug > 1;
+$Packages::Search::debug = 1 if $debug > 1;
 
 # If you want, just print out a list of all of the variables and exit.
 print $input->header if $debug;
@@ -259,7 +259,7 @@ if ($use_cache && ($cached = $cache{$cache_key})) {
 			    tie %packages, 'DB_File', $file, O_RDONLY
 				or die "Couldn't open packages file $file: $!";
 			    
-			    if (my $data = $packages{$searchkeyword}) {
+			    if (my $data = $packages{$keyword}) {
 				print "DEBUG: Found result $data<br>"
 				    if $debug > 1;		
 				push @results, "$file:$data";
@@ -375,7 +375,7 @@ if (!@results) {
 		print "<p>You have searched only for words exactly matching your keywords. You can try to search <a href=\"$thisscript?subword=1&amp;searchon=$searchon&amp;suite=$suites_param&amp;case=$case&amp;section=$sections_param&amp;keywords=$keyword_esc&amp;arch=$archs_param\">allowing subword matching</a>.</p>";
 	    }
 	}
-	print "<p>".( $printed ? "Or you" : "You" )." can try a different search on the <a href=\"$SEARCHPAGE#search_packages\">Packages search page</a>.</p>";
+#	print "<p>".( $printed ? "Or you" : "You" )." can try a different search on the <a href=\"$SEARCHPAGE#search_packages\">Packages search page</a>.</p>";
 	
 	&printfooter;
     }
@@ -604,8 +604,8 @@ sub printfooter {
 print <<END;
 </div>
 
-<hr class="hidecss">
-<p style="text-align:right;font-size:small;font-stlye:italic"><a href="$SEARCHPAGE">Packages search page</a></p>
+<!-- <hr class="hidecss">
+<p style="text-align:right;font-size:small;font-stlye:italic"><a href="$SEARCHPAGE">Packages search page</a></p> -->
 
 </div>
 END
