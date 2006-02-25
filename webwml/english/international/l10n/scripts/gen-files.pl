@@ -8,10 +8,10 @@ use lib ($0 =~ m|(.*)/|, $1 or ".") ."/../../../../Perl";
 
 use Debian::L10n::Db;
 
-use vars qw($opt_h $opt_d $opt_l $opt_s $opt_D $opt_P $opt_T $opt_L);
+use vars qw($opt_h $opt_d $opt_l $opt_s $opt_D $opt_P $opt_T $opt_L $opt_M);
 
 sub usage {
-        print "Usage:  gen-files.pl [--dist=DIST] [--l10ndir=DIR] [--sort=FILE] [--po] [--templates] [--podebconf] [--langs]\n";
+        print "Usage:  gen-files.pl [--dist=DIST] [--l10ndir=DIR] [--sort=FILE] [--po] [--templates] [--podebconf] [--langs] [--po4a]\n";
         exit($_[0]);
 }
 
@@ -30,6 +30,7 @@ if (not Getopt::Long::GetOptions(qw(
         P|po
         T|templates
         L|langs
+        M|po4a
         ))) {
         usage(1);
 }
@@ -86,6 +87,7 @@ my %skip_po = (
         turba           => 1,
 );
 my @po_langs = ();
+my @p4_langs = ();
 my @pd_langs = ();
 my @td_langs = ();
 
@@ -133,6 +135,142 @@ sub transform_team {
         $name =~ s/\./ dot /g;
         $name =~ s/&(?!#)/&amp;/g;
         return $name;
+}
+
+sub get_stats_po4a {
+        my ($section, $packages) = @_;
+        my ($pkg, $line, $lang, %list);
+
+        my %done  = ();
+        my %todo  = ();
+        my %excl  = ();
+        my $none  = '';
+        my $orig  = '';
+
+        $total{$section} = 0;
+        foreach $pkg (sort pkgsort @{$packages}) {
+                if ($data->upstream($pkg) eq 'dbs') {
+                        $none .= "<li>".$pkg." (*)</li>\n";
+                        next;
+                }
+                unless ($data->has_po4a($pkg)) {
+                        $none .= "<li>".$pkg."</li>\n";
+                        next;
+                }
+                my $list = {};
+                foreach (@p4_langs) {
+                        $list{uc $_}  = 0;
+                }
+                my $addorig = '';
+                foreach $line (@{$data->po4a($pkg)}) {
+                        my ($po4afile, $lang, $stat, $link,$translator,$team) = @{$line};
+                        $link =~ s/:/\%3a/g;
+                        $translator = transform_translator($translator);
+                        $team = transform_team($team);
+                        if ($lang eq '_') {
+                                if ($stat =~ m/(\d+)u/) {
+                                        $total{$section} += $1;
+                                }
+                                $addorig .= " [<a href=\"".
+                                        ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root).
+                                        "po/$opt_d/".$data->pooldir($pkg).
+                                        "/$link.gz\">$po4afile</a>]";
+                                next;
+                        }
+                        $lang = uc($lang) || 'UNKNOWN';
+                        $list{$lang} = 1;
+		        my $str= '';
+                        $str .= "<tr style=\"background-color: ".
+                              get_color(percent_stat($stat)).
+                              "\"><td>";
+		        $str .= (percent_stat($stat) eq "100%" ? $pkg : "<a href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>");
+		        $str .= "</td><td>".show_stat($stat)."</td><td><a href=\"";
+                        $str .= ($data->section($pkg) =~ m/non-US/ ? $rootnonus : $root) . "po/$opt_d/";
+                        $str .= $data->pooldir($pkg)."/$link.gz\">$po4afile</a></td>";
+		        $str .= "<td>$translator</td><td>$team</td>".
+                              "</tr>\n";
+                        if ($stat =~ m/(\d+)t/) {
+                                $score{$lang} += $1;
+                        }
+                        if (percent_stat($stat) eq "100%") {
+                                $done{$lang} = ($done{$lang} || '') . $str; # avoid warning when concatening
+                        } else {
+                                $todo{$lang} = ($todo{$lang} || '') . $str;
+                        }
+                }
+                $orig .= "<li><a name=\"$pkg\" href=\"http://bugs.debian.org/cgi-bin/pkgreport.cgi?which=src&amp;data=$pkg\">$pkg</a>$addorig</li>\n"
+                        if $addorig;
+                foreach $lang (@p4_langs) {
+                        my $l = uc($lang) || 'UNKNOWN';
+                        next if $list{$l};
+                        $excl{$l}  = '' unless defined($excl{$l});
+                        $excl{$l} .= $pkg.", ";
+                }
+        }
+        foreach $lang (@p4_langs) {
+                next unless defined $done{uc $lang};
+                open (GEN, "> $opt_l/po4a/gen/$section-$lang.ok")
+                        || die "Unable to write into $opt_l/po4a/gen/$section-$lang.ok";
+                print GEN $done{uc $lang};
+                close (GEN);
+        }
+        foreach $lang (@p4_langs) {
+                next unless defined $todo{uc $lang};
+                open (GEN, "> $opt_l/po4a/gen/$section-$lang.todo")
+                        || die "Unable to write into $opt_l/po4a/gen/$section-$lang.todo";
+                print GEN $todo{uc $lang};
+                close (GEN);
+        }
+        foreach $lang (@p4_langs) {
+                next unless defined $excl{uc $lang};
+                $excl{uc $lang} =~ s/, $//s;
+                open (GEN, "> $opt_l/po4a/gen/$section-$lang.exc")
+                        || die "Unable to write into $opt_l/po4a/gen/$section-$lang.exc";
+                print GEN "<p>\n".$excl{uc $lang}."</p>\n";
+                close (GEN);
+        }
+        open (GEN, "> $opt_l/po4a/gen/$section.exc")
+                || die "Unable to write into $opt_l/po4a/gen/$section.exc";
+        print GEN "<ul>\n".$none."</ul>\n" if $none ne '';
+        close (GEN);
+        open (GEN, "> $opt_l/po4a/gen/$section.orig")
+                || die "Unable to write into $opt_l/po4a/gen/$section.orig";
+        print GEN "<ul>\n".$orig."</ul>\n" if $orig ne '';
+        close (GEN);
+}
+
+sub process_po4a {
+        -d "$opt_l/po/gen" || File::Path::mkpath("$opt_l/po4a/gen", 0, 0775);
+
+        foreach (@p4_langs) {
+                $score{uc $_} = 0;
+        }
+
+        get_stats_po4a('main', \@main);
+        get_stats_po4a('contrib', \@contrib);
+        get_stats_po4a('non-free', \@nonfree);
+
+        open (GEN, "> $opt_l/po4a/gen/rank.inc")
+                || die "Unable to write into $opt_l/po4a/gen/rank.inc";
+        print GEN "<dl>\n";
+        foreach my $lang (sort {$score{uc $b} <=> $score{uc $a}} @p4_langs) {
+                print GEN "<dt><a href=\"$lang\">$lang</a> ".$score{uc $lang}."</dt>\n";
+                print GEN "<dd><language-name $lang /></dd>\n";
+        }
+        print GEN "</dl>\n";
+        close (GEN);
+        open (GEN, "> $opt_l/po4a/gen/total")
+                || die "Unable to write into $opt_l/po4a/gen/total";
+        print GEN "<define-tag po-total-strings>".
+                ($total{main}+$total{contrib}+$total{'non-free'}).
+                "</define-tag>\n";
+        close (GEN);
+        open (GEN, "> $opt_l/po4a/gen/stats")
+                || die "Unable to write into $opt_l/templates/gen/stats";
+        foreach my $lang (@p4_langs) {
+	            print GEN "$lang:".$score{uc $lang}."\n" if defined ($score{uc $lang});
+	        }
+        close (GEN);
 }
 
 sub get_stats_po {
@@ -772,6 +910,7 @@ sub process_langs {
 
         my $langs = {
                 po              => {},
+                po4a            => {},
                 templates       => {},
                 podebconf       => {},
                 all             => {},
@@ -779,6 +918,14 @@ sub process_langs {
 
         my ($pkg, $line, $file, $lang);
         foreach $pkg ($data->list_packages()) {
+                if ($data->has_po4a($pkg)) {
+                        foreach $line (@{$data->po4a($pkg)}) {
+                                ($file, $lang) = @{$line};
+                                next unless $lang ne '' && $lang ne '_';
+                                $langs->{po4a}->{$lang}  = 1;
+                                $langs->{all}->{$lang} = 1;
+                        }
+                }
                 if ($data->has_po($pkg) && !defined($skip_po{$pkg})) {
                         foreach $line (@{$data->po($pkg)}) {
                                 ($file, $lang) = @{$line};
@@ -804,6 +951,7 @@ sub process_langs {
                         }
                 }
         }
+        @p4_langs = keys %{$langs->{po4a}};
         @po_langs = keys %{$langs->{po}};
         @td_langs = keys %{$langs->{templates}};
         @pd_langs = keys %{$langs->{podebconf}};
@@ -867,6 +1015,7 @@ EOT
 close (GEN);
 
 process_langs($opt_L);
+process_po4a()      if $opt_M;
 process_po()        if $opt_P;
 process_templates() if $opt_T;
 process_podebconf() if $opt_D;
