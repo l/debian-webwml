@@ -76,6 +76,19 @@
 #  DO NOT TRANSLATE ANYTHING BELOW
 #
 
+<define-tag po4a-table endtag=required>
+<table border=1>
+<tr>
+  <th><package></th>
+  <th><score></th>
+  <th><file></th>
+  <th><translator></th>
+  <th><team></th>
+</tr>
+%body
+</table>
+</define-tag>
+
 <define-tag po-table endtag=required>
 <table border=1>
 <tr>
@@ -155,6 +168,42 @@ sub language_name {
 
 <define-tag language-name whitespace=delete>
 <:=language_name('%0'):>
+</define-tag>
+
+<define-tag po4a-langs-long>
+<:
+@po4alangs = ();
+open(LANGS, "< $(ENGLISHDIR)/international/l10n/data/langs")
+        || die "Unable to read $(ENGLISHDIR)/international/l10n/data/langs (use script/list-languages.pl to regenerate it)";
+while (<LANGS>) {
+        if (s/^po4a:\s+//) {
+                @po4alangs = split(' ', $_);
+                last;
+        }
+}
+close(LANGS);
+print "<ul>\n" if (@po4alangs);
+foreach my $l (sort @po4alangs) {
+        print "<li>$l (<a href=\"$l\">".language_name($l)."</a>)</li>\n";
+}
+print "</ul>\n" if (@po4alangs);
+:>
+</define-tag>
+
+<define-tag po4a-langs-short>
+<:
+open(LANGS, "< $(ENGLISHDIR)/international/l10n/data/langs")
+        || die "Unable to read $(ENGLISHDIR)/international/l10n/data/langs";
+while (<LANGS>) {
+        if (s/^po4a:\s+//) {
+                foreach my $code (split(' ', $_)) {
+                        print " [<a href=\"$code\">$code</a>] ";
+                }
+                last;
+        }
+}
+close(LANGS);
+:>
 </define-tag>
 
 <define-tag po-langs-long>
