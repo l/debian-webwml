@@ -36,6 +36,8 @@ C<webwml/E<lt>languageE<gt>/internaltional/l10n/>.
 package Debian::L10n::Db;
 use strict;
 use Time::localtime;
+use File::Path;
+use Data::Dumper;
 
 #   Do not use ``our'' to be compatible with Perl 5.005
 use vars (qw($AUTOLOAD));
@@ -57,7 +59,7 @@ sub new {
 	        #   as fields of a package called '' (that's the same trick than in po files)
 	        
 	        # Language Year Month Message are for the spider
-	        headers => [qw{Date Language Year Month Message}],
+	        headers => [qw{Date Language Year Month Message Page}],
                 #   Fields below are written into file in the same order
                 #   Package must always be the first field
 	    
@@ -66,7 +68,7 @@ sub new {
                 scalar  => [qw(Package Version Section Priority Maintainer PoolDir Type Upstream 
 		               Switch )],
                 array1  => [qw(Errors Catgets Gettext)],
-                array2  => [qw(NLS PO TEMPLATES PODEBCONF MENU DESKTOP MAN STATUS)],
+                array2  => [qw(NLS PO TEMPLATES PODEBCONF PO4A MENU DESKTOP MAN STATUS)],
         };
         $self->{methods} = {};
         foreach (@{$self->{scalar}}) {
@@ -250,9 +252,8 @@ sub write {
         my ($text, $line);
 
         my $dir  = $file;
-        $dir  =~ s#/+[^/]*$##;
-
-        File::Path::mkpath($dir, 0, 0755) unless (-d $dir);
+        File::Path::mkpath($dir, 0, 0755)
+           if ($dir  =~ s#/+[^/]*$## && !-d $dir);
     
         if ($file =~ m/\.gz$/) {
                 open (DB,"| gzip -c > $file")
@@ -332,33 +333,51 @@ Change the status for the category specified as second argument.
 =cut
 
 sub set_status {
-    my ($db,$pkg,$type,$file,$date,$status,$translator,$url,$bug_nb) = @_;
+    my ($db,$pkg,$type,$file,$date,$status,$translator,$list,$url,$bug_nb) = @_;
 
     foreach my $line (@{$db->{data}->{$pkg}->{STATUS}}) {
-	if (${$line}[0] eq $type) {
-	    ${$line}[1] = $file;
+	if (${$line}[0] eq $type
+	 && ${$line}[1] eq $file) {
 	    ${$line}[2] = $date;
 	    ${$line}[3] = $status;
 	    ${$line}[4] = $translator;
-	    ${$line}[5] = $url;
-	    ${$line}[6] = $bug_nb;
+	    ${$line}[5] = $list;
+	    ${$line}[6] = $url;
+	    ${$line}[7] = $bug_nb;
 	    return
 	}
     }
-    $db->add_status($pkg,$type,$file,$date,$status,$translator,$url,$bug_nb);
+    $db->add_status($pkg,$type,$file,$date,$status,$translator,$list,$url,$bug_nb);
 }
 
 =item del_status
 
 Del the package if there was only one status line. 
+If a reference to a statusline is provided, it removes the first found
 It should remove the right line from the DB, and empty the package if nothing else is left.
 
 =cut
 
 sub del_status {
-    my ($db,$pkg,$type) = @_;
+    my ($db,$pkg,$type,$statusline) = @_;
     if (scalar @{$db->{data}->{$pkg}->{STATUS}} == 1) {
 	$db->clear_pkg($pkg);
+    } elsif ($statusline) {
+	my $ok;
+	for (my $i=0; $i < @{$db->{data}->{$pkg}->{STATUS}}; $i++) {
+	    my @a = @$statusline;
+	    my @b = @{$db->{data}->{$pkg}->{STATUS}->[$i]};
+	    $ok = 1;
+	    while (scalar @a) {
+		next if (shift(@a) eq shift(@b));
+		$ok = 0;
+		last;
+	    }
+	    next unless $ok;
+	    splice @{$db->{data}->{$pkg}->{STATUS}}, $i, 1;
+	    last;
+	}
+	print "Cannot del_status, statusline not found\n" unless $ok;
     } else {
 	print "Ups, sorry, cannot del_status when there is more than one status field in the pkg\n";
     }
@@ -421,8 +440,8 @@ sub set_date {
 Data about packages can be classified within scalar values (C<package>,
 C<version>, C<section>, C<priority>, C<maintainer>, C<pooldir>, C<type>,
 C<upstream>), arrays (C<errors>, C<catgets>, C<gettext>), and arrays of
-arrays (C<nls>, C<po>, C<templates>, C<podebconf>, C<man>, C<menu> and
-C<desktop>).
+arrays (C<nls>, C<po>, C<po4a>, C<templates>, C<podebconf>, C<man>, C<menu>
+and C<desktop>).
 Each field has a method with the same name to get and set it, e.g.
 
    $section = $l10n_db->section($pkg);
