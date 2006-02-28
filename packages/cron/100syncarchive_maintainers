@@ -7,7 +7,15 @@ cd ${archivedir}
 
 # scp -q auric:/org/ftp.debian.org/ftp/indices/Maintainers .
 
-if [ ! -s Maintainers -a -L Maintainers ]
+if [ -f /org/ftp.root/debian/indices/Maintainers ]
 then
-    ln -s /org/ftp.root/debian/indices/Maintainers .
+    if [ ! -s Maintainers -a -L Maintainers ]
+    then
+	ln -s /org/ftp.root/debian/indices/Maintainers .
+    fi
+else
+    if [ ! -L Maintainers ]
+    then
+	wget -q -O Maintainers ftp://ftp.debian.org/debian/indices/Maintainers
+    fi
 fi
