@@ -1,18 +1,18 @@
 #! /usr/bin/perl
 
 #   build-maintainerdb - convert several Packages files to maintainer database
-#   Copyright (c) 1998,9,2001,3,4  Martin Schulze <joey@debian.org>
-
+#   Copyright (c) 1998,9,2001,3,4,6  Martin Schulze <joey@debian.org>
+#
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
 #   the Free Software Foundation; either version 2 of the License, or
 #   (at your option) any later version.
-
+#
 #   This program is distributed in the hope that it will be useful,
 #   but WITHOUT ANY WARRANTY; without even the implied warranty of
 #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #   GNU General Public License for more details.
-
+#
 #   You should have received a copy of the GNU General Public License
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -33,9 +33,12 @@ while (<C>) {
 }
 close (C);
 
+$maildomain = "packages.debian.org";
+
 $maintainerfile = "$topdir/archive/Maintainers";
-$maintainerdb = "$topdir/files/maintainerdb";
+$maintainerdb = "$topdir/etc/maintainer";
 $overridefile = "$topdir/etc/maintainerdb.override";
+$postcall = "/usr/sbin/postmap $maintainerdb";
 
 sub package_maintainer
 {
@@ -115,11 +118,13 @@ sub write_maintainer
     open (CONF, ">$file.new") || die "Can't open $file.new, $!";
     foreach $package (sort(keys(%maint))) {
 	printf "%s -> %s\n", $package, $maint{$package} if ($opt_verbose > 1);
-	printf CONF "%s:%s\n", $package, $maint{$package};
+	printf CONF "%s@%s\t%s\n", $package, $maildomain, $maint{$package};
     }
     close (CONF);
     printf "Renaming to %s\n", $file if ($opt_verbose > 0);
     system "mv -f $file.new $file";
+    printf "Executing $postcall\n" if ($opt_verbose > 0);
+    system "$postcall";
 }
 
 sub help
