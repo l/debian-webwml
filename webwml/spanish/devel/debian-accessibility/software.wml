@@ -1,0 +1,376 @@
+#use wml::debian::template title="Debian-Accesibilidad - Software"
+{#style#:<link rel="stylesheet" href="style.css" type="text/css" />:#style#}
+#use wml::debian::translation-check translation="1.7" maintainer="Fernando Cerezal"
+
+<define-tag a11y-pkg endtag=required>
+<preserve name tag url/>
+<set-var %attributes>
+<h3><if "<get-var url>"
+        <a href="<get-var url>" name="<get-var tag>"><get-var name></a>
+      <a name="<get-var tag>"><get-var name></a>></h3>
+  %body
+<restore name tag url/>
+</define-tag>
+
+<h2><a id="speech-synthesis" name="speech-synthesis">Síntesis de voz y APIs relacionadas</a></h2>
+<a11y-pkg name="EFlite" tag=eflite url="http://eflite.sourceforge.net/">
+<p>
+  Un servidor de voz para <a href="#emacspeak">«Emacspeak»</a> y
+  <a href="#yasr">«yasr»</a> (u otro lector de pantalla) que les 
+  sirve de interfaz con <a href="#flite">«Festival Lite»</a>, un motor libre texto a voz
+  desarrollado en el Centro de Voz de la CMU como una ramificación de
+  <a href="#festival">«Festival»</a>.
+</p>
+<p>
+  Debido a limitaciones inherentes de su programa base, por el momento «EFlite» sólo proporciona
+  soporte para la lengua inglesa.
+</p>
+</a11y-pkg>
+<a11y-pkg name="Festival Lite" tag=flite>
+<p>
+  Un pequeño motor de síntesis de voz rápido en tiempo de ejecución. Es la última
+  incorporación al conjunto de herramientas de síntesis de software libre incluyendo
+  el sistema de síntesis de voz de la Universidad de Edinburgo y
+  el proyecto «FestVox» de la Universidad Carnegie Mellon, herramientas, scripts y 
+  documentación para construir voces sintéticas. Sin embargo, «flite» por sí mismo
+  no necesita ninguno de estos sistemas para funcionar.
+</p>
+<p>
+  Actualmente sólo da soporte a la lengua inglesa.
+</p>
+</a11y-pkg>
+<a11y-pkg name="Festival" tag="festival"
+          url="http://www.cstr.ed.ac.uk/projects/festival/">
+<p>
+  Un sistema de síntesis de voz plurilingüe desarrollado
+  en el <a href="http://www.cstr.ed.ac.uk/">CSTR</a> «[<i>C</i>entre for
+  <i>S</i>peech <i>T</i>echnology <i>R</i>esearch]» (Centro para la investigación
+  de tecnología del habla) de la
+  <a href="http://www.ed.ac.uk/text.html">Universidad de Edinburgo</a>.
+</p>
+<p>
+  Festival ofrece un sistema texto a voz completo con varias APIs, así como
+  un entorno de desarrollo e investigación de técnicas de síntesis de voz.
+  Está escrito en C++ con un intérprete de órdenes basado en Scheme 
+  para el control general.
+</p>
+<p>
+  Además de la investigación en la síntesis de voz, «festival» es útil como un 
+  programa de síntesis de voz autónomo. Es capaz de producir voz claramente
+  comprensible a partir de texto.
+</p>
+</a11y-pkg>
+<a11y-pkg name="recite" tag="recite">
+<p>
+  «Recite» es un programa para la síntesis de voz. La calidad del sonido que produce
+  no es terriblemente buena, pero debería ser adecuada para informar verbalmente 
+  de mensajes de error ocasionales.
+</p>
+<p>
+  Dado algún texto en inglés, «recite» lo convertirá en una serie de fonemas,
+  una vez hecho esto se convierten los fonemas en una secuencia de parámetros vocales, y
+  entonces la síntesis del sonido vocalmente le haría decir la frase.
+  «Recite» puede desarrollar un subconjunto de estas operaciones, de forma que 
+  se puede usar para convertir texto en fonemas, o producir una pronunciación 
+  basada en los parámetros vocales calculados por otro programa.
+</p>
+</a11y-pkg>
+<a11y-pkg name="Speech Dispatcher" tag="speech-dispatcher"
+          url="http://www.freebsoft.org/speechd">
+<p>
+  Proporciona un capa independiente de dispositivos para la síntesis de voz.
+  Da Soporte varios sintetizadores de voz por «software» y «hardware» como
+  base y proporciona una capa genérica para la síntesis de voz y
+  reproducir datos PCM a las aplicaciones a través de aquellos programas base distintos.
+</p>
+<p>
+  Varios conceptos de alto nivel, como encolar frente a interrumpir la voz
+  y configuraciones de usuario de aplicaciones específicas, se implementan en 
+  un dispositivo de forma independiente. Esto es por aquello de liberar al programador de
+  la aplicación de tener que reinventar la rueda.
+</p>
+</a11y-pkg>
+
+<h2><A name="i18nspeech">Síntesis de voz internacionalizada</a></h2>
+<p>
+Todas las soluciones libres para «software» basadas en la síntesis de voz 
+disponibles actualmente parecen compartir una deficiencia común: La mayoría
+están principalmente limitadas al inglés, proporcionando sólo un soporte muy
+marginal para otras lenguas o ,en lo mayoría de los casos, ninguno.
+Entre todos los sintetizadores de voz de software libre para Linux, sólo
+«Festival» de la CMU da soporte a más de una lengua natural. «Festival» de la CMU puede 
+sintetizar inglés, español y galés. No se da soporte al alemán. No se da soporte al
+francés. No se da soporte al ruso. Cuando la internacionalización y localización 
+son las tendencias en el software y los servicios «web», ¿es razonable pedir
+a la gente ciega interesada en Linux que aprendan inglés sólo para entender
+lo que dice su ordenador y llevar toda su correspondencia en una lengua 
+extranjera?
+</p>
+<p>
+Desafortunadamente, la síntesis de voz no es realmente el proyecto doméstico 
+favorito de Jane Hacker. Crear un «software» sintetizador de 
+voz inteligible conlleva tareas que consumen mucho tiempo. La síntesis de voz
+concatenativa requiere la cuidadosa creación de una base de datos de fonemas
+que contengan todas las posibles combinaciones de sonidos de la lengua objetivo.
+También se necesitan desarrollar con sumo cuidado las reglas que determinan las 
+transformación de la representación en texto a fonemas individuales , y
+normalmente requiere la división del flujo de caracteres en grupos lógicos, como
+oraciones, frases y palabras. Tal análisis léxico requiere un léxico específico
+de la lengua raramente publicable bajo una licencia libre.
+</p>
+<p>
+Una de las mayores promesas en los sistemas de síntesis de voz es Mbrola, con
+bases de datos de fonemas para más de diez lenguas. Por desgracia, la licencia
+elegida para el proyecto es muy restrictiva. Mbrola sólo se puede distribuir 
+como binario precompilado. Además, las bases de datos de fonemas son sólo
+para uso no militar ni comercial. Contactamos con los desarrolladores 
+del proyecto, pero no eran capaces de cambiar la licencia de su trabajo
+debido al conjunto de limitaciones que pusieron varios contribuyentes. 
+Desgraciadamente, dado el modelo de licencia restrictiva de Mbrola, no se 
+puede usar como base para un trabajo mayor en esa dirección, al menos no en el
+contexto del sistema operativo Debian.
+</p>
+<p>
+Sin un «software» sintetizador de voz ampliamente plurilingüe, Linux
+no puede ser aceptado por proveedores de tecnología de asistencia y gente
+con discapacidades visuales. ¿Qué podemos hacer para mejorar esto?
+</p>
+<p>
+Básicamente hay dos métodos posibles:
+<p>
+<ol>
+<li>Organizar un grupo de gente deseoso de ayudar en este asunto, e
+intentar activamente mejorar la situación. Esto puede ser un poco complicado,
+ya que se necesita un montón de conocimiento específico sobre síntesis de voz,
+lo que no es que sea fácil si se hace de forma autodidacta. Sin embargo, esto no 
+debería descorazonarle. Si piensa que puede motivar un grupo de gente lo 
+suficientemente grande para alcanzar algunas mejoras, valdría la pena hacerlo.</li>
+<li>Obtener fondos y contratar a algún instituto que ya tenga el conocimiento de 
+cómo crear las bases de datos de fonemas necesarios, léxico y reglas de 
+transformación. Este método tiene la ventaja de que tiene mayores probabilidades
+de generar resultados de calidad, y también debería alcanzar algunas mejoras 
+mucho antes que el primer método. Por supuesto, la licencia bajo la que se 
+publicaría todo el trabajo resultante se debería acordar por adelantado, y 
+debería pasar los requerimientos de las DFSG. La solución ideal sería, por 
+supuesto, convencer a alguna universidad para sufragar tal proyecto con sus 
+propios fondos, y contribuir con los resultados a la comunidad del software libre.</li>
+</ol>
+
+<h2><A id="emacs" name="emacs">Extensiones de revisión de pantalla de Emacs</a></h2>
+<a11y-pkg name="Emacspeak" tag="emacspeak"
+          url="http://emacspeak.sourceforge.net/">
+<p>
+  Un sistema de salida por voz que permitirá a cualquiera que no pueda ver 
+  trabajar directamente en un sistema UNIX. Una vez inicie Emacs con
+  «Emacspeak» cargado, obtendrá respuesta hablada para todo lo que haga. Su 
+  rendimiento variará dependiendo de cómo de bien sepa usar Emacs. No hay nada que
+  no pueda hacer en Emacs :-). Este paquete incluye servidores de voz escritos 
+  en tcl para soportar los sintetizadores de voz DECtalk Express y DECtalk 
+  MultiVoice. Para otros sintetizadores, busque paquetes separados de 
+  servidores de voz como «Emacspeak-ss» o <a href="#eflite">«eflite»</a>.
+</p>
+</a11y-pkg>
+<a11y-pkg name="speechd-el" tag="speechd-el"
+          url="http://www.freebsoft.org/speechd-el">
+<p>
+  Un cliente de Emacs y una biblioteca de Elisp para el
+  <a href="#speech-dispatcher">«speech-dispatcher»</a> (expendedor de voz). 
+  Proporciona una compleja interfaz para Emacs, enfocado especialmente 
+  (pero no limitado) a los usuarios ciegos o con daños visuales. Permite 
+  al usuario trabajar con Emacs sin mirar la pantalla, usando la salida 
+  de voz producida por los sintetizadores de voz a los que da soporte el «speech-dispatcher».
+</p>
+</a11y-pkg>
+<h2><a id="console" name="console">Lectores de consola (modo-texto)</a></h2>
+<a11y-pkg name="BRLTTY" tag="brltty" url="http://mielke.cc/brltty/">
+<p>
+  Un demonio que proporciona acceso a la consola de Linux para una persona 
+  ciega usando un «software» para dispositivos de Braille.
+  Maneja el terminal Braille y proporciona funcionalidad para la revisión de la 
+  pantalla completa.
+</p>
+<p>
+  Actualmente se da soporte a los siguientes modelos de presentación (en la versión 
+  3.4.1-2):
+</p>
+  <ul>
+   <li>Alva (ABT3xx/Delphi)</li>
+   <li>BrailleLite (18/40)</li>
+   <li>BrailleNote (18/32)</li>
+   <li>EcoBraille displays</li>
+   <li>EuroBraille displays</li>
+   <li>HandyTech (Bookworm/Braillino/Braille Wave/Braille Star 40/80)</li>
+   <li>LogText 32</li>
+   <li>MDV Braille displays</li>
+   <li>Papenmeier</li>
+   <li>Tieman Voyager 44/70 (USB), CombiBraille, MiniBraille and MultiBraille</li>
+   <li>TSI (PowerBraille/Navigator)</li>
+   <li>Vario (Emul. 1 (40/80)/Emul. 2)</li>
+   <li>Videobraille</li>
+   <li>VisioBraille</li>
+  </ul>
+<p>
+  BRLTTY también proporciona una infraestructura basada en cliente/servidor
+  para aplicaciones que deseen utilizar un dispositivo de mostrado en Braille.
+  El demonio escucha conexiones TCP/IP entrantes en un cierto puerto.
+  Se proporciona en el paquete <a href="http://packages.debian.org/libbrlapi">
+  libbrlapi</a> una biblioteca de objetos compartidos para clientes. En el paquete
+  se proporciona una biblioteca estática, archivos de encabezado y documentación.
+  <a href="http://packages.debian.org/libbrlapi-dev">libbrlapi-dev
+  </a>. Esta funcionalidad la usa por ejemplo <a href="#gnopernicus">Gnopernicus
+  </a> para proporcionar soporte a tipos de mostradores que aún no 
+  soporta Gnopernicus directamente.
+</p>
+</a11y-pkg>
+<a11y-pkg name="Screader" tag="screader"
+          url="http://www.euronet.nl/~acj/eng-screader.html">
+<p>
+  El programa lector de pantalla en segundo plano lee la pantalla y le pasa la 
+  información a un paquete de «software» texto a voz (como
+  «<a href="#festival">«festival»</a>») o un sintetizador de voz por «hardware».
+</p>
+</a11y-pkg>
+<a11y-pkg name="Speakup" tag="speakup"
+          url="http://www.linux-speakup.org/speakup.html">
+<p>
+  El paquete del núcleo
+  <a href="http://packages.debian.org/kernel-image-2.4.24-speakup">kernel-image-2.4.24-speakup</a>
+  contiene un núcleo Linux parcheado con «speakup», un lector de pantalla para
+  la consola de Linux. La propiedad especial de «speakup» es que se ejecuta en
+  espacio de núcleo, lo que proporciona un acceso a un nivel del sistema un 
+  poco más bajo que lo que pueden proporcionar otros lectores de pantalla.
+  «Speakup» puede, por ejemplo, leerle mensajes críticos del núcleo en el 
+  punto donde el núcleo ya está colapsado, y no hay programa de espacio de 
+  usuario que pueda hacer nada útil ya.
+</p>
+<p>
+  «Speakup» da soporte actualmente a los siguientes sintetizadores de voz por «hardware»:
+</p>
+  <ul>
+   <li>DoubleTalk PC/LT</li>
+   <li>LiteTalk</li>
+   <li>Accent PC/SA</li>
+   <li>Speakout</li>
+   <li>Artic Transport</li>
+   <li>Audapter</li>
+   <li>Braille 'N Speak / Type 'N Speak</li>
+   <li>Dectalk External y Express</li>
+   <li>the Apollo2</li>
+  </ul>
+</a11y-pkg>
+<a11y-pkg name="Yasr" tag="yasr" url="http://yasr.sourceforge.net/">
+<p>
+  Un lector de pantalla de consola de propósito general para GNU/Linux y
+  otros sistemas operativos tipo Unix. El nombre «yasr» es un acrónimo que
+  se puede interpretar tanto como «Yet Another Screen Reader» (Otro 
+  lector de consola más) o «Your All-purpose Screen Reader» (Su lector de 
+  consola para cualquier propósito).
+</p>
+<p>
+  En la actualidad, «yasr» intenta dar soporte a los sintetizadores por «hardware»
+  Speak-out, DEC-talk, BNS, Apollo y DoubleTalk. También puede comunicarse
+  con servidores de voz «Emacspeak» y así ser usado con sintetizadores que no
+  soporte directamente, como <a href="#flite">«Festival Lite»</a> (a través 
+  de <a href="#eflite">«eflite»</a>) o «FreeTTS».
+</p>
+<p>
+  «Yasr» funciona abriendo un pseudoterminal y lanzando una consola, interceptando
+  todos los datos que entran y salen. Mira las secuencias de escape que se 
+  envían y mantiene una «ventana» virtual que contiene lo que cree que está en 
+  la pantalla. De esta manera no usa ninguna característica específica de Linux 
+  y se puede migrar a otros sistemas operativos tipo UNIX sin demasiados problemas.
+</p>
+</a11y-pkg>
+<h2><A id="gui" name="gui">Interfaces gráficas de usuario</a></h2>
+<p>
+La accesibilidad de las interfaces gráficas de usuarios sólo ha recibido un 
+giro significativo recientemente con los variados trabajos de desarrollo
+en el <a href="http://www.gnome.org/">Escritorio GNOME</a>, especialmente el
+<a href="http://developer.gnome.org/projects/gap/">proyecto de accesibilidad de GNOME</a>.
+</p>
+<h2><A id="gnome" name="gnome">«Software» de accesibilidad en GNOME</a></h2>
+<a11y-pkg name="Assistive Technology Service Provider Interface" tag="at-spi">
+<p>
+  Este paquete contiene los componentes centrales de accesibilidad de GNOME.
+  Permite a los distribuidores de tecnología de asistencia, como lectores de 
+  pantalla, pedir a todas las aplicaciones que se estén ejecutando en el 
+  escritorio información relativa a accesibilidad, a la vez que proporciona 
+  mecanismos de enlace para soportar otros conjuntos de herramientas 
+  distintos de GTK.
+</p>
+</a11y-pkg>
+<a11y-pkg name="The ATK accessibility toolkit" tag="atk">
+<p>
+  ATK es un conjunto de herramientas que proporcionan interfaces de accesibilidad
+  para aplicaciones u otros conjuntos de herramientas. Implementando estas 
+  interfaces, esos otros conjuntos de herramientas o aplicaciones se pueden usar 
+  con herramientas como lectores de pantalla, ampliadores, y otros 
+  dispositivos de entrada alternativos.
+</p>
+<p>
+  La parte que se ejecuta de ATK, que se necesita para ejecutar aplicaciones
+  construidas con ello, está disponible en el paquete 
+  <a href="http://packages.debian.org/libatk1.0-0">libatk1.0-0</a>.
+  Los archivos de desarrollo de ATK, que se necesita para la compilación de
+  programas o conjuntos de herramientas que que lo usen, se proporcionan en
+  el paquete <a href="http://packages.debian.org/libatk1.0-dev">libatk1.0-dev</a>.
+</p>
+</a11y-pkg>
+<a11y-pkg name="gnome-speech" tag="gnome-speech">
+<p>
+  La biblioteca GNOME Speech proporciona una API general aunque simple para 
+  programas para convertir texto en voz, así como entrada de voz.
+</p>
+<p>
+  Se soportan múltiples programas base, pero actualmente sólo el programa base
+  <a href="#festival">«Festival»</a> está habilitado en este paquete; los
+  otros requieren algún «software» Java o propietario.
+</p>
+</a11y-pkg>
+<a11y-pkg name="Gnopernicus" tag="gnopernicus"
+          url="http://www.baum.ro/gnopernicus.html">
+<p>
+  Gnopernicus está diseñado para permitir a los usuarios con visión limitada o 
+  ciegos acceder a aplicaciones GNOME. Proporciona un número de funciones, 
+  incluyendo ampliación, seguimiento de enfoque, salida de Braille y más funciones.
+</p>
+</a11y-pkg>
+<h2><A id="input" name="input">Métodos de entrada de datos no estándar</a></h2>
+<a11y-pkg name="Dasher" tag="dasher" url="http://www.inference.phy.cam.ac.uk/dasher/">
+<p>
+  Dasher es un interfaz de entrada de texto eficiente en cuanto a información, manejado
+  por acciones naturales de señalado continuas. Dasher es un sistema de entrada 
+  competitivo donde quiera que sea que no se pueda usar un teclado completo, por ejemplo,
+</p>
+  <ul>
+   <li>un ordenador de mano («palmtop»)</li>
+   <li>un ordenador de viaje</li>
+   <li>cuando utilice un ordenador con una mano, por ejemplo un mando de juego, pantalla táctil,
+       mando por bola o ratón</li>
+   <li>cuando utilice un ordenador sin manos (esto es, por ratón para la cabeza o rastreador del ojo).</li>
+  </ul>
+<p>
+  La versión de seguimiento del ojo de Dasher permite a un usuario experimentado escribir texto tan 
+  rápido como una escritura manual normal, 25 palabras por minuto. Usando un ratón,
+  los usuarios experimentados pueden escribir a 39 palabras por minuto.
+</p>
+<p>
+  Dasher utiliza un algoritmo de predicción de texto más avanzado que el T9(tm)
+  que se usa a veces en los teléfonos móviles, haciéndolo sensible al contexto.
+</p>
+</a11y-pkg>
+<a11y-pkg name="GOK" tag="gok" url="http://www.gok.ca/">
+<p>
+  GOK [<i>G</i>NOME <i>O</i>nscreen <i>K</i>eyboard (Teclado en pantalla de GNOME)] 
+  es un teclado en pantalla dinámico para sistemas operativos UNIX y otros tipo UNIX.
+  Ofrece selección directa, selección por detención, métodos de acceso de escaneo
+  automático y escaneo inverso e incluye completado de palabra.
+</p>
+<p>
+  GOK incluye un teclado alfanumérico y un teclado para lanzar aplicaciones. Los
+  teclados están especificados en XML posibilitando que se modifiquen los teclados 
+  existentes y se creen teclados nuevos. Los métodos de acceso también se 
+  especifican en XML proporcionando la capacidad de modificar los métodos 
+  existentes y crear nuevos.
+</p>
+</a11y-pkg>
