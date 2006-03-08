@@ -18,7 +18,7 @@ configdir=${topdir}/etc
 # unset this if packages.debian.org moves somewhere where the packages files
 # cannot be obtained locally
 #
-localdir=/org/ftp.debian.org/ftp
+localdir=/org/ftp.root/debian
 
 # path to private ftp directory
 ftproot=/org/ftp.root
