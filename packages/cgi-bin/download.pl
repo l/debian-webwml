@@ -48,6 +48,7 @@ my @european_sites = (
 	"ftp.de.debian.org/debian",
 	"ftp.at.debian.org/debian",
 	"ftp.bg.debian.org/debian",
+	"ftp.ch.debian.org/debian",
 	"ftp.cz.debian.org/debian",
 	"ftp.dk.debian.org/debian",
 	"ftp.ee.debian.org/debian",
