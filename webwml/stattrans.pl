@@ -325,7 +325,7 @@ foreach $lang (@search_in) {
                     $u_body .= sprintf "<tr><td>%s</td><td>&nbsp;</td></tr>\n", $file;
                 } else {
                     (my $base = $file) =~ s/\.wml$//;
-                    $u_body .= sprintf "<tr><td><a href=\"$opt_b/%s\">%s</a></td><td align=\"right\">%d</td><td>(%.2f&nbsp;&permil;)</td></tr>\n", $base, $base, $sizes{$file}, int($sizes{$file}/$nsize * 100000 + 50) / 100;
+                    $u_body .= sprintf "<tr><td><a href=\"$opt_b/%s\">%s</a></td><td align=\"right\">%d</td><td>(%.2f&nbsp;&permil;)</td></tr>\n", $base, $base, $sizes{$file}, $sizes{$file}/$nsize * 1000;
                 }
                 $untranslated{$lang}++;
 		$untranslated_s{$lang} += $sizes{$file};
@@ -342,17 +342,23 @@ foreach $lang (@search_in) {
 	$translated_s{$lang} = $translated_s{$lang} - $outdated_s{$lang};
 
         if ($nfiles > 0) {
-            $percent_a{$lang} = int ($wml{$lang}/$nfiles * 100 + .5);
-            $percent_as{$lang} = (int ($wml_s{$lang}/$nsize * 1000 + 5))/10;
+            $percent_a{$lang} = $wml{$lang}/$nfiles * 100;
         } else {
             $percent_a{$lang} = 0;
+        }
+        if ($nsize > 0) {
+            $percent_as{$lang} = $wml_s{$lang}/$nsize * 100;
+        } else {
 	    $percent_as{$lang} = 0;
         }
         if ($wml{$lang} > 0) {
-            $percent_t{$lang} = int ($translated{$lang}/$wml{$lang} * 100 + .5);
-            $percent_ts{$lang} = (int ($translated_s{$lang}/($wml_s{$lang}+1) * 1000 + 5))/10;
+            $percent_t{$lang} = $translated{$lang}/$wml{$lang} * 100;
         } else {
             $percent_t{$lang} = 0;
+        }
+        if ($wml_s{$lang} > 0) {
+            $percent_ts{$lang} = $translated_s{$lang}/$wml_s{$lang} * 100;
+        } else {
 	    $percent_ts{$lang} = 0;
         }
         $percent_o{$lang} = 100 - $percent_t{$lang};
@@ -377,10 +383,10 @@ foreach $lang (@search_in) {
             # printf HTML "<tr><td colspan=4><h1 align=\"center\">%s: %s</h1></td></tr>", $config{'title'}, ucfirst $lang;
 
             print HTML "<tr><th>Translated</th><th>Up-to-date</th><th>Outdated</th><th>Not translated</th></tr>\n<tr>";
-            printf HTML "<td>%d files (%d%%)</td>",     $wml{$lang},          $percent_a{$lang};
-            printf HTML "<td>%d files (%d%%)</td>",     $translated{$lang},   $percent_t{$lang};
-            printf HTML "<td>%d files (%d%%)</td>",       $outdated{$lang},     $percent_o{$lang};
-            printf HTML "<td>%d files (%d%%)</td>", $untranslated{$lang}, $percent_u{$lang};
+            printf HTML "<td>%d files (%.1f%%)</td>",     $wml{$lang},          $percent_a{$lang};
+            printf HTML "<td>%d files (%.1f%%)</td>",     $translated{$lang},   $percent_t{$lang};
+            printf HTML "<td>%d files (%.1f%%)</td>",       $outdated{$lang},     $percent_o{$lang};
+            printf HTML "<td>%d files (%.1f%%)</td>", $untranslated{$lang}, $percent_u{$lang};
             print HTML "</tr>\n";
 	    print HTML "<tr>\n";
 	    printf HTML "<td>%d bytes (%.1f%%)</td>",     $wml_s{$lang},        $percent_as{$lang};
@@ -524,10 +530,10 @@ foreach $lang (@search_in) {
 
         print HTMLI "<tr>";
         printf HTMLI "<th><a href=\"%s.html\">%s</a> (%s)</th>", $l, ucfirst $lang, $l;
-        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%d%%)</td>", $color_a, $wml{$lang},          $percent_a{$lang};
-        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%d%%)</td>", $color_t, $translated{$lang},   $percent_t{$lang};
-        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%d%%)</td>", $color_o, $outdated{$lang},     $percent_o{$lang};
-        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%d%%)</td>", $color_u, $untranslated{$lang}, $percent_u{$lang};
+        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%.1f%%)</td>", $color_a, $wml{$lang},          $percent_a{$lang};
+        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%.1f%%)</td>", $color_t, $translated{$lang},   $percent_t{$lang};
+        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%.1f%%)</td>", $color_o, $outdated{$lang},     $percent_o{$lang};
+        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%.1f%%)</td>", $color_u, $untranslated{$lang}, $percent_u{$lang};
         print HTMLI "</tr>\n";
     }
 }
