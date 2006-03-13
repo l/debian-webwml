@@ -87,19 +87,6 @@ my %version;
 my %files;
 my %sizes;
 
-	    sub format3($) {
-	    	$_ = sprintf("%d", shift);
-		# $_ = "&nbsp;&nbsp;$_" if length($_) < 2;
-		# $_ =       "&nbsp;$_" if length($_) < 3;
-		# $_;
-	    }
-	    sub format5($) {
-	    	$_ = sprintf("%d", shift);
-	    	# $_ = sprintf("%.1f", shift);
-		# $_ = "&nbsp;&nbsp;$_" if length($_) < 4;
-		# $_ =       "&nbsp;$_" if length($_) < 5;
-		# $_;
-	    }
 # Count wml files in given directory
 #
 sub getwmlfiles
@@ -537,10 +524,10 @@ foreach $lang (@search_in) {
 
         print HTMLI "<tr>";
         printf HTMLI "<th><a href=\"%s.html\">%s</a> (%s)</th>", $l, ucfirst $lang, $l;
-        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%s%%)</td>", $color_a, $wml{$lang},          format3($percent_a{$lang});
-        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%s%%)</td>", $color_t, $translated{$lang},   format3($percent_t{$lang});
-        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%s%%)</td>", $color_o, $outdated{$lang},     format3($percent_o{$lang});
-        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%s%%)</td>", $color_u, $untranslated{$lang}, format3($percent_u{$lang});
+        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%d%%)</td>", $color_a, $wml{$lang},          $percent_a{$lang};
+        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%d%%)</td>", $color_t, $translated{$lang},   $percent_t{$lang};
+        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%d%%)</td>", $color_o, $outdated{$lang},     $percent_o{$lang};
+        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%d%%)</td>", $color_u, $untranslated{$lang}, $percent_u{$lang};
         print HTMLI "</tr>\n";
     }
 }
@@ -583,10 +570,10 @@ foreach $lang (@search_in) {
 
 	print HTMLI "<tr>";
 	printf HTMLI "<th><a href=\"%s.html\">%s</a> (%s)</th>", $l, ucfirst $lang, $l;
-	printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%s%%)</td>", $color_a, $wml_s{$lang},                   format5($percent_as{$lang});
-	printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%s%%)</td>", $color_t, $translated_s{$lang},            format5($percent_ts{$lang});
-	printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%s%%)</td>", $color_o, $outdated_s{$lang},              format5($percent_os{$lang});
-	printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%s%%)</td>", $color_u, $wml_s{"english"}+$untranslated_s{'english'}-$wml_s{$lang}, format5($percent_us{$lang});
+	printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%.1f%%)</td>", $color_a, $wml_s{$lang},                   $percent_as{$lang};
+	printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%.1f%%)</td>", $color_t, $translated_s{$lang},            $percent_ts{$lang};
+	printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%.1f%%)</td>", $color_o, $outdated_s{$lang},              $percent_os{$lang};
+	printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%.1f%%)</td>", $color_u, $wml_s{"english"}+$untranslated_s{'english'}-$wml_s{$lang}, $percent_us{$lang};
 	print HTMLI "</tr>\n";
     }
 }
@@ -623,9 +610,9 @@ foreach $lang (@search_in) {
         $color_t = get_color ($percent_po_t{'total'}{$lang});
         $color_f = get_color (100 - $percent_po_f{'total'}{$lang});
         $color_u = get_color (100 - $percent_po_u{'total'}{$lang});
-        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%s%%)</td>", $color_t, $po_translated{'total'}{$lang},   format3($percent_po_t{'total'}{$lang});
-        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%s%%)</td>", $color_f, $po_fuzzy{'total'}{$lang},        format3($percent_po_f{'total'}{$lang});
-        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%s%%)</td>", $color_u, $po_untranslated{'total'}{$lang}, format3($percent_po_u{'total'}{$lang});
+        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%d%%)</td>", $color_t, $po_translated{'total'}{$lang},   $percent_po_t{'total'}{$lang};
+        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%d%%)</td>", $color_f, $po_fuzzy{'total'}{$lang},        $percent_po_f{'total'}{$lang};
+        printf HTMLI "<td style=\"background-color: %s\">%d</td><td>(%d%%)</td>", $color_u, $po_untranslated{'total'}{$lang}, $percent_po_u{'total'}{$lang};
         print HTMLI "</tr>\n";
     }
 }
