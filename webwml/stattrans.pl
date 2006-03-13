@@ -338,7 +338,7 @@ foreach $lang (@search_in) {
                     $u_body .= sprintf "<tr><td>%s</td><td>&nbsp;</td></tr>\n", $file;
                 } else {
                     (my $base = $file) =~ s/\.wml$//;
-                    $u_body .= sprintf "<tr><td><a href=\"$opt_b/%s\">%s</a></td><td align=\"right\">%d</td><td>(%.2f&nbsp;&permil;)</td></tr>\n", $base, $base, $sizes{$file}, int($sizes{$file}/$nsize * 100000 + .5) / 100;
+                    $u_body .= sprintf "<tr><td><a href=\"$opt_b/%s\">%s</a></td><td align=\"right\">%d</td><td>(%.2f&nbsp;&permil;)</td></tr>\n", $base, $base, $sizes{$file}, int($sizes{$file}/$nsize * 100000 + 50) / 100;
                 }
                 $untranslated{$lang}++;
 		$untranslated_s{$lang} += $sizes{$file};
