@@ -17,11 +17,11 @@
 <input type="radio" name="searchon" value="sourcenames" id="src" />
 <label for="src"><gettext domain="distrib">Source package names</gettext></label>
 <br />
-<gettext domain="distrib">Allow searching on subwords</gettext>:
-<input type="checkbox" name="subword" value="1" checked="checked" />
+<label for="searchsubw"><gettext domain="distrib">Allow searching on subwords</gettext></label>:
+<input type="checkbox" name="subword" value="1" checked="checked" id="searchsubw" />
 <br />
-<gettext domain="distrib">Search case sensitive</gettext>:
-<input type="checkbox" name="case" value="sensitive" />
+<label for="searchcase"><gettext domain="distrib">Search case sensitive</gettext></label>:
+<input type="checkbox" name="case" value="sensitive" id="searchcase" />
 <br />
 <gettext domain="distrib">Distribution</gettext>:
 <select name="version">
