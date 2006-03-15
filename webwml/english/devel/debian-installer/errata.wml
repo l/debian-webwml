@@ -1,28 +1,100 @@
 #use wml::debian::template title="Debian-Installer errata"
 #use wml::debian::recent_list
 
-<h1 id="etch-beta1">Errata for etch beta 1</h1>
+<h1 id="etch-beta2">Errata for etch beta 2</h1>
 
 <p>
-This is a list of known problems in the etch beta 1 release of the
+This is a list of known problems in the etch beta 2 release of the
 Debian-Installer. If you do not see your problem listed here,
 please send us an <a href="report-template">installation report</a>
 describing the problem.
 </p>
 
-<p>
-Note: The errata for the graphical installer are listed separately
-below.
-</p>
-
 <ul>
 	<li>
-	<b>netinst iso too large</b><br>
+	<b>Network and disk devices may change on reboot</b><br>
+	On systems with multiple disk or network controllers, the kernel/udev
+	may assign a different device node on reboot of the system than was
+	used during installation due to difference in load order of drivers.<br>
+	This can lead to failure to boot the system or to the network not
+	coming up automatically. In most cases this can be rectified changing
+	the bootloader configuration and /etc/fstab, or /etc/network/interfaces,
+	possibly using the rescue mode of the installer.<br>
+	Note however that this problem may occur again on subsequent boots.
+	Fixing is issue has priority for the next release of Debian installer.
+	</li>
+
+	<li>
+	<b>Issues during package installation for some languages</b><br>
+	Languages that have not been set to use UTF-8 by default will see
+	garbled text during package installation because of character encoding
+	problems (mojibake). This is a known issue for installations in Russian.
+	</li>
+
+	<li>
+	<b>General issues after reboot because of UTF-8 default</b><br>
+	The installed system is now set to UTF-8 by default. However, not all
+	applications properly support UTF-8 yet, which may result in minor or
+	major problems when using them.<br>
+	Please check if such problems have been reported yet and, if not, file
+	a bug report against the relevant package (not the installer).
+	</li>
+
+	<li>
+	<b>Limited localization of installed system</b><br>
+	For the Sarge version of the installer the package localization-config was
+	responsible for part of the localization of the installed system. This
+	package ran as part of base-config, which has been dropped in the release.
+	Adapting localization-config to run before the reboot is on our TODO list,
+	but meanwhile some localization may not be done automatically when
+	installing in languages other than English.
+	</li>
+
+	<li>
+	<b>Installation of Sarge not supported</b><br>
+	As a result of some structural changes in this release of the installer,
+	installation of Sarge (stable) is not supported. We expect to make this
+	possible again in the next release.
+	</li>
+
+	<li>
+	<b>CD-ROM drives connected to SATA controllers not detected</b><br>
+	Cause for the drives not being detected is that libata ATAPI support
+	is not enabled in the kernel as the upstream kernel developers do not
+	yet consider it mature. It is expected to be enabled in 2.6.16 kernels.<br>
+	A <a href="http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=345999;msg=75">
+	workaround is available</a> that will allow users to enable ATAPI
+	support manually for the installation and the installed system. For
+	details see also the other posts to that
+	<a href="http://bugs.debian.org/345999">installation report</a>.
+	</li>
+
+	<li>
+	<b>Several issues for PowerPC</b><br>
+	The PowerPC port has several issues in this release:
+	<ul>
+		<li>support for prep partitions in partman is broken</li>
+		<li>tg3 driver not available during installation</li>
+		<li>floppy installations for powerpc are broken because no
+		    device node is created for the swim3 module</li>
+	        <li>Oldworld powerpc boot floppies will not work as miboot
+		    is not included</li>
+	</ul>
+	</li>
+
+	<li>
+	<b>arm: CATS cdrom images missing essential drivers</b><br>
+	Please use netboot or daily (sid_d-i) images instead.
+	</li>
+
+	<li>
+	<b>i386: netinst iso too large for USB stick installs</b><br>
 	The netinst iso is too large to fit on a 128 mb USB stick. It will
 	work as a regular CD image or on larger USB sticks for a USB
 	install.
 	</li>
 
+<!-- leaving this in for possible future use...
 	<li>
 	<b>i386: more than 32 mb of memory is needed to install</b><br>
 	The minimum amount of memory needed to successfully install on i386
@@ -30,70 +102,23 @@ below.
 	requirements back to 32 mb later. Memory requirements may have
 	also changed for other architectures.
 	</li>
+-->
 
 	<li>
-	<b>sparc: drivers for sbus devices not loaded automatically</b><br>
-	Due to a bug in discover, drivers for devices on the sbus will not
-	be loaded automatically
-	(<a href="http://bugs.debian.org/339565">#339565</a>). To load the
-	needed kernel module(s) manually, use the modprobe command from VT2.
+	<b>mips: installations via SSH broken for Cobalt</b><br>
+	This was going to be a new feature for the release, but a bug was
+	discovered at the last minute. A fixed image is available for
+	<a href="http://people.debian.org/~tbm/cobalt/etch-beta2/nfsroot.tar.gz">download</a>.
 	</li>
 
 	<li>
-	<b>sparc: 2.4 incorrectly enters lowmem mode</b><br>
-	Due to a bug in the installer when running with the sparc 2.4
-	kernel, it will enter low memory mode on all systems, no matter the
-	amount of free memory. We recommend using the 2.6 kernel instead if
-	possible.
-	</li>
-
-	<li>
-	<b>sparc: 2.4 netboot image needs special parameter to boot</b><br>
+	<b>sparc: 2.4 netboot images need special parameter to boot</b><br>
 	The netboot image needs to be passed ramdisk_size=16000 to boot the 2.4
 	kernel properly.
 	</li>
 
 	<li>
-	<b>oldworld powerpc: floppies not bootable</b><br>
-	The oldworld powerpc boot floppies will not work as miboot is not
-	included.
-	</li>
-
-	<li>
-	<b>s390: Not supported</b><br>
-	The s390 architecture is not included in this release due to lack
-	of support in parted.
-	</li>
-
-	<li>
 	<b>sparc32: 2.6 kernel not supported</b><br>
 	Only the 2.4 kernel works with the sparc32 subarchitecture.
-	</li>
-</ul>
-
-<h2 id="etch-beta1-gtk">Errata for alpha release of the graphical installer</h2>
-
-<ul>
-	<li>
-	<b>graphical installer is alpha quality</b><br>
-	The graphical installer included in this release is alpha quality,
-	with known bugs and limitations. Use at your own risk. The graphical
-	installer requires at least 92 MB memory to run.
-	</li>
-
-	<li>
-	<b>hangs in final step of installation</b><br>
-	During the step "Finish installation", the installer will hang when trying
-	to unmount all filesystems. You can work around this by switching to VT2
-	(using ctrl-alt-F2) and entering the command 'reboot'.
-	</li>
-
-	<li>
-	<b>executing a shell and switching consoles</b><br>
-	The option "Execute a shell" in the main menu does not work in the graphical
-	installer. There is also a problem with switching consoles while the
-	graphical frontend is busy. To work around this, make sure the graphical
-	frontend is waiting for input and only then switch consoles to VT2, VT3 or VT4.
-	VT2 gives access to a shell. The graphical frontend is on VT5.
 	</li>
 </ul>
