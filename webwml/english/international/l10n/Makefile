@@ -4,7 +4,7 @@
 
 WMLBASE=../..
 CUR_DIR=international/l10n
-SUBS=po templates po-debconf po4a
+SUBS=po po-debconf po4a
 
 GETTEXTFILES += l10n.mo
 
