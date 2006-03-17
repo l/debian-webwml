@@ -1,99 +1,156 @@
 #use wml::debian::template title="Debian-Installer Errata"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.77"
+#use wml::debian::translation-check translation="1.81"
 # $Id$
 # Original-Translator: Frank Lichtenheld <frank@lichtenheld.de>, 2003-11-11
 # Translator: Helge Kreutzmann <kreutzm@itp.uni-hannover.de>, 2005-11-12
 
-<h1 id="etch-beta1">Errata für Etch Beta 1</h1>
+<h1 id="etch-beta1">Errata für Etch Beta 2</h1>
 
 <p>
-Dies ist eine Liste der bekannten Probleme in der Etch Beta 1-Veröffentlichung des
+Dies ist eine Liste der bekannten Probleme in der Etch Beta 2-Veröffentlichung des
 Debian-Installers. Wenn Sie Ihr Problem hier nicht aufgeführt finden,
 senden Sie uns bitte einen <a href="report-template">\
 Installationsbericht</a>, der das Problem beschreibt.
 </p>
 
-<p>
-   Hinweis: Die Errata für den graphischen Installer sind unten separat
-   aufgelistet.
-</p>
-
 <ul>
  <li>
-   <b>Netzinst-ISO zu groß</b><br />
-      Das Netzinst-ISO ist zu groß um auf einen 128 MB USB-Stick zu passen. 
-      Es wird als reguläres CD-Image oder auf einem größeren USB-Stick für eine
-      USB-Installation funktionieren.
+  <b>Netz- und Plattengeräte können sich beim Neustart ändern</b><br />
+     Auf Systemen mit mehreren Hardware-Platten- und Netz-Geräten kann es
+     vorkommen, dass der der Kernel/Udev aufgrund verschiedener Lade-Reihenfolge
+     der Treiber einen anderen Geräteknoten als den bei der Installation
+     verwendeten beim System-Neustart zuweist.<br />
+     Dies kann zum Misslingen des Bootens des Systems führen oder dazu, dass das
+     Netz nicht automatisch hoch kommt. In den meisten Fällen kann dies durch
+     Änderung der Boot-Lader-Konfiguration und /etc/fstab oder 
+     /etc/network/interfaces korrigiert werden, möglicherweise unter Verwendung
+     des Rettungs-Moduses des Installers.<br />
+     Beachten Sie, dass das Problem bei folgenden Neustarts erneut auftreten 
+     kann. Die Korrektur dieses Problems hat für die nächste Veröffentlichung
+     des Debian-Installers Priorität.
  </li>
  <li>
-   <b>i386: mehr als 32 MB an Speicher werden zur Installation benötigt</b><br />
-      Die für eine erfolgreiche Installation auf i386 benötigte Minimalmenge an
-      Speicher beträgt 48 MB, anstatt der bisherigen 32 MB. Wir hoffen, die
-      Anforderungen später wieder auf 32 MB zu reduzieren. Die 
-      Speicher-Anforderungen können sich auf für andere Architekturen geändert
-      haben.
+  <b>Probleme in einigen Sprachen bei der Paket-Installation</b><br />
+     Sprachen, die nicht standardmäßig auf UTF-8 gesetzt worden sind werden
+     aufgrund von Zeichen-Kodierproblemen während der Paket-Installation 
+     entstellten Text sehen (mojibake). Dies ist ein bekanntes Problem bei
+     der Installation auf russisch.
  </li>
  <li>
-   <b>Sparc: Treiber für Sbus-Geräte werden nicht automatisch geladen</b><br />
-      Aufgrund eines Fehlers in Discover werden die Treiber für Geräte auf dem
-      Sbus nicht automatisch geladen (<a href="http://bugs.debian.org/339565"># 
-      339565</a>). Verwenden Sie den modprobe-Befehl auf VT2 um das/die
-      benötigte(n) Kernel-Modul(e) manuell zu laden.
+  <b>Allgemeine Probleme nach dem Neustart aufgrund des standardmäßigen UTF-8</b><br />
+     Das installierte System wird nun standardmäßig auf UTF-8 eingestellt. 
+     Allerdings unterstützen nicht alle Anwendungen schon UTF-8 korrekt, was
+     zu kleineren oder größeren Problemen bei deren Benutzung führen kann.<br />
+     Bitte überprüfen Sie, ob solch ein Problem bereits berichtet wurde und,
+     falls nicht, reichen Sie einen Fehlerbericht gegen das relevante Paket
+     (nicht gegen den Installer) ein.
  </li>
  <li>
-   <b>Sparc: 2.4 tritt inkorrekterweise in lowmem-Modus</b><br />
-      Aufgrund eines Fehlers im Installationsprogramm wird beim Betrieb des
-      Sparc 2.4er-Kernels unabhängig von der Menge des freien Speichers auf 
-      allen Systemen in den wenig-Speicher (low memory) Modus geschaltet. Wir
-      empfehlen die Verwendung des 2.6er-Kernels stattdessen falls möglich.
+  <b>Nicht-i386-Installationen: Spiegel-Liste kann inkorrekt sein</b><br />
+     Debian durchläuft derzeit eine Restrukturierung seiner Archiv-Spiegel.
+     In der Praxis bedeutet dies, dass das Archiv, das bisher aller (oder die
+     meisten) Architekturen unterstützt hat, dies nicht länger tut. Das
+     Installationsprogramm enthält eine statische Liste, auf der steht, welche
+     Spiegel welche Architekturen unterstützen und, aufgrund dieser Änderung,
+     kann diese Liste veraltet sein.<br />
+     Die Spiegel-Auswahlkomponente im Installationsprogramm prüft <u>nicht</u>,
+     ob eine Architektur tatsächlich auf dem Spiegel vorhanden ist, sondern
+     nur, ob der Spiegel die zu installierende Veröffentlichung unterstützt.
+     Falls ein Spiegel die Architektur abgesetzt hat, kann dies zu Fehlern 
+     während der Installation von d-i-Komponenten oder während der 
+     Paket-Installation führen.<br />
+     Die Lösung besteht natürlich darin, einen Spiegel zu finden, der Ihre
+     Architektur unterstützt und diesen zu verwenden. Dieses Problem betrifft
+     nur von i386 verschiedene Architekturen.
  </li>
  <li>
-   <b>Sparc: 2.4er Netzboot-Images benötigen spezielle Parameter zum booten</b><br />
-      Das Netzboot-Image benötigt die Übergabe von ramdisk_size=16000 um den
-      2.4er-Kernel korrekt zu booten.
+  <b>Begrenzte Lokalisierung des installierten Systems</b><br />
+     Für die Sarge-Version des Installers war das Paket localization-config
+     für einen Teil der Lokalisierung des installierten Systems verantwortlich.
+     Dieses Paket lief als Teil von base-config, das aus der Veröffentlichung
+     entfernt wurde. Die Anpassung, das localization-config vor dem Neustart
+     läuft, ist auf unserer <q>Zu-Tun</q>-Liste, aber derzeit können einige
+     Lokalisierungen nicht automatisch durchgeführt werden, wenn Sie in Sprachen
+     außer englisch installieren.
  </li>
  <li>
-   <b>Oldworld-Powerpc: Disketten nicht bootbar</b><br />
-      Die Boot-Disketten für Oldword-Powerpc werden nicht funktionieren, da
-      miboot nicht enthalten ist.
+  <b>Installation von Sarge wird nicht unterstützt</b><br />
+     Als Ergebnis einiger struktureller Änderungen in dieser Veröffentlichung
+     des Installers wird die Installation von Sarge (Stable) nicht unterstützt.
+     Wir erwarten, dies in der nächsten Veröffentlichung wieder zu ermöglichen.
  </li>
  <li>
-   <b>S390: Nicht unterstützt</b><br />
-      Die S390-Architektur ist in dieser Veröffentlichung aufgrund mangelnder
-      Unterstützung in Parted nicht enthalten.
+  <b>CD-ROM-Geräte an SATA-Kontrollern werden nicht erkannt</b><br />
+     Der Grund für die nicht-Erkennung ist, dass die libata-ATAPI-Unterstützung
+     nicht im Kernel aktiviert ist, da die Original-Kernelentwickler sie noch
+     nicht für ausgereift halten. Es wird erwartet, das sie in den 
+     2.6.16er-Kerneln aktiviert ist.<br />
+     Eine <a 
+     href="http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=345999;msg=75">\
+     provisorische Lösung ist verfügbar</a>, dies es Benutzern erlaubt, die
+     ATAPI-Unterstützung manuell für die Installation und das installierte
+     System zu aktivieren. Für Details lesen Sie auch die anderen Beiträge zu
+     dem <a href="http://bugs.debian.org/345999">Installationsbericht</a>.
  </li>
  <li>
-   <b>Sparc32: 2.6er-Kernel nicht unterstützt</b><br>
-      Au der Sparc32-Unterarchitektur funktionieren nur die 2.4er-Kernel.
- </li>
-</ul>
-
-<h2 id="etch-beta1-gtk">Errata für die alpha-Veröffentlichung des graphischen Installers</h2>
-
-<ul>
- <li>
-   <b>Graphisches Installationsprogramm hat Alpha-Qualität</b><br />
-      Das in dieser Veröffentlichung mitgelieferte graphische 
-      Installationsprogramm hat Alpha-Qualität, mit bekannten Fehlern und
-      Einschränkungen. Verwenden Sie es auf eigenes Risiko. Der graphische
-      Installer benötigt mindestens 92 MB Speicher zum Laufen.
+  <b>Mehrere Probleme für PowerPC</b><br />
+     Die PowerPC-Portierung hat mehrere Probleme in dieser Veröffentlichung:
+     <ul>
+       <li>Unterstützung für prep-Partitionen in Partman ist defekt</li>
+       <li>der tg3-Treiber ist während der Installation nicht verfügbar</li>
+       <li>Disketten-Installationen für PowerPC sind defekt, da kein 
+           Geräteknoten für das swim3-Modul erstellt wird</li>
+	<li>Oldworld-PowerPC Boot-Disketten werden nicht funktionieren, da
+	    miboot nicht enthalten ist</li>
+     </ul>
  </li>
  <li>
-   <b>Hängt im letzten Schritt der Installation</b><br>
-      Während des Schritts <q>Installation beenden</q> wird sich der Installer
-      beim Einhängen aller Dateisysteme aufhängen. Sie können diesen Fehler
-      umgehen, indem Sie auf das VT2 (mittels Strg-Alt-F2) umschalten und den
-      Befehl <q>reboot</q> eingeben.
+  <b>AMD64: Pakete können auf den CD-Images fehlen</b><br />
+     Zum Zeitpunkt der Veröffentlichung war bekannt, dass dem AMD64 Etch-Archiv
+     einige Pakete aufgrund einer inversen Migration aus Unstable fehlten. Dies
+     führte dazu, dass KDE nicht auf den vollen CD-Images für AMD64 (aufgrund
+     des fehlenden libcupsys2) enthalten ist. Andere Pakete können auch 
+     betroffen sein.
  </li>
  <li>
-  <b>Ausführen einer Shell und Umschalten zwischen Konsolen</b><br>
-     Die Option <q>Eine Shell ausführen</q> im Hauptmenü funktioniert im 
-     graphischen Installer nicht. Es gibt auch ein Problem beim Umschalten 
-     zwischen Konsolen, während die graphische Oberfläche beschäftigt ist.
-     Um dies zu umgehen stellen Sie sicher, dass die graphische Oberfläche
-     auf Eingaben warten bevor Sie auf die Konsolen VT2, VT3 oder VT4
-     umschalten. VT2 gibt Ihnen Zugriff auf eine Shell. Die graphische
-     Oberfläche ist auf VT5.
+  <b>Arm: CATS CD-ROM-Images fehlen wesentliche Treiber</b><br />
+     Bitte verwenden Sie stattdessen Netzboot- oder tägliche (sid_d-i) Images.
+ </li>
+ <li>
+  <b>i386: Netz-Installations-ISOs sind zu groß für USB-Stick-Installationen</b><br />
+     Die Netz-Installations-ISOs sind zu groß um auf einen 128 MB USB-Stick zu
+     passen. Sie werden als reguläres CD-Image oder auf größeren USB-Sticks für
+     eine USB-Installation funktionieren.
+ </li>
+ <!-- leaving this in for possible future use...
+        <li>
+     <b>i386: mehr als 32 MB an Speicher werden zur Installation benötigt</b><br />
+        Die für eine erfolgreiche Installation auf i386 benötigte Minimalmenge an
+        Speicher beträgt 48 MB, anstatt der bisherigen 32 MB. Wir hoffen, die
+        Anforderungen später wieder auf 32 MB zu reduzieren. Die
+        Speicher-Anforderungen können sich auf für andere Architekturen geändert
+	haben.
+         </li>
+-->
+	 
+ </li>
+ <li>
+  <b>Mips: Installationen via SSH auf Cobalt defekt</b><br />
+     Dies sollte eine neue Funktion für diese Veröffentlichung werden, aber in
+     der letzten Minute wurde ein Fehler gefunden. Ein korrigiertes Image ist
+     zum <a
+     href="http://people.debian.org/~tbm/cobalt/etch-beta2/nfsroot.tar.gz">\
+     Download</a> verfügbar.
+ </li>
+ 
+ <li>
+  <b>Sparc: 2.4 Netzboot-Images benötigen spezielle Parameter zum Booten</b><br />
+     Den Netzboot-Images muss der Parameter <q>ramdisk_size=16000</q> übergeben
+     werden, damit der 2.4-Kernel vernünftig bootet.
+ </li>
+ <li>
+  <b>Sparc32: 2.6-Kernel werden nicht unterstützt</b><br />
+     Nur der 2.4-Kernel funktioniert mit der Sparc32-Unterarchitektur.
  </li>
 </ul>
