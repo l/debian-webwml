@@ -1,80 +1,121 @@
 #use wml::debian::template title="Errata pour l'installateur Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.77" maintainer="Nicolas Bertolissio"
+#use wml::debian::translation-check translation="1.79" maintainer="Nicolas Bertolissio"
 
 
-<h1 id="etch-beta1"><i>Errata</i> pour la première version bêta pour Etch</h1>
+<h1 id="etch-beta2"><i>Errata</i> pour la seconde version bêta pour Etch</h1>
 
 <p>
-Voici une liste des problèmes connus dans la première version bêta
+Voici une liste des problèmes connus dans la seconde version bêta
 de l'installateur Debian pour Etch. Si vous n'y voyez pas le problème que
 vous rencontrez, veuillez nous envoyer un <a href="report-template">\
 compte-rendu d'installation</a> (en anglais) décrivant le problème.
 </p>
 
-<p>
-Note&nbsp;: Les <i>errata</i> de l'installateur graphique sont listés
-séparément ci-dessous.
-</p>
-
 <ul>
-  <li><b>Image d'installation par le réseau trop grosse</b><br />
+  <li><b>Possible modification des périphériques de réseaux et de disques lors
+    du redémarrage</b><br />
+    Sur les systèmes comportant plusieurs contrôleurs de disques ou de réseaux,
+    lors du redémarrage du système, le module du noyau permettant la gestion
+    des périphériques en espace mémoire utilisateur peut assigner un n½ud de
+    périphérique différent de celui utilisé pendant l'installation à cause d'un
+    changement dans l'ordre de chargement des pilotes. Ceci peut entraîner
+    l'échec du démarrage du système ou la non-présence automatique du réseau.
+    Dans la plupart des cas, ceci peut être corrigé en modifiant la
+    configuration du chargeur d'amorçage et /etc/fstab, ou
+    /etc/network/interfaces, en utilisant le mode de secours de l'installateur
+    par exemple. Veuillez noter cependant que ce problème peut se reproduire
+    lors de démarrages suivants. La correction de ce problème est une priorité
+    pour la prochaine version de l'installateur Debian&nbsp;;</li>
+  <li><b>Problème lors de l'installation des paquets avec certaines
+    langues</b><br />
+    Les langues qui n'utilisent pas par défaut le codage UTF-8 affichent des
+    caractères incompréhensibles pendant l'installation des paquets à cause de
+    problèmes de codage des caractères (mijobake). Ce problème se produit au
+    moins pour l'installation en russe&nbsp;;</li>
+  <li><b>Problèmes courants après le redémarrage à cause du codage UTF-8
+    utilisé par défaut</b><br />
+    Le système d'installation est désormais paramétré en UTF-8 par défaut.
+    Cependant, toutes les applications ne supportent pas encore correctement
+    l'UTF-8 ce qui peut engendrer de petits problèmes ou des problèmes plus
+    importants lors de leur utilisation. Veuillez vérifier si de tels problèmes
+    ont déjà été reportés avant de remplir un rapport de bogue contre le paquet
+    correspondant (pas l'installateur)&nbsp;;</li>
+  <li><b>Traduction partielle du système installé</b><br />
+    Dans la version Sarge de l'installateur, le paquet localization-config
+    était responsable d'une partie de la traduction du système installé. Ce
+    paquet faisait partie du paquet d'installation de base qui a été supprimé
+    dans cette nouvelle version. L'adaptation de localization-config pour qu'il
+    fonctionne avant le redémarrage est sur notre liste des choses à faire,
+    mais en attendant certaines traductions peuvent ne pas être réalisées
+    automatiquement lors de l'installation dans une langue autre que
+    l'anglais&nbsp;;</li>
+  <li><b>Installation de Sarge non supportée</b><br />
+    En conséquence de certaines modifications structurelles dans cette version
+    de l'installateur, l'installation de Sarge (la distribution stable) n'est
+    pas supportée. Nous prévoyons de la rendre possible à nouveau dans la
+    prochaine édition&nbsp;;</li>
+  <li><b>Lecteurs de cédéroms connectés à un contrôleur SATA non
+    détectés</b><br />
+    Comme les développeurs amonts du noyau ne le considère pas encore mature,
+    le support de libata ATAPI n'est pas activé dans le noyau ce qui empêche la
+    détection de ces lecteurs. Il est prévu de l'activer dans les
+    versions&nbsp;2.6.16 du noyau. Un <a
+    href="http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=345999;msg=75">\
+    contournement</a> permettant aux utilisateurs d'activer le support ATAPI
+    manuellement pour l'installation et le système installé est disponible.
+    Pour de plus amples informations, veuillez consulter également les autres
+    messages sur ce <a href="http://bugs.debian.org/345999">compte-rendu
+    d'installation</a>&nbsp;;</li>
+  <li><b>Plusieurs problèmes sur l'architecture PowerPC</b><br />
+    Le portage sur l'architecture PowerPC a plusieurs problèmes dans cette
+    version&nbsp;:
+    <ul>
+      <li>le support des partitions prep est cassé dans le gestionnaire de
+      partitionnement,</li>
+      <li>le pilote tg3 n'est pas disponible pendant l'installation,<li>
+      <li>les installations de disquettes sont cassées car aucun n½ud n'est
+      créé pour le module swim3,</li>
+      <li>les disquettes de démarrage pour la sous-architecture oldworld ne
+      fonctionnent pas car miboot manque&nbsp;;</li>
+    </ul></li>
+  <li><b>Architecture amd64&nbsp;: certains paquets peuvent manquer sur les
+    images de cédéroms</b><br />
+    Au moment de la publication, certains paquets manquaient dans l'archive
+    amd64 d'Etch à cause d'une migration inversée de la distribution instable.
+    Cela a empêché l'inclusion de KDE dans les images de cédéroms complètes
+    pour l'architecture amd64 (car libcupsys2 manquait). D'autres paquets
+    peuvent aussi être affectés&nbsp;;</li>
+  <li><b>Architecture arm&nbsp;: des pilotes essentiels manquent dans les
+    images de cédéroms CATS</b><br />
+    Veuillez utiliser les images d'amorçage par le réseau ou des images
+    construites quotidiennement (version Sid de l'installateur, sid_d-i) à la
+    place&nbsp;;</li>
+  <li><b>Architecture i386&nbsp;: image d'installation par le réseau trop
+    grosse pour une installation par clef USB</b><br />
     L'image d'installation par le réseau est trop grosse pour rentrer sur une
     clef USB de 128&nbsp;Mo. Comme image de cédérom normale ou sur une clef USB
     plus grosse pour une installation USB, elle fonctionne&nbsp;;</li>
-  <li><b>Architecture i386&nbsp;: plus de 32&nbsp;Mo requis pour l'installation</b><br />
+<!-- conservé pour une possible utilisation ultérieure...
+  <li><b>Architecture i386&nbsp;: plus de 32&nbsp;Mo requis pour
+    l'installation</b><br />
     La qualité minimale de mémoire requise pour réussir l'installation sur
     l'architecture i386 est de 48&nbsp;Mo, à lieu de 32&nbsp;Mo précédemment.
     Nous espérons réduire à nouveau ce besoin à 32&nbsp;Mo plus tard. Le besoin
     de mémoire peut aussi avoir changé pour les autres
     architectures&nbsp;;</li>
-  <li><b>Architecture sparc&nbsp;: pilotes de périphérique sbus non chargés automatiquement</b><br />
-    À cause d'un bogue dans discover (N.D.T.&nbsp;: la bibliothèque chargée de
-    trouver les périphériques présents sur la machine), les pilotes pour les
-    périphériques sbus ne sont pas chargés automatiquement (bogue n°&nbsp;<a
-    href="http://bugs.debian.org/339565">339565</a>). Pour charger les modules
-    nécessaires au noyau vous-même, veuillez utiliser la commande modprobe à
-    partir du deuxième terminal virtuel&nbsp;;</li>
-  <li><b>Architecture sparc&nbsp;: entrée incorrecte en mode de mémoire restreinte</b><br />
-    À cause d'un bogue dans l'installateur lors de l'utilisation du
-    noyau&nbsp;2.4 sur l'architecture sparc, celui-ci entre en mode de quantité
-    de mémoire restreinte sur tous les systèmes, quelque soit la quantité de
-    mémoire libre. Nous vous recommandons d'utiliser le noyau&nbsp;2.6 si
-    possible&nbsp;;</li>
-  <li><b>Architecture sparc&nbsp;: paramètres particuliers pour démarrer
-    l'image d'amorçage pour le réseau avec le noyau&nbsp;2.4</b><br />
-    Il faut passer le paramètre ramdisk_size=16000 à l'image d'amorçage par le
-    réseau pour pouvoir utiliser correctement le noyau&nbsp;2.4&nbsp;;</li>
-  <li><b>Architecture powerpc ancienne génération&nbsp;: disquettes non amorçables</b><br />
-    Les disquettes d'amorçage de l'architecture powerpc d'ancienne génération
-    ne fonctionnent pas car il manque miboot&nbsp;;</li>
-  <li><b>Architecture s390&nbsp;: non supportée</b><br />
-    L'architecture s390 n'est pas comprises dans cette édition car parted n'est
-    pas supporté&nbsp;;</li>
+-->
+  <li><b>Architecture mips&nbsp;: installation <i>via</i> SSH cassée pour la
+    sous-architecture Cobalt</b><br />
+    Ce devait être une nouvelle fonctionnalité de cette version, mais un bogue
+    a été découvert au dernier moment. Une image corrigée est disponible au <a
+    href="http://people.debian.org/~tbm/cobalt/etch-beta2/nfsroot.tar.gz">\
+    téléchargement</a>&nbsp;;</li>
+  <li><b>Architecture sparc&nbsp;: paramètres particuliers pour démarrer les
+    images d'amorçage par le réseau avec un noyau&nbsp;2.4</b><br />
+    Il faut passer le paramètre «&nbsp;ramdisk_size=16000&nbsp;» pour démarrer
+    correctement le noyau&nbsp;2.4 des images d'amorçage par le
+    réseau&nbsp;;</li>
   <li><b>Architecture sparc32&nbsp;: noyau&nbsp;2.6 non supporté</b><br />
-    Seule le noyau&nbsp;2.4 fonctionne sur l'architecture sparc32.</li>
+    Seul le noyau&nbsp;2.4 fonctionne avec la sous-architecture sparc32.</li>
 </ul>
-
-
-<h2 id="etch-beta1-gtk"><i>Errata</i> pour la version alpha de l'installateur graphique</h2>
-
-<ul>
-  <li><b>Installateur graphique en version alpha</b><br />
-    L'installateur graphique inclus dans cette édition est en version alpha,
-    avec tous les bogues connus et les limitations que cela implique. Son
-    utilisation est à vos risques et périls. Cet installateur graphique à
-    besoin d'au moins 92&nbsp;Mo de mémoire pour fonctionner&nbsp;;</li>
-  <li><b>Blocage lors de l'étape finale d'installation</b><br />
-    Durant l'étape «&nbsp;Terminer l'installation&nbsp;», l'installateur se
-    bloque en essayant de démonter tous les systèmes de fichiers. Vous pouvez
-    contourner ce problème en passant sur le deuxième terminal virtuel (avec
-    Ctrl-Alt-F2) et en tapant la commande «&nbsp;reboot&nbsp;»&nbsp;;</li>
-  <li><b>Exécution d'un interpréteur de commande et changement de console</b><br />
-    L'option «&nbsp;Exécuter un interpréteur de commandes&nbsp;» du menu
-    principal ne fonctionne pas avec l'installateur graphique. Il y a aussi un
-    problème lors du changement de console pendant que le frontal graphique est
-    occupé. Pour contourner ces problèmes, veuillez vous assurer que le frontal
-    graphique attend une action et seulement ensuite vous pourrez changer de
-    console vers les terminaux virtuels 2, 3 ou&nbsp;4. Le 2 vous donne accès à
-    un interpréteur de commandes. Le frontal graphique est sur le 5.</li>
-</ul>	
