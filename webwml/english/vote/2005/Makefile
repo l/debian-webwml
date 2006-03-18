@@ -11,6 +11,7 @@ include $(WMLBASE)/Make.lang
 
 
 $(foreach i, $(VOTE), $(i).$(LANGUAGE).html): %.$(LANGUAGE).html: %.wml \
+  $(wildcard suppl_*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/../[0-9]*/vote_*.wml) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml
 	$(WML) $(<F)
