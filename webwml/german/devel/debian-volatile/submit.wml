@@ -1,0 +1,300 @@
+#use wml::debian::template title="Volatile Spiegel-Informationen einreichen"
+#use wml::debian::translation-check translation="1.12"
+# $Id$
+# Translator: Helge Kreutzmann <kreutzm@itp.uni-hannover.de> 2006-03-17
+
+<p>Falls Sie Informationen über Spiegel von Debian Volatile (FTP-Archive, Web)
+   einreichen wollen, können Sie dies über das Formular weiter unten erledigen.
+</p>
+
+<p>Es gibt <a href="#examples">Beispiele</a> am Fuß der Seite, falls Sie sich
+   nicht sicher sind, wie Sie fortfahren sollen.
+</p>
+
+<p>Falls Sie Änderungen zu Ihrem existierenden Eintrag einreichen müssen, 
+   füllen Sie einfach eine (komplette) Einreichung aus und fügen Sie einen
+   Kommentar hinzu, dass es sich um eine Aktualisierung handelt.
+</p>
+
+<p>Nicht alle angegebene Information wird auf der Spiegel-Liste angezeigt,
+   wie beispielsweise die Adresse des Spiegel-Betreuers. Die E-Mail-Adresse
+   wird irgendwo auf unserem Auftritt gespeichert, so dass Spiegel-List-Editoren
+   Sie mit Neuigkeiten und Fehlerberichten erreichen können.
+</p>
+
+<p>Bitte beachten Sie, dass ein offizielle Spiegel Rsync als Methode zum 
+   Erhalt aktueller Pakete verwenden muss. Wir empfehlen dringend, unser <a 
+   href="http://volatile.debian.net/mirror-volatile.sh">\
+   mirror-volatile.sh</a>-Skript.
+</p>
+
+<p>Um aufgeführt zu werden, müssen Sie die folgenden Kriterien respektieren:</p>
+<ul>
+  <li>Sie müssen das komplette debian-volatile-Archiv spiegeln.</li>
+  <li>Sie müssen debian-volatile mindestens einmal täglich spiegeln.</li>
+  <li>Sie müssen <q>date -u</q> in /project/trace/$YOURHOSTNAME setzen</li>
+  <li>Sie müssen eine E-Mail-Adresse haben, an die geschrieben werden kann.
+      <b>Einträge werden entfernt, falls wir nicht in der Lage sind, Sie zu
+      erreichen.</b></li>
+</ul>
+<p>Wir unterscheiden zwischen <q>Push</q>-Spiegeln und normalen Spiegeln.</p>
+
+<h2>Was ist ein <q>Push</q>-Spiegel?</h2>
+<p>Kurzgesagt ist er ein normaler Spiegel mit dem einzigen Unterschied, dass
+   volatile.debian.net Ihnen erzählt, wenn sich etwas im Archiv geändert hat.
+   Daher ist es nicht notwendig, periodisch eine Synchronisation zu versuchen,
+   Sie werden informiert, wenn sich das Archiv ändert. Eine gute Seite, die
+   dies beschreibt, und einige Teile der Einrichtung, ist <a 
+   href="http://www.debian.org/mirror/push_mirroring.en.html">auf den 
+   debian.org-Servern verfügbar</a>. Bitte lesen Sie sie, falls Sie nicht damit
+   vertraut sind.
+</p>
+
+<p>Ihnen steht es frei, ein beliebiges Skript zu verwenden, aber bitte stellen
+   Sie sicher, dass es ein sicheres Skript ist. Wir akzeptieren KEINE Spiegel,
+   die debmirror oder ähnliche Werkzeuge zum Spiegeln verwenden. Diese 
+   Werkzeuge sind ausgezeichnet für private Spiegel, aber nicht zu verwenden
+   für volle Spiegel, da sie viele der nützlichen Dateien ausschließen. Dies
+   bedeutet hauptsächlich: halten Sie die ganze Zeit einen vollen Spiegel. Die
+   folgenden Optionen für Rsync (neben Ihren gewöhnlichen Optionen) erledigen
+   den Trick:
+</p>
+
+<hr />
+
+<table>
+<tr>
+ <th>Lauf</th>
+
+ <th>Optionen</th>
+ <th>Betrifft</th>
+</tr>
+<tr>
+<td>1</td>
+<td>--exclude Packages* --exclude Sources* --exclude Release*</td>
+
+<td>Sie laden neue Binärdateien, Quellen und Pakete herunter, aber nicht ihre
+    Meta-Daten, die <code>apt-get</code> verwendet. Beachten Sie auch, dass
+    keine Lösch-Option angegeben ist.</td>
+
+</tr>
+<tr>
+<td>2</td>
+<td>--delete --delete-after</td>
+<td>Der zweite Lauf holt jetzt die im ersten Lauf ausgeschlossenen Dateien und
+    löschte auch alle Dateien, die nicht mehr im Archiv sind.</td>
+</tr>
+</table>
+
+<hr />
+
+<p>Der zwei-Wege Spiegel-Ansatz stellt sicher, dass Benutzer mit ihrem apt-get
+   immer die Dateien holen, die für dort angekündigt worden sind (über die
+   Packages-Datei), sogar falls ihr Spiegel sich gerade in dem Moment 
+   aktualisiert, wenn sie versuchen, etwas herunterzuladen. Ihnen steht es frei,
+   jede andere Option die Sie mögen von Rsync zu verwenden, aber wir empfehlen
+   dringen, zumindestens -lH zu verwenden.
+</p>
+
+<p>Jetzt müssen Sie <a href="http://volatile.debian.net/id_mirrorpush.pub">\
+   diesen ssh-Schlüssel</a> zu der .ssh/authorized_keys-Datei des 
+   Spiegel-Benutzers hinzufügen. Falls Sie sich den Schlüssel ansehen, sehen 
+   Sie, dass der Schlüssel auf nur einen Befehl eingeschränkt ist. Dies
+   bedeutet, dass wir NICHT in der Lage sind, uns auf Ihrem System mit diesem
+   Schlüssel anzumelden. Es gibt keine Möglichkeit für uns etwas anderes auf
+   Ihrem System durchzuführen als den Spiegelvorgang auszulösen &ndash; somit
+   wäre der einzige Schaden, den wir auslösen könnten, Ihren Spiegelvorgang alle
+   paar Sekunden  auszulösen, aber dafür verwendet das von uns bereitgestellte
+   Beispiel-Skript eine Lock-Datei um mehrfache gleichzeitige Läufe zu 
+   verhindern. <b>Sie müssen das auf das Skript, dass Sie verwenden, ändern, 
+   aber löschen Sie NICHT das &amp; am Ende.</b>
+</p>
+
+<h2>Verkehr- und Platz-Abwägungen</h2>
+<h3>Verkehr</h3>
+<p>Vielleicht möchten Sie wissen, welchen Verkehr Sie erhalten &ndash; oder
+   wie viel Plattenplatz Sie benötigten. Die Bandbreitenverwendung hängt von
+   den Benutzern ab, wie sie sie verwenden, und welche Spiegel sie auswählen.
+   Wir haben derzeit rund 20 GB pro Monat auf volatile.debian.net. Einige
+   Spiegel können mehr, andere weniger Verkehr haben.
+</p>
+
+<h3>Platz</h3>
+
+<p>Derzeit verwendet unser Archiv rund 200 MB an Platz. Da wir von Zeit zu
+   Zeit Pakete hinzufügen, rechnen Sie mit einem Wachstum des Archivs.
+</p>
+
+<h2>Empfohlene ergänzende Einstellungen</h2>
+
+<p>Falls Sie den Debian-Spiegel über HTTP verfügbar machen wollen, ergänzen
+   Sie bitte die folgenden Einstellungen in Ihrer Apache-Konfiguration 
+   (natürlich nur, falls Sie Apache einsetzen), wobei 
+   /pfad/zu/Ihrem/Debian/Spiegel der tatsächliche Name des Verzeichnisses
+   sein sollte, unter dem Sie den Spiegel halten:
+</p>
+
+<pre>
+   ReadmeName /pfad/zu/Ihrem/Debian/Spiegel/README
+
+   &lt;Directory /pfad/zu/Ihrem/Debian/Spiegel&gt;
+      Options +Indexes +SymlinksIfOwnerMatch
+      IndexOptions NameWidth=*
+      ReadmeName README.txt
+   &lt;/Directory&gt;
+</pre>			   
+
+<p>Dies ermöglicht die Verzeichnis-Indices und stellt sicher, dass das
+   Nachverfolgen von Symlinks funktioniert. Auch werden Dateinamen im 
+   Verzeichnisindex nicht abgeschnitten.
+</p>
+
+<h2>Den <q>Push</q> erhalten</h2> 
+
+<p>Sobald Sie mit dem Einrichten fertig sind, sind Sie bereit, zu der Liste
+   der <q>pushed</q>-Server hinzugefügt zu werden. Dafür verwenden Sie bitte
+   das Formular im nächsten Abschnitt.
+</p>
+
+<h2>Grundlegende Informationen</h2>
+
+<p>Bitte fügen Sie den Namen, unter dem der Spiegel aufgeführt werden soll,
+   im <em>Site</em>-Feld ein. Falls der Server andere Namen hat, führen Sie
+   sie im <em>Alias</em>-Feld auf, getrennt durch Kommata (<q>,</q>). Dies
+   sind wahrscheinlich die reversen DNS-Einträge.</p>
+
+<form method=post action="http://cgi.ftbfs.de/submit_mirror.cgi">
+<p>
+Site: <input type="text" name="site" size="30"><br />
+Alias: <input type="text" name="aliases" size="60">
+</p>
+
+<h2>Arten von Spiegeln und Zugriffsmethoden darauf</H2>
+
+<p>Tragen Sie die Pfade des Volatile-Spiegels auf Ihrer Site in die unten
+   aufgeführten Felder ein. Lassen Sie die nicht-zutreffenden Felder leer.
+</p>
+
+<define-tag tablerow>
+	<tr><td>%0: </td><td><input type="text" name="%1" size="%2"></td></tr>
+</define-tag>
+
+<table>
+<tablerow "Paket-Archiv über HTTP"   archive-http   30>
+<tablerow "Paket-Archiv über FTP"    archive-ftp    30>
+<tablerow "Paket-Archiv über Rsync"  archive-rsync  30>
+</table>
+
+<h2>Informationen über die Spiegel-Site</h2>
+
+<p>Bitte tragen Sie alle folgenden Informationen ein (wir werden Ihren Namen
+   und Ihre E-Mail-Adresse an niemanden weitergeben). Das Land und der
+   Spiegel-Ursprung sind wichtig, da wir diese dazu verwenden, die Einträge
+   zu sortieren.</p>
+
+<table>
+<tablerow "Spiegel wird aktualisiert von"          mirrors_from  30>
+<tablerow "Name des Site-Betreuers"                maint_name    30>
+<tablerow "E-Mail des Site-Betreuers"              maint_email   30>
+<tr><td>Land des Site:  <td><select name="country">
+#include "$(ENGLISHDIR)/mirror/countries.data"
+<: country_list() :>
+</select>
+<tablerow "Ort der Site (optional)"                location      30>
+<tablerow "Name des Sponsors der Site (optional)"  sponsor_name  30>
+<tablerow "URL des Sponsors der Site (optional)"   sponsor_url   30>
+</table>
+
+<table><tr>
+<td valign="top">Kommentar:</td>
+<td><textarea name="comment" cols=40 rows=7></textarea></td>
+</tr></table>
+
+<p>Hinweis: Falls es mehr als einen Sponsor gibt, ergänzen Sie die anderen
+   in den Kommentaren. Sie sollten auch angeben, falls nur ein Teil gespiegelt
+   wird, wie oft er aktualisiert wird und wie schnell die Site ist (seine
+   maximale Bandbreite). Alternative Zugriffsmethoden (NFS, IPv6, ...) passen
+   dort auch.
+<br />
+
+<input type="submit" value="Submit"> <input type="reset" value="Clear form">
+</p>
+</form>
+
+<p>Ihre Site wird innerhalb einer Woche in der Liste auftauchen. Falls Probleme
+   auftauchen schicken wir Ihnen eine E-Mail mit dem eingereichten Eintrag.
+</p>
+
+
+<h2><a name="examples">Beispiele</a></h2>
+
+<p>Die folgende Einreichung wäre für einen Server mit Namen debian.example.com,
+   der auch unter e1.example.com erreichbar ist. Die Namen sind natürlich frei
+   erfunden.
+</p>
+
+<p class="centerblock">
+Site: <code>debian.example.com</code><br />
+Alias: <code>e1.example.com</code>
+</p>
+
+<p>Volatile Archiv-Spiegel ist im Verzeichnis /debian-volatile/ auf dem 
+   Web-Server:
+</p>
+
+<p class="centerblock">
+   Paket-Archiv über HTTP: <code>/debian-volatile/</code>
+</p>
+
+<p>Dies ist für ftp://debian.example.com/debian-volatile/:</p>
+
+<p class="centerblock">
+   Paket-Archiv über FTP: <code>/debian-volatile/</code>
+</p>
+
+<p>Dies ist das Verzeichnis für Rsync-Zugriff, 
+   debian.example.com::debian-volatile/:
+</p>
+
+<p class="centerblock">
+   Paket-Archiv über Rsync: <code>debian-volatile/</code>
+</p>
+
+<p>Dieser Spiegel wird von ftp.de.debian.org aufgefrischt, daher ergänzen 
+   wir:</p>
+
+<p class="centerblock">
+   Spiegel wird aktualisiert von: <code>ftp.de.debian.org</code>
+</p>
+
+<p>Nun zu den Betreuer-Informationen:</p>
+
+<p class="centerblock">
+   Name des Site-Betreuers: <code>John Doe</code><br />
+   E-Mail des Site-Betreuers: <code>address.goes@here.example.com</code>
+</p>
+
+<p>(Nochmal: die Betreuer-Adresse wird nicht auf der öffentlichen Liste
+   angezeigt, sondern auf Site die von Spiegel-Listen-Redakteuren benutzt
+   werden. Bitte tragen Sie eine korrekte Adresse ein.)
+</p>
+
+<p>Die anderen Informationen wäre dann:</p>
+
+<p class="centerblock">
+Land: <code>United States [US]</code><br>
+Kommentar: <code>Jeder Hinweis, von dem Sie glauben, das er anderen hilft</code>
+</p>
+
+<p>Das folgende Beispiel würde den Spiegel ftp.uk.debian.org beschreiben:</p>
+
+<p class="centerblock">
+Site: <code>ftp.uk.debian.org</code><br />
+Alias: <code>open.hands.com</code><br />
+Paket-Archiv über HTTP: <code>/debian-volatile/</code><br />
+Paket-Archiv über FTP: <code>/debian-volatile/</code><br />
+Paket-Archiv über Rsync: <code>debian-volatile/</code><br />
+Name des Site-Betreuers: <code>Philip Hands</code><br />
+E-Mail des Site-Betreuers: <code>abc@adresse.kommt.hierher</code><br />
+Land: <code>United Kingdom [GB]</code>
+</p>
