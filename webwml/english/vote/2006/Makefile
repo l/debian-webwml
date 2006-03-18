@@ -15,6 +15,7 @@ $(foreach i, $(VOTE), $(i).$(LANGUAGE).html): %.$(LANGUAGE).html: %.wml \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/votebar.wml
 	$(WML) $(<F)
 index.$(LANGUAGE).html: index.wml $(wildcard vote_*.wml) \
+  $(wildcard suppl_*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/../[0-9]*/vote_*.wml) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml \
   $(TEMPLDIR)/votebar.wml
@@ -24,7 +25,7 @@ ifeq "$(LANGUAGE)" "en"
 textfiles := vote_001_quorum.err  vote_001_quorum.log vote_001_quorum.txt  \
              vote_001_results.png vote_001_vote.png   vote_001_results.txt \
              vote_001_results.dot vote_001_tally.txt  vote_001_voters.txt  \
-             vote_001_vote_detailed.png                                    \
+             vote_001_vote_detailed.png               debate_style.inc     \
              vote_002_quorum.err  vote_002_quorum.log vote_002_quorum.txt 
 
 desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
