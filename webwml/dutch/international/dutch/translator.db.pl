@@ -28,7 +28,16 @@
 
 sub init_translators {
         my $translators = {
-                'Wouter Verhelst' => {
+                'Luk Claes' => {
+			email		=> 'luk@debian.org',
+			summary		=> 3,
+			logs		=> 3,
+			diff		=> 0,
+			tdiff		=> 0,
+			file		=> 0,
+			compress	=> 'none'
+		},
+		'Wouter Verhelst' => {
 			email		=> 'wouter@debian.org',
 			summary		=> 3,
 			logs		=> 3,
