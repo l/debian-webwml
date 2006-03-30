@@ -58,8 +58,9 @@ sub init_translators {
                         mailbody    => '',
                 },
                 unmaintained        => {
-                        email       => 'debian-l10n-dutch@lists.debian.org',
-                        summary     => 2,
+                        email       => 'luk@debian.org',
+                        summary     => 3,
+			logs        => 3,
                         mailsubject => 'Verouderde webpagina\'s die geupdated moeten worden',
                         mailbody    => 'dutch/international/dutch/mail_unmaintained.txt',
                 },
