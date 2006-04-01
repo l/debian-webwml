@@ -124,6 +124,16 @@ push @stories, $story;
 # print, and more junk. So scan forward to the links, and print them.
 while (<IN>) {
 	last if m/^\s\s\sVisible links/;
+	if (/^\s+This issue of Debian Weekly News was edited by /
+	 or /^\s+Diese Ausgabe der wöchentlichen Debian-Nachrichten /
+	 or /^\s+Esta edição das Notícias Semanais do Debian /)
+	{
+		$authors .= $_;
+		while (<IN>) {
+			last if /\s+_________________________/;
+			$authors .= $_;
+		}
+	}
 }
 
 # print "\n", $divider, "References\n";
@@ -161,5 +171,8 @@ foreach $story (@stories) {
      print "\n";
 }
 
+$authors =~ s/\[\d+\]//;
+$authors =~ s/   //g;
+print "$authors";
 unlink ($tmpfile);
 rmdir ($tmpdir) if ($tmpdir);
