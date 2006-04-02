@@ -14,12 +14,11 @@
 #<define-tag isvulnerable>yes|no</define-tag>
 #<define-tag fixed>yes|no</define-tag>
 
-
 use Getopt::Std;
 use Time::gmtime;
 use IO::File;
 use Date::Parse;
-require 'parse_wml.pm';
+use parse_wml qw{%dsaref $VERBOSE};
 
 # Stdin options
 # -v verbose
@@ -31,7 +30,7 @@ if ( $opt_h ) {
 	print "\t-h\tthis help\n";
 	exit 0;
 }
-$VERBOSE=$opt_v;
+$ParseDSA::VERBOSE=$opt_v;
 
 
 ParseDSA::parsedirs (".", "data", 2);
@@ -45,11 +44,11 @@ printrefs();
 exit 0;
 
 sub printdsas {
-	foreach $dsa ( keys %dsaref) {
+	foreach $dsa ( keys %ParseDSA::dsaref) {
 		print "INSERT INTO DSA (\"dsaid\") VALUES ('$dsa');\n";
 		print "UPDATE DSA SET ";
-		foreach $key (keys %{$dsaref{$dsa}} ) {
-			print "\"$key\"='$dsaref{$dsa}{$key}', " if ( $key ne "secrefs" ) ;
+		foreach $key (keys %{$ParseDSA::dsaref{$dsa}} ) {
+			print "\"$key\"='$ParseDSA::dsaref{$dsa}{$key}', " if ( $key ne "secrefs" ) ;
 		}
 		print " \"dsaid\"='$dsa' ";
 		print "WHERE \"dsaid\"='$dsa';\n";
@@ -60,7 +59,7 @@ sub printdsas {
 sub printreferences {
 	my ($dsa) = @_;
 	print "Printing references for $dsa\n" if $opt_v;
-	foreach $ref ( split(' ', $dsaref{$dsa}{'secrefs'}) ) {
+	foreach $ref ( split(' ', $ParseDSA::dsaref{$dsa}{'secrefs'}) ) {
 		my $query="INSERT INTO ";
 		if ( $ref =~ /((CVE|CAN)-[\d-]+)/i )  {
 			$query .= "cvedsa (\"cve\", \"dsaid\") ";
@@ -86,7 +85,7 @@ sub printreferences {
 }
 
 sub printrefs {
-	foreach $dsa ( keys %dsaref) {
+	foreach $dsa ( keys %ParseDSA::dsaref) {
 		printreferences($dsa);
 	}
 }
