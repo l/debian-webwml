@@ -26,8 +26,10 @@ textfiles := vote_001_quorum.err  vote_001_quorum.log vote_001_quorum.txt  \
              vote_001_results.png vote_001_vote.png   vote_001_results.txt \
              vote_001_results.dot vote_001_tally.txt  vote_001_voters.txt  \
              vote_001_vote_detailed.png               debate_style.inc     \
-             vote_002_quorum.err  vote_002_quorum.log vote_002_quorum.txt 
-
+             vote_002_quorum.err  vote_002_quorum.log vote_002_quorum.txt  \
+             vote_002_results.png vote_002_vote.png   vote_002_results.txt \
+             vote_002_vote_detailed.png               vote_002_results.dot    
+    
 desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
 
 install:: $(desttextfiles)
@@ -36,6 +38,14 @@ $(desttextfiles): $(HTMLDIR)/%: %
 	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
 	install -m 664 -p $< $(HTMLDIR)
 
+
 cleandest::
 	rm -f $(desttextfiles)
 endif
+
+check:
+	for i in $(wildcard *.$(LANGUAGE).html); do                         \
+         echo $$i;                                                          \
+         onsgmls -e -g -s -u /usr/share/sgml/declaration/html.decl $$i;     \
+         echo $$i done;                                                     \
+        done
