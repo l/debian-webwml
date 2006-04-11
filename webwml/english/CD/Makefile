@@ -6,7 +6,7 @@ WMLBASE=..
 CUR_DIR=CD
 SUBS=artwork faq http-ftp jigdo-cd torrent-cd mirroring netinst pictures pik releases vendors
 
-NOGENERICDEP := true
+#NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
 GETTEXTFILES += templates.mo
