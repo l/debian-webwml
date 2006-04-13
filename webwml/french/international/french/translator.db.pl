@@ -261,6 +261,16 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
+                
+                'Gregory Colpart' =>  {
+                        email       => 'reg@evolix.fr',
+                        summary     => 3,
+                        logs        => 2,
+                        diff        => 2,
+                        tdiff       => 2,
+                        file        => 0,
+                        compress    => 'none'
+                },
                 # Below are special users, used to handle special cases
                 #     default:      default values
                 #     untranslated: pages not translated
