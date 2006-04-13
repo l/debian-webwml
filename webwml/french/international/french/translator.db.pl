@@ -81,6 +81,15 @@ sub init_translators {
 		        tdiff       => 0,
 		        file        => 0
 		},
+                'Gregory Colpart' =>  {
+                        email       => 'reg@evolix.fr',
+                        summary     => 3,
+                        logs        => 2,
+                        diff        => 2,
+                        tdiff       => 2,
+                        file        => 0,
+                        compress    => 'none'
+                },
                 'Christian Couder' => {
                         email       => 'christian@couder.net',
                         summary     => 3,
@@ -258,16 +267,6 @@ sub init_translators {
                         logs        => 2,
                         diff        => 2,
                         tdiff       => 0,
-                        file        => 0,
-                        compress    => 'none'
-                },
-                
-                'Gregory Colpart' =>  {
-                        email       => 'reg@evolix.fr',
-                        summary     => 3,
-                        logs        => 2,
-                        diff        => 2,
-                        tdiff       => 2,
                         file        => 0,
                         compress    => 'none'
                 },
