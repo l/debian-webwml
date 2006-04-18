@@ -235,9 +235,10 @@ END
 #    print_links( "South America", $file, @nonus_south_american_sites );
 
 	print <<END;
-  <p>Note that AMD64 is not officialy included in the Debian archive
-  yet, but the AMD64 porter group keeps their archive in sync with
-  the official archive as close as possible. See the
+  <p>Note that the sarge release (current stable) for AMD64 is not
+  officialy included in the Debian archive, but the AMD64 porter
+  group keeps their archive in sync with the official archive as
+  close as possible. See the
   <a href="http://www.debian.org/ports/amd64/">AMD64 ports page</a> for
   current information.</p>
 END
