@@ -238,6 +238,13 @@ sub package_pages_walker {
 		$package_page .=  "&amp;file=".uri_escape($filenames{a2f}->{$a});
 		$package_page .=  "&amp;md5sum=$file_md5s{a2f}->{$a}";
 		$package_page .=  "&amp;arch=$a";
+		my $unofficial = '';
+		if (($a =~ /^kfreebsd/) ||
+			(($env->{distribution} eq "stable") &&
+				$a eq 'amd64')) {
+			$unofficial = ' '.gettext( '(unofficial port)' );
+			$package_page .= "&amp;type=unofficial";
+		} else {
 		# there was at least one package with two
 		# different source packages on different
 		# archs where one had a security update
@@ -252,10 +259,10 @@ sub package_pages_walker {
 		    $package_page .=  "&amp;type=nonus";
 		} else {
 		    $package_page .=  "&amp;type=main";
-		}
-		my $unofficial = ($a =~ /^(amd64|kfreebsd)/) ?
-		    ' '.gettext( '(unofficial port)' ) :
-		    '';
+		}}
+#		my $unofficial = ($a =~ /^(amd64|kfreebsd)/) ?
+#		    ' '.gettext( '(unofficial port)' ) :
+#		    '';
 		$package_page .=  "\">$a</a>$unofficial</th>\n";
 		$package_page .= "<td>";
 		if ( $env->{distribution} ne "experimental" ) {
