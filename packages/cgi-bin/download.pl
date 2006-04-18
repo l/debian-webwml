@@ -225,7 +225,7 @@ if ($type eq 'security') {
 security.debian.org.</p>
 END
 
-} elsif ($arch eq 'amd64') {
+} elsif (($type eq 'unofficial') and ($arch eq 'amd64')) {
 
     print_links( "North America", $file, @amd64_north_american_sites );
     print_links( "Europe", $file, @amd64_european_sites );
