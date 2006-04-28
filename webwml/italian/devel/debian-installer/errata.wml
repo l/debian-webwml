@@ -1,84 +1,191 @@
 #use wml::debian::template title="Errata Corrige del Debian-Installer"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.77" maintainer="Claudio Moratti"
+#use wml::debian::translation-check translation="1.87" maintainer="Claudio Moratti"
 
-<h1 id="etch-beta1">Errata per etch beta 1</h1>
+<h1 id="etch-beta1">Errata per etch beta 2</h1>
+
 <p>
-Questa è una lista di problemi conosciuti nella versione etch beta 1 dell'installatore
-Debian. Se il problema riscontrato non è presente in questa pagina, è possibile inviare un 
-<a href="report-template">report dell'installazione</a> descrivendo il problema.
-</p>
-<p>
-Nota: Gli errata per l'installatore grafico sono elencati separatamente più in basso.
+Questa è una lista dei problemi conosciuti nella versione etch beta 2
+dell'installatore Debian. Se il problema riscontrato non è presente in
+questa pagina, è possibile inviare un <a href="report-template">resoconto
+dell'installazione</a> descrivendo il problema.
 </p>
 
 <dl class="gloss">
-	<dt>L'immagine iso netinst è troppo grande</dt>
+	<dt>I device di rete e dei dischi potrebbero cambiare al riavvio</dt>
 	<dd>
-	L'immagine iso netinst è troppo grande per essere contenuta in una penna USB da
-	128 mb. Funzionerà correttamente come una normale immagine CD o su una penna USB
-	più grande, per una installazione via USB.
+	Sui sistemi con con più dischi o più schede di rete, il kernel/udev
+	al riavvio del sistema potrebbe assegnare un device diverso da
+	quello usato durante l'installazione a causa di un diverso
+	dell'ordine nel caricamento dei driver.
+	<br />
+	Questo può comportare l'impossibilità d'avviare il sistema oppure
+	la mancata attivazione della rete. Nella maggior parte dei casi si
+	può ovviare modificando la configurazione del boot loader e /etc/fstab,
+	oppure /etc/network/interfaces usando la modalità di ripristino
+	dell'installatore.
+	<br />
+	Notare che questo problema si può presentare a ogni avvio, la
+	correzione di questo problema è prioritaria nella prossima versione
+	del Debian Installer.
+	</dd>
+
+	<dt>Uso dei mirror in rete durante le installazioni con CD/DVD</dt>
+	<dd>
+	Un mirror in rete viene aggiunto al file sources.list anche quando
+	l'installazione avviene da CD o DVD. Questo comporta che, dopo la
+	scelta dei task, i pacchetti per i quali esiste una versione più
+	recente nel mirror vengono scaricati anziché essere recuperati da
+	CD/DVD.
+	<br />
+	&Egrave; possibile aggirare questo comportamento usando il bottone
+	<q>Indietro</q> quando viene richiesta la scelta di un mirror e, dal
+	menu, passando direttamente all'installazione dei pacchetti. Quando
+	nel seguito dell'installazione viene ripetuta la domanda sulla scelta
+	di un mirror premere <q>Ignora</q>.
+	<br />
+	Nota: il mirror per la sicurezza potrebbe essere usato comunque.
+	</dd>
+
+	<dt>Problemi durante l'installazione di pacchetti con alcune
+	lingue</dt>
+	<dd>
+	Con le lingue che ancora non usano UTF-8 come codifica predefinita
+	si potrebbero vedere degli strani caratteri durante l'installazione
+	dei pacchetti a causa della codifica dei caratteri. Questo problema
+	è certo per le installazioni in russo.
+	</dd>
+
+	<dt>Vari problemi legati al fatto che al riavvio la codifica
+	predefinita è UTF-8</dt>
+	<dd>
+	Nel sistema appena installato viene usata la codifica UTF-8. Purtroppo
+	non tutte le applicazioni supportano UTF-8 correttamente, questo
+	comporta dei problemi durante il loro uso.
+	<dd>
+	Verificare che questi problemi siano già stati segnalati e, se no,
+	inviare una segnalazione di bug per il pacchetto che presenta i
+	problemi (non verso installer).
+	</dd>
+
+	<dt>installazioni non-i386: l'elenco dei mirror potrebbe essere
+	sbagliato</dt>
+	<dd>
+	Attualmente i mirror dell'archivio Debian stanno subendo una
+	ristrutturazione. Questo comporta che gli archivi che in passato
+	supportavano tutte le tutte (o quasi) architetture potrebbero non
+	più supportarle. L'installatore include un elenco statico dei mirror
+	che, a causa di questa modifica, potrebbe essere non aggiornato.
+	<br />
+	Il componente dell'installatore che si occupa della scelta del mirror
+	<strong>non verifica</strong> che l'architettura sia attualmente
+	disponibile nel mirror. Se da un mirror è stata rimossa l'architettura
+	si possono verificare degli errori durante il recupero dei componenti
+	del d-i o durante l'installazione dei pacchetti.
+	<br/>
+	La soluzione a questo problema è trovare un mirror che supporta la
+	propria architettura e utilizzarlo. Questo problema affligge solo le
+	architetture diverse da i386.
+	</dd>
+
+	<dt>Localizzazione limitata sul sistema installato</dt>
+	<dd>
+	Nella versione per Sarge dell'installatore il pacchetto
+	localization-config si occupava della localizzazione sul sistema
+	installato. Questo pacchetto era eseguito all'interno di base-config,
+	che però è stato eliminato in questa release. L'adattamento di
+	localization-config per essere eseguito prima del riavvio è fra le
+	cose da fare, nel frattempo alcuni aspetti della localizzazione non
+	possono essere fatti automaticamente durante l'installazione.
+	</dd>
+
+	<dt>L'installazione si Sarge non è supportata</dt>
+	<dd>
+	A causa di alcune modifiche strutturali con questa release
+	dell'installatore non è possibile fare l'installazione di Sarge
+	(stable). Prevediamo che questa funzionalità sarà ripristinata nella
+	prossima release.
+	</dd>
+
+	<dt>I lettori CD-ROM connessi a controller SATA non sono rilevati</dt>
+	<dd>
+	I lettori non sono rilevati perché il supporto libata ATAPI non è
+	attivato nel kernel perché ritenuto non ancora maturo dagli
+	sviluppatori del kernel. Si prevede che sarà attivato nei kernel
+	2.6.16.
+	<br />
+	&Egrave; dispobile una <a href="http://wiki.debian.org/DebianInstaller/SataAtapiHowto">procedura
+	per aggirare</a> questo problema e che permette agli utenti di
+	attivare manualmente il supporto per ATAPI sul sistema installato.
+	</dd>
+
+	<dt>Vari problemi per PowerPC</dt>
+	<dd>
+	In questa release il port su PowerPC è afflitto da alcuni problemi:
+	<ul>
+		<li>in partman il supporto per le partizioni prep non
+		funziona</li>
+		<li>il driver tg3 non è disponibile durante l'installazione</li>
+		<li>l'installazione da floppy non funziona su powerpc perché
+		non viene creato il nodo di device per il modulo swim3</li>
+		<li>non funziona l'avvio da floppy su powerpc Oldworld perché
+		miboot non è stato incluso</li>
+	</ul>
+	</dd>
+
+	<dt>amd64: potrebbero mancare dei pacchetti dalle immagini dei CD</dt>
+	<dd>
+	Al momento del rilascio dall'archivio AMD64 di etch mancavano dei
+	pacchetti a causa di una migrazione inversa verso unstable. Questo ha
+	comportato l'esclusione di KDE dalle immagini del set completo per
+	AMD64 (causato dalla mancanza di libcupsys2). Anche altri pacchetti
+	potrebbero essere afflitti dallo stesso problema.
+	</dd>
+
+	<dt>arm: sulle immagini dei cdrom per CATS mancano dei driver
+	essenziali</dt>
+	<dd>
+	Al posto di queste immagini usare quelle netboot oppure quelle
+	quotidiane (sid_d-i).
+	</dd>
+
+	<dt>i386: L'immagine iso netinst è troppo grande per le installazioni
+	con penna USB</dt>
+	<dd>
+	L'immagine iso netinst è troppo grande per essere contenuta in una
+	penna USB da 128&nbsp;MB. Funzionerà correttamente come una normale
+	immagine CD o su una penna USB più grande, per una installazione
+	via USB.
  	</dd>
-	<dt>i386: sono richiesti più di 32mb per l'installazione</dt>
+
+<!-- leaving this in for possible future use...
+	<dt>i386: sono richiesti più di 32&nbsp;MB per l'installazione</dt>
 	<dd>
-	La quantità minima di memoria necessaria per eseguire correttamente l'installazione
-	su un i386 è di 48 mb, al posto dei precedenti 32 mb. Ci auguriamo di ridurre la quantità
-	necessaria a 32 mb. I requisiti di memoria potrebbero aver subito cambiamenti anche per
-	le altre architetture.
+	La quantità minima di memoria necessaria per eseguire correttamente
+	l'installazione su un i386 è di 48&nbsp;MB, al posto dei precedenti
+	32&nbsp;MB. Ci auguriamo di ridurre la quantità necessaria a
+	32&nbsp;MB. I requisiti di memoria potrebbero aver subito cambiamenti
+	anche per le altre architetture.
 	</dd>
-	<dt>sparc:  i driver per i dispositivi sbus non vengono caricati automaticamente</dt>
+-->
+
+	<dt>mips: su Cobalt non funziona l'installazione via SSH</dt>
 	<dd>
-	A causa di un bug in discover, i driver per i dispositivi su sbun non verranno caricati
-	automaticamente	(<a href="http://bugs.debian.org/339565">#339565</a>). Per caricare manualmente
-	i moduli del kernel necessari, è possibile usare il comando modprobe da VT2.
- 	</dd>
-	<dt>sparc: 2.4 non entra correttamente in modalità lowmem</dt>
-	<dd>
-	A causa di un bug nell'installatore, quando viene eseguito con il kernel 2.4 per sparc,
-	questo entrerà in modalità "low memory" in tutti i sistemi, indipendentemente dalla quantità
-	di memoria. Si raccomanda di di usare il kernel 2.6, se possibile.
+	Questa era prevista come una nuova funzionalità della release,
+	purtroppo è stato scoperto un bug all'ultimo minuto. Si può
+	<a href="http://people.debian.org/~tbm/cobalt/etch-beta2/nfsroot.tar.gz">scaricare</a>
+	un'immagine in cui questo problema è risolto.
 	</dd>
-	<dt>sparc: l'immagine netboot 2.4 necessita di parametri speciali al boot</dt>
+
+	<dt>sparc: l'immagine netboot 2.4 necessita di parametri speciali
+	al boot</dt>
 	<dd>
-	L'immagine netboot necessita del passaggio di ramdisk_size=16000 per avviare correttamente
-	il kernel 2.4.
+	L'immagine netboot necessita del passaggio di ramdisk_size=16000
+	per avviare correttamente il kernel 2.4.
 	</dd>
-	<dt>oldworld powerpc: dischetti floppy non avviabili</dt>
-	<dd>
-	I dischetti di avvio oldworld per powerpc non funzioneranno in quanto
-	miboot non è incluso.
-	</dd>
-	<dt>s390: Non supportato</dt>
-	<dd>
-	L'architettura s390 non è inclusa in questo rilascio a causo della mancanza di supporto in
-	parted.
-	</dd>
+
 	<dt>sparc32: kernel 2.6 non supportato</dt>
 	<dd>
 	Solo il kernel 2.4 funziona con la sotto architettura sparc32.
-	</dd>
-</dl>
-
-<h2 id="etch-beta1-gtk">Errata per il rilascio alpha dell'installatore grafico</h2>
-<dl class="gloss">
-	<dt>L'installatore grafico è di qualità alpha</dt>
-	<dd>
-	L'installatore grafico incluso in questo rilascio è di qualità alpha con bug conosciuti
-	e limitazioni. Da usarsi a proprio rischio. L'installatore grafico richiede almeno 92 mb 
-	di memoria per essere eseguito.
-	</dd>
-	<dt>Si blocca nella fase conclusiva dell'installazione</dt>
-	<dd>
-	Durante il passaggio "Termina installazione", l'Installatore si fermerà quando proverà a
-	smontare tutti i filesystem. È possibile aggirare questo problema selezionando VT2
-	(usando ctrl-alt-F2) ed eseguire il comando 'reboot'.
-	</dd>
-	<dt>eseguire una shell e cambiare console</dt>
-	<dd>
-	L'opzione "Esegui in una shell" nel menù principale non funziona nell'installatore
-	grafico. È presente anche un problema nel cambiare la console quando il frontend 
-	grafico è occupato. Per aggirare questo problema, assicurarsi che il frontend 
-	grafico sia in attesa di input e solo a questo punto cambiare verso VT2, VT3 o VT4.
-	VT2 da accesso ad una shell. Il frontend grafico si trova in VT5.
 	</dd>
 </dl>
