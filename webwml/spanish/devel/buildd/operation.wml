@@ -1,4 +1,4 @@
-#use wml::debian::template title="Boceto del funcionamiento de la red de autoconstrucción" BARETITLE="true"
+#use wml::debian::template title="Boceto del funcionamiento de la red de autocompilación" BARETITLE="true"
 #use wml::debian::translation-check translation="1.8" maintainer="Fernando Cerezal"
 
 <P>
@@ -19,7 +19,7 @@ propósito de <TT>wanna-build</TT>:
 Asegurarse que la misma versión del paquete no se construye dos veces.
 
 <DIV class="center"><A name="autobuilder34"></A>
-<IMG SRC="scheme.png" alt="Autobuilder scheme">
+<IMG SRC="scheme.png" alt="Esquema de autocompilación">
 <p><STRONG>Figura:</STRONG>
 Estados de los paquetes y transiciones</p>
 </DIV>
@@ -29,27 +29,27 @@ Si todo va bien, un paquete terminado se puede mandar más tarde, y se pondrá
 en estado <TT>Uploaded</TT>. Tras esto finalmente se instalará en el
 repositorio de Debian y así aparecerá en la lista de paquetes actualizados de 
 esa arquitectura. Esta lista se fusionará en la base de datos, así el 
-paquete pasará al estado <TT>Installed</TT> y permanecerá ahi hasta 
-la proxima versión del paquete fuente.
+paquete pasará al estado <TT>Installed</TT> y permanecerá ahí hasta 
+la próxima versión del paquete fuente.
 
 <P>
 Hay varios otros estados; incluyen: <TT>Failed</TT> es para los paquetes
-cuya construcción falló por errores en las fuentes, y se espera que los
+cuya compilación falló por errores en las fuentes, y se espera que los
 errores se arreglen en una versión posterior (tras informar del problema,
 por supuesto). Así una nueva versión entrará directamente en 
 <TT>Needs-Build</TT>, pero con un aviso de que algo fue mal en la versión
 anterior. Mientras esté en este estado se guardará una descripción del 
 error. El estado <TT>Dep-Wait</TT> se usa cuando un paquete necesita 
 algunos otros paquetes para compilarse pero estos no están disponibles
-aún y se deben construir antes. Este estado almacena una lista de los 
+aún y se deben compilar antes. Este estado almacena una lista de los 
 paquetes que se necesitan y puede que las versiones, y si se sabe que todos 
 ellos van a ser instalados y el estado vuelve a <TT>Needs-Build</TT>.
 
 <P>
-Como ya hemos visto, el demonio de construcción toma los paquetes de 
-la base de datos para compilarlos. Veamoslo un poco mas de cerca: si
-tiene algunos paquetes que construir, usa <TT>sbuild</TT> para el 
-proceso de compilación real, y por cada construcción se envía un 
+Como ya hemos visto, el demonio de compilación toma los paquetes de 
+la base de datos para compilarlos. Veámoslo un poco más de cerca: si
+tiene algunos paquetes que compilar, usa <TT>sbuild</TT> para el 
+proceso de compilación real, y por cada compilación se envía un 
 correo con el registro al responsable del demonio. Este revisa el 
 registro y decide qué hacer con el paquete:
 enviarlo, ponerlo como <TT>Failed</TT> o <TT>Dep-Wait</TT>, hacer 
@@ -70,7 +70,7 @@ resultantes con una llave sin una frase de contraseña en la máquina de
 construcción. Considero que esto es una agujero de seguridad inaceptable.
 
 <P>
-El guión de construcción <TT>sbuild</TT> más o menos solo llama a
+El script de compilación <TT>sbuild</TT> más o menos solo llama a
 algunas herramientas estándar de Debian para compilar las fuentes.
 También ayuda con algunas de las tareas comunes y la contabilidad, 
 pero lo realmente especial es con las dependencias de las fuentes. A 
@@ -78,7 +78,7 @@ veces los paquetes necesitan otros paquetes instalados para compilarse,
 por ejemplo compiladores y bibliotecas. No es práctico tener todos 
 estos paquetes instalados todo el tiempo, y a veces no es posible
 por conflictos. Ahora las fuentes sencillamente cuentan a <TT>sbuild</TT>
-en cada paquete que paquetes se necesitan. Puede automáticamente 
+en cada paquete qué paquetes se necesitan. Puede automáticamente 
 instalarlos antes de la construcción y entonces quitarlos de nuevo después.
 
 <P>
