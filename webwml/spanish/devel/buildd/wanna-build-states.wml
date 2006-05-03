@@ -4,7 +4,7 @@
     <p>Esta página intenta explicar lo que significa cada estado de 
       wanna-build y qué le pasará al paquete cuando esté en ese estado.
       El público al que va destinada son los responsables de los paquetes de 
-      Debian que intentan entender por qué su paquete ha sido o no construido
+      Debian que intentan entender por qué su paquete ha sido o no compilado
       para una arquitectura específica. También se da una explicación
       de los distintos resultados del registro que se pueden obtener.</p>
 
@@ -13,7 +13,7 @@
 	en cuenta que no habla de todo lo que se menciona en este documento.</p>
 
 <h2>Estados de wanna-build</h2>
-<p>Para cada arquitectura soportada por Debian, hay una base de datos de 
+<p>Para cada arquitectura a la que Debian da soporte, hay una base de datos de 
 wanna-build instalada en buildd.debian.org, con todos los paquetes y su 
 estado de compilación actual. Hay 7 estados: <em>needs-build</em>,
 <em>building</em>, <em>uploaded</em>, <em>dep-wait</em>,
@@ -27,27 +27,27 @@ estado de compilación actual. Hay 7 estados: <em>needs-build</em>,
 	responsable ha enviado una nueva versión, pero para una
 	arquitectura diferente de la arquitectura para la que es
 	esta base de datos de wanna-build; así que necesita que se
-	reconstruya. Si el estado es <em>needs-build</em>, no le 
-	ha escogido un autoconstructor todavía, pero lo hará (una vez
+	recompile. Si el estado es <em>needs-build</em>, no le 
+	ha escogido un autocompilador todavía, pero lo hará (una vez
 	uno esté disponible en un momento en el que el paquete específico
 	esté cerca del principio de la lista). La gente comúnmente dice
-	dice que «un paquete está en la cola para la reconstrucción» cuando
+	que «un paquete está en la cola para la recompilación» cuando
 	hablan sobre un paquete en estado <em>needs-build</em>.<br>
 	Puede ser interesante darse cuenta de que la cola <em>needs-build</em>
 	no es una cola «FIFO»; más bien, el orden usado se basa en los 
 	siguientes criterios:
 	<ol>
 	  <li>Paquetes con estados previos de compilación: a los paquetes
-	    que se han construido previamente se les da prioridad sobre los
+	    que se han compilado previamente se les da prioridad sobre los
 	    paquetes nuevos.
 	  </li>
 	  <li>prioridades (los paquetes con prioridad <em>required</em> se
-	    construyen antes que los paquetes con prioridad <em>extra</em>)
+	    compilan antes que los paquetes con prioridad <em>extra</em>)
 	  </li>
 	  <li>La sección en que esté un paquete. Este orden está basado en
 	    qué paquetes se consideran más importantes; e.g., la sección
-	    <em>games</em> se construye más tarde que la sección <em>base</em>,
-	    y la sección <em>libs</em> se construye antes que <em>devel</em>.
+	    <em>games</em> se compila más tarde que la sección <em>base</em>,
+	    y la sección <em>libs</em> se compila antes que <em>devel</em>.
 	  </li>
 	  <li>en orden «ASCIIbético» en el nombre del paquete.</li>
 	</ol>
@@ -57,52 +57,52 @@ estado de compilación actual. Hay 7 estados: <em>needs-build</em>,
 	lo pondrá de nuevo en la cola (donde ocupará de nuevo
 	su posición anterior, esto es, la cabeza de la cola), pero ignorará
 	el paquete durante unas pocas horas. Otro ejemplo donde puede
-	suceder esto es cuando una arquitectura tiene autoconstructores
-	múltiples; en ese caso, los portadores de arquitecturas pueden
-	elegir construir los paquetes más grandes en sus autoconstructores
+	suceder esto es cuando una arquitectura tiene autocompiladores
+	múltiples; en ese caso, los adaptadores a arquitecturas pueden
+	elegir compilar los paquetes más grandes en sus autocompiladores
 	más rápidos, y dejar los más pequeños para las máquinas más lentas.
 	Un buildd teóricamente también puede pedir explícitamente un orden
 	de secciones diferente, pero no se hace normalmente.<br>
 	Podría haber otras situaciones donde el orden de la cola parezca
-	que se ignora; pero dése cuenta que todas son excepciones.
+	que se ignora; pero dese cuenta que todas son excepciones.
       </dd>
       <dt><a name="building">building</a></dt>
       <dd>Un paquete se marca <em>building</em> desde el momento en
-        que un autoconstructor lo coja del principio de la cola de 
+        que un autocompilador lo coja del principio de la cola de 
 	wanna-build hasta el momento en que el administrador del
-	autoconstructor contesta al registro. Como los paquetes no se 
+	autocompilador contesta al registro. Como los paquetes no se 
 	cogen uno a uno, esto quiere decir que un paquete puede estar
 	(y normalmente lo está) marcado como <em>building</em> antes de
-	que la construcción haya comenzado en realidad; sin embargo, 
-	como buildd construye paquetes en su cola local según una cola 
+	que la compilación haya comenzado en realidad; sin embargo, 
+	como buildd compila paquetes en su cola local según una cola 
 	FIFO, no debería tomar demasiado. También tenga en cuenta
 	que el estado del paquete <strong>no</strong> se modifica una
-	vez que se complete la construcción, sino cuando el administrador
-	del autoconstructor venga a responder al registro.</dd>
+	vez que se complete la compilación, sino cuando el administrador
+	del autocompilador venga a responder al registro.</dd>
       <dt><a name="uploaded">uploaded</a></dt>
-      <dd>Cuando un intento de construcción es satisfactorio,
-        se envía un registro de construcción al administrador y a
-	buildd.debian.org. El responsable del autoconstructor firma 
+      <dd>Cuando un intento de compilación es satisfactorio,
+        se envía un registro de la compilación al administrador y a
+	buildd.debian.org. El responsable del autocompilador firma 
 	el archivo .changes que está incluido dentro del registro 
-	de construcción, y lo envía al autoconstructor. Como 
-	consecuencia, el autoconstructor envía el paquete y pone su
+	de compilación, y lo envía al autocompilador. Como 
+	consecuencia, el autocompilador envía el paquete y pone su
 	estado como <em>uploaded</em>. Como tal, un paquete se puede 
 	encontrar en la cola de entrada (en cualquier sitio).<br>
-	Un autoconstructor no tocará más un paquete una vez que su 
+	Un autocompilador no tocará más un paquete una vez que su 
 	estado sea <em>uploaded</em>, al menos no hasta el siguiente 
-	envío o hasta que algún responsable de migraciones a otras
+	envío o hasta que algún responsable de adaptaciones a otras
 	arquitecturas modifique manualmente el estado del paquete.
       </dd>
       <dt><a name="dep-wait">dep-wait</a></dt>
       <dd>Cuando un paquete falla debido a que no se encuentran
-	dependencias en el momento de la construcción, el responsable del
-	autoconstructor enviará un correo al autoconstructor, dándole
+	dependencias en el momento de la compilación, el responsable del
+	autocompilador enviará un correo al autocompilador, dándole
 	instrucciones para quitar las fuentes del paquete y marcarlo como
-	<em>dep-wait</em> esperando las dependencias de construcción no
+	<em>dep-wait</em> esperando las dependencias de compilación no
 	encontradas. Un paquete es ese estado, automáticamente,
 	sin intervención humana, se marcará como needs-build una vez
 	dichas dependencias estén disponibles.<br>
-	Originariamente, un paquete tenía que ver un intento de construcción
+	Originariamente, un paquete tenía que ver un intento de compilación
         antes de que el responsable lo pusiera manualmente en estado
         <em>dep-wait</em>. Sin embargo, en agosto de 2005 se añadió algún
 	código a wanna-build que hará que un paquete se mueva del estado
@@ -113,56 +113,56 @@ estado de compilación actual. Hay 7 estados: <em>needs-build</em>,
 	error de mecanografía especificando las dependencias de <em>dep-wait</em> 
 	(de forma que un paquete se marca como que está esperando una dependencia
 	de un paquete que no existe ni existirá) y cuando se declara una
-	dependencia en tiempo de construcción en un paquete que está 
+	dependencia en tiempo de compilación en un paquete que está 
 	marcado como <em>not-for-us</em>, o que está en la lista 
 	<em>packages-arch-specific</em>.<br>
 	Como último ejemplo, considere tres paquetes: un paquete
 	<tt>foo</tt>, que existe sólo para <tt>i386</tt>; un paquete
 	<tt>bar</tt>, que existe sólo para <tt>m68k</tt> (y que aproximadamente
 	desarrolla la misma función); y un paquete <tt>baz</tt>, que se puede
-	construir con uno de ellos, <tt>foo</tt> o <tt>bar</tt>. El 
+	compilar con uno de ellos, <tt>foo</tt> o <tt>bar</tt>. El 
 	responsable del paquete <tt>baz</tt> olvida añadir <tt>bar</tt>
-	a las dependencias de construcción, y lo añade cuando se le 
+	a las dependencias de compilación, y lo añade cuando se le 
 	avisa de que <tt>baz</tt> está en <em>dep-wait</em> esperando un 
 	inexistente <tt>foo</tt> para <tt>m68k</tt>, entonces el estado
 	<em>dep-wait</em> para <tt>m68k</tt> lo tendrán que cambiar 
 	manualmente los responsables de <tt>m68k</tt>.
       </dd>
       <dt><a name="wanna-build-state-failed">failed</a></dt>
-      <dd>Si un intento de construcción falló, el responsable del 
-        autoconstructor decide si realmente es un fallo que no se 
+      <dd>Si un intento de compilación falló, el responsable del 
+        autocompilador decide si realmente es un fallo que no se 
 	debería reintentar, y el paquete se marca como <em>failed</em>.
 	Un paquete no dejará este estado hasta que un responsable decida
 	que debería hacerlo, o hasta que una nueva versión esté 
 	disponible. Sin embargo, cuando una nueva versión de un paquete
-	que se marcó como <em>failed</em> en la versión anteriorm,
-	el autoconstructor preguntará a su administrador si se debe o no 
-	reintentar construirlo; esto es así para que los paquetes que 
+	que se marcó como <em>failed</em> en la versión anterior,
+	el autocompilador preguntará a su administrador si se debe o no 
+	reintentar compilarlo; esto es así para que los paquetes que 
 	obviamente fallarán de nuevo no hagan perder el tiempo a
-	buildd. Aunque descartar un paquete antes de intentar construirlo
+	buildd. Aunque descartar un paquete antes de intentar compilarlo
 	apenas alguna vez es la manera correcta de hacerlo,
-	la opción está disponible para el administrador del autoconstructor.<br>
+	la opción está disponible para el administrador del autocompilador.<br>
 	Dese cuenta de que un paquete<strong>nunca</strong> se marcará como
 	<em>failed</em> sin intervención humana.
       </dd>
       <dt><a name="not-for-us">not-for-us</a></dt>
       <dd>Ciertos paquetes concretos son específicos de arquitecturas; por
         ejemplo, <tt>lilo</tt>, un gestor de arranque para i386, no se
-	debería reconstruir para alpha, m68k, o s390. Sin embargo,
+	debería recompilar para alpha, m68k, o s390. Sin embargo,
 	<em>wanna-build</em> no mira en el archivo de control de un paquete
 	cuando crea su base de datos; solo el nombre del paquete y sección,
 	su urgencia, y su prioridad. De esta forma, al enviar por primera
 	vez un paquete específico de una arquitectura que no se debería
-	construir para otras, no obstante se intenta (pero
+	compilación para otras, no obstante se intenta (pero
 	falla incluso antes de que se descarguen y/o instalen las
-	dependencias del momento de construcción)<br>
-	Ya que los autoconstructores no deberían perder tiempo intentado
-	construir paquetes que no se necesitan para su arquitectura, se
+	dependencias del momento de la compilación)<br>
+	Ya que los autocompiladores no deberían perder tiempo intentado
+	compilar paquetes que no se necesitan para su arquitectura, se
 	necesita una manera de listar los paquetes para los que no es
-	necesario ni si quiera un intento de construcción. La primera 
+	necesario ni si quiera un intento de compilación. La primera 
 	solución a este problema fue <em>not-for-us</em>; sin embargo, como
 	eso es difícil de mantener, <em>not-for-us</em> está desaprobado 
-	hoy en día; los responsables de los autoconstructores deberían usar 
+	hoy en día; los responsables de los autocompiladores deberían usar 
 	en su lugar <em>packages-arch-specific</em>, que es una lista de
 	paquetes específicos para una o más arquitecturas en lugar de un 
 	estado de wanna-build.<br>
@@ -182,7 +182,7 @@ estado de compilación actual. Hay 7 estados: <em>needs-build</em>,
 	sin embargo, esto ya no es así; ahora, un paquete pasa del estado
 	<em>uploaded</em> a <em>installed</em> cuando se acepta en el 
 	repositorio. Esto significa que un paquete normalmente se marca 
-	como <em>installed</em> una media de tras 15 minutos.
+	como <em>installed</em> tras una media de 15 minutos.
       </dd>
     </dl>
     <p>Además de estos siete estados, <em>wanna-build</em> también 
@@ -205,7 +205,7 @@ estado de compilación actual. Hay 7 estados: <em>needs-build</em>,
     <p>
       No es posible acceder a la base de datos de wanna-build directamente;
       esta base de datos está instalada en ftp-master.debian.org, que es
-      un servidor restringido, y solo los autoconstructores tienen una llave
+      un servidor restringido, y solo los autocompiladores tienen una llave
       ssh que les permite acceder a la base de datos de wanna-build de su 
       arquitectura. Este ha sido el caso incluso antes de que ftp-master 
       fuese restringido; como wanna-build hace un bloqueo a nivel de base 
@@ -213,7 +213,7 @@ estado de compilación actual. Hay 7 estados: <em>needs-build</em>,
       que estar en el grupo adecuado (wb-&lt;arch&gt;) para poder acceder 
       directamente a la base de datos de wanna-build.
     </p>
-    <p>Dicho eso, puede ver en qué estado está un paquete llendo a la
+    <p>Dicho eso, puede ver en qué estado está un paquete yendo a la
         <a href="http://buildd.debian.org/stats/">página de estadísticas 
 	de Debian</a>, excepto si está en estado <em>installed</em>
 	(bueno, no puede a menos que no le moleste escarbar en los archivos 
@@ -224,55 +224,55 @@ estado de compilación actual. Hay 7 estados: <em>needs-build</em>,
 	dan una manera fácil de leer (al menos para los humanos) en qué 
 	estado está un paquete.
     </p>
-    <h2>Los resultados del registro de construcción</h2>
+    <h2>Los resultados del registro de compilación</h2>
     <p>
-      Cuando sbuild construye un paquete (el componente de buildd 
-      que hace la construcción en realidad), se envía un correo 
+      Cuando sbuild compila un paquete (el componente de buildd 
+      que hace la compilación en realidad), se envía un correo 
       con el registro del resultado, al administrador del 
-      autoconstructor y a logs@buildd.debian.org
+      autocompilador y a logs@buildd.debian.org
       (así que puede terminar en http://buildd.debian.org). El registro
-      que resulta de la construcción puede ser <em>successful</em>,
+      que resulta de la compilación puede ser <em>successful</em>,
       <em>failed</em>, <em>given-back</em>, o <em>skipped</em>. 
       Dese cuenta que, en <a href="http://buildd.debian.org/">la página
        que muestra el registro de buildd</a>, el prefijo <em>maybe-</em> 
-       se añade, porque entre otras cosas, el hecho de que una construcción 
+       se añade, porque entre otras cosas, el hecho de que una compilación
        se pueda marcar <em>failed</em> ahí para cosas que <em>realmente</em>
        no son un fallo ha causado confusión en el pasado (o, de otra forma,
-       a veces un paquete que aparentemente se construyó satisfactoriamente 
-       relamente está roto y hay que reconstruirlo)..</p> 
+       a veces un paquete que aparentemente se compiló satisfactoriamente 
+       realmente está roto y hay que recompilarlo)..</p> 
 	<p>El significado del registro de resultados es el siguiente:</p>
     <dl>
       <dt><a name="successful">successful</a></dt>
-      <dd>La construcción fue satisfactoria. Cuando el responsable
-        del autoconstructor recibe este registro, extraerá el archivo 
+      <dd>La compilación fue satisfactoria. Cuando el responsable
+        del autocompilador recibe este registro, extraerá el archivo 
 	<code>.changes</code> incluido, lo firma, y lo envía de vuelta
-	al autoconstructor, lo que hará que se envíe el paquete.</dd>
+	al autocompilador, lo que hará que se envíe el paquete.</dd>
       <dt><a name="failed">failed</a></dt>
-      <dd>La construcción falló. Como puede haber un gran número de razones por 
+      <dd>La compilación falló. Como puede haber un gran número de razones por 
         las que falle, enumerarlos todos sería tedioso, así que no se
 	intentará hacer aquí. Si un paquete suyo se marca 
 	<em>(maybe-)failed</em>, querrá leer lo de más arriba, y comprobar
 	su estado en wanna-build.
       </dd>
       <dt><a name="given-back">given-back</a></dt>
-      <dd>La construcción falló debido a un problema temporal con el 
-        autoconstructor; como ejemplos hay problemas de red, la
+      <dd>La compilación falló debido a un problema temporal con el 
+        autocompilador; como ejemplos hay problemas de red, la
 	no disponibilidad de los paquetes fuentes en el actual 
 	sources.list, poco espacio de disco, y otros.<br>
 	Un paquete que es <em>given-back</em> se marca como
 	<em><a href="#needs-build">needs-build</a></em> de nuevo; 
-	como tal, será automáticamente escogido por un autoconstructor 
+	como tal, será automáticamente escogido por un autocompilador 
 	diferente una vez esté preparado.
       </dd>
       <dt><a name="skipped">skipped</a></dt>
       <dd>En el momento entre que el paquete es escogido por un 
-          autoconstructor y se marca como <em><a href="#building">
-	  building</a></em> y el intento de construcción, se envía 
-	  una nueva versión de este paquete, o un portador modifica 
+          autocompilador y se marca como <em><a href="#building">
+	  building</a></em> y el intento de compilación, se envía 
+	  una nueva versión de este paquete, o un adaptador modifica 
 	  manualmente el estado en wanna-build por otra razón. Cuando
-	  se hace eso, se envía un correo al autoconstructor, que 
-	  marcará el paquete como que no va a ser construido; sbuild 
-	  ve esto, y se saltará la construcción (aunque se envía un 
+	  se hace eso, se envía un correo al autocompilador, que 
+	  marcará el paquete como que no va a ser compilado; sbuild 
+	  ve esto, y se saltará la compilación (aunque se envía un 
 	  registro con ese resultado, describiendo el hecho que ocasionó
 	  esto).
       </dd>
