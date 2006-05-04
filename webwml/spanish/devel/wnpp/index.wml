@@ -1,0 +1,350 @@
+#use wml::debian::template title="Futuros paquetes o en los que se necesita trabajar"
+#use wml::debian::toc
+#use wml::debian::translation-check translation="1.31" maintainer="Fernando
+Cerezal"
+
+<define-tag toc-title-formatting endtag=required><h3>%body</h3></define-tag>
+
+<p>Los futuros paquetes o en los que se necesita trabajar, 
+WNPP abreviadamente, es una lista de paquetes que necesitan nuevos
+responsables o que estarán en un futuro en Debian. Para seguir el
+estado real de estos paquetes, WNPP funciona actualmente como un
+pseudo-paquete mediante el <a
+href="http://bugs.debian.org/">sistema de seguimiento de fallos de
+Debian (BTS)</a>.
+
+<hrline>
+
+<p><a href="work_needing">Paquetes que necesitan un nuevo responsable</a>:
+<ul>
+  <li><a href="rfa_bypackage">Paquetes listos para adopción</a>
+  <li><a href="rfa_bymaint">Paquetes listos para adopción, por responsable</a>
+  <li><a href="orphaned">Paquetes huérfanos</a>
+  <li><a href="being_adopted">Paquetes en adopción</a>
+</ul>
+
+<p><a href="help_requested">Paquetes que necesitan ayuda</a>
+
+<p><a href="prospective">Futuros paquetes</a>:
+<ul>
+  <li><a href="being_packaged">Paquetes en preparación</a>
+  <li><a href="requested">Paquetes solicitados</a>
+</ul>
+
+<p><a href="unable-to-package">«Software» que no se puede empaquetar</a>
+
+<p>Nota: estas listas se actualizan diariamente. Para obtener información más 
+actualizada, por favor vaya a la <a href="http://bugs.debian.org/wnpp">página 
+del pseudo-paquete wnpp</a> en el BTS.
+
+<hrline>
+
+<h2>Uso de WNPP</h2>
+
+<toc-display />
+
+<p>Dado que se usa el BTS, todos los desarrolladores están 
+familiarizados con los detalles técnicos sobre cómo enviar nueva información, 
+modificarla, o cerrar las solicitudes pendientes. A pesar de esto, para 
+poder lograr un alto nivel de automatización, se deben seguir una serie 
+de procedimientos.
+
+<p>Para poder enviar nueva información, se tiene que informar de un error 
+en el <a href="http://bugs.debian.org/wnpp">pseudo paquete wnpp</a> para 
+cada (futuro) paquete que se vaya a preparar. Por favor, dese cuenta de que 
+sólo debe enviar un informe por cada paquete fuente en vez de un informe 
+por cada paquete binario que se cree a partir de un paquete fuente.</p>
+
+
+<toc-add-entry>Añadir nuevas entradas con &laquo;reportbug&raquo;</toc-add-entry>
+
+<p>Puede usar <a href="http://packages.debian.org/reportbug">reportbug</a>
+(<kbd>apt-get install reportbug</kbd>):</p>
+
+<samp>
+  $ reportbug --email <var>nombreusuario@dominio.tld</var> wnpp<br>
+  Using '<var>Su Nombre &lt;nombreusuario@dominio.tld&gt;</var>' as your from address.<br>
+  Getting status for wnpp...<br>
+  Querying Debian bug tracking system for reports on wnpp<br>
+  (Use ? for help at prompts.)<br>
+  ...<br>
+</samp>
+
+<p>Verá una lista de informes ya enviados al sistema WNPP que debería leer
+para evitar enviar un segundo informe para el mismo paquete.</p>
+<p>Después de mostrarle la lista de informes anteriores, se le preguntará por
+el tipo de petición que va a hacer:</p>
+
+<samp>
+What sort of request is this?<br>
+<br>
+1 ITP  This is an &lsquo;Intent To Package&rsquo;. Please submit a package description<br>
+       along with copyright and URL in such a report.<br>
+<br>
+2 O    The package has been &lsquo;Orphaned&rsquo;. It needs a new maintainer as soon<br>
+       as possible.<br>
+<br>
+3 RFA  This is a &lsquo;Request for Adoption&rsquo;. Due to lack of time, resources,<br>
+       interest or something similar, the current maintainer is asking for<br>
+       someone else to maintain this package. They will maintain it in<br>
+       the meantime, but perhaps not in the best possible way. In short:<br>
+       the package needs a new maintainer.<br>
+<br>
+4 RFH  This is a &lsquo;Request For Help&rsquo;. The current maintainer wants to continue<br>
+       to maintain this package, but he/she needs some help to do this, because<br>
+       his/her time is limited or the package is quite big and needs several<br>
+       maintainers.<br>
+<br>
+5 RFP  This is a &lsquo;Request For Package&rsquo;. You have found an interesting piece<br>
+       of software and would like someone else to maintain it for Debian.<br>
+       Please submit a package description along with copyright and URL in<br>
+       such a report.<br>
+<br>
+Choose the request type: <br>
+</samp>
+
+<p>Después de que realice su elección se le preguntará por el nombre del paquete:</p>
+
+<samp>
+Choose the request type: <var>x</var><br>
+Please enter the proposed package name: <var>NOMBREPAQUETE</var><br>
+Checking status database...<br>
+</samp>
+
+<ul>
+<li><p>Si el tipo de su petición es ITP (1) o RFP (4), se le preguntará
+   también por una descripción corta y alguna información más sobre el paquete:</p>
+
+<samp>
+Please briefly describe this package; this should be an appropriate short
+description for the eventual package:<br>
+&gt; <var>UNA DESCRIPCIÓN</var><br>
+<br>
+ Subject: ITP: <var>NOMBREPAQUETE -- UNA DESCRIPCIÓN</var><br>
+ Package: wnpp<br>
+ Version: N/A; reported 2002-01-30<br>
+ Severity: wishlist<br>
+ <br>
+* Package name    : <var>NOMBREPAQUETE</var><br>
+  Version         : <var>x.y.z</var><br>
+  Upstream Author : <var>Nombre &lt;alguien@alguna.org&gt;</var><br>
+* URL             : <var>http://www.alguna.org/</var><br>
+* License         : <var>(GPL, LGPL, BSD, MIT/X, etc.)</var><br>
+  Description     : <var>UNA DESCRIPCIÓN</var><br>
+<br>
+<br>
+-- System Information<br>
+...<br>
+</samp>
+      
+<p>Debajo de la línea «Description» debería dar más información acerca 
+del paquete.</p>
+
+<li><p>Si el tipo de su petición es O (2) o RFA (3), tiene que introducir el
+nombre del paquete.</p>
+
+<samp>
+Choose the request type: <var>x</var><br>
+Please enter the name of the package: <var>NOMBREPAQUETE</var><br>
+Checking status database...<br>
+<br>
+Subject: O: <var>NOMBREPAQUETE -- DESCRIPCIÓN CORTA</var><br>
+Package: wnpp<br>
+Version: N/A; reported 2002-01-30<br>
+Severity: normal<br>
+<br>
+<br>
+<br>
+-- System Information<br>
+...<br>
+</samp>
+
+<p>Debería añadir alguna información acerca del mantenimiento del 
+paquete, el estado del autor original y quizá la razón por la que quiere 
+deshacerse del paquete.</p>
+
+</ul>
+
+<p>Entonces se le pregunta si quiere enviar su petición:</p>
+
+<samp>
+Report will be sent to Debian Bug Tracking System &lt;submit@bugs.debian.org&gt;<br>
+Submit this bug report (e to edit) [Y|n|i|e|?]? <br>
+</samp>
+
+
+<toc-add-entry>Añadir nuevas entradas mediante correo electrónico</toc-add-entry>
+
+<p>También es posible enviar informes al sistema WNPP mediante el 
+correo electrónico. El formato del envío debería ser:</p>
+
+<samp>
+  To: submit@bugs.debian.org<br>
+  Subject: <var>TAG</var>: <var>nombre del paquete</var> -- <var>pequeña descripción</var><br>
+  <br>
+  Package: wnpp<br>
+  Severity: <var>mire más abajo</var><br>
+  <br>
+  <var>Información concerniente al paquete</var>. (Si esto es un ITP o RFP, se requiere
+  una URL desde la que el paquete - el archivo .deb o la fuente original - se pueda
+  obtener, así como información acerca de la licencia).
+</samp>
+
+<p>Las etiquetas que se pueden emplear y sus correspondientes severidades son:
+
+ <table>
+ <colgroup span="3">
+ <col width="10%">
+ <col width="10%">
+ <col width="80%">
+ </colgroup>
+  <tr>
+  <th valign="top"><a name="tag-o"><b>O</b></a></th>
+  <td valign="top"><i>normal</i></td>
+  <td>El paquete ha sido &lsquo;Abandonado&rsquo;. Necesita un nuevo
+      responsable tan pronto como sea posible. Si el paquete tiene una
+      prioridad mayor o igual que estándar («standard»), la gravedad se
+      debería establecer como importante («important»).
+  </td>
+</tr>
+<tr>
+  <th valign="top"><b>RFA</b></th>
+  <td valign="top"><a name="tag-rfa"><b>RFA</b></a></td>
+  <td valign="top"><i>normal</i></td>
+  <td>Esto es una &lsquo;Petición de Adopción&rsquo;. Debido a la falta
+      de tiempo, recursos, interés o algo similar, el responsable actual 
+      está pidiendo que alguien mantenga este paquete. Lo mantendrá
+      mientras tanto, pero quizás no de la mejor forma posible.
+      En resumen: el paquete necesita un nuevo responsable.
+  </td>
+</tr>
+<tr>
+  <th valign="top"><a name="tag-rfh"><b>RFH</b></a></th>
+  <td valign="top"><i>normal</i></td>
+  <td>Esto es una «Petición de ayuda» (&lsquo;Request For Help&rsquo;).
+       El responsable actual quiere continuar siendo responsable del paquete,
+       pero necesita algo de ayuda para hacerlo, porque su tiempo es limitado 
+       o el paquete es realmente grande y necesita varios responsables.
+  </td>
+</tr>
+<tr>
+  <th valign="top"><a name="tag-itp"><b>ITP</b></a></th>
+  <td valign="top"><i>wishlist</i></td>
+  <td>Esto es un &lsquo;Intento de Empaquetado&rsquo;. Por favor, envíe
+      la descripción del paquete junto con el «copyright» y la URL en este
+      tipo de informes.
+  </td>
+</tr>
+<tr>
+  <th valign="top"><a name="tag-rfp"><b>RFP</b></a></th>
+  <td valign="top"><i>wishlist</i></td>
+  <td>Esto es una &lsquo;Petición de Empaquetado&rsquo;. Alguien ha encontrado 
+      un programa interesante y le gustaría que otra persona fuese su responsable en 
+      Debian. Por favor, envíe una descripción del paquete junto con el «copyright» 
+      y la URL.
+  </td>
+</tr>
+</table>
+
+
+<toc-add-entry>Eliminar entradas</toc-add-entry>
+
+<p>Los procedimientos para cerrar estos errores son:
+
+<table border=0 cellpadding=3 cellspacing=3>
+<tr>
+  <th valign="top"><b>O</b></th>
+  <td valign="top"><a name="howto-o"><b>O</b></a></td>
+  <td>Si va a adoptar un paquete, retitule su error
+      y reemplace &lsquo;O&rsquo; por &lsquo;ITA&rsquo;, de forma que otras personas puedan
+      saber que el paquete está siendo adoptado, y se evite que se 
+      elimine de forma automática del archivo, y póngase como dueño del
+      informe. Para adoptar realmente 
+      el paquete, debe enviarlo con su nombre en el campo «Maintainer:», 
+      y añadir algo como
+      <code>
+         * New maintainer (Closes: #<var>númerodeerror</var>)
+      </code>
+      en el «changelog» del paquete de modo que el informe de error
+      se cierre automáticamente una vez que el paquete sea instalado; donde 
+      <var>númerodeerror</var> ha de ser reemplazado por el correspondiente número
+      del informe de error. Además, antes de subir al archivo una nueva 
+      versión del paquete con usted como mantenedor, debería comprobar si existe 
+      una nueva versión del programa y tratar de arreglar los fallos que haya
+      en ese programa.
+  </td>
+</tr>
+<tr>
+  <th valign="top"><a name="howto-rfa"><b>RFA</b></a></th>
+  <td>Si va a adoptar un paquete, retitule su error
+      y sustituya &lsquo;RFA&rsquo; por &lsquo;ITA&rsquo;, de forma que otras personas puedan
+      saber que el paquete está siendo adoptado, y se evite que se 
+      elimine de forma automática del archivo, y póngase como dueño del
+      informe. Para adoptar realmente
+      el paquete, debe subirlo con su nombre en el campo «Maintainer:» ,
+      y cerrar el error una vez que el paquete haya sido instalado.
+
+      <p>Si como responsable decide abandonar el paquete que marcó 
+      como &lsquo;RFA&rsquo;, por favor, cambie el título del informe de error y 
+      sustituya &lsquo;RFA&rsquo; por &lsquo;O&rsquo;. Si retira su petición, cierre el error.
+</td>
+</tr>
+<tr>
+  <th valign="top"><a name="howto-rfh"><b>RFH</b></a></th>
+  <td>Normalmente este error sólo lo debería cerrar el remitente,
+       i.e. el responsable del paquete, si lo consideran obsoleto, una de dos o
+       porque una o más personas han ofrecido (y proporcionado) su soporte o 
+       porque ahora cree que pueden tratar el paquete él mismo.
+
+       <p>Si usted, como responsable del paquete, decide cambiar el RFH a
+       una petición de adopción (&lsquo;RFA&rsquo;) o si quiere dejar 
+       huérfano el paquete (&lsquo;O&rsquo;), por favor cambie el titulo
+       del error en lugar de cerrarlo y rellenar uno nuevo.
+  </td>
+</tr>
+<tr>
+  <th valign="top"><a name="howto-itp"><b>ITP</b></a></th>
+  <td>Empaquete el «software», cárguelo en el archivo y cierre 
+      el error una vez que el paquete haya sido instalado.
+
+      <p>Si cambia de idea, y ya no desea empaquetar este programa, cierre
+      el error o cambie el título y reclasifíquelo como RFP, como 
+      considere que es mejor.
+  </td>
+</tr>
+<tr>
+  <th valign="top"><a name="howto-rfp"><b>RFP</b></a></th>
+  <td>Si va a empaquetar este programa, cambie el informe de error
+      para reemplazar &lsquo;RFP&rsquo; por &lsquo;ITP&rsquo;, de forma que otras
+      personas puedan saber que el programa ya está siendo empaquetado, y
+      póngase usted como dueño del informe. Empaquete el
+      programa, cárguelo en el archivo y cierre el error cuando el paquete haya sido 
+      instalado.
+  </td>
+</tr>
+</table>
+
+<p>Si piensa que la lista de desarrolladores debiera enterarse del ITP,
+RFA o lo que sea, añada la cabecera
+<pre>X-Debbugs-CC: debian-devel@lists.debian.org</pre>
+<p>al mensaje (nota: ésta es una cabecera real, no una pseudocabecera).
+
+<p>Por supuesto, la forma más fácil de cerrar estos informes de error es añadiendo una
+entrada en el archivo de cambios («changelog») del paquete,  diciendo qué ha hecho 
+y añadiendo <tt>(closes:&nbsp;bug#nnnnn)</tt> a ella. De esta forma el error se 
+cerrará automáticamente cuando el nuevo paquete quede instalado dentro 
+del archivo.
+
+<p><strong>Atención:</strong> Usted <strong>no</strong> puede reasignar,
+retitular o cambiar el dueño de un informe de error enviando un correo al
+número de error@bugs.debian.org, 
+<strong>ni</strong> enviando nuevos informes. Tiene que enviar el mensaje 
+apropiado al robot de control del BTS &mdash; <a
+href="$(HOME)/Bugs/server-control">¡Lea las instrucciones para hacerlo!</a>
+
+<p>Nota: Si un paquete permanece huérfano durante un tiempo muy largo, se 
+examinará su situación para determinar si el paquete se necesita &mdash; si 
+no, se pedirá a los mantenedores del FTP que lo eliminen de Sid.
+
+<p>Si por alguna razón necesita contactar con los responsables de WNPP, puede 
+hacerlo en <email wnpp@debian.org>.
