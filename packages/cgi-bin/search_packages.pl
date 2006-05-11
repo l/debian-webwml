@@ -37,7 +37,7 @@ my @DISTS = @SUITES;
 my @SECTIONS = qw( main contrib non-free );
 my @ARCHIVES = qw( us security installer );
 my @ARCHITECTURES = qw( alpha amd64 arm hppa hurd-i386 i386 ia64
-			kfreebsd-i386 mips mipsel powerpc s390 sparc );
+			kfreebsd-i386 m68k mips mipsel powerpc s390 sparc );
 
 $ENV{PATH} = "/bin:/usr/bin";
 
