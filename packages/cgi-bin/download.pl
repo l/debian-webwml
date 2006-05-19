@@ -78,6 +78,7 @@ my @australian_sites = (
 	"ftp.nz.debian.org/debian",
 	);
 my @asian_sites = (
+	"ftp.hk.debian.org/debian",
 	"ftp.jp.debian.org/debian",
 	"ftp.kr.debian.org/debian",
 	"linux.csie.nctu.edu.tw/debian",
