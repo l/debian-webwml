@@ -1,16 +1,17 @@
-#use wml::debian::cdimage title="Como se tornar um servidor espelho ('mirror') para as imagens de CD do Debian" BARETITLE=true
+#use wml::debian::cdimage title="Tornando-se um servidor espelho para as imagens de CD do Debian" BARETITLE=true
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.12"
+#use wml::debian::translation-check translation="1.13"
 
 <p>Para se tornar um servidor espelho de imagens do CD do Debian, 
 você precisa de uma máquina Linux ou compatível com Unix e de 
-uma conexão com a Internet permanente e confiável. os espelhos de
-CD do Debian contém imagens <tt>.iso</tt> para CDs e DVDs de vários
+uma conexão com a Internet permanente e confiável. Os espelhos de
+CD do Debian contêm imagens <tt>.iso</tt> para CDs e DVDs de vários
 tamanhos, arquivos para <a
 href="http://atterer.net/jigdo/">jigdo</a> (<tt>.jigdo</tt> e
 <tt>.template</tt>), arquivos <a
 href="http://bitconjurer.org/BitTorrent/">BitTorrent</a> (<tt>.torrent</tt>) 
-e checksums MD5 das imagens (<tt>MD5SUMS*</tt>).</p>
+e arquivos de verificação de integridade ("checksums") MD5
+das imagens (<tt>MD5SUMS*</tt>).</p>
 
 <toc-display/>
 
@@ -19,8 +20,8 @@ e checksums MD5 das imagens (<tt>MD5SUMS*</tt>).</p>
 
 <toc-add-entry name="master">Site mestre</toc-add-entry>
 
-<p>Há dois lugares para espelhar, um para imagens estáveis e um para
-imagens beta/instável/testing. As URLs do site mestre são exibidas
+<p>Há dois lugares a serem espelhados, um para imagens estáveis e um para
+imagens beta/instável/teste. As URLs do site mestre são exibidas
 abaixo - no entanto, <strong>por favor</strong>, considere espelhar
 a partir de outro espelho próximo (listas de espelhos: <a
 href="../http-ftp/">HTTP/FTP</a>, <a href="rsync-mirrors">rsync</a>)
@@ -30,7 +31,7 @@ nas proximidades de um lançamento.</p>
 <p>Esteja também ciente que uma <strong>grande</strong> quantidade de
 dados estão armazenados nestes diretórios - leia a <a 
 href="#exclude">seção abaixo</a> para detalhes sobre como diminuir
-o tamanho excluindo alguns arquivox.</p>
+o tamanho excluindo alguns arquivos.</p>
  
 <ul>
 
@@ -46,7 +47,31 @@ o tamanho excluindo alguns arquivox.</p>
 
   </li>
 
-  <li>Imagens Beta/instável/testing (maioria das seções atualizada semanalmente):<br>
+  <li>Imagens semanais:<br>
+
+    <a href="http://cdimage.debian.org/cdimage/weekly-builds/"
+    ><tt>http://cdimage.debian.org/cdimage/weekly-builds/</tt></a><br>
+
+    <a href="ftp://cdimage.debian.org/cdimage/weekly-builds/"
+    ><tt>ftp://cdimage.debian.org/cdimage/weekly-builds/</tt></a><br>
+
+    <tt>rsync://cdimage.debian.org/cdimage/weekly-builds/</tt>
+
+  </li>
+
+  <li>Imagens diárias:<br>
+
+    <a href="http://cdimage.debian.org/cdimage/daily-builds/"
+    ><tt>http://cdimage.debian.org/cdimage/daily-builds/</tt></a><br>
+
+    <a href="ftp://cdimage.debian.org/cdimage/daily-builds/"
+    ><tt>ftp://cdimage.debian.org/cdimage/daily-builds/</tt></a><br>
+
+    <tt>rsync://cdimage.debian.org/cdimage/daily-builds/</tt>
+
+  </li>
+
+  <li>Imagens beta/instável/teste:<br>
 
     <a href="http://cdimage.debian.org/pub/cdimage-testing/">\
     <tt>http://cdimage.debian.org/pub/cdimage-testing/</tt></a><br>
@@ -95,7 +120,7 @@ modificação e o tamanho são os mesmos, <kbd>rsync</kbd> irá deixar o arquivo
 quieto, portanto <kbd>--times</kbd> é realmente obrigatório.</p>
 #______________________________________________________________________
 
-<toc-add-entry name="jigdolite">Espelhas usando jigdo-lite é 
+<toc-add-entry name="jigdolite">Espelhar usando jigdo-lite é 
 desencorajado</toc-add-entry>
 
 <p>Versões recentes do programa <a href="http://atterer.net/jigdo/">\
@@ -108,7 +133,7 @@ para criar espelhos de CD Debian - use o <kbd>jigdo-mirror</kbd>.</p>
 <toc-add-entry name="jigdomirror">Espelhar usando o jigdo-mirror é 
 recomendado</toc-add-entry>
 
-<p>Na verdade, isto significa: Espelhar os arquivos <tt>.iso</tt> usando
+<p>Na verdade, isto significa: espelhar os arquivos <tt>.iso</tt> usando
 <a href="http://atterer.net/jigdo/"><kbd>jigdo-mirror</kbd></a>, e
 então (se você também quiser espelhar outros tipos de arquivos, como
 arquivos <tt>.jigdo</tt> e <tt>.template</tt>) rodar rsync no diretório
@@ -116,7 +141,7 @@ para obter o resto. Os scripts <a
 href="http://www.acc.umu.se/~maswan/debian-push/cdimage/">nesta
 página</a> podem ajudar a configurar isto.</p>
 
-<p>Várias pessoas mantém servidores espelho "regulares" 
+<p>Várias pessoas mantêm servidores espelho "regulares" 
 (<kbd>debian/</kbd>), ou simplesmente possuem algum deles por perto. 
 Isto significa que elas já tem os <tt>.deb</tt>s que são incluídos nas imagens 
 de CD. A questão óbvia é: por que nós não podemos usar esses mesmos 
@@ -128,7 +153,7 @@ mais alguns poucos arquivos de template do jigdo.</p>
 
 <p>Em primeiro lugar, você precisa dos arquivos de template do jigdo. 
 Os links estão na <a 
-href="../jigdo-cd">a página de informações do jigdo</a>. Peque os
+href="../jigdo-cd">a página de informações do jigdo</a>. Pegue os
 arquivos para cada arquitetura para as quais gostaria de construir
 imagens.</p>
 
@@ -143,7 +168,7 @@ debianMirror="file:/onde/você/mantém/espelhamentos/debian"
 include='i386/|sparc/|powerpc/|source/'; exclude='-1\.'
 </pre>
 
-<p>As variáveis <i>include</i> e <i>exclude</i> contém a lista das 
+<p>As variáveis <i>include</i> e <i>exclude</i> contêm a lista das 
 arquiteturas das quais você deseja criar imagens (semelhante a expressões 
 regulares). Para mais informações, veja o manual do <kbd>jigdo-mirror</kbd> 
 ou mesmo o código-fonte (ele é um script shell com vários comentários).</p>
@@ -162,8 +187,8 @@ um arquivo, etc.).</p>
 enviar uma mensagem para seus espelhos e fazê-los começarem a se
 atualizar automaticamente. Deste modo, os novos dados são "empurrados"
 (pushed) ao invés de "puxados" pelos espelhos durante sua próxima
-atualização diária, levando à uma propagação mais rápida das
-novas versões das iamgens.</p>
+atualização diária, levando a uma propagação mais rápida das
+novas versões das imagens.</p>
 
 <p>Se você quer que seu espelho torne-se parte deste sistema de
 atualização, dê uma olhada <a
@@ -198,7 +223,7 @@ excluído ou incluído.</p>
   <kbd>--include='*businesscard*.iso' --include='*netinst*.iso'
   --exclude='*.iso'</kbd><br>
   
-  Exlui todos os conjuntos de imagens de CD/DVD para todas as
+  Exclui todos os conjuntos de imagens de CD/DVD para todas as
   arquiteturas, <em>mas</em> espelha as imagens .iso com
   tamanho de cartão de visitas e instalação via rede. Nós
   recomendamos sempre espelhar estas imagens pequenas:
@@ -211,7 +236,7 @@ excluído ou incluído.</p>
   Como acima, mas <em>inclue</em> todas as imagens de CD/DVD para a
   arquitetura i386.</li>
 
-  <li><strong>Excluir imagens completas, exceto os CD1 de 1 à 3 para
+  <li><strong>Excluir imagens completas, exceto os CD1 de 1 a 3 para
   i386:</strong>
   <kbd>--include='*netinst*.iso' --include='i386/**-[1-3].iso'
   --exclude='*.iso'</kbd><br>
@@ -228,8 +253,8 @@ excluído ou incluído.</p>
   --exclude=powerpc/ --exclude=s390/ --exclude=sh/
   --exclude=sparc/</kbd><br>
   
-  Inclue somente os conjuntos completos de arquivos para i386, não
-  inclue nenhum outro arquivo <tt>.jigdo</tt>, <tt>.iso</tt>, etc 
+  Inclui somente os conjuntos completos de arquivos para i386, não
+  inclui nenhum outro arquivo <tt>.jigdo</tt>, <tt>.iso</tt>, etc 
   para outras arquiteturas.</li>
   
   </ul>
@@ -239,7 +264,7 @@ excluído ou incluído.</p>
 para as imagens <tt>.iso</tt></toc-add-entry>
 
 <p>As variantes diferentes das imagens <tt>.iso</tt> são distinguíveis
-pelos seus nomes, permitindo-lhe restringir os tipos de imagens à 
+pelos seus nomes, permitindo-lhe restringir os tipos de imagens a
 espelhar:</p>
 
 <ul>
