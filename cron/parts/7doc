@@ -27,10 +27,15 @@ install_policy_doc () {
     target="$2"
     target="$webdocdir/$target/"
     pathprefix="$3/"
+    htmlsingle="$4"
     
     echo -n " $document"
     test -d "$target" || install -d -m 2775 "$target"
-    install -p -m 664 dp/usr/share/doc/debian-policy/${pathprefix}${document}.html/* "$target"
+    if [ -n "$htmlsingle" ]; then
+    	install -p -m 664 dp/usr/share/doc/debian-policy/${pathprefix}${document}.html "$target"
+    else
+    	install -p -m 664 dp/usr/share/doc/debian-policy/${pathprefix}${document}.html/* "$target"
+    fi
     for format in ps pdf txt; do
 	file="dp/usr/share/doc/debian-policy/${pathprefix}${document}.${format}.gz"
 	[ -e $file ] && \
@@ -39,7 +44,7 @@ install_policy_doc () {
 }
 
 install_policy_doc policy debian-policy
-install_policy_doc fhs packaging-manuals/fhs fhs
+install_policy_doc fhs-2.3 packaging-manuals/fhs fhs yes
 install_policy_doc menu-policy packaging-manuals/menu-policy
 install_policy_doc perl-policy packaging-manuals/perl-policy
 install_policy_doc mime-policy packaging-manuals/mime-policy
