@@ -176,7 +176,20 @@ ifeq "$(LANGUAGE)" "zh"
 	$(TEMPLDIR)/weeklynews/footer.wml $(GETTEXTDEP)
 endif
 
+export LANGUAGE ENGLISHSRCDIR CUR_DIR
+dwn.$(LANGUAGE).rdf:
+	if [ -f $(shell cat $(ENGLISHSRCDIR)/$(CUR_DIR)/CURRENT-ISSUE-IS)/index.wml -a \
+	    $(shell cat $(ENGLISHSRCDIR)/$(CUR_DIR)/CURRENT-ISSUE-IS)/index.wml -nt \
+	        dwn.$(LANGUAGE).rdf ]; then \
+	    $(ENGLISHSRCDIR)/$(CUR_DIR)/dwn-to-rdf.pl; \
+	fi
+
+all:: dwn.$(LANGUAGE).rdf
+install:: dwn.$(LANGUAGE).rdf
+
 # Generate the mail for posting to debian-news. Requires the web page already
 # be updated.
 mail:
 	@./makemail.pl
+
+.PHONY:	dwn.$(LANGUAGE).rdf
