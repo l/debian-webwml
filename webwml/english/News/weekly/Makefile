@@ -176,13 +176,14 @@ ifeq "$(LANGUAGE)" "zh"
 	$(TEMPLDIR)/weeklynews/footer.wml $(GETTEXTDEP)
 endif
 
+CURRENT_ISSUE=$(shell cat $(ENGLISHSRCDIR)/$(CUR_DIR)/CURRENT-ISSUE-IS)/index.wml
+DWN_CURRENT=$(shell test -f $(CURRENT_ISSUE) && echo "yes" || echo)
+
+ifeq "$(DWN_CURRENT)" "yes"
+
 export LANGUAGE ENGLISHSRCDIR CUR_DIR
 dwn.$(LANGUAGE).rdf:
-	if [ -f $(shell cat $(ENGLISHSRCDIR)/$(CUR_DIR)/CURRENT-ISSUE-IS)/index.wml -a \
-	    $(shell cat $(ENGLISHSRCDIR)/$(CUR_DIR)/CURRENT-ISSUE-IS)/index.wml -nt \
-	        dwn.$(LANGUAGE).rdf ]; then \
-	    $(ENGLISHSRCDIR)/$(CUR_DIR)/dwn-to-rdf.pl; \
-	fi
+	$(ENGLISHSRCDIR)/$(CUR_DIR)/dwn-to-rdf.pl
 
 all:: dwn.$(LANGUAGE).rdf
 install:: $(HTMLDIR)/dwn.$(LANGUAGE).rdf
@@ -194,9 +195,10 @@ $(HTMLDIR)/dwn.$(LANGUAGE).rdf: $(HTMLDIR)/%: %
 	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
 	install -m 664 -p $< $(HTMLDIR)
 
+.PHONY:	dwn.$(LANGUAGE).rdf
+endif
+
 # Generate the mail for posting to debian-news. Requires the web page already
 # be updated.
 mail:
 	@./makemail.pl
-
-.PHONY:	dwn.$(LANGUAGE).rdf
