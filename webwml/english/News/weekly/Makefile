@@ -187,6 +187,13 @@ dwn.$(LANGUAGE).rdf:
 all:: dwn.$(LANGUAGE).rdf
 install:: dwn.$(LANGUAGE).rdf
 
+clean::
+	rm -f dwn.$(LANGUAGE).rdf
+
+$(HTMLDIR)/dwn.$(LANGUAGE).rdf: $(HTMLDIR)/%: %
+	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
+	install -m 664 -p $< $(HTMLDIR)
+
 # Generate the mail for posting to debian-news. Requires the web page already
 # be updated.
 mail:
