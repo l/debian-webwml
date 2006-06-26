@@ -185,7 +185,7 @@ dwn.$(LANGUAGE).rdf:
 	fi
 
 all:: dwn.$(LANGUAGE).rdf
-install:: dwn.$(LANGUAGE).rdf
+install:: $(HTMLDIR)/dwn.$(LANGUAGE).rdf
 
 clean::
 	rm -f dwn.$(LANGUAGE).rdf
