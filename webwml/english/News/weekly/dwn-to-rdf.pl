@@ -62,7 +62,7 @@ sub current_issue
 
 my $current = current_issue;
 my $rdf = 'dwn.' . $ENV{LANGUAGE} . '.rdf';
-my $url = 'http://www.debian.org/News/weekly/' . $current . '/';
+my $url = 'http://www.debian.org/News/weekly/' . $current . '/index.' . $ENV{LANGUAGE} . '.html';
 
 sub rdf_add
 {
