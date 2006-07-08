@@ -1,0 +1,176 @@
+#use wml::debian::translation-check translation="1.3" maintainer="Frédéric Bothamy"
+<define-tag description>Plusieurs failles</define-tag>
+<define-tag moreinfo>
+<p>Plusieurs failles locales et distantes ont été découvertes dans le
+noyau Linux qui pouvaient mener à un déni de service ou à l'exécution de
+code arbitraire. Le projet «&nbsp;Common Vulnerabilities and
+Exposures&nbsp;» a identifié les problèmes suivants&nbsp;:</p>
+
+<ul>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0038">CVE-2006-0038</a>
+
+    <p>«&nbsp;Solar Designer&nbsp;» a découvert que des calculs
+    arithmétiques dans la fonction do_replace() de netfilter pouvait
+    mener à un dépassement de tampon et à l'exécution de code
+    arbitraire. Cependant, l'opération nécessite des privilèges
+    CAP_NET_ADMIN, ce qui n'est un problème que dans les susyèmes
+    virtualisés ou les systèmes à contrôle d'accès fin.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0039">CVE-2006-0039</a>
+
+    <p>«&nbsp;Solar Designer&nbsp;» a découvert une condition de
+    concurrence dans la fonction do_add_counters() de netfilter, ce qui
+    permet un dévoilement d'informations de la mémoire du noyau en
+    exploitant une condition de concurrence. Comme <a
+    href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0038">CVE-2006-0038</a>,
+    cela nécessite des privilèges CAP_NET_ADMIN.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0741">CVE-2006-0741</a>
+
+    <p>Il a été découvert que des systèmes Intel EM64T étaient
+    susceptibles à un déni de service local à cause d'une faute
+    récursive sans fin liée à une mauvaise entrée ELF.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0742">CVE-2006-0742</a>
+
+    <p>La fonction die_if_kernel() était incorrectement déclarée comme
+    «&nbsp;ne retournant jamais&nbsp;», ce qui pouvait être exploité par
+    un attaquant local résultant en un plantage du noyau.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-1056">CVE-2006-1056</a>
+
+    <p>Il a été trouvé que les machines AMD64 (et d'autres processeurs
+    AuthenticAMD de 7e et 8e générations) étaient vulnérables à une
+    fuite d'informations sensibles en raison de la façon dont elles
+    gèrent la sauvegarde et la restauration des registres x86 FOP, FIP
+    et FDP dans FXSAVE/FXRSTOR quand une exception est en cours. Cela
+    permettait à un processus de déterminer des parties de l'état des
+    instructions en virgule flottante d'autres processus.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-1242">CVE-2006-1242</a>
+
+    <p>Marco Ivaldi a découvert qu'il y avait un dévoilement non désiré
+    d'informations permettant à des attaquants distants de contourner
+    des protections contre les «&nbsp;Idle Scans&nbsp;» (nmap -sI) en
+    abusant le champ IP de paquets IP et de contourner l'identifiant IP
+    à zéro dans les contre-mesures de paquet DF. Cela provenait de la
+    fonction ip_push_pending_frames incrémentant incorrectement le champ
+    IP ID lors de l'envoi d'un RST après la réception de paquets TCP
+    SYN-ACK non sollicités.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-1343">CVE-2006-1343</a>
+
+    <p>Pavel Kankovsky a signalé l'existence d'une fuite potentielle
+    d'informations résultant de l'échec de l'initialisation de
+    sin.sin_zero dans le code de socket IPv4.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-1368">CVE-2006-1368</a>
+
+    <p>Shaun Tancheff a découvert un dépassement de tampon (erreur de
+    condition aux limites) dans l'implémentation RNDIS de gadget USB
+    permettant aux attaquants distants de provoquer un déni de service.
+    Lors de la création d'une message de réponse, le pilote allouait de
+    la mémoire pour les données de réponse, mais pas pour la structure
+    de réponse. Le noyau ne vérifiait pas correctement les limites des
+    données fournies depuis l'espace utilisateur avant de le copier vers
+    un tampon de mémoire de taille insuffisante. Des attaquants
+    pouvaient planter le système ou peut-être exécuter du code machine
+    arbitraire.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-1524">CVE-2006-1524</a>
+
+    <p>Hugh Dickins a découvert un problème dans la fonction
+    madvise_remove() dans laquelle les restrictions de fichier et mmap
+    n'étaient pas suivies, permettant aux utilisateurs locaux de
+    contourner les permissions IPC et de remplacer des parties de
+    fichiers de tmpfs en lecture seule par des zéros.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-1525">CVE-2006-1525</a>
+
+    <p>Alexandra Kossovsky a signalé une condition de déréférencement de
+    pointeur NLL dans ip_route_input() qui pouvait être déclenchée par un
+    utilisateur local en demandant une route pour une adresse IP
+    multicast, résultant en un déni de service (panic).</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-1857">CVE-2006-1857</a>
+
+    <p>Vlad Yasevich a signalé un problème de validation de données dans
+    le sous-système SCTP qui pouvait permettre à un utilisateur local de
+    déclencher un dépassement de tampon en utilisant un morceau HB-ACK
+    mal formatté, résultant en un déni de service.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-1858">CVE-2006-1858</a>
+
+    <p>Vlad Yasevich a signalé un bogue dans le code de vérification des
+    limites dans le sous-système SCTP qui pouvait permettre à un
+    attaquant distant de déclencher une attaque par déni de service
+    quand des tailles de paramètre arrondies sont utilisées pour
+    calculer des longueurs de paramètre au lieu des valeurs réelles.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-1864">CVE-2006-1864</a>
+
+    <p>Mark Mosely a découvert qu'il était possible de s'évader d'un
+    chroot résidant sur un partage SMB avec des séquences
+    «&nbsp;cd&nbp;» spécialement conçues.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-2271">CVE-2006-2271</a>
+
+    <p>La «&nbsp;Mu security team&nbsp;» a découvert que des morceaux
+    ECNE spécialement conçus pouvaient entraîner un plantage du noyau en
+    accédant à des entrées stables d'état incorrectes dans le
+    sosu-système réseau SCTP, ce qui permettait un déni de service.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-2272">CVE-2006-2272</a>
+
+    <p>La «&nbsp;Mu security team&nbsp;» a découvert que des morceaux de
+    contrôle SCTP fragmentés pouvaient déclencher un panic du noyau, ce
+    qui permettait des attaques par déni de service.</p></li>
+
+<li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-2274">CVE-2006-2274</a>
+
+    <p>Il a été découvert que des paquets SCTP avec deux paquets de
+    données inclus initiaux pouvaient mener à une récursion infinie, ce
+    qui permettait des attaques par déni de service.</p></li>
+
+</ul>
+
+<p>Le tableau suivant explique quelle version du noyau corrige les
+problèmes mentionnés ci-dessus pour quelle architecture&nbsp;:</p>
+
+<div class="centerdiv"><table cellspacing="0" cellpadding="2">
+<tr><th></th>                <th>Debian&nbsp;3.1 (<em>Sarge</em>)</th></tr>
+<tr><td>Source</td>                      <td>2.4.27-10sarge3</td></tr>
+<tr><td>Architecture Alpha</td>          <td>2.4.27-10sarge3</td></tr>
+<tr><td>Architecture ARM</td>            <td>2.4.27-2sarge3</td></tr>
+<tr><td>Architecture Intel IA-32</td>    <td>2.4.27-10sarge3</td></tr>
+<tr><td>Architecture Intel IA-64</td>    <td>2.4.27-10sarge3</td></tr>
+<tr><td>Architecture Motorola 680x0</td> <td>2.4.27-3sarge3</td></tr>
+<tr><td>Architecture MIPS grand-boutiste</td> <td>2.4.27-10.sarge3.040815-1</td></tr>
+<tr><td>Architecture MIPS petit-boutiste</td> <td>2.4.27-10.sarge3.040815-1</td></tr>
+<tr><td>Architecture PowerPC</td>        <td>2.4.27-10sarge3</td></tr>
+<tr><td>Architecture IBM S/390</td>      <td>2.4.27-2sarge3</td></tr>
+<tr><td>Architecture Sun Sparc</td>      <td>2.4.27-9sarge3</td></tr>
+</table></div>
+
+<p>Le tableau suivant liste les paquets supplémentaires qui ont été
+reconstruits pour des raisons de compatibilité ou pour tirer parti de
+cette mise à jour&nbsp;:</p>
+
+<div class="centerdiv"><table cellspacing="0" cellpadding="2">
+<tr><th></th>                            <th>Debian&nbsp;3.1 (<em>Sarge</em>)</th></tr>
+<tr><td>fai-kernels</td>                 <td>1.9.1sarge2</td></tr>
+<tr><td>kernel-image-2.4.27-speakup</td> <td>2.4.27-1.1sarge2</td></tr>
+<tr><td>mindi-kernel</td>                <td>2.4.27-2sarge2</td></tr>
+<tr><td>systemimager</td>                <td>3.2.3-6sarge2</td></tr>
+</table></div>
+
+<p>Nous vous recommandons de mettre à jour votre paquet de noyau immédiatement
+et de réamorcer la machine. Si vous avez construit une noyau personnalisé en
+utilisant le paquet des sources du noyau, vous devez le reconstruire pour tirer
+parti de ces corrections.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2006/dsa-1097.data"
+# $Id$
