@@ -4,7 +4,7 @@
 # the translation-check header to it. It also will create the
 # destination directory if necessary, and copy the Makefile from the source.
 
-# Written in 2000-2005 by Peter Karlsson <peterk@debian.org>
+# Written in 2000-2006 by Peter Karlsson <peterk@debian.org>
 # © Copyright 2000-2005 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
@@ -24,7 +24,7 @@ unless ($number)
 
 # Locate advisory
 $number = "dsa-" . $number if $number !~ /^dsa-/;
-$year = 2005;
+$year = 2006;
 YEAR: while (-d "../../english/security/$year")
 {
 	last YEAR if -e "../../english/security/$year/$number.wml";
@@ -104,11 +104,19 @@ while (<SRC>)
 	s/>symlink attack</>attack mot symboliska länkar</;
 	s/>remote exploit</>fjärrattack</;
 	s/>missing input sanitising</>städar inte indata</;
+	s/>programming error</>programmeringsfel</;
 	s/Several vulnerabilities/Flera sårbarheter/;
 	s/several vulnerabilities/flera sårbarheter/;
 	s/>several</>flera</;
 	s/>unsanitised input</>städar ej indata</;
+	s/ identifies the following problems:/ identifierar följande problem:/;
+	s/The following matrix explains which kernel version for which architecture/Följande tabell beskriver vilka versioner av kärnan för vilka arkitekturer som/;
+	s/fix the problems mentioned above:/rättar problemen som beskrivs ovan:/;
+	s/fix the problem mentioned above:/rättar problemet som beskrivs ovan:/;
 	s/This has been fixed in version/Detta har rättats i version/;
+	s/(<td>.*) architecture/$1-arkitekturen/;
+	s/The following matrix lists additional packages that were rebuilt for/Följande tabell beskriver ytterligare paket som byggts om för kompatibilitet/;
+	s/compatibility with or to take advantage of this update:/med, eller för att dra nytt av, denna uppdatering:/;
 	s/(?:,)?( )?this problem has been fixed in/$1har detta problem rättats i/;
 	s/(?:,)?( )?this problem has been fixed$/$1har detta problem rättats/;
 	s/(?:,)?( )?this problem has(?: been)?$/$1har detta problem/;
@@ -142,7 +150,7 @@ while (<SRC>)
 	s/The old stable distribution/Den gamla stabila utgåvan/;
 	s/^stable distribution/stabila utgåvan/;
 	s/^unstable distribution/instabila utgåvan/;
-	s/does(?: not|n't) contain a(?:ny)? ([^ ]) package/innehåller inte något $1-paket/;
+	s/does(?: not|n't) contain a(?:ny)? ([^ ]) package/innehåller inte paketet $1/;
 	s/distribution (\(potato|woody|sarge\))/utgåvan $1/;
 	s/privilege escalation/utökning av privilegier/;
 	s/cross site/serveröverskridande/;
