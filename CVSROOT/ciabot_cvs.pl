@@ -22,7 +22,7 @@
 #
 # Its record in the loginfo file should look like:
 #
-#     ALL /usr/bin/perl $CVSROOT/CVSROOT/ciabot_cvs.pl %{,,,s} $USER project from_email dest_email ignore_regexp
+#     ALL /usr/bin/perl $CVSROOT/CVSROOT/ciabot_cvs.pl $USER project from_email dest_email ignore_regexp -- %p %s
 #
 # IMPORTANT: The %{,,,s} in loginfo is new, and is required for proper operation.
 #
@@ -128,30 +128,32 @@ $" = "\7";
 ### Input data loading
 
 
+# Figure out who is doing the update.
+
+$user = shift;
+
+# Use the optional parameters, if supplied.
+
+$project = shift unless ($ARGV[0] eq "--");
+$from_email = shift unless ($ARGV[0] eq "--");
+$dest_email = shift unless ($ARGV[0] eq "--");
+$ignore_regexp = shift unless ($ARGV[0] eq "--");
+
+# Remove "--"
+shift;
+
+# The directory is specified first
+$dir[0] = shift;
+
 # These arguments are from %s; first the relative path in the repository
 # and then the list of files modified.
 
-@files = split (' ,,,', ($ARGV[0] or ''));
-$dir[0] = shift @files or die "$0: no directory specified\n";
+@files = @ARGV or ('');
 $dirfiles[0] = "@files" or die "$0: no files specified\n";
-
 
 # Guess module name.
 
 $module = $dir[0]; $module =~ s#/.*##;
-
-
-# Figure out who is doing the update.
-
-$user = $ARGV[1];
-
-
-# Use the optional parameters, if supplied.
-
-$project = $ARGV[2] if $ARGV[2];
-$from_email = $ARGV[3] if $ARGV[3];
-$dest_email = $ARGV[4] if $ARGV[4];
-$ignore_regexp = $ARGV[5] if $ARGV[5];
 
 
 # Parse stdin (what's interesting is the tag and log message)
