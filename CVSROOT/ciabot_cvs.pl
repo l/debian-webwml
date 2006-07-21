@@ -42,6 +42,15 @@ use vars qw ($project $from_email $dest_email $rpc_uri $sendmail $sync_delay
 ### Configuration
 
 # Project name (as known to CIA).
+#
+# NOTE: This shouldn't be a long description of your project. Ideally
+#       it is a short identifier with no spaces, punctuation, or
+#       unnecessary capitalization. This will be used in URLs related
+#       to your project, as an internal identifier, and in IRC messages.
+#       If you want a longer name shown for your project on the web
+#       interface, please use the "title" metadata key rather than
+#       putting that here.
+#
 $project = 'YOUR_PROJECT_HERE';
 
 # The from address in generated mails.
@@ -124,7 +133,7 @@ $" = "\7";
 
 @files = split (' ,,,', ($ARGV[0] or ''));
 $dir[0] = shift @files or die "$0: no directory specified\n";
-$dirfiles[0] = "@files" or exit;
+$dirfiles[0] = "@files" or die "$0: no files specified\n";
 
 
 # Guess module name.
@@ -165,7 +174,7 @@ while (<STDIN>) {
 
 $dirfiles[0] = join (' ',
   grep {
-    my $f = "$module/$dir[0]/$_";
+    my $f = "$dir[0]/$_";
     $f !~ m/$ignore_regexp/;
   } split (/\s+/, $dirfiles[0])
 ) if ($ignore_regexp);
@@ -226,7 +235,7 @@ if (-f $syncfile and -w $syncfile) {
 ### Compose the mail message
 
 
-my ($VERSION) = '2.3';
+my ($VERSION) = '2.4';
 my ($URL) = 'http://cia.navi.cx/clients/cvs/ciabot_cvs.pl';
 my $ts = time;
 
