@@ -313,6 +313,7 @@ $modulename = "";
 
 # parse command line arguments (file list is seen as one arg)
 #
+@files = ();
 while (@ARGV) {
     $arg = shift @ARGV;
 
@@ -329,9 +330,7 @@ while (@ARGV) {
 	($commitlog) && die("Too many '-f' args\n");
 	$commitlog = shift @ARGV;
     } else {
-	($donefiles) && die("Too many arguments!  Check usage.\n");
-	$donefiles = 1;
-	@files = split(/ /, $arg);
+	push(@files, $arg);
     }
 }
 ($mailto) || die("No -m mail recipient specified\n");
