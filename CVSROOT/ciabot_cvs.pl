@@ -148,7 +148,7 @@ $dir[0] = shift;
 # These arguments are from %s; first the relative path in the repository
 # and then the list of files modified.
 
-@files = @ARGV or ('');
+@files = @ARGV;
 $dirfiles[0] = "@files" or die "$0: no files specified\n";
 
 # Guess module name.
