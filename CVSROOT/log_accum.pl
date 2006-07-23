@@ -371,11 +371,9 @@ if ($debug) {
 # Check for a new directory first.  This appears with files set as follows:
 #
 #    files[0] - "path/name/newdir"
-#    files[1] - "-"
-#    files[2] - "New"
-#    files[3] - "directory"
+#    files[1] - "- New directory"
 #
-if ($files[2] =~ /New/ && $files[3] =~ /directory/) {
+if ($files[1] eq "- New directory") {
     local(@text);
 
     @text = ();
@@ -439,11 +437,9 @@ for ($i = $#log_lines; $i > 0; $i--) {
 # Check for an import command.  This appears with files set as follows:
 #
 #    files[0] - "path/name"
-#    files[1] - "-"
-#    files[2] - "Imported"
-#    files[3] - "sources"
+#    files[1] - "- Imported sources"
 #
-if ($files[2] =~ /Imported/ && $files[3] =~ /sources/) {
+if ($files[1] eq "- Imported sources") {
     local(@text);
 
     @text = ();
@@ -488,23 +484,6 @@ if ($debug) {
 &append_names_to_file("$ADDED_FILE.$i.$id",   $dir, @added_files);
 &append_names_to_file("$REMOVED_FILE.$i.$id", $dir, @removed_files);
 &write_logfile("$LOG_FILE.$i.$id", @log_lines);
-
-# Check whether this is the last directory.  If not, quit.
-#
-if ($debug) {
-    print STDERR "Checking current dir against last dir ($LAST_FILE.$id).\n";
-}
-$_ = &read_line("$LAST_FILE.$id");
-
-if ($_ ne $cvsroot . "/" . $files[0]) {
-    if ($debug) {
-	print STDERR sprintf("Current directory %s is not last directory %s.\n", $cvsroot . "/" .$files[0], $_);
-    }
-    exit 0;
-}
-if ($debug) {
-    print STDERR sprintf("Current directory %s is last directory %s -- all commits done.\n", $files[0], $_);
-}
 
 #
 #	End Of Commits!
