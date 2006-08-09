@@ -297,8 +297,8 @@ $debug = 0;
 $id = getpgrp();	# note, you *must* use a shell which does setpgrp()
 $state = $STATE_NONE;
 
-#$login = $ENV{'CVS_USER'} || getlogin || (getpwuid($<))[0] || "nobody";
-$login = $ENV{'LOGNAME'} || getlogin || (getpwuid($<))[0] || "nobody";
+$login = $ENV{'CVS_USER'} || getlogin || (getpwuid($<))[0] || "nobody";
+#$login = $ENV{'LOGNAME'} || getlogin || (getpwuid($<))[0] || "nobody";
 
 chop($hostname = `hostname`);
 if ($hostname !~ /\./) {
