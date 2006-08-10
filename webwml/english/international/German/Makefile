@@ -10,3 +10,5 @@ include $(WMLBASE)/Make.lang
 
 
 credits_website.$(LANGUAGE).html: credits_website.wml $(ENGLISHSRCDIR)/../german/international/German/credits.tags
+
+index.$(LANGUAGE).html: $(ENGLISHSRCDIR)/devel/website/tc.data
