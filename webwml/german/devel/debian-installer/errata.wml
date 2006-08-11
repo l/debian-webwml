@@ -1,56 +1,71 @@
 #use wml::debian::template title="Debian-Installer Errata"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.87"
+#use wml::debian::translation-check translation="1.89"
 # $Id$
 # Original-Translator: Frank Lichtenheld <frank@lichtenheld.de>, 2003-11-11
 # Translator: Helge Kreutzmann <kreutzm@itp.uni-hannover.de>, 2005-11-12
 
-<h1 id="etch-beta1">Errata für Etch Beta 2</h1>
+<h1 id="etch-beta1">Errata für Etch Beta 3</h1>
 
 <p>
-Dies ist eine Liste der bekannten Probleme in der Etch Beta 2-Veröffentlichung des
+Dies ist eine Liste der bekannten Probleme in der Etch Beta 3-Veröffentlichung des
 Debian-Installers. Wenn Sie Ihr Problem hier nicht aufgeführt finden,
 senden Sie uns bitte einen <a href="report-template">\
 Installationsbericht</a>, der das Problem beschreibt.
 </p>
 
 <dl class="gloss">
-  <dt>Netz- und Plattengeräte können sich beim Neustart ändern</dt>
+  <dt>Plattengeräte können sich beim Neustart ändern</dt>
   <dd>
-     Auf Systemen mit mehreren Hardware-Platten- und Netz-Geräten kann es
+     Auf Systemen mit mehreren Hardware-Platten-Geräten kann es
      vorkommen, dass der der Kernel/Udev aufgrund verschiedener Lade-Reihenfolge
      der Treiber einen anderen Geräteknoten als den bei der Installation
      verwendeten beim System-Neustart zuweist.<br />
-     Dies kann zum Misslingen des Bootens des Systems führen oder dazu, dass das
-     Netz nicht automatisch hoch kommt. In den meisten Fällen kann dies durch
-     Änderung der Boot-Lader-Konfiguration und /etc/fstab oder 
-     /etc/network/interfaces korrigiert werden, möglicherweise unter Verwendung
-     des Rettungs-Moduses des Installers.<br />
+     Dies kann zum Misslingen des Bootens des Systems führen. In den meisten
+     Fällen kann dies durch Änderung der Boot-Lader-Konfiguration und /etc/fstab
+     korrigiert werden, möglicherweise unter Verwendung des Rettungs-Moduses
+     des Installers.<br />
      Beachten Sie, dass das Problem bei folgenden Neustarts erneut auftreten 
      kann. Die Korrektur dieses Problems hat für die nächste Veröffentlichung
      des Debian-Installers Priorität.
  </dd>
-  <dt>Verwendung von Netz-Spiegeln während CD/DVD-Installationen</dt>
+  <dt>Gefahr des Datenverlustes beim Größenändern von Partitionen</dt>
   <dd>
-     Standardmäßig wird ein Netz-Spiegel zu Ihrer Quellen-Liste hinzugefügt,
-     selbst wenn Sie von einer vollen CD oder DVD installieren. Dies bedeutet,
-     dass nach der <q>Task</q>-Auswahl Pakete, für die eine neuere Version auf
-     dem Spiegel vorhanden ist, vom Netz heruntergeladen werden, anstatt von
-     der CD/DVD gelesen zu werden.<br />
-     Es ist möglich, dieses zu umgehen, in dem Sie den &lt;Gehe zurück&gt;-Knopf
-     verwenden, ehe Sie gefragt werden, einen Spiegel auszuwählen und den 
-     nächsten Installations-Schritt zu überspringen, wenn Sie zum Menü gelangen.
-     Wenn Sie noch einmal später in der Installation gefragt werden, ob Sie 
-     einen Spiegel verwenden wollen, verwenden Sie die Option 
-     <q>Ignorieren</q>.<br />
-     Hinweis: Der Sicherheits-Spiegel kann noch verwendet werden.<br />
+     Die Größenveränderung von Partitionen mittels Partman kann zu 
+     Datenverlust führen, falls der Anfangssektor der Partition nicht am
+     Anfang eines Zylinders ist. Lesen Sie den Fehlerbericht Nr. <a
+     href="http://bugs.debian.org/379835">379835</a> für eine detaillierte
+     Analyse.<br />
+     Dies wurde insbesondere für NTFS-Partitionen, die während einer 
+     Installation von Windows Vista Beta 2 erstellt wurden, beobachtet.
+     Die Größenveränderung von NTFS-Partitionen, die von älteren 
+     Windows-Versionen erstellt wurden, sollte noch funktionieren.
  </dd>
-  <dt>Probleme in einigen Sprachen bei der Paket-Installation</dt>
+  <dt>CD-ROM-Laufwerke an SATA-Kontrollern werden nicht erkannt</dt>
   <dd>
-     Sprachen, die nicht standardmäßig auf UTF-8 gesetzt worden sind werden
-     aufgrund von Zeichen-Kodierproblemen während der Paket-Installation 
-     entstellten Text sehen (mojibake). Dies ist ein bekanntes Problem bei
-     der Installation auf russisch.
+     Der Grund für die nicht-Erkennung ist, dass die libata-ATAPI-Unterstützung
+     nicht im Kernel aktiviert ist, da die Original-Kernelentwickler sie noch
+     nicht für ausgereift halten. Es wird erwartet, das sie in den 
+     2.6.16er-Kerneln aktiviert ist.<br />
+     Eine <a 
+     href="http://wiki.debian.org/DebianInstaller/SataAtapiHowto">\
+     provisorische Lösung ist verfügbar</a>, die es Benutzern erlaubt, die
+     ATAPI-Unterstützung manuell für die Installation und das installierte
+     System zu aktivieren.
+ </dd>
+  <dt>Unvollständige Installation des Desktop-Tasks von der Komplett-CD</dt>
+  <dd>
+      Das CD Komplett-Image ist zu klein, um alle Pakete zu enthalten, die
+      für den kompletten Desktop-Task benötigt werden. Dies bedeutet, dass, 
+      falls Sie nur die CD als Quelle verwenden, nur ein Teil des Desktop-Tasks
+      installiert werden wird.<br />
+      Sie können dies entweder <em>während der Installation</em> durch Auswahl
+      eines Netz-Spiegels beheben, der als Paket-Installationsquelle zusätzlich
+      zu der CD dient (nicht empfohlen, falls Sie keine anständige
+      Internet-Verbindung haben) oder <em>nachdem Sie das installierte System
+      hochgefahren haben</em>, indem Sie <tt>apt-cdrom</tt> verwenden, um
+      zusätzliche CDs zu laden, und dann den Desktop-Task in <tt>aptitude</tt>
+      erneut auswählen.
  </dd>
   <dt>Allgemeine Probleme nach dem Neustart aufgrund des standardmäßigen UTF-8</dt>
   <dd>
@@ -60,24 +75,6 @@ Installationsbericht</a>, der das Problem beschreibt.
      Bitte überprüfen Sie, ob solch ein Problem bereits berichtet wurde und,
      falls nicht, reichen Sie einen Fehlerbericht gegen das relevante Paket
      (nicht gegen den Installer) ein.
- </dd>
-  <dt>Nicht-i386-Installationen: Spiegel-Liste kann inkorrekt sein</dt>
-  <dd>
-     Debian durchläuft derzeit eine Restrukturierung seiner Archiv-Spiegel.
-     In der Praxis bedeutet dies, dass das Archiv, das bisher aller (oder die
-     meisten) Architekturen unterstützt hat, dies nicht länger tut. Das
-     Installationsprogramm enthält eine statische Liste, auf der steht, welche
-     Spiegel welche Architekturen unterstützen und, aufgrund dieser Änderung,
-     kann diese Liste veraltet sein.<br />
-     Die Spiegel-Auswahlkomponente im Installationsprogramm prüft <strong>nicht</strong>,
-     ob eine Architektur tatsächlich auf dem Spiegel vorhanden ist, sondern
-     nur, ob der Spiegel die zu installierende Veröffentlichung unterstützt.
-     Falls ein Spiegel die Architektur abgesetzt hat, kann dies zu Fehlern 
-     während der Installation von d-i-Komponenten oder während der 
-     Paket-Installation führen.<br />
-     Die Lösung besteht natürlich darin, einen Spiegel zu finden, der Ihre
-     Architektur unterstützt und diesen zu verwenden. Dieses Problem betrifft
-     nur von i386 verschiedene Architekturen.
  </dd>
   <dt>Begrenzte Lokalisierung des installierten Systems</dt>
   <dd>
@@ -93,49 +90,21 @@ Installationsbericht</a>, der das Problem beschreibt.
   <dd>
      Als Ergebnis einiger struktureller Änderungen in dieser Veröffentlichung
      des Installers wird die Installation von Sarge (Stable) nicht unterstützt.
-     Wir erwarten, dies in der nächsten Veröffentlichung wieder zu ermöglichen.
  </dd>
-  <dt>CD-ROM-Geräte an SATA-Kontrollern werden nicht erkannt</dt>
-  <dd>
-     Der Grund für die nicht-Erkennung ist, dass die libata-ATAPI-Unterstützung
-     nicht im Kernel aktiviert ist, da die Original-Kernelentwickler sie noch
-     nicht für ausgereift halten. Es wird erwartet, das sie in den 
-     2.6.16er-Kerneln aktiviert ist.<br />
-     Eine <a 
-     href="http://wiki.debian.org/DebianInstaller/SataAtapiHowto">\
-     provisorische Lösung ist verfügbar</a>, dies es Benutzern erlaubt, die
-     ATAPI-Unterstützung manuell für die Installation und das installierte
-     System zu aktivieren.
- </dd>
-  <dt>Mehrere Probleme für PowerPC</dt>
+   <dt>Mehrere Probleme für PowerPC</dt>
   <dd>
      Die PowerPC-Portierung hat mehrere Probleme in dieser Veröffentlichung:
      <ul>
-       <li>Unterstützung für prep-Partitionen in Partman ist defekt</li>
-       <li>der tg3-Treiber ist während der Installation nicht verfügbar</li>
        <li>Disketten-Installationen für PowerPC sind defekt, da kein 
            Geräteknoten für das swim3-Modul erstellt wird</li>
 	<li>Oldworld-PowerPC Boot-Disketten werden nicht funktionieren, da
 	    miboot nicht enthalten ist</li>
+	<li>Der Airport Extreme-Treiber soll in 2.6.16 defekt sein (<a 
+	    href="http://bugs.debian.org/358833"># 358833</a>)</li>
+	<li>Das snd-powermac-Modul wird nicht mehr standardmäßig geladen, da
+	    es einige Systeme zum Anhalten bringt; Sie müssen es manuell zu
+	    der <tt>/etc/modules</tt> hinzufügen</li>
      </ul>
- </dd>
-  <dt>AMD64: Pakete können auf den CD-Images fehlen</dt>
-  <dd>
-     Zum Zeitpunkt der Veröffentlichung war bekannt, dass dem AMD64 Etch-Archiv
-     einige Pakete aufgrund einer inversen Migration aus Unstable fehlten. Dies
-     führte dazu, dass KDE nicht auf den vollen CD-Images für AMD64 (aufgrund
-     des fehlenden libcupsys2) enthalten ist. Andere Pakete können auch 
-     betroffen sein.
- </dd>
-  <dt>Arm: CATS CD-ROM-Images fehlen wesentliche Treiber</dt>
-  <dd>
-     Bitte verwenden Sie stattdessen Netzboot- oder tägliche (sid_d-i) Images.
- </dd>
-  <dt>i386: Netz-Installations-ISOs sind zu groß für USB-Stick-Installationen</dt>
-  <dd>
-     Die Netz-Installations-ISOs sind zu groß um auf einen 128 MB USB-Stick zu
-     passen. Sie werden als reguläres CD-Image oder auf größeren USB-Sticks für
-     eine USB-Installation funktionieren.
  </dd>
  <!-- leaving this in for possible future use...
      <dt>i386: mehr als 32 MB an Speicher werden zur Installation benötigt</dt>
@@ -148,22 +117,36 @@ Installationsbericht</a>, der das Problem beschreibt.
          </dd>
 -->
 	 
-  <dt>Mips: Installationen via SSH auf Cobalt defekt</dt>
+  <dt>amd64: [graphischer Installer] Konsolenwechsel nicht möglich</dt>
   <dd>
-     Dies sollte eine neue Funktion für diese Veröffentlichung werden, aber in
-     der letzten Minute wurde ein Fehler gefunden. Ein korrigiertes Image ist
-     zum <a
-     href="http://people.debian.org/~tbm/cobalt/etch-beta2/nfsroot.tar.gz">\
-     Download</a> verfügbar.
+     Falls Sie versuchen, auf amd64 vom graphischen Installer auf eine andere 
+     Konsole zu wechseln, wird die Oberfläche abstürzen. Dies bedeutet, dass 
+     während der Installation keine Shell zur Verfügung steht. Protokolle können
+     über die <q>Debug-Protokolle sichern</q>-Option vom Hauptmenü angeschaut
+     werden.
  </dd>
- 
-  <dt>Sparc: 2.4 Netzboot-Images benötigen spezielle Parameter zum Booten</dt>
+  <dt>mipsel/cobalt: Fehler in Netz-Boot-Konfiguration</dt>
   <dd>
-     Den Netzboot-Images muss der Parameter <q>ramdisk_size=16000</q> übergeben
-     werden, damit der 2.4-Kernel vernünftig bootet.
+     Diese Veröffentlichung stellt für mipsel/cobalt ein Satz von Dateien zum
+     Booten über Netz bereit. Der Kernel-Image-Name ist 
+     vmlinux-2.6.16-2-r5k-cobalt, aber <tt>default.colo</tt> bezieht sich noch
+     auf vmlinux-2.6.16-1-r5k-cobalt.<br />
+     Als provisorische Lösung ändern Sie den Eintrag in der Datei 
+     <tt>default.colo</tt> im NFS-Wurzelverzeichnis auf den erwarteten
+     Kernel-Dateinamen vmlinux-2.6.16-2-r5k-cobalt.
  </dd>
-  <dt>Sparc32: 2.6-Kernel werden nicht unterstützt</dt>
+  <dt>s390: Benutzerfreundlichkeit &ndash; Probleme</dt>
   <dd>
-     Nur der 2.4-Kernel funktioniert mit der Sparc32-Unterarchitektur.
+     Verschiedene Komponenten wurden neu geschrieben, um 2.6-basierte 
+     Installationen zu unterstützen und haben noch ein paar Kanten:
+     <ul>
+     <li>Während der Netzgeräte-Auswahl werden Geräte, die bereits ausgewählt
+         wurden, nicht von der Liste der verfügbaren Geräte entfernt</li>
+     <li>Während der dasd-Auswahl zeigt der Dialog nicht an, welche dasds
+         bereits ausgewählt wurden und welche nicht</li>
+     <li>Die dasd-Auswahlkomponente unterstützt noch nicht die Formatierung
+         einer neuen dasd; verwenden Sie <tt>dasdfmt</tt> von einer Shell
+	 aus als provisorische Lösung</li>
+     </ul>
  </dd>
 </dl>
