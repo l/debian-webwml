@@ -28,7 +28,7 @@ use XML::RSS;
 if (!exists ($ENV{ENGLISHSRCDIR}) ||
     !exists ($ENV{CUR_DIR}) ||
     !exists ($ENV{LANGUAGE})) {
-    printf "One of ENGLISHSRCDIRENGLISHSRCDIR, CUR_DIR or LANGUAGE not exported.\n";
+    printf "One of ENGLISHSRCDIR, CUR_DIR or LANGUAGE not exported.\n";
     exit (1);
 }
 
@@ -60,7 +60,28 @@ sub current_issue
     return $_;
 }
 
+#
+# Extract the release date
+#
+sub pubdate
+{
+    my $issue = shift;
+    my $pubdate;
+
+    if (open (F, $ENV{ENGLISHSRCDIR}.'/'.$ENV{CUR_DIR}.'/'.$issue.'/index.wml')) {
+	while (!$pubdate && ($_ = <F>)) {
+	    if (/PUBDATE="([^\"]*)"/) {
+		$pubdate = $1;
+	    }
+	}	
+	close (F);
+    }
+    $pubdate = "1970-01-01" if ($pubdate !~ /\d{4}-\d{2}-\d{2}/);
+    return $pubdate;
+}
+
 my $current = current_issue;
+my $pubdate = pubdate ($current) . "T00:00:00Z";
 my $rdf = 'dwn.' . $ENV{LANGUAGE} . '.rdf';
 my $url = 'http://www.debian.org/News/weekly/' . $current . '/index.' . $ENV{LANGUAGE} . '.html';
 
@@ -90,6 +111,7 @@ my $rss = new XML::RSS (version => '1.0', encoding => charset);
 $rss->channel (title          => 'Debian Weekly News',
 	       description    => 'Debian Weekly News '. $current,
 	       link           => $url,
+	       pubDate        => $pubdate,
 	       );
 
 my $count = 0;
