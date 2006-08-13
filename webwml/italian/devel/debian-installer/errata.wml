@@ -1,59 +1,67 @@
-#use wml::debian::template title="Errata Corrige del Debian-Installer"
+#use wml::debian::template title="Errata corrige dell'istallatore Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.87" maintainer="Claudio Moratti"
+#use wml::debian::translation-check translation="1.89" maintainer="Giuseppe Sacco"
 
-<h1 id="etch-beta1">Errata per etch beta 2</h1>
+<h1 id="etch-beta1">Errata per etch beta 3</h1>
 
 <p>
-Questa è una lista dei problemi conosciuti nella versione etch beta 2
+Questa è una lista dei problemi conosciuti nella versione etch beta 3
 dell'installatore Debian. Se il problema riscontrato non è presente in
 questa pagina, è possibile inviare un <a href="report-template">resoconto
 dell'installazione</a> descrivendo il problema.
 </p>
 
 <dl class="gloss">
-	<dt>I device di rete e dei dischi potrebbero cambiare al riavvio</dt>
+	<dt>I device dei dischi potrebbero cambiare al riavvio</dt>
 	<dd>
-	Sui sistemi con con più dischi o più schede di rete, il kernel/udev
+	Sui sistemi con più dischi, il kernel/udev
 	al riavvio del sistema potrebbe assegnare un device diverso da
 	quello usato durante l'installazione a causa di un diverso
-	dell'ordine nel caricamento dei driver.
+	ordine nel caricamento dei driver.
 	<br />
-	Questo può comportare l'impossibilità d'avviare il sistema oppure
-	la mancata attivazione della rete. Nella maggior parte dei casi si
-	può ovviare modificando la configurazione del boot loader e /etc/fstab,
-	oppure /etc/network/interfaces usando la modalità di ripristino
-	dell'installatore.
+	Questo può comportare l'impossibilità d'avviare il sistema.
+	Nella maggior parte dei casi si
+	può ovviare modificando la configurazione del boot loader e /etc/fstab
+	usando la modalità di ripristino dell'installatore.
 	<br />
 	Notare che questo problema si può presentare a ogni avvio, la
 	correzione di questo problema è prioritaria nella prossima versione
-	del Debian Installer.
+	dell'istallatore Debian.
 	</dd>
 
-	<dt>Uso dei mirror in rete durante le installazioni con CD/DVD</dt>
+	<dt>Pericolo di perdita di dati durante il ridimensionamento delle partizioni</dt>
 	<dd>
-	Un mirror in rete viene aggiunto al file sources.list anche quando
-	l'installazione avviene da CD o DVD. Questo comporta che, dopo la
-	scelta dei task, i pacchetti per i quali esiste una versione più
-	recente nel mirror vengono scaricati anziché essere recuperati da
-	CD/DVD.
-	<br />
-	&Egrave; possibile aggirare questo comportamento usando il bottone
-	<q>Indietro</q> quando viene richiesta la scelta di un mirror e, dal
-	menu, passando direttamente all'installazione dei pacchetti. Quando
-	nel seguito dell'installazione viene ripetuta la domanda sulla scelta
-	di un mirror premere <q>Ignora</q>.
-	<br />
-	Nota: il mirror per la sicurezza potrebbe essere usato comunque.
+	Il ridimensionamento delle partizioni utilizzando partman pu&ograve;
+	risultare in una perdita di dati se il settore iniziale della partizione
+	non si trova all'inizio di un cilindro. Vedi la segnalazione
+	<a href="http://bugs.debian.org/379835">#379835</a> per il dettaglio.<br />
+	Questo problema &egrave; stato evidenziato in particolare con le
+	partizioni NTFS create durante l'installazione di Windows Vista Beta 2.
+	Il ridimensionamento delle partizioni create con versioni precedenti di
+	Windows dovrebbe ancora funzionare.
 	</dd>
 
-	<dt>Problemi durante l'installazione di pacchetti con alcune
-	lingue</dt>
+	<dt>Lettori CD-ROM collegati a controller SATA non sono rilevati</td>
 	<dd>
-	Con le lingue che ancora non usano UTF-8 come codifica predefinita
-	si potrebbero vedere degli strani caratteri durante l'installazione
-	dei pacchetti a causa della codifica dei caratteri. Questo problema
-	è certo per le installazioni in russo.
+	La causa di questo problema &egrave; che il supporto di libata ATAPI
+	per i CD-ROM non &egrave; ancora ritenuto maturo dagli sviluppatori del
+	kernel. Si presume che sar&agrave; abilitato nella versione 2.6.16
+	del kernel.</br />
+	Una possibile <a href="http://wiki.debian.org/DebianInstaller/SataAtapiHowto">\
+	soluzione temporanea</a> permette di abilitare manualmente questo supporto
+	sia per l'installazione che per il sistema installato.
+	</dd>
+
+	<dt>Installazione parziale dell'ambiente "Desktop" con il CD completo</dt>
+	<dd>
+	L'immagine di CD completo &egrave; troppo piccola per ospitare tutti i
+	pacchetti dell'ambiente Desktop. Questo vuol dire che se si utilizza solo
+	il primo CD come sorgente, solo una parte dei pacchetti saranno installati.</br />
+	Questo problema &egrave; risolvibile sia <em>durante l'installazione</em>
+	selezionando un mirror come sorgente di rete aggiuntiva al CD (sconsigliato
+	se non si ha una buona connessione di rete); sia <em>dopo il riavvio</em> del
+	sistema installato usando <tt>apt-cdrom</tt> per caricare i successivi CD e poi
+	<tt>aptitude</tt> per selezionare nuovamente il task Desktop.
 	</dd>
 
 	<dt>Vari problemi legati al fatto che al riavvio la codifica
@@ -62,30 +70,10 @@ dell'installazione</a> descrivendo il problema.
 	Nel sistema appena installato viene usata la codifica UTF-8. Purtroppo
 	non tutte le applicazioni supportano UTF-8 correttamente, questo
 	comporta dei problemi durante il loro uso.
-	<dd>
-	Verificare che questi problemi siano già stati segnalati e, se no,
+	<br />
+	Verificare che questi problemi siano già stati segnalati e, altrimenti,
 	inviare una segnalazione di bug per il pacchetto che presenta i
 	problemi (non verso installer).
-	</dd>
-
-	<dt>installazioni non-i386: l'elenco dei mirror potrebbe essere
-	sbagliato</dt>
-	<dd>
-	Attualmente i mirror dell'archivio Debian stanno subendo una
-	ristrutturazione. Questo comporta che gli archivi che in passato
-	supportavano tutte le tutte (o quasi) architetture potrebbero non
-	più supportarle. L'installatore include un elenco statico dei mirror
-	che, a causa di questa modifica, potrebbe essere non aggiornato.
-	<br />
-	Il componente dell'installatore che si occupa della scelta del mirror
-	<strong>non verifica</strong> che l'architettura sia attualmente
-	disponibile nel mirror. Se da un mirror è stata rimossa l'architettura
-	si possono verificare degli errori durante il recupero dei componenti
-	del d-i o durante l'installazione dei pacchetti.
-	<br/>
-	La soluzione a questo problema è trovare un mirror che supporta la
-	propria architettura e utilizzarlo. Questo problema affligge solo le
-	architetture diverse da i386.
 	</dd>
 
 	<dt>Localizzazione limitata sul sistema installato</dt>
@@ -101,62 +89,23 @@ dell'installazione</a> descrivendo il problema.
 
 	<dt>L'installazione si Sarge non è supportata</dt>
 	<dd>
-	A causa di alcune modifiche strutturali con questa release
-	dell'installatore non è possibile fare l'installazione di Sarge
-	(stable). Prevediamo che questa funzionalità sarà ripristinata nella
-	prossima release.
-	</dd>
-
-	<dt>I lettori CD-ROM connessi a controller SATA non sono rilevati</dt>
-	<dd>
-	I lettori non sono rilevati perché il supporto libata ATAPI non è
-	attivato nel kernel perché ritenuto non ancora maturo dagli
-	sviluppatori del kernel. Si prevede che sarà attivato nei kernel
-	2.6.16.
-	<br />
-	&Egrave; dispobile una <a href="http://wiki.debian.org/DebianInstaller/SataAtapiHowto">procedura
-	per aggirare</a> questo problema e che permette agli utenti di
-	attivare manualmente il supporto per ATAPI sul sistema installato.
+	Come risultato di alcuni cambiamenti strutturali dell'installatore,
+	l'installazione di Sarge (stable) non &egrave; supportata.
 	</dd>
 
 	<dt>Vari problemi per PowerPC</dt>
 	<dd>
 	In questa release il port su PowerPC è afflitto da alcuni problemi:
 	<ul>
-		<li>in partman il supporto per le partizioni prep non
-		funziona</li>
-		<li>il driver tg3 non è disponibile durante l'installazione</li>
-		<li>l'installazione da floppy non funziona su powerpc perché
-		non viene creato il nodo di device per il modulo swim3</li>
 		<li>non funziona l'avvio da floppy su powerpc Oldworld perché
 		miboot non è stato incluso</li>
+		<li>Il driver Airport Extreme non funziona con il kernel
+		2.6.16 (<a href="http://bugs.debian.org/358833">#358833</a>)</li
+		<li>Il modulo snd-powermac non &egrave; caricato automaticamente
+		all'avvio perch&eacute; blocca alcuni sistemi. Se lo si vuole
+		caricare deve essere aggiunto manualmente in <tt>/etc/modules</tt>.
 	</ul>
 	</dd>
-
-	<dt>amd64: potrebbero mancare dei pacchetti dalle immagini dei CD</dt>
-	<dd>
-	Al momento del rilascio dall'archivio AMD64 di etch mancavano dei
-	pacchetti a causa di una migrazione inversa verso unstable. Questo ha
-	comportato l'esclusione di KDE dalle immagini del set completo per
-	AMD64 (causato dalla mancanza di libcupsys2). Anche altri pacchetti
-	potrebbero essere afflitti dallo stesso problema.
-	</dd>
-
-	<dt>arm: sulle immagini dei cdrom per CATS mancano dei driver
-	essenziali</dt>
-	<dd>
-	Al posto di queste immagini usare quelle netboot oppure quelle
-	quotidiane (sid_d-i).
-	</dd>
-
-	<dt>i386: L'immagine iso netinst è troppo grande per le installazioni
-	con penna USB</dt>
-	<dd>
-	L'immagine iso netinst è troppo grande per essere contenuta in una
-	penna USB da 128&nbsp;MB. Funzionerà correttamente come una normale
-	immagine CD o su una penna USB più grande, per una installazione
-	via USB.
- 	</dd>
 
 <!-- leaving this in for possible future use...
 	<dt>i386: sono richiesti più di 32&nbsp;MB per l'installazione</dt>
@@ -169,23 +118,34 @@ dell'installazione</a> descrivendo il problema.
 	</dd>
 -->
 
-	<dt>mips: su Cobalt non funziona l'installazione via SSH</dt>
+	<dt>amd64: [installatore grafico] non &egrave; possibile cambiare console</dt>
 	<dd>
-	Questa era prevista come una nuova funzionalità della release,
-	purtroppo è stato scoperto un bug all'ultimo minuto. Si può
-	<a href="http://people.debian.org/~tbm/cobalt/etch-beta2/nfsroot.tar.gz">scaricare</a>
-	un'immagine in cui questo problema è risolto.
+	Se si cerca di passare ad una console differente dall'installatore grafico su
+	amd64, il sistema si blocca. Questo vuol dire che non &egrave; disponibile una
+	shell durante l'installazione. I log possono essere consultati con l'opzione
+	di menu <q>Salva i log di debug</q>.
 	</dd>
 
-	<dt>sparc: l'immagine netboot 2.4 necessita di parametri speciali
-	al boot</dt>
+	<dt>mipsel/cobalt: errore nella configurazione di avvio via rete</dt>
 	<dd>
-	L'immagine netboot necessita del passaggio di ramdisk_size=16000
-	per avviare correttamente il kernel 2.4.
+	Questo rilascio fornisce per mipsel/cobalt un insieme di file per
+	l'avvio via rete. Il nome dell'immagine del kernel &egrave; vmlinux-2.6.16-2-r5k-cobalt,
+	ma  <tt>default.colo</tt> riporta il vecchio vmlinux-2.6.16-1-r5k-cobalt.<br />
+	Come soluzione temporanea, cambiare il file <tt>default.colo</tt> nella root
+	NFS per inserire il nome corretto: vmlinux-2.6.16-2-r5k-cobalt.
 	</dd>
 
-	<dt>sparc32: kernel 2.6 non supportato</dt>
+	<dt>s390: problemi di utilizzo</dt>
 	<dd>
-	Solo il kernel 2.4 funziona con la sotto architettura sparc32.
+	Vari componenti sono stati riscritti per poter sfruttare il kernel 2.6, ma non
+	sono stati completamente rifiniti.
+	<ul>
+	<li>nella selezione dei dispositivi di rete, quelli gi&agrave; selezionati
+	    non sono rimossi dall'elenco di quelli disponibili</li>
+	<li>durante la selezione dasd, il dialogo non mostra quali dasd sono
+	    gi&agrave; stati selezionati e quali no</li>
+	<li>il componente della selezione di dasd non permette la formattazione di
+	    un nuovo dasd. Come soluzione temporanea usare <tt>dasdfmt</tt> da una shell</li>
+	</ul>
 	</dd>
 </dl>
