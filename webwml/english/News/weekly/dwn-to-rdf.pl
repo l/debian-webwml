@@ -42,6 +42,7 @@ sub charset
     if (open (F, "../../.wmlrc")) {
 	while (<F>) {
 	    $charset = $1 if (/^-D CHARSET=(.*)$/);
+	    $charset = $1 if (/^-D CHARSET_WML=(.*)$/); # proper charset if exists
 	}
 	close (F);
     }
@@ -141,6 +142,7 @@ if (open (F, $current . '/index.wml')) {
 		&& $headline ne "Aggiornamenti per la sicurezza"	# Italian
 		&& $headline ne "Atualizaçoes de Segurança"		# Portuguese
 		&& $headline ne "Aktualisierungen zur Systemsicherheit"	# German
+		&& $headline ne "¥»¥­¥å¥ê¥Æ¥£¾å¤Î¹¹¿·¡£"		# Japanese
 		) {
 
 		if (!$headline) {
