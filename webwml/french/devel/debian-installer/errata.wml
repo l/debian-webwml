@@ -1,59 +1,73 @@
 #use wml::debian::template title="Errata pour l'installateur Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.87" maintainer="Nicolas Bertolissio"
+#use wml::debian::translation-check translation="1.90" maintainer="Nicolas Bertolissio"
 
 
-<h1 id="etch-beta2"><i>Errata</i> pour la seconde version bêta pour Etch</h1>
+<h1 id="etch-beta3"><i>Errata</i> pour la troisième version bêta pour Etch</h1>
 
 <p>
-Voici une liste des problèmes connus dans la seconde version bêta
+Voici une liste des problèmes connus dans la troisième version bêta
 de l'installateur Debian pour Etch. Si vous n'y voyez pas le problème que
 vous rencontrez, veuillez nous envoyer un <a href="report-template">\
 compte-rendu d'installation</a> (en anglais) décrivant le problème.
 </p>
 
 <dl class="gloss">
-  <dt>Possible modification des périphériques de réseaux et de disques lors
-    du redémarrage</dt>
+  <dt>Possible modification des périphériques de disques lors du
+    redémarrage</dt>
     <dd>
-    Sur les systèmes comportant plusieurs contrôleurs de disques ou de réseau,
-    lors du redémarrage du système, le programme réalisant la gestion des
-    périphériques en espace mémoire utilisateur (<q>udev</q>) peut
-    assigner un n½ud de périphérique différent de celui utilisé pendant
-    l'installation à cause d'un changement dans l'ordre de chargement des
-    pilotes.<br />
-    Ceci peut entraîner l'échec du démarrage du système ou la non-présence
-    automatique du réseau. Dans la plupart des cas, ceci peut être corrigé en
-    modifiant la configuration du chargeur d'amorçage et /etc/fstab, ou
-    /etc/network/interfaces, en utilisant le mode de secours de l'installateur
+    Sur les systèmes comportant plusieurs contrôleurs de disques lors du
+    redémarrage du système, le programme réalisant la gestion des périphériques
+    en espace mémoire utilisateur (<q>udev</q>) peut assigner un n&oelig;ud de
+    périphérique différent de celui utilisé pendant l'installation à cause d'un
+    changement dans l'ordre de chargement des pilotes.<br />
+    Ceci peut entraîner l'échec du démarrage du système. Dans la plupart des
+    cas, ceci peut être corrigé en modifiant la configuration du chargeur
+    d'amorçage et /etc/fstab, en utilisant le mode de secours de l'installateur
     par exemple.<br />
     Veuillez noter cependant que ce problème peut se reproduire lors de
     démarrages suivants. La correction de ce problème est une priorité pour la
     prochaine version de l'installateur Debian&nbsp;;
     </dd>
-  <dt>Utilisation de miroirs réseau lors de l'installation par cédérom ou
-    dévédé</dt>
+  <dt>Risque de perte de données lors du retaillage des partitions</dt>
     <dd>
-    Par défaut, un miroir réseau est ajouté à votre liste de sources même lors
-    d'une installation à partir d'un cédérom ou d'un dévédé autonome. Cela
-    implique que, après la sélection des tâches, les paquets pour lesquels une
-    version plus récente est disponible sur le miroir seront téléchargés sur le
-    réseau au lieu d'être lus à partir du cédérom ou du dévédé.<br />
-    Il est possible de contourner cela en utilisant le bouton &lt;Retour&gt;
-    lorsqu'on vous demande de sélectionner un miroir, puis de passer à l'étape
-    d'installation suivante lorsque vous êtes dans le menu. Lorsqu'on vous
-    demande une fois encore si vous souhaitez utiliser un miroir plus tard lors
-    de l'installation, veuillez choisir l'option <q>Ignorer</q>.<br />
-    Note&nbsp;: il est possible que le miroir de sécurité soit toujours
-    utilisé&nbsp;;
+    Le retaillage de partitions avec partman peut conduire à la perte de
+    données si le secteur débutant la partition n'est pas au début d'un
+    cylindre. Veuillez vous reporter au rapport de bogue <a
+    href="http://bugs.debian.org/379835">n°&nbsp;379835</a> pour une analyse
+    détaillée.<br />
+    Cela a particulièrement été observé avec des partitions NTFS créées lors de
+    l'installation de la seconde version bêta de Windows Vista. Le retaillage
+    de partition NTFS créées avec des versions plus anciennes de Windows
+    devrait toujours fonctionner.
     </dd>
-  <dt>Problème lors de l'installation des paquets avec certaines
-    langues</dt>
+  <dt>Lecteurs de cédéroms connectés à un contrôleur SATA non
+    détectés</dt>
+  <dt>Lecteur de cédéroms non détecté sur contrôleurs SATA</dt>
     <dd>
-    Les langues qui n'utilisent pas par défaut le codage UTF-8 affichent des
-    caractères erronés pendant l'installation des paquets à cause de
-    problèmes de codage des caractères (mijobake). Ce problème se produit au
-    moins pour l'installation en russe&nbsp;;
+    Comme les développeurs amonts du noyau ne le considère pas encore mature,
+    le support de libata ATAPI n'est pas activé dans le noyau, ce qui empêche la
+    détection de ces lecteurs. Il est prévu de l'activer dans les
+    versions&nbsp;2.6.16 du noyau.<br />
+    Un <a href="http://wiki.debian.org/DebianInstaller/SataAtapiHowto">\
+    contournement</a> permettant aux utilisateurs d'activer le support ATAPI
+    eux-mêmes pour l'installation et le système installé est disponible&nbsp;;
+    </dd>
+  <dt>Installation incomplète de la tâche «&nbsp;bureautique&nbsp;» à partir
+    du cédérom complet</dt>
+    <dd>
+    L'image du cédérom complet est trop petite pour contenir tous les paquets
+    nécessaires à l'installation complète de la tâche
+    «&nbsp;bureautique&nbsp;». Cela signifie que si vous n'utilisez que ce
+    cédérom comme source, seule une partie de la tâche
+    «&nbsp;bureautique&nbsp;» sera installée/.<br />
+    Vous ouvez résoudre ce problèem soit <em>durant l'installation</em> en
+    choisissant d'utiliser un miroir réseau comme source d'installation des
+    paquets en plus du cédérom (ce qui n'est pas recommandé si vous n'avez pas
+    une connection internet décente), ou <em>après avoir redémarré</em> sur le
+    système installé en utilisant <tt>apt-cdrom</tt> pour charge des cédéroms
+    supplémentaires puis en sélectionnant à nouveau la tâche
+    «&nbsp;bureautique&nbsp;» dans <tt> aptitude</tt>.
     </dd>
   <dt>Problèmes courants après le redémarrage à cause du codage UTF-8
     utilisé par défaut</dt>
@@ -61,25 +75,10 @@ compte-rendu d'installation</a> (en anglais) décrivant le problème.
     Le système d'installation est désormais paramétré en UTF-8 par défaut.
     Cependant, toutes les applications ne supportent pas encore correctement
     l'UTF-8 ce qui peut engendrer de petits problèmes ou des problèmes plus
-    importants lors de leur utilisation. Veuillez vérifier si de tels problèmes
-    ont déjà été reportés avant de remplir un rapport de bogue contre le paquet
-    correspondant (pas l'installateur)&nbsp;;
-    </dd>
-  <dt>Installations sur architectures autres qu'i386&nbsp;: la liste des
-    miroirs peut ne pas être correcte</dt>
-    <dd>
-    Debian procède actuellement à une restructuration de ses miroirs d'archive.
-    En pratique, cela signifie que les archives qui fournissaient précédemment
-    toutes (ou la plupart des) architectures peuvent ne plus le faire.
-    L'installateur contient une liste statique des miroirs et des architectures
-    qu'ils fournissent et, à cause de cette modification, cette liste peut être
-    périmée. Le composant de sélection des miroirs de l'installateur ne vérifie
-    <strong>pas</strong> si une architecture est réellement disponible sur un
-    miroir. Si un miroir a abandonné une architecture, cela peut entraîner des
-    erreurs pendant le téléchargement des composants de l'installateur Debian
-    ou pendant l'installation des paquets. La solution, bien sûr, est de
-    trouver un miroir fournissant votre architecture et de l'utiliser. Ce
-    problème n'affecte que les architectures autres qu'i386.
+    importants lors de leur utilisation.<br />
+    Veuillez vérifier si de tels problèmes ont déjà été reportés avant de
+    remplir un rapport de bogue contre le paquet correspondant (pas
+    l'installateur)&nbsp;;
     </dd>
   <dt>Traduction partielle du système installé</dt>
     <dd>
@@ -94,58 +93,26 @@ compte-rendu d'installation</a> (en anglais) décrivant le problème.
     </dd>
   <dt>Installation de Sarge non supportée</dt>
     <dd>
-    En conséquence de certaines modifications structurelles dans cette version
-    de l'installateur, l'installation de Sarge (la distribution stable) n'est
-    pas supportée. Nous prévoyons de la rendre possible à nouveau dans la
-    prochaine édition&nbsp;;
-    </dd>
-  <dt>Lecteurs de cédéroms connectés à un contrôleur SATA non
-    détectés</dt>
-    <dd>
-    Comme les développeurs amonts du noyau ne le considère pas encore mature,
-    le support de libata ATAPI n'est pas activé dans le noyau, ce qui empêche la
-    détection de ces lecteurs. Il est prévu de l'activer dans les
-    versions&nbsp;2.6.16 du noyau. Un <a
-    href="http://wiki.debian.org/DebianInstaller/SataAtapiHowto">\
-    contournement</a> permettant aux utilisateurs d'activer le support ATAPI
-    manuellement pour l'installation et le système installé est disponible&nbsp;;
+    En conséquence de certaines modifications structurelles dans
+    l'installateur, l'installation de Sarge (la distribution stable) n'est pas
+    supportée.
     </dd>
   <dt>Plusieurs problèmes sur l'architecture PowerPC</dt>
     <dd>
     Le portage sur l'architecture PowerPC a plusieurs problèmes dans cette
     version&nbsp;:
     <ul>
-      <li>le support des partitions prep est cassé dans le gestionnaire de
-      partitionnement,</li>
-      <li>le pilote tg3 n'est pas disponible pendant l'installation,</li>
-      <li>les installations par disquettes sont cassées car aucun n½ud n'est
-      créé pour le module swim3,</li>
+      <li>les installations par disquettes sont cassées car aucun n&oelig;ud
+      n'est créé pour le module swim3,</li>
       <li>les disquettes de démarrage pour la sous-architecture oldworld ne
       fonctionnent pas car miboot manque&nbsp;;</li>
+      <li>le pilote pour l'airport extreme est reporté cassé dans la
+      versions&nbsp;2.6.16 du noyau (bogue <a
+      href="http://bugs.debian.org/358833">n°&nbsp;358833</a>),</li>
+      <li>le module snd-powermac n'est plus chargé par défaut car il gèle
+      certains systèmes&nbsp;; vous devrez l'ajouter vous-même dans
+      <tt>/etc/modules</tt>&nbsp;;</li>
     </ul>
-    </dd>
-  <dt>Architecture amd64&nbsp;: certains paquets peuvent manquer sur les
-    images de cédéroms</dt>
-    <dd>
-    Au moment de la publication, certains paquets manquaient dans l'archive
-    amd64 d'Etch à cause d'une migration inversée de la distribution instable.
-    Cela a empêché l'inclusion de KDE dans les images de cédéroms complètes
-    pour l'architecture amd64 (car libcupsys2 manquait). D'autres paquets
-    peuvent aussi être affectés&nbsp;;
-    </dd>
-  <dt>Architecture arm&nbsp;: des pilotes essentiels manquent dans les
-    images de cédéroms CATS</dt>
-    <dd>
-    Veuillez utiliser les images d'amorçage par le réseau ou des images
-    construites quotidiennement (version Sid de l'installateur, sid_d-i) à la
-    place&nbsp;;
-    </dd>
-  <dt>Architecture i386&nbsp;: image d'installation par le réseau trop
-    grosse pour une installation par clef USB</dt>
-    <dd>
-    L'image d'installation par le réseau est trop grosse pour rentrer sur une
-    clef USB de 128&nbsp;Mo. Comme image de cédérom normale ou sur une clef USB
-    plus grosse pour une installation USB, elle fonctionne&nbsp;;
     </dd>
 <!-- conservé pour une possible utilisation ultérieure...
   <dt>Architecture i386&nbsp;: plus de 32&nbsp;Mo requis pour
@@ -158,23 +125,44 @@ compte-rendu d'installation</a> (en anglais) décrivant le problème.
     architectures&nbsp;;
     </dd>
 -->
-  <dt>Architecture mips&nbsp;: installation <i>via</i> SSH cassée pour la
-    sous-architecture Cobalt</dt>
+  <dt>Architecture amd65&nbsp;: [installateur graphique] changement de console
+    impossible</dt>
     <dd>
-    Ce devait être une nouvelle fonctionnalité de cette version, mais un bogue
-    a été découvert au dernier moment. Une image corrigée est disponible au <a
-    href="http://people.debian.org/~tbm/cobalt/etch-beta2/nfsroot.tar.gz">\
-    téléchargement</a>&nbsp;;
+    Si vous essayez de change de console à partir de l'installateur graphique
+    sur architecture amd64, le frontal plantera. Cela signifie que
+    l'interpréteur commandes n'est pas disponible pendant l'installation. Il
+    est possible de voir les journaux en utilisant l'option <q>Sauvegarder les
+    journaux de débogage</q> à partir du menu principal&nbsp;;
     </dd>
-  <dt>Architecture sparc&nbsp;: paramètres particuliers pour démarrer les
-    images d'amorçage par le réseau avec un noyau&nbsp;2.4</dt>
+  <dt>Architecture mipsel/cobalt&nbsp;: erreur dans la configuration d'amorçage
+    par le réseau</dt>
     <dd>
-    Il faut passer le paramètre «&nbsp;ramdisk_size=16000&nbsp;» pour démarrer
-    correctement le noyau&nbsp;2.4 des images d'amorçage par le
-    réseau&nbsp;;
+    La version fournie pour l'architecture mipsel/cobalt un ensemble de
+    fichiers pour amorcer sur le réseau. Le nom de l'image du noyau est
+    vmlinux-2.6.16-2-r5k-cobalt, mais <tt>default.colo</tt> conserve toujours
+    vmlinux-2.6.16-1-r5k-cobalt.<br />
+    Pour contourner ce problème, veuillez éditer le fichier
+    <tt>default.colo</tt> dans la racine NFS pour indiquer
+    vmlinux-2.6.16-2-r5k-cobalt comme nom de fichier de noyau&nbsp;;
     </dd>
-  <dt>Architecture sparc32&nbsp;: noyau&nbsp;2.6 non supporté</dt>
+  <dt>Architecture mipsel/&nbsp;: clavier hors d'usage sur SGI Indy</dt>
+    <dd>Le clavier ne fonctionne pas après le démarrage de l'installateur. Il
+    s'agit probablement d'une problème de noyau. L'installation sur console
+    série devrait toujours être possible&nbsp;;
+    </dd>
+  <dt>Architecture s390&nbsp;: problèmes d'utilisation</dt>
     <dd>
-    Seul le noyau&nbsp;2.4 fonctionne avec la sous-architecture sparc32.
+    Plusieurs composants ont été récrits afin de gérer les installations
+    basées sur les versions&nbps;2.6 du noyau et il y a toujours quelques
+    soucis&nbsp;:
+    <ul>
+      <li>pendant le choix du périphérique réseau, les périphériques déjà
+      sélectionnés ne sont pas supprimés de la liste de ceux disponibles,</li>
+      <li>pendant le choix de dasd, la boîte de diologue ne montre pas quels
+      dasds sont déjà sélectionnés ou pas,</li>
+      <li>le composant de sélection de dasd ne gère pas encore le formatage
+      d'un nouveau dasd&nbsp;; veuillez utiliser <tt>dasdfmt</tt> à partir de
+      l'interpréteur de commandes pour contourner ce problème.<li>
+    </ul>
     </dd>
 </dl>
