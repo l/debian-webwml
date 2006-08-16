@@ -3,12 +3,13 @@
 # mirror_list.pl -- generate various Debian mirror lists
 # Copyright (C) 1998 James Treacy
 # Copyright (C) 2000-2002 Josip Rodin
+# Copyright (C) 2006 Joey Schulze
 
 use strict;
 require 5.001;
 
 # Arches not to list.
-my @filter_arches=qw(amd64);
+my @filter_arches=qw();
 
 my ($html, $last_modify);
 
