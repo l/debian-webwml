@@ -1,0 +1,380 @@
+#use wml::debian::template title="The Debian Description Translation Project &mdash; DDTP"
+
+<p>
+The <a href="http://ddtp.debian.net">Debian Description Translation Project</a>
+which was implemented by <a href="mailto: Michael Bramer
+&lt;grisu@debian.org&gt;">Michael Bramer</a> aims to provide translated
+package descriptions and the infrastructure to support translations. Even
+thought it exists since a few years it was deactivated after a break-in into a
+Debian host and has currently only basic functionality compared to the past.
+</p>
+
+<p>
+The project supports
+<ul>
+  <li>Fetching of current (sid) and older (etch) package descriptions.</li>
+  <li>Adding new translations via an email interface.</li>
+  <li>Reusing of already translated paragraphs from one description in other
+      package descriptions.</li>
+  <li>Providing of <tt>Translation-*</tt> files for mirrors and APT.</li>
+</ul>
+</p>
+
+<p>
+The review process as known from the past is not yet activated. Also the
+non-free section in the Debian archive is at the moment not translatable
+because there could exist license
+<!-- I thought that even for non-free projects the debian packaging stuff
+     (debian/) is free but it seems its not required!? -->
+issues which forbid e.g. translation and need to be checked carefully.
+</p>
+
+<p>
+Translating more than 15000 package transcriptions is a big challenge. Please
+help us to fulfill our goal. See also our <a href="#todo">todo</a> list for
+remaining issues.
+</p>
+
+
+<h2>Interfaces to the DDTP</h2>
+<p>
+There exist various ways to fetch and commit translations. The original
+interface uses emails for communication but there are also other ones.
+</p>
+
+<p>
+Since all interfaces use the DDTP backend, you need first to ensure that your
+language is already supported. This should be the case for most
+languages. If there does not exist such support write to
+<email debian-i18n@lists.debian.org>
+so that your language can be activated. Also many rules of the email interface
+are true for other as well, so be sure to read it properly.
+</p>
+
+<p>
+Supported languages:
+<!-- CHECKME: Whats with pt_PT? -->
+<pre>
+  da (Danish)
+  de (German)
+  cs (Czech)
+  fr (French)
+  hu (Hungarian)
+  it (Italian)
+  ja (Japanese)
+  nl (Dutch)
+  pl (Polish)
+  pt_BR (Brazilian Portuguese)
+  ru (Russian)
+  sk (Slovak)
+  sv_SE (Swedish)
+  uk (Ukrainian)
+  es (Spanish)
+  eo (Esperanto)
+  fi (Finnish)
+</pre>
+</p>
+
+<h3 id="email">The email interface</h3>
+<p>
+To obtain a new untranslated package description just send an email to
+pdesc@ddtp.debian.net with the subject <tt>GET <var>n</var>
+<var>lang</var></tt>, where <var>n</var> is the number of descriptions
+you want to fetch (the upper limit is 9) and <var>lang</var> is your language
+code (e.g. <q>de</q> or <q>pt_BR</q>). You can also append a dot followed by
+the encoding to the language code to notify the server that your translations
+<!-- CHECKME: Is this true? Or does it only refer to the encoding of the mail
+(which possible contains a previous translation)? -->
+will use the specified encoding. 
+</p>
+
+<p>
+You should receive short time later an email containing the requested number of
+descriptions. These are now reserved for you and will not be requestable by
+other interested people until your lock times out. Now translate the
+untranslated parts of each attachment which are marked &lt;trans&gt;.
+<p>
+
+<p>
+Please note that the server assumes a fixed encoding for your translation.
+# Translators: Adapt this to your language!
+The German language uses for example latin1.
+
+If you prefer another encoding such as UTF-8 you can specify it by changing
+<tt>Description-<var>lang</var></tt>: into
+<tt>Description-<var>lang</var>.UTF-8:</tt>.
+</p>
+
+<p>
+Once you finished your task, you should send the translated files back to
+pdesc@ddtp.debian.net. The subject and the body of the mail do not matter and
+can by empty. It's suggested that you mark each single attachment file as
+binary (e.g. base64), since the translation consists in general of two
+encodings: The English part is always UTF-8 encoded, but the translated part
+not. If you send the attachment as text, the DDTP server may use
+files with a mismatched encoding. It is strongly suggested that you check your
+translation in the DDTP the first time for this kind of errors!
+</p>
+
+<p>
+Once you send your translation back you will get a notification mail. If your
+subject contains <q>noguide</q> this will not happen. Another command understood
+by the server is <q>nothing</q> which could be used as subject to send mails
+to the server.
+</p>
+
+<h3 id="DDTSS">The web frontend</h3>
+<p>
+Beside the official email interface there exists also a nice web frontend
+called <a href="http://kleptog.org/cgi-bin/ddtss2-cgi/xx">DDTSS</a> written by
+<a href="mailto:Martijn van Oosterhout &lt;kleptog@gmail.com&gt;">Martijn van
+Oosterhout</a> which tries to simplify the task of translation and review.
+</p>
+
+<h4>Overview</h4>
+<p>
+It supports all features of the email interface and allows additionally
+proofreading. It supports a custom configuration for each language team so that
+each team can decide how many reviews are necessary until the description
+is transferred to the DDTP. It's also possible to request user authorisation,
+so that only restricted people can perform special actions. You also don't
+have to care about the encoding, the DDTSS handles this for you.
+</p>
+
+<p>
+Current default properties:
+<table>
+  <tr><td>number of reviews:</td><td>3</td></tr>
+  <tr><td>supported languages:</td><td>all of the DDTP, except cs</td></tr>
+  <tr><td>user authorisation:</td><td>no, it's open for all</td></tr>
+</table>
+
+The Czech language is not supported as this team prefers the email interface.
+</p>
+
+<p>
+It is possible to specify a default word list for a language. This is used to
+provide default translations via tooltips. This list is available via a link
+on the bottom of the language page.
+</p>
+
+<h4>Workflow</h4>
+<p>
+The DDTSS provides for all languages the following items:
+</p>
+
+<h5>Pending translation</h5>
+<p>
+A list of pending translations. These are descriptions free selectable for
+translation by the user. It looks like:
+<pre>
+exim4 (priority 52)
+exim4-config (priority 52)
+ibrazilian (priority 47, busy)
+postgresql-client (priority 47)
+postgresql-contrib (priority 47)
+grap (priority 45)
+</pre>
+
+A language team should try to translate packages with a high priority (this is
+calculated using the category e.g. essential, base, ...) first. The packages
+are sorted to accomplish this.
+
+Descriptions marked with busy are already reserved by an user and can not be
+selected for at most 15 minutes. If there is no commit during this time it's again
+marked as freely available.
+</p>
+
+<p>
+A description needs to be completely translated before the frontend accepts it.
+So please ensure ensure that you are able to translate the whole text before
+you start. Select <q>Submit</q> to add your translation and <q>Abandon</q>
+if you decide not to translate it. It's also possible that you are lucky and that
+there is already a translation for a previous version of the English template.
+You could copy and paste this old translation from the bottom part of the page
+together with a diff of the changes in the English translation which you have
+to integrate into your translation.
+</p>
+
+<p>
+To avoid ugly fluctuation of the text width it is suggested that you do not
+enter newlines manually if not necessary (such as for list items). The text
+breaks automatically. Remember that a user could add or remove minor parts
+during the proofread which could otherwise result in an inconsistent line
+length. Fixing this too makes the diff created by the review hard to read.
+</p>
+
+<p>
+It's also possible to select preferred packages by name. This is useful to
+translate a set of similar packages such as manpages-de, manpages-es in order,
+to be able to copy and paste previous translations.
+
+Even already translated packages can be fetched this way again, to improve it
+(please note that the current DDTP functionality for this is buggy, so please
+avoid it if possible for now).
+</p>
+
+<h5>Pending review</h5>
+<p>
+A list of translated description which still needs to be reviewed.
+<pre>
+ 1. aspell-es (needs review, had 1)
+ 2. bookmarks (needs initial review)
+ 3. doc-linux-ja-html (needs initial review)
+ 4. doc-linux-ja-text (needs initial review)
+ 5. gnome-menus (needs initial review)
+ 6. geany (needs review, had 2)
+ 7. initramfs-tools (needs initial review)
+ 8. inn2 (needs initial review)
+</pre>
+
+The following flags exist:
+<table>
+  <tr>
+    <td>needs initial review:</td>
+    <td>The current version of this translation has not
+        yet passed a single review.</td>
+  </tr>
+  <tr>
+    <td>needs review:</td>
+    <td>The current version of this translation needs further
+        reviews, but passed already at least one.</td>
+  </tr>
+  <tr>
+    <td>reviewed:</td>
+    <td>This description was reviewed without change by the user.
+        Other users needs to proofread it.</td>
+  </tr>
+  <tr>
+    <td>owner:</td>
+    <td>This description was translated or changed during a proofread by the
+        user. Other users needs to proofread it.</td>
+  </tr>
+</table>
+</p>
+
+<p>
+If there happened already a review with corrections you will get a nice color
+diff which shows all changes of the last review once you select the package.
+</p>
+
+<h6>Recently translated</h6>
+<p>
+A list of transferred description to the DDTP. At most ten packages together
+with the date of the transfer are listed.
+</p>
+
+<h3 id="Pootle">The internationalisation frontend</h3>
+<p>
+There exist plans to implement a new framework to aid translation of various
+documents in Debian, such as PO files and Debconf templates. This should also
+support package descriptions at some time. Once this is active and works as
+expected, the current DDTP and it's frontends will be closed.
+</p>
+
+<p>
+This framework will be based on
+<a href="http://pootle.wordforge.org/">Pootle</a>. It's a Google Summer of
+Code project.
+</p>
+
+<h2 id="rules">Common translation rules</h2>
+<p>
+It's important that you do not change English descriptions during translation.
+If you recognise errors in it you should fill a bug report against the
+corresponding package, see <a href="$(HOME)/Bugs/Reporting">How to report a bug
+in Debian</a> for details.
+</p>
+
+<p>
+Translate the untranslated parts of each attachment which are marked
+&lt;trans&gt;. It's important that you do not change lines containing only a
+period in the first column. These are paragraph separators and will not be
+visible in APT frontends.
+
+Paragraphs which are already translated are either reused from other descriptions
+or result from an older translation and indicate that this original English
+paragraph was not changed since this time. Once you change such a paragraph, it
+will FIXME(not?) change all other descriptions with the same paragraph as well.
+</p>
+
+<p>
+Also note that each language team has it's own preferences such as word lists
+or quotation style. Please follow these standards as close as possible. The
+# Translators: create a link to your rules from "pusblished"
+most important rules are published. It is suggested that you start reviewing
+existing translations, either via <a href="#DDTSS">DDTSS</a> or by browsing
+<a href="http://ddtp.debian.net">http://ddtp.debian.net</a> first to get a
+# Translators: create a link to your language team (mailing list, ...)
+feeling for it. If you are unsure contact your language team.
+</p>
+
+<h2>Proofreading and error fixing</h2>
+# General proofread suggestions, not DDTSS specific
+<p>
+Only the DDTSS implements currently a review mode and sends all translations
+to the DDTP after a fixed number of proofreads succeed.
+</p>
+
+<p>
+Once you notice common typos or other easy to fix errors such as encoding
+problems, it is possible to bypass any review process and to fix this for all
+packages at once using a script. It is suggested that only one trusted
+translation coordinator collects all these issues and applies the script.
+</p>
+
+<p>
+Since the proofread can take a large time (especially if only
+minor issues are fixed all the time), it may be an option to just ignore
+single typos and inconsistencies during the review and to start later a check
+for all these (hopefully collected) issues. This speeds up the review and
+allows to apply these corrections later in all descriptions.
+</p>
+
+<h2>Usage of the translations</h2>
+<p>
+There is no proper support for translated package description yet available in
+the sarge or etch distribution. Nevertheless there exists a modified APT
+package in
+<a href="http://packages.debian.org/experimental/admin/apt">experimental</a>
+which fulfills this task. Using this package every user can read the
+descriptions in his preferred language in all programs which use APT.  This
+includes <tt>apt-cache</tt>, <tt>aptitude</tt>, <tt>synaptic</tt> and various
+other. We try to migrate this APT to etch but it's not yet clear whether this
+can be reached.
+</p>
+
+<p>
+This version of APT downloads <tt>Translation-<var>lang</var></tt> files from
+Debian mirrors. These are at the moment only available for sid and may be
+missing on some mirrors. The location of these files on mirrors is
+# Translators: use a proper mirror and test it!
+<a href="http://ftp.de.debian.org/debian/dists/sid/main/i18n/">dists/main/sid/i18n/</a>.
+</p>
+
+<!--
+<p>
+FIXME: I need to test this script from me again against the new Translation-<lang>
+files. Ignore this for now:<br />
+There is also a small script available which just replaces English descriptions
+in the local <tt>Packages</tt> files (<tt>/var/lib/apt/lists/</tt>) with
+translations. This could be used if the new APT version cannot be installed for
+whatever reasons.
+</p>
+-->
+
+<h2 id="todo">Todo</h2>
+
+Even thought there is some progress for the DDTP there is still a lot to do:
+<ul>
+  <li>Help testing of APT from experimental so that it can migrate to etch.</li>
+  <li>All translation teams search currently new translators and reviewers
+      which help to process the really large package list.</li>
+  <li>Add support for improving English package descriptions during the
+      translation/review process. Maybe this could be archived by adding a
+      new English pseudo language containing the improved description as
+      translation and automatic filling a bug after a successful review.</li>
+  <li>The new internationalisation framework based on Pootle needs a lot of
+      work until it fulfills all of our ideas.</li>
+</ul>
+
