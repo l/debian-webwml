@@ -10,7 +10,4 @@
 
 <menu-item name="ports"         basename="../index">
 <menu-item name="mips"          basename="index">
-<menu-item name="cpu"           basename="cpu">
-<menu-item name="news"          basename="news">
-<menu-item name="systems"       basename="system">
 
