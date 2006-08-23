@@ -8,8 +8,4 @@
 
 <menu-item name="ports"         basename="../index">
 <menu-item name="arm"           basename="index">
-<menu-item name="news"          basename="news">
-<menu-item name="status"        basename="status">
-<menu-item name="links"         basename="links">
-<menu-item name="softwaremap"   basename="softwaremap">
 
