@@ -1,6 +1,6 @@
 #use wml::debian::template title="Réplicas del servidor web de Debian"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.34"
+#use wml::debian::translation-check translation="1.37"
 #include "$(ENGLISHDIR)/mirror/webmirrors.data"
 
 <toc-display/>
@@ -62,38 +62,38 @@ acceso anónimo a los ficheros del sitio web. Puede concertar un acceso
 autenticado con el mantenedor del sitio que desea replicar, enviando un
 mensaje a <a href="mailto:mirrors@debian.org">mirrors@debian.org</a>.
 
-<p>La réplica es un proceso `pull', esto es, el cliente pide los datos del
+<p>La réplica es un proceso «pull», esto es, el cliente pide los datos del
 servidor a su conveniencia. Para conseguirlo, puede usar el <a
 href="websync">script websync</a> y <a href="websync.conf">su fichero de
 configuración</a>, que puede ejecutar mediante crontab, y que lo hará todo
 automáticamente. Siga las instrucciones del script para asegurarse que
 todo funciona correctamente.
 
-<h3>Hacer réplicas de un servidor `push'</h3>
+<h3>Hacer réplicas de un servidor «push»</h3>
 
-<p>La réplica `push' es una forma de replicar usando rsync que hemos
+<p>La réplica «push» es una forma de replicar usando rsync que hemos
 desarrollado para minimizar el tiempo que tarda en propagarse un cambio
 en los ficheros hasta las réplicas. El servidor replicado usa un
 disparador mediante ssh para indicarle al cliente replicador que ha de
 actualizarse.
 
 <p>Este método es bastante seguro ya que ssh se configura para ejecutar
-sólo una orden. Además, el replicado sigue siendo `pull', de manera que
+sólo una orden. Además, la replicación sigue siendo «pull», de manera que
 <strong>no</strong> es posible corromper el contenido del archivo mediante
-un servidor `push' falso. Algunos administradores de réplicas han mostrado
-cierta reluctancia a la hora de usar este método de replicado debido a que
+un servidor «push» falso. Algunos administradores de réplicas han mostrado
+cierta reluctancia a la hora de usar este método de replicación debido a que
 temen que el método pueda abrir sus máquinas ante una invasión. Esto,
 sencillamente, <strong>no</strong> es cierto.
 
-<p>Si desea una descripcción más detallada de cómo funciona esto, por qué
-es seguro, y cómo configurar un servidor `push', por favor lea <a
+<p>Si desea una descripción más detallada de cómo funciona esto, por qué
+es seguro, y cómo configurar un servidor «push», por favor lea <a
 href="push_mirroring">la explicación completa</a>.
 
 <toc-add-entry name="when">Cuándo replicar</toc-add-entry>
 
 <p>El sitio principal se actualiza aproximadamente cada cuatro horas.</p>
 
-<p>Si su sitio replica mediante el método `push', no necesita preocuparse
+<p>Si su sitio replica mediante el método «push», no necesita preocuparse
 al respecto. En caso contrario, debería calcular el tiempo entre réplicas
 para su sitio de acuerdo con la fecha en el registro horario de los
 ficheros en el directorio <code>/mirror/timestamps/</code> del sitio web.
@@ -190,9 +190,11 @@ caracteres erróneo, asegúrese de que la opción
 <code>AddDefaultCharSet</code> está comentada o su valor es
 `<code>Off</code>'.
 
-<p>Para servir correctamente los índices de los directorios, probablemente
-necesite modificar la sección <code>DirectoryIndex</code> en
-<code>/etc/apache/srm.conf</code>. Lo siguiente debería bastar:
+<p>Si usa Apache 1, para servir correctamente los índices de los 
+directorios, probablemente necesite modificar la sección 
+<code>DirectoryIndex</code> en <code>/etc/apache/srm.conf</code>.
+Aunque esto no funcionará con Apache 2. Lo siguiente debería 
+bastar para Apache 1:
 
 <pre>
 DirectoryIndex index index.html
@@ -212,6 +214,13 @@ así:</p>
 
 <pre>
 AddType application/rss+xml .rdf
+</pre>
+
+<p>Para evitar problemas de negociación de contenido con el contenido bajo
+<a href="../events/">/events</a>, a los archivos de calendario hay que asignarles una prioridad menor que al contenido text/html:</p>
+
+<pre>
+AddType text/calendar;qs=0.9 .ics
 </pre>
 
 <h3>Redirecciones</h3>
