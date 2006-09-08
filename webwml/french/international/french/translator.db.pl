@@ -65,7 +65,7 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Norbert Bottlaender-Prier' => {
-                        email       => 'norbert@globenet.org',
+                        email       => 'frederic.bothamy@free.fr',
                         summary     => 2,
                         logs        => 0,
                         diff        => 1,
