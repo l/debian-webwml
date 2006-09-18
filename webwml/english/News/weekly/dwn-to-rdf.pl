@@ -135,7 +135,7 @@ if (open (F, $current . '/index.wml')) {
 	} elsif (/(.*)<\/p>/) {
 	    $body .= $1;
 
-	    if ($body !~ /(newpkg_main|<code>wnpp-alert<\/code>|href="mailto:dwn\@debian.org")/
+	    if ($body !~ /(newpkg_main|removals.txt|<code>wnpp-alert<\/code>|href="mailto:dwn\@debian.org")/
 		&& $headline ne "Security Updates"			# English
 		&& $headline ne "Mises à jour de sécurité"		# French
 		&& $headline ne "¡i¦w¥þ§ó·s¡j"				# Chinese
