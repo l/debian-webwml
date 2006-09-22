@@ -22,16 +22,18 @@ index.$(LANGUAGE).html: index.wml $(wildcard vote_*.wml) \
 
 ifeq "$(LANGUAGE)" "en"
 
-textfiles := vote_001_quorum.err  vote_001_quorum.log vote_001_quorum.txt  \
-             vote_001_results.png vote_001_vote.png   vote_001_results.txt \
-             vote_001_results.dot vote_001_tally.txt  vote_001_voters.txt  \
-             vote_001_vote_detailed.png               debate_style.inc     \
-             vote_002_quorum.err  vote_002_quorum.log vote_002_quorum.txt  \
-             vote_002_results.png vote_002_vote.png   vote_002_results.txt \
-             vote_002_vote_detailed.png               vote_002_results.dot \
-	     vote_002_tally.txt   vote_002_voters.txt                      \
-             vote_003_quorum.err  vote_003_quorum.log vote_003_quorum.txt  \
-             vote_004_quorum.err  vote_004_quorum.log vote_004_quorum.txt  
+textfiles := vote_001_quorum.err  vote_001_quorum.log  vote_001_quorum.txt  \
+             vote_001_results.png vote_001_vote.png    vote_001_results.txt \
+             vote_001_results.dot vote_001_tally.txt   vote_001_voters.txt  \
+             vote_001_vote_detailed.png                debate_style.inc     \
+             vote_002_quorum.err  vote_002_quorum.log  vote_002_quorum.txt  \
+             vote_002_results.png vote_002_vote.png    vote_002_results.txt \
+             vote_002_vote_detailed.png                vote_002_results.dot \
+	     vote_002_tally.txt   vote_002_voters.txt                       \
+             vote_003_quorum.err  vote_003_quorum.log  vote_003_quorum.txt  \
+             vote_003_quorum.inc  vote_003_results.inc vote_003_majority.inc\
+             vote_004_quorum.err  vote_004_quorum.log  vote_004_quorum.txt  \
+             vote_004_quorum.inc  vote_004_results.inc vote_004_majority.inc
 
 desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
 
