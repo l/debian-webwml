@@ -32,6 +32,9 @@ textfiles := vote_001_quorum.err  vote_001_quorum.log  vote_001_quorum.txt  \
 	     vote_002_tally.txt   vote_002_voters.txt                       \
              vote_003_quorum.err  vote_003_quorum.log  vote_003_quorum.txt  \
              vote_003_quorum.inc  vote_003_results.inc vote_003_majority.inc\
+             vote_003_results.png vote_003_vote.png    vote_003_results.txt \
+             vote_003_results.dot vote_003_tally.txt   vote_003_voters.txt  \
+             vote_003_vote_detailed.png                                     \
              vote_004_quorum.err  vote_004_quorum.log  vote_004_quorum.txt  \
              vote_004_quorum.inc  vote_004_results.inc vote_004_majority.inc
 
