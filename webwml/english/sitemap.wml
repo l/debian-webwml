@@ -51,6 +51,12 @@ sub title_of {
   die "$page doesn't exist!\n" unless (-f $page);
   my $title = `egrep '^#use .* title=' $page `; chomp $title;
   $title =~ s/^#use .* title="(.+?)("\s.*$|"$|"\e.*$)/$1/;
+<protect pass=2>
+  if ($title eq '<pagetitle>') {
+    $title = `egrep '^<define-tag pagetitle>.*</define-tag>' $page `; chomp $title;
+    $title =~ s/^<define-tag pagetitle>(.+?)<\/define-tag>/$1/;
+  }
+</protect>
   die "can't find a title in $page!\n" unless (($title) || ($title eq ""));
   if ($CUR_LANG eq 'Japanese') {
     $title .= "\e(B" unless $title =~ /\e\(B$/;
