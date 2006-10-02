@@ -1,0 +1,196 @@
+#use wml::debian::template title="ミラー情報の提出"
+#use wml::debian::translation-check translation="1.41"
+<p>Debian の (FTP アーカイブ、ウェブ) ミラー情報を提出したい場合は、
+このフォームを使ってください。</p>
+
+<p>進め方がよくわからないという場合のために、ページ下部に<a
+href="#examples">例があります</a>。</p>
+
+<p>既存のエントリに対する変更を提出する場合は、
+それが更新であることをコメントで示して、新しく提出してください。</p>
+
+<p>提出された情報がすべてミラーリストに公開されるというわけではなく、
+ミラー管理者のアドレスのように公開されないものもあります。
+メールアドレスは管理用サイトのどこかで公開されるので、
+ミラーリスト編集者は伝達事項やバグ報告の際に連絡を取ることができます。</p>
+
+<p>公式ミラーは最新パッケージ取得に rsync
+を使用しなければならないことに注意してください。<a
+href="anonftpsync">anonftpsync</a> スクリプトの使用を強く推奨します。</p>
+
+
+<h2>基本的な情報</h2>
+
+<p>リストに表示するミラーの名前を<em>サイト</em>欄に入力してください。
+サーバに別の名前があるときは<em>別名</em>欄にコンマ (`,')
+区切りのリストを入力してください。これは多くの場合 DNS
+の逆引きエントリになります。</p>
+
+<form method="post" action="http://cgi.debian.org/cgi-bin/submit_mirror.pl">
+<p>
+サイト: <input type="text" name="site" size="30"><br>
+別名: <input type="text" name="aliases" size="60">
+</p>
+
+<h2>ミラーの種類とアクセス方法</h2>
+
+<p>あなたのサイトの Debian ミラーへのパスを以下に入力してください。
+該当しない項目は空白にしておいてください。</p>
+
+<define-tag tablerow>
+	<tr><td>%0: </td><td><input type="text" name="%1" size="%2"></td></tr>
+</define-tag>
+
+<table>
+<tablerow "パッケージアーカイブ、HTTP"   archive-http   30>
+<tablerow "パッケージアーカイブ、FTP"    archive-ftp    30>
+<tablerow "パッケージアーカイブ、rsync"  archive-rsync  30>
+<tablerow "Non-US パッケージ、HTTP"      nonus-http     30>
+<tablerow "Non-US パッケージ、FTP"       nonus-ftp      30>
+<tablerow "Non-US パッケージ、rsync"     nonus-rsync    30>
+<tablerow "セキュリティ更新、HTTP"       security-http  30>
+<tablerow "セキュリティ更新、FTP"        security-ftp   30>
+<tablerow "セキュリティ更新、rsync"      security-rsync 30>
+<tablerow "CD イメージ、HTTP"            cdimage-http   30>
+<tablerow "CD イメージ、FTP"             cdimage-ftp    30>
+<tablerow "CD イメージ、rsync"           cdimage-rsync  30>
+<tablerow "古い Debian リリース、HTTP"   old-http       30>
+<tablerow "古い Debian リリース、FTP"    old-ftp        30>
+<tablerow "古い Debian リリース、rsync"  old-rsync      30>
+<tablerow "Debian ウェブページ、HTTP"    www-http       30>
+<tablerow "Debian ウェブページ、FTP"     www-ftp        30>
+<tablerow "Debian ウェブページ、rsync"   www-rsync      30>
+</table>
+
+<h2>ミラーサイトの情報</h2>
+
+<p>以下の欄をすべて入力してください
+(名前とメールアドレスは誰にも公開しません)。
+国とミラー元はエントリの組織化にあたって使用するので重要です。</p>
+
+<table>
+<tablerow "ミラーの更新元"               mirrors_from  30>
+<tablerow "サイト管理者の名前"           maint_name    30>
+<tablerow "サイト管理者のメールアドレス" maint_email   30>
+<tr><td>サイトがある国:  <td><select name="country">
+#include "$(ENGLISHDIR)/mirror/countries.data"
+<: country_list() :>
+</select>
+<tablerow "サイトの位置 (任意)"        location      30>
+<tablerow "サイト後援者の名前 (任意)"  sponsor_name  30>
+<tablerow "サイト後援者の URL (任意)"  sponsor_url   30>
+</table>
+
+<table><tr>
+<td valign="top">コメント:</td>
+<td><textarea name="comment" cols="40" rows="7"></textarea></td>
+</tr></table>
+
+<p>注: 後援者が複数ある場合はコメントに追記してください。
+ミラーが不完全である場合の注釈や、更新の頻度、そのサイトの速度
+(最大帯域幅) を記入するのもよいでしょう。他のアクセス方法
+(NFS, IPv6, ...) もここに記入してください。
+<br>
+
+<input type="submit" value="送信"> <input type="reset" value="クリア">
+</p>
+</form>
+
+<p>あなたのサイトは 1 週間以内に表示されるようになります。
+提出された内容に不備がある場合はメールすることがあります。</p>
+
+<h2><a name="examples">例</a></h2>
+
+<p>以下はサーバが debian.example.com で、e1.example.com
+でも到達可能な場合の例です。名前はもちろん架空のものです。</p>
+
+<div class="centerblock">
+<p>
+サイト: <code>debian.example.com</code><br>
+別名: <code>e1.example.com</code>
+</p>
+</div>
+
+<p>Debian アーカイブのミラーがウェブサーバの /debian/
+にある場合:</p>
+
+<div class="centerblock">
+<p>
+パッケージアーカイブ、HTTP: <code>/debian/</code>
+</p>
+</div>
+
+<p>これは ftp://debian.example.com/debian/ の場合:</p>
+     
+<div class="centerblock">
+<p>
+パッケージアーカイブ、FTP: <code>/debian/</code>
+</p>
+</div>
+
+<p>これは rsync でのアクセスに使われるディレクトリ、debian.example.com::debian/:</p>
+
+<div class="centerblock">
+<p>
+パッケージアーカイブ、rsync: <code>debian/</code>
+</p>
+</div>
+
+<p>このミラーが ftp.xy.debian.org から更新データを取得する場合:</p>
+
+<div class="centerblock">
+<p>
+ミラーの更新元: <code>ftp.xy.debian.org</code>
+</p>
+</div>
+
+<p>管理者情報:</p>
+
+<div class="centerblock">
+<p>
+サイト管理者の名前: <code>John Doe</code><br>
+サイト管理者のメールアドレス: <code>address.goes@here.example.com</code>
+</p>
+</div>
+
+<p>(繰り返しますが、管理者のアドレスは公開されるリストには載りません。
+ミラーリスト編集者の使用するサイトで公開されます。
+正しいアドレスを入力してください。)</p>
+
+<p>他の情報:</p>
+
+<div class="centerblock">
+<p>
+国: <code>United States [US]</code><br>
+コメント: <code>役に立つと思ったことを何でも</code>
+</p>
+</div>
+
+<p>次の例は ftp.uk.debian.org のミラーの場合です:</p>
+
+<div class="centerblock">
+<p>
+サイト: <code>ftp.uk.debian.org</code><br>
+別名: <code>open.hands.com</code><br>
+パッケージアーカイブ、HTTP: <code>/debian/</code><br>
+パッケージアーカイブ、FTP: <code>/debian/</code><br>
+パッケージアーカイブ、rsync: <code>debian/</code><br>
+サイト管理者の名前: <code>Philip Hands</code><br>
+サイト管理者のメールアドレス: <code>abc@address.goes.here</code><br>
+国: <code>United Kingdom [GB]</code>
+</p>
+</div>
+
+<p>Debian の古い版を管理する場合のエントリは次のようになります:</p>
+
+<div class="centerblock">
+<p>
+サイト: <code>archive.debian.org</code><br>
+古い Debian リリース、HTTP: <code>/debian-archive/</code><br>
+古い Debian リリース、FTP: <code>/debian-archive/</code><br>
+古い Debian リリース、rsync: <code>debian-archive/</code><br>
+サイト管理者の名前: <code>Debian FTP admins</code><br>
+サイト管理者のメールアドレス: <code>abc@address.goes.here</code><br>
+国: <code>United States [US]</code><br>
+</p>
+</div>
