@@ -1,0 +1,184 @@
+#use wml::debian::template title="Debian アーカイブミラーの構築"
+#use wml::debian::toc
+#include "$(ENGLISHDIR)/releases/woody/release.data"
+#use wml::debian::translation-check translation="1.44"
+
+<toc-display/>
+
+<p>ミラーが構築できたら、<a href="submit">Debian に登録</a>して<a
+href="list">ミラーリスト</a>に追加して貰うようにしてください。手続きは<a
+href="submit">簡単なウェブフォーム</a>から行うことができます。</p>
+
+<p>問題や疑問があれば、<email mirrors@debian.org> 宛にお願いします。</p>
+
+<toc-add-entry name="what">ミラーの対象</toc-add-entry>
+
+<p><a href="./">メインのミラーページ</a>にミラーできるアーカイブのリストがあります。<br>
+Debian をネットワークからインストールするため、CD を (jigdo
+を使って) 作成するため、あるいはインストール済みのシステムを更新するために、
+debian/ アーカイブをユーザは期待します。</p>
+
+<p>注意: debian-non-US/ アーカイブは sarge
+のリリースとともに非推奨となりました。</p>
+
+<p>debian-cd/ はミラーサーバによって内容が異なるアーカイブです。
+CD イメージの作成に使われる jigdo (debian/ のファイルと組み合わせて使用されます)
+のテンプレートが置かれているサイトや、出来上がっている CD
+イメージが置かれているサイト、あるいは両方が置かれているサイトがあります。<br>
+詳細は <a href="$(HOME)/CD/mirroring/">Debian CD
+イメージのミラーサイトになるには</a>のページを見てください。</p>
+
+<p>debian-archive/ には実際の<em>アーカイブ</em>、古い、obsolete なバージョンの
+Debian があります。これは通常、特定少数のユーザしか関心を持たないものでしょう。</p>
+
+<p>debian-security/ アーカイブには Debian
+セキュリティチームによりリリースされる、セキュリティ更新が置かれます。
+これは誰しも関心をもつ対象となるでしょうが、セキュリティ更新は散発的に起こるので、
+最新を保つのに頻繁なミラー処理 (あるいは <a href="push_mirroring">push
+ミラー</a>) が要求されるため、推奨しません。Debian では、代わりに
+security.debian.org の高い可用性を保つのにあらゆる努力をします。</p>
+
+<p>ミラーのサイズについての正確な情報については、<a
+href="size">ミラーサイズ</a>のページを見てください。</p>
+
+<toc-add-entry name="wherefrom">どこからミラーするのか</toc-add-entry>
+
+<p><code>ftp.debian.org</code> が Debian パッケージの正当な場所で、
+そこからミラーするのがベストだと考える人が多くいますが、
+これは<strong>正しくありません</strong>。<code>ftp.debian.org</code> は内部の
+Debian サーバから更新しているサーバのうちの一つに過ぎません。</p>
+
+<p><a href="list-full">ミラー全リスト</a>にあるサーバのうち、
+'<kbd>Type: Push-Primary</kbd>' タグがあるものがミラー元として適切です。
+その中からネットワーク的に近いものを使用してください。</p>
+
+<p>ミラー処理がなされている限り、異なる <em>Push-Primary</em>
+のミラーサーバの間に実質的な違いはありません。言い換えれば、
+多くの人が ftp.debian.org を使う (残念ながらそうなっています) と、
+提供された帯域を活かせずに無駄にしているということになります。</p>
+
+<toc-add-entry name="how">どうやってミラーするのか</toc-add-entry>
+
+<p>推奨するミラー方法は <a href="anonftpsync">anonftpsync</a>
+というスクリプトで匿名 <a
+href="http://packages.debian.org/stable/net/rsync">rsync</a>
+を使う方法です。</p>
+
+<p>注意: <kbd>wget</kbd> やその他の ftp
+ツールでも可能なようですが問題があります。rsync
+の使用を強く推奨します。</p>
+
+<h3>匿名 rsync</h3>
+
+<p>アーカイブのミラーには <a href="anonftpsync">anonftpsync</a>
+の使用を推奨します。スクリプト内の指示に従ってミラーを構築してください。</p>
+
+<p>他の方法を採りたい人に向けて:</p>
+
+<ul>
+  <li>rsync には最低限このオプションを付けてください:
+      <kbd>--recursive --times --links --hard-links --delete</kbd></li>
+
+  <li>ディスク容量に余裕がある場合は、<kbd>--delete-after</kbd>
+      オプションも使って更新時の一時的な問題も回避するようにしてください。</li>
+
+  <li>全体をミラーするだけの十分なディスク容量がない場合は、<kbd>--exclude</kbd>
+      オプションを使ってミラーするアーカイブを除外してください。
+      通常これには望まないアーキテクチャを含めます。
+      例えば、この例では<em>全</em>アーキテクチャを除外します:<br>
+<: 
+print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
+  foreach (sort keys %arches);
+:>
+      <a href="#partial">部分的なミラー</a>の項目も確認してください。</li>
+
+  <li>rsync でのミラー作業が終わったら、
+      あなたのサーバ名を付けたタイムスタンプファイルを Debian ミラーの
+      <code>project/trace/</code> サブディレクトリに追加してください。
+      つまり、日々の rsync が終わったら
+      <kbd>date -u &gt; .../debian/project/trace/<var>your.server</var></kbd>
+      を、また、debian-non-US をミラーする場合は日々の non-US の rsync が終わったら
+      <kbd>date -u &gt; .../debian-non-US/project/trace/<var>your.server</var></kbd>
+      を実行するということです。</li>
+
+  <li><tt>project/</tt>, <tt>doc/</tt>
+      その他のサブディレクトリについてはできるだけ除外しないようにしてください。
+      これらは通常、サイズは小さく、それでいてユーザにとって有益です。
+      特に、<tt>project/trace</tt> はミラーに問題があった場合非常に役に立ちます。</li>
+</ul>
+
+<h3>push ミラーによる認証付きの rsync</h3>
+
+<p>push ミラーによるミラー作業は私たちが開発した、rsync
+を使ってアーカイブへの変更がミラーに行き渡るまでの時間を最小にとどめる方法です。
+ミラーのサーバが ssh を使ってミラーのクライアントに更新を開始させます。</p>
+
+<p>push 型のミラー作業は (<tt>ftp.us.debian.org</tt> のように DNS
+ラウンドロビンの別名となっているような場合に)、
+複数のサーバを同期させ続けるのに必要です。また、私たちは第 1 層、
+第 2 層のミラーに対してこれを使用します。「普通」のミラーについては、
+この方法では要求する点が多く、うまく設定された cron
+ジョブに対する優位性が見出せません。</p>
+
+<p>この方法は ssh
+はただ一つのコマンドだけを実行するように設定するのでまったく安全です。
+さらに、ミラー作業はあくまで「取得」するもので、偽の push
+ミラーがアーカイブの内容を汚染することができるというものでは<strong>ありません</strong>。
+この方法のミラー作業によって侵入される可能性があるのではないかという恐れにより消極的になるミラー管理者もいますが、
+これは単純に<strong>間違い</strong>です。</p>
+
+<p>この仕組みについて、さらに突っ込んだ説明や、どうして安全なのか、
+push ミラーの構築方法については、<a
+href="push_mirroring">完全な説明</a>を参照してください。</p>
+
+<toc-add-entry name="partial">部分的なミラー</toc-add-entry>
+
+<p>既に <a href="size">Debian
+アーカイブのサイズは巨大になっている</a>ので、必要な一部だけのミラーをしたいという人もいます。
+何か除外する場合は、アーキテクチャを除外してください。</p>
+
+<p><a href="anonftpsync">anonftpsync</a> の場合は、ARCH_EXCLUDE
+変数を編集することで可能になります。
+他にも専用に書かれたスクリプトはありますが、公式ミラーには不適です。</p>
+
+<p><tt>project/</tt>, <tt>doc/</tt>
+その他のサブディレクトリについてはできるだけ除外しないようにしてください。
+これらは通常、サイズは小さく、それでいてユーザにとって有益です。
+特に、<tt>project/trace</tt> はミラーに問題があった場合非常に役に立ちます。</p>
+
+<toc-add-entry name="when">いつミラーするのか</toc-add-entry>
+
+<p>メインのアーカイブは 24 時間ごとに更新されます。</p>
+
+<p>ミラーは通常 00:00 UTC
+頃に更新を始めますがこれは決まっているわけではありません。
+この数時間後に毎日ミラー作業を行うことを推奨します。
+実際には、ミラー元のサイトが <kbd>project/trace/</kbd>
+サブディレクトリに残すタイムスタンプファイルを確認してください。
+タイムスタンプファイルはそのサイトのような名前で、
+その内容は最後のミラー更新完了時刻です。(安全を見て)
+これから数時間とってミラーしてください。</p>
+
+<p>毎日のミラー作業を自動化するのに最も簡単なのは cron です。詳細は
+<kbd>man crontab</kbd> してください。</p>
+
+<p>注: あなたのサイトが push
+機構を採用する場合にはこの項目はまったく気にする必要がありません。</p>
+
+<toc-add-entry name="settings">追加の推奨設定</toc-add-entry>
+
+<p>Debian ミラーを HTTP から利用できるようにする場合は、Apache の設定の
+<code>&lt;Directory <var>/path/to/your/debian/mirror</var>&gt;</code>
+ブロック内に以下を加えてください (恐らく Apache を使っているでしょう)。
+<var>/path/to/your/debian/mirror</var>
+には実際にミラーを置いているディレクトリが入ります:</p>
+
+<pre>
+   Options +Indexes +SymlinksIfOwnerMatch
+   IndexOptions NameWidth=* +SuppressDescription
+   DirectoryIndex .
+</pre>
+
+<p>これによりディレクトリインデクスが有効になり、symlink
+追跡が効くようになります。ディレクトリインデクスでファイル名が切られなくなり、
+(ほとんど存在しない) 説明は表示されなくなります。</p>
