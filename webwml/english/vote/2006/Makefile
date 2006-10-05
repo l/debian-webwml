@@ -36,7 +36,11 @@ textfiles := vote_001_quorum.err  vote_001_quorum.log  vote_001_quorum.txt  \
              vote_003_results.dot vote_003_tally.txt   vote_003_voters.txt  \
              vote_003_vote_detailed.png                                     \
              vote_004_quorum.err  vote_004_quorum.log  vote_004_quorum.txt  \
-             vote_004_quorum.inc  vote_004_results.inc vote_004_majority.inc
+             vote_004_quorum.inc  vote_004_results.inc vote_004_majority.inc\
+             vote_005_quorum.err  vote_005_quorum.log  vote_005_quorum.txt  \
+             vote_005_quorum.inc  vote_005_results.inc vote_005_majority.inc\
+             vote_006_quorum.err  vote_006_quorum.log  vote_006_quorum.txt  \
+             vote_006_quorum.inc  vote_006_results.inc vote_006_majority.inc
 
 desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
 
