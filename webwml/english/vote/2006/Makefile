@@ -40,7 +40,9 @@ textfiles := vote_001_quorum.err  vote_001_quorum.log  vote_001_quorum.txt  \
              vote_005_quorum.err  vote_005_quorum.log  vote_005_quorum.txt  \
              vote_005_quorum.inc  vote_005_results.inc vote_005_majority.inc\
              vote_006_quorum.err  vote_006_quorum.log  vote_006_quorum.txt  \
-             vote_006_quorum.inc  vote_006_results.inc vote_006_majority.inc
+             vote_006_quorum.inc  vote_006_results.inc vote_006_majority.inc\
+             vote_007_quorum.err  vote_007_quorum.log  vote_007_quorum.txt  \
+             vote_007_quorum.inc  vote_007_results.inc vote_007_majority.inc
 
 desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
 
