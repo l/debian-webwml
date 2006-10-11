@@ -27,9 +27,26 @@ echo "copying events/materials/ in place..." >> $crondir/lessoften.log
 install -d -m 2775 -g debwww $webdir/events/materials
 cp -a $webtopdir/events-materials/* $webdir/events/materials/
 
-# until we can actually build it on the server
-echo "copying sarge installmanual in place..." >> $crondir/lessoften.log
-cp -a $webtopdir/installmanual/sarge/* $webdir/releases/sarge/
+# build installation guide for etch
+cd $crondir/tmp
+igdsc=`ls -t1 $ftpdir/pool/main/i/installation-guide/installation-guide_*.dsc | head -1`
+igdir=`basename "$igdsc"
+	| sed -e 's/installation-guide_/installation-guide-/' -e 's/\.dsc//'`
+if [ "$igdsc" -nt $webtopdir/installmanual/etch.log ]; then
+	echo "extracting installation-guide source..." >> $crondir/lessoften.log
+	[ -d "$igdir" ] && rm -fr "$igdir"
+	dpkg-source -sn -x "$igdsc" >> $crondir/lessoften.log
+	if [ -d "$igdir" ]; then
+		echo "building installation-guide for etch..." >> $crondir/lessoften.log
+		cd $igdir/build &&
+			manual_release=etch destination=$webtopdir/installmanual/etch/ ./buildweb.sh > $webtopdir/installmanual/etch.log 2>&1
+	fi
+fi
+
+for dist in sarge etch; do
+	echo "copying $dist installmanual in place..." >> $crondir/lessoften.log
+	cp -a $webtopdir/installmanual/$dist/* $webdir/releases/$dist/
+done
 
 # previously in parts/1l10ndata, from bouz
 [ -d $crondir/datafiles ] || mkdir -p $crondir/datafiles
