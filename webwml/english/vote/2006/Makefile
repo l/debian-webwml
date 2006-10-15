@@ -37,12 +37,24 @@ textfiles := vote_001_quorum.err  vote_001_quorum.log  vote_001_quorum.txt  \
              vote_003_vote_detailed.png                                     \
              vote_004_quorum.err  vote_004_quorum.log  vote_004_quorum.txt  \
              vote_004_quorum.inc  vote_004_results.inc vote_004_majority.inc\
+             vote_004_results.png vote_004_vote.png    vote_004_results.txt \
+             vote_004_results.dot vote_004_tally.txt   vote_004_voters.txt  \
+             vote_004_vote_detailed.png                                     \
              vote_005_quorum.err  vote_005_quorum.log  vote_005_quorum.txt  \
              vote_005_quorum.inc  vote_005_results.inc vote_005_majority.inc\
+             vote_005_results.png vote_005_vote.png    vote_005_results.txt \
+             vote_005_results.dot vote_005_tally.txt   vote_005_voters.txt  \
+             vote_005_vote_detailed.png                                     \
              vote_006_quorum.err  vote_006_quorum.log  vote_006_quorum.txt  \
              vote_006_quorum.inc  vote_006_results.inc vote_006_majority.inc\
+             vote_006_results.png vote_006_vote.png    vote_006_results.txt \
+             vote_006_results.dot vote_006_tally.txt   vote_006_voters.txt  \
+             vote_006_vote_detailed.png                                     \
              vote_007_quorum.err  vote_007_quorum.log  vote_007_quorum.txt  \
-             vote_007_quorum.inc  vote_007_results.inc vote_007_majority.inc
+             vote_007_quorum.inc  vote_007_results.inc vote_007_majority.inc\
+             vote_007_results.png vote_007_vote.png    vote_007_results.txt \
+             vote_007_results.dot vote_007_tally.txt   vote_007_voters.txt  \
+             vote_007_vote_detailed.png                                     \
 
 desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
 
