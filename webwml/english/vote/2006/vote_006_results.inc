@@ -1,20 +1,13 @@
            <p class="center">
-             <a style="margin-left: auto; margin-right: auto;" href="results.dot">
-               <img src="results.png" alt="Graphical rendering of the results">
+             <a style="margin-left: auto; margin-right: auto;" href="vote_006_results.dot">
+               <img src="vote_006_results.png" alt="Graphical rendering of the results">
                </a>
            </p>
              <p>
                In the graph above, any pink colored nodes imply that
                the option did not pass majority, the Blue is the
                winner. The Octagon is used for the options that did
-               not beat the default.  In the following table,
-               tally[row x][col y] represents the votes that option x
-               received over option y. A <a
-               href="http://en.wikipedia.org/wiki/Schwartz_method">more
-                 detailed explanation of the beat matrix</a> may help in
-               understanding the table. For understanding the Condorcet method, the
-               <a href="http://en.wikipedia.org/wiki/Condorcet_method">Wikipedia
-                 entry</a> is fairly informative.
+               not beat the default.  
            </p>
            <ul>
 <li>Option 1 "Re-affirm DPL, wish success to unofficial Dunc Tank"</li>
