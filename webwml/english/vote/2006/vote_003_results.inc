@@ -1,4 +1,4 @@
-              <h3>The winners</h3>
+              <h3>The winner</h3>
               <ul>
                 <li>Option 1 <q>Amend the constitution  [needs 3:1]</q></li>
               </ul>
