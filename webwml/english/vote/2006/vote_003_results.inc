@@ -1,6 +1,6 @@
               <h3>The winners</h3>
               <ul>
-                <li>Option 1 "Amend the constitution  [needs 3:1]"</li>
+                <li>Option 1 <q>Amend the constitution  [needs 3:1]</q></li>
               </ul>
            <p class="center">
              <a style="margin-left: auto; margin-right: auto;" href="vote_003_results.dot">
@@ -14,8 +14,8 @@
                not beat the default. 
            </p>
            <ul>
-<li>Option 1 "Amend the constitution  [needs 3:1]"</li>
-<li>Option 2 "Further Discussion"</li>
+<li>Option 1 <q>Amend the constitution  [needs 3:1]</q></li>
+<li>Option 2 <q>Further Discussion</q></li>
            </ul>
             <p>
                In the following table, tally[row x][col y] represents
@@ -58,7 +58,7 @@ received 242 votes over Further Discussion.<br/>
               </ul>
               <h3>The Schwartz Set contains</h3>
               <ul>
-                <li>Option 1 "Amend the constitution  [needs 3:1]"</li>
+                <li>Option 1 <q>Amend the constitution  [needs 3:1]</q></li>
               </ul>
               <p>
                Debian uses the Condorcet method voting.
