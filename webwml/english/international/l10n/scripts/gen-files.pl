@@ -66,8 +66,10 @@ sub pkgsort ($$) {
         }
 }
 
-my $root = 'http://merkel.debian.org/~barbier/l10n/material/';
-my $rootnonus = 'http://merkel.debian.org/~barbier/l10n/material/';
+#my $root = 'http://merkel.debian.org/~barbier/l10n/material/';
+#my $rootnonus = 'http://merkel.debian.org/~barbier/l10n/material/';
+my $root = 'http://i18n.debian.net/material/';
+my $rootnonus = $root;
 
 my $langfile = $opt_l.'/data/langs';
 #   These packages use a RFC1766 naming convention for language codes
