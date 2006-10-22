@@ -53,8 +53,8 @@
 	</tr>
         	<tr class="Ignored">
 	  <td  align="center" colspan="6">
-             <a href="vote_007results.dot">
-	       <img src="vote_007results.png" alt="Graph of the
+             <a href="vote_007_results.dot">
+	       <img src="vote_007_results.png" alt="Graph of the
 		  standings of the candidates">
              </a>
 	  </td>
