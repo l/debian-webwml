@@ -19,11 +19,13 @@
 # Should run after the mirror pulse.  The mirror tends to finish by
 # the ctime of rsync.log.* in ~archvsync.
 
-topdir=/org/packages.debian.org
-logs=$topdir/files/logs
+source config.sh
+files=$topdir/files
+logs=$files/logs
 log=$logs/cron.log
 
-test -d $log || mkdir -p $logs
+test -d $files || mkdir -p $files
+test -d $logs || mkdir -p $logs
 
 if [ -s $log ]
 then
@@ -31,5 +33,13 @@ then
 fi
 
 date > $log
-run-parts --report $topdir/cron >> $log 2>&1
+
+if lockfile -600 -r5 "${files}/cron.lock" >> $log 2>&1
+then
+    run-parts --verbose $topdir/cron.d >> $log 2>&1
+    rm -f "${files}/cron.lock"
+else
+    echo "couldn't aquire lock file in due time" >> $log
+fi
+
 date >> $log
