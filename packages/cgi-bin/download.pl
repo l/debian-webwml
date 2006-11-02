@@ -20,55 +20,110 @@ my ($input,   # The CGI data
     $file, $filen, $md5sum, @file_components, $type, $arch);
 
 my @north_american_sites = qw(
+	mirrors.kernel.org/ubuntu
 	ftp.cs.umn.edu/pub/ubuntu
+	lug.mtu.edu/ubuntu
 	mirror.clarkson.edu/pub/distributions/ubuntu
 	ubuntu.mirrors.tds.net/ubuntu
-	itanix.rutgers.edu/ubuntu
 	www.opensourcemirrors.org/ubuntu
 	ftp.ale.org/pub/mirrors/ubuntu
 	ubuntu.secs.oakland.edu
+	mirror.mcs.anl.gov/pub/ubuntu
+	mirrors.cat.pdx.edu/ubuntu
+	ubuntu.cs.utah.edu/ubuntu
+	ftp.ussg.iu.edu/linux/ubuntu
+	mirrors.xmission.com/ubuntu
+	ftp.osuosl.org/pub/ubuntu
+	mirrors.cs.wmich.edu/ubuntu
+	mirror.cpsc.ucalgary.ca/mirror/ubuntu.com
+	mirror.arcticnetwork.ca/pub/ubuntu/packages
+	gulus.USherbrooke.ca/pub/distro/ubuntu
 	);
 my @european_sites = qw(
-	archive.ubuntu.com/ubuntu
+	fr.archive.ubuntu.com/ubuntu
+	ge.archive.ubuntu.com/ubuntu
+	nl.archive.ubuntu.com/ubuntu
+	no.archive.ubuntu.com/ubuntu
+	yu.archive.ubuntu.com/ubuntu
 	ubuntu.inode.at/ubuntu
 	ubuntu.uni-klu.ac.at/ubuntu
 	gd.tuwien.ac.at/opsys/linux/ubuntu/archive
 	ftp.belnet.be/pub/mirror/ubuntu.com
-	mirror.freax.be/ubuntu/archive.ubuntu.com
+	ubuntu.mirrors.skynet.be/pub/ubuntu.com
+	ubuntu.ipacct.com/ubuntu
+	ubnutu-hr.org/ubuntu
 	archive.ubuntu.cz/ubuntu
 	mirrors.dk.telia.net/ubuntu
 	mirrors.dotsrc.org/ubuntu
-	mir1.ovh.net/ubuntu/ubuntu
+	klid.dk/homeftp/ubuntu
+	ftp.estpak.ee/pub/ubuntu
+	www.nic.funet.fi/pub/mirrors/archive.ubuntu.com
+	mir1.ovh.net/ubuntu
+	ftp.u-picardie.fr/pub/ubuntu/ubuntu
+	ftp.oleane.net/pub/ubuntu
+	debian.charite.de/ubuntu
 	ftp.inf.tu-dresden.de/os/linux/dists/ubuntu
 	www.artfiles.org/ubuntu.com/archive
 	ftp.rz.tu-bs.de/pub/mirror/ubuntu-packages
 	ftp.join.uni-muenster.de/pub/mirrors/ftp.ubuntu.com/ubuntu
+	www.ftp.uni-erlangen.de/pub/mirrors/ubuntu
+	ftp.ntua.gr/pub/linux/ubuntu
 	ftp.kfki.hu/linux/ubuntu
 	ubuntu.odg.cc
+	ubuntu.lhi.is
 	ftp.esat.net/mirrors/archive.ubuntu.com
 	ftp.heanet.ie/pub/ubuntu
+	ftp.linux.it/ubuntu
 	na.mirror.garr.it/mirrors/ubuntu-archive
+	mirrors.linux.edu.lv/ftp.ubuntu.com
 	ftp.litnet.lt/pub/ubuntu
 	ubuntu.synssans.nl
 	ubuntulinux.mainseek.com/ubuntu
+	ubuntu.task.gda.pl/ubuntu
+	darkstar.ist.utl.pt/ubuntu/archive
+	ubuntu.dcc.fc.up.pt
+	ftp.iasi.roedu.net/mirrors/ubuntulinux.org/ubuntu
+	ftp.gui.uva.es/sites/ubuntu.com/ubuntu
 	ftp.acc.umu.se/mirror/ubuntu
 	mirror.switch.ch/ftp/mirror/ubuntu
 	www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu
+	www.mirror.ac.uk/mirror/archive.ubuntu.com/ubuntu
+	ubuntu.blueyonder.co.uk/archive
+	ubuntu.snet.uz/ubuntu
 	);
 my @south_american_sites = qw(
-	ftp.interlegis.gov.br/pub/ubuntu/archive
-        ubuntu.c3sl.ufpr.br
+	cl.archive.ubuntu.com/ubuntu
+	espelhos.edugraf.ufsc.br/ubuntu
+	ubuntu.interlegis.gov.br/archive
+        ubuntu.c3sl.ufpr.br/ubuntu
+	ftp.ucr.ac.cr/ubuntu
+	www.computacion.uni.edu.ni/iso/ubuntu
 	);
 my @australian_sites = qw(
+	ftp.iinet.net.au/pub/ubuntu
+	mirror.optus.net/ubuntu
 	mirror.isp.net.au/ftp/pub/ubuntu
 	www.planetmirror.com/pub/ubuntu
+	ftp.filearena.net/pub/ubuntu
+	mirror.pacific.net.au/linux/ubuntu
 	);
 my @asian_sites = qw(
 	archive.ubuntu.org.cn/ubuntu
+	debian.cn99.com/ubuntu
+	mirror.lupaworld.com/ubuntu
 	komo.vlsm.org/ubuntu
 	kambing.vlsm.org/ubuntu
+	ubuntu.mithril-linux.org/archives
 	ubuntu.csie.ntu.edu.tw/ubuntu
-	); 
+	mirror.letsopen.com/os/ubuntu
+	ftp.kaist.ac.kr/pub/ubuntu
+	apt.ubuntu.org.tw/ubuntu
+	apt.nc.hcc.edu.tw/pub/ubuntu
+	mirror.in.th/ubuntu
+	);
+my @african_sites = qw(
+	za.archive.ubuntu.com/ubuntu
+	);
 
 # list of architectures
 my %arches = (
@@ -138,13 +193,14 @@ END
     print_links( "Asia", $file, @asian_sites );
     print '</div><div class="cardright">';
     print_links( "Europe", $file, @european_sites );
+    print_links( "Africa", $file, @african_sites );
     print '</div>';
 
 	print <<END;
 <p style="clear:both">If none of the above sites are fast enough for you, please see the
 <a href="http://www.ubuntulinux.org/wiki/Archive">complete mirror list</a>.<br>
 The list of mirrors used by this scripts was last synced with the mirror list
-<em>Wed, 22 Dec 2004 01:32:12 +0000</em>.</p>
+<em>Wed, 18 Oct 2006 16:39:11 +0000</em>.</p>
 END
 }
 
