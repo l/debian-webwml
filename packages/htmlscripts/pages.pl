@@ -271,7 +271,7 @@ sub package_pages_walker {
 	$package_page .= pmoreinfo( name => $name, env => $env, data => $d,
 				    bugreports => 1, sourcedownload => 1,
 				    changesandcopy => 1, maintainers => 0,
-				    search => 1, buildlogs => $buildlogs );
+				    search => 1, buildlogs => 0 );
 	
 	#
 	# Trailer
@@ -530,7 +530,7 @@ sub src_package_pages_walker {
 				bugreports => 1,
 				changesandcopy => 1, maintainers => 0,
 				search => 1, is_source => 1,
-				buildlogs => $buildlogs );
+				buildlogs => 0 );
 
     #
     # Trailer

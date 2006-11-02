@@ -28,9 +28,7 @@ our $CHANGELOG_URL = 'http://changelogs.ubuntu.com/changelogs';
 our $COPYRIGHT_URL = 'http://changelogs.ubuntu.com/changelogs';
 our $SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=names&amp;version=all&amp;exact=1&amp;keywords=';
 our $SRC_SEARCH_URL = '/cgi-bin/search_packages.pl?searchon=sourcenames&amp;version=all&amp;exact=1&amp;keywords=';
-our $BUG_URL = 'http://bugzilla.ubuntu.com/buglist.cgi?query_format=advanced&amp;resolution=DUPLICATE&amp;resolution=---&amp;bugidtype=include&amp;cmdtype=doit&amp;component=';
 our $LAUNCHPAD_URL = 'https://launchpad.net/distros/ubuntu/+source/';
-our $SRC_BUG_URL = $BUG_URL;
 our $QA_URL = 'http://packages.qa.debian.org/';
 our $BUILD_LOG_URL = 'http://people.ubuntu.com/~lamont/buildLogs';
 our $TEST_BUILD_LOG_URL = 'http://people.ubuntu.com/~lamont/buildLogs/Test';
@@ -155,13 +153,9 @@ sub pmoreinfo {
     
     if ($info{bugreports}) {
     	my $url_name = $name;
-	my $bug_url = $is_source ? $SRC_BUG_URL : $BUG_URL; 
-    	if (($d->{section} eq 'universe')
-	    || ($d->{section} eq 'multiverse')) {
-	    $bug_url = $LAUNCHPAD_URL;
-	    $url_name = "$name/+bugs";
-	    $url_name = "$d->{src_name}/+bugs" unless $is_source;
-	}
+	my $bug_url = $LAUNCHPAD_URL;
+	$url_name = "$name/+bugs";
+	$url_name = "$d->{src_name}/+bugs" unless $is_source;
 	$str .= sprintf( gettext( "Check for <a href=\"%s\">Bug Reports</a> about %s." )."<br>\n",
 			 $bug_url.$url_name, $name );
     }
@@ -417,14 +411,14 @@ HEAD
 ;
 
     my $current = 'home';
-    foreach my $dist (qw(warty hoary-backports hoary breezy breezy-backports dapper)) {
+    foreach my $dist (qw(warty hoary-backports hoary breezy-backports breezy dapper-backports dapper edgy-backports edgy feisty)) {
 	if ($KEYWORDS_LINE =~ /\Q$dist\E/) {
 	    $current = $dist;
 	    last;
 	}
     }
     #TODO: what with backports?
-    foreach my $tab (qw(home warty hoary breezy dapper)) {
+    foreach my $tab (qw(home warty hoary breezy dapper edgy feisty)) {
 	my $url = $tab eq 'home' ? '' : "$tab/";
 	my $id = $tab eq $current ? 'current' : 'plain';
 	$txt .= "<li id=\"$id\"><a href=\"/$url\">".ucfirst($tab)."</a></li>";
