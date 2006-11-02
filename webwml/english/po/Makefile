@@ -23,7 +23,6 @@ l10n_FILES      = $(ENGLISHDIR)/international/l10n/dtc.def \
 langs_FILES     = $(TEMPLDIR)/language_names.wml
 organization_FILES = $(ENGLISHDIR)/intro/organization.data
 ports_FILES     = $(ENGLISHDIR)/ports/menu.defs \
-  $(ENGLISHDIR)/ports/mips/cpu.data \
   $(shell export LC_COLLATE=C; echo $(ENGLISHDIR)/ports/*/menu.inc) \
   $(ENGLISHDIR)/misc/laptops/menu.inc
 search_FILES    = $(ENGLISHDIR)/searchtmpl/search.def
