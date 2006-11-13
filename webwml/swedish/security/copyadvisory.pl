@@ -138,6 +138,8 @@ while (<SRC>)
 	s/([Ff])or the old stable/$1ör den gamla stabila/;
 	s/([Ff])or the current stable distribution/$1ör den nuvarande stabila utgåvan/;
 	s/([Ff])or the current stable/$1ör den nuvarande stabila/;
+	s/([Ff])or the upcoming stable distribution/$1ör den kommande stabila utgåvan/;
+	s/([Ff])or the upcoming stable/$1ör den kommande stabila/;
 	s/([Ff])or the Debian stable distribution/$1ör Debians stabila utgåva/;
 	s/([Ff])or the stable distribution/$1ör den stabila utgåvan/;
 	s/([Ff])or the stable/$1ör den stabila/;
