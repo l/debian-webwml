@@ -3,22 +3,22 @@
 # $Id$
 
 <p>Einen Push-Spiegel aufzusetzen, besteht aus zwei Aufgaben:
-Einrichten des rsync-Zugangs (für normales, »Pull«-Spiegeln) und
-Einrichtung des Auslöse-Mechanismus (für den »pushing«-Teil des
-»Pull«-Spiegelns).
+Einrichten des rsync-Zugangs (für normales, <q>Pull</q>-Spiegeln) und
+Einrichtung des Auslöse-Mechanismus (für den <q>pushing</q>-Teil des
+<q>Pull</q>-Spiegelns).</p>
 
 <p><small>(Wenn Sie genauere Informationen darüber erhalten möchten,
 was ein Push-Spiegel ist, lesen Sie bitte <a href="push_mirroring">die
-Beschreibung des Push-Spiegelns</a>.)</small>
+Beschreibung des Push-Spiegelns</a>.)</small></p>
 
 <h2>rsync einrichten</h2>
 
-<p>Installieren Sie <code>rsync</code> 2.1.1 oder neuer.  Wenn Ihr
+<p>Installieren Sie <code>rsync</code> 2.1.1 oder neuer. Wenn Ihr
 Rechner unter Debian läuft, installieren Sie einfach das neueste
-<a href="http://packages.debian.org/stable/net/rsync">rsync</a>-Paket.
+<a href="http://packages.debian.org/stable/net/rsync">rsync</a>-Paket.</p>
 
 <p>Erzeugen Sie die Datei <code>rsyncd.conf</code> und schreiben Sie
-etwas Ähnliches wie das Folgende hinein:
+etwas Ähnliches wie das Folgende hinein:</p>
 
 <pre>
 uid = nobody
@@ -43,7 +43,7 @@ socket options = SO_KEEPALIVE
 
 <p>Fügen Sie einen Eintrag für jeden Rechner zur Datei
 <code>/etc/rsyncd/debian.secrets</code> hinzu, bei dem Sie das
-Spiegeln einleiten:
+Spiegeln einleiten:</p>
 
 <pre>
 autorisierter_Zugang1:ein_Passwort
@@ -51,19 +51,19 @@ autorisierter_ZugangN:ein_weiteres_Passwort
 </pre>
 
 <p>Sie haben jetzt den in der Hierarchie tiefergelegenen Spiegeln
-Zugriff zu Ihrem Rechner gewährt.
+Zugriff zu Ihrem Rechner gewährt.</p>
 
 <p>Sie möchten wahrscheinlich den rsync-Daemon von inetd aufrufen
 lassen. Um dies zu erledigen, müssen Sie den rsync-Dienst in die
 Datei <code>/etc/services</code> eintragen (falls er dort noch nicht
-steht), ungefähr wie folgt:
+steht), ungefähr wie folgt:</p>
 
 <pre>
 rsync           873/tcp
 </pre>
 
 <p>Um den Daemon per inetd zu starten, fügen Sie das Folgende zu
-Ihrer Datei <code>/etc/inetd.conf</code> hinzu:
+Ihrer Datei <code>/etc/inetd.conf</code> hinzu:</p>
 
 <pre>
 rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daemon
@@ -75,27 +75,27 @@ ihm mitzuteilen, dass die Konfiguration neu eingelesen werden soll.)
 <h2>Einrichten des SSH-Auslöser-Mechanismus</h2>
 
 <p>Erzeugen Sie einen neuen SSH-Schlüssel für den Zugang, den Sie
-verwenden, um Debian zu spiegeln.  Stellen Sie sicher, dass Sie den
+verwenden, um Debian zu spiegeln. Stellen Sie sicher, dass Sie den
 eigentlichen SSH-Schlüssel nicht überschreiben, indem Sie die Option
--f verwenden, beispielsweise:
+-f verwenden, beispielsweise:</p>
 
 <pre>
 ssh-keygen -f ~/.ssh/identity.meinRechner
 </pre>
 
 <p>Stellen Sie sicher, dass der neue öffentliche Schlüssel
-(~/.ssh/identity.meinRechner.pub) Folgendes am Dateianfang enthält:
+(~/.ssh/identity.meinRechner.pub) Folgendes am Dateianfang enthält:</p>
 
 <pre>
 no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/websync &amp;"
 </pre>
 
-<p>(Ersetzen Sie »websync« durch »ftpsync« oder »ftpsync-non-US«,
-oder wie auch immer der Befehl heißt, der das Spiegeln beginnt.)
+<p>(Ersetzen Sie <q>websync</q> durch <q>ftpsync</q> oder <q>ftpsync-non-US</q>,
+oder wie auch immer der Befehl heißt, der das Spiegeln beginnt.)</p>
 
 <p>Sie müssen ein Skript einrichten, das die tiefergelegenen Spiegel
-kontaktiert.  Erzeugen Sie eine Datei mit dem Namen
-<code>signal</code>, die Folgendes enthält:
+kontaktiert. Erzeugen Sie eine Datei mit dem Namen
+<code>signal</code>, die Folgendes enthält:</p>
 
 <protect>
 <pre>
@@ -110,19 +110,19 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.meinRechner sleep 
 </protect>
 
 <p>Dieses Skript wird sich mit dem speziellen SSH-Schlüssel, den Sie
-oben erstellt haben, auf einem entfernten Rechner einloggen.  Das
+oben erstellt haben, auf einem entfernten Rechner einloggen. Das
 Skript selbst wird nichts sinnvolles auf dem entfernten Rechner
 machen, das Programm ~/websync (oder ~/ftpsync, oder ~/ftpsync-non-US)
-wird von diesem Schlüssel aus aufgerufen.
+wird von diesem Schlüssel aus aufgerufen.</p>
 
 <p>Um einen Spiegel tatsächlich zu starten, müssen Sie Zeilen mit
 <code>./signal &lt;Rechner&gt; &lt;Benutzername&gt;</code> ans Ende des
 eigenen Skripts <code>websync</code> anfügen oder, falls es bequemer
 für Sie ist, in ein neues Skript, und dieses von <code>websync</code>
-aufrufen lassen.
+aufrufen lassen.</p>
 
 <p>Das neue Skript <code>runmirrors</code> würde so etwas wie das
-folgende enthalten:
+folgende enthalten:</p>
 
 <protect>
 <pre>
@@ -137,8 +137,8 @@ folgende enthalten:
 </protect>
 
 <p>Sobald Ihr Rechner das Spiegeln vom höhergelegenen Rechner beendet
-hat, wird der Rechner die tiefergelegenen Spiegel kontaktieren.
+hat, wird der Rechner die tiefergelegenen Spiegel kontaktieren.</p>
 
 <p>Wenn Sie irgendwelche Probleme damit haben,
 <a href="mailto:mirrors@debian.org">kontaktieren</a>
-Sie uns (auf Englisch).
+Sie uns (auf Englisch).</p>
