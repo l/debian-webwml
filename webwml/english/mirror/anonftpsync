@@ -9,10 +9,11 @@ set -e
 # + added ARCH_EXCLUDE
 # + mirror in a safe way, first /pool, then /dists and the rest
 # + add documentation where to find /usr/bin/procmail
+# + --delete-after and --delay-updates to minimize the length of lack of consistency
 
 # Version: $Id$ 
 
-# Note: You MUST have rsync 2.0.16-1 or newer, which is available in slink
+# Note: You MUST have rsync 2.6.4 or newer, which is available in sarge
 # and all newer Debian releases, or at http://rsync.samba.org/
 
 # Note: You need to install the package procmail, it contains 
@@ -63,29 +64,24 @@ LOGDIR=
 
 ARCH_EXCLUDE=
 
-# EXCLUDE is a list of parameters listing patterns that rsync will exclude.
+# EXCLUDE is a list of parameters listing patterns that rsync will exclude, in
+# addition to the architectures excluded by ARCH_EXCLUDE.
+#
+# Use ARCH_EXCLUDE to exclude specific architectures or all sources
+#
+# --exclude stable, testing, unstable options DON'T remove the packages of
+# the given distribution. If you want do so, use debmirror instead.
+#
 # The following example would exclude mostly everything:
 #EXCLUDE="\
-#  --exclude binary-alpha/ --exclude binary-arm/ --exclude binary-i386/ \
-#  --exclude binary-m68k/ --exclude binary-powerpc/ --exclude binary-sparc/ \
-#  --exclude binary-ia64/ --exclude binary-mips*/ --exclude binary-hppa/ \
-#  --exclude binary-sh/ --exclude binary-s390/ \
-#  --exclude binary-hurd-i386/ \
-#  --exclude *_alpha.deb --exclude *_arm.deb --exclude *_i386.deb \
-#  --exclude *_m68k.deb --exclude *_powerpc.deb --exclude *_sparc.deb \
-#  --exclude *_ia64.deb --exclude *_hppa.deb --exclude *_sh.deb \
-#  --exclude *_mips.deb --exclude *_mipsel.deb --exclude *_s390.deb \
-#  --exclude *_hurd-i386.deb \
-#  --exclude disks-alpha/ --exclude disks-arm/ --exclude disks-i386/ \
-#  --exclude disks-ia64/ --exclude disks-m68k/ --exclude disks-mips*/  \
-#  --exclude disks-powerpc/  --exclude disks-s390/  --exclude disks-sparc/ \
 #  --exclude stable/ --exclude testing/ --exclude unstable/ \
 #  --exclude source/ \
 #  --exclude *.orig.tar.gz --exclude *.diff.gz --exclude *.dsc \
 #  --exclude /contrib/ --exclude /non-free/ \
 # "
 
-# With a blank EXCLUDE you will mirror the entire archive.
+# With a blank EXCLUDE you will mirror the entire archive, except the
+# architectures excluded by ARCH_EXCLUDE.
 # (optional)
 
 EXCLUDE=
@@ -110,6 +106,7 @@ fi
 
 if ! [ -d ${TO}/project/trace/ ]; then
 	# we are running mirror script for the first time
+	umask 002
 	mkdir -p ${TO}/project/trace
 fi
 
@@ -117,8 +114,13 @@ fi
 # If that's the case on your system, make sure hostname prints the full
 # hostname, and remove the -f option. If there's no hostname command,
 # explicitly replace `hostname -f` with the hostname.
+
 HOSTNAME=`hostname -f`
 
+# The hostname must match the "Site" field written in the list of mirrors.
+# If hostname doesn't returns the correct value, fill and uncomment below 
+# HOSTNAME=mirror.domain.tld
+ 
 LOCK="${TO}/Archive-Update-in-Progress-${HOSTNAME}"
 
 # Exclude architectures defined in $ARCH_EXCLUDE
@@ -158,17 +160,16 @@ trap "rm -f $LOCK > /dev/null 2>&1" exit
 set +e
 
 # First sync /pool
-rsync --recursive --links --hard-links --times --verbose --delete \
+rsync --recursive --links --hard-links --times --verbose \
      $EXCLUDE $SOURCE_EXCLUDE \
      $RSYNC_HOST::$RSYNC_DIR/pool/ $TO/pool/ >> $LOGFILE 2>&1
 result=$?
 
 if [ 0 = $result ]; then
 	# Now sync the remaining stuff
-	rsync --recursive --links --hard-links --times --verbose --delete-after \
+	rsync --recursive --links --hard-links --times --verbose --delay-updates --delete-after \
 	     --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
 	     --exclude "project/trace/${HOSTNAME}" \
-	     --exclude "/pool/" \
 	     $EXCLUDE \
 	     $RSYNC_HOST::$RSYNC_DIR $TO >> $LOGFILE 2>&1
 
