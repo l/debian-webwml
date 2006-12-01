@@ -28,30 +28,23 @@ my ($input,   # The CGI data
 # hint:
 # grep-dctrl -F Site,Alias -e '(udel|bigfoot|kernel|crosslink|internap|cerias|lcs.mit|progeny)' Mirrors.masterlist | timestamps/archive_mirror_check.py
 my @north_american_sites = (
-	"ftp.us.debian.org/debian",
 	"http.us.debian.org/debian",
-	"ftp.debian.org/debian",
-#	"ftp.ca.debian.org/debian",
 	"ftp.egr.msu.edu/debian",
 	"mirrors.kernel.org/debian",
-	"archive.progeny.com/debian",
 	"debian.crosslink.net/debian",
-	"ftp-mirror.internap.com/pub/debian",
-	"ftp.cerias.purdue.edu/pub/os/debian",
 	"ftp.lug.udel.edu/debian",
 	"debian.lcs.mit.edu/debian",
 	"debian.teleglobe.net",
-	"debian.rutgers.edu",
 	"debian.oregonstate.edu/debian",
 	);
 my @european_sites = (
 	"ftp.de.debian.org/debian",
 	"ftp.at.debian.org/debian",
-	"ftp.bg.debian.org/debian",
 	"ftp.ch.debian.org/debian",
 	"ftp.cz.debian.org/debian",
 	"ftp.dk.debian.org/debian",
 	"ftp.ee.debian.org/debian",
+	"ftp.es.debian.org/debian",
 	"ftp.fi.debian.org/debian",
 	"ftp.fr.debian.org/debian",
 	"ftp.hr.debian.org/debian",
@@ -63,7 +56,6 @@ my @european_sites = (
 	"ftp.no.debian.org/debian",
 	"ftp.pl.debian.org/debian",
 	"ftp.si.debian.org/debian",
-	"ftp.es.debian.org/debian",
 	"ftp.se.debian.org/debian",
 	"ftp.tr.debian.org/debian",
 	"ftp.uk.debian.org/debian",
@@ -78,10 +70,10 @@ my @australian_sites = (
 	"ftp.nz.debian.org/debian",
 	);
 my @asian_sites = (
-	"ftp.hk.debian.org/debian",
 	"ftp.jp.debian.org/debian",
+	"ftp2.jp.debian.org/debian",
 	"ftp.kr.debian.org/debian",
-	"linux.csie.nctu.edu.tw/debian",
+	"ftp.tw.debian.org/debian",
 	"debian.linux.org.tw/debian",
 	"linux.cdpa.nsysu.edu.tw/debian",
 	); 
