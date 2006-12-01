@@ -285,14 +285,13 @@ END
 
     print '<div class="cardleft">';
     print_links( "North America", $file, @north_american_sites );
+    print_links( "South America", $file, @south_american_sites );
     print '</div><div class="cardright">';
     print_links( "Europe", $file, @european_sites );
     print '</div><div class="cardleft">';
     print_links( "Australia and New Zealand", $file, @australian_sites );
     print '</div><div class="cardright">';
     print_links( "Asia", $file, @asian_sites );
-    print '</div><div class="cardleft">';
-    print_links( "South America", $file, @south_american_sites );
     print '</div>';
 
     print <<END;
