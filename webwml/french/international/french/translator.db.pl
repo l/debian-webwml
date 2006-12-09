@@ -100,12 +100,12 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Guillaume Estival' =>  {
-                        email       => 'thomas.huriaux@enst-bretagne.fr',
-                        summary     => 3,
-                        logs        => 3,
-                        diff        => 3,
-                        tdiff       => 0,
-                        file        => 0,
+                        email       => 'frederic.bothamy@free.fr',
+                        summary     => 2,
+                        logs        => 0,
+                        diff        => 1,
+                        tdiff       => 1,
+                        file        => 1,
                         compress    => 'none'
                 },
                 'Arnaud Fontaine' => {
@@ -118,12 +118,12 @@ sub init_translators {
                         compress    => 'none'
 		},
                 'Thomas Huriaux' => {
-                        email       => 'thomas.huriaux@enst-bretagne.fr',
-                        summary     => 3,
-                        logs        => 3,
-                        diff        => 3,
-                        tdiff       => 0,
-                        file        => 0,
+                        email       => 'frederic.bothamy@free.fr',
+                        summary     => 2,
+                        logs        => 0,
+                        diff        => 1,
+                        tdiff       => 1,
+                        file        => 1,
                         compress    => 'none'
                 },
                 'Sébastien Kalt' => {
@@ -153,15 +153,6 @@ sub init_translators {
            		file        => 0,
                         compress    => 'none'
            	},
-                'Jérôme Marant' => {
-                        email       => 'thomas.huriaux@enst-bretagne.fr',
-                        summary     => 3,
-                        logs        => 3,
-                        diff        => 3,
-                        tdiff       => 0,
-                        file        => 0,
-                        compress    => 'none'
-                },
                 'Thomas Marteau' => {
                         email       => 'thomas@marteau.org',
                         summary     => 2,
@@ -172,12 +163,12 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Ghislain Mary' => {
-		        email       => 'thomas.huriaux@enst-bretagne.fr',
-		        summary     => 3,
-		        logs        => 3,
-		        diff        => 3,
-		        tdiff       => 0,
-		        file        => 0,
+		        email       => 'frederic.bothamy@free.fr',
+		        summary     => 2,
+		        logs        => 0,
+		        diff        => 1,
+		        tdiff       => 1,
+		        file        => 1,
                         compress    => 'none'
 		},
                'Simon Paillard' =>  {
@@ -199,12 +190,12 @@ sub init_translators {
                         compress    => 'none'
                 },
 	        'Willy Picard' =>  {
-                        email       => 'thomas.huriaux@enst-bretagne.fr',
-                        summary     => 3,
-                        logs        => 3,
-                        diff        => 3,
-                        tdiff       => 0,
-                        file        => 0,
+                        email       => 'frederic.bothamy@free.fr',
+                        summary     => 2,
+                        logs        => 0,
+                        diff        => 1,
+                        tdiff       => 1,
+                        file        => 1,
                         compress    => 'none'
                 },
                'Charles Plessy' => {
