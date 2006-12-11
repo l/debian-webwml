@@ -182,17 +182,28 @@ print $input->header;
 
 $file = $input->param('file');
 param_error( "file" ) unless defined $file;
+# Make file fit in a regexp
+param_invalid ("file") if  $file !~ m!^[\w%.:+~_/-]+$!;
 @file_components = split('/', $file);
 $filen = pop(@file_components);
 
 $md5sum = $input->param('md5sum');
 param_error( "md5sum" ) unless defined $md5sum;
+# Make md5sum fit in a regexp
+param_invalid ("md5sum") if  $md5sum !~ /^\w{32}$/;
 
 $type = $input->param('type');
 param_error( "type" ) unless defined $type;
+# Make type fit in a regexp
+param_invalid ("type") if  $type !~ /^\w+$/;
 
 $arch = $input->param('arch');
 param_error( "arch" ) unless defined $arch;
+# Make arch fit in a regexp
+param_invalid ("arch") if  $arch !~ /^[\w\-]+$/;
+# And also check that it is in the list of supported archs
+param_invalid ("arch") if  ! defined ($arches{$arch});
+
 
 my $arch_string = $arch ne 'all' ? "on $arches{$arch} machines" : "";
 
@@ -340,3 +351,12 @@ sub param_error {
     print "<p>If the problem persists, please inform $ENV{SERVER_ADMIN}.</p>\n";
     exit;
 }
+
+sub param_invalid {
+    my $param = shift;
+
+    print "<p>Error: Required parameter \"$param\" does not have a valid content.</p>\n";
+    print "<p>If the problem persists, please inform $ENV{SERVER_ADMIN}.</p>\n";
+    exit;
+}
+
