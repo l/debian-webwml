@@ -171,7 +171,7 @@ param_error( "arch" ) unless defined $arch;
 # Make arch fit in a regexp
 param_invalid ("arch") if  $arch !~ /^[\w\-]+$/;
 # And also check that it is in the list of supported archs
-param_invalid ("arch") if  ! defined ($arches{$arch});
+param_invalid ("arch") if  ($arch ne 'all') && ! defined ($arches{$arch});
 
 
 my $arch_string = $arch ne 'all' ? "on $arches{$arch} machines" : "";
