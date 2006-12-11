@@ -152,7 +152,7 @@ print $input->header;
 $file = $input->param('file');
 param_error( "file" ) unless defined $file;
 # Make file fit in a regexp
-param_invalid ("file") if  $file !~ /^[\w\%\.\_\-]+$/;
+param_invalid ("file") if  $file !~ m!^[\w%.:+~_/-]+$!;
 @file_components = split('/', $file);
 $filen = pop(@file_components);
 
@@ -164,12 +164,12 @@ param_invalid ("md5sum") if  $md5sum !~ /^\w{32}$/;
 $type = $input->param('type');
 param_error( "type" ) unless defined $type;
 # Make type fit in a regexp
-param_invalid ("type") if  $type !~ /^\w{1,10}$/;
+param_invalid ("type") if  $type !~ /^\w+$/;
 
 $arch = $input->param('arch');
 param_error( "arch" ) unless defined $arch;
 # Make arch fit in a regexp
-param_invalid ("arch") if  $arch !~ /^[\w\-]{1,10}$/;
+param_invalid ("arch") if  $arch !~ /^[\w\-]+$/;
 # And also check that it is in the list of supported archs
 param_invalid ("arch") if  ! defined ($arches{$arch});
 
