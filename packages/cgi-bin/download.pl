@@ -195,7 +195,7 @@ param_invalid ("md5sum") if  $md5sum !~ /^[0-9a-f]{32}$/;
 $type = $input->param('type');
 param_error( "type" ) unless defined $type;
 # Make type fit in a regexp
-param_invalid ("type") if  $type !~ /^\w+$/;
+param_invalid ("type") if  $type !~ /^(main|nonus|security|unofficial|volatile)$/;
 
 $arch = $input->param('arch');
 param_error( "arch" ) unless defined $arch;
