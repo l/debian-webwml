@@ -190,7 +190,7 @@ $filen = pop(@file_components);
 $md5sum = $input->param('md5sum');
 param_error( "md5sum" ) unless defined $md5sum;
 # Make md5sum fit in a regexp
-param_invalid ("md5sum") if  $md5sum !~ /^\w{32}$/;
+param_invalid ("md5sum") if  $md5sum !~ /^[0-9a-f]{32}$/;
 
 $type = $input->param('type');
 param_error( "type" ) unless defined $type;
