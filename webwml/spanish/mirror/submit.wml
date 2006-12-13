@@ -1,42 +1,48 @@
 #use wml::debian::template title="Enviar información del sitio de réplica"
-#use wml::debian::translation-check translation="1.41" maintainer="Fernando Cerezal"
+#use wml::debian::translation-check translation="1.46" maintainer="Fernando Cerezal"
 
 <p>Si le gustaría enviar información acerca de un sitio de réplica de Debian
-(archivo FTP, web), puede hacerlo usando el formulario de abajo.
+(archivo FTP, web), puede hacerlo usando el formulario de debajo.</p>
 
 <p>Hay <a href="#examples">ejemplos</a> al final de la página en el caso de
-que no es'te seguro de cómo actuar.
+que no es'te seguro de cómo actuar.</p>
 
 <p>Si necesita enviar cambios a su entrada existente, simplemente haga un
-envío nuevo y añada un comentario referente a que es una actualización.
+envío nuevo y añada un comentario referente a que es una actualización.</p>
 
-<p>No toda la información suministrada se mostrará en la lista de sitios de
-réplica, como la dirección del mantenedor del sitio de réplica.
+<p>La mayoría de la información que suministre se mostrará en la lista de réplicas. La dirección de correo electrónico del responsable de la réplica estará disponible para todos los usuarios. Si remite una dirección privada, sólo estará disponible para los editores de la lista de réplicas de Debian, para que se puedan poner en contacto con usted si hay noticias importantes y/o informes de fallo.</p>
 
-La dirección de correo electrónico se mostrará en cualquier parte en nuestros
-sitios, de forma que los editores de la lista de réplicas pueda contactar con
-usted para informarle de noticias e informes de errores.
+#La dirección de correo electrónico se mostrará en cualquier parte en nuestros
+#sitios, de forma que los editores de la lista de réplicas pueda contactar con
+#usted para informarle de noticias e informes de errores.
 
-<p>Por favor, desde cuenta que una réplica oficial debe usar rsync como método
-para obtener los paquetes actuales.
-Nosotros recomendamos encarecidamente usar el script <a href="anonftpsync">anonftpsync</a>.</p>
+<p>Por favor, dese cuenta que una réplica oficial debe seguir las
+<a href="ftpmirror">reglas y directrices expuestas en nuestra documentación</a>.</p>
 
-<H2>Información básica</H2>
+<h2>Información básica</h2>
 
 <p>Por favor, incluya el nombre bajo el que desea que se liste el sitio de
 réplica en el campo <em>Sitio</em>. Si el servidor tiene otros nombres,
 lístelos en el campo <em>Aliases</em>, separados por comas (`,'). Esto será
-probablemente la inversa de las entradas DNS.
+probablemente la inversa de las entradas DNS.</p>
 
 <form method=post action="http://cgi.debian.org/cgi-bin/submit_mirror.pl">
 <p>
 Sitio: <input type="text" name="site" size="30"><br>
 Aliases: <input type="text" name="aliases" size="60">
+</p>
 
-<H2>Tipos de sitios de réplica y métodos de acceder a ellos</H2>
++<p>
++<input type="radio" name="submissiontype" value="new" checked>
++New mirror submission
++<input type="radio" name="submissiontype" value="update">
++Update of an existing mirror
++</p>
+
+<h2>Tipos de sitios de réplica y métodos de acceder a ellos</h2>
 
 <p>Introduzca las rutas a la réplica de Debian en su sitio en los campos
-inferiores. Deje en blanco los campos que no sean relevantes.
+inferiores. Deje en blanco los campos que no sean relevantes.</p>
 
 <define-tag tablerow>
 	<tr><td>%0: </td><td><input type="text" name="%1" size="%2"></td></tr>
@@ -46,9 +52,6 @@ inferiores. Deje en blanco los campos que no sean relevantes.
 <tablerow "Archivo de paquetes, sobre HTTP"           archive-http   30>
 <tablerow "Archivo de paquetes, sobre FTP"            archive-ftp    30>
 <tablerow "Archivo de paquetes, sobre rsync"          archive-rsync  30>
-<tablerow "Paquetes non-US, sobre HTTP"               nonus-http     30>
-<tablerow "Paquetes non-US, sobre FTP"                nonus-ftp      30>
-<tablerow "Paquetes non-US, sobre rsync"              nonus-rsync    30>
 <tablerow "Actualizaciones de seguridad, sobre HTTP"  security-http  30>
 <tablerow "Actualizaciones de seguridad, sobre FTP"   security-ftp   30>
 <tablerow "Actualizaciones de seguridad, sobre rsync" security-rsync 30>
@@ -58,21 +61,25 @@ inferiores. Deje en blanco los campos que no sean relevantes.
 <tablerow "Versiones antiguas de Debian, sobre HTTP"  old-http       30>
 <tablerow "Versiones antiguas de Debian, sobre FTP"   old-ftp        30>
 <tablerow "Versiones antiguas de Debian, sobre rsync" old-rsync      30>
+<tablerow "Paquetes non-US, sobre HTTP"               nonus-http     30>
+<tablerow "Paquetes non-US, sobre FTP"                nonus-ftp      30>
+<tablerow "Paquetes non-US, sobre rsync"              nonus-rsync    30>
 <tablerow "Páginas web de Debian, sobre HTTP"         www-http       30>
 <tablerow "Páginas web de Debian, sobre FTP"          www-ftp        30>
 <tablerow "Páginas web de Debian, sobre rsync"        www-rsync      30>
 </table>
 
-<H2>Información sobre el sitio de réplica</H2>
+<h2>Información sobre el sitio de réplica</h2>
 
 <p>Por favor, rellene toda la información siguiente (no comunicaremos el
 nombre ni el correo electrónico a nadie). El país y la réplica de origen
-son importantes ya que los usamos para organizar las entradas.
+son importantes, ya que los usamos para organizar las entradas.</p>
 
 <table>
 <tablerow "El sitio de réplica es actualizado desde"          mirrors_from  30>
 <tablerow "Nombre del mantenedor del sitio"         maint_name    30>
-<tablerow "Correo electrónico del mantenedor del sitio"        maint_email   30>
+<tablerow "Correo electrónico público del mantenedor del sitio"        maint_public_email   30>
+<tablerow "Correo electrónico privado del mantenedor del sitio (opcional)"        maint_private_email   30>
 <tr><td>País del sitio:  <td><select name="country">
 #include "$(ENGLISHDIR)/mirror/countries.data"
 <: country_list() :>
@@ -99,14 +106,14 @@ ancho de banda). También tienen cabida aquí otros métodos de acceso alternativo
 </form>
 
 <p>Su sitio aparecerá en la lista en una semana. Podemos mandarle un correo
-electrónico en caso de que haya problemas con la entrada enviada.
+electrónico en caso de que haya problemas con la entrada enviada.</p>
 
 
-<H2><a name="examples">Ejemplos</a></H2>
+<h2><a name="examples">Ejemplos</a></h2>
 
 <p>Los siguientes envíos serían para un servidor llamado debian.ejemplo.com,
 que también se puede alcanzar usando e1.ejemplo.com. Estos son nombres
-ficticios, por supuesto.
+ficticios, por supuesto.</p>
 
 <div class="centerblock">
 <p>
@@ -124,7 +131,7 @@ Archivo de paquetes, sobre HTTP: <code>/debian/</code>
 </p>
 </div>
 
-<p>Esto es para ftp://debian.ejemplo.com/debian/:
+<p>Esto es para ftp://debian.ejemplo.com/debian/:</p>
      
 <div class="centerblock">
 <p>
@@ -133,7 +140,7 @@ Archivo de paquetes, sobre FTP: <code>/debian/</code>
 </div>
 
 <p>Este es el directorio usado para el acceso mediante rsync,
-debian.ejemplo.com::debian/:
+debian.ejemplo.com::debian/:</p>
 
 <div class="centerblock">
 <p>
@@ -142,7 +149,7 @@ Archivo de paquetes, sobre rsync: <code>debian/</code>
 </div>
 
 <p>Este sitio de réplica se refresca desde ftp.xy.debian.org, así que
-añadiremos:
+añadiremos:</p>
 
 <div class="centerblock">
 <p>
@@ -161,9 +168,9 @@ Correo electrónico del mantenedor del sitio: <code>la.dirección@va.aquí.com</cod
 
 <p>(Una vez más, la dirección del responsable no se mostrará en las listas,
 sino en los sitios usados por los editores de la lista de réplicas.
-Por favor, introduzca una dirección correcta.)
+Por favor, introduzca una dirección correcta.)</p>
 
-<p>La otra información sería:
+<p>La otra información sería:</p>
 
 <div class="centerblock">
 <p>
@@ -172,7 +179,7 @@ Comentario: <code>Cualquier aviso que le pueda ser de ayuda a los otros</code>
 </p>
 </div>
 
-<p>El siguiente ejemplo describiría el sitio de réplica de ftp.uk.debian.org:
+<p>El siguiente ejemplo describiría el sitio de réplica de ftp.uk.debian.org:</p>
 
 <div class="centerblock">
 <p>
@@ -188,7 +195,7 @@ País: <code>Reino Unido [GB]</code>
 </div>
 
 <p>Si mantiene copias de versiones antiguas de Debian, su entrada sería
-similar a esta:
+similar a esta:</p>
 
 <div class="centerblock">
 <p>
