@@ -51,7 +51,7 @@ my @european_sites = qw(
 	ftp.belnet.be/pub/mirror/ubuntu.com
 	ubuntu.mirrors.skynet.be/pub/ubuntu.com
 	ubuntu.ipacct.com/ubuntu
-	ubnutu-hr.org/ubuntu
+	ubuntu-hr.org/ubuntu
 	archive.ubuntu.cz/ubuntu
 	mirrors.dk.telia.net/ubuntu
 	mirrors.dotsrc.org/ubuntu
