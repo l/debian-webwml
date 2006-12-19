@@ -132,7 +132,8 @@ unless ($revision)
 # Insert the revision number
 print DST qq'#use wml::debian::acronyms\n';
 print DST qq'#use wml::debian::translation-check translation="$revision"\n';
-print DST qq'# \$Id$vf,v 1.1 $year/11/02 21:15:10 jseidel Exp \$\n';
+print DST qq'# \$I';                                        # Too fool CVS
+print DST qq'd: $vf,v 1.1 $year/11/02 21:15:10 jseidel Exp \$\n';
 print DST qq'# Translator: $TRANSLATOR <$EMAIL> $dheute\n\n';
 
 
@@ -191,7 +192,7 @@ while (<SRC>)
 	    s#Voting Period#Abstimmungsperiode#;
 	    s#With the current list of <a href="(.*)">voting#Mit der aktuellen Liste von <a href="$1">stimmberechtigten#;
             s#developers</a>, we have:#Entwicklern</a> haben wir:#;
-	    s#For this GR, as always#Für diese GR werden wie immer während der Wahlperiode periodisch <a#;
+	    s#For this GR, as always#Für diese <acronym_GR /> werden wie immer während der Wahlperiode periodisch <a#;
 	    s#<a href="(.*)">statistics</a>#href="$1">\\#;
 	    s#shall be gathered about ballots received and acknowledgements#Statistiken</a> über die empfangenen Stimmen und die versandten#;
             s#sent periodically during the voting period.  Additionally, the#Bestätigungen gesammelt. Zusätzlich würde die Liste der <a#;
@@ -201,7 +202,7 @@ while (<SRC>)
             s#<a href="(.*)">tally sheet</a>#kann die <a href="$1">Strichliste</a>#;
 	    s#may also be viewed after to voting is done \(Note that#angeschaut werden (beachten Sie, dass es sich#;
             s#while the vote is in progress it is a dummy tally sheet\).#während des Urnengangs um eine Pseudo-Strichliste handelt).#;
-	    s#All the amendments need simple majority#Alle Änderungsanträge benötigen die einfache Mehrheit#;
+	    s#All the amendments need simple majority#Alle Änderungsanträge benötigen die einfache Mehrheit.#;
 	    s#The outcome#Das Ergebnis#;
 
 	    #Generic
@@ -220,6 +221,8 @@ while (<SRC>)
 	    s#Friday#Freitag#;
 	    s#Saturday#Samstag#;
 	    s#Sunday#Sonntag#;
+	    s#<sup>st</sup>#.#;
+	    s#<sup>th</sup>#.#;
 
 	}
 	print DST $_;
