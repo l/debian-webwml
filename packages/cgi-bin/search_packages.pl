@@ -43,7 +43,7 @@ my $input = new CGI;
 # exit;
 
 my %params_def = ( keywords => { default => undef, match => '^\s*([-+\@\w\/.:]+)\s*$' },
-		   version => { default => 'edgy', match => '^(\w+)$',
+		   version => { default => 'edgy', match => '^([\w-]+)$',
 				replace => { all => '*' } },
 		   case => { default => 'insensitive', match => '^(\w+)$' },
 		   subword => { default => 0, match => '^(\w+)$' },
