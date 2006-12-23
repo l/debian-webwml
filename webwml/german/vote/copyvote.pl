@@ -204,14 +204,16 @@ while (<SRC>)
             s#while the vote is in progress it is a dummy tally sheet\).#während des Urnengangs um eine Pseudo-Strichliste handelt).#;
 	    s#All the amendments need simple majority#Alle Änderungsanträge benötigen die einfache Mehrheit.#;
 	    s#The outcome#Das Ergebnis#;
+	    s#The actual text of the resolution is as follows.  Please note#Der eigentliche Text des Beschlusses lautet wie folgt. Bitte beachten#;
 	    s#The actual text of the resolution is as follows. Please note#Der eigentliche Text des Beschlusses lautet wie folgt. Bitte beachten#;
             s#that this does not include preludes, prologues, any preambles to#Sie, dass dieser keinen Vorspann, Nachspann, Präamblen des Beschlusses,#;
 	    s#the resolution, post-ambles to the resolution, abstracts,#Postamblen des Beschlusses, Zusammenfassungen, Vorworte, Nachworte,#;
 	    s#fore-words, after-words, rationales, supporting documents,#Begründungen, Unterstützende Dokumente, Meinungsumfragen, Argumente für#;
 	    s#opinion polls, arguments for and against, and any of the other#und gegen, oder irgendwelches andere wichtige Material, das Sie in den#;
 	    s#important material you will find on the mailing list#Mailinglisten-Archiven finden, beinhaltet. Bitte lesen Sie die#;
-	    s#archives. Please read the debian-vote mailing list archives for##;
-	    s#details.#debian-vote-Mailinglistenarchive für Details.#;
+	    s#archives. Please read the mailing list archives for#Mailinglistenarchive#;
+	    s#archives. Please read the debian-vote mailing list archives for#debian-vote-Mailinglistenarchive#;
+	    s#details.#für Details.#;
 
 	    #Generic
 	    s#January#Januar#;
