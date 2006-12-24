@@ -1,42 +1,51 @@
 #use wml::debian::template title="Enviando Informação de um Espelho"
-#use wml::debian::translation-check translation="1.41"
+#use wml::debian::translation-check translation="1.46"
 
 <p>Se você deseja enviar informações sobre um espelho do Debian
-(repositório FTP, web), você pode fazer isto usando o formulário abaixo.
+(repositório FTP, web), você pode fazer isto usando o formulário abaixo.</p>
 
 <p>Há <a href="#examples">exemplos</a> na parte inferior da página, caso você
-não tenha certeza sobre como proceder.
+não tenha certeza sobre como proceder.</p>
 
 <p>Se você precisar enviar mudanças para um espelho já existente, simplesmente
 faça um novo (completo) envio e adicione um comentário que indique que se trata
-de uma atualização.
+de uma atualização.</p>
 
-<p>Nem toda a informação fornecida aqui será mostrada na lista de espelhos,
-como o endereço do responsável pelo espelho.
-O endereço de email será mostrado em algum lugar em nossos sites,
-de forma que editores de lista de espelhos podem contatar você com novidades e
-relatórios de bugs.
+<p>A maioria das informações fornecidas aqui serão mostradas na lista de
+espelhos. O endereço de e-mail público do mantenedor do espelho estará
+disponível para todos os usuários. Se você enviar um endereço privado, ele
+estará disponível somente para os editores da lista de espelhos Debian, para
+que eles possam contatá-lo com notícias importantes e/ou relatórios de
+problemas.</p>
 
-<p>Por favor, observe que um espelho oficial deve usar rsync como o método para
-obter os pacotes atuais.
-Nós recomendamos fortemente a utilização do script <a href="anonftpsync">anonftpsync</a>.</p>
+<p>Por favor, observe que um espelho oficial deve seguir as
+<a href="ftpmirror">regras e definições presentes em nossa documentação</a>.</p>
 
-<H2>Informações básicas</H2>
 
-<P>Por favor, inclua o nome pelo qual você deseja que o espelho seja chamado
+<h2>Informações básicas</h2>
+
+<p>Por favor, inclua o nome pelo qual você deseja que o espelho seja chamado
 no campo<em>Site</em>. Se o servidor tem outros nomes, liste-os no campo
 <em>Aliases</em>, separados por vírgula (`,'). Este é provavelmente
-o reverso das entradas do DNS.
+o reverso das entradas do DNS.</p>
 
 <form method=post action="http://cgi.debian.org/cgi-bin/submit_mirror.pl">
 <p>
 Site: <input type="text" name="site" size="30"><br>
 Aliases: <input type="text" name="aliases" size="60">
+</p>
 
-<H2>Tipos de espelhos e métodos para acessá-los</H2>
+<p>
+<input type="radio" name="submissiontype" value="new" checked>
+New mirror submission (Envio de novo espelho)
+<input type="radio" name="submissiontype" value="update">
+Update of an existing mirror (Atualização de um espelho existente)
+</p>
+
+<h2>Tipos de espelhos e métodos para acessá-los</h2>
 
 <p>Entre com o endereço do espelho Debian em seu site nos campos abaixo.
-Deixe os campos não necessários em branco.
+Deixe os campos não necessários em branco.</p>
 
 <define-tag tablerow>
 	<tr><td>%0: </td><td><input type="text" name="%1" size="%2"></td></tr>
@@ -46,9 +55,6 @@ Deixe os campos não necessários em branco.
 <tablerow "Repositório de pacotes, acesso por HTTP"   archive-http   30>
 <tablerow "Repositório de pacotes, acesso por FTP"    archive-ftp    30>
 <tablerow "Repositório de pacotes, acesso por rsync"  archive-rsync  30>
-<tablerow "Pacotes Non-US, acesso por HTTP"    nonus-http     30>
-<tablerow "Pacotes Non-US, acesso por FTP"     nonus-ftp      30>
-<tablerow "Pacotes Non-US, acesso por rsync"   nonus-rsync    30>
 <tablerow "Atualizações de Segurança por HTTP" security-http  30>
 <tablerow "Atualizações de Segurança por FTP"  security-ftp   30>
 <tablerow "Atualizações de Segurança por rsync" security-rsync 30>
@@ -58,25 +64,29 @@ Deixe os campos não necessários em branco.
 <tablerow "Versões antigas do Debian, acesso por HTTP"  old-http     30>
 <tablerow "Versões antigas do Debian, acesso por FTP"   old-ftp      30>
 <tablerow "Versões antigas do Debian, acesso por rsync" old-rsync    30>
+<tablerow "Pacotes Non-US, acesso por HTTP"    nonus-http     30>
+<tablerow "Pacotes Non-US, acesso por FTP"     nonus-ftp      30>
+<tablerow "Pacotes Non-US, acesso por rsync"   nonus-rsync    30>
 <tablerow "Páginas web do Debian, acesso por HTTP"   www-http       30>
 <tablerow "Páginas web do Debian, acesso por FTP"    www-ftp        30>
 <tablerow "Páginas web do Debian, acesso por rsync"  www-rsync      30>
 </table>
 
-<H2>Informações sobre o site do espelho</H2>
+<h2>Informações sobre o site do espelho</h2>
 
 <p>Por favor, preencha todos os campos que seguem (nós não divulgaremos o nome e
 e-mail para ninguém). O país e a origem do espelho são importantes, já que
-usamos para organizar as entradas.
+usamos para organizar as entradas.</p>
 
 <table>
-<tablerow "Espelho atualizado a partir de"          mirrors_from  30>
-<tablerow "Nome do responsável pelo site"         maint_name    30>
-<tablerow "E-mail do responsável pelo site"        maint_email   30>
+<tablerow "Espelho atualizado a partir de"           mirrors_from  30>
+<tablerow "Nome do responsável pelo site"            maint_name    30>
+<tablerow "E-mail público do responsável pelo site"  maint_public_email    30>
 <tr><td>País do site:  <td><select name="country">
 #include "$(ENGLISHDIR)/mirror/countries.data"
 <: country_list() :>
 </select>
+<tablerow "E-mail privado do responsável pelo site (opcional)"  maint_private_email   30>
 <tablerow "Localização do site (opcional)"     location      30>
 <tablerow "Nome do patrocinador do site (opcional)" sponsor_name  30>
 <tablerow "URL do site patrocinador (opcional)"  sponsor_url   30>
@@ -99,14 +109,14 @@ Métodos de acesso alternativos (NFS, IPv6, ...) também são adeqüados.
 </form>
 
 <p>Seu site entrará na lista dentro de uma semana. Será enviado um e-mail para
-você em caso de algum problema com as informações fornecidas.
+você em caso de algum problema com as informações fornecidas.</p>
 
 
-<H2><a name="examples">Exemplos</a></H2>
+<h2><a name="examples">Exemplos</a></h2>
 
 <p>As seguintes informações enviadas seriam para um servidor chamado
 debian.example.com, o qual também pode ser encontrado usando e1.example.com.
-Este nomes são fictícios, é claro.
+Este nomes são fictícios, é claro.</p>
 
 <div class="centerblock">
 <p>
@@ -115,7 +125,7 @@ Aliases: <code>e1.example.com</code>
 </p>
 </div>
 
-<p>O espelho do repositório Debian está no diretório /debian/ do servidor web:
+<p>O espelho do repositório Debian está no diretório /debian/ do servidor web:</p>
 
 <div class="centerblock">
 <p>
@@ -123,7 +133,7 @@ Repositório de pacotes, acessado por HTTP: <code>/debian/</code>
 </p>
 </div>
 
-<p>Isto é para ftp://debian.example.com/debian/:
+<p>Isto é para ftp://debian.example.com/debian/:</p>
      
 <div class="centerblock">
 <p>
@@ -131,7 +141,7 @@ Repositório de pacotes, acessado por FTP: <code>/debian/</code>
 </p>
 </div>
 
-<p>Este é o diretório usado pelo acesso do rsync, debian.example.com::debian/:
+<p>Este é o diretório usado pelo acesso do rsync, debian.example.com::debian/:</p>
 
 <div class="centerblock">
 <p>
@@ -140,7 +150,7 @@ Repositório de pacotes, acessado por rsync: <code>debian/</code>
 </div>
 
 <p>Este espelho é atualizado a partir de ftp.xy.debian.org, então iremos
-adicionar:
+adicionar:</p>
 
 <div class="centerblock">
 <p>
@@ -148,7 +158,7 @@ O espelho é atualizado a partir de: <code>ftp.xy.debian.org</code>
 </p>
 </div>
 
-<p>Agora para informações do responsável:
+<p>Agora para informações do responsável:</p>
 
 <div class="centerblock">
 <p>
@@ -159,9 +169,9 @@ E-mail do responsável pelo site: <code>address.goes@here.example.com</code>
 
 <p>(Mais uma vez, o endereço do responsável não será mostrado nas listas
 públicas, mas em sites usados por editores de listas de espelhos.
-Por favor, informe o endereço correto.)
+Por favor, informe o endereço correto).</p>
 
-<p>As outras informações serão:
+<p>As outras informações serão:</p>
 
 <div class="centerblock">
 <p>
@@ -170,7 +180,7 @@ Comentário: <code>Algumas notas suas que podem ajudar outras pessoas</code>
 </p>
 </div>
 
-<p>O seguinte exemplo descreve o espelho ftp.uk.debian.org:
+<p>O seguinte exemplo descreve o espelho ftp.uk.debian.org:</p>
 
 <div class="centerblock">
 <p>
@@ -186,7 +196,7 @@ País: <code>Reino Unido [GB]</code>
 </div>
 
 <p>Se você mantém cópias de versões antigas do Debian, sua entrada será 
-algo desse tipo:
+algo desse tipo:</p>
 
 <div class="centerblock">
 <p>
