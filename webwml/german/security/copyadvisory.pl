@@ -91,6 +91,7 @@ while (<SRC>)
 	s/We recommend that you update your (.*) packages immediately/Wir empfehlen Ihnen, Ihre $1-Pakete zu aktualisieren/;
 	s/We recommend that you update your (.*) packages/Wir empfehlen Ihnen, Ihre $1-Pakete zu aktualisieren/;
 	s/We recommend that you update your (.*) package/Wir empfehlen Ihnen, Ihr $1-Paket zu aktualisieren/;
+	s/denial of service/Diensteverweigerung (<q>denial of service<\/q>)/;
 	s/buffer overflows?/Pufferüberlauf/;
 	s/integer overflow/Integer-Überlauf/;
 	s/format string vulnerability/Formatzeichenkettenverwundbarkeit/;
@@ -105,6 +106,7 @@ while (<SRC>)
 	s/>programming error</>Programmierfehler</;
 	s/Several vulnerabilities/Mehrere Verwundbarkeiten/;
 	s/several vulnerabilities/mehrere Verwundbarkeiten/;
+	s/Multiple vulnerabilities/Mehrere Verwundbarkeiten/;
 	s/>several</>mehrere</;
 	s/>unsanitise</>Fehlende Entschärfung</;
 	s/ identifies the following problems:/ identifieziert die folgenden Probleme:/;
@@ -121,15 +123,15 @@ while (<SRC>)
 	s/This problem has been fixed/This problem has been fixed/;
 	s/(?:,)?( )?this problem is fixed in/$1this problem is fixed in/;
 	s/(?:,)?( )?this problem is fixed/$1this problem is fixed/;
-	s/These problems have been fixed/These problems have been fixed/;
-	s/(?:,)?( )?these problems have been fixed in/$1these problems have been fixed in/;
-	s/(?:,)?( )?these problems have been fixed$/$1these problems have been fixed/;
-	s/(?:,)?( )?these problems have(?: been)?$/$1these problems have/;
-	s/(?:,)?( )?these probleme are fixed in/$1these problem are fixed in/;
+	s/These problems have been fixed/diese Probleme wurden in behoben/;
+	s/(?:,)?( )?these problems have been fixed in/$1wurden diese Probleme in Version korrigiert/;
+	s/(?:,)?( )?these problems have been fixed$/$1wurden diese Probleme behoben/;
+	s/(?:,)?( )?these problems have(?: been)?$/$1diese Probleme wurden/;
+	s/(?:,)?( )?these probleme are fixed in/$1diese Probleme wurden in behoben/;
 	s/(?:,)?( )?these probleme are fixed/wurden diese Probleme behoben/;
 	s/(?:,)?( )?these problems will be fixed soon/diese Probleme werden bald behoben sein/;
 	s/(?:been )?fixed in version/wurde in Version behoben/;
-	s/\bin version\b/in version/;
+	s/\bin version\b/in Version/;
 	s/of the Debian package/des Debian-Pakets/;
 	s/upstream version/Originalversion/;
 	s/([Ff])or the old stable distribution/$1ür die alte Stable-Distribution/;
