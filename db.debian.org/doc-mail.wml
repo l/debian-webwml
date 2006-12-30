@@ -61,9 +61,10 @@ occurrences of a field. Useful e.g. to unset your vacation status.
 The fields that can be deleted are:
 <b>c</b>, <b>l</b>, <b>facsimiletelephonenumber</b>, <b>telephonenumber</b>,
 <b>postaladdress</b>, <b>postalcode</b>, <b>emailforward</b>, <b>ircnick</b>,
-<b>onvacation</b>, <b>labeleduri</b>, <b>latitude</b>, <b>longitude</b>,
-<b>dnsZoneEntry</b>,
-<b>icquin</b>, <b>sshrsaauthkey</b>, and <b>sshdsaauthkey</b>
+<b>onvacation</b>, <b>labeledURI</b>, <b>latitude</b>, <b>longitude</b>,
+<b>dnsZoneEntry</b>, <b>jabberJID</b>, <b>birthDate</b>, <b>mailGreylisting</b>,
+<b>mailCallout</b>, <b>mailRBL</b>, <b>mailRHSBL</b>, <b>mailDisableMessage</b>,
+<b>icquin</b>, <b>sshrsaauthkey</b>, <b>mailwhitelist</b>
 
 <li>The daemon has a special parser to help changing latitude and longitude
 values. It accepts several common formats for position information and
@@ -86,6 +87,11 @@ which will set the authentication key to the identity you are using.
 
 Multiple keys per user are supported, but they must all be sent at once.
 
+<li>RBL, RHSBL, and whitelists can only be updated via the mail gateway.  Like
+DNS and ssh keys, any list specified must be specified in its enterity.  The format is:
+<b>listtype</b> <b>dns.domain.of.rbl/IP to whitelist</b> where listtype is one of mailRBL,
+mailRHSBL, and mailWhitelist
+
 <li>Debian.net DNS Zone Entry. The only way to get a debian.net address is
 to use the mail gateway. It
 will verify the request and prevent name collisions automatically. Requests
@@ -95,8 +101,7 @@ Note that you
 cannot combine CNAME with any other record types. The precise form
 is critical and must not be deviated from.
 Like the SSH function above, multiple hosts are supported, but they must all
-be sent at once. The debian.net zone is only reloaded once per day at
-midnight -0700.
+be sent at once. The debian.net zone is reloaded hourly.
 
 <li>If the single word <b>show</b> appears on a line then a PGP encrypted version
 of the entire record will be attached to the resulting email.
@@ -127,5 +132,5 @@ a short while before any changes made take effect.
 <p>
 If the mail you're sending to the mail robot is too long for your MTA
 and gets split please use a different mail origin or pass the mail to
-the MTA on a debian.org machine, e.g. master:
-<pre>cat .ssh/id_dsa.pub | gpg --clearsign | ssh master mail changes@db.debian.org</pre>
+the MTA on a debian.org machine, e.g. gluck:
+<pre>cat .ssh/id_dsa.pub | gpg --clearsign | ssh gluck mail changes@db.debian.org</pre>
