@@ -10,7 +10,7 @@
   <gettext domain="ports">Hurd CDs</gettext>
 </define-menu-item>
 
-<menu-item name="ports"         basename="../index">
+<menu-item name="ports"         basename="$(HOME)/ports/index">
 <menu-item name="hurd"          basename="index">
 <menu-item name="news"          basename="hurd-news">
 <menu-item name="install"       basename="hurd-install">
