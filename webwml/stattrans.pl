@@ -272,7 +272,7 @@ foreach $lang (@search_in) {
     foreach $l (@processed_langs) {
         print "$l.html " if ($config{'verbose'});
 
-        $t_body = $u_body = $o_body = "";
+        $t_body = $u_body = $un_body = $uu_body = $o_body = "";
         $translated{$lang} = $outdated{$lang} = $untranslated{$lang} = 0;
 
         # get stats about files
@@ -320,13 +320,24 @@ foreach $lang (@search_in) {
             }
             # Untranslated pages
             else {
+	        my $u_tmp;
                 if (($file !~ /\.wml$/)
                     || ($file eq "devel/wnpp/wnpp.wml")) {
-                    $u_body .= sprintf "<tr><td>%s</td><td>&nbsp;</td></tr>\n", $file;
+                    $u_tmp = sprintf "<tr><td>%s</td><td>&nbsp;</td></tr>\n", $file;
                 } else {
                     (my $base = $file) =~ s/\.wml$//;
-                    $u_body .= sprintf "<tr><td><a href=\"$opt_b/%s\">%s</a></td><td align=\"right\">%d</td><td>(%.2f&nbsp;&permil;)</td></tr>\n", $base, $base, $sizes{$file}, $sizes{$file}/$nsize * 1000;
+                    $u_tmp = sprintf "<tr><td><a href=\"$opt_b/%s\">%s</a></td><td align=\"right\">%d</td><td>(%.2f&nbsp;&permil;)</td></tr>\n", $base, $base, $sizes{$file}, $sizes{$file}/$nsize * 1000;
                 }
+		if ((($file =~ /(News|events|security|vote)\/[0-9]{4}\//) &&
+		     ($file !~ /index.wml$/)) ||
+		    ($file =~ /(News\/weekly\/[0-9]{4}\/|security\/undated)/)) {
+		    $un_body .= $u_tmp;
+		} elsif (($file =~ /(consultants|users\/(com|edu|gov|org))\//) &&
+		         ($file !~ /index.wml$/)) {
+		    $uu_body .=$u_tmp;
+		} else {
+		    $u_body .= $u_tmp;
+		}
                 $untranslated{$lang}++;
 		$untranslated_s{$lang} += $sizes{$file};
             }
@@ -383,15 +394,15 @@ foreach $lang (@search_in) {
             # printf HTML "<tr><td colspan=4><h1 align=\"center\">%s: %s</h1></td></tr>", $config{'title'}, ucfirst $lang;
 
             print HTML "<tr><th>Translated</th><th>Up-to-date</th><th>Outdated</th><th>Not translated</th></tr>\n<tr>";
-            printf HTML "<td>%d files (%.1f%%)</td>",     $wml{$lang},          $percent_a{$lang};
-            printf HTML "<td>%d files (%.1f%%)</td>",     $translated{$lang},   $percent_t{$lang};
-            printf HTML "<td>%d files (%.1f%%)</td>",       $outdated{$lang},     $percent_o{$lang};
+            printf HTML "<td>%d files (%.1f%%)</td>", $wml{$lang}, $percent_a{$lang};
+            printf HTML "<td>%d files (%.1f%%)</td>", $translated{$lang}, $percent_t{$lang};
+            printf HTML "<td>%d files (%.1f%%)</td>", $outdated{$lang}, $percent_o{$lang};
             printf HTML "<td>%d files (%.1f%%)</td>", $untranslated{$lang}, $percent_u{$lang};
             print HTML "</tr>\n";
 	    print HTML "<tr>\n";
-	    printf HTML "<td>%d bytes (%.1f%%)</td>",     $wml_s{$lang},        $percent_as{$lang};
-	    printf HTML "<td>%d bytes (%.1f%%)</td>",     $translated_s{$lang}, $percent_ts{$lang};
-	    printf HTML "<td>%d bytes (%.1f%%)</td>",       $outdated_s{$lang},   $percent_os{$lang};
+	    printf HTML "<td>%d bytes (%.1f%%)</td>", $wml_s{$lang}, $percent_as{$lang};
+	    printf HTML "<td>%d bytes (%.1f%%)</td>", $translated_s{$lang}, $percent_ts{$lang};
+	    printf HTML "<td>%d bytes (%.1f%%)</td>", $outdated_s{$lang}, $percent_os{$lang};
 	    printf HTML "<td>%d bytes (%.1f%%)</td>", $nsize-$wml_s{$lang}, $percent_us{$lang};
 	    print HTML "</tr>\n";
             print HTML "</table>\n";
@@ -405,7 +416,13 @@ foreach $lang (@search_in) {
                 print HTML "<li><a href=\"#outdated\">Outdated translations</a></li>\n";
             }
             if ($u_body) {
-                print HTML "<li><a href=\"#untranslated\">Pages not translated</a></li>\n";
+                print HTML "<li><a href=\"#untranslated\">General pages not translated</a></li>\n";
+            }
+            if ($un_body) {
+                print HTML "<li><a href=\"#untranslated-news\">News items not translated</a></li>\n";
+            }
+            if ($uu_body) {
+                print HTML "<li><a href=\"#untranslated-user\">Consultant/user pages not translated</a></li>\n";
             }
             if ($t_body) {
                 print HTML "<li><a href=\"#uptodate\">Translations up to date</a></li>\n";
@@ -430,9 +447,21 @@ foreach $lang (@search_in) {
                 print HTML "</table>\n";
             }
             if ($u_body) {
-                print HTML "<h3><a name='untranslated'>Pages not translated</a>: <a href='#top'>(top)</a></h3>\n";
-		print HTML "<table summary=\"Untranslated Pages\">\n";
+                print HTML "<h3><a name='untranslated'>Genereal pages not translated</a>: <a href='#top'>(top)</a></h3>\n";
+		print HTML "<table summary=\"Untranslated general pages\">\n";
                 print HTML $u_body;
+		print HTML "</table>\n";
+            }
+            if ($un_body) {
+                print HTML "<h3><a name='untranslated-news'>News items not translated</a>: <a href='#top'>(top)</a></h3>\n";
+		print HTML "<table summary=\"Untranslated news items\">\n";
+                print HTML $un_body;
+		print HTML "</table>\n";
+            }
+            if ($uu_body) {
+                print HTML "<h3><a name='untranslated-user'>Consultant/user pages not translated</a>: <a href='#top'>(top)</a></h3>\n";
+		print HTML "<table summary=\"Untranslated consultant/user pages\">\n";
+                print HTML $uu_body;
 		print HTML "</table>\n";
             }
             if ($t_body) {
@@ -445,7 +474,7 @@ foreach $lang (@search_in) {
             if ($lang ne 'english') {
                 print HTML "<h3><a name='gettext'>Translations of templates (gettext files)</a>: <a href='#top'>(top)</a></h3>\n";
     #            print HTML $border_head;
-                print HTML "<table summary=\"Gettext Statistics\" width=\"100%\">\n";
+                print HTML "<table summary=\"Gettext statistics\" width=\"100%\">\n";
                 print HTML "<tr><th>File</th><th>Up to date</th><th>Fuzzy</th><th>Untranslated</th><th>Total</th></tr>\n";
                 foreach my $domain (sort keys %po_total) {
                     next if $domain eq 'total';
