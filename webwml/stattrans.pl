@@ -415,27 +415,32 @@ foreach $lang (@search_in) {
             if ($o_body) {
                 print HTML "<li><a href=\"#outdated\">Outdated translations</a></li>\n";
             }
-            if ($u_body) {
-                print HTML "<li><a href=\"#untranslated\">General pages not translated</a></li>\n";
-            }
-            if ($un_body) {
-                print HTML "<li><a href=\"#untranslated-news\">News items not translated</a></li>\n";
-            }
-            if ($uu_body) {
-                print HTML "<li><a href=\"#untranslated-user\">Consultant/user pages not translated</a></li>\n";
+            if (($u_body) || ($un_body) || ($uu_body)) {
+                print HTML "<li>Untranslated</li>\n";
+                print HTML "<ul>\n";
+                if ($u_body) {
+                    print HTML "<li><a href=\"#untranslated\">General pages</a></li>\n";
+                }
+                if ($un_body) {
+                    print HTML "<li><a href=\"#untranslated-news\">News items</a></li>\n";
+                }
+	        if ($uu_body) {
+              	    print HTML "<li><a href=\"#untranslated-user\">Consultant/user pages</a></li>\n";
+                }
+                print HTML "</ul>\n";
             }
             if ($t_body) {
-                print HTML "<li><a href=\"#uptodate\">Translations up to date</a></li>\n";
+                print HTML "<li><a href=\"#uptodate\">Translated pages (up-to-date)</a></li>\n";
             }
             if ($lang ne 'english') {
-                print HTML "<li><a href=\"#gettext\">Translations of templates (gettext files)</a></li>\n";
+                print HTML "<li><a href=\"#gettext\">Translation of templates (gettext files)</a></li>\n";
             }
             print HTML "</ul>\n";
 
             # outputs the content
             if ($o_body) {
-                print HTML "<h3><a name='outdated'>Outdated translations</a>: <a href='#top'>(top)</a></h3>\n";
-                print HTML "<table summary=\"Outdated Translations\" border=0 cellpadding=1 cellspacing=1>\n";
+                print HTML "<h3 id='outdated'>Outdated translations: <a href='#top'>(top)</a></h3>\n";
+                print HTML "<table summary=\"Outdated translations\" border=0 cellpadding=1 cellspacing=1>\n";
                 print HTML "<tr><th>File</th><th>Translated</th><th>Origin</th><th>Comment</th>";
                 if ($opt_d eq "u") { print HTML "<th>Unified diff</th>"; }
                 elsif ($opt_d eq "h") { print HTML "<th>Colored diff</th>"; }
@@ -447,33 +452,33 @@ foreach $lang (@search_in) {
                 print HTML "</table>\n";
             }
             if ($u_body) {
-                print HTML "<h3><a name='untranslated'>Genereal pages not translated</a>: <a href='#top'>(top)</a></h3>\n";
-		print HTML "<table summary=\"Untranslated general pages\">\n";
+                print HTML "<h3 id='untranslated'>Genereal pages not translated: <a href='#top'>(top)</a></h3>\n";
+                print HTML "<table summary=\"Untranslated general pages\">\n";
                 print HTML $u_body;
-		print HTML "</table>\n";
+                print HTML "</table>\n";
             }
             if ($un_body) {
-                print HTML "<h3><a name='untranslated-news'>News items not translated</a>: <a href='#top'>(top)</a></h3>\n";
-		print HTML "<table summary=\"Untranslated news items\">\n";
+                print HTML "<h3 id='untranslated-news'>News items not translated: <a href='#top'>(top)</a></h3>\n";
+                print HTML "<table summary=\"Untranslated news items\">\n";
                 print HTML $un_body;
-		print HTML "</table>\n";
+                print HTML "</table>\n";
             }
             if ($uu_body) {
-                print HTML "<h3><a name='untranslated-user'>Consultant/user pages not translated</a>: <a href='#top'>(top)</a></h3>\n";
-		print HTML "<table summary=\"Untranslated consultant/user pages\">\n";
+                print HTML "<h3 id='untranslated-user'>Consultant/user pages not translated: <a href='#top'>(top)</a></h3>\n";
+                print HTML "<table summary=\"Untranslated consultant/user pages\">\n";
                 print HTML $uu_body;
-		print HTML "</table>\n";
+                print HTML "</table>\n";
             }
             if ($t_body) {
-                print HTML "<h3><a name='uptodate'>Translations up to date</a>: <a href='#top'>(top)</a></h3>\n";
-		print HTML "<ul class=\"discless\">\n";
+                print HTML "<h3 id='uptodate'>Translated pages (up-to-date): <a href='#top'>(top)</a></h3>\n";
+                print HTML "<ul class=\"discless\">\n";
                 print HTML $t_body;
-		print HTML "</ul>\n";
+                print HTML "</ul>\n";
             }
             # outputs the gettext stats
             if ($lang ne 'english') {
-                print HTML "<h3><a name='gettext'>Translations of templates (gettext files)</a>: <a href='#top'>(top)</a></h3>\n";
-    #            print HTML $border_head;
+                print HTML "<h3 id='gettext'>Translation of templates (gettext files): <a href='#top'>(top)</a></h3>\n";
+#               print HTML $border_head;
                 print HTML "<table summary=\"Gettext statistics\" width=\"100%\">\n";
                 print HTML "<tr><th>File</th><th>Up to date</th><th>Fuzzy</th><th>Untranslated</th><th>Total</th></tr>\n";
                 foreach my $domain (sort keys %po_total) {
