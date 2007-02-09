@@ -452,7 +452,7 @@ foreach $lang (@search_in) {
                 print HTML "</table>\n";
             }
             if ($u_body) {
-                print HTML "<h3 id='untranslated'>Genereal pages not translated: <a href='#top'>(top)</a></h3>\n";
+                print HTML "<h3 id='untranslated'>General pages not translated: <a href='#top'>(top)</a></h3>\n";
                 print HTML "<table summary=\"Untranslated general pages\">\n";
                 print HTML $u_body;
                 print HTML "</table>\n";
