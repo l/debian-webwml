@@ -1,45 +1,53 @@
 #use wml::debian::template title="Enviar información del sitio de réplica"
-#use wml::debian::translation-check translation="1.46" maintainer="Fernando Cerezal"
+#use wml::debian::translation-check translation="1.58" maintainer="Fernando Cerezal"
 
 <p>Si le gustaría enviar información acerca de un sitio de réplica de Debian
-(archivo FTP, web), puede hacerlo usando el formulario de debajo.</p>
+(archivo FTP, web), puede hacerlo usando el formulario de debajo.
+La mayoría de la información proporcionada se mostrará en la lista de réplicas.
+</p>
 
 <p>Hay <a href="#examples">ejemplos</a> al final de la página en el caso de
 que no es'te seguro de cómo actuar.</p>
 
-<p>Si necesita enviar cambios a su entrada existente, simplemente haga un
-envío nuevo y añada un comentario referente a que es una actualización.</p>
-
-<p>La mayoría de la información que suministre se mostrará en la lista de réplicas. La dirección de correo electrónico del responsable de la réplica estará disponible para todos los usuarios. Si remite una dirección privada, sólo estará disponible para los editores de la lista de réplicas de Debian, para que se puedan poner en contacto con usted si hay noticias importantes y/o informes de fallo.</p>
+<p><span style="color: red">¡Aviso!</span> Desafortunadamente, todo lo remitido
+a través de esta página entre mediados de noviembre de 2005 y el 29 de enero de 2007
+que parecía haberse realizado normalmente, en realidad <em>falló</em> y
+no los recibimos. Nos disculpamos por este problema, que se debió a un error de
+programación en el programa de procesamiento. Si nos escribió durante este 
+período, por favor, resuscriba su réplica de nuevo.</p>
 
 #La dirección de correo electrónico se mostrará en cualquier parte en nuestros
 #sitios, de forma que los editores de la lista de réplicas pueda contactar con
 #usted para informarle de noticias e informes de errores.
 
-<p>Por favor, dese cuenta que una réplica oficial debe seguir las
+<p>Por favor, dese cuenta de que una réplica oficial debe seguir las
 <a href="ftpmirror">reglas y directrices expuestas en nuestra documentación</a>.</p>
+
+<form method=post action="http://cgi.debian.org/cgi-bin/submit_mirror.pl">
 
 <h2>Información básica</h2>
 
-<p>Por favor, incluya el nombre bajo el que desea que se liste el sitio de
-réplica en el campo <em>Sitio</em>. Si el servidor tiene otros nombres,
-lístelos en el campo <em>Aliases</em>, separados por comas (`,'). Esto será
-probablemente la inversa de las entradas DNS.</p>
-
-<form method=post action="http://cgi.debian.org/cgi-bin/submit_mirror.pl">
 <p>
-Sitio: <input type="text" name="site" size="30"><br>
-Aliases: <input type="text" name="aliases" size="60">
+<input type="radio" name="submissiontype" value="nuevo" checked>
+Remitir una réplica nueva
+<input type="radio" name="submissiontype" value="actualización">
+Actualizar una réplica existente
 </p>
 
-+<p>
-+<input type="radio" name="submissiontype" value="new" checked>
-+New mirror submission
-+<input type="radio" name="submissiontype" value="update">
-+Update of an existing mirror
-+</p>
+<p>Por favor, incluya el nombre bajo el que desea que se liste la réplica en 
+   el campo <em>Sitio</em>.</p>
 
-<h2>Tipos de sitios de réplica y métodos de acceder a ellos</h2>
+<p>
+Sitio: <input type="text" name="site" size="30"></p>
+
+<p>Si el servidor tiene otros nombres, enumérelos en el campo <em>Alias</em>,
+separados por comas (,).
+</p>
+
+<p>Alias: <input type="text" name="aliases" size="60"></p>
+
+
+<h2>Tipos de sitios de réplica y métodos para acceder a ellos</h2>
 
 <p>Introduzca las rutas a la réplica de Debian en su sitio en los campos
 inferiores. Deje en blanco los campos que no sean relevantes.</p>
@@ -55,9 +63,9 @@ inferiores. Deje en blanco los campos que no sean relevantes.</p>
 <tablerow "Actualizaciones de seguridad, sobre HTTP"  security-http  30>
 <tablerow "Actualizaciones de seguridad, sobre FTP"   security-ftp   30>
 <tablerow "Actualizaciones de seguridad, sobre rsync" security-rsync 30>
-<tablerow "Imágenes de CD, sobre HTTP"                cdimage-http   30>
-<tablerow "Imágenes de CD, sobre FTP"                 cdimage-ftp    30>
-<tablerow "Imágenes de CD, sobre rsync"               cdimage-rsync  30>
+<tablerow "Imágenes de CD/DVD, sobre HTTP"            cdimage-http   30>
+<tablerow "Imágenes de CD/DVD, sobre FTP"             cdimage-ftp    30>
+<tablerow "Imágenes de CD/DVD, sobre rsync"           cdimage-rsync  30>
 <tablerow "Versiones antiguas de Debian, sobre HTTP"  old-http       30>
 <tablerow "Versiones antiguas de Debian, sobre FTP"   old-ftp        30>
 <tablerow "Versiones antiguas de Debian, sobre rsync" old-rsync      30>
@@ -71,19 +79,45 @@ inferiores. Deje en blanco los campos que no sean relevantes.</p>
 
 <h2>Información sobre el sitio de réplica</h2>
 
-<p>Por favor, rellene toda la información siguiente (no comunicaremos el
-nombre ni el correo electrónico a nadie). El país y la réplica de origen
-son importantes, ya que los usamos para organizar las entradas.</p>
+<table>
+<tablerow "El sitio de réplica se actualiza desde"          mirrors_from  30>
+<tr>
+<td>Arquitecturas replicadas:
+<td>
+<label><input type=checkbox name=architectures value="ALL">&nbsp;<em>todas (esto es, no se excluye por arquitectura)</em></label><br>
+#include "$(ENGLISHDIR)/releases/$(TESTING)/release.data"
+<:
+my $na = scalar keys %arches; $na = int($na / 3 + .5);
+foreach my $a (sort keys %arches) {
+  $i++;
+  my $aname = $arches{$a}; $aname =~ s, ,\&nbsp\;,g;
+  print "<br>\n" if ($i % $na == 0);
+  print "<label><input type=checkbox name=architectures value=".$a.">&nbsp;".$aname."&nbsp;(".$a.")</label> &nbsp;\n";
+}
+:>
+</td></tr>
+</table>
 
 <table>
-<tablerow "El sitio de réplica es actualizado desde"          mirrors_from  30>
 <tablerow "Nombre del mantenedor del sitio"         maint_name    30>
 <tablerow "Correo electrónico público del mantenedor del sitio"        maint_public_email   30>
-<tablerow "Correo electrónico privado del mantenedor del sitio (opcional)"        maint_private_email   30>
+<tr><td>&nbsp;</td><td>
+<small>
+La dirección de correo electrónico pública del mantenedor de la réplica se mostrará a todos los usuarios.
+</small>
+</td></tr>
 <tr><td>País del sitio:  <td><select name="country">
 #include "$(ENGLISHDIR)/mirror/countries.data"
 <: country_list() :>
 </select>
+<tablerow "Correo electrónico privado del mantenedor del sitio (opcional)"        maint_private_email   30>
+<tr><td>&nbsp;</td><td>
+<small>
+Si remite una dirección privada, estará disponible sólo para los editores de
+la lista de réplicas de Debian, para contactar en caso de noticias importantes
+y/o informes de fallo.
+</small>
+</td></tr>
 <tablerow "Localización del sitio (opcional)"     location      30>
 <tablerow "Nombre del patrocinador del sitio (opcional)" sponsor_name  30>
 <tablerow "URL del patrocinador del sitio (opcional)"  sponsor_url   30>
@@ -105,7 +139,8 @@ ancho de banda). También tienen cabida aquí otros métodos de acceso alternativo
 </p>
 </form>
 
-<p>Su sitio aparecerá en la lista en una semana. Podemos mandarle un correo
+<p>Su sitio debería aparecer en la lista en una semana, tan pronto como un 
+operador humano lo verifique y añada. Podemos mandarle un correo
 electrónico en caso de que haya problemas con la entrada enviada.</p>
 
 
@@ -118,7 +153,7 @@ ficticios, por supuesto.</p>
 <div class="centerblock">
 <p>
 Sitio: <code>debian.ejemplo.com</code><br>
-Aliases: <code>e1.ejemplo.com</code>
+Alias: <code>e1.ejemplo.com</code>
 </p>
 </div>
 
@@ -162,22 +197,41 @@ La réplica se actualiza desde: <code>ftp.xy.debian.org</code>
 <div class="centerblock">
 <p>
 Nombre del mantenedor del sitio: <code>Juan Nadie</code><br>
-Correo electrónico del mantenedor del sitio: <code>la.dirección@va.aquí.com</code>
+Correo electrónico pública del mantenedor del sitio: <code>la.dirección@va.aquí.com</code>
 </p>
 </div>
 
-<p>(Una vez más, la dirección del responsable no se mostrará en las listas,
-sino en los sitios usados por los editores de la lista de réplicas.
-Por favor, introduzca una dirección correcta.)</p>
+<p>Esta dirección del mantenedor generalmente no se mostrará en las listas públicas,
+pero es necesario tener una para que los editores de la lista y los usuarios
+puedan contactar con usted en caso de problemas. Por favor, introduzca una dirección correcta.</p>
 
-<p>La otra información sería:</p>
+<p>La única otra información necesaria es el país.
+Por ejemplo:</p>
 
 <div class="centerblock">
 <p>
 País: <code>España [ES]</code><br>
-Comentario: <code>Cualquier aviso que le pueda ser de ayuda a los otros</code>
 </p>
 </div>
+
+<p>Opcionalmente también puede añadir:</p>
+
+<div class="centerblock">
+<p>
+Dirección de correo electrónico privada del mantenedor del sitio (opcional): <code>privado@direccion.aqui</code><br>
+Ubicación del sitio (opcional): <code>Sitio, región</code><br>
+Nombre del patrocinador del sitio (opcional): <code>nombre del patrocinador del sitio</code><br>
+URL del patrocinador del sitio (opcional): <code>http://nombre.del.patrocinador.sa/</code><br>
+Comentario: <code>Cualquier nota que piense que ayudaría a otros</code><br>
+</p>
+</div>
+
+<p>Aquí puede introducir una dirección de correo electrónico privado que sólo se
+enviará a unos pocos editores de la lista selectos, si le gustase darnos una 
+dirección más directa pero está harto de que lo publiquen.
+También puede dar crédito al patrocinador del sitio y dar otra información 
+específica sobre su sitio.</p>
+
 
 <p>El siguiente ejemplo describiría el sitio de réplica de ftp.uk.debian.org:</p>
 
