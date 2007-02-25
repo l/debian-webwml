@@ -1,5 +1,5 @@
 #use wml::debian::template title="Sitios de réplica oficiales de Debian" BARETITLE=true
-#use wml::debian::translation-check translation="1.11" maintainer="Fernando Cerezal"
+#use wml::debian::translation-check translation="1.12" maintainer="Fernando Cerezal"
 #include "$(ENGLISHDIR)/mirror/official.data"
 
 <p>Los sitios de réplica FTP oficiales del archivo de Debian tienen una
@@ -52,7 +52,7 @@ los siguientes criterios:</p>
             </li>
             <li>FTP (ftp://<var>su.servidor</var>/debian/)
                 <br>
-		Aunque el uso de FTP está llegando a estar desaprobado, todavía se usa muy ampliamente.
+		FTP es el protocolo de mayor antigüedad, y todavía se usa muy ampliamente.
             </li>
             <li>rsync (rsync://<var>su.servidor</var>::debian/)
                 <br>
@@ -61,19 +61,27 @@ los siguientes criterios:</p>
 		la proliferación de secundarias.
             </li>
         </ul>
-    <li>El sitio de réplica se debe actualizar con <a href="anonftpsync">anonftpsync</a>.
-        <a href="push_mirroring">La réplica por empuje</a> necesita configurarse;
+    <li>La réplica se debería actualizar con <a href="anonftpsync">anonftpsync</a>,
+        un script que proporciona estas importantes funciones:
+        <ul>
+          <li>Usa rsync y mantiene marcas de tiempo de los archivos replicados,
+              de forma que las marcas de tiempo (UTC) de los archivos coincidan
+              con el del resto de la red de réplicas.
+          <li>Tiene que existir un archivo de marcas de tiempo adicional con el
+              nombre de la replica en el subdirectorio <kbd>project/trace/</kbd>
+              de la réplica.
+              <br>
+              Esto significa ejecutar
+              <kbd>date -u &gt; .../debian/project/trace/<var>your.server</var></kbd>
+              cuando su rsync diario haya terminado.
+              <br>
+              Es trivial de configurar, no gasta muchos recursos, pero es útil
+              para mantener un trazado de la replicación.
+          <li>Se necesita replicar los árboles <kbd>/doc</kbd> y <kbd>/project</kbd>.
+        </ul>
+    <li><a href="push_mirroring">La réplica por empuje</a> necesita configurarse;
 	siéntase libre de contactar con nosotros para ponernos en contacto con el 
 	responsable de otra réplica.
-	Los árboles <kbd>/doc</kbd> y <kbd>/project</kbd> necesitan que se 
-	repliquen. Tiene que existir un archivo de registro temporal con el
-	nombre de la réplica en el subdirectorio project/trace de la réplica.
-    <br>Esto significa ejecutar
-        <kbd>date -u &gt; .../debian/project/trace/<var>su.servidor</var></kbd>
-        tras acabar el rsync diario;
-	<br>
-	Es trivial configurarlo, no consume muchos recursos, y es útil
-	para mantener una traza de las réplicas.
     </li>
 </ul>
 
