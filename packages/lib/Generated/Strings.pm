@@ -198,7 +198,7 @@ Unter <URL:http://www.debian.org/license> finden Sie die Lizenzbedingungen.
                        'The following packages were added to the unstable Debian archive during the last 7 days.' => 'Die folgenden Pakete wurden dem unstable Debian-Archiv wц╓hrend der letzten 7 Tage hinzugefц╪gt.',
                        'These packages probably may not be used in or distributed from the U.S. due to software patents. You should check the regulations in your country before using this software.' => 'Diese Pakete dц╪rfen wahrscheinlich nicht in den USA verwendet werden oder nicht ausgefц╪hrt werden aufgrund von Software-Patenten. Sie sollten die Vorschriften in Ihrem Land ц╪berprц╪fen bevor Sie diese Software verwenden.',
                        'This information is also available as an <a href="newpkg_%s.%s.rdf">RSS feed</a>.' => 'Diese Informationen sind auch als <a href="newpkg_%s.%s.rdf">RSS-Feed</a> verfц╪gbar.',
-                       'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary.html#s-virtual_pkg">definition of virtual packages</a>.' => 'Dies ist ein <em>virtuelles Paket</em>. Sehen Sie in die <a href="%s">Debian-Policy</a> fц╪r eine <a href="%sch-binary.html#s-virtual_pkg">Definition von virtuellen Paketen</a>.',
+                       'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary#s-virtual_pkg">definition of virtual packages</a>.' => 'Dies ist ein <em>virtuelles Paket</em>. Sehen Sie in die <a href="%s">Debian-Policy</a> fц╪r eine <a href="%sch-binary#s-virtual_pkg">Definition von virtuellen Paketen</a>.',
                        'This page is also available in the following languages:
 ' => 'Diese Seite gibt es auch in den folgenden Sprachen:
 ',
@@ -407,7 +407,7 @@ See <URL:http://www.debian.org/license> for the license terms.
                        'The following packages were added to the unstable Debian archive during the last 7 days.' => 'The following packages were added to the unstable Debian archive during the last 7 days.',
                        'These packages probably may not be used in or distributed from the U.S. due to software patents. You should check the regulations in your country before using this software.' => 'These packages probably may not be used in or distributed from the U.S. due to software patents. You should check the regulations in your country before using this software.',
                        'This information is also available as an <a href="newpkg_%s.%s.rdf">RSS feed</a>.' => 'This information is also available as an <a href="newpkg_%s.%s.rdf">RSS feed</a>.',
-                       'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary.html#s-virtual_pkg">definition of virtual packages</a>.' => 'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary.html#s-virtual_pkg">definition of virtual packages</a>.',
+                       'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary#s-virtual_pkg">definition of virtual packages</a>.' => 'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary#s-virtual_pkg">definition of virtual packages</a>.',
                        'This page is also available in the following languages:
 ' => 'This page is also available in the following languages:
 ',
@@ -616,7 +616,7 @@ Katso lisenssiehdot sivulta <URL:http://www.debian.org/license>.
                        'The following packages were added to the unstable Debian archive during the last 7 days.' => 'Seuraavat paketit on lisДtty epДvakaaseen Debian-arkistoon viimeisen seitsemДn (7) pДivДn aikana.',
                        'These packages probably may not be used in or distributed from the U.S. due to software patents. You should check the regulations in your country before using this software.' => 'NДitД paketteja ei todennДkЖisesti saa kДyttДД tai levittДД Yhdysvalloissa ohjelmistopatenttien vuoksi. Kannattaa tarkistaa oman maasi sДДnnЖkset ennen nДiden ohjelmistojen kДyttДmistД.',
                        'This information is also available as an <a href="newpkg_%s.%s.rdf">RSS feed</a>.' => 'TДmД tieto on saatavilla myЖs <a href="newpkg_%s.%s.rdf">RSS-syЖtteenД</a>.',
-                       'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary.html#s-virtual_pkg">definition of virtual packages</a>.' => 'TДmД on <em>nДennДispaketti</em>. Katso <a href="%s">Debianin linjan kuvaksesta</a> <a href="%sch-binary.html#s-virtual_pkg">nДennДispaketin mДДritelmД</a>.',
+                       'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary#s-virtual_pkg">definition of virtual packages</a>.' => 'TДmД on <em>nДennДispaketti</em>. Katso <a href="%s">Debianin linjan kuvaksesta</a> <a href="%sch-binary#s-virtual_pkg">nДennДispaketin mДДritelmД</a>.',
                        'This page is also available in the following languages:
 ' => 'TДmД sivu on saatavilla myЖs seuraavilla kielillД:
 ',
@@ -823,7 +823,7 @@ See <URL:http://www.debian.org/license> for the license terms.
                        'The following packages were added to the unstable Debian archive during the last 7 days.' => 'Les paquets suivants ont ц╘tц╘ ajoutц╘s ц═ l\'archive Debian б╚&nbsp;unstable&nbsp;б╩ au cours des 7&nbsp;derniers jours.',
                        'These packages probably may not be used in or distributed from the U.S. due to software patents. You should check the regulations in your country before using this software.' => 'Ces paquets ne peuvent vraisemblablement pas ц╙tre utilisц╘s ou distribuц╘s aux ц┴tats-Unis du fait de brevets logiciels. Vous devriez vц╘rifier la rц╗glementation de votre pays avant d\'utiliser ces logiciels.',
                        'This information is also available as an <a href="newpkg_%s.%s.rdf">RSS feed</a>.' => 'Cette information est aussi disponible via le <a href="newpkg_%s.%s.rdf">fil RSS</a>.',
-                       'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary.html#s-virtual_pkg">definition of virtual packages</a>.' => 'Ceci est un <em>paquet virtuel</em>. Consultez la <a href="%s">Charte Debian</a> pour une <a href="%sch-binary.html#s-virtual_pkg">dц╘finition des paquets virtuels</a>.',
+                       'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary#s-virtual_pkg">definition of virtual packages</a>.' => 'Ceci est un <em>paquet virtuel</em>. Consultez la <a href="%s">Charte Debian</a> pour une <a href="%sch-binary#s-virtual_pkg">dц╘finition des paquets virtuels</a>.',
                        'This page is also available in the following languages:
 ' => 'Cette page est aussi disponible dans les langues suivantes&nbsp;:
 ',
@@ -1032,7 +1032,7 @@ Zie <URL:http://www.debian.org/license>voor de licentievoorwaarden.
                        'The following packages were added to the unstable Debian archive during the last 7 days.' => 'De volgende pakketten zijn in de afgelopen 7 dagen aan de ╚unstable╩ distributie toegevoegd.',
                        'These packages probably may not be used in or distributed from the U.S. due to software patents. You should check the regulations in your country before using this software.' => 'Deze pakketten mogen waarschijnlijk niet worden gebruikt in of gedistribueerd vanuit de Verenigde Staten vanwege softwarepatenten. U kunt het beste de regels in uw eigen land checken alvorens deze software te gebruiken.',
                        'This information is also available as an <a href="newpkg_%s.%s.rdf">RSS feed</a>.' => 'Deze informatie is ook beschikbaar als een <a href="newpkg_%s.%s.rdf">RSS feed</a>.',
-                       'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary.html#s-virtual_pkg">definition of virtual packages</a>.' => 'Dit is een <em>virtueel pakket</em>.  Zie het <a href="%s">Debian beleidshandboek</a> voor de <a href="%sch-binary.html#s-virtual_pkg">definitie van een virtueel pakket</a>.',
+                       'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary#s-virtual_pkg">definition of virtual packages</a>.' => 'Dit is een <em>virtueel pakket</em>.  Zie het <a href="%s">Debian beleidshandboek</a> voor de <a href="%sch-binary#s-virtual_pkg">definitie van een virtueel pakket</a>.',
                        'This page is also available in the following languages:
 ' => 'Deze pagina is ook beschikbaar in de volgende talen:
 ',
@@ -1241,7 +1241,7 @@ See <URL:http://www.debian.org/license> for the license terms.
                        'The following packages were added to the unstable Debian archive during the last 7 days.' => 'Наступн╕ пакунки було додано до нестаб╕льного арх╕ву Debian протягом останн╕х семи дн╕в.',
                        'These packages probably may not be used in or distributed from the U.S. due to software patents. You should check the regulations in your country before using this software.' => 'Ц╕ пакунки, мабуть, не можна використовувати в або експортувати з╕ США через патенти на програмне забезпечення. Вам потр╕бно перев╕рити законодавство вашо╖ кра╖ни перед використанням цих програм.',
                        'This information is also available as an <a href="newpkg_%s.%s.rdf">RSS feed</a>.' => 'Ця ╕нформац╕я також доступна як <a href="newpkg_%s.%s.rdf">лента RSS</a>.',
-                       'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary.html#s-virtual_pkg">definition of virtual packages</a>.' => 'Це&nbsp;&mdash; <em>в╕ртуальний пакунок</em>. Перегляньте <a href="%s">Пол╕тику Debian</a> щоб д╕знатись про <a href="%sch-binary.html#s-virtual_pkg">визначення в╕ртуальних пакунк╕в</a>.',
+                       'This is a <em>virtual package</em>. See the <a href="%s">Debian policy</a> for a <a href="%sch-binary#s-virtual_pkg">definition of virtual packages</a>.' => 'Це&nbsp;&mdash; <em>в╕ртуальний пакунок</em>. Перегляньте <a href="%s">Пол╕тику Debian</a> щоб д╕знатись про <a href="%sch-binary#s-virtual_pkg">визначення в╕ртуальних пакунк╕в</a>.',
                        'This page is also available in the following languages:
 ' => 'Ця стор╕нка також доступна наступними мовами:
 ',

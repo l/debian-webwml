@@ -83,7 +83,7 @@ sub print_virt_pack {
     $package_page .= title( sprintf( gettext( "Virtual Package: %s" ), 
 				     $name ) );
 
-    $package_page .= note( sprintf( gettext( "This is a <em>virtual package</em>. See the <a href=\"%s\">Debian policy</a> for a <a href=\"%sch-binary.html#s-virtual_pkg\">definition of virtual packages</a>." ),
+    $package_page .= note( sprintf( gettext( "This is a <em>virtual package</em>. See the <a href=\"%s\">Debian policy</a> for a <a href=\"%sch-binary#s-virtual_pkg\">definition of virtual packages</a>." ),
 				    $POLICY_URL, $POLICY_URL ) );
 
     $package_page .= sprintf( "<h2>".gettext( "Packages providing %s" )."</h2>",
