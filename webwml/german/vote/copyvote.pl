@@ -71,7 +71,7 @@ if (exists $env{'DEBEMAIL'}) {
 }
 
 
-$year = 2006;
+$year = 2007;
 $srcdir = "/scr/build/content/debian/web-commit/webwml/english/vote/$year";
 # $srcdir = "../../english/vote/$year";
 die "Unable to locate English version of vote $number.\n"
@@ -112,11 +112,15 @@ open DST, ">$dstfile"
 	or die "Could not create $dstfile ($!)\n";
 
 # Retrieve the CVS version number
+$revision="";
 while (<CVS>)
 {
-	if (m[^/$number\.wml/([0-9]*\.[0-9]*)/]o)
+#print "$_ :: $vf\n";
+#if (m[^/$number\.wml/([0-9]*\.[0-9]*)/]o)
+	if (m(^/$vf/([0-9]*\.[0-9]*)/))
 	{
 		$revision = $1;
+#	print "Found $revision\n";
 	}
 }
 
@@ -124,7 +128,7 @@ close CVS;
 
 unless ($revision)
 {
-	print "Could not get revision number - bug in script?\n";
+	print "Could not get revision number for $vf - bug in script?\n";
 	$revision = '1.1';
 }
 
@@ -197,11 +201,30 @@ while (<SRC>)
 	    s#shall be gathered about ballots received and acknowledgements#Statistiken</a> über die empfangenen Stimmen und die versandten#;
             s#sent periodically during the voting period.  Additionally, the#Bestätigungen gesammelt. Zusätzlich würde die Liste der <a#;
 	    s#list of##;
-	    s#<a href="(.*)">voters</a>#href="$1">Abstimmenden</a> veröffentlicht. Auch#;
+	    s#<a (.*)="(.*)">voters</a>#$1="$2">Abstimmenden</a> veröffentlicht. Auch#;
 	    s#would be made publicly available. Also, the##;
-            s#<a href="(.*)">tally sheet</a>#kann die <a href="$1">Strichliste</a>#;
+            s#<a (.*)="(.*)">tally sheet</a>#kann die <a $1="$2">Strichliste</a>#;
 	    s#may also be viewed after to voting is done \(Note that#angeschaut werden (beachten Sie, dass es sich#;
             s#while the vote is in progress it is a dummy tally sheet\).#während des Urnengangs um eine Pseudo-Strichliste handelt).#;
+   	    s#This year, like always,#Dieses Jahr werden wie immer periodisch während der Wahlperiode <a#;
+	    s#<a (.*)="(.*)">statistics</a> shall be gathered#$1="$2">Statistiken</a>#;
+	    s#about ballots received and acknowledgements sent#über die empfangenen Stimmen und die versandten#;
+	    s#periodically during the voting period.  Additionally, the#Bestätigungen gesammelt. Zusätzlich würde die Liste der <a#;
+            s#list of <a (\w*)="(.*)">voters</a>#$1="$2">Abstimmenden</a> aufgezeichnet. Auch#;  # FIXME Is ignored (pattern order)
+            s#recorded. Also, the <a (.*)="(.*)">tally#kann die <a $1="$2">Strichliste</a>#;
+            s#sheet</a> will also be made available to be viewed.#angeschaut werden.#;
+            s#Please remember that the project leader election has a#Bitte beachten Sie, dass die Wahl des Projektleiters einen#;
+            s#secret ballot, so the tally sheet will be produced with#geheimen Stimmzettel hat, so dass die Strichliste mit dem Hash des#;
+            s#the hash of the alias of the voter rather than the name;#Aliases des Wählenden statt dessen Namen erstellt wird;#;
+            s#the alias shall be sent to the corresponding voter along#der Alias wird dem Wähler zusammen mit der Bestätigung des#;
+            s#with the acknowledgement of the ballot so that people may#Wahlzettels übersandt, so dass jeder überprüfen kann, ob#;
+            s#verify that their votes were correctly tabulated. While#seine Stimme korrekt eingetragen wurde. Während des#;
+            s#the voting is open the tally will be a dummy one; after#Urnengangs handelt es sich um eine Pseudo-Strichliste; die#;
+            s#the vote, the final tally sheet will be put in#endgültige Strichliste wird nach Abschluss des Urnengangs#;
+            s#place. Please note that for secret ballots the md5sum on#veröffentlicht. Bitte beachten Sie, dass für geheime Abstimmungen#;
+            s#the dummy tally sheet is randomly generated, as otherwise#die Pseudo-Strichliste zufällig generiert wird, da andernfalls#;
+            s#the dummy tally sheet would leak information relating the#die Pseudostrichliste Informationen über den MD5-Hash und den#;
+            s#md5 hash and the voter.#Wähler durchsickern lassen könnte.#;
 	    s#All the amendments need simple majority#Alle Änderungsanträge benötigen die einfache Mehrheit.#;
 	    s#The outcome#Das Ergebnis#;
 	    s#The actual text of the resolution is as follows.  Please note#Der eigentliche Text des Beschlusses lautet wie folgt. Bitte beachten#;
@@ -214,6 +237,16 @@ while (<SRC>)
 	    s#archives. Please read the mailing list archives for#Mailinglistenarchive#;
 	    s#archives. Please read the debian-vote mailing list archives for#debian-vote-Mailinglistenarchive#;
 	    s#details.#für Details.#;
+	    s#Nomination period:#Nominierungsperiode#;
+	    s#Campaigning period:#Wahlkampfperiode:#;
+	    s#Voting period:#Abstimmungsperiode:#;
+	    s#Please note that the new term for the project leader shall start#Bitte beachten Sie, dass die neue Amtszeit für den#;
+	    s#on April 17<sup>th</sup>, (.*)\.#Projektleiter am 17. April $1 beginnt.#;
+	    s#The ballot, when ready, can be requested through email#Wenn es soweit ist, kann der Stimmzettel#;
+	    s#by emailing#per E-Mail an#;
+	    s#with the subject (.*)\.# mit dem Betreff <q>$1</q> angefordert werden.#;
+	    s#All candidates would need a simple majority to be eligible.#Alle Kandidaten benötigten eine einfache Mehrheit um wählbar zu sein.#;
+	    s#The proposal needs simple majority.#Der Vorschlag benötigt eine einfache Mehrheit#;
 
 	    #Generic
 	    s#January#Januar#;
@@ -235,6 +268,18 @@ while (<SRC>)
 	    s#<sup>nd</sup>#.#;
 	    s#<sup>th</sup>#.#;
 	    s#Choice#Wahl#;
+	}
+	if ($vf eq "vote_".$number."_quorum.txt")
+	{
+	    s#Current Developer Count#Aktuelle Entwickler-Anzahl#;
+	}
+	if ($vf eq "vote_".$number."_results.src")
+	{
+	    s#To be decided.#Muss noch entschieden werden.#;
+	}
+	if ($vf eq "vote_".$number."_index.src")
+	{
+	    s#To be decided.#Muss noch entschieden werden.#;
 	}
 	print DST $_;
 }
