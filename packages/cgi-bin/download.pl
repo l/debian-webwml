@@ -150,6 +150,17 @@ my @nonus_south_american_sites = (
 	"ftp.cl.debian.org/debian-non-US",
 	);
 
+my @old_european_sites = (
+	"ftp.de.debian.org/debian-archive",
+	"ftp.nl.debian.org/debian-archive",
+	"ftp.ch.debian.org/debian-archive",
+	);
+
+my @old_north_american_sites = (
+	"archive.debian.org",
+	"ftp3.nrc.ca/debian-archive",
+	);
+
 # list of architectures
 my %arches = (
         i386    => 'Intel x86',
@@ -186,6 +197,8 @@ param_error( "file" ) unless defined $file;
 param_invalid ("file") if  $file !~ m!^[\w%.:+~_/-]+$!;
 @file_components = split('/', $file);
 $filen = pop(@file_components);
+
+$dist = $input->param('dist');
 
 $md5sum = $input->param('md5sum');
 param_error( "md5sum" ) unless defined $md5sum;
@@ -276,6 +289,16 @@ END
     print <<END;
 <p>If none of the above sites are fast enough for you, please see our
 <a href="http://www.debian.org/mirror/list-non-US">complete mirror list</a>.</p>
+END
+
+} elsif ($dist eq 'oldstable') {
+
+    print_links( "North America", $file, @old_north_american_sites );
+    print_links( "Europe", $file, @old_european_sites );
+
+    print <<END;
+<p>If none of the above sites are fast enough for you, please see our
+<a href="http://www.debian.org/distrib/archive/">complete mirror list</a>.</p>
 END
 
 } elsif ($type eq 'volatile') {
