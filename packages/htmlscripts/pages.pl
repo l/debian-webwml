@@ -238,6 +238,9 @@ sub package_pages_walker {
 		$package_page .=  "&amp;file=".uri_escape($filenames{a2f}->{$a});
 		$package_page .=  "&amp;md5sum=$file_md5s{a2f}->{$a}";
 		$package_page .=  "&amp;arch=$a";
+		if ($env->{distribution} eq "oldstable") {
+		$package_page .=  "&amp;dist=$env->{distribution}";
+		}
 		my $unofficial = '';
 		if (($a =~ /^kfreebsd/) ||
 			(($env->{distribution} eq "stable") &&
