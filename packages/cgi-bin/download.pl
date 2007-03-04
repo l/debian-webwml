@@ -17,7 +17,7 @@ use lib "../lib";
 use Packages::HTML ();
 
 my ($input,   # The CGI data
-    $file, $filen, $md5sum, @file_components, $type, $arch);
+    $file, $filen, $md5sum, @file_components, $type, $arch, $dist);
 
 # TODO: find a way to get the U.S. mirror list from a more authoritive
 # location automatically. might not be overly smart to automatize it
