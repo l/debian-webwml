@@ -298,7 +298,7 @@ END
 
     print <<END;
 <p>If none of the above sites are fast enough for you, please see our
-<a href="http://www.debian.org/distrib/archive/">complete mirror list</a>.</p>
+<a href="http://www.debian.org/distrib/archive">complete mirror list</a>.</p>
 END
 
 } elsif ($type eq 'volatile') {
