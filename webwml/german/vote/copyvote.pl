@@ -209,7 +209,7 @@ while (<SRC>)
    	    s#This year, like always,#Dieses Jahr werden wie immer periodisch während der Wahlperiode <a#;
 	    s#<a (.*)="(.*)">statistics</a> shall be gathered#$1="$2">Statistiken</a>#;
 	    s#about ballots received and acknowledgements sent#über die empfangenen Stimmen und die versandten#;
-	    s#periodically during the voting period.  Additionally, the#Bestätigungen gesammelt. Zusätzlich würde die Liste der <a#;
+	    s#periodically during the voting period.  Additionally, the#Bestätigungen gesammelt. Zusätzlich wird die Liste der <a#;
             s#list of <a (\w*)="(.*)">voters</a>#$1="$2">Abstimmenden</a> aufgezeichnet. Auch#;  # FIXME Is ignored (pattern order)
             s#recorded. Also, the <a (.*)="(.*)">tally#kann die <a $1="$2">Strichliste</a>#;
             s#sheet</a> will also be made available to be viewed.#angeschaut werden.#;
@@ -222,7 +222,7 @@ while (<SRC>)
             s#the voting is open the tally will be a dummy one; after#Urnengangs handelt es sich um eine Pseudo-Strichliste; die#;
             s#the vote, the final tally sheet will be put in#endgültige Strichliste wird nach Abschluss des Urnengangs#;
             s#place. Please note that for secret ballots the md5sum on#veröffentlicht. Bitte beachten Sie, dass für geheime Abstimmungen#;
-            s#the dummy tally sheet is randomly generated, as otherwise#die Pseudo-Strichliste zufällig generiert wird, da andernfalls#;
+            s#the dummy tally sheet is randomly generated, as otherwise#die MD5-Prüfsumme in der Pseudo-Strichliste zufällig generiert wird, da andernfalls#;
             s#the dummy tally sheet would leak information relating the#die Pseudostrichliste Informationen über den MD5-Hash und den#;
             s#md5 hash and the voter.#Wähler durchsickern lassen könnte.#;
 	    s#All the amendments need simple majority#Alle Änderungsanträge benötigen die einfache Mehrheit.#;
@@ -245,7 +245,7 @@ while (<SRC>)
 	    s#The ballot, when ready, can be requested through email#Wenn es soweit ist, kann der Stimmzettel#;
 	    s#by emailing#per E-Mail an#;
 	    s#with the subject (.*)\.# mit dem Betreff <q>$1</q> angefordert werden.#;
-	    s#All candidates would need a simple majority to be eligible.#Alle Kandidaten benötigten eine einfache Mehrheit um wählbar zu sein.#;
+	    s#All candidates would need a simple majority to be eligible.#Alle Kandidaten benötigten eine einfache Mehrheit, um wählbar zu sein.#;
 	    s#The proposal needs simple majority.#Der Vorschlag benötigt eine einfache Mehrheit#;
 
 	    #Generic
