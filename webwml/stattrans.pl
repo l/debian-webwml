@@ -272,7 +272,7 @@ foreach $lang (@search_in) {
     foreach $l (@processed_langs) {
         print "$l.html " if ($config{'verbose'});
 
-        $t_body = $u_body = $un_body = $uu_body = $o_body = "";
+        $t_body = $u_body = $ui_body = $un_body = $uu_body = $o_body = "";
         $translated{$lang} = $outdated{$lang} = $untranslated{$lang} = 0;
 
         # get stats about files
@@ -328,9 +328,12 @@ foreach $lang (@search_in) {
                     (my $base = $file) =~ s/\.wml$//;
                     $u_tmp = sprintf "<tr><td><a href=\"$opt_b/%s\">%s</a></td><td align=\"right\">%d</td><td>(%.2f&nbsp;&permil;)</td></tr>\n", $base, $base, $sizes{$file}, $sizes{$file}/$nsize * 1000;
                 }
-		if ((($file =~ /(News|events|security|vote)\/[0-9]{4}\//) &&
-		     ($file !~ /index.wml$/)) ||
-		    ($file =~ /(News\/weekly\/[0-9]{4}\/|security\/undated)/)) {
+		if (($file =~ /international\//) &&
+		    ($file !~ /international\/l10n\//)) {
+		    $ui_body .=$u_tmp;
+		} elsif ((($file =~ /(News|events|security|vote)\/[0-9]{4}\//) &&
+		          ($file !~ /index.wml$/)) ||
+		         ($file =~ /(News\/weekly\/[0-9]{4}\/|security\/undated)/)) {
 		    $un_body .= $u_tmp;
 		} elsif (($file =~ /(consultants|users\/(com|edu|gov|org))\//) &&
 		         ($file !~ /index.wml$/)) {
@@ -415,11 +418,14 @@ foreach $lang (@search_in) {
             if ($o_body) {
                 print HTML "<li><a href=\"#outdated\">Outdated translations</a></li>\n";
             }
-            if (($u_body) || ($un_body) || ($uu_body)) {
+            if (($u_body) || ($ui_body) || ($un_body) || ($uu_body)) {
                 print HTML "<li>Untranslated</li>\n";
                 print HTML "<ul>\n";
                 if ($u_body) {
                     print HTML "<li><a href=\"#untranslated\">General pages</a></li>\n";
+                }
+                if ($ui_body) {
+                    print HTML "<li><a href=\"#untranslated-l10n\">International pages</a></li>\n";
                 }
                 if ($un_body) {
                     print HTML "<li><a href=\"#untranslated-news\">News items</a></li>\n";
@@ -455,6 +461,12 @@ foreach $lang (@search_in) {
                 print HTML "<h3 id='untranslated'>General pages not translated: <a href='#top'>(top)</a></h3>\n";
                 print HTML "<table summary=\"Untranslated general pages\">\n";
                 print HTML $u_body;
+                print HTML "</table>\n";
+            }
+            if ($ui_body) {
+                print HTML "<h3 id='untranslated-l10n'>International pages not translated: <a href='#top'>(top)</a></h3>\n";
+                print HTML "<table summary=\"Untranslated international pages\">\n";
+                print HTML $ui_body;
                 print HTML "</table>\n";
             }
             if ($un_body) {
