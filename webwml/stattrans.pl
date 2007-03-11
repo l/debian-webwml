@@ -329,7 +329,8 @@ foreach $lang (@search_in) {
                     $u_tmp = sprintf "<tr><td><a href=\"$opt_b/%s\">%s</a></td><td align=\"right\">%d</td><td>(%.2f&nbsp;&permil;)</td></tr>\n", $base, $base, $sizes{$file}, $sizes{$file}/$nsize * 1000;
                 }
 		if (($file =~ /international\//) &&
-		    ($file !~ /international\/l10n\//)) {
+		    (($file !~ /international\/index.wml$/) ||
+		     ($file !~ /international\/l10n\//))) {
 		    $ui_body .=$u_tmp;
 		} elsif ((($file =~ /(News|events|security|vote)\/[0-9]{4}\//) &&
 		          ($file !~ /index.wml$/)) ||
