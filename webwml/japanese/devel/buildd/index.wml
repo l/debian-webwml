@@ -1,0 +1,167 @@
+#use wml::debian::template title="Autobuilder ネットワーク" BARETITLE="true"
+#use wml::debian::translation-check translation="1.9"
+
+<p>autobuilder ネットワークは <a href="$(HOME)/ports/">Debian
+が現在サポートする</a>全アーキテクチャのパッケージの再コンパイルの
+加速に役立っている Debian 開発です。
+このネットワークは数台のマシンからなり、<em>buildd</em>
+という特定のソフトウェアパッケージを使って Debian
+アーカイブからパッケージを取り上げて、
+対象のアーキテクチャ向けに再ビルドします。</p>
+
+<h2>なぜ autobuilder ネットワークが必要ですか?</h2>
+
+<p>Debian ディストリビューションは<a
+ href="$(HOME)/ports/">相当数のアーキテクチャ</a>をサポートしていますが、
+パッケージメンテナは通常、単一のアーキテクチャ (通常 i386)
+のバイナリ版だけをコンパイルします。他のアーキテクチャの開発者が Intel
+ディストリビューションに追従を続けたい場合は
+パッケージの新バージョンを監視して再コンパイルする必要があります。</p>
+
+<p>Debian/m68k (最初の非 Intel 移植版)
+が開始した時、これはすべて手作業で行われました:
+開発者はアップロードメーリングリストを見て新しいパッケージを待ち、
+そのいくつかを取り上げてビルドしていました。
+同じパッケージを別の人が二重にビルドしないように、
+メーリングリスト上で発表するで調整していました。
+この手順は間違えやすく、時間がかかりすぎることも明らかです。
+しかし、非 i386 ディストリビューションの保守のやり方としては、
+長い間これが通常の方法でした。</p>
+
+<p>ビルドデーモンシステムはこのプロセスのほとんどを自動化します。
+これはスクリプトのセット (Perl と Python で書かれています) から成り、
+様々な作業について移植者を補助するために時間とともに発展してきました。
+最終的に、非 i386 の Debian ディストリビューションをほぼ自動的に、
+最新に保っておくことができるシステムに発展しました。</p>
+
+<h2>buildd はどのように働きますか?</h2>
+
+<p><em>Buildd</em> は通常 autobuilder ネットワークによって使われる
+ソフトウェアに与えられる名前ですが、実際は違う部分からできています:</p>
+
+<dl>
+
+<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/";>wanna-build</a></dt>
+<dd>
+パッケージ及びその状態のリストを保持するデータベースと協調して、
+パッケージの (再) ビルドの調整を補助するツール。
+アーキテクチャごとに中央データベースがあり、
+パッケージの状態、バージョン、および他の情報を保存します。
+</dd>
+
+<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/";>buildd</a></dt>
+<dd>
+<em>wanna-build</em> により管理されるデータベースを定期的にチェックし、
+<em>sbuild</em> を呼び出してパッケージをビルドするデーモン。
+ビルドの失敗や成功を追跡し、
+管理者が承認すればパッケージのアップロードも行います。
+</dd>
+
+<dt><a href="http://packages.debian.org/sbuild";>sbuild</a></dt>
+<dd>
+隔離された chroots におけるパッケージの実際のコンパイルを担当します。
+主に標準の Debian ツールを使いますが、
+ソースの依存関係やその他の軽微な問題を解決します。
+</dd>
+
+<dt><a href="http://packages.debian.org/quinn-diff";>quinn-diff</a></dt>
+<dd>
+新しいパッケージを wanna-build データベースに送ります。
+二つのアーキテクチャで入手可能なパッケージのバージョンを比較し、
+違いを出力します (ソースファイル及びパッケージファイルを比較します)。
+quinn-diff についての詳細については<a
+ href="http://buildd.debian.org/quinn-diff/";>ここ</a>で入手可能です。
+</dd>
+
+<dt>andrea</dt>
+<dd>
+ソース依存関係を自動的にいくつか生成し、
+そのデータを手作業で追加された依存関係とマージします。
+</dd>
+
+</dl>
+
+<p>これらの部分がすべて一緒に<a href="operation">動作</a>して、
+builder ネットワークが働きます。</p>
+
+<h2>Debian 開発者は、何をする必要がありますか?</h2>
+
+<p>実際のところ、平均的な Debian 開発者は明示的に buildd
+ネットワークを使う必要はありません。
+(任意のアーキテクチャにコンパイルされたバイナリを)
+いつでもアーカイブにパッケージをアップロードすると、(状態は
+<em>Needs-Build</em> で) 全アーキテクチャのデータベースに追加されます。
+ビルドマシンはパッケージのこの状態をビルドデータベースに問い合わせ、
+そのリストから定期的にパッケージを消していきます。
+このリストは前のコンパイル状態、優先度、セクション、
+そして最後にパッケージ名によって優先度を付けられます。</p>
+
+<p>ビルドが全アーキテクチャで成功すれば、管理者は何もする必要がありません。
+それらのバイナリのパッケージはすべて、
+各アーキテクチャのメインのサイトにアップロードされます。
+ビルドが成功しなかった場合、パッケージは特別な状態 (<em>Failed</em>、
+あるいは特定の入手不可能なビルド依存状態に依存している場合は
+<em>Dep-Wait</em>) に入ります。autobuilder
+管理者はビルドに失敗したパッケージをレビューして、
+通常はバグ追跡システムにバグ報告という形でメンテナに報告します。</p>
+
+<p>時々、パッケージが特定のアーキテクチャでのビルドに長い時間がかかり、
+そのことでパッケージが <a href="$(HOME)/devel/testing">testing</a>
+に入るのを遅らせることになります。
+残念ながらパッケージがマシンに取り上げられるまで待つ必要があるでしょう。
+既に優先度リストがあるので、Buildd
+管理者がパッケージのビルドを早くする要求を受け入れることはないでしょう。
+ただし、メンテナは <a href="http://db.debian.org/machines.cgi";>Debian
+開発マシン</a>にアクセスし、手作業でパッケージをビルドことができます。</p>
+
+<p><a href="http://buildd.debian.org/bymaint.php";>buildd
+ログ</a>を確認することで、任意のメンテナに属しているパッケージの、異なる
+buildds での動作状態をチェックすることができます。
+これらのログはパッケージのメンテナ概観からもリンクされています。</p>
+
+<p>パッケージが取りえる他の状態の詳細については、<a
+ href="wanna-build-states">wanna-build-states</a> を読んでください。</p>
+
+<h2>追加情報はどこで見つけられますか?</h2>
+
+<p>当然ですが、buildd ネットワークがどのように働くか調べるには、
+こういった様々なツールに関する文書やソースコードをあたってみるのが最善です。
+さらに、<a href="$(HOME)/doc/manuals/developers-reference/">Debian
+デベロッパーズリファレンス</a>の <a
+ href="$(HOME)/doc/manuals/developers-reference/ch-pkgs#s-porting"
+ >Porting and being ported</a>
+節に、これがどのように働くかについて補完する情報、また、<a
+ href="$(HOME)/doc/manuals/developers-reference/ap-tools#s-tools-builders"
+ >package builders</a> 及び <a
+ href="$(HOME)/doc/manuals/developers-reference/ap-tools#s-tools-porting"
+ >porting tools</a> にも、buildd
+ネットワークの設定、保守双方の過程に関する情報があります。</p>
+
+<p><a href="http://buildd.debian.org/stats/";>buildd 統計のページ</a>に
+autobuilder ネットワークで利用可能な統計がいくつかあります。</p>
+
+<h2>自分の auto-builder ノードの設定はどのようにしたらいいですか?</h2>
+
+<p>開発者 (またはユーザ) が autobuilder
+を設定、実行することの利点がいくつかあります:</p>
+
+<ul>
+<li>パッケージの <tt>Build-Depends</tt> 適切に定義されているか
+(つまり、auto-builder autobuilder
+環境でパッケージをコンパイルすることにより)、ローカルでテストする</li>
+<li>任意のアーキテクチャへの移植版の開発補助 (autobuilder が必要な場合)</li>
+<li>パッケージの多くの部分を再コンパイルすることによって
+任意のコンパイラ最適化やパッチの影響を評価</li>
+<li>パッケージを分析して既知の誤りを発見するツールで、
+コンパイル済みパッケージ中で実行される必要があるものを実行するため。
+これはソースコードの分析をする場合に、例えば <tt>dpatch</tt>
+を使うパッケージに対処する手段として必要になることもあります。</li>
+</ul>
+
+<p><a href="setting-up">autobuilder の設定</a>に詳細があります。</p>
+
+<hrline/>
+<p><small>この autobuilder ネットワークの入門は、Roman Hodez,
+Christian T. Steigies, Wouter Verhelst, Andreas Barth,
+Francesco Paolo Lovergine 及び Javier Fern&aacute;ndez-Sanguino
+によって提供された情報を元に書かれました。</small></p>
