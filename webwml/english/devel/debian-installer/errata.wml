@@ -1,10 +1,10 @@
 #use wml::debian::template title="Debian-Installer errata"
 #use wml::debian::recent_list
 
-<h1 id="etch-rc1">Errata for etch release candidate 1 (RC1)</h1>
+<h1 id="etch-rc2">Errata for etch release candidate 2 (RC2)</h1>
 
 <p>
-This is a list of known problems in the etch RC1 release of
+This is a list of known problems in the etch RC2 release of
 Debian Installer. If you do not see your problem listed here,
 please send us an <a href="report-template">installation report</a>
 describing the problem.
@@ -13,7 +13,7 @@ describing the problem.
 <dl class="gloss">
 	<dt>Disk devices may change on reboot</dt>
 	<dd>
-	On systems with multiple diskcontrollers, the kernel/udev may assign
+	On systems with multiple disk controllers, the kernel/udev may assign
 	a different device node on reboot of the system than was used during
 	installation due to difference in load order of drivers.<br />
 	This can lead to failure to boot the system. In most cases this can be
@@ -23,17 +23,18 @@ describing the problem.
 	Fixing this issue has priority for the next release of Debian installer.
 	</dd>
 
-	<dt>Danger of data loss from resizing partitions</dt>
+	<dt>Resizing of existing ext3 partitions may fail</dt>
 	<dd>
-	Partition resizing using partman may result in data loss if the
-	starting sector of the partition is not at the start of a cylinder.
-	See bug report <a href="http://bugs.debian.org/379835">#379835</a>
-	for a detailed analysis.<br />
-	This has been observed in particular for NTFS partitions created
-	during installation of Windows Vista Beta 2. Resizing of NTFS
-	partitions created by earlier Windows versions should still work.<br />
-	Because of this resizing of NTFS partitions containing Windows Vista
-	has been disabled.
+	The installer is currently not able to resize ext3 partitions that have
+	the <tt>dir_index</tt> and/or <tt>resize_inode</tt> features enabled.
+	This includes ext3 partitions created with the Etch installer.<br />
+	You can however manually resize an ext3 partition during installation.
+	Proceed until the partitioning step, use the &lt;Go Back&gt; button to
+	exit to the main menu, start a shell, and resize the file system and
+	partition using the commands available in the shell (<tt>fsck.ext3</tt>,
+	<tt>resize2fs</tt> and e.g. <tt>fdisk</tt> or <tt>parted</tt>). If you
+	start partman again after completing the resize operation, it should
+	show the new size of the partition.
 	</dd>
 
 	<dt>Incomplete installation of Desktop task from full CD</dt>
@@ -47,6 +48,19 @@ describing the problem.
 	<em>after you have rebooted</em> into the installed system by using
 	<tt>apt-cdrom</tt> to load additional CDs and then selecting the Desktop
 	task again in <tt>aptitude</tt>.
+	</dd>
+
+	<dt>Buggy routers may cause network problems</dt>
+	<dd>
+	If you experience network problems during the installation, this may be
+	caused by a router somewhere between you and the Debian mirror that
+	doesn't correctly handle window scaling.
+	See <a href="http://bugs.debian.org/401435">#401435</a> and this
+	<a href="http://kerneltrap.org/node/6723">kerneltrap article</a> for
+	details.<br />
+	You can work around this issue by disabling TCP window scaling. Activate
+	a shell and enter the following command:<br />
+	<tt>echo 0 > /proc/sys/net/ipv4/tcp_window_scaling</tt>
 	</dd>
 
 	<dt>General issues after reboot because of UTF-8 default</dt>
@@ -76,22 +90,27 @@ describing the problem.
 
 	<dt>Graphical installer</dt>
 	<dd>
-	The graphical installer still has some known issues:
+	The graphical installer still has some known issues (see also the
+	Installation Guide):
 	<ul>
-		<li>some tasks (e.g. the File server task) may not install
-		    correctly due to bug
-		    <a href="http://bugs.debian.org/282147">#282147</a></li>
-		<li>switching consoles will crash the frontend on amd64</li>
-		<li>support for keymaps other than US has improved, but
-		    there are still some issues (deadkeys and combining
-		    characters do not work)</li>
+		<li>some non-US keymaps are not fully supported (deadkeys and
+		    combining characters do not work)</li>
+		<li>touchpads should work, but support may not be optimal; if you
+		    experience problems, you should use an external mouse instead</li>
 		<li>limited support for creating encrypted partitions</li>
-		<li>touchpads may not work correctly; use an external mouse
-		    instead</li>
 		<li>should work on almost all PowerPC systems that have an ATI
 		    graphics card, but is unlikely to work on other PowerPC
 		    systems</li>
 	</ul>
+	</dd>
+
+	<dt>Network driver sky2 known to be broken</dt>
+	<dd>
+	The sky2 network driver is known to be broken in the kernel
+	(2.6.18.dfsg.1-11) used in the installer and may cause kernel panics. See
+	for example <a href="http://bugs.debian.org/404107">#404107</a>.
+	<a href="http://bugs.debian.org/411115">#411115</a> contains a series of
+	patches that may fix the issues.
 	</dd>
 
 <!-- leaving this in for possible future use...
@@ -104,27 +123,10 @@ describing the problem.
 	</dd>
 -->
 
-	<dt>amd64: [graphical installer] console switching not possible</dt>
-	<dd>
-	If you try to switch to a different console from the graphical installer
-	on amd64, the frontend will crash. This means there is no shell available
-	during the installation. Logs can be viewed using the <q>Save debug logs</q>
-	option from the main menu.
-	</dd>
-
 	<dt>powerpc: various issues</dt>
 	<dd>
 	The PowerPC port has several issues in this release:
 	<ul>
-		<li>RAID installation is broken with macintosh partition tables
-		    (see <a href="http://bugs.debian.org/397973">#397973</a>
-		    and <a href="http://bugs.debian.org/392767">#392767</a>
-		    for details)</li>
-		<li>PReP unsupported due to missing support in the 2.6.17 kernel;
-		    support is expected to be activated again with 2.6.18</li>
-		<li>on G5 Apple machines the fans can be very loud during
-		    installation due to missing power/fan control; this has been
-		    fixed in daily built images</li>
 		<li>installation from floppy on OldWorld PowerMac is broken
 		    because no device node is created for the swim3 module
 		    and as miboot is not included</li>
@@ -134,11 +136,6 @@ describing the problem.
 	</ul>
 	</dd>
 
-	<dt>alpha: VGA console on TITAN- and TSUNAMI-class systems not supported</dt>
-	<dd>
-	This is expected to be fixed for RC2.
-	</dd>
-
 	<dt>sparc: CD installs for sparc32 may fail</dt>
 	<dd>
 	The esp kernel driver module is broken which means that installation from
@@ -146,17 +143,12 @@ describing the problem.
 	installation method instead.
 	</dd>
 
-	<dt>s390: usability issues</dt>
+	<dt>s390: unsupported features</dt>
 	<dd>
-	Various components were rewritten in order to support 2.6 based
-	installations and still have a few rough edges:
 	<ul>
-	<li>during network device selection, devices that have already been
-	    selected are not removed from the list of available devices</li>
-	<li>during dasd selection, the dialog does not show which dasds have
-	    already been selected and which not</li>
-	<li>the dasd selection component does not yet support formatting a new
-	    dasd; use <tt>dasdfmt</tt> from a shell as a workaround</li>
+		<li>support for the DASD DIAG discipline is currently not
+		    available</li>
+		<li>support for LCS network interfaces is no longer available</li>
 	</ul>
 	</dd>
 </dl>
