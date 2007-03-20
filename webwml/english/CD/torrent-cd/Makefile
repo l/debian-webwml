@@ -10,4 +10,6 @@ include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml \
 	$(TEMPLDIR)/installer.wml $(TEMPLDIR)/toc.wml \
-	$(ENGLISHSRCDIR)/releases/info
+	$(ENGLISHSRCDIR)/releases/info \
+	$(ENGLISHSRCDIR)/devel/debian-installer/images.data \
+	$(ENGLISHSRCDIR)/releases/images.data
