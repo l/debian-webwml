@@ -4,7 +4,7 @@
 
 WMLBASE=../..
 CUR_DIR=releases/etch
-SUBS=
+SUBS=debian-installer
 
 include $(WMLBASE)/Make.lang
 
