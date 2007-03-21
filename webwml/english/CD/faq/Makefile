@@ -8,4 +8,7 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml $(TEMPLDIR)/toc.wml
+index.$(LANGUAGE).html: index.wml \
+	$(TEMPLDIR)/cdimage.wml \
+	$(TEMPLDIR)/toc.wml \
+	$(ENGLISHSRCDIR)/releases/info
