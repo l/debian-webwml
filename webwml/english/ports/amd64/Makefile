@@ -11,5 +11,5 @@ include $(WMLBASE)/Make.lang
 $(HTMLFILES): $(ENGLISHSRCDIR)/ports/amd64/menu.inc $(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml
 
 index.$(LANGUAGE).html: $(ENGLISHSRCDIR)/ports/amd64/menu.inc \
-	$(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml
-
+	$(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml \
+	$(ENGLISHSRCDIR)/releases/info

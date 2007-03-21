@@ -15,3 +15,5 @@ ifeq "$(LANGUAGE)" "en"
 install::
 	test -L $(HTMLDIR)/mipsel || ln -sf mips $(HTMLDIR)/mipsel
 endif
+
+index.$(LANGUAGE).html:: $(ENGLISHSRCDIR)/releases/info
