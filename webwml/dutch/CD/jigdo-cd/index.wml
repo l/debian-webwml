@@ -1,12 +1,14 @@
 #use wml::debian::cdimage title="Debian CD-images downloaden met jigdo" BARETITLE=true
 #use wml::debian::toc
 #use wml::debian::installer
-#use wml::debian::translation-check translation="1.65"
+#include "$(ENGLISHDIR)/releases/info"
+#include "$(ENGLISHDIR)/releases/images.data"
+#include "$(ENGLISHDIR)/devel/debian-installer/images.data"
+
+#use wml::debian::translation-check translation="1.67"
 
 #Last Translation Update by $Author$
 #Last Translation Update at  $Date$
-
-#include "$(ENGLISHDIR)/releases/info"
 
 <p>Jigsaw ("puzzel") Download, oftewel <a href="http://atterer.net/jigdo/">jigdo</a>,
 is bedoeld als de voornaamste manier waarop Debian CD-images in de toekomst
@@ -32,7 +34,7 @@ servers om ze te hosten.</p>
 dan downloaden?. Jigdo doet dit door alle files te downloaden die op de CD komen
 te staan. Vervolgens worden die files samengevoegd tot &eacute;&eacute;n grote file, die
 precies overeenkomt met een CD-image. Dit gebeurt echter allemaal achter de
-schermen. Het enige dat <em>U</em> hoeft te doen, is het download programma de
+schermen. Het enige dat <em>u</em> hoeft te doen, is het download programma de
 locatie van een "<tt>.jigdo</tt>" file te geven.</p>
 
 <p>Meer informatie is beschikbaar op de 
@@ -71,13 +73,6 @@ willen meewerken aan de ontwikkeling van jigdo zijn altijd welkom!</p>
   Er is ook een volledige <a href="$(HOME)/mirror/list">lijst van beschikbare 
   spiegelservers</a>.</li>
 
-<if-stable-release release="woody">
-  <li>Als u de prompt "Debian non-US mirror" krijgt, geeft dan
-  <kbd>http://ftp.<strong><var>XX</var></strong>.debian.org/debian-non-US/</kbd>
-  in, waar u weer de juiste landcode invult.  Gebruikers in België kunnen
-  <kbd>http://ftp.belnet.be/debian-non-US/</kbd> gebruiken.</li>
-</if-stable-release>
-
 </ul>
 
 <p>Voor een gedetailleerde, stap-voor-stap beschrijving van dit proces, werp
@@ -97,6 +92,7 @@ het installatie proces</a>.</p>
 
 <ul>
 
+<if-stable-release release="sarge">
   <li>Officiële jigdo-bestanden voor de "stable" release op CD:<br>
   <images-list url="http://cdimage.debian.org/debian-cd/current/@ARCH@/jigdo-cd/" />
   </li>
@@ -104,9 +100,19 @@ het installatie proces</a>.</p>
   <li>Officiële jigdo-bestanden voor de "stable" release op DVD:<br>
   <images-list url="http://cdimage.debian.org/debian-cd/current/@ARCH@/jigdo-dvd/" />
   </li>
+</if-stable-release>
+<if-stable-release release="etch">
+  <li>Officiële jigdo-bestanden voor de "stable" release op CD:<br>
+  <etch-full-cd-jigdo />
+  </li>
 
+  <li>Officiële jigdo-bestanden voor de "stable" release op DVD:<br>
+  <etch-full-dvd-jigdo />
+  </li>
+</if-stable-release>
 </ul>
 
+<if-stable-release release="sarge">
 <ul>
 
   <li>Jigdo-bestanden voor de niet-officiële <a href="$(HOME)/ports/amd64/">
@@ -118,12 +124,14 @@ het installatie proces</a>.</p>
   </li>
 
 </ul>
+</if-stable-release>
 
 <ul>
-  <li>Officiële jigdo files voor de 
-  <a href="http://cdimage.debian.org/cdimage/weekly-builds/">
-  "testing"-distributie</a> op CD en DVD
-  (<em>alle architecturen, wekelijks gegenereerd</em>)
+  <li>Officiële jigdo files voor de "testing"-distributie</a> op CD:
+  <full-cd-jigdo />
+  </li>
+  <li>Officiële jigdo files voor de "testing"-distributie</a> op DVD:
+  <full-dvd-jigdo />
   </li>
 </ul>
 
@@ -201,7 +209,7 @@ worden toegevoegd aan die regel:</p>
 <br><tt>--proxy-user=<i>GEBRUIKER</i></tt>
 <br><tt>--proxy-passwd=<i>WACHTWOORD</i></tt></p>
 
-<p>Uiteraard moet U hierbij de juiste waarden voor uw proxy server invullen. De
+<p>Uiteraard moet u hierbij de juiste waarden voor uw proxy server invullen. De
 laatste twee opties zijn alleen nodig als uw proxy wachtwoord authenticatie
 gebruikt. De opties moeten aan het einde van de wgetOpts regel worden toegevoegd
 <em>voor</em> het laatste <tt>'</tt> teken. Alle opties moeten op
@@ -214,10 +222,10 @@ de file file <tt>/etc/environment</tt> of <tt>~/.bashrc</tt>.</p>
 <p><strong>Aargh! Het script stopt met een foutmelding - heb ik al die 
 megabytes voor niks gedownload?</strong></p>
 
-<p>Natuurlijk hoort dit niet te gebeuren, maar om verschillende redenen kunt U
+<p>Natuurlijk hoort dit niet te gebeuren, maar om verschillende redenen kunt u
 in een situatie geraken waarin er wel al een grote "<tt>.iso.tmp</tt>" file is
-gegenereerd en <tt>jigdo-lite</tt> problemen krijgt waarna het U vertelt om de download
-opnieuw te starten. Er zijn verschillende dingen die U in dit geval kunt
+gegenereerd en <tt>jigdo-lite</tt> problemen krijgt waarna het u vertelt om de download
+opnieuw te starten. Er zijn verschillende dingen die u in dit geval kunt
 proberen:</p>
 
 <ul>
@@ -229,17 +237,17 @@ proberen:</p>
 
   <li>Probeer een andere spiegelserver. Sommige Debian-spiegelservers lopen een beetje uit de
   pas. Misschien bevat een andere spiegelserver nog de files die al verwijderd zijn van
-  de server die U hebt gebruikt, of misschien is die al geupdate met files die
+  de server die u hebt gebruikt, of misschien is die al geupdate met files die
   nog niet beschikbaar zijn op uw huidige spiegelserver.</li>
 
   <li>Verkrijg de ontbrekende delen met <tt><a
-  href="http://rsync.samba.org/">rsync</a></tt>. Allereerst moet U de juiste
-  rsync URL bepalen voor het image dat U probeert te downloaden:
+  href="http://rsync.samba.org/">rsync</a></tt>. Allereerst moet u de juiste
+  rsync URL bepalen voor het image dat u probeert te downloaden:
   
   Kies en server die rscync toegang biedt tot de <a
   href="../mirroring/rsync-mirrors">stable</a> of <a
   href="../http-ftp/#testing">testing</a> images, bepaal vervolgens het correcte
-  pad en filenaam. Directory listings krijgt U met commando's als 
+  pad en filenaam. Directory listings krijgt u met commando's als 
   <tt>rsync&nbsp;rsync://cdimage.debian.org/debian-cd/</tt>
 
   <br>Verwijder vervolgens de "<tt>.tmp</tt>" extensie van 
@@ -257,10 +265,10 @@ proberen:</p>
   toegang te krijgen tot de pakketten die al gedownload zijn, en deze te
   hergebruiken om een image te maken van een nieuwe jigdo file (bijvoorbeeld de
   nieuwste wekelijkse snapshot van de testing distributie, als uw mislukte download
-  ook een snapshot van testing was.) Om dit te doen geeft U eerst als root het
+  ook een snapshot van testing was.) Om dit te doen geeft u eerst als root het
   volgende commando in de directory met de mislukte download: <tt>mkdir&nbsp;mnt;
   mount&nbsp;-t&nbsp;iso9660&nbsp;-o&nbsp;loop&nbsp;*.tmp&nbsp;mnt</tt>. 
-  Vervolgens start U een nieuwe download in een andere directory, en geeft U het
+  Vervolgens start u een nieuwe download in een andere directory, en geeft u het
   pad van de <tt>mnt</tt> directory op aan de "Files to scan" prompt.</li>
 
 </ul>
