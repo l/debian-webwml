@@ -1,13 +1,13 @@
 #use wml::debian::template title="Errata pour l'installateur Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.100" maintainer="Nicolas Bertolissio"
+#use wml::debian::translation-check translation="1.104" maintainer="Nicolas Bertolissio"
 
 
-<h1 id="etch-beta3"><i>Errata</i> pour la première version candidate à la
+<h1 id="etch-beta3"><i>Errata</i> pour la seconde version candidate à la
 publication pour Etch</h1>
 
 <p>
-Voici une liste des problèmes connus dans la première version candidate à la
+Voici une liste des problèmes connus dans la seconde version candidate à la
 publication de l'installateur Debian pour Etch. Si vous n'y voyez pas le
 problème que vous rencontrez, veuillez nous envoyer un <a
 href="report-template">compte-rendu d'installation</a> (en anglais) décrivant
@@ -31,19 +31,21 @@ le problème.
     démarrages suivants. La correction de ce problème est une priorité pour la
     prochaine version de l'installateur Debian&nbsp;;
     </dd>
-  <dt>Risque de perte de données lors du redimensionnement des partitions</dt>
+  <dt>Échec possible du redimentionnement de partitions ext3 existantes</dt>
     <dd>
-    Le redimensionnement de partitions avec partman peut conduire à la perte de
-    données si le secteur débutant la partition n'est pas au début d'un
-    cylindre. Veuillez vous reporter au rapport de bogue <a
-    href="http://bugs.debian.org/379835">n°&nbsp;379835</a> pour une analyse
-    détaillée.<br />
-    Cela a particulièrement été observé avec des partitions NTFS créées lors de
-    l'installation de la seconde version bêta de Windows Vista. Le redimensionnement
-    de partition NTFS créées avec des versions plus anciennes de Windows
-    devrait toujours fonctionner.<br />
-    Au cause de cela, le redimentionnement de partitions NTFS contenant Windows
-    Vista a été désactivé&nbsp;;
+    L'installateur n'est actuellement pas capable de redimentionner les
+    partitions ext3 dont les capacités <tt>dir_index</tt> ou
+    <tt>resize_inode</tt> sont activées. Cela inclut les partitions ext3 créées
+    avec l'installateur d'Etch.<br />
+    Vous pouvez cependant redimentionner vous-mêmes une partition ext3 lors de
+    l'installation. Allez jusqu'à l'étape de partitionnement, utilisez le
+    bouton &lt;Retour&gt; pour revenir au menu principal, lancez un
+    interpréteur de commandes et redimentionnez le système de fichiers et la
+    partition en utilisant les commandes disponibles dans l'interpréteur de
+    commandes (<tt>fsck.ext3</tt>, <tt>resize2fs</tt> et par exemple
+    <tt>fdisk</tt> ou <tt>parted</tt>). Si vous relancez partman après avoir
+    terminé les opérations de redimentionnerment, il devrait afficher la
+    nouvelle taille de la partition&nbsp;;
     </dd>
   <dt>Installation incomplète de la tâche «&nbsp;bureautique&nbsp;» à partir
     du cédérom complet</dt>
@@ -60,6 +62,19 @@ le problème.
     système installé en utilisant <tt>apt-cdrom</tt> pour charger des cédéroms
     supplémentaires puis en sélectionnant à nouveau la tâche
     «&nbsp;bureautique&nbsp;» dans <tt> aptitude</tt>&nbsp;;
+    </dd>
+  <dt>Problèmes de réseau possible avec des routeurs bogués</dt>
+    <dd>
+    Si vous rencontrez des problèmes de réseau durant l'installation, cela
+    peut-être dû à un routeur qui ne gère par correctement le dimentionnement
+    de fenêtres situé quelquepart entre vous et le miroir Debian . Veuillez
+    vous reporter au bogue <a href="http://bugs.debian.org/401435">\
+    n°&nbsp;401435</a> et à cet <a href="http://kerneltrap.org/node/6723">\
+    article de kerneltrap</a> pour de plus amples informations.<br />
+    Vous pouvez contourner ce problème en désactivant le dimentionnement de
+    fenêtre TCP. Activez un interpréteur de commandes et saisissez la commande
+    suivante&nbsp;:<br />
+    <tt>echo 0 &gt; /proc/sys/net/ipv4/tcp_window_scaling</tt>
     </dd>
   <dt>Problèmes courants après le redémarrage à cause du codage UTF-8
     utilisé par défaut</dt>
@@ -91,23 +106,25 @@ le problème.
     </dd>
   <dt>Installateur graphique</dt>
     <dd>
-    L'installateur a toujours quelques problèmes connus&nbsp;:
+    L'installateur a toujours quelques problèmes connus (veuillez également
+    vous reporter au guide d'installation&nbsp;:
     <ul>
-      <li>certaines tâches (p. ex. la tâche de serveur de fichiers) peuvent ne
-      pas s'installer correctement à cause du bogue <a
-      href="http://bugs.debian.org/282147">n°&nbsp;282147</a>&nbsp;;</li>
-      <li>le changement de console fait planter le frontal sur l'architecture
-      amd64&nbsp;;</li>
-      <li>la gestion des dispositions de clavier non américaines a été
-      améliorée, mais il reste encore quelques problèmes (les touches mortes et
-      la combinaison de caractères ne fonctionnent pas)&nbsp;;</li>
+      <li>Certaines dispositions de claviers non américaines ne sont pas
+	totallement gérées (les touches mortes et la combinaison de caractères
+	ne fonctionnent pas),</li>
       <li>la gestion des partitions chiffrées est limitée&nbsp;</li>
-      <li>les pavés sensitifs (<i>touchpads</i>) peuvent ne pas fonctionner correctement,
-      veuillez utiliser une souris à la place&nbsp;;</li>
       <li>la plupart des PowerPC avec une carte ATI ne devraient pas rencontrer
-      de problèmes, mais il y a peu de chances que cela fonctionne sur les
-      autres systèmes PowerPC.</li>
+	de problèmes, mais il y a peu de chances que cela fonctionne sur les
+	autres systèmes PowerPC&nbsp;;</li>
     </ul>
+    </dd>
+  <dt>Pilote réseau sky2 cassé</dt>
+    <dd>
+    Le pilote réseau sky2 est cassé dans le noyau utilisé (2.6.18.dfsg.1-11) et
+    peut engendrer des plantages du noyau. Veuillez vous reporter par exemple
+    au bogue <a href="http://bugs.debian.org/404107">n°&nbsp;404107</a>. Le
+    bogue <a href="http://bugs.debian.org/411115">n°&nbsp;411115</a> contient
+    un ensemble de parrectifs qui pourraient corriger ce problème&nbsp;;
     </dd>
 <!-- conservé pour une possible utilisation ultérieure...
   <dt>Architecture i386&nbsp;: plus de 32&nbsp;Mo requis pour
@@ -120,45 +137,28 @@ le problème.
     architectures&nbsp;;
     </dd>
 -->
-  <dt>Architecture amd64&nbsp;: [installateur graphique] changement de console
-    impossible</dt>
+  <dt>Architecture alpha&nbsp;: erreur lors de chargement du disque virtuel
+    d'initialisation avec l'installation à partir d'un CD</dt>
     <dd>
-    Si vous essayez de changer de console à partir de l'installateur graphique
-    sur architecture amd64, le frontal plantera. Cela signifie que
-    l'interpréteur de commandes n'est pas disponible pendant l'installation. Il
-    est possible de voir les journaux en utilisant l'option <q>Sauvegarder les
-    journaux de débogage</q> à partir du menu principal&nbsp;;
+    La valeur du paramètre d'amorçage <tt>ramdisk_size</tt> est trop faible sur
+    les images de la seconde version candidate à la publication des CD et DVD.
+    Vous pouvez tout de même amorcer à partir du CD en augmentant cette valeur
+    à&nbsp;17108.<br />
+    Ce problème a été résolu dans les images construites quotidiennement et le
+    sera également pour les images officielles d'Etch&nbsp;;
     </dd>
   <dt>Architecture PowerPC&nbsp;: divers problèmes</dt>
     <dd>
     Le portage sur l'architecture PowerPC a plusieurs problèmes dans cette
     version&nbsp;:
     <ul>
-      <li>l'installation en RAID est cassée avec les tables de partitions
-      macintosh (veuillez vous reporter aux bogues <a
-      href="http://bugs.debian.org/397973">n°&nbsp;397973</a> et <a
-      href="http://bugs.debian.org/392767">n°&nbsp;392767</a> pour de plus
-      amples informations)&nbsp;;</li>
-      <li>la sous-architecture PReP n'est pas gérée car sa gestion manque dans
-      la version&nbsp;2.6.17 du noyau, il est prévu de réactiver sa gestion
-      dans la version&nbsp;2.6.18&nbsp;;</li>
-      <li>les ventilateurs des machines Apple G5 peuvent être très bruyants
-      pendant l'installation car la gestion des ventilateurs et de l'énergie
-      manque&nbsp;; ce problème a été corrigé dans les images construites
-      quotidiennement&nbsp;;</li>
       <li>l'installation par disquettes pour la sous-architecture oldworld est
       cassée car aucun n&oelig;ud n'est créé pour le module swim3 et car miboot
-      n'est pas fourni&nbsp;;</li>
+      n'est pas fourni,</li>
       <li>le module snd-powermac n'est plus chargé par défaut car il gèle
       certains systèmes&nbsp;; vous devrez l'ajouter vous-même dans
       <tt>/etc/modules</tt>&nbsp;;</li>
     </ul>
-    </dd>
-  <dt>Architecture alpha: console VGA non gérée sur les systèmes de classe
-    TITAN et TSUNAMI</dt>
-    <dd>
-    La correction est prévue pour la seconde version candidate à la
-    publication.
     </dd>
   <dt>Architecture sparc&nbsp;: possible échec des installations à partir de
     cédéroms pour l'architecture sparc32</dt>
@@ -168,19 +168,12 @@ le problème.
     sparc32. Nous vous suggérons d'utiliser la méthode d'installation par
     amorçage sur le réseau à la place.
     </dd>
-  <dt>Architecture s390&nbsp;: problèmes d'utilisation</dt>
+  <dt>Architecture s390&nbsp;: capacités non gérées</dt>
     <dd>
-    Plusieurs composants ont été récrits afin de gérer les installations
-    basées sur les versions&nbsp;2.6 du noyau et il y a toujours quelques
-    soucis&nbsp;:
     <ul>
-      <li>pendant le choix du périphérique réseau, les périphériques déjà
-      sélectionnés ne sont pas supprimés de la liste de ceux disponibles,</li>
-      <li>pendant le choix de dasd, la boîte de dialogue ne montre pas quels
-      dasds sont déjà sélectionnés ou pas,</li>
-      <li>le composant de sélection de dasd ne gère pas encore le formatage
-      d'un nouveau dasd&nbsp;; veuillez utiliser <tt>dasdfmt</tt> à partir de
-      l'interpréteur de commandes pour contourner ce problème.</li>
+      <li>la gestion de la règle<!-- discipline ? --> DASD DIAG n'est
+        actuellement pas disponible,</li>
+      <li>la gestion des interfaces réseau LCS n'est plus disponibles.</li>
     </ul>
     </dd>
 </dl>
