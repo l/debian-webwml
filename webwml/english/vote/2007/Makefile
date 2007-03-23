@@ -22,12 +22,16 @@ index.$(LANGUAGE).html: index.wml $(wildcard vote_*.wml) \
 
 ifeq "$(LANGUAGE)" "en"
 
-textfiles := vote_001_quorum.err vote_001_quorum.log  vote_001_quorum.txt   \
-             vote_001_quorum.src vote_001_results.src vote_001_majority.src \
-             vote_001_index.src  vote_001_tally.txt   vote_001_voters.txt   \
-             vote_002_quorum.err vote_002_quorum.log  vote_002_quorum.txt   \
-             vote_002_quorum.src vote_002_results.src vote_002_majority.src \
-             vote_002_index.src  vote_002_tally.txt   vote_002_voters.txt
+textfiles := vote_001_quorum.err  vote_001_quorum.log  vote_001_quorum.txt   \
+             vote_001_quorum.src  vote_001_results.src vote_001_majority.src \
+             vote_001_index.src   vote_001_tally.txt   vote_001_voters.txt   \
+             vote_002_quorum.err  vote_002_quorum.log  vote_002_quorum.txt   \
+             vote_002_quorum.src  vote_002_results.src vote_002_majority.src \
+             vote_002_index.src   vote_002_tally.txt   vote_002_voters.txt   \
+             vote_002_vote.png    vote_002_results.png vote_002_results.dot  \
+             vote_002_results.txt vote_002_vote_detailed.png
+
+
 
 desttextfiles := $(patsubst %,$(HTMLDIR)/%,$(textfiles))
 
