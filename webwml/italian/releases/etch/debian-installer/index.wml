@@ -1,0 +1,264 @@
+#use wml::debian::template title="Installazione di Debian &ldquo;etch&rdquo;" NOHEADER="true"
+#include "$(ENGLISHDIR)/releases/info"
+#include "$(ENGLISHDIR)/releases/etch/release.data"
+#include "$(ENGLISHDIR)/releases/images.data"
+#use wml::debian::translation-check translation="1.3" maintainer="Luca Monducci"
+
+<h1>Installazione di etch</h1>
+
+<if-stable-release release="sarge">
+
+Please see <a href="$(HOME)/devel/debian-installer/">the Debian-Installer project
+page</a> for details on installing etch using a current version of the
+Debian-Installer.
+
+</if-stable-release>
+
+<if-stable-release release="etch">
+
+<p>
+<b>Per installare Debian GNU/Linux</b> <current_release_sarge>
+(<em>etch</em>), scaricare una delle seguenti immagini:
+</p>
+
+<ul>
+<li>Immagini dei CD <q>netinst</q> (135-175&nbsp;MB) e <q>businesscard</q>
+(generally 20-50&nbsp;MB)<br />
+<etch-small-cd-images /></li>
+
+<li>Set completo di CD/DVD
+<table cellpadding="0" cellspacing="0">
+  <tr><td>CD:&nbsp;</td><td><etch-full-cd-images /></td></tr>
+  <tr><td>DVD:&nbsp;</td><td><etch-full-dvd-images /></td></tr>
+</table>
+</li>
+
+<li>Set completo di CD/DVD (via <a href="$(HOME)/CD/torrent-cd/">bittorrent</a>)
+<table cellpadding="0" cellspacing="0">
+  <tr><td>CD:&nbsp;</td><td><etch-full-cd-torrent /></td></tr>
+  <tr><td>DVD:&nbsp;</td><td><etch-full-dvd-torrent /></td></tr>
+</table>
+</li>
+
+<li>Set completo di CD/DVD (via <a href="$(HOME)/CD/jigdo-cd">jigdo</a>)
+<table cellpadding="0" cellspacing="0">
+  <tr><td>CD:&nbsp;</td><td><etch-full-cd-jigdo /></td></tr>
+  <tr><td>DVD:&nbsp;</td><td><etch-full-dvd-jigdo /></td></tr>
+</table>
+</li>
+
+<li>Altre immagini (per netboot, chiave USB, dischetto, ecc.)<br />
+<etch-other-images /></li>
+</ul>
+
+<h1>Documentazione</h1>
+
+<p>
+<b>Volendo leggere un solo documento</b> per l'installazione è meglio
+scegliere l'<a href="../i386/apa">Installation Howto</a>, una rapida guida
+passo-passo al processo d'installazione. Altri documenti utili sono:
+</p>
+
+<ul>
+<li><a href="../installmanual">Guida all'installazione</a><br />
+istruzioni dettagliate per l'installazione.</li>
+
+<li><a href="http://wiki.debian.org/DebianInstaller/FAQ">\
+Domande ricorrenti (FAQ) sull'Installatore Debian</a><br />
+risposte alle domande più frequenti.</li>
+
+<li><a href="http://wiki.debian.org/DebianInstaller">Wiki
+dell'Installatore Debian</a><br />
+documentazione gestita dalla comunità.</li>
+</ul>
+
+<h1 id="errata">Errata</h1>
+
+<p>
+Questo è l'elenco dei problemi conosciuti dell'installatore rilasciato
+insieme a Debian GNU/Linux <current_release_sarge>. Se si riscontrano dei
+problemi con l'installazione di Debian che non sono elencati in questa
+pagina si invii un <a href="$(HOME)/devel/debian-installer/report-template">\
+resoconto d'installazione</a> in cui si descrive il problema oppure
+verificare che non sia già presente
+<a href="http://wiki.debian.org/DebianInstaller/BrokenThings">su wiki</a>.
+</p>
+
+<h3 id="errata-r0">Errata del rilascio 4.0r0</h3>
+
+<dl class="gloss">
+
+<dt>I device dei dischi potrebbero cambiare al riavvio</dt>
+<dd>
+Sui sistemi con più dischi, il kernel/udev
+al riavvio del sistema potrebbe assegnare un device diverso da
+quello usato durante l'installazione a causa di un diverso
+ordine nel caricamento dei driver.
+<br />
+Questo può comportare l'impossibilità d'avviare il sistema.
+Nella maggior parte dei casi si può ovviare modificando
+la configurazione del boot loader e /etc/fstab
+usando la modalità di ripristino dell'installatore.
+<br />
+Notare che questo problema si può presentare a ogni avvio, la
+correzione di questo problema è prioritaria nella prossima versione
+dell'istallatore Debian.
+</dd>
+
+<dt>Ridimensionamento di partizioni ext3 esistenti</dt>
+<dd>
+Attualmente l'installatore non è capace di ridimensionare le
+partizioni ext3 che hanno le funzionalità <tt>dir_index</tt> e/o
+<tt>resize_inode</tt> attive; fra queste ci sono le partizioni
+ext3 create con l'installatore per Etch.
+<br/>
+&Egrave; comunque possibile ridimensionare la partizione ext3
+manualmente durante l'installazione. Procedere fino al partizionamento
+e tornare al menu principale premendo il bottone &lt;Indietro&gt;,
+poi avviare una shell e ridimensionare il filesystem e la partizione
+con i comandi disponibili nella shell (<tt>fsck.ext3</tt>,
+<tt>resize2fs</tt> e per esempio <tt>fdisk</tt> o <tt>parted</tt>).
+Finita l'operazione di ridimensionamento, al riavvio di parted
+viene mostrata la nuova dimensione della partizione.
+</dd>
+
+<dt>Installazione parziale del task Desktop con il CD completo</dt>
+<dd>
+L'immagine del CD completo è troppo piccola per ospitare tutti i
+pacchetti dell'ambiente Desktop. Questo vuol dire che se si utilizza
+solo il primo CD come sorgente, viene installata solo una parte del
+task.
+<br />
+Questo problema è risolvibile sia <em>durante l'installazione</em>
+selezionando un mirror come sorgente di rete aggiuntiva al CD
+(sconsigliato se non si dispone di una buona connessione di rete)
+oppure <em>dopo il riavvio</em> del sistema installato usando
+<tt>apt-cdrom</tt> per caricare i successivi CD e poi
+<tt>aptitude</tt> per selezionare nuovamente il task Desktop.
+</dd>
+
+<dt>Buggy routers may cause network problems</dt>
+<dd>
+Se durante l'installazione si verificano dei problemi di rete,
+questi potrebbero essere causati da un router fra voi e il mirror
+Debian che non gestisce correttamente il window scaling. Per
+ulteriori dettagli si veda <a href="http://bugs.debian.org/401435">#401435</a>
+e questo <a href="http://kerneltrap.org/node/6723">articolo su
+kerneltrap</a>.
+<br/>
+Si può aggirare questo problema disabilitando il TCP window scaling.
+Attivare una shell e inserire il seguente comando:
+<br />
+<tt>echo 0 &gt; /proc/sys/net/ipv4/tcp_window_scaling</tt>
+</dd>
+
+<dt>Vari problemi legati al fatto che al riavvio la codifica
+predefinita è UTF-8</dt>
+<dd>
+Nel sistema appena installato viene usata la codifica UTF-8. Purtroppo
+non tutte le applicazioni supportano UTF-8 correttamente, questo
+comporta dei problemi durante il loro uso.
+<br />
+Verificare che questi problemi siano già stati segnalati e, altrimenti,
+inviare una segnalazione di bug per il pacchetto che presenta i
+problemi (non verso installer).
+</dd>
+
+<dt>Localizzazione limitata sul sistema installato</dt>
+<dd>
+Nella versione per Sarge dell'installatore il pacchetto
+localization-config si occupava della localizzazione sul sistema
+installato. Questo pacchetto era eseguito all'interno di base-config,
+che però è stato eliminato in questa release. L'adattamento di
+localization-config per essere eseguito prima del riavvio è fra le
+cose da fare, nel frattempo alcuni aspetti della localizzazione non
+possono essere fatti automaticamente durante l'installazione.
+</dd>
+
+<dt>L'installazione di Sarge non è supportata</dt>
+<dd>
+Come risultato di alcuni cambiamenti strutturali dell'installatore,
+l'installazione di Sarge (stable) non è supportata.
+</dd>
+
+<dt>Installatore grafico</dt>
+<dd>
+L'installatore grafico ha ancora alcuni difetti conosciuti (si veda
+anche la guida all'installazione):
+<ul>
+	<li>Alcune mappe di caratteri diverse da quella US non sono
+	pienamente supportate (deadkey e i caratteri combinati non
+	funzionano)</li>
+	<li>I touchpad dovrebbero funzionare ma il supporto non è
+	ancora ottimale; in caso di problemi usare un mouse
+	esterno</li>
+	<li>Il supporto per la creazione delle partizioni cifrate è
+	ancora limitato</li>
+	<li>Dovrebbe funzionare su quasi tutti i PowerPC con scheda
+	video ATI, ma il supporto per gli altri sistemi PowerPC è
+	molto limitato</li>
+</ul>
+</dd>
+
+<dt>Il driver di rete sky2 non funziona</dt>
+<dd>
+Il driver di rete sky2 presente nel kernel (2.6.18.dfsg.1-11)
+non funziona, questp kernel è quello usato dall'installatore e
+potrebbe causare dei blocchi del kernel. Per esempio, si veda
+<a href="http://bugs.debian.org/404107">#404107</a>.
+<a href="http://bugs.debian.org/411115">#411115</a> contiene
+una raccolta di correzioni che potrebbero risolvere questo
+problema.
+</dd>
+
+<!-- leaving this in for possible future use...
+<dt>i386: sono richiesti più di 32&nbsp;MB per l'installazione</dt>
+<dd>
+La quantità minima di memoria necessaria per eseguire correttamente
+l'installazione su un i386 è di 48&nbsp;MB, al posto dei precedenti
+32&nbsp;MB. Ci auguriamo di ridurre la quantità necessaria a
+32&nbsp;MB. I requisiti di memoria potrebbero aver subito cambiamenti
+anche per le altre architetture.
+</dd>
+-->
+
+<dt>powerpc: vari problemi</dt>
+<dd>
+In questa release il port su PowerPC è afflitto da alcuni problemi:
+<ul>
+	<li>Non funziona l'avvio da dischetto sui PowerMac OldWorld
+	perché il device per il modulo swim3 non viene creato e perché
+	miboot non è stato incluso</li>
+	<li>Il modulo snd-powermac non è caricato automaticamente
+	all'avvio perché blocca alcuni sistemi. Se lo si vuole
+	caricare deve essere aggiunto manualmente in <tt>/etc/modules</tt>.</li>
+</ul>
+</dd>
+
+<dt>sparc: l'installazione da CD per sparc32 fallisce</dt>
+<dd>
+Il driver esp del kernel è fallato questo implica che l'installazione
+da CD-ROM non funziona sulla maggior parte di sistemi sparc32. Si
+suggerisce di utilizzare il metodo di installazione <q>netboot</q>.
+</dd>
+
+<dt>s390: varie funzionalità non supportate</dt>
+<dd>
+<ul>
+	<li>Attulamente non è disponibile il supporto per
+	DASD DIAG.</li>
+	<li>Il supporto per le interfacce di rete LCS non è più
+	disponibile</li>
+</ul>
+</dd>
+
+</dl>
+
+<p>
+Delle versioni migliorate del sistema di installazione sono in sviluppo per
+la prossima release Debian e possono essere usate anche per installare etch.
+Per i dettagli si consulti la <a href="$(HOME)/devel/debian-installer/">\
+pagina dell'Installatore Debian</a>.
+</p>
+
+</if-stable-release>
