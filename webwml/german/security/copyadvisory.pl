@@ -94,8 +94,8 @@ while (<SRC>)
 	s/denial of service/Diensteverweigerung (<q>denial of service<\/q>)/;
 	s/buffer overflows?/Pufferüberlauf/;
 	s/integer overflow/Integer-Überlauf/;
-	s/format string vulnerability/Formatzeichenkettenverwundbarkeit/;
-	s/format string vulnerabilities/Formatzeichenkettenverwundbarkeiten/;
+	s/format string vulnerability/Formatierungszeichenkettenverwundbarkeit/;
+	s/format string vulnerabilities/Formatierungszeichenkettenverwundbarkeiten/;
 	s/insecure temporary files/unsichere temporäre Dateien/;
 	s/>insecure temporary file creation</>Unsichere Erstellung temporärer Dateien</;
 	s/>local root exploit</>Lokale root-Ausnutzung</;
@@ -124,7 +124,7 @@ while (<SRC>)
 	s/(?:,)?( )?this problem is fixed in/$1this problem is fixed in/;
 	s/(?:,)?( )?this problem is fixed/$1this problem is fixed/;
 	s/These problems have been fixed/diese Probleme wurden in behoben/;
-	s/(?:,)?( )?these problems have been fixed in/$1wurden diese Probleme in Version korrigiert/;
+	s/(?:,)?( )?these problems have been fixed in/$1wurden diese Probleme in Version behoben/;
 	s/(?:,)?( )?these problems have been fixed$/$1wurden diese Probleme behoben/;
 	s/(?:,)?( )?these problems have(?: been)?$/$1diese Probleme wurden/;
 	s/(?:,)?( )?these probleme are fixed in/$1diese Probleme wurden in behoben/;
