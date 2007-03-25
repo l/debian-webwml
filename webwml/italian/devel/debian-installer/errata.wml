@@ -1,11 +1,11 @@
 #use wml::debian::template title="Errata corrige dell'istallatore Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.100" maintainer="Giuseppe Sacco"
+#use wml::debian::translation-check translation="1.104" maintainer="Giuseppe Sacco"
 
-<h1 id="etch-rc1">Errata per il <i>release candidate 1 (RC1)</i> di etch</h1>
+<h1 id="etch-rc2">Errata per il <i>release candidate 2 (RC2)</i> di etch</h1>
 
 <p>
-Questa è una lista dei problemi conosciuti nella versione etch rc1
+Questa è una lista dei problemi conosciuti nella versione etch rc2
 dell'installatore Debian. Se il problema riscontrato non è presente in
 questa pagina, è possibile inviare un <a href="report-template">resoconto
 dell'installazione</a> descrivendo il problema.
@@ -29,18 +29,20 @@ dell'installazione</a> descrivendo il problema.
 	dell'istallatore Debian.
 	</dd>
 
-	<dt>Pericolo di perdita di dati durante il ridimensionamento delle partizioni</dt>
+	<dt>Il ridimensionamento di partizioni ext3 pu&ograve; fallire</dt
 	<dd>
-	Il ridimensionamento delle partizioni utilizzando partman pu&ograve;
-	risultare in una perdita di dati se il settore iniziale della partizione
-	non si trova all'inizio di un cilindro. Vedi la segnalazione
-	<a href="http://bugs.debian.org/379835">#379835</a> per il dettaglio.<br />
-	Questo problema &egrave; stato evidenziato in particolare con le
-	partizioni NTFS create durante l'installazione di Windows Vista Beta 2.
-	Il ridimensionamento delle partizioni create con versioni precedenti di
-	Windows dovrebbe ancora funzionare.<br />
-	A causa di questo problema, il ridimensionamento delle partizioni NTFS
-	&egrave; stato disabilitato.
+	L'installatore non &egrave; momentaneamente in grado di ridimensionare
+	partizione ext3 che hanno <tt>dir_index</tt> e/o <tt>resize_inode</tt>
+	attivi. Sono quindi comprese le partizioni create con l'installatore
+	per Etch.<br />
+	Si pu&ograve; comunque effettuare il ridimensionamento manualmente
+	durante l'installazione: procedere fino al passo di partizionamento,
+	usare il bottone &lt;Indietro&gt; per tornare al menu principale,
+	eseguire una shell, effettuare il ridimensionamento a mano con i
+	comandi disponibili dalla shell (<tt>fsck.ext3</tt>, <tt>resize2fs</tt>
+	e <tt>fdisk</tt> o <tt>parted</tt>). Se si utilizza nuovamente partman 
+	dopo il ridimensionamento, dovrebbe mostrare le dimensioni delle
+	partizioni corrette.
 	</dd>
 
 	<dt>Installazione parziale dell'ambiente "Desktop" con il CD completo</dt>
@@ -53,6 +55,21 @@ dell'installazione</a> descrivendo il problema.
 	se non si ha una buona connessione di rete); sia <em>dopo il riavvio</em> del
 	sistema installato usando <tt>apt-cdrom</tt> per caricare i successivi CD e poi
 	<tt>aptitude</tt> per selezionare nuovamente il task Desktop.
+	</dd>
+
+	<dt>Router difettosi possono causare problemi di rete</dt>
+	<dd>
+	Se si incontrano problemi di rete durante l'installazione, &egrave;
+	possibile che essi siano causati da qualche router, tra il
+	computer e il mirror Debian, che non gestisca correttamente il
+	&ldquo;window scaling&rdquo;.
+	Vedere <a href="http://bugs.debian.org/401435">#401435</a> e
+	questo <a href="http://kerneltrap.org/node/6723">articolo su
+	kerneltrap</a> for dettagli.<br />
+	Per aggirare l'ostacolo &egrave; possibile disabilitare
+	il &ldquo;TCP window scaling&rdquo;. Attivare una shell e dare il
+	comando:<br />
+	<tt>echo 0 &gt; /proc/sys/net/ipv4/tcp_window_scaling</tt>
 	</dd>
 
 	<dt>Vari problemi legati al fatto che al riavvio la codifica
@@ -86,23 +103,28 @@ dell'installazione</a> descrivendo il problema.
 
 	<dt>Installatore grafico</dt>
 	<dd>
-	L'installatore grafico ha ancora alcuni difetti conosciuti:
+	L'installatore grafico ha ancora alcuni difetti conosciuti (vedere
+	anche il manuale d'installazione):
 	<ul>
-		<li>Alcuni task, come il <i>file server</i>, potrebbero
-		   non installarsi correttamente a causa del bug
-		   <a href="http://bugs.debian.org/282147">#282147</a></li>
-		<li>Il passaggi oda una console ad un'altra pu&ograve;
-		   bloccare il frontend su amd64</li>
-		<li>Il supporto per le mappe di caratteri diverse da quella
-		   US &egrave; migliorato, ma ci sono ancora alcuni problemi
-		   (deadkey e i caratteri combinati non funzionano)</li>
+		<li>Alcune tastiere non US non sono completamente supportate
+		   (i tasti ciechi e i caratteri combinati non funzionano)</li>
+		<li>I touchpad dovrebbero funzionare, ma non in maniera
+		   ottimale; se si incontrano problemi &egrave; meglio
+		   utilizzare un mouse esterno</li>
 		<li>Il supporto per la creazione delle partizioni cifrate
 		   &egrave; ancora limitato</li>
-		<li>I touchpad potrebbero non funzionare correttamente; usare un
-		   mouse esterno</li>
 		<li>Il funzionamento &egrave; quasi completo sui PowerPC con
 		   scheda video ATI, ma molto limitato su altri sistemi PowerPC</li>
 	</ul>
+	</dd>
+
+	<dt>Il driver di rete sky2 non funziona</dt>
+	<dd>
+	Il driver di rete sky2 non funziona con il kernel utilizzato
+	dall'installatore (2.6.18.dfsg.1-11) e pu&ograve; bloccare il
+	sistema. Vedere ad esempio <a href="http://bugs.debian.org/404107">#404107</a>.
+	<a href="http://bugs.debian.org/411115">#411115</a> contiene delle
+	patch che possono essere utilizzate per risolvere il problema.
 	</dd>
 
 <!-- leaving this in for possible future use...
@@ -116,29 +138,19 @@ dell'installazione</a> descrivendo il problema.
 	</dd>
 -->
 
-	<dt>amd64: [installatore grafico] non &egrave; possibile cambiare console</dt>
+	<dt>alpha: errore caricando l'immagine initrd durante l'installazione da CD</dt>
 	<dd>
-	Se si cerca di passare ad una console differente dall'installatore
-	grafico su amd64, il sistema si blocca. Questo vuol dire che non
-	&egrave; disponibile una shell durante l'installazione. I log
-	possono essere consultati con l'opzione di menu <q>Salva i log
-	di debug</q>.
+	Il valore del parametro di avvio <tt>ramdisk_size</tt> &egrave; troppo
+	piccolo nelle imagini di CD e DVD della RC2. Si pu&ograve; comunque
+	effettuare l'installazione alzando il valore a 17108.<br />
+	Questo problema &egrave; stato risolto nelle immagini giornaliere
+	e sar&agrave; corretto anche nelle immagini ufficiali di Etch.
 	</dd>
 
 	<dt>powerpc: vari problemi</dt>
 	<dd>
 	In questa release il port su PowerPC è afflitto da alcuni problemi:
 	<ul>
-		<li>L'installazione RAID non funziona con le tabelle di partizioni
-		   macintosh (cfr. <a href="http://bugs.debian.org/397973">#397973</a>
-		   e <a href="http://bugs.debian.org/392767">#392767</a> per ulteriori
-		   dettagli)</li>
-		<li>PReP non &egrave; supportato perch&eacute; il kernel 2.6.17 non
-		   lo prevede; il supporto dovrebbe essere riattivato in 2.6.18</li>
-		<li>Sulle macchine Apple G5 la ventola può essere molto rumorosa
-		   durante l'installazione perch&eacute; non &egrave; presente
-		   il modulo del kernel per il suo controllo. Questo problema
-		   &egrave; stato risolto nelle immagini giornaliere</li>
 		<li>non funziona l'avvio da floppy su powerpc Oldworld perché
 		   il device per il modulo swim3 non &egrave; creato e perch&eacute;
 		   miboot non è stato incluso</li>
@@ -148,22 +160,13 @@ dell'installazione</a> descrivendo il problema.
 	</ul>
 	</dd>
 
-	<dt>alpha: la console VGA su sistemi TITAN- e TSUNAMI- non &egrave; supportata</dt>
+	<dt>s390: caratteristiche non supportate</dt>
 	<dd>
-	Questo dovrebbe essere corretto nella RC2.
-	</dd>
-
-	<dt>s390: problemi di utilizzo</dt>
-	<dd>
-	Vari componenti sono stati riscritti per poter sfruttare il kernel 2.6, ma non
-	sono stati completamente rifiniti:
 	<ul>
-	<li>nella selezione dei dispositivi di rete, quelli gi&agrave; selezionati
-	    non sono rimossi dall'elenco di quelli disponibili</li>
-	<li>durante la selezione dasd, il dialogo non mostra quali dasd sono
-	    gi&agrave; stati selezionati e quali no</li>
-	<li>il componente della selezione di dasd non permette la formattazione di
-	    un nuovo dasd. Come soluzione temporanea usare <tt>dasdfmt</tt> da una shell</li>
+	  <li>Il supporto per la disciplina DADS DIAG non &egrave;
+	  attualmente disponibile</li>
+	  <li>Il supporto per le interfacce di rete LCS non &egrave; &ugrave;
+	  disponibile</li>
 	</ul>
 	</dd>
 
