@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian BTS &mdash; control del servidor" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.57" maintainer="Fernando Cerezal"
+#use wml::debian::translation-check translation="1.60" maintainer="Fernando Cerezal"
 
 <h1>Información para desarrolladores sobre cómo manipular fallos
 utilizando el interfaz de correo electrónico.</h1>
@@ -91,6 +91,12 @@ recientemente de lo que ha sido arreglado.</p>
 arregladas para el fallo se limpia. Este comportamiento es idéntico al de
 <code>reopen</code>.</p>
 
+<p>Esta orden sólo hará que un fallo como no arreglado si no se especifica una 
+versión, o si la <var>version</var> que está marcada es igual a la 
+<var>version</var> que es la última márcada como arreglada. (Si está
+seguro de que quiere marcar el fallo como no arreglado,
+use <code>reopen</code> junto a <code>found</code>.)</p>
+
 <p>Esta orden se introdujo, prefiriéndose a <code>reopen</code>,
 porque era difícil añadir una <var>versión</var> a esa sintaxis de órdenes
 sin sufrir ambigüedad.</p>
@@ -103,6 +109,26 @@ sin sufrir ambigüedad.</p>
 <p>Esto difiere de cerrar el fallo en esa versión en que no se lista
 como arreglado en versión alguna; no se conocerá información sobre esa
 versión. Se pretende que sea para guardar en el registro cuándo se encontró un fallo.</p>
+
+<dt><code>fixed</code> <var>númerodefallo</var> <var>versión</var>
+
+<dd>Indica que el fallo #<var>númerodefallo</var> se arregló en la
+<var>versión</var> dada del paquete al que está asignado.
+
+<p> Esto <em>no</em> hace que se marque el fallo como cerrado, 
+simplemente añade otra versión en la que el fallo está arreglado.
+use la dirección númerodefallo-done para cerrar un fallo y marcarlo como 
+arreglado en una versión particular.</p>
+
+<dt><code>notfixed</code> <var>númerodefallo</var> <var>versión</var>
+
+<dd>Elimina el registro de que el fallo #<var>númerodefallo</var> está
+arreglado en la versión <var>versión</var>.
+
+<p>Esta orden es equivalente a <code>found</code> seguida de
+<code>notfound</code> (el «found» elimina el arreglo en una versión
+particular, y el «notfound» elimina el «found».</p>
+
 
 <dt><code>submitter</code> <var>númerodefallo</var>
 <var>dirección del informador</var> | <code>!</code>
@@ -341,8 +367,8 @@ paquete.</p>
 <dt><code>owner</code> <var>númerodefallo</var> <var>dirección</var> | <code>!</code>
 
   <dd>Hace que <var>dirección</var> sea el «dueño» de #<var>númerodefallo</var>.
-  El dueño de un fallo se hace responsable de arreglarlo y recibirá todo
-  el correo al respecto. Esto es útil para compartir trabajo en caso de
+  El dueño de un fallo se hace responsable de arreglarlo.
+  Esto es útil para compartir trabajo en caso de
   que un paquete tenga un equipo de mantenedores.
 
   <p>Si desea convertirse en el dueño de un fallo, puede usar el atajo
