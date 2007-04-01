@@ -1,0 +1,271 @@
+#use wml::debian::template title="Debian «etch» Información de instalación" NOHEADER="true"
+#include "$(ENGLISHDIR)/releases/info"
+#include "$(ENGLISHDIR)/releases/etch/release.data"
+#include "$(ENGLISHDIR)/releases/images.data"
+#use wml::debian::translation-check translation="1.5"
+
+<h1>Instalar etch</h1>
+
+<if-stable-release release="sarge">
+
+Por favor, diríjase a la <a href="$(HOME)/devel/debian-installer/">página del 
+proyecto del instalador de Debian</a> si desea detalles sobre instalar etch utilizando la versión actual del instalador de Debian.
+
+</if-stable-release>
+
+<if-stable-release release="etch">
+
+<p>
+<b>Para instalar Debian GNU/Linux</b> <current_release_etch>
+(<em>etch</em>), descargue cualquiera de las siguientes imágenes:
+</p>
+
+<ul>
+	<li>Imágenes de CD de netinst (generalmente 135-175 MB) y 
+	    tamaño tarjeta de visita (generalmente 20-50 MB)<br />
+	    <etch-small-cd-images />
+	</li>
+	<li>Conjunto completo de  CD/DVD<br />
+            <table cellpadding="0" cellspacing="0">
+                <tr><td>CD:&nbsp;</td><td><etch-full-cd-images /></td></tr>
+                <tr><td>DVD:&nbsp;</td><td><etch-full-dvd-images /></td></tr>
+            </table>
+	</li>
+        <li>Conjunto completo de CD/DVD (usando <a href="$(HOME)/CD/torrent-cd">bittorrent</a>)
+            <table cellpadding="0" cellspacing="0">
+                <tr><td>CD:&nbsp;</td><td><etch-full-cd-torrent /></td></tr>
+                <tr><td>DVD:&nbsp;</td><td><etch-full-dvd-torrent /></td></tr>
+            </table>
+        </li>
+        <li>Conjunto completo de CD/DVD (usando <a href="$(HOME)/CD/jigdo-cd">jigdo</a>)
+            <table cellpadding="0" cellspacing="0">
+                <tr><td>CD:&nbsp;</td><td><etch-full-cd-jigdo /></td></tr>
+                <tr><td>DVD:&nbsp;</td><td><etch-full-dvd-jigdo /></td></tr>
+            </table>
+        </li>
+        <li>otras imágenes (arranque por red, memoria usb, disquete, etc)<br />
+            <etch-other-images />
+        </li>
+</ul>
+
+<h1>Documentación</h1>
+
+<p>
+<b>Si sólo va a leer un documento antes de la instalación, lea nuestro
+<a href="../i386/apa">Cómo instalar</a>, un paseo rápido por el 
+proceso de instalación. Otra documentación útil incluye:
+</p>
+
+<ul>
+<li><a href="../installmanual">Guía de instalación de Etch</a><br />
+instrucciones detalladas de instalación</li>
+<li><a href="http://wiki.debian.org/DebianInstaller/FAQ">PF del instalador de Debian</a><br />
+preguntas y respuestas comunes</li>
+<li><a href="http://wiki.debian.org/DebianInstaller">Wiki del instalador de Debian</a><br />
+documentación mantenida por la comunidad</li>
+</ul>
+
+<h1 id="errata">Erratas</h1>
+
+<p>
+Esta es una lista de los problemas conocidos del instalador que lleva 
+Debian GNU/Linux <current_release_etch>. Si ha experimentado algún problema 
+instalando Debian y no ve su problema en esta lista, por favor mándenos un
+<a href="$(HOME)/devel/debian-installer/report-template">informe de instalación</a> 
+describiendo el problema o 
+<a href="http://wiki.debian.org/DebianInstaller/BrokenThings">compruebe el wiki</a>
+para ver otros problemas conocidos.
+</p>
+
+<h3 id="errata-r0">Erratas de la publicación 4.0r0</h3>
+
+<dl class="gloss">
+	<dt>Los dispositivos de disco pueden cambiar al reiniciar</dt>
+	<dd>
+	En algunos sistemas con múltiples controladores de discos, el 
+	núcleo/udev pueden asignar un nodo diferente de dispositivo al reiniciar
+	el sistema del que se usó durante la instalación debido a diferencias
+	en el orden de carga de los controladores.<br />
+	Esto puede llevar a fallos en el arranque del sistema. En la mayoría 
+	de los casos se puede corregir cambiando la configuración del cargador 
+	de arranque y /etc/fstab, posiblemente usando el modo rescate del 
+	instalador.<br />
+	Sin embargo, tenga en cuenta que este error puede ocurrir de nuevo en 
+	arranques posteriores.
+	El arreglo de esta cuestión tiene prioridad en la próxima versión del 
+	instalador de Debian.
+	</dd>
+
+	<dt>Puede fallar el redimensionamiento de las particiones ext3 existentes</dt>
+	<dd>
+	Actualmente, el instalador no puede redimensionar particiones ext3 que 
+	tengan las características <tt>dir_index</tt> y/o <tt>resize_inode</tt> activadas.
+	Esto incluye particiones ext3 creadas con el instalador de Etch.<br />
+	Sin embargo, el usuario puede redimensionar una partición ext3 
+	manualmente durante la instalación.
+	Proceda hasta el paso de particionado, pulse el botón <q>Retroceder</q> para
+	salir al menú principal, inicie un terminal, y redimensione la partición
+	y el sistema de archivos utilizando las órdenes disponibles en el 
+	terminal (<tt>fsck.ext3</tt>, <tt>resize2fs</tt> y e.g. <tt>fdisk</tt> o
+	<tt>parted</tt>). Si inicia partman de nuevo tras completar la operación
+	de redimensionamiento, debería mostrar el nuevo tamaño de la partición.
+	</dd>
+
+	<dt>Instalación incompleta de la tarea de escritorio desde la imagen 
+	completa de CD</dt>
+	<dd>
+	La imagen completa de CD es demasiado pequeña para contener todos los 
+	paquetes necesarios para instalar la tarea completa de escritorio. Esto
+	significa que si usa sólo el CD como fuente, sólo se instalará parte 
+	de la tarea de escritorio.<br />
+	Puede resolver esto <em>durante la instalación</em> eligiendo usar
+	una réplica de red como fuente para instalar paquetes además del CD 
+	(no se recomienda si no tiene una conexión decente a internet), o
+	<em>tras haber reiniciado</em> en el sistema instalado, usar 
+	<tt>apt-cdrom</tt> para cargar CDs adicionales y entonces seleccionar 
+	la tarea de escritorio otra vez en <tt>aptitude</tt>.
+	</dd>
+
+	<dt>Enrutadores defectuosos pueden causar problemas de red</dt>
+	<dd>
+	Si experimenta problemas de red durante la instalación, puede que los
+	cause un enrutador, en algún sitio entre usted y la réplica de Debian, 
+	que no trate correctamente el escalado de ventana.
+	Véase <a href="http://bugs.debian.org/401435">#401435</a> y este
+	<a href="http://kerneltrap.org/node/6723">artículo de kerneltrap</a> 
+	para más detalles.<br />
+	Puede arreglarlo provisionalmente deshabilitando el escalado de la 
+	ventana TCP. Abra un terminal e introduzca la siguiente orden:<br />
+	<tt>echo 0 > /proc/sys/net/ipv4/tcp_window_scaling</tt>
+	</dd>
+
+	<dt>Asuntos generales tras reiniciar debido al uso predeterminado de UTF-8</dt>
+	<dd>
+	El sistema instalado ahora establece UTF-8 como predeterminado. Sin 
+	embargo, no todas las aplicaciones soportan adecuadamente UTF-8 aún, lo
+	que puede resultar en mayores o menores problemas cuando los use.<br />
+	Por favor, compruebe si ya se ha informado de tales problemas, y si no, 
+	remita un informa de error contra el paquete en cuestión (no al
+	instalador).
+	</dd>
+
+	<dt>Localización limitada en el sistema instalado</dt>
+	<dd>
+	Para la versión de Sarge del instalador, el paquete localization-config
+	era el responsable de parte de la localización del sistema instalado.
+	Este paquete se ejecutaba como parte de base-config, lo que se ha 
+	descartado en la publicación.
+	En nuestra lista de cosas por hacer está adaptar localization-config 
+	para que se ejecute antes de reiniciar, pero mientras tanto puede que
+	algunas localizaciones no se hagan automáticamente cuando hagan 
+	instalaciones en lenguas distintas del inglés.
+	</dd>
+
+	<dt>No se soporta la instalación de Sarge</dt>
+	<dd>
+	Como resultado de algunos cambios estructurales en el instalador, no 
+	se soporta la instalación de Sarge (estable).
+	</dd>
+
+	<dt>Instalador gráfico</dt>
+	<dd>
+	El instalador gráfico aún tiene algunos asuntos conocidos (véase
+	también la guía de instalación):
+	<ul>
+		<li>algunos mapas de caracteres no estadounidenses no están 
+		    totalmente soportados (teclas muertas y combinaciones de 
+		    caracteres que no funcionan)</li>
+		<li>los <q>touchpad</q> deberían funcionar, pero el soporte 
+		    puede no ser óptimo. Si experimenta problemas, debería usar
+		    un ratón externo en su lugar</li>
+		<li>soporte limitado para crear particiones cifradas</li>
+		<li>debería funcionar en casi todos los sistemas PowerPC que
+		    tengan una tarjeta gráfica ATI, pero es poco probable que
+		    funcione en otros sistemas PowerPC</li>
+	</ul>
+	</dd>
+
+	<dt>El controlador de red sky2 se sabe que no funciona</dt>
+	<dd>
+	El controlador de red sky2 se sabe que no funciona en el núcleo
+	(2.6.18.dfsg.1-11) usado en el instalador y puede causar 
+	<q>kernel panics</q>. Véase, por ejemplo,
+	<a href="http://bugs.debian.org/404107">#404107</a>.
+	<a href="http://bugs.debian.org/411115">#411115</a> contiene una serie 
+	de parches que pueden arreglar este asunto.
+	</dd>
+
+<!-- Esto se deja para posible uso en el futuro...
+	<dt>i386: se necesitan más de 32 mb de memoria para instalar</dt>
+	<dd>
+	La mínima cantidad de memoria necesaria para una instalación 
+	satisfactoria en un i386 es 48 mb, en lugar de los anteriores 
+	32 mb. Esperamos volver a reducirlo a 32 mb en el futuro. Los 
+	requerimientos de memoria puede que hayan cambiado para otras 
+	arquitecturas.
+	</dd>
+-->
+
+	<dt>i386/amd64: configuración de terminal serie con GRUB</dt>
+	<dd>
+	Hay algunas cuestiones sobre la manera en que el instalador intenta 
+	configurar GRUB para usar un terminal serie. Se pueden encontrar todos
+	los detalles en el informe de fallo 
+	<a href="http://bugs.debian.org/416310">#416310</a>.
+	Brevemente, estos asuntos se pueden resolver asegurándose de que la
+	paridad y las opciones de bits también se le pasan en la definición
+	<q><tt>console=</tt></q>.<br />
+	Para la mayoría de la gente esto significará que en lugar de arrancar 
+	el instalador con <q><tt>console=ttyS0,9600</tt></q> deberían arrancarlo
+	usando <q><tt>console=ttyS0,9600n8</tt></q>.
+	</dd>
+
+	<dt>amd64: no se puede formatear un sistema de archivos ext2</dt>
+	<dd>
+	Dado que el módulo ext2 del núcleo no está disponible, no se puede crear
+	un sistema de archivos ext2. Esto se arreglará en la próxima versión del
+	instalador para Etch.
+	</dd>
+
+	<dt>powerpc: varias cuestiones</dt>
+	<dd>
+	La adaptación a PowerPC tiene varias cuestiones en esta publicación:
+	<ul>
+		<li>la instalación desde disquete en PowerMac <q>OldWorld</q> no
+		    funciona porque no se crea un nodo de dispositivo para el
+		    módulo swim3 y ya que miboot no está incluido</li>
+		<li>el módulo snd-powermac ya no se carga por omisión ya que 
+		    bloqueaba algunos sistemas. Tendrá que añadirlo manualmente
+		    a <tt>/etc/modules</tt></li>
+	</ul>
+	</dd>
+
+	<dt>sparc: la instalación desde CD para sparc32 puede fallar</dt>
+	<dd>
+	el módulo del controlador esp del núcleo no funciona lo que significa 
+	que la instalación desde CD-ROM no funciona en la mayoría de los
+	sistemas sparc32. Le sugerimos que use el método de instalación 
+	<q>netboot</q> en su lugar.
+	</dd>
+
+
+	<dt>s390: características no soportadas</dt>
+	<dd>
+	<ul>
+		<li>el soporte para la disciplina DASD DIAG no está disponible 
+		    actualmente</li>
+		<li>el soporte para interfaces de red LCS ya no está disponible
+		    </li>
+	</ul>
+	</dd>
+</dl>
+
+<p>
+Se han desarrollado versiones mejoradas del sistema de instalación para la 
+próxima publicación de Debian, y se pueden usar también para instalar etch.
+Para más detalles, véase 
+<a href="$(HOME)/devel/debian-installer/">la página del proyecto del instalador de Debian</a>.
+</p>
+
+</if-stable-release>º:w
+
