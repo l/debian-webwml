@@ -420,7 +420,7 @@ foreach $lang (@search_in) {
                 print HTML "<li><a href=\"#outdated\">Outdated translations</a></li>\n";
             }
             if (($u_body) || ($ui_body) || ($un_body) || ($uu_body)) {
-                print HTML "<li>Untranslated</li>\n";
+                print HTML "<li>Untranslated\n";
                 print HTML "<ul>\n";
                 if ($u_body) {
                     print HTML "<li><a href=\"#untranslated\">General pages</a></li>\n";
@@ -434,7 +434,7 @@ foreach $lang (@search_in) {
 	        if ($uu_body) {
               	    print HTML "<li><a href=\"#untranslated-user\">Consultant/user pages</a></li>\n";
                 }
-                print HTML "</ul>\n";
+                print HTML "</ul></li>\n";
             }
             if ($t_body) {
                 print HTML "<li><a href=\"#uptodate\">Translated pages (up-to-date)</a></li>\n";
@@ -518,7 +518,7 @@ foreach $lang (@search_in) {
                 printf HTML "<td style=\"background-color: %s\" align=right>%d (%d%%)</td>", $color_u, $po_untranslated{'total'}{$lang}, $percent_po_u{'total'}{$lang};
                 printf HTML "<td align=right>%d</td>", $po_total{'total'};
                 print HTML "</tr>\n";
-               print HTML "</table>\n";
+                print HTML "</table>\n";
             }
 
             # outputs footer
@@ -675,7 +675,7 @@ print HTMLI "</table>\n";
 # print HTMLI $border_foot;
 
 print HTMLI "<p><hr>\n";
-print HTMLI "<p>Created with <a href=\"http://cvs.debian.org/webwml/stattrans.pl?cvsroot=webwml\">webwml-stattrans</a> at $date\n";
+print HTMLI "<p><address>Created with <a href=\"http://cvs.debian.org/webwml/stattrans.pl?cvsroot=webwml\">webwml-stattrans</a> on $date</address>\n";
 print HTMLI "</body></html>\n";
 close (HTMLI);
 
