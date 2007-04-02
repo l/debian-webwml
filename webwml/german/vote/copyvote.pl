@@ -281,6 +281,11 @@ while (<SRC>)
 	{
 	    s#To be decided.#Muss noch entschieden werden.#;
 	}
+	if ($vf eq "suppl_".$number."_stats_detailed.wml")
+	{
+	    s#Graph of the#Grafik der Rate,#;
+	    s#rate at which the votes were received#in der die Stimmen empfangen wurden#;
+	}
 	print DST $_;
 }
 
