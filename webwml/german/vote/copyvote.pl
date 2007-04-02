@@ -280,6 +280,32 @@ while (<SRC>)
 	if ($vf eq "vote_".$number."_index.src")
 	{
 	    s#To be decided.#Muss noch entschieden werden.#;
+
+	    s#Ballots Received#Empfangene Stimmzettel#;
+            s#MIME Decoded#MIME entschlüsselt#;
+            s#Passed Sig Check#Unterschrift überprüft#;
+	    s#Passed LDAP Check#LDAP überprüft#;
+	    s#Votes Tallied#Gezählte Stimmen#;
+	    s#Acks Created#Erstellte Bestätigungen#;
+            s#Acks Sent#Gesendete Bestätigungen#;
+	    s#Acks Unsent#Nicht gesendete Bestätigungen#;
+	    s#Rejects Sent#Ablehnungen verschickt#;
+	    s#Bad Ballot#Ungültige Stimmzettel#;
+	    s#Unique Voters#Eindeutige Wähler#;
+            s#Graph of the#Grafik#;
+	    s#rate at which the votes are received# der Rate, in der die Stimmen empfangen wurden#;
+            s#Click on the image above to get a Zoomed in version.<br> A#Klicken Sie auf das obige Bild, um eine vergrößerte Version zu\nbekommen.<br />#;
+	    s#<a href="(.*)">tally sheet</a> is#Das <a href="$1">Zählblatt</a> ist verfügbar.#;
+	    s#available.  While the voting is still open the tally is a#Während die Wahlphase noch läuft, ist das#;
+            s#dummy one; after the vote, the final tally sheet shall be#Zählblatt mit Pseudowerten gefüllt; nach der Abstimmung#;
+            s#put in place. Please note that for secret ballots the#wird stattdessen das endgültige Zählblatt veröffentlicht.#;
+            s#md5sum on the dummy tally sheet is randomly generated, as#Bitte beachten Sie, dass die MD5-Summen im vorläufigen\nZählblatt für geheime Wahlen zufällig erzeugt werden.#;
+	    s#otherwise the dummy tally sheet would leak information#Andernfalls würden Informationen über die MD5-Summe und#;
+            s#relating the md5 hash and the voter.  Additionally, the#den zugehörigen Wähler durchsickern können. Außerdem werden#;
+	    s#<a href="(.*)">results</a> shall be#die <a href="$1">Ergebnisse</a>#;
+	    s#updated after the polls close.#aktualisiert, sobald die Wahlphase abgeschlossen ist.#;
+	    s#standings of the candidates#des Standes der Kandidaten#;
+
 	}
 	if ($vf eq "suppl_".$number."_stats_detailed.wml")
 	{
