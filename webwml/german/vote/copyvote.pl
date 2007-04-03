@@ -269,6 +269,10 @@ while (<SRC>)
 	    s#<sup>th</sup>#.#;
 	    s#Choice#Wahl#;
 	}
+	if ($vf eq "vote_".$number."_quorum.src")
+	{
+	    s#Option(.*) Reached quorum#Option $1 erreichte Quorum#;
+	}
 	if ($vf eq "vote_".$number."_quorum.txt")
 	{
 	    s#Current Developer Count#Aktuelle Entwickler-Anzahl#;
@@ -276,6 +280,11 @@ while (<SRC>)
 	if ($vf eq "vote_".$number."_results.src")
 	{
 	    s#To be decided.#Muss noch entschieden werden.#;
+	}
+	if ($vf eq "vote_".$number."_majority.src")
+	{
+	    s#Option(.*) passes Majority#Option $1 erreicht Mehrheit#;
+	    s#Majority#Mehrheit#;
 	}
 	if ($vf eq "vote_".$number."_index.src")
 	{
