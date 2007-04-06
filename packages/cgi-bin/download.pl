@@ -19,6 +19,8 @@ use Packages::HTML ();
 my ($input,   # The CGI data
     $file, $filen, $md5sum, @file_components, $type, $arch, $dist);
 
+use constant OLDSTABLE_IS_ARCHIVED => 0;
+
 # TODO: find a way to get the U.S. mirror list from a more authoritive
 # location automatically. might not be overly smart to automatize it
 # completely, since I hand pick sites that are up-to-date, fast, and
@@ -291,7 +293,7 @@ END
 <a href="http://www.debian.org/mirror/list-non-US">complete mirror list</a>.</p>
 END
 
-} elsif ($dist eq 'oldstable') {
+} elsif (OLDSTABLE_IS_ARCHIVED and ($dist eq 'oldstable')) {
 
     print_links( "North America", $file, @old_north_american_sites );
     print_links( "Europe", $file, @old_european_sites );
