@@ -35,34 +35,6 @@ do
    cd ${archivedir}
 done
 
-# non-US
-#
-for dist in oldstable
-do
-    test -d ${flatdir}/${dist} || mkdir -p ${flatdir}/${dist}
-    cd non-US/${dist}
-    foo=\$arch_${dist//-/_}
-    for arch in `eval echo $foo`
-    do
-	for part in ${parts}
-	do
-	    if [ -f ${part}/binary-${arch}/Packages.gz ]
-	    then
-		test -d ${flatdir}/${dist}/${part} || mkdir -p ${flatdir}/${dist}/${part}
-		$bindir/flatten-db \
-		    --db ${part}/binary-${arch}/Packages.gz \
-		    --descr ${flatdir}/${dist}/${part}/Description.tmp \
-		    --sections ${flatdir}/${dist}/${part}/Section.tmp \
-		    --packages ${flatdir}/${dist}/${part}/Packages-${arch}.non-US.db.tmp \
-		    --output ${flatdir}/${dist}/${part}/Packages-${arch}.non-US
-	        [ -s ${flatdir}/${dist}/${part}/Packages-${arch}.non-US.db.tmp  ] \
-			&& mv ${flatdir}/${dist}/${part}/Packages-${arch}.non-US.db{.tmp,}
-	    fi
-       done
-    done
-   cd ${archivedir}
-done
-
 # updates
 #
 for dist in oldstable stable
