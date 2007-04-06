@@ -93,10 +93,6 @@ close (C);
 
 my $cdir = $topdir . "/files/contents";
 my $file = "$cdir/$version/Contents-$arch";
-my $file_nonus = "";
-if ($version eq 'oldstable') {
-    $file_nonus = "$cdir/$version/Contents-$arch.non-US";
-}
 
 # The keyword needs to be modified for the actual search, but left alone
 # for future reference, so we create a different variable for searching
@@ -106,9 +102,8 @@ $searchkeyword =~ s/[.]/[.]/;
 # check if the Contents file is there
 if (!-r $file) {
 # XXX has to be updated for new architecures
-  if (($version eq "stable" and $arch =~ /^(hurd|sh)$/)
-      || ($version eq "oldstable" and $arch =~ /^amd64$/)) {
-    print "Error: the $arch architecture didn't exist in $version.<br>\n"
+  if ($version =~ /^((old)?stable|testing)$/ and $arch =~ /^(hurd|kfreebsd)-/) {
+    print "Error: the $arch architecture doesn't exist in $version.<br>\n"
          ."Please go back and choose a different distribution.\n";
   } else {
     print "Error: Contents file not found.<br>\n"
@@ -142,7 +137,6 @@ if ($searchmode eq "filelist") {
 }
 
 push @grep, $file;
-push @grep, $file_nonus if $file_nonus;
 #print STDERR "@grep<br>\n"; # just for debugging
 
 open my $grep_out, '-|', @grep or die "grep failed: $!";
