@@ -2,16 +2,18 @@
 #include "$(ENGLISHDIR)/releases/info"
 #include "$(ENGLISHDIR)/releases/etch/release.data"
 #include "$(ENGLISHDIR)/releases/images.data"
-#use wml::debian::translation-check translation="1.5" maintainer="Nicolas Bertolissio"
+#use wml::debian::translation-check translation="1.7" maintainer="Nicolas Bertolissio"
 
 <h1>Installer Etch</h1>
 
 <if-stable-release release="sarge">
 
+<p>
 Veuillez vous reporter à la <a href="$(HOME)/devel/debian-installer/">page du
 projer de l'installateur Debian</a> pour de plus amples informations sur
 l'installation d'Etch en utilisant la version actuelle de l'installateur
 Debian.
+</p>
 
 </if-stable-release>
 
@@ -98,20 +100,20 @@ wiki</a> pour d'autres problèmes connus.
     démarrages suivants. La correction de ce problème est une priorité pour la
     prochaine version de l'installateur Debian&nbsp;;
     </dd>
-  <dt>Échec possible du redimentionnement de partitions ext3 existantes</dt>
+  <dt>Échec possible du redimensionnement de partitions ext3 existantes</dt>
     <dd>
-    L'installateur n'est actuellement pas capable de redimentionner les
+    L'installateur n'est actuellement pas capable de redimensionner les
     partitions ext3 dont les capacités <tt>dir_index</tt> ou
     <tt>resize_inode</tt> sont activées. Cela inclut les partitions ext3 créées
     avec l'installateur d'Etch.<br />
-    Vous pouvez cependant redimentionner vous-mêmes une partition ext3 lors de
+    Vous pouvez cependant redimensionner vous-même une partition ext3 lors de
     l'installation. Allez jusqu'à l'étape de partitionnement, utilisez le
     bouton &lt;Retour&gt; pour revenir au menu principal, lancez un
-    interpréteur de commandes et redimentionnez le système de fichiers et la
+    interpréteur de commandes et redimensionnez le système de fichiers et la
     partition en utilisant les commandes disponibles dans l'interpréteur de
     commandes (<tt>fsck.ext3</tt>, <tt>resize2fs</tt> et par exemple
     <tt>fdisk</tt> ou <tt>parted</tt>). Si vous relancez partman après avoir
-    terminé les opérations de redimentionnerment, il devrait afficher la
+    terminé les opérations de redimensionnement, il devrait afficher la
     nouvelle taille de la partition&nbsp;;
     </dd>
   <dt>Installation incomplète de la tâche «&nbsp;bureautique&nbsp;» à partir
@@ -130,27 +132,33 @@ wiki</a> pour d'autres problèmes connus.
     supplémentaires puis en sélectionnant à nouveau la tâche
     «&nbsp;bureautique&nbsp;» dans <tt>aptitude</tt>&nbsp;;
     </dd>
-  <dt>Problèmes de réseau possible avec des routeurs bogués</dt>
+  <dt>Problèmes de réseau possibles avec des routeurs bogués</dt>
     <dd>
     Si vous rencontrez des problèmes de réseau durant l'installation, cela
-    peut-être dû à un routeur qui ne gère par correctement le dimentionnement
-    de fenêtres situé quelquepart entre vous et le miroir Debian . Veuillez
+    peut être dû à un routeur situé quelque part entre vous et le miroir Debian
+    et qui ne gère par correctement le dimensionnement de la fenêtre TCP. Veuillez
     vous reporter au bogue <a href="http://bugs.debian.org/401435">\
     n°&nbsp;401435</a> et à cet <a href="http://kerneltrap.org/node/6723">\
     article de kerneltrap</a> pour de plus amples informations.<br />
-    Vous pouvez contourner ce problème en désactivant le dimentionnement de
-    fenêtre TCP. Activez un interpréteur de commandes et saisissez la commande
+    Vous pouvez contourner ce problème en désactivant le dimensionnement de
+    fenêtre TCP. Saisissez dans un interpréteur de commandes la commande
     suivante&nbsp;:<br />
-    <tt>echo 0 &gt; /proc/sys/net/ipv4/tcp_window_scaling</tt>
+    <tt>echo 0 &gt; /proc/sys/net/ipv4/tcp_window_scaling</tt><br />
+    Une fois le système installé, vous ne devriez probablement pas désactiver 
+    complètement le dimensionnement de la fenêtre TCP. La commande suivante
+    configure des intervalles en lecture et écriture qui devraient fonctionner
+    avec pratiquement tous les routeurs&nbsp;:<br />
+    <tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_rmem</tt><br />
+    <tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_wmem</tt>
     </dd>
   <dt>Problèmes courants après le redémarrage à cause du codage UTF-8
     utilisé par défaut</dt>
     <dd>
     Le système d'installation est désormais paramétré en UTF-8 par défaut.
-    Cependant, toutes les applications ne supportent pas encore correctement
-    l'UTF-8 ce qui peut engendrer de petits problèmes ou des problèmes plus
+    Cependant, toutes les applications ne gèrent pas encore correctement
+    l'UTF-8, ce qui peut engendrer de petits problèmes ou des problèmes plus
     importants lors de leur utilisation.<br />
-    Veuillez vérifier si de tels problèmes ont déjà été reportés avant de
+    Veuillez vérifier si de tels problèmes ont déjà été signalés avant de
     remplir un rapport de bogue contre le paquet correspondant (et non contre
     l'installateur)&nbsp;;
     </dd>
@@ -168,7 +176,7 @@ wiki</a> pour d'autres problèmes connus.
   <dt>Installation de Sarge non prise en charge</dt>
     <dd>
     En conséquence de certaines modifications structurelles dans
-    l'installateur, l'installation de Sarge (la distribution stable) n'est pas
+    l'installateur, l'installation de Sarge (l'ancienne distribution stable) n'est pas
     gérée&nbsp;;
     </dd>
   <dt>Installateur graphique</dt>
@@ -207,15 +215,15 @@ wiki</a> pour d'autres problèmes connus.
   <dt>Architectures i386 et amd64&nbsp;: paramétrage de la console série avec le
     GRUB</dt>
     <dd>
-    Il y a quelques problèmes dans la manière que l'installateur utiliser pour
-    essayer de paramétrer le GRUB pour utiliser une console série. De plus
+    Il y a quelques problèmes dans la manière de l'installateur
+    d'essayer de paramétrer GRUB pour utiliser une console série. De plus
     amples informations se trouvent dans le rapport de bogue <a
     href="http://bugs.debian.org/416310">n°&nbsp;416310</a>. En bref, ces
     problèmes peuvent être résolus en s'assurant que les options de parité et
-    de bits sont aussi fournies dans la définition "<tt>console=</tt>".<br />
+    de bits sont aussi fournies dans la définition <q><tt>console=</tt></q>.<br />
     Pour la plupart des gens, cela signifie qu'au lieu de démarrer
-    l'installateur avec "<tt>console=ttyS0,9600</tt>" il faut utiliser
-    "<tt>console=ttyS0,9600n8</tt>".
+    l'installateur avec <q><tt>console=ttyS0,9600</tt></q> il faut utiliser
+    <q><tt>console=ttyS0,9600n8</tt></q>.
     </dd>
   <dt>Architecture amd64&nbsp;: impossibilité de formater un système de
     fichiers ext2</dt>
@@ -239,7 +247,7 @@ wiki</a> pour d'autres problèmes connus.
   <dt>Architecture sparc&nbsp;: possible échec des installations à partir de
     CD pour l'architecture sparc32</dt>
     <dd>
-    Le module pilote du noyau esp est cassé ce que signifie que l'installation
+    Le module pilote du noyau esp est cassé ce qui signifie que l'installation
     à partir d'un CD ne fonctionne pas sur la plupart des systèmes
     sparc32. Nous vous suggérons d'utiliser la méthode d'installation par
     amorçage sur le réseau à la place.
@@ -249,7 +257,7 @@ wiki</a> pour d'autres problèmes connus.
     <ul>
       <li>la gestion de la règle<!-- discipline ? --> DASD DIAG n'est
         actuellement pas disponible,</li>
-      <li>la gestion des interfaces réseau LCS n'est plus disponibles.</li>
+      <li>la gestion des interfaces réseau LCS n'est plus disponible.</li>
     </ul>
     </dd>
 </dl>
