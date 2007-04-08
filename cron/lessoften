@@ -27,25 +27,27 @@ echo "copying events/materials/ in place..." >> $crondir/lessoften.log
 install -d -m 2775 -g debwww $webdir/events/materials
 cp -a $webtopdir/events-materials/* $webdir/events/materials/
 
-# build installation guide for etch
+# build installation guide for etch/lenny
 cd $crondir/tmp
 igdsc=`ls -t1 $ftpdir/pool/main/i/installation-guide/installation-guide_*.dsc | head -1`
 igdir=`basename "$igdsc" |
 	sed -e 's/installation-guide_/installation-guide-/' -e 's/\.dsc//'`
-if [ "$igdsc" -nt $webtopdir/installmanual/etch.log ]; then
-	echo "extracting installation-guide source..." >> $crondir/lessoften.log
-	[ -d "$igdir" ] && rm -fr "$igdir"
-	dpkg-source -sn -x "$igdsc" >> $crondir/lessoften.log
-	if [ -d "$igdir" ]; then
-		echo "building installation-guide for etch..." >> $crondir/lessoften.log
-		cd $igdir/build &&
-			manual_release=etch destination=$webtopdir/installmanual/etch/ ./buildweb.sh > $webtopdir/installmanual/etch.log 2>&1
+for dist in etch lenny; do
+	if [ "$igdsc" -nt $webtopdir/installmanual/$dist.log ]; then
+		echo "extracting installation-guide source..." >> $crondir/lessoften.log
+		[ -d "$igdir" ] && rm -fr "$igdir"
+		dpkg-source -sn -x "$igdsc" >> $crondir/lessoften.log
+		if [ -d "$igdir" ]; then
+			echo "building installation-guide for $dist..." >> $crondir/lessoften.log
+			cd $igdir/build &&
+				manual_release=$dist destination=$webtopdir/installmanual/$dist/ ./buildweb.sh > $webtopdir/installmanual/$dist.log 2>&1
+		fi
+	else
+		echo no new installation-guide for $dist, skipping build >> $crondir/lessoften.log
 	fi
-else
-	echo no new installation-guide for etch, skipping build >> $crondir/lessoften.log
-fi
+done
 
-for dist in sarge etch; do
+for dist in sarge etch lenny; do
 	echo "copying $dist installmanual in place..." >> $crondir/lessoften.log
 	cp -a $webtopdir/installmanual/$dist/* $webdir/releases/$dist/
 done
