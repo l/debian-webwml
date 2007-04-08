@@ -25,6 +25,8 @@ ifeq "$(LANGUAGE)" "en"
 textfiles := vote_001_quorum.err  vote_001_quorum.log  vote_001_quorum.txt   \
              vote_001_quorum.src  vote_001_results.src vote_001_majority.src \
              vote_001_index.src   vote_001_tally.txt   vote_001_voters.txt   \
+             vote_001_vote.png    vote_001_results.png vote_001_results.dot  \
+             vote_001_results.txt vote_001_results.png vote_001_vote_detailed.png \
              vote_002_quorum.err  vote_002_quorum.log  vote_002_quorum.txt   \
              vote_002_quorum.src  vote_002_results.src vote_002_majority.src \
              vote_002_index.src   vote_002_tally.txt   vote_002_voters.txt   \
