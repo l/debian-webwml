@@ -1,5 +1,7 @@
 #use wml::debian::template title="The debian-volatile Project"
-<define-tag current_testing_name>etch</define-tag>
+<define-tag current_testing_name>lenny</define-tag>
+<define-tag current_stable_name>etch</define-tag>
+<define-tag current_oldstable_name>sarge</define-tag>
 
 <h2>debian-volatile for end users</h2>
 
@@ -40,8 +42,15 @@ for details.</p>
 
 <p><strong>Archive</strong><br />
 The official archive of debian-volatile is available on the main site
-<a href="http://volatile.debian.net/debian-volatile">volatile.debian.net</a>, but
+<a href="http://volatile.debian.org/debian-volatile">volatile.debian.org</a>, but
 a <a href="volatile-mirrors">network of mirrors</a> is active and available.
+</p>
+<p>
+Please just use sarge/volatile or etch/volatile with<br />
+deb http://volatile.debian.net/debian-volatile sarge/volatile main contrib non-free<br />
+or<br />
+deb http://volatile.debian.net/debian-volatile etch/volatile main contrib non-free
+</p>
 
 <h2>debian-volatile for developers</h2>
 
@@ -76,7 +85,7 @@ following criteria:</p>
  </li>
 
  <li>Packages need to be conformant to stable policy; we currently take
-   <a href="http://release.debian.org/sarge_rc_policy.txt">http://release.debian.org/sarge_rc_policy.txt</a>
+   <a href="http://release.debian.org/<current_stable_name>_rc_policy.txt">http://release.debian.org/<current_stable_name>_rc_policy.txt</a>
    as a hint about what is ok and what not.</li>
 
  <li>The upgrade path from volatile to the next stable release needs to be at
@@ -101,15 +110,15 @@ packages inclusion in debian-volatile:</p>
 
 <li><em>Upload to debian-volatile</em><br />
    After receiving consensus from the list, please upload at least
-   source and binary-all packages to <tt>volatile-master.debian.net</tt> (see below)
+   source and binary-all packages to <tt>volatile-master.debian.org</tt> (see below)
    using FTP. Please document changes in <tt>debian/changelog</tt>.
    Just writing<br />
    <code>* Upload package to volatile</code><br />
    is <em>NOT</em> acceptable. If you already did an upload to volatile for the package, and your proposed changes to the
    previous version are security fixes, please tell us in advance. If
-   you already have got one or more CAN identifiers, please put them in the changelog for
+   you already have got one or more CVE identifiers, please put them in the changelog for
    tracking the security issues. If you
-   do not have any CAN id, please tell us anyway, because we can obtain them for you. If you
+   do not have any CVE id, please tell us anyway, because we can obtain them for you. If you
    want to contact the <a href="team">debian-volatile team</a> in private, please contact one
    of its members. Sometimes there are embargo dates on publication of security bugs and
    their fixes. We respect them.</li>
@@ -133,7 +142,7 @@ You should add the following sniplet to your <tt>~/.dput.cf</tt>:</p>
 <pre>
 [volatile]
 method = ftp
-fqdn = volatile-master.debian.net
+fqdn = volatile-master.debian.org
 incoming = /pub/UploadQueue/
 login = anonymous
 hash = md5
@@ -142,10 +151,18 @@ hash = md5
 <p>If you are using dupload, the stanza below should be added to your <tt>~/.dupload.conf</tt>:</p>
 <pre>
 $cfg{'volatile'} = {
-        fqdn => "volatile-master.debian.net",
+        fqdn => "volatile-master.debian.org",
         incoming => "/pub/UploadQueue/",
         \# files pass on to dinstall on ftp-master which sends emails itself
         dinstall_runs => 1,
         passive => 1,
 };
 </pre>
+
+<p><strong>Archive signing key</strong><br />
+Please see <a href="http://volatile.debian.org/ziyi-sarge.asc">ziyi-sarge.asc</a> for sarge, and <a href="http://volatile.debian.org/etch-volatile.asc">etch-volatile.asc</a> for etch.
+</p>
+
+<p><strong>Installation times</strong><br />
+Unlike on <a href="http://ftp-master.debian.org/">ftp-master</a>, there are not really fixed dinstall times on volatile. dinstall is run by cron on minute 5 and 35. First, any changes file in the upload directory is checked. If there is any changes file in queue/accepted after the check (means: at least one package is accepted from the unchecked directory, or was accepted by hand from the new queue) or any volatilemaster gives a hint to run dinstall in any case, dinstall is run and mirrors are synced after the run.
+</p>
