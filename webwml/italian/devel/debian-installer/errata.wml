@@ -1,6 +1,6 @@
 #use wml::debian::template title="Errata corrige dell'istallatore Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.104" maintainer="Giuseppe Sacco"
+#use wml::debian::translation-check translation="1.108" maintainer="Giuseppe Sacco"
 
 <h1 id="etch-rc2">Errata per il <i>release candidate 2 (RC2)</i> di etch</h1>
 
@@ -69,7 +69,13 @@ dell'installazione</a> descrivendo il problema.
 	Per aggirare l'ostacolo &egrave; possibile disabilitare
 	il &ldquo;TCP window scaling&rdquo;. Attivare una shell e dare il
 	comando:<br />
-	<tt>echo 0 &gt; /proc/sys/net/ipv4/tcp_window_scaling</tt>
+	<tt>echo 0 &gt; /proc/sys/net/ipv4/tcp_window_scaling</tt><br />
+	Per la procedura di installazione non &egrave; opportuno
+	disabilitare del tutto il &ldquo;TCP window scaling&rdquo;, ma
+	solo in maniera parziale. I seguenti comandi dovrebbero andare
+	bene per la maggior parte dei router in circolazione:<br />
+	<tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_rmem</tt><br />
+	<tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_wmem</tt>
 	</dd>
 
 	<dt>Vari problemi legati al fatto che al riavvio la codifica
@@ -138,6 +144,20 @@ dell'installazione</a> descrivendo il problema.
 	</dd>
 -->
 
+	<dt>i386/amd64: impostazione della console seriale con GRUB</dt>
+	<dd>
+	Ci sono alcuni problemi legati al modo nel quale l'installatore
+	cerca di configurare GRUB per l'uso tramite console seriale.
+	Tutti i dettaglli sono raccolti nella segnalazione
+	<a href="http://bugs.debian.org/416310">#416310</a>.
+	Brevemente, i problemi possono essere risolti accertandosi che
+	la parit&agrave; e il numero di bit siano esplicitamente
+	utilizzati nell'opzione <q><tt>console=</tt></q>.<br />
+	Per la maggior parte dei casi questo vuol dire che al posto di
+	specificare <q><tt>console=ttyS0,9600</tt></q> si dovr&agrave;
+	digitare <q><tt>console=ttyS0,9600n8</tt></q>.
+	</dd>
+
 	<dt>alpha: errore caricando l'immagine initrd durante l'installazione da CD</dt>
 	<dd>
 	Il valore del parametro di avvio <tt>ramdisk_size</tt> &egrave; troppo
@@ -145,6 +165,12 @@ dell'installazione</a> descrivendo il problema.
 	effettuare l'installazione alzando il valore a 17108.<br />
 	Questo problema &egrave; stato risolto nelle immagini giornaliere
 	e sar&agrave; corretto anche nelle immagini ufficiali di Etch.
+	</dd>
+
+	<dt>amd64: non &egrave; possibile formattare un file system ext2</dt>
+	<dd>
+	Poich&eacute; il modulo ext2 del kernel non &egrave; disponibile,
+	nonm &egrave; possibile creare un file system ext2.
 	</dd>
 
 	<dt>powerpc: vari problemi</dt>
