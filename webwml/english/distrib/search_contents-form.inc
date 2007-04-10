@@ -47,8 +47,8 @@
   <option value="arm"><gettext domain="distrib">ARM</gettext></option>
   <option value="hppa"><gettext domain="distrib">HP PA/RISC</gettext></option>
   <option value="ia64"><gettext domain="distrib">Intel IA-64</gettext></option>
-  <option value="mips"><gettext domain="distrib">MIPS</gettext></option>
-  <option value="mipsel"><gettext domain="distrib">MIPS (DEC)</gettext></option>
+  <option value="mips"><gettext domain="distrib">MIPS (big endian)</gettext></option>
+  <option value="mipsel"><gettext domain="distrib">MIPS (little endian)</gettext></option>
   <option value="s390"><gettext domain="distrib">IBM S/390</gettext></option>
 # SuperH is currently not in shape for anything
 #  <option value="sh"></option>
