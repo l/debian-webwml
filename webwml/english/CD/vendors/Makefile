@@ -13,3 +13,9 @@ include $(WMLBASE)/Make.lang
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml $(TEMPLDIR)/countries.wml \
   $(ENGLISHDIR)/CD/vendors/vendors.CD $(ENGLISHDIR)/CD/vendors/vendors.CD.def \
   $(GETTEXTDEP)
+
+tes := $(shell grep "define-tag current_testing_name" $(ENGLISHDIR)/releases/info | grep -v ^\# | cut -d\< -f2 | cut -d\> -f2)
+
+adding-form.$(LANGUAGE).html: adding-form.wml $(ENGLISHDIR)/mirror/countries.data \
+  $(TEMPLDIR)/countries.wml $(GETTEXTDEP)
+	$(WML) $(<F) -D TESTING=$(tes)
