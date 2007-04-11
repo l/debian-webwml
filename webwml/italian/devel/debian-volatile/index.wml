@@ -1,6 +1,8 @@
 #use wml::debian::template title="Il Progetto debian-volatile"
-#use wml::debian::translation-check translation="1.8" maintainer="Johan Haggi"
-<define-tag current_testing_name>etch</define-tag>
+#use wml::debian::translation-check translation="1.11" maintainer="Johan Haggi"
+<define-tag current_testing_name>lenny</define-tag>
+<define-tag current_stable_name>etch</define-tag>
+<define-tag current_oldstable_name>sarge</define-tag>
 
 <h2>debian-volatile per gli utenti finali</h2>
 
@@ -40,8 +42,15 @@ per i dettagli.</p>
 
 <p><strong>Archivio</strong><br />
 L'archivio ufficiale di debian-volatile &egrave; disponibile sul sito principale
-<a href="http://volatile.debian.net/debian-volatile">volatile.debian.net</a>, ma
+<a href="http://volatile.debian.org/debian-volatile">volatile.debian.org</a>, ma
 una <a href="volatile-mirrors">rete di mirror</a> &egrave; attiva e disponibile.
+</p>
+<p>
+Si usi sarge/volatile o etch/volatile mediante<br />
+deb http://volatile.debian.org/debian-volatile sarge/volatile main contrib non-free<br />
+o<br />
+deb http://volatile.debian.org/debian-volatile etch/volatile main contrib non-free
+</p>
 
 <h2>debian-volatile per gli sviluppatori</h2>
 
@@ -76,7 +85,7 @@ seguenti criteri:</p>
  </li>
 
  <li>I pacchetti devono essere conformi alla stable policy; attualmente utilizziamo
-   <a href="http://release.debian.org/sarge_rc_policy.txt">http://release.debian.org/sarge_rc_policy.txt</a>
+   <a href="http://release.debian.org/<current_stable_name>_rc_policy.txt">http://release.debian.org/<current_stable_name>_rc_policy.txt</a>
    come guida su cosa sia ok e cosa non lo sia.</li>
 
  <li>La procedura di aggiornamento da volatile alla prossima release stabile deve essere
@@ -101,15 +110,15 @@ includere nuovi pacchetti in debian-volatile:</p>
 
 <li><em>Invio a debian-volatile</em><br />
    Dopo aver ricevuto il consenso dalla lista, si inviino almeno i
-   pacchetti source e binary-all a <tt>volatile-master.debian.net</tt> (si veda oltre)
+   pacchetti source e binary-all a <tt>volatile-master.debian.org</tt> (si veda oltre)
    mediante FTP. Si documentino le modifiche in <tt>debian/changelog</tt>.
    Scrivere solo<br />
    <code>* Upload package to volatile</code><br />
    <em>NON</em> &egrave; accettabile. Se il pacchetto &egrave; gi&agrave; stato inviato a volatile e si propongono modifiche alla
    versione precedente che sono fix per la sicurezza, comunicatecelo in anticipo. Se
-   si hanno gi&agrave; uno o pi&ugrave; identificativi CAN, li si includa nello changelog per
+   si hanno gi&agrave; uno o pi&ugrave; identificativi CVE, li si includa nello changelog per
    tener traccia dei problemi di sicurezza. Se non si ha un
-   CAN id, contattateci ugualmente, poich&eacute; potremmo ottenerlo noi. Se si
+   CVE id, contattateci ugualmente, poich&eacute; potremmo ottenerlo noi. Se si
    vuole contattare il <a href="team">team debian-volatile</a> in privato, si contatti uno
    dei suoi membri. Qualche volta ci sono divieti di pubblicazione sui bachi relativi alla sicurezza e
    sulle loro soluzioni. Noi li rispettiamo.</li>
@@ -133,7 +142,7 @@ Si aggiunga il seguente paragrafo al proprio <tt>~/.dput.cf</tt>:</p>
 <pre>
 [volatile]
 method = ftp
-fqdn = volatile-master.debian.net
+fqdn = volatile-master.debian.org
 incoming = /pub/UploadQueue/
 login = anonymous
 hash = md5
@@ -142,10 +151,25 @@ hash = md5
 <p>Se si usa dupload, si aggiunga il seguente paragrafo al proprio <tt>~/.dupload.conf</tt>:</p>
 <pre>
 $cfg{'volatile'} = {
-        fqdn => "volatile-master.debian.net",
+        fqdn => "volatile-master.debian.org",
         incoming => "/pub/UploadQueue/",
         \# files pass on to dinstall on ftp-master which sends emails itself
         dinstall_runs => 1,
         passive => 1,
 };
 </pre>
+
+<p><strong>Chiave per la firma dell'archivio</strong><br />
+Si veda <a href="http://volatile.debian.org/ziyi-sarge.asc">ziyi-sarge.asc</a> per sarge e <a href="http://volatile.debian.org/etch-volatile.asc">etch-volatile.asc</a> per etch.
+</p>
+
+<p><strong>Tempi di installazione</strong><br />
+Diversamente da <a href="http://ftp-master.debian.org/">ftp-master</a>, su
+volatile non ci sono orari fissi per dinstall, esso viene lanciato ogni 15
+minuti da cron. Per prima cosa viene controllato se ci sono file changes nella
+directory upload. Se ci sono file changes in queue/accepted dopo il check
+(il che significa: almeno un pacchetto &egrave; stato accettato dalla directory
+unchecked oppure era stato accettato manualmente dalla nuova queue) oppure se
+uno dei volatilemaster da il comando, dinstall viene eseguito e i mirror vengono
+sincronizzati dopo l'esecuzuione.
+</p>
