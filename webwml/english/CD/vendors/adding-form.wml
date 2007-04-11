@@ -1,0 +1,84 @@
+#use wml::debian::template title="Submit CD vendor information"
+
+<p>If you are considering selling Debian CDs, you should look at the Debian
+<a href="info">vendor information</a> page.</p>
+
+<p>If you would like to submit information about a vendor of Debian CDs,
+you can do so using the form below.
+Most information provided will be displayed in the vendor list.
+</p>
+
+<p>It is important that you keep this information up to date. We try to
+check the vendor sites every now and then and if, for example, the web page
+no longer exists or mail bounces, we delete that entry.</p>
+
+<form method=post action="http://cgi.debian.org/cgi-bin/submit_cdvendor.pl">
+
+<h2>CD vendor information</h2>
+
+<p>
+<input type="radio" name="submissiontype" value="new" checked>
+New vendor listing submission
+&nbsp; &nbsp; &nbsp;
+<input type="radio" name="submissiontype" value="update">
+Update of an existing vendor listing
+</p>
+
+<p>Vendor name:
+<input type="text" name="vendor" size="50"></p>
+
+<p>URL of vendor:
+<input type="text" name="url" size="50"></p>
+
+<p>Do you donate some of the sale to Debian:
+<input type=checkbox name="donates" value="yes"></p>
+
+<p>Country you are in:
+<select name="country">
+#include "$(ENGLISHDIR)/mirror/countries.data"
+  <: country_list() :>
+</select>
+</p>
+
+<p>Do you ship orders overseas:
+<select name="shipping">
+  <option value="yes">yes
+  <option value="no">no
+  <option value="some">some areas
+  <option value="europe">within Europe
+</select>
+
+<p>URL of a web page that has information about your Debian CDs:
+<input type="text" name="urldebcd" size="50"></p>
+
+<p>Email address for sales enquiries:
+<input type="text" name="email" size="50"></p>
+
+<p>What architectures your CDs are for:
+<table border="0"><tr><td>
+<label><input type=checkbox name=architectures value="ALL">&nbsp;<em>all of them</em></label><br>
+#include "$(ENGLISHDIR)/releases/$(TESTING)/release.data"
+<:
+my $na = scalar keys %arches; $na = int($na / 3 + .5);
+foreach my $a (sort keys %arches) {
+  $i++;
+  my $aname = $arches{$a}; $aname =~ s, ,\&nbsp\;,g;
+  print "<br>\n" if ($i % $na == 0);
+  print "<label><input type=checkbox name=architectures value=".$a.">&nbsp;".$aname."&nbsp;(".$a.")</label> &nbsp;\n";
+}
+:>
+</td></tr></table>
+
+<table><tr>
+<td valign="top">Comment:</td>
+<td><textarea name="comment" cols=40 rows=7></textarea></td>
+</tr></table>
+
+# <p>Note: ...</p>
+
+<input type="submit" value="Submit"> <input type="reset" value="Clear form">
+</form>
+
+<p>Your listing should appear on the list within a week, as soon as
+a human operator verifies it and includes it. We might email you in
+case of any problems with the submitted entry.</p>
