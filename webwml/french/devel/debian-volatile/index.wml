@@ -1,6 +1,8 @@
 #use wml::debian::template title="Le projet debian-volatile"
-#use wml::debian::translation-check translation="1.8" maintainer="Frédéric Bothamy"
-<define-tag current_testing_name>Etch</define-tag>
+#use wml::debian::translation-check translation="1.11" maintainer="Frédéric Bothamy"
+<define-tag current_testing_name>Lenny</define-tag>
+<define-tag current_stable_name>Etch</define-tag>
+<define-tag current_oldstable_name>Sarge</define-tag>
 
 <h2><em>debian-volatile</em> pour l'utilisateur</h2>
 
@@ -53,9 +55,17 @@ pour les détails.</p>
 <p><strong>Archive</strong><br />
 L'archive officielle de <em>debian-volatile</em> est disponible sur le
 site principal <a
-href="http://volatile.debian.net/debian-volatile">volatile.debian.net</a>,
+href="http://volatile.debian.org/debian-volatile">volatile.debian.org</a>,
 mais un <a href="volatile-mirrors">réseau de miroirs</a> est également
 actif et disponible.
+</p>
+<p>
+Veuillez simplement utiliser sarge/volatile or etch/volatile avec<br />
+deb http://volatile.debian.org/debian-volatile sarge/volatile main contrib non-free<br />
+ou<br />
+deb http://volatile.debian.org/debian-volatile etch/volatile main contrib non-free
+</p>
+
 
 <h2><em>debian-volatile</em> pour les développeurs</h2>
 
@@ -97,8 +107,8 @@ doit répondre aux critères suivants&nbsp;:</p>
 
  <li>Les paquets doivent être en conformité avec les directives pour
   <em>stable</em>&nbsp;; nous utilisons actuellement <a
-  href="http://release.debian.org/sarge_rc_policy.txt">\
-  http://release.debian.org/sarge_rc_policy.txt</a> comme indication de
+  href="http://release.debian.org/<current_stable_name>_rc_policy.txt">\
+  http://release.debian.org/<current_stable_name>_rc_policy.txt</a> comme indication de
   ce qui est et n'est pas autorisé.</li>
 
  <li>Le chemin de mise à jour de <em>volatile</em> vers la prochaine
@@ -127,7 +137,7 @@ pour inclure de nouveaux paquets dans <em>debian-volatile</em>&nbsp;:</p>
 
 <li><em>Envoyez le paquet vers debian-volatile</em><br />
    Si vous avez obtenu un consensus sur la liste, veuillez envoyer au moins les
-   paquets source et binary-all sur <tt>volatile-master.debian.net</tt>
+   paquets source et binary-all sur <tt>volatile-master.debian.org</tt>
    par FTP (voir ci-dessous).
    Veuillez documenter les changements dans le fichier
    <tt>debian/changelog</tt>.
@@ -137,9 +147,9 @@ pour inclure de nouveaux paquets dans <em>debian-volatile</em>&nbsp;:</p>
    Si vous avez déjà effectué un envoi vers <em>volatile</em> et
    que les changements proposés par rapport à la version précédente sont des
    corrections de sécurité, veuillez nous l'indiquer par avance. Si vous
-   avez un ou plusieurs identifiants CAN, veuillez les mettre dans le
+   avez un ou plusieurs identifiants CVE, veuillez les mettre dans le
    changelog pour le suivi des problèmes de sécurité. Si vous
-   n'avez pas d'identifiant CAN, veuillez nous le dire car nous pourrons les obtenir pour
+   n'avez pas d'identifiant CVE, veuillez nous le dire car nous pourrons les obtenir pour
    vous. Si vous voulez contacter <a href="team">l'équipe volatile</a> en privé, veuillez
    vous adresser à l'un des membres de l'équipe. Parfois, il y a des
    dates d'embargo sur la publication de bogues de sécurité et de leurs
@@ -167,7 +177,7 @@ Vous devriez ajouter l'extrait suivant à votre fichier <tt>~/.dput.cf</tt>&nbsp;
 <pre>
 [volatile]
 method = ftp
-fqdn = volatile-master.debian.net
+fqdn = volatile-master.debian.org
 incoming = /pub/UploadQueue/
 login = anonymous
 hash = md5
@@ -177,10 +187,31 @@ hash = md5
 fichier <tt>~/.dupload.conf</tt>&nbsp;:</p>
 <pre>
 $cfg{'volatile'} = {
-        fqdn => "volatile-master.debian.net",
+        fqdn => "volatile-master.debian.org",
         incoming => "/pub/UploadQueue/",
         \# files pass on to dinstall on ftp-master which sends emails itself
         dinstall_runs => 1,
         passive => 1,
 };
 </pre>
+
+<p><strong>Clé de signature de l'archive</strong><br />
+Veuillez utiliser <a
+href="http://volatile.debian.org/ziyi-sarge.asc">ziyi-sarge.asc</a> pour
+<em>Sarge</em> et <a
+href="http://volatile.debian.org/etch-volatile.asc">etch-volatile.asc</a>
+pour <em>Etch</em>.
+</p>
+
+<p><strong>Horaires d'installation</strong><br />
+À la différence de <a
+href="http://ftp-master.debian.org/">ftp-master</a>, il n'y a pas
+vraiment d'horaire fixe dinstall sur volatile. dinstall est exécuté
+toutes les 15&nbsp;minutes par cron. Tout d'abord, tout fichier changes
+dans le répertoire upload est vérifié. S'il y a un fichier changes dans
+queue/accepted après la vérification (ce qui veut dire&nbsp;: au moins,
+un paquet est accepté dans le répertoire unchecked ou a été manuellement
+accepté depuis la file new) ou si un responsable de volatile place une
+indication pour exécuter dinstall dans tous les cas, dinstall est
+exécuté et les miroirs sont synchronisés après cette exécution.
+</p>
