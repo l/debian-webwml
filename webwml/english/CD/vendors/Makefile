@@ -16,6 +16,6 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml $(TEMPLDIR)/countries.
 
 tes := $(shell grep "define-tag current_testing_name" $(ENGLISHDIR)/releases/info | grep -v ^\# | cut -d\< -f2 | cut -d\> -f2)
 
-adding-form.$(LANGUAGE).html: adding-form.wml $(ENGLISHDIR)/mirror/countries.data \
+adding-form.$(LANGUAGE).html: adding-form.wml $(TEMPLDIR)/countries_all.wml \
   $(TEMPLDIR)/countries.wml $(GETTEXTDEP)
 	$(WML) $(<F) -D TESTING=$(tes)
