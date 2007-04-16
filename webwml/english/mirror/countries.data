@@ -246,13 +246,23 @@ my %our_countries = (
 );
 
 sub country_list {
+  my $ccodepos = shift;
+  $ccodepos = 'ccafter' unless (defined($ccodepos));
   my $l = uc $CUR_ISO_LANG;
   foreach $c (sort keys %our_countries) {
     my $localname = $our_countries{$c};
     if (defined $countries{$c}{$l} && $countries{$c}{$l} ne "") {
       $localname = $countries{$c}{$l};
     }
-    print "<option value=\"$c $our_countries{$c}\">$localname [$c]\n";
+    if ($ccodepos eq 'ccafter') {
+      print "<option value=\"$c $our_countries{$c}\">$localname [$c]\n";
+    } elsif ($ccodepos eq 'ccbefore') {
+      print "<option value=\"$c $our_countries{$c}\">[$c] $localname\n";
+    } else {
+      print "<option value=\"$c $our_countries{$c}\">$c $localname\n";
+    }
   }
 }
+
+
 </perl>
