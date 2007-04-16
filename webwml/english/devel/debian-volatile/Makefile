@@ -18,4 +18,6 @@ volatile-mirrors.inc:
 
 team.$(LANGUAGE).html: team.wml $(TEMPLDIR)/template.wml
 
+submit.$(LANGUAGE).html: submit.wml $(TEMPLDIR)/countries_all.wml
+
 .PHONY: volatile-mirrors.inc

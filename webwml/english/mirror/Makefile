@@ -10,7 +10,7 @@ include $(WMLBASE)/Make.lang
 
 tes := $(shell grep "define-tag current_testing_name" $(ENGLISHDIR)/releases/info | grep -v ^\# | cut -d\< -f2 | cut -d\> -f2)
 
-submit.$(LANGUAGE).html: submit.wml $(ENGLISHDIR)/mirror/countries.data \
+submit.$(LANGUAGE).html: submit.wml $(TEMPLDIR)/countries_all.wml \
   $(TEMPLDIR)/countries.wml $(GETTEXTDEP)
 	$(WML) $(<F) -D TESTING=$(tes)
 
