@@ -28,12 +28,11 @@ use constant OLDSTABLE_IS_ARCHIVED => 0;
 #   -- Joy
 
 # hint:
-# grep-dctrl -F Site,Alias -e '(udel|bigfoot|kernel|crosslink|internap|cerias|lcs.mit|progeny)' Mirrors.masterlist | timestamps/archive_mirror_check.py
+# grep-dctrl -F Site,Alias -e '(udel|bigfoot|kernel|internap|cerias|lcs.mit|progeny)' Mirrors.masterlist | timestamps/archive_mirror_check.py
 my @north_american_sites = (
 	"http.us.debian.org/debian",
 	"ftp.egr.msu.edu/debian",
 	"mirrors.kernel.org/debian",
-	"debian.crosslink.net/debian",
 	"ftp.lug.udel.edu/debian",
 	"debian.lcs.mit.edu/debian",
 	"debian.teleglobe.net",
