@@ -39,6 +39,11 @@ nonvulns-sarge.$(LANGUAGE).html: nonvulns-sarge.wml $(translated_nonvulns-sarge)
 	$(ENGLISHSRCDIR)/security/nonvulns-sarge.src \
 	$(TEMPLDIR)/securityreferences.wml 
 
+translated_nonvulns-etch=$(shell [ -f nonvulns-etch.src ] && echo nonvulns-etch.src)
+nonvulns-etch.$(LANGUAGE).html: nonvulns-etch.wml $(translated_nonvulns-etch)  \
+	$(ENGLISHSRCDIR)/security/nonvulns-etch.src \
+	$(TEMPLDIR)/securityreferences.wml 
+
 clean::
 	rm -f $(DSARDF) $(DSALONGRDF)
 ifeq "$(LANGUAGE)" "ja"
