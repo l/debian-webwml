@@ -336,9 +336,9 @@ determining which machine will serve you best.
 
 END
 	print "<p>" if $html;
-	print "The authoritative copy of the following list can always be found at:\n";
-	print "<a href=\"http://www.debian.org/devel/debian-volatile/list\">" if $html;
-	print "                      http://www.debian.org/devel/debian-volatile/list";
+	print "The authoritative copy of the following list can be found at:\n";
+	print "<a href=\"http://www.debian.org/volatile/volatile-mirrors.en.html\">" if $html;
+	print "                      http://www.debian.org/volatile/volatile-mirrors.en.html";
 	print "</a>.<br>" if $html;
 	print "\n";
 
@@ -346,16 +346,16 @@ END
 If you know of any mirrors that are missing from this list,
 please have the site maintainer fill out the form at:
 END
-	print "<a href=\"http://www.debian.org/devel/debian-volatile/submit\">" if $html;
-	print "                     http://www.debian.org/devel/debian-volatile/submit";
+	print "<a href=\"http://www.debian.org/volatile/submit\">" if $html;
+	print "                     the submit page";
 	print "</a>.<br>" if $html;
 	print "\n";
 
 	print <<END;
 Everything else you want to know about Debian-volatile:
 END
-	print "<a href=\"http://www.debian.org/devel/debian-volatile/\">" if $html;
-	print "                        http://www.debian.org/devel/debian-volatile/";
+	print "<a href=\"http://www.debian.org/volatile/\">" if $html;
+	print "                        volatile users' home";
 	print "</a>.<br>" if $html;
 	print "\n";
 }
