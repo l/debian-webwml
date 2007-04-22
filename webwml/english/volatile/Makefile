@@ -19,4 +19,19 @@ volatile-mirrors.inc:
 
 submit.$(LANGUAGE).html: submit.wml $(TEMPLDIR)/countries_all.wml
 
+ifeq "$(LANGUAGE)" "en"
+
+mirrorstuff := etch-volatile.asc id_mirrorpush.pub mirror-volatile.sh ziyi-sarge.asc
+
+destmirrorstuff := $(patsubst %,$(HTMLDIR)/%,$(mirrorstuff))
+
+install:: $(destmirrorstuff)
+
+$(destmirrorstuff): $(HTMLDIR)/%: %
+	install -m 664 -p $< $(HTMLDIR)
+
+cleandest::
+	rm -f $(destmirrorstuff)
+endif
+
 .PHONY: volatile-mirrors.inc
