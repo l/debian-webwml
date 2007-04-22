@@ -6,7 +6,7 @@ WMLBASE=.
 CUR_DIR=
 SUBS=Bugs CD MailingLists News Pics banners chinese consultants devel \
 distrib doc events intro international legal logos mirror misc partners \
-ports releases searchtmpl security users vote y2k
+ports releases searchtmpl security users volatile vote y2k
 
 all install:: install-locale
 
