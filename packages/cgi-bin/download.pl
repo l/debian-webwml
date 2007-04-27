@@ -33,9 +33,7 @@ my @north_american_sites = (
 	"http.us.debian.org/debian",
 	"ftp.egr.msu.edu/debian",
 	"mirrors.kernel.org/debian",
-	"ftp.lug.udel.edu/debian",
 	"debian.lcs.mit.edu/debian",
-	"debian.teleglobe.net",
 	"debian.oregonstate.edu/debian",
 	);
 my @european_sites = (
