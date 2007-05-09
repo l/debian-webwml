@@ -1,0 +1,101 @@
+#use wml::debian::template title="Envoyer des informations de vendeurs de CD"
+#use wml::debian::translation-check translation="1.13" maintainer="Frédéric Bothamy"
+
+<p>Si vous désirez envoyer des informations à propos d'un vendeur de CD
+Debian, vous pouvez le faire en utilisant le formulaire ci-dessous.</p>
+
+<p>Si vous envisagez de vendre des CD Debian, vous devriez consulter la
+page Debian d'<a href="info">informations pour les vendeurs de
+cédéroms</a>.</p>
+
+<p>La plupart des informations seront affichées dans la liste des
+vendeurs. En particulier, l'adresse électronique sera affichée dans la
+liste et sera disponible pour tous les utilisateurs.</p>
+
+<p>Il est important que vous conserviez ces informations à jour. Nous
+essayons de vérifier les sites des vendeurs de temps en temps et si, par
+exemple, la page web n'existe plus ou l'adresse électronique ne
+fonctionne plus, nous supprimons cette entrée.</p>
+
+<form method=post action="http://cgi.debian.org/cgi-bin/submit_cdvendor.pl">
+
+<h2>Informations de vendeur de CD</h2>
+
+<p>
+<input type="radio" name="submissiontype" value="new" checked>
+Envoi des informations d'un nouveau vendeur
+&nbsp; &nbsp; &nbsp;
+<input type="radio" name="submissiontype" value="update">
+Mise à jour des informations d'un vendeur existant
+</p>
+
+<p>Nom du vendeur&nbsp;:
+<input type="text" name="vendor" size="50"></p>
+
+<p>URL du vendeur&nbsp;:
+<input type="text" name="url" size="50"></p>
+
+<p>Faites-vous don d'une partie du prix des ventes à Debian&nbsp;:
+<input type="radio" name="donates" value="yes"> oui
+<input type="radio" name="donates" value="no"> non
+</p>
+
+<p>Type(s) de CD vendus&nbsp;: <br />
+<label> &nbsp; <input type="checkbox" name="type" value="official">CD&nbsp;officiel</label> <br />
+<label> &nbsp; <input type="checkbox" name="type" value="develsnap">Instantané&nbsp;de&nbsp;développement</label> <br />
+<label> &nbsp; <input type="checkbox" name="type" value="vendor">Version&nbsp;du&nbsp;vendeur</label> <br />
+<label> &nbsp; <input type="checkbox" name="type" value="custom">Version&nbsp;personnalisée</label> <br />
+<label> &nbsp; <input type="checkbox" name="type" value="nonus">non-US</label> <br />
+<label> &nbsp; <input type="checkbox" name="type" value="nonfree">non-free</label>
+
+<p>Pays dans lequel vous vous trouvez&nbsp;:
+<select name="country">
+  <: country_list('ccbefore') :>
+</select>
+</p>
+
+<p>Envoyez-vous des commandes à l'étranger&nbsp;:
+<select name="shipping">
+  <option value="yes">oui
+  <option value="no">non
+  <option value="some">vers certains pays
+  <option value="europe">en Europe
+</select>
+
+<p>URL de la page web où l'on trouve des informations à propos de vos CD
+de Debian&nbsp;:
+<input type="text" name="urldebcd" size="50"></p>
+
+<p>Adresse électronique pour obtenir des informations sur les
+ventes&nbsp;:
+<input type="text" name="email" size="50"></p>
+
+<p>Architecture matérielle pour laquelle vos CD sont conçus&nbsp;:
+<table border="0"><tr><td>
+<label><input type=checkbox name=architectures value="ALL">&nbsp;<em>toutes</em></label><br />
+#include "$(ENGLISHDIR)/releases/$(TESTING)/release.data"
+<:
+my $na = scalar keys %arches; $na = int($na / 3 + .5);
+foreach my $a (sort keys %arches) {
+  $i++;
+  my $aname = $arches{$a}; $aname =~ s, ,\&nbsp\;,g;
+  print "<br />\n" if ($i % $na == 0);
+  print "<label><input type=checkbox name=architectures value=".$a.">&nbsp;".$aname."&nbsp;(".$a.")</label> &nbsp;\n";
+}
+:>
+</td></tr></table>
+
+<table><tr>
+<td valign="top">Commentaire (<em>en anglais</em>):</td>
+<td><textarea name="comment" cols=40 rows=7></textarea></td>
+</tr></table>
+
+# <p>Note: ...</p>
+
+<input type="submit" value="Submit">
+</form>
+
+<p>Vos informations devraient apparaître sur la liste sous une semaine,
+dès qu'un opérateur humain les aura vérifiées et incluses. Nous vous
+enverrons un courrier électronique en cas de problème avec les
+informations envoyées.</p>
