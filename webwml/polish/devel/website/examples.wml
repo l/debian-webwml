@@ -1,0 +1,126 @@
+#use wml::debian::template title="Przyk³ady"
+#use wml::debian::translation-check translation="1.8"
+
+<h2>Przyk³ad zaczynania t³umaczenia</h2>
+
+<p>
+  Jako przyk³ad we¼miemy t³umaczenie francuskie:
+  <pre>
+    cvs checkout webwml/Makefile.common webwml/english
+    cd webwml
+    mkdir french
+    cvs add french
+    cd french
+    cp ../english/.wmlrc ../english/Make.* .
+    echo '<protect>include $(subst webwml/french,webwml/english,$(CURDIR))/Makefile</protect>' &gt; Makefile
+    mkdir po
+    cvs add Make* .wmlrc po
+    cp Makefile po
+    make -C po init-po
+    cvs add po/Makefile po/*.fr.po
+  </pre>
+</p>
+
+<p>
+  Edytuj plik .wmlrc i zamieñ:
+  <ul>
+    <li><code>-D CUR_LANG=English</code> na <code>-D CUR_LANG=French</code></li>
+    <li><code>-D CUR_ISO_LANG=en</code> na <code>-D CUR_ISO_LANG=fr</code></li>
+    <li><code>-D CUR_LOCALE=en_US</code> na <code>-D CUR_LOCALE=fr_FR</code></li>
+    <li><code>-D CHARSET=iso-8859-1</code> na kodowanie w³a¶ciwe Twojemu
+	jêzykowi.<br> Francuski akurat u¿ywa tego samego kodowania co
+	angielski, wiêc ¿adna zmiana nie jest potrzebna, jednak¿e dla
+	wielu innych jêzyków t± zmienn± nale¿a³oby poprawiæ.</li>
+  </ul>
+</p>
+
+<p>
+  Edytuj Make.lang i zamieñ <code>LANGUAGE := en</code> na
+  <code>LANGUAGE := fr</code>. W przypadku, gdy t³umaczysz na jêzyk
+  z multibajtowym kodowaniem, prawdopodobnie powiniene¶ zmieniæ te¿
+  kilka innych zmiennych w tym pliku. Aby uzyskaæ wiêcej informacji,
+  przeczytaj ../Makefile.common i zobacz inne dzia³aj±ce przyk³ady
+  t³umaczeñ na takie jêzyki (np. chiñski).
+</p>
+
+<p>
+  Przejd¼ do french/po i przet³umacz pozycje w pliku PO. Ta czynno¶æ
+  powinna byæ do¶æ prosta, dlatego nie wymaga opisu.
+</p>
+
+<p>
+  Zawsze pamiêtaj, ¿eby skopiowaæ plik Makefile do ka¿dego katalogu,
+  który t³umaczysz. Jest to potrzebne, gdy¿ program <code>make</code>
+  ich u¿ywa, a to w³a¶nie on wywo³uje wml, który kompiluje nasze
+  strony.
+</p>
+
+<p>
+  Kiedy ju¿ skoñczysz dodawanie i edytowanie plików, wywo³aj polecenie:
+  <pre>
+    cvs commit
+  </pre>
+  w katalogu webwml. Teraz mo¿esz zacz±æ t³umaczyæ strony. 
+</p>
+
+<h2>Przyk³ad t³umaczenia strony</h2>
+
+<p>
+  Dla przyk³adu we¼miemy francuskie t³umaczenie umowy spo³ecznej:
+  <pre>
+    cd webwml/french
+    cp ../english/social_contract.wml .
+    cvs add social_contract.wml
+  </pre>
+</p>
+
+<p>
+  Edytuj social_contract.wml i przet³umacz tekst. Nie próbuj
+  t³umaczyæ ¿adnych odno¶ników ani zmieniaæ ich w jakikolwiek sposób
+  - je¿eli chcesz zmieniæ cokolwiek, popro¶ o to na li¶cie
+  debian-www. Je¶li skoñczy³e¶, wpisz w konsoli: 
+  <pre>
+    cvs commit -m "krótki opis zmian które uczyni³e¶" social_contract.wml
+  </pre>
+</p> 
+
+<h2>Przyk³ad dodawania nowego folderu</h2>
+
+<p>
+  Ten przyk³ad pokazuje dodawanie katalogu intro/ do francuskiego
+  t³umaczenia:
+  <pre>
+    cd webwml/french
+    mkdir intro
+    cvs add intro
+    cd intro
+    cp ../Makefile .
+  </pre>
+  Upewnij siê, czy nowy katalog posiada plik makefile i czy jest on
+  równie¿ dodany do repozytorium CVS, w przeciwnym wypadku ka¿dy, kto wyda
+  komendê <code>make</code>, w efektcie otrzyma b³±d.
+  <pre>
+    cvs add Makefile
+    cd ..
+    cvs commit -m "dodanie intro/ do CVS" intro
+  </pre>
+</p>
+
+#example not finished
+# <H2>Example of a Conflict</H2>
+#
+# <p>This example shows a commit that won't work because the copy in the
+# repository has been modified since your last <kbd>cvs update -d</kbd>.
+#
+# <pre>
+#    cvs commit -m"fixed a broken link" foo.wml
+# </pre>
+#
+# will output:
+#
+# <pre>
+# cvs: Up-to-date check failed for foo.wml!
+# cvs: fix the above errors first
+# </pre>
+#
+# or something like that :)
