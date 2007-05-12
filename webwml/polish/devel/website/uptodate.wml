@@ -1,0 +1,113 @@
+#use wml::debian::template title="Aktualizowanie t³umaczeñ"
+#use wml::debian::translation-check translation="1.15"
+#use wml::debian::acronyms 
+
+<p>
+  Poniewa¿ strony Debiana ci±gle siê zmieniaj±, dobrym pomys³em jest
+  ¶ledzenie do jakiej wersji orygina³u odnosi siê dane t³umaczenie
+  strony i u¿ycie tych informacji do sprawdzania, które strony zosta³y
+  zmienione od ostatniego t³umaczenia. Te informacje powinny byæ
+  wypisane na górze dokumentu WML (choæ poni¿ej innych
+  nag³ówków <q>use</q>) w nastêpuj±cej formie:
+  <pre>
+    \#use wml::debian::translation-check translation="X.x"
+  </pre>
+  gdzie <var>X.x</var> jest numerem wersji CVS orygina³u (angielskiej
+  strony). Mo¿esz zobaczyæ te numery wersji w CVS/Entries, które jest w
+  formacie: <code>/nazwa_pliku/X.x/data//</code>. Mo¿esz równie¿ uzyskaæ
+  je komend±: <code>cvs status nazwa_pliku</code> w katalogu angielskich
+  stron. Je¿eli u¿yjesz skryptu: <code>copypage.pl</code> w katalogu
+  webwml, ta linia zostanie dodana automatycznie.
+</p>
+<p>
+  Jest to równie¿ przydatne, gdy¿ niektóre t³umaczenia mog± nie byæ
+  aktualizowane przez do¶æ d³ugi czas, nawet wtedy, gdy oryginalna
+  (angielska) wersja zosta³a zaktualizowana. Z
+  powodu <a href="content_negotiation">negocjacji zawarto¶ci</a>,
+  czytelnik przet³umaczonego tekstu mo¿e byæ nie¶wiadomy tego i
+  przeoczyæ pewne wa¿ne informacje wprowadzone w nowej wersji
+  orygina³u. Szablon
+  <code>translation-check</code> zawiera kod, który sprawdza czy Twoje
+  t³umaczenie nie jest przestarza³e i generuje odpowiednie ostrze¿enie
+  dla u¿ytkownika na ten temat.
+</p>
+<p>
+  S± równie¿ pewne dodatkowe parametry, które mo¿esz u¿yæ w liniach
+  <code>#use</code>:
+  <dl>
+    <dt><code>original="<var>jêzyk</var>"</code></dt>
+    <dd>
+      gdzie <var>jêzyk</var> jest nazw± jêzyka na który t³umaczysz,
+      lub je¶li jest to nowa strona - "english".  Warto¶æ tej zmiennej
+      musi odpowiadaæ nazwie podkatalogu w CVS oraz nazwie w szablonie
+      languages.wml
+    </dd>
+    <dt><code>mindelta="<var>liczba</var>"</code></dt>
+    <dd>
+      która definiuje maksymaln± ró¿nicê miêdzy rewizjami CVS przed
+      uznaniem t³umaczenia jako nieaktualne.
+      Domy¶ln± warto¶ci± jest <var>1</var>. Dla mniej wa¿nych stron ustaw j±
+      na <var>2</var>, co bêdzie znaczy³o, ¿e dwie zmiany musz± zaj¶æ, aby
+      uznaæ t³umaczenie za nieaktualne.
+    </dd>
+    <dt><code>maxdelta="<var>liczba</var>"</code></dt>
+    <dd>
+      która definiuje maksymaln± ró¿nicê w rewizjach CVS przed uznaniem
+      t³umaczenia jako przestarza³e. 
+      Domy¶ln± warto¶ci± jest tutaj <var>5</var>. 
+      Dla bardzo wa¿nych stron, zmniejsz t± warto¶æ. Warto¶æ <var>1</var>
+      oznacza, ¿e ka¿da zmiana w oryginale czyni t³umaczenie przestarza³ym.
+    </dd>
+  </dl>
+</p>
+<p>
+  Na podstawie tego budowany jest <a href="stats/">raport</a>
+  zawieraj±cy listê zarówno przestarza³ych t³umaczeñ, jak i stron, które
+  nie by³y jeszcze t³umaczone. Jego celem jest pomoc t³umaczom
+  oraz przyci±gniêcie nowych osób do t³umaczenia stron Debiana.
+</p>
+<p>
+  Aby unikn±æ przedstawiania naszym u¿ytkownikom informacji, które s±
+  zbyt przestarza³e, t³umaczenia które nie by³y aktualizowane przez 6
+  miesiêcy, od czasu kiedy oryginalna strona by³a zmieniona, bêd±
+  usuwane automatycznie. Zobacz <a href="http://people.debian.org/~peterk/outdated/">listê 
+  nieaktualnych t³umaczeñ</a>, aby znale¼æ strony, które s± zagro¿one 
+  usuniêciem.
+</p>
+<p>
+  Ponadto, skrypt <code>check_trans.pl</code>, który jest dostêpny w
+  katalogu webwml, pokazuje jakie strony wymagaj± aktualizacji:
+  <pre>
+    check_trans.pl <var>jêzyk</var>
+  </pre>
+  gdzie <var>jêzyk</var> jest nazw± katalogu, który zawiera Twoje
+  t³umaczenie, np. "swedish".
+</p>
+<p>
+  Strony, które wymagaj± przet³umaczenia, bêd± pokazane jako:
+  <samp>
+    Missing <var>nazwa_pliku</var>
+  </samp>
+  Natomiast strony, które s± nieaktualne wzglêdem orygina³u, bêd±
+  pokazane jako:
+  <samp>
+    NeedToUpdate: <var>nazwa_pliku</var> to version <var>x.y</var>
+  </samp>
+</p>
+<p>
+  Je¶li chcesz zobaczyæ, co dok³adnie zosta³o zmienione, mo¿esz
+  zobaczyæ ró¿nicê, dodaj±c opcjê <code>-d</code>. Pamiêtaj jednak, ¿e
+  prawdopodobnie zajmie to trochê czasu, gdy¿ mo¿e to wymagaæ
+  kilkakrotnych zapytañ do serwera CVS.
+</p> 
+<p>
+  Je¶li nie chcesz ogl±daæ ostrze¿eñ o brakuj±cych stronach (np. stare
+  wiadomo¶ci <acronym_DWN>), mo¿esz utworzyæ plik .transignore
+  w katalogu, w którym chcesz zignorowaæ ostrze¿enia i umie¶ciæ w nim listê
+  plików, których nie zamierzasz t³umaczyæ - jedna linia na ka¿dy plik.
+</p>
+<p>
+  Istnieje równie¿ podobny skrypt do ¶ledzenia zmian w t³umaczeniach
+  list dyskusyjnych. Przeczytaj komentarze w skrypcie
+  <code>check_desc_trans.pl</code>, aby dowiedzieæ siê wiêcej.
+</p>
