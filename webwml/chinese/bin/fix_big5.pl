@@ -8,6 +8,10 @@ s/^((?:[\x00-\x7F]|(?:[\x80-\xFF].))+[\x80-\xFF]\\)$/$1\\/;
 while ( s{^((?:[\x00-\x7F]|(?:[\x80-\xFF].))+?)([\x80-\xFF]\{)(?!</protect>)}
 	 {$1<protect>$2</protect>} ) {}
 
+# Convert the Big5 forward slash that's not in the GB2312 code table
+# to the forward slash that's convertible.
+s/∕/／/g;
+
 # Note: the following should be automatically generated in the future.
 s/<tw支援>/[CN:支援:][HKTW:支持:]/g;
 s/<tw(檔|檔案)>/[CN:文件:][HKTW:$1:]/g;
