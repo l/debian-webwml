@@ -1,52 +1,58 @@
 #use wml::debian::template title="Registrera spegelinformation"
-#use wml::debian::translation-check translation="1.41"
+#use wml::debian::translation-check translation="1.63"
+#use wml::debian::countries_all
 
 <p>
-Om du vill registrera information om en spegel av Debian (ftp-arkiv,
-webbsidor) kan du göra det med detta formulär.
+Om du vill registrera information om en spegel av Debian så
+kan du göra det med detta formulär.
+Det mesta av informationen som sänds in kommer visas i spegellistan.
+</p>
 
 <p>
 Det finns <a href="#examples">exempel</a>
 i slutet av sidan om du är osäker på hur du skall göra.
-
-<p>
-Om du behöver registrera förändringar till din existerande datapost
-gör du enklast en ny (komplett)
-registrering och lägger till en kommentar som säger att det är en
-uppdatering.
-
-<p>Inte all information som sänds in kommer att
-visas i spegellistan, såsom ansvariges adress för spegeln.
-E-posten kommer visas någonstans på våra servrar, så att redaktörerna för
-spegellistan kan kontakta dig med nyheter och felrapporter.
 </p>
 
 <p>
-Observera att officiella speglar måste använda rsync för att hämta aktuella
-paket.
-Vi rekommenderar å det bestämdaste att du använder skriptet
-<a href="anonftpsync">anonftpsync</a>.
+Observera att alla speglar som anmäls skall följa
+<a href="ftpmirror">reglerna och riktlinjerna i vår dokumentation</a>.
 </p>
+
+<form method=post action="http://cgi.debian.org/cgi-bin/submit_mirror.pl">
 
 <h2>Grundläggande information</h2>
 
 <p>
+<input type="radio" name="submissiontype" value="new" checked>
+Nyanmälning av spegel
+&nbsp; &nbsp; &nbsp;
+<input type="radio" name="submissiontype" value="update">
+Uppdatering av befintlig spegel
+</p>
+
+<p>
 Ange det namn under vilket du vill att spegeln skall listas i
 <em>Plats</em>-fältet.
+</p>
+
+<p>
+Plats: <input type="text" name="site" size="30">
+</p>
+
+<p>
 Om servern har ytterligare namn anger du dem i <em>Alias</em>-fältet,
 avdelade med kommatecken (",").
-Detta är troligen bakvänt gentemot DNS-posterna.
+</p>
 
-
-<form method=post action="http://cgi.debian.org/cgi-bin/submit_mirror.pl">
 <p>
-Plats: <input type="text" name="site" size="30"><br>
-Alias: <input type="text" name="aliases" size="60"><br>
+Alias: <input type="text" name="aliases" size="60">
+</p>
 
-<h2>Typer av speglar och hur de kan kommas åt</h2>
+<h2>Typer av speglar och hur de kan nås</h2>
 
 <p>Ange sökvägen till din Debianspegel i fälten nedan.
 Lämna irrelevanta fält blanka.
+</p>
 
 <define-tag tablerow>
 	<tr><td>%0: </td><td><input type="text" name="%1" size="%2"></td></tr>
@@ -56,38 +62,58 @@ Lämna irrelevanta fält blanka.
 <tablerow "Paketarkiv, via HTTP"           archive-http   30>
 <tablerow "Paketarkiv, via FTP"            archive-ftp    30>
 <tablerow "Paketarkiv, via rsync"          archive-rsync  30>
-<tablerow "Non-US-paket, via HTTP"         nonus-http     30>
-<tablerow "Non-US-paket, via FTP"          nonus-ftp      30>
-<tablerow "Non-US-paket, via rsync"        nonus-rsync    30>
 <tablerow "Säkerhetsuppdateringar, over HTTP"  security-http  30>
 <tablerow "Säkerhetsuppdateringar, over FTP"   security-ftp   30>
 <tablerow "Säkerhetsuppdateringar, over rsync" security-rsync 30>
-<tablerow "Cd-avbilder, via HTTP"          cdimage-http   30>
-<tablerow "Cd-avbilder, via FTP"           cdimage-ftp    30>
-<tablerow "Cd-avbilder, via rsync"         cdimage-rsync  30>
+
+<tablerow "Cd-/dvd-avbilder, via HTTP"     cdimage-http   30>
+<tablerow "Cd-/dvd-avbilder, via FTP"      cdimage-ftp    30>
+<tablerow "Cd-/dvd-avbilder, via rsync"    cdimage-rsync  30>
 <tablerow "Äldre Debianutgåvor, via HTTP"  old-http       30>
 <tablerow "Äldre Debianutgåvor, via FTP"   old-ftp        30>
 <tablerow "Äldre Debianutgåvor, via rsync" old-rsync      30>
-<tablerow "Debianwebbsidor, via HTTP"      www-http       30>
-<tablerow "Debianwebbsidor, via FTP"       www-ftp        30>
-<tablerow "Debianwebbsidor, via rsync"     www-rsync      30>
 </table>
 
 <h2>Information om spegeln</h2>
 
-<p>Fyll i alla delar av följande (vi lämnar inte ut namn och e-postadress
-till någon).
-Landsinformationen är viktig, eftersom det är så vi sorterar upp posterna.
-
 <table>
 <tablerow "Spegln uppdateras från"          mirrors_from  30>
+<tr>
+<td>Speglade arkitekturer
+<td>
+<label><input type=checkbox name=architectures value="ALL">&nbsp;<em>alla (dvs. inga aritekturer utesluts specifikt)</em></label><br>
+#include "$(ENGLISHDIR)/releases/$(TESTING)/release.data"
+<:
+my $na = scalar keys %arches; $na = int($na / 3 + .5);
+foreach my $a (sort keys %arches) {
+  $i++;
+  my $aname = $arches{$a}; $aname =~ s, ,\&nbsp\;,g;
+  print "<br>\n" if ($i % $na == 0);
+  print "<label><input type=checkbox name=architectures value=".$a.">&nbsp;".$aname."&nbsp;(".$a.")</label> &nbsp;\n";
+}
+:>
+</td></tr>
+</table>
+
+<table>
 <tablerow "Namn på spegelansvarige"         maint_name    30>
-<tablerow "E-post för spegelansvarige"      maint_email   30>
+<tablerow "Öppen e-post för spegelansvarige" maint_email   30>
+<tr><td>&nbsp;</td><td>
+<small>
+Den öppna e-postadressen för spegelansvarig kommer vara tillgänglig till
+alla användare.
+</small>
 <tr><td>Spegelns land:  <td><select name="country">
-#include "$(ENGLISHDIR)/template/debian/countries_all.wml"
 <: country_list() :>
 </select>
-
+<tablerow "Privat e-post för spegelansvarig (valfri)"  maint_private_email   30>
+<tr><td>&nbsp;</td><td>
+<small>
+Om du anger en privat adress kommer den endast vara tillgänglig för de som
+redigerar Debians spegellista, så att de kan kontakta dig mede viktiga
+nyheter och/eller felrapporter.
+</small>
+</td></tr>
 <tablerow "Plats för spegel (valfri)"       location      30>
 <tablerow "Namn på sponsor (valfri)"        sponsor_name  30>
 <tablerow "Webbadress för sponsor (valfri)" sponsor_url   30>
@@ -109,14 +135,18 @@ Alternativa åtkomstmetoder (NFS, IPv6, ...) bör också skrivas där.
 </p>
 </form>
 
-<p>Din spegel kommer att läggas in i listan inom en vecka.
+<p>
+Din spegel bör läggas in i listan inom en vecka, så fort en mänsklig
+operatör har verifierat den och lagt in den.
 Om det är några problem med de data du angivit kanske vi kontaktar dig.
+</p>
 
 <h2 id="examples">Exempel</h2>
 
 <p>Följande data skulle vara för en server som heter debian.example.com,
 vilken även kan nås som e1.example.com.
 Namnen är naturligtvis fingerade.
+</p>
 
 <div class="centerblock">
 <p>
@@ -126,6 +156,7 @@ Namnen är naturligtvis fingerade.
 </div>
 
 <p>Debianarkivspegeln ligger i /debian/-katalogen på webbservern:
+</p>
 
 <div class="centerblock">
 <p>
@@ -134,6 +165,7 @@ Namnen är naturligtvis fingerade.
 </div>
 
 <p>Detta är för ftp://debian.example.com/debian/:
+</p>
 
 <div class="centerblock">
 <p>
@@ -143,6 +175,7 @@ Namnen är naturligtvis fingerade.
 
 <p>Detta är katalogen som används för rsync-åtkomst,
 debian.example.com::debian/:
+</p>
 
 <div class="centerblock">
 <p>
@@ -151,6 +184,7 @@ debian.example.com::debian/:
 </div>
 
 <p>Denna spegel uppdateras från ftp.xy.debian.org, så vi lägger till:
+</p>
 
 <div class="centerblock">
 <p>
@@ -159,29 +193,54 @@ debian.example.com::debian/:
 </div>
 
 <p>Nu information om den ansvarige:
+</p>
 
 <div class="centerblock">
 <p>
  Namn på spegelansvarige: <code>N. N.</code><br>
- E-post för spegelansvarige: <code>abc@adress.här.example.com</code>
+ Öppen e-post för spegelansvarige: <code>adress@här.example.com</code>
 </p>
 </div>
 
-<p>(Än en gång, den ansvariges adress kommer inte visas i de allmänt
-tillgängliga listorna, bara på sidor som används av redaktörerna för
-spegellistan.
-Vi ber dig ange en korrekt adress.)
+<p>
+Adressen till den ansvariga visas vanligtvis inte i den öppna listan, men
+det är nödvändigt att ha en så att spegellisteredigerarna och användare kan
+kontakta dig om det uppstår problem.
+Vi ber dig ange en giltig adress.
 </p>
 
 <p>
-Övrig information bör vara:
+Den enda ytterligare information som behövs är landet.
+Till exempel:
+</p>
 
 <div class="centerblock">
 <p>
  Land: <code>Förenta staterna [US]</code><br>
- Kommentarer: <code>Övriga kommentarer som kan vara till hjälp för andra</code>
 </p>
 </div>
+
+<p>
+Du kan om du vill även lägga till:</p>
+
+<div class="centerblock">
+<p>
+Privat e-postadress för spegelansvarige: <code>privat@adress.här</code><br>
+
+Plats för spegel (valfri): <code>Plats, regionnamn</code><br>
+Namn på sponsor (valfri): <code>Namn på spegelns sponsor</code><br>
+Webbadress för sponsor (valfri): <code>http://name.på.sponsor.tld/</code><br>
+Kommentar: <code>Övriga kommentarer som kan vara till hjälp för andra</code><br>
+</p>
+</div>
+
+<p>
+Här kan du ange en privat e-postadress som endast sänds till en utvald skara
+spegellisteredigererare, om du vill ge oss en mer direkt adress men inte
+vill publicera den.
+Du kan även ära spegelns sponsor och ge annan specifik information om din
+spegel.
+</p>
 
 <p>Följande exempel skulle beskriva spegeln på ftp.uk.debian.org:
 
@@ -200,6 +259,7 @@ Vi ber dig ange en korrekt adress.)
 
 <p>Om du har kopior på gamla versioner av Debian, skulle din post se ut
 ungefär så här:
+</p>
 
 <div class="centerblock">
 <p>
