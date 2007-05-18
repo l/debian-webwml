@@ -89,7 +89,7 @@ sub pdesc {
 }
 
 sub pdeplegend {
-    my $str = "<table border=\"1\" summary=\"legend\"><tr>\n";
+    my $str = "<table border=\"1\" rules=\"groups\" cellpadding=\"2\" summary=\"legend\"><tr>\n";
 
     foreach my $entry (@_) {
 	$str .= "<td><img src=\"../../Pics/$entry->[0].gif\" alt=\"[$entry->[0]]\" width=\"16\" height=\"16\">= $entry->[1]</td>";
