@@ -137,8 +137,12 @@ sub permute_as_matrix {
     %arches || die "%arches is not set\n";
     %formats || die "%formats is not set\n";
 
-    # FIXME: only remove PDF for releases before woody
-    if ($file =~ /release-notes/) { $formats{'pdf'} = "PDF" };
+    if ($file =~ /release-notes/) {
+      # these two releases had installmanual.*.pdf but no release-notes.*.pdf
+      if ($release eq 'slink' or $release eq 'potato') {
+        delete $formats{'pdf'};
+      };
+    };
 
     my %sorted_langs = ();
     foreach (@langs) {
