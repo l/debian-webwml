@@ -1,0 +1,57 @@
+#use wml::debian::translation-check translation="1.1" mindelta="1"
+<define-tag description>formgivningsfel</define-tag>
+<define-tag moreinfo>
+<p>
+Ett formgivningsfel har identifierats i OpenAFS, ett plattformsövergripande
+distribuerat filsystem som medföljer Debian.
+</p>
+
+<p>
+OpenAFS har historiskt aktiverat filsystemsstöd för setuid för den lokala cellen.
+Med det nuvarande protokollet kan dock OpenAFS endast använda kryptering, och
+därför integritetskontroll, om användaren är autentiserad.
+Oautentiserad åtkomst utför inte integritetskontroller.
+Resultatet i praktiken är att det är möjligt för en angripare med kunskap om AFS
+att förfalska ett AFS FetchStatus-anrop och göra så att godtyckliga binära filer
+visas som setuid på en AFS-klientvärd.
+Om de sedan kan få det programmet att exekveras kan de uppnå en utökning av
+privilegier.
+</p>
+
+<p>
+OpenAFS 1.3.81-3sarge2 ändrar standardbeteendet så att det inaktiverar
+setuid-filen globalt, även i den lokala cellen.
+Det är viktigt att lägga märke till att ändringen inte träder i kraft förrän den
+AFS-kärnemodul som byggts från paketet openafs-modules-source startars om och
+läses in i din kärna.
+För att tillfälligt gå runt det tills det att kärnmodulen kan läsas om, kan
+setuid-stöd manuellt inaktiveras för den lokala cellen genom att köra följande
+kommando som root:
+</p>
+
+<p><kbd>fs setcell -cell &lt;localcell&gt; -nosuid</kbd></p>
+
+<p>
+Efter att ha tagit den här uppdateringen i bruk kan du, om du är säker på att det
+inte finns några säkerhetsrisker där en angripare kan förfalska
+AFS-filserversvar, aktivera setuid-status på individuell basis med följande
+kommando.
+Detta bör dock inte göras för filsystem som är synliga på Internet.
+</p>
+
+<p><kbd>fs setcell -cell &lt;localcell&gt; -suid</kbd></p>
+
+<p>
+För den stabila utgåvan (Sarge) har detta problem rättats i version
+1.3.81-3sarge2.
+</p>
+
+<p>
+För den instabila utgåvan (Sid) och den kommande stabila utgåvan (Etch), 
+kommer detta problem att rättas i version 1.4.2-6.</p>
+
+<p>Vi rekommenderar att ni uppgraderar ert openafs-paket.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2007/dsa-1271.data"
