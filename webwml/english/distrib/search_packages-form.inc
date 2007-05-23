@@ -37,7 +37,6 @@
   <option value="main"><gettext domain="distrib">main</gettext></option>
   <option value="contrib"><gettext domain="distrib">contrib</gettext></option>
   <option value="non-free"><gettext domain="distrib">non-free</gettext></option>
-  <option value="non-us"><gettext domain="distrib">non-US</gettext></option>
   <option value="all" selected="selected"><gettext domain="distrib">any</gettext></option>
 </select>
 </p>
