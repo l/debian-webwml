@@ -366,7 +366,7 @@ sub process_name {
 # The following should handle almost everyone
 #
 # the latest insane regexp courtesy of Matt Kraai
-		elsif ($maintainer =~ /"?(.+?)\s+(([vV][ao]n )?(da |der? |Di |Le |Dal )?[\w~'&;#-]+),?\s*([IV]*|Jr\.?)"?(\s+\(.*\))?\s+<(.+)>\s*/o) {
+		elsif ($maintainer =~ /"?(.+?)\s+(([vV][ao]n )?(da |der? |Di |Le |Dal )?[.\w~'&;#-]+),?\s*([IV]*|Jr\.?)"?(\s+\(.*\))?\s+<(.+)>\s*/o) {
 			($firstname,$lastname,$email) = ($1,$2,$7);
 			if (uc($firstname) eq $firstname) {
 				($firstname,$lastname) = ($lastname,ucfirst(lc($firstname)));
