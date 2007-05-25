@@ -1,0 +1,172 @@
+#use wml::debian::template title="Kako se pravi www.debian.org"
+#use wml::debian::toc
+#use wml::debian::translation-check translation="1.25"
+
+<p>Debian <em>&#x201E;webtree&#x201D;</em>, skup direktorija i datoteka koje èine na¹
+web site, se nalazi u direktoriju <tt>/org/www.debian.org/www</tt> na
+www-master.debian.org. Veæina stranica su normalne statièke HTML datoteke
+(tj. ne rade se neèim dinamièkim kao ¹to je CGI ili PHP skripta), zato ¹to
+se web site mirrora.
+
+<p>Stranice se generiraju na jedan od tri naèina:
+<ul>
+  <li>veæina se generira putem WML-a, iz `webwml' CVS stabla
+  <li>dokumentacija se generira putem DebianDoc-SGML-a, iz `debian-doc' CVS
+      stabla
+  <li>dijelovi web sitea se generiraju putem skripti, npr. stranice za
+      prijavljivanje/odjavu s mailing lista
+</ul>
+
+<p>Automatsko osvje¾avanje (iz CVS repositorya i drugih izvora u webtree)
+se pokreæe ¹est puta dnevno.
+
+<p>Ako biste ¾eljeli doprinijeti siteu, <strong>nemojte</strong> jednostavno
+dodati ili ureðivati stvari u <code>www/</code> direktoriju.
+Prvo kontaktirajte <a href="mailto:webmaster@debian.org">webmastere</a>.
+
+<p>Sve datoteke i direktorije posjeduje grupa debwww i ta grupa mo¾e pisati
+u njih, tako da web tim mo¾e mijenjati datoteke u web direktoriju. Mod 2775
+na direktorijima znaèi da æe sve datoteke koje se pod tim direktorijem
+kreiraju naslijediti grupu - debwww u ovom sluèaju. Od svih u grupi debwww
+se oèekuje da postave `<code>umask 002</code>' kako bi se datoteke kreirale
+s dozvolom pisanja za grupu.
+
+<toc-display />
+
+<hrline />
+
+<toc-add-entry name="look">Look &amp; feel</toc-add-entry>
+
+<p>Dajemo stranicama isti "look &amp; feel" putem 
+<a href="http://packages.debian.org/unstable/web/wml">WML-a</a> koji
+vr¹i sav detaljni posao oko dodavanja zaglavlja i krajeva na stranice.
+Iako .wml stranica na prvi pogled mo¾e izgledati kao HTML, HTML je samo
+jedan od oblika dodatnih informacija koje se mogu koristiti u .wml-u. Nakon
+¹to WML zavr¹i s pokretanjem svojih raznih filtera na datoteci, finalni
+proizvod je pravi HTML. Da biste vidjeli moæ WML-a, mo¾ete ukljuèiti Perl
+kod u stranicu da biste mogli napraviti, pa, zapravo bilo ¹to.
+
+<p>Ipak, primijetite kako WML provjerava (i nekad automagièno ispravlja)
+samo najosnovniju ispravnost va¹eg HTML kôda. Trebate instalirati
+<a href="http://packages.debian.org/unstable/web/weblint">weblint</a>
+i/ili
+<a href="http://packages.debian.org/unstable/web/tidy">tidy</a>
+da ispravite va¹ HTML kôd.
+
+<p>Na¹e se web stranice trenutno pridr¾avaju standarda
+<a href="http://www.w3.org/TR/html4/">HTML 4.01 Strict</a>.
+Ipak, namjeravamo prijeæi na <a href="http://www.w3.org/TR/xhtml1/">XHTML</a>,
+pa se svima koji ureðuju web stranice toplo preporuèa pisanje HTML
+<em>tagova</em> malim slovima, stavljanje <em>tagova</em> na kraj itd., kako
+bi prijelaz bio ¹to glatkiji.
+
+<p>Bilo tko tko radi na puno stranica bi trebao instalirati wml tako da mogu
+isprobati i osigurati da je rezultat ono ¹to ¾ele. Ako koristite Debian,
+jednostavno mo¾ete instalirati <code>wml</code> paket. Proèitajte stranice
+o <a href="using_wml">kori¹tenju WML-a</a> za vi¹e informacija.
+
+<toc-add-entry name="sources">Izvornici</toc-add-entry>
+
+<p>Izvorni kod web stranica se dr¾i u CVS-u. CVS je sustav kontrole inaèica,
+koji nam omoguæuje dr¾anje zapisnika o tome kakve su, od koga, kada, i za¹to
+napravljene promjene, itd. To je siguran naèin kontroliranja konkurentnih
+ureðivanja datoteka izvornika meðu brojnim autorima, ¹to je presudno za nas
+jer je Debian web tim prilièno velik.
+
+<p>Ako niste upoznati s ovim programom, ¾eljet æete proèitati stranice o
+<a href="using_cvs">kori¹tenju CVS-a</a>.
+
+<p>Najvi¹i webwml direktorij u CVS repositoryu sadr¾i direktorije nazvane po
+svim jezicima na kojima su web stranice, dva makefilea i nekoliko skripti.
+Imena direktorija prijevoda trebaju biti na engleskom i malim slovima
+(npr. "german", ne "Deutsch").
+
+<p>Va¾niji od dva makefilea je Makefile.common koji, kako mu ime ka¾e
+(eng. common, zajednièki, op.prev.), sadr¾i neka zajednièka pravila koja se
+primjenjuju tako da se ova datoteka ukljuèi u drugim makefileovima.
+
+<p>Svaki od direktorija jezika sadr¾i makefileove, WML izvornike i
+poddirektorije. Imena datoteka i direktorija se ne razlikuju kako bi veze
+bile toène za sve jezike. Direktoriji mogu sadr¾avati i .wmlrc datoteke koje
+sadr¾e neke informacije korisne WML-u.
+
+<p>Direktorij webwml/english/template sadr¾ava posebne WML datoteke koje
+nazivamo predlo¹cima, jer se one mogu koristiti iz svih ostalih datoteka
+koristeæi <code>#use</code> naredbu.
+
+<p>Kako bi se promjene u predlo¹cima propagirale u datoteke koje ih koriste,
+te datoteke imaju makefile ovisnosti (dependency) na njih. Buduæi da velika
+veæina datoteka koristi "template" predlo¾ak, tako ¹to ima "<code>#use
+wml::debian::template</code>" redak na vrhu, poèetna ovisnost (ona koju sve
+datoteke imaju) je ba¹ taj predlo¾ak. Za ovo pravilo postoje iznimke,
+naravno.
+
+<toc-add-entry name="scripts">Skripte</toc-add-entry>
+
+<p>Skripte su veæinom pisane u shellu ili Perlu. Neke od njih su samostalne,
+a neke su integrirane u izvorne WML datoteke.</p>
+
+<p>Izvornici za glavne skripte koje obnavljaju www-master su u
+<a href="http://cvs.debian.org/cron/?cvsroot=webwml">cron modulu u CVS-u</a>.
+</p>
+
+<p>Izvornici za skripte koje obnavljaju packages.debian.org su u
+<a href="http://cvs.debian.org/packages/?cvsroot=webwml">packages modulu u
+CVS-u</a>.</p>
+
+<toc-add-entry name="help">Kako pomoæi</toc-add-entry>
+
+<p>Pozivamo sve zainteresirane da nam pomognu uèiniti Debian site ¹to je
+bolji moguæ. Ako imate vrijedne informacije vezane uz Debian za koje mislite
+da nedostaju na na¹im stranicama, <a href="mailto:debian-www@lists.debian.org">
+podijelite ih s nama</a> i pobrinut æemo se da se ukljuèe.
+
+<p>Uvijek je korisna pomoæ u dizajniranju stranica (¹to se tièe grafike i
+izgleda), kao i odr¾avanjem HTML-a èistim. Redovno vrtimo sljedeæe provjere
+na cijelom web poslu¾itelju:</p>
+
+<ul>
+  <li><a href="http://people.debian.org/~djpig/urlcheck/">URL provjera</a>
+  <li><a href="http://people.debian.org/~alfie/validate/">wdg-html-validator</a>
+  <li><a href="http://people.debian.org/~alfie/tidy/">tidy</a>
+</ul>
+
+<p>Pomoæ u èitanju gornjih zapisa i ispravljanju problema je uvijek
+dobrodo¹la.</p>
+
+<p>A¾urni log zapisi pravljenja web stranica se mogu naæi na
+<url "http://www-master.debian.org/build-logs/">.</p>
+
+<p>Ako teèno govorite engleski jezik, bilo bi nam drago da potanko
+pregledate na¹e stranice i prijavite
+<a href="mailto:debian-www@lists.debian.org">nam</a> sve gre¹ke.
+
+<p>Ako govorite neki drugi jezik, mo¾da æete nam ¾eljeti pomoæi prevesti
+stranice na va¹ jezik. Ako je prijevod veæ napravljen, ali ima problema,
+pogledajte popis <a href="translation_coordinators">koordinatora
+prijevoda</a> i porazgovarajte s voditeljem za va¹ jezik o ispravljanju.
+Ako biste ¾eljeli sami prevoditi stranice, pogledajte stranicu o
+<a href="translating">toj temi</a> za vi¹e informacija.
+
+<p>Postoji i <a href="todo">TODO datoteka</a>, pogledajte je.</p>
+
+<toc-add-entry name="nohelp">Kako <strong>ne</strong> pomoæi</toc-add-entry>
+
+<p><em>[Q] ®elio bih staviti <var>zgodnu moguænost weba</var> na
+www.debian.org, smijem li?</em>
+
+<p>[A] Ne. Mi ¾elimo da www.debian.org bude ¹to pristupaèniji, tako da
+<ul>
+    <li>nema "dodataka" specifiènih za neke preglednike.
+    <li>nema oslanjanja samo na slike. Slike se mogu koristiti za
+        poja¹njavanje, ali informacije na www.debian.org moraju ostati
+        pristupaène kroz tekstualni web preglednik, kao ¹to je lynx.
+</ul>
+
+<p><em>[Q] Imam ovu zgodnu ideju. Mo¾ete li omoguæiti BLA u HTTPD-u za
+www.debian.org, molim vas?</em>
+
+<p>[A] Ne. ®elimo olak¹ati ¾ivot administratorima koji mirroraju
+www.debian.org, tako da ne ¾elimo posebne HTTPD moguænosti, molimo. Ne, èak
+ni SSI. Iznimka je napravljena za pregovaranje sadr¾aja. Ovo je zato ¹to je
+to jedini pouzdani naèin poslu¾ivanja vi¹e jezika.
