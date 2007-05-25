@@ -1,0 +1,385 @@
+#use wml::debian::template title="Debian BTS - prijavljivanje bugova" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.50"
+
+<h1>Kako prijaviti bug u Debianu</h1>
+
+<h2>Va¾ne stvari za uoèiti <strong>prije</strong> slanja</h2>
+
+<p>Molimo nemojte prijavljivati vi¹e nevezanih bugova &mdash; posebno onih u
+razlièitim paketima &mdash; u jednom bug izvje¹taju.</p>
+
+<p>Trebate provjeriti je li va¹ bug izvje¹taj veæ netko drugi prijavio
+prije nego ga po¹aljete. Popisi trenutno ispostavljenih bugova su dostupni
+<a href="./">na World Wide Webu</a> i <a href="Access">drugdje</a> &mdash;
+pogledajte druge dokumente za detalje. Svoje komentare o postojeæem bug
+izvje¹taju <var>&lt;broj&gt;</var> mo¾ete poslati e-mailom na
+<var>&lt;broj&gt;</var>@bugs.debian.org</p>
+
+<p>Ako ne mo¾ete ustanoviti koji paket ima problem, molimo po¹aljite e-mail
+na <a href="mailto:debian-user@lists.debian.org">Debian korisnièku mailing
+listu</a> i pitajte za savjet. Ako se va¹ problem ne tièe samo jednog paketa
+nego neke opæenite Debian usluge, postoji nekoliko
+<a href="pseudo-packages">pseudo-paketa</a> pa i
+<a href="../MailingLists/">mailing lista</a> koje mo¾ete koristiti
+kako bi nam prenijeli va¹u poruku.</p>
+
+<p>Ako biste ¾eljeli poslati va¹ bug izvje¹taj dodatnim primateljima (npr.
+mailing listama), ne biste trebali koristiti uobièajena e-mail zaglavlja,
+veæ <a href="#xcc">drugaèiji naèin, opisan ispod</a>.</p>
+
+
+<h2>Slanje bug izvje¹taja koristeæi automatski alat za bug izvje¹taje</h2>
+
+<p>Program
+<code><a href="http://packages.debian.org/stable/utils/reportbug">reportbug</a></code>
+mo¾e olak¹ati prijavu bugova time ¹to æe vas provesti kroz proces prijave
+buga korak po korak.
+Alat <kbd>querybts</kbd>, dostupan iz istog paketa kao i 
+<a href="http://packages.debian.org/stable/utils/reportbug">reportbug</a>,
+pru¾a zgodno tekstualno suèelje sustavu praæenja bugova.</p>
+
+<p>Korisnici Emacsa takoðer mogu koristiti naredbu debian-bug koju pru¾a
+<code><a href="http://packages.debian.org/stable/utils/debian-el">\
+debian-el</a></code> paket. Kada je pozovete sa <kbd>M-x debian-bug</kbd>,
+pitat æe vas sve potrebne informacije slièno kao i <code>reportbug</code>.</p>
+
+
+<h2>Slanje bug izvje¹taja e-mailom</h2>
+
+<p>Po¹aljite e-mail na
+<a href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></a>,
+kao ¹to je opisano ispod.</p>
+
+<p>Naravno, kao i svaki e-mail, trebate ukljuèiti jasan, opisan
+<code>Subject</code> redak u glavnom e-mail zaglavlju. Tema koju zadate æe
+biti kori¹tena kao inicijalni naslov buga u sustavu praæenja, pa molimo
+poku¹ajte je uèiniti informativnom!</p>
+
+<p>Trebate postaviti <a name="pseudoheader">pseudo-zaglavlje</a> na poèetak
+tijela poruke. To znaèi da prvi redak tijela poruke treba glasiti:</p>
+
+<pre>
+Package: &lt;ne¹to&gt;
+</pre>
+
+<p>Zamijenite <code>&lt;ne¹to&gt;</code> imenom paketa koji ima bug.</p>
+
+<p>Drugi redak poruke treba glasiti:</p>
+
+<pre>
+Version: &lt;ne¹to&gt;
+</pre>
+
+<p>Zamijenite <code>&lt;ne¹to&gt;</code> inaèicom paketa.
+Molimo nemojte ovdje upisati nikakav tekst osim same verzije, jer
+sustav praæenja bugova ovisi o ovom polju kako bi utvrdio koja su izdanja
+Debiana zahvaæena bugom.</p>
+
+<p>Trebate upisati toènu vrijednost na <code>Package</code> redak u
+pseudo-zaglavlju kako bi sustav praæenja bugova isporuèio poruku
+odr¾avatelju paketa. Pogledajte <a href="#findpkgver">ovaj primjer</a> za
+informacije o tome kako pronaæi te podatke.</p>
+
+<p>Polja pseudo-zaglavlja trebaju poèinjati na samom poèetku redaka
+(u prvom stupcu, op.prev.).</p>
+
+<p>Molimo vas da u va¹ izvje¹taj ukljuèite:</p>
+
+<ul>
+  <li><em>Toèan</em> i <em>potpun</em> tekst svake poruke gre¹ci koja je
+      ispisana ili logirana. Ovo je vrlo va¾no!
+  <li>Toèno ¹to ste utipkali ili uèinili da demonstrirate problem.
+  <li>Opis netoènog pona¹anja: toèno koje pona¹anje ste oèekivali, te ¹to
+      ste opazili. Zapisnik rada kao primjer je dobar naèin da se ovo poka¾e.
+  <li>Preporuèena ispravka, ili èak zakrpa, ako je imate.
+  <li>Detalji postavki programa s problemom. Ukljuèite potpuni tekst
+      njegovih konfiguracijskih datoteka.
+  <li>Verzije svih paketa o kojima bugovit paket ovisi.
+  <li>Koju verziju kernela koristite (otipkajte <code>uname -a</code>), va¹e
+      dijeljene C biblioteke (otipkajte <code>ls -l /lib/libc.so.6</code>
+      ili <code>dpkg -s libc6 | grep ^Version</code>), i svi drugi detalji o
+      va¹em Debian sustavu, ako vam djeluju prikladno. Naprimjer, ako ste
+      imali problem s Perl skriptom, ¾eljet æete dati verziju `perl'
+      binarnog paketa (otipkajte <code>perl -v</code> ili <code>dpkg -s
+      perl | grep ^Version:</code>)
+  <li>Prikladni detalji o hardveru u va¹em sustavu. Ako prijavljujete
+      problem s upravljaèkim programom (driverom) za neki ureðaj, molimo
+      popi¹ite <em>sav</em> hardver u va¹em sustavu, jer su problemi èesto
+      uzrokovani konfliktima IRQ-ova i I/O adresa.
+</ul>
+
+<p>Ukljuèite svaki detalj koji se èini relevantnim &mdash; vrlo je mala
+opasnost da uèinite svoj izvje¹taj predugim tako ¹to ukljuèite previ¹e
+informacija.
+Ako su malene, molimo ukljuèite sve datoteke koje ste koristili za
+reproduciranje problema (uuencodirajte ih ako bi mogli sadr¾avati èudne
+znakove itd.).
+
+<p>Za vi¹e savjeta o tome kako pomoæi razvijateljima rije¹iti va¹ problem,
+molimo proèitajte "<a href="http://www.chiark.greenend.org.uk/~sgtatham/bugs.html">\
+How to Report Bugs Effectively</a>" (kako efikasno prijavljivati bugove).</p>
+
+
+<h2><a name="example">Primjer</a></h2>
+
+<p>Bug izvje¹taj, s zaglavljem e-maila, izgleda ovako nekako:
+
+<PRE>
+  To: submit@bugs.debian.org
+  From: marljivo@testiranje.linux.hr
+  Subject: Hello says `goodbye'
+
+  Package: hello
+  Version: 1.3-16
+
+  When I invoke `hello' without arguments from an ordinary shell
+  prompt it prints `goodbye', rather than the expected `hello, world'.
+  Here is a transcript:
+
+  $ hello
+  goodbye
+  $ /usr/bin/hello
+  goodbye
+  $
+
+  I suggest that the output string, in hello.c, be corrected.
+
+  I am using Debian GNU/Linux 2.2, kernel 2.2.17-pre-patch-13
+  and libc6 2.1.3-10.
+</PRE>
+
+<p>(Sjetite se da je Debian projekt u kojem je glavni jezik engleski, pa ne
+bi bilo pametno da po¹aljete bug izvje¹taj na hrvatskom :-) -op.prev.)</p>
+
+
+<h2><a name="xcc">Slanje kopije bug izvje¹taja na druge adrese</a></h2>
+
+<p>Nekad je potrebno poslati kopiju bug izvje¹taja negdje drugdje osim
+na <code>debian-bugs-dist</code> i odr¾avatelju paketa, gdje se inaèe ¹alju.</p>
+
+<p>Ovo mo¾ete postiæi tako da CC:ate svoj bug izvje¹taj na drugu
+adresu (adrese), ali onda druge kopije neæe imati broj bug izvje¹taja u
+<code>Reply-To</code> polju i <code>Subject</code> retku. Kad primatelji
+odgovore, oni æe vjerojatno ostaviti <code>submit@bugs.debian.org</code>
+meðu zaglavljima i tako svojom porukom prijaviti novi bug izvje¹taj. Ovo
+dovodi do mnogo dupliciranih bug izvje¹taja.</p>
+
+<p><em>Pravi</em> naèin kako ovo uèiniti je kori¹tenje
+<code>X-Debbugs-CC</code> zaglavlja. Dodajte redak kao ¹to je ovaj meðu
+zaglavlja svoje poruke:</p>
+
+<pre>
+ X-Debbugs-CC: druga-lista@cosmic.edu
+</pre>
+
+<p>Ovo æe uzrokovati to da sustav praæenja bugova po¹alje kopiju va¹eg
+izvje¹taja na adresu (adrese) u <code>X-Debbugs-CC</code> retku kao i na
+<code>debian-bugs-dist</code>.</p>
+
+<p>Izbjegavajte slanje takvih kopija na adrese drugih bug izvje¹taja, jer æe
+ih presresti provjere koje spreèavaju e-mail petlje. Ionako nema previ¹e
+smisla koristiti <code>X-Debbugs-CC</code> za ovo, buduæi da æe broj buga
+koji ovaj mehanizam dodaje biti zamijenjen novim; umjesto toga, koristite
+obièno <code>CC</code> zaglavlje.</p>
+
+<p>Ova moguænost se èesto mo¾e korisno kombinirati sa slanjem na
+<code>quiet</code> &mdash; vidi dolje.</p>
+
+
+<h2><a name="severities">`Severity' nivoi</a></h2>
+
+<p>Ako izvje¹taj govori o posebno ozbiljnom bugu, ili je tek zahtjev za
+nekom moguæno¹æu, mo¾ete postaviti `severity' nivo buga kada ga
+prijavljujete. Ipak, ovo nije nu¾no, razvijatelji æe dodijeliti prikladni
+`severity' nivo va¹em izvje¹taju ako to vi ne uèinite.
+
+<p>Da bi dodijelili `severity' nivo, stavite redak slièan sljedeæem u
+<a href="#pseudoheader">pseudo-zaglavlje</a>:</p>
+
+<pre>
+Severity: &lt;<var>severity</var>&gt;
+</pre>
+
+<p>Zamijenite &lt;<var>severity</var>&gt; jednim od dostupnih `severity'
+nivoa, opisanih u
+<a href="Developer#severities">dokumentaciji za razvijatelje</a>.
+
+
+<h2><a name="tags">Dodjeljivanje oznaka</a></h2>
+
+<p>Mo¾ete postaviti oznake na bugu kad ga prijavljujete. Naprimjer, ako
+ukljuèujete zakrpu (eng. "patch") s izvje¹tajem o bugu, mo¾ete htjeti
+postaviti <code>patch</code> oznaku. Ipak, ovo nije obavezno, razvijatelji
+æe postaviti oznake na va¹ izvje¹taj kako i kada bude prikladno.</p>
+
+<p>Za postavljanje oznaka, stavite redak slièan ovome u
+<a href="#pseudoheader">pseudo-zaglavlje</a>:</p>
+
+<pre>
+Tags: &lt;<var>oznake</var>&gt;
+</pre>
+
+<p>Zamijenite &lt;<var>oznake</var>&gt; s jednom ili vi¹e dostupnih oznaka,
+opisanih u <a href="Developer#tags">dokumentaciji za razvijatelje</a>.
+Dodatne oznake odvojite zarezima i/ili razmacima.</p>
+
+<pre>
+User: &lt;<var>korisnickoime</var>&gt;
+Usertags: &lt;<var>usertags</var>&gt;
+</pre>
+
+<p>Zamijenite &lt;<var>usertags</var>&gt; sa jednim ili vi¹e <i>usertagova</i>.
+Vi¹estruke takve oznake odvojite zarezima i/ili razmacima. Ako postavite
+&lt;<var>korisnickoime</var>&gt;, bit æe postavljene oznake zadanog korisnika.
+Inaèe æe se e-mail adresa po¹iljatelja koristiti kao korisnièko ime.</p>
+
+<h2><a name="miscpseudoheaders">Druga pseudo-zaglavlja (uglavnom zanimljiva
+odr¾avateljima paketa)</a></h2>
+
+<pre>
+Forwarded: <var>foo@example.com</var>
+</pre>
+
+<p>
+æe oznaèiti novoprijavljeni bug kao proslijeðen na foo@example.com.
+Za detalje pogledajte
+"<a href="Developer#forward">Recording that you have passed on a bug
+report</a>" u dokumentaciji za razvijatelje.
+</p>
+
+<pre>
+Owner: <var>foo@example.com</var>
+</pre>
+
+<p>
+æe naznaèiti da je foo@example.com sada odgovoran za ispravljanje ovog buga.
+Za detalje pogledajte
+"<a href="Developer#owner">Changing bug ownership</a>"
+u dokumentaciji za razvijatelje.
+</p>
+
+<pre>
+Source: <var>foopackage</var>
+</pre>
+
+<p>
+ekvivalentno retku <code>Package:</code> za bugove koji postoje u paketu
+izvorniku paketa foopackage; za veæinu bugova u veæini paketa, neæete
+koristiti ovu opciju.
+</p>
+
+<p>Konaèno, ako va¹
+<acronym title="Mail User Agent" lang="en">MUA</acronym>
+ne dopu¹ta ureðivanje zaglavlja, mo¾ete podesiti razna
+<code>X-Debbugs-</code> zaglavlja u
+<a href="#pseudoheader">pseudo-zaglavljima</a>.</p>
+
+
+<h2>Razlièite prihvatne adrese (minorni ili masovni bug izvje¹taji)</h2>
+
+<p>Ako je bug izvje¹taj minoran, naprimjer, tipfeler u dokumentaciji ili
+neki trivijalni problem pri izraðivanju paketa, molimo postavite prikladan
+`severity' i po¹aljite ga na <code>maintonly@bugs</code> umjesto na
+<code>submit@bugs</code>. <code>maintonly</code> æe proslijediti izvje¹taj
+odr¾avatelju paketa, i neæe ga proslijediti na BTS mailing liste.
+
+<p>Ako ¹aljete puno izvje¹taja odjednom, svakako trebate koristiti
+<code>maintonly@bugs</code> kako ne bi napravili puno nepotrebnog prometa na
+BTS mailing listama. Prije slanja puno sliènih bugova biste trebali poslati
+sa¾etak na <code>debian-bugs-dist</code>.
+
+<p>Ako ¾elite prijaviti bug u sustav praæenja bugova a on je veæ poslan
+odr¾avatelju, mo¾ete koristiti <code>quiet@bugs</code>. Bugovi poslani na
+<code>quiet@bugs</code> nigdje neæe biti proslijeðeni, samo spremljeni.
+
+<p>Kad koristite razlièite prihvatne adrese, sustav praæenja bugova æe
+postaviti <code>Reply-To</code> svake proslijeðene poruke tako da æe
+odgovori po pretpostavljenoj vrijednosti biti procesuirani kao i originalni
+izvje¹taj. To znaèi da æe, naprimjer, odgovori na <code>maintonly</code> iæi
+na <var>nnn</var><code>-maintonly@bugs</code> umjesto na
+<var>nnn</var><code>@bugs</code>, osim ako se ruèno ne preprave, naravno.
+
+
+<h2>Potvrde</h2>
+
+<p>Normalno æe vam sustav praæenja bugova e-mailom vratiti potvrdu o
+primitku kad prijavite novi bug ili dodate informacije u postojeæi bug.
+Ako ¾elite potisnuti ove potvrde, ukljuèite <code>X-Debbugs-No-Ack</code>
+zaglavlje u svoj e-mail (sadr¾aj zaglavlja nije bitan; ipak, ono mora
+biti u zaglavlju e-maila a <em>ne</em> u pseudo-zaglavlju skupa s
+<code>Package</code> poljem). Ako prijavite novi bug s ovim zaglavljem,
+morat æete sami naæi broj buga putem web suèelja.</p>
+
+<p>Primijetite da ovo zaglavlje neæe potisnuti potvrde od
+<code>control@bugs</code> e-mail poslu¾itelja, buduæi da te potvrde mogu
+sadr¾avati poruke o gre¹kama koje trebaju biti proèitane i zbog kojih mo¾e
+ne¹to trebati poduzeti.</p>
+
+
+<h2>Bug izvje¹taji za nepoznate pakete</h2>
+
+<p>Ako sustav praæenja bugova ne zna tko je odr¾avatelj relevantnog paketa,
+izvje¹taj æe biti proslijeðen na <code>debian-bugs-dist</code> èak i ako ste
+koristili <code>maintonly</code>.
+
+<p>Kad ¹aljete na <code>maintonly@bugs</code> ili
+<var>nnn</var><code>-maintonly@bugs</code>, trebate provjeriti da je bug
+izvje¹taj dodijeljen pravom paketu, tako ¹to stavite pravi
+<code>Package</code> redak na poèetak originalnog izvje¹taja, ili tako da
+koristite <a href="server-control"><code>control@bugs</code> servis</a> da
+dodijelite izvje¹taj ispravnom paketu ako to veæ nije dobro dodijeljen.
+
+
+<h2><a name="findpkgver">Kori¹tenje <code>dpkg</code>a za pronala¾enje
+paketa i verzije za izvje¹taj</a></h2>
+
+<p>Ako prijavljujete bug u nekoj naredbi, mo¾ete saznati koji ju je paket
+instalirao koristeæi <code>dpkg --search</code>. Verziju paketa kojeg imate
+instaliranog mo¾ete saznati koristeæi <code>dpkg --list</code> ili
+<code>dpkg --status</code>.
+
+<p>Naprimjer:
+
+<pre>
+$ which apt-get
+/usr/bin/apt-get
+$ type apt-get
+apt-get is /usr/bin/apt-get
+$ dpkg --search /usr/bin/apt-get
+apt: /usr/bin/apt-get
+$ dpkg --list apt
+Desired=Unknown/Install/Remove/Purge/Hold
+| Status=Not/Installed/Config-files/Unpacked/Failed-config/Half-installed
+|/ Err?=(none)/Hold/Reinst-required/X=both-problems (Status,Err: uppercase=bad)
+||/ Name           Version        Description
++++-==============-==============-============================================
+ii  apt            0.3.19         Advanced front-end for dpkg
+$ dpkg --status apt
+Package: apt
+Status: install ok installed
+Priority: standard
+Section: base
+Installed-Size: 1391
+Maintainer: APT Development Team &lt;deity@lists.debian.org&gt;
+Version: 0.3.19
+Replaces: deity, libapt-pkg-doc (&lt;&lt; 0.3.7), libapt-pkg-dev (&lt;&lt; 0.3.7)
+Provides: libapt-pkg2.7
+Depends: libapt-pkg2.7, libc6 (&gt;= 2.1.2), libstdc++2.10
+Suggests: dpkg-dev
+Conflicts: deity
+Description: Advanced front-end for dpkg
+ This is Debian's next generation front-end for the dpkg package manager.
+ It provides the apt-get utility and APT dselect method that provides a
+ simpler, safer way to install and upgrade packages.
+ .
+ APT features complete installation ordering, multiple source capability
+ and several other unique features, see the Users Guide in
+ /usr/doc/apt/guide.text.gz
+
+</pre>
+
+<hr>
+
+#use "otherpages.inc"
+
+#use "$(ENGLISHDIR)/Bugs/footer.inc"
