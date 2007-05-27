@@ -599,12 +599,15 @@ access method for each type.
 <dl>
 <dt><strong>Packages</strong>
 	<dd>The Debian package pool.
-<dt><strong>Non-US packages</strong>
-	<dd>A pool for Debian packages that can't be distributed in the US
-	due to software patents or use of encryption.
 <dt><strong>CD Images</strong>
 	<dd>Official Debian CD Images. See
 	<a href="http://www.debian.org/CD/">http://www.debian.org/CD/</a> for details.
+<dt><strong>Old releases</strong>
+	<dd>The archive of old released versions of Debian.<br>
+	Some of the old releases also included the so-called debian-non-US
+	archive, with sections for Debian packages that could not be
+	distributed in the US due to software patents or use of encryption.
+	The debian-non-US updates were discontinued with Debian 3.1.
 <dt><strong>WWW pages</strong>
 	<dd>The Debian web pages.
 </dl>
@@ -786,10 +789,14 @@ To prevent anyone from taking unnecessary legal risks, some Debian
 packages were only available from a site in Leiden, The Netherlands, until 
 the release of Debian 3.1, which incorporates this software thanks to
 changes in United States law.
-
+END
+	print "<p>" if $html;
+	print <<END;
 You should not need the non-US archive unless you are using a version of
 Debian from before Debian 3.1.
-
+END
+	print "<p>" if $html;
+	print <<END;
 Available access methods are:
 END
 	print "<blockquote>\n" if $html;
