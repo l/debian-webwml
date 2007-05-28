@@ -134,8 +134,8 @@ while (<SRC>)
 	s/\bin version\b/i version/;
 	s/of the Debian package/av Debianpaketet/;
 	s/upstream version/uppströmsversion/;
-	s/([Ff])or the old stable distribution/$1ör den gamla stabila utgåvan/;
-	s/([Ff])or the old stable/$1ör den gamla stabila/;
+	s/([Ff])or the old ?stable distribution/$1ör den gamla stabila utgåvan/;
+	s/([Ff])or the old ?stable/$1ör den gamla stabila/;
 	s/([Ff])or the current stable distribution/$1ör den nuvarande stabila utgåvan/;
 	s/([Ff])or the current stable/$1ör den nuvarande stabila/;
 	s/([Ff])or the upcoming stable distribution/$1ör den kommande stabila utgåvan/;
