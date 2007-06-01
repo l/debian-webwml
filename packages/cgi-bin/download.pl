@@ -175,6 +175,8 @@ my %arches = (
         s390    => 'IBM S/390',
 	"hurd-i386" => 'Hurd (i386)',
 	amd64   => 'AMD64',
+	armel   => 'EABI ARM',
+	"kfreebsd-amd64" => 'GNU/kFreeBSD (amd64)',
 	"kfreebsd-i386" => 'GNU/kFreeBSD (i386)'
 );
 
@@ -259,7 +261,7 @@ END
   current information.</p>
 END
 
-} elsif ($arch eq 'kfreebsd-i386') {
+} elsif ($arch =~ /^(kfreebsd|armel)/) {
 
     print_links( "North America", $file, @kfreebsd_north_american_sites );
     print_links( "Europe", $file, @kfreebsd_european_sites );

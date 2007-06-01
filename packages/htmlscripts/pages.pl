@@ -242,7 +242,7 @@ sub package_pages_walker {
 		$package_page .=  "&amp;dist=$env->{distribution}";
 		}
 		my $unofficial = '';
-		if (($a =~ /^kfreebsd/) ||
+		if (($a =~ /^(kfreebsd|armel)/) ||
 			(($env->{distribution} eq "oldstable") &&
 				$a eq 'amd64')) {
 			$unofficial = ' '.gettext( '(unofficial port)' );
