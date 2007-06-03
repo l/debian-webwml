@@ -78,7 +78,10 @@ while (<SRC>)
 	#next if /\$Id/;
 
 	s/^(<p>)?A problem has been discovered in\b/$1Ein Problem wurde in entdeckt/;
+	s/^(<p>)?It was discovered that\b/$1Es wurde entdeckt, dass/;
 	s/\bdiscovered a problem in\b/entdeckte ein Problem in/;
+	s/\bdiscovered a/entdeckte ein/;
+	s/\bdiscovered that\b/entdeckte, dass/;
 	s/^(<p>)?A vulnerability was discovered in\b/$1Eine Verwundbarkeit wurde in entdeckt/;
 	s/^(<p>)?Two vulnerabilities were discovered in\b/$1Zwei Verwundbarkeiten wurden in entdeckt/;
 	s/which could lead to the execution of arbitrary code/Dies kann zur Ausführung beliebigen Codes führen/;
@@ -109,7 +112,7 @@ while (<SRC>)
 	s/Multiple vulnerabilities/Mehrere Verwundbarkeiten/;
 	s/>several</>mehrere</;
 	s/>unsanitise</>Fehlende Entschärfung</;
-	s/ identifies the following problems:/ identifieziert die folgenden Probleme:/;
+	s/ identifies the following problems:/ identifiziert die folgenden Probleme:/;
 	s/The following matrix explains which kernel version for which architecture/The following matrix explains which kernel version for which architecture/;
 	s/fix the problems mentioned above:/fix the problems mentioned above:/;
 	s/fix the problem mentioned above:/fix the problem mentioned above:/;
