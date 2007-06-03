@@ -1,7 +1,7 @@
 #use wml::debian::template title="Einen Debian-Archiv-Spiegel erstellen"
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/woody/release.data"
-#use wml::debian::translation-check translation="1.52"
+#use wml::debian::translation-check translation="1.54"
 # $Id$
 # Translator: Thimo Neubauer <thimo@debian.org>
 # Updated by: Frank Lichtenheld <frank@lichtenheld.de>
@@ -12,18 +12,13 @@
 <toc-add-entry name="what">Was spiegeln</toc-add-entry>
 
 <p>Die <a href="./">Haupt-Spiegelseite</a> listet alle zum Spiegeln
-verfügbaren Archive auf.
+verfügbaren Archive auf.</p>
 
 <ul>
 <li>
-Benutzer werden nach dem debian/-Archiv suchen, um Debian über das
-Netzwerk zu installieren, CDs zu erstellen (mit jigdo), und bereits
+Benutzer werden nach dem debian/-Archiv suchen, um Debian über 
+Netz zu installieren, CDs zu erstellen (mit jigdo), und bereits
 installierte Systeme zu aktualisieren. 
-<br />
-Das debian/-Archiv ist sehr groß, während das debian-non-US/-Archiv
-vergleichsweise klein ist. Auf der
-<a href="size">Spiegelgrößen</a>-Seite finden Sie präzisere 
-Informationen.
 </li>
 
 <li>
@@ -61,17 +56,23 @@ Verfügbarkeit von security.debian.org sicherzustellen.</p>
 
 <toc-add-entry name="wherefrom">Von wo spiegeln</toc-add-entry>
 
-<p>Viele Leute denken, dass <code>ftp.debian.org</code> die vorschriftsmäßige
+<p>Viele Leute denken, dass <code>ftp.debian.org</code> die kanonische
 Adresse von Debian-Paketen sei und dass es für sie am besten sei, von dort zu
-spiegeln. Das ist <strong>nicht wahr</strong>. <code>ftp.debian.org</code> ist
-lediglich einer von mehreren Servern, die von einem internen Debian-Server
-aktualisiert werden.</p>
+spiegeln. Das ist <strong>nicht wahr</strong>.
 
-<p>Jeder der Server in der <a href="list-full">vollständigen Liste aller
+<p><code>ftp.debian.org</code> ist
+lediglich einer von mehreren Servern, die von einem internen Debian-Server
+aktualisiert werden. Diese Adresse befindet sich derzeit in den Vereinigten
+Staaten auf einem einzelnen Server und existiert hauptsächlich noch für die
+Abwärtskompatibilität.</p>
+
+<p>Die <a href="official">offiziellen Spiegel</a> sind als guter Ort gedacht,
+   um davon zu spiegeln.
+Jeder der Server in der <a href="list-full">vollständigen Liste aller
 Spiegel</a>, der das <q><kbd>Type: Push-Primary</kbd></q>- oder <q><kbd>Type: 
 Push-Secondary</kbd></q>-Tag besitzt, sollte fürs
 Spiegeln gut geeignet sein. Bitte verwenden Sie einen, der netztopologisch
-nahe bei Ihnen liegt.</p>
+und geographisch nahe bei Ihnen liegt.</p>
 
 <p>Es gibt keinen wirklichen Unterschied zwischen den verschiedenen 
 <em>Push-Primary</em> Spiegeln, soweit es das Spiegeln betrifft. Auf der
@@ -79,6 +80,21 @@ anderen Seite, wenn viele Leute ftp.debian.org verwenden (und
 unglücklicherweise tun Sie das), verschwendet das unnötigerweise die
 gespendete Bandbreite.</p>
 
+<p>Spiegel-Administratoren in den Vereinigten Staaten sollten von 
+   ftp.us.debian.org (der offiziellen Spiegeladresse aus den USA, einem
+   Push-Primary-Spiegel) spiegeln. Da diese Adresse aber auch ein Verteilalias 
+   (<q lang="en">round robin alias</q>) ist, ist es für gewöhnlich am 
+   sinnvollsten, herauszufinden, welche der Komponente am besten ist und direkt 
+   von dieser zu spiegeln.
+   <br />
+   <small>Das Positive daran ist, dass das Risiko von Fehlschlägen beim
+          zweistufigen Rsync vermieden wird (verschiedene Stufen könnten auf
+	  verschiedenen Maschinen ablaufen &ndash; dies kann bei bestimmten
+	  Zeitfenster zu verschieden Daten führen (eine sog. <q lang="en">Race 
+	  Condition</q>)). Das Negative daran ist, dass es auf eine einzige
+	  Maschine konzentriert deren Leistungsfähigkeit variiert,
+	  aber dies ist momentan unserem Spiegelnetz im Allgemeinen inhärent.
+   </small></p>
 
 <toc-add-entry name="how">Wie man spiegelt</toc-add-entry>
 
@@ -111,7 +127,7 @@ Skript, um den Spiegel zu erstellen.</p>
     verwenden Sie die <kbd>--exclude</kbd> Option, um Teile des Archivs vom
     Spiegeln auszunehmen. Üblicherweise beinhaltet dies verschiedene
     Architekturen, die Sie nicht wollen; zum Beispiel würde dies
-    <em>alle</em> Architekturen ausschließen:
+    <em>alle</em> Architekturen ausschließen:<br />
 <: 
 print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
 foreach (sort keys %arches);
@@ -123,15 +139,12 @@ foreach (sort keys %arches);
     im <code>project/trace/</code> Verzeichnis des Debian-Spiegels hinzu,
     der nach ihrem Server benannt ist. Das heißt, dass Sie
     <kbd>date -u &gt; .../debian/project/trace/<var>ihr.server</var></kbd>
-    aufrufen sollen, nachdem ihr tägliches rsync beendet ist; und
-    <kbd>date -u &gt; .../debian-non-US/project/trace/<var>ihr.server</var></kbd>
-    nach dem das tägliche non-US beendet ist, falls Sie debian-non-US
-    spiegeln.</li>
+    aufrufen sollen, nachdem Ihr tägliches rsync beendet ist.</li>
 
-<li> Wir raten nachdrücklich vom Ausschluss der <tt>project/</tt>-, 
+<li>Wir raten nachdrücklich vom Ausschluss der <tt>project/</tt>-, 
     <tt>doc/</tt>- und anderer Unterverzeichnisse ab. Normalerweise sind
     sie von geringfügiger Größe und dennoch nützlich für die Benutzer.
-    Insbesondere <tt>project/trace</tt> hilft sehr viel, wenn es 
+    Insbesondere <tt>project/trace</tt> hilft sehr viel, falls es 
     Spiegel-Probleme gibt.</li>
 
 </ul>
@@ -148,10 +161,10 @@ mitzuteilen, dass er sein Archiv aktualisieren soll.</p>
 <p>Push-Spiegeln wird benötigt, um mehrere Server synchron zu halten (wie die
 Server in DNS round-robin-Aliasen wie <tt>ftp.us.debian.org</tt>), und wir
 verwenden es gewöhnlich für unsere ersten und zweiten tier-Spiegel. Für
-<q>normale</q> Spiegel benötigt diese Methode viel Aufwand, um es aufzusetzen, was
-nicht viel Sinn hat gegenüber einem gut angepasstem cron-job.</p>
+<q>normale</q> Spiegel benötigt diese Methode viel Aufwand, um es aufzusetzen, 
+was im Vergleich zu einem gut angepasstem cron-job nicht viel Sinn ergibt.</p>
 
-<p>Die Methode ist ziemlich sicher, da SSH so konfiguriert ist,
+<p>Die Methode ist ziemlich sicher, da Ssh so konfiguriert ist,
 dass nur ein einziger Befehl ausgeführt wird.
 Außerdem läuft das eigentliche Spiegeln immer noch
 <q>ziehenderweise</q> ab, so dass es nicht möglich ist, den
