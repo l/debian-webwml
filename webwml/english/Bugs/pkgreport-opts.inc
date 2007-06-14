@@ -162,6 +162,12 @@
 <define-tag etch-ignore whitespace=delete>
   <gettext domain="bugs">etch-ignore</gettext>
 </define-tag>
+<define-tag lenny whitespace=delete>
+  <gettext domain="bugs">lenny</gettext>
+</define-tag>
+<define-tag lennny-ignore whitespace=delete>
+  <gettext domain="bugs">lenny-ignore</gettext>
+</define-tag>
 <define-tag sid whitespace=delete>
   <gettext domain="bugs">sid</gettext>
 </define-tag>
@@ -217,6 +223,8 @@
   <label><input type="checkbox" name="include" value="sarge-ignore"><sarge-ignore></label>
   <label><input type="checkbox" name="include" value="etch"><etch></label>
   <label><input type="checkbox" name="include" value="etch-ignore"><etch-ignore></label>
+  <label><input type="checkbox" name="include" value="lenny"><etch></label>
+  <label><input type="checkbox" name="include" value="lenny-ignore"><etch-ignore></label>
   <label><input type="checkbox" name="include" value="sid"><sid></label>
   <label><input type="checkbox" name="include" value="experimental"><experimental></label>
   <label><input type="checkbox" name="include" value="confirmed"><confirmed></label>
@@ -244,6 +252,8 @@
   <label><input type="checkbox" name="exclude" value="sarge-ignore"><sarge-ignore></label>
   <label><input type="checkbox" name="exclude" value="etch"><etch></label>
   <label><input type="checkbox" name="exclude" value="etch-ignore"><etch-ignore></label>
+  <label><input type="checkbox" name="include" value="lenny"><etch></label>
+  <label><input type="checkbox" name="include" value="lenny-ignore"><etch-ignore></label>
   <label><input type="checkbox" name="exclude" value="sid"><sid></label>
   <label><input type="checkbox" name="exclude" value="experimental"><experimental></label>
   <label><input type="checkbox" name="exclude" value="confirmed"><confirmed></label>
