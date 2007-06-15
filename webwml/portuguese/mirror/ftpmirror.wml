@@ -1,33 +1,34 @@
 #use wml::debian::template title="Configurando um espelho do repositório Debian"
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/woody/release.data"
-#use wml::debian::translation-check translation="1.54" maintainer="Felipe Augusto van de Wiel (faw)"
+#use wml::debian::translation-check translation="1.55" maintainer="Felipe Augusto van de Wiel (faw)"
 
 <toc-display/>
 
 <toc-add-entry name="what">O que espelhar</toc-add-entry>
 
 <p>A <a href="./">página principal sobre espelhos</a> lista os repositórios
-disponíveis para espelhamento.
+disponíveis para espelhamento.</p>
 
 <ul>
 <li>
 Usuários procurarão pelo repositório debian/ para instalar o Debian através da
-rede, para construir CDs (com o jigdo) e para atualizar sistemas já instalados.
+rede, para construir CDs (com o jigdo) e para atualizar sistemas já
+instalados.</p>
 
 <li>
 O debian-cd/ é um repositório que não é idêntico em todos os servidores
 espelhos. Em alguns ele contém apenas modelos jigdo para construir
 imagens de CD (usados em combinação com o debian/), em alguns ele contém
 imagens já construídas e em alguns, ambos.
-<br>
+<br />
 Veja a página sobre <a href="$(HOME)/CD/mirroring/">espelhamento das imagens
-de CD</a> para mais informações.
+de CD</a> para mais informações.</p>
 
 <li>
 O debian-archive contém o verdadeiro <em>arquivo de repositórios</em>,
 as versões antigas e obsoletas do Debian. Ele geralmente será de interesse
-apenas para um pequeno segmento de usuários.
+apenas para um pequeno segmento de usuários.</p>
 
 </ul>
 
@@ -49,7 +50,8 @@ desde a versão 3.1 (<em>sarge</em>) lançada em Junho de 2005.</p>
 
 <p>Muitas pessoas parecem pensar que o <code>ftp.debian.org</code> é a
 localização oficial dos pacotes do Debian e que ele será o melhor lugar de
-todos para fazer o espelho. Isto é <strong>falso</strong>.
+todos para fazer o espelho. Isto é <strong>falso</strong>.</p>
+
 <p><code>ftp.debian.org</code> é meramente um dos vários servidores que é
 atualizado por um servidor interno do Debian.</p> Este endereço está
 atualmente localizado em um único servidor nos Estados Unidos, e ele
@@ -58,7 +60,7 @@ ainda existe principalmente por retro-compatibilidade.</p>
 <p>Os <a href="official">espelhos oficiais</a> tendem a ser um bom lugar
 a partir do qual espelhar. Qualquer servidor que esteja na
 <a href="list-full">lista completa de espelhos</a> e que possua os rótulos
-'<kbd>Type: Push-Primary</kbd>' ou '<kbd>Type: Push-Secondary</kbd>'
+<q><kbd>Type: Push-Primary</kbd></q> ou <q><kbd>Type: Push-Secondary</kbd></q>
 deveria ser um bom lugar de onde se fazer um espelho.
 Por favor, escolha um que esteja perto de você, tanto em termos de rede
 como geograficamente.</p>
@@ -73,7 +75,7 @@ de ftp.us.debian.org (o endereço de espelho oficial dos EUA, que é um espelho
 Push-Primary). Mas, como este endereço é também um apelido "round-robin" para
 várias máquinas, normalmente faz sentido determinar quais dos componentes é
 o melhor e então espelhar a partir deste em particular.
-<br>
+<br />
 <small>A vantagem de fazer isso é que evita o risco de falhas quando
 realizando rsync em dois estágios (diferentes estágios podem acabar em
 máquinas diferentes durante as janelas de tempo nas quais eles tem dados
@@ -92,69 +94,72 @@ há alguns problemas. Nós recomendamos fortemente o uso do rsync.</p>
 
 <h3>Usuário anônimo no rsync</h3>
 
-<p>Nós recomendamos uso <a href="anonftpsync">deste script</a> para fazer o espelho
-dos repositórios. Siga as instruções no script para configurar um espelho.
+<p>Nós recomendamos uso <a href="anonftpsync">deste script</a> para fazer o
+espelho dos repositórios.
+Siga as instruções no script para configurar um espelho.</p>
 
-<p>Alguns conselhos para aqueles que preferem métodos diferentes:
+<p>Alguns conselhos para aqueles que preferem métodos diferentes:</p>
 
 <ul>
   <li>Execute o rsync com pelo menos essas opções: <kbd>--recursive --times
-      --links --hard-links --delete</kbd>.
+      --links --hard-links --delete</kbd>.</li>
 
-  <li>Se você tem muito espaço em disco, também use a opção <kbd>--delete-after</kbd>
-      para evitar alguns problemas temporários de atualização.
+  <li>Se você tem muito espaço em disco, também use a opção
+      <kbd>--delete-after</kbd> para evitar alguns problemas temporários
+      de atualização.</li>
 
-  <li>Se você não tiver muito espaço em disco para fazer o espelho de tudo, use a
-      opção <kbd>--exclude</kbd> para eliminar porções do repositório do espelho.
-      Geralmente essas porções incluem várias arquiteturas que você pode não
-      precisar; por exemplo, isso exclui <em>todas</em> arquiteturas:
-      <br>
+  <li>Se você não tiver muito espaço em disco para fazer o espelho de tudo,
+      use a opção <kbd>--exclude</kbd> para eliminar porções do repositório
+      do espelho. Geralmente essas porções incluem várias arquiteturas que
+      você pode não precisar; por exemplo, isso exclui <em>todas</em>
+      arquiteturas:
+      <br />
 <:
 print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
   foreach (sort keys %arches);
 :>
       Verifique também a seção <a href="#partial">fazendo um espelho
-      parcial</a>.
+      parcial</a>.</li>
 
   <li>Depois que o rsync tiver feito o espelho, adicione um arquivo de registro
       de data com o mesmo nome do seu servidor ao subdiretório
       <code>project/trace/</code> do seu espelho do Debian. Ou seja execute o
       comando
       <kbd>date -u &gt; .../debian/project/trace/<var>seu.servidor</var></kbd>
-      depois que o seu rsync diário estiver terminado.
+      depois que o seu rsync diário estiver terminado.</li>
 
   <li>Nós advertimos fortemente sobre a exclusão dos subdiretórios
       <tt>project/</tt>, <tt>doc/</tt> e outros. Normalmente eles são menores,
       e de muita utilidade para os usuários.
       Especialmente <tt>project/trace</tt>, que ajuda muito se houver algum
-      problema com o espelho.
+      problema com o espelho.</li>
 </ul>
 
-<h3>Rsync com autenticação, de um espelho 'push'</h3>
+<h3>Rsync com autenticação, de um espelho <q>push</q></h3>
 
-<p>'Espelhamento push' é uma forma que desenvolvemos para fazer um espelho
+<p><q>Espelhamento push</q> é uma forma que desenvolvemos para fazer um espelho
 usando rsync, que minimiza o tempo gasto no exame das mudanças dos
 repositórios dos espelhos. O espelho servidor usa um gatilho ssh para informar
-o espelho cliente para se atualizar.
+o espelho cliente para se atualizar.</p>
 
-<p>O 'Push mirroring' é necessário para manter vários servidores em sincronia
-(tais como os servidores pseudônimos de DNS em round-robin como
+<p>O <q>espelhamento push</q> é necessário para manter vários servidores em
+sincronia (tais como os servidores pseudônimos de DNS em round-robin como
 <tt>ftp.us.debian.org</tt>), e nós geralmente usamos isto para o nossos
-espelhos de primeiro e segundo grau. Para espelhos "normais",
+espelhos de primeiro e segundo grau. Para espelhos <q>normais</q>,
 este método requer muitos esforços para ser configurado, os quais não
 compensam, comparados com um trabalho do cron bem ajustado.</p>
 
 <p>O método é totalmente seguro já que o ssh é configurado para executar um
-simples comando. Além disso, o espelho segue sendo `pull' de maneira que
+simples comando. Além disso, o espelho segue sendo <q>pull</q> de maneira que
 <strong>não</strong> é possível corromper o conteúdo dos repositórios por
-meio de um 'espelho push' forjado. Alguns administradores de espelhos têm
+meio de um <q>espelho push</q> forjado. Alguns administradores de espelhos têm
 mostrado relutância para usar este método para fazer um espelho devido aos
 medos de que o método possa abrir sua máquina para invasão. Isto simplesmente
-<strong>não</strong> é verdade.
+<strong>não</strong> é verdade.</p>
 
 <p>Para uma descrição mais detalhada de como isto funciona, porque ele é
-seguro, e como configurar um 'espelho push', veja a
-<a href="push_mirroring">explicação completa</a>.
+seguro, e como configurar um <q>espelho push</q>, veja a
+<a href="push_mirroring">explicação completa</a>.</p>
 
 <toc-add-entry name="partial">Fazendo um espelho parcial</toc-add-entry>
 
@@ -194,7 +199,7 @@ do espelho. Adicione algumas horas a esse horário (por segurança) e faça o
 espelho dele.</p>
 
 <p>A maneira mais fácil de se ter automaticamente o espelhamento executado
-todos os dias é usando o cron. Veja <kbd>man crontab</kbd> para detalhes.
+todos os dias é usando o cron. Veja <kbd>man crontab</kbd> para detalhes.</p>
 
 <p>Note que se seu site for atualizado com um mecanismo push, então você não
 precisa se preocupar com nada disso.</p>
