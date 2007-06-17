@@ -105,8 +105,8 @@ while (<SRC>)
 	s/>remote exploit</>fjärrattack</;
 	s/>missing input sanitising</>städar inte indata</;
 	s/>programming error</>programmeringsfel</;
-	s/Several vulnerabilities/Flera sårbarheter/;
-	s/several vulnerabilities/flera sårbarheter/;
+	s/(Several|Multiple) vulnerabilities/Flera sårbarheter/;
+	s/(several|multiple) vulnerabilities/flera sårbarheter/;
 	s/>several</>flera</;
 	s/>unsanitised input</>städar ej indata</;
 	s/ identifies the following problems:/ identifierar följande problem:/;
@@ -116,7 +116,7 @@ while (<SRC>)
 	s/This has been fixed in version/Detta har rättats i version/;
 	s/(<td>.*) architecture/$1-arkitekturen/;
 	s/The following matrix lists additional packages that were rebuilt for/Följande tabell beskriver ytterligare paket som byggts om för kompatibilitet/;
-	s/compatibility with or to take advantage of this update:/med, eller för att dra nytt av, denna uppdatering:/;
+	s/compatibility with or to take advantage of this update:/med, eller för att dra nytta av, denna uppdatering:/;
 	s/(?:,)?( )?this problem has been fixed in/$1har detta problem rättats i/;
 	s/(?:,)?( )?this problem has been fixed$/$1har detta problem rättats/;
 	s/(?:,)?( )?this problem has(?: been)?$/$1har detta problem/;
