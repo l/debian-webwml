@@ -1,6 +1,6 @@
 #use wml::debian::template title="Sätta upp en spegel av Debianarkivet"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.52"
+#use wml::debian::translation-check translation="1.55"
 
 <toc-display/>
 
@@ -23,7 +23,7 @@ debian-cd/ är ett arkiv som inte är identiskt hos alla spegelservrar.
 På några platser innehåller det jigdo-mallar att bygga cd-avbildningar från
 (används tillsammans med filer från debian/), på några innehåller det
 färdigbyggda cd-avbildningar, och på vissa bådadera.
-<br>
+<br />
 Se sidan om att <a href="$(HOME)/CD/mirroring/">spegla cd-avbildningar</a>
 för vidare information om detta.
 </li>
@@ -45,7 +45,7 @@ Arkiven i debian-security/ innehåller säkerhetsuppdateringar som släppts av
 Debians säkerhetsgrupp.
 Det låter intressant för alla, men eftersom säkerhetsuppdateringarna är
 sporadiska måste man spegla den väldigt ofta för att hålla sig à jour (eller
-använda <a href="push_mirroring">&rdquo;push&rdquo;-spegling</a>), så vi
+använda <a href="push_mirroring"><q>push</q>-spegling</a>), så vi
 rekommenderar det inte.
 Debian gör allt som står i vår makt för att istället vidmakthålla
 tillgängligheten hos security.debian.org.
@@ -58,17 +58,26 @@ Debian 3.1 (<em>Sarge</em>) i juni 2005.
 
 <toc-add-entry name="wherefrom">Platser att spegla</toc-add-entry>
 
-<p>Många tror att <code>ftp.debian.org</code> är &rdquo;rätt&rdquo; plats
+<p>Många tror att <code>ftp.debian.org</code> är <q>rätt</q> plats
 för Debianpaket och att det är bäst att spegla därifrån.
-Detta är <strong>inte sant</strong>.
-<code>ftp.debian.org</code> är bara en av många servrar som uppdateras från
-en intern Debianserver.</p>
+Detta är <strong>inte korrekt</strong>.
+</p>
 
-<p>Alla servrar i den <a href="list-full">kompletta spegellistan</a> som
-är märkta &rdquo;<kbd>Type: Push-Primary</kbd>&rdquo; eller
-&rdquo;<kbd>Type: Push-Secondary</kbd>&rdquo;
+<p>
+<code>ftp.debian.org</code> är bara en av många servrar som uppdateras från
+en intern Debianserver.
+Adressen pekar för närvarande mot en enda adress i Förenta Staterna och är
+mest där för bakåtkompatibilitet.
+</p>
+
+<p>
+<a href="official">Officiella speglar</a> är tänkta att vara bra platser att
+spegla från.
+Alla servrar i den <a href="list-full">kompletta spegellistan</a> som
+är märkta <q><kbd>Type: Push-Primary</kbd></q> eller
+<q><kbd>Type: Push-Secondary</kbd></q>
 bör vara lämpade att spegla från.
-Välj en som är nära dig nätverksgeografiskt.
+Välj en som är nära dig både nätverksmässigt och geografiskt.
 </p>
 
 <p>
@@ -76,6 +85,21 @@ Det är i praktiken ingen skillnad mellan olika <em>Push-Primary</em>-speglar
 vad gäller själva speglingen.
 Å andra sidan, om många använder ftp.debian.org (vilket tyvärr sker) slösar
 detta i onödan med donerad bandbredd.
+</p>
+
+<p>
+Spegeladministratörer i Förenta Staterna bör spegla från ftp.us.debian.org
+(den officiella spegeladressen i USA, vilken är en Push-Primary-spegel).
+Men eftersom den adressen även är ett slingalias för flera maskiner är det
+oftast en bra idé att bestämma vilken av komponenterna som är bäst och
+därefter spegla från just den.
+<br />
+<small>Fördelen med detta är att man undviker risken för misslyckanden när
+man kör en tvåstegs-rsync (olika steg kan hamna hos olika maskiner under det
+tidsfönster då de har olika data, vilket ger en kapplöpningseffekt).
+Nackdelen är att den koncentrerar sig på en enda plats, vilket gör att
+prestanda kan variera, men det är något som finns där i hela vårt
+spegelnätverk för närvarande.</small>
 </p>
 
 <toc-add-entry name="how">Hur man speglar</toc-add-entry>
@@ -123,9 +147,9 @@ Här är några råd för de som föredrar andra arbetssätt:
   spegeln.
   Det vanliga är att skriva in olika arkitekturer du inte önskar; till
   exempel kommer detta att utesluta <em>alla</em> arkitekturer:
-  <br>
+  <br />
 <: 
-print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
+print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br />\n"
   foreach (sort keys %arches);
 :>
   Se även <a href="#partial">stycket om att spegla delmängder</a>.
@@ -137,9 +161,7 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
   server som namn.
   Det betyder att du bör köra
   <kbd>date -u &gt; .../debian/project/trace/<var>din.server</var></kbd>
-  när din dagliga rsync är färdig; samt
-  <kbd>date -u &gt; .../debian-non-US/project/trace/<var>din.server</var></kbd>
-  när din dagliga rsync av non-US är färdig, om du speglar debian-non-US.
+  när din dagliga rsync är färdig.
  </li>
 
  <li>
@@ -151,36 +173,36 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
  </li>
 </ul>
 
-<h3>Rsync med autentisering, från en &rdquo;push&rdquo;-spegel</h3>
+<h3>Rsync med autentisering, från en <q>push</q>-spegel</h3>
 
 <p>
-&rdquo;Push&rdquo;-spegling är en form av spegling med rsync vi har utvecklat
+<q>Push</q>-spegling är en form av spegling med rsync vi har utvecklat
 som minimerar tiden det tar för ändringar i huvudarkivet att nå speglarna.
 Den servande spegeln använder en utlösarmekanism för att informera
 klientspegeln om att den måste uppdateras.
 
 <p>
-&rdquo;Push&rdquo;-spegling är nödvändig för att hålla flera servrar
+<q>Push</q>-spegling är nödvändig för att hålla flera servrar
 synkroniserade (såsom servrarna för cirkulerande DNS-alias som
 <tt>ftp.us.debian.org</tt>), och vi använder det vanligtvis för våra första-
 och andranivåspeglar.
-För &rdquo;normala&rdquo; speglar kräver detta en hel del arbete att ställa
+För <q>normala</q> speglar kräver detta en hel del arbete att ställa
 in vilket egentligen inte är värt besväret jämfört med ett finjusterat
 cron-jobb.</p>
 
 <p>
 Metoden är relativt säker eftersom ssh konfigureras för att köra ett
 enda kommando.
-Dessutom är spegeln fortfarande &rdquo;pull&rdquo;, så det är
+Dessutom är spegeln fortfarande <q>pull</q>, så det är
 <strong>inte</strong> möjligt att förstöra innehållet i arkivet via en
-förfalskad &rdquo;push&rdquo;-spegel.
+förfalskad <q>push</q>-spegel.
 Vissa spegeladministratörer har uppvisat viss motvillighet mot att
 använda denna typ av spegel på grund av oro för att metoden öppnar deras
 maskin för intrång, något som <strong>inte</strong> är sant.
 
 <p>
 För en mer utförlig beskrivning av hur det fungerar, varför det är
-säkert, och hur man sätter upp en &rdquo;push&rdquo;-spegel, se
+säkert, och hur man sätter upp en <q>push</q>-spegel, se
 <a href="push_mirroring">den kompletta förklaringen</a>.
 
 <toc-add-entry name="partial">Spegla delmängder</toc-add-entry>
@@ -234,7 +256,7 @@ Se <kbd>man crontab</kbd> för detaljer.
 </p>
 
 <p>
-Om din plats blir &rdquo;push&rdquo;-speglad behöver du inte bry dig om något av detta.
+Om din plats blir <q>push</q>-speglad behöver du inte bry dig om något av detta.
 </p>
 
 <toc-add-entry name="settings">Rekommenderade ytterligare inställningar</toc-add-entry>
