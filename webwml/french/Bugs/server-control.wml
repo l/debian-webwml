@@ -1,437 +1,628 @@
 #use wml::debian::template title="Suivi des bogues Debian &mdash; serveur de contrôle" NOHEADER=yes NOCOPYRIGHT=true
 
-#use wml::debian::translation-check translation="1.57" translation_maintainer="Christian Couder"
+#use wml::debian::translation-check translation="1.64" translation_maintainer="Christian Couder"
 
 
 <h1>Introduction au serveur de messages de contrôle et de manipulation des 
 bogues</h1>
 
-<p>En plus du serveur de messages à
-<code>request@bugs.debian.org</code> qui permet de récupérer les
-données et la documentation des bogues par courrier électronique, il y
-a un autre serveur à <code>control@bugs.debian.org</code> qui permet
-aussi de manipuler des rapports de bogue de différentes façons.</p>
+<p>
+En plus du serveur de messages à <code>request@bugs.debian.org</code> qui
+permet de récupérer les données et la documentation des bogues par courrier
+électronique, il y a un autre serveur à <code>control@bugs.debian.org</code>
+qui permet aussi de manipuler des rapports de bogue de différentes façons.
+</p>
 
-<p>Le serveur de contrôle fonctionne simplement comme le serveur de
-requêtes, excepté qu'il dispose de commandes supplémentaires ; en
-fait, c'est le même programme. Les deux adresses sont simplement
-distinctes pour éviter que des utilisateurs fassent des erreurs ou
-causent des problèmes en demandant juste des informations.</p>
+<p>
+Le serveur de contrôle fonctionne simplement comme le serveur de requêtes,
+excepté qu'il dispose de commandes supplémentaires&nbsp;; en fait, c'est le
+même programme. Les deux adresses sont simplement distinctes pour éviter que
+des utilisateurs fassent des erreurs ou causent des problèmes en demandant
+juste des informations.
+</p>
 
-<p>Comme les commandes spécifiques au serveur de contrôle modifient le
-statut d'un bogue, une notification du traitement de la commande est
-envoyée au responsable du(des) paquet(s) auquel(s) les bogues modifiés
-sont assignés. De plus le message vers le serveur et les modifications
-qui en résultent sont enregistrés dans le rapport de bogue et de ce
-fait disponibles sur les pages web.</p>
+<p>
+Comme les commandes spécifiques au serveur de contrôle modifient le statut d'un
+bogue, une notification du traitement de la commande est envoyée au responsable
+du(des) paquet(s) auquel(s) les bogues modifiés sont assignés. De plus le
+message vers le serveur et les modifications qui en résultent sont enregistrés
+dans le rapport de bogue et de ce fait disponibles sur les pages web.
+</p>
 
-<p>Merci de lire au préalable <a
-href="server-request#introduction">l'introduction au serveur de
-requêtes</a> disponible sur la Toile, dans le fichier
-<code>bug-log-mailserver.txt</code>, ou d'envoyer <code>help</code> à
-l'un des serveurs de messages, pour avoir des précisions sur
-l'utilisation de ces serveurs et les commandes usuelles
-disponibles lors de l'envoi de messages.</p>
+<p>
+Merci de lire au préalable <a href="server-request#introduction">l'introduction
+au serveur de requêtes</a> disponible sur la Toile, dans le fichier
+<code>bug-log-mailserver.txt</code>, ou d'envoyer <code>help</code> à l'un des
+serveurs de messages, pour avoir des précisions sur l'utilisation de ces
+serveurs et les commandes usuelles disponibles lors de l'envoi de messages.
+</p>
 
-<p>La <a href="server-refcard">carte de référence</a> pour les
-serveurs de messages est disponible sur la Toile, à
-<code>bug-mailserver-refcard.txt</code> ou par courrier électronique
-en utilisant la commande <code>refcard</code>.</p>
+<p>
+La <a href="server-refcard">carte de référence</a> pour les serveurs de
+messages est disponible sur la Toile, à <code>bug-mailserver-refcard.txt</code>
+ou par courrier électronique en utilisant la commande <code>refcard</code>.
+</p>
+
 
 <h1>Les commandes disponibles sur le serveur de messages de contrôle</h1>
 
 <dl>
 
-<dt><code>reassign</code> <var>NuméroDeBogue</var> <var>Paquet</var>
-[ <var>Version</var> ]
-<dd>
-
-<p>Enregistre le fait que le bogue n° <var>NuméroDeBogue</var> est un
-bogue dans <var>Paquet</var>.</p>
-
-<P>Cela peut être utilisé pour indiquer le paquet si l'utilisateur a oublié le 
-pseudo-en-tête, ou pour changer une assignation préalable. Aucune notification
-n'est envoyée à quiconque (autre que l'information habituelle lors de la 
-transcription en cours).</p>
-
-<p>Si vous fournissez une <var>Version</var>, le système de suivi
-des bogues enregistrera le fait que ce bogue affecte cette version du
-paquet.</p>
-
-<dt><code>reopen</code> <var>NuméroDeBogue</var>
- [ <var>AdresseDOrigine</var> | <code>=</code> | <code>!</code> ]
-<dd>
-
-<p>Rouvre n° <var>NuméroDeBogue</var> s'il a été fermé.</p>
-
-<p>Par défaut, ou si vous spécifiez <code>=</code>, celui qui a soumis
-initialement le rapport reste l'origine du rapport, de façon à ce
-qu'il soit avisé quand le bogue sera de nouveau fermé.</p>
-
-<p>Si vous fournissez une <var>AdresseDOrigine</var>, l'origine sera 
-l'adresse que vous fournissez. Si vous souhaitez devenir la nouvelle
-origine du rapport rouvert, vous pouvez utiliser le raccourci 
-<code>!</code> ou spécifier votre propre adresse.</p>
-
-<p>C'est habituellement une bonne idée de dire à la personne qui va
-être enregistrée comme l'origine du rapport que vous le rouvrez, de
-façon à ce qu'elle s'attende à l'avis qu'elle recevra quand il sera de
-nouveau fermé.</p>
-
-<p>Si le bogue n'est pas fermé alors « reopen » ne fera rien, même pas
-changer l'origine du rapport. Pour changer la personne à l'origine d'un
-rapport de bogue ouvert, utilisez la commande <code>submitter</code>;
-notez que celui qui est à l'origine sera informé du changement.</p>
-
-<p>Si le bogue a été enregistré comme étant fermé pour une certaine
-version du paquet, mais réapparaît dans une version suivante, il vaut
-mieux utiliser la commande <code>found</code> à la place.</p>
-
-<dt><code>found</code> <var>NuméroDeBogue</var> [ <var>Version</var> ]</dt>
-
-<dd>
-Enregistre le fait que <var>NuméroDeBogue</var> a été rencontré
-sur la <var>Version</var> donnée du paquet auquel il est assigné.
-
-<p>Le système de suivi des bogues utilise cette information, en
-conjonction avec les versions corrigées enregistrées lors de la
-fermeture des bogues, pour afficher des listes de bogues ouverts dans
-les différentes versions de chaque paquet. Il considère un bogue comme
-étant ouvert quand il n'a aucune version corrigée, ou s'il a été
-retrouvé plus récemment que lorsqu'il a été corrigé.</p>
-
-<p>Si aucune <var>Version</var> n'est fournie, alors la liste des
-versions corrigées pour ce bogue est vidée. On a alors le même
-comportement que celui de la commande <code>reopen</code>.</p>
-
-<p>Cette commande a été introduite pour être utilisée de préférence
-par rapport à <code>reopen</code>, car il était difficile d'ajouter
-sans ambiguïté une <var>Version</var> à la syntaxe de cette commande.</p>
-</dd>
-
-<dt><code>notfound</code> <var>NuméroDeBogue</var> <var>Version</var>
-
-<dd>Supprime l'enregistrement indiquant que <var>NuméroDeBogue</var>
-est apparu sur la <var>Version</var> donnée du paquet auquel il est
-assigné.
-
-<p>Cela n'est pas la même chose que de fermer le bogue sur cette
-version, car le bogue n'est pas non plus considéré comme corrigé dans
-cette version&nbsp;; aucune information sur cette version ne sera
-connue. Ceci est destiné à corriger des erreurs lors de
-l'enregistrement quand le bogue a été trouvé.</p>
-
-<dt><code>submitter</code> <var>NuméroDeBogue</var>
-<var>AdresseDOrigine</var> | <code>!</code>
-<dd>
-
-Met <var>AdresseDOrigine</var> à l'origine de <var>NuméroDeBogue</var>.
-
-<p>Si vous souhaitez être la nouvelle origine du rapport, vous pouvez
-utiliser le raccourci <code>!</code> ou bien spécifier votre propre
-adresse électronique.</p>
-
-<p>Tandis que la commande <code>reopen</code> remplace l'origine des
-autres bogues fusionnés avec celui qui est rouvert,
-<code>submitter</code> n'affecte pas les bogues fusionnés.</p>
-
-<dt><code>forwarded</code> <var>NuméroDeBogue</var> <var>Adresse</var>
-<dd>
-
-<p>Enregistre le fait que <var>NuméroDeBogue</var> a été transmis au 
-responsable original à <var>Adresse</var>. Cela ne transmet pas en réalité le
-rapport. Cela peut être utilisé pour changer une adresse  « forwarded-to »
-existante incorrecte, ou pour en enregistrer une nouvelle pour un bogue qui 
-n'a pas été signalé auparavant comme ayant été transmis.</p>
-
-<dt><code>notforwarded</code> <var>NuméroDeBogue</var>
-<dd>
-
-<p>Oublie toute idée que le bogue <var>NuméroDeBogue</var> ait pu être envoyé
-à un responsable original. Si le bogue n'a pas été enregistré comme ayant été
-transmis alors cela ne fera rien.</p>
-
-<dt><code>retitle</code> <var>NuméroDeBogue</var> <var>NouveauTitre</var>
-<dd>
-
-<p>Remplace le titre d'un rapport de bogue par celui qui est spécifié (le titre 
-par défaut est l'<code>Objet</code> en en-tête du message du rapport original).</p>
-
-<p>Au contraire de la plupart des autres commandes de manipulation des 
-bogues, quand celle-ci est utilisée sur un rapport faisant partie d'un 
-ensemble de rapports fusionnés, cela changera uniquement le titre du 
-rapport du bogue en question, et non pas de tous ceux avec lesquels il 
-est fusionné.</p>
-
-<dt><code>severity</code> <var>NuméroDeBogue</var> <var>Gravité</var>
-<dd>
-
-<p>Le niveau de gravité du rapport de bogue n°
-<var>NuméroDeBogue</var> est mis à <var>Gravité</var>. Aucune
-notification n'est envoyée à l'utilisateur qui a signalé le bogue.</p>
-
-<p>Les niveaux de gravité sont 
-<code>critical</code> (critique), <code>grave</code> (grave),
-<code>serious</code> (sérieux), <code>important</code> (important), 
-<code>normal</code> (normal), <code>minor</code> (mineur), 
-et <code>wishlist</code> (souhaitable).</p>
-
-<p>Pour <a href="Developer#severities">leur signification</a> merci de 
-consulter la documentation générale des développeurs concernant le système 
-de suivi des bogues.</p>
-
-<dt><code>clone</code> <var>NuméroDeBogue</var> <var>Nouvel ID</var> [ <var>Nouveaux ID</var> ... ]
-
-  <dd>La commande de contrôle clone vous permet de dupliquer un
-  rapport de bogue. Elle est utile au cas où un unique rapport de
-  bogue signale que plusieurs anomalies se sont produites.
-  Les «&nbsp;<var>Nouveaux ID</var>&nbsp;» doivent être des nombres négatifs,
-  séparés par des espaces, qui pourront être utilisés dans les
-  commandes de contrôle suivantes pour faire référence aux bogues qui
-  viennent d'être dupliqués. Un nouveau rapport est généré pour chaque
-  nouvel ID.
-
-  <p>Exemple d'utilisation :</p>
-
-  <pre>
-        clone 12345 -1 -2
-        reassign -1 foo
-        retitle -1 foo: foo sucks
-        reassign -2 bar
-        retitle -2 bar: bar sucks when used with foo
-        severity -2 wishlist
-        clone 123456 -3
-        reassign -3 foo
-        retitle -3 foo: foo sucks
-        merge -1 -3
-  </pre>
-
-<dt><code>merge</code> <var>NuméroDeBogue</var> <var>NuméroDeBogue</var> ...
-<dd>
-
-<p>Fusionne plusieurs rapports de bogues. Une fois les rapports
-fusionnés, l'ouverture, la fermeture, le marquage ou le démarquage
-signalant une transmission et la réassignation d'un des bogues à un
-nouveau paquet auront un effet identique sur tous les rapports
-fusionnés.</p>
-
-<p>Avant que les bogues puissent être fusionnés, ils doivent être
-exactement dans le même état : tous ouverts ou tous fermés, avec la
-même adresse d'auteur original dans le champs « forwarded-to » ou
-alors tous sans marque de transmission, tous assignés au(x) même(s)
-paquet(s) (une comparaison exacte de chaîne de caractères est faite
-sur le paquet auquel le bogue est assigné), et tous de la même
-gravité.  S'ils ne sont pas tous dans le même état au début vous
-devriez utiliser <code>reassign</code>, <code>reopen</code> et ainsi
-de suite pour être sûr qu'ils le sont avant d'utiliser
-<code>merge</code>. Les titres n'ont pas besoin de correspondre et ne
-seront pas affectés pas la fusion. Les marques n'ont pas besoin de
-correspondre, non plus, elles seront fusionnées.</p>
-
-<p>Si des bogues contenus dans une commande <code>merge</code> sont déjà 
-fusionnés avec d'autre bogues, alors tous les rapports fusionnés avec l'un 
-de ceux de la commande seront aussi fusionnés. Les fusions sont comme les 
-égalités : elles sont réflexives, transitives et symétriques.</p>
-
-<p>La fusion de rapports entraîne l'apparition d'une note sur chacun
-des enregistrements du rapport ; sur les pages web cela contient des
-liens vers les autres bogues.</p>
-
-<p>Les rapports fusionnés expirent tous simultanément, et seulement quand 
-chacun des rapport pris séparément a atteint le critère d'expiration.</p>
-
-<dt><code>forcemerge</code> <var>NuméroDeBogue</var> <var>NuméroDeBogue</var> ...</dt>
-
-<dd>Fusionne de force deux rapports de bogue ou plus. Le premier bogue
-spécifié est le bogue maître, et son état (l'état qui doit être
-identique entre tous les bogues lors d'une fusion normale) est propagé
-à tous les bogues spécifiés ensuite. Pour éviter que des typos
-fusionnent par erreurs des bogues, les bogues doivent être dans le
-même paquet. Voyez ci-dessus pour une description de ce que signifie
-la fusion.
-
-<p>Notez que cela rend possible la fermeture des bogues en les
-fusionnant&nbsp;; il est de votre responsabilité d'informer ceux qui
-ont soumis le rapport de bogue en leur envoyant un message approprié
-de fermeture de bogue si vous faites ceci.</p>
-
-</dd>
-
-<dt><code>unmerge</code> <var>NuméroDeBogue</var>
-<dd>
-
-<p>Déconnecte un rapport de bogue de tout autre rapport avec lequel il
-a pu être fusionné. Si le rapport en question est fusionné avec
-plusieurs autres, alors les autres sont tous laissés comme étant
-fusionnés ensemble ; seulement leurs associations avec le bogue
-explicitement désigné sont retirées.</p>
-
-<p>Si beaucoup de rapports de bogues sont fusionnés et si vous désirez les 
-diviser en deux groupes séparés de rapports fusionnés, vous devez déconnecter 
-chaque rapport de l'un des nouveaux groupes séparément et ensuite les 
-fusionner dans le nouveau groupe.</p>
-
-<p>Vous ne pouvez déconnecter qu'un seul rapport par commande 
-<code>unmerge</code> ; si vous voulez déconnecter plus d'un seul rapport 
-incluez simplement plusieurs commandes <code>unmerge</code> dans votre 
-message.</p>
-
-<dt><code>tags</code> <var>NuméroDeBogue</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>Marque</var> [ <var>Marque</var> ... ]
-
-  <dd>Traite des marques sur le rapport de bogue numéro
-  <var>NuméroDeBogue</var>. Aucune notification n'est envoyée à l'utilisateur
-  qui a signalé le bogue. Utiliser l'action
-  <code>+</code> signifie ajouter chaque <var>Marque</var>,
-  <code>-</code> signifie supprimer chaque <var>Marque</var>, et
-  <code>=</code> signifie ignorer les marques courantes et les mettre en
-  fonction de la liste fournie.
-  L'action par défaut est l'ajout.
-
-  <p>Exemples d'utilisations&nbsp;:</p>
-
-  <pre>
-        \# comme « tags 123456 + patch »
-        tags 123456 patch
-
-        \# comme « tags 123456 + help security »
-        tags 123456 help security
-
-        \# ajoute les marques « fixed » et « pending »
-        tags 123456 + fixed pending
-
-        \# supprime la marque « unreproducible »
-        tags 123456 - unreproducible
-
-        \# met exactement les marques à « moreinfo » et « unreproducible »
-        tags 123456 = moreinfo unreproducible
-  </pre>
-
-  <p>Les marques courantes sont
- 
-	<code>patch</code> (rustine), 
-	<code>wontfix</code> (ne sera pas corrigé), 
-	<code>moreinfo</code> (plus d'info), 
-  	<code>unreproducible</code> (non reproductible),
-	<code>help</code> (aide demandée),
-	<code>pending</code> (en cours),
-	<code>fixed</code> (corrigé), 
-	<code>upstream</code> (paquet original),
-	<code>confirmed</code> (confirmé), 
-	<code>d-i</code> (installateur Debian), 
-	<code>ipv6</code> (IPv6), 
-	<code>lfs</code> (support des gros fichiers), 
-	<code>l10n</code> (localisation), 
-	<code>potato</code> (Potato), 
-	<code>woody</code> (Woody),
-	<code>sarge</code> (Sarge),
-	<code>sarge-ignore</code> (à ignorer pour Sarge),
-	<code>etch</code> (Etch),
-	<code>etch-ignore</code> (à ignorer pour Etch),
-	<code>sid</code> (Sid) et
-	<code>experimental</code> (expérimentale).
-
-  <p>Pour <a href="Developer#tags">leur signification</a> veuillez
-  consulter la documentation des développeurs sur le système de
-  suivi des bogues.</p>
-
-<dt><code>block</code> <var>NuméroDeBogue</var> <code>by</code>
-<var>NuméroDeBogue</var> ...
-
-  <dd>Indique que la correction du premier bogue est bloquée par les
- autres bogues spécifiés.
-
-<dt><code>unblock</code> <var>NuméroDeBogue</var> <code>by</code>
-<var>NuméroDeBogue</var> ...
-
-  <dd>Indique que la correction du premier bogue n'est plus bloquée
- par les autres bogues spécifiés.
-
-<dt><code>close</code> <var>NuméroDeBogue</var> (dépréciée)
-<dd>
-
-<p>Ferme le rapport de bogue ayant le numéro <var>NuméroDeBogue</var>.</p>
-
-<p>Une notification est envoyée à l'utilisateur qui a signalé le
-bogue, mais (contrairement à l'envoi à
-<var>NuméroDeBogue</var><code>-done@bugs.debian.org</code>) le texte
-du message qui a servi à fermer le bogue n'est <em>pas</em> inclus
-dans cette notification. Le responsable qui ferme un rapport devrait
-s'assurer, probablement en envoyant un message séparément, que
-l'utilisateur qui a signalé le bogue sait pourquoi le rapport est
-fermé. L'utilisation de cette commande est donc obsolète. Voyez les
-informations pour les développeurs sur <a
-href="Developer#closing">comment fermer un bogue correctement</a>.</p>
-
-<dt><code>package</code> [ <var>Paquet</var> ... ]
-
-  <dd>Limite les commandes qui suivent de façon à ce qu'elles
-  s'appliquent uniquement aux bogues enregistrés contre les paquets
-  spécifiés. Vous pouvez spécifier un ou plusieurs paquets. Si vous ne
-  spécifiez aucun paquet, les commandes qui suivent s'appliqueront à
-  tous les bogues. Vous êtes encouragés à utiliser cette commande
-  comme une mesure de sécurité au cas où vous utiliseriez
-  accidentellement le mauvais numéro de bogue.
-
-  <p>Exemples d'utilisations&nbsp;:</p>
-
-  <pre>
-        package foo
-        reassign 123456 bar
-
-        package bar
-        retitle 123456 bar: bar est nul
-        severity 123456 normal
-
-        package
-        severity 234567 wishlist
-  </pre>
-
-<dt><code>owner</code> <var>NuméroDeBogue</var> <var>Adresse</var> | <code>!</code>
-<dd>
-Positionne l'<var>Adresse</var> comme étant le propriétaire
-(«&nbsp;owner&nbsp;» en anglais) du bogue numéro <var>NuméroDeBogue</var>.
-Le propriétaire d'une bogue prend la responsabilité de le corriger et
-recevra tous les courriels le concernant. Ceci est utile pour partager
-le travail dans le cas où une équipe est responsable du paquet.
-
-<p>Si vous désirez devenir le propriétaire d'un bogue vous-même, vous
-pouvez utiliser le raccourci <code>!</code> ou spécifier votre propre
-adresse de courrier.</p>
-
-<dt><code>noowner</code> <var>NuméroDeBogue</var>
-
-<dd>Oublie tout propriétaire du bogue autre que le responsable
-habituel. Si le bogue n'a pas de propriétaire enregistré, cela ne fera
-rien.
-
-<dt><code>#</code>...
-
-  <dd>Commentaire sur une seule ligne. Le <code>#</code> doit se
-  trouver au début de la ligne. Le texte du commentaire sera inclus
-  dans le message de confirmation qui vous sera adressé ainsi qu'aux
-  responsables concernés. Donc vous pouvez utiliser cette
-  fonctionnalité pour documenter les raisons de votre commande.
-
-<dt><code>quit</code>
-<dt><code>stop</code>
-<dt><code>thank</code>
-<dt><code>thanks</code>
-<dt><code>thankyou</code>
-<dt><code>thank you</code>
-<dt><code>--</code>
+  <dt><code>reassign</code> <var>NuméroDeBogue</var> <var>Paquet</var>
+    [&nbsp;<var>Version</var>&nbsp;]</dt>
+  <dd>
+    <p>
+    Enregistre le fait que le bogue n°&nbsp;<var>NuméroDeBogue</var> est un
+    bogue dans <var>Paquet</var>.
+    </p>
+
+    <p>
+    Cela peut être utilisé pour indiquer le paquet si l'utilisateur a oublié le
+    pseudo-en-tête, ou pour changer une assignation préalable. Aucune
+    notification n'est envoyée à quiconque (autre que l'information habituelle
+    lors de la transcription en cours).
+    </p>
+
+    <p>
+    Si vous fournissez une <var>Version</var>, le système de suivi des bogues
+    enregistrera le fait que ce bogue affecte cette version du paquet.
+    </p>
+  </dd>
+
+  <dt><code>reopen</code> <var>NuméroDeBogue</var>
+    [&nbsp;<var>AdresseDOrigine</var> | <code>=</code> |
+    <code>!</code>&nbsp;]</dt>
+  <dd>
+    <p>
+    Rouvre n°&nbsp;<var>NuméroDeBogue</var> s'il a été fermé.
+    </p>
+
+    <p>
+    Par défaut, ou si vous spécifiez <code>=</code>, celui qui a soumis
+    initialement le rapport reste l'origine du rapport, de façon à ce qu'il
+    soit avisé quand le bogue sera de nouveau fermé.
+    </p>
+
+    <p>
+    Si vous fournissez une <var>AdresseDOrigine</var>, l'origine sera l'adresse
+    que vous fournissez. Si vous souhaitez devenir la nouvelle origine du
+    rapport rouvert, vous pouvez utiliser le raccourci <code>!</code> ou
+    spécifier votre propre adresse.
+    </p>
+
+    <p>
+    C'est habituellement une bonne idée de dire à la personne qui va être
+    enregistrée comme l'origine du rapport que vous le rouvrez, de façon à ce
+    qu'elle s'attende à l'avis qu'elle recevra quand il sera de nouveau fermé.
+    </p>
+
+    <p>
+    Si le bogue n'est pas fermé alors <q>reopen</q> ne fera rien, même pas
+    changer l'origine du rapport. Pour changer la personne à l'origine d'un
+    rapport de bogue ouvert, utilisez la commande <code>submitter</code>&nbsp;;
+    notez que celui qui est à l'origine sera informé du changement.
+    </p>
+
+    <p>
+    Si le bogue a été enregistré comme étant fermé pour une certaine version du
+    paquet, mais réapparaît dans une version suivante, il vaut mieux utiliser
+    la commande <code>found</code> à la place.
+    </p>
+  </dd>
+
+  <dt><code>found</code> <var>NuméroDeBogue</var>
+    [&nbsp;<var>Version</var>&nbsp;]</dt>
+
+  <dd>
+    <p>
+    Enregistre le fait que <var>NuméroDeBogue</var> a été rencontré sur la
+    <var>Version</var> donnée du paquet auquel il est assigné.
+    </p>
+
+    <p>
+    Le système de suivi des bogues utilise cette information, en conjonction
+    avec les versions corrigées enregistrées lors de la fermeture des bogues,
+    pour afficher des listes de bogues ouverts dans les différentes versions de
+    chaque paquet. Il considère un bogue comme étant ouvert quand il n'a aucune
+    version corrigée, ou s'il a été retrouvé plus récemment que lorsqu'il a été
+    corrigé.
+    </p>
+
+    <p>
+    Si aucune <var>Version</var> n'est fournie, alors la liste des versions
+    corrigées pour ce bogue est vidée. On a alors le même comportement que
+    celui de la commande <code>reopen</code>.
+    </p>
+
+    <p>
+    Cette commande ne fera que marquer un bogue comme étant clôturé si aucune
+    version n'est spécifiée, ou si la <var>Version</var> devant être marquée
+    est égale à la dernière <var>Version</var> marquée corrigée (si vous êtes
+    sûr ne vouloir marquer le bogue comme n'étant pas clôturé, utilisez
+    <code>reopen</code> en conjonctioin de <code>found</code>.
+    </p>
+
+    <p>
+    Cette commande a été introduite pour être utilisée de préférence par
+    rapport à <code>reopen</code>, car il était difficile d'ajouter sans
+    ambiguïté une <var>Version</var> à la syntaxe de cette commande.
+    </p>
+  </dd>
+
+  <dt><code>notfound</code> <var>NuméroDeBogue</var> <var>Version</var></dt>
+
+  <dd>
+    <p>
+    Supprime l'enregistrement indiquant que <var>NuméroDeBogue</var> est apparu
+    sur la <var>Version</var> donnée du paquet auquel il est assigné.
+    </p>
+
+    <p>
+    Cela n'est pas la même chose que de fermer le bogue sur cette version, car
+    le bogue n'est pas non plus considéré comme corrigé dans cette
+    version&nbsp;; aucune information sur cette version ne sera connue. Ceci
+    est destiné à corriger des erreurs lors de l'enregistrement quand le bogue
+    a été trouvé.
+    </p>
+  </dd>
+
+  <dt><code>fixed</code> <var>NuméroDeBogue</var> <var>Version</var></dt>
+
+  <dd>
+    <p>
+    Indique que le bogue n°&nbsp;<var>NuméroDeBogue</var> a été corrigé dans la
+    <var>Version</var> indiquée du paquet auquel il était assigné.
+    </p>
+
+    <p>
+    Ceci ne marque <em>pas</em> le bogue comme étant clôturé, principalement,
+    cela ajoute une nouvelle version pour laquelle le bogue est corrigé.
+    Utilisez l'adresse bugnumber-done pour clôturer un bogue marqué corrigé
+    dans une version particulière.
+    </p>
+  </dd>
+
+  <dt><code>notfixed</code> <var>NuméroDeBogue</var> <var>Version</var></dt>
+
+  <dd>
+    <p>
+    Supprime l'enregistrement indiquant que le bogue
+    n°&nbsp;<var>NuméroDeBogue</var> a été corrigé dans la <var>Version</var>
+    indiquée.
+    </p>
+
+    <p>
+    Cette commande est équivalente à <code>found</code> suivi de
+    <code>notfound</code> (le <code>found</code> supprimer la marque
+    <q>corrigé</q> d'une version particulière, et le <code>notfound</code>
+    supprimer le <code>found</code>).
+    </p>
+  </dd>
+
+  <dt><code>submitter</code> <var>NuméroDeBogue</var>
+    <var>AdresseDOrigine</var> | <code>!</code></dt>
+
+  <dd>
+    <p>
+    Met <var>AdresseDOrigine</var> à l'origine de <var>NuméroDeBogue</var>.
+    </p>
+
+    <p>
+    Si vous souhaitez être la nouvelle origine du rapport, vous pouvez utiliser
+    le raccourci <code>!</code> ou bien spécifier votre propre adresse
+    électronique.
+    </p>
+
+    <p>
+    Tandis que la commande <code>reopen</code> remplace l'origine des autres
+    bogues fusionnés avec celui qui est rouvert, <code>submitter</code>
+    n'affecte pas les bogues fusionnés.
+    </p>
+  </dd>
+
+  <dt><code>forwarded</code> <var>NuméroDeBogue</var> <var>Adresse</var></dt>
+
+  <dd>
+    <p>
+    Enregistre le fait que <var>NuméroDeBogue</var> a été transmis au
+    responsable original à <var>Adresse</var>. Cela ne transmet pas en réalité
+    le rapport. Cela peut être utilisé pour changer une adresse
+    <q>forwarded-to</q> existante incorrecte, ou pour en enregistrer une
+    nouvelle pour un bogue qui n'a pas été signalé auparavant comme ayant été
+    transmis.
+    </p>
+  </dd>
+
+  <dt><code>notforwarded</code> <var>NuméroDeBogue</var></dt>
+
+  <dd>
+    <p>
+    Oublie toute idée que le bogue <var>NuméroDeBogue</var> ait pu être envoyé
+    à un responsable original. Si le bogue n'a pas été enregistré comme ayant
+    été transmis alors cela ne fera rien.
+    </p>
+  </dd>
+
+  <dt><code>retitle</code> <var>NuméroDeBogue</var> <var>NouveauTitre</var></dt>
+
+  <dd>
+    <p>
+    Remplace le titre d'un rapport de bogue par celui qui est spécifié (le
+    titre par défaut est l'<code>Objet</code> en en-tête du message du rapport
+    original).
+    </p>
+
+    <p>
+    Au contraire de la plupart des autres commandes de manipulation des bogues,
+    quand celle-ci est utilisée sur un rapport faisant partie d'un ensemble de
+    rapports fusionnés, cela changera uniquement le titre du rapport du bogue
+    en question, et non pas de tous ceux avec lesquels il est fusionné.
+    </p>
+  </dd>
+
+  <dt><code>severity</code> <var>NuméroDeBogue</var> <var>Gravité</var></dt>
+
+  <dd>
+    <p>
+    Le niveau de gravité du rapport de bogue n°&nbsp;<var>NuméroDeBogue</var>
+    est mis à <var>Gravité</var>. Aucune notification n'est envoyée à
+    l'utilisateur qui a signalé le bogue.
+    </p>
+
+    <p>
+    Les niveaux de gravité sont <code>critical</code> (critique),
+    <code>grave</code> (grave), <code>serious</code> (sérieux),
+    <code>important</code> (important), <code>normal</code> (normal),
+    <code>minor</code> (mineur), et <code>wishlist</code> (souhaitable).
+    </p>
+
+    <p>
+    Pour <a href="Developer#severities">leur signification</a> merci de
+    consulter la documentation générale des développeurs concernant le système
+    de suivi des bogues.
+    </p>
+  </dd>
+
+  <dt><code>clone</code> <var>NuméroDeBogue</var> <var>Nouvel ID</var>
+    [&nbsp;<var>Nouveaux ID</var> ...&nbsp;]</dt>
+
+  <dd>
+    <p>
+    La commande de contrôle clone vous permet de dupliquer un rapport de bogue.
+    Elle est utile au cas où un unique rapport de bogue signale que plusieurs
+    anomalies se sont produites.  Les <q><var>Nouveaux ID</var></q> doivent
+    être des nombres négatifs, séparés par des espaces, qui pourront être
+    utilisés dans les commandes de contrôle suivantes pour faire référence aux
+    bogues qui viennent d'être dupliqués. Un nouveau rapport est généré pour
+    chaque nouvel ID.
+    </p>
+
+    <p>
+    Exemple d'utilisation&nbsp;:
+    </p>
+
+    <pre>
+    clone 12345 -1 -2
+    reassign -1 foo
+    retitle -1 foo: foo sucks
+    reassign -2 bar
+    retitle -2 bar: bar sucks when used with foo
+    severity -2 wishlist
+    clone 123456 -3
+    reassign -3 foo
+    retitle -3 foo: foo sucks
+    merge -1 -3
+    </pre>
+  </dd>
+
+  <dt><code>merge</code> <var>NuméroDeBogue</var> <var>NuméroDeBogue</var>
+    ...</dt>
+
+  <dd>
+    <p>
+    Fusionne plusieurs rapports de bogues. Une fois les rapports fusionnés,
+    l'ouverture, la fermeture, le marquage ou le démarquage signalant une
+    transmission et la réassignation d'un des bogues à un nouveau paquet auront
+    un effet identique sur tous les rapports fusionnés.
+    </p>
+
+    <p>
+    Avant que les bogues puissent être fusionnés, ils doivent être exactement
+    dans le même état : tous ouverts ou tous fermés, avec la même adresse
+    d'auteur original dans le champs <q>forwarded-to</q> ou alors tous sans
+    marque de transmission, tous assignés au(x) même(s) paquet(s) (une
+    comparaison exacte de chaîne de caractères est faite sur le paquet auquel
+    le bogue est assigné), et tous de la même gravité.  S'ils ne sont pas tous
+    dans le même état au début vous devriez utiliser <code>reassign</code>,
+    <code>reopen</code> et ainsi de suite pour être sûr qu'ils le sont avant
+    d'utiliser <code>merge</code>. Les titres n'ont pas besoin de correspondre
+    et ne seront pas affectés pas la fusion. Les marques n'ont pas besoin de
+    correspondre, non plus, elles seront fusionnées.
+    </p>
+
+    <p>
+    Si des bogues contenus dans une commande <code>merge</code> sont déjà
+    fusionnés avec d'autre bogues, alors tous les rapports fusionnés avec l'un
+    de ceux de la commande seront aussi fusionnés. Les fusions sont comme les
+    égalités&nbsp;: elles sont réflexives, transitives et symétriques.
+    </p>
+
+    <p>
+    La fusion de rapports entraîne l'apparition d'une note sur chacun des
+    enregistrements du rapport&nbsp;; sur les pages web cela contient des liens
+    vers les autres bogues.
+    </p>
+
+    <p>
+    Les rapports fusionnés expirent tous simultanément, et seulement quand
+    chacun des rapport pris séparément a atteint le critère d'expiration.
+    </p>
+  </dd>
+
+  <dt><code>forcemerge</code> <var>NuméroDeBogue</var> <var>NuméroDeBogue</var>
+    ...</dt>
+
+  <dd>
+    <p>
+    Fusionne de force deux rapports de bogue ou plus. Le premier bogue spécifié
+    est le bogue maître, et son état (l'état qui doit être identique entre tous
+    les bogues lors d'une fusion normale) est propagé à tous les bogues
+    spécifiés ensuite. Pour éviter que des typos fusionnent par erreurs des
+    bogues, les bogues doivent être dans le même paquet. Voyez ci-dessus pour
+    une description de ce que signifie la fusion.
+    </p>
+
+    <p>
+    Notez que cela rend possible la fermeture des bogues en les
+    fusionnant&nbsp;; il est de votre responsabilité d'informer ceux qui ont
+    soumis le rapport de bogue en leur envoyant un message approprié de
+    fermeture de bogue si vous faites ceci.
+    </p>
+  </dd>
+
+  <dt><code>unmerge</code> <var>NuméroDeBogue</var></dt>
+  
+  <dd>
+    <p>
+    Déconnecte un rapport de bogue de tout autre rapport avec lequel il a pu
+    être fusionné. Si le rapport en question est fusionné avec plusieurs
+    autres, alors les autres sont tous laissés comme étant fusionnés
+    ensemble&nbsp;; seulement leurs associations avec le bogue explicitement
+    désigné sont retirées.
+    </p>
+
+    <p>
+    Si beaucoup de rapports de bogues sont fusionnés et si vous désirez les
+    diviser en deux groupes séparés de rapports fusionnés, vous devez
+    déconnecter chaque rapport de l'un des nouveaux groupes séparément et
+    ensuite les fusionner dans le nouveau groupe.
+    </p>
+
+    <p>
+    Vous ne pouvez déconnecter qu'un seul rapport par commande
+    <code>unmerge</code>&nbsp;; si vous voulez déconnecter plus d'un seul
+    rapport incluez simplement plusieurs commandes <code>unmerge</code> dans
+    votre message.
+    </p>
+  </dd>
+
+  <dt><code>tags</code> <var>NuméroDeBogue</var> [&nbsp;<code>+</code> |
+    <code>-</code> | <code>=</code>&nbsp;] <var>Marque</var>
+    [&nbsp;<var>Marque</var> ...&nbsp;]</dt>
+
+  <dd>
+    <p>
+    Traite des marques sur le rapport de bogue numéro <var>NuméroDeBogue</var>.
+    Aucune notification n'est envoyée à l'utilisateur qui a signalé le bogue.
+    Utiliser l'action <code>+</code> signifie ajouter chaque <var>Marque</var>,
+    <code>-</code> signifie supprimer chaque <var>Marque</var>, et
+    <code>=</code> signifie ignorer les marques courantes et les mettre en
+    fonction de la liste fournie. L'action par défaut est l'ajout.
+    </p>
+
+    <p>
+    Exemples d'utilisations&nbsp;:
+    </p>
+
+    <pre>
+    \# comme « tags 123456 + patch »
+    tags 123456 patch
+
+    \# comme « tags 123456 + help security »
+    tags 123456 help security
+
+    \# ajoute les marques « fixed » et « pending »
+    tags 123456 + fixed pending
+
+    \# supprime la marque « unreproducible »
+    tags 123456 - unreproducible
+
+    \# met exactement les marques à « moreinfo » et « unreproducible »
+    tags 123456 = moreinfo unreproducible
+    </pre>
+
+    <p>
+    Les marques courantes sont
+    <code>patch</code> (rustine), 
+    <code>wontfix</code> (ne sera pas corrigé), 
+    <code>moreinfo</code> (plus d'info), 
+    <code>unreproducible</code> (non reproductible),
+    <code>help</code> (aide demandée),
+    <code>pending</code> (en cours),
+    <code>fixed</code> (corrigé), 
+    <code>upstream</code> (paquet original),
+    <code>confirmed</code> (confirmé), 
+    <code>d-i</code> (installateur Debian), 
+    <code>ipv6</code> (IPv6), 
+    <code>lfs</code> (support des gros fichiers), 
+    <code>l10n</code> (localisation), 
+    <code>potato</code> (Potato), 
+    <code>woody</code> (Woody),
+    <code>sarge</code> (Sarge),
+    <code>sarge-ignore</code> (à ignorer pour Sarge),
+    <code>etch</code> (Etch),
+    <code>etch-ignore</code> (à ignorer pour Etch),
+    <code>sid</code> (Sid) et
+    <code>experimental</code> (expérimentale).
+    </p>
+
+    <p>
+    Pour <a href="Developer#tags">leur signification</a> veuillez consulter la
+    documentation des développeurs sur le système de suivi des bogues.
+    </p>
+  </dd>
+
+  <dt><code>block</code> <var>NuméroDeBogue</var> <code>by</code>
+    <var>NuméroDeBogue</var> ...</dt>
+
+  <dd>
+    <p>
+    Indique que la correction du premier bogue est bloquée par les autres
+    bogues spécifiés.
+    </p>
+  </dd>
+
+  <dt><code>unblock</code> <var>NuméroDeBogue</var> <code>by</code>
+    <var>NuméroDeBogue</var> ...</dt>
+
+  <dd>
+    <p>
+    Indique que la correction du premier bogue n'est plus bloquée par les
+    autres bogues spécifiés.
+    </p>
+  </dd>
+
+  <dt><code>close</code> <var>NuméroDeBogue</var> (dépréciée)</dt>
+
+  <dd>
+    <p>
+    Ferme le rapport de bogue ayant le numéro <var>NuméroDeBogue</var>.
+    </p>
+
+    <p>
+    Une notification est envoyée à l'utilisateur qui a signalé le bogue, mais
+    (contrairement à l'envoi à
+    <var>NuméroDeBogue</var><code>-done@bugs.debian.org</code>) le texte du
+    message qui a servi à fermer le bogue n'est <em>pas</em> inclus dans cette
+    notification. Le responsable qui ferme un rapport devrait s'assurer,
+    probablement en envoyant un message séparément, que l'utilisateur qui a
+    signalé le bogue sait pourquoi le rapport est fermé. L'utilisation de cette
+    commande est donc obsolète. Voyez les informations pour les développeurs
+    sur <a href="Developer#closing">comment fermer un bogue correctement</a>.
+    </p>
+  </dd>
+
+  <dt><code>package</code> [&nbsp;<var>Paquet</var> ...&nbsp;]</dt>
+
+  <dd>
+    <p>
+    Limite les commandes qui suivent de façon à ce qu'elles s'appliquent
+    uniquement aux bogues enregistrés contre les paquets spécifiés. Vous pouvez
+    spécifier un ou plusieurs paquets. Si vous ne spécifiez aucun paquet, les
+    commandes qui suivent s'appliqueront à tous les bogues. Vous êtes
+    encouragés à utiliser cette commande comme une mesure de sécurité au cas où
+    vous utiliseriez accidentellement le mauvais numéro de bogue.
+    </p>
+
+    <p>
+    Exemples d'utilisations&nbsp;:
+    </p>
+
+    <pre>
+    package foo
+    reassign 123456 bar
+
+    package bar
+    retitle 123456 bar: bar est nul
+    severity 123456 normal
+
+    package
+    severity 234567 wishlist
+    </pre>
+  </dd>
+
+  <dt><code>owner</code> <var>NuméroDeBogue</var> <var>Adresse</var> |
+    <code>!</code></dt>
+
+  <dd>
+    <p>
+    Positionne l'<var>Adresse</var> comme étant le propriétaire (<q>owner</q>
+    en anglais) du bogue numéro <var>NuméroDeBogue</var>. Le propriétaire d'un
+    bogue prend la responsabilité de le corriger. Ceci est utile pour partager
+    le travail dans le cas où une équipe est responsable du paquet.
+    </p>
+
+    <p>
+    Si vous désirez devenir le propriétaire d'un bogue vous-même, vous pouvez
+    utiliser le raccourci <code>!</code> ou spécifier votre propre adresse de
+    courrier.
+    </p>
+  </dd>
+
+  <dt><code>noowner</code> <var>NuméroDeBogue</var></dt>
+
+  <dd>
+    <p>
+    Oublie tout propriétaire du bogue autre que le responsable habituel. Si le
+    bogue n'a pas de propriétaire enregistré, cela ne fera rien.
+    </p>
+  </dd>
+
+  <dt><code>archive</code> <var>NuméroDeBogue</var></dt>
+
+  <dd>
+    <p>
+    Archive un bogue qui était précédemment archivé si ce bogue ce bouge
+    remplit les conditions d'archivage, ignorant la date.
+    </p>
+  </dd>
+
+  <dt><code>unarchive</code> <var>NuméroDeBogue</var></dt>
+
+  <dd>
+    <p>
+    Désarchive un bogue qui était précédemment archivé. Le désarchivage doit
+    générallement être couplé à reopen et found/fixed selon ce qui convient.
+    Les bogues qui ont été déarchivés peuvent être archivés avec archive si les
+    conditions non temporaires d'archivage sont remplies.
+    </p>
+  </dd>
+
+  <dt><code>#</code>...</dt>
+
+  <dd>
+    <p>
+    Commentaire sur une seule ligne. Le <code>#</code> doit se trouver au début
+    de la ligne. Le texte du commentaire sera inclus dans le message de
+    confirmation qui vous sera adressé ainsi qu'aux responsables concernés.
+    Donc vous pouvez utiliser cette fonctionnalité pour documenter les raisons
+    de votre commande.
+    </p>
+  </dd>
+
+  <dt><code>quit</code></dt>
+  <dt><code>stop</code></dt>
+  <dt><code>thank</code></dt>
+  <dt><code>thanks</code></dt>
+  <dt><code>thankyou</code></dt>
+  <dt><code>thank you</code></dt>
+  <dt><code>--</code></dt>
 <!-- #366093, I blame you! -->
 <!-- <dt><code>kthxbye</code> -->
 <!-- See... I documented it! -->
 
-  <dd>Sur une seule ligne et éventuellement suivi d'une espace, 
-  demande au serveur de contrôle d'arrêter de traiter le message&nbsp;;
-  le reste du message peut comprendre des explications, signatures ou
-  n'importe quoi d'autre, rien ne sera traité par le serveur de
-  contrôle.</dd>
+  <dd>
+    <p>
+    Sur une seule ligne et éventuellement suivi d'une espace, demande au
+    serveur de contrôle d'arrêter de traiter le message&nbsp;; le reste du
+    message peut comprendre des explications, signatures ou n'importe quoi
+    d'autre, rien ne sera traité par le serveur de contrôle.
+    </p>
+  </dd>
  
 </dl>
 
-<hr>
+<hr />
 
 #use "otherpages.inc"
 
