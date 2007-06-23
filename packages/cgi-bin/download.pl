@@ -102,8 +102,6 @@ my @kfreebsd_north_american_sites = (
 my @kfreebsd_european_sites = (
         # master site, aka ftp.gnuab.org
         "kfreebsd-gnu.debian.net/debian",
-        "ftp.easynet.be/ftp/gnuab/debian",
-	"ftp.de.debian.org/debian-kfreebsd",
 			       );
 my @nonus_north_american_sites = (
 #	"ftp.ca.debian.org/debian-non-US",
