@@ -145,38 +145,68 @@ sub secondary_mirrors {
 			next unless ($mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian\.org$/);
 			$tmp = "%-$longest{site}s ";
 			printf $tmp, $mirror[$id]{site};
-			if (defined $mirror[$id]{method}{'archive-ftp'} && $html) {
+			if (defined $mirror[$id]{method}{'archive-ftp'}) {
 				my $rest = $longest{'archive-ftp'} - length($mirror[$id]{method}{'archive-ftp'});
-				$tmp = "<a href=\"%s\">%s</a>%${rest}s";
-				printf $tmp, "ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'}", $mirror[$id]{method}{'archive-ftp'}, '';
-			} elsif (defined $mirror[$id]{method}{'archive-ftp'}) {
-				my $rest = $longest{'archive-ftp'} - length($mirror[$id]{method}{'archive-ftp'});
-				$tmp = "%s%${rest}s";
-				printf $tmp, $mirror[$id]{method}{'archive-ftp'}, '';
+				if ($html) {
+					$tmp = "<a href=\"%s\">%s</a>%${rest}s";
+					printf $tmp, "ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'}", $mirror[$id]{method}{'archive-ftp'}, '';
+				} else {
+					$tmp = "%s%${rest}s";
+					printf $tmp, $mirror[$id]{method}{'archive-ftp'}, '';
+				}
 			} else {
 				$tmp = "%-$longest{'archive-ftp'}s";
 				printf $tmp, " ";
 			}
 			$tmp = "%-$longest{'archive-http'}s";
-			if (defined $mirror[$id]{method}{'archive-http'} && $html) {
+			if (defined $mirror[$id]{method}{'archive-http'}) {
 				my $rest = $longest{'archive-http'} - length($mirror[$id]{method}{'archive-http'});
-				$tmp = "<a href=\"%s\">%s</a>%${rest}s";
-				printf $tmp, "http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}",$mirror[$id]{method}{'archive-http'}, '';
-			} elsif (defined $mirror[$id]{method}{'archive-http'}) {
-				my $rest = $longest{'archive-http'} - length($mirror[$id]{method}{'archive-http'});
-				$tmp = "%s%${rest}s";
-				printf $tmp, $mirror[$id]{method}{'archive-http'}, '';
+				if ($html) {
+					$tmp = "<a href=\"%s\">%s</a>%${rest}s";
+					printf $tmp, "http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}",$mirror[$id]{method}{'archive-http'}, '';
+				} else {
+					$tmp = "%s%${rest}s";
+					printf $tmp, $mirror[$id]{method}{'archive-http'}, '';
+				}
 			} else {
 				$tmp = "%-$longest{'archive-http'}s";
 				printf $tmp, " ";
 			}
           		if (exists $mirror[$id]{'archive-architecture'}) {
 				print join(" ", sort @{$mirror[$id]{'archive-architecture'}});
-			}
-			else {
+			} else {
 				print "all";
 			}
 			print "\n";
+			if (exists $mirror[$id]{'aliases'}) {
+				if (exists $mirror[$id]{includes}) {
+					print "  (";
+					my @tmparray = @{$mirror[$id]{includes}};
+					my $notalldone = $#tmparray + 1;
+					foreach my $subsite (@{ $mirror[$id]{includes} }) {
+						# this is basically a sanity check
+						my $subsite_id;
+						foreach my $mid (0 .. $#mirror) {
+							if ($mirror[$mid]{site} eq $subsite) {
+								$subsite_id = $mid;
+								last;
+							}
+						}
+						die "$subsite included in ftp.us.debian.org does not exist\n" unless defined $subsite_id; # must be an error
+						# this prints the canonical name of the included site rather than its reference - should be in sync, but might actually vary
+						print $mirror[$subsite_id]{site};
+						$notalldone--;
+						print ", " if ($notalldone);
+					}
+					print ")" . "\n";
+				} else {
+					my $truename = @{$mirror[$id]{'aliases'}}[0];
+					if ($truename =~ /^ftp.+\.debian\.org$/) {
+						$truename = @{$mirror[$id]{'aliases'}}[1];
+					}
+					print "  (" . $truename . ")" . "\n";
+				}
+			}
 		}
 		# then list the unofficial sites
 		foreach my $id (@{ $countries{$country} }) {
