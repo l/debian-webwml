@@ -741,7 +741,7 @@ sub full_listing {
 				}
 			}
 			if (exists $mirror[$id]{'archive-architecture'}) {
-				print "Archive Architectures: ".join(" ", sort @{$mirror[$id]{'archive-architecture'}})."\n";
+				print "Includes architectures: ".join(" ", sort @{$mirror[$id]{'archive-architecture'}})."\n";
 			}
 			if (exists $mirror[$id]{'comment'}) {
 				print "Comment: ".$mirror[$id]{comment}."\n";
