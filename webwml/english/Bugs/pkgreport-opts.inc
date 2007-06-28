@@ -165,7 +165,7 @@
 <define-tag lenny whitespace=delete>
   <gettext domain="bugs">lenny</gettext>
 </define-tag>
-<define-tag lennny-ignore whitespace=delete>
+<define-tag lenny-ignore whitespace=delete>
   <gettext domain="bugs">lenny-ignore</gettext>
 </define-tag>
 <define-tag sid whitespace=delete>
