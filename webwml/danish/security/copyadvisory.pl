@@ -95,7 +95,7 @@ while (<SRC>)
 	s/integer overflow/heltalsoverløb/;
 	s/format string vulnerability/formatstrengssårbarhed/;
 	s/format string vulnerabilities/formatstrengssårbarheder/;
-	s/insecure temporary files/usiker midlertidige filer/;
+	s/insecure temporary files/usikre midlertidige filer/;
 	s/>insecure temporary file creation</>usikker oprettelse af fil</;
 	s/>local root exploit</>lokal root-udnyttelse</;
 	s/>remote root exploit</>fjern root-udnyttelse</;
