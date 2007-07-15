@@ -2,124 +2,102 @@
 
 <bind-gettext-domain domain="vendors" />
 
-<define-tag vendor whitespace=delete>
-  <strong><gettext domain="vendors">Vendor:</gettext></strong> %attributes<br>
+<!--
+<gettext domain="vendors">Vendor:</gettext>
+<gettext domain="vendors">URL for Debian Page:</gettext>
+<gettext domain="vendors">Allows Contribution to Debian:</gettext>
+<gettext domain="vendors">Country:</gettext>
+<gettext domain="vendors">Ship International:</gettext>
+<gettext domain="vendors">email:</gettext>
+<gettext domain="vendors">CD Type:</gettext>
+<gettext domain="vendors">DVD Type:</gettext>
+<gettext domain="vendors">Architectures:</gettext>
+-->
+
+<define-tag country endtag=required>
+<preserve code />
+<preserve name />
+<set-var %attributes />
+<set-var trclass="a" />
+<h3><a name="<get-var code />"><get-var name /></a></h3>
+  <table class="vendors">
+    <tr>
+      <th><gettext domain="vendors">Vendor</gettext></th>
+      <th><gettext domain="vendors">Allows Contributions</gettext></th>
+      <th><gettext domain="vendors">CD/DVD</gettext></th>
+      <th><gettext domain="vendors">Architectures</gettext></th>
+      <th><gettext domain="vendors">Ship International</gettext></th>
+      <th><gettext domain="vendors">Contact</gettext></th>
+  </tr>
+%body
+</table>
+<restore code />
+<restore name />
 </define-tag>
-<define-tag URLdeb whitespace=delete>
-  <strong><gettext domain="vendors">URL for Debian Page:</gettext></strong> 
-  <if %0 "<a href="%0">%0</a><br>" "<br>">
+
+<define-tag vendor>
+  <preserve name />
+  <preserve url />
+  <preserve deburl />
+  <preserve contribution />
+  <preserve ship />
+  <preserve email />
+  <preserve cd />
+  <preserve dvd />
+  <set-var %attributes />
+  <tr class="<get-var trclass />">
+  <ifeq <get-var trclass /> "a" <set-var trclass="b" /> <set-var trclass="a" /> />
+    <td><a href="<get-var url />" class="h"><img src="h.png" alt="<gettext domain="vendors">Vendor Home</gettext>"></a> <a href="<get-var deburl />"><get-var name /></a></td>
+    <td><contribution <get-var contribution />></td>
+    <td>\
+      <ifeq <get-var cd /> "yes" "CD">\
+      <ifeq <get-var cd /> "yes" <ifeq <get-var dvd /> "yes" "+">>\
+      <ifeq <get-var dvd /> "yes" "DVD">\
+    </td>
+    <td><get-var architectures /></td>
+    <td><ship <get-var ship />></td>
+    <td><email <get-var email />></td>
+  </tr>
+  <restore dvd />
+  <restore cd />
+  <restore email />
+  <restore ship />
+  <restore contribution />
+  <restore deburl />
+  <restore url />
+  <restore name />
 </define-tag>
+
 <define-tag contribution whitespace=delete>
-  <strong><gettext domain="vendors">Allows Contribution to Debian:</gettext> 
-  <span class="<ifeq "%0" "yes" "00BB00"><ifeq "%0" "no" "FF0000">">
-  <ifeq "%0" "yes" <yes>> 
+  <ifeq "%0" "yes" <yes>>
   <ifeq "%0" "no"  <no>>
-  </span></strong>
 </define-tag>
-<define-tag country whitespace=delete>
-  <strong><gettext domain="vendors">Country:</gettext></strong> %attributes<br>
-</define-tag>
+
 <define-tag ship whitespace=delete>
-  <strong><gettext domain="vendors">Ship International:</gettext></strong> 
   <ifeq "%0" "yes" <yes>>
   <ifeq "%0" "no"  <no>>
   <ifeq "%0" "europe" <europe_only>>
   <ifeq "%0" "some" <some_areas>>
-  <br>
 </define-tag>
+
 <define-tag europe_only whitespace=delete>
   <gettext domain="vendors">within Europe</gettext>
 </define-tag>
+
 <define-tag some_areas whitespace=delete>
   <gettext domain="vendors">To some areas</gettext>
 </define-tag>
+
 <define-tag email whitespace=delete>
-  <strong><gettext domain="vendors">email:</gettext></strong> 
-  <a href="mailto:%attributes">%attributes</a><br>
+  <a href="mailto:%attributes"><gettext domain="vendors">email</gettext></a>
 </define-tag>
-<define-tag type whitespace=delete>
-  <strong><gettext domain="vendors">CD Type:</gettext></strong>
-</define-tag>
-<define-tag dvdtype whitespace=delete>
-  <strong><gettext domain="vendors">DVD Type:</gettext></strong>
-</define-tag>
-<define-tag OfficialCD whitespace=delete>
-  <strong><gettext domain="vendors">Official CD</gettext></strong>
-</define-tag>
-<define-tag OfficialDVD whitespace=delete>
-  <strong><gettext domain="vendors">Official DVD</gettext></strong>
-  </define-tag>
-<define-tag DevelopmentSnapshot whitespace=delete>
-  <gettext domain="vendors">Development Snapshot</gettext>
-</define-tag>
-<define-tag VendorRelease whitespace=delete>
-  <gettext domain="vendors">Vendor Release</gettext>
-</define-tag>
-<define-tag MultipleDistribution whitespace=delete>
-  <gettext domain="vendors">Multiple Distribution</gettext>
-</define-tag>
-<define-tag non-us whitespace=delete>
-	non-US
-</define-tag>
-<define-tag non-free>
-	non-free
-</define-tag>
-<define-tag contrib>
-	contrib
-</define-tag>
-<define-tag non-usincluded whitespace=delete>
-  <gettext domain="vendors">non-US included</gettext>
-</define-tag>
-<define-tag non-freeincluded whitespace=delete>
-  <gettext domain="vendors">non-free included</gettext>
-</define-tag>
-<define-tag contribincluded whitespace=delete>
-  <gettext domain="vendors">contrib included</gettext>
-</define-tag>
-<define-tag VendorAdditions whitespace=delete>
-  <gettext domain="vendors">vendor additions</gettext>
-</define-tag>
-<define-tag custom whitespace=delete>
-  <gettext domain="vendors">Custom Release</gettext>
-</define-tag>
-<define-tag reseller whitespace=delete>
-	<preserve vend>
-	<set-var %attributes>
-        <if <get-var vend>
-        	<gettext domain="vendors">reseller of $var</gettext>
-        	<gettext domain="vendors">reseller</gettext>
-        >
-	<restore vend>
-</define-tag>
-<define-tag weekly whitespace=delete>
-  <gettext domain="vendors">updated weekly</gettext>
-</define-tag>
-<define-tag twiceweekly whitespace=delete>
-  <gettext domain="vendors">updated twice weekly</gettext>
-</define-tag>
-<define-tag monthly whitespace=delete>
-  <gettext domain="vendors">updated monthly</gettext>
-</define-tag>
-<define-tag and whitespace=delete>
-  <gettext domain="vendors">and</gettext>
-</define-tag>
+
 <define-tag source whitespace=delete>
   <gettext domain="vendors">source</gettext>
 </define-tag>
 
-<define-tag architectures whitespace=delete>
-  <strong><gettext domain="vendors">Architectures:</gettext></strong>&nbsp;
-</define-tag>
-<define-tag vendorentry endtag=required>\
-	<table width="100%">
-	<colgroup span="2">
-	<col width="55%">
-	<col>
-	</colgroup>
-	<tr><td>
-%body
-        </td></tr>
-	</table>
+<define-tag and whitespace=delete>
+  <gettext domain="vendors">and</gettext>
 </define-tag>
 
 #use wml::debian::url
