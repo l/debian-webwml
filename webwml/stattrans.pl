@@ -265,6 +265,16 @@ my @filenames = sort keys %files;
 my $nfiles = scalar @filenames;
 $nsize += $sizes{$_} foreach (@filenames);
 
+my $firstdifftype;
+my $seconddifftype;
+if ($config{'difftype'} eq 'u') {
+    $firstdifftype = 'u';
+    $seconddifftype = 'h';
+} else {
+    $firstdifftype = 'h';
+    $seconddifftype = 'u';
+}
+
 print "Creating files: " if ($config{'verbose'});
 foreach $lang (@search_in) {
     my @processed_langs = ($langs{$lang});
@@ -300,7 +310,10 @@ foreach $lang (@search_in) {
 		    if ($msg eq "Wrong translation version" || $msg eq "The original no longer exists") {
 		        $o_body .= "<td></td><td></td>";
 		    } else {
-		        $o_body .= sprintf "<td>&nbsp;&nbsp;<a href=\"http://cvs.debian.org/webwml/$orig/%s.diff\?r1=%s\&amp;r2=%s\&amp;cvsroot=webwml\&amp;diff_format=%s\">%s -> %s</a></td>", $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $config{'difftype'}, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+		        $o_body .= sprintf "<td><a href=\"http://cvs.debian.org/webwml/$orig/%s.diff\?r1=%s\&amp;r2=%s\&amp;cvsroot=webwml\&amp;diff_format=%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
+                                           $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $firstdifftype, $transversion{"$lang/$file"}, $version{"$orig/$file"};
+		        $o_body .= sprintf "<td><a href=\"http://cvs.debian.org/webwml/$orig/%s.diff\?r1=%s\&amp;r2=%s\&amp;cvsroot=webwml\&amp;diff_format=%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
+                                           $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $seconddifftype, $transversion{"$lang/$file"}, $version{"$orig/$file"};
                         $o_body .= sprintf "<td><a href=\"http://cvs.debian.org/webwml/$orig/%s?cvsroot=webwml#rev%s\">[L]</a></td>", $file, $version{"$orig/$file"};
 		    }
                     $o_body .= sprintf "<td align=center>%s</td>", $maintainer{"$lang/$file"} || "";
@@ -449,8 +462,8 @@ foreach $lang (@search_in) {
                 print HTML "<h3 id='outdated'>Outdated translations: <a href='#top'>(top)</a></h3>\n";
                 print HTML "<table summary=\"Outdated translations\" border=0 cellpadding=1 cellspacing=1>\n";
                 print HTML "<tr><th>File</th><th>Translated</th><th>Origin</th><th>Comment</th>";
-                if ($opt_d eq "u") { print HTML "<th>Unified diff</th>"; }
-                elsif ($opt_d eq "h") { print HTML "<th>Colored diff</th>"; }
+                if ($opt_d eq "u") { print HTML "<th>Unified diff</th><th>Colored diff</th>"; }
+                elsif ($opt_d eq "h") { print HTML "<th>Colored diff</th><th>Unified diff</th>"; }
                 else { print HTML "<th>Diff</th>"; }
                 print HTML "<th>Log</th>";
                 print HTML "<th>Maintainer</th>";
