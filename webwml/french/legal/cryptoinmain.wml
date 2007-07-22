@@ -1,0 +1,981 @@
+#use wml::debian::template title="Étude sur les logiciels de chiffrement dans l'archive principale de Debian" BARETITLE=true
+#use wml::debian::translation-check translation="1.6" maintainer="Nicolas Bertolissio"
+
+<hr />
+
+<p>
+Note du traducteur&nbsp;: Cette traduction est fournie à titre indicatif. Si
+vous êtes concerné par les problèmes soulevés par ce document, veuillez vous
+référer à la <a href="$(HOME)/legal/cryptoinmain.en.html">version en
+anglais</a>.
+</p>
+
+<hr />
+
+<table width="100%" summary="mail headers">
+  <colgroup span="2">
+    <col width="10%" />
+    <col />
+  </colgroup>
+  <tr>
+    <td>À&nbsp;:</td>
+    <td><a href="http://www.spi-inc.org/">Software in the Public Interest</a>, <a href="http://www.debian.org/">projet Debian</a></td>
+  </tr>
+  <tr>
+    <td>De&nbsp;:</td>
+    <td>Roszel C. Thomsen II, Partner, <a href="http://www.t-b.com/">Thomsen &amp; Burke LLP</a></td>
+  </tr>
+  <tr>
+    <td>Date&nbsp;:</td>
+    <td>31 juillet 2001</td>
+  </tr>
+  <tr>
+    <td>Rép.&nbsp;:</td>
+    <td>Étude sur les logiciels de chiffrement dans l'archive principale de Debian</td>
+  </tr>
+</table>
+
+<p>
+Merci de nous donner cette opportunité de commenter le livre blanc de Sam
+Hartman intitulé <q>Étude sur les logiciels de chiffrement dans l'archive
+principale de Debian</q>.
+</p>
+
+<p>
+Nous vous fournissons ces informations en tant qu'orientation générale. Le BXA
+(bureau de l'administration aux exportations) exige que chaque entité exportant
+des produits soit au courant et se conforme à ses obligations de déclaration
+déterminées dans les règlements de l'administration aux exportations. Veuillez
+noter que ces règlements sont sujets à modification. Nous vous recommandons
+d'obtenir vos propres conseils légaux lors d'exportations. De plus, des pays
+peuvent limiter certains niveaux de chiffrement importés sur leur territoire.
+Nous vous recommandons de consulter des avocats-conseils légaux dans le pays
+approprié ou les agences gouvernementales concernées dans le pays considéré.
+</p>
+
+<p>
+Sur le fond, l'exportation de logiciels de chiffrement des États-Unis est
+régie par les termes des règlements de l'administration aux exportation des
+États-Unis (<q>EAR</q>, 15 CFR partie&nbsp;730 et suivantes) administrés par le
+bureau de l'administration aux exportation (<q>BXA</q>) du ministère du
+commerce. La dernière mise à jour par le BXA des règlements de l'administration
+aux exportations régissant les logiciels de chiffrement date du
+19&nbsp;octobre&nbsp;2000. Je me réfère à ces derniers par les <q>nouveaux
+règlements des États-Unis</q> afin de les distinguer des règlements antérieurs
+qui étaient plus restrictifs.
+</p>
+
+<p>
+Lorsque l'administration Clinton est arrivée à Washington, les articles de
+chiffrement étaient contrôlés à l'exportation des États-Unis de la même manière
+que les <q>munitions</q> selon l'acte de contrôle des exportations d'armement
+et les règlements de trafic international d'armement. La plupart des demandes
+de permis d'exportation les articles de chiffrement fort étaient rejetées.
+L'industrie et les groupes d'intérêt public ont incité à la libéralisation, et
+l'administration Clinton a reformé les contrôles obsolètes d'exportation des
+États-Unis sur les articles de chiffrement par une série d'étapes graduées,
+aboutissant aux nouveaux règlements des États-Unis. La nouvelle administration
+Bush étudie d'autres libéralisations qui pourraient être éditées à la fin de
+cette année.
+</p>
+
+<p>
+Malgré ces libéralisations, les contrôle d'exportation des États-Unis sur les
+articles commerciaux de chiffrement demeurent complexes et onéreux. Les
+entreprises américaines doivent soumettre les articles de chiffrement à des
+revues techniques des autorités d'espionnage avant l'exportation. Les
+exportations vers certaines agences des gouvernements étrangers exigent des
+licences, de même que les exportations de fournisseurs de services de
+télécommunication et internet souhaitant fournir des services à certains
+organismes gouvernementaux. En conclusion, des conditions de notification après
+exportation s'appliquent à beaucoup d'exportations des États-Unis. Ainsi, les
+contrôles d'exportation d'articles de chiffrement des États-Unis continuent à
+imposer des charges dues à une normalisation significative aux compagnies
+américaines, retardant le déploiement mondial d'un chiffrement fort dans les
+logiciels commerciaux.
+</p>
+
+<p>
+Tous les logiciels avec chiffrement ne sont pas des produits commerciaux,
+cependant. Pour les règlements de l'administration aux exportations, les
+contrôles de code source de chiffrement entrent dans trois catégories&nbsp;:
+(a) source ouvert, (b) source communautaire, et (c) source propriétaire. Les
+règles régissant les exportations de chaque type de code source sont
+différentes, et elles ont été modifiées de manière importante dans les nouveaux
+règlements des États-Unis.
+</p>
+
+<p>
+Le source ouvert se rapporte au logiciel qui est à la disposition du public
+sans restriction gratuitement, aux termes d'un accord de licence de type GNU.
+Debian semblerait entrer dans cette catégorie. Les anciens règlements
+permettaient l'exportation des sources ouvertes à n'importe quel utilisateur
+sans revue technique, à condition que la personne rendant le source ouvert
+disponible ait fourni une notification correspondante au BXA et à l'agence de
+sécurité nationale (<q>NSA</q>). Cependant, les anciens règlements étaient
+silencieux en ce qui concerne des restrictions (s'il y en avait) à
+l'exportation du logiciel exécutable compilé à partir de code source ouvert.
+</p>
+
+<p>
+Aux termes des nouveaux règlements des États-Unis, non seulement le code source
+ouvert, mais également le logiciel exécutable compilé à partir du code source
+ouvert, sont autorisés à l'exportation dans les mêmes conditions que le code
+source ouvert lui-même, à condition que l'exécutable compilé soit disponible
+sans restriction et gratuitement. Malheureusement, si vous incluez le logiciel
+exécutable compilé dans un produit que vous distribuez contre rétribution,
+alors le produit résultant est sujet à des toutes les règles qui s'appliquent
+aux logiciels commerciaux. Par exemple, ils doivent être soumis au BXA et à la
+NSA pour la revue technique unique, décrite ci-dessus.
+</p>
+
+<p>
+Le code source communautaire se rapporte au logiciel qui est à la disposition
+du public gratuitement pour un usage non commercial mais qui contient d'autres
+restrictions à l'utilisation commerciale. Le code source communautaire peut
+être exportée dans essentiellement les mêmes conditions que le code source
+ouvert, mais le code source communautaire demeure sujet à des conditions de
+notification plus détaillées.
+</p>
+
+<p>
+Le code source propriétaire se rapporte à tout le code source qui n'est ni code
+source <q>ouvert</q> ni <q>communautaire</q>. Les exportateurs peuvent fournir
+le code source propriétaire à n'importe quel utilisateur dans l'Union
+européenne et à ses associés, et à n'importe quel utilisateur non
+gouvernemental dans d'autres pays, après avoir effectué une revue technique avec
+le BXA et la NSA. Les conditions de notification applicables au code source
+communautaire s'appliquent également au code source de propriétaire.
+</p>
+
+<p>
+Veuillez garder à l'esprit que des personnes aux États-Unis qui envoient du
+courrier à de sites situés en dehors des États-Unis sont soumises aux lois des
+États-Unis, même si elles font cela à titre individuel. Par conséquent, vous
+pouvez souhaiter avertir des personnes aux États-Unis que leurs envois au
+serveur actuel de logiciels de chiffrement en dehors des États-Unis sont
+toujours sujets aux règlements des États-Unis.
+</p>
+
+<p>
+En conclusion, vous devriez être conscient qu'une partie importante des
+contrôles d'exportation des États-Unis s'applique à toutes les exportations de
+logiciels de chiffrement à code source ouvert à partir des États-Unis.
+Principalement, ces contrôles interdisent l'exportation de logiciels de
+chiffrement à code de source ouvert sous exception de licence de technologies
+et logiciels libres (1) aux parties interdites (énumérées à <a
+href="http://www.bxa.doc.gov/DPL/Default.shtm">http://www.bxa.doc.gov/DPL/Default.shtm</a>),
+(2) aux pays interdits (actuellement Cuba, l'Iran, l'Irak, la Libye, la Corée du
+Nord, le Soudan, la Syrie et l'Afghanistan occupé par les Talibans) et (3) à la
+conception, le développement, le stockage, la production ou l'utilisation des
+armes ou des missiles nucléaires, chimiques ou biologiques.
+</p>
+
+<p>
+Considérant cela, il est répondu à vos questions spécifiques en ce qui concerne
+Debian dans l'ordre dans lequel elles apparaissent dans le livre blanc de Sam
+Hartman, ci-dessous en italiques.
+<p/>
+
+<hr />
+
+
+<h2><i>Étude sur les logiciels de chiffrement dans l'archive principale de
+Debian</i></h2>
+
+<p>
+<i>Sam Hartman</i>
+</p>
+
+<p>
+<i>Le projet Debian</i>
+</p>
+
+<hrline />
+
+<p style="margin-left: 2em">
+<i>Debian est un système d'exploitation libre. Actuellement, pour des raison
+d'exportations des États-Unis, Debian sépare les logiciels de chiffrement dans
+une archive particulière située hors des États-Unis. Ce document résume les
+questions auxquelles nous devons répondre d'un point de vu légal afin de
+fusionner les deux archives.</i>
+</p>
+
+<hrline />
+
+
+<h3><i>À propos de Debian</i></h3>
+
+<p>
+<i>Debian est une association d'individus qui travaillent pour produire un
+système d'exploitation libre. Ces individus sont responsables des décisions
+qu'ils font lorsqu'ils travaillent sur Debian&nbsp;; il n'y a pas
+d'organisation Debian légale pour laquelle les développeurs travaillent ou pour
+laquelle des décisions sont prises. Il existe un organisme enregistré à but non
+lucratif, Software in the Public Interest (SPI), qui détient les capitaux et
+les ressources de Debian. Aussi les décisions des développeurs peuvent
+impacter les ressources détenues par SPI et donc SPI. D'autres ressources de
+Debian sont détenues par divers parrains. Debian dépend de manière générale de
+parrains pour sa connectivité réseau. Il existe également des groupements tiers
+qui copient les logiciels Debian sur des miroirs pour que les gens autour du
+monde puissent télécharger et utiliser la distribution. D'autres fabriquent et
+vendent des CD de Debian. Tous ces groupes peuvent être responsables à un
+niveau plus ou moins élevé des décisions prises par Debian. Nous souhaitons
+nous conduire de manière à minimiser la responsabilité de chaque partie et,
+avec cette contrainte, maximiser la valeur de nos efforts.</i>
+</p>
+
+<p>
+<i>Comme tous les fournisseurs de systèmes d'exploitation, Debian a besoin
+d'inclure des logiciels de chiffrement. Ces logiciels fournissent de la
+sécurité, permettent à des utilisateurs de s'engager commercialement sur
+Internet, et accomplissent d'autre tâches exigeant du chiffrement. Aujourd'hui,
+ces logiciels sont stockés sur un serveur en dehors des États-Unis, connus sous
+le nom de <q>serveur non-US</q>. Actuellement Debian ne prend aucune mesure
+pour aider les développeurs américains à se conformer aux règlements de
+contrôle des exportations s'ils téléchargent des logiciels dans l'archive
+non-US ou pour les empêcher de télécharger ces logiciels. Nous voudrions
+déplacer les logiciels de chiffrement du serveur non-US sur notre serveur
+principal aux États-Unis.</i>
+</p>
+
+<p>
+<i>Étant donné que le travail est de plus en plus réalisé en réseau, que de
+plus en plus de fonctions critiques sont situées sur des plates-formes
+informatiques et que malheureusement les comportements malveillants se
+développent, la sécurité va prendre de plus en plus d'importance. Le
+chiffrement est une importante pierre angulaire d'un certain nombre de
+processus de sécurité. Tout système d'exploitation qui ne ferait pas un effort
+pour intégrer le chiffrement de manière native a peu de chance d'être
+compétitif.</i>
+</p>
+
+<p>
+<i>Mettre tous les logiciels sur une source unique, et en induire la capacité
+de créer un unique ensemble de CD contenant une gestion intégrée du chiffrement
+rend les choses plus simples pour les utilisateurs, pour les fournisseurs de
+CD, pour les développeurs qui téléchargent les logiciels sur ces sites et pour
+la réplication des dépôts de logiciels sur l'internet.</i>
+</p>
+
+<p>
+<i>Le reste de ce document s'attache plus particulièrement au serveur principal
+situé aux États-Unis et à ses miroirs et copies tout autour du monde. Il est
+important de réaliser qu'il existe actuellement une structure parallèle
+paramétrée pour traiter le serveur situé hors des États-Unis (non-US).</i>
+</p>
+
+<p>
+<i>Régulièrement, les développeurs Debian publient une nouvelle version
+officielle de Debian. Ces logiciels sont rendus disponibles sur le serveur
+principal (et pour les logiciels de chiffrement sur le serveur non-US) à un
+groupe de miroirs primaires autour du monde. Ces miroirs copient les logiciels
+du serveur principal et les rendent disponibles aux utilisateurs et aux miroirs
+secondaires. Les utilisateurs peuvent utiliser HTTP, FTP ou un certain nombre
+d'autres méthodes pour récupérer les logiciels. Les images de CD sont rendues
+disponibles aux utilisateurs et aux distributeurs. Ces images peuvent être
+gravées sur des CD pour les gens ou par ceux qui souhaitent vendre ou donner
+Debian.</i>
+</p>
+
+<p>
+<i>De plus, il y a deux version de Debian en constante évolution&nbsp;: les
+versions de test et instable. Ces versions sont mises à jour quotidiennement
+par tous les développeurs autour du monde. Comme les versions officielles, ces
+versions sont rendues disponibles aux miroirs primaires sur les serveurs
+principal et non-US. Les miroirs primaires rendent les logiciels disponibles
+<em>via</em> HTTP, FTP et d'autres méthodes à la fois aux utilisateurs et aux
+miroirs secondaires. Des images de CD sont parfois réalisées à partir de ces
+publications. La différence importante entre ces versions évolutives et la
+version officielle est qu'elles sont en modification constante.</i>
+</p>
+
+<p>
+<i>Souvent, les développeurs téléchargent des binaires et du code source en
+même temps. Cependant, nous gérons de nombreux types d'ordinateurs qui
+demandent chacun des binaires différents pour le même code source. La plupart
+des développeurs ne construisent des binaires que pour l'une des architectures
+informatiques que nous gérons lorsqu'ils téléchargent un programme modifié. Des
+processus automatiques utilisent le code source qu'ils ont téléchargés pour
+construire les binaires pour les autres architectures. Ainsi, certains binaires
+pour un code source particulier ont des chances d'être téléchargés après le
+code source lui-même.</i>
+</p>
+
+<p>
+<i>Certains développeurs Debian utilisent aussi les ressources de Debian pour
+travailler sur des logiciels qui ne sont pas encore publiés. La principale
+source utilisée pour cela est le serveur CVS de Debian. Le code source des
+projets qui sont sur ce serveur est pratiquement toujours disponible
+publiquement, mais peut être modifié plusieurs fois par jour. Le serveur CVS
+est situé aux États-Unis.</i>
+</p>
+
+<p>
+<i>Cependant, la plupart des logiciels de Debian ne sont pas développés
+directement par des développeurs Debian. Au lieu de cela, ces logiciels sont
+publiés publiquement par des tiers. Certains logiciels sont mis à disposition
+du public sur des sites situés aux États-Unis, alors que d'autres auteurs
+publient leurs logiciels sur des sites situés hors des États-Unis. Les
+développeurs Debian sont responsables de l'intégration de ces logiciels dans
+Debian. En faisant ce travail, de nombreux développeurs Debian finissent par
+travailler étroitement avec les auteurs amonts des logiciels, contribuant
+souvent à la versions amont.</i>
+</p>
+
+<p>
+<i>Les logiciels dans Debian se conforment aux principes du logiciel libre
+selon Debian&nbsp;; Nous croyons que le code source de ces logiciels est
+disponible publiquement au sens de la section&nbsp;740.13(e) des règlements
+l'administration aux exportation. Ces principes demandent que le code source
+soit redistribuable. Ce principes demandent indirectement que chacun puisse
+distribuer un produit basé sur ce code source sans payer de taxe. Nous
+distribuons tout le code source dans Debian en tant que partie de nos
+publications. D'autres logiciels sont distribués dans l'archive non libre, mais
+nous ne nous intéressons dans ce document qu'aux logiciels libres selon les
+principes de Debian. Nous serions intéressés de savoir jusqu'où nous pouvons
+déplacer vers les États-Unis des logiciels qui ne sont pas libres selon ces
+principes et pour lesquels nous distribuons le code source, mais nous
+souhaitons nous assurer que des conseils dans ce domaine ne se mélangent pas
+avec des conseils sur la manière de gérer les logiciels libres selon les
+principes de Debian.</i>
+</p>
+
+<p>
+<i>Les développeurs Debian vivent partout dans le monde et sont citoyens de
+plusieurs pays. Évidemment certains sont des citoyens américains, mais beaucoup
+ne le sont pas. Certains peuvent être citoyens des sept pays interdits dans la
+section&nbsp;740.13(e) des règlements de l'administration aux exportations.</i>
+</p>
+
+<p>
+<i>Comme indiqué, nous disposons de miroirs partout dans le monde. Nous n'avons
+pas de miroirs officiels (de miroirs qui seraient liés au projet) dans aucun
+des sept pays listés dans la section&nbsp;740.13(e) des règlements de
+l'administration aux exportations, cependant comme nos logiciels sont
+disponibles publiquement, ils peuvent être copiés dans ces pays. La plupart des
+miroirs situés aux États-Unis ne recopient que le serveur principal (celui sans
+les logiciels de chiffrement), bien que certains recopient à la fois les
+parties principales et non-US de l'archive. Debian dégage toute responsabilité
+pour les miroirs situés aux États-Unis qui recopient la partie non-US de
+l'archive.</i>
+</p>
+
+<hrline />
+
+<h3><i>Notre but</i></h3>
+
+<p>
+<i>Nous souhaitons inclure les logiciels de chiffrement dans notre archive
+principale. Nous souhaitons comprendre les risques que prennent les
+développeurs, les utilisateurs, SPI, les responsables des miroirs, les
+revendeurs de CD, les parrains et toute tierce partie liée à Debian afin de
+prendre une décision éclairée. Nous souhaitons pouvoir documenter et faire
+connaître ce risque pour que ces tiers ne commettent par de crime par
+ignorance. Évidemment, nous souhaitons également éviter de prendre des risques
+inutiles.</i>
+</p>
+
+<p>
+<i>En particulier, nous souhaiterions prendre en compte les activités
+suivantes&nbsp;:</i>
+</p>
+
+<ul>
+  <li><i>ajouts et modifications quotidiens de logiciels libres conforment aux
+    principes du logiciel libre selon Debian à nos publications. En pratique,
+    seuls les distributions de test et instable sont modifiées quotidiennement,
+    mais les autres versions sont modifiées de temps en temps&nbsp;;</i></li>
+  <li><i>distribution par internet et sur CD de logiciels de chiffrement dans
+    nos versions&nbsp;;</i></li>
+  <li><i>ajout et modification de logiciels de chiffrement conforment aux
+    principes du logiciel libre selon Debian sur notre serveur
+    CVS&nbsp;;</i></li>
+  <li><i>toute réaction que nous devrions avoir pour modifier les règlements
+    (ou les lois) sur le chiffrement.</i></li>
+</ul>
+
+<hrline />
+
+<p>
+<em>FIN du préambule du document Debian</em>
+</p>
+
+<p>
+Je vais essayer prendre en compte ces buts dans mes réponses à vos questions.
+En résumé, je pense qu'une notification initiale devrait suffire pour l'archive
+actuelle et ses mises à jour. Une nouvelle notification ne devrait être requise
+que si un nouveau programme avec chiffrement est ajouté à l'archive. La
+distribution supplémentaire de logiciels gratuits ne nécessite pas d'autre
+notification. Cependant, les versions commerciales doivent être soumises aux
+obligations de revue technique, de licence et de signalement qui s'appliquent
+aux autres produits commerciaux. Prévoir les modifications à venir aux lois et
+aux règlements est difficile, mais si la loi change, vous devrez soit arrêter
+le site soit le modifier pour y rester conforme. Vous n'avez aucune obligation
+d'informer les autres parties de leurs obligations légales, mais si vous avez
+une liste des questions fréquemment posées, je serais heureux de suggérer des
+réponses appropriées que vous pourrez souhaiter faire.
+</p>
+
+<p>
+Questions (veuillez noter que chaque question de Debian est indiquée par
+<q>D&nbsp;:</q>)
+</p>
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Devons-nous notifier les logiciels que nous ajoutons aux versions au bureau de
+l'administration aux exportations (BXA)&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+Si la notification est écrite correctement, et que l'archive reste sur le site
+identifié dans la notification, alors vous ne devez remplir qu'une seule
+notification au BXA pour l'archive initiale. Une seule notification est
+nécessaire pour un site américain&nbsp;; aucune notification séparée n'est
+requise pour les sites miroirs aux et hors des États-Unis. Cette notification
+ne devra être mise à jour que si vous ajoutez un nouveau programme implantant
+le chiffrement.
+</p>
+
+<pre>
+  Ministère du commerce
+  Bureau de l'administration aux exportations
+  Bureau du commerce stratégique et des contrôles de police aux frontières
+  14<sup>e</sup> rue et avenue du Pennsylvanie, N.W.
+  Pièce 2705
+  Washington, DC 20230
+
+  Rép. : Notification de code source de chiffrement sans restriction, produit :
+  code source de Debian
+
+  Chère Madame, cher Monsieur,
+  Conformément au paragraphe (e)(1) de la partie 740.13 du règlement de
+  l'administration américaine sur les exportations (« EAR », 15 CFR partie 730
+  et suivantes), nous fournissons cette notification écrite de la localisation
+  internet du code source disponible publiquement sans restriction de Debian.
+  Le code source de Debian est un système d'exploitation libre développé par un
+  groupe d'individus, coordonné par l'organisme à but non lucratif Software in
+  the Public Interest. Cette archive est mise à jour de temps en temps, mais sa
+  localisation est fixe. Aussi cette notification sert-elle de notification
+  unique pour les mises à jour suivantes qui pourraient se produire dans le
+  futur. Les nouveaux programmes seront sujets à notification séparée. La
+  localisation internet du code source de Debian est :
+  http://ftp.debian.org/debian/.
+
+  Ce site est recopié vers un certain nombre d'autres sites situés hors des
+  États-Unis.
+
+  Une copie de cette notification a été envoyée au coordinateur des demandes
+  sur le chiffrement, P.O. Box 246, Annapolis Junction, MD 20701-0246.
+
+  Si vous avez des questions, veuillez m'appeler au (xxx) xxx-xxxx.
+
+  Sincèrement,
+  Nom
+  Titre
+</pre>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Quelles informations devons-nous inclure dans la notification&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+La formule ci-dessus comprend les informations que vous devez inclure dans la
+notification.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Tous les combien devons-nous faire une notifications&nbsp;? Nous souhaitons
+faire le moins possible de notifications car cela engendre du travail pour nous
+et pour le gouvernement, mais nous souhaitons faire des notifications aussi
+souvent que nécessaire pour nous conformer aux règlements.
+</p>
+
+</blockquote>
+
+<p>
+Comme rédigé ci-dessus, et en considérant que l'archive reste sur le site
+internet identifié dans la notification, vous n'avez pas besoin de remplir de
+notification supplémentaire pour les mises à jours suivantes. Vous ne devez
+remplir d'autre notification que si vous ajoutez un nouveau programme
+implantant le chiffrement.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Si nous déplaçons nos logiciels de chiffrement dans ce pays, et que les lois ou
+les règlements changent et deviennent plus restrictifs, que risquons-nous de
+perdre&nbsp;? Devrons-nous détruire des logiciels ou des CD&nbsp;? Devrons-nous
+les supprimer de nos sites principal et secondaires&nbsp;? Si nous utilisons
+cette meilleure disponibilité de logiciels de chiffrement pour améliorer la
+sécurité de reste du système et que le climat légal sur le chiffrement se
+dégrade, est-il possible que nous ayons à détruire toutes les copies de tels
+logiciels aux États-Unis&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+La tendance va vers une augmentation de la libéralisation des contrôles
+d'exportations sur le chiffrement aux États-Unis plutôt que vers une
+augmentation des restrictions. Cette tendance est constante sur la dernière
+décennie et s'est accélérée l'année dernière. Nous ne pouvons pas vous
+conseiller sur ce que vous pourriez perdre avant que de nouveaux règlements ne
+soient publiés. Cependant, nous croyons que vous conserverez les droits
+d'auteur sur les logiciels et certains droits à l'exportation, quoique
+peut-être plus restreints.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Par ordre décroissant de préférence, nous souhaiterions notifier&nbsp;:
+</p>
+
+<ul>
+  <li>une seule fois pour l'ensemble de l'archive Debian&nbsp;;</li>
+  <li>une seule fois par chaque publication officielle (en gardant à l'esprit
+    que les versions de test et instable sont modifiées entre les
+    publications)&nbsp;;</li>
+  <li>une fois lorsqu'un nouveau programme contenant une méthode de chiffrement
+    est ajouté à l'archive&nbsp;;</li>
+  <li>une fois lorsqu'une nouvelle version d'un programme contenant une méthode
+    de chiffrement est ajouté à l'archive.</li>
+</ul>
+	
+</blockquote>
+
+<p>
+Je pense que vous ne devez remplir une nouvelle notification que si vous
+ajoutez un nouveau programme qui incorpore le chiffrement. Les mises à jours de
+programmes devraient être couvertes par la tournure ouverte de la notification
+que nous suggérons ci-dessus.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Les nouveaux paquets entrent dans l'archive Debian à travers la séquence
+suivante. À quel moment faut-il faire la notification&nbsp;?
+</p>
+
+<ol>
+  <li>le développeur amont publie un paquet à code source ouvert. Cette étape
+    est sautée dans le cas d'un paquet natif de Debian&nbsp;;</li>
+  <li>un développeur Debian empaquette le source et le binaire pour Debian,
+    souvent avec des modifications au code source&nbsp;;</li>
+  <li>le paquet est téléchargé sur le serveur ftp maître, dans la file
+    d'attente d'entrée&nbsp;;</li>
+  <li>le paquet ne s'installe pas car il est nouveau&nbsp;;</li>
+  <li>les administrateurs ftp ajoutent les enregistrements nécessaires pour le
+    paquet&nbsp;;</li>
+  <li>le paquet est installé dans l'archive en quelques jours&nbsp;;</li>
+  <li>le paquet est copié sur les sites miroirs.</li>
+</ol>
+
+</blockquote>
+
+<p>
+Les règlements sont assez clair&nbsp;: la notification doit être faite avant ou
+conjointement à la disponibilité publique. Les exportations avant la
+disponibilité publique nécessitent une licence d'exportation. Ainsi, si
+l'archive à la troisième étape n'est pas disponible publiquement, alors soit le
+paquet doit être rendu public avant cette troisième étape (et la notification
+envoyée), soit une licence d'exportation est nécessaire aux développeurs
+Debian. Si l'archive à la troisième étape est disponible publiquement, alors la
+notification à ce moment-là élimine le besoin de détenir une licence
+d'exportation pour les développeurs Debian.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Si l'auteur amont a notifié le BXA, la notification est-elle requise&nbsp;?
+L'empaquetage pour Debian peut impliquer des modifications dans le code source
+concernant la localisation de fichiers, et occasionnellement des différences
+fonctionnelles, bien que le but général soit de faire fonctionner le code amont
+dans Debian avec le minimum de modifications.
+</p>
+
+</blockquote>
+
+<p>
+Si l'auteur amont a notifié le BXA, c'est suffisant.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Devons-nous faire une notification lorsque de nouveaux binaires (code objet)
+sont ajoutés si nous avons déjà notifié le code source&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+Je ne pense pas que vous deviez remplir une nouvelle notification pour le code
+objet, à partir du moment où la notification pour le code source a été remplie.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Une notification est-elle requise pour les programmes qui ne contient pas
+d'algorithmes de chiffrement, mais qui sont liés à des bibliothèques de
+chiffrement&nbsp;? Qu'en est-il des programmes qui lancent d'autres programme
+afin de fonctions de chiffrement&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+Tant que le programme est à code source ouvert, il peut inclure une interface
+de programmation d'application de chiffrement ouverte et reste sous l'exception
+de licence.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Les nouveaux programmes peuvent être vérifiés facilement avant leur publication
+(et la notification faite à ce moment-là), mais lors d'une mise à jour, il n'y
+a pas d'étape manuelle pour faire la notification. Est-il acceptable de
+notifier le BXA de chaque ajout de logiciel, en indiquant que les mises à jour
+à venir pourraient comprendre l'ajout de fonctionnalités de chiffrement&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+Oui. Signaler plus de programme devrait sans doute être éviter lorsque c'est
+possible, mais signaler moins que nécessaire doit être évité. Les mises à jour
+futures d'un programme existant ne nécessitent pas de notification séparée.
+Seuls les nouveaux programmes ont besoin d'une notification séparée.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Pouvons-nous automatiser le processus d'envoi des notifications&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+Vous pouvez automatiser le processus d'envoi des notifications. C'est un
+problème de procédure interne. Le BSA et la NSA ne s'occupent pas de votre
+manière de gérer les notifications en interne.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Quelle forme doit avoir une notification&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+Les notifications au BXA peuvent être sous forme soit électronique soit
+papier&nbsp;; cependant, les notifications à la NSA doivent être sous forme
+papier.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Qui peut envoyer les notifications&nbsp;? Par exemple, doivent-elles l'être par
+un citoyen américain&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+Toute personne peut envoyer une notification&nbsp;; la citoyenneté n'a pas
+d'importance.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Devrions-nous nous préoccuper que quelque chose d'autre&nbsp;? Quelles étapes
+autres que la notification devons-nous suivre&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+En plus de la notification, vous pourriez étudier l'implantation d'une
+recherche IP inversée qui identifie l'ordinateur demandant le téléchargement et
+le blocage des téléchargements de l'archive de logiciels de chiffrement vers
+les pays sous embargo des États-Unis&nbsp;: Cuba, l'Iran, l'Irak, la Libye, la
+Corée du Nord, la Syrie, le Soudan et l'Afghanistan occupé par les Talibans. De
+plus, vous pourriez étudier la fourniture de votre autorisation de licence, ou
+un écran séparé avant le téléchargement, pour avertir les personnes qui
+téléchargent les logiciels de la manière suivante&nbsp;:
+</p>
+
+<p>
+Ce logiciel est soumis aux contrôles d'exportation des États-Unis applicables
+aux logiciels à code source ouvert qui incluent du chiffrement. Debian a déposé
+une notification au bureau de l'administration aux exportations et à l'agence
+nationale de sécurité telle que requise avant l'exportation sous l'exception de
+licence sur les technologies et les logiciels libres des règlement de
+l'administration aux exportations. Conformément aux obligations de l'exception
+de licence sur les technologies et les logiciels libres, vous déclarez et
+garantissez pouvoir recevoir ce logiciel, ne pas être dans un pays sous embargo
+des États-Unis, et ne pas vouloir utiliser le logiciel directement ou
+indirectement pour la conception, le développement, le stockage ou
+l'utilisation d'armes ou de missiles nucléaires, chimiques ou biologiques. Le
+code binaire compilé qui est fournit gratuitement peut être réexporté sous
+l'exception de licence sur les technologies et les logiciels libres. Cependant,
+une revue technique complémentaire et d'autres obligations peuvent s'appliquer
+aux produits commerciaux incluant ce code avant l'exportation des États-Unis.
+Pour de plus amples informations, veuillez consulter www.bxa.doc.gov.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Actuellement, les utilisateurs autour du monde peuvent accéder et
+potentiellement télécharger des logiciels qui sont en attente d'intégration
+dans notre archive. Bien sûr, nous ferons toute notification nécessaire lorsque
+le logiciel sera ajouté à l'archive, le logiciel dans cet état est donc en
+attente de notification. Cela pose-t-il un problème&nbsp;? Si oui, est-il
+acceptable de paramétrer une file d'attente différente pour les logiciels de
+chiffrement en attente d'intégration dans l'archive et qui ne soit accessible
+qu'aux développeurs&nbsp;? Afin qu'un logiciel soit ajouté à notre
+distribution, des développeurs qui sont souvent hors des États-Unis doivent
+examiner le logiciel et s'assurer qu'il suit certains principes. Comment
+devons-nous fournir cet accès&nbsp;? Existe-t-il d'autres solutions que nous
+devrions étudier à cette zone de prénotification de l'archive&nbsp;?
+</p>
+
+<p>
+Un problème que nous rencontrons souvent est celui des brevets logiciels. Il
+est clair que l'intégration du chiffrement dans les logiciels ne supprime
+aucune préoccupation sur les brevets à laquelle nous devrions normalement
+penser. Cependant, existe-t-il de nouveaux problèmes dont nous devrions nous
+occuper lorsque les brevets interagissent avec les règlements d'exportation sur
+le chiffrement&nbsp;? Il semble qu'au moins pour l'exemption sur les
+technologies et les logiciels libres (section&nbsp;740.13 des règlements de
+l'administration aux exportations), les brevets n'influencent pas le fait que
+le code source soit ou non public.
+</p>
+
+</blockquote>
+
+<p>
+Il est important de faire la différence entre l'archive qui a fait l'objet
+d'une notification et les nouveaux programmes. Vous pouvez mettre à jour
+l'archive qui a fait l'objet d'une notification sans autre notification, tel
+qu'écrit ci-dessus. Seuls les nouveaux programmes doivent faire l'objet d'une
+notification séparée avant d'être envoyés. Si les nouveaux programmes doivent
+être revus par des développeurs avant d'être envoyés, et que ces logiciels ne
+sont pas disponibles publiquement ni déjà notifiés au gouvernement des
+États-Unis, alors je vous recommande d'étudier l'obtention d'une licence à
+l'exportation autorisant cette revue limitée avant notification. Il est exact
+que les brevets n'empêchent pas les logiciels d'être éligibles à l'exportation
+sous l'exception de licence sur les technologies et les logiciels libres.
+</p>
+
+
+<blockquote class="question">
+<p>
+<span>D&nbsp;:</span>
+Distribution, miroirs et CD.
+</p>
+
+<p>
+Nos miroirs situés aux États-Unis doivent-ils faire l'objet d'une notification
+au BXA si nous ajoutons des logiciels de chiffrement à notre archive&nbsp;?
+Tous les combien doivent-ils faire l'objet d'une notification au BXA&nbsp;?
+Nous souhaiterions éviter une situation où les miroirs devraient faire l'objet
+d'une notification pour chaque nouveau programme que Debian ajoute à l'archive,
+même si notre serveur maître doit faire l'objet de telles notifications. Nous
+devons conserver un mode opératoire simple pour les miroirs. Que faut-il faire,
+si nécessaire, pour les miroirs situés hors des États-Unis&nbsp;?
+</p>
+
+<p>
+Si nous envoyons une mise à jour à un miroir plutôt que d'attendre qu'il
+télécharge le logiciel, devons-nous faire quelque chose de particulier&nbsp;?
+Et si nous envoyons au miroir une demande de téléchargement des logiciels
+nouveaux ou modifiés&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+Une fois que la notification a été remplie pour le serveur central, aucune
+autre notification n'est nécessaire pour les sites miroirs.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Lesquels dans fournisseurs suivants, s'il y en a, peuvent-ils embarquer des
+binaires de Debian non modifiés avec une simple notification&nbsp;? Lesquels
+devront-ils passer par une revue et une approbation&nbsp;? Cette revue peut-elle
+est conjointe à l'envoi ou l'approbation doit-elle précéder l'envoi&nbsp;?
+</p>
+<p>
+A) Envoi suite à une commande par courriel de CD au coût du média&nbsp;?<br />
+B) Envoi suite à une commande par courriel de CD avec bénéfices&nbsp;?<br />
+C) Vente sur étagère de CD au coût du média&nbsp;?<br />
+D) Vente sur étagère de CD avec bénéfices&nbsp;?<br />
+E) Fournisseurs des CD de A ou C ci-dessus, avec du matériel. Matériel vendu
+   avec un bénéfice, mais sans préinstallation&nbsp;?<br />
+F) E, mais avec les logiciels préinstallés&nbsp;?<br />
+G) Tous les cas précédents avec vente de support pour les logiciels&nbsp;?
+</p>
+
+<p>
+Si c'est plus simple, voici une autre manière de voir ceci&nbsp;: Quelles
+conditions doivent-elles être remplies par le fournisseur pour embarquer des
+binaires sous l'exception de licence de technologies et logiciels libres, et 
+jusqu'où le fabriquant peut-il recouvrir ses coûts ou vendre à profit&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+Un prix raisonnable et ordinaire pour la reproduction et la distribution est
+autorisé, mais pas de charge de licence ou de droit d'auteur. Le support est
+également autorisé, soumis aux limitations ci-dessus.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Si une revue unique est nécessaire pour vendre à profit des binaires non
+modifiés, cette autorisation peut-elle être utilisée par d'autres fournisseurs
+qui vendent des binaires non modifiés&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+La revue unique est pour le produit et est indépendante du fournisseur.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Est-il acceptable de placer un miroir officiel dans un pays interdit dans la
+section&nbsp;740.13(e) des règlements de l'administration aux
+exportations&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+Vous devez vous porter candidat à une licence pour placer un miroir officiel
+dans un pays sous embargo.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+S'il est techniquement impossible de bloquer l'accès des sept pays au serveur
+sur la Toile (ou ftp, etc.), la diligence normale requiert-elle des mesures
+extrêmes&nbsp;? Les standards de fait des pratiques usuelles de l'industrie
+(américaine) remplissent-ils cette diligence normale&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+Les standards de fait de l'industrie suffisent. J'espère que le gouvernement
+reconnaîtra que tout système imaginé par l'homme peut être mis en échec, avec
+un effort suffisant.
+</p>
+
+
+<blockquote class="question">
+
+<p>
+<span>D&nbsp;:</span>
+Que devons-nous faire si nous sommes au courant que quelqu'un télécharge des
+logiciels dans l'un de ces pays à partir d'un miroir situé aux
+États-Unis&nbsp;? D'un miroir situé hors des États-Unis&nbsp;?
+</p>
+
+<p>
+Certains de nos développeurs peuvent vivre ou être citoyens des sept pays
+interdits à l'exception des technologies et logiciels libres. Cela pose-t-il un
+problème pour ces développeurs d'avoir accès à des logiciels de chiffrement sur
+nos machines&nbsp;? Devons-nous leur demander de ne pas télécharger de tels
+programmes&nbsp;? Que devons-nous faire si nous sommes au courant qu'ils
+téléchargent des logiciels de chiffrement&nbsp;?
+</p>
+
+</blockquote>
+
+<p>
+Le simple fait d'envoyer des logiciels de chiffrement sur un serveur accessible
+depuis les pays sous embargo ne constitue pas une <q>preuve</q> que ces
+logiciels y ont été exportés. Donc, la responsabilité criminelle ne s'applique
+pas à l'acte d'envoi. Nous vous recommandons de réaliser des vérifications d'IP
+et d'interdire les téléchargements des pays sous embargo connu. Cette
+diligence fournira également une défense à une plainte en responsabilité
+civile. Si vous découvrez que vos logiciels ont été téléchargés d'une
+destination interdite, alors je vous recommande de bloquer les téléchargements
+futurs vers cet hôte spécifique jusqu'à l'obtention d'une licence du BXA.
+</p>
+
+<hr />
+
+<p>
+Debian remercie les <a href="http://www.hp.com/products1/linux/">opérations des
+systèmes Linux</a> de <a href="http://www.hp.com/">Hewlett-Packard</a> pour
+leur aide dans l'obtention de cet avis légal.
+</p>
