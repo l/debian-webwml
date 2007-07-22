@@ -1,0 +1,448 @@
+#use wml::debian::template title="Le projet de traduction de descriptions de Debian &mdash; DDTP"
+#use wml::debian::toc
+#use wml::debian::translation-check translation="1.14" maintainer="Nicolas Bertolissio"
+
+<p>
+Le <a href="http://ddtp.debian.net">projet de traduction des descriptions de
+Debian</a>, <i>Debian Description Translation Project, DDTP</i>, (qui a été
+implanté par <a href="mailto:Michael%20Bramer%20%3Cgrisu@debian.org%3E">Michael
+Bramer</a>) a pour but de fournir des descriptions traduites des paquets et
+l'infrastructure pour gérer ces traductions. Même s'il existe depuis quelques
+années déjà, il a été désactivé après une pénétration dans un hôte Debian et
+n'a actuellement que des fonctions de bases comparé au passé.
+</p>
+
+<p>
+Le projet gère&nbsp;:
+</p>
+
+<ul>
+  <li>la récupération des descriptions de paquets actuel (Sid) et anciens
+    (Etch)&nbsp;;</li>
+  <li>l'ajout de nouvelles traductions par l'interface de courriels&nbsp;;</li>
+  <li>la réutilisation de paragraphes déjà traduits d'une description dans une
+    autre description de paquet&nbsp;;</li>
+  <li>la fourniture de fichiers <tt>Translation-*</tt> pour les miroirs et
+    Apt.</li>
+</ul>
+
+<p>
+Le processus de relecture tel qu'il existait dans le passé n'a pas encore été
+réactivé. La section non libre de l'archive Debian n'est actuellement pas
+traduisible à cause de possibles problèmes de licence<!--
+Je pense que même pour les projet non libres le matériel d empaquetage de
+Debian (debian/) est  libre, mais il semble que ce ne soit pas obligatoire ! ?
+-->
+qui interdisent par exemple la traduction et doivent être vérifiés avec attention.
+</p>
+
+<p>
+Traduire plus de 20&nbsp;000&nbsp; descriptions de paquet est un grand défi.
+Veuillez nous aider à atteindre ce but. Veuillez également lire notre liste des
+<a href="#todo">choses à faire</a> sur les problèmes restant.
+</p>
+
+
+<toc-display/>
+
+
+<toc-add-entry>Interfaces avec le DDTP</toc-add-entry>
+
+<p>
+Il existe diverses façon de récupérer des descriptions et d'enregistrer des
+traductions. L'interface originale utilise le courriel pour la communication
+mais il y en a aussi d'autres.
+</p>
+
+<p>
+Comme toutes les interfaces utilisent le dorsal DDTP, vous devez d'abord vous
+assurer que votre langue est déjà gérée. Ce devrait être le cas pour la plupart
+des langues. Si cette gestion n'existe pas, veuillez écrire à <email
+debian-i18n@lists.debian.org> pour que votre langue soit activée. Beaucoup des
+règles de l'interface par courriel sont aussi valables pour les autres,
+veuillez vous assurer de les lire correctement.
+</p>
+
+
+<h3 id="email">L'interface par courriels</h3>
+
+<p>
+Pour obtenir une nouvelle description de paquet non traduite pour <a
+href="$(HOME)/releases/sid/">Sid</a> envoyez simplement un courriel à
+pdesc@ddtp.debian.net avec le sujet
+<tt>GET <var>n</var> <var>langue</var></tt>,
+où <var>n</var> est le nombre de descriptions que vous souhaitez récupérer (la
+limite maximale est de&nbsp;9) et <var>langue</var> le code de votre langue
+(par exemple <q>fr</q> ou <q>pt_BR</q>). Vous pouvez également ajouter un point
+suivi du codage au code de langue pour indiquer au serveur que vos traductions
+utiliser le codage spécifié. Pour obtenir la description d'un <var>paquet</var>
+particulier, utilisez
+<tt>GET <var>paquet</var> <var>langue</var></tt>.
+</p>
+
+<p>
+Un peu plus tard, vous recevrez un courriel contenant le nombre demandé de
+descriptions. Elles vous sont désormais réservées et ne peuvent pas être
+demandées par d'autres personnes intéressées avant que votre verrou n'expire.
+Traduisez les parties non traduites qui sont marqués pas &lt;trans&gt; de
+chaque fichier joint.
+</p>
+
+<p>
+Veuillez noter que le serveur suppose que le codage est fixé pour votre
+traduction.
+# Traducteurs : Adaptez ceci à votre langue !
+La langue française utilise par exemple le codage latin1.
+
+Si vous préférez un autre codage comme l'UTF-8 vous pouvez l'indique en
+changeant
+<tt>Description-<var>langue</var>:</tt> en
+<tt>Description-<var>langue</var>.UTF-8:</tt>.
+</p>
+
+<p>
+Une fois que vous avez terminé votre tâche, vous devez renvoyer les fichiers
+traduits à pdesc@ddtp.debian.net. le sujet et le corps du courriel n'importent
+pas et peuvent être vides. Il est suggéré de marqué chaque fichier attaché
+comme étant binaire (par exemple base64) car en général la traduction est
+constituée de deux codages&nbsp;: l'anglais qui est toujours codé en UTF-8,
+mais la partie traduite ne l'est pas. Si vous envoyé l'attachement en texte, le
+serveur DDTP pourrait utiliser le fichier avec un mauvais codage. Il est
+fortement recommandé que vous vérifiez votre traduction dans le DDTP la
+première fois que vous traduisez avec d'éviter ce genre d'erreurs&nbsp;!
+</p>
+
+<p>
+Une fois que vous avez renvoyé votre traduction vous recevrez un courriel de
+notification, sauf si le sujet de votre courriel contient <q>noguide</q>.
+<q>nothing</q> est une autre commande que le serveur comprend, elle peut être
+utilisée comme sujet des courriels que vous envoyez au serveur.
+</p>
+
+
+<h3 id="DDTSS">L'interface sur la Toile</h3>
+
+<p>
+En plus de l'interface officielle par courriel, il existe aussi une belle
+interface sur la Toile appelée <a
+href="http://kleptog.org/cgi-bin/ddtss2-cgi/xx">DDTSS</a> et écrite pas <a
+href="mailto:Martijn%20van%20Oosterhout%20%3Ckleptog@gmail.com%3E">Martijn van
+Oosterhout</a>, elle essayer de simplifier le travail de traduction et de
+relecture.
+</p>
+
+
+<h4>Aperçu</h4>
+
+<p>
+Elle gère toutes les capacités de l'interface par courriels et permet en plus
+la relecture. Elle gère une configuration personnalisée pour chaque équipe de
+langue afin que chaque équipe puisse décidé du nombre de relectures nécessaires
+pour qu'une description soit transférée au DDTP. Il est également possible de
+demander une autorisation d'utilisation afin que seul un groupe restreint de
+personnes puisse réaliser certaines actions. De plus vous n'avez pas à vous
+soucier du codage, le DDTSS le fait pour vous.
+</p>
+
+<p>
+Propriétés par défaut actuelles&nbsp;
+</p>
+
+<dl>
+  <dt>nombre de relectures&nbsp;:</dt>
+    <dd>3</dd>
+  <dt>langues gérées&nbsp;:</dt>
+    <dd>toutes celles du DDTP, sauf cs</dd>
+  <dt>autorisation d'utilisation&nbsp;:</dt>
+    <dd>aucune, ouvert à tous</dd>
+</dl>
+
+<p>
+Le tchèque n'est pas géré car l'équipe préfère l'interface par courriels.
+</p>
+
+<p>
+Il est possible d'indiquer une liste de mots par défaut pour une langue. Elle
+est utilisée pour fournir des traductions par défaut <i>via</i> des astuces.
+Cette liste est disponible par un lien au bas de la page de la langue.
+</p>
+
+
+<h4>Flux</h4>
+
+<p>
+Le DDTSS fournit les objets suivants pour toutes les langues&nbsp;:
+</p>
+
+
+<h5>Traductions en attente</h5>
+
+<p>
+Une liste de traductions en attente. Ce sont des descriptions qui peuvent être
+choisies librement pour être traduites par l'utilisateur. Cela ressemble
+à&nbsp;:
+</p>
+<pre>
+exim4 (priorité 52)
+exim4-config (priorité 52)
+ibrazilian (priorité 47, prise)
+postgresql-client (priorité 47)
+postgresql-contrib (priorité 47)
+grap (priorité 45)
+</pre>
+
+<p>
+Une équipe de langue devrait essayer de traduire d'abord les paquets avec une
+priorité haute (elle est calculée à partir de la catégorie, par exemple
+essentiel, de base, ...). Les paquets sont triés pour cela.
+</p>
+
+<p>
+Les descriptions marquées prises sont déjà réservées par un utilisateur et ne
+peuvent pas être sélectionnées pendant au plus 15&nbsp;minutes. S'il n'y a pas
+d'enregistrement pendant cette période, elles sont à nouveau marquées libres.
+</p>
+
+<p>
+Une description doit être complètement traduite dans que l'interface ne
+l'accepte. Aussi veuillez vous assurer que vous savez traduire tout le texte
+avant de commencer. Choisissez <q>Soumettre</q> pour ajouter votre traduction
+et <q>Abandonner</q> si vous décidez de ne pas la traduire. Il est aussi
+possible que vous ayez de la chance et qu'une traduction pour une version
+précédente du modèle anglais existe avec une liste des différences entre les
+descriptions anglaises que vous devrez intégrer à votre traduction. Vous pouvez
+copier et coller cette ancienne traduction à partir de la partie basse de la
+page et la mettre à jour en fonction.
+</p>
+
+<p>
+# Ne fonctionne pas encore correctement
+Pour éviter des fluctuations étranges de la largeur du texte, il est suggéré de
+ne pas passer à la ligne manuellement à moins que ce ne soit nécessaire (comme
+pour les listes). Les lignes sont coupées automatiquement. Rappelez-vous qu'un
+utilisateur peut ajouter ou supprimer de petites parties pendant la relecture
+ce qui pourrait entraîner des longueurs de lignes incohérentes. De plus
+corriger cela rend les différences créées par les relectures plus difficiles à
+lire.
+</p>
+
+<p>
+Il est aussi possible de sélectionner des paquets préférés par leur nom. C'est
+utile pour traduire un ensemble de paquets similaires, tel que manpages-de,
+manpages-es, pour pouvoir copier et coller les traductions précédentes.
+</p>
+
+<p>
+Même les paquets déjà traduits peuvent être à nouveau récupérés de cette façon
+pour les améliorer (veuillez noter que la fonctionnalité actuelle du DDTP est
+bogué, aussi veuillez éviter de l'utiliser si possible pour le moment).
+</p>
+
+<h5>Relectures en attente</h5>
+
+<p>
+Une liste des descriptions traduites qui a toujours besoin d'être relue. Cette
+liste peut ressemble à ceci&nbsp;:
+</p>
+
+<pre>
+ 1. aspell-es (doit être relu, l'a été 1 fois)
+ 2. bookmarks (doit être relu pour la première fois)
+ 3. doc-linux-ja-html (doit être relu pour la première fois)
+ 4. doc-linux-ja-text (doit être relu pour la première fois)
+ 5. gnome-menus (doit être relu pour la première fois)
+ 6. geany (doit être relu, l'a été 2 fois)
+ 7. initramfs-tools (doit être relu pour la première fois)
+ 8. inn2 (doit être relu pour la première fois)
+</pre>
+
+<p>
+Il existe les drapeaux suivants&nbsp;:
+</p>
+
+<dl>
+  <dt lang="en">doit être relu pour la première fois</dt>
+    <dd>
+    La version actuelle de cette traduction n'a pas encore été relue une seule
+    fois.
+    </dd>
+  <dt lang="en">doit être relu</dt>
+    <dd>
+    La version actuelle de cette traduction doit être encore relue, mais elle
+    l'a déjà été au moins une fois.
+    </dd>
+  <dt lang="en">relu</dt>
+    <dd>
+    Cette description a été relue sans être corrigée par l'utilisateur. D'autre
+    utilisateurs doivent la relire.
+    </dd>
+  <dt lang="en">détenteur</dt>
+    <dd>
+    Cette description a été traduite ou modifiée pendant la relecture d'un
+    utilisateur. D'autres utilisateurs doivent la relire.
+    </dd>
+</dl>
+
+<p>
+Si une relecture avec des corrections a déjà eue lieu vous obtiendrez une belle
+liste des différences en couleurs qui montre les modifications de la dernière
+relecture après avoir sélectionné le paquet.
+</p>
+
+
+<h5>Traduit récemment</h5>
+
+<p>
+Une liste des descriptions transférées au DDTP. Au moins dix paquet et la date
+du transfert sont listés.
+</p>
+
+
+<h3 id="Pootle">L'interface d'internationalisation</h3>
+
+<p>
+Il existe des prévisions d'implantation d'un nouveau cadre pour aider à la
+traduction de divers documents dans Debian, comme les fichiers PO et les
+modèles Debconf. Il devrait aussi gérer les descriptions de paquets à un
+moment. Lorsqu'il sera actif et fonctionnera correctement, le DDTP actuel et ses
+interfaces seront arrêtés.
+</p>
+
+<p>
+Ce cadre est basé sur <a href="http://pootle.wordforge.org/">Pootle</a>. C'est
+un projet du camp d'été de codage de Google.
+</p>
+
+
+<toc-add-entry name="rules">Règles usuelles de traduction</toc-add-entry>
+
+<p>
+Il est important de ne pas modifier les descriptions anglaises pendant la
+traduction. Si vous y trouvez des erreurs vous devez remplir un rapport de bogue
+contre le paquet correspondant, veuillez lire <a
+href="$(HOME)/Bugs/Reporting">Comment signaler un bogue dans Debian</a> pour
+plus d'informations.
+</p>
+
+<p>
+Traduisez les parties non traduites de chaque attachement qui sont marquées
+&lt;trans&gt;. Il est important de ne pas modifier de lignes ne contenant qu'un
+point dans la première colonne. Ce sont des séparateurs de paragraphe et ils ne
+sont pas visibles dans les interfaces à Apt.
+</p>
+
+<p>
+Les paragraphes qui sont déjà traduits sont soit réutilisés d'autres
+descriptions soit d'une ancienne traduction (et indiquent donc que le
+paragraphe original en anglais n'a pas été modifié depuis). Si vous modifié un
+tel paragraphe, il ne sera pas aussi changé dans les autres descriptions.
+</p>
+
+<p>
+Veuillez également noter que chaque équipe de langue a ses propres préférences
+comme des listes de mots et des styles de citation. Veuillez suivre ces
+standards aussi proche que possible. Les règles les plus importantes sont
+publiées <a href="$(HOME)/international/french/index">ici</a>. Il est conseillé
+de commencé en relisant des traductions existantes, soit <i>via</i> le <a
+href="#DDTSS">DDTSS</a> soit en navigant dans les descriptions dans un système
+de gestion des paquets comme <a
+href="http://packages.debian.org/aptitude">aptitude</a>, pour vous imprégner
+des habitudes de traduction. Dans tous les cas, veuillez contacter l'équipe de
+traduction de Debian en français à <email debian-l10n-french@lists.debian.org>.
+</p>
+
+
+<toc-add-entry>Relecture et correction des erreurs</toc-add-entry>
+
+# suggestion générale pour la relecture, non spécifique au DDTSS
+<p>
+Seul le DDTSS implante actuellement un mode de relecture et il n'envoie au DDTP
+que les traductions qui ont passé un nombre fixé de relectures.
+</p>
+
+<p>
+Après avoir noté des erreurs habituelles de typographie ou d'autre erreurs
+faciles à corriger comme des problèmes de codage, il est possible d'outrepasser
+tout processus de relecture et de corriger cela pour tous les paquets en
+utilisant un script. Il est suggéré que seul un coordinateur de traduction de
+confiance collecte tous ces problèmes et applique le script.
+</p>
+
+<p>
+Étant donné que la relecture peut prendre beaucoup de temps (en particulier si
+seule de petits problèmes sont corrigés constamment), il peut être intéressant
+d'ignorer ces erreurs de typographies et ces incohérences simples pendant la
+relecture et de vérifier tous ces problèmes ultérieurement. Cela accélère la
+relecture et permet d'appliquer ces corrections à toutes les descriptions
+ensuite.
+</p>
+
+
+<toc-add-entry>Utilisation des traductions</toc-add-entry>
+
+<p>
+Il n'y a encore pas de gestion correcte des descriptions de paquets traduites
+dans les distributions Sarge et Etch. Cependant, le paquet Apt dans <a
+href="http://packages.debian.org/testing/admin/apt">la distribution de test</a>
+remplit cette tâche. Avec ce paquet, tout utilisateur peut lire les
+descriptions dans sa langue préférée avec tous les programmes qui utilisent Apt,
+dont <tt>apt-cache</tt>, <tt>aptitude</tt>, <tt>synaptic</tt> et divers autres.
+Lenny utilisera cette version d'apt par défaut.
+</p>
+
+<p>
+Cette version d'Apt télécharge des fichiers
+<tt>Translation-<var>langue</var></tt> sur les miroirs Debian. Elles ne sont
+disponibles que pour Sid actuellement et peuvent manquer sur certains miroirs.
+Ces fichiers sont situés sur les miroir à <a
+href="http://ftp.fr.debian.org/debian/dists/sid/main/i18n/">dists/main/sid/i18n/</a>.
+</p>
+
+<p>
+Le DDTP fournit des traductions à jour pour
+<a href="http://ddtp.debian.net/debian/dists/sid/main/i18n/">Sid</a>,
+<a href="http://ddtp.debian.net/debian/dists/lenny/main/i18n/">Lenny</a> et
+<a href="http://ddtp.debian.net/debian/dists/etch/main/i18n/">Etch</a>. ajoutez simplement
+</p>
+
+<pre>
+  deb http://ddtp.debian.net/debian sid main
+</pre>
+
+<p>
+à votre fichier <tt>/etc/apt/sources.list</tt> (replacez Sid par votre
+distribution préférée) et mettez à jour la liste des paquet par <tt>apt-get
+update</tt>.
+</p>
+
+<!--
+<p>
+FIXME: I need to test this script from me again against the new Translation-<lang>
+files. Ignore this for now:<br />
+Il existe également un petit script qui remplace simplement les descriptions en
+anglais dans les fichiers <tt>Packages</tt> locaux
+(<tt>/var/lib/apt/lists/</tt>) par les traductions. Il peut être utilisé si la
+nouvelle version d'Apt ne peut pas être installée pour une raison quelconque.
+</p>
+-->
+
+
+<toc-add-entry name="todo">À faire</toc-add-entry>
+
+<p>
+Bien qu'il y ait certains progrès pour le DDTP, il y a toujours beaucoup à
+faire&nbsp;:
+</p>
+
+<ul>
+  <li>toutes les équipes de traduction recherchent de nouveaux traducteurs et
+    de nouveaux relecteurs pour les aider à traiter la très grande liste de
+    paquets&nbsp;;</li>
+  <li>ajouter la gestion de l'amélioration des descriptions anglaises pendant
+    le processus de traduction et de relecture. Cela pourrait peut-être être
+    réalisé en ajoutant une nouvelle pseudo langue anglaise contenant la
+    description améliorée comme traduction et en remplissant automatiquement un
+    rapport de bogue après une relecture réussie&nbsp;;</li>
+  <li>le nouveau cadre d'internationalisation basé sur Pootle a besoin d'être
+    beaucoup travaillé avant de remplir tous nos besoins.</li>
+</ul>
