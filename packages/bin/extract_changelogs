@@ -26,21 +26,29 @@ fi
 (
 date
 
+successful=1
 for part in $parts; do
     time "${bindir}/extract_files" -v -d "${localdir}/pool/$part/" \
 	-t "${htmldir}/changelogs/pool/$part/" \
 	-c "$configdir" -w "$tmpdir" \
 	--dumpfile "${filesdir}/changelogs.$part.dump" \
 	--cachefile "${filesdir}/changelogs.cache" --debug
+    if [ $? -ne 0 ]; then
+        echo program exited with non-zero exitcode: $? >&2
+    	successful=0
+    fi
 done
 
-find "${htmldir}/changelogs/" -name log -cmin +14440 \
- | while read logfile; do
- 	dir=$(dirname "$logfile")
+if [ "$successful" -eq 1 ]; then
+    find "${htmldir}/changelogs/" -name log -cmin +14440 \
+     | while read logfile; do
+    	dir=$(dirname "$logfile")
 	echo deleting $dir
  	rm -r "$dir"
 	rmdir --ignore-fail-on-non-empty $(dirname "$dir")
-done
-
+    done
+else
+    echo clean-up skipped because at least one of the extraction runs failed >&2
+fi
 date
 ) > $log 2>&1
