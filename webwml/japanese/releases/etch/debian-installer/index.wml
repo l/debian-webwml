@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debian &ldquo;etch&rdquo; インストール情報" NOHEADER="true"
-#use wml::debian::translation-check translation="1.11"
+#use wml::debian::translation-check translation="1.13"
 #include "$(ENGLISHDIR)/releases/info"
 #include "$(ENGLISHDIR)/releases/etch/release.data"
 #include "$(ENGLISHDIR)/releases/images.data"
@@ -136,6 +136,22 @@ href="http://wiki.debian.org/DebianInstaller/BrokenThings">wiki をチェック</a>し
 を使用してファイルシステムとパーティションのサイズを変更します。
 サイズ変更の操作が完了した後で再び partman を起動すれば、
 変更したパーティションの新しいサイズが表示されるはずです。
+</dd>
+
+<dt>hd-media を用いたインストールで loop-aes 暗号化を使用する際のエラー</dt>
+<dd>
+hd-media イメージを用いた (例えば USB メモリからの) インストールで loop-aes
+暗号化を使用しようとすると、以下の (あるいは類似の) エラーメッセージが syslog
+に出力されて失敗します (<a
+href="http://bugs.debian.org/434027">#434027</a>):<br />
+<tt>partman-crypto: ioctl: LOOP_SET_STATUS: Invalid argument, requested
+cipher or key length (256 bits) not supported by kernel.</tt><br />
+この問題の原因は、CD イメージがインストールの初期段階で通常の loop
+モジュールを用いて loop マウントされており、そのため後で loop-aes
+モジュールをロードできないためです。<br />
+この問題は、CD イメージを手動でアンマウントしてから loop
+モジュールをアンロードし、loop-aes モジュールをロードした上で CD
+イメージを再マウントすることで回避可能です。
 </dd>
 
 <dt>フル CD からの「デスクトップ」タスクのインストールが不完全です</dt>
