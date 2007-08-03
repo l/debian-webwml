@@ -64,9 +64,10 @@ package Deb::Versions;
 
 use strict;
 use Exporter;
+use Carp qw(cluck);
 
 our @ISA = qw( Exporter );
-our @EXPORT = qw( version_cmp version_sort );
+our @EXPORT = qw( version_cmp version_sort suites_cmp suites_sort );
 
 our $VERSION = v1.0.0;
 
@@ -79,7 +80,7 @@ sub version_cmp {
 	( $e1, $u1, $d1 ) = ( $1, $2, $3 );
 	$e1 ||= 0;
     } else {
-	warn "This seems not to be a valid version number:"
+	cluck "This seems not to be a valid version number:"
 	    . "<$ver1>\n";
 	return -1;
     }
@@ -87,7 +88,7 @@ sub version_cmp {
         ( $e2, $u2, $d2 ) = ( $1, $2, $3 );
 	$e2 ||= 0;
     } else {
-        warn "This seems not to be a valid version number:"
+        cluck "This seems not to be a valid version number:"
             . "<$ver2>\n";
         return 1;
     }
@@ -110,7 +111,7 @@ sub _cmp_part {
     my ( $v1, $v2 ) = @_;
     my $r;
 
-    while ( $v1 && $v2 ) {
+    while ( $v1 || $v2 ) {
 	$v1 =~ s/^(\D*)//o;
 	my $sp1 = $1;
 	$v2 =~ s/^(\D*)//o;
@@ -137,8 +138,8 @@ sub _cmp_part {
 
 sub _lcmp {
     my ( $v1, $v2 ) = @_;
-    
-    for ( my $i = 0; $i < length( $v1 ); $i++ ) {
+   
+    for ( my $i = 0; $i <= length( $v1 ); $i++ ) {
 	my ( $n1, $n2 ) = ( ord( substr( $v1, $i, 1 ) ), 
 			    ord( substr( $v2, $i, 1 ) ) );
 	$n1 += 256 if $n1 < 65; # letters sort earlier than non-letters
@@ -151,6 +152,46 @@ sub _lcmp {
     }
     return length( $v1 ) <=> length( $v2 );
 }
+
+our @SUITES_SORT = qw( woody oldstable sarge stable stable-proposed-updates
+		       etch etch-m68k testing testing-proposed-updates sid unstable
+		       experimental warty hoary hoary-backports breezy
+		       breezy-backports dapper );
+our @ARCHIVE_SORT = qw( non-US security updates volatile backports );
+our @PRIORITY_SORT = qw( required important standard optional extra );
+my $i = 1000;
+our %suites_sort = map { $_ => ($i-=10) } @SUITES_SORT;
+our %priority_sort = map { $_ => $i-- } @PRIORITY_SORT;
+$i = 0;
+our %archive_sort = map { $_ => $i++ } @ARCHIVE_SORT;
+
+sub suites_cmp {
+    my ($s_a, $s_b) = @_;
+    my $cmp_a = $suites_sort{$s_a};
+    unless ($cmp_a) {
+	$cmp_a = $suites_sort{$1} - $archive_sort{$2}
+	if $s_a =~ m;^(.+?)[/-](.*)$;o;
+    }
+    my $cmp_b = $suites_sort{$s_b};
+    unless ($cmp_b) {
+	$cmp_b = $suites_sort{$1} - $archive_sort{$2}
+	if $s_b =~ m;^(.+?)[/-](.*)$;o;
+    }
+    return ($cmp_a <=> $cmp_b);
+}
+
+sub suites_sort {
+    return sort { suites_cmp( $b, $a ) } @_;
+}
+
+sub priority_cmp {
+    return ($priority_sort{$_[0]} <=> $priority_sort{$_[1]});
+}
+
+sub priority_sort {
+    return sort { priority_cmp( $b, $a ) } @_;
+}
+
 
 1;
 __END__
