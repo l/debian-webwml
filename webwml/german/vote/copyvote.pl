@@ -239,7 +239,7 @@ while (<SRC>)
 	    s#archives. Please read the mailing list archives for#Mailinglistenarchive#;
 	    s#archives. Please read the debian-vote mailing list archives for#debian-vote-Mailinglistenarchive#;
 	    s#details.#für Details.#;
-	    s#that this does not include supporting or opposing arguments#Sie, dass dies nicht die unterstützenden oder ablehenden Argumente#;
+	    s#that this does not include supporting or opposing arguments#Sie, dass dies nicht die unterstützenden oder ablehnenden Argumente#;
 	    s#or rationales.  These may be found on the debian-vote mailing#oder Begründungen enthält. Diese können in den Archiven der#;
 	    s#list archives\.#debian-vote-Mailingliste gefunden werden.#;
 	    s#Nomination period:#Nominierungsperiode#;
