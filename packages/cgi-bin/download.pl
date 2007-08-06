@@ -209,7 +209,7 @@ END
 
 	print <<END;
 <p style="clear:both">If none of the above sites are fast enough for you, please see the
-<a href="http://www.ubuntulinux.org/wiki/Archive">complete mirror list</a>.<br>
+<a href="https://wiki.ubuntu.com/Mirrors">complete mirror list</a>.<br>
 The list of mirrors used by this scripts was last synced with the mirror list
 <em>Wed, 18 Oct 2006 16:39:11 +0000</em>.</p>
 END
