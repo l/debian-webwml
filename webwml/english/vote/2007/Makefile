@@ -28,17 +28,21 @@ $(foreach i, $(basename $(wildcard suppl_*_stats.wml)), $(i).$(LANGUAGE).html): 
 
 ifeq "$(LANGUAGE)" "en"
 
-textfiles := vote_001_quorum.err  vote_001_quorum.log   \
-             vote_001_tally.txt   vote_001_voters.txt   \
-             vote_001_vote.png    vote_001_results.dot  \
-             vote_001_results.txt vote_001_results.png vote_001_vote_detailed.png \
+textfiles := vote_001_quorum.err  vote_001_quorum.log  \
+             vote_001_tally.txt   vote_001_voters.txt  \
+             vote_001_vote.png    vote_001_results.dot \
+             vote_001_results.txt vote_001_results.png \
+             vote_001_vote_detailed.png                \
              vote_002_quorum.err  vote_002_quorum.log  \
              vote_002_tally.txt   vote_002_voters.txt  \
-             vote_002_vote.png    vote_002_results.png vote_002_results.dot  \
-             vote_002_results.txt vote_002_vote_detailed.png \
-             vote_003_quorum.err  vote_003_quorum.log   \
-             vote_003_tally.txt   vote_003_voters.txt   \
-             vote_003_results.txt 
+             vote_002_vote.png    vote_002_results.png \
+             vote_002_results.dot vote_002_results.txt \
+             vote_002_vote_detailed.png                \
+             vote_003_quorum.err  vote_003_quorum.log  \
+             vote_003_tally.txt   vote_003_voters.txt  \
+             vote_003_vote.png    vote_003_results.png \
+             vote_003_results.dot vote_003_results.txt \
+             vote_003_vote_detailed.png
 
 
 
