@@ -124,7 +124,9 @@ while (<SRC>)
 	s/of the Debian package/af Debian-pakken/;
 	s/upstream version/opstrømsversion/;
 	s/([Ff])or the old stable distribution/I den gamle stabile distribution/;
+	s/([Ff])or the oldstable distribution/I den gamle stabile distribution/;
 	s/([Ff])or the old stable/I den gamle stabile/;
+	s/([Ff])or the oldstable/I den gamle stabile/;
 	s/([Ff])or the current stable distribution/I den nuværende stabile distribution/;
 	s/([Ff])or the current stable/I den nuværende stabile/;
 	s/([Ff])or the Debian stable distribution/I Debians stabile distribution/;
