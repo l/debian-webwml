@@ -2,10 +2,10 @@
 
 <h1>Introduction to the bug control and manipulation mailserver</h1>
 
-<p>In addition to the mailserver on <code>request@bugs.debian.org</code>
-which allows the retrieval of bug data and documentation by email,
-there is another server on <code>control@bugs.debian.org</code> which
-also allows bug reports to be manipulated in various ways.</p>
+<p>Just as <code>request@bugs.debian.org</code> allows the <a
+href="server-request">retrieval of bug data and documentation by
+email</a>, <code>control@bugs.debian.org</code> allows bug reports to
+be manipulated in various ways.</p>
 
 <p>The control server works just like the request server, except that it
 has some additional commands; in fact, it's the same program.  The two
@@ -33,10 +33,68 @@ mailservers is available via the WWW, in
 
 <h1>Commands available at the control mailserver</h1>
 
+<center>
+<table>
+<tr>
+<td align="center">General</td>
+<td align="center">Versioning</td>
+<td align="center">Duplicates</td>
+<td align="center">Misc.</td>
+</tr>
+<tr>
+<!-- General -->
+<td valign="top">
+<dl>
+<dt><a href="#reassign">reassign</a></dt>
+<dt><a href="#severity">severity</a></dt>
+<dt><a href="#tag">tag</a></dt>
+<dt><a href="#retitle">retitle</a></dt>
+<dt><a href="#submitter">submitter</a></dt>
+</dl>
+</td>
+<!-- Versioning -->
+<td valign="top">
+<dl>
+<dt><a href="#found">found</a> |
+<a href="#notfound">notfound</a></dt>
+<dt><a href="#fixed">fixed</a> |
+<a href="#notfixed">notfixed</a></dt>
+<dt><a href="#reopen">reopen</a></dt>
+<!-- <dt>(close)</dt> Deprecated -->
+</dl>
+</td>
+<!-- Duplicates -->
+<td valign="top">
+<dl>
+<dt><a href="#merge">merge</a> |
+<a href="#unmerge">unmerge</a></dt>
+<dt><a href="#forcemerge">forcemerge</a></dt>
+<dt><a href="#clone">clone</a></dt>
+</dl>
+</td>
+<!-- Misc. -->
+<td valign="top">
+<dl>
+<dt><a href="#thanks">thanks</a></dt>
+<dt><a href="#comment">#</a></dt>
+<dt><a href="#forwarded">forwarded</a> | 
+<a href="#notforwarded">notforwarded</a></dt>
+<dt><a href="#owner">owner</a> |
+<a href="#noowner">nowner</a></dt>
+<dt><a href="#block">block</a> |
+<a href="#unblock">unblock</a></dt>
+</dl>
+</td>
+</tr>
+</table>
+</center>
+
 <dl>
 
+<a name="reassign">
 <dt><code>reassign</code> <var>bugnumber</var> <var>package</var>
  [ <var>version</var> ]</dt>
+</a>
 
 <dd>
 <p>
@@ -52,8 +110,10 @@ that the bug affects that version of the newly-assigned package.
 </p>
 </dd>
 
+<a name="reopen">
 <dt><code>reopen</code> <var>bugnumber</var>
  [ <var>originator-address</var> | <code>=</code> | <code>!</code> ]</dt>
+</a>
 
 <dd>
 <p>
@@ -85,7 +145,9 @@ package but recurred in a later version, it is better to use the
 </p>
 </dd>
 
+<a name="found">
 <dt><code>found</code> <var>bugnumber</var> [ <var>version</var> ]</dt>
+</a>
 
 <dd>
 <p>
@@ -114,7 +176,9 @@ because it was difficult to add a <var>version</var> to that command's
 syntax without suffering ambiguity.</p>
 </dd>
 
+<a name="notfound">
 <dt><code>notfound</code> <var>bugnumber</var> <var>version</var></dt>
+</a>
 
 <dd>
 <p>
@@ -128,7 +192,9 @@ will be known. It is intended for fixing mistakes in the record of when a
 bug was found.</p>
 </dd>
 
+<a name="fixed">
 <dt><code>fixed</code> <var>bugnumber</var> <var>version</var></dt>
+</a>
 
 <dd>
 <p>
@@ -142,7 +208,9 @@ bugnumber-done address to close a bug and mark it fixed in a
 particular version.</p>
 </dd>
 
+<a name="notfixed">
 <dt><code>notfixed</code> <var>bugnumber</var> <var>version</var></dt>
+</a>
 
 <dd>
 <p>
@@ -155,8 +223,10 @@ the given <var>version</var>.
 version, and notfound removes the found.)</p>
 </dd>
 
+<a name="submitter">
 <dt><code>submitter</code> <var>bugnumber</var>
 <var>originator-address</var> | <code>!</code></dt>
+</a>
 
 <dd>
 <p>
@@ -172,7 +242,9 @@ bugs merged with the one being reopened, <code>submitter</code> does not
 affect merged bugs.</p>
 </dd>
 
+<a name="forwarded">
 <dt><code>forwarded</code> <var>bugnumber</var> <var>address</var></dt>
+</a>
 
 <dd>
 Notes that <var>bugnumber</var> has been forwarded to the upstream
@@ -182,7 +254,9 @@ address, or to record a new one for a bug that wasn't previously noted
 as having been forwarded.
 </dd>
 
+<a name="notforwarded">
 <dt><code>notforwarded</code> <var>bugnumber</var></dt>
+</a>
 
 <dd>
 
@@ -191,7 +265,9 @@ upstream maintainer.  If the bug was not recorded as having been
 forwarded then this will do nothing.
 </dd>
 
+<a name="retitle">
 <dt><code>retitle</code> <var>bugnumber</var> <var>new-title</var></dt>
+</a>
 
 <dd>
 <p>
@@ -204,7 +280,9 @@ a set of merged reports this will change the title of only the
 individual bug requested, and not all those with which it is merged.</p>
 </dd>
 
+<a name="severity">
 <dt><code>severity</code> <var>bugnumber</var> <var>severity</var></dt>
+</a>
 
 <dd>
 <p>Set the severity level for bug report #<var>bugnumber</var> to
@@ -220,7 +298,9 @@ consult the general developers' documentation for the bug system.
 </p>
 </dd>
 
+<a name="clone">
 <dt><code>clone</code> <var>bugnumber</var> <var>NewID</var> [ <var>new IDs</var> ... ]</dt>
+</a>
 
   <dd>
   <p>
@@ -248,7 +328,9 @@ consult the general developers' documentation for the bug system.
   </pre>
 </dd>
 
+<a name="merge">
 <dt><code>merge</code> <var>bugnumber</var> <var>bugnumber</var> ...</dt>
+</a>
 
 <dd>
 <p>
@@ -282,7 +364,9 @@ the reports each separately meet the criteria for expiry.
 </p>
 </dd>
 
+<a name="forcemerge">
 <dt><code>forcemerge</code> <var>bugnumber</var> <var>bugnumber</var> ...</dt>
+</a>
   <dd>
   <p>
   Forcibly merges two or more bug reports. The first bug listed
@@ -298,7 +382,9 @@ the reports each separately meet the criteria for expiry.
   message if you do this.</p>
   </dd>
 
+<a name="unmerge">
 <dt><code>unmerge</code> <var>bugnumber</var></dt>
+</a>
 
 <dd>
 <p>
@@ -319,7 +405,9 @@ several <code>unmerge</code> commands in your message.
 </p>
 </dd>
 
-<dt><code>tags</code> <var>bugnumber</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var> [ <var>tag</var> ... ]
+<a name="tags">
+<dt><code>tags</code> <var>bugnumber</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var> [ <var>tag</var> ... ]</dt>
+</a>
 
   <dd>
   <p>
@@ -365,17 +453,23 @@ several <code>unmerge</code> commands in your message.
   general developers' documentation for the bug system.</p>
 </dd>
 
+<a name="block">
 <dt><code>block</code> <var>bugnumber</var> <code>by</code> <var>bug</var> ...</dt>
+</a>
   <dd>Note that the fix for the first bug is blocked by the other listed bugs.
 </dd>
 
+<a name="unblock">
 <dt><code>unblock</code> <var>bugnumber</var> <code>by</code> <var>bug</var> ...</dt>
+</a>
   <dd>Note that the fix for the first bug is no longer blocked by the other
   listed bugs.
 </dd>
 
+<a name="close">
 <dt><code>close</code> <var>bugnumber</var> [ <var>fixed-version</var> ]
  (deprecated)</dt>
+</a>
 
 <dd>
 <p>
@@ -396,7 +490,9 @@ close a bug properly</a>.</p>
 will note that the bug was fixed in that version of the package.</p>
 </dd>
 
+<a name="package">
 <dt><code>package</code> [ <var>packagename</var> ... ]</dt>
+</a>
 
   <dd>
   <p>
@@ -422,7 +518,9 @@ will note that the bug was fixed in that version of the package.</p>
   </pre>
 </dd>
 
+<a name="owner">
 <dt><code>owner</code> <var>bugnumber</var> <var>address</var> | <code>!</code></dt>
+</a>
 
   <dd>
   <p>
@@ -436,20 +534,26 @@ will note that the bug was fixed in that version of the package.</p>
   <code>!</code> shorthand or specify your own email address.</p>
 </dd>
 
+<a name="noowner">
 <dt><code>noowner</code> <var>bugnumber</var></dt>
+</a>
 
   <dd>Forgets any idea that the bug has an owner other than the usual
   maintainer.  If the bug had no owner recorded then this will do nothing.
 </dd>
 
+<a name="archive">
 <dt><code>archive</code> <var>bugnumber</var></dt>
+</a>
 
   <dd>Archives a bug that had been archived at some point in the past
   but is currently not archived if the bug fulfills
   the requirements for archival, ignoring time.
 </dd>
 
+<a name="unarchive">
 <dt><code>unarchive</code> <var>bugnumber</var></dt>
+</a>
 
   <dd>Unarchives a bug that was previously archived. Unarchival should
   generally be coupled with reopen and found/fixed as appropriate. Bugs
@@ -457,7 +561,9 @@ will note that the bug was fixed in that version of the package.</p>
   non-time based archival requirements are met.
 </dd>
 
+<a name="comment">
 <dt><code>#</code>...</dt>
+</a>
 
   <dd>One-line comment. The <code>#</code> must be at the start of the line.
   The text of comments will be included in the acknowledgement sent to the
@@ -465,6 +571,7 @@ will note that the bug was fixed in that version of the package.</p>
   reasons for your commands.
 </dd>
 
+<a name="thanks">
 <dt><code>quit</code></dt>
 <dt><code>stop</code></dt>
 <dt><code>thank</code></dt>
@@ -475,6 +582,7 @@ will note that the bug was fixed in that version of the package.</p>
 <!-- #366093, I blame you! -->
 <!-- <dt><code>kthxbye</code></dt> -->
 <!-- See... I documented it! -->
+</a>
 
   <dd>On a line by itself, in any case, possibly followed by
       whitespace, tells the control server to stop processing the
