@@ -1,156 +1,224 @@
 #use wml::debian::template title="Suivi des bogues Debian - signaler les bogues" NOHEADER=yes NOCOPYRIGHT=true
 
-#use wml::debian::translation-check translation="1.49" maintainer="Christian Couder"
+#use wml::debian::translation-check translation="1.56" maintainer="Christian Couder"
 
 
-<h1>Comment signaler un bogue dans Debian</h1>
+<h1>Comment signaler un bogue dans Debian avec reportbug</h1>
 
 
-<h2>Choses importantes à noter <strong>avant</strong> de signaler un bogue</h2>
-
-<p>S'il vous plaît, ne signalez pas plusieurs bogues sans lien entre
-eux &mdash; en particulier s'ils affectent des paquets différents &mdash; dans le
-même rapport de bogue. Cela nous facilite énormément la vie si vous
-envoyez des rapports distincts.</p>
- 
-<p>Vous devriez vérifier que votre bogue n'a pas déjà été signalé par
-quelqu'un d'autre avant de le soumettre. Des listes des bogues non
-encore résolus sont disponibles <a href="./">sur la Toile</a> et <a
-href="Access">ailleurs</a> &mdash; consultez la documentation pour plus de
-détails. Vous pouvez envoyer vos commentaires concernant un rapport de
-bogue existant n°<var>&lt;numéro&gt;</var> en envoyant un message à
-<var>&lt;numéro&gt;</var>@bugs.debian.org</p>
-
-<p>Si vous ne pouvez pas déterminer de quel paquet vient le problème,
-merci de demander conseil à la <a
-href="mailto:debian-user@lists.debian.org">liste de diffusion des
-utilisateurs de Debian</a>. Si votre problème
-n'est pas lié à un unique paquet mais au fonctionnement global de
-Debian, il y a plusieurs <a href="pseudo-packages">pseudo-paquets</a>
-ou même des <a href="../MailingLists/">listes de
-diffusion</a> que vous pouvez utiliser pour nous faire part de vos
-problèmes.
-
-<p>Si vous voulez envoyer une copie de votre rapport de bogue
-à d'autres destinataires, (comme des listes de diffusion), vous 
-ne devez pas utiliser les en-têtes habituels de message, mais
-<a href="#xcc">un autre moyen, décrit ci-dessous</a>.</p>
-
-
-<h2>Utiliser un outil automatique pour envoyer un rapport de bogue</h2>
-
-<p>Le programme <code><a
+<a name="reportbug"></a>
+<p>
+Nous vous recommandons fortement d'utiliser le programme <a
 href="http://packages.debian.org/stable/utils/reportbug">reportbug</a></code>
-facilite le signalement des bogues en vous guidant pas à pas au cours du
-processus. L'outil <kbd>querybts</kbd>, disponible dans le même paquet que
-<a
-href="http://packages.debian.org/stable/utils/reportbug">reportbug</a>,
-fournit une interface pratique en mode texte au système de suivi des
-bogues.</p>
+pour signaler vos bogues dans Debian. Les commandes simples <code>aptitude
+install reportbug; reportbug</code> vous permettent d'installer et de lancer
+<code>reportbug</code>. Il vous guide pas à pas au cours du processus de
+signalement d'un bogue.
+</p>
 
-<p>Les utilisateurs d'Emacs peuvent aussi utiliser la commande debian-bug
-fournie par le paquet
-<code><a href="http://packages.debian.org/stable/utils/debian-el">\
-debian-el</a></code>. Lorsqu'elle est lancée avec <kbd>M-x
-debian-bug</kbd>, elle demande toutes les informations nécessaires de façon
-similaire à <code>reportbug</code>.</p>
- 
+<p>
+Si vous avez des questions que l'invite interactive de report bug ne résoud
+pas, vous pouvez vous référer à nouveau à cette documentation ou demander sur
+la <a href="mailto:debian-user@lists.debian.org">liste de diffusion des
+utilisateurs de Debian</a>.
+</p>
+
+
+<h1>Comment signaler un bogue dans Debian par courrier électronique</h1>
+
+
+<h2>Choses importantes à noter <strong>avant</strong> d'envoyer votre rapport
+  de bogue</h2>
+
+
+<a name="whatpackage"></a>
+<h3>À quel paquet se rapporte votre bogue&nbsp;?</h3>
+
+<p>
+Vous devez savoir contre quel paquet votre rapport de bogue doit être rempli.
+Veuillez voir <a href="#findpkgver">cet exemple</a> pour avoir des informations
+sur comment trouver cette information (vous utiliserez cette information pour
+<a href="#filedalready">savoir si votre bogue a déjà été signalé</a>).
+</p>
+
+
+<p>
+Si vous ne pouvez pas déterminer contre quel paquet le rapport de bogue doit
+être rempli, merci de demander conseil à la <a
+href="mailto:debian-user@lists.debian.org">liste de diffusion des utilisateurs
+de Debian</a>.
+</p>
+
+<p>
+Si votre problème n'est pas lié à un unique paquet mais au fonctionnement
+global de Debian, il y a plusieurs <a href="pseudo-packages">pseudo-paquets</a>
+ou même des <a href="../MailingLists/">listes de diffusion</a> que vous pouvez
+utiliser pour nous faire part de vos problèmes.
+</p>
+
+
+<a name="filedalready"></a>
+<h3>Votre bogue a-t-il déjà été signalé&nbsp;?</h3>
+
+<p>
+Vous devriez vérifier que votre bogue n'a pas déjà été signalé avant de le
+soumettre. Vous pouvez voir quels bogues ont été signalés en utilisant le <a
+href="./#pkgreport">formulaire de recherche des paquets</a>. S'il existe un
+rapport de bogue avec le n°&nbsp;<var>numéro</var>, vous devez soumettre vos
+commentaires en envoyant un courriel à <var>&lt;numéro&gt;</var>\
+@bugs.debian.org plutôt que de signaler un nouveau bogue.
+</p>
+
+
+<h3>Envoyez plusieurs rapports pour plusieurs bogues</h3>
+
+<p>
+Veuillez ne pas signaler plusieurs bogues sans lien entre eux &mdash;&nbsp;en
+particulier s'ils affectent des paquets différents&nbsp;&mdash; dans le même
+rapport de bogue.
+</p>
+
+
+<h3>Ne signalez pas le bogue en amont</h3>
+
+<p>
+Si vous signalez le bogue dans Debian, n'envoyez pas de copie aux responsables
+amonts du logiciel vous-même, car il est possible que le bogue n'existe que
+dans Debian. Si nécessaire, le responsable du paquet fera suivre le bogue.
+</p>
+
 
 <h2>Envoyer le rapport de bogue par courrier électronique</h2>
 
-<p>Envoyez un message à
-<a href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></a>, comme décrit ci-dessous.</p>
+<p>
+Vous pouvez signaler un bogue dans Debian en envoyant un courriel à <a
+href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></a>
+selon le format particulier décrit ci-dessous.
+</p>
 
-<p>Bien sûr, comme pour tout message électronique, vous inclurez une
-ligne <code>Objet</code> claire et descriptive dans l'en-tête
-principal du message électronique. L'objet que vous donnez est
-utilisé comme titre initial dans le système de suivi des bogues,
-merci d'essayer de le rendre informatif&nbsp;!</p>
 
-<p>Vous devez mettre un <a name="pseudoheader">pseudo-en-tête</a> au début 
-du corps du message.
-Cela signifie que la première ligne du message devrait être&nbsp;:
+<h3>En-têtes</h3>
+
+<p>
+Comme pour tout message électronique, vous inclurez une ligne
+<code>Objet</code> claire et descriptive dans l'en-tête principal du message
+électronique. L'objet que vous donnez est utilisé comme titre initial dans le
+système de suivi des bogues, merci d'essayer de le rendre informatif&nbsp;!
+</p>
+
+<p>
+Si vous souhaitez envoyer un copie de votre rapport de bogue à des
+destinataires supplémentaires (comme des listes de diffusion), vous ne devez
+pas utiliser les en-têtes de courriel habituels, mais <a href="#xcc">une
+méthode différente décrite ci-dessous</a>.
+</p>
+
+<h3>Pseudo-en-tête</h3>
+
+<p>
+La première partie du rapport de bogue est constituée de <a
+name="pseudoheader">pseudo-en-têtes</a> qui contiennent des informations sur le
+paquet et la version auxquels s'applique votre rapport de bogue. Les
+pseudo-en-têtes doivent débuter sur la première ligne du corps du message. En
+d'autres mots, la première ligne du corps du message doit être&nbsp;:
+</p>
 
 <pre>
-Package: &lt;un_truc&gt;
+Package: &lt;nom de paquet&gt;
 </pre>
 
-<p>Remplacez <code>&lt;un_truc&gt;</code> par le nom du paquet défectueux.
+<p>
+Remplacez <code>&lt;nom de paquet&gt;</code> par le <a href="#whatpackage">nom
+du paquet</a> défectueux.
+</p>
 
-<p>La deuxième ligne du message devrait être&nbsp;:
+<p>
+La deuxième ligne du message doit être&nbsp;:
+</p>
 
 <pre>
-Version: &lt;un_truc&gt;
+Version: &lt;version du paquet&gt;
 </pre>
 
-<p>Remplacez <code>&lt;un_truc&gt;</code> par la version du paquet.
-Merci de rien mettre d'autre que la version elle même, car le système
-de suivi des bogues se base sur cet en-tête pour trouver quelles
-versions sont touchées par ce bogue.</p>
+<p>
+Remplacez <code>&lt;version du paquet&gt;</code> par la version du paquet.
+Merci de rien mettre d'autre que la version elle même, car le système de suivi
+des bogues se base sur cet en-tête pour trouver quelles versions sont touchées
+par ce bogue.
+</p>
 
-<p>Vous devez fournir une ligne <code>Package</code> correcte dans le
-pseudo-en-tête pour que le système de suivi des bogues délivre le
-message au responsable du paquet. Voyez <a href="#findpkgver">cet
-exemple</a> pour savoir comment trouver cette information.</p>
+<p>
+Vous devez fournir une ligne <code>Package</code> correcte dans le
+pseudo-en-tête pour que le système de suivi des bogues délivre le message au
+responsable du paquet. Voyez <a href="#findpkgver">cet exemple</a> pour savoir
+comment trouver cette information.
+</p>
 
-<p>Les champs du pseudo-en-tête devraient commencer au tout début de
-leur ligne.</p>
+<p>
+Pour avoir d'autres pseudo-en-têtes valides, veuillez voir les <a
+href="#additionalpseudoheaders">pseudo-en-têtes supplémentaires</a>.
+</p>
 
-<p>S'il vous plaît, incluez dans votre rapport&nbsp;:
+
+<h3>Corps de votre rapport</h3>
+
+<p>
+Veuillez inclure dans votre rapport&nbsp;:
+</p>
 
 <ul>
-
-<li>Le texte <em>exact</em> et <em>complet</em> de tout message
-d'erreur affiché ou enregistré. C'est très important&nbsp;!</li>
-
-<li>Ce que vous avez exactement tapé ou fait pour faire apparaître le
-problème.</li>
-
-<li>Une description du comportement incorrect&nbsp;: ce que vous attendiez
-exactement, et ce que vous avez observé. Une transcription d'une
-session d'exemple est un bon moyen de montrer cela.</li>
-
-<li>Une suggestion de correction, ou même une rustine, si vous en
-avez.</li>
-
-<li>Les détails de la configuration du programme posant problème.
-Incluez le texte complet de son fichier de configuration.</li>
-
-<li>Les versions de tous les paquets desquels dépend le paquet
-défectueux.</li>
-
-<li>Quelle version du noyau vous utilisez (tapez <code>uname
--a</code>), votre bibliothèque C partagée (tapez <code>ls -l
-/lib/libc.so.6</code> ou <code>dpkg -s libc6 | grep ^Version</code>),
-et tout autre renseignement sur votre système Debian, si cela semble
-approprié. Par exemple, si vous avez eu un problème avec un script
-Perl, vous pouvez fournir la version du binaire « perl » (tapez
-<code>perl -v</code> ou <code>dpkg -s perl | grep
-^Version:</code>).</li>
-
-<li>Les renseignements appropriés sur votre matériel. Si vous
-rapportez un problème avec un pilote de périphérique, merci de décrire
-<em>tout</em> le matériel de votre système, car les problèmes sont
-souvent causés par des conflits d'IRQ et d'adresse E/S.</li>
-
+  <li>Le texte <em>exact</em> et <em>complet</em> de tout message d'erreur
+    affiché ou enregistré. C'est très important&nbsp;!</li>
+  <li>Ce que vous avez exactement tapé ou fait pour faire apparaître le
+    problème.</li>
+  <li>Une description du comportement incorrect&nbsp;: ce que vous attendiez
+    exactement, et ce que vous avez observé. Une transcription d'une session
+    d'exemple est un bon moyen de montrer cela.</li>
+  <li>Une suggestion de correction, ou même une rustine, si vous en avez.</li>
+  <li>Les détails de la configuration du programme posant problème. Incluez le
+    texte complet de son fichier de configuration.</li>
+  <li>Les versions de tous les paquets desquels dépend le paquet
+    défectueux.</li>
+  <li>Quelle version du noyau vous utilisez (tapez <code>uname -a</code>),
+    votre bibliothèque C partagée (tapez <code>ls -l /lib/libc.so.6</code> ou
+    <code>dpkg -s libc6 | grep ^Version</code>), et tout autre renseignement
+    sur votre système Debian, si cela semble approprié. Par exemple, si vous
+    avez eu un problème avec un script Perl, vous pouvez fournir la version du
+    binaire « perl » (tapez <code>perl -v</code> ou <code>dpkg -s perl | grep
+    ^Version:</code>).</li>
+  <li>Les renseignements appropriés sur votre matériel. Si vous rapportez un
+    problème avec un pilote de périphérique, merci de décrire <em>tout</em> le
+    matériel de votre système, car les problèmes sont souvent causés par des
+    conflits d'IRQ et d'adresse E/S.</li>
+  <li>Si <a href="http://packages.debian.org/stable/utils/reportbug">\
+    reportbug</a> est installé, la sortie de <code>reportbug -q --template -T
+    none -s none -S normal -b --list-cc none -q &lt;package&gt;</code> sera
+    également utile car elle contient le sortie de scripts spécifiques du
+    responsable et des informations de version.</li>
 </ul>
 
-<p>Incluez tout détail qui semble lié &mdash; il y a très peu de risque de rendre 
-votre rapport trop long en incluant trop d'informations. S'ils sont petits, 
-merci d'inclure dans votre rapport tout fichier que vous avez utilisé pour 
-reproduire le problème (en les uuencodant s'ils peuvent contenir des 
-caractères spéciaux).</p>
+<p>
+Incluez tout détail qui semble lié &mdash; il y a très peu de risque de rendre
+votre rapport trop long en incluant trop d'informations. S'ils sont petits,
+merci d'inclure dans votre rapport tout fichier que vous avez utilisé pour
+reproduire le problème (s'ils sont longs, pensez à les rendre disponible sur un
+site public si possible).
+</p>
 
-<p>Pour plus de conseils sur la façon d'aider les développeurs à
-corriger votre problème, merci de lire <a
-href="http://www.chiark.greenend.org.uk/~sgtatham/bugs.html">Comment
-signaler efficacement des bogues (texte en anglais)</a>.</p>
+<p>
+Pour plus de conseils sur la façon d'aider les développeurs à corriger votre
+problème, merci de lire <a
+href="http://www.chiark.greenend.org.uk/~sgtatham/bugs.html">Comment signaler
+efficacement des bogues (texte en anglais)</a>.
+</p>
 
 
-<h2><a name="example">Exemple</a></h2>
+<h2><a name="example">Exemple de rapport de bogue</a></h2>
 
-<p>Un rapport de bogue, avec un en-tête de message, ressemble à
-quelque chose comme ceci&nbsp;:</p>
+<p>
+Un rapport de bogue, avec en-têtes et pseudo-en-têtes de message, ressemble à
+quelque chose comme ceci&nbsp;:
+</p>
 
 <pre>
   To: submit@bugs.debian.org
@@ -176,15 +244,18 @@ quelque chose comme ceci&nbsp;:</p>
   and libc6 2.1.3-10.
 </pre>
 
-<p>Note du traducteur&nbsp;: pour information, une traduction complète de
-ce message pourrait être&nbsp;:</p>
-<pre>
-  A: submit@bugs.debian.org
-  De: diligent@testing.linux.org
-  Objet: Hello affiche « goodbye »
+<p>
+Note du traducteur&nbsp;: pour information, une traduction complète de ce
+message pourrait être&nbsp;:
+</p>
 
-  Package: hello
-  Version: 1.3-2
+<pre>
+  À : submit@bugs.debian.org
+  De : diligent@testing.linux.org
+  Objet : Hello affiche « goodbye »
+
+  Paquet : hello
+  Version : 1.3-2
 
   Quand je lance « hello »  sans argument depuis un shell ordinaire
   cela affiche « goodbye », plutôt que le « hello, world » attendu.
@@ -204,84 +275,107 @@ ce message pourrait être&nbsp;:</p>
 
 
 <h2><a name="xcc">Envoyer des copies de rapports de bogue à d'autres 
-adresses</a></h2>
+  adresses</a></h2>
 
-<p>Il est parfois nécessaire d'envoyer une copie d'un rapport de bogue
-ailleurs qu'à <code>debian-bugs-dist</code> et au responsable du
-paquet, auxquels le rapport est normalement envoyé.</p>
+<p>
+Il est parfois nécessaire d'envoyer une copie d'un rapport de bogue ailleurs
+qu'à <code>debian-bugs-dist</code> et au responsable du paquet, auxquels le
+rapport est normalement envoyé.
+</p>
 
-<p>Vous pouvez faire cela en utilisant les autres adresses dans le champ 
-<code>Copies-À</code> (<code>CC</code> en anglais) de votre logiciel de 
-messagerie, mais alors les autres copies n'auront pas de numéro de rapport 
-de bogue mis dans le champ <code>Répondre-À</code> (<code>Reply-To</code> 
-en anglais) et dans la ligne <code>Objet</code> (<code>Subject</code> en 
-anglais). Quand les destinataires répondront ils garderont probablement 
-l'entrée <code>submit@bugs.debian.org</code> dans l'en-tête et verront leur 
-message enregistré comme un nouveau rapport de bogue. Cela engendre beaucoup 
-de rapports dupliqués.</p>
+<p>
+Vous pouvez faire cela en utilisant les autres adresses dans le champ
+<code>Copies-À</code> (<code>CC</code> en anglais) de votre logiciel de
+messagerie, mais alors les autres copies n'auront pas de numéro de rapport de
+bogue mis dans le champ <code>Répondre-À</code> (<code>Reply-To</code> en
+anglais) et dans la ligne <code>Objet</code> (<code>Subject</code> en anglais).
+Quand les destinataires répondront ils garderont probablement l'entrée
+<code>submit@bugs.debian.org</code> dans l'en-tête et verront leur message
+enregistré comme un nouveau rapport de bogue. Cela engendre beaucoup de
+rapports dupliqués.
+</p>
 
-<p>La <em>bonne</em> manière de procéder est d'utiliser l'en-tête
-<code>X-Debbugs-CC</code>. Ajoutez une ligne comme celle-ci à votre en-tête
-de message&nbsp;:
+<p>
+La <em>bonne</em> manière de procéder est d'utiliser l'en-tête
+<code>X-Debbugs-CC</code>. Ajoutez une ligne comme celle-ci à votre en-tête de
+message&nbsp;:
+</p>
+
 <pre>
  X-Debbugs-CC: autre-liste@cosmic.edu
 </pre>
-<p>Cela fera envoyer par le système de suivi des bogues une copie de votre 
-rapport à l'adresse (aux adresses) de la ligne <code>X-Debbugs-CC</code> 
-aussi bien qu'à <code>debian-bugs-dist</code>.</p>
 
-<p>Évitez d'envoyer de telles copies aux adresses d'autres rapports de
-bogues, parce qu'elles seront interceptées par les vérifications qui
-empêchent les messages de boucler. Il y a relativement peu d'intérêt à
-utiliser <code>X-Debbugs-CC</code> pour cela de toute façon, car le
-numéro de bogue ajouté par ce mécanisme sera simplement remplacé par
-un nouveau ; utilisez un en-tête <code>CC</code> ordinaire à la
-place.</p>
+<p>
+Cela fera envoyer par le système de suivi des bogues une copie de votre rapport
+à l'adresse (aux adresses) de la ligne <code>X-Debbugs-CC</code> aussi bien
+qu'à <code>debian-bugs-dist</code>.
+</p>
 
-<p>Cette fonctionnalité peut souvent être utilement combinée avec le code de 
-message <code>quiet</code> &mdash; voyez ci-dessous.</p>
+<p>
+Évitez d'envoyer de telles copies aux adresses d'autres rapports de bogues,
+parce qu'elles seront interceptées par les vérifications qui empêchent les
+messages de boucler. Il y a relativement peu d'intérêt à utiliser
+<code>X-Debbugs-CC</code> pour cela de toute façon, car le numéro de bogue
+ajouté par ce mécanisme sera simplement remplacé par un nouveau ; utilisez un
+en-tête <code>CC</code> ordinaire à la place.
+</p>
+
+<p>
+Cette fonctionnalité peut souvent être utilement combinée avec le code de
+message <code>quiet</code> &mdash; voyez ci-dessous.
+</p>
 
 
 <h2><a name="severities">Niveaux de gravité</a></h2>
 
-<p>Si un rapport concerne un bogue particulièrement grave, ou si c'est 
-plutôt une demande de fonctionnalité, vous pouvez indiquer un niveau de 
-gravité pour le bogue lorsque vous le signalez. Ce n'est cependant pas 
-indispensable et les développeurs affecteront un niveau de gravité approprié 
-à votre rapport si vous ne le faites pas.</p>
+<p>
+Si un rapport concerne un bogue particulièrement grave, ou si c'est plutôt une
+demande de fonctionnalité, vous pouvez indiquer un niveau de gravité pour le
+bogue lorsque vous le signalez. Ce n'est cependant pas indispensable et les
+responsables du paquet affecteront un niveau de gravité approprié à votre
+rapport si vous ne le faites pas (ou s'il est mauvais).
+</p>
 
-<p>Pour indiquer un niveau de gravité mettez une ligne comme celle-ci
+<p>
+Pour indiquer un niveau de gravité mettez une ligne comme celle-ci
 dans le <a href="#pseudoheader">pseudo-en-tête</a>&nbsp;:
+</p>
 
 <pre>
 Severity: &lt;<var>gravité</var>&gt;
 </pre>
 
-<p>Remplacez &lt;<var>gravité</var>&gt; par l'un des niveaux de
-gravité disponible, comme décrit dans la <A
-href="Developer#severities">documentation des développeurs</A>.</P>
+<p>
+Remplacez &lt;<var>gravité</var>&gt; par l'un des niveaux de gravité
+disponible, comme décrit dans la <a href="Developer#severities">documentation
+avancée</a>.
+</p>
 
 
 <h2><a name="tags">Marquer un bogue</a></h2>
 
-<p>Vous pouvez donner des étiquettes (<i>tags</i>) à un bogue, c'est-à-dire
-le marquer en même temps que vous le signalez. Par exemple, si
-vous incluez une rustine (un <i>patch</i>) avec votre rapport de bogue,
-vous pouvez lui donner l'étiquette <code>patch</code>. Ce n'est pas
-obligatoire, cependant, car les développeurs mettront les étiquettes sur
-votre rapport si nécessaire.
+<p>
+Vous pouvez donner des étiquettes (<i>tags</i>) à un bogue, c'est-à-dire le
+marquer en même temps que vous le signalez. Par exemple, si vous incluez une
+rustine (un <i>patch</i>) avec votre rapport de bogue, vous pouvez lui donner
+l'étiquette <code>patch</code>. Ce n'est pas obligatoire, cependant, car les
+développeurs mettront les étiquettes sur votre rapport si nécessaire.
+</p>
 
-<p>Pour coller une étiquette, mettez une ligne comme celle-ci dans le
-<a href="#pseudoheader">pseudo-en-tête</a>&nbsp;:</p>
+<p>
+Pour coller une étiquette, mettez une ligne comme celle-ci dans le <a
+href="#pseudoheader">pseudo-en-tête</a>&nbsp;:
+</p>
 
 <pre>
 Tags: &lt;<var>étiquettes</var>&gt;
 </pre>
 
-<p>Remplacez &lt;<var>étiquettes</var>&gt; par une ou plusieurs des étiquettes
-disponibles, comme décrit dans la
-<a href="Developer#tags">documentation pour les développeurs</a>.
-Séparez les différentes étiquettes avec des virgules, des espaces ou les deux.
+<p>
+Remplacez &lt;<var>étiquettes</var>&gt; par une ou plusieurs des étiquettes
+disponibles, comme décrit dans la <a href="Developer#tags">documentation pour
+les développeurs</a>. Séparez les différentes étiquettes avec des virgules, des
+espaces ou les deux.
 </p>
 
 <pre>
@@ -289,27 +383,23 @@ User: &lt;<var>nom d'utilisateur</var>&gt;
 Usertags: &lt;<var>étiquettes de l'utilisateur</var>&gt;
 </pre>
 
-<p>Remplacez &lt;<var>étiquettes de l'utilisateur</var>&gt; par une ou plusieurs
+<p>
+Remplacez &lt;<var>étiquettes de l'utilisateur</var>&gt; par une ou plusieurs
 étiquettes qui vous sont propres. Séparez les différentes étiquettes avec des
 virgules, des espaces ou les deux. Si vous indiquez un &lt;<var>nom
 d'utilisateur</var>&gt;, ces étiquettes d'utilisateurs seront collées. Sinon,
-l'adresse de courriel de l'expéditeur sera utilisée comme nom
-d'utilisateur.</p>
-
-<h2><a name="miscpseudoheaders">Autres pseudo-en-têtes (intéressant
-principalement les responsables de paquet)</a></h2>
+l'adresse de courriel de l'expéditeur sera utilisée comme nom d'utilisateur.
+</p>
 
 <pre>
 Forwarded: <var>foo@exemple.com</var>
 </pre>
 
 <p>
-
 indiquera que le bogue qui vient d'être signalé est transféré à
-foo@exemple.com. Voyez <a href="Developer#forward">Enregistrer que
-vous avez transmis un rapport de bogue</a> dans la documentation
-développeur pour les détails.
-
+foo@exemple.com. Voyez <a href="Developer#forward">Enregistrer que vous avez
+transmis un rapport de bogue</a> dans la documentation développeur pour les
+détails.
 </p>
 
 <pre>
@@ -317,12 +407,9 @@ Owner: <var>foo@exemple.com</var>
 </pre>
 
 <p>
-
-indiquera que foo@exemple.com est maintenant responsable de la
-correction de ce bogue. Voyez <a href="Developer#owner">Changer le
-propriétaire d'un bogue</a> dans la documentation
-développeur pour les détails.
-
+indiquera que foo@exemple.com est maintenant responsable de la correction de ce
+bogue. Voyez <a href="Developer#owner">Changer le propriétaire d'un bogue</a>
+dans la documentation développeur pour les détails.
 </p>
 
 <pre>
@@ -330,98 +417,118 @@ Source: <var>paquetfoo</var>
 </pre>
 
 <p>
-
-est équivalent à <code>Package:</code> pour les bogues présents dans
-le paquet source de paquetfoo&nbsp;; pour la plupart des bogues dans
-la plupart des paquets il ne vaut mieux pas utiliser cette option.
-
+est équivalent à <code>Package:</code> pour les bogues présents dans le paquet
+source de paquetfoo&nbsp;; pour la plupart des bogues dans la plupart des
+paquets il ne vaut mieux pas utiliser cette option.
 </p>
 
-<p>Enfin, si votre
-<acronym title="Mail User Agent" lang="en">MUA</acronym>
-ne vous permet pas de modifier les en-têtes, vous pouvez
-mettre les différents en-têtes <code>X-Debbugs-</code> dans les 
-<a href="#pseudoheader">pseudo-en-têtes</a>.</p> 
+<p>
+Enfin, si votre <acronym title="Mail User Agent" lang="en">MUA</acronym> ne
+vous permet pas de modifier les en-têtes, vous pouvez mettre les différents
+en-têtes <code>X-Debbugs-</code> dans les <a
+href="#pseudoheader">pseudo-en-têtes</a>.
+</p> 
 
 
-<h2>Autres adresses pour le signalement (rapports de bogues
-mineurs ou multiples)</h2>
+<h1>Informations supplémentaires</h1>
 
-<P>Si un rapport de bogue est mineur, par exemple, une coquille dans
-la documentation ou tout autre problème trivial de compilation, merci
-d'indiquer correctement la gravité et de l'envoyer à
-<code>maintonly@bugs</code> au lieu de <code>submit@bugs</code>.
-<code>maintonly</code> enverra le rapport au seul responsable du
-paquet, il ne l'enverra pas aux listes de diffusion du système de
-suivi des bogues.
 
-<p>Si vous soumettez plusieurs rapports à la fois, vous devriez
-certainement utiliser <code>maintonly@bugs</code> afin de ne pas
-causer trop de trafic redondant sur les listes de diffusion du
-système de suivi des bogues. Avant d'envoyer beaucoup de bogues
-similaires vous devriez peut-être poster un résumé sur
-<code>debian-bugs-dist</code>.
+<h2>Autres adresses pour le signalement (rapports de bogues mineurs ou
+multiples)</h2>
 
-<p>Si vous souhaitez signaler au système de suivi des bogues un
-bogue qui a déjà été envoyé au responsable, vous pouvez utiliser
-<code>quiet@bugs</code>. Les bogues envoyés à <code>quiet@bugs</code>
-ne sont pas transmis, seulement enregistrés.
+<p>
+Si un rapport de bogue est mineur, par exemple, une coquille dans la
+documentation ou tout autre problème trivial de compilation, merci d'indiquer
+correctement la gravité et de l'envoyer à
+<code>maintonly@bugs.debian.org</code> au lieu de
+<code>submit@bugs.debian.org</code>.  <code>maintonly</code> enverra le rapport
+au seul responsable du paquet, il ne l'enverra pas aux listes de diffusion du
+système de suivi des bogues.
+</p>
 
-<p>Quand vous utilisez une adresse autre que l'adresse
-<code>submit@bugs</code> pour soumettre un rapport de bogue, le
-système de suivi des bogues remplira le champ <code>Reply-To</code>
-de tout message transmis de façon à ce que les réponses soient par
-défaut traitées de la même manière que le rapport original. Cela
-signifie par exemple que les réponses à <code>maintonly</code> iront à
-<var>nnn</var><code>-maintonly@bugs</code> au lieu de
-<var>nnn</var><code>@bugs</code>, sauf bien sûr si quelqu'un modifie
+<p>
+Si vous soumettez plusieurs rapports à la fois, vous devriez certainement
+utiliser <code>maintonly@bugs.debian.org</code> afin de ne pas causer trop de
+trafic redondant sur les listes de diffusion du système de suivi des bogues.
+Avant d'envoyer beaucoup de bogues similaires vous devriez peut-être poster un
+résumé sur <code>debian-bugs-dist</code>.
+</p>
+
+<p>
+Si vous souhaitez signaler au système de suivi des bogues un bogue qui a déjà
+été envoyé au responsable, vous pouvez utiliser
+<code>quiet@bugs.debian.org</code>. Les bogues envoyés à
+<code>quiet@bugs.debian.org</code> ne sont pas transmis, seulement enregistrés.
+</p>
+
+<p>
+Quand vous utilisez une adresse autre que l'adresse
+<code>submit@bugs.debian.org</code> pour soumettre un rapport de bogue, le
+système de suivi des bogues remplira le champ <code>Reply-To</code> de tout
+message transmis de façon à ce que les réponses soient par défaut traitées de
+la même manière que le rapport original. Cela signifie par exemple que les
+réponses à <code>maintonly</code> iront à
+<var>nnn</var><code>-maintonly@bugs.debian.org</code> au lieu de
+<var>nnn</var><code>@bugs.debian.org</code>, sauf bien sûr si quelqu'un modifie
 le champ manuellement.
+</p>
 
 
 <h2>Accusés de réception</h2>
 
-<p>Normalement, le système de suivi des bogues vous renvoie un
-accusé de réception par courrier électronique quand vous signalez un
-nouveau bogue ou quand vous ajoutez de nouvelles informations à un
-bogue existant. Si vous ne voulez pas recevoir ces accusés de
-réception, incluez un en-tête <code>X-Debbugs-No-Ack</code> dans votre
-message (le contenu de cet en-tête ne sert à rien ; cependant, il doit
-être dans l'en-tête du message et <em>non</em> dans le pseudo-en-tête
-contenant le champ <code>Package</code>). Si vous signalez un nouveau
-bogue avec cet en-tête, vous devrez utilisez l'interface web pour
-connaître le numéro du bogue.</p>
+<p>
+Normalement, le système de suivi des bogues vous renvoie un accusé de réception
+par courrier électronique quand vous signalez un nouveau bogue ou quand vous
+ajoutez de nouvelles informations à un bogue existant. Si vous ne voulez pas
+recevoir ces accusés de réception, incluez un en-tête
+<code>X-Debbugs-No-Ack</code> dans votre message (le contenu de cet en-tête ne
+sert à rien ; cependant, il doit être dans l'en-tête du message et <em>non</em>
+dans le pseudo-en-tête contenant le champ <code>Package</code>). Si vous
+signalez un nouveau bogue avec cet en-tête, vous devrez utilisez l'interface
+web pour connaître le numéro du bogue.
+</p>
 
-<p>Notez que cet en-tête ne supprimera pas les accusés de réception du
-serveur de message <code>control@bugs</code>, car ces accusés de
-réception peuvent contenir des messages d'erreur qui doivent être lus
-et auxquels il faut réagir.</p>
+<p>
+Notez que cet en-tête ne supprimera pas les accusés de réception du serveur de
+message <code>control@bugs.debian.org</code>, car ces accusés de réception
+peuvent contenir des messages d'erreur qui doivent être lus et auxquels il faut
+réagir.
+</p>
 
 
 <h2>Rapports de bogues concernant des paquets inconnus</h2>
 
-<p>Si le système de suivi des bogues ne peut trouver qui est le
-responsable du paquet concerné il enverra le rapport à
-<code>debian-bugs-dist</code> même si le code <code>maintonly</code> a
-été utilisé.</p>
+<p>
+Si le système de suivi des bogues ne peut trouver qui est le responsable du
+paquet concerné il enverra le rapport à <code>debian-bugs-dist</code> même si
+le code <code>maintonly</code> a été utilisé.
+</p>
 
-<p>Quand vous envoyez un message à <code>maintonly@bugs</code> ou
-<var>nnn</var><code>-maintonly@bugs</code> vous devriez vérifier que
-le rapport de bogue est assigné au bon paquet, en remplissant
-correctement le champ <code>Package</code> en haut de la soumission
-originale d'un rapport, ou en utilisant <a href="server-control">le
-service <code>control@bugs</code></A> pour tout d'abord (ré)assigner
-correctement le rapport si ce n'est pas déjà correct.</p>
+<p>
+Quand vous envoyez un message à <code>maintonly@bugs.debian.org</code> ou
+<var>nnn</var><code>-maintonly@bugs.debian.org</code> vous devriez vérifier que
+le rapport de bogue est assigné au bon paquet, en remplissant correctement le
+champ <code>Package</code> en haut de la soumission originale d'un rapport, ou
+en utilisant <a href="server-control">le service
+<code>control@bugs.debian.org</code></a> pour tout d'abord (ré)assigner
+correctement le rapport si ce n'est pas déjà correct.
+</p>
 
 
 <h2><a name="findpkgver">Utiliser <code>dpkg</code> pour trouver le
 paquet et sa version pour le rapport</a></h2>
 
-<p>Si vous signalez un bogue dans une commande, vous pouvez déterminer quel 
-paquet l'a installée en utilisant <code>dpkg --search</code>. Vous pouvez
-trouver la version d'un paquet que vous avez installé en utilisant
-<code>dpkg --list</code> ou <code>dpkg --status</code>.</p>
+<p>
+Si vous signalez un bogue dans une commande, vous pouvez déterminer quel paquet
+l'a installée en utilisant <code>dpkg --search</code>. Vous pouvez trouver la
+version d'un paquet que vous avez installé en utilisant <code>dpkg
+--list</code> ou <code>dpkg --status</code>.
+</p>
 
-<p>Par exemple&nbsp;:
+<p>
+Par exemple&nbsp;:
+</p>
+
 <pre>
 $ which apt-get
 /usr/bin/apt-get
@@ -459,6 +566,25 @@ Description: Advanced front-end for dpkg
  /usr/doc/apt/guide.text.gz
 
 </pre>
+
+<a name="otherusefulcommands"></a>
+<h2>Autres commandes et paquets utiles</h2>
+
+<p>
+L'outil <kbd>querybts</kbd>, disponible dans le même paquet que <a
+href="http://packages.debian.org/stable/utils/reportbug">reportbug</a>, fournit
+une interface pratique en mode texte au système de suivi des bogues.
+</p>
+
+<p>
+Les utilisateurs d'Emacs peuvent aussi utiliser la commande debian-bug fournie
+par le paquet <code><a
+href="http://packages.debian.org/stable/utils/debian-el">debian-el</a></code>.
+Lorsqu'elle est lancée avec <kbd>M-x debian-bug</kbd>, elle demande toutes les
+informations nécessaires de façon similaire à <code>reportbug</code>.
+</p>
+
+<hr />
 
 #use "otherpages.inc"
  
