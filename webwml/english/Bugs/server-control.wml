@@ -2,594 +2,634 @@
 
 <h1>Introduction to the bug control and manipulation mailserver</h1>
 
-<p>Just as <code>request@bugs.debian.org</code> allows the <a
+<p>
+Just as <code>request@bugs.debian.org</code> allows the <a
 href="server-request">retrieval of bug data and documentation by
 email</a>, <code>control@bugs.debian.org</code> allows bug reports to
-be manipulated in various ways.</p>
+be manipulated in various ways.
+</p>
 
-<p>The control server works just like the request server, except that it
+<p>
+The control server works just like the request server, except that it
 has some additional commands; in fact, it's the same program.  The two
 addresses are only separated to avoid users making mistakes and
-causing problems while merely trying to request information.</p>
+causing problems while merely trying to request information.
+</p>
 
-<p>Since the commands specific to the control server actually change
+<p>
+Since the commands specific to the control server actually change
 the status of a bug, a notification about processing the commands is
 sent to the maintainer of the package(s) the changed bugs are assigned
 to. Additionally the mail to the server and the resulting changes are
-logged in the bug report and thereby available in the WWW pages.</p>
+logged in the bug report and thereby available in the WWW pages.
+</p>
 
-<p>Please see the
+<p>
+Please see the
 <a href="server-request#introduction">introduction to the request server</a>
 available on the World Wide Web, in the file
 <code>bug-log-mailserver.txt</code>, or by sending
 <code>help</code> to either mailserver, for details of the basics of
 operating the mailservers and the common commands available when
-mailing either address.</p>
+mailing either address.
+</p>
 
-<p>The <a href="server-refcard">reference card</a> for the
+<p>
+The <a href="server-refcard">reference card</a> for the
 mailservers is available via the WWW, in
 <code>bug-mailserver-refcard.txt</code> or by email using the
-<code>refcard</code> command.</p>
+<code>refcard</code> command.
+</p>
+
 
 <h1>Commands available at the control mailserver</h1>
 
 <center>
-<table>
-<tr>
-<td align="center">General</td>
-<td align="center">Versioning</td>
-<td align="center">Duplicates</td>
-<td align="center">Misc.</td>
-</tr>
-<tr>
-<!-- General -->
-<td valign="top">
-<dl>
-<dt><a href="#reassign">reassign</a></dt>
-<dt><a href="#severity">severity</a></dt>
-<dt><a href="#tag">tag</a></dt>
-<dt><a href="#retitle">retitle</a></dt>
-<dt><a href="#submitter">submitter</a></dt>
-</dl>
-</td>
-<!-- Versioning -->
-<td valign="top">
-<dl>
-<dt><a href="#found">found</a> |
-<a href="#notfound">notfound</a></dt>
-<dt><a href="#fixed">fixed</a> |
-<a href="#notfixed">notfixed</a></dt>
-<dt><a href="#reopen">reopen</a></dt>
-<!-- <dt>(close)</dt> Deprecated -->
-</dl>
-</td>
-<!-- Duplicates -->
-<td valign="top">
-<dl>
-<dt><a href="#merge">merge</a> |
-<a href="#unmerge">unmerge</a></dt>
-<dt><a href="#forcemerge">forcemerge</a></dt>
-<dt><a href="#clone">clone</a></dt>
-</dl>
-</td>
-<!-- Misc. -->
-<td valign="top">
-<dl>
-<dt><a href="#thanks">thanks</a></dt>
-<dt><a href="#comment">#</a></dt>
-<dt><a href="#forwarded">forwarded</a> | 
-<a href="#notforwarded">notforwarded</a></dt>
-<dt><a href="#owner">owner</a> |
-<a href="#noowner">nowner</a></dt>
-<dt><a href="#block">block</a> |
-<a href="#unblock">unblock</a></dt>
-</dl>
-</td>
-</tr>
-</table>
+  <table>
+    <tr>
+    <td align="center">General</td>
+    <td align="center">Versioning</td>
+    <td align="center">Duplicates</td>
+    <td align="center">Misc.</td>
+    </tr>
+    <tr>
+      <!-- General -->
+      <td valign="top">
+	<dl>
+	  <dt><a href="#reassign">reassign</a></dt>
+	  <dt><a href="#severity">severity</a></dt>
+	  <dt><a href="#tag">tag</a></dt>
+	  <dt><a href="#retitle">retitle</a></dt>
+	  <dt><a href="#submitter">submitter</a></dt>
+	</dl>
+      </td>
+      <!-- Versioning -->
+      <td valign="top">
+	<dl>
+	  <dt><a href="#found">found</a> | <a href="#notfound">notfound</a></dt>
+	  <dt><a href="#fixed">fixed</a> | <a href="#notfixed">notfixed</a></dt>
+	  <dt><a href="#reopen">reopen</a></dt>
+	  <!-- <dt>(close)</dt> Deprecated -->
+	</dl>
+      </td>
+      <!-- Duplicates -->
+      <td valign="top">
+	<dl>
+	  <dt><a href="#merge">merge</a> | <a href="#unmerge">unmerge</a></dt>
+	  <dt><a href="#forcemerge">forcemerge</a></dt>
+	  <dt><a href="#clone">clone</a></dt>
+	</dl>
+      </td>
+      <!-- Misc. -->
+      <td valign="top">
+	<dl>
+	  <dt><a href="#thanks">thanks</a></dt>
+	  <dt><a href="#comment">#</a></dt>
+	  <dt><a href="#forwarded">forwarded</a> |  <a href="#notforwarded">notforwarded</a></dt>
+	  <dt><a href="#owner">owner</a> | <a href="#noowner">nowner</a></dt>
+	  <dt><a href="#block">block</a> | <a href="#unblock">unblock</a></dt>
+	</dl>
+      </td>
+    </tr>
+  </table>
 </center>
 
 <dl>
-
-<dt><a name="reassign"><code>reassign</code> <var>bugnumber</var>
-  <var>package</var> [ <var>version</var> ]</a></dt>
-
-
-<dd>
-<p>
-Records that bug #<var>bugnumber</var> is a bug in <var>package</var>.
-This can be used to set the package if the user forgot the
-pseudo-header, or to change an earlier assignment.  No notifications
-are sent to anyone (other than the usual information in the processing
-transcript).
-</p>
-
-<p>If you supply a <var>version</var>, the bug tracking system will note
-that the bug affects that version of the newly-assigned package.
-</p>
-</dd>
-
-
-<dt><a name="reopen"><code>reopen</code> <var>bugnumber</var>
- [ <var>originator-address</var> | <code>=</code> | <code>!</code> ]</a></dt>
-
-<dd>
-<p>
-Reopens #<var>bugnumber</var> if it is closed.
-</p>
-
-<p>By default, or if you specify <code>=</code>, the original submitter is
-still as the originator of the report, so that they will get the ack
-when it is closed again.</p>
-
-<p>If you supply an <var>originator-address</var> the originator will be
-set to the address you supply.  If you wish to become the new
-originator of the reopened report you can use the <code>!</code>
-shorthand or specify your own email address.</p>
-
-<p>It is usually a good idea to tell the person who is about to be
-recorded as the originator that you're reopening the report, so that
-they will know to expect the ack which they'll get when it is closed
-again.</p>
-
-<p>If the bug is not closed then reopen won't do anything, not even
-change the originator.  To change the originator of an open bug report,
-use the <code>submitter</code> command; note that this will inform the
-original submitter of the change.</p>
-
-<p>If the bug was recorded as being closed in a particular version of a
-package but recurred in a later version, it is better to use the
-<code>found</code> command instead.
-</p>
-</dd>
-
-
-<dt><a name="found"><code>found</code> <var>bugnumber</var> [ <var>version</var> ]</a></dt>
-
-
-<dd>
-<p>
-Record that #<var>bugnumber</var> has been encountered in the given
-<var>version</var> of the package to which it is assigned.
-</p>
-
-<p>The bug tracking system uses this information, in conjunction with
-fixed versions recorded when closing bugs, to display lists of bugs
-open in various versions of each package. It considers a bug to be open
-when it has no fixed version, or when it has been found more recently than
-it has been fixed.</p>
-
-<p>If no <var>version</var> is given, then the list of fixed versions for
-the bug is cleared. This is identical to the behaviour of
-<code>reopen</code>.</p>
-
-<p>This command will only cause a bug to be marked as not done if no
-version is specified, or if the <var>version</var> being marked found
-is equal to the <var>version</var> which was last marked fixed. (If
-you are certain that you want the bug marked as not done,
-use <code>reopen</code> in conjunction with <code>found</code>.)</p>
-
-<p>This command was introduced in preference to <code>reopen</code>
-because it was difficult to add a <var>version</var> to that command's
-syntax without suffering ambiguity.</p>
-</dd>
-
-
-<dt><a name="notfound"><code>notfound</code> <var>bugnumber</var> <var>version</var></a></dt>
-
-
-<dd>
-<p>
-Remove the record that #<var>bugnumber</var> was encountered in the
-given <var>version</var> of the package to which it is assigned.
-</p>
-
-<p>This differs from closing the bug at that version in that the bug is not
-listed as fixed in that version either; no information about that version
-will be known. It is intended for fixing mistakes in the record of when a
-bug was found.</p>
-</dd>
-
-
-<dt><a name="fixed"><code>fixed</code> <var>bugnumber</var> <var>version</var></a></dt>
-
-
-<dd>
-<p>
-Indicate that bug #<var>bugnumber</var> was fixed in the given
-<var>version</var> of the package to which it is assigned.
-</p>
-
-<p> This does <em>not</em> cause the bug to be marked as closed, it
-merely adds another version in which the bug was fixed. Use the
-bugnumber-done address to close a bug and mark it fixed in a
-particular version.</p>
-</dd>
-
-
-<dt><a name="notfixed"><code>notfixed</code> <var>bugnumber</var> <var>version</var></a></dt>
-
-
-<dd>
-<p>
-Remove the record that bug #<var>bugnumber</var> has been fixed in
-the given <var>version</var>.
-</p>
-
-<p>This command is equivalent to <code>found</code> followed by
-<code>notfound</code> (the found removes the fixed at a particular
-version, and notfound removes the found.)</p>
-</dd>
-
-
-<dt><a name="submitter"><code>submitter</code> <var>bugnumber</var>
-<var>originator-address</var> | <code>!</code></a></dt>
-
-
-<dd>
-<p>
-Changes the originator of #<var>bugnumber</var> to
-<var>originator-address</var>.
-</p>
-
-<p>If you wish to become the new originator of the report you can use
-the <code>!</code> shorthand or specify your own email address.</p>
-
-<p>While the <code>reopen</code> command changes the originator of other
-bugs merged with the one being reopened, <code>submitter</code> does not
-affect merged bugs.</p>
-</dd>
-
-
-<dt><a name="forwarded"><code>forwarded</code> <var>bugnumber</var> <var>address</var></a></dt>
-
-
-<dd>
-Notes that <var>bugnumber</var> has been forwarded to the upstream
-maintainer at <var>address</var>.  This does not actually forward the
-report.  This can be used to change an existing incorrect forwarded-to
-address, or to record a new one for a bug that wasn't previously noted
-as having been forwarded.
-</dd>
-
-
-<dt><a name="notforwarded"><code>notforwarded</code> <var>bugnumber</var></a></dt>
-
-
-<dd>
-
-Forgets any idea that <var>bugnumber</var> has been forwarded to any
-upstream maintainer.  If the bug was not recorded as having been
-forwarded then this will do nothing.
-</dd>
-
-
-<dt><a name="retitle"><code>retitle</code> <var>bugnumber</var> <var>new-title</var></a></dt>
-
-
-<dd>
-<p>
-Changes the title of a bug report to that specified (the default is
-the <code>Subject</code> mail header from the original report).
-</p>
-
-<p>Unlike most of the other bug-manipulation commands when used on one of
-a set of merged reports this will change the title of only the
-individual bug requested, and not all those with which it is merged.</p>
-</dd>
-
-
-<dt><a name="severity"><code>severity</code> <var>bugnumber</var> <var>severity</var></a></dt>
-
-
-<dd>
-<p>Set the severity level for bug report #<var>bugnumber</var> to
-<var>severity</var>.  No notification is sent to the user who reported
-the bug.</p>
-
-<p>Severities are <code>critical</code>, <code>grave</code>,
-<code>serious</code>, <code>important</code>, <code>normal</code>,
-<code>minor</code>, and <code>wishlist</code>.</p>
-
-<p>For <a href="Developer#severities">their meanings</a> please
-consult the general developers' documentation for the bug system.
-</p>
-</dd>
-
-
-<dt><a name="clone"><code>clone</code> <var>bugnumber</var> <var>NewID</var> [ <var>new IDs</var> ... ]</a></dt>
-
-
+  <dt><a name="reassign"><code>reassign</code> <var>bugnumber</var>
+    <var>package</var> [ <var>version</var> ]</a></dt>
   <dd>
-  <p>
-  The clone control command allows you to duplicate a bug report. It is
-  useful in the case where a single report actually indicates that multiple
-  distinct bugs have occurred. <q><var>New IDs</var></q> are negative numbers,
-  separated by spaces, which may be used in subsequent control commands to
-  refer to the newly duplicated bugs. A new report is generated for each
-  new ID.
-  </p>
+    <p>
+    Records that bug #<var>bugnumber</var> is a bug in <var>package</var>.
+    This can be used to set the package if the user forgot the
+    pseudo-header, or to change an earlier assignment.  No notifications
+    are sent to anyone (other than the usual information in the processing
+    transcript).
+    </p>
 
-  <p>Example usage:</p>
-
-  <pre>
-        clone 12345 -1 -2
-        reassign -1 foo
-        retitle -1 foo: foo sucks
-        reassign -2 bar
-        retitle -2 bar: bar sucks when used with foo
-        severity -2 wishlist
-        clone 123456 -3
-        reassign -3 foo
-        retitle -3 foo: foo sucks
-        merge -1 -3
-  </pre>
-</dd>
-
-
-<dt><a name="merge"><code>merge</code> <var>bugnumber</var> <var>bugnumber</var> ...</a></dt>
-
-
-<dd>
-<p>
-Merges two or more bug reports.  When reports are merged opening,
-closing, marking or unmarking as forwarded and reassigning any of the
-bugs to a new package will have an identical effect on all of the
-merged reports.
-</p>
-
-<p>Before bugs can be merged they must be in exactly the same state:
-either all open or all closed, with the same forwarded-to upstream
-author address or all not marked as forwarded, all assigned to the
-same package or package(s) (an exact string comparison is done on the
-package to which the bug is assigned), and all of the same severity.
-If they don't start out in the same state you should use
-<code>reassign</code>, <code>reopen</code> and so forth to make sure
-that they are before using <code>merge</code>. Titles are not required
-to match, and will not be affected by the merge. Tags are not required
-to match, either, they will be joined.</p>
-
-<p>If any of the bugs listed in a <code>merge</code> command is already
-merged with another bug then all the reports merged with any of the
-ones listed will all be merged together.  Merger is like equality: it
-is reflexive, transitive and symmetric.</p>
-
-<p>Merging reports causes a note to appear on each report's logs; on the
-WWW pages this is includes links to the other bugs.</p>
-
-<p>Merged reports are all expired simultaneously, and only when all of
-the reports each separately meet the criteria for expiry.
-</p>
-</dd>
-
-
-<dt><a name="forcemerge"><code>forcemerge</code> <var>bugnumber</var> <var>bugnumber</var> ...</a></dt>
-
-  <dd>
-  <p>
-  Forcibly merges two or more bug reports. The first bug listed
-  is the master bug, and its settings (the settings which must be equal in 
-  a normal merge) are assigned to the bugs listed next.
-  To avoid typos erroneously merging bugs, bugs must be in
-  the same package. See the text above for a description of what
-  merging means.
-  </p>
-
-  <p>Note that this makes it possible to close bugs by merging; you
-  are responsible for notifying submitters with an appropriate close
-  message if you do this.</p>
+    <p>
+    If you supply a <var>version</var>, the bug tracking system will note
+    that the bug affects that version of the newly-assigned package.
+    </p>
   </dd>
 
 
-<dt><a name="unmerge"><code>unmerge</code> <var>bugnumber</var></a></dt>
-
-
-<dd>
-<p>
-Disconnects a bug report from any other reports with which it may have
-been merged.  If the report listed is merged with several others then
-they are all left merged with each other; only their associations with
-the bug explicitly named are removed.
-</p>
-
-<p>If many bug reports are merged and you wish to split them into two
-separate groups of merged reports you must unmerge each report in one
-of the new groups separately and then merge them into the required new
-group.</p>
-
-<p>You can only unmerge one report with each <code>unmerge</code>
-command; if you want to disconnect more than one bug simply include
-several <code>unmerge</code> commands in your message.
-</p>
-</dd>
-
-
-<dt><a name="tags"><code>tags</code> <var>bugnumber</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var> [ <var>tag</var> ... ]</a></dt>
-
-
+  <dt><a name="reopen"><code>reopen</code> <var>bugnumber</var>
+   [ <var>originator-address</var> | <code>=</code> | <code>!</code> ]</a></dt>
   <dd>
-  <p>
-  Sets tags for the bug report #<var>bugnumber</var>. No notification
-  is sent to the user who reported the bug. Setting the action to
-  <code>+</code> means to add each given <var>tag</var>, <code>-</code>
-  means to remove each given <var>tag</var>, and <code>=</code> means to
-  ignore the current tags and set them afresh to the list provided. The
-  default action is adding.
-  </p>
+    <p>
+    Reopens #<var>bugnumber</var> if it is closed.
+    </p>
 
-  <p>Example usage:</p>
+    <p>
+    By default, or if you specify <code>=</code>, the original submitter is
+    still as the originator of the report, so that they will get the ack
+    when it is closed again.
+    </p>
 
-  <pre>
-        \# same as 'tags 123456 + patch'
-        tags 123456 patch
+    <p>
+    If you supply an <var>originator-address</var> the originator will be
+    set to the address you supply.  If you wish to become the new
+    originator of the reopened report you can use the <code>!</code>
+    shorthand or specify your own email address.
+    </p>
 
-        \# same as 'tags 123456 + help security'
-        tags 123456 help security
+    <p>
+    It is usually a good idea to tell the person who is about to be
+    recorded as the originator that you're reopening the report, so that
+    they will know to expect the ack which they'll get when it is closed
+    again.
+    </p>
 
-        \# add 'fixed' and 'pending' tags
-        tags 123456 + fixed pending
+    <p>
+    If the bug is not closed then reopen won't do anything, not even
+    change the originator.  To change the originator of an open bug report,
+    use the <code>submitter</code> command; note that this will inform the
+    original submitter of the change.
+    </p>
 
-        \# remove 'unreproducible' tag
-        tags 123456 - unreproducible
-
-        \# set tags to exactly 'moreinfo' and 'unreproducible'
-        tags 123456 = moreinfo unreproducible
-  </pre>
-
-  <p>Available tags currently include <code>patch</code>, <code>wontfix</code>,
-  <code>moreinfo</code>, <code>unreproducible</code>, <code>help</code>,
-  <code>pending</code>, <code>fixed</code>,
-  <code>fixed-in-experimental</code>, <code>fixed-upstream</code>,
-  <code>security</code>, 
-  <code>upstream</code>, <code>confirmed</code>, <code>d-i</code>,
-  <code>ipv6</code>, <code>lfs</code>, <code>l10n</code>,
-  <code>potato</code>, <code>woody</code>, <code>sarge</code>,
-  <code>sarge-ignore</code>, <code>etch</code>, <code>etch-ignore</code>,
-  <code>sid</code>, and <code>experimental</code>.
-  </p>
-
-  <p>For <a href="Developer#tags">their meanings</a> please consult the
-  general developers' documentation for the bug system.</p>
-</dd>
+    <p>
+    If the bug was recorded as being closed in a particular version of a
+    package but recurred in a later version, it is better to use the
+    <code>found</code> command instead.
+    </p>
+  </dd>
 
 
-<dt><a name="block"><code>block</code> <var>bugnumber</var> <code>by</code> <var>bug</var> ...</a></dt>
-
-  <dd>Note that the fix for the first bug is blocked by the other listed bugs.
-</dd>
-
-
-<dt><a name="unblock"><code>unblock</code> <var>bugnumber</var> <code>by</code> <var>bug</var> ...</a></dt>
-
-  <dd>Note that the fix for the first bug is no longer blocked by the other
-  listed bugs.
-</dd>
-
-
-<dt><a name="close"><code>close</code> <var>bugnumber</var> [ <var>fixed-version</var> ]
- (deprecated)</a></dt>
-
-
-<dd>
-<p>
-Close bug report #<var>bugnumber</var>.
-</p>
-
-<p>A notification is sent to the user who reported the bug, but (in
-contrast to mailing <var>bugnumber</var><code>-done@bugs.debian.org</code>) the
-text of the mail which caused the bug to be closed is <strong>not</strong>
-included in that notification.  The maintainer who closes a report
-needs to ensure, probably by sending a separate message, that the user
-who reported the bug knows why it is being closed.
-The use of this command is therefore deprecated. See the
-developer's information about <a href="Developer#closing">how to
-close a bug properly</a>.</p>
-
-<p>If you supply a <var>fixed-version</var>, the bug tracking system
-will note that the bug was fixed in that version of the package.</p>
-</dd>
-
-
-<dt><a name="package"><code>package</code> [ <var>packagename</var> ... ]</a></dt>
-
-
+  <dt><a name="found"><code>found</code> <var>bugnumber</var> [
+    <var>version</var> ]</a></dt>
   <dd>
-  <p>
-  Limits the following commands so that they will only apply to bugs
-  filed against the listed packages. You can list one or more packages. If
-  you don't list any packages, the following commands will apply to all
-  bugs. You're encouraged to use this as a safety feature in case you
-  accidentally use the wrong bug numbers.
-</p>
+    <p>
+    Record that #<var>bugnumber</var> has been encountered in the given
+    <var>version</var> of the package to which it is assigned.
+    </p>
 
-  <p>Example usage:</p>
+    <p>
+    The bug tracking system uses this information, in conjunction with
+    fixed versions recorded when closing bugs, to display lists of bugs
+    open in various versions of each package. It considers a bug to be open
+    when it has no fixed version, or when it has been found more recently than
+    it has been fixed.
+    </p>
 
-  <pre>
-        package foo
-        reassign 123456 bar 1.0-1
+    <p>
+    If no <var>version</var> is given, then the list of fixed versions for
+    the bug is cleared. This is identical to the behaviour of
+    <code>reopen</code>.
+    </p>
 
-        package bar
-        retitle 123456 bar: bar sucks
-        severity 123456 normal
+    <p>
+    This command will only cause a bug to be marked as not done if no
+    version is specified, or if the <var>version</var> being marked found
+    is equal to the <var>version</var> which was last marked fixed. (If
+    you are certain that you want the bug marked as not done,
+    use <code>reopen</code> in conjunction with <code>found</code>.)
+    </p>
 
-        package
-        severity 234567 wishlist
-  </pre>
-</dd>
+    <p>
+    This command was introduced in preference to <code>reopen</code>
+    because it was difficult to add a <var>version</var> to that command's
+    syntax without suffering ambiguity.
+    </p>
+  </dd>
 
 
-<dt><a name="owner"><code>owner</code> <var>bugnumber</var> <var>address</var> | <code>!</code></a></dt>
-
-
+  <dt><a name="notfound"><code>notfound</code> <var>bugnumber</var>
+    <var>version</var></a></dt>
   <dd>
-  <p>
-  Sets <var>address</var> to be the <q>owner</q> of #<var>bugnumber</var>.
-  The owner of a bug claims responsibility for fixing it.
-  This is useful to share out work in cases where a
-  package has a team of maintainers.
-</p>
+    <p>
+    Remove the record that #<var>bugnumber</var> was encountered in the
+    given <var>version</var> of the package to which it is assigned.
+    </p>
 
-  <p>If you wish to become the owner of the bug yourself, you can use the
-  <code>!</code> shorthand or specify your own email address.</p>
-</dd>
-
-
-<dt><a name="noowner"><code>noowner</code> <var>bugnumber</var></a></dt>
-
-
-  <dd>Forgets any idea that the bug has an owner other than the usual
-  maintainer.  If the bug had no owner recorded then this will do nothing.
-</dd>
+    <p>
+    This differs from closing the bug at that version in that the bug is not
+    listed as fixed in that version either; no information about that version
+    will be known. It is intended for fixing mistakes in the record of when a
+    bug was found.
+    </p>
+  </dd>
 
 
-<dt><a name="archive"><code>archive</code> <var>bugnumber</var></a></dt>
+  <dt><a name="fixed"><code>fixed</code> <var>bugnumber</var>
+    <var>version</var></a></dt>
+  <dd>
+    <p>
+    Indicate that bug #<var>bugnumber</var> was fixed in the given
+    <var>version</var> of the package to which it is assigned.
+    </p>
+
+    <p>
+    This does <em>not</em> cause the bug to be marked as closed, it
+    merely adds another version in which the bug was fixed. Use the
+    bugnumber-done address to close a bug and mark it fixed in a
+    particular version.
+    </p>
+  </dd>
 
 
-  <dd>Archives a bug that had been archived at some point in the past
-  but is currently not archived if the bug fulfills
-  the requirements for archival, ignoring time.
-</dd>
+  <dt><a name="notfixed"><code>notfixed</code> <var>bugnumber</var>
+    <var>version</var></a></dt>
+  <dd>
+    <p>
+    Remove the record that bug #<var>bugnumber</var> has been fixed in
+    the given <var>version</var>.
+    </p>
+
+    <p>
+    This command is equivalent to <code>found</code> followed by
+    <code>notfound</code> (the found removes the fixed at a particular
+    version, and notfound removes the found.)
+    </p>
+  </dd>
 
 
-<dt><a name="unarchive"><code>unarchive</code> <var>bugnumber</var></a></dt>
+  <dt><a name="submitter"><code>submitter</code> <var>bugnumber</var>
+    <var>originator-address</var> | <code>!</code></a></dt>
+  <dd>
+    <p>
+    Changes the originator of #<var>bugnumber</var> to
+    <var>originator-address</var>.
+    </p>
+
+    <p>
+    If you wish to become the new originator of the report you can use
+    the <code>!</code> shorthand or specify your own email address.
+    </p>
+
+    <p>
+    While the <code>reopen</code> command changes the originator of other
+    bugs merged with the one being reopened, <code>submitter</code> does not
+    affect merged bugs.
+    </p>
+  </dd>
 
 
-  <dd>Unarchives a bug that was previously archived. Unarchival should
-  generally be coupled with reopen and found/fixed as appropriate. Bugs
-  that have been unarchived can be archived using archive assuming the
-  non-time based archival requirements are met.
-</dd>
+  <dt><a name="forwarded"><code>forwarded</code> <var>bugnumber</var>
+    <var>address</var></a></dt>
+  <dd>
+    Notes that <var>bugnumber</var> has been forwarded to the upstream
+    maintainer at <var>address</var>.  This does not actually forward the
+    report.  This can be used to change an existing incorrect forwarded-to
+    address, or to record a new one for a bug that wasn't previously noted
+    as having been forwarded.
+  </dd>
 
 
-<dt><a name="comment"><code>#</code>...</a></dt>
+  <dt><a name="notforwarded"><code>notforwarded</code>
+    <var>bugnumber</var></a></dt>
+  <dd>
+    Forgets any idea that <var>bugnumber</var> has been forwarded to any
+    upstream maintainer.  If the bug was not recorded as having been
+    forwarded then this will do nothing.
+  </dd>
 
 
-  <dd>One-line comment. The <code>#</code> must be at the start of the line.
-  The text of comments will be included in the acknowledgement sent to the
-  sender and to affected maintainers, so you can use this to document the
-  reasons for your commands.
-</dd>
+  <dt><a name="retitle"><code>retitle</code> <var>bugnumber</var>
+    <var>new-title</var></a></dt>
+  <dd>
+    <p>
+    Changes the title of a bug report to that specified (the default is
+    the <code>Subject</code> mail header from the original report).
+    </p>
+
+    <p>
+    Unlike most of the other bug-manipulation commands when used on one of
+    a set of merged reports this will change the title of only the
+    individual bug requested, and not all those with which it is merged.
+    </p>
+  </dd>
 
 
-<dt><a name="thanks"><code>quit</code></a></dt>
-<dt><code>stop</code></dt>
-<dt><code>thank</code></dt>
-<dt><code>thanks</code></dt>
-<dt><code>thankyou</code></dt>
-<dt><code>thank you</code></dt>
-<dt><code>--</code></dt>
-<!-- #366093, I blame you! -->
-<!-- <dt><code>kthxbye</code></dt> -->
-<!-- See... I documented it! -->
+  <dt><a name="severity"><code>severity</code> <var>bugnumber</var>
+    <var>severity</var></a></dt>
+  <dd>
+    <p>
+    Set the severity level for bug report #<var>bugnumber</var> to
+    <var>severity</var>.  No notification is sent to the user who reported
+    the bug.
+    </p>
+
+    <p>
+    Severities are <code>critical</code>, <code>grave</code>,
+    <code>serious</code>, <code>important</code>, <code>normal</code>,
+    <code>minor</code>, and <code>wishlist</code>.
+    </p>
+
+    <p>
+    For <a href="Developer#severities">their meanings</a> please
+    consult the general developers' documentation for the bug system.
+    </p>
+  </dd>
 
 
-  <dd>On a line by itself, in any case, possibly followed by
-      whitespace, tells the control server to stop processing the
-      message; the remainder of the message can include explanations,
-      signatures or anything else, none of it will be detected by the
-      control server.
-</dd>
+  <dt><a name="clone"><code>clone</code> <var>bugnumber</var> <var>NewID</var>
+    [ <var>new IDs</var> ... ]</a></dt>
+  <dd>
+    <p>
+    The clone control command allows you to duplicate a bug report. It is
+    useful in the case where a single report actually indicates that multiple
+    distinct bugs have occurred. <q><var>New IDs</var></q> are negative numbers,
+    separated by spaces, which may be used in subsequent control commands to
+    refer to the newly duplicated bugs. A new report is generated for each
+    new ID.
+    </p>
 
+    <p>
+    Example usage:
+    </p>
+
+    <pre>
+          clone 12345 -1 -2
+          reassign -1 foo
+          retitle -1 foo: foo sucks
+          reassign -2 bar
+          retitle -2 bar: bar sucks when used with foo
+          severity -2 wishlist
+          clone 123456 -3
+          reassign -3 foo
+          retitle -3 foo: foo sucks
+          merge -1 -3
+    </pre>
+  </dd>
+
+
+  <dt><a name="merge"><code>merge</code> <var>bugnumber</var>
+    <var>bugnumber</var> ...</a></dt>
+  <dd>
+    <p>
+    Merges two or more bug reports.  When reports are merged opening,
+    closing, marking or unmarking as forwarded and reassigning any of the
+    bugs to a new package will have an identical effect on all of the
+    merged reports.
+    </p>
+
+    <p>
+    Before bugs can be merged they must be in exactly the same state:
+    either all open or all closed, with the same forwarded-to upstream
+    author address or all not marked as forwarded, all assigned to the
+    same package or package(s) (an exact string comparison is done on the
+    package to which the bug is assigned), and all of the same severity.
+    If they don't start out in the same state you should use
+    <code>reassign</code>, <code>reopen</code> and so forth to make sure
+    that they are before using <code>merge</code>. Titles are not required
+    to match, and will not be affected by the merge. Tags are not required
+    to match, either, they will be joined.
+    </p>
+
+    <p>
+    If any of the bugs listed in a <code>merge</code> command is already
+    merged with another bug then all the reports merged with any of the
+    ones listed will all be merged together.  Merger is like equality: it
+    is reflexive, transitive and symmetric.
+    </p>
+
+    <p>
+    Merging reports causes a note to appear on each report's logs; on the
+    WWW pages this is includes links to the other bugs.
+    </p>
+
+    <p>
+    Merged reports are all expired simultaneously, and only when all of
+    the reports each separately meet the criteria for expiry.
+    </p>
+  </dd>
+
+
+  <dt><a name="forcemerge"><code>forcemerge</code> <var>bugnumber</var>
+    <var>bugnumber</var> ...</a></dt>
+  <dd>
+    <p>
+    Forcibly merges two or more bug reports. The first bug listed
+    is the master bug, and its settings (the settings which must be equal in 
+    a normal merge) are assigned to the bugs listed next.
+    To avoid typos erroneously merging bugs, bugs must be in
+    the same package. See the text above for a description of what
+    merging means.
+    </p>
+
+    <p>
+    Note that this makes it possible to close bugs by merging; you
+    are responsible for notifying submitters with an appropriate close
+    message if you do this.
+    </p>
+  </dd>
+
+
+  <dt><a name="unmerge"><code>unmerge</code> <var>bugnumber</var></a></dt>
+  <dd>
+    <p>
+    Disconnects a bug report from any other reports with which it may have
+    been merged.  If the report listed is merged with several others then
+    they are all left merged with each other; only their associations with
+    the bug explicitly named are removed.
+    </p>
+
+    <p>
+    If many bug reports are merged and you wish to split them into two
+    separate groups of merged reports you must unmerge each report in one
+    of the new groups separately and then merge them into the required new
+    group.
+    </p>
+
+    <p>
+    You can only unmerge one report with each <code>unmerge</code>
+    command; if you want to disconnect more than one bug simply include
+    several <code>unmerge</code> commands in your message.
+    </p>
+  </dd>
+
+
+  <dt><a name="tags"><code>tags</code> <var>bugnumber</var> [ <code>+</code> |
+    <code>-</code> | <code>=</code> ] <var>tag</var> [ <var>tag</var> ...
+    ]</a></dt>
+  <dd>
+    <p>
+    Sets tags for the bug report #<var>bugnumber</var>. No notification
+    is sent to the user who reported the bug. Setting the action to
+    <code>+</code> means to add each given <var>tag</var>, <code>-</code>
+    means to remove each given <var>tag</var>, and <code>=</code> means to
+    ignore the current tags and set them afresh to the list provided. The
+    default action is adding.
+    </p>
+
+    <p>
+    Example usage:
+    </p>
+
+    <pre>
+          \# same as 'tags 123456 + patch'
+          tags 123456 patch
+
+          \# same as 'tags 123456 + help security'
+          tags 123456 help security
+
+          \# add 'fixed' and 'pending' tags
+          tags 123456 + fixed pending
+
+          \# remove 'unreproducible' tag
+          tags 123456 - unreproducible
+
+          \# set tags to exactly 'moreinfo' and 'unreproducible'
+          tags 123456 = moreinfo unreproducible
+    </pre>
+
+    <p>
+    Available tags currently include <code>patch</code>, <code>wontfix</code>,
+    <code>moreinfo</code>, <code>unreproducible</code>, <code>help</code>,
+    <code>pending</code>, <code>fixed</code>,
+    <code>fixed-in-experimental</code>, <code>fixed-upstream</code>,
+    <code>security</code>, 
+    <code>upstream</code>, <code>confirmed</code>, <code>d-i</code>,
+    <code>ipv6</code>, <code>lfs</code>, <code>l10n</code>,
+    <code>potato</code>, <code>woody</code>, <code>sarge</code>,
+    <code>sarge-ignore</code>, <code>etch</code>, <code>etch-ignore</code>,
+    <code>sid</code>, and <code>experimental</code>.
+    </p>
+
+    <p>
+    For <a href="Developer#tags">their meanings</a> please consult the
+    general developers' documentation for the bug system.
+    </p>
+  </dd>
+
+
+  <dt><a name="block"><code>block</code> <var>bugnumber</var> <code>by</code>
+    <var>bug</var> ...</a></dt>
+  <dd>
+    Note that the fix for the first bug is blocked by the other listed bugs.
+  </dd>
+
+
+  <dt><a name="unblock"><code>unblock</code> <var>bugnumber</var>
+    <code>by</code> <var>bug</var> ...</a></dt>
+  <dd>
+    Note that the fix for the first bug is no longer blocked by the other
+    listed bugs.
+  </dd>
+
+
+  <dt><a name="close"><code>close</code> <var>bugnumber</var> [
+    <var>fixed-version</var> ] (deprecated)</a></dt>
+  <dd>
+    <p>
+    Close bug report #<var>bugnumber</var>.
+    </p>
+
+    <p>
+    A notification is sent to the user who reported the bug, but (in
+    contrast to mailing <var>bugnumber</var><code>-done@bugs.debian.org</code>) the
+    text of the mail which caused the bug to be closed is <strong>not</strong>
+    included in that notification.  The maintainer who closes a report
+    needs to ensure, probably by sending a separate message, that the user
+    who reported the bug knows why it is being closed.
+    The use of this command is therefore deprecated. See the
+    developer's information about <a href="Developer#closing">how to
+    close a bug properly</a>.
+    </p>
+
+    <p>
+    If you supply a <var>fixed-version</var>, the bug tracking system
+    will note that the bug was fixed in that version of the package.
+    </p>
+  </dd>
+
+
+  <dt><a name="package"><code>package</code> [ <var>packagename</var> ...
+    ]</a></dt>
+  <dd>
+    <p>
+    Limits the following commands so that they will only apply to bugs
+    filed against the listed packages. You can list one or more packages. If
+    you don't list any packages, the following commands will apply to all
+    bugs. You're encouraged to use this as a safety feature in case you
+    accidentally use the wrong bug numbers.
+    </p>
+
+    <p>
+    Example usage:
+    </p>
+
+    <pre>
+          package foo
+          reassign 123456 bar 1.0-1
+
+          package bar
+          retitle 123456 bar: bar sucks
+          severity 123456 normal
+
+          package
+          severity 234567 wishlist
+    </pre>
+  </dd>
+
+
+  <dt><a name="owner"><code>owner</code> <var>bugnumber</var>
+    <var>address</var> | <code>!</code></a></dt>
+  <dd>
+    <p>
+    Sets <var>address</var> to be the <q>owner</q> of #<var>bugnumber</var>.
+    The owner of a bug claims responsibility for fixing it.
+    This is useful to share out work in cases where a
+    package has a team of maintainers.
+    </p>
+
+    <p>
+    If you wish to become the owner of the bug yourself, you can use the
+    <code>!</code> shorthand or specify your own email address.
+    </p>
+  </dd>
+
+
+  <dt><a name="noowner"><code>noowner</code> <var>bugnumber</var></a></dt>
+  <dd>
+    Forgets any idea that the bug has an owner other than the usual
+    maintainer.  If the bug had no owner recorded then this will do nothing.
+  </dd>
+
+
+  <dt><a name="archive"><code>archive</code> <var>bugnumber</var></a></dt>
+  <dd>
+    Archives a bug that had been archived at some point in the past
+    but is currently not archived if the bug fulfills
+    the requirements for archival, ignoring time.
+  </dd>
+
+
+  <dt><a name="unarchive"><code>unarchive</code> <var>bugnumber</var></a></dt>
+    <dd>
+    Unarchives a bug that was previously archived. Unarchival should
+    generally be coupled with reopen and found/fixed as appropriate. Bugs
+    that have been unarchived can be archived using archive assuming the
+    non-time based archival requirements are met.
+  </dd>
+
+
+  <dt><a name="comment"><code>#</code>...</a></dt>
+    <dd>
+    One-line comment. The <code>#</code> must be at the start of the line.
+    The text of comments will be included in the acknowledgement sent to the
+    sender and to affected maintainers, so you can use this to document the
+    reasons for your commands.
+  </dd>
+
+
+  <dt><a name="thanks"><code>quit</code></a></dt>
+  <dt><code>stop</code></dt>
+  <dt><code>thank</code></dt>
+  <dt><code>thanks</code></dt>
+  <dt><code>thankyou</code></dt>
+  <dt><code>thank you</code></dt>
+  <dt><code>--</code></dt>
+  <!-- #366093, I blame you! -->
+  <!-- <dt><code>kthxbye</code></dt> -->
+  <!-- See... I documented it! -->
+  <dd>
+    On a line by itself, in any case, possibly followed by
+    whitespace, tells the control server to stop processing the
+    message; the remainder of the message can include explanations,
+    signatures or anything else, none of it will be detected by the
+    control server.
+  </dd>
 </dl>
 
 <hr />
