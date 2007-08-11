@@ -177,7 +177,7 @@ while (<SRC>)
             s#<a href="\$\(HOME\)/devel/constitution">the constitution</a>,#<a href="\$(HOME)/devel/constitution">der Verfassung</a>#;
             s#specifically,  A.6.#schriftlich festgehalten, speziell § A.6.#;
 	    s/Looking at row (.*), column (.*),/Wie in Zeile $1, Spalte $2 sichtbar, erhielt/;
-	    s/Option (.*) defeats Option (.*) by \( (.*) -   (.*)\) =  (.*) votes/Option $1 besiegt Option $2 mit ( $3 -   $4) =  $5 Stimmen/;
+	    s/Option (.*) defeats Option (.*) by \( (.*) -  (.*)\) =\s*(.*) votes/Option $1 besiegt Option $2 mit \( $3 -   $4\) =  $5 Stimmen/;
 
 # Generic
 	    s/needs/benötigt/;
