@@ -1,12 +1,12 @@
 #use wml::debian::template title="Debian BTS &mdash; server di controllo" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.66" maintainer="Giuseppe Sacco"
+#use wml::debian::translation-check translation="1.67" maintainer="Giuseppe Sacco"
 
 <h1>Introduzione al server di posta di controllo e gestione bug</h1>
 
-<p>In aggiunta al server di posta su <code>request@bugs.debian.org</code>
-che consente il recupero dei dati e documentazione sui bug via email,
-c'è un altro server su <code>control@bugs.debian.org</code>
-che permette anche di manipolare in vari modi i rapporti sui bug.
+<p>Cos&igrave; come <code>request@bugs.debian.org</code> permette di
+<a href="server-request">ottenere informazioni su segnalazioni e
+documentazione via email</a>, <code>control@bugs.debian.org</code>
+permette di manipolare in vari modi i rapporti sui bug.
 </p>
 
 <p>Il server di controllo lavora proprio come il server di richiesta,
@@ -37,10 +37,68 @@ comando <code>refcard</code>.</p>
 
 <h1>Comandi disponibili sul server di posta di controllo</h1>
 
+<center>
+<table>
+<tr>
+<td align="center">Generale</td>
+<td align="center">Versioni</td>
+<td align="center">Duplicati</td>
+<td align="center">Altro</td>
+</tr>
+<tr>
+<!-- General -->
+<td valign="top">
+<dl>
+<dt><a href="#reassign">reassign</a></dt>
+<dt><a href="#severity">severity</a></dt>
+<dt><a href="#tag">tag</a></dt>
+<dt><a href="#retitle">retitle</a></dt>
+<dt><a href="#submitter">submitter</a></dt>
+</dl>
+</td>
+<!-- Versioning -->
+<td valign="top">
+<dl>
+<dt><a href="#found">found</a> |
+<a href="#notfound">notfound</a></dt>
+<dt><a href="#fixed">fixed</a> |
+<a href="#notfixed">notfixed</a></dt>
+<dt><a href="#reopen">reopen</a></dt>
+<!-- <dt>(close)</dt> Deprecated -->
+</dl>
+</td>
+<!-- Duplicates -->
+<td valign="top">
+<dl>
+<dt><a href="#merge">merge</a> |
+<a href="#unmerge">unmerge</a></dt>
+<dt><a href="#forcemerge">forcemerge</a></dt>
+<dt><a href="#clone">clone</a></dt>
+</dl>
+</td>
+<!-- Misc. -->
+<td valign="top">
+<dl>
+<dt><a href="#thanks">thanks</a></dt>
+<dt><a href="#comment">#</a></dt>
+<dt><a href="#forwarded">forwarded</a> | 
+<a href="#notforwarded">notforwarded</a></dt>
+<dt><a href="#owner">owner</a> |
+<a href="#noowner">nowner</a></dt>
+<dt><a href="#block">block</a> |
+<a href="#unblock">unblock</a></dt>
+</dl>
+</td>
+</tr>
+</table>
+</center>
+
 <dl>
 
+<a name="reassign">
 <dt><code>reassign</code> <var>bugnumber</var> <var>pacchetto</var>
  [ <var>versione</var> ]</dt>
+</a>
 
 <dd>
 <p>
@@ -56,8 +114,10 @@ ricorder&agrave; che il bug &egrave; relativo a qualla versione
 del pacchetto al quale si sta facendo l'assegnamento.</p>
 </dd>
 
+<a name="reopen">
 <dt><code>reopen</code> <var>bugnumber</var>
  [ <var>originator-address</var> | <code>=</code> | <code>!</code> ]</dt>
+</a>
 
 <dd>
 <p>
@@ -89,7 +149,9 @@ particolare del pacchetto, ma riappare in una successiva &egrave; meglio
 utilizzare il tag <code>found</code> anzich&eacute; questo.</p>
 </dd>
 
+<a name="found">
 <dt><code>found</code> <var>bugnumber</var> [ <var>versione</var> ]</dt>
+</a>
 
 <dd>
 <p>
@@ -119,7 +181,9 @@ quest'ultimo aggiungendogli il parametro <var>versione</var>
 senza ambiguit&agrave;.</p>
 </dd>
 
+<a name="notfound">
 <dt><code>notfound</code> <var>bugnumber</var> <var>versione</var></dt>
+</a>
 
 <dd>
 <p>Cancella la registrazione che il bug numero <var>bugnumber</var> sia
@@ -132,7 +196,9 @@ futuro non ci saranno informazioni sul bug in quella versione del pacchetto.
 &Egrave; stato pensato per correggere eventuali segnalazioni errate.</p>
 </dd>
 
+<a name="fixed">
 <dt><code>fixed</code> <var>bugnumber</var> <var>versione</var></dt>
+</a>
 
 <dd>
 <p>Indica che il bug numero <var>bugnumber</var> &egrave; stato
@@ -145,14 +211,26 @@ aggiunge solamente un'altra versione nel quale il bug &egrave; corretto.
 Usare numerobug-<code>done</code> per chiudere la segnalazione e marcare
 il problema come corretto in una specifica versione.</p>
 
+<a name="nofixed">
+<dt><code>notfixed</code> <var>bugnumber</var> <var>versione</var></dt>
+</a>
+
+<dd>
+<p>
+Cancella l'indicazione che il bug numero <var>bugnumber</var> sia
+stato risolto nella specifica <var>versione</var>.
+</p>
+
 <p>Questo comando &egrave; equivalente al comando <code>found</code> seguito
 dal comando <code>notfound</code> (il <code>found</code> rimuove il
 <code>fixed</code> in una versione specifica, mentre il <code>notfound</code>
 rimuove il <code>found</code>).</p>
 </dd>
 
+<a name="submitter">
 <dt><code>submitter</code> <var>bugnumber</var>
 <var>indirizzo-di-originatore</var> | <code>!</code></dt>
+</a>
 
 <dd>
 <p>
@@ -169,7 +247,9 @@ segnalazioni unite a quella riaperta, <code>submitter</code> non
 influisce sulle segnalazioni unite.</p>
 </dd>
 
+<a name="forwarded">
 <dt><code>forwarded</code> <var>bugnumber</var> <var>indirizzo</var></dt>
+</a>
 
 <dd>
 <p>
@@ -182,7 +262,9 @@ in precedenza annotato come inviato per conoscenza.
 </p>
 </dd>
 
+<a name="notforwarded">
 <dt><code>notforwarded</code> <var>bugnumber</var></dt>
+</a>
 
 <dd>
 <p>
@@ -193,7 +275,9 @@ per conoscenza, non farà nulla.
 </p>
 </dd>
 
+<a name="retitle">
 <dt><code>retitle</code> <var>bugnumber</var> <var>nuovo-titolo</var></dt>
+</a>
 
 <dd>
 <p>
@@ -208,7 +292,9 @@ questo cambierà solo il titolo del bug individuale richiesto
 e non tutti quelli collegati con esso.</p>
 </dd>
 
+<a name="severity">
 <dt><code>severity</code> <var>bugnumber</var> <var>gravità</var></dt>
+</a>
 
 <dd>
 <p>Imposta il livello di gravità del rapporto bug #<var>bugnumber</var> a
@@ -225,7 +311,9 @@ per il sistema dei bug.
 </p>
 </dd>
 
+<a name="clone">
 <dt><code>clone</code> <var>bugnumber</var> <var>new ID</var> [ <var>new IDs</var> ]</dt>
+</a>
 
 <dd>
 <p>
@@ -252,7 +340,9 @@ clonato. Per ogni ID viene generata una nuova segnalazione.
   </pre>
 </dd>
 
+<a name="merge">
 <dt><code>merge</code> <var>bugnumber</var> <var>bugnumber</var> ...</dt>
+</a>
 
 <dd>
 <p>
@@ -290,7 +380,10 @@ e solo quando tutti i rapporti rispettano i criteri di eliminazione
 ciascuno separatamente.</p>
 </dd>
 
+<a name="forcemerge">
 <dt><code>forcemerge</code> <var>bugnumber</var> <var>bugnumber</var> ...</dt>
+</a>
+
 <dd>
 <p>
 Forza il collegamento tra due o pi&ugrave; segnalazioni. Il primo
@@ -305,7 +398,10 @@ per informazioni sul significato di merge.
   con un messaggio che notifichi la chiusura della segnalazione.</p>
   </dd>
 
+<a name="unmerge">
 <dt><code>unmerge</code> <var>bugnumber</var></dt>
+</a>
+
 <dd>
 <p>
 Disconnette un rapporto su bug da qualsiasi altro con il quale possa
@@ -324,7 +420,9 @@ se vuoi scollegare più di un bug semplicemente includi un serie di comandi
 <code>unmerge</code> nel tuo messaggio.</p>
 </dd>
 
+<a name="tags">
 <dt><code>tags</code> <var>bugnumber</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var> [ <var>tag</var> ... ]</dt>
+</a>
 
 <dd>
 <p>Imposta un particolare tag per il rapporto su bug 
@@ -369,18 +467,27 @@ se vuoi scollegare più di un bug semplicemente includi un serie di comandi
   la documentazione generale dello sviluppatore per il sistema dei bug.</p>
 </dd>
 
+<a name="block">
 <dt><code>block</code> <var>bugnumber</var> <code>by</code> <var>bug</var> ...</dt>
+</a>
+
 <dd>
 Segnala che la soluzione di questo bug &egrave; bloccata da un altro.
 </dd>
 
+<a name="unblock">
 <dt><code>unblock</code> <var>bugnumber</var> <code>by</code> <var>bug</var> ...</dt>
+</a>
+
   <dd>Segnala che la soluzione di questo bug non &egrave; pi&ugrave;
   bloccata da un altro.
 </dd>
 
+<a name="close">
 <dt><code>close</code> <var>bugnumber</var> [ <var>fixed-version</var> ]
 (sconsigliato)</dt>
+</a>
+
 <dd>
 <p>
 Chiude il rapporto sul bug #<var>bugnumber</var>.
@@ -401,7 +508,9 @@ chiudere una segnalazione correttamente</a>.</p>
 tracciamento noter&agrave; che il bug &egrave; stato corretto in quella
 versione.</p>
 
+<a name="package">
 <dt><code>package</code> [ <var>nomepacchetto</var> ... ]</dt>
+</a>
 
 <dd>
 <p>Limita il campo di azione dei comandi successivi ai soli pacchetti
@@ -424,7 +533,9 @@ versione.</p>
   </pre>
 </dd>
 
+<a name="owner">
 <dt><code>owner</code> <var>numerobug</var> <var>indirizzo</var> | <code>!</code></dt>
+</a>
 
 <dd>
 <p>Imposta <var>indirizzo</var> come "proprietario" del #<var>numerobug</var>.
@@ -438,7 +549,9 @@ versione.</p>
       email.</p>
 </dd>
 
+<a name="noowner">
 <dt><code>noowner</code> <var>numerobug</var></dt>
+</a>
 
 <dd>
 <p>Elimina tutte le tracce di altri proprietari del bug al di fuori
@@ -447,7 +560,10 @@ versione.</p>
 </p>
 </dd>
 
+<a name="archive">
 <dt><code>archive</code> <var>numerobug</var></dt>
+</a>
+
 <dd>
 <p>Archivia una segnalazione che era stata gi&agrave; archiviata
       in passato a condizione che abbia tutti i requisiti necessari,
@@ -455,7 +571,10 @@ versione.</p>
 </p>
 </dd>
 
+<a name="unarchive">
 <dt><code>unarchive</code> <var>numerobug</var></dt>
+</a>
+
 <dd>
 <p>Estrae dall'archivio una segnalazione che era stata precedentemente
       archiviata. Questa operazione va in genere associata alla riapertura
@@ -465,7 +584,9 @@ versione.</p>
 </p>
 </dd>
 
+<a name="comment">
 <dt><code>#</code>...</dt>
+</a>
 
 <dd>
 <p>Commento di una linea. Il <code>#</code> deve essere all'inizio della riga.
@@ -475,6 +596,7 @@ versione.</p>
 </p>
 </dd>
 
+<a name="thanks">
 <dt><code>quit</code></dt>
 <dt><code>stop</code></dt>
 <dt><code>thank</code>...</dt>
@@ -482,6 +604,7 @@ versione.</p>
 <dt><code>thankyou</code>...</dt>
 <dt><code>thank you</code>...</dt>
 <dt><code>--</code>...</dt>
+</a>
 
   <dd>In una linea a se stante, maiuscolo o minuscolo, anche seguito da spazi.
       Dice al server di controllo di bloccare l'analisi del messaggio; il
