@@ -38,18 +38,25 @@
 
 <define-tag vendor>
   <preserve name />
+  <preserve country />
   <preserve url />
   <preserve deburl />
   <preserve contribution />
   <preserve ship />
-  <preserve email />
+  <preserve contacturl />
   <preserve cd />
   <preserve dvd />
   <set-var %attributes />
   <tr class="<get-var trclass />">
   <ifeq <get-var trclass /> "a" <set-var trclass="b" /> <set-var trclass="a" /> />
+    ####################
+    # Vendor home page link, Debian page link
     <td><a href="<get-var url />" class="h"><img src="h.png" alt="<gettext domain="vendors">Vendor Home</gettext>"></a> <a href="<get-var deburl />"><get-var name /></a></td>
+    ####################
+    # Vendor allows donations - "Yes" or "No"
     <td><contribution <get-var contribution />></td>
+    ####################
+    # Vendor offers "CD", "DVD" or "CD+DVD"
     <td>\
       <ifeq <get-var cd /> "yes" "CD">\
       <ifeq <get-var cd /> "yes" <ifeq <get-var dvd /> "yes" "+">>\
@@ -57,21 +64,38 @@
     </td>
     <td><get-var architectures /></td>
     <td><ship <get-var ship />></td>
-    <td><email <get-var email />></td>
+    ####################
+    # Contact URL may be empty, or a http: link or (default) a mailto: link
+    <td>\
+      <ifeq <get-var contacturl /> ""
+        "-"
+        <ifeq <substring <get-var contacturl /> 0 7 /> "http://"
+          <a href="<get-var contacturl />"><gettext domain="vendors">page</gettext></a>
+          <a href="<get-var contacturl />"><gettext domain="vendors">email</gettext></a>
+        >\
+      >\
+    </td>
   </tr>
+  ####################
   # Ensure that the list is sorted:
   <ifeq <string-compare "<get-var name />" "<get-var prevname />" caseless="true" />
         "less"
         <exit status="1" message="CD/DVD Vendor entries not sorted - '<get-var name />' should appear before '<get-var prevname />' in the list!" />
   />
+  ####################
+  # Ensure that the entry is in the right country section
+  <ifneq <get-var country /> <get-var code />
+    <exit status="1" message="CD/DVD Vendor '<get-var name />' should appear inside the country tag for country '<get-var country />', but it is inside that for '<get-var code />'!" />
+  />\
   <set-var prevname="<get-var name />" />
   <restore dvd />
   <restore cd />
-  <restore email />
+  <restore contacturl />
   <restore ship />
   <restore contribution />
   <restore deburl />
   <restore url />
+  <restore country />
   <restore name />
 </define-tag>
 
@@ -93,10 +117,6 @@
 
 <define-tag some_areas whitespace=delete>
   <gettext domain="vendors">To some areas</gettext>
-</define-tag>
-
-<define-tag email whitespace=delete>
-  <a href="mailto:%attributes"><gettext domain="vendors">email</gettext></a>
 </define-tag>
 
 <define-tag source whitespace=delete>
