@@ -1,499 +1,659 @@
 #use wml::debian::template title="Debian BTS &mdash; servidor de controle" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.66" translation_maintainer="Felipe Augusto van de Wiel (faw)"
+#use wml::debian::translation-check translation="1.70" translation_maintainer="Felipe Augusto van de Wiel (faw)"
 
 <h1>Introdução ao servidor de e-mail para controle e manipulação de bugs</h1>
 
-<p>Em adição ao servidor de e-mail em <code>request@bugs.debian.org</code>,
-o qual permite a recuperação de dados e documentação de bugs por e-mail,
-existe um outro servidor em <code>control@bugs.debian.org</code>, o qual
-também permite que relatórios de bugs sejam manipulados de várias maneiras.</p>
+<p>
+Assim como <code>request@bugs.debian.org</code> permite a <a
+href="server-request">obtenção de dados e documentação de bugs por
+e-mail</a>, <code>control@bugs.debian.org</code>,
+permite que os relatórios de bug sejam manipulados de várias formas.
+</p>
 
-<p>O servidor de controle funciona da mesma maneira que o servidor de
+<p>
+O servidor de controle funciona da mesma maneira que o servidor de
 requisição, exceto por possuir comandos adicionais; de fato, é o mesmo
 programa. Os dois endereços são separados somente para evitar que usuários
 cometam erros e causem problemas quando tentam meramente requisitar
-informação.</p>
+informação.
+</p>
 
-<p>Como os comandos específicos para o servidor de controle alteram o
+<p>
+Como os comandos específicos para o servidor de controle alteram o
 estado de um bug, uma notificação sobre o processamento dos comandos
 é enviado para o mantenedor do pacote para os quais os bugs alterados
 estão designados. Adicionalmente, a mensagem para o servidor e as
 alterações resultantes são registradas no relatório e portanto
-disponiblizadas nas páginas WWW.</p>
+disponiblizadas nas páginas WWW.
+</p>
 
-<p>Por favor consulte a
+<p>
+Por favor consulte a
 <a href="server-request#introduction">introdução ao servidor de requisição</a>
 disponível na World Wide Web, no arquivo
 <code>bug-log-mailserver.txt</code> ou enviando
 <code>help</code> para qualquer um dos servidores para detalhes básicos de
 operações dos servidores de e-mail e os comandos básicos disponíveis ao enviar
-mensagens para qualquer um dos endereços.</p>
+mensagens para qualquer um dos endereços.
+</p>
 
-<p>O <a href="server-refcard">cartão de referência</a> para os servidores de
+<p>
+O <a href="server-refcard">cartão de referência</a> para os servidores de
 e-mail está disponível via WWW em <code>bug-mailserver-refcard.txt</code> ou
-por e-mail usando o comando <code>refcard</code>.</p>
+por e-mail usando o comando <code>refcard</code>.
+</p>
+
 
 <h1>Comandos disponíveis no servidor de e-mail de controle</h1>
 
+<center>
+  <table>
+    <tr>
+    <td align="center">Geral</td>
+    <td align="center">Versionamento</td>
+    <td align="center">Duplicados</td>
+    <td align="center">Misc.</td>
+    </tr>
+    <tr>
+      <!-- General -->
+      <td valign="top">
+	<dl>
+	  <dt><a href="#reassign">reassign</a></dt>
+	  <dt><a href="#severity">severity</a></dt>
+	  <dt><a href="#tag">tag</a></dt>
+	  <dt><a href="#retitle">retitle</a></dt>
+	  <dt><a href="#submitter">submitter</a></dt>
+	</dl>
+      </td>
+      <!-- Versioning -->
+      <td valign="top">
+	<dl>
+	  <dt><a href="#found">found</a> | <a href="#notfound">notfound</a></dt>
+	  <dt><a href="#fixed">fixed</a> | <a href="#notfixed">notfixed</a></dt>
+	  <dt><a href="#reopen">reopen</a></dt>
+	  <!-- <dt>(close)</dt> Obsoleto -->
+	</dl>
+      </td>
+      <!-- Duplicates -->
+      <td valign="top">
+	<dl>
+	  <dt><a href="#merge">merge</a> | <a href="#unmerge">unmerge</a></dt>
+	  <dt><a href="#forcemerge">forcemerge</a></dt>
+	  <dt><a href="#clone">clone</a></dt>
+	</dl>
+      </td>
+      <!-- Misc. -->
+      <td valign="top">
+	<dl>
+	  <dt><a href="#thanks">thanks</a></dt>
+	  <dt><a href="#comment">#</a></dt>
+	  <dt><a href="#forwarded">forwarded</a> |  <a href="#notforwarded">notforwarded</a></dt>
+	  <dt><a href="#owner">owner</a> | <a href="#noowner">nowner</a></dt>
+	  <dt><a href="#block">block</a> | <a href="#unblock">unblock</a></dt>
+	</dl>
+      </td>
+    </tr>
+  </table>
+</center>
+
 <dl>
-
-<dt><code>reassign</code> <var>número-do-bug</var> <var>pacote</var>
- [ <var>versão</var> ]</dt>
-
-<dd>
-<p>
-Registra que o bug #<var>número-do-bug</var> é um bug em <var>pacote</var>.
-Pode ser usado para definir o pacote caso o usuário tenha esquecido o
-pseudo-cabeçalho ou para mudar uma atribuição anterior. Nenhuma notificação
-é enviada para ninguém (a não ser a informação normal no processamento da
-transcrição).
-</p>
-
-<p>Se você fornecer uma <var>versão</var>, o sistema de acompanhamento de bugs
-perceberá que o bug afeta aquela versão do pacote recém-atribuído.
-</p>
-</dd>
-
-<dt><code>reopen</code> <var>número-do-bug</var>
- [ <var>endereço-do-relator</var> | <code>=</code> | <code>!</code> ]</dt>
-
-<dd>
-<p>
-Reabre #<var>número-do-bug</var> caso o mesmo esteja fechado.
-</p>
-
-<p>Por padrão, ou se você especificar <code>=</code>, a pessoa que enviou
-originalmente o relatório de bug continua como o remetente do relatório, assim
-a mesma poderá receber uma notificação quando o bug for fechado novamente.</p>
-
-<p>Caso você forneça um <var>endereço-do-relator</var> o remetente será
-definido como o endereço que você fornecer. Caso você deseje se tornar o novo
-remetente do relatório reaberto você pode usar o atalho <code>!</code> ou
-especificar seu próprio endereço de e-mail.</p>
-
-<p>Normalmente é uma boa idéia avisar à pessoa que está prestes a ser
-registrada como o relator que você está reabrindo o relatório, assim ela
-estará avisada para esperar a notificação que receberá quando o bug for
-fechado novamente.</p>
-
-<p>Caso o bug não esteja fechado, reabrir o mesmo não resultará em nada, nem
-mesmo mudar o relator. Para alterar o remetente de um relatório de bug
-aberto, use o comando <code>submitter</code>; note que isto notificará o
-relator original sobre esta mudança.</p>
-
-<p>Se o bug foi registrado como fechado em determinada versão de um pacote
-mas reapareceu em uma versão posterior, é melhor utilizar o comando
-<code>found</code>.
-</p>
-</dd>
-
-<dt><code>found</code> <var>número-do-bug</var> [ <var>versão</var> ]</dt>
-
-<dd>
-<p>
-Registra que #<var>número-do-bug</var> foi encontrado em determinada
-<var>versão</var> do pacote ao qual ele está atribuído.
-</p>
-
-<p>O sistema de acompanhamento de bugs utiliza essa informação, em conjunto
-com as versões corrigidas que são registradas quando bugs são fechados, para
-exibir listas de bugs abertos em várias versões de cada pacote. O sistema
-considera um bug como aberto quando não há uma versão corrigida, ou quando o
-bug foi encontrado ("found") mais recentemente do que havia sido corrigido.</p>
-
-<p>Caso nenhuma <var>versão</var> seja fornecida, a lista de versões corrigidas
-para o bug é esvaziada. Isto é idêntico ao comportamento do
-<code>reopen</code>.</p>
-
-<p>Este comando só fará com que um bug seja marcado como não concluído
-se a versão não for especificada, ou se a <var>versão</var> sendo marcada
-como encontrada (found) é igual à <var>versão</var> que foi marcada como
-corrigida (fixed). (Se você tem certeza de que quer o bug marcado como
-não concluído, use <code>reopen</code> em conjunto com <code>found</code>.)</p>
-
-<p>Este comando foi introduzido como substituto do <code>reopen</code> porque
-era difícil adicionar uma <var>versão</var> à sintaxe desse comando sem sofrer
-ambigüidade.</p>
-</dd>
-
-<dt><code>notfound</code> <var>número-do-bug</var> <var>versão</var></dt>
-
-<dd>
-<p>
-Remove o registro de que #<var>número-do-bug</var> foi encontrado em
-determinada <var>versão</var> do pacote ao qual ele está atribuído.
-</p>
-
-<p>Isso é diferente de fechar o bug na versão especificada, uma vez que o bug
-também não está listado como corrigido naquela versão; nenhuma informação
-sobre aquela versão será conhecida. O objetivo é corrigir erros no registro de
-quando um bug foi encontrado.</p>
-</dd>
-
-<dt><code>fixed</code> <var>número-do-bug</var> <var>versão</var></dt>
-
-<dd>
-<p>
-Indica que o bug #<var>número-do-bug</var> foi corrigido na
-<var>versão</var> informada do pacote para o qual está designado.
-</p>
-
-<p>Isto <em>não</em> faz com que o bug seja marcado como fechado,
-isto meramente adiciona outra versão na qual o bug foi corrigido.
-Use o endereço número-do-bug-done para fechar um bug e marcá-lo como
-corrigido numa versão particular.</p>
-</dd>
-
-<dt><code>notfixed</code> <var>número-do-bug</var> <var>versão</var></dt>
-
-<dd>
-<p>
-Remove o registro que o bug #<var>número-do-bug</var> foi corrigido
-na <var>versão</var> informada.
-</p>
-
-<p>Este comando é equivalente ao <code>found</code> seguido pelo
-<code>notfound</code> (<q>found</q> remove o estado de fechado de
-uma versão particular e <q>notfound</q> remove o <q>found</q>).</p>
-</dd>
-
-<dt><code>submitter</code> <var>número-do-bug</var>
-<var>endereço-do-relator</var> | <code>!</code></dt>
-
-<dd>
-<p>
-Altera o relator do #<var>número-do-bug</var> para
-<var>endereço-do-relator</var>.
-</p>
-
-<p>Se você deseja ser o novo remetente do relatório você pode usar o
-<code>!</code> ou especificar seu próprio endereço de e-mail.</p>
-
-<p>Enquanto o comando <code>reopen</code> altera o relator dos outros bugs
-unidos com o que está sendo aberto novamente, <code>submitter</code> não
-afeta bugs unidos.</p>
-</dd>
-
-<dt><code>forwarded</code> <var>número-do-bug</var> <var>endereço</var></dt>
-
-<dd>
-Marca que <var>número-do-bug</var> foi encaminhado para o mantenedor original
-em <var>endereço</var>. Isto na verdade não encaminha o relatório. Isso pode
-ser usado para modificar um endereço de encaminhamento incorreto existente ou
-para registrar um novo endereço para um bug que não tenha sido marcado como
-tendo sido encaminhado.
-</dd>
-
-<dt><code>notforwarded</code> <var>número-do-bug</var></dt>
-
-<dd>
-Esquece qualquer vestígio de que <var>número-do-bug</var> foi encaminhado
-para qualquer mantenedor original. Caso o bug não tenha sido marcado como
-tendo sido encaminhado então isso não causará nada.
-</dd>
-
-<dt><code>retitle</code> <var>número-do-bug</var> <var>novo-título</var></dt>
-
-<dd>
-<p>
-Muda o título de um relatório de bug para o especificado (o padrão é
-o cabeçalho <code>Subject</code> &mdash; Assunto &mdash; da mensagem do
-relatório original).
-</p>
-
-<p>Diferente da maioria dos outros comandos de manipulação de bugs, quando
-usado em um relatório de um conjunto de relatórios unidos, modificará
-somente o título do bug individual requisitado e não todos aqueles com os
-quais o mesmo está unido.</p>
-</dd>
-
-<dt><code>severity</code> <var>número-do-bug</var> <var>severidade</var></dt>
-
-<dd>
-<p>Define o nível de severidade para o relatório de bug #<var>número-do-bug
-</var> para <var>severidade</var>. Nenhuma notificação é enviada para o
-usuário que reportou o bug.</p>
-
-<p>As severidades são <code>critical</code>, <code>grave</code>,
-<code>serious</code>, <code>important</code>, <code>normal</code>,
-<code>minor</code>, e <code>wishlist</code>.</p>
-
-<p>Para <a href="Developer#severities">os significados das severidades</a> por
-favor consulte a documentação geral dos desenvolvedores sobre o sistema de
-bugs.
-</p>
-</dd>
-
-<dt><code>clone</code> <var>número-do-bug</var> <var>NovoID</var> [ <var>Novos IDs</var> ... ]</dt>
-
+  <dt><a name="reassign"><code>reassign</code> <var>número-do-bug</var>
+    <var>pacote</var> [ <var>versão</var> ]</a></dt>
   <dd>
-  <p>
-  O comando de controle clone permite duplicar um relatório de bug. Ele é
-  útil quando um único relatório na verdade indica que múltiplos bugs
-  distintos ocorreram. <q><var>Novos IDs</var></q> são números negativos,
-  separados por espaços, que podem ser usados em comandos de controle
-  subseqüentes para se referir aos novos bugs duplicados. Um novo relatório
-  é gerado para cada novo ID.
-  </p>
+    <p>
+    Registra que o bug #<var>número-do-bug</var> é um bug em <var>pacote</var>.
+    Pode ser usado para definir o pacote caso o usuário tenha esquecido o
+    pseudo-cabeçalho ou para mudar uma atribuição anterior. Nenhuma notificação
+    é enviada para ninguém (a não ser a informação normal no processamento da
+    transcrição).
+    </p>
 
-  <p>Exemplo de uso:</p>
-
-  <pre>
-        clone 12345 -1 -2
-        reassign -1 foo
-        retitle -1 foo: foo fede
-        reassign -2 bar
-        retitle -2 bar: bar fede quando usado com foo
-        severity -2 wishlist
-        clone 123456 -3
-        reassign -3 foo
-        retitle -3 foo: foo fede
-        merge -1 -3
-  </pre>
-
-  <p>Lembre-se de escrever o seu relatório de bug em inglês. Se precisar de
-  ajuda você pode enviar uma mensagem para
-  <email "debian-devel-portuguese@lists.debian.org"> ou para
-  <email "debian-l10n-portuguese@lists.debian.org">.</p>
+    <p>
+    Se você fornecer uma <var>versão</var>, o sistema de acompanhamento de bugs
+    perceberá que o bug afeta aquela versão do pacote recém-atribuído.
+    </p>
   </dd>
 
-<dt><code>merge</code> <var>número-do-bug</var> <var>número-do-bug</var> ...</dt>
 
-<dd>
-<p>
-Une dois ou mais relatórios de bug. Quando relatórios são unidos, abrir,
-fechar, marcar ou desmarcar como encaminhados e reatribuir quaisquer dos bugs
-para um novo pacote terá o efeito idêntico em todos os relatórios que foram
-unidos.
-</p>
-
-<p>Antes que os bugs possam ser unidos os mesmos precisam estar exatamente
-no mesmo estado: ou todos são bugs abertos ou todos são bugs fechados, com
-o mesmo endereço de encaminhamento para o autor original ou todos não
-marcados como encaminhados, todos atribuídos para o(s) mesmo(s) pacote(s)
-(uma comparação exata de strings é feita no pacote para o qual o bug está
-atribuído), e todos da mesma severidade. Caso os mesmos não estejam
-inicialmente no mesmo estado você deve usar <code>reassign</code>,
-<code>reopen</code> e assim por diante para certificar-se de que os mesmos
-estejam no mesmo estado antes de usar <code>merge</code>. Os títulos não
-precisam ser os mesmos, e não serão afetados pelo merge. As tags também
-não precisam ser as mesmas, elas serão unidas.</p>
-
-<p>Caso qualquer um dos bugs listados em um comando <code>merge</code> já
-esteja unido com um outro bug, todos os relatórios unidos com quaisquer um
-dos relatórios listados serão todos unidos. Unir é como a igualdade: é
-reflexivo, transitivo e simétrico.</p>
-
-<p>Unir relatórios faz com que uma nota apareça no log de cada relatório
-de bug; nas páginas WWW isto faz com que sejam incluídos links para os
-outros bugs.</p>
-
-<p>Relatórios unidos são todos expirados simultaneamente e somente quando
-todos os relatórios separadamente atinjam os critérios para expiração.
-</p>
-</dd>
-
-<dt><code>forcemerge</code> <var>número-do-bug</var> <var>número-do-bug</var> ...</dt>
+  <dt><a name="reopen"><code>reopen</code> <var>número-do-bug</var>
+   [ <var>endereço-do-relator</var> | <code>=</code> | <code>!</code> ]</a></dt>
   <dd>
-  <p>
-  Une forçadamente dois ou mais relatórios de bug. O primeiro bug listado
-  é o bug principal, e suas configurações (as configurações que devem ser
-  iguais numa união normal) são atribuídas aos bugs listados em seguida.
-  Para evitar que erros de digitação unam bugs erroneamente, os bugs precisam
-  estar no mesmo pacote. Veja o texto acima para uma descrição do que união
-  (<q>merge</q>) significa.
-  </p>
+    <p>
+    Reabre #<var>número-do-bug</var> caso o mesmo esteja fechado.
+    </p>
 
-  <p>Note que isto torna possível o fechamento de bugs na união; você é
-  responsável por notificar os relatores dos bugs com uma mensagem de
-  fechamento apropriada se você fizer isto.</p>
+    <p>
+    Por padrão, ou se você especificar <code>=</code>, a pessoa que enviou
+    originalmente o relatório de bug continua como o remetente do relatório,
+    assim a mesma poderá receber uma notificação quando o bug for fechado
+    novamente.
+    </p>
+
+    <p>
+    Caso você forneça um <var>endereço-do-relator</var> o remetente será
+    definido como o endereço que você fornecer. Caso você deseje se tornar o
+    novo remetente do relatório reaberto você pode usar o atalho <code>!</code>
+    ou especificar seu próprio endereço de e-mail.
+    </p>
+
+    <p>
+    Normalmente é uma boa idéia avisar à pessoa que está prestes a ser
+    registrada como o relator que você está reabrindo o relatório, assim ela
+    estará avisada para esperar a notificação que receberá quando o bug for
+    fechado novamente.
+    </p>
+
+    <p>
+    Caso o bug não esteja fechado, reabrir o mesmo não resultará em nada, nem
+    mesmo mudar o relator. Para alterar o remetente de um relatório de bug
+    aberto, use o comando <code>submitter</code>; note que isto notificará o
+    relator original sobre esta mudança.
+    </p>
+
+    <p>
+    Se o bug foi registrado como fechado em determinada versão de um pacote
+    mas reapareceu em uma versão posterior, é melhor utilizar o comando
+    <code>found</code>.
+    </p>
   </dd>
 
-<dt><code>unmerge</code> <var>número-do-bug</var></dt>
 
-<dd>
-<p>
-Desconecta um relatório de bug de quaisquer outros relatórios com os quais o
-relatório em questão possa ter sido unido. Caso o relatório listado seja unido
-com diversos outros então os mesmos serão todos mantidos unidos; somente suas
-associações com o bug explicitamente nomeado serão removidas.
-</p>
-
-<p>Caso muitos relatórios de bugs sejam unidos e você deseje separá-los em dois
-grupos separados de relatórios unidos você deve desconectar cada relatório em
-um dos novos grupos separadamente e então uní-los na forma do novo grupo
-requerido.</p>
-
-<p>Você pode somente desconectar um relatório com cada comando
-<code>unmerge</code>; caso você queira desconectar mais de um bug simplesmente
-inclua diversos comandos <code>unmerge</code> em sua mensagem.
-</p>
-</dd>
-
-<dt><code>tags</code> <var>número-do-bug</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var> [ <var>tag</var> ... ]</dt>
-
+  <dt><a name="found"><code>found</code> <var>número-do-bug</var> [
+    <var>versão</var> ]</a></dt>
   <dd>
-  <p>
-  Define tags para o relatório de bug #<var>número-do-bug</var>. Nenhuma
-  notificação é enviada para o usuário que relatou o bug. Definir a ação
-  como <code>+</code> significa que cada <var>tag</var> dada deve ser
-  adicionada, <code>-</code> significa que cada <var>tag</var> deve ser
-  removida, e <code>=</code> significa que o conjunto atual de tags deve
-  ser ignorado e definido a partir da lista fornecida. A ação padrão é
-  adicionar.
-  </p>
- 
-  <p>Exemplo de uso:</p>
- 
-  <pre>
-        \# o mesmo que 'tags 123456 + patch'
-        tags 123456 patch
- 
-        \# o mesmo que 'tags 123456 + help security'
-        tags 123456 help security
- 
-        \# adiciona as tags 'fixed' e 'pending'
-        tags 123456 + fixed pending
- 
-        \# remove a tag 'unreproducible'
-        tags 123456 - unreproducible
- 
-        \# define as tags exatamente como 'moreinfo' e 'unreproducible'
-        tags 123456 = moreinfo unreproducible
-  </pre>
- 
-  <p>As tags disponíveis atualmente incluem <code>patch</code>,
-  <code>wontfix</code>, <code>moreinfo</code>, <code>unreproducible</code>,
-  <code>help</code>, <code>pending</code>, <code>fixed</code>,
-  <code>fixed-in-experimental</code>, <code>fixed-upstream</code>,
-  <code>security</code>,
-  <code>upstream</code>, <code>confirmed</code>, <code>d-i</code>,
-  <code>ipv6</code>, <code>lfs</code>, <code>l10n</code>
-  <code>potato</code>, <code>woody</code>, <code>sarge</code>,
-  <code>sarge-ignore</code>, <code>etch</code>, <code>etch-ignore</code>,
-  <code>sid</code> e <code>experimental</code>.
+    <p>
+    Registra que #<var>número-do-bug</var> foi encontrado em determinada
+    <var>versão</var> do pacote ao qual ele está atribuído.
+    </p>
 
-  <p>Para <a href="Developer#tags">os significados das tags</a> por favor
-  consulte a documentação geral dos desenvolvedores sobre o sistema de
-  bugs.</p>
+    <p>
+    O sistema de acompanhamento de bugs utiliza essa informação, em conjunto
+    com as versões corrigidas que são registradas quando bugs são fechados,
+    para exibir listas de bugs abertos em várias versões de cada pacote. O
+    sistema considera um bug como aberto quando não há uma versão corrigida,
+    ou quando o bug foi encontrado ("found") mais recentemente do que havia
+    sido corrigido.
+    </p>
+
+    <p>
+    Caso nenhuma <var>versão</var> seja fornecida, a lista de versões
+    corrigidas para o bug é esvaziada. Isto é idêntico ao comportamento do
+    <code>reopen</code>.
+    </p>
+
+    <p>
+    Este comando só fará com que um bug seja marcado como não concluído
+    se a versão não for especificada, ou se a <var>versão</var> sendo marcada
+    como encontrada (found) é igual à <var>versão</var> que foi marcada como
+    corrigida (fixed). (Se você tem certeza de que quer o bug marcado como
+    não concluído, use <code>reopen</code> em conjunto com <code>found</code>).
+    </p>
+
+    <p>
+    Este comando foi introduzido como substituto do <code>reopen</code> porque
+    era difícil adicionar uma <var>versão</var> à sintaxe desse comando sem
+    sofrer ambigüidade.
+    </p>
   </dd>
 
-<dt><code>block</code> <var>número-do-bug</var> <code>by</code> <var>bug</var> ...</dt>
-  <dd>Note que a correção para o primeiro bug está bloqueada pelos outros bugs
-  listados.</dd>
 
-<dt><code>unblock</code> <var>número-do-bug</var> <code>by</code> <var>bug</var> ...</dt>
-  <dd>Note que a correção para o primeiro bug deixou de estar bloqueada pelos
-  outros bugs listados.</dd>
-
-<dt><code>close</code> <var>número-do-bug</var> [ <var>versão-corrigida</var> ]
- (ultrapassado)</dt>
-
-<dd>
-<p>
-Fecha o relatório de bug #<var>número-do-bug</var>.
-</p>
-
-<p>Uma notificação é enviada para o usuário que reportou o bug, mas (ao
-contrário do envio de uma mensagem para
-<var>número-do-bug</var><code>-done@bugs.debian.org</code>) o texto da
-mensagem que fechou o bug <strong>não</strong> é incluído na notificação.
-O mantenedor que fecha o relatório precisa certificar-se, provavelmente
-enviando uma mensagem separada, que o usuário que reportou o bug fique
-sabendo a razão pela qual o bug está sendo fechado. O uso deste comando é
-portanto desencorajado. Veja as informações para desenvolvedores sobre
-<a href="Developer#closing">como fechar um relatório de bug</a>.</p>
-
-<p>Se você fornecer uma <var>versão-corrigida</var>, o sistema de
-acompanhamento de bugs perceberá que o bug foi corrigido para aquela
-versão do pacote.</p>
-</dd>
-
-<dt><code>package</code> [ <var>nome-do-pacote</var> ... ]</dt>
-
+  <dt><a name="notfound"><code>notfound</code> <var>número-do-bug</var>
+    <var>versão</var></a></dt>
   <dd>
-  <p>
-  Limita os próximos comandos, fazendo com que eles sejam aplicados
-  somente em erros relativos aos pacotes listados. Você pode listar um ou
-  mais pacotes. Se você não listar nenhum pacote, os próximos comandos 
-  serão aplicados em todos os bugs. Você é encorajado a usar isto como uma
-  medida de segurança para o caso de você, acidentalmente, usar os números
-  errados dos relatórios de bug.
-  </p>
+    <p>
+    Remove o registro de que #<var>número-do-bug</var> foi encontrado em
+    determinada <var>versão</var> do pacote ao qual ele está atribuído.
+    </p>
 
-  <p>Exemplo de uso:</p>
-
-  <pre>
-        package foo
-	reassign 123456 bar 1.0-1
-
-	package bar
-	retitle 123456 bar: bar fede
-	severity 123456 normal
-
-	package
-	severity 234567 wishlist
-  </pre>
+    <p>
+    Isso é diferente de fechar o bug na versão especificada, uma vez que o
+    bug também não está listado como corrigido naquela versão; nenhuma
+    informação sobre aquela versão será conhecida. O objetivo é corrigir
+    erros no registro de quando um bug foi encontrado.
+    </p>
   </dd>
 
-<dt><code>owner</code> <var>número-do-bug</var> <var>endereço</var> | <code>!</code></dt>
 
+  <dt><a name="fixed"><code>fixed</code> <var>número-do-bug</var>
+    <var>versão</var></a></dt>
   <dd>
-  <p>
-  Define <var>endereço</var> como "dono" do #<var>número-do-bug</var>.
-  O dono de um bug clama a responsabilidade de corrigí-lo.
-  Isto é útil para dividir o trabalho em
-  pacotes que possuem equipes de mantenedores.
-  </p>
+    <p>
+    Indica que o bug #<var>número-do-bug</var> foi corrigido na
+    <var>versão</var> informada do pacote para o qual está designado.
+    </p>
 
-  <p>Se você quer se tornar o dono de um bug, você pode usar a abreviação
-  <code>!</code> ou especificar seu endereço de e-mail.</p>
-  </dd>
- 
-<dt><code>noowner</code> <var>número-do-bug</var></dt>
- 
-  <dd>Esquece qualquer dono que o bug tenha além do mantenedor usual. Se o
-  bug não tiver algum dono registrado, esta opção não fará nada.</dd>
-
-<dt><code>archive</code> <var>número-do-bug</var></dt>
-
-  <dd>Arquiva um bug que foi arquivado em algum ponto no passado mas não
-  está atualmente arquivado se o bug preenche os requisitos para
-  arquivamento, ignorando o tempo.</dd>
-
-<dt><code>unarchive</code> <var>número-do-bug</var></dt>
-
-  <dd>Desarquiva um bug que foi previamente arquivado. Desarquivar deveria
-  ser geralmente acompanhado com reopen e found/fixed conforme for apropriado.
-  Bugs que foram desarquivados podem ser arquivados usando archive assumindo
-  que os requisitos de arquivamentos não baseados em tempo sejam atendidos.
+    <p>
+    Isto <em>não</em> faz com que o bug seja marcado como fechado,
+    isto meramente adiciona outra versão na qual o bug foi corrigido.
+    Use o endereço número-do-bug-done para fechar um bug e marcá-lo como
+    corrigido numa versão particular.
+    </p>
   </dd>
 
 
-<dt><code>#</code>...</dt>
+  <dt><a name="notfixed"><code>notfixed</code> <var>número-do-bug</var>
+    <var>versão</var></a></dt>
+  <dd>
+    <p>
+    Remove o registro que o bug #<var>número-do-bug</var> foi corrigido
+    na <var>versão</var> informada.
+    </p>
 
-  <dd>Comentário de uma linha. O <code>#</code> precisa estar no começo da
-  linha. O texto dos comentários será incluído na mensagem enviada pelo
-  remetente e para os mantenedores afetados, portanto você pode utilizar isto
-  para documentar as razões de seus comandos.</dd>
+    <p>
+    Este comando é equivalente ao <code>found</code> seguido pelo
+    <code>notfound</code> (<q>found</q> remove o estado de fechado de
+    uma versão particular e <q>notfound</q> remove o <q>found</q>).
+    </p>
+  </dd>
 
-<dt><code>quit</code></dt>
-<dt><code>stop</code></dt>
-<dt><code>thank</code></dt>
-<dt><code>thanks</code></dt>
-<dt><code>thankyou</code></dt>
-<dt><code>thank you</code></dt>
-<dt><code>--</code></dt>
-<!-- #366093, I blame you! -->
-<!-- <dt><code>kthxbye</code></dt> -->
-<!-- See... I documented it! -->
 
-  <dd>Numa linha sozinho, em qualquer caso, possivelmente seguido por um
-  espaço em branco, informa ao servidor de controle para parar de
-  processar a mensagem; é possível incluir explicações, assinaturas ou
-  qualquer outra coisa no resto da mensagem, nada disso será detectado
-  pelo servidor de controle.</dd>
+  <dt><a name="submitter"><code>submitter</code> <var>número-do-bug</var>
+    <var>endereço-do-relator</var> | <code>!</code></a></dt>
+  <dd>
+    <p>
+    Altera o relator do #<var>número-do-bug</var> para
+    <var>endereço-do-relator</var>.
+    </p>
 
+    <p>
+    Se você deseja ser o novo remetente do relatório você pode usar o
+    <code>!</code> ou especificar seu próprio endereço de e-mail.
+    </p>
+
+    <p>
+    Enquanto o comando <code>reopen</code> altera o relator dos outros bugs
+    unidos com o que está sendo aberto novamente, <code>submitter</code> não
+    afeta bugs unidos.
+    </p>
+  </dd>
+
+
+  <dt><a name="forwarded"><code>forwarded</code> <var>número-do-bug</var>
+    <var>endereço</var></a></dt>
+  <dd>
+    Marca que <var>número-do-bug</var> foi encaminhado para o mantenedor
+    original em <var>endereço</var>. Isto na verdade não encaminha o relatório.
+    Isso pode ser usado para modificar um endereço de encaminhamento incorreto
+    existente ou para registrar um novo endereço para um bug que não tenha sido
+    marcado como tendo sido encaminhado.
+  </dd>
+
+
+  <dt><a name="notforwarded"><code>notforwarded</code>
+    <var>número-do-bug</var></a></dt>
+  <dd>
+    Esquece qualquer vestígio de que <var>número-do-bug</var> foi encaminhado
+    para qualquer mantenedor original. Caso o bug não tenha sido marcado como
+    tendo sido encaminhado então isso não causará nada.
+  </dd>
+
+
+  <dt><a name="retitle"><code>retitle</code> <var>número-do-bug</var>
+    <var>novo-título</var></a></dt>
+  <dd>
+    <p>
+    Muda o título de um relatório de bug para o especificado (o padrão é
+    o cabeçalho <code>Subject</code> &mdash; Assunto &mdash; da mensagem do
+    relatório original).
+    </p>
+
+    <p>
+    Diferente da maioria dos outros comandos de manipulação de bugs, quando
+    usado em um relatório de um conjunto de relatórios unidos, modificará
+    somente o título do bug individual requisitado e não todos aqueles com os
+    quais o mesmo está unido.
+    </p>
+  </dd>
+
+
+  <dt><a name="severity"><code>severity</code> <var>número-do-bug</var>
+    <var>severidade</var></a></dt>
+  <dd>
+    <p>
+    Define o nível de severidade para o relatório de bug #<var>número-do-bug
+    </var> para <var>severidade</var>. Nenhuma notificação é enviada para o
+    usuário que reportou o bug.
+    </p>
+
+    <p>
+    As severidades são <code>critical</code>, <code>grave</code>,
+    <code>serious</code>, <code>important</code>, <code>normal</code>,
+    <code>minor</code>, e <code>wishlist</code>.
+    </p>
+
+    <p>
+    Para <a href="Developer#severities">os significados das severidades</a> por
+    favor consulte a documentação geral dos desenvolvedores sobre o sistema de
+    bugs.
+    </p>
+  </dd>
+
+
+  <dt><a name="clone"><code>clone</code> <var>número-do-bug</var>
+    <var>NovoID</var> [ <var>Novos IDs</var> ... ]</a></dt>
+  <dd>
+    <p>
+    O comando de controle clone permite duplicar um relatório de bug. Ele é
+    útil quando um único relatório na verdade indica que múltiplos bugs
+    distintos ocorreram. <q><var>Novos IDs</var></q> são números negativos,
+    separados por espaços, que podem ser usados em comandos de controle
+    subseqüentes para se referir aos novos bugs duplicados. Um novo relatório
+    é gerado para cada novo ID.
+    </p>
+
+    <p>
+    Exemplo de uso:
+    </p>
+
+    <pre>
+          clone 12345 -1 -2
+          reassign -1 foo
+          retitle -1 foo: foo fede
+          reassign -2 bar
+          retitle -2 bar: bar fede quando usado com foo
+          severity -2 wishlist
+          clone 123456 -3
+          reassign -3 foo
+          retitle -3 foo: foo fede
+          merge -1 -3
+    </pre>
+
+## portuguese only
+    <p>
+    Lembre-se de escrever o seu relatório de bug em inglês. Se precisar de
+    ajuda você pode enviar uma mensagem para
+    <email "debian-devel-portuguese@lists.debian.org"> ou para
+    <email "debian-l10n-portuguese@lists.debian.org">.
+    </p>
+## /portuguese
+  </dd>
+
+
+  <dt><a name="merge"><code>merge</code> <var>número-do-bug</var>
+    <var>número-do-bug</var> ...</a></dt>
+  <dd>
+    <p>
+    Une dois ou mais relatórios de bug. Quando relatórios são unidos, abrir,
+    fechar, marcar ou desmarcar como encaminhados e reatribuir quaisquer dos
+    bugs para um novo pacote terá o efeito idêntico em todos os relatórios
+    que foram unidos.
+    </p>
+
+    <p>
+    Antes que os bugs possam ser unidos os mesmos precisam estar exatamente
+    no mesmo estado: ou todos são bugs abertos ou todos são bugs fechados, com
+    o mesmo endereço de encaminhamento para o autor original ou todos não
+    marcados como encaminhados, todos atribuídos para o(s) mesmo(s) pacote(s)
+    (uma comparação exata de strings é feita no pacote para o qual o bug está
+    atribuído), e todos da mesma severidade. Caso os mesmos não estejam
+    inicialmente no mesmo estado você deve usar <code>reassign</code>,
+    <code>reopen</code> e assim por diante para certificar-se de que os mesmos
+    estejam no mesmo estado antes de usar <code>merge</code>. Os títulos não
+    precisam ser os mesmos, e não serão afetados pelo merge. As tags também
+    não precisam ser as mesmas, elas serão unidas.
+    </p>
+
+    <p>
+    Caso qualquer um dos bugs listados em um comando <code>merge</code> já
+    esteja unido com um outro bug, todos os relatórios unidos com quaisquer um
+    dos relatórios listados serão todos unidos. Unir é como a igualdade: é
+    reflexivo, transitivo e simétrico.
+    </p>
+
+    <p>
+    Unir relatórios faz com que uma nota apareça no log de cada relatório
+    de bug; nas páginas WWW isto faz com que sejam incluídos links para os
+    outros bugs.
+    </p>
+
+    <p>
+    Relatórios unidos são todos expirados simultaneamente e somente quando
+    todos os relatórios separadamente atinjam os critérios para expiração.
+    </p>
+  </dd>
+
+
+  <dt><a name="forcemerge"><code>forcemerge</code> <var>número-do-bug</var>
+    <var>número-do-bug</var> ...</a></dt>
+  <dd>
+    <p>
+    Une forçadamente dois ou mais relatórios de bug. O primeiro bug listado
+    é o bug principal, e suas configurações (as configurações que devem ser
+    iguais numa união normal) são atribuídas aos bugs listados em seguida.
+    Para evitar que erros de digitação unam bugs erroneamente, os bugs precisam
+    estar no mesmo pacote. Veja o texto acima para uma descrição do que união
+    (<q>merge</q>) significa.
+    </p>
+
+    <p>
+    Note que isto torna possível o fechamento de bugs na união; você é
+    responsável por notificar os relatores dos bugs com uma mensagem de
+    fechamento apropriada se você fizer isto.
+    </p>
+  </dd>
+
+
+  <dt><a name="unmerge"><code>unmerge</code> <var>número-do-bug</var></a></dt>
+  <dd>
+    <p>
+    Desconecta um relatório de bug de quaisquer outros relatórios com os quais
+    o relatório em questão possa ter sido unido. Caso o relatório listado seja
+    unido com diversos outros então os mesmos serão todos mantidos unidos;
+    somente suas associações com o bug explicitamente nomeado serão removidas.
+    </p>
+
+    <p>
+    Caso muitos relatórios de bugs sejam unidos e você deseje separá-los em
+    dois grupos separados de relatórios unidos você deve desconectar cada
+    relatório em um dos novos grupos separadamente e então uní-los na forma
+    do novo grupo requerido.
+    </p>
+
+    <p>
+    Você pode somente desconectar um relatório com cada comando
+    <code>unmerge</code>; caso você queira desconectar mais de um bug
+    simplesmente inclua diversos comandos <code>unmerge</code> em sua
+    mensagem.
+    </p>
+  </dd>
+
+
+  <dt><a name="tags"><code>tags</code> <var>número-do-bug</var>
+    [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>tag</var>
+    [ <var>tag</var> ... ]</a></dt>
+  <dd>
+    <p>
+    Define tags para o relatório de bug #<var>número-do-bug</var>. Nenhuma
+    notificação é enviada para o usuário que relatou o bug. Definir a ação
+    como <code>+</code> significa que cada <var>tag</var> dada deve ser
+    adicionada, <code>-</code> significa que cada <var>tag</var> deve ser
+    removida, e <code>=</code> significa que o conjunto atual de tags deve
+    ser ignorado e definido a partir da lista fornecida. A ação padrão é
+    adicionar.
+    </p>
+
+    <p>
+    Exemplo de uso:
+    </p>
+
+    <pre>
+          \# o mesmo que 'tags 123456 + patch'
+          tags 123456 patch
+
+          \# o mesmo que 'tags 123456 + help security'
+          tags 123456 help security
+
+          \# adiciona as tags 'fixed' e 'pending'
+          tags 123456 + fixed pending
+
+          \# remove a tag 'unreproducible'
+          tags 123456 - unreproducible
+
+          \# define as tags exatamente como 'moreinfo' e 'unreproducible'
+          tags 123456 = moreinfo unreproducible
+    </pre>
+
+    <p>
+    As tags disponíveis atualmente incluem <code>patch</code>,
+    <code>wontfix</code>, <code>moreinfo</code>, <code>unreproducible</code>,
+    <code>help</code>, <code>pending</code>, <code>fixed</code>,
+    <code>fixed-in-experimental</code>, <code>fixed-upstream</code>,
+    <code>security</code>,
+    <code>upstream</code>, <code>confirmed</code>, <code>d-i</code>,
+    <code>ipv6</code>, <code>lfs</code>, <code>l10n</code>,
+    <code>potato</code>, <code>woody</code>, <code>sarge</code>,
+    <code>sarge-ignore</code>, <code>etch</code>, <code>etch-ignore</code>,
+    <code>sid</code> e <code>experimental</code>.
+    </p>
+
+    <p>
+    Para <a href="Developer#tags">os significados das tags</a> por favor
+    consulte a documentação geral dos desenvolvedores sobre o sistema de
+    bugs.
+    </p>
+  </dd>
+
+
+  <dt><a name="block"><code>block</code> <var>número-do-bug</var>
+    <code>by</code> <var>bug</var> ...</a></dt>
+  <dd>
+    Note que a correção para o primeiro bug está bloqueada pelos outros bugs
+    listados.
+  </dd>
+
+
+  <dt><a name="unblock"><code>unblock</code> <var>número-do-bug</var>
+    <code>by</code> <var>bug</var> ...</a></dt>
+  <dd>
+    Note que a correção para o primeiro bug deixou de estar bloqueada pelos
+    outros bugs listados.
+  </dd>
+
+  <dt><a name="close"><code>close</code> <var>número-do-bug</var>
+    [ <var>versão-corrigida</var> ] (obsoleto)</a></dt>
+  <dd>
+    <p>
+    Fecha o relatório de bug #<var>número-do-bug</var>.
+    </p>
+
+    <p>
+    Uma notificação é enviada para o usuário que reportou o bug, mas (ao
+    contrário do envio de uma mensagem para
+    <var>número-do-bug</var><code>-done@bugs.debian.org</code>) o texto da
+    mensagem que fechou o bug <strong>não</strong> é incluído na notificação.
+    O mantenedor que fecha o relatório precisa certificar-se, provavelmente
+    enviando uma mensagem separada, que o usuário que reportou o bug fique
+    sabendo a razão pela qual o bug está sendo fechado. O uso deste comando é
+    portanto desencorajado. Veja as informações para desenvolvedores sobre
+    <a href="Developer#closing">como fechar um relatório de bug</a>.
+    </p>
+
+    <p>
+    Se você fornecer uma <var>versão-corrigida</var>, o sistema de
+    acompanhamento de bugs perceberá que o bug foi corrigido para aquela
+    versão do pacote.
+    </p>
+  </dd>
+
+
+  <dt><a name="package"><code>package</code> [ <var>nome-do-pacote</var> ...
+    ]</a></dt>
+  <dd>
+    <p>
+    Limita os próximos comandos, fazendo com que eles sejam aplicados
+    somente em erros relativos aos pacotes listados. Você pode listar um ou
+    mais pacotes. Se você não listar nenhum pacote, os próximos comandos 
+    serão aplicados em todos os bugs. Você é encorajado a usar isto como uma
+    medida de segurança para o caso de você, acidentalmente, usar os números
+    errados dos relatórios de bug.
+    </p>
+
+    <p>
+    Exemplo de uso:
+    </p>
+
+    <pre>
+          package foo
+          reassign 123456 bar 1.0-1
+
+          package bar
+          retitle 123456 bar: bar fede
+          severity 123456 normal
+
+          package
+          severity 234567 wishlist
+    </pre>
+  </dd>
+
+
+  <dt><a name="owner"><code>owner</code> <var>número-do-bug</var>
+    <var>endereço</var> | <code>!</code></a></dt>
+  <dd>
+    <p>
+    Define <var>endereço</var> como "dono" do #<var>número-do-bug</var>.
+    O dono de um bug clama a responsabilidade de corrigí-lo.
+    Isto é útil para dividir o trabalho em
+    pacotes que possuem equipes de mantenedores.
+    </p>
+
+    <p>
+    Se você quer se tornar o dono de um bug, você pode usar a abreviação
+    <code>!</code> ou especificar seu endereço de e-mail.
+    </p>
+  </dd>
+
+
+  <dt><a name="noowner"><code>noowner</code> <var>número-do-bug</var></a></dt>
+  <dd>
+    Esquece qualquer dono que o bug tenha além do mantenedor usual. Se o
+    bug não tiver algum dono registrado, esta opção não fará nada
+  </dd>
+
+
+  <dt><a name="archive"><code>archive</code> <var>número-do-bug</var></a></dt>
+  <dd>
+    Arquiva um bug que foi arquivado em algum ponto no passado mas não
+    está atualmente arquivado se o bug preenche os requisitos para
+    arquivamento, ignorando o tempo.
+  </dd>
+
+
+  <dt><a name="unarchive"><code>unarchive</code>
+    <var>número-do-bug</var></a></dt>
+  <dd>
+    Desarquiva um bug que foi previamente arquivado. Desarquivar deveria ser
+    geralmente acompanhado com reopen e found/fixed conforme for apropriado.
+    Bugs que foram desarquivados podem ser arquivados usando archive assumindo
+    que os requisitos de arquivamentos não baseados em tempo sejam atendidos.
+  </dd>
+
+
+  <dt><a name="comment"><code>#</code>...</a></dt>
+    <dd>
+    Comentário de uma linha. O <code>#</code> precisa estar no começo da
+    linha. O texto dos comentários será incluído na mensagem enviada pelo
+    remetente e para os mantenedores afetados, portanto você pode utilizar isto
+    para documentar as razões de seus comandos.
+  </dd>
+
+
+  <dt><a name="thanks"><code>quit</code></a></dt>
+  <dt><code>stop</code></dt>
+  <dt><code>thank</code></dt>
+  <dt><code>thanks</code></dt>
+  <dt><code>thankyou</code></dt>
+  <dt><code>thank you</code></dt>
+  <dt><code>--</code></dt>
+  <!-- #366093, I blame you! -->
+  <!-- <dt><code>kthxbye</code></dt> -->
+  <!-- See... I documented it! -->
+  <dd>
+    Numa linha sozinho, em qualquer caso, possivelmente seguido por um
+    espaço em branco, informa ao servidor de controle para parar de
+    processar a mensagem; é possível incluir explicações, assinaturas ou
+    qualquer outra coisa no resto da mensagem, nada disso será detectado
+    pelo servidor de controle.
+  </dd>
 </dl>
 
 <hr />
