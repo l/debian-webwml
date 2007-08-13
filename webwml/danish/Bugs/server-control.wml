@@ -1,12 +1,12 @@
 #use wml::debian::template title="Debians fejlrapporteringssystem &mdash; kontrolserveren" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.66"
+#use wml::debian::translation-check translation="1.70"
 
 <h1>Introduktion til e-mailserveren til fejlrapportskontrol og -behandling</h1>
 
-<p>Foruden e-mailserveren på <code>request@bugs.debian.org</code> som gør det
-muligt at hente oplysninger om fejlrapporter via e-mail, er der yderligere en
-server på <code>control@bugs.debian.org</code> som desuden gør det muligt at
-behandle fejlrapporterne på forskellige måder.</p>
+<p>På samme måde som <code>request@bugs.debian.org</code> gør det muligt at
+<a href="server-request">hente fejldata og dokumentation gennem e-mail</a>, 
+gør <code>control@bugs.debian.org</code> det muligt at behandle fejlrapporter på 
+forskellige måder.</p>
 
 <p>Kontrolserveren fungerer præcis som forespørgselsserveren og har desuden 
 nogle ekstra kommandoer.  Hvis sandheden skal frem, så er det faktisk det 
@@ -34,9 +34,61 @@ e-mail med kommandoen <code>refcard</code>.</p>
 
 <h1>Kommandoer der findes på kontrolserveren</h1>
 
+<center>
+  <table>
+    <tr>
+    <td align="center">Generelt</td>
+    <td align="center">Versionering</td>
+    <td align="center">Duplikater</td>
+    <td align="center">Forskelligt</td>
+    </tr>
+    <tr>
+      <!-- General -->
+      <td valign="top">
+	<dl>
+	  <dt><a href="#reassign">reassign</a></dt>
+	  <dt><a href="#severity">severity</a></dt>
+	  <dt><a href="#tag">tag</a></dt>
+	  <dt><a href="#retitle">retitle</a></dt>
+	  <dt><a href="#submitter">submitter</a></dt>
+	</dl>
+      </td>
+      <!-- Versioning -->
+      <td valign="top">
+	<dl>
+	  <dt><a href="#found">found</a> | <a href="#notfound">notfound</a></dt>
+	  <dt><a href="#fixed">fixed</a> | <a href="#notfixed">notfixed</a></dt>
+	  <dt><a href="#reopen">reopen</a></dt>
+	  <!-- <dt>(close)</dt> Deprecated -->
+	</dl>
+      </td>
+      <!-- Duplicates -->
+      <td valign="top">
+	<dl>
+	  <dt><a href="#merge">merge</a> | <a href="#unmerge">unmerge</a></dt>
+	  <dt><a href="#forcemerge">forcemerge</a></dt>
+	  <dt><a href="#clone">clone</a></dt>
+	</dl>
+      </td>
+      <!-- Misc. -->
+      <td valign="top">
+	<dl>
+	  <dt><a href="#thanks">thanks</a></dt>
+	  <dt><a href="#comment">#</a></dt>
+	  <dt><a href="#forwarded">forwarded</a> |  <a href="#notforwarded">notforwarded</a></dt>
+	  <dt><a href="#owner">owner</a> | <a href="#noowner">nowner</a></dt>
+	  <dt><a href="#block">block</a> | <a href="#unblock">unblock</a></dt>
+	</dl>
+      </td>
+    </tr>
+  </table>
+</center>
+
+
 <dl>
-  <dt><code>reassign</code> <var>fejlnummer</var> <var>pakke</var>
-      [ <var>version</var> ]</dt>
+  <dt><a name="reassign">
+      <code>reassign</code> <var>fejlnummer</var> <var>pakke</var>
+      [ <var>version</var> ]</a></dt>
   <dd><p>Angiver at fejlen med nummeret <var>fejlnummer</var> er en fejl i pakken
       <var>paket</var>.  Dette kan anvendes til at sætte pakkenavnet hvis
       afsenderen glemte pseudo-brevhovedet, eller til at ændre en tidligere
@@ -46,8 +98,10 @@ e-mail med kommandoen <code>refcard</code>.</p>
       <p>Hvis du tilføjer en <var>version</var> vil fejlsporingssystemet
       bemærke, at fejlen påvirker den version af den nyligt tildelte pakke.</p> 
       </dd>
-  <dt><code>reopen</code> <var>fejlnummer</var>
-      [ <var>oprindelsesadresse</var> | <code>=</code> | <code>!</code> ]</dt>
+      
+  <dt><a name="reopen">
+      <code>reopen</code> <var>fejlnummer</var>
+      [ <var>oprindelsesadresse</var> | <code>=</code> | <code>!</code> ]</a></dt>
   <dd><p>Åbner fejlrapporten med nummeret <var>fejlnummer</var> igen hvis den er
       blevet lukket.</p>
       <p>Som standard, eller hvis man angiver <code>=</code>, vil stadig kun 
@@ -72,7 +126,8 @@ e-mail med kommandoen <code>refcard</code>.</p>
       anvende kommandoen <code>found</code> i stedet.</p>
       </dd>
       
-  <dt><code>found</code> <var>fejlnummer</var> [ <var>version</var> ]</dt>
+  <dt><a name="found">
+      <code>found</code> <var>fejlnummer</var> [ <var>version</var> ]</a></dt>
   <dd><p>Registrerer at #<var>fejlnummer</var> er opdaget i den angivne 
       <var>version</var> af pakken som den er knyttet til.</p>
 
@@ -96,8 +151,9 @@ e-mail med kommandoen <code>refcard</code>.</p>
       det var svært at tilføje en <var>version</var> til den kommandos 
       syntaks uden at lide af flertydighed.</p>
       </dd>
-      
-  <dt><code>notfound</code> <var>fejlnummer</var> <var>version</var></dt>        
+
+  <dt><a name="notfound">      
+      <code>notfound</code> <var>fejlnummer</var> <var>version</var></a></dt>
   <dd><p>Fjern registreringen af at #<var>fejlnummer</var> blev fundet i den
       angivne <var>version</var> af pakken som det er tilknyttet.</p>
 	        
@@ -107,7 +163,8 @@ e-mail med kommandoen <code>refcard</code>.</p>
       registreringen af hvornår en fejl blev fundet.</p>
       </dd>
       
-  <dt><code>fixed</code> <var>fejlnummer</var> <var>version</var></dt>
+  <dt><a name="fixed">
+      <code>fixed</code> <var>fejlnummer</var> <var>version</var></a></dt>
   <dd><p>Angiv af fejl nummer <var>fejlnummer</var> blev rettet i en given
       <var>version</var> af den pakke, som den vedrører.</p>
 
@@ -117,7 +174,8 @@ e-mail med kommandoen <code>refcard</code>.</p>
       version.</p>
       </dd>
 
-  <dt><code>notfixed</code> <var>fejlnummer</var> <var>version</var></dt>
+  <dt><a name="notfixed">
+      <code>notfixed</code> <var>fejlnummer</var> <var>version</var></a></dt>
   <dd><p>Fjern registreringen af at fejl nummer <var>fejlnummer</var> blev 
       rettet i den givne <var>version</var>.</p>
 
@@ -126,8 +184,9 @@ e-mail med kommandoen <code>refcard</code>.</p>
       'notfound' fjerner 'found'.)</p>
       </dd>
       
-  <dt><code>submitter</code> <var>fejlnummer</var>
-      <var>oprindelsesadresse</var> | <code>!</code></dt>
+  <dt><a name="submitter">
+      <code>submitter</code> <var>fejlnummer</var>
+      <var>oprindelsesadresse</var> | <code>!</code></a></dt>
   <dd><p>Ændrer oprindelsesadressen i #<var>fejlnummer</var> til 
       <var>oprindelsesadresse</var>.</p>
      
@@ -138,8 +197,9 @@ e-mail med kommandoen <code>refcard</code>.</p>
       fejlrapporter kombineret med den der genåbnes, påvirker 
       <code>submitter</code> ikke kombinerede fejlrapporter.</p>
       </dd>
-      
-  <dt><code>forwarded</code> <var>fejlnummer</var> <var>adresse</var></dt>
+
+  <dt><a name="forwarded">      
+      <code>forwarded</code> <var>fejlnummer</var> <var>adresse</var></a></dt>
   <dd><p>Noterer at fejlrapporten med nummeret <var>fejlnummer</var> er blevet
       videresendt til en opstrømsudvikler på adressen <var>adresse</var>.  Dette
       videresender faktisk ikke rapporten, men kan anvendes til at ændre en
@@ -147,13 +207,15 @@ e-mail med kommandoen <code>refcard</code>.</p>
       ny adresse til en fejl som ikke tidligere var registeret som videresendt.</p>
       </dd>
 
-  <dt><code>notforwarded</code> <var>fejlnummer</var></dt>
+  <dt><a name="notforwarded">
+      <code>notforwarded</code> <var>fejlnummer</var></a></dt>
   <dd><p>Glemmer alt om at fejlrapporten med nummeret <var>fejlnummer</var> er
       blevet videresendt til en opstrømsudvikler.  Hvis fejlen ikke er 
       registeret som videresendt, gør denne kommando ikke noget.</p>
       </dd>
 
-  <dt><code>retitle</code> <var>fejlnummer</var> <var>ny-overskrift</var></dt>
+  <dt><a name="retitle">
+      <code>retitle</code> <var>fejlnummer</var> <var>ny-overskrift</var></a></dt>
   <dd><p>Ændrer overskriften på en fejlrapport til den angivne (standard er den
       oprindelige rapports tekst i <code>emne</code>-linjen).
       <p>Modsat de fleste andre fejlbehandlingskommandoer, påvirker denne 
@@ -161,7 +223,8 @@ e-mail med kommandoen <code>refcard</code>.</p>
       den er slået sammen med.</p>
       </dd>
 
-  <dt><code>severity</code> <var>fejlnummer</var> <var>alvorsgrad</var></dt>
+  <dt><a name="severity">
+      <code>severity</code> <var>fejlnummer</var> <var>alvorsgrad</var></a></dt>
   <dd><p>Sætter alvorsgraden på fejlrapporten med nummeret <var>fejlnummer</var> 
       til alvorsgraden <var>grad</var>.  Den oprindelige afsender af rapporten
       underrettes ikke.</p>
@@ -173,7 +236,8 @@ e-mail med kommandoen <code>refcard</code>.</p>
       fejlrapporteringssystemet.</p>
       </dd>
 
-  <dt><code>clone</code> <var>fejlnummer</var> <var>ny id</var> [ <var>nye id'er</var> ... ]</dt>
+  <dt><a name="clone">
+      <code>clone</code> <var>fejlnummer</var> <var>ny id</var> [ <var>nye id'er</var> ... ]</a></dt>
   <dd><p>Kloningskommandoen giver mulighed for at kopiere en fejlrapport.  Det er
       nyttigt hvor en enkelt fejlrapport faktisk angiver at flere forskellige
       fejl er opstået. <q><var>Nye id'er</var></q> er negative tal, adskilt af 
@@ -195,7 +259,8 @@ e-mail med kommandoen <code>refcard</code>.</p>
       </pre>
       </dd>
 
-  <dt><code>merge</code> <var>fejlnummer</var> <var>fejlnummer</var> ...</dt>
+  <dt><a name="merge">
+      <code>merge</code> <var>fejlnummer</var> <var>fejlnummer</var> ...</a></dt>
   <dd><p>Slår to eller flere fejlrapporter sammen.  Når rapporter er slået sammen
       vil åbning, lukning, markering af videresendelse eller fjernelse af 
       samme, samt omtildeling til en anden pakke af en af pakkerne have samme 
@@ -222,7 +287,8 @@ e-mail med kommandoen <code>refcard</code>.</p>
       rapporterne hver for sig opfylder kriterierne for at udløbe.</p>
       </dd>
 
-  <dt><code>forcemerge</code> <var>fejlnummer</var> <var>fejlnummer</var> ...</dt>
+  <dt><a name="forcemerge">
+      <code>forcemerge</code> <var>fejlnummer</var> <var>fejlnummer</var> ...</a></dt>
   <dd><p>Gennemtvinger forbindelse af to eller flere fejlrapporter.  Den første
       angivne fejl er hovedfejlen og dens indstillinger (som skal svare til en
       normal merge-kommando) tildeles de efterfølgende angivne fejl.  For at undgå 
@@ -234,7 +300,8 @@ e-mail med kommandoen <code>refcard</code>.</p>
       hvis du vælger at gøre dette.</p>
       </dd>
 
-  <dt><code>unmerge</code> <var>fejlnummer</var></dt>
+  <dt><a name="unmerge">
+      <code>unmerge</code> <var>fejlnummer</var></a></dt>
   <dd><p>Fjerner forbindelsen mellem en fejlrapport og de rapporter den er slået
       sammen med.  Hvis rapporten er slået sammen med flere andre, vil de andre
       fortsat være slået sammen, kun forbindelsen til den specifikt angivne 
@@ -249,8 +316,9 @@ e-mail med kommandoen <code>refcard</code>.</p>
       <code>unmerge</code>-kommandoer i din meddelelse.</p>
       </dd>
 
-  <dt><code>tags</code> <var>fejlnummer</var> [ <code>+</code> | <code>-</code> 
-      | <code>=</code> ] <var>mærke</var> [ <var>mærke</var> ... ]</dt>
+  <dt><a name="tags">
+      <code>tags</code> <var>fejlnummer</var> [ <code>+</code> | <code>-</code> 
+      | <code>=</code> ] <var>mærke</var> [ <var>mærke</var> ... ]</a></dt>
   <dd><p>Sætter mærker for fejlrapporten med nummeret <var>fejlnummer</var>.
       Brugeren som rapporterede fejlen bliver ikke underrettet.  Sættes 
       handlingen til <code>+</code>, betyder det at alle de angivne 
@@ -292,16 +360,19 @@ e-mail med kommandoen <code>refcard</code>.</p>
       fejlrapporteringssystemet.</p>
       </dd>
 
-  <dt><code>block</code> <var>fejlnummer</var> <code>by</code> <var>fejl</var> ...</dt>
+  <dt><a name="block">
+      <code>block</code> <var>fejlnummer</var> <code>by</code> <var>fejl</var> ...</a></dt>
   <dd><p>Bemærk at rettelsen til den første fejl blokeres af de andre anførte fejl.</p>
       </dd>
     	 
-  <dt><code>unblock</code> <var>fejlnumber</var> <code>by</code> <var>fejl</var> ...</dt>
+  <dt><a name="unblock">
+      <code>unblock</code> <var>fejlnumber</var> <code>by</code> <var>fejl</var> ...</a></dt>
   <dd><p>Bemærk at rettelsen til den første fejl ikke længere blokeres af de andre 
       anførte fejl.</p>
       </dd>
 
-  <dt><code>close</code> <var>fejlnummer</var> (bør ikke længere anvendes)</dt>
+  <dt><a name="close">
+      <code>close</code> <var>fejlnummer</var> (bør ikke længere anvendes)</a></dt>
   <dd><p>Lukker fejlrapporten med nummeret <var>fejlnummer</var>.</p>
       <p>Bruger som oprindeligt indsendte fejlrapporten får besked, men 
       indholdet i den e-mail som lukker rapporten inkluderes 
@@ -313,8 +384,9 @@ e-mail med kommandoen <code>refcard</code>.</p>
       udvikleroplysningerne om <a href="Developer#closing">hvordan man på rette
       vis lukker en fejl</a>.</p>
       </dd>
-      
-  <dt><code>package</code> [ <var>pakkenavn</var> ... ]</dt>
+
+  <dt><a name="package">
+      <code>package</code> [ <var>pakkenavn</var> ... ]</a></dt>
   <dd><p>Begrænser de følgende kommandoer, så de kun virker på fejl indsendt mod de
       angivne pakker.  Du kan angive en eller flere pakker.  Hvis du ikke 
       angiver nogen pakker, vil de følgende kommandoer virke på alle fejl.
@@ -336,7 +408,8 @@ e-mail med kommandoen <code>refcard</code>.</p>
       </pre>
       </dd>
 
-  <dt><code>owner</code> <var>fejlnummer</var> <var>adresse</var> | <code>!</code></dt>
+  <dt><a name="owner">
+      <code>owner</code> <var>fejlnummer</var> <var>adresse</var> | <code>!</code></a></dt>
   <dd><p>Sætter <var>adresse</var> til at være <q>owner</q> (ejer) af #<var>fejlnummer</var>.
       Ejeren af en fejl tager ansvareret for at rette den.  Dette er nyttigt 
       til arbejdsdeling i tilfælde hvor en pakke har et hold af vedligeholdere.</p>
@@ -344,19 +417,22 @@ e-mail med kommandoen <code>refcard</code>.</p>
       <code>!</code> eller angive din egen e-mail-adresse.</p>
       </dd>
 
-  <dt><code>noowner</code> <var>fejlnummer</var></dt>
+  <dt><a name="noowner">
+      <code>noowner</code> <var>fejlnummer</var></a></dt>
   <dd><p>Glemmer alt om, at fejlen har en ejer, bortset fra den sædvanlige 
       vedligeholder.  Der er ikke er registeret en ejer af fejlen har denne
       kommando ingen effekt.</p>
       </dd>
 
-  <dt><code>archive</code> <var>fejlnummer</var></dt>
+  <dt><a name="archive">
+      <code>archive</code> <var>fejlnummer</var></a></dt>
   <dd><p>Arkiverer en fejl, der tidligere var arkiveret men ikke er det i 
       øjeblikket, hvis fejlen opfylder arkiveringskravene, ignorerende 
       tidskrav.</p>
       </dd>
 		 
-  <dt><code>unarchive</code> <var>fejlnummer</var></dt>		     
+  <dt><a name="unarchive">
+      <code>unarchive</code> <var>fejlnummer</var></a></dt>
   <dd><p>Ophæver arkiveringen af en fejl, der tidligere var arkiveret.  Ophævelse 
       af arkivering bør generelt kombineres med <q>reopen</q> (genåbn) og 
       <q>found</q>/<q>fixed</q> (fundet/rettet) hvor det er relevant.  Fejl, 
@@ -364,14 +440,15 @@ e-mail med kommandoen <code>refcard</code>.</p>
       forudsat at de ikke-tidsmæssige arkiveringskrav er opfyldt.</p>
       </dd>
 
-  <dt><code>#</code>...</dt>
+  <dt><a name="comment">
+      <code>#</code>...</a></dt>
   <dd><p>En-linje-kommentar.  <code>#</code> skal være på begyndelsen af linjen.
       Kommentartekster vil blive medtaget i bekræftelsen som sendes til 
       afsenderen og berørte vedligeholdere, hvorfor du kan anvende dette til at
       dokumentere årsagerne til dine kommandoer.</p>
       </dd>
 
-  <dt><code>quit</code></dt>
+  <dt><a name="thanks"><code>quit</code></a></dt>
   <dt><code>stop</code></dt>
   <dt><code>thank</code></dt>
   <dt><code>thanks</code></dt>
