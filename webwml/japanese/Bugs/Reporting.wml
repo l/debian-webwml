@@ -1,85 +1,100 @@
 #use wml::debian::template title="Debian BTS - バグを報告する" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.54"
+#use wml::debian::translation-check translation="1.58"
 
-<h1>Debian にバグを報告する方法</h1>
+<h1>reportbug を用いて Debian のバグを報告する方法</h1>
 
-<h2>報告する <strong>前</strong> に注意する重要事項</h2>
+<a name="reportbug"></a>
+<p>Debian のバグは、<code><a
+href="http://packages.debian.org/stable/utils/reportbug">reportbug</a></code>
+プログラムを用いて報告することを強くお勧めします。
+<code>aptitude install reportbug; reportbug</code> を実行するだけで、
+<code>reportbug</code> をインストールして起動することができます。reportbug
+は、手順を一つずつ教えてバグ報告の送信まで導いてくれます。</p>
 
-<p>関係のない複数のバグ、特に異なるパッケージのものをひとつのバグ報告と
-しないでください。</p>
+<p>reportbug の対話的なプロンプトで解決されない問題が生じた場合は、
+本文書を調べ直すか、<a href="mailto:debian-user@lists.debian.org">Debian
+ユーザメーリングリスト</a>に質問するとよいでしょう。</p>
 
-<p>バグ報告をする前に、すでに誰かにそのバグが報告されていないか確認すべきです。
-現在の未解決バグの一覧は、<a href="./">WWW</a> や
-<a href="Access">他のところ</a>にあります。
-詳細は他のドキュメントを参照してください。
-すでに報告されている #<var>&lt;number&gt;</var>
-というバグに対してコメントを加えるには、
-<var>&lt;number&gt;</var>@bugs.debian.org にメールを送ってください。
-</p>
+<h1>メールを用いて Debian のバグを報告する方法</h1>
 
-<p>どのパッケージに問題があるのか判らないときは、
+
+<h2>バグ報告を送る<strong>前</strong>に注意する重要事項</h2>
+
+
+<a name="whatpackage"></a>
+<h3>どのパッケージに対するバグ報告なのか?</h3>
+<p>バグ報告をどのパッケージに対してすべきか知る必要があります。
+この情報を取得する方法について知りたい場合は、<a
+href="#findpkgver">この例</a>を参照してください (<a
+href="#filedalready">報告しようとしているバグが既に報告されていないか調べる</a>のにこの情報を使用するでしょう)。</p>
+
+<p>どのパッケージに対してバグを報告すべきか判らない場合は、
 <a href="mailto:debian-user@lists.debian.org">Debian
-ユーザ・メーリングリスト</a>で助言を求めてください。
-問題がひとつのパッケージではなくて一般的な
+ユーザメーリングリスト</a>で助言を求めてください。</p>
+
+<p>問題がひとつのパッケージではなくて一般的な
 Debian のサービスに関わる場合は、いくつかの<a
 href="pseudo-packages">擬似パッケージ</a>や<a
 href="../MailingLists/">メーリングリスト</a>に対して報告するのが良いでしょう。
 </p>
 
-<p>バグ報告のコピーを、(メーリングリストなどの) 他の人にも送りたい場合は、
-通常の電子メールのヘッダではなく<a
-href="#xcc">下記の別の方法</a>を使うようにしてください。</p>
+<a name="filedalready"></a>
+<h3>バグが既に報告されていないか?</h3>
+<p>バグ報告を投稿する前に、バグが既に報告されていないか確認すべきです。<a
+href="./#pkgreport">バグ検索フォーム</a>を用いると、
+どのバグが報告されているか調べることができます。
+既にバグ報告 #<var>&lt;番号&gt;</var> で報告されている場合は、
+新たにバグを報告する代わりに、<var>&lt;番号&gt;</var>@bugs.debian.org
+宛ての電子メールでコメントを投稿してください。</p>
 
+<h3>バグが複数ある場合は複数の報告を送るように</h3>
+<p>関係のない複数のバグ、特に異なるパッケージのものをひとつのバグ報告と
+しないでください。</p>
+
+<h3>バグを上流に報告しないように</h3>
 <p>Debian にバグを報告する場合、そのバグが Debian のパッケージにのみ存在する可能性もあるので、
 開発元のソフトウェアメンテナにはバグ報告のコピーを送らないようにしてください。
 必要であれば、パッケージのメンテナがバグ報告を転送します。</p>
 
-<h2>自動バグ報告ツールを使ってバグ報告を送る</h2>
-
-<p><code><a href="http://packages.debian.org/stable/utils/reportbug">reportbug</a></code>
-プログラムは、バグ報告のやりかたを順を追って示しますので、
-簡単にバグを報告することができます。<a
-href="http://packages.debian.org/stable/utils/reportbug">reportbug</a>
-と同じパッケージに入っている <kbd>querybts</kbd> ツールは、
-バグ追跡システムへの便利なテキストベースのインタフェースを提供します。</p>
-
-<p>emacs ユーザは、
-<code><a href="http://packages.debian.org/stable/utils/debian-el">\
-debian-el</a></code> パッケージに含まれる debian-bug
-コマンドを使うこともできます。<kbd>M-x debian-bug</kbd>
-と入力すると、<code>reportbug</code> とよく似たやり方で、
-全ての必要事項を尋ねられます。</p>
-
 <h2>電子メールを使ってバグ報告を送る</h2>
 
-<p>以下に説明する手順に従って、
+<p>Debian でバグ報告をするには、以下で説明する特殊な書式で、
 <a href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></a>
 に電子メールを送ってください。</p>
 
-<p>もちろんどのような電子メールでも同じですが、メールヘッダの <code>Subject</code>
+<h3>ヘッダ</h3>
+<p>どのような電子メールでも同じですが、メールヘッダの <code>Subject</code>
 行には明解でわかりやすい説明を含めなくてはいけません。
 あなたがつけたサブジェクトは、
 バグ追跡システムにおいてバグの最初のタイトルとして使用されます。
 バグの内容がわかるようなサブジェクトをつけるよう心掛けてください！</p>
 
-<p>メール本文の先頭に<a
-name="pseudoheader">擬似ヘッダ</a>を記述しなければいけません。
-つまり、メール本文の 1 行目は以下のようになります:</p>
+<p>バグ報告のコピーを、(メーリングリストなどの) 他の人にも送りたい場合は、
+通常の電子メールのヘッダではなく<a
+href="#xcc">下記の別の方法</a>を使うようにしてください。</p>
+
+<h3>擬似ヘッダ</h3>
+<p>バグ報告の冒頭の部分は、
+そのバグ報告がどのパッケージのどのバージョンを対象としているかについての情報を含む<a
+ name="pseudoheader">擬似ヘッダ</a>です。
+擬似ヘッダは必ず本文の 1 行目から始めてください。
+
+つまり、メッセージ本文の 1 行目は以下のようになります。</p>
 
 <pre>
-Package: &lt;something&gt;
+Package: &lt;パッケージ名&gt;
 </pre>
 
-<p><code>&lt;something&gt;</code>
-の部分を、バグのあるパッケージ名に置き換えてください。</p>
+<p><code>&lt;パッケージ名&gt;</code>
+の部分を、バグのある<a href="#whatpackage">パッケージの名前</q>に置き換えてください。</p>
 
 <p>2 行目は以下のようになります:</p>
 
 <pre>
-Version: &lt;something&gt;
+Version: &lt;パッケージバージョン&gt;
 </pre>
 
-<p><code>&lt;something&gt;</code>
+<p><code>&lt;パッケージバージョン&gt;</code>
 は、パッケージのバージョンに置き換えてください。
 ここには、バージョン番号以外のものを含めないでください。バグ追跡システムは、
 このバグがどのリリースに影響するか調べるのにこのフィールドを頼りにしています。</p>
@@ -89,9 +104,10 @@ Version: &lt;something&gt;
 この行を使っています。この情報を調べる方法の<a
 href="#findpkgver">例</a>を参照してください。</p>
 
-<p>擬似ヘッダのフィールドは、
-それぞれ行の先頭からはじまらなければいけません。</p>
+<p>その他の有効な擬似ヘッダについては、<a
+href="#additionalpseudoheaders">「その他の擬似ヘッダ」</a>を参照してください。</p>
 
+<h3>バグ報告の本文</h3>
 <p>バグ報告には以下の情報を記述してください:</p>
 
 <ul>
@@ -119,22 +135,28 @@ href="#findpkgver">例</a>を参照してください。</p>
 デバイスドライバの問題を報告する場合は、
 システム上のすべてのハードウェアを列挙して下さい。
 IRQ や I/O アドレスの衝突が原因であることがよくありますから。</li>
+<li><a href="http://packages.debian.org/stable/utils/reportbug">reportbug</a>
+をインストール済みの場合は、
+<code>reportbug -q --template -T none -s none -S normal -b --list-cc
+ none -q &lt;パッケージ名&gt;</code> の出力も有用です。
+これには、メンテナ特有のスクリプトの出力やバージョン情報が含まれているからです。</li>
 </ul>
 
 <p>その他関係ありそうな詳しい情報はなんでも書いて下さい。
 情報をつめ込みすぎても長大なバグ報告になってしまう恐れはほとんどありません。
 問題を再現するために使用するファイルも、
 小さいものでしたら一緒にバグ報告に含めて下さい
-(テキスト以外のファイルは uuencode して下さい)。</p>
+(ファイルのサイズが大きい場合は、できるだけ、
+公共がアクセス可能なウェブサイトからそのファイルを取得できるようにすることを検討してください)。</p>
 
 <p>開発者があなたの問題を解決する手助けとなる、さらなるアドバイスもあります。
 <a href="http://www.chiark.greenend.org.uk/~sgtatham/bugs.html">\
 効果的なバグ報告方法</a>を読んでください。</p>
 
 
-<h2><a name="example">報告例</a></h2>
+<h2><a name="example">バグ報告の例</a></h2>
 
-<p>バグ報告はメールヘッダも含めて以下のようなものになります。</p>
+<p>ヘッダや擬似ヘッダのついたバグ報告は以下のようなものになります。</p>
 
 <pre>
   To: submit@bugs.debian.org
@@ -197,13 +219,17 @@ IRQ や I/O アドレスの衝突が原因であることがよくありますから。</li>
 以下を参照して下さい。</p>
 
 
+<a name="additionalpseudoheaders"></a>
+<h1>その他の擬似ヘッダ</h1>
+ 
 <h2><a name="severities">重要度 (severity レベル)</a></h2>
 
 <p>報告するバグが特に深刻である場合や、単に将来的な要望である場合、
 バグ報告を行う際にそのバグの重要度 (severity レベル)
 を設定することができます。しかし、これは必須ではありません。
-あなたが指定していない場合は、開発者があなたの報告に対して適切な
-severity レベルを指定することもあります。</p>
+あなたが指定していない場合 (あるいは不適切な重要度を指定した場合)
+でも、パッケージメンテナがあなたの報告に対して適切な
+severity レベルを指定することがあります。</p>
 
 <p>重要度を設定するには、以下のように<a
 href="#pseudoheader">擬似ヘッダ</a>を記述してください:</p>
@@ -214,7 +240,7 @@ Severity: &lt;<var>severity</var>&gt;
 
 <p>&lt;<var>severity</var>&gt; は有効な重要度に置き換えてください。
 重要度については、<a
-href="Developer#severities">開発者用文書</a>に記載されています。</p>
+href="Developer#severities">上級者向けの文書</a>に記載されています。</p>
 
 <h2><a name="tags">タグを設定する</a></h2>
 
@@ -231,7 +257,7 @@ Tags: &lt;<var>tags</var>&gt;
 </pre>
 
 <p>&lt;<var>tags</var>&gt; を
-<a href="Developer#tags">開発者文書</a> に記載されているような、
+<a href="Developer#tags">上級者向けの文書</a>に記載されているような、
 1つ以上の利用可能なタグで置きかえてください。
 複数のタグは、コンマ、スペース、またはその両方で区切ってください。</p>
 
@@ -244,8 +270,6 @@ Usertags: &lt;<var>usertags</var>&gt;
 複数のタグは、コンマ、スペース、またはその両方で区切ってください。
 &lt;<var>username</var>&gt; を指定するとユーザのタグが設定されます。
 そうでない場合には、送信者の電子メールアドレスが username として使用されます。</p>
-
-<h2><a name="miscpseudoheaders">その他の擬似ヘッダ (主にパッケージメンテナにとって重要なもの)</a></h2>
 
 <pre>
 Forwarded: <var>foo@example.com</var>
@@ -278,6 +302,8 @@ lang="ja">MUA</acronym> でヘッダの編集ができない場合、
 様々な <code>X-Debbugs-</code> ヘッダを<a
 href="#pseudoheader">擬似ヘッダ</a>に設定してもかまいません。</p>
 
+
+<h1>その他の情報</h1>
 
 <h2>別の報告用アドレス (ちょっとした、あるいは大量のバグ報告)</h2>
 
@@ -335,10 +361,10 @@ BTS メーリングリストには転送しません。</p>
 <p><code>maintonly@bugs.debian.org</code> または
 <var>nnn</var><code>-maintonly@bugs.debian.org</code>
 に送付する際は、
-送付するバグ報告がパッケージを正しく指定していることを確認して下さい。
+必ず、送付するバグ報告が正しいパッケージに割り当てられるようにしてください。
 新たにバグ報告を発行する場合は、その本文先頭に <code>Package</code>
 行を正しく記載してください。
-既に報告されているバグ報告のパッケージ名等が誤っている場合は、先に
+既存のバグ報告については、
 <a href="server-control"><code>control@bugs.debian.org</code>
 サービス</a>を利用して適切なものへ (再) 指定してください。</p>
 
@@ -390,7 +416,22 @@ Description: Advanced front-end for dpkg
 
 </pre>
 
-<hr/>
+
+<a name="otherusefulcommands"></a>
+<h2>その他の有用なコマンドやパッケージ</h2>
+
+<p><a href="http://packages.debian.org/stable/utils/reportbug">reportbug</a>
+と同じパッケージに入っている <kbd>querybts</kbd> ツールは、
+バグ追跡システムへの便利なテキストベースのインタフェースを提供します。</p>
+
+<p>emacs ユーザは、
+<code><a href="http://packages.debian.org/stable/utils/debian-el">\
+debian-el</a></code> パッケージに含まれる debian-bug
+コマンドを使うこともできます。<kbd>M-x debian-bug</kbd>
+と入力すると、<code>reportbug</code> とよく似たやり方で、
+全ての必要事項を尋ねられます。</p>
+
+<hr />
 
 #use "otherpages.inc"
 
