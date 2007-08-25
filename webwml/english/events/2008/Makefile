@@ -3,7 +3,7 @@
 # problem can be fixed.
 
 WMLBASE=../..
-CUR_DIR=events/2007
+CUR_DIR=events/2008
 SUBS=
 
 include $(WMLBASE)/Make.lang
