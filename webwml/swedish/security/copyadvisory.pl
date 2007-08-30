@@ -84,6 +84,7 @@ while (<SRC>)
 	s/\bdiscovered a problem in\b/upptäckte ett problem i/;
 	s/^(<p>)?A vulnerability was discovered in\b/$1En sårbarhet upptäcktes i/;
 	s/^(<p>)?Two vulnerabilities were discovered in\b/$1Två sårbarheter upptäcktes i/;
+	s/It was discovered that /Man har upptäckt att /;
 	s/We recommend that you upgrade your (.*) package immediately/Vi rekommenderar att ni uppgraderar ert $1-paket omedelbart/;
 	s/We recommend that you upgrade your (.*) packages immediately/Vi rekommenderar att ni uppgraderar era $1-paket omedelbart/;
 	s/We recommend that you upgrade your (.*) and (.*) packages/Vi rekommenderar att ni uppgraderar era $1- och $2-paket/;
@@ -109,7 +110,7 @@ while (<SRC>)
 	s/(several|multiple) vulnerabilities/flera sårbarheter/;
 	s/>several</>flera</;
 	s/>unsanitised input</>städar ej indata</;
-	s/ identifies the following problems:/ identifierar följande problem:/;
+	s/\bidentifies the following problems:/identifierar följande problem:/;
 	s/The following matrix explains which kernel version for which architecture/Följande tabell beskriver vilka versioner av kärnan för vilka arkitekturer som/;
 	s/fix the problems mentioned above:/rättar problemen som beskrivs ovan:/;
 	s/fix the problem mentioned above:/rättar problemet som beskrivs ovan:/;
@@ -130,6 +131,7 @@ while (<SRC>)
 	s/(?:,)?( )?these problem are fixed in/$1rättas dessa problem i/;
 	s/(?:,)?( )?these problem are fixed/$1rättas dessa problem/;
 	s/(?:,)?( )?these problems will be fixed soon/$1kommer dessa problem att rättas inom kort/;
+	s/this problem with be fixed soon/kommer detta problem att rättas inom kort/;
 	s/(?:been )?fixed in version/rättats i version/;
 	s/\bin version\b/i version/;
 	s/of the Debian package/av Debianpaketet/;
