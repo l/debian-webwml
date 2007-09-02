@@ -3,34 +3,27 @@
 
 <bind-gettext-domain domain="distrib" />
 
-<form method="GET" action="http://packages.debian.org/cgi-bin/search_contents.pl">
+<form method="GET" action="http://packages.debian.org/search">
 <p>
+<input type="hidden" name="searchon" value="contents" />
 <label for="keyword"><gettext domain="distrib">Keyword</gettext>:</label>
-<input type="text" size="30" name="word" id="keyword" /> &nbsp;
+<input type="text" size="30" name="keywords" id="keyword" /> &nbsp;
 <input type="submit" value="<gettext domain="distrib">Search</gettext>" />
 &nbsp;<input type="reset" value="<gettext domain="distrib">Reset</gettext>" />
 <br />
 <gettext domain="distrib">Display</gettext>:
 <br />
-<input type=radio name="searchmode" value="searchfiles" id="searchfiles" checked="checked" />
+<input type=radio name="mode" value="path" id="searchpath" checked="checked" />
+  <label for="searchpath"><gettext domain="distrib">paths ending with the keyword</gettext></label>
+<br />
+<input type=radio name="mode" value="exactfilename" id="searchfiles" />
   <label for="searchfiles"><gettext domain="distrib">packages that contain files named like this</gettext></label>
 <br />
-<input type=radio name="searchmode" value="searchfilesanddirs" id="searchfilesanddirs" />
-  <label for="searchfilesanddirs"><gettext domain="distrib">packages that contain files or directories named like this</gettext></label>
+<input type=radio name="mode" value="filename" id="searchword" />
+  <label for="searchword"><gettext domain="distrib">packages that contain files whose names contain the keyword</gettext></label>
 <br />
-<input type=radio name="searchmode" value="searchword" id="searchword" />
-  <label for="searchword"><gettext domain="distrib">packages that contain files or directories whose names contain the keyword</gettext></label>
-<br />
-<input type=radio name="searchmode" value="filelist" id="filelist" />
-  <label for="filelist"><gettext domain="distrib">all files in this package</gettext></label>
-<br />
-<label for="casesens"><gettext domain="distrib">Case sensitive</gettext>:</label>
-<select name="case" id="casesens">
-  <option value="insensitive" selected="selected"><gettext domain="distrib">no</gettext></option>
-  <option value="sensitive"><gettext domain="distrib">yes</gettext></option>
-</select>
 <label for="distro"><gettext domain="distrib">Distribution</gettext>:</label>
-<select name="version" id="distro">
+<select name="suite" id="distro">
   <option value="oldstable"><gettext domain="distrib">oldstable</gettext></option>
   <option value="stable" selected="selected"><gettext domain="distrib">stable</gettext></option>
   <option value="testing"><gettext domain="distrib">testing</gettext></option>
@@ -38,7 +31,8 @@
 </select>
 <label for="architecture"><gettext domain="distrib">Architecture</gettext>:</label>
 <select name="arch" id="architecture">
-  <option value="i386" selected="selected"><gettext domain="distrib">Intel x86</gettext></option>
+  <option value="any" selected="selected"><gettext domain="distrib">any</gettext></option>
+  <option value="i386"><gettext domain="distrib">Intel x86</gettext></option>
   <option value="m68k"><gettext domain="distrib">Motorola 680x0</gettext></option>
   <option value="alpha"><gettext domain="distrib">Alpha</gettext></option>
   <option value="amd64"><gettext domain="distrib">AMD64</gettext></option>
@@ -50,8 +44,6 @@
   <option value="mips"><gettext domain="distrib">MIPS (big endian)</gettext></option>
   <option value="mipsel"><gettext domain="distrib">MIPS (little endian)</gettext></option>
   <option value="s390"><gettext domain="distrib">IBM S/390</gettext></option>
-# SuperH is currently not in shape for anything
-#  <option value="sh"></option>
 # TODO: Hurd should be listed as a separate distribution
   <option value="hurd-i386"><gettext domain="distrib">Hurd (i386)</gettext></option>
 </select>
