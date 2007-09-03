@@ -5,19 +5,19 @@ up package recompilations for all the architectures
 <a href="$(HOME)/ports/">Debian currently supports</a>. This
 network is made up of several machines that use a specific software
 package called <em>buildd</em> to pick up packages from the Debian
-archive and rebuild them for the target architecture.
+archive and rebuild them for the target architecture.</p>
 
 <h2>Why is the autobuilder network needed?</h2>
 
-<P>The Debian distribution supports <a href="$(HOME)/ports/">quite a
+<p>The Debian distribution supports <a href="$(HOME)/ports/">quite a
 few architectures</a>,
 but the package maintainers usually only compile binary versions for
 a single architecture (usually i386).
 Developers for other architectures have to watch out for new
 versions of packages and recompile them if they want to stay
-up-to-date with the Intel distribution.
+up-to-date with the Intel distribution.</p>
 
-<P>
+<p>
 As Debian/m68k (the first non-Intel port) started, all this was done
 manually: developers watched the upload mailing list for new packages and
 took some of them for building. Coordination that no package
@@ -25,23 +25,25 @@ is built twice by different people was done by announcing on a mailing
 list. It's obvious that this procedure is error-prone and
 time-consuming. This was, however, the usual way for keeping non-i386
 distributions current for a long time.
+</p>
 
-<P>
+<p>
 The build daemon system automates most of this process. It consists of
 a set of scripts (written in Perl and Python) that have evolved over
 time to help porters with various tasks. They have finally developed
 into a system that is able to keep non-i386 Debian distributions
 up-to-date nearly automatically.
+</p>
 
 
 <h2>How does buildd work?</h2>
 
-<P><em>Buildd</em> is the name usually given to the software used by the 
-autobuilder network, but it's really made of different parts:
+<p><em>Buildd</em> is the name usually given to the software used by the 
+autobuilder network, but it's really made of different parts:</p>
 
 <dl>
 
-<dt><A href="http://svn.cyberhqz.com/svn/wanna-build/">wanna-build</A></dt>
+<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">wanna-build</a></dt>
 <dd>
 a tool that helps coordinate package (re)building through a database
 that keeps a list of packages and their status. There is one central
@@ -58,7 +60,7 @@ will also upload packages after the build log
 has been acknowledged by the administrator.
 </dd>
 
-<dt><A href="http://packages.debian.org/sbuild">sbuild</A></dt>
+<dt><a href="http://packages.debian.org/sbuild">sbuild</a></dt>
 <dd>
 is responsible for the actual compilation of packages in isolated chroots.
 It mainly uses standard Debian tools for this, but also takes care of
@@ -83,49 +85,49 @@ merges these data with dependencies added manually.
 
 </dl>
 
-<P>All these parts <a href="operation">operate</a>
-together in order to make the builder network work.
+<p>All these parts <a href="operation">operate</a>
+together in order to make the builder network work.</p>
 
 <h2>What does a Debian developer need to do?</h2>
 
-<P>Actually, an average Debian developer does not need to explicitly use
+<p>Actually, an average Debian developer does not need to explicitly use
 the buildd network. Whenever he uploads a package to the archive
 (binary compiled to a given architecture) it will be added to the database
 for all architectures (in state <em>Needs-Build</em>). 
 Build machines will query the build database for packages in this state,
 and will routinely take packages from that list. The list
 is prioritized by previous compilation state, priority, section, and finally
-package name.
+package name.</p>
 
-<P>If the build succeeds in all architectures, the maintainer will not
+<p>If the build succeeds in all architectures, the maintainer will not
 need to do anything. All those binary packages will be uploaded to the
 architecture main site. If the build does not succeed the package will
 enter a special state (<em>Failed</em> or <em>Dep-Wait</em>, if they
 depend on specific build dependencies which are not available). 
 The autobuilder administrators will review packages which fail the build
 and will report back to the maintainer, usually, opening up a bug in the
-Bug Tracking System.
+Bug Tracking System.</p>
 
-<P>Sometimes a package takes a long time to build for a given architecture
+<p>Sometimes a package takes a long time to build for a given architecture
 and that holds the package from entering <a href="$(HOME)/devel/testing">\
 testing</a>. Unfortunately, the package will need to wait until a machine 
 picks it up. Buildd administrators will not accept requests to speed
 up the building of a package since the priority list has already been
 established. A maintainer, however, can access a 
 <a href="http://db.debian.org/machines.cgi">Debian development machine</a>
-and manually build the package there.
+and manually build the package there.</p>
 
-<P>You can check that status of the different buildds attempt
+<p>You can check that status of the different buildds attempt
 of the packages that belong to any given maintainer by checking the 
 <a href="http://buildd.debian.org/bymaint.php">buildd logs</a>. 
-These logs are also linked from the Packages' Maintainer Overview.
+These logs are also linked from the Packages' Maintainer Overview.</p>
 
-<P>For more information on the different states a package can be
-please read <a href="wanna-build-states">wanna-build-states</a>.
+<p>For more information on the different states a package can be
+please read <a href="wanna-build-states">wanna-build-states</a>.</p>
 
 <h2>Where can I find additional information?</h2>
 
-<P>Of course, both the documentation and the source code available for these
+<p>Of course, both the documentation and the source code available for these
 different tools are the best way to find out how the buildd network
 works. Additionally, the
 <a href="$(HOME)/doc/manuals/developers-reference/ch-pkgs#s-porting">\
@@ -137,34 +139,34 @@ it also provides some information on
 package builders</a> and
 <a href="$(HOME)/doc/manuals/developers-reference/ap-tools#s-tools-porting">\
 porting tools</a> which are involved in the process of both setting
-up and maintaining the buildd network.
+up and maintaining the buildd network.</p>
 
-<P>There are some statistics available for the autobuilder network at
-<a href="http://buildd.debian.org/stats/">the buildd stats page</a>.
+<p>There are some statistics available for the autobuilder network at
+<a href="http://buildd.debian.org/stats/">the buildd stats page</a>.</p>
 
 <h2>How can I setup my own auto-builder node?</h2>
 
-<P>There are several reasons why a developer (or user)
-might want to setup and run an autobuilder:
+<p>There are several reasons why a developer (or user)
+might want to setup and run an autobuilder:</p>
 
 <ul>
 <li>To locally test if the package <tt>Build-Depends</tt> are properly
-defined (i.e. by compiling the package in the auto-builder environment).
+defined (i.e. by compiling the package in the auto-builder environment).</li>
 <li>To help in developing a port to a given architecture (when autobuilders
-are needed).
+are needed).</li>
 <li>To assess the impact of a given compiler optimisation or patch
-by recompiling a large subset of packages.
+by recompiling a large subset of packages.</li>
 <li>To run tools that analyse packages for known mistakes and need to
 be run in compiled packages. This is even needed when doing source
 code analysis, for example, as a work-around for packages
-using <tt>dpatch</tt>.
+using <tt>dpatch</tt>.</li>
 </ul>
 
-<P>You can read more information on how you can
-<a href="setting-up">setup an autobuilder</a>.
+<p>You can read more information on how you can
+<a href="setting-up">setup an autobuilder</a>.</p>
 
 <hrline/>
-<P><SMALL>This introduction to the autobuilder network was written
+<p><small>This introduction to the autobuilder network was written
 with bits and pieces provided by Roman Hodek, 
 Christian T. Steigies, Wouter Verhelst, Andreas Barth, 
-Francesco Paolo Lovergine and Javier Fern&aacute;ndez-Sanguino.</SMALL></P>
+Francesco Paolo Lovergine and Javier Fern&aacute;ndez-Sanguino.</small></p>
