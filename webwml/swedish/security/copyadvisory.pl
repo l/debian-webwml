@@ -84,6 +84,7 @@ while (<SRC>)
 	s/\bdiscovered a problem in\b/upptäckte ett problem i/;
 	s/^(<p>)?A vulnerability was discovered in\b/$1En sårbarhet upptäcktes i/;
 	s/^(<p>)?Two vulnerabilities were discovered in\b/$1Två sårbarheter upptäcktes i/;
+	s/Several local and remote vulnerabilities/Flera lokala och utifrån nåbara sårbarheter/;
 	s/It was discovered that /Man har upptäckt att /;
 	s/We recommend that you upgrade your (.*) package immediately/Vi rekommenderar att ni uppgraderar ert $1-paket omedelbart/;
 	s/We recommend that you upgrade your (.*) packages immediately/Vi rekommenderar att ni uppgraderar era $1-paket omedelbart/;
