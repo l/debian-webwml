@@ -23,18 +23,11 @@ in it:
 uid = nobody
 gid = nogroup
 max connections = 25
-syslog facility = daemon
 socket options = SO_KEEPALIVE
 
 [debian]
-  path = /org/ftp.debian.org/ftp
-  comment = Debian FTP Archive (~24 GB)
-  auth users = authorized_account1,authorized_account2,authorized_accountN
-  read only = true
-  secrets file = /etc/rsyncd/debian.secrets
-[debian-web]
-  path = /org/www.debian.org/debian.org
-  comment = Debian Web Site (~400 MB)
+  path = /srv/debian/mirror
+  comment = The Debian Archive (~250 GB)
   auth users = authorized_account1,authorized_account2,authorized_accountN
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
@@ -84,11 +77,8 @@ ssh-keygen -f ~/.ssh/identity.mysite
 this at the beginning:
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/websync &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/sync &amp;"
 </pre>
-
-<p>(replace "websync" with "ftpsync" or whatever's
-the command to start the mirroring called)
 
 <p>You need to set up a script that will contact the downstream mirrors.
 Create a file called <code>signal</code>, containing this:
@@ -106,17 +96,20 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
 </protect>
 
 <p>This script will login to a remote host using the special ssh key you
-created above. The script itself will not do anything useful remotely, the
-~/websync (or ~/ftpsync) command will be run from the
-key.
+created above, provided that each downstream mirror operator adds that
+key to their own ~/.ssh/authorized_keys (also replacing "sync" with
+"ftpsync" or whatever their command to start the mirroring is called).
+The script itself will not do anything useful remotely, the single command
+will be run as specified by the key setting.</p>
 
-<p>To actually signal the mirrors, you need to add <code>./signal
-&lt;site&gt; &lt;username&gt;</code> lines at the end of either the
-<code>websync</code> script, or if it's more convenient for you, in a new
-script, and then run that script from <code>websync</code>.
+<p>To actually signal the mirrors, you need to run <code>./signal
+&lt;site&gt; &lt;username&gt;</code> after your own rsyncing is done.
+Thus, as soon as your site is finished mirroring from your upstream site,
+you will start pushing to those downstream from you.
 
-<p>This new script, <code>runmirrors</code>, would contain something like
-this:
+<p>You can place these commands either at the end of your
+<code>ftpsync</code> script, or if it's more convenient for you, in a new
+script, and then run that script from <code>ftpsync</code>, for example:
 
 <protect>
 <pre>
@@ -128,9 +121,6 @@ this:
 ./signal and.another.site othersiteaccount
 </pre>
 </protect>
-
-<p>Thus, as soon as your site is finished mirroring from the upstream site,
-you will start pushing to those downstream from you.
 
 <p>If you have any trouble with this, <a href="mailto:mirrors@debian.org">
 contact us</a>.
