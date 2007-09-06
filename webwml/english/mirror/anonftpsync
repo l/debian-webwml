@@ -9,9 +9,6 @@ set -e
 # Note: You MUST have rsync 2.6.4 or newer, which is available in sarge
 # and all newer Debian releases, or at http://rsync.samba.org/
 
-# Note: You need to install the package procmail, it contains 
-# /usr/bin/lockfile, which is needed by this script.
-
 # Don't forget:
 # chmod u+x anonftpsync
 
@@ -147,10 +144,23 @@ cd $HOME
 umask 002
 
 # Check to see if another sync is in progress
-if lockfile -! -l 43200 -r 0 "$LOCK"; then
-  echo ${HOSTNAME} is unable to start rsync, lock file exists
-  exit 1
+if [ -f "$LOCK" ]; then
+  if [ "`find $LOCK -maxdepth 1 -amin -360`" = "" ]; then
+# Note: this requires the procps ps; for other ps', adjust as necessary
+    if ps ax | grep '[r]'sync | grep -q $RSYNC_HOST; then
+      echo "stale lock found, but a rsync is still running, aiee!"
+      exit 1
+    else
+      echo "stale lock found (not accessed in the last 6 hours), forcing update!"
+      rm -f $LOCK
+    fi
+  else
+    echo "current lock file exists, unable to start rsync!"
+    exit 1
+  fi
 fi
+
+touch $LOCK
 # Note: on some non-Debian systems, trap doesn't accept "exit" as signal
 # specification. If that's the case on your system, try using "0".
 trap "rm -f $LOCK > /dev/null 2>&1" exit
@@ -184,3 +194,4 @@ fi
 
 savelog $LOGFILE
 
+rm $LOCK
