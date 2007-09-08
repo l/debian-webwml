@@ -1,5 +1,5 @@
 #use wml::debian::template title="push ミラー"
-#use wml::debian::translation-check translation="1.11"
+#use wml::debian::translation-check translation="1.13"
 
 #O <p>Push mirroring is a form of mirroring that minimizes the time it takes
 #O for changes to the main archive to reach mirrors. The server mirror uses
@@ -15,10 +15,12 @@
 #O is that the upstream mirror initiates the mirror process immediately after
 #O its archive has been updated. This allows changes to the archive to
 #O propagate extremely quickly.
+#O </p>
 <p>push ミラーでは、上流・下流の管理者が情報のやり取りを
 しなければならないので、ちょっとだけ設定が面倒です。利点は、
 アーカイブが更新された段階で、上流側からミラー処理を開始できることです。
 これによってアーカイブの変更は非常にすばやく伝播します。
+</p>
 
 #O <h2>Explanation of the method</h2>
 <h2>手法の詳細</h2>
@@ -28,12 +30,14 @@
 #O in the clear, once you connect to a machine you are basically guaranteed that
 #O future connections will be to the same machine. This prevents many man-in-the-middle
 #O attacks.
+#O </p>
 <p>まず ssh に関する知識から。
 ssh は別のマシンのアカウントへの接続を安全に行う手法です。
 パスワードが平文で渡らないようにするだけでなく、
 いったんあるマシンへの接続が行われれば、
 基本的に将来も同じマシンへ接続していることが保証されます。
 これによって man-in-the-middle 攻撃が防げます。
+</p>
 
 #O <p>One capability ssh has is the ability for a user to take the public identity
 #O key for a user on another machine and add it to a file of authorized keys on your
@@ -42,6 +46,7 @@ ssh は別のマシンのアカウントへの接続を安全に行う手法です。
 #O then has login privileges to your account. It is possible, though, to add text
 #O to an authorized key restricting the type of access a person accessing your
 #O account using that key has.
+#O </p>
 <p>ssh の機能を用いると、あなたのマシンのユーザは、
 別のマシンのユーザの公開鍵を自分の承認鍵ファイルへ登録できます。
 デフォルトでは、その別のマシンのユーザ
@@ -49,6 +54,7 @@ ssh は別のマシンのアカウントへの接続を安全に行う手法です。
 これによってそのアカウントへのログイン権限を持つことになります。
 しかし、承認鍵ファイルにテキストを追加すれば、
 その鍵を使った人がアカウントで行えることを制限もできます。
+</p>
 
 #O <p>So to protect the downstream mirror, the key provided by the upstream mirror
 #O has text added to it to limit it to only give the person accessing your account
@@ -57,6 +63,7 @@ ssh は別のマシンのアカウントへの接続を安全に行う手法です。
 #O the most they could do is to start the mirror program on your machine. 
 #O You do not even have to worry about multiple copies of the program being started
 #O as a lockfile is used.
+#O </p>
 <p>よってミラーの下流側を守るため、上流側から与えられた鍵にテキストを追加し、
 アカウントにアクセスしてくる人のできることをひとつに、
 すなわちミラー更新プログラムを起動すること、に限るべきです。
@@ -64,6 +71,7 @@ ssh は別のマシンのアカウントへの接続を安全に行う手法です。
 あなたのマシンでできることはミラープログラムの起動にとどまります。
 またロックファイルが使われているので、
 このプログラムをいくつも起動される心配もありません。
+</p>
 
 #O <p>On the upstream end, rsync can be configured to restrict who can mirror
 #O a given area by username and password. These are totally separate from <kbd>/etc/passwd</kbd>
@@ -71,6 +79,7 @@ ssh は別のマシンのアカウントへの接続を安全に行う手法です。
 #O As it is set up, the username and password are passed in the clear. This
 #O shouldn't be a problem though, as the worst that can happen is that a
 #O third party gains the ability to mirror the Debian pages from that site.
+#O </p>
 <p>上流では rsync を設定して、指定した領域をミラーできる人を、
 ユーザ名とパスワードによって制限します。これらは
 <kbd>/etc/passwd</kbd> とはまったく別のものですので、
@@ -78,6 +87,7 @@ push サーバが他人からアクセスされる心配はありません。
 この設定では、ユーザ名とパスワードは平文です。
 しかし、第三者ができることは Debian のページをそのサイトから
 ミラーすることだけですから、これはあまり問題にはならないでしょう。
+</p>
 
 #O <h2>Setting up a push client mirror</h2>
 <h2>push ミラーのクライアントを設定する</h2>
@@ -85,9 +95,11 @@ push サーバが他人からアクセスされる心配はありません。
 #O <p>It is best to set this up using the account of an ordinary user, not
 #O root. The contents of the public ssh key given to you by the upstream mirror
 #O should be placed in <kbd>~&lt;user&gt;/.ssh/authorized_keys</kbd>.
+#O </p>
 <p>この設定を行うには、root ではない通常のユーザを用いてください。
 ミラーの上流から受け取った ssh 公開鍵の内容を
 <kbd>~&lt;user&gt;/.ssh/authorized_keys</kbd> に加えてください。
+</p>
 
 #O <p>To become a push client for the FTP archive, you will need to set up
 #O mirroring using our standard <a href="anonftpsync">anonftpsync</a> script,
@@ -96,6 +108,7 @@ push サーバが他人からアクセスされる心配はありません。
 #O file <a href="ftpsync.conf">ftpsync.conf</a>.
 #O Edit ftpsync.conf and follow the directions in there using
 #O the information provided to you by the upstream mirror.
+#O </p>
 <p>FTP アーカイブの push クライアントになるには、私たちが標準としている <a
 href="anonftpsync">anonftpsync</a>
 スクリプトを少し修正したものを用いてミラーを設定する必要があります。
@@ -103,6 +116,7 @@ href="anonftpsync">anonftpsync</a>
 href="ftpsync.conf">ftpsync.conf</a> を include
 している行のコメントを外してください。さらに、説明に従って、
 ミラーの上流から提供された情報をもとに ftpsync.conf を編集してください。
+</p>
 
 # The files have different names so that you may use the same account to
 # mirror both archives.
@@ -111,24 +125,29 @@ href="ftpsync.conf">ftpsync.conf</a> を include
 #O <a href="websync">websync</a> and <a href="websync.conf">websync.conf</a>.
 #O Edit websync.conf and follow the directions in there using the information
 #O provided to you by the upstream mirror.
+#O </p>
 <p>WWW ページの push クライアントになるには、
 <a href="websync">websync</a>, <a href="websync.conf">websync.conf</a>
 各ファイルが必要です。websync.conf を開き、そこに書かれている説明と
 ミラーの上流から提供された情報をもとに編集を行ってください。
+</p>
 
 #O <h2>Push-Primary client sites</h2>
 <h2>push-primary クライアントサイト</h2>
 
 #O <p>Push-Primary client mirrors, also referred to as Tier-1 mirrors, are the
 #O push client mirrors which are allowed to mirror from our master archives.
+#O </p>
 <p>push-primary クライアントミラー (Tier-1 ミラーとも呼ばれます) とは、
 私たちのマスタアーカイブからのミラーを許可されている push クライアントです。
+</p>
 
 #O <p>If your site is <strong>very</strong> well connected (both very good
 #O bandwidth and well connected to major backbones) and you are willing to let
 #O other sites mirror from your site, you may want to let us know so we can
 #O consider you for a push mirror. However, don't expect it to happen very soon
 #O because we already have a fair number of Tier-1 mirrors.
+#O </p>
 <p>あなたのサイトの回線が
 (バンド幅とバックボーンへの接続の良好性の両面で)
 <strong>非常に</strong>優れており、
@@ -136,6 +155,7 @@ href="ftpsync.conf">ftpsync.conf</a> を include
 私たちに連絡してくれれば、あなたのサイトを push ミラーにするか考慮します。
 しかし、あまり早い対応は期待しないでください。すでに私たちは
 かなりたくさんの Tier-1 ミラーを保有しているからです。
+</p>
 
 #O <p>If your site is becoming a Push-Primary for the FTP archive, you will
 #O need one of these files:</p>
@@ -173,20 +193,26 @@ href="ftpsync.conf">ftpsync.conf</a> を include
 #O upstream source for Debian (i.e. their push server mirror). It is much more
 #O efficient if the load is distributed among a number of push mirrors
 #O distributed throughout the globe.
+#O </p>
 <p>Debian アーカイブのサイズは大きく、またミラーも多いため、
 マスタアーカイブを全ミラーの上流ソースとすることは
 (つまり push サーバとすることは) 不可能です。
 負荷は世界中に散らばっている多数の push ミラーに分散させるほうが
 はるかに効率的です。
+</p>
 
 #O <p>Push server mirrors should be push client mirrors of the master archive
 #O (or perhaps another push server), and they should contain a mirror of the
 #O entire Debian archive.
+#O </p>
 <p>push ミラーのサーバは、マスタアーカイブ
 (あるいは別の push サーバ) の push クライアントになり、
 Debian アーカイブ全体のミラーを保有していなければなりません。
+</p>
 
 #O <p>See the <a href="push_server">details on setting up a push server</a>.
+#O </p>
 <p><a href="push_server">push サーバの設定に関する詳細</a>
 を見てください。
+</p>
 
