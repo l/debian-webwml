@@ -1,38 +1,31 @@
 #use wml::debian::template title="push サーバを設定する"
-#use wml::debian::translation-check translation="1.15"
+#use wml::debian::translation-check translation="1.16"
 #use wml::debian::toc
 
-#O <p>Setting up a push server consists of two basic tasks: setting up rsync
-#O access (for normal, "pull" mirroring) and setting up ssh trigger mechanism
-#O (for "pushing" the pull mirroring).
 <p>push サーバの設定は、基本的に 2 つの作業からなります。
-ひとつは rsync 接続 (通常の "pull" ミラー) の設定、
-もうひとつは ssh のトリガ機構 (pull ミラーを "push" するためのもの)
+ひとつは rsync 接続 (通常の<q>pull</q>ミラー) の設定、
+もうひとつは ssh のトリガ機構 (pull ミラーを<q>push</q>するためのもの)
 の設定です。
+</p>
 
-#O <p><small>(For more information on what a push server is, please read
-#O <a href="push_mirroring">the explanation of push mirroring</a>.)</small>
 <p><small>
 (push サーバに関する詳細は<a href="push_mirroring">push ミラーの説明</a>
 をご覧ください。)</small>
+</p>
 
 <toc-display />
 
-#O <toc-add-entry name="rsync">Setting up rsync</toc-add-entry>
 <toc-add-entry name="rsync">rsync の設定</toc-add-entry>
 
-#O <p>Install <code>rsync</code> 2.1.1 or greater. If your site is running
-#O Debian, just install the latest
-#O <a href="http://packages.debian.org/stable/net/rsync">rsync</a> package.
 <p><code>rsync</code> 2.1.1 以降をインストールします。
 もし Debian を使っているサイトでしたら、単に
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>
 パッケージの最新版をインストールするだけです。
+</p>
 
-#O <p>Create <code>rsyncd.conf</code> file and put something similar to this
-#O in it:
 <p><code>rsyncd.conf</code> ファイルを作り、
 以下のような内容を追加します。
+</p>
 
 <pre>
 uid = nobody
@@ -48,10 +41,9 @@ socket options = SO_KEEPALIVE
   secrets file = /etc/rsyncd/debian.secrets
 </pre>
 
-#O <p>Add an entry for each site you are pushing to in the
-#O <code>/etc/rsyncd/debian.secrets</code> file:
 <p>push する各サイトに対応するエントリを、
 <code>/etc/rsyncd/debian.secrets</code> ファイルに追加します。
+</p>
 
 <pre>
 authorized_account1:a_password
@@ -59,64 +51,56 @@ authorized_account2:another_password
 authorized_accountN:password
 </pre>
 
-#O <p>You have now given the downstream mirrors access to the archive on your
-#O machine.
 <p>これで下流のミラーに、あなたのマシンのアーカイブへの
 接続を許したことになります。
+</p>
 
-#O <p>You will probably want to start the rsync daemon from inetd. To do this,
-#O you have to add rsync service in <code>/etc/services</code> file (if it
-#O isn't already there), like this:
 <p>rsync デーモンは inetd から起動することになるでしょう。
 これにはまず、<code>/etc/services</code> ファイルに
 次のような rsync サービスを (まだなければ) 追加します。
+</p>
 
 <pre>
 rsync           873/tcp
 </pre>
 
-#O To enable the daemon from inetd, add the following to your
-#O <code>/etc/inetd.conf</code> file:
+<p>
 デーモンを inetd から起動させるには、次の行を
 <code>/etc/inetd.conf</code> ファイルに加えます。
+</p>
 
 <pre>
 rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daemon
 </pre>
 
-#O (Remember to send inetd an HUP signal to tell it to reread its config file
-#O after modifying the file.)
+<p>
 (修正後に inetd に HUP シグナルを送り、
 修正された設定ファイルを読み込ませるのを忘れないこと)
+</p>
 
-#O <toc-add-entry name="sshtrigger">Setting up ssh trigger mechanism</toc-add-entry>
 <toc-add-entry name="sshtrigger">ssh トリガ機構の設定</toc-add-entry>
 
-#O <p>Create a new ssh key for the account that you use to mirror Debian. Make
-#O sure you don't overwrite your original ssh key by using the -f option, for
-#O example:
 <p>Debian のミラーに用いるアカウントの ssh 鍵を新しく作ります。
 すでにある自分の鍵を上書きしないよう、-f オプションを用いましょう。
 たとえば次のようになります。
+</p>
 
 <pre>
 ssh-keygen -f ~/.ssh/identity.mysite
 </pre>
 
-#O <p>Make sure that the new public key (~/.ssh/identity.mysite.pub) contains
-#O this at the beginning:
 <p>公開鍵 (~/.ssh/identity.mysite.pub) の先頭に、
 次の内容を追加してください。
+</p>
 
 <pre>
 no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/sync &amp;"
 </pre>
 
-#O <p>You need to set up a script that will contact the downstream mirrors.
-#O Create a file called <code>signal</code>, containing this:
 <p>次に、下流のミラーに接続するスクリプトを書きます。
 <code>signal</code> という名前のファイルを作り、
 以下の内容を書き込みます。
+</p>
 
 <protect>
 <pre>
@@ -130,23 +114,12 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
 </pre>
 </protect>
 
-#O <p>This script will login to a remote host using the special ssh key you
-#O created above, provided that each downstream mirror operator adds that
-#O key to their own ~/.ssh/authorized_keys (also replacing "sync" with
-#O "ftpsync" or whatever their command to start the mirroring is called).
-#O The script itself will not do anything useful remotely, the single command
-#O will be run as specified by the key setting.</p>
 <p>このスクリプトは先に作った専用の ssh 鍵でリモートホストにログインします。
 このとき、下流の各ミラーの運営者がその鍵を自分の ~/.ssh/authorized_keys
-に追加済みである必要があります (また、"sync" を、"ftpsync"
+に追加済みである必要があります (また、<q>sync</q>を、<q>ftpsync</q>
 など、ミラー開始用のコマンドの名前に書き換えてある必要があります)。
 このスクリプト自身はリモートでなんら作業を行いませんが、
 鍵の設定によって指定されたミラー開始用のコマンドだけが実行されます。</p>
-
-#O <p>To actually signal the mirrors, you need to run <code>./signal
-#O &lt;site&gt; &lt;username&gt;</code> after your own rsyncing is done.
-#O Thus, as soon as your site is finished mirroring from your upstream site,
-#O you will start pushing to those downstream from you.
 
 <p>実際にミラーを開始させるには、
 rsync で自分のサイトを更新し終えた後に
@@ -154,13 +127,12 @@ rsync で自分のサイトを更新し終えた後に
 というコマンドを実行する必要があります。
 こうすると、あなたのサイトが上流からのミラーを終えると、
 すぐさま下流への push を開始することになります。
+</p>
 
-#O <p>You can place these commands either at the end of your
-#O <code>ftpsync</code> script, or if it's more convenient for you, in a new
-#O script, and then run that script from <code>ftpsync</code>, for example:
 <p>これらのコマンドは、<code>ftpsync</code> スクリプトの末尾に追記してもかまいませんし、
 あるいは次のような別のスクリプトに書いて、そのスクリプトを <code>ftpsync</code>
 から呼び出す形の方が便利なら、それでもかまいません。
+</p>
 
 <protect>
 <pre>
@@ -173,8 +145,6 @@ rsync で自分のサイトを更新し終えた後に
 </pre>
 </protect>
 
-#O <p>If you have any trouble with this, <a href="mailto:mirrors@debian.org">
-#O contact us</a>.
 <p>もし問題が起こったら、
 <a href="mailto:mirrors@debian.org">連絡してください</a>。
-
+</p>
