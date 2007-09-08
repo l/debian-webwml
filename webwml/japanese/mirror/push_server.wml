@@ -1,5 +1,6 @@
 #use wml::debian::template title="push サーバを設定する"
-#use wml::debian::translation-check translation="1.12"
+#use wml::debian::translation-check translation="1.14"
+#use wml::debian::toc
 
 #O <p>Setting up a push server consists of two basic tasks: setting up rsync
 #O access (for normal, "pull" mirroring) and setting up ssh trigger mechanism
@@ -15,8 +16,10 @@
 (push サーバに関する詳細は<a href="push_mirroring">push ミラーの説明</a>
 をご覧ください。)</small>
 
-#O <h2>Setting up rsync</h2>
-<h2>rsync の設定</h2>
+<toc-display />
+
+#O <toc-add-entry name="rsync">Setting up rsync</toc-add-entry>
+<toc-add-entry name="rsync">rsync の設定</toc-add-entry>
 
 #O <p>Install <code>rsync</code> 2.1.1 or greater. If your site is running
 #O Debian, just install the latest
@@ -93,8 +96,8 @@ rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daem
 (修正後に inetd に HUP シグナルを送り、
 修正された設定ファイルを読み込ませるのを忘れないこと)
 
-#O <h2>Setting up ssh trigger mechanism</h2>
-<h2>ssh トリガ機構の設定</h2>
+#O <toc-add-entry name="sshtrigger">Setting up ssh trigger mechanism</toc-add-entry>
+<toc-add-entry name="sshtrigger">ssh トリガ機構の設定</toc-add-entry>
 
 #O <p>Create a new ssh key for the account that you use to mirror Debian. Make
 #O sure you don't overwrite your original ssh key by using the -f option, for
@@ -116,9 +119,9 @@ ssh-keygen -f ~/.ssh/identity.mysite
 no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/websync &amp;"
 </pre>
 
-#O <p>(replace "websync" with "ftpsync", or "ftpsync-non-US", or whatever's
+#O <p>(replace "websync" with "ftpsync" or whatever's
 #O the command to start the mirroring called)
-<p>("websync" は適宜 "ftpsync", "ftpsync-non-US" など、
+<p>("websync" は適宜 "ftpsync" など、
 ミラーを開始するコマンドに書き換えてください)
 
 #O <p>You need to set up a script that will contact the downstream mirrors.
@@ -141,12 +144,12 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
 
 #O <p>This script will login to a remote host using the special ssh key you
 #O created above. The script itself will not do anything useful remotely, the
-#O ~/websync (or ~/ftpsync, or ~/ftpsync-non-US) command will be run from the
+#O ~/websync (or ~/ftpsync) command will be run from the
 #O key.
 <p>このスクリプトは先に作った専用の ssh 鍵でリモートホストにログインします。
 このスクリプト自身はリモートでなんら作業を行いませんが、
 鍵の設定によってリモートでは ~/websync
-(あるいは ~/ftpsync や ~/ftpsync-non-US) が実行されます。
+(あるいは ~/ftpsync) が実行されます。
 
 #O <p>To actually signal the mirrors, you need to add <code>./signal
 #O &lt;site&gt; &lt;username&gt;</code> lines at the end of either the
