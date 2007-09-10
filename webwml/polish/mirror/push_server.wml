@@ -1,49 +1,45 @@
 #use wml::debian::template title="Konfiguracja serwera push"
-#use wml::debian::translation-check translation="1.12" maintainer=""
+#use wml::debian::toc
+#use wml::debian::translation-check translation="1.16"
 
-<p>Konfigurowanie serwera technologii push sk³ada siê z dwóch
-podstawowych kroków: skonfigurowania dostêpu przez rsync (dla normalnego
+<p>Konfigurowanie serwera w metodzie push sk³ada siê z dwóch
+podstawowych kroków: skonfigurowania dostêpu przez rsync (jak dla normalnego
 tworzenia serwera lustrzanego, typu <q>pull</q>) oraz skonfigurowania
 mechanizmu <q>spustowego</q> ssh (aby umo¿liwiæ inicjowanie tworzenia
-serwera lustrzanego metod± push).
+serwera lustrzanego metod± push).</p>
 
-<p><small>(Aby uzyskaæ wiêcej informacji na temat serwerów technologii
+<p><small>(Aby uzyskaæ wiêcej informacji na temat serwerów
 push przeczytaj
 <a href="push_mirroring">wyja¶nienie tworzenia serwerów lustrzanych
-metod± push</a>.)</small>
+metod± push</a>.)</small></p>
 
-<h2>Konfiguracja rsync</h2>
+<toc-display />
+
+<toc-add-entry name="rsync">Konfiguracja rsync</toc-add-entry>
 
 <p>Zainstaluj <code>rsync</code> 2.1.1 lub nowszy. Je¶li Twój serwer
 u¿ywa systemu Debian, po prostu zainstaluj najnowsz± wersjê pakietu
-<a href="http://packages.debian.org/stable/net/rsync">rsync</a>.
+<a href="http://packages.debian.org/stable/net/rsync">rsync</a>.</p>
 
 <p>Utwórz plik <code>rsyncd.conf</code> i wpisz do niego tak± (lub
-zbli¿on±) zawarto¶æ:
+zbli¿on±) zawarto¶æ:</p>
 
 <pre>
 uid = nobody
 gid = nogroup
 max connections = 25
-syslog facility = daemon
 socket options = SO_KEEPALIVE
 
 [debian]
-  path = /org/ftp.debian.org/ftp
-  comment = Debian FTP Archive (~24 GB)
-  auth users = authorized_account1,authorized_account2,authorized_accountN
-  read only = true
-  secrets file = /etc/rsyncd/debian.secrets
-[debian-web]
-  path = /org/www.debian.org/debian.org
-  comment = Debian Web Site (~400 MB)
+  path = /srv/debian/mirror
+  comment = The Debian Archive (~250 GB)
   auth users = authorized_account1,authorized_account2,authorized_accountN
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
 </pre>
 
 <p>Dodaj wpis dla ka¿dego serwera, z którym siê ³±czysz metod± push w
-pliku <code>/etc/rsyncd/debian.secrets</code>:
+pliku <code>/etc/rsyncd/debian.secrets</code>:</p>
 
 <pre>
 authorized_account1:a_password
@@ -51,51 +47,50 @@ authorized_account2:another_password
 authorized_accountN:password
 </pre>
 
-<p>W tej chwili da³e¶ serwerom podrzêdnym dostêp do swojego komputera.
+<p>W ten sposób da³e¶ serwerom podrzêdnym dostêp do swojego komputera.</p>
 
 <p>Prawdopodobnie bêdziesz chcia³ uruchamiaæ demona rsync z inetd. Aby
 to osi±gnaæ, musisz dodaæ us³ugê rsync do pliku
 <code>/etc/services</code> (je¶li jeszcze jej tam nie ma) w nastêpuj±cy
-sposób:
+sposób:</p>
 
 <pre>
 rsync           873/tcp
 </pre>
 
 Aby uaktywniæ demona przez inetd, dodaj nastêpuj±cy wpis do pliku
-<code>/etc/inetd.conf</code>:
+<code>/etc/inetd.conf</code>:</p>
 
 <pre>
 rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daemon
 </pre>
 
+<p>
 (Pamiêtaj, aby wys³aæ sygna³ HUP do inetd, aby poinformowaæ go, ¿eby
 odczyta³ ponownie swój plik konfiguracyjny po jego modyfikacji.)
+</p>
 
-<h2>Konfiguracja mechanizmu <q>spustowego</q> ssh</h2>
-
+<toc-add-entry name="sshtrigger">Konfiguracja mechanizmu <q>spustowego</q>
+ssh</toc-add-entry>
 
 <p>Utwórz nowy klucz ssh dla konta, którego u¿ywasz do tworzenia obrazu
 lustrzanego Debiana. Upewnij siê, ¿e nie nadpiszesz swojego poprzedniego
-klucza ssh poprzez dodanie opcji -f, na przyk³ad: 
+klucza ssh poprzez dodanie opcji -f, na przyk³ad:</p>
 
 <pre>
 ssh-keygen -f ~/.ssh/identity.mysite
 </pre>
 
 <p>Upewnij siê, ¿e nowy klucz publiczny (~/.ssh/identity.mysite.pub)
-zawiera na pocz±tku taki wpis:
+zawiera na pocz±tku taki wpis:</p>
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/websync &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/sync &amp;"
 </pre>
 
-<p>(zamieñ "websync" na "ftpsync", albo "ftpsync-non-US", albo na
-jak±kolwiek inn± komendê, której u¿ywasz do tworzenia kopii lustrzanej)
-
-<p>Musisz stworzyæ skrypt, który bêdzie siê kontaktowa³ z serwerami
-podrzêdnymi. 
-Stwórz plik o nazwie <code>signal</code> i nastêpuj±cej zawarto¶ci:
+<p>Musisz utworzyæ skrypt, który bêdzie siê kontaktowa³ z serwerami
+podrzêdnymi. Utwórz plik o nazwie <code>signal</code> i nastêpuj±cej
+zawarto¶ci:</p>
 
 <protect>
 <pre>
@@ -109,25 +104,31 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
 </pre>
 </protect>
 
-<p>Powy¿szy skrypt zaloguje siê na zdalnym komputerze u¿ywaj±c
-specjalnego klucza ssh, który stworzy³e¶ powy¿ej.  Sam skrypt nie robi
-niczego u¿ytecznego na zdalnym komputerze, polecenie 
-~/websync (albo ~/ftpsync, albo ~/ftpsync-non-US) zostanie uruchomione przez
-klucz. 
+<p>Skrypt ten zaloguje siê na zdalnym komputerze u¿ywaj±c
+specjalnego klucza ssh, który utworzy³e¶ powy¿ej, przy za³o¿eniu, ¿e ka¿dy
+administrator mirrora podrzêdnego doda ten klucz do pliku
+~/.ssh/authorized_keys (zamieniaj±c <q>sync</q> na <q>ftpsync</q> lub
+co¶ innego, co powoduje rozpoczêcie procesu synchronizacji).
+Sam skrypt nie robi niczego u¿ytecznego na zdalnym komputerze, zostanie
+uruchomione polecenie wyspecyfikowane w kluczu.</p>
 
 <p>Aby zawiadomiæ serwery lustrzane, musisz dodaæ liniê <code>./signal
-&lt;site&gt; &lt;username&gt;</code> albo na koñcu skryptu
-<code>websync</code>, albo, je¶li bêdzie to dla Ciebie bardziej wygodne,
-w nowym skrypcie, a potem wywo³aæ ten skrypt z <code>websync</code>.
+&lt;site&gt; &lt;username&gt;</code> po zakoñczeniu procesu synchronizacji
+Twojego serwera. Tak wiêc, kiedy tylko zakoñczy siê synchronizacja z
+serwerm nadrzêdnym, rozpoczyna siê synchronizacja serwerów zale¿nych
+od Twojego.
+</p>
 
-<p>Ten nowy skrypt, <code>runmirrors</code>, powinien zawieraæ tak±
-tre¶æ:
+<p>Mo¿esz umie¶ciæ te polecenia albo na koñcu skryptu <code>ftpsync</code>
+albo, je¶li to Ci bardziej odpowiada, w nowym skrypcie, wywo³ywanym
+przez <code>ftpsync</code>, na przyk³ad:
+</p>
 
 <protect>
 <pre>
 #!/bin/sh
 
-# Ten skrypt jest wywo³ywany przez websync, aby powiadomiæ podrzêdne
+# Ten skrypt jest wywo³ywany, aby powiadomiæ podrzêdne
 # serwery lustrzane.
 
 ./signal some.other.site archvsync
@@ -135,9 +136,5 @@ tre¶æ:
 </pre>
 </protect>
 
-<p>Zatem, jak tylko Twój serwer zakoñczy proces synchronizacji z serwerem
-nadrzêdnym, rozpocznie siê proces przesy³ania danych metod± push do
-serwerów podrzêdnych.
-
 <p>Je¶li bêdziesz mia³ z tym jakiekolwiek problemy, <a
-href="mailto:mirrors@debian.org">skontaktuj siê z nami</a>.
+href="mailto:mirrors@debian.org">skontaktuj siê z nami</a>.</p>
