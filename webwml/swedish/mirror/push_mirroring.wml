@@ -1,10 +1,11 @@
 #use wml::debian::template title="Push-spegling"
-#use wml::debian::translation-check translation="1.9"
+#use wml::debian::translation-check translation="1.13"
 
-<p>&rdquo;Push&rdquo;-spegling är en form av spegling med rsync som minimerar tiden det tar
+<p>&rdquo;Push&rdquo;-spegling är en form av spegling som minimerar tiden det tar
 för ändringar i huvudarkivet att nå speglarna.
-Den servande spegeln använder en utlösarmekanism för att informera
+Den servande spegeln använder en utlösarmekanism för att omedelbart informera
 klientspegeln om att den måste uppdateras.
+</p>
 
 <p>&rdquo;Push&rdquo;-spegling tar lite mer tid i anspråk att sätta upp, eftersom de
 som är ansvariga för upp- och nedströmsspeglarna måste utbyta
@@ -12,6 +13,7 @@ information.
 Fördelen är att uppströmsspegeln är den som påbörjar speglingsprocessen
 direkt efter att dess eget arkiv har uppdateras, vilket gör att ändringar i
 arkivet propageras extremt snabbt.
+</p>
 
 <h2>Förklaring av metoden</h2>
 
@@ -23,6 +25,7 @@ garanterad att så fort du gjort en uppkoppling mot en maskin att framtida
 uppkopplingar verkligen sker mot samma maskin, något som förhindra många
 attacker av typen &rdquo;man-in-the-middle&rdquo;, alltså att någon på vägen
 avlyssnar/förändrar kommunikationen.
+</p>
 
 <p>En funktionalitet som finns i ssh är möjligheten för användaren att lägga
 den publika identitetsnyckeln för en användare på en annan maskin och lägga
@@ -33,6 +36,7 @@ som du fått) då får inloggningsbehörighet på ditt konto.
 Det är dock möjligt att lägga in en text till en auktoriserad nyckel som
 begränsar den typ av åtkomstbehörighet som den person som använder den
 nyckeln för att komma åt ditt konto får.
+</p>
 
 <p>Därför, för att skydda spegeln nedströms, har nyckeln som fås av spegeln
 uppströms en sådan begränsning som bara tillåter personen som använder ditt
@@ -42,6 +46,7 @@ din spegel.
 kan göra att starta speglingsprogrammet på din maskin.
 Du behöver inte ens oroa dig för att flera kopior av programmets startas,
 eftersom en låsfil används.
+</p>
 
 <p>Rsync på maskinen uppströms kan konfigureras att begränsa vilka som kan
 spegla en viss avdelning medelst användarnamn och lösenord.
@@ -49,6 +54,7 @@ Dessa är helt separerade från <kbd>/etc/passwd</kbd> så en &rdquo;push&rdquo;-se
 behöver inte oroa sig för att ge andra tillgång till sin maskin.
 Detta bör dock inte vara ett problem, eftersom det värsta som kan hända är
 att en tredje part får möjlighet att spegla Debiansidorna från den platsen.
+</p>
 
 <h2>Sätta upp en &rdquo;push&rdquo;-speglingsklient</h2>
 
@@ -56,6 +62,7 @@ att en tredje part får möjlighet att spegla Debiansidorna från den platsen.
 inte root.
 Innehållet i den publika ssh-nyckeln som du får från spegeln uppströms ska
 placeras i <kbd>~&lt;användare&gt;/.ssh/authorized_keys</kbd>.
+</p>
 
 <p>För att bli &rdquo;push&rdquo;-klient för ftp-arkivet behöver du sätta upp
 spegling med hjälp av vårt standardskript <a href="anonftpsync">anonftpsync</a>
@@ -64,6 +71,7 @@ lösenordsskyddade konfigureringar och avkommentera inkluderandet av
 filen <a href="ftpsync.conf">ftpsync.conf</a>.
 Redigera ftpsync.conf och följ anvisningarna i den tillsammans med den
 information som du får från spegeln uppströms.
+</p>
 
 # Filerna har olika namn så att du kan använda samma konto för att spegla
 # båda arkiven.
@@ -72,6 +80,7 @@ information som du får från spegeln uppströms.
 <a href="websync">websync</a> och <a href="websync.conf">websync.conf</a>.
 Redigera websync.conf och följ anvisningarna i den tillsammans med den
 information som du får från spegeln uppströms.
+</p>
 
 <h2>Push-Primary-klienter</h2>
 
@@ -85,15 +94,22 @@ att låta andra platser spegla från dig, så kan du överväga att berätta det
 för oss, så att vi kan överväga att låta dig bli &rdquo;push&rdquo;-server.
 Du kan dock inte förvänta dig att det händer inom kort tid, eftersom
 vi redan har ett hyfsat antal nivå-1-speglar.
-
-<p>Om din plats blir en primär &rdquo;push&rdquo;-spegel för ftp-arkivet behöver du
-den <a href="id_rsa.pub.ftp-master">öppna SSH2-nyckeln för
-archvsync@ftp-master.debian.org</a>.
 </p>
 
+<p>Om din plats blir en primär &rdquo;push&rdquo;-spegel för ftp-arkivet behöver du
+en av följande filer:</p>
+<ul>
+  <li><a href="id_rsa.pub.ftp-master">öppen SSH2-nyckel använd av
+    ftp-master.debian.org</a>.</li>
+  <li><a href="id_rsa.pub.syncproxy.eu">öppen SSH2-nyckel använd av
+    syncproxy.eu.debian.org</a>.</li>
+  <li><a href="id_rsa.pub.syncproxy.wna">öppen SSH2-nyckel använd av
+    syncproxy.wna.debian.org</a>.</li>
+</ul>
+
 <p>Om din plats blir en primär &rdquo;push&rdquo;-spegel för webbsidorna behöver du
-den <a href="id_dsa.pub.www-master">öppna SSH2-nyckeln för
-archvsync@www-master.debian.org</a>.
+den <a href="id_dsa.pub.www-master">öppna SSH2-nyckeln använd av
+www-master.debian.org</a>.
 </p>
 
 <h2>Sätta upp en &rdquo;push&rdquo;-speglingsserver</h2>
@@ -103,10 +119,12 @@ möjligt för alla speglar att använda huvudarkivet som uppströmskälla för
 Debian (dvs. deras &rdquo;push&rdquo;-speglingsserver).
 Det är mycket mer effektivt att fördela belastningen över ett antal
 &rdquo;push&rdquo;-speglar utspridda över jordklotet.
+</p>
 
 <p>&rdquo;Push&rdquo;-speglingsservrar bör vara
 &rdquo;push&rdquo;-speglingsklienter hos huvudarkivet (eller möjligen någon
 annan &rdquo;push&rdquo;-spegel), och bör dessutom
 innehålla en spegel av hela Debianarkivet.
+</p>
 
-<p>Se <a href="push_server">förklaringssidan</a> för detaljerad information.
+<p>Se <a href="push_server">förklaringssidan</a> för detaljerad information.</p>
