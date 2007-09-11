@@ -1,44 +1,45 @@
 #use wml::debian::template title="Sätta upp en &quot;push&quot;-server"
-#use wml::debian::translation-check translation="1.12"
+#use wml::debian::translation-check translation="1.16"
+#use wml::debian::toc
 
-<p>Att sätta upp en &rdquo;push&rdquo;-server består av två grundläggande steg:
-Ställa in rsync-åtkomst (för normal &rdquo;pull&rdquo;-spegling) och ställa in en
-ssh-utlösarmekanism (för att trycka (&rdquo;push&rdquo;) i &rdquo;push&rdquo;-speglingen).
+<p>Att sätta upp en <q>push</q>server består av två grundläggande steg:
+Ställa in rsync-åtkomst (för normal <q>pull</q>-spegling) och ställa in en
+ssh-utlösarmekanism (för att trycka (<q>push</q>) i <q>pull</q>-speglingen).
+</p>
 
-<p><small>(För mer information om vad en &rdquo;push&rdquo;-server är, läs
-<a href="push_mirroring">&rdquo;push&rdquo;-speglings-förklaringen</a>.)</small>
+<p><small>(För mer information om vad en <q>push</q>-server är, läs
+<a href="push_mirroring"><q>push</q>-speglingsförklaringen</a>.)</small>
+</p>
 
-<h2>Ställa in rsync</h2>
+<toc-display />
+
+<toc-add-entry name="rsync">Ställa in rsync</toc-add-entry>
 
 <p>Installera <code>rsync</code> version 2.1.1 eller senare.
 Om din server kör Debian installerar du bara det senaste
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>-paketet.
+</p>
 
 <p>Skapa <code>rsyncd.conf</code> och lägg in något i stil med detta:
+</p>
 
 <pre>
 uid = nobody
 gid = nogroup
 max connections = 25
-syslog facility = daemon
 socket options = SO_KEEPALIVE
 
 [debian]
-  path = /org/ftp.debian.org/ftp
-  comment = Debians ftp-arkiv (~24 Gbyte)
-  auth users = auktoriserat_konto1,auktoriserat_konto2,auktoriserat_kontoN
-  read only = true
-  secrets file = /etc/rsyncd/debian.secrets
-[debian-web]
-  path = /org/www.debian.org/debian.org
-  comment = Debians webbplats (~400 Mbyte)
+  path = /srv/debian/mirror
+  comment = Debians arkiv (~250 Gbyte)
   auth users = auktoriserat_konto1,auktoriserat_konto2,auktoriserat_kontoN
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
 </pre>
 
-<p>Lägg en post för varje server som hämtar från dig med &rdquo;push&rdquo; i filen
+<p>Lägg en post för varje server som hämtar från dig med <q>push</q> i filen
 <code>/etc/rsyncd/debian.secrets</code>:
+</p>
 
 <pre>
 auktoriserat_konto1:ett_lösenord
@@ -47,10 +48,12 @@ auktoriserat_kontoN:lösenord
 </pre>
 
 <p>Du har nu gett nedströmsspeglarna tillgång till arkivet på din maskin.
+</p>
 
 <p>Du vill antagligen starta rsyncprocessen från inetd.
 För att göra detta måste du lägga in rsync-servicen i filen
 <code>/etc/services</code> (om det inte redan står där), så här:
+</p>
 
 <pre>
 rsync           873/tcp
@@ -58,6 +61,7 @@ rsync           873/tcp
 
 <p>För att aktivera servern från inetd, lägger du till följande i din
 <code>/etc/inetd.conf</code>:
+</p>
 
 <pre>
 rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daemon
@@ -66,12 +70,14 @@ rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daem
 <p>
    (Kom ihåg att sända en HUP-signal till inetd för att tala om för det
     att läsa om sin inställningsfil efter att du ändrat den.)
+</p>
 
-<h2>Ställa in ssh-utlösarmekanism</h2>
+<toc-add-entry name="sshtrigger">Ställa in ssh-utlösarmekanism</toc-add-entry>
 
 <p>Skapa en ny ssh-nyckel för kontot som du använder för att spegla Debian.
 Se till att du inte skriver över din riktiga ssh-nyckel genom att
 använda flaggan -f, till exempel:
+</p>
 
 <pre>
 ssh-keygen -f ~/.ssh/identity.minserver
@@ -79,19 +85,15 @@ ssh-keygen -f ~/.ssh/identity.minserver
 
 <p>Se till att den nya öppna nyckeln (~/.ssh/identity.minserver.pub)
 innehåller följande i början:
+</p>
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/websync &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/sync &amp;"
 </pre>
-
-<p>(ersätt &rdquo;websync&rdquo; med &rdquo;ftpsync&rdquo; eller
-&rdquo;ftpsync-non-US&rdquo; eller vad du nu
-använder för kommando för att starta speglingen)
 
 <p>Du måste ställa in skriptet så att det kontaktar speglar nedströms.
 Skapa en fil med namnet <code>signal</code> med följande innehåll:
-
-filerna <kbd>runmirrors</kbd>, med innehållet:
+</p>
 
 <protect>
 <pre>
@@ -106,17 +108,24 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
 </protect>
 
 <p>Detta skript kommer att logga in på fjärrvärden genom att använda den
-speciella ssh-nyckel du skapade ovan.
-Skriptet själv gör inget användbart på den andra sidan, ~/websync
-(eller ~/ftpsync eller ~/ftpsync-non-US) kommer att köras från nyckeln.
+speciella ssh-nyckel du skapade ovan, förutsatt att varje nedströmsspegelsoperatör
+lägger till denna nyckel till deras egen ~/.ssh/authorized_keys (och ersätter
+"sync" med "ftpsync" eller vad deras kommando för att starta speglingen kallas).
+Skriptet själv gör inget användbart på den andra sidan, 
+kommandot kommer att köras som specificerat i nyckelinställningarna.
+</p>
 
-<p>För att faktiskt signalera speglarna måste du lägga in rader på formen
-<code>./signal &lt;plats&gt; &lt;användar-id&gt;</code> i slutet av
-antingen <code>websync</code>-skriptet, eller, om det är enklare för dig,
-i ett nytt skript som du anropar från <code>websync</code>.
+<p>För att faktiskt signalera speglarna måste du köra
+<code>./signal &lt;plats&gt; &lt;användar-id&gt;</code> efter att din egen
+rsyncning utförts.
+Därmed kommer du, så snart som din plats har speglat klart från din uppströmsplats,
+att börja föra speglingen vidare (<q>push</q>) till de nedströms från dig.
+</p>
 
-<p>Detta nya skript, <code>runmirrors</code>, skulle då innehålla något sånt
-här:
+<p>Du kan placera dessa kommandon antingen i slutet av ditt
+<code>ftpsync</code>-skript eller, om det är enklare för dig, i ett nytt
+skript och sedan köra detta skript från <code>ftpsync</code>, exempelvis:
+</p>
 
 <protect>
 <pre>
@@ -131,8 +140,6 @@ cd $HOME
 </pre>
 </protect>
 
-<p>Därmed kommer du börja trycka data till dina nedströmsspeglar så fort
-du är klar med att spegla från uppströmsservern.
-
 <p>Om du har problem med detta,
 <a href="mailto:mirrors@debian.org">kontakta oss</a>.
+</p>
