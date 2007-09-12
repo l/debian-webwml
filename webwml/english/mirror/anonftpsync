@@ -82,6 +82,14 @@ EXCLUDE=
 
 MAILTO=
 
+# LOCK_TIMEOUT is a timeout in minutes.  Defaults to 360 (6 hours).
+# This program creates a lock to ensure that only one copy
+# of it is mirroring any one archive at any one time.
+# Locks held for longer than the timeout are broken, unless
+# a running rsync process appears to be connected to $RSYNC_HOST.
+
+LOCK_TIMEOUT=360
+
 # There should be no need to edit anything below this point, unless there
 # are problems.
 
@@ -158,13 +166,13 @@ umask 002
 # Check to see if another sync is in progress
 if [ -f "$LOCK" ]; then
 # Note: this requires the findutils find; for other finds, adjust as necessary
-  if [ "`find $LOCK -maxdepth 1 -amin -360`" = "" ]; then
+  if [ "`find $LOCK -maxdepth 1 -amin -$LOCK_TIMEOUT`" = "" ]; then
 # Note: this requires the procps ps; for other ps', adjust as necessary
     if ps ax | grep '[r]'sync | grep -q $RSYNC_HOST; then
       echo "stale lock found, but a rsync is still running, aiee!"
       exit 1
     else
-      echo "stale lock found (not accessed in the last 6 hours), forcing update!"
+      echo "stale lock found (not accessed in the last $LOCK_TIMEOUT minutes), forcing update!"
       rm -f $LOCK
     fi
   else
