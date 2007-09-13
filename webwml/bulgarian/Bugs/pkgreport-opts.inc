@@ -1,6 +1,6 @@
 #use wml::debian::language_names
 #use wml::debian::common_tags
-#use wml::debian::translation-check translation="1.41"
+#use wml::debian::translation-check translation="1.45"
 
 <bind-gettext-domain domain="bugs" />
 
@@ -22,6 +22,42 @@
   <label><input type="checkbox" name="show_list_footer" value="no">
      <gettext domain="bugs">скриване на статистиките в долния колонтитул</gettext></label>
   </small>
+
+<define-tag oldstable whitespace=delete>
+  <gettext domain="bugs">oldstable</gettext>
+</define-tag>
+<define-tag stable whitespace=delete>
+  <gettext domain="bugs">stable</gettext>
+</define-tag>
+<define-tag proposed-updates whitespace=delete>
+  <gettext domain="bugs">proposed-updates</gettext>
+</define-tag>
+<define-tag testing whitespace=delete>
+  <gettext domain="bugs">testing</gettext>
+</define-tag>
+<define-tag testing-proposed-updates whitespace=delete>
+  <gettext domain="bugs">testing-proposed-updates</gettext>
+</define-tag>
+<define-tag unstable whitespace=delete>
+  <gettext domain="bugs">unstable</gettext>
+</define-tag>
+<define-tag experimental whitespace=delete>
+  <gettext domain="bugs">experimental</gettext>
+</define-tag>
+
+  <li><small><gettext domain="bugs">Версия на пакета:</gettext>
+  <label><input type="text" name="version" value="" size="20"></label>
+  </small></li>
+
+  <li><small><gettext domain="bugs">Distribution:</gettext>
+  <label><input type="radio" name="dist" value="oldstable"><oldstable></label>
+  <label><input type="radio" name="dist" value="stable"><stable></label>
+  <label><input type="radio" name="dist" value="proposed-updates"><proposed-updates></label>
+  <label><input type="radio" name="dist" value="testing"><testing></label>
+  <label><input type="radio" name="dist" value="testing-proposed-updates"><testing-proposed-updates></label>
+  <label><input type="radio" name="dist" value="unstable" checked><unstable></label>
+  <label><input type="radio" name="dist" value="experimental"><experimental></label>
+  </small></li>
 
   <li><small><gettext domain="bugs">Обратно сортиране по:</gettext>
   <label><input type="checkbox" name="pend-rev" value="yes">
@@ -127,11 +163,14 @@
 <define-tag etch-ignore whitespace=delete>
   <gettext domain="bugs">etch-ignore</gettext>
 </define-tag>
+<define-tag lenny whitespace=delete>
+  <gettext domain="bugs">lenny</gettext>
+</define-tag>
+<define-tag lenny-ignore whitespace=delete>
+  <gettext domain="bugs">lenny-ignore</gettext>
+</define-tag>
 <define-tag sid whitespace=delete>
   <gettext domain="bugs">sid</gettext>
-</define-tag>
-<define-tag experimental whitespace=delete>
-  <gettext domain="bugs">experimental</gettext>
 </define-tag>
 <define-tag confirmed whitespace=delete>
   <gettext domain="bugs">потвърден</gettext>
@@ -183,6 +222,10 @@
   <label><input type="checkbox" name="include" value="woody"><woody></label>
   <label><input type="checkbox" name="include" value="sarge"><sarge></label>
   <label><input type="checkbox" name="include" value="sarge-ignore"><sarge-ignore></label>
+  <label><input type="checkbox" name="include" value="etch"><etch></label>
+  <label><input type="checkbox" name="include" value="etch-ignore"><etch-ignore></label>
+  <label><input type="checkbox" name="include" value="lenny"><lenny></label>
+  <label><input type="checkbox" name="include" value="lenny-ignore"><lenny-ignore></label>
   <label><input type="checkbox" name="include" value="sid"><sid></label>
   <label><input type="checkbox" name="include" value="experimental"><experimental></label>
   <label><input type="checkbox" name="include" value="confirmed"><потвърден></label>
@@ -208,6 +251,10 @@
   <label><input type="checkbox" name="exclude" value="woody"><woody></label>
   <label><input type="checkbox" name="exclude" value="sarge"><sarge></label>
   <label><input type="checkbox" name="exclude" value="sarge-ignore"><sarge-ignore></label>
+  <label><input type="checkbox" name="include" value="etch"><etch></label>
+  <label><input type="checkbox" name="include" value="etch-ignore"><etch-ignore></label>
+  <label><input type="checkbox" name="include" value="lenny"><lenny></label>
+  <label><input type="checkbox" name="include" value="lenny-ignore"><lenny-ignore></label>
   <label><input type="checkbox" name="exclude" value="sid"><sid></label>
   <label><input type="checkbox" name="exclude" value="experimental"><experimental></label>
   <label><input type="checkbox" name="exclude" value="confirmed"><confirmed></label>
