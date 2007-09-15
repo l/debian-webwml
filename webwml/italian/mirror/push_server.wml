@@ -1,46 +1,41 @@
 #use wml::debian::template title="Configurare un server push"
-#use wml::debian::translation-check translation="1.12"
+#use wml::debian::translation-check translation="1.16" maintainer="Luca Monducci"
 
-<p>Configurare un server push consiste in due compiti di base:
-configurare l'accesso rsync (per un normale mirroring di tipo "pull")
-e configurare un meccanismo di attivazione via ssh
-(per "lanciare" il mirroring pull).
+<p>Configurare un server push consiste in due compiti di base: la
+configurazione dell'accesso rsync (per un normale mirroring di tipo
+<q>pull</q>) e la configurazionre del un meccanismo di attivazione
+via ssh (per avviare il mirroring push).</p>
 
-<p><small>(Per maggiori informazioni su cosa è un server push, leggi
-<a href="push_mirroring">la spiegazione sul push mirroring</a>.)</small>
+<p><small>(Per maggiori informazioni su cosa è un server push, leggere
+<a href="push_mirroring">la spiegazione sul push mirroring</a>.)</small></p>
 
-<h2>Configurare rsync</h2>
+<toc-display />
 
-<p>Installa <code>rsync</code> 2.1.1 o superiore. Se il tuo sito
-gira su Debian, installa semplicemente il più recente pacchetto
-<a href="http://packages.debian.org/stable/net/rsync">rsync</a>.
+<toc-add-entry name="rsync">Configurazione di rsync</toc-add-entry>
 
-<p>Crea un <code>rsyncd.conf</code> e scrivici dentro qualcosa di
-simile a questo:
+<p>Installare <code>rsync</code> 2.1.1 o superiore. Se per il proprio
+sito si utiulizza Debian, è sufficiente installare il pacchetto
+<a href="http://packages.debian.org/stable/net/rsync">rsync</a>
+più recente.</p>
+
+<p>Creare il file <code>rsyncd.conf</code> e inserirvi qualcosa di
+simile a questo:</p>
 
 <pre>
 uid = nobody
 gid = nogroup
 max connections = 25
-syslog facility = daemon
 socket options = SO_KEEPALIVE
 
 [debian]
-  path = /org/ftp.debian.org/ftp
-  comment = Debian FTP Archive (~24 GB)
-  auth users = authorized_account1,authorized_account2,authorized_accountN
-  read only = true
-  secrets file = /etc/rsyncd/debian.secrets
-[debian-web]
-  path = /org/www.debian.org/debian.org
-  comment = Debian Web Site (~400 MB)
-  auth users = authorized_account1,authorized_account2,authorized_accountN
+  path = /srv/debian/mirror
+  comment = The Debian Archive (~250 GB)  auth users = authorized_account1,authorized_account2,authorized_accountN
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
 </pre>
 
-<p>Aggiungi una voce per ogni sito per il quale fai pushing nel file
-<code>/etc/rsyncd/debian.secrets</code>: 
+<p>Aggiungere nel file <code>/etc/rsyncd/debian.secrets</code> una voce per
+ogni sito verso cui si vuole effettuare il pushing:</p>
 
 <pre>
 authorized_account1:a_password
@@ -48,50 +43,46 @@ authorized_account2:another_password
 authorized_accountN:password
 </pre>
 
-<p>A questo punto hai dato accesso ai mirror destinazione all'archivio
-della tua macchina.
+<p>Con questo si è dato accesso ai mirror destinazione all'archivio
+sulla propria macchina.</p>
 
-<p>Probabilmente vorrai avviare il demone rsync da inetd. Per farlo,
-devi aggiungere il servizio rsync nel file <code>/etc/services</code> 
-(se non fosse già lì), in questo modo:
+<p>Per far avviare il demone rsync da inetd si deve aggiungere il servizio
+rsync nel file <code>/etc/services</code> (se non fosse già presente), in
+questo modo:</p>
 
 <pre>
 rsync           873/tcp
 </pre>
 
-Per abilitare il demone da inetd, aggiungi quanto segue al tuo file
-<code>/etc/inetd.conf</code>:
+<p>Per abilitare il demone da inetd, aggiungere quanto segue al proprio file
+<code>/etc/inetd.conf</code>:</p>
 
 <pre>
 rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daemon
 </pre>
 
-(Ricorda di inviare a inetd un segnale HUP per dirgli di rileggere
-il proprio file di configurazione dopo la modifica).
+<p>(Ricordasi di inviare a inetd un segnale HUP per fargli rileggere il file
+di configurazione dopo la modifica).</p>
 
-<h2>Configurare un meccanismo di attivazione con ssh</h2>
+<toc-add-entry name="sshtrigger">Configurazione del meccanismo di attivazione con ssh</toc-add-entry>
 
-<p>Crea una nuova chiave ssh per l'account che usi per il mirror di
-Debian. Assicurati di non sovrascrivere la chiave ssh originale usando
-l'opzione -f, per esempio:
+<p>Creare una nuova chiave ssh per l'account che usa per il mirror di
+Debian. Assicurarsi di non sovrascrivere la chiave ssh originale usando
+l'opzione -f, per esempio:</p>
 
 <pre>
 ssh-keygen -f ~/.ssh/identity.mysite
 </pre>
 
-<p>Assicurati che la nuova chiave pubblica (~/.ssh/identity.mysite.pub)
-contenga all'inizio questo:
+<p>Assicurarsi che la nuova chiave pubblica (~/.ssh/identity.mysite.pub)
+contenga all'inizio questo:</p>
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/websync &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/sync &amp;"
 </pre>
 
-<p>(sostituisci "websync" con "ftpsync", o "ftpsync-non-US", o il nome
-del comando che fa partire il mirroring)
-
-<p>Occorre che configuri uno script che contatterà i mirror
-destinazione.
-Crea un file chiamato <code>signal</code>, contenga questo:
+<p>Occorre configurare uno script che contatterà i mirror destinazione.
+Creare un file chiamato <code>signal</code>, con il seguente contenuto:</p>
 
 <protect>
 <pre>
@@ -106,21 +97,20 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
 </protect>
 
 <p>Questo script si allocherà sulla macchina remota usando la speciale
-chiave ssh creata prima. Lo script stesso non farà nulla di utile
-in remoto, il comando
-~/websync (o ~/ftpsync, o ~/ftpsync-non-US) sarà lanciato dalla chiave.
+chiave ssh creata prima, fornita a ciascun mirror destinatario e aggiunta
+nei rispettivi ~/.ssh/authorized_keys (sostituendo <q>sync</q> con
+<q>ftpsync</q> oppure con qualsiasi altro comando per avviare il
+mirroring). Lo script stesso non farà nulla di utile in remoto, l'unico
+comando sarà lanciato in base alle impostazioni dalla chiave.</p>
 
-<p>Per inviare un segnale ai mirror effettivamente, hai bisogno di 
-aggiungere le righe
-<code>./signal &lt;site&gt; &lt;username&gt;</code> 
-alla fine dello script
-<code>websync</code>, o
-se lo ritieni più conveniente per te, in un nuovo script,
-e lanciare quindi quello script da
-<code>websync</code>.
+<p>Per inviare un segnale ai mirror effettivamente, hai bisogno di aggiungere
+le righe <code>./signal &lt;site&gt; &lt;username&gt;</code> al termine di
+del proprio rsync. Quindi, appena completato il proprio mirroring con il
+sito di origine, inizia il push verso i propri destinatari.</p>
 
-<p>Il nuovo script, 
-<code>runmirrors</code>, contiene qualcosa come questo:
+<p>È possibile mettere questi comandi sia all'inizio che al termine del
+proprio script <code>ftpsync</code> oppure, se più conveniente, in un
+nuovo script che viene avviato da <code>ftpsync</code>, per esempio:</p>
 
 <protect>
 <pre>
@@ -133,9 +123,5 @@ e lanciare quindi quello script da
 </pre>
 </protect>
 
-<p>
-Perciò, non appena il tuo sito ha finito il mirroring dalla propria
-sorgente, farai partire il pushing mirror di queste destinazioni da te.
-
-<p>Se hai problemi con queste cose, <a href="mailto:mirrors@debian.org">
-contattaci</a>.
+<p>In caso di problemi, <a href="mailto:mirrors@debian.org">\
+contatteci</a>.</p>
