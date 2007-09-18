@@ -1,0 +1,182 @@
+#use wml::debian::template title="Rede de construtores automáticos (<q>Autobuilder network</q>)" BARETITLE="true"
+#use wml::debian::translation-check translation="1.13" translation_maintainer="Felipe Augusto van de Wiel (faw)"
+
+<p>A rede de construtores automáticos (<q>autobuilder network</q>) é um
+desenvolvimento Debian que ajuda a agilizar as recompilações de pacotes
+para todas as arquiteturas que o
+<a href="$(HOME)/ports/">Debian suporta atualmente</a>. Esta
+rede é feita de várias máquinas que usam um pacote de software
+específico chamado <em>buildd</em> para pegar os pacotes de um
+repositório Debian e reconstruí-los para a arquitetura alvo.</p>
+
+<h2>Por que a rede de construtores automáticos (<q>autobuilder network</q>)
+é necessária?</h2>
+
+<p>A distribuição Debian suporta <a href="$(HOME)/ports/">algumas
+arquiteturas</a>,
+mas os mantenedores de pacote usualmente só compilam as versões
+binárias para uma única arquitetura (normalmente i386).
+Desenvolvedores para outras arquiteturas precisam acompanhar
+novas versões dos pacotes e recompilá-los se eles querem ficar
+atualizados com a distribuição Intel.</p>
+
+<p>
+Quando o Debian/m68k (o primeiro porte não-Intel) começou, tudo isto
+era feito manualmente: desenvolvedores olhavam a lista de discussão
+de <q>uploads</q> em busca de novos pacotes e pegavam alguns deles para
+construção. A coordenação para que nenhum pacote fosse construído duas
+vezes por diferentes pessoas era feita através de anúncios em uma lista de
+discussão. É óbvio que este procedimento é suscetível a erros e consome
+muito tempo. Isto foi, no entanto, a forma usual de manter distribuições
+não-i386 atualizadas por um bom tempo.
+</p>
+
+<p>
+O sistema de daemon de construção automatiza a maioria deste processo.
+Ele consiste de um conjunto de scripts (escritos em Perl e Python) que
+evoluíram através do tempo para ajudar portadores em várias tarefas.
+Eles finalmente desenvolveram um sistema que é capaz de manter distribuições
+Debian não-i386 atualizadas quase que automaticamente.
+</p>
+
+
+<h2>Como o buildd funciona?</h2>
+
+<p><em>Buildd</em> é o nome usualmente dado ao software usado pela
+rede de construtores automáticos (<q>autobuilder network</q>), mas
+na verdade ele é feito de diferentes partes:</p>
+
+<dl>
+
+<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">wanna-build</a></dt>
+<dd>
+uma ferramenta que ajuda a coordenar a (re)construção de pacotes através
+de um banco de dados que mantém uma lista de pacotes e seus estados. Há
+um banco de dados central por arquitetura que armazena os estados dos
+pacotes, versões, e algumas outras informações.
+</dd>
+
+<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">buildd</a></dt>
+<dd>
+um daemon que, periodicamente, verifica o banco de dados mantido pela
+<em>wanna-build</em> e chama o <em>sbuild</em> para construir os pacotes.
+Ele acompanha falhas e sucessos na construção, e também envia pacotes
+após o log de construção ter sido reconhecido pelo administrador.
+</dd>
+
+<dt><a href="http://packages.debian.org/sbuild">sbuild</a></dt>
+<dd>
+é responsável pela real compilação dos pacotes em chroots isoladas.
+Ele usa principalmente ferramentas Debian padrão para isto, mas também
+cuida das dependências de código fonte e alguns outros pequenos detalhes.
+</dd>
+
+<dt><a href="http://packages.debian.org/quinn-diff">quinn-diff</a></dt>
+<dd>
+Alimenta o banco de dados wanna-build com novos pacotes. Ele compara
+as versões de pacotes disponíveis para duas arquiteturas e fornece as
+diferenças (comparando um arquivo Sources e um arquivo Packages).
+Mais informação sobre o quinn-diff está disponível
+<a href="http://buildd.debian.org/quinn-diff/">aqui</a>.
+</dd>
+
+<dt>andrea</dt>
+<dd>
+Uma ferramenta que gera algumas dependências de código fonte
+automaticamente e mescla estes dados com dependências adicionadas
+manualmente.
+</dd>
+
+</dl>
+
+<p>Todas estas partes <a href="operation">operam</a>
+juntas para fazer a rede de construtores funcionar.</p>
+
+<h2>O que um desenvolvedor Debian precisa fazer?</h2>
+
+<p>Na verdade, o desenvolvedor Debian mediano não precisa fazer nada
+explicitamente para usar a rede buildd. Quando ele envia um pacote para
+o repositório (binário compilado para uma dada arquitetura) ele será
+adicionado ao banco de dados para todas as arquiteturas (no estado
+<em>Needs-Build</em>).
+Máquinas construtoras consultarão o banco de dados de construção em
+busca de pacotes neste estado e, rotineiramente, pegarão pacotes desta
+lista. A lista é priorizada pelo estado de compilação anterior, prioridade,
+seção e, finalmente, nome do pacote.</p>
+
+<p>Se o processo de construção for bem sucedido em todas as arquiteturas, o
+mantenedor não precisará fazer nada. Todos esses pacotes binários serão
+enviados ao local principal da arquitetura. Se o processo de construção
+falhar o pacote entrará em um estado especial (<em>Failed</em> ou
+<em>Dep-Wait</em>, se ele possui dependências de construção específicas
+que não estão disponíveis). Os administradores da rede de construtores
+automáticos revisarão os pacotes cuja construção falhou e entrarão em
+contato com o mantenedor, usualmente, abrindo um bug no Sistema de
+Acompanhamento de Bug.</p>
+
+<p>Algumas vezes um pacote leva um longo tempo para construir em uma dada
+arquitetura e isso impede que o pacote entre na
+<a href="$(HOME)/devel/testing">testing</a>. Infelizmente, o pacote terá
+que esperar até que uma máquina o pegue. Administradores buildd não
+aceitarão pedidos para agilizar a construção de um pacote uma vez que a
+lista de prioridade já está estabelecida. Um mantenedor, no entanto, pode
+acessar uma
+<a href="http://db.debian.org/machines.cgi">máquina de desenvolvimento
+Debian</a> e construir manualmente o pacote lá.</p>
+
+<p>Você pode verificar esse estado das diferentes tentativas das buildds dos
+pacotes que pertencem a qualquer mantenedor verificando os
+<a href="http://buildd.debian.org/bymaint.php">logs da buildd</a>.
+Estes logs também estão ligados a partir da Visão Geral do Mantenedor
+do Pacote.</p>
+
+<p>Para mais informação sobre os diferentes estados nos quais um pacote pode
+estar, por favor, leia <a href="wanna-build-states">wanna-build-states</a>.</p>
+
+<h2>Onde eu posso encontrar informações adicionais?</h2>
+
+<p>É claro que, tanto a documentação quando o código fonte disponíveis
+para estas diferentes ferramentas são a melhor forma de entender como a
+rede buildd funciona. Adicionalmente, a seção
+<a href="$(HOME)/doc/manuals/developers-reference/ch-pkgs#s-porting">\
+Portando e sendo portado</a> (<q>Porting and being ported</q>) da
+<a href="$(HOME)/doc/manuals/developers-reference/">Referência do
+Desenvolvedor Debian</a> fornece informação complementar sobre como
+a rede funciona e também fornece alguma informação sobre
+<a href="$(HOME)/doc/manuals/developers-reference/ap-tools#s-tools-builders">\
+construtores de pacotes</a> e
+<a href="$(HOME)/doc/manuals/developers-reference/ap-tools#s-tools-porting">\
+ferramentas de <q>porting</q></a> que estão envolvidas no processo tanto de
+configuração quanto de manutenção da rede buildd.</p>
+
+<p>Há algumas estatísticas disponíveis sobre a rede de construção automática na
+<a href="http://buildd.debian.org/stats/">página de estados da buildd</a>.</p>
+
+<h2>Como eu posso configurar meu próprio nó de construção automática?</h2>
+
+<p>Há várias razões pelas quais um desenvolvedor (ou usuário)
+pode querer configurar e usar uma rede de construtores automáticos:</p>
+
+<ul>
+<li>Para testar localmente se o campo <tt>Build-Depends</tt> do pacote está
+apropriadamente definido (i.e. pela compilação do pacote dentro do ambiente
+de construção automática).</li>
+<li>Para ajudar no desenvolvimento de um porte para uma dada arquitetura
+(quanto construtores automáticos são necessários).</li>
+<li>Para avaliar o impacto de uma dada otimização de compilador ou patch
+pela recompilação de um grande subconjunto de pacotes.</li>
+<li>Para executar ferramentas que analisam pacotes em busca de erros
+comuns e precisam ser executados em pacotes compilados. Isto é necessário
+até mesmo quando da realização de análise de código fonte, por exemplo,
+como uma forma de contornar pacotes usando <tt>dpatch</tt>.</li>
+</ul>
+
+<p>Você pode ler mais informação sobre como você pode
+<a href="setting-up">configurar um construtor automático
+(<q>autobuilder</q>)</a>.</p>
+
+<hrline />
+<p><small>Esta introdução à rede de construtores automáticos foi escrita
+com bits e peças fornecidos por Roman Hodek, 
+Christian T. Steigies, Wouter Verhelst, Andreas Barth, 
+Francesco Paolo Lovergine e Javier Fernández-Sanguino.</small></p>
