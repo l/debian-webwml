@@ -1,0 +1,64 @@
+#use wml::debian::template title="Consejos para la utilización de gettext"
+
+
+<H1><a name="ortografia">Revisión ortográfica de ficheros PO</a></h1>
+
+<p>A continuación se dan algunos consejos para la revisión ortográfica de
+ficheros PO de gettext.</p>
+
+<H2>Revisión con Ispell</h2>
+
+<p>Para hacer la revisión ortográfica con <tt>ispell</tt> debes instalar
+<tt>ispell</tt>, <tt>wspanish</tt> y <tt>gettext-lint</tt>. Se 
+recomienda crear los siguientes alias para consola:
+
+<pre>
+alias msgspell-lat1='POFileSpell --command="ispell -l" -i'
+alias msgspell-u8='POFileSpell --command="iconv -f utf8 -t latin1 | ispell -l" -i'
+</pre>
+
+<p>Así, si el fichero PO está codificado en página de caracteres
+latin1 utilizarías: <tt>msgspell-lat1 es.po</tt> y 
+si está codificado en utf8: <tt>msgspell-u8 XX.po</tt>. Para identificar
+la codificación mira la cabecera del fichero PO:
+
+<ul>
+<li>Codificación UTF-8: <tt>Content-Type: text/plain; charset=UTF-8\n</tt>
+<li>Codificación Latin-1: <tt>Content-Type: text/plain; charset=ISO-8859-15</tt>
+</ul>
+
+<H2>Revisión con Emacs</h2>
+
+<P>Para hacer una revisión ortográfica de los ficheros PO utilizando
+<tt>emacs</tt> e <tt>ispell</tt> necesitarás tener instalado el paquete
+<tt>ispell</tt> así como la lista de palabras <tt>wspanish</tt>.
+Para facilitar la revisión pon el siguiente fragmento en tu
+fichero de configuración <tt>~/.emacs</tt>:</p>
+
+<pre>
+(defun po-mode-ispell-pattern ()
+    "Add ispell patterns so that only translated messages are checked."
+    (make-variable-buffer-local 'ispell-skip-region-alist)
+    (add-to-list 'ispell-skip-region-alist '("^msgid" . "^msgstr"))
+    (add-to-list 'ispell-skip-region-alist '("^#[:,]" . "\n")))
+(add-hook 'po-mode-hook 'po-mode-ispell-pattern)
+</pre>
+
+<P>Si haces esto al llamar a <tt>ispell</tt> sólo se revisará la ortografía de
+los comentarios y de los contenidos traducidos. Ten en cuenta que como el
+modo PO de emacs pone el búfer en sólo lectura no se podrán hacer cambios, sólo revisar si la ortografía está bien.
+
+<H2>Revisión con Kbabel</h2>
+
+<p>La herramienta Kbabel utilizada para la edición gráfica de ficheros
+PO tiene la capacidad de hacer revisión ortográfica de estos ficheros.
+
+<H2>Revisión con Aspell</h2>
+
+<p>Instala el paquete <tt>aspell</tt> y <tt>aspell-es</tt>. Aspell se 
+supone que tiene soporte de gettext a partir de la versión 0.60.
+
+<p><em>NOTA:</em> El soporte de gettext no parece funcionar bien y,
+además, no tiene soporte de UTF-8 con lo que los ficheros codificados
+así tienen que convertirse a Latin-1.
+
