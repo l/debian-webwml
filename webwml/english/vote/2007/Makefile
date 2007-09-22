@@ -42,7 +42,8 @@ textfiles := vote_001_quorum.err  vote_001_quorum.log  \
              vote_003_tally.txt   vote_003_voters.txt  \
              vote_003_vote.png    vote_003_results.png \
              vote_003_results.dot vote_003_results.txt \
-             vote_003_vote_detailed.png
+             vote_003_vote_detailed.png                \
+             vote_004_quorum.err  vote_004_quorum.log
 
 
 
