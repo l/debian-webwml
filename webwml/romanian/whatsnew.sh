@@ -4,7 +4,8 @@
 #
 #  script to check out the English versions only for the translations
 #  reason: the site has grown to 30Mb
-#  works in pair with whatsnew.mak
+#
+#  Usage: cd romanian && ./whatsnew.sh 
 #
 
 translation=romanian
@@ -28,7 +29,7 @@ do
   if [ -f $f ]; then
     case $f in
 	*html)
-	    echo "  Skipping $f..."
+	    echo "   Skipping $f..."
 	    continue
 		;;
 	esac
@@ -46,6 +47,7 @@ done
 #cvs update $tfiles
 #cvs update $efiles
 
+
 # check which one is newer
 echo 
 echo "====== Outdated files: "
@@ -61,4 +63,6 @@ done
 
 cd $translation
 echo "====== Done "
+
+cd .. && ./check_trans.pl -q $translation
 
