@@ -26,36 +26,39 @@ files=`find $translation -name '*' -print | grep -v CVS`
 for f in $files
 do
   if [ -f $f ]; then
+    case $f in
+	*html)
+	    echo "  Skipping $f..."
+	    continue
+		;;
+	esac
+	
     ef=`echo $f | sed s/$translation/english/`
     echo "$f <=> $ef"
     efiles=$efiles" "$ef
     tfiles=$tfiles" "$f
     #cvs update -d $f
-    #cvs update -d $ef
+    cvs update -d $ef
   fi
 done
 #echo $tfiles
 #echo $efiles
 #cvs update $tfiles
-cvs update $efiles
+#cvs update $efiles
 
 # check which one is newer
-# do not know how to stat files in shell
-echo
+echo 
+echo "====== Outdated files: "
 for f in $files
 do
   if [ -f $f ]; then
     ef=`echo $f | sed s/$translation/english/`
-    TFILE=$f
-    export TFILE
-    OFILE=$ef
-    export OFILE
-    make -f $translation/whatsnew.mak &> '.###' 
-    cat '.###' | grep Outdated
+	if [ $ef -nt $f ]; then
+	    echo "    $f"
+	fi
   fi
 done
-rm '.###'
 
 cd $translation
-echo "====== Done ======"
+echo "====== Done "
 
