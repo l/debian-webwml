@@ -77,6 +77,8 @@ while (<SRC>)
 {
 	#next if /\$Id/;
 
+	s/cross-site scripting/Site-übergreifendes Skripting/;
+	s/[sS]everal security related problems have been discovered in/Mehrere sicherheitsbezogene Probleme wurden in/;
 	s/^(<p>)?A problem has been discovered in\b/$1Ein Problem wurde in entdeckt/;
 	s/^(<p>)?It was discovered that\b/$1Es wurde entdeckt, dass/;
 	s/\bdiscovered a problem in\b/entdeckte ein Problem in/;
@@ -84,6 +86,7 @@ while (<SRC>)
 	s/\bdiscovered that\b/entdeckte, dass/;
 	s/^(<p>)?A vulnerability was discovered in\b/$1Eine Verwundbarkeit wurde in entdeckt/;
 	s/^(<p>)?Two vulnerabilities were discovered in\b/$1Zwei Verwundbarkeiten wurden in entdeckt/;
+	s/Common Vulnerabilities and Exposures project/<q>Common Vulnerabilities and Exposures<\/q>-Projekt/;
 	s/which could lead to the execution of arbitrary code/Dies kann zur Ausführung beliebigen Codes führen/;
 	s/We recommend that you upgrade your (.*) package immediately/Wir empfehlen Ihnen, Ihr $1-Paket zu aktualisieren/;
 	s/We recommend that you upgrade your (.*) packages immediately/Wir empfehlen Ihnen, Ihre $1-Pakete zu aktualisieren/;
@@ -137,6 +140,8 @@ while (<SRC>)
 	s/\bin version\b/in Version/;
 	s/of the Debian package/des Debian-Pakets/;
 	s/upstream version/Originalversion/;
+	s/([Ff])or the oldstable distribution/$1ür die alte Stable-Distribution/;
+	s/([Ff])or the oldstable/$1ür die alte Stable/;
 	s/([Ff])or the old stable distribution/$1ür die alte Stable-Distribution/;
 	s/([Ff])or the old stable/$1ür die alte Stable/;
 	s/([Ff])or the current stable distribution/$1ür die aktuelle Stable-Distribution/;
@@ -161,7 +166,7 @@ while (<SRC>)
 	s/cross site/Site-übergreifend/;
 	s/\bis not affected/ist nicht betroffen/;
 	s/does not contain ([[:word:]]*) packages?/enthält keine $1-Pakete?/;
-	s/does not contain a(?:ny)? ([[:word:]]*) packages/enthält kein $1-Pakete/;
+	s/does not contain a(?:ny)? ([[:word:]]*) packages/enthält keine $1-Pakete/;
 	s/does not contain a(?:ny)? ([[:word:]]*) package/enthält kein $1-Paket/;
 	s/this problem will be fixed soon/wird dieses Problem bald behoben sein/;
 	s/\(potato\)/(Potato)/;
