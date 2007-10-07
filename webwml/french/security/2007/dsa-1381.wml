@@ -1,0 +1,86 @@
+#use wml::debian::translation-check translation="1.3" maintainer="Nicolas Bertolissio"
+
+<define-tag description>Plusieurs vulnérabilités</define-tag>
+<define-tag moreinfo>
+
+<p>
+Plusieurs vulnérabilités locales et à distance ont été découvertes dans le
+noyau Linux&nbsp;; elles peuvent conduire à un déni de service ou à l'exécution
+de code arbitraire. Le projet des expositions et vulnérabilités communes (CVE)
+identifie les problèmes suivants&nbsp;:
+</p>
+
+<ul>
+  <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-5755">CVE-2006-5755</a>
+    <p>
+    Le bit NT peut fuir dans la tâche suivante ce qui peut rendre possible un
+    déni de service par des attaquants locaux sur les systèmes qui fonctionnent
+    avec la version amd64 du noyau. On ne croyait pas que la distribution
+    stable (<em>Etch</em>) était vulnérable à ce problème lors de sa
+    publication, cependant Bastian Blank a découvert que ce problème
+    s'appliquait toujours aux versions xen-amd64 et xen-vserver-amd64, et il
+    est résolu par cette annonce de sécurité.
+    </p>
+  </li>
+  <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-4133">CVE-2007-4133</a>
+    <p>
+    Hugh Dickins a découvert un possible déni de service local (panic) dans
+    hugetlbfs. Une mauvaise conversion de hugetlb_vmtruncate_list vers
+    prio_tree peut permettre à des utilisateurs locaux de déclencher un appel à
+    BUG_ON() dans exit_mmap.
+    </p>
+  </li>
+  <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-4573">CVE-2007-4573</a>
+    <p>
+    Wojciech Purczynski a découvert une vulnérabilité qui peut être exploitée
+    par un utilisateur local pour obtenir les privilèges de superutilisateur
+    sur les systèmes x86_64. Cela résulte d'un mauvais nettoyage des bits de
+    poids fort des registres pendant l'émulation d'un appel système ia32. Cette
+    vulnérabilité concerne le portage Debian sur l'architecture amd64 ainsi que
+    les utilisateurs du portage sur l'architecture i386 qui utilisent la
+    version amd64 du paquet linux-image.
+    </p>
+
+    <p>
+    L'annonce de sécurité DSA-1378 résolvait se problème pour les version amd64 du noyau, mais
+    Tim Wickberg et Ralf Hemmenstädt ont signalé un problème non résolu avec les versions
+    xen-amd64 et xen-vserver-amd64 qui est résolu par cette annonce-ci.
+    </p>
+  </li>
+  <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-5093">CVE-2007-5093</a>
+    <p>
+    Alex Smith a découvert un problème avec le pilote pwc et certains
+    périphériques webcam. Si le périphérique est enlevé alors qu'une
+    application en espace utilisateur l'a ouvert, le pilote attend que l'espace
+    utilisateur ferme le périphérique ce qui bloque le sous-système USB. Ce
+    problème a un faible impact de sécurité car il nécessite soit que
+    l'attaquant ait un accès physique au système soit qu'il convainque des
+    utilisateurs ayant un accès local à enlever le périphérique à leur place.
+    </p>
+  </li>
+</ul>
+
+<p>
+Ces problèmes ont été corrigés dans la distribution stable dans la
+version&nbsp;2.6.18.dfsg.1-13etch4.
+</p>
+
+<p>
+Au moment de publier cette annonce de sécurité, seule la construction pour
+l'architecture amd64 est disponible. Au vu de la gravité des problèmes
+spécifiques à cette architecture, nous publions une mise à jour incomplète.
+Cette annonce sera mise à jour une fois que les constructions pour les autres
+architectures seront disponibles.
+</p>
+
+<p>
+Nous vous recommandons de mettre à jour votre paquet de noyau immédiatement et
+de redémarrer la machine. Si vous avez construit un noyau personnalisé avec le
+paquet des sources du noyau, vous devez le reconstruire pour tirer parti de ces
+corrections.
+</p>
+
+</define-tag>
+
+# ne pas modifier la ligne suivante
+#include "$(ENGLISHDIR)/security/2007/dsa-1381.data"
