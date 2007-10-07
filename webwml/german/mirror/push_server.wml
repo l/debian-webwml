@@ -1,4 +1,5 @@
 #use wml::debian::template title="Einrichten eines Push-Spiegels"
+#use wml::debian::toc
 #use wml::debian::translation-check translation="1.12"
 # $Id$
 
@@ -11,7 +12,9 @@ Einrichtung des Auslöse-Mechanismus (für den <q>pushing</q>-Teil des
 was ein Push-Spiegel ist, lesen Sie bitte <a href="push_mirroring">die
 Beschreibung des Push-Spiegelns</a>.)</small></p>
 
-<h2>rsync einrichten</h2>
+<toc-display />
+
+<toc-add-entry name="rsync">rsync einrichten</toc-add-entry>
 
 <p>Installieren Sie <code>rsync</code> 2.1.1 oder neuer. Wenn Ihr
 Rechner unter Debian läuft, installieren Sie einfach das neueste
@@ -24,18 +27,11 @@ etwas Ähnliches wie das Folgende hinein:</p>
 uid = nobody
 gid = nogroup
 max connections = 25
-syslog facility = daemon
 socket options = SO_KEEPALIVE
 
 [debian]
-  path = /org/ftp.debian.org/ftp
-  comment = Debian FTP Archive (~24 GB)
-  auth users = autorisierter_Zugang1,...,autorisierter_ZugangN
-  read only = true
-  secrets file = /etc/rsyncd/debian.secrets
-[debian-web]
-  path = /org/www.debian.org/debian.org
-  comment = Debian Web Site (~400 MB)
+  path = /srv/debian/mirror
+  comment = The Debian Archive (~250 GB)
   auth users = autorisierter_Zugang1,...,autorisierter_ZugangN
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
@@ -69,10 +65,12 @@ Ihrer Datei <code>/etc/inetd.conf</code> hinzu:</p>
 rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daemon
 </pre>
 
+<p>
 (Sie müssen dem inetd anschließend ein HUP-Signal schicken, um
 ihm mitzuteilen, dass die Konfiguration neu eingelesen werden soll.)
+</p>
 
-<h2>Einrichten des SSH-Auslöser-Mechanismus</h2>
+<toc-add-entry name="sshtrigger">Einrichten des SSH-Auslöser-Mechanismus</toc-add-entry>
 
 <p>Erzeugen Sie einen neuen SSH-Schlüssel für den Zugang, den Sie
 verwenden, um Debian zu spiegeln. Stellen Sie sicher, dass Sie den
@@ -87,11 +85,8 @@ ssh-keygen -f ~/.ssh/identity.meinRechner
 (~/.ssh/identity.meinRechner.pub) Folgendes am Dateianfang enthält:</p>
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/websync &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/sync &amp;"
 </pre>
-
-<p>(Ersetzen Sie <q>websync</q> durch <q>anonftpsync</q> oder <q>anonftpsync-non-US</q>,
-oder wie auch immer der Befehl heißt, der das Spiegeln beginnt.)</p>
 
 <p>Sie müssen ein Skript einrichten, das die tiefergelegenen Spiegel
 kontaktiert. Erzeugen Sie eine Datei mit dem Namen
@@ -110,19 +105,27 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.meinRechner sleep 
 </protect>
 
 <p>Dieses Skript wird sich mit dem speziellen SSH-Schlüssel, den Sie
-oben erstellt haben, auf einem entfernten Rechner einloggen. Das
+oben erstellt haben, auf einem entfernten Rechner einloggen, vorausgesetzt,
+jeder Spiegel unterhalb von Ihnen fügt diesen Schlüssel zu seiner eigenen 
+~/.ssh/authorized_keys hinzu (ebenfalls mit der Ersetzung von <q>sync</q> durch
+<q>anonftpsync</q> oder wie auch immer sein Befehl zum Starten des Spiegelns
+genannt ist). Das
 Skript selbst wird nichts sinnvolles auf dem entfernten Rechner
-machen, das Programm ~/websync (oder ~/anonftpsync, oder ~/anonftpsync-non-US)
-wird von diesem Schlüssel aus aufgerufen.</p>
+machen, der einzelne Befehl wie er in der Schlüsseleinstellung angegeben ist
+wird ausgeführt.</p>
 
-<p>Um einen Spiegel tatsächlich zu starten, müssen Sie Zeilen mit
-<code>./signal &lt;Rechner&gt; &lt;Benutzername&gt;</code> ans Ende des
-eigenen Skripts <code>websync</code> anfügen oder, falls es bequemer
-für Sie ist, in ein neues Skript, und dieses von <code>websync</code>
-aufrufen lassen.</p>
+<p>Um den Spiegeln tatsächlich ein Signal zu senden, müssen Sie <code>./signal
+   &lt;Site&gt; &lt;Benutzername&gt;</code> ausführen, sobald Ihr eigener 
+   Rsync-Lauf beendet ist. Daher werden Sie an alle tieferliegenden von Ihnen 
+   die Daten weiterschieben, sobald Sie mit dem Spiegeln von Ihrer 
+   Ursprungs-Site fertig sind.
+</p>
 
-<p>Das neue Skript <code>runmirrors</code> würde so etwas wie das
-folgende enthalten:</p>
+<p>Sie könen diese Befehle entweder an das Ende Ihres Skriptes 
+   <code>anonftpsync</code> anfügen, oder, falls dies bequemer für Sie ist,
+   in ein neues Skripte einfügen, und dann das Skript von 
+   <code>anonftpsync</code> ausführen lassen, beispielsweise:
+</p>
 
 <protect>
 <pre>
@@ -136,9 +139,6 @@ folgende enthalten:</p>
 </pre>
 </protect>
 
-<p>Sobald Ihr Rechner das Spiegeln vom höhergelegenen Rechner beendet
-hat, wird der Rechner die tiefergelegenen Spiegel kontaktieren.</p>
-
-<p>Wenn Sie irgendwelche Probleme damit haben,
+<p>Falls Sie irgendwelche Probleme damit haben,
 <a href="mailto:mirrors@debian.org">kontaktieren</a>
 Sie uns (auf Englisch).</p>
