@@ -164,8 +164,9 @@ while (<SRC>)
             s#Debian uses the Condorcet method voting.#Debian benutzt die Condorcet-Methode für Abstimmungen.#;
             s#Simplistically, plain Condorcets method#Vereinfachend kann die grundlegende#;
             s#can be stated like so : <br/>#Condorcet-Methode folgendermaßen beschrieben werden:<br />#;
+            s#can be stated like so : <br />#Condorcet-Methode folgendermaßen beschrieben werden:<br />#;
             s#<q>Consider all possible two-way races between candidates.#<q>Ziehe alle möglichen Zweikämpfe zwischen den Kandidaten#;
-            s#The Condorcet winner, if there is one, is the one#in Betracht. Der Condorcet-Gewinner, wenn es einen gibt,#;
+            s#The Condorcet winner, if there is one, is the one#in Betracht. Der Condorcet-Gewinner, falls es einen gibt,#;
             s#candidate who can beat each other candidate in a two-way#ist derjenige Kandidat, der jeden anderen Kandidaten im#;
             s#race with that candidate.</q>#Zweikampf schlagen kann.</q>#;
             s#The problem is that in complex elections, there may well#Das Problem ist, dass es bei komplexen Wahlen durchaus zu#;
@@ -309,6 +310,7 @@ while (<SRC>)
             s#Graph of the#Grafik#;
 	    s#rate at which the votes are received# der Rate, in der die Stimmen empfangen wurden#;
             s#Click on the image above to get a Zoomed in version.<br> A#Klicken Sie auf das obige Bild, um eine vergrößerte Version zu\nbekommen.<br />#;
+            s#Click on the image above to get a Zoomed in version.<br /> A#Klicken Sie auf das obige Bild, um eine vergrößerte Version zu\nbekommen.<br />#;
 	    s#<a href="(.*)">tally sheet</a> is#Das <a href="$1">Zählblatt</a> ist verfügbar.#;
 	    s#available.  While the voting is still open the tally is a#Während die Wahlphase noch läuft, ist das#;
             s#dummy one; after the vote, the final tally sheet shall be#Zählblatt mit Pseudowerten gefüllt; nach der Abstimmung#;
