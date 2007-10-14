@@ -743,6 +743,11 @@ sub full_listing {
 			if (exists $mirror[$id]{'archive-architecture'}) {
 				print "Includes architectures: ".join(" ", sort @{$mirror[$id]{'archive-architecture'}})."\n";
 			}
+			if (exists $mirror[$id]{'ipv6'}) {
+				if ($mirror[$id]{ipv6} ne 'no') {
+					print "IPv6: ".$mirror[$id]{ipv6}."\n";
+				}
+			}
 			if (exists $mirror[$id]{'comment'}) {
 				print "Comment: ".$mirror[$id]{comment}."\n";
 			}
@@ -784,6 +789,11 @@ sub full_listing {
 			}
 			if (exists $mirror[$id]{'archive-architecture'}) {
 				print "Includes architectures: ".join(" ", sort @{$mirror[$id]{'archive-architecture'}})."\n";
+			}
+			if (exists $mirror[$id]{'ipv6'}) {
+				if ($mirror[$id]{ipv6} ne 'no') {
+					print "IPv6: ".$mirror[$id]{ipv6}."\n";
+				}
 			}
 			if (exists $mirror[$id]{'comment'}) {
 				print "Comment: ".$mirror[$id]{comment}."\n";
