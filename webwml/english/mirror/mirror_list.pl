@@ -21,7 +21,7 @@ my %opthash = (
 	"help|h!" => \$help,
 	);
 	
-my (@mirror, %countries, $count, %longest);
+my (@mirror, %countries, %countries_sorted, $count, %longest);
 
 
 sub process_line {
@@ -140,9 +140,8 @@ sub secondary_mirrors {
 		my $i = length($country);
 		print "-" while ($i--); # underline
 		print "\n";
-		# first list the official sites
-		foreach my $id (@{ $countries{$country} }) {
-			next unless ($mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian\.org$/);
+		foreach my $id (@{ $countries_sorted{$country} }) {
+			next unless (defined $mirror[$id]{method}{'archive-ftp'} || defined $mirror[$id]{method}{'archive-http'});
 			$tmp = "%-$longest{site}s ";
 			printf $tmp, $mirror[$id]{site};
 			if (defined $mirror[$id]{method}{'archive-ftp'}) {
@@ -200,6 +199,9 @@ sub secondary_mirrors {
 					}
 					print ")" . "\n";
 				} else {
+					# we want to display aliases in the main list for official mirrors
+					# but for others, it's just clutter, so skip them
+					next unless ($mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian\.org$/);
 					my $truename = @{$mirror[$id]{'aliases'}}[0];
 					if ($truename =~ /^ftp.+\.debian\.org$/) {
 						$truename = @{$mirror[$id]{'aliases'}}[1];
@@ -207,45 +209,6 @@ sub secondary_mirrors {
 					print "  (" . $truename . ")" . "\n";
 				}
 			}
-		}
-		# then list the unofficial sites
-		foreach my $id (@{ $countries{$country} }) {
-			next if ($mirror[$id]{site} =~ /^(saens|gluck|raff|ftp\d?(?:\.wa)?\...)\.debian\.org$/);
-			next unless (defined $mirror[$id]{method}{'archive-ftp'} || defined $mirror[$id]{method}{'archive-http'});
-			$tmp = "%-$longest{site}s ";
-			printf $tmp, $mirror[$id]{site};
-			if (defined $mirror[$id]{method}{'archive-ftp'} && $html) {
-				my $rest = $longest{'archive-ftp'} - length($mirror[$id]{method}{'archive-ftp'});
-				$tmp = "<a href=\"%s\">%s</a>%${rest}s";
-				printf $tmp, "ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'}", $mirror[$id]{method}{'archive-ftp'}, '';
-			} elsif (defined $mirror[$id]{method}{'archive-ftp'}) {
-				my $rest = $longest{'archive-ftp'} - length($mirror[$id]{method}{'archive-ftp'});
-				$tmp = "%s%${rest}s";
-				printf $tmp, $mirror[$id]{method}{'archive-ftp'}, '';
-			} else {
-				$tmp = "%-$longest{'archive-ftp'}s";
-				printf $tmp, " ";
-			}
-			$tmp = "%-$longest{'archive-http'}s";
-			if (defined $mirror[$id]{method}{'archive-http'} && $html) {
-				my $rest = $longest{'archive-http'} - length($mirror[$id]{method}{'archive-http'});
-				$tmp = "<a href=\"%s\">%s</a>%${rest}s";
-				printf $tmp, "http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}",$mirror[$id]{method}{'archive-http'}, '';
-			} elsif (defined $mirror[$id]{method}{'archive-http'}) {
-				my $rest = $longest{'archive-http'} - length($mirror[$id]{method}{'archive-http'});
-				$tmp = "%s%${rest}s";
-				printf $tmp, $mirror[$id]{method}{'archive-http'}, '';
-			} else {
-				$tmp = "%-$longest{'archive-http'}s";
-				printf $tmp, " ";
-			}
-          		if (exists $mirror[$id]{'archive-architecture'}) {
-				print join(" ", sort @{$mirror[$id]{'archive-architecture'}});
-			}
-			else {
-				print "all";
-			}
-			print "\n";
 		}
 	}
 	print "</small></pre>" if $html;
@@ -706,56 +669,7 @@ sub full_listing {
 		my $i = length($country);
 		print "-" while ($i--); # underline
 		print "\n";
-		# first list the official sites
-		foreach my $id (@{ $countries{$country} }) {
-			next unless ($mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian\.org$/);
-			print "Site: $mirror[$id]{site}";
-			if (exists $mirror[$id]{'aliases'}) {
-				print ", ".join(", ", @{ $mirror[$id]{'aliases'} });
-			}
-			print "\n";
-			$mirror[$id]{'type'} ||= 'leaf';
-			# die "undefined type for $mirror[$id]{site}!\n" unless defined $mirror[$id]{'type'};
-			print "Type: $mirror[$id]{'type'}\n";
-			foreach my $method ( sort keys %{ $mirror[$id]{method} } ) {
-				my $display = $method;
-				$display =~ s/archive-/Packages /;
-				$display =~ s/nonus-/Non-US packages /;
-				$display =~ s/security-/Security updates /;
-				$display =~ s/www-/WWW pages /;
-				$display =~ s/cdimage-/CD Images /;
-				$display =~ s/jigdo-/Jigdo files /;
-				$display =~ s/old-/Old releases /;
-				$display =~ s/ftp/over FTP/;
-				$display =~ s/http/over HTTP/;
-				$display =~ s/nfs/over NFS/;
-				$display =~ s/rsync/over rsync/;
-				if ($method =~ /http/) {
-					print $display.":	<a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{$method}\">$mirror[$id]{method}{$method}</a>\n";
-				}
-				elsif ($method =~ /ftp/) {
-					print $display.":	<a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{$method}\">$mirror[$id]{method}{$method}</a>\n";
-				}
-				else {
-					print $display.":	".$mirror[$id]{method}{$method}."\n";
-				}
-			}
-			if (exists $mirror[$id]{'archive-architecture'}) {
-				print "Includes architectures: ".join(" ", sort @{$mirror[$id]{'archive-architecture'}})."\n";
-			}
-			if (exists $mirror[$id]{'ipv6'}) {
-				if ($mirror[$id]{ipv6} ne 'no') {
-					print "IPv6: ".$mirror[$id]{ipv6}."\n";
-				}
-			}
-			if (exists $mirror[$id]{'comment'}) {
-				print "Comment: ".$mirror[$id]{comment}."\n";
-			}
-			print "\n";
-		}
-		# then list the unofficial sites
-		foreach my $id (@{ $countries{$country} }) {
-			next if ($mirror[$id]{site} =~ /^(saens|gluck|raff|ftp\d?(?:\.wa)?\...)\.debian\.org$/);
+		foreach my $id (@{ $countries_sorted{$country} }) {
 			print "Site: $mirror[$id]{site}";
 			if (exists $mirror[$id]{'aliases'}) {
 				print ", ".join(", ", @{ $mirror[$id]{'aliases'} });
@@ -925,35 +839,7 @@ END
 	  } else {
 	    next;
 	  }
-	  # first list the official sites
-	  foreach my $m_id (@{ $countries{$country} }) {
-	    next unless ($mirror[$m_id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian\.org$/);
-	    if (defined $mirror[$m_id]{method}{'nonus-ftp'}) {
-	      print "<a href=\"ftp://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-ftp'}\">" if $html;
-	      print "  ftp://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-ftp'}";
-	      print "</a><br>\n" if $html;
-	      if (defined $mirror[$m_id]{method}{'nonus-http'}) {
-	        print "\n    ";
-	        print "<a href=\"http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}\">" if $html;
-	        print "http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}";
-	        print "</a>\n" if $html;
-	      }
-	      print "\n\n";
-	      print "<p>" if $html;
-	      $nonuscount++;
-	    } elsif (defined $mirror[$m_id]{method}{'nonus-http'}) {
-	      print "  ";
-	      print "<a href=\"http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}\">" if $html;
-	      print "http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}";
-	      print "</a>\n" if $html;
-	      print "\n\n";
-	      print "<p>" if $html;
-	      $nonuscount++;
-	    }
-	  }
-	  # then list the unofficial sites
-	  foreach my $m_id (@{ $countries{$country} }) {
-	    next if ($mirror[$m_id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian\.org$/);
+	  foreach my $m_id (@{ $countries_sorted{$country} }) {
 	    if (defined $mirror[$m_id]{method}{'nonus-ftp'}) {
 	      print "<a href=\"ftp://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-ftp'}\">" if $html;
 	      print "  ftp://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-ftp'}";
@@ -1229,7 +1115,30 @@ foreach my $id (0..$#mirror) {
 		push @{ $countries{$mirror[$id]{country}} }, $id;
 	}
 }
-	
+
+# Sort the country info arrays to first list the official sites,
+# then the unofficial sites, but exclude special Debian sites
+foreach my $country (sort keys %countries) {
+	my %countries_sorted_o; my %countries_sorted_u;
+	foreach my $id (@{ $countries{$country} }) {
+		if ($mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian\.org$/) {
+			push @{ $countries_sorted_o{$country} }, $id;
+		} elsif ($mirror[$id]{site} !~ /^(saens|gluck|raff|ftp\d?(?:\.wa)?\...)\.debian\.org$/) {
+			push @{ $countries_sorted_u{$country} }, $id;
+		}
+	}
+	# merge the reordered lists into %countries_sorted
+	# (there's got to be a cleaner way to do this, but hey)
+	foreach my $id (@{ $countries_sorted_o{$country} }) {
+		push @{ $countries_sorted{$country} }, $id;
+	}
+	undef %countries_sorted_o;
+	foreach my $id (@{ $countries_sorted_u{$country} }) {
+		push @{ $countries_sorted{$country} }, $id;
+	}
+	undef %countries_sorted_u;
+}
+
 # count the number of mirrors
 $count = @mirror;
 
