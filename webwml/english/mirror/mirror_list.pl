@@ -888,10 +888,12 @@ sub nonus_short() {
     my $hasmirrors = 0;
     my %countries_nonus;
     foreach my $m_id (@{ $countries{$country} }) {
-      $hasmirrors++ if ( defined($mirror[$m_id]{method}{'nonus-ftp'}) or
-                         defined($mirror[$m_id]{method}{'nonus-http'}) or
-                         defined($mirror[$m_id]{method}{'nonus-rsync'}) );
-      push @{ $countries_nonus{$country} }, $m_id;
+      if ( defined($mirror[$m_id]{method}{'nonus-ftp'}) or
+           defined($mirror[$m_id]{method}{'nonus-http'}) or
+           defined($mirror[$m_id]{method}{'nonus-rsync'}) ) {
+        $hasmirrors++;
+        push @{ $countries_nonus{$country} }, $m_id;
+      }
     }
     next unless ($hasmirrors);
     my $countrycode; my $countryplain;
@@ -900,13 +902,14 @@ sub nonus_short() {
       $countryplain = $2;
     }
     foreach my $m_id (@{ $countries_nonus{$country} }) {
-      print "<li>".$mirror[$m_id]{site}." (<".$countrycode."c>): ";
-      print "<a href=\"http://". $mirror[$m_id]{site} . $mirror[$m_id]{method}{'nonus-http'} ."\">HTTP</a>"
+      print "<li><".$countrycode."c>: " . $mirror[$m_id]{site} . ": ";
+      print "<a href=\"http://". $mirror[$m_id]{site} . $mirror[$m_id]{method}{'nonus-http'} ."\">HTTP</a> "
         if (defined $mirror[$m_id]{method}{'nonus-http'});
-      print "<a href=\"ftp://". $mirror[$m_id]{site} . $mirror[$m_id]{method}{'nonus-ftp'} ."\">FTP</a>"
+      print "<a href=\"ftp://". $mirror[$m_id]{site} . $mirror[$m_id]{method}{'nonus-ftp'} ."\">FTP</a> "
         if (defined $mirror[$m_id]{method}{'nonus-ftp'});
       print "rsync&nbsp;". $mirror[$m_id]{site} . "::" . $mirror[$m_id]{method}{'nonus-rsync'}
         if (defined $mirror[$m_id]{method}{'nonus-rsync'});
+      print "</li>\n";
     }
   }
 }
