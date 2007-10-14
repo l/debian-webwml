@@ -882,6 +882,35 @@ END
   }
 }
 
+sub nonus_short() {
+  return unless ($html);
+  foreach my $country (sort keys %countries) {
+    my $hasmirrors = 0;
+    my %countries_nonus;
+    foreach my $m_id (@{ $countries{$country} }) {
+      $hasmirrors++ if ( defined($mirror[$m_id]{method}{'nonus-ftp'}) or
+                         defined($mirror[$m_id]{method}{'nonus-http'}) or
+                         defined($mirror[$m_id]{method}{'nonus-rsync'}) );
+      push @{ $countries_nonus{$country} }, $m_id;
+    }
+    next unless ($hasmirrors);
+    my $countrycode; my $countryplain;
+    if ($country =~ /^(\w\w) (.+)$/) {
+      $countrycode = $1;
+      $countryplain = $2;
+    }
+    foreach my $m_id (@{ $countries_nonus{$country} }) {
+      print "<li>".$mirror[$m_id]{site}." (<".$countrycode."c>): ";
+      print "<a href=\"http://". $mirror[$m_id]{site} . $mirror[$m_id]{method}{'nonus-http'} ."\">HTTP</a>"
+        if (defined $mirror[$m_id]{method}{'nonus-http'});
+      print "<a href=\"ftp://". $mirror[$m_id]{site} . $mirror[$m_id]{method}{'nonus-ftp'} ."\">FTP</a>"
+        if (defined $mirror[$m_id]{method}{'nonus-ftp'});
+      print "rsync&nbsp;". $mirror[$m_id]{site} . "::" . $mirror[$m_id]{method}{'nonus-rsync'}
+        if (defined $mirror[$m_id]{method}{'nonus-rsync'});
+    }
+  }
+}
+
 sub footer_stuff() {
   if ($html) {
 	print <<END;
@@ -1186,6 +1215,10 @@ elsif ($output_type eq 'nonushtml') {
 	$html = 1;
 	nonus_mirrors();
 	trailer();
+}
+elsif ($output_type eq 'nonusshort') {
+	$html = 1;
+	nonus_short();
 }
 elsif ($output_type eq 'officialsponsors') {
 	$html=1;
