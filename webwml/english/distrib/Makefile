@@ -11,6 +11,7 @@ GETTEXTFILES = distrib.mo
 include $(WMLBASE)/Make.lang
 
 archive.$(LANGUAGE).html: archive.wml $(ENGLISHDIR)/distrib/archive.mirrors \
+  $(ENGLISHDIR)/distrib/archive-nonus.mirrors \
   $(TEMPLDIR)/countries.wml
 packages.$(LANGUAGE).html: packages.wml $(ENGLISHSRCDIR)/releases/info \
   $(ENGLISHDIR)/distrib/search_packages-form.inc \
@@ -21,7 +22,7 @@ floppyinst.$(LANGUAGE).html: floppyinst.wml $(ENGLISHSRCDIR)/releases/info
 
 ifeq "$(LANGUAGE)" "en"
 clean::
-	rm -f archive.mirrors
+	rm -f archive.mirrors archive-nonus.mirrors
 
 $(ENGLISHSRCDIR)/distrib/archive.mirrors: archive.mirrors
 archive.mirrors: ../mirror/Mirrors.masterlist
@@ -40,6 +41,31 @@ archive.mirrors: ../mirror/Mirrors.masterlist
             echo "<a href=\"ftp://$${i}$${ftp}\">FTP</a>" >> $@; \
           fi; \
           rsync=`grep-dctrl -n -F Site -s Old-rsync -X $$i ../mirror/Mirrors.masterlist`; \
+          if [ "$$rsync" != "" ]; then \
+            echo "rsync&nbsp;$${i}::$${rsync}" >> $@; \
+          fi; \
+          echo "</li>" >> $@; \
+	done
+	echo "</ul>" >> $@
+	echo "</define-tag>" >> $@
+
+$(ENGLISHSRCDIR)/distrib/archive-nonus.mirrors: archive-nonus.mirrors
+archive-nonus.mirrors: ../mirror/Mirrors.masterlist
+	echo "#use wml::debian::countries" > $@
+	echo "<define-tag archivenonusmirrors>" >> $@
+	echo "<ul>" >> $@
+	for i in `grep-dctrl -n -F NonUS-http,NonUS-ftp,NonUS-rsync -s Site -r '.' ../mirror/Mirrors.masterlist | sort`; do \
+          xy=`grep-dctrl -n -F Site -s Country -X $$i ../mirror/Mirrors.masterlist | perl -pe 's/^(..) .*$$/$$1/' | head -1`; \
+	  echo "<li>$$i (<$${xy}c>): " >> $@; \
+          http=`grep-dctrl -n -F Site -s NonUS-http -X $$i ../mirror/Mirrors.masterlist`; \
+          if [ "$$http" != "" ]; then \
+            echo "<a href=\"http://$${i}$${http}\">HTTP</a>" >> $@; \
+          fi; \
+          ftp=`grep-dctrl -n -F Site -s NonUS-ftp -X $$i ../mirror/Mirrors.masterlist`; \
+          if [ "$$ftp" != "" ]; then \
+            echo "<a href=\"ftp://$${i}$${ftp}\">FTP</a>" >> $@; \
+          fi; \
+          rsync=`grep-dctrl -n -F Site -s NonUS-rsync -X $$i ../mirror/Mirrors.masterlist`; \
           if [ "$$rsync" != "" ]; then \
             echo "rsync&nbsp;$${i}::$${rsync}" >> $@; \
           fi; \
