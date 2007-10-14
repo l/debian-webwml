@@ -1004,6 +1004,144 @@ END
   }
 }
 
+sub mirror_tree_by_origin {
+  return unless $html;
+  my %origins;
+  foreach my $country (sort keys %countries) {
+    foreach my $id (sort @{ $countries{$country} }) {
+#      if ($mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian.org$/) {
+      if (exists $mirror[$id]{method}{'archive-http'} or exists $mirror[$id]{method}{'archive-ftp'}) {
+	my $tfm = $mirror[$id]{method}{'archive-http'} || $mirror[$id]{method}{'archive-ftp'};
+	my $tf = "http://" . $mirror[$id]{site} . $tfm . "project/trace/";
+	my $mf;
+	if ($mirror[$id]{site} eq "ftp.us.debian.org") {
+	  die "$mirror[$id]{site} has no includes\n" unless exists $mirror[$id]{includes}; # must be an error
+	  my $numsubsites = @{ $mirror[$id]{includes} };
+	  my $snum = 0;
+	  foreach my $subsite (@{ $mirror[$id]{includes} }) {
+	    $tf = "http://" . $subsite . $mirror[$id]{method}{'archive-http'} . "project/trace/";
+	    $mf = exists $mirror[$id]{'mirrors-from'} ? $mirror[$id]{'mirrors-from'} : "ftp-master.debian.org";
+ 	    my @mfs = split(',\s*', $mf);
+            foreach my $mfss (@mfs) {
+	      $origins{$mfss}{$subsite} = $tf;
+	    }
+	  }
+	} else {
+	  my $mfdefault = $mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian.org$/ ? "ftp-master.debian.org" : "unknown-origin";
+	  $mf = exists $mirror[$id]{'mirrors-from'} ? $mirror[$id]{'mirrors-from'} : $mfdefault;
+	  my @mfs = split(',\s*', $mf);
+          foreach my $mfss (@mfs) {
+  	    $origins{$mfss}{ $mirror[$id]{site} } = $tf;
+	  }
+	}
+      }
+    }
+  }
+
+  $origins{ 'ftp-master.debian.org' }{ 'syncproxy.eu.debian.org' } = 1;
+  $origins{ 'ftp-master.debian.org' }{ 'syncproxy.wna.debian.org' } = 1;
+
+  print "<h2>Mirrors sorted by origin</h2>\n";
+  print "<ul>\n";
+  print "<li>ftp-master.debian.org</li>";
+
+  sub crawl_origins($%) {
+    my $top = shift;
+    my %origins = shift;
+#      print "<pre>";
+#      use Data::Dumper;
+#      print Dumper(%origins);
+#      print "</pre>";
+    print "<ul>\n";
+    my @tocheck = ();
+    foreach my $o (keys %origins) {
+      if ($o ne $top) {
+        push @tocheck, $o;
+      } else {
+        
+      }
+    }
+    my $o; # FIXME
+      if ($o ne $top) {
+        print "<p>recursing with $o, " . join(",", keys %{$origins{$o}}) . "\n";
+#        crawl_origins($o, keys %{$origins{$o}}) unless ($o eq $top);
+      } else {
+        foreach my $oo (keys %{$origins{$o}}) {
+          print "<li>$oo";
+          print " (<a href=\"$origins{$o}{$oo}\">p/t</a>)"
+        }
+      }
+    print "</ul>\n";
+  }
+
+  crawl_origins('ftp-master.debian.org', %origins);
+
+if (0) {
+  print "<ul>\n";
+  print "<li>syncproxy.eu.debian.org</li>";
+  print "<ul>\n";
+  foreach my $o (keys %{$origins{'syncproxy.eu.debian.org'}}) {
+    print "<li>$o";
+    print " (<a href=\"". $origins{'syncproxy.eu.debian.org'}{$o} ."\">p/t</a>)";
+    print "<ul>\n";
+    foreach my $oo (keys %{$origins{$o}}) {
+      print "<li>$oo";
+      print " (<a href=\"$origins{$o}{$oo}\">p/t</a>)";
+      delete $origins{$o}{$oo};
+    }
+    print "</ul>\n";
+    delete $origins{'syncproxy.eu.debian.org'}{$o};
+  }
+  print "</ul>\n";
+  print "<li>syncproxy.wna.debian.org</li>";
+  print "<ul>\n";
+  foreach my $o (keys %{$origins{'syncproxy.wna.debian.org'}}) {
+    print "<li>$o";
+    print " (<a href=\"". $origins{'syncproxy.wna.debian.org'}{$o} ."\">p/t</a>)";
+    print "<ul>\n";
+    foreach my $oo (keys %{$origins{$o}}) {
+      print "<li>$oo";
+      print " (<a href=\"$origins{$o}{$oo}\">p/t</a>)";
+      delete $origins{$o}{$oo};
+    }
+    print "</ul>\n";
+    delete $origins{'syncproxy.wna.debian.org'}{$o};
+  }
+  print "</ul>\n";
+  foreach my $o (keys %{$origins{'ftp-master.debian.org'}}) {
+    next if ($o =~ /^syncproxy.(eu|wna).debian.org$/);
+    print "<li>$o";
+    print " (<a href=\"". $origins{'ftp-master.debian.org'}{$o} ."\">p/t</a>)";
+    print "<ul>\n";
+    foreach my $oo (keys %{$origins{$o}}) {
+      print "<li>$oo";
+      print " (<a href=\"$origins{$o}{$oo}\">p/t</a>)";
+      delete $origins{$o}{$oo};
+    }
+    print "</ul>\n";
+    delete $origins{'ftp-master.debian.org'}{$o};
+  }
+  print "<pre>";
+  use Data::Dumper;
+  print Dumper(%origins);
+  print "</pre>";
+  print "<li>unknown-origin</li>";
+  foreach my $o (keys %origins) {
+    print "<ul>\n";
+    foreach my $oo (keys %{$origins{$o}}) {
+      print "<li>$oo";
+      print " (<a href=\"$origins{$o}{$oo}\">p/t</a>)"
+    }
+    print "</ul>\n";
+  }
+  print "<ul>\n";
+  print "</ul>\n";
+  print "</ul>\n";
+
+} # if (0)
+
+}
+
 ######### Begin main routine ###########################
 Getopt::Long::config('no_getopt_compat', 'no_auto_abbrev');
 GetOptions(%opthash) or die "error parsing options";
@@ -1145,6 +1283,10 @@ elsif ($output_type eq 'cdimages-httpftp') {
 elsif ($output_type eq 'cdimages-rsync') {
 	$html=1;
 	cdimage_mirrors("rsync");
+}
+elsif ($output_type eq 'origins') {
+	$html=1;
+	mirror_tree_by_origin();
 }
 else {
 	die "Error: unknown output type requested, $output_type\n";
