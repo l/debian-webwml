@@ -1123,7 +1123,7 @@ foreach my $country (sort keys %countries) {
 	foreach my $id (@{ $countries{$country} }) {
 		if ($mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian\.org$/) {
 			push @{ $countries_sorted_o{$country} }, $id;
-		} elsif ($mirror[$id]{site} !~ /^(saens|gluck|raff|ftp\d?(?:\.wa)?\...)\.debian\.org$/) {
+		} elsif ($mirror[$id]{site} !~ /^(saens|gluck|raff|ftp)\.debian\.org$/) {
 			push @{ $countries_sorted_u{$country} }, $id;
 		}
 	}
