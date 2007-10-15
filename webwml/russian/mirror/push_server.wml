@@ -1,44 +1,45 @@
 #use wml::debian::template title="Настройка push-сервера"
-#use wml::debian::translation-check translation="1.12"
+#use wml::debian::translation-check translation="1.17"
+#use wml::debian::toc
 
 <p>Настройка push-сервера состоит из двух основных задач: настройка rsync
-доступа (для нормального, "тянущего" зеркалирования) и настройка триггерного механизма ssh
-(для "проталкивания" тянущего зеркалирования).
+доступа (для нормального, <q>тянущего</q> зеркалирования) и настройка триггерного механизма ssh
+(для <q>проталкивания</q> тянущего зеркалирования).
+</p>
 
 <p><small>(Подробности о том, что такое push-сервер, читайте в
 <a href="push_mirroring">разъяснениях push-зеркалирования</a>.)</small>
+</p>
 
-<h2>Настройка rsync</h2>
+<toc-display />
+
+<toc-add-entry name="rsync">Настройка rsync</toc-add-entry>
 
 <p>Установите <code>rsync</code> версии 2.1.1 или выше. Если ваш сайт работает на
 Debian, просто установите последний пакет
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>.
+</p>
 
 <p>Создайте файл <code>rsyncd.conf</code> и внесите в него что-то подобное этому:
+</p>
 
 <pre>
 uid = nobody
 gid = nogroup
 max connections = 25
-syslog facility = daemon
 socket options = SO_KEEPALIVE
 
 [debian]
-  path = /org/ftp.debian.org/ftp
-  comment = Архив Debian FTP (~24 GB)
-  auth users = авторизованная_учётная_запись1,авторизованная_учётная_запись2,авторизованная_учётная_записьN
-  read only = true
-  secrets file = /etc/rsyncd/debian.secrets
-[debian-web]
-  path = /org/www.debian.org/debian.org
-  comment = Web-сайт Debian (~400 MB)
-  auth users = авторизованная_учётная_запись1,авторизованная_учётная_запись2,авторизованная_учётная_записьN
+  path = /srv/debian/mirror
+  comment = The Debian Archive (~250 GB)
+  auth users = authorized_account1,authorized_account2,authorized_accountN
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
 </pre>
 
 <p>Добавьте запись для каждого сайта, который вы проталкиваете, в файл
 <code>/etc/rsyncd/debian.secrets</code>:
+</p>
 
 <pre>
 авторизованная_учётная_запись1:пароль
@@ -47,17 +48,21 @@ socket options = SO_KEEPALIVE
 </pre>
 
 <p>Теперь вы даёте нижележащим зеркалам доступ к архиву на вашей машине.
+</p>
 
 <p>Возможно, вы захотите, чтобы демон rsync запускался из inetd. Чтобы сделать это,
 вы должны добавить сервис rsync в файл <code>/etc/services</code> (если он ещё
 не там), как показано ниже:
+</p>
 
 <pre>
 rsync           873/tcp
 </pre>
 
+<p>
 Добавьте следующую строку в файл <code>/etc/inetd.conf</code>, чтобы разрешить
 демон из inetd:
+</p>
 
 <pre>
 rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daemon
@@ -66,11 +71,12 @@ rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daem
 (Не забудьте послать inetd сигнал HUP, чтобы сказать ему перечитать конфигурационный файл
 после модификации.)
 
-<h2>Настройка механизма триггера ssh</h2>
+<toc-add-entry name="sshtrigger">Настройка механизма триггера ssh</toc-add-entry>
 
 <p>Создайте новый ключ ssh для учётной записи, которую вы используете для зеркалирования Debian.
 Будьте осторожны и не перезапишите ваш оригинальный ключ ssh, для чего воспользуйтесь ключом
 командной строки -f, например:
+</p>
 
 <pre>
 ssh-keygen -f ~/.ssh/identity.mysite
@@ -78,16 +84,15 @@ ssh-keygen -f ~/.ssh/identity.mysite
 
 <p>Убедитесь что новый публичный ключ (~/.ssh/identity.mysite.pub) содержит
 в начале следующее:
+</p>
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/websync &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/sync &amp;"
 </pre>
-
-<p>(замените "websync" на "anonftpsync" или "anonftpsync-non-US", или какое-либо другое
-название для имени команды запуска зеркалирования)
 
 <p>Вам нужно настроить сценарий, который будет связываться с нижележащими зеркалами.
 Создайте файл с именем <code>signal</code>, содержащий следующее:
+</p>
 
 <protect>
 <pre>
@@ -102,15 +107,22 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
 </protect>
 
 <p>Этот сценарий будет соединяться с удалённым хостом, используя специальный ключ ssh,
-который вы создали выше. Сам по себе сценарий удалённо не делает ничего полезного,
-из ключа будет запущена команда ~/websync (или ~/anonftpsync, или ~/anonftpsync-non-US).
+который вы создали выше, предлагая его добавить в ~/.ssh/authorized_keys 
+каждому оператору нижележащих зеркал (заменяет <q>sync</q> с
+<q>anonftpsync</q> или любой другой командой для начала зеркалирования).
+Сам по себе сценарий удалённо не делает ничего &mdash будет запущена 
+единственная команда, зависящая от настроек ключа.</p>
 
-<p>Фактически, чтобы связать зеркала, вам нудно добавить строки <code>./signal
-&lt;сайт&gt; &lt;имя_пользователя&gt;</code> в конец сценария <code>websync</code>,
-или, если вам более удобно, в новый сценарий, и запускать его затем из <code>websync</code>.
+<p>Фактически, чтобы связать зеркала, вам нужно выполнить <code>./signal
+&lt;сайт&gt; &lt;имя_пользователя&gt;</code> после завершения синхронизации 
+с помощью rsync. Соответственно, как только будет закончено зеркалирование
+с вышележащим сайтом, вы стартуете проталкивание нижележащим от вас сайтам.
+</p>
 
-<p>Этот новый сценарий, <code>runmirrors</code>, может содержать что-то подобное
-следующему:
+<p>Также можно разместить эти команды в конце вашего <code>anonftpsync</code>
+сценария или создать новый сценарий и запускать его из <code>anonftpsync</code>.
+<br />Например:
+</p>
 
 <protect>
 <pre>
@@ -123,8 +135,6 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
 </pre>
 </protect>
 
-<p>Таким образом, как только ваш сайт закончит зеркалирование с вышестоящего сайта,
-вы стартуете проталкивание нижележащим от вас сайтам.
-
 <p>Если у вас появились с этим какие-то проблемы, <a href="mailto:mirrors@debian.org">
 свяжитесь с нами</a>.
+</p>
