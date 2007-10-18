@@ -29,7 +29,7 @@ my $thisscript = "search_packages.pl";
 my $HOME = "http://www.ubuntulinux.org";
 my $ROOT = "";
 my $SEARCHPAGE = "/";
-my @DISTS = qw( dapper dapper-backports edgy edgy-backports feisty feisty-backports gutsy );
+my @DISTS = qw( dapper dapper-backports edgy edgy-backports feisty feisty-backports gutsy gutsy-backports);
 
 $ENV{PATH} = "/bin:/usr/bin";
 
@@ -43,7 +43,7 @@ my $input = new CGI;
 # exit;
 
 my %params_def = ( keywords => { default => undef, match => '^\s*([-+\@\w\/.:]+)\s*$' },
-		   version => { default => 'feisty', match => '^([\w-]+)$',
+		   version => { default => 'gutsy', match => '^([\w-]+)$',
 				replace => { all => '*' } },
 		   case => { default => 'insensitive', match => '^(\w+)$' },
 		   subword => { default => 0, match => '^(\w+)$' },

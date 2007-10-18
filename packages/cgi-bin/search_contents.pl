@@ -38,7 +38,7 @@ print $input->header;
 
 
 my %params_def = ( word => { default => undef, match => '^\s*([-+\@\w\/.:]+)\s*$' },
-		   version => { default => 'feisty', match => '^(\w+)$' },
+		   version => { default => 'gutsy', match => '^(\w+)$' },
 		   case => { default => 'insensitive', match => '^(\w+)$' },
 		   searchmode => { default => "" },
 		   searchon => { default => 'all', match => '^(\w+)$' },

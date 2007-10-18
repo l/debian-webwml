@@ -411,7 +411,7 @@ HEAD
 ;
 
     my $current = 'home';
-    foreach my $dist (qw(dapper-backports dapper edgy-backports edgy feisty-backports feisty gutsy)) {
+    foreach my $dist (qw(dapper-backports dapper edgy-backports edgy feisty-backports feisty gutsy-backports gutsy)) {
 	if ($KEYWORDS_LINE =~ /\Q$dist\E/) {
 	    $current = $dist;
 	    last;
