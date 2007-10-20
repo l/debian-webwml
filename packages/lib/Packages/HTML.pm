@@ -411,14 +411,14 @@ HEAD
 ;
 
     my $current = 'home';
-    foreach my $dist (qw(dapper-backports dapper edgy-backports edgy feisty-backports feisty gutsy-backports gutsy)) {
+    foreach my $dist (qw(dapper-backports dapper edgy-backports edgy feisty-backports feisty gutsy-backports gutsy hardy)) {
 	if ($KEYWORDS_LINE =~ /\Q$dist\E/) {
 	    $current = $dist;
 	    last;
 	}
     }
     #TODO: what with backports?
-    foreach my $tab (qw(home dapper edgy feisty gutsy)) {
+    foreach my $tab (qw(home dapper edgy feisty gutsy hardy)) {
 	my $url = $tab eq 'home' ? '' : "$tab/";
 	my $id = $tab eq $current ? 'current' : 'plain';
 	$txt .= "<li id=\"$id\"><a href=\"/$url\">".ucfirst($tab)."</a></li>";

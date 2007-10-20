@@ -29,7 +29,7 @@ my $thisscript = "search_packages.pl";
 my $HOME = "http://www.ubuntulinux.org";
 my $ROOT = "";
 my $SEARCHPAGE = "/";
-my @DISTS = qw( dapper dapper-backports edgy edgy-backports feisty feisty-backports gutsy gutsy-backports);
+my @DISTS = qw( dapper dapper-backports edgy edgy-backports feisty feisty-backports gutsy gutsy-backports hardy );
 
 $ENV{PATH} = "/bin:/usr/bin";
 
