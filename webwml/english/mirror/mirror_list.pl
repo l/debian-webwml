@@ -56,7 +56,7 @@ sub process_line {
 			$mirror[$count-1]{'archive-architecture'}=\@arches;
 		}
 	}
-	elsif ($line=~ /^((Archive|NonUS|Security|WWW|CDimage|Jigdo|Old)-(\w*)):\s*(.*)\s*$/i) {
+	elsif ($line=~ /^((Archive|NonUS|Security|WWW|CDimage|Jigdo|Old|Volatile)-(\w*)):\s*(.*)\s*$/i) {
 		my $type = lc $1;
 		$mirror[$count-1]{method}{$type} = $4;
 		if (!defined($longest{$type}) || length($4) > $longest{$type}) {
@@ -687,6 +687,7 @@ sub full_listing {
 				$display =~ s/cdimage-/CD Images /;
 				$display =~ s/jigdo-/Jigdo files /;
 				$display =~ s/old-/Old releases /;
+				$display =~ s/volatile-/Volatile packages /;
 				$display =~ s/ftp/over FTP/;
 				$display =~ s/http/over HTTP/;
 				$display =~ s/nfs/over NFS/;
