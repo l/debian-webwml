@@ -1279,7 +1279,7 @@ foreach my $country (sort keys %countries) {
 }
 
 # count the number of mirrors
-# again, after the parser's $count? :) -joy, 2007-10-22
+# the masterlist parser's $count included the filtered sites
 $count = @mirror;
 
 foreach my $id (0..$#mirror) {
