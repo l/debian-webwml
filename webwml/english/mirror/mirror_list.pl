@@ -2,8 +2,8 @@
 #
 # mirror_list.pl -- generate various Debian mirror lists
 # Copyright (C) 1998 James Treacy
-# Copyright (C) 2000-2002 Josip Rodin
-# Copyright (C) 2006 Joey Schulze
+# Copyright (C) 2000-2002, 2007 Josip Rodin
+# Copyright (C) 2005 Joey Hess
 
 use strict;
 require 5.001;
