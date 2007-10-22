@@ -21,7 +21,8 @@ my %opthash = (
 	"help|h!" => \$help,
 	);
 	
-my (@mirror, %countries, %countries_sorted, $count, %longest);
+my (@mirror, %countries, %countries_sorted, %longest);
+my ($count, $nonuscount, $volatilecount, $cdimagecount);
 
 
 sub process_line {
@@ -825,7 +826,6 @@ END
 END
 	print "</a>" if $html;
 
-	my $nonuscount = 0;
 	foreach my $country (sort keys %countries) {
 	  my $hasmirrors = 0;
 	  foreach my $m_id (@{ $countries{$country} }) {
@@ -853,7 +853,6 @@ END
 	      }
 	      print "\n\n";
 	      print "<p>" if $html;
-	      $nonuscount++;
 	    } elsif (defined $mirror[$m_id]{method}{'nonus-http'}) {
 	      print "  ";
 	      print "<a href=\"http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}\">" if $html;
@@ -861,26 +860,9 @@ END
 	      print "</a>\n" if $html;
 	      print "\n\n";
 	      print "<p>" if $html;
-	      $nonuscount++;
 	    }
 	  }
 	}
-
-  if ($html) {
-	print <<END;
-<hr>
-<table border="0" width="100%"><tr>
-  <td align="left"><small>Last modified: $last_modify</small></td>
-  <td align="right"><small>Number of sites listed: $nonuscount</small></td>
-</tr></table>
-END
-  } else {
-	print <<END;
-
--------------------------------------------------------------------------------
-Last modified: $last_modify             Number of sites listed: $nonuscount
-END
-  }
 }
 
 sub nonus_short() {
@@ -915,20 +897,21 @@ sub nonus_short() {
   }
 }
 
-sub footer_stuff() {
+sub footer_stuff($) {
+  my $whichcount = shift;
   if ($html) {
 	print <<END;
 <hr>
 <table border="0" width="100%"><tr>
   <td align="left"><small>Last modified: $last_modify</small></td>
-  <td align="right"><small>Number of sites listed: $count</small></td>
+  <td align="right"><small>Number of sites listed: $whichcount</small></td>
 </tr></table>
 END
   } else {
 	print <<END;
 
 -------------------------------------------------------------------------------
-Last modified: $last_modify             Number of sites listed: $count
+Last modified: $last_modify             Number of sites listed: $whichcount
 END
   }
 }
@@ -978,131 +961,76 @@ sub volatile_mirrors {
 			print "-" while ($i--); # underline
 			print "\n";
 		}
-		# first list the official sites
-		foreach my $id (@{ $countries{$country} }) {
-			next unless ($mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian\.org$/);
+		foreach my $id (@{ $countries_sorted{$country} }) {
 			if ($html) {
 				print "<tr><th>$mirror[$id]{site}</th>";
 			} else {
 				$tmp = "%-$longest{site}s ";
 				printf $tmp, $mirror[$id]{site};
 			}
-			if (defined $mirror[$id]{method}{'volatile-ftp'} && $html) {
-				print "<td><a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'volatile-ftp'}\">";
-				print "$mirror[$id]{method}{'volatile-ftp'}";
-				print "</a></td>\n";
-			} elsif (defined $mirror[$id]{method}{'volatile-ftp'}) {
-				my $rest = $longest{'volatile-ftp'} - length($mirror[$id]{method}{'volatile-ftp'});
-				$tmp = "%s%${rest}s";
-				printf $tmp, $mirror[$id]{method}{'volatile-ftp'}, '';
-			} elsif ($html) {
-				print "<td> </td>\n";
+			if (defined $mirror[$id]{method}{'volatile-ftp'}) {
+				if ($html) {
+					print "<td><a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'volatile-ftp'}\">";
+					print "$mirror[$id]{method}{'volatile-ftp'}";
+					print "</a></td>\n";
+				} else {
+					my $rest = $longest{'volatile-ftp'} - length($mirror[$id]{method}{'volatile-ftp'});
+					$tmp = "%s%${rest}s";
+					printf $tmp, $mirror[$id]{method}{'volatile-ftp'}, '';
+				}
 			} else {
-				$tmp = "%-$longest{'volatile-ftp'}s";
-				printf $tmp, " ";
+				if ($html) {
+					print "<td> </td>\n";
+				} else {
+					$tmp = "%-$longest{'volatile-ftp'}s";
+					printf $tmp, " ";
+				}
 			}
 			$tmp = "%-$longest{'volatile-http'}s";
-			if (defined $mirror[$id]{method}{'volatile-http'} && $html) {
-				print "<td><a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{'volatile-http'}\">";
-				print "$mirror[$id]{method}{'volatile-http'}";
-				print "</a></td>\n";
-			} elsif (defined $mirror[$id]{method}{'volatile-http'}) {
-				my $rest = $longest{'volatile-http'} - length($mirror[$id]{method}{'volatile-http'});
-				$tmp = "%s%${rest}s";
-				printf $tmp, $mirror[$id]{method}{'volatile-http'}, '';
-			} elsif ($html) {
-				print "<td> </td>\n";
+			if (defined $mirror[$id]{method}{'volatile-http'}) {
+				if ($html) {
+					print "<td><a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{'volatile-http'}\">";
+					print "$mirror[$id]{method}{'volatile-http'}";
+					print "</a></td>\n";
+				} else {
+					my $rest = $longest{'volatile-http'} - length($mirror[$id]{method}{'volatile-http'});
+					$tmp = "%s%${rest}s";
+					printf $tmp, $mirror[$id]{method}{'volatile-http'}, '';
+				}
 			} else {
-				$tmp = "%-$longest{'volatile-http'}s";
-				printf $tmp, " ";
+				if ($html) {
+					print "<td> </td>\n";
+				} else {
+					$tmp = "%-$longest{'volatile-http'}s";
+					printf $tmp, " ";
+				}
 			}
 			$tmp = "%-$longest{'volatile-rsync'}s";
-			if (defined $mirror[$id]{method}{'volatile-rsync'} && $html) {
-				print "<td><a href=\"rsync://$mirror[$id]{site}/$mirror[$id]{method}{'volatile-rsync'}\">";
-				print "$mirror[$id]{method}{'volatile-rsync'}";
-				print "</a></td>\n";
-			} elsif (defined $mirror[$id]{method}{'volatile-rsync'}) {
-				my $rest = $longest{'volatile-rsync'} - length($mirror[$id]{method}{'volatile-rsync'});
-				$tmp = "%s%${rest}s";
-				printf $tmp, $mirror[$id]{method}{'volatile-rsync'}, '';
-			} elsif ($html) {
-				print "<td> </td>\n";
+			if (defined $mirror[$id]{method}{'volatile-rsync'}) {
+				if ($html) {
+					print "<td><a href=\"rsync://$mirror[$id]{site}/$mirror[$id]{method}{'volatile-rsync'}\">";
+					print "$mirror[$id]{method}{'volatile-rsync'}";
+					print "</a></td>\n";
+				} else {
+					my $rest = $longest{'volatile-rsync'} - length($mirror[$id]{method}{'volatile-rsync'});
+					$tmp = "%s%${rest}s";
+					printf $tmp, $mirror[$id]{method}{'volatile-rsync'}, '';
+				}
 			} else {
-				$tmp = "%-$longest{'volatile-rsync'}s";
-				printf $tmp, " ";
+				if ($html) {
+					print "<td> </td>\n";
+				} else {
+					$tmp = "%-$longest{'volatile-rsync'}s";
+					printf $tmp, " ";
+				}
 			}
 			print "<td>" if ($html);
           		if (exists $mirror[$id]{'volatile-architecture'}) {
 				print join(" ", sort @{$mirror[$id]{'volatile-architecture'}});
-			}
-			else {
+			} else {
 				print " all";
 			}
 			print "</td>\n</tr>" if ($html);
-			print "\n";
-		}
-		# then list the unofficial sites
-		foreach my $id (@{ $countries{$country} }) {
-			next if ($mirror[$id]{site} =~ /^(saens|gluck|raff|ftp\d?(?:\.wa)?\...)\.debian\.org$/);
-			next unless (defined $mirror[$id]{method}{'volatile-ftp'} || defined $mirror[$id]{method}{'volatile-http'} || defined $mirror[$id]{method}{'volatile-rsync'});
-			if ($html) {
-				print "<tr><th>$mirror[$id]{site}</th>";
-			} else {
-				$tmp = "%-$longest{site}s ";
-				printf $tmp, $mirror[$id]{site};
-			}
-			if (defined $mirror[$id]{method}{'volatile-ftp'} && $html) {
-				print "<td><a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'volatile-ftp'}\">";
-				print "$mirror[$id]{method}{'volatile-ftp'}";
-				print "</a></td>\n";
-				my $rest = $longest{'volatile-ftp'} - length($mirror[$id]{method}{'volatile-ftp'});
-			} elsif (defined $mirror[$id]{method}{'volatile-ftp'}) {
-				my $rest = $longest{'volatile-ftp'} - length($mirror[$id]{method}{'volatile-ftp'});
-				$tmp = "%s%${rest}s";
-				printf $tmp, $mirror[$id]{method}{'volatile-ftp'}, '';
-			} elsif ($html) {
-				print "<td> </td>\n";
-			} else {
-				$tmp = "%-$longest{'volatile-ftp'}s";
-				printf $tmp, " ";
-			}
-			$tmp = "%-$longest{'volatile-http'}s";
-			if (defined $mirror[$id]{method}{'volatile-http'} && $html) {
-				print "<td><a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{'volatile-http'}\">";
-				print "$mirror[$id]{method}{'volatile-http'}";
-				print "</a></td>\n";
-
-			} elsif (defined $mirror[$id]{method}{'volatile-http'}) {
-				my $rest = $longest{'volatile-http'} - length($mirror[$id]{method}{'volatile-http'});
-				$tmp = "%s%${rest}s";
-				printf $tmp, $mirror[$id]{method}{'volatile-http'}, '';
-			} elsif ($html) {
-				print "<td> </td>\n";
-			} else {
-				$tmp = "%-$longest{'volatile-http'}s";
-				printf $tmp, " ";
-			}
-			if (defined $mirror[$id]{method}{'volatile-rsync'} && $html) {
-				print "<td><a href=\"rsync://$mirror[$id]{site}/$mirror[$id]{method}{'volatile-rsync'}\">";
-				print "$mirror[$id]{method}{'volatile-rsync'}";
-				print "</a></td>\n";
-			} elsif (defined $mirror[$id]{method}{'volatile-rsync'}) {
-				my $rest = $longest{'volatile-rsync'} - length($mirror[$id]{method}{'volatile-rsync'});
-				$tmp = "%s%${rest}s";
-				printf $tmp, $mirror[$id]{method}{'volatile-rsync'}, '';
-			} elsif ($html) {
-				print "<td> </td>\n";
-			} else {
-				$tmp = "%-$longest{'volatile-rsync'}s";
-				printf $tmp, " ";
-			}
-          		print "<td>" if ($html);
-			if (exists $mirror[$id]{'volatile-architecture'}) {
-				print join(" ", sort @{$mirror[$id]{'volatile-architecture'}});
-			} else {
-				print " all";
-			}
-			print "</td>\n</tr>\n" if ($html);
 			print "\n";
 		}
 	}
@@ -1351,7 +1279,13 @@ foreach my $country (sort keys %countries) {
 }
 
 # count the number of mirrors
+# again, after the parser's $count? :) -joy, 2007-10-22
 $count = @mirror;
+
+foreach my $id (0..$#mirror) {
+	$nonuscount++ if (defined $mirror[$id]{method}{'nonus-ftp'} || defined $mirror[$id]{method}{'nonus-http'});
+	$volatilecount++ if (defined $mirror[$id]{method}{'volatile-ftp'} || defined $mirror[$id]{method}{'volatile-http'});
+}
 
 my @stat = stat($mirror_source);
 $last_modify = gmtime($stat[9]);
@@ -1363,7 +1297,7 @@ if ($output_type eq 'html') {
 	intro();
 	primary_mirrors();
 	secondary_mirrors();
-	footer_stuff();
+	footer_stuff($count);
 	trailer();
 }
 elsif ($output_type eq 'text') {
@@ -1371,7 +1305,7 @@ elsif ($output_type eq 'text') {
 	intro();
 	primary_mirrors();
 	secondary_mirrors();
-	footer_stuff();
+	footer_stuff($count);
 }
 elsif ($output_type eq 'apt') {
 	header();
@@ -1385,17 +1319,19 @@ elsif ($output_type eq 'fullmethods') {
 	header();
 	access_methods();
 	full_listing();
-	footer_stuff();
+	footer_stuff($count);
 	trailer();
 }
 elsif ($output_type eq 'nonus') {
 	$html = 0;
 	nonus_mirrors();
+	footer_stuff($nonuscount);
 }
 elsif ($output_type eq 'nonushtml') {
 	header("non-US ");
 	$html = 1;
 	nonus_mirrors();
+	footer_stuff($nonuscount);
 	trailer();
 }
 elsif ($output_type eq 'nonusshort') {
@@ -1421,8 +1357,7 @@ elsif ($output_type eq 'cdimages-rsync') {
 elsif ($output_type eq 'volatile-html') {
 	$html=1;
 	volatile_mirrors();
-	my $volatile_count = $count; # temp -joy, 2007-10-22
-	footer_stuff($volatile_count);
+	footer_stuff($volatilecount);
 }
 elsif ($output_type eq 'origins') {
 	$html=1;
