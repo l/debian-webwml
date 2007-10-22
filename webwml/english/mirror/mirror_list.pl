@@ -363,7 +363,10 @@ END
       if ($mirror[$id]{site} =~ /^(?:ftp|http)\d?(?:\.wa)?\...\.debian.org$/) {
         (my $countryplain = $country) =~ s/^.. //;
 
-	next unless exists $mirror[$id]{method}{'archive-http'};
+	unless (exists $mirror[$id]{method}{'archive-http'}) {
+		warn "official mirror " . $mirror[$id]{site} . " does not have archive-http?!";
+		next;
+	}
 	my $arches="all";
 	if (exists $mirror[$id]{'archive-architecture'}) {
 		$arches=join(" ", sort @{$mirror[$id]{'archive-architecture'}});
