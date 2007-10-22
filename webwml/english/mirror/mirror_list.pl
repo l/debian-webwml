@@ -21,7 +21,7 @@ my %opthash = (
 	"help|h!" => \$help,
 	);
 	
-my (@mirror, %countries, %countries_sorted, %longest);
+my (@mirror, %countries, %countries_sorted, %countries_sponsors, %longest);
 my ($count, $nonuscount, $volatilecount, $cdimagecount);
 
 
@@ -476,12 +476,7 @@ sub mirror_sponsors {
 <tr><td colspan="3"><hr></td></tr>
 END
   foreach my $country (sort keys %countries) {
-    foreach my $id (sort @{ $countries{$country} }) {
-      if ((defined $mirror[$id]{method}{'archive-ftp'} ||
-           defined $mirror[$id]{method}{'archive-http'} ||
-           defined $mirror[$id]{method}{'nonus-ftp'} ||
-           defined $mirror[$id]{method}{'nonus-http'}) &&
-           exists $mirror[$id]{sponsor}) {
+    foreach my $id (sort @{ $countries_sponsors{$country} }) {
         (my $countrycode = $country) =~ s/^(..).*/$1/;
 	print <<END;
 <tr>
@@ -489,7 +484,7 @@ END
   <td>$mirror[$id]{site}</td>
   <td>
 END
-	if ($mirror[$id]{site} ne "ftp.us.debian.org") {
+	unless (exists $mirror[$id]{includes}) {
 	  my $numsponsors = @{ $mirror[$id]{sponsor} };
 	  my $num = 0;
 	  my ($sponsorname, $sponsorurl);
@@ -513,7 +508,7 @@ END
   </td>
 </tr>
 END
-      }
+
     }
   }
 }
@@ -1248,10 +1243,34 @@ foreach my $id (reverse @filtered) { # reverse order so indexes are valid
 	splice(@mirror, $id, 1);
 }
 
+# count the number of mirrors
+# the masterlist parser's $count included the filtered sites
+$count = @mirror;
+
+foreach my $id (0..$#mirror) {
+	$nonuscount++ if (defined $mirror[$id]{method}{'nonus-ftp'} || defined $mirror[$id]{method}{'nonus-http'});
+	$volatilecount++ if (defined $mirror[$id]{method}{'volatile-ftp'} || defined $mirror[$id]{method}{'volatile-http'});
+}
+
 # Create arrays of countries, with their mirrors.
 foreach my $id (0..$#mirror) {
 	if (exists $mirror[$id]{country}) {
 		push @{ $countries{$mirror[$id]{country}} }, $id;
+		if (exists $mirror[$id]{sponsor}) {
+			push @{ $countries_sponsors{$mirror[$id]{country}} }, $id;
+# optionally do this...
+#      if ((defined $mirror[$id]{method}{'archive-ftp'} ||
+#           defined $mirror[$id]{method}{'archive-http'} ||
+#           defined $mirror[$id]{method}{'nonus-ftp'} ||
+#           defined $mirror[$id]{method}{'nonus-http'} ||
+#           defined $mirror[$id]{method}{'cdimage-ftp'} ||
+#           defined $mirror[$id]{method}{'cdimage-http'} ||
+#           defined $mirror[$id]{method}{'volatile-ftp'} ||
+#           defined $mirror[$id]{method}{'volatile-http'} ||
+#	...
+# but this would be fairly tedious and hardcoded, for no apparent reason
+# because we use this in mirror_sponsors() which doesn't really care
+		}
 	} else {
 		warn "found a mirror without a country, wtf? " . $mirror[$id]{site};
 	}
@@ -1278,15 +1297,6 @@ foreach my $country (sort keys %countries) {
 		push @{ $countries_sorted{$country} }, $id;
 	}
 	undef %countries_sorted_u;
-}
-
-# count the number of mirrors
-# the masterlist parser's $count included the filtered sites
-$count = @mirror;
-
-foreach my $id (0..$#mirror) {
-	$nonuscount++ if (defined $mirror[$id]{method}{'nonus-ftp'} || defined $mirror[$id]{method}{'nonus-http'});
-	$volatilecount++ if (defined $mirror[$id]{method}{'volatile-ftp'} || defined $mirror[$id]{method}{'volatile-http'});
 }
 
 my @stat = stat($mirror_source);
