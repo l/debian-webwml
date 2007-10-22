@@ -73,10 +73,11 @@ sub process_line {
 	elsif ($line =~ /^([\w-]+):\s*(.+)\s*$/s) {
 		$field = lc $1;
 		# no need for this private data in the $mirror hash
-		next if ($field =~ /^x-/);
-		$mirror[$count-1]{$field} = $2;
-		if (!defined($longest{$field}) || length($2) > $longest{$field}) {
-			$longest{$field} = length($2);
+		if ($field !~ /^x-/) {
+			$mirror[$count-1]{$field} = $2;
+			if (!defined($longest{$field}) || length($2) > $longest{$field}) {
+				$longest{$field} = length($2);
+			}
 		}
 	}
 	else {
