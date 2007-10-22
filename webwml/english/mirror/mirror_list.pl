@@ -256,9 +256,8 @@ END
 END
 	}
 	print <<END;
-  Additionally, most of them are updated automatically after updates to the
-  Debian archive. The Debian archive on those sites is normally available
-  using both FTP and HTTP protocols.
+  They are all automatically updated whenever there are updates to
+  the Debian archive.
 
 END
 	print "  </blockquote>\n" if $html;
