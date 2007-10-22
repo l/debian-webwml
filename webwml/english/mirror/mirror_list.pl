@@ -72,6 +72,8 @@ sub process_line {
 	}
 	elsif ($line =~ /^([\w-]+):\s*(.+)\s*$/s) {
 		$field = lc $1;
+		# no need for this private data in the $mirror hash
+		next if ($field =~ /^x-/);
 		$mirror[$count-1]{$field} = $2;
 		if (!defined($longest{$field}) || length($2) > $longest{$field}) {
 			$longest{$field} = length($2);
@@ -192,7 +194,7 @@ sub secondary_mirrors {
 								last;
 							}
 						}
-						die "$subsite included in ftp.us.debian.org does not exist\n" unless defined $subsite_id; # must be an error
+						die $subsite ." included in " . $mirror[$id]{site} . " does not exist\n" unless defined $subsite_id; # must be an error
 						# this prints the canonical name of the included site rather than its reference - should be in sync, but might actually vary
 						print $mirror[$subsite_id]{site};
 						$notalldone--;
@@ -407,8 +409,7 @@ END
   <td><a href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{site}</a></td>
   <td>
 END
-	if ($mirror[$id]{site} eq "ftp.us.debian.org") {
-	  die "$mirror[$id]{site} has no includes\n" unless exists $mirror[$id]{includes}; # must be an error
+	if (exists $mirror[$id]{includes}) {
 	  my $numsubsites = @{ $mirror[$id]{includes} };
 	  my $snum = 0;
 	  foreach my $subsite (@{ $mirror[$id]{includes} }) {
@@ -1047,8 +1048,7 @@ sub mirror_tree_by_origin {
 	my $tfm = $mirror[$id]{method}{'archive-http'} || $mirror[$id]{method}{'archive-ftp'};
 	my $tf = "http://" . $mirror[$id]{site} . $tfm . "project/trace/";
 	my $mf;
-	if ($mirror[$id]{site} eq "ftp.us.debian.org") {
-	  die "$mirror[$id]{site} has no includes\n" unless exists $mirror[$id]{includes}; # must be an error
+	if (exists $mirror[$id]{includes}) {
 	  my $numsubsites = @{ $mirror[$id]{includes} };
 	  my $snum = 0;
 	  foreach my $subsite (@{ $mirror[$id]{includes} }) {
