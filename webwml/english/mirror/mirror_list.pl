@@ -1248,10 +1248,12 @@ foreach my $id (reverse @filtered) { # reverse order so indexes are valid
 	splice(@mirror, $id, 1);
 }
 
-# Get country info for remaining mirrors.
+# Create arrays of countries, with their mirrors.
 foreach my $id (0..$#mirror) {
 	if (exists $mirror[$id]{country}) {
 		push @{ $countries{$mirror[$id]{country}} }, $id;
+	} else {
+		warn "found a mirror without a country, wtf? " . $mirror[$id]{site};
 	}
 }
 
