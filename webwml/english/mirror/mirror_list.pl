@@ -597,6 +597,9 @@ access method for each type.
 	archive, with sections for Debian packages that could not be
 	distributed in the US due to software patents or use of encryption.
 	The debian-non-US updates were discontinued with Debian 3.1.
+<dt><strong>Volatile packages</strong>
+	<dd>Packages from the debian-volatile project. See
+	<a href="http://www.debian.org/volatile/">http://www.debian.org/volatile/</a> for details.
 <dt><strong>WWW pages</strong>
 	<dd>The Debian web pages.
 </dl>
