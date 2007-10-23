@@ -427,7 +427,8 @@ END
 			last;
 		}
 	    }	    
-	    die "$subsite has no sponsor\n" unless defined $subsite_id; # must be an error
+	    die "can't find $subsite, wtf?!" unless defined $subsite_id; # must be an error
+	    die "can't find sponsor for $subsite, wtf?!" unless defined $mirror[$subsite_id]{sponsor}; # must be an error
 
 	    my $numsponsors = @{ $mirror[$subsite_id]{sponsor} };
 	    my $num = 0;
