@@ -10,9 +10,14 @@ include $(WMLBASE)/Make.lang
 
 tes := $(shell grep "define-tag current_testing_name" $(ENGLISHDIR)/releases/info | grep -v ^\# | cut -d\< -f2 | cut -d\> -f2)
 
-submit.$(LANGUAGE).html: submit.wml $(TEMPLDIR)/countries_all.wml \
-  $(TEMPLDIR)/countries.wml $(GETTEXTDEP)
+submit.$(LANGUAGE).html: submit.wml $(ENGLISHDIR)/mirror/submit.inc \
+  $(GETTEXTDEP)
 	$(WML) $(<F) -D TESTING=$(tes)
+
+ifeq "$(LANGUAGE)" "en"
+$(ENGLISHDIR)/mirror/submit.inc: $(TEMPLDIR)/countries_all.wml \
+  $(TEMPLDIR)/countries.wml
+endif
 
 webmirror.$(LANGUAGE).html: webmirror.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHSRCDIR)/mirror/webmirrors.data $(GETTEXTDEP)
