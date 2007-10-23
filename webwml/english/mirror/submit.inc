@@ -49,7 +49,7 @@ function giveau(element) {
 }
 </script>
 
-#include "$(ENGLISHDIR)/releases/$(TESTING)/release.data"
+#include "$(ENGLISHDIR)/releases/sid/archive.data"
 
 <define-tag archlist>
 <div id="archlist">
