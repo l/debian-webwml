@@ -1,48 +1,34 @@
 #use wml::debian::template title="Submit Volatile Mirror Information"
-#use wml::debian::countries_all
 
 <p>If you would like to submit information about a mirror of Debian Volatile
-(FTP archive, web), you can do so using the form below.</p>
+please observe the following rules and guidelines.</p>
 
-<p>There are <a href="#examples">examples</a> at the bottom of the page in
-case you aren't sure how to proceed.</p>
+<h2>Requirements</h2>
 
-<p>If you need to submit changes to your existing entry, simply make
-a new (complete) submission and add a comment stating it is an update.</p>
-
-<p>Not all information provided will be displayed in the mirror list, such
-as the mirror maintainer address.
-The email address will be saved somewhere on our sites,
-so that mirror list editors can contact you with news and bug reports.</p>
-
-<p>Please note that an official mirror must use rsync as the method to
-get current packages. We strongly recommend to use our 
-<a href="$(HOME)/volatile/mirror-volatile.sh">mirror-volatile.sh</a> script.</p>
-
-<p>To get listed, you need to respect the following criteria:</p>
+<p>To get listed, you need to respect the following basic criteria:</p>
 <ul>
+  <li>You need to use rsync as the method to get current packages.</li>
   <li>You need to mirror the complete debian-volatile archive.</li>
-  <li>You need to mirror debian-volatile at least once a day </li>
+  <li>You need to mirror debian-volatile at least once a day.</li>
   <li>You need to put 'date -u' into /project/trace/$YOURHOSTNAME</li>
   <li>You need to have an e-mail address one can write to. <strong>Entries will
   be removed, if we won't be able to contact you.</strong></li>
 </ul>
-<p>We differentiate between push mirrors and normal mirrors.</p>
 
-<h2>What is a <q>Push</q> Mirror?</h2>
-<p>In brief it is a normal mirror, with the only difference that
-volatile.debian.org tells you when something has changed in the
-archive. So there is no need to try a sync periodically, your are
-notified when the archive changes.
-A good page describing it, and some parts of the setup, is
-<a href="http://www.debian.org/mirror/push_mirroring">available
-on the debian.org servers</a>. Please read it if you are not familiar
-with it.</p>
+<p>Once all this is set up, you can <a href="../mirror/submit">fill out
+the mirror submission form</a>.</p>
+
+<h2>rsync setup</h2>
+
+<p>We strongly recommend to use our 
+<a href="$(HOME)/volatile/mirror-volatile.sh">mirror-volatile.sh</a> script.</p>
 
 <p>You are free to use any script you want, but please be sure to
 use a safe one. We do NOT accept mirrors that use debmirror or similar tools
 to mirror. These tools are fine for a private mirror, but not usable for full
-mirrors, as they exclude many of the useful files. This basically means: keep
+mirrors, as they exclude many of the useful files.</p>
+
+<p>A well-tuned rsync setup will maintain
 a full working mirror the whole time. The following options to rsync
 (besides what you normally have) do the trick:</p>
 
@@ -81,7 +67,18 @@ even when your mirror is updating itself at the moment they try to download
 stuff.  You are free to use any other option to rsync you may like, but we
 strongly suggest to use at least -lH.</p>
 
-<p>Now you need to add <a
+<h2><q>Push</q> mirroring</h2>
+
+<p>A <q>pushed</q> mirror is a normal mirror, with the only difference that
+volatile.debian.org tells you when something has changed in the
+archive. So there is no need to try a sync periodically, your are
+notified when the archive changes.
+A good page describing it, and some parts of the setup, is
+<a href="http://www.debian.org/mirror/push_mirroring">available
+on the debian.org servers</a>. Please read it if you are not familiar
+with it.</p>
+
+<p>To set up your site to be pushed by volatile.debian.org, you need to add <a
 href="$(HOME)/volatile/id_mirrorpush.pub">this ssh key</a> to the mirror-user's
 .ssh/authorized_keys file.  If you look into the key you see that it is limited
 to only one command.  This means that we are NOT able to log on to your system
@@ -92,8 +89,14 @@ script we provide as an example uses a lockfile to avoid multiple
 runs at the same time.  <strong>You need to change that to whatever
 script you use, but do NOT delete the &amp; at the end.</strong> </p>
 
-<h2>Traffic and Space Considerations</h2>
-<h3>Traffic</h3>
+<p>As soon as you finished setting it up you are ready to be added to the list
+of <q>pushed</q> servers.  For that please make sure you have
+<a href="../mirror/submit">submitted the mirror using the standard form</a>
+and then send e-mail in English to <email mirrors@debian.org> asking to be
+added to the push setup.</p>
+
+<h2>Traffic considerations</h2>
+
 <p>
 Maybe you want to know what traffic you will get &mdash; or how much disk space you
 need.  The bandwith usage depends on the
@@ -102,11 +105,13 @@ currently about 20GB a month on volatile.debian.org. Some mirrors might have
 more, some less traffic.
 </p>
 
-<h3>Space</h3>
+<h2>Space considerations</h2>
 
 <p>
-At the moment our archive takes about 200MB of space. As we add packages from
-time to time expect the archive to grow.
+Please see the <a href="../mirror/size">mirror size</a> page for information.
+At the moment the debian-volatile archive is relatively small compared to
+some other mirrored Debian archives, but as we add packages from
+time to time, expect the archive to grow.
 </p>
 
 <h2>Recommended additional settings</h2>
@@ -130,141 +135,5 @@ name of the directory where you keep the mirror:</p>
 symlinks will work. Also file names in the directory indices won't be
 truncated.</p>
 
-<h2>Getting the push</h2> 
 
-<p>As soon as you finished setting it up you are ready to be added to the list
-of <q>pushed</q> servers.  For that please use the form in the following section.
-</p>
-
-<h2>Basic information</h2>
-
-<p>Please, include the name under which you wish the mirror to be listed in
-the <em>Site</em> field. If the server has other names, list them in the
-<em>Alias</em> field, separated with commas (<q>,</q>). This is probably the
-reverse of the DNS entries.</p>
-
-<form method=post action="http://cgi.ftbfs.de/submit_mirror.cgi">
-<p>
-Site: <input type="text" name="site" size="30"><br />
-Alias: <input type="text" name="aliases" size="60">
-</p>
-
-<h2>Types of mirrors and methods of accessing them</h2>
-
-<p>Enter the paths to the Volatile mirror on your site in the fields below.
-Leave non-relevant fields blank.</p>
-
-<define-tag tablerow>
-	<tr><td>%0: </td><td><input type="text" name="%1" size="%2"></td></tr>
-</define-tag>
-
-<table>
-<tablerow "Packages archive, over HTTP"   archive-http   30>
-<tablerow "Packages archive, over FTP"    archive-ftp    30>
-<tablerow "Packages archive, over rsync"  archive-rsync  30>
-</table>
-
-<h2>Information about the mirror site</h2>
-
-<p>Please fill in all of the following (we will not disclose the name and
-e-mail to anyone). The country and mirror origin are important since we use
-that to organize the entries.</p>
-
-<table>
-<tablerow "Mirror is updated from"          mirrors_from  30>
-<tablerow "Name of site maintainer"         maint_name    30>
-<tablerow "Email of site maintainer"        maint_email   30>
-<tablerow "Enter 'volatile' here"           vol_antispam  30>
-<tr><td>Country of site:  <td><select name="country">
-<: country_list() :>
-</select>
-<tablerow "Location of site (optional)"     location      30>
-<tablerow "Name of site sponsor (optional)" sponsor_name  30>
-<tablerow "URL of site sponsor (optional)"  sponsor_url   30>
-</table>
-
-<table><tr>
-<td valign="top">Comment:</td>
-<td><textarea name="comment" cols=40 rows=7></textarea></td>
-</tr></table>
-
-<p>Note: if there is more than one sponsor, add the others in the comment.
-You may also want to note if a mirror is partial, how often does it get
-updated, and how fast the site is (its maximum bandwidth).
-Alternative access methods (NFS, IPv6, ...) are also suitable there.
-<br />
-
-<input type="submit" value="Submit"> <input type="reset" value="Clear form">
-</p>
-</form>
-
-<p>Your site will appear on the list within a week. We might email you in
-case of any problems with the submitted entry.</p>
-
-
-<h2><a name="examples">Examples</a></h2>
-
-<p>The following submission would be for a server called debian.example.com,
-which can also be reached using e1.example.com. These names are fictional,
-of course.</p>
-
-<p class="centerblock">
-Site: <code>debian.example.com</code><br />
-Alias: <code>e1.example.com</code>
-</p>
-
-<p>Volatile archive mirror is in the /debian-volatile/ directory on the web server:</p>
-
-<p class="centerblock">
-Packages archive, over HTTP: <code>/debian-volatile/</code>
-</p>
-
-<p>This is for ftp://debian.example.com/debian-volatile/:</p>
-     
-<p class="centerblock">
-Packages archive, over FTP: <code>/debian-volatile/</code>
-</p>
-
-<p>This is the directory used for rsync access, debian.example.com::debian-volatile/:</p>
-
-<p class="centerblock">
-Packages archive, over rsync: <code>debian-volatile/</code>
-</p>
-
-<p>This mirror gets refreshed from ftp.de.debian.org, so we'll add:</p>
-
-<p class="centerblock">
-Mirror is updated from: <code>ftp.de.debian.org</code>
-</p>
-
-<p>Now for the maintainer information:
-
-<p class="centerblock">
-Name of site maintainer: <code>John Doe</code><br />
-Email of site maintainer: <code>address.goes@here.example.com</code>
-</p>
-
-<p>(Once again, the maintainer address will not be shown on the public lists,
-but on sites used by mirror list editors.
-Please enter a correct address.)</p>
-
-<p>The other information would be:</p>
-
-<p class="centerblock">
-Country: <code>United States [US]</code><br />
-Comment: <code>Any notes you feel would help others</code>
-</p>
-
-<p>The following example would describe the mirror at ftp.uk.debian.org:</p>
-
-<p class="centerblock">
-Site: <code>ftp.uk.debian.org</code><br />
-Alias: <code>open.hands.com</code><br />
-Packages archive, over HTTP: <code>/debian-volatile/</code><br />
-Packages archive, over FTP: <code>/debian-volatile/</code><br />
-Packages archive, over rsync: <code>debian-volatile/</code><br />
-Name of site maintainer: <code>Philip Hands</code><br />
-Email of site maintainer: <code>abc@address.goes.here</code><br />
-Country: <code>United Kingdom [GB]</code>
-</p>
-
+# <form method=post action="http://cgi.ftbfs.de/submit_mirror.cgi">
