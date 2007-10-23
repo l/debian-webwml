@@ -1,131 +1,140 @@
 #use wml::debian::template title="Suivi des bogues Debian - serveur de requêtes" NOHEADER=yes NOCOPYRIGHT=true
 
-#use wml::debian::translation-check translation="1.21" translation_maintainer="Christian Couder"
+#use wml::debian::translation-check translation="1.25" translation_maintainer="Cyril Brulebois"
 
 
-<h1><A name="introduction">
+<h1><a name="introduction">
 Introduction au serveur de requêtes du système de suivi des bogues
-</A></h1>
+</a></h1>
 
-<P>Il y a un serveur de message qui peut envoyer des rapports de bogues et 
-des index en texte seul à la demande.</P>
+<p>Il y a un serveur de message qui peut envoyer des rapports de bogues et
+des index en texte seul à la demande.</p>
 
-<P>Pour l'utiliser il faut envoyer un message à
-<A href="mailto:request@bugs.debian.org"><code>request@bugs.debian.org</code></A>.
-L'<code>Objet</code> (Subject en anglais) du message est ignoré, sauf pour 
-générer l'<code>Objet</code> de la réponse.</P>
+<p>Pour l'utiliser il faut envoyer un message à
+<a href="mailto:request@bugs.debian.org"><code>request@bugs.debian.org</code></a>.
+L'<code>Objet</code> (Subject en anglais) du message est ignoré, sauf pour
+générer l'<code>Objet</code> de la réponse.</p>
 
-<P>Le corps du message que vous envoyez doit être une série de
-commandes, une par ligne.  Vous recevrez une réponse qui ressemblera à
+<p>Le corps du message que vous envoyez doit être une série de
+commandes, une par ligne. Vous recevrez une réponse qui ressemblera à
 une transcription de votre message ayant été interprété, avec une
 réponse pour chaque commande. Aucune notification n'est envoyée à
 personne pour les commandes décrites ici et le message n'est
-enregistré à aucun endroit qui soit accessible publiquement.</P>
+enregistré à aucun endroit qui soit accessible publiquement.</p>
 
-<P>Tout texte d'une ligne commençant par un caractère dièse <code>#</code> est 
-ignorée&nbsp;; le serveur arrête de traiter un message lorsqu'il trouve une ligne 
-avec un <a href="#stopprocessing">code de terminaison de contrôle</a> (<code>quit</code>, <code>thank you</code> ou 
-deux traits d'union sont des exemples habituels). Il arrêtera 
-aussi s'il rencontre trop de commandes inconnues ou mal formatées. 
-Si aucune commande n'est traitée avec succès il enverra le texte d'aide 
-du serveur.</P>
+<p>Tout texte d'une ligne commençant par un caractère dièse <code>#</code> est
+ignorée ; le serveur arrête de traiter un message lorsqu'il trouve une ligne
+avec un <a href="#stopprocessing">code de terminaison de contrôle</a>
+(<code>quit</code>, <code>thank you</code> ou deux traits d'union
+sont des exemples habituels). Il arrêtera
+aussi s'il rencontre trop de commandes inconnues ou mal formatées.
+Si aucune commande n'est traitée avec succès il enverra le texte d'aide
+du serveur.</p>
 
 <h1>Commandes disponibles</h1>
 
 <dl>
-<dt><code>send</code> <var>NuméroDeBogue</var>
-<dt><code>send-detail</code> <var>NuméroDeBogue</var>
+<dt><code>send</code> <var>NuméroDeBogue</var></dt>
+<dt><code>send-detail</code> <var>NuméroDeBogue</var></dt>
 <dd>
-
 Demande la transcription concernant le rapport de bogue spécifié.
-<code>send-detail</code> envoie tous les messages «&nbsp;ennuyeux&nbsp;»
+<code>send-detail</code> envoie tous les messages « ennuyeux »
 de la transcription, comme les diverses autoconfirmations.
+</dd>
 
-<dt><code>index</code> [<code>full</code>]
-<dt><code>index-summary by-package</code>
-<dt><code>index-summary by-number</code>
+<dt><code>index</code> [<code>full</code>]</dt>
+<dt><code>index-summary by-package</code></dt>
+<dt><code>index-summary by-number</code></dt>
 <dd>
-
-Demande l'index complet (avec tous les détails, et incluant les rapports 
-traités (« Done ») et transmis (« forwarded »), ou le sommaire trié par 
+Demande l'index complet (avec tous les détails, et incluant les rapports
+traités (« Done ») et transmis (« forwarded »), ou le sommaire trié par
 paquet ou par numéro, respectivement.
+</dd>
 
-<dt><code>index-maint</code>
+<dt><code>index-maint</code></dt>
 <dd>
-
-Demande la page d'index donnant la liste des responsables ayant des bogues 
+Demande la page d'index donnant la liste des responsables ayant des bogues
 (ouverts et récemment fermés) dans le système de suivi des bogues.
+</dd>
 
-<dt><code>index maint</code> <var>Responsable</var>
+<dt><code>index maint</code> <var>Responsable</var></dt>
 <dd>
-
 Demande les pages d'index des bogues du système pour le responsable
 <var>Responsable</var>. Le terme recherché est une copie exacte du paramètre
-spécifié.  L'index des bogues sera envoyé dans un autre message.
+spécifié. L'index des bogues sera envoyé dans un autre message.
+</dd>
 
-<dt><code>index-packages</code>
+<dt><code>index-packages</code></dt>
 <dd>
-
-Demande la page d'index donnant la liste des paquets ayant des bogues 
+Demande la page d'index donnant la liste des paquets ayant des bogues
 (ouverts et récemment fermés) dans le système de suivi des bogues.
+</dd>
 
-<dt><code>index packages</code> <var>Paquet</var>
+<dt><code>index packages</code> <var>Paquet</var></dt>
 <dd>
-
 Demande les pages d'index des bogues du système pour le paquet
 <var>Paquet</var>. Le terme recherché doit correspondre exactement
-au nom du paquet. L'index des bogues sera envoyé dans un autre message.
+au nom du paquet. L'index des bogues sera envoyé dans un autre
+message.
+</dd>
 
-<dt><code>send-unmatched</code> [<code>this</code>|<code>0</code>]
-<dt><code>send-unmatched</code> <code>last</code>|<code>-1</code>
-<dt><code>send-unmatched</code> <code>old</code>|<code>-2</code>
+<dt><code>send-unmatched</code> [<code>this</code>|<code>0</code>]</dt>
+<dt><code>send-unmatched</code> <code>last</code>|<code>-1</code></dt>
+<dt><code>send-unmatched</code> <code>old</code>|<code>-2</code></dt>
 <dd>
-
-Demande les enregistrements des messages non liés à un rapport de bogue 
-particulier, pour cette semaine, la semaine dernière et la semaine d'avant. 
+Demande les enregistrements des messages non liés à un rapport de bogue
+particulier, pour cette semaine, la semaine dernière et la semaine d'avant.
 (Chaque semaine se termine un mercredi.)
+</dd>
 
-<dt><code>getinfo</code> <var>NomDeFichier</var>
+<dt><code>getinfo</code> <var>NomDeFichier</var></dt>
 <dd>
 
-Demande un fichier contenant les informations à propos d'un ou plusieurs 
-paquets et/ou responsables - les fichiers disponibles sont :
+Demande un fichier contenant les informations à propos d'un ou plusieurs
+paquets et/ou responsables - les fichiers disponibles sont :
+
 <dl>
-<dt><code>maintainers</code>
+<dt><code>maintainers</code></dt>
 <dd>
-Liste unifiée des responsables de paquets, telle qu'elle est utilisée par 
+Liste unifiée des responsables de paquets, telle qu'elle est utilisée par
 le système de suivi des bogues.
-Elle est déduite des informations dans les fichiers <code>Packages</code>, 
-les fichiers « override » et les fichiers de pseudo-paquets.
+Elle est déduite des informations dans les fichiers <code>Packages</code>,
+les fichiers « override » et les fichiers de pseudo-paquets.
+</dd>
 
-
-<dt><code>override.</code><var>Distribution</var>
-<dt><code>override.</code><var>Distribution</var><code>.non-free</code>
-<dt><code>override.</code><var>Distribution</var><code>.contrib</code>
-<dt><code>override.experimental</code>
+<dt><code>override.</code><var>Distribution</var></dt>
+<dt><code>override.</code><var>Distribution</var><code>.non-free</code></dt>
+<dt><code>override.</code><var>Distribution</var><code>.contrib</code></dt>
+<dt><code>override.experimental</code></dt>
 <dd>
-Informations concernant les priorités, les sections des paquets et 
-les données principales pour les responsables. Ces informations sont utilisées 
-par le processus qui génère les fichiers <code>Packages</code> dans l'archive 
-FTP. Ces informations sont disponibles pour chacun des principaux arbres 
+Informations concernant les priorités, les sections des paquets et
+les données principales pour les responsables. Ces informations sont utilisées
+par le processus qui génère les fichiers <code>Packages</code> dans l'archive
+FTP. Ces informations sont disponibles pour chacun des principaux arbres
 disponibles de la distribution à partir de leur nom de code.
+</dd>
 
 <dt><code>pseudo-packages.description</code>
 <dt><code>pseudo-packages.maintainers</code>
 <dd>
 La liste des descriptions et des responsables respectivement pour les pseudo
 paquets.
-</dl>
+</dd>
 
-<dt><code>refcard</code>
-<dd>
-Demande que la carte de référence des serveurs de messages soit envoyée 
-uniquement en ASCII.
+</dl> <!-- getinfo -->
+</dd>
 
-<dt><code>help</code>
+<dt><code>refcard</code></dt>
 <dd>
-Demande que ce document d'aide soit envoyé par courrier électronique 
+Demande que la carte de référence des serveurs de messages soit envoyée
 uniquement en ASCII.
+</dd>
+
+<dt><code>help</code></dt>
+<dd>
+Demande que ce document d'aide soit envoyé par courrier électronique
+uniquement en ASCII.
+</dd>
 
 <a name="stopprocessing"></a>
 <dt><code>quit</code></dt>
@@ -141,52 +150,52 @@ uniquement en ASCII.
 
 <dd>
 
-Arrête le traitement à l'endroit courant dans le message. Après cette 
-commande vous pouvez inclure n'importe quel texte que vous souhaitez, et 
-il sera ignoré. Vous pouvez utiliser cela pour inclure de plus longs 
-commentaires que ce qui est approprié avec <code>#</code>, par 
-exemple pour le plus grand bénéfice des lecteurs humains de votre message 
+Arrête le traitement à l'endroit courant dans le message. Après cette
+commande vous pouvez inclure n'importe quel texte que vous souhaitez, et
+il sera ignoré. Vous pouvez utiliser cela pour inclure de plus longs
+commentaires que ce qui est approprié avec <code>#</code>, par
+exemple pour le plus grand bénéfice des lecteurs humains de votre message
 (qui le lisent depuis les enregistrements du système de suivi ou à cause
-d'un <code>Copies-A</code> (« CC » en anglais) ou d'un 
-<code>Copies-Cachées-A</code> (« BCC » en anglais).
+d'un <code>Copies-A</code> (« CC » en anglais) ou d'un
+<code>Copies-Cachées-A</code> (« BCC » en anglais).
 
 <dt><code>#</code>...
 <dd>
 
 Commentaire d'une ligne. Le <code>#</code> doit être au début de la ligne.
 
-<dt><code>debug</code> <var>Niveau</var>
+<dt><code>debug</code> <var>Niveau</var></dt>
 <dd>
-
-Configure le niveau de débogage à <var>Niveau</var>, qui doit être un entier 
-positif. 0 signifie pas de débogage ; 1 est habituellement suffisant. Le 
-résultat du débogage apparaît dans la transcription. Il est peu probable que 
+Configure le niveau de débogage à <var>Niveau</var>, qui doit être un entier
+positif. 0 signifie pas de débogage ; 1 est habituellement suffisant. Le
+résultat du débogage apparaît dans la transcription. Il est peu probable que
 cela soit utile aux utilisateurs normaux du système de suivi des bogues.
+</dd>
 
 </dl>
 
-<P>Il y a une <A href="server-refcard">carte de référence</A> du serveur de 
-message, disponible sur la Toile, dans 
-<code>bug-mailserver-refcard.txt</code> ou par courrier électronique en 
-utilisant la commande <code>refcard</code> (voyez plus haut).</P>
+<p>Il y a une <a href="server-refcard">carte de référence</a> du serveur de
+message, disponible sur la Toile, dans
+<code>bug-mailserver-refcard.txt</code> ou par courrier électronique en
+utilisant la commande <code>refcard</code> (voyez plus haut).</p>
 
-<P>Si vous souhaitez manipuler les rapports de bogue vous devriez utiliser 
-l'adresse <code>control@bugs.debian.org</code>, qui comprend un 
-<A href="server-control">surensemble des commandes listées plus 
-haut</A>. Cet ensemble de commandes est décrit dans un autre document, 
-disponible sur la Toile, dans le fichier 
-<code>bug-maint-mailcontrol.txt</code>, 
-ou en envoyant la commande <code>help</code> à 
-<code>control@bugs</code>.</P>
+<p>Si vous souhaitez manipuler les rapports de bogue vous devriez utiliser
+l'adresse <code>control@bugs.debian.org</code>, qui comprend un
+<a href="server-control">surensemble des commandes listées plus
+haut</a>. Cet ensemble de commandes est décrit dans un autre document,
+disponible sur la Toile, dans le fichier
+<code>bug-maint-mailcontrol.txt</code>,
+ou en envoyant la commande <code>help</code> à
+<code>control@bugs</code>.</p>
 
-<P>Au cas où vous lisiez ceci dans un fichier en texte seul ou dans un 
-message : 
-une version HTML est disponible à partir de la page principale du système de 
-suivi des bogues <code>http://www.debian.org/Bugs/</code>.</P>
+<p>Au cas où vous lisiez ceci dans un fichier en texte seul ou dans un
+message :
+une version HTML est disponible à partir de la page principale du système de
+suivi des bogues <code>http://www.debian.org/Bugs/</code>.</p>
 
-<hr>
+<hr />
 
 #use "otherpages.inc"
- 
+
 #use "$(ENGLISHDIR)/Bugs/footer.inc"
 
