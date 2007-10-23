@@ -17,8 +17,6 @@ volatile-mirrors.inc: $(ENGLISHSRCDIR)/mirror/Mirrors.masterlist $(ENGLISHSRCDIR
 #	wget -q -O Mirrors.masterlist http://volatile.debian.org/debian-volatile/project/Mirrors.masterlist
 	$(ENGLISHSRCDIR)/mirror/mirror_list.pl -t volatile-html > volatile-mirrors.inc
 
-submit.$(LANGUAGE).html: submit.wml $(TEMPLDIR)/countries_all.wml
-
 ifeq "$(LANGUAGE)" "en"
 
 mirrorstuff := etch-volatile.asc id_mirrorpush.pub mirror-volatile.sh ziyi-sarge.asc
