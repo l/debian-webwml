@@ -947,10 +947,14 @@ sub volatile_mirrors {
 	}
 	foreach my $country (sort keys %countries) {
 		my $hasmirrors = 0;
+		my %has_volatile;
 		foreach my $id (@{ $countries{$country} }) {
-		  $hasmirrors++ if (defined $mirror[$id]{method}{'volatile-ftp'} || 
-				    defined $mirror[$id]{method}{'volatile-http'} || 
-				    defined $mirror[$id]{method}{'volatile-rsync'});
+		  if (defined $mirror[$id]{method}{'volatile-ftp'} || 
+		      defined $mirror[$id]{method}{'volatile-http'} || 
+		      defined $mirror[$id]{method}{'volatile-rsync'}) {
+		        $hasmirrors++;
+		        $has_volatile{$id} = 1;
+		  }
 		}
 		if ($hasmirrors) {
 		  print "\n";
@@ -965,6 +969,7 @@ sub volatile_mirrors {
 			print "\n";
 		}
 		foreach my $id (@{ $countries_sorted{$country} }) {
+			next unless $has_volatile{$id};
 			if ($html) {
 				print "<tr><th>$mirror[$id]{site}</th>";
 			} else {
