@@ -143,11 +143,13 @@ foreach $_ (split (/\n/, $files)) {
 }
 $files = join ("\n", @f);
 
-$adv =~ /.*dsa[- ](\d+)-(\d+)\.(.*)/;
-$wml = "$curyear/dsa-$1.wml";
-$data = "$curyear/dsa-$1.data";
-$pagetitle = "DSA-$1-$2 $3";
-
+if ( $adv =~ /.*dsa[- ](\d+)-(\d+)\.(.*)/ ) {
+    $wml = "$curyear/dsa-$1.wml";
+    $data = "$curyear/dsa-$1.data";
+    $pagetitle = "DSA-$1-$2 $3";
+} else {
+    die ("Could not parse advisory filename '$adv'. Must be: dsa-<nnnn>-<rev>.<package>");
+}
 $data = $wml = "-" if ($debug);
 
 die "directory $curyear does not exist!\n" if (!(-d $curyear));
