@@ -1,6 +1,6 @@
 #use wml::debian::template title="Registrér oplysninger om spejl"
-#use wml::debian::translation-check translation="1.67"
-#use wml::debian::countries_all
+#use wml::debian::translation-check translation="1.68"
+#include "$(ENGLISHDIR)/mirror/submit.inc"
 
 <p>Hvis du ønsker at indsende oplysninger om et Debian-filspejl, kan du gøre det
 ved hjælp af formularen herunder.  De fleste af de indsendte oplysninger vil 
@@ -38,12 +38,8 @@ af kommaer (,).</p>
 
 <h2>Spejltype og hvordan de tilgås</h2>
 
-<p>Angivet stierne til dit Debian-spejl i felterne herunder.  Lad felter som 
+<p>Angiv stierne til dit Debian-spejl i felterne herunder.  Lad felter som 
 ikke er relevante være tomme.</p>
-
-<define-tag tablerow>
-	<tr><td>%0: </td><td><input type="text" name="%1" size="%2"></td></tr>
-</define-tag>
 
 <table>
 <tablerow "Pakkearkiv, via HTTP"               archive-http   30>
@@ -75,21 +71,15 @@ nej
 <h2>Oplysninger om spejlet</h2>
 
 <table>
-<tablerow "Spejlet opdateres fra"              mirrors_from  30>
+<tr-upstream-give "Hovedspejlet opdateres fra"			archive-upstream   30>
+<tr-upstream-take "Volatile-spejlet opdateres fra"		volatile-upstream  30>
+<tr-upstream-take "Security-spejlet opdateres fra"		security-upstream  30>
+<tr-upstream-take "Cd-/dvd-aftryksspejlet opdateres fra"	cdimage-upstream   30>
 <tr>
 <td>Spejlede arkitekturer:
 <td>
-<label><input type=checkbox name=architectures value="ALL">&nbsp;<em>dem alle (dvs. intet fravalg af arkitekturer)</em></label><br>
-#include "$(ENGLISHDIR)/releases/$(TESTING)/release.data"
-<:
-my $na = scalar keys %arches; $na = int($na / 3 + .5);
-foreach my $a (sort keys %arches) {
-    $i++;
-    my $aname = $arches{$a}; $aname =~ s, ,\&nbsp\;,g;
-    print "<br>\n" if ($i % $na == 0);
-    print "<label><input type=checkbox name=architectures value=".$a.">&nbsp;".$aname."&nbsp;(".$a.")</label> &nbsp;\n";
-}
-:>
+<label><input type="checkbox" name="arkitekturer" id="allarch" value="ALL" onclick="allarches()">&nbsp;<em>dem alle (dvs. ingen per-arkitektur udelukkelse foretages)</em></label><br>
+<archlist>
 </td></tr>
 </table>
 
@@ -102,7 +92,7 @@ Den offentlige e-mail-adresse tilhørende filspejlsvedligeholderen vil være
 tilgængelig for alle brugere.</small>
 </td></tr>
 <tr><td>Spejlets land:  <td><select name="country">
-<: country_list() :>
+<countrylist>
 </select>
 
 <tablerow "Privat e-mail-adresse tilhørende den ansvarlige (frivillig)"   maint_private_email   30>
