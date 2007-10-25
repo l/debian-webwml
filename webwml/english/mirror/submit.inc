@@ -59,7 +59,7 @@ foreach my $a (sort keys %arches) {
   $i++;
   my $aname = $arches{$a}; $aname =~ s, ,\&nbsp\;,g;
   print "<br>\n" if ($i % $na == 0);
-  print "<label id=arch_".$a."><input type=checkbox name=architectures value=".$a.">&nbsp;".$aname."&nbsp;(".$a.")</label> &nbsp;\n";
+  print "<label id=arch_".$a."><input type=checkbox id=cbarch_".$a." name=architectures value=".$a.">&nbsp;".$aname."&nbsp;(".$a.")</label> &nbsp;\n";
 }
 :>
 </div>
@@ -75,6 +75,17 @@ function allarches() {
   } else {
     al.style.color = "#000000";
     al.style.backgroundColor = "#ffffff";
+  }
+  var arches = new Object();
+<: 
+  foreach my $a (sort keys %arches) {
+    print "  arches[\'$a\'] = \'cbarch_$a\';\n";
+  }
+:>
+  for ( a in arches ) {
+    ele = document.getElementById(arches[a]);
+    if (ele.checked == false)
+      ele.checked = true;
   }
 }
 </script>
