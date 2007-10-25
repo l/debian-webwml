@@ -54,12 +54,17 @@ function giveau(element) {
 <define-tag archlist>
 <div id="archlist">
 <:
-my $na = scalar keys %arches; $na = int($na / 3 + .5);
+my $na = scalar keys %arches; $na = int($na / 4 + .5);
+my $i = 0;
 foreach my $a (sort keys %arches) {
-  $i++;
   my $aname = $arches{$a}; $aname =~ s, ,\&nbsp\;,g;
-  print "<br>\n" if ($i % $na == 0);
-  print "<label id=arch_".$a." style=\"white-space: pre\"><input type=checkbox id=cbarch_".$a." name=architectures value=".$a.">&nbsp;".$aname."&nbsp;[".$a."]</label> &nbsp;\n";
+  print "<label id=arch_".$a." style=\"white-space: pre\"><input type=checkbox id=cbarch_".$a." name=architectures value=".$a.">&nbsp;".$aname."&nbsp;[".$a."]</label>";
+  $i++;
+  if ($i != 0 && $i % $na == 0) {
+    print "<br>\n";
+  } else {
+    print " &nbsp;\n";
+  }
 }
 :>
 </div>
