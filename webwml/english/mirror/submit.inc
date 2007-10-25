@@ -59,7 +59,7 @@ foreach my $a (sort keys %arches) {
   $i++;
   my $aname = $arches{$a}; $aname =~ s, ,\&nbsp\;,g;
   print "<br>\n" if ($i % $na == 0);
-  print "<label id=arch_".$a."><input type=checkbox id=cbarch_".$a." name=architectures value=".$a.">&nbsp;".$aname."&nbsp;(".$a.")</label> &nbsp;\n";
+  print "<label id=arch_".$a." style=\"white-space: pre\"><input type=checkbox id=cbarch_".$a." name=architectures value=".$a.">&nbsp;".$aname."&nbsp;(".$a.")</label> &nbsp;\n";
 }
 :>
 </div>
