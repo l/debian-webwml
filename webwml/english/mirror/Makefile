@@ -25,7 +25,7 @@ sponsors.$(LANGUAGE).html: sponsors.wml \
   $(TEMPLDIR)/template.wml $(ENGLISHDIR)/mirror/sponsors.list \
   $(TEMPLDIR)/countries.wml $(GETTEXTDEP)
 ftpmirror.$(LANGUAGE).html: ftpmirror.wml $(TEMPLDIR)/template.wml \
-  $(TEMPLDIR)/toc.wml $(GETTEXTDEP)
+  $(TEMPLDIR)/toc.wml $(ENGLISHDIR)/releases/sid/archive.data $(GETTEXTDEP)
 official.$(LANGUAGE).html: official.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/mirror/Mirrors.masterlist \
   $(ENGLISHDIR)/mirror/official.data $(TEMPLDIR)/countries.wml \
