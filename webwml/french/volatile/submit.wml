@@ -1,32 +1,17 @@
 #use wml::debian::template title="Soumission d'informations de miroir volatile"
-#use wml::debian::countries_all
-#use wml::debian::translation-check translation="1.5" maintainer="Frédéric Bothamy"
+#use wml::debian::translation-check translation="1.6" maintainer="Frédéric Bothamy"
 
 <p>Si vous désirez soumettre des informations à propos d'un miroir de
-<em>debian volatile</em> (FTP archive, web), vous pouvez le faire en
-utilisant le formulaire ci-dessous.</p>
+<em>debian volatile</em>, veuillez suivre les règles et directives
+suivantes.</p>
 
-<p>Il y a des <a href="#examples">exemples</a> au bas de la page au cas
-où vous ne seriez pas certain de la façon de procéder.</p>
+<h2>Exigences</h2>
 
-<p>Si vous voulez soumettre des changements à propos de votre entrée
-déjà existante, créez simplement une soumission nouvelle (complète) et
-ajoutez un commentaire indiquant qu'il s'agit d'une mise à jour.</p>
-
-<p>Toutes les informations fournies ne seront pas affichées dans la
-liste des miroirs, comme l'adresse du responsable du miroir. L'adresse
-électronique sera sauvegardée quelque part sur nos sites pour que les
-éditeurs de la liste des miroirs puissent vous informer des nouveautés et
-des rapports de bogue.</p>
-
-<p>Veuillez noter qu'un miroir officiel doit utiliser rsync comme
-méthode pour récupérer les paquets actuels. Nous recommandons fortement
-d'utiliser le script <a
-href="$(HOME)/volatile/mirror-volatile.sh">\
-mirror-volatile.sh</a>.</p>
-
-<p>Pour être listé, vous devez respecter les critères suivants&nbsp;:</p>
+<p>Pour être listé, vous devez respecter les critères de base
+suivants&nbsp;:</p>
 <ul>
+  <li>vous devez utiliser rsync comme méthode pour récupérer les paquets
+  actuels&nbsp;;</li>
   <li>vous devez fournir un miroir de l'archive complète
   <em>debian-volatile</em>&nbsp;;</li>
   <li>vous devez rafraîchir le miroir de <em>debian-volatile</em> au
@@ -34,26 +19,27 @@ mirror-volatile.sh</a>.</p>
   <li>vous devez placer la sortie de «&nbsp;date -u&nbsp;» dans
   /project/trace/$YOURHOSTNAME</li>
   <li>vous devez avoir une adresse électronique à laquelle on peut vous
-  écrire. <strong>Les entrées seront supprimées si nous ne pouvons pas vous contacter.</strong></li>
+  écrire. <strong>Les entrées seront supprimées si nous ne pouvons pas
+  vous contacter.</strong></li>
 </ul>
-<p>Nous différencions entre les miroirs «&nbsp;push&nbsp;» et les miroirs normaux.</p>
 
-<h2>Qu'est-ce qu'un miroir <q>Push</q>&nbsp;?</h2>
-<p>En bref, c'est un miroir normal avec la seule différence que
-volatile.debian.org vous indique quand quelque chose a changé dans
-l'archive. Il n'est donc pas nécessaire de tenter une synchronisation
-périodique, vous êtes notifié des changements d'archive. Une page
-intéressante décrivant cela et certaines parties de la configuration est
-<a href="http://www.debian.org/mirror/push_mirroring">disponible</a>
-sur les serveurs debian.org. Veuillez la lire si vous n'êtes pas
-familier avec cela.</p>
+<p>Une fois que tout ceci est mis en place, vous pouvez <a
+href="../mirror/submit">remplir le formulaire de soumission de
+miroir</a>.</p>
+
+<h2>Mise en place de rsync</h2>
+
+<p>Nous recommandons fortement d'utiliser notre script
+<a href="$(HOME)/volatile/mirror-volatile.sh">mirror-volatile.sh</a>.</p>
 
 <p>Vous êtes libre d'utiliser le script que vous voulez, mais
 assurez-vous d'en utiliser un sécurisé. Nous <em>n'acceptons pas</em> de
 miroirs utilisant debmirror ou des outils similaires pour le miroitage.
 Ces outils sont acceptables pour un miroir privé, mais ne sont pas
 utilisables pour des miroirs complets car ils excluent beaucoup de
-fichiers intéressants. Basiquement, cela veut dire cela&nbsp;: garder un
+fichiers intéressants.<p>
+
+<p>Une installation bien configurée de rsync conservera un
 miroir complet et fonctionnel tout le temps. Les options suivantes de
 rsync (en plus de celles que vous avez normalement) devraient faire
 l'affaire&nbsp;:</p>
@@ -97,7 +83,19 @@ télécharger des fichiers. Vous êtes libre d'utiliser toute autre option
 que vous voulez avoir, mais nous vous suggérons fortement d'utiliser au
 moins -lH.</p>
 
-<p>Vous devez maintenant ajouter <a
+<h2>Miroir <q>Push</q></h2>
+
+<p>Un miroir <q>Push</q> est un miroir normal avec la seule différence
+que volatile.debian.org vous indique quand quelque chose a changé dans
+l'archive. Il n'est donc pas nécessaire de tenter une synchronisation
+périodique, vous êtes notifié des changements d'archive. Une page
+intéressante décrivant cela et certaines parties de la configuration est
+<a href="http://www.debian.org/mirror/push_mirroring">disponible</a>
+sur les serveurs debian.org. Veuillez la lire si vous n'êtes pas
+familier avec cela.</p>
+
+<p>Pour configurer votre site comme miroir <q>Push</q> de
+volatile.debian.org, vous devez ajouter <a
 href="$(HOME)/volatile/id_mirrorpush.pub">cette clé SSH</a> au
 fichier .ssh/authorized_keys de l'utilisateur mirror-user. Si vous
 étudiez la clé, vous verrez qu'elle est limitée à une seule commande.
@@ -110,9 +108,15 @@ simultanées. <strong>Vous devez remplacer cela par le script que
 vous utilisez, mais <em>ne supprimez pas</em> le &amp; à la
 fin.</strong> </p>
 
-<h2>Considérations de trafic et d'espace disque</h2>
+<p>Dès que vous avez fini de mettre en place votre serveur, il est prêt à être
+ajouté à la liste des serveurs miroirs <q>Push</q>. Pour cela,
+assurez-vous d'avoir envoyé le <a href="../mirror/submit">formulaire
+standard de soumission de miroir</a> et un courriel (en anglais) à
+<email mirrors@debian.org> demandant d'être ajouté à la configuration
+<q>Push</q>.</p>
 
-<h3>Trafic</h3>
+<h2>Considérations de trafic</h2>
+
 <p>
 Vous voulez peut-être savoir quel traffic vous recevrez &mdash; ou de
 quel espace disque vous aurez besoin. L'utilisation de bande passante
@@ -122,13 +126,15 @@ sur volatile.debian.org. Certains miroirs peuvent avoir plus de trafic,
 d'autres moins.
 </p>
 
-<h3>Espace disque</h3>
+<h2>Considérations d'espace disque</h2>
 
 <p>
-Actuellement, notre archive occupe 200&nbsp;Mo d'espace disque. Comme
-nous ajoutons des paquets de temps en temps, attendez-vous à ce que
-l'archive grossisse.
-</p>
+Veuillez consulter la <a href="../mirror/size">page de taille des
+miroirs</a> pour plus d'informations. Actuellement, l'archive
+debian-volatile est relativement petite comparée à certains autres
+archives Debian de miroir, mais comme nous ajoutons des paquets de temps
+en temps, attendez-vous à ce que l'archive grossisse.
+<p>
 
 <h2>Option de configuration supplémentaires recommandées</h2>
 
@@ -152,146 +158,4 @@ conservez le miroir&nbsp;:</p>
 symboliques suivants fonctionneront. Les noms de fichier dans les
 indices de répertoire ne seront également pas tronqués.</p>
 
-
-<h2>Recevoir la poussée</h2> 
-
-<p>Dès que vous avez fini de le configurer, vous êtes prêt à être ajouté
-à la liste des serveurs <q>push</q>. Pour cela, veuillez utiliser
-le formulaire de la prochaine section.
-</p>
-
-<h2>Informations de base</h2>
-
-<p>Veuillez inclure le nom sous lequel vous désirez que votre miroir
-soit listé dans le champ <em>Site</em>. Si le serveur a d'autres noms,
-listez-les dans le champs <em>Alias</em>, séparés par des virgules
-(<q>,</q>). Il s'agit probablement de l'inverse des entrées DNS.</p>
-
-<form method=post action="http://cgi.ftbfs.de/submit_mirror.cgi">
-<p>
-Site: <input type="text" name="site" size="30"><br />
-Alias: <input type="text" name="aliases" size="60">
-</p>
-
-<h2>Types de miroir et méthodes pour les accéder</h2>
-
-<p>Entrez les chemins vers le miroir volatile de votre site dans les
-champs ci-dessous. Laissez en blanc les champs non pertinents.</p>
-
-<define-tag tablerow>
-	<tr><td>%0: </td><td><input type="text" name="%1" size="%2"></td></tr>
-</define-tag>
-
-<table>
-<tablerow "Archive des paquets, par HTTP"   archive-http   30>
-<tablerow "Archive des paquets, par FTP"    archive-ftp    30>
-<tablerow "Archive des paquets, par rsync"  archive-rsync  30>
-</table>
-
-<h2>Informationa à propos du site miroir</h2>
-
-<p>Veuillez remplir tous les champs suivants (nous ne dévoilerons à
-personne les noms et courriels). Le pays et l'origine du miroir sont
-importants car nous les utilisons pour organiser les entrées.</p>
-
-<table>
-<tablerow "Le miroir est mis à jour depuis"    mirrors_from  30>
-<tablerow "Nom du responsable du site"         maint_name    30>
-<tablerow "Courriel du responsable du site"    maint_email   30>
-<tablerow "Indiquer 'volatile' ici"            vol_antispam  30>
-<tr><td>Pays du site&nbsp;:  <td><select name="country">
-<: country_list() :>
-</select>
-<tablerow "Emplacement du site (optionnel)"    location      30>
-<tablerow "Nom du sponsor du site (optionnel)" sponsor_name  30>
-<tablerow "URL du sponsor du site (optionnel)" sponsor_url   30>
-</table>
-
-<table><tr>
-<td valign="top">Commentaire&nbsp;:</td>
-<td><textarea name="comment" cols=40 rows=7></textarea></td>
-</tr></table>
-
-<p>Note&nbsp;: s'il y a plus d'un sponsor, ajoutez les autres dans le
-commentaire. Vous pouvez également noter si un miroir est partiel, la
-fréquence à laquelle il est mis à jour et la vitesse du site (sa bande
-passante maximale). Vous pouvez également lister les méthodes d'accès
-alternatives (NFS, IPv6, etc.) ici.
-<br />
-
-<input type="submit" value="Submit"> <input type="reset" value="Clear form">
-</p>
-</form>
-
-<p>Votre site apparaîtra sur la liste d'ici une semaine. Nous pouvons
-vous envoyer un courriel en cas de problème avec l'entrée soumise.</p>
-
-
-<h2><a name="examples">Exemples</a></h2>
-
-<p>La soumission suivante serait pour un serveur appelé
-debian.example.com, qui peut également être joint en utilisant
-e1.example.com. Ces noms sont naturellement fictifs.</p>
-
-<p class="centerblock">
-Site: <code>debian.example.com</code><br />
-Alias: <code>e1.example.com</code>
-</p>
-
-<p>Le miroir de l'archive volatile est dans le répertoire
-/debian-volatile/ du serveur web&nbsp;:</p>
-
-<p class="centerblock">
-Archive des paquets, par HTTP: <code>/debian-volatile/</code>
-</p>
-
-<p>Ceci est pour ftp://debian.example.com/debian-volatile/&nbsp;:</p>
-
-<p class="centerblock">
-Archive des paquets, par FTP: <code>/debian-volatile/</code>
-</p>
-
-<p>Voici le répertoire utilisé pour l'accès rsync, debian.example.com::debian-volatile/&nbsp;:</p>
-
-<p class="centerblock">
-Archive des paquets, par rsync: <code>debian-volatile/</code>
-</p>
-
-<p>Ce miroir est actualisé à partir de ftp.de.debian.org, nous ajoutons donc&nbsp;:</p>
-
-<p class="centerblock">
-Le miroir est mis à jour depuis: <code>ftp.de.debian.org</code>
-</p>
-
-<p>Maintenant les informations du responsable&nbsp;:</p>
-
-<p class="centerblock">
-Nom du responsable du site: <code>John Doe</code><br />
-Courriel du responsable du site: <code>address.goes@here.example.com</code>
-</p>
-
-<p>(Une fois encore, l'adresse du responsable ne sera pas affichée sur
-les listes publiques, mais sur les sites utilisés par les éditeurs de
-liste des miroirs. Veuillez donc entrer une adresse valide.)</p>
-
-<p>Les autres informations seraient&nbsp;:</p>
-
-<p class="centerblock">
-Pays: <code>United States [US]</code><br />
-Commentaire: <code>Toute note dont vous estimez qu'elle pourrait aider
-d'autres personnes</code>
-</p>
-
-<p>L'exemple suivant pourrait décrire le miroir à ftp.uk.debian.org&nbsp;:</p>
-
-<p class="centerblock">
-Site: <code>ftp.uk.debian.org</code><br />
-Alias: <code>open.hands.com</code><br />
-Archive des paquets, par HTTP: <code>/debian-volatile/</code><br />
-Archive des paquets, par FTP: <code>/debian-volatile/</code><br />
-Archive des paquets, par rsync: <code>debian-volatile/</code><br />
-Nom du responsable du site: <code>Philip Hands</code><br />
-Courriel du responsable du site: <code>abc@address.goes.here</code><br />
-Pays: <code>United Kingdom [GB]</code>
-</p>
-
+# <form method=post action="http://cgi.ftbfs.de/submit_mirror.cgi">
