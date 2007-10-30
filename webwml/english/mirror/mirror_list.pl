@@ -57,6 +57,13 @@ sub process_line {
 			$mirror[$count-1]{'archive-architecture'}=\@arches;
 		}
 	}
+	elsif ($line =~ /^([\w-]+-upstream):\s*(.+)\s*$/s) {
+		$field = lc $1;
+		# no need for this private data in the $mirror hash
+		if ($field !~ /^x-/) {
+			$mirror[$count-1]{$field} = $2;
+		}
+	}
 	elsif ($line=~ /^((Archive|NonUS|Security|WWW|CDimage|Jigdo|Old|Volatile)-(\w*)):\s*(.*)\s*$/i) {
 		my $type = lc $1;
 		$mirror[$count-1]{method}{$type} = $4;
