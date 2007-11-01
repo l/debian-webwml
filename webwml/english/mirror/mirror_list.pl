@@ -688,8 +688,8 @@ sub full_listing {
 				print ", ".join(", ", @{ $mirror[$id]{'aliases'} });
 			}
 			print "\n";
+			warn "undefined type for $mirror[$id]{site}!\n" unless defined $mirror[$id]{'type'};
 			$mirror[$id]{'type'} ||= 'leaf';
-			# die "undefined type for $mirror[$id]{site}!\n" unless defined $mirror[$id]{'type'};
 			print "Type: $mirror[$id]{'type'}\n";
 			foreach my $method ( sort keys %{ $mirror[$id]{method} } ) {
 				my $display = $method;
