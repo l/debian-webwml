@@ -11,11 +11,6 @@ include $(WMLBASE)/Make.lang
 submit.$(LANGUAGE).html: submit.wml $(ENGLISHDIR)/mirror/submit.inc \
   $(GETTEXTDEP)
 
-ifeq "$(LANGUAGE)" "en"
-$(ENGLISHDIR)/mirror/submit.inc: $(TEMPLDIR)/countries_all.wml \
-  $(TEMPLDIR)/countries.wml $(ENGLISHDIR)/releases/sid/archive.data
-endif
-
 webmirror.$(LANGUAGE).html: webmirror.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHSRCDIR)/mirror/webmirrors.data $(GETTEXTDEP)
 official_sponsors.$(LANGUAGE).html: official_sponsors.wml \
@@ -27,8 +22,6 @@ sponsors.$(LANGUAGE).html: sponsors.wml \
 ftpmirror.$(LANGUAGE).html: ftpmirror.wml $(TEMPLDIR)/template.wml \
   $(TEMPLDIR)/toc.wml $(ENGLISHDIR)/releases/sid/archive.data $(GETTEXTDEP)
 official.$(LANGUAGE).html: official.wml $(TEMPLDIR)/template.wml \
-  $(ENGLISHDIR)/mirror/Mirrors.masterlist \
-  $(ENGLISHDIR)/mirror/official.data $(TEMPLDIR)/countries.wml \
   $(GETTEXTDEP)
 
 # there only needs to be one version of the following so
@@ -72,6 +65,12 @@ $(ENGLISHDIR)/mirror/sponsors.list: \
 
 $(ENGLISHDIR)/mirror/webmirrors.data: $(TEMPLDIR)/countries.wml \
   $(ENGLISHDIR)/mirror/Mirrors.masterlist
+
+$(ENGLISHDIR)/mirror/official.data: $(TEMPLDIR)/countries.wml \
+  $(ENGLISHDIR)/mirror/Mirrors.masterlist
+
+$(ENGLISHDIR)/mirror/submit.inc: $(TEMPLDIR)/countries_all.wml \
+  $(TEMPLDIR)/countries.wml $(ENGLISHDIR)/releases/sid/archive.data
 
 endif
 
