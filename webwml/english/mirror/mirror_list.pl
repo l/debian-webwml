@@ -444,6 +444,8 @@ END
 	      if ($sponsor =~ /^(.+) (http:.*)$/) {
 	        $sponsorname = $1;
 	        $sponsorurl = $2;
+	      } else {
+	        die "can't find sponsor URL for sponsor $sponsor of $subsite";
 	      }
 	      $sponsorname =~ s/&(\s+)/&amp;$1/g;
 	      print "<a href=\"$sponsorurl\">$sponsorname</a>";
@@ -462,6 +464,8 @@ END
 	    if ($sponsor =~ /^(.+) (http:.*)$/) {
 	      $sponsorname = $1;
 	      $sponsorurl = $2;
+            } else {
+	      die "can't find sponsor URL for sponsor $sponsor of $mirror[$id]{site}";
 	    }
 	    $sponsorname =~ s/&(\s+)/&amp;$1/g;
 	    print "<a href=\"$sponsorurl\">$sponsorname</a>";
@@ -504,13 +508,11 @@ END
 	    if ($sponsor =~ /^(.+) (http:.*)$/) {
 	      $sponsorname = $1;
 	      $sponsorurl = $2;
-	      $sponsorname =~ s/&(\s+)/&amp;$1/g;
-	      print "<a href=\"$sponsorurl\">$sponsorname</a>";
+            } else {
+	      die "can't find sponsor URL for sponsor $sponsor of $mirror[$id]{site}";
 	    }
-	    else {
-	      $sponsorname = $sponsor;
-	      print $sponsor;
-	    }
+	    $sponsorname =~ s/&(\s+)/&amp;$1/g;
+	    print "<a href=\"$sponsorurl\">$sponsorname</a>";
 	    $num++;
 	    print ",\n" unless ($num >= $numsponsors);
 	  }
