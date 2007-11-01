@@ -69,6 +69,10 @@ $(ENGLISHDIR)/mirror/official_sponsors.list: \
 $(ENGLISHDIR)/mirror/sponsors.list: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
 	./mirror_list.pl -m Mirrors.masterlist -t sponsors > $@
+
+$(ENGLISHDIR)/mirror/webmirrors.data: $(TEMPLDIR)/countries.wml \
+  $(ENGLISHDIR)/mirror/Mirrors.masterlist
+
 endif
 
 .DELETE_ON_ERROR:
