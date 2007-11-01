@@ -1069,7 +1069,7 @@ sub mirror_tree_by_origin {
 	  my $snum = 0;
 	  foreach my $subsite (@{ $mirror[$id]{includes} }) {
 	    $tf = "http://" . $subsite . $mirror[$id]{method}{'archive-http'} . "project/trace/";
-	    $mf = exists $mirror[$id]{'mirrors-from'} ? $mirror[$id]{'mirrors-from'} : "ftp-master.debian.org";
+	    $mf = exists $mirror[$id]{'archive-upstream'} ? $mirror[$id]{'archive-upstream'} : "ftp-master.debian.org";
  	    my @mfs = split(',\s*', $mf);
             foreach my $mfss (@mfs) {
 	      $origins{$mfss}{$subsite} = $tf;
@@ -1077,7 +1077,7 @@ sub mirror_tree_by_origin {
 	  }
 	} else {
 	  my $mfdefault = $mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian.org$/ ? "ftp-master.debian.org" : "unknown-origin";
-	  $mf = exists $mirror[$id]{'mirrors-from'} ? $mirror[$id]{'mirrors-from'} : $mfdefault;
+	  $mf = exists $mirror[$id]{'archive-upstream'} ? $mirror[$id]{'archive-upstream'} : $mfdefault;
 	  my @mfs = split(',\s*', $mf);
           foreach my $mfss (@mfs) {
   	    $origins{$mfss}{ $mirror[$id]{site} } = $tf;
