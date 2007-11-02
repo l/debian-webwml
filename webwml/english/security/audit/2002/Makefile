@@ -5,5 +5,10 @@
 WMLBASE=../../..
 CUR_DIR=security/audit/2002
 
+dsa: ../make-advisories
+	../make-advisories ../data
+
+.PHONY: dsa
+
 
 include $(WMLBASE)/Make.lang

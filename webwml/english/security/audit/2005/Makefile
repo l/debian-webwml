@@ -3,7 +3,12 @@
 # so the problem can be fixed.
 
 WMLBASE=../../..
-CUR_DIR=security/audit/2002
+CUR_DIR=security/audit/2005
+
+dsa: ../make-advisories
+	../make-advisories ../data
+
+.PHONY: dsa
 
 
 include $(WMLBASE)/Make.lang
