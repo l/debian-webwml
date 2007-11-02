@@ -9,6 +9,7 @@ all:: dsa
 install:: all
 clean::
 	-rm ./data/[0-9]*.inc
+	-rm ./data/credits.inc
 
 dsa: $(ENGLISHDIR)/security/audit/make-advisories
 
