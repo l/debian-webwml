@@ -601,6 +601,7 @@ sub trailer {
 }
 
 
+# this is likely obsolete
 sub access_methods {
 	print <<END;
 <h1 align="center">Debian worldwide mirror sites</h1>
@@ -1352,13 +1353,18 @@ elsif ($output_type eq 'apt') {
 	print "</pre>\n";
 	trailer();
 }
-elsif ($output_type eq 'fullmethods') {
+elsif ($output_type eq 'fullmethods') { # this is likely obsolete
 	$html=1;
 	header();
 	access_methods();
 	full_listing();
 	footer_stuff($count);
 	trailer();
+}
+elsif ($output_type eq 'wml-full') {
+	$html=1;
+	full_listing();
+	footer_stuff($count);
 }
 elsif ($output_type eq 'nonus') {
 	$html = 0;
