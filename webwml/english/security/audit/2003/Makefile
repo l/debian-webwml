@@ -5,7 +5,7 @@
 WMLBASE=../../..
 CUR_DIR=security/audit/2003
 
-dsa: ../make-advisories
+dsa: ../make-advisories all
 	../make-advisories ../data
 
 .PHONY: dsa
