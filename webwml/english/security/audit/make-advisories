@@ -1,0 +1,138 @@
+#!/usr/bin/perl -w
+
+use strict;
+use warnings;
+
+#
+#  Get our data directory.
+#
+my $dir = shift;
+
+die "No directory" unless( defined( $dir ) );
+die "No such directory $dir " unless( -d $dir );
+
+my $test = 0;
+
+#
+#  Process each file \d.data
+#
+foreach my $file ( sort glob( "$dir/[0-9]*.data" ) )
+{
+    my $input  = $file;
+    my $output = $file;
+
+    if ( $output =~ /(.*)\.data$/ )
+    {
+        $output = $1 . ".inc";
+    }
+
+    createAdvisories( $input, $output );
+}
+
+
+
+sub createAdvisories
+{
+    my( $input, $output ) = ( @_ );
+
+    my %data = readData( $input );
+
+    outputAdvisories( $output, %data );
+}
+
+
+
+
+
+
+sub readData
+{
+    my( $file ) = (@_);
+
+    #
+    # Data.
+    #
+    my %data;
+    my $inSection = 0;
+    my $section   = '';
+
+    open( INPUT, "<", $file )
+      or die "Failed to open '$file' - $!";
+
+    while( my $line = <INPUT> )
+    {
+        next if !defined($line);
+
+        chomp($line);
+
+        if (( $inSection ) && ( $section ) )
+        {
+            if (!length($line ))
+	    {
+	    	$inSection = 0;
+		$section = '';
+            }
+	    else
+	    {
+		      my ($key, $val) = split( /=/, $line );
+		    $data{$section}->{$key} = $val;
+		    }
+        }
+        else
+        {
+            if ( $line =~ /^\[(.*)\]$/ )
+            {
+                $inSection = 1;
+                $section = $1;
+            }
+        }
+    }
+    close( INPUT );
+    return %data;
+}
+
+
+sub outputAdvisories
+{
+    my( $filename, %data ) = ( @_ );
+
+    open( OUT, ">", $filename )
+      or die "Failed to write to '$filename' - $!";
+
+    my $count = 0;
+    foreach my $dsa ( sort keys %data )
+    {
+	$count += 1;
+    }
+
+
+    if ( $count )
+    {
+	print OUT "<dl>\n";
+
+	foreach my $dsa ( sort keys %data )
+	{
+	    my $link    = $data{$dsa}->{'link'} || undef;
+	    my $type    = $data{$dsa}->{'type'} || undef;
+	    my $date    = $data{$dsa}->{'date'} || undef;
+	    my $credit  = $data{$dsa}->{'credit'} || undef;
+	    my $package = $data{$dsa}->{'package'} || undef;
+	    
+	    $dsa = uc($dsa);
+	    if ( $link && $date && $type && $credit )
+	    {
+		print OUT <<EOF;
+		<dt>$date <a href="$link">$dsa - $package</a></dt>
+		    <dd><p>$credit discovered that $package contained a $type vulnerability</p></dd>
+EOF
+		}
+	}
+	print OUT "</dl>\n";
+    }
+    else
+    {
+	print OUT "<p>No advisories for that year.</p>\n";
+    }
+    close( OUT );
+}
+
