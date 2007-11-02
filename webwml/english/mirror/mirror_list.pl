@@ -744,7 +744,7 @@ sub full_listing {
 	print "</pre>\n" if ($html);
 }
 
-sub nonus_mirrors {
+sub nonus_intro {
   if ($html) {
 	print "<h1 align=\"center\">Debian non-US packages</h1>\n\n";
   } else {
@@ -849,6 +849,9 @@ END
                         http://www.debian.org/mirror/
 END
 	print "</a>" if $html;
+}
+
+sub nonus_mirrors {
 
 	foreach my $country (sort keys %countries) {
 	  my $hasmirrors = 0;
@@ -1368,12 +1371,14 @@ elsif ($output_type eq 'wml-full') {
 }
 elsif ($output_type eq 'nonus') {
 	$html = 0;
+	nonus_intro();
 	nonus_mirrors();
 	footer_stuff($nonuscount);
 }
 elsif ($output_type eq 'nonushtml') {
 	header("non-US ");
 	$html = 1;
+	nonus_intro();
 	nonus_mirrors();
 	footer_stuff($nonuscount);
 	trailer();
@@ -1381,6 +1386,11 @@ elsif ($output_type eq 'nonushtml') {
 elsif ($output_type eq 'nonusshort') {
 	$html = 1;
 	nonus_short();
+}
+elsif ($output_type eq 'wml-nonus') {
+	$html = 1;
+	nonus_mirrors();
+	footer_stuff($nonuscount);
 }
 elsif ($output_type eq 'officialsponsors') {
 	$html=1;
