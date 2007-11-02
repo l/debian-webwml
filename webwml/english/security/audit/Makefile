@@ -6,6 +6,7 @@ WMLBASE=../..
 CUR_DIR=security/audit
 
 all:: dsa
+install:: all
 clean::
 	-rm ./data/[0-9]*.inc
 
