@@ -11,10 +11,9 @@ my $dir = shift;
 die "No directory" unless( defined( $dir ) );
 die "No such directory $dir " unless( -d $dir );
 
-my $test = 0;
 
 #
-#  Process each file \d.data
+#  Process each file in the given directory which is N.data
 #
 foreach my $file ( sort glob( "$dir/[0-9]*.data" ) )
 {
@@ -57,7 +56,7 @@ sub readData
     my $section   = '';
 
     open( INPUT, "<", $file )
-      or die "Failed to open '$file' - $!";
+	or die "Failed to open '$file' - $!";
 
     while( my $line = <INPUT> )
     {
@@ -74,9 +73,9 @@ sub readData
             }
 	    else
 	    {
-		      my ($key, $val) = split( /=/, $line );
-		    $data{$section}->{$key} = $val;
-		    }
+		my ($key, $val) = split( /=/, $line );
+		$data{$section}->{$key} = $val;
+	    }
         }
         else
         {
@@ -97,7 +96,7 @@ sub outputAdvisories
     my( $filename, %data ) = ( @_ );
 
     open( OUT, ">", $filename )
-      or die "Failed to write to '$filename' - $!";
+	or die "Failed to write to '$filename' - $!";
 
     my $count = 0;
     foreach my $dsa ( sort keys %data )
@@ -112,10 +111,10 @@ sub outputAdvisories
 
 	foreach my $dsa ( sort keys %data )
 	{
-	    my $link    = $data{$dsa}->{'link'} || undef;
-	    my $type    = $data{$dsa}->{'type'} || undef;
-	    my $date    = $data{$dsa}->{'date'} || undef;
-	    my $credit  = $data{$dsa}->{'credit'} || undef;
+	    my $link    = $data{$dsa}->{'link'}    || undef;
+	    my $type    = $data{$dsa}->{'type'}    || undef;
+	    my $date    = $data{$dsa}->{'date'}    || undef;
+	    my $credit  = $data{$dsa}->{'credit'}  || undef;
 	    my $package = $data{$dsa}->{'package'} || undef;
 	    
 	    $dsa = uc($dsa);
@@ -123,7 +122,7 @@ sub outputAdvisories
 	    {
 		print OUT <<EOF;
 		<dt>$date <a href="$link">$dsa - $package</a></dt>
-		    <dd><p>$credit discovered that $package contained a $type vulnerability</p></dd>
+		    <dd><p>$credit discovered that $package contained a $type vulnerability.</p></dd>
 EOF
 		}
 	}
@@ -131,7 +130,7 @@ EOF
     }
     else
     {
-	print OUT "<p>No advisories for that year.</p>\n";
+	print OUT "<p>No advisories found.</p>\n";
     }
     close( OUT );
 }
