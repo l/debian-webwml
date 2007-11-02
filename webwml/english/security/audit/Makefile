@@ -10,8 +10,10 @@ install:: all
 clean::
 	-rm ./data/[0-9]*.inc
 
-dsa: make-advisories
-	./make-advisories ./data 
+dsa: $(ENGLISHDIR)/security/audit/make-advisories
+
+$(ENGLISHDIR)/security/audit/make-advisories:
+	$(ENGLISHDIR)/security/audit/make-advisories ./data 
 
 SUBS=examples  2002 2003 2004 2005 2006 2007
 GETTEXTFILES += others.mo
