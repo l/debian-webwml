@@ -26,6 +26,8 @@ official.$(LANGUAGE).html: official.wml $(TEMPLDIR)/template.wml \
 list.$(LANGUAGE).html: list.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/mirror/list-primary.inc \
   $(ENGLISHDIR)/mirror/list-secondary.inc
+list-full.$(LANGUAGE).html: list-full.wml $(TEMPLDIR)/template.wml \
+  $(ENGLISHDIR)/mirror/list-full.inc
 
 # there only needs to be one version of the following so
 # the non-english directories shouldn't try to install them
@@ -82,6 +84,10 @@ $(ENGLISHDIR)/mirror/list-primary.inc: \
 $(ENGLISHDIR)/mirror/list-secondary.inc: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
 	./mirror_list.pl -m Mirrors.masterlist -t wml-secondary > $@
+
+$(ENGLISHDIR)/mirror/list-full.inc: \
+  $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
+	./mirror_list.pl -m Mirrors.masterlist -t wml-full > $@
 
 endif
 
