@@ -1,25 +1,53 @@
 #!/usr/bin/perl -w
+#
+#  The purpose of this script is two-fold:
+#
+#  1.  Generate a HTML file which may be included via wml, to describe
+#     each of the advisories produced in a given year.
+#
+#  2.  Generate a list of globally unique names of people who have
+#     been credited with an advisory.
+#
+#  The code is mostly trivial, and may be freely edited/copied/used/abused.
+#
+# Steve
+# --
+# skx"debian.org  - deliberate typo ;)
+#
+#
+
 
 use strict;
 use warnings;
 
 #
-#  Get our data directory.
+#  Find the location of the data directory.
 #
 my $dir = shift;
-
 die "No directory" unless( defined( $dir ) );
 die "No such directory $dir " unless( -d $dir );
 
 
 #
-#  Process each file in the given directory which is N.data
+#  This maintains a global list of everybody who has been mentioned
+# in the 'credit=' line of one of our data-files
+#
+my %credits;
+
+
+
+#
+#  Process each file in the given directory which is named in the
+# form NNNN.data
 #
 foreach my $file ( sort glob( "$dir/[0-9]*.data" ) )
 {
     my $input  = $file;
     my $output = $file;
 
+    #
+    #  Output file is NNNN.inc
+    #
     if ( $output =~ /(.*)\.data$/ )
     {
         $output = $1 . ".inc";
@@ -29,6 +57,26 @@ foreach my $file ( sort glob( "$dir/[0-9]*.data" ) )
 }
 
 
+#
+#  Now output the list of credits.
+#
+outputCredits();
+
+#
+#  All done
+#
+exit;
+
+
+
+=begin doc
+
+  Create the advisories from the given input file, and write the
+ HTML to the given output file.
+
+=end doc
+
+=cut
 
 sub createAdvisories
 {
@@ -41,8 +89,14 @@ sub createAdvisories
 
 
 
+=begin doc
 
+  Read the advisory data from the given input file, and return
+ it as a hash of hashes.
 
+=end doc
+
+=cut
 
 sub readData
 {
@@ -52,20 +106,36 @@ sub readData
     # Data.
     #
     my %data;
+
+    #
+    #  Are we in a section, denoted by '[foo]'?  And if so what it the name
+    # of that section.
+    #
     my $inSection = 0;
     my $section   = '';
 
+    #
+    #  Open the file.
+    #
     open( INPUT, "<", $file )
 	or die "Failed to open '$file' - $!";
 
     while( my $line = <INPUT> )
     {
+	# skip blank / empty lines.
         next if !defined($line);
 
         chomp($line);
 
+	#
+	#  If we're in a section already...
+	#
         if (( $inSection ) && ( $section ) )
         {
+	    #
+	    # and the line is blank then we're at the end
+	    # of a section.
+	    #
             if (!length($line ))
 	    {
 	    	$inSection = 0;
@@ -73,8 +143,23 @@ sub readData
             }
 	    else
 	    {
+		# otherwise we record the values.
 		my ($key, $val) = split( /=/, $line );
+
+		# stripping leading/trailing whitespace.
+		$key =~ s/^\s+//;
+		$key =~ s/\s+$//;
+		$val =~ s/^\s+//;
+		$val =~ s/\s+$//;
+
+		# store it away.
 		$data{$section}->{$key} = $val;
+
+                #  special case for credits.
+		if ( $key && $key eq 'credit' )
+		{
+		    $credits{$val} += 1;
+		}
 	    }
         }
         else
@@ -91,6 +176,16 @@ sub readData
 }
 
 
+
+=begin doc
+
+  Output to the given file the advisories contained in the given
+ hash of hashes.
+
+=end doc
+
+=cut
+
 sub outputAdvisories
 {
     my( $filename, %data ) = ( @_ );
@@ -98,13 +193,18 @@ sub outputAdvisories
     open( OUT, ">", $filename )
 	or die "Failed to write to '$filename' - $!";
 
+    #
+    #  Cheap hacky way of making sure we found at least one advisory.
+    #
     my $count = 0;
     foreach my $dsa ( sort keys %data )
     {
 	$count += 1;
     }
 
-
+    #
+    #  If we found one then output the details.
+    #
     if ( $count )
     {
 	print OUT "<dl>\n";
@@ -135,3 +235,29 @@ EOF
     close( OUT );
 }
 
+
+
+=begin doc
+
+  Output a list of sorted authors.
+
+=end doc
+
+=cut
+
+sub outputCredits
+{
+    open( OUT, ">", $dir . "/credits.inc" ) 
+	or die "Failed to write to credits file: $!";
+
+    print OUT "<ul>\n";
+
+    foreach my $author ( sort keys %credits )
+    {
+	print OUT "<li>$author</li>\n";
+    }
+
+    print OUT "</ul>\n";
+
+    close( OUT );
+ }
