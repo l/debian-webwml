@@ -125,11 +125,15 @@ sub aptlines {
 sub secondary_mirrors {
 	# TODO clean up the html to match the primary list and make the
 	# text version not have such long lines.
+    my $skipinfo = shift;
+    $skipinfo = 0 unless $skipinfo;
+    unless ($skipinfo) {
 	print "<h2 align=\"center\">" if $html;
 	print "\n\n                   " if (!$html);
 	print "Secondary mirrors of the Debian archive";
 	print "\n                   ---------------------------------------\n\n" if (!$html);
 	print "</h2>\n\n" if $html;
+    }
 	print "\n<pre><small>\n" if $html;
 	my $tmp = "%-$longest{site}s %-$longest{'archive-ftp'}s %-$longest{'archive-http'}s %s\n";
 	print "<strong>" if $html;
@@ -339,8 +343,11 @@ END
 }
 
 sub primary_mirrors {
-  if ($html) {
-    print <<END;
+  my $skipinfo = shift;
+  $skipinfo = 0 unless $skipinfo;
+  unless ($skipinfo) {
+    if ($html) {
+      print <<END;
 
 <h2 align="center">Primary Debian mirror sites</h2>
 
@@ -351,10 +358,9 @@ sub primary_mirrors {
   <th><b>Debian&nbsp;archive</b></th>
   <th><b>Architectures</b></th>
 </tr>
-<tr><td colspan="5"><hr></td></tr>
 END
-  } else {
-    print <<END;
+    } else {
+      print <<END;
 
 
                          Primary Debian mirror sites
@@ -362,6 +368,11 @@ END
 
  Country         Site                  Debian archive  Architectures
  ---------------------------------------------------------------------------
+END
+    }
+  } elsif ($html) {
+    print <<END;
+<tr><td colspan="5"><hr></td></tr>
 END
   }
   foreach my $country (sort keys %countries) {
@@ -1201,23 +1212,8 @@ $output_type = 'html' if (! defined $output_type);
 $mirror_source = 'Mirrors.masterlist' if (! defined $mirror_source);
 
 if (defined $help) {
-	print <<END;
-Usage: $0 [mt|--type type] [-m|--mirror mirror_list_source]
-
-`mirror_list_source\' is usually the Mirrors.masterlist file
-`type\' can be one of:
-	html			(the default)
-	text
-	apt
-	fullmethods
-	nonus
-	nonushtml
-	officialsponsors
-	sponsors
-	cdimages-httpftp
-	cdimages-rsync
-END
-	exit;
+  print_help();
+  exit;
 }
 
 open SRC, "<$mirror_source" or
@@ -1340,6 +1336,15 @@ elsif ($output_type eq 'text') {
 	secondary_mirrors();
 	footer_stuff($count);
 }
+elsif ($output_type eq 'wml-primary') {
+	$html=1;
+	primary_mirrors('skipinfo');
+}
+elsif ($output_type eq 'wml-secondary') {
+	$html=1;
+	secondary_mirrors('skipinfo');
+	footer_stuff($count);
+}
 elsif ($output_type eq 'apt') {
 	header();
 	print "<pre>\n";
@@ -1398,4 +1403,27 @@ elsif ($output_type eq 'origins') {
 }
 else {
 	die "Error: unknown output type requested, $output_type\n";
+}
+
+sub print_help {
+  print <<END;
+Usage: $0 [mt|--type type] [-m|--mirror mirror_list_source]
+
+`mirror_list_source\' is usually the Mirrors.masterlist file
+`type\' can be one of:
+	html			(the default)
+	text
+	wml-primary
+	wml-secondary
+	apt
+	fullmethods
+	nonus
+	nonushtml
+	nonusshort
+	officialsponsors
+	sponsors
+	cdimages-httpftp
+	cdimages-rsync
+	volatile-html
+END
 }
