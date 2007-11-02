@@ -5,14 +5,16 @@
 WMLBASE=../..
 CUR_DIR=security/audit
 
-dsa: make-advisories
-	@./make-advisories ./data 
-
 all:: dsa
 clean::
 	-rm ./data/[0-9]*.inc
+
+dsa: make-advisories
+	./make-advisories ./data 
 
 SUBS=examples  2002 2003 2004 2005 2006 2007
 GETTEXTFILES += others.mo
 
 include $(WMLBASE)/Make.lang
+
+.PHONY: dsa
