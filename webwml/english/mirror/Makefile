@@ -23,6 +23,9 @@ ftpmirror.$(LANGUAGE).html: ftpmirror.wml $(TEMPLDIR)/template.wml \
   $(TEMPLDIR)/toc.wml $(ENGLISHDIR)/releases/sid/archive.data $(GETTEXTDEP)
 official.$(LANGUAGE).html: official.wml $(TEMPLDIR)/template.wml \
   $(GETTEXTDEP)
+list.$(LANGUAGE).html: list.wml $(TEMPLDIR)/template.wml \
+  $(ENGLISHDIR)/mirror/list-primary.inc \
+  $(ENGLISHDIR)/mirror/list-secondary.inc
 
 # there only needs to be one version of the following so
 # the non-english directories shouldn't try to install them
@@ -71,6 +74,14 @@ $(ENGLISHDIR)/mirror/official.data: $(TEMPLDIR)/countries.wml \
 
 $(ENGLISHDIR)/mirror/submit.inc: $(TEMPLDIR)/countries_all.wml \
   $(TEMPLDIR)/countries.wml $(ENGLISHDIR)/releases/sid/archive.data
+
+$(ENGLISHDIR)/mirror/list-primary.inc: \
+  $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
+	./mirror_list.pl -m Mirrors.masterlist -t wml-primary > $@
+
+$(ENGLISHDIR)/mirror/list-secondary.inc: \
+  $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
+	./mirror_list.pl -m Mirrors.masterlist -t wml-secondary > $@
 
 endif
 
