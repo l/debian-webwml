@@ -439,7 +439,7 @@ foreach my \$pmir (sort langcmp keys \%primaries) {
   print <<EOM;
 <tr>
   <td width="25%">\$pmir</td>
-  <td width="25%" align="center"><code>\$elems[0]</code></td>
+  <td width="25%"><code>\$elems[0]</code></td>
   <td width="25%">\$elems[1]</td>
   <td width="25%">\$elems[2]</td>
 </tr>
