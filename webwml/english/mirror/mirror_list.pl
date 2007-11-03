@@ -345,6 +345,7 @@ END
 sub primary_mirrors {
   my $skipinfo = shift;
   $skipinfo = 0 unless $skipinfo;
+  my %primaries = ();
   unless ($skipinfo) {
     if ($html) {
       print <<END;
@@ -374,16 +375,24 @@ END
     print <<END;
 <tr><td colspan="5"><hr></td></tr>
 END
+    print <<END;
+<perl>
+END
   }
   foreach my $country (sort keys %countries) {
     foreach my $id (sort @{ $countries{$country} }) {
       if ($mirror[$id]{site} =~ /^(?:ftp|http)\d?(?:\.wa)?\...\.debian.org$/) {
-        (my $countryplain = $country) =~ s/^.. //;
+        my ($countryplain, $countrycode);
+        if ($country =~ /^(..) (.+)$/) {
+          $countryplain = $2;
+          $countrycode = $1;
+        }
 
 	unless (exists $mirror[$id]{method}{'archive-http'}) {
 		warn "official mirror " . $mirror[$id]{site} . " does not have archive-http?!";
 		next;
 	}
+
 	my $arches="all";
 	if (exists $mirror[$id]{'archive-architecture'}) {
 		$arches=join(" ", sort @{$mirror[$id]{'archive-architecture'}});
@@ -391,17 +400,28 @@ END
 	
 	if ($html) {
 	  $countryplain =~ s/ /&nbsp;/;
-	  print <<END;
+	  unless ($skipinfo) {
+            print <<END;
 <tr>
   <td width="25%">$countryplain</td>
   <td width="25%" align="center"><code>$mirror[$id]{site}</code></td>
   <td width="25%"><a href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{method}{'archive-http'}</a></td>
   <td width="25%">$arches</td>
-END
-
-          print <<END;
 </tr>
 END
+          } else {
+            # this creates a hash of with keys like <DEc>
+            # later this gets expanded by WML into forms like
+            # Germany or Deutschland
+            print <<EOF;
+  push \@{ \$primaries{"<${countrycode}c>"} },
+    (
+	"$mirror[$id]{site}",
+	"<a href=\\\"http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}\\\">$mirror[$id]{method}{'archive-http'}</a>",
+	"$arches",
+    );
+EOF
+          }
         } else {
           printf " %-14s  %-20s  %-14s  %s\n", $countryplain, $mirror[$id]{site}, $mirror[$id]{method}{'archive-http'}, $arches;
 # $countryplain	-   $site		$mirror[$id]{method}{'archive-ftp'}	$mirror[$id]{method}{'nonus-ftp'}
@@ -409,6 +429,24 @@ END
         }
       }
     }
+  }
+  if ($skipinfo && $html) {
+    # in our WML templates there is a langcmp comparison method,
+    # which sorts alphabetically depending on the language
+    print <<EOF;
+foreach my \$pmir (sort langcmp keys \%primaries) {
+  my \@elems = \@{\$primaries{\$pmir}};
+  print <<EOM;
+<tr>
+  <td width="25%">\$pmir</td>
+  <td width="25%" align="center"><code>\$elems[0]</code></td>
+  <td width="25%">\$elems[1]</td>
+  <td width="25%">\$elems[2]</td>
+</tr>
+EOM
+}
+</perl>
+EOF
   }
   print "</table>\n" if $html;
 }
