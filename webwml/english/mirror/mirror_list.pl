@@ -443,7 +443,7 @@ foreach my \$pmir (sort langcmp keys \%primaries) {
   <td width="25%">\$pmir</td>
   <td width="25%"><code>\$pmirsite</code></td>
   <td width="25%">\$elems[0]</td>
-  <td width="25%">\$elems[1]</td>
+  <td width="25%"><small><small>\$elems[1]</small></small></td>
 </tr>
 EOM
   }
