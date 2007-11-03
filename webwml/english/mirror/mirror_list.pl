@@ -413,10 +413,11 @@ END
             # this creates a hash of with keys like <DEc>
             # later this gets expanded by WML into forms like
             # Germany or Deutschland
+            # the next-level key is the site name, because countries
+            # can have more than one site
             print <<EOF;
-  push \@{ \$primaries{"<${countrycode}c>"} },
+  push \@{ \$primaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
     (
-	"$mirror[$id]{site}",
 	"<a href=\\\"http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}\\\">$mirror[$id]{method}{'archive-http'}</a>",
 	"$arches",
     );
@@ -435,20 +436,22 @@ EOF
     # which sorts alphabetically depending on the language
     print <<EOF;
 foreach my \$pmir (sort langcmp keys \%primaries) {
-  my \@elems = \@{\$primaries{\$pmir}};
-  print <<EOM;
+  foreach my \$pmirsite (sort keys \%{\$primaries{\$pmir}}) {
+    my \@elems = \@{\$primaries{\$pmir}{\$pmirsite}};
+    print <<EOM;
 <tr>
   <td width="25%">\$pmir</td>
-  <td width="25%"><code>\$elems[0]</code></td>
+  <td width="25%"><code>\$pmirsite</code></td>
+  <td width="25%">\$elems[0]</td>
   <td width="25%">\$elems[1]</td>
-  <td width="25%">\$elems[2]</td>
 </tr>
 EOM
+  }
 }
 </perl>
 EOF
   }
-  print "</table>\n" if $html;
+  print "</table>\n" if ($html && !$skipinfo);
 }
 
 # meant to be output into a file which is then included into a .wml file
