@@ -127,43 +127,69 @@ sub secondary_mirrors {
 	# text version not have such long lines.
     my $skipinfo = shift;
     $skipinfo = 0 unless $skipinfo;
+
+    my $tmp = "%-$longest{site}s %-$longest{'archive-ftp'}s %-$longest{'archive-http'}s %s\n";
+
     unless ($skipinfo) {
 	print "<h2 align=\"center\">" if $html;
 	print "\n\n                   " if (!$html);
 	print "Secondary mirrors of the Debian archive";
 	print "\n                   ---------------------------------------\n\n" if (!$html);
 	print "</h2>\n\n" if $html;
-    }
 	print "\n<pre><small>\n" if $html;
-	my $tmp = "%-$longest{site}s %-$longest{'archive-ftp'}s %-$longest{'archive-http'}s %s\n";
 	print "<strong>" if $html;
 	printf $tmp, "HOST NAME", "FTP", "HTTP", "ARCHITECTURES";
 	printf $tmp, "---------", "---", "----", "-------------";
 	print "</strong>" if $html;
+    } else {
+    	if ($html) {
+	    print "<perl>\n";
+    	}
+    }
 	foreach my $country (sort keys %countries) {
+		my ($countryplain, $countrycode);
+		if ($country =~ /^(..) (.+)$/) {
+			$countryplain = $2;
+			$countrycode = $1;
+		}
 		my $hasmirrors = 0;
 		foreach my $id (@{ $countries{$country} }) {
 		  $hasmirrors++ if (defined $mirror[$id]{method}{'archive-ftp'} || defined $mirror[$id]{method}{'archive-http'});
 		}
 		if ($hasmirrors) {
 		  print "\n";
-		  print $html ? "<b>$country</b>" : "$country";
+		  if ($html) {
+		    unless ($skipinfo) {
+		      print "<b>$country</b>";
+		    }
+		  } else {
+		    print "$country";
+		  }
 		  print "\n";
 		} else {
 		  next;
 		}
 		my $i = length($country);
-		print "-" while ($i--); # underline
-		print "\n";
+		unless ($skipinfo) {
+		  print "-" while ($i--); # underline
+		  print "\n";
+		}
 		foreach my $id (@{ $countries_sorted{$country} }) {
 			next unless (defined $mirror[$id]{method}{'archive-ftp'} || defined $mirror[$id]{method}{'archive-http'});
 			$tmp = "%-$longest{site}s ";
-			printf $tmp, $mirror[$id]{site};
+			printf $tmp, $mirror[$id]{site} unless ($skipinfo);
 			if (defined $mirror[$id]{method}{'archive-ftp'}) {
 				my $rest = $longest{'archive-ftp'} - length($mirror[$id]{method}{'archive-ftp'});
 				if ($html) {
+				    unless ($skipinfo) {
 					$tmp = "<a href=\"%s\">%s</a>%${rest}s";
 					printf $tmp, "ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'}", $mirror[$id]{method}{'archive-ftp'}, '';
+				    } else {
+					print <<EOF;
+  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
+	"<a href=\\\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'}\\\">$mirror[$id]{method}{'archive-ftp'}</a>";
+EOF
+				    }
 				} else {
 					$tmp = "%s%${rest}s";
 					printf $tmp, $mirror[$id]{method}{'archive-ftp'}, '';
@@ -171,13 +197,26 @@ sub secondary_mirrors {
 			} else {
 				$tmp = "%-$longest{'archive-ftp'}s";
 				printf $tmp, " ";
+				if ($skipinfo) {
+					print <<EOF;
+  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
+	"";
+EOF
+				}
 			}
 			$tmp = "%-$longest{'archive-http'}s";
 			if (defined $mirror[$id]{method}{'archive-http'}) {
 				my $rest = $longest{'archive-http'} - length($mirror[$id]{method}{'archive-http'});
 				if ($html) {
+				    unless ($skipinfo) {
 					$tmp = "<a href=\"%s\">%s</a>%${rest}s";
 					printf $tmp, "http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}",$mirror[$id]{method}{'archive-http'}, '';
+				    } else {
+					print <<EOF;
+  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
+	"<a href=\\\"http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}\\\">$mirror[$id]{method}{'archive-http'}</a>";
+EOF
+				    }
 				} else {
 					$tmp = "%s%${rest}s";
 					printf $tmp, $mirror[$id]{method}{'archive-http'}, '';
@@ -185,16 +224,27 @@ sub secondary_mirrors {
 			} else {
 				$tmp = "%-$longest{'archive-http'}s";
 				printf $tmp, " ";
+				if ($skipinfo) {
+					print <<EOF;
+  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
+	"";
+EOF
+				}
 			}
-          		if (exists $mirror[$id]{'archive-architecture'}) {
-				print join(" ", sort @{$mirror[$id]{'archive-architecture'}});
+			my $archlistsorted = join(" ", sort @{$mirror[$id]{'archive-architecture'}});
+			unless ($skipinfo) {
+				print $archlistsorted;
 			} else {
-				print "all";
+				print <<EOF;
+  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
+	"$archlistsorted";
+EOF
 			}
 			print "\n";
 			if (exists $mirror[$id]{'aliases'}) {
+				my $aliaslist;
 				if (exists $mirror[$id]{includes}) {
-					print "  (";
+					$aliaslist .= "  (";
 					my @tmparray = @{$mirror[$id]{includes}};
 					my $notalldone = $#tmparray + 1;
 					foreach my $subsite (@{ $mirror[$id]{includes} }) {
@@ -208,11 +258,11 @@ sub secondary_mirrors {
 						}
 						die $subsite ." included in " . $mirror[$id]{site} . " does not exist\n" unless defined $subsite_id; # must be an error
 						# this prints the canonical name of the included site rather than its reference - should be in sync, but might actually vary
-						print $mirror[$subsite_id]{site};
+						$aliaslist .= $mirror[$subsite_id]{site};
 						$notalldone--;
-						print ", " if ($notalldone);
+						$aliaslist .= ", " if ($notalldone);
 					}
-					print ")" . "\n";
+					$aliaslist .= ")" . "\n";
 				} else {
 					# we want to display aliases in the main list for official mirrors
 					# but for others, it's just clutter, so skip them
@@ -221,12 +271,69 @@ sub secondary_mirrors {
 					if ($truename =~ /^ftp.+\.debian\.org$/) {
 						$truename = @{$mirror[$id]{'aliases'}}[1];
 					}
-					print "  (" . $truename . ")" . "\n";
+					$aliaslist .= "  (" . $truename . ")" . "\n";
+				}
+				if ($aliaslist) {
+					unless ($skipinfo) {
+						print $aliaslist;
+					} else {
+						print <<EOF;
+  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
+	"$aliaslist";
+EOF
+					}
 				}
 			}
 		}
 	}
-	print "</small></pre>" if $html;
+	if ($html) {
+		unless ($skipinfo) {
+			print "</small></pre>";
+		} else {
+		# in our WML templates there is a langcmp comparison method,
+		# which sorts alphabetically depending on the language
+			print <<EOF;
+my \%sawcountry = {};
+foreach my \$country (sort langcmp keys \%secondaries) {
+  unless (\$sawcountry{\$country}) {
+    print <<EOM;
+<tr><td colspan="4"><hr size="1"></td></tr>
+<tr><td colspan="4"><big><strong>\$country</strong></big></td></tr>
+EOM
+  }
+  \$sawcountry{\$country} = 1;
+  sub officialfirst {
+    (\$b =~ /^ftp\\d?(?:\\.wa)?\\...\\.debian\\.org\$/) <=> (\$a =~ /^ftp\\d?(?:\\.wa)?\\...\\.debian\\.org\$/)
+    ||
+    \$a cmp \$b;
+  }
+  foreach my \$countrysite (sort officialfirst keys \%{\$secondaries{\$country}}) {
+    my \@elems = \@{\$secondaries{\$country}{\$countrysite}};
+    print <<EOM;
+<tr>
+  <td valign="top"><code>\$countrysite</code>
+EOM
+    if (\$elems[3]) {
+      my \$extraname = \$elems[3];
+      \$extraname =~ s%  %\&nbsp\;\&nbsp\;%;
+      print <<EOM;
+<br>
+<code>\$extraname</code>
+EOM
+    }
+    print <<EOM;
+  </td>
+  <td valign="top">\$elems[0]</td>
+  <td valign="top">\$elems[1]</td>
+  <td valign="top"><small><small>\$elems[2]</small></small></td>
+</tr>
+EOM
+  }
+}
+</perl>
+EOF
+		}
+	}
 }
 
 
@@ -435,13 +542,13 @@ EOF
     # in our WML templates there is a langcmp comparison method,
     # which sorts alphabetically depending on the language
     print <<EOF;
-foreach my \$pmir (sort langcmp keys \%primaries) {
-  foreach my \$pmirsite (sort keys \%{\$primaries{\$pmir}}) {
-    my \@elems = \@{\$primaries{\$pmir}{\$pmirsite}};
+foreach my \$country (sort langcmp keys \%primaries) {
+  foreach my \$countrysite (sort keys \%{\$primaries{\$country}}) {
+    my \@elems = \@{\$primaries{\$country}{\$countrysite}};
     print <<EOM;
 <tr>
-  <td width="25%">\$pmir</td>
-  <td width="25%"><code>\$pmirsite</code></td>
+  <td width="25%">\$country</td>
+  <td width="25%"><code>\$countrysite</code></td>
   <td width="25%">\$elems[0]</td>
   <td width="25%"><small><small>\$elems[1]</small></small></td>
 </tr>
