@@ -25,7 +25,8 @@ official.$(LANGUAGE).html: official.wml $(TEMPLDIR)/template.wml \
   $(GETTEXTDEP)
 list.$(LANGUAGE).html: list.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/mirror/list-primary.inc \
-  $(ENGLISHDIR)/mirror/list-secondary.inc
+  $(ENGLISHDIR)/mirror/list-secondary.inc \
+  $(ENGLISHDIR)/mirror/list-footer.inc
 list-full.$(LANGUAGE).html: list-full.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/mirror/list-full.inc
 list-non-US.$(LANGUAGE).html: list-non-US.wml $(TEMPLDIR)/template.wml \
@@ -94,6 +95,10 @@ $(ENGLISHDIR)/mirror/list-full.inc: \
 $(ENGLISHDIR)/mirror/list-non-US.inc: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
 	./mirror_list.pl -m Mirrors.masterlist -t wml-nonus > $@
+
+$(ENGLISHDIR)/mirror/list-footer.inc: \
+  $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
+	./mirror_list.pl -m Mirrors.masterlist -t wml-footer > $@
 
 endif
 

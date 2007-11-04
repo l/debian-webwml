@@ -1492,6 +1492,9 @@ elsif ($output_type eq 'wml-primary') {
 elsif ($output_type eq 'wml-secondary') {
 	$html=1;
 	secondary_mirrors('skipinfo');
+}
+elsif ($output_type eq 'wml-footer') {
+	$html=1;
 	footer_stuff($count);
 }
 elsif ($output_type eq 'apt') {
@@ -1576,6 +1579,7 @@ Usage: $0 [mt|--type type] [-m|--mirror mirror_list_source]
 	text
 	wml-primary
 	wml-secondary
+	wml-footer
 	apt
 	fullmethods
 	nonus
