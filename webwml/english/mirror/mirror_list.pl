@@ -460,8 +460,7 @@ sub primary_mirrors {
 <tr>
   <th>Country</th>
   <th>Site</th>
-  <th><b>Debian&nbsp;archive</b></th>
-  <th><b>Architectures</b></th>
+  <th>Architectures</th>
 </tr>
 END
     } else {
@@ -477,9 +476,6 @@ END
     }
   } elsif ($html) {
     print <<END;
-<tr><td colspan="5"><hr></td></tr>
-END
-    print <<END;
 <perl>
 END
   }
@@ -493,8 +489,7 @@ END
       }
 
       unless (exists $mirror[$id]{method}{'archive-http'}) {
-        warn "official mirror " . $mirror[$id]{site} . " does not have archive-http?!";
-        next;
+        die "official mirror " . $mirror[$id]{site} . " does not have archive-http?!";
       }
 
       my $arches=join(" ", sort @{$mirror[$id]{'archive-architecture'}});
@@ -504,10 +499,9 @@ END
         unless ($skipinfo) {
           print <<END;
 <tr>
-  <td width="25%">$countryplain</td>
-  <td width="25%" align="center"><code>$mirror[$id]{site}</code></td>
-  <td width="25%"><a href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{method}{'archive-http'}</a></td>
-  <td width="25%">$arches</td>
+  <td>$countryplain</td>
+  <td><a href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}</a></td>
+  <td>$arches</td>
 </tr>
 END
         } else {
@@ -519,7 +513,7 @@ END
           print <<EOF;
   push \@{ \$primaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
     (
-  "<a href=\\\"http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}\\\">$mirror[$id]{method}{'archive-http'}</a>",
+  "$mirror[$id]{method}{'archive-http'}",
   "$arches",
     );
 EOF
@@ -540,10 +534,9 @@ foreach my \$country (sort langcmp keys \%primaries) {
     my \@elems = \@{\$primaries{\$country}{\$countrysite}};
     print <<EOM;
 <tr>
-  <td width="25%">\$country</td>
-  <td width="25%"><code>\$countrysite</code></td>
-  <td width="25%">\$elems[0]</td>
-  <td width="25%"><small><small>\$elems[1]</small></small></td>
+  <td>\$country</td>
+  <td><a href="http://\$countrysite\$elems[0]">\$countrysite\$elems[0]</a></td>
+  <td><small><small>\$elems[1]</small></small></td>
 </tr>
 EOM
   }
