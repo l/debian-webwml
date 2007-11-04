@@ -989,17 +989,30 @@ END
 }
 
 sub nonus_mirrors {
+  my $skipinfo = shift;
+  $skipinfo = 0 unless $skipinfo;
 
   foreach my $country (sort keys %countries) {
     my $hasmirrors = 0;
     foreach my $m_id (@{ $countries{$country} }) {
       $hasmirrors++ if (defined $mirror[$m_id]{method}{'nonus-ftp'} || defined $mirror[$m_id]{method}{'nonus-http'});
     }
-    my $countryplain;
-    ($countryplain = $country) =~ s/^.. //;
+    my ($countryplain, $countrycode);
+    if ($country =~ /^(..) (.+)$/) {
+      $countryplain = $2;
+      $countrycode = $1;
+    }
     if ($hasmirrors) {
       print "\n";
-      print $html ? "<h3>$countryplain</h3>" : "$countryplain:";
+      if ($html) {
+        unless ($skipinfo) {
+          print "<h3>$countryplain</h3>";
+        } else {
+          print "<h3><${countrycode}c></h3>";
+        }
+      } else {
+        print "$countryplain:";
+      }
       print "\n";
     } else {
       next;
@@ -1511,7 +1524,7 @@ if ($output_type eq 'html') {
   nonus_short();
 } elsif ($output_type eq 'wml-nonus') {
   $html = 1;
-  nonus_mirrors();
+  nonus_mirrors('skipinfo');
   footer_stuff($nonuscount);
 } elsif ($output_type eq 'officialsponsors') {
   $html=1;
