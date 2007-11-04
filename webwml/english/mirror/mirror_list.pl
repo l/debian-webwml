@@ -500,10 +500,7 @@ END
 		next;
 	}
 
-	my $arches="all";
-	if (exists $mirror[$id]{'archive-architecture'}) {
-		$arches=join(" ", sort @{$mirror[$id]{'archive-architecture'}});
-	}
+	my $arches=join(" ", sort @{$mirror[$id]{'archive-architecture'}});
 	
 	if ($html) {
 	  $countryplain =~ s/ /&nbsp;/;
