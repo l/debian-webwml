@@ -8,10 +8,7 @@
 use strict;
 require 5.001;
 
-# Arches not to list.
-my @filter_arches=qw();
-
-my ($html, $last_modify);
+my @filter_arches=qw(); # Architectures not to list.
 
 use Getopt::Long;
 my ($mirror_source, $output_type, $help);
@@ -22,6 +19,7 @@ my %opthash = (
   );
 
 my (@mirror, %countries, %countries_sorted, %countries_sponsors, %longest);
+my ($html, $last_modify);
 my ($count, $nonuscount, $volatilecount, $cdimagecount);
 
 sub process_line {
@@ -487,24 +485,24 @@ END
   }
   foreach my $country (sort keys %countries) {
     foreach my $id (sort @{ $countries{$country} }) {
-      if ($mirror[$id]{site} =~ /^(?:ftp|http)\d?(?:\.wa)?\...\.debian.org$/) {
-        my ($countryplain, $countrycode);
-        if ($country =~ /^(..) (.+)$/) {
-          $countryplain = $2;
-          $countrycode = $1;
-        }
+      next unless ($mirror[$id]{site} =~ /^(?:ftp|http)\d?(?:\.wa)?\...\.debian.org$/);
+      my ($countryplain, $countrycode);
+      if ($country =~ /^(..) (.+)$/) {
+        $countryplain = $2;
+        $countrycode = $1;
+      }
 
-        unless (exists $mirror[$id]{method}{'archive-http'}) {
-          warn "official mirror " . $mirror[$id]{site} . " does not have archive-http?!";
-          next;
-        }
+      unless (exists $mirror[$id]{method}{'archive-http'}) {
+        warn "official mirror " . $mirror[$id]{site} . " does not have archive-http?!";
+        next;
+      }
 
-        my $arches=join(" ", sort @{$mirror[$id]{'archive-architecture'}});
-  
-        if ($html) {
-          $countryplain =~ s/ /&nbsp;/;
-          unless ($skipinfo) {
-            print <<END;
+      my $arches=join(" ", sort @{$mirror[$id]{'archive-architecture'}});
+
+      if ($html) {
+        $countryplain =~ s/ /&nbsp;/;
+        unless ($skipinfo) {
+          print <<END;
 <tr>
   <td width="25%">$countryplain</td>
   <td width="25%" align="center"><code>$mirror[$id]{site}</code></td>
@@ -512,25 +510,24 @@ END
   <td width="25%">$arches</td>
 </tr>
 END
-          } else {
-            # this creates a hash of with keys like <DEc>
-            # later this gets expanded by WML into forms like
-            # Germany or Deutschland
-            # the next-level key is the site name, because countries
-            # can have more than one site
-            print <<EOF;
+        } else {
+          # this creates a hash of with keys like <DEc>
+          # later this gets expanded by WML into forms like
+          # Germany or Deutschland
+          # the next-level key is the site name, because countries
+          # can have more than one site
+          print <<EOF;
   push \@{ \$primaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
     (
   "<a href=\\\"http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}\\\">$mirror[$id]{method}{'archive-http'}</a>",
   "$arches",
     );
 EOF
-          }
-        } else {
-          printf " %-14s  %-20s  %-14s  %s\n", $countryplain, $mirror[$id]{site}, $mirror[$id]{method}{'archive-http'}, $arches;
+        }
+      } else {
+        printf " %-14s  %-20s  %-14s  %s\n", $countryplain, $mirror[$id]{site}, $mirror[$id]{method}{'archive-http'}, $arches;
 # $countryplain  -   $site    $mirror[$id]{method}{'archive-ftp'}  $mirror[$id]{method}{'nonus-ftp'}
 #END
-        }
       }
     }
   }
@@ -566,74 +563,73 @@ sub primary_mirror_sponsors {
 END
   foreach my $country (sort keys %countries) {
     foreach my $id (sort @{ $countries{$country} }) {
-      if ($mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian.org$/) {
-        (my $countrycode = $country) =~ s/^(..).*/$1/;
-        print <<END;
+      next unless ($mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian.org$/);
+      (my $countrycode = $country) =~ s/^(..).*/$1/;
+      print <<END;
 <tr>
   <td><${countrycode}c></td>
   <td><a href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{site}</a></td>
   <td>
 END
-        if (exists $mirror[$id]{includes}) {
-          my $numsubsites = @{ $mirror[$id]{includes} };
-          my $snum = 0;
-          foreach my $subsite (@{ $mirror[$id]{includes} }) {
-            # XXX Note this is a little bit wrong; if there is more than one id
-            # for a subsite, it just takes the first one. This problem
-            # could occur if a subsite begins mirroring some other arch,
-            # like amd64.
-            my $subsite_id;
-            foreach my $mid (0..$#mirror) {
-              if ($mirror[$mid]{site} eq $subsite) {
-                $subsite_id=$mid;
-                last;
-              }
-            }      
-            die "can't find $subsite, wtf?!" unless defined $subsite_id; # must be an error
-            die "can't find sponsor for $subsite, wtf?!" unless defined $mirror[$subsite_id]{sponsor}; # must be an error
-
-            my $numsponsors = @{ $mirror[$subsite_id]{sponsor} };
-            my $num = 0;
-            my ($sponsorname, $sponsorurl);
-            foreach my $sponsor (@{ $mirror[$subsite_id]{sponsor} }) {
-              if ($sponsor =~ /^(.+) (http:.*)$/) {
-                $sponsorname = $1;
-                $sponsorurl = $2;
-              } else {
-                die "can't find sponsor URL for sponsor $sponsor of $subsite";
-              }
-              $sponsorname =~ s/&(\s+)/&amp;$1/g;
-              print "<a href=\"$sponsorurl\">$sponsorname</a>";
-              $num++;
-              print ", " unless ($num >= $numsponsors);
+      if (exists $mirror[$id]{includes}) {
+        my $numsubsites = @{ $mirror[$id]{includes} };
+        my $snum = 0;
+        foreach my $subsite (@{ $mirror[$id]{includes} }) {
+          # XXX Note this is a little bit wrong; if there is more than one id
+          # for a subsite, it just takes the first one. This problem
+          # could occur if a subsite begins mirroring some other arch,
+          # like amd64.
+          my $subsite_id;
+          foreach my $mid (0..$#mirror) {
+            if ($mirror[$mid]{site} eq $subsite) {
+              $subsite_id=$mid;
+              last;
             }
-            $snum++;
-            print ", " unless ($snum >= $numsubsites);
-          }
-        } else {
-          die "$mirror[$id]{site} has no sponsor\n" unless exists $mirror[$id]{sponsor}; # must be an error
-          my $numsponsors = @{ $mirror[$id]{sponsor} };
+          }      
+          die "can't find $subsite, wtf?!" unless defined $subsite_id; # must be an error
+          die "can't find sponsor for $subsite, wtf?!" unless defined $mirror[$subsite_id]{sponsor}; # must be an error
+
+          my $numsponsors = @{ $mirror[$subsite_id]{sponsor} };
           my $num = 0;
           my ($sponsorname, $sponsorurl);
-          foreach my $sponsor (@{ $mirror[$id]{sponsor} }) {
+          foreach my $sponsor (@{ $mirror[$subsite_id]{sponsor} }) {
             if ($sponsor =~ /^(.+) (http:.*)$/) {
               $sponsorname = $1;
               $sponsorurl = $2;
-                  } else {
-              die "can't find sponsor URL for sponsor $sponsor of $mirror[$id]{site}";
+            } else {
+              die "can't find sponsor URL for sponsor $sponsor of $subsite";
             }
             $sponsorname =~ s/&(\s+)/&amp;$1/g;
             print "<a href=\"$sponsorurl\">$sponsorname</a>";
             $num++;
             print ", " unless ($num >= $numsponsors);
           }
+          $snum++;
+          print ", " unless ($snum >= $numsubsites);
         }
-        print <<END;
+      } else {
+        die "$mirror[$id]{site} has no sponsor\n" unless exists $mirror[$id]{sponsor}; # must be an error
+        my $numsponsors = @{ $mirror[$id]{sponsor} };
+        my $num = 0;
+        my ($sponsorname, $sponsorurl);
+        foreach my $sponsor (@{ $mirror[$id]{sponsor} }) {
+          if ($sponsor =~ /^(.+) (http:.*)$/) {
+            $sponsorname = $1;
+            $sponsorurl = $2;
+                } else {
+            die "can't find sponsor URL for sponsor $sponsor of $mirror[$id]{site}";
+          }
+          $sponsorname =~ s/&(\s+)/&amp;$1/g;
+          print "<a href=\"$sponsorurl\">$sponsorname</a>";
+          $num++;
+          print ", " unless ($num >= $numsponsors);
+        }
+      }
+      print <<END;
 
   </td>
 </tr>
 END
-      }
     }
   }
   print "</table>\n";
@@ -655,29 +651,30 @@ END
   <td>$mirror[$id]{site}</td>
   <td>
 END
-      unless (exists $mirror[$id]{includes}) {
-        my $numsponsors = @{ $mirror[$id]{sponsor} };
-        my $num = 0;
-        my ($sponsorname, $sponsorurl);
-        foreach my $sponsor (@{ $mirror[$id]{sponsor} }) {
-          if ($sponsor =~ /^(.+) (http:.*)$/) {
-            $sponsorname = $1;
-            $sponsorurl = $2;
-                } else {
-            die "can't find sponsor URL for sponsor $sponsor of $mirror[$id]{site}";
-          }
-          $sponsorname =~ s/&(\s+)/&amp;$1/g;
-          print "<a href=\"$sponsorurl\">$sponsorname</a>";
-          $num++;
-          print ",\n" unless ($num >= $numsponsors);
+      # sites which have Includes don't have to have Sponsor, the included ones
+      # have it; and those are looped over separately anyway, so no need to repeat
+      next if (exists $mirror[$id]{includes});
+      my $numsponsors = @{ $mirror[$id]{sponsor} };
+      my $num = 0;
+      my ($sponsorname, $sponsorurl);
+      foreach my $sponsor (@{ $mirror[$id]{sponsor} }) {
+        if ($sponsor =~ /^(.+) (http:.*)$/) {
+          $sponsorname = $1;
+          $sponsorurl = $2;
+              } else {
+          die "can't find sponsor URL for sponsor $sponsor of $mirror[$id]{site}";
         }
-        print "\n";
+        $sponsorname =~ s/&(\s+)/&amp;$1/g;
+        print "<a href=\"$sponsorurl\">$sponsorname</a>";
+        $num++;
+        print ",\n" unless ($num >= $numsponsors);
       }
-      print <<END;
+      print "\n";
+    }
+    print <<END;
   </td>
 </tr>
 END
-    }
   }
 }
 
@@ -798,9 +795,6 @@ access method for each type.
 </dl>
 (See <a href="http://www.debian.org/mirror/push_mirroring">the page about push
 mirroring</a> for details on that.)
-END
-
-  print <<END;
 
 <p>The authoritative copy of the following list can always be found at:
 <a href="http://www.debian.org/mirror/list-full">
@@ -824,8 +818,8 @@ sub full_listing {
       print "<br>" unless ($counter++ % 6);
     }
     print "\n<hr noshade size=\"1\">\n";
+    print "<pre>\n";
   }
-  print "<pre>\n" if ($html);
   foreach my $country (sort keys %countries) {
     if ($html) {
       (my $XY = $country) =~ s/^([[:upper:]]+) .+$/$1/;
@@ -1070,7 +1064,7 @@ sub nonus_short() {
 sub footer_stuff($) {
   my $whichcount = shift;
   if ($html) {
-  print <<END;
+    print <<END;
 <hr>
 <table border="0" width="100%"><tr>
   <td align="left"><small>Last modified: $last_modify</small></td>
@@ -1078,7 +1072,7 @@ sub footer_stuff($) {
 </tr></table>
 END
   } else {
-  print <<END;
+    print <<END;
 
 -------------------------------------------------------------------------------
 Last modified: $last_modify             Number of sites listed: $whichcount
@@ -1106,8 +1100,7 @@ sub volatile_mirrors {
   if ($html) {
     print "<table class=\"volatile\"summary=\"Mirrors sorted by Country\">\n";
     print "<colgroup span=\"5\">\n</colgroup>\n";
-    print "<thead><tr><th>HOST NAME</th><th>FTP</th><th>
-    HTTP</th><th>RSYNC</th><th>ARCHITECTURES</th></tr></thead>\n<tbody>";
+    print "<thead><tr><th>HOST NAME</th><th>FTP</th><th>HTTP</th><th>RSYNC</th><th>ARCHITECTURES</th></tr></thead>\n<tbody>";
   } else {
     printf $tmp, "HOST NAME", " FTP", " HTTP", " RSYNC" ,"  ARCHITECTURES";
     printf $tmp, "---------", " ---", " ----", " -----" ,"  -------------";
@@ -1211,7 +1204,6 @@ sub volatile_mirrors {
   }
   print "</tbody>\n</table>\n" if $html;
 }
-
 
 
 sub mirror_tree_by_origin {
@@ -1372,22 +1364,18 @@ foreach (<SRC>) {
   chop;
   if (/^$/ && $current eq '') {
     next;
-  }
-  elsif (/^$/) {
+  } elsif (/^$/) {
     process_line($current);
     $current = '';
     next;
-  }
-  elsif (/^\s+(.*)$/) { # add line to current entry
+  } elsif (/^\s+(.*)$/) { # add line to current entry
     $current .= "\n$1";
-  }
-  elsif (/^[\w-]+:\s/) {
+  } elsif (/^[\w-]+:\s/) {
     if ($current ne "") { # need to process previous line
       process_line($current);
     }
     $current = $_;
-  }
-  else {
+  } else {
     die "Error: unknown format on line $.:\n$_\n";
   }
 }
@@ -1474,95 +1462,77 @@ if ($output_type eq 'html') {
   secondary_mirrors();
   footer_stuff($count);
   trailer();
-}
-elsif ($output_type eq 'text') {
+} elsif ($output_type eq 'text') {
   $html=0;
   intro();
   primary_mirrors();
   secondary_mirrors();
   footer_stuff($count);
-}
-elsif ($output_type eq 'wml-primary') {
+} elsif ($output_type eq 'wml-primary') {
   $html=1;
   primary_mirrors('skipinfo');
-}
-elsif ($output_type eq 'wml-secondary') {
+} elsif ($output_type eq 'wml-secondary') {
   $html=1;
   secondary_mirrors('skipinfo');
-}
-elsif ($output_type eq 'wml-footer') {
+} elsif ($output_type eq 'wml-footer') {
   $html=1;
   footer_stuff($count);
-}
-elsif ($output_type eq 'apt') {
+} elsif ($output_type eq 'apt') {
   header();
   print "<pre>\n";
   aptlines();
   print "</pre>\n";
   trailer();
-}
-elsif ($output_type eq 'fullmethods') { # this is likely obsolete
+} elsif ($output_type eq 'fullmethods') { # this is likely obsolete
   $html=1;
   header();
   access_methods();
   full_listing();
   footer_stuff($count);
   trailer();
-}
-elsif ($output_type eq 'wml-full') {
+} elsif ($output_type eq 'wml-full') {
   $html=1;
   full_listing();
   footer_stuff($count);
-}
-elsif ($output_type eq 'nonus') {
+} elsif ($output_type eq 'nonus') {
   $html = 0;
   nonus_intro();
   nonus_mirrors();
   footer_stuff($nonuscount);
-}
-elsif ($output_type eq 'nonushtml') {
+} elsif ($output_type eq 'nonushtml') {
   header("non-US ");
   $html = 1;
   nonus_intro();
   nonus_mirrors();
   footer_stuff($nonuscount);
   trailer();
-}
-elsif ($output_type eq 'nonusshort') {
+} elsif ($output_type eq 'nonusshort') {
   $html = 1;
   nonus_short();
-}
-elsif ($output_type eq 'wml-nonus') {
+} elsif ($output_type eq 'wml-nonus') {
   $html = 1;
   nonus_mirrors();
   footer_stuff($nonuscount);
-}
-elsif ($output_type eq 'officialsponsors') {
+} elsif ($output_type eq 'officialsponsors') {
   $html=1;
   primary_mirror_sponsors();
-}
-elsif ($output_type eq 'sponsors') {
+} elsif ($output_type eq 'sponsors') {
   $html=1;
   mirror_sponsors();
-}
-elsif ($output_type eq 'cdimages-httpftp') {
+} elsif ($output_type eq 'cdimages-httpftp') {
   $html=1;
   cdimage_mirrors("httpftp");
-}
-elsif ($output_type eq 'cdimages-rsync') {
+} elsif ($output_type eq 'cdimages-rsync') {
   $html=1;
   cdimage_mirrors("rsync");
-}
-elsif ($output_type eq 'volatile-html') {
+} elsif ($output_type eq 'volatile-html') {
   $html=1;
   volatile_mirrors();
   footer_stuff($volatilecount);
-}
-elsif ($output_type eq 'origins') {
+} elsif ($output_type eq 'origins') {
   $html=1;
   mirror_tree_by_origin();
-}
-else {
+} else {
   die "Error: unknown output type requested, $output_type\n";
 }
 
