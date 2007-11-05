@@ -17,9 +17,15 @@ my %opthash = (
   "type|t=s" => \$output_type,
   "help|h!" => \$help,
   );
+Getopt::Long::config('no_getopt_compat', 'no_auto_abbrev');
+GetOptions(%opthash) or die "error parsing options";
+
+$output_type = 'html' if (! defined $output_type);
+$mirror_source = 'Mirrors.masterlist' if (! defined $mirror_source);
+
+my $last_modify = gmtime((stat($mirror_source))[9]);
 
 my (@mirror, %countries, %countries_sorted, %countries_sponsors, %longest);
-my ($html, $last_modify);
 my ($count, $nonuscount, $volatilecount, $cdimagecount);
 
 sub process_line {
@@ -120,28 +126,38 @@ sub aptlines {
 
 
 sub secondary_mirrors {
-  # TODO clean up the html to match the primary list and make the
-  # text version not have such long lines.
-  my $skipinfo = shift;
-  $skipinfo = 0 unless $skipinfo;
+  # TODO make the text version not have such long lines.
+  my $format = shift;
+  die "must get format for secondary_mirrors()" unless $format;
+  my $html = 1 if ($format eq 'html');
+  my $text = 1 if ($format eq 'text');
+  my $wml = 1 if ($format eq 'wml');
 
-  my $tmp = "%-$longest{site}s %-$longest{'archive-ftp'}s %-$longest{'archive-http'}s %s\n";
-
-  unless ($skipinfo) {
+  my $formatstring;
+  
+  if ($html || $text) {
     print "<h2 align=\"center\">" if $html;
-    print "\n\n                   " if (!$html);
+    print "\n\n                   " if $text;
     print "Secondary mirrors of the Debian archive";
-    print "\n                   ---------------------------------------\n\n" if (!$html);
+    print "\n                   ---------------------------------------\n\n" if $text;
     print "</h2>\n\n" if $html;
-    print "\n<pre><small>\n" if $html;
-    print "<strong>" if $html;
-    printf $tmp, "HOST NAME", "FTP", "HTTP", "ARCHITECTURES";
-    printf $tmp, "---------", "---", "----", "-------------";
-    print "</strong>" if $html;
-  } else {
     if ($html) {
-      print "<perl>\n";
+      print <<END;
+<table border="0" align="center">
+<tr>
+  <th>Host name</th>
+  <th>FTP</th>
+  <th>HTTP</th>
+  <th>Architectures</th>
+</tr>
+END
+    } else {
+      my $formatstring = "%-$longest{site}s %-$longest{'archive-ftp'}s %-$longest{'archive-http'}s %s\n";
+      printf $formatstring, "HOST NAME", "FTP", "HTTP", "ARCHITECTURES";
+      printf $formatstring, "---------", "---", "----", "-------------";
     }
+  } elsif ($wml) {
+    print "<perl>\n";
   }
   foreach my $country (sort keys %countries) {
     my ($countryplain, $countrycode);
@@ -156,10 +172,9 @@ sub secondary_mirrors {
     if ($hasmirrors) {
       print "\n";
       if ($html) {
-        unless ($skipinfo) {
-          print "<b>$country</b>";
-        }
-      } else {
+        print "<tr><td colspan=4><hr size=1></td></tr>\n";
+        print "<tr><td colspan=4><big><strong>$country</strong></big></td></tr>\n";
+      } elsif ($text) {
         print "$country";
       }
       print "\n";
@@ -167,79 +182,14 @@ sub secondary_mirrors {
       next;
     }
     my $i = length($country);
-    unless ($skipinfo) {
+    if ($text) {
       print "-" while ($i--); # underline
       print "\n";
     }
     foreach my $id (@{ $countries_sorted{$country} }) {
       next unless (defined $mirror[$id]{method}{'archive-ftp'} || defined $mirror[$id]{method}{'archive-http'});
-      $tmp = "%-$longest{site}s ";
-      printf $tmp, $mirror[$id]{site} unless ($skipinfo);
-      if (defined $mirror[$id]{method}{'archive-ftp'}) {
-        my $rest = $longest{'archive-ftp'} - length($mirror[$id]{method}{'archive-ftp'});
-        if ($html) {
-          unless ($skipinfo) {
-            $tmp = "<a href=\"%s\">%s</a>%${rest}s";
-            printf $tmp, "ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'}", $mirror[$id]{method}{'archive-ftp'}, '';
-          } else {
-            print <<EOF;
-  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
-  "<a href=\\\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'}\\\">$mirror[$id]{method}{'archive-ftp'}</a>";
-EOF
-          }
-        } else {
-          $tmp = "%s%${rest}s";
-          printf $tmp, $mirror[$id]{method}{'archive-ftp'}, '';
-        }
-      } else {
-        $tmp = "%-$longest{'archive-ftp'}s";
-        printf $tmp, " ";
-        if ($skipinfo) {
-          print <<EOF;
-  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
-  "";
-EOF
-        }
-      }
-      $tmp = "%-$longest{'archive-http'}s";
-      if (defined $mirror[$id]{method}{'archive-http'}) {
-        my $rest = $longest{'archive-http'} - length($mirror[$id]{method}{'archive-http'});
-        if ($html) {
-          unless ($skipinfo) {
-            $tmp = "<a href=\"%s\">%s</a>%${rest}s";
-            printf $tmp, "http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}",$mirror[$id]{method}{'archive-http'}, '';
-          } else {
-            print <<EOF;
-  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
-  "<a href=\\\"http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}\\\">$mirror[$id]{method}{'archive-http'}</a>";
-EOF
-          }
-        } else {
-          $tmp = "%s%${rest}s";
-          printf $tmp, $mirror[$id]{method}{'archive-http'}, '';
-        }
-      } else {
-        $tmp = "%-$longest{'archive-http'}s";
-        printf $tmp, " ";
-        if ($skipinfo) {
-          print <<EOF;
-  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
-  "";
-EOF
-        }
-      }
-      my $archlistsorted = join(" ", sort @{$mirror[$id]{'archive-architecture'}});
-      unless ($skipinfo) {
-        print $archlistsorted;
-      } else {
-        print <<EOF;
-  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
-  "$archlistsorted";
-EOF
-      }
-      print "\n";
+      my $aliaslist;
       if (exists $mirror[$id]{'aliases'}) {
-        my $aliaslist;
         if (exists $mirror[$id]{includes}) {
           $aliaslist .= "  (";
           my @tmparray = @{$mirror[$id]{includes}};
@@ -259,7 +209,7 @@ EOF
             $notalldone--;
             $aliaslist .= ", " if ($notalldone);
           }
-          $aliaslist .= ")" . "\n";
+          $aliaslist .= ")";
         } else {
           # we want to display aliases in the main list for official mirrors
           # but for others, it's just clutter, so skip them
@@ -268,28 +218,105 @@ EOF
           if ($truename =~ /^ftp.+\.debian\.org$/) {
             $truename = @{$mirror[$id]{'aliases'}}[1];
           }
-          $aliaslist .= "  (" . $truename . ")" . "\n";
+          $aliaslist .= "  (" . $truename . ")";
         }
-        if ($aliaslist) {
-          unless ($skipinfo) {
-            print $aliaslist;
-          } else {
-            print <<EOF;
+      }
+      if ($html) {
+        print "<tr>\n";
+        print "<td valign=top>$mirror[$id]{site}";
+        print "<br>$aliaslist" if ($aliaslist);
+        print "</td>\n";
+      } elsif ($text) {
+        my $formatstring = "%-$longest{site}s ";
+        printf $formatstring, $mirror[$id]{site};
+      }
+      if (defined $mirror[$id]{method}{'archive-ftp'}) {
+        my $rest = $longest{'archive-ftp'} - length($mirror[$id]{method}{'archive-ftp'});
+        if ($html) {
+          print <<END;
+<td valign=top><a href="ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'}">$mirror[$id]{method}{'archive-ftp'}</a></td>
+END
+        } elsif ($text) {
+          my $formatstring = "%s%${rest}s";
+          printf $formatstring, $mirror[$id]{method}{'archive-ftp'}, '';
+        } elsif ($wml) {
+          print <<EOF;
   push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
-  "$aliaslist";
+        "<a href=\\\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'archive-ftp'}\\\">$mirror[$id]{method}{'archive-ftp'}</a>";
 EOF
-          }
         }
+      } else {
+        if ($html) {
+          print "<td></td>\n";
+        } elsif ($text) {
+          my $formatstring = "%-$longest{'archive-ftp'}s";
+          printf $formatstring, " ";
+        } elsif ($wml) {
+          print <<EOF;
+  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
+        "";
+EOF
+        }
+      }
+      if (defined $mirror[$id]{method}{'archive-http'}) {
+        my $rest = $longest{'archive-http'} - length($mirror[$id]{method}{'archive-http'});
+        if ($html) {
+          print <<END;
+<td valign=top><a href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{method}{'archive-http'}</a></td>
+END
+        } elsif ($text) {
+          my $formatstring = "%s%${rest}s";
+          printf $formatstring, $mirror[$id]{method}{'archive-http'}, '';
+        } elsif ($wml) {
+          print <<EOF;
+  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
+        "<a href=\\\"http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}\\\">$mirror[$id]{method}{'archive-http'}</a>";
+EOF
+        }
+      } else {
+        if ($html) {
+          print "<td></td>\n";
+        } elsif ($text) {
+          my $formatstring = "%-$longest{'archive-http'}s";
+          printf $formatstring, " ";
+        } elsif ($wml) {
+          print <<EOF;
+  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
+        "";
+EOF
+        }
+      }
+      my $archlistsorted = join(" ", sort @{$mirror[$id]{'archive-architecture'}});
+      if ($html) {
+        print "<td valign=top><small><small>$archlistsorted</small></small></td>\n";
+      } elsif ($text) {
+        print $archlistsorted;
+        print "\n";
+      } elsif ($wml) {
+        print <<EOF;
+  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
+        "$archlistsorted";
+EOF
+      }
+      if ($aliaslist) {
+        if ($text) {
+          print $aliaslist . "\n";
+        } elsif ($wml) {
+          print <<EOF;
+  push \@{ \$secondaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
+        "$aliaslist";
+EOF
+        }
+      }
+      if ($html) {
+        print "</tr>\n";
       }
     }
   }
-  if ($html) {
-    unless ($skipinfo) {
-      print "</small></pre>";
-    } else {
+  if ($wml) {
     # in our WML templates there is a langcmp comparison method,
     # which sorts alphabetically depending on the language
-      print <<EOF;
+    print <<EOF;
 my \%sawcountry = {};
 foreach my \$country (sort langcmp keys \%secondaries) {
   unless (\$sawcountry{\$country}) {
@@ -329,27 +356,31 @@ EOM
 }
 </perl>
 EOF
-    }
   }
+  print "</table>\n" if ($html);
 }
 
 
 sub intro {
+  my $format = shift;
+  die "must get format for intro()" unless $format;
+  my $html = 1 if ($format eq 'html');
+  my $text = 1 if ($format eq 'text');
+
   print "<h1 align=\"center\">" if $html;
-  print "                 " if (!$html);
+  print "                        " if $text;
   print "Debian worldwide mirror sites";
   print "</h1>" if $html;
-  print "\n                        -----------------------------\n" if (!$html);
+  print "\n                        -----------------------------\n" if $text;
   print "\n";
 
   print "<p>" if $html;
   print "Debian is distributed (";
   print $html ? "<em>mirrored</em>" : "mirrored";
-  print ") on hundreds of\n";
+  print ") on hundreds of servers on the Internet.\n";
   print <<END;
-servers on the Internet. Using a nearby server will probably speed up your
-download, and also reduce the load on our central servers and on the
-Internet as a whole.
+Using a nearby server will probably speed up your download, and also
+reduce the load on our central servers and on the Internet as a whole.
 
 END
   print "<p>" if $html;
@@ -447,12 +478,15 @@ END
 }
 
 sub primary_mirrors {
-  my $skipinfo = shift;
-  $skipinfo = 0 unless $skipinfo;
+  my $format = shift;
+  die "must get format for primary_mirrors()" unless $format;
+  my $html = 1 if ($format eq 'html');
+  my $text = 1 if ($format eq 'text');
+  my $wml = 1 if ($format eq 'wml');
+
   my %primaries = ();
-  unless ($skipinfo) {
-    if ($html) {
-      print <<END;
+  if ($html) {
+    print <<END;
 
 <h2 align="center">Primary Debian mirror sites</h2>
 
@@ -463,8 +497,8 @@ sub primary_mirrors {
   <th>Architectures</th>
 </tr>
 END
-    } else {
-      print <<END;
+  } elsif ($text) {
+    print <<END;
 
 
                          Primary Debian mirror sites
@@ -473,8 +507,7 @@ END
  Country         Site                  Debian archive  Architectures
  ---------------------------------------------------------------------------
 END
-    }
-  } elsif ($html) {
+  } elsif ($wml) {
     print <<END;
 <perl>
 END
@@ -492,40 +525,38 @@ END
         die "official mirror " . $mirror[$id]{site} . " does not have archive-http?!";
       }
 
-      my $arches=join(" ", sort @{$mirror[$id]{'archive-architecture'}});
+      my $arches = join(" ", sort @{$mirror[$id]{'archive-architecture'}});
 
-      if ($html) {
+      if ($html || $wml) {
         $countryplain =~ s/ /&nbsp;/;
-        unless ($skipinfo) {
-          print <<END;
+      }
+      if ($html) {
+        print <<END;
 <tr>
   <td>$countryplain</td>
   <td><a href="http://$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}">$mirror[$id]{site}$mirror[$id]{method}{'archive-http'}</a></td>
-  <td>$arches</td>
+  <td><small><small>$arches</small></small></td>
 </tr>
 END
-        } else {
-          # this creates a hash of with keys like <DEc>
-          # later this gets expanded by WML into forms like
-          # Germany or Deutschland
-          # the next-level key is the site name, because countries
-          # can have more than one site
-          print <<EOF;
+      } elsif ($text) {
+        printf " %-14s  %-20s  %-14s  %s\n", $countryplain, $mirror[$id]{site}, $mirror[$id]{method}{'archive-http'}, $arches;
+      } elsif ($wml) {
+        # this creates a hash of with keys like <DEc>
+        # later this gets expanded by WML into forms like
+        # Germany or Deutschland
+        # the next-level key is the site name, because countries
+        # can have more than one site
+        print <<EOF;
   push \@{ \$primaries{"<${countrycode}c>"}{"$mirror[$id]{site}"} },
     (
-  "$mirror[$id]{method}{'archive-http'}",
-  "$arches",
+      "$mirror[$id]{method}{'archive-http'}",
+      "$arches",
     );
 EOF
-        }
-      } else {
-        printf " %-14s  %-20s  %-14s  %s\n", $countryplain, $mirror[$id]{site}, $mirror[$id]{method}{'archive-http'}, $arches;
-# $countryplain  -   $site    $mirror[$id]{method}{'archive-ftp'}  $mirror[$id]{method}{'nonus-ftp'}
-#END
       }
     }
   }
-  if ($skipinfo && $html) {
+  if ($wml) {
     # in our WML templates there is a langcmp comparison method,
     # which sorts alphabetically depending on the language
     print <<EOF;
@@ -544,13 +575,12 @@ EOM
 </perl>
 EOF
   }
-  print "</table>\n" if ($html && !$skipinfo);
+  print "</table>\n" if ($html);
 }
 
 # meant to be output into a file which is then included into a .wml file
 # and processed by WML
 sub primary_mirror_sponsors {
-  return unless $html;
   print <<END;
 <tr><td colspan="3"><hr></td></tr>
 END
@@ -631,7 +661,6 @@ END
 # meant to be output into a file which is then included into a .wml file
 # and processed by WML
 sub mirror_sponsors {
-  return unless $html;
   print <<END;
 <tr><td colspan="3"><hr></td></tr>
 END
@@ -675,7 +704,6 @@ END
 # and processed by WML
 sub cdimage_mirrors {
   my $which = shift;
-  return unless $html;
   print "#use wml::debian::languages\n\n<perl>\nmy \@cdmirrors = (\n";
   foreach my $country (keys %countries) {
     foreach my $id (sort @{ $countries{$country} }) {
@@ -800,6 +828,12 @@ END
 }
 
 sub full_listing {
+  my $format = shift;
+  die "must get format for full_listing()" unless $format;
+  my $html = 1 if ($format eq 'html');
+  my $text = 1 if ($format eq 'text');
+  my $wml = 1 if ($format eq 'wml');
+
   if ($html) {
     print "\n<hr noshade size=\"1\">\n";
     print "<p>Jump directly to a country on the list:<br>\n";
@@ -875,6 +909,11 @@ sub full_listing {
 }
 
 sub nonus_intro {
+  my $format = shift;
+  die "must get format for nonus_intro()" unless $format;
+  my $html = 1 if ($format eq 'html');
+  my $text = 1 if ($format eq 'text');
+
   if ($html) {
     print "<h1 align=\"center\">Debian non-US packages</h1>\n\n";
   } else {
@@ -982,8 +1021,11 @@ END
 }
 
 sub nonus_mirrors {
-  my $skipinfo = shift;
-  $skipinfo = 0 unless $skipinfo;
+  my $format = shift;
+  die "must get format for nonus_mirrors()" unless $format;
+  my $html = 1 if ($format eq 'html');
+  my $text = 1 if ($format eq 'text');
+  my $wml = 1 if ($format eq 'wml');
 
   foreach my $country (sort keys %countries) {
     my $hasmirrors = 0;
@@ -998,13 +1040,11 @@ sub nonus_mirrors {
     if ($hasmirrors) {
       print "\n";
       if ($html) {
-        unless ($skipinfo) {
-          print "<h3>$countryplain</h3>";
-        } else {
-          print "<h3><${countrycode}c></h3>";
-        }
-      } else {
+        print "<h3>$countryplain</h3>";
+      } elsif ($text) {
         print "$countryplain:";
+      } elsif ($wml) {
+        print "<h3><${countrycode}c></h3>";
       }
       print "\n";
     } else {
@@ -1012,31 +1052,30 @@ sub nonus_mirrors {
     }
     foreach my $m_id (@{ $countries_sorted{$country} }) {
       if (defined $mirror[$m_id]{method}{'nonus-ftp'}) {
-        print "<a href=\"ftp://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-ftp'}\">" if $html;
+        print "<a href=\"ftp://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-ftp'}\">" if ($html || $wml);
         print "  ftp://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-ftp'}";
-        print "</a><br>\n" if $html;
+        print "</a><br>\n" if ($html || $wml);
         if (defined $mirror[$m_id]{method}{'nonus-http'}) {
           print "\n    ";
-          print "<a href=\"http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}\">" if $html;
+          print "<a href=\"http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}\">" if ($html || $wml);
           print "http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}";
-          print "</a>\n" if $html;
+          print "</a>\n" if ($html || $wml);
         }
         print "\n\n";
-        print "<p>" if $html;
+        print "<p>" if ($html || $wml);
       } elsif (defined $mirror[$m_id]{method}{'nonus-http'}) {
         print "  ";
-        print "<a href=\"http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}\">" if $html;
+        print "<a href=\"http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}\">" if ($html || $wml);
         print "http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}";
-        print "</a>\n" if $html;
+        print "</a>\n" if ($html || $wml);
         print "\n\n";
-        print "<p>" if $html;
+        print "<p>" if ($html || $wml);
       }
     }
   }
 }
 
 sub nonus_short() {
-  return unless ($html);
   foreach my $country (sort keys %countries) {
     my $hasmirrors = 0;
     my %countries_nonus;
@@ -1067,9 +1106,17 @@ sub nonus_short() {
   }
 }
 
-sub footer_stuff($) {
+sub footer_stuff($$) {
+  my $format = shift;
+  die "must get format for footer_stuff()" unless $format;
+  my $html = 1 if ($format eq 'html');
+  my $text = 1 if ($format eq 'text');
+  my $wml = 1 if ($format eq 'wml');
+
   my $whichcount = shift;
-  if ($html) {
+  die "must get count for footer_stuff()" unless $whichcount;
+
+  if ($html || $wml) {
     print <<END;
 <hr>
 <table border="0" width="100%"><tr>
@@ -1077,20 +1124,29 @@ sub footer_stuff($) {
   <td align="right"><small>Number of sites listed: $whichcount</small></td>
 </tr></table>
 END
-  } else {
-    print <<END;
-
--------------------------------------------------------------------------------
-Last modified: $last_modify             Number of sites listed: $whichcount
-END
+  } elsif ($text) {
+    print "\n";
+    print "-" x 79 . "\n";
+# expecting $last_modify like: Mon Jan  1 00:00:00 0000 - 24 characters wide
+# expecting $whichcount to be less than 1k :)
+    printf "%-14s %-24s %-11s %-23s %-3d\n",
+           'Last modified:', $last_modify, '', 'Number of sites listed:', $whichcount;
   }
 }
 
 # fork of secondary_mirrors
 # Changed for debian-volatile by Francesco Paolo Lovergine, 2005 
 sub volatile_mirrors {
-  # TODO clean up the html to match the primary list and make the
-  # text version not have such long lines.
+  # TODO make the text version not have such long lines.
+  my $format = shift;
+  die "must get format for volatile_mirrors()" unless $format;
+  my $html = 1 if ($format eq 'html');
+  my $text = 1 if ($format eq 'text');
+  my $wml = 1 if ($format eq 'wml');
+
+  # temporary, hopefully, until this whole thing is merged somewhere
+  $html = 1 if $wml;
+
   if ($html) {
     print "<h2 class=\"center\">";
   } else {
@@ -1102,14 +1158,14 @@ sub volatile_mirrors {
   } else {
     print "\n                   ---------------------------------------\n\n";
   }
-  my $tmp = "%-$longest{site}s%-$longest{'volatile-ftp'}s%-$longest{'volatile-http'}s%-$longest{'volatile-rsync'}s%s\n";
+  my $formatstring = "%-$longest{site}s%-$longest{'volatile-ftp'}s%-$longest{'volatile-http'}s%-$longest{'volatile-rsync'}s%s\n";
   if ($html) {
     print "<table class=\"volatile\"summary=\"Mirrors sorted by Country\">\n";
     print "<colgroup span=\"5\">\n</colgroup>\n";
     print "<thead><tr><th>HOST NAME</th><th>FTP</th><th>HTTP</th><th>RSYNC</th><th>ARCHITECTURES</th></tr></thead>\n<tbody>";
   } else {
-    printf $tmp, "HOST NAME", " FTP", " HTTP", " RSYNC" ,"  ARCHITECTURES";
-    printf $tmp, "---------", " ---", " ----", " -----" ,"  -------------";
+    printf $formatstring, "HOST NAME", " FTP", " HTTP", " RSYNC" ,"  ARCHITECTURES";
+    printf $formatstring, "---------", " ---", " ----", " -----" ,"  -------------";
   }
   foreach my $country (sort keys %countries) {
     my $hasmirrors = 0;
@@ -1129,7 +1185,7 @@ sub volatile_mirrors {
     } else {
       next;
     }
-    if (!$html) {
+    if ($text) {
       my $i = length($country);
       print "-" while ($i--); # underline
       print "\n";
@@ -1139,8 +1195,8 @@ sub volatile_mirrors {
       if ($html) {
         print "<tr><th>$mirror[$id]{site}</th>";
       } else {
-        $tmp = "%-$longest{site}s ";
-        printf $tmp, $mirror[$id]{site};
+        $formatstring = "%-$longest{site}s ";
+        printf $formatstring, $mirror[$id]{site};
       }
       if (defined $mirror[$id]{method}{'volatile-ftp'}) {
         if ($html) {
@@ -1149,18 +1205,18 @@ sub volatile_mirrors {
           print "</a></td>\n";
         } else {
           my $rest = $longest{'volatile-ftp'} - length($mirror[$id]{method}{'volatile-ftp'});
-          $tmp = "%s%${rest}s";
-          printf $tmp, $mirror[$id]{method}{'volatile-ftp'}, '';
+          $formatstring = "%s%${rest}s";
+          printf $formatstring, $mirror[$id]{method}{'volatile-ftp'}, '';
         }
       } else {
         if ($html) {
           print "<td> </td>\n";
         } else {
-          $tmp = "%-$longest{'volatile-ftp'}s";
-          printf $tmp, " ";
+          $formatstring = "%-$longest{'volatile-ftp'}s";
+          printf $formatstring, " ";
         }
       }
-      $tmp = "%-$longest{'volatile-http'}s";
+      $formatstring = "%-$longest{'volatile-http'}s";
       if (defined $mirror[$id]{method}{'volatile-http'}) {
         if ($html) {
           print "<td><a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{'volatile-http'}\">";
@@ -1168,18 +1224,18 @@ sub volatile_mirrors {
           print "</a></td>\n";
         } else {
           my $rest = $longest{'volatile-http'} - length($mirror[$id]{method}{'volatile-http'});
-          $tmp = "%s%${rest}s";
-          printf $tmp, $mirror[$id]{method}{'volatile-http'}, '';
+          $formatstring = "%s%${rest}s";
+          printf $formatstring, $mirror[$id]{method}{'volatile-http'}, '';
         }
       } else {
         if ($html) {
           print "<td> </td>\n";
         } else {
-          $tmp = "%-$longest{'volatile-http'}s";
-          printf $tmp, " ";
+          $formatstring = "%-$longest{'volatile-http'}s";
+          printf $formatstring, " ";
         }
       }
-      $tmp = "%-$longest{'volatile-rsync'}s";
+      $formatstring = "%-$longest{'volatile-rsync'}s";
       if (defined $mirror[$id]{method}{'volatile-rsync'}) {
         if ($html) {
           print "<td><a href=\"rsync://$mirror[$id]{site}/$mirror[$id]{method}{'volatile-rsync'}\">";
@@ -1187,15 +1243,15 @@ sub volatile_mirrors {
           print "</a></td>\n";
         } else {
           my $rest = $longest{'volatile-rsync'} - length($mirror[$id]{method}{'volatile-rsync'});
-          $tmp = "%s%${rest}s";
-          printf $tmp, $mirror[$id]{method}{'volatile-rsync'}, '';
+          $formatstring = "%s%${rest}s";
+          printf $formatstring, $mirror[$id]{method}{'volatile-rsync'}, '';
         }
       } else {
         if ($html) {
           print "<td> </td>\n";
         } else {
-          $tmp = "%-$longest{'volatile-rsync'}s";
-          printf $tmp, " ";
+          $formatstring = "%-$longest{'volatile-rsync'}s";
+          printf $formatstring, " ";
         }
       }
       print "<td>" if ($html);
@@ -1213,7 +1269,6 @@ sub volatile_mirrors {
 
 
 sub mirror_tree_by_origin {
-  return unless $html;
   my %origins;
   foreach my $country (sort keys %countries) {
     foreach my $id (sort @{ $countries{$country} }) {
@@ -1350,11 +1405,6 @@ if (0) {
 }
 
 ######### Begin main routine ###########################
-Getopt::Long::config('no_getopt_compat', 'no_auto_abbrev');
-GetOptions(%opthash) or die "error parsing options";
-
-$output_type = 'html' if (! defined $output_type);
-$mirror_source = 'Mirrors.masterlist' if (! defined $mirror_source);
 
 if (defined $help) {
   print_help();
@@ -1456,33 +1506,24 @@ foreach my $country (sort keys %countries) {
   undef %countries_sorted_u;
 }
 
-my @stat = stat($mirror_source);
-$last_modify = gmtime($stat[9]);
-# print "$last_modify<br>";
-
 if ($output_type eq 'html') {
-  $html=1;
   header();
-  intro();
-  primary_mirrors();
-  secondary_mirrors();
-  footer_stuff($count);
+  intro('html');
+  primary_mirrors('html');
+  secondary_mirrors('html');
+  footer_stuff('html', $count);
   trailer();
 } elsif ($output_type eq 'text') {
-  $html=0;
-  intro();
-  primary_mirrors();
-  secondary_mirrors();
-  footer_stuff($count);
+  intro('text');
+  primary_mirrors('text');
+  secondary_mirrors('text');
+  footer_stuff('text', $count);
 } elsif ($output_type eq 'wml-primary') {
-  $html=1;
-  primary_mirrors('skipinfo');
+  primary_mirrors('wml');
 } elsif ($output_type eq 'wml-secondary') {
-  $html=1;
-  secondary_mirrors('skipinfo');
+  secondary_mirrors('wml');
 } elsif ($output_type eq 'wml-footer') {
-  $html=1;
-  footer_stuff($count);
+  footer_stuff('wml', $count);
 } elsif ($output_type eq 'apt') {
   header();
   print "<pre>\n";
@@ -1490,53 +1531,41 @@ if ($output_type eq 'html') {
   print "</pre>\n";
   trailer();
 } elsif ($output_type eq 'fullmethods') { # this is likely obsolete
-  $html=1;
   header();
   access_methods();
-  full_listing();
-  footer_stuff($count);
+  full_listing('html');
+  footer_stuff('html', $count);
   trailer();
 } elsif ($output_type eq 'wml-full') {
-  $html=1;
-  full_listing();
-  footer_stuff($count);
+  full_listing('wml');
+  footer_stuff('wml', $count);
 } elsif ($output_type eq 'nonus') {
-  $html = 0;
-  nonus_intro();
-  nonus_mirrors();
-  footer_stuff($nonuscount);
+  nonus_intro('text');
+  nonus_mirrors('text');
+  footer_stuff('text', $nonuscount);
 } elsif ($output_type eq 'nonushtml') {
   header("non-US ");
-  $html = 1;
-  nonus_intro();
-  nonus_mirrors();
-  footer_stuff($nonuscount);
+  nonus_intro('html');
+  nonus_mirrors('html');
+  footer_stuff('html', $nonuscount);
   trailer();
 } elsif ($output_type eq 'nonusshort') {
-  $html = 1;
   nonus_short();
 } elsif ($output_type eq 'wml-nonus') {
-  $html = 1;
-  nonus_mirrors('skipinfo');
-  footer_stuff($nonuscount);
+  nonus_mirrors('wml');
+  footer_stuff('wml', $nonuscount);
 } elsif ($output_type eq 'officialsponsors') {
-  $html=1;
   primary_mirror_sponsors();
 } elsif ($output_type eq 'sponsors') {
-  $html=1;
   mirror_sponsors();
 } elsif ($output_type eq 'cdimages-httpftp') {
-  $html=1;
   cdimage_mirrors("httpftp");
 } elsif ($output_type eq 'cdimages-rsync') {
-  $html=1;
   cdimage_mirrors("rsync");
-} elsif ($output_type eq 'volatile-html') {
-  $html=1;
-  volatile_mirrors();
-  footer_stuff($volatilecount);
+} elsif ($output_type eq 'volatile-wml') {
+  volatile_mirrors('wml');
+  footer_stuff('wml', $volatilecount);
 } elsif ($output_type eq 'origins') {
-  $html=1;
   mirror_tree_by_origin();
 } else {
   die "Error: unknown output type requested, $output_type\n";
