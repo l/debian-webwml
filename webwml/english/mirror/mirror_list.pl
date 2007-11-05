@@ -31,18 +31,19 @@ my $last_modify = gmtime((stat($mirror_source))[9]);
 my (@mirror, %countries, %countries_sorted, %countries_sponsors, %longest);
 my ($count, $nonuscount, $volatilecount, $cdimagecount);
 
-#my $globalsite;
+my $globalsite;
+
 sub process_line {
   my ($line) = @_;
   my $field = '';
 
   if ($line =~ /^Site:\s*(.+)\s*$/i) {
     my $site = $1;
-#    $globalsite = $site;
+    $globalsite = $site;
     $count++;
     unless ($site =~ /$internalsiteregex/) {
       if (!defined($longest{site}) || length($site) > $longest{site}) {
-        $longest{site} = length($site)
+        $longest{site} = length($site);
 #        warn "increasing longest site to " . length($site) . " because of " . $site . "\n";
       }
     }
@@ -159,7 +160,7 @@ sub secondary_mirrors {
 </tr>
 END
     } else {
-      my $formatstring = "%-$longest{site}s %-$longest{'archive-ftp'}s %-$longest{'archive-http'}s %s\n";
+      my $formatstring = "%-$longest{site}s %-$longest{'archive-ftp'}s%-$longest{'archive-http'}s%s\n";
       printf $formatstring, "HOST NAME", "FTP", "HTTP", "ARCHITECTURES";
       printf $formatstring, "---------", "---", "----", "-------------";
     }
