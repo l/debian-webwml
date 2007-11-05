@@ -10,6 +10,9 @@ require 5.001;
 
 my @filter_arches=qw(); # Architectures not to list.
 
+my $officialsiteregex = q{^ftp\d?(?:\.wa)?\...\.debian\.org$};
+my $internalsiteregex = q{^((ftp|www|security|volatile)-master|ftp)\.debian\.org$};
+
 use Getopt::Long;
 my ($mirror_source, $output_type, $help);
 my %opthash = (
@@ -28,15 +31,20 @@ my $last_modify = gmtime((stat($mirror_source))[9]);
 my (@mirror, %countries, %countries_sorted, %countries_sponsors, %longest);
 my ($count, $nonuscount, $volatilecount, $cdimagecount);
 
+#my $globalsite;
 sub process_line {
   my ($line) = @_;
   my $field = '';
 
   if ($line =~ /^Site:\s*(.+)\s*$/i) {
     my $site = $1;
+#    $globalsite = $site;
     $count++;
-    if (!defined($longest{site}) || length($site) > $longest{site}) {
-      $longest{site} = length($site);
+    unless ($site =~ /$internalsiteregex/) {
+      if (!defined($longest{site}) || length($site) > $longest{site}) {
+        $longest{site} = length($site)
+#        warn "increasing longest site to " . length($site) . " because of " . $site . "\n";
+      }
     }
     $mirror[$count-1]{site} = $1;
     return;
@@ -69,9 +77,11 @@ sub process_line {
   }
   elsif ($line=~ /^((Archive|NonUS|Security|WWW|CDimage|Jigdo|Old|Volatile)-(\w*)):\s*(.*)\s*$/i) {
     my $type = lc $1;
-    $mirror[$count-1]{method}{$type} = $4;
-    if (!defined($longest{$type}) || length($4) > $longest{$type}) {
-      $longest{$type} = length($4);
+    my $value = $4;
+    $mirror[$count-1]{method}{$type} = $value;
+    if (!defined($longest{$type}) || length($value) > $longest{$type}) {
+      $longest{$type} = length($value);
+#      warn "increasing longest $type to " . length($value) . " because of " . $value . " at " . $globalsite . "\n" if (defined($type) && $type =~ /archive-(f|ht)tp/);
     }
   }
   elsif ($line =~ /^Includes:\s*(.+)\s*$/i) {
@@ -85,9 +95,6 @@ sub process_line {
     # no need for this private data in the $mirror hash
     if ($field !~ /^x-/) {
       $mirror[$count-1]{$field} = $2;
-      if (!defined($longest{$field}) || length($2) > $longest{$field}) {
-        $longest{$field} = length($2);
-      }
     }
   }
   else {
@@ -514,7 +521,7 @@ END
   }
   foreach my $country (sort keys %countries) {
     foreach my $id (sort @{ $countries{$country} }) {
-      next unless ($mirror[$id]{site} =~ /^(?:ftp|http)\d?(?:\.wa)?\...\.debian.org$/);
+      next unless ($mirror[$id]{site} =~ /$officialsiteregex/);
       my ($countryplain, $countrycode);
       if ($country =~ /^(..) (.+)$/) {
         $countryplain = $2;
@@ -586,7 +593,7 @@ sub primary_mirror_sponsors {
 END
   foreach my $country (sort keys %countries) {
     foreach my $id (sort @{ $countries{$country} }) {
-      next unless ($mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian.org$/);
+      next unless ($mirror[$id]{site} =~ /$officialsiteregex/);
       (my $countrycode = $country) =~ s/^(..).*/$1/;
       print <<END;
 <tr>
@@ -1272,7 +1279,7 @@ sub mirror_tree_by_origin {
   my %origins;
   foreach my $country (sort keys %countries) {
     foreach my $id (sort @{ $countries{$country} }) {
-#      if ($mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian.org$/) {
+#      if ($mirror[$id]{site} =~ /$officialsiteregex/) {
       if (exists $mirror[$id]{method}{'archive-http'} or exists $mirror[$id]{method}{'archive-ftp'}) {
         my $tfm = $mirror[$id]{method}{'archive-http'} || $mirror[$id]{method}{'archive-ftp'};
         my $tf = "http://" . $mirror[$id]{site} . $tfm . "project/trace/";
@@ -1289,7 +1296,7 @@ sub mirror_tree_by_origin {
             }
           }
         } else {
-          my $mfdefault = $mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian.org$/ ? "ftp-master.debian.org" : "unknown-origin";
+          my $mfdefault = $mirror[$id]{site} =~ /$officialsiteregex/ ? "ftp-master.debian.org" : "unknown-origin";
           $mf = exists $mirror[$id]{'archive-upstream'} ? $mirror[$id]{'archive-upstream'} : $mfdefault;
           my @mfs = split(',\s*', $mf);
           foreach my $mfss (@mfs) {
@@ -1488,9 +1495,9 @@ foreach my $id (0..$#mirror) {
 foreach my $country (sort keys %countries) {
   my %countries_sorted_o; my %countries_sorted_u;
   foreach my $id (@{ $countries{$country} }) {
-    if ($mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian\.org$/) {
+    if ($mirror[$id]{site} =~ /$officialsiteregex/) {
       push @{ $countries_sorted_o{$country} }, $id;
-    } elsif ($mirror[$id]{site} !~ /^(ftp-master|www-master|ftp)\.debian\.org$/) {
+    } elsif ($mirror[$id]{site} !~ /$internalsiteregex/) {
       push @{ $countries_sorted_u{$country} }, $id;
     }
   }
