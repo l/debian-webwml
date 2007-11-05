@@ -195,20 +195,20 @@ END
       print "\n";
     }
     foreach my $id (@{ $countries_sorted{$country} }) {
-      next unless (defined $mirror[$id]{method}{'archive-ftp'} || defined $mirror[$id]{method}{'archive-http'});
+      next unless (defined $mirror[$id]{method}{'archive-ftp'} or defined $mirror[$id]{method}{'archive-http'});
       my $aliaslist;
       if (exists $mirror[$id]{'aliases'}) {
         if (exists $mirror[$id]{includes}) {
           $aliaslist .= "  (";
           my @tmparray = @{$mirror[$id]{includes}};
           my $notalldone = $#tmparray + 1;
-          foreach my $subsite (@{ $mirror[$id]{includes} }) {
+SUBSITE:  foreach my $subsite (@{ $mirror[$id]{includes} }) {
             # this is basically a sanity check
             my $subsite_id;
-            foreach my $mid (0 .. $#mirror) {
+SUBSITEID:  foreach my $mid (0 .. $#mirror) {
               if ($mirror[$mid]{site} eq $subsite) {
                 $subsite_id = $mid;
-                last;
+                last SUBSITEID;
               }
             }
             die $subsite ." included in " . $mirror[$id]{site} . " does not exist\n" unless defined $subsite_id; # must be an error
@@ -221,12 +221,13 @@ END
         } else {
           # we want to display aliases in the main list for official mirrors
           # but for others, it's just clutter, so skip them
-          next unless ($mirror[$id]{site} =~ /^ftp\d?(?:\.wa)?\...\.debian\.org$/);
-          my $truename = @{$mirror[$id]{'aliases'}}[0];
-          if ($truename =~ /^ftp.+\.debian\.org$/) {
-            $truename = @{$mirror[$id]{'aliases'}}[1];
+          if ($mirror[$id]{site} =~ /$officialsiteregex/) {
+            my $truename = @{$mirror[$id]{'aliases'}}[0];
+            if ($truename =~ /^ftp.+\.debian\.org$/) {
+              $truename = @{$mirror[$id]{'aliases'}}[1];
+            }
+            $aliaslist .= "  (" . $truename . ")";
           }
-          $aliaslist .= "  (" . $truename . ")";
         }
       }
       if ($html) {
