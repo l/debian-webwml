@@ -4,9 +4,8 @@
 
 WMLBASE=..
 CUR_DIR=security
-SUBS=undated $(wildcard [12][0-9][0-9][0-9]) audit 
-# oval
-# TODO: Enable 'oval' when RT #160 (rt.debian.org) has been closed
+SUBS=undated $(wildcard [12][0-9][0-9][0-9]) audit oval
+# TODO: Check that 'oval' works now that RT #160 (rt.debian.org) has been closed
 
 GETTEXTFILES += security.mo
 
