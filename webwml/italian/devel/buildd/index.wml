@@ -1,0 +1,171 @@
+#use wml::debian::template title="Autobuilder network" BARETITLE="true"
+#use wml::debian::translation-check translation="1.14" maintainer="Giovanni Mascellani"
+
+<p>La rete di buildd è un sottoprogetto di Debian che aiuta a velocizzare
+la ricompilazione dei pacchetti per tutte le architetture che
+<a href="$(HOME)/ports/">Debian al momento supporta</a>. Questa rete è formata
+da svariate macchine (i nodi buildd) che utilizzano uno specifico pacchetto
+software, chiamato <em>buildd</em>, per prendere i pacchetti dall'archivio
+Debian e ricompilarli per l'architettura richiesta.</p>
+
+<h2>Come mai è necessaria la rete di buildd?</h2>
+
+<p>La distribuzione Debian supporta <a href="$(HOME)/ports/">un buon numero di
+architetture</a>, ma i mantenitori dei pacchetti in genere compilano i binari
+solo per una sola architettura (di solito i386). Gli sviluppatori di altre
+architetture devono prestare attenzione a quando escono nuove versioni di ogni
+pacchetto e ricompilarle, se vogliono stare al passo con la distribuzione
+Intel.</p>
+
+<p>Quando fu iniziata Debian/m68k (il primo port non Intel) tutto questo veniva
+fatto manualmente: gli sviluppatori controllavano sulla mailing list degli
+upload la presenza di nuovi pacchetti e ne prendevano alcuni per compilarli.
+Annunciando su una mailing list cosa si stava per fare si evitava che un
+pacchetto venisse compilato due volte. È evidente che però questo metodo era
+facilmente soggetto ad errori ed estremamente costoso in termini di tempo, ma è
+stato per lungo tempo l'unico modo di mantenere le distribuzioni non i386.</p>
+
+<p>Il demone di compilazione rende automatica la maggior parte di questo
+processo. Consiste di una serie di script (scritti in Perl e Python), che sono
+stati modificati molte volte nel corso del tempo in modo da aiutare i porter
+in molti compiti. Sono finalmente diventati un sistema che è capace di
+mantenere quasi automaticamente una distribuzione Debian non i386 aggiornata.
+</p>
+
+
+<h2>Come funziona buildd?</h2>
+
+<p><em>Buildd</em> è il nome che di solito si dà ai programmi utilizzati
+della rete, ma in realtà è però diviso in parti diverse:</p>
+
+<dl>
+
+<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">wanna-build</a></dt>
+<dd>
+un tool che coordina la (ri)compilazione dei pacchetti attraverso un database
+che mantiene la lista dei pacchetti e del loro stato. C'è un database centrale
+per ogni architettura che memorizza lo stato dei pacchetti, la loro versione
+e qualche altra informazione.
+</dd>
+
+<dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">buildd</a></dt>
+<dd>
+un demone che controlla periodicamente il database mantenuto da
+<em>wanna-build</em> e chiama <em>sbuild</em> per compilare i pacchetti. Tiene
+traccia delle compilazioni fallite e riuscite e carica i pacchetti nell'archivio
+una volta che il log di compilazione è stato accettato dall'amministratore.
+</dd>
+
+<dt><a href="http://packages.debian.org/sbuild">sbuild</a></dt>
+<dd>
+è responsabile dell'effettiva compilazione dei pacchetti in chroot isolate.
+Per fare questo principalmente utilizza tool standard di Debian, ma tiene anche
+conto delle dipendenze di compilazione e di altre sottigliezze.
+</dd>
+
+<dt><a href="http://packages.debian.org/quinn-diff">quinn-diff</a></dt>
+<dd>
+riempie il database di wanna-build con i nuovi pacchetti. Confronta la lista dei
+pacchetti disponibili ed elenca le differenze (comparando un file Sources ed un
+file Packages). Altre informazioni su quinn-diff sono disponibili
+<a href="http://buildd.debian.org/quinn-diff/">qui</a>.
+</dd>
+
+<dt>andrea</dt>
+<dd>
+un tool che genera alcune dipendenze di compilazioni automaticamente ed integra
+questi dati a dipendenze aggiunte manualmente.
+</dd>
+
+</dl>
+
+<p>Tutte queste parti <a href="operation">operano</a> insieme per far funzionare
+la rete di buildd.</p>
+
+<h2>Cosa deve fare uno sviluppatore Debian?</h2>
+
+<p>In realtà lo sviluppatore Debian medio non deve esplicitamente usare
+la rete di buildd. Quando carica un pacchetto nell'archivio (binari
+compilati per una certa architettura), questo sarà aggiunto al database di ogni
+architettura (nello stato <em>Needs-Build</em>, ossia "compilazione
+necessaria"). Le macchine di compilazione interrogheranno il database chiedendo
+quali pacchetti sono in quello stato e prenderanno continuamente pacchetti dalla
+lista. I criteri di priorità della lista sono lo stato della precedente
+compilazione, la priorità del pacchetto, la sua sezione ed infine il suo
+nome.</p>
+
+<p>Se la compilazione ha successo su tutte le architetture, il mantenitore
+non avrà bisogno di fare niente. Tutti i pacchetti binari saranno caricati
+nell'archivio principale della loro architettura. Se la compilazione non finisce
+con successo, il pacchetto entrerà in uno stato speciale (<em>Failed</em>,
+"fallito", oppure <em>Dep-Wait</em>, "aspetta le dipendenze", se ha dipendenze
+di compilazione o di installazione che non sono disponibili). Gli amministratori
+della rete di buildd controlleranno i pacchetti che non sono stati compilati
+con successo e ne daranno comunicazione al mantenitore, generalmente aprendo un
+bug nel Bug Tracking System.</p>
+
+<p>A volte un pacchetto impiega molto tempo per essere compilato per una certa
+architettura, e questo gli impedisce di entrare in
+<a href="$(HOME)/devel/testing">testing</a>. Sfortunatamente il pacchetto dovrà
+aspettare finché una macchina non lo prende. Gli amministratori di buildd non
+accetteranno richieste di velocizzare la compilazione di un pacchetto, perché
+la lista delle priorità è stata fissata. Un mantenitore, comunque, può accedere
+ad una <a href="http://db.debian.org/machines.cgi">macchina di sviluppo
+Debian</a> e compilare manualmente il pacchetto da lì.</p>
+
+<p>Puoi controllare lo stato di ogni tentativo fatto da buildd per compilare i
+pacchetti che appartengono ad ogni mantenitore controllando i
+<a href="http://buildd.debian.org/bymaint.php">log di buildd</a>. Questi log
+possono essere raggiunti anche dal Riassunto dei Pacchetti di un
+Mantenitore (Packages' Maintainer Overview).</p>
+
+<p>Per maggiori informazioni sui diversi stati dei pacchetti puoi leggere
+<a href="wanna-build-states">"stati di wanna-build"</a>.</p>
+
+<h2>Dove posso trovare altre informazioni?</h2>
+
+<p>Ovviamente, il miglior modo di capire come funziona la rete i buildd è
+consultare i codici sorgente e la documentazione disponibile. Inoltre, la
+sezione <a href="$(HOME)/doc/manuals/developers-reference/ch-pkgs#s-porting">\
+Porting and being ported</a> della <a
+href="$(HOME)/doc/manuals/developers-reference/">Debian Developers Reference</a>
+contiene altre informazioni su come funziona, nonché informazioni sui
+<a href="$(HOME)/doc/manuals/developers-reference/ap-tools#s-tools-builders">\
+compilatori di pacchetti</a> e
+<a href="$(HOME)/doc/manuals/developers-reference/ap-tools#s-tools-porting">\
+tool per il porting</a> che sono utilizzati nel processo di costruzione e
+mantenimento della rete di buildd.</p>
+
+<p>Sono disponibili <a href="http://buildd.debian.org/stats/">alcune statistiche
+sulla rete di buildd</a>.</p>
+
+<h2>Come faccio a installare il mio nodo buildd personale?</h2>
+
+<p>Ci sono molte ragioni per cui uno sviluppatore (o un utente) potrebbe voler
+metter su e far funzionare un sistema buildd:</p>
+
+<ul>
+<li>Per testare localmente se le dipendenze di compilazione di un pacchetto sono
+correttamente definite (p. es. compilando il pacchetto nell'ambiente di
+buildd).</li>
+<li>Per aiutare nel port su una certa architettura (quando sono necessari nodi
+buildd).</li>
+<li>Per valutare l'effetto di una certa patch o ottimizzazione del compilatore
+su un grande numero di pacchetti.</li>
+<li>Per utilizzare tool che analizzano pacchetti cercando errori comuni e che
+lavorano sui pacchetti compilati, operazione che può anche essere necessaria
+per fare analisi sul codice sorgente, per esempio come work-around per pacchetti
+che usano <tt>dpatch</tt>.</li>
+</ul>
+
+<p>Qui puoi trovare ulteriori informazioni su come
+<a href="setting-up">installare un nodo buildd</a>.</p>
+
+<hrline />
+
+<p><small>Questa introduzione alla rete di buildd è stata scritta mettendo
+insieme pezzetti appartenenti a Roman Hodek, Christian T. Steigies,
+Wouter Verhelst, Andreas Barth, Francesco Paolo Lovergine e
+Javier Fernández-Sanguino.</small></p>
+
+
