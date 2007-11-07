@@ -8,11 +8,13 @@
 WMLBASE=../../..
 CUR_DIR=security/audit/2004
 
-all:: ../data/2004.inc
-
+all:: ../data/2004.inc index.en.html
 install:: all
 
-../data/2004.inc: 
+../data/2004.inc:  ../data/2004.data
 	$(ENGLISHDIR)/security/audit/make-advisories $(ENGLISHDIR)/security/audit/data
+
+index.en.html: index.wml  ../data/2004.inc ../data/2004.data
+	$(WML) $(<F) 
 
 include $(WMLBASE)/Make.lang
