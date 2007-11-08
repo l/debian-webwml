@@ -863,7 +863,7 @@ sub full_listing {
       print "<br>" unless ($counter++ % 6);
     }
     print "\n<hr noshade size=\"1\">\n";
-    print "<pre>\n";
+    print "<pre>\n" unless ($wml);
   }
   foreach my $country (sort keys %countries) {
     my ($countryplain, $countrycode);
@@ -877,7 +877,7 @@ sub full_listing {
     } elsif ($text) {
       print "$country\n";
     } elsif ($wml) {
-      print "<strong><a name=\"$countrycode\"><${countrycode}c></a></strong>\n";
+      print "<h3><a name=\"$countrycode\"><${countrycode}c></a></h3>\n";
     }
     if ($html || $text) {
       my $i = length($country);
@@ -891,10 +891,12 @@ sub full_listing {
       if (exists $mirror[$id]{'aliases'}) {
         print ", ".join(", ", @{ $mirror[$id]{'aliases'} });
       }
+      print "<br>" if $wml;
       print "\n";
       warn "undefined type for $mirror[$id]{site}!\n" unless defined $mirror[$id]{'type'};
       $mirror[$id]{'type'} ||= 'leaf';
       print "Type: $mirror[$id]{'type'}\n";
+      print "<br>" if $wml;
       foreach my $method ( sort keys %{ $mirror[$id]{method} } ) {
         my $display = $method;
         $display =~ s/archive-/Packages /;
@@ -914,26 +916,34 @@ sub full_listing {
         }
         elsif ($method =~ /ftp/) {
           print $display.":  <a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{$method}\">$mirror[$id]{method}{$method}</a>\n";
-        }
-        else {
+        } else {
           print $display.":  ".$mirror[$id]{method}{$method}."\n";
         }
+        print "<br>" if $wml;
       }
       if (exists $mirror[$id]{'archive-architecture'}) {
         print "Includes architectures: ".join(" ", sort @{$mirror[$id]{'archive-architecture'}})."\n";
+        print "<br>" if $wml;
       }
       if (exists $mirror[$id]{'ipv6'}) {
         if ($mirror[$id]{ipv6} ne 'no') {
           print "IPv6: ".$mirror[$id]{ipv6}."\n";
+          print "<br>" if $wml;
         }
       }
       if (exists $mirror[$id]{'comment'}) {
-        print "Comment: ".$mirror[$id]{comment}."\n";
+        print "Comment: ";
+        print "<span style=\"white-space: pre;\">" if $wml;
+        print $mirror[$id]{comment};
+        print "</span>" if $wml;
+        print "\n";
+        print "<br>" if $wml;
       }
+      print "<br>" if $wml;
       print "\n";
     }
   }
-  print "</pre>\n" if ($html || $wml);
+  print "</pre>\n" if $html;
 }
 
 sub nonus_intro {
