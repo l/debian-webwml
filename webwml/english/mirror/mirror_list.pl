@@ -887,10 +887,13 @@ sub full_listing {
     }
     print "\n";
     foreach my $id (@{ $countries_sorted{$country} }) {
-      print "Site: $mirror[$id]{site}";
+      print "Site: ";
+      print "<tt>" if $wml;
+      print $mirror[$id]{site};
       if (exists $mirror[$id]{'aliases'}) {
         print ", ".join(", ", @{ $mirror[$id]{'aliases'} });
       }
+      print "</tt>" if $wml;
       print "<br>" if $wml;
       print "\n";
       warn "undefined type for $mirror[$id]{site}!\n" unless defined $mirror[$id]{'type'};
@@ -912,12 +915,20 @@ sub full_listing {
         $display =~ s/nfs/over NFS/;
         $display =~ s/rsync/over rsync/;
         if ($method =~ /http/) {
-          print $display.":  <a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{$method}\">$mirror[$id]{method}{$method}</a>\n";
-        }
-        elsif ($method =~ /ftp/) {
-          print $display.":  <a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{$method}\">$mirror[$id]{method}{$method}</a>\n";
+          print $display.":  ";
+          print "<tt>" if $wml;
+          print "<a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{$method}\">$mirror[$id]{method}{$method}</a>\n";
+          print "</tt>" if $wml;
+        } elsif ($method =~ /ftp/) {
+          print $display.":  ";
+          print "<tt>" if $wml;
+          print "<a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{$method}\">$mirror[$id]{method}{$method}</a>\n";
+          print "</tt>" if $wml;
         } else {
-          print $display.":  ".$mirror[$id]{method}{$method}."\n";
+          print $display.":  ";
+          print "<tt>" if $wml;
+          print $mirror[$id]{method}{$method}."\n";
+          print "</tt>" if $wml;
         }
         print "<br>" if $wml;
       }
