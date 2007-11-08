@@ -837,6 +837,7 @@ END
 }
 
 sub full_listing {
+  # TODO: fix the html/wml modes to output actual normal HTML, rather than <pre>
   my $format = shift;
   die "must get format for full_listing()" unless $format;
   my $html = 1 if ($format eq 'html');
@@ -846,26 +847,44 @@ sub full_listing {
   if ($html) {
     print "\n<hr noshade size=\"1\">\n";
     print "<p>Jump directly to a country on the list:<br>\n";
+  }
+  if ($html || $wml) {
     my $counter = 1;
     foreach my $country (sort keys %countries) {
-      (my $XY = $country) =~ s/^([[:upper:]]+) .+$/$1/;
-      (my $con = $country) =~ s/^[[:upper:]]+ (.+)$/$1/;
-      print " [<a href=\"#$XY\">$con</a>]";
+      my ($countryplain, $countrycode);
+      if ($country =~ /^(..) (.+)$/) {
+        $countryplain = $2;
+        $countrycode = $1;
+      }
+      print " [<a href=\"#${countrycode}\">";
+      if ($html) { print $countryplain }
+      elsif ($wml) { print "<${countrycode}c>" }
+      print "</a>]";
       print "<br>" unless ($counter++ % 6);
     }
     print "\n<hr noshade size=\"1\">\n";
     print "<pre>\n";
   }
   foreach my $country (sort keys %countries) {
+    my ($countryplain, $countrycode);
+    if ($country =~ /^(..) (.+)$/) {
+      $countryplain = $2;
+      $countrycode = $1;
+    }
+    print "\n";
     if ($html) {
-      (my $XY = $country) =~ s/^([[:upper:]]+) .+$/$1/;
-      print "\n<strong><a name=\"$XY\">$country</a></strong>\n";
+      print "<strong><a name=\"$countrycode\">$country</a></strong>\n";
+    } elsif ($text) {
+      print "$country\n";
+    } elsif ($wml) {
+      print "<strong><a name=\"$countrycode\"><${countrycode}c></a></strong>\n";
     }
-    else {
-      print "\n$country\n";
+    if ($html || $text) {
+      my $i = length($country);
+      print "-" while ($i--); # underline
+    } elsif ($wml) {
+      print "\n";
     }
-    my $i = length($country);
-    print "-" while ($i--); # underline
     print "\n";
     foreach my $id (@{ $countries_sorted{$country} }) {
       print "Site: $mirror[$id]{site}";
@@ -914,7 +933,7 @@ sub full_listing {
       print "\n";
     }
   }
-  print "</pre>\n" if ($html);
+  print "</pre>\n" if ($html || $wml);
 }
 
 sub nonus_intro {
