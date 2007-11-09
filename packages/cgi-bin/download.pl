@@ -23,7 +23,7 @@ my @north_american_sites = qw(
 	mirrors.kernel.org/ubuntu
 	ftp.cs.umn.edu/pub/ubuntu
 	lug.mtu.edu/ubuntu
-	mirror.clarkson.edu/pub/distributions/ubuntu
+	mirror.clarkson.edu/pub/ubuntu
 	ubuntu.mirrors.tds.net/ubuntu
 	www.opensourcemirrors.org/ubuntu
 	ftp.ale.org/pub/mirrors/ubuntu
