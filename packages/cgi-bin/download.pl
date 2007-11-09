@@ -101,6 +101,7 @@ my @south_american_sites = qw(
 	);
 my @australian_sites = qw(
 	ftp.iinet.net.au/pub/ubuntu
+	nz2.archive.ubuntu.com/ubuntu
 	mirror.optus.net/ubuntu
 	mirror.isp.net.au/ftp/pub/ubuntu
 	www.planetmirror.com/pub/ubuntu
