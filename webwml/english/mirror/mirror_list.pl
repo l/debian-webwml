@@ -1124,32 +1124,66 @@ sub nonus_mirrors {
   }
 }
 
-sub nonus_short() {
-  foreach my $country (sort keys %countries) {
-    my $hasmirrors = 0;
-    my %countries_nonus;
-    foreach my $m_id (@{ $countries{$country} }) {
-      if ( defined($mirror[$m_id]{method}{'nonus-ftp'}) or
-           defined($mirror[$m_id]{method}{'nonus-http'}) or
-           defined($mirror[$m_id]{method}{'nonus-rsync'}) ) {
-        $hasmirrors++;
-        push @{ $countries_nonus{$country} }, $m_id;
+sub compact_list($$) {
+  my $whichtype = shift;
+  die "must get type for compact_list()" unless $whichtype;
+  my $ordering = shift;
+  die "must get ordering for compact_list()" unless $ordering;
+
+  if ($ordering eq 'countrysite') {
+    foreach my $country (sort keys %countries) {
+      my $hasmirrors = 0;
+      my %countries_ours;
+      foreach my $id (@{ $countries{$country} }) {
+        if ( defined($mirror[$id]{method}{$whichtype.'-ftp'}) or
+             defined($mirror[$id]{method}{$whichtype.'-http'}) or
+             defined($mirror[$id]{method}{$whichtype.'-rsync'}) ) {
+          $hasmirrors++;
+          push @{ $countries_ours{$country} }, $id;
+        }
+      }
+      next unless ($hasmirrors);
+      my $countrycode; my $countryplain;
+      if ($country =~ /^(\w\w) (.+)$/) {
+        $countrycode = $1;
+        $countryplain = $2;
+      }
+      foreach my $id (@{ $countries_ours{$country} }) {
+        print "<li><".$countrycode."c>: " . $mirror[$id]{site} . ": ";
+        print "<a href=\"http://". $mirror[$id]{site} . $mirror[$id]{method}{$whichtype.'-http'} ."\">HTTP</a> "
+          if (defined $mirror[$id]{method}{$whichtype.'-http'});
+        print "<a href=\"ftp://". $mirror[$id]{site} . $mirror[$id]{method}{$whichtype.'-ftp'} ."\">FTP</a> "
+          if (defined $mirror[$id]{method}{$whichtype.'-ftp'});
+        print "rsync&nbsp;". $mirror[$id]{site} . "::" . $mirror[$id]{method}{$whichtype.'-rsync'}
+          if (defined $mirror[$id]{method}{$whichtype.'-rsync'});
+        print "</li>\n";
       }
     }
-    next unless ($hasmirrors);
-    my $countrycode; my $countryplain;
-    if ($country =~ /^(\w\w) (.+)$/) {
-      $countrycode = $1;
-      $countryplain = $2;
+  } elsif ($ordering eq 'sitecountry') {
+    my %mirror_ours;
+    foreach my $id (0..$#mirror) {
+      my $hasmirrors = 0;
+      if ( defined($mirror[$id]{method}{$whichtype.'-ftp'}) or
+           defined($mirror[$id]{method}{$whichtype.'-http'}) or
+           defined($mirror[$id]{method}{$whichtype.'-rsync'}) ) {
+        $hasmirrors++;
+        $mirror_ours{ $mirror[$id]{site} } = $id;
+      }
     }
-    foreach my $m_id (@{ $countries_nonus{$country} }) {
-      print "<li><".$countrycode."c>: " . $mirror[$m_id]{site} . ": ";
-      print "<a href=\"http://". $mirror[$m_id]{site} . $mirror[$m_id]{method}{'nonus-http'} ."\">HTTP</a> "
-        if (defined $mirror[$m_id]{method}{'nonus-http'});
-      print "<a href=\"ftp://". $mirror[$m_id]{site} . $mirror[$m_id]{method}{'nonus-ftp'} ."\">FTP</a> "
-        if (defined $mirror[$m_id]{method}{'nonus-ftp'});
-      print "rsync&nbsp;". $mirror[$m_id]{site} . "::" . $mirror[$m_id]{method}{'nonus-rsync'}
-        if (defined $mirror[$m_id]{method}{'nonus-rsync'});
+    foreach my $site (sort keys %mirror_ours) {
+      my $id = $mirror_ours{$site};
+      my $countrycode; my $countryplain;
+      if ($mirror[$id]{country} =~ /^(\w\w) (.+)$/) {
+        $countrycode = $1;
+        $countryplain = $2;
+      }
+      print "<li>" . $mirror[$id]{site} . " (<".$countrycode."c>): ";
+      print "<a href=\"http://". $mirror[$id]{site} . $mirror[$id]{method}{$whichtype.'-http'} ."\">HTTP</a> "
+        if (defined $mirror[$id]{method}{$whichtype.'-http'});
+      print "<a href=\"ftp://". $mirror[$id]{site} . $mirror[$id]{method}{$whichtype.'-ftp'} ."\">FTP</a> "
+        if (defined $mirror[$id]{method}{$whichtype.'-ftp'});
+      print "rsync&nbsp;". $mirror[$id]{site} . "::" . $mirror[$id]{method}{$whichtype.'-rsync'}
+        if (defined $mirror[$id]{method}{$whichtype.'-rsync'});
       print "</li>\n";
     }
   }
@@ -1598,8 +1632,10 @@ if ($output_type eq 'html') {
   nonus_mirrors('html');
   footer_stuff('html', $nonuscount);
   trailer();
-} elsif ($output_type eq 'nonusshort') {
-  nonus_short();
+} elsif ($output_type eq 'compact-nonus') {
+  compact_list('nonus', 'countrysite');
+} elsif ($output_type eq 'compact-old') {
+  compact_list('old', 'sitecountry');
 } elsif ($output_type eq 'wml-nonus') {
   nonus_mirrors('wml');
   footer_stuff('wml', $nonuscount);
