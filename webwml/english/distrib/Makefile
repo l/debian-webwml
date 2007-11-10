@@ -28,37 +28,21 @@ ifeq "$(LANGUAGE)" "en"
 clean::
 	rm -f archive.mirrors archive-nonus.mirrors
 
-$(ENGLISHSRCDIR)/distrib/archive.mirrors: archive.mirrors
-archive.mirrors: ../mirror/Mirrors.masterlist
+$(ENGLISHSRCDIR)/distrib/archive.mirrors: \
+ $(ENGLISHSRCDIR)/mirror/Mirrors.masterlist $(ENGLISHSRCDIR)/mirror/mirror_list.pl
 	echo "#use wml::debian::countries" > $@
 	echo "<define-tag archivemirrors>" >> $@
 	echo "<ul>" >> $@
-	for i in `grep-dctrl -n -F Old-http,Old-ftp,Old-rsync -s Site -r '.' ../mirror/Mirrors.masterlist | sort`; do \
-          xy=`grep-dctrl -n -F Site -s Country -X $$i ../mirror/Mirrors.masterlist | perl -pe 's/^(..) .*$$/$$1/' | head -1`; \
-	  echo "<li>$$i (<$${xy}c>): " >> $@; \
-          http=`grep-dctrl -n -F Site -s Old-http -X $$i ../mirror/Mirrors.masterlist`; \
-          if [ "$$http" != "" ]; then \
-            echo "<a href=\"http://$${i}$${http}\">HTTP</a>" >> $@; \
-          fi; \
-          ftp=`grep-dctrl -n -F Site -s Old-ftp -X $$i ../mirror/Mirrors.masterlist`; \
-          if [ "$$ftp" != "" ]; then \
-            echo "<a href=\"ftp://$${i}$${ftp}\">FTP</a>" >> $@; \
-          fi; \
-          rsync=`grep-dctrl -n -F Site -s Old-rsync -X $$i ../mirror/Mirrors.masterlist`; \
-          if [ "$$rsync" != "" ]; then \
-            echo "rsync&nbsp;$${i}::$${rsync}" >> $@; \
-          fi; \
-          echo "</li>" >> $@; \
-	done
+	../mirror/mirror_list.pl -m ../mirror/Mirrors.masterlist -t compact-old >> $@
 	echo "</ul>" >> $@
 	echo "</define-tag>" >> $@
 
-$(ENGLISHSRCDIR)/distrib/archive-nonus.mirrors: archive-nonus.mirrors
-archive-nonus.mirrors: ../mirror/Mirrors.masterlist ../mirror/mirror_list.pl
+$(ENGLISHSRCDIR)/distrib/archive-nonus.mirrors: \
+ $(ENGLISHSRCDIR)/mirror/Mirrors.masterlist $(ENGLISHSRCDIR)/mirror/mirror_list.pl
 	echo "#use wml::debian::countries" > $@
 	echo "<define-tag archivenonusmirrors>" >> $@
 	echo "<ul>" >> $@
-	../mirror/mirror_list.pl -m ../mirror/Mirrors.masterlist -t nonusshort >> $@
+	../mirror/mirror_list.pl -m ../mirror/Mirrors.masterlist -t compact-nonus >> $@
 	echo "</ul>" >> $@
 	echo "</define-tag>" >> $@
 
