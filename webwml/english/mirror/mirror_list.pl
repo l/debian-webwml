@@ -936,6 +936,22 @@ sub full_listing {
         print "Includes architectures: ".join(" ", sort @{$mirror[$id]{'archive-architecture'}})."\n";
         print "<br>" if $wml;
       }
+      print "Update frequency: ";
+      if ($mirror[$id]{'type'} =~ /push/i) {
+        print "whenever there are updates (push-triggered)";
+      } elsif (exists $mirror[$id]{'updates'} and $mirror[$id]{'updates'} =~ /^(?:once|daily)(.*)$/) {
+        print "once a day";
+        print " $2" if $2;
+      } elsif (exists $mirror[$id]{'updates'} and $mirror[$id]{'updates'} =~ /^(?:twice)(.*)$/) {
+        print "twice a day";
+        print " $2" if $2;
+      } elsif (exists $mirror[$id]{'updates'} and $mirror[$id]{'updates'} ne '') {
+        print $mirror[$id]{'updates'};
+      } else {
+        print "unknown";
+      }
+      print "\n";
+      print "<br>" if $wml;
       if (exists $mirror[$id]{'ipv6'}) {
         if ($mirror[$id]{ipv6} ne 'no') {
           print "IPv6: ".$mirror[$id]{ipv6}."\n";
