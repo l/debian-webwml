@@ -1223,36 +1223,10 @@ END
 # fork of secondary_mirrors
 # Changed for debian-volatile by Francesco Paolo Lovergine, 2005 
 sub volatile_mirrors {
-  # TODO make the text version not have such long lines.
-  my $format = shift;
-  die "must get format for volatile_mirrors()" unless $format;
-  my $html = 1 if ($format eq 'html');
-  my $text = 1 if ($format eq 'text');
-  my $wml = 1 if ($format eq 'wml');
-
-  # temporary, hopefully, until this whole thing is merged somewhere
-  $html = 1 if $wml;
-
-  if ($html) {
-    print "<h2 class=\"center\">";
-  } else {
-    print "\n\n                   ";
-  }
-  print "Mirrors of the Debian-volatile archive";
-  if ($html) {
-    print "</h2>\n";
-  } else {
-    print "\n                   ---------------------------------------\n\n";
-  }
-  my $formatstring = "%-$longest{site}s%-$longest{'volatile-ftp'}s%-$longest{'volatile-http'}s%-$longest{'volatile-rsync'}s%s\n";
-  if ($html) {
-    print "<table class=\"volatile\"summary=\"Mirrors sorted by Country\">\n";
-    print "<colgroup span=\"5\">\n</colgroup>\n";
-    print "<thead><tr><th>HOST NAME</th><th>FTP</th><th>HTTP</th><th>RSYNC</th><th>ARCHITECTURES</th></tr></thead>\n<tbody>";
-  } else {
-    printf $formatstring, "HOST NAME", " FTP", " HTTP", " RSYNC" ,"  ARCHITECTURES";
-    printf $formatstring, "---------", " ---", " ----", " -----" ,"  -------------";
-  }
+  print "<h2 class=\"center\">Mirrors of the Debian-volatile archive</h2>\n";
+  print "<table class=\"volatile\" summary=\"Mirrors sorted by Country\">\n";
+  print "<colgroup span=\"5\">\n</colgroup>\n";
+  print "<thead><tr><th>HOST NAME</th><th>FTP</th><th>HTTP</th><th>RSYNC</th><th>ARCHITECTURES</th></tr></thead>\n<tbody>\n";
   foreach my $country (sort keys %countries) {
     my $hasmirrors = 0;
     my %has_volatile;
@@ -1265,92 +1239,44 @@ sub volatile_mirrors {
       }
     }
     if ($hasmirrors) {
-      print "\n";
-      print $html ? "<tr class=\"country\"><th colspan=\"5\">$country</th></tr>" : "$country";
-      print "\n";
+      print "<tr class=\"country\"><th colspan=\"5\">$country</th></tr>\n";
     } else {
       next;
     }
-    if ($text) {
-      my $i = length($country);
-      print "-" while ($i--); # underline
-      print "\n";
-    }
     foreach my $id (@{ $countries_sorted{$country} }) {
       next unless $has_volatile{$id};
-      if ($html) {
-        print "<tr><th>$mirror[$id]{site}</th>";
-      } else {
-        $formatstring = "%-$longest{site}s ";
-        printf $formatstring, $mirror[$id]{site};
-      }
+      print "<tr><th>$mirror[$id]{site}</th>";
       if (defined $mirror[$id]{method}{'volatile-ftp'}) {
-        if ($html) {
-          print "<td><a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'volatile-ftp'}\">";
-          print "$mirror[$id]{method}{'volatile-ftp'}";
-          print "</a></td>\n";
-        } else {
-          my $rest = $longest{'volatile-ftp'} - length($mirror[$id]{method}{'volatile-ftp'});
-          $formatstring = "%s%${rest}s";
-          printf $formatstring, $mirror[$id]{method}{'volatile-ftp'}, '';
-        }
+        print "<td><a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'volatile-ftp'}\">";
+        print "$mirror[$id]{method}{'volatile-ftp'}";
+        print "</a></td>\n";
       } else {
-        if ($html) {
-          print "<td> </td>\n";
-        } else {
-          $formatstring = "%-$longest{'volatile-ftp'}s";
-          printf $formatstring, " ";
-        }
+        print "<td> </td>\n";
       }
-      $formatstring = "%-$longest{'volatile-http'}s";
       if (defined $mirror[$id]{method}{'volatile-http'}) {
-        if ($html) {
-          print "<td><a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{'volatile-http'}\">";
-          print "$mirror[$id]{method}{'volatile-http'}";
-          print "</a></td>\n";
-        } else {
-          my $rest = $longest{'volatile-http'} - length($mirror[$id]{method}{'volatile-http'});
-          $formatstring = "%s%${rest}s";
-          printf $formatstring, $mirror[$id]{method}{'volatile-http'}, '';
-        }
+        print "<td><a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{'volatile-http'}\">";
+        print "$mirror[$id]{method}{'volatile-http'}";
+        print "</a></td>\n";
       } else {
-        if ($html) {
-          print "<td> </td>\n";
-        } else {
-          $formatstring = "%-$longest{'volatile-http'}s";
-          printf $formatstring, " ";
-        }
+        print "<td> </td>\n";
       }
-      $formatstring = "%-$longest{'volatile-rsync'}s";
       if (defined $mirror[$id]{method}{'volatile-rsync'}) {
-        if ($html) {
-          print "<td><a href=\"rsync://$mirror[$id]{site}/$mirror[$id]{method}{'volatile-rsync'}\">";
-          print "$mirror[$id]{method}{'volatile-rsync'}";
-          print "</a></td>\n";
-        } else {
-          my $rest = $longest{'volatile-rsync'} - length($mirror[$id]{method}{'volatile-rsync'});
-          $formatstring = "%s%${rest}s";
-          printf $formatstring, $mirror[$id]{method}{'volatile-rsync'}, '';
-        }
+        print "<td><a href=\"rsync://$mirror[$id]{site}/$mirror[$id]{method}{'volatile-rsync'}\">";
+        print "$mirror[$id]{method}{'volatile-rsync'}";
+        print "</a></td>\n";
       } else {
-        if ($html) {
-          print "<td> </td>\n";
-        } else {
-          $formatstring = "%-$longest{'volatile-rsync'}s";
-          printf $formatstring, " ";
-        }
+        print "<td> </td>\n";
       }
-      print "<td>" if ($html);
-              if (exists $mirror[$id]{'volatile-architecture'}) {
+      print "<td>";
+      if (exists $mirror[$id]{'volatile-architecture'}) {
         print join(" ", sort @{$mirror[$id]{'volatile-architecture'}});
       } else {
         print " all";
       }
-      print "</td>\n</tr>" if ($html);
-      print "\n";
+      print "</td>\n</tr>\n";
     }
   }
-  print "</tbody>\n</table>\n" if $html;
+  print "</tbody>\n</table>\n";
 }
 
 
@@ -1651,7 +1577,7 @@ if ($output_type eq 'html') {
 } elsif ($output_type eq 'cdimages-rsync') {
   cdimage_mirrors("rsync");
 } elsif ($output_type eq 'volatile-wml') {
-  volatile_mirrors('wml');
+  volatile_mirrors();
   footer_stuff('wml', $volatilecount);
 } elsif ($output_type eq 'origins') {
   mirror_tree_by_origin();
