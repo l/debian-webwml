@@ -1130,6 +1130,13 @@ sub compact_list($$) {
   my $ordering = shift;
   die "must get ordering for compact_list()" unless $ordering;
 
+  sub printhtmlftprsync($$$$) {
+    my ($site, $http, $ftp, $rsync) = @_;
+    print "<a href=\"http://". $site . $http ."\">HTTP</a> " if (defined $http);
+    print "<a href=\"ftp://". $site . $ftp ."\">FTP</a> " if (defined $ftp);
+    print "rsync&nbsp;". $site . "::" . $rsync if (defined $rsync);
+  }
+
   if ($ordering eq 'countrysite') {
     foreach my $country (sort keys %countries) {
       my $hasmirrors = 0;
@@ -1150,12 +1157,10 @@ sub compact_list($$) {
       }
       foreach my $id (@{ $countries_ours{$country} }) {
         print "<li><".$countrycode."c>: " . $mirror[$id]{site} . ": ";
-        print "<a href=\"http://". $mirror[$id]{site} . $mirror[$id]{method}{$whichtype.'-http'} ."\">HTTP</a> "
-          if (defined $mirror[$id]{method}{$whichtype.'-http'});
-        print "<a href=\"ftp://". $mirror[$id]{site} . $mirror[$id]{method}{$whichtype.'-ftp'} ."\">FTP</a> "
-          if (defined $mirror[$id]{method}{$whichtype.'-ftp'});
-        print "rsync&nbsp;". $mirror[$id]{site} . "::" . $mirror[$id]{method}{$whichtype.'-rsync'}
-          if (defined $mirror[$id]{method}{$whichtype.'-rsync'});
+        printhtmlftprsync($mirror[$id]{site},
+                          $mirror[$id]{method}{$whichtype.'-http'},
+                          $mirror[$id]{method}{$whichtype.'-ftp'},
+                          $mirror[$id]{method}{$whichtype.'-rsync'});
         print "</li>\n";
       }
     }
@@ -1178,12 +1183,10 @@ sub compact_list($$) {
         $countryplain = $2;
       }
       print "<li>" . $mirror[$id]{site} . " (<".$countrycode."c>): ";
-      print "<a href=\"http://". $mirror[$id]{site} . $mirror[$id]{method}{$whichtype.'-http'} ."\">HTTP</a> "
-        if (defined $mirror[$id]{method}{$whichtype.'-http'});
-      print "<a href=\"ftp://". $mirror[$id]{site} . $mirror[$id]{method}{$whichtype.'-ftp'} ."\">FTP</a> "
-        if (defined $mirror[$id]{method}{$whichtype.'-ftp'});
-      print "rsync&nbsp;". $mirror[$id]{site} . "::" . $mirror[$id]{method}{$whichtype.'-rsync'}
-        if (defined $mirror[$id]{method}{$whichtype.'-rsync'});
+      printhtmlftprsync($mirror[$id]{site},
+                        $mirror[$id]{method}{$whichtype.'-http'},
+                        $mirror[$id]{method}{$whichtype.'-ftp'},
+                        $mirror[$id]{method}{$whichtype.'-rsync'});
       print "</li>\n";
     }
   }
