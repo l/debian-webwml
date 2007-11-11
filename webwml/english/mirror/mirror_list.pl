@@ -848,7 +848,7 @@ sub full_listing {
     print "\n<hr noshade size=\"1\">\n";
     print "<p>Jump directly to a country on the list:<br>\n";
   }
-  if ($html || $wml) {
+  if ($html) {
     my $counter = 1;
     foreach my $country (sort keys %countries) {
       my ($countryplain, $countrycode);
@@ -857,14 +857,40 @@ sub full_listing {
         $countrycode = $1;
       }
       print " [<a href=\"#${countrycode}\">";
-      if ($html) { print $countryplain }
-      elsif ($wml) { print "<${countrycode}c>" }
+      print $countryplain;
       print "</a>]";
       print "<br>" unless ($counter++ % 6);
     }
-    print "\n<hr noshade size=\"1\">\n";
-    print "<pre>\n" unless ($wml);
+  } elsif ($wml) {
+    # in our WML templates there is a langcmp comparison method,
+    # which sorts alphabetically depending on the language
+    print <<EOF;
+<:
+my \%countrylist;
+EOF
+    foreach my $country (sort keys %countries) {
+      my ($countryplain, $countrycode);
+      if ($country =~ /^(..) (.+)$/) {
+        $countryplain = $2;
+        $countrycode = $1;
+      }
+      print <<EOF;
+\$countrylist{"<${countrycode}c>"} = $countrycode;
+EOF
+    }
+    print <<EOF;
+my \$counter = 1;
+foreach my \$country (sort langcmp keys \%countrylist) {
+  print ' [<a href="#' . \$countrylist{\$country} . '">' . "\$country</a>]";
+  print "<br>\n" unless (\$counter++ % 6);
+}
+:>
+EOF
   }
+  if ($html || $wml) {
+    print "\n<hr noshade size=\"1\">\n";
+  }
+  print "<pre>\n" if $html;
   foreach my $country (sort keys %countries) {
     my ($countryplain, $countrycode);
     if ($country =~ /^(..) (.+)$/) {
