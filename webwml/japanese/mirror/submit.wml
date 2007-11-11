@@ -1,6 +1,7 @@
 #use wml::debian::template title="ミラー情報の提出"
 #use wml::debian::countries_all
-#use wml::debian::translation-check translation="1.66"
+#include "$(ENGLISHDIR)/mirror/submit.inc"
+#use wml::debian::translation-check translation="1.69"
 <p>Debian のミラーの情報を提出したい場合は、このフォームを使ってください。
 提出された情報はほとんどがミラーリストに公開されます。</p>
 
@@ -37,10 +38,6 @@ href="ftpmirror">文書で説明している規則と指針</a>
 <p>あなたのサイトの Debian ミラーへのパスを以下に入力してください。
 該当しない項目は空白にしておいてください。</p>
 
-<define-tag tablerow>
-	<tr><td>%0: </td><td><input type="text" name="%1" size="%2"></td></tr>
-</define-tag>
-
 <table>
 <tablerow "パッケージアーカイブ、HTTP"   archive-http   30>
 <tablerow "パッケージアーカイブ、FTP"    archive-ftp    30>
@@ -51,6 +48,9 @@ href="ftpmirror">文書で説明している規則と指針</a>
 <tablerow "CD/DVD イメージ、HTTP"            cdimage-http   30>
 <tablerow "CD/DVD イメージ、FTP"             cdimage-ftp    30>
 <tablerow "CD/DVD イメージ、rsync"           cdimage-rsync  30>
+<tablerow "Volatile パッケージ、HTTP"    volatile-http  30>
+<tablerow "Volatile パッケージ、FTP"     volatile-ftp   30>
+<tablerow "Volatile パッケージ、rsync"   volatile-rsync 30>
 <tablerow "古い Debian リリース、HTTP"   old-http       30>
 <tablerow "古い Debian リリース、FTP"    old-ftp        30>
 <tablerow "古い Debian リリース、rsync"  old-rsync      30>
@@ -67,21 +67,27 @@ href="ftpmirror">文書で説明している規則と指針</a>
 <h2>ミラーサイトの情報</h2>
 
 <table>
-<tablerow "ミラーの更新元"               mirrors_from  30>
+<tr-upstream-give "メインミラーの更新元"            archive-upstream   30>
+<tr-upstream-take "Volatile ミラーの更新元"         volatile-upstream  30>
+<tr-upstream-take "セキュリティミラーの更新元"      security-upstream  30>
+<tr-upstream-take "CD/DVD イメージミラーの更新元"   cdimage-upstream   30>
+<tr>
+<td>ミラーの頻度:</td>
+<td>
+<select name="updates">
+<option value="never">選択してください...</option>
+<option value="push">プッシュトリガー</option>
+<option value="twice">1日2回</option>
+<option value="once">1日1回</option>
+<option value="lessoften">たまに</option>
+</select>
+</td>
+</tr>
 <tr>
 <td>ミラーが含んでいるアーキテクチャ:
 <td>
-<label><input type=checkbox name=architectures value="ALL">&nbsp;<em>すべて (つまりアーキテクチャの除外は行っていない)</em></label><br>
-#include "$(ENGLISHDIR)/releases/sid/archive.data"
-<:
-my $na = scalar keys %arches; $na = int($na / 3 + .5);
-foreach my $a (sort keys %arches) {
-  $i++;
-  my $aname = $arches{$a}; $aname =~ s, ,\&nbsp\;,g;
-  print "<br>\n" if ($i % $na == 0);
-  print "<label><input type=checkbox name=architectures value=".$a.">&nbsp;".$aname."&nbsp;(".$a.")</label> &nbsp;\n";
-}
-:>
+<label><input type=checkbox name=architectures id="allarch" value="ALL" onclick="allarches()">&nbsp;<em>すべて (つまりアーキテクチャの除外は行っていない)</em></label><br>
+<archlist>
 </td></tr>
 </table>
 
@@ -94,7 +100,7 @@ foreach my $a (sort keys %arches) {
 </small>
 </td></tr>
 <tr><td>サイトがある国:  <td><select name="country">
-<: country_list() :>
+<countrylist>
 </select>
 <tablerow "サイト管理者の非公開メールアドレス (任意)"  maint_private_email   30>
 <tr><td>&nbsp;</td><td>
