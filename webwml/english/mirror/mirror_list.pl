@@ -1262,27 +1262,27 @@ sub volatile_mirrors {
     foreach my $id (@{ $countries_sorted{$country} }) {
       next unless $has_volatile{$id};
       print "<tr><th>$mirror[$id]{site}</th>";
+      print "<td>";
       if (defined $mirror[$id]{method}{'volatile-ftp'}) {
-        print "<td><a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'volatile-ftp'}\">";
-        print "$mirror[$id]{method}{'volatile-ftp'}";
-        print "</a></td>\n";
-      } else {
-        print "<td> </td>\n";
+        print "<a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'volatile-ftp'}\">";
+        print $mirror[$id]{method}{'volatile-ftp'};
+        print "</a>\n";
       }
+      print "</td>\n";
+      print "<td>";
       if (defined $mirror[$id]{method}{'volatile-http'}) {
-        print "<td><a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{'volatile-http'}\">";
-        print "$mirror[$id]{method}{'volatile-http'}";
-        print "</a></td>\n";
-      } else {
-        print "<td> </td>\n";
+        print "<a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{'volatile-http'}\">";
+        print $mirror[$id]{method}{'volatile-http'};
+        print "</a>\n";
       }
+      print "</td>\n";
+      print "<td>";
       if (defined $mirror[$id]{method}{'volatile-rsync'}) {
-        print "<td><a href=\"rsync://$mirror[$id]{site}/$mirror[$id]{method}{'volatile-rsync'}\">";
-        print "$mirror[$id]{method}{'volatile-rsync'}";
-        print "</a></td>\n";
-      } else {
-        print "<td> </td>\n";
+        print "<a href=\"rsync://$mirror[$id]{site}/$mirror[$id]{method}{'volatile-rsync'}\">";
+        print $mirror[$id]{method}{'volatile-rsync'};
+        print "</a>\n";
       }
+      print "</td>\n";
       print "<td>";
       if (exists $mirror[$id]{'volatile-architecture'}) {
         print join(" ", sort @{$mirror[$id]{'volatile-architecture'}});
