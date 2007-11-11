@@ -837,7 +837,7 @@ END
 }
 
 sub full_listing {
-  # TODO: fix the html/wml modes to output actual normal HTML, rather than <pre>
+  # TODO: fix the html mode to output actual normal HTML, rather than <pre>
   my $format = shift;
   die "must get format for full_listing()" unless $format;
   my $html = 1 if ($format eq 'html');
