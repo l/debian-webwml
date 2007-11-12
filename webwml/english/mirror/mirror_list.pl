@@ -849,7 +849,7 @@ sub full_listing {
     print "<p>Jump directly to a country on the list:<br>\n";
   }
   if ($html) {
-    my $counter = 1;
+    my $linelength = 0;
     foreach my $country (sort keys %countries) {
       my ($countryplain, $countrycode);
       if ($country =~ /^(..) (.+)$/) {
@@ -859,7 +859,11 @@ sub full_listing {
       print " [<a href=\"#${countrycode}\">";
       print $countryplain;
       print "</a>]";
-      print "<br>" unless ($counter++ % 6);
+      $linelength += length($countryplain) + 3;
+      if ($linelength >= 75) {
+        print "<br>\n";
+        $linelength = 0;
+      }
     }
   } elsif ($wml) {
     # in our WML templates there is a langcmp comparison method,
@@ -879,10 +883,14 @@ EOF
 EOF
     }
     print <<EOF;
-my \$counter = 1;
+my \$linelength = 0;
 foreach my \$country (sort langcmp keys \%countrylist) {
   print ' [<a href="#' . \$countrylist{\$country} . '">' . "\$country</a>]";
-  print "<br>\n" unless (\$counter++ % 6);
+  \$linelength += length(\$country) + 3;
+  if (\$linelength >= 75) {
+    print "<br>\n";
+    \$linelength = 0;
+  }
 }
 :>
 EOF
