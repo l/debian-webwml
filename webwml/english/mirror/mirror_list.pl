@@ -975,10 +975,10 @@ EOF
         print "whenever there are updates (push-triggered)";
       } elsif (exists $mirror[$id]{'updates'} and $mirror[$id]{'updates'} =~ /^(?:once|daily)(.*)$/) {
         print "once a day";
-        print " $2" if $2;
+        print " $1" if $1;
       } elsif (exists $mirror[$id]{'updates'} and $mirror[$id]{'updates'} =~ /^(?:twice)(.*)$/) {
         print "twice a day";
-        print " $2" if $2;
+        print " $1" if $1;
       } elsif (exists $mirror[$id]{'updates'} and $mirror[$id]{'updates'} ne '') {
         print $mirror[$id]{'updates'};
       } else {
