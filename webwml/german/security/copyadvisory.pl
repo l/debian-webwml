@@ -98,6 +98,7 @@ while (<SRC>)
 	s/We recommend that you update your (.*) packages/Wir empfehlen Ihnen, Ihre $1-Pakete zu aktualisieren/;
 	s/We recommend that you update your (.*) package/Wir empfehlen Ihnen, Ihr $1-Paket zu aktualisieren/;
 	s/denial of service/Diensteverweigerung (<q>denial of service<\/q>)/;
+	s/Several remote vulnerabilities have been/Mehrere entfernt ausnutzbare Verwundbarkeiten wurden in/;
 	s/buffer overflows?/Pufferüberlauf/;
 	s/integer overflow/Integer-Überlauf/;
 	s/format string vulnerability/Formatierungszeichenkettenverwundbarkeit/;
@@ -158,6 +159,8 @@ while (<SRC>)
 	s/current stable distribution/aktuelle Stable-Distribution/;
 	s/unstable distribution/Unstable-Distribution/;
 	s/The old stable distribution/Die alte Stable-Distribution/;
+	s/The oldstable distribution/Die alte Stable-Distribution/;
+	s/^oldstable distribution/^alte Stable-Distribution/;
 	s/^stable distribution/^Stable-Distribution/;
 	s/^unstable distribution/^Unstable-Distribution/;
 	s/does(?: not|n't) contain a(?:ny)? ([^ ]) package/enthält kein $1-Paket/;
@@ -176,6 +179,7 @@ while (<SRC>)
 	s/\(sid\)/(Sid)/;
 	s/Refer to Debian (<.*>)?bug #([0-9]+)</Verweisen auf $1 Debian-Fehler #$2</;
 	s/(of|from) the Debian Security Audit (Project|Team)/vom Debian-Sicherheits-Audit-$2/;
+	s/(of|from) Debian Security Audit (project|team)/vom Debian-Sicherheits-Audit-$2/;
 
 	print DST $_;
 }
