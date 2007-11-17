@@ -711,8 +711,9 @@ END
 
 # meant to be output into a file which is then included into a .wml file
 # and processed by WML
-sub cdimage_mirrors {
+sub cdimage_mirrors($) {
   my $which = shift;
+  die unless $which;
   print "#use wml::debian::languages\n\n<perl>\nmy \@cdmirrors = (\n";
   foreach my $country (keys %countries) {
     foreach my $id (sort @{ $countries{$country} }) {
