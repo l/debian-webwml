@@ -9,7 +9,8 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml \
-  $(ENGLISHDIR)/CD/http-ftp/cdimage_mirrors.list
+  $(ENGLISHDIR)/CD/http-ftp/cdimage_mirrors.list \
+  $(ENGLISHDIR)/releases/info $(ENGLISHDIR)/releases/images.data
 
 ifeq "$(LANGUAGE)" "en"
 $(ENGLISHDIR)/CD/http-ftp/cdimage_mirrors.list: \
