@@ -2,9 +2,9 @@
 #include "$(ENGLISHDIR)/releases/info"
 #include "$(ENGLISHDIR)/releases/etch/release.data"
 #include "$(ENGLISHDIR)/releases/images.data"
-#use wml::debian::translation-check translation="1.11"
+#use wml::debian::translation-check translation="1.17"
 
-<h1>Instalar etch</h1>
+<h1>Instalar Debian GNU/Linux <current_release_etch></h1>
 
 <if-stable-release release="sarge">
 
@@ -18,7 +18,7 @@ proyecto del instalador de Debian</a> si desea detalles sobre instalar etch util
 <if-stable-release release="etch">
 
 <p>
-<b>Para instalar Debian GNU/Linux</b> <current_release_etch>
+<strong>Para instalar Debian GNU/Linux</strong> <current_release_etch>
 (<em>etch</em>), descargue cualquiera de las siguientes imágenes:
 </p>
 
@@ -53,17 +53,17 @@ proyecto del instalador de Debian</a> si desea detalles sobre instalar etch util
 </ul>
 
 <p>
-<b>Notas</b>
+<strong>Notas</strong>
 </p>
 <ul>
     <li>
 	Las imágenes de <em>CD</em> multiarquitectura soportan i386/amd64/powerpc 
-	y alpha/hppa/ia64 respectivamante. La instalación es similar a instalar
-       desde una imágen netinst de una sola arquitectura.
+	y alpha/hppa/ia64 respectivamente. La instalación es similar a instalar
+       desde una imagen netinst de una sola arquitectura.
     </li><li>
-	La imágen de <em>DVD</em> multiarquitectura soporta i386/amd64/powerpc.
-       La instalación es similar a instalar desde una imágen de CD completa de
-       una sola arqutectura. El DVD también incluye las fuentes de todos los 
+	La imagen de <em>DVD</em> multiarquitectura soporta i386/amd64/powerpc.
+       La instalación es similar a instalar desde una imagen de CD completa de
+       una sola arquitectura. El DVD también incluye las fuentes de todos los 
        paquetes incluidos.
     </li><li>
 	Los archivos con las <tt>MD5SUMS</tt> y <tt>SHA1SUMS</tt> de las 
@@ -75,7 +75,7 @@ proyecto del instalador de Debian</a> si desea detalles sobre instalar etch util
 <h1>Documentación</h1>
 
 <p>
-<b>Si sólo va a leer un documento</b> antes de la instalación, lea nuestro
+<strong>Si sólo va a leer un documento</strong> antes de la instalación, lea nuestro
 <a href="../i386/apa">Cómo instalar</a>, un paseo rápido por el 
 proceso de instalación. Otra documentación útil incluye:
 </p>
@@ -100,6 +100,24 @@ describiendo el problema o
 <a href="http://wiki.debian.org/DebianInstaller/BrokenThings">compruebe el wiki</a>
 para ver otros problemas conocidos.
 </p>
+
+<h3 id="errata-r1">Erratas de la publicación 4.0r1</h3>
+  	 
+	<p>Esta nueva publicación arregla unos pocos problemas presentes en la
+	publicación 4.0r0 original.
+	Ahora se detectan más dispositivos de CD y USB y <tt>gksu</tt> se configurará
+	correctamente cuando se instale con la cuenta de root deshabilitada 
+	(modo <tt>sudo</tt>). Ahora se pueden crear sistemas de archivos 
+	<tt>ext2</tt> en amd64.</p>
+	
+	<p>También se ha actualizado la lista de réplicas, así como las 
+	traducciones catalana y rumana del particionador.</p>
+	
+	<p>Con la actualización del núcleo en esta publicación, algunas de las 
+	imágenes que se publicaron originalmente con etch 4.0r0 (arranque por 
+	red y disquetes) ya no funcionarán debido a que las versiones del núcleo
+	no concuerdan. Las instalaciones basadas en CD <strong>no</strong> 
+	están afectadas.</p>
 
 <h3 id="errata-r0">Erratas de la publicación 4.0r0</h3>
 
@@ -135,6 +153,22 @@ para ver otros problemas conocidos.
 	de redimensionamiento, debería mostrar el nuevo tamaño de la partición.
 	</dd>
 
+        <dt>Error usando bucle de cifrado aes durante la instalación en hd</dt>
+        <dd>
+        Si se usa el bucle de cifrado aes durante una instalación usando las
+	imágenes de medios tipo disco duro (p.ej. desde memorias USB), esto
+	puede fallar con el siguiente mensaje (o similar) en el syslog
+        (<a href="http://bugs.debian.org/434027">#434027</a>):<br />
+        <tt>partman-crypto: ioctl: LOOP_SET_STATUS: Invalid argument, requested
+        cipher or key length (256 bits) not supported by kernel.</tt><br />
+        La causa de este asunto es que, al principio de la instalación, la 
+	imagen del CD se habrá montado mediante un bucle usando el módulo normal
+	de bucle, el cual impide que el módulo de bucle aes se cargue más tarde.<br />
+        Se puede solventar este asunto desmontando manualmente la imagen de CD, 
+	descargando el módulo loop, cargando el módulo loop-aes y remontando
+        la imagen de CD.
+        </dd>
+
 	<dt>Instalación incompleta de la tarea de escritorio desde la imagen 
 	completa de CD</dt>
 	<dd>
@@ -160,7 +194,7 @@ para ver otros problemas conocidos.
 	para más detalles.<br />
 	Puede arreglarlo provisionalmente deshabilitando el escalado de la 
 	ventana TCP. Abra un terminal e introduzca la siguiente orden:<br />
-	<tt>echo 0 > /proc/sys/net/ipv4/tcp_window_scaling</tt><br />
+	<tt>echo 0 &gt /proc/sys/net/ipv4/tcp_window_scaling</tt><br />
 	Probablemente no debería deshabilitar completamente el escalado de
 	la ventana TCP en el sistema instalado. Las siguientes órdenes
 	establecerán los rangos de lectura y escritura que deberían funcionar 
@@ -215,6 +249,15 @@ para ver otros problemas conocidos.
 	</ul>
 	</dd>
 
+         <dt>Falso aviso sobre la falta de «swap» cuando se instala la tarea <em>portátil</em></dt>
+         <dd>
+         Cuando se instala la tarea <em>portátil</em>, el paquete <tt>uswsusp</tt>
+	 mostrará un aviso diciendo que <q>No se ja encontrado una partición de intercambio; los programas de suspensión en espacio de usuario no funcionarán</q>. 
+	Esto es sólo un aviso <strong>incorrecto</strong> y los programas de 
+	suspensión deberían funcionar correctamente. Véase también el fallo
+         <a href="http://bugs.debian.org/427104">#427104</a>.
+         </dd>
+
 	<dt>El controlador de red sky2 se sabe que no funciona</dt>
 	<dd>
 	El controlador de red sky2 se sabe que no funciona en el núcleo
@@ -264,7 +307,7 @@ para ver otros problemas conocidos.
  	<a href="http://bugs.debian.org/415992">#415992</a>.
  	</dd>
 
-	<dt>amd64: no se puede formatear un sistema de archivos ext2</dt>
+	<dt>amd64: no se puede formatear un sistema de archivos ext2 (arreglado en 4.0r1)</dt>
 	<dd>
 	Dado que el módulo ext2 del núcleo no está disponible, no se puede crear
 	un sistema de archivos ext2. Esto se arreglará en la próxima versión del
@@ -292,7 +335,7 @@ para ver otros problemas conocidos.
 	<q>netboot</q> en su lugar.
 	</dd>
 
- 	<dt>sparc: el instalador parece colgarse durante el arranquet</dt>
+ 	<dt>sparc: el instalador parece colgarse durante el arranque</dt>
  	<dd>
  	Hay dos situaciones en las que el instalador puede parecer colgarse
 	durante el arranque tras mostrar <q><tt>Booting Linux...</tt></q>. La
