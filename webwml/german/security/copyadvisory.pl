@@ -88,6 +88,7 @@ while (<SRC>)
 	s/^(<p>)?Two vulnerabilities were discovered in\b/$1Zwei Verwundbarkeiten wurden in entdeckt/;
 	s/Common Vulnerabilities and Exposures project/<q>Common Vulnerabilities and Exposures<\/q>-Projekt/;
 	s/which could lead to the execution of arbitrary code/Dies kann zur Ausführung beliebigen Codes führen/;
+	s/which may lead to the execution of arbitrary code/Dies kann zur Ausführung beliebigen Codes führen/;
 	s/We recommend that you upgrade your (.*) package immediately/Wir empfehlen Ihnen, Ihr $1-Paket zu aktualisieren/;
 	s/We recommend that you upgrade your (.*) packages immediately/Wir empfehlen Ihnen, Ihre $1-Pakete zu aktualisieren/;
 	s/We recommend that you upgrade your (.*) and (.*) packages/Wir empfehlen Ihnen, Ihre $1- und $2-Pakete zu aktualisieren/;
@@ -110,6 +111,8 @@ while (<SRC>)
 	s/>symlink attack</>Symlink-Angriff</;
 	s/>remote exploit</>entfernter Exploit</;
 	s/>missing input sanitising</>Fehlende Eingabebereinigung</;
+	s/insufficient/unzureichende/;
+	s/sanitising/Bereinigung/;
 	s/>programming error</>Programmierfehler</;
 	s/Several vulnerabilities/Mehrere Verwundbarkeiten/;
 	s/several vulnerabilities/mehrere Verwundbarkeiten/;
@@ -160,9 +163,9 @@ while (<SRC>)
 	s/unstable distribution/Unstable-Distribution/;
 	s/The old stable distribution/Die alte Stable-Distribution/;
 	s/The oldstable distribution/Die alte Stable-Distribution/;
-	s/^oldstable distribution/^alte Stable-Distribution/;
-	s/^stable distribution/^Stable-Distribution/;
-	s/^unstable distribution/^Unstable-Distribution/;
+	s/^oldstable distribution/alte Stable-Distribution/;
+	s/^stable distribution/Stable-Distribution/;
+	s/^unstable distribution/Unstable-Distribution/;
 	s/does(?: not|n't) contain a(?:ny)? ([^ ]) package/enthält kein $1-Paket/;
 	s/distribution (\(potato|woody|sarge\))/Distribution $1/;
 	s/privilege escalation/Privilegienerweiterung/;
