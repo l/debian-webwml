@@ -1,42 +1,98 @@
 #use wml::debian::template title="Debian BTS &mdash; control del servidor" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.66" maintainer="Fernando Cerezal"
+#use wml::debian::translation-check translation="1.73" maintainer="Fernando Cerezal"
 
 <h1>Información para desarrolladores sobre cómo manipular fallos
 utilizando el interfaz de correo electrónico.</h1>
 
-<p>Además del servidor de correo que hay en
-<code>request@bugs.debian.org</code> y que permite obtener datos de fallos
-y documentación mediante correo electrónico, hay otro servidor en
-<code>control@bugs.debian.org</code> que permite manipular los informes de
-fallos de varias maneras.</p>
+<p>
+Sólo <code>request@bugs.debian.org</code> permite la <a href="server-request">obtención de datos y documentación de fallos por correo electrónico</a>, <code>control@bugs.debian.org</code> permite manipular informes de fallos de varias maneras.
+</p>
 
-<p>El servicio que atiende <code>control@bugs.debian.org</code> trabaja de la misma manera 
-que el que atiende <code>request@bugs.debian.org</code>; en realidad, son el mismo programa.</p>
+<p>
+El servidor de control funciona de la misma manera que el de peticiones («request»); en realidad, son el mismo programa. Sencillamente, las dso direcciones están separadas para evitar errores de los usuarios y que puedan causar problemas cuando sólo quieran obtener información.
+</p>
 
-<p>Se envía una notificación al mantenedor del paquete o paquetes al
+<p>
+Se envía una notificación al mantenedor del paquete o paquetes al
 que están asignados los fallos, ya que las órdenes específicas al 
 servidor de control cambian el estado de un fallo. Además, se registran
 el mensaje enviado al servidor y los cambios realizados y están
-disponibles en las páginas WWW.</p>
+disponibles en las páginas web.
+</p>
 
-<p>Si desea obtener detalles de operación básica de los servidores de
+<p>
+Si desea obtener detalles de operación básica de los servidores de
 correo y las órdenes comunes, lea por favor la
 página <a href="server-request#introduction">Cómo pedir informes de
 fallo por correo</a> disponible en Internet, en el fichero
 <code>bug-log-mailserver.txt</code>, o envíe <code>help</code> a
-cualquiera de los servidores de correo.</p>
+cualquiera de los servidores de correo.
+</p>
 
-<p>La <A href="server-refcard">tarjeta de referencia</A> de los
+<p>
+La <A href="server-refcard">tarjeta de referencia</A> de los
 servidores de correo está disponible mediante WWW, en
 <code>bug-mailserver-refcard.txt</code> o mediante correo electrónico
-usando la orden <code>refcard</code>.</p>
+usando la orden <code>refcard</code>.
+</p>
 
 <h1>Órdenes disponibles en el servidor de correo «control»</h1>
 
+<center>
+  <table>
+    <tr>
+    <td align="center">General</td>
+    <td align="center">Versionado</td>
+    <td align="center">Duplicados</td>
+    <td align="center">Varios</td>
+    </tr>
+    <tr>
+      <!-- General -->
+      <td valign="top">
+<dl>
+          <dt><a href="#reassign">reasignar</a></dt>
+          <dt><a href="#severity">importancia</a></dt>
+          <dt><a href="#tag">etiquetas</a></dt>
+          <dt><a href="#retitle">retitulación</a></dt>
+          <dt><a href="#submitter">remitente</a></dt>
+        </dl>
+      </td>
+      <!-- Versioning -->
+      <td valign="top">
+        <dl>
+          <dt><a href="#found">found</a> | <a href="#notfound">no encontrado</a></dt>
+          <dt><a href="#fixed">fixed</a> | <a href="#notfixed">no arreglado</a></dt>
+          <dt><a href="#reopen">reabierto</a></dt>
+          <!-- <dt>(close)</dt> Deprecated -->
+        </dl>
+      </td>
+      <!-- Duplicates -->
+      <td valign="top">
+        <dl>
+          <dt><a href="#merge">fusionar</a> | <a href="#unmerge">desfusionar</a></dt>
+          <dt><a href="#forcemerge">fusión forzada</a></dt>
+          <dt><a href="#clone">clonar</a></dt>
+        </dl>
+      </td>
+      <!-- Misc. -->
+      <td valign="top">
+        <dl>
+          <dt><a href="#thanks">gracias</a></dt>
+          <dt><a href="#comment">#</a></dt>
+          <dt><a href="#forwarded">reenvío</a> |  <a href="#notforwarded">sin reenvío</a></dt>
+          <dt><a href="#owner">propietario</a> | <a href="#noowner">sin propietario</a></dt>
+          <dt><a href="#block">bloqueo</a> | <a href="#unblock">desbloqueo</a></dt>
+          <dt><a href="#archive">archivar</a> | <a href="#unarchive">desarchivar</a></dt>
+        </dl>
+      </td>
+    </tr>
+  </table>
+</center>
+
 <dl>
 
-<dt><code>reassign</code> <var>númerodefallo</var> <var>paquete</var>
- [ <var>versión</var> ]</dt>
+<dt><a name="reassign"><code>reassign</code> <var>numerofallo</var>
+  	     <var>paquete</var> [ <var>versión</var> ]</a></dt>
 
 <dd>
 <p>
@@ -47,43 +103,64 @@ se enviarán notificaciones a nadie (excepto la información normal en la
 transcripción del proceso).
 </p>
 
-<p>Si proporciona una <var>versión</var>, el sistema de seguimiento de 
-fallos notará que el fallo afecta a esa versión del nuevo paquete asignado.</p>
+<p>
+Si proporciona una <var>versión</var>, el sistema de seguimiento de 
+fallos notará que el fallo afecta a esa versión del nuevo paquete asignado.
+</p>
+
+<p>
+  Puede asignar un fallo a dos paquetes a la vez separando los nombres de los 
+  paquetes con una coma. <em>Sin embargo</em>, sólo debería hacerlo si el fallo
+  se puede arreglar mediante un cambio en <em>cualquiera</em> de ellos. Si no es
+  este el caso, debería <a href="#clone">clonar</a> el fallo y reasignar el clon
+  al otro paquete.
+</p>
+
 </dd>
 
-<dt><code>reopen</code> <var>númerodefallo</var>
- [ <var>dirección del descubridor</var> | <code>=</code> | <code>!</code> ]</dt>
+<dt><a name="reopen"><code>reopen</code> <var>numerofallo</var>
+  	    [ <var>dirección_del_originador</var> | <code>=</code> | <code>!</code> ]</a></dt>
 
 <dd>
 <p>
 Reabre el #<var>númerodefallo</var> en caso de que estuviera cerrado.
 </p>
 
-<p>Por defecto, o si específica <code>=</code>, se mantendrá el informador
+<p>
+Por defecto, o si específica <code>=</code>, se mantendrá el informador
 original del fallo tal cual, de manera que obtendrá una notificación
-cuando vuelva a ser cerrado.</p>
+cuando vuelva a ser cerrado.
+</p>
 
-<p>Si proporciona una <var>dirección del descubridor</var> entonces se
+<p>
+Si proporciona una <var>dirección del descubridor</var> entonces se
 cambiará la dirección de correo del informador del fallo por esta otra. Si
 desea ser el nuevo informador del informe reabierto, puede usar el atajo
-<code>!</code> o especificar su propia dirección de correo.</p>
+<code>!</code> o especificar su propia dirección de correo.
+</p>
 
-<p>Suele ser buena idea decirle a la persona que va a ser registrada como
+<p>
+Suele ser buena idea decirle a la persona que va a ser registrada como
 descubridor que está usted reabriendo el informe, de manera que sepa que
-recibirá una notificación cuando vuelva a ser cerrado.</p>
+recibirá una notificación cuando vuelva a ser cerrado.
+</p>
 
-<p>Si el fallo no está cerrado, reabrirlo no hará nada, siquiera
+<p>
+Si el fallo no está cerrado, reabrirlo no hará nada, siquiera
 cambiar quién envió el fallo. Para cambiar esto de un informe de fallo 
 abierto, use la orden <code>submitter</code>; percátese de que esto informará 
-a la persona que envió el fallo en primer lugar del cambio.</p>
+a la persona que envió el fallo en primer lugar del cambio.
+</p>
 
-<p>Si el fallo se registró como que había sido cerrado en una versión 
+<p>
+Si el fallo se registró como que había sido cerrado en una versión 
 particular de un paquete pero reapareció en una versión posterior, es mejor
 usar la orden <code>found</code> en su lugar.
 </p>
 </dd>
 
-<dt><code>found</code> <var>númerodefallo</var> [ <var>versión</var> ]</dt>
+ <dt><a name="found"><code>found</code> <var>númerodefallo</var> [
+  	     <var>versión</var> ]</a></dt>
 
 <dd>
 <p>
@@ -91,28 +168,37 @@ Registra que #<var>númerodefallo</var> se ha encontrado en la versión dada en
 <var>versión</var> del paquete al que se asignó.
 </p>
 
-<p>El sistema de seguimiento de fallos utiliza esta información, junto con
+<p>
+El sistema de seguimiento de fallos utiliza esta información, junto con
 los registros de las versiones arregladas al cerrar los fallos, para mostrar
 listas de fallos abiertos en varias versiones de cada paquete. Considera que
 un fallo está abierto cuando no tiene versión arreglada, o cuando se ha encontrado más 
-recientemente de lo que ha sido arreglado.</p>
+recientemente de lo que ha sido arreglado.
+</p>
 
-<p>Si no se da una <var>versión</var>, entonces la lista de versiones 
+<p>
+Si no se da una <var>versión</var>, entonces la lista de versiones 
 arregladas para el fallo se limpia. Este comportamiento es idéntico al de
-<code>reopen</code>.</p>
+<code>reopen</code>.
+</p>
 
-<p>Esta orden sólo hará que un fallo como no arreglado si no se especifica una 
+<p>
+Esta orden sólo hará que un fallo como no arreglado si no se especifica una 
 versión, o si la <var>version</var> que está marcada es igual a la 
 <var>version</var> que es la última márcada como arreglada. (Si está
 seguro de que quiere marcar el fallo como no arreglado,
-use <code>reopen</code> junto a <code>found</code>.)</p>
+use <code>reopen</code> junto a <code>found</code>.)
+</p>
 
-<p>Esta orden se introdujo, prefiriéndose a <code>reopen</code>,
+<p>
+Esta orden se introdujo, prefiriéndose a <code>reopen</code>,
 porque era difícil añadir una <var>versión</var> a esa sintaxis de órdenes
-sin sufrir ambigüedad.</p>
+sin sufrir ambigüedad.
+</p>
 </dd>
 
-<dt><code>notfound</code> <var>númerodefallo</var> <var>versión</var></dt>
+<dt><a name="notfound"><code>notfound</code> <var>númerodefallo</var>
+  	     <var>versión</var></a></dt>
 
 <dd>
 <p>
@@ -120,12 +206,15 @@ Borra el registro de #<var>númerodefallo</var> que se encontró en la
 <var>versión</var> dada del paquete al que está asignado.
 </p>
 
-<p>Esto difiere de cerrar el fallo en esa versión en que no se lista
+<p>
+Esto difiere de cerrar el fallo en esa versión en que no se lista
 como arreglado en versión alguna; no se conocerá información sobre esa
-versión. Se pretende que sea para guardar en el registro cuándo se encontró un fallo.</p>
+versión. Se pretende que sea para guardar en el registro cuándo se encontró un fallo.
+</p>
 </dd>
 
-<dt><code>fixed</code> <var>númerodefallo</var> <var>versión</var></dt>
+<dt><a name="fixed"><code>fixed</code> <var>númerodefallo</var>
+  	     <var>versión</var></a></dt>
 
 <dd>
 <p>
@@ -133,13 +222,16 @@ Indica que el fallo #<var>númerodefallo</var> se arregló en la
 <var>versión</var> dada del paquete al que está asignado.
 </p>
 
-<p> Esto <em>no</em> hace que se marque el fallo como cerrado, 
+<p>
+Esto <em>no</em> hace que se marque el fallo como cerrado, 
 simplemente añade otra versión en la que el fallo está arreglado.
 use la dirección númerodefallo-done para cerrar un fallo y marcarlo como 
-arreglado en una versión particular.</p>
+arreglado en una versión particular.
+</p>
 </dd>
 
-<dt><code>notfixed</code> <var>númerodefallo</var> <var>versión</var></dt>
+<dt><a name="notfixed"><code>notfixed</code> <var>númerodefallo</var>
+  	     <var>versión</var></a></dt>
 
 <dd>
 <p>
@@ -147,13 +239,15 @@ Elimina el registro de que el fallo #<var>númerodefallo</var> está
 arreglado en la versión <var>versión</var>.
 </p>
 
-<p>Esta orden es equivalente a <code>found</code> seguida de
+<p>
+Esta orden es equivalente a <code>found</code> seguida de
 <code>notfound</code> (el «found» elimina el arreglo en una versión
-particular, y el «notfound» elimina el «found».</p>
+particular, y el «notfound» elimina el «found».
+</p>
 </dd>
 
-<dt><code>submitter</code> <var>númerodefallo</var>
-<var>dirección del informador</var> | <code>!</code></dt>
+<dt><a name="submitter"><code>submitter</code> <var>númerodefallo</var>
+  	     <var>dirección_del_originador</var> | <code>!</code></a></dt>
 
 <dd>
 <p>
@@ -161,15 +255,20 @@ Cambia el informador del fallo #<var>número</var> a
 <var>dirección del informador</var>.
 </p>
 
-<p>Si desea ser la nueva persona origen del fallo, puede usar la 
-abreviatura <code>!</code> o especificar su propia dirección de correo.</p>
+<p>
+Si desea ser la nueva persona origen del fallo, puede usar la 
+abreviatura <code>!</code> o especificar su propia dirección de correo.
+</p>
 
-<p>Mientras la orden <code>reopen</code> cambia también el origen de otros 
+<p>
+Mientras la orden <code>reopen</code> cambia también el origen de otros 
 fallos fusionados con el que se está reabriendo, la orden <code>submitter</code>
-no afecta a los fallos fusionados.</p>
+no afecta a los fallos fusionados.
+</p>
 </dd>
 
-<dt><code>forwarded</code> <var>númerodefallo</var> <var>dirección</var></dt>
+dt><a name="forwarded"><code>forwarded</code> <var>númerodefallo</var>
+  	     <var>dirección</var></a></dt>
 
 <dd>
 Indica que <var>númerodefallo</var> ha sido informado al mantenedor
@@ -179,7 +278,8 @@ para registrar una nueva para un fallo del que no se había indicado que
 fue reenviado.
 </dd>
 
-<dt><code>notforwarded</code> <var>númerodefallo</var></dt>
+<dt><a name="notforwarded"><code>notforwarded</code>
+  	     <var>númerodefallo</var></a></dt>
 
 <dd>
 Elimina cualquier registro de que <var>númerodefallo</var> haya sido
@@ -187,7 +287,7 @@ reenviado a algún mantenedor oficial. Si este fallo no tenía registros
 que indicasen tal reenvío, entonces no sucederá nada.
 </dd>
 
-<dt><code>retitle</code> <var>númerodefallo</var> <var>nuevo título</var></dt>
+<dt><a name="retitle"><code>retitle</code> <var>númerodefallo</var> <var>nuevo título</var></a></dt>
 
 <dd>
 <p>
@@ -195,30 +295,37 @@ Cambia el título del informe de fallo por el que se específica (por
 defecto se toma la cabecera <code>Asunto</code>) del mensaje original).
 </p>
 
-<p>Al contrario que la mayoría de las otras órdenes de manipulación de
+<p>
+Al contrario que la mayoría de las otras órdenes de manipulación de
 fallos, cuando se usa en un conjunto de mensajes fusionados, sólo cambiará
 el título del número de fallo solicitado, y no el de aquellos con los que
-fue fusionado (<i>merged</i>).</p>
+fue fusionado (<i>merged</i>).
+</p>
 </dd>
 
-<dt><code>severity</code> <var>númerodefallo</var> <var>gravedad</var></dt>
+<dt><a name="severity"><code>severity</code> <var>númerodefallo</var> <var>gravedad</var></a></dt>
 
 <dd>
-<p>Establece el nivel de gravedad del informe de fallo
+<p>
+Establece el nivel de gravedad del informe de fallo
 #<var>número de fallo</var>. No se enviará notificación alguna al usuario
-que informó de él.</p>
+que informó de él.
+</p>
 
-<p>Las posibles gravedades son <code>critical</code>, <code>grave</code>,
+<p>
+Las posibles gravedades son <code>critical</code>, <code>grave</code>,
 <code>serious</code>, <code>important</code>, <code>normal</code>,
-<code>minor</code>, and <code>wishlist</code>.</p>
+<code>minor</code>, and <code>wishlist</code>.
+</p>
 
-<p>Si desea saber <A href="Developer#severities">sus significados</A>,
+<p>
+Si desea saber <A href="Developer#severities">sus significados</A>,
 sírvase consultar la documentación general para desarrolladores sobre el
 sistema de fallos.
 </p>
 </dd>
 
-<dt><code>clone</code> <var>númerodefallo</var> <var>nuevoID</var> [ <var>nuevosIDs</var> ... ]</dt>
+<dt><a name="clone"><code>clone</code> <var>númerodefallo</var> <var>nuevoID</var> [ <var>nuevosIDs</var> ... ]</a></dt>
 
 <dd>
 <p>
@@ -229,7 +336,9 @@ separados por espacios, que se usarán en órdenes de control subsecuentes
 para referirse a los informes recién duplicados. Se genera un nuevo
 informe por cada nuevo ID.
 </p>
-<p>Ejemplo de uso:</p>
+<p>
+Ejemplo de uso:
+</p>
 
 <pre>
       clone 12345 -1 -2
@@ -245,7 +354,7 @@ informe por cada nuevo ID.
 </pre>
 </dd>
 
-<dt><code>merge</code> <var>númerodefallo</var> <var>númerodefallo</var> ...</dt>
+<dt><a name="merge"><code>merge</code> <var>númerodefallo</var> <var>númerodefallo</var> ...</a></dt>
 
 <dd>
 <p>
@@ -256,7 +365,8 @@ paquete, tendrán un efecto idéntico en el resto de los informes
 fusionados.
 </p>
 
-<p>Antes de que se puedan fusionar mensajes, deben encontrarse
+<p>
+Antes de que se puedan fusionar mensajes, deben encontrarse
 exactamente en el mismo estado: todos abiertos, o todos cerrados; indicando
 la misma dirección de reenvío al autor original, o sin marcar; todos
 asignados al mismo paquete o paquetes (se realiza una comparación exacta
@@ -265,22 +375,28 @@ gravedad. Si no comienzan en el mismo estado, debería usar
 <code>reassign</code> (reasignar), <code>reopen</code> (reabrir), etc., para asegurarse de
 que lo están antes usar <code>merge</code> (fusionar). No es necesario
 que coincidan los títulos ya que no afectará a la fusión.
-Tampoco es necesario que coincidan las etiquetas ya que se unirán éstas.</p>
+Tampoco es necesario que coincidan las etiquetas ya que se unirán éstas.
+</p>
 
-<p>Si cualquiera de los informes listados en una orden <code>merge</code>
+<p>
+Si cualquiera de los informes listados en una orden <code>merge</code>
 ya se encuentra fusionado con otro fallo, entonces todos los informes
 fusionados con cualquiera de los indicados entrará en la fusión. La fusión
-es como la igualdad: es reflexiva, transitiva y simétrica.</p>
+es como la igualdad: es reflexiva, transitiva y simétrica.
+</p>
 
-<p>Fusionar informes hace que aparezca una nota en cada uno de ellos; en
-la página WWW se reflejan como enlaces a los otros.</p>
+<p>
+Fusionar informes hace que aparezca una nota en cada uno de ellos; en
+la página web se reflejan como enlaces a los otros.
+</p>
 
-<p>Los informes fusionados expiran todos a la vez, y sólo cuando todos y
+<p>
+Los informes fusionados expiran todos a la vez, y sólo cuando todos y
 cada uno, por se parado, cumplan el criterio de expiración.
 </p>
 </dd>
 
-<dt><code>forcemerge</code> <var>númerodefallo</var> <var>númerodefallo</var> ...</dt>
+<dt><a name="forcemerge"><code>forcemerge</code> <var>númerodefallo</var> <var>númerodefallo</var> ...</a></dt>
 <dd>
 <p>
 Fusiona a la fuerza dos o más informes de fallos. El primer fallo listado
@@ -291,11 +407,13 @@ en el mismo paquete. Mire un poco más arriba en el texto si desea una
 descripción de lo que significa fusionar. 
 </p>
 
-<p>Dese cuenta que esto hace posible cerrar fallos fusionándolos; Es usted
-   responsable de avisar a los remitentes con un mensaje de cierre apropiado si lo hace.</p>
+<p>
+Dese cuenta que esto hace posible cerrar fallos fusionándolos; Es usted
+responsable de avisar a los remitentes con un mensaje de cierre apropiado si lo hace.
+</p>
 </dd>
 
-<dt><code>unmerge</code> <var>númerodefallo</var></dt>
+<dt><a name="unmerge"><code>unmerge</code> <var>númerodefallo</var></a></dt>
 
 <dd>
 <p>
@@ -305,16 +423,20 @@ unidos; sólo se elimina su asociación con el informe indicado
 explícitamente.
 </p>
 
-<p>Si tiene muchos informes fusionados y desea separarlos en dos grupos,
+<p>
+Si tiene muchos informes fusionados y desea separarlos en dos grupos,
 deberá separar cada uno de los mensajes que quiera poner en otro grupo,
-para luego fusionarlos en el nuevo grupo que se desea.</p>
+para luego fusionarlos en el nuevo grupo que se desea.
+</p>
 
-<p>Sólo puede separar un informe con cada orden <code>unmerge</code>. Si
+<p>
+Sólo puede separar un informe con cada orden <code>unmerge</code>. Si
 desea desconectar más de un informe, no tiene más que incluir varias
-órdenes <code>unmerge</code> en su mensaje.</p>
+órdenes <code>unmerge</code> en su mensaje.
+</p>
 </dd>
 
-<dt><code>tags</code> <var>númerodefallo</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>etiqueta</var> [ <var>etiqueta</var> ...]
+<dt>t><a name="tag"><code>tags</code> <var>númerodefallo</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>etiqueta</var> [ <var>etiqueta</var> ...]</a></dt>
 
 <dd>
 <p>
@@ -328,7 +450,9 @@ en este momento, y que se deben fijar los valores que se indican en ese momento.
 La acción en su defecto es añadir.
 </p>
 
- <p>Ejemplo de uso:</p>
+ <p>
+ Ejemplo de uso:
+ </p>
 
  <pre>
         \# lo mismo que 'tags 123456 + patch'
@@ -348,7 +472,8 @@ La acción en su defecto es añadir.
   </pre>
 
 
-  <p>Entre las etiquetas disponibles en este momento se incluyen
+  <p>
+  Entre las etiquetas disponibles en este momento se incluyen
   <code>patch</code>, <code>wontfix</code>, <code>moreinfo</code>,
   <code>unreproducible</code>, <code>help</code>, <code>pending</code>,
   <code>fixed</code>, <code>fixed-in-experimental</code>, 
@@ -357,27 +482,31 @@ La acción en su defecto es añadir.
   <code>lfs</code>, <code>l10n</code>, <code>potato</code>, <code>woody</code>,
   <code>sarge</code>, <code>sarge-ignore</code>, <code>etch</code>, 
   <code>etch-ignore</code>, <code>sid</code> y <code>experimental</code>.
-
+  </p>
   <p>Consulte la documentación general para desarrolladores sobre el
   sistema de fallos si desea conocer <a href="Developer#tags">sus
-  significados</a>.</p>
+  significados</a>.
+  </p>
   </dd>
 
-<code>block</code> <var>númerodefallo</var> <code>by</code> <var>fallo</var> ...</dt>
-  <dd>Dese cuenta de que el arreglo del primer fallo está bloqueado por el otro.</dd>
+<dt><a name="block"><code>block</code> <var>númerodefallo</var> <code>by</code> <var>fallo</var> ...</a></dt>
+  <dd>
+  Dese cuenta de que el arreglo del primer fallo está bloqueado por el otro.</dd>
 
-<dt><code>unblock</code> <var>númerodefallo</var> <code>by</code> <var>fallo</var> ...</dt>
-  <dd>Entiende que el arreglo del primer fallo ya no está bloqueado por el otro.</dd>
+<dt><a name="unblock"><code>unblock</code> <var>númerodefallo</var> <code>by</code> <var>fallo</var> ...</a></dt>
+  <dd>
+  Entiende que el arreglo del primer fallo ya no está bloqueado por el otro.</dd>
 
-<dt><code>close</code> <var>númerodefallo</var> [ <var>versión arreglada</var> ]
-(obsoleto)</dt>
+<dt><a name="close"><code>close</code> <var>númerodefallo</var> [ <var>versión arreglada</var> ]
+(obsoleto)</a></dt>
 
 <dd>
 <p>
 Cierra el informe de fallo #<var>númerodefallo</var>.
 </p>
 
-<p>Se envía una notificación al usuario que informó del fallo, pero (en
+<p>
+Se envía una notificación al usuario que informó del fallo, pero (en
 contraste a enviar <var>númerodefallo</var><code>-done@bugs.debian.org</code>)
 <em>no</em> se incluirá en la notificación el texto del mensaje que causó
 el cierre del fallo. El mantenedor que cierra el fallo debería asegurarse,
@@ -385,14 +514,17 @@ probablemente enviando un mensaje aparte, de que el usuario que informó
 del fallo sabe por qué ha sido cerrado.
 Por tanto, el uso de esta orden es obsoleto.
 Consulte la información dirigida a mantenedores para ver 
-<a href="Developer#closing">cómo cerrar un fallo correctamente</a>.</p>
+<a href="Developer#closing">cómo cerrar un fallo correctamente</a>.
+</p>
 
-<p>Si proporciona una <var>versión arreglada</var>, el sistema de seguimiento 
+<p>
+Si proporciona una <var>versión arreglada</var>, el sistema de seguimiento 
 de fallos se dará cuenta de que el fallo se arregló en esa versión del
-paquete.</p>
+paquete.
+</p>
 </dd>
 
-<dt><code>package</code> [ <var>nombredelpaquete</var> ... ]</dt>
+<dt><a name="package"><code>package</code> [ <var>nombredelpaquete</var> ... ]</a></dt>
 
   <dd>
   <p>
@@ -403,7 +535,9 @@ paquete.</p>
   para el caso en que use accidentalmente números de fallo erróneos.
   </p>
 
-  <p>Ejemplo de uso:</p>
+  <p>
+  Ejemplo de uso:
+  </p>
 
   <pre>
         package foo
@@ -418,7 +552,7 @@ paquete.</p>
   </pre>
  </dd>
 
-<dt><code>owner</code> <var>númerodefallo</var> <var>dirección</var> | <code>!</code></dt>
+<dt><a name="owner"><code>owner</code> <var>númerodefallo</var> <var>dirección</var> | <code>!</code></dt>
 
   <dd>
   <p>
@@ -432,32 +566,33 @@ paquete.</p>
   <code>!</code> o especificar su propia dirección de correo.</p>
   </dd>
 
-<dt><code>noowner</code> <var>númerodefallo</var></dt>
+<dt><a name="noowner"><code>noowner</code> <var>númerodefallo</var></a></dt>
 
   <dd>Olvida cualquier hecho que apunte a que el fallo tenga un dueño diferente a su
   mantenedor habitual. Si el fallo no tiene dueño asignado, no hará nada.</dd>
 
-<dt><code>archive</code> <var>númerodefallo</var></dt>
+<dt><a name="archive"><code>archive</code> <var>númerodefallo</var></a></dt>
 
   <dd>Archiva un fallo que se archivó previamente si el fallo cumple todos los
   requerimientos para archivarse, ignorando el timepo.</dd>
 
-<dt><code>unarchive</code> <var>númerodefallo</var></dt>
+<dt><a name="unarchive"><code>unarchive</code> <var>númerodefallo</var></a></dt>
 
-  <dd>Desarchiva un fallo que se archivó previmante. La desarchivcación, normalmente,
+  <dd>
+  Desarchiva un fallo que se archivó previmante. La desarchivcación, normalmente,
   debería ir acompañado de «reopen» y «found/fixed» apropidamente. Los
   fallos que se han desarchivado se pueden archivar usando «archive», 
   asumiendo que se cumplen todos los requerimientos para ser archivado excepto el de tiempo.
   </dd>
 
-<dt><code>#</code>...</dt>
+<dt><a name="comment"><code>#</code>...</a></dt>
 
   <dd>Comentario de una línea. El símbolo <code>#</code> debe estar al inicio
   de la línea. El texto de los comentarios será incluido en los créditos
   enviados al emisor y a los mantenedores afectados, para que así pueda
   utilizarlo para documentar las razones de sus órdenes.</dd>
 
-<dt><code>quit</code></dt>
+<dt><a name="thanks"><code>quit</code></a></dt>
 <dt><code>stop</code></dt>
 <dt><code>thank</code></dt>
 <dt><code>thanks</code></dt>
@@ -468,7 +603,8 @@ paquete.</p>
 <!-- <dt><code>kthxbye</code></dt> --></dt>
 <!-- See... I documented it! -->
 
-  <dd>En una sola línea, en mayúsculas o minúsculas, posiblemente seguida 
+  <dd>
+      En una sola línea, en mayúsculas o minúsculas, posiblemente seguida 
       de espacio en blanco, le indica al servidor de control que debe parar el 
       proceso del mensaje; el resto puede incluir explicaciones, firmas, o 
       cualquier otra cosa, pero nada de esto lo detectará el servidor de control.
