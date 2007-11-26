@@ -159,13 +159,15 @@ pot:
 	-rm -f $(POTFILES)
 	$(MAKE) $(POTFILES)
 
+# Suppress errors from msgmerge as they corrupt translation stats on the
+# Debian website
 ifeq "$(LANGUAGE)" "en"
 stats:
 else
 stats: $(POTFILES)
 	-@for d in $(DOMAINS); do \
           echo -n "$$d.$(LANGUAGE).po: " 1>&2; \
-          msgmerge -q $$d.$(LANGUAGE).po $(ENGLISHDIR)/po/$$d.pot |\
+          msgmerge -q $$d.$(LANGUAGE).po $(ENGLISHDIR)/po/$$d.pot 2>/dev/null | \
              msgfmt -o /dev/null --statistics -; \
         done
 endif
