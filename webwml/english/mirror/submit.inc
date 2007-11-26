@@ -1,3 +1,11 @@
+#use wml::std::tags
+#use wml::debian::common_tags
+
+<bind-gettext-domain domain="others" />
+
+<define-tag sameastheabove whitespace=delete>
+  <gettext domain="others">same as the above</gettext>
+</define-tag>
 
 <define-tag tablerow>
 	<tr><td>%0: </td><td><input type="text" name="%1" id="%1" size="%2"></td></tr>
@@ -10,7 +18,7 @@
 <define-tag tr-upstream-take>
   <tr><td>%0: </td><td>
   <input type="text" name="%1" id="%1" size="%2">
-  <label><input id="cb_%1" name="cb_%1" type="checkbox" onclick="takeau('%1')">&nbsp;<em>same as the above</em></label>
+  <label><input id="cb_%1" name="cb_%1" type="checkbox" onclick="takeau('%1')">&nbsp;<em><sameastheabove></em></label>
   </td></tr>
 </define-tag>
 
