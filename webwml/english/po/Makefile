@@ -41,7 +41,8 @@ others_FILES    = $(ENGLISHDIR)/News/press/press.tags \
   $(ENGLISHDIR)/misc/merchandise.def $(ENGLISHDIR)/y2k/l10n.data \
   $(ENGLISHDIR)/devel/join/nm-steps.inc \
   $(ENGLISHDIR)/events/speakers/speakers.defs \
-  $(ENGLISHDIR)/misc/hardware.def
+  $(ENGLISHDIR)/misc/hardware.def \
+  $(ENGLISHDIR)/mirror/submit.inc
 templates_FILES = $(addprefix $(TEMPLDIR)/, \
   cdimage.wml common_tags.wml common_translation.wml consultant.wml \
   ddp.wml events_common.wml fixes_link.wml footer.wml languages.wml \
