@@ -1,79 +1,111 @@
 #use wml::debian::template title="Debian BTS - rapporteren van bugs" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.50"
+#use wml::debian::translation-check translation="1.64"
 
 # Last Translation Update by: $Author$
 # Last Translation Update at: $Date$
 
-<h1>Het rapporteren van bugs in Debian</h1>
+<h1>Een probleem in Debian rapporteren met reportbug</h1>
 
-<h2>Belangrijke zaken om in gedachten te houden <strong>vóór</strong> het 
-rapporteren van een bug.</h2>
+<a name="reportbug"></a>
+<p>We raden sterk aan om problemen (bugs) in Debian te rapporteren met
+behulp van het programma
+<code><a href="http://packages.debian.org/stable/utils/reportbug">\
+reportbug</a></code>. De commando's om <code>reportbug</code> te installeren
+en starten zijn eenvoudig:<code>aptitude install reportbug; reportbug</code>.
+Het programma zal u stap voor stap door het proces van het rapporteren van
+een probleem begeleiden.</p>
 
-<p>Rapporteer liever niet meerdere ongerelateerde bugs in één enkel bugrapport,
-zeker niet als het bugs in verschillende pakketten betreft.</p>
+<p>Als u vragen heeft die de interactieve prompts van reportbug niet oplossen,
+dan kunt u de verdere documentatie hieronder raadplegen of om hulp vragen op
+de <a href="mailto:debian-user@lists.debian.org">mailinglijst voor gebruikers
+van Debian</a> (Engels talig!).</p>
 
-<p>Bekijk of de bug die u wilt rapporteren niet al door iemand anders is
-gemeld voordat u hem zelf opstuurt. Lijsten van bugs die op het moment
-bekend zijn, zijn beschikbaar <a href="./">op het WWW</a> en zijn ook op
-<a href="Access">andere manieren</a> op te vragen. U kunt
-extra informatie over een reeds bekende bug met nummer #<var>&lt;nummer&gt;</var> 
-per e-mail opsturen naar <var>&lt;nummer&gt;</var>@bugs.debian.org</p>
+<p>Merk op dat <em>alle</em> probleemrapporten in het Engels moeten worden
+ingediend</p>
 
-<p>In het geval dat u niet kan thuisbrengen door welk pakket een bug precies wordt
-veroorzaakt, kunt u een e-mail met uw probleem sturen naar de <a
-href="mailto:debian-user@lists.debian.org">mailinglijst van Debian
-gebruikers</a>. Als uw probleem niet direct te maken heeft met een
-specifiek pakket, maar met een algemeen aspect van Debian, kunt u dit
-melden door een bug te rapporteren over een  <a
-href="pseudo-packages">pseudo-pakket</a> of door een e-mail te sturen
+<h1>Een probleem in Debian rapporteren via e-mail
+    (en geavanceerd gebruik van reportbug)</h1>
+
+<h2>Belangrijke zaken om in gedachten te houden <strong>vóórdat</strong> u
+een probleem rapporteert</h2>
+
+<a name="whatpackage"></a>
+<h3>Tot welk pakket behoort uw probleemrapport?</h3>
+<p>U dient te weten tegen welk pakket u uw probleem gaat rapporteren.
+Zie <a href="#findpkgver">dit voorbeeld</a> voor informatie over hoe
+dit uit te vinden. (Deze informatie zal u gebruiken om te controleren
+<a href="#filedalready">of het probleem al gerapporteerd is.</a>)
+</p>
+
+<p>Als het niet lukt om te bepalen tegen welk pakket een probleem
+gerapporteerd moet worden, kunt u een e-mail sturen naar de
+<a href="mailto:debian-user@lists.debian.org">mailinglijst voor gebruikers
+van Debian</a> en daar om hulp vragen (in het Engels!).</p>
+
+<p>Als uw probleem niet direct te maken heeft met een specifiek pakket,
+maar met een algemeen aspect van Debian, kunt u dit melden door een bug
+te rapporteren tegen een
+<a href="pseudo-packages">pseudo-pakket</a> of door een e-mail te sturen
 naar een van de <a href="../MailingLists/">mailinglijsten</a>
 van Debian.</p>
 
-<p>Als u een kopie van het bericht naar andere mensen wilt sturen, kunt
-u beter niet de standaard manier gebruiken, maar <a href="#xcc">een
-andere methode</a>, die verderop wordt beschreven.</p>
+<a name="filedalready"></a>
+<h3>Is uw probleem reeds gerapporteerd?</h3>
+<p>Bekijk of het probleem dat u wilt rapporteren niet al door iemand anders
+is gemeld voordat u het zelf indient. U kunt zien welke problemen voor een
+bepaald pakket zijn gerapporteerd door de naam van het pakket in te geven op
+het <a href="./#pkgreport">zoekformulier voor probleemrapporten</a>.
+Als er al een bestaand probleemrapport is, met nummer #<var>&lt;number&gt;</var>,
+dan kunt u aanvullende informatie daaraan toevoegen door een e-mail te
+sturen aan <var>&lt;number&gt;</var>@bugs.debian.org. Dien in elk geval niet
+nieuw probleemrapport in.</p>
 
+<h3>Dien afzonderlijke rapporten in voor verschillende problemen</h3>
+<p>Rapporteer liever niet meerdere ongerelateerde bugs in één enkel bugrapport,
+zeker niet als het bugs in verschillende pakketten betreft.</p>
 
-<h2>Het rapporteren van bugs met een automatisch programma</h2>
+<h3>Dien geen probleemrapporten in <q>upstream</q></h3>
+<p>Als u een probleem rapporteert binnen Debian, rapporteer het probleem dan
+niet ook zelf bij de <q>upstream</q> ontwikkelaars van de programmatuur. Het
+is immers mogelijk dat het probleem alleen voorkomt in Debian. Indien nodig
+zal de beheerder van het pakket uw rapport doorsturen.</p>
 
-<p>Het <code><a href="http://packages.debian.org/stable/utils/reportbug">\
-reportbug</a></code> programma maakt het insturen van bugs gemakkelijker
-doordat het u stap voor stap door het proces voert.  Tevens heeft u met het
-<kbd>querybts</kbd> programma, dat beschikbaar is in hetzelfde pakket als 
-<a href="http://packages.debian.org/stable/utils/reportbug">reportbug</a>,
-een tekst-gebaseerde toegang tot het Bug Traceer
-Systeem.</p>
-
-<p>Gebruikers van Emacs kunnen ook het debian-bug commando gebruiken, dat in
-het <code><a href="http://packages.debian.org/stable/utils/debian-el">\
-debian-el</a></code>-pakket zit.  Wanneer u het aanroept met <kbd>M-x
-debian-bug</kbd>, vraagt het u naar alle relevante informatie op een
-soortgelijke manier als <code>reportbug</code>.</p>
 
 <h2>Een bug via e-mail rapporteren</h2>
 
-<P>Stuur een e-mail naar
-<A href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></A>
-zoals hier beneden beschreven is.</P>
+<p>U kunt problemen in Debian ook indienen door een e-mail te sturen naar
+<a href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></a>.
+Hiervoor is een speciale indeling nodig die hieronder wordt beschreven.
+Omdat <code>reportbug</code> (<a href="#reportbug">zie boven</a>) deze
+indeling automatisch verzorgt, wordt gebruik ervan sterk aangeraden!</p>
 
-<p>Net als bij een normaal e-mail bericht, moet u natuurlijk een helder,
-beschrijvend <code>Onderwerp</code> door uw e-mail gebruiken. Het
+<h3><q>Headers</q></h3>
+<p>Net als bij een normaal e-mail bericht, dient u een duidelijk,
+beschrijvend <code>Onderwerp</code> voor uw e-mail kiezen. Het
 onderwerp dat u invult, zal worden gebruikt als de titel van de bug in
 het bug traceer systeem. Probeer dus een informatieve regel als
 onderwerp te gebruiken!</p>
 
-<p>Verder moet u in het begin van uw e-mail bericht een zogenaamde
-<a name="pseudoheader">pseudo-header</a> invoegen. Dit betekent dat de eerste
-regel van uw bericht er als volgt moet uitzien:
+<p>Als u een kopie van het bericht ook naar andere mensen (of een
+mailinglijst) wilt sturen, kunt u beter niet de standaard e-mail headers
+(zoals <q>CC</q>) gebruiken, maar <a href="#xcc">een andere methode</a>,
+die verderop wordt beschreven.</p>
+
+<h3><q><a name="pseudoheader">Pseudo-headers</a></q></h3>
+<p>De eerste regels van het bericht zelf bepalen, door het gebruik van
+zogenaamde <a name="pseudoheader">pseudo-headers</a>, op welk pakket en
+welke versie van dat pakket uw rapport betrekking heeft. Dit betekent dat
+de eerste regel van uw bericht er als volgt <em>moet</em> uitzien:
 
 <pre>
-Package: &lt;pakket&gt;
+Package: &lt;pakketnaam&gt;
 </pre>
 
-<p>Vervang hier <code>&lt;pakket&gt;</code> met de naam van het pakket
-of pseudo-pakket waarover u een bug wilt rapporteren.
+<p>Vervang hier <code>&lt;pakketnaam&gt;</code> door de
+<a href="#whatpackage">naam van het pakket</a> (of het pseudo-pakket)
+waarover u een bug wilt rapporteren.</p>
 
-<p>De tweede regel moet er als volgt uitzien:
+<p>De tweede regel dient er als volgt uit te zien:</p>
 
 <pre>
 Version: &lt;versie&gt;
@@ -81,53 +113,61 @@ Version: &lt;versie&gt;
 
 <p>Vervang hier <code>&lt;versie&gt;</code> door de versie van het
 pakket dat u gebruikt. Voeg geen tekst toe aan de versie zelf, want het
-bugtraceerstysteem steunt op dit veld om uit te zoeken welke releases
-getroffen worden door deze bug.
+bugtraceersysteem steunt op dit veld om uit te zoeken welke releases
+getroffen worden door deze bug.</p>
 
 <p>De <code>Package</code> regel in uw bericht moet correct zijn, omdat
 deze informatie door het bug traceer systeem wordt gebruikt om uw
 bericht door te sturen naar de ontwikkelaar die verantwoordelijk is voor
 dit specifieke pakket. In <a href="#findpkgver">dit voorbeeld</a> wordt
-uitgelegd hoe u deze informatie kunt achterhalen.
+uitgelegd hoe u deze informatie kunt achterhalen.</p>
 
-<p>De velden van de pseudo-header moeten beginnen aan het begin van de
-regel.</p>
+<p>Onder <a href="#additionalpseudoheaders">overige pseudo-headers</a>
+vindt u welke andere pseudo-headers zijn toegestaan.</p>
 
+<h3>De eigenlijke probleemmelding</h3>
 <p>U wordt verzocht de volgende informatie in uw rapport te vermelden:</p>
 
 <ul>
 <li>De <em>exacte</em> en <em>complete</em> tekst van alle
 foutmeldingen die op het scherm worden getoond of in de logfiles worden
-opgeslagen. Dit is erg belangrijk!
-<li>Wat u precies typte of deed toen het probleem optrad.
+opgeslagen. Dit is erg belangrijk!</li>
+<li>Wat u precies typte of deed toen het probleem optrad.</li>
 <li>De beschrijving van het foute gedrag: welk gedrag verwachtte u
 precies en wat gebeurde er? Een transcriptie van een voorbeeldsessie is
-een goede manier om dit duidelijk te maken.
+een goede manier om dit duidelijk te maken.</li>
 <li>Een suggestie om het probleem op te lossen, of misschien zelfs een
-patch, als u die heeft.
+patch, als u die heeft.</li>
 <li>De details van de configuratie van het programma dat het probleem
 vertoont. Neem de complete tekst van de
-configuratiebestanden in uw mail op.
-<li>De versies van de pakketten waarvan het pakket met de fout afhangt.
+configuratiebestanden in uw mail op.</li>
+<li>De versies van de pakketten waarvan het pakket met de fout afhangt.</li>
 <li>De kernel versie die u gebruikt (typ <code>uname -a</code>), de
 versie van uw standaard C bibliotheek (type <code>dpkg -s libc6 | grep
 ^Version</code>) en alle andere details van de configuratie van uw
 systeem, als dat nodig lijkt. Bijvoorbeeld, als u een probleem met een
 Perl script rapporteert, kunt u het beste ook de versie van het 'perl'
 programma zelf opnemen in uw rapport (type <code>perl -v</code> of
-<code>dpkg -s perl | grep ^Version:</code>). 
+<code>dpkg -s perl | grep ^Version:</code>).</li>
 <li>Details van uw hardwareconfiguratie, als dat relevant lijkt. Indien
 u een probleem met een device driver rapporteert, stuur dan een lijst
 mee van <em>alle</em> hardware in uw systeem, omdat dit soort problemen
-vaak worden veroorzaakt door conflicten van IRQ's of I/O adressen.
+vaak worden veroorzaakt door conflicten van IRQ's of I/O adressen.</li>
+<li>Als het pakket
+<a href="http://packages.debian.org/stable/utils/reportbug">reportbug</a>
+is ge&iuml;nstalleerd, kan ook de uitvoer van
+<code>reportbug -q --template -T none -s none -S normal -b --list-cc
+none -q &lt;package&gt;</code> nuttig zijn. Dit bevat versie-informatie en
+de uitvoer van speciale scripts van de pakketbeheerder.</li>
 </ul>
 
 
 <p>Neem ieder detail dat relevant lijkt op in uw bericht. Er is weinig
 kans dat uw bericht door dit soort informatie te lang wordt. Verder kunt
 u, als de bestanden niet te groot zijn, de bestanden die u gebruikte om
-het probleem te reproduceren, meesturen. U kunt zulke bestanden het
-beste uuencoden als ze vreemde tekens bevatten.</p>
+het probleem te reproduceren, meesturen. (Als de bestanden groot zijn,
+overweeg dan om ze, indien mogelijk, beschikbaar te stellen op een
+openbaar toegankelijke website.</p>
 
 <p>Meer informatie over hoe u de ontwikkelaars kunt helpen om uw probleem
 op te lossen kunt u vinden op de
@@ -135,11 +175,12 @@ op te lossen kunt u vinden op de
 to Report Bugs Effectively"</a>-pagina (engelstalig).</p>
 
 
-<h2><A name="example">Voorbeeld</A></h2>
+<h2><a name="example">Voorbeeld van een probleemrapport</a></h2>
 
-<p>Een bug rapport, inclusief de mail header, ziet er ongeveer zo uit:
+<p>Een bug rapport, inclusief de mail header en pseudo-headers, ziet er
+ongeveer als volgt uit:
 
-<PRE>
+<pre>
   To: submit@bugs.debian.org
   From: diligent@testing.linux.org
   Subject: Hello says `goodbye'
@@ -161,10 +202,10 @@ to Report Bugs Effectively"</a>-pagina (engelstalig).</p>
 
   I am using Debian GNU/Linux 2.2, kernel 2.2.17-pre-patch-13
   and libc6 2.1.3-10.
-</PRE>
+</pre>
 
 
-<h2><A name="xcc">Het versturen van bug rapporten naar andere ontvangers</A></h2>
+<h2><a name="xcc">Het versturen van bug rapporten naar andere ontvangers</a></h2>
 
 <p>Soms is het nodig om een kopie van uw bug rapport op te sturen naar
 iemand anders dan <code>debian-bugs-dist</code> en de ontwikkelaar die
@@ -199,24 +240,27 @@ standaard <code>CC</code> header gebruiken.</p>
 <p>Het is vaak zinvol te deze optie te gebruiken in combinatie met de
 <code>quiet</code> verzend optie (zie hieronder).</p>
 
-<h2><A name="severities">Ernst van de bugs</a></h2>
+<a name="additionalpseudoheaders"></a>
+<h1>Overige pseudo-headers</h1>
 
-<p>Als u een bug rapporteert die behoorlijk ernstig is, of als u juist
-een wens heeft voor extra functionaliteit van het programma, kunt u de
-ernst van de bug aangeven. Dit is echter niet verplicht, omdat de
-ontwikkelaar zelf een ernst niveau aan uw bug zal toekennen, als u het
-niet zelf doet.</p>
+<h2><a name="severities">Zwaarte van de bugs</a></h2>
 
-<p>Om een ernst niveau aan te geven, kunt u een regel zoals hieronder in
+<p>Als u een probleem rapporteert dat bezonder ernstig is, of als u juist
+slechts een wens heeft voor extra functionaliteit van het programma, kunt u de
+zwaarte van de bug aangeven. Dit is echter niet verplicht, en de
+pakketbeheerder kan een juiste zwaarte aan uw rapport toekennen, als u het
+niet zelf doet (of een onjuiste zwaarte heeft gekozen).</p>
+
+<p>Om de zwaarte aan te geven, kunt u een regel zoals hieronder in
 de <a href="#pseudoheader">pseudo-header</a> invoegen:
 
 <pre>
-Severity: &lt;<var>ernst</var>&gt;
+Severity: &lt;<var>zwaarte</var>&gt;
 </pre>
 
-<p>Vervang &lt;<var>ernst</var>&gt; met een van de beschikbare ernst
-niveaus, zoals beschreven in de <A
-href="Developer#severities">ontwikkelaarsdocumentatie</a>.</p>
+<p>Vervang &lt;<var>zwaarte</var>&gt; met een van de gedefineerde niveaus
+zoals beschreven in de
+<a href="Developer#severities">aanvullende documentatie</a>.</p>
 
 <h2><a name="tags">Het toewijzen van labels (tags)</a></h2>
 <p>Het is mogelijk om labels (tags) aan een bug-rapport toe te wijzen als u
@@ -233,8 +277,8 @@ Tags: &lt;<var>tags</var>&gt;
 
 <p>Hier moet u uiteraard &lt;<var>tags</var>&gt; vervangen door een of
 meerdere beschikbare labels.  De labels die
-beschikbaar zijn, zijn beschreven in de <a href="Developer#tags">documentatie
-voor ontwikkelaars</a>.
+beschikbaar zijn, zijn beschreven in de <a href="Developer#tags">aanvullende
+documentatie</a>.
 Als u meerdere tags wilt opgeven, moeten deze gescheiden worden door komma's,
 spaties of beide.</p>
 
@@ -248,9 +292,6 @@ Scheidt meerdere tags door comma's, spaties of beide. Als u een
 &lt;<var>gebruikersnaam</var>&gt;opgeeft, zullen de tags voor die gebruiker
 worden gezet. Anders zal het e-mailadres van de afzender worden gebruikt als
 gebruikersnaam.</p>
-
-<h2><a name="miscpseudoheaders">Andere pseudo-headers (vooral interessant
-voor pakketbeheerders)</a></h2>
 
 <pre>
 Forwarded: <var>foo@example.com</var>
@@ -286,36 +327,38 @@ je niet toelaat om de headers te wijzigen, dan kunt u de verschillende
 <code>X-Debbugs-</code>-headers in de 
 <a href="#pseudoheader">pseudo-headers</a> vermelden.</p>
 
+<h1>Aanvullende informatie</h1>
+
 <h2>Verschillende rapporteeradressen (rapporteren van kleine bug of
 heel veel bugs tegelijk)</h2>
 
 <p>Als u een klein probleem rapporteert zoals een typo in de
 documentatie of een triviaal bouw probleem, wordt u verzocht de ernst
 van uw bug rapport daaraan aan te passen en uw rapport aan
-<code>maintonly@bugs</code> te sturen in plaats van
-<code>submit@bugs</code>. Dit zorgt ervoor dat uw bericht alleen wordt
+<code>maintonly@bugs.debian.org</code> te sturen in plaats van
+<code>submit@bugs.debian.org</code>. Dit zorgt ervoor dat uw bericht alleen wordt
 doorgestuurd naar de ontwikkelaar van het pakket en niet naar de bug
-mailinglijsten.
+mailinglijsten.</p>
 
 <p>Als u veel bugs tegelijkertijd rapporteert, moet u zeker
-<code>maintonly@bugs</code> gebruiken, zodat u niet te veel e-mail
+<code>maintonly@bugs.debian.org</code> gebruiken, zodat u niet te veel e-mail
 verkeer veroorzaakt op de bug traceer mailinglijsten. Voordat u veel
 dezelfde bugs rapporteert, kunt u het beste ook een samenvatting sturen
-naar de <code>debian-bugs-dist</code> lijst.
+naar de <code>debian-bugs-dist</code> lijst.</p>
 
 <p>Als u een bug wilt rapporteren die al eerder naar de ontwikkelaar is
-gestuurd, kunt u <code>quiet@bugs</code> gebruiken. Bugs die naar dit
+gestuurd, kunt u <code>quiet@bugs.debian.org</code> gebruiken. Bugs die naar dit
 adres worden gestuurd, worden alleen opgenomen in het bug traceer systeem
-en verder naar niemand doorgestuurd.
+en verder naar niemand doorgestuurd.</p>
 
 <p>Als uw verschillende rapporteeradressen gebruikt, zal het bug traceer
 systeem automatisch de <code>Reply-To</code> header van alle
 doorgestuurde berichten zetten, zodat de antwoorden op deze berichten op
 dezelfde manier worden behandeld als het originele rapport. Dat betekent
 bijvoorbeeld, dat antwoorden op <code>maintonly</code> naar
-<var>nnn</var><code>-maintonly@bugs</code> zullen worden gestuurd in
-plaats van naar <var>nnn</var><code>@bugs</code>, tenzij iemand dat
-handmatig aanpast.
+<var>nnn</var><code>-maintonly@bugs.debian.org</code> zullen worden gestuurd in
+plaats van naar <var>nnn</var><code>@bugs.debian.org</code>, tenzij iemand dat
+handmatig aanpast.</p>
 
 
 <h2>Bevestigingen</h2>
@@ -331,7 +374,7 @@ in de www-interface op zoek moeten naar het nummer van de bug als u deze nodig
 hebt.</p>
 
 <p>Merk op dat deze header niet de bevestigingen van de
-<code>control@bugs</code>-server onderdrukt. Deze kunnen namelijk 
+<code>control@bugs.debian.org</code>-server onderdrukt. Deze kunnen namelijk 
 foutmeldingen bevatten naar aanleiding waarvan u nog actie moet
 ondernemen.</p>
 
@@ -343,24 +386,28 @@ verantwoordelijk is voor het relevant pakket, zal het rapport worden
 doorgestuurd naar <code>debian-bugs-dist</code>, zelfs als
 het rapport naar <code>maintonly</code> is gestuurd.</p>
 
-<p>Als u berichten stuurt naar <code>maintonly@bugs</code> of
-<var>nnn</var><code>-maintonly@bugs</code>, moet u ervoor zorgen dat het
+<p>Als u berichten stuurt naar <code>maintonly@bugs.debian.org</code> of
+<var>nnn</var><code>-maintonly@bugs.debian.org</code>, moet u ervoor zorgen dat het
 rapport aan het goede pakket is toegewezen. Dat kunt u doen door een
 correcte <code>Package</code> header bovenaan het rapport te zetten, of
-door <A href="server-control">de <code>control@bugs</code> service</a>
+door <A href="server-control">de <code>control@bugs.debian.org</code> service</a>
 te gebruiken.</p>
 
 
 <h2><a name="findpkgver">Het gebruik van <code>dpkg</code> om het pakket
 en de versie voor het report te vinden</a></h2>
 
-<p>Als u een bug in een bepaald commando wilt rapporteren, kunt u
-uitvinden bij welk pakket dat commando hoort, door <code>dpkg
---search</code> te gebruiken. U kunt uitvinden welke versie van een
-bepaald pakket u heeft ge&iuml;nstalleerd met het commando <code>dpkg
---list</code> of <code>dpkg --status</code>.</p>
+<p>Als u <code>reportbug</code> gebruikt om een probleem te rapporteren met
+een bepaald commando, zeg <code>grep</code>, kan op de volgende manier
+automatisch het juiste pakket worden bepaald en kunt u meteen het rapport
+schrijven: <code>reportbug --file $(which grep)</code>.</p>
 
-<P>Bijvoorbeeld:
+<p>U kunt ook uitvinden welk pakket een commando installeerde door
+<code>dpkg --search</code> te gebruiken. U kunt uitvinden welke versie van
+een bepaald pakket u heeft ge&iuml;nstalleerd met het commando
+<code>dpkg --list</code> of <code>dpkg --status</code>.</p>
+
+<P>Bijvoorbeeld:</p>
 <pre>
 $ which apt-get
 /usr/bin/apt-get
@@ -399,7 +446,20 @@ Description: Advanced front-end for dpkg
 
 </pre>
 
-<hr>
+<a name="otherusefulcommands"></a>
+<h2>Overige nuttige commando's en pakketten</h2>
+
+<p>Het hulpprogramma <kbd>querybts</kbd>, beschikbaar in hetzelde pakket als
+<a href="http://packages.debian.org/stable/utils/reportbug">reportbug</a>,
+biedt een handige textuele interface naar het bug traceer systeem.</p>
+
+<p>Gebruikers van Emacs kunnen ook het commando debian-bug uit het
+pakket <code><a href="http://packages.debian.org/stable/utils/debian-el">\
+debian-el</a></code> gebruiken. Wanneer aangeroepen met behulp van <kbd>M-x
+debian-bug</kbd>, zal het op een vergelijkbare wijze als <code>reportbug</code>
+vragen om alle benodigde informatie.</p>
+
+<hr />
 
 #use "otherpages.inc"
 
