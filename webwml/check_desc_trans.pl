@@ -18,7 +18,7 @@
 # There are no command line parameters.
 
 # Originally written 2002-10-05 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2002-2003 Software in the public interest, Inc.
+# © Copyright 2002-2007 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -41,16 +41,18 @@ elsif (open CONF, "<language.conf")
 die "Language not defined in DWWW_LANG or language.conf\n"
 	unless defined $language;
 
-# Counter
+# Counters
 $old = 0;
 $uptodate = 0;
 $unknown = 0;
+$needtranslation = 0;
 
 # Start-up
 $directory = 'MailingLists/desc';
 &process($directory);
 
 # Results
+print $needtranslation, " need to be translated.\n" if $needtranslation;
 print $old, " need to be updated.\n" if $old;
 print $uptodate, " are up to date.\n" if $uptodate;
 print $unknown, " are orphaned.\n" if $unknown;
@@ -120,6 +122,7 @@ sub process
         {
         	print "Untranslated file: $destination/$untranslated ",
         	      $sourcefile{$untranslated}, "\n";
+            $needtranslation ++;
         }
     }
     else
