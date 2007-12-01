@@ -1,11 +1,11 @@
 <p>Andere BTS pages:
 
 <ul>
-  <li><a href="./">Bug traceer systeem hoofdpagina.</a>
+  <li><a href="./">Bug Tracking Systeem hoofdpagina.</a>
   <li><a href="Reporting">Instructies voor het melden van bugs.</a>
   <li><a href="Access">Methoden om bug rapporten te bekijken.</a>
-  <li><a href="Developer">Informatie voor ontwikkelaars over het bug traceer
-      systeem.</a>
+  <li><a href="Developer">Informatie voor ontwikkelaars over het Bug Tracking
+      Systeem.</a>
   <li><a href="server-control">Ontwikkelaarsinformatie over het bewerken van
       bugs via een e-mailinterface.</a>
   <li><a href="server-refcard">Mailservers' referentiekaart.</a>
