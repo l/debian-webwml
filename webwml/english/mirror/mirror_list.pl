@@ -1128,12 +1128,10 @@ sub nonus_mirrors {
   my $wml = 1 if ($format eq 'wml');
 
   foreach my $country (sort keys %countries) {
-    my $hasmirrors = 0;
     my %countries_ours;
     foreach my $m_id (@{ $countries{$country} }) {
       if (defined $mirror[$m_id]{method}{'nonus-ftp'} ||
           defined $mirror[$m_id]{method}{'nonus-http'}) {
-          $hasmirrors++;
           $countries_ours{$country}{$m_id}++;
       }
     }
@@ -1142,7 +1140,7 @@ sub nonus_mirrors {
       $countryplain = $2;
       $countrycode = $1;
     }
-    if ($hasmirrors) {
+    if (keys %{ $countries_ours{$country} }) {
       print "\n";
       if ($html) {
         print "<h3>$countryplain</h3>";
