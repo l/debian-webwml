@@ -183,6 +183,7 @@ while (<SRC>)
 	s/Refer to Debian (<.*>)?bug #([0-9]+)</Verweisen auf $1 Debian-Fehler #$2</;
 	s/(of|from) the Debian Security Audit (Project|Team)/vom Debian-Sicherheits-Audit-$2/;
 	s/(of|from) Debian Security Audit (project|team)/vom Debian-Sicherheits-Audit-$2/;
+	s/dissector/Sezierer (<q>dissector<\/q>)/;
 
 	print DST $_;
 }
