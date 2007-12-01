@@ -1129,8 +1129,13 @@ sub nonus_mirrors {
 
   foreach my $country (sort keys %countries) {
     my $hasmirrors = 0;
+    my %countries_ours;
     foreach my $m_id (@{ $countries{$country} }) {
-      $hasmirrors++ if (defined $mirror[$m_id]{method}{'nonus-ftp'} || defined $mirror[$m_id]{method}{'nonus-http'});
+      if (defined $mirror[$m_id]{method}{'nonus-ftp'} ||
+          defined $mirror[$m_id]{method}{'nonus-http'}) {
+          $hasmirrors++;
+          $countries_ours{$country}{$m_id}++;
+      }
     }
     my ($countryplain, $countrycode);
     if ($country =~ /^(..) (.+)$/) {
@@ -1151,6 +1156,8 @@ sub nonus_mirrors {
       next;
     }
     foreach my $m_id (@{ $countries_sorted{$country} }) {
+      next unless (exists $countries_ours{$country}{$m_id});
+      print "<p>" if ($html || $wml);
       if (defined $mirror[$m_id]{method}{'nonus-ftp'}) {
         print "<a href=\"ftp://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-ftp'}\">" if ($html || $wml);
         print "  ftp://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-ftp'}";
@@ -1161,16 +1168,13 @@ sub nonus_mirrors {
           print "http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}";
           print "</a>\n" if ($html || $wml);
         }
-        print "\n\n";
-        print "<p>" if ($html || $wml);
       } elsif (defined $mirror[$m_id]{method}{'nonus-http'}) {
         print "  ";
         print "<a href=\"http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}\">" if ($html || $wml);
         print "http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}";
         print "</a>\n" if ($html || $wml);
-        print "\n\n";
-        print "<p>" if ($html || $wml);
       }
+      print "\n\n";
     }
   }
 }
