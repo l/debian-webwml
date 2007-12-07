@@ -30,6 +30,7 @@ my $last_modify = gmtime((stat($mirror_source))[9]);
 
 my (@mirror, %countries, %countries_sorted, %countries_sponsors, %longest);
 my ($count, $nonuscount, $volatilecount, $cdimagecount);
+my (%countrycodes, %countryplains);
 
 my $globalsite;
 
@@ -93,9 +94,18 @@ sub process_line {
   }
   elsif ($line =~ /^([\w-]+):\s*(.+)\s*$/s) {
     $field = lc $1;
+    my $value = $2;
     # no need for this private data in the $mirror hash
     if ($field !~ /^x-/) {
-      $mirror[$count-1]{$field} = $2;
+      $mirror[$count-1]{$field} = $value;
+    }
+    if ($field eq 'country') {
+      if ($value =~ /^(\w\w) (.+)$/) {
+        $mirror[$count-1]{'countrycode'} = $1;
+        $mirror[$count-1]{'countryplain'} = $2;
+      } else {
+        die "strangely formatted Country field value: $value";
+      }
     }
   }
   else {
