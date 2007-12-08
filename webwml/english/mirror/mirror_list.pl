@@ -30,7 +30,7 @@ my $last_modify = gmtime((stat($mirror_source))[9]);
 
 my (@mirror, %countries, %countries_sorted, %countries_sponsors, %longest);
 my ($count, $nonuscount, $volatilecount, $cdimagecount);
-my (%countrycodes, %countryplains);
+my (%code_of_country, %plain_name_of_country);
 
 my $globalsite;
 
@@ -101,8 +101,8 @@ sub process_line {
     }
     if ($field eq 'country') {
       if ($value =~ /^(\w\w) (.+)$/) {
-        $mirror[$count-1]{'countrycode'} = $1;
-        $mirror[$count-1]{'countryplain'} = $2;
+        $code_of_country{$value} = $1;
+        $plain_name_of_country{$value} = $2;
       } else {
         die "strangely formatted Country field value: $value";
       }
@@ -178,16 +178,16 @@ END
     print "<perl>\n";
   }
   foreach my $country (sort keys %countries) {
-    my ($countryplain, $countrycode);
-    if ($country =~ /^(..) (.+)$/) {
-      $countryplain = $2;
-      $countrycode = $1;
-    }
-    my $hasmirrors = 0;
+    my $countryplain = $plain_name_of_country{$country};
+    my $countrycode = $code_of_country{$country};
+    my %our_mirrors;
     foreach my $id (@{ $countries{$country} }) {
-      $hasmirrors++ if (defined $mirror[$id]{method}{'archive-ftp'} || defined $mirror[$id]{method}{'archive-http'});
+      if (defined $mirror[$id]{method}{'archive-ftp'} ||
+          defined $mirror[$id]{method}{'archive-http'}) {
+        $our_mirrors{$id} = 1;
+      }
     }
-    if ($hasmirrors) {
+    if (keys %our_mirrors) {
       print "\n";
       if ($html) {
         print "<tr><td colspan=4><hr size=1></td></tr>\n";
@@ -534,11 +534,9 @@ END
   foreach my $country (sort keys %countries) {
     foreach my $id (sort @{ $countries{$country} }) {
       next unless ($mirror[$id]{site} =~ /$officialsiteregex/);
-      my ($countryplain, $countrycode);
-      if ($country =~ /^(..) (.+)$/) {
-        $countryplain = $2;
-        $countrycode = $1;
-      }
+
+      my $countryplain = $plain_name_of_country{$country};
+      my $countrycode = $code_of_country{$country};
 
       unless (exists $mirror[$id]{method}{'archive-http'}) {
         die "official mirror " . $mirror[$id]{site} . " does not have archive-http?!";
@@ -546,10 +544,8 @@ END
 
       my $arches = join(" ", sort @{$mirror[$id]{'archive-architecture'}});
 
-      if ($html || $wml) {
-        $countryplain =~ s/ /&nbsp;/;
-      }
       if ($html) {
+        $countryplain =~ s/ /&nbsp;/;
         print <<END;
 <tr>
   <td>$countryplain</td>
@@ -606,7 +602,7 @@ END
   foreach my $country (sort keys %countries) {
     foreach my $id (sort @{ $countries{$country} }) {
       next unless ($mirror[$id]{site} =~ /$officialsiteregex/);
-      (my $countrycode = $country) =~ s/^(..).*/$1/;
+      my $countrycode = $code_of_country{$country};
       print <<END;
 <tr>
   <td><${countrycode}c></td>
@@ -685,7 +681,7 @@ sub mirror_sponsors {
 END
   foreach my $country (sort keys %countries) {
     foreach my $id (sort @{ $countries_sponsors{$country} }) {
-      (my $countrycode = $country) =~ s/^(..).*/$1/;
+      my $countrycode = $code_of_country{$country};
       print <<END;
 <tr>
   <td>${countrycode} <${countrycode}c></td>
@@ -727,7 +723,7 @@ sub cdimage_mirrors($) {
   print "#use wml::debian::languages\n\n<perl>\nmy \@cdmirrors = (\n";
   foreach my $country (keys %countries) {
     foreach my $id (sort @{ $countries{$country} }) {
-      (my $countrycode = $country) =~ s/^(..) .*/$1/;
+      my $countrycode = $code_of_country{$country};
       if ($which eq "httpftp") {
         if (defined $mirror[$id]{method}{'cdimage-ftp'} ||
             defined $mirror[$id]{method}{'cdimage-http'}) {
@@ -862,11 +858,8 @@ sub full_listing {
   if ($html) {
     my $linelength = 0;
     foreach my $country (sort keys %countries) {
-      my ($countryplain, $countrycode);
-      if ($country =~ /^(..) (.+)$/) {
-        $countryplain = $2;
-        $countrycode = $1;
-      }
+      my $countryplain = $plain_name_of_country{$country};
+      my $countrycode = $code_of_country{$country};
       print " [<a href=\"#${countrycode}\">";
       print $countryplain;
       print "</a>]";
@@ -884,11 +877,8 @@ sub full_listing {
 my \%countrylist;
 EOF
     foreach my $country (sort keys %countries) {
-      my ($countryplain, $countrycode);
-      if ($country =~ /^(..) (.+)$/) {
-        $countryplain = $2;
-        $countrycode = $1;
-      }
+      my $countryplain = $plain_name_of_country{$country};
+      my $countrycode = $code_of_country{$country};
       print <<EOF;
 \$countrylist{"<${countrycode}c>"} = $countrycode;
 EOF
@@ -911,11 +901,8 @@ EOF
   }
   print "<pre>\n" if $html;
   foreach my $country (sort keys %countries) {
-    my ($countryplain, $countrycode);
-    if ($country =~ /^(..) (.+)$/) {
-      $countryplain = $2;
-      $countrycode = $1;
-    }
+    my $countryplain = $plain_name_of_country{$country};
+    my $countrycode = $code_of_country{$country};
     print "\n";
     if ($html) {
       print "<strong><a name=\"$countrycode\">$country</a></strong>\n";
@@ -1138,48 +1125,42 @@ sub nonus_mirrors {
   my $wml = 1 if ($format eq 'wml');
 
   foreach my $country (sort keys %countries) {
-    my %countries_ours;
-    foreach my $m_id (@{ $countries{$country} }) {
-      if (defined $mirror[$m_id]{method}{'nonus-ftp'} ||
-          defined $mirror[$m_id]{method}{'nonus-http'}) {
-          $countries_ours{$country}{$m_id}++;
+    my %our_mirrors;
+    foreach my $id (@{ $countries{$country} }) {
+      if (defined $mirror[$id]{method}{'nonus-ftp'} ||
+          defined $mirror[$id]{method}{'nonus-http'}) {
+        $our_mirrors{$id} = 1;
       }
     }
-    my ($countryplain, $countrycode);
-    if ($country =~ /^(..) (.+)$/) {
-      $countryplain = $2;
-      $countrycode = $1;
+    next unless (keys %our_mirrors);
+    print "\n";
+    my $countryplain = $plain_name_of_country{$country};
+    my $countrycode = $code_of_country{$country};
+    if ($html) {
+      print "<h3>$countryplain</h3>";
+    } elsif ($text) {
+      print "$countryplain:";
+    } elsif ($wml) {
+      print "<h3><${countrycode}c></h3>";
     }
-    if (keys %{ $countries_ours{$country} }) {
-      print "\n";
-      if ($html) {
-        print "<h3>$countryplain</h3>";
-      } elsif ($text) {
-        print "$countryplain:";
-      } elsif ($wml) {
-        print "<h3><${countrycode}c></h3>";
-      }
-      print "\n";
-    } else {
-      next;
-    }
-    foreach my $m_id (@{ $countries_sorted{$country} }) {
-      next unless (exists $countries_ours{$country}{$m_id});
+    print "\n";
+    foreach my $id (@{ $countries_sorted{$country} }) {
+      next unless (exists $our_mirrors{$id});
       print "<p>" if ($html || $wml);
-      if (defined $mirror[$m_id]{method}{'nonus-ftp'}) {
-        print "<a href=\"ftp://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-ftp'}\">" if ($html || $wml);
-        print "  ftp://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-ftp'}";
+      if (defined $mirror[$id]{method}{'nonus-ftp'}) {
+        print "<a href=\"ftp://$mirror[$id]{site}$mirror[$id]{method}{'nonus-ftp'}\">" if ($html || $wml);
+        print "  ftp://$mirror[$id]{site}$mirror[$id]{method}{'nonus-ftp'}";
         print "</a><br>\n" if ($html || $wml);
-        if (defined $mirror[$m_id]{method}{'nonus-http'}) {
+        if (defined $mirror[$id]{method}{'nonus-http'}) {
           print "\n    ";
-          print "<a href=\"http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}\">" if ($html || $wml);
-          print "http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}";
+          print "<a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{'nonus-http'}\">" if ($html || $wml);
+          print "http://$mirror[$id]{site}$mirror[$id]{method}{'nonus-http'}";
           print "</a>\n" if ($html || $wml);
         }
-      } elsif (defined $mirror[$m_id]{method}{'nonus-http'}) {
+      } elsif (defined $mirror[$id]{method}{'nonus-http'}) {
         print "  ";
-        print "<a href=\"http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}\">" if ($html || $wml);
-        print "http://$mirror[$m_id]{site}$mirror[$m_id]{method}{'nonus-http'}";
+        print "<a href=\"http://$mirror[$id]{site}$mirror[$id]{method}{'nonus-http'}\">" if ($html || $wml);
+        print "http://$mirror[$id]{site}$mirror[$id]{method}{'nonus-http'}";
         print "</a>\n" if ($html || $wml);
       }
       print "\n\n";
@@ -1202,23 +1183,19 @@ sub compact_list($$) {
 
   if ($ordering eq 'countrysite') {
     foreach my $country (sort keys %countries) {
-      my $hasmirrors = 0;
-      my %countries_ours;
+      my %our_mirrors;
       foreach my $id (@{ $countries{$country} }) {
         if ( defined($mirror[$id]{method}{$whichtype.'-ftp'}) or
              defined($mirror[$id]{method}{$whichtype.'-http'}) or
              defined($mirror[$id]{method}{$whichtype.'-rsync'}) ) {
-          $hasmirrors++;
-          push @{ $countries_ours{$country} }, $id;
+          $our_mirrors{$id} = 1;
         }
       }
-      next unless ($hasmirrors);
-      my $countrycode; my $countryplain;
-      if ($country =~ /^(\w\w) (.+)$/) {
-        $countrycode = $1;
-        $countryplain = $2;
-      }
-      foreach my $id (@{ $countries_ours{$country} }) {
+      next unless (keys %our_mirrors);
+      my $countryplain = $plain_name_of_country{$country};
+      my $countrycode = $code_of_country{$country};
+      foreach my $id (@{ $countries_sorted{$country} }) {
+        next unless (exists $our_mirrors{$id});
         print "<li><".$countrycode."c>: " . $mirror[$id]{site} . ": ";
         printhtmlftprsync($mirror[$id]{site},
                           $mirror[$id]{method}{$whichtype.'-http'},
@@ -1230,21 +1207,16 @@ sub compact_list($$) {
   } elsif ($ordering eq 'sitecountry') {
     my %mirror_ours;
     foreach my $id (0..$#mirror) {
-      my $hasmirrors = 0;
       if ( defined($mirror[$id]{method}{$whichtype.'-ftp'}) or
            defined($mirror[$id]{method}{$whichtype.'-http'}) or
            defined($mirror[$id]{method}{$whichtype.'-rsync'}) ) {
-        $hasmirrors++;
         $mirror_ours{ $mirror[$id]{site} } = $id;
       }
     }
     foreach my $site (sort keys %mirror_ours) {
       my $id = $mirror_ours{$site};
-      my $countrycode; my $countryplain;
-      if ($mirror[$id]{country} =~ /^(\w\w) (.+)$/) {
-        $countrycode = $1;
-        $countryplain = $2;
-      }
+      my $countryplain = $plain_name_of_country{ $mirror[$id]{country} };
+      my $countrycode = $code_of_country{ $mirror[$id]{country} };
       print "<li>" . $mirror[$id]{site} . " (<".$countrycode."c>): ";
       printhtmlftprsync($mirror[$id]{site},
                         $mirror[$id]{method}{$whichtype.'-http'},
@@ -1291,23 +1263,18 @@ sub volatile_mirrors {
   print "<colgroup span=\"5\">\n</colgroup>\n";
   print "<thead><tr><th>HOST NAME</th><th>FTP</th><th>HTTP</th><th>RSYNC</th><th>ARCHITECTURES</th></tr></thead>\n<tbody>\n";
   foreach my $country (sort keys %countries) {
-    my $hasmirrors = 0;
-    my %has_volatile;
+    my %our_mirrors;
     foreach my $id (@{ $countries{$country} }) {
       if (defined $mirror[$id]{method}{'volatile-ftp'} || 
           defined $mirror[$id]{method}{'volatile-http'} || 
           defined $mirror[$id]{method}{'volatile-rsync'}) {
-            $hasmirrors++;
-            $has_volatile{$id} = 1;
+            $our_mirrors{$id} = 1;
       }
     }
-    if ($hasmirrors) {
-      print "<tr class=\"country\"><th colspan=\"5\">$country</th></tr>\n";
-    } else {
-      next;
-    }
+    next unless (keys %our_mirrors);
+    print "<tr class=\"country\"><th colspan=\"5\">$country</th></tr>\n";
     foreach my $id (@{ $countries_sorted{$country} }) {
-      next unless $has_volatile{$id};
+      next unless (exists $our_mirrors{$id});
       print "<tr><th>$mirror[$id]{site}</th>";
       print "<td>";
       if (defined $mirror[$id]{method}{'volatile-ftp'}) {
@@ -1537,9 +1504,9 @@ foreach my $id (0..$#mirror) {
 # Create arrays of countries, with their mirrors.
 foreach my $id (0..$#mirror) {
   if (exists $mirror[$id]{country}) {
-    push @{ $countries{$mirror[$id]{country}} }, $id;
+    push @{ $countries{ $mirror[$id]{country} } }, $id;
     if (exists $mirror[$id]{sponsor}) {
-      push @{ $countries_sponsors{$mirror[$id]{country}} }, $id;
+      push @{ $countries_sponsors{ $mirror[$id]{country} } }, $id;
 # optionally do this...
 #      if ((defined $mirror[$id]{method}{'archive-ftp'} ||
 #           defined $mirror[$id]{method}{'archive-http'} ||
