@@ -1205,16 +1205,16 @@ sub compact_list($$) {
       }
     }
   } elsif ($ordering eq 'sitecountry') {
-    my %mirror_ours;
+    my %our_mirrors;
     foreach my $id (0..$#mirror) {
       if ( defined($mirror[$id]{method}{$whichtype.'-ftp'}) or
            defined($mirror[$id]{method}{$whichtype.'-http'}) or
            defined($mirror[$id]{method}{$whichtype.'-rsync'}) ) {
-        $mirror_ours{ $mirror[$id]{site} } = $id;
+        $our_mirrors{ $mirror[$id]{site} } = $id;
       }
     }
-    foreach my $site (sort keys %mirror_ours) {
-      my $id = $mirror_ours{$site};
+    foreach my $site (sort keys %our_mirrors) {
+      my $id = $our_mirrors{$site};
       my $countryplain = $plain_name_of_country{ $mirror[$id]{country} };
       my $countrycode = $code_of_country{ $mirror[$id]{country} };
       print "<li>" . $mirror[$id]{site} . " (<".$countrycode."c>): ";
