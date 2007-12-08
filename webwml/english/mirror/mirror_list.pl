@@ -187,18 +187,15 @@ END
         $our_mirrors{$id} = 1;
       }
     }
-    if (keys %our_mirrors) {
-      print "\n";
-      if ($html) {
-        print "<tr><td colspan=4><hr size=1></td></tr>\n";
-        print "<tr><td colspan=4><big><strong>$country</strong></big></td></tr>\n";
-      } elsif ($text) {
-        print "$country";
-      }
-      print "\n";
-    } else {
-      next;
+    next unless (keys %our_mirrors);
+    print "\n";
+    if ($html) {
+      print "<tr><td colspan=4><hr size=1></td></tr>\n";
+      print "<tr><td colspan=4><big><strong>$country</strong></big></td></tr>\n";
+    } elsif ($text) {
+      print "$country";
     }
+    print "\n";
     my $i = length($country);
     if ($text) {
       print "-" while ($i--); # underline
