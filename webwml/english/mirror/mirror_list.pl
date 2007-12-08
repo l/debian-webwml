@@ -117,8 +117,7 @@ sub process_line {
 sub aptlines {
   foreach my $country (sort keys %countries) {
     print "\n$country\n";
-    my $i = length($country);
-    print "-" while ($i--); # underline
+    print "-" x length($country); # underline
     print "\n";
     foreach my $id (@{ $countries{$country} }) {
       my $archcomm="";
@@ -196,9 +195,8 @@ END
       print "$country";
     }
     print "\n";
-    my $i = length($country);
     if ($text) {
-      print "-" while ($i--); # underline
+      print "-" x length($country); # underline
       print "\n";
     }
     foreach my $id (@{ $countries_sorted{$country} }) {
@@ -909,8 +907,7 @@ EOF
       print "<h3><a name=\"$countrycode\"><${countrycode}c></a></h3>\n";
     }
     if ($html || $text) {
-      my $i = length($country);
-      print "-" while ($i--); # underline
+      print "-" x length($country); # underline
     } elsif ($wml) {
       print "\n";
     }
