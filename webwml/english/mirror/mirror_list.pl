@@ -1029,11 +1029,13 @@ To prevent anyone from taking unnecessary legal risks, some Debian
 packages were only available from a site in Leiden, The Netherlands, until 
 the release of Debian 3.1, which incorporates this software thanks to
 changes in United States law.
+
 END
   print "<p>" if $html;
   print <<END;
 You should not need the non-US archive unless you are using a version of
 Debian from before Debian 3.1.
+
 END
   print "<p>" if $html;
   print <<END;
