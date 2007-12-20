@@ -84,6 +84,7 @@ while (<SRC>)
 	s/\bdiscovered a problem in\b/entdeckte ein Problem in/;
 	s/\bdiscovered a/entdeckte ein/;
 	s/\bdiscovered that\b/entdeckte, dass/;
+	s/traversal/überschreitung/;
 	s/^(<p>)?A vulnerability was discovered in\b/$1Eine Verwundbarkeit wurde in entdeckt/;
 	s/^(<p>)?Two vulnerabilities were discovered in\b/$1Zwei Verwundbarkeiten wurden in entdeckt/;
 	s/Common Vulnerabilities and Exposures project/<q>Common Vulnerabilities and Exposures<\/q>-Projekt/;
@@ -171,7 +172,7 @@ while (<SRC>)
 	s/privilege escalation/Privilegienerweiterung/;
 	s/cross site/Site-übergreifend/;
 	s/\bis not affected/ist nicht betroffen/;
-	s/does not contain ([[:word:]]*) packages?/enthält keine $1-Pakete?/;
+	s/does not contain ([[:word:]]*) packages?/enthält kein(e) $1-Paket(e)/;
 	s/does not contain a(?:ny)? ([[:word:]]*) packages/enthält keine $1-Pakete/;
 	s/does not contain a(?:ny)? ([[:word:]]*) package/enthält kein $1-Paket/;
 	s/this problem will be fixed soon/wird dieses Problem bald behoben sein/;
