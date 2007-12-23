@@ -1,13 +1,13 @@
 #use wml::debian::template title="Debian BTS - servidor de peticiones" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.19"
+#use wml::debian::translation-check translation="1.25"
 
-<h1><A name="introduction">Cómo pedir informes de error por correo</A></h1>
+<h1><a name="introduction">Introducción al servidor de peticiones del sistema de fallos</a></h1>
 
 <p>Hay un servidor de correo que puede enviar informes de fallos e índices
 en forma de texto bajo demanda.</p>
 
 <p>Para usarlo ha de enviar un mensaje a
-<A href="mailto:request@bugs.debian.org"><code>request@bugs.debian.org</code></A>.
+<a href="mailto:request@bugs.debian.org"><code>request@bugs.debian.org</code></a>.
 El <code>Asunto</code> del mensaje será ignorado, excepto
 para la generación del <code>Asunto</code> de la respuesta.</p>
 
@@ -19,114 +19,133 @@ los mensajes en ningún lugar accesible publicamente.</p>
 
 <p>Cualquier texto en una línea que comience por el símbolo <code>#</code>
 será ignorado; el servidor dejará de procesar cuando encuentre un renglón
-que comience por <code>quit</code>, <code>stop</code>, <code>thank</code>
-o dos guiones (para evitar que se interprete la firma). Además se detendrá
+con un <a href="#stopprocessing">terminador de control</a> ( <code>quit</code>, <code>thank you</code>, o dos guiones son ejemplos comunes). Además se detendrá
 si encuentra demasiadas órdenes irreconocibles o con mal formato. Si no
-procesa ninguna orden correctamente, enviará un el mensaje de ayuda del
+procesa ninguna orden correctamente, enviará el mensaje de ayuda del
 servidor.</p>
 
-<h1>Ordenes disponibles</h1>
+<h1>Órdenes disponibles</h1>
 
 <dl>
-<dt><code>send</code> <var>númerodefallo</var>
-<dt><code>send-detail</code> <var>númerodefallo</var>
+<dt><code>send</code> <var>númerodefallo</var></dt>
+<dt><code>send-detail</code> <var>númerodefallo</var></dt>
 <dd>
 
 Pedir la transcripcción del informe de fallo en cuestión.
-<code>send-detail</code> envía también todos los mensajes «aburridos» de
+<code>send-detail</code> envía también todos los mensajes <q>aburridos</q> de
 la transcripción, tales como los varios auto-ack.
+</dd>
 
-<dt><code>index</code> [<code>full</code>]
-<dt><code>index-summary by-package</code>
-<dt><code>index-summary by-number</code>
+<dt><code>index</code> [<code>full</code>]</dt>
+<dt><code>index-summary by-package</code></dt>
+<dt><code>index-summary by-number</code></dt>
 <dd>
 
 Pedir el índice completo (con todo detalle, e incluyendo informes
 terminados y reenviados), o el sumario ordenado por paquete o por
 número, respectivamente.
+</dd>
 
-<dt><code>index-maint</code>
+<dt><code>index-maint</code></dt>
 <dd>
 
 Pedir la página de índice con la lista de mantenedores cuyos paquetes
 tienen fallos (abiertos y cerrados recientemente) en el sistema de
 seguimiento.
+</dd>
 
-<dt><code>index maint</code> <var>mantenedor</var>
+<dt><code>index maint</code> <var>mantenedor</var></dt>
 <dd>
 
 Pedir las páginas de índice de fallos en el sistema para el mantenedor
 <var>mantenedor</var>. Se hace una comparación exacta del término de
 búsqueda. El índice de fallos será enviado en un mensaje aparte.
+</dd>
 
-<dt><code>index-packages</code>
+<dt><code>index-packages</code></dt>
 <dd>
 
 Pedir la página de índice que da la lista de paquetes con fallos
 (abiertos y cerrados recientemente) en el sistema de seguimiento.
+</dd>
 
-<dt><code>index packages</code> <var>paquete</var>
+<dt><code>index packages</code> <var>paquete</var></dt>
 <dd>
 
 Pedir las páginas índice de fallos en el sistema del paquete
 <var>paquete</var>. El término de búsqueda es una cadena exacta.
 El índice de fallos será enviado en un mensaje aparte.
+</dd>
 
-<dt><code>send-unmatched</code> [<code>this</code>|<code>0</code>]
-<dt><code>send-unmatched</code> <code>last</code>|<code>-1</code>
-<dt><code>send-unmatched</code> <code>old</code>|<code>-2</code>
+<dt><code>send-unmatched</code> [<code>this</code>|<code>0</code>]</dt>
+<dt><code>send-unmatched</code> <code>last</code>|<code>-1</code></dt>
+<dt><code>send-unmatched</code> <code>old</code>|<code>-2</code></dt>
 <dd>
 
 Pedir registros de mensajes que no se refieran a un informe de error
 en particular, de esta semana, la semana pasada, y la semana anterior.
 (Cada semana termina en miércoles)
+</dd>
 
-<dt><code>getinfo</code> <var>nombre de archivo</var>
+<dt><code>getinfo</code> <var>nombre de archivo</var></dt>
 <dd>
 
+<p>
 Pedir un fichero que contenga información sobre paquetes o
 mantenedores. Los ficheros disponibles son:
+</p>
+
 <dl>
 <dt><code>mantenedores</code>
 <dd>
 La lista unificada de mantenedores de paquetes, que esa la que usa
 el sistema de seguimiento.
 Esta información está sacada de los ficheros <code>Packages</code>,
-ficheros 'override' y ficheros de pseudopaquetes.
+ficheros <q>override</q> y ficheros de pseudopaquetes.
+</dd>
 
-
-<dt><code>override.</code><var>distribución</var>
-<dt><code>override.</code><var>distribución</var><code>.non-free</code>
-<dt><code>override.</code><var>distribución</var><code>.contrib</code>
-<dt><code>override.experimental</code>
+<dt><code>override.</code><var>distribución</var></dt>
+<dt><code>override.</code><var>distribución</var><code>.non-free</code></dt>
+<dt><code>override.</code><var>distribución</var><code>.contrib</code></dt>
+<dt><code>override.experimental</code></dt>
 <dd>
 Información al respecto de prioridades y secciones de paquetes y
-valores de preferencias (<I>overrides</I>) de los mantenedores. Esta
+valores de preferencias (<q>overrides</q>) de los mantenedores. Esta
 información la usa el proceso que genera el fichero <code>Packages</code>
 en el archivo FTP. Esta información está disponible para cada uno de los
-principales árboles de distribuciones disponibles, identificadas por su
+principales árboles de las distribuciones disponibles, identificadas por su
 nombre en clave.
+</dd>
 
-
-<dt><code>pseudo-packages.description</code>
-<dt><code>pseudo-packages.maintainers</code>
+<dt><code>pseudo-packages.description</code></dt>
+<dt><code>pseudo-packages.maintainers</code></dt>
 <dd>
 Lista de descripciones y mantenedores de pseudo-paquetes, respectivamente.
+</dd>
 </dl>
+</dd>
 
-<dt><code>refcard</code>
+<dt><code>refcard</code></dt>
 <dd>
 Pedir que se envíe la tarjeta de referencia de los servidores de correo
 como texto plano.
+</dd>
 
-<dt><code>help</code>
+<dt><code>help</code></dt>
 <dd>
 Pedir que se envíe este documento de ayuda por correo como texto plano.
+</dd>
 
-<dt><code>quit</code>
-<dt><code>stop</code>
-<dt><code>thank</code>...
-<dt><code>--</code>...
+<dt><a name="stopprocessing"></a><code>quit</code></dt>
+<dt><code>stop</code></dt>
+<dt><code>thank</code></dt>
+<dt><code>thanks</code></dt>
+<dt><code>thankyou</code></dt>
+<dt><code>thank you</code></dt>
+<dt><code>--</code</dt>
+<!-- #366093, I blame you! -->
+<!-- <dt><code>kthxbye</code></dt> -->
+<!-- See... I documented it! -->
 <dd>
 
 Termina el proceso en este punto del mensaje. Después de esto puede
@@ -135,33 +154,36 @@ para incluir comentarios más grandes de los que serían razonables con
 <code>#</code>, por ejemplo, para beneficio de los lectores humanos de su
 mensaje (mediante los registros del sistema de fallos o debido a un código
 <code>CC</code> o <code>BCC</code>).
+</dd>
 
-<dt><code>#</code>...
+<dt><code>#</code>...</dt>
 <dd>
 
 Comentario de una línea. El <code>#</code> debe estar al principio del
 renglón.
+</dd>
 
-<dt><code>debug</code> <var>nivel</var>
+<dt><code>debug</code> <var>nivel</var></dt>
 <dd>
 
 Establece el nivel de depurado a <var>nivel</var>, que debería ser un
 número no negativo. 0 significa sin depurado; 1 suele ser suficiente.
 La salida de depurado aparece en la transcripción. No suele ser útil
 para los usuarios normales del sistema de fallos.
+</dd>
 
 </dl>
 
-<p>Hay una <A href="server-refcard">tarjeta de referencia</A> de los
+<p>Hay una <a href="server-refcard">tarjeta de referencia</a> de los
 servidores de correo, disponible mediante WWW, en
 <code>bug-mailserver-refcard.txt</code> o mediante correo electrónico,
 usando la orden <code>refcard</code> (ver más arriba).</p>
 
 <p>Si desea manipular informes de fallos, debería usar la dirección
 <code>control@bugs.debian.org</code>, que entiende un
-<A href="server-control">superconjunto de las órdenes listadas
-anteriormente</A>. Están descritas en otro documento, disponible en la
-<A href="server-control">WWW</A>,
+<a href="server-control">superconjunto de las órdenes listadas
+anteriormente</a>. Están descritas en otro documento, disponible en la
+<a href="server-control">WWW</a>,
 en el fichero <code>bug-maint-mailcontrol.txt</code>, o enviando un
 mensaje <code>help</code> a <code>control@bugs</code>.</p>
 
@@ -170,7 +192,7 @@ electrónico: existe una versión HTML disponible en la página principal de
 contenidos del sistema de fallos
 <code>http://www.debian.org/Bugs/</code>.</p>
 
-<hr>
+<hr />
 
 #use "otherpages.inc"
 
