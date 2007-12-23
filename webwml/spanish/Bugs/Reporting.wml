@@ -1,109 +1,122 @@
 #use wml::debian::template title="Debian BTS - informar de los fallos" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.53"
+#use wml::debian::translation-check translation="1.64"
 
-<h1>Cómo informar de un fallo en Debian</h1>
+<h1>Cómo informar de un fallo en Debian usando reportbug</h1>
 
-<h2>Cosas importantes que tiene que hacer <strong>antes</strong> de
-enviarlo</h2>
++<a name="reportbug"></a>
++<p>Rogamos encarecidamente que informe de fallo en Debian usando el programa
+<code><a
+href="http://packages.debian.org/stable/utils/reportbug">reportbug</a></code>.
+Para instalar e iniciar <code>reportbug</code> sencillamente ejecute <code>aptitude install reportbug; reportbug</code>. Le guiará por el proceso de informar de un fallo paso a paso.</p>
 
-<p>Por favor, no avise de varios fallos que no estén relacionados entre
-sí en un único informe.</p>
+<p>si tiene dudas que peticiones interactivas de reportbug no resuelven, puede
+dirigirse a la documentación que se describe a continuación o preguntar en la <a
+href="mailto:debian-user@lists.debian.org">lista de usuarios de Debian (en inglés)</a> o en la <a
+href="mailto:debian-user-spanish@lists.debian.org">lista de usuarios de Debian (en castellano)</a>.
+</p>
 
-<p>Debería comprobar si otra persona ha enviado ya el mismo informe de
-fallo antes de decidirse a enviarlo. Tiene a su disposición listas de los
-fallos pendientes aún no arreglados <A href="./">en la World Wide Web</A>
-y <A href="Access">en otros sitios</A> (vea otros documentos si desea
-más detalle). Puede enviar sus comentarios sobre un informe de fallo
-existente #<var>&lt;número&gt;</var> enviando correo a
-<var>&lt;número&gt;</var>@bugs.debian.org .</p>
+<h1> Cómo informar de un fallo en Debian usando el correo (y uso avanzado de reportbug)</h1>
 
-<p>Si no puede determinar qué paquete contiene el problema, haga el favor
-de enviar un mensaje a la <a href="mailto:debian-user@lists.debian.org">
-lista de correo de usuarios de Debian</a> pidiendo ayuda. Si el problema
+<h2>Cosas importantes a tener en cuenta <strong>antes</strong> de enviar un informe de fallo</h2>
+
+<a name="whatpackage"></a>
+<h3>¿En qué paquete está fallo del que está informando?</h3>
+<p>Necesita saber a que paquete hay que asignar el informe de fallo.
+Vea <a href="#findpkgver">este ejemplo</a> si desea información sobre
+como enconrar esta información. (Usará esta información para
+<a href="#filedalready">ver si ya se ha informado del fallo.</a>)
+</p>
+
+<p>Si no es capaz de determinar a qué paquete se debería asignar el fallo, haga el favor
+de enviar un mensaje a la <a href="mailto:debian-user-spanish@lists.debian.org">
+lista de correo de usuarios de Debian</a> pidiendo ayuda.</p>
+
+<p>Si el problema
 no se refiere a un paquete, sino a algún servicio general de Debian,
 existen varios <a href="pseudo-packages">pseudopaquetes</a> o incluso
 <a href="../MailingLists/">listas de correo</a> que puede usar
 para indicarnos el fallo.</p>
 
-<p>Si desea enviar una copia de su informe a destinatarios adicionales,
-(tales como listas de correo), no debería usar las cabeceras habituales
-del mensaje, sino <a href="#xcc">un método diferente, descrito más
-adelante</a>.</p>
+<a name="filedalready"></a>
+<h3>¿Se ha informado ya del fallo que le ha ocurrido?</h3>
+<p>Debería comrobar si si ya se ha informado del fallo que le ha ocurrido 
+antes de remitir el informe. Puede ver que informes se han remitido a un
+paquete concreto usando la
+<a href="./#pkgreport">opción de paquete del formulario de búsqueda de fallos</a>.
+Si hay un informe de fallo designado #<var>&lt;numero&gt;</var>,
+debería remitir sus comentarios enviando un correo electrónico a
+<var>&lt;número&gt;</var>@bugs.debian.org en lugar de enviar un informe nuevo.</p>
 
+<h3>Envie varios informes para varios fallos</h3>
+<p>Por favor, no informe de varios fallos no relacionados (especialmente de diferentes paquetes) en un solo informe de fallo.</p>
+ 
+<h3>No envíe los informes a los desarrolladores</h3>
 <p>Si rellena un informe de fallo en Debian, no envíe usted mismo copia al 
 desarrollador del programa, ya que es posible que el fallo sólo exista en Debian. Si fuera necesario, el mantenedor del paquete lo reenviará al desarrollador.</p>
 
-<h2>Envío del informe mediante una herramienta automática</h2>
-
-<p>El programa <code><a href="http://packages.debian.org/stable/utils/reportbug">reportbug</a></code>
-puede facilitar la introducción de fallos guiándole por el proceso de
-informar de un fallo paso a paso.
-La herramienta <kbd>querybts</kbd>, disponible en el mismo paquete que
-<a href="http://packages.debian.org/stable/utils/reportbug">reportbug</a>,
-proporciona una interfaz conveniente al sistema de seguimiento de fallos
-basada en texto.</p>
-
-<p>Los usuarios de emacs también pueden utilizar la orden debian-bug que
-proporciona el paquete <code><a
-href="http://packages.debian.org/stable/utils/debian-el">\
-debian-el</a></code>. Al invocarla con <kbd>M-x
-debian-bug</kbd>, pedirá toda la información necesaria de forma similar
-a como lo hace <code>reportbug</code>.</p>
-
 <h2>Envío del informe mediante correo electrónico</h2>
 
-<p>Envíe un mensaje a
-<A href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></A>,
-tal como se describe más adelante.</p>
+<p>Puede informar de fallos en Debian enviando un correo electrónico a
+<a href="mailto:submit@bugs.debian.org"><code>submit@bugs.debian.org</code></a>
+con un formato especial que se describe a continuación. <code>reportbug</code> (<a
+href="#reportbug">ver más adelante</a>) formatea adecuadamente los correos electrónicos por usted. ¡úselo, por favor!</p>
 
-<p>Por supuesto, como con cualquier otro mensaje, debería incluir un
+<h3>Cabeceras</h3>
+<p>Como en cualquier correo electrónico, debería incluir un 
 <code>Asunto</code> (subject) descriptivo y claro en la cabecera de su
 mensaje. Este asunto que proporciona se usará como título del informe
 inicial de fallo en la página de seguimiento de fallos, de manera que,
 ¡intente que sea informativo!</p>
 
-<P>Necesita escribir una <a name="pseudoheader">pseudocabecera</a> al
-principio del mensaje. Esto significa que la primera línea del mensaje
-debería decir:
+<p>Si le gustaría enviar una copia de su informe de fallo a más destinatarios
+(como listas de correo), no debería usar las cabeceras de correo normales, sino
+<a href="#xcc">un método diferente, descrito más adelante</a>.</p>
+
+<h3><a name="pseudoheader">Pseudocabeceras</a></h3>
+<p>La primera parte del informe de fallo son las pseudocabeceras que contienen
+información sobre a qué paquete y versión se aplica su informe de fallo.
+La primera línea del cuerpo del mensaje tiene que incluir una pseudocabecera.
+Debería poner:</p>
 
 <pre>
-Package: &lt;algo&gt;
+Package: &lt;nombredelpaquete&gt;
 </pre>
 
-<p>Cambie <code>&lt;algo&gt;</code> por el nombre del paquete que contenga
+<p>Cambie <code>&lt;nombredelpaquete&gt;</code> por el nombre del <a href="#whatpackage">paquete</a> que contenga
 el fallo. Por favor no incluya ningún otro texto aquí, mas que únicamente
 la versión, debido a que el sistema de rastreo de fallos necesita este
 campo para ubicar las liberaciones afectadas por el bug.</p>
 
-<p>La segunda línea del mensaje debería decir:</p>
+<p>En la segunda línea del mensaje debería poner:</p>
 
 <pre>
-Version: &lt;algo&gt;
+Version: &lt;versióndelpaquete&gt;
 </pre>
 
-<p>Cambie <code>&lt;algo&gt;</code> por la versión del paquete.</p>
+<p>Cambie <code>&lt;versióndelpaquete&gt;</code> por la versión del paquete.</p>
 
 <p>Debe proporcionar una línea <code>Package</code> correcta en la
 pseudocabecera para que el sistema de seguimiento de fallos envíe un
 mensaje al responsable del paquete. Vea <a href="#findpkgver">este
 ejemplo</a> si desea averiguar la forma de conseguir esta información.</p>
 
-<p>Debería colocar los campos de la pseudocabecera al principio de la
-línea en que aparecen (sin dejar espacios en blanco antes).</p>
+<p>Si desea conocer otras pseudocabeceras válidas, véase <a
+href="#additionalpseudoheaders">pseudocabeceras adicionales</a></p>
 
-<p>Por favor, incluya en su mensaje:</p>
+<h3>El cuerpo del informe</h3>
+<p>Por favor, incluya en su informe:</p>
 
 <ul>
 <li>El texto <em>exacto</em> y <em>completo</em> de cualquier mensaje de
-fallo impreso o registrado. ¡Es muy importante!
-<li>Qué escribió o hizo exactamente para mostrar el problema.
-<li>Una descripción del comportamiento incorrecto: qué era exactamente lo
+fallo impreso o registrado. ¡Es muy importante!</li>
+<li>Qué escribió o hizo exactamente para mostrar el problema.</li>
+<li>Una descripción del comportamiento incorrecto: qué era exactamente lo</li>
 que usted esperaba, y qué fue lo que observó. Una transcripción de una
 sesión de ejemplo es una buena manera de mostrarlo.
-<li>Una sugerencia de corrección, si es que la tiene.
+<li>Una sugerencia de corrección, si es que la tiene.</li>
 <li>Detalles de la configuración del programa con el problema. Incluya el
-texto completo de sus ficheros de configuración.
-<li>La versión de cualquier paquete del que dependa el que tiene fallos.
+texto completo de sus ficheros de configuración.</li>
+<li>La versión de cualquier paquete del que dependa el que tiene fallos.</li>
 <li>Qué versión del núcleo está usando (escriba <code>uname -a</code>), su
 versión de la biblioteca compartida de C (escriba
 <code>ls -l /lib/libc.so.6</code> o
@@ -111,27 +124,33 @@ versión de la biblioteca compartida de C (escriba
 sobre su sistema Debian, si parece apropiado. Por ejemplo, si tiene un
 problema con un <I>script</I> en Perl, puede que quiera incluir la versión
 del ejecutable `perl' (escriba <code>perl -v</code> o
-<code>dpkg -s perl | grep ^Version:</code>).
+<code>dpkg -s perl | grep ^Version:</code>).</li>
 <li>Detalles apropiados sobre el hardware de su sistema. Si está
 informando sobre un problema con un controlador de dispositivo, incluya
 una lista de <em>todo</em> el hardware de su sistema, ya que los problemas
-pueden venir a causa de conflictos de dirección E/S o de IRQ.
+pueden venir a causa de conflictos de dirección E/S o de IRQ.</li>
+<li>si tiene instalado <a
+href="http://packages.debian.org/stable/utils/reportbug">reportbug</a>,
+ lo que muestre el ejecutar
+ <code>reportbug -q --template -T none -s none -S normal -b --list-cc
+ none -q &lt;package&gt;</code>
+también será muy útil, ya que contiene lo que muestran scripts específicos del mantener e información sobre la versión.</li>
 </ul>
 
 <p>Incluya cualquier detalle que crea relevante (no crea que su informe
 será demasiado largo por incluir demasiada información). Si son pequeños,
 incluya en su informe cualesquiera ficheros que esté usando para reproducir
-el problema (codificándolos con uuencode si contienen caracteres extraños,
-etc).</p>
+el problema. (Si son grandes, considere publicarlos en sitio web disponible 
+públicamente, si es posible.)</p>
 
 <p>Si desea más indicaciones sobre cómo ayudar a los desarrolladores a
 resolver su problema, lea por favor
 <a href="http://www.chiark.greenend.org.uk/~sgtatham/bugs.html">Cómo
 informar de fallos de forma efectiva</a> (en inglés).</p>
 
-<h2><a name="example">Ejemplo</a></h2>
+<h2><a name="example">Ejemplo de informe de fallo</a></h2>
 
-<p>Un informe de fallo, con la cabecera del mensaje, tiene este aspecto:</p>
+<p>Un informe de fallo, con la cabecera y pseudocabecera, tiene este aspecto:</p>
 
 <pre>
   To: submit@bugs.debian.org
@@ -160,7 +179,7 @@ informar de fallos de forma efectiva</a> (en inglés).</p>
 <strong>Nota:</strong> Se ha dejado en el inglés original, puesto que éste
 será el idioma en el que se envíen los informes de fallos.
 
-<h2><A name="xcc">Enviar copias de un informe de fallos a otra dirección</A></h2>
+<h2><a name="xcc">Enviar copias de un informe de fallos a otra dirección</a></h2>
 
 <p>Algunas veces es necesario enviar una copia de un informe de fallo a
 algún otro sitio aparte de <code>debian-bugs-dist</code> y al responsable
@@ -189,7 +208,7 @@ ya que podrían ser capturadas por las comprobaciones que impiden los
 bucles de correo. De todas maneras, tiene bastante poco sentido usar
 <code>X-Debbugs-CC</code> para hacer esto, ya que el número de fallo añadido
 por el mecanismo será sustituido por otro; use una cabecera
-<code>CC</code> corriente en su lugar.</P>
+<code>CC</code> corriente en su lugar.</p>
 
 <p>Esta característica a menudo puede ser combinada enviando un mensaje
 <code>quiet</code> (lea más adelante).</p>
@@ -211,7 +230,7 @@ Severity: &lt;<var>importancia</var>&gt;
 
 <p>Sustituya &lt;<var>importancia</var>&gt; por uno de los niveles
 disponibles, que están descritos en la
-<a href="Developer#severities">documentación del desarrollador</a>.</p>
+<a href="Developer#severities">documentación avanzada</a>.</p>
 
 
 <h2><a name="tags">Asignar etiquetas</a></h2>
@@ -230,7 +249,7 @@ Tags: &lt;<var>etiquetas</var>&gt;
 
 <p>Sustituya &lt;<var>etiquetas</var>&gt; por una o más de las etiquetas
 de que dispone, tal como se describe en la
-<a href="Developer#tags">documentación para desarrolladores</a>.
+<a href="Developer#tags">documentación avanzada</a>.
 Separe las etiquetas con comas, espacios o ambos.</p>
 
 <pre>
@@ -243,9 +262,6 @@ Separe varias etiquetas con comas, espacios o ambos. Si especifica un
 &lt;<var>nombredeusuario</var>&gt;, se establecerán las etiquetas de ese usuario. De lo contrario, 
 se utilizará la dirección de correo electrónico del remitente como nombre de usuario.</p>
 
-
-<h2><a name="miscpseudoheaders">Otras pseudocabeceras (principalmente de
-interés para los desarrolladores de paquetes)</a></h2>
 
 <pre>
 Forwarded: <var>foo@example.com</var>
@@ -282,6 +298,8 @@ quiere usar esta opción.
 no le permite editar las cabeceras, puede
 establecer las distintas cabeceras <code>X-Debbugs-</code> en las
 <a href="#pseudoheader">pseudocabeceras</a>.</p>
+
+<h1>Información adicional</h1>
 
 <h2>Diferentes direcciones de envío (informes menores o en masa)</h2>
 
@@ -346,10 +364,14 @@ si no lo estaba ya.</p>
 <h2><a name="findpkgver">Uso de <code>dpkg</code> para averiguar el
 paquete y la versión a usar en el informe</a></h2>
 
-<p>Si está enviando un fallo en una orden, puede encontrar qué paquete la
-instaló usando <code>dpkg --search</code>. Puede averiguar la versión del
-paquete que instaló usando <code>dpkg --list</code> o <code>dpkg
---status</code>.
+<p>Cuando use <code>reportbug</code> para informar de un fallo en una orden, digamos
+<code>grep</code>, lo siguiente selecciona automáticamente el paquete adecuado
+y le permite escribir el informe correctamente
+ <code>reportbug --file $(which grep)</code></p>
+
+<p>También puede encontrar qué paquete lo instaló usando 
+<code>dpkg --search</code>. Puede encontrar que versión de un paquete tiene
+instalada usando <code>dpkg --list</code> o <code>dpkg --status</code>.
 </p>
 
 <p>Por ejemplo:</p>
@@ -391,7 +413,22 @@ Description: Advanced front-end for dpkg
 
 </pre>
 
-<hr>
+<a name="otherusefulcommands"></a>
+<h2>Otras órdenes y paquetes útiles</h2>
+
+<p>
+La herramienta <kbd>querybts</kbd>, disponible en el mismo paquete que
+<a href="http://packages.debian.org/stable/utils/reportbug">reportbug</a>,
+proporciona una interfaz basada en texto conveniente para usar el sistema de seguimiento de fallos.</p>
+
+<p>Los usuarios de Emacs también pueden usar la orden debian-bug que proporciona
+el paquete
+<code><a href="http://packages.debian.org/stable/utils/debian-el">\
+debian-el</a></code>. Cuando lo invoque con <kbd>M-x
+debian-bug</kbd>, le preguntará toda la información necesaria de forma similar
+a <code>reportbug</code>.</p>
+
+<hr />
 
 #use "otherpages.inc"
 
