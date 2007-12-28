@@ -484,7 +484,7 @@ sub process_homepages {
   my $filename = @_;
 
   my (%uid, %page, $name);
-  my ($ldap_cn, $ldap_sn);
+  my ($ldap_cn, $ldap_sn, $ldap_labeledURI);
 
   # get the stuff from the LDAP database
   foreach (`ldapsearch -x -h db.debian.org -b dc=debian,dc=org uid=\* cn mn sn labeledURI`) {
@@ -505,9 +505,14 @@ sub process_homepages {
 #      warn "had to decode: $worddata\n";
     }
     elsif ($line =~ /^labeledURI(=|: )(.+)$/) {
-	my $homepageurl = $2;
+       $ldap_labeledURI = $2;
+    }
+    elsif ($line =~ /^((version|search|result):|#)/) { next; }
+    elsif ($line eq "") {
+      # empty line terminates record
+      if ($ldap_labeledURI and ($ldap_cn ne "Debian BTS")) {
+       my $homepageurl = $ldap_labeledURI;
 	$homepageurl =~ s,^www,http://www,;
-	# warn $ldap_cn." ".$ldap_sn." ".$homepageurl."\n";
 	my $has_package = 0;
 	foreach my $person (keys %People) {
 		if ($person =~ /(.*):(.*)/) {
@@ -523,17 +528,17 @@ sub process_homepages {
 		}
 	}
 	if (!$has_package) {
-		# for some reason, the debbugs user is in the LDAP database, and we don't need it
-		next if ($ldap_cn eq "Debian BTS");
-
 		# they don't seem to have any packages, but add them anyway
 		my $person = "$ldap_sn:$ldap_cn";
 		$People{$person}{email} = "";
 		$People{$person}{homepage} = $homepageurl;
 		# warn "Adding $person even though they don't have any packages\n";
 	}
+      }
+      undef $ldap_labeledURI;
+      undef $ldap_sn;
+      undef $ldap_cn;
     }
-    elsif ($line eq "" or $line =~ /^((version|search|result):|#)/) { next; }
     else { die "Error: unknown format on line $.:\n$_\n"; }
   }
 
