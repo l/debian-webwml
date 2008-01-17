@@ -9,6 +9,7 @@ CUR_DIR=News/press
 SUBS=
 
 GETTEXTFILES += others.mo
+LAST_YEAR = 2007
 
 NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
@@ -17,7 +18,7 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
     $(TEMPLDIR)/countries.wml \
     $(GETTEXTDEP) \
     $(ENGLISHDIR)/News/press/press.tags \
-    $(ENGLISHDIR)/News/press/$(CUR_YEAR).data
+    $(ENGLISHDIR)/News/press/$(LAST_YEAR).data
 	$(WML) $(<F)
 
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/template.wml $(TEMPLDIR)/countries.wml \
