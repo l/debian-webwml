@@ -1,7 +1,7 @@
 # Configuration for packages.debian.org
 #
 
-topdir=/org/packages.ubuntu.com
+topdir=/srv/packages.ubuntu.com
 
 tmpdir=${topdir}/tmp
 bindir=${topdir}/bin
