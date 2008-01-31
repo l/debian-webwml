@@ -247,7 +247,7 @@ sub package_pages_walker {
 		}
 		$package_page .=  "\">$a</a></th>\n";
 		$package_page .= "<td>";
-		if ( $env->{distribution} !~ /\w+-backports/ ) {
+		if ($env->{distribution} !~ /\w+-backports/) {
 		    $package_page .= sprintf( "[<a href=\"%s\">".gettext( "list of files" )."</a>]\n", "$FILELIST_URL$encodedpack&amp;version=$env->{distribution}&amp;arch=$a", $name );
 		} else {
 		    $package_page .= gettext("no current information available");
