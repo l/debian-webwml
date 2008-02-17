@@ -19,7 +19,7 @@ packages.$(LANGUAGE).html: packages.wml $(ENGLISHSRCDIR)/releases/info \
 pre-installed.$(LANGUAGE).html: pre-installed.wml $(TEMPLDIR)/countries.wml \
   $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/CD/vendors/vendors.CD.def
 
-netinst.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
+netinst.$(LANGUAGE).html: netinst.wml $(TEMPLDIR)/template.wml \
   $(TEMPLDIR)/toc.wml \
   $(ENGLISHSRCDIR)/releases/info \
   $(ENGLISHSRCDIR)/releases/images.data \
