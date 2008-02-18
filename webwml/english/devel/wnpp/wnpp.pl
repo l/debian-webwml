@@ -33,15 +33,10 @@ my $attrs  = [
 my $maintainers_file = "$(ENGLISHDIR)/devel/wnpp/Maintainers";
 
 my %maintainer;
-open MAINTAINERS, $maintainers_file or die "Can't find $maintainers_file file at $host: $!\n";
+open MAINTAINERS, '<:utf8', $maintainers_file or die "Can't find $maintainers_file file at $host: $!\n";
 while (<MAINTAINERS>) {
     if (/^(\S+)\s+(.*)$/) {
-        my $pack = $1;
-        my $maint = $2;
-        $maint =~ s/</&lt;/;
-        $maint =~ s/>/&gt;/;
-	$maint =~ s/\xc3\xb8/&oslash;/;
-        $maintainer{$pack} = $maint;
+	$maintainer{$1} = encode_entities($2);
     }
 }
 close MAINTAINERS;
