@@ -200,13 +200,13 @@ while (<SRC>)
 	    s#With the current list of <a href="(.*)">voting#Mit der aktuellen Liste von <a href="$1">stimmberechtigten#;
             s#developers</a>, we have:#Entwicklern</a> haben wir:#;
 	    s#For this GR, as always#Für diese <acronym_GR /> werden wie immer während der Wahlperiode periodisch <a#;
-	    s#<a href="(.*)">statistics</a>#href="$1">\\#;
+	    s#<a href="(.*)"\s*>statistics</a>#href="$1">\\#;
 	    s#shall be gathered about ballots received and acknowledgements#Statistiken</a> über die empfangenen Stimmen und die versandten#;
             s#sent periodically during the voting period.  Additionally, the#Bestätigungen gesammelt. Zusätzlich würde die Liste der <a#;
 	    s#list of##;
-	    s#<a (.*)="(.*)">voters</a>#$1="$2">Abstimmenden</a> veröffentlicht. Auch#;
+	    s#<a (.*)="(.*)"\s*>voters</a>#$1="$2">Abstimmenden</a> veröffentlicht. Auch#;
 	    s#would be made publicly available. Also, the##;
-            s#<a (.*)="(.*)">tally sheet</a>#kann die <a $1="$2">Strichliste</a>#;
+            s#<a (.*)="(.*)"\s*>tally sheet</a>#kann die <a $1="$2">Strichliste</a>#;
 	    s#may also be viewed after to voting is done \(Note that#angeschaut werden (beachten Sie, dass es sich#;
             s#while the vote is in progress it is a dummy tally sheet\).#während des Urnengangs um eine Pseudo-Strichliste handelt).#;
    	    s#This year, like always,#Dieses Jahr werden wie immer periodisch während der Wahlperiode <a#;
@@ -253,6 +253,10 @@ while (<SRC>)
 	    s#with the subject (.*)\.# mit dem Betreff <q>$1</q> angefordert werden.#;
 	    s#All candidates would need a simple majority to be eligible.#Alle Kandidaten benötigten eine einfache Mehrheit, um wählbar zu sein.#;
 	    s#The proposal needs simple majority.#Der Vorschlag benötigt eine einfache Mehrheit#;
+	    s#Since this proposal and amendment would require modification of#Da dieser Vorschlag und Änderung die Anpassung eines Gründungsdokuments#;
+	    s#a foundation document, namely, the#verlangen würde, genauer gesagt der <a#;
+	    s#<a href="http://www.debian.org/devel/constitution">constitution</a>#href="http://www.debian.org/devel/constitution">Verfassung</a>,#;
+	    s#it requires a 3:1 majority to pass.#benötigt er eine 3:1-Mehrheit, um angenommen zu werden.#;
 
 	    #Generic
 	    s#January#Januar#;
