@@ -98,7 +98,7 @@ MAILTO=
 
 #-----------------------------------------------------------------------------#
 
-# Check for some enviroment variables
+# Check for some environment variables
 if [ -z $TO ] || [ -z $RSYNC_HOST ] || [ -z $RSYNC_DIR ] || [ -z $LOGDIR ]; then
 	echo "One of the following variables seem to be empty:"
 	echo "TO, RSYNC_HOST, RSYNC_DIR or LOGDIR"
