@@ -189,14 +189,19 @@ trap "rm -f $LOCK" exit
 set +e
 
 # First sync /pool
-rsync --recursive --links --hard-links --times --verbose \
+rsync --recursive --links --hard-links --times \
+     --verbose \
+     --timeout=3600 \
      $TMP_EXCLUDE $EXCLUDE $SOURCE_EXCLUDE \
      $RSYNC_HOST::$RSYNC_DIR/pool/ $TO/pool/ >> $LOGFILE 2>&1
 result=$?
 
 if [ 0 = $result ]; then
 	# Now sync the remaining stuff
-	rsync --recursive --links --hard-links --times --verbose --delay-updates --delete-after \
+	rsync --recursive --links --hard-links --times \
+	     --verbose \
+	     --delay-updates --delete-after \
+	     --timeout=3600 \
 	     --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
 	     --exclude "project/trace/${HOSTNAME}" \
 	     $TMP_EXCLUDE $EXCLUDE $SOURCE_EXCLUDE \
