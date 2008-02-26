@@ -105,13 +105,13 @@ LOCK_TIMEOUT=360
 #-----------------------------------------------------------------------------#
 
 # Check for some environment variables
-if [ -z $TO ] || [ -z $RSYNC_HOST ] || [ -z $RSYNC_DIR ] || [ -z $LOGDIR ]; then
+if [ -z "$TO" ] || [ -z "$RSYNC_HOST" ] || [ -z "$RSYNC_DIR" ] || [ -z "$LOGDIR" ]; then
 	echo "One of the following variables seems to be empty:"
 	echo "TO, RSYNC_HOST, RSYNC_DIR or LOGDIR"
 	exit 2
 fi
 
-if [ ! -d ${TO}/project/trace/ ]; then
+if [ ! -d "${TO}/project/trace/" ]; then
 	# we are running mirror script for the first time
 	umask 002
 	mkdir -p ${TO}/project/trace
@@ -196,7 +196,7 @@ rsync --recursive --links --hard-links --times \
      $RSYNC_HOST::$RSYNC_DIR/pool/ $TO/pool/ >> $LOGFILE 2>&1
 result=$?
 
-if [ 0 = $result ]; then
+if [ "$result" = 0 ]; then
 	# Now sync the remaining stuff
 	rsync --recursive --links --hard-links --times \
 	     --verbose \
@@ -214,7 +214,7 @@ else
 fi
 
 
-if [ -n $MAILTO ]; then
+if [ -n "$MAILTO" ]; then
 	mail -s "debian archive synced" $MAILTO < $LOGFILE
 fi
 
