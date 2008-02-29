@@ -111,12 +111,6 @@ if [ -z "$TO" ] || [ -z "$RSYNC_HOST" ] || [ -z "$RSYNC_DIR" ] || [ -z "$LOGDIR"
 	exit 2
 fi
 
-if [ ! -d "${TO}/project/trace/" ]; then
-	# we are running mirror script for the first time
-	umask 002
-	mkdir -p ${TO}/project/trace
-fi
-
 # Note: on some non-Debian systems, hostname doesn't accept -f option.
 # If that's the case on your system, make sure hostname prints the full
 # hostname, and remove the -f option. If there's no hostname command,
@@ -162,6 +156,12 @@ LOGFILE=$LOGDIR/debian-mirror.log
 # 
 cd $HOME
 umask 002
+
+# If we are running mirror script for the first time, create the
+# destination directory and the trace directory underneath it
+if [ ! -d "${TO}/project/trace/" ]; then
+  mkdir -p ${TO}/project/trace
+fi
 
 # Check to see if another sync is in progress
 if [ -f "$LOCK" ]; then
