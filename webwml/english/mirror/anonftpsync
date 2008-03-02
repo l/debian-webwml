@@ -31,7 +31,7 @@ RSYNC_HOST=
 # the mirrors file for the site you have chosen to mirror.
 # (mandatory)
 
-RSYNC_DIR=debian/
+RSYNC_DIR=debian
 
 # LOGDIR is the directory where the logs will be written to
 # (mandatory)
@@ -151,6 +151,9 @@ done
 
 # Logfile
 LOGFILE=$LOGDIR/debian-mirror.log
+# optionally, use the rsync module name in the log file name:
+# LOGFILE=$LOGDIR/$(echo $RSYNC_DIR | tr / _)-mirror.log
+# LOGFILE=$LOGDIR/${RSYNC_DIR/\//_}-mirror.log
 
 # Get in the right directory and set the umask to be group writable
 # 
@@ -205,7 +208,7 @@ if [ "$result" = 0 ]; then
 	     --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
 	     --exclude "project/trace/${HOSTNAME}" \
 	     $TMP_EXCLUDE $EXCLUDE $SOURCE_EXCLUDE \
-	     $RSYNC_HOST::$RSYNC_DIR $TO >> $LOGFILE 2>&1
+	     $RSYNC_HOST::$RSYNC_DIR/ $TO >> $LOGFILE 2>&1
 
 	LANG=C date -u > "${TO}/project/trace/${HOSTNAME}"
 else
