@@ -1,6 +1,6 @@
 #use wml::debian::template title="Opsætning af et Debian-arkivspejl"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.58"
+#use wml::debian::translation-check translation="1.60"
 #include "$(ENGLISHDIR)/releases/sid/archive.data"
 
 <toc-display />
@@ -100,14 +100,17 @@ filspejle.</small></p>
 <toc-add-entry name="how">Hvordan man spejler</toc-add-entry>
 
 <p>Den anbefalede filspejlingsmetode er med det såkaldte skript 
-<a href="anonftpsync">anonftpsync</a> via anonym
+<a href="anonftpsync">anonftpsync</a>.</p>
+
+<p>Den anbefalede filspejlingsprotokol er 
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>.</p>
 
-<p>Bemærk: mens <kbd>wget</kbd> og andre ftp-værktøjer lader til at fungere 
-fint, er der nogle problemer.  Vi anbefaler kraftigt at bruge rsync.</p>
+<p>Vær venlig ikke at anvende <kbd>wget</kbd> og andre ftp-værktøjer.  De 
+ser ud til at fungere, men vil have mange problemer (de kan ikke identificere
+hard links, det er mere besværligt at lave delvise filspejle, osv.).</p>
 
 
-<h3>Anonym rsync</h3>
+<h3>Rsync-opsætning</h3>
 
 <p>Vi anbefaler at bruge <a href="anonftpsync">dette skript</a> til at lave et 
 filspejl af arkivet. Følg instruktionerne i skriptet for at sætte 
@@ -118,6 +121,12 @@ filspejlingen op.</p>
 <ul>
   <li>Kør rsync med i hvert fald disse parametre: <kbd>--recursive --times
       --links --hard-links --delete</kbd>.</li>
+
+  <li>Undgå at spejle indeksfiler (Packages, Sources, osv.) før alle nye 
+      datafiler (.deb, .orig.tar.gz, osv.) er hentet.  Anvend to rsync-trin - 
+      overfør først datafilerne uden at medtage indeksfilerne (med 
+      <kbd>--exclude</kbd>), og overfør dernæst alt andet.  Se 
+      <a href="anonftpsync">vores skript</a> for et eksempel.</li>
 
   <li>Hvis du har ekstra diskplads, så brug også parametret 
       <kbd>--delete-after</kbd> for at undgå nogle af de midlertidige 
@@ -144,33 +153,12 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
       andre undermapper.  Normalt er disse mindre i størrelse og alligevel
       nyttige for brugerne.  Særligt <tt>project/trace</tt> er meget nyttig
       hvis der er problemer med et filspejl.</li>
+      
+  <li>Normalt vil opstrøms-rsync-servere tillade anonym adgang.  I tilfælde af
+      at der kræves autentifikation, sættes brugernavne og adgangskoder op i
+      dit skript, enten gennem miljøvariablen RSYNC_PASSWORD eller ed at anvende
+      valgmuligheden <kbd>--password-file</kbd> option.</li>
 </ul>
-
-
-<h3>Rsync med autentifikation, fra et <q>push</q>-filspejl</h3>
-
-<p><q>Push</q>-filspejling er en form for spejling ved hjælp af rsync vi har 
-udviklet for at minimere den tid det tager ændringer i arkivet at nå ud til 
-filspejlene. Server-filspejlet anvender en ssh-udløser til at fortælle 
-klient-filspejlet at det sker opdatere sig selv.</p>
-
-<p>Push-filspejling er nødvendig hvis mange servere skal være synkrone (såsom
-servere i DNS der på skrift svarer på et alias som <tt>ftp.us.debian.org</tt>),
-og vi bruger det almindeligvis i forbindelse med vores primære og sekundære 
-filspejle. I forbindelse med <q>normale</q> filspejle er det et stort arbejde at 
-sætte op, som ikke er umagen værd i forhold til et veltilpasset cron-job.</p>
-
-<p>Denne metode er ganske sikker da ssh er sat op til kun at køre en enkelt 
-kommando. Desuden er spejlingen stadig 'pull' så det er <strong>ikke</strong>
-muligt at ødelægge indholdet af arkivet ved hjælp af et forfalsket 
-'push'-filspejl. Nogle administratorer af filspejle har vist sig utilbøjelige 
-til at anvende denne form for filspejl af frygt for at deres maskiner vil være
-åbne for angreb. Det er simpelthen <strong>ikke</strong> korrekt.</p>
-
-<p>For en mere detaljeret beskrivelse af hvordan dette fungerer, hvorfor det er
-sikkert, og hvordan man opsætter et 'push'-filspejl, se 
-<a href="push_mirroring">den komplette beskrivelse</a>.</p>
-
 
 <toc-add-entry name="partial">Delvis filspejling</toc-add-entry>
 
@@ -211,6 +199,25 @@ anvende cron. Se <kbd>man crontab</kbd> for flere oplysninger.</p>
 
 <p>Bemærk, at den nemmeste måde at få spejlingen til at køre automatisk hver 
 dag, er at bruge cron.  Se <kbd>man crontab</kbd> for flere oplysninger.</p>
+
+<h3>Push-udløst filspejling</h3>
+
+<p><q>Push</q>-filspejling er en form for spejling ved hjælp af rsync vi har 
+udviklet for at minimere den tid det tager ændringer i arkivet at nå ud til 
+filspejlene. Server-filspejlet anvender en ssh-udløser til at fortælle 
+nedenstrøms-filspejlet at det sker opdatere sig selv.  <q>Push</q>'et er normalt
+begrænset til en sikker udløser, der ikke medtager variable data, så resten af 
+filspejlingsprocessen simpelthen er et <q>pull</q> som med et cron-job.</p>
+
+<p>Push-filspejling er nødvendig hvis mange servere skal være synkrone (så som
+servere i DNS der på skrift svarer på et alias som <tt>ftp.us.debian.org</tt>),
+og vi bruger det almindeligvis i forbindelse med vores primære og sekundære 
+filspejle. I forbindelse med <q>normale</q> filspejle, er det et stort arbejde 
+at sætte op, som ikke er umagen værd i forhold til et veltilpasset cron-job.</p>
+
+<p>For en mere detaljeret beskrivelse af hvordan dette fungerer, hvorfor det er
+sikkert, og hvordan man opsætter et <q>push</q>-filspejl, se 
+<a href="push_mirroring">den komplette beskrivelse</a>.</p>
 
 
 <toc-add-entry name="settings">Yderligere anbefalet opsætning</toc-add-entry>
