@@ -99,12 +99,15 @@ inherent to our mirror network in general.</small></p>
 <toc-add-entry name="how">How to mirror</toc-add-entry>
 
 <p>The recommended method of mirroring is with
-the so called <a href="anonftpsync">anonftpsync</a> script
-via anonymous
+the so called <a href="anonftpsync">anonftpsync</a> script.</p>
+
+<p>The mirroring protocol which we recommend is
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>.</p>
 
-<p>Note: while <kbd>wget</kbd> and other ftp-tools seem to work well,
-there are some issues. We strongly recommend to use rsync.</p>
+<p>Please do not mirror Debian using <kbd>wget</kbd> and other tools
+based on FTP. They may seem to work well, but will have numerous
+issues (they can't detect hard links, it's harder to make partial
+mirrors, etc).</p>
 
 <h3>Anonymous rsync</h3>
 
@@ -116,6 +119,13 @@ Follow the directions in the script to set up mirroring.</p>
 <ul>
   <li>Run rsync with at least these options: <kbd>--recursive --times
       --links --hard-links --delete</kbd>.</li>
+
+  <li>Avoid mirroring index files (Packages, Sources, etc) before
+      all the new data files (.deb, .orig.tar.gz, etc) are in place.
+      Use two stages of rsync - first transfer the data files while
+      excluding the index files (with <kbd>--exclude</kbd>), and then
+      transfer everything else. See <a href="anonftpsync">our script</a>
+      for an example.
 
   <li>If you have extra disk space, also use the <kbd>--delete-after</kbd>
       option to avoid some of the temporary update problems.</li>
