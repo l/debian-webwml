@@ -109,7 +109,7 @@ based on FTP. They may seem to work well, but will have numerous
 issues (they can't detect hard links, it's harder to make partial
 mirrors, etc).</p>
 
-<h3>Anonymous rsync</h3>
+<h3>rsync setup</h3>
 
 <p>We recommend to use <a href="anonftpsync">this script</a> to mirror the archive.
 Follow the directions in the script to set up mirroring.</p>
@@ -151,31 +151,12 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
       and other subdirectories. Usually these are minor in size and yet useful to
       users.
       Especially <tt>project/trace</tt> helps very much if there are any mirror issues.</li>
+
+  <li>Usually the upstream rsync servers will allow anonymous access.
+      In case they require authentication, set up usernames and passwords
+      in your script, either via the RSYNC_PASSWORD environment variable,
+      or using the <kbd>--password-file</kbd> option.</li>
 </ul>
-
-<h3>Rsync with authentication, from a push mirror</h3>
-
-<p>Push mirroring is a form of mirroring using rsync that we have developed
-to minimize the time it takes for changes to the archive to reach mirrors.
-The server mirror uses an ssh trigger to tell the client mirror to update
-itself.</p>
-
-<p>Push mirroring is necessary to keep multiple servers in synchronization
-(such as servers in DNS round-robin aliases like <tt>ftp.us.debian.org</tt>),
-and we commonly use it for our first and second tier mirrors. For <q>normal</q>
-mirrors, this method requires a lot of effort to set up which doesn't
-actually pay off compared to a well tuned cron job.</p>
-
-<p>The method is quite secure as ssh is configured to run only a single
-command. Also, mirroring is still <q>pull</q> so it is <strong>not</strong>
-possible to corrupt the contents of the archive via a forged push mirror.
-Some mirror administrators have shown some reluctance to using this method of
-mirroring due to fears that the method may open their machine to invasion.
-This is simply <strong>not</strong> true.</p>
-
-<p>For a more detailed description of how this works, why it is secure, and
-how to set a push mirror, please see <a href="push_mirroring">the complete
-explanation</a>.</p>
 
 <toc-add-entry name="partial">Partial mirroring</toc-add-entry>
 
@@ -217,6 +198,25 @@ cron. See <kbd>man crontab</kbd> for details.</p>
 
 <p>Note that if your site is being triggered with a push mechanism, then you
 don't need to worry about any of this.</p>
+
+<h3>Push-triggered mirroring</h3>
+
+<p><q>Push</q> mirroring is a form of mirroring that we have developed
+to minimize the time it takes for changes to the archive to reach mirrors.
+An upstream mirror uses an SSH trigger to tell the downstream mirror to
+update itself. The <q>pushing</q> is usually limited to a secure trigger
+that takes no variable data, so the rest of the mirroring process is
+simply <q>pull</q> like with a cron job.</p>
+
+<p>Push mirroring is necessary to keep multiple servers in synchronization
+(such as servers in DNS round-robin aliases like <tt>ftp.us.debian.org</tt>),
+and we commonly use it for our first and second tier mirrors. For <q>normal</q>
+mirrors, this method requires a lot of effort to set up which doesn't
+actually pay off compared to a well tuned cron job.</p>
+
+<p>For a more detailed description of how this works, why it is secure, and
+how to set a push mirror, please see <a href="push_mirroring">the complete
+explanation</a>.</p>
 
 <toc-add-entry name="settings">Recommended additional settings</toc-add-entry>
 
