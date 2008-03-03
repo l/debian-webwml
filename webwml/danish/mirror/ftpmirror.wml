@@ -1,6 +1,6 @@
 #use wml::debian::template title="Opsætning af et Debian-arkivspejl"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.60"
+#use wml::debian::translation-check translation="1.63"
 #include "$(ENGLISHDIR)/releases/sid/archive.data"
 
 <toc-display />
@@ -124,9 +124,13 @@ filspejlingen op.</p>
 
   <li>Undgå at spejle indeksfiler (Packages, Sources, osv.) før alle nye 
       datafiler (.deb, .orig.tar.gz, osv.) er hentet.  Anvend to rsync-trin - 
-      overfør først datafilerne uden at medtage indeksfilerne (med 
-      <kbd>--exclude</kbd>), og overfør dernæst alt andet.  Se 
-      <a href="anonftpsync">vores skript</a> for et eksempel.</li>
+      overfør først datafilerne uden at medtage indeksfilerne og overfør 
+      dernæst alt andet.
+      <br />
+      Dette kan gøres vha. <kbd>--exclude</kbd> der springer over Packages*-,
+      Sources*- og Release*-filer, eller ved kun at anvende undermappen pool/ i
+      det første trin.  Se <a href="anonftpsync">vores skript</a> for et 
+      eksempel.</li>
 
   <li>Hvis du har ekstra diskplads, så brug også parametret 
       <kbd>--delete-after</kbd> for at undgå nogle af de midlertidige 
@@ -134,14 +138,9 @@ filspejlingen op.</p>
 
   <li>Hvis du ikke har diskplads nok til at spejle alt, så brug parametret 
       <kbd>--exclude</kbd> til at udelukke dele af arkivet fra spejlingen.
-      Almindeligvis er dette forskellige arkitekturer som du måske ikke ønsker;
-      for eksempel vil dette udlukke <em>alle</em> arkitekturer:
-      <br />
-<: 
-print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
-  foreach (sort keys %arches);
-:>
-      Se også <a href="#partial">afsnittet om delvis spejling</a>.</li>
+      Almindeligvis er dette forskellige arkitekturer som du måske ikke ønsker,
+      fordi de kræver en masse plads.  Se <a href="#partial">afsnittet om delvis 
+      filspejling</a>.</li>
 
   <li>Når rsync er færdig med at spejle, tilføjes et tidsstemplingsfil til 
       undermappen <code>project/trace/</code> på Debian-spejlet, opkaldt
@@ -160,6 +159,7 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
       valgmuligheden <kbd>--password-file</kbd> option.</li>
 </ul>
 
+
 <toc-add-entry name="partial">Delvis filspejling</toc-add-entry>
 
 <p>Det allerede <a href="size">store Debian-arkiv</a> taget i betragtning, 
@@ -167,13 +167,21 @@ foretrækker nogle kun at spejle de dele som de har brug for. Hvis du ønsker at
 fravælge noget, bør du fravælge arkitekturer.</p>
 
 <p>Med <a href="anonftpsync">anonftpsync</a> kan dette gøres ved at ændre 
-ARCH EXCLUDE-variablen.  Der er også andre særligt fremstillede skripter.  De 
-er dog ikke velegnede til officielle filspejle.</p>
+ARCH EXCLUDE-variablen.</p>
 
 <p>Vi advarer kraftigt imod at fravælge mapperne <tt>project/</tt>, 
 <tt>doc/</tt> og andre undermapper. Normalt er de ikke særligt store og 
 alligevel nyttige for brugerne.  Særligt <tt>project/trace</tt> kan være meget
 nyttigt hvis der er problemer med et filspejl.</p>
+
+<p>Det er muligt at anvende andre særligt fremstillede skripter, men de er 
+normalt ikke nødvendige, og anbefales ikke til officielle filspejle.  For 
+eksempel vil disse rsync-valgmuligheder fravælge <em>alle</em> arkitekturer:
+<br />
+<:
+print "<code>--exclude binary-$_/ --exclude *_$_.deb --exclude *_$_.udeb --exclude installer-$_/ --exclude Contents-$_*</code><br>\n"
+foreach (sort keys %arches);
+:>
 
 
 <toc-add-entry name="when">Hvornår man skal filspejle</toc-add-entry>
