@@ -24,7 +24,7 @@ unless ($number)
 
 # Locate advisory
 $number = "dsa-" . $number if $number !~ /^dsa-/;
-$year = 2006;
+$year = 2008;
 YEAR: while (-d "../../english/security/$year")
 {
 	last YEAR if -e "../../english/security/$year/$number.wml";
@@ -107,6 +107,7 @@ while (<SRC>)
 	s/>remote exploit</>fjärrattack</;
 	s/>missing input sanitising</>städar inte indata</;
 	s/>programming error</>programmeringsfel</;
+	s/>various</>diverse</;
 	s/(Several|Multiple) vulnerabilities/Flera sårbarheter/;
 	s/(several|multiple) vulnerabilities/flera sårbarheter/;
 	s/>several</>flera</;
