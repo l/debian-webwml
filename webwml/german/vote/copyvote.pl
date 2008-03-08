@@ -3,11 +3,11 @@
 # This script copies a set of vote related files named on the command line, 
 # and adds the translation-check header to them. It also will create the
 # destination directory if necessary, and copy the Makefile from the source.
-# Written in 2006 by Helge Kreutzmann <debian@helgefjell.de>
+# Written in 2006-2008 by Helge Kreutzmann <debian@helgefjell.de>
 
 # Based on a script "copyadvisory.pl" by Peter Karlsson <peterk@debian.org>:
 # Written in 2000-2006 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2000-2005 Software in the public interest, Inc.
+# © Copyright 2000-2008 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -71,7 +71,7 @@ if (exists $env{'DEBEMAIL'}) {
 }
 
 
-$year = 2007;
+$year = 2008;
 $srcdir = "/scr/build/content/debian/web-commit/webwml/english/vote/$year";
 # $srcdir = "../../english/vote/$year";
 die "Unable to locate English version of vote $number.\n"
@@ -162,6 +162,7 @@ while (<SRC>)
 	    s#entry</a> is fairly informative.#Wikipedia-Eintrag</a> recht informativ.#;
 
             s#Debian uses the Condorcet method voting.#Debian benutzt die Condorcet-Methode für Abstimmungen.#;
+            s#Debian uses the Condorcet method for votes.#Debian benutzt die Condorcet-Methode für Abstimmungen.#;
             s#Simplistically, plain Condorcets method#Vereinfachend kann die grundlegende#;
             s#can be stated like so : <br/>#Condorcet-Methode folgendermaßen beschrieben werden:<br />#;
             s#can be stated like so : <br />#Condorcet-Methode folgendermaßen beschrieben werden:<br />#;
@@ -169,13 +170,23 @@ while (<SRC>)
             s#The Condorcet winner, if there is one, is the one#in Betracht. Der Condorcet-Gewinner, falls es einen gibt,#;
             s#candidate who can beat each other candidate in a two-way#ist derjenige Kandidat, der jeden anderen Kandidaten im#;
             s#race with that candidate.</q>#Zweikampf schlagen kann.</q>#;
+	    s#The problem is that in complex elections, there may well be a#Das Problem ist, dass es bei komplexen Wahlen durchaus zu#;
             s#The problem is that in complex elections, there may well#Das Problem ist, dass es bei komplexen Wahlen durchaus zu#;
+	    s#circular relations ship in which A beats B, B beats C, and C#einer
+	    kreisförmigen Beziehung kommen kann, in der A über#;
             s#be a circular relations ship in which A beats B, B beats C,#einer kreisförmigen Beziehung kommen kann, in der A über#;
+	    s#beats A. Most of the variations on Condorcet use various means#B siegt, B über C siegt und C über A siegt. Die meisten#;
             s#and C beats A. Most of the variations on Condorcet use#B siegt, B über C siegt und C über A siegt. Die meisten#;
+	    s#of resolving the tie. See <a#Variationen von Condorcet
+	    verwenden verschiedene Mittel,\num diese Pattsituation aufzulösen. Siehe#;
             s#various means of resolving the tie. See#Variationen von Condorcet verwenden verschiedene Mittel,\num diese Pattsituation aufzulösen. Siehe#;
+	    s#href="http://en.wikipedia.org/wiki/Cloneproof_Schwartz_Sequential_Dropping">Cloneproof#<q><a href="http://de.wikipedia.org/wiki/Schulze-Methode">\\#;
             s#<a href="http://en.wikipedia.org/wiki/Cloneproof_Schwartz_Sequential_Dropping">Cloneproof Schwartz Sequential Dropping</a>#<q><a href="http://de.wikipedia.org/wiki/Schulze-Methode">\\#;
+	    s#Schwartz Sequential Dropping</a> for details. Debian's variation#Cloneproof Schwartz Sequential Dropping</a></q> für Details.\nDie Variation von Debian ist in#;
             s#for details. Debian's variation is spelled out in the#Cloneproof Schwartz Sequential Dropping</a></q> für Details.\nDie Variation von Debian ist in#;
+	    s#is spelled out in the <a href="\$\(HOME\)/devel/constitution">the#<a href="\$(HOME)/devel/constitution">der Verfassung</a>#;
             s#<a href="\$\(HOME\)/devel/constitution">the constitution</a>,#<a href="\$(HOME)/devel/constitution">der Verfassung</a>#;
+	    s#constitution</a>, specifically, A.6.#schriftlich festgehalten, speziell § A.6.#;
             s#specifically,  A.6.#schriftlich festgehalten, speziell § A.6.#;
 	    s/Looking at row (.*), column (.*),/Wie in Zeile $1, Spalte $2 sichtbar, erhielt/;
 	    s/Option (.*) defeats Option (.*) by \( (.*) -  (.*)\) =\s*(.*) votes/Option $1 besiegt Option $2 mit \( $3 -   $4\) =  $5 Stimmen/;
@@ -201,10 +212,16 @@ while (<SRC>)
             s#developers</a>, we have:#Entwicklern</a> haben wir:#;
 	    s#For this GR, as always#Für diese <acronym_GR /> werden wie immer während der Wahlperiode periodisch <a#;
 	    s#<a href="(.*)"\s*>statistics</a>#href="$1">\\#;
+	    s#href="(.*)"\s*>statistics</a>#href="$1">\\#;
 	    s#shall be gathered about ballots received and acknowledgements#Statistiken</a> über die empfangenen Stimmen und die versandten#;
+	    s#will be gathered about ballots received and#Statistiken</a> über die empfangenen Stimmen#;
+	    s#acknowledgements sent periodically during the voting#und die versandten Bestätigungen gesammelt.#;
             s#sent periodically during the voting period.  Additionally, the#Bestätigungen gesammelt. Zusätzlich würde die Liste der <a#;
+	    s#period.  Additionally, the  <a#Zusätzlich würde die Liste der <a#;
+	    # FIXME Does not work?
 	    s#list of##;
 	    s#<a (.*)="(.*)"\s*>voters</a>#$1="$2">Abstimmenden</a> veröffentlicht. Auch#;
+            s#(.*)="(.*)">voters</a> will be#$1="$2">Abstimmenden</a> veröffentlicht. Auch#;
 	    s#would be made publicly available. Also, the##;
             s#<a (.*)="(.*)"\s*>tally sheet</a>#kann die <a $1="$2">Strichliste</a>#;
 	    s#may also be viewed after to voting is done \(Note that#angeschaut werden (beachten Sie, dass es sich#;
