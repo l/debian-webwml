@@ -28,23 +28,6 @@ $(ENGLISHSRCDIR)/security/ref-table.inc: $(ENGLISHSRCDIR)/security/make-ref-tabl
 crossreferences.$(LANGUAGE).html:: $(ENGLISHSRCDIR)/security/ref-table.inc \
 	$(ENGLISHDIR)/template/debian/securityreferences.wml 
 
-
-# only depend on it if it exists
-translated_nonvulns-woody=$(shell [ -f nonvulns-woody.src ] && echo nonvulns-woody.src)
-nonvulns-woody.$(LANGUAGE).html: nonvulns-woody.wml $(translated_nonvulns-woody)  \
-	$(ENGLISHSRCDIR)/security/nonvulns-woody.src \
-	$(TEMPLDIR)/securityreferences.wml 
-
-translated_nonvulns-sarge=$(shell [ -f nonvulns-sarge.src ] && echo nonvulns-sarge.src)
-nonvulns-sarge.$(LANGUAGE).html: nonvulns-sarge.wml $(translated_nonvulns-sarge)  \
-	$(ENGLISHSRCDIR)/security/nonvulns-sarge.src \
-	$(TEMPLDIR)/securityreferences.wml 
-
-translated_nonvulns-etch=$(shell [ -f nonvulns-etch.src ] && echo nonvulns-etch.src)
-nonvulns-etch.$(LANGUAGE).html: nonvulns-etch.wml $(translated_nonvulns-etch)  \
-	$(ENGLISHSRCDIR)/security/nonvulns-etch.src \
-	$(TEMPLDIR)/securityreferences.wml 
-
 clean::
 	rm -f $(DSARDF) $(DSALONGRDF)
 ifeq "$(LANGUAGE)" "ja"
