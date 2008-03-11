@@ -1,6 +1,6 @@
 #use wml::debian::template title="Sätta upp en spegel av Debianarkivet"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.58"
+#use wml::debian::translation-check translation="1.64"
 
 <toc-display/>
 
@@ -117,7 +117,8 @@ detta i onödan med donerad bandbredd.
 <p>
 Spegeladministratörer i Förenta Staterna bör spegla från ftp.us.debian.org
 (den officiella spegeladressen i USA, vilken är en Push-Primary-spegel).
-Men eftersom den adressen även är ett slingalias för flera maskiner är det
+Men eftersom den adressen även är ett cirkulerande alias för flera maskiner
+är det
 oftast en bra idé att bestämma vilken av komponenterna som är bäst och
 därefter spegla från just den.
 <br />
@@ -133,17 +134,22 @@ spegelnätverk för närvarande.</small>
 
 <p>
 Den rekommenderade metoden för att spegla är med det så kallade
-<a href="anonftpsync">anonftpsync</a>-skriptet via anonym
+<a href="anonftpsync">anonftpsync</a>-skriptet.
+</p>
+
+<p>
+Speglingsprotokollet vi rekommenderar är anonym
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>.
 </p>
 
-<p>Observera:
-Även om <kbd>wget</kbd> och andra ftp-verktyg verkar fungera bra finns det
-vissa problem.
-Vi rekommenderar å det bestämdaste att använda rsync.
+<p>
+Vi ber dig att inte använda <kbd>wget</kbd> eller andra ftp-baserade
+verktyg.
+De verkar fungera bra, men har vissa problem (de kan inte detektera hårda
+länkar, gör det svårare att ha en delvis spegling, osv).
 </p>
 
-<h3>Anonym rsync</h3>
+<h3>Ställa in rsync</h3>
 
 <p>
 Vi rekommenderar att du använder
@@ -163,6 +169,18 @@ Här är några råd för de som föredrar andra arbetssätt:
  </li>
 
  <li>
+  Undvik att spegla indexfiler (Packages, Sources, osv) innan alla nya
+  datafiler (.deb, .orig.tar.gz, osv) är på plats.
+  Använd en tvåstegs-rsync &ndash; överför först datafilerna medan du
+  exkluderar indexfilerna, och överför sedan allt annat.
+  <br/>
+  Du kan göra detta genom att använda <kbd>--exclude</kbd> för att hoppa
+  över filerna Packages*, Sources* och Release*, eller genom att bara
+  använda underkatalogen pool/ i detta första steg.
+  Se <a href="anonftpsync">vårt skript</a> för ett exempel.
+ </li>
+
+ <li>
   Om du har tillräckligt med diskutrymme bör även flaggan
   <kbd>--delete-after</kbd> användas för att undvika vissa temporära
   uppdateringsproblem.
@@ -172,14 +190,9 @@ Här är några råd för de som föredrar andra arbetssätt:
   Om du inte har tillräckligt med diskutrymme att spegla allting, använd
   flaggan <kbd>--exclude</kbd> för att utesluta delar av arkivet från
   spegeln.
-  Det vanliga är att skriva in olika arkitekturer du inte önskar; till
-  exempel kommer detta att utesluta <em>alla</em> arkitekturer:
-  <br />
-<: 
-print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br />\n"
-  foreach (sort keys %arches);
-:>
-  Se även <a href="#partial">stycket om att spegla delmängder</a>.
+  Det vanliga är att skriva in olika arkitekturer du inte önskar,
+  eftersom de tar en hel del utrymme.
+  Se <a href="#partial">avsnittet om att spegla delmängder</a>.
  </li>
 
  <li>
@@ -198,39 +211,14 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br />\n"
   Speciellt <tt>project/trace</tt> är väldigt bra att ha om det är några
   problem med speglingsprocessen.
  </li>
+
+ <li>
+  Normalt tillåter uppströms-rsync-servrar anonym åtkomst.
+  Om de kräver autentisering måste du ställa in användar-id och lösenord
+  i ditt skript, antingen via miljövariabeln RSYNC_PASSWORD, eller genom att
+  använda flaggan <kbd>--password-file</kbd>.
+ </li>
 </ul>
-
-<h3>Rsync med autentisering, från en <q>push</q>-spegel</h3>
-
-<p>
-<q>Push</q>-spegling är en form av spegling med rsync vi har utvecklat
-som minimerar tiden det tar för ändringar i huvudarkivet att nå speglarna.
-Den servande spegeln använder en utlösarmekanism för att informera
-klientspegeln om att den måste uppdateras.
-
-<p>
-<q>Push</q>-spegling är nödvändig för att hålla flera servrar
-synkroniserade (såsom servrarna för cirkulerande DNS-alias som
-<tt>ftp.us.debian.org</tt>), och vi använder det vanligtvis för våra första-
-och andranivåspeglar.
-För <q>normala</q> speglar kräver detta en hel del arbete att ställa
-in vilket egentligen inte är värt besväret jämfört med ett finjusterat
-cron-jobb.</p>
-
-<p>
-Metoden är relativt säker eftersom ssh konfigureras för att köra ett
-enda kommando.
-Dessutom är spegeln fortfarande <q>pull</q>, så det är
-<strong>inte</strong> möjligt att förstöra innehållet i arkivet via en
-förfalskad <q>push</q>-spegel.
-Vissa spegeladministratörer har uppvisat viss motvillighet mot att
-använda denna typ av spegel på grund av oro för att metoden öppnar deras
-maskin för intrång, något som <strong>inte</strong> är sant.
-
-<p>
-För en mer utförlig beskrivning av hur det fungerar, varför det är
-säkert, och hur man sätter upp en <q>push</q>-spegel, se
-<a href="push_mirroring">den kompletta förklaringen</a>.
 
 <toc-add-entry name="partial">Spegla delmängder</toc-add-entry>
 
@@ -249,6 +237,17 @@ officiella speglar.
 Vanligtvis är dessa inte speciellt stora men ändå användbara för användare.
 Speciellt <tt>project/trace</tt> är väldigt bra att ha om det är några
 problem med speglingsprocessen.
+</p>
+
+<p>
+Du kan välja att använda andra specialskrivna skript, men det är oftast inte
+nödvändigt, och rekommenderas inte för officiella speglar.
+Det här exemplet kommer till exempel att utesluta <em>samtliga</em> arkitekturer:
+<br />
+<: 
+print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br />\n"
+  foreach (sort keys %arches);
+:>
 </p>
 
 <toc-add-entry name="when">När du bör spegla</toc-add-entry>
@@ -286,6 +285,33 @@ Se <kbd>man crontab</kbd> för detaljer.
 Om din plats blir <q>push</q>-speglad behöver du inte bry dig om något av detta.
 </p>
 
+<h3><q>Push</q>-styrd spegling</h3>
+
+<p>
+<q>Push</q>-spegling är en form av spegling med rsync vi har utvecklat
+som minimerar tiden det tar för ändringar i huvudarkivet att nå speglarna.
+En uppströmsspegel använder en SSH-utlösare som informerar nedströmsspegeln
+om att den måste uppdateras.
+<q>Pushningen</q> begränsas oftast till en säker utlösare som inte tar någon
+variabel indata, så att resten av spegelfunktionen är en vanlig <q>pull</q>,
+på samma sätt som för ett cron-jobb.
+</p>
+
+<p>
+<q>Push</q>-spegling är nödvändig för att hålla flera servrar
+synkroniserade (som servrarna för cirkulerande DNS-alias, till exempel
+<tt>ftp.us.debian.org</tt>), och vi använder det vanligtvis för våra första-
+och andranivåspeglar.
+För <q>vanliga</q> speglar kräver detta en hel del arbete att ställa
+in vilket egentligen inte är värt besväret jämfört med ett finjusterat
+cron-jobb.
+</p>
+
+<p>
+För en mer utförlig beskrivning av hur det fungerar, varför det är
+säkert, och hur man sätter upp en <q>push</q>-spegel, se
+<a href="push_mirroring">den kompletta förklaringen</a>.
+</p>
 <toc-add-entry name="settings">Rekommenderade ytterligare inställningar</toc-add-entry>
 
 <p>Om du planerar att göra Debianspegeln tillgänglig över HTTP ber vi dig
