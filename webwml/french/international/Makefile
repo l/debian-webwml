@@ -1,1 +1,12 @@
-include $(subst webwml/french,webwml/english,$(CURDIR))/Makefile
+# This Makefile should need no changes from webwml/english/international/Makefile
+# Please send a message to debian-www if you need to modify anything
+# so the problem can be fixed.
+
+WMLBASE=..
+CUR_DIR=international
+SUBS=Catalan Chinese Croatian Danish french German l10n Polish spanish Swedish
+
+include $(WMLBASE)/Make.lang
+
+
+index.$(LANGUAGE).html: index.wml $(ENGLISHSRCDIR)/international/index.data
