@@ -3,7 +3,7 @@
 # so the problem can be fixed.
 
 WMLBASE=../../../..
-CUR_DIR=devel/debian-installer/News/2007 
+CUR_DIR=devel/debian-installer/News/2007
 SUBS=
 
 include $(WMLBASE)/Make.lang
