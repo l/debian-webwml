@@ -1,44 +1,48 @@
 #use wml::debian::template title="Peilipalvelimen koko"
-#use wml::debian::translation-check translation="1.36"
+#use wml::debian::translation-check translation="1.38"
 
 <h2>Kuinka suuri Debian-arkisto on?</h2>
 
 # (note for the English editors on how to update some of the numbers below)
 # dak psql database on ftp-master is 'projectb'
 # and there's a copy on merkel
-# projectb=> select architecture.arch_string as Architecture, sum(files.size)
-#            from files,binaries,architecture where
-#            architecture.id=binaries.architecture and files.id=binaries.file
-#            group by architecture.arch_string;
-# projectb=> select sum(size) from files where
+# projectb=> select architecture.arch_string as Architecture,
+#            sum(files.size)/1024/1024/1024 as Size
+#            from files,binaries,architecture
+#            where architecture.id=binaries.architecture
+#            and files.id=binaries.file
+#            group by architecture.arch_string
+#            order by Size;
+# projectb=> select sum(size)/1024/1024/1024 from files where
 #            filename ~ '.diff.gz$' or filename ~ '.dsc$'
 #            or filename ~ '.orig.tar.gz$';
-# projectb=> select sum(files.size) from files,binaries,architecture
-#            where architecture.id=binaries.architecture and
-#            architecture.arch_string='i386' and files.id=binaries.file;
+# projectb=> select sum(files.size)/1024/1024/1024
+#            from files, binaries, architecture
+#            where architecture.id=binaries.architecture
+#            and files.id=binaries.file
+#            and architecture.arch_string='i386';
 
-# however, this might not work completely reliably, it will report smaller
-# figures. dunno exactly why; asked elmo and he didn't have an answer.
-# thankfully, later checks showed that the difference from the real thing
-# is sufficiently small (<= 100 MB or so) to be ignored -joy
+# wc -c'ing files inside the debian/ directory might occasionally give
+# slightly different results than the SQL queries, but the difference
+# is usually negligible -joy
 
-<p>Tämän sivun tiedot pohjautuvat lokakuun 2007 arkistotietoihin.</p>
+<p>Tämän sivun tiedot pohjautuvat maaliskuun 2008 arkistotietoihin.</p>
 
 <dl>
 <dt><strong>yhteensä</strong></dt>
-  <dd>noin 290 gigatavua</dd>
+  <dd>noin 335 gigatavua</dd>
 
 <dt><strong>arkkitehtuureille yhteiset paketit</strong></dt>
-  <dd>noin 24 gigatavua</dd>
+  <dd>noin 28 gigatavua</dd>
 
 <dt><strong>julkaistu arkkitehtuuri</strong> (aiempi vakaa, vakaa, testattava ja epävakaa)</dt>
-  <dd>vaihtelee 16,1-22 gigatavun välillä (noin)</dd>
+  <dd>vaihtelee 18-25 gigatavun välillä (noin)</dd>
 
 <dt><strong>julkaisematon arkkitehtuuri</strong></dt>
-  <dd>vaihtelee 2-13 gigatavun välillä, mutta suurenee koko ajan</dd>
+  <dd>vaihtelee 2,5-14 gigatavun välillä, mutta suurenee koko ajan</dd>
 
 <dt><strong>lähdekoodit</strong></dt>
-  <dd>noin 37 gigatavua</dd>
+  <dd>noin 43 gigatavua</dd>
 </dl>
 
 <p>Huomaa että arkiston koko kasvaa jatkuvasti; testattava erityisesti kun uuden
@@ -63,6 +67,11 @@ href="../CD/mirroring/">Debian CD-peilipalvelin -sivuilta</a>.</p>
 <h3>Kuinka suuri Debianin volatile-arkisto on?</h3>
 
 <p>Debian-volatile-arkiston koko on noin 3 gigatavua.</p>
+
+<h2>Kuinka suuria ovat peilipalvelinten normaalit päivitykset?</h2>
+
+<p>Debianin main-arkiston tiedot löytyvät <a href=
+"http://ftp-master.debian.org/size-quarter.png">tästä kuvaajasta</a>.</p>
 
 <h2>Kuinka suuri on www-sivusto?</h2>
 
