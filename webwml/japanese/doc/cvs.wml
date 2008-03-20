@@ -1,104 +1,60 @@
-#use wml::debian::ddp title="Debian ドキュメンテーションプロジェクトの CVS"
+#use wml::debian::ddp title="Debian ドキュメンテーションプロジェクトの SVN"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.27"
+#use wml::debian::translation-check translation="1.28"
 
 <p>The Debian Documentation Project では、
 ウェブページや多くのマニュアル文書を
-<strong>cvs.debian.org</strong> の Debian CVS サーバに置いています。</p>
+<strong>svn.debian.org</strong> の Debian Subversion サーバに置いています。
+svn.debian.org は alioth.debian.org の Gforge インストレーションの一部です。
+このサービスがどのように動作しているかについての詳細は、<a href="http://wiki.debian.org/Alioth">Alioth ドキュメント</a>
+を参照してください。
+</p>
 
-<p>どなたでも、CVS からソースをダウンロードできます。
+<p>どなたでも、SVN からソースをダウンロードできます。
 ファイルを更新できるのは、
 Debian Documentation Project のメンバーだけです。</p>
 
 <toc-display />
 
-<toc-add-entry name="access">CVS 中のソースにアクセスするには</toc-add-entry>
+<toc-add-entry name="access">SVN 中のソースにアクセスするには</toc-add-entry>
 
 <p>ウェブ上で個々のファイルにアクセスしたり、
-それらの変更状況を見たりしたい場合に使える viewCVS インターフェースには、
-<url "http://cvs.debian.org/?cvsroot=debian-doc" /> からアクセスできます。</p>
+それらの変更状況を見たりしたい場合に使えるウェブインターフェースには、
+<url "http://svn.debian.org/wsvn/ddp/manuals/trunk" /> からアクセスできます。</p>
 
 <p>マニュアル全部をダウンロードしたい場合には、
-CVS サーバに直接アクセスするほうが良いでしょう。
-この場合にはマシンに <tt><a href="http://packages.debian.org/cvs">cvs</a></tt>
+SVN サーバに直接アクセスするほうが良いでしょう。
+この場合にはマシンに <tt><a href="http://packages.debian.org/subversion">subversion</a></tt>
 パッケージを入れておく必要があります。</p>
 
-<h3>匿名での (リードオンリーの) CVS サーバ への接続</h3>
+<h3>匿名での (リードオンリーの) SVN サーバ への接続</h3>
 
 <p>次のコマンドを入力して接続してください:</p>
 
 <p style="margin-left: 2em">
-  <code>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/debian-doc login</code>
-
-<p>パスワードを聞かれたら、単に enter を押してください。</p>
-
-<p>これで、通常の CVS コマンド (CVS の info ページをご覧ください)
-でファイルをチェックアウトできるようになります。
-ただしファイルに変更を加えたり、コミットしたりすることはできません。</p>
-
-<p>最初ファイルをダウンロードするときには、
-それらを保存するディレクトリを作成し、そこに移動してください。
-このディレクトリには、
-<strong>CVS</strong> および <strong>ddp</strong>
-という 2 つのディレクトリが作成されることになります。</p>
-
-<p>ファイルを全部ダウンロードするには、次のコマンドを使います。</p>
-
-<p style="margin-left: 2em">
-  <code>cvs -d :pserver:anonymous@cvs.debian.org:/cvs/debian-doc -z3 checkout ddp/manuals.sgml</code>
-</p>
+  <code>svn co svn://svn.debian.org/ddp/manuals/trunk manuals</code>
 
 <p>このコマンドを実行すると、再帰的にディレクトリが生成され、
 その中にファイルが保存されます。</p>
 
 <p>ローカルにコピーしたファイルを、
 他の人の加えた変更に応じてアップデートするには、
-<strong>ddp/manuals.sgml</strong>
-ディレクトリに移動して次のコマンドを実行します。</p>
+<strong>manuals</strong> ディレクトリに移動して次のコマンドを実行します。</p>
 
 <p style="margin-left: 2em">
-  <code>cvs -z3 update -d -P</code>
+  <code>svn update</code>
 </p>
 
-<p>CVS リモートセッションを終了したら、
-以下のコマンドを実行してサーバとの接続を解除します。</p>
+<h3>更新権限がある場合の SVN サーバへの接続</h3>
 
-<p style="margin-left: 2em">
-  <code>cvs logout</code>
-</p>
-
-<h3>更新権限がある場合の CVS サーバへの接続</h3>
-
-<p>ここに述べる方法で CVS サーバにアクセスするには、
+<p>ここに述べる方法で SVN サーバにアクセスするには、
 書き込み権限を持ってアクセスする許可が先に必要になります。
 まず更新権限の<a href="#obtaining">請求方法</a>をご覧ください。</p>
 
-<p>接続するには、次のコマンドを実行します。</p>
-
-<p style="margin-left: 2em">
-  <code>cvs -d :pserver:<var>ユーザid</var>@cvs.debian.org:/cvs/debian-doc login</code>
-</p>
-
-<p>ついで文書コーディネータとの間で取り決めたパスワードを入力します。
-上記のコマンドの <var>ユーザid</var> の部分は、
-CVS パスワードサーバ上でのあなたのユーザ名に置きかえてください。
-これは必ずしも
-<strong>cvs.debian.org</strong>
-でのログイン名 (を持っている場合) と同じとは限りません。</p>
-
-<p>これで、通常の CVS コマンド (CVS の info ページをご覧ください)
-を使用してファイルのチェックアウトとコミットができるようになります。</p>
-
-<p>最初ファイルをダウンロードするときには、
-それらを保存するディレクトリを作成し、そこに移動してください。
-このディレクトリには、
-<strong>CVS</strong> および <strong>ddp</strong>
-という 2 つのディレクトリが作成されることになります。</p>
-
 <p>ファイルを全部ダウンロードするには、次のコマンドを使います。</p>
 
 <p style="margin-left: 2em">
-  <code>cvs -d :pserver:userid@cvs.debian.org:/cvs/debian-doc -z3 checkout ddp/manuals.sgml</code>
+  <code>svn co svn+ssh://svn.debian.org/svn/ddp/manuals/trunk manuals</code>
 </p>
 
 <p>このコマンドを実行すると、再帰的にディレクトリが生成され、
@@ -106,69 +62,10 @@ CVS パスワードサーバ上でのあなたのユーザ名に置きかえてください。
 
 <p>ローカルにコピーしたファイルを、
 他の人の加えた変更に応じてアップデートするには、
-<strong>ddp/manuals.sgml</strong>
-ディレクトリに移動して次のコマンドを実行します。</p>
+<strong>manuals</strong> ディレクトリに移動して次のコマンドを実行します。</p>
 
 <p style="margin-left: 2em">
-  <code>cvs -z3 update -d -P</code>
-</p>
-
-<p>CVS リモートセッションを終了したら、
-以下のコマンドを実行してサーバとの接続を解除します。</p>
-
-<p style="margin-left: 2em">
-  <code>cvs logout</code>
-</p>
-
-<h3>更新権限がある場合の CVS サーバへの接続 (ssh を使う)</h3>
-
-<p>この方法は、登録された Debian 開発者のみ使用可能で、
-上記の pserver を使用した方法より好ましいです。
-最近になって Debian 開発者になられた方は、
-文書コーディネータに pserver アカウントを消去してもらうよう依頼して下さい。</p>
-
-<p>ssh を用いて接続するには、
-まず ssh を使うことを次のコマンドによって CVS に伝えます。</p>
-
-<p style="margin-left: 2em">
-  <code>export CVS_RSH=ssh</code>
-</p>
-
-<p>そうしたら、
-すべてのファイルを保存するディレクトリを作り、
-そこに移動し、次のコマンドを入力してください。</p>
-
-<p style="margin-left: 2em">
-  <code>cvs -d :ext:<var>ユーザid</var>@cvs.debian.org:/cvs/debian-doc -z3 checkout <var>モジュール</var></code>
-</p>
-
-<p>上のコマンドの <var>ユーザid</var> の部分は、
-CVS サーバでのあなたのユーザ名で置き換えてください。
-これは、すべての Debian マシンにおけるあなたの
-ログイン名と同一になります。
-<var>モジュール</var> の部分は、
-チェックアウトしたいモジュール名で置き換えてください。
-通常は <tt>ddp/manuals.sgml</tt> になります。
-ここで CVS サーバのパスワードをきかれます。
-これはあなたのマシン上でのパスワードとは別物ですので、
-お間違えにならないでください。</p>
-
-<p>このディレクトリには
-<strong>CVS</strong> および <strong>ddp</strong>
-というふたつのディレクトリができます。
-リクエストしたモジュール (つまりディレクトリ) が
-CVS によって再帰的に生成され、そこにファイルが置かれます。</p>
-
-<p>これで、通常の CVS コマンド (CVS の info ページをご覧ください)
-を使用してファイルのチェックアウトとコミットができるようになります。</p>
-
-<p>ローカルにコピーしたファイルを、
-他の人の加えた変更に応じてアップデートするには、
-<strong>ddp/manuals.sgml</strong>
-ディレクトリに移動して次のコマンドを実行します。</p>
-
-<p style="margin-left: 2em">
-  <code>cvs -z3 update -d -P</code>
+  <code>svn update</code>
 </p>
 
 <toc-add-entry name="obtaining">更新権限を得るには</toc-add-entry>
@@ -180,60 +77,27 @@ CVS によって再帰的に生成され、そこにファイルが置かれます。</p>
 <p>アップデート権限を入手するには、<a
 href="mailto:debian-doc@lists.debian.org">Debian
 ドキュメンテーションメーリングリスト</a>にリクエストを出して、
-なぜそれが必要なのかを説明してください。アクセスが許可されるためには、
-事前に文書コーディネータもしくは Debian
-ドキュメンテーションチームのメンバーからの賛同を得ている必要があります。
-賛同が得られたら、<a href="mailto:debian-admin@lists.debian.org">debian-admin</a>
-に対して (署名した) リクエストを送るよう、賛同者に依頼してください。</p>
-
-<p>Debian 開発者の場合は、リクエストが受理されれば <tt>cvs.debian.org</tt>
-の <tt>cvs_doc</tt> グループに追加され、それ以降、CVS の更新が可能になります。</p>
-
-<p>Debian 開発者ではない場合は、リクエストが受理された後に、
-ログイン名とパスワードを提出する必要があります。ログイン名は、既存の Debian
-アカウントとは異なったものでなければいけません (<a
-href="http://db.debian.org">db.debian.org</a> で確かめてください)。
-cvs ではネットワーク上でパスワードが暗号化されずに送信されるとはいえ、
-暗号化していないパスワードをメールで送ってはいけません。</p>
-
-<p><tt>makepasswd</tt> を使えば、簡単にパスワードを生成できます。
-<tt>makepasswd</tt> パッケージをインストールして、以下のように実行するだけです。</p>
-
-<pre>
-$ echo "SECRET" |makepasswd --clearfrom=- --crypt
-</pre>
-
-<p>パスワードを暗号化する別の簡単な方法は、Perl のワンライナーを使うことです。
-Perl は Debian GNU/Linux マシンにすでに入ってるでしょうから。</p>
-
-<pre>
-$ perl -e "printf \"%s\n\", crypt ("SECRET", join ('', ('.', '/', 0..9, 'A'.. 'Z', 'a'..'z')[rand (64), rand (64)]))"
-</pre>
-
-<p>生成した結果を、希望するアカウントとともに <a
-href="mailto:joey@debian.org">Martin Schulze</a> さんに送ってください。
-その際、メール全体を<a
-href="http://db.debian.org/fetchkey.cgi?fingerprint=B53FE57BD0C1F689FCE25">\
-彼の GnuPG 鍵</a>で暗号化してください。</p>
-
-<p>詳しい情報は、彼が書いた手順に関する<a
-href="http://people.debian.org/~joey/misc/webwml.html">注意書き</a>を読んでください。</p>
+なぜそれが必要なのかを説明してください。あなたの
+<a href="http://alioth.debian.org/">Alioth</a> ログイン名も提示してください。
+要求が承認されたら、あなたは Alioth の <a
+href="http://alioth.debian.org/projects/ddp">"ddp" プロジェクト</a> (および Unix グループ) の一員となります。</p>
 
 <hr />
 
-<toc-add-entry name="organization">ファイル群の構成</toc-add-entry>
-
-<p>CVS ディレクトリの階層構造は、この図のようになっています。
-</p>
-<div class="center">
-<img src="dirtree.jpg" alt="DDP CVS directory tree" />
-</div>
-
-<p>DDP ウェブサイトは Debian CVS リポジトリの
-webwml モジュールに組み込まれています。
-これは他の Debian ウェブページと統合するためです。</p>
-
-<hr />
+# Disabled (obsolete)
+# <toc-add-entry name="organization">ファイル群の構成</toc-add-entry>
+# 
+# <p>CVS ディレクトリの階層構造は、この図のようになっています。
+# </p>
+# <div class="center">
+# <img src="dirtree.jpg" alt="DDP CVS directory tree" />
+# </div>
+# 
+# <p>DDP ウェブサイトは Debian CVS リポジトリの
+# webwml モジュールに組み込まれています。
+# これは他の Debian ウェブページと統合するためです。</p>
+# 
+# <hr />
 
 <toc-add-entry name="updates">自動更新の仕組み</toc-add-entry>
 
@@ -242,9 +106,8 @@ www-master.debian.org で動いている cron ジョブによって、
 15:39 (米国太平洋標準時; 日本から17時間遅れ、
 サマータイム時には日本から16時間遅れ) 以降の時間に生成されます。</p>
 
-<p>このスクリプトは、まず <kbd>cvs update -d -P</kbd> を、
-ついで <kbd>make -C manuals.sgml clean publish</kbd> を、
-両方とも <code>ddp</code> ディレクトリで実行します。</p>
+<p>このスクリプトは、まず <kbd>svn update</kbd> を、
+ついで <kbd>make -C manuals clean publish</kbd> を実行します。</p>
 
 <p>makefile は、すべてのサブディレクトリ
 (メンテナンスされている文書が入っています) をリビルドし、
@@ -252,7 +115,7 @@ www-master.debian.org で動いている cron ジョブによって、
 <code>doc/manuals/</code> のウェブサイト用サブディレクトリに
 インストールするよう設定されています。
 各サブディレクトリの makefile は
-<code>ddp/manuals.sgml/standard.makefile</code>から呼ばれます。</p>
+<code>manuals/standard.makefile</code>から呼ばれます。</p>
 
 <p>更新スクリプトによって生成されたドキュメントファイルは、
 <a href="manuals/">http://www.debian.org/doc/manuals/</a>
@@ -263,5 +126,3 @@ www-master.debian.org で動いている cron ジョブによって、
 で見ることができます。</p>
 
 # <!-- Created: Mon Jul  6 19:58:09 BST 1998 -->
-
-
