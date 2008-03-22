@@ -685,7 +685,13 @@ END
 END
       # sites which have Includes don't have to have Sponsor, the included ones
       # have it; and those are looped over separately anyway, so no need to repeat
-      next if (exists $mirror[$id]{includes});
+      if (exists $mirror[$id]{includes}) {
+        print <<END;
+  </td>
+</tr>
+END
+        next;
+      }
       my $numsponsors = @{ $mirror[$id]{sponsor} };
       my $num = 0;
       my ($sponsorname, $sponsorurl);
@@ -702,11 +708,11 @@ END
         print ",\n" unless ($num >= $numsponsors);
       }
       print "\n";
-    }
-    print <<END;
+      print <<END;
   </td>
 </tr>
 END
+    }
   }
 }
 
