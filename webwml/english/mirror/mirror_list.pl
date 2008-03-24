@@ -31,6 +31,7 @@ my $last_modify = gmtime((stat($mirror_source))[9]);
 my (@mirror, %countries, %countries_sorted, %countries_sponsors, %longest);
 my ($count, $nonuscount, $volatilecount, $cdimagecount);
 my (%code_of_country, %plain_name_of_country);
+my %includedsites;
 
 my $globalsite;
 
@@ -676,22 +677,24 @@ sub mirror_sponsors {
 END
   foreach my $country (sort keys %countries) {
     foreach my $id (sort @{ $countries_sponsors{$country} }) {
+      # sites which have Includes don't have to have Sponsor, the included ones
+      # have it; and those are looped over separately anyway, so no need to repeat
+      next if (exists $mirror[$id]{includes});
       my $countrycode = $code_of_country{$country};
       print <<END;
 <tr>
   <td>${countrycode} <${countrycode}c></td>
-  <td>$mirror[$id]{site}</td>
+  <td>$mirror[$id]{site}
+END
+      if (exists $mirror[$id]{'included-in'}) {
+        print "<br>(";
+        print join (", ", @{ $mirror[$id]{'included-in'} });
+        print ")";
+      }
+      print <<END;
+  </td>
   <td>
 END
-      # sites which have Includes don't have to have Sponsor, the included ones
-      # have it; and those are looped over separately anyway, so no need to repeat
-      if (exists $mirror[$id]{includes}) {
-        print <<END;
-  </td>
-</tr>
-END
-        next;
-      }
       my $numsponsors = @{ $mirror[$id]{sponsor} };
       my $num = 0;
       my ($sponsorname, $sponsorurl);
@@ -699,7 +702,7 @@ END
         if ($sponsor =~ /^(.+) (http:.*)$/) {
           $sponsorname = $1;
           $sponsorurl = $2;
-              } else {
+        } else {
           die "can't find sponsor URL for sponsor $sponsor of $mirror[$id]{site}";
         }
         $sponsorname =~ s/&(\s+)/&amp;$1/g;
@@ -1525,6 +1528,13 @@ foreach my $id (0..$#mirror) {
   } else {
     warn "found a mirror without a country, wtf? " . $mirror[$id]{site};
   }
+  # we'll also use this opportunity to help create a references
+  # between sites which are connected with Includes:
+  if (exists $mirror[$id]{includes}) {
+    foreach my $includedsite (@{ $mirror[$id]{includes} }) {
+      $includedsites{$includedsite} = $mirror[$id]{site};
+    }
+  }
 }
 
 # Sort the country info arrays to first list the official sites,
@@ -1536,6 +1546,10 @@ foreach my $country (sort keys %countries) {
       push @{ $countries_sorted_o{$country} }, $id;
     } elsif ($mirror[$id]{site} !~ /$internalsiteregex/) {
       push @{ $countries_sorted_u{$country} }, $id;
+    }
+    # using the opportunity to add the Included-in: back-reference
+    if (exists $includedsites{ $mirror[$id]{site} }) {
+      push @{ $mirror[$id]{'included-in'} }, $includedsites{ $mirror[$id]{site} };
     }
   }
   # merge the reordered lists into %countries_sorted
