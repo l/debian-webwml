@@ -49,7 +49,7 @@ sub process_line {
 #        warn "increasing longest site to " . length($site) . " because of " . $site . "\n";
       }
     }
-    $mirror[$count-1]{site} = $1;
+    $mirror[$count-1]{site} = $site;
     return;
   }
   elsif ($line =~ /^Alias(?:es)?:\s*(.+)\s*$/is) {
