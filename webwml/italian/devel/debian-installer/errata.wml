@@ -1,14 +1,12 @@
 #use wml::debian::template title="Errata corrige dell'istallatore Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.109" maintainer="Giuseppe Sacco"
+#use wml::debian::translation-check translation="1.111" maintainer="Giuseppe Sacco"
 
-<h1 id="etch-rc2">Errata per il <i>release candidate 2 (RC2)</i> di etch</h1>
+<h1 id="lenny-beta1">Errata per la release beta1 di lenny</h1>
 
 <p>
-Questa è una lista dei problemi conosciuti nella versione etch rc2
-dell'installatore Debian. La stessa versione dell'installatore è
-stata utilizzata per il rilascio ufficiale 4.0.
-Se il problema riscontrato non è presente in
+Questa è una lista dei problemi conosciuti nella versione lenny beta1
+dell'installatore Debian. Se il problema riscontrato non è presente in
 questa pagina, è possibile inviare un <a href="report-template">resoconto
 dell'installazione</a> descrivendo il problema.
 </p>
@@ -29,34 +27,6 @@ dell'installazione</a> descrivendo il problema.
 	Notare che questo problema si può presentare a ogni avvio, la
 	correzione di questo problema è prioritaria nella prossima versione
 	dell'istallatore Debian.
-	</dd>
-
-	<dt>Il ridimensionamento di partizioni ext3 pu&ograve; fallire</dt>
-	<dd>
-	L'installatore non &egrave; momentaneamente in grado di ridimensionare
-	partizione ext3 che hanno <tt>dir_index</tt> e/o <tt>resize_inode</tt>
-	attivi. Sono quindi comprese le partizioni create con l'installatore
-	per Etch.<br />
-	Si pu&ograve; comunque effettuare il ridimensionamento manualmente
-	durante l'installazione: procedere fino al passo di partizionamento,
-	usare il bottone &lt;Indietro&gt; per tornare al menu principale,
-	eseguire una shell, effettuare il ridimensionamento a mano con i
-	comandi disponibili dalla shell (<tt>fsck.ext3</tt>, <tt>resize2fs</tt>
-	e <tt>fdisk</tt> o <tt>parted</tt>). Se si utilizza nuovamente partman 
-	dopo il ridimensionamento, dovrebbe mostrare le dimensioni delle
-	partizioni corrette.
-	</dd>
-
-	<dt>Installazione parziale dell'ambiente "Desktop" con il CD completo</dt>
-	<dd>
-	L'immagine di CD completo &egrave; troppo piccola per ospitare tutti i
-	pacchetti dell'ambiente Desktop. Questo vuol dire che se si utilizza solo
-	il primo CD come sorgente, solo una parte dei pacchetti saranno installati.<br />
-	Questo problema &egrave; risolvibile sia <em>durante l'installazione</em>
-	selezionando un mirror come sorgente di rete aggiuntiva al CD (sconsigliato
-	se non si ha una buona connessione di rete); sia <em>dopo il riavvio</em> del
-	sistema installato usando <tt>apt-cdrom</tt> per caricare i successivi CD e poi
-	<tt>aptitude</tt> per selezionare nuovamente il task Desktop.
 	</dd>
 
 	<dt>Router difettosi possono causare problemi di rete</dt>
@@ -92,23 +62,6 @@ dell'installazione</a> descrivendo il problema.
 	problemi (non verso installer).
 	</dd>
 
-	<dt>Localizzazione limitata sul sistema installato</dt>
-	<dd>
-	Nella versione per Sarge dell'installatore il pacchetto
-	localization-config si occupava della localizzazione sul sistema
-	installato. Questo pacchetto era eseguito all'interno di base-config,
-	che però è stato eliminato in questa release. L'adattamento di
-	localization-config per essere eseguito prima del riavvio è fra le
-	cose da fare, nel frattempo alcuni aspetti della localizzazione non
-	possono essere fatti automaticamente durante l'installazione.
-	</dd>
-
-	<dt>L'installazione di Sarge non è supportata</dt>
-	<dd>
-	Come risultato di alcuni cambiamenti strutturali dell'installatore,
-	l'installazione di Sarge (stable) non &egrave; supportata.
-	</dd>
-
 	<dt>Installatore grafico</dt>
 	<dd>
 	L'installatore grafico ha ancora alcuni difetti conosciuti (vedere
@@ -126,13 +79,15 @@ dell'installazione</a> descrivendo il problema.
 	</ul>
 	</dd>
 
-	<dt>Il driver di rete sky2 non funziona</dt>
+	<dt>I CD per installare KDE e Xfce installano anche GNOME</dt>
 	<dd>
-	Il driver di rete sky2 non funziona con il kernel utilizzato
-	dall'installatore (2.6.18.dfsg.1-11) e pu&ograve; bloccare il
-	sistema. Vedere ad esempio <a href="http://bugs.debian.org/404107">#404107</a>.
-	<a href="http://bugs.debian.org/411115">#411115</a> contiene delle
-	patch che possono essere utilizzate per risolvere il problema.
+	Questo &egrave; dovuto ad una modifica di tasksel per il quale
+	abbiamo dimenticato di aggiornare lo strumento usato per la
+	creazione delle immagini dei CD. &Egrave; possibile aggirare
+	questo problema avviando l'installatore con le opzioni extra:
+	<tt>install desktop=kde</tt> oppure <tt>install desktop=xfce</tt>.<br />
+	Il problema &egrave; gi&agrave; stato corretto nelle immagini
+	settimanali.
 	</dd>
 
 <!-- leaving this in for possible future use...
@@ -146,33 +101,13 @@ dell'installazione</a> descrivendo il problema.
 	</dd>
 -->
 
-	<dt>i386/amd64: impostazione della console seriale con GRUB</dt>
+	<dt>i386: kernel oops durante l'avvio dell'installatore su ThinkPad T41</dt>
 	<dd>
-	Ci sono alcuni problemi legati al modo nel quale l'installatore
-	cerca di configurare GRUB per l'uso tramite console seriale.
-	Tutti i dettaglli sono raccolti nella segnalazione
-	<a href="http://bugs.debian.org/416310">#416310</a>.
-	Brevemente, i problemi possono essere risolti accertandosi che
-	la parit&agrave; e il numero di bit siano esplicitamente
-	utilizzati nell'opzione <q><tt>console=</tt></q>.<br />
-	Per la maggior parte dei casi questo vuol dire che al posto di
-	specificare <q><tt>console=ttyS0,9600</tt></q> si dovr&agrave;
-	digitare <q><tt>console=ttyS0,9600n8</tt></q>.
-	</dd>
-
-	<dt>alpha: errore caricando l'immagine initrd durante l'installazione da CD</dt>
-	<dd>
-	Il valore del parametro di avvio <tt>ramdisk_size</tt> &egrave; troppo
-	piccolo nelle imagini di CD e DVD della RC2. Si pu&ograve; comunque
-	effettuare l'installazione alzando il valore a 17108.<br />
-	Questo problema &egrave; stato risolto nelle immagini giornaliere
-	e sar&agrave; corretto anche nelle immagini ufficiali di Etch.
-	</dd>
-
-	<dt>amd64: non &egrave; possibile formattare un file system ext2</dt>
-	<dd>
-	Poich&eacute; il modulo ext2 del kernel non &egrave; disponibile,
-	nonm &egrave; possibile creare un file system ext2.
+	Finch&eacute; non aggiorniamo al nuovo kernel non possiamo essere
+	certi che il problema sia risolto. Sembra un problema del kernel
+	e non dell'installatore, nonostante sia stato riportato inizialmente
+	verso la procedura d'installazione.
+	Altri dettagli: <a href="http://bugs.debian.org/470522">#470522</a>.
 	</dd>
 
 	<dt>powerpc: vari problemi</dt>
@@ -196,12 +131,5 @@ dell'installazione</a> descrivendo il problema.
 	  <li>Il supporto per le interfacce di rete LCS non &egrave; &ugrave;
 	  disponibile</li>
 	</ul>
-	</dd>
-
-	<dt>sparc: l'installazione da CD per sparc32 fallisce</dt>
-	<dd>
-	Il driver esp del kernel &egrave; guasto il che vuol dire che l'installazione
-	da CD-ROM non funziona sulla maggior parte di sistemi sparc32. La soluzione
-	&egrave; utilizzare il metodo di installazione <q>netboot</q>.
 	</dd>
 </dl>
