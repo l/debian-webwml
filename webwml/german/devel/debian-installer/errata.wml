@@ -1,17 +1,15 @@
 #use wml::debian::template title="Debian-Installer Errata"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.109"
+#use wml::debian::translation-check translation="1.112"
 # $Id$
 # Original-Translator: Frank Lichtenheld <frank@lichtenheld.de>, 2003-11-11
 # Translator: Helge Kreutzmann <debian@helgefjell.de>, 2005-11-12 ff.
 
-<h1 id="etch-rc2">Errata für Etch Veröffentlichungskandidat 2 (<acronym 
-lang="en" title="Release Candidate">RC</acronym>2)</h1>
+<h1 id="lenny-beta1">Errata für Lenny Veröffentlichung Beta1</h1>
 
 <p>
-Dies ist eine Liste der bekannten Probleme in der Etch RC 2-Veröffentlichung des
-Debian-Installers. Die selbe Version des Installers wurde im offiziellen
-4.0-Release verwendet. Wenn Sie Ihr Problem hier nicht aufgeführt finden,
+Dies ist eine Liste der bekannten Probleme in der Lenny Beta 1-Veröffentlichung des
+Debian-Installers. Falls Sie Ihr Problem hier nicht aufgeführt finden,
 senden Sie uns bitte einen <a href="report-template">\
 Installationsbericht</a>, der das Problem beschreibt.
 </p>
@@ -31,34 +29,13 @@ Installationsbericht</a>, der das Problem beschreibt.
      kann. Die Korrektur dieses Problems hat für die nächste Veröffentlichung
      des Debian-Installers Priorität.
  </dd>
-  <dt>Größenänderung von existierenden Ext3-Partitionen kann fehlschlagen</dt>
+  <dt>Verwendung der Einhängeoption <q>relatime</q> ist noch nicht möglich</dt>
+     Unterstützung für die Einhängeoption (<span lang="en">mount option</span>)
+     <q>relatime</q> wurde hinzugefügt, kann aber noch nicht verwendet werden,
+     da dem Mount-Befehl von Busybox die Unterstützung hierzu fehlt (<a 
+     href="http://bugs.debian.org/460824">#460824</a>). Dies wurde in täglich
+     und wöchentlich gebauten Images behoben.
   <dd>
-     Der Installer ist derzeit nicht in der Lage, die Größe von Ext3-Partitionen
-     zu verändern, bei denen die <tt>dir_index</tt>- und/oder 
-     <tt>resize_inode</tt>-Funktionalitäten aktiviert wurden. Dies betrifft auch
-     Ext3-Partitionen, die mit dem Etch-Installer erstellt wurden.<br />
-     Sie können allerdings während der Installation eine Ext3-Partition manuell
-     in der Größe verändern. Verwenden Sie beim Partitionierungsschritt den
-     &lt;Zurück&gt;-Knopf, um zum Hauptmenü zurückzukehren, öffnen Sie eine
-     Shell und verändern Sie die Größe des Dateisystems und der Partition mit
-     den in der Shell verfügbaren Befehle (<tt>fsck.ext3</tt>, 
-     <tt>resize2fs</tt> und z.B. <tt>fdisk</tt> oder <tt>parted</tt>). Falls Sie
-     nach der Größenveränderung Partman erneut starten, sollte er die neue 
-     Größe der Partition anzeigen.
- </dd>
-  <dt>Unvollständige Installation des Desktop-Tasks von der Komplett-CD</dt>
-  <dd>
-      Das CD-Komplett-Image ist zu klein, um alle Pakete zu enthalten, die
-      für den kompletten Desktop-Task benötigt werden. Dies bedeutet, dass, 
-      falls Sie nur die CD als Quelle verwenden, nur ein Teil des Desktop-Tasks
-      installiert werden wird.<br />
-      Sie können dies entweder <em>während der Installation</em> durch Auswahl
-      eines Netz-Spiegels beheben, der als Paket-Installationsquelle zusätzlich
-      zu der CD dient (nicht empfohlen, falls Sie keine anständige
-      Internet-Verbindung haben) oder <em>nachdem Sie das installierte System
-      hochgefahren haben</em>, indem Sie <tt>apt-cdrom</tt> verwenden, um
-      zusätzliche CDs zu laden, und dann den Desktop-Task in <tt>aptitude</tt>
-      erneut auswählen.
  </dd>
   <dt>Fehlerhafte Router können zu Netzproblemen führen</dt>
   <dd>
@@ -89,21 +66,6 @@ Installationsbericht</a>, der das Problem beschreibt.
      falls nicht, reichen Sie einen Fehlerbericht gegen das relevante Paket
      (nicht gegen den Installer) ein.
  </dd>
-  <dt>Begrenzte Lokalisierung des installierten Systems</dt>
-  <dd>
-     Für die Sarge-Version des Installers war das Paket localization-config
-     für einen Teil der Lokalisierung des installierten Systems verantwortlich.
-     Dieses Paket lief als Teil von base-config, das aus der Veröffentlichung
-     entfernt wurde. Die Anpassung, dass localization-config vor dem Neustart
-     läuft, ist auf unserer <q>Zu-Tun</q>-Liste, aber derzeit können einige
-     Lokalisierungen nicht automatisch durchgeführt werden, wenn Sie in Sprachen
-     außer Englisch installieren.
- </dd>
-  <dt>Installation von Sarge wird nicht unterstützt</dt>
-  <dd>
-     Als Ergebnis einiger struktureller Änderungen in dieser Veröffentlichung
-     des Installers wird die Installation von Sarge (Stable) nicht unterstützt.
- </dd>
   <dt>Graphischer Installer</dt>
   <dd>
      Der graphische Installer hat noch einige Probleme (lesen Sie auch den
@@ -121,13 +83,15 @@ Installationsbericht</a>, der das Problem beschreibt.
 	 PowerPC-Systemen</li>
      </ul>
  </dd>
-  <dt>Netzwerktreiber Sky2 ist bekanntermaßen defekt</dt>
+  <dt>KDE- und Xfce-CDs installieren auch GNOME</dt>
   <dd>
-      Der Netzwerktreiber Sky2 ist im Kernel des Installers (2.6.18.dfsg.1-11) 
-      bekanntermaßen defekt und kann zur Kernelpanik führen. Lesen Sie
-      beispielsweise <a href="http://bugs.debian.org/404107">#404107</a>. <a 
-      href="http://bugs.debian.org/411115">#411115</a> enthält eine Reihe von
-      Patches die die Problem beheben könnten.
+     Dies erfolgt aufgrund einer Änderung in Tasksel, bei der wir es unterlassen
+     haben, die Werkzeuge zum Erstellen der CD-Images zu aktualisieren. Dieses
+     Problem kann umgangen werden, indem der Installer mit einer Extraoption
+     gebootet wird: <tt>install desktop=kde</tt> oder <tt>install 
+     desktop=xfce</tt>.<br />
+     Dieses Problem wurde bereits in den wöchentlich gebauten CD-Images
+     behoben.
  </dd>
 
  <!-- leaving this in for possible future use...
@@ -141,31 +105,14 @@ Installationsbericht</a>, der das Problem beschreibt.
          </dd>
 -->
 	 
-  <dt>i386/Amd64: Einrichtung der seriellen Konsole mit GRUB</dt>
+  <dt>i386: Kernel-Oops während der Installereinrichtung auf dem ThinkPad 
+      T41</dt>
   <dd>
-      Es gibt einige Probleme mit der Art und Weise, mit der der Installer
-      versucht, GRUB für die Verwendung der seriellen Konsole einzurichten. Die
-      kompletten Details können im Fehlerbericht <a 
-      href="http://bugs.debian.org/416310">#416310</a> gefunden werden. Kurz
-      gesagt können diese Probleme behoben werden, indem sichergestellt wird,
-      dass die Paritäts- und Bit-Optionen auch in der 
-      <q><tt>console=</tt></q>-Definition übergeben werden.<br /> 
-      Für die meisten Leute bedeutet dies, dass Sie den Installer mit 
-      <q><tt>console=ttyS0,9600n8</tt></q> anstatt von 
-      <q><tt>console=ttyS0,9600</tt></q> booten sollten.
- </dd>
-  <dt>Alpha: Fehler beim Laden der Initrd bei der Installation von CD</dt>
-  <dd>
-      Der Wert des Boot-Parameters <tt>ramdisk_size</tt> ist bei den RC2 CD- und
-      DVD-Images zu klein. Sie können dennoch von CD booten, indem Sie diesen
-      Wert auf 17108 erhöhen.<br />
-      Dieses Problem ist auf den täglichen Images bereits behoben und wird auch
-      für die offiziellen Etch-Images behoben.
- </dd>
-  <dt>Amd64: Formatierung eines Ext2-Dateisystems ist nicht möglich</dt>
-  <dd>
-      Da das Ext2-Kernelmodul nicht verfügbar ist, ist es nicht möglich, ein
-      Ext2-Dateisystem zu erstellen.
+     Bis wir auf einen neueren Kernel aktualisieren, können wir nicht sicher
+     sein, dass dies behoben wurde. Es scheint allerdings ein Problem mit dem
+     Kernel und nicht dem Installer zu sein, obwohl es ursprünglich als
+     Installer-Fehlerbericht gemeldet wurde. Lesen Sie zur Referenz <a 
+     href="http://bugs.debian.org/470522">#470522</a>.
  </dd>
   <dt>PowerPC: Verschiedene Probleme</dt>
   <dd>
@@ -178,13 +125,6 @@ Installationsbericht</a>, der das Problem beschreibt.
 	    es einige Systeme zum Anhalten bringt; Sie müssen es manuell zu
 	    der <tt>/etc/modules</tt> hinzufügen</li>
      </ul>
- </dd>
-  <dt>Sparc: CD-Installationen für Sparc32 könnten misslingen</dt>
-  <dd>
-     Der esp-Kerneltreiber ist defekt was bedeutet, dass die Installation von
-     CD-ROM auf den meisten Sparc32-Systemen nicht funktioniert. Wir empfehlen,
-     dass Sie die stattdessen die <q>Netzboot</q>-Installationsmethode 
-     verwenden.
  </dd>
   <dt>S390: Nichtunterstützte Funktionalitäten</dt>
   <dd>
