@@ -73,7 +73,7 @@ sub process_line {
   }
   elsif ($line =~ /^([\w-]+-upstream):\s*(.+)\s*$/s) {
     $field = lc $1;
-    # no need for this private data in the $mirror hash
+    # no need for this private data in the %mirror hash
     if ($field !~ /^x-/) {
       $mirror[$count-1]{$field} = $2;
     }
@@ -96,8 +96,12 @@ sub process_line {
   elsif ($line =~ /^([\w-]+):\s*(.+)\s*$/s) {
     $field = lc $1;
     my $value = $2;
-    # no need for this private data in the $mirror hash
-    if ($field !~ /^x-/) {
+    # no need for all private data in the %mirror hash
+    # XXX modified to include x-archive-architecture because
+    # the nsupdate thingy needs it for included-in sites - another
+    # possible solution would be to convert those particular ones to
+    # e.g. <somethingelse>-archive-architecture?
+    if ($field !~ /^x-/ || $field =~ /^x-archive-architecture/) {
       $mirror[$count-1]{$field} = $value;
     }
     if ($field eq 'country') {
