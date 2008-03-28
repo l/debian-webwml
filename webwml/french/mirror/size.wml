@@ -1,46 +1,50 @@
 #use wml::debian::template title="Taille d'un miroir"
-#use wml::debian::translation-check translation="1.36" maintainer="Simon Paillard"
+#use wml::debian::translation-check translation="1.38" maintainer="Simon Paillard"
 
 <h2>Quelle taille fait l'archive Debian ?</h2>
 
 # (note for the English editors on how to update some of the numbers below)
 # dak psql database on ftp-master is 'projectb'
 # and there's a copy on merkel
-# projectb=> select architecture.arch_string as Architecture, sum(files.size)
-#            from files,binaries,architecture where
-#            architecture.id=binaries.architecture and files.id=binaries.file
-#            group by architecture.arch_string;
-# projectb=> select sum(size) from files where
+# projectb=> select architecture.arch_string as Architecture,
+#            sum(files.size)/1024/1024/1024 as Size
+#            from files,binaries,architecture
+#            where architecture.id=binaries.architecture
+#            and files.id=binaries.file
+#            group by architecture.arch_string
+#            order by Size;
+# projectb=> select sum(size)/1024/1024/1024 from files where
 #            filename ~ '.diff.gz$' or filename ~ '.dsc$'
 #            or filename ~ '.orig.tar.gz$';
-# projectb=> select sum(files.size) from files,binaries,architecture
-#            where architecture.id=binaries.architecture and
-#            architecture.arch_string='i386' and files.id=binaries.file;
+# projectb=> select sum(files.size)/1024/1024/1024
+#            from files, binaries, architecture
+#            where architecture.id=binaries.architecture
+#            and files.id=binaries.file
+#            and architecture.arch_string='i386';
 
-# however, this might not work completely reliably, it will report smaller
-# figures. dunno exactly why; asked elmo and he didn't have an answer.
-# thankfully, later checks showed that the difference from the real thing
-# is sufficiently small (<= 100 MB or so) to be ignored -joy
+# wc -c'ing files inside the debian/ directory might occasionally give
+# slightly different results than the SQL queries, but the difference
+# is usually negligible -joy
 
 <p>Les chiffres sur cette page reflètent l'état de l'archive en
-octobre 2007.</p>
+mars 2008.</p>
 
 <dl>
 <dt><strong>L'ensemble</strong></dt>
-  <dd>Environ 290 Go.</dd>
+  <dd>Environ 335 Go.</dd>
 
 <dt><strong>Les paquets indépendants des architectures</strong></dt>
-  <dd>Environ 24 Go.</dd>
+  <dd>Environ 28 Go.</dd>
 
 <dt><strong>Pour une architecture déjà disponible</strong> (dans « oldstable », 
 « stable », « testing » et « unstable »)</dt>
-  <dd>De 16,1 Go à 22 Go environ.</dd>
+  <dd>De 18 Go à 25 Go environ.</dd>
  
 <dt><strong>Pour une architecture encore en développement</strong></dt>
-  <dd>Entre 2 Go et 13 Go, mais en croissance.</dd>
+  <dd>Entre 2,5 Go et 14 Go, mais en croissance.</dd>
 
 <dt><strong>Sources</strong></dt>
-  <dd>Environ 37 Go.</dd>
+  <dd>Environ 43 Go.</dd>
 </dl>
 
 <p>Notez que l'archive est en croissance constante ;
@@ -66,6 +70,13 @@ de mise à niveau, les fichiers Bittorrent, etc.</p>
 <h3>Quelle taille fait l'archive Volatile ?</h3>
 
 <p>L'archive debian-volatile occupe environ 3 Go.</p>
+
+
+<h2>Quelle taille font les mises à jours quotidiennes des miroirs ?</h2>
+
+<p>En ce qui concerne l'archive Debian principale, veuillez consulter 
+<a href="http://ftp-master.debian.org/size-quarter.png">le graphe de mise à
+jour quotidienne</a>.</p>
 
 
 <h2>Quelle taille font les pages web ?</h2>
