@@ -1463,7 +1463,7 @@ sub generate_nsupdate {
       # incremental removal of old data)
       print "update delete $cc.$arch.mirror.debian.net.\n";
       foreach my $a (sort keys %{$zone_entries{$cc}{$arch}}) {
-        next if ($a == 0);
+        next if ($a eq 0);
         # poor man's IPv6 detection :)
         print "update add $cc.$arch.mirror.debian.net. 14400";
         if ($a !~ /:/) { print " A "; }
