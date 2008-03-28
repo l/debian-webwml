@@ -1427,6 +1427,7 @@ sub generate_nsupdate {
         push @site_ip_v4, $a;
       } else {
         warn "skipping $a of $site because the HTTP server isn't set up right.\n";
+        warn "fetching $tracefile as $cc.i386.m.d.n returned " . $myurl->status_line . "\n";
         next;
       }
     }
