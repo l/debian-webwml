@@ -75,6 +75,12 @@ foreach $l (<ADV>) {
   if ($l =~ /^(CVE (names?|id\(?s?\)?|references?)?|CERT advisor(y|ies))\s*: (.+)/i) {
     push @dbids, join (" ", split (/,? /, $4));
   }
+  if ($l =~ /^\s*((?:CVE-\d+-\d+[ ]*)+)$/i) {
+    push @dbids, join (" ", split (/,? /, $1));
+  }
+  if ($l =~ /^\s*((?:VU#\d+[ ]*)+)$/i) {
+    push @dbids, join (" ", split (/,? /, $1));
+  }
   if ($l =~ /^Bugtraq Ids?\s*: (.+)/i) {
       for $id (split (/,? /, $1)) {
 	  push @dbids, "BID".$id;
@@ -121,6 +127,8 @@ chomp ($moreinfo);
 $files =~ s/(- )?-+\n//g;
 $files =~ s/\n\n$/\n/s;
 
+$files =~ s/.+ updates are available for .+\n//g;
+
 $files =~ s/(  )?    (Size\/)?MD5 checksum: (\s*\d+ )?\w{32}\n//sg;
 $files =~ s/(  )?Source archives:/<dt><source \/>/sg;
 $files =~ s/(  )?Architecture.independent \w+:\n/<dt><arch-indep \/>\n/sg;
@@ -143,12 +151,12 @@ foreach $_ (split (/\n/, $files)) {
 }
 $files = join ("\n", @f);
 
-if ( $adv =~ /.*dsa[- ](\d+)-(\d+)\.(.*)/ ) {
+if (defined($package) && $dsa =~ /DSA[- ](\d+)-(\d+)/ ) {
     $wml = "$curyear/dsa-$1.wml";
     $data = "$curyear/dsa-$1.data";
-    $pagetitle = "DSA-$1-$2 $3";
+    $pagetitle = "DSA-$1-$2 $package";
 } else {
-    die ("Could not parse advisory filename '$adv'. Must be: dsa-<nnnn>-<rev>.<package>");
+    die ("Could not parse advisory filename '$adv'. Must contain Package and DSA number information");
 }
 $data = $wml = "-" if ($debug);
 
