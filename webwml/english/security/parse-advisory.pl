@@ -10,6 +10,8 @@
 # Copyright (c) 2002,3 Josip Rodin, Martin Schulze
 # Licensed under the GNU General Public License version 2.
 
+use WWW::Mechanize;
+
 my $debug = 0;
 my $adv = $ARGV[0];
 if ($adv eq "-d") {
@@ -152,9 +154,11 @@ foreach $_ (split (/\n/, $files)) {
 $files = join ("\n", @f);
 
 if (defined($package) && $dsa =~ /DSA[- ](\d+)-(\d+)/ ) {
-    $wml = "$curyear/dsa-$1.wml";
-    $data = "$curyear/dsa-$1.data";
-    $pagetitle = "DSA-$1-$2 $package";
+    $dsa_number=$1;
+    $dsa_revision=$2;
+    $wml = "$curyear/dsa-$dsa_number.wml";
+    $data = "$curyear/dsa-$dsa_number.data";
+    $pagetitle = "DSA-$dsa_number-$dsa_revision $package";
 } else {
     die ("Could not parse advisory filename '$adv'. Must contain Package and DSA number information");
 }
@@ -163,6 +167,11 @@ $data = $wml = "-" if ($debug);
 die "directory $curyear does not exist!\n" if (!(-d $curyear));
 die "$wml already exists!\n" if (-f $wml);
 die "$data already exists!\n" if (-f $data);
+
+
+my $mech = WWW::Mechanize->new();
+$mech->get( $mlURL );
+$dsaLink = ($mech->find_link( text_regex => qr/$dsa_number-$dsa_revision/ ))->url_abs();
 
 $files =~ s,^</dl>\n\n,,;
 open DATA, ">$data";
@@ -174,7 +183,7 @@ print DATA "<define-tag isvulnerable>yes</define-tag>\n";
 print DATA "<define-tag fixed>yes</define-tag>\n";
 print DATA "\n#use wml::debian::security\n\n";
 print DATA "$files\n\n</dl>\n";
-print DATA "\n<p><md5sums $mlURL /></p>\n";
+print DATA "\n<p><md5sums $dsaLink /></p>\n";
 close DATA;
 
 open WML, ">$wml";
@@ -186,6 +195,3 @@ printf WML "# %sId: \$\n", "\$";
 close WML;
 
 print "Now edit $data and remove any English-specific stuff from it.\n";
-print "\n";
-print "Also, go to $mlURL\n";
-print "find $dsa, then put a link to that page on the last line of $data .\n";
