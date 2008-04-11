@@ -1,68 +1,26 @@
 #use wml::debian::template title="Errata pour l'installateur Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.109" maintainer="Nicolas Bertolissio"
+#use wml::debian::translation-check translation="1.112" maintainer="Nicolas Bertolissio"
 
 
-<h1 id="etch-beta3"><i>Errata</i> pour la seconde version candidate à la
-publication pour Etch</h1>
+<h1 id="lenny-beta1"><i>Errata</i> pour la première version bêta pour
+Lenny</h1>
 
 <p>
-Voici une liste des problèmes connus dans la seconde version candidate à la
-publication de l'installateur Debian pour Etch. Cette même version de
-l'installateur est fournie dans la version&nbsp;4.0 officielle. Si vous n'y
-voyez pas le problème que vous rencontrez, veuillez nous envoyer un <a
-href="report-template">compte-rendu d'installation</a> (en anglais) décrivant
-le problème.
+Voici une liste des problèmes connus dans la première version bêta de
+l'installateur Debian pour Lenny. Si vous n'y voyez pas le problème que vous
+rencontrez, veuillez nous envoyer un <a href="report-template">compte-rendu
+d'installation</a> (en anglais) décrivant le problème.
 </p>
 
 <dl class="gloss">
-  <dt>Possible modification des périphériques de disques lors du
-    redémarrage</dt>
+  <dt>Utilisation de l'option de montage <q>relatime</q> impossible pour
+    l'instant</dt>
     <dd>
-    Sur les systèmes comportant plusieurs contrôleurs de disques lors du
-    redémarrage du système, le programme réalisant la gestion des périphériques
-    en espace mémoire utilisateur (<q>udev</q>) peut assigner un n&oelig;ud de
-    périphérique différent de celui utilisé pendant l'installation à cause d'un
-    changement dans l'ordre de chargement des pilotes.<br />
-    Ceci peut entraîner l'échec du démarrage du système. Dans la plupart des
-    cas, ceci peut être corrigé en modifiant la configuration du chargeur
-    d'amorçage et /etc/fstab, en utilisant le mode de secours de l'installateur
-    par exemple.<br />
-    Veuillez noter cependant que ce problème peut se reproduire lors de
-    démarrages suivants. La correction de ce problème est une priorité pour la
-    prochaine version de l'installateur Debian&nbsp;;
-    </dd>
-  <dt>Échec possible du redimensionnement de partitions ext3 existantes</dt>
-    <dd>
-    L'installateur n'est actuellement pas capable de redimensionner les
-    partitions ext3 dont les capacités <tt>dir_index</tt> ou
-    <tt>resize_inode</tt> sont activées. Cela inclut les partitions ext3 créées
-    avec l'installateur d'Etch.<br />
-    Vous pouvez cependant redimensionner vous-mêmes une partition ext3 lors de
-    l'installation. Allez jusqu'à l'étape de partitionnement, utilisez le
-    bouton &lt;Retour&gt; pour revenir au menu principal, lancez un
-    interpréteur de commandes et redimensionnez le système de fichiers et la
-    partition en utilisant les commandes disponibles dans l'interpréteur de
-    commandes (<tt>fsck.ext3</tt>, <tt>resize2fs</tt> et par exemple
-    <tt>fdisk</tt> ou <tt>parted</tt>). Si vous relancez partman après avoir
-    terminé les opérations de redimensionnement, il devrait afficher la
-    nouvelle taille de la partition&nbsp;;
-    </dd>
-  <dt>Installation incomplète de la tâche «&nbsp;bureautique&nbsp;» à partir
-    du cédérom complet</dt>
-    <dd>
-    L'image du cédérom complet est trop petite pour contenir tous les paquets
-    nécessaires à l'installation complète de la tâche
-    «&nbsp;bureautique&nbsp;». Cela signifie que si vous n'utilisez que ce
-    cédérom comme source, seule une partie de la tâche
-    «&nbsp;bureautique&nbsp;» sera installée.<br />
-    Vous pouvez résoudre ce problème soit <em>durant l'installation</em> en
-    choisissant d'utiliser un miroir réseau comme source d'installation des
-    paquets en plus du cédérom (ce qui n'est pas recommandé si vous n'avez pas
-    une connexion internet rapide), ou <em>après avoir redémarré</em> sur le
-    système installé en utilisant <tt>apt-cdrom</tt> pour charger des cédéroms
-    supplémentaires puis en sélectionnant à nouveau la tâche
-    «&nbsp;bureautique&nbsp;» dans <tt>aptitude</tt>&nbsp;;
+    La gestion de l'option de montage <q>relatime</q> a été ajoutée, mais elle
+    n'est pas encore utilisable car sa gestion manque dans la commande mount de
+    busybox (<a href="http://bugs.debian.org/460824">bogue n°&nbsp;</a>). Ce
+    problème est corrigé dans les images construites hedomadairement.
     </dd>
   <dt>Problèmes de réseau possibles avec des routeurs bogués</dt>
     <dd>
@@ -94,23 +52,6 @@ le problème.
     remplir un rapport de bogue contre le paquet correspondant (et non contre
     l'installateur)&nbsp;;
     </dd>
-  <dt>Traduction partielle du système installé</dt>
-    <dd>
-    Dans la version Sarge de l'installateur, le paquet localization-config
-    était responsable d'une partie de la traduction du système installé. Ce
-    paquet faisait partie du paquet d'installation base-config qui a été supprimé
-    dans cette nouvelle version. L'adaptation de localization-config pour qu'il
-    fonctionne avant le redémarrage est sur notre liste des tâches à réaliser,
-    mais en attendant certaines traductions peuvent ne pas être réalisées
-    automatiquement lors de l'installation dans une langue autre que
-    l'anglais&nbsp;;
-    </dd>
-  <dt>Installation de Sarge non prise en charge</dt>
-    <dd>
-    En conséquence de certaines modifications structurelles dans
-    l'installateur, l'installation de Sarge (la distribution stable) n'est pas
-    gérée&nbsp;;
-    </dd>
   <dt>Installateur graphique</dt>
     <dd>
     L'installateur a toujours quelques problèmes connus (veuillez également
@@ -125,13 +66,14 @@ le problème.
 	autres systèmes PowerPC&nbsp;;</li>
     </ul>
     </dd>
-  <dt>Pilote réseau sky2 cassé</dt>
+  <dt>Installation de Gnome par les CD avec KDE et Xfce</dt>
     <dd>
-    Le pilote réseau sky2 est cassé dans le noyau utilisé (2.6.18.dfsg.1-11) et
-    peut engendrer des plantages du noyau. Veuillez vous reporter par exemple
-    au bogue <a href="http://bugs.debian.org/404107">n°&nbsp;404107</a>. Le
-    bogue <a href="http://bugs.debian.org/411115">n°&nbsp;411115</a> contient
-    un ensemble de correctifs qui pourraient corriger ce problème&nbsp;;
+    Cela est dû a une modification dans le sélecteur de tâches où nous avons
+    oublié de mettre à jour les outils utilisés pour construire les images de
+    CD. Il est possible de contourner ce problème en amorçant l'installateur
+    avec une option supplémentaire&nbsp;: <tt>install desktop=kde</tt>, ou
+    <tt>install desktop=xfce</tt>. Ce problème est corrigé dans les images
+    construites hedomadairement.
     </dd>
 <!-- conservé pour une possible utilisation ultérieure...
   <dt>Architecture i386&nbsp;: plus de 32&nbsp;Mo requis pour
@@ -144,34 +86,15 @@ le problème.
     architectures&nbsp;;
     </dd>
 -->
-  <dt>Architectures i386 et amd64&nbsp;: paramétrage de la console série avec le
-    GRUB</dt>
+  <dt>Architectures i386&nbsp;: hoquets du noyau pendant le démarrage de
+    l'installateur sur ThinkPad T41</dt>
     <dd>
-    Il y a quelques problèmes dans la manière que l'installateur utilise pour
-    essayer de paramétrer le GRUB pour utiliser une console série. De plus
-    amples informations se trouvent dans le rapport de bogue <a
-    href="http://bugs.debian.org/416310">n°&nbsp;416310</a>. En bref, ces
-    problèmes peuvent être résolus en s'assurant que les options de parité et
-    de bits sont aussi fournies dans la définition <q><tt>console=</tt></q>.<br />
-    Pour la plupart des gens, cela signifie qu'au lieu de démarrer
-    l'installateur avec "<tt>console=ttyS0,9600</tt>" il faut utiliser
-    <q><tt>console=ttyS0,9600n8</tt></q>.
-    </dd>
-  <dt>Architecture alpha&nbsp;: erreur lors de chargement du disque virtuel
-    d'initialisation avec l'installation à partir d'un CD</dt>
-    <dd>
-    La valeur du paramètre d'amorçage <tt>ramdisk_size</tt> est trop faible sur
-    les images de la seconde version candidate à la publication des CD et DVD.
-    Vous pouvez tout de même amorcer à partir du CD en augmentant cette valeur
-    à&nbsp;17108.<br />
-    Ce problème a été résolu dans les images construites quotidiennement et le
-    sera également pour les images officielles d'Etch&nbsp;;
-    </dd>
-  <dt>Architecture amd64&nbsp;: impossibilité de formater un système de
-    fichiers ext2</dt>
-    <dd>
-    Comme le module du noyau ext2 n'est pas disponible, il n'est pas possible
-    de créer de systèmes de fichiers ext2.
+    Nous ne pouvons pas être sûrs que ce bogue a été corrigé avant que nous ne
+    mettions à jour une nouveau version du noyau. Il semble que ce soit un
+    problème du noyau, et non de l'installateur, bien qu'il ait été
+    initialement signalé comme un bogue de l'installateur.  Pour de plus amples
+    informations veuillez voir le <a href="http://bugs.debian.org/470522">bogue
+    n°&nbsp;470522</a>.
     </dd>
   <dt>Architecture PowerPC&nbsp;: divers problèmes</dt>
     <dd>
@@ -185,14 +108,6 @@ le problème.
       certains systèmes&nbsp;; vous devrez l'ajouter vous-même dans
       <tt>/etc/modules</tt>&nbsp;;</li>
     </ul>
-    </dd>
-  <dt>Architecture sparc&nbsp;: possible échec des installations à partir de
-    cédéroms pour l'architecture sparc32</dt>
-    <dd>
-    Le module pilote du noyau esp est cassé ce que signifie que l'installation
-    à partir d'un cédérom ne fonctionne pas sur la plupart des systèmes
-    sparc32. Nous vous suggérons d'utiliser la méthode d'installation par
-    amorçage sur le réseau à la place.
     </dd>
   <dt>Architecture s390&nbsp;: capacités non gérées</dt>
     <dd>
