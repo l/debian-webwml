@@ -1,7 +1,7 @@
 #use wml::debian::template title="Configurando um espelho do repositório Debian"
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/sid/archive.data"
-#use wml::debian::translation-check translation="1.58" translation_maintainer="Felipe Augusto van de Wiel (faw)"
+#use wml::debian::translation-check translation="1.64" translation_maintainer="Felipe Augusto van de Wiel (faw)"
 
 <toc-display />
 
@@ -105,13 +105,17 @@ atualmente inerente à nossa rede de espelhos em geral.</small></p>
 <toc-add-entry name="how">Como fazer um espelho</toc-add-entry>
 
 <p>O método recomendado para se fazer um espelho é usando o
-script <a href="anonftpsync">anonftpsync</a>, através de um
-<a href="http://packages.debian.org/stable/net/rsync">rsync</a> anônimo.</p>
+script <a href="anonftpsync">anonftpsync</a>.</p>
 
-<p>Note: embora o <kbd>wget</kbd> e outras ferramentas de ftp pareçam funcionar bem,
-há alguns problemas. Nós recomendamos fortemente o uso do rsync.</p>
+<p>O protocolo de espelhamento que nós recomendamos é o
+<a href="http://packages.debian.org/stable/net/rsync">rsync</a>.</p>
 
-<h3>Usuário anônimo no rsync</h3>
+<p>Por favor, não espelhe o Debian usando o <kbd>wget</kbd> e outras
+ferramentas baseadas em FTP. Pode parecer que elas funcionam bem, mas
+há vários problemas (elas não detectam <q>hard links</q>, é difícil
+fazer um espelho parcial, etc).</p>
+
+<h3>Configuração rsync</h3>
 
 <p>Nós recomendamos uso <a href="anonftpsync">deste script</a> para fazer o
 espelho dos repositórios.
@@ -123,6 +127,17 @@ Siga as instruções no script para configurar um espelho.</p>
   <li>Execute o rsync com pelo menos essas opções: <kbd>--recursive --times
       --links --hard-links --delete</kbd>.</li>
 
+  <li>Evite espelhar arquivos de índice (Packages, Sources, etc) antes que
+      todos os novos arquivos de dados (.deb, .orig.tar.gz, etc) estejam
+      sincronizados. Use dois estágios de rsync &mdash; primeiro transfira
+      os arquivos de dados enquanto exclui os arquivos de índice, e então
+      transfira todo o resto.
+      <br />
+      Isto pode ser feito usando <kbd>--exclude</kbd> para pular os arquivos
+      Packages*, Sources* e Release*, ou usando somente o subdiretório pool/
+      no primeiro estágio.
+      Veja <a href="anonftpsync">nosso script</a> para um exemplo.</li>
+
   <li>Se você tem muito espaço em disco, também use a opção
       <kbd>--delete-after</kbd> para evitar alguns problemas temporários
       de atualização.</li>
@@ -130,14 +145,8 @@ Siga as instruções no script para configurar um espelho.</p>
   <li>Se você não tiver muito espaço em disco para fazer o espelho de tudo,
       use a opção <kbd>--exclude</kbd> para eliminar porções do repositório
       do espelho. Geralmente essas porções incluem várias arquiteturas que
-      você pode não precisar; por exemplo, isso exclui <em>todas</em>
-      arquiteturas:
-      <br />
-<:
-print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
-  foreach (sort keys %arches);
-:>
-      Verifique também a seção <a href="#partial">fazendo um espelho
+      você pode não precisar, porque elas ocupam muito espaço.
+      Por favor, veja a <a href="#partial">seção sobre espelhamento
       parcial</a>.</li>
 
   <li>Depois que o rsync tiver feito o espelho, adicione um arquivo de registro
@@ -152,33 +161,12 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br>\n"
       e de muita utilidade para os usuários.
       Especialmente <tt>project/trace</tt>, que ajuda muito se houver algum
       problema com o espelho.</li>
+
+  <li>Usualmente os servidores rsync <q>upstream</q> permitirão acesso
+      anônimo. Caso eles requeiram autenticação, configure nomes de usuário
+      e senhas no seu script, através da variável de ambiente RSYNC_PASSWORD
+      ou usando a opção <kbd>--password-file</kbd>.</li>
 </ul>
-
-<h3>Rsync com autenticação, de um espelho <q>push</q></h3>
-
-<p><q>Espelhamento push</q> é uma forma que desenvolvemos para fazer um espelho
-usando rsync, que minimiza o tempo gasto no exame das mudanças dos
-repositórios dos espelhos. O espelho servidor usa um gatilho ssh para informar
-o espelho cliente para se atualizar.</p>
-
-<p>O <q>espelhamento push</q> é necessário para manter vários servidores em
-sincronia (tais como os servidores pseudônimos de DNS em round-robin como
-<tt>ftp.us.debian.org</tt>), e nós geralmente usamos isto para o nossos
-espelhos de primeiro e segundo grau. Para espelhos <q>normais</q>,
-este método requer muitos esforços para ser configurado, os quais não
-compensam, comparados com um trabalho do cron bem ajustado.</p>
-
-<p>O método é totalmente seguro já que o ssh é configurado para executar um
-simples comando. Além disso, o espelho segue sendo <q>pull</q> de maneira que
-<strong>não</strong> é possível corromper o conteúdo dos repositórios por
-meio de um <q>espelho push</q> forjado. Alguns administradores de espelhos têm
-mostrado relutância para usar este método para fazer um espelho devido aos
-medos de que o método possa abrir sua máquina para invasão. Isto simplesmente
-<strong>não</strong> é verdade.</p>
-
-<p>Para uma descrição mais detalhada de como isto funciona, porque ele é
-seguro, e como configurar um <q>espelho push</q>, veja a
-<a href="push_mirroring">explicação completa</a>.</p>
 
 <toc-add-entry name="partial">Fazendo um espelho parcial</toc-add-entry>
 
@@ -187,9 +175,7 @@ algumas pessoas preferem fazer um espelho apenas da parte que elas necessitam.
 Se você quer excluir alguma coisa, você deve excluir as arquiteturas.</p>
 
 <p>Com o <a href="anonftpsync">anonftpsync</a>, isto pode ser feito editando
-a variável ARCH_EXCLUDE.
-Há também outros scripts escritos especialmente para isso.
-Entretanto, eles não são adequados para espelhos oficiais.</p>
+a variável ARCH_EXCLUDE.</p>
 
 <p>Nós advertimos fortemente sobre a exclusão dos subdiretórios
 <tt>project/</tt>, <tt>doc/</tt> e outros. Normalmente eles são menores,
@@ -197,6 +183,17 @@ e de muita utilidade para os usuários.
 Especialmente <tt>project/trace</tt>, que ajuda muito se houver algum problema
 com o espelho.
 </p>
+
+<p>É possível usar outros scripts escritos especialmente para isso mas,
+usualmente, eles não são necessários e não são recomendados para espelhos
+oficiais.
+Por exemplo, este conjunto de opções rsync excluiria <em>todas</em> as
+arquiteturas:
+<br />
+<: 
+print "<code>--exclude binary-$_/ --exclude *_$_.deb --exclude *_$_.udeb --exclude installer-$_/ --exclude Contents-$_*</code><br>\n"
+  foreach (sort keys %arches);
+:>
 
 <toc-add-entry name="when">Quando fazer o espelho</toc-add-entry>
 
@@ -222,6 +219,27 @@ todos os dias é usando o cron. Veja <kbd>man crontab</kbd> para detalhes.</p>
 
 <p>Note que se seu site for atualizado com um mecanismo push, então você não
 precisa se preocupar com nada disso.</p>
+
+<h3>Espelhamento disparado por <q>push</q> (<q>Push-triggered</q>)</h3>
+
+<p>Espelhamento <q>push</q> é uma forma de espelhamento que nós desenvolvemos
+para minimizar o tempo que leva para que as mudanças no repositório cheguem
+aos espelhos. Um espelho <q>upstream</q> usa um gatilho SSH que diz aos demais
+espelhos para se atualizarem. O <q>pushing</q> é usualmente limitado a um
+gatilho seguro que não aceita dados variáveis, de forma que o restante do
+processo de espelhamento seja simplesmente puxar os dados de forma similar a
+uma tarefa cron.</p>
+
+<p>O espelhamento <q>push</q> é necessário para manter vários servidores em
+sincronia (tais como servidores em round-robin de DNS como
+<tt>ftp.us.debian.org</tt>), e nós geralmente usamos isto para os nossos
+espelhos de primeiro e segundo nível. Para espelhos <q>normais</q>,
+este método requer bastante esforço para ser configurado que na verdade
+não compensam quando comparados com uma tarefa cron bem ajustada.</p>
+
+<p>Para uma descrição mais detalhada de como isto funciona, porque ele é
+seguro, e como configurar um espelho <q>push</q>, veja
+<a href="push_mirroring">a explicação completa</a>.</p>
 
 <toc-add-entry name="settings">Configurações adicionais recomendadas</toc-add-entry>
 
