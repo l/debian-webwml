@@ -1,44 +1,49 @@
 #use wml::debian::template title="Tamanho do Espelho"
-#use wml::debian::translation-check translation="1.36" translation_maintainer="Felipe Augusto van de Wiel (faw)"
+#use wml::debian::translation-check translation="1.38" translation_maintainer="Felipe Augusto van de Wiel (faw)"
 
 <h2>Qual é o tamanho do repositório Debian?</h2>
 
 # (note for the English editors on how to update some of the numbers below)
 # dak psql database on ftp-master is 'projectb'
 # and there's a copy on merkel
-# projectb=> select architecture.arch_string as Architecture, sum(files.size)
-#            from files,binaries,architecture where
-#            architecture.id=binaries.architecture and files.id=binaries.file
-#            group by architecture.arch_string;
-# projectb=> select sum(size) from files where
+# projectb=> select architecture.arch_string as Architecture,
+#            sum(files.size)/1024/1024/1024 as Size
+#            from files,binaries,architecture
+#            where architecture.id=binaries.architecture
+#            and files.id=binaries.file
+#            group by architecture.arch_string
+#            order by Size;
+# projectb=> select sum(size)/1024/1024/1024 from files where
 #            filename ~ '.diff.gz$' or filename ~ '.dsc$'
 #            or filename ~ '.orig.tar.gz$';
-# projectb=> select sum(files.size) from files,binaries,architecture
-#            where architecture.id=binaries.architecture and
-#            architecture.arch_string='i386' and files.id=binaries.file;
+# projectb=> select sum(files.size)/1024/1024/1024
+#            from files, binaries, architecture
+#            where architecture.id=binaries.architecture
+#            and files.id=binaries.file
+#            and architecture.arch_string='i386';
 
-# however, this might not work completely reliably, it will report smaller
-# figures. dunno exactly why; asked elmo and he didn't have an answer.
-# thankfully, later checks showed that the difference from the real thing
-# is sufficiently small (<= 100 MB or so) to be ignored -joy
+# wc -c'ing files inside the debian/ directory might occasionally give
+# slightly different results than the SQL queries, but the difference
+# is usually negligible -joy
 
-<p>Os números nesta página são do repositório em outubro de 2007.
+
+<p>Os números nesta página são do repositório em março de 2008.
 
 <dl>
 <dt><strong>tudo</strong></dt>
-  <dd>Aproximadamente 290 GB.</dd>
+  <dd>Aproximadamente 335 GB.</dd>
 
 <dt><strong>pacotes independentes de arquitetura</strong></dt>
-  <dd>Aproximadamente 24 GB.</dd>
+  <dd>Aproximadamente 28 GB.</dd>
 
 <dt><strong>uma arquitetura lançada</strong> (da oldstable, stable, testing e unstable)</dt>
-  <dd>variando (aproximadamente) de 16,1 GB a 22 GB.</dd>
+  <dd>variando (aproximadamente) de 18 GB a 25 GB.</dd>
 
 <dt><strong>uma arquitetura que não foi lançada</strong></dt>
-  <dd>Em qualquer lugar entre 2 GB e 13 GB, mas crescendo.</dd>
+  <dd>Em qualquer lugar entre 2,5 GB e 14 GB, mas crescendo.</dd>
 
 <dt><strong>fontes</strong></dt>
-  <dd>em torno de 37 GB.</dd>
+  <dd>em torno de 43 GB.</dd>
 </dl>
 
 <p>Note que o repositório está constantemente em crescimento; a teste
@@ -64,6 +69,12 @@ veja as <a href="../CD/mirroring/">páginas sobre espelhos Debian CD</a>.</p>
 <h3>Qual é o tamanho do repositório Debian Volatile?</h3>
 
 <p>O repositório debian-volatile tem em torno de 3 GB.</p>
+
+<h2>Qual é o tamanho das atualizações regulares dos espelhos?</h2>
+
+<p>Para o repositório <q>main</q> do Debian, por favor, veja
+<a href="http://ftp-master.debian.org/size-quarter.png">o gráfico dto
+tamanho da execução diária</a>.</p>
 
 <h2>Qual é o tamanho das páginas web?</h2>
 
