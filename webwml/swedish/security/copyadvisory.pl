@@ -120,9 +120,9 @@ while (<SRC>)
 	s/(<td>.*) architecture/$1-arkitekturen/;
 	s/The following matrix lists additional packages that were rebuilt for/Följande tabell beskriver ytterligare paket som byggts om för kompatibilitet/;
 	s/compatibility with or to take advantage of this update:/med, eller för att dra nytta av, denna uppdatering:/;
-	s/(?:,)?( )?this problem has been fixed in/$1har detta problem rättats i/;
-	s/(?:,)?( )?this problem has been fixed$/$1har detta problem rättats/;
-	s/(?:,)?( )?this problem has(?: been)?$/$1har detta problem/;
+	s/(?:,)?( )?th(?:is|e) problem (?:has been|was) fixed in/$1har detta problem rättats i/;
+	s/(?:,)?( )?th(?:is|e) problem (?:has been|was) fixed$/$1har detta problem rättats/;
+	s/(?:,)?( )?th(?:is|e) problem has(?: been)?$/$1har detta problem/;
 	s/This problem has been fixed/Detta problem har rättats/;
 	s/(?:,)?( )?this problem is fixed in/$1rättas detta problem i/;
 	s/(?:,)?( )?this problem is fixed/$1rättas detta problem/;
@@ -172,6 +172,9 @@ while (<SRC>)
 	s/\(sid\)/(Sid)/;
 	s/Refer to Debian (<.*>)?bug #([0-9]+)</Se Debians $1felrapport $2</;
 	s/(of|from) the Debian Security Audit (Project|Team)/från Debians säkerhetsgranskningsprojekt/i;
+	s/&aring;/å/g;
+	s/&auml;/ä/g;
+	s/&ouml;/ö/g;
 
 	print DST $_;
 }
