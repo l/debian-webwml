@@ -185,8 +185,8 @@ export LANGUAGE ENGLISHSRCDIR CUR_DIR
 dwn.$(LANGUAGE).rdf:
 	$(ENGLISHSRCDIR)/$(CUR_DIR)/dwn-to-rdf.pl
 
-all:: dwn.$(LANGUAGE).rdf
-install:: $(HTMLDIR)/dwn.$(LANGUAGE).rdf
+#all:: dwn.$(LANGUAGE).rdf
+#install:: $(HTMLDIR)/dwn.$(LANGUAGE).rdf
 
 clean::
 	rm -f dwn.$(LANGUAGE).rdf
