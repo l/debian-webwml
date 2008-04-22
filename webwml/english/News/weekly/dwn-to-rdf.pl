@@ -122,13 +122,13 @@ my $headline = '';
 my $body = '';
 if (open (F, $current . '/index.wml')) {
     while (<F>) {
-	if (/^<p><strong>(.*)<\/strong>\s*(.*)/) {
+	if (/^<p><strong>(.*)<\/strong>(?:<br \/>)?\s*(.*)/) {
 	    $headline = $1;
 	    $body = $2."\n";
 	    chop ($headline) if ($headline =~ /\.$/);
 	} elsif (/^<p><strong>(.*)/) {
 	    $headline = $1;
-        } elsif (/^(.*)<\/strong>(.*)/) {
+        } elsif (/^(.*)<\/strong>(?:<br \/>)?(.*)/) {
             $headline .= ' '.$1;
             $body = $2."\n";
             chop ($headline) if ($headline =~ /\.$/);
