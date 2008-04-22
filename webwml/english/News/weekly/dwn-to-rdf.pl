@@ -112,8 +112,10 @@ my $rss = new XML::RSS (version => '1.0', encoding => charset);
 $rss->channel (title          => 'Debian Weekly News',
 	       description    => 'Debian Weekly News '. $current,
 	       link           => $url,
-	       pubDate        => $pubdate,
-	       );
+	       dc             => {
+		   date => $pubdate,
+	       },
+    );
 
 my $count = 0;
 my $headline = '';
