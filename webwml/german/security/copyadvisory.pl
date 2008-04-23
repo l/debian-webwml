@@ -84,6 +84,7 @@ while (<SRC>)
 	s/\bdiscovered a problem in\b/entdeckte ein Problem in/;
 	s/\bdiscovered a/entdeckte ein/;
 	s/\bdiscovered that\b/entdeckte, dass/;
+	s/discovered/entdeckte/;
 	s/traversal/überschreitung/;
 	s/^(<p>)?A vulnerability was discovered in\b/$1Eine Verwundbarkeit wurde in entdeckt/;
 	s/^(<p>)?Two vulnerabilities were discovered in\b/$1Zwei Verwundbarkeiten wurden in entdeckt/;
@@ -101,7 +102,8 @@ while (<SRC>)
 	s/We recommend that you update your (.*) package/Wir empfehlen Ihnen, Ihr $1-Paket zu aktualisieren/;
 	s/denial of service/Diensteverweigerung (<q>denial of service<\/q>)/;
 	s/Several remote vulnerabilities have been/Mehrere entfernt ausnutzbare Verwundbarkeiten wurden in/;
-	s/buffer overflows?/Pufferüberlauf/;
+	s/buffer overflow/Pufferüberlauf/;
+	s/buffer overflows/Pufferüberläufe/;
 	s/integer overflow/Integer-Überlauf/;
 	s/format string vulnerability/Formatierungszeichenkettenverwundbarkeit/;
 	s/format string vulnerabilities/Formatierungszeichenkettenverwundbarkeiten/;
@@ -118,6 +120,8 @@ while (<SRC>)
 	s/Several vulnerabilities/Mehrere Verwundbarkeiten/;
 	s/several vulnerabilities/mehrere Verwundbarkeiten/;
 	s/Multiple vulnerabilities/Mehrere Verwundbarkeiten/;
+	s/vulnerability/Verwundbarkeit/;
+	s/vulnerabilities/Verwundbarkeiten/;
 	s/>several</>mehrere</;
 	s/>unsanitise</>Fehlende Entschärfung</;
 	s/ identifies the following problems:/ identifiziert die folgenden Probleme:/;
@@ -185,6 +189,7 @@ while (<SRC>)
 	s/(of|from) the Debian Security Audit (Project|Team)/vom Debian-Sicherheits-Audit-$2/;
 	s/(of|from) Debian Security Audit (project|team)/vom Debian-Sicherheits-Audit-$2/;
 	s/dissector/Sezierer (<q>dissector<\/q>)/;
+	s/disclosure/Enthüllung/;
 
 	print DST $_;
 }
