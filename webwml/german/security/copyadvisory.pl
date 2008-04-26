@@ -102,8 +102,8 @@ while (<SRC>)
 	s/We recommend that you update your (.*) package/Wir empfehlen Ihnen, Ihr $1-Paket zu aktualisieren/;
 	s/denial of service/Diensteverweigerung (<q>denial of service<\/q>)/;
 	s/Several remote vulnerabilities have been/Mehrere entfernt ausnutzbare Verwundbarkeiten wurden in/;
-	s/buffer overflow/Pufferüberlauf/;
 	s/buffer overflows/Pufferüberläufe/;
+	s/buffer overflow/Pufferüberlauf/;
 	s/integer overflow/Integer-Überlauf/;
 	s/format string vulnerability/Formatierungszeichenkettenverwundbarkeit/;
 	s/format string vulnerabilities/Formatierungszeichenkettenverwundbarkeiten/;
