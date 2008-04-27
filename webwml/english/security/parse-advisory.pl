@@ -77,10 +77,10 @@ foreach $l (<ADV>) {
   if ($l =~ /^(CVE (names?|id\(?s?\)?|references?)?|CERT advisor(y|ies))\s*: (.+)/i) {
     push @dbids, join (" ", split (/,? /, $4));
   }
-  if ($l =~ /^\s*((?:CVE-\d+-\d+[ ]*)+)$/i) {
+  if ($l =~ /^\s+((?:CVE-\d+-\d+[ ]*)+)$/i) {
     push @dbids, join (" ", split (/,? /, $1));
   }
-  if ($l =~ /^\s*((?:VU#\d+[ ]*)+)$/i) {
+  if ($l =~ /^\s+((?:VU#\d+[ ]*)+)$/i) {
     push @dbids, join (" ", split (/,? /, $1));
   }
   if ($l =~ /^Bugtraq Ids?\s*: (.+)/i) {
