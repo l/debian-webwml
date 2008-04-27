@@ -171,7 +171,17 @@ die "$data already exists!\n" if (-f $data);
 
 my $mech = WWW::Mechanize->new();
 $mech->get( $mlURL );
-$dsaLink = ($mech->find_link( text_regex => qr/$dsa_number-$dsa_revision/ ))->url_abs();
+
+my $link_object = ($mech->find_link( text_regex => qr/$dsa_number-$dsa_revision/ )) ;
+
+if (defined $link_object) {
+    $dsaLink = $link_object->url_abs() ;
+}
+else {
+    $dsaLink = $mlURL ;
+    print "DSA $dsa_number-$dsa_revision has not reached $mlURL yet.\n";
+    print "Please edit the link yourself or try again later.\n" ;
+}
 
 $files =~ s,^</dl>\n\n,,;
 open DATA, ">$data";
