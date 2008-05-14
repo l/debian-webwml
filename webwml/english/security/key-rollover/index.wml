@@ -1,9 +1,142 @@
 #use wml::debian::template title="Key Rollover"
 
-<h1>More to follow soon</h1>
-
-<center>
 <p>
-(In the meantime, you might want to check the user-submitted information in <url http://wiki.debian.org/SSLkeys>)
+In <a href="2008/dsa-1571">Debian Security Advisory 1571</a>, the Debian
+Security Team disclosed a vulnerability in the openssl package that makes
+many cryptographic keys that are used for authentication (e.g. through SSH)
+or signing (e.g. web server certificates) potentially vulnerable.
 </p>
-</center>
+
+<p>
+This page documents how to perform key rollover procedures for packages
+whose keys are affected by the openssl vulnerability.
+</p>
+
+<ul>
+<li><a href="#openssh">OpenSSH</a>
+<li><a href="#openswan">OpenSWAN / StrongSWAN</a>
+</ul>
+
+<p>
+For key rollover instructions for other software, you might want to check
+the user-submitted information in <url http://wiki.debian.org/SSLkeys>
+</p>
+
+<h1><a name="openssh">OpenSSH</a></h1>
+
+<p>
+A package has been released as <a href="2008/dsa-1576">DSA-1576</a>, 
+which eases key transformation.
+</p>
+
+<p>1. Install the security updates in DSA-1576</p>
+
+   <p>Once the update is applied, weak user keys will be automatically
+   rejected where possible (though they cannot be detected in all
+   cases).  If you are using such keys for user authentication, they
+   will immediately stop working and will need to be replaced (see
+   step 3).</p>
+
+   <p>OpenSSH host keys can be automatically regenerated when the OpenSSH
+   security update is applied.  The update will prompt for confirmation
+   before taking this step.</p>
+
+<p>2. Update OpenSSH known_hosts files</p>
+
+   <p>The regeneration of host keys will cause a warning to be displayed when
+   connecting to the system using SSH until the host key is updated in the
+   known_hosts file.  The warning will look like this:</p>
+
+<pre>
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that the RSA host key has just been changed.
+</pre>
+
+   <p>In this case, the host key has simply been changed, and you should update
+   the relevant known_hosts file as indicated in the error message.
+   
+   It is recommended that you use a trustworthy channel to exchange the
+   server key.  It is found in the file /etc/ssh/ssh_host_rsa_key.pub on
+   the server; it's fingerprint can be printed using the command:</p>
+
+      <p>ssh-keygen -l -f /etc/ssh/ssh_host_rsa_key.pub</p>
+
+   <p>In addition to user-specific known_hosts files, there may be a
+   system-wide known hosts file /etc/ssh/known_hosts.  This is file is
+   used both by the ssh client and by sshd for the hosts.equiv
+   functionality.  This file needs to be updated as well.</p>
+
+<p>3. Check all OpenSSH user keys</p>
+
+   <p>The safest course of action is to regenerate all OpenSSH user keys,
+   except where it can be established to a high degree of certainty that the
+   key was generated on an unaffected system.</p>
+
+   <p>Check whether your key is affected by running the ssh-vulnkey tool, included
+   in the security update.  By default, ssh-vulnkey will check the standard
+   location for user keys (~/.ssh/id_rsa, ~/.ssh/id_dsa and ~/.ssh/identity),
+   your authorized_keys file (~/.ssh/authorized_keys and
+   ~/.ssh/authorized_keys2), and the system's host keys
+   (/etc/ssh/ssh_host_dsa_key and /etc/ssh/ssh_host_rsa_key).</p>
+
+   <p>To check all your own keys, assuming they are in the standard
+   locations (~/.ssh/id_rsa, ~/.ssh/id_dsa, or ~/.ssh/identity):</p>
+
+     <p>ssh-vulnkey</p>
+
+   <p>To check all keys on your system:</p>
+
+     <p>sudo ssh-vulnkey -a</p>
+
+   <p>To check a key in a non-standard location:</p>
+
+     <p>ssh-vulnkey /path/to/key</p>
+
+   <p>If ssh-vulnkey says "Unknown (no blacklist information)", then it has no
+   information about whether that key is affected.  If in doubt, destroy the
+   key and generate a new one.
+   </p>
+
+<p>4. Regenerate any affected user keys</p>
+
+   <p>OpenSSH keys used for user authentication must be manually regenerated,
+   including those which may have since been transferred to a different system
+   after being generated.</p>
+
+   <p>New keys can be generated using ssh-keygen, e.g.:</p>
+
+   <pre>
+   $ ssh-keygen
+   Generating public/private rsa key pair.
+   Enter file in which to save the key (/home/user/.ssh/id_rsa):
+   Enter passphrase (empty for no passphrase):
+   Enter same passphrase again:
+   Your identification has been saved in /home/user/.ssh/id_rsa.
+   Your public key has been saved in /home/user/.ssh/id_rsa.pub.
+   The key fingerprint is:
+   00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00 user@host
+   </pre>
+
+<p>5. Update authorized_keys files (if necessary)</p>
+
+   <p>Once the user keys have been regenerated, the relevant public keys
+   must be propagated to any authorized_keys files (and authorized_keys2
+   files, if applicable) on remote systems.  Be sure to delete the
+   affected key.</p>
+
+<h1><a name="openswan">OpenSWAN / StrongSWAN</a></h1>
+
+<pre>
+rm /etc/ipsec.d/private/`hostname`Key.pem /etc/ipsec.d/certs/`hostname`Cert.pem
+dpkg-reconfigure (open|strong)swan
+/etc/init.d/ipsec restart
+</pre>
+
+<p>
+Beware: Restarting the ipsec services terminates all currently open IPSec
+connections, which may need to be restarted from the other end.
+</p>
