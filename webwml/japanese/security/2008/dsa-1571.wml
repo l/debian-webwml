@@ -1,0 +1,79 @@
+#use wml::debian::translation-check translation="1.3"
+<define-tag description>予測可能な乱数の生成</define-tag>
+<define-tag moreinfo>
+<p>
+Luciano Bello さんにより、Debian の openssl パッケージの乱数生成機が予測
+可能な乱数を生成することが発見されました。これは Debian 固有の openssl
+への誤った修正 (<a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-0166">CVE-2008-0166</a>) が原因です。この結果として、暗号に使う鍵
+の材料が予測可能です。
+</p>
+
+<p>
+これは Debian 固有の欠陥であり、Debian 派生ではない他の OS には影響があ
+りません。但し、他の OS にも弱い鍵が import されることにより、間接的な影
+響はあります。
+</p>
+
+<p>
+Debian システムで、バージョン 0.9.8c-1 以降の OpenSSL で作成された、暗号
+鍵に関するデータは捨てて作り直す必要があります。さらに、影響を受ける
+Debian システムで、署名や本人認証の目的で使われた全ての DSA 鍵は脆弱であ
+ると考えてください。デジタル署名アルゴリズムは、署名生成時の秘密の乱数の
+値に依存しているからです。
+</p>
+
+<p>
+この欠陥を持つ最初のバージョンは 0.9.8c-1 で、不安定版に 2006-09-17 にア
+ップロードされており、その後テスト版 (testing) や安定版 (etch) に流れて
+います。旧安定版 (sarge) には影響はありません。
+</p>
+
+<p>
+影響を受ける鍵は、SSH 鍵、OpenVPN 鍵、DNSSEC 鍵、X.509 証明書を生成する
+のに使われる鍵データ、および SSL/TLS コネクションに使うセッション鍵です。
+GnuPG や GnuTLS で生成した鍵は影響を受けません。
+</p>
+
+<p>脆弱な鍵を発見するための資料は以下で公開されています。</p>
+
+  <p><url "http://security.debian.org/project/extra/dowkd/dowkd.pl.gz">
+  <a href="http://security.debian.org/project/extra/dowkd/dowkd.pl.gz.asc">(OpenPGP signature)</a></p>
+
+<p>様々なパッケージでのキーロールオーバの手順は、以下で公開されています。</p>
+
+  <p><url "http://www.debian.org/security/key-rollover/"></p>
+
+<p>
+このウェブサイトは継続的に更新されており、SSL 証明書を用いたパッケージの
+キーロールオーバについての、新しい更新済みの手順が記載されています。また、
+影響を受けない代表的なパッケージについても列挙されています。
+</p>
+
+<p>
+この緊急の変更以外に、openssl の二つの欠陥が修正されています。これらの欠
+陥は次の etch のポイントリリースでの修正を予定していたものです。一つは
+Openssl の DTLS (Datagram TLS: SSL 上の UDP) が正しく DTLS を実装してお
+らず、潜在的にずっと弱いプロトコルとなっていた可能性があった問題、もう一
+つは、任意のコードが実行可能であった問題 (<a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-4995">CVE-2007-4995</a>) です。更に整数
+乗算ルーチンのサイドチャネル攻撃 (<a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-3108">CVE-2007-3108</a>) も対処されています。
+</p>
+
+<p>
+安定版 (stable) ディストリビューション (etch) では、これらの問題はバージ
+ョン 0.9.8c-4etch3 で修正されています。
+</p>
+
+<p>
+不安定版 (unstable) ディストリビューション (sid) とテスト版 (testing) デ
+ィストリビューション (lenny) では、これらの問題はバージョン 0.9.8g-9 で
+修正されています。
+</p>
+
+<p>
+直ぐに openssl パッケージをアップグレードし、上の記載に沿って暗号鍵を再
+生成することを勧めます。
+</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2008/dsa-1571.data"
