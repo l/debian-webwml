@@ -13,8 +13,13 @@ whose keys are affected by the openssl vulnerability.
 </p>
 
 <ul>
-<li><a href="#openssh">OpenSSH</a>
+<li><b><a href="#openssh">OpenSSH</a></b>
+
+<li><a href="#iceweasel">Iceweasel</a>
+<li><a href="#gforge">gforge</a>
+<li><a href="#kerberos">MIT Kerberos (krb5)</a>
 <li><a href="#openswan">OpenSWAN / StrongSWAN</a>
+<li><a href="#xrdp">xrdp</a>
 </ul>
 
 <p>
@@ -128,6 +133,31 @@ It is also possible that the RSA host key has just been changed.
    files, if applicable) on remote systems.  Be sure to delete the
    affected key.</p>
 
+<h1><a name="iceweasel">Iceweasel</a></h1>
+
+<p>
+The Iceweasel ("firefox") web browser functionality for generating X509 
+public/private keypairs (certificates) is not affected by this
+vulnerability. Iceweasel uses nss, a different cryptography engine.
+</p>
+
+<h1><a name="gforge">gforge</a></h1>
+
+<p>
+The gforge-web-apache2 package in sid and lenny sets up the website
+with a dummy certificate if no existing certificate is found. Users are then
+encouraged to replace it with a "real" one. The dummy certificate in
+question is the Snake Oil one, so it should already be known as a weak
+one (even without the SSL bug), but some users may accept
+it without a second thought. 
+</p>
+
+<h1><a name="kerberos">MIT Kerberos (krb5)</a></h1>
+
+No part of MIT Kerberos in Debian 4.0 ("Etch") uses OpenSSL. In Lenny the
+separate binary package krb5-pkinit uses OpenSSL. Instructions on key
+exchanges for PKINIT operation will be added soon.
+
 <h1><a name="openswan">OpenSWAN / StrongSWAN</a></h1>
 
 <pre>
@@ -139,4 +169,20 @@ dpkg-reconfigure (open|strong)swan
 <p>
 Beware: Restarting the ipsec services terminates all currently open IPSec
 connections, which may need to be restarted from the other end.
+</p>
+
+<h1><a name="xrdp">xrdp</a></h1>
+
+<p>
+xrdp uses generated keys. Most clients do not check those keys by
+default, therefore changing them is painless. You just have to:
+</p>
+
+<pre>
+rm /etc/xrdp/rsakeys.ini
+/etc/init.d/xrdp restart
+</pre>
+
+<p>
+xrdp is not in stable.
 </p>
