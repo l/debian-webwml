@@ -10,3 +10,6 @@ include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml
 	$(WML) $(<F)
+
+notvuln.$(LANGUAGE).html: notvuln.wml
+	$(WML) $(<F)
