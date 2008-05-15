@@ -1,11 +1,11 @@
-#use wml::debian::template title="Schlüsselaustausch - Key Rollover"
+#use wml::debian::template title="Schlüsselaustausch"
 #use wml::debian::translation-check translation="1.6" maxdelta="1"
 
 <p>
 In der <a href="$(HOME)/security/2008/dsa-1571">Debian-Sicherheitsankündigung 1571</a>,
 deckte das Debian-Sicherheitsteam eine Verwundbarkeit im Paket openssl auf, die viele
-kryptografische Schlüssel, die für Authentizierung (z.B. mittels SSH)
-oder Signierung (z.B. Web-Server-Zertifikate) verwendet werden, potentiell
+kryptografische Schlüssel, die für Authentifizierung (z.B. mittels SSH)
+oder Signierung (z.B. Web-Server-Zertifikate) verwendet werden, potenziell
 anfällig macht.
 </p>
 
@@ -28,7 +28,7 @@ von Benutzern zusammengetragenen Informationen unter
 <h1><a name="openssh">OpenSSH</a></h1>
 
 <p>
-Ein Paket wurde als <a href="$(HOME)/security/2008/dsa-1576">DSA-1576</a>, 
+Ein Paket wurde als <a href="$(HOME)/security/2008/dsa-1576">DSA-1576</a>
 herausgegeben, das die Schlüsseltransformation vereinfacht.
 </p>
 
@@ -48,7 +48,7 @@ herausgegeben, das die Schlüsseltransformation vereinfacht.
 <p>2. Aktualisierung der OpenSSH-Dateien <tt>known_hosts</tt></p>
 
    <p>Die Neuerzeugung der Rechnerschlüssel wird eine Warnung ausgeben, wenn
-      auf das System mit SSH zugegriffen wird, bis der Recherschlüssel in
+      auf das System mit SSH zugegriffen wird, bis der Rechnerschlüssel in
       der Datei known_hosts auf dem Klient aktualisiert wurde. Die Warnung
       wird wie folgt aussehen:</p>
 
@@ -74,14 +74,14 @@ Es ist auch möglich, dass der RSA-Rechnerschlüssel vor kurzem geändert wurde.
 
    <p>In diesem Fall wurde der Rechnerschlüssel einfach geändert und Sie
       sollten die entsprechende Datei <tt>known_hosts</tt>, wie in der
-      Fehlermeldung beschrieben, aktualisieren.
+      Meldung beschrieben, aktualisieren.
    
    Es wird empfohlen, dass Sie einen vertrauenswürdigen Kanal zum Austausch
    des Server-Schlüssels verwenden. Er befindet sich in der Datei
    <tt>/etc/ssh/ssh_host_rsa_key.pub</tt> auf dem Server;
    sein Fingerabdruck kann mit dem folgenden Kommando gedruckt werden:</p>
 
-      <p>ssh-keygen -l -f /etc/ssh/ssh_host_rsa_key.pub</p>
+      <p><code>ssh-keygen -l -f /etc/ssh/ssh_host_rsa_key.pub</code></p>
 
    <p>Zusätzlich zu benutzerspezifischen <tt>known_hosts</tt>-Dateien, kann
       eine systemweite Datei <tt>/etc/ssh/known_hosts</tt> existieren. Diese
@@ -97,29 +97,29 @@ Es ist auch möglich, dass der RSA-Rechnerschlüssel vor kurzem geändert wurde.
       System erstellt wurde.</p>
 
    <p>Um zu testen, ob Ihr Schlüssel betroffen ist, können Sie
-      ssh-vulnkey starten, was in der sicherheitsaktualisierung enthalten ist.
-      Standardmäßig wird ssh-vulnkey den Standardort für Benutzerschlüssel
-      (~/.ssh/id_rsa, ~/.ssh/id_dsa und ~/.ssh/identity), Ihre Datei
-      <tt>authorized_keys</tt> ( <tt>~/.ssh/authorized_keys</tt> und
-      ~/.ssh/authorized_keys2) und die Rechnerschlüssel des Systems
-      (/etc/ssh/ssh_host_dsa_key und /etc/ssh/ssh_host_rsa_key) überprüfen.</p>
+      <tt>ssh-vulnkey</tt> starten, was in der Sicherheitsaktualisierung enthalten ist.
+      Standardmäßig wird <tt>ssh-vulnkey</tt> den Standardort für Benutzerschlüssel
+      (<tt>~/.ssh/id_rsa</tt>, <tt>~/.ssh/id_dsa</tt> und <tt>~/.ssh/identity</tt>), Ihre Datei
+      <tt>authorized_keys</tt> (<tt>~/.ssh/authorized_keys</tt> und
+      <tt>~/.ssh/authorized_keys2</tt>) und die Rechnerschlüssel des Systems
+      (<tt>/etc/ssh/ssh_host_dsa_key</tt> und <tt>/etc/ssh/ssh_host_rsa_key</tt>) überprüfen.</p>
 
    <p>Sie können alle Ihre eigenen Schlüssel wie folgt testen, unter der
-      Voraussetzung, dass sie sich an den Standardorten (~/.ssh/id_rsa,
-      ~/.ssh/id_dsa oder ~/.ssh/identity) befinden:</p>
+      Voraussetzung, dass sie sich an den Standardorten (<tt>~/.ssh/id_rsa</tt>,
+      <tt>~/.ssh/id_dsa</tt> oder <tt>~/.ssh/identity</tt>) befinden:</p>
 
-     <p>ssh-vulnkey</p>
+     <p><code>ssh-vulnkey</code></p>
 
    <p>Um alle Schlüssel auf Ihrem System zu überprüfen:</p>
 
-     <p>sudo ssh-vulnkey -a</p>
+     <p><code>sudo ssh-vulnkey -a</code></p>
 
    <p>Um einen Schlüssel an einem nicht standardmäßigem Ort zu testen:</p>
 
-     <p>ssh-vulnkey /Pfad/zum/Schlüssel</p>
+     <p><code>ssh-vulnkey <var>/Pfad/zum/Schlüssel</var><code></p>
 
-   <p>Falls ssh-vulnkey die Meldung <q>Unknown (no blacklist information)</q>
-      ausgibt, hat es keine Information darüber, ob der Schlüssel betroffen ist.
+   <p>Falls <tt>ssh-vulnkey</tt> die Meldung <q>Unknown (no blacklist information)</q>
+      ausgibt, hat es keine Informationen darüber, ob der Schlüssel betroffen ist.
       Im Zweifelsfall sollte der Schlüssel zerstört und ein neuer erzeugt
       werden.
    </p>
@@ -130,7 +130,7 @@ Es ist auch möglich, dass der RSA-Rechnerschlüssel vor kurzem geändert wurde.
    manuell neu erzeugt werden, inklusive derjenigen, die nach der
    Erzeugung auf ein anderes System übertragen wurden.</p>
 
-   <p>Neue Schlüssel können mit ssh-keygen erzeugt werden, z.B.:</p>
+   <p>Neue Schlüssel können mit <tt>ssh-keygen</tt> erzeugt werden, z.B.:</p>
 
    <pre>
    $ ssh-keygen
@@ -149,7 +149,7 @@ Es ist auch möglich, dass der RSA-Rechnerschlüssel vor kurzem geändert wurde.
    <p>Sobald die Benutzerschlüssel neu erzeugt wurden, müssen die relevanten
       öffentlichen Schlüssel in <tt>authorized_keys</tt>-Dateien (und eventuell
       <tt>authorized_keys2</tt>-Dateien) auf entfernten Systemen übertragen
-      werden. Stellen Sie sicher, die betroffenen Schlüssel zu löschen.</p>
+      werden. Stellen Sie sicher, dass die betroffenen Schlüssel gelöscht werden.</p>
 
 <h1><a name="openswan">OpenSWAN / StrongSWAN</a></h1>
 
@@ -160,6 +160,6 @@ dpkg-reconfigure (open|strong)swan
 </pre>
 
 <p>
-Vorsicht: Neu starten des Dienstes ipsec beendet alle aktuell offenen
+Vorsicht: Neustarten des Dienstes ipsec beendet alle aktuell offenen
 IPSec-Verbindungen. Diese müssen eventuell vom anderen Ende neu gestartet werden.
 </p>
