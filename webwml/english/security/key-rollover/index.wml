@@ -156,9 +156,35 @@ it without a second thought.
 
 <h1><a name="kerberos">MIT Kerberos (krb5)</a></h1>
 
-No part of MIT Kerberos in Debian 4.0 ("Etch") uses OpenSSL. In Lenny the
-separate binary package krb5-pkinit uses OpenSSL. Instructions on key
-exchanges for PKINIT operation will be added soon.
+<p>
+No part of MIT Kerberos in Debian 4.0 ("Etch") uses OpenSSL, and so Kerberos
+in Debian 4.0 is not affected at all.
+</p>
+
+<p>
+In Lenny the separate binary package krb5-pkinit uses OpenSSL.
+<ul>
+<li>
+MIT Kerberos itself does not generate long-term key pairs even when the
+PKINIT plugin is used, so any vulnerable long-term key pairs would have
+been generated outside of the MIT Kerberos software itself.  The PKINIT
+plugin only references existing key pairs and isn't responsible for key
+management.
+</li>
+<li>
+All of the random session key generation inside the PKINIT plugin is
+done using the regular MIT Kerberos random key functions, <em>not</em> the
+OpenSSL random number generator, and hence sessions created via PKINIT
+are not subject to this vulnerability.
+</li>
+</ul>
+</p>
+
+<p>
+MIT Kerberos itself is not in affected.  However, long-term key pairs used
+with PKINIT may be affected if generated on an affected Debian system, but
+such generation is external to MIT Kerberos.
+</p>
 
 <h1><a name="openswan">OpenSWAN / StrongSWAN</a></h1>
 
