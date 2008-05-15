@@ -18,6 +18,7 @@ whose keys are affected by the OpenSSL vulnerability.
 <li><a href="#gforge">gforge</a>
 <li><a href="#kerberos">MIT Kerberos (krb5)</a>
 <li><a href="#openswan">OpenSWAN / StrongSWAN</a>
+<li><a href="#puppet">puppet</a>
 <li><a href="#xrdp">xrdp</a>
 </ul>
 
@@ -197,6 +198,69 @@ dpkg-reconfigure (open|strong)swan
 <p>
 Beware: Restarting the ipsec services terminates all currently open IPSec
 connections, which may need to be restarted from the other end.
+</p>
+
+<h1><a name="puppet">puppet</a></h1>
+
+<p>
+There are two methods to handle puppet certificates, one is via capistrano,
+the second is manually.
+</p>
+
+<p>
+Regenerating Puppet SSL Certificates using capistrano is detailed here:
+<a href="http://reductivelabs.com/trac/puppet/wiki/RegenerateSSL">http://reductivelabs.com/trac/puppet/wiki/RegenerateSSL</a>
+</p>
+
+<p>
+The manual steps are as follows:
+</p>
+
+<ol>
+<li>You need to wipe and regenerate your CA info:
+<pre>
+/etc/init.d/puppetmaster stop
+rm $vardir/ssl/*
+/etc/init.d/puppetmaster start
+</pre>
+<p>
+However, if you are running mongrel, instead of starting puppetmaster from
+the init script, you will need to first stop the front-end web listener
+(apache, nginx, etc.) and then do the following:
+</p>
+<pre>
+puppetmasterd --daemonize ; sleep 30 ; pkill -f 'ruby /usr/sbin/puppetmasterd'
+</pre>
+<p>
+The above is necessary because for some reason when running with mongrel,
+puppetmaster will not regenerate its CA.
+</p>
+</li>
+<li>Wipe all the client certs
+<pre>
+/etc/init.d/puppet stop
+rm $vardir/ssl/*
+</pre> 
+</li>
+<li>Have each client request a new cert:
+<pre>
+puppetd --onetime --debug --ignorecache --no-daemonize
+</pre> 
+</li>
+<li>Once all the requests have rolled in, you can sign them all at once:
+<pre>
+puppetca --sign --all
+</pre> 
+</li>
+<li>Start up your puppet clients:
+<pre>
+/etc/init.d/puppet start
+</pre>
+</li>
+</ol>
+
+<p>
+You could also enable autosign temporarily, if you are comfortable with that.
 </p>
 
 <h1><a name="xrdp">xrdp</a></h1>
