@@ -1,4 +1,164 @@
 #use wml::debian::template title="Schlüsselaustausch - Key Rollover"
-#use wml::debian::translation-check translation="1.1" maxdelta="1"
+#use wml::debian::translation-check translation="1.5" maxdelta="1"
 
-<h1>Wird in Kürze ergänzt</h1>
+<p>
+In der <a href="$(HOME)/security/2008/dsa-1571">Debian-Sicherheitsankündigung 1571</a>,
+deckte das Debian-Sicherheitsteam eine Verwundbarkeit im Paket openssl auf, die viele
+kryptografische Schlüssel, die für Authentizierung (z.B. mittels SSH)
+oder Signierung (z.B. Web-Server-Zertifikate) verwendet werden, potentiell
+anfällig macht.
+</p>
+
+<p>
+Diese Seite dokumentiert, wie die Schlüssel für Pakete, deren Schlüssel durch
+die openssl-Verwundbarkeit betroffen sind, ausgetauscht werden können.
+</p>
+
+<ul>
+<li><a href="#openssh">OpenSSH</a>
+<li><a href="#openswan">OpenSWAN / StrongSWAN</a>
+</ul>
+
+<p>
+Für Anleitungen zum Schlüsselaustausch für andere Software wird auf die
+von Benutzern zusammengetragenen Informationen unter
+<url http://wiki.debian.org/SSLkeys> verwiesen.
+</p>
+
+<h1><a name="openssh">OpenSSH</a></h1>
+
+<p>
+Ein Paket wurde als <a href="$(HOME)/security/2008/dsa-1576">DSA-1576</a>, 
+herausgegeben, das die Schlüsseltransformation vereinfacht.
+</p>
+
+<p>1. Installieren Sie die Sicherheitsaktualisierungen aus DSA-1576</p>
+
+   <p>Sobald die Aktualisierung eingespielt wurde, werden schwache
+   Benutzerschlüssel, wenn möglich, automatisch zurückgewiesen (diese können
+   aber nicht in allen Fällen erkannt werden). Falls Sie solche Schlüssel
+   für die Benutzerauthentifizierung verwenden, werden sie ab sofort nicht
+   mehr funktionieren und müssen ersetzt werden (siehe Schritt 3).</p>
+
+   <p>OpenSSH-Rechner-Schlüssel können automatisch neu erzeugt werden, wenn
+      die OpenSSH-Sicherheitsaktualisierung eingespielt wurde. Die
+      Aktualisierung wird nach Bestätigung fragen, bevor dieser Schritt
+      durchgeführt wird.</p>
+
+<p>2. Aktualisierung der OpenSSH-Dateien <tt>known_hosts</tt></p>
+
+   <p>Die Neuerzeugung der Rechnerschlüssel wird eine Warnung ausgeben, wenn
+      auf das System mit SSH zugegriffen wird, bis der Recherschlüssel in
+      der Datei known_hosts aktualisiert wurde. Die Warnung wird wie folgt aussehen:</p>
+
+<pre>
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that the RSA host key has just been changed.
+</pre>
+
+Auf Deutsch lautet diese Meldung in etwa wie folgt:
+
+<pre>
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ WARNING: IDENTIFIZIERUNG DES ENTFERNTES RECHNERS HAT SICH GEÄNDERT @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ES IST MÖGLICH, DASS JEMAND ETWAS BÖSES TUT!
+Jemand könnte Sie zurzeit abhören (man-in-the-middle-(Mann in der Mitte)-Angriff)!
+Es ist auch möglich, dass der RSA-Rechnerschlüssel vor kurzem geändert wurde.
+</pre>
+
+   <p>In diesem Fall wurde der Rechnerschlüssel einfach geändert und Sie
+      sollten die entsprechende Datei <tt>known_hosts</tt>, wie in der
+      Fehlermeldung beschrieben, aktualisieren.
+   
+   Es wird empfohlen, dass Sie einen vertrauenswürdigen Kanal zum Austausch
+   des Server-Schlüssels verwenden. Er befindet sich in der Datei
+   <tt>/etc/ssh/ssh_host_rsa_key.pub</tt> auf dem Server;
+   sein Fingerabdruck kann mit dem folgenden Kommando gedruckt werden:</p>
+
+      <p>ssh-keygen -l -f /etc/ssh/ssh_host_rsa_key.pub</p>
+
+   <p>Zusätzlich zu benutzerspezifischen <tt>known_hosts</tt>-Dateien, kann
+      eine systemweite Datei <tt>/etc/ssh/known_hosts</tt> existieren. Diese
+      Datei wird sowohl vom ssh-Klient als auch von sshd für die
+      <tt>hosts.equiv</tt>-Funktionalität verwendet. Diese Datei muss auch
+      aktualisiert werden.</p>
+
+<p>3. Überprüfen aller OpenSSH-Benutzerschlüssel</p>
+
+   <p>Der sicherste Weg ist es, alle OpenSSH-Benutzerschlüssel neu zu
+      erzeugen, es sei denn, es kann mit ausreichender Bestimmtheit
+      sichergestellt werden, dass der Schlüssel auf einem nicht betroffenen
+      System erstellt wurde.</p>
+
+   <p>Um zu testen, ob Ihr Schlüssel betroffen ist, können Sie
+      ssh-vulnkey starten, was in der sicherheitsaktualisierung enthalten ist.
+      Standardmäßig wird ssh-vulnkey den Standardort für Benutzerschlüssel
+      (~/.ssh/id_rsa, ~/.ssh/id_dsa und ~/.ssh/identity), Ihre Datei
+      <tt>authorized_keys</tt> ( <tt>~/.ssh/authorized_keys</tt> und
+      ~/.ssh/authorized_keys2) und die Rechnerschlüssel des Systems
+      (/etc/ssh/ssh_host_dsa_key und /etc/ssh/ssh_host_rsa_key) überprüfen.</p>
+
+   <p>Sie können alle Ihre eigenen Schlüssel wie folgt testen, unter der
+      Voraussetzung, dass sie sich an den Standardorten (~/.ssh/id_rsa,
+      ~/.ssh/id_dsa oder ~/.ssh/identity) befinden:</p>
+
+     <p>ssh-vulnkey</p>
+
+   <p>Um alle Schlüssel auf Ihrem System zu überprüfen:</p>
+
+     <p>sudo ssh-vulnkey -a</p>
+
+   <p>Um einen Schlüssel an einem nicht standardmäßigem Ort zu testen:</p>
+
+     <p>ssh-vulnkey /Pfad/zum/Schlüssel</p>
+
+   <p>Falls ssh-vulnkey die Meldung <q>Unknown (no blacklist information)</q>
+      ausgibt, hat es keine Information darüber, ob der Schlüssel betroffen ist.
+      Im Zweifelsfall sollte der Schlüssel zerstört und ein neuer erzeugt
+      werden.
+   </p>
+
+<p>4. Neuerzeugen beliebiger betroffener Benutzerschlüssel</p>
+
+   <p>Für die Benutzerauthentifizierung verwendete OpenSSH-Schlüssel müssen
+   normalerweise neu erzeugt werden, inklusive derjenigen, die nach der
+   Erzeugung auf ein anderes System übertragen wurden.</p>
+
+   <p>Neue Schlüssel können mit ssh-keygen erzeugt werden, z.B.:</p>
+
+   <pre>
+   $ ssh-keygen
+   Generating public/private rsa key pair.
+   Enter file in which to save the key (/home/user/.ssh/id_rsa):
+   Enter passphrase (empty for no passphrase):
+   Enter same passphrase again:
+   Your identification has been saved in /home/user/.ssh/id_rsa.
+   Your public key has been saved in /home/user/.ssh/id_rsa.pub.
+   The key fingerprint is:
+   00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00 user@host
+   </pre>
+
+<p>5. Aktualisierung der <tt>authorized_keys</tt>-Dateien (falls nötig)</p>
+
+   <p>Sobald die Benutzerschlüssel neu erzeugt wurden, müssen die relevanten
+      öffentlichen Schlüssel in <tt>authorized_keys</tt>-Dateien (und eventuell
+      <tt>authorized_keys2</tt>-Dateien) auf entfernten Systemen übertragen
+      werden. Stellen Sie sicher, die betroffenen Schlüssel zu löschen.</p>
+
+<h1><a name="openswan">OpenSWAN / StrongSWAN</a></h1>
+
+<pre>
+rm /etc/ipsec.d/private/`hostname`Key.pem /etc/ipsec.d/certs/`hostname`Cert.pem
+dpkg-reconfigure (open|strong)swan
+/etc/init.d/ipsec restart
+</pre>
+
+<p>
+Vorsicht: Neu starten des Dienstes ipsec beendet alle aktuell offenen
+IPSec-Verbindungen. Diese müssen eventuell vom anderen Ende neu gestartet werden.
+</p>
