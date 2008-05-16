@@ -20,6 +20,7 @@ whose keys are affected by the OpenSSL vulnerability.
 
 <li><a href="#bincimap">bincimap</a>
 <li><a href="#boxbackup">boxbackup</a>
+<li><a href="#cryptsetup">cryptsetup</a>
 <li><a href="#dropbear">dropbear</a>
 <li><a href="#ftpd-ssl">ftpd-ssl</a>
 <li><a href="#gforge">gforge</a>
@@ -199,6 +200,45 @@ storing your data in plain text on a public server without authentication.
 data, and take other measures to mitigate the exposure of your
 secrets)</li>
 </ul>
+
+<h1><a name="cryptsetup">cryptsetup</a></h1>
+
+<p>
+Cryptsetup itself does not use openssl for encryption (this applies to
+both LUKS and dm-crypt devices).
+</p>
+
+<p>
+<em>If</em> cryptsetup has been configured to use SSL-encrypted keyfiles (a
+non-default setup which must be explicitly configured by the user)
+and a broken version of openssl was used to generate the keyfile, the
+keyfile encryption may be weaker than expected (as the salt is not
+truly random).
+<p>
+
+<p>
+The solution is either to re-encrypt the keyfile (if you are
+reasonably certain that the encrypted key has not been disclosed to to
+any third parties) or to wipe and reinstall the affected partition(s)
+using a new key.
+</p>
+
+<p>
+Instructions for re-encrypting a keyfile:
+</p>
+
+<p>
+Do the following for each SSL-encrypted keyfile, replacing
+&lt;ssl_encrypted_key_path&gt; with the path to the actual keyfile:
+</p>
+
+<pre>
+tmpkey=$(tempfile)
+openssl enc -aes-256-cbc -d -salt -in &lt;ssl_encrypted_key_path&gt; -out "$tmpkey"
+shred -uz &lt;ssl_encrypted_key_path&gt;
+openssl enc -aes-256-cbc -e -salt -in "$tmpkey" -out &lt;ssl_encrypted_key_path&gt;
+shred -uz "$tmpkey"
+</pre>
 
 <h1><a name="dropbear">dropbear</a></h1>
 
