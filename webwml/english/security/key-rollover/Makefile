@@ -8,8 +8,8 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html: index.wml
+index.$(LANGUAGE).html: index.wml $(ENGLISHSRCDIR)/security/key-rollover/index.wml
 	$(WML) $(<F)
 
-notvuln.$(LANGUAGE).html: notvuln.wml
+notvuln.$(LANGUAGE).html: notvuln.wml $(ENGLISHSRCDIR)/security/key-rollover/notvuln.wml
 	$(WML) $(<F)
