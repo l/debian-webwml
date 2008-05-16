@@ -16,6 +16,7 @@ whose keys are affected by the OpenSSL vulnerability.
 <li><b><a href="#openssh">OpenSSH</a></b>
 
 <li><a href="#bincimap">bincimap</a>
+<li><a href="#boxbackup">boxbackup</a>
 <li><a href="#dropbear">dropbear</a>
 <li><a href="#ftpd-ssl">ftpd-ssl</a>
 <li><a href="#gforge">gforge</a>
@@ -167,6 +168,35 @@ into /etc/ssl/certs/imapd.pem. To regenerate, run:
 rm -f /etc/ssl/certs/imapd.pem
 dpkg-reconfigure bincimap
 </pre>
+
+<h1><a name="boxbackup">boxbackup</a></h1>
+
+<p>
+Boxbackup is not present in Debian stable, only in testing/Lenny.
+</p>
+
+<p>
+Upstream has published a first impact analysis of key material created
+on system with insufficient random PRNG. You can read the details
+<a href="http://lists.warhead.org.uk/pipermail/boxbackup/2008-May/004476.html">here</a>.
+
+<p>
+If the PRNG in your OpenSSL was insufficiently random, you need to:
+</p>
+
+<ul>
+<li>Regenerate all affected certificates, which have been generated or
+signed on an affected system</li>
+<li>Regenerate all the data keys (*-FileEncKeys.raw)</li>
+<li>Destroy the data stored on your server to an appropriate level of
+security (overwrite with zeros at the least, more if you're paranoid)</li>
+<li>Upload everything again</li>
+<li>Take appropriate measures under the assumption that you have been
+storing your data in plain text on a public server without authentication.
+(ie, start from scratch, destroying all trace of the backed up
+data, and take other measures to mitigate the exposure of your
+secrets)</li>
+</ul>
 
 <h1><a name="dropbear">dropbear</a></h1>
 
