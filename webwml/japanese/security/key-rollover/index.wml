@@ -1,0 +1,341 @@
+#use wml::debian::template title="Key Rollover"
+#use wml::debian::translation-check translation="1.17"
+
+<p>
+In <a href="$(HOME)/security/2008/dsa-1571">Debian Security Advisory 1571</a>, the Debian
+Security Team は、OpenSSL パッケージの欠陥を公表しました。本人認証
+(SSH 経由) や署名 (例えばウェブサーバ証明書)
+に使われる暗号鍵が潜在的に脆弱なものとなります。
+</p>
+
+<p>
+このページの文書は、鍵のロールオーバー (総交換) 手順を、OpenSSL
+ の欠陥に影響される鍵を持つ各パッケージ別に示したものです。
+</p>
+
+<ul>
+<li><b><a href="#openssh">OpenSSH</a></b>
+
+<li><a href="#ftpd-ssl">ftpd-ssl</a>
+<li><a href="#gforge">gforge</a>
+<li><a href="#kerberos">MIT Kerberos (krb5)</a>
+<li><a href="#openswan">OpenSWAN / StrongSWAN</a>
+<li><a href="#openvpn">OpenVPN</a>
+<li><a href="#puppet">puppet</a>
+<li><a href="#ssl-cert">ssl-cert</a>
+<li><a href="#telnetd-ssl">telnetd-ssl</a>
+<li><a href="#xrdp">xrdp</a>
+</ul>
+
+<p>
+他のソフトウェアも暗号鍵を用いますが、鍵生成や交換に OpenSSL を使っていないため
+<a href="notvuln">欠陥はありません</a>。
+</p>
+
+<ul>
+<li><a href="notvuln#ckermit">ckermit</a>
+<li><a href="notvuln#gnupg">GnuPG</a>
+<li><a href="notvuln#iceweasel">Iceweasel</a>
+<li><a href="notvuln#mysql">MySQL</a>
+</ul>
+
+<p>
+これ以外のソフトウェアでのキーロールオーバの手順については、ユーザからの情報
+<url http://wiki.debian.org/SSLkeys> が参考になります。
+</p>
+
+<h1><a name="openssh">OpenSSH</a></h1>
+
+<p>
+# can this sentence be improved? (e.g. "An updated package ... (together|in|with)
+with DSA-1576")
+パッケージが <a href="$(HOME)/security/2008/dsa-1576">DSA-1576</a>
+としてリリースされており、鍵の変換が楽になっています。
+</p>
+
+<p>1. DSA-1576 のセキュリティ更新をインストールする</p>
+
+   <p>   更新の適用が終わったならば、可能な場合には脆弱なユーザ鍵は自動的に拒絶されます。
+   但し全部の検出は行えません。ユーザの個人認証にこのような鍵を使っている場合は、鍵は
+直後に動作しなくなり、新しい鍵で更新しなければならなくなります
+   (手順 3 参照)。</p>
+
+   <p>OpenSSH ホスト鍵は、OpenSSH セキュリティ更新を適用後自動的に再作成さ
+   れます。更新時には、この処理の前にユーザへの確認問い合わせが行われま
+   す。</p>
+
+<p>2. OpenSSH known_hosts ファイルを更新する</p>
+
+   <p>ホスト鍵を再生成した場合、SSH を使っているシステムに接続の際、
+   known_hosts のホスト鍵の更新がすんでいない場合には以下の警告画面が表示されます</p>
+
+<pre>
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that the RSA host key has just been changed.
+</pre>
+
+   <pこの場合、実際にホスト鍵が変更されているので、エラーメッセージにあるよ
+   うに対象の known_hosts を更新する必要があります。
+
+      サーバ鍵の交換には、信用できる通信路を使用することを勧めます。鍵はサ
+   ーバ上の /etc/ssh/ssh_host_rsa_key.pub に置かれます。鍵のフィンガー
+   プリントは以下のコマンドで見ることができます。</p>
+
+      <p>ssh-keygen -l -f /etc/ssh/ssh_host_rsa_key.pub</p>
+
+   <p>ユーザ別の known_hosts ファイル以外に、システム全体で有効なホストフ
+   ァイル  /etc/ssh/known_hosts が存在しているかもしれません。このファ
+   イルは ssh クライアントと sshd の両方で hosts.equiv 機能を提供するた
+   めに使われています。このファイルも同様に更新する必要があります。</p>
+
+<p>3. すべての OpenSSH ユーザ鍵をチェックする</p>
+
+   <p>一番安全な手順は、欠陥のないシステムで作成された鍵だと強く確信できる
+   場合を除いて全ての OpenSSH 鍵を再作成することです。</p>
+
+   <p>鍵が安全かどうかは、この更新に含まれている ssh-vulnkey ツールでチ
+   ェックできます。既定では、ssh-vulnkey はユーザ鍵の標準の格納場所
+   (~/.ssh/id_rsa, ~/.ssh/id_dsa と ~/.ssh/identity) と、authorized_keys
+   ファイル (~/.ssh/authorized_keys と ~/.ssh/authorized_keys2)、およ
+   びシステムのホスト鍵 (/etc/ssh/ssh_host_dsa_key と
+   /etc/ssh/ssh_host_rsa_key) をチェックします。</p>
+
+   <p>自分の全ての鍵が標準の場所 (~/.ssh/id_rsa, ~/.ssh/id_dsa, または
+   ~/.ssh/identity) に格納されている場合、それらをチェックするには以下
+   のコマンドを使います。</p>
+
+     <p>ssh-vulnkey</p>
+
+   <p>システムの全ての鍵をチェックするには以下のようにします</p>
+
+     <p>sudo ssh-vulnkey -a</p>
+
+   <p>非標準の場所での鍵をチェックするには以下のようにします</p>
+
+     <p>ssh-vulnkey /path/to/key</p>
+
+   <p>もし ssh-vulnkey が <q>"Unknown (no blacklist information)"</q>
+   と答えた場合、キーが脆弱かどうかの情報がないということです。
+   疑わしい場合は、新しい鍵を作成して、全部のサーバから古い鍵を削除して
+   ください。
+   </p>
+
+<p>4. 離京を受けるユーザ鍵を再作成する</p>
+
+   <p>ユーザの個人認証に使用する OpenSSH 鍵は、手動で再生成する必要があり
+   ます。これは生成後に他のシステムに移動した鍵を含みます。</p>
+
+   <p>新しい鍵は ssh-keygen を使って作成します。</p>
+
+   <pre>
+   $ ssh-keygen
+   Generating public/private rsa key pair.
+   Enter file in which to save the key (/home/user/.ssh/id_rsa):
+   Enter passphrase (empty for no passphrase):
+   Enter same passphrase again:
+   Your identification has been saved in /home/user/.ssh/id_rsa.
+   Your public key has been saved in /home/user/.ssh/id_rsa.pub.
+   The key fingerprint is:
+   00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00 user@host
+   </pre>
+
+<p>5. authorized_keys ファイルを更新する (必要に応じて実行)</p>
+
+   <p>ユーザキーを再作成した後、対応する公開鍵は必要なリモートシステムの
+   authorized_keys (または authorized_keys2) に配布する必要があります。
+   当該ファイルから古い鍵を削除することを忘れないようにしてください。</p>
+
+<h1><a name="ftpd-ssl">ftpd-ssl</a></h1>
+
+<pre>
+rm -f /etc/ftpd-ssl/ftpd.pem /etc/ssl/certs/ftpd.pem
+dpkg-reconfigure ftpd-ssl
+</pre>
+
+<p>
+この手順により、標準のセットアップはカバーされます。ローカルの管理者がこれ以上の ssl
+インフラストラクチャに関する設定を行っている場合、それらに関する鍵の再作成も同様に必
+要です。
+</p>
+
+<h1><a name="gforge">gforge</a></h1>
+
+<p>
+lenny と sid に収録された gforge-web-apache2 パッケージは、他二歳と証明書が存在してい
+なかった場合にはダミーのサイト証明書を用いてウェブサイトを設定します。
+ユーザはそれを追って正式な証明書に交換することが推奨されているわけです。
+問題のダミーの証明書は名称が Snake Oil になっており、すでに脆弱だと (SSL のバグと関係
+なしに) 明白なものとみなすべきものです。
+しかしながら、一部のユーザは深く考えずこの証明書を受け入れてしまうかもしれません。
+</p>
+
+<h1><a name="kerberos">MIT Kerberos (krb5)</a></h1>
+
+<p>
+Debian 4.0 ("Etch") の MIT Kerberos は OpenSSL を全く使っていないため
+Debian 4.0 の Kerberos には影響は全くありません。
+</p>
+
+<p>
+Lenny では、OpenSSL を使う別パッケージ krb5-pkinit があります。
+<ul>
+<li>
+MIT Kerberos 自体は、PKINIT プラグインを使っている場合でも、長期にわたって使用する鍵
+を生成しません。従って長期利用の鍵に関する欠陥は、MIT Kerberos ソフトウェアとは別に作
+成されたものです。PKINIT プラグインは、存在している鍵ペアを参照するだけで、鍵の管理に
+は責任を持ちません。
+</li>
+<li>
+PKINIT プラグイン内部で生成されるランダムなセッション鍵は全て、通常の MIT
+Kerberos 乱数鍵生成関数を使って実施されます。OpenSSL
+の乱数生成器ではありません。従って PKINIT
+で生成されたセッションは今回の欠陥の影響を受けません。
+</li>
+</ul>
+</p>
+
+<p>
+MIT Kerberos 自体は今回の欠陥を持ちません。但し、PKINIT が用いる鍵ペアは、
+欠陥のある Debian システムで生成されている場合、欠陥を持つかもしれません。
+但し、このような生成は MIT Kerberos の枠組みの外の話です。
+</p>
+
+<h1><a name="openswan">OpenSWAN / StrongSWAN</a></h1>
+
+<pre>
+rm /etc/ipsec.d/private/`hostname`Key.pem /etc/ipsec.d/certs/`hostname`Cert.pem
+dpkg-reconfigure (open|strong)swan
+/etc/init.d/ipsec restart
+</pre>
+
+<p>
+注意；ipsec サービスを再起動すると、その時点でオープンされている全ての
+IPSec コネクションが切断されます。
+接続の反対側では再起動が必要になるかもしれません。
+</p>
+
+<h1><a name="openvpn">OpenVPN</a></h1>
+
+<p>
+秘密鍵ファイルをバックアップしてください。鍵の名前は好きにつけられ、
+以下のコマンドを実行することで検出されます。
+<pre>grep secret /etc/openvpn/*.conf</pre>
+</p>
+
+<p>
+これらの鍵を以下のコマンドで再作成してください。
+<pre>openvpn --genkey --secret SECRET_FILENAME</pre>
+</p>
+
+<p>
+この後、共有の秘密鍵をリモートホストにコピーし、両端のホストで以下のコマンドを使って
+VPN を再起動してください。
+<pre>/etc/init.d/openvpn force-reload</pre>
+</p>
+
+<h1><a name="puppet">puppet</a></h1>
+
+<p>
+puppet の証明書を扱うには二つの方法があります。capistrano
+を使う方法と、手動で行う方法です。
+</p>
+
+<p>
+capistrano を使った場合の Puppet SSL 証明書を再作成する方法は、以下のページで詳しく説
+明されています。
+<a
+href="http://reductivelabs.com/trac/puppet/wiki/RegenerateSSL";>http://reductivelabs.com/trac/puppet/wiki/RegenerateSSL</a>
+</p>
+
+<p>
+手動で行うには、以下の手順をおこないます。
+</p>
+
+<ol>
+<li>CA 情報を消し去って再作成しなければなりません
+<pre>
+/etc/init.d/puppetmaster stop
+rm $vardir/ssl/*
+/etc/init.d/puppetmaster start
+</pre>
+<p>
+但し、init スクリプトから puppetmaster を起動する代わりに mongrel を実行している場合
+は、まずフロントエンドのウェブリスナ (apache, nginx, etc.) を止めてから、以下の処理を
+行う必要があるでしょう。
+</p>
+<pre>
+puppetmasterd --daemonize ; sleep 30 ; pkill -f 'ruby /usr/sbin/puppetmasterd'
+</pre>
+<p>
+このような処理が必要なのは、何らかの理由で mongrel を実行している場合、
+puppetmaster が CA の再作成を行わないからです。
+</p>
+</li>
+<li>全てのクライアント証明書を消去する
+<pre>
+/etc/init.d/puppet stop
+rm $vardir/ssl/*
+</pre>
+</li>
+<li>各クライアントから、新しい証明書を要求する。
+<pre>
+puppetd --onetime --debug --ignorecache --no-daemonize
+</pre>
+</li>
+<li>全ての要求を取り込んだら、全部にまとめて署名できます
+<pre>
+puppetca --sign --all
+</pre>
+</li>
+<li>puppet クライアントを起動する
+<pre>
+/etc/init.d/puppet start
+</pre>
+</li>
+</ol>
+
+<p>
+その方が好きなら、autosign を一時的に有効にしておくこともできます。
+</p>
+
+<h1><a name="ssl-cert">ssl-cert</a></h1>
+
+<p>
+snakeoil 証明書 /etc/ssl/certs/ssl-cert-snakeoil.pem
+は、以下のようにして再作成できます。
+</p>
+
+<pre>make-ssl-cert generate-default-snakeoil --force-overwrite</pre>
+
+<h1><a name="telnetd-ssl">telnetd-ssl</a></h1>
+
+<pre>
+rm -f /etc/telnetd-ssl/telnetd.pem /etc/ssl/certs/telnetd.pem
+dpkg-reconfigure telnetd-ssl
+</pre>
+
+<p>
+この手順により、標準のセットアップはカバーされます。ローカルの管理者がこれ以上の ssl
+インフラストラクチャに関する設定を行っている場合、それらに関する鍵の再作成も同様に必
+要です。
+</p>
+
+<h1><a name="xrdp">xrdp</a></h1>
+
+<p>
+xrdp は生成された鍵を使用しています。殆どのクライアントは既定ではこれらの鍵をチェック
+しないため、鍵の交換には苦労は必要ありません。単に以下のようにしてください。
+</p>
+
+<pre>
+rm /etc/xrdp/rsakeys.ini
+/etc/init.d/xrdp restart
+</pre>
+
+<p>
+xrdp は安定版には収録されていません。
+</p>
