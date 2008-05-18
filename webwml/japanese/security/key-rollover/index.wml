@@ -1,11 +1,14 @@
 #use wml::debian::template title="鍵のロールオーバー"
-#use wml::debian::translation-check translation="1.17"
+#use wml::debian::translation-check translation="1.22"
 
 <p>
 <a href="$(HOME)/security/2008/dsa-1571">Debian セキュリティ勧告 1571</a>
-で、Debian セキュリティチームは、OpenSSL パッケージの欠陥を公表しました。本人認証
-(SSH 経由) や署名 (例えばウェブサーバ証明書)
-に使われる暗号鍵が潜在的に脆弱なものとなります。
+で、Debian セキュリティチームは、Debian およびその派生ディストリビューションの OpenSSL
+で使用されている乱数生成器の欠陥を修正しました。この欠陥によって、一部の暗号鍵は、
+本来あるべき姿よりも遥かに一般的なものとなってしまっているため、攻撃者は、
+システムに関するごくわずかな知識を持っていれば、
+総当たり攻撃を通じて鍵を推測できてしまう可能性があります。この問題は、
+特に OpenSSH、OpenVPN、SSL 証明書の使用に影響します。
 </p>
 
 <p>
@@ -16,6 +19,9 @@
 <ul>
 <li><b><a href="#openssh">OpenSSH</a></b>
 
+<li><a href="#bincimap">bincimap</a>
+<li><a href="#boxbackup">boxbackup</a>
+<li><a href="#dropbear">dropbear</a>
 <li><a href="#ftpd-ssl">ftpd-ssl</a>
 <li><a href="#gforge">gforge</a>
 <li><a href="#kerberos">MIT Kerberos (krb5)</a>
@@ -24,6 +30,8 @@
 <li><a href="#puppet">puppet</a>
 <li><a href="#ssl-cert">ssl-cert</a>
 <li><a href="#telnetd-ssl">telnetd-ssl</a>
+<li><a href="#tinc">tinc</a>
+<li><a href="#tor">tor</a>
 <li><a href="#xrdp">xrdp</a>
 </ul>
 
@@ -47,9 +55,8 @@
 <h1><a name="openssh">OpenSSH</a></h1>
 
 <p>
-# can this sentence be improved? (e.g. "An updated package ... (together|in|with) with DSA-1576")
-パッケージが <a href="$(HOME)/security/2008/dsa-1576">DSA-1576</a>
-としてリリースされており、鍵の変換が楽になっています。
+更新版のパッケージが <a href="$(HOME)/security/2008/dsa-1576">DSA-1576</a>
+を通じてリリースされており、鍵の変換が楽になっています。
 </p>
 
 <p>1. DSA-1576 のセキュリティ更新をインストールする</p>
@@ -147,6 +154,71 @@ It is also possible that the RSA host key has just been changed.
    <p>ユーザキーを再作成した後、対応する公開鍵は必要なリモートシステムの
    authorized_keys (または authorized_keys2) に配布する必要があります。
    当該ファイルから古い鍵を削除することを忘れないようにしてください。</p>
+  
+<h1><a name="bincimap">bincimap</a></h1>
+
+<p>
+bincimap パッケージでは、自動的に openssl プログラムを用いて bincimap-ssl
+サービス用の自己署名証明書を作成し、それを /etc/ssl/certs/imapd.pem に配置します。
+再生成するには、以下のコマンドを実行してください。
+</p>
+
+<pre>
+rm -f /etc/ssl/certs/imapd.pem
+dpkg-reconfigure bincimap
+</pre>
+
+<h1><a name="boxbackup">boxbackup</a></h1>
+
+<p>
+boxbackup は Debian 安定版 (stable) には存在しません。テスト版 (testing)
+である lenny にのみ存在します。
+</p>
+
+<p>
+開発元は、ランダムさが不十分な疑似乱数生成器 (PRNG)
+を用いて作成された鍵の最初の影響分析の結果を公開しました。詳細は<a
+href="http://lists.warhead.org.uk/pipermail/boxbackup/2008-May/004476.html">こちらで</a>読めます。
+
+<p>
+お使いの OpenSSL の PRNG のランダムさが不十分な場合は、以下のことをする必要があります。
+</p>
+
+<ul>
+<li>問題のシステムで生成・署名された、影響のある証明書をすべて生成しなおす</li>
+<li>データ鍵 (*-FileEncKeys.raw) をすべて生成しなおす</li>
+<li>サーバに保存されているデータを適切なセキュリティレベルで破壊する (最低でもゼロ書き込みを行い、徹底的に破壊しないと気が済まない場合はさらなる作業をする)</li>
+<li>すべてのものをアップロードしなおす</li>
+<li>これまで公開サーバに認証なしでプレーンテキストのデータを保存していたという仮定のもとで、
+適切な措置をとる (つまり、最初からやり直し、バックアップされたデータの痕跡をすべて消し、
+さらに、あなたの秘密が暴露するのを和らげるためのその他の措置をとる)
+</li>
+</ul>
+
+<h1><a name="dropbear">dropbear</a></h1>
+
+<p>
+/etc/ssh/*host* という鍵がある場合は、Dropbear の鍵を更新する前に、
+まず /etc/ssh/*host* を削除するか、または <a href="#openssh">OpenSSH
+に関する説明</a>に従ってください。
+</p>
+
+<p>
+Dropbear の postinst は、dropbear のホスト鍵が見つからない場合、
+既存の OpenSSH の鍵を dropbear 形式に変換します。
+</p>
+
+<pre>
+rm /etc/dropbear/*_host_key
+dpkg-reconfigure dropbear
+</pre>
+
+<p>
+注意: Dropbear 自体が生成した鍵は脆弱ではありません (OpenSSL ではなく libtomcrypt
+を使用しています)。
+</p>
+
+</p>
 
 <h1><a name="ftpd-ssl">ftpd-ssl</a></h1>
 
@@ -321,6 +393,74 @@ dpkg-reconfigure telnetd-ssl
 この手順により、標準のセットアップはカバーされます。ローカルの管理者がこれ以上の ssl
 インフラストラクチャに関する設定を行っている場合、それらに関する鍵の再作成も同様に必
 要です。
+</p>
+
+<h1><a name="tinc">tinc</a></h1>
+
+<p>
+次の方法で、疑わしい公開鍵・秘密鍵はすべての削除してください。
+<ol>
+<li>rsa_key.priv を削除する。</li>
+<li>hosts/ ディレクトリ内のファイルをすべて編集して、公開鍵のブロックを削除する。</li>
+</ol>
+</p>
+
+<p>
+次の方法で、新たな公開鍵・秘密鍵の鍵対を生成してください。
+<pre>
+tincd -n <netname> -K
+</pre>
+</p>
+
+<p>
+VPN の他のメンバーと、新たな公開鍵とともにホストの設定ファイルを交換してください。
+tinc デーモンを再起動するのをお忘れなく。
+</p>
+
+<h1><a name="tor">tor</a></h1>
+
+<p>
+Tor は安定版 (stable) には収録されていませんが、lenny では欠陥の影響を受けます。
+</p>
+
+<p>
+バージョン 0.1.2.x を実行するクライアントは欠陥の影響を受けません。
+あらゆるバージョンを実行する Tor ノードや秘匿サービス提供者、およびバージョン 0.2.0.x
+を使用するユーザは、欠陥の影響を受けます。
+</p>
+
+<p>
+Tor アナウンス用メーリングリスト上の<a
+href="http://archives.seul.org/or/announce/May-2008/msg00000.html">脆弱性のアナウンス</a>を参照してください。
+</p>
+
+<p>
+バージョン 0.1.2.19-3 (テスト版 (testing) および不安定版 (unstable)、
+backports.org、通常の <a
+href="https://wiki.torproject.org/noreply/TheOnionRouter/TorOnDebian">noreply.org
+のリポジトリ</a> から入手可能) またはバージョン 0.2.0.26-rc-1 (experimental
+および通常の <a
+href="https://wiki.torproject.org/noreply/TheOnionRouter/TorOnDebian">noreply.org
+のリポジトリ</a>) へのアップグレードをお勧めします。これらのバージョンでリレーを実行すると、
+強制的に新しいサーバ鍵 (/var/lib/tor/keys/secret_*) が生成されます。
+</p>
+
+<p>
+パッケージのインフラストラクチャ (debian-tor というユーザや、/var/lib/tor
+という DataDirectory など) を利用せずに Tor ノードを実行する場合は、
+問題のある鍵を手で削除する必要があります。前述の勧告のリンクを参照してください。
+</p>
+
+<p>
+秘匿サービス提供者であり、libssl に問題があった期間に鍵を生成した場合は、
+秘匿サービスの秘密鍵を削除してください。それによって秘匿サービスのホスト名が変わり、
+サーバの再設定が必要になるかもしれません。
+</p>
+
+<p>
+バージョン 0.2.0.x を実行している場合は、アップグレードを強くお勧めします。
+6 つの v3 認証サーバのうち 3 つが欠陥のある鍵を使用しているからです。
+古いバージョン 0.2.0.x は、1 〜 2 週間で動作を停止する予定です。
 </p>
 
 <h1><a name="xrdp">xrdp</a></h1>
