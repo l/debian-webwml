@@ -1,5 +1,5 @@
 #use wml::debian::template title="鍵のロールオーバー"
-#use wml::debian::translation-check translation="1.24"
+#use wml::debian::translation-check translation="1.25"
 
 <p>
 <a href="$(HOME)/security/2008/dsa-1571">Debian セキュリティ勧告 1571</a>
@@ -18,6 +18,7 @@
 
 <ul>
 <li><b><a href="#openssh">OpenSSH</a></b>
+<li><b><a href="#openssl">OpenSSL: 一般的な PEM 鍵生成手順の説明</a></b>
 
 <li><a href="#bincimap">bincimap</a>
 <li><a href="#boxbackup">boxbackup</a>
@@ -156,6 +157,23 @@ It is also possible that the RSA host key has just been changed.
    authorized_keys (または authorized_keys2) に配布する必要があります。
    当該ファイルから古い鍵を削除することを忘れないようにしてください。</p>
   
+<h1><a name="openssl">OpenSSL: 一般的な PEM 鍵生成手順の説明</a></h1>
+
+<p>
+以下の記述は、PEM で符号化された証明書を (再) 生成するユーザのための、
+単なるリマインダです。この手順の他にも、
+おそらくサイトには鍵の管理方法に関する取り決めがあるので、それにも従うべきでしょう。
+さらに、下記の方法で自己証明を用いるよりも、
+第三者の証明機関に再度署名してもらう必要があるかもしれません。
+</p>
+
+<pre>
+cd /etc/ssl/private
+openssl genrsa 1024 &gt; mysite.pem
+cd /etc/ssl/certs
+openssl req -new -key ../private/mysite.pem -x509 -days 9999 -out mysite.pem
+</pre>
+
 <h1><a name="bincimap">bincimap</a></h1>
 
 <p>
