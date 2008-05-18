@@ -1,5 +1,5 @@
 #use wml::debian::template title="鍵のロールオーバー"
-#use wml::debian::translation-check translation="1.22"
+#use wml::debian::translation-check translation="1.23"
 
 <p>
 <a href="$(HOME)/security/2008/dsa-1571">Debian セキュリティ勧告 1571</a>
@@ -21,6 +21,7 @@
 
 <li><a href="#bincimap">bincimap</a>
 <li><a href="#boxbackup">boxbackup</a>
+<li><a href="#cryptsetup">cryptsetup</a>
 <li><a href="#dropbear">dropbear</a>
 <li><a href="#ftpd-ssl">ftpd-ssl</a>
 <li><a href="#gforge">gforge</a>
@@ -195,6 +196,46 @@ href="http://lists.warhead.org.uk/pipermail/boxbackup/2008-May/004476.html">こち
 さらに、あなたの秘密が暴露するのを和らげるためのその他の措置をとる)
 </li>
 </ul>
+
+<h1><a name="cryptsetup">cryptsetup</a></h1>
+
+<p>
+cryptsetup 自体は暗号化に OpenSSL を使用していません (これは、LUKS と dm-crypt
+の両方のデバイスに言えることです)。
+</p>
+
+<p>
+<em>もし</em>、cryptsetup が SSL
+で暗号化された鍵ファイルを使用するようという設定 (これは非デフォルトのセットアップで、
+ユーザが明示的に設定しなければ使われることはありません) になっており、
+欠陥のあるバージョンの OpenSSL が鍵ファイルの生成に使用されたのであれば、
+(食塩が本当にランダムではないように) 鍵ファイルの暗号化は、
+期待されるよりも弱い可能性があります。
+</p>
+
+<p>
+解決策は、
+鍵ファイルを暗号化しなおす (ただし暗号化された鍵が第三者に漏洩していないとある程度確信できる場合)
+か、欠陥の影響を受けるパーティションを新たな鍵を用いて消去し、再インストールするか、
+のどちらかです。
+</p>
+
+<p>
+鍵ファイルを暗号化しなおす方法の説明は以下のとおりです。
+</p>
+
+<p>
+SSL で暗号化された各鍵ファイルについて、以下のコマンドを実行してください。
+ただし、&lt;ssl_encrypted_key_path&gt; は実際の鍵ファイルのパスで置き換えてください。
+</p>
+
+<pre>
+tmpkey=\$(tempfile)
+openssl enc -aes-256-cbc -d -salt -in &lt;ssl_encrypted_key_path&gt; -out "$tmpkey"
+shred -uz &lt;ssl_encrypted_key_path&gt;
+openssl enc -aes-256-cbc -e -salt -in "$tmpkey" -out &lt;ssl_encrypted_key_path&gt;
+shred -uz "\$tmpkey"
+</pre>
 
 <h1><a name="dropbear">dropbear</a></h1>
 
