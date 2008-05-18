@@ -1,5 +1,5 @@
 #use wml::debian::template title="鍵のロールオーバー"
-#use wml::debian::translation-check translation="1.23"
+#use wml::debian::translation-check translation="1.24"
 
 <p>
 <a href="$(HOME)/security/2008/dsa-1571">Debian セキュリティ勧告 1571</a>
@@ -293,26 +293,35 @@ Debian 4.0 の Kerberos には影響は全くありません。
 
 <p>
 lenny では、OpenSSL を使う別パッケージ krb5-pkinit があります。
-<ul>
-<li>
 MIT Kerberos 自体は、PKINIT プラグインを使っている場合でも、長期にわたって使用する鍵対
 を生成しません。従って長期利用の鍵対に関する欠陥は、MIT Kerberos ソフトウェアとは別に作
 成されたものです。PKINIT プラグインは、存在している鍵対を参照するだけで、鍵の管理に
 は責任を持ちません。
-</li>
-<li>
-PKINIT プラグイン内部で生成されるランダムなセッション鍵は全て、通常の MIT
-Kerberos 乱数鍵生成関数を使って実施されます。OpenSSL
-の乱数生成器ではありません。従って PKINIT
-で生成されたセッションは今回の欠陥の影響を受けません。
-</li>
-</ul>
 </p>
-
 <p>
-MIT Kerberos 自体は今回の欠陥を持ちません。但し、PKINIT が用いる鍵対は、
+PKINIT が用いる鍵対は、
 欠陥のある Debian システムで生成されている場合、欠陥を持つかもしれません。
 但し、このような生成は MIT Kerberos の枠組みの外の話です。
+</p>
+<p>
+しかし、OpenSSL の乱数生成器は、PKINIT 認証が使用されている場合は DH
+交換に使用されます。つまり、攻撃者が総当たり攻撃を用いて、PKINIT 認証に対する KDC
+のレスポンスにアクセスし、
+その後でその認証からのサービスチケットを用いて作成されたあらゆるセッションにアクセスできる可能性があります。
+</p>
+<p>
+何らかの KDC で lenny の PKINIT プラグインを使用している場合は、すぐに KDC
+の libssl0.9.8 パッケージをアップグレードし、以下のコマンドを実行して Kerberos KDC
+を再起動してください。
+</p>
+<pre>
+/etc/init.d/krb5-kdc restart
+</pre>
+<p>
+欠陥のある libssl を使用している Kerberos KDC を用いた PKINIT 認証に由来する、
+あらゆる Kerberos チケット保証チケット (TGT) や暗号化されたセッションは、
+疑ってかかるべきです。パケットキャプチャを使用する攻撃者は、
+これらの鍵やセッションを侵害できる可能性があります。
 </p>
 
 <h1><a name="openswan">OpenSWAN / StrongSWAN</a></h1>
