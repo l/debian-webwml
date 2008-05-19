@@ -29,6 +29,7 @@ whose keys are affected by the OpenSSL vulnerability.
 <li><a href="#kerberos">MIT Kerberos (krb5)</a>
 <li><a href="#openswan">OpenSWAN / StrongSWAN</a>
 <li><a href="#openvpn">OpenVPN</a>
+<li><a href="#proftpd">Proftpd</a>
 <li><a href="#puppet">puppet</a>
 <li><a href="#sendmail">sendmail</a>
 <li><a href="#ssl-cert">ssl-cert</a>
@@ -399,6 +400,44 @@ Then copy the shared secret keys to the remote hosts and restart the VPN
 on each host with
 </p>
 <pre>/etc/init.d/openvpn force-reload</pre>
+
+<h1><a name="proftpd">Proftpd</a></h1>
+
+<p>
+The Debian packaging doesn't include key generation, so the following
+steps should only be nessecary if SSL keys have been created externally.
+</p>
+
+<p>
+An upcoming proftpd upload to unstable will include a tls.conf template
+with the commment below.
+<p>
+
+<p>
+Note that the self-signed certificate generation is bit
+different from that suggested on the general openssl section, in order
+to avoid using of an explicit password at daemon startup.
+</p>
+
+<p>
+You can (re-)generate a self-signed certificate using a command like:
+<pre>
+ openssl req -x509 -newkey rsa:1024 \
+         -keyout /etc/ssl/private/proftpd.key -out /etc/ssl/certs/proftpd.crt \
+         -nodes -days 365
+</pre>
+</p>
+
+<p>
+Both files must be readable by root only. The file paths can be
+checked/configured through the following configuration directives:
+<pre>
+TLSRSACertificateFile                   /etc/ssl/certs/proftpd.crt
+TLSRSACertificateKeyFile                /etc/ssl/private/proftpd.key
+TLSCACertificateFile                    /etc/ssl/certs/CA.pem
+TLSOptions                              NoCertRequest
+</pre>
+</p>
 
 <h1><a name="puppet">puppet</a></h1>
 
