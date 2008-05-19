@@ -1,5 +1,5 @@
 #use wml::debian::template title="Schlüsselaustausch"
-#use wml::debian::translation-check translation="1.34" maxdelta="1"
+#use wml::debian::translation-check translation="1.38" maxdelta="1"
 
 <p>
 In der <a href="$(HOME)/security/2008/dsa-1571">Debian-Sicherheitsankündigung 1571</a>,
@@ -21,22 +21,24 @@ die OpenSSL-Verwundbarkeit betroffen sind, ausgetauscht werden können.
 <li><b><a href="#openssh">OpenSSH</a></b>
 <li><b><a href="#openssl">OpenSSL: Generic PEM key generation instructions</a></b>
 
-<li><a href="#bincimap">bincimap</a>
-<li><a href="#boxbackup">boxbackup</a>
-<li><a href="#cryptsetup">cryptsetup</a>
-<li><a href="#dropbear">dropbear</a>
-<li><a href="#ftpd-ssl">ftpd-ssl</a>
-<li><a href="#gforge">gforge</a>
+<li><a href="#bincimap">Bincimap</a>
+<li><a href="#boxbackup">Boxbackup</a>
+<li><a href="#cryptsetup">Cryptsetup</a>
+<li><a href="#dropbear">Dropbear</a>
+<li><a href="#ekg">Ekg</a>
+<li><a href="#ftpd-ssl">Ftpd-ssl</a>
+<li><a href="#gforge">Gforge</a>
 <li><a href="#kerberos">MIT Kerberos (krb5)</a>
 <li><a href="#openswan">OpenSWAN / StrongSWAN</a>
 <li><a href="#openvpn">OpenVPN</a>
-<li><a href="#puppet">puppet</a>
-<li><a href="#sendmail">sendmail</a>
-<li><a href="#ssl-cert">ssl-cert</a>
-<li><a href="#telnetd-ssl">telnetd-ssl</a>
-<li><a href="#tinc">tinc</a>
-<li><a href="#tor">tor</a>
-<li><a href="#xrdp">xrdp</a>
+<li><a href="#proftpd">Proftpd</a>
+<li><a href="#puppet">Puppet</a>
+<li><a href="#sendmail">Sendmail</a>
+<li><a href="#ssl-cert">Ssl-cert</a>
+<li><a href="#telnetd-ssl">Telnetd-ssl</a>
+<li><a href="#tinc">Tinc</a>
+<li><a href="#tor">Tor</a>
+<li><a href="#xrdp">Xrdp</a>
 </ul>
 
 <p>
@@ -314,6 +316,29 @@ dpkg-reconfigure dropbear
   verwundbar sind (es verwendet libtomcrypt statt OpenSSL).
 </p>
 
+<h1><a name="ekg">Ekg</a></h1>
+
+<p>
+  Benutzer des Programms Ekg oder Ekg2 (letzteres ist nur in Experimental) die
+  die <q>SIM</q>-Verschlüsselungsfunktionalität verwenden und ihr 
+  Schlüsselpaar mittels des Befehls <q>/key [-g|--generate]</q> erstellt
+  haben (der libssl zur Erledigung verwendet) sollten ihren Schlüssel neu
+  erstellen, nachdem Sie das Upgrade von libssl eingespielt und das Programm
+  neu gestartet haben.
+</p>
+
+<p>
+  Die Originalautoren haben einen Hinweis auf ihre Website gestellt:
+  <a href="http://ekg.chmurka.net/index.php">i\
+     http://ekg.chmurka.net/index.php</a>
+</p>
+
+<p>
+  Falls Sie weitere Hilfe benötigen, fragen Sie bitte auf 
+  ekg-users@lists.ziew.org oder auf ekg2-users@lists.ziew.org (beide auf
+  Englisch und Polnisch).
+</p>
+
 <h1><a name="ftpd-ssl">Ftpd-ssl</a></h1>
 
 <pre>
@@ -409,6 +434,45 @@ Then copy the shared secret keys to the remote hosts and restart the VPN
 on each host with
 </p>
 <pre>/etc/init.d/openvpn force-reload</pre>
+
+<h1><a name="proftpd">Proftpd</a></h1>
+
+<p>
+  Das Debian-Paket enthält keine Schlüsselerzeugung, daher sollten die folgenden
+  Schritte nur notwendig sein, falls SSL-Schlüssel extern erstellt wurden.
+</p>
+
+<p>
+  Ein zukünftiger Upload von Proftpd nach Unstable wird eine tls.conf-Vorlage
+  mit dem Kommentar unten enthalten.
+<p>
+
+<p>
+  Beachten Sie, dass die Erstellung selbst-signierter Zertifikate sich etwas
+  vom allgemeinen Abschnitt von Openssl unterscheidet, um die Verwendugn eines
+  expliziten Passworts beim Starten des Daemons zu vermeiden.
+</p>
+
+<p>
+  Sie können das selbst-signierte Zertifikat mit einem Befehl der folgenden
+  Art erstellen:
+</p>
+<pre>
+ openssl req -x509 -newkey rsa:1024 \
+         -keyout /etc/ssl/private/proftpd.key -out /etc/ssl/certs/proftpd.crt \
+	 -nodes -days 365
+</pre>
+
+<p>
+  Beide Dateien dürfen nur von Root lesbar sein. Die Pfade der Dateien können
+  mit den folgenden Konfigurationsdirektiven überprüft/konfiguriert werden:
+</p>
+<pre>
+TLSRSACertificateFile                   /etc/ssl/certs/proftpd.crt
+TLSRSACertificateKeyFile                /etc/ssl/private/proftpd.key
+TLSCACertificateFile                    /etc/ssl/certs/CA.pem
+TLSOptions                              NoCertRequest
+</pre>
 
 <h1><a name="puppet">puppet</a></h1>
 
