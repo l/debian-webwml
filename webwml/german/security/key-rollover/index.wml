@@ -488,59 +488,62 @@ TLSCACertificateFile                    /etc/ssl/certs/CA.pem
 TLSOptions                              NoCertRequest
 </pre>
 
-<h1><a name="puppet">puppet</a></h1>
+<h1><a name="puppet">Puppet</a></h1>
 
 <p>
-There are two methods to handle puppet certificates, one is via capistrano,
-the second is manually.
+  Es gibt zwei Methoden, Puppet-Zertifikate zu handhaben. Die eine ist via
+  capistrano, die zweite ist manuell.
 </p>
 
 <p>
-Regenerating Puppet SSL Certificates using capistrano is detailed here:
-<a href="http://reductivelabs.com/trac/puppet/wiki/RegenerateSSL">http://reductivelabs.com/trac/puppet/wiki/RegenerateSSL</a>
+  Die Neuerstellung der SSL-Zertifikate von Puppet mittels capistrano ist
+  hier beschrieben:
+  <a href="http://reductivelabs.com/trac/puppet/wiki/RegenerateSSL">\
+  http://reductivelabs.com/trac/puppet/wiki/RegenerateSSL</a>
 </p>
 
 <p>
-The manual steps are as follows:
+  Die manuellen Schritte sind wie folgt:
 </p>
 
 <ol>
-<li>You need to wipe and regenerate your CA info:
+<li>Sie müssen die CA-Information löschen und neu generieren:
 <pre>
 /etc/init.d/puppetmaster stop
 rm $vardir/ssl/*
 /etc/init.d/puppetmaster start
 </pre>
 <p>
-However, if you are running mongrel, instead of starting puppetmaster from
-the init script, you will need to first stop the front-end web listener
-(apache, nginx, etc.) and then do the following:
+  Falls Sie allerdings Mongrel betreiben statt Puppetmaster aus dem Init-Skript
+  zu starten, müssen Sie erst am Web auf Anfragen wartende Oberflächen
+  (Apache, Nginx, usw.) stoppen und dann das folgende durchführen:
 </p>
 <pre>
 puppetmasterd --daemonize ; sleep 30 ; pkill -f 'ruby /usr/sbin/puppetmasterd'
 </pre>
 <p>
-The above is necessary because for some reason when running with mongrel,
-puppetmaster will not regenerate its CA.
+  Der obige Befehl ist notwendig, da aus irgend einem Grund Puppetmaster seine
+  CA nicht neu erstellen wird, falls es unter Mongrel läuft.
 </p>
 </li>
-<li>Wipe all the client certs
+<li>Löschen Sie alle Client-Zertifikate
 <pre>
 /etc/init.d/puppet stop
 rm $vardir/ssl/*
 </pre> 
 </li>
-<li>Have each client request a new cert:
+<li>Lassen Sie jeden Client ein neues Zertifikat erstellen
 <pre>
 puppetd --onetime --debug --ignorecache --no-daemonize
 </pre> 
 </li>
-<li>Once all the requests have rolled in, you can sign them all at once:
+<li>Sobald alle Anfragen eingetroffen sind, können Sie sie alle auf einmal
+    signieren:
 <pre>
 puppetca --sign --all
 </pre> 
 </li>
-<li>Start up your puppet clients:
+<li>Starten Sie Ihre Puppet-Clients:
 <pre>
 /etc/init.d/puppet start
 </pre>
@@ -548,7 +551,8 @@ puppetca --sign --all
 </ol>
 
 <p>
-You could also enable autosign temporarily, if you are comfortable with that.
+  Sie könnten auch temporär das automatische Signieren aktivieren, falls Ihnen
+  das zusagt.
 </p>
 
 <h1><a name="sendmail">Sendmail</a></h1>
