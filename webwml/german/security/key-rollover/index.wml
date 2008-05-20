@@ -367,41 +367,47 @@ dpkg-reconfigure ftpd-ssl
 <h1><a name="kerberos">MIT Kerberos (krb5)</a></h1>
 
 <p>
-No part of MIT Kerberos in Debian 4.0 (<q>Etch</q>) uses OpenSSL, and so Kerberos
-in Debian 4.0 is not affected at all.
+  Kein Teil von <acronym lang="en" 
+  title="Massachusetts Institute of Technology">MIT</acronym>-Kerberos in Debian
+  4.0 (<q>Etch</q>) verwendet OpenSSL, und daher ist Kerberos in Debian 4.0 in
+  keinster Weise betroffen.
 </p>
 
 <p>
-In Lenny the separate binary package krb5-pkinit uses OpenSSL.  MIT
-Kerberos itself does not generate long-term key pairs even when the PKINIT
-plugin is used, so any vulnerable long-term key pairs would have been
-generated outside of the MIT Kerberos software itself. The PKINIT plugin
-only references existing key pairs and isn't responsible for key
-management.
+  In Lenny verwendet das separate Binärpaket krb5-pkinit OpenSSL. MIT-Kerberos
+  selbst generiert keine langlebigen Schlüsselpaare, selbst wenn die 
+  PKINIT-Erweiterung verwandt wird, daher müssten alle verwundbaren langlebigen
+  Schlüsselpaare außerhalb der MIT-Kerberos-Software selbst erstellt worden
+  sein. Die PKINIT-Erweiterung referenziert nur existierende Schlüsselpaare
+  und ist nicht für die Schlüsselverwaltung verantwortlich.
 </p>
 <p>
-Long-term key pairs used with PKINIT may be affected if generated on an
-affected Debian system, but such generation is external to MIT Kerberos.
+  Langlebige Sclüsselpaare, die mit PKINIT verwandt werden, könnten betroffen
+  sein, falls sie auf einem betroffenen Debian-System erzeugt wurden, aber
+  diese Erstellung liegt außerhalb von MIT-Kerberos.
 </p>
 <p>
-However, the OpenSSL random key functions are used for the DH exchange
-when PKINIT authentication is used, which means that an attacker may be
-able to use brute-force to gain access to the KDC response to a PKINIT
-authentication and subsequently gain access to any sessions created using
-service tickets from that authentication.
+  Allerdings wird die <q>random key</q>-Funktion von OpenSSL für den
+  DH-Austausch verwandt, wenn die PKINIT-Authetifizierung verwandt wird.
+  Dies bedeutet, dass ein Angreifer in der Lage sein könnte, mit roher
+  Gewalt Zugriff auf die Antwort des KDC auf eine PKINIT-Authentifizierung
+  zu erlangen und folgerichtig Zugriff auf alle Sitzungen, die mit diesem
+  Dienst-Ticket von dieser Authentifizierung erstellt wurden, zu erlangen.
 </p>
 <p>
-Any KDCs using the PKINIT plugin from Lenny should have their libssl0.9.8
-packages upgraded immediately and the Kerberos KDC restarted with:
+  Alle KDCs, die die PKINIT-Erweiterung aus Lenny einsetzen, sollten sofort
+  ein Upgrade des libssl0.9.8-Pakets bekommen. Anschließend sollte der Kerberos 
+  KDC wie folgt neu gestartet werden:
 </p>
 <pre>
 /etc/init.d/krb5-kdc restart
 </pre>
 <p>
-Any Kerberos ticket-granting tickets (TGTs) or encrypted sessions resulting
-from PKINIT authentication using a Kerberos KDC with the affected libssl
-should be treated as suspect; it's possible that attackers with packet
-captures will be able to compromise those keys and sessions.
+  Jedes <q lang="en">Kerberos ticket-granting ticket</q> (TGT) und alle
+  verschlüsselten Sitzungen, die aus einer PKINIT-Authentifizierung mittels
+  eines Kerberos KDC mit einer betroffenen libssl erfolgten, sollten als
+  suspekt betrachtet werden. Es ist möglich, dass Angreifer, die Pakete
+  abfangen können, diese Schlüssel und Sitzungen kompromitieren könnten.
 </p>
 
 <h1><a name="openswan">OpenSWAN / StrongSWAN</a></h1>
