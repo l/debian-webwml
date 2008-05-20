@@ -1,5 +1,5 @@
 #use wml::debian::template title="Substituição de Chaves"
-#use wml::debian::translation-check translation="1.36" translation_maintainer="Felipe Augusto van de Wiel (faw)" maxdelta="1"
+#use wml::debian::translation-check translation="1.39" translation_maintainer="Felipe Augusto van de Wiel (faw)" maxdelta="1"
 
 <p>
 No <a href="$(HOME)/security/2008/dsa-1571">Alerta de Segurança Debian 1571</a>,
@@ -33,6 +33,7 @@ OpenSSL.
 <li><a href="#kerberos">MIT Kerberos (krb5)</a>
 <li><a href="#openswan">OpenSWAN / StrongSWAN</a>
 <li><a href="#openvpn">OpenVPN</a>
+<li><a href="#proftpd">Proftpd</a>
 <li><a href="#puppet">puppet</a>
 <li><a href="#sendmail">sendmail</a>
 <li><a href="#ssl-cert">ssl-cert</a>
@@ -417,6 +418,45 @@ Então, copie as chaves secretas compartilhadas para os hosts remotos e
 reinicie a VPN em cada host com
 </p>
 <pre>/etc/init.d/openvpn force-reload</pre>
+
+<h1><a name="proftpd">Proftpd</a></h1>
+
+<p>
+O empacotamento Debian não inclui geração de chaves, portanto os passos
+a seguir só serão necessários se chaves SSL foram criadas externamente.
+</p>
+
+<p>
+O futuro pacote proftpd a ser enviado para a instável (<q>unstable</q>)
+inclui um modelo tls.conf com o comentário abaixo (em inglês).
+<p>
+
+<p>
+Note que a geração de certificados auto-assinados é um pouco
+diferente da sugerida na seção genérica de openssl, para evitar
+o uso de uma senha quando o daemon está iniciando.
+</p>
+
+<p>
+Você pode (re)gerar um certificado auto-assinado usando um comando como:
+</p>
+<pre>
+ openssl req -x509 -newkey rsa:1024 \
+         -keyout /etc/ssl/private/proftpd.key -out /etc/ssl/certs/proftpd.crt \
+         -nodes -days 365
+</pre>
+
+<p>
+Ambos os arquivos devem ter permissão de leitura somente par ao root.
+os caminhos dos arquivos podem ser checados/configurados através das
+seguintes diretivas de configuração:
+</p>
+<pre>
+TLSRSACertificateFile                   /etc/ssl/certs/proftpd.crt
+TLSRSACertificateKeyFile                /etc/ssl/private/proftpd.key
+TLSCACertificateFile                    /etc/ssl/certs/CA.pem
+TLSOptions                              NoCertRequest
+</pre>
 
 <h1><a name="puppet">puppet</a></h1>
 
