@@ -1,5 +1,5 @@
 #use wml::debian::template title="鍵のロールオーバー"
-#use wml::debian::translation-check translation="1.36"
+#use wml::debian::translation-check translation="1.40"
 
 <p>
 <a href="$(HOME)/security/2008/dsa-1571">Debian セキュリティ勧告 1571</a>
@@ -30,6 +30,7 @@
 <li><a href="#kerberos">MIT Kerberos (krb5)</a>
 <li><a href="#openswan">OpenSWAN / StrongSWAN</a>
 <li><a href="#openvpn">OpenVPN</a>
+<li><a href="#proftpd">Proftpd</a>
 <li><a href="#puppet">puppet</a>
 <li><a href="#sendmail">sendmail</a>
 <li><a href="#ssl-cert">ssl-cert</a>
@@ -397,6 +398,44 @@ VPN を再起動してください。
 </p>
 <pre>/etc/init.d/openvpn force-reload</pre>
 
+<h1><a name="proftpd">Proftpd</a></h1>
+
+<p>
+Debian パッケージでは鍵の生成を行うようになっていません。
+したがって、以下の手順は、外部で SSL 鍵を作成した場合にのみ必要となるはずです。
+</p>
+
+<p>
+次に proftpd を不安定版 (unstable) にアップロードする際には、
+下記のコメントを tls.conf のテンプレートに含める予定です。
+<p>
+
+<p>
+自己署名証明書の生成方法は、OpenSSL
+における一般的な手順のセクションで提案されているものとは、少し異なります。
+これは、デーモンの起動時に明示的にパスワードを使用するのを避けるためです。
+</p>
+
+<p>
+自己署名証明書の (再) 生成は、次のようなコマンドでできます。
+</p>
+<pre>
+ openssl req -x509 -newkey rsa:1024 \
+         -keyout /etc/ssl/private/proftpd.key -out /etc/ssl/certs/proftpd.crt \
+         -nodes -days 365
+</pre>
+
+<p>
+どちらのファイルも、読めるのは root のみでなくてはなりません。
+ファイルのパスの確認や確認は、以下の設定ディレクティブでできます。
+</p>
+<pre>
+TLSRSACertificateFile                   /etc/ssl/certs/proftpd.crt
+TLSRSACertificateKeyFile                /etc/ssl/private/proftpd.key
+TLSCACertificateFile                    /etc/ssl/certs/CA.pem
+TLSOptions                              NoCertRequest
+</pre>
+
 <h1><a name="puppet">puppet</a></h1>
 
 <p>
@@ -419,7 +458,7 @@ href="http://reductivelabs.com/trac/puppet/wiki/RegenerateSSL">http://reductivel
 <li>CA 情報を消し去って再作成しなければなりません
 <pre>
 /etc/init.d/puppetmaster stop
-rm $vardir/ssl/*
+rm -rf $vardir/ssl/*
 /etc/init.d/puppetmaster start
 </pre>
 <p>
