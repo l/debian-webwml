@@ -1,7 +1,7 @@
 #use wml::debian::template title="Debian アーカイブミラーの構築"
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/sid/archive.data"
-#use wml::debian::translation-check translation="1.58"
+#use wml::debian::translation-check translation="1.59"
 
 <toc-display />
 
@@ -89,13 +89,17 @@ href="size">ミラーサイズ</a>のページを見てください。</p>
 <toc-add-entry name="how">どうやってミラーするのか</toc-add-entry>
 
 <p>推奨するミラー方法は <a href="anonftpsync">anonftpsync</a>
-というスクリプトで匿名 <a
-href="http://packages.debian.org/stable/net/rsync">rsync</a>
-を使う方法です。</p>
+というスクリプトを使用する方法です。</p>
 
-<p>注意: <kbd>wget</kbd> やその他の ftp
-ツールでも可能なようですが問題があります。rsync
-の使用を強く推奨します。</p>
+<p>推奨するミラー用のプロトコルは <a
+href="http://packages.debian.org/stable/net/rsync">rsync</a>
+です。</p>
+
+<p><kbd>wget</kbd> やその他の FTP ベースのミラーツールを用いて Debian
+をミラーするのは控えるようお願いします。
+これらのツールでも可能なように思われるかもしれませんが、
+これらには様々な問題 (ハードリンクを検出できない、部分的なミラーをするのが大変、など)
+があります。</p>
 
 <h3>匿名 rsync</h3>
 
@@ -107,6 +111,14 @@ href="http://packages.debian.org/stable/net/rsync">rsync</a>
 <ul>
   <li>rsync には最低限このオプションを付けてください:
       <kbd>--recursive --times --links --hard-links --delete</kbd></li>
+
+  <li>新たなデータファイル (.deb や .orig.tar.gz など)
+      のミラーを終える前にインデックスファイル (Packages や Sources など)
+      をミラーしないようにしてください。まず (<kbd>--exclude</kbd> で)
+      インデックスファイルを除いてデータファイルを転送し、
+      続いてその他すべてのファイルを転送するという、2 段階の rsync
+      を用いてください。例として、<a
+      href="anonftpsync">私たちが提供しているスクリプト</a>を参照してください。</li>
 
   <li>ディスク容量に余裕がある場合は、<kbd>--delete-after</kbd>
       オプションも使って更新時の一時的な問題も回避するようにしてください。</li>
