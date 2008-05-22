@@ -1,7 +1,7 @@
 #use wml::debian::template title="Debian アーカイブミラーの構築"
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/sid/archive.data"
-#use wml::debian::translation-check translation="1.62"
+#use wml::debian::translation-check translation="1.64"
 
 <toc-display />
 
@@ -130,13 +130,9 @@ href="http://packages.debian.org/stable/net/rsync">rsync</a>
 
   <li>全体をミラーするだけの十分なディスク容量がない場合は、<kbd>--exclude</kbd>
       オプションを使ってミラーするアーカイブを除外してください。
-      通常これには望まないアーキテクチャを含めます。
-      例えば、この例では<em>全</em>アーキテクチャを除外します:<br/>
-<: 
-print "<code>--exclude binary-$_/ --exclude *_$_.deb --exclude *_$_.udeb --exclude installer-$_/ --exclude Contents-$_*</code><br>\n"
-  foreach (sort keys %arches);
-:>
-      <a href="#partial">部分的なミラー</a>の項目も確認してください。</li>
+      通常これには、ミラーを望まないアーキテクチャを指定します。
+      各アーキテクチャは大量のディスク領域をとるためです。<a
+      href="#partial">「部分的なミラー」のセクション</a>も参照してください。</li>
 
   <li>rsync でのミラー作業が終わったら、
       あなたのサーバ名を付けたタイムスタンプファイルを Debian ミラーの
@@ -163,13 +159,22 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb --exclude *_$_.udeb --exclu
 何か除外する場合は、アーキテクチャを除外してください。</p>
 
 <p><a href="anonftpsync">anonftpsync</a> の場合は、ARCH_EXCLUDE
-変数を編集することで可能になります。
-他にも専用に書かれたスクリプトはありますが、公式ミラーには不適です。</p>
+変数を編集することで可能になります。</p>
 
 <p><tt>project/</tt>, <tt>doc/</tt>
 その他のサブディレクトリについてはできるだけ除外しないようにしてください。
 これらは通常、サイズは小さく、それでいてユーザにとって有益です。
 特に、<tt>project/trace</tt> はミラーに問題があった場合非常に役に立ちます。</p>
+
+<p>その他の専用スクリプトも使用することはできますが、通常は不要でしょうし、
+公式ミラーに使うのはお勧めできません。
+例えば、以下のような rsync のオプションを指定するだけで、
+<em>すべての</em>アーキテクチャを除外できます。
+<br />
+<: 
+print "<code>--exclude binary-$_/ --exclude *_$_.deb --exclude *_$_.udeb --exclude installer-$_/ --exclude Contents-$_*</code><br>\n"
+  foreach (sort keys %arches);
+:>
 
 <toc-add-entry name="when">いつミラーするのか</toc-add-entry>
 
