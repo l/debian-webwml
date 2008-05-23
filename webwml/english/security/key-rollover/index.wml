@@ -372,9 +372,25 @@ captures will be able to compromise those keys and sessions.
 
 <h1><a name="nessus">Nessus</a></h1>
 
-<p>The Nessus server package will regenerate the OpenSSL certificates
-when configured if it cannot find them. You will need to remove the
-certicates and have it generate new ones with:
+<p>The Nessus server package (nessusd) post installation script creates
+some SSL keys for secure communication between a Nessus server and client.
+That communication channel should be considered compromised since a rogue user
+could be able to intercept the information exchanged between the server and the
+client (which includes information of remote hosts vulnerabilities) and
+potentially could send commands to the servers as the logged in user.
+
+<p>Additionally, if the admin has created either the Nessus CA key a user
+certificate (with nessus-mkcert-client) for remote authentication in a server
+which had installed the OpenSSL version affected by this security issue those
+keys should be considered compromised. Note that remote users with access to
+the Nessus server can launch attacks to the servers they are allowed to attack
+and, if enabled on the local configuration (in Debian it defaults to 'no')
+upload plugins which would be executed in the Nessus server with root
+privileges.
+
+<p>The maintainer configuration scripts will regenerate the OpenSSL certificates
+when configured if it cannot find them. You will need to remove the certicates
+and have it generate new ones doing:
 
 <pre>
 rm -f /var/lib/nessus/CA/cacert.pem /var/lib/nessus/CA/servercert.pem
@@ -382,11 +398,11 @@ rm -f /var/lib/nessus/private/CA/cakey.pem /var/lib/nessus/private/CA/serverkey.
 dpkg-reconfigure nessusd
 </pre>
 
-<p>If you created certificates with nessus-mkcert-client for your users to use
-them for remote authentication you will need to remove them as they will be
-invalid one the CA key has been removed.
+<p>Once this is done you will have to remove the old user keys
+at /var/lib/nessus/users/USERNAME/auth and regenerate them again with
+nessus-mkcert-client. Old keys will be invalid once the CA key has been removed.
 
-<p>After the key is regenerated you will need to distribute the new CA
+<p>After the CA key is regenerated you will also need to distribute the new CA
 certicate to your users, and your users will have to accept the new certificate
 from the Nessus server once they reconnect. Certificate settings for the old
 server should be removed but you can also remove them manually by editing the
