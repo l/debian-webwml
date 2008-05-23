@@ -27,6 +27,7 @@ whose keys are affected by the OpenSSL vulnerability.
 <li><a href="#ftpd-ssl">ftpd-ssl</a>
 <li><a href="#gforge">gforge</a>
 <li><a href="#kerberos">MIT Kerberos (krb5)</a>
+<li><a href="#nessus">Nessus</a>
 <li><a href="#openswan">OpenSWAN / StrongSWAN</a>
 <li><a href="#openvpn">OpenVPN</a>
 <li><a href="#proftpd">Proftpd</a>
@@ -368,6 +369,30 @@ from PKINIT authentication using a Kerberos KDC with the affected libssl
 should be treated as suspect; it's possible that attackers with packet
 captures will be able to compromise those keys and sessions.
 </p>
+
+<h1><a name="nessus">Nessus</a></h1>
+
+<p>The Nessus server package will regenerate the OpenSSL certificates
+when configured if it cannot find them. You will need to remove the
+certicates and have it generate new ones with:
+
+<pre>
+rm -f /var/lib/nessus/CA/cacert.pem /var/lib/nessus/CA/servercert.pem
+rm -f /var/lib/nessus/private/CA/cakey.pem /var/lib/nessus/private/CA/serverkey.pem
+dpkg-reconfigure nessusd
+</pre>
+
+<p>If you created certificates with nessus-mkcert-client for your users to use
+them for remote authentication you will need to remove them as they will be
+invalid one the CA key has been removed.
+
+<p>After the key is regenerated you will need to distribute the new CA
+certicate to your users, and your users will have to accept the new certificate
+from the Nessus server once they reconnect. Certificate settings for the old
+server should be removed but you can also remove them manually by editing the
+<pre>.nessusrc.cert</pre> (if using the Nessus client) or
+<pre>.openvasrc.cert</pre> (if using the OpenVAS client).
+
 
 <h1><a name="openswan">OpenSWAN / StrongSWAN</a></h1>
 
