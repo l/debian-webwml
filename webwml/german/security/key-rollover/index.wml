@@ -1,5 +1,5 @@
 #use wml::debian::template title="Schlüsselaustausch"
-#use wml::debian::translation-check translation="1.41" maxdelta="1"
+#use wml::debian::translation-check translation="1.44" maxdelta="1"
 
 <p>
 In der <a href="$(HOME)/security/2008/dsa-1571">Debian-Sicherheitsankündigung 1571</a>,
@@ -18,27 +18,28 @@ die OpenSSL-Verwundbarkeit betroffen sind, ausgetauscht werden können.
 </p>
 
 <ul>
-<li><b><a href="#openssh">OpenSSH</a></b>
-<li><b><a href="#openssl">OpenSSL: Allgemeine PEM-Schlüsselerzeugungsinstruktionen</a></b>
+<li><b><a href="#openssh">OpenSSH</a></b></li>
+<li><b><a href="#openssl">OpenSSL: Allgemeine PEM-Schlüsselerzeugungsinstruktionen</a></b></li>
 
-<li><a href="#bincimap">Bincimap</a>
-<li><a href="#boxbackup">Boxbackup</a>
-<li><a href="#cryptsetup">Cryptsetup</a>
-<li><a href="#dropbear">Dropbear</a>
-<li><a href="#ekg">Ekg</a>
-<li><a href="#ftpd-ssl">Ftpd-ssl</a>
-<li><a href="#gforge">Gforge</a>
-<li><a href="#kerberos">MIT Kerberos (krb5)</a>
-<li><a href="#openswan">OpenSWAN / StrongSWAN</a>
-<li><a href="#openvpn">OpenVPN</a>
-<li><a href="#proftpd">Proftpd</a>
-<li><a href="#puppet">Puppet</a>
-<li><a href="#sendmail">Sendmail</a>
-<li><a href="#ssl-cert">Ssl-cert</a>
-<li><a href="#telnetd-ssl">Telnetd-ssl</a>
-<li><a href="#tinc">Tinc</a>
-<li><a href="#tor">Tor</a>
-<li><a href="#xrdp">Xrdp</a>
+<li><a href="#bincimap">Bincimap</a></li>
+<li><a href="#boxbackup">Boxbackup</a></li>
+<li><a href="#cryptsetup">Cryptsetup</a></li>
+<li><a href="#dropbear">Dropbear</a></li>
+<li><a href="#ekg">Ekg</a></li>
+<li><a href="#ftpd-ssl">Ftpd-ssl</a></li>
+<li><a href="#gforge">Gforge</a></li>
+<li><a href="#kerberos">MIT Kerberos (krb5)</a></li>
+<li><a href="#nessus">Nessus</a></li>
+<li><a href="#openswan">OpenSWAN / StrongSWAN</a></li>
+<li><a href="#openvpn">OpenVPN</a></li>
+<li><a href="#proftpd">Proftpd</a></li>
+<li><a href="#puppet">Puppet</a></li>
+<li><a href="#sendmail">Sendmail</a></li>
+<li><a href="#ssl-cert">Ssl-cert</a></li>
+<li><a href="#telnetd-ssl">Telnetd-ssl</a></li>
+<li><a href="#tinc">Tinc</a></li>
+<li><a href="#tor">Tor</a></li>
+<li><a href="#xrdp">Xrdp</a></li>
 </ul>
 
 <p>
@@ -409,6 +410,48 @@ dpkg-reconfigure ftpd-ssl
   suspekt betrachtet werden. Es ist möglich, dass Angreifer, die Pakete
   abfangen können, diese Schlüssel und Sitzungen kompromitieren könnten.
 </p>
+
+<h1><a name="nessus">Nessus</a></h1>
+
+<p>The Nessus server package (nessusd) post installation script creates
+some SSL keys for secure communication between a Nessus server and client.
+That communication channel should be considered compromised since a rogue user
+could be able to intercept the information exchanged between the server and the
+client (which includes information of remote hosts vulnerabilities) and
+potentially could send commands to the servers as the logged in user.
+
+<p>Additionally, if the admin has created either the Nessus CA key a user
+certificate (with nessus-mkcert-client) for remote authentication in a server
+which had installed the OpenSSL version affected by this security issue those
+keys should be considered compromised. Note that remote users with access to
+the Nessus server can launch attacks to the servers they are allowed to attack
+and, if enabled on the local configuration (in Debian it defaults to 'no')
+upload plugins which would be executed in the Nessus server with root
+privileges.
+
+<p>The maintainer configuration scripts will regenerate the OpenSSL certificates
+when configured if it cannot find them. You will need to remove the certicates
+and have it generate new ones doing:
+
+<pre>
+rm -f /var/lib/nessus/CA/cacert.pem
+rm -f /var/lib/nessus/CA/servercert.pem
+rm -f /var/lib/nessus/private/CA/cakey.pem
+rm -f /var/lib/nessus/private/CA/serverkey.pem
+dpkg-reconfigure nessusd
+</pre>
+
+<p>Once this is done you will have to remove the old user keys
+at /var/lib/nessus/users/USERNAME/auth and regenerate them again with
+nessus-mkcert-client. Old keys will be invalid once the CA key has been removed
+
+<p>After the CA key is regenerated you will also need to distribute the new CA
+certicate to your users, and your users will have to accept the new certificate
+from the Nessus server once they reconnect. Certificate settings for the old
+server should be removed but you can also remove them manually by editing the
+<pre>.nessusrc.cert</pre> (if using the Nessus client) or
+<pre>.openvasrc.cert</pre> (if using the OpenVAS client).
+
 
 <h1><a name="openswan">OpenSWAN / StrongSWAN</a></h1>
 
