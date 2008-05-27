@@ -1,5 +1,5 @@
 #use wml::debian::template title="Substituição de Chaves"
-#use wml::debian::translation-check translation="1.41" translation_maintainer="Felipe Augusto van de Wiel (faw)" maxdelta="1"
+#use wml::debian::translation-check translation="1.46" translation_maintainer="Felipe Augusto van de Wiel (faw)" maxdelta="1"
 
 <p>
 No <a href="$(HOME)/security/2008/dsa-1571">Alerta de Segurança Debian 1571</a>,
@@ -19,28 +19,29 @@ OpenSSL.
 </p>
 
 <ul>
-<li><b><a href="#openssh">OpenSSH</a></b>
+<li><b><a href="#openssh">OpenSSH</a></b></li>
 <li><b><a href="#openssl">OpenSSL: instruções para geração de chave PEM
-    genérica</a></b>
+    genérica</a></b></li>
 
-<li><a href="#bincimap">bincimap</a>
-<li><a href="#boxbackup">boxbackup</a>
-<li><a href="#cryptsetup">cryptsetup</a>
-<li><a href="#dropbear">dropbear</a>
-<li><a href="#ekg">ekg</a>
-<li><a href="#ftpd-ssl">ftpd-ssl</a>
-<li><a href="#gforge">gforge</a>
-<li><a href="#kerberos">MIT Kerberos (krb5)</a>
-<li><a href="#openswan">OpenSWAN / StrongSWAN</a>
-<li><a href="#openvpn">OpenVPN</a>
-<li><a href="#proftpd">Proftpd</a>
-<li><a href="#puppet">puppet</a>
-<li><a href="#sendmail">sendmail</a>
-<li><a href="#ssl-cert">ssl-cert</a>
-<li><a href="#telnetd-ssl">telnetd-ssl</a>
-<li><a href="#tinc">tinc</a>
-<li><a href="#tor">tor</a>
-<li><a href="#xrdp">xrdp</a>
+<li><a href="#bincimap">bincimap</a></li>
+<li><a href="#boxbackup">boxbackup</a></li>
+<li><a href="#cryptsetup">cryptsetup</a></li>
+<li><a href="#dropbear">dropbear</a></li>
+<li><a href="#ekg">ekg</a></li>
+<li><a href="#ftpd-ssl">ftpd-ssl</a></li>
+<li><a href="#gforge">gforge</a></li>
+<li><a href="#kerberos">MIT Kerberos (krb5)</a></li>
+<li><a href="#nessus">Nessus</a></li>
+<li><a href="#openswan">OpenSWAN / StrongSWAN</a></li>
+<li><a href="#openvpn">OpenVPN</a></li>
+<li><a href="#proftpd">Proftpd</a></li>
+<li><a href="#puppet">puppet</a></li>
+<li><a href="#sendmail">sendmail</a></li>
+<li><a href="#ssl-cert">ssl-cert</a></li>
+<li><a href="#telnetd-ssl">telnetd-ssl</a></li>
+<li><a href="#tinc">tinc</a></li>
+<li><a href="#tor">tor</a></li>
+<li><a href="#xrdp">xrdp</a></li>
 </ul>
 
 <p>
@@ -50,10 +51,10 @@ gerar ou trocar suas chaves.
 </p>
 
 <ul>
-<li><a href="notvuln#ckermit">ckermit</a>
-<li><a href="notvuln#gnupg">GnuPG</a>
-<li><a href="notvuln#iceweasel">Iceweasel</a>
-<li><a href="notvuln#mysql">MySQL</a>
+<li><a href="notvuln#ckermit">ckermit</a></li>
+<li><a href="notvuln#gnupg">GnuPG</a></li>
+<li><a href="notvuln#iceweasel">Iceweasel</a></li>
+<li><a href="notvuln#mysql">MySQL</a></li>
 </ul>
 
 <p>
@@ -387,6 +388,54 @@ que atacantes com capturas de pacotes sejam capazes de comprometes essas
 chaves e sessões.
 </p>
 
+<h1><a name="nessus">Nessus</a></h1>
+
+<p>O script de pós-instalação do pacote do servidor Nessus (nessusd) cria
+algumas chaves SSL para comunicação segura entre um servidor Nessus e o
+cliente. Esse canal de comunicação deveria ser considerado comprometido
+uma vez que um usuário mal intencionado poderia ser capaz de interceptar
+a informação trocada entre o servidor e o cliente (o que inclui informação
+sobre vulnerabilidades em hosts remotos) e potencialmente enviar comandos
+para os servidores como o usuário que está autenticado.</p>
+
+<p>Adicionalmente, se o administrador criou a chave CA do Nessus ou um
+certificado de usuário (com o nessus-mkcert-client) para autenticação
+remota em um servidor que tinha instalada a versão do OpenSSL afetada por
+este problema de segurança, essas chaves deverão ser consideradas
+comprometidas. Note que os usuários remotos com acesso ao servidor Nessus
+podem disparar ataques a servidores que eles têm permissão para atacar e,
+se habilitado na configuração local (no Debian o padrão é <q>não</q>)
+enviar extensões que poderiam ser executadas no servidor Nessus com
+privilégios de root.</p>
+
+<p>Os scripts de configuração do mantenedor regerarão os certificados OpenSSL
+quando configurados se ele não puder achá-los. Você terá que remover os
+certificados e gerar novos usando:</p>
+
+<pre>
+rm -f /var/lib/nessus/CA/cacert.pem
+rm -f /var/lib/nessus/CA/servercert.pem
+rm -f /var/lib/nessus/private/CA/cakey.pem
+rm -f /var/lib/nessus/private/CA/serverkey.pem
+dpkg-reconfigure nessusd
+</pre>
+
+<p>Quando isto estiver concluído, você terá que remover as antigas chaves
+de usuário em /var/lib/nessus/users/NOME_DE_USUÁRIO/auth e regerá-las
+novamente com nessus-mkcert-client. Antigas chaves serão invalidadas uma
+vez que a chave CA tenha sido removida.
+</p>
+
+<p>Após a chave CA ter sido regerada, você também precisará distribuir o
+novo certificado CA para os seus usuários, e seus usuários terão que
+aceitar o novo certificado do servidor Nessus quando eles reconectarem.
+As configurações do certificado para o antigo servidor deveriam ser
+removidas automaticamente mas você também pode removê-las manualmente
+editando o arquivo <pre>.nessusrc.cert</pre> (se estiver usando o cliente
+Nessus) ou o arquivo <pre>.openvasrc.cert</pre> (se estiver usando o cliente
+OpenVAS).</p>
+
+
 <h1><a name="openswan">OpenSWAN / StrongSWAN</a></h1>
 
 <pre>
@@ -635,7 +684,7 @@ serviço oculto e pode requerer uma reconfiguração dos seus servidores.
 
 <p>
 Se você está executando a versão 0.2.0.x, uma atualização é altamente
-recomendada -- 3 dos 6 servidores de autoridade v3 tinham chaves
+recomendada &mdash; 3 dos 6 servidores de autoridade v3 tinham chaves
 comprometidas. Antigas versões 0.2.0.x deixarão de funcionar em uma
 ou duas semanas.
 </p>
