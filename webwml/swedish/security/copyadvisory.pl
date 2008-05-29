@@ -106,6 +106,7 @@ while (<SRC>)
 	s/>symlink attack</>attack mot symboliska länkar</;
 	s/>remote exploit</>fjärrattack</;
 	s/>missing input sanitising</>städar inte indata</;
+	s/>insufficient input sanitising</>otillräcklig städning av indata</;
 	s/>programming error</>programmeringsfel</;
 	s/>various</>diverse</;
 	s/(Several|Multiple) vulnerabilities/Flera sårbarheter/;
