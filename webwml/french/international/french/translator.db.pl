@@ -173,9 +173,9 @@ sub init_translators {
 		},
                'Simon Paillard' =>  {
                         email       => 'simon.paillard@resel.enst-bretagne.fr',
-                        summary     => 2,
-                        logs        => 2,
-                        diff        => 2,
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
                         tdiff       => 0,
                         file        => 0,
                         compress    => 'none'
@@ -189,7 +189,16 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
-	        'Willy Picard' =>  {
+	               'Thomas Péteul' =>  {
+                        email       => 'olaf@resel.fr',
+                        summary     => 3,
+                        logs        => 3,
+                        diff        => 3,
+                        tdiff       => 0,
+                        file        => 0,
+                        compress    => 'none'
+                },
+        'Willy Picard' =>  {
                         email       => 'frederic.bothamy@free.fr',
                         summary     => 2,
                         logs        => 0,
