@@ -109,8 +109,8 @@ sub rdf_add
 
 my $rss = new XML::RSS (version => '1.0', encoding => charset);
 
-$rss->channel (title          => 'Debian Weekly News',
-	       description    => 'Debian Weekly News '. $current,
+$rss->channel (title          => 'Debian Project News',
+	       description    => 'Debian Project News '. $current,
 	       link           => $url,
 	       dc             => {
 		   date => $pubdate,
