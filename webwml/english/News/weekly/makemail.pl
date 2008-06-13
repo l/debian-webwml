@@ -106,11 +106,11 @@ while (<IN>) {
 		$skippedlinks++ while m/\[\d+\]/g;
 	}
 		# See if it's time to stop skipping.
-	if ($skip && /^\s*Debian Weekly News - /) {
+	if ($skip && /^\s*Debian Project News - /) {
 		# Title found, stop skipping. But first, print the header.
 		s/^\s*//;
 		print $divider,
-		      "Debian Weekly News\n",
+		      "Debian Project News\n",
 		      "$url\n",
 		      $_,
 		      $divider;
@@ -124,7 +124,7 @@ push @stories, $story;
 # print, and more junk. So scan forward to the links, and print them.
 while (<IN>) {
 	last if m/^\s\s\sVisible links/;
-	if (/^\s+This issue of Debian Weekly News was edited by /
+	if (/^\s+This issue of Debian Project News was edited by /
 	 or /^\s+Diese Ausgabe der wöchentlichen Debian-Nachrichten /
 	 or /^\s+Esta edição das Notícias Semanais do Debian /)
 	{
