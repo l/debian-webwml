@@ -46,7 +46,8 @@ others_FILES    = $(ENGLISHDIR)/News/press/press.tags \
 templates_FILES = $(addprefix $(TEMPLDIR)/, \
   cdimage.wml common_tags.wml common_translation.wml consultant.wml \
   ddp.wml events_common.wml fixes_link.wml footer.wml languages.wml \
-  links.tags.wml mirrors.wml news.wml recent_list.wml speakers.wml \
+  links.tags.wml mirrors.wml news.wml projectnews/footer.wml \
+  recent_list.wml speakers.wml \
   todoitem.wml translation-check.wml url.wml users.wml votebar.wml \
   weeklynews/footer.wml legal.wml legal_tags.wml wnpp.wml) \
   $(ENGLISHDIR)/devel/website/tc.data
