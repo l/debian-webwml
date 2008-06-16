@@ -11,6 +11,8 @@ SUBS=$(YEARS) weekly press
 
 include $(WMLBASE)/Make.lang
 
+ifeq "$(LANGUAGE)" "en"
+	test -L $(HTMLDIR)/project || ln -sf weekly $(HTMLDIR)/project
 
 # Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.wml) \
