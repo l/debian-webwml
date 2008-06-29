@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# Generates debian weekly news in text format, suitable for mailing to
+# Generates debian project news in text format, suitable for mailing to
 # debian-news, of the current issue that is on the web site. Or, if you
 # pass a url as the first parameter, will use the issue there instead.
 
@@ -7,7 +7,7 @@ use locale;
 
 my $current_issue=`cat CURRENT-ISSUE-IS`;
 chomp $current_issue;
-my $url=shift || "http://www.debian.org/News/weekly/$current_issue/";
+my $url=shift || "http://www.debian.org/News/project/$current_issue/";
 
 my $tmpfile;
 my $tmpdir;
@@ -58,6 +58,7 @@ open (IN, "lynx -dump $tmpfile |") or die "Can't open $tmpfile or no lynx in pat
 if ($url =~ m,\d\d\d\d/\d\d?/,) {
      # This is a local URL - fix the output
      $url =~ s,^,http://www.debian.org/News/weekly/,;
+     $url =~ s,^,http://www.debian.org/News/project/,;
      $url =~ s/index\.\w\w\.html$//;
 }
 
