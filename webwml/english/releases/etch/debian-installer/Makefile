@@ -12,3 +12,8 @@ index.$(LANGUAGE).html:: $(ENGLISHDIR)/releases/etch/release.data \
 	$(ENGLISHSRCDIR)/releases/images.data \
 	$(ENGLISHDIR)/releases/info \
 	$(TEMPLDIR)/installer.wml
+
+etchnhalf.$(LANGUAGE).html:: $(ENGLISHDIR)/releases/etch/release.data \
+	etchnhalf-images.data \
+	$(ENGLISHDIR)/releases/info \
+	$(TEMPLDIR)/installer.wml
