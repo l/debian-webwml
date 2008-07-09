@@ -18,3 +18,6 @@ releasenotes.$(LANGUAGE).html: releasenotes.wml $(TEMPLDIR)/release.wml \
 installmanual.$(LANGUAGE).html: installmanual.wml $(TEMPLDIR)/release.wml \
   $(ENGLISHDIR)/releases/etch/release.data $(ENGLISHDIR)/releases/info \
   $(wildcard $(HTMLDIR)/*/install*)
+
+etchnhalf.$(LANGUAGE).html: etchnhalf.wml $(TEMPLDIR)/release.wml \
+  $(ENGLISHDIR)/releases/etch/release.data
