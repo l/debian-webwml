@@ -14,6 +14,6 @@ index.$(LANGUAGE).html:: $(ENGLISHDIR)/releases/etch/release.data \
 	$(TEMPLDIR)/installer.wml
 
 etchnhalf.$(LANGUAGE).html:: $(ENGLISHDIR)/releases/etch/release.data \
-	etchnhalf-images.data \
+	$(ENGLISHDIR)/releases/etch/debian-installer/etchnhalf-images.data \
 	$(ENGLISHDIR)/releases/info \
 	$(TEMPLDIR)/installer.wml
