@@ -4,17 +4,16 @@
 # Please send a message to debian-www if you need to modify anything
 # so the problem can be fixed.
 
-
 WMLBASE=../../..
 CUR_DIR=security/audit/2002
 
-all:: ../data/2002.inc index.en.html
-install:: all
-
-../data/2002.inc:  ../data/2002.data
-	$(ENGLISHDIR)/security/audit/make-advisories $(ENGLISHDIR)/security/audit/data
-
-index.en.html: index.wml  ../data/2002.inc ../data/2002.data
-	$(WML) $(<F) 
-
 include $(WMLBASE)/Make.lang
+
+ifeq "$(LANGUAGE)" "en"
+$(ENGLISHSRCDIR)/security/audit/data/2002.inc: $(ENGLISHSRCDIR)/security/audit/data/2002.data
+	$(ENGLISHSRCDIR)/security/audit/make-advisories $(ENGLISHSRCDIR)/security/audit/data
+endif
+
+index.$(LANGUAGE).html: index.wml \
+  $(ENGLISHSRCDIR)/security/audit/data/2002.inc \
+  $(ENGLISHSRCDIR)/security/audit/data/2002.data
