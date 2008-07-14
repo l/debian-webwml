@@ -13,29 +13,14 @@ my ($firstname, $lastname, $email, $pname);
 my (%People, %package, @nameslist, , $names, $file);
 my @special_maintainer = (
 	"Debian QA Group",
-	"Debian Install System Team",
 	"Debian Policy List",
-	"GNU Hurd Maintainers",
-	"GNU Libc Maintainers",
-	"Debbugs developers",
 	"Dpkg Development",
-	"teTeX maintainers",
-	"APT Development Team",
-	"Progeny Debian Packaging Team",
-	"Progeny Debian Packaging Group",
 	"Dynamic DNS Tools and Services",
 	"Cdbs Hackers",
-	"Popularity Contest Developers",
 	"Grub-Devel",
-	"Grub Maintainers",
-	"Debian Berkeley DB Maintainers",
-	"Debian SPARC 2.4 Kernel Maintainers",
-	"Exim4 Maintainers",
-	"Debian Firebird RDBMS Team",
-	"Debian VDR and DVB Packaging Team",
 	"Debian GNU/kFreeBSD",
 );
-my $special_maintainer_regex = qr(Debian \S+ (?:[Mm]aintainers|[Tt]eam|[Gg]roup));
+my $special_maintainer_regex = qr(.*? (?:[Mm]aintainers|[Tt]eam|[Gg]roup|[Dd]evelopers));
 
 
 # put the auxilliary functions first to shut up perl >= 5.6
@@ -233,13 +218,13 @@ sub process_name {
 		}
 		$maintainer = from_utf8_or_iso88591_to_sgml($maintainer);
 # Take care of the annoying cases and exceptions and overrides and stuff
-		if ($maintainer =~ /($special_maintainer_regex).*<(.+)>/) {
+		if ($maintainer =~ /($special_maintainer_regex)\s+<(.+)>/o) {
 			$lastname = $1; $firstname = ''; $email = $2;
 		}
-		elsif ($maintainer =~ /Debian Quality Assurance.*<(.+)>/) {
+		elsif ($maintainer =~ /Debian Quality Assurance.*<(.+)>/o) {
 			$lastname = 'Debian QA Group'; $firstname = ''; $email = $1;
 		}
-		elsif ($maintainer =~ /Boot Floppies Team <(.+)>/) {
+		elsif ($maintainer =~ /Boot Floppies Team <(.+)>/o) {
 			$lastname = 'Debian Install System Team'; $firstname = ''; $email = $1;
 		}
 		elsif ($maintainer =~ /Javier Fernandez-Sanguino Pen~a\s+<(.+)>/o) {
@@ -248,106 +233,106 @@ sub process_name {
 		elsif ($maintainer =~ /J\.H\.M\.? Dassen \(Ray\) <(.+)>/o) {
 			$lastname = 'Dassen'; $firstname = 'Ray J.H.M.'; $email = $1;
 		}
-		elsif ($maintainer =~ /David (A\. )?van Leeuwen <(.+)>/) {
+		elsif ($maintainer =~ /David (A\. )?van Leeuwen <(.+)>/o) {
 			$lastname = 'van Leeuwen'; $firstname = 'David'; $email = $2;
 		}
-		elsif ($maintainer =~ /Mark W\. Eichin <(.+)>/) {
+		elsif ($maintainer =~ /Mark W\. Eichin <(.+)>/o) {
 			$lastname = 'Eichin'; $firstname = 'Mark'; $email = $1;
 		}
-		elsif ($maintainer =~ /Kam Tik <(.+)>/) {
+		elsif ($maintainer =~ /Kam Tik <(.+)>/o) {
 			$lastname = 'Kam' ; $firstname = 'Tik' ; $email = $1;
 		}
-		elsif ($maintainer =~ /Yu Guanghui <(.+)>/) {
+		elsif ($maintainer =~ /Yu Guanghui <(.+)>/o) {
 			$lastname = 'Yu' ; $firstname = 'Guanghui' ; $email = $1;
 		}
-		elsif ($maintainer =~ /zhaoway <(.+)>/) {
+		elsif ($maintainer =~ /zhaoway <(.+)>/o) {
 			$lastname = 'Way' ; $firstname = 'Zhao' ; $email = $1;
 		}
-		elsif ($maintainer =~ /Gustavo Noronha Silva <(.+)>/) {
+		elsif ($maintainer =~ /Gustavo Noronha Silva <(.+)>/o) {
 			$lastname = 'Noronha Silva' ; $firstname = 'Gustavo' ; $email = $1;
 		}
-		elsif ($maintainer =~ /An Thi-Nguyen Le <(.+)>/) {
+		elsif ($maintainer =~ /An Thi-Nguyen Le <(.+)>/o) {
 			$lastname = 'Le' ; $firstname = 'An Thi-Nguyen' ; $email = $1;
 		}
-		elsif ($maintainer =~ /C\.M\. Connelly <(.+)>/) {
+		elsif ($maintainer =~ /C\.M\. Connelly <(.+)>/o) {
 			$lastname = 'Connelly' ; $firstname = 'Claire' ; $email = $1;
 		}
-		elsif ($maintainer =~ /Thomas Bushnell, BSG <(.+)>/) {
+		elsif ($maintainer =~ /Thomas Bushnell, BSG <(.+)>/o) {
 			$lastname = 'Bushnell' ; $firstname = 'Thomas' ; $email = $1;
 		}
-		elsif ($maintainer =~ /Viral <(.+)>/) {
+		elsif ($maintainer =~ /Viral <(.+)>/o) {
 			$lastname = 'Shah' ; $firstname = 'Viral' ; $email = $1;
 		}
-		elsif ($maintainer =~ /Masamichi Goudge M\.D\. <(.+)>/) {
+		elsif ($maintainer =~ /Masamichi Goudge M\.D\. <(.+)>/o) {
 			$lastname = 'Goudge' ; $firstname = 'Masamichi' ; $email = $1;
 		}
-		elsif ($maintainer =~ /Pedro Zorzenon Neto <(.+)>/) {
+		elsif ($maintainer =~ /Pedro Zorzenon Neto <(.+)>/o) {
 			$lastname = 'Zorzenon Neto' ; $firstname = 'Pedro' ; $email = $1;
 		}
-		elsif ($maintainer =~ /Wookey <(.+)>/) {
+		elsif ($maintainer =~ /Wookey <(.+)>/o) {
 			$lastname = 'Wookey' ; $firstname = '' ; $email = $1;
 		}
-		elsif ($maintainer =~ /Ramakrishnan M <(.+)>/) {
+		elsif ($maintainer =~ /Ramakrishnan M <(.+)>/o) {
 			$lastname = 'Muthukrishnan' ; $firstname = 'Ramakrishnan' ; $email = $1;
 		}
-		elsif ($maintainer =~ /Amaya Rodrigo Sastre <(.+)>/) {
+		elsif ($maintainer =~ /Amaya Rodrigo Sastre <(.+)>/o) {
 			$lastname = 'Rodrigo Sastre' ; $firstname = 'Amaya' ; $email = $1;
 		}
-		elsif ($maintainer =~ /Jose Carlos Garcia Sogo <(.+)>/) {
+		elsif ($maintainer =~ /Jose Carlos Garcia Sogo <(.+)>/o) {
 			$lastname = 'Garcia Sogo' ; $firstname = 'Jose Carlos'; $email = $1;
 		}
-		elsif ($maintainer =~ /Luca - De Whiskey's - De Vitis <(.+)>/) { #'
+		elsif ($maintainer =~ /Luca - De Whiskey's - De Vitis <(.+)>/o) { #'
 			$lastname = 'De Vitis' ; $firstname = 'Luca'; $email = $1;
 		}
-		elsif ($maintainer =~ /Chris(topher)? L\.? Cheney <(.+)>/) {
+		elsif ($maintainer =~ /Chris(topher)? L\.? Cheney <(.+)>/o) {
 			$lastname = 'Cheney'; $firstname = 'Christopher L.'; $email = $2;
 		}
-		elsif ($maintainer =~ /Sylvain LE GALL <(.+)>/) {
+		elsif ($maintainer =~ /Sylvain LE GALL <(.+)>/o) {
 			$lastname = 'Le Gall'; $firstname = 'Sylvain'; $email = $1;
 		}
-		elsif ($maintainer =~ /A Lee <(.+)>/) {
+		elsif ($maintainer =~ /A Lee <(.+)>/o) {
 			$lastname = 'Lee'; $firstname = 'Ho-seok'; $email = $1;
 		}
-		elsif ($maintainer =~ /A Mennucc1? <(.+)>/) {
+		elsif ($maintainer =~ /A Mennucc1? <(.+)>/o) {
 			$lastname = 'Mennucci'; $firstname = 'Andrea'; $email = $1;
 		}
-		elsif ($maintainer =~ /Abraham vd Merwe <(.+)>/) {
+		elsif ($maintainer =~ /Abraham vd Merwe <(.+)>/o) {
 			$lastname = 'van der Merwe'; $firstname = 'Abraham'; $email = $1;
 		}
-		elsif ($maintainer =~ /Goedson Teixeira Paixao <(.+)>/) {
+		elsif ($maintainer =~ /Goedson Teixeira Paixao <(.+)>/o) {
 			$lastname = 'Teixeira Paixao'; $firstname = 'Goedson'; $email = $1;
 		}
-		elsif ($maintainer =~ /MJ Ray <(.+)>/) {
+		elsif ($maintainer =~ /MJ Ray <(.+)>/o) {
 			$lastname = 'Ray'; $firstname = 'Mark'; $email = $1;
 		}
-		elsif ($maintainer =~ /Manuel Estrada Sainz <(.+)>/) {
+		elsif ($maintainer =~ /Manuel Estrada Sainz <(.+)>/o) {
 			$lastname = 'Estrada Sainz'; $firstname = 'Manuel'; $email = $1;
 		}
-		elsif ($maintainer =~ /Roberto Suarez Soto <(.+)>/) {
+		elsif ($maintainer =~ /Roberto Suarez Soto <(.+)>/o) {
 			$lastname = 'Suarez Soto'; $firstname = 'Roberto'; $email = $1;
 		}
-		elsif ($maintainer =~ /JP Sugarbroad <(.+)>/) {
+		elsif ($maintainer =~ /JP Sugarbroad <(.+)>/o) {
 			$lastname = 'Sugarbroad'; $firstname = 'Jean-Philippe'; $email = $1;
 		}
-		elsif ($maintainer =~ /Hatta Shuzo <(.+)>/) {
+		elsif ($maintainer =~ /Hatta Shuzo <(.+)>/o) {
 			$lastname = 'Hatta'; $firstname = 'Shuzo'; $email = $1;
 		}
-		elsif ($maintainer =~ /Oohara Yuuma <(.+)>/) {
+		elsif ($maintainer =~ /Oohara Yuuma <(.+)>/o) {
 			$lastname = 'Oohara'; $firstname = 'Yuuma'; $email = $1;
 		}
-		elsif ($maintainer =~ /W\. Borgert <(.+)>/) {
+		elsif ($maintainer =~ /W\. Borgert <(.+)>/o) {
 			$lastname = 'Borgert'; $firstname = 'Wolfgang'; $email = $1;
 		}
-		elsif ($maintainer =~ /Lenart Janos <(.+)>/) {
+		elsif ($maintainer =~ /Lenart Janos <(.+)>/o) {
 			$lastname = 'Lenart'; $firstname = 'Janos'; $email = $1;
 		}
-		elsif ($maintainer =~ /Bruno Barrera C\. <(.+)>/) {
+		elsif ($maintainer =~ /Bruno Barrera C\. <(.+)>/o) {
 			$lastname = 'Barrera C.'; $firstname = 'Bruno'; $email = $1;
 		}
-		elsif ($maintainer =~ /Alejandro Rios P\. <(.+)>/) {
+		elsif ($maintainer =~ /Alejandro Rios P\. <(.+)>/o) {
 			$lastname = 'Rios P.'; $firstname = 'Alejandro'; $email = $1;
 		}
-		elsif ($maintainer =~ /Elrond <(.+)>/) {
+		elsif ($maintainer =~ /Elrond <(.+)>/o) {
 			$lastname = 'Elrond'; $firstname = ''; $email = $1;
 		}
 
@@ -589,7 +574,7 @@ foreach (@special_maintainer) {
 @nameslist = sort { lc($a) cmp lc($b) } keys %People;
 foreach $names (@nameslist) {
 	($lastname,$firstname) = split(/:/, $names);
-	if ($lastname =~ $special_maintainer_regex) {
+	if ($lastname =~ /$special_maintainer_regex$/o) {
 		print_maintainer($names);
 		delete $People{$names};
 	}
