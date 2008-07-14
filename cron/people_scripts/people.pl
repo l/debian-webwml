@@ -22,31 +22,20 @@ my @special_maintainer = (
 	"teTeX maintainers",
 	"APT Development Team",
 	"Progeny Debian Packaging Team",
+	"Progeny Debian Packaging Group",
 	"Dynamic DNS Tools and Services",
-	"Debian OpenOffice Team",
 	"Cdbs Hackers",
 	"Popularity Contest Developers",
-	"Debian XML/SGML Group",
 	"Grub-Devel",
-	"Debian S/390 Team",
-	"Debian Firebird Group",
-	"Debian Mono Group",
-	"Debian Perl Group",
-	"Progeny Debian Packaging Group",
 	"Grub Maintainers",
 	"Debian Berkeley DB Maintainers",
 	"Debian SPARC 2.4 Kernel Maintainers",
 	"Exim4 Maintainers",
-	"Debian VoIP Team",
-	"Dbus Maintainance Team",
 	"Debian Firebird RDBMS Team",
-	"Debian kernel team",
-	"Debian logcheck Team",
-	"Debian NTP Team",
-	"Debian QEMU Team",
-	"Debian VBA Team",
 	"Debian VDR and DVB Packaging Team",
+	"Debian GNU/kFreeBSD",
 );
+my $special_maintainer_regex = qr(Debian \S+ (?:[Mm]aintainers|[Tt]eam|[Gg]roup));
 
 
 # put the auxilliary functions first to shut up perl >= 5.6
@@ -244,7 +233,7 @@ sub process_name {
 		}
 		$maintainer = from_utf8_or_iso88591_to_sgml($maintainer);
 # Take care of the annoying cases and exceptions and overrides and stuff
-		if ($maintainer =~ /(Debian \S+ [Mm]aintainers).*<(.+)>/) {
+		if ($maintainer =~ /($special_maintainer_regex).*<(.+)>/) {
 			$lastname = $1; $firstname = ''; $email = $2;
 		}
 		elsif ($maintainer =~ /Debian Quality Assurance.*<(.+)>/) {
@@ -259,10 +248,10 @@ sub process_name {
 		elsif ($maintainer =~ /J\.H\.M\.? Dassen \(Ray\) <(.+)>/o) {
 			$lastname = 'Dassen'; $firstname = 'Ray J.H.M.'; $email = $1;
 		}
-		elsif ($maintainer =~ /David (A. )?van Leeuwen <(.+)>/) {
+		elsif ($maintainer =~ /David (A\. )?van Leeuwen <(.+)>/) {
 			$lastname = 'van Leeuwen'; $firstname = 'David'; $email = $2;
 		}
-		elsif ($maintainer =~ /Mark W. Eichin <(.+)>/) {
+		elsif ($maintainer =~ /Mark W\. Eichin <(.+)>/) {
 			$lastname = 'Eichin'; $firstname = 'Mark'; $email = $1;
 		}
 		elsif ($maintainer =~ /Kam Tik <(.+)>/) {
@@ -280,7 +269,7 @@ sub process_name {
 		elsif ($maintainer =~ /An Thi-Nguyen Le <(.+)>/) {
 			$lastname = 'Le' ; $firstname = 'An Thi-Nguyen' ; $email = $1;
 		}
-		elsif ($maintainer =~ /C.M. Connelly <(.+)>/) {
+		elsif ($maintainer =~ /C\.M\. Connelly <(.+)>/) {
 			$lastname = 'Connelly' ; $firstname = 'Claire' ; $email = $1;
 		}
 		elsif ($maintainer =~ /Thomas Bushnell, BSG <(.+)>/) {
@@ -289,7 +278,7 @@ sub process_name {
 		elsif ($maintainer =~ /Viral <(.+)>/) {
 			$lastname = 'Shah' ; $firstname = 'Viral' ; $email = $1;
 		}
-		elsif ($maintainer =~ /Masamichi Goudge M.D. <(.+)>/) {
+		elsif ($maintainer =~ /Masamichi Goudge M\.D\. <(.+)>/) {
 			$lastname = 'Goudge' ; $firstname = 'Masamichi' ; $email = $1;
 		}
 		elsif ($maintainer =~ /Pedro Zorzenon Neto <(.+)>/) {
@@ -600,7 +589,7 @@ foreach (@special_maintainer) {
 @nameslist = sort { lc($a) cmp lc($b) } keys %People;
 foreach $names (@nameslist) {
 	($lastname,$firstname) = split(/:/, $names);
-	if ($lastname =~ /Debian \S+ [Mm]aintainers/) {
+	if ($lastname =~ $special_maintainer_regex) {
 		print_maintainer($names);
 		delete $People{$names};
 	}
