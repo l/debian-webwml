@@ -1332,7 +1332,10 @@ sub generate_nsupdate {
   foreach my $id (0..$#mirror) {
     if (exists $mirror[$id]{'archive-architecture'}) {
       foreach my $arch (@{ $mirror[$id]{'archive-architecture'} }) {
-        die "found an ALL-architecture entry for $mirror[$id]{site}" if ($arch eq 'ALL');
+        if ($arch eq 'ALL') {
+          warn "found an ALL-architecture entry for $mirror[$id]{site}";
+          next;
+        }
         $arches{$arch} = 1 unless $arches{$arch};
       }
     }
