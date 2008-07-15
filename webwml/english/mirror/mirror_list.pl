@@ -1390,6 +1390,11 @@ sub generate_nsupdate {
       }
     }
 
+    if ($site_arches[0] eq 'ALL') {
+      warn "skipping $site because of an ALL-architecture entry";
+      next;
+    }
+
     if ($#site_arches < 0) {
       warn "skipping $site because it doesn't carry any (main) archive architectures.\n";
       next;
