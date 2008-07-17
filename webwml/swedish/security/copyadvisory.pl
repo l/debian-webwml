@@ -176,6 +176,8 @@ while (<SRC>)
 	s/&aring;/å/g;
 	s/&auml;/ä/g;
 	s/&ouml;/ö/g;
+	s/^Several remote vulnerabilities have been discovered in /Man har upptäckt flera utifrån nåbara sårbarheter i /;
+	s/^Several vulnerabilities have been discovered in /Man har upptäckt flera sårbarheter i /;
 
 	print DST $_;
 }
