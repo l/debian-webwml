@@ -176,8 +176,11 @@ while (<SRC>)
 	s/&aring;/å/g;
 	s/&auml;/ä/g;
 	s/&ouml;/ö/g;
-	s/^Several remote vulnerabilities have been discovered in /Man har upptäckt flera utifrån nåbara sårbarheter i /;
-	s/^Several vulnerabilities have been discovered in /Man har upptäckt flera sårbarheter i /;
+	s/\bSeveral remote vulnerabilities have been discovered in /Man har upptäckt flera utifrån nåbara sårbarheter i /;
+	s/\bSeveral local\/remote vulnerabilities have been discovered in /Man har upptäckt flera lokala och utifrån nåbara sårbarheter i /;
+	s/\bSeveral vulnerabilities have been discovered in /Man har upptäckt flera sårbarheter i /;
+	s/an unbranded version of the Firefox browser/en varumärkesfri version av webbläsaren Firefox/;
+	s/an unbranded version of the /en varumärkesfri version av /;
 
 	print DST $_;
 }
