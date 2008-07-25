@@ -103,6 +103,7 @@ sub process_package_file {
 			$package_info .= $_;
 		}
 	}
+	close PKG;
 }
 
 sub process_source_file {
@@ -205,7 +206,11 @@ sub from_utf8_or_iso88591_to_sgml ($) {
 
 sub process_name {
     my ($maintainer) = @_;
-		$maintainer =~ s/&/&amp;/g;
+    unless ($maintainer) {
+	warn "undefined maintainer";
+	return;
+    }
+    $maintainer =~ s/&/&amp;/g;
 
     my ($lastname, $firstname, $email);
 
@@ -385,7 +390,10 @@ sub canonical_names {
 
 		my ($lastname, $firstname, $email) = process_name($maintainer);
 
-		next unless $lastname;
+		unless ($lastname) {
+			warn "no canonical name for package $pack";
+			return;
+		}
 
 		$package{$pack}{lastname} = $lastname;
 		$package{$pack}{firstname} = $firstname;
