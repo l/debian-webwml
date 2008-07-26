@@ -1,26 +1,40 @@
 #use wml::debian::template title="Errata pour l'installateur Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.112" maintainer="Nicolas Bertolissio"
+#use wml::debian::translation-check translation="1.118" maintainer="Nicolas Bertolissio"
 
 
-<h1 id="lenny-beta1"><i>Errata</i> pour la première version bêta pour
+<h1 id="lenny-beta1"><i>Errata</i> pour la deuxième version bêta pour
 Lenny</h1>
 
 <p>
-Voici une liste des problèmes connus dans la première version bêta de
+Voici une liste des problèmes connus dans la deuxième version bêta de
 l'installateur Debian pour Lenny. Si vous n'y voyez pas le problème que vous
 rencontrez, veuillez nous envoyer un <a href="report-template">compte-rendu
 d'installation</a> (en anglais) décrivant le problème.
 </p>
 
 <dl class="gloss">
-  <dt>Utilisation de l'option de montage <q>relatime</q> impossible pour
-    l'instant</dt>
+  <dt>Avertissements pour <q>valeur non initialisée</q> par Perl pendant
+  l'installation</dt>
     <dd>
-    La gestion de l'option de montage <q>relatime</q> a été ajoutée, mais elle
-    n'est pas encore utilisable car sa gestion manque dans la commande mount de
-    busybox (<a href="http://bugs.debian.org/460824">bogue n°&nbsp;</a>). Ce
-    problème est corrigé dans les images construites hedomadairement.
+    Conséquence du passage récent à Perl 5.10, les journaux d'installation
+    contiendront quelques avertissements de Perl. Pour autant que nous
+    sachions, ils sont inoffensifs et peuvent être ignorés. Une solution à ce
+    problème  (<a href="http://bugs.debian.org/480533">#480533</a>) est en
+    cours de recherche.
+    <dt>Erreurs d'aptitude pendant l'installation en russe</dt>
+    Ce problème conduira à l'échec de l'installation. Nous avons vu uniquement des signalements pour le russe, mais d'autres langues peuvent également être affectées.
+    On s'attend à ce que ce problème (<a href="http://bugs.debian.org/473559">#473559</a>) soit rapidement corrigé, après la publication des reconstructions quotidiennes et hebdomadaires de l'installateur et des images de CD/DVD.<br />
+    Dans le cas où vous êtes touché par ce problème, l'installation peut être terminée en utilisant le contournement suivant :
+    <ul>
+    <li>Passez sur une console de débogage sur VT2</li>
+    <li>Lancez la commande :<br />
+    <tt>rm /target/usr/share/locale/&lt;lang&gt;/LC_MESSAGES/*apt*</tt><br />
+    (remplacez <q><tt>&lt;lang&gt;</tt></q> par votre code de langue, e.g. <q><tt>ru</tt></q>)</li>
+    <li>Revenez au menu de l'installateur sur VT1</li>
+    <li>Continuez l'installation en essayant à nouveau l'étape de
+    l'installation sélectionnée</li>
+    </ul>
     </dd>
   <dt>Problèmes de réseau possibles avec des routeurs bogués</dt>
     <dd>
@@ -60,21 +74,16 @@ d'installation</a> (en anglais) décrivant le problème.
       <li>Certaines dispositions de claviers non américaines ne sont pas
 	totalement gérées (les touches mortes et la combinaison de caractères
 	ne fonctionnent pas),</li>
-      <li>la gestion des partitions chiffrées est limitée&nbsp;</li>
+      <li>Les touches pour les caractères accentués ou les caractères spéciaux
+      peuvent ne pas fonctionner correctement ; c'est une régression comparée
+      aux publications précédentes que nous espérons voir bientôt corrigée 
+      (<a href="http://bugs.debian.org/482335">#482335</a>)&nbsp;</li>
       <li>la plupart des PowerPC avec une carte ATI ne devraient pas rencontrer
 	de problèmes, mais il y a peu de chances que cela fonctionne sur les
 	autres systèmes PowerPC&nbsp;;</li>
     </ul>
     </dd>
-  <dt>Installation de Gnome par les CD avec KDE et Xfce</dt>
-    <dd>
-    Cela est dû a une modification dans le sélecteur de tâches où nous avons
-    oublié de mettre à jour les outils utilisés pour construire les images de
-    CD. Il est possible de contourner ce problème en amorçant l'installateur
-    avec une option supplémentaire&nbsp;: <tt>install desktop=kde</tt>, ou
-    <tt>install desktop=xfce</tt>. Ce problème est corrigé dans les images
-    construites hedomadairement.
-    </dd>
+
 <!-- conservé pour une possible utilisation ultérieure...
   <dt>Architecture i386&nbsp;: plus de 32&nbsp;Mo requis pour
     l'installation</dt>
@@ -86,17 +95,38 @@ d'installation</a> (en anglais) décrivant le problème.
     architectures&nbsp;;
     </dd>
 -->
-  <dt>Architectures i386&nbsp;: hoquets du noyau pendant le démarrage de
-    l'installateur sur ThinkPad T41</dt>
+  <dt>Architectures i386 : pas d'installation à partir de disquettes</dt>
     <dd>
-    Nous ne pouvons pas être sûrs que ce bogue a été corrigé avant que nous ne
-    mettions à jour une nouveau version du noyau. Il semble que ce soit un
-    problème du noyau, et non de l'installateur, bien qu'il ait été
-    initialement signalé comme un bogue de l'installateur.  Pour de plus amples
-    informations veuillez voir le <a href="http://bugs.debian.org/470522">bogue
-    n°&nbsp;470522</a>.
+    À cause de l'augmentation de la taille du noyau 2.6.24, nous ne pouvons
+    fournir d'images d'installation pour disquettes. Nous prévoyons d'être
+    capable de prendre en charge les installations avec disquettes quand
+    l'installateur passera à la version suivante du noyau.
     </dd>
-  <dt>Architecture PowerPC&nbsp;: divers problèmes</dt>
+    <dt>Architectures i386/amd64 : l'installation de GRUB sur un cpqarray de volumes RAID
+    peut échouer</dt>
+    <dd>
+    Sont affectés les systèmes qui ont des équipements <tt>/dev/ida/cXdX</tt>.
+    Ce problème (<a href="http://bugs.debian.org/466600">#466600</a>) devrait
+    être corrigé rapidement après la publication des reconstructions
+    quotidiennes et hebdomadaires de l'installateur et des images CD/DVD
+    lorsqu'une version corrigée de GRUB atteindra testing.
+    </dd>
+    <dt>Architectures i386/amd64 : le redémarrage peut échouer avec un système de fichiers
+    chiffré avec loop-aes</dt>
+    <dd>
+    Cela peut être dû à un problème avec GRUB qui a pour conséquence qu'un
+    paramètre incorrect <tt>root=</tt> est indiqué dans
+    <tt>/etc/grub/menu.lst</tt>.
+    Consultez <a href="http://bugs.debian.org/486360">#486360</a> pour plus de
+    détails et pour un contournement.
+    </dd>
+    <dt>Architecture arm : une image NSLU2 ne démarrera pas</dt>
+    Les images de l'installateur NSLU2 de Debian ne démarreront pas.
+    Cependant, ce problème n'est pas présent dans les paquets non officiels
+    issus de <tt>slug-firmware.net</tt>. Ces images incluent également le
+    microcode propriétaire nécessaire à Ethernet pour fonctionner, donc nous
+    vous prions d'utiliser les images de <tt>slug-firmware.net</tt>.
+    <dt>Architecture PowerPC&nbsp;: divers problèmes</dt>
     <dd>
     Le portage sur l'architecture PowerPC a plusieurs problèmes dans cette
     version&nbsp;:
@@ -108,6 +138,13 @@ d'installation</a> (en anglais) décrivant le problème.
       certains systèmes&nbsp;; vous devrez l'ajouter vous-même dans
       <tt>/etc/modules</tt>&nbsp;;</li>
     </ul>
+    </dd>
+    <dt>Architecture sparc : échoue lors de la reconnaissance du contrôleur
+    SCSI ESP/FAS</dt>
+    <dd>
+    Il manque aux images de l'installateur le module du noyau <tt>sun_esp</tt>
+    qui est nécessaire pour gérer les lecteurs CD et les disques connectés à
+    un contrôleur ESP ou FAS.
     </dd>
   <dt>Architecture s390&nbsp;: capacités non gérées</dt>
     <dd>
