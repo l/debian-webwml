@@ -6,8 +6,8 @@
 # a removing a WML file from CVS causes the corresponding HTML file to go
 # away.
 
-# Originally written 2001-03-22 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2001-2002,2004 Software in the public interest, Inc.
+# Originally written 2001-03-22 by Peter Krefting <peterk@debian.org>
+# © Copyright 2001-2008 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
