@@ -6,8 +6,8 @@
 # Makefile.  It will do this by simply including the English version -- copied
 # Makefiles are not supported anymore for they bear too much space for errors.
 
-# Originally written 2000-02-26 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2000-2004 Software in the public interest, Inc.
+# Originally written 2000-02-26 by Peter Krefting <peterk@debian.org>
+# © Copyright 2000-2008 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$

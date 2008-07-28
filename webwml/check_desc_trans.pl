@@ -17,8 +17,8 @@
 #
 # There are no command line parameters.
 
-# Originally written 2002-10-05 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2002-2007 Software in the public interest, Inc.
+# Originally written 2002-10-05 by Peter Krefting <peterk@debian.org>
+# © Copyright 2002-2008 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$

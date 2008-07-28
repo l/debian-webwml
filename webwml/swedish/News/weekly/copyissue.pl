@@ -5,8 +5,8 @@
 # adds the translation-check header to it. It will also create the
 # destination directory if necessary.
 
-# Written in 2000-2004 by Peter Karlsson <peter@softwolves.pp.se>
-# © Copyright 2000-2004 Software in the public interest, Inc.
+# Written in 2000-2008 by Peter Krefting <peter@softwolves.pp.se>
+# © Copyright 2000-2008 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -252,7 +252,7 @@ while (<SRC>)
 	if (/wml::debian::weeklynews::footer/)
 	{
 		chomp;
-		$_ .= qq' translator="Peter Karlsson"\n';
+		$_ .= qq' translator="Peter Krefting"\n';
 	}
 	print DST $_;
 }

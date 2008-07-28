@@ -8,7 +8,7 @@
 
 # This is GPL'ed code.
 # Copyright 1998 Paolo Molaro <lupus@debian.org>.
-# Copyright 1999-2003 Peter Karlsson <peterk@debian.org>.
+# Copyright 1999-2003 Peter Krefting <peterk@debian.org>.
 # Copyright 2000,2001 Martin Quinson <mquinson@ens-lyon.fr>.
 
 # Invocation:
