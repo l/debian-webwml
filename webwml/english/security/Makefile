@@ -139,10 +139,3 @@ ifeq "$(LANGUAGE)" "en"
 	ln -sf dsa-long.en.rdf $(HTMLDIR)/dsa-long.rdf
 endif
 
-ifeq "$(LANGUAGE)" "en"
-install:: $(HTMLDIR)/keys.txt
-
-$(HTMLDIR)/keys.txt: $(HTMLDIR)/%: %
-	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
-	install -m 664 -p $< $(HTMLDIR)
-endif
