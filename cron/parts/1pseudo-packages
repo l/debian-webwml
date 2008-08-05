@@ -5,16 +5,17 @@
 
 . `dirname $0`/../common.sh
 
-# James has the canonical version symlinked here:
-# this ftp-master rsyncd module stopped working after ries crash 2007-10
-# but isn't really necessary, cf. bug#449097
-#rsync -upL ftp-master::masterfiles/pseudo-packages.description $crondir/datafiles
+# use the BTS' copy -joy, 2007-12-03
+wget -q http://bugs.debian.org/pseudo-packages.description \
+     -O $crondir/datafiles/pseudo-packages.description.new
 
-# changed to use the BTS' copy -joy, 2007-12-03
-wget -q http://bugs.debian.org/pseudo-packages.description -O $crondir/datafiles/pseudo-packages.description
+if [ -s $crondir/datafiles/pseudo-packages.description.new ]; then
+  mv $crondir/datafiles/pseudo-packages.description.new \
+     $crondir/datafiles/pseudo-packages.description
+fi
 
 # the appropriate Makefile will do the rest of the work
 ln -sf $crondir/datafiles/pseudo-packages.description \
- $webtopdir/webwml/english/Bugs/pseudo-packages.description
+       $webtopdir/webwml/english/Bugs/pseudo-packages.description
 
 echo
