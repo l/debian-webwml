@@ -11,4 +11,4 @@ include $(WMLBASE)/Make.lang
 index.$(LANGUAGE).html: index.wml \
 	$(TEMPLDIR)/cdimage.wml \
 	$(TEMPLDIR)/toc.wml \
-	$(ENGLISHSRCDIR)/releases/info
+	$(TEMPLDIR)/release_info.wml

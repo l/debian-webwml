@@ -10,10 +10,10 @@ include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html:: $(ENGLISHDIR)/releases/etch/release.data \
 	$(ENGLISHSRCDIR)/releases/images.data \
-	$(ENGLISHDIR)/releases/info \
+	$(TEMPLDIR)/release_info.wml \
 	$(TEMPLDIR)/installer.wml
 
 etchnhalf.$(LANGUAGE).html:: $(ENGLISHDIR)/releases/etch/release.data \
 	$(ENGLISHDIR)/releases/etch/debian-installer/etchnhalf-images.data \
-	$(ENGLISHDIR)/releases/info \
+	$(TEMPLDIR)/release_info.wml \
 	$(TEMPLDIR)/installer.wml

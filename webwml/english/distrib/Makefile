@@ -13,7 +13,7 @@ include $(WMLBASE)/Make.lang
 archive.$(LANGUAGE).html: archive.wml $(ENGLISHDIR)/distrib/archive.mirrors \
   $(ENGLISHDIR)/distrib/archive-nonus.mirrors \
   $(TEMPLDIR)/countries.wml
-packages.$(LANGUAGE).html: packages.wml $(ENGLISHSRCDIR)/releases/info \
+packages.$(LANGUAGE).html: packages.wml $(TEMPLDIR)/release_info.wml \
   $(ENGLISHDIR)/distrib/search_packages-form.inc \
   $(ENGLISHDIR)/distrib/search_contents-form.inc
 pre-installed.$(LANGUAGE).html: pre-installed.wml $(TEMPLDIR)/countries.wml \
@@ -21,7 +21,7 @@ pre-installed.$(LANGUAGE).html: pre-installed.wml $(TEMPLDIR)/countries.wml \
 
 netinst.$(LANGUAGE).html: netinst.wml $(TEMPLDIR)/template.wml \
   $(TEMPLDIR)/toc.wml \
-  $(ENGLISHSRCDIR)/releases/info \
+  $(TEMPLDIR)/release_info.wml \
   $(ENGLISHSRCDIR)/releases/images.data \
 
 ifeq "$(LANGUAGE)" "en"

@@ -9,12 +9,12 @@ SUBS=debian-installer
 include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/release.wml \
-  $(ENGLISHDIR)/releases/sarge/release.data $(ENGLISHDIR)/releases/info
+  $(ENGLISHDIR)/releases/sarge/release.data $(TEMPLDIR)/release_info.wml
 
 releasenotes.$(LANGUAGE).html: releasenotes.wml $(TEMPLDIR)/release.wml \
-  $(ENGLISHDIR)/releases/sarge/release.data $(ENGLISHDIR)/releases/info \
+  $(ENGLISHDIR)/releases/sarge/release.data $(TEMPLDIR)/release_info.wml \
   $(wildcard $(HTMLDIR)/*/release-notes*)
 
 installmanual.$(LANGUAGE).html: installmanual.wml $(TEMPLDIR)/release.wml \
-  $(ENGLISHDIR)/releases/sarge/release.data $(ENGLISHDIR)/releases/info \
+  $(ENGLISHDIR)/releases/sarge/release.data $(TEMPLDIR)/release_info.wml \
   $(wildcard $(HTMLDIR)/*/install*)

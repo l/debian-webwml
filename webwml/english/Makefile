@@ -27,12 +27,12 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/mainpage.wml $(GETTEXTDEP) \
 		$(wildcard News/$(CUR_YEAR)/[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/[0-9]*.wml) \
 		$(wildcard security/$(CUR_YEAR)/dsa-[0-9]*.wml) $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-[0-9]*.wml) \
 		$(TEMPLDIR)/ctime.wml $(TEMPLDIR)/recent_list.wml $(TEMPLDIR)/languages.wml \
-		$(ENGLISHSRCDIR)/releases/info
+		$(TEMPLDIR)/release_info.wml
 	$(WML) index.wml
 
 $(SITEMAP): $(ENGLISHDIR)/sitemap.wml $(TEMPLDIR)/card.wml \
   $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/template.wml $(GETTEXTDEP) \
-  $(ENGLISHDIR)/releases/info $(ENGLISHDIR)/MailingLists/mklist.tags
+  $(TEMPLDIR)/release_info.wml $(ENGLISHDIR)/MailingLists/mklist.tags
 ifeq "$(LANGUAGE)" "zh"
 	$(subst :.zh,:sitemap.zh,$(WML)) \
           $(shell egrep '^-D (CUR_|CHAR)' .wmlrc) \

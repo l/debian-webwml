@@ -12,4 +12,4 @@ $(HTMLFILES): $(ENGLISHSRCDIR)/ports/amd64/menu.inc $(TEMPLDIR)/submenu.wml $(TE
 
 index.$(LANGUAGE).html: $(ENGLISHSRCDIR)/ports/amd64/menu.inc \
 	$(TEMPLDIR)/submenu.wml $(TEMPLDIR)/template.wml \
-	$(ENGLISHSRCDIR)/releases/info
+	$(TEMPLDIR)/release_info.wml
