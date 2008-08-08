@@ -15,7 +15,7 @@ include $(WMLBASE)/Make.lang
 index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.wml) \
   $(wildcard $(ENGLISHSRCDIR)/security/$(CUR_YEAR)/dsa-*.data) \
-  $(ENGLISHSRCDIR)/releases/info \
+  $(TEMPLDIR)/release_info.wml \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
 
 faq.$(LANGUAGE).html: faq.wml \

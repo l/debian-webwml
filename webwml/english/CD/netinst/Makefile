@@ -9,5 +9,5 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
-  $(ENGLISHSRCDIR)/releases/info $(TEMPLDIR)/installer.wml \
+  $(TEMPLDIR)/release_info.wml $(TEMPLDIR)/installer.wml \
   $(ENGLISHSRCDIR)/releases/images.data

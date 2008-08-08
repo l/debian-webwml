@@ -9,8 +9,8 @@ SUBS=
 include $(WMLBASE)/Make.lang
 
 
-index.$(LANGUAGE).html: index.wml $(ENGLISHDIR)/releases/info
-errata.$(LANGUAGE).html: errata.wml $(ENGLISHDIR)/releases/info
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/release_info.wml
+errata.$(LANGUAGE).html: errata.wml $(TEMPLDIR)/release_info.wml
 installmanual.$(LANGUAGE).html: installmanual.wml $(TEMPLDIR)/release.wml \
   $(ENGLISHDIR)/releases/woody/release.data
 releasenotes.$(LANGUAGE).html: releasenotes.wml $(TEMPLDIR)/release.wml \

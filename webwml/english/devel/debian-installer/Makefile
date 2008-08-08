@@ -14,7 +14,7 @@ index.$(LANGUAGE).html:: $(TEMPLDIR)/recent_list.wml \
 	$(wildcard News/[12][0-9][0-9][0-9]/[0-9]*.wml) \
 	$(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/News/[12][0-9][0-9][0-9]/[0-9]*.wml) \
 	$(ENGLISHSRCDIR)/$(CUR_DIR)/images.data \
-	$(ENGLISHSRCDIR)/releases/info
+	$(TEMPLDIR)/release_info.wml
 
 $(ENGLISHSRCDIR)/$(CUR_DIR)/images.data: $(TEMPLDIR)/installer.wml
 	touch $@

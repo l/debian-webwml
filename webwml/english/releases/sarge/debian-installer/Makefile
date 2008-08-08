@@ -8,4 +8,4 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html:: $(ENGLISHDIR)/releases/sarge/release.data $(ENGLISHDIR)/releases/info $(TEMPLDIR)/installer.wml
+index.$(LANGUAGE).html:: $(ENGLISHDIR)/releases/sarge/release.data $(TEMPLDIR)/release_info.wml $(TEMPLDIR)/installer.wml
