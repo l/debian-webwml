@@ -10,4 +10,4 @@ include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
   $(TEMPLDIR)/release_info.wml $(TEMPLDIR)/installer.wml \
-  $(ENGLISHSRCDIR)/releases/images.data
+  $(TEMPLDIR)/release_images.wml

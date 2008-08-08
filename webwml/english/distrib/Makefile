@@ -22,7 +22,7 @@ pre-installed.$(LANGUAGE).html: pre-installed.wml $(TEMPLDIR)/countries.wml \
 netinst.$(LANGUAGE).html: netinst.wml $(TEMPLDIR)/template.wml \
   $(TEMPLDIR)/toc.wml \
   $(TEMPLDIR)/release_info.wml \
-  $(ENGLISHSRCDIR)/releases/images.data \
+  $(TEMPLDIR)/release_images.wml \
 
 ifeq "$(LANGUAGE)" "en"
 clean::

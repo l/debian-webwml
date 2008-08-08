@@ -10,7 +10,7 @@ include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml \
   $(ENGLISHDIR)/CD/http-ftp/cdimage_mirrors.list \
-  $(TEMPLDIR)/release_info.wml $(ENGLISHDIR)/releases/images.data
+  $(TEMPLDIR)/release_info.wml $(TEMPLDIR)/release_images.wml
 
 ifeq "$(LANGUAGE)" "en"
 $(ENGLISHDIR)/CD/http-ftp/cdimage_mirrors.list: \
