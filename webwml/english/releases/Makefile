@@ -10,7 +10,7 @@ include $(WMLBASE)/Make.lang
 
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
-  $(ENGLISHSRCDIR)/$(CUR_DIR)/info
+  $(TEMPLDIR)/release_info.wml
 
 ifeq "$(LANGUAGE)" "en"
 # this stuff creates symlinks for releases
