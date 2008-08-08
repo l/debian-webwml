@@ -12,4 +12,4 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml \
 	$(TEMPLDIR)/installer.wml $(TEMPLDIR)/toc.wml \
 	$(TEMPLDIR)/release_info.wml \
 	$(ENGLISHSRCDIR)/devel/debian-installer/images.data \
-	$(ENGLISHSRCDIR)/releases/images.data
+	$(TEMPLDIR)/release_images.wml
