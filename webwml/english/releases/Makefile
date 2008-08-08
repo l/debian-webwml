@@ -14,9 +14,9 @@ index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
 
 ifeq "$(LANGUAGE)" "en"
 # this stuff creates symlinks for releases
-tes := $(shell grep "define-tag current_testing_name" info | grep -v ^\# | cut -d\< -f2 | cut -d\> -f2)
-rel := $(shell grep "define-tag current_release_name" info | grep -v ^\# | cut -d\< -f2 | cut -d\> -f2)
-old := $(shell grep "define-tag current_oldstable_name" info | grep -v ^\# | cut -d\< -f2 | cut -d\> -f2)
+tes := $(shell grep "define-tag current_testing_name" $(TEMPLDIR)/release_info.wml | grep -v ^\# | cut -d\< -f2 | cut -d\> -f2)
+rel := $(shell grep "define-tag current_release_name" $(TEMPLDIR)/release_info.wml | grep -v ^\# | cut -d\< -f2 | cut -d\> -f2)
+old := $(shell grep "define-tag current_oldstable_name" $(TEMPLDIR)/release_info.wml | grep -v ^\# | cut -d\< -f2 | cut -d\> -f2)
 uns := sid
 
 install::
