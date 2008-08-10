@@ -1,5 +1,6 @@
 #use wml::debian::template title="Debianin vianseurantaj‰rjestelm‰" BARETITLE=true NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.69"
+#use wml::debian::translation-check translation="1.70"
+{#style#:<link rel="stylesheet" href="http://bugs.debian.org/css/bugs.css" type="text/css">:##}
 
 <p>Debianilla on vikojen seurantaan j‰rjestelm‰ (bug tracking system, BTS),
 joka kirjaa tarkat tiedot k‰ytt‰jien ja kehitt‰jien ilmoittamista vioista
@@ -35,21 +36,107 @@ ohjeita ja vinkkej‰ <a href="Reporting">vikailmoituksen laatimiseen</a>.</p>
   <label><input type="checkbox" name="boring" value="yes"> n‰yt‰ tyls‰t viestit</label>
   </p>
   </form>
+<h2>Valitse vikailmoitukset WWW:ss‰</h2>
 <a name="pkgreport"></a>
 <form method="get" action="http://bugs.debian.org/cgi-bin/pkgreport.cgi">
-<p>Hae vikoja ehdolla:
-<label><input type="radio" name="which" value="pkg" checked><strong>paketti</strong></label>
-<label><input type="radio" name="which" value="src"><strong>l‰hdekoodipaketti</strong></label>
-<label><input type="radio" name="which" value="maint"><strong>yll‰pit‰j‰n&nbsp;s‰hkˆposti</strong></label>
-<label><input type="radio" name="which" value="submitter"><strong>l‰hett‰j‰n&nbsp;s‰hkˆposti</strong></label>
-<label><input type="radio" name="which" value="severity"><strong>vakavuus</strong></label>
-<label><input type="radio" name="which" value="tag"><strong>tagi</strong></label>
-<br />
-<label>Hakuehto: <input type="text" name="data" value="" size="50"></label>
-<input type="submit" value="Hae" />
-<br />
-<p>Lis‰asetuksia (n‰m‰ voit j‰tt‰‰ tyhjiksi, sill‰ oletusarvot ovat toimivat):</p>
-#include "$(ENGLISHDIR)/Bugs/pkgreport-opts.inc"
+<input type="hidden" name="_fo_combine_key_fo_searchkey_value_fo_searchvalue" value="1">
+<input type="hidden" name="form_options" value="1">
+<table class="forms">
+<tr><td><h2>Valitse viat</h2>
+</td>
+<td>
+<nobr><select name="_fo_searchkey">
+<option value="package" selected>paketissa</option>
+<option value="tag">tagilla</option>
+<option value="severity">vakavuudella</option>
+<option value="src">l‰hdekoodipaketissa</option>
+<option value="maint">paketissa, jota yll‰pit‰‰</option>
+<option value="submitter">joista on ilmoittanut</option>
+<option value="owner">jotka omistaa</option>
+<option value="status">joissa on tila</option>
+<option value="correspondent">joissa l‰hett‰j‰n s‰hkˆposti on</option>
+<option value="newest">uusimmat viat</option>
+</select>
+<input type="text" name="_fo_searchvalue" value ="">
+</nobr>
+<br>
+</td>
+
+<td>
+<p>Samat hakukent‰t yhdistet‰‰n TAI-ehdolla ja eri kent‰t JA-ehdolla.</p>
+<p>Kelvolliset vakavuudet ovat critical (kriittinen), grave (merkitt‰v‰), serious (vakava), important (t‰rke‰), normal (normaali), minor (v‰h‰inen), wishlist (toive), fixed (korjattu)</p>
+<p>Kelvolliset tagit ovat patch (korjaus), wontfix (ei korjata), moreinfo (lis‰tietoa), unreproducible (ei toistettavissa), fixed (korjattu), potato, woody, sid, help (apua), security (tietoturva), upstream (yl‰virran ongelma), pending (odottaa), sarge, sarge-ignore (sargessa ei v‰litet‰), experimental (koskee kokeellista julkaisua), d-i (asennin), confirmed (vahvistettu), ipv6, lfs, fixed-in-experimental (korjattu kokeellisessa), fixed-upstream (korjattu yl‰virralla), l10n (paikallistaminen), etch, etch-ignore (etchiss‰ ei v‰litet‰), lenny, lenny-ignore (lennyss‰ ei v‰litet‰)</p>
+</td>
+</tr>
+<tr><td><h2>Sis‰llyt‰ viat</h2></td>
+<td><input type="hidden" name="_fo_concatenate_into_include_fo_includekey_fo_includevalue" value="1">
+<nobr><select name="_fo_includekey">
+<option value="subject">aihe sis‰lt‰‰</option>
+<option value="tags">tagilla</option>
+
+<option value="severity">vakavuudella </option>
+<option value="pending">odottava tila</option>
+<option value="originator">joissa ilmoittaja sis‰lt‰‰</option>
+<option value="forwarded">jotka on v‰litetty eteenp‰in</option>
+<option value="owner">joissa omistaja sis‰lt‰‰</option>
+<option value="package">paketissa</option>
+
+</select>
+<input type="text" name="_fo_includevalue" value ="">
+</nobr>
+</td>
+<td></td>
+</tr>
+<tr><td><h2>Ohita viat</h2></td>
+<td>
+<input type="hidden" name="_fo_concatenate_into_exclude_fo_excludekey_fo_excludevalue" value="1">
+<nobr><select name="_fo_excludekey">
+<option value="subject">aihe sis‰lt‰‰</option>
+<option value="tags">tagilla</option>
+<option value="severity">vakavuudella</option>
+<option value="pending">odottava tila</option>
+
+<option value="originator">joissa ilmoittaja sis‰lt‰‰</option>
+<option value="forwarded">jotka on v‰litetty eteenp‰in</option>
+<option value="owner">joissa omistaja sis‰lt‰‰</option>
+<option value="package">paketissa</option>
+
+</select>
+<input type="text" name="_fo_excludevalue" value ="">
+</nobr>
+</td>
+<td></td>
+</tr>
+<tr><td><h2>Luokitteluperuste</h2></td>
+<td></td>
+</tr>
+<tr><td><h2>J‰rjest‰misperuste</h2></td>
+<td><select name="ordering"><option value="normal" selected>normaali</option>
+<option value="oldview">vanha n‰kym‰</option>
+<option value="raw">raaka</option>
+<option value="age">ik‰</option>
+</td>
+
+<td></td>
+</tr>
+<tr><td><h2>Sekalaisia valintoja</h2></td>
+<td>
+<input type="checkbox" name="repeatmerged" >Toista yhdistetyt<br>
+<input type="checkbox" name="bug-rev" >K‰‰nteiset viat<br>
+<input type="checkbox" name="pend-rev" >K‰‰nteinen odottava tila<br>
+<input type="checkbox" name="sev-rev" >K‰‰nteinen vakavuus<br>
+
+<select name="archive">
+<option value="0" selected>arkistoimattomat</option>
+<option value="1">arkistoidut</option>
+<option value="both">arkistoidut sek‰ arkistoimattomat</option>
+</select>
+</td>
+</tr>
+<tr><td><h2>Hae</h2></td><td colspan=2>
+<input type="submit" name="submit" value="Hae">
+</td></tr>
+</table>
 </form>
 
 <p>Yll‰ olevat kyselyt voit myˆs tehd‰ kirjoittamalla URL-osoitteen
