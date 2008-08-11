@@ -1,5 +1,6 @@
 #use wml::debian::template title="Debians fejlrapporteringssystem" BARETITLE=true NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.69"
+#use wml::debian::translation-check translation="1.70"
+{#style#:<link rel="stylesheet" href="http://bugs.debian.org/css/bugs.css" type="text/css">:##}
 
 <p>Debian har et fejlrapporteringssystem (BTS) som holder styr på oplysninger 
 om fejl rapporteret af brugere og udviklere.  Hver fejl får tildelt et nummer 
@@ -25,9 +26,9 @@ distribution.</p>
   <li><a href="server-request">Få tilsendt fejlrapporter via e-mail</a></li>
 </ul>
 
-<h2>Læs fejlrapporter via Internet</h2>
+<h2>Se fejlrapporter på WWW</h2>
 
-<p>Find en fejl efter <strong>nummer</strong></p>
+<p>Find en fejl ud fra <strong>nummer</strong></p>
   <br />
   <a name="bugreport"></a>
   <form method="get" action="http://bugs.debian.org/cgi-bin/bugreport.cgi">
@@ -36,28 +37,116 @@ distribution.</p>
   <input type="submit" value="Søg">
   <label><input type="checkbox" name="mbox" value="yes"> som mbox</label>
   <label><input type="checkbox" name="trim" value="no"> vis alle headerlinjer</label>	
-  <label><input type="checkbox" name="boring" value="yes"> vis kedelige meddelelser</label>  
+  <label><input type="checkbox" name="boring" value="yes"> vis kedelige meddeleser</label>  
   </p>
   </form>
 
+<h2>Vælg fejlrapporter på WWW</h2>
+
 <a name="pkgreport"></a>
 <form method="get" action="http://bugs.debian.org/cgi-bin/pkgreport.cgi">
-  <p>Find fejl ud fra </p>
-  <label><input type="radio" name="which" value="pkg" checked><strong>pakke</strong></label>
-  <label><input type="radio" name="which" value="src"><strong>kildekodepakke</strong></label>
-  <label><input type="radio" name="which" value="maint"><strong>vedligeholders&nbsp;e-mail</strong></label>
-  <label><input type="radio" name="which" value="submitter"><strong>indsenders&nbsp;e-mail</strong></label>
-  <label><input type="radio" name="which" value="severity"><strong>alvorhedsgrad</strong></label>
-  <label><input type="radio" name="which" value="tag"><strong>mærke</strong></label>
-  <br />
-  <label>Hvad der skal søges efter:<input type="text" name="data" value="" size="50"></label>
-  <input type="submit" value="Søg">
-  <br />
-  <p>Flere indstillinger (som du ikke behøver at ændre, standardindstillingerne kan anvendes):</p>
-#include "$(ENGLISHDIR)/Bugs/pkgreport-opts.inc"
+<input type="hidden" name="_fo_combine_key_fo_searchkey_value_fo_searchvalue" value="1">
+<input type="hidden" name="form_options" value="1">
+<table class="forms">
+<tr><td><h2>Vælg fejl</h2>
+</td>
+<td>
+<nobr><select name="_fo_searchkey">
+<option value="package" selected>i pakke</option>
+<option value="tag">markeret</option>
+<option value="severity">med alvorlighedsgrad</option>
+<option value="src">i kildekodepakke</option>
+<option value="maint">i pakker vedligeholdt af</option>
+<option value="submitter">indsendt af</option>
+<option value="owner">ejes af</option>
+<option value="status">med status</option>
+<option value="correspondent">med mail fra</option>
+<option value="newest">nyeste fejl</option>
+</select>
+<input type="text" name="_fo_searchvalue" value ="">
+</nobr>
+<br>
+</td>
+
+<td>
+<p>De samme søgefelter OR's sammen, forskellige felter AND's.</p>
+<p>Gyldige alvorlighedsgrader er critical, grave, serious, important, normal, minor, wishlist, fixed</p>
+<p>Gyldige markering er patch, wontfix, moreinfo, unreproducible, fixed, potato, woody, sid, help, security, upstream, pending, sarge, sarge-ignore, experimental, d-i, confirmed, ipv6, lfs, fixed-in-experimental, fixed-upstream, l10n, etch, etch-ignore, lenny, lenny-ignore</p>
+</td>
+</tr>
+<tr><td><h2>Inkludér fejl</h2></td>
+<td><input type="hidden" name="_fo_concatenate_into_include_fo_includekey_fo_includevalue" value="1">
+<nobr><select name="_fo_includekey">
+<option value="subject">med emne indeholdende</option>
+<option value="tags">markeret</option>
+
+<option value="severity">med alvorlighedsgrad</option>
+<option value="pending">med afventer-status (pending)</option>
+<option value="originator">med indsender indeholdende</option>
+<option value="forwarded">med videresendt indeholdende</option>
+<option value="owner">med ejer indeholdende</option>
+<option value="package">med pakke</option>
+
+</select>
+<input type="text" name="_fo_includevalue" value ="">
+</nobr>
+</td>
+<td></td>
+</tr>
+<tr><td><h2>Ekskludér fejl</h2></td>
+<td>
+<input type="hidden" name="_fo_concatenate_into_exclude_fo_excludekey_fo_excludevalue" value="1">
+<nobr><select name="_fo_excludekey">
+<option value="subject">med emne indeholdende</option>
+<option value="tags">markeret</option>
+<option value="severity">med alvorlighedsgrad</option>
+<option value="pending">med afventer-status (pending)</option>
+
+<option value="originator">med indsender indeholdende</option>
+<option value="forwarded">med videresendt indeholdende</option>
+<option value="owner">med ejer indeholdende</option>
+<option value="package">med pakke</option>
+
+</select>
+<input type="text" name="_fo_excludevalue" value ="">
+</nobr>
+</td>
+<td></td>
+</tr>
+<tr><td><h2>Kategorisér ved hjælp af</h2></td>
+<td></td>
+</tr>
+<tr><td><h2>Arrangér efter</h2></td>
+<td><select name="ordering"><option value="normal" selected>normal</option>
+<option value="oldview">gammel visning</option>
+<option value="raw">rå</option>
+<option value="age">alder</option>
+</td>
+
+<td></td>
+</tr>
+<tr><td><h2>Forskellige valgmuligheder</h2></td>
+<td>
+<input type="checkbox" name="repeatmerged" > Omvendt sammenlagt<br>
+<input type="checkbox" name="bug-rev" > Omvendt fejl<br>
+<input type="checkbox" name="pend-rev" > Omvendt afventer (pending)<br>
+<input type="checkbox" name="sev-rev" > Omvendt alvorlighedsgrad<br>
+
+<select name="archive">
+<option value="0" selected>Uarkiveret</option>
+<option value="1">Arkiveret</option>
+<option value="both">Arkiveret og uarkiveret</option>
+</select>
+</td>
+</tr>
+<tr><td><h2>Udfør</h2></td><td colspan=2>
+<input type="submit" name="submit" value="Udfør">
+</td></tr>
+</table>
 </form>
 
-<p>Søgningerne ovenfor kan også udføres ved at besøge følgende formularers 
+
+<p>Søgningerne oven for kan også udføres ved at besøge følgende formularers 
 adresser, henholdsvis</p>
 <ul>
   <li><tt>http://bugs.debian.org/<var>nummer</var></tt></li>
@@ -66,9 +155,10 @@ adresser, henholdsvis</p>
   <li><tt>http://bugs.debian.org/src:<var>kildekodepakke</var></tt></li>
   <li><tt>http://bugs.debian.org/<var>vedligeholders@e-mail-adresse</var></tt></li>
   <li><tt>http://bugs.debian.org/from:<var>indsenders@e-mail-adresse</var></tt></li>
-  <li><tt>http://bugs.debian.org/severity:<var>alvorhedsgrad</var></tt></li>
-  <li><tt>http://bugs.debian.org/tag:<var>mærke</var></tt></li>
+  <li><tt>http://bugs.debian.org/severity:<var>alvorlighedsgrad</var></tt></li>
+  <li><tt>http://bugs.debian.org/tag:<var>markeret</var></tt></li>
 </ul>
+
 
 <h2>Søgning i fejlrapporterne</h2>	
 
@@ -87,12 +177,13 @@ avancerede søgning</a>.</p>
 og <a href="http://www.mail-archive.com/debian-bugs-dist%40lists.debian.org/">\
 The Mail Archive</a>.</p>
 
+
 <h2>Supplerende oplysninger</h2>
 
 <p>Den aktuelle liste over <a href="http://bugs.debian.org/release-critical/">\
 udgivelseskritiske fejl</a>.</p>
 	 
-<p>Den aktuelle liste over <a href="pseudo-packages">pseudo-pakker</a> som
+<p>Den aktuelle liste over <a href="pseudo-packages">pseudopakker</a> som
 Debians fejlhåndteringssystem kender.</p>
 
 <p>Følgende indekser over fejlrapporter er tilgængelige:</p>
