@@ -9,9 +9,10 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates bugs countries date debian-cdd distrib doc l10n langs legal mailinglists organization ports search security vendors vote wnpp others
+DOMAINS = templates bugs cdimage countries date debian-cdd distrib doc l10n langs legal mailinglists organization ports search security vendors vote wnpp others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
+cdimage_FILES   = $(TEMPLDIR)/cdimage.wml
 countries_FILES = $(TEMPLDIR)/countries.wml
 date_FILES      = $(TEMPLDIR)/ctime.wml
 debian-cdd_FILES = $(TEMPLDIR)/debian-cdd.wml
@@ -61,6 +62,7 @@ POTFILES = $(addprefix $(ENGLISHDIR)/po/,$(addsuffix .pot,$(DOMAINS)))
 MOFILES = $(addsuffix .mo,$(DOMAINS))
 SOURCEFILES = \
   $(bugs_FILES)                 \
+  $(cdimage_FILES)              \
   $(countries_FILES)            \
   $(date_FILES)                 \
   $(debian-cdd_FILES)           \
@@ -91,6 +93,9 @@ $(ENGLISHDIR)/po/templates.pot: # $(templates_FILES)
 
 $(ENGLISHDIR)/po/bugs.pot: # $(bugs_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl bugs $(bugs_FILES) > $@
+
+$(ENGLISHDIR)/po/cdimage.pot: # $(cdimage_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl cdimage $(cdimage_FILES) > $@
 
 $(ENGLISHDIR)/po/countries.pot: # $(countries_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl countries $(countries_FILES) > $@
