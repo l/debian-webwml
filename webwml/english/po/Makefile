@@ -9,7 +9,7 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates bugs cdimage countries date debian-cdd distrib doc l10n langs legal mailinglists organization ports search security vendors vote wnpp others
+DOMAINS = templates bugs cdimage countries date debian-cdd distrib doc l10n langs legal mailinglists newsevents organization ports search security vendors vote wnpp others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
 cdimage_FILES   = $(TEMPLDIR)/cdimage.wml
@@ -24,6 +24,11 @@ l10n_FILES      = $(ENGLISHDIR)/international/l10n/dtc.def \
 langs_FILES     = $(TEMPLDIR)/language_names.wml
 legal_FILES     = $(addprefix $(TEMPLDIR)/, legal.wml legal_tags.wml)
 mailinglists_FILES = $(ENGLISHDIR)/MailingLists/mklist.tags
+newsevents_FILES = $(addprefix $(TEMPLDIR)/, \
+  events_common.wml news.wml speakers.wml \
+  projectnews/footer.wml weeklynews/footer.wml) \
+  $(ENGLISHDIR)/News/press/press.tags \
+  $(ENGLISHDIR)/events/speakers/speakers.defs
 organization_FILES = $(ENGLISHDIR)/intro/organization.data
 ports_FILES     = $(ENGLISHDIR)/ports/menu.defs \
   $(shell export LC_COLLATE=C; echo $(ENGLISHDIR)/ports/*/menu.inc) \
@@ -37,24 +42,20 @@ security_FILES  = $(TEMPLDIR)/security.wml \
 vendors_FILES   = $(ENGLISHDIR)/CD/vendors/vendors.CD.def
 vote_FILES      = $(TEMPLDIR)/votebar.wml
 wnpp_FILES      = $(TEMPLDIR)/wnpp.wml
-others_FILES    = $(ENGLISHDIR)/News/press/press.tags \
-  $(ENGLISHDIR)/banners/index.tags \
+others_FILES    = $(ENGLISHDIR)/banners/index.tags \
   $(ENGLISHDIR)/consultants/consultant.defs \
   $(ENGLISHDIR)/devel/debian-installer/ports-status.defs \
   $(ENGLISHDIR)/devel/website/tc.data \
   $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/logos/index.data \
   $(ENGLISHDIR)/misc/merchandise.def $(ENGLISHDIR)/y2k/l10n.data \
   $(ENGLISHDIR)/devel/join/nm-steps.inc \
-  $(ENGLISHDIR)/events/speakers/speakers.defs \
   $(ENGLISHDIR)/misc/hardware.def \
   $(ENGLISHDIR)/mirror/submit.inc
 templates_FILES = $(addprefix $(TEMPLDIR)/, \
   cdimage.wml common_tags.wml common_translation.wml consultant.wml \
-  ddp.wml events_common.wml fixes_link.wml footer.wml languages.wml \
-  links.tags.wml mirrors.wml news.wml projectnews/footer.wml \
-  recent_list.wml speakers.wml \
-  todoitem.wml translation-check.wml url.wml users.wml \
-  weeklynews/footer.wml) \
+  ddp.wml fixes_link.wml footer.wml languages.wml \
+  links.tags.wml mirrors.wml recent_list.wml \
+  todoitem.wml translation-check.wml url.wml users.wml) \
   $(ENGLISHDIR)/devel/website/tc.data
 
 
@@ -72,6 +73,7 @@ SOURCEFILES = \
   $(langs_FILES)                \
   $(legal_FILES)                \
   $(mailinglists_FILES)         \
+  $(newsevents_FILES)           \
   $(organization_FILES)         \
   $(ports_FILES)                \
   $(search_FILES)               \
@@ -123,6 +125,9 @@ $(ENGLISHDIR)/po/legal.pot: # $(legal_FILES)
 
 $(ENGLISHDIR)/po/mailinglists.pot: # $(mailinglists_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl mailinglists $(mailinglists_FILES) > $@
+
+$(ENGLISHDIR)/po/newsevents.pot: # $(newsevents_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl newsevents $(newsevents_FILES) > $@
 
 $(ENGLISHDIR)/po/organization.pot: # $(organization_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl organization $(organization_FILES) > $@
