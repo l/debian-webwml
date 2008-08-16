@@ -196,7 +196,7 @@ update-po: $(POTFILES)
 install-mo: $(MOFILES)
 	[ -d $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES ] || mkdir -p $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES
 	for d in $(DOMAINS); do \
-          cp -u $$d.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/$$d.mo; \
+          cp -vu $$d.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/$$d.mo; \
         done
 
 clean::
