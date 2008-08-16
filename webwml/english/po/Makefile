@@ -9,7 +9,7 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates bugs countries date debian-cdd distrib doc l10n langs legal organization ports search security vendors vote wnpp others
+DOMAINS = templates bugs countries date debian-cdd distrib doc l10n langs legal mailinglists organization ports search security vendors vote wnpp others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
 countries_FILES = $(TEMPLDIR)/countries.wml
@@ -22,6 +22,7 @@ l10n_FILES      = $(ENGLISHDIR)/international/l10n/dtc.def \
   $(ENGLISHDIR)/international/l10n/menu.def
 langs_FILES     = $(TEMPLDIR)/language_names.wml
 legal_FILES     = $(addprefix $(TEMPLDIR)/, legal.wml legal_tags.wml)
+mailinglists_FILES = $(ENGLISHDIR)/MailingLists/mklist.tags
 organization_FILES = $(ENGLISHDIR)/intro/organization.data
 ports_FILES     = $(ENGLISHDIR)/ports/menu.defs \
   $(shell export LC_COLLATE=C; echo $(ENGLISHDIR)/ports/*/menu.inc) \
@@ -36,7 +37,7 @@ vendors_FILES   = $(ENGLISHDIR)/CD/vendors/vendors.CD.def
 vote_FILES      = $(TEMPLDIR)/votebar.wml
 wnpp_FILES      = $(TEMPLDIR)/wnpp.wml
 others_FILES    = $(ENGLISHDIR)/News/press/press.tags \
-  $(ENGLISHDIR)/MailingLists/mklist.tags $(ENGLISHDIR)/banners/index.tags \
+  $(ENGLISHDIR)/banners/index.tags \
   $(ENGLISHDIR)/consultants/consultant.defs \
   $(ENGLISHDIR)/devel/debian-installer/ports-status.defs \
   $(ENGLISHDIR)/devel/website/tc.data \
@@ -68,6 +69,7 @@ SOURCEFILES = \
   $(l10n_FILES)                 \
   $(langs_FILES)                \
   $(legal_FILES)                \
+  $(mailinglists_FILES)         \
   $(organization_FILES)         \
   $(ports_FILES)                \
   $(search_FILES)               \
@@ -113,6 +115,9 @@ $(ENGLISHDIR)/po/langs.pot: # $(langs_FILES)
 
 $(ENGLISHDIR)/po/legal.pot: # $(legal_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl legal $(legal_FILES) > $@
+
+$(ENGLISHDIR)/po/mailinglists.pot: # $(mailinglists_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl mailinglists $(mailinglists_FILES) > $@
 
 $(ENGLISHDIR)/po/organization.pot: # $(organization_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl organization $(organization_FILES) > $@
