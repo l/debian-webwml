@@ -56,8 +56,7 @@ templates_FILES = $(addprefix $(TEMPLDIR)/, \
   cdimage.wml common_tags.wml common_translation.wml \
   ddp.wml fixes_link.wml footer.wml languages.wml \
   links.tags.wml mirrors.wml recent_list.wml \
-  todoitem.wml translation-check.wml url.wml users.wml) \
-  $(ENGLISHDIR)/devel/website/tc.data
+  todoitem.wml translation-check.wml url.wml users.wml)
 
 
 POTFILES = $(addprefix $(ENGLISHDIR)/po/,$(addsuffix .pot,$(DOMAINS)))
