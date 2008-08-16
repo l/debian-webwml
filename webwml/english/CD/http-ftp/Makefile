@@ -6,7 +6,12 @@ WMLBASE=../..
 CUR_DIR=CD/http-ftp
 SUBS=
 
+NOGENERICDEP := true
+
 include $(WMLBASE)/Make.lang
+
+%.$(LANGUAGE).html: %.wml $(WMLRCDEP) $(GETTEXTDEP) $(TEMPLDIR)/cdimage.wml
+	$(WML) $(<F)
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml \
   $(ENGLISHDIR)/CD/http-ftp/cdimage_mirrors.list \

@@ -6,5 +6,9 @@ WMLBASE=../..
 CUR_DIR=CD/artwork
 SUBS=
 
+NOGENERICDEP := true
+
 include $(WMLBASE)/Make.lang
 
+%.$(LANGUAGE).html: %.wml $(WMLRCDEP) $(GETTEXTDEP) $(TEMPLDIR)/cdimage.wml
+	$(WML) $(<F)
