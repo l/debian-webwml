@@ -75,17 +75,18 @@ $(existing-SUBS-cleandest):
 
 # the rule for every wml file
 ifndef NOGENERICDEP
+
 %.$(LANGUAGE).html : %.wml $(WMLRCDEP) $(GETTEXTDEP) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
 	$(WML) $(<F)
 ifeq "$(LANGUAGE)" "en"
-ifeq "$(findstring /international/,$(CURDIR)/)" ""
+	-$(WMLBASE)/../touch_translations.pl $(CURDIR)/$(<F) $(LANGUAGE)
+else
+ifneq "$(findstring international,$(CUR_DIR))" ""
 	-$(WMLBASE)/../touch_translations.pl $(CURDIR)/$(<F) $(LANGUAGE)
 endif
 endif
-ifneq "$(findstring /international/,$(CURDIR)/)" ""
-	-$(WMLBASE)/../touch_translations.pl $(CURDIR)/$(<F) $(LANGUAGE)
-endif
+
 endif
 
 ifndef NOGENERICINSTDEP
