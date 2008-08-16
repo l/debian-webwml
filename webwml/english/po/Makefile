@@ -9,7 +9,7 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates bugs countries date debian-cdd distrib doc l10n langs legal organization ports search security vendors vote others
+DOMAINS = templates bugs countries date debian-cdd distrib doc l10n langs legal organization ports search security vendors vote wnpp others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
 countries_FILES = $(TEMPLDIR)/countries.wml
@@ -34,6 +34,7 @@ security_FILES  = $(TEMPLDIR)/security.wml \
   $(ENGLISHDIR)/security/make-ref-table.pl
 vendors_FILES   = $(ENGLISHDIR)/CD/vendors/vendors.CD.def
 vote_FILES      = $(TEMPLDIR)/votebar.wml
+wnpp_FILES      = $(TEMPLDIR)/wnpp.wml
 others_FILES    = $(ENGLISHDIR)/News/press/press.tags \
   $(ENGLISHDIR)/MailingLists/mklist.tags $(ENGLISHDIR)/banners/index.tags \
   $(ENGLISHDIR)/consultants/consultant.defs \
@@ -51,7 +52,7 @@ templates_FILES = $(addprefix $(TEMPLDIR)/, \
   links.tags.wml mirrors.wml news.wml projectnews/footer.wml \
   recent_list.wml speakers.wml \
   todoitem.wml translation-check.wml url.wml users.wml \
-  weeklynews/footer.wml wnpp.wml) \
+  weeklynews/footer.wml) \
   $(ENGLISHDIR)/devel/website/tc.data
 
 
@@ -73,6 +74,7 @@ SOURCEFILES = \
   $(security_FILES)             \
   $(vendors_FILES)              \
   $(vote_FILES)                 \
+  $(wnpp_FILES)                 \
   $(others_FILES)               \
   $(templates_FILES)
 
@@ -129,6 +131,9 @@ $(ENGLISHDIR)/po/vendors.pot: # $(vendors_FILES)
 
 $(ENGLISHDIR)/po/vote.pot: # $(vote_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl vote $(vote_FILES) > $@
+
+$(ENGLISHDIR)/po/wnpp.pot: # $(wnpp_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl wnpp $(wnpp_FILES) > $@
 
 $(ENGLISHDIR)/po/others.pot: # $(others_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl others $(others_FILES) > $@
