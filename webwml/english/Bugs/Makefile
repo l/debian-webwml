@@ -6,7 +6,7 @@ WMLBASE=..
 CUR_DIR=Bugs
 SUBS=
 
-GETTEXTFILES = bugs.mo
+GETTEXTFILES += bugs.mo
 
 include $(WMLBASE)/Make.lang
 
@@ -21,4 +21,4 @@ server-refcard.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc $(ENGLI
 server-request.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc $(ENGLISHDIR)/Bugs/footer.inc
 pseudo-packages.$(LANGUAGE).html: $(ENGLISHDIR)/Bugs/pseudo-packages.description \
   $(TEMPLDIR)/template.wml otherpages.inc $(ENGLISHDIR)/Bugs/footer.inc \
-  $(ENGLISHDIR)/Bugs/pseudo-packages.inc
+  $(ENGLISHDIR)/Bugs/pseudo-packages.inc $(GETTEXTDEP)
