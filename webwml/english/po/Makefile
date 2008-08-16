@@ -9,7 +9,7 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates bugs countries date debian-cdd distrib doc l10n langs organization ports search security vendors others
+DOMAINS = templates bugs countries date debian-cdd distrib doc l10n langs legal organization ports search security vendors others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
 countries_FILES = $(TEMPLDIR)/countries.wml
@@ -21,6 +21,7 @@ doc_FILES       = $(ENGLISHDIR)/doc/books.def $(ENGLISHDIR)/doc/manuals.defs
 l10n_FILES      = $(ENGLISHDIR)/international/l10n/dtc.def \
   $(ENGLISHDIR)/international/l10n/menu.def
 langs_FILES     = $(TEMPLDIR)/language_names.wml
+legal_FILES     = $(addprefix $(TEMPLDIR)/, legal.wml legal_tags.wml)
 organization_FILES = $(ENGLISHDIR)/intro/organization.data
 ports_FILES     = $(ENGLISHDIR)/ports/menu.defs \
   $(shell export LC_COLLATE=C; echo $(ENGLISHDIR)/ports/*/menu.inc) \
@@ -49,7 +50,7 @@ templates_FILES = $(addprefix $(TEMPLDIR)/, \
   links.tags.wml mirrors.wml news.wml projectnews/footer.wml \
   recent_list.wml speakers.wml \
   todoitem.wml translation-check.wml url.wml users.wml votebar.wml \
-  weeklynews/footer.wml legal.wml legal_tags.wml wnpp.wml) \
+  weeklynews/footer.wml wnpp.wml) \
   $(ENGLISHDIR)/devel/website/tc.data
 
 
@@ -64,6 +65,7 @@ SOURCEFILES = \
   $(doc_FILES)                  \
   $(l10n_FILES)                 \
   $(langs_FILES)                \
+  $(legal_FILES)                \
   $(organization_FILES)         \
   $(ports_FILES)                \
   $(search_FILES)               \
@@ -104,6 +106,9 @@ $(ENGLISHDIR)/po/l10n.pot: # $(l10n_FILES)
 
 $(ENGLISHDIR)/po/langs.pot: # $(langs_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl langs $(langs_FILES) > $@
+
+$(ENGLISHDIR)/po/legal.pot: # $(legal_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl legal $(legal_FILES) > $@
 
 $(ENGLISHDIR)/po/organization.pot: # $(organization_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl organization $(organization_FILES) > $@
