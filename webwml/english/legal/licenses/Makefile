@@ -6,8 +6,9 @@ WMLBASE=../..
 CUR_DIR=legal/licenses
 SUBS=
 
-GETTEXTFILES += templates.mo
+GETTEXTFILES += legal.mo
 
+NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
 %.$(LANGUAGE).html: %.wml $(TEMPLDIR)/legal.wml \

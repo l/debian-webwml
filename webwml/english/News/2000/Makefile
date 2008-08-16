@@ -8,6 +8,7 @@ SUBS=
 
 GETTEXTFILES += newsevents.mo
 
+NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
 

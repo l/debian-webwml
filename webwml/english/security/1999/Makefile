@@ -6,6 +6,7 @@ WMLBASE=../..
 CUR_DIR=security/1999
 SUBS=
 
+NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
 

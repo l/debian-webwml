@@ -8,6 +8,7 @@ SUBS=
 
 GETTEXTFILES += security.mo
 
+NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
 
