@@ -9,6 +9,8 @@ CUR_DIR=News
 YEARS:=$(wildcard [12][0-9][0-9][0-9])
 SUBS=$(YEARS) weekly press
 
+GETTEXTFILES += newsevents.mo
+
 include $(WMLBASE)/Make.lang
 
 install::

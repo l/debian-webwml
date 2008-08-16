@@ -7,7 +7,7 @@ CUR_DIR=consultants
 SUBS=
 
 NOGENERICDEP := true
-GETTEXTFILES += others.mo
+GETTEXTFILES += consultants.mo
 
 include $(WMLBASE)/Make.lang
 
