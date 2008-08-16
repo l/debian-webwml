@@ -19,6 +19,8 @@ GETTEXTDEP += $(addprefix $(LOCALEDIR)/,$(GETTEXTFILES))
 endif
 endif
 
+WMLRCDEP := $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc
+
 LANGUAGECAP = $(shell echo $(LANGUAGE) | tr "a-z" "A-Z")
 WMLOPTIONS := -q -D CUR_YEAR=$(CUR_YEAR)
 WMLOUTFILE = $(@F)
@@ -74,16 +76,16 @@ $(existing-SUBS-cleandest):
 # the rule for every wml file
 ifndef NOGENERICDEP
 ifeq "$(findstring /CD,$(CURDIR))" ""
-%.$(LANGUAGE).html : %.wml $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
+%.$(LANGUAGE).html : %.wml $(WMLRCDEP) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml $(GETTEXTDEP)
 	$(WML) $(<F)
 else
 ifeq "$(findstring /CD/vendors,$(CURDIR))" ""
-%.$(LANGUAGE).html : %.wml $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
+%.$(LANGUAGE).html : %.wml $(WMLRCDEP) \
   $(TEMPLDIR)/cdimage.wml $(GETTEXTDEP)
 	$(WML) $(<F)
 else
-%.$(LANGUAGE).html : %.wml $(WMLBASE)/../.wmlrc $(WMLBASE)/.wmlrc \
+%.$(LANGUAGE).html : %.wml $(WMLRCDEP) \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml $(GETTEXTDEP)
 	$(WML) $(<F)
 endif
