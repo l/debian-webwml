@@ -5,7 +5,7 @@
 WMLBASE=../..
 CUR_DIR=News/weekly
 
-GETTEXTFILES += newsevents.wml
+GETTEXTFILES += newsevents.mo
 
 # we have different %.$(LANGUAGE).html and HTMLDIR/%.$(LANGUAGE).html rules here
 NOGENERICDEP := true
