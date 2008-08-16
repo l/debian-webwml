@@ -85,11 +85,7 @@ SOURCEFILES = \
   $(others_FILES)               \
   $(templates_FILES)
 
-ifeq "$(LANGUAGE)" "en"
-all install:: $(POTFILES)
-else
 all install:: $(POTFILES) install-mo
-endif
 
 $(ENGLISHDIR)/po/templates.pot: # $(templates_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl templates $(templates_FILES) > $@
@@ -157,6 +153,27 @@ $(ENGLISHDIR)/po/wnpp.pot: # $(wnpp_FILES)
 $(ENGLISHDIR)/po/others.pot: # $(others_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl others $(others_FILES) > $@
 
+ifeq "$(LANGUAGE)" "en"
+
+init-po:
+update-po:
+install-mo:
+stats:
+
+pot:
+	rm -f $(POTFILES)
+	$(MAKE) $(POTFILES)
+
+gen-%.pot:
+	potfile=$(ENGLISHDIR)/po/$*.pot; \
+	rm -f $$potfile; \
+	$(MAKE) $$potfile
+
+cvsupdate:
+	@echo 'cd $(WMLBASE)/..;' `echo cvs update $(SOURCEFILES) | sed -e 's/ [^ ]*\/\.\.\// /g'`
+
+else # not english
+
 #  This target prevents breakage when a new .pot file is added
 %.$(LANGUAGE).po:
 	cp $(ENGLISHDIR)/po/$*.pot $@
@@ -179,33 +196,20 @@ update-po: $(POTFILES)
 install-mo: $(MOFILES)
 	[ -d $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES ] || mkdir -p $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES
 	for d in $(DOMAINS); do \
-          if [ -f $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/$$d.mo ]; then \
-            cmp $$d.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/$$d.mo >/dev/null 2>&1 \
-            || cp -f $$d.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/$$d.mo; \
-          else \
-            cp -f $$d.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/$$d.mo; \
-          fi; \
+          cp -u $$d.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/$$d.mo; \
         done
 
 clean::
-	-rm -f *.mo
+	rm -f *.mo
 
-pot:
-	-rm -f $(POTFILES)
-	$(MAKE) $(POTFILES)
-
-# Suppress errors from msgmerge as they corrupt translation stats on the
-# Debian website
-ifeq "$(LANGUAGE)" "en"
-stats:
-else
 stats: $(POTFILES)
+# Suppress errors from msgmerge as they corrupt translation stats on
+# the Debian website
 	-@for d in $(DOMAINS); do \
           echo -n "$$d.$(LANGUAGE).po: " 1>&2; \
           msgmerge -q $$d.$(LANGUAGE).po $(ENGLISHDIR)/po/$$d.pot 2>/dev/null | \
              msgfmt -o /dev/null --statistics -; \
         done
-endif
 
 todo:
 	-@for d in $(DOMAINS); do \
@@ -213,12 +217,4 @@ todo:
 	  msgattrib --untranslated $$d.$(LANGUAGE).po; \
 	done
 
-cvsupdate:
-	-@echo 'cd $(WMLBASE)/..;' `echo cvs update $(SOURCEFILES) | sed -e 's/ [^ ]*\/\.\.\// /g'`
-
-ifeq "$(LANGUAGE)" "en"
-gen-%.pot:
-	potfile=$(ENGLISHDIR)/po/$*.pot; \
-	rm -f $$potfile; \
-	$(MAKE) $$potfile
-endif
+endif # english or not
