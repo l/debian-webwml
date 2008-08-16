@@ -75,21 +75,9 @@ $(existing-SUBS-cleandest):
 
 # the rule for every wml file
 ifndef NOGENERICDEP
-ifeq "$(findstring /CD,$(CURDIR))" ""
-%.$(LANGUAGE).html : %.wml $(WMLRCDEP) \
-  $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml $(GETTEXTDEP)
+%.$(LANGUAGE).html : %.wml $(WMLRCDEP) $(GETTEXTDEP) \
+  $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml
 	$(WML) $(<F)
-else
-ifeq "$(findstring /CD/vendors,$(CURDIR))" ""
-%.$(LANGUAGE).html : %.wml $(WMLRCDEP) \
-  $(TEMPLDIR)/cdimage.wml $(GETTEXTDEP)
-	$(WML) $(<F)
-else
-%.$(LANGUAGE).html : %.wml $(WMLRCDEP) \
-  $(TEMPLDIR)/template.wml $(TEMPLDIR)/languages.wml $(GETTEXTDEP)
-	$(WML) $(<F)
-endif
-endif
 ifeq "$(LANGUAGE)" "en"
 ifeq "$(findstring /international/,$(CURDIR)/)" ""
 	-$(WMLBASE)/../touch_translations.pl $(CURDIR)/$(<F) $(LANGUAGE)
