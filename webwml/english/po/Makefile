@@ -9,10 +9,12 @@ include $(WMLBASE)/Make.lang
 
 LOCALEROOT = $(WMLBASE)/../locale
 
-DOMAINS = templates bugs cdimage countries date debian-cdd distrib doc l10n langs legal mailinglists newsevents organization ports search security vendors vote wnpp others
+DOMAINS = templates bugs cdimage consultants countries date debian-cdd distrib doc l10n langs legal mailinglists newsevents organization ports search security vendors vote wnpp others
 
 bugs_FILES      = $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
 cdimage_FILES   = $(TEMPLDIR)/cdimage.wml
+consultants_FILES = $(TEMPLDIR)/consultant.wml \
+  $(ENGLISHDIR)/consultants/consultant.defs
 countries_FILES = $(TEMPLDIR)/countries.wml
 date_FILES      = $(TEMPLDIR)/ctime.wml
 debian-cdd_FILES = $(TEMPLDIR)/debian-cdd.wml
@@ -43,7 +45,6 @@ vendors_FILES   = $(ENGLISHDIR)/CD/vendors/vendors.CD.def
 vote_FILES      = $(TEMPLDIR)/votebar.wml
 wnpp_FILES      = $(TEMPLDIR)/wnpp.wml
 others_FILES    = $(ENGLISHDIR)/banners/index.tags \
-  $(ENGLISHDIR)/consultants/consultant.defs \
   $(ENGLISHDIR)/devel/debian-installer/ports-status.defs \
   $(ENGLISHDIR)/devel/website/tc.data \
   $(ENGLISHDIR)/distrib/pre-installed.data $(ENGLISHDIR)/logos/index.data \
@@ -52,7 +53,7 @@ others_FILES    = $(ENGLISHDIR)/banners/index.tags \
   $(ENGLISHDIR)/misc/hardware.def \
   $(ENGLISHDIR)/mirror/submit.inc
 templates_FILES = $(addprefix $(TEMPLDIR)/, \
-  cdimage.wml common_tags.wml common_translation.wml consultant.wml \
+  cdimage.wml common_tags.wml common_translation.wml \
   ddp.wml fixes_link.wml footer.wml languages.wml \
   links.tags.wml mirrors.wml recent_list.wml \
   todoitem.wml translation-check.wml url.wml users.wml) \
@@ -64,6 +65,7 @@ MOFILES = $(addsuffix .mo,$(DOMAINS))
 SOURCEFILES = \
   $(bugs_FILES)                 \
   $(cdimage_FILES)              \
+  $(consultants_FILES)          \
   $(countries_FILES)            \
   $(date_FILES)                 \
   $(debian-cdd_FILES)           \
@@ -98,6 +100,9 @@ $(ENGLISHDIR)/po/bugs.pot: # $(bugs_FILES)
 
 $(ENGLISHDIR)/po/cdimage.pot: # $(cdimage_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl cdimage $(cdimage_FILES) > $@
+
+$(ENGLISHDIR)/po/consultants.pot: # $(consultants_FILES)
+	$(ENGLISHDIR)/po/wmlxgettext.pl consultants $(consultants_FILES) > $@
 
 $(ENGLISHDIR)/po/countries.pot: # $(countries_FILES)
 	$(ENGLISHDIR)/po/wmlxgettext.pl countries $(countries_FILES) > $@
@@ -211,3 +216,10 @@ todo:
 
 cvsupdate:
 	-@echo 'cd $(WMLBASE)/..;' `echo cvs update $(SOURCEFILES) | sed -e 's/ [^ ]*\/\.\.\// /g'`
+
+ifeq "$(LANGUAGE)" "en"
+gen-%.pot:
+	potfile=$(ENGLISHDIR)/po/$*.pot; \
+	rm -f $$potfile; \
+	$(MAKE) $$potfile
+endif
