@@ -6,6 +6,8 @@ WMLBASE=../..
 CUR_DIR=events/2006
 SUBS=
 
+GETTEXTFILES += newsevents.mo
+
 include $(WMLBASE)/Make.lang
 
 
