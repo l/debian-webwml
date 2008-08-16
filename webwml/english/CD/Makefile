@@ -9,7 +9,7 @@ SUBS=artwork faq http-ftp jigdo-cd torrent-cd mirroring netinst pictures release
 #NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
-GETTEXTFILES += templates.mo
+GETTEXTFILES += cdimage.mo
 
 ifneq "$(wildcard releases/index.wml)" ""
 RELEASESDEP := releases/index.wml

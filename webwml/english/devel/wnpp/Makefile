@@ -6,6 +6,8 @@ WMLBASE=../..
 CUR_DIR=devel/wnpp
 SUBS=
 
+GETTEXTFILES += wnpp.mo
+
 NOGENERICDEP = true
 include $(WMLBASE)/Make.lang
 

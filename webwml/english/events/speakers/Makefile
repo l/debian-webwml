@@ -7,7 +7,7 @@ CUR_DIR=events/speakers
 SUBS=
 
 NOGENERICDEP := true
-GETTEXTFILES += others.mo templates.mo
+GETTEXTFILES += newsevents.mo
 
 include $(WMLBASE)/Make.lang
 

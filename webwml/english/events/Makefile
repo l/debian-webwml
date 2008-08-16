@@ -8,6 +8,8 @@ YEARS=$(wildcard [12][0-9][0-9][0-9])
 SUBS=$(YEARS) weekly press speakers
 # note: the materials/ subdirectory isn't in CVS.
 
+GETTEXTFILES += newsevents.mo
+
 include $(WMLBASE)/Make.lang
 
 
