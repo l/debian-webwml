@@ -6,7 +6,12 @@ WMLBASE=../..
 CUR_DIR=CD/mirroring
 SUBS=
 
+NOGENERICDEP := true
+
 include $(WMLBASE)/Make.lang
+
+%.$(LANGUAGE).html: %.wml $(WMLRCDEP) $(GETTEXTDEP) $(TEMPLDIR)/cdimage.wml
+	$(WML) $(<F)
 
 rsync-mirrors.$(LANGUAGE).html: rsync-mirrors.wml $(TEMPLDIR)/cdimage.wml \
   $(ENGLISHDIR)/CD/mirroring/cdimage_mirrors.list

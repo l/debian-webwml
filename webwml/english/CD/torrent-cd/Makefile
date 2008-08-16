@@ -6,7 +6,12 @@ WMLBASE=../..
 CUR_DIR=CD/torrent-cd
 SUBS=
 
+NOGENERICDEP := true
+
 include $(WMLBASE)/Make.lang
+
+%.$(LANGUAGE).html: %.wml $(WMLRCDEP) $(GETTEXTDEP) $(TEMPLDIR)/cdimage.wml
+	$(WML) $(<F)
 
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml \
 	$(TEMPLDIR)/installer.wml $(TEMPLDIR)/toc.wml \
