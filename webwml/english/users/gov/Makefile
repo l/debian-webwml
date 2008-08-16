@@ -6,6 +6,7 @@ WMLBASE=../..
 CUR_DIR=users/gov
 SUBS=
 
+NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
 %.$(LANGUAGE).html: %.wml\
