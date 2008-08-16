@@ -148,3 +148,29 @@
   </option>
   </select>
 </define-tag>
+
+# this is pasted from debbugs/etc/config
+<perl>
+@gSeverityList = ( "critical", "grave", "serious", "important", "normal",
+                   "minor", "wishlist", "fixed"
+                 );
+</perl>
+
+<define-tag bts_severities whitespace=delete>
+  <: print (join ", ", @gSeverityList); :>
+</define-tag>
+
+# this is pasted from debbugs/etc/config
+<perl>
+@gTags = ( "patch", "wontfix", "moreinfo", "unreproducible", "fixed",
+           "potato", "woody", "sid", "help", "security", "upstream",
+           "pending", "sarge", "sarge-ignore", "experimental", "d-i",
+           "confirmed", "ipv6", "lfs", "fixed-in-experimental",
+           "fixed-upstream", "l10n", "etch", "etch-ignore",
+           "lenny", "lenny-ignore",
+         );
+</perl>
+
+<define-tag bts_tags whitespace=delete>
+  <: print join(", ", @gTags); :>
+</define-tag>
