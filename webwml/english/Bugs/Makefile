@@ -10,7 +10,9 @@ GETTEXTFILES += bugs.mo
 
 include $(WMLBASE)/Make.lang
 
-
+$(ENGLISHDIR)/Bugs/pkgreport-opts.inc: $(TEMPLDIR)/language_names.wml \
+  $(TEMPLDIR)/common_tags.wml $(GETTEXTDEP) $(call locale,bugs)
+	touch $@ # because of $(?F)
 index.$(LANGUAGE).html: $(TEMPLDIR)/template.wml $(ENGLISHDIR)/Bugs/footer.inc \
   $(ENGLISHDIR)/Bugs/pkgreport-opts.inc
 Access.$(LANGUAGE).html: $(TEMPLDIR)/template.wml otherpages.inc $(ENGLISHDIR)/Bugs/footer.inc
