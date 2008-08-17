@@ -18,7 +18,6 @@ ifeq "$(LANGUAGE)" "en"
 	test -L $(HTMLDIR)/project || ln -sf weekly $(HTMLDIR)/project
 endif
 
-# Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.wml) \
      $(wildcard $(ENGLISHSRCDIR)/News/$(CUR_YEAR)/$(CUR_YEAR)*.wml) \
      $(wildcard $(CUR_YEAR)/$(CUR_YEAR)*.title) \

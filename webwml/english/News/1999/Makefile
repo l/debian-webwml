@@ -11,8 +11,6 @@ GETTEXTFILES += newsevents.mo
 NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
-
-# Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(wildcard 1999*.wml) \
                         $(wildcard 1999*.title)\
                         $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml \
