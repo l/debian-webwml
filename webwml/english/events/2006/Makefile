@@ -11,8 +11,6 @@ GETTEXTFILES += newsevents.mo
 NOGENERICDEP := true
 include $(WMLBASE)/Make.lang
 
-
-# Do Not modify the following lines
 EVENTFILES := $(wildcard [0-9]*\-*.wml)
 ICSFILES := $(filter-out %-report.wml,$(EVENTFILES))
 ICSFILES := $(ICSFILES:.wml=.$(LANGUAGE).ics)

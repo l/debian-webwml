@@ -12,7 +12,6 @@ SUBS=$(YEARS)
 include $(WMLBASE)/Make.lang
 
 
-# Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/template.wml \
   $(TEMPLDIR)/recent_list.wml \
   $(wildcard $(ENGLISHSRCDIR)/$(CUR_DIR)/[0-9]*/*.wml)

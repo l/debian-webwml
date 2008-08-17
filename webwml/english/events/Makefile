@@ -12,8 +12,6 @@ GETTEXTFILES += newsevents.mo
 
 include $(WMLBASE)/Make.lang
 
-
-# Do Not modify the following lines
 index.$(LANGUAGE).html: index.wml $(wildcard [0-9]*/*.wml) \
      $(ENGLISHSRCDIR)/events/index.include \
      $(wildcard $(ENGLISHSRCDIR)/events/[0-9]*/*.wml) \
