@@ -12,8 +12,19 @@ RELHTMLBASE := ../../www
 HTMLDIR = $(WMLBASE)/$(RELHTMLBASE)/$(CUR_DIR)
 
 LOCALEDIR := $(WMLBASE)/../locale/$(LANGUAGE)/LC_MESSAGES
+essential-locale-files := templates countries langs date
+ifeq "$(LANGUAGE)" "en"
+locale = $(addsuffix .pot, $(addprefix $(ENGLISHDIR)/po/, $(1)))
+$(ENGLISHDIR)/po/%.pot:
+	touch $@ # because of $(?F)
+else
+locale = $(addsuffix .mo, $(addprefix $(LOCALEDIR)/, $(1)))
+$(LOCALEDIR)/%.mo:
+	touch $@ # because of $(?F)
+endif
+GETTEXTDEP := $(call locale, $(essential-locale-files) )
+
 ifneq "$(LANGUAGE)" "en"
-GETTEXTDEP := $(LOCALEDIR)/templates.mo $(LOCALEDIR)/countries.mo $(LOCALEDIR)/langs.mo $(LOCALEDIR)/date.mo
 ifneq "$(GETTEXTFILES)" ""
 GETTEXTDEP += $(addprefix $(LOCALEDIR)/,$(GETTEXTFILES))
 endif
@@ -106,11 +117,18 @@ ifeq ($(LANGUAGE),en)
 endif
 endif
 
+LOCALEDESTFILES := $(patsubst $(ENGLISHDIR)/po/%.pot,$(LOCALEDIR)/%.mo,$(wildcard $(ENGLISHDIR)/po/*.pot))
+
+ifneq "$(LANGUAGE)" "en"
 #    Ensure that MO files do exist
 #    Translators have to run make under webwml/<lang>/po if they
 #    want it updated, it cannot be automatically performed.
-$(LOCALEDIR)/templates.mo:
-	$(MAKE) -C $(WMLBASE)/po install
+$(LOCALEDESTFILES): $(LOCALEDIR)/%.mo: $(WMLBASE)/po/%.$(LANGUAGE).po
+	$(MAKE) -C $(WMLBASE)/po install-$*.mo
+else
+# English doesn't generate those .mo files, so just fake them
+$(LOCALEDESTFILES): $(LOCALEDIR)/%.mo: $(ENGLISHDIR)/po/%.pot
+endif
 
 $(OTHERDESTFILES): $(HTMLDIR)/%: %
 	@test -d $(HTMLDIR) || mkdir -m g+w -p $(HTMLDIR)
@@ -122,7 +140,13 @@ endif
 
 # template dependencies
 $(TEMPLDIR)/%.wml:
-	touch $@
+ifeq "$(LANGUAGE)" "en"
+	touch $@ # because of $(?F)
+else
+	@if [ "$(findstring .mo,$(?F))" = "" ]; then \
+	  touch $@; echo "touch $@ # because of $(?F)"; \
+	fi
+endif
 
 gendep:
 	@for f in $(TEMPLDIR)/*.wml $(TEMPLDIR)/weeklynews/*.wml; do \
@@ -148,36 +172,45 @@ $(TEMPLDIR)/basic.wml: $(TEMPLDIR)/common_translation.wml \
   $(TEMPLDIR)/navbar.wml
 $(TEMPLDIR)/cdimage.wml: $(TEMPLDIR)/common_translation.wml \
   $(TEMPLDIR)/common_tags.wml $(TEMPLDIR)/languages.wml \
-  $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/basic.wml
+  $(TEMPLDIR)/links.tags.wml $(TEMPLDIR)/basic.wml \
+  $(call locale,cdimage)
 $(TEMPLDIR)/common_translation.wml: $(TEMPLDIR)/common_tags.wml
 $(TEMPLDIR)/consultant.wml: $(TEMPLDIR)/common_tags.wml \
-  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml
-$(TEMPLDIR)/countries.wml: $(TEMPLDIR)/common_tags.wml
+  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml \
+  $(call locale,consultants)
+$(TEMPLDIR)/countries.wml: $(TEMPLDIR)/common_tags.wml\
+  $(call locale,countries)
 $(TEMPLDIR)/countries_all.wml: $(TEMPLDIR)/countries.wml
-$(TEMPLDIR)/ctime.wml: $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/ctime.wml: $(TEMPLDIR)/common_tags.wml\
+  $(call locale,date)
 $(TEMPLDIR)/ddp.wml: $(TEMPLDIR)/basic.wml \
   $(TEMPLDIR)/common_translation.wml $(TEMPLDIR)/languages.wml
 $(TEMPLDIR)/debian-cdd.wml: $(TEMPLDIR)/common_tags.wml \
-  $(TEMPLDIR)/template.wml
+  $(TEMPLDIR)/template.wml\
+  $(call locale,debian-cdd)
 $(TEMPLDIR)/event.wml: $(TEMPLDIR)/events_common.wml \
   $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml
-$(TEMPLDIR)/events_common.wml: $(TEMPLDIR)/common_translation.wml
+$(TEMPLDIR)/events_common.wml: $(TEMPLDIR)/common_translation.wml \
+  $(call locale,legal)
 $(TEMPLDIR)/fixes_link.wml: $(TEMPLDIR)/common_tags.wml
 $(TEMPLDIR)/footer.wml: $(TEMPLDIR)/ctime.wml \
   $(TEMPLDIR)/common_tags.wml
 $(TEMPLDIR)/header.wml: $(TEMPLDIR)/common_translation.wml
 $(TEMPLDIR)/installer.wml: $(TEMPLDIR)/release_data.wml
-$(TEMPLDIR)/language_names.wml: $(TEMPLDIR)/common_tags.wml
+$(TEMPLDIR)/language_names.wml: $(TEMPLDIR)/common_tags.wml \
+  $(call locale,langs)
 $(TEMPLDIR)/languages.wml: $(TEMPLDIR)/common_tags.wml \
   $(TEMPLDIR)/language_names.wml
 $(TEMPLDIR)/legal.wml: $(TEMPLDIR)/common_tags.wml \
   $(TEMPLDIR)/common_translation.wml $(TEMPLDIR)/languages.wml \
   $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/submenu.wml \
-  $(TEMPLDIR)/legal_tags.wml $(TEMPLDIR)/basic.wml
+  $(TEMPLDIR)/legal_tags.wml $(TEMPLDIR)/basic.wml \
+  $(call locale,legal)
 $(TEMPLDIR)/legal_lists.wml: $(TEMPLDIR)/ctime.wml \
   $(TEMPLDIR)/common_tags.wml $(TEMPLDIR)/legal_tags.wml
 $(TEMPLDIR)/legal_tags.wml: $(TEMPLDIR)/common_tags.wml \
-  $(TEMPLDIR)/common_translation.wml
+  $(TEMPLDIR)/common_translation.wml \
+  $(call locale,legal)
 $(TEMPLDIR)/links.tags.wml: $(TEMPLDIR)/common_tags.wml
 $(TEMPLDIR)/mainpage.wml: $(TEMPLDIR)/common_translation.wml \
   $(TEMPLDIR)/basic.wml $(TEMPLDIR)/links.tags.wml \
@@ -188,7 +221,8 @@ $(TEMPLDIR)/navbar.wml: $(TEMPLDIR)/common_translation.wml \
   $(TEMPLDIR)/mirrors.wml
 $(TEMPLDIR)/news.wml: $(TEMPLDIR)/common_translation.wml \
   $(TEMPLDIR)/common_tags.wml $(TEMPLDIR)/languages.wml \
-  $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/basic.wml
+  $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/basic.wml \
+  $(call locale,legal)
 $(TEMPLDIR)/past_event.wml: $(TEMPLDIR)/events_common.wml \
   $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml
 $(TEMPLDIR)/recent_list.wml: $(TEMPLDIR)/ctime.wml \
@@ -201,9 +235,11 @@ $(TEMPLDIR)/release_images.wml: $(TEMPLDIR)/installer.wml \
 $(TEMPLDIR)/security.wml: $(TEMPLDIR)/common_tags.wml \
   $(TEMPLDIR)/common_translation.wml $(TEMPLDIR)/fixes_link.wml \
   $(TEMPLDIR)/languages.wml $(TEMPLDIR)/ctime.wml \
-  $(TEMPLDIR)/securityreferences.wml $(TEMPLDIR)/basic.wml
+  $(TEMPLDIR)/securityreferences.wml $(TEMPLDIR)/basic.wml \
+  $(call locale,security)
 $(TEMPLDIR)/speakers.wml: $(TEMPLDIR)/common_tags.wml \
-  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml
+  $(TEMPLDIR)/basic.wml $(TEMPLDIR)/languages.wml \
+  $(call locale,legal)
 $(TEMPLDIR)/template.wml: $(TEMPLDIR)/basic.wml \
   $(TEMPLDIR)/languages.wml
 $(TEMPLDIR)/todoitem.wml: $(TEMPLDIR)/common_tags.wml
@@ -211,9 +247,12 @@ $(TEMPLDIR)/translation-check.wml: $(TEMPLDIR)/languages.wml \
   $(TEMPLDIR)/common_tags.wml
 $(TEMPLDIR)/url.wml: $(TEMPLDIR)/common_tags.wml
 $(TEMPLDIR)/votebar.wml: $(TEMPLDIR)/languages.wml \
-  $(TEMPLDIR)/common_tags.wml
-$(TEMPLDIR)/wnpp.wml: $(TEMPLDIR)/common_tags.wml
-$(TEMPLDIR)/weeklynews/footer.wml: $(TEMPLDIR)/common_tags.wml
+  $(TEMPLDIR)/common_tags.wml \
+  $(call locale,vote)
+$(TEMPLDIR)/wnpp.wml: $(TEMPLDIR)/common_tags.wml \
+  $(call locale,wnpp)
+$(TEMPLDIR)/weeklynews/footer.wml: $(TEMPLDIR)/common_tags.wml \
+  $(call locale,newsevents)
 $(TEMPLDIR)/weeklynews/header.wml: $(TEMPLDIR)/common_tags.wml \
   $(TEMPLDIR)/ctime.wml $(TEMPLDIR)/links.tags.wml \
   $(TEMPLDIR)/template.wml
