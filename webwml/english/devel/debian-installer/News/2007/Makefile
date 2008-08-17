@@ -6,9 +6,10 @@ WMLBASE=../../../..
 CUR_DIR=devel/debian-installer/News/2007
 SUBS=
 
+NOGENERICDEP := true
+
 include $(WMLBASE)/Make.lang
 
-# Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(wildcard 2004*.wml) \
                         $(wildcard 2004*.title) \
                         $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml \
