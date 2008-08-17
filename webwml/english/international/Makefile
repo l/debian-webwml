@@ -13,6 +13,10 @@ ifeq "$(LANGUAGE)" "es"
 SUBS += spanish
 endif
 
+ifeq "$(LANGUAGE)" "nl"
+SUBS += dutch
+endif
+
 include $(WMLBASE)/Make.lang
 
 
