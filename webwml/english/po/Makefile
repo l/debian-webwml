@@ -53,7 +53,7 @@ others_FILES    = $(ENGLISHDIR)/banners/index.tags \
   $(ENGLISHDIR)/misc/hardware.def \
   $(ENGLISHDIR)/mirror/submit.inc
 templates_FILES = $(addprefix $(TEMPLDIR)/, \
-  cdimage.wml common_tags.wml common_translation.wml \
+  common_tags.wml common_translation.wml \
   ddp.wml fixes_link.wml footer.wml languages.wml \
   links.tags.wml mirrors.wml recent_list.wml \
   todoitem.wml translation-check.wml url.wml users.wml)
@@ -174,12 +174,12 @@ cvsupdate:
 
 else # not english
 
-#  This target prevents breakage when a new .pot file is added
-%.$(LANGUAGE).po:
-	cp $(ENGLISHDIR)/po/$*.pot $@
+%.$(LANGUAGE).po: $(ENGLISHDIR)/po/%.pot
+# this prevents breakage when a new .pot file is added
+	@[ -f $@ ] || cp $(ENGLISHDIR)/po/$*.pot $@
 
-%.mo: %.$(LANGUAGE).po $(ENGLISHDIR)/po/%.pot
-	msgmerge -q $*.$(LANGUAGE).po $(ENGLISHDIR)/po/$*.pot |\
+%.mo: %.$(LANGUAGE).po
+	msgmerge -q $*.$(LANGUAGE).po $(ENGLISHDIR)/po/$*.pot | \
             msgfmt --statistics -o $@ -
 
 init-po:
@@ -193,11 +193,20 @@ update-po: $(POTFILES)
 	  msgmerge --previous -F -q $$d.$(LANGUAGE).po $(ENGLISHDIR)/po/$$d.pot -o $$d.$(LANGUAGE).po.new && mv $$d.$(LANGUAGE).po.new $$d.$(LANGUAGE).po; \
 	done
 
-install-mo: $(MOFILES)
-	[ -d $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES ] || mkdir -p $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES
-	for d in $(DOMAINS); do \
-          cp -vu $$d.mo $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/$$d.mo; \
-        done
+# can't have this here, it's like that in Makefile.common
+# DESTMOFILES := $(addprefix $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/,$(MOFILES))
+# 
+# $(DESTMOFILES): $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/%.mo: %.mo
+# 	@[ -d $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES ] || mkdir -p $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES
+# 	@cp -vu $< $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/$<
+
+INSTMOFILES := $(addprefix install-,$(MOFILES))
+
+$(INSTMOFILES): install-%.mo: %.mo
+	@[ -d $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES ] || mkdir -p $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES
+	@cp -vu $< $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/$<
+
+install-mo: $(INSTMOFILES)
 
 clean::
 	rm -f *.mo
