@@ -1,15 +1,16 @@
 #use wml::debian::template title="Debians fejlrapporteringssystem" BARETITLE=true NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.70"
+#use wml::debian::translation-check translation="1.73"
+#include "$(ENGLISHDIR)/Bugs/pkgreport-opts.inc"
 {#style#:<link rel="stylesheet" href="http://bugs.debian.org/css/bugs.css" type="text/css">:##}
 
-<p>Debian har et fejlrapporteringssystem (BTS) som holder styr på oplysninger 
-om fejl rapporteret af brugere og udviklere.  Hver fejl får tildelt et nummer 
-og gemmes i systemet indtil den er markeret som taget hånd om.</p>
+<p>Debian har et fejlrapporteringssystem (BTS) som holder styr pÃ¥ oplysninger 
+om fejl rapporteret af brugere og udviklere.  Hver fejl fÃ¥r tildelt et nummer 
+og gemmes i systemet indtil den er markeret som taget hÃ¥nd om.</p>
 
 <h2>Hvordan man rapporterer en fejl i Debian</h2>
 
-<p>På en særskilt side er der vejledning og tips om <a href="Reporting">hvordan
-man rapporterer en fejl</a>, hvis du løber ind i problemer med Debians 
+<p>PÃ¥ en sÃ¦rskilt side er der vejledning og tips om <a href="Reporting">hvordan
+man rapporterer en fejl</a>, hvis du lÃ¸ber ind i problemer med Debians 
 distribution.</p>
 
 <h2>Dokumentation af fejlsporingssystemet</h2>
@@ -22,11 +23,11 @@ distribution.</p>
   <li><a href="Developer">Avancerede oplysninger om hvordan systemet anvendes</a></li>
   <li><a href="server-control">Oplysninger om hvordan man behandler fejl via e-mail</a></li>
   <li><a href="server-refcard">Mailserverens referencekort</a></li>
-  <li><a href="Access">Måder at tilgå fejlrapportloggen på</a></li>
-  <li><a href="server-request">Få tilsendt fejlrapporter via e-mail</a></li>
+  <li><a href="Access">MÃ¥der at tilgÃ¥ fejlrapportloggen pÃ¥</a></li>
+  <li><a href="server-request">FÃ¥ tilsendt fejlrapporter via e-mail</a></li>
 </ul>
 
-<h2>Se fejlrapporter på WWW</h2>
+<h2>Se fejlrapporter pÃ¥ WWW</h2>
 
 <p>Find en fejl ud fra <strong>nummer</strong></p>
   <br />
@@ -34,119 +35,74 @@ distribution.</p>
   <form method="get" action="http://bugs.debian.org/cgi-bin/bugreport.cgi">
   <p>
   <input type="text" size="9" name="bug" value="">
-  <input type="submit" value="Søg">
+  <input type="submit" value="SÃ¸g">
   <label><input type="checkbox" name="mbox" value="yes"> som mbox</label>
   <label><input type="checkbox" name="trim" value="no"> vis alle headerlinjer</label>	
   <label><input type="checkbox" name="boring" value="yes"> vis kedelige meddeleser</label>  
   </p>
   </form>
 
-<h2>Vælg fejlrapporter på WWW</h2>
+<h2>VÃ¦lg fejlrapporter pÃ¥ WWW</h2>
 
 <a name="pkgreport"></a>
-<form method="get" action="http://bugs.debian.org/cgi-bin/pkgreport.cgi">
-<input type="hidden" name="_fo_combine_key_fo_searchkey_value_fo_searchvalue" value="1">
-<input type="hidden" name="form_options" value="1">
+
+<bts_main_form>
+
 <table class="forms">
-<tr><td><h2>Vælg fejl</h2>
+
+<tr><td><h2>VÃ¦lg fejl</h2>
 </td>
 <td>
-<nobr><select name="_fo_searchkey">
-<option value="package" selected>i pakke</option>
-<option value="tag">markeret</option>
-<option value="severity">med alvorlighedsgrad</option>
-<option value="src">i kildekodepakke</option>
-<option value="maint">i pakker vedligeholdt af</option>
-<option value="submitter">indsendt af</option>
-<option value="owner">ejes af</option>
-<option value="status">med status</option>
-<option value="correspondent">med mail fra</option>
-<option value="newest">nyeste fejl</option>
-</select>
-<input type="text" name="_fo_searchvalue" value ="">
-</nobr>
-<br>
+<bts_select_form>
 </td>
-
 <td>
-<p>De samme søgefelter OR's sammen, forskellige felter AND's.</p>
-<p>Gyldige alvorlighedsgrader er critical, grave, serious, important, normal, minor, wishlist, fixed</p>
-<p>Gyldige markering er patch, wontfix, moreinfo, unreproducible, fixed, potato, woody, sid, help, security, upstream, pending, sarge, sarge-ignore, experimental, d-i, confirmed, ipv6, lfs, fixed-in-experimental, fixed-upstream, l10n, etch, etch-ignore, lenny, lenny-ignore</p>
+<p>Flere valgmuligheder kan tilfÃ¸jes efter den fÃ¸rste sÃ¸gning.  Hvis en senere 
+sÃ¸gning er i det samme sÃ¸gefelt, OR'es resultaterne.  Hvis det er i et andet 
+sÃ¸gefelt, AND'es resultaterne.</p>
+<p>Gyldige alvorlighedsgrader er <bts_severities></p>
+<p>Gyldige markeringer er <bts_tags></p>
 </td>
 </tr>
-<tr><td><h2>Inkludér fejl</h2></td>
-<td><input type="hidden" name="_fo_concatenate_into_include_fo_includekey_fo_includevalue" value="1">
-<nobr><select name="_fo_includekey">
-<option value="subject">med emne indeholdende</option>
-<option value="tags">markeret</option>
 
-<option value="severity">med alvorlighedsgrad</option>
-<option value="pending">med afventer-status (pending)</option>
-<option value="originator">med indsender indeholdende</option>
-<option value="forwarded">med videresendt indeholdende</option>
-<option value="owner">med ejer indeholdende</option>
-<option value="package">med pakke</option>
-
-</select>
-<input type="text" name="_fo_includevalue" value ="">
-</nobr>
-</td>
-<td></td>
-</tr>
-<tr><td><h2>Ekskludér fejl</h2></td>
+<tr><td><h2>InkludÃ©r fejl</h2></td>
 <td>
-<input type="hidden" name="_fo_concatenate_into_exclude_fo_excludekey_fo_excludevalue" value="1">
-<nobr><select name="_fo_excludekey">
-<option value="subject">med emne indeholdende</option>
-<option value="tags">markeret</option>
-<option value="severity">med alvorlighedsgrad</option>
-<option value="pending">med afventer-status (pending)</option>
+<bts_include_form>
+</td>
+<td>
+</td>
+</tr>
 
-<option value="originator">med indsender indeholdende</option>
-<option value="forwarded">med videresendt indeholdende</option>
-<option value="owner">med ejer indeholdende</option>
-<option value="package">med pakke</option>
-
-</select>
-<input type="text" name="_fo_excludevalue" value ="">
-</nobr>
+<tr><td><h2>EkskludÃ©r fejl</h2></td>
+<td>
+<bts_exclude_form>
 </td>
 <td></td>
 </tr>
-<tr><td><h2>Kategorisér ved hjælp af</h2></td>
-<td></td>
-</tr>
-<tr><td><h2>Arrangér efter</h2></td>
-<td><select name="ordering"><option value="normal" selected>normal</option>
-<option value="oldview">gammel visning</option>
-<option value="raw">rå</option>
-<option value="age">alder</option>
-</td>
 
+<tr><td><h2>KategorisÃ©r ved hjÃ¦lp af</h2></td>
 <td></td>
 </tr>
+<tr><td><h2>ArrangÃ©r efter</h2></td>
+<td>
+<bts_orderby_form>
+</td>
+<td></td>
+</tr>
+
 <tr><td><h2>Forskellige valgmuligheder</h2></td>
 <td>
-<input type="checkbox" name="repeatmerged" > Omvendt sammenlagt<br>
-<input type="checkbox" name="bug-rev" > Omvendt fejl<br>
-<input type="checkbox" name="pend-rev" > Omvendt afventer (pending)<br>
-<input type="checkbox" name="sev-rev" > Omvendt alvorlighedsgrad<br>
-
-<select name="archive">
-<option value="0" selected>Uarkiveret</option>
-<option value="1">Arkiveret</option>
-<option value="both">Arkiveret og uarkiveret</option>
-</select>
+<bts_miscopts_form>
 </td>
 </tr>
-<tr><td><h2>Udfør</h2></td><td colspan=2>
-<input type="submit" name="submit" value="Udfør">
+
+<tr><td><h2>UdfÃ¸r</h2></td><td colspan=2>
+<input type="submit" name="submit" value="UdfÃ¸r">
 </td></tr>
+
 </table>
 </form>
 
-
-<p>Søgningerne oven for kan også udføres ved at besøge følgende formularers 
+<p>SÃ¸gningerne oven for kan ogsÃ¥ udfÃ¸res ved at besÃ¸ge fÃ¸lgende formularers 
 adresser, henholdsvis</p>
 <ul>
   <li><tt>http://bugs.debian.org/<var>nummer</var></tt></li>
@@ -160,19 +116,19 @@ adresser, henholdsvis</p>
 </ul>
 
 
-<h2>Søgning i fejlrapporterne</h2>	
+<h2>SÃ¸gning i fejlrapporterne</h2>	
 
-<p>Du kan søge i fejlrapporterne ved hjælp af den
+<p>Du kan sÃ¸ge i fejlrapporterne ved hjÃ¦lp af den
 our <a href="http://merkel.debian.org/~don/cgi/search.cgi">HyperEstraier-baserede
-søge-cgi.</a></p>
+sÃ¸ge-cgi.</a></p>
 
-<p>En anden måde at søge i fejlrapporter er at anvende 
+<p>En anden mÃ¥de at sÃ¸ge i fejlrapporter er at anvende 
 <a href="http://groups.google.com/group/linux.debian.bugs.dist">Google Groups</a>.
-Den periode der skal søges i kan begrænses ved i stedet at anvende den
+Den periode der skal sÃ¸ges i kan begrÃ¦nses ved i stedet at anvende den
 <a href="http://groups.google.com/advanced_search?q=+group%3Alinux.debian.bugs.dist">\
-avancerede søgning</a>.</p>
+avancerede sÃ¸gning</a>.</p>
 		     
-<p>Alternative steder der tillader søgning i fejlrapporter er
+<p>Alternative steder der tillader sÃ¸gning i fejlrapporter er
 <a href="http://dir.gmane.org/gmane.linux.debian.devel.bugs.general">Gmane</a> 
 og <a href="http://www.mail-archive.com/debian-bugs-dist%40lists.debian.org/">\
 The Mail Archive</a>.</p>
@@ -184,9 +140,9 @@ The Mail Archive</a>.</p>
 udgivelseskritiske fejl</a>.</p>
 	 
 <p>Den aktuelle liste over <a href="pseudo-packages">pseudopakker</a> som
-Debians fejlhåndteringssystem kender.</p>
+Debians fejlhÃ¥ndteringssystem kender.</p>
 
-<p>Følgende indekser over fejlrapporter er tilgængelige:</p>
+<p>FÃ¸lgende indekser over fejlrapporter er tilgÃ¦ngelige:</p>
 
 <ul>
   <li>Pakker med  
@@ -195,10 +151,10 @@ Debians fejlhåndteringssystem kender.</p>
       <a href="http://bugs.debian.org/cgi-bin/pkgindex.cgi?indexon=pkg&amp;archive=yes">arkiverede</a> 
       fejlrapporter.</li>
   <li>Kildekodepakker med 
-      <a href="http://bugs.debian.org/cgi-bin/pkgindex.cgi?indexon=src">aktive</a>
+ Â  Â  Â <a href="http://bugs.debian.org/cgi-bin/pkgindex.cgi?indexon=src">aktive</a>
       og
-      <a href="http://bugs.debian.org/cgi-bin/pkgindex.cgi?indexon=src&amp;archive=yes">arkiverede</a>
-      fejlrapporter.</li>
+ Â  Â  Â <a href="http://bugs.debian.org/cgi-bin/pkgindex.cgi?indexon=src&amp;archive=yes">arkiverede</a>
+Â      fejlrapporter.</li>
   <li>Vedligeholdere af pakker med 
       <a href="http://bugs.debian.org/cgi-bin/pkgindex.cgi?indexon=maint">aktive</a> 
       og 
@@ -211,8 +167,8 @@ Debians fejlhåndteringssystem kender.</p>
       fejlrapporter.</li>
 </ul>
 
-<p><strong>Bemærk:</strong> nogle af de tidligere tilgængelige indekser over 
-fejlrapporter er ikke længere tilgængelige på grund af interne problemer med 
-det program som genererer dem. Vi beklager besværet dette kan medføre.</p>
+<p><strong>BemÃ¦rk:</strong> nogle af de tidligere tilgÃ¦ngelige indekser over 
+fejlrapporter er ikke lÃ¦ngere tilgÃ¦ngelige pÃ¥ grund af interne problemer med 
+det program som genererer dem. Vi beklager besvÃ¦ret dette kan medfÃ¸re.</p>
 
 #include "$(ENGLISHDIR)/Bugs/footer.inc"
