@@ -1,5 +1,3 @@
-# the file webwml/english/devel/debian-installer/Makefile
-# because webwml/english/devel/debian-installer/Makefile is "upstream"
 # If this makefile is not generic enough to support a translation,
 # please contact debian-www.
 

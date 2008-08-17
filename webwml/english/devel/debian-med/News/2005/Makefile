@@ -1,4 +1,3 @@
-# webwml/english/devel/debian-med/News/2005/Makefile
 # If this makefile is not generic enough to support a translation,
 # please contact debian-www.
 
