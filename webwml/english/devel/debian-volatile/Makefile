@@ -1,4 +1,3 @@
-# the file webwml/english/devel/debian-volatile/Makefile
 # If this makefile is not generic enough to support a translation,
 # please contact debian-www.
 
