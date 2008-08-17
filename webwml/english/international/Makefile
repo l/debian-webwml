@@ -3,7 +3,15 @@
 
 WMLBASE=..
 CUR_DIR=international
-SUBS=Catalan Chinese Croatian Danish German l10n Polish spanish Swedish
+SUBS=Catalan Chinese Croatian Danish German l10n Polish Swedish
+
+ifeq "$(LANGUAGE)" "fr"
+SUBS += french
+endif
+
+ifeq "$(LANGUAGE)" "es"
+SUBS += spanish
+endif
 
 include $(WMLBASE)/Make.lang
 
