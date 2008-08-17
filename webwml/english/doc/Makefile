@@ -1,5 +1,5 @@
-# This Makefile should need no changes from the equivalent copy under
-# webwml/english/
+# If this makefile is not generic enough to support a translation,
+# please contact debian-www.
 
 WMLBASE	:= ..
 CUR_DIR	:= $(subst $(shell cd $(WMLBASE); pwd -P)/,,$(shell pwd))

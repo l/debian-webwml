@@ -1,6 +1,5 @@
-# This Makefile should need no changes from webwml/english/international/l10n/po/Makefile
-# Please send a message to debian-www if you need to modify anything
-# so the problem can be fixed.
+# If this makefile is not generic enough to support a translation,
+# please contact debian-www.
 
 WMLBASE=../../..
 CUR_DIR=international/l10n/po
