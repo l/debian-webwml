@@ -6,10 +6,10 @@ WMLBASE=../../../..
 CUR_DIR=devel/debian-jr/News/2003
 SUBS=
 
+NOGENERICDEP := true
+
 include $(WMLBASE)/Make.lang
 
-
-# Do Not modify the following line
 index.$(LANGUAGE).html: index.wml $(wildcard 2003*.wml) \
                         $(wildcard 2003*.title)\
                         $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml
