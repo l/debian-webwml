@@ -192,6 +192,10 @@ update-po: $(POTFILES)
 	  msgmerge --previous -F -q $$d.$(LANGUAGE).po $(ENGLISHDIR)/po/$$d.pot -o $$d.$(LANGUAGE).po.new && mv $$d.$(LANGUAGE).po.new $$d.$(LANGUAGE).po; \
 	done
 
+update-%.$(LANGUAGE).po:
+	msgmerge --previous -F -q $*.$(LANGUAGE).po $(ENGLISHDIR)/po/$*.pot -o $*.$(LANGUAGE).po.new
+	mv $*.$(LANGUAGE).po.new $*.$(LANGUAGE).po
+
 # can't have this here, it's like that in Makefile.common
 # DESTMOFILES := $(addprefix $(LOCALEROOT)/$(LANGUAGE)/LC_MESSAGES/,$(MOFILES))
 # 
