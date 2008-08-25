@@ -1,5 +1,5 @@
 #use wml::debian::template title="鍵のロールオーバー"
-#use wml::debian::translation-check translation="1.41"
+#use wml::debian::translation-check translation="1.46"
 
 <p>
 <a href="$(HOME)/security/2008/dsa-1571">Debian セキュリティ勧告 1571</a>
@@ -17,27 +17,28 @@
 </p>
 
 <ul>
-<li><b><a href="#openssh">OpenSSH</a></b>
-<li><b><a href="#openssl">OpenSSL: 一般的な PEM 鍵生成手順の説明</a></b>
+<li><b><a href="#openssh">OpenSSH</a></b></li>
+<li><b><a href="#openssl">OpenSSL: 一般的な PEM 鍵生成手順の説明</a></b></li>
 
-<li><a href="#bincimap">bincimap</a>
-<li><a href="#boxbackup">boxbackup</a>
-<li><a href="#cryptsetup">cryptsetup</a>
-<li><a href="#dropbear">dropbear</a>
-<li><a href="#ekg">ekg</a>
-<li><a href="#ftpd-ssl">ftpd-ssl</a>
-<li><a href="#gforge">gforge</a>
-<li><a href="#kerberos">MIT Kerberos (krb5)</a>
-<li><a href="#openswan">OpenSWAN / StrongSWAN</a>
-<li><a href="#openvpn">OpenVPN</a>
-<li><a href="#proftpd">Proftpd</a>
-<li><a href="#puppet">puppet</a>
-<li><a href="#sendmail">sendmail</a>
-<li><a href="#ssl-cert">ssl-cert</a>
-<li><a href="#telnetd-ssl">telnetd-ssl</a>
-<li><a href="#tinc">tinc</a>
-<li><a href="#tor">tor</a>
-<li><a href="#xrdp">xrdp</a>
+<li><a href="#bincimap">bincimap</a></li>
+<li><a href="#boxbackup">boxbackup</a></li>
+<li><a href="#cryptsetup">cryptsetup</a></li>
+<li><a href="#dropbear">dropbear</a></li>
+<li><a href="#ekg">ekg</a></li>
+<li><a href="#ftpd-ssl">ftpd-ssl</a></li>
+<li><a href="#gforge">gforge</a></li>
+<li><a href="#kerberos">MIT Kerberos (krb5)</a></li>
+<li><a href="#nessus">Nessus</a></li>
+<li><a href="#openswan">OpenSWAN / StrongSWAN</a></li>
+<li><a href="#openvpn">OpenVPN</a></li>
+<li><a href="#proftpd">Proftpd</a></li>
+<li><a href="#puppet">puppet</a></li>
+<li><a href="#sendmail">sendmail</a></li>
+<li><a href="#ssl-cert">ssl-cert</a></li>
+<li><a href="#telnetd-ssl">telnetd-ssl</a></li>
+<li><a href="#tinc">tinc</a></li>
+<li><a href="#tor">tor</a></li>
+<li><a href="#xrdp">xrdp</a></li>
 </ul>
 
 <p>
@@ -46,10 +47,10 @@
 </p>
 
 <ul>
-<li><a href="notvuln#ckermit">ckermit</a>
-<li><a href="notvuln#gnupg">GnuPG</a>
-<li><a href="notvuln#iceweasel">Iceweasel</a>
-<li><a href="notvuln#mysql">MySQL</a>
+<li><a href="notvuln#ckermit">ckermit</a></li>
+<li><a href="notvuln#gnupg">GnuPG</a></li>
+<li><a href="notvuln#iceweasel">Iceweasel</a></li>
+<li><a href="notvuln#mysql">MySQL</a></li>
 </ul>
 
 <p>
@@ -364,6 +365,49 @@ PKINIT が用いる鍵対は、
 疑ってかかるべきです。パケットキャプチャを使用する攻撃者は、
 これらの鍵やセッションを侵害できる可能性があります。
 </p>
+
+<h1><a name="nessus">Nessus</a></h1>
+
+<p>Nessus サーバパッケージ (nessusd) のインストール後スクリプトは、
+Nessus サーバとクライアントの間の安全な接続のためにいくつかの SSL 鍵を
+作成します。
+この接続チャネルは、悪意を持つユーザがサーバ/クライアント間で交換される
+情報 (リモートホストの脆弱性の情報も含む) を横取りでき、ログインしたユーザ
+としてサーバにコマンドを送る潜在的可能性があるるため、侵害され得ると
+考えられます。
+</p>
+
+<p>加えて、管理者がリモート認証のために、このセキュリティ問題の影響を受ける
+OpenSSL バージョンをインストールしたサーバで Nessus CA 鍵またはユーザ
+証明書を (nessus-mkcert-clientを使って) 作成していた場合、これらの鍵
+は侵害できる可能性があると考えられます。Nessus サーバにアクセス権限を持つ
+リモートユーザは、攻撃を許可されているためにサーバに攻撃を実行可能で、
+ローカルの設定でアップロードプラグインを有効にしている場合 (Debian での
+デフォルトは <q>no</q> です) は、 root 権限で Nessus サーバ内で実行される
+ということに注意してください。</p>
+
+<p>メンテナ設定スクリプトは、設定時に、OpenSSL 証明書が見つからない場合それを再生成します。よって、次のように証明書を削除して、新しいものを生成する必要があります:</p>
+
+<pre>
+rm -f /var/lib/nessus/CA/cacert.pem
+rm -f /var/lib/nessus/CA/servercert.pem
+rm -f /var/lib/nessus/private/CA/cakey.pem
+rm -f /var/lib/nessus/private/CA/serverkey.pem
+dpkg-reconfigure nessusd
+</pre>
+
+<p>これを行ったら、/var/lib/nessus/users/USERNAME/auth にある古いユーザ鍵を
+削除して、それらを nessus-mkcert-client で再度生成する必要があります。
+古い鍵は CA 鍵が削除された時点で無効になります。
+</p>
+
+<p>CA 鍵を再生成後、新しい CA 証明書をユーザに配布する必要もあります。
+ユーザは一度再接続して、Nessus サーバからの新しい証明書を許可しなければ
+なりません。古いサーバ用の証明書の設定は自動で削除されるはずですが、
+<pre>.nessusrc.cert</pre> (Nessus クライアントを使っている場合) または
+<pre>.openvasrc.cert</pre> (OpenVAS クライアントを使っている場合) を
+編集し手動で削除することもできます。</p>
+
 
 <h1><a name="openswan">OpenSWAN / StrongSWAN</a></h1>
 
