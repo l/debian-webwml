@@ -10,7 +10,7 @@ GETTEXTFILES += consultants.mo
 
 include $(WMLBASE)/Make.lang
 
-ifeq ($(LANGUAGE),en)
+ifeq "$(LANGUAGE)" "en"
 $(ENGLISHSRCDIR)/consultants/consultant.inc: consultant.data
 	$(ENGLISHSRCDIR)/consultants/count
 endif
