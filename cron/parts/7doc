@@ -72,6 +72,19 @@ drdeb=`ls -t1 $ftpdir/pool/main/d/developers-reference/developers-reference_*.de
 dpkg-deb -x $drdeb dr
 test -d $webdocdir/developers-reference || install -d -m 2775 $webdocdir/developers-reference
 install -p -m 664 dr/usr/share/doc/developers-reference/*.html $webdocdir/developers-reference/
+install -p -m 664 dr/usr/share/doc/developers-reference/developers-reference.pdf $webdocdir/developers-reference/
+install -p -m 664 dr/usr/share/doc/developers-reference/developers-reference.txt.gz $webdocdir/developers-reference/
+rm -rf dr
+
+drdeb=`ls -t1 $ftpdir/pool/main/d/developers-reference/developers-reference-fr_*.deb | head -1`
+dpkg-deb -x $drdeb dr
+test -d $webdocdir/developers-reference || install -d -m 2775 $webdocdir/developers-reference
+for doc in dr/usr/share/doc/developers-reference-fr/*.html
+do
+	install -p -m 664 "$doc" $webdocdir/developers-reference/$(basename "$doc").fr
+done
+install -p -m 664 dr/usr/share/doc/developers-reference-fr/developers-reference.pdf $webdocdir/developers-reference/developers-reference.pdf.fr
+install -p -m 664 dr/usr/share/doc/developers-reference-fr/developers-reference.txt.gz $webdocdir/developers-reference/developers-reference.txt.gz.fr
 rm -rf dr
 
 echo -n " maint-guide"
