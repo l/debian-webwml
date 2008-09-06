@@ -129,6 +129,7 @@
   <option value="age">
     <gettext domain="bugs">age</gettext>
   </option>
+  </select>
 </define-tag>
 
 <define-tag bts_miscopts_form whitespace=delete>
