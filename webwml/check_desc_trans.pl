@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 # Check translation status for mailing list descriptions. Since these files
 # aren't WML files, the translation data is stored in a separate file in
@@ -15,125 +15,232 @@
 # are missing, which files are outdated, and if there are files translating
 # files that are no longer in the English directory.
 #
-# There are no command line parameters.
-
-# Originally written 2002-10-05 by Peter Krefting <peterk@debian.org>
-# © Copyright 2002-2008 Software in the public interest, Inc.
-# This program is released under the GNU General Public License, v2.
+# The language to check can be specified on the command line, in 
+# language.conf, or in the DWWW_LANG environment variable.
+#
+# Originally written 2002-10-05 by Peter Karlsson <peterk@debian.org>
+# © Copyright 2002-2007 Software in the public interest, Inc.
+# Complete rewrite 2008 by Bas Zoetekouw <bas@debian.org>
+# © Copyright 2008 by Bas Zoetekouw <bas@debian.org>
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of version 2 of the GNU General Public License as published
+# by the Free Software Foundation.
+#
 
 # $Id$
 
-# Get configuration
-if (exists $ENV{DWWW_LANG}) 
+use FindBin;
+use lib "$FindBin::Bin/Perl";
+
+use File::Basename;
+use File::Spec::Functions;
+use File::Find::Rule;
+use List::MoreUtils qw{ uniq };
+use Term::ANSIColor;
+
+use Local::VCS_CVS ':all';
+
+use strict;
+use warnings;
+
+# Get language configuration
+my $language;
+if ( $ARGV[0] )
+{
+	$language = $ARGV[0];
+}
+elsif (exists $ENV{DWWW_LANG}) 
 {
 	$language = $ENV{DWWW_LANG};
 } 
-elsif (open CONF, "<language.conf")
+elsif ( open( my $conf, '<', 'language.conf' ) )
 {
-	while (<CONF>)
+	while ( my $line  = <$conf> )
 	{
-		next if /^#/;
-		chomp;
-		$language = $_, next unless defined $language;
+		next if $line =~ /^#/;
+		chomp $line ;
+		$language = $line;
+		last;
 	}
+
+	close $conf;
 }
 
 die "Language not defined in DWWW_LANG or language.conf\n"
 	unless defined $language;
+die "Language `$language' doesn't exist\n"
+	unless -d $language;
 
 # Counters
-$old = 0;
-$uptodate = 0;
-$unknown = 0;
-$needtranslation = 0;
+my $old = 0;
+my $uptodate = 0;
+my $unknown = 0;
+my $needtranslation = 0;
 
-# Start-up
-$directory = 'MailingLists/desc';
-&process($directory);
+# directories
+my $directory = catdir( 'MailingLists' , 'desc' );
+my $srcdir    = catdir( 'english', $directory );
+my $destdir   = catdir( $language, $directory );
 
-# Results
-print $needtranslation, " need to be translated.\n" if $needtranslation;
-print $old, " need to be updated.\n" if $old;
-print $uptodate, " are up to date.\n" if $uptodate;
-print $unknown, " are orphaned.\n" if $unknown;
+# read svn info about files in source dir
+my %revision_info = vcs_path_info( $srcdir, 'recursive' => 1 );
 
-sub process
+# read the translation-check files in dest dir
+my %transcheck = read_transcheck( $destdir );
+
+# check all files
+my ($nr_uptodate,$nr_old,$nr_needtrans,$nr_obsolete,$nr_error) = 
+	check_all( $language, $directory, \%transcheck, \%revision_info );
+
+# print results
+print "\nResults:\n";
+printf "  %3i are up to date.\n",        $nr_uptodate;
+printf "  %3i need to be updated.\n",    $nr_old;
+printf "  %3i need to be translated.\n", $nr_needtrans;
+printf "  %3i are obsolete.\n",          $nr_obsolete;
+printf "  %3i are broken.\n",            $nr_error;
+
+exit 0;
+
+
+#============================================================
+
+
+# read in all transcheck files under the specified directory
+sub read_transcheck
 {
-    my $curdir = shift;
-    my $source = 'english/' . $curdir;
-    my $destination = $language . '/' . $curdir;
+	my $dir = shift  or  die("No directory specified");
 
-    my %sourcefile;
-    my @subdirs;
+	# get a listof all translation-check files
+	my @files = File::Find::Rule->file()->name('translation-check')->in($dir);
 
-    print "Checking $curdir\n";
+	my %info;
+	foreach my $file (@files)
+	{
+		my $thisdir = dirname $file;
 
-    # Read the Entries file for the source directory
-    open CVS, $source . '/CVS/Entries'
-        or die "Cannot read $source/CVS/Entries: $!\n";
+		# TODO: use a nice File::Spec function for this
+		$thisdir =~ s{^$dir/*}{} ;
 
-    while (<CVS>)
-    {
-    	next if /README/;
-		if (m[^/([^/]+)/([0-9\.]+)/])
-        {
-            $sourcefile{$1} = $2;
-        }
-		elsif (m[^D/([^/]+)/])
-        {
-            push @subdirs, $1;
-        }
-    }
-    close CVS;
+		open( my $fd, '<', $file ) or die("Can't open `$file': $!\n");
+		while ( my $line = <$fd> )
+		{
+			chomp $line;
 
-    # Read the translation-check file for the destination directory
-    if (open CHECK, $destination . '/translation-check')
-    {
-        # Get data for the entries and compare
-        while (<CHECK>)
-        {
-            if (/^([^\s]+)\s*([0-9\.]+)$/)
-            {
-            	print "Ghost entry $destination/$1\n"
-            		unless -f "$destination/$1";
-                if (defined $sourcefile{$1})
-                {
-                    my ($file, $oldrev, $newrev) = ($1, $2, $sourcefile{$1});
-                    if ($oldrev ne $newrev)
-                    {
-                        $old ++;
-                        print "Need to update $destination/$file from ",
-                              $oldrev, " to ", $newrev, "\n";
-                    }
-                    else
-                    {
-                        $uptodate ++;
-                    }
-		            delete $sourcefile{$1};
-                }
-                else
-                {
-                    print "Unknown translated file: $destination/$1\n";
-                    $unknown ++;
-                }
-            }
-        }
-        foreach $untranslated (keys %sourcefile)
-        {
-        	print "Untranslated file: $destination/$untranslated ",
-        	      $sourcefile{$untranslated}, "\n";
-            $needtranslation ++;
-        }
-    }
-    else
-    {
-        warn "Cannot read $destination/translation-check: $!\nDirectory skipped\n";
-    }
+			# skip comments and empty lines
+			next if $line =~ m{^#};
+			next if $line =~ m{^\s+$};
 
+			# read the file name and the revision from the file
+			my ($listfile,$revision) = split( /\s+/, $line, 2 );
+			warn "Couldn't parse line $. of $file\n" unless $revision;
 
-    # Process subdirs
-    foreach $subdir (@subdirs)
-    {
-        &process($curdir . '/' . $subdir);
-    }
+			# prepend the directory name, if needed
+			my $thefile = $thisdir ? catfile( $thisdir, $listfile ) : $listfile;
+
+			# save the data 
+			$info{ $thefile } = $revision;
+		}
+		close( $fd );
+	}
+
+	return %info;
+
 }
+
+
+# check all translations
+sub check_all
+{
+	my $lang    = shift  or  die("No language specified");
+	my $dir     = shift  or  die("No directory specified");
+	my $files   = shift  or  die("No transcheck files specified");
+	my $revinfo = shift  or  die("No revision info specified");
+
+	die("Language `$lang' doesn't exists\n") unless -d $lang;
+
+	my $source      = catdir( 'english', $dir );
+	my $destination = catdir( $lang,     $dir );
+
+	# create a list of all files (note that the filenames are relative to the
+	# english and translated mailinglist directories)
+	my @allfiles = sort {$a cmp $b} uniq( keys %$files, keys %$revinfo );
+
+	# counters
+	my ($nr_uptodate,$nr_old,$nr_obsolete,$nr_needtrans,$nr_error) = (0,0,0,0,0);
+
+	foreach my $file ( @allfiles )
+	{
+		# special case, this doesn't need to be translated
+		next if $file eq 'README';
+
+		my $file_english = catfile( 'english', $dir, $file );
+		my $file_transl  = catfile( $lang,     $dir, $file );
+
+		# check if the info from vcs and from the fs are consistent
+		if ( -e $file_english  and  not exists $revinfo->{$file} )
+		{
+			warn "$file: english version found, but no revision info available!\n";
+			next;
+		}
+		# check if the info from translation-check and from the fs are consistent
+		if ( -e $file_transl  and  not exists $files->{$file} )
+		{
+			warn "$file: $lang version found, but not found in a translation-check file!\n";
+			next;
+		}
+
+		# now check for out-of-dateness and other things
+		if ( -e $file_english and -e $file_transl )
+		{
+			# needs update
+			if ( vcs_cmp_rev( $files->{$file}, $revinfo->{$file}->{'cmt_rev'} ) == -1 )
+			{
+				$nr_old++;
+				print color('blue'), $file, color('reset');
+				printf ": needs to be updated from revision %s to revison %s\n", 
+					$files->{$file}, $revinfo->{$file}->{'cmt_rev'};
+			}
+			# translated file is too new
+			elsif ( vcs_cmp_rev( $files->{$file}, $revinfo->{$file}->{'cmt_rev'} ) == -1 )
+			{
+				$nr_error++;
+				print color('blue'), $file, color('reset');
+				printf ": %s revision %s is larger than english revision %s\n",
+					$lang, $files->{$file}, $revinfo->{$file}->{'cmt_rev'};
+			}
+			# up to date!
+			else
+			{
+				$nr_uptodate++;
+			}
+		}
+		# file not translated yet
+		elsif ( -e $file_english )
+		{
+			$nr_needtrans++;
+			print color('blue'), $file, color('reset');
+			printf ": need to translate revision %s\n", $revinfo->{$file}->{'cmt_rev'};
+		}
+		# translation exists, but original has been removed
+		elsif ( -e $file_transl )
+		{
+			$nr_obsolete++;
+			print color('blue'), $file, color('reset');
+			print ": no english file found!\n";
+		}
+		# weirdness
+		else
+		{
+			$nr_error++;
+			print color('blue'), $file, color('reset');
+			print ": Woopsie, neither english nor $lang file found\n";
+			next;
+		}
+	}
+
+	return ($nr_uptodate,$nr_old,$nr_needtrans,$nr_obsolete,$nr_error);
+}
+
+__END__
