@@ -68,6 +68,13 @@ echo "extracting the list of languages..." >> $crondir/log/lessoften.log
 cd $webtopdir/webwml/english/international/l10n
 ./scripts/list-languages.pl data/unstable.gluck > data/langs
 
+echo "updating the status files used to build l10n stats..." >> $crondir/log/lessoften.log
+cd $crondir/datafiles
+wget -erobots=off -q -N -nd -r -l1 --no-parent -A"status.*" http://i18n.debian.net/debian-l10n/status/ || { echo "couldn't fetch status.*!" >> $crondir/log/lessoften.log; exit 1; }
+for status_file in status.*; do
+	ln -sf $crondir/datafiles/$status_file $webtopdir/webwml/english/international/l10n/data/$status_file
+done
+
 echo "cleaning up obsolete templates translation information" >> $crondir/log/lessoften.log
 cd $webdir/international/l10n
 find po po-debconf templates -type f -mtime +30 -exec rm -f \{\} \;
