@@ -52,7 +52,11 @@ BEGIN {
 	use base qw( Exporter );
 
 	our $VERSION = sprintf "%d", q$Revision$ =~ /(\d+)/g;
-	our @EXPORT_OK = qw( &vcs_path_info   &vcs_cmp_rev  &vcs_get_topdir );
+	our @EXPORT_OK = qw( 
+	                     &vcs_cmp_rev     &vcs_count_changes
+	                     &vcs_get_topdir 
+	                     &vcs_path_info   &vcs_file_info
+	                   );
 	our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 }
 
@@ -110,6 +114,53 @@ sub vcs_cmp_rev
 	croak "Internal error: this should never be executed";
 }
 
+=item vcs_count_changes
+
+Return the number of changes to particular file between two revisions
+
+The first argument is a name of a file.
+The second and third argument specify the revision range
+
+Example use:
+
+   my $num1 = svn_count_changes( 'foo.c', 'r42', 'r70' );
+   my $num2 = svn_count_changes( 'foo.c', 'r42', 'HEAD' );
+
+=cut
+
+sub vcs_count_changes
+{
+	my $file = shift  or  return undef;
+	my $rev1 = shift || '1.1';
+	my $rev2 = shift || 'HEAD';
+
+	# find the version number of HEAD, if it was specified
+	if ( $rev2 eq 'HEAD' )
+	{
+		my %info = vcs_file_info( $file );
+		return -1  if  not %info;
+		$rev2 = $info{'cmt_rev'};
+	}
+
+	# for CVS, this is pretty easy: we simply compare the two version numbers
+	# note: we don't support branches (aren't used in the webwml repo anyway)
+	my @rev1 = split( /\./, $rev1 );
+	my @rev2 = split( /\./, $rev2 );
+
+	croak "non-similar revision numbers (different branches?)"
+		if ( scalar @rev1 != scalar @rev2 );
+
+	# check that all but the last components of the version numbers match
+	# i.e., we can compare 2.0.1 and 2.0.17, but not 1.0.2 and 2.0.17
+	while ( @rev1 > 1 )
+	{
+		croak "non-similar revision numbers (different branches?)"
+			unless  shift @rev1 == shift @rev2;
+	}
+
+	return $rev2[0] - $rev1[0];
+}
+
 
 =item vcs_path_info
 
@@ -122,10 +173,8 @@ The function returns a hash, which for each filename contains
 Subversion status information:
 
   'type'       => type of the file ('d' directory, 'f' regular file, etc)
-  'status'     => current status of checked out file (bla)
   'cmt_rev'    => revision in which latest change was made to this file
   'cmt_date'   => date on which latest change to this file was committed
-  'cmt_author' => author who committed the latest change to this file
 
 Optional remaining arguments are a hash array with options:
 
@@ -151,20 +200,23 @@ sub vcs_path_info
 
 	my $recurse   = $options{recursive} || $options{recurse} || 0;
 	my $match_pat = $options{match_pat} || undef;
-	my$skip_pat   = $options{skip_pat}  || undef;
+	my $skip_pat  = $options{skip_pat}  || undef;
 
 	_debug "Recurse is $recurse";
 	_debug "Match pattern is '$match_pat'" if defined $match_pat;
 	_debug "Skip pattern is  '$skip_pat'"  if defined $skip_pat;
 
-	croak "Match and skip not implemented" 
-		if defined $match_pat or defined $skip_pat;
+	croak "Skip not implemented" if defined $skip_pat;
+
+	# $cvs->readinfo expects a matchfile input;  if nothing is specified, we
+	# pass a pattern that matches everything
+	$match_pat ||= '.'; 
 
 	$dir = rel2abs( $dir );
 
 	# use Local::Cvsinfo to do the actual work in CVS
 	my $cvs = Local::Cvsinfo->new();
-	$cvs->readinfo( $dir, recursive => $recurse, matchfile => ['.'] );
+	$cvs->readinfo( $dir, recursive => $recurse, matchfile => [$match_pat] );
 	my $files = $cvs->files;
 
 	# construct a nice hash from the data we received from Cvsinfo
@@ -183,6 +235,43 @@ sub vcs_path_info
 	}
 
 	return %data;
+}
+
+=item vcs_file_info
+
+Return VCS information and status about a single file
+
+The single argument is a name of a file.
+
+The function returns a hash, which contains VCS status information for
+the specified file:
+
+  'type'       => type of the file ('d' directory, 'f' regular file, etc)
+  'cmt_rev'    => revision in which latest change was made to this file
+  'cmt_date'   => date on which latest change to this file was committed
+
+Example use:
+
+   my %info = $vcs_file_info( 'foo.wml' );
+
+=cut
+
+sub vcs_file_info
+{
+	my $file = shift or carp("No file specified");
+
+	my ($basename,$dirname) = fileparse( rel2abs $file );
+
+	# note: for some weird reason, the file is returned as '.'
+	my %info = vcs_path_info( $dirname, 'recursive' => 0 );
+
+	if ( not ( exists $info{$basename} and $info{$basename} ) )
+	{
+		carp("No info found about `$file' (does the file exist?)");
+		return;
+	}
+
+	return %{ $info{$basename} };
 }
 
 =item vcs_get_topdir
@@ -260,39 +349,6 @@ Free Software Foundation.
 # -- Bas.
 __END__
 
-
-=item svn_file_info
-
-Return Subversion information and status about a single file
-
-The single argument is a name of a file.
-
-The function returns a hash, which contains Subversion status information for
-the specified file:
-
-  'type'       => type of the file ('d' directory, 'f' regular file, etc)
-  'status'     => current status of checked out file (bla)
-  'cmt_rev'    => revision in which latest change was made to this file
-  'cmt_date'   => date on which latest change to this file was committed
-  'cmt_author' => author who committed the latest change to this file
-
-Example use:
-
-   my %info = $svn_file_info( 'foo.c' );
-
-=cut
-
-sub svn_file_info
-{
-	my $file = shift or carp("No file specified");
-	carp( "No such file: $file" ) unless -e $file;
-
-	# note: for some weird reason, the file is returned as '.'
-	my %info = svn_path_info( $file, 'recursive' => 0 );
-	carp("No info found about $file") unless exists $info{'.'} and $info{'.'};
-
-	return %{ $info{'.'} };
-}
 
 
 =item svn_diff
@@ -494,116 +550,6 @@ sub svn_log
 
 	# return a copy of the logs
 	return @_log_collection;
-}
-
-=item svn_count_changes
-
-Return the number of changes to aprticular file between two revisions
-
-The first argument is a name of a file.
-The second and third argument specify the revision range
-
-There are two version of this function, one for offline usage (when no contact
-with the repository is possible), and one for online work.  The main function
-will automatically use the offline version of the revision cache file
-`revisions.stor' can be found.
-
-Example use:
-
-   my $num1 = svn_count_changes( 'foo.c', 'r42', 'r70' );
-   my $num2 = svn_count_changes( 'foo.c', 'r42', 'HEAD' );
-
-=cut
-
-# global variable to prevent the revision log from being loaded on
-# _every_ invocation of _svn_count_changes_offline
-# now we just load it once (see below)
-my $revinfo = undef;
-
-sub _svn_count_changes_offline
-{
-	my $revstor = shift or die("No revision cache file specified");
-	my $file    = shift or carp("No file specified");
-	my $rev1    = shift || '0';
-	my $rev2    = shift || 'HEAD';
-
-	# common case that nothing has changed
-	return 0  if  $rev1 eq $rev2;
-
-	# only load the revision log file once
-	if ( not defined $revinfo )
-	{
-		require Storable;
-		$revinfo = Storable::lock_retrieve( $revstor );
-	}
-
-	if ( not $revinfo )
-	{
-		carp "Couldn't load revision log `$revstor', reverting to online query\n";
-		return _svn_count_changes_online $file, $rev1, $rev2;
-	}
-
-	# for the checks below, it suffices to regard HEAD as infinity (i.e., more
-	# recent than any other change)
-	$rev1 = 1e99  if  $rev1 eq 'HEAD';
-	$rev2 = 1e99  if  $rev2 eq 'HEAD';
-
-	# the filenames in %$revinfo are relative to the root of the repository
-	# so we need to convert $file also to be relative to that path
-	my $depth = svn_get_depth( $file );
-	my @dirs  = splitdir dirname $file;
-	@dirs = @dirs[ @dirs-$depth .. @dirs-1 ];
-	my $file_rel = catfile( '/', @dirs, basename $file );
-
-	# now fetch the revisions in which this file has changed
-	my $file_revs = $revinfo->{$file_rel};
-
-	if ( not $file_revs )
-	{
-		carp "No info for `$file_rel' found in revision log!\n";
-		return undef;
-	}
-
-	# now get all revisions in which $file was changed between $rev1 and $rev2
-	my @changes = grep { $_ > $rev1  and  $_ <= $rev2 } @$file_revs;
-
-	return scalar @changes;
-}
-
-sub _svn_count_changes_online
-{
-	my $file = shift or carp("No file specified");
-	my $rev1 = shift || '0';
-	my $rev2 = shift || 'HEAD';
-
-	return 0  if  $rev1 eq $rev2;
-
-	carp "Using online query";
-
-	my @log = svn_log( $file, $rev1, $rev2 );
-
-	return undef unless @log;
-
-	return scalar @log - 1;
-}
-
-sub svn_count_changes
-{
-	# find the path of this current script
-	my $me = $INC{'Local/SVNinfo.pm'};
-
-	# if we can find the revisions.stor file, we use the offline version 
-	if ( $me )
-	{
-		my $path = dirname( $me );
-		my $revlog = catfile( $path, '..', '..', '.revisions.stor' );
-		if ( -e $revlog )
-		{
-			return _svn_count_changes_offline $revlog, @_;
-		}
-	}
-
-	return _svn_count_changes_online @_;
 }
 
 =item svn_get_info
