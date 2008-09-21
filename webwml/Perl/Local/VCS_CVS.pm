@@ -52,7 +52,7 @@ BEGIN {
 	use base qw( Exporter );
 
 	our $VERSION = sprintf "%d", q$Revision$ =~ /(\d+)/g;
-	our @EXPORT_OK = qw( &vcs_path_info   &vcs_cmp_rev );
+	our @EXPORT_OK = qw( &vcs_path_info   &vcs_cmp_rev  &vcs_get_topdir );
 	our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 }
 
@@ -111,7 +111,7 @@ sub vcs_cmp_rev
 }
 
 
-=item path_info
+=item vcs_path_info
 
 Return CVS information and status about a tree of files.
 
@@ -136,7 +136,7 @@ Optional remaining arguments are a hash array with options:
 
 Example uses:
 
-   my %info1 = $svn_path_info( 'src' );
+   my %info1 = $vcs_path_info( 'src' );
    my %info2 = $readinfo( 'src', recursive => 1 );
    my %info3 = $readinfo( 'src', recursive => 1, match_pat => '\.c$' );
 
@@ -184,6 +184,41 @@ sub vcs_path_info
 
 	return %data;
 }
+
+=item vcs_get_topdir
+
+Return the top dir of the webwml repository
+
+The first argument is a name of a checked-out file or directory.
+If it is not specified, by default the current directory is used.
+
+Example use:
+
+   my $dir = vcs_get_topdir( 'foo.c' );
+
+=cut
+
+sub vcs_get_topdir
+{
+	my $file = shift || '.';
+
+	my $cvs = Local::Cvsinfo->new();
+	$cvs->readinfo( $file );
+	my $root = $cvs->topdir()
+		or croak ("Unable to determine top-level directory");
+
+	# TODO: add some check that this really is the top level dir
+
+	return $root;
+}
+
+
+
+
+
+######################################
+## internal functions
+######################################
 
 
 # return the type of the input argument (file, dir, symlink, etc)
