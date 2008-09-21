@@ -56,6 +56,7 @@ BEGIN {
 	                     &vcs_cmp_rev     &vcs_count_changes
 	                     &vcs_get_topdir 
 	                     &vcs_path_info   &vcs_file_info
+						 &vcs_log_info
 	                   );
 	our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 }
@@ -272,6 +273,74 @@ sub vcs_file_info
 	}
 
 	return %{ $info{$basename} };
+}
+
+=item vcs_log_info
+
+Return the log info about a specified file
+
+The first argument is a name of a checked-out file.
+The (optional) seconds and third argument specify the starting and end revision
+of the log entries
+
+Example use:
+
+   my @log_entries = vcs_log_info( 'foo.wml' );
+
+=cut
+
+sub vcs_log_info
+{
+	my $file = shift  or  return;
+	my $rev1 = shift || '0';
+	my $rev2 = shift || '';
+
+	my @logdata;
+
+	# set the record separator for cvs log output
+	local $/ = "\n----------------------------\n";
+
+	my $command = sprintf( 'cvs log -r%s:%s %s', $rev1, $rev2, $file );
+	open( my $cvs, '-|', $command ) 
+		or croak("Couldn't run `$command': $!");
+
+	# skip the first record (gives genral meta-info)
+	<$cvs>;
+
+	# read the consequetive records
+	while ( my $record = <$cvs> )
+	{
+		#print "==> $record\n";
+
+		# the first two lines of a record contains metadata that looks like this:
+		# revision 1.4
+		# date: 2008-09-18 16:21:31 +0200;  author: bas;  state: Exp;  lines: +212 -105;  commitid: aGcNZ0HjJeSEfgjt;
+		
+		# first split off the first line
+		my ($metadata1,$metadata2,$logmessage) = split( /\n/, $record, 3 );
+
+		my ($revision)     = $metadata1 =~ m{^revision (.+)};
+		my ($date,$author) = $metadata2 =~ m{^date: (.*?);  author: (.*?);  state: };
+
+		croak( "Couldn't parse output of `$command'" ) 
+			unless  $revision and $date and $author;
+
+		# convert date to unixtime
+		$date = str2time( $date );
+
+		# last line of the log message is still the record separator
+		$logmessage =~ s{\n[^\n]+\n$}{}ms;
+
+		push @logdata, {
+			'rev'     => $revision,
+			'date'    => $date,
+			'author'  => $author,
+			'message' => $logmessage,
+		};
+	}
+	close( $cvs );
+
+	return reverse @logdata;
 }
 
 =item vcs_get_topdir
