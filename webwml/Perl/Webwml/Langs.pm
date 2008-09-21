@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 ##  Copyright (C) 2001  Denis Barbier <barbier@debian.org>
 ##
@@ -22,7 +22,7 @@ Webwml::Langs - get all languages in which w.d.o is translated
 
 =head1 DESCRIPTION
 
-This module parses english/template/debian/languages.wml and returns 
+This module parses english/template/debian/languages.wml and returns
 the list of languages in which Debian web site is translated.
 
 =head1 METHODS
@@ -32,57 +32,78 @@ the list of languages in which Debian web site is translated.
 =cut
 
 package Webwml::Langs;
+
 use Carp;
+use Local::VCS_CVS 'vcs_get_topdir';
+
 use strict;
-use Local::Cvsinfo;
+use warnings;
 
 =item new
 
 This is the constructor.  If called with an argument, it tells where to
 find top-level webwml directory.  Otherwise it is automatically
-determined by parsing F<CVS/Repository>.
+determined from VCS meta-info.
 
    my $l = Webwml::Langs->new("/path/to/webwml");
 
 =cut
 
 sub new {
-        my $proto = shift;
-        my $class = ref($proto) || $proto;
-        my $root;
-        if (@_) {
-                $root = shift;
-        } else {
-                my $cvs = Local::Cvsinfo->new();
-                $cvs->readinfo('.');
-                $root = $cvs->topdir()
-                        or croak ("Unable to determine top-level directory");
-        }
-        my $self = _read($root);
-        bless ($self, $class);
-        return $self;
+	my $proto = shift;
+	my $class = ref($proto) || $proto;
+	my $root;
+	if (@_)
+	{
+		$root = shift;
+	} else
+	{
+		$root = vcs_get_topdir;
+	}
+	my $self = _read($root);
+	bless ($self, $class);
+	return $self;
 }
 
+
+# read the languages.wml, search for the %langs variable, and evaluate it
+# within this program
+# TODO: pretty hacky, rewrite to avoid eval()
+# TODO: or rather define the lnaguages in a module, and include those in
+#       languages.wml
 sub _read {
-        my $root = shift;
-        open(LANGS, "< $root/english/template/debian/languages.wml")
-                or croak ("Unable to read $root/english/template/debian/languages.wml");
-        my $decl = "";
-        my $start = 1;
-        #   This variable is declared in english/template/debian/languages.wml
-        my %langs;
-        while (<LANGS>) {
-                next if $_ !~ m/\s*my\s+\%langs\s*=/ and $start;
-                next if m/^\s*\#/;
-                $start = 0;
-                $decl .= $_;
-                last if m/\);/;
-        }
-        close(LANGS);
-        $decl =~ s/^\s*my//s;
-        eval "$decl";
-        carp $@ . " when parsing \n$decl\nin Webwml::Langs\n" if $@;
-        return \%langs;
+	my $root = shift || vcs_get_topdir;
+
+	open( my $file, '<', "$root/english/template/debian/languages.wml")
+		or croak ("Unable to read $root/english/template/debian/languages.wml");
+
+	my $decl = '';
+	my $start = 1;
+
+	#   This variable is declared in english/template/debian/languages.wml
+	my %langs;
+	while ( my $line = <$file> )
+	{
+		# continue until we find the line defining the %langs variable
+		next  if ( $start  and  not $line =~ m{my \s+ \%langs \s* =}x );
+		# skip comments
+		next if $line =~ m{^\s*#};
+
+		$start = 0;
+		$decl .= $line;
+
+		# end of the variable declaration
+		last if $line =~ m{\);};
+	}
+	close( $file );
+
+	# remove "my" from the front of the declaration and evaluate it
+	$decl =~ s/^\s*my//s;
+	eval "$decl";
+
+	carp $@ . " when parsing \n$decl\nin Webwml::Langs\n" if $@;
+
+	return \%langs;
 }
 
 =item iso3166
@@ -93,9 +114,10 @@ Return the list of country codes.
 
 =cut
 
-sub iso3166 {
-        my $self = shift;
-        return values %{$self};
+sub iso3166
+{
+	my $self = shift;
+	return values %{$self};
 }
 
 =item names
@@ -106,9 +128,10 @@ Return the list of language names.
 
 =cut
 
-sub names {
-        my $self = shift;
-        return keys %{$self};
+sub names
+{
+	my $self = shift;
+	return keys %{$self};
 }
 
 =item iso_name
@@ -119,9 +142,10 @@ Return a hash array I<code>/I<name>.
 
 =cut
 
-sub iso_name {
-        my $self = shift;
-        return map { ${$self}{$_} => $_ } keys %$self;
+sub iso_name
+{
+	my $self = shift;
+	return map { ${$self}{$_} => $_ } keys %$self;
 }
 
 =item name_iso
@@ -132,9 +156,10 @@ Return a hash array I<name>/I<code>.
 
 =cut
 
-sub name_iso {
-        my $self = shift;
-        return %{$self};
+sub name_iso
+{
+	my $self = shift;
+	return %{$self};
 }
 
 =back
