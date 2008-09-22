@@ -56,7 +56,7 @@ BEGIN {
 	                     &vcs_cmp_rev     &vcs_count_changes
 	                     &vcs_get_topdir 
 	                     &vcs_path_info   &vcs_file_info
-	                     &vcs_get_log
+	                     &vcs_get_log     &vcs_get_diff
 	                   );
 	our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 }
@@ -280,7 +280,7 @@ sub vcs_file_info
 Return the log info about a specified file
 
 The first argument is a name of a checked-out file.
-The (optional) seconds and third argument specify the starting and end revision
+The (optional) second and third argument specify the starting and end revision
 of the log entries
 
 Example use:
@@ -341,6 +341,74 @@ sub vcs_get_log
 	close( $cvs );
 
 	return reverse @logdata;
+}
+
+=item vcs_get_diff
+
+Returns a hash of (filename,diff) pairs info about a specified file or
+directory.
+
+The first argument is a name of a checked-out file.  The second and third
+argument specify the starting and end revision of the log entries.  If the
+third argument is not specified, the current (possibly modified) version is
+used.  If the second argument is also not specified, the current (possibly
+modified) version is diffed against the latest checked in version.
+
+Example use:
+
+   my %diffs = vcs_get_diff( 'foo.wml', '1.4', '1.17' );
+   my %diffs = vcs_get_diff( 'bla.wml', '1.8' );
+   my %diffs = vcs_get_diff( 'bas.wml' );
+
+=cut
+
+sub vcs_get_diff
+{
+	my $file = shift  or  return;
+	my $rev1 = shift;
+	my $rev2 = shift;
+
+	# hash to store the output
+	my %data;
+
+	my $command = sprintf( 'cvs -q diff %s %s -u %s 2> /dev/null', 
+		defined $rev1 ? "-r$rev1" : '', 
+		defined $rev2 ? "-r$rev2" : '', 
+		$file );
+
+	# set the record separator for cvs diff output
+	local $/ = "\n" . ('=' x 67) . "\n";
+
+	open( my $cvs, '-|', $command ) 
+		or croak("Couldn't run `$command': $!");
+
+	# the first "record" is bogusl
+	<$cvs>;
+
+	# read the consequetive records
+	while ( my $record = <$cvs> )
+	{
+		# remove the record separator from the end of the record
+		$record =~ s{ $/ \n? \Z }{}msx;
+
+		# remove the "Index:" line from the end of the record
+		$record =~ s{ ^Index: [^\n]+ \n+ \Z }{}msx;
+
+		# remove the first four lines
+		$record =~ s{ \A (?: .*? \n ){4} }{}msx;
+
+		# get the file name
+		if ( not $record =~ m{ \A --- \s+ ([^\t]+) \t }msx )
+		{
+			croak("Parse error in output of `$command'");
+		}
+		my $file = $1;
+
+		$data{$file} = $record;
+	}
+	close( $cvs );
+
+	return %data;
 }
 
 =item vcs_get_topdir
