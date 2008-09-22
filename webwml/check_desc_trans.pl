@@ -19,9 +19,9 @@
 # language.conf, or in the DWWW_LANG environment variable.
 #
 # Originally written 2002-10-05 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2002-2007 Software in the public interest, Inc.
+# Â© Copyright 2002-2007 Software in the public interest, Inc.
 # Complete rewrite 2008 by Bas Zoetekouw <bas@debian.org>
-# © Copyright 2008 by Bas Zoetekouw <bas@debian.org>
+# Â© Copyright 2008 by Bas Zoetekouw <bas@debian.org>
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of version 2 of the GNU General Public License as published
