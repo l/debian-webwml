@@ -56,7 +56,7 @@ BEGIN {
 	                     &vcs_cmp_rev     &vcs_count_changes
 	                     &vcs_get_topdir 
 	                     &vcs_path_info   &vcs_file_info
-						 &vcs_log_info
+	                     &vcs_get_log
 	                   );
 	our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 }
@@ -275,7 +275,7 @@ sub vcs_file_info
 	return %{ $info{$basename} };
 }
 
-=item vcs_log_info
+=item vcs_get_log
 
 Return the log info about a specified file
 
@@ -285,11 +285,11 @@ of the log entries
 
 Example use:
 
-   my @log_entries = vcs_log_info( 'foo.wml' );
+   my @log_entries = vcs_get_log( 'foo.wml' );
 
 =cut
 
-sub vcs_log_info
+sub vcs_get_log
 {
 	my $file = shift  or  return;
 	my $rev1 = shift || '0';
