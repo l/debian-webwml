@@ -44,6 +44,7 @@ use Carp;
 use Fcntl qw/ SEEK_SET /; 
 use Data::Dumper;
 use Date::Parse;
+use POSIX qw/ WIFEXITED /;
 
 use strict;
 use warnings;
@@ -57,6 +58,7 @@ BEGIN {
 	                     &vcs_get_topdir 
 	                     &vcs_path_info   &vcs_file_info
 	                     &vcs_get_log     &vcs_get_diff
+	                     &vcs_get_file
 	                   );
 	our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 }
@@ -411,6 +413,61 @@ sub vcs_get_diff
 	return %data;
 }
 
+
+# returns the respository
+sub _get_repository
+{
+	open( my $fd, '<', 'CVS/Repository' )
+		or croak("Couldn't open `CVS/Repository': $!");
+	my $repo = <$fd>;
+	close( $fd );
+
+	chomp $repo;
+	return $repo;
+}
+
+=item vcs_get_file
+
+Return a particular revision of a file
+
+The first argument is a name of a file.
+The second argument is the revision.
+
+This function retrieves the specified revision fo the file from the repository
+and returns it (without writing anything in the current checked-out tree)
+
+Example use:
+
+   my $text = vcs_get_file( 'foo.c', '1.12' );
+
+=cut
+
+sub vcs_get_file
+{
+	my $file = shift or croak("No file specified");
+	my $rev  = shift or croak("No revision specified");
+
+	croak( "No such file: $file" ) unless -f $file;
+
+	#TODO: what happens if we're not in the root webwml dir?
+
+	my $command = sprintf( 'cvs -q checkout -p -r%s %s/%s', 
+		$rev, _get_repository, $file );
+	
+
+	local $/ = ('=' x 67) . "\n";
+
+	my $text;
+	open ( my $cvs, '-|', $command ) 
+		or croak("Error while executing `$command': $!");
+	$text .= $_  while <$cvs>;
+	close( $cvs );
+	croak("Error while executing `$command': $!") unless WIFEXITED($?);
+
+	# return the file
+	return $text;
+}
+
 =item vcs_get_topdir
 
 Return the top dir of the webwml repository
@@ -560,62 +617,6 @@ sub svn_diff
 	return $out;
 }
 
-
-=item svn_get_file
-
-Return a particular revision of a file
-
-The first argument is a name of a file.
-The second argument is the revision.
-
-This function retrieves the specified revision fo the file from the repository
-and return it (without writing anything in the current checked-out tree 
-
-Example use:
-
-   my $text = svn_get_file( 'foo.c', 'r42' );
-
-=cut
-
-sub svn_get_file
-{
-	my $file = shift or carp("No file specified");
-	my $rev  = shift or carp("No revision specified");
-
-	carp( "No such file: $file" ) unless -e $file;
-
-	# intitalize SVN client
-	my $ctx = SVN::Client->new();
-
-	# create a filehandles to receive the file in
-
-	# TODO: this doesn't work (bug in SVN::Client?)
-	my $text;
-	#open ( my $fd_out, '>', \$text ) or croak("Couldn't open \\\$text");
-
-	open ( my $fd_out, '+>', undef ) or croak("Couldn't open anonymous output");
-
-	eval {
-		$ctx->cat( 
-			$fd_out, # output file
-			$file, $rev, # file
-		);
-	};
-	croak($@) if $@;
-
-	# read the stuff from the files
-	{ 
-		local $/;
-		seek( $fd_out, 0, SEEK_SET );
-		$text = <$fd_out>;
-	}
-
-	# done with the file
-	close( $fd_out );
-
-	# return the file
-	return $text;
-}
 
 =item svn_log
 
