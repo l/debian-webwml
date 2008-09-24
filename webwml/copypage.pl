@@ -12,7 +12,12 @@
 
 # $Id$
 
+use FindBin;
+FindBin::again();
+use lib "$FindBin::Bin/Perl";
+
 use File::Path;
+use Local::VCS_CVS qw(vcs_file_info);
 
 # Declare variables only used in references to avoid warnings
 use vars qw(@iso_8859_2_compat  @iso_8859_3_compat  @iso_8859_4_compat
@@ -165,8 +170,6 @@ sub copy
 	my $filename = $srcfile;
 	$filename =~ s[$srcdir][];			# Pathless filename
 
-	my $cvsfile = "$srcdir/CVS/Entries";# Name of file with CVS revisions
-
 	my $srcmake = $srcdir . "Makefile";	# Name of source Makefile
 	my $dstmake = $dstdir . "Makefile";	# Name of destination Makefile
 
@@ -221,9 +224,6 @@ sub copy
 	}
 
 	# Open the files
-	open CVS, $cvsfile
-		or die "Could not read $cvsfile ($!)\n";
-
 	open SRC, $srcfile
 		or die "Could not read $srcfile ($!)\n";
 
@@ -231,21 +231,11 @@ sub copy
 		or die "Could not create $dstfile ($!)\n";
 
 	# Retrieve CVS revision number
-	my $revision;
-	while (<CVS>)
-	{
-		if (m[^/$filename/([0-9]*\.[0-9]*)/])
-		{
-			$revision = $1;
-		}
-	}
+	my %vcsinfo = vcs_file_info( $srcfile );
 
-	close CVS;
-
-	unless ($revision)
+	if ( not %vcsinfo  or  not exists $vcsinfo{'cmt_rev'}  )
 	{
-		print "Could not get revision number - bug in script?\n";
-		$revision = '1.1';
+		die "Could not get revision number for `$srcfile' - bug in script?\n";
 	}
 
 	# Copy the file and insert the revision number
@@ -257,7 +247,7 @@ sub copy
 
 		unless ($insertedrevision || /^#/)
 		{
-			print DST qq'#use wml::debian::translation-check translation="$revision"';
+			printf DST qq'#use wml::debian::translation-check translation="%s"', $vcsinfo{'cmt_rev'};
 			print DST qq' maintainer="$maintainer"'
 				if defined $maintainer;
 			print DST qq'\n';
@@ -299,7 +289,7 @@ sub copy
 
 	unless ($insertedrevision)
 	{
-		print DST qq'#use wml::debian::translation-check translation="$revision"';
+		printf DST qq'#use wml::debian::translation-check translation="%s"', $vcsinfo{'cmt_rev'};
 		print DST qq' maintainer="$maintainer"'
 			if defined $maintainer;
 		print DST qq'\n';
