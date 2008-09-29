@@ -347,8 +347,7 @@ sub vcs_get_log
 
 =item vcs_get_diff
 
-Returns a hash of (filename,diff) pairs info about a specified file or
-directory.
+Returns a hash of (filename,diff) pairs containing the unified diff between two version of a (number of) files.
 
 The first argument is a name of a checked-out file.  The second and third
 argument specify the starting and end revision of the log entries.  If the
@@ -460,7 +459,10 @@ sub vcs_get_file
 	my $text;
 	open ( my $cvs, '-|', $command ) 
 		or croak("Error while executing `$command': $!");
-	$text .= $_  while <$cvs>;
+	while ( my $line = <$cvs> )
+	{
+		$text .= $line;
+	}
 	close( $cvs );
 	croak("Error while executing `$command': $!") unless WIFEXITED($?);
 
