@@ -17,7 +17,7 @@ FindBin::again();
 use lib "$FindBin::Bin/Perl";
 
 use File::Path;
-use Local::VCS_CVS qw(vcs_file_info);
+use Local::VCS qw(vcs_file_info);
 
 # Declare variables only used in references to avoid warnings
 use vars qw(@iso_8859_2_compat  @iso_8859_3_compat  @iso_8859_4_compat

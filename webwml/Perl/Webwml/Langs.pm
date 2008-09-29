@@ -34,7 +34,7 @@ the list of languages in which Debian web site is translated.
 package Webwml::Langs;
 
 use Carp;
-use Local::VCS_CVS 'vcs_get_topdir';
+use Local::VCS 'vcs_get_topdir';
 
 use strict;
 use warnings;
