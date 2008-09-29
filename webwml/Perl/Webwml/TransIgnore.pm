@@ -33,7 +33,7 @@ package Webwml::TransIgnore;
 
 use Carp;
 use File::Spec::Functions;
-use Local::VCS_CVS  qw{ vcs_get_topdir };
+use Local::VCS  qw{ vcs_get_topdir };
 
 use strict;
 use warnings;

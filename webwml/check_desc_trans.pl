@@ -39,7 +39,7 @@ use File::Find::Rule;
 use List::MoreUtils qw{ uniq };
 use Term::ANSIColor;
 
-use Local::VCS_CVS ':all';
+use Local::VCS ':all';
 
 use strict;
 use warnings;
