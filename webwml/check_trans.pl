@@ -327,16 +327,21 @@ sub verbose;
 			if ( $status != ST_MISSING )
 			{
 				$maxdelta ||= $translators{maxdelta}{maxdelta} || 5;
-				my $delta = vcs_count_changes( $file_orig, $rev_transl, 'HEAD' );
 
-				push @{ $emails_to_send{'maxdelta'} }, {
-					'file'           => $file,
-					'status'         => $status,
-					'info'           => $str,
-					'delta'          => $delta,
-					'last_trans_rev' => $rev_transl,
+				my $delta = undef;
+				if ( -e $file_orig )
+				{
+					$delta = vcs_count_changes( $file_orig, $rev_transl, 'HEAD' );
+
+					push @{ $emails_to_send{'maxdelta'} }, {
+						'file'           => $file,
+						'status'         => $status,
+						'info'           => $str,
+						'delta'          => $delta,
+						'last_trans_rev' => $rev_transl,
+					}
+					if ( $delta >= $maxdelta );
 				}
-				if ( $delta >= $maxdelta );
 			}
 
 		}
@@ -439,10 +444,12 @@ sub send_email
 		}
 
 		# and attach the body to the mail
-		$msg->attach(
-			'Type' => 'TEXT',
+		my $part = MIME::Lite->new(
+			'Type' => 'text/plain',
 			'Data' => $body,
 		);
+		$part->attr( 'content-type.charset' => 'utf-8' );
+		$msg->attach( $part );
 
 		# attach part about NeedToUpdate files
 		my $text = '';
@@ -548,7 +555,7 @@ sub send_email
 				my $rev       = $file->{'last_trans_rev'};
 				my $log       = get_log( $filename, $rev, 'HEAD' );
 				my $part = MIME::Lite->new(
-					'Type'	   => 'TEXT',
+					'Type'     => 'TEXT',
 					'Filename' => "$filename.log",
 					'Data'     => $log,
 					'Encoding' => 'quoted-printable',
@@ -645,7 +652,7 @@ sub get_log
 	{
 		chomp $l->{'message'};
 
-		$str .= sprintf( "r%d | %s | %s\n",
+		$str .= sprintf( "%s | %s | %s\n",
 			$l->{'rev'}, $l->{'author'}, scalar localtime $l->{'date'} );
 		$str .= "\n";
 		$str .= $l->{'message'} . "\n";
@@ -744,7 +751,7 @@ sub parse_cmdargs
 	$OPT{s} = '';
 
 	# parse options
-	if ( not getopts( 'adghmn:p:qs:TvV', \%OPT )  )
+	if ( not getopts( 'adghm:n:p:qs:TvV', \%OPT )  )
 	{
 		show_help();
 		exit -1;
@@ -773,7 +780,7 @@ sub parse_cmdargs
 
 	if ( $OPT{'m'}  and  $OPT{'n'} !~ m{^[123]$} )
 	{
-		die "Invalid priority. Please set -n value to 1, 2 or 3.\n"
+		die "Invalid priority `$OPT{n}'. Please set -n value to 1, 2 or 3.\n"
 		   ."(assuming you know what you're doing)\n";
 	}
 
