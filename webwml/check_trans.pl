@@ -1,691 +1,1067 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
+#
+#  This is a little utility designed to keep track of translations
+#  in the Debian web site Subversion repository.
+#
+## For information about translation revisions please see
+## http://www.debian.org/devel/website/uptodate
+#
+#  Copyright (C) 2008 Bas Zoetekouw <bas@debian.org>
+#  Based on on code from:
+#   Copyright (C) 1998 Paolo Molaro <lupus@debian.org>
+#   Copyright (C) 1999-2003 Peter Karlsson <peterk@debian.org>
+#   Copyright (C) 2000,2001 Martin Quinson <mquinson@ens-lyon.fr>
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of version 2 of the GNU General Public License as
+#  published by the Free Software Foundation.
+#
+## This program is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+#
+#
+#  Invocation:
+#    check_trans.pl [-vqdlM] [-C dir] [-p pattern] [-s subtree]
+#                   [-m email -n N] [-c charset] [-g] [-t outputtype]
+#                   [language]
+#
+#  It needs to be run from the top level webwml directory.
+#  If you don't specify a language on the command line, the language name
+#  will be loaded from a file called language.conf, if such a file exists.
+#
+#  For example:
+#    $ check_trans.pl -v italian
+#  You may also check only some subtrees as in:
+#    $ check_trans.pl -s devel italian
+#
+#  Options:
+#       -q            just don't whine about missing files
+#       -v            show the status of all files (verbose)
+#       -V            output what we're doing (very verbose)
+#       -d            output diffs
+#       -l            output log messages
+#       -T            output translated diffs
+#       -p <pattern>  include only files matching <pattern>,
+#                     default is *.src|*.wml
+#       -s <subtree>  check only that subtree
+#       -a            output age of translation (if older than 2 months)
+#
+#  Options useful when sending mails:
+#       -m <email>    sends mails to translation maintainers
+#                     PLEASE CAREFULLY READ THE BELOW TEXT ABOUT MAKING MAILS!
+#                     <email> is the default recipient
+#                     (it should be the list used for organisation,
+#                     e.g. debian-l10n-french@lists.debian.org)
+#       -g            debuG mail send process
+#       -n <1|2|3>    send mails of priority upper or equal to
+#                    1 (monthly), 2 (weekly) or 3 (daily)
+#
+#  generating emails
+#   If you want to, this script send mails to the maintainer of the mails.
+#   BEWARE, SOME PEOPLE DO NOT LIKE TO RECEIVE AUTOMATIC MAILS!
+#
+#   PREREQUISITES:
+#    You will need one database:
+#      - one in which to get info about translators and the frequency at
+#        which they want to get mails. It must be named
+#        webwml/$langto/international/$langto/translator.db.pl
+#        Please refer to the French one for more info.
+#
+#   USAGE:
+#    If you give the "-g" option, all mails are sent to the default addressee
+#      (i.e. the one given as value to the -m option), without respect to their
+#      normal addressee. It is useful if you want to run it for yourself,
+#      and for debugging.
+#    Without that option, it sends real mails to real addresses.
+#    MAKE SURE THE ADDRESSEES REALLY WANT TO GET THESE MAILS
 
-# This is a little utility designed to keep track of translations
-# in the Debian web site CVS repository.
-
-# For information about translation revisions please see
-# http://www.debian.org/devel/website/uptodate
-
-# This is GPL'ed code.
-# Copyright 1998 Paolo Molaro <lupus@debian.org>.
-# Copyright 1999-2003 Peter Krefting <peterk@debian.org>.
-# Copyright 2000,2001 Martin Quinson <mquinson@ens-lyon.fr>.
-
-# Invocation:
-#   check_trans.pl [-vqdlM] [-C dir] [-p pattern] [-s subtree]
-#                  [-m email -n N] [-c charset] [-g] [-t outputtype]
-#                  [language]
-
-# It needs to be run from the top level webwml directory.
-# If you don't specify a language on the command line, the language name
-# will be loaded from a file called language.conf, if such a file exists.
-
-# For example:
-#   $ check_trans.pl -v italian
-# You may also check only some subtrees as in:
-#   $ check_trans.pl -s devel italian
-
-# Options:
-#	-Q		enable really quiet mode
-#	-q		just don't whine about missing files
-# 	-v		enable verbose mode
-#	-V		enable very verbose mode
-#	-C <dir>	go to <dir> directory before running this script
-#	-d		output CVS diffs
-#	-l		output CVS log messages
-#	-T		output translated diffs
-#	-p <pattern>	include only files matching <pattern>,
-#			default is *.src|*.wml
-#	-s <subtree>	check only that subtree
-#	-t <type>	choose output type  (default is `text')
-#	-M		display differences for all 'Makefile's
-#	-a		output age of translation (if older than 2 months)
-
-# Options useful when sending mails:
-#	-m <email>	sends mails to translation maintainers
-#			PLEASE CAREFULLY READ THE BELOW TEXT ABOUT MAKING MAILS!
-#			<email> is the default recipient
-#			(it should be the list used for organisation,
-#			e.g. debian-l10n-french@lists.debian.org)
-#	-g		debuG
-#	-c <charset>	charset used in mails
-#	-n <1|2|3>	send mails of priority upper or equal to
-#			1 (monthly), 2 (weekly) or 3 (daily)
-
-# Making Mails
-#  If you want to, this script send mails to the maintainer of the mails.
-#  BEWARE, SOME PEOPLE DO NOT LIKE TO RECEIVE AUTOMATIC MAILS!
-
-#  PREREQUISITES:
-#   You will need one database:
-#     - one in which to get info about translators and the frequency at
-#       which they want to get mails. It must be named
-#       webwml/$langto/international/$langto/translator.db.pl
-#       Please refer to the French one for more info.
-
-#  USAGE:
-#   If you give the "-g" option, all mails are sent to the default addressee
-#     (i.e. the one given as value to the -m option), without respect to their
-#     normal addressee. It is useful if you want to run it for yourself,
-#     and for debugging.
-#   Without that option, it sends real mails to real addresses.
-#   MAKE SURE THE ADDRESSEES REALLY WANT TO GET THESE MAILS
-
-use strict;
 use Getopt::Std;
-use IO::Handle;
 use Date::Parse;
+use File::Basename;
+use File::Spec::Functions;
+use List::MoreUtils qw{ uniq };
+use Term::ANSIColor;
+use File::Slurp;
+use MIME::Lite;
+use Encode;
+#use Data::Dumper;
+use Email::Address;
+use FindBin;
+FindBin::again();
 
 #    These modules reside under webwml/Perl
-use lib ($0 =~ m|(.*)/|, $1 or ".") ."/Perl";
-use Local::Cvsinfo;
+use lib "$FindBin::Bin/Perl";
+use Local::VCS ':all';
 use Local::WmlDiffTrans;
 use Webwml::TransCheck;
 use Webwml::TransIgnore;
 
-# TODO:
-# get the revisions from $lang/intl/$lang so diffing works
-# need to quote dirnames?
-# use a file to bind a file to a translator?
+use strict;
+use warnings;
 
-# global db variables
-my $translations_status;
-my $translators;# the ref resulting of require
-my %translators;# the real hash
+
 
 # misc hardcoded things
-my $maintainer = "mquinson\@ens-lyon.fr"; # the default e-mail at which to bitch :-)
+my $MY_EMAIL = q{Debian WWW translation watch <debian-www@lists.debian.org>};
+my $DEFAULT_PATTERN = '(?:\.wml|\.src)$';
 
-# options (note: with perl 5.6, this could change to our())
-use vars qw($opt_C $opt_M $opt_Q $opt_c $opt_d $opt_g $opt_l $opt_m $opt_n
-            $opt_p $opt_q $opt_s $opt_t $opt_T $opt_v $opt_V $opt_a);
-$opt_n = 5; # an invalid default
-$opt_s = '';
-$opt_C = '.';
-$opt_t = 'text';
+# global variable to record verbosity
+my $VERBOSE  = 0;
 
-unless (getopts('vgdqQC:m:c:s:Tt:p:ln:MVa'))
+# status codes
+use constant {
+	ST_MISSING     => 1,
+	ST_NEEDSUPDATE => 3,
+	ST_UPTODATE    => 4,
+	ST_NOTATRANSL  => 5,
+	ST_BROKEN      => 6,
+	ST_OBSOLETE    => 7,
+	ST_UNDEFINED   => 8,
+};
+
+# how to colour each different status
+my %COLOURS = (
+	main::ST_MISSING     => 'magenta',
+	main::ST_NEEDSUPDATE => 'blue',
+	main::ST_UPTODATE    => 'green',
+	main::ST_NOTATRANSL  => 'yellow',
+	main::ST_BROKEN      => 'red',
+	main::ST_OBSOLETE    => 'red',
+	main::ST_UNDEFINED   => 'red',
+	'warn'               => 'bold red',
+);
+
+# these is called in "main" so needs to be declared here
+sub switch_var(\$\$);
+sub verbose;
+
+#=================================================
+#== "main"
+#==
 {
-	open SELF, "<$0" or die "Unable to display help: $!\n";
-	HELP: while (<SELF>)
+	my ($language,$file_pattern,%OPT) = parse_cmdargs();
+	my %translators = read_translators( $language, $OPT{m} );
+	my %emails_to_send;
+
+	# -s allows the user to restrict processing to a subtree
+	my $english_path  = 'english';
+	my $language_path = $language;
+
+	my $subdir = $OPT{'s'} || undef;
+
+	# Global .transignore
+	my $transignore = Webwml::TransIgnore->new( vcs_get_topdir );
+
+	# first get a list with revision information from all files in english...
+	my %english_revs = vcs_path_info( $english_path,
+		'recursive' => 1,
+		'match_pat' => $file_pattern,
+	);
+	# ... and the translation
+	my %translation_revs = vcs_path_info( $language_path,
+		'recursive' => 1,
+		'match_pat' => $file_pattern,
+	);
+
+	# construct a list with all files that either occur in english or
+	# in the translation
+	my @files = uniq ( keys %english_revs, keys %translation_revs );
+
+
+	# now check each of the files
+	foreach my $file (sort @files)
 	{
-		print, next if /^$/;
-		last HELP if (/^use/);
-		s/^# ?//;
-		next if /^!/;
+		# ignore this file?
+		next if $transignore->is_global( $file );
+		next if $subdir and not $file =~ m{^$subdir};
+
+		# note: $language is the name of the current language we're
+		# processing, whereas $transl is the name of the language which the
+		# current file is translated into (which might be english!)
+		my $orig   = 'english';
+		my $transl = $language;
+
+		my $file_orig   = catfile( $orig,   $file );
+		my $file_transl = catfile( $transl, $file );
+
+		my $revinfo_orig   = $english_revs{$file};
+		my $revinfo_transl = $translation_revs{$file};
+
+		# TODO: put this in a separate function
+		# first we check if the translated file has an origin other than
+		# english
+		if ( -e $file_transl )
+		{
+			my $transcheck = Webwml::TransCheck->new( $file_transl );
+			my $original_lang = $transcheck->original();
+
+			if ( $original_lang  and  $original_lang ne 'english' )
+			{
+				die( "Unknown original language `$original_lang' "
+				    ."for `$file_transl'\n" ) unless -d $original_lang;
+
+				verbose "`$file_transl' is translated from $original_lang";
+
+				# now, we use the correct (non-english) original file
+				$file_orig  = catfile( $original_lang, $file );
+
+				# and find the correct revision info for this file
+				$revinfo_orig = { vcs_file_info( $file_orig ) };
+			}
+		}
+
+		# TODO: put this in a separate function
+		# secondly, we check if perhaps the original file is a translation
+		# (such as in the case of english/international/Swedish/index.wml)
+		if ( -e $file_transl and -e $file_orig )
+		{
+			my $transcheck    = Webwml::TransCheck->new( $file_orig );
+			my $original_lang = $transcheck->original();
+			my $rev           = $transcheck->revision();
+
+			if ( $rev )
+			{
+				if ( not $original_lang )
+				{
+					# TODO: ideally, this would also be mailed out to the
+					# translation team
+					warn "`$file_orig' has a revision header but no origin language";
+					next;
+				}
+
+				if ( $original_lang eq $language )
+				{
+					verbose "`$file_orig' is a translation from $language";
+
+					# switch $orig and $transl
+					switch_var( $orig,         $transl         );
+					switch_var( $file_orig,    $file_transl    );
+					switch_var( $revinfo_orig, $revinfo_transl );
+				}
+			}
+
+		}
+
+		# determine the status of the file
+		my ($status,$str,$rev_transl,$maintainer,$maxdelta) = check_file(
+			$file,
+			$orig, $transl,
+			$revinfo_orig, $revinfo_transl,
+		);
+
+
+		######################################################################
+		## Everything below is just output logic
+		######################################################################
+
+		# print info
+		if (    ( $OPT{v} )
+		     or ( $status == ST_MISSING  and  not $OPT{q}  )
+		     or ( $status != ST_MISSING  and  $status != ST_UPTODATE
+		          and  $status != ST_NOTATRANSL )
+		)
+		{
+			print colored( "$str\n", $COLOURS{$status} );
+			flush STDOUT;
+		}
+
+		# check age of the translation
+		if ( $OPT{a} and $status == ST_NEEDSUPDATE )
+		{
+			my $age = int get_revision_age( $revinfo_transl );
+
+			# only warn if the translation is older than 2 weeks
+			if ( $age > 14 )
+			{
+				print colored( "$file is outdated by $age days\n",
+					$COLOURS{warn} );
+				flush STDOUT;
+			}
+		}
+
+		# print diff if requested and an update is needed
+		if ( $OPT{'d'}  and  $status == ST_NEEDSUPDATE )
+		{
+			my $diff = get_diff(
+				$file_orig,
+				$rev_transl,
+				$revinfo_orig->{'cmt_rev'},
+			);
+			print $diff;
+		}
+
+		# print text diff, if requested and an update is needed
+		if ( $OPT{'T'}  and  $status == ST_NEEDSUPDATE )
+		{
+			my $diff = get_diff_txt(
+				$file_orig,
+				$rev_transl,
+				$revinfo_orig->{'cmt_rev'},
+				$file_transl
+			);
+			print $diff;
+		}
+
+
+		# prepare a mail to be sent
+		if ( $OPT{'m'}  and  $status != ST_UPTODATE )
+		{
+			# handle special case maintainer fields
+			$maintainer = 'unmaintained'
+				unless $maintainer and exists $translators{$maintainer};
+			$maintainer = 'untranslated'
+				if $status == ST_MISSING;
+
+			# mail to send to the maintainer
+			push @{ $emails_to_send{$maintainer} }, {
+				'file'           => $file,
+				'status'         => $status,
+				'info'           => $str,
+				'last_trans_rev' => $rev_transl,
+			}
+			if ( exists $translators{$maintainer} );
+
+			# mail for maxdelta
+			if ( $status != ST_MISSING )
+			{
+				$maxdelta ||= $translators{maxdelta}{maxdelta} || 5;
+				my $delta = vcs_count_changes( $file_orig, $rev_transl, 'HEAD' );
+
+				push @{ $emails_to_send{'maxdelta'} }, {
+					'file'           => $file,
+					'status'         => $status,
+					'info'           => $str,
+					'delta'          => $delta,
+					'last_trans_rev' => $rev_transl,
+				}
+				if ( $delta >= $maxdelta );
+			}
+
+		}
+
+	}
+
+	send_email( \%emails_to_send, \%translators, $language, $OPT{'n'}, !$OPT{'g'} );
+
+	exit 0;
+}
+die("Never reached");
+
+
+#=================================================
+#== swich two variables around
+#==
+sub switch_var(\$\$)
+{
+	my $a = shift;
+	my $b = shift;
+
+	my $c = $$a;
+	$$a = $$b;
+	$$b = $c;
+}
+
+
+#=================================================
+#== output verbose messages
+#==
+sub verbose
+{
+	return unless $VERBOSE;
+	print @_, "\n";
+}
+
+
+
+#=================================================
+#== send out the emails
+#==
+sub send_email
+{
+	my $emails      = shift  or  die("No emails specified");
+	my $translators = shift  or  die("No translators specified");
+	my $lang        = shift  or  die("No language specified");
+	my $priority    = shift  or  die("No priority specified");
+	my $really_send = shift || 0;
+
+
+	foreach my $name (sort keys %$emails)
+	{
+		verbose("Preparing email for $name");
+
+		# skip unconfigured users
+		if ( not exists $translators->{$name}
+		     or  not $translators->{$name}{'email'} )
+		{
+			verbose( "Woops!  Can't find info for user `$name'\n" );
+			next;
+		}
+
+		# check the user's email addres
+		if ( not Email::Address->parse( $translators->{$name}{'email'} ) )
+		{
+			printf STDERR "Can't parse email address `%s' for %s!\n",
+				$translators->{$name}{'email'}, $name;
+			next;
+		}
+
+		# skip if the user doesn't want a summary at all
+		if ( $translators->{$name}{'summary'} < $priority )
+		{
+			verbose( "Not sending message to $name (prio "
+				. $translators->{$name}{'summary'} . " < $priority)" );
+			next;
+		}
+
+		my %transl = %{ $translators->{$name} };
+
+		#print Dumper($emails->{$name});
+
+		my $msg = MIME::Lite->new(
+			'From'    => $MY_EMAIL,
+			'To'      => $translators->{$name}{'email'},
+			'Subject' => $translators->{$name}{'mailsubject'},
+			'Type'    => 'multipart/mixed',
+		);
+
+		# read body and interpret perl that's embedded there
+		my $body = read_file_enc( $transl{'mailbody'} )
+			or die("Can't read $transl{'mailbody'}");
+		{
+			# a bit hackish, but I want to keep the curent format of
+			# the mail body files intact, for now
+			# so we need to use the same old variable names as the original
+			# script used
+			my %translators = %{$translators};
+			$body =~ s{#(.*?)#}{eval $1}mge;
+		}
+
+		# and attach the body to the mail
+		$msg->attach(
+			'Type' => 'TEXT',
+			'Data' => $body,
+		);
+
+		# attach part about NeedToUpdate files
+		my $text = '';
+		foreach my $file ( @{ $emails->{$name} } )
+		{
+			next unless $file->{'status'} == ST_NEEDSUPDATE;
+			$text .= $file->{'info'};
+
+			if ( exists $file->{'delta'} )
+			{
+				$text .= sprintf( " [out of date by %d revisions]",
+					$file->{'delta'} );
+			}
+
+			$text .= "\n";
+		}
+		$msg->attach(
+			'Type'     => 'TEXT',
+			'Filename' => 'NeedToUpdate summary',
+			'Data'     => $text,
+		)
+		if $text;
+
+		# attach part about Missing files
+		$text = '';
+		foreach my $file ( @{ $emails->{$name} } )
+		{
+			next unless $file->{'status'} == ST_MISSING;
+			$text .= sprintf( "%s\n", $file->{'info'} );
+		}
+		$msg->attach(
+			'Type'     => 'TEXT',
+			'Filename' => 'Missing summary',
+			'Data'     => $text,
+			'Encoding' => 'quoted-printable',
+		)
+		if $text;
+
+		# add diffs, if requested
+		if ( $priority <= $translators->{$name}{'diff'} )
+		{
+			foreach my $file ( @{ $emails->{$name} } )
+			{
+				# diffs really only make sense if there is an existing
+				# translation
+				next unless $file->{'status'} == ST_NEEDSUPDATE;
+
+				my $filename = catfile( 'english', $file->{'file'} );
+				my $rev      = $file->{'last_trans_rev'};
+				my $diff     = get_diff( $filename, $rev, 'HEAD' );
+				$msg->attach(
+					'Type'	   => 'TEXT',
+					'Filename' => "$filename.diff",
+					'Data'     => $diff,
+					'Encoding' => 'quoted-printable',
+				);
+			}
+		}
+		else
+		{
+			verbose( "Not attaching diffs  (prio "
+				. $translators->{$name}{'diff'} . " < $priority)" );
+		}
+
+		# add tdiffs, if requested
+		if ( $priority <= $translators->{$name}{'tdiff'} )
+		{
+			foreach my $file ( @{ $emails->{$name} } )
+			{
+				# diffs really only make sense if there is an existing
+				# translation
+				next unless $file->{'status'} == ST_NEEDSUPDATE;
+
+				my $filename  = catfile( 'english', $file->{'file'} );
+				my $filename2 = catfile( $lang,     $file->{'file'} );
+				my $rev       = $file->{'last_trans_rev'};
+				my $tdiff    =  get_diff_txt( $filename, $rev, 'HEAD',
+					$filename2 );
+				$msg->attach(
+					'Type'	   => 'TEXT',
+					'Filename' => "$filename.tdiff",
+					'Data'     => $tdiff,
+					'Encoding' => 'quoted-printable',
+				);
+			}
+		}
+		else
+		{
+			verbose( "Not attaching tdiffs (prio "
+				. $translators->{$name}{'tdiff'} . " < $priority)" );
+		}
+
+		# add logs, if requested
+		if ( $priority <= $translators->{$name}{'logs'} )
+		{
+			foreach my $file ( @{ $emails->{$name} } )
+			{
+				# logs really only make sense if there is an existing
+				# translation
+				next unless $file->{'status'} == ST_NEEDSUPDATE;
+
+				my $filename  = catfile( 'english', $file->{'file'} );
+				my $rev       = $file->{'last_trans_rev'};
+				my $log       = get_log( $filename, $rev, 'HEAD' );
+				my $part = MIME::Lite->new(
+					'Type'	   => 'TEXT',
+					'Filename' => "$filename.log",
+					'Data'     => $log,
+					'Encoding' => 'quoted-printable',
+				);
+				$part->attr( 'content-type.charset' => 'utf-8' );
+				$msg->attach( $part );
+			}
+		}
+		else
+		{
+			verbose( "Not attaching logs   (prio "
+				. $translators->{$name}{'logs'} . " < $priority)" );
+		}
+
+		# add file, if requested
+		if ( $priority <= $translators->{$name}{'file'} )
+		{
+			foreach my $file ( @{ $emails->{$name} } )
+			{
+				my $filename  = catfile( $lang, $file->{'file'} );
+				my $part = MIME::Lite->new(
+					'Type'	   => 'text/wml',
+					'Filename' => $filename,
+					'Path'     => $filename,
+					'Encoding' => 'quoted-printable',
+				);
+				$part->attr( 'content-type.charset' => get_file_charset($filename) );
+				$msg->attach( $part );
+
+			}
+		}
+		else
+		{
+			verbose( "Not attaching files  (prio "
+				. $translators->{$name}{'file'} . " < $priority)" );
+		}
+
+
+
+		# check if we really want to send the mail
+		if ( $really_send )
+		{
+			verbose 'Sending email to ' . $translators->{$name}{'email'};
+			$msg->send  or  warn("Couldn't send message to $name");
+		}
+		else
+		{
+			print $msg->as_string;
+		}
+	}
+}
+
+
+#=================================================
+#== return the age of the revision (in days)
+#==
+sub get_revision_age
+{
+	my $rev_info = shift;
+
+	die("No revision info specified") unless ref $rev_info eq 'HASH';
+
+	my $rev_timestamp = $rev_info->{'cmt_date'};
+	my $age = time - $rev_timestamp;
+
+	warn( "Timestamp is in the future!" ) if $age < 0;
+
+	# return age in days
+	return $age / ( 60*60*24 );
+}
+
+
+
+#=================================================
+#== get a log
+#==
+sub get_log
+{
+	my $file = shift or die("No file specified for diff");
+	my $rev1 = shift;
+	my $rev2 = shift;
+
+	die("NO such file `$file'") unless -e $file;
+
+	my @log = vcs_get_log( $file, $rev1, $rev2 );
+
+	# remove the first item of the log, because we only want
+	# to see when changed in the (left-open) range (rev1,rev2]
+	shift @log;
+
+	# format it nicely
+	my $str = '-' x 78 . "\n";
+	foreach my $l (@log)
+	{
+		chomp $l->{'message'};
+
+		$str .= sprintf( "r%d | %s | %s\n",
+			$l->{'rev'}, $l->{'author'}, scalar localtime $l->{'date'} );
+		$str .= "\n";
+		$str .= $l->{'message'} . "\n";
+		$str .= "\n";
+
+		$str .= '-' x 78 . "\n";
+
+	}
+
+
+	return $str;
+}
+
+#=================================================
+#== get a diff
+#==
+sub get_diff
+{
+	my $file = shift or die("No file specified for diff");
+	my $rev1 = shift;
+	my $rev2 = shift;
+
+	die("NO such file `$file'") unless -e $file;
+
+	my %diffs = vcs_get_diff( $file, $rev1, $rev2 );
+
+	# just glue all diffs together and return it as a big string
+	my $difftxt = join( '', values %diffs );
+
+	return $difftxt;
+}
+
+
+#=================================================
+#== get a diff while trying to match html tags
+#==
+sub get_diff_txt
+{
+	my $english_file = shift or die("No file specified");
+	my $rev1         = shift or die("No revision specified");
+	my $rev2         = shift or die("No revision specified");
+	my $transl_file  = shift or die("No transl file specified");
+
+	die("No such file $english_file") unless -e $english_file;
+	die("No such file $transl_file")  unless -e $transl_file;
+
+	# Get old revision file
+	my @english_txt = split( "\n", vcs_get_file( $english_file, $rev1 ) );
+
+	# Get translation file
+	my @transl_txt = split( "\n", read_file( $transl_file ) );
+
+	# Get diff lines
+	my @diff_txt = split( "\n", get_diff( $english_file, $rev1, $rev2 ) );
+
+	# do the matching
+	my $txt = Local::WmlDiffTrans::find_trans_parts(
+		\@english_txt,
+		\@transl_txt,
+		\@diff_txt
+	);
+
+	return $txt;
+}
+
+
+#=================================================
+#== show help from the top of this file
+#==
+sub show_help
+{
+	# read the help from the comments above and display it
+	open( my $me, '<', $0 ) or die "Unable to display help: $!\n";
+
+	while (<$me>)
+	{
+		last  if     m{^use};
+		next  unless m{^# };
+
+		s{^#  ?}{};
+
 		print;
 	}
-	exit;
+
+	close( $me );
 }
 
-if ($opt_a)
+
+#=================================================
+#== parse command line options and read defaults
+#==
+sub parse_cmdargs
 {
-    require Date::Manip;
-    import Date::Manip;
-}
+	my %OPT;
+	$OPT{n} = 5; # an invalid default
+	$OPT{s} = '';
 
-die "you can't have both verbose and quiet, doh!\n" if (($opt_v) && ($opt_Q));
-die "you can't have both very verbose and quiet, doh!\n" if (($opt_V) && ($opt_Q));
-
-$opt_v = 1 if ($opt_V);
-
-warn "Checking subtree $opt_s only\n" if (($opt_v) && ($opt_s));
-
-# include only files matching $filename
-my $filename = $opt_p || '(\.wml$)|(\.src$)';
-
-# Go to desired directory
-chdir($opt_C) || die "Cannot go to $opt_C\n";
-
-my $cvs = Local::Cvsinfo->new();
-$cvs->options(
-	recursive => 1,
-	matchfile => [ $filename ],
-	skipdir   => [ "template" ],
-);
-#   This object is used to retrieve information when original is
-#   not English
-my $altcvs = $cvs->new();
-
-#   Global .transignore
-my $globtrans = Webwml::TransIgnore->new(".");
-
-# language configuration
-my $defaultlanguage = '';
-if (exists $ENV{DWWW_LANG})
-{
-	$defaultlanguage = $ENV{DWWW_LANG};
-}
-elsif (open CONF, "<language.conf")
-{
-	while (<CONF>)
+	# parse options
+	if ( not getopts( 'adghmn:p:qs:TvV', \%OPT )  )
 	{
-		next if /^#/;
-		$defaultlanguage = $_;
-		chomp $defaultlanguage;
-		last;
+		show_help();
+		exit -1;
 	}
-	close CONF;
-}
 
-my $from = 'english';
-my $to = shift || $defaultlanguage;
-$to =~ s%/$%%; # Remove slash from the end
-
-if ($to eq '')
-{
-	die "Language not defined in DWWW_LANG, language.conf or on command line\n";
-}
-
-my $langto = $to;
-$langto =~ s,^([^/]*).*$,$1,;
-if (-e "./$langto/international/$langto/translator.db.pl") {
-    push(@INC,"./$langto/international/$langto");
-    print "READ TRANSLATOR DB: $langto/international/$langto/translator.db.pl\n"
-       if $opt_v;
-    require 'translator.db.pl';
-    %translators=%{init_translators()};
-    if (defined($translators{default})) {
-        my @field_list = keys %{$translators{default}};
-        foreach my $user (keys %translators) {
-            next unless $user =~ m/ /;
-            foreach my $f (@field_list) {
-                $translators{$user}{$f} = $translators{default}{$f}
-                    unless defined($translators{$user}{$f});
-            }
-        }
-    }
-} else {
-    die "I need my DBs to send mails !\n Please read the comments in the script and try again\n" if $opt_m;
-}
-
-if ($opt_m) {
-    unless ($opt_n =~ m,[123],) {
-	die "Invalid priority. Please set -n value to 1, 2 or 3.\n".
-	    "(assuming you know what you're doing)\n";
-    }
-}
-
-$from = "$from/$opt_s";
-$to = "$to/$opt_s";
-
-init_mails();
-
-print "\$translations = {\n" if $opt_t eq 'perl';
-
-# Check the files in the English directory
-
-my $V = $opt_V ? 1 : 0;
-$cvs->readinfo($from, verbose => $V );
-foreach my $path (@{$cvs->dirs()}) {
-	my $tpath = $path;
-	$tpath =~ s/^$from/$to/o;
-	my $transignore = Webwml::TransIgnore->new($tpath);
-	next unless $transignore->found();
-	warn "Loading $tpath/.transignore\n" if $opt_v;
-	foreach (@{$transignore->local()}) {
-		s/^$to/$from/o;
-		$cvs->removefile($_);
+	# show help
+	if ( $OPT{h} )
+	{
+		show_help();
+		exit 0;
 	}
-}
 
-my %checkedfile;
+	# handle verbosity setting
+	if ( ( $OPT{'v'} or $OPT{'V'} ) and $OPT{'Q'} )
+	{
+		die "you can't have both verbose and quiet, doh!\n";
+	}
+	$VERBOSE  = 1  if $OPT{'V'};
+	$OPT{'v'} = 1  if $OPT{'V'};
 
-foreach (sort @{$cvs->files()}) {
-	my ($path, $tpath);
-	$path = $_;
-	$tpath = $path;
-	$tpath =~ s/^$from/$to/o;
-    $checkedfile{$tpath} = 1; # Remember which files we found here
-	check_file($tpath,
-		$cvs->revision($path),
-		str2time($cvs->date($path)),
-		get_translators_from_db($tpath));
-}
+	# handle -s (subtree check) setting
+	if ( $OPT{s})
+	{
+		verbose "Checking subtree $OPT{s} only\n";
+	}
 
-# Now check all the files in the translated directory as well, there may be
-# some files that are not available in the English version.
+	if ( $OPT{'m'}  and  $OPT{'n'} !~ m{^[123]$} )
+	{
+		die "Invalid priority. Please set -n value to 1, 2 or 3.\n"
+		   ."(assuming you know what you're doing)\n";
+	}
 
-$cvs->reset();
-$cvs->readinfo($to, verbose => $V );
-foreach my $tpath (@{$cvs->dirs()})
-{
-    my $transignore = Webwml::TransIgnore->new($tpath);
-    next unless $transignore->found();
-    warn "Loading $tpath/.transignore\n" if $opt_v;
-    foreach (@{$transignore->local()})
-    {
-        s/^$to/$from/o;
-        $cvs->removefile($_);
-    }
-}
+	if ( $OPT{'g'} and not $OPT{'m'} )
+	{
+		die "Option -g (debuG mail) without -m (use mail) "
+		   ."really doesn't make much sense\n";
+	}
 
-foreach (sort @{$cvs->files()})
-{
-    my $tpath = $_;
-    next if defined $checkedfile{$tpath}; # Don't look at a file twice
-    warn "$tpath does not match anything in English\n" if $opt_v;
-    check_file($tpath, undef, undef, get_translators_from_db($tpath));
-}
+	# include only files matching $filename
+	my $file_pattern = $OPT{'p'} || $DEFAULT_PATTERN;
 
-print "}; 1;\n" if $opt_t eq 'perl';
+	my $translation = shift @ARGV || '';
 
-send_mails();
-
-if ($opt_M) {
-	foreach my $makefile (split(/\n/, `find $from -name Makefile -print`)) {
-		my $destination = $makefile;
-		$destination =~ s/^$from/$to/o;
-		if (-e $destination) {
-            # First check if the destination makefile simply includes the english
-            # version
-            my $includes = 0;
-            if (open MK, "<$destination")
-            {
-                my $firstline = <MK>;
-                close MK;
-                $includes = 1 if $firstline =~ m'^include.*subst webwml/.*,webwml/english,.*CURDIR.*Makefile';
-            }
-            else
-            {
-                warn "Cannot read $from: $!\n";
-            }
-            unless ($includes)
-            {
-                # Otherwise show any differences
-                STDOUT->flush;
-                system("diff -u $destination $makefile");
-                STDOUT->flush;
-            }
+	# language configuration
+	if ( not $translation )
+	{
+		if ( exists $ENV{DWWW_LANG} )
+		{
+			$translation = $ENV{DWWW_LANG};
+		}
+		elsif ( -e "language.conf" )
+		{
+			open( my $conf, '<', 'language.conf' )
+				or die("Can't read language.conf: $!\n");
+			while (<$conf>)
+			{
+				next if /^#/;
+				chomp;
+				$translation = $_;
+				last;
+			}
+			close $conf;
 		}
 	}
-}
 
-sub verify_send {
-    return 1 unless ($opt_m);
-    # returns true whether we have to send this part to this guy
-    my $name=shift;
-    my $part=shift;
-    $name =~ s,<.*?>,,;
-    $name =~ s,^ *(.*?) *$,$1,;
-    print "$name is unknown\n" unless defined($translators{$name});
-#    print "pri=$opt_n ; maint_pri=${translators{$name}{$part}}\n";
-    return $opt_m # if we have to send any mail
-	&& defined($translators{$name})  # if this guy is known
-	&& defined($translators{$name}{$part}) # we know something about the wanted frequency
-	&& ($opt_n <= $translators{$name}{$part}); # check if the frequency is ok
-}
+	# Remove slash from the end
+	$translation =~ s{/$}{};
 
-sub get_translators_from_db {
-    my $id=shift;
-    my $res='';
-
-    $id=~ s,^$langto/,,;
-    $id=~ s/\.wml$//;
-    if (defined(%{$$translations_status{$id}})
-	&& defined ($$translations_status{$id}{'translation_maintainer'})) {
-	foreach my $n (sort @{$$translations_status{$id}{'translation_maintainer'}}) {
-	    $res .= " $n";
+	if ( $translation eq '' )
+	{
+		die "Language not defined in DWWW_LANG, language.conf, "
+		   ."or on command line\n";
 	}
-    } else {
-	$res = "";
-    }
-    return $res;
+
+	return ($translation,$file_pattern,%OPT);
 }
 
-sub init_mails {
-    return unless $opt_m;
-    eval q{use MIME::Lite};
-    foreach my $name (keys %translators) {
-	return if defined $translators{$name}{"msg"};
-	next if $name eq 'default' || $translators{$name}{email} eq '';
-	$translators{$name}{"msg"} = MIME::Lite->new(
-	   From    => "Script watching translation state <$maintainer>",
-           To      => ($opt_g ? $opt_m : $translators{$name}{"email"}),
-           Subject => $translators{$name}{mailsubject},
-           Type    => 'multipart/mixed');
-        my $str;
-        {
-                open (MAIL, "< $translators{$name}{mailbody}")
-                        or die "$name: Unable to read \`$translators{$name}{mailbody}'";
-                local $/ = undef;
-	        $str= <MAIL>;
-                close (MAIL);
-        }
-        1 while ($str =~ s/#(.*?)#/eval $1/ge);
+#=================================================
+#== read the translators from translator.db
+#==
+sub read_translators
+{
+	my $lang = shift or die("Internal error: no language specified");
+	my $need_translators = shift;
 
-	my $part = MIME::Lite->new(
-           Type => 'TEXT',
-           Data => $str);
-	$part->attr('content-type.charset' => $opt_c) if $opt_c;
-        $translators{$name}{"msg"}->attach($part);
-	$translators{$name}{"send"}=0;
-    }
-}
+	my %translators;
 
-sub send_mails {
-    #Makes the mails and send them
-    return unless $opt_m;
-    foreach my $name (sort keys %translators) {
-	next if $name eq 'default' || $translators{$name}{email} eq '';
-	$translators{$name}{"msg"}->attach(
-                     Type     => 'TEXT',
-	             Filename => 'NeedToUpdate_summary',
-		     Data     => $translators{$name}{"part_summary"})
-	    if defined($translators{$name}{"part_summary"});
-	$translators{$name}{"msg"}->attach(
-		     Type     => 'TEXT',
-	             Filename => 'Missing_summary',
-		     Data     => $translators{$name}{"part_missing"})
-	    if defined($translators{$name}{"part_missing"});
-	foreach my $part (qw (file logs diff tdiff)) {
-	    if (defined($translators{$name}{"part_$part"})) {
-		foreach my $file (sort keys %{$translators{$name}{"part_$part"}}) {
-		    $translators{$name}{"msg"}->attach(
-			 Type     => 'TEXT',
-	                 Filename => "$file.$part",
-			 Data     => $translators{$name}{"part_$part"}{$file});
+	my $db_file = catfile( $lang, 'international', $lang, 'translator.db.pl' );
+
+	verbose "Reading translation database $db_file";
+
+	if ( -e $db_file)
+	{
+		require $db_file;
+
+		verbose "READ TRANSLATOR DB: $db_file\n";
+
+		%translators = %{ init_translators() };
+
+		if ( exists $translators{default} )
+		{
+			my @field_list = keys %{ $translators{default} };
+			foreach my $user (keys %translators)
+			{
+				next if $user eq 'default';
+				foreach my $f (@field_list)
+				{
+					$translators{$user}{$f} = $translators{default}{$f}
+						unless exists $translators{$user}{$f};
+				}
+			}
 		}
-	    }
 	}
-	if ($translators{$name}{"send"}) {
-	    print "send mail to $name\n" unless $opt_Q;
-	    if (($name =~ m,mquinson,) || ($opt_g && $opt_m eq $maintainer)) {
-		print "Well, detourned to $maintainer\n" unless $opt_Q;
-		$translators{$name}{"msg"}->send;
-	    }
-#	    $translators{$name}{"msg"}->print_header;
-	    $translators{$name}{"msg"}->send;
-	} else {
-	    print "didn't send mail to $name: nothing to say to him\n" unless $opt_Q;
+
+	if ( $need_translators and not %translators )
+	{
+		die "I need my DBs to send mails !\n"
+		   ."Please read the comments in the script and try again\n";
 	}
-    }
+
+	return %translators;
 }
 
-sub add_part {
-    my $name = shift;
-    my $part = shift;
-    my $txt = shift;
-    $name =~ s,<.*?>,,;
-    $name =~ s,^ *(.*?) *$,$1,;
-    if (verify_send($name,$part)) {
-	$translators{$name}{"part_$part"}.=$txt;
-	$translators{$name}{"send"}=1;
-    }
-}
+#=================================================
+#== check if a single file is up to date
+#== returns ($status,$message)
+#== where status is one of the ST_* constants (see top of file)
+#==
+sub check_file
+{
+	my $file            = shift;
+	my $orig            = shift;
+	my $lang            = shift;
+	my $english_rev     = shift; # might be undef
+	my $translation_rev = shift; # might be undef
 
-sub add_sub_part {
-    my $name = shift;
-    my $part = shift;
-    my $subpart=shift;
-    my $txt = shift;
-    $name =~ s,<.*?>,,;
-    $name =~ s,^ *(.*?) *$,$1,;
-#    print "add_sub_part($name)(part=$part)($subpart):$txt" if $opt_v;
-    STDOUT->flush;
-    if (verify_send($name,$part)) {
-#	print "YES\n";
-	$translators{$name}{"part_$part"}{$subpart}.= "$txt";
-	$translators{$name}{"send"}=1;
-    }
-#    print "no\n";
-}
+	die("Internal error: insufficient arguments")
+		unless $file and $orig and $lang;
 
-sub get_diff_txt {
-  my ($oldr, $revision, $oldname, $name) = @_;
-  my $cmd;
+	# filename of english and translated files
+	my $file_orig        = catfile( $orig, $file );
+	my $file_translation = catfile( $lang, $file );
 
-  # Get old revision file
-  $cmd = "cvs -z3 update -r $oldr -p $oldname 2>/dev/null";
-#  print "!get_diff_txt: cvs -z3 update -r ".$oldr." -p ".$oldname."\n";
-  my @old_rev_file_lines = qx($cmd);
+	# revision of the latest change in the english file
+	my $orig_last_change = $english_rev ? $english_rev->{cmt_rev} : 'n/a';
 
-  # Get translation file
-  open (FILE,"$name") || die ("Can't open `$name' for read");
-  my @translation_file_lines;
-  while (<FILE>) {
-      $translation_file_lines[scalar @translation_file_lines] = $_;
-  }
-  close FILE || die ("Can't close $name after reading");
+	# revision of the english file that was translated
+    my $transcheck = Webwml::TransCheck->new( $file_translation );
+	my $translation_last_change = $transcheck->revision()   || 'n/a';
+	my $translation_translator  = $transcheck->maintainer() || undef;
+	my $translation_maxdelta    = $transcheck->maxdelta()   || undef;
 
-  # Get diff lines
-  $cmd = "cvs -z3 diff -u -r$oldr -r $revision $oldname 2>/dev/null";
-#  print "get_diff_txt: $cmd: cvs -z3 diff -u -r$oldr -r $revision $oldname\n";
-  my @diff_lines = qx($cmd);
+	verbose "Checking $file_translation, $orig revision $orig_last_change";
 
-  my $txt = Local::WmlDiffTrans::find_trans_parts(\@old_rev_file_lines,
-						  \@translation_file_lines,
-						  \@diff_lines);
+	# status information
+	my $status = undef;
+	my $str    = undef;
 
-  return $txt;
-}
+	# at this point, there are several possibilities:
+	#   1) file exists both in english and translation
+	#   2) file exists only in english
+	#   3) file exists only in translation
+	#   4) file exists in neither original or translation: can't happen
+	# we handle those cases one by one
 
-sub check_file {
-	my ($name, $revision, $mtime, $translator) = @_;
-	$revision ||= 'n/a';
-	my ($oldr, $oldname, $original, $fromname);
-	warn "Checking $name, English revision $revision\n" if $opt_v;
-        my $docname = $name;
-        $docname =~ s#^$langto/##;
-        $docname =~ s#\.wml$##;
-	unless (-r $name) {
-		(my $iname = $name) =~ s/^$to//o;
-		if (!$globtrans->is_global($iname)) {
-		  unless (($opt_q) || ($opt_Q)) {
-                     if ($opt_t eq 'perl') {
-  	               print "'$docname' => {\n\t'type' => 'Web',\n";
-  	               print "\t'revision' => '$revision',\n";
-  	               print "\t'mtime' => '$mtime',\n" if $mtime;
-  	               print "\t'status' => 1,\n";
-  	               print "},\n";
-                     } else {
-  		       print "Missing $name version $revision\n";
-                     }
-		     add_part("untranslated","missing","Missing $name version $revision\n");
-		  }
-		} else {
-		  warn "Ignored $name\n" if $opt_v;
+	# 1) both files exist
+	if ( -e $file_orig and -e $file_translation )
+	{
+		# now check if both files have correct revisions
+		# again, three cases
+		# 1a) original file doesn't have a revision (can't happen)
+		# 1b) translated file doesn't have a revision (error in wml file)
+		# 1c) revision of both files is known
+
+		# 1a) no revision for english file
+		if ( $orig_last_change eq 'n/a' )
+		{
+			# this can't happen: something must be wrong with this script
+			die( "internal error: no revision for english file" );
 		}
-		return;
-	}
-	my $transcheck = Webwml::TransCheck->new($name);
-	$oldr = $transcheck->revision() || 0;
-	if (!$oldr && ($name =~ m#$langto/international/$langto#i)) {
-		#   This document is original, check for
-		#   english/international/$langto...
-		$name =~ s{^$to}{$from};
-		$transcheck = Webwml::TransCheck->new($name);
-		$oldr       = $transcheck->revision() || 0;
-	}
-	$translator = $transcheck->maintainer() || "";
-	$original   = $transcheck->original();
-	warn "Found translation for $oldr\n" if $opt_v and $oldr;
-	warn "Translated by $translator\n"   if $opt_v and $translator;
-	warn "Original is $original\n"       if $opt_v and $original;
-	if ($original) {
-		my ($fromdir);
-		$fromname = $name;
-		$fromname =~ s{^[^/]+}{$original};
-		$fromdir  = $fromname;
-		$fromdir  =~ s{/+[^/]+$}{};
-		$altcvs->reset();
-		$altcvs->readinfo($fromdir, matchfile => [$fromname]);
-		$revision = $altcvs->revision($fromname);
-		warn "Original is $original, revision $revision\n" if $opt_v;
-	}
 
-	$translator =~ s/^\s+//;
-	$translator =~ s/\s+$//;
+		# 1b) no revision on translated file: error
+		elsif ( $translation_last_change eq 'n/a' )
+		{
+			$status = ST_UNDEFINED;
+			$str = "Unknown status of $file_translation "
+			      ."(revision should be $orig_last_change)";
+		}
 
-	my $str;
-	my $status = 8; # Unknown
-   	(my $numrev)  = $revision =~ m/^1\.(\d+)$/; $numrev ||= "0";
-   	(my $numoldr) = $oldr =~ m/^1\.(\d+)$/; $numoldr ||= "0";
+		# 1c) both files have revisions
+		else
+		{
+			# check the revisions to see if they're up to date
+			my $cmp = vcs_cmp_rev( $translation_last_change, 
+				$orig_last_change );
 
-    if ($revision ne 'n/a')
-    {
-        # The original version of this file exists (English or otherwise)
-        # - compare the translated version number to the original
-    	if (!$oldr) {
-            if ($name =~ /^english/)
-            {
-                # This is the original file
-                $status = 4; # Up-to-date
-                $oldr = $revision;
-            }
-            else
-            {
-        	    $oldr = '1.0';
-        	    $str = "Unknown status of $name (revision should be $revision)";
-            }
-    	} elsif ($oldr eq $revision) {
-    	    $status = 4; # Up-to-date
-    	} elsif ($numoldr > $numrev) {
-    	    $str = "Broken revision number $oldr for $name, it should be $revision";
-    	} else {
-    	    $str = "NeedToUpdate $name from version $oldr to version $revision";
-    	    $status = 3; # Needs update
-    	}
-    }
-    else
-    {
-        # There is no English file matching this one.
-        if ($oldr eq '0')
-        {
-            # There is no translation-check header, so it must be the
-            # original version, and is thus always up-to-date.
-            $status = 4; # Up-to-date
-        }
-        else
-        {
-            # There is a translation-check header referencing an English
-            # version, which means that the English file has been removed.
-            $status = 7; # Obsolete
-            $str = "Obsolete $name";
-        }
-    }
-
-	$str .= " (maintainer: $translator)" if $translator;
-	if ($opt_t eq 'perl') {
-  	  print "'$docname' => {\n\t'type' => 'Web',\n";
-  	  print "\t'revision' => '$revision',\n";
-  	  print "\t'mtime' => '$mtime',\n" if $mtime;
-  	  print "\t'base_revision' => '$oldr',\n";
-  	  print "\t'translation_maintainer' => ['$translator'],\n" if $translator;
-  	  print "\t'status' => $status,\n";
-  	  print "},\n";
-	} elsif ($str && $oldr ne $revision) {
-	  $str .= "\n";
-	  print $str unless ($opt_Q);
+			if ( $cmp == 0 ) # revisions equal
+			{
+				# up to date
+				$str = "UpToDate $file_translation";
+				$status = ST_UPTODATE;
+			}
+			elsif ( $cmp == -1 ) # $translation_last_change < $orig_last_change
+			{
+				# out of date
+				$status = ST_NEEDSUPDATE;
+				$str = "NeedToUpdate $file_translation from revision "
+				      ."$translation_last_change to revision $orig_last_change";
+			}
+			else # $translation_last_change > $orig_last_change
+			{
+				# weirdness: translation is newer than original
+				$status = ST_BROKEN;
+				$str = "Broken revision number r$translation_last_change "
+				."for $file_translation, it should be $orig_last_change";
+			}
+		}
 	}
 
-    # Return if we're up-to-date or the original is missing
-	return if (defined($oldr) && ($oldr eq $revision || $revision eq 'n/a'));
-
-    if ($original)
-    {
-        # Source is non-English, use name we set up above
-        $oldname = $fromname;
-    }
-    else
-    {
-        # Source is English
-        $oldname = $name;
-        $oldname =~ s/^$to/$from/;
-    }
-
-	my @logrev = split(/\./, $oldr);
-	$logrev[$#logrev] ++;
-	my $logoldr = join('.', @logrev);
-	my $maxdelta = $transcheck->maxdelta() || $translators{maxdelta}{maxdelta} || 5;
-
-	if ($opt_m) {
-            my @list_tr;
-	    if ($translator eq "") {
-                if ($numrev - $numoldr >= $maxdelta) {
-	            @list_tr = ("maxdelta");
-                } else {
-	            @list_tr = ("unmaintained");
-                }
-            } elsif ($numrev - $numoldr >= $maxdelta) {
-	        @list_tr = ($translator, "maxdelta");
-            } else {
-	        @list_tr = ($translator);
-            }
-            foreach my $tname (@list_tr) {
-                add_part($tname,"summary",$str);
-                add_sub_part($tname,"diff",$name,
-                        join("",qx(cvs -z3 diff -u -r'$oldr' -r $revision $oldname)));
-                add_sub_part($tname,"tdiff",$name,
-                        get_diff_txt("$oldr","$revision","$oldname","$name"));
-
-                add_sub_part($tname,"logs",$name,
-                        join("",qx(cvs -z3 log -r$logoldr:$revision $oldname)));
-                add_sub_part($tname,"file",$name,
-                        join("",qx(cat $name)));
-            }
+	# 2) original file exists, but translation is missing
+	elsif ( -e $file_orig and not -e $file_translation )
+	{
+		$status = ST_MISSING;
+		$str = "Missing $file_translation version $orig_last_change";
 	}
 
-	if ($opt_d) {
-		STDOUT->flush;
-		my $cvsline = "cvs -z3 log -r'$logoldr:$revision' '$oldname'";
-		warn "Running $cvsline\n" if (($opt_v) && ($opt_l));
-		system($cvsline) if $opt_l;
-		STDOUT->flush if $opt_l;
-		$cvsline = "cvs -z3 diff -u -r '$oldr' -r '$revision' '$oldname'";
-		warn "Running $cvsline\n" if $opt_v;
-		system($cvsline);
-		STDOUT->flush;
+	# 3) translation exists, but original is missing
+	elsif ( not -e $file_orig and -e $file_translation )
+	{
+		# the translated file doesn't have a translation header,
+		# so it probably is an original
+		if ( $translation_last_change eq 'n/a' )
+		{
+			$status = ST_NOTATRANSL;
+			$str = "NotATranslation $file_translation";
+		}
+		# otherwise, it has a translation header, 
+		# so the english file was removed
+		else
+		{
+			$status = ST_OBSOLETE;
+			$str = "Obsolete $file_translation";
+		}
 	}
 
-    if (3 == $status && $opt_a) {
-        # Check the age of this translation
-        STDOUT->flush;
-        my $cvsline = "cvs -z3 log -r'$logoldr' '$oldname'";
-        if (open CVSLOG, '-|', $cvsline)
-        {
-            CVSDATA: while (<CVSLOG>)
-            {
-                last CVSDATA if /^date:/;
-            }
-            close CVSLOG;
-            if (/^date: ([\d]{4}.[\d]{2}.[\d]{2})/)
-            {
-                # Got the date of the last translation
-                my $agestring = &DateCalc($1, 'today', 1, 1);
-                die "CVS date is in the future" if $agestring =~ /^\-/;
-                my ($years, $months, $weeks, $undef) = split /:/, substr($agestring, 1), 4;
-                my ($yearstring, $monthstring, $weekstring) = ('', '', '');
-                if ($years)
-                {
-                    $yearstring = "$years year";
-                    $yearstring .= 's' unless 1 == $years;
-                }
-                if ($months)
-                {
-                    $monthstring = "$months month";
-                    $monthstring .= 's' unless 1 == $months;
-                }
-                if ($weeks)
-                {
-                    $weekstring = "$weeks week";
-                    $weekstring .= 's' unless 1 == $weeks;
-                }
-
-                if ($weeks > 2 || $months || $years)
-                {
-                    $monthstring .= ', '
-                        if $monthstring ne '' && $weekstring ne '';
-                    $yearstring .= ', '
-                        if $yearstring ne '' && ($monthstring ne '' || $weekstring ne '');
-                    print "$name is outdated by $yearstring$monthstring$weekstring\n";
-                }
-            }
-        }
-        STDOUT->flush;
-    }
-
-	if ($opt_T) {
-	    print get_diff_txt("$oldr", "$revision", "$oldname", "$name")."\n";
+	# neither original nor translation exists
+	else
+	{
+		# this should never occur, because it means the function was
+		# called with an invalid argument
+		die( "Internal error: file not present in english nor $lang" );
 	}
+
+	# add name of translator
+	$str .= " (maintainer $translation_translator)" if $translation_translator;
+
+	return ($status,$str,$translation_last_change,
+	        $translation_translator,$translation_maxdelta);
 }
+
+
+# get the encoding of a certain file, by looking for wmlrc
+sub get_file_charset
+{
+	my $file = shift or croak("No file specified");
+
+	# default charset
+	my $charset = 'utf-8';
+
+	# read the wmlrc file
+	my $wmlrc_dir = dirname($file);
+	while ( not -e catfile( $wmlrc_dir, '.wmlrc' ) )
+	{
+		$wmlrc_dir = dirname $wmlrc_dir;
+		last if  length( $wmlrc_dir ) < 3
+	}
+
+	# now read the wmlrc file to find the charset
+	my $wmlrc = catfile( $wmlrc_dir,'.wmlrc' );
+	if ( open( my $fd, '<', $wmlrc ) )
+	{
+		while ( my $line = <$fd> )
+		{
+			next unless $line =~ m{CHARSET=(.*?)\s*$};
+			$charset = $1;
+			last;
+		}
+		close($fd);
+	}
+	else
+	{
+		verbose "wmlrc for `$file' not found; assuming $charset charset";
+	}
+
+	return $charset;
+}
+
+# Slurp a file from a particular language in the right encoding
+sub read_file_enc
+{
+    my $file = shift or croak("No file specified");
+
+	my $charset = get_file_charset( $file );
+
+	# now read the file
+	open( my $fd, '<:bytes', $file ) or return undef;
+	my $text;
+	{
+		local $/ = undef;
+		$text = <$fd>;
+	}
+	close( $fd );
+
+	# decode the text
+	$text = decode( $charset, $text );
+
+	return $text;
+}
+
+__END__
