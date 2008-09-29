@@ -1,16 +1,47 @@
-#!/usr/bin/perl
+##  Wrapper around the various Local::VCS_* modules
+##
+##  Copyright (C) 2008  Bas Zoetekouw <bas@debian.org>
+##
+##  This program is free software; you can redistribute it and/or modify
+##  it under the terms of version 2 of the GNU General Public License as
+##  published by the Free Software Foundation.
 
-package VCS;
-use vars qw(@ISA);
+package Local::VCS;
 
-if (-d 'CVS') {
-	# CVS directory is in every subdirectory, so this is a save call
-	require Local::VCS_CVS;
-	@ISA = qw(Local::VCS_CVS);
-} else {
-	# we don't want to move up to look for a .git directory ...
-	require Local::VCS_Git;
-	@ISA = qw(Local::VCS_Git);
+use Carp;
+use Exporter;
+
+use strict;
+use warnings;
+
+our @ISA = qw(Exporter);
+
+# this is the import routine that is called when this  is "used" by a program
+# We implement it ourselves here to export the symbols from the 
+# correct module to the main program
+sub import
+{
+	# the first argument is "Local::VCS";  
+	# shift it away, we'll specify it manually below
+	shift @_;
+
+	# import the symbols from the module we need...
+	if ( -d 'CVS' )
+	{
+		require Local::VCS_CVS;
+		Local::VCS_CVS->export_to_level(1, 'Local::VCS_CVS', @_);
+	}
+	# TODO: this probably won't suffice, as git only puts a .git directory
+	# in the top directory
+	elsif ( -d '.git' )
+	{
+		require Local::VCS_git;
+		Local::VCS_git->export_to_level(1, 'Local::VCS_git', @_);
+	}
+	else
+	{
+		croak "No VCS found --- only CVS and git are supported\n";
+	}
 }
 
 42;
