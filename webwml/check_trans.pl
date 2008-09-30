@@ -84,10 +84,8 @@ use File::Spec::Functions;
 use List::MoreUtils qw{ uniq };
 use Term::ANSIColor;
 use File::Slurp;
-use MIME::Lite;
 use Encode;
 #use Data::Dumper;
-use Email::Address;
 use FindBin;
 FindBin::again();
 
@@ -782,6 +780,24 @@ sub parse_cmdargs
 	{
 		die "Invalid priority `$OPT{n}'. Please set -n value to 1, 2 or 3.\n"
 		   ."(assuming you know what you're doing)\n";
+	}
+
+	# load additional module we need for mail
+	if ( $OPT{'m'} )
+	{
+		eval {
+			require MIME::Lite;
+			import MIME::Lite;
+		};
+		die "The module MIME::Lite could not be loaded.\n"
+		   ."Please install libmime-lite-perl\n"   if $@;
+
+		eval {
+			require Email::Address;
+			import Email::Address;
+		};
+		die "The module Email::Address could not be loaded.\n"
+		   ."Please install libemail-address-perl\n"   if $@;
 	}
 
 	if ( $OPT{'g'} and not $OPT{'m'} )
