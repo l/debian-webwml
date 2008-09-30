@@ -36,10 +36,10 @@ use lib "$FindBin::Bin/Perl";
 use File::Basename;
 use File::Spec::Functions;
 use File::Find::Rule;
-use List::MoreUtils qw{ uniq };
 use Term::ANSIColor;
 
-use Local::VCS ':all';
+use Local::VCS  ':all';
+use Local::Util 'uniq';
 
 use strict;
 use warnings;
@@ -242,5 +242,6 @@ sub check_all
 
 	return ($nr_uptodate,$nr_old,$nr_needtrans,$nr_obsolete,$nr_error);
 }
+
 
 __END__
