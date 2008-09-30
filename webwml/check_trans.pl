@@ -220,15 +220,18 @@ sub verbose;
 
 			if ( $rev )
 			{
-				if ( not $original_lang )
-				{
-					# TODO: ideally, this would also be mailed out to the
-					# translation team
-					warn "`$file_orig' has a revision header but no origin language";
-					next;
-				}
+				## This check is too strict: some translators like to translate
+				##from other translations rather than from the original english
+				##(see e.g., danish/international/Norwegian.wml)
+				#if ( not $original_lang )
+				#{
+				#	# TODO: ideally, this would also be mailed out to the
+				#	# translation team
+				#	warn "`$file_orig' has a revision header but no origin language\n";
+				#	next;
+				#}
 
-				if ( $original_lang eq $language )
+				if ( $original_lang   and  $original_lang eq $language )
 				{
 					verbose "`$file_orig' is a translation from $language";
 
