@@ -81,7 +81,6 @@ use Getopt::Std;
 use Date::Parse;
 use File::Basename;
 use File::Spec::Functions;
-use List::MoreUtils qw{ uniq };
 use Term::ANSIColor;
 use Encode;
 #use Data::Dumper;
@@ -91,6 +90,7 @@ FindBin::again();
 #    These modules reside under webwml/Perl
 use lib "$FindBin::Bin/Perl";
 use Local::VCS ':all';
+use Local::Util 'uniq';
 use Local::WmlDiffTrans;
 use Webwml::TransCheck;
 use Webwml::TransIgnore;
