@@ -22,6 +22,7 @@ scripts, and for which we don't want to add dependencies on external modules.
 package Local::Util;
 
 use 5.008;
+use Carp;
 
 use strict;
 use warnings;
@@ -30,7 +31,7 @@ BEGIN {
 	use base qw( Exporter );
 
 	our $VERSION = sprintf "%d", q$Revision$ =~ /(\d+)/g;
-	our @EXPORT_OK = qw( uniq );
+	our @EXPORT_OK = qw( uniq read_file );
 	our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 }
 
@@ -60,6 +61,31 @@ sub uniq (@)
 	my %h;
 	map { $h{$_}++ == 0 ? $_ : () } @_;
 }
+
+=item read_file
+
+Slurps an entire file and returns the contents of the file as a scalar, or
+undef if an error occured (actual error will be in $!).
+
+This function is mean as a light-weight replacement for File::Slurp.
+
+=cut
+sub read_file
+{
+	my $filename = shift 
+		or croak("Local::Util::read_file: no file specified");
+
+	# slurp mode
+	local $/ = undef;
+
+	# read the file
+	open( my $fd, '<', $filename ) or return;
+	my $text = <$fd>;
+	close( $fd );
+
+	return $text;
+}
+
 
 42;
 
