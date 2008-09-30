@@ -78,7 +78,6 @@
 #    MAKE SURE THE ADDRESSEES REALLY WANT TO GET THESE MAILS
 
 use Getopt::Std;
-use Date::Parse;
 use File::Basename;
 use File::Spec::Functions;
 use Term::ANSIColor;
