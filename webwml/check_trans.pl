@@ -262,7 +262,6 @@ sub verbose;
 		)
 		{
 			print colored( "$str\n", $COLOURS{$status} );
-			flush STDOUT;
 		}
 
 		# check age of the translation
@@ -275,7 +274,6 @@ sub verbose;
 			{
 				print colored( "$file is outdated by $age days\n",
 					$COLOURS{warn} );
-				flush STDOUT;
 			}
 		}
 
