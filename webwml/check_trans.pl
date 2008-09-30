@@ -83,7 +83,6 @@ use File::Basename;
 use File::Spec::Functions;
 use List::MoreUtils qw{ uniq };
 use Term::ANSIColor;
-use File::Slurp;
 use Encode;
 #use Data::Dumper;
 use FindBin;
@@ -681,6 +680,24 @@ sub get_diff
 	return $difftxt;
 }
 
+#=================================================
+##== read en entire file and return the text
+##==
+sub read_file
+{
+	my $filename = shift or die("Internal error: no file specified");
+
+	# slurp mode
+	local $/ = undef;
+
+	# read the file
+	open( my $fd, '<', $filename ) 
+		or die("Couldn't open file `$filename': $!\n");
+	my $text = <$fd>;
+	close( $fd );
+
+	return $text;
+}
 
 #=================================================
 #== get a diff while trying to match html tags
