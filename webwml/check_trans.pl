@@ -90,7 +90,7 @@ FindBin::again();
 #    These modules reside under webwml/Perl
 use lib "$FindBin::Bin/Perl";
 use Local::VCS ':all';
-use Local::Util 'uniq';
+use Local::Util qw/ uniq read_file /;
 use Local::WmlDiffTrans;
 use Webwml::TransCheck;
 use Webwml::TransIgnore;
@@ -684,25 +684,6 @@ sub get_diff
 }
 
 #=================================================
-##== read en entire file and return the text
-##==
-sub read_file
-{
-	my $filename = shift or die("Internal error: no file specified");
-
-	# slurp mode
-	local $/ = undef;
-
-	# read the file
-	open( my $fd, '<', $filename ) 
-		or die("Couldn't open file `$filename': $!\n");
-	my $text = <$fd>;
-	close( $fd );
-
-	return $text;
-}
-
-#=================================================
 #== get a diff while trying to match html tags
 #==
 sub get_diff_txt
@@ -719,7 +700,9 @@ sub get_diff_txt
 	my @english_txt = split( "\n", vcs_get_file( $english_file, $rev1 ) );
 
 	# Get translation file
-	my @transl_txt = split( "\n", read_file( $transl_file ) );
+	my $transl_txt = read_file( $transl_file )
+		or die("Couln't read `$transl_file': $!");
+	my @transl_txt = split( "\n", $transl_txt );
 
 	# Get diff lines
 	my @diff_txt = split( "\n", get_diff( $english_file, $rev1, $rev2 ) );
