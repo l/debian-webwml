@@ -776,7 +776,7 @@ sub parse_cmdargs
 	{
 		# redirect stdout to /dev/null
 		close( STDOUT );
-		open( STDOUT, '>', '/dev/null' ) 
+		open( STDOUT, '>', '/dev/null' )
 			or die( "Can't redirect STDOUT to /dev/null: $!" );
 	}
 
@@ -971,7 +971,7 @@ sub check_file
 		else
 		{
 			# check the revisions to see if they're up to date
-			my $cmp = vcs_cmp_rev( $translation_last_change, 
+			my $cmp = vcs_cmp_rev( $translation_last_change,
 				$orig_last_change );
 
 			if ( $cmp == 0 ) # revisions equal
@@ -1014,7 +1014,7 @@ sub check_file
 			$status = ST_NOTATRANSL;
 			$str = "NotATranslation $file_translation";
 		}
-		# otherwise, it has a translation header, 
+		# otherwise, it has a translation header,
 		# so the english file was removed
 		else
 		{
