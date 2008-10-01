@@ -23,7 +23,7 @@
 #
 #
 #  Invocation:
-#    check_trans.pl [-dlMvqQ] [-C dir] [-p pattern] [-s subtree]
+#    check_trans.pl [-dlvqQ] [-C dir] [-p pattern] [-s subtree]
 #                   [-m email -n N] [-c charset] [-g] [-t outputtype]
 #                   [language]
 #
