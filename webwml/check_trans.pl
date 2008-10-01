@@ -279,6 +279,17 @@ sub verbose;
 			}
 		}
 
+		# print log if requested and an update is needed
+		if ( $OPT{'l'}  and  $status == ST_NEEDSUPDATE )
+		{
+			my $log = get_log(
+				$file_orig,
+				$rev_transl,
+				$revinfo_orig->{'cmt_rev'},
+			);
+			print $log;
+		}
+
 		# print diff if requested and an update is needed
 		if ( $OPT{'d'}  and  $status == ST_NEEDSUPDATE )
 		{
@@ -750,7 +761,7 @@ sub parse_cmdargs
 	$OPT{s} = '';
 
 	# parse options
-	if ( not getopts( 'adghm:n:p:Qqs:TvV', \%OPT )  )
+	if ( not getopts( 'adghlm:n:p:Qqs:TvV', \%OPT )  )
 	{
 		show_help();
 		exit -1;
