@@ -37,6 +37,7 @@
 #    $ check_trans.pl -s devel italian
 #
 #  Options:
+#       -Q            be really quiet (only show errors/warnings on stderr)
 #       -q            just don't whine about missing files
 #       -v            show the status of all files (verbose)
 #       -V            output what we're doing (very verbose)
@@ -749,7 +750,7 @@ sub parse_cmdargs
 	$OPT{s} = '';
 
 	# parse options
-	if ( not getopts( 'adghm:n:p:qs:TvV', \%OPT )  )
+	if ( not getopts( 'adghm:n:p:Qqs:TvV', \%OPT )  )
 	{
 		show_help();
 		exit -1;
@@ -763,12 +764,21 @@ sub parse_cmdargs
 	}
 
 	# handle verbosity setting
-	if ( ( $OPT{'v'} or $OPT{'V'} ) and $OPT{'Q'} )
+	if ( ( $OPT{'v'} or $OPT{'V'} ) and ( $OPT{'q'} or $OPT{'Q'} ) )
 	{
 		die "you can't have both verbose and quiet, doh!\n";
 	}
 	$VERBOSE  = 1  if $OPT{'V'};
 	$OPT{'v'} = 1  if $OPT{'V'};
+
+	# handle really quiet setting
+	if ( $OPT{'Q'} )
+	{
+		# redirect stdout to /dev/null
+		close( STDOUT );
+		open( STDOUT, '>', '/dev/null' ) 
+			or die( "Can't redirect STDOUT to /dev/null: $!" );
+	}
 
 	# handle -s (subtree check) setting
 	if ( $OPT{s})
