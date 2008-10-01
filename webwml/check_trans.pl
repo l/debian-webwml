@@ -59,7 +59,7 @@
 #       -n <1|2|3>    send mails of priority upper or equal to
 #                     1 (monthly), 2 (weekly) or 3 (daily)
 #
-#  generating emails
+#  GENERATING EMAILS
 #   If you want to, this script send mails to the maintainer of the mails.
 #   BEWARE, SOME PEOPLE DO NOT LIKE TO RECEIVE AUTOMATIC MAILS!
 #
@@ -737,14 +737,15 @@ sub show_help
 	# read the help from the comments above and display it
 	open( my $me, '<', $0 ) or die "Unable to display help: $!\n";
 
-	while (<$me>)
+	while ( my $line = <$me> )
 	{
-		last  if     m{^use};
-		next  unless m{^# };
+		last        if     $line =~ m{^use};
+		print "\n"  if     $line =~ m{^#$};
+		next        unless $line =~ m{^# };
 
-		s{^#  ?}{};
+		$line =~ s{^#  ?}{};
 
-		print;
+		print $line;
 	}
 
 	close( $me );
