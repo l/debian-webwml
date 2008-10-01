@@ -23,7 +23,7 @@
 #
 #
 #  Invocation:
-#    check_trans.pl [-vqdlM] [-C dir] [-p pattern] [-s subtree]
+#    check_trans.pl [-dlMvqQ] [-C dir] [-p pattern] [-s subtree]
 #                   [-m email -n N] [-c charset] [-g] [-t outputtype]
 #                   [language]
 #
@@ -57,7 +57,7 @@
 #                     e.g. debian-l10n-french@lists.debian.org)
 #       -g            debuG mail send process
 #       -n <1|2|3>    send mails of priority upper or equal to
-#                    1 (monthly), 2 (weekly) or 3 (daily)
+#                     1 (monthly), 2 (weekly) or 3 (daily)
 #
 #  generating emails
 #   If you want to, this script send mails to the maintainer of the mails.
