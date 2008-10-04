@@ -23,7 +23,7 @@
 #
 #
 #  Invocation:
-#    check_trans.pl [-dlvqQ] [-C dir] [-p pattern] [-s subtree]
+#    check_trans.pl [-cdlvqQ] [-C dir] [-p pattern] [-s subtree]
 #                   [-m email -n N] [-c charset] [-g] [-t outputtype]
 #                   [language]
 #
@@ -48,6 +48,7 @@
 #                     default is *.src|*.wml
 #       -s <subtree>  check only that subtree
 #       -a            output age of translation (if older than 2 months)
+#       -c            disable use of color in the output
 #
 #  Options useful when sending mails:
 #       -m <email>    sends mails to translation maintainers
@@ -773,7 +774,7 @@ sub parse_cmdargs
 	$OPT{s} = '';
 
 	# parse options
-	if ( not getopts( 'adghlm:n:p:Qqs:TvV', \%OPT )  )
+	if ( not getopts( 'acdghlm:n:p:Qqs:TvV', \%OPT )  )
 	{
 		show_help();
 		exit -1;
@@ -801,6 +802,13 @@ sub parse_cmdargs
 		close( STDOUT );
 		open( STDOUT, '>', '/dev/null' )
 			or die( "Can't redirect STDOUT to /dev/null: $!" );
+	}
+
+	# handle -c (disable color) setting
+	if ( $OPT{'c'} )
+	{
+		# nice feature of Term::ANSIColor
+		$ENV{'ANSI_COLORS_DISABLED'} = '1';
 	}
 
 	# handle -s (subtree check) setting
