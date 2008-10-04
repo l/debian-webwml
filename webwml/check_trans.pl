@@ -138,6 +138,9 @@ sub verbose;
 #== "main"
 #==
 {
+	# install a signal handler to catch Ctrl-C
+	$SIG{'INT'} = \&handle_INT;
+
 	my ($language,$file_pattern,%OPT) = parse_cmdargs();
 	my %translators = read_translators( $language, $OPT{m} );
 	my %emails_to_send;
@@ -387,7 +390,15 @@ sub verbose
 	print @_, "\n";
 }
 
-
+#=================================================
+#== handles INT signal
+#==
+sub handle_INT
+{
+	# reset terminal color
+	print color('reset');
+	die( "Interrupted by user" );
+}
 
 #=================================================
 #== send out the emails
