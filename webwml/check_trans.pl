@@ -130,7 +130,7 @@ my %COLOURS = (
 	'warn'               => 'bold red',
 );
 
-# these is called in "main" so needs to be declared here
+# these is called in "main" so need to be declared here
 sub switch_var(\$\$);
 sub verbose;
 
