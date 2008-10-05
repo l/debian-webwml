@@ -24,7 +24,7 @@
 #
 #  Invocation:
 #    check_trans.pl [-cdlvqQ] [-C dir] [-p pattern] [-s subtree]
-#                   [-m email -n N] [-c charset] [-g] [-t outputtype]
+#                   [-m email -n N] [-g] [-t outputtype]
 #                   [language]
 #
 #  It needs to be run from the top level webwml directory.
