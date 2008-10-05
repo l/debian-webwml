@@ -496,7 +496,7 @@ sub send_email
 			}
 
 			$recipient = $translators->{$name}{'email'};
-			$subject   = $translators->{'default'}{'subject'};
+			$subject   = $translators->{'default'}{'mailsubject'};
 
 			# read body and interpret perl that's embedded there
 			$mailbody = read_file_enc( $translators->{'default'}{'mailbody'} )
