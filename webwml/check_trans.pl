@@ -522,7 +522,7 @@ sub send_email
 		# and attach the body to the mail
 		my $part = MIME::Lite->new(
 			'Type' => 'text/plain',
-			'Data' => $mailbody,
+			'Data' => encode('utf-8',$mailbody),
 		);
 		$part->attr( 'content-type.charset' => 'utf-8' );
 		$msg->attach( $part );
@@ -1202,26 +1202,13 @@ sub get_file_charset
 	return $charset;
 }
 
-# Slurp a file from a particular language in the right encoding
 sub read_file_enc
 {
     my $file = shift or croak("No file specified");
 
 	my $charset = get_file_charset( $file );
 
-	# now read the file
-	open( my $fd, '<:bytes', $file ) or return undef;
-	my $text;
-	{
-		local $/ = undef;
-		$text = <$fd>;
-	}
-	close( $fd );
-
-	# decode the text
-	$text = decode( $charset, $text );
-
-	return $text;
+	return read_file( $file, $charset );
 }
 
 __END__
