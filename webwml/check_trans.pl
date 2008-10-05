@@ -24,7 +24,8 @@
 #
 #  Invocation:
 #    check_trans.pl [-cdlvqQ] [-C dir] [-p pattern] [-s subtree]
-#                   [-m email -n N] [-g] [-t outputtype]
+#                   [-m { -n <num> | -M <email> } [-g] ]
+#                   [-t outputtype]
 #                   [language]
 #
 #  It needs to be run from the top level webwml directory.
@@ -51,14 +52,17 @@
 #       -c            disable use of color in the output
 #
 #  Options useful when sending mails:
-#       -m <email>    sends mails to translation maintainers
+#       -m            sends mails to translation maintainers as specified in
+#                     in database in $lang/international/$lang/translator.db.pl
 #                     PLEASE CAREFULLY READ THE BELOW TEXT ABOUT MAKING MAILS!
-#                     <email> is the default recipient
-#                     (it should be the list used for organisation,
-#                     e.g. debian-l10n-french@lists.debian.org)
-#       -g            debuG mail send process
-#       -n <1|2|3>    send mails of priority upper or equal to
-#                     1 (monthly), 2 (weekly) or 3 (daily)
+#       -n <1|2|3>    send mails of priority upper or equal to 1 (monthly),
+#                     2 (weekly) or 3 (daily), as specified in the translator
+#                     database
+#       -M <email>    instead of using the translator database, send all email
+#                     the specified address.  The translator database is not
+#                     used.
+#       -g            instead of sending mails, dump them to the console
+#                     (no mails will be sent)
 #
 #  GENERATING EMAILS
 #   If you want to, this script send mails to the maintainer of the mails.
@@ -68,16 +72,18 @@
 #    You will need one database:
 #      - one in which to get info about translators and the frequency at
 #        which they want to get mails. It must be named
-#        webwml/$langto/international/$langto/translator.db.pl
+#        webwml/$lang/international/$lang/translator.db.pl
 #        Please refer to the French one for more info.
 #
 #   USAGE:
-#    If you give the "-g" option, all mails are sent to the default addressee
-#      (i.e. the one given as value to the -m option), without respect to their
-#      normal addressee. It is useful if you want to run it for yourself,
-#      and for debugging.
-#    Without that option, it sends real mails to real addresses.
-#    MAKE SURE THE ADDRESSEES REALLY WANT TO GET THESE MAILS
+#    If you give the "-g" option, all mails are written to the console.  No
+#    mails are sent out at all.  This is useful for debugging.
+#    If you specify an email addres with the "-M" options, all mails are sent
+#    to the specified addressee.  No mails are sent to any other addresses.  It
+#    is useful if you want to run it for yourself.
+#    Without either of these options, real mails will be sent to real
+#    addresses.
+#    MAKE SURE THE ADDRESSEES REALLY WANT TO GET THESE MAILS!
 
 use Getopt::Std;
 use File::Basename;
@@ -88,7 +94,7 @@ use Encode;
 use FindBin;
 FindBin::again();
 
-#    These modules reside under webwml/Perl
+# These modules reside under webwml/Perl
 use lib "$FindBin::Bin/Perl";
 use Local::VCS ':all';
 use Local::Util qw/ uniq read_file /;
@@ -100,13 +106,11 @@ use strict;
 use warnings;
 
 
-
-# misc hardcoded things
-my $MY_EMAIL = q{Debian WWW translation watch <debian-www@lists.debian.org>};
-my $DEFAULT_PATTERN = '(?:\.wml|\.src)$';
-
 # global variable to record verbosity
 my $VERBOSE  = 0;
+
+# default files to process
+my $DEFAULT_PATTERN = '(?:\.wml|\.src)$';
 
 # status codes
 use constant {
@@ -131,6 +135,19 @@ my %COLOURS = (
 	'warn'               => 'bold red',
 );
 
+# default values for sending mails
+my $MY_EMAIL = q{Debian WWW translation watch <debian-www@lists.debian.org>};
+my $DEFAULT_SUBJECT = q{Debian web page translations needing updates};
+(my $DEFAULT_BODY = <<"EOF") =~ s/^\t//gm;
+	Hi!
+
+	This is an automatic message providing an overview of Debian webpages
+	of which the translation is outdated.
+
+	Kind regards,
+	Your automatic daemon.
+EOF
+
 # these is called in "main" so need to be declared here
 sub switch_var(\$\$);
 sub verbose;
@@ -142,14 +159,20 @@ sub verbose;
 	# install a signal handler to catch Ctrl-C
 	$SIG{'INT'} = \&handle_INT;
 
+	# parse the command line
 	my ($language,$file_pattern,%OPT) = parse_cmdargs();
-	my %translators = read_translators( $language, $OPT{m} );
+
+	# read the tranlator db if we need it (-n was specified)
+	my %translators = $OPT{n} ? read_translators( $language ) : ();
+
+	# this hash will be used to store the emails we want to send out
 	my %emails_to_send;
 
-	# -s allows the user to restrict processing to a subtree
+	# the subdirs where the english and translated files are located
 	my $english_path  = 'english';
 	my $language_path = $language;
 
+	# -s allows the user to restrict processing to a subtree
 	my $subdir = $OPT{'s'} || undef;
 
 	# Global .transignore
@@ -160,7 +183,7 @@ sub verbose;
 		'recursive' => 1,
 		'match_pat' => $file_pattern,
 	);
-	# ... and the translation
+	# ... and in the translation
 	my %translation_revs = vcs_path_info( $language_path,
 		'recursive' => 1,
 		'match_pat' => $file_pattern,
@@ -321,11 +344,25 @@ sub verbose;
 		# prepare a mail to be sent
 		if ( $OPT{'m'}  and  $status != ST_UPTODATE )
 		{
-			# handle special case maintainer fields
-			$maintainer = 'unmaintained'
-				unless $maintainer and exists $translators{$maintainer};
-			$maintainer = 'untranslated'
-				if $status == ST_MISSING;
+			# -M was specified, so all mails to there
+			if ( $OPT{'M'} )
+			{
+				$maintainer = 'default';
+
+				# don't send mail about untranslated files if -q was specified
+				$maintainer = 'none' 
+					if $status == ST_MISSING and $OPT{'q'} 
+			}
+			else # addresses from the database is used
+			{
+				# handle special case maintainer fields
+				$maintainer = 'unmaintained'
+					unless $maintainer and exists $translators{$maintainer};
+				$maintainer = 'untranslated'
+					if $status == ST_MISSING;
+			}
+
+			verbose  "Found maintainer $maintainer for this file";
 
 			# mail to send to the maintainer
 			push @{ $emails_to_send{$maintainer} }, {
@@ -333,19 +370,19 @@ sub verbose;
 				'status'         => $status,
 				'info'           => $str,
 				'last_trans_rev' => $rev_transl,
-			}
-			if ( exists $translators{$maintainer} );
+			};
 
-			# mail for maxdelta
-			if ( $status != ST_MISSING )
+			# additionally, if -n was specified, also see if we need to
+			# send a mail to maxdelta
+			if ( $OPT{'n'}  and  $status != ST_MISSING  and  -e $file_orig )
 			{
 				$maxdelta ||= $translators{maxdelta}{maxdelta} || 5;
 
-				my $delta = undef;
-				if ( -e $file_orig )
-				{
-					$delta = vcs_count_changes( $file_orig, $rev_transl, 'HEAD' );
+				my $delta;
+				$delta = vcs_count_changes( $file_orig, $rev_transl, 'HEAD' );
 
+				if ( $delta >= $maxdelta )
+				{
 					push @{ $emails_to_send{'maxdelta'} }, {
 						'file'           => $file,
 						'status'         => $status,
@@ -353,7 +390,6 @@ sub verbose;
 						'delta'          => $delta,
 						'last_trans_rev' => $rev_transl,
 					}
-					if ( $delta >= $maxdelta );
 				}
 			}
 
@@ -361,7 +397,8 @@ sub verbose;
 
 	}
 
-	send_email( \%emails_to_send, \%translators, $language, $OPT{'n'}, !$OPT{'g'} );
+	send_email( \%emails_to_send, \%translators, $language, 
+		$OPT{'n'}, $OPT{'M'}, $OPT{'g'} );
 
 	exit 0;
 }
@@ -409,65 +446,83 @@ sub send_email
 	my $emails      = shift  or  die("No emails specified");
 	my $translators = shift  or  die("No translators specified");
 	my $lang        = shift  or  die("No language specified");
-	my $priority    = shift  or  die("No priority specified");
-	my $really_send = shift || 0;
-
+	my $priority    = shift;
+	my $default_rec = shift;
+	my $debug       = shift;
 
 	foreach my $name (sort keys %$emails)
 	{
+		# special case
+		next if $name eq 'none';
+
 		verbose("Preparing email for $name");
 
-		# skip unconfigured users
-		if ( not exists $translators->{$name}
-		     or  not $translators->{$name}{'email'} )
+		my $recipient;
+		my $subject;
+		my $mailbody;
+
+		# First handle the case in whcih all mail goes to the -M address
+		if ( $default_rec )
 		{
-			verbose( "Woops!  Can't find info for user `$name'\n" );
-			next;
+			# address was already validated while parsing the command line
+			$recipient = $default_rec;
+			$subject   = $DEFAULT_SUBJECT;
+			$mailbody  = $DEFAULT_BODY;
 		}
-
-		# check the user's email addres
-		if ( not Email::Address->parse( $translators->{$name}{'email'} ) )
+		else # handle the case in whcih addresses are fetch from the db
 		{
-			printf STDERR "Can't parse email address `%s' for %s!\n",
-				$translators->{$name}{'email'}, $name;
-			next;
+			# skip unconfigured users
+			if ( not exists $translators->{$name}
+					or  not $translators->{$name}{'email'} )
+			{
+				verbose( "Woops!  Can't find info for user `$name'\n" );
+				next;
+			}
+
+			# check the user's email addres
+			if ( not Email::Address->parse( $translators->{$name}{'email'} ) )
+			{
+				printf STDERR "Can't parse email address `%s' for %s!\n",
+					$translators->{$name}{'email'}, $name;
+				next;
+			}
+
+			# skip if the user doesn't want a summary at all
+			if ( $translators->{$name}{'summary'} < $priority )
+			{
+				verbose( "Not sending message to $name (prio "
+					. $translators->{$name}{'summary'} . " < $priority)" );
+				next;
+			}
+
+			$recipient = $translators->{$name}{'email'};
+			$subject   = $translators->{'default'}{'subject'};
+
+			# read body and interpret perl that's embedded there
+			$mailbody = read_file_enc( $translators->{'default'}{'mailbody'} )
+				or die("Can't read $translators->{'default'}{'mailbody'}");
+			{
+				# a bit hackish, but I want to keep the curent format of
+				# the mail body files intact, for now
+				# so we need to use the same old variable names as the original
+				# script used
+				my %translators = %{$translators};
+				$mailbody =~ s{#(.*?)#}{eval $1}mge;
+			}
+
 		}
-
-		# skip if the user doesn't want a summary at all
-		if ( $translators->{$name}{'summary'} < $priority )
-		{
-			verbose( "Not sending message to $name (prio "
-				. $translators->{$name}{'summary'} . " < $priority)" );
-			next;
-		}
-
-		my %transl = %{ $translators->{$name} };
-
-		#print Dumper($emails->{$name});
 
 		my $msg = MIME::Lite->new(
 			'From'    => $MY_EMAIL,
-			'To'      => $translators->{$name}{'email'},
-			'Subject' => $translators->{$name}{'mailsubject'},
+			'To'      => $recipient,
+			'Subject' => $subject,
 			'Type'    => 'multipart/mixed',
 		);
-
-		# read body and interpret perl that's embedded there
-		my $body = read_file_enc( $transl{'mailbody'} )
-			or die("Can't read $transl{'mailbody'}");
-		{
-			# a bit hackish, but I want to keep the curent format of
-			# the mail body files intact, for now
-			# so we need to use the same old variable names as the original
-			# script used
-			my %translators = %{$translators};
-			$body =~ s{#(.*?)#}{eval $1}mge;
-		}
 
 		# and attach the body to the mail
 		my $part = MIME::Lite->new(
 			'Type' => 'text/plain',
-			'Data' => $body,
+			'Data' => $mailbody,
 		);
 		$part->attr( 'content-type.charset' => 'utf-8' );
 		$msg->attach( $part );
@@ -495,22 +550,25 @@ sub send_email
 		if $text;
 
 		# attach part about Missing files
-		$text = '';
-		foreach my $file ( @{ $emails->{$name} } )
+		if ( not $default_rec )
 		{
-			next unless $file->{'status'} == ST_MISSING;
-			$text .= sprintf( "%s\n", $file->{'info'} );
+			$text = '';
+			foreach my $file ( @{ $emails->{$name} } )
+			{
+				next unless $file->{'status'} == ST_MISSING;
+				$text .= sprintf( "%s\n", $file->{'info'} );
+			}
+			$msg->attach(
+				'Type'     => 'TEXT',
+				'Filename' => 'Missing summary',
+				'Data'     => $text,
+				'Encoding' => 'quoted-printable',
+			)
+			if $text;
 		}
-		$msg->attach(
-			'Type'     => 'TEXT',
-			'Filename' => 'Missing summary',
-			'Data'     => $text,
-			'Encoding' => 'quoted-printable',
-		)
-		if $text;
 
 		# add diffs, if requested
-		if ( $priority <= $translators->{$name}{'diff'} )
+		if ( $default_rec  or  $priority <= $translators->{$name}{'diff'} )
 		{
 			foreach my $file ( @{ $emails->{$name} } )
 			{
@@ -536,7 +594,7 @@ sub send_email
 		}
 
 		# add tdiffs, if requested
-		if ( $priority <= $translators->{$name}{'tdiff'} )
+		if ( not $default_rec  and  $priority <= $translators->{$name}{'tdiff'} )
 		{
 			foreach my $file ( @{ $emails->{$name} } )
 			{
@@ -560,11 +618,12 @@ sub send_email
 		else
 		{
 			verbose( "Not attaching tdiffs (prio "
-				. $translators->{$name}{'tdiff'} . " < $priority)" );
+				. $translators->{$name}{'tdiff'} . " < $priority)" )
+			unless $default_rec;
 		}
 
 		# add logs, if requested
-		if ( $priority <= $translators->{$name}{'logs'} )
+		if ( $default_rec  or  $priority <= $translators->{$name}{'logs'} )
 		{
 			foreach my $file ( @{ $emails->{$name} } )
 			{
@@ -592,7 +651,7 @@ sub send_email
 		}
 
 		# add file, if requested
-		if ( $priority <= $translators->{$name}{'file'} )
+		if ( not $default_rec  and  $priority <= $translators->{$name}{'file'} )
 		{
 			foreach my $file ( @{ $emails->{$name} } )
 			{
@@ -611,20 +670,32 @@ sub send_email
 		else
 		{
 			verbose( "Not attaching files  (prio "
-				. $translators->{$name}{'file'} . " < $priority)" );
+				. $translators->{$name}{'file'} . " < $priority)" )
+				unless $default_rec;
 		}
 
 
 
 		# check if we really want to send the mail
-		if ( $really_send )
+		if ( $debug )
 		{
-			verbose 'Sending email to ' . $translators->{$name}{'email'};
-			$msg->send  or  warn("Couldn't send message to $name");
+			print color('bold yellow');
+			print '*'x72, "\n";
+			printf "Would send email to %s (but -g was specified):\n",
+				$recipient;
+			print '-'x72, "\n";
+			print color('reset');
+
+			print $msg->as_string;
+
+			print color('bold yellow');
+			print '*'x72, "\n";
+			print color('reset');
 		}
 		else
 		{
-			print $msg->as_string;
+			verbose "Sending email to $recipient";
+			$msg->send  or  warn("Couldn't send message to $name");
 		}
 	}
 }
@@ -770,11 +841,10 @@ sub show_help
 sub parse_cmdargs
 {
 	my %OPT;
-	$OPT{n} = 5; # an invalid default
 	$OPT{s} = '';
 
 	# parse options
-	if ( not getopts( 'acdghlm:n:p:Qqs:TvV', \%OPT )  )
+	if ( not getopts( 'acdghlmM:n:p:Qqs:TvV', \%OPT )  )
 	{
 		show_help();
 		exit -1;
@@ -810,6 +880,12 @@ sub parse_cmdargs
 		# nice feature of Term::ANSIColor
 		$ENV{'ANSI_COLORS_DISABLED'} = '1';
 	}
+	else
+	{
+		# we need flushed STDOUT putput, because otherwise the colours wills
+		# blend into STDERR
+		$| = 1;
+	}
 
 	# handle -s (subtree check) setting
 	if ( $OPT{s})
@@ -817,15 +893,13 @@ sub parse_cmdargs
 		verbose "Checking subtree $OPT{s} only\n";
 	}
 
-	if ( $OPT{'m'}  and  $OPT{'n'} !~ m{^[123]$} )
-	{
-		die "Invalid priority `$OPT{n}'. Please set -n value to 1, 2 or 3.\n"
-		   ."(assuming you know what you're doing)\n";
-	}
-
-	# load additional module we need for mail
+	# check validity of mail options
+	# if -m is specified, either -n or -M must also be given
+	# furthermore, the argument to -n must be 1, 2, or 3, and
+	# the argument to -M must be a valid email address
 	if ( $OPT{'m'} )
 	{
+		# load additional module we need for mail
 		eval {
 			require MIME::Lite;
 			import MIME::Lite;
@@ -839,6 +913,29 @@ sub parse_cmdargs
 		};
 		die "The module Email::Address could not be loaded.\n"
 		   ."Please install libemail-address-perl\n"   if $@;
+
+		# now check the options
+		if ( $OPT{'n'} and $OPT{'M'} )
+		{
+			die "You can't specify both -n and -M\n";
+		}
+		elsif ( $OPT{'n'} )
+		{
+			die "Invalid priority `$OPT{n}'. "
+			   ."Please set -n value to 1, 2 or 3.\n"
+				unless $OPT{'n'} =~ m{^[123]$}
+		}
+		elsif ( $OPT{'M'} )
+		{
+			die "Invalid email address `$OPT{M}'\n"
+				unless Email::Address->parse( $OPT{M} );
+		}
+		else
+		{
+			die "You specified -m (send mails), but you didn't specify "
+			   ."either -n or -M, so I don't knwo where to send my mails\n";
+		}
+
 	}
 
 	if ( $OPT{'g'} and not $OPT{'m'} )
@@ -892,7 +989,6 @@ sub parse_cmdargs
 sub read_translators
 {
 	my $lang = shift or die("Internal error: no language specified");
-	my $need_translators = shift;
 
 	my %translators;
 
@@ -921,11 +1017,11 @@ sub read_translators
 				}
 			}
 		}
-	}
-
-	if ( $need_translators and not %translators )
+	} 
+	else
 	{
-		die "I need my DBs to send mails !\n"
+		die "File `$db_file' doesn't exist!\n"
+		   ."I need my DBs to send mails.\n"
 		   ."Please read the comments in the script and try again\n";
 	}
 
