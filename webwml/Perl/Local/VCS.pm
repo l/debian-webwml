@@ -17,11 +17,11 @@ use warnings;
 our @ISA = qw(Exporter);
 
 # this is the import routine that is called when this  is "used" by a program
-# We implement it ourselves here to export the symbols from the 
+# We implement it ourselves here to export the symbols from the
 # correct module to the main program
 sub import
 {
-	# the first argument is "Local::VCS";  
+	# the first argument is "Local::VCS";
 	# shift it away, we'll specify it manually below
 	shift @_;
 
@@ -31,16 +31,11 @@ sub import
 		require Local::VCS_CVS;
 		Local::VCS_CVS->export_to_level(1, 'Local::VCS_CVS', @_);
 	}
-	# TODO: this probably won't suffice, as git only puts a .git directory
-	# in the top directory
-	elsif ( -d '.git' )
+	# fall back to git
+	else
 	{
 		require Local::VCS_git;
 		Local::VCS_git->export_to_level(1, 'Local::VCS_git', @_);
-	}
-	else
-	{
-		croak "No VCS found --- only CVS and git are supported\n";
 	}
 }
 
