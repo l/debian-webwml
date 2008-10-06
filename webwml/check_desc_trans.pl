@@ -44,6 +44,13 @@ use Local::Util 'uniq';
 use strict;
 use warnings;
 
+# see if -c was specified 
+if ( $ARGV[0] eq '-c' )
+{
+	shift @ARGV;
+	$ENV{'ANSI_COLORS_DISABLED'} = '1';
+}
+
 # Get language configuration
 my $language;
 if ( $ARGV[0] )
