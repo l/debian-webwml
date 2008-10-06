@@ -181,13 +181,13 @@ sub check_all
 		# check if the info from vcs and from the fs are consistent
 		if ( -e $file_english  and  not exists $revinfo->{$file} )
 		{
-			warn "$file: english version found, but no revision info available!\n";
+			warn "$file_english: english version found, but no revision info available!\n";
 			next;
 		}
 		# check if the info from translation-check and from the fs are consistent
 		if ( -e $file_transl  and  not exists $files->{$file} )
 		{
-			warn "$file: $lang version found, but not found in a translation-check file!\n";
+			warn "$file_transl: $lang version found, but not found in a translation-check file!\n";
 			next;
 		}
 
@@ -198,7 +198,7 @@ sub check_all
 			if ( vcs_cmp_rev( $files->{$file}, $revinfo->{$file}->{'cmt_rev'} ) == -1 )
 			{
 				$nr_old++;
-				print color('blue'), $file, color('reset');
+				print color('blue'), $file_transl, color('reset');
 				printf ": needs to be updated from revision %s to revison %s\n", 
 					$files->{$file}, $revinfo->{$file}->{'cmt_rev'};
 			}
@@ -206,7 +206,7 @@ sub check_all
 			elsif ( vcs_cmp_rev( $files->{$file}, $revinfo->{$file}->{'cmt_rev'} ) == -1 )
 			{
 				$nr_error++;
-				print color('blue'), $file, color('reset');
+				print color('blue'), $file_transl, color('reset');
 				printf ": %s revision %s is larger than english revision %s\n",
 					$lang, $files->{$file}, $revinfo->{$file}->{'cmt_rev'};
 			}
@@ -220,14 +220,14 @@ sub check_all
 		elsif ( -e $file_english )
 		{
 			$nr_needtrans++;
-			print color('blue'), $file, color('reset');
+			print color('blue'), $file_transl, color('reset');
 			printf ": need to translate revision %s\n", $revinfo->{$file}->{'cmt_rev'};
 		}
 		# translation exists, but original has been removed
 		elsif ( -e $file_transl )
 		{
 			$nr_obsolete++;
-			print color('blue'), $file, color('reset');
+			print color('blue'), $file_transl, color('reset');
 			print ": no english file found!\n";
 		}
 		# weirdness
