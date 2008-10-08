@@ -3,6 +3,10 @@
 # This script perform changes in WML source files and bump version
 # number when translated files are up to date.
 
+# Known Issues:
+# when there is no change to the origfile the translation="" revision is
+# updated for current translations nevertheless
+
 use strict;
 use Getopt::Long;
 
