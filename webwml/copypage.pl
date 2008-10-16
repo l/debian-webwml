@@ -223,20 +223,20 @@ sub copy
 		undef $dsttitle;
 	}
 
-	# Open the files
-	open SRC, $srcfile
-		or die "Could not read $srcfile ($!)\n";
-
-	open DST, ">$dstfile"
-		or die "Could not create $dstfile ($!)\n";
-
-	# Retrieve CVS revision number
+	# Retrieve VCS revision number
 	my %vcsinfo = vcs_file_info( $srcfile );
 
 	if ( not %vcsinfo  or  not exists $vcsinfo{'cmt_rev'}  )
 	{
 		die "Could not get revision number for `$srcfile' - bug in script?\n";
 	}
+
+	# Open the files
+	open SRC, $srcfile
+		or die "Could not read $srcfile ($!)\n";
+
+	open DST, ">$dstfile"
+		or die "Could not create $dstfile ($!)\n";
 
 	# Copy the file and insert the revision number
 	my $insertedrevision = 0;
