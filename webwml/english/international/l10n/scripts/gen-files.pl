@@ -22,6 +22,7 @@ my %LanguageList = (
 #	NL    => 'dutch',
 	PT_BR => 'portuguese',
 	RO    => 'romanian',
+	SV    => 'swedish',
 # Has not used pseudo-urls recently
 #	TR    => 'turkish',
 );
@@ -686,7 +687,7 @@ sub get_stats_podebconf {
 	my $podebconf_errors_by_language = {};
 	# Load the coordination status databases
         my %status_db    = ();
-        for my $l (qw/ar ca de es fr nl pt_BR ro tr/) {
+        for my $l (qw/ar ca de es fr nl pt_BR ro sv tr/) {
                 if (-r "$opt_l/data/status.$l") {
                         $status_db{uc $l} = Debian::L10n::Db->new();
                         $status_db{uc $l}->read("$opt_l/data/status.$l", 0);
