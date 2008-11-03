@@ -84,7 +84,7 @@ sub pubdate
 my $current = current_issue;
 my $pubdate = pubdate ($current) . "T00:00:00Z";
 my $rdf = 'dwn.' . $ENV{LANGUAGE} . '.rdf';
-my $url = 'http://www.debian.org/News/weekly/' . $current . '/index.' . $ENV{LANGUAGE} . '.html';
+my $url = 'http://www.debian.org/News/project/' . $current . '/index.' . $ENV{LANGUAGE} . '.html';
 
 sub rdf_add
 {
