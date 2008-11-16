@@ -37,6 +37,17 @@ sub init_translators {
                        file            => 0,
                        compress        => 'none'
                 },
+
+               'Jean-Edouard Babin' => {
+                         email       => 'debian-l10n@jeb.be',
+                         summary     => 3,
+                         logs        => 3,
+                         diff        => 3,
+                         tdiff       => 0,
+                         file        => 3,
+                         compress    => 'none'
+                 },
+
                 'Denis Barbier' => {
                         email       => 'barbier@imacs.polytechnique.fr',
                         summary     => 3,
