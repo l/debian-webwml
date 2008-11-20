@@ -316,6 +316,7 @@ foreach $lang (@search_in) {
                                            $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $seconddifftype, $transversion{"$lang/$file"}, $version{"$orig/$file"};
                         $o_body .= sprintf "<td><a href=\"http://cvs.debian.org/webwml/$orig/%s?cvsroot=webwml#rev%s\">[L]</a></td>", $file, $version{"$orig/$file"};
 		    }
+		    		$o_body .= sprintf "<td><a href=\"http://cvs.debian.org/*checkout*/webwml/%s/%s?content-type=text/plain\">[F]</a>&nbsp;<a href=\"http://cvs.debian.org/webwml/%s/%s?cvsroot=webwml\">[L]</a></td>", $lang, $file, $lang, $file;
                     $o_body .= sprintf "<td align=center>%s</td>", $maintainer{"$lang/$file"} || "";
                     $o_body .= "</tr>\n";
                     $outdated{$lang}++;
@@ -466,6 +467,7 @@ foreach $lang (@search_in) {
                 elsif ($opt_d eq "h") { print HTML "<th>Colored diff</th><th>Unified diff</th>"; }
                 else { print HTML "<th>Diff</th>"; }
                 print HTML "<th>Log</th>";
+                print HTML "<th>Translation</th>";
                 print HTML "<th>Maintainer</th>";
                 print HTML "</tr>\n";
                 print HTML $o_body;
