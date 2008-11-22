@@ -7,7 +7,7 @@
 # Makefiles are not supported anymore for they bear too much space for errors.
 
 # Originally written 2000-02-26 by Peter Krefting <peterk@debian.org>
-# © Copyright 2000-2008 Software in the public interest, Inc.
+# Â© Copyright 2000-2008 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$

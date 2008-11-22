@@ -5,7 +5,7 @@
 # and provided language (-p switch) giving preference to
 # the later.
 
-# (c) Javier Fern·ndez-Sanguino PeÒa <jfs@debian.org>
+# (c) Javier Fern√°ndez-Sanguino Pe√±a <jfs@debian.org>
 # Distributed under the GNU GPL License (see http://www.gnu.org/gpl)
 
 # It fixes all the href links in the current directory

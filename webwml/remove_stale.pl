@@ -7,7 +7,7 @@
 # away.
 
 # Originally written 2001-03-22 by Peter Krefting <peterk@debian.org>
-# © Copyright 2001-2008 Software in the public interest, Inc.
+# Â© Copyright 2001-2008 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
