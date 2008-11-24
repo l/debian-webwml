@@ -1,20 +1,57 @@
 #use wml::debian::template title="Debian-Installer-Errata"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.118"
+#use wml::debian::translation-check translation="1.123"
 # $Id$
 # Original-Translator: Frank Lichtenheld <frank@lichtenheld.de>, 2003-11-11
 # Translator: Helge Kreutzmann <debian@helgefjell.de>, 2005-11-12 ff.
 
-<h1 id="lenny-beta2">Errata für Lenny-Veröffentlichung Beta2</h1>
+<h1 id="lenny-rc1">Errata für Lenny-Veröffentlichung RC1</h1>
 
 <p>
-Dies ist eine Liste der bekannten Probleme in der Lenny-Beta-2-Veröffentlichung des
+Dies ist eine Liste der bekannten Probleme in der Lenny-RC1-Veröffentlichung des
 Debian-Installers. Falls Sie Ihr Problem hier nicht aufgeführt finden,
 senden Sie uns bitte einen <a href="report-template">\
 Installationsbericht</a>, der das Problem beschreibt.
 </p>
 
 <dl class="gloss">
+  <dt>Veralteter Installationsleitfaden auf den Installationsmedien</dt>
+  <dd>
+     Die Ausgabe des Installationsleitfadens auf den Installationsmedien ist
+     veraltet. Es wird den Benutzern empfohlen, die <a 
+     href="http://www.debian.org/releases/lenny/installmanual">aktualisierte
+     Ausgabe auf der Website</a> zu verwenden.
+ </dd>
+  <dt>Multiarch-CD startet direkt den AMD64-Installer</dt>
+  <dd>
+     Auf der Multiarch-CD wird das Boot-Menü nicht angezeigt, sondern direkt in
+     den AMD64-Installer gestartet (Fehler #505243).
+ </dd>
+  <dt>Fehlerhafte Anzeige von Meldungen bei Installationen auf Dzongkha</dt>
+  <dd>
+     Passt das ausgewählte Passwort für root und die Bestätigung nicht zusammen,
+     dann ist bei Installationen in der Sprache Dzongkha der folgende Bildschirm
+     durcheinandergewürfelt (defekte Anzeige kursiver Schrift).
+ </dd>
+  <dt>Rückfall-Sprachen funktionieren nicht wie geplant</dt>
+  <dd>
+     Für einige Sprachen (konkret Nördliches Sami und Wolof) sollte eine
+     von Englisch verschiedene Rückfallsprache verwendet werden; allerdings
+     wird hier nur Englisch verwandt. Benutzer, die diese Sprachen, insbesondere
+     Nördliches Sami, auswählen, werden viele Masken auf Englisch angezeigt.
+ </dd>
+ <dt>Marvell-Platten-Controller werden bei den CD-ROMs nicht unterstützt</dt>
+ <dd>
+    Da das Paket <q>pata-modules</q> auf i386- und Amd64-Medien fehlt, werden
+    Geräte, die an Marvell-Platten-Controllern hängen, nicht erkannt. Um darum
+    herumzuarbeiten, können Sie das udeb-Paket für <a 
+    href="http://ftp.de.debian.org/debian/pool/main/l/linux-kernel-di-i386-2.6/pata-modules-2.6.26-1-486-di_1.72_i386.udeb">\
+    i386</a> oder <a 
+    href="http://ftp.de.debian.org/debian/pool/main/l/linux-kernel-di-amd64-2.6/pata-modules-2.6.26-1-amd64-di_1.72_amd64.udeb">\
+    Amd64</a> manuell herunterladen, auf ein Wechselmedium packen und manuell
+    mit <q>udpkg -i</q> von der zweiten Konsole aus installieren. Führen Sie
+    dann <q>depmod -a ; modprobe pata_marvell</q> aus.
+ </dd>
   <dt>Plattengeräte können sich beim Neustart ändern</dt>
   <dd>
      Auf Systemen mit mehreren Festplatten-Controllern kann es
@@ -28,34 +65,14 @@ Installationsbericht</a>, der das Problem beschreibt.
      Beachten Sie, dass das Problem bei folgenden Neustarts erneut auftreten 
      kann.
  </dd>
-  <dt><q>uninitialized value</q>-Warnungen von Perl während der Installation</dt>
-  <dd>
-     Als Ergebnis der kürzlichen Umstellung auf perl 5.10 werden in den
-     Installationsprotokollen einige Perl-Warnungen auftauchen. Soweit wir
-     wissen, sind diese harmlos und können ignoriert werden. An einer Lösung für
-     dieses Problem (<a href="http://bugs.debian.org/480533">#480533</a>) wird
-     gearbeitet.
- </dd>
-  <dt>Aptitude-Fehler während der Installation auf Russisch</dt>
-  <dd>
-     Dieses Problem wird zum Scheitern der Installation führen. Wir haben nur
-     für Russisch Berichte gesehen, aber einige andere Sprachen könnten auch
-     betroffen sein. Es wird erwartet, dass das Problem (<a 
-     href="http://bugs.debian.org/473559">#473559</a>) kurz nach der 
-     Veröffentlichung für täglich und wöchentlich gebaute Installer- und
-     CD-/DVD-Images behoben wird.<br />
-     Falls Sie von diesem Problem betroffen sind, kann die Installation mit
-     folgendem Trick dennoch abgeschlossen werden:
-     <ul>
-       <li>wechseln Sie auf die Debug-Konsole auf VT2</li>
-       <li>führen Sie folgenden Befehl aus:<br />
-           <tt>rm /target/usr/share/locale/&lt;Sprache&gt;/LC_MESSAGES/*apt*</tt><br />
-           (ersetzen Sie <q><tt>&lt;Sprache&gt;</tt></q> durch Ihren Sprachcode,
-           z.B. <q><tt>ru</tt></q>)</li>
-       <li>wechseln Sie zum Installer-Menü auf VT1 zurück</li>
-       <li>fahren Sie mit der Installation fort, indem Sie den ausgewählten
-           Installationsschritt erneut versuchen</li>
-    </ul>
+ <dt>Neustart-Probleme bei der Installation von USB-Sticks</dt>
+ <dd>
+    Das vorherige Problem kann auch bei Installationen von einem USB-Stick 
+    auftreten. Lassen Sie den USB-Stick vorübergehend eingesteckt, um den
+    installierten Rechner zu booten und die Konfigurationsdatei des
+    Bootloaders zu korrigieren. Lesen Sie <a 
+    href="http://bugs.debian.org/401435">#506263</a> für Details über solche 
+    provisorischen Lösungen.
  </dd>
   <dt>Fehlerhafte Router können zu Netzproblemen führen</dt>
   <dd>
@@ -77,36 +94,6 @@ Installationsbericht</a>, der das Problem beschreibt.
       <tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_wmem</tt>
 
  </dd>
-  <dt>Allgemeine Probleme nach dem Neustart aufgrund des standardmäßigen UTF-8</dt>
-  <dd>
-     Das installierte System wird nun standardmäßig auf UTF-8 eingestellt. 
-     Allerdings unterstützen nicht alle Anwendungen UTF-8 schon korrekt, was
-     zu kleineren oder größeren Problemen bei deren Benutzung führen kann.<br />
-     Bitte überprüfen Sie, ob solch ein Problem bereits berichtet wurde und,
-     falls nicht, reichen Sie einen Fehlerbericht gegen das relevante Paket
-     (nicht gegen den Installer) ein.
- </dd>
-  <dt>Graphischer Installer</dt>
-  <dd>
-     Der graphische Installer hat noch einige Probleme (lesen Sie auch den
-     Installationsleitfaden):
-     <ul>
-     <li>Einige Nicht-US-Tastaturinterpretationen werden nicht komplett
-         unterstützt (Tottasten und Kombinieren von Zeichen funktionieren 
-         nicht)</li>
-     <li>Tasten für akzentuierte oder besondere Zeichen könnten nicht korrekt
-         funktionieren. Das ist ein Rückschritt im Vergleich zu vorherigen
-         Veröffentlichungen, der hoffentlich bald behoben wird (<a 
-         href="http://bugs.debian.org/482335">#482335</a>)</li>
-     <li>Touchpads sollten funktionieren, aber die Unterstützung könnte nicht
-         optimal sein; falls bei Ihnen Probleme auftreten, sollten Sie 
-         stattdessen eine externe Maus verwenden.</li>
-     <li>Sollte auf fast allen PowerPC-Systemen mit einer ATI-Graphikkarte
-         funktionieren, aber wahrscheinlich nicht auf anderen 
-         PowerPC-Systemen</li>
-     </ul>
- </dd>
-
  <!-- leaving this in for possible future use...
      <dt>i386: mehr als 32&nbsp;MB an Speicher werden zur Installation benötigt</dt>
      <dd>
@@ -124,31 +111,6 @@ Installationsbericht</a>, der das Problem beschreibt.
      Lage, Installations-Images für Installationen von Diskette bereitzustellen.
      Wir erwarten, dass wir Installationen von Disketten wieder ermöglichen,
      wenn der Installer auf die nächste Kernelversion umsteigt.
- </dd>
-  <dt>i386/amd64: GRUB-Installation auf cpqarray-RAID könnte fehlschlagen</dt>
-  <dd>
-     Betroffen sind Systeme, die über <tt>/dev/ida/cXdX</tt>-Geräte verfügen.
-     Es wird erwartet, dass das Problem (<a 
-     href="http://bugs.debian.org/466600">#466600</a>) kurz nach der
-     Veröffentlichung für täglich und wöchentlich gebaute Installer und
-     CD-/DVD-Images behoben wird, wenn eine korrigierte Version von GRUB 
-     Testing erreicht.
- </dd>
-  <dt>i386/amd64: Reboot könnte bei loop-aes-verschlüsselten Root-Dateisystemen fehlschlagen</dt>
-  <dd>
-     Dies kann aufgrund eines Problems in GRUB auftreten, das zu einem
-     inkorrekten Setzen des <tt>root=</tt>-Parameters in 
-     <tt>/etc/grub/menu.lst</tt> führt. Lesen Sie <a 
-     href="http://bugs.debian.org/486360">#486360</a> für Details und 
-     Abhilfe.
- </dd>
-  <dt>Arm: NSLU2-Image startet nicht</dt>
-  <dd>
-     Die NSLU2-Installer-Images von debian.org booten nicht. Das Problem ist
-     allerdings auf den inoffiziellen Images von <tt>slug-firmware.net</tt>
-     nicht vorhanden. Diese Images enthalten auch den proprietären Mikrocode,
-     der für die Ethernet-Funktionalität notwendig ist, daher verwenden Sie
-     bitte die Images von <tt>slug-firmware.net</tt>.
  </dd>
   <dt>PowerPC: Verschiedene Probleme</dt>
   <dd>
