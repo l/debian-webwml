@@ -1,42 +1,87 @@
 #use wml::debian::template title="Errata pour l'installateur Debian"
 #use wml::debian::recent_list
-#use wml::debian::translation-check translation="1.118" maintainer="Nicolas Bertolissio"
+#use wml::debian::translation-check translation="1.122" maintainer="Nicolas Bertolissio"
 
 
-<h1 id="lenny-beta1"><i>Errata</i> pour la deuxième version bêta pour
-Lenny</h1>
+<h1 id="lenny-rc1"><i>Errata</i> pour la première version candidate à la
+publication pour Lenny</h1>
 
 <p>
-Voici une liste des problèmes connus dans la deuxième version bêta de
-l'installateur Debian pour Lenny. Si vous n'y voyez pas le problème que vous
-rencontrez, veuillez nous envoyer un <a href="report-template">compte-rendu
-d'installation</a> (en anglais) décrivant le problème.
+Voici une liste des problèmes connus dans la première version candidate à la
+publication de l'installateur Debian pour Lenny. Si vous n'y voyez pas le
+problème que vous rencontrez, veuillez nous envoyer un <a
+href="report-template">compte-rendu d'installation</a> (en anglais) décrivant
+le problème.
 </p>
 
 <dl class="gloss">
-  <dt>Avertissements pour <q>valeur non initialisée</q> par Perl pendant
-  l'installation</dt>
+<dt>Guide d'installation obsolète sur les media d'installation</dt>
+<dd>
+La copie du guide d'installation incluse dans les media d'installation est
+obsolète. Les utilisateurs ont suggéré d'utiliser <a
+href="http://www.debian.org/releases/lenny/installmanual">la copie mise à jour
+sur le site web</a>.
+</dd>
+<dt>Le CD multiarchitectures amorce directement l'installateur pour
+AMD64</dt>
+<dd>
+Le CD multiarchitectures («·multiarch·») ne montre pas le menu d'amorçage mais
+démarre directement sur l'installateur pour AMD64 (Bogue #505243).
+</dd>
+<dt>Affichage corrompu des messages dans les installations en Dzongkha</dt>
+<dd>
+Quand le mot de passe choisi pour root et sa confirmation ne correspondent
+pas, l'affichage des écrans qui suivent est brouillé pendant l'installation en
+langue Dzongkha (affichage cassé d'une police en italique).
+</dd>
+<dt>Les langues de repli ne sont pas utilisées comme prévu</dt>
+<dd>
+Pour certaines langues (à savoir le sami du nord et le wolof), une langue de
+repli différente de l'anglais devait être utilisée. Cependant, seul l'anglais
+est utilisé comme repli pour ces langues. Les utilisateurs sélectionnant ces
+langues, et particulièrement le sami du nord, se verront présenter de nombreux
+écrans en anglais.
+</dd>
+<dt>Les contrôleurs de disque Marvell ne sont pas pris en charge dans les
+media CD-ROM</dt>
+<dd>
+À cause de l'absence du paquet pata-modules sur les media pour i386 et amd64,
+les périphériques gérés par les contrôleurs de disque Marvell ne sont pas
+détectés.
+Comme solution de contournement, vous pouvez télécharger manuellement le
+paquet udeb pour <a
+href="http://http.us.debian.org/debian/pool/main/l/linux-kernel-di-i386-2.6/pata-modules-2.6.26-1-486-di_1.72_i386.udeb">i386</a>
+ou <a
+href="http://http.us.debian.org/debian/pool/main/l/linux-kernel-di-amd64-2.6/pata-modules-2.6.26-1-amd64-di_1.72_amd64.udeb">amd64</a>,
+le mettre sur un medium éjectable et l'installer manuellement en lançant la
+commande «·udpkg -i·» depuis la seconde console. Exécutez ensuite «·depmod
+-a·; modprobe pata_marvell·».
+</dd>
+<dt>Possible modification des périphériques de disques lors du redémarrage</dt>
     <dd>
-    Conséquence du passage récent à Perl 5.10, les journaux d'installation
-    contiendront quelques avertissements de Perl. Pour autant que nous
-    sachions, ils sont inoffensifs et peuvent être ignorés. Une solution à ce
-    problème  (<a href="http://bugs.debian.org/480533">#480533</a>) est en
-    cours de recherche.
-    <dt>Erreurs d'aptitude pendant l'installation en russe</dt>
-    Ce problème conduira à l'échec de l'installation. Nous avons vu uniquement des signalements pour le russe, mais d'autres langues peuvent également être affectées.
-    On s'attend à ce que ce problème (<a href="http://bugs.debian.org/473559">#473559</a>) soit rapidement corrigé, après la publication des reconstructions quotidiennes et hebdomadaires de l'installateur et des images de CD/DVD.<br />
-    Dans le cas où vous êtes touché par ce problème, l'installation peut être terminée en utilisant le contournement suivant :
-    <ul>
-    <li>Passez sur une console de débogage sur VT2</li>
-    <li>Lancez la commande :<br />
-    <tt>rm /target/usr/share/locale/&lt;lang&gt;/LC_MESSAGES/*apt*</tt><br />
-    (remplacez <q><tt>&lt;lang&gt;</tt></q> par votre code de langue, e.g. <q><tt>ru</tt></q>)</li>
-    <li>Revenez au menu de l'installateur sur VT1</li>
-    <li>Continuez l'installation en essayant à nouveau l'étape de
-    l'installation sélectionnée</li>
-    </ul>
+    Sur les systèmes comportant plusieurs contrôleurs de disques lors du
+    redémarrage du système, le programme réalisant la gestion des périphériques
+    en espace mémoire utilisateur (<q>udev</q>) peut assigner un n&oelig;ud de
+    périphérique différent de celui utilisé pendant l'installation à cause d'un
+    changement dans l'ordre de chargement des pilotes.<br />
+    Ceci peut entraîner l'échec du démarrage du système. Dans la plupart des
+    cas, ceci peut être corrigé en modifiant la configuration du chargeur
+    d'amorçage et /etc/fstab, en utilisant le mode de secours de l'installateur
+    par exemple.<br />
+    Veuillez noter cependant que ce problème peut se reproduire lors des
+    démarrages suivants. La correction de ce problème est une priorité pour la
+    prochaine version de l'installateur Debian&nbsp;;
     </dd>
-  <dt>Problèmes de réseau possibles avec des routeurs bogués</dt>
+    <dt>Problèmes au redémarrage après l'installation depuis une clé USB</dt>
+    <dd>
+    Le problème ci-dessus peut aussi avoir lieu lors de l'installation depuis
+    une clé USB.
+    Laisser la clé USB en place provisoirement vous permettra de démarrer le
+    système installé et la bonne configuration du chargeur d'amorçage.
+    Voir <a href="http://bugs.debian.org/401435">#506263</a>
+    pour plus de détail et les solutions de contournement.
+    </dd>
+    <dt>Problèmes de réseau possibles avec des routeurs bogués</dt>
     <dd>
     Si vous rencontrez des problèmes de réseau durant l'installation, cela peut
     être dû à un routeur situé quelque part entre vous et le miroir Debian et
@@ -54,34 +99,6 @@ d'installation</a> (en anglais) décrivant le problème.
     fonctionner pour pratiquement tous les routeurs&nbsp;:<br />
     <tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_rmem</tt><br />
     <tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_wmem</tt>
-    </dd>
-  <dt>Problèmes courants après le redémarrage à cause du codage UTF-8
-    utilisé par défaut</dt>
-    <dd>
-    Le système d'installation est désormais paramétré en UTF-8 par défaut.
-    Cependant, toutes les applications ne supportent pas encore correctement
-    l'UTF-8 ce qui peut engendrer de petits problèmes ou des problèmes plus
-    importants lors de leur utilisation.<br />
-    Veuillez vérifier si de tels problèmes ont déjà été signalés avant de
-    remplir un rapport de bogue contre le paquet correspondant (et non contre
-    l'installateur)&nbsp;;
-    </dd>
-  <dt>Installateur graphique</dt>
-    <dd>
-    L'installateur a toujours quelques problèmes connus (veuillez également
-    vous reporter au guide d'installation&nbsp;:
-    <ul>
-      <li>Certaines dispositions de claviers non américaines ne sont pas
-	totalement gérées (les touches mortes et la combinaison de caractères
-	ne fonctionnent pas),</li>
-      <li>Les touches pour les caractères accentués ou les caractères spéciaux
-      peuvent ne pas fonctionner correctement ; c'est une régression comparée
-      aux publications précédentes que nous espérons voir bientôt corrigée 
-      (<a href="http://bugs.debian.org/482335">#482335</a>)&nbsp;</li>
-      <li>la plupart des PowerPC avec une carte ATI ne devraient pas rencontrer
-	de problèmes, mais il y a peu de chances que cela fonctionne sur les
-	autres systèmes PowerPC&nbsp;;</li>
-    </ul>
     </dd>
 
 <!-- conservé pour une possible utilisation ultérieure...
@@ -111,21 +128,6 @@ d'installation</a> (en anglais) décrivant le problème.
     quotidiennes et hebdomadaires de l'installateur et des images CD/DVD
     lorsqu'une version corrigée de GRUB atteindra testing.
     </dd>
-    <dt>Architectures i386/amd64 : le redémarrage peut échouer avec un système de fichiers
-    chiffré avec loop-aes</dt>
-    <dd>
-    Cela peut être dû à un problème avec GRUB qui a pour conséquence qu'un
-    paramètre incorrect <tt>root=</tt> est indiqué dans
-    <tt>/etc/grub/menu.lst</tt>.
-    Consultez <a href="http://bugs.debian.org/486360">#486360</a> pour plus de
-    détails et pour un contournement.
-    </dd>
-    <dt>Architecture arm : une image NSLU2 ne démarrera pas</dt>
-    Les images de l'installateur NSLU2 de Debian ne démarreront pas.
-    Cependant, ce problème n'est pas présent dans les paquets non officiels
-    issus de <tt>slug-firmware.net</tt>. Ces images incluent également le
-    microcode propriétaire nécessaire à Ethernet pour fonctionner, donc nous
-    vous prions d'utiliser les images de <tt>slug-firmware.net</tt>.
     <dt>Architecture PowerPC&nbsp;: divers problèmes</dt>
     <dd>
     Le portage sur l'architecture PowerPC a plusieurs problèmes dans cette
