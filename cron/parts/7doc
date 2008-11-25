@@ -71,7 +71,10 @@ echo -n " developers-reference"
 drdeb=`ls -t1 $ftpdir/pool/main/d/developers-reference/developers-reference_*.deb | head -1`
 dpkg-deb -x $drdeb dr
 test -d $webdocdir/developers-reference || install -d -m 2775 $webdocdir/developers-reference
-install -p -m 664 dr/usr/share/doc/developers-reference/*.html $webdocdir/developers-reference/
+for doc in dr/usr/share/doc/developers-reference/*.html
+do
+	install -p -m 664 "$doc" $webdocdir/developers-reference/$(basename "$doc" .html).en.html
+done
 install -p -m 664 dr/usr/share/doc/developers-reference/developers-reference.pdf $webdocdir/developers-reference/
 install -p -m 664 dr/usr/share/doc/developers-reference/developers-reference.txt.gz $webdocdir/developers-reference/
 rm -rf dr
