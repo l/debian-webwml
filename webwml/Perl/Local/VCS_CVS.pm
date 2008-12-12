@@ -194,6 +194,8 @@ Example uses:
 
 =cut
 
+# todo: verbose
+
 sub vcs_path_info
 {
 	my ($dir,%options) = @_;
@@ -208,8 +210,6 @@ sub vcs_path_info
 	_debug "Recurse is $recurse";
 	_debug "Match pattern is '$match_pat'" if defined $match_pat;
 	_debug "Skip pattern is  '$skip_pat'"  if defined $skip_pat;
-
-	croak "Skip not implemented" if defined $skip_pat;
 
 	# $cvs->readinfo expects a matchfile input;  if nothing is specified, we
 	# pass a pattern that matches everything
@@ -226,7 +226,10 @@ sub vcs_path_info
 	my %data;
 	for my $file (keys %{$cvs->{FILES}})
 	{
-		# we return relative paths, so strip of the dir name
+		# skip files that match the skip pattern
+		next if  $skip_pat  and  $file =~ m{$skip_pat};
+
+		# we return relative paths, so strip off the dir name
 		my $file_rel = $file;
 		$file_rel =~ s{^$dir/?}{};
 
