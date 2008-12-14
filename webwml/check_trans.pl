@@ -1188,6 +1188,7 @@ sub get_file_charset
 	{
 		while ( my $line = <$fd> )
 		{
+			next if $line =~ m{^[#%]};
 			next unless $line =~ m{CHARSET=(.*?)\s*$};
 			$charset = $1;
 			last;
