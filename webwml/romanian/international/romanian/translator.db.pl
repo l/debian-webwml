@@ -33,7 +33,7 @@ sub init_translators {
                        summary         => 3,
                        logs            => 0,
                        diff            => 3,
-                       tdiff           => 3,
+                       tdiff           => 0,
                        file            => 0,
                        compress        => 'none'
                 },
@@ -44,26 +44,27 @@ sub init_translators {
                 #     maxdelta:     outdated pages
 
                 untranslated        => {
-                        email       => '',
-                        mailsubject => '',
-                        mailbody    => '',
+                        email       => 'debian-l10n-romanian@lists.debian.org',
+                        summary     => '0',
+                        mailsubject => 'Pagini web netraduse',
+                        mailbody    => 'romanian/international/romanian/mail_untranslated.txt',
                 },
                 unmaintained        => {
                         email       => 'andreimpopescu@gmail.com',
-                        summary     => 2,
+                        summary     => 3,
                         mailsubject => 'Pagini web orfane',
                         mailbody    => 'romanian/international/romanian/mail_unmaintained.txt',
                 },
                 maxdelta            => {
-                        email       => 'andreimpopescu@gmail.com',
-                        summary     => 2,
+                        email       => 'debian-l10n-romanian@lists.debian.org',
+                        summary     => 1,
                         maxdelta    => 5,
                         mailsubject => '[Important] Pagini web invechite',
                         mailbody    => 'romanian/international/romanian/mail_obsolete.txt',
                 },
                 # this is a special name containing the default values
                 default   => {
-                        email       => '',
+                        email       => 'debian-l10n-romanian@lists.debian.org',
                         missing     => 0,
                         summary     => 0,
                         logs        => 0,
