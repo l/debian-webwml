@@ -137,6 +137,8 @@ sub vcs_count_changes
 	my $rev1 = shift || '1.1';
 	my $rev2 = shift || 'HEAD';
 
+	$rev1 = '1.1'  if $rev1 eq 'n/a';
+
 	# find the version number of HEAD, if it was specified
 	if ( $rev2 eq 'HEAD' )
 	{
@@ -150,7 +152,7 @@ sub vcs_count_changes
 	my @rev1 = split( /\./, $rev1 );
 	my @rev2 = split( /\./, $rev2 );
 
-	croak "non-similar revision numbers (different branches?)"
+	croak "non-similar revision numbers `$rev1' and `$rev2' (different branches?)"
 		if ( scalar @rev1 != scalar @rev2 );
 
 	# check that all but the last components of the version numbers match
