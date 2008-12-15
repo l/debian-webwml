@@ -686,6 +686,8 @@ sub send_email
 			print '-'x72, "\n";
 			print color('reset');
 
+			# make sure perl doesn't do any annoying charset conversions
+			binmode( \*STDOUT, ':bytes' );
 			print $msg->as_string;
 
 			print color('bold yellow');
