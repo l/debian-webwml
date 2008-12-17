@@ -132,6 +132,10 @@ if (open (F, $current . '/index.wml')) {
             $headline .= ' '.$1;
             $body = $2."\n";
             chop ($headline) if ($headline =~ /\.$/);
+	} elsif (/^<h2>(.*)<\/h2>(?:<br \/>)?\s*(.*)/) {
+            $headline = $1;
+            $body = $2."\n";
+            chop ($headline) if ($headline =~ /\.$/);
         } elsif (/^<p>(.*)/) {
             $body = $1."\n";
 	} elsif (/(.*)<\/p>/) {
