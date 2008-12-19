@@ -270,8 +270,10 @@ sub verbose;
 					switch_var( $revinfo_orig, $revinfo_transl );
 				}
 			}
-
 		}
+
+		# skip original files (i.e., most of english)
+		next if ( $file_orig eq $file_transl );
 
 		# determine the status of the file
 		my ($status,$str,$rev_transl,$maintainer,$maxdelta) = check_file(
