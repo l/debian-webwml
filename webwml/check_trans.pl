@@ -47,6 +47,7 @@
 #       -T            output translated diffs
 #       -p <pattern>  include only files matching <pattern>,
 #                     default is *.src|*.wml
+#       -r <file>     dump raw output to the specified file
 #       -s <subtree>  check only that subtree
 #       -a            output age of translation (if older than 2 months)
 #       -c            disable use of color in the output
@@ -90,7 +91,7 @@ use File::Basename;
 use File::Spec::Functions;
 use Term::ANSIColor;
 use Encode;
-#use Data::Dumper;
+use Data::Dumper;
 use FindBin;
 FindBin::again();
 
@@ -113,6 +114,7 @@ my $VERBOSE  = 0;
 my $DEFAULT_PATTERN = '(?:\.wml|\.src)$';
 
 # status codes
+# careful: these numbers are also used in stat_trans.pl!
 use constant {
 	ST_MISSING     => 1,
 	ST_NEEDSUPDATE => 3,
@@ -175,6 +177,9 @@ sub verbose;
 	# -s allows the user to restrict processing to a subtree
 	my $subdir = $OPT{'s'} || undef;
 
+	# -r <file> dumps raw output to the specified file
+	my $rawfile = $OPT{'r'} || undef;
+
 	# Global .transignore
 	my $transignore = Webwml::TransIgnore->new( vcs_get_topdir );
 
@@ -182,19 +187,20 @@ sub verbose;
 	my %english_revs = vcs_path_info( $english_path,
 		'recursive' => 1,
 		'match_pat' => $file_pattern,
-		'skip_pat'  => '^template/'
+		'skip_pat'  => '^template/',
 	);
 	# ... and in the translation
 	my %translation_revs = vcs_path_info( $language_path,
 		'recursive' => 1,
 		'match_pat' => $file_pattern,
-		'skip_pat'  => '^template/'
+		'skip_pat'  => '^template/',
 	);
 
 	# construct a list with all files that either occur in english or
 	# in the translation
 	my @files = uniq ( keys %english_revs, keys %translation_revs );
 
+	my %result;
 
 	# now check each of the files
 	foreach my $file (sort @files)
@@ -270,8 +276,10 @@ sub verbose;
 					switch_var( $revinfo_orig, $revinfo_transl );
 				}
 			}
-
 		}
+
+		# skip original files (i.e., most of the english originals)
+		next if ( $file_transl eq $file_orig );
 
 		# determine the status of the file
 		my ($status,$str,$rev_transl,$maintainer,$maxdelta) = check_file(
@@ -280,6 +288,47 @@ sub verbose;
 			$revinfo_orig, $revinfo_transl,
 		);
 
+		$result{$file} = {
+			status      => $status,
+			str         => $str,
+			rev_transl  => $rev_transl,
+			date_transl => $revinfo_transl->{'cmt_date'},
+			maintainer  => $maintainer,
+			maxdelta    => $maxdelta,
+			file_orig   => $file_orig,
+			file_transl => $file_transl,
+			rev_orig    => $revinfo_orig->{'cmt_rev'},
+		};
+
+	}
+
+
+	if ( $rawfile )
+	{
+		require Storable;
+
+		verbose( "Dumping output to `$rawfile'\n" );
+
+		open( my $fd, '>', $rawfile ) or die("Couldn't open `$rawfile': $!\n");
+		Storable::store_fd( \%result, $fd ) or die("Couldn't dump results to file\n");
+		close( $fd );
+
+		# don't output anything else
+		exit 0;
+	}
+
+	# now output the results
+	foreach my $file ( sort keys %result )
+	{
+		my $status      = $result{$file}->{status};
+		my $str         = $result{$file}->{str};
+		my $rev_transl  = $result{$file}->{rev_transl};
+		my $date_transl = $result{$file}->{date_transl};
+		my $maintainer  = $result{$file}->{maintainer};
+		my $maxdelta    = $result{$file}->{maxdelta};
+		my $file_orig   = $result{$file}->{file_orig};
+		my $file_transl = $result{$file}->{file_transl};
+		my $rev_orig    = $result{$file}->{rev_orig};
 
 		######################################################################
 		## Everything below is just output logic
@@ -298,7 +347,7 @@ sub verbose;
 		# check age of the translation
 		if ( $OPT{a} and $status == ST_NEEDSUPDATE )
 		{
-			my $age = int get_revision_age( $revinfo_transl );
+			my $age = int get_revision_age( $date_transl );
 
 			# only warn if the translation is older than 2 weeks
 			if ( $age > 14 )
@@ -314,7 +363,7 @@ sub verbose;
 			my $log = get_log(
 				$file_orig,
 				$rev_transl,
-				$revinfo_orig->{'cmt_rev'},
+				$rev_orig
 			);
 			print $log;
 		}
@@ -325,7 +374,7 @@ sub verbose;
 			my $diff = get_diff(
 				$file_orig,
 				$rev_transl,
-				$revinfo_orig->{'cmt_rev'},
+				$rev_orig
 			);
 			print $diff;
 		}
@@ -336,7 +385,7 @@ sub verbose;
 			my $diff = get_diff_txt(
 				$file_orig,
 				$rev_transl,
-				$revinfo_orig->{'cmt_rev'},
+				$rev_orig,
 				$file_transl
 			);
 			print $diff;
@@ -521,10 +570,13 @@ sub send_email
 			'Type'    => 'multipart/mixed',
 		);
 
+		die("Couldn't create mail message (MIME::Lite missing?)\n") unless $msg;
+
 		# and attach the body to the mail
 		my $part = MIME::Lite->new(
 			'Type' => 'text/plain',
 			'Data' => encode('utf-8',$mailbody),
+			#'Data' => $mailbody,
 		);
 		$part->attr( 'content-type.charset' => 'utf-8' );
 		$msg->attach( $part );
@@ -688,9 +740,9 @@ sub send_email
 			print '-'x72, "\n";
 			print color('reset');
 
-			# make sure perl doesn't do any annoying charset conversions
+			my $txt = $msg->as_string;
 			binmode( \*STDOUT, ':bytes' );
-			print $msg->as_string;
+			print $txt;
 
 			print color('bold yellow');
 			print '*'x72, "\n";
@@ -710,11 +762,10 @@ sub send_email
 #==
 sub get_revision_age
 {
-	my $rev_info = shift;
+	my $rev_timestamp = shift;
 
-	die("No revision info specified") unless ref $rev_info eq 'HASH';
+	die("No revision date specified") unless $rev_timestamp;
 
-	my $rev_timestamp = $rev_info->{'cmt_date'};
 	my $age = time - $rev_timestamp;
 
 	warn( "Timestamp is in the future!" ) if $age < 0;
@@ -848,7 +899,7 @@ sub parse_cmdargs
 	$OPT{s} = '';
 
 	# parse options
-	if ( not getopts( 'acdghlmM:n:p:Qqs:TvV', \%OPT )  )
+	if ( not getopts( 'acdghlmM:n:p:Qqr:s:TvV', \%OPT )  )
 	{
 		show_help();
 		exit -1;
@@ -1192,12 +1243,14 @@ sub get_file_charset
 	{
 		while ( my $line = <$fd> )
 		{
-			next if $line =~ m{^[#%]};
+			next if $line =~ m{^#};
 			next unless $line =~ m{CHARSET=(.*?)\s*$};
 			$charset = $1;
 			last;
 		}
 		close($fd);
+
+		verbose "using charset `$charset' for file `$file'";
 	}
 	else
 	{
