@@ -67,6 +67,8 @@ sub uniq (@)
 Slurps an entire file and returns the contents of the file as a scalar, or
 undef if an error occured (actual error will be in $!).
 
+The optional second argument can be used to specify the charset the file is in.
+
 This function is mean as a light-weight replacement for File::Slurp.
 
 =cut
@@ -74,12 +76,19 @@ sub read_file
 {
 	my $filename = shift 
 		or croak("Local::Util::read_file: no file specified");
+	my $encoding = shift;
+
+	my $input = '<';
+	if ( $encoding )
+	{
+		$input .= ":encoding($encoding)";
+	}
 
 	# slurp mode
 	local $/ = undef;
 
 	# read the file
-	open( my $fd, '<', $filename ) or return;
+	open( my $fd, $input, $filename ) or return;
 	my $text = <$fd>;
 	close( $fd );
 
