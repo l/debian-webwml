@@ -214,14 +214,22 @@ install-mo: $(INSTMOFILES)
 clean::
 	rm -f *.mo
 
+
+# TODO: there a bug here: if the translation .po files doesn't exist (i.e.
+# nothing translated), the stats are incorrect. 
 stats: $(POTFILES)
 # Suppress errors from msgmerge as they corrupt translation stats on
 # the Debian website
 	-@for d in $(DOMAINS); do \
-          echo -n "$$d.$(LANGUAGE).po: " 1>&2; \
-          msgmerge -q $$d.$(LANGUAGE).po $(ENGLISHDIR)/po/$$d.pot 2>/dev/null | \
-             msgfmt -o /dev/null --statistics -; \
-        done
+		echo -n "$$d.$(LANGUAGE).po: " 1>&2; \
+		if [ -e $$d.$(LANGUAGE).po ]; then \
+			msgmerge -q $$d.$(LANGUAGE).po $(ENGLISHDIR)/po/$$d.pot 2>/dev/null | \
+			msgfmt -o /dev/null --statistics -; \
+		else \
+			echo -n $$(egrep '^msgid ' $(ENGLISHDIR)/po/$$d.pot | wc -l); \
+			echo ' untranslated messages.'; \
+		fi; \
+	done
 
 todo:
 	-@for d in $(DOMAINS); do \
