@@ -228,12 +228,12 @@ sub vcs_path_info
 	my %data;
 	for my $file (keys %{$cvs->{FILES}})
 	{
-		# skip files that match the skip pattern
-		next if  $skip_pat  and  $file =~ m{$skip_pat};
-
 		# we return relative paths, so strip off the dir name
 		my $file_rel = $file;
 		$file_rel =~ s{^$dir/?}{};
+
+		# skip files that match the skip pattern
+		next if  $skip_pat  and  $file_rel =~ m{$skip_pat};
 
 		$data{$file_rel} = {
 			'cmt_rev'  => $cvs->{FILES}->{$file}->{'REV'},

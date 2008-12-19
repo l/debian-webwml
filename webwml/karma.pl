@@ -42,7 +42,7 @@ my %Karma;
 
 # include only files matching $filename
 my $MATCH = '(\.wml$)|(\.html$)';
-my $SKIP  = '/template/';
+my $SKIP  = '^template/';
 
 # parse command line;
 die("Please specify a language to examine\n")  if not @ARGV;
