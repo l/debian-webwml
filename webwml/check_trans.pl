@@ -182,11 +182,13 @@ sub verbose;
 	my %english_revs = vcs_path_info( $english_path,
 		'recursive' => 1,
 		'match_pat' => $file_pattern,
+		'skip_pat'  => '^template/'
 	);
 	# ... and in the translation
 	my %translation_revs = vcs_path_info( $language_path,
 		'recursive' => 1,
 		'match_pat' => $file_pattern,
+		'skip_pat'  => '^template/'
 	);
 
 	# construct a list with all files that either occur in english or
