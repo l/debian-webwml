@@ -1,0 +1,249 @@
+#use wml::debian::translation-check translation="1.2"
+<define-tag pagetitle>Debian GNU/Linux 4.0 のアップデート</define-tag>
+<define-tag release_date>2008-02-17</define-tag>
+#use wml::debian::news
+
+<define-tag release>4.0</define-tag>
+<define-tag codename>etch</define-tag>
+<define-tag revision>4.0r3</define-tag>
+
+<define-tag dsa>
+    <tr><td align="center"><a href="$(HOME)/security/%0/dsa-%1">DSA-%1</a></td>
+        <td align="center"><:
+    my @p = ();
+    for my $p (split (/,\s*/, "%2")) {
+	push (@p, sprintf ('<a href="http://packages.debian.org/src:%s">%s</a>', $p, $p));
+    }
+    print join (", ", @p);
+:></td><td align="left">%3</td></tr>
+</define-tag>
+
+<define-tag correction>
+    <tr><td><a href="http://packages.debian.org/src:%0">%0</a></td>              <td>%1</td></tr>
+</define-tag>
+
+<define-tag srcpkg><a href="http://packages.debian.org/src:%0">%0</a></define-tag>
+
+<p>
+Debian Project は、安定版ディストリビューション Debian GNU/Linux <release> 
+(コードネーム <codename>) の二回目の更新アナウンスができることを嬉しく思います。
+今回の更新では、主に安定版リリースへのセキュリティ問題の修正の追加と、
+重大な問題に対する若干の調整への対応を追加しています。</p>
+
+<p>
+今回の更新は Debian GNU/Linux <release> の新たなバージョンとなるものではなく、
+構成しているパッケージのいくつかに対しての更新であることに注意してください。
+<release> の CD や DVD を捨てる必要はありませんが、
+最新の変更を導入するために ftp.debian.org 
+に対して更新を行う必要があることには注意してください。</p>
+
+<p>
+頻繁に security.debian.org から更新をインストールしている人は大量のパッケージ更新をする必要はありません。
+security.debian.org での更新のほとんどが今回のアップデートに含まれています。</p>
+
+<p>
+新規の CD/DVD イメージは更新されたパッケージを含んでおり、
+パッケージアーカイブが含まれた通常の各種インストールメディアは、いつもの場所で間もなく入手可能になります。</p>
+
+<p>
+オンラインからの今回のリビジョンへのアップグレードは、通常 
+aptitude (または apt) パッケージツールで Debian の FTP/HTTP 
+ミラーの多くのうちの一つを指定することで実施されます 
+(sources.list(5) マニュアルページを参照してください)。
+ミラーの完全なリストは以下から入手出来ます:</p>
+
+<div class="center">
+  <a href="$(HOME)/mirror/list">http://www.debian.org/mirror/list</a>
+</div>
+
+
+<h2>Debian-Installer の更新</h2>
+
+<p>
+インストーラが、このリリースに含められている更新されたカーネルを使うように更新されました。
+この変更によって古い netboot イメージとフロッピーイメージが動作しなくなります。
+更新されたバージョンのものがいつもの場所から入手出来ます。</p>
+
+<p>
+今回の更新は安定度の改善と、二回目の更新時にアナウンスされていたものの実際は追加されていなかった 
+300MHz RM5200SC (Nevada) CPU の SGI O2 マシンに対するサポートを追加しています。</p>
+
+
+<h2>重要な変更点</h2>
+
+<p>
+更新された bcm43xx-fwcutter パッケージが volatile.debian.org 経由で配信されるようになります。
+パッケージ自体は次回の更新時に <codename> から削除されます。</p>
+
+<p>
+flashplugin-nonfree は削除されました (下記を参照)。
+これはソースが公開されていないのとセキュリティサポートを得られないためです。
+セキュリティ上の理由から、直ちに全バージョンの flashplugin-nonfree パッケージと 
+Adobe Flash プレイヤーを含んでいるファイルの削除をお勧めします。
+テストされた更新が backports.org 経由で入手可能になるようにされます。</p>
+
+
+<h2>様々なバグ修正</h2>
+
+<p>
+今回の安定版の更新では、全アーキテクチャに渡ってパッケージのバージョンが一致していなかったパッケージについて、
+複数のアーキテクチャのバイナリ更新を追加しています。
+また、以下のパッケージについて重要な修正を2、3追加しています。</p>
+
+<table border=0>
+<tr><th>パッケージ</th>			<th>理由</th></tr>
+
+<correction apache                  "複数の脆弱性の修正">
+<correction apache2                 "複数の脆弱性の修正">
+<correction apache2-mpm-itk         "apache2 の再ビルドに対してビルド">
+<correction bos                     "non-free なコンテンツを削除">
+<correction clamav                  "non-freeな (そして再配布不可能な) unrar のコードを削除">
+<correction cpio                    "壊れた ustar アーカイブが作成されるのを修正">
+<correction denyhosts               "ssh ログファイルの誤った解析を修正">
+<correction ircproxy                "サービス拒否を修正">
+<correction glibc                   "sunrpc のメモリリークを修正">
+<correction gpsd                    "閏年に関する問題を修正">
+<correction ipmitool                "アーキテクチャ群を同期">
+<correction kdebase                 "最新の flash プラグインのサポートを追加">
+<correction kdelibs                 "最新の flash プラグインのサポートを追加">
+<correction kdeutils                "ハイバネート時の認証されていないアクセスを防止">
+<correction libchipcard2            "不足していた依存関係を追加">
+<correction linux-2.6               "複数のバグを修正">
+<correction loop-aes                "linux-2.6 カーネルの更新">
+<correction madwifi                 "サービス拒否攻撃を受ける可能性を修正">
+<correction net-snmp                "壊れていた snmpbulkwalk を修正">
+<correction ngircd                  "サービス拒否攻撃を受ける可能性を修正">
+<correction sing                    "権限の上昇を修正">
+<correction sun-java5               "リモートからのプログラム実行を修正">
+<correction unrar-nonfree           "任意のコード実行を修正">
+<correction viewcvs                 "cvs の解析処理を修正">
+<correction xorg-server             "cpuid を持たないプロセッサ用のインラインアセンブラを修正">
+
+</table>
+
+<p>以下のパッケージが新しいカーネルのサポートのために更新されています:</p>
+
+<ul>
+<li><srcpkg linux-modules-contrib-2.6></li>
+<li><srcpkg linux-modules-extra-2.6></li>
+<li><srcpkg linux-modules-nonfree-2.6></li>
+<li><srcpkg nvidia-graphics-legacy-modules-amd64></li>
+<li><srcpkg nvidia-graphics-legacy-modules-i386></li>
+<li><srcpkg nvidia-graphics-modules-amd64></li>
+<li><srcpkg nvidia-graphics-modules-i386></li>
+</ul>
+
+
+<h2>セキュリティ更新</h2>
+
+<p>
+このリビジョンでは、以下のセキュリティ更新が安定版リリースに対して追加されています。
+セキュリティチームは、これらの各更新について既に勧告をリリースしています:</p>
+
+<table border=0>
+<tr><th>勧告 ID</th>  <th>パッケージ名</th>    <th>修正内容</th></tr>
+
+<dsa 2007 1405    zope-cmfplone            "任意のコード実行">
+<dsa 2007 1437    cupsys                   "複数の脆弱性">
+<dsa 2007 1438    tar                      "複数の脆弱性">
+<dsa 2007 1439    typo3-src                "SQL インジェクション">
+<dsa 2007 1440    inotify-tools            "任意のコード実行">
+<dsa 2007 1441    peercast                 "任意のコード実行">
+<dsa 2007 1442    libsndfile               "任意のコード実行">
+<dsa 2008 1443    tcpreen                  "サービス拒否">
+<dsa 2008 1444    php5                     "複数の脆弱性">
+<dsa 2008 1445    maradns                  "サービス拒否">
+<dsa 2008 1446    wireshark                "サービス拒否">
+<dsa 2008 1447    tomcat5.5                "複数の脆弱性">
+<dsa 2008 1448    eggdrop                  "任意のコード実行">
+<dsa 2008 1449    loop-aes-utils           "プログラムミス">
+<dsa 2008 1450    util-linux               "プログラムミス">
+<dsa 2008 1451    mysql-dfsg-5.0           "複数の脆弱性">
+<dsa 2008 1452    wzdftpd                  "サービス拒否">
+<dsa 2008 1453    tomcat5                  "複数の脆弱性">
+<dsa 2008 1454    freetype                 "任意のコード実行">
+<dsa 2008 1455    libarchive               "複数の問題">
+<dsa 2008 1456    fail2ban                 "サービス拒否">
+<dsa 2008 1457    dovecot                  "情報漏洩">
+<dsa 2008 1458    openafs                  "サービス拒否">
+<dsa 2008 1459    gforge                   "SQL インジェクション">
+<dsa 2008 1460    postgresql-8.1           "複数の脆弱性">
+<dsa 2008 1461    libxml2                  "サービス拒否">
+<dsa 2008 1462    hplip                    "権限の上昇">
+<dsa 2008 1463    postgresql-7.4           "複数の脆弱性">
+<dsa 2008 1464    syslog-ng                "サービス拒否">
+<dsa 2008 1465    apt-listchanges          "任意のコード実行">
+<dsa 2008 1466    xorg                     "複数の脆弱性">
+<dsa 2008 1468    tomcat5.5                "複数の脆弱性">
+<dsa 2008 1469    flac                     "任意のコード実行">
+<dsa 2008 1470    horde3                   "サービス拒否">
+<dsa 2008 1471    libvorbis                "複数の脆弱性">
+<dsa 2008 1472    xine-lib                 "任意のコード実行">
+<dsa 2008 1473    scponly                  "任意のコード実行">
+<dsa 2008 1474    exiv2                    "任意のコード実行">
+<dsa 2008 1475    gforge                   "クロスサイトスクリプティング (XSS)">
+<dsa 2008 1476    pulseaudio               "権限の上昇">
+<dsa 2008 1477    yarssr                   "任意のシェルコマンドの実行">
+<dsa 2008 1478    mysql-dfsg-5.0           "複数の脆弱性">
+<dsa 2008 1479    fai-kernels              "複数の脆弱性">
+<dsa 2008 1479    linux-2.6                "複数の脆弱性">
+<dsa 2008 1483    net-snmp                 "サービス拒否">
+<dsa 2008 1484    xulrunner                "複数の脆弱性">
+
+</table>
+
+<p>
+更新を受け入れられたパッケージと受け入れを拒否されたパッケージについて、
+根拠も含めた完全なリストがこのリビジョンについての準備のページ上にあります:</p>
+
+<div class="center">
+  <url "http://release.debian.org/stable/<release>/<revision>/">
+</div>
+
+
+<h2>URL</h2>
+
+<p>今回のリリースにて変更が加わったパッケージの完全なリストは以下です:</p>
+
+<div class="center">
+  <url "http://ftp.debian.org/debian/dists/<downcase <codename>>/ChangeLog">
+</div>
+
+<p>現在の安定版ディストリビューション:</p>
+
+<div class="center">
+  <url "http://ftp.debian.org/debian/dists/stable/">
+</div>
+
+<p>安定版ディストリビューションへの更新提案中のパッケージ (Proposed updates):</p>
+
+<div class="center">
+  <url "http://ftp.debian.org/debian/dists/proposed-updates/">
+</div>
+
+<p>安定版ディストリビューションの情報 (リリースノート、正誤表など):</p>
+
+<div class="center">
+  <a
+  href="$(HOME)/releases/stable/">http://www.debian.org/releases/stable/</a>
+</div>
+
+<p>セキュリティ関連のアナウンスと情報について:</p>
+
+<div class="center">
+  <a href="$(HOME)/security/">http://security.debian.org/</a>
+</div>
+
+<h2>Debian について</h2>
+
+<p>
+Debian Project は、完全にフリーなオペレーティングシステム Debian GNU/Linux 
+をボランティアで時間と労力を割いて開発しているフリーソフトウェア開発者の団体です。</p>
+
+<h2>連絡先について</h2>
+
+<p>
+より詳細な情報については、Debian のウェブページ <a 
+href="$(HOME)/">http://www.debian.org/</a> を訪れるか、&lt;press@debian.org&gt; 
+宛にメールする、もしくは &lt;debian-release@lists.debian.org&gt; 
+から安定版リリースチームに問い合わせを行ってください。</p>
