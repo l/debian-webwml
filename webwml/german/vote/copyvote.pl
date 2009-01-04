@@ -3,11 +3,11 @@
 # This script copies a set of vote related files named on the command line, 
 # and adds the translation-check header to them. It also will create the
 # destination directory if necessary, and copy the Makefile from the source.
-# Written in 2006-2008 by Helge Kreutzmann <debian@helgefjell.de>
+# Written in 2006-2009 by Helge Kreutzmann <debian@helgefjell.de>
 
 # Based on a script "copyadvisory.pl" by Peter Karlsson <peterk@debian.org>:
 # Written in 2000-2006 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2000-2008 Software in the public interest, Inc.
+# © Copyright 2000-2009 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -71,7 +71,8 @@ if (exists $env{'DEBEMAIL'}) {
 }
 
 
-$year = 2008;
+$year = 2009;
+# Note: you may have to adjust the following path
 $srcdir = "/scr/build/content/debian/web-commit/webwml/english/vote/$year";
 # $srcdir = "../../english/vote/$year";
 die "Unable to locate English version of vote $number.\n"
@@ -311,6 +312,7 @@ while (<SRC>)
 	if ($vf eq "vote_".$number."_majority.src")
 	{
 	    s#Option(.*) passes Majority#Option $1 erreicht Mehrheit#;
+	    s#Dropping Option(.*) because of Majority#Verwerfe Option $1 aufgrund von Mehrheit#;
 	    s#Majority#Mehrheit#;
 	}
 	if ($vf eq "vote_".$number."_index.src")
