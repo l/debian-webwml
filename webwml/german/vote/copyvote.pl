@@ -180,7 +180,7 @@ while (<SRC>)
 	    s#of resolving the tie. See <a#Variationen von Condorcet
 	    verwenden verschiedene Mittel,\num diese Pattsituation aufzulösen. Siehe#;
             s#various means of resolving the tie. See#Variationen von Condorcet verwenden verschiedene Mittel,\num diese Pattsituation aufzulösen. Siehe#;
-	    s#href="http://en.wikipedia.org/wiki/Cloneproof_Schwartz_Sequential_Dropping">Cloneproof#<q><a href="http://de.wikipedia.org/wiki/Schulze-Methode">\\#;
+#    s#href="http://en.wikipedia.org/wiki/Cloneproof_Schwartz_Sequential_Dropping">Cloneproof#<q><a href="http://de.wikipedia.org/wiki/Schulze-Methode">\\#;
             s#<a href="http://en.wikipedia.org/wiki/Cloneproof_Schwartz_Sequential_Dropping">Cloneproof Schwartz Sequential Dropping</a>#<q><a href="http://de.wikipedia.org/wiki/Schulze-Methode">\\#;
 	    s#Schwartz Sequential Dropping</a> for details. Debian's variation#Cloneproof Schwartz Sequential Dropping</a></q> für Details.\nDie Variation von Debian ist in#;
             s#for details. Debian's variation is spelled out in the#Cloneproof Schwartz Sequential Dropping</a></q> für Details.\nDie Variation von Debian ist in#;
