@@ -863,7 +863,7 @@ sub get_stats_podebconf {
 			      }
 			   }
 			   if (length $add) {
-			      $str = "<td>$str</td><td>0\% (0t0f$curtotal)</td><td></td><td></td>".$add;
+			      $str = "<td>$str</td><td>0\% (0t;0f;".$curtotal."u)</td><td></td><td></td>".$add;
 			   }
 			}
 			if (length $add) {
