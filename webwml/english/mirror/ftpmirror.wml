@@ -98,8 +98,13 @@ inherent to our mirror network in general.</small></p>
 
 <toc-add-entry name="how">How to mirror</toc-add-entry>
 
-<p>The recommended method of mirroring is with
-the so called <a href="anonftpsync">anonftpsync</a> script.</p>
+<p>The recommended method of mirroring is with the so called ftpsync scriptset,
+available in two forms:</p>
+<ul>
+    <li>as a tarball from <url "http://ftp-master.debian.org/ftpsync.tar.gz"></li>
+    <li>as a git repository: <kbd>git clone https://ftp-master.debian.org/git/archvsync.git</kbd></li>
+</ul>
+
 
 <p>The mirroring protocol which we recommend is
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>.</p>
@@ -111,33 +116,42 @@ mirrors, etc).</p>
 
 <h3>rsync setup</h3>
 
-<p>We recommend to use <a href="anonftpsync">this script</a> to mirror the archive.
-Follow the directions in the script to set up mirroring.</p>
+<p>We recommend to use <a href="http://ftp-master.debian.org/ftpsync.tar.gz">the ftpsync scriptset</a> to mirror the archive.
+Follow the README file included to set up mirroring.</p>
 
-<p>Here is some advice for those who prefer different methods:</p>
+<p>If you do use your own scripts, the minimal functionality that must be 
+supported is as follows:</p>
 
 <ul>
+   <li><p>MUST perform a 2-stage sync</p>
+   <p>The archive mirroring must be done in 2 stages. The first rsync run
+   must ignore the index files.  The correct exclude options for the 
+   first rsync run are:</p>
+   <kbd>--exclude Packages* --exclude Sources* --exclude Release* --exclude ls-lR*</kbd>
+   <p>The first stage must not delete any files.</p>
+   <p>The second stage should then transfer the above excluded files and
+   delete files that no longer belong on the mirror.</p>
+
+   <p>Rationale: if archive mirroring is done in a single stage, there will be
+   periods of time during which the index files will reference files not
+   yet mirrored.</p>
+   </li>
+
+   <li><p>MUST not ignore pushes while running (for <a href="push_mirroring">push mirroring</a>).</p>
+   <p>If a push is received during a run of the mirror sync, it MUST NOT
+   be ignored.  The whole synchronization process must be rerun.</p>
+
+   <p>Rationale: most implementations of Debian mirror scripts will leave the
+   mirror in an inconsistent state in the event of a second push being
+   received while the first sync is still running.  It is likely that in
+   the near future, the frequency of pushes will increase.</p>
+   </li>
+
   <li>Run rsync with at least these options: <kbd>--recursive --times
       --links --hard-links --delete</kbd>.</li>
 
-  <li>Avoid mirroring index files (Packages, Sources, etc) before
-      all the new data files (.deb, .orig.tar.gz, etc) are in place.
-      Use two stages of rsync &mdash; first transfer the data files while
-      excluding the index files, and then transfer everything else.
-      <br/>
-      This can be done by using <kbd>--exclude</kbd> to skip Packages*,
-      Sources* and Release* files, or by using only the pool/ subdirectory
-      in the first stage.
-      See <a href="anonftpsync">our script</a> for an example.</li>
-
   <li>If you have extra disk space, also use the <kbd>--delete-after</kbd>
       option to avoid some of the temporary update problems.</li>
-
-  <li>If you don't have enough disk space to mirror everything, use the
-      <kbd>--exclude</kbd> option to exclude portions of the archive from
-      mirroring. Commonly this includes various architectures you might not
-      want, because they take up a lot of space.
-      Please see the <a href="#partial">section on partial mirroring</a>.</li>
 
   <li>After rsync is done mirroring, add a time stamp file to the
       <code>project/trace/</code> subdirectory of the Debian mirror
@@ -150,10 +164,6 @@ Follow the directions in the script to set up mirroring.</p>
       users.
       Especially <tt>project/trace</tt> helps very much if there are any mirror issues.</li>
 
-  <li>Usually the upstream rsync servers will allow anonymous access.
-      In case they require authentication, set up usernames and passwords
-      in your script, either via the RSYNC_PASSWORD environment variable,
-      or using the <kbd>--password-file</kbd> option.</li>
 </ul>
 
 <toc-add-entry name="partial">Partial mirroring</toc-add-entry>
@@ -162,7 +172,7 @@ Follow the directions in the script to set up mirroring.</p>
 some people prefer to mirror only parts of it they need. If you want to
 exclude something, you should exclude architectures.</p>
 
-<p>With <a href="anonftpsync">anonftpsync</a>, this can be done by
+<p>With the recommended <a href="http://ftp-master.debian.org/ftpsync.tar.gz">ftpsync</a>, this can be done by
 editing the ARCH_EXCLUDE variable.</p>
 
 <p>We strongly advise against excluding the <tt>project/</tt>, <tt>doc/</tt>
@@ -183,8 +193,8 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb --exclude *_$_.udeb --exclu
 
 <toc-add-entry name="when">When to mirror</toc-add-entry>
 
-<p>The main archive gets updated twice a day.
-The mirrors commonly start updating around 9:00 and 21:00 (both times UTC),
+<p>The main archive gets updated four times a day.
+The mirrors commonly start updating around 3:00, 9:00, 15:00 and 21:00 (all times UTC),
 but these are never fixed times and you should not fixate your mirror on them.</p>
 
 <p>We recommend mirroring once every day. Mirroring more often than twice a
