@@ -1,26 +1,22 @@
 #use wml::debian::template title="Debian-Installer errata"
 #use wml::debian::recent_list
 
-<h1 id="lenny-rc1">Errata for lenny release RC1</h1>
+<h1 id="lenny-rc1">Errata for lenny release RC2</h1>
 
 <p>
-This is a list of known problems in the lenny RC1 release of
+This is a list of known problems in the lenny RC2 release of
 Debian Installer. If you do not see your problem listed here,
 please send us an <a href="report-template">installation report</a>
 describing the problem.
 </p>
 
 <dl class="gloss">
-	<dt>Outdated Installation Guide on installation media</dt>
+	<dt>Auto-assembly of RAID arrays in rescue mode can corrupt data</dt>
 	<dd>
-	The copy of the Installation Guide that's included on
-        installation media is outdated. Users are suggested to use
-        <a href="http://www.debian.org/releases/lenny/installmanual">the updated copy on the website</a>.
-	</dd>
-	<dt>Multiarch CD boots the AMD64 installer directly</dt>
-	<dd>
-	The multiarch CD doesn't show the boot menu but rather boots directly
-        into the AMD64 installer (Bug #505243).
+        Rescue mode should be used with great care when software RAID
+        arrays were in use on the system to rescue. The rescue mode scripts
+        automatically assemble arrays, which could lead to data corruption in
+        the presence of invalid or obsolete RAID superblocks.
 	</dd>
 	<dt>Corrupted display of messages in Dzongkha installs</dt>
 	<dd>
@@ -29,25 +25,6 @@ describing the problem.
         installs in Dzongkha language (broken display of italic
         font).
 	</dd>
-	<dt>Fallback languages not used as planned</dt>
-	<dd>
-	For some languages (namely Northern Sami and Wolof), a fallback
-        language different from English should be used. However, only
-        English is used as fallback for these language. Users choosing
-	these languages, particularly Northern Sami will be
-	presented with many screens in English.
-	</dd>
-
-	<dt>Marvell disk controllers not supported in CD-ROM media</dt>
-	<dd>
-	Due to a missing pata-modules package on i386 and amd64 media,
-	peripherals driven by Marvell disk controllers are not detected.
-	As a workaround, you can manually download the 
-	udeb package for <a href="http://http.us.debian.org/debian/pool/main/l/linux-kernel-di-i386-2.6/pata-modules-2.6.26-1-486-di_1.76_i386.udeb">i386</a> or <a href="http://http.us.debian.org/debian/pool/main/l/linux-kernel-di-amd64-2.6/pata-modules-2.6.26-1-amd64-di_1.53_amd64.udeb">amd64</a>, put it on a removable
-	medium and manually install it with 'udpkg -i' from the second
-	console. Then run 'depmod -a ; modprobe pata_marvell'.
-	</dd>
-
 	<dt>Disk devices may change on reboot</dt>
 	<dd>
 	On systems with multiple disk controllers, the kernel/udev may assign
@@ -97,15 +74,23 @@ describing the problem.
 	</dd>
 -->
 
-	<dt>i386: no installation from floppy disk</dt>
+	<dt>i386: few issues</dt>
 	<dd>
-	Due to an increase in the size of the 2.6.24 kernel, we are unable
+	The i386 port has some known issues in this release:
+	<ul>
+	<li>Due to an increase in the size of the 2.6.24 kernel, we are unable
 	to provide installation images for installs from floppy disk. We
 	expect to be able to support floppy installs again when the installer
-	switches to the next kernel version.
+	switches to the next kernel version.</li>
+	<li>We had at least one report about the installer crashing at
+	  the network hardware detection step on some Dell Inspiron laptops.
+	  See <a href="http://bugs.debian.org/509238">bug #509238</a>
+	  for details. A workaround seems to be booting the installer with
+	  the "vga=771" parameter.</li>
+	  </ul>
 	</dd>
 
-	<dt>powerpc: various issues</dt>
+	<dt>PowerPC: various issues</dt>
 	<dd>
 	The PowerPC port has several issues in this release:
 	<ul>
@@ -116,13 +101,6 @@ describing the problem.
 		    it will lock up some systems; you will need to add it to
 		    <tt>/etc/modules</tt> manually</li>
 	</ul>
-	</dd>
-
-	<dt>sparc: fails to recognize ESP/FAS SCSI controller</dt>
-	<dd>
-	Installer images are missing the <tt>sun_esp</tt> kernel module
-	which is needed to support CD and disc drives connected to an ESP or
-	FAS controller.
 	</dd>
 
 	<dt>s390: unsupported features</dt>
