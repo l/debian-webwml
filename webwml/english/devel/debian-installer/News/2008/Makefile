@@ -2,15 +2,15 @@
 # please contact debian-www.
 
 WMLBASE=../../../..
-CUR_DIR=devel/debian-installer/News/2009
+CUR_DIR=devel/debian-installer/News/2008
 SUBS=
 
 NOGENERICDEP := true
 
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html: index.wml $(wildcard 2009*.wml) \
-                        $(wildcard 2009*.title) \
+index.$(LANGUAGE).html: index.wml $(wildcard 2008*.wml) \
+                        $(wildcard 2008*.title) \
                         $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml \
                         $(GETTEXTDEP)
 	$(WML) index.wml
