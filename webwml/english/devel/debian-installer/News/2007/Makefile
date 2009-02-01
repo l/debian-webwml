@@ -9,8 +9,8 @@ NOGENERICDEP := true
 
 include $(WMLBASE)/Make.lang
 
-index.$(LANGUAGE).html: index.wml $(wildcard 2004*.wml) \
-                        $(wildcard 2004*.title) \
+index.$(LANGUAGE).html: index.wml $(wildcard 2007*.wml) \
+                        $(wildcard 2007*.title) \
                         $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml \
                         $(GETTEXTDEP)
 	$(WML) index.wml
