@@ -1,21 +1,21 @@
 #use wml::debian::template title="Configurare un server push"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.17" maintainer="Luca Monducci"
+#use wml::debian::translation-check translation="1.18" maintainer="Luca Monducci"
 
-<p>Configurare un server push consiste in due compiti di base: la
+<p>La configurazione di un server push consiste in due compiti di base: la
 configurazione dell'accesso rsync (per un normale mirroring di tipo
 <q>pull</q>) e la configurazionre del un meccanismo di attivazione
 via ssh (per avviare il mirroring push).</p>
 
-<p><small>(Per maggiori informazioni su cosa è un server push, leggere
+<p><small>(Per maggiori informazioni su cosa è un server push si veda
 <a href="push_mirroring">la spiegazione sul push mirroring</a>.)</small></p>
 
 <toc-display />
 
 <toc-add-entry name="rsync">Configurazione di rsync</toc-add-entry>
 
-<p>Installare <code>rsync</code> 2.1.1 o superiore. Se per il proprio
-sito si utiulizza Debian, è sufficiente installare il pacchetto
+<p>Installare <code>rsync</code> 2.1.1 o superiore. Se sul proprio
+sito si utilizza Debian, è sufficiente installare il pacchetto
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>
 più recente.</p>
 
@@ -77,10 +77,11 @@ ssh-keygen -f ~/.ssh/identity.mysite
 </pre>
 
 <p>Assicurarsi che la nuova chiave pubblica (~/.ssh/identity.mysite.pub)
-contenga all'inizio questo:</p>
+contenga all'inizio questo, dove IPADDRESS è l'indirizzo IP del proprio
+mirror di origine:</p>
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/sync &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync,,from="IPADDRESS" &amp;"
 </pre>
 
 <p>Occorre configurare uno script che contatterà i mirror destinazione.
@@ -100,19 +101,20 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
 
 <p>Questo script si allocherà sulla macchina remota usando la speciale
 chiave ssh creata prima, fornita a ciascun mirror destinatario e aggiunta
-nei rispettivi ~/.ssh/authorized_keys (sostituendo <q>sync</q> con
-<q>anonftpsync</q> oppure con qualsiasi altro comando per avviare il
+nei rispettivi ~/.ssh/authorized_keys (sostituendo <q>ftpsync</q> con
+con un qualsiasi altro comando per avviare il
 mirroring). Lo script stesso non farà nulla di utile in remoto, l'unico
 comando sarà lanciato in base alle impostazioni dalla chiave.</p>
 
-<p>Per inviare un segnale ai mirror effettivamente, hai bisogno di aggiungere
+<p>Per inviare un segnale ai mirror effettivamente, è necessario aggiungere
 le righe <code>./signal &lt;site&gt; &lt;username&gt;</code> al termine di
 del proprio rsync. Quindi, appena completato il proprio mirroring con il
 sito di origine, inizia il push verso i propri destinatari.</p>
 
 <p>È possibile mettere questi comandi sia all'inizio che al termine del
-proprio script <code>anonftpsync</code> oppure, se più conveniente, in un
-nuovo script che viene avviato da <code>anonftpsync</code>, per esempio:</p>
+proprio script <code>ftpsync.conf</code> oppure, se più conveniente, in
+un nuovo script che viene avviato da <code>anonftpsync</code>, per
+esempio:</p>
 
 <protect>
 <pre>
