@@ -1,7 +1,7 @@
 #use wml::debian::template title="Einen Debian-Archiv-Spiegel erstellen"
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/sid/archive.data"
-#use wml::debian::translation-check translation="1.64"
+#use wml::debian::translation-check translation="1.65"
 # $Id$
 # Translator: Thimo Neubauer <thimo@debian.org>
 # Updated by: Frank Lichtenheld <frank@lichtenheld.de>
@@ -116,8 +116,13 @@ gespendete Bandbreite.</p>
 
 <toc-add-entry name="how">Wie man spiegelt</toc-add-entry>
 
-<p>Die bevorzugte Methode zum Spiegeln ist 
-das so genannte <a href="anonftpsync">anonftpsync</a>-Skript.</p>
+<p>Die bevorzugte Methode zum Spiegeln erfolgt mit dem sogenannten 
+   <q>ftpsync</q>-Skripte-Satz, der in zwei Formen erhältlich ist:</p>
+<ul>
+    <li>als Tarball von <url "http://ftp-master.debian.org/ftpsync.tar.gz"></li>
+    <li>als ein Git-Depot: 
+       <kbd>git clone https://ftp-master.debian.org/git/archvsync.git</kbd></li>
+</ul>
 
 <p>Das von uns empfohlene Spiegelprotokoll ist
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>.</p>
@@ -129,35 +134,49 @@ das so genannte <a href="anonftpsync">anonftpsync</a>-Skript.</p>
 
 <h3>Rsync-Einrichtung</h3>
 
-<p>Wir empfehlen die Verwendung <a href="anonftpsync">dieses Skripts</a>,
-um das Archiv zu spiegeln. Folgen Sie einfach den Anweisungen im
-Skript, um den Spiegel zu erstellen.</p>
+<p>Wir empfehlen die Verwendung <a 
+   href="http://ftp-master.debian.org/ftpsync.tar.gz">des 
+   ftpsync-Skriptesatzes</a>,
+um das Archiv zu spiegeln. Folgen Sie der beigefügten README-Datei, um das
+   Spiegeln einzurichten.</p>
 
-<p>Hier einige Ratschläge für jene, die andere Methoden bevorzugen:</p>
+<p>Falls Sie Ihre eigenen Skripte verwenden, müssen diese mindestens die
+   folgenden Funktionalitäten aufweisen:</p>
+
+ <ul>
+   <li><p>Sie MÜSSEN einen zweistufigen Sync durchführen</p>
+     <p>Das Spiegeln des Archivs muss in zwei Stufen erfolgen. Der erste 
+        Rsync-Lauf muss die Index-Dateien ignorieren. Die korrekten 
+	Exclude-Optionen für den ersten Rsync-Lauf lauten:</p>
+        <kbd>--exclude Packages* --exclude Sources* --exclude Release* --exclude ls-lR*</kbd>
+     <p>In der ersten Stufe dürfen keine Dateien gelöscht werden.</p>
+     <p>Die zweite Stufe sollte die oben ausgeschlossenen Dateien übertragen
+        und Dateien löschen, die nicht mehr zum Spiegel gehören.</p>
+
+     <p>Begründung: Falls das Spiegeln in einer Stufe erfolgt wird es Zeiträume
+        geben, während der die Indexdatei Dateien referenziert, die noch nicht
+	gespiegelt wurden.</p>
+  </li>
+
+   <li><p>Sie dürfen <q>pushes</q> NICHT während des Laufs ignorieren (beim
+          <a href="push_mirroring">Push-Spiegeln</a>).</p>
+       <p>Falls während des Spiegelsynchronisierens ein Push erhalten wird,
+          darf dieser NICHT ignoriert werden. Der gesamte 
+	  Synchronisationsprozess muss erneut durchlaufen werden.</p>
+       <p>Begründung: die meisten Implementierungen der Debian-Spiegelskripte
+          lassen den Spiegel in einem inkonsistenten Zustand, falls während
+	  des ersten Synchronisationslaufs ein zweiter Push erhalten wird. Es
+	  ist davon auszugehen, dass in naher Zukunft sich die Push-Frequenz
+	  erhöhen wird.</p>
+  </li>
 
 <ul>
 <li>Führen Sie rsync mit zumindest diesen Optionen aus: <kbd>--recursive
     --times --links --hard-links --delete</kbd>.</li>
 
-<li>Vermeiden Sie das Spiegeln von Indexdateien (Packages, Sources usw.) bevor
-    alle Datendateien (.deb, .orig.tar.gz usw.) an ihrem Ort sind. Verwenden
-    Sie ein zweistufiges Rsync &ndash; übertragen Sie zuerst die Datendateien,
-    wobei Sie die Indexdateien ausschließen und dann übertragen Sie den Rest.
-    <br />
-    Dies kann mit der Option <kbd>--exclude</kbd> zum Überspringen der Dateien
-    Packages*, Sources* und Release* erreicht werden, oder indem bei der ersten
-    Stufe nur das Unterverzeichnis pool/ verwendet wird. Lesen Sie <a 
-    href="anonftpsync">unser Skript</a> als Beispiel.</li>
-
 <li>Falls Sie zusätzlichen Plattenplatz haben, verwenden Sie auch die
     <kbd>--delete-after</kbd> Option, um einige der temporären
     Aktualisierungsprobleme zu vermeiden.</li>
-
-<li>Falls Sie nicht genügend Plattenplatz haben, um alles zu spiegeln,
-    verwenden Sie die <kbd>--exclude</kbd> Option, um Teile des Archivs vom
-    Spiegeln auszunehmen. Üblicherweise beinhaltet dies verschiedene
-    Architekturen, die Sie nicht wollen, da sie viel Platz belegen. Bitte lesen
-    Sie den <a href="#partial">Abschnitt über teilweises Spiegeln</a>.</li>
 
 <li>Nachdem rsync mit dem Spiegeln fertig ist, fügen Sie einen Zeitstempel
     im <code>project/trace/</code> Verzeichnis des Debian-Spiegels hinzu,
@@ -170,11 +189,6 @@ Skript, um den Spiegel zu erstellen.</p>
     sie von geringfügiger Größe und dennoch nützlich für die Benutzer.
     Insbesondere <tt>project/trace</tt> hilft sehr viel, falls es 
     Spiegel-Probleme gibt.</li>
-
-<li>Typischerweise erlauben die Ursprungs-Rsync-Server anonymen Zugriff. Falls
-    Sie Authentifizierung verlangen richten Sie Benutzernamen und Passwörter in
-    Ihrem Skript ein, entwender über die Umgebungsvariable RSYNC_PASSWORD oder
-    mittels der Option <kbd>--password-file</kbd>.</li>
 </ul>
 
 
@@ -186,7 +200,8 @@ bevorzugen einige Leute, nur die Teile zu spiegeln, die sie auch benötigen.
 Wenn Sie etwas ausschließen wollen, sollten Sie Architekturen
 ausschließen.</p>
 
-<p>Mit <a href="anonftpsync">anonftpsync</a> kann dies durch das Editieren der
+<p>Mit dem empfohlenen <a href="http://ftp-master.debian.org/ftpsync.tar.gz">\
+   ftpsync</a> kann dies durch das Editieren der
 ARCH_EXCLUDE Variable geschehen.</p>
 
 <p>Wir empfehlen Ihnen dringend, die <tt>project/</tt>-, <tt>doc/</tt>- und 
@@ -207,8 +222,8 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb --exclude *_$_.udeb --exclu
 
 <toc-add-entry name="when">Wann Spiegeln</toc-add-entry>
 
-<p>Das Hauptarchiv wird zweimal täglich aktualisiert. Die Spiegel starten
-   typischerweise um 9:00 und 21:00 Uhr (beides UTC) mit der Aktualisierung,
+<p>Das Hauptarchiv wird viermal täglich aktualisiert. Die Spiegel starten
+   typischerweise um 3:00, 9:00, 15:00 and 21:00 Uhr (alles UTC) mit der Aktualisierung,
    aber das sind keine festen Zeiten und Sie sollten Ihren Spiegel nicht 
    fest darauf einstellen.</p>
 
