@@ -1,7 +1,7 @@
 #use wml::debian::template title="Mettre en place un serveur de repoussage"
 #use wml::debian::toc
 
-#use wml::debian::translation-check translation="1.17" maintainer="Nicolas Bertolissio"
+#use wml::debian::translation-check translation="1.8" maintainer="Nicolas Bertolissio"
 
 # Traducteur précédant : Christian Couder
 # Premier traducteur   : Christophe Lebars
@@ -105,11 +105,12 @@ ssh-keygen -f ~/.ssh/identite.monsite
 
 <p>
 Vérifiez que la nouvelle clé publique (~/.ssh/identite.monsite.pub) contient
-ceci au début du fichier&nbsp;:
+ceci au début du fichier, avec ADRESSEIP l'IP de votre miroir amont :
 </p>
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/sync &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync,,from="ADRESSEIP"
+&amp;"
 </pre>
 
 <p>
@@ -133,10 +134,9 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identite.monsite sleep 1
 Ce script va se connecter sur un hôte distant en utilisant la clé ssh spéciale
 que vous avez créée ci-dessus, à condition que chaque opérateur de miroir
 client ajoute cette clef à son propre fichier ~/.ssh/authorized_keys (en
-remplaçant également <q>sync</q> par <q>anonftpsync</q> ou autre selon le nom de sa
-commande de lancement de la recopie). Ce script ne fait rien d'utile à distance
-en lui-même, la commande unique sera lancée comme spécifié par le paramétrage
-de la clef.
+remplaçant également <q>ftpsync</q> selon le nom de sa commande de lancement
+de la recopie). Ce script ne fait rien d'utile à distance en lui-même, la
+commande unique sera lancée comme spécifié par le paramétragede la clef.
 </p>
 
 <p>
@@ -152,9 +152,9 @@ Ce nouveau script, <code>runmirrors</code>, devrait contenir quelque chose
 comme ceci&nbsp;:
 </p>
 <p>
-Vous pouvez placer ces commandes soit à la fin de votre script
-<code>anonftpsync</code>, ou si vous préférez, dans un autre script et lancer ce
-script à partir de <code>anonftpsync</code>, par exemple de la façon
+Vous pouvez placer ces commandes soit à la fin de votre
+<code>ftpsync.conf</code>, ou si vous préférez, dans un autre script et lancer
+ce script à partir de <code>anonftpsync</code>, par exemple de la façon
 suivante&nbsp;:
 </p>
 
