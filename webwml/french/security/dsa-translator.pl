@@ -1,6 +1,6 @@
 #!env perl -w
 
-# This script translate common part of DSA
+# This script translate common parts of DSA
 
 # Written by Jean-Edouard Babin
 
@@ -10,11 +10,11 @@ use Getopt::Std;
 #binmode(STDOUT, ":utf8");	
 
 # You may put your name here to add it automatically in the translation header
-my $maintainer = "Jean-Edouard Babin";
+my $maintainer = ""; 
 
 my $output= "";
 getopts('l:f:');
-die "Usage: $0 -f <file> -l <LANG> > <translted_file>" if (!defined($opt_f) or !defined($opt_l));
+die "Usage: $0 -f <file> -l <LANG> > <translated_file>" if (!defined($opt_f) or !defined($opt_l));
 
 
 $translation = {
