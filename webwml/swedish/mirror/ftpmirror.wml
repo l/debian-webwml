@@ -1,6 +1,6 @@
 #use wml::debian::template title="Sätta upp en spegel av Debianarkivet"
 #use wml::debian::toc
-#use wml::debian::translation-check translation="1.64"
+#use wml::debian::translation-check translation="1.65"
 
 <toc-display/>
 
@@ -133,8 +133,13 @@ spegelnätverk för närvarande.</small>
 <toc-add-entry name="how">Hur man speglar</toc-add-entry>
 
 <p>
-Den rekommenderade metoden för att spegla är med det så kallade
-<a href="anonftpsync">anonftpsync</a>-skriptet.
+Den rekommenderade metoden för att spegla är med den skriptsamling
+som kallas <a href="anonftpsync">ftpsync</a>
+och finns tillgänglig på två sätt:
+<ul>
+    <li>som en tarboll från <url "http://ftp-master.debian.org/ftpsync.tar.gz"></li>
+    <li>som ett gitarkiv: <kbd>git clone https://ftp-master.debian.org/git/archvsync.git</kbd></li>
+</ul>
 </p>
 
 <p>
@@ -153,46 +158,54 @@ länkar, gör det svårare att ha en delvis spegling, osv).
 
 <p>
 Vi rekommenderar att du använder
-<a href="anonftpsync">detta skript</a> för att spegla
+skriptsamlingen <a href="http://ftp-master.debian.org/ftpsync.tar.gz">ftpsync</a> för att spegla
 arkivet.
-Följ instruktionerna i skriptet för att sätta upp spegeln.
+Följ den medföljande README-filen för att sätta upp spegeln.
 </p>
 
 <p>
-Här är några råd för de som föredrar andra arbetssätt:
+Om du använder dina egna skript, gäller att den minsta funktionaliteten
+som måste stödjas är som följer:
 </p>
 
 <ul>
+ <li>
+  <p>MÅSTE genomföra en 2-stegssynkronisering.</p>
+  <p>Arkivspeglingen måste göras i två steg.
+  Den första rsync-körningen måste ignorera indexfilerna.
+  Det korrekta valet av "exclude"-parametrar för
+  den första rsync-körningen är</p>
+  <kbd>--exclude Packages* --exclude Sources* --exclude Release* --exclude ls-lR*</kbd>
+  <p>Det första steget får inte ta bort några filer.</p>
+  <p>Det andra steget måste sedan hämta de filer
+  som exkluderades ovan och ta bort filer som inte längre hör hemma
+  på spegeln.</p>
+
+  <p>Motivering: om arkivspegling görs i ett enda steg,
+  kommer det finnas
+  tidsperioder då indexfilerna refererar till filer som inte har
+  speglats ännu.</p>
+ </li>
+
+ <li>
+   <p>FÅR INTE ignorera uppdateringar under körning (för <a href="push_mirroring">&rdquo;push&rdquo;-spegling</a>).</p>
+  <p>Om en uppdatering tas emot under en körning av spegelsynkroniseringen FÅR den INTE
+  ignoreras.  Hela synkroniseringsprocessen måste köras om.</p>
+
+  <p>Motivering: de flesta implementationer av speglingsskript för Debian kommer lämna
+  spegeln i ett inkonsekvent tillstånd vid hämdelse av en andra uppdatering
+  som utförs medan den första synkroniseringen fortfarande körs.
+  Det är troligt att uppdateringsfrekvensen kommer öka i framtiden.</p>
+ </li>
  <li>
   Kör rsync med åtminstone dessa flaggor:
   <kbd>--recursive --times --links --hard-links --delete</kbd>.
  </li>
 
  <li>
-  Undvik att spegla indexfiler (Packages, Sources, osv) innan alla nya
-  datafiler (.deb, .orig.tar.gz, osv) är på plats.
-  Använd en tvåstegs-rsync &ndash; överför först datafilerna medan du
-  exkluderar indexfilerna, och överför sedan allt annat.
-  <br/>
-  Du kan göra detta genom att använda <kbd>--exclude</kbd> för att hoppa
-  över filerna Packages*, Sources* och Release*, eller genom att bara
-  använda underkatalogen pool/ i detta första steg.
-  Se <a href="anonftpsync">vårt skript</a> för ett exempel.
- </li>
-
- <li>
   Om du har tillräckligt med diskutrymme bör även flaggan
   <kbd>--delete-after</kbd> användas för att undvika vissa temporära
   uppdateringsproblem.
- </li>
-
- <li>
-  Om du inte har tillräckligt med diskutrymme att spegla allting, använd
-  flaggan <kbd>--exclude</kbd> för att utesluta delar av arkivet från
-  spegeln.
-  Det vanliga är att skriva in olika arkitekturer du inte önskar,
-  eftersom de tar en hel del utrymme.
-  Se <a href="#partial">avsnittet om att spegla delmängder</a>.
  </li>
 
  <li>
@@ -212,12 +225,6 @@ Här är några råd för de som föredrar andra arbetssätt:
   problem med speglingsprocessen.
  </li>
 
- <li>
-  Normalt tillåter uppströms-rsync-servrar anonym åtkomst.
-  Om de kräver autentisering måste du ställa in användar-id och lösenord
-  i ditt skript, antingen via miljövariabeln RSYNC_PASSWORD, eller genom att
-  använda flaggan <kbd>--password-file</kbd>.
- </li>
 </ul>
 
 <toc-add-entry name="partial">Spegla delmängder</toc-add-entry>
@@ -226,7 +233,7 @@ Här är några råd för de som föredrar andra arbetssätt:
 redan är föredrar vissa att bara spegla de delar de behöver.
 Om du vill undvara något bör du undvara arkitekturer.</p>
 
-<p>Med <a href="anonftpsync">anonftpsync</a> kan detta göras genom att
+<p>Med det rekommenderade <a href="http://ftp-master.debian.org/ftpsync.tar.gz">ftpsync</a> kan detta göras genom att
 redigera ARCH_EXCLUDE-variabeln.
 Det finns även andra specialskrivna skript, de är dock inte lämpliga för
 officiella speglar.
@@ -253,9 +260,9 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb</code><br />\n"
 <toc-add-entry name="when">När du bör spegla</toc-add-entry>
 
 <p>
-Huvudarkivet uppdateras var två gånger om dagen.
-Speglarna börjar normalt uppdatera runt klockan 9:00 och 21:00 (båda tiderna
-UTC), men detta är en fastslagen tid och du bör inte fixera dina speglar
+Huvudarkivet uppdateras fyra gånger om dagen.
+Speglarna börjar normalt uppdatera runt klockan 3:00, 9:00, 15:00 och 21:00 (alla tiderna
+UTC), men dessa är inga fastslagna tider och du bör inte fixera dina speglar
 runt dem.
 </p>
 
