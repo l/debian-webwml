@@ -1,5 +1,5 @@
 #use wml::debian::template title="Sätta upp en &quot;push&quot;-server"
-#use wml::debian::translation-check translation="1.17"
+#use wml::debian::translation-check translation="1.18"
 #use wml::debian::toc
 
 <p>Att sätta upp en <q>push</q>server består av två grundläggande steg:
@@ -84,11 +84,11 @@ ssh-keygen -f ~/.ssh/identity.minserver
 </pre>
 
 <p>Se till att den nya öppna nyckeln (~/.ssh/identity.minserver.pub)
-innehåller följande i början:
+innehåller följande i början där IPADRESS är din uppströmsspegels IP:
 </p>
 
 <pre>
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/sync &amp;"
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync,,from="IPADRESS" &amp;"
 </pre>
 
 <p>Du måste ställa in skriptet så att det kontaktar speglar nedströms.
@@ -110,7 +110,7 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
 <p>Detta skript kommer att logga in på fjärrvärden genom att använda den
 speciella ssh-nyckel du skapade ovan, förutsatt att varje nedströmsspegelsoperatör
 lägger till denna nyckel till deras egen ~/.ssh/authorized_keys (och ersätter
-"sync" med "anonftpsync" eller vad deras kommando för att starta speglingen kallas).
+<q>ftpsync</q> med namnet på deras kommando för att starta speglingen).
 Skriptet själv gör inget användbart på den andra sidan, 
 kommandot kommer att köras som specificerat i nyckelinställningarna.
 </p>
@@ -123,7 +123,7 @@ att börja föra speglingen vidare (<q>push</q>) till de nedströms från dig.
 </p>
 
 <p>Du kan placera dessa kommandon antingen i slutet av ditt
-<code>anonftpsync</code>-skript eller, om det är enklare för dig, i ett nytt
+<code>ftpsync.conf</code> eller, om det är enklare för dig, i ett nytt
 skript och sedan köra detta skript från <code>anonftpsync</code>, exempelvis:
 </p>
 
