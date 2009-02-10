@@ -57,7 +57,7 @@ para informações mais precisas sobre o tamanho dos espelhos.</p>
 <p>O repositório debian-security/ contém as atualizações de segurança lançadas
 pela equipe de segurança do Debian. Soa interessante para todos, mas como
 as atualizações de segurança são esporádicas, seria necessário espelhá-las
-muito freqüentemente para se manter atualizado (ou usar <a
+muito frequentemente para se manter atualizado (ou usar <a
 href="push_mirroring">espelhamento push</a>), por isso nós não recomendamos.
 Ao invés disso, o Debian faz tudo que é necessário para manter a alta
 disponibilidade do security.debian.org.</p>
@@ -91,21 +91,26 @@ acontece), muita banda é desperdiçada sem necessidade.</p>
 
 <p>Administradores de espelhos nos Estados Unidos deveria espelhar a partir
 de ftp.us.debian.org (o endereço de espelho oficial dos EUA, que é um espelho
-Push-Primary). Mas, como este endereço é também um apelido "round-robin" para
-várias máquinas, normalmente faz sentido determinar quais dos componentes é
-o melhor e então espelhar a partir deste em particular.
+Push-Primary). Mas, como este endereço é também um apelido <q>round-robin</q>
+para várias máquinas, normalmente faz sentido determinar quais dos componentes
+é o melhor e então espelhar a partir deste em particular.
 <br />
 <small>A vantagem de fazer isso é que evita o risco de falhas quando
 realizando rsync em dois estágios (diferentes estágios podem acabar em
 máquinas diferentes durante as janelas de tempo nas quais eles tem dados
-diferentes, causando uma condição de disputa ("race"). A desvantagem é
+diferentes, causando uma condição de disputa (<q>race</q>). A desvantagem é
 que concentra em único site o desempenho que pode varia, mas que é
 atualmente inerente à nossa rede de espelhos em geral.</small></p>
 
 <toc-add-entry name="how">Como fazer um espelho</toc-add-entry>
 
-<p>O método recomendado para se fazer um espelho é usando o
-script <a href="anonftpsync">anonftpsync</a>.</p>
+<p>O método recomendado para se fazer um espelho é usando o famoso conjunto
+de scripts ftpsync, disponível de duas formas:</p>
+<ul>
+    <li>como um tarball em <url "http://ftp-master.debian.org/ftpsync.tar.gz"></li>
+    <li>como um repositório git: <kbd>git clone https://ftp-master.debian.org/git/archvsync.git</kbd></li>
+</ul>
+
 
 <p>O protocolo de espelhamento que nós recomendamos é o
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>.</p>
@@ -117,37 +122,47 @@ fazer um espelho parcial, etc).</p>
 
 <h3>Configuração rsync</h3>
 
-<p>Nós recomendamos uso <a href="anonftpsync">deste script</a> para fazer o
-espelho dos repositórios.
-Siga as instruções no script para configurar um espelho.</p>
+<p>Nós recomendamos usar <a href="http://ftp-master.debian.org/ftpsync.tar.gz">\
+o conjunto de scripts ftpsync</a> para espelhar os repositórios.
+Siga as instruções do arquivo README incluído para configurar um espelho.</p>
 
-<p>Alguns conselhos para aqueles que preferem métodos diferentes:</p>
+<p>Se você prefere seus próprios scripts, a seguir listamos a funcionalidade
+mínima para a qual deve existir suporte:</p>
 
 <ul>
+   <li><p>DEVE realizar uma sincronização em 2 estágios</p>
+   <p>O espelhamento do arquivo deve ser feito em dois estágios. O primeiro
+   rsync deve ignorar os arquivos de índice. As opções de exclusão corretas
+   para o primeiro rsync são:</p>
+   <kbd>--exclude Packages* --exclude Sources* --exclude Release* --exclude ls-lR*</kbd>
+   <p>O primeiro estágio não deve apagar nenhum arquivo.</p>
+   <p>O segundo estágio deverá transferir os arquivos acima que não foram
+   incluídos e apagar os arquivos que não pertençam ao espelho.</p>
+
+   <p>Justificativa: se o espelhamento do arquivo é feito em um único estágio,
+   há períodos nos quais os arquivos de índices farão referências para arquivos
+   que ainda não foram espelhados.</p>
+   </li>
+
+   <li><p>NÃO DEVE ignorar <q>pushes</q> enquanto estiver em execução (para
+   <a href="push_mirroring">push mirroring</a>).</p>
+   <p>Se um <q>push</q> é recebido durante a execução de uma sincronização,
+   ele NÃO DEVE ser ignorado. Todo o processo de sincronização deve ser
+   re-executado.</p>
+
+   <p>Justificativa: a maioria das implementações dos scripts de espelhos do
+   Debian deixará o espelho em um estado inconsistente caso um segundo
+   <q>push</q> seja recebido enquanto a primeira sincronização ainda está
+   em execução. É provável que num futuro próximo, a frequência dos
+   <q>pushes</q> aumente.</p>
+   </li>
+
   <li>Execute o rsync com pelo menos essas opções: <kbd>--recursive --times
       --links --hard-links --delete</kbd>.</li>
-
-  <li>Evite espelhar arquivos de índice (Packages, Sources, etc) antes que
-      todos os novos arquivos de dados (.deb, .orig.tar.gz, etc) estejam
-      sincronizados. Use dois estágios de rsync &mdash; primeiro transfira
-      os arquivos de dados enquanto exclui os arquivos de índice, e então
-      transfira todo o resto.
-      <br />
-      Isto pode ser feito usando <kbd>--exclude</kbd> para pular os arquivos
-      Packages*, Sources* e Release*, ou usando somente o subdiretório pool/
-      no primeiro estágio.
-      Veja <a href="anonftpsync">nosso script</a> para um exemplo.</li>
 
   <li>Se você tem muito espaço em disco, também use a opção
       <kbd>--delete-after</kbd> para evitar alguns problemas temporários
       de atualização.</li>
-
-  <li>Se você não tiver muito espaço em disco para fazer o espelho de tudo,
-      use a opção <kbd>--exclude</kbd> para eliminar porções do repositório
-      do espelho. Geralmente essas porções incluem várias arquiteturas que
-      você pode não precisar, porque elas ocupam muito espaço.
-      Por favor, veja a <a href="#partial">seção sobre espelhamento
-      parcial</a>.</li>
 
   <li>Depois que o rsync tiver feito o espelho, adicione um arquivo de registro
       de data com o mesmo nome do seu servidor ao subdiretório
@@ -162,10 +177,6 @@ Siga as instruções no script para configurar um espelho.</p>
       Especialmente <tt>project/trace</tt>, que ajuda muito se houver algum
       problema com o espelho.</li>
 
-  <li>Usualmente os servidores rsync <q>upstream</q> permitirão acesso
-      anônimo. Caso eles requeiram autenticação, configure nomes de usuário
-      e senhas no seu script, através da variável de ambiente RSYNC_PASSWORD
-      ou usando a opção <kbd>--password-file</kbd>.</li>
 </ul>
 
 <toc-add-entry name="partial">Fazendo um espelho parcial</toc-add-entry>
@@ -174,8 +185,8 @@ Siga as instruções no script para configurar um espelho.</p>
 algumas pessoas preferem fazer um espelho apenas da parte que elas necessitam.
 Se você quer excluir alguma coisa, você deve excluir as arquiteturas.</p>
 
-<p>Com o <a href="anonftpsync">anonftpsync</a>, isto pode ser feito editando
-a variável ARCH_EXCLUDE.</p>
+<p>Com o <a href="http://ftp-master.debian.org/ftpsync.tar.gz">ftpsync</a>, que
+é recomendado, isto pode ser feito editando a variável ARCH_EXCLUDE.</p>
 
 <p>Nós advertimos fortemente sobre a exclusão dos subdiretórios
 <tt>project/</tt>, <tt>doc/</tt> e outros. Normalmente eles são menores,
@@ -197,10 +208,10 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb --exclude *_$_.udeb --exclu
 
 <toc-add-entry name="when">Quando fazer o espelho</toc-add-entry>
 
-<p>O repositório principal é atualizado duas vezes por dia.
-Os espelhos geralmente começam a ser atualizadas em torno de 09:00 e 21:00
-(ambos os horários UTC), mas estes não são horários fixos e você não deveria
-fixar seu espelho neles.</p>
+<p>O repositório principal é atualizado quatro vezes por dia.
+Os espelhos geralmente começam a ser atualizadas em torno de 03h00min,
+09h00min, 15h00min e 21h00min (todos os horários UTC), mas estes não são
+horários fixos e você não deveria fixar seu espelho neles.</p>
 
 <p>Nós recomendamos que você faça o espelhamento uma vez por dia. Espelhar
 mais do que duas vezes por dia não tem propósito e provavelmente vai levar
