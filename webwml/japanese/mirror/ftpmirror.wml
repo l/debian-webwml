@@ -1,7 +1,7 @@
 #use wml::debian::template title="Debian アーカイブミラーの構築"
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/sid/archive.data"
-#use wml::debian::translation-check translation="1.64"
+#use wml::debian::translation-check translation="1.65"
 
 <toc-display />
 
@@ -88,8 +88,12 @@ href="size">ミラーサイズ</a>のページを見てください。</p>
 
 <toc-add-entry name="how">どうやってミラーするのか</toc-add-entry>
 
-<p>推奨するミラー方法は <a href="anonftpsync">anonftpsync</a>
-というスクリプトを使用する方法です。</p>
+<p>推奨するミラー方法は、次の2種類の形式で利用可能な、ftpsync
+というスクリプトセットを使用する方法です。</p>
+<ul>
+    <li><url "http://ftp-master.debian.org/ftpsync.tar.gz"> の tarball</li>
+    <li>git リポジトリ: <kbd>git clone https://ftp-master.debian.org/git/archvsync.git</kbd></li>
+</ul>
 
 <p>推奨するミラー用のプロトコルは <a
 href="http://packages.debian.org/stable/net/rsync">rsync</a>
@@ -103,36 +107,41 @@ href="http://packages.debian.org/stable/net/rsync">rsync</a>
 
 <h3>匿名 rsync</h3>
 
-<p>アーカイブのミラーには <a href="anonftpsync">anonftpsync</a>
-の使用を推奨します。スクリプト内の指示に従ってミラーを構築してください。</p>
+<p>アーカイブのミラーには <a href="http://ftp-master.debian.org/ftpsync.tar.gz">ftpsync スクリプトセット</a>
+の使用を推奨します。中にある README ファイルに従ってミラーを構築してください。</p>
 
-<p>他の方法を採りたい人に向けて:</p>
+<p>あなた自身のスクリプトを使う場合、サポートしなければならない
+最低限の機能は次のとおりです:</p>
 
 <ul>
+   <li><p>2段階の同期を行うようにしてください。</p>
+   <p>アーカイブミラーは、2 段階で行われなければなりません。最初の rsync は
+   インデックスファイルを無視して実行する必要があります。最初の rsync 実行での
+   正しい exclude オプション は次のとおりです:</p>
+   <kbd>--exclude Packages* --exclude Sources* --exclude Release* --exclude ls-lR*</kbd>
+   <p>最初の段階ではどのファイルも削除してはなりません。</p>
+   <p>次の段階では、上記で除外されたファイルを転送し、もうミラーに属さない
+      ファイルを削除するようにします。</p>
+
+   <p>根拠: アーカイブミラーを 1 段階だけで行うようにすると、インデックスファイル
+      がまだミラーされていないファイルを参照する期間ができてしまいます。</p>
+   </li>
+
+   <li><p>実行中に push を無視してはなりません (<a href="push_mirroring">push ミラー</a> 向け)。</p>
+   <p>ミラー同期の実行中に push を受け取った場合、それを無視しては*いけません*。
+      全同期処理を再実行する必要があります。</p>
+
+   <p>根拠: Debian ミラースクリプトのほとんどの実装は、
+      最初の同期がまだ実行されているときに2回目の push イベントを受け取った場合、
+      ミラーを矛盾した状態のままにしてしまいます。おそらく近い将来、push の頻度は
+      増える予定です。</p>
+   </li>
+
   <li>rsync には最低限このオプションを付けてください:
       <kbd>--recursive --times --links --hard-links --delete</kbd></li>
 
-  <li>新たなデータファイル (.deb や .orig.tar.gz など)
-      のミラーを終える前にインデックスファイル (Packages や Sources など)
-      をミラーしないようにしてください。
-      最初にインデックスファイル以外のデータファイルを転送し、
-      その後でその他すべてのファイルを転送するという、2 段階の rsync
-      を用いてください。
-      <br/>
-      これを実現するには、第 1 段階において、<kbd>--exclude</kbd>
-      を用いて Packages* ファイルおよび Sources* ファイル、Release*
-      ファイルを無視するか、または pool/ サブディレクトリのみを使用するようにします。
-      例として、<a
-      href="anonftpsync">私たちの提供するスクリプト</a>を参照してください。</li>
-
   <li>ディスク容量に余裕がある場合は、<kbd>--delete-after</kbd>
       オプションも使って更新時の一時的な問題も回避するようにしてください。</li>
-
-  <li>全体をミラーするだけの十分なディスク容量がない場合は、<kbd>--exclude</kbd>
-      オプションを使ってミラーするアーカイブを除外してください。
-      通常これには、ミラーを望まないアーキテクチャを指定します。
-      各アーキテクチャは大量のディスク領域をとるためです。<a
-      href="#partial">「部分的なミラー」のセクション</a>も参照してください。</li>
 
   <li>rsync でのミラー作業が終わったら、
       あなたのサーバ名を付けたタイムスタンプファイルを Debian ミラーの
@@ -146,10 +155,6 @@ href="http://packages.debian.org/stable/net/rsync">rsync</a>
       これらは通常、サイズは小さく、それでいてユーザにとって有益です。
       特に、<tt>project/trace</tt> はミラーに問題があった場合非常に役に立ちます。</li>
 
-  <li>通常、上流の rsync サーバでは匿名アクセスが許可されています。
-      認証が必要となる場合は、環境変数 RSYNC_PASSWORD
-      または <kbd>--password-file</kbd> オプションを用いて、
-      スクリプト内でユーザ名とパスワードをセットアップしてください。</li>
 </ul>
 
 <toc-add-entry name="partial">部分的なミラー</toc-add-entry>
@@ -158,7 +163,7 @@ href="http://packages.debian.org/stable/net/rsync">rsync</a>
 アーカイブのサイズは巨大になっている</a>ので、必要な一部だけのミラーをしたいという人もいます。
 何か除外する場合は、アーキテクチャを除外してください。</p>
 
-<p><a href="anonftpsync">anonftpsync</a> の場合は、ARCH_EXCLUDE
+<p>推奨の <a href="http://ftp-master.debian.org/ftpsync.tar.gz">ftpsync</a> の場合は、ARCH_EXCLUDE
 変数を編集することで可能になります。</p>
 
 <p><tt>project/</tt>, <tt>doc/</tt>
@@ -178,8 +183,8 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb --exclude *_$_.udeb --exclu
 
 <toc-add-entry name="when">いつミラーするのか</toc-add-entry>
 
-<p>メインのアーカイブは一日二回更新されます。
-ミラーは通常 9:00 及び 21:00 (ともに UTC) 頃に更新を始めますが、
+<p>メインのアーカイブは1日4回更新されます。
+ミラーは通常 3:00、9:00、15:00 及び 21:00 (ともに UTC) 頃に更新を始めますが、
 これは決まっているわけではなく、これに執着すべきでもありません。</p>
 
 <p>毎日ミラー作業を行うことを推奨します。
