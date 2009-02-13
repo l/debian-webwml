@@ -3,7 +3,7 @@
 
 WMLBASE=..
 CUR_DIR=releases
-SUBS=hamm slink potato woody sarge etch lenny sid
+SUBS=hamm slink potato woody sarge etch lenny squeeze sid
 
 include $(WMLBASE)/Make.lang
 
