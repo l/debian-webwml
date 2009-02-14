@@ -13,6 +13,7 @@ include $(WMLBASE)/Make.lang
 ifeq "$(LANGUAGE)" "en"
 install::
 	test -L $(HTMLDIR)/mipsel || ln -sf mips $(HTMLDIR)/mipsel
+	test -L $(HTMLDIR)/armel || ln -sf arm $(HTMLDIR)/armel
 endif
 
 index.$(LANGUAGE).html:: $(TEMPLDIR)/release_info.wml
