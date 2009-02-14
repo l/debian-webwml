@@ -3,7 +3,7 @@
 
 WMLBASE=../..
 CUR_DIR=releases/lenny
-SUBS=
+SUBS=debian-installer
 
 include $(WMLBASE)/Make.lang
 
