@@ -111,6 +111,111 @@ describing the problem or
 for other known problems.
 </p>
 
+<h3 id="errata-r0">Errata for release 5.0</h3>
+
+<dl class="gloss">
+	<dt>Auto-assembly of RAID arrays in rescue mode can corrupt data</dt>
+	<dd>
+        Rescue mode should be used with great care when software RAID
+        arrays were in use on the system to rescue. The rescue mode scripts
+        automatically assemble arrays, which could lead to data corruption in
+        the presence of invalid or obsolete RAID superblocks.
+	</dd>
+	<dt>Corrupted display of messages in Dzongkha installs</dt>
+	<dd>
+	When the password chosen for root and its confirmations do not
+        match, the display of screens that follow is garbled, during
+        installs in Dzongkha language (broken display of italic
+        font).
+	</dd>
+	<dt>Disk devices may change on reboot</dt>
+	<dd>
+	On systems with multiple disk controllers, the kernel/udev may assign
+	a different device node on reboot of the system than was used during
+	installation due to difference in load order of drivers.<br />
+	This can lead to failure to boot the system. In most cases this can be
+	corrected by changing the bootloader configuration and /etc/fstab,
+	possibly using the rescue mode of the installer.<br />
+	Note however that this problem may occur again on subsequent boots.
+	</dd>
+
+	<dt>Reboot problems when installing from a USB stick</dt>
+	<dd>
+	The former problem may also happen when installing from a USB stick.
+	Temporarily keeping the USB stick in place will allow you
+	to boot the installed system and correct the bootloader
+	configuration file. See 
+	<a href="http://bugs.debian.org/506263">#506263</a>
+	for details about such workaround.
+	</dd>
+
+	<dt>Buggy routers may cause network problems</dt>
+	<dd>
+	If you experience network problems during the installation, this may be
+	caused by a router somewhere between you and the Debian mirror that
+	doesn't correctly handle window scaling.
+	See <a href="http://bugs.debian.org/401435">#401435</a> and this
+	<a href="http://kerneltrap.org/node/6723">kerneltrap article</a> for
+	details.<br />
+	You can work around this issue by disabling TCP window scaling. Activate
+	a shell and enter the following command:<br />
+	<tt>echo 0 &gt; /proc/sys/net/ipv4/tcp_window_scaling</tt><br />
+	For the installed system you should probably not completely disable TCP
+	window scaling. The following command will set ranges for reading and
+	writing that should work with almost any router:<br />
+	<tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_rmem</tt><br />
+	<tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_wmem</tt>
+	</dd>
+
+<!-- leaving this in for possible future use...
+	<dt>i386: more than 32 mb of memory is needed to install</dt>
+	<dd>
+	The minimum amount of memory needed to successfully install on i386
+	is 48 mb, instead of the previous 32 mb. We hope to reduce the
+	requirements back to 32 mb later. Memory requirements may have
+	also changed for other architectures.
+	</dd>
+-->
+
+	<dt>i386: few issues</dt>
+	<dd>
+	The i386 port has some known issues in this release:
+	<ul>
+	<li>Due to an increase in the size of the 2.6.24 kernel, we are unable
+	to provide installation images for installs from floppy disk. We
+	expect to be able to support floppy installs again when the installer
+	switches to the next kernel version.</li>
+	<li>We had at least one report about the installer crashing at
+	  the network hardware detection step on some Dell Inspiron laptops.
+	  See <a href="http://bugs.debian.org/509238">bug #509238</a>
+	  for details. A workaround seems to be booting the installer with
+	  the "vga=771" parameter.</li>
+	  </ul>
+	</dd>
+
+	<dt>PowerPC: various issues</dt>
+	<dd>
+	The PowerPC port has several issues in this release:
+	<ul>
+		<li>installation from floppy on OldWorld PowerMac is broken
+		    because no device node is created for the swim3 module
+		    and as miboot is not included</li>
+		<li>the snd-powermac module is no longer loaded by default as
+		    it will lock up some systems; you will need to add it to
+		    <tt>/etc/modules</tt> manually</li>
+	</ul>
+	</dd>
+
+	<dt>s390: unsupported features</dt>
+	<dd>
+	<ul>
+		<li>support for the DASD DIAG discipline is currently not
+		    available</li>
+		<li>support for LCS network interfaces is no longer available</li>
+	</ul>
+	</dd>
+</dl>
+
 <p>
 Improved versions of the installation system are being developed
 for the next Debian release, and can also be used to install etch.
