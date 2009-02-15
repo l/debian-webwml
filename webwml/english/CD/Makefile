@@ -19,7 +19,7 @@ else
 RELEASESDEP := $(ENGLISHDIR)/CD/releases/index.wml
 endif
 
-index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml $(RELEASESDEP) $(GETTEXTDEP)
+index.$(LANGUAGE).html: index.wml $(TEMPLDIR)/cdimage.wml $(TEMPLDIR)/release_info.wml $(RELEASESDEP) $(GETTEXTDEP)
 	$(WML) $(<F) -I $(ENGLISHDIR)/CD/
 
 misc.$(LANGUAGE).html: misc.wml $(TEMPLDIR)/cdimage.wml $(GETTEXTDEP)
