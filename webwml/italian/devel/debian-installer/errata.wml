@@ -1,0 +1,132 @@
+#use wml::debian::template title="Errata corrige dell'Istallatore Debian"
+#use wml::debian::recent_list
+#use wml::debian::translation-check translation="1.126" maintainer="Luca Monducci"
+
+<h1 id="lenny-rc1">Errata per la release lenny RC2</h1>
+
+<p>
+Questa è una lista dei problemi conosciuti nella versione lenny RC2
+dell'Installatore Debian. Se si riscontra un problema che non è presente
+in questa pagina, inviare un <a href="report-template">resoconto
+dell'installazione</a> in cui si descrive il proprio problema.
+</p>
+
+<dl class="gloss">
+    <dt>L'assemblamento automatico degli array RAID della modalità di ripristino può corrompere i dati</dt>
+    <dd>
+    La modalità di ripristino deve essere usata con moltissima cautela
+    se sul sistema da ripristinare sono in uso degli array in RAID software.
+    Infatti gli script della modalità di ripristino assemblano automaticamente
+    gli array, questo può comportare la corruzione dei dati se sono presenti
+    dei superblocchi RAID non validi o obsoleti.
+    </dd>
+
+    <dt>Visualizzazione corrotta dei messaggi durante le installazioni in Dzongkha</dt>
+    <dd>
+    Nel caso in cui la password di root e la sua conferma non coincidono,
+    la visualizzazione dello schermo successivo è corrotta. Questo si
+    verifica nelle installazioni in lingua Dzongkha (si rovina la
+    visualizzazione dei font in corsivo).
+    </dd>
+
+    <dt>I device dei dischi potrebbero cambiare a ogni riavvio</dt>
+    <dd>
+    Sui sistemi con più dischi, il kernel/udev
+    al riavvio del sistema potrebbe assegnare un device diverso da
+    quello usato durante l'installazione a causa di un diverso
+    ordine nel caricamento dei driver.
+    <br />
+    Questo può comportare l'impossibilità d'avviare il sistema.
+    Nella maggior parte dei casi si può ovviare modificando
+    la configurazione del boot loader e /etc/fstab
+    usando la modalità di ripristino dell'installatore.
+    <br />
+    Notare che questo problema si può presentare a ogni avvio.
+    </dd>
+
+    <dt>Problemi di riavvio con le installazioni da chiavetta USB</dt>
+    <dd>
+    Il problema precedente si potrebbe verificare anche con le installazioni
+    da chiavetta USB. Lasciando la chiavetta collegata è possibile avviare
+    il sistema installato e correggere il file di configurazione del
+    bootloader. Si veda il <a href="http://bugs.debian.org/506263">bug
+    #506263</a> per i dettagli su come aggirare questo problema.
+    </dd>
+
+    <dt>Router difettosi possono causare problemi di rete</dt>
+    <dd>
+    Se si incontrano problemi di rete durante l'installazione, &egrave;
+    possibile che essi siano causati da qualche router, tra il
+    computer e il mirror Debian, che non gestisca correttamente il
+    &ldquo;window scaling&rdquo;.
+    Vedere <a href="http://bugs.debian.org/401435">#401435</a> e
+    questo <a href="http://kerneltrap.org/node/6723">articolo su
+    kerneltrap</a> for dettagli.
+    <br />
+    Per aggirare l'ostacolo &egrave; possibile disabilitare
+    il &ldquo;TCP window scaling&rdquo;. Attivare una shell e dare il
+    comando:
+    <br />
+    <tt>echo 0 &gt; /proc/sys/net/ipv4/tcp_window_scaling</tt>
+    <br />
+    Per la procedura di installazione non &egrave; opportuno
+    disabilitare del tutto il &ldquo;TCP window scaling&rdquo;, ma
+    solo in maniera parziale. I seguenti comandi dovrebbero andare
+    bene per la maggior parte dei router in circolazione:
+    <br />
+    <tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_rmem</tt><br />
+    <tt>echo 4096 65536 65536 &gt;/proc/sys/net/ipv4/tcp_wmem</tt>
+    </dd>
+
+<!-- leaving this in for possible future use...
+    <dt>i386: sono richiesti più di 32&nbsp;MB per l'installazione</dt>
+    <dd>
+    La quantità minima di memoria necessaria per eseguire correttamente
+    l'installazione su un i386 è di 48&nbsp;MB, al posto dei precedenti
+    32&nbsp;MB. Ci auguriamo di ridurre la quantità necessaria a
+    32&nbsp;MB. I requisiti di memoria potrebbero aver subito cambiamenti
+    anche per le altre architetture.
+    </dd>
+-->
+
+    <dt>i386: qualche problema</dt>
+    <dd>
+    In questo rilascio il port su i386 ha qualche problema:
+    <ul>
+    <li>A causa dell'aumento della dimensione del kernel 2.6.24, non
+    è più possibile fornire immagini per l'installazione da dischetto.
+    Probabilmente sarà nuovamente possibile fare delle installazioni
+    da dischetto quando l'Installatore utilizzerà la prossima versione
+    del kernel.</li>
+
+    <li>È presente almeno una segnalazione del crash dell'Installatore
+    durante il riconoscimento dell'hardware di rete su alcuni portatili
+    Dell Inspiron. Si veda il <a href="http://bugs.debian.org/509238">bug
+    #509238</a> per i dettagli. Un modo per aggirare questo problema è
+    avviare l'Installatore con il parametro "vga=771".</li>
+    </ul>
+    </dd>
+
+    <dt>PowerPC: vari problemi</dt>
+    <dd>
+    In questo rilascio il port su PowerPC è afflitto da alcuni problemi:
+    <ul>
+    <li>non funziona l'avvio da floppy su PowerPC Oldworld perché il
+    modulo swim3 non crea il device e perché miboot non è stato incluso</li>
+
+    <li>Il modulo snd-powermac non è caricato automaticamente all'avvio
+    perché blocca alcuni sistemi. Per caricarlo automaticamente deve
+    essere aggiunto manualmente in <tt>/etc/modules</tt>.</li>
+    </ul>
+    </dd>
+
+    <dt>s390: caratteristiche non supportate</dt>
+    <dd>
+    <ul>
+    <li>Attualmente il supporto per la disciplina DADS DIAG non è
+    disponibile</li>
+
+    <li>Il supporto per le interfacce di rete LCS non è disponibile</li>
+    </ul>
+    </dd>
+</dl>
