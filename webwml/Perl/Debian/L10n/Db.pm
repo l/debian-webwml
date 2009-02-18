@@ -25,7 +25,7 @@ Debian::L10n::Db - handle database of debian l10n stuff
 
 This module is an interface to the database files used in several places of
 the debian localisation infrastructure, such as the webpages under
-C<webwml/E<lt>languageE<gt>/internaltional/l10n/>.
+C<webwml/E<lt>languageE<gt>/international/l10n/>.
 
 =head1 METHODS
 
