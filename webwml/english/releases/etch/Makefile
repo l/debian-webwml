@@ -20,3 +20,6 @@ installmanual.$(LANGUAGE).html: installmanual.wml $(TEMPLDIR)/release.wml \
 
 etchnhalf.$(LANGUAGE).html: etchnhalf.wml $(TEMPLDIR)/release.wml \
   $(ENGLISHDIR)/releases/etch/release.data
+
+$(ENGLISHSRCDIR)/$(CUR_DIR)/release.data: $(TEMPLDIR)/installer.wml
+	touch $@

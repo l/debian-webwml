@@ -17,3 +17,6 @@ releasenotes.$(LANGUAGE).html: releasenotes.wml $(TEMPLDIR)/release.wml \
 installmanual.$(LANGUAGE).html: installmanual.wml $(TEMPLDIR)/release.wml \
   $(ENGLISHDIR)/releases/lenny/release.data $(TEMPLDIR)/release_info.wml \
   $(wildcard $(HTMLDIR)/*/install*)
+
+$(ENGLISHSRCDIR)/$(CUR_DIR)/release.data: $(TEMPLDIR)/release_images.wml
+	touch $@
