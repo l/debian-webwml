@@ -101,7 +101,10 @@ sub getwmlfiles
     my @listfiles;
 
     print "$lang " if ($config{verbose});
-    die "$0: can't find $dir!\n" if (! -d "$dir");
+    if (! -d "$dir") {
+      print "$0: can't find $dir! Skipping ...\n";
+      return;
+    }
     if ($is_english) {
         @listfiles = @{$cvs->files()};
     } else {
@@ -220,6 +223,13 @@ my ( %percent_po_t, %percent_po_u, %percent_po_f );
 foreach $lang (@search_in) {
     next if $lang eq 'english';
     $po_translated{"total"}{$lang} = $po_fuzzy{"total"}{$lang} = $po_untranslated{"total"}{$lang} = 0;
+    $percent_po_t{'total'}{$lang} = 0;
+    $percent_po_f{'total'}{$lang} = 0;
+    $percent_po_u{'total'}{$lang} = 100;
+    if (! -d "$opt_w/$lang/po") {
+      print "$0: can't find $opt_w/$lang/po! Skipping ...\n";
+      next;
+    }
     my @status = qx,LC_ALL=C make -C $opt_w/$lang/po stats 2>&1 1>/dev/null,;
     foreach $line (@status) {
         chomp $line;
@@ -241,7 +251,7 @@ foreach $lang (@search_in) {
         } else {
             $percent_po_t{$domain}{$lang} = 0;
             $percent_po_f{$domain}{$lang} = 0;
-            $percent_po_u{$domain}{$lang} = 0;
+            $percent_po_u{$domain}{$lang} = 0; # or 100 if po/ doesn't exist
         }
     }
     $po_total{"total"} = $po_translated{"total"}{$lang} + $po_fuzzy{"total"}{$lang} + $po_untranslated{"total"}{$lang};
@@ -250,10 +260,6 @@ foreach $lang (@search_in) {
 	$percent_po_t{'total'}{$lang} = int ($po_translated{'total'}{$lang}/$po_total{'total'} * 100 + .5);
 	$percent_po_f{'total'}{$lang} = int ($po_fuzzy{'total'}{$lang}/$po_total{'total'} * 100 + .5);
 	$percent_po_u{'total'}{$lang} = int ($po_untranslated{'total'}{$lang}/$po_total{'total'} * 100 + .5);
-    } else {
-	$percent_po_t{'total'}{$lang} = 0;
-	$percent_po_f{'total'}{$lang} = 0;
-	$percent_po_u{'total'}{$lang} = 0;
     }
 }
 print "done.\n" if ($config{'verbose'});
