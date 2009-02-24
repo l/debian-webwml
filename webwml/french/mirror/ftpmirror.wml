@@ -2,7 +2,7 @@
 #use wml::debian::toc
 #include "$(ENGLISHDIR)/releases/sid/archive.data"
 
-#use wml::debian::translation-check translation="1.64" maintainer="Simon Paillard"
+#use wml::debian::translation-check translation="1.65" maintainer="Simon Paillard"
 
 
 <toc-display />
@@ -114,7 +114,11 @@ provoquant une problème de concurrence).</small></p>
 <toc-add-entry name="how">Comment faire un miroir</toc-add-entry>
 
 <p>La méthode recommandée pour faire tourner un miroir est d'utiliser
-le script dénommé <a href="anonftpsync">anonftpsync</a>.</p>
+le script ftpsync, disponibles de deux manières :</p>
+<ul>
+    <li>sous la forme d'une archive à l'adresse <url "http://ftp-master.debian.org/ftpsync.tar.gz"></li>
+    <li>via le dépôt git : <kbd>git clone https://ftp-master.debian.org/git/archvsync.git</kbd></li>
+</ul>
 
 <p>Le protocole recommandé est <a href="http://packages.debian.org/stable/net/rsync">rsync</a>.</p>
 
@@ -125,41 +129,47 @@ partielles de l'archive, etc.</p>
 
 <h3>Configuration de rsync</h3>
 
-<p>Nous recommandons l'utilisation de <a href="anonftpsync">ce
-script</a> pour faire un miroir de l'archive. Suivez les indications
-se trouvant dans le script pour mettre en place le miroir.</p>
+<p>Nous recommandons l'utilisation de <a href="http://ftp-master.debian.org/ftpsync.tar.gz">ftpsync</a> pour faire un miroir de l'archive. Suivez les indications
+se trouvant dans le fichier README pour mettre en place le miroir.</p>
 
-<p>Voici des conseils pour ceux qui préfèrent d'autres façons de faire
-un miroir.</p>
+<p>Si vous devez utiliser vos propres scripts, ceux-ci doivent intégrer les
+fonctionnalités indispensables ci-dessous :</p>
 
 <ul>
+   <li><p>la synchronisation DOIT se faire en deux étapes</p>
+   <p>La mise à jour de l'archive doit être effectuée en deux étapes.
+   Lors du premier passage de rsync, les fichiers d'index doivent être ignorés,
+   en utilisant la liste d'exclusion suivante :</p>
+   <kbd>--exclude Packages* --exclude Sources* --exclude Release* --exclude ls-lR*</kbd>
+   <p>La première étape ne doit pas supprimer un seul fichier.</p>
+   <p>La seconde étape doit ensuite effectuer le transfert des fichiers exclus
+   ci-dessus et supprimer les fichiers qui n'appartiennent plus à l'archive.</p> 
+
+   <p>Explication : lorsque la mise à jour de l'archive est faite en un seule étape,
+   les fichiers d'index référencent des fichiers qui n'ont pas encore été récupérés.</p> 
+
+   </li>
+
+   <li><p>un script en cours ne DOIT pas ignorer les signaux de déclenchement
+   (dans le cas de <a href="push_mirroring">miroir par repoussage</a>).</p>
+
+   <p>Si un signal est reçu alors qu'une mise à jour du miroir est en cours,
+   celui-ci ne DOIT PAS être ignoré. La mise à jour complète du miroir doit alors
+   être effectuée à nouveau.</p>
+
+   <p>Explication : si un second signal est reçu alors qu'une première mise à
+   jour est en cours, la plupart des scripts pour miroirs Debian laissent le
+   miroir dans un état incohérent.
+   Dans un futur proche, la fréquence de mise à jour de l'archive augmentera
+   probablement.</p>
+   </li>
 
   <li>Lancez rsync avec au moins les options suivantes&nbsp;:
   <kbd>--recursive --times --links --hard-links --delete</kbd>.</li>
 
-  <li>Évitez de synchroniser les fichiers index (les fichiers Packages,
-      Sources, etc) avant que les nouveaux fichiers de données (.deb, 
-      .orig.tar.gz, etc) ne soient mis en place.
-      Utilisez deux étapes de rsync &mdash; commencez par transférer les
-      fichiers de données en excluant les fichiers index, puis transférez tout
-      le reste.
-      <br/>
-      Cela peut être effectué en utilisant <kbd>--exclude</kbd> afin d'éviter
-      les fichiers Packages*, Sources* et Release*, ou en synchronisant
-      uniquement le répertoire pool/ lors de la première étape.
-      Référez-vous à <a href="anonftpsync">notre fichier</a> comme exemple.</li>
-
   <li>Même si vous avez de la place disque supplémentaire, utilisez
   l'option <kbd>--delete-after</kbd> pour éviter des problèmes de mise
   à jour temporaire.</li>
-
-  <li>Si vous n'avez pas assez d'espace disque pour faire un miroir de
-  toute l'archive, utilisez l'option <kbd>--exclude</kbd> pour exclure
-  certaines parties de l'archive. En général on enlève certaines
-  architectures qu'on ne veut pas, parce qu'elles occupent beaucoup d'espace
-  disque.
-  Veuillez consulter la <a href="#partial">section sur les miroirs
-  partiels</a>.</li>
 
   <li>Une fois que rsync a fini de mettre à jour le miroir, ajoutez
   un fichier «&nbsp;timestamp&nbsp;» au sous-répertoire
@@ -174,13 +184,6 @@ un miroir.</p>
   En particulier <tt>project/trace</tt> aide beaucoup en cas de
   problème de miroir.</li>
 
-  <li>Généralement les miroirs rsync amont autorisent les accès anonymes. Dans
-  le cas où une identification serait requise, configurez le nom d'utilisateur
-  et le mot de passe dans votre script, soit en utilisant la variable
-  d'environnement RSYNC_PASSWORD, soit en utilisant l'option
-  <kbd>--password-file</kbd>.
-  </li>
-
 </ul>
 
 <toc-add-entry name="partial">Miroir partiel</toc-add-entry>
@@ -190,8 +193,8 @@ Debian</a>, certaines personnes préfèrent ne faire un miroir que des
 quelques parties dont ils ont besoin. Si vous voulez en
 exclure une partie, vous devriez exclure les architectures.</p>
 
-<p>Avec <a href="anonftpsync">anonftpsync</a>, cela peut se faire en
-modifiant la variable ARCH_EXCLUDE.</p>
+<p>Avec le script recommandé <a href="http://ftp-master.debian.org/ftpsync.tar.gz">ftpsync</a>,
+cela peut se faire en modifiant la variable ARCH_EXCLUDE.</p>
 
 <p>Nous déconseillons vivement d'exclure les sous-répertoires
 <tt>project/</tt>, <tt>doc/</tt> et autres. Ils sont généralement
@@ -212,10 +215,10 @@ print "<code>--exclude binary-$_/ --exclude *_$_.deb --exclude *_$_.udeb --exclu
 
 <toc-add-entry name="when">Quand rafraîchir les miroirs&nbsp;?</toc-add-entry>
 
-<p>L'archive principale est mise à jour deux fois par jour.</p>
+<p>L'archive principale est mise à jour quatre fois par jour.</p>
 
 <p>En général les miroirs commencent à se mettre à jour à partir de
-09:00 et 21:00 (UTC), mais ce ne sont pas des horaires fixes et vous ne devriez
+03:00, 09:00, 15:00 et 21:00 (UTC), mais ce ne sont pas des horaires fixes et vous ne devriez
 pas régler votre opération de miroir à ces horaires.</p>
 
 <p>Nous recommandons de mettre à jour votre miroir une fois chaque jour. Mettre
