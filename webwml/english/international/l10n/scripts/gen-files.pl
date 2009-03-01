@@ -14,6 +14,7 @@ my %LanguageList = (
 	AR    => 'arabic',
 	CA    => 'catalan',
 	DE    => 'german',
+	RU    => 'russian',
 # Used by the Smith project, not for translations
 #	EN    => 'english',
 	ES    => 'spanish',
