@@ -3,7 +3,7 @@
 
 WMLBASE=../..
 CUR_DIR=vote/2009
-#SUBS=platforms
+SUBS=platforms
 VOTE=$(basename $(wildcard vote_*.wml))
 
 include $(WMLBASE)/Make.lang
