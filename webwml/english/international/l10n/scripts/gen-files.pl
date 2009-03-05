@@ -688,12 +688,22 @@ sub get_stats_podebconf {
 	my $podebconf_errors_by_language = {};
 	# Load the coordination status databases
         my %status_db    = ();
-        for my $l (qw/ar ca de es fr nl pt_BR ro sv tr/) {
+        opendir (DATADIR, "$opt_l/data")
+                or die "Cannot open directory $opt_l/data: $!\n";
+        foreach (readdir (DATADIR)) {
+                # Only check the status files
+                next unless ($_ =~ m/^status\.(.*)$/);
+                my $l = $1;
+                # status.en is not used for the English translation, but
+                # for reviews
+                next if ($l eq "en");
+
                 if (-r "$opt_l/data/status.$l") {
                         $status_db{uc $l} = Debian::L10n::Db->new();
                         $status_db{uc $l}->read("$opt_l/data/status.$l", 0);
                 }
         }
+        closedir (DATADIR);
         foreach $pkg (sort pkgsort @{$packages}) {
                 next unless $data->has_podebconf($pkg);
 
