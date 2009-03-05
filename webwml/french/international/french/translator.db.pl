@@ -110,6 +110,15 @@ sub init_translators {
                         file        => 3,
                         compress    => 'none'
                 },
+                'Guillaume Delacour' => {
+                       email           => 'gui@iroqwa.org',
+                       summary         => 2,
+                       logs            => 2,
+                       diff            => 2,
+                       tdiff           => 2,
+                       file            => 2,
+                       compress        => 'none'
+                },
                 'Guillaume Estival' =>  {
                         email       => 'frederic.bothamy@free.fr',
                         summary     => 2,
