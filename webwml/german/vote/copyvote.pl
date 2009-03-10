@@ -275,6 +275,8 @@ while (<SRC>)
 	    s#a foundation document, namely, the#verlangen würde, genauer gesagt der <a#;
 	    s#<a href="http://www.debian.org/devel/constitution">constitution</a>#href="http://www.debian.org/devel/constitution">Verfassung</a>,#;
 	    s#it requires a 3:1 majority to pass.#benötigt er eine 3:1-Mehrheit, um angenommen zu werden.#;
+	    s#Not determinted yet#Noch nicht bestimmt#;
+	    s#Debian Project Secretary#Debian-Projekt-Schriftführer#;
 
 	    #Generic
 	    s#January#Januar#;
