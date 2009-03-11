@@ -44,6 +44,7 @@ my %arch = (
 	    'sparc'   => 'Sun Sparc',
 	    'powerpc' => 'PowerPC',
 	    'arm'     => 'ARM',
+	    'armel'   => 'ARM EABI',
 	    );
 
 open ADV, $adv;
