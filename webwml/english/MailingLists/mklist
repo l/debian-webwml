@@ -350,7 +350,17 @@ END
 			foreach my $l (@lists) {
 				my $slist = $l; $slist =~ s/@.*//;
 				printf OUT "<DT><INPUT TYPE=\"checkbox\" NAME=\"subscribe\" VALUE=\"%s\">\n", $slist;
-				printf OUT "	<STRONG><a name=\"%s\" href=\"http://lists.debian.org/%s/\">%s</a></STRONG>", $slist, $slist, $slist;
+
+				# this fixes #445010, which is an annoying bug.
+				# this is hacked this way in order to only mess with the output part
+				# of the subscribe script generation, instead of modifying our whole
+				# process for foreign lists.
+				#  - damog@d.o, mar 14, 2009
+				if($slist =~ /\Aother\-(.+?)\z/) {
+					printf OUT "  <STRONG><a name=\"%s\" href=\"http://lists.debian.org/%s/\">%s</a></STRONG>", $1, $1, $1;
+				} else {	
+					printf OUT "	<STRONG><a name=\"%s\" href=\"http://lists.debian.org/%s/\">%s</a></STRONG>", $slist, $slist, $slist;
+				}
 
 				$list{$l}->{'Description'} =~ s/&/&amp;/g;
 				$list{$l}->{'Description'} =~ s/>/&gt;/g;
