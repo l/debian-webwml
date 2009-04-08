@@ -30,6 +30,7 @@ list-full.$(LANGUAGE).html: list-full.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/mirror/list-full.inc
 list-non-US.$(LANGUAGE).html: list-non-US.wml $(TEMPLDIR)/template.wml \
   $(ENGLISHDIR)/mirror/list-non-US.inc
+size.$(LANGUAGE).html: size.wml $(ENGLISHDIR)/mirror/size.data
 
 # there only needs to be one version of the following so
 # the non-english directories shouldn't try to install them
@@ -50,7 +51,7 @@ $(destmirrorstuff): $(HTMLDIR)/%: %
 cleandest::
 	rm -f $(destmirrorstuff)
 
-.PHONY: text html full nonus
+.PHONY: text html full nonus $(ENGLISHDIR)/mirror/size.data 
 text: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t text
 html: mirror_list.pl Mirrors.masterlist
@@ -61,6 +62,9 @@ nonus: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t nonus
 nonushtml: mirror_list.pl Mirrors.masterlist
 	@./mirror_list.pl -m Mirrors.masterlist -t nonushtml
+
+$(ENGLISHDIR)/mirror/size.data: $(ENGLISHDIR)/mirror/arch_size.pl
+	./arch_size.pl > $@
 
 $(ENGLISHDIR)/mirror/official_sponsors.list: \
   $(ENGLISHDIR)/mirror/mirror_list.pl $(ENGLISHDIR)/mirror/Mirrors.masterlist
