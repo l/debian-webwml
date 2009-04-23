@@ -29,7 +29,7 @@
 sub init_translators {
         my $translators = {
                 'Mohammed Adnène Trojette' => {
-                       email           => 'adn@via.ecp.fr',
+                       email           => 'debian-l10n-french@lists.debian.org',
                        summary         => 3,
                        logs            => 3,
                        diff            => 3,
@@ -76,7 +76,7 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Norbert Bottlaender-Prier' => {
-                        email       => 'frederic.bothamy@free.fr',
+                        email       => 'debian-l10n-french@lists.debian.org',
                         summary     => 2,
                         logs        => 0,
                         diff        => 1,
@@ -85,7 +85,7 @@ sub init_translators {
                         compress    => 'none'
                 },
 		'Cyril Brulebois' => {
-  	      		email       => 'cyril.brulebois@enst-bretagne.fr',
+                        email       => 'debian-l10n-french@lists.debian.org',
 		        summary     => 3,
 		        logs        => 3,
 		        diff        => 3,
@@ -102,7 +102,7 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Christian Couder' => {
-                        email       => 'christian@couder.net',
+                        email       => 'debian-l10n-french@lists.debian.org',
                         summary     => 3,
                         logs        => 3,
                         diff        => 3,
@@ -120,7 +120,7 @@ sub init_translators {
                        compress        => 'none'
                 },
                 'Guillaume Estival' =>  {
-                        email       => 'frederic.bothamy@free.fr',
+                        email       => 'debian-l10n-french@lists.debian.org',
                         summary     => 2,
                         logs        => 0,
                         diff        => 1,
@@ -138,7 +138,7 @@ sub init_translators {
                         compress    => 'none'
 		},
                 'Thomas Huriaux' => {
-                        email       => 'frederic.bothamy@free.fr',
+                        email       => 'debian-l10n-french@lists.debian.org',
                         summary     => 2,
                         logs        => 0,
                         diff        => 1,
@@ -183,7 +183,7 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Ghislain Mary' => {
-		        email       => 'frederic.bothamy@free.fr',
+                        email       => 'debian-l10n-french@lists.debian.org',
 		        summary     => 2,
 		        logs        => 0,
 		        diff        => 1,
@@ -219,7 +219,7 @@ sub init_translators {
                         compress    => 'none'
                 },
         'Willy Picard' =>  {
-                        email       => 'frederic.bothamy@free.fr',
+                        email       => 'debian-l10n-french@lists.debian.org',
                         summary     => 2,
                         logs        => 0,
                         diff        => 1,
@@ -237,7 +237,7 @@ sub init_translators {
                          compress    => 'none'
                  },
                 'Martin Quinson' => {
-                        email       => 'frederic.bothamy@free.fr',
+                        email       => 'debian-l10n-french@lists.debian.org',
                         summary     => 2,
                         logs        => 0,
                         diff        => 1,
@@ -255,7 +255,7 @@ sub init_translators {
                         compress    => 'none'
                 }, 
                 'Jérôme Schell' =>  {
-                        email       => 'frederic.bothamy@free.fr',
+                        email       => 'debian-l10n-french@lists.debian.org',
                         summary     => 2,
                         logs        => 0,
                         diff        => 1,
@@ -264,7 +264,7 @@ sub init_translators {
                         compress    => 'none'
                 },
                 'Mickael Simon' =>  {
-                        email       => 'frederic.bothamy@free.fr',
+                        email       => 'debian-l10n-french@lists.debian.org',
                         summary     => 2,
                         logs        => 0,
                         diff        => 1,
