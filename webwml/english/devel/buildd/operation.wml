@@ -3,9 +3,10 @@
 <P>
 At the heart of the system is the <TT>wanna-build</TT> database, which
 keeps track of package versions and states. <TT>quinn-diff</TT>
-compares the package lists for the target architecture against the list of source packages every
-day and feeds a list of packages that need re-compilation into the
-database where they enter state <TT>Needs-Build</TT>.
+compares the package lists for the target architecture against the list
+of source packages after every archive update and feeds a list of packages
+that need re-compilation into the database where they enter state
+<TT>Needs-Build</TT>.
 
 <P>
 All the build daemons (there can be more than one) query the database
@@ -48,10 +49,10 @@ database for compiling them. Let's look a bit closer: If it has some
 packages to build, it uses <TT>sbuild</TT> for the actual compilation
 process, and for each build a log is mailed to the maintainer of the
 daemon. He reviews the log and decides what to do with the package:
-upload it, set it to <TT>Failed</TT> or <TT>Dep-Wait</TT>, make some
-additions to the source dependency list and retry it, etc...
-If a positive acknowledge is received, the daemon moves it to an
-upload directory, from where all packages are uploaded by a cron job.
+upload it, set it to <TT>Failed</TT> or <TT>Dep-Wait</TT> and retry it,
+etc...  If a positive acknowledgement (a signed <TT>.changes</TT>
+file) is received, the daemon moves it to an upload directory, from where
+all packages are uploaded by a cron job.
 
 <P>
 Looking at the log files is the only human intervention in the whole
@@ -66,24 +67,10 @@ security hole.
 <P>
 The build script <TT>sbuild</TT> more or less just calls some standard
 Debian tools to compile the sources. It also helps with some common
-tasks and bookkeeping, but the really special thing about it are the
-source dependencies. Often packages need other packages installed for
-compilation, for example compilers and libraries. It is not practical
-to have all these packages installed all the time, and often it's not
-even possible because of conflicts. The source dependencies now simply
-tell <TT>sbuild</TT> for each package which other packages are needed.
-It can then automatically install them before the build and remove
-them again afterwards.
+tasks and bookkeeping and with automatically installing the
+build-dependencies as requested by the package being built.
 
-<P>
-The source dependency list can partially be generated automatically,
-too, by looking at the dependencies of the binary packages generated
-by the source. This is <TT>andrea</TT>'s job, which analyses the i386
-package list for dependencies and maps library packages to development
-package names. It also merges the results with manual additions for
-things that cannot be auto-generated, like compilers or special
-tools.
-
-<HR>
-<P><small>Content developed by Roman Hodek for the
-6th International Linux-Kongress 1999</small></p>
+<hrline />
+<p><small>Content developed by Roman Hodek for the
+6th International Linux-Kongress 1999; it was gently updated to reflect
+the current reality a bit more by Philipp Kern in 2009</small></p>
