@@ -32,23 +32,20 @@ cd $crondir/tmp
 igdsc=`ls -t1 $ftpdir/pool/main/i/installation-guide/installation-guide_*.dsc | head -1`
 igdir=`basename "$igdsc" |
 	sed -e 's/installation-guide_/installation-guide-/' -e 's/\.dsc//'`
-for dist in lenny; do
-	if [ "$igdsc" -nt $webtopdir/installmanual/$dist.log ]; then
-		echo "extracting installation-guide source..." >> $crondir/log/lessoften.log
-		[ -d "$igdir" ] && rm -fr "$igdir"
-		dpkg-source -sn -x "$igdsc" >> $crondir/log/lessoften.log
-		if [ -d "$igdir" ]; then
-			echo "building installation-guide for $dist..." >> $crondir/log/lessoften.log
-			cd $igdir/build &&
-				manual_release=$dist destination=$webtopdir/installmanual/$dist/ ./buildweb.sh > $webtopdir/installmanual/$dist.log 2>&1
-		fi
-	else
-		echo no new installation-guide for $dist, skipping build >> $crondir/log/lessoften.log
+if [ "$igdsc" -nt $webtopdir/installmanual/squeeze.log -a "$igdsc" -nt $webtopdir/installmanual/lenny.log ]; then
+	echo "extracting installation-guide source..." >> $crondir/log/lessoften.log
+	[ -d "$igdir" ] && rm -fr "$igdir"
+	dpkg-source -sn -x "$igdsc" >> $crondir/log/lessoften.log
+	if [ -d "$igdir" ]; then
+		echo "building installation-guide for squeeze..." >> $crondir/log/lessoften.log
+		cd $igdir/build &&
+			manual_release=squeeze destination=$webtopdir/installmanual/squeeze/ ./buildweb.sh > $webtopdir/installmanual/squeeze.log 2>&1
 	fi
-done
-
-echo "copying lenny installmanual in place..." >> $crondir/log/lessoften.log
-cp -a $webtopdir/installmanual/lenny/* $webdir/releases/lenny/
+	echo "copying squeeze installmanual in place..." >> $crondir/log/lessoften.log
+	cp -a $webtopdir/installmanual/squeeze/* $webdir/releases/squeeze/
+else
+	echo no new installation-guide for squeeze, skipping build >> $crondir/log/lessoften.log
+fi
 
 # previously in parts/1l10ndata, from bouz
 [ -d $crondir/datafiles ] || mkdir -p $crondir/datafiles
