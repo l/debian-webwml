@@ -1462,7 +1462,7 @@ sub generate_nsupdate {
   warn "writing out nsupdate commands...\n";
 
   # these aren't strictly necessary, but I thought they should help a bit
-  print "server samosa.debian.org\n";
+  print "server db.debian.org\n";
   print "zone mirror.debian.net\n";
 
   foreach my $cc (sort keys %zone_entries) {
