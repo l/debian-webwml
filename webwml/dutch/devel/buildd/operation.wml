@@ -1,12 +1,12 @@
 #use wml::debian::template title="Outline of operation of the autobuilder network" BARETITLE="true"
-#use wml::debian::translation-check translation="1.8" maintainer="Wouter Verhelst"
+#use wml::debian::translation-check translation="1.9"
 
 <p>Centraal in het systeem bevindt zich de <tt>wanna-build</tt>
 databank, dewelke informatie over pakketversies en -states bijhoudt.
-<tt>quinn-diff</tt> vergelijkt elke dag de pakketlijsten voor de
-doelarchitectuur tegen de lijst van bronpakketten, en stuurt een lijst
-van pakketten die gehercompileerd moeten worden in de database, waar ze
-de status <tt>needs-build</tt> krijgen.</p>
+<tt>quinn-diff</tt> vergelijkt na elke update van het archief de
+pakketlijsten voor de doelarchitectuur met de lijst van bronpakketten,
+en werkt een lijst van pakketten die opnieuw gecompileerd moeten worden
+bij in de database, waar deze de status <tt>Needs-Build</tt> krijgen.</p>
 
 <p>Alle build daemons (er kunnen er meerdere zijn) bevragen regelmatig
 de databank voor pakketten in deze status en kiezen een aantal van hen
@@ -25,27 +25,27 @@ Pakket-states en overgangen</p>
 
 <p>
 Als alles goed gaat, dan kan een afgewerkt pakket later geuploaded
-worden, wat overeenkomt met een andere status, <tt>uploaded</tt>. Daarna
+worden, wat overeenkomt met een andere status, <tt>Uploaded</tt>. Daarna
 zal het uiteindelijk geïnstalleerd worden in het Debian-archief zodat
 het tevoorschijn komt in de aangepaste pakketlijst voor de
 doelarchitectuur. Deze lijst wordt dan samengevoegd met de databank, en
-het pakket zal de status <tt>installed</tt> verkrijgen, waar het blijft
+het pakket zal de status <tt>Installed</tt> verkrijgen, waar het blijft
 tot de volgende versie van het bronpakket verschijnt.</p>
 
 <p>
-Er zijn verschillende andere statussen; hieronder zijn: <tt>failed</tt>,
+Er zijn verschillende andere statussen; hieronder zijn: <tt>Failed</tt>,
 wat gebruikt wordt voor pakketten die niet gecompileerd konden worden
 door fouten in de broncode, en waarbij verwacht wordt dat de problemen
 opgelost zullen worden in een volgende versie (nadat fouten gemeld
 werden, uiteraard). Zulk een nieuwe versie zal meteen
-<tt>needs-build</tt> binnengaan, maar met een waarschuwing dat iets mis
+<tt>Needs-Build</tt> binnengaan, maar met een waarschuwing dat iets mis
 was met de vorige versie. Samen met deze status wordt een
-foutbeschrijving opgeslagen. De status <tt>dep-wait</tt> wordt gebruikt
+foutbeschrijving opgeslagen. De status <tt>Dep-Wait</tt> wordt gebruikt
 wanneer een pakket een ander pakket nodig heeft, maar waarbij deze nog
 niet beschikbaar zijn en eerst opnieuw gecompileerd moeten worden. Deze
 status slaat de lijst van benodigde pakketten mee op, inclusief
 eventuele versies, en wanneer ze allemaal beschikbaar zijn, wordt de
-status terug naar <tt>needs-build</tt> gezet.</p>
+status teruggezet naar <tt>Needs-Build</tt>.</p>
 
 <p>
 Zoals we al gezien hebben neemt de build daemon pakketten uit de
@@ -54,11 +54,11 @@ er een aantal pakketten beschikbaar zijn, dan gebruikt het
 <tt>sbuild</tt> voor het daadwerkelijke compilatieproces, en wordt voor
 elke compilatie een log naar de beheerder van de daemon gestuurd. Hij
 controleert de log en beslist wat ermee gedaan moet worden: het
-uploaden, het pakket op <tt>failed</tt> of <tt>dep-wait</tt> zetten, een
-aantal zaken aan de lijst met afhankelijkheden toevoegen en opnieuw
-proberen, enz... Als een positief antwoord ontvangen wordt, dan
-verplaatst de daemon het pakket naar een upload directory, vanwaar alle
-pakketten door een cronjob geuploaded worden.</p>
+uploaden, het pakket op <tt>Failed</tt> of <tt>Dep-Wait</tt> zetten, en
+een nieuwe poging doen, enz...
+Als een positief antwoord (een gesigneerd <tt>.changes</tt> bestand</tt>)
+ontvangen wordt, dan verplaatst de daemon het pakket naar een upload directory,
+vanwaar door een cronjob alle pakketten geupload worden.</p>
 
 <p>
 Kijken naar de logbestanden is de enige menselijke interventie in het
@@ -76,26 +76,10 @@ beveiligingsrisico.</p>
 <p>Het compilatiescript <tt>sbuild</tt> doet niet veel meer dan het
 aanroepen van een aantal standaard Debian-tools om de broncode te
 compileren. Het helpt ook bij een aantal standaard taken en wat
-boekhouding, maar het echt speciale ding aan <tt>sbuild</tt> zijn de
-broncode-afhankelijkheden. Dikwijls hebben pakketten andere pakketten
-nodig om gecompileerd te kunnen worden, bijvoorbeeld compilers en
-bibliotheekbestanden. Het is niet praktisch om al die pakketten ten
-allen tijde geïnstalleerd te hebben staan, en het is dikwijls zelfs niet
-mogelijk omwille van conflicten. De broncode-afhankelijkheden vertellen
-<tt>sbuild</tt> nu gewoon voor elk pakket welke andere pakketten
-benodigd zijn. Het kan ze dan automatisch installeren voor de compilatie
-uitgevoerd wordt, en ze nadien ook weer verwijderen.<p>
-
-<p>
-De lijst van broncode-afhankelijkheden kan ten dele ook automatisch
-gegenereerd worden, door naar de lijst van afhankelijkheden van de
-binaire pakketten te kijken die door de broncode gegenereerd worden. Dit
-is de taak van <tt>andrea</tt>, die de afhankelijkheden in de
-i386-pakketlijst analyseert en bibliotheek-pakketten aan namen van
-ontwikkelingspakketten koppelt. Het voegt het resultaat ook samen met
-handmatige toevoegingen voor zaken die niet automatisch gegenereerd
-kunnen worden, zoals compilers of speciale tools.</p>
+boekhouding, en met de automatische installatie van
+broncode-afhankelijkheden.</p>
 
 <hr>
 <p><small>Inhoud geschreven door Roman Hodek voor het 6e internationale
-Linux-Kongress 1999</small></p>
+Linux-Kongress 1999; in 2009 door Philipp Kern voorzichtig bijgewerkt
+om beter aan te sluiten bij de huidige realiteit</small></p>
