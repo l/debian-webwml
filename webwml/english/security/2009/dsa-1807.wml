@@ -1,0 +1,56 @@
+<define-tag description>buffer overflow</define-tag>
+<define-tag moreinfo>
+<p>James Ralston discovered that the sasl_encode64() function of cyrus-sasl2,
+a free library implementing the Simple Authentication and Security Layer,
+suffers from a missing null termination in certain situations.  This causes
+several buffer overflows in situations where cyrus-sasl2 itself requires
+the string to be null terminated which can lead to denial of service or
+arbitrary code execution.</p>
+
+<p>Important notice (Quoting from US-CERT):
+While this patch will fix currently vulnerable code, it can cause
+non-vulnerable existing code to break. Here's a function prototype from
+include/saslutil.h to clarify my explanation:</p>
+
+<p>/* base64 encode
+* in -- input data
+* inlen -- input data length
+* out -- output buffer (will be NUL terminated)
+* outmax -- max size of output buffer
+* result:
+* outlen -- gets actual length of output buffer (optional)
+*
+* Returns SASL_OK on success, SASL_BUFOVER if result won't fit
+*/
+LIBSASL_API int sasl_encode64(const char *in, unsigned inlen,
+char *out, unsigned outmax,
+unsigned *outlen);</p>
+
+<p>Assume a scenario where calling code has been written in such a way that it
+calculates the exact size required for base64 encoding in advance, then
+allocates a buffer of that exact size, passing a pointer to the buffer into
+sasl_encode64() as *out. As long as this code does not anticipate that the
+buffer is NUL-terminated (does not call any string-handling functions like
+strlen(), for example) the code will work and it will not be vulnerable.</p>
+
+<p>Once this patch is applied, that same code will break because sasl_encode64()
+will begin to return SASL_BUFOVER.</p>
+
+
+<p>For the oldstable distribution (etch), this problem will be fixed soon.</p>
+
+<p>For the stable distribution (lenny), this problem has been fixed in
+version 2.1.22.dfsg1-23+lenny1 of cyrus-sasl2 and cyrus-sasl2-heimdal.</p>
+
+<p>For the testing distribution (squeeze), this problem will be fixed soon.</p>
+
+<p>For the unstable distribution (sid), this problem has been fixed in
+version 2.1.23.dfsg1-1 of cyrus-sasl2 and cyrus-sasl2-heimdal.</p>
+
+
+<p>We recommend that you upgrade your cyrus-sasl2/cyrus-sasl2-heimdal packages.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2009/dsa-1807.data"
+# $Id$
