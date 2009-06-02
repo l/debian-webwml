@@ -346,7 +346,7 @@ foreach $lang (@search_in) {
                     $u_tmp = sprintf "<tr><td>%s</td><td>&nbsp;</td></tr>\n", $file;
                 } else {
                     (my $base = $file) =~ s/\.wml$//;
-                    $u_tmp = sprintf "<tr><td><a href=\"$opt_b/%s\">%s</a></td><td align=\"right\">%d</td><td>(%.2f&nbsp;&permil;)</td></tr>\n", $base, $base, $sizes{$file}, $sizes{$file}/$nsize * 1000;
+                    $u_tmp = sprintf "<tr><td><a href=\"$opt_b/%s\">%s&nbsp;&nbsp;(%s)</a></td><td align=\"right\">%d</td><td>(%.2f&nbsp;&permil;)</td></tr>\n", $base, $base, $version{"$orig/$file"}, $sizes{$file}, $sizes{$file}/$nsize * 1000;
                 }
 		if (($file =~ /international\//) &&
 		    (($file !~ /international\/index.wml$/) ||
