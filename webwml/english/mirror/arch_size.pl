@@ -20,7 +20,7 @@ my $arch_space = $res->content;
 my $total ;
 
 for my $line (split("\n",$arch_space)) {
-	if ($line =~ /^([\w-]+)\s*\|(\d+)$/) {
+	if ($line =~ /^([\w-]+)\s*\|(\d+)\s*$/) {
 		my $size = $2/1000000000;
 		$total += $2 ;
 		printf "<tr><td>$1</td>\t<td>%.0f</td></tr>\n", $size ;
