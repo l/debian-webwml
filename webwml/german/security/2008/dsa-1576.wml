@@ -1,0 +1,168 @@
+<define-tag description>vorhersagbarer Zufallszahlengenerator</define-tag>
+<define-tag moreinfo>
+<p>Die kürzlich bekanntgegebene Verwundbarkeit in Debians openssl-Paket
+   (<a href="/security/2008/dsa-1571">DSA-1571-1</a>, <a 
+   href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-0166">\
+   CVE-2008-0166</a>) betrifft indirekt OpenSSH. Als Ergebnis müssen alle 
+   Benutzer- und Rechnerschlüssel, die mit der defekten Version des Paketes 
+   openssl erstellt wurden, als nicht-vertrauenswürdig eingestuft werden, selbst
+   nachdem die Aktualisierung von Openssl eingespielt wurde.</p>
+
+<p>1. Installieren der Sicherheitsaktualisierungen</p>
+
+   <p>Diese Aktualisierung enthält eine Abhängigkeit auf die 
+      Openssl-Aktualisierung und wird automatisch eine korrigierte Version des 
+      Pakets libssl0.9.8 und ein neues Paket openssh-blacklist installieren.</p>
+
+   <p>Sobald die Aktualisierung angewandt wurde, werden &ndash; wo möglich 
+      &ndash; schwache Benutzerschlüssel automatische zurückgewiesen. Allerdings
+      können sie nicht in allen Fällen erkannt werden. Falls Sie solche
+      Schlüssel für die Benutzerauthentifizierung verwenden, werden diese
+      ab sofort nicht mehr funktionieren und müssen ersetzt werden (siehe
+      Schritt 3).</p>
+
+   <p>OpenSSH-Host-Schlüssel können automatische erstellt werden, wenn die
+      Sicherheitsaktualisierung angewandt wird. Diese Aktualisierung wird
+      um Bestätigung bitten, bevor der Schritt ausgeführt wird.</p>
+
+<p>2. Aktualisieren der Datei known_hosts von OpenSSH</p>
+
+   <p>Die Neuerstellung der Hostschlüssel wird zu einer Warnung führen, die
+      angezeigt wird, wenn per SSH mit einem System verbunden wird, auf dem
+      die Datei known_hosts noch nicht aktualisiert wurde. Die Warnung wird
+      wie folgt aussehen:</p>
+
+<pre lang="en">
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that the RSA host key has just been changed.
+</pre>
+
+   <p>In diesem Fall wurde der Host-Schlüssel einfach geändert und Sie 
+      sollten die relevante Datei known_hosts wie in der Fehlermeldung
+      angegeben aktualisieren.
+
+      Es wird empfohlen, dass Sie einen vertrauenswürdigen Kanal verwenden,
+      um den Serverschlüssel auszutauschen. Er kann in der Datei 
+      /etc/ssh/ssh_host_rsa_key.pub auf dem Server gefunden werden. Der 
+      Fingerabdruck kann mit folgendem Befehl angezeigt werden:</p>
+
+      <p>ssh-keygen -l -f /etc/ssh/ssh_host_rsa_key.pub</p>
+
+   <p>Zusätzlich zu der benutzerspezifischen Datei known_hosts könnte es
+      eine systemweite Host-Datei in /etc/ssh/ssh_known_hosts geben. Diese
+      Datei wird sowohl vom ssh-Client als auch von sshd für die 
+      hosts.equiv-Funktionalität verwandt. Diese Datei muss auch
+      aktualisiert werden.</p>
+
+<p>3.Überprüfen aller OpenSSH-Benutzerschlüssel</p>
+
+   <p>Das sicherste Vorgehen ist die Neuerstellung aller 
+      OpenSSH-Benutzerschlüssel, außer dort, wo mit hoher Sicherheit 
+      festgestellt werden kann, dass der Schlüssel auf einem nichtbetroffenen
+      System erstellt wurde.</p>
+
+   <p>Überprüfen Sie, ob Ihr Schlüssel betroffen ist, indem Sie das Werkzeug 
+      ssh-vulnkey, das in der Sicherheitsaktualisierung enthalten ist, 
+      verwenden. Standardmäßig wird ssh-vulnkey den Standardort für 
+      Benutzerschlüssel (~/.ssh/id_rsa, ~/.ssh/id_dsa und ~/.ssh/identity), 
+      Ihre Datei authorized_keys (~/.ssh/authorized_keys und 
+      ~/.ssh/authorized_keys2) und die System-Host-Schlüssel
+      (/etc/ssh/ssh_host_dsa_key und /etc/ssh/ssh_host_rsa_key) überprüfen.</p>
+
+   <p>Um alle Ihre eigenen Schlüssel zu überprüfen (wobei angenommen wird, dass
+      sich dies an den Standardorten (~/.ssh/id_rsa, ~/.ssh/id_dsa oder 
+      ~/.ssh/identity) befinden) geben Sie Folgendes ein:</p>
+
+     <p>ssh-vulnkey</p>
+
+   <p>Für die Überprüfung aller Schlüssel auf Ihrem System:</p>
+
+     <p>sudo ssh-vulnkey -a</p>
+
+   <p>Um einen Schlüssel an einem nicht-standard-Ort zu prüfen:</p>
+
+     <p>ssh-vulnkey /pfad/zum/schlüssel</p>
+
+   <p>Falls ssh-vulnkey <q lang="en">Unknown (no blacklist information)</q>
+      meldet hat es keine Information darüber, ob der Schlüssel betroffen ist.
+      In diesem Fall können Sie die Änderungszeit (mtime) der Datei mittels
+      <q>ls -l</q> prüfen. Schlüssel, die vor September 2006 erstellt wurden,
+      sind nicht betroffen. Denken Sie auch daran, dass
+      Datensicherungsprozeduren die Dateizeit zurückdatiert haben könnten (oder
+      die Systemzeit falsch gewesen sein könnte), auch wenn dies 
+      unwahrscheinlich ist.
+
+      Im Zweifelsfall erstellen Sie einen neuen Schlüssel und entfernen
+      den alten von allen Servern.</p>
+   
+<p>4. Neuerstellung aller betroffenen Benutzerschlüssel</p>
+
+   <p>OpenSSH-Schlüssel, die zur Authentifizierung benutzt werden, müssen
+      manuell neu erstellt werden. Dazu gehören auch Schlüssel, die seitdem
+      vom Rechner, auf dem sie erstellt wurden, auf andere Systeme transferiert
+      wurden.</p>
+
+   <p>Neue Schlüssel können mittels ssh-keygen erstellt werden, z.B.:</p>
+
+<pre lang="en">
+   $ ssh-keygen
+   Generating public/private rsa key pair.
+   Enter file in which to save the key (/home/user/.ssh/id_rsa):
+   Enter passphrase (empty for no passphrase):
+   Enter same passphrase again:
+   Your identification has been saved in /home/user/.ssh/id_rsa.
+   Your public key has been saved in /home/user/.ssh/id_rsa.pub.
+   The key fingerprint is:
+   00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00 user@host
+</pre>
+
+<p>5. Aktualisieren der Datei authorized_keys (falls notwendig)</p>
+
+   <p>Sobald die Benutzerschlüssel neu erstellt wurden, müssen die
+      relevanten öffentlichen Schlüssel in allen authorized_keys-Dateien
+      (und, wo zutreffend, den authorized_keys2-Dateien) auf Systeme
+      in der Ferne übertragen werden. Stellen Sie sicher, dass Sie
+      die Zeilen mit Bezug auf die alten Schlüssel aus diesen Dateien
+      entfernen.</p>
+
+
+<p>Zusätzlich zu den Gegenmaßnahmen, um die Zufallszahlenverwundbarkeit zu
+   entschärfen, behebt diese OpenSSH-Aktualisierung mehrere andere 
+   Verwundbarkeiten:</p>
+
+<p><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-1483">CVE-2008-1483</a>:
+   Timo Juhani Lindfors entdeckte, dass beim Einsatz von X11-Weiterleitung
+   der SSH-Client einen X11-Weiterleitungsport auswählt, ohne sicherzustellen,
+   dass er auf allen Adressfamilien gebunden werden kann. Falls das System
+   für IPv6 konfiguriert ist (selbst wenn es über keine funktionierende
+   IPv6-Verbindung verfügt), könnte dies es lokalen Angreifern auf dem System
+   in der Ferne erlauben, X11-Weiterleitungen zu entführen.</p>
+
+<p><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-4752">CVE-2007-4752</a>:
+   Jan Pechanec entdeckte, dass ssh auf die Erstellung von vertrauenswürdigen
+   X11-Cookies zurückfällt, falls die Erstellung eines unvertrauenswürdigen
+   Cookies fehlschlägt. Dabei könnte die lokale Anzeige einem böswilligen
+   Server in der Ferne offengelegt werden, wenn X11-Weiterleitung verwandt
+   wird.</p>
+
+<p>Für die stabile Distribution (Etch) wurden diese Probleme in Version
+   4.3p2-9etch1 behoben. Derzeit wurden nur eine Teilmenge der 
+   unterstützten Architekturen gebaut; weitere Aktualisierungen werden
+   bereitgestellt, sobald diese verfügbar werden.</p>
+
+<p>Für die instabile Distribution (Sid) und die Testing-Distribution
+   (Lenny) wurden diese Probleme in Version 4.7p1-9 behoben.</p>
+
+<p>Wir empfehlen, dass Sie Ihre openssh-Pakete aktualisieren und die
+   oben aufgeführten Maßnahmen ergreifen.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2008/dsa-1576.data"
+# Translator: Helge Kreutzmann <debian@helgefjell.de> 2009-06-29
+# $Id$
+#use wml::debian::translation-check translation="1.5"
