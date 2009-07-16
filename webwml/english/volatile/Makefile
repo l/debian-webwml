@@ -19,7 +19,7 @@ $(ENGLISHSRCDIR)/volatile/volatile-mirrors.inc: \
   $(ENGLISHSRCDIR)/mirror/Mirrors.masterlist $(ENGLISHSRCDIR)/mirror/mirror_list.pl
 	$(ENGLISHSRCDIR)/mirror/mirror_list.pl -m $(ENGLISHSRCDIR)/mirror/Mirrors.masterlist -t volatile-wml > volatile-mirrors.inc
 
-mirrorstuff := etch-volatile.asc id_mirrorpush.pub mirror-volatile.sh ziyi-sarge.asc
+mirrorstuff := etch-volatile.asc id_mirrorpush.pub mirror-volatile.sh
 
 destmirrorstuff := $(patsubst %,$(HTMLDIR)/%,$(mirrorstuff))
 
