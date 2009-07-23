@@ -5,6 +5,8 @@ WMLBASE=..
 CUR_DIR=international
 SUBS=Catalan Chinese Croatian Danish German l10n Polish Swedish
 
+include $(WMLBASE)/Make.lang
+
 ifeq "$(LANGUAGE)" "fr"
 SUBS += french
 endif
@@ -16,8 +18,5 @@ endif
 ifeq "$(LANGUAGE)" "nl"
 SUBS += dutch
 endif
-
-include $(WMLBASE)/Make.lang
-
 
 index.$(LANGUAGE).html: index.wml $(ENGLISHSRCDIR)/international/index.data
