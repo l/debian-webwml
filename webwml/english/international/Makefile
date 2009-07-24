@@ -3,20 +3,23 @@
 
 WMLBASE=..
 CUR_DIR=international
-SUBS=Catalan Chinese Croatian Danish German l10n Polish Swedish
+SUBS=Catalan Chinese Croatian Danish German l10n Polish Swedish 
 
-include $(WMLBASE)/Make.lang
-
-ifeq "$(LANGUAGE)" "fr"
+# Note: we cannot use LANGUAGE here since it is defined in Make.lang
+# and we cannot move Make.lang up since SUBS is used to define variables
+# in Makefile.common, so we are stuck with this crude hack
+ifneq (,$(findstring french/,$(CURDIR)))
 SUBS += french
 endif
 
-ifeq "$(LANGUAGE)" "es"
+ifneq (,$(findstring spanish/,$(CURDIR)))
 SUBS += spanish
 endif
 
-ifeq "$(LANGUAGE)" "nl"
+ifneq (,$(findstring dutch/,$(CURDIR)))
 SUBS += dutch
 endif
+
+include $(WMLBASE)/Make.lang
 
 index.$(LANGUAGE).html: index.wml $(ENGLISHSRCDIR)/international/index.data
