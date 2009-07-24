@@ -61,6 +61,8 @@ mailservers is available via the WWW, in
 	  <dt><a href="#tag">tag</a></dt>
 	  <dt><a href="#retitle">retitle</a></dt>
 	  <dt><a href="#submitter">submitter</a></dt>
+	  <dt><a href="#affects">affects</a></dt>
+	  <dt><a href="#summary">summary</a></dt>
 	</dl>
       </td>
       <!-- Versioning -->
@@ -345,6 +347,38 @@ mailservers is available via the WWW, in
     </p>
   </dd>
 
+  <dt><a name="affects"><code>affects</code> <var>bugnumber</var>
+      [ <code>+</code> | <code>-</code> | <code>=</code>
+      ] <var>package</var> [ <var>package</var> ... ]</dt>
+  <dd>
+    <p>
+      Indicates that a bug affects another package. In the case
+      where <var>bugnumber</var> causes breakage in <var>package</var>
+      even though the bug is actually present in the package to which
+      it is assigned, this causes the bug to be listed by default in
+      the package list of <var>package</var>. This should generally be
+      used where the bug is severe enough to cause multiple reports
+      from users to be assigned to the wrong package.
+    </p>
+  </dd>
+
+  <dt><a name="summary"><code>summary</code> <var>bugnumber</var>
+      [<var>message number</var>]
+  <dd>
+    <p>
+      Selects a message to use as a summary of a bug. The first
+      non-pseudoheader paragraph of that bug is parsed and set as the
+      summary of the bug which is displayed on the top of the bug
+      report page. This is useful in cases where the original report
+      doesn't correctly describe the problem or the bug has many
+      messages which make it difficult to identify the actual problem.
+    </p>
+    <p>
+      If <var>message number</var> is not given, clears the
+      summary. <var>message number</var> is the message number as
+      listed in the bugreport cgi script output.
+  </dd>
+ 
 
   <dt><a name="clone"><code>clone</code> <var>bugnumber</var> <var>NewID</var>
     [ <var>new IDs</var> ... ]</a></dt>
@@ -464,15 +498,18 @@ mailservers is available via the WWW, in
 
 
   <dt><a name="tag"><code>tags</code> <var>bugnumber</var> [ <code>+</code> |
-    <code>-</code> | <code>=</code> ] <var>tag</var> [ <var>tag</var> ...
-    ]</a></dt>
+    <code>-</code> | <code>=</code> ] <var>tag</var> [ <var>tag</var>
+    ... ] [ <code>+</code> | <code>-</code>
+    | <code>=</code> <var>tag</var> ... ] ]</a></dt>
   <dd>
     <p>
     Sets tags for the bug report #<var>bugnumber</var>. No notification
     is sent to the user who reported the bug. Setting the action to
-    <code>+</code> means to add each given <var>tag</var>, <code>-</code>
-    means to remove each given <var>tag</var>, and <code>=</code> means to
-    ignore the current tags and set them afresh to the list provided. The
+    <code>+</code> means to add each <var>tag</var>
+    following, <code>-</code> means to remove each <var>tag</var>
+    following, and <code>=</code> means to set the following tags to
+    the list provided. Intervening <code>+</code>, <code>-</code>,
+    or <code>=</code> change the action for the tags following. The
     default action is adding.
     </p>
 
@@ -495,6 +532,9 @@ mailservers is available via the WWW, in
 
           \# set tags to exactly 'moreinfo' and 'unreproducible'
           tags 123456 = moreinfo unreproducible
+	  
+	  \# remove the moreinfo tag and add a patch tag
+	  tags 123456 - moreinfo + patch
     </pre>
 
     <p>
