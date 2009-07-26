@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debians felrapporteringssystem - styrservern" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.78"
+#use wml::debian::translation-check translation="1.80"
 
 <h1>Introduktion till e-postservern för felrapportsstyrning och -manipulering</h1>
 
@@ -62,6 +62,8 @@ tillgängligt via webben, i
 	  <dt><a href="#tag">tag</a></dt>
 	  <dt><a href="#retitle">retitle</a></dt>
 	  <dt><a href="#submitter">submitter</a></dt>
+	  <dt><a href="#affects">affects</a></dt>
+	  <dt><a href="#summary">summary</a></dt>
 	</dl>
       </td>
       <!-- Versioning -->
@@ -355,6 +357,40 @@ den övergripande utvecklardokumentationen för felrapporteringssystemet.
   </p>
  </dd>
 
+  <dt id="affects"><code>affects</code> <var>felnummer</var>
+      [ <code>+</code> | <code>-</code> | <code>=</code>
+      ] <var>paket</var> [ <var>paket</var> ... ]</dt>
+  <dd>
+    <p>
+      Indikerar att ett fel påverkar ett annat paket. I det fall
+      <var>felnummer</var> orsakar problem i <var>paket</var>
+      trots att felet i själva verket finns i det paket det
+      är kopplat till, gör detta kommando att felet listas som standard i
+      <var>paket</var>s lista. Detta ska generellt användas
+      när felet är allvarligt nog att föranleda användare att rapportera
+      flera rapporter som kopplas till fel paket.
+    </p>
+  </dd>
+
+  <dt id="summary"><a name="summary"><code>summary</code> <var>felnummer</var>
+      [<var>meddelandenummer</var>]</a></dt>
+  <dd>
+    <p>
+      Väljer ett meddelande som används som sammanfattning av felet. Det första
+      stycket i det meddelandet som inte är ett
+      pseudohuvud tolkas och sätts som
+      sammanfattning av felet.
+      Sammanfattningen visas högst upp på felrapportsidan.
+      Detta är användbart i fall originalrapporten
+      inte beskriver problemet korrekt eller felet har flera
+      meddelanden vilket gör det svårt att identifiera problemet.
+    </p>
+    <p>
+      Om <var>meddelandenummer</var> inte ges, töms
+      sammanfattningen. <var>meddelandenummer</var> är meddelandenumret som det
+      listas i utdatat från cgi-skriptet bugreport.
+  </dd>
+ 
  <dt id="clone">
   <code>clone</code> <var>felnummer</var> <var>nytt-id</var>
   [ <var>nya-id</var> ]
@@ -477,7 +513,10 @@ Om du vill plocka isär fler än en kan du helt enkelt ange flera
  </dd>
 
  <dt id="tag">
-  <code>tags</code> <var>felnummer</var> [ <code>+</code> | <code>-</code> | <code>=</code> ] <var>märke</var> [ <var>märke</var> ... ]
+  <code>tags</code> <var>felnummer</var> [ <code>+</code> |
+    <code>-</code> | <code>=</code> ] <var>märke</var> [ <var>märke</var>
+    ... ] [ <code>+</code> | <code>-</code>
+    | <code>=</code> <var>märke</var> ... ] ]
  </dt>
 
  <dd>
@@ -487,8 +526,10 @@ Om du vill plocka isär fler än en kan du helt enkelt ange flera
   Att välja funktionen
   <code>+</code> betyder att alla angivna märken läggs till,
   <code>-</code> betyder att alla angivna märken tas bort, och
-  <code>=</code> betyder att alla aktuella märken ignoreras och de ställs om
-  från noll till den angivna listan.
+  <code>=</code> betyder att märkena ställs om till den angivna listan.
+  Om <code>+</code>, <code>-</code> eller <code>=</code>
+  dyker upp mitt i listan ställer det om hur de efterföljande
+  märkena behandlas.
   Förvald funktion är att lägga till.
   </p>
 
@@ -509,6 +550,9 @@ tags 123456 - unreproducible
 
 \# Ställ in exakt märkena &rdquo;moreinfo&rdquo; och &rdquo;unreproducible&rdquo;
 tags 123456 = moreinfo unreproducible
+  
+\# ta bort märket &rdquo;moreinfo&rdquo; och lägg till märket &rdquo;patch&rdquo;
+tags 123456 - moreinfo + patch
 </pre>
 
   <p>Tillgängliga markeringar är för närvarande <code>patch</code>,
