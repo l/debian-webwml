@@ -7,89 +7,89 @@
 <p>
 Les miroirs par repoussage sont une forme de miroirs qui minimisent le temps
 que mettent les changements de l'archive principale pour atteindre les miroirs.
-Le miroir serveur utilise un mécanisme déclencheur pour indiquer immédiatement
-au miroir client qu'il doit se mettre à jour.
+Le miroir serveur utilise un mÃ©canisme dÃ©clencheur pour indiquer immÃ©diatement
+au miroir client qu'il doit se mettre Ã  jour.
 </p>
 
 <p>
-Les miroirs par repoussage demandent un peu plus d'effort à mettre en place car
-les responsables des miroirs client et serveur doivent s'échanger des
-informations. L'avantage est que le miroir serveur lance le processus de mise à
-jour du client immédiatement après que son archive a été mise à jour. Cela
-permet une propagation très rapide des changements de l'archive.
+Les miroirs par repoussage demandent un peu plus d'effort Ã  mettre en place car
+les responsables des miroirs client et serveur doivent s'Ã©changer des
+informations. L'avantage est que le miroir serveur lance le processus de mise Ã 
+jour du client immÃ©diatement aprÃ¨s que son archive a Ã©tÃ© mise Ã  jour. Cela
+permet une propagation trÃ¨s rapide des changements de l'archive.
 </p>
 
 
 <h2>Explication de ce fonctionnement</h2>
 
 <p>
-Tout d'abord quelques informations sur ssh. Ssh permet de se connecter à des
-comptes sur différentes machines d'une manière sûre. Non seulement les mots de
-passe ne sont jamais transmis en clair, mais une fois que vous êtes connecté à
-une machine vous êtes certain que les connexions futures se feront sur la même
-machine. Cela empêche beaucoup d'attaques du type un-homme-au-milieu.
+Tout d'abord quelques informations sur ssh. Ssh permet de se connecter Ã  des
+comptes sur diffÃ©rentes machines d'une maniÃ¨re sÃ»re. Non seulement les mots de
+passe ne sont jamais transmis en clair, mais une fois que vous Ãªtes connectÃ© Ã 
+une machine vous Ãªtes certain que les connexions futures se feront sur la mÃªme
+machine. Cela empÃªche beaucoup d'attaques du type un-homme-au-milieu.
 </p>
 
 <p>
-Une possibilité que vous offre ssh est la faculté d'accepter la clé publique
+Une possibilitÃ© que vous offre ssh est la facultÃ© d'accepter la clÃ© publique
 d'identification d'un utilisateur d'une autre machine et de l'ajouter au
-fichier des clés autorisées sur sa propre machine. Par défaut, l'utilisateur
-sur l'autre machine (qui a la clé d'identification privée associée à la clé
-d'identité publique qu'il a donnée) a alors le droit de se connecter sous votre
-compte. Il est cependant possible de rajouter des options à une clé autorisée
-pour restreindre le type d'accès d'une personne l'utilisant pour se connecter
+fichier des clÃ©s autorisÃ©es sur sa propre machine. Par dÃ©faut, l'utilisateur
+sur l'autre machine (qui a la clÃ© d'identification privÃ©e associÃ©e Ã  la clÃ©
+d'identitÃ© publique qu'il a donnÃ©e) a alors le droit de se connecter sous votre
+compte. Il est cependant possible de rajouter des options Ã  une clÃ© autorisÃ©e
+pour restreindre le type d'accÃ¨s d'une personne l'utilisant pour se connecter
 sur votre machine.
 </p>
 
 <p>
-Ainsi pour protéger le miroir client, des options sont ajoutées à une clé
-fournie par le miroir serveur pour donner aux personnes qui accèdent à votre
+Ainsi pour protÃ©ger le miroir client, des options sont ajoutÃ©es Ã  une clÃ©
+fournie par le miroir serveur pour donner aux personnes qui accÃ¨dent Ã  votre
 compte un seul droit&nbsp;: celui de lancer sur votre machine le programme qui
-met à jour votre miroir. Même si quelqu'un (un tiers malveillant) était capable
-de casser les clés, il ne pourrait alors que lancer le programme de miroir sur
-votre machine. Vous n'avez même pas à vous soucier de la possibilité d'avoir
-plusieurs copies du programme lancées, car un fichier verrou est utilisé.
+met Ã  jour votre miroir. MÃªme si quelqu'un (un tiers malveillant) Ã©tait capable
+de casser les clÃ©s, il ne pourrait alors que lancer le programme de miroir sur
+votre machine. Vous n'avez mÃªme pas Ã  vous soucier de la possibilitÃ© d'avoir
+plusieurs copies du programme lancÃ©es, car un fichier verrou est utilisÃ©.
 </p>
 
 <p>
-Sur le miroir client, rsync peut être configuré pour restreindre par nom
-d'utilisateur et mot de passe la possibilité de faire un miroir d'une zone
-donnée. Ceux-ci sont complètement séparés de <kbd>/etc/passwd</kbd> de façon à
-ce qu'un serveur de repoussage n'ait pas à se soucier de donner à d'autres
-l'accès à sa machine. De la façon dont c'est configuré, le nom d'utilisateur et
-le mot de passe sont transmis en clair. Cela ne devrait cependant pas être un
-problème, car le pire qu'il puisse se produire est qu'un tiers ait la
-possibilité de faire un miroir des pages Debian depuis ce site.
+Sur le miroir client, rsync peut Ãªtre configurÃ© pour restreindre par nom
+d'utilisateur et mot de passe la possibilitÃ© de faire un miroir d'une zone
+donnÃ©e. Ceux-ci sont complÃ¨tement sÃ©parÃ©s de <kbd>/etc/passwd</kbd> de faÃ§on Ã 
+ce qu'un serveur de repoussage n'ait pas Ã  se soucier de donner Ã  d'autres
+l'accÃ¨s Ã  sa machine. De la faÃ§on dont c'est configurÃ©, le nom d'utilisateur et
+le mot de passe sont transmis en clair. Cela ne devrait cependant pas Ãªtre un
+problÃ¨me, car le pire qu'il puisse se produire est qu'un tiers ait la
+possibilitÃ© de faire un miroir des pages Debian depuis ce site.
 </p>
 
 
-<h2>Mettre en place un miroir par repoussage côté client</h2>
+<h2>Mettre en place un miroir par repoussage cÃ´tÃ© client</h2>
 
 <p>
 Le mieux est de mettre en place tout cela en utilisant le compte d'un
-utilisateur ordinaire, non root. Le contenu de la clé ssh publique que le
-miroir serveur vous donne devrait être placée dans
+utilisateur ordinaire, non root. Le contenu de la clÃ© ssh publique que le
+miroir serveur vous donne devrait Ãªtre placÃ©e dans
 <kbd>~&lt;user&gt;/.ssh/authorized_keys</kbd>.
 </p>
 
 <p>
-Pour devenir un client par repoussage de l'archive FTP, vous devez paramétrer
+Pour devenir un client par repoussage de l'archive FTP, vous devez paramÃ©trer
 la recopie en utilisant notre set de scripts <a href="ftpmirror#how">ftpsync</a>
-standards, avec quelques modifications. Éditez la partie du script concernant
-les configurations protégées par mot de passe en décommentant l'inclusion du
-fichier <a href="ftpsync.conf">ftpsync.conf</a>. Éditez ftpsync.conf et suivez
-les indications qui se trouvent à l'intérieur en utilisant les informations qui
-vous sont données par le miroir serveur.
+standards, avec quelques modifications. Ã‰ditez la partie du script concernant
+les configurations protÃ©gÃ©es par mot de passe en dÃ©commentant l'inclusion du
+fichier <a href="ftpsync.conf">ftpsync.conf</a>. Ã‰ditez ftpsync.conf et suivez
+les indications qui se trouvent Ã  l'intÃ©rieur en utilisant les informations qui
+vous sont donnÃ©es par le miroir serveur.
 </p>
 
-# Ces fichiers ont des noms différents de façon à ce que vous puissiez
-# utiliser le même compte pour faire un miroir des deux archives.
+# Ces fichiers ont des noms diffÃ©rents de faÃ§on Ã  ce que vous puissiez
+# utiliser le mÃªme compte pour faire un miroir des deux archives.
 
 <p>
 Pour devenir un client par repoussage des pages du site, vous avez besoin des
 fichiers <a href="websync">websync</a> et <a href="websync.conf">\
-websync.conf</a>. Éditez websync.conf et suivez les indications qui se trouvent
-à l'intérieur en utilisant les informations qui vous sont données par le miroir
+websync.conf</a>. Ã‰ditez websync.conf et suivez les indications qui se trouvent
+Ã  l'intÃ©rieur en utilisant les informations qui vous sont donnÃ©es par le miroir
 serveur.
 </p>
 
@@ -97,18 +97,18 @@ serveur.
 <h2>Les sites par repoussage de type client primaire</h2>
 
 <p>
-Les miroirs par repoussage de type client primaire, aussi appelés miroirs
+Les miroirs par repoussage de type client primaire, aussi appelÃ©s miroirs
 1<sup>er</sup>&nbsp;tiers, <i>Tier-1</i>, sont les miroirs par repoussage de
-type client qui sont autorisés à faire un miroir de nos archives principales.
+type client qui sont autorisÃ©s Ã  faire un miroir de nos archives principales.
 </p>
 
 <p>
-Si votre site est <strong>très</strong> bien connecté (à la fois une très bonne
-bande passante et bien connecté aux épines dorsales majeures du réseau) et que
-vous acceptez de laisser d'autres sites faire un miroir à partir de votre site,
+Si votre site est <strong>trÃ¨s</strong> bien connectÃ© (Ã  la fois une trÃ¨s bonne
+bande passante et bien connectÃ© aux Ã©pines dorsales majeures du rÃ©seau) et que
+vous acceptez de laisser d'autres sites faire un miroir Ã  partir de votre site,
 vous pouvez nous le faire savoir afin que nous envisagions d'en faire un miroir
-de repoussage. Cependant, ne vous attendez pas à ce que ça se fasse rapidement
-car nous avons déjà un bon nombre de miroirs 1<sup>er</sup>&nbsp; tiers.
+de repoussage. Cependant, ne vous attendez pas Ã  ce que Ã§a se fasse rapidement
+car nous avons dÃ©jÃ  un bon nombre de miroirs 1<sup>er</sup>&nbsp; tiers.
 </p>
 
 <p>
@@ -117,39 +117,39 @@ des fichiers suivants&nbsp;:
 </p>
 
 <ul>
-  <li><a href="id_rsa.pub.ftp-master">clef publique SSH2 utilisée par
+  <li><a href="id_rsa.pub.ftp-master">clef publique SSH2 utilisÃ©e par
       ftp-master.debian.org</a></li>
-  <li><a href="id_rsa.pub.syncproxy.eu">clef publique SSH2 utilisée par
+  <li><a href="id_rsa.pub.syncproxy.eu">clef publique SSH2 utilisÃ©e par
       syncproxy.eu.debian.org</a></li>
-  <li><a href="id_rsa.pub.syncproxy.wna">clef publique SSH2 utilisée par
+  <li><a href="id_rsa.pub.syncproxy.wna">clef publique SSH2 utilisÃ©e par
       syncproxy.wna.debian.org</a></li>
 </ul>
 
 <p>
 Si vous devenez un repousseur primaire des pages du site, vous avez besoin de
-la <a href="id_rsa.pub.www-master">clef publique SSH2 utilisée par
+la <a href="id_rsa.pub.www-master">clef publique SSH2 utilisÃ©e par
 www-master.debian.org</a>.
 </p>
 
 
-<h2>Mettre en place un miroir de repoussage côté serveur</h2>
+<h2>Mettre en place un miroir de repoussage cÃ´tÃ© serveur</h2>
 
 <p>
-Étant donné le grand nombre de miroirs et la taille de l'archive Debian, il
+Ã‰tant donnÃ© le grand nombre de miroirs et la taille de l'archive Debian, il
 n'est pas possible que tous les miroirs utilisent l'archive principale comme
-source de la Debian (c'est-à-dire comme leur miroir de repoussage de type
+source de la Debian (c'est-Ã -dire comme leur miroir de repoussage de type
 serveur). Il est beaucoup plus efficace de distribuer la charge sur un certain
-nombre de miroirs de repoussage répartis à travers le monde.
+nombre de miroirs de repoussage rÃ©partis Ã  travers le monde.
 </p>
 
 <p>
-Les miroirs de repoussage de type serveur doivent être des miroirs par
-repoussage de type client de l'archive principale (ou éventuellement d'un autre
+Les miroirs de repoussage de type serveur doivent Ãªtre des miroirs par
+repoussage de type client de l'archive principale (ou Ã©ventuellement d'un autre
 miroir de repoussage de type serveur), et doivent contenir un miroir de
 l'ensemble de l'archive Debian.
 </p>
 
 <p>
-Voyez les <a href="push_server">détails sur la mise en place d'un serveur de
+Voyez les <a href="push_server">dÃ©tails sur la mise en place d'un serveur de
 repoussage</a>.
 </p>

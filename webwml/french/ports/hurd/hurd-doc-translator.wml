@@ -15,266 +15,266 @@
 
 <h3><a href="#TOC_concept" name="concept">Concept</a></h3>
 <p>
-Avant d'étudier en détail les traducteurs, voyons le fonctionnement d'un
-système de fichiers traditionnel. Un système de fichiers est une zone
-de données organisée en un arbre hiérarchique de répertoires
-et de fichiers. Ces répertoires et fichiers sont désignés par une
-chaîne de caractères spéciale, le <em>chemin</em>. D'autres données que
-de simples fichiers ou répertoires peuvent être présents dans cet 
+Avant d'Ã©tudier en dÃ©tail les traducteurs, voyons le fonctionnement d'un
+systÃ¨me de fichiers traditionnel. Un systÃ¨me de fichiers est une zone
+de donnÃ©es organisÃ©e en un arbre hiÃ©rarchique de rÃ©pertoires
+et de fichiers. Ces rÃ©pertoires et fichiers sont dÃ©signÃ©s par une
+chaÃ®ne de caractÃ¨res spÃ©ciale, le <em>chemin</em>. D'autres donnÃ©es que
+de simples fichiers ou rÃ©pertoires peuvent Ãªtre prÃ©sents dans cet 
 arbre&nbsp;:</p>
-<ul><li>des liens symboliques, qui permettent de référencer un fichier depuis
+<ul><li>des liens symboliques, qui permettent de rÃ©fÃ©rencer un fichier depuis
 d'autres endroits de l'arbre&nbsp;;</li>
-<li>des liens physiques, qui désignent un même fichier unique depuis
+<li>des liens physiques, qui dÃ©signent un mÃªme fichier unique depuis
 plusieurs emplacements&nbsp;</li>
-<li>des fichiers spéciaux de périphériques, qui permettent de
-communiquer avec les pilotes de périphériques du noyau&nbsp;</li>
-<li>des points de montage, qui permettent d'inclure d'autres systèmes
+<li>des fichiers spÃ©ciaux de pÃ©riphÃ©riques, qui permettent de
+communiquer avec les pilotes de pÃ©riphÃ©riques du noyau&nbsp;</li>
+<li>des points de montage, qui permettent d'inclure d'autres systÃ¨mes
 de fichiers dans l'arborescence&nbsp;</li>
 <li>ainsi que d'autres objets obscurs comme les FIFO.</li></ul>
 <p>
-Malgré les grandes différences qui existent entre ces objets,
-ils partagent certaines propriétés générales, par exemple,
-ils ont tous un propriétaire et un groupe qui leur est
-associé, ainsi que des droits d'accès (permissions).
-Ces informations sont conservées dans des inodes. Voilà encore une
-propriété partagée&nbsp;: chacun de ces objets a exactement un inode qui lui
-est associé (à l'exception des liens physiques qui sont plusieurs à
-partager le même inode). Quelques fois, l'inode contient un peu plus
+MalgrÃ© les grandes diffÃ©rences qui existent entre ces objets,
+ils partagent certaines propriÃ©tÃ©s gÃ©nÃ©rales, par exemple,
+ils ont tous un propriÃ©taire et un groupe qui leur est
+associÃ©, ainsi que des droits d'accÃ¨s (permissions).
+Ces informations sont conservÃ©es dans des inodes. VoilÃ  encore une
+propriÃ©tÃ© partagÃ©e&nbsp;: chacun de ces objets a exactement un inode qui lui
+est associÃ© (Ã  l'exception des liens physiques qui sont plusieurs Ã 
+partager le mÃªme inode). Quelques fois, l'inode contient un peu plus
 d'informations. Par exemple, il peut contenir la destination d'un lien
 symbolique.</p>
 <p>
-Cependant, ces ressemblances ne sont généralement pas exploitées dans
-les implémentations, malgré une interface de programmation commune.
-On peut accéder à tous les inodes par des appels POSIX standards,
+Cependant, ces ressemblances ne sont gÃ©nÃ©ralement pas exploitÃ©es dans
+les implÃ©mentations, malgrÃ© une interface de programmation commune.
+On peut accÃ©der Ã  tous les inodes par des appels POSIX standards,
 par exemple <code>read()</code> et <code>write()</code>. Mais pour
 ajouter un nouveau type d'objet (par exemple un nouveau type de lien)
 sur un noyau unix monolithique classique, il faut modifier le code
-de chaque système de fichiers séparément.</p>
+de chaque systÃ¨me de fichiers sÃ©parÃ©ment.</p>
 <p>
-Avec GNU/Hurd, les choses sont différentes.
-Bien sûr, lorsqu'un système de fichiers particulier (comme ext2fs)
-ajoute à un objet standard (comme le lien symbolique) une propriété
-particulière (comme le lien rapide), GNU/Hurd l'implémente dans un serveur
-de système de fichiers spécifique. Mais sa grande force est de posséder
-une interface générique permettant d'ajouter de telles fonctionnalités
+Avec GNU/Hurd, les choses sont diffÃ©rentes.
+Bien sÃ»r, lorsqu'un systÃ¨me de fichiers particulier (comme ext2fs)
+ajoute Ã  un objet standard (comme le lien symbolique) une propriÃ©tÃ©
+particuliÃ¨re (comme le lien rapide), GNU/Hurd l'implÃ©mente dans un serveur
+de systÃ¨me de fichiers spÃ©cifique. Mais sa grande force est de possÃ©der
+une interface gÃ©nÃ©rique permettant d'ajouter de telles fonctionnalitÃ©s
 sans modifier le code existant.</p>
 <p>
-L'astuce consiste à permettre à un programme de s'insérer entre le contenu
-effectif du fichier et l'utilisateur qui accède à ce fichier.
+L'astuce consiste Ã  permettre Ã  un programme de s'insÃ©rer entre le contenu
+effectif du fichier et l'utilisateur qui accÃ¨de Ã  ce fichier.
 Un tel programme s'appelle un traducteur, parce qu'il est capable
-de traiter et transformer des requêtes de plein de façons différentes.
-En d'autres termes, un traducteur est un serveur Hurd qui implémente
-l'interface de base des système de fichiers.</p>
+de traiter et transformer des requÃªtes de plein de faÃ§ons diffÃ©rentes.
+En d'autres termes, un traducteur est un serveur Hurd qui implÃ©mente
+l'interface de base des systÃ¨me de fichiers.</p>
 <p>
-Les traducteurs ont des propriétés très intéressantes. Vu du noyau, ce
+Les traducteurs ont des propriÃ©tÃ©s trÃ¨s intÃ©ressantes. Vu du noyau, ce
 ne sont que des processus comme les autres, qui
-peuvent être lancés par n'importe quel utilisateur. Vous n'avez pas besoin
-des privilèges de root pour installer ou modifier un traducteur, il
-suffit des droits d'accès à l'inode auquel est rattaché ce traducteur.
+peuvent Ãªtre lancÃ©s par n'importe quel utilisateur. Vous n'avez pas besoin
+des privilÃ¨ges de root pour installer ou modifier un traducteur, il
+suffit des droits d'accÃ¨s Ã  l'inode auquel est rattachÃ© ce traducteur.
 De nombreux traducteurs n'ont pas besoin d'un fichier concret pour
 fonctionner, ils fournissent des informations par leurs propres moyens.
-C'est pourquoi les informations sur les traducteurs sont associées
+C'est pourquoi les informations sur les traducteurs sont associÃ©es
 aux inodes.</p>
 <p>
-Un traducteur a pour responsabilité de répondre à toutes les requêtes
-de système de fichiers qui agissent sur l'inode auquel il est rattaché.
-Comme il n'est pas limité aux objets habituels (lien, fichier spécial
-de périphérique, etc.), il est libre de retourner tout ce qui peut avoir
+Un traducteur a pour responsabilitÃ© de rÃ©pondre Ã  toutes les requÃªtes
+de systÃ¨me de fichiers qui agissent sur l'inode auquel il est rattachÃ©.
+Comme il n'est pas limitÃ© aux objets habituels (lien, fichier spÃ©cial
+de pÃ©riphÃ©rique, etc.), il est libre de retourner tout ce qui peut avoir
 un sens. On pourrait imaginer un traducteur qui se comporte comme un
-répertoire lorsqu'on y accède par <code>cd</code> ou <code>ls</code> et
-en même temps comme un fichier lorsqu'on y accède par <code>cat</code>.</p>
+rÃ©pertoire lorsqu'on y accÃ¨de par <code>cd</code> ou <code>ls</code> et
+en mÃªme temps comme un fichier lorsqu'on y accÃ¨de par <code>cat</code>.</p>
 
 <h3><a href="#TOC_examples" name="examples">Exemples</a></h3>
 <h4>Point de montage</h4>
 <p>
-Un point de montage peut être vu comme un inode avec un traducteur
-spécial qui lui est rattaché. Son utilité est de traduire les opérations
-de système de fichiers sur le point de montage en opérations sur
-d'autres données, par exemple une autre partition.</p>
+Un point de montage peut Ãªtre vu comme un inode avec un traducteur
+spÃ©cial qui lui est rattachÃ©. Son utilitÃ© est de traduire les opÃ©rations
+de systÃ¨me de fichiers sur le point de montage en opÃ©rations sur
+d'autres donnÃ©es, par exemple une autre partition.</p>
 <p>
-C'est en effet ainsi que les systèmes de fichiers sont implémentés sur
-GNU/Hurd. Un système de fichiers est un traducteur. Ce traducteur prend en
-argument un périphérique de stockage, et effectue de façon transparente
-toutes les opérations de système de fichiers.</p>
+C'est en effet ainsi que les systÃ¨mes de fichiers sont implÃ©mentÃ©s sur
+GNU/Hurd. Un systÃ¨me de fichiers est un traducteur. Ce traducteur prend en
+argument un pÃ©riphÃ©rique de stockage, et effectue de faÃ§on transparente
+toutes les opÃ©rations de systÃ¨me de fichiers.</p>
 
-<h4>Fichier spécial de périphérique</h4>
+<h4>Fichier spÃ©cial de pÃ©riphÃ©rique</h4>
 <p>
-Il existe de très nombreuses sortes de fichiers de périphérique, et dans un
-système avec un noyau monolithique, ils sont tous gérés par le noyau
-lui-même. Dans GNU/Hurd, tous les fichiers de périphérique sont gérés par des
-traducteurs. Un même traducteur peut gérer de nombreux fichiers de
-périphériques similaires, par exemple toutes les partitions de disques durs.
-Ainsi, le nombre réel de traducteurs nécessaires est réduit. En revanche,
-chaque fois qu'un fichier de périphérique est utilisé, un nouveau
-thread est lancé dans le traducteur. Comme GNU/Hurd est hautement multithread,
-cette opération n'est pas coûteuse du tout.</p>
+Il existe de trÃ¨s nombreuses sortes de fichiers de pÃ©riphÃ©rique, et dans un
+systÃ¨me avec un noyau monolithique, ils sont tous gÃ©rÃ©s par le noyau
+lui-mÃªme. Dans GNU/Hurd, tous les fichiers de pÃ©riphÃ©rique sont gÃ©rÃ©s par des
+traducteurs. Un mÃªme traducteur peut gÃ©rer de nombreux fichiers de
+pÃ©riphÃ©riques similaires, par exemple toutes les partitions de disques durs.
+Ainsi, le nombre rÃ©el de traducteurs nÃ©cessaires est rÃ©duit. En revanche,
+chaque fois qu'un fichier de pÃ©riphÃ©rique est utilisÃ©, un nouveau
+thread est lancÃ© dans le traducteur. Comme GNU/Hurd est hautement multithread,
+cette opÃ©ration n'est pas coÃ»teuse du tout.</p>
 <p>
-Lorsqu'il doit accéder à du matériel, un traducteur se met à communiquer avec
-le noyau pour transférer des données. Mais si aucun accès au matériel n'est
-nécessaire, le noyau n'est plus du tout concerné. Par exemple,
-<code>/dev/zero</code> ne nécessite aucun accès matériel, donc il est
-entièrement implémenté dans l'espace utilisateur.</p>
+Lorsqu'il doit accÃ©der Ã  du matÃ©riel, un traducteur se met Ã  communiquer avec
+le noyau pour transfÃ©rer des donnÃ©es. Mais si aucun accÃ¨s au matÃ©riel n'est
+nÃ©cessaire, le noyau n'est plus du tout concernÃ©. Par exemple,
+<code>/dev/zero</code> ne nÃ©cessite aucun accÃ¨s matÃ©riel, donc il est
+entiÃ¨rement implÃ©mentÃ© dans l'espace utilisateur.</p>
 
 <h4>Lien symbolique</h4>
 <p>
-Un lien symbolique peut être vu comme un traducteur. L'accès à un lien
-symbolique lancerait le traducteur, qui ferait suivre les requêtes vers
-le système de fichiers contenant le fichier vers lequel le lien pointe.</p>
+Un lien symbolique peut Ãªtre vu comme un traducteur. L'accÃ¨s Ã  un lien
+symbolique lancerait le traducteur, qui ferait suivre les requÃªtes vers
+le systÃ¨me de fichiers contenant le fichier vers lequel le lien pointe.</p>
 <p>
-Cependant, pour de meilleures performances, les systèmes de fichiers qui
+Cependant, pour de meilleures performances, les systÃ¨mes de fichiers qui
 ont un support natif des liens symboliques peuvent en tirer avantage
-et les implémenter différemment. En interne, l'accès à un lien symbolique
+et les implÃ©menter diffÃ©remment. En interne, l'accÃ¨s Ã  un lien symbolique
 ne lance pas un nouveau thread de traducteur, mais pour l'utilisateur
-tout se passe comme si un traducteur passif était présent (voyez plus bas
+tout se passe comme si un traducteur passif Ã©tait prÃ©sent (voyez plus bas
 pour une explication sur les traducteurs passifs).</p>
 <p>
 Comme GNU/Hurd fournit un traducteur de lien symbolique, tout serveur de
-système de fichiers qui supporte les traducteurs supporte automatiquement les
-liens symboliques (et les firmlinks, et les fichiers de périphériques, etc.)&nbsp;!
-Cela signifie que vous pouvez faire tourner un nouveau type de système de
-fichiers très rapidement, et ajouter le support natif des liens symboliques
-et d'autres fonctionnalités plus tard.</p>
+systÃ¨me de fichiers qui supporte les traducteurs supporte automatiquement les
+liens symboliques (et les firmlinks, et les fichiers de pÃ©riphÃ©riques, etc.)&nbsp;!
+Cela signifie que vous pouvez faire tourner un nouveau type de systÃ¨me de
+fichiers trÃ¨s rapidement, et ajouter le support natif des liens symboliques
+et d'autres fonctionnalitÃ©s plus tard.</p>
 
 <h3><a href="#TOC_actpas" name="actpas">Traducteur passif, traducteur actif</a></h3>
 <p>
 Il y a deux types de traducteurs, les traducteurs passifs, et les traducteurs
-actifs. Ce sont réellement deux choses différentes, qu'il ne faut pas
-mélanger, mais ces deux types des traducteurs sont en étroite relation.
+actifs. Ce sont rÃ©ellement deux choses diffÃ©rentes, qu'il ne faut pas
+mÃ©langer, mais ces deux types des traducteurs sont en Ã©troite relation.
 </p>
 
 <h4>Traducteur actif</h4>
 <p>
 Un traducteur actif est un processus de traducteur qui tourne, comme
-expliqué plus haut. Vous pouvez ajouter ou retirer un traducteur actif
+expliquÃ© plus haut. Vous pouvez ajouter ou retirer un traducteur actif
 en utilisant la commande <code>settrans -a</code>.
-L'option <code>-a</code> est nécessaire pour indiquer à
-<code>settrans</code> que vous désirez agir sur un traducteur actif.</p>
+L'option <code>-a</code> est nÃ©cessaire pour indiquer Ã 
+<code>settrans</code> que vous dÃ©sirez agir sur un traducteur actif.</p>
 <p>
-La commande <code>settrans</code> prend trois catégories d'arguments.
-Premièrement, les options propres à la commande
-<code>settrans</code> elle-même, comme <code>-a</code> pour modifier
-le traducteur actif. Ensuite, vous précisez l'inode à modifier.
-Rappelez-vous qu'un traducteur est toujours rattaché à un inode dans
-une hiérarchie de répertoires. Vous ne pouvez modifier qu'un seul inode
-à la fois. Si vous n'indiquez pas plus d'arguments, <code>settrans</code>
-essayera d'enlever le traducteur existant. L'énergie qu'il y mettra
-dépend des options spécifiées (si le traducteur est en cours
-d'utilisation, vous aurez un message d'erreur «&nbsp;<i>device or resource 
-busy</i>&nbsp;» à moins de forcer sa suppression).</p>
+La commande <code>settrans</code> prend trois catÃ©gories d'arguments.
+PremiÃ¨rement, les options propres Ã  la commande
+<code>settrans</code> elle-mÃªme, comme <code>-a</code> pour modifier
+le traducteur actif. Ensuite, vous prÃ©cisez l'inode Ã  modifier.
+Rappelez-vous qu'un traducteur est toujours rattachÃ© Ã  un inode dans
+une hiÃ©rarchie de rÃ©pertoires. Vous ne pouvez modifier qu'un seul inode
+Ã  la fois. Si vous n'indiquez pas plus d'arguments, <code>settrans</code>
+essayera d'enlever le traducteur existant. L'Ã©nergie qu'il y mettra
+dÃ©pend des options spÃ©cifiÃ©es (si le traducteur est en cours
+d'utilisation, vous aurez un message d'erreur Â«&nbsp;<i>device or resource 
+busy</i>&nbsp;Â» Ã  moins de forcer sa suppression).</p>
 <p>
-Mais si vous précisez d'autres arguments, ils seront interprétés comme
+Mais si vous prÃ©cisez d'autres arguments, ils seront interprÃ©tÃ©s comme
 une ligne de commande de lancement du traducteur. Cela signifie que
-l'argument qui suit est le nom de l'exécutable du traducteur et que
+l'argument qui suit est le nom de l'exÃ©cutable du traducteur et que
 les suivants sont ses options, et non celles de la commande
 <code>settrans</code>.</p>
 <p>
 Par exemple, pour monter une partition ext2fs, il suffit de lancer
 <code>settrans -a -c /mnt /hurd/ext2fs /dev/hd2s5</code>. L'option
-<code>-c</code> créera le point de montage s'il n'existe pas déjà.
-Notez que ce point de montage n'est pas nécessairement un répertoire.
-Pour démonter cette partition, il suffit de faire
+<code>-c</code> crÃ©era le point de montage s'il n'existe pas dÃ©jÃ .
+Notez que ce point de montage n'est pas nÃ©cessairement un rÃ©pertoire.
+Pour dÃ©monter cette partition, il suffit de faire
 <code>settrans -a /mnt</code>.</p>
 
 <h4>Traducteur passif</h4>
 <p>
-Un traducteur passif est positionné ou modifié par la même syntaxe
+Un traducteur passif est positionnÃ© ou modifiÃ© par la mÃªme syntaxe
 que pour un traducteur actif (il suffit de retirer le <code>-a</code>),
-donc tout ce qui a été dit précédemment est applicable aux traducteurs
-passifs. Cependant, il y a une différence&nbsp;: les traducteurs passifs ne
-sont pas lancés immédiatement.</p>
+donc tout ce qui a Ã©tÃ© dit prÃ©cÃ©demment est applicable aux traducteurs
+passifs. Cependant, il y a une diffÃ©rence&nbsp;: les traducteurs passifs ne
+sont pas lancÃ©s immÃ©diatement.</p>
 <p>
-Cela correspond finalement au sens que vous voulez donner à un traducteur.
-Vous ne voulez pas que la partition soit montée à moins d'accéder réellement
-à cette partition. Vous ne voulez pas lancer le réseau tant qu'il n'y a
+Cela correspond finalement au sens que vous voulez donner Ã  un traducteur.
+Vous ne voulez pas que la partition soit montÃ©e Ã  moins d'accÃ©der rÃ©ellement
+Ã  cette partition. Vous ne voulez pas lancer le rÃ©seau tant qu'il n'y a
 pas de trafic, etc.</p>
 <p>
-Au lieu de cela, au premier accès au traducteur passif, un traducteur
-actif est lancé à partir de la ligne de commande stockée dans l'inode.
-Ce mécanisme est un peu similaire à l'automounter de Linux. La différence,
-c'est qu'il ne s'agit pas d'un petit plus à mettre en place manuellement,
-mais d'une partie intégrante du système. La mise en place de traducteurs
-passifs repousse donc le lancement de ces traducteurs au moment où
-ils seront réellement nécessaires. Par ailleurs, si un traducteur
-actif meurt pour une quelconque raison, il est relancé au premier
-accès qui suit à l'inode.</p>
+Au lieu de cela, au premier accÃ¨s au traducteur passif, un traducteur
+actif est lancÃ© Ã  partir de la ligne de commande stockÃ©e dans l'inode.
+Ce mÃ©canisme est un peu similaire Ã  l'automounter de Linux. La diffÃ©rence,
+c'est qu'il ne s'agit pas d'un petit plus Ã  mettre en place manuellement,
+mais d'une partie intÃ©grante du systÃ¨me. La mise en place de traducteurs
+passifs repousse donc le lancement de ces traducteurs au moment oÃ¹
+ils seront rÃ©ellement nÃ©cessaires. Par ailleurs, si un traducteur
+actif meurt pour une quelconque raison, il est relancÃ© au premier
+accÃ¨s qui suit Ã  l'inode.</p>
 <p>
-Il y a une autre différence&nbsp;: les traducteurs actifs peuvent mourir ou
-se perdre. Dès qu'un traducteur est tué (par exemple, parce que la machine
-est réamorcée), il est perdu pour toujours. Les traducteur passifs
-sont conservés dans les inodes pendant les réamorçages jusqu'à ce que
+Il y a une autre diffÃ©rence&nbsp;: les traducteurs actifs peuvent mourir ou
+se perdre. DÃ¨s qu'un traducteur est tuÃ© (par exemple, parce que la machine
+est rÃ©amorcÃ©e), il est perdu pour toujours. Les traducteur passifs
+sont conservÃ©s dans les inodes pendant les rÃ©amorÃ§ages jusqu'Ã  ce que
 vous les modifiiez par le programme <code>settrans</code>, ou que
-vous effaciez les inodes auxquels ils sont attachés. Cela signifie
-que vous n'avez pas de fichier de configuration à tenir à jour pour
+vous effaciez les inodes auxquels ils sont attachÃ©s. Cela signifie
+que vous n'avez pas de fichier de configuration Ã  tenir Ã  jour pour
 vos points de montage.</p>
 <p>
-Un dernier point&nbsp;: même si vous avez mis en place un traducteur passif,
-vous pouvez toujours lancer un traducteur actif différent.
-Ce n'est que dans le cas où aucun traducteur n'est actif au moment où
-l'inode est utilisé qu'un traducteur est lancé automatiquement par le
+Un dernier point&nbsp;: mÃªme si vous avez mis en place un traducteur passif,
+vous pouvez toujours lancer un traducteur actif diffÃ©rent.
+Ce n'est que dans le cas oÃ¹ aucun traducteur n'est actif au moment oÃ¹
+l'inode est utilisÃ© qu'un traducteur est lancÃ© automatiquement par le
 traducteur passif.</p>
 
 <h3><a href="#TOC_manage" name="manage">Gestion des traducteurs</a></h3>
 <p>
-Comme indiqué plus haut, vous pouvez utiliser <code>settrans</code> 
+Comme indiquÃ© plus haut, vous pouvez utiliser <code>settrans</code> 
 pour lancer ou modifier les traducteurs passifs et actifs. Il existe de
 nombreuses options pour changer le comportement de <code>settrans</code>
 en cas d'erreur, ou pour conditionner son action.
 Voici quelques utilisations classiques&nbsp;:</p>
 <ul><li><code>settrans -c /mnt /hurd/ext2fs /dev/hd2s5</code> monte une
-partition, et le traducteur restera permanent pendant les redémarrages.</li>
+partition, et le traducteur restera permanent pendant les redÃ©marrages.</li>
 <li><code>settrans -a /mnt /hurd/ext2fs ~/dummy.fs</code> monte un
-système de fichiers dans un fichier de données, et le montage
-disparaîtra si le traducteur meurt.
-<li><code>settrans -fg /nfs-data</code> force un traducteur à disparaître.</li>
+systÃ¨me de fichiers dans un fichier de donnÃ©es, et le montage
+disparaÃ®tra si le traducteur meurt.
+<li><code>settrans -fg /nfs-data</code> force un traducteur Ã  disparaÃ®tre.</li>
 </ul>
 <p>
 Vous pouvez utiliser la commande
 <a href="hurd-doc-utils#showtrans"><code>showtrans</code></a>
-pour voir si un traducteur est attaché à un inode. Cette commande n'affichera
+pour voir si un traducteur est attachÃ© Ã  un inode. Cette commande n'affichera
 cependant que le traducteur passif.</p>
 <p>
-Vous pouvez changer les options d'un traducteur actif (de système de
+Vous pouvez changer les options d'un traducteur actif (de systÃ¨me de
 fichiers), avec la commande <code>fsysopts</code> sans le relancer.
-C'est vraiment pratique. Par exemple, vous pouvez faire l'équivalent
-d'un «&nbsp;remontage de partition en lecture seule&nbsp;» sous Linux en lançant
+C'est vraiment pratique. Par exemple, vous pouvez faire l'Ã©quivalent
+d'un Â«&nbsp;remontage de partition en lecture seule&nbsp;Â» sous Linux en lanÃ§ant
 simplement <code>fsysopts /point_de_montage --readonly</code>.
 Le traducteur actif changera son comportement dans la mesure du possible.
-<code>fsysopts /point_de_montage</code> sans autre paramètre affiche
-l'état courant du traducteur.</p>
+<code>fsysopts /point_de_montage</code> sans autre paramÃ¨tre affiche
+l'Ã©tat courant du traducteur.</p>
 
 <h4>Exemples</h4>
 <p>
 Je vous recommande de commencer par lire la commande <code>/bin/mount</code>,
 c'est juste un petit script. Comme la mise en place de traducteurs
-de systèmes de fichiers est similaire au montage de partitions, vous
-pourrez ainsi facilement maîtriser ce concept. Faites une image
-d'un système de fichiers avec <code>dd if=/dev/zero of=dummy.fs bs=1024k
+de systÃ¨mes de fichiers est similaire au montage de partitions, vous
+pourrez ainsi facilement maÃ®triser ce concept. Faites une image
+d'un systÃ¨me de fichiers avec <code>dd if=/dev/zero of=dummy.fs bs=1024k
 count=8; mke2fs dummy.fs</code> et montez-la avec <code>settrans -c dummy
 /hurd/ext2fs `pwd`/dummy.fs</code>. Notez que le traducteur n'est pas
-encore lancé, il n'y a pas de nouveau processus <code>ext2fs</code>
-qui tourne (vérifiez avec <code>ps Aux</code>). Vérifiez que tout est
+encore lancÃ©, il n'y a pas de nouveau processus <code>ext2fs</code>
+qui tourne (vÃ©rifiez avec <code>ps Aux</code>). VÃ©rifiez que tout est
 correct en utilisant <code>showtrans</code>.</p>
 <p>
 Maintenant, tapez <code>ls dummy</code>, vous remarquerez un court
-délai pendant que le traducteur démarre. Après cela, il n'y aura plus
-de délais pour accéder à dummy. Sous Linux, on aurait dit que vous
-avez automonté un système de fichiers <code>loop</code>. Vérifiez
+dÃ©lai pendant que le traducteur dÃ©marre. AprÃ¨s cela, il n'y aura plus
+de dÃ©lais pour accÃ©der Ã  dummy. Sous Linux, on aurait dit que vous
+avez automontÃ© un systÃ¨me de fichiers <code>loop</code>. VÃ©rifiez
 avec <code>ps Aux</code> qu'il y a un processus <code>ext2fs dummy</code>
 qui tourne. Maintenant, mettez quelques fichiers dans ce nouveau
-répertoire. Essayez de passer ce système de fichier en lecture seule
-avec <code>fsysopts</code>. Notez que de nouvelles tentatives d'écriture
-échouent maintenant. Essayez de tuer le traducteur actif avec
+rÃ©pertoire. Essayez de passer ce systÃ¨me de fichier en lecture seule
+avec <code>fsysopts</code>. Notez que de nouvelles tentatives d'Ã©criture
+Ã©chouent maintenant. Essayez de tuer le traducteur actif avec
 <code>settrans -g</code>.</p>
 <p>
-Vous devriez commencer à comprendre ce qui se passe. Maintenant, rappelez-vous,
+Vous devriez commencer Ã  comprendre ce qui se passe. Maintenant, rappelez-vous,
 ce n'est qu'un seul serveur, le serveur Hurd ext2fs. Il existe de nombreux
-autres serveurs dans le répertoire <code>/hurd</code>. Certains sont
-pour des systèmes de fichiers. Certains sont nécessaires pour
-des fonctionnalités des systèmes de fichiers, comme les liens.
-Certains sont nécessaires pour les fichiers de périphériques. Certains
-sont nécessaires pour le réseau. Imaginez que vous montez un serveur
-FTP avec <code>settrans</code> et que vous téléchargez des fichiers
+autres serveurs dans le rÃ©pertoire <code>/hurd</code>. Certains sont
+pour des systÃ¨mes de fichiers. Certains sont nÃ©cessaires pour
+des fonctionnalitÃ©s des systÃ¨mes de fichiers, comme les liens.
+Certains sont nÃ©cessaires pour les fichiers de pÃ©riphÃ©riques. Certains
+sont nÃ©cessaires pour le rÃ©seau. Imaginez que vous montez un serveur
+FTP avec <code>settrans</code> et que vous tÃ©lÃ©chargez des fichiers
 en utilisant simplement la commande <code>cp</code> standard, ou bien
-que vous éditez votre site web avec la commande
+que vous Ã©ditez votre site web avec la commande
 <code>emacs /ftp/homepage.my.server.org/index.html</code>&nbsp;!</p>
 

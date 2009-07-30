@@ -4,49 +4,49 @@
 <define-tag moreinfo>
 
 <p>
-Dan Kaminsky a découvert que des propriétés inhérentes au protocole DNS
-conduisaient à des attaques par empoisonnement de cache DNS. Entre autres
-choses, des attaques réussies peuvent conduire à mal diriger du trafic sur la
-Toile et à rerouter des courriels.
+Dan Kaminsky a dÃ©couvert que des propriÃ©tÃ©s inhÃ©rentes au protocole DNS
+conduisaient Ã  des attaques par empoisonnement de cache DNS. Entre autres
+choses, des attaques rÃ©ussies peuvent conduire Ã  mal diriger du trafic sur la
+Toile et Ã  rerouter des courriels.
 </p>
 
 <p>
-Cette mise à jour modifie les paquets de la version&nbsp;9 de Bind de Debian et
-implante cette contre-mesure recommandée&nbsp;: sélection aléatoire du port
-source des requêtes UDP. Cette modification augmente le nombre de valeurs dans
-lesquelles un attaquant doit chercher. Elle assure la compatibilité ascendante
+Cette mise Ã  jour modifie les paquets de la version&nbsp;9 de Bind de Debian et
+implante cette contre-mesure recommandÃ©e&nbsp;: sÃ©lection alÃ©atoire du port
+source des requÃªtes UDP. Cette modification augmente le nombre de valeurs dans
+lesquelles un attaquant doit chercher. Elle assure la compatibilitÃ© ascendante
 et rend les attaques significativement plus difficiles.
 </p>
 
 <p>
-Veuillez noter que cette mise à jour de sécurité modifie le comportement réseau
-de Bind de manière fondamentale, et les étapes suivantes sont recommandées pour
-assurer une mise à jour sans heurt.
+Veuillez noter que cette mise Ã  jour de sÃ©curitÃ© modifie le comportement rÃ©seau
+de Bind de maniÃ¨re fondamentale, et les Ã©tapes suivantes sont recommandÃ©es pour
+assurer une mise Ã  jour sans heurt.
 </p>
 
 <p>
-1. Assurez-vous que votre configuration réseau est compatible avec la sélection
-aléatoire de port source. Si vous protégez votre solveur avec un filtre de
-paquets sans état, vous devez vous assurer qu'aucun service autre que DNS
-n'écoute sur la série de port UDP 1024 à 65535 et l'ouvrir sur ce filtre de
-paquets. Par exemple, les filtres de paquets basés sur la version&nbsp;2.6.18
-du noyau Linux d'Etch ne gèrent que le filtrage sans état des paquets IPv6, et
-donc soulève cette difficulté supplémentaire (Si vous utilisez IPv4 avec
-iptables et des règles ESTABLISHED, il est probable qu'aucune modification du
-réseau ne soit nécessaire).
+1. Assurez-vous que votre configuration rÃ©seau est compatible avec la sÃ©lection
+alÃ©atoire de port source. Si vous protÃ©gez votre solveur avec un filtre de
+paquets sans Ã©tat, vous devez vous assurer qu'aucun service autre que DNS
+n'Ã©coute sur la sÃ©rie de port UDP 1024 Ã  65535 et l'ouvrir sur ce filtre de
+paquets. Par exemple, les filtres de paquets basÃ©s sur la version&nbsp;2.6.18
+du noyau Linux d'Etch ne gÃ¨rent que le filtrage sans Ã©tat des paquets IPv6, et
+donc soulÃ¨ve cette difficultÃ© supplÃ©mentaire (Si vous utilisez IPv4 avec
+iptables et des rÃ¨gles ESTABLISHED, il est probable qu'aucune modification du
+rÃ©seau ne soit nÃ©cessaire).
 </p>
 
 <p>
-2. Installez la mise à jour de la version&nbsp;9 de Bind, avec <q>apt-get
-update</q> suivi de <q>apt-get install bind9</q>. Vérifiez que le processus
-named a été redémarré et répond aux requêtes récursives (Si toutes les requêtes
-échouent suite à une erreur de temps de traitement dépassé, cela signifie que
-des modifications du réseau sont nécessaires&nbsp;; veuillez vous référer à la
-première étape).
+2. Installez la mise Ã  jour de la version&nbsp;9 de Bind, avec <q>apt-get
+update</q> suivi de <q>apt-get install bind9</q>. VÃ©rifiez que le processus
+named a Ã©tÃ© redÃ©marrÃ© et rÃ©pond aux requÃªtes rÃ©cursives (Si toutes les requÃªtes
+Ã©chouent suite Ã  une erreur de temps de traitement dÃ©passÃ©, cela signifie que
+des modifications du rÃ©seau sont nÃ©cessaires&nbsp;; veuillez vous rÃ©fÃ©rer Ã  la
+premiÃ¨re Ã©tape).
 </p>
 
 <p>
-3. Vérifiez que la sélection aléatoire de port source est active. Vérifiez que
+3. VÃ©rifiez que la sÃ©lection alÃ©atoire de port source est active. VÃ©rifiez que
 le fichier /var/log/daemon.log ne contient pas de message de la forme
 suivante&nbsp;:
 </p>
@@ -54,59 +54,59 @@ suivante&nbsp;:
 <pre>named[6106]: /etc/bind/named.conf.options:28: using specific query-source port suppresses port randomization and can be insecure.</pre>
 
 <p>
-juste après les messages <q>listening on IPv6 interface</q> et <q>listening on
-IPv4 interface</q> inscrits dans le journal par Bind au démarrage. Si ces
-messages sont présents, vous devez supprimer les lignes indiquées de la
-configuration, ou remplacer les numéros de ports qu'ils contiennent par le
+juste aprÃ¨s les messages <q>listening on IPv6 interface</q> et <q>listening on
+IPv4 interface</q> inscrits dans le journal par Bind au dÃ©marrage. Si ces
+messages sont prÃ©sents, vous devez supprimer les lignes indiquÃ©es de la
+configuration, ou remplacer les numÃ©ros de ports qu'ils contiennent par le
 symbole <q>*</q> (par exemple, remplacez <q>port 53</q> par <q>port *</q>).
 </p>
 
 <p>
-À fin de vérification complémentaire, utilisez tcpdump ou d'autres outils de
-surveillance du réseau pour vérifier la variation des ports source UDP. S'il y
-a un périphérique NAT devant votre solveur, veuillez vous assurer qu'il ne
-supprime pas les effets de la sélection aléatoire de ports source.
+Ã€ fin de vÃ©rification complÃ©mentaire, utilisez tcpdump ou d'autres outils de
+surveillance du rÃ©seau pour vÃ©rifier la variation des ports source UDP. S'il y
+a un pÃ©riphÃ©rique NAT devant votre solveur, veuillez vous assurer qu'il ne
+supprime pas les effets de la sÃ©lection alÃ©atoire de ports source.
 </p>
 
 <p>
-4. Si vous ne pouvez pas activer la sélection aléatoire de ports source, pensez
-à configurer la version&nbsp;9 de Bind pour rediriger les requêtes vers un
-solveur qui le peut, si possible sur un réseau privé virtuel comme OpenVPN afin
-de créer le lien réseau sécurisé nécessaire (utilisez le mode de simple
+4. Si vous ne pouvez pas activer la sÃ©lection alÃ©atoire de ports source, pensez
+Ã  configurer la version&nbsp;9 de Bind pour rediriger les requÃªtes vers un
+solveur qui le peut, si possible sur un rÃ©seau privÃ© virtuel comme OpenVPN afin
+de crÃ©er le lien rÃ©seau sÃ©curisÃ© nÃ©cessaire (utilisez le mode de simple
 redirection de Bind dans ce cas).
 </p>
 
 <p>
-D'autres solveurs utilisant un cache distribués par Debian (PowerDNS, MaraDNS,
-Unbound) emploient déjà la sélection aléatoire de ports source, et ils n'ont
-pas besoin d'être mis à jour. Différentes versions&nbsp;9.5 de Bind (à partir de
+D'autres solveurs utilisant un cache distribuÃ©s par Debian (PowerDNS, MaraDNS,
+Unbound) emploient dÃ©jÃ  la sÃ©lection alÃ©atoire de ports source, et ils n'ont
+pas besoin d'Ãªtre mis Ã  jour. DiffÃ©rentes versions&nbsp;9.5 de Bind (Ã  partir de
 la version&nbsp;1:9.5.0.dfsg-4) n'implantent qu'une forme faible de
-sélection aléatoire des ports source et doivent aussi être mis à jour. Pour des
+sÃ©lection alÃ©atoire des ports source et doivent aussi Ãªtre mis Ã  jour. Pour des
 informations sur la version&nbsp;8 de Bind, veuillez vous reporter au <a
-href="dsa-1604">bulletin de sécurité Debian n°&nbsp;1604-1</a>, et pour l'état
+href="dsa-1604">bulletin de sÃ©curitÃ© Debian nÂ°&nbsp;1604-1</a>, et pour l'Ã©tat
 du solveur<!-- libc stub resolver --> de la libc, veuillez vous reporter au <a
-href="dsa-1605">bulletin de sécurité Debian n°&nbsp;1605-1</a>.
+href="dsa-1605">bulletin de sÃ©curitÃ© Debian nÂ°&nbsp;1605-1</a>.
 </p>
 
 <p>
-Les paquets bind9 mis à jour contiennent des modifications initialement prévues
-pour la prochaine version intermédiaire de la distribution stable, y compris
-l'adresse IP modifiée de L.ROOT-SERVERS.NET (bogue Debian n°&nbsp;<a
+Les paquets bind9 mis Ã  jour contiennent des modifications initialement prÃ©vues
+pour la prochaine version intermÃ©diaire de la distribution stable, y compris
+l'adresse IP modifiÃ©e de L.ROOT-SERVERS.NET (bogue Debian nÂ°&nbsp;<a
 href="http://bugs.debian.org/449148">449148</a>).
 </p>
 
 <p>
-Pour la distribution stable (<em>Etch</em>), ce problème a été corrigé dans la
+Pour la distribution stable (<em>Etch</em>), ce problÃ¨me a Ã©tÃ© corrigÃ© dans la
 version&nbsp;9.3.4-2etch3.
 </p>
 
 <p>
-Pour la distribution instable (<em>Sid</em>), ce problème sera corrigé
+Pour la distribution instable (<em>Sid</em>), ce problÃ¨me sera corrigÃ©
 prochainement.
 </p>
 
 <p>
-Nous vous recommandons de mettre à jour votre paquet bind9.
+Nous vous recommandons de mettre Ã  jour votre paquet bind9.
 </p>
 
 </define-tag>
