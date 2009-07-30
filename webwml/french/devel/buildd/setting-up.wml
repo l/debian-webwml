@@ -1,29 +1,29 @@
 #use wml::debian::template title="Mettre en place un service d'empaquetage" BARETITLE="true"
-#use wml::debian::translation-check translation="1.9" maintainer="Mohammed Adnène Trojette"
+#use wml::debian::translation-check translation="1.9" maintainer="Mohammed AdnÃ¨ne Trojette"
 
-<p>Vous trouverez ici une antisèche pour mettre en place un service
-d'empaquetage pour Debian. Andreas Barth a écrit ce document lorsqu'il
+<p>Vous trouverez ici une antisÃ¨che pour mettre en place un service
+d'empaquetage pour Debian. Andreas Barth a Ã©crit ce document lorsqu'il
 a mis en place des services d'empaquetage pour <em>experimental</em>
 et backports.org, il est donc possible qu'il ne soit pas
-complètement cohérent avec la mise en place réalisée sur les machines
-des développeurs qui sont utilisées comme serveurs d'empaquetage
+complÃ¨tement cohÃ©rent avec la mise en place rÃ©alisÃ©e sur les machines
+des dÃ©veloppeurs qui sont utilisÃ©es comme serveurs d'empaquetage
 automatique.</p>
 
-<p>Pour réaliser un service d'empaquetage, vous pouvez
-soit utiliser le service d'empaquetage situé sur
+<p>Pour rÃ©aliser un service d'empaquetage, vous pouvez
+soit utiliser le service d'empaquetage situÃ© sur
 db.debian.org, ou en extraire un depuis les sources de <a
 href="http://svn.cyberhqz.com/svn/wanna-build/">wanna-build</a>. Si
 vous souhaitez utiliser la version de db.debian.org, veuillez ajouter
 <tt>deb http://db.debian.org debian-admin/</tt> au fichier
 <tt>sources.list</tt> et installer <tt>buildd</tt>.</p>
 
-<p>Par ailleurs, vous avez besoin d'un <tt>debootstrap</tt> récent afin
-de pouvoir mettre en place des «&nbsp;chroots&nbsp;» pour <em>testing</em>
-et <em>unstable</em>. Vous aurez alors peut-être besoin d'un rétroportage
-pour cela. Vous pouvez soit le prendre sur un dépôt de rétroportage ou
-alors le réempaqueter depuis le paquet source vous-même.</p>
+<p>Par ailleurs, vous avez besoin d'un <tt>debootstrap</tt> rÃ©cent afin
+de pouvoir mettre en place des Â«&nbsp;chroots&nbsp;Â» pour <em>testing</em>
+et <em>unstable</em>. Vous aurez alors peut-Ãªtre besoin d'un rÃ©troportage
+pour cela. Vous pouvez soit le prendre sur un dÃ©pÃ´t de rÃ©troportage ou
+alors le rÃ©empaqueter depuis le paquet source vous-mÃªme.</p>
 
-<p>Vous devez créer les répertoires suivants (sous
+<p>Vous devez crÃ©er les rÃ©pertoires suivants (sous
 <tt>/org/buildd/</tt>)&nbsp;:</p>
 <pre>
 install -d build mqueue -o buildd -g buildd
@@ -43,47 +43,47 @@ ln -s source-dependencies-unstable /etc/source-dependencies-sid-nonfree
 sudo ln -s source-dependencies-stable /etc/source-dependencies-woody-backports.org
 </pre>
 
-<p>Ajouter les «&nbsp;chroots&nbsp;»&nbsp;:</p>
+<p>Ajouter les Â«&nbsp;chroots&nbsp;Â»&nbsp;:</p>
 <pre>
 sudo debootstrap --variant=buildd sid chroots/sid http://ftp.debian.org/debian
 sudo ln -s /org/buildd/chroots/sid/ build/chroot-unstable
 </pre>
 
-<p>Mettre ensuite à jour et installer les paquets nécessaires&nbsp;:</p>
+<p>Mettre ensuite Ã  jour et installer les paquets nÃ©cessaires&nbsp;:</p>
 <pre>
 sudo chroot chroots/sid apt-get update
 sudo chroot chroots/sid apt-get install fakeroot build-essential sudo debfoster
 sudo chroot chroots/sid debfoster
 </pre>
 
-<p>et pour les rétroportage <em>woody</em> également&nbsp;:</p>
+<p>et pour les rÃ©troportage <em>woody</em> Ã©galement&nbsp;:</p>
 <pre>
 sudo debootstrap --variant=buildd woody chroots/woody-backports http://ftp.debian.org/debian
 sudo ln -s /org/buildd/chroots/woody-backports/ build/chroot-woody-backports.org
 </pre>
-<p>Éditons
+<p>Ã‰ditons
 <tt>chroots/woody-backports/etc/apt/sources.list</tt></p>
 <pre>
 deb http://ftp.debian.org/debian woody main non-free contrib
 deb-src http://ftp.debian.org/debian woody main non-free contrib
 deb-src ftp://linux.mathematik.tu-darmstadt.de/pub/linux/distributions/debian-backports/debian woody all
 </pre>
-<p>Mettons à jour et installons quelques petites choses&nbsp;:</p>
+<p>Mettons Ã  jour et installons quelques petites choses&nbsp;:</p>
 <pre>
 sudo chroot chroots/woody-backports apt-get update
 sudo chroot chroots/woody-backports apt-get install fakeroot build-essential sudo debfoster
 sudo chroot chroots/woody-backports debfoster
 </pre>
 
-<p>OK, créons le <tt>.sbuildrc</tt></p>
+<p>OK, crÃ©ons le <tt>.sbuildrc</tt></p>
 <pre>
-\# Adresse de courriel où les journaux sont envoyés (obligatoire, pas de
-\# valeur par défaut !)
+\# Adresse de courriel oÃ¹ les journaux sont envoyÃ©s (obligatoire, pas de
+\# valeur par dÃ©fautÂ !)
 $mailto = 'ce que vous voulez';
 
-\# Nom du responsable à utiliser dans les fichiers .changes (obligatoire, 
-\# pas de valeur par défaut !)
-$maintainer_name='ce qui devra être dans le fichier .changes';
+\# Nom du responsable Ã  utiliser dans les fichiers .changes (obligatoire, 
+\# pas de valeur par dÃ©fautÂ !)
+$maintainer_name='ce qui devra Ãªtre dans le fichier .changes';
 
 \#$fakeroot='/usr/bin/sudo';
 $fakeroot='/usr/bin/fakeroot';
@@ -92,7 +92,7 @@ $fakeroot='/usr/bin/fakeroot';
 </pre>
 
 <p>N'oubliez pas d'ajouter l'utilisateur du service d'empaquetage au
-fichier de configuration de <tt>sudo</tt> de façon à ce qu'il puisse
+fichier de configuration de <tt>sudo</tt> de faÃ§on Ã  ce qu'il puisse
 lancer les outils sans restriction.</p>
 
 <p>OK, testons le tout maintenant&nbsp;: allons dans ~buildd/build et
@@ -102,24 +102,24 @@ sbuild -d unstable -v netpbm-nonfree_2:9.20-2
 sbuild -d woody-backports.org -v arj_3.10.19-1.backports.org.1
 </pre>
 
-<p>Ajoutons <tt>|/usr/bin/buildd-mail-wrapper</tt> à ~buildd/.forward de
-façon à pouvoir répondre aux courriels des services d'empaquetage.</p>
+<p>Ajoutons <tt>|/usr/bin/buildd-mail-wrapper</tt> Ã  ~buildd/.forward de
+faÃ§on Ã  pouvoir rÃ©pondre aux courriels des services d'empaquetage.</p>
 
 <p>Vous devez aussi modifier ~buildd/buildd.conf&nbsp;-&nbsp;mais
-désolé, il n'y a pas d'antisèche pour cela, parce que cela dépend de
+dÃ©solÃ©, il n'y a pas d'antisÃ¨che pour cela, parce que cela dÃ©pend de
 votre <tt>wanna-build</tt>.</p>
 
-<p>Vous pouvez obtenir plus d'informations sur les détails concernant
-les états du service
+<p>Vous pouvez obtenir plus d'informations sur les dÃ©tails concernant
+les Ã©tats du service
 d'empaquetage <a href="wanna-build-states">ici</a>.
-Veuillez répondre aux courriels des services d'empaquetage
-soit avec le fichier .changes signé, soit avec «&nbsp;give-back&nbsp;»,
-«&nbsp;retry&nbsp;», «&nbsp;dep-wait&nbsp;», «&nbsp;failed&nbsp;»,
-«&nbsp;dep-wait&lt;dependencies&gt;&nbsp;», «&nbsp;failed\n&lt;why it
-failed&gt;&nbsp;».</p>
+Veuillez rÃ©pondre aux courriels des services d'empaquetage
+soit avec le fichier .changes signÃ©, soit avec Â«&nbsp;give-back&nbsp;Â»,
+Â«&nbsp;retry&nbsp;Â», Â«&nbsp;dep-wait&nbsp;Â», Â«&nbsp;failed&nbsp;Â»,
+Â«&nbsp;dep-wait&lt;dependencies&gt;&nbsp;Â», Â«&nbsp;failed\n&lt;why it
+failed&gt;&nbsp;Â».</p>
 
-<p>Vous pouvez utiliser les tâches suivantes comme des tâches
-automatisées dans le cron&nbsp;:</p>
+<p>Vous pouvez utiliser les tÃ¢ches suivantes comme des tÃ¢ches
+automatisÃ©es dans le cron&nbsp;:</p>
 <pre>
 @reboot        touch ~buildd/NO-DAEMON-PLEASE
 17 * * * * /usr/bin/buildd-watcher

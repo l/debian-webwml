@@ -1,20 +1,20 @@
-<p>Autres pages concernant le système de gestion des bogues (SGB ou BTS pour <i>Bug Tracking System</i> en anglais)&nbsp;:
+<p>Autres pages concernant le systÃ¨me de gestion des bogues (SGB ou BTS pour <i>Bug Tracking System</i> en anglais)&nbsp;:
 
 <ul>
-  <li><a href="./">Page principale du système de gestion des bogues.</a>
+  <li><a href="./">Page principale du systÃ¨me de gestion des bogues.</a>
   <li><a href="Reporting">Instructions pour signaler des bogues.</a>
-  <li><a href="Access">Accéder aux enregistrements de bogues autrement que
+  <li><a href="Access">AccÃ©der aux enregistrements de bogues autrement que
 	sur la Toile.</a>
-  <li><a href="Developer">Informations pour les développeurs 
-	sur le système de gestion des bogues.</a>
-  <li><a href="server-control">Informations pour les développeurs
-	sur le traitement des bogues par messagerie électronique.</a>
-  <li><a href="server-refcard">Carte de référence des serveurs de 
+  <li><a href="Developer">Informations pour les dÃ©veloppeurs 
+	sur le systÃ¨me de gestion des bogues.</a>
+  <li><a href="server-control">Informations pour les dÃ©veloppeurs
+	sur le traitement des bogues par messagerie Ã©lectronique.</a>
+  <li><a href="server-refcard">Carte de rÃ©fÃ©rence des serveurs de 
 	messagerie.</a>
-  <li><a href="server-request">Requêtes de rapport de bogues par
-	messages électroniques.</a>
-#  <li><a href="db/ix/full.html">Liste complète des rapports de bogues
-# non résolus et récents.</a>
+  <li><a href="server-request">RequÃªtes de rapport de bogues par
+	messages Ã©lectroniques.</a>
+#  <li><a href="db/ix/full.html">Liste complÃ¨te des rapports de bogues
+# non rÃ©solus et rÃ©cents.</a>
 #  <li><a href="db/ix/packages.html">Paquets ayant des rapports de bogues.</a>
 #  <li><a href="db/ix/maintainers.html">Mainteneurs de paquets ayant des
 # rapports de bogues.</a>

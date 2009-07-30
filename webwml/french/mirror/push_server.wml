@@ -3,14 +3,14 @@
 
 #use wml::debian::translation-check translation="1.18" maintainer="Nicolas Bertolissio"
 
-# Traducteur précédant : Christian Couder
+# Traducteur prÃ©cÃ©dant : Christian Couder
 # Premier traducteur   : Christophe Lebars
 
 <p>
-Mettre en place un serveur de repoussage se résume à effectuer deux tâches
-relativement simples&nbsp;: mettre en place un accès rsync (comme pour faire un
-miroir par aspiration standard) et mettre en place un mécanisme déclencheur
-utilisant ssh (pour déclencher la mise à jour du miroir par repoussage).
+Mettre en place un serveur de repoussage se rÃ©sume Ã  effectuer deux tÃ¢ches
+relativement simples&nbsp;: mettre en place un accÃ¨s rsync (comme pour faire un
+miroir par aspiration standard) et mettre en place un mÃ©canisme dÃ©clencheur
+utilisant ssh (pour dÃ©clencher la mise Ã  jour du miroir par repoussage).
 </p>
 
 <p>
@@ -26,13 +26,13 @@ repoussage</a>.</small>
 <toc-add-entry name="rsync">Mettre en place rsync</toc-add-entry>
 
 <p>
-Installez <code>rsync</code>&nbsp;2.1.1 ou une version supérieure. Si votre
+Installez <code>rsync</code>&nbsp;2.1.1 ou une version supÃ©rieure. Si votre
 site tourne sous Debian, installez simplement le dernier paquet <a
 href="http://packages.debian.org/stable/net/rsync">rsync</a>.
 </p>
 
 <p>
-Créez un fichier <code>rsyncd.conf</code> et mettez quelque chose comme ceci
+CrÃ©ez un fichier <code>rsyncd.conf</code> et mettez quelque chose comme ceci
 dans celui-ci&nbsp;:
 </p>
 
@@ -45,31 +45,31 @@ socket options = SO_KEEPALIVE
 [debian]
   path = /srv/debian/mirror
   comment = The Debian Archive (~250 GB)
-  auth users = compte_autorisé1,compte_autorisé2,compte_autoriséN
+  auth users = compte_autorisÃ©1,compte_autorisÃ©2,compte_autorisÃ©N
   read only = true
   secrets file = /etc/rsyncd/debian.secrets
 </pre>
 
 <p>
-Pour chaque site dont vous faites un miroir par repoussage, ajoutez une entrée
+Pour chaque site dont vous faites un miroir par repoussage, ajoutez une entrÃ©e
 au fichier <code>/etc/rsyncd/debian.secrets</code>&nbsp;:
 </p>
 
 <pre>
-compte_autorisé1:un_mot_de_passe
-compte_autorisé2:autre_mot_de_passe
-compte_autoriséN:_mot_de_passe
+compte_autorisÃ©1:un_mot_de_passe
+compte_autorisÃ©2:autre_mot_de_passe
+compte_autorisÃ©N:_mot_de_passe
 </pre>
 
 <p>
-Vous avez alors donné accès à l'archive se trouvant sur votre machine aux
+Vous avez alors donnÃ© accÃ¨s Ã  l'archive se trouvant sur votre machine aux
 miroirs clients de votre machine.
 </p>
 
 <p>
-Vous voudrez probablement lancer le démon rsync depuis inetd. Pour cela, vous
+Vous voudrez probablement lancer le dÃ©mon rsync depuis inetd. Pour cela, vous
 devez d'abord ajouter le service rsync dans le fichier
-<code>/etc/services</code> (s'il n'y est pas déjà), comme ceci&nbsp;:
+<code>/etc/services</code> (s'il n'y est pas dÃ©jÃ ), comme ceci&nbsp;:
 </p>
 	
 <pre>
@@ -77,7 +77,7 @@ rsync           873/tcp
 </pre>
 
 <p>
-Pour lancer le démon avec inetd, ajoutez ce qui suit à votre fichier
+Pour lancer le dÃ©mon avec inetd, ajoutez ce qui suit Ã  votre fichier
 <code>/etc/inetd.conf</code>&nbsp;:
 </p>
 
@@ -86,16 +86,16 @@ rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daem
 </pre>
 
 <p>
-N'oubliez pas d'envoyer à inetd un signal HUP pour lui dire de relire son
-fichier de configuration après que vous l'avez modifié.
+N'oubliez pas d'envoyer Ã  inetd un signal HUP pour lui dire de relire son
+fichier de configuration aprÃ¨s que vous l'avez modifiÃ©.
 </p>
 
 
-<toc-add-entry name="sshtrigger">Mettre en place un mécanisme déclencheur ssh</toc-add-entry>
+<toc-add-entry name="sshtrigger">Mettre en place un mÃ©canisme dÃ©clencheur ssh</toc-add-entry>
 
 <p>
-Créez une nouvelle clé ssh pour le compte que vous utilisez pour faire un
-miroir de Debian. Faites attention à ne pas écraser votre clé ssh originale et
+CrÃ©ez une nouvelle clÃ© ssh pour le compte que vous utilisez pour faire un
+miroir de Debian. Faites attention Ã  ne pas Ã©craser votre clÃ© ssh originale et
 pour cela utilisez l'option -f, par exemple&nbsp;:
 </p>
 
@@ -104,8 +104,8 @@ ssh-keygen -f ~/.ssh/identite.monsite
 </pre>
 
 <p>
-Vérifiez que la nouvelle clé publique (~/.ssh/identite.monsite.pub) contient
-ceci au début du fichier, avec ADRESSEIP l'IP de votre miroir amont :
+VÃ©rifiez que la nouvelle clÃ© publique (~/.ssh/identite.monsite.pub) contient
+ceci au dÃ©but du fichier, avec ADRESSEIP l'IP de votre miroir amontÂ :
 </p>
 
 <pre>
@@ -115,15 +115,15 @@ no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/f
 
 <p>
 Vous devez aussi mettre en place le script qui contactera les miroirs clients.
-Créez un fichier nommé <code>signal</code>, contenant ceci&nbsp;:
+CrÃ©ez un fichier nommÃ© <code>signal</code>, contenant ceci&nbsp;:
 </p>
 
 <protect>
 <pre>
 #!/bin/sh
 
-# Ce script est appelé pour signaler à l'hôte distant qu'il est temps de
-# mettre à jour le miroir à partir de l'archive.
+# Ce script est appelÃ© pour signaler Ã  l'hÃ´te distant qu'il est temps de
+# mettre Ã  jour le miroir Ã  partir de l'archive.
 
 echo Signalling $1
 ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identite.monsite sleep 1
@@ -131,19 +131,19 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identite.monsite sleep 1
 </protect>
 
 <p>
-Ce script va se connecter sur un hôte distant en utilisant la clé ssh spéciale
-que vous avez créée ci-dessus, à condition que chaque opérateur de miroir
-client ajoute cette clef à son propre fichier ~/.ssh/authorized_keys (en
-remplaçant également <q>ftpsync</q> selon le nom de sa commande de lancement
-de la recopie). Ce script ne fait rien d'utile à distance en lui-même, la
-commande unique sera lancée comme spécifié par le paramétragede la clef.
+Ce script va se connecter sur un hÃ´te distant en utilisant la clÃ© ssh spÃ©ciale
+que vous avez crÃ©Ã©e ci-dessus, Ã  condition que chaque opÃ©rateur de miroir
+client ajoute cette clef Ã  son propre fichier ~/.ssh/authorized_keys (en
+remplaÃ§ant Ã©galement <q>ftpsync</q> selon le nom de sa commande de lancement
+de la recopie). Ce script ne fait rien d'utile Ã  distance en lui-mÃªme, la
+commande unique sera lancÃ©e comme spÃ©cifiÃ© par le paramÃ©tragede la clef.
 </p>
 
 <p>
-Pour déclencher effectivement les miroirs, vous devez lancer la commande
-<code>./signal &lt;site&gt; &lt;username&gt;</code> après avoir réalisé votre
-propre synchronisation. De cette façon, dès que votre site a terminé de mettre
-à jour son miroir à partir de son serveur, vous allez déclencher la mise à jour
+Pour dÃ©clencher effectivement les miroirs, vous devez lancer la commande
+<code>./signal &lt;site&gt; &lt;username&gt;</code> aprÃ¨s avoir rÃ©alisÃ© votre
+propre synchronisation. De cette faÃ§on, dÃ¨s que votre site a terminÃ© de mettre
+Ã  jour son miroir Ã  partir de son serveur, vous allez dÃ©clencher la mise Ã  jour
 des sites clients de votre serveur.
 </p>
 
@@ -152,9 +152,9 @@ Ce nouveau script, <code>runmirrors</code>, devrait contenir quelque chose
 comme ceci&nbsp;:
 </p>
 <p>
-Vous pouvez placer ces commandes soit à la fin de votre
-<code>ftpsync.conf</code>, ou si vous préférez, dans un autre script et lancer
-ce script à partir de <code>anonftpsync</code>, par exemple de la façon
+Vous pouvez placer ces commandes soit Ã  la fin de votre
+<code>ftpsync.conf</code>, ou si vous prÃ©fÃ©rez, dans un autre script et lancer
+ce script Ã  partir de <code>anonftpsync</code>, par exemple de la faÃ§on
 suivante&nbsp;:
 </p>
 
@@ -162,7 +162,7 @@ suivante&nbsp;:
 <pre>
 #!/bin/sh
 
-# Ce script est appelé par websync pour déclencher les miroirs clients.
+# Ce script est appelÃ© par websync pour dÃ©clencher les miroirs clients.
 
 ./signal un.autre.site archvsync
 ./signal et.un.autre.site autrecompte
@@ -171,6 +171,6 @@ suivante&nbsp;:
 
 
 <p>
-Si vous avez le moindre problème avec ceci, <a
+Si vous avez le moindre problÃ¨me avec ceci, <a
 href="mailto:mirrors@debian.org">contactez-nous</a>.
 </p>
