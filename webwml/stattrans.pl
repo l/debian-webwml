@@ -288,6 +288,15 @@ foreach $lang (@search_in) {
     foreach $l (@processed_langs) {
         print "$l.html " if ($config{'verbose'});
 
+		$charset{$lang};
+		open (wmlrc,"$opt_w/$lang/.wmlrc") ;
+		while (<wmlrc>) {
+			if ( /^-D CHARSET=(.*)$/ ) { 
+				$charset{$lang} = $1;
+			}
+		}		
+		close wmlrc ;
+
         $t_body = $u_body = $ui_body = $un_body = $uu_body = $o_body = "";
         $translated{$lang} = $outdated{$lang} = $untranslated{$lang} = 0;
 
@@ -405,7 +414,7 @@ foreach $lang (@search_in) {
 	    printf HTML "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n";
             # printf HTML "<html><head><title>%s: %s</title></head><body bgcolor=\"#ffffff\">\n", $config{'title'}, ucfirst $lang;
             printf HTML "<html>\n<head>\n";
-	    printf HTML "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+	    printf HTML "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=$charset{$lang}\">\n";
 	    printf HTML "  <title>%s: %s</title>\n", $config{'title'}, ucfirst $lang;
 	    print HTML " <link href=\"../../../debian.css\" rel=\"stylesheet\" type=\"text/css\">";
 	    print HTML "</head>\n<body>\n";
