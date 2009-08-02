@@ -218,7 +218,7 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
-        'Willy Picard' =>  {
+	        'Willy Picard' =>  {
                         email       => 'debian-l10n-french@lists.debian.org',
                         summary     => 2,
                         logs        => 0,
