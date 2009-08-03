@@ -209,7 +209,7 @@ sub init_translators {
                         file        => 0,
                         compress    => 'none'
                 },
-	               'Thomas Péteul' =>  {
+		'Thomas Péteul' =>  {
                         email       => 'olaf@resel.fr',
                         summary     => 3,
                         logs        => 3,
