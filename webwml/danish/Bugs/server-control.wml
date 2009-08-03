@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debians fejlrapporteringssystem &mdash; kontrolserveren" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.78"
+#use wml::debian::translation-check translation="1.80"
 
 <h1>Introduktion til e-mailserveren til fejlrapportskontrol og -behandling</h1>
 
@@ -51,6 +51,8 @@ e-mail med kommandoen <code>refcard</code>.</p>
 	  <dt><a href="#tag">tag</a></dt>
 	  <dt><a href="#retitle">retitle</a></dt>
 	  <dt><a href="#submitter">submitter</a></dt>
+	  <dt><a href="#affects">affects</a></dt>
+	  <dt><a href="#summary">summary</a></dt>
 	</dl>
       </td>
       <!-- Versioning -->
@@ -216,7 +218,7 @@ e-mail med kommandoen <code>refcard</code>.</p>
       e-mail-adresse.  Ved, hvor muligt, at angive en URI, er der mulighed for 
       at værktøjer kan forespørge et fjerntliggende fejlsporingssystem (så som 
       bugzilla) om en fejls status.</p>
-      <p>Eksempel pÃ¥ brug:</p>
+      <p>Eksempel på brug:</p>
       <pre>
         forwarded 12345 http://bugz.illa.foo/cgi/54321
       </pre>
@@ -249,6 +251,38 @@ e-mail med kommandoen <code>refcard</code>.</p>
       <p>For en beskrivelse af hvad de <a href="Developer#severities">\
       betyder</a>, se udviklernes gennerelle dokumentation vedrørende
       fejlrapporteringssystemet.</p>
+  </dd>
+
+  <dt><a name="affects"><code>affects</code> <var>fejlnummer</var>
+      [ <code>+</code> | <code>-</code> | <code>=</code>
+      ] <var>pakke</var> [ <var>pakke</var> ... ]</a></dt>
+  <dd>
+    <p>
+      Indikerer at en fejl påvirker en anden pakke.  I tilfældet hvor
+      <var>fejlnummer</var> forårsager problemer i <var>pakke</var>, selv om 
+      fejlen i virkeligheden findes i den pakke, som den er tildelt, forårsager
+      dette at fejlen som standard vises i pakkelisten hørende til 
+      <var>pakke</var>.  Det bør generelt anvendes, hvor en fejl er alvorlig nok
+      til at forårsage flere rapporter fra brugerne bliver tildelt den forkerte 
+      pakke.
+    </p>
+  </dd>
+
+  <dt><a name="summary"><code>summary</code> <var>fejlnummer</var>
+      [<var>meddelelse nummer</var>]</a></dt>
+  <dd>
+    <p>
+      Vælger en meddelelse, der anvendes som fejlens opsummering.  Det første 
+      ikke-pseudoheader-afsnit hørende til den fejl, fortolkes og opsættes som 
+      opsummering vedrørende fejlen og vises øverst på fejlrapportsiden.  Det er 
+      nyttigt i situationer, hvor den oprindelige rapport ikke på korrekt vis
+      beskriver problemet eller hvis fejlen har mange meddelelser, der gør det 
+      vanskeligt at identificere det egentlige problem.
+    </p>
+    <p>
+      Hvis <var>meddelelse nummer</var> ikke er angivet, fjernes opsummeringen.
+      <var>meddelelse nummer</var> er meddelelsesnummeret, der vises i outputtet 
+      fra bugreport-cgi-skriptet.
   </dd>
 
   <dt><a name="clone">
@@ -333,14 +367,16 @@ e-mail med kommandoen <code>refcard</code>.</p>
 
   <dt><a name="tag">
       <code>tags</code> <var>fejlnummer</var> [ <code>+</code> | <code>-</code> 
-      | <code>=</code> ] <var>mærke</var> [ <var>mærke</var> ... ]</a></dt>
+      | <code>=</code> ] <var>mærke</var> [ <var>mærke</var> ... ]
+      [ <code>+</code> | <code>-</code> | <code>=</code> <var>mærke</var> ... ] ]</a></dt>
   <dd><p>Sætter mærker for fejlrapporten med nummeret <var>fejlnummer</var>.
       Brugeren som rapporterede fejlen bliver ikke underrettet.  Sættes 
-      handlingen til <code>+</code>, betyder det at alle de angivne 
-      <var>mærker</var> tilføjes; <code>-</code> betyder at alle de angivne
-      <var>mærker</var> fjernes; og <code>=</code> betyder at de aktuelle 
-      mærker ignores opsæt dem på ny jævnfør den leverede liste.  Standard er 
-      tilføjelse.</p>     
+      handlingen til <code>+</code>, betyder det at alle de efterfølgende
+      <var>mærker</var> tilføjes; <code>-</code> betyder at alle de efterfølgende
+      <var>mærker</var> fjernes; og <code>=</code> betyder at de efterfølgende
+      mærker opsættes jævnfør den leverede liste.  Anvendelse af mærkerne 
+      <code>+</code>, <code>-</code> eller <code>=</code> ændrer handlingen på 
+      de efterfølgende mærker.  Standardhandlingen er tilføjelse.</p>     
 
       <p>Eksempler:</p>
 
@@ -359,6 +395,9 @@ e-mail med kommandoen <code>refcard</code>.</p>
 												            
 	\# sætter mærkerne til kun 'moreinfo' og 'unreproducible'	
 	tags 123456 = moreinfo unreproducible	
+	
+	\# fjerner mærket moreinfo og tilføjer et patch-mærke
+	tags 123456 - moreinfo + patch	
       </pre>     
      
       <p>Tilgængelige markeringer er pt. <code>patch</code>, 
