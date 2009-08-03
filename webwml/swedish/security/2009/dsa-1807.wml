@@ -1,0 +1,59 @@
+#use wml::debian::translation-check translation="1.3"
+<define-tag description>buffertspill</define-tag>
+
+<define-tag moreinfo>
+<p>James Ralston upptäckte att funktionen sasl_encode64() i cyrus-sasl2,
+ett fritt bibliotek som implementerar <q>Simple Authentication and Security Layer</q>,
+saknar en nullterminering i vissa situationer.  Detta orsakar
+several buffer overflows in situations where cyrus-sasl2 itself requires
+flera buffertspill i situationer där cyrus-sasl2 kräver
+kräver att ströngen är nullterminerad, vilket kan leda till överbelastning eller
+exevering av godtycklig kod.</p>
+
+<p>Viktig information (ursprungligen från US-CERT, översatt här):
+Denna rättelse rättar visserligen kod som är sårbar, men den kan göra att
+existerande, icke-sårbar kod slutar fungera. Här är en funktionsprototyp från
+include/saslutil.h som illustrerar förklaringen:</p>
+
+<pre>/* bas64-kodning
+* in -- indata
+* inlen -- indatalängd
+* out -- utbuffert (kommer vara nullterminerad)
+* outmax -- största storlek på utbuffert
+* resultat:
+* outlen -- får faktisk längd av utbuffert (valfritt)
+*
+* Returnerar SASL_OK vid framgång, SASL_BUFOVER om resultatet inte får plats
+*/
+LIBSASL_API int sasl_encode64(const char *in, unsigned inlen,
+char *out, unsigned outmax,
+unsigned *outlen);</pre>
+
+<p>Antag ett scenario där anropande kod har skrivits så att den
+beräknar den exakta storleken som krävs för bas64-kodning i förväg, sedan
+allokerar en buffert av precis den storleken och skickar en pekare till buffertedn in i
+sasl_encode64() som *out. Så länge denna kod inte väntar sig att
+bufferten är nullterminerad (exempelvis anropar den inte några stränghanterande funktioner som
+strlen()), kommer koden fungera och inte vara sårbar</p>
+
+<p>När denna rättelse appliceras, kommer samma kod misslyckas eftersom sasl_encode64()
+kommer börja returnera SASL_BUFOVER.</p>
+
+
+<p>För den gamla stabila utgåvan (Etch) har detta problem rättats
+i version 2.1.22.dfsg1-8+etch1 av cyrus-sasl2.</p>
+
+<p>För den stabila utgåvan (Lenny) har detta problem rättats i
+version 2.1.22.dfsg1-23+lenny1 av cyrus-sasl2 och cyrus-sasl2-heimdal.</p>
+
+<p>För uttestningsutgåvan (Squeeze) kommer detta problem att rättas inom kort.</p>
+
+<p>För den instabila utgåvan (Sid) har detta problem rättats i
+version 2.1.23.dfsg1-1 av cyrus-sasl2 och cyrus-sasl2-heimdal.</p>
+
+
+<p>Vi rekommenderar att ni uppgraderar era cyrus-sasl2- och/eller cyrus-sasl2-heimdal-paket.</p>
+</define-tag>
+
+# do not modify the following line
+#include "$(ENGLISHDIR)/security/2009/dsa-1807.data"
