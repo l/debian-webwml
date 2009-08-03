@@ -1,0 +1,740 @@
+#use wml::debian::template title="Debian BTS &mdash; komentopalvelu" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::translation-check translation="1.80"
+
+<h1>Opastus vikajärjestelmän komento- ja hallintapostipalvelun käyttöön</h1>
+
+<p>Kun <code>request@bugs.debian.org</code> antaa <a
+href="server-request">noutaa vikailmoitustietoa ja dokumentaatiota
+sähköpostitse</a>, <code>control@bugs.debian.org</code> kautta voidaan
+vikailmoituksia muokata eri tavoin.</p>
+
+<p>Komentopalvelu toimii kuten hakupalvelukin, paitsi että se
+hyväksyy muutaman lisäkomennon; itse asiassa se on sama ohjelma.
+Kaksi osoitetta on erotettu estämään käyttäjien tekemästä virheitä ja
+aiheuttamasta ongelmia yrittäessään ainoastaan hakea tietoa.</p>
+
+<p>Koska komentopalvelun omat komennot myös muuttavat vikojen
+tilatietoa, ilmoitus komentojen käsittelystä lähetetään muutettujen
+vikojen pakettien ylläpitäjille. Lisäksi palveluun lähetetyt viestit
+ja muutosten tulokset lokitetaan vikailmoitukseen ja tulevat
+saataville www-sivuille.</p>
+
+<p>Katsothan <a href="server-request#introduction">opastuksen
+hakupalveluun</a>, joka on saatavilla www:ssä, tiedostossa
+<code>bug-log-mailserver.txt</code> ja lähettämällä komento
+<code>help</code> kumpaan tahansa postipalveluista. Ohjeissa on
+yksityiskohdat postipalveluiden käyttämisestä sekä saatavilla olevista
+komennoista yleisimmät kun kumpaan tahansa osoitteeseen lähetetään
+viestejä.</p>
+
+<p><a href="server-refcard">Pikaopas</a> postipalvelulle on
+saatavilla www:ssä tiedostosta
+<code>bug-mailserver-refcard.txt</code> tai sähköpostitse
+komennolla <code>refcard</code>.</p>
+
+<h1>Komentopostipalvelimessa käytössä olevat komennot</h1>
+
+<center>
+  <table>
+    <tr>
+    <td align="center">Yleisiä</td>
+    <td align="center">Versiointi</td>
+    <td align="center">Monistus</td>
+    <td align="center">Sekalaista</td>
+    </tr>
+    <tr>
+      <!-- General -->
+      <td valign="top">
+        <dl>
+          <dt><a href="#reassign">reassign</a></dt>
+          <dt><a href="#severity">severity</a></dt>
+          <dt><a href="#tag">tag</a></dt>
+          <dt><a href="#retitle">retitle</a></dt>
+          <dt><a href="#submitter">submitter</a></dt>
+          <dt><a href="#affects">affects</a></dt>
+          <dt><a href="#summary">summary</a></dt>
+        </dl>
+      </td>
+      <!-- Versioning -->
+      <td valign="top">
+        <dl>
+          <dt><a href="#found">found</a> | <a href="#notfound">notfound</a></dt>
+          <dt><a href="#fixed">fixed</a> | <a href="#notfixed">notfixed</a></dt>
+          <dt><a href="#reopen">reopen</a></dt>
+          <!-- <dt>(close)</dt> Deprecated -->
+        </dl>
+      </td>
+      <!-- Duplicates -->
+      <td valign="top">
+        <dl>
+          <dt><a href="#merge">merge</a> | <a href="#unmerge">unmerge</a></dt>
+          <dt><a href="#forcemerge">forcemerge</a></dt>
+          <dt><a href="#clone">clone</a></dt>
+        </dl>
+      </td>
+      <!-- Misc. -->
+      <td valign="top">
+        <dl>
+          <dt><a href="#thanks">thanks</a></dt>
+          <dt><a href="#comment">#</a></dt>
+          <dt><a href="#forwarded">forwarded</a> |  <a href="#notforwarded">notforwarded</a></dt>
+          <dt><a href="#owner">owner</a> | <a href="#noowner">noowner</a></dt>
+          <dt><a href="#block">block</a> | <a href="#unblock">unblock</a></dt>
+          <dt><a href="#archive">archive</a> | <a href="#unarchive">unarchive</a></dt>
+        </dl>
+      </td>
+    </tr>
+  </table>
+</center>
+
+<dl>
+
+  <dt><a name="reassign"><code>reassign</code> <var>vikanumero</var>
+      <var>paketti</var> [ <var>versio</var> ]</a></dt>
+
+  <dd>
+    <p>
+      Tallentaa vian #<var>vikanumero</var>
+      viaksi <var>paketti</var>in. Tätä voidaan käyttää asettamaan
+      paketti, jos käyttäjä unohti pseudo-otsakkeen, tai vaihtamaan
+      pakettia. Yhtään huomautusta ei lähetetä kenellekkään (muuta
+      kuin tavallinen tieto komentolistan käsittelystä).
+    </p>
+
+    <p>
+      Mikäli annat myös <var>versio</var>n, vianseurantajärjestelmä
+      ottaa huomioon, että vika koskee tätä versiota uudesta
+      paketista.
+    </p>
+
+    <p>
+      Voit asettaa vian kahdelle paketille samaan aikaan erottamalla
+      pakettien nimet pilkulla. <em>Huomaa</em>, että näin tehdään
+      vain mikäli vian voi korjata muuttamalla <em>kumpaa tahansa</em>
+      paketeista. Mikäli asia ei ole näin, tulee vika
+      <a href="#clone">kloonata</a> ja asettaa kloonattu vika toiselle
+      paketille.
+    </p>
+  </dd>
+
+
+  <dt><a name="reopen"><code>reopen</code> <var>vikanumero</var>
+      [ <var>ilmoittajan-osoite</var> | <code>=</code>
+      | <code>!</code> ]</a></dt>
+  <dd>
+    <p>
+      Uudelleenavaa vian #<var>vikanumero</var> mikäli se on suljettu.
+    </p>
+
+    <p>
+      Oletuksena, tai mikäli annetaan parametri <code>=</code>,
+      alkuperäinen ilmoittaja jää edelleen vikailmoituksen
+      ilmoittajaksi, joten heille lähtee kuittaus kun ilmoitus
+      suljetaan uudelleen.
+    </p>
+
+    <p>
+      Mikäli annetaan <var>ilmoittajan-osoite</var> vian ilmoittajaksi
+      asetetaan syötetty osoite. Mikäli haluat ryhtyä uudeksi
+      ilmoittajaksi uudelleenavaamallesi vialle, voit käyttää
+      lyhennystä <code>!</code> tai syöttää oman sähköpostiosoitteesi.
+    </p>
+
+    <p>
+      On yleensä hyvä idea kertoa henkilölle kuka merkitään
+      ilmoittajaksi vikailmoitukseen, jonka avaat uudelleen, jotta he
+      osaavat odottaa kuittausta, jonka he saavat kun vika suljetaan
+      uudelleen.
+    </p>
+
+    <p>
+      Mikäli vika ei ole suljettu, reopen-komento ei tee mitään, ei
+      edes vaihda ilmoittajaa. Avoimen vikailmoituksen ilmoittajan
+      vaihtamiseen tulee käyttää komentoa <code>submitter</code>.
+      Huomaa, että se komento informoi alkuperäistä ilmoittajaa
+      muutoksesta.
+    </p>
+
+    <p>
+      Mikäli vika on merkitty suljetuksi tietyssä versiossa paketista,
+      mutta esiintyy uudelleen myöhemmällä versiolla, on parempi
+      käyttää komentoa <code>found</code> tämän sijaan.
+    </p>
+  </dd>
+
+
+  <dt><a name="found"><code>found</code> <var>vikanumero</var>
+      [ <var>versio</var> ]</a></dt>
+  <dd>
+    <p>
+      Merkitse, että #<var>vikanumero</var> on esiintynyt annetussa
+      <var>versio</var>ssa paketissa, jolle se on ilmoitettu.
+    </p>
+
+    <p>
+      Vianseurantajärjestelmä käyttää tätä tietoa yhdessä vikoja
+      suljettaessa merkittyjen korjattujen versioiden kanssa
+      näyttämään luettelon avoimista vioista pakettien eri versioissa.
+      Vikaa pidetään avoimena mikäli sille ei ole korjattua versioita
+      tai kun se on löydetty tuoreemmasta versiosta kuin missä se on
+      merkitty korjatuksi.
+    </p>
+
+    <p>
+      Mikäli parametria <var>versio</var> ei anneta, korjatut versiot
+      tälle vialle tyhjätään. Tämä on identtinen käytös komennon
+      <code>reopen</code> kanssa.
+    </p>
+
+    <p>
+      Tämä komento aiheuttaa vian merkitsemisen ei-tehtyksi jos
+      versiota ei anneta tai mikäli <var>versio</var> jossa vika
+      merkitään löytyneeksi on sama kuin <var>versio</var>, jossa se
+      oli viimeksi merkitty korjatuksi. (Jos olet varma, että haluat
+      merkitä vian ei-tehtyksi, käytä komentoa <code>reopen</code>
+      yhdessä komennon <code>found</code> kanssa.)
+    </p>
+
+    <p>
+      Tämä komento luotiin <code>reopen</code> komentoa paremmaksi,
+      koska oli vaikea lisätä <var>versio</var> tuon komennon
+      syntaksiin selkeällä tavalla.
+    </p>
+  </dd>
+
+
+  <dt><a name="notfound"><code>notfound</code> <var>vikanumero</var>
+    <var>versio</var></a></dt>
+  <dd>
+    <p>
+      Poista merkintä, että #<var>vikanumero</var> löytyy annetussa
+      kohdistetun paketin versiossa <var>versio</var>.
+    </p>
+
+    <p>
+      Tämä eroaa vian sulkemisesta tietyssä versiossa siten, että
+      vikaa ei luetella korjatuksi tässä versiossa. Tietoa versiosta
+      ei siis tiedetä. Tämä on tarkoitettu korjaamaan virhemerkintöjä
+      vikojen löytymisestä.
+    </p>
+  </dd>
+
+
+  <dt><a name="fixed"><code>fixed</code> <var>vikanumero</var>
+    <var>versio</var></a></dt>
+  <dd>
+    <p>
+      Ilmoittaa, että vika #<var>vikanumero</var> on korjattu
+      kohdistetun paketin annetussa <var>versio</var>ssa.
+    </p>
+
+    <p>
+      Tämä <em>ei</em> johda vian merkitsemiseen suljetuksi, vaan
+      ainoastaan lisää yhden version, jossa vika oli korjattu. Käytä
+      osoitetta vikanumero-done sulkemaan vika ja merkitsemään se
+      korjatuksi tietyssä versiossa.
+    </p>
+  </dd>
+
+
+  <dt><a name="notfixed"><code>notfixed</code> <var>vikanumero</var>
+      <var>versio</var></a></dt>
+  <dd>
+    <p>
+      Poista merkintä, että vika #<var>vikanumero</var> olisi korjattu
+      annetussa <var>versio</var>ssa.
+    </p>
+
+    <p>
+      Tämä komento johtaa samaan tilanteeseen kuin
+      komento <code>found</code>, jota seuraa
+      <code>notfound</code> (found poistaa merkinnän korjauksesta
+      tietyssä versiossa ja notfound poistaa löytymismerkinnän.)
+    </p>
+  </dd>
+
+
+  <dt><a name="submitter"><code>submitter</code> <var>vikanumero</var>
+      <var>ilmoittajan-osoite</var> | <code>!</code></a></dt>
+  <dd>
+    <p>
+      Vaihtaa vian #<var>vikanumero</var> ilmoittajan osoitteeksi
+      <var>ilmoittajan-osoite</var>.
+    </p>
+
+    <p>
+      Mikäli haluat ruveta vikailmoitukseen uudeksi ilmoittajaksi,
+      voit käyttää lyhennystä <code>!</code> tai määrittää oman
+      sähköpostiosoitteesi.
+    </p>
+
+    <p>
+      Kun komento <code>reopen</code> muuttaa muiden tämän vian kanssa
+      liitettyjen vikojen ilmoittajan, komento <code>submitter</code>
+      ei vaikuta liitettyihin vikoihin.
+    </p>
+  </dd>
+
+
+  <dt><a name="forwarded"><code>forwarded</code> <var>vikanumero</var>
+      <var>osoite</var></a></dt>
+  <dd>
+    <p>
+      Merkitsee, että <var>vikanumero</var> on edelleenlähetetty
+      ylävirran ylläpitäjälle osoitteeseen <var>osoite</var>. Tämä ei
+      itsessään edelleenlähetä ilmoitusta. Tätä voi käyttää vaihtamaan
+      aiempi virheellinen edelleenlähetysosoite, tai taltioimaan uusi
+      osoite vialle, jota ei aiemmin ole merkitty
+      edelleenlähetetyksi. <var>osoite</var> tulisi olla URI tai
+      mahdollisesti sähköpostiosoite. Käyttämällä URIa kun
+      mahdollista, voidaan työkaluilla tarkkailla
+      etävianseurantajärjestelmästä (kuten Bugzillasta) vian
+      tilamuutoksia.
+    </p>
+
+    <p>
+      Esimerkkikäyttö:
+    </p>
+
+    <pre>
+      forwarded 12345 http://bugz.illa.foo/cgi/54321
+    </pre>
+  </dd>
+
+
+  <dt><a name="notforwarded"><code>notforwarded</code>
+      <var>vikanumero</var></a></dt>
+  <dd>
+    <p>
+      Unohtaa ajatuksen siitä, että <var>vikanumero</var> on
+      edelleenlähetetty ylävirran ylläpitäjälle. Mikäli vikaa ei ole
+      merkitty edelleenlähetetyksi, tämä komento ei tee mitään.
+    </p>
+  </dd>
+
+
+  <dt><a name="retitle"><code>retitle</code> <var>vikanumero</var>
+      <var>uusi-otsikko</var></a></dt>
+  <dd>
+    <p>
+      Vaihtaa vikailmoituksen otsikoksi annetun (oletus on viestin
+      aihekenttä (<code>Subject</code>) alkuperäisessä ilmoituksessa).
+    </p>
+
+    <p>
+      Toisin kuin useimmat muista vikojen muokkauskomennoista
+      yhdistettyjen vikailmoituksten vikojen ollessa kyseessä, tämä
+      muuttaa vain yksittäisen pyydetyn vian otsikkoa, eikä niiden
+      kaikkien vikojen, jotka on yhdistetty.
+    </p>
+  </dd>
+
+
+  <dt><a name="severity"><code>severity</code> <var>vikanumero</var>
+      <var>vakavuus</var></a></dt>
+  <dd>
+    <p>
+      Asettaa vikailmoituksen #<var>vikanumero</var> vakavuustasoksi
+      <var>vakavuus</var>. Tästä ei lähetetä huomatusta vian
+      ilmoittajalle.
+    </p>
+
+    <p>
+      Vakavuudet ovat <code>critical</code>
+      (kriittinen), <code>grave</code> (erittäin vakava),
+      <code>serious</code> (vakava), <code>important</code>
+      (tärkeä), <code>normal</code> (normaali),
+      <code>minor</code> (vähäinen) ja <code>wishlist</code> (toive).
+    </p>
+
+    <p>
+      Katso <a href="Developer#severities">niiden merkitykset</a>
+      vianseurantajärjestelmän yleisdokumentaatiosta kehittäjille.
+    </p>
+  </dd>
+
+
+  <dt><a name="affects"><code>affects</code> <var>vikanumero</var>
+      [ <code>+</code> | <code>-</code> | <code>=</code>
+      ] <var>paketti</var> [ <var>paketti</var> ... ]</a></dt>
+  <dd>
+    <p>
+      Indikoi, että vika vaikuttaa toiseen pakettiin. Tapauksessa,
+      jossa <var>vikanumero</var> aiheuttaa rikkinäistä käyttäytymistä
+      paketissa <var>paketti</var>, vaikka vika itsessään on tässä
+      paketissa, jolle vika on kohdistettu, saadaan vika näkymään
+      oletuksena myös toisen paketin <var>package</var> luettelossa.
+      Tätä tulisi yleensä käyttää kun vika on niin vakava, että
+      käyttäjät lähettävät siitä useita ilmoituksia väärälle
+      paketille.
+    </p>
+  </dd>
+
+
+  <dt><a name="summary"><code>summary</code> <var>vikanumero</var>
+      [<var>viestin numero</var>]</a></dt>
+  <dd>
+    <p>
+      Valitsee viestin, jota käytetään vian tiivistelmänä. Ensimmäinen
+      kappale, joka ei ole tämän vian pseudo-otsakkeita, jäsennellään
+      ja asetetaan vian tiivistelmäksi, joka näkyy vikailmoitussivun
+      alussa. Tämä on hyödyllinen sellaisissa tapauksissa, joissa
+      alkuperäinen ilmoitus ei kuvaa ongelmaa oikein tai viassa on
+      useita viestejä tehden vaikeaksi identifioida todellinen
+      ongelma.
+    </p>
+
+    <p>
+      Jos <var>viestin numero number</var>a ei anneta, tiivistelmä
+      poistetaan. <var>Viestin numero</var> on viestin
+      järjestysnumero, joka luetellaan vikailmoitus-skriptin
+      tulosteessa.
+    </p>
+  </dd>
+
+
+  <dt><a name="clone"><code>clone</code> <var>vikanumero</var> <var>UusiID</var>
+      [ <var>uudet IDt</var> ... ]</a></dt>
+  <dd>
+    <p>
+      Kloonaushallintakomento sallii vikailmoituksen monistamisen. Se
+      on hyödyllinen silloin kun yksittäinen vikailmoitus itse asiassa
+      aiheutuu useista erillisistä kohdatuista vioista. <q><var>Uudet
+      IDt</var></q> ovat välilyönnillä eroteltuja negatiivisia lukuja,
+      joilla voidaan myöhemmissä komennoissa viitata uusiin
+      monistettuihin vikailmoituksiin. Uusi ilmoitus luodaan jokaista
+      uutta ID:tä kohti.
+    </p>
+
+    <p>
+      Esimerkkikäyttö:
+    </p>
+
+    <pre>
+          clone 12345 -1 -2
+          reassign -1 foo
+          retitle -1 foo: foo sucks
+          reassign -2 bar
+          retitle -2 bar: bar sucks when used with foo
+          severity -2 wishlist
+          clone 123456 -3
+          reassign -3 foo
+          retitle -3 foo: foo sucks
+          merge -1 -3
+    </pre>
+  </dd>
+
+
+  <dt><a name="merge"><code>merge</code> <var>vikanumero</var>
+      <var>vikanumero</var> ...</a></dt>
+  <dd>
+    <p>
+      Yhdistä kaksi tai useampi vikailmoitusta. Kun viat on
+      yhdistetty, vian avaamiset, sulkemiset,
+      edelleenlähetysmerkintöjen asettamiset ja poistamiset sekä
+      paketin vaihtaminen mille tahansa yhdistetyistä vioista
+      aiheuttaa saman vaikutukset kaikkiin yhdistettyihin
+      vikailmoituksiin.
+    </p>
+
+    <p>
+      Ennenkuin viat voidaan yhdistää, niiden tulee olla täsmälleen
+      samassa tilassa: joko kaikki avoinna tai kaikki suljettuina,
+      edelleenlähetysosoitteena sama osoite tai mikään ei
+      edelleenlähetettynä, kaikki kohdistettu samaan pakettiin tai
+      paketteihin (tarkka merkkijonovertailu vikojen kohdistettujen
+      pakettien välillä) sekä kaikilla sama vakavuusaste. Mikäli
+      vioilla ei ole sama tila, tulee ensin käyttää komentoja
+      <code>reassign</code>, <code>reopen</code> ja niin edelleen
+      ennen kuin ne voidaan yhdistää komennolla <code>merge</code>.
+      Vikojen otsikkojen ei tarvitse täsmätä, ja yhdistäminen ei
+      vaikuta otsikoihin. Tagienkaan ei tarvitse täsmätä, vaan ne
+      liitetään yhteen.
+    </p>
+
+    <p>
+      Mikäli yksikin <code>merge</code>-komennolle lueteltu vika on jo
+      yhdistetty jonkun toisen vian kanssa, niin silloin kaikki
+      vikailmoitukset yhdistetään. Yhdistäminen on kuin yhtäsuuruus:
+      se on refleksiivinen, transitiivinen sekä symmetrinen.
+    </p>
+
+    <p>
+      Ilmoitusten yhdistäminen aiheuttaa huomautuksen ilmaantumisen
+      jokaisen vikailmoituksen lokissa. Www-sivuilla tämä sisältää
+      linkit muihin yhdistettyihin vikoihin.
+    </p>
+
+    <p>
+      Yhdistetyt ilmoitukset vanhenevat yhdessä ja vain kun kaikki
+      ilmoitukset erikseen täyttävät vanhenemisen ehdot.
+    </p>
+  </dd>
+
+
+  <dt><a name="forcemerge"><code>forcemerge</code> <var>vikanumero</var>
+    <var>vikanumero</var> ...</a></dt>
+  <dd>
+
+    <p>
+      Väkisin yhdistää kaksi tai useampia vikailmoituksia. Ensimmäinen
+      lueteltu vika on päävika, ja sen asetukset (ne asetukset, joiden
+      tulee olla samat normaalissa yhdistämisessä) asetetaan muille
+      luetelluille vioille. Jotta vältetään virheellisiä vikojen
+      liittämisiä, vikojen tulee kohdistua samaan pakettiin. Aiempi
+      kuvaus kertoo, mitä liittäminen tarkoittaa.
+    </p>
+
+    <p>
+      Huomaa, että näin on mahdollista sulkea vikoja yhdistämällä.
+      Näin tehdessäsi olet itse velvollinen huomauttamaan ilmoittajia
+      sopivalla sulkemisviestillä.
+    </p>
+  </dd>
+
+
+  <dt><a name="unmerge"><code>unmerge</code> <var>vikanumero</var></a></dt>
+  <dd>
+    <p>
+      Irrottaa vikailmoituksetn mistä tahansa muista ilmoituksista,
+      joihin se on saatettu yhdistää. Mikäli ilmoitus on lueteltu
+      liitetyksi useiden muiden kanssa, tällöin nämä muut jäävät
+      yhdistetyksi toisiinsa ja vain niiden liitos tähän
+      eksplisiittisesti mainittuun vikaan poistuu.
+    </p>
+
+    <p>
+      Mikäli useita vikailmoituksia on yhdistetty ja haluat erottaa ne
+      kahdeksi erilliseksi ryhmäksi, tulee sinun ensin irrottaa kaikki
+      ilmoitukset toisessa uusista ryhmistä erikseen ja sitten liittää
+      ne halutuksi uudeksi ryhmäksi.
+    </p>
+
+    <p>
+      Voit irrottaa vain yhden ilmoituksen
+      jokaisella <code>unmerge</code>-komennolla. Mikäli haluat
+      irrottaa useampia kuin yhden vian, voit yksinkertaisesti antaa
+      useita <code>unmerge</code>-komentoja viestissäsi.
+    </p>
+  </dd>
+
+
+  <dt><a name="tag"><code>tags</code> <var>vikanumero</var>
+      [ <code>+</code> | <code>-</code> | <code>=</code> ]
+      <var>tagi</var>
+      [ <var>tagi</var> ... ]
+      [ <code>+</code> | <code>-</code> | <code>=</code>
+        <var>tagi</var> ... ]</a></dt>
+  <dd>
+    <p>
+      Asettaa tageja vikailmoitukseen #<var>vikanumero</var>. Tästä ei
+      lähetetä huomautusta vian ilmoittajalle. Kun toiminnoksi annetaan
+      <code>+</code>, niin jokainen annettu tagi <var>tag</var>
+      lisätään, <code>-</code> tarkoittaa, että jokainen annettu
+      tagi <var>tag</var> poistetaan, ja <code>=</code> tarkoittaa,
+      että nykyiset tagit ohitetaan ja ilmoituksen tageiksi asetetaan
+      täsmälleen annettu luettelo. Välissä
+      olevat <code>+</code>, <code>-</code> tai <code>=</code>
+      vaihtavat toimintoa perässä luetelluille tageille.
+      Oletustoiminto on lisätä tageja.
+    </p>
+
+    <p>
+      Esimerkkikäyttö:
+    </p>
+
+    <pre>
+          \# sama kuin "tags 123456 + patch"
+          tags 123456 patch
+
+          \# sama kuin "tags 123456 + help security"
+          tags 123456 help security
+
+          \# lisää tagit "fixed" ja "pending"
+          tags 123456 + fixed pending
+
+          \# poista tagi "unreproducible"
+          tags 123456 - unreproducible
+
+          \# aseta tageiksi täsmälleen "moreinfo" ja "unreproducible"
+          tags 123456 = moreinfo unreproducible
+         
+          \# poista tagi "moreinfo" ja lisää tagi "patch"
+          tags 123456 - moreinfo + patch
+    </pre>
+
+    <p>
+      Tällä hetkellä käytössä on seuraavat
+      tagit: <code>patch</code>, <code>wontfix</code>,
+      <code>moreinfo</code>, <code>unreproducible</code>, <code>help</code>,
+      <code>pending</code>, <code>fixed</code>,
+      <code>fixed-in-experimental</code>, <code>fixed-upstream</code>,
+      <code>security</code>, 
+      <code>upstream</code>, <code>confirmed</code>, <code>d-i</code>,
+      <code>ipv6</code>, <code>lfs</code>, <code>l10n</code>,
+      <code>potato</code>, <code>woody</code>, <code>sarge</code>,
+      <code>sarge-ignore</code>, <code>etch</code>, <code>etch-ignore</code>,
+      <code>lenny</code>, <code>lenny-ignore</code>,
+      <code>squeeze</code>, <code>squeeze-ignore</code>,
+      <code>sid</code> ja <code>experimental</code>.
+    </p>
+
+    <p>
+      Niiden <a href="Developer#tags">merkitykset</a> on annettu
+      vianseurantajärjestelmän yleisissä kehittäjien ohjeissa.
+    </p>
+  </dd>
+
+
+  <dt><a name="block"><code>block</code> <var>vikanumero</var> <code>by</code>
+      <var>vika</var> ...</a></dt>
+  <dd>
+    Lisää huomautus, että korjaus ensimmäiseen vikaan on estynyt
+    kunnes muut luetellut viat korjataan.
+  </dd>
+
+
+  <dt><a name="unblock"><code>unblock</code> <var>vikanumero</var>
+    <code>by</code> <var>bug</var> ...</a></dt>
+  <dd>
+    Poista huomautus, että korjaus ensimmäiseen vikaan olisi estynyt
+    kunnes muut luetellut viat korjataan.
+  </dd>
+
+
+  <dt><a name="close"><code>close</code> <var>vikanumero</var> [
+      <var>korjattu-versio</var> ] (vanhentunut)</a></dt>
+  <dd>
+    <p>
+      Sulje vikailmoitus #<var>vikanumero</var>.
+    </p>
+
+    <p>
+      Viasta ilmoittaneelle henkilölle lähetetään huomautus, mutta
+      (toisin kuin lähetettäessä postia
+      osoitteeseen <var>vikanumero</var><code>-done@bugs.debian.org</code>)
+      viestin tekstiä, jolla vika suljetaan, <strong>ei</strong>
+      sisällytetä huomautukseen. Ylläpitäjän, joka sulkee vian, tulee
+      varmistaa, luultavasti lähettämällä erillinen viesti, että
+      viasta ilmoittanut henkilö tietää miksi vikailmoitus suljetaan.
+      Tämä komento on tämän vuoksi vanhentunut. Katso kehittäjien
+      ohjeista <a href="Developer#closing">kuinka sulkea viat
+      oikein</a>.
+    </p>
+
+    <p>
+      Mikäli annat <var>korjattu-versio</var>n,
+      vianseurantajärjestelmä merkitseen vian korjatuksi paketin
+      annetussa versiossa.
+    </p>
+  </dd>
+
+
+  <dt><a name="package"><code>package</code>
+      [ <var>paketinnimi</var> ... ]</a></dt>
+  <dd>
+    <p>
+      Rajoittaa myöhemmät komennot siten, että ne koskevat vain
+      vikoja, jotka on ilmoitettu kohdistuvan lueteltuihin
+      paketteihin. Voit luetella yhden tai usemman paketin. Mikäli et
+      luettele yhtään pakettia, myöhemmät komennot koskevat kaikkia
+      vikoja. Tätä kannattaa käyttää varmistuskeinona siltä varalta,
+      että vahingossa käytät vääriä vikanumeroita.
+    </p>
+
+    <p>
+      Esimerkkikäyttö:
+    </p>
+
+    <pre>
+          package foo
+          reassign 123456 bar 1.0-1
+
+          package bar
+          retitle 123456 bar: bar sucks
+          severity 123456 normal
+
+          package
+          severity 234567 wishlist
+    </pre>
+  </dd>
+
+
+  <dt><a name="owner"><code>owner</code> <var>vikanumero</var>
+      <var>osoite</var> | <code>!</code></a></dt>
+  <dd>
+    <p>
+      Asettaa <var>osoitteen</var> vian
+      #<var>vikanumero</var> <q>omistajaksi</q>. Vian omistaja on
+      vastuussa vian korjauksesta. Tämä on hyödyllinen jaettaessa
+      työtä silloin kun paketilla on ryhmän verran ylläpitäjiä.
+    </p>
+
+    <p>
+      Mikäli haluat tulla vian omistajaksi itse, voit käyttää lyhennettä
+      <code>!</code> tai syöttää oman sähköpostiosoitteesi.
+    </p>
+  </dd>
+
+
+  <dt><a name="noowner"><code>noowner</code> <var>vikanumero</var></a></dt>
+  <dd>
+    Unohtaa tiedon siitä, että vialla olisi muu omistaja kuin
+    ylläpitäjä. Mikäli vialle ei ole merkitty omistajaa, tämä ei
+    aiheuta mitään muutoksia.
+  </dd>
+
+
+  <dt><a name="archive"><code>archive</code> <var>vikanumero</var></a></dt>
+  <dd>
+    Arkistoi vika, joka on joskus aiemmin ollut arkistoituna, mutta ei
+    tällä hetkellä ole arkistoituna. Komento toimii vain jos vika
+    täyttää vaatimukset arkistoinnille aikavaatimusta lukuunottamatta.
+  </dd>
+
+
+  <dt><a name="unarchive"><code>unarchive</code> <var>vikanumero</var></a></dt>
+    <dd>
+      Palauta aiemmin arkistoitu vika arkistosta. Arkistosta
+      palauttaminen tulisi yleensä liittää uudelleenavaamiseen ja
+      löytyneeseen/korjattuun versioon sopivalla tavalla. Viat, jotka
+      on palautettu arkistosta, voidaan
+      arkistoida <code>archive</code>-komennolla olettaen, että muut
+      kuin aikaan perustuvat arkistointivaatimukset täyttyvät.
+  </dd>
+
+
+  <dt><a name="comment"><code>#</code>...</a></dt>
+    <dd>
+      Yksirivinen kommentti. <code>#</code> täytyy olla rivin
+      ensimmäinen merkki. Kommenttiteksti sisältyy kuittaukseen, joka
+      lähetetään komennon lähettäjälle sekä asiaan kuuluville
+      ylläpitäjille, joten tällä tavoin voi dokumentoida syyt
+      komennoillesi.
+  </dd>
+
+
+  <dt><a name="thanks"><code>quit</code></a></dt>
+  <dt><code>stop</code></dt>
+  <dt><code>thank</code></dt>
+  <dt><code>thanks</code></dt>
+  <dt><code>thankyou</code></dt>
+  <dt><code>thank you</code></dt>
+  <dt><code>--</code></dt>
+  <!-- #366093, syytän sinua! -->
+  <!-- <dt><code>kthxbye</code></dt> -->
+  <!-- Katsokaa... Olen dokumentoinut tämän! -->
+  <dd>
+    Omalla rivillään, kaikissa tapaukssisa, valinnaisesti perässä
+    tyhjää, kertoo hallintapalvelulle, että viestin käsittely tulee
+    lopettaa tähän. Loppuosa viestistä voi sisältää selityksiä,
+    allekirjoituksen tai mitä tahansa muuta. Hallintapalvelu ei
+    tunnista tai välitä niistä.
+  </dd>
+</dl>
+
+<hr />
+
+#use "otherpages.inc"
+
+#use "$(ENGLISHDIR)/Bugs/footer.inc"
