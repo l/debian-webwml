@@ -1,12 +1,12 @@
 #use wml::debian::template title="Funzionamento della rete di buildd" BARETITLE="true"
-#use wml::debian::translation-check translation="1.8" maintainer="Giovanni Mascellani"
+#use wml::debian::translation-check translation="1.9" maintainer="Giovanni Mascellani"
 
 <p>Il cuore del sistema è il database di <tt>wanna-build</tt>, che tiene traccia
 delle versioni e degli stati di ogni pacchetto. <tt>quinn-diff</tt> confronta
-ogni giorno la lista dei pacchetti dell'architettura considerata con la lista
-dei pacchetti sorgente, e compila una lista dei pacchetti che devono essere
-ricompilati, impostandoli nel database allo stato di <tt>Needs-Build</tt>
-(<q>compilazione necessaria</q>).</p>
+dopo ogni aggiornamento dell'archivio la lista dei pacchetti dell'architettura
+considerata con la lista dei pacchetti sorgente, e compila una lista dei
+pacchetti che devono essere ricompilati, impostandoli nel database allo stato di
+<tt>Needs-Build</tt> (<q>compilazione necessaria</q>).</p>
 
 <p>Tutti i demoni di compilazione (ce ne possono essere più di uno) interrogano
 regolarmente il database cercando tali pacchetti e ne prendono alcuni facendoli
@@ -47,10 +47,11 @@ compilare dall'archivio. Diamoci un'occhiata più da vicino: se ha qualche
 pacchetto da compilare, utilizza <tt>sbuild</tt> per l'effettivo processo di
 compilazione, e per ogni esecuzione viene inviato un log via email al
 manutentore del demone. Questo lo visiona e decidere cosa fare del pacchetto:
-caricarlo nell'archvio, impostarlo a <tt>Failed</tt> o a <tt>Dep-Wait</tt>,
-fare dei cambiamenti alle dipendenze di compilazione e riprovare, ecc... Se
-il pacchetto viene accettato, il demone lo sposta in un directory di upload,
-dalla quale tutti i pacchetti sono periodicamente caricati sul server.</p>
+caricarlo nell'archvio, impostarlo a <tt>Failed</tt> o a <tt>Dep-Wait</tt>
+e riprovare, ecc... Se il pacchetto viene accettato (tramite l'invio di
+un file <tt>.changes</tt> firmato), il demone lo sposta in una
+directory di upload, dalla quale tutti i pacchetti sono periodicamente caricati
+sul server.</p>
 
 <p>Controllare i file di log è l'unico intervento umano nell'intero processo,
 se non ci sono errori. Ci sono due buone ragioni per non eliminare anche questo
@@ -62,24 +63,12 @@ di sicurezza inaccettabile.</p>
 
 <p>Lo script <tt>sbuild</tt> sostanzialmente chiama i tool standard di Debian per
 compilare i sorgenti. In realtà dà anche una mano effettuando delle operazioni
-di <q>ordinaria amministrazione</q>, ma la sua vera specialità sono le dipendenze di
-compilazione. Spesso dei pacchetti hanno bisogno di altri pacchetti installati
-per poter essere compilati, per esempio compilatori e librerie. Non è molto
-intelligente tenere tutti questi pacchetti sempre installati, e spesso non è
-neanche possibile per via di conflitti. Le dipendenze di compilazioni dicono
-semplicemente a <tt>sbuild</tt> di cosa ha bisogno ogni pacchetto. Questo può
-quindi installare le dipendenze prima di compilare e rimuoverle subito dopo.</p>
+di <q>ordinaria amministrazione</q> e installando automaticamente le
+dipendenze di compilazione come richiesto dal pacchetto in corso di elaborazione.
 
-<p>Le dipendenze di compilazione possono essere parzialmente generate
-automaticamente, controllando le dipendenze del pacchetto binario generato dai
-sorgenti. Questo è quello che fa <tt>andrea</tt>: analizzare la lista dei
-pacchetti per i386 e mappare i pacchetti delle librerie nei corrispondenti
-pacchetti di sviluppo. A queste dipendenze ne aggiunge altre impostate
-manualmente, quando non possono essere generate automaticamente, come per
-esempio compilatori o tool speciali.</p>
-
-<hr>
+<hrline />
 
 <p><small>Materiale sviluppato da Roman Hodek per il sesto International
-Linux-Kongress 1999.</small></p>
+Linux-Kongress 1999 e poi leggermente aggiornato nel 2009 da Phipipp Kern
+in modo da rispecchiare più fedelmente la realtà attuale.</small></p>
 
