@@ -5,7 +5,7 @@
 # destination directory if necessary, and copy the Makefile from the source.
 
 # Written in 2000-2004 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2000-2004 Software in the public interest, Inc.
+# Â© Copyright 2000-2004 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -82,28 +82,28 @@ while (<SRC>)
 
 	s/^(<p>)?A problem has been discovered in\b/$1Et problem er opdaget i/;
 	s/\bdiscovered a problem in\b/opdaget et problem i/;
-	s/We recommend that you upgrade your (.*) package immediately/Vi anbefaler at du omgående opgraderer din $1-pakke/;
-	s/We recommend that you upgrade your (.*) packages immediately/Vi anbefaler at du omgående opgraderer dine $1-pakker/;
+	s/We recommend that you upgrade your (.*) package immediately/Vi anbefaler at du omgÃ¥ende opgraderer din $1-pakke/;
+	s/We recommend that you upgrade your (.*) packages immediately/Vi anbefaler at du omgÃ¥ende opgraderer dine $1-pakker/;
         s/We recommend that you upgrade your (.*) and (.*) packages/Vi anbefaler at du opgraderer dine $1- og $2-pakker/;	
 	s/We recommend that you upgrade your (.*) packages/Vi anbefaler at du opgraderer dine $1-pakker/;
 	s/We recommend that you upgrade your (.*) package/Vi anbefaler at du opgraderer din $1-pakke/;
-	s/We recommend that you update your (.*) package immediately/Vi anbefaler at du omgående opdaterer din $1-pakke/;
-	s/We recommend that you update your (.*) packages immediately/Vi anbefaler at du omgående opdaterer dine $1-pakker/;
+	s/We recommend that you update your (.*) package immediately/Vi anbefaler at du omgÃ¥ende opdaterer din $1-pakke/;
+	s/We recommend that you update your (.*) packages immediately/Vi anbefaler at du omgÃ¥ende opdaterer dine $1-pakker/;
 	s/We recommend that you update your (.*) packages/Vi anbefaler at du opdaterer dine $1-pakker/;
 	s/We recommend that you update your (.*) package/Vi anbefaler at du opdaterer din $1-pakke/;
-	s/buffer overflows?/bufferoverløb/;
-	s/integer overflow/heltalsoverløb/;
-	s/format string vulnerability/formatstrengssårbarhed/;
-	s/format string vulnerabilities/formatstrengssårbarheder/;
+	s/buffer overflows?/bufferoverlÃ¸b/;
+	s/integer overflow/heltalsoverlÃ¸b/;
+	s/format string vulnerability/formatstrengssÃ¥rbarhed/;
+	s/format string vulnerabilities/formatstrengssÃ¥rbarheder/;
 	s/insecure temporary files/usikre midlertidige filer/;
 	s/>insecure temporary file creation</>usikker oprettelse af fil</;
 	s/>local root exploit</>lokal root-udnyttelse</;
 	s/>remote root exploit</>fjern root-udnyttelse</;
-	s/>symlink attack</>symbolsk lænke-angreb</;
+	s/>symlink attack</>symbolsk lÃ¦nke-angreb</;
 	s/>remote exploit</>fjernangreb</;
 	s/>missing input sanitising</>manglende kontrol af inddata</;
-	s/Several vulnerabilities/Flere sårbarheder/;
-	s/several vulnerabilities/flere sårbarheder/;
+	s/Several vulnerabilities/Flere sÃ¥rbarheder/;
+	s/several vulnerabilities/flere sÃ¥rbarheder/;
 	s/>several</>flere</;
 	s/This has been fixed in version/Dette er rettet i version/;
 	s/this problem has been fixed in/er dette problem rettet i/;
@@ -122,29 +122,29 @@ while (<SRC>)
 	s/(?:been )?fixed in version/rettet i version/;
 	s/\bin version\b/i version/;
 	s/of the Debian package/af Debian-pakken/;
-	s/upstream version/opstrømsversion/;
+	s/upstream version/opstrÃ¸msversion/;
 	s/([Ff])or the old stable distribution/I den gamle stabile distribution/;
 	s/([Ff])or the oldstable distribution/I den gamle stabile distribution/;
 	s/([Ff])or the old stable/I den gamle stabile/;
 	s/([Ff])or the oldstable/I den gamle stabile/;
-	s/([Ff])or the current stable distribution/I den nuværende stabile distribution/;
-	s/([Ff])or the current stable/I den nuværende stabile/;
+	s/([Ff])or the current stable distribution/I den nuvÃ¦rende stabile distribution/;
+	s/([Ff])or the current stable/I den nuvÃ¦rende stabile/;
 	s/([Ff])or the Debian stable distribution/I Debians stabile distribution/;
 	s/([Ff])or the stable distribution/I den stabile distribution/;
 	s/([Ff])or the stable/I den stabile/;
 	s/([Ff])or the Debian unstable distribution/I Debians ustabile distribution/;
 	s/([Ff])or the unstable distribution/I den ustabile distribution/;
 	s/([Ff])or the unstable/I den ustabile/;
-	s/current stable distribution/nuværende stabile distribution/;
+	s/current stable distribution/nuvÃ¦rende stabile distribution/;
 	s/unstable distribution/ustabile distribution/;
 	s/The old stable distribution/Den gamle stabile distribution/;
 	s/^stable distribution/stabile distribution/;
 	s/^unstable distribution/ustabile distribution/;
 	s/does(?: not|n't) contain a(?:ny)? ([^ ]) package/indeholder ikke pakken $1/;
 	s/distribution (\(potato|woody|sarge\))/distributionen $1/;
-	s/privilege escalation/rettighedsforøgelse/;
-	s/cross site/på tværs af servere/;
-	s/\bis not affected/er ikke påvirket/;
+	s/privilege escalation/rettighedsforÃ¸gelse/;
+	s/cross site/pÃ¥ tvÃ¦rs af servere/;
+	s/\bis not affected/er ikke pÃ¥virket/;
 	s/does not contain ([[:word:]]*) packages?/indeholder ikke pakker $1-pakker/;
 	s/does not contain a(?:ny)? ([[:word:]]*) packages/indeholder ikke $1-pakker/;
 	s/does not contain a(?:ny)? ([[:word:]]*) package/indeholder ikke pakken $1/;

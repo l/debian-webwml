@@ -1,40 +1,40 @@
-<define-tag description>omgåelse af safe_mode, CRLF-indsættelse</define-tag>
+<define-tag description>omgÃ¥else af safe_mode, CRLF-indsÃ¦ttelse</define-tag>
 <define-tag moreinfo>
-<p>Wojciech Purczynski har opdaget er det er muligt for scripts at overføre
-vilkårlig tekst til sendmail som en kommandolinieudvidelse, når man sender en
-e-mail gennem PHP, også selvom safe_mode ("sikker tilstand") er slået til.  
-Overførslen af det femte parameter burde være slået fra når PHP er opsat til at 
-køre i safe_mode, hvilket er tilfældet for nyere PHP-versioner og for 
-versionerne nævnt nedenfor.  Dette påvirker dog ikke PHP3.</p>
+<p>Wojciech Purczynski har opdaget er det er muligt for scripts at overfÃ¸re
+vilkÃ¥rlig tekst til sendmail som en kommandolinieudvidelse, nÃ¥r man sender en
+e-mail gennem PHP, ogsÃ¥ selvom safe_mode ("sikker tilstand") er slÃ¥et til.  
+OverfÃ¸rslen af det femte parameter burde vÃ¦re slÃ¥et fra nÃ¥r PHP er opsat til at 
+kÃ¸re i safe_mode, hvilket er tilfÃ¦ldet for nyere PHP-versioner og for 
+versionerne nÃ¦vnt nedenfor.  Dette pÃ¥virker dog ikke PHP3.</p>
 
-<p>Wojciech Purczynski opdagede også at vilkårlige ASCII-kontroltegn kan 
-indsættes i mail()-funktionens strengparametre.  Hvis mail()-parametre kommer
-fra brugerens uddata, kan det give brugeren mulighed for at ændre på indholdet
+<p>Wojciech Purczynski opdagede ogsÃ¥ at vilkÃ¥rlige ASCII-kontroltegn kan 
+indsÃ¦ttes i mail()-funktionens strengparametre.  Hvis mail()-parametre kommer
+fra brugerens uddata, kan det give brugeren mulighed for at Ã¦ndre pÃ¥ indholdet
 af meddelelsen, blandt andre header-linierne.</p>
 
-<p>Ulf Härnhammar har opdaget af file() og fopen() er sårbare overfor 
-CRLF-indsættelse.  En angriber kan bruge det til at omgå visse restriktioner og
-tilføje vilkårlig tekst til hvad der ser ud som HTTP-forespørgsler, der slippes
+<p>Ulf HÃ¤rnhammar har opdaget af file() og fopen() er sÃ¥rbare overfor 
+CRLF-indsÃ¦ttelse.  En angriber kan bruge det til at omgÃ¥ visse restriktioner og
+tilfÃ¸je vilkÃ¥rlig tekst til hvad der ser ud som HTTP-forespÃ¸rgsler, der slippes
 igennem.</p>
 
-<p>Dette sker dog kun hvis noget overføres til disse funktioner, noget der 
+<p>Dette sker dog kun hvis noget overfÃ¸res til disse funktioner, noget der 
 hverken er et gyldigt filnavn eller en gyldig URL.  Enhver streng som 
-indeholder kontroltegn kan ikke være en gyldig URL.  Før man overfører en 
-streng, som skulle være en URL, til en hvilken som helst funktion, skal man 
-først anvende urlencode() for at indkapsle det pågældende.</p>
+indeholder kontroltegn kan ikke vÃ¦re en gyldig URL.  FÃ¸r man overfÃ¸rer en 
+streng, som skulle vÃ¦re en URL, til en hvilken som helst funktion, skal man 
+fÃ¸rst anvende urlencode() for at indkapsle det pÃ¥gÃ¦ldende.</p>
 
 <p>Tre problemer er blevet identificeret i PHP:</p>
 
 <ol>
-  <li>Funktionen mail() tillader at vilkårlige e-mail-headere kan angives som
+  <li>Funktionen mail() tillader at vilkÃ¥rlige e-mail-headere kan angives som
       en modtageradresse eller emne indeholdende CR/LF-tegn.</li>
 
-  <li>Funktionen mail() slår ikke på korrekt vis overførlsen af vilkårlige 
-      kommandolinie-parametre til sendmail fra, når man kører i "Safe Mode".</li>
+  <li>Funktionen mail() slÃ¥r ikke pÃ¥ korrekt vis overfÃ¸rlsen af vilkÃ¥rlige 
+      kommandolinie-parametre til sendmail fra, nÃ¥r man kÃ¸rer i "Safe Mode".</li>
 
-  <li>Funktionen fopen() tillader, når den henter en URL, at der manipuleres
-      med forespørgslen efter ressourcen gennem en URL indeholdende CR/LF-tegn.
-      For eksempel kan headere blive føjet til HTTP-forespørgslen.</li>
+  <li>Funktionen fopen() tillader, nÃ¥r den henter en URL, at der manipuleres
+      med forespÃ¸rgslen efter ressourcen gennem en URL indeholdende CR/LF-tegn.
+      For eksempel kan headere blive fÃ¸jet til HTTP-forespÃ¸rgslen.</li>
 </ol>
 
 <p>Disse problemer er rettet i PHP3 version 3.0.18-23.1woody1 og PHP4 4.1.2-5 i 

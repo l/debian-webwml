@@ -1,24 +1,24 @@
-<define-tag description>bufferoverløb</define-tag>
+<define-tag description>bufferoverlÃ¸b</define-tag>
 <define-tag moreinfo>
 <p>James Ralston opdagede at funktionen sasl_encode64() i cyrus-sasl2, et frit 
-tilgængeligt bibliotek som implementerer Simple Authentication and Security 
+tilgÃ¦ngeligt bibliotek som implementerer Simple Authentication and Security 
 Layer, var ramt af en manglende null-terminering i visse situationer.  Det 
-forårsagede flere bufferoverløb i situationer hvor cyrus-sasl2 selv krævede at 
-strengen var null-termineret, hvilket kunne føre til lammelsesangreb (denial of
-service) eller udførelse af vilkårlig kode.</p>
+forÃ¥rsagede flere bufferoverlÃ¸b i situationer hvor cyrus-sasl2 selv krÃ¦vede at 
+strengen var null-termineret, hvilket kunne fÃ¸re til lammelsesangreb (denial of
+service) eller udfÃ¸relse af vilkÃ¥rlig kode.</p>
 
-<p>Vigtig bemærkning (citat fra US-CERT):
-Mens denne rettelse retter aktuelt sårbar kode, kan det medføre at ikke-sårbar
+<p>Vigtig bemÃ¦rkning (citat fra US-CERT):
+Mens denne rettelse retter aktuelt sÃ¥rbar kode, kan det medfÃ¸re at ikke-sÃ¥rbar
 eksisterende kode holder op med at virke.  Her er en funktion-prototype fra 
 include/saslutil.h til forklaring:</p>
 
 <pre>/* base64 encode
 * in -- inputdata
-* inlen -- inputdatalængde
-* out -- outputbuffer (vil være NUL-termineret)
-* outmax -- maks.størrelse på outputbuffer
+* inlen -- inputdatalÃ¦ngde
+* out -- outputbuffer (vil vÃ¦re NUL-termineret)
+* outmax -- maks.stÃ¸rrelse pÃ¥ outputbuffer
 * result:
-* outlen -- henter aktuel længde på outputbuffer (valgfri)
+* outlen -- henter aktuel lÃ¦ngde pÃ¥ outputbuffer (valgfri)
 *
 * Returnerer SASL_OK ved succes, SASL_BUFOVER hvis resultatet ikke passer
 */
@@ -26,14 +26,14 @@ LIBSASL_API int sasl_encode64(const char *in, unsigned inlen,
 char *out, unsigned outmax,
 unsigned *outlen);</pre>
 
-<p>Forestil dig en situation, hvor den kaldende kode er skrevet på en sådan måde,
-at den på forhånd beregner den nøjagtige størrelse krævet til base64-indkapsling,
-dernæst allokerer en buffer på præcis den størrelse, leverer en pointer til 
-bufferen til sasl_encode64() som *out.  Så længe koden ikke forventer at bufferen
-er NUL-termineret (ikke kalder strenghåndteringsfunktioenr så som strlen()), vil 
-den fungere og vil ikke være sårbar.</p>
+<p>Forestil dig en situation, hvor den kaldende kode er skrevet pÃ¥ en sÃ¥dan mÃ¥de,
+at den pÃ¥ forhÃ¥nd beregner den nÃ¸jagtige stÃ¸rrelse krÃ¦vet til base64-indkapsling,
+dernÃ¦st allokerer en buffer pÃ¥ prÃ¦cis den stÃ¸rrelse, leverer en pointer til 
+bufferen til sasl_encode64() som *out.  SÃ¥ lÃ¦nge koden ikke forventer at bufferen
+er NUL-termineret (ikke kalder strenghÃ¥ndteringsfunktioenr sÃ¥ som strlen()), vil 
+den fungere og vil ikke vÃ¦re sÃ¥rbar.</p>
 
-<p>Når rettelsen er taget i brug, vil den samme kode holde op med at fungere, 
+<p>NÃ¥r rettelsen er taget i brug, vil den samme kode holde op med at fungere, 
 fordi sasl_encode64() vil begynde at returnere SASL_BUFOVER.</p>
 
 <p>I den gamle stabile distribution (etch), er dette problem rettet i version 

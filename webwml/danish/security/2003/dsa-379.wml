@@ -1,21 +1,21 @@
-<define-tag description>flere sårbarheder</define-tag>
+<define-tag description>flere sÃ¥rbarheder</define-tag>
 <define-tag moreinfo>
 <p>Alexander Hvostov, Julien Blache og Aurelien Jarno har opdaget flere
 sikkerhedsrelaterede problemer i pakken sane-backends, der indeholder et
-API-bibliotek til scannere og en scanner-dæmon (i pakken libsane), som kan
-fjernudnyttes.  Disse problemer gør det muligt for en fjernangriber, at 
-forsage en segmenteringsfejl og/eller opbruge vilkårlige mængder hukommelse.
-Angrebet lykkes, også selvom angriberens computer ikke er anført i 
+API-bibliotek til scannere og en scanner-dÃ¦mon (i pakken libsane), som kan
+fjernudnyttes.  Disse problemer gÃ¸r det muligt for en fjernangriber, at 
+forsage en segmenteringsfejl og/eller opbruge vilkÃ¥rlige mÃ¦ngder hukommelse.
+Angrebet lykkes, ogsÃ¥ selvom angriberens computer ikke er anfÃ¸rt i 
 saned.conf.</p>
 
-<p>Man er kun sårbar, hvis man rent faktisk kører saned, for eksempel fra 
+<p>Man er kun sÃ¥rbar, hvis man rent faktisk kÃ¸rer saned, for eksempel fra 
 xinetd eller inetd.  Hvis oplysningerne i xinitds henholdsvis initds 
-opsætningsfil er udkommenteret eller ikke findes, er man sikker.</p>
+opsÃ¦tningsfil er udkommenteret eller ikke findes, er man sikker.</p>
 
-<p>Prøv <kbd>telnet localhost 6566</kbd> på den server, hvor saned måske kører. 
-Får du meddelelsen "connection refused", kører saned ikke og du er sikker.</p>
+<p>PrÃ¸v <kbd>telnet localhost 6566</kbd> pÃ¥ den server, hvor saned mÃ¥ske kÃ¸rer. 
+FÃ¥r du meddelelsen "connection refused", kÃ¸rer saned ikke og du er sikker.</p>
 
-<p>Projeket Common Vulnerabilities and Exposures har fundet frem til følgende
+<p>Projeket Common Vulnerabilities and Exposures har fundet frem til fÃ¸lgende
 problemer:</p>
 
 <ul>
@@ -23,51 +23,51 @@ problemer:</p>
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0773">\
 CAN-2003-0773</a>:
 
-<p>saned kontrollerer kun identiteten (IP-adressen) på den fjerne maskine efter 
-den første kommunikation er forekommet (SANE_NET_INIT).  Derfor kan alle sende 
-dénne RPC, også selvom den fjerne maskine ikke har tilladelse til at scanne 
-(dvs. ikke er anført i saned.conf).</p></li>
+<p>saned kontrollerer kun identiteten (IP-adressen) pÃ¥ den fjerne maskine efter 
+den fÃ¸rste kommunikation er forekommet (SANE_NET_INIT).  Derfor kan alle sende 
+dÃ©nne RPC, ogsÃ¥ selvom den fjerne maskine ikke har tilladelse til at scanne 
+(dvs. ikke er anfÃ¸rt i saned.conf).</p></li>
 
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0774">\
 CAN-2003-0774</a>:
 
-<p>saned mangler fejlkontroller næsten overalt i koden.  Derfor opdages 
+<p>saned mangler fejlkontroller nÃ¦sten overalt i koden.  Derfor opdages 
 afbrudte forbindelser meget sent.  Hvis den afbrudte forbindelse ikke opdages,
-beholder forbindelsen til den interne wire-buffer grænserne for den allokerede 
-hukommelse.  Derfor bliver tilfældig hukommelse "efter" wire-bufferen læst, 
-hvilket fører til en segementeringsfejl.</p></li>
+beholder forbindelsen til den interne wire-buffer grÃ¦nserne for den allokerede 
+hukommelse.  Derfor bliver tilfÃ¦ldig hukommelse "efter" wire-bufferen lÃ¦st, 
+hvilket fÃ¸rer til en segementeringsfejl.</p></li>
 
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0775">\
 CAN-2003-0775</a>:
 
-<p>Hvis saned forventer strenge, malloc'erers den nødvendige hukommelse til
-opbevaring af hele strenge, efter strengens størrelse er modtaget.  Hvis
-forbindelsen afbrydes før størrelsen er blevet overført, reserverer malloc en
-vilkårlig mængde hukommelse.  Afhængigt af denne størrelse og mængden af 
-tilgængelig hukommelse, vil malloc gå ned (dvs. saned afbryder) eller en stor
-mængde hukommelse vil blive allokeret.  Swapping og OOM-tiltag kan forekomme, 
-afhængigt af kernen.</p></li>
+<p>Hvis saned forventer strenge, malloc'erers den nÃ¸dvendige hukommelse til
+opbevaring af hele strenge, efter strengens stÃ¸rrelse er modtaget.  Hvis
+forbindelsen afbrydes fÃ¸r stÃ¸rrelsen er blevet overfÃ¸rt, reserverer malloc en
+vilkÃ¥rlig mÃ¦ngde hukommelse.  AfhÃ¦ngigt af denne stÃ¸rrelse og mÃ¦ngden af 
+tilgÃ¦ngelig hukommelse, vil malloc gÃ¥ ned (dvs. saned afbryder) eller en stor
+mÃ¦ngde hukommelse vil blive allokeret.  Swapping og OOM-tiltag kan forekomme, 
+afhÃ¦ngigt af kernen.</p></li>
 
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0776">\
 CAN-2003-0776</a>:
 
-<p>saned kontrollerer ikke om modtagne RPC-numre er gyldige, før den modtager
+<p>saned kontrollerer ikke om modtagne RPC-numre er gyldige, fÃ¸r den modtager
 parametrene.</p></li>
 
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0777">\
 CAN-2003-0777</a>:
 
-<p>Hvis fejlsøgningsmeddelelser er slået til og forbindelsen afbrydes, kan
+<p>Hvis fejlsÃ¸gningsmeddelelser er slÃ¥et til og forbindelsen afbrydes, kan
 strenge der ikke er nul-afsluttede blive udskrevet og en segmenteringsfejl 
-opstå.</p></li>
+opstÃ¥.</p></li>
 
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0778">\
 CAN-2003-0778</a>:
 
-<p>Det er muligt at allokere en vilkårlig mængde hukommelse på serveren, der
-kører saned, selvom forbindelsen ikke afbrydes.  For øjeblikket er det ikke
-noget, som let kan rettes iflg. forfatteren.  Det er bedre at begrænse den 
-totale mængde hukommelse, saned må bruge (ulimit).</p></li>
+<p>Det er muligt at allokere en vilkÃ¥rlig mÃ¦ngde hukommelse pÃ¥ serveren, der
+kÃ¸rer saned, selvom forbindelsen ikke afbrydes.  For Ã¸jeblikket er det ikke
+noget, som let kan rettes iflg. forfatteren.  Det er bedre at begrÃ¦nse den 
+totale mÃ¦ngde hukommelse, saned mÃ¥ bruge (ulimit).</p></li>
 
 </ul>
 
