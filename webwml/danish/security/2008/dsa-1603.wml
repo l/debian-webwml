@@ -1,65 +1,65 @@
 <define-tag description>DNS-cacheforgiftning</define-tag>
 <define-tag moreinfo>
 
-<p>Dan Kaminsky opdagede at medfødte egenskaber i DNS-protokollen kunne føre til 
+<p>Dan Kaminsky opdagede at medfÃ¸dte egenskaber i DNS-protokollen kunne fÃ¸re til 
 effektive DNS-cacheforgiftningsangreb.  Blandt andre kunne succesrige angreb
-føre til fejldirigeret webtrafik og e-mail-omdirigering.</p>
+fÃ¸re til fejldirigeret webtrafik og e-mail-omdirigering.</p>
 
-<p>Denne opdatering ændrer Debians BIND 9-pakker for at implementere de 
-anbefalede modforholdsregler:  Randomnisering af UDP-forespørgselskildeport.
-Ændringen forøger størrelsen på det område, en angriber skal gætte værdier i,
-på en bagudkompatibel måde og gør succesrige angreb betydeligt sværere.</p>
+<p>Denne opdatering Ã¦ndrer Debians BIND 9-pakker for at implementere de 
+anbefalede modforholdsregler:  Randomnisering af UDP-forespÃ¸rgselskildeport.
+Ã†ndringen forÃ¸ger stÃ¸rrelsen pÃ¥ det omrÃ¥de, en angriber skal gÃ¦tte vÃ¦rdier i,
+pÃ¥ en bagudkompatibel mÃ¥de og gÃ¸r succesrige angreb betydeligt svÃ¦rere.</p>
 
-<p>Bemærk at denne sikkerhedsopdatering ændrer BINDs netværksvirkemåde på en 
-fundamental måde, og følgende trin anbefales for at sikre en problemfri 
+<p>BemÃ¦rk at denne sikkerhedsopdatering Ã¦ndrer BINDs netvÃ¦rksvirkemÃ¥de pÃ¥ en 
+fundamental mÃ¥de, og fÃ¸lgende trin anbefales for at sikre en problemfri 
 opgradering.</p>
 
-<p>1. Forvis dig om, at din netværksopsætning er kompatibel med 
-kildeportsrandomnisering.  Hvis du beskytter din DNS-opløser (<q>resolver</q>) 
-med et <q>stateless</q> pakkefilter, kan det være nødvendigt for dig at sikre, 
+<p>1. Forvis dig om, at din netvÃ¦rksopsÃ¦tning er kompatibel med 
+kildeportsrandomnisering.  Hvis du beskytter din DNS-oplÃ¸ser (<q>resolver</q>) 
+med et <q>stateless</q> pakkefilter, kan det vÃ¦re nÃ¸dvendigt for dig at sikre, 
 at ingen ikke-DNS-tjenester lytter til UDP-portene mellem 1024 og 65535, samt 
-at åbne for det i pakkefilteret.  Pakkefiltre, der er eksempelvis er baseret 
-på etchs Linux 2.6.18-kerne, understøtter kun stateless filtrering af 
+at Ã¥bne for det i pakkefilteret.  Pakkefiltre, der er eksempelvis er baseret 
+pÃ¥ etchs Linux 2.6.18-kerne, understÃ¸tter kun stateless filtrering af 
 IPv6-pakker, og er derfor ramt af dette ekstra problem.  (Hvis du anvender IPv4 
-med iptables og ESTABLISHED-regler, vil netværksændringer formentlig ikke være
-nødvendige.)</p>
+med iptables og ESTABLISHED-regler, vil netvÃ¦rksÃ¦ndringer formentlig ikke vÃ¦re
+nÃ¸dvendige.)</p>
 
-<p>2. Installér BIND 9-opgraderingen ved hjælp af <q>apt-get update</q> 
+<p>2. InstallÃ©r BIND 9-opgraderingen ved hjÃ¦lp af <q>apt-get update</q> 
 efterfulgt af <q>apt-get install bind9</q>.  Kontroller at processen named er 
-blevet genstartet og svarer på rekursive forespørgsler.  (Hvis alle 
-forespørgsler giver timeouts, er det en indikation af at netværksændringer er 
-påkrævede; se trin et.)</p>
+blevet genstartet og svarer pÃ¥ rekursive forespÃ¸rgsler.  (Hvis alle 
+forespÃ¸rgsler giver timeouts, er det en indikation af at netvÃ¦rksÃ¦ndringer er 
+pÃ¥krÃ¦vede; se trin et.)</p>
 
-<p>3. Kontrollér at kildeportrandomnisering er aktiveret.  Forvis dig om at 
-filen /var/log/daemon.log ikke indeholder meddelelser med følgende udseende</p>
+<p>3. KontrollÃ©r at kildeportrandomnisering er aktiveret.  Forvis dig om at 
+filen /var/log/daemon.log ikke indeholder meddelelser med fÃ¸lgende udseende</p>
 
   <pre>named[6106]: /etc/bind/named.conf.options:28: using specific query-source port suppresses port randomization and can be insecure.</pre>
 
 <p>lige efter meddelelserne <q>listening on IPv6 interface</q> og <q>listening 
 on IPv4 interface</q>, logget af BIND ved programstart.  Hvis disse meddelelser
-er til stede, bør du fjerne den angivne linje fra opsætningen eller erstatte 
+er til stede, bÃ¸r du fjerne den angivne linje fra opsÃ¦tningen eller erstatte 
 portnumre i dem med <kbd>*</kbd>-tegnet (udskift fx <q>port 53</q> med 
 <q>port *</q>).</p>
 
 <p>For yderligere vished, brug tcpdump eller et andet 
-netværksovervågningsværktøj for at undersøge om der er skiftende UDP-kildeporte.
-Hvis der er en NAT-enhed foran din DNS-opløser, skal du sikre dig at den ikke 
+netvÃ¦rksovervÃ¥gningsvÃ¦rktÃ¸j for at undersÃ¸ge om der er skiftende UDP-kildeporte.
+Hvis der er en NAT-enhed foran din DNS-oplÃ¸ser, skal du sikre dig at den ikke 
 annullerer effekten af kildeportsrandomniseringen.</p>
 
-<p>4. Hvis du ikke kan aktivere kildeportsrandomnisering, så overvej at opsætte
-BIND 9 til at sende forespørgsler videre til en DNS-opløser, der kan, eventuelt 
-over en VPN så som OpenVPN, for at oprette det nødvendige betroede netværkslink.
+<p>4. Hvis du ikke kan aktivere kildeportsrandomnisering, sÃ¥ overvej at opsÃ¦tte
+BIND 9 til at sende forespÃ¸rgsler videre til en DNS-oplÃ¸ser, der kan, eventuelt 
+over en VPN sÃ¥ som OpenVPN, for at oprette det nÃ¸dvendige betroede netvÃ¦rkslink.
 (Brug BIND's forward-only-tilstand i denne situation.)</p>
 
-<p>Andre caching-opløsere, der distribueres af Debian (PowerDNS, MaraDNS, 
-Unbound) anvender allerede kildeportsrandomnisering, og det er ikke nødvendigt 
+<p>Andre caching-oplÃ¸sere, der distribueres af Debian (PowerDNS, MaraDNS, 
+Unbound) anvender allerede kildeportsrandomnisering, og det er ikke nÃ¸dvendigt 
 at opdatere pakkerne.  BIND 9.5 op til og med version 1:9.5.0.dfsg-4 
 implementerer kun en svag form for kildeportsrandomnisering og skal derfor 
-også opdateres.  For oplysninger om BIND 8 se <a href="dsa-1604">DSA-1604-1</a>, 
-og for status på libcs stub-opløser se <a href="dsa-1605">DSA-1605-1</a>.</p>
+ogsÃ¥ opdateres.  For oplysninger om BIND 8 se <a href="dsa-1604">DSA-1604-1</a>, 
+og for status pÃ¥ libcs stub-oplÃ¸ser se <a href="dsa-1605">DSA-1605-1</a>.</p>
 
-<p>De opdaterede bind9-pakker indeholder ændringer oprindelig planlagt til den 
-næste stabile punktopdatering, deriblandt den ændrede IP-adresse for 
+<p>De opdaterede bind9-pakker indeholder Ã¦ndringer oprindelig planlagt til den 
+nÃ¦ste stabile punktopdatering, deriblandt den Ã¦ndrede IP-adresse for 
 L.ROOT-SERVERS.NET (Debian-fejl nummer <a href="http://bugs.debian.org/449148">\
 449148</a>).</p>
 
