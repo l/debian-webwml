@@ -17,8 +17,8 @@ index.$(LANGUAGE).html: index.wml $(wildcard $(CUR_YEAR)/dsa-*.wml) \
   $(TEMPLDIR)/release_info.wml \
   $(TEMPLDIR)/template.wml $(TEMPLDIR)/recent_list.wml $(GETTEXTDEP)
 
-pam.$(LANGUAGE).html: pam.wml \
-  $(ENGLISHSRCDIR)/security/pam.wml
+pam-auth.$(LANGUAGE).html: pam-auth.wml \
+  $(ENGLISHSRCDIR)/security/pam-auth.wml
 
 faq.$(LANGUAGE).html: faq.wml \
   $(ENGLISHSRCDIR)/security/faq.wml \
