@@ -1,5 +1,5 @@
 #use wml::debian::template title="Suivi des bogues Debian &mdash; serveur de contrôle" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.78" translation_maintainer="Guillaume Delacour"
+#use wml::debian::translation-check translation="1.80" translation_maintainer="Guillaume Delacour"
 
 # Translators:
 # Christian Couder, 2008-2009.
@@ -65,6 +65,8 @@ ou par courrier électronique en utilisant la commande <code>refcard</code>.
 	  <dt><a href="#tag">tag</a></dt>
 	  <dt><a href="#retitle">retitle</a></dt>
 	  <dt><a href="#submitter">submitter</a></dt>
+	  <dt><a href="#affects">affects</a></dt>
+	  <dt><a href="#summary">summary</a></dt>
 	</dl>
       </td>
       <!-- Versioning -->
@@ -360,6 +362,41 @@ ou par courrier électronique en utilisant la commande <code>refcard</code>.
   </dd>
 
 
+  <dt><a name="affects"><code>affects</code> <var>NuméroDeBogue</var>
+    [&nbsp;<code>+</code> | <code>-</code> | <code>=</code>
+    ] <var>paquet</var> [ <var>paquet</var> ...&nbsp;]</dt>
+  <dd>
+   <p>
+    Indique qu'un bogue a des incidences sur un autre paquet. Dans le cas où le
+    <var>NuméroDeBogue</var> occasionne des problèmes dans <var>paquet</var>
+    alors que le bogue est vraiment issu du paquet auquel il est assigné, 
+    le bogue sera listé par défaut dans la liste de paquets de <var>paquet</var>. 
+    Ceci devrait généralement être utilisé dans le cas où le bogue est suffisamment 
+    sévère pour engendrer de multiples rapports de la part des utilisateurs pour 
+    être assigné au mauvais paquet.
+   </p>
+  </dd>
+
+   
+  <dt><a name="summary"><code>summary</code> <var>NuméroDeBogue</var>
+    [<var>NuméroDeMessage</var>]</a></dt>
+  <dd>
+   <p>
+    Sélectionne un message à utiliser comme résumé d'un bogue. Le premier
+    paragraphe qui n'est pas pseudo en-tête de ce bogue est analysé et utilisé comme
+    résumé du bogue qui est affiché en haut de la page du rapport de bogue.
+    Cela est utile lorsque le rapport initial ne décrit pas correctement le problème
+    ou que le bogue est composé de beaucoup de messages, qui rendent le vrai problème
+    difficile à identifier.
+   </p>
+   <p>
+    Si <var>NuméroDeMessage</var> n'est pas fourni, efface le récapitulatif.
+    <var>NuméroDeMessage</var> est le numéro de message tel qu'il est listé
+    sur l'interface du système de suivi des bogues.
+   </p>
+  </dd>
+
+
   <dt><a name="clone"><code>clone</code> <var>NuméroDeBogue</var> <var>Nouvel ID</var>
     [&nbsp;<var>Nouveaux ID</var> ...&nbsp;]</a></dt>
   <dd>
@@ -483,17 +520,20 @@ ou par courrier électronique en utilisant la commande <code>refcard</code>.
   </dd>
 
 
-  <dt><a name="tag"><code>tags</code> <var>NuméroDeBogue</var> [&nbsp;<code>+</code> |
-    <code>-</code> | <code>=</code>&nbsp;] <var>Marque</var>
-    [&nbsp;<var>Marque</var> ...&nbsp;]</a></dt>
+  <dt><a name="tag"><code>tags</code> <var>NuméroDeBogue</var> [&nbsp;<code>+</code> | 
+    <code>-</code> | <code>=</code>&nbsp;] <var>Marque</var> [&nbsp;<var>Marque</var> ...&nbsp;]
+   [ <code>+</code> | <code>-</code> |&nbsp;<code>=</code> <var>tag</var> ...&nbsp;]&nbsp;]</a></dt>
   <dd>
     <p>
     Traite des marques sur le rapport de bogue numéro <var>NuméroDeBogue</var>.
     Aucune notification n'est envoyée à l'utilisateur qui a signalé le bogue.
-    Utiliser l'action <code>+</code> signifie ajouter chaque <var>Marque</var>,
-    <code>-</code> signifie supprimer chaque <var>Marque</var>, et
-    <code>=</code> signifie ignorer les marques courantes et les mettre en
-    fonction de la liste fournie. L'action par défaut est l'ajout.
+    Utiliser l'action <code>+</code> signifie ajouter chaque <var>Marque</var>
+    qui suit, <code>-</code> signifie supprimer chaque <var>Marque</var>,
+    qui suit et <code>=</code> signifie assigner les marques qui suivent dans 
+    la liste fournie. Intervenir sur <code>+</code>, <code>-</code> ou
+    <code>=</code>, modifie les actions pour les marques fournies.
+    L'action par défaut est l'ajout.
+
     </p>
 
     <p>
@@ -515,6 +555,9 @@ ou par courrier électronique en utilisant la commande <code>refcard</code>.
 
           \# met exactement les marques à « moreinfo » et « unreproducible »
           tags 123456 = moreinfo unreproducible
+
+          \# supprime la marque « moreinfo » et ajoute une marque « patch »
+          tags 123456 - moreinfo + patch
     </pre>
 
     <p>
