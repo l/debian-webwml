@@ -43,7 +43,7 @@ ifeq "$(LANGUAGE)" "en"
 mailing-lists.txt: $(mklist) $(lists.cfg) $(descfiles)
 	$(mklist) -f $(lists.cfg) -t
 $(lists.cfg):
-	wget -O lists.cfg http://liszt.debian.org/lists.cfg
+	wget -O lists.cfg http://lists.debian.org/lists.cfg
 else
 mailing-lists.$(LANGUAGE).txt: $(mklist) $(lists.cfg) $(descfiles)
 	$(mklist) -f $(lists.cfg) -t && mv mailing-lists.txt mailing-lists.$(LANGUAGE).txt
