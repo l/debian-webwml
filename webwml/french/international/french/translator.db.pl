@@ -192,7 +192,7 @@ sub init_translators {
                         compress    => 'none'
 		},
                'Simon Paillard' =>  {
-                        email       => 'simon.paillard@resel.enst-bretagne.fr',
+                        email       => 'spaillard@debian.org',
                         summary     => 3,
                         logs        => 3,
                         diff        => 3,
@@ -282,7 +282,7 @@ sub init_translators {
 		        compress        => 'none',
 		 },
                 'DFS Task Force' =>  {
-                        email       => 'simon.paillard@resel.enst-bretagne.fr',
+                        email       => 'spaillard@debian.org',
                         summary     => 2,
                         logs        => 2,
                         diff        => 2,
