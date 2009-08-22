@@ -1,97 +1,97 @@
-#use wml::debian::template title="Debian BTS - $B%j%/%(%9%H%5!<%P(B" NOHEADER=yes NOCOPYRIGHT=true
+#use wml::debian::template title="Debian BTS - リクエストサーバ" NOHEADER=yes NOCOPYRIGHT=true
 #use wml::debian::translation-check translation="1.25"
 
-<h1><a name="introduction">$B%P%0%7%9%F%`%j%/%(%9%H%5!<%PF~Lg(B</a></h1>
+<h1><a name="introduction">バグシステムリクエストサーバ入門</a></h1>
 
-<p>$B%P%0DI@W%7%9%F%`$G$O!"MW5a$K1~$8$FJ?J8$G%P%0Js9p$d:w0z$rAwIU$9$k(B
-$B%a!<%k%5!<%P$r1?MQ$7$F$$$^$9!#(B</p>
+<p>バグ追跡システムでは、要求に応じて平文でバグ報告や索引を送付する
+メールサーバを運用しています。</p>
 
-<p>$B%a!<%k%5!<%P$O!"(B
+<p>メールサーバは、
 <a href="mailto:request@bugs.debian.org"><code>request@bugs.debian.org</code></a>
-$B08$KEE;R%a!<%k$rAw$k$3$H$GMxMQ$G$-$^$9!#(B<code>Subject</code> $B$O(B
-$BJV?.%a!<%k$N(B <code>Subject</code> $B$KMxMQ$5$l$^$9$,!"$=$N0J30$G$O(B
-$BL5;k$5$l$^$9!#(B</p>
+宛に電子メールを送ることで利用できます。<code>Subject</code> は
+返信メールの <code>Subject</code> に利用されますが、その以外では
+無視されます。</p>
 
-<p>$BK\J8$K$O0l9T$K0l$D$N%3%^%s%I$r=q$$$FAw$i$J$1$l$P$$$1$^$;$s!#%a!<%k(B
-$BH/?.<T$,<u$1$H$kJV?.$K$O!"2r<a$5$l$?<+J,$N%a%C%;!<%8$H$=$l$>$l$N(B
-$B%3%^%s%I$KBP$9$k1~Ez$,=q$+$l$F$$$^$9!#$3$3$K5s$2$i$l$?%3%^%s%I$G$O!"C/$+$KDLCN$,(B
-$BAw$i$l$k$3$H$O$"$j$^$;$s!#$^$?%a!<%k$O!"8x3+$5$l$F$$$k>l=j$K$O5-O?$5$l$^$;$s!#(B</p>
+<p>本文には一行に一つのコマンドを書いて送らなければいけません。メール
+発信者が受けとる返信には、解釈された自分のメッセージとそれぞれの
+コマンドに対する応答が書かれています。ここに挙げられたコマンドでは、誰かに通知が
+送られることはありません。またメールは、公開されている場所には記録されません。</p>
 
-<p>$B%O%C%7%e5-9f(B <code>#</code> $B$G;O$^$k9T$OL5;k$5$l$^$9!#(B
-$B%5!<%P$O!"(B<a href="#stopprocessing">$B@)8f=*C<(B</a>
-(<code>quit</code>$B!"(B<code>thank you</code>$B!"(B
-$B$"$k$$$O%O%$%U%s(B2$B$D!"$J$I$,0lHLE*$JNc$G$9(B) $B$N$"$k9T$G(B
-$B=hM}$rCf;_$7$^$9!#$^$?!"G'<1ITG=$J%3%^%s%I$dIT@5$J7A<0$r;}$D(B
-$B%3%^%s%I$,B?$/$"$k>l9g$b!"=hM}$rCf;_$7$^$9!#@5>o$J=hM}$r9T$C$?(B
-$B%3%^%s%I$,$R$H$D$b$J$$>l9g!"%5!<%P$O(B help $BJ8=q$rAw$j$^$9!#(B</p>
+<p>ハッシュ記号 <code>#</code> で始まる行は無視されます。
+サーバは、<a href="#stopprocessing">制御終端</a>
+(<code>quit</code>、<code>thank you</code>、
+あるいはハイフン2つ、などが一般的な例です) のある行で
+処理を中止します。また、認識不能なコマンドや不正な形式を持つ
+コマンドが多くある場合も、処理を中止します。正常な処理を行った
+コマンドがひとつもない場合、サーバは help 文書を送ります。</p>
 
-<h1>$BMxMQ2DG=$J%3%^%s%I(B</h1>
+<h1>利用可能なコマンド</h1>
 
 <dl>
 <dt><code>send</code> <var>bugnumber</var></dt>
 <dt><code>send-detail</code> <var>bugnumber</var></dt>
 <dd>
-$B0z$-?t$G;XDj$7$?%P%0Js9p$N<L$7$rMW5a$7$^$9!#(B<code>send-detail</code>
-$B$G$O!"<+F0DLCN$J$IA4$F$N(B<q>$BB`6~$J(B</q>$B%a%C%;!<%8$,Aw$i$l$^$9!#(B
+引き数で指定したバグ報告の写しを要求します。<code>send-detail</code>
+では、自動通知など全ての<q>退屈な</q>メッセージが送られます。
 </dd>
 
 <dt><code>index</code> [<code>full</code>]</dt>
 <dt><code>index-summary by-package</code></dt>
 <dt><code>index-summary by-number</code></dt>
 <dd>
-$B$=$l$>$l!"(B
-(full $B$r$D$1$k$H2r7h:Q!"E>Aw:Q%P%0Js9p$b4^$`(B)$B40A4$J%$%s%G%C%/%9!"(B
-$B%Q%C%1!<%8L>=g$NMWLs!"%P%0HV9f=g$NMWLs$rMW5a$7$^$9!#(B
+それぞれ、
+(full をつけると解決済、転送済バグ報告も含む)完全なインデックス、
+パッケージ名順の要約、バグ番号順の要約を要求します。
 </dd>
 
 <dt><code>index-maint</code></dt>
 <dd>
-$B%P%0DI@W%7%9%F%`$G(B($BL$2r7h$^$?$O:G6a%/%m!<%:$5$l$?(B)$B%P%0$r;}$D(B
-$B%a%s%F%J!<%j%9%H$N%$%s%G%C%/%9%Z!<%8$rMW5a$7$^$9!#(B
+バグ追跡システムで(未解決または最近クローズされた)バグを持つ
+メンテナーリストのインデックスページを要求します。
 </dd>
 
 <dt><code>index maint</code> <var>maintainer</var></dt>
 <dd>
-$B%a%s%F%J(B <var>maintainer</var> $B$N(B
-$B%P%0$N%$%s%G%C%/%9%Z!<%8$rMW5a$7$^$9!#(B
-$B8!:w8l$O!"40A40lCW$G$9!#(B
-$B%P%0$N%$%s%G%C%/%9$O8DJL$N%a!<%k$GAw$i$l$^$9!#(B
+メンテナ <var>maintainer</var> の
+バグのインデックスページを要求します。
+検索語は、完全一致です。
+バグのインデックスは個別のメールで送られます。
 </dd>
 
 <dt><code>index-packages</code></dt>
 <dd>
-$B%P%0DI@W%7%9%F%`$G(B($BL$2r7h$^$?$O:G6a%/%m!<%:$5$l$?(B)$B%P%0$r;}$D(B
-$B%Q%C%1!<%8%j%9%H$N%$%s%G%C%/%9%Z!<%8$rMW5a$7$^$9!#(B
+バグ追跡システムで(未解決または最近クローズされた)バグを持つ
+パッケージリストのインデックスページを要求します。
 </dd>
 
 <dt><code>index packages</code> <var>package</var></dt>
 <dd>
-$B%Q%C%1!<%8(B <code>package</code> $B$N%P%00lMw$rMW5a$7$^$9!#(B
-$B8!:w8l$O!"40A40lCW$G$9!#(B
-$B%P%0$N%$%s%G%C%/%9$O8DJL$N%a!<%k$GAw$i$l$^$9!#(B
+パッケージ <code>package</code> のバグ一覧を要求します。
+検索語は、完全一致です。
+バグのインデックスは個別のメールで送られます。
 </dd>
 
 <dt><code>send-unmatched</code> [<code>this</code>|<code>0</code>]</dt>
 <dt><code>send-unmatched</code> <code>last</code>|<code>-1</code></dt>
 <dt><code>send-unmatched</code> <code>old</code>|<code>-2</code></dt>
 <dd>
-$B$=$l$>$l:#=5!"@h=5!"@h!9=5$N4V$KAw$i$l$?FCDj$N%P%0Js9p$K(B
-$B3:Ev$7$J$$%a%C%;!<%8$N%m%0$rMW5a$7$^$9(B($B?eMKF|$r=5Kv$H$7$F07$$$^$9(B)
+それぞれ今週、先週、先々週の間に送られた特定のバグ報告に
+該当しないメッセージのログを要求します(水曜日を週末として扱います)
 </dd>
 
 <dt><code>getinfo</code> <var>filename</var></dt>
 <dd>
 <p>
-$B%Q%C%1!<%8$d%a%s%F%J$N>pJs$r4^$`%U%!%$%k$rMW5a$7$^$9!#(B
-$BMxMQ2DG=$J%U%!%$%k$r0J2<$K<($7$^$9!#(B
+パッケージやメンテナの情報を含むファイルを要求します。
+利用可能なファイルを以下に示します。
 </p>
 
 <dl>
 <dt><code>maintainers</code></dt>
 <dd>
-$B%P%0DI@W%7%9%F%`$GMxMQ$5$l$k%Q%C%1!<%8%a%s%F%J!<0lMw!#(B
-$B$3$l$O(B <code>Packages</code> $B%U%!%$%k!"(Boverride $B%U%!%$%k$*$h$S(B
-$B5<;w%Q%C%1!<%8%U%!%$%kCf$N>pJs$+$i:n$i$l$^$9!#(B
+バグ追跡システムで利用されるパッケージメンテナー一覧。
+これは <code>Packages</code> ファイル、override ファイルおよび
+擬似パッケージファイル中の情報から作られます。
 </dd>
 
 <dt><code>override.</code><var>distribution</var></dt>
@@ -99,28 +99,28 @@
 <dt><code>override.</code><var>distribution</var><code>.contrib</code></dt>
 <dt><code>override.experimental</code></dt>
 <dd>
-$B%Q%C%1!<%8$N=EMWEY(B(priority)$B$H%;%/%7%g%s(B(section)$B$N>pJs$d%a%s%F%J(B
-$B$N=$@5>pJs!#$3$N>pJs$O(B FTP $B%"!<%+%$%V>e$N(B <code>Packages</code> $B%U%!%$%k(B
-$B$r@8@.$9$k:]$KMxMQ$5$l$^$9!#%G%#%9%H%j%S%e!<%7%g%s%D%j!<$=$l$>$l$K(B
-$B$D$$$F$3$N>pJs$,MxMQ2DG=$G$9!#%G%#%9%H%j%S%e!<%7%g%sL>$O%3!<%IL>$G$9!#(B
+パッケージの重要度(priority)とセクション(section)の情報やメンテナ
+の修正情報。この情報は FTP アーカイブ上の <code>Packages</code> ファイル
+を生成する際に利用されます。ディストリビューションツリーそれぞれに
+ついてこの情報が利用可能です。ディストリビューション名はコード名です。
 </dd>
 
 <dt><code>pseudo-packages.description</code></dt>
 <dt><code>pseudo-packages.maintainers</code></dt>
 <dd>
-$B$=$l$>$l!"5<;w%Q%C%1!<%8$KBP$9$k@bL@$H%a%s%F%J!<$N0lMw!#(B
+それぞれ、擬似パッケージに対する説明とメンテナーの一覧。
 </dd>
 </dl>
 </dd>
 
 <dt><code>refcard</code></dt>
 <dd>
-$B%a!<%k%5!<%P%j%U%!%l%s%9%+!<%I$rJ?J8$GAw$k$h$&MW5a$7$^$9!#(B
+メールサーバリファレンスカードを平文で送るよう要求します。
 </dd>
 
 <dt><code>help</code></dt>
 <dd>
-$B$3$N%X%k%WJ8=q(B($B86J8(B)$B$rJ?J8$GAw$k$h$&MW5a$7$^$9!#(B
+このヘルプ文書(原文)を平文で送るよう要求します。
 </dd>
 
 <dt><a name="stopprocessing"></a><code>quit</code></dt>
@@ -134,46 +134,46 @@
 <!-- <dt><code>kthxbye</code></dt> -->
 <!-- See... I documented it! -->
 <dd>
-$B$3$N9T$G%a%C%;!<%8$N=hM}$rCf;_$7$^$9!#(B
-$B$3$N9T$N8e$KG$0U$NJ8=q$r4^$a$k$3$H$,$G$-$^$9$,!"%a!<%k%5!<%P$O$=$l$r(B
-$B=hM}$7$^$;$s!#$?$H$($P!"$"$J$?$N%a%C%;!<%8$r(B($B%P%0DI@W%7%9%F%`$N%m%0$d(B
-<code>CC</code> $B$^$?$O(B <code>BCC</code> $B$G(B)$BFI$`?M$N$?$a$K!"(B
-$BD9$$%3%a%s%H$r4^$a$k;~$K$O(B <code>#</code> $B$h$j$b$3$l$r;HMQ$9$kJ}$,(B
-$BE,@Z$G$9!#(B
+この行でメッセージの処理を中止します。
+この行の後に任意の文書を含めることができますが、メールサーバはそれを
+処理しません。たとえば、あなたのメッセージを(バグ追跡システムのログや
+<code>CC</code> または <code>BCC</code> で)読む人のために、
+長いコメントを含める時には <code>#</code> よりもこれを使用する方が
+適切です。
 </dd>
 
 <dt><code>#</code>...</dt>
 <dd>
-$B%3%a%s%H9T!#(B<code>#</code> $B$O9TF,$K$J$1$l$P$$$1$^$;$s!#(B
+コメント行。<code>#</code> は行頭になければいけません。
 </dd>
 
 <dt><code>debug</code> <var>level</var></dt>
 <dd>
-$B%G%P%C%0%l%Y%k$r(B<var>level</var>$B$K@_Dj$7$^$9!#(B<var>level</var>$B$K$O(B
-$BIi$G$J$$@0?t$,;HMQ$G$-$^$9!#(B0 $B$N>l9g$O%G%P%C%0=PNO$r$7$^$;$s!#DL>o$N%G%P%C%0(B
-$B$K$O(B 1 $B$G==J,$G$9!#%G%P%C%0=PNO$O<L$7$K=q$-=P$5$l$^$9$,!"$3$l$P(B
-$B%P%0%7%9%F%`$N0lHL%f!<%6$KLrN)$D>pJs$G$O$"$j$^$;$s!#(B
+デバッグレベルを<var>level</var>に設定します。<var>level</var>には
+負でない整数が使用できます。0 の場合はデバッグ出力をしません。通常のデバッグ
+には 1 で十分です。デバッグ出力は写しに書き出されますが、これば
+バグシステムの一般ユーザに役立つ情報ではありません。
 </dd>
 </dl>
 
-<p>$B$3$NB>!"%a!<%k%5!<%P$N(B<a href="server-refcard">$B%j%U%!%l%s%9%+!<%I(B</a>
-$B$,MQ0U$5$l$F$$$^$9!#MxMQ$K$O(B WWW $B>e$d(B 
-<code>bug-mailserver-refcard.txt</code>$B!"(B
-$BEE;R%a!<%k$G(B <code>refcard</code> $B%3%^%s%I$r;H$$$^$9!#(B
-($B>e5-$r;2>H$N$3$H(B)$B!#(B</p>
+<p>この他、メールサーバの<a href="server-refcard">リファレンスカード</a>
+が用意されています。利用には WWW 上や 
+<code>bug-mailserver-refcard.txt</code>、
+電子メールで <code>refcard</code> コマンドを使います。
+(上記を参照のこと)。</p>
 
-<p>$B%P%0Js9p$rA`:n$7$?$$>l9g$O!"(B<code>control@bugs.debian.or.jp</code>
-$B%"%I%l%9$r;HMQ$7$J$1$l$P$$$1$^$;$s!#$3$N%"%I%l%9$O(B<a href="server-control">
-$B>e5-$N%3%^%s%I72$N%9!<%Q!<%;%C%H(B</a>$B$r2r<a$7$^$9!#>\:Y$OJL$NJ8=q$G(B
-$B5-=R$5$l$F$*$j!"(B
-<a href="server-control">WWW</a> $B>e$d(B
+<p>バグ報告を操作したい場合は、<code>control@bugs.debian.or.jp</code>
+アドレスを使用しなければいけません。このアドレスは<a href="server-control">
+上記のコマンド群のスーパーセット</a>を解釈します。詳細は別の文書で
+記述されており、
+<a href="server-control">WWW</a> 上や
 <code>bug-maint-mailcontrol.txt</code>
-$B!"$^$?$O(B <code>control@bugs</code> $B$K(B <code>help</code> $B%3%^%s%I$r(B
-$BAw$k$3$H$G;2>H$G$-$^$9!#(B</p>
+、または <code>control@bugs</code> に <code>help</code> コマンドを
+送ることで参照できます。</p>
 
-<p>$B$3$NJ8=q$rJ?J8%U%!%$%k!"$b$7$/$OEE;R%a!<%k$GFI$s$G$$$k>l9g$O!"(B
-$B%P%0DI@W%7%9%F%`%H%C%W%Z!<%8(B <code>http://www.debian.org/Bugs/</code>
-$B$+$i(B HTML $BHG$,MxMQ$G$-$^$9!#(B</p>
+<p>この文書を平文ファイル、もしくは電子メールで読んでいる場合は、
+バグ追跡システムトップページ <code>http://www.debian.org/Bugs/</code>
+から HTML 版が利用できます。</p>
 
 <hr />
 

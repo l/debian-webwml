@@ -1,14 +1,14 @@
-<p>$B$=$NB>$N(B BTS $B%Z!<%8(B:
+<p>その他の BTS ページ:
 
 <ul>
-  <li><a href="./">$B%P%0DI@W%7%9%F%`%a%$%s%Z!<%8(B</a>
-  <li><a href="Reporting">$B%P%0Js9p$N4+$a(B($B;HMQ@bL@=q(B)</a>
-  <li><a href="Access">WWW $B0J30$G%P%0Js9p$N%m%0$r;2>H$9$kJ}K!(B</a>
-  <li><a href="Developer">$B%P%0DI@W%7%9%F%`$N;HMQJ}K!$K4X$9$k3+H/<T>pJs(B</a>
-  <li><a href="server-control">$BEE;R%a!<%k$G%P%0Js9p$rA`:n$9$k$3$H$K4X$9$k(B
-      $B3+H/<T>pJs(B</a>
-  <li><a href="server-refcard">$B%a!<%k%5!<%P%j%U%!%l%s%9%+!<%I(B</a>
-  <li><a href="server-request">$BEE;R%a!<%k$K$h$k%P%0Js9p$N<h$j4s$;(B</a>
+  <li><a href="./">バグ追跡システムメインページ</a>
+  <li><a href="Reporting">バグ報告の勧め(使用説明書)</a>
+  <li><a href="Access">WWW 以外でバグ報告のログを参照する方法</a>
+  <li><a href="Developer">バグ追跡システムの使用方法に関する開発者情報</a>
+  <li><a href="server-control">電子メールでバグ報告を操作することに関する
+      開発者情報</a>
+  <li><a href="server-refcard">メールサーバリファレンスカード</a>
+  <li><a href="server-request">電子メールによるバグ報告の取り寄せ</a>
 #  <li><a href="db/ix/full.html">Full list of outstanding and recent bug
 #      reports.</a>
 #  <li><a href="db/ix/packages.html">Packages with bug reports.</a>
