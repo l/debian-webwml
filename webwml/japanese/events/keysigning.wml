@@ -1,172 +1,172 @@
-#use wml::debian::template title="$B80=pL>(B (Keysigning)"
+#use wml::debian::template title="鍵署名 (Keysigning)"
 # $Id$
 #use wml::debian::translation-check translation="1.12"
 
-<p>$B%H%l!<%I%7%g%&$d%+%s%U%!%l%s%9$G$O$?$/$5$s$N3+H/<T$?$A$,=8$^$j$^$9$+$i!"(B
-$BB>$N?M$K<+J,$N(B GnuPG $B80$K=pL>$7$F$b$i$$!"(B
-$B!V?.Mj$N%M%C%H%o!<%/(B (Web of Trust)$B!W$r6/2=$9$kNI$$5!2q$H$$$($^$9!#(B
-$BFC$K%W%m%8%'%/%H$K?7$7$/;22C$7$??M$K$H$C$F$O!"(B
-$BB>$N3+H/<T$?$A$K2q$C$?$j80=pL>$r9T$C$?$j$9$k$N$O!"(B
-$B$H$F$b3Z$7$$$3$H$G$7$g$&!#(B
+<p>トレードショウやカンファレンスではたくさんの開発者たちが集まりますから、
+他の人に自分の GnuPG 鍵に署名してもらい、
+「信頼のネットワーク (Web of Trust)」を強化する良い機会といえます。
+特にプロジェクトに新しく参加した人にとっては、
+他の開発者たちに会ったり鍵署名を行ったりするのは、
+とても楽しいことでしょう。
 
-<p>$B$3$NJ8=q$O!"80=pL>$N0lO"$N:n6H$KBP$9$k;29M$H$J$k$Y$/=q$+$l$^$7$?!#(B
-$B0J2<$NNc$O!"$9$Y$F80%5!<%P$H$7$F(B <code>keyring.debian.org</code>
-$B$r;H$C$F$$$^$9!#$b$7LdBj$H$J$C$F$$$k80$,(B Debian keyring
-$B$K$J$$>l9g$O!"(B<code>keyring.debian.org</code> $B$r(B
-<code>wwwkeys.pgp.net</code> ($B$=$NL>A0$K$+$+$o$i$:!"(BGnuPG
-$B$N80$b07$C$F$$$^$9(B) $B$J$I$N8x3+80%5!<%P$KCV$-49$($F$/$@$5$$!#(B</p>
+<p>この文書は、鍵署名の一連の作業に対する参考となるべく書かれました。
+以下の例は、すべて鍵サーバとして <code>keyring.debian.org</code>
+を使っています。もし問題となっている鍵が Debian keyring
+にない場合は、<code>keyring.debian.org</code> を
+<code>wwwkeys.pgp.net</code> (その名前にかかわらず、GnuPG
+の鍵も扱っています) などの公開鍵サーバに置き換えてください。</p>
 
-<p>$B$"$k80$K=pL>$r$9$k:]$O!">/$J$/$H$b0J2<$NFs$D$N>r7o$,I,MW$G$9(B:
+<p>ある鍵に署名をする際は、少なくとも以下の二つの条件が必要です:
 
 <ol>
 
-<li>$B80$N=jM-<T$O=pL><T$KBP$7$F!"(B
-    UID $B$K=q$+$l$F$$$k8D?M>pJs$,<B:]$K<+J,$N8D?M>pJs$G$"$k$3$H$r!"(B
-    $B=pL><T$,G<F@$9$k$h$&$J>Z5r$rMQ$$$F!">ZL@$7$J$1$l$P$J$j$^$;$s!#(B
-    $BIaDL$N>l9g$O!"80$N=jM-<T$O@/I\$J$I$NH/9T$7$?>ZL@=q(B
-    ($B80$N=jM-<T$N>pJs$,=q$+$l$F$$$k<L??$D$-$N$b$N(B)
-    $B$rDs<($9$k$3$H$K$J$k$G$7$g$&!#(B
-    ($B=pL><T$K$h$C$F$O!"Ds<($r<u$1$?@/I\H/9T$N(B ID $B$,(B
-    $B4JC1$KYTB$$5$l$k$3$H$rCN$C$F$$$?$j!"(B
-    $BH/9T<T$N8"0R$,5?$o$7$$$3$H$rCN$C$F$$$?$j$7$F!"(B
-    $BDI2C>pJs$dJL$N>pJs$rMW5a$9$k$3$H$b$"$k$+$b$7$l$^$;$s!#(B)
+<li>鍵の所有者は署名者に対して、
+    UID に書かれている個人情報が実際に自分の個人情報であることを、
+    署名者が納得するような証拠を用いて、証明しなければなりません。
+    普通の場合は、鍵の所有者は政府などの発行した証明書
+    (鍵の所有者の情報が書かれている写真つきのもの)
+    を提示することになるでしょう。
+    (署名者によっては、提示を受けた政府発行の ID が
+    簡単に捏造されることを知っていたり、
+    発行者の権威が疑わしいことを知っていたりして、
+    追加情報や別の情報を要求することもあるかもしれません。)
 
-<li>$B80$N=jM-<T$O!"=pL>$5$l$h$&$H$7$F$$$k80$N;XLf(B (fingerprint) $B$H80$N4|8B$,!"(B
-    $B<B:]$K<+J,$N80$N$b$N$G$"$k$3$H$r3NG'$7$J$1$l$P$J$j$^$;$s!#(B
+<li>鍵の所有者は、署名されようとしている鍵の指紋 (fingerprint) と鍵の期限が、
+    実際に自分の鍵のものであることを確認しなければなりません。
 
 </ol>
 
 <p>
-$B:G$b=EMW$J$N$O!"80$N=jM-<T$,808r<B$N>l$K<B:]$K;22C$7$J$1$l$P!"(B
-$B$3$N>r7o$N(B 1 $B$H(B 2 $B$NN>J}$rK~$?$9$3$H$O$G$-$J$$!"$H$$$&E@$G$9!#(B
-$B80$N=jM-<T$NBeM}?M$G$O!"(B
-$B80=jM-<T$N@.$9$Y$-(B 1 $B$NMW7o$rK~$?$9$3$H$O$G$-$^$;$s!#(B
-$B$J$<$J$i$3$l$r5v$7$F$7$^$&$H!"(BID $B%+!<%I$rEp$s$@?M4V$K$h$C$F!"(B
-$BBeM}?M$K$J$j$9$^$7$F(B PGP $B80$X$N=pL>$r<u$1$k$3$H$,(B
-$B2DG=$K$J$C$F$7$^$&$+$i$G$9!#(B
-$B$^$?80$N=jM-<T$NBeM}?M$,!"(B
-$B80=jM-<T$N@.$9$Y$-(B 2 $B$NMW7o$rK~$?$9$3$H$O$G$-$^$;$s!#(B
-$B$J$<$J$iBeM}?M$,!"(B
-$BJL$N(B PGP $B80$K=jM-<T$NL>A0$rIU$1!"(B
-$B$=$N;XLf$K:9$7BX$($F=pL>$r9T$o$;$k$3$H$,(B
-$B2DG=$K$J$C$F$7$^$&$+$i$G$9!#(B
+最も重要なのは、鍵の所有者が鍵交実の場に実際に参加しなければ、
+この条件の 1 と 2 の両方を満たすことはできない、という点です。
+鍵の所有者の代理人では、
+鍵所有者の成すべき 1 の要件を満たすことはできません。
+なぜならこれを許してしまうと、ID カードを盗んだ人間によって、
+代理人になりすまして PGP 鍵への署名を受けることが
+可能になってしまうからです。
+また鍵の所有者の代理人が、
+鍵所有者の成すべき 2 の要件を満たすことはできません。
+なぜなら代理人が、
+別の PGP 鍵に所有者の名前を付け、
+その指紋に差し替えて署名を行わせることが
+可能になってしまうからです。
 
 <ul>
 
-<li>GnuPG $B;XLf$H80$N4|8B$r0u:~$7$?$b$N$H!"<+J,<+?H$G$"$k$3$H$r>ZL@$9$k(BID $B%+!<%I(B
-    ($B%Q%9%]!<%H$d1?E>LH5v>Z$J$I(B) $B$,I,MW$G$9!#(B
+<li>GnuPG 指紋と鍵の期限を印刷したものと、自分自身であることを証明するID カード
+    (パスポートや運転免許証など) が必要です。
 
-<li>$B;XLf$H80$N4|8B$O!"2q9g$N8e$G$"$J$?$N80$K=pL>$7$F$/$l$k!"B>$N?MC#$KEO$7$^$9!#(B
+<li>指紋と鍵の期限は、会合の後であなたの鍵に署名してくれる、他の人達に渡します。
 
-<li>GnuPG $B80$r$^$@=jM-$7$F$$$J$1$l$P!"(B
-    <code>gpg --gen-key</code> $B$K$h$C$F:n@.$7$F$/$@$5$$!#(B
+<li>GnuPG 鍵をまだ所有していなければ、
+    <code>gpg --gen-key</code> によって作成してください。
 
-<li>$B80$N=jM-<T$,!"$^$5$K=jM-<T$G$"$k$H>ZL@$5$l$?>l9g$K8B$C$F!"(B
-    $B$=$N80$K=pL>$9$k$h$&$K$7$F$/$@$5$$!#(B
+<li>鍵の所有者が、まさに所有者であると証明された場合に限って、
+    その鍵に署名するようにしてください。
 
-<li>$B2q9g$,=*$C$?$i!"=pL>$9$k(B GnuPG $B80$rF~<j$7$F$/$@$5$$!#(B
-    $B0J2<$N$h$&$J46$8$K$J$k$G$7$g$&!#(B
+<li>会合が終ったら、署名する GnuPG 鍵を入手してください。
+    以下のような感じになるでしょう。
 
 <pre>
        gpg --keyserver keyring.debian.org --recv-keys 0xDEADBEEF
 </pre>
 
-<p>$B$3$N<jB3$-$d!"B>$N(B GnuPG $B=hM}$K$*$$$F$O!"(B
-   $B;XLf$N(B (16 $B?J?t;z$N(B) $B:G8e$N(B 8 $B7e$,;H$($^$9!#(B
-   $B@hF,$K$"$k(B <tt>0x</tt> $B$O>JN,$7$F$b9=$$$^$;$s!#(B</p>
+<p>この手続きや、他の GnuPG 処理においては、
+   指紋の (16 進数字の) 最後の 8 桁が使えます。
+   先頭にある <tt>0x</tt> は省略しても構いません。</p>
 
      </li>
 
-<li>$B80$K=pL>$9$k$K$O!"<!$N%3%^%s%I$K$h$C$FJT=8%a%K%e!<$KF~$j$^$9!#(B
+<li>鍵に署名するには、次のコマンドによって編集メニューに入ります。
 
 <pre>
        gpg --edit-key 0xDEADBEEF
 </pre>
 
-<li>GnuPG $B$+$i!"=pL>$9$k$9$Y$F$N(B uid $B$r(B <code>uid n</code>
-    (<code>n</code> $B$O%a%K%e!<$KI=<($5$l$F$$$k(B uid $B$NHV9f(B)
-    $B$K$h$C$FA*Br$7$^$9!#(B
-    enter $B%-!<$r2!$;$P!"$9$Y$F$N(B uid $B$K=pL>$G$-$^$9!#(B</li>
+<li>GnuPG から、署名するすべての uid を <code>uid n</code>
+    (<code>n</code> はメニューに表示されている uid の番号)
+    によって選択します。
+    enter キーを押せば、すべての uid に署名できます。</li>
 
-<li>$B80$K=pL>$9$k$K$O!"(B<code>sign</code> $B$HF~NO$7$^$9!#(B
-    $B$9$k$H$=$N80$N;XLf$H80$N4|8B$,I=<($5$l$^$9$N$G!"(B
-    $B@h$K<B:]$K2q$C$??MJ*$+$i$b$i$C$?$b$N$HHf3S$7$J$1$l$P$J$j$^$;$s!#(B
+<li>鍵に署名するには、<code>sign</code> と入力します。
+    するとその鍵の指紋と鍵の期限が表示されますので、
+    先に実際に会った人物からもらったものと比較しなければなりません。
 
-<li>$B8!>Z$N%l%Y%k$rJ9$+$l$?$i!"!V4JC1$J8!>Z(B (casual)$B!W$rA*$s$G$/$@$5$$!#(B
+<li>検証のレベルを聞かれたら、「簡単な検証 (casual)」を選んでください。
 
-<li><code>quit</code> $B$HF~NO$7$F(B GnuPG $B$r=*N;$7$^$9!#(B
+<li><code>quit</code> と入力して GnuPG を終了します。
 
-<li>$B@5$7$/=pL>$G$-$?$+$I$&$+3NG'$9$k$K$O!"<!$N%3%^%s%I$r<B9T$7$^$9!#(B
+<li>正しく署名できたかどうか確認するには、次のコマンドを実行します。
 
 <pre>
        gpg --list-sigs 0xDEADBEEF
 </pre>
 
-<p>$B=PNO$K<+J,(B ($B=pL><T(B) $B$NL>A0$H;XLf(B ($BC;$$7A<0(B) $B$,8=$o$l$F$$$k$O$:$G$9!#(B
+<p>出力に自分 (署名者) の名前と指紋 (短い形式) が現われているはずです。
 
      </li>
 
-<li>$B$9$Y$F$&$^$/$$$C$F$$$k$3$H$,3NG'$G$-$?$i!"(B
-    $B<!$N%3%^%s%I$r<B9T$7!"=pL>$7$?80$r<u<h?M$KAw?.$7$^$9!#(B
+<li>すべてうまくいっていることが確認できたら、
+    次のコマンドを実行し、署名した鍵を受取人に送信します。
 
 <pre>
        gpg --export -a 0xDEADBEEF &gt; someguys.key
 </pre>
 
-<p><code>-a</code> $B%*%W%7%g%s$r;XDj$9$k$H!"(B
-ASCII $B7A<0$G80$r%(%/%9%]!<%H$9$k$N$G!"(B
-$BEE;R%a!<%k$GAw$k:]$K$b2u$l$k?4G[$r$7$J$/$F$9$_$^$9!#(B
+<p><code>-a</code> オプションを指定すると、
+ASCII 形式で鍵をエクスポートするので、
+電子メールで送る際にも壊れる心配をしなくてすみます。
 
      </li>
 
-<li>$B$b$7$@$l$+$,$3$N$h$&$J7A$G$"$J$?$N80$K=pL>$7$F$/$l$?$i!"(B
-$B0J2<$N%3%^%s%I$rMQ$$$l$P!"$3$l$r(B Debian keyring $B$KDI2C$G$-$^$9!#(B
+<li>もしだれかがこのような形であなたの鍵に署名してくれたら、
+以下のコマンドを用いれば、これを Debian keyring に追加できます。
 
 <pre>
        gpg --import mysigned.key
        gpg --keyserver keyring.debian.org --send-keys <var>&lt;your key id&gt;</var>
 </pre>
 
-<p>keyring $B$N4IM}<T$,$"$J$?$N80$r99?7$9$k$^$G$K$O(B
-$B>/!9;~4V$,$+$+$k$+$b$7$l$^$;$s$,!"2fK}$7$F$/$@$5$$!#(B
-$B$^$?99?7$5$l$?80$O!"8x3+80%5!<%P$K$b%"%C%W%m!<%I$7$F$*$-$^$7$g$&!#(B</p>
+<p>keyring の管理者があなたの鍵を更新するまでには
+少々時間がかかるかもしれませんが、我慢してください。
+また更新された鍵は、公開鍵サーバにもアップロードしておきましょう。</p>
 
      </li>
 
 </ul>
 
-<p>Debian $B%Q%C%1!<%8$N(B <a href="http://packages.debian.org/signing-party">signing-party</a>
-$B$O!"$3$N%W%m%;%9$KLrN)$D%D!<%k$r$$$/$D$+Ds6!$7$F$$$^$9!#(B<tt>gpg-key2ps</tt>
-$B$O(B GnuPG $B80$r(B PostScript $B%U%!%$%k$KJQ49$7$F!"80$N;XLf$r0u:~$7$F$/$l$^$9!#$^$?!"(B
-<tt>gpg-mailkeys</tt> $B$O=pL>$7$?80$r$=$N;}$A<g$K%a!<%k$GAw?.$7$F$/$l$^$9!#(B
-$B$3$N%Q%C%1!<%8$K$O$b$C$H?J2=$7$?%D!<%k(B <tt>caff</tt> $B$b4^$^$l$F$$$^$9!#(B
-$B>\$7$$>pJs$O!"%Q%C%1!<%8$N%I%-%e%a%s%F!<%7%g%s$r8+$F$/$@$5$$!#(B</p>
+<p>Debian パッケージの <a href="http://packages.debian.org/signing-party">signing-party</a>
+は、このプロセスに役立つツールをいくつか提供しています。<tt>gpg-key2ps</tt>
+は GnuPG 鍵を PostScript ファイルに変換して、鍵の指紋を印刷してくれます。また、
+<tt>gpg-mailkeys</tt> は署名した鍵をその持ち主にメールで送信してくれます。
+このパッケージにはもっと進化したツール <tt>caff</tt> も含まれています。
+詳しい情報は、パッケージのドキュメンテーションを見てください。</p>
 
-<h3>$B$d$C$F$O$$$1$J$$$3$H(B</h3>
+<h3>やってはいけないこと</h3>
 
-<p>$B<B:]$K8D?ME*$K2q$C$??M$G$J$$8B$j!"(B
-$B@dBP$K$=$N?M$N80$K=pL>$7$F$O$$$1$^$;$s!#(B
-$BD>@\CN$j$($?>pJs0J30$r4p$K80$K=pL>$7$F$7$^$&$H!"(B
-$B!V?.Mj$N%M%C%H%o!<%/!W$rGK2u$7$F$7$^$$$^$9!#(B
-$B$"$J$?$NM'C#$,!"$"$J$?$N(B ID $B$H;XLf$r!"B>$N3+H/<T$KDs<($7$?$H$7$^$7$g$&!#(B
-$B$G$b$"$J$?$O$=$N>l$K$$$^$;$s$+$i!"(B
-$B$=$N;XLf$,<B:]$K$"$J$?$N$b$N$+$I$&$+3NG'$G$-$^$;$s!#(B
-$B$=$N3+H/<T$O!";XLf$H(B ID $B$H$r7k$S$D$1$k>pJs$H$7$F!"(B
-$B2?$rDs6!$5$l$?$3$H$K$J$k$G$7$g$&$+!)(B
-$B$=$NM'C#$N8@MU$H!"$"$J$?$N80$K$J$5$l$?B>$N=pL>$@$1$K2a$.$^$;$s!#(B
-$B=>$C$F!"3+H/<T$,$3$N$"$J$?$N80$K=pL>$7$?$H$9$l$P!"(B
-$B!VB>$N?M$,=pL>$7$F$k$+$i<+J,$b=pL>$7$?!W$H$$$&$N$H2?$iJQ$o$j$O$J$$$N$G$9(B!
+<p>実際に個人的に会った人でない限り、
+絶対にその人の鍵に署名してはいけません。
+直接知りえた情報以外を基に鍵に署名してしまうと、
+「信頼のネットワーク」を破壊してしまいます。
+あなたの友達が、あなたの ID と指紋を、他の開発者に提示したとしましょう。
+でもあなたはその場にいませんから、
+その指紋が実際にあなたのものかどうか確認できません。
+その開発者は、指紋と ID とを結びつける情報として、
+何を提供されたことになるでしょうか？
+その友達の言葉と、あなたの鍵になされた他の署名だけに過ぎません。
+従って、開発者がこのあなたの鍵に署名したとすれば、
+「他の人が署名してるから自分も署名した」というのと何ら変わりはないのです!
 </p>
 
-<p>$B$R$H$D$N80$K$?$/$5$s=pL>$,$"$k$N$ONI$$$3$H$G$9!#(B
-$B$G$9$+$i$D$$<jB3$-$r>JN,$7$F$7$^$$$?$/$J$k$+$b$7$l$^$;$s!#(B
-$B$7$+$7$J$,$i!"?.Mj$KB-$k=pL>$r$7$F$b$i$&$3$H$O!"(B
-$B$?$/$5$s$N=pL>$r<u$1$k$3$H$h$j$b=EMW$G$9!#(B
-$B$G$9$+$i!"80=pL>$N<jB3$-$r!"(B
-$B2DG=$J8B$j1x@w$5$l$J$$$h$&$KJ]$D$3$H$,Hs>o$K=EMW$G$9!#(B
-$BB>$NC/$+$N80$K=pL>$9$k$H$$$&$3$H$O!"(B
-$B$=$N80$N=jM-<T$N8D?M>pJs$r!"D>@\$N>Z5r$K$h$C$F3NG'$7$?!"(B
-$B$H$$$&0UL#$N>5G'$K$"$?$j$^$9!#(B
-$B$3$l0J30$N$D$b$j$G=pL>$r9T$C$?$i!"(B
-$B$=$l0J9_!V?.Mj$N%M%C%H%o!<%/!W$O?.Mj$G$-$J$$$b$N$K$J$C$F$7$^$$$^$9!#(B
+<p>ひとつの鍵にたくさん署名があるのは良いことです。
+ですからつい手続きを省略してしまいたくなるかもしれません。
+しかしながら、信頼に足る署名をしてもらうことは、
+たくさんの署名を受けることよりも重要です。
+ですから、鍵署名の手続きを、
+可能な限り汚染されないように保つことが非常に重要です。
+他の誰かの鍵に署名するということは、
+その鍵の所有者の個人情報を、直接の証拠によって確認した、
+という意味の承認にあたります。
+これ以外のつもりで署名を行ったら、
+それ以降「信頼のネットワーク」は信頼できないものになってしまいます。
 </p>

@@ -1,60 +1,60 @@
-<define-tag description>$B%;!<%U%b!<%I$N%P%$%Q%9$H(BCRLF $B$NA^F~(B</define-tag>
+<define-tag description>セーフモードのバイパスとCRLF の挿入</define-tag>
 <define-tag moreinfo>
-<p>Wojciech Purczynski $B$5$s$K$h$j!"%;!<%U%b!<%I$rM-8z$K$7$F$$$k$H$-(B
-$B$G$b!"(BPHP $B$r7PM3$7$F%a!<%k$rAw?.$9$k:]$K!"%9%/%j%W%H$+$iG$0U$N%F%-%9%H(B
-$B$r%3%^%s%I%i%$%s0z?t$H$7$F(B sendmail $B$KAw$k$3$H$,$G$-$k$H$$$&LdBj$,(B
-$BH/8+$5$l$^$7$?!#(B
-PHP $B$,%;!<%U%b!<%I$K@_Dj$5$l$F$$$k$H$-$K$O!"(B5 $BHVL\$N0z?t$rEO$95!G=$O(B
-$BL58z$K$5$l$k$Y$-$G$9!#?7$7$$%P!<%8%g%s$H!"2<5-$N%P!<%8%g%s$N(B PHP $B$G$O(B
-$B$=$&$J$C$F$$$^$9!#(B
-$B$^$?!"(BPHP3 $B$O$3$NLdBj$N1F6A$r<u$1$^$;$s!#(B
+<p>Wojciech Purczynski さんにより、セーフモードを有効にしているとき
+でも、PHP を経由してメールを送信する際に、スクリプトから任意のテキスト
+をコマンドライン引数として sendmail に送ることができるという問題が
+発見されました。
+PHP がセーフモードに設定されているときには、5 番目の引数を渡す機能は
+無効にされるべきです。新しいバージョンと、下記のバージョンの PHP では
+そうなっています。
+また、PHP3 はこの問題の影響を受けません。
 </p>
 
-<p>Wojciech Purczynski $B$5$s$O!"$5$i$K!"G$0U$N(B ASCII $B@)8fJ8;z$,(B mail()
-$B4X?t$NJ8;zNs$KA^F~$G$-$k$3$H$rH/8+$7$^$7$?!#(B
-mail() $B4X?t$N0z?t$,%f!<%6F~NO$+$iM?$($i$l$F$$$k>l9g!"$3$l$K$h$C$F(B
-$B%a!<%k%X%C%@$r4^$`%a!<%k$NFbMF$rJQ99$9$k$3$H$,2DG=$G$9!#(B
+<p>Wojciech Purczynski さんは、さらに、任意の ASCII 制御文字が mail()
+関数の文字列に挿入できることを発見しました。
+mail() 関数の引数がユーザ入力から与えられている場合、これによって
+メールヘッダを含むメールの内容を変更することが可能です。
 </p>
 
-<p>Ulf H&auml;rnhammar $B$5$s$O!"(Bfile() $B4X?t$H(B fopen() $B4X?t$O(B CRLF $B$NA^F~$K(B
-$BBP$7$F@H<e$G$"$k$3$H$rH/8+$7$^$7$?!#(B
-$B967b<T$O!"$3$l$rMQ$$$FFCDj$N@)8B$rF($l!"EO$5$l$k=jDj$N(B HTTP $B%j%/%(%9%H(B
-$B$KG$0U$N%F%-%9%H$rDI2C$9$k$3$H$,$G$-$^$9!#(B
+<p>Ulf H&auml;rnhammar さんは、file() 関数と fopen() 関数は CRLF の挿入に
+対して脆弱であることを発見しました。
+攻撃者は、これを用いて特定の制限を逃れ、渡される所定の HTTP リクエスト
+に任意のテキストを追加することができます。
 </p>
 
-<p>$B$?$@$7!"$3$NLdBj$O!"4X?t$KM-8z$G$J$$%U%!%$%kL>$d(B URL $B$G$O$J$$$b$N$,(B
-$BEO$5$l$k$H$-$KH/@8$7$^$9!#@)8fJ8;z$r4^$`J8;zNs$O!"M-8z$J(B URL $B$G$O(B
-$B$"$j$($^$;$s!#(BURL $B$G$"$k$Y$-J8;zNs$r2?$i$+$N4X?t$KEO$9$H$-!"(B
-$B$=$l$r(B urlencode() $B4X?t$r;H$C$F%(%s%3!<%I$7$J$1$l$P$J$i$J$$$+$i$G$9!#(B
+<p>ただし、この問題は、関数に有効でないファイル名や URL ではないものが
+渡されるときに発生します。制御文字を含む文字列は、有効な URL では
+ありえません。URL であるべき文字列を何らかの関数に渡すとき、
+それを urlencode() 関数を使ってエンコードしなければならないからです。
 </p>
 
-<p>$B$^$H$a$k$H!"(BPHP $B$K$O!";0$D$NLdBj$,H/8+$5$l$F$$$^$9(B:</p>
+<p>まとめると、PHP には、三つの問題が発見されています:</p>
 
 <ol>
-<li>mail() $B4X?t$G!"08@h$N%"%I%l%9$^$?$O(B subject $B9T$K(B CR/LF $BJ8;z$,(B
-$B4^$^$l$F$$$?>l9g$K!"G$0U$N%a!<%k%X%C%@$N;XDj$,2DG=$H$J$C$F$7$^$$$^$9!#(B
+<li>mail() 関数で、宛先のアドレスまたは subject 行に CR/LF 文字が
+含まれていた場合に、任意のメールヘッダの指定が可能となってしまいます。
 </li>
 
-<li>mail() $B4X?t$O!"%;!<%U%b!<%I$G<B9T$5$l$F$$$k$H$-$K(B sendmail $B$K(B
-$BG$0U$N%3%^%s%I%i%$%s%*%W%7%g%s$rEO$5$J$$$h$&$K$9$k=hM}$,(B
-$BE,@Z$K9T$o$l$F$$$^$;$s!#(B
+<li>mail() 関数は、セーフモードで実行されているときに sendmail に
+任意のコマンドラインオプションを渡さないようにする処理が
+適切に行われていません。
 </li>
 
-<li>fopen() $B4X?t$O!"(BURL $B$r<hF@$9$k:]$K!"(BCR/LF $BJ8;z$r4^$`(B URL $B$r(B
-$B;H$C$F%j%=!<%9$KBP$9$k%j%/%(%9%H=hM}$r2DG=$K$7$F$7$^$$$^$9!#(B
-$BNc$($P!"(BHTTP $B%j%/%(%9%H$K%X%C%@$r2C$($k$3$H$,2DG=$G$9!#(B
+<li>fopen() 関数は、URL を取得する際に、CR/LF 文字を含む URL を
+使ってリソースに対するリクエスト処理を可能にしてしまいます。
+例えば、HTTP リクエストにヘッダを加えることが可能です。
 </li>
 </ol>
 
-<p>$B$3$NLdBj$O!"8=0BDjHG(B (stable) (woody) $B$G$O!"(B PHP3 $B$K$D$$$F$O(B
-$B%P!<%8%g%s(B 3.0.18-23.1woody1 $B!"(BPHP4 $B$K$D$$$F$O%P!<%8%g%s(B 4.1.2-5 $B$G!"(B
-$B=$@5$5$l$F$$$^$9!#(B
-$B$^$?!"5l0BDjHG(B (potato) $B$G$O!"(BPHP3 $B$K$D$$$F$O(B 3.0.18-0potato1.2 $B$G!"(B
-PHP4 $B$K$D$$$F$O(B 4.0.3pl1-0potato4 $B$G=$@5$5$l$F$$$^$9!#(B
-$BIT0BDjHG(B (unstable)(sid) $B$G$O!"(BPHP3 $B$K$D$$$F$O%P!<%8%g%s(B 3.0.18-23.2$B$G!"(B
-PHP4 $B$K$D$$$F$O(B 4.2.3-3 $B$G=$@5$5$l$F$$$^$9!#(B</p>
+<p>この問題は、現安定版 (stable) (woody) では、 PHP3 については
+バージョン 3.0.18-23.1woody1 、PHP4 についてはバージョン 4.1.2-5 で、
+修正されています。
+また、旧安定版 (potato) では、PHP3 については 3.0.18-0potato1.2 で、
+PHP4 については 4.0.3pl1-0potato4 で修正されています。
+不安定版 (unstable)(sid) では、PHP3 についてはバージョン 3.0.18-23.2で、
+PHP4 については 4.2.3-3 で修正されています。</p>
 
-<p>PHP $B%Q%C%1!<%8$r%"%C%W%0%l!<%I$9$k$3$H$r$*4+$a$7$^$9!#(B</p>
+<p>PHP パッケージをアップグレードすることをお勧めします。</p>
 </define-tag>
 
 #use wml::debian::translation-check translation="1.4"

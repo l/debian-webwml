@@ -1,50 +1,50 @@
 #use wml::debian::translation-check translation="1.1"
-<define-tag description>�ݥꥷ����̷��</define-tag>
+<define-tag description>ポリシーの矛盾</define-tag>
 <define-tag moreinfo>
 <p>
-DSA-1603-1 �� Debian �ץ��������Ȥ� BIND 9 �ɥᥤ��͡��ॵ���Фι�����
-�Ԥ���UDP �������ݡ��ȥ������Ƴ�����ޤ���������� DNS ����å������
-���� (The Common Vulnerabilities and Exposures project �Ǥ�
-<a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-1447">CVE-2008-1447</a> �Ȥ�����Ͽ����Ƥ��ޤ�) �ζ��Ҥ��б�������ΤǤ������ν�
-������������ΤǤϤ���ޤ�����Debian Etch �����ۤ��줿 SELinux �Υ�ե�
-��󥹥ݥꥷ���ȸߴ���������ޤ��󡣤��Υݥꥷ���Ǥϡ�named_t �ɥᥤ��
-������ץ������� UDP �ݡ��Ȥ˥Х���ɤǤ��륽���åȤˡ�ɸ��� DNS �ݡ�
-�� (53) �ʳ�������ʤ�����Ǥ���������ߴ����ϡ������Ǥ� refpolicy ��
-'targeted' ����� 'strict' �ݥꥷ���ѥå�������ξ�����Ф����ΤǤ���
+DSA-1603-1 で Debian プロジェクトは BIND 9 ドメインネームサーバの更新を
+行い、UDP ソースポートランダムを導入しました。これは DNS キャッシュ汚染
+攻撃 (The Common Vulnerabilities and Exposures project では
+<a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-1447">CVE-2008-1447</a> として登録されています) の脅威に対応したものです。この修
+正は正しいものではありますが、Debian Etch で配布された SELinux のリファ
+レンスポリシーと互換性がありません。このポリシーでは、named_t ドメイン
+で走るプロセスが UDP ポートにバインドできるソケットに、標準の DNS ポー
+ト (53) 以外を許さないためです。この非互換性は、この版の refpolicy の
+'targeted' および 'strict' ポリシーパッケージの両方に対するものです。
 </p>
 
 <p>
-���� refpolicy �ѥå������ι����Ǥϡ�named_t �ץ����������Ǥ�դ� UDP
-�ݡ��ȤؤΥХ���ɤ�����ޤ������󥹥ȡ���塢�������줿�ѥå������Ǥϡ�
-0.0.20061018-5 �����ΥС������� refpolicy �����˥����ɤ���Ƥ�����硢
-bind �ݥꥷ���⥸�塼��򹹿����ޤ���
+この refpolicy パッケージの更新では、named_t プロセスからの任意の UDP
+ポートへのバインドを許します。インストール後、更新されたパッケージでは、
+0.0.20061018-5 以前のバージョンの refpolicy が既にロードされていた場合、
+bind ポリシーモジュールを更新します。
 </p>
 
 <p>
-Debian �� refpolicy �ѥå������Ǥϡ��ݥꥷ���⥸�塼��ι�����ǰƬ����
-�����߷פ��줿��ΤȤϤʤäƤ��餺��SELinux ��ͭ���� Debian �����ƥ��
-��¿���ξ�祵���ȸ�ͭ�Υݥꥷ�����꤬�Ԥ��Ƥ��뤿�ᡢ�������Х����
-�ݥꥷ���ˤ��Ŭ�ڤ˥��åץ��졼�ɤ���뤳�Ȥ��ݾڤ���ΤϺ���Ǥ�����
-�Τ��� bind �ݥꥷ���ι��������Ԥ������Ǥ⡢�ѥå����������ϰ۾ｪλ
-�Ϥ��ޤ��󡣿������ݥꥷ���⥸�塼��ϡ����󥹥ȡ�����
+Debian の refpolicy パッケージでは、ポリシーモジュールの更新を念頭に置
+いて設計されたものとはなっておらず、SELinux が有効な Debian システムで
+は多くの場合サイト固有のポリシー設定が行われているため、新しいバインド
+ポリシーにより適切にアップグレードされることを保証するのは困難です。こ
+のため bind ポリシーの更新が失敗した場合でも、パッケージ更新は異常終了
+はしません。新しいポリシーモジュールは、インストール後は
   /usr/share/selinux/refpolicy-targeted/bind.pp
-���֤���ޤ������� bind �����ӥ��ݥꥷ�������Ѥ����������Ԥϡ��ݥꥷ��
-����ߴ��������������θ��ư�ǹ������Ƥ����������������ˤĤ��Ƥξ�
-���������ϡ��ʲ��򻲾Ȥ���������
+に置かれます。この bind サービスポリシーを利用したい管理者は、ポリシー
+の非互換性を修正し、その後手動で更新してください。修正手順についての詳
+しい説明は、以下を参照ください。
 <a href="http://wiki.debian.org/SELinux/Issues/BindPortRandomization">http://wiki.debian.org/SELinux/Issues/BindPortRandomization</a></p>
 
 <p>
-������ (stable) �ǥ����ȥ�ӥ塼����� (etch) �Ǥϡ���������ϥС������
-0.0.20061018-5.1+etch1 �ǽ�������Ƥ��ޤ���
+安定版 (stable) ディストリビューション (etch) では、この問題はバージョン
+0.0.20061018-5.1+etch1 で修正されています。
 </p>
 
 <p>
-�԰����� (unstable) sid �ˤϱƶ��Ϥ���ޤ��󡣤���ϡ��ʹߤ� refpolicy
-�ѥå������ˤ�Ʊ�ͤν������Ԥ��Ƥ��뤿��Ǥ���
+不安定版 (unstable) sid には影響はありません。これは、以降の refpolicy
+パッケージには同様の修正が行われているためです。
 </p>
 
 <p>
-ľ���� refpolicy �ѥå������򥢥åץ��졼�ɤ��뤳�Ȥ򴫤�ޤ���
+直ぐに refpolicy パッケージをアップグレードすることを勧めます。
 </p>
 
 </define-tag>

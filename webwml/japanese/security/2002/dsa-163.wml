@@ -1,19 +1,19 @@
-<define-tag description>$B%/%m%9%5%$%H%9%/%j%W%F%#%s%0(B</define-tag>
+<define-tag description>クロスサイトスクリプティング</define-tag>
 <define-tag moreinfo>
-<p>Jason Molenda $B$5$s$H(B $B9bLZ9@8w$5$s$K$h$j!"(Bmhonarc
-($B%a!<%k$r(B HTML $B$KJQ49$9$k%3%s%P!<%?(B) $B$K!"(B
-$B%/%m%9%5%$%H%9%/%j%W%F%#%s%0$N%P%0$rFM$$$F967b$9$k<jK!$,(B
-<a href="http://online.securityfocus.com/archive/1/268455">$BH/8+(B</a>$B$5$l$^$7$?!#(B
-$B0-0U$r$b$C$F:Y9)$5$l$?(B text/html $B%?%$%W$N%a!<%k$r=hM}$9$k$H$-!"(B
-mhonarc $B$O$9$Y$F$N%9%/%j%W%HItJ,$rE,@Z$KL58z2=$7$F$$$^$;$s$G$7$?!#(B
-$B$3$NLdBj$O!">eN.$N%P!<%8%g%s(B 2.5.3 $B$G=$@5$5$l$F$$$^$9!#(B</p>
+<p>Jason Molenda さんと 高木浩光さんにより、mhonarc
+(メールを HTML に変換するコンバータ) に、
+クロスサイトスクリプティングのバグを突いて攻撃する手法が
+<a href="http://online.securityfocus.com/archive/1/268455">発見</a>されました。
+悪意をもって細工された text/html タイプのメールを処理するとき、
+mhonarc はすべてのスクリプト部分を適切に無効化していませんでした。
+この問題は、上流のバージョン 2.5.3 で修正されています。</p>
 
-<p>$B%;%-%e%j%F%#$,?4G[$J>l9g!"%a!<%k%"!<%+%$%V$N(B text/html $B%a%C%;!<%8$N(B
-$B%5%]!<%H$rL58z$K$9$k$3$H$r$*4+$a$7$^$9!#(B
-mhtxthtml.pl $B%i%$%V%i%j$,!"(BHTML $B%G!<%?$K$+$i$s$G5/$3$j$&$k(B
-$B$9$Y$F$N967b$rKI$0$@$1$N4h6/$5$r;}$A$"$o$;$F$$$k$H$$$&J]>Z$,$J$$$+$i$G$9!#(B
+<p>セキュリティが心配な場合、メールアーカイブの text/html メッセージの
+サポートを無効にすることをお勧めします。
+mhtxthtml.pl ライブラリが、HTML データにからんで起こりうる
+すべての攻撃を防ぐだけの頑強さを持ちあわせているという保証がないからです。
 
-<p>HTML $B%G!<%?$r=|30$9$k$K$O!"(BMIMEEXCS $B%j%=!<%9$r;H$$$^$9!#Nc$($P(B:</p>
+<p>HTML データを除外するには、MIMEEXCS リソースを使います。例えば:</p>
 
 <pre>
     &lt;MIMEExcs&gt;
@@ -22,12 +22,12 @@ mhtxthtml.pl $B%i%$%V%i%j$,!"(BHTML $B%G!<%?$K$+$i$s$G5/$3$j$&$k(B
     &lt;/MIMEExcs&gt;
 </pre>
 
-<p>"text/x-html" $B%?%$%W$r;HMQ$9$k$3$H$O$*$=$i$/$b$&$J$$$G$7$g$&$,!"(B
-$BG0$N$?$a$K$3$l$b4^$a$F$*$/$N$,NI$$$G$7$g$&!#(B
+<p>"text/x-html" タイプを使用することはおそらくもうないでしょうが、
+念のためにこれも含めておくのが良いでしょう。
 </p>
 
-<p>$B0lIt$N%a%C%;!<%8$NFbMFA4BN$r=|30$7$h$&$H$*9M$($N>l9g$K$O!"(B
-$B>e5-$NBe$o$j$K2<5-$N$h$&$JJ}K!$H$J$j$^$9!#(B</p>
+<p>一部のメッセージの内容全体を除外しようとお考えの場合には、
+上記の代わりに下記のような方法となります。</p>
 
 <pre>
     &lt;MIMEFilters&gt;
@@ -36,15 +36,15 @@ mhtxthtml.pl $B%i%$%V%i%j$,!"(BHTML $B%G!<%?$K$+$i$s$G5/$3$j$&$k(B
     &lt;/MIMEFilters&gt;
 </pre>
 
-<p>$B$3$l$O!"(BHTML $B$r(B text/plain $B$H$_$J$7$F=hM}$9$k!"$H$$$&@_Dj$G$9!#(B</p>
+<p>これは、HTML を text/plain とみなして処理する、という設定です。</p>
 
-<p>$B>e5-$NLdBj$O!"8=0BDjHG(B (stable)(woody) $B$G$O%P!<%8%g%s(B 2.5.2-1.1 $B$G!"(B
-$B5l0BDjHG(B (potato) $B$G$O%P!<%8%g%s(B 2.4.4-1.1 $B$G!"(B
-$BIT0BDjHG(B (unstable)(sid) $B$G$O%P!<%8%g%s(B version 2.5.11-1 $B$G(B
-$B3F!9=$@5$5$l$F$$$^$9!#(B
+<p>上記の問題は、現安定版 (stable)(woody) ではバージョン 2.5.2-1.1 で、
+旧安定版 (potato) ではバージョン 2.4.4-1.1 で、
+不安定版 (unstable)(sid) ではバージョン version 2.5.11-1 で
+各々修正されています。
 </p>
 
-<p>mhonarc $B%Q%C%1!<%8$r%"%C%W%0%l!<%I$9$k$3$H$r$*4+$a$7$^$9!#(B
+<p>mhonarc パッケージをアップグレードすることをお勧めします。
 </p>
 </define-tag>
 

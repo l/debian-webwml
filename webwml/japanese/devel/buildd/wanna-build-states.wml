@@ -1,266 +1,266 @@
 #use wml::debian::template title="Wanna-build states: an explanation" BARETITLE="true"
 #use wml::debian::translation-check translation="1.19"
 
-    <p>$B$3$N%Z!<%8$G$O!"(Bwanna-build $B>uBV$,0UL#$9$k$9$Y$F!"(B
-       $B$^$?!"$3$N>uBV$K$"$k%Q%C%1!<%8$K2?$,5/$3$k$N$+!"$H$$$&$3$H$r(B
-       $B@bL@$7$^$9!#BP>]FI<T$O!"<+J,$N%Q%C%1!<%8$,FCDj$N%"!<%-%F%/%A%c$G(B
-       $B$I$&$7$F%S%k%I$5$l$F$$$k$N$+!"$"$k$$$O$5$l$J$$$N$+!"(B
-       $B$H$$$&$3$H$rM}2r$7$h$&$H$9$k%Q%C%1!<%8%a%s%F%J$G$9!#(B
-       $B$^$?!"0[$J$k7k2L$H$J$C$?%m%0$K$D$$$F$b@bL@$7$^$9!#(B</p>
+    <p>このページでは、wanna-build 状態が意味するすべて、
+       また、この状態にあるパッケージに何が起こるのか、ということを
+       説明します。対象読者は、自分のパッケージが特定のアーキテクチャで
+       どうしてビルドされているのか、あるいはされないのか、
+       ということを理解しようとするパッケージメンテナです。
+       また、異なる結果となったログについても説明します。</p>
 
-    <p>$B:G8e$K(B wanna-build $B$N>uBV$N%U%m!<%A%c!<%HHG$b(B<a
-        href="#graphlink">$B$"$j$^$9(B</a>$B$,!"(B
-       $B$3$NJ8=q$G=R$Y$F$$$k$9$Y$F$K$D$$$F?($l$i$l$F$$$k(B
-       $B$o$1$G$O$J$$$3$H$KCm0U$7$F$/$@$5$$!#(B</p>
+    <p>最後に wanna-build の状態のフローチャート版も<a
+        href="#graphlink">あります</a>が、
+       この文書で述べているすべてについて触れられている
+       わけではないことに注意してください。</p>
 
-<h2>wanna-build $B>uBV(B</h2>
-<p>Debian $B$G%5%]!<%H$5$l$k%"!<%-%F%/%A%c$9$Y$F$K$*$$$F!"(B
-buildd.debian.org $B$K%$%s%9%H!<%k$5$l$F$$$k(B wanna-build
-$B%G!<%?%Y!<%9$,$"$j!"(B
-$BA4%Q%C%1!<%8$H$=$N8=:_$N%3%s%Q%$%k>uBV$r4IM}$7$F$$$^$9!#(B
-$B>uBV$O<7$D$"$j$^$9(B: <em>needs-build</em>, <em>building</em>,
+<h2>wanna-build 状態</h2>
+<p>Debian でサポートされるアーキテクチャすべてにおいて、
+buildd.debian.org にインストールされている wanna-build
+データベースがあり、
+全パッケージとその現在のコンパイル状態を管理しています。
+状態は七つあります: <em>needs-build</em>, <em>building</em>,
  <em>uploaded</em>, <em>dep-wait</em>, <em>failed</em>,
- <em>not-for-us</em>, $B5Z$S(B <em>installed</em>$B!#(B</p>
+ <em>not-for-us</em>, 及び <em>installed</em>。</p>
 
-<p>$B$=$l$>$l$N0UL#$O<!$NDL$j$G$9(B:</p>
+<p>それぞれの意味は次の通りです:</p>
   <dl>
     <dt><a name="needs-build">needs-build</a></dt>
-    <dd><em>needs-build</em> $B$H$5$l$?%Q%C%1!<%8$O$3$N(B wanna-build
-    $B$N%"!<%-%F%/%A%c0J30$K$D$$$F$O%a%s%F%J$K$h$j(B
-    $B?7%P!<%8%g%s$,%"%C%W%m!<%I$5$l!"$=$l<+BN$O:F%S%k%I$,I,MW$G$9!#(B
-    $B>uBV$,(B <em>needs-build</em> $B$J$N$O$^$@(B autobuilder
-    $B$,<h$j>e$2$F$$$J$$$b$N(B
-    ($B;~4V$N7P2a$KH<$$%j%9%H$N>e0L$KMh$l$P=hM}$5$l$k(B)$B!#(B
-    <em>needs-build</em> $B>uBV$N%Q%C%1!<%8$K$D$$$FOC$9;~$K!"(B
-    <q>$B%Q%C%1!<%8$,:F%S%k%I%-%e!<$KF~$C$?(B</q>$B$H0lHL$K8@$o$l$^$9!#(B<br />
+    <dd><em>needs-build</em> とされたパッケージはこの wanna-build
+    のアーキテクチャ以外についてはメンテナにより
+    新バージョンがアップロードされ、それ自体は再ビルドが必要です。
+    状態が <em>needs-build</em> なのはまだ autobuilder
+    が取り上げていないもの
+    (時間の経過に伴いリストの上位に来れば処理される)。
+    <em>needs-build</em> 状態のパッケージについて話す時に、
+    <q>パッケージが再ビルドキューに入った</q>と一般に言われます。<br />
     <em>needs-build</em>
-    $B$N%-%e!<$,@h$KF~$C$?$b$N$+$i=hM}$5$l$k$o$1$G$O$J$$$H$$$&$N$O!"(B
-    $B6=L#?<$$Cm0UE@$+$b$7$l$^$;$s(B;
-    $B=hM}$N=g=x$O$=$l$h$j$b0J2<$r4p=`$K7h$a$i$l$^$9(B:
+    のキューが先に入ったものから処理されるわけではないというのは、
+    興味深い注意点かもしれません;
+    処理の順序はそれよりも以下を基準に決められます:
     <ol>
-      <li>$B%Q%C%1!<%8$N0JA0$N%3%s%Q%$%k>uBV!#(B
-        $B0JA0$K%S%k%I$5$l$F$$$k%Q%C%1!<%8$O?7$7$$%Q%C%1!<%8$h$j$b(B
-        $B9b$$M%@hEY$rM?$($i$l$^$9!#(B</li>
-      <li>$BM%@hEY(B (<em>required</em> $B$N%Q%C%1!<%8$O(B <em>extra</em>
-        $B$N%Q%C%1!<%8$h$j$bA0$K%S%k%I$5$l$^$9(B)</li>
-      <li>$B%Q%C%1!<%8$NB0$9$k%;%/%7%g%s!#$3$N=g=x$O!"(B
-        $B$I$N%Q%C%1!<%8$,$h$j=EMW$G$"$k$H9M$($i$l$F$$$k$+$K4p$E$-$^$9!#(B
-        $BNc$($P!"%;%/%7%g%s(B <em>games</em> $B$O%;%/%7%g%s(B <em>base</em>
-        $B$h$j$b8e$K!"$^$?!"%;%/%7%g%s(B <em>libs</em> $B$O(B <em>devel</em>
-        $B$h$j$bA0$K%S%k%I$5$l$^$9!#(B</li>
-      <li>$B%Q%C%1!<%8L>$N(B ASCII $B=g!#(B</li>
+      <li>パッケージの以前のコンパイル状態。
+        以前にビルドされているパッケージは新しいパッケージよりも
+        高い優先度を与えられます。</li>
+      <li>優先度 (<em>required</em> のパッケージは <em>extra</em>
+        のパッケージよりも前にビルドされます)</li>
+      <li>パッケージの属するセクション。この順序は、
+        どのパッケージがより重要であると考えられているかに基づきます。
+        例えば、セクション <em>games</em> はセクション <em>base</em>
+        よりも後に、また、セクション <em>libs</em> は <em>devel</em>
+        よりも前にビルドされます。</li>
+      <li>パッケージ名の ASCII 順。</li>
     </ol>
-    $B$5$i$K!"0lDj$N>r7o$N2<$G!"(Bbuildd
-    $B$,%-%e!<$N@hF,$N%Q%C%1!<%8$r<h$j>e$2$J$$$3$H$,5/$3$k$+$b$7$l$^$;$s(B;
-    $BNc$($P!"(Bbuildd $B$,%Q%C%1!<%8$N%=!<%9$r8+$D$1$i$l$J$$>l9g$O!"(B
-    $B%-%e!<$KLa$5$l$^$9(B ($BLa$5$l$k@h$O85$N0LCV!"$D$^$j%-%e!<$N@hF,$G$9(B)$B!#(B
-    $B$?$@$7!"?t;~4V$O$=$N%Q%C%1!<%8$OL5;k$5$l$^$9!#(B
-    $B$3$l$,5/$3$k$+$b$7$l$J$$JL$NNc$O!"%"!<%-%F%/%A%c$KJ#?t$N(B
-    autobuilder $B$,$"$k>l9g$G$9!#(B
-    $B$=$N>l9g!"$=$N%"!<%-%F%/%A%c$N0\?"<T$O!"B.$$J}$N(B autobuilder
-    $B$GBg$-$$J}$N%Q%C%1!<%8$r!"CY$$J}$N%^%7%s$K$O>.$5$$J}$r;D$9!"(B
-    $B$H$$$&$h$&$K7h$a$k$3$H$,$G$-$^$9!#M}O@E*$K$O!"(Bbuildd
-    $B$O%;%/%7%g%s$N=g=x$rL@<(E*$K;X<($G$-$^$9$,!"DL>o$O9T$$$^$;$s!#(B<br />
-    $BB>$K$b%-%e!<$N=g=x$,L5;k$5$l$k$h$&$J>u67$,$"$k$+$b$7$l$^$;$s$,!"(B
-    $B$=$l$O$9$Y$FNc30$G$"$k$3$H$KCm0U$7$F$/$@$5$$!#(B</dd>
+    さらに、一定の条件の下で、buildd
+    がキューの先頭のパッケージを取り上げないことが起こるかもしれません;
+    例えば、buildd がパッケージのソースを見つけられない場合は、
+    キューに戻されます (戻される先は元の位置、つまりキューの先頭です)。
+    ただし、数時間はそのパッケージは無視されます。
+    これが起こるかもしれない別の例は、アーキテクチャに複数の
+    autobuilder がある場合です。
+    その場合、そのアーキテクチャの移植者は、速い方の autobuilder
+    で大きい方のパッケージを、遅い方のマシンには小さい方を残す、
+    というように決めることができます。理論的には、buildd
+    はセクションの順序を明示的に指示できますが、通常は行いません。<br />
+    他にもキューの順序が無視されるような状況があるかもしれませんが、
+    それはすべて例外であることに注意してください。</dd>
 
     <dt><a name="building">building</a></dt>
-    <dd>autobuilder $B$,(B wanna-build $B%-%e!<$N@hF,$+$i<h$j>e$2$F$+$i(B
-    autobuilder $B4IM}<T$,%m%0$KJV?.$9$k$^$G!"%Q%C%1!<%8$O(B
-    <em>building</em> $B$H$5$l$^$9!#(B
-    $B%Q%C%1!<%8$O0l$D$:$DA*$P$l$k$o$1$G$O$J$$$N$G!"(B
-    $B$D$^$j%Q%C%1!<%8$O%S%k%I$,<B:]$K;O$^$kA0$K(B <em>building</em>
-    $B$H$5$l$k$3$H$,$"$k(B ($BDL>o$=$&$J$k(B) $B$H$$$&$3$H$K$J$j$^$9!#$7$+$7!"(B
-    buildd $B$O%m!<%+%k$N%-%e!<$K$"$k%Q%C%1!<%8$r!"(B
-    $B4pK\E*$K$OF~$C$?=g$K%S%k%I$9$k$N$G!"(B
-    $B$3$3$+$i$=$&D9$/$+$+$k$3$H$O$J$$$G$7$g$&!#(B
-    $B$^$?!"%S%k%I$,=PMh>e$,$C$F$b%Q%C%1!<%8$N>uBV$OJQ99(B
-    <strong>$B$5$l$J$$(B</strong> $B$3$H$KCm0U$7$F$/$@$5$$!#JQ99$5$l$k$N$O(B
-    autobuilder $B4IM}<T$,%m%0$KH?1~$7$?;~$@$1$G$9!#(B</dd>
+    <dd>autobuilder が wanna-build キューの先頭から取り上げてから
+    autobuilder 管理者がログに返信するまで、パッケージは
+    <em>building</em> とされます。
+    パッケージは一つずつ選ばれるわけではないので、
+    つまりパッケージはビルドが実際に始まる前に <em>building</em>
+    とされることがある (通常そうなる) ということになります。しかし、
+    buildd はローカルのキューにあるパッケージを、
+    基本的には入った順にビルドするので、
+    ここからそう長くかかることはないでしょう。
+    また、ビルドが出来上がってもパッケージの状態は変更
+    <strong>されない</strong> ことに注意してください。変更されるのは
+    autobuilder 管理者がログに反応した時だけです。</dd>
 
     <dt><a name="uploaded">uploaded</a></dt>
-    <dd>$B%S%k%I$,@.8y$9$k$H!"%S%k%I%m%0$,(B autobuilder $B4IM}<T$H(B
-    buildd.debian.org $B$KAw$i$l$^$9!#$=$l$+$i(B autobuilder $B4IM}<T$,(B
-    $B%S%k%I%m%0$KKd$a9~$^$l$k(B .changes $B%U%!%$%k$K=pL>$7!"(Bautobuilder
-    $B$KAw$j$^$9!#$=$&$9$k$H(B autobuilder $B$O%Q%C%1!<%8$r%"%C%W%m!<%I$7!"(B
-    $B>uBV$r(B <em>uploaded</em> $B$K$7$^$9!#(B
+    <dd>ビルドが成功すると、ビルドログが autobuilder 管理者と
+    buildd.debian.org に送られます。それから autobuilder 管理者が
+    ビルドログに埋め込まれる .changes ファイルに署名し、autobuilder
+    に送ります。そうすると autobuilder はパッケージをアップロードし、
+    状態を <em>uploaded</em> にします。
 
-    $B$3$N>uBV$N%Q%C%1!<%8<+BN$O(B incoming $B%-%e!<(B ($B$N$I$3$+(B) $B$K$"$j$^$9!#(B<br />
-    <em>uploaded</em> $B>uBV$K$J$k$H!">/$J$/$H$b<!$N%"%C%W%m!<%I$^$?$O(B
-    $B%Q%C%1!<%8$N>uBV$N0\?"<T$K$h$k<j:n6H$G$N=$@5$,9T$o$l$k$^$G(B
-    autobuilder $B$O%Q%C%1!<%8$KBP$7$F2?$b$7$^$;$s!#(B</dd>
+    この状態のパッケージ自体は incoming キュー (のどこか) にあります。<br />
+    <em>uploaded</em> 状態になると、少なくとも次のアップロードまたは
+    パッケージの状態の移植者による手作業での修正が行われるまで
+    autobuilder はパッケージに対して何もしません。</dd>
 
     <dt><a name="dep-wait">dep-wait</a></dt>
-    <dd>$B%Q%C%1!<%8$,%S%k%I;~$N0MB8$N$?$a<:GT$9$k$H!"(Bautobuilder
-    $B4IM}<T$O%a!<%k$r(B autobuilder $B$KAw$j!"%Q%C%1!<%8%=!<%9$r:o=|$5$;!"(B
-    $B$=$N%Q%C%1!<%8$r7g$1$F$$$k%S%k%I0MB8$KBP$9$k(B <em>dep-wait</em>
-    $B$H$7$^$9!#$3$N>uBV$N%Q%C%1!<%8$O<($5$l$?0MB8$,F~<j2DG=$K$J$l$P<+F0E*$K!"(B
-    $B?M4V$N2pF~$J$7$G(B needs-build $B$K$J$j$^$9!#(B<br />
+    <dd>パッケージがビルド時の依存のため失敗すると、autobuilder
+    管理者はメールを autobuilder に送り、パッケージソースを削除させ、
+    そのパッケージを欠けているビルド依存に対する <em>dep-wait</em>
+    とします。この状態のパッケージは示された依存が入手可能になれば自動的に、
+    人間の介入なしで needs-build になります。<br />
 
-    $B:G=i$N$3$m!"%Q%C%1!<%8$O%a%s%F%J$,<j:n6H$G(B <em>dep-wait</em>
-    $B>uBV$K$9$kA0$K%S%k%I$r;n$_$kI,MW$,$"$j$^$7$?!#$7$+$7!"(B2005 $BG/(B
-    8 $B7n$K(B wanna-build $B$K%3!<%I$,DI2C$5$l!"E,@Z$J>l9g$O%Q%C%1!<%8$rD>@\(B
-    <em><a href='#installed'>installed</a></em> $B$+$i(B <em>dep-wait</em>
-    $B$K0\F0$5$;$k$h$&$K$J$j$^$7$?!#(B<br />
+    最初のころ、パッケージはメンテナが手作業で <em>dep-wait</em>
+    状態にする前にビルドを試みる必要がありました。しかし、2005 年
+    8 月に wanna-build にコードが追加され、適切な場合はパッケージを直接
+    <em><a href='#installed'>installed</a></em> から <em>dep-wait</em>
+    に移動させるようになりました。<br />
 
-    $B%Q%C%1!<%8$,(B dep-wait $B$K$J$C$?$^$^$K$J$k2DG=@-$,6qBNE*$KFsNc$"$j$^$9!#(B
-    <em>dep-wait</em> $B0MB8$N;X<($KBG$A4V0c$$$,$"$C$?>l9g(B
-    ($B$D$^$j$=$N%Q%C%1!<%8$,7h$7$FB8:_$7$J$$!"(B
-    $B$9$k$3$H$N$J$$%Q%C%1!<%8$KBP$9$k(B dep-wait $B$H$5$l$k(B) $B$H!"(B
-    $B%S%k%I;~$K!"(B<em>not-for-us</em> $B$H$5$l$F$$$k!"$"$k$$$O(B
+    パッケージが dep-wait になったままになる可能性が具体的に二例あります。
+    <em>dep-wait</em> 依存の指示に打ち間違いがあった場合
+    (つまりそのパッケージが決して存在しない、
+    することのないパッケージに対する dep-wait とされる) と、
+    ビルド時に、<em>not-for-us</em> とされている、あるいは
     <em>packages-arch-specific</em>
-    $B%j%9%H$K$"$k%Q%C%1!<%8$KBP$9$k0MB8>uBV$,@k8@$5$l$k>l9g$G$9!#(B<br />
+    リストにあるパッケージに対する依存状態が宣言される場合です。<br />
 
-    $B8e<T$NNc$r<($7$F$_$^$9!#;0$D$N%Q%C%1!<%8$r9M$($F$_$F$/$@$5$$(B:
-    <tt>i386</tt> $B$@$1$KB8:_$9$k%Q%C%1!<%8(B <tt>foo</tt>$B!"(B
-    <tt>m68k</tt> $B$@$1$KB8:_$9$k%Q%C%1!<%8(B <tt>bar</tt>
-    ($BMpK=$K8@$C$FF1$85!G=$r<B9T$7$^$9(B)$B!"$=$7$F!"(B<tt>foo</tt> $B$^$?$O(B
-    <tt>bar</tt> $B$N$I$A$i$+$,$"$l$P%S%k%I$G$-$k%Q%C%1!<%8(B <tt>baz</tt>$B!#(B
-    $B$=$7$F!"%Q%C%1!<%8(B <tt>baz</tt> $B$N%a%s%F%J$,(B <tt>bar</tt>
-    $B$r%S%k%I0MB8$KDI2C$9$k$3$H$rK:$l$F!"(B<tt>baz</tt> $B$,(B <tt>m68k</tt>
-    $B$K$OB8:_$7$J$$(B <tt>foo</tt> $B$KBP$9$k(B <em>dep-wait</em>
-    $B>uBV$K$J$C$F$$$k$H$-$K5$IU$$$FDI2C$7$?>l9g!"(B<tt>m68k</tt> $B$N(B
-    <em>dep-wait</em> $B>uBV$O(B <tt>m68k</tt>
-    $B0\?"<T$N<j:n6H$K$h$jJQ99$5$l$J$1$l$P$J$i$J$$$G$7$g$&!#(B</dd>
+    後者の例を示してみます。三つのパッケージを考えてみてください:
+    <tt>i386</tt> だけに存在するパッケージ <tt>foo</tt>、
+    <tt>m68k</tt> だけに存在するパッケージ <tt>bar</tt>
+    (乱暴に言って同じ機能を実行します)、そして、<tt>foo</tt> または
+    <tt>bar</tt> のどちらかがあればビルドできるパッケージ <tt>baz</tt>。
+    そして、パッケージ <tt>baz</tt> のメンテナが <tt>bar</tt>
+    をビルド依存に追加することを忘れて、<tt>baz</tt> が <tt>m68k</tt>
+    には存在しない <tt>foo</tt> に対する <em>dep-wait</em>
+    状態になっているときに気付いて追加した場合、<tt>m68k</tt> の
+    <em>dep-wait</em> 状態は <tt>m68k</tt>
+    移植者の手作業により変更されなければならないでしょう。</dd>
 
     <dt><a name="wanna-build-state-failed">failed</a></dt>
-    <dd>$B%S%k%I$,<:GT$7!"(Bautobuilder
-    $B4IM}<T$,$=$l$r:F;n9T$9$Y$-$G$J$$<B:]$N<:GT$@$HH=CG$9$k$H(B
-    $B%Q%C%1!<%8$O(B <em>failed</em> $B$H$5$l$^$9!#(B
-    $B%Q%C%1!<%8$O!"0\?"<T$,JQ99$9$Y$-$@$HH=CG$9$k$^$G!"(B
-    $B$"$k$$$O?7%P!<%8%g%s$,F~<j2DG=$K$J$k$^$G!"$3$N>uBV$+$iJQ$o$j$^$;$s!#(B
-    $B$7$+$7!"A0$N%P!<%8%g%s$G(B <em>failed</em>
-    $B$H$5$l$F$$$?%Q%C%1!<%8$N?7$7$$%P!<%8%g%s$,F~<j2DG=$K$J$k$H!"(B
-    autobuilder $B$O$=$l$r:F;n9T$9$Y$-$+$I$&$+4IM}<T$KLd$$9g$o$;$^$9!#(B
-    $B$3$&$9$k$3$H$G!":F$S<:GT$9$k$N$,L@$i$+$K%Q%C%1!<%8$G(B buildd
-    $B$N;~4V$rO2Hq$7$J$$$h$&$K$7$^$9!#%S%k%I;n9TA0$K%Q%C%1!<%8$,<:GT!"(B
-    $B$H$$$&$N$b$$$5$5$+$*$+$7$JOC$G$O$"$j$^$9$,!"(Bautobuilder
-    $B4IM}<T$O%*%W%7%g%s$r;H$&$3$H$,$G$-$^$9!#(B<br />
-    $B?M4V$N2p:_$J$7$K%Q%C%1!<%8$r(B <em>failed</em> $B$H$9$k$3$H$O(B
-    <strong>$B7h$7$F$J$$(B</strong>$B$3$H$KCm0U$7$F$/$@$5$$!#(B</dd>
+    <dd>ビルドが失敗し、autobuilder
+    管理者がそれを再試行すべきでない実際の失敗だと判断すると
+    パッケージは <em>failed</em> とされます。
+    パッケージは、移植者が変更すべきだと判断するまで、
+    あるいは新バージョンが入手可能になるまで、この状態から変わりません。
+    しかし、前のバージョンで <em>failed</em>
+    とされていたパッケージの新しいバージョンが入手可能になると、
+    autobuilder はそれを再試行すべきかどうか管理者に問い合わせます。
+    こうすることで、再び失敗するのが明らかにパッケージで buildd
+    の時間を浪費しないようにします。ビルド試行前にパッケージが失敗、
+    というのもいささかおかしな話ではありますが、autobuilder
+    管理者はオプションを使うことができます。<br />
+    人間の介在なしにパッケージを <em>failed</em> とすることは
+    <strong>決してない</strong>ことに注意してください。</dd>
 
     <dt><a name="not-for-us">not-for-us</a></dt>
-    <dd>$B0lIt$NFCDj$N%Q%C%1!<%8$,%"!<%-%F%/%A%c8GM-$N$b$N$G$9!#(B
-    $BNc$($P!"(Bi386 $B%V!<%H%m!<%@$N(B <tt>lilo</tt> $B$O(B alpha, m68k, $B$"$k$$$O(B
-    s390 $B$G%S%k%I$5$l$k$Y$-$G$"$j$^$;$s!#$7$+$7!"(B<em>wanna-build</em>
-    $B$O%G!<%?%Y!<%9$N:n@.;~$K%Q%C%1!<%8$N@)8f%U%!%$%k$r8+$^$;$s!#(B
-    $B8+$k$N$O%Q%C%1!<%8$NL>A0$H%;%/%7%g%s!"A0$N%S%k%I>uBV!"(B
-    $B5Z$S$=$NM%@hEY$@$1$G$9!#$=$&$$$&$o$1$G!"B>$N%"!<%-%F%/%A%c$G(B
-    $B%S%k%I$5$l$k$Y$-$G$J$$%"!<%-%F%/%A%c8GM-$N%Q%C%1!<%8$G$"$C$F$b!"(B
-    $B%S%k%I;n9T$O9T$o$l$^$9(B($B$7$+$7!"%S%k%I;~$N0MB8>uBV$,%@%&%s%m!<%I$d(B
-    $B%$%s%9%H!<%k$NA0$G$"$C$F$b<:GT$H$J$j$^$9(B)$B!#(B<br />
+    <dd>一部の特定のパッケージがアーキテクチャ固有のものです。
+    例えば、i386 ブートローダの <tt>lilo</tt> は alpha, m68k, あるいは
+    s390 でビルドされるべきでありません。しかし、<em>wanna-build</em>
+    はデータベースの作成時にパッケージの制御ファイルを見ません。
+    見るのはパッケージの名前とセクション、前のビルド状態、
+    及びその優先度だけです。そういうわけで、他のアーキテクチャで
+    ビルドされるべきでないアーキテクチャ固有のパッケージであっても、
+    ビルド試行は行われます(しかし、ビルド時の依存状態がダウンロードや
+    インストールの前であっても失敗となります)。<br />
 
-    autobuilder $B$O%"!<%-%F%/%A%c$GI,MW$H$5$l$J$$%Q%C%1!<%8$N%S%k%I$K(B
-    $B;~4V$r>CHq$9$Y$-$G$O$J$$$N$G!"(B
-    $B%S%k%I$N;n9T$NI,MW$5$($J$$%Q%C%1!<%8$r%j%9%H$9$kJ}K!$,I,MW$K$J$j$^$9!#(B
-    $B$3$NLdBj$N:G=i$N2r7h:v$O(B <em>not-for-us</em> $B$G$7$?!#(B
-    $B$7$+$7!"$3$l$OJ]<i$7$E$i$$$N$G!":G6a$G$O(B <em>not-for-us</em>
-    $B$OHs?d>)$H$J$C$F$$$^$9!#(Bautobuilder $B4IM}<T$OBe$o$j$K(B
-    <em>packages-arch-specific</em> $B$r;HMQ$9$Y$-$G$9!#$3$l$O(B wanna-build
-    $B>uBV$NBe$o$j$H$J$k!"FCDj$N%"!<%-%F%/%A%c$KFCM-$J%Q%C%1!<%8$N%j%9%H$G$9(B<br />
-    <em>not-for-us</em> $B$d(B <em>packages-arch-specific</em>
-    $B$N%Q%C%1!<%8$,$3$N>uBV$+$i<+F0E*$KJQ$o$k$3$H$O(B<strong>$B$"$j$^$;$s(B</strong>$B!#(B
-    $B0JA0$KG$0U$N%"!<%-%F%/%A%c$,@)8f%U%!%$%k$G=|30$5$l$F$$$?%Q%C%1!<%8$G!"(B
-    $BBP>]%"!<%-%F%/%A%c$,A}$($?>l9g$O!"$=$l$K$D$$$F$O(B
-    <strong>$B<j:n6H$G(B</strong>$B%-%e!<$KF~$l$J$1$l$P$J$j$^$;$s!#(B<br />
-    $B$3$l$rC/$+$KMj$`I,MW$,$"$k%]%8%7%g%s$K$$$k>l9g$O!"3:Ev$9$k(B buildd
-    $B$K0MMj$9$k$3$H$,$G$-$^$9!#(B$arch@buildd.debian.org
-    $B$GO"Mm$r<h$k$3$H$,$G$-$^$9!#(B</dd>
+    autobuilder はアーキテクチャで必要とされないパッケージのビルドに
+    時間を消費すべきではないので、
+    ビルドの試行の必要さえないパッケージをリストする方法が必要になります。
+    この問題の最初の解決策は <em>not-for-us</em> でした。
+    しかし、これは保守しづらいので、最近では <em>not-for-us</em>
+    は非推奨となっています。autobuilder 管理者は代わりに
+    <em>packages-arch-specific</em> を使用すべきです。これは wanna-build
+    状態の代わりとなる、特定のアーキテクチャに特有なパッケージのリストです<br />
+    <em>not-for-us</em> や <em>packages-arch-specific</em>
+    のパッケージがこの状態から自動的に変わることは<strong>ありません</strong>。
+    以前に任意のアーキテクチャが制御ファイルで除外されていたパッケージで、
+    対象アーキテクチャが増えた場合は、それについては
+    <strong>手作業で</strong>キューに入れなければなりません。<br />
+    これを誰かに頼む必要があるポジションにいる場合は、該当する buildd
+    に依頼することができます。$arch@buildd.debian.org
+    で連絡を取ることができます。</dd>
 
     <dt><a name="installed">installed</a></dt>
-    <dd>$BL>A0$G$o$+$k$h$&$K!"(B<em>installed</em> $B$H$5$l$?%Q%C%1!<%8$O$=$N(B
-    wanna-build $B%G!<%?%Y!<%9$N%"!<%-%F%/%A%c8~$1$K%3%s%Q%$%k$5$l$F$$$^$9!#(B
-    Woody $B$,%j%j!<%9$5$l$kA0$O!"(Bdaily katie $B$N<B9T8e$K(B
-    <em>uploaded</em> $B$+$i(B <em>installed</em> $B$KJQ99$5$l$F$$$^$7$?!#(B
-    $B$7$+$7!"(B<a
+    <dd>名前でわかるように、<em>installed</em> とされたパッケージはその
+    wanna-build データベースのアーキテクチャ向けにコンパイルされています。
+    Woody がリリースされる前は、daily katie の実行後に
+    <em>uploaded</em> から <em>installed</em> に変更されていました。
+    しかし、<a
      href="http://lists.debian.org/debian-devel-announce/2002/debian-devel-announce-200206/msg00002.html"
-     >Accepted-autobuild</a> $B$N<BAu$K$h$C$F$3$l$O@5$7$/$J$/$J$j$^$7$?!#(B
-    $B:G6a$G$O!"%Q%C%1!<%8$,%"!<%+%$%V$K<u$1F~$l$i$l$?;~$K(B
-    <em>uploaded</em> $B$+$i(B <em>installed</em> $B$K0\9T$7$^$9!#MW$9$k$K!"(B
-    $B%Q%C%1!<%8$ODL>o!"J?6Q$7$F(B 15 $BJ,8e$K(B <em>installed</em> $B$H$5$l$^$9!#(B</dd>
+     >Accepted-autobuild</a> の実装によってこれは正しくなくなりました。
+    最近では、パッケージがアーカイブに受け入れられた時に
+    <em>uploaded</em> から <em>installed</em> に移行します。要するに、
+    パッケージは通常、平均して 15 分後に <em>installed</em> とされます。</dd>
     </dl>
 
-    <p>$B0J>e$N<7$D$N>uBV$K2C$($F!"$+$J$j$^$l$G$9$,(B
-    <em>wanna-build</em> $B$K$O(B -removed $B$N>uBV$,Fs$D$"$j$^$9!#(B
-    <em>dep-wait-removed</em> $B$H(B <em>failed-removed</em> $B$G$9!#(B
-    $B0J2<$N$h$&$K$=$l$>$l$N(B<q>$BDL>o(B</q>$B$N>uBV$H4XO"$7$^$9(B:
-    <em>failed</em> $B$d(B <em>dep-wait</em> $B$N>uBV$K$"$k%Q%C%1!<%8$,!"(B
-    <em>wanna-build</em> $B$KAw$i$l$??7$7$$%Q%C%1!<%8$N%U%!%$%kCf$K$J$$>l9g(B
-    &ndash; $B=P$F$-$?$H$-$K$O4{$K:o=|:Q$_$H$J$C$F$$$k(B &ndash;
-    $B%Q%C%1!<%8%U%!%$%k$K$J$$$N$OC1$J$k0l;~E*$JIT6q9g$G$"$k!"(B
-    $B2?$i$+$NM}M3$K$h$j0l;~E*$K:o=|$5$l$F$$$k$@$1$G$"$k(B
-    ($B;~4V$N7P2a$H$H$b$K:F$S%"!<%+%$%V$K=P$F$/$k(B)$B!"$H$$$C$?2DG=@-$,$"$k$?$a!"(B
-    $B$=$N%Q%C%1!<%8$K$D$$$F$N>pJs$O<N$F$i$l$^$;$s!#(B
-    $BBe$o$j$K!"$3$&$$$C$?>l9g$K$O%Q%C%1!<%8$O(B <em>-removed</em>
-    $B>uBV$K$J$j!"<:GT$7$?M}M3$d!"2?$rBT$C$F$$$k>uBV$J$N$+!"(B
-    $B$H$$$&>pJs$rJ];}$7$F$*$/$3$H$,$G$-$^$9!#%Q%C%1!<%8$,0J9_$N(B
-    wanna-build $B$KAw$i$l$k%Q%C%1!<%8%U%!%$%k$K:F$S=P$F$-$?>l9g$O!"(B
-    $B$5$i$J$k=hM}$,9T$o$l$kA0$K(B <em>failed-removed</em> $B$+$i(B
-    <em>failed</em> $B$KLa$5$l$^$9!#(B</p>
+    <p>以上の七つの状態に加えて、かなりまれですが
+    <em>wanna-build</em> には -removed の状態が二つあります。
+    <em>dep-wait-removed</em> と <em>failed-removed</em> です。
+    以下のようにそれぞれの<q>通常</q>の状態と関連します:
+    <em>failed</em> や <em>dep-wait</em> の状態にあるパッケージが、
+    <em>wanna-build</em> に送られた新しいパッケージのファイル中にない場合
+    &ndash; 出てきたときには既に削除済みとなっている &ndash;
+    パッケージファイルにないのは単なる一時的な不具合である、
+    何らかの理由により一時的に削除されているだけである
+    (時間の経過とともに再びアーカイブに出てくる)、といった可能性があるため、
+    そのパッケージについての情報は捨てられません。
+    代わりに、こういった場合にはパッケージは <em>-removed</em>
+    状態になり、失敗した理由や、何を待っている状態なのか、
+    という情報を保持しておくことができます。パッケージが以降の
+    wanna-build に送られるパッケージファイルに再び出てきた場合は、
+    さらなる処理が行われる前に <em>failed-removed</em> から
+    <em>failed</em> に戻されます。</p>
 
-    <p>wanna-build $B%G!<%?%Y!<%9$KD>@\%"%/%;%9$9$k$3$H$O$G$-$^$;$s!#(B
-    $B$3$N%G!<%?%Y!<%9$O@)8B$5$l$F$k(B ftp-master.debian.org
-    $B$K$"$j!"(Bautobuilder $B$@$1$,$=$l$>$l$N%"!<%-%F%/%A%c$N(B wanna-build
-    $B%G!<%?%Y!<%9$K%"%/%;%9$G$-$k(B SSH $B80$r;}$C$F$$$^$9!#(B
-    ftp-master $B$,@)8B$5$l$kA0$G$b$3$&$J$C$F$$$^$7$?!#(Bwanna-build
-    $B$O%"%/%;%9;~$K!"%G!<%?$NFI$_9~$_$G$"$C$F$b%G!<%?%Y!<%9%l%Y%k$G%m%C%/$9$k$N$G!"(B
-    $BD>@\(B wanna-build $B%G!<%?%Y!<%9$K%"%/%;%9$9$k$K$O@5$7$$%0%k!<%W(B
-    (wb-&lt;arch&gt;) $B$KB0$7$F$$$J$1$l$P$J$j$^$;$s!#(B</p>
+    <p>wanna-build データベースに直接アクセスすることはできません。
+    このデータベースは制限されてる ftp-master.debian.org
+    にあり、autobuilder だけがそれぞれのアーキテクチャの wanna-build
+    データベースにアクセスできる SSH 鍵を持っています。
+    ftp-master が制限される前でもこうなっていました。wanna-build
+    はアクセス時に、データの読み込みであってもデータベースレベルでロックするので、
+    直接 wanna-build データベースにアクセスするには正しいグループ
+    (wb-&lt;arch&gt;) に属していなければなりません。</p>
 
-    <p>$B$H$O8@$C$F$b!"%Q%C%1!<%8$,$I$N>uBV$K$"$k$N$+$O!"(B
-    <em>installed</em> $B$N>uBV$K$"$k$b$N$r=|$$$F!"(B<a
-     href="http://buildd.debian.org/stats/">buildd $B>u67%Z!<%8(B</a>
-    $B$G;2>H$G$-$^$9(B ($B?t%a%,%P%$%H$K5Z$V(B "&lt;arch&gt;-all.txt"
-    $B%U%!%$%k$rD4$Y$h$&$H$$$&$N$G$"$l$PJL$G$9(B)$B!#(B</p>
+    <p>とは言っても、パッケージがどの状態にあるのかは、
+    <em>installed</em> の状態にあるものを除いて、<a
+     href="http://buildd.debian.org/stats/">buildd 状況ページ</a>
+    で参照できます (数メガバイトに及ぶ "&lt;arch&gt;-all.txt"
+    ファイルを調べようというのであれば別です)。</p>
 
-    <h2>$B%S%k%I%m%0$N7k2L(B</h2>
-    <p>$B%Q%C%1!<%8$O(B sbuild ($B<B:]$K%S%k%I$9$k(B buildd $B%3%s%]!<%M%s%H(B)
-      $B$K$h$C$F%S%k%I$5$l!"%m%0$H%S%k%I7k2L$,%a!<%k$K$h$j(B autobuilder
-      $B4IM}<T$H(B logs@buildd.debian.org $B$KAw$i$l$^$9!#(B
-      ($B$J$N$G(B http://buildd.debian.org $B$G=hM}$5$l$^$9!#(B)
-      $B%S%k%I%m%0$N7k2L$O(B <em>successful</em>, <em>failed</em>,
-      <em>given-back</em>, <em>skipped</em> $B$N$&$A$N0l$D$K$J$j$^$9!#(B
-      <a href="http://buildd.debian.org/">buildd $B%m%035MW%Z!<%8(B</a>$B$G!"(B
-      $BFC$K!"%S%k%I$,(B <em>failed</em> $B$H$5$l$F$$$F$b(B<em>$B<B:]$N(B</em>
-      $B<:GT$G$O$J$$2DG=@-$,$"$C$?(B ($B$"$k$$$O!"(B
-      $BH?BP$K%S%k%I@.8y$H$5$l$?%Q%C%1!<%8$,<B$O2u$l$F$$$F:F%S%k%I$NI,MW$,$"$C$?(B)
-      $B$3$H$K$h$j2a5n$K8m2r$r>7$$$?$?$a!"F,$K(B <em>maybe-</em>
-      $B$,DI2C$5$l$F$$$k$3$H$KCm0U$7$F$/$@$5$$!#(B</p>
+    <h2>ビルドログの結果</h2>
+    <p>パッケージは sbuild (実際にビルドする buildd コンポーネント)
+      によってビルドされ、ログとビルド結果がメールにより autobuilder
+      管理者と logs@buildd.debian.org に送られます。
+      (なので http://buildd.debian.org で処理されます。)
+      ビルドログの結果は <em>successful</em>, <em>failed</em>,
+      <em>given-back</em>, <em>skipped</em> のうちの一つになります。
+      <a href="http://buildd.debian.org/">buildd ログ概要ページ</a>で、
+      特に、ビルドが <em>failed</em> とされていても<em>実際の</em>
+      失敗ではない可能性があった (あるいは、
+      反対にビルド成功とされたパッケージが実は壊れていて再ビルドの必要があった)
+      ことにより過去に誤解を招いたため、頭に <em>maybe-</em>
+      が追加されていることに注意してください。</p>
 
-    <p>$B%m%0$N7k2L$N0UL#$O<!$NDL$j$G$9(B:</p>
+    <p>ログの結果の意味は次の通りです:</p>
     <dl>
     <dt><a name="successful">successful</a></dt>
-    <dd>$B%S%k%I$O@.8y$7$^$7$?!#(Bautobuilder
-    $B4IM}<T$O$3$N%m%0$r<u$1<h$C$?>l9g!"Kd$a9~$^$l$?(B <code>.changes</code>
-    $B%U%!%$%k$rCj=P$7!"=pL>$7$F(B autobuilder $B$KAw$jJV$7$^$9!#(B
-    $B$=$&$9$k$H%Q%C%1!<%8$,%"%C%W%m!<%I$5$l$^$9!#(B</dd>
+    <dd>ビルドは成功しました。autobuilder
+    管理者はこのログを受け取った場合、埋め込まれた <code>.changes</code>
+    ファイルを抽出し、署名して autobuilder に送り返します。
+    そうするとパッケージがアップロードされます。</dd>
 
     <dt><a name="failed">failed</a></dt>
-    <dd>$B%S%k%I$O<:GT$7$^$7$?!#%S%k%I$,<:GT$9$kM}M3$O$$$/$D$b9M$($i$l!"(B
-    $B$9$Y$FNs5s$9$k$N$O2s$j$/$I$$$@$1$J$N$G$3$3$G$O5s$2$^$;$s!#(B
-    $B$b$7<+J,$N%Q%C%1!<%8$,(B <em>(maybe-)failed</em> $B$H$J$C$F$$$?$i!"(B
-    $B>e5-$rFI$s$G(B wanna-build $B$N8=:_$N>uBV$r3NG'$7$F$_$k$H$h$$$G$7$g$&!#(B</dd>
+    <dd>ビルドは失敗しました。ビルドが失敗する理由はいくつも考えられ、
+    すべて列挙するのは回りくどいだけなのでここでは挙げません。
+    もし自分のパッケージが <em>(maybe-)failed</em> となっていたら、
+    上記を読んで wanna-build の現在の状態を確認してみるとよいでしょう。</dd>
 
     <dt><a name="given-back">given-back</a></dt>
-    <dd>$B%S%k%I$O(B autobuilder $B$N0l;~E*$JLdBj$N$?$a<:GT$7$^$7$?!#(B
-    $BNc$($P!"%M%C%H%o!<%/$NLdBj!"8=:_$N(B sources.list
-    $B$G$O%Q%C%1!<%8$N%=!<%9$,F~<j$G$-$J$$!"%G%#%9%/NN0h$NITB-!"Ey$,$"$j$^$9!#(B<br />
-    <em>given-back</em> $B$H$5$l$F$$$k%Q%C%1!<%8$O:F$S(B
-    <em><a href="#needs-build">needs-build</a></em> $B$H$5$l!"(B
-    $B=`Hw$,$G$-<!Bh!"B>$N(B autobuilder $B$K$h$C$F<h$j>e$2$i$l$^$9!#(B</dd>
+    <dd>ビルドは autobuilder の一時的な問題のため失敗しました。
+    例えば、ネットワークの問題、現在の sources.list
+    ではパッケージのソースが入手できない、ディスク領域の不足、等があります。<br />
+    <em>given-back</em> とされているパッケージは再び
+    <em><a href="#needs-build">needs-build</a></em> とされ、
+    準備ができ次第、他の autobuilder によって取り上げられます。</dd>
 
     <dt><a name="skipped">skipped</a></dt>
-    <dd>$B%Q%C%1!<%8$,(B autobuilder $B$K$h$j<h$j>e$2$i$l$F(B
-    <em><a href="#building">building</a></em> $B$H$5$l$F$+$i!"(B
-    $B%S%k%I;n9T$^$G$K!"$=$N%Q%C%1!<%8$N?7%P!<%8%g%s$,%"%C%W%m!<%I$5$l$?$+!"(B
-    $B2?$i$+$NM}M3$G0\?"<T$,<j:n6H$G(B wanna-build $B>uBV$rJQ99$7$?>l9g!#(B
-    $B$3$l$,9T$o$l$k$H!"$=$N%Q%C%1!<%8$r%S%k%I$7$J$$$h$&$K!"(Bautobuilder
-    $B$K%a!<%k$,Aw$i$l$^$9!#(Bsbuild $B$O$3$l$r8+$F!"%S%k%I$rHt$P$7$^$9(B
-    ($B%S%k%I%m%0$H$3$N7k2L$,Aw$i$l!"$3$l$,5/$-$?$H$$$&$3$H$r<($7$^$9$,(B)$B!#(B</dd>
+    <dd>パッケージが autobuilder により取り上げられて
+    <em><a href="#building">building</a></em> とされてから、
+    ビルド試行までに、そのパッケージの新バージョンがアップロードされたか、
+    何らかの理由で移植者が手作業で wanna-build 状態を変更した場合。
+    これが行われると、そのパッケージをビルドしないように、autobuilder
+    にメールが送られます。sbuild はこれを見て、ビルドを飛ばします
+    (ビルドログとこの結果が送られ、これが起きたということを示しますが)。</dd>
     </dl>
 
-<h2><a name="graphlink">$B;k3P2=%P!<%8%g%s(B</a></h2>
-<p>$B>e5-$r@bL@$9$k$?$a$K!"$3$N<j=g$N(B<a
- href="wanna-build.png">$B%U%m!<%A%c!<%H%P!<%8%g%s(B</a>$B$bMQ0U$7$^$7$?!#(B
-$B7+$jJV$7$^$9$,!"$3$l$K$O$3$NJ8=q$G8@5Z$7$?$9$Y$F$,4^$^$l$F$$$k$o$1$G$O(B
-$B$J$$$3$H$KCm0U$7$F$/$@$5$$!#(B</p>
+<h2><a name="graphlink">視覚化バージョン</a></h2>
+<p>上記を説明するために、この手順の<a
+ href="wanna-build.png">フローチャートバージョン</a>も用意しました。
+繰り返しますが、これにはこの文書で言及したすべてが含まれているわけでは
+ないことに注意してください。</p>

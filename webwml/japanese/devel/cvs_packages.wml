@@ -1,22 +1,22 @@
-#use wml::debian::template title="CVS $B$r;HMQ$7$?(B Debian $B%Q%C%1!<%84IM}(B"
+#use wml::debian::template title="CVS を使用した Debian パッケージ管理"
 #use wml::debian::translation-check translation="1.8"
 
-<p>$B$3$NC;$$J8=q$O!"%Q%C%1!<%8$N(B CVS
-$B4IM}$X$NJQ49$K$*$$$F4JC1$J<j=u$1$rM?$($k$3$H$@$1$rL\E*$H$7$F$$$^$9!#(B
-$B$*$=$i$/!"$"$^$j(B CVS
-$B$d%P!<%8%g%s4IM}$K>\$7$/$J$$?M0J30$K$O6=L#?<$$$b$N$G$O$J$$$G$7$g$&!#(B
-$B$^$?!"(B<code>/usr/share/doc/cvs-buildpackage</code> $B0J2<$K(B
-<code>cvs-pkginit</code> $B$H$$$&%9%/%j%W%H$,$"$j(B ($B$3$l$K$O%9%/%j%W%H$H(B
-man $B%Z!<%8$,N>J}F~$C$F$$$^$9(B)$B!"$3$N(B HOWTO $BJ8=q$N35MW$r=PNO$7$^$9!#(B</p>
+<p>この短い文書は、パッケージの CVS
+管理への変換において簡単な手助けを与えることだけを目的としています。
+おそらく、あまり CVS
+やバージョン管理に詳しくない人以外には興味深いものではないでしょう。
+また、<code>/usr/share/doc/cvs-buildpackage</code> 以下に
+<code>cvs-pkginit</code> というスクリプトがあり (これにはスクリプトと
+man ページが両方入っています)、この HOWTO 文書の概要を出力します。</p>
 
-<p>$BNc$($P!"%Q%C%1!<%8(B foo$B!"%P!<%8%g%s(B bar1$B!"(BDebian $B2~D{(B 3
-$B$rJQ49$9$k$N$K(B</p>
+<p>例えば、パッケージ foo、バージョン bar1、Debian 改訂 3
+を変換するのに</p>
 
 <pre>
 % cvs-pkginit foo bar1 3
 </pre>
 
-<p>$B$r<B9T$7$F35MW$r$D$+$s$G$/$@$5$$!#(B</p>
+<p>を実行して概要をつかんでください。</p>
 
 <pre>
 Oldenburg, 6/2/97                           Joey (joey@debian.org)
@@ -25,14 +25,14 @@ Mobile,                                     Manoj Srivastava
                                             srivasta@debian.org
 </pre>
 
-<p>$BCm(B: $B0J2<$N@bL@$G$O!";37A3g8L(B &lt;&gt; $B$NCf$O$=$NETEYJQ99!"(B
-$B$=$l0J30$K$D$$$F$O$=$N$^$^$GF~NO$7$^$9!#Nc$($P!">eN.$N%P!<%8%g%s$,(B
-2.1.82 $B$N%Q%C%1!<%8$G$"$l$P(B &lt;$B%P!<%8%g%s(B&gt; $B$O(B 2.1.82 $B$r!"(B
-upstream_version_&lt;$B%P!<%8%g%s(B | tr  . _&gt; $B$O(B upstream_version_2_1_82.
-$B$N0UL#$K$J$j$^$9!#(B</p>
+<p>注: 以下の説明では、山形括弧 &lt;&gt; の中はその都度変更、
+それ以外についてはそのままで入力します。例えば、上流のバージョンが
+2.1.82 のパッケージであれば &lt;バージョン&gt; は 2.1.82 を、
+upstream_version_&lt;バージョン | tr  . _&gt; は upstream_version_2_1_82.
+の意味になります。</p>
 
 <ol>
-<li>CVS $B$N@_Dj(B
+<li>CVS の設定
 
 <pre>
    $ CVSROOT=/where/your/repository/will/be
@@ -41,37 +41,37 @@ upstream_version_&lt;$B%P!<%8%g%s(B | tr  . _&gt; $B$O(B upstream_version_2_
    $ mkdir $CVSROOT/debian
 </pre>
 
-   <p>$B$3$l$G!"(BDebian $B%Q%C%1!<%8$H$=$l0J30$,:#8e%j%]%8%H%jCf$GJ,N%$5$l$k$3$H$K$J$j$^$9!#(B
-   $BB>$NL\E*$G(B CVS $B$,I,MW$K$J$k$3$H$O$J$$$H;W$C$F$b!"(B
-   $B8e$G8e2y$9$k$h$j$b!"$3$3$G%j%]%8%H%j$r:n$C$FJ,N`$7$F$*$/$N$,F@:v$G$9(B
-   ($B8e$+$i%j%]%8%H%j$K0\$9$N$O<j4V$,A}$($k$3$H$K$J$j$^$9(B)$B!#(B</p>
+   <p>これで、Debian パッケージとそれ以外が今後リポジトリ中で分離されることになります。
+   他の目的で CVS が必要になることはないと思っても、
+   後で後悔するよりも、ここでリポジトリを作って分類しておくのが得策です
+   (後からリポジトリに移すのは手間が増えることになります)。</p>
 
-   <p>$B$b$7J#?t$N?M$,!"(BCVS $B$r;H$&$N$G$"$l$P$=$N?M$?$A$,(B $B!"(BCVS
-   $B$r;H$C$F<B:]$K%j%]%8%H%j$rJQ99$G$-$k$3$H$r3NG'$7$J$1$l$P$J$j$^$;$s!#(B
-   $B%j%]%8%H%j$N0lIt$X$N%"%/%;%9$r5v2D$9$k%0%k!<%W(B ($B$^$?$O0lAH$N%0%k!<%W(B)
-   $B$rA*Br$7$F8"8B$r%;%C%H$7$F$/$@$5$$(B:</p>
+   <p>もし複数の人が、CVS を使うのであればその人たちが 、CVS
+   を使って実際にリポジトリを変更できることを確認しなければなりません。
+   リポジトリの一部へのアクセスを許可するグループ (または一組のグループ)
+   を選択して権限をセットしてください:</p>
 
 <pre>
-   \# chgrp &lt;$B%"!<%+%$%V(B&gt; $CVSROOT/debian
+   \# chgrp &lt;アーカイブ&gt; $CVSROOT/debian
    \# chmod g+ws    $CVSROOT/debian
 </pre>
 
-   <p>$B$3$l$G!"%"!<%+%$%V%0%k!<%W$N%a%s%P!<$,%j%]%8%H%j$N(B
-   $B@_Dj$r5v2D$5$l$F$$$k$3$H$r3N$+$a$^$9!#<!$O@5$7$$%0%k!<%W$G(B
-   $B%j%]%8%H%j$N0lIt$rJQ99$G$-$k$3$H$r3NG'$9$kI,MW$,$"$j$^$9!#(B</p>
+   <p>これで、アーカイブグループのメンバーがリポジトリの
+   設定を許可されていることを確かめます。次は正しいグループで
+   リポジトリの一部を変更できることを確認する必要があります。</p>
 
 <pre>
-   \# mkdir $CVSROOT/debian/&lt;$B%Q%C%1!<%8(B1&gt;
-   \# chgrp &lt;$B%0%k!<%W(B1&gt; $CVSROOT/debian/&lt;$B%Q%C%1!<%8(B1&gt;
-   \# chmod g+ws     $CVSROOT/debian/&lt;$B%Q%C%1!<%8(B1&gt;
-   \# mkdir $CVSROOT/debian/&lt;$B%Q%C%1!<%8(B2&gt;
-   \# chgrp &lt;$B%0%k!<%W(B2&gt; $CVSROOT/debian/&lt;$B%Q%C%1!<%8(B2&gt;
-   \# chmod g+ws     $CVSROOT/debian/&lt;$B%Q%C%1!<%8(B2&gt;
+   \# mkdir $CVSROOT/debian/&lt;パッケージ1&gt;
+   \# chgrp &lt;グループ1&gt; $CVSROOT/debian/&lt;パッケージ1&gt;
+   \# chmod g+ws     $CVSROOT/debian/&lt;パッケージ1&gt;
+   \# mkdir $CVSROOT/debian/&lt;パッケージ2&gt;
+   \# chgrp &lt;グループ2&gt; $CVSROOT/debian/&lt;パッケージ2&gt;
+   \# chmod g+ws     $CVSROOT/debian/&lt;パッケージ2&gt;
 </pre>
 
-   <p>$B0lHL%f!<%6$G(B <kbd>"-d /where/your/repository/will/be"</kbd>
-   $B$r;XDj$9$k$+%W%m%U%!%$%k$K=q$-9~$s$G!"(BCVS
-   $B%j%]%8%H%j$r8x3+$7$F$/$@$5$$!#(B</p>
+   <p>一般ユーザで <kbd>"-d /where/your/repository/will/be"</kbd>
+   を指定するかプロファイルに書き込んで、CVS
+   リポジトリを公開してください。</p>
 
 <pre>
    $ CVSROOT=/where/your/repository/will/be
@@ -79,7 +79,7 @@ upstream_version_&lt;$B%P!<%8%g%s(B | tr  . _&gt; $B$O(B upstream_version_2_
 </pre>
 </li>
 
-<li>$B%b%8%e!<%k$N;HMQ(B
+<li>モジュールの使用
 
 <pre>
    \# cvs checkout CVSROOT
@@ -87,107 +87,107 @@ upstream_version_&lt;$B%P!<%8%g%s(B | tr  . _&gt; $B$O(B upstream_version_2_
    \# vi modules
 </pre>
 
-   <p>$B0J2<$K$*$$$F!"(B&lt;$B%Q%C%1!<%8(B&gt; $B$O(B debian/changelog
-   $B%U%!%$%kCf$HF1MM$K%Q%C%1!<%8L>$K$7$F$/$@$5$$!#(B</p>
+   <p>以下において、&lt;パッケージ&gt; は debian/changelog
+   ファイル中と同様にパッケージ名にしてください。</p>
 
-   <p>$B0J2<$N9T$rDI2C$7$F$/$@$5$$!#@hF,9T$OI,?\$G$9!#(B
-   $BFs9TL\$OJ#@=$G$b$+$^$$$^$;$s!#0lL\NFA3$J$b$N$,$$$$$G$7$g$&(B:</p>
+   <p>以下の行を追加してください。先頭行は必須です。
+   二行目は複製でもかまいません。一目瞭然なものがいいでしょう:</p>
 
 <pre>
    modules   CVSROOT modules
-   &lt;$B%Q%C%1!<%8(B&gt; debian/&lt;$B%Q%C%1!<%8(B&gt;
+   &lt;パッケージ&gt; debian/&lt;パッケージ&gt;
 </pre>
 
 <pre>
-   \# cvs commit -m '$B0l$DL\$N%b%8%e!<%k$rDj5A(B'
+   \# cvs commit -m '一つ目のモジュールを定義'
 </pre>
 </li>
 
-<li>CVS $B$r;H$&=`Hw(B
+<li>CVS を使う準備
 
-   <p>$B0J2<$N%3%^%s%I$G%=!<%9%D%j!<$r2C$($^$9(B ($B$9$G$K(B debian $B2=$,:Q$s$G(B
-   orig.tar.gz $B%U%!%$%k$,$"$k$b$N$H2>Dj$7$F$$$^$9(B)$B!#(B
-   $B>eN.%=!<%9$,(B -ko $B%*%W%7%g%sIU$-(B ($B%P%$%J%j%U%!%$%k$KCm0U$7$F$/$@$5$$(B)
-   $B$G%$%s%]!<%H$5$l$^$9$,$3$3$G$O<j85$NJQ99$OF~$C$F$$$J$$$3$H$KCm0U$7$F$/$@$5$$!#(B
-   CVS $B%?%0L>$N7hDj$K$O%(%]%C%/$OL5;k$5$l$k$3$H$KCm0U$7$F$/$@$5$$(B
-   ($B$3$l$O0lHL$K(B dpkg $B$,H=CG$9$k%Q%C%1!<%8$N=g=x$rJQ99$9$k$N$K;HMQ$5$l!"(B
-   $BDL>o(B CVS $B%?%0$H$7$FE,@Z$G$O$"$j$^$;$s(B)$B!#(B</p>
+   <p>以下のコマンドでソースツリーを加えます (すでに debian 化が済んで
+   orig.tar.gz ファイルがあるものと仮定しています)。
+   上流ソースが -ko オプション付き (バイナリファイルに注意してください)
+   でインポートされますがここでは手元の変更は入っていないことに注意してください。
+   CVS タグ名の決定にはエポックは無視されることに注意してください
+   (これは一般に dpkg が判断するパッケージの順序を変更するのに使用され、
+   通常 CVS タグとして適切ではありません)。</p>
 
-   <p>CVS $B$KF~$l$h$&$H$7$F$$$k(B debian
-   $B2=$7$?3+H/%=!<%9%D%j!<$N>l=j$X0\F0$7$F$/$@$5$$(B
-   ($B$3$l$ODL>o(B CVSROOT $B0J2<$K$"$j$^$;$s(B)$B!#(B</p>
+   <p>CVS に入れようとしている debian
+   化した開発ソースツリーの場所へ移動してください
+   (これは通常 CVSROOT 以下にありません)。</p>
 
-   <p>$B7+$jJV$7$^$9(B: $B0J2<$G!"(B&lt;$B%Q%C%1!<%8(B&gt; $B$O(B debian/changelog
-   $B%U%!%$%kCf$HF1MM$K%Q%C%1!<%8L>$K$7$F$/$@$5$$!#(B</p>
+   <p>繰り返します: 以下で、&lt;パッケージ&gt; は debian/changelog
+   ファイル中と同様にパッケージ名にしてください。</p>
 
 <pre>
    $ cd /where/your/source/tree/resides/
-   $ tar zvfx &lt;$B%Q%C%1!<%8(B&gt;_&lt;$B%P!<%8%g%s(B&gt;.orig.tar.gz
-   $ cd &lt;$B%Q%C%1!<%8(B&gt;_&lt;$B%P!<%8%g%s(B&gt;.orig
-   $ cvs import -ko -m '$B$=$N$^$^$N%=!<%9(B' debian/&lt;$B%Q%C%1!<%8(B&gt; \
-       source-dist upstream_version_&lt;$B%P!<%8%g%s(B|tr . _&gt;
+   $ tar zvfx &lt;パッケージ&gt;_&lt;バージョン&gt;.orig.tar.gz
+   $ cd &lt;パッケージ&gt;_&lt;バージョン&gt;.orig
+   $ cvs import -ko -m 'そのままのソース' debian/&lt;パッケージ&gt; \
+       source-dist upstream_version_&lt;バージョン|tr . _&gt;
 </pre>
 
-   <p>$B%V%i%s%A%?%0$N(B source-dist $B$O9%$-$J$h$&$KJQ99$7$F$/$@$5$$!#(B
-   (cvs-buildpackage $B%a%s%F%J$O>o$K>eN.$N%?%0$r;H$$$^$9(B
-   ($BM>7W$J$3$H$G$9$,(B ;-)))$B!#(B</p>
+   <p>ブランチタグの source-dist は好きなように変更してください。
+   (cvs-buildpackage メンテナは常に上流のタグを使います
+   (余計なことですが ;-)))。</p>
 
-   <p>CVS $B$r(B root $B$G@_Dj$7!"%0%k!<%W$K=q$-9~$_8"8B$rM?$($F$$$J$$>l9g!"(B
-    root $B$G(B $CVSROOT/debian/&lt;$B%Q%C%1!<%8(B&gt; $B$r:n@.$7!"(B
-    $B%j%]%8%H%j$N=jM-%f!<%6$+%0%k!<%W$rFCDj$N%0%k!<%W$+%f!<%6$K(B
-    $BJQ99$7$J$1$l$P$J$j$^$;$s!#(BCVS $B%$%s%]!<%H$9$k$H(B
-    debian/&lt;$B%Q%C%1!<%8(B&gt;
-    $B%G%#%l%/%H%j$r:n@.$G$-$J$$$H$$$&7Y9p$,I=<($5$l$^$9$,!"(B
-    $B$3$l$OBg>fIW$G$9!#(B
+   <p>CVS を root で設定し、グループに書き込み権限を与えていない場合、
+    root で $CVSROOT/debian/&lt;パッケージ&gt; を作成し、
+    リポジトリの所有ユーザかグループを特定のグループかユーザに
+    変更しなければなりません。CVS インポートすると
+    debian/&lt;パッケージ&gt;
+    ディレクトリを作成できないという警告が表示されますが、
+    これは大丈夫です。
 
-   <p>$B<!$NCJ3,$O%D%j!<A4BN$r%A%'%C%/%"%&%H$7!"JQ99$r$9$Y$FAH$_9~$`$3$H$G$9!#(B
+   <p>次の段階はツリー全体をチェックアウトし、変更をすべて組み込むことです。
 
 <pre>
    $ cd /where/your/source/tree/will/reside
-   $ cvs checkout &lt;$B%Q%C%1!<%8(B&gt;
+   $ cvs checkout &lt;パッケージ&gt;
 </pre>
 
-   <p>$B$3$l$^$G(B CVS $B$r;H$&$3$H$J$/(B debian $B2=$7$?%P!<%8%g%s$r:n@.$7$?>l9g!"(B
-   $B0J2<$N%3%^%s%I$r<B9T$7$FJQ2=$rAH$_9~$`$3$H$b$G$-$^$9!#(B
-   $B$=$l$+$i!"$=$N%j%j!<%9$K%?%0$rIU$1$F$*$1$P!"(B
-   $B8e$G$=$l$r%A%'%C%/%"%&%H$9$k$3$H$,$G$-$^$9!#(B</p>
+   <p>これまで CVS を使うことなく debian 化したバージョンを作成した場合、
+   以下のコマンドを実行して変化を組み込むこともできます。
+   それから、そのリリースにタグを付けておけば、
+   後でそれをチェックアウトすることができます。</p>
 
 <pre>
-   $ cd /where/your/source/tree/resides/&lt;$B%Q%C%1!<%8(B&gt;-&lt;$B%P!<%8%g%s(B&gt;
-   $ diff -qrBbw . /where/your/source/tree/will/reside/&lt;$B%Q%C%1!<%8(B&gt;/ | grep -v CVS
-   $ FILES_CHANGED_LOCALLY="&lt;$B>e$N=PNO(B&gt;"
+   $ cd /where/your/source/tree/resides/&lt;パッケージ&gt;-&lt;バージョン&gt;
+   $ diff -qrBbw . /where/your/source/tree/will/reside/&lt;パッケージ&gt;/ | grep -v CVS
+   $ FILES_CHANGED_LOCALLY="&lt;上の出力&gt;"
    $ tar cf - $FILES_CHANGED_LOCALLY | \
-       tar -C /where/your/source/tree/will/reside/&lt;$B%Q%C%1!<%8(B&gt; -xvpf -
-   $ cd /where/your/source/tree/will/reside/&lt;$B%Q%C%1!<%8(B&gt;
+       tar -C /where/your/source/tree/will/reside/&lt;パッケージ&gt; -xvpf -
+   $ cd /where/your/source/tree/will/reside/&lt;パッケージ&gt;
 </pre>
 
    <p>debian/rules
-   $B%U%!%$%k$r<B9T2DG=$K$7$F%(%/%9%]!<%H$7$?$H$-$K<B9T2DG=$K$J$k$h$&$K!"(B
-   $B$^$?!"%(%/%9%]!<%H$7$?%=!<%9$G(B dpkg-buildpackage
-   $B$r<B9T$7$FLdBj$,$J$$$+3NG'$7$F$/$@$5$$!#(B
-   $B0lHL$K!"%U%!%$%k$,(B<b>$B$9$Y$F(B</b>$B@5$7$$8"8B$K$J$C$F$$$k$+!"(BCVS
-   $B%j%]%8%H%j$KDI2C$9$kA0$K3NG'$7$F$/$@$5$$!#(B</p>
+   ファイルを実行可能にしてエクスポートしたときに実行可能になるように、
+   また、エクスポートしたソースで dpkg-buildpackage
+   を実行して問題がないか確認してください。
+   一般に、ファイルが<b>すべて</b>正しい権限になっているか、CVS
+   リポジトリに追加する前に確認してください。</p>
 
 <pre>
-   $ cd /where/your/source/tree/will/reside/&lt;$B%Q%C%1!<%8(B&gt;
-   $ cvs add debian &lt;$BDI2C$7$?B>$N%U%!%$%k$K$D$$$F$bF1MM(B&gt;
+   $ cd /where/your/source/tree/will/reside/&lt;パッケージ&gt;
+   $ cvs add debian &lt;追加した他のファイルについても同様&gt;
 </pre>
 
-   <p>$B$^$?!"%j%]%8%H%j$KF~$l$k$Y$-%U%!%$%k!"FC$K(B debian
-   $B%5%V%G%#%l%/%H%jCf$NA4%U%!%$%k$r<j:n6H$GDI2C$7$J$1$l$P$J$i$J$$$3$H$K(B
-   $BCm0U$7$F$/$@$5$$!#$5$i$K!"(Bcvs add $B%3%^%s%I$O:F5"E*$K$O(B<i>$BF/$+$J$$(B</i>$B!"(B
-   $B$D$^$j%5%V%G%#%l%/%H%j$K$D$$$F$b$9$Y$F<j:n6H$GDI2C$7$J$1$l$P$J$i$J$$(B
-   $B$3$H$KCm0U$7$F$/$@$5$$!#(B(cd debian; cvs add *)</p>
+   <p>また、リポジトリに入れるべきファイル、特に debian
+   サブディレクトリ中の全ファイルを手作業で追加しなければならないことに
+   注意してください。さらに、cvs add コマンドは再帰的には<i>働かない</i>、
+   つまりサブディレクトリについてもすべて手作業で追加しなければならない
+   ことに注意してください。(cd debian; cvs add *)</p>
 
-   <p>$BNI$$$3$H$K(B cvs update
-   $B$N<B9T$G%G%#%l%/%H%jCf$NA4%U%!%$%k$N>uBV$,<($5$l$^$9!#(B</p>
+   <p>良いことに cvs update
+   の実行でディレクトリ中の全ファイルの状態が示されます。</p>
 
 <pre>
-   $ cd /where/your/source/tree/will/reside/&lt;$B%Q%C%1!<%8(B&gt;
+   $ cd /where/your/source/tree/will/reside/&lt;パッケージ&gt;
    $ cvs update
 </pre>
 
-   <p>$B=PNO$O$3$N$h$&$K$J$j$^$9(B:</p>
+   <p>出力はこのようになります:</p>
 <pre>
        cvs update: Updating .
        M Makefile
@@ -195,30 +195,30 @@ upstream_version_&lt;$B%P!<%8%g%s(B | tr  . _&gt; $B$O(B upstream_version_2_
        A rules
        ? example1
 </pre>
-   <p>M $B$O=$@5$5$l$F$$$k$3$H(B ($B3JG<$7$J$1$l$P$J$i$J$$(B)$B!"(B
-    A $B$ODI2C$5$l$F$$$k$3$H(B ($B3JG<$7$J$1$l$P$J$i$J$$(B)$B!"(B
-    ? $B$O(B CVS $B$,$=$N%U%!%$%k$K$D$$$F>pJs$r;}$?$J$$$3$H(B
-    ($BB?J,DI2C$9$kI,MW$,$"$k$N$G$7$g$&(B)$B!"$r$=$l$>$l<($7$^$9!#(B
-    $BB-$j$J$$$b$N$O$J$$!"%U%!%$%k$N8"8B$O$9$Y$FA[DjDL$j!"(B
-    $B$@$HH=CG$G$-$?$i3JG<$N<j=g$KF~$j$^$9!#(B</p>
+   <p>M は修正されていること (格納しなければならない)、
+    A は追加されていること (格納しなければならない)、
+    ? は CVS がそのファイルについて情報を持たないこと
+    (多分追加する必要があるのでしょう)、をそれぞれ示します。
+    足りないものはない、ファイルの権限はすべて想定通り、
+    だと判断できたら格納の手順に入ります。</p>
 
 <pre>
-   $ cd /where/your/source/tree/will/reside/&lt;$B%Q%C%1!<%8(B&gt;
+   $ cd /where/your/source/tree/will/reside/&lt;パッケージ&gt;
    $ cvs commit -m 'Made all debian changes'
-   $ cvs tag debian_version_&lt;$B%P!<%8%g%s(B|tr . _&gt;-&lt;debian-revision|tr . _&gt; .
+   $ cvs tag debian_version_&lt;バージョン|tr . _&gt;-&lt;debian-revision|tr . _&gt; .
 </pre>
 
-   <p>$B?7$7$$%=!<%9%D%j!<$,$"$k%G%#%l%/%H%j$O%P!<%8%g%sHV9f$r4^$_$^$;$s!#(B
-   $B$3$l$O8e$G;2>H$9$k;~$K$OA4$/LdBj$K$O$J$j$^$;$s!#(B</p>
+   <p>新しいソースツリーがあるディレクトリはバージョン番号を含みません。
+   これは後で参照する時には全く問題にはなりません。</p>
 
-   <p>$BBe$o$j$K!"%9%/%i%C%A$+$i(B debian $B%G%#%l%/%H%j$r:n@.$9$k>l9g(B
-   ($B4JC1$K$J$k$+$b$7$l$^$;$s!#<j:n6H$,A}$($^$9$,!#(B):</p>
+   <p>代わりに、スクラッチから debian ディレクトリを作成する場合
+   (簡単になるかもしれません。手作業が増えますが。):</p>
 
 <pre>
    $ mkdir debian
 </pre>
 
-   <p>$BI,MW$J(B debian $B%U%!%$%k$r$9$Y$F:n@.$7!"%=!<%9@)8f$KDI2C$7$F$/$@$5$$!#(B</p>
+   <p>必要な debian ファイルをすべて作成し、ソース制御に追加してください。</p>
 
 <pre>
    $ cvs add debian
@@ -226,197 +226,197 @@ upstream_version_&lt;$B%P!<%8%g%s(B | tr  . _&gt; $B$O(B upstream_version_2_
    $ cvs add *
 </pre>
 
-   <p>$B<!$N%A%'%C%/%$%s$G%U%!%$%k$O$9$Y$F4^$^$l$^$9!#(B</p>
+   <p>次のチェックインでファイルはすべて含まれます。</p>
 
 <pre>
-   $ cd /where/your/source/tree/will/reside/&lt;$B%Q%C%1!<%8(B&gt;
-   $ cvs commit -m &lt;$B%a%C%;!<%8(B&gt;
+   $ cd /where/your/source/tree/will/reside/&lt;パッケージ&gt;
+   $ cvs commit -m &lt;メッセージ&gt;
 </pre>
 </li>
 
-<li>$B%j%j!<%9$N=`Hw(B
+<li>リリースの準備
 
-   <p>$B%Q%C%1!<%8$r%S%k%I$9$k$N$K(B Debian $B%3%^%s%I$r<B9T$9$kA0$K!"(B
-   CVS $B%5%V%G%#%l%/%H%j$r$9$Y$F=|$$$F!"(B
-   $B%b%8%e!<%k$r%A%'%C%/%"%&%H$7$J$1$l$P$J$j$^$;$s!#$3$l$O(B
-   `<kbd>export</kbd>' $B%3%^%s%I$G<B9T$G$-$^$9$,!"(B
-   $B$^$:$9$Y$F$NJQ99$r3JG<$7$F%j%j!<%9HV9f$r$D$1$kI,MW$,$"$j$^$9!#(B</p>
+   <p>パッケージをビルドするのに Debian コマンドを実行する前に、
+   CVS サブディレクトリをすべて除いて、
+   モジュールをチェックアウトしなければなりません。これは
+   `<kbd>export</kbd>' コマンドで実行できますが、
+   まずすべての変更を格納してリリース番号をつける必要があります。</p>
 <pre>
-   $ cvs commit -m &lt;$B%a%C%;!<%8(B&gt;
-   $ cvs tag debian_version_&lt;$B%P!<%8%g%s(B|tr . _&gt;-&lt;debian-revision|tr . _&gt;
+   $ cvs commit -m &lt;メッセージ&gt;
+   $ cvs tag debian_version_&lt;バージョン|tr . _&gt;-&lt;debian-revision|tr . _&gt;
 </pre>
 </li>
 
-<li>$B%j%j!<%9$N:n@.(B
+<li>リリースの作成
 
-   <p>cvs-buildpackage $B5!9=$N;HMQ(B ($B?d>)(B)
-   $B$^$?$O<j:n6H$G%(%/%9%]!<%H$r9T$$$^$9!#$^$:!"(B
-   cvs-buildpackage $B$r%I%i%$%i%s$G(B($B%?%0$,9g$C$F$$$k$3$H$r3NG'$7$F(B)
-   $B<!$N$h$&$K<B9T$7$F%F%9%H$7$^$9(B
-   (/etc/cvsdeb.conf $B$r@_Dj$7$F$$$k$3$H$,A0Ds$G$9(B):</p>
+   <p>cvs-buildpackage 機構の使用 (推奨)
+   または手作業でエクスポートを行います。まず、
+   cvs-buildpackage をドライランで(タグが合っていることを確認して)
+   次のように実行してテストします
+   (/etc/cvsdeb.conf を設定していることが前提です):</p>
 
 <pre>
    $ cvs-buildpackage -d -n -rsudo
 </pre>
 
-   <p>$B$=$7$F<B:]$K<B9T$7$^$9!#(Broot $B$K$J$l$k$N$G$"$l$P!"(Bsudo $B$J$7$G<B9T$G$-$^$9!#(B</p>
+   <p>そして実際に実行します。root になれるのであれば、sudo なしで実行できます。</p>
 
 <pre>
    $ cvs-buildpackage -rsudo
 </pre>
 
-   <p>$B<j:n6H$G$9$Y$F9T$&>l9g(B:</p>
+   <p>手作業ですべて行う場合:</p>
 
-   <p>$B%Q%C%1!<%8$N%A%'%C%/%"%&%H(B</p>
+   <p>パッケージのチェックアウト</p>
 
 <pre>
-   $ cvs export -d &lt;$B%Q%C%1!<%8(B&gt;-&lt;$B%P!<%8%g%s(B&gt; \
-         -r debian_version_&lt;$B%P!<%8%g%s(B|tr . _&gt;-&lt;debian-revision|tr . _&gt; \
-             &lt;$B%Q%C%1!<%8(B&gt;
+   $ cvs export -d &lt;パッケージ&gt;-&lt;バージョン&gt; \
+         -r debian_version_&lt;バージョン|tr . _&gt;-&lt;debian-revision|tr . _&gt; \
+             &lt;パッケージ&gt;
 </pre>
 
-   <p>$B$3$l$GIaDL$N%j%j!<%9$N%(%/%9%]!<%H5!9=$rB3$1$k$3$H$,$G$-$^$9!#(B</p>
+   <p>これで普通のリリースのエクスポート機構を続けることができます。</p>
 
 <hr>
 
-   <p>$B=*$o$j$G$9(B!
-   $B$*$a$G$H$&(B!
-   $B%=!<%9%D%j!<>e$G$G$-$k:n6H$,$$$/$i$+$"$j$^$9(B:</p>
+   <p>終わりです!
+   おめでとう!
+   ソースツリー上でできる作業がいくらかあります:</p>
 <hr>
 
-<li>$B%U%!%$%k$N:o=|!"%j%M!<%`(B
+<li>ファイルの削除、リネーム
 
-   <p>$B%U%!%$%k$r0\F0$9$kIaDL$NJ}K!$O(B OLD $B$r(B NEW $B$K%3%T!<$7!"(B
-   $B$=$l$+$iIaDL$N(B CVS $B%3%^%s%I$G%j%]%8%H%j$+$i(B OLD $B$r:o=|!"$=$7$F(B
-   NEW $B$rDI2C$7$^$9(B (OLD $B5Z$S(B NEW $B$O$H$b$KAjBP%Q%9!"Nc$($P(B
-   `<kbd>foo/bar.c</kbd>' $B$r4^$a$k$3$H$,$G$-$^$9(B)$B!#(B
+   <p>ファイルを移動する普通の方法は OLD を NEW にコピーし、
+   それから普通の CVS コマンドでリポジトリから OLD を削除、そして
+   NEW を追加します (OLD 及び NEW はともに相対パス、例えば
+   `<kbd>foo/bar.c</kbd>' を含めることができます)。
 
 <pre>
    $ mv OLD NEW
    $ cvs remove OLD
    $ cvs add NEW
-   $ cvs commit -m "OLD $B$+$i(B NEW $B$K%j%M!<%`(B" OLD NEW
+   $ cvs commit -m "OLD から NEW にリネーム" OLD NEW
 </pre>
 
-   <p>$B$3$l$O:G$b4JC1$J%U%!%$%k$N0\F0J}K!$G!"4V0c$($K$/$/!"(B
-   $B$=$l$^$G$NMzNr$OJ]B8$5$l$^$9!#(B
-   $B%U%!%$%k$NMzNr$K%"%/%;%9$9$k>l9g!"(B
-   $BMzNr$N$I$NItJ,$K%"%/%;%9$9$k$N$+$K$h$j!"(B
-   $B?75l$I$A$i$+$NL>A0$r;XDj$7$J$1$l$P$J$i$J$$$3$H$KCm0U$7$F$/$@$5$$!#(B
-   $BNc$($P(B `<kbd>cvs log OLD</kbd>' $B$G$O%j%M!<%`$^$G$N%m%0$r<hF@$7$^$9!#(B</p>
+   <p>これは最も簡単なファイルの移動方法で、間違えにくく、
+   それまでの履歴は保存されます。
+   ファイルの履歴にアクセスする場合、
+   履歴のどの部分にアクセスするのかにより、
+   新旧どちらかの名前を指定しなければならないことに注意してください。
+   例えば `<kbd>cvs log OLD</kbd>' ではリネームまでのログを取得します。</p>
 
 </li>
 
-<li>$B%$%s%]!<%H%3%^%s%I$K$h$k%b%8%e!<%k$N99?7(B
+<li>インポートコマンドによるモジュールの更新
 
-   <p>$B?7$7$$%j%j!<%9$N%=!<%9$,F~<j$G$-$?$i!"$^$:Bh0l$K!"(B
-   $B%j%]%8%H%j$r@_Dj$7$?$H$-$HF1MM$K(B `import'
-   $B%3%^%s%I$K$h$j%j%]%8%H%j$K%$%s%]!<%H$7$^$9!#(B
-   $B%j%j!<%9%?%0$NL>A0$H%a%C%;!<%8$,0[$J$k$@$1$G$9!#(B</p>
+   <p>新しいリリースのソースが入手できたら、まず第一に、
+   リポジトリを設定したときと同様に `import'
+   コマンドによりリポジトリにインポートします。
+   リリースタグの名前とメッセージが異なるだけです。</p>
 
 <pre>
    $ cd /where/your/source/tree/will/reside/&lt;new source directory&gt;
-   $ cvs import -m 'Import new release' debian/&lt;$B%Q%C%1!<%8(B&gt; source-dist \
-         upstream_version_&lt;$B%P!<%8%g%s(B|tr . _&gt;
+   $ cvs import -m 'Import new release' debian/&lt;パッケージ&gt; source-dist \
+         upstream_version_&lt;バージョン|tr . _&gt;
 </pre>
 
-   <p>$B$3$3$G!"?7$7$$2~D{$K2C$($?JQ99$rAH$_9~$^$J$1$l$P$J$j$^$;$s!#(B
-   $B:G$b$h$$J}K!$O:n6H%3%T!<$r0\F0$7(B ($B5lHG$N>eN.%=!<%9$K4p$E$$$F(B)$B!"(B
-   $B%Q%C%1!<%8$N?7$7$$%3%T!<$r%A%'%C%/%"%&%H$7$F>eN.%=!<%9$G$NJQ99$r(B
-   <b>$BAH$_9~$`(B</b>$BJ}K!$G$9!#J}K!$r<($7$^$9(B:</p>
+   <p>ここで、新しい改訂に加えた変更を組み込まなければなりません。
+   最もよい方法は作業コピーを移動し (旧版の上流ソースに基づいて)、
+   パッケージの新しいコピーをチェックアウトして上流ソースでの変更を
+   <b>組み込む</b>方法です。方法を示します:</p>
 
 <pre>
    $ cd /where/your/source/tree/will/reside
-   $ mv &lt;$B%Q%C%1!<%8(B&gt; &lt;$B%Q%C%1!<%8(B&gt;.old
-   $ cvs checkout -jsource-dist:yesterday -jsource-dist &lt;$B%Q%C%1!<%8(B&gt;
-   $ cd /where/your/source/tree/will/reside/&lt;$B%Q%C%1!<%8(B&gt;
+   $ mv &lt;パッケージ&gt; &lt;パッケージ&gt;.old
+   $ cvs checkout -jsource-dist:yesterday -jsource-dist &lt;パッケージ&gt;
+   $ cd /where/your/source/tree/will/reside/&lt;パッケージ&gt;
 </pre>
 
-   <p>$B>e$N%3%^%s%I$O!"(B&lt;$B%Q%C%1!<%8(B&gt; $B$N:G?7HG$r%A%'%C%/%"%&%H$7!"(B
-   $B%Y%s%@%V%i%s%A(B `source-dist'
-   $B$KBP$7$FA0F|0J9_$K2C$($i$l$?JQ99$r:n6H%3%T!<$K%^!<%8$7$^$9!#(B
-   $B%^!<%8$N:]$K>WFM$,$"$C$?>l9g$OIaDL$NJ}K!$GBP=h$7$^$9!#(B
-   $B$=$l$+$i!"JQ99$7$?%U%!%$%k$r3JG<$7$^$9!#(B</p>
+   <p>上のコマンドは、&lt;パッケージ&gt; の最新版をチェックアウトし、
+   ベンダブランチ `source-dist'
+   に対して前日以降に加えられた変更を作業コピーにマージします。
+   マージの際に衝突があった場合は普通の方法で対処します。
+   それから、変更したファイルを格納します。</p>
 
-   <p>$B>e$GDs0F$7$F$$$kF|IU$N;HMQ$O!"F1$8F|$KF10l@=IJ$NJ#?t$N%j%j!<%9$r(B
-   $B%$%s%]!<%H$9$k$3$H$O$J$$$b$N$H2>Dj$7$F$$$^$9!#(B
-   $B$=$&$G$J$$>l9g!"<!$N$h$&$JJ}K!$,>o$K;H$($^$9(B:</p>
+   <p>上で提案している日付の使用は、同じ日に同一製品の複数のリリースを
+   インポートすることはないものと仮定しています。
+   そうでない場合、次のような方法が常に使えます:</p>
 
 <pre>
    $ cvs checkout -jupstream_version_&lt;oldversion|tr . _&gt; \
-                  -jupstream_version_&lt;newversion|tr . _&gt; &lt;$B%Q%C%1!<%8(B&gt;
+                  -jupstream_version_&lt;newversion|tr . _&gt; &lt;パッケージ&gt;
 </pre>
 
-   <p>$B$3$N>l9g!">e5-$NFs$D$N%3%^%s%I$OEy2A$G$9!#(B</p>
+   <p>この場合、上記の二つのコマンドは等価です。</p>
 
-   <p>$B%m!<%+%k$GJQ99$5$l$F$$$J$$%U%!%$%k$N?7$7$/:n@.$5$l$?2~D{$O(B
-   head $B%j%S%8%g%s$K$J$j$^$9!#(B</p>
+   <p>ローカルで変更されていないファイルの新しく作成された改訂は
+   head リビジョンになります。</p>
 
-   <p>$B$J$N$G!"%U%!%$%k$,$9$Y$F@5$7$/99?7$5$l$F$$$k$+3NG'$7$F$/$@$5$$!#(B
-   $BFC$K!"(Bdebian/changelog $B%U%!%$%k$rJQ99$9$k$N$rK:$l$J$$$G$/$@$5$$(B!</p>
+   <p>なので、ファイルがすべて正しく更新されているか確認してください。
+   特に、debian/changelog ファイルを変更するのを忘れないでください!</p>
 
-   <p>$BLdBj$J$1$l$P!":n6H%G%#%l%/%H%j$N8E$$%P!<%8%g%s$O:o=|$7$F$b$+$^$$$^$;$s!#(B
-   $B:o=|$9$k%G%#%l%/%H%j$r@dBP$K4V0c$($J$$$h$&$K$7$F$/$@$5$$(B!</p>
+   <p>問題なければ、作業ディレクトリの古いバージョンは削除してもかまいません。
+   削除するディレクトリを絶対に間違えないようにしてください!</p>
 
 <pre>
-   $ rm -rf ../&lt;$B%Q%C%1!<%8(B&gt;.old
+   $ rm -rf ../&lt;パッケージ&gt;.old
 </pre>
 
-   <p>$B$3$l$G!"%j%j!<%9$N=`Hw$,@0$$$^$7$?!#(B</p>
+   <p>これで、リリースの準備が整いました。</p>
 </li>
 
-<li>$B%=!<%9%D%j!<$r:o=|$7$F%G%#%9%/MFNL$r6u$1$k(B
+<li>ソースツリーを削除してディスク容量を空ける
 
-   <p>$B:n6HMQ$N%=!<%9%D%j!<$N:o=|$K$"$?$C$F!"(B<kbd>rm -rf</kbd> $B$G$O$J$/(B
-   CVS $B%3%^%s%I$r;H$C$F<j85$GJQ99$7$F3JG<$7$F$$$J$$$b$N$,$J$$$+!"(B
-   $B3NG'$9$k$3$H$r4+$a$^$9!#(B</p>
+   <p>作業用のソースツリーの削除にあたって、<kbd>rm -rf</kbd> ではなく
+   CVS コマンドを使って手元で変更して格納していないものがないか、
+   確認することを勧めます。</p>
 
 <pre>
    $ cd /where/your/source/tree/will/reside/
-   $ cvs release -d &lt;$B%Q%C%1!<%8(B&gt;
+   $ cvs release -d &lt;パッケージ&gt;
 </pre>
 </li>
 
-<li>$BMQ8l(B
+<li>用語
 <pre>
-   $B%?%0(B         $BFCDj$N%j%S%8%g%s$KIU$1$k>]D'E*$JL>A0(B
-   $B%j%]%8%H%j(B   $B%=!<%9%U%!%$%k$N%"!<%+%$%V(B
+   タグ         特定のリビジョンに付ける象徴的な名前
+   リポジトリ   ソースファイルのアーカイブ
 </pre>
 </li>
 
-<li>$BIUO?(B:
+<li>付録:
 
-   <p>A: CVS $B%?%0$N47Nc(B</p>
+   <p>A: CVS タグの慣例</p>
 
 <pre>
  |=========================================================================================|
- |$B>eN.%P!<%8%g%s(B      | &lt;$B%P!<%8%g%s(B&gt;                                                 |
- |Debian $B2~D{(B         | &lt;$B2~D{(B&gt;                                                       |
- |Orig tar $B%U%!%$%kL>(B | package_&lt;$B%P!<%8%g%s(B&gt;.orig.tar.gz                             |
- |Debian $B%Q%C%1!<%8L>(B | package_&lt;$B%P!<%8%g%s(B&gt;-&lt;$B2~D{(B&gt;_&lt;$B%"!<%-%F%/%A%c(B&gt;.deb |
- |CVS $B%Y%s%@%?%0(B      | upstream_version_&lt;$B%P!<%8%g%s(B  | tr . _&gt;                      |
- |CVS $B8=9T%?%0(B        | debian_version_&lt;$B2~D{(B | tr . _&gt;                               |
+ |上流バージョン      | &lt;バージョン&gt;                                                 |
+ |Debian 改訂         | &lt;改訂&gt;                                                       |
+ |Orig tar ファイル名 | package_&lt;バージョン&gt;.orig.tar.gz                             |
+ |Debian パッケージ名 | package_&lt;バージョン&gt;-&lt;改訂&gt;_&lt;アーキテクチャ&gt;.deb |
+ |CVS ベンダタグ      | upstream_version_&lt;バージョン  | tr . _&gt;                      |
+ |CVS 現行タグ        | debian_version_&lt;改訂 | tr . _&gt;                               |
  |=========================================================================================|
 </pre>
 
-   <p>$BNc(B:</p>
+   <p>例:</p>
 <pre>
  |======================================================================|
- |                    | $B>eN.%=!<%9(B             | Debian $BFH<+%Q%C%1!<%8(B  |
+ |                    | 上流ソース             | Debian 独自パッケージ  |
  |======================================================================|
- |$B>eN.%P!<%8%g%s(B      | 2.76                   | 3.38                   |
- |Debian $B2~D{(B         | 1.2                    |                        |
- |Orig tar $B%U%!%$%kL>(B | make_2.76.orig.tar.gz  |                        |
- |Debian $B%Q%C%1!<%8L>(B | make_2.76-1.2_i386.deb | kpkg_3.38_i386.deb     |
- |CVS $B%Y%s%@%?%0(B      | upstream_version_2_76  | upstream_version_3_38  |
- |CVS $B8=9T%?%0(B        | debian_version_2_76-1_2| debian_version_3_38    |
+ |上流バージョン      | 2.76                   | 3.38                   |
+ |Debian 改訂         | 1.2                    |                        |
+ |Orig tar ファイル名 | make_2.76.orig.tar.gz  |                        |
+ |Debian パッケージ名 | make_2.76-1.2_i386.deb | kpkg_3.38_i386.deb     |
+ |CVS ベンダタグ      | upstream_version_2_76  | upstream_version_3_38  |
+ |CVS 現行タグ        | debian_version_2_76-1_2| debian_version_3_38    |
  |======================================================================|
 </pre>
 
-   <p>CVS $B%?%0L>$N7hDj$K$"$?$C$F!"%(%]%C%/?t$OL5;k$5$l$k$3$H$KCm0U$7$F$/$@$5$$(B
-   ($B$3$l$O0lHL$K(B dpkg
-   $B$,H=CG$9$k%Q%C%1!<%8$N=g=x$rJQ99$9$k$N$K;HMQ$5$l!"DL>o(B CVS
-   $B%?%0$H$7$FE,@Z$G$O$"$j$^$;$s(B)$B!#(B</p>
+   <p>CVS タグ名の決定にあたって、エポック数は無視されることに注意してください
+   (これは一般に dpkg
+   が判断するパッケージの順序を変更するのに使用され、通常 CVS
+   タグとして適切ではありません)。</p>
 
 </li>
 </ol>

@@ -1,25 +1,25 @@
-<define-tag moreinfo>$B8=:_Fs$D$N%P%0$,(B GnuPG $B$KH/8+$5$l$F$$$^$9(B:
+<define-tag moreinfo>現在二つのバグが GnuPG に発見されています:
 
 <ol>
-<li>$BJ,N%$5$l$?=pL>$N@5Ev@-$r3NG'$9$k$H$-$K8m$C$F@5Ev$G$"$k$H<($9(B
+<li>分離された署名の正当性を確認するときに誤って正当であると示す
 
-<p>gpg $B$,J,N%$5$l$?=pL>$N@5Ev@-$r3NG'$9$k$H$-$K!"8m$C$F@5Ev$G$"$k$H<($9J}K!$,$"$j$^$9!#$=$l$O!"J,N%$5$l$?=pL>$,0J2<$N$h$&$J%3%^%s%I$G3NG'$5$l$k$H$-$G$9(B: <code>gpg --verify detached.sig &lt; mydata</code>
+<p>gpg が分離された署名の正当性を確認するときに、誤って正当であると示す方法があります。それは、分離された署名が以下のようなコマンドで確認されるときです: <code>gpg --verify detached.sig &lt; mydata</code>
 
-<p>$B$b$7!"C/$+$,(B detached.sig $B$r=pL>$5$l$?J8>O(B ($BJ,N%$5$l$?=pL>$G$O$J$/(B) $B$KCV$-49$($k$H!"(B mydata $B$,JQ99$5$l$F$b!"(B gpg $B$OCV$-49$(A0$HF1MM$K=pL>$N3NG'$,@.8y$7$?$HJs9p$7$^$9!#(B
+<p>もし、誰かが detached.sig を署名された文章 (分離された署名ではなく) に置き換えると、 mydata が変更されても、 gpg は置き換え前と同様に署名の確認が成功したと報告します。
 
-<p>$B$3$NLdBj$r=$@5$9$k$?$a$K!"(B --verify $B%*%W%7%g%s$,$I$N$h$&$KF/$/$+$,JQ99$5$l$^$7$?(B: $B8=:_$G$OJ,N%$5$l$?=pL>$r3NG'$9$k$N$K(B 2 $B$D$N%*%W%7%g%s$,I,MW$G$9(B: $BJRJ}$OJ,N%$5$l$?=pL>%U%!%$%k$G!"$b$&(B 1 $B$D$O3NG'$5$l$k%G!<%?$,F~$C$?%U%!%$%k$G$9!#$3$NJQ99$,2a5n$N%P!<%8%g%s$H$N8_49@-$r<:$o$;$k$3$H$KCm0U$7$F$/$@$5$$!#(B
+<p>この問題を修正するために、 --verify オプションがどのように働くかが変更されました: 現在では分離された署名を確認するのに 2 つのオプションが必要です: 片方は分離された署名ファイルで、もう 1 つは確認されるデータが入ったファイルです。この変更が過去のバージョンとの互換性を失わせることに注意してください。
 
-<li>$BHkL)80$,Js9pL5$7$K<h$j9~$^$l$k(B
+<li>秘密鍵が報告無しに取り込まれる
 
-<p>Florian Weimer $B$,!"(B gpg $B$,HkL)80$r80%5!<%P$+$i<h$j9~$`2DG=@-$,$"$k$3$H$rH/8+(B
-$B$7$^$7$?!#(B gpg $B$,!"8x3+80$r4{CN$N?.MQ$5$l$F$$$kHkL)80$HId9g$9$k$HH=CG$9$k$H!"(B
-$B967b<T$O(B Web $BG'>Z$r2sHr$9$k$3$H$,$G$-$^$9!#(B
+<p>Florian Weimer が、 gpg が秘密鍵を鍵サーバから取り込む可能性があることを発見
+しました。 gpg が、公開鍵を既知の信用されている秘密鍵と符合すると判断すると、
+攻撃者は Web 認証を回避することができます。
 
-<p>$B$3$NLdBj$r=$@5$9$k$?$a$K!"(B gpg $B$KHkL)80$r<h$j9~$`$3$H$r5v2D$9$k?7$7$$%*%W%7(B
-$B%g%s(B --allow-key-import $B$,DI2C$5$l$^$7$?!#(B
+<p>この問題を修正するために、 gpg に秘密鍵を取り込むことを許可する新しいオプシ
+ョン --allow-key-import が追加されました。
 
 </ol></define-tag>
-<define-tag description>$BJ,N%$7$?=pL>$K4X$9$k%P%0!"(B Web $BG'>Z$N2sHr(B</define-tag>
+<define-tag description>分離した署名に関するバグ、 Web 認証の回避</define-tag>
 
 #use wml::debian::translation-check translation="1.4"
 

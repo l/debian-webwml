@@ -1,49 +1,49 @@
-<define-tag description>$BJ#?t$NLdBj(B</define-tag>
+<define-tag description>複数の問題</define-tag>
 <define-tag moreinfo>
-<p>MySQL $B$N4F::Cf$K!"(Be-matters $B$OJ#?t$NLdBj$rH/8+$7$^$7$?(B:</p>
+<p>MySQL の監査中に、e-matters は複数の問題を発見しました:</p>
 
 <dl>
- <dt>COM_TABLE_DUMP $BCf$G$NId9fIU$-(B/$BId9f$J$7@0?t$NLdBj(B
+ <dt>COM_TABLE_DUMP 中での符号付き/符号なし整数の問題
  <dd>
-  $BId9fIU$-@0?t$H$7$FFs<oN`$N%5%$%:$,0z?t$K$H$i$l!"$=$N@0?t$,Ii$N?t$G(B
-$B$"$k$+$I$&$+$N%A%'%C%/$r9T$o$:$KId9f$J$7@0?t$X$N%-%c%9%H$,9T$o$l$F$$$^$7$?!#(B
-$B$3$N7k2L$N?t$,(B memcpy() $B=hM}$G;H$o$l$k$?$a!"%a%b%jGK2u$K$D$J$,$j$^$9!#(B
+  符号付き整数として二種類のサイズが引数にとられ、その整数が負の数で
+あるかどうかのチェックを行わずに符号なし整数へのキャストが行われていました。
+この結果の数が memcpy() 処理で使われるため、メモリ破壊につながります。
 </dd>
 
- <dt>COM_CHANGE_USER $B$G$N%Q%9%o!<%I$ND9$5$N07$$(B
+ <dt>COM_CHANGE_USER でのパスワードの長さの扱い
  <dd>
-  $B0[$J$k%f!<%6$K:]G'>Z$r9T$&:]$K!"(BMySQL $B$O:G=i$NG'>Z$G9T$o$l$?%A%'%C%/(B
-$B$NA4It$r9T$C$F$O$$$^$;$s!#$3$l$K$h$j!"Fs$D$NLdBj$,@8$8$^$7$?(B:
+  異なるユーザに際認証を行う際に、MySQL は最初の認証で行われたチェック
+の全部を行ってはいません。これにより、二つの問題が生じました:
   <ul>
-  <li> $B$3$NLdBj$K$h$j!"0lJ8;z%Q%9%o!<%I$NAmEv$?$j$,2DG=$H$J$j$^$9(B
- ($B:G=i$N%m%0%$%s$N:]$NF1MM$NLdBj$O(B 2002 $BG/(B 2 $B7n$K=$@5$5$l$F$$$^$9(B)$B!#(B
-$B$3$NLdBj$O!"0lHL%f!<%6$,%G!<%?%Y!<%9$N(B root $B8"8B$rF@$k$3$H$,$G$-$^$9(B</li>
-  <li> $B%Q%9%o!<%I%P%C%U%!$r%*!<%P!<%U%m!<$5$;$k$3$H$,$G$-$^$9!#(B
-$B$=$l$K$h$C$F!"%5!<%P$KG$0U$N%3!<%I$r<B9T$5$;$k$3$H$,$G$-$^$9(B</li>
+  <li> この問題により、一文字パスワードの総当たりが可能となります
+ (最初のログインの際の同様の問題は 2002 年 2 月に修正されています)。
+この問題は、一般ユーザがデータベースの root 権限を得ることができます</li>
+  <li> パスワードバッファをオーバーフローさせることができます。
+それによって、サーバに任意のコードを実行させることができます</li>
   </ul></dd>
 
- <dt>libmysqlclient $BCf$N(B read_rows() $B$N%*!<%P!<%U%m!<(B
+ <dt>libmysqlclient 中の read_rows() のオーバーフロー
  <dd>
-SQL $B%5!<%P$+$iJV$5$l$?9T$r=hM}$9$k:]!"Bg$-$9$.$k9T$d(B NUL$B=*N;J8;z$,(B
-$B$"$k$+$I$&$+$N%A%'%C%/$,9T$o$l$F$$$^$;$s$G$7$?!#(B
-$B$3$NLdBj$r0-MQ$9$k$H!"967b$r<u$1$?(B MySQL $B%5!<%P$K@\B3$7$F$$$k(B SQL 
-$B%/%i%$%"%s%H$r967b$9$k$3$H$,$G$-$^$9!#(B
+SQL サーバから返された行を処理する際、大きすぎる行や NUL終了文字が
+あるかどうかのチェックが行われていませんでした。
+この問題を悪用すると、攻撃を受けた MySQL サーバに接続している SQL 
+クライアントを攻撃することができます。
 </dd>
 
- <dt>libmysqlclient $BCf$N(B read_one_row() $B$N%*!<%P!<%U%m!<(B
+ <dt>libmysqlclient 中の read_one_row() のオーバーフロー
  <dd>
-SQL $B%5!<%P$+$iJV$5$l$?9T$r=hM}$9$k:]!"JV$5$l$k%U%#!<%k%I$N%5%$%:(B
-$B$,3NG'$5$l$F$$$^$;$s!#$3$NLdBj$r0-MQ$9$k$H!"967b$r<u$1$?(B MySQL
-$B%5!<%P$K@\B3$7$F$$$k(B SQL $B%/%i%$%"%s%H$r967b$9$k$3$H$,$G$-$^$9!#(B 
+SQL サーバから返された行を処理する際、返されるフィールドのサイズ
+が確認されていません。この問題を悪用すると、攻撃を受けた MySQL
+サーバに接続している SQL クライアントを攻撃することができます。 
 </dd>
 </dl>
 
-<p>$B$3$l$i$NLdBj$O!"(B $B8=0BDjHG(B (stable) Debian GNU/Linux 3.0/woody $B$G$O(B
-$B%P!<%8%g%s(B 3.23.49-8.2 $B$G!"5l0BDjHG(B Debian GNU/Linux 2.2/potato $B$G$O(B
-$B%P!<%8%g%s(B 3.22.32-6.3 $B$G3F!9=$@5$5$l$F$$$^$9!#(B</p>
+<p>これらの問題は、 現安定版 (stable) Debian GNU/Linux 3.0/woody では
+バージョン 3.23.49-8.2 で、旧安定版 Debian GNU/Linux 2.2/potato では
+バージョン 3.22.32-6.3 で各々修正されています。</p>
 
-<p>$B$G$-$k$@$1Aa5^$K(B mysql $B%Q%C%1!<%872$r%"%C%W%0%l!<%I$9$k$3$H$r(B
-$B$*4+$a$7$^$9!#(B</p>
+<p>できるだけ早急に mysql パッケージ群をアップグレードすることを
+お勧めします。</p>
 </define-tag>
 
 #use wml::debian::translation-check translation="1.5"

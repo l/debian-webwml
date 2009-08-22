@@ -1,174 +1,174 @@
-#use wml::debian::template title="autobuilder $B%M%C%H%o!<%/(B" BARETITLE="true"
+#use wml::debian::template title="autobuilder ネットワーク" BARETITLE="true"
 #use wml::debian::translation-check translation="1.18"
 
-<p>autobuilder $B%M%C%H%o!<%/$O!"(B<a href="$(HOME)/ports/">Debian
-$B$,8=:_%5%]!<%H$7$F$$$k(B</a>$B$9$Y$F$N%"!<%-%F%/%A%cMQ$K%Q%C%1!<%8$r:F%3%s%Q%$%k$9$k$N$r2CB.$9$k$N$KLrN)$C$F$$$k(B Debian
-$B3+H/@_Hw$G$9!#$3$N%M%C%H%o!<%/$OJ#?tBf$N%^%7%s$+$i$J$j!"(B<em>buildd</em>
-$B$H$$$&FCDj$N%=%U%H%&%'%"%Q%C%1!<%8$r;HMQ$7$^$9!#(Bbuildd $B$O!"(BDebian
-$B%"!<%+%$%V$+$i%Q%C%1!<%8$r<h$j=P$7$F!"BP>]%"!<%-%F%/%A%c8~$1$K:F%S%k%I$7$^$9!#(B</p>
+<p>autobuilder ネットワークは、<a href="$(HOME)/ports/">Debian
+が現在サポートしている</a>すべてのアーキテクチャ用にパッケージを再コンパイルするのを加速するのに役立っている Debian
+開発設備です。このネットワークは複数台のマシンからなり、<em>buildd</em>
+という特定のソフトウェアパッケージを使用します。buildd は、Debian
+アーカイブからパッケージを取り出して、対象アーキテクチャ向けに再ビルドします。</p>
 
-<h2>autobuilder $B%M%C%H%o!<%/$,I,MW$J$N$O2?8N$G$9$+(B?</h2>
+<h2>autobuilder ネットワークが必要なのは何故ですか?</h2>
 
-<p>Debian $B%G%#%9%H%j%S%e!<%7%g%s$O(B<a
- href="$(HOME)/ports/">$BAjEv?t$N%"!<%-%F%/%A%c(B</a>$B$r%5%]!<%H$7$F$$$^$9$,!"(B
-$B%Q%C%1!<%8%a%s%F%J$,%P%$%J%jHG$r%3%s%Q%$%k$9$k$N$O!"DL>o!"C10l$N%"!<%-%F%/%A%c(B ($BDL>o(B i386)
-$B$@$1$G$9!#B>$N%"!<%-%F%/%A%c$N3+H/<T$,(B Intel
-$B%G%#%9%H%j%S%e!<%7%g%s$KDI=>$7B3$1$?$$>l9g$O!"(B
-$B%Q%C%1!<%8$N?7%P!<%8%g%s$r4F;k$7$F:F%3%s%Q%$%k$9$kI,MW$,$"$j$^$9!#(B</p>
+<p>Debian ディストリビューションは<a
+ href="$(HOME)/ports/">相当数のアーキテクチャ</a>をサポートしていますが、
+パッケージメンテナがバイナリ版をコンパイルするのは、通常、単一のアーキテクチャ (通常 i386)
+だけです。他のアーキテクチャの開発者が Intel
+ディストリビューションに追従し続けたい場合は、
+パッケージの新バージョンを監視して再コンパイルする必要があります。</p>
 
-<p>Debian/m68k ($B:G=i$NHs(B Intel $B0\?"HG(B)
-$B$,3+;O$7$?;~!"$3$l$O$9$Y$F<j:n6H$G9T$o$l$^$7$?!#(B
-$B$D$^$j!"3+H/<T$O%"%C%W%m!<%I%a!<%j%s%0%j%9%H$r8+$F?7$7$$%Q%C%1!<%8$rBT$A!"(B
-$B$=$N$$$/$D$+$r<h$j=P$7$F%S%k%I$7$F$$$^$7$?!#(B
-$BF1$8%Q%C%1!<%8$rJ#?t$N?M!9$,Fs=E$K%S%k%I$7$J$$$h$&$K$9$k$?$a!"(B
-$B%a!<%j%s%0%j%9%H>e$GH/I=$7$FD4@0$7$F$$$^$7$?!#(B
-$BL@$i$+$K!"$3$N<j=g$O4V0c$($d$9$/;~4V$b$+$+$j$9$.$^$9!#(B
-$B$7$+$7!"Hs(B i386 $B%G%#%9%H%j%S%e!<%7%g%s$NJ]<i$N$d$jJ}$H$7$F$O!"(B
-$BD9$$4V$3$l$,DL>o$NJ}K!$G$7$?!#(B</p>
+<p>Debian/m68k (最初の非 Intel 移植版)
+が開始した時、これはすべて手作業で行われました。
+つまり、開発者はアップロードメーリングリストを見て新しいパッケージを待ち、
+そのいくつかを取り出してビルドしていました。
+同じパッケージを複数の人々が二重にビルドしないようにするため、
+メーリングリスト上で発表して調整していました。
+明らかに、この手順は間違えやすく時間もかかりすぎます。
+しかし、非 i386 ディストリビューションの保守のやり方としては、
+長い間これが通常の方法でした。</p>
 
-<p>$B%S%k%I%G!<%b%s%7%9%F%`$O$3$N%W%m%;%9$NBgH>$r<+F02=$7$^$9!#(B
-$B$3$N%7%9%F%`$O%9%/%j%W%H$N%;%C%H(B (Perl $B$H(B Python $B$G=q$+$l$F$$$^$9(B) $B$+$i@.$j!"(B
-$B$=$l$i$N%9%/%j%W%H$O;~4V$H$H$b$K?J2=$7$F!"0\?"<T$NMM!9$J:n6H$r<j=u$1$9$k$h$&$K$J$j$^$7$?!#(B
-$B$=$7$F:G=*E*$K!"Hs(B i386 $B$N(B Debian
-$B%G%#%9%H%j%S%e!<%7%g%s$r$[$\<+F0E*$K:G?7$KJ]$C$F$*$/$3$H$,2DG=$J%7%9%F%`$K?J2=$7$^$7$?!#(B</p>
+<p>ビルドデーモンシステムはこのプロセスの大半を自動化します。
+このシステムはスクリプトのセット (Perl と Python で書かれています) から成り、
+それらのスクリプトは時間とともに進化して、移植者の様々な作業を手助けするようになりました。
+そして最終的に、非 i386 の Debian
+ディストリビューションをほぼ自動的に最新に保っておくことが可能なシステムに進化しました。</p>
 
-<h2>buildd $B$O$I$N$h$&$KF0:n$7$^$9$+(B?</h2>
+<h2>buildd はどのように動作しますか?</h2>
 
-<p><em>buildd</em> $B$O!"DL>o$O(B autobuilder $B%M%C%H%o!<%/$K$h$C$F;H$o$l$k(B
-$B%=%U%H%&%'%"$KM?$($i$l$kL>A0$G$9$,!"<B:]$K$O<!$N$h$&$JMM!9$JItIJ$+$i$G$-$F$$$^$9!#(B</p>
+<p><em>buildd</em> は、通常は autobuilder ネットワークによって使われる
+ソフトウェアに与えられる名前ですが、実際には次のような様々な部品からできています。</p>
 
 <dl>
 
 <dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">wanna-build</a></dt>
 <dd>
-$B%Q%C%1!<%8$*$h$S$=$N>uBV$N%j%9%H$rJ];}$9$k%G!<%?%Y!<%9$H6(D4$7$F!"(B
-$B%Q%C%1!<%8$N(B ($B:F(B) $B%S%k%I$ND4@0$rJd=u$9$k%D!<%k$G$9!#(B
-$B%"!<%-%F%/%A%c$4$H$KCf1{%G!<%?%Y!<%9$,$"$j!"(B
-$B%Q%C%1!<%8$N>uBV$d%P!<%8%g%s!"$=$NB>$N>pJs$rJ]B8$7$^$9!#(B
+パッケージおよびその状態のリストを保持するデータベースと協調して、
+パッケージの (再) ビルドの調整を補助するツールです。
+アーキテクチャごとに中央データベースがあり、
+パッケージの状態やバージョン、その他の情報を保存します。
 </dd>
 
 <dt><a href="http://svn.cyberhqz.com/svn/wanna-build/">buildd</a></dt>
 <dd>
-<em>wanna-build</em> $B$K$h$j4IM}$5$l$k%G!<%?%Y!<%9$rDj4|E*$K%A%'%C%/$7!"(B
-<em>sbuild</em> $B$r8F$S=P$7$F%Q%C%1!<%8$r%S%k%I$9$k%G!<%b%s$G$9!#(B
-$B%S%k%I$N<:GT$d@.8y$rDI@W$7!"(B
-$B%S%k%I%m%0$r4IM}<T$,>5G'$9$l$P%Q%C%1!<%8$N%"%C%W%m!<%I$b9T$$$^$9!#(B
+<em>wanna-build</em> により管理されるデータベースを定期的にチェックし、
+<em>sbuild</em> を呼び出してパッケージをビルドするデーモンです。
+ビルドの失敗や成功を追跡し、
+ビルドログを管理者が承認すればパッケージのアップロードも行います。
 </dd>
 
 <dt><a href="http://packages.debian.org/sbuild">sbuild</a></dt>
 <dd>
-$B3VN%$5$l$?(B chroot $B$K$*$1$k%Q%C%1!<%8$N<B:]$N%3%s%Q%$%k$rC4Ev$7$^$9!#(B
-$B<g$KI8=`$N(B Debian $B%D!<%k$r;H$$$^$9$,!"(B
-$B%=!<%9$N0MB84X78$d$=$NB>$NM=B,ITG=$J7ZHy$J=PMh;v$K$bBP1~$7$^$9!#(B
+隔離された chroot におけるパッケージの実際のコンパイルを担当します。
+主に標準の Debian ツールを使いますが、
+ソースの依存関係やその他の予測不能な軽微な出来事にも対応します。
 </dd>
 
 <dt><a href="http://packages.debian.org/quinn-diff">quinn-diff</a></dt>
 <dd>
-$B?7$7$$%Q%C%1!<%8$r(B wanna-build $B%G!<%?%Y!<%9$KAw$j$^$9!#(B
-$B?7$?$KMxMQ2DG=$K$J$C$?$=$N%Q%C%1!<%8%P!<%8%g%s$r(B 2 $B$D$N%"!<%-%F%/%A%c$GHf3S$7!"(B
-(Sources $B%U%!%$%k$d(B Packages $B%U%!%$%k$rHf3S$7$F(B) $B0c$$$r=PNO$7$^$9!#(Bquinn-diff
-$B$K$D$$$F$N$5$i$K>\$7$$>pJs$O(B<a
- href="http://buildd.debian.org/quinn-diff/">$B$3$3(B</a>$B$GF~<j2DG=$G$9!#(B
+新しいパッケージを wanna-build データベースに送ります。
+新たに利用可能になったそのパッケージバージョンを 2 つのアーキテクチャで比較し、
+(Sources ファイルや Packages ファイルを比較して) 違いを出力します。quinn-diff
+についてのさらに詳しい情報は<a
+ href="http://buildd.debian.org/quinn-diff/">ここ</a>で入手可能です。
 </dd>
 
 <dt>andrea</dt>
 <dd>
-$B%=!<%9$N0MB84X78$r<+F0E*$K$$$/$D$+@8@.$7!"(B
-$B$=$N%G!<%?$r<j:n6H$GDI2C$5$l$?0MB84X78$H%^!<%8$9$k%D!<%k$G$9!#(B
+ソースの依存関係を自動的にいくつか生成し、
+そのデータを手作業で追加された依存関係とマージするツールです。
 </dd>
 
 </dl>
 
-<p>$B$3$l$i$NItIJ$9$Y$F$N(B<a href="operation">$B6(D4:n6H(B</a>$B$K$h$C$F!"(B
-builder $B%M%C%H%o!<%/$,F0:n$7$^$9!#(B</p>
+<p>これらの部品すべての<a href="operation">協調作業</a>によって、
+builder ネットワークが動作します。</p>
 
-<h2>Debian $B3+H/<T$O!"2?$r$9$kI,MW$,$"$j$^$9$+(B?</h2>
+<h2>Debian 開発者は、何をする必要がありますか?</h2>
 
-<p>$B<B:]$N$H$3$m!"J?6QE*$J(B Debian $B3+H/<T$OL@<(E*$K(B buildd
-$B%M%C%H%o!<%/$r;H$&I,MW$O$"$j$^$;$s!#(B
-($BG$0U$N%"!<%-%F%/%A%c$K%P%$%J%j%3%s%Q%$%k$5$l$?(B)
-$B%Q%C%1!<%8$r%"!<%+%$%V$K%"%C%W%m!<%I$9$l$P!">o$K$=$N%Q%C%1!<%8$O(B (<em>Needs-Build</em>
-$B$H$$$&>uBV$G(B) $BA4%"!<%-%F%/%A%c$N%G!<%?%Y!<%9$KDI2C$5$l$^$9!#(B
-$B%S%k%I%^%7%s$O%Q%C%1!<%8$N$3$N>uBV$r%S%k%I%G!<%?%Y!<%9$KLd$$9g$o$;!"(B
-$B$=$N%j%9%H$+$iDj4|E*$K%Q%C%1!<%8$r>C$7$F$$$-$^$9!#(B
-$B$3$N%j%9%H$OA0$N%3%s%Q%$%k>uBV!"M%@hEY!"%;%/%7%g%s!"(B
-$B$=$7$F:G8e$K%Q%C%1!<%8L>$K$h$C$FM%@hEY$rIU$1$i$l$^$9!#(B</p>
+<p>実際のところ、平均的な Debian 開発者は明示的に buildd
+ネットワークを使う必要はありません。
+(任意のアーキテクチャにバイナリコンパイルされた)
+パッケージをアーカイブにアップロードすれば、常にそのパッケージは (<em>Needs-Build</em>
+という状態で) 全アーキテクチャのデータベースに追加されます。
+ビルドマシンはパッケージのこの状態をビルドデータベースに問い合わせ、
+そのリストから定期的にパッケージを消していきます。
+このリストは前のコンパイル状態、優先度、セクション、
+そして最後にパッケージ名によって優先度を付けられます。</p>
 
-<p>$B%S%k%I$,A4%"!<%-%F%/%A%c$G@.8y$9$l$P!"4IM}<T$O2?$b$9$kI,MW$,$"$j$^$;$s!#(B
-$B$=$l$i$N%P%$%J%j$N%Q%C%1!<%8$O$9$Y$F!"(B
-$B3F%"!<%-%F%/%A%c$N%a%$%s$N%5%$%H$K%"%C%W%m!<%I$5$l$^$9!#(B
-$B%S%k%I$,@.8y$7$J$+$C$?>l9g!"%Q%C%1!<%8$OFCJL$J>uBV(B (<em>Failed</em>$B!"(B
-$B$"$k$$$OFCDj$NF~<jIT2DG=$J%S%k%I0MB8>uBV$K0MB8$7$F$$$k>l9g$O(B
-<em>Dep-Wait</em>) $B$KF~$j$^$9!#(Bautobuilder
-$B4IM}<T$O%S%k%I$K<:GT$7$?%Q%C%1!<%8$r%l%S%e!<$7$F!"(B
-$BDL>o$O%P%0DI@W%7%9%F%`$K%P%0Js9p$H$$$&7A$G%a%s%F%J$KJs9p$7$^$9!#(B</p>
+<p>ビルドが全アーキテクチャで成功すれば、管理者は何もする必要がありません。
+それらのバイナリのパッケージはすべて、
+各アーキテクチャのメインのサイトにアップロードされます。
+ビルドが成功しなかった場合、パッケージは特別な状態 (<em>Failed</em>、
+あるいは特定の入手不可能なビルド依存状態に依存している場合は
+<em>Dep-Wait</em>) に入ります。autobuilder
+管理者はビルドに失敗したパッケージをレビューして、
+通常はバグ追跡システムにバグ報告という形でメンテナに報告します。</p>
 
-<p>$B;~!9!"%Q%C%1!<%8$,FCDj$N%"!<%-%F%/%A%c$G$N%S%k%I$KD9$$;~4V$,$+$+$j!"(B
-$B$=$N$3$H$G%Q%C%1!<%8$,(B<a href="$(HOME)/devel/testing">$B%F%9%HHG(B (testing)</a>
-$B$KF~$k$N$rCY$i$;$k$3$H$K$J$j$^$9!#(B
-$B;DG0$J$,$i%Q%C%1!<%8$,%^%7%s$K<h$j>e$2$i$l$k$^$GBT$DI,MW$,$"$k$G$7$g$&!#(B
-$B4{$KM%@hEY%j%9%H$,$"$k$N$G!"(BBuildd
-$B4IM}<T$,%Q%C%1!<%8$N%S%k%I$rAa$/$9$kMW5a$r<u$1F~$l$k$3$H$O$J$$$G$7$g$&!#(B</p>
+<p>時々、パッケージが特定のアーキテクチャでのビルドに長い時間がかかり、
+そのことでパッケージが<a href="$(HOME)/devel/testing">テスト版 (testing)</a>
+に入るのを遅らせることになります。
+残念ながらパッケージがマシンに取り上げられるまで待つ必要があるでしょう。
+既に優先度リストがあるので、Buildd
+管理者がパッケージのビルドを早くする要求を受け入れることはないでしょう。</p>
 
 <p><a href="http://buildd.debian.org/bymaint.php">buildd
-$B%m%0(B</a>$B$r3NG'$9$k$3$H$G!"G$0U$N%a%s%F%J$KB0$7$F$$$k%Q%C%1!<%8$N!"J#?t$N(B buildd
-$B$G$NF0:n>uBV$r%A%'%C%/$9$k$3$H$,$G$-$^$9!#(B
-$B$3$l$i$N%m%0$O%Q%C%1!<%8$N%a%s%F%J354Q$+$i$b%j%s%/$5$l$F$$$^$9!#(B</p>
+ログ</a>を確認することで、任意のメンテナに属しているパッケージの、複数の buildd
+での動作状態をチェックすることができます。
+これらのログはパッケージのメンテナ概観からもリンクされています。</p>
 
-<p>$B%Q%C%1!<%8$,<h$j$&$k$=$NB>$N>uBV$K$D$$$F$5$i$KCN$j$?$$>l9g$O!"(B<a
- href="wanna-build-states">wanna-build-states</a> $B$rFI$s$G$/$@$5$$!#(B</p>
+<p>パッケージが取りうるその他の状態についてさらに知りたい場合は、<a
+ href="wanna-build-states">wanna-build-states</a> を読んでください。</p>
 
-<h2>$B$5$i$K>\$7$$>pJs$O$I$3$G8+$D$1$i$l$^$9$+(B?</h2>
+<h2>さらに詳しい情報はどこで見つけられますか?</h2>
 
-<p>$BEvA3$G$9$,!"(Bbuildd $B%M%C%H%o!<%/$,$I$N$h$&$KF/$/$+D4$Y$k$K$O!"(B
-$B$3$&$$$C$?MM!9$J%D!<%k$K4X$9$kJ8=q$d%=!<%9%3!<%I$r$"$?$C$F$_$k$N$,:GA1$G$9!#(B
-$B$5$i$K!"(B<a href="$(HOME)/doc/manuals/developers-reference/">Debian
-$B%G%Y%m%C%Q!<%:%j%U%!%l%s%9(B</a>$B$N(B <a
+<p>当然ですが、buildd ネットワークがどのように働くか調べるには、
+こういった様々なツールに関する文書やソースコードをあたってみるのが最善です。
+さらに、<a href="$(HOME)/doc/manuals/developers-reference/">Debian
+デベロッパーズリファレンス</a>の <a
  href="$(HOME)/doc/manuals/developers-reference/pkgs#porting"
  >Porting and being ported</a>
-$B@a$K!"$3$l$,$I$N$h$&$KF/$/$+$K$D$$$FJd40$9$k>pJs!"$^$?!"(B<a
+節に、これがどのように働くかについて補完する情報、また、<a
  href="$(HOME)/doc/manuals/developers-reference/tools#tools-builders"
- >package builders</a> $B5Z$S(B <a
+ >package builders</a> 及び <a
  href="$(HOME)/doc/manuals/developers-reference/tools#tools-porting"
- >porting tools</a> $B$K$b!"(Bbuildd
-$B%M%C%H%o!<%/$N@_Dj!"J]<iAPJ}$N2aDx$K4X$9$k>pJs$,$"$j$^$9!#(B</p>
+ >porting tools</a> にも、buildd
+ネットワークの設定、保守双方の過程に関する情報があります。</p>
 
-<p><a href="http://buildd.debian.org/stats/">buildd $BE}7W$N%Z!<%8(B</a>$B$K(B
-autobuilder $B%M%C%H%o!<%/$GMxMQ2DG=$JE}7W$,$$$/$D$+$"$j$^$9!#(B</p>
+<p><a href="http://buildd.debian.org/stats/">buildd 統計のページ</a>に
+autobuilder ネットワークで利用可能な統計がいくつかあります。</p>
 
-<h2>$B<+J,$N(B auto-builder $B%N!<%I$N@_Dj$O$I$N$h$&$K$7$?$i$$$$$G$9$+(B?</h2>
+<h2>自分の auto-builder ノードの設定はどのようにしたらいいですか?</h2>
 
-<p>$B3+H/<T(B ($B$^$?$O%f!<%6(B) $B$,(B autobuilder
-$B$r@_Dj!"<B9T$9$k$3$H$NMxE@$,$$$/$D$+$"$j$^$9(B:</p>
+<p>開発者 (またはユーザ) が autobuilder
+を設定、実行することの利点がいくつかあります:</p>
 
 <ul>
-<li>$B%Q%C%1!<%8$N(B <tt>Build-Depends</tt> $BE,@Z$KDj5A$5$l$F$$$k$+(B
-($B$D$^$j!"(Bautobuilder
-$B4D6-$G%Q%C%1!<%8$r%3%s%Q%$%k$9$k$3$H$K$h$j(B)$B!"%m!<%+%k$G%F%9%H$9$k(B</li>
-<li>$BG$0U$N%"!<%-%F%/%A%c$X$N0\?"HG$N3+H/Jd=u(B (autobuilder $B$,I,MW$J>l9g(B)</li>
-<li>$B%Q%C%1!<%8$NB?$/$NItJ,$r:F%3%s%Q%$%k$9$k$3$H$K$h$C$F(B
-$BG$0U$N%3%s%Q%$%i:GE,2=$d%Q%C%A$N1F6A$rI>2A(B</li>
-<li>$B%Q%C%1!<%8$rJ,@O$7$F4{CN$N8m$j$rH/8+$9$k%D!<%k$G!"(B
-$B%3%s%Q%$%k:Q$_%Q%C%1!<%8Cf$G<B9T$5$l$kI,MW$,$"$k$b$N$r<B9T$9$k$?$a!#(B
-$B$3$l$O%=!<%9%3!<%I$NJ,@O$r$9$k>l9g$K!"Nc$($P(B <tt>dpatch</tt>
-$B$r;H$&%Q%C%1!<%8$KBP=h$9$k<jCJ$H$7$FI,MW$K$J$k$3$H$b$"$j$^$9!#(B</li>
+<li>パッケージの <tt>Build-Depends</tt> 適切に定義されているか
+(つまり、autobuilder
+環境でパッケージをコンパイルすることにより)、ローカルでテストする</li>
+<li>任意のアーキテクチャへの移植版の開発補助 (autobuilder が必要な場合)</li>
+<li>パッケージの多くの部分を再コンパイルすることによって
+任意のコンパイラ最適化やパッチの影響を評価</li>
+<li>パッケージを分析して既知の誤りを発見するツールで、
+コンパイル済みパッケージ中で実行される必要があるものを実行するため。
+これはソースコードの分析をする場合に、例えば <tt>dpatch</tt>
+を使うパッケージに対処する手段として必要になることもあります。</li>
 </ul>
 
-<p><a href="setting-up">autobuilder $B$N@_Dj(B</a>$B$K>\:Y$,$"$j$^$9!#(B</p>
+<p><a href="setting-up">autobuilder の設定</a>に詳細があります。</p>
 
-<h2>buildd $B4IM}<T$X$NO"MmJ}K!(B</h2>
+<h2>buildd 管理者への連絡方法</h2>
 
-<p>$B8DJL$N%"!<%-%F%/%A%c$N(B buildd $B$NC4Ev4IM}<T$K$O!"(B
-$B$?$H$($P(B <email
-i386@buildd.debian.org> $B$N$h$&$K(B
-<email arch@buildd.debian.org> $B$GFO$-$^$9!#(B</p>
+<p>個別のアーキテクチャの buildd の担当管理者には、
+たとえば <email
+i386@buildd.debian.org> のように
+<email arch@buildd.debian.org> で届きます。</p>
 
-<p>$B8DJL$N(B buildd $B4IM}<T$NL>A0$O!"(B
-<a href="http://www.buildd.net/">www.buildd.net</a> $B$G3NG'$G$-$^$9!#(B
-$BMxMQ2DG=$J(B buildd $B$H$=$N4IM}<T$r8+$k$K$O!"%"!<%-%F%/%A%c$H%G%#%9%H%j%S%e!<%7%g%s$rA*$s$G$/$@$5$$!#(B</p>
+<p>個別の buildd 管理者の名前は、
+<a href="http://www.buildd.net/">www.buildd.net</a> で確認できます。
+利用可能な buildd とその管理者を見るには、アーキテクチャとディストリビューションを選んでください。</p>
 
 <hrline />
-<p><small>$B$3$N(B autobuilder $B%M%C%H%o!<%/$NF~Lg$O!"(BRoman Hodek,
+<p><small>この autobuilder ネットワークの入門は、Roman Hodek,
 Christian T. Steigies, Wouter Verhelst, Andreas Barth,
-Francesco Paolo Lovergine $B5Z$S(B Javier Fern&aacute;ndez-Sanguino
-$B$K$h$C$FDs6!$5$l$?>pJs$r85$K=q$+$l$^$7$?!#(B</small></p>
+Francesco Paolo Lovergine 及び Javier Fern&aacute;ndez-Sanguino
+によって提供された情報を元に書かれました。</small></p>

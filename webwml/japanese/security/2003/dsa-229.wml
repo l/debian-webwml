@@ -1,36 +1,36 @@
-<define-tag description>SQL ���󥸥��������</define-tag>
+<define-tag description>SQL インジェクション</define-tag>
 <define-tag moreinfo>
-<p>Jouko Pynnonen ����ˤ�ꡢWeb �١����� IMAP �ץ������Ǥ��� IMP 
-�����꤬ȯ������ޤ��������տ����������줿 URL ���Ѥ��뤳�Ȥǡ�
-��⡼�Ȥι���Ԥ���Ŭ�ڤ�ǧ�ڤʤ��� SQL �䤤��碌��� SQL
-�����ɤ򺹤����ळ�Ȥ���ǽ�Ǥ������� SQL
-������η�̤�ľ�ܲ��̤Ǹ��뤳�ȤϤǤ��ޤ��󤬡�
-����Ԥ��鸫����������η�̤��Ѥ��ƥ᡼���̾�򹹿����뤳�Ȥ���ǽ�ǡ�
-����� IMP �� preferences �ڡ����Ǹ��뤳�Ȥ��Ǥ��ޤ���</p>
+<p>Jouko Pynnonen さんにより、Web ベースの IMAP プログラムである IMP 
+に問題が発見されました。注意深く作成された URL を用いることで、
+リモートの攻撃者が、適切な認証なしに SQL 問い合わせ中に SQL
+コードを差し込むことが可能です。この SQL
+クエリの結果を直接画面で見ることはできませんが、
+攻撃者から見たいクエリの結果を用いてメール署名を更新することが可能で、
+それを IMP の preferences ページで見ることができます。</p>
 
-<p>SQL �����αƶ��ϡ��Хå�����ɤǻȤ��Ƥ���ǡ����١����ȡ�
-��������˶�����¸���ޤ���PostgreSQL ���Ȥ��Ƥ����硢
-���ߥ�����Ƕ��ڤ뤳�Ȥ�ʣ���δ����� SQL �������¹Բ�ǽ�Ǥ���
-�ǡ����١����ˤϥ��å���� ID ����Ǽ����Ƥ��ޤ��Τǡ�
-����ԤϤ��λ�������³��Υ桼���Υ��å�����å�äơ�
-���οͤΥ᡼����ɤळ�Ȥ���ǽ�Ǥ����ǰ��ξ�硢hordemgr �桼����
-COPY SQL ���ޥ�ɤ�¹Ԥ���˽�ʬ���ø�����äƤ������ˤϡ����ʤ��Ȥ�
-PostgreSQL �Ǥϡ���⡼�ȥ桼���ϥǡ����١����桼�� (postgres) 
-���ɤळ�ȤΤǤ���ǡ����������ɤ߽񤭲�ǽ�Ǥ���
-����ԤϤ��Τ��Ȥ��Ѥ��ơ�postgres �桼���� ~/.psqlrc
-�˥��ޥ�ɤ�񤭹��ळ�Ȥ�Ǥ�դΥ����륳�ޥ�ɤμ¹Ԥ���ǽ�Ǥ���~/.psqlrc
-�ϥ桼���� psql ���ޥ�ɤ�¹Ԥ���ݤ˼¹Ԥ���ޤ��������ˤ�äƤ�
-cron ������ץȤ������Ū�˼¹Ԥ���ޤ���</p>
+<p>SQL 挿入の影響は、バックエンドで使われているデータベースと、
+その設定に強く依存します。PostgreSQL が使われている場合、
+セミコロンで区切ることで複数の完全な SQL クエリを実行可能です。
+データベースにはセッション ID が格納されていますので、
+攻撃者はその時点で接続中のユーザのセッションを奪って、
+その人のメールを読むことが可能です。最悪の場合、hordemgr ユーザが
+COPY SQL コマンドを実行するに十分な特権を持っていた場合には、少なくとも
+PostgreSQL では、リモートユーザはデータベースユーザ (postgres) 
+が読むことのできるデータを全て読み書き可能です。
+攻撃者はそのことを用いて、postgres ユーザの ~/.psqlrc
+にコマンドを書き込むことで任意のシェルコマンドの実行が可能です。~/.psqlrc
+はユーザが psql コマンドを実行する際に実行されますし、場合によっては
+cron スクリプトから定期的に実行されます。</p>
 
-<p>�������� (stable) (woody) �Ǥϡ�����ϥС������ 2.2.6-5.1 
-�ǽ�������Ƥ��ޤ���</p>
+<p>現安定版 (stable) (woody) では、これはバージョン 2.2.6-5.1 
+で修正されています。</p>
 
-<p>������� (potato) �Ǥϡ�����ϥС������ 2.2.6-0.potato.5.1 
-�ǽ�������Ƥ��ޤ���</p>
+<p>旧安定版 (potato) では、これはバージョン 2.2.6-0.potato.5.1 
+で修正されています。</p>
 
-<p>�԰����� (unstable) (sid) �Ǥϡ�����ϥС������ 2.2.6-7 �ǽ���ͽ��Ǥ���</p>
+<p>不安定版 (unstable) (sid) では、これはバージョン 2.2.6-7 で修正予定です。</p>
 
-<p>������ IMP �ѥå������򥢥åץ��졼�ɤ��뤳�Ȥ򴫤�ޤ���</p>
+<p>すぐに IMP パッケージをアップグレードすることを勧めます。</p>
 </define-tag>
 
 #use wml::debian::translation-check translation="1.5"

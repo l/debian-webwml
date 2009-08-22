@@ -1,25 +1,25 @@
-#use wml::debian::template title="buildd $B$N@_Dj(B" BARETITLE="true"
+#use wml::debian::template title="buildd の設定" BARETITLE="true"
 #use wml::debian::translation-check translation="1.9"
 
-<p>$B$3$3$K$O!"(BDebian $B$N(B buildd $B@_DjJ}K!$N<oL@$+$7$,$"$j$^$9!#(B
-$B$3$NJ8=q$O(B Andreas Barth $B$K$h$C$F(B experimental $B5Z$S(B backports.org $B$N(B
-buildds $B$r@_Dj$9$k:]$K=q$+$l$?$b$N$J$N$G!"3+H/<T$,<+J,$N%^%7%s$G(B autobuilder
-$B$r;H$C$F(B Debian $B$N@_Dj$r$9$k$H$-$H$O40A4$K$O0lCW$7$J$$$+$b$7$l$^$;$s!#(B</p>
+<p>ここには、Debian の buildd 設定方法の種明かしがあります。
+この文書は Andreas Barth によって experimental 及び backports.org の
+buildds を設定する際に書かれたものなので、開発者が自分のマシンで autobuilder
+を使って Debian の設定をするときとは完全には一致しないかもしれません。</p>
 
-<p>buildd $B$O(B db.debian.org $B$K$"$k(B buildd $B$"$k$$$O(B <a
+<p>buildd は db.debian.org にある buildd あるいは <a
  href="http://svn.cyberhqz.com/svn/wanna-build/">wanna-build</a>
-$B$N%=!<%9$+$iCj=P$7$F;HMQ$9$k$3$H$,$G$-$^$9!#(Bdb.debian.org
-$B$K$"$k$b$N$r;H$$$?$$>l9g$O!"(Bsources.list $B$K(B
-<tt>deb http://db.debian.org debian-admin/</tt> $B$rDI2C$7$F(B buildd
-$B$r%$%s%9%H!<%k$7$F$/$@$5$$!#(B</p>
+のソースから抽出して使用することができます。db.debian.org
+にあるものを使いたい場合は、sources.list に
+<tt>deb http://db.debian.org debian-admin/</tt> を追加して buildd
+をインストールしてください。</p>
 
-<p>$B$5$i$K!"(Btesting $BMQ$d(B unstable $BMQ$N(B chroot $B$r%;%C%H%"%C%W$9$k$N$K(B debootstrap
-$B$,I,MW$K$J$j$^$9!#$7$?$,$C$F!"$3$N$?$a$K(B backport
-$B$,I,MW$K$J$k$+$b$7$l$^$;$s!#(Bbackports $B%j%]%8%H%j$+$i<hF@$9$k$+!"(B
-$B$"$k$$$O<+J,$G%=!<%9$+$i%S%k%I$9$k$3$H$b$G$-$^$9!#(B</p>
+<p>さらに、testing 用や unstable 用の chroot をセットアップするのに debootstrap
+が必要になります。したがって、このために backport
+が必要になるかもしれません。backports リポジトリから取得するか、
+あるいは自分でソースからビルドすることもできます。</p>
 
-<p>(<tt>/org/buildd/</tt> $B0J2<$K(B)
-$B<!$K5s$2$k%G%#%l%/%H%j$r:n@.$9$kI,MW$,$"$j$^$9(B:</p>
+<p>(<tt>/org/buildd/</tt> 以下に)
+次に挙げるディレクトリを作成する必要があります:</p>
 <pre>
 install -d build mqueue -o buildd -g buildd
 install -d chroots -m 755
@@ -38,47 +38,47 @@ ln -s source-dependencies-unstable /etc/source-dependencies-sid-nonfree
 sudo ln -s source-dependencies-stable /etc/source-dependencies-woody-backports.org
 </pre>
 
-<p>chroot $B$7$F$+$i(B:</p>
+<p>chroot してから:</p>
 <pre>
 sudo debootstrap --variant=buildd sid chroots/sid http://ftp.debian.org/debian
 sudo ln -s /org/buildd/chroots/sid/ build/chroot-unstable
 </pre>
 
-<p>$B$=$l$+$i!"I,MW$H$J$k%Q%C%1!<%8$r99?7!"%$%s%9%H!<%k$7$F$/$@$5$$(B:</p>
+<p>それから、必要となるパッケージを更新、インストールしてください:</p>
 <pre>
 sudo chroot chroots/sid apt-get update
 sudo chroot chroots/sid apt-get install fakeroot build-essential sudo debfoster
 sudo chroot chroots/sid debfoster
 </pre>
 
-<p>woody-backports $B$K$D$$$F$b(B:</p>
+<p>woody-backports についても:</p>
 <pre>
 sudo debootstrap --variant=buildd woody chroots/woody-backports http://ftp.debian.org/debian
 sudo ln -s /org/buildd/chroots/woody-backports/ build/chroot-woody-backports.org
 </pre>
 
 <p><tt>chroots/woody-backports/etc/apt/sources.list</tt>
-$B$rJT=8$7$^$7$g$&(B</p>
+を編集しましょう</p>
 <pre>
 deb http://ftp.debian.org/debian woody main non-free contrib
 deb-src http://ftp.debian.org/debian woody main non-free contrib
 deb-src ftp://linux.mathematik.tu-darmstadt.de/pub/linux/distributions/debian-backports/debian woody all
 </pre>
 
-<p>$B%"%C%W%0%l!<%I5Z$S%$%s%9%H!<%k$r$7$^$7$g$&(B:</p>
+<p>アップグレード及びインストールをしましょう:</p>
 <pre>
 sudo chroot chroots/woody-backports apt-get update
 sudo chroot chroots/woody-backports apt-get install fakeroot build-essential sudo debfoster
 sudo chroot chroots/woody-backports debfoster
 </pre>
 
-<p>$B<!$O(B .sbuildrc $B$r:n@.$7$^$7$g$&(B:</p>
+<p>次は .sbuildrc を作成しましょう:</p>
 <pre>
-# $B%m%0$rAw?.$9$k08@h$N%a!<%k%"%I%l%9(B ($BI,?\!"%G%U%)%k%HCM$O$"$j$^$;$s(B!)
-$mailto = '$B9%$-$J$h$&$K(B';
+# ログを送信する宛先のメールアドレス (必須、デフォルト値はありません!)
+$mailto = '好きなように';
 
-# .changes $B%U%!%$%k$G;HMQ$5$l$k4IM}<T$NL>A0(B ($BI,?\!"%G%U%)%k%HCM$O$"$j$^$;$s(B!)
-$maintainer_name='changes $B$G;H$$$?$$L>A0(B';
+# .changes ファイルで使用される管理者の名前 (必須、デフォルト値はありません!)
+$maintainer_name='changes で使いたい名前';
 
 #$fakeroot='/usr/bin/sudo';
 $fakeroot='/usr/bin/fakeroot';
@@ -86,29 +86,29 @@ $fakeroot='/usr/bin/fakeroot';
 %dist_order = ( 'oldstable-security' => 0, stable => 1, 'stable-security' => 1, testing => 2, 'testing-security' => 2, unstable => 3, 'woody-backports.org' => 5, 'sarge-backports.org' => 6, experimental => 7 );
 </pre>
 
-<p>buildd $B%f!<%6$r(B sudo $B@_Dj%U%!%$%k$KDI2C$7$F!"(B
-$B@)8B$J$7$G%D!<%k$r<B9T$G$-$k$h$&$K$9$k$N$rK:$l$J$$$G$/$@$5$$!#(B</p>
+<p>buildd ユーザを sudo 設定ファイルに追加して、
+制限なしでツールを実行できるようにするのを忘れないでください。</p>
 
-<p>$B$O$$!"$=$l$G$O%F%9%H$7$^$7$g$&(B:
-~buildd/build $B$K0\F0$7$F%Q%C%1!<%8$r%S%k%I$7$F$_$^$7$g$&(B:</p>
+<p>はい、それではテストしましょう:
+~buildd/build に移動してパッケージをビルドしてみましょう:</p>
 <pre>
 sbuild -d unstable -v netpbm-nonfree_2:9.20-2
 sbuild -d woody-backports.org -v arj_3.10.19-1.backports.org.1
 </pre>
 
-<p>~buildd/.forward $B$K(B <tt>|/usr/bin/buildd-mail-wrapper</tt>
-$B$rDI2C$7$F(B buildds $B$N%a!<%k$KJV?.$G$-$k$h$&$K$7$^$7$g$&!#(B</p>
+<p>~buildd/.forward に <tt>|/usr/bin/buildd-mail-wrapper</tt>
+を追加して buildds のメールに返信できるようにしましょう。</p>
 
-<p>~buildd/buildd.conf $B$bD4@0$9$kI,MW$,$"$j$^$9(B - $B$7$+$7!";DG0$J$,$i$3$l$O(B
-wanna-build $B$K$h$C$FJQ$o$k$N$G$=$N<oL@$+$7$O$G$-$^$;$s!#(B</p>
+<p>~buildd/buildd.conf も調整する必要があります - しかし、残念ながらこれは
+wanna-build によって変わるのでその種明かしはできません。</p>
 
-<p>buildd $B$N>uBV$K$D$$$F$N$5$i$J$k>\:Y$O!"(B<a
- href="wanna-build-states">$B$3$3(B</a>$B$+$iF@$k$3$H$,$G$-$^$9!#(Bbuildd
-$B$N%a!<%k$K$O!"=pL>:Q$_(B changes $B%U%!%$%k$+!"(B"give-back", "retry",
-"dep-wait", "failed", "dep-wait &lt;$B0MB84X78(B&gt;",
-"failed\n&lt;$B<:GT$N860x(B&gt;" $B$N$I$l$+$rJV?.$9$Y$-$G$9!#(B</p>
+<p>buildd の状態についてのさらなる詳細は、<a
+ href="wanna-build-states">ここ</a>から得ることができます。buildd
+のメールには、署名済み changes ファイルか、"give-back", "retry",
+"dep-wait", "failed", "dep-wait &lt;依存関係&gt;",
+"failed\n&lt;失敗の原因&gt;" のどれかを返信すべきです。</p>
 
-<p>cronjob $B$N%?%9%/$H$7$F0J2<$r;H$&$3$H$,$G$-$^$9(B:</p>
+<p>cronjob のタスクとして以下を使うことができます:</p>
 <pre>
 @reboot        touch ~buildd/NO-DAEMON-PLEASE
 17 * * * * /usr/bin/buildd-watcher

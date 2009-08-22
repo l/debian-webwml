@@ -1,30 +1,30 @@
-#use wml::debian::template title="push �����Ф����ꤹ��"
+#use wml::debian::template title="push サーバを設定する"
 #use wml::debian::translation-check translation="1.18"
 #use wml::debian::toc
 
-<p>push �����Ф�����ϡ�����Ū�� 2 �Ĥκ�Ȥ���ʤ�ޤ���
-�ҤȤĤ� rsync ��³ (�̾��<q>pull</q>�ߥ顼) �����ꡢ
-�⤦�ҤȤĤ� ssh �Υȥꥬ���� (pull �ߥ顼��<q>push</q>���뤿��Τ��)
-������Ǥ���
+<p>push サーバの設定は、基本的に 2 つの作業からなります。
+ひとつは rsync 接続 (通常の<q>pull</q>ミラー) の設定、
+もうひとつは ssh のトリガ機構 (pull ミラーを<q>push</q>するためのもの)
+の設定です。
 </p>
 
 <p><small>
-(push �����Ф˴ؤ���ܺ٤� <a href="push_mirroring">push �ߥ顼������</a>
-��������������)</small>
+(push サーバに関する詳細は <a href="push_mirroring">push ミラーの説明</a>
+をご覧ください。)</small>
 </p>
 
 <toc-display />
 
-<toc-add-entry name="rsync">rsync ������</toc-add-entry>
+<toc-add-entry name="rsync">rsync の設定</toc-add-entry>
 
-<p><code>rsync</code> 2.1.1 �ʹߤ򥤥󥹥ȡ��뤷�ޤ���
-�⤷ Debian ��ȤäƤ��륵���ȤǤ����顢ñ��
+<p><code>rsync</code> 2.1.1 以降をインストールします。
+もし Debian を使っているサイトでしたら、単に
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>
-�ѥå������κǿ��Ǥ򥤥󥹥ȡ��뤹������Ǥ���
+パッケージの最新版をインストールするだけです。
 </p>
 
-<p><code>rsyncd.conf</code> �ե�������ꡢ
-�ʲ��Τ褦�����Ƥ��ɲä��ޤ���
+<p><code>rsyncd.conf</code> ファイルを作り、
+以下のような内容を追加します。
 </p>
 
 <pre>
@@ -41,8 +41,8 @@ socket options = SO_KEEPALIVE
   secrets file = /etc/rsyncd/debian.secrets
 </pre>
 
-<p>push ����ƥ����Ȥ��б����륨��ȥ��
-<code>/etc/rsyncd/debian.secrets</code> �ե�������ɲä��ޤ���
+<p>push する各サイトに対応するエントリを、
+<code>/etc/rsyncd/debian.secrets</code> ファイルに追加します。
 </p>
 
 <pre>
@@ -51,13 +51,13 @@ authorized_account2:another_password
 authorized_accountN:password
 </pre>
 
-<p>����ǲ�ή�Υߥ顼�ˡ����ʤ��Υޥ���Υ��������֤ؤ�
-��³����������Ȥˤʤ�ޤ���
+<p>これで下流のミラーに、あなたのマシンのアーカイブへの
+接続を許したことになります。
 </p>
 
-<p>rsync �ǡ����� inetd ���鵯ư���뤳�Ȥˤʤ�Ǥ��礦��
-����ˤϤޤ���<code>/etc/services</code> �ե������
-���Τ褦�� rsync �����ӥ��� (�ޤ��ʤ����) �ɲä��ޤ���
+<p>rsync デーモンは inetd から起動することになるでしょう。
+これにはまず、<code>/etc/services</code> ファイルに
+次のような rsync サービスを (まだなければ) 追加します。
 </p>
 
 <pre>
@@ -65,8 +65,8 @@ rsync           873/tcp
 </pre>
 
 <p>
-�ǡ����� inetd ���鵯ư������ˤϡ����ιԤ�
-<code>/etc/inetd.conf</code> �ե�����˲ä��ޤ���
+デーモンを inetd から起動させるには、次の行を
+<code>/etc/inetd.conf</code> ファイルに加えます。
 </p>
 
 <pre>
@@ -74,32 +74,32 @@ rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daem
 </pre>
 
 <p>
-(������� inetd �� HUP �����ʥ�����ꡢ
-�������줿����ե�������ɤ߹��ޤ���Τ�˺��ʤ�����)
+(修正後に inetd に HUP シグナルを送り、
+修正された設定ファイルを読み込ませるのを忘れないこと)
 </p>
 
-<toc-add-entry name="sshtrigger">ssh �ȥꥬ����������</toc-add-entry>
+<toc-add-entry name="sshtrigger">ssh トリガ機構の設定</toc-add-entry>
 
-<p>Debian �Υߥ顼���Ѥ��륢������Ȥ� ssh ���򿷤������ޤ���
-���Ǥˤ��뼫ʬ�θ����񤭤��ʤ��褦��-f ���ץ������Ѥ��ޤ��礦��
-���Ȥ��м��Τ褦�ˤʤ�ޤ���
+<p>Debian のミラーに用いるアカウントの ssh 鍵を新しく作ります。
+すでにある自分の鍵を上書きしないよう、-f オプションを用いましょう。
+たとえば次のようになります。
 </p>
 
 <pre>
 ssh-keygen -f ~/.ssh/identity.mysite
 </pre>
 
-<p>������ (~/.ssh/identity.mysite.pub) ����Ƭ�ˡ�
-IPADDRESS �򤢤ʤ��ξ�ή�ߥ顼���֤������ơ��������Ƥ��ɲä��Ƥ���������
+<p>公開鍵 (~/.ssh/identity.mysite.pub) の先頭に、
+IPADDRESS をあなたの上流ミラーに置き換えて、次の内容を追加してください。
 </p>
 
 <pre>
 no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync,,from="IPADDRESS" &amp;"
 </pre>
 
-<p>���ˡ���ή�Υߥ顼����³���륹����ץȤ�񤭤ޤ���
-<code>signal</code> �Ȥ���̾���Υե�������ꡢ
-�ʲ������Ƥ�񤭹��ߤޤ���
+<p>次に、下流のミラーに接続するスクリプトを書きます。
+<code>signal</code> という名前のファイルを作り、
+以下の内容を書き込みます。
 </p>
 
 <protect>
@@ -114,23 +114,23 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.mysite sleep 1
 </pre>
 </protect>
 
-<p>���Υ�����ץȤ���˺�ä����Ѥ� ssh ���ǥ�⡼�ȥۥ��Ȥ˥������󤷤ޤ���
-���ΤȤ�����ή�γƥߥ顼�α��ļԤ����θ���ʬ�� ~/.ssh/authorized_keys
-���ɲúѤߤǤ���ɬ�פ�����ޤ� (�ޤ���<q>ftpsync</q>�򡢥ߥ顼�����Ѥ�
-���ޥ�ɤ�̾���˽񤭴����Ƥ���ɬ�פ�����ޤ�)��
-���Υ�����ץȼ��Ȥϥ�⡼�ȤǤʤ���Ȥ�Ԥ��ޤ��󤬡�
-��������ˤ�äƻ��ꤵ�줿�ߥ顼�����ѤΥ��ޥ�ɤ������¹Ԥ���ޤ���</p>
+<p>このスクリプトは先に作った専用の ssh 鍵でリモートホストにログインします。
+このとき、下流の各ミラーの運営者がその鍵を自分の ~/.ssh/authorized_keys
+に追加済みである必要があります (また、<q>ftpsync</q>を、ミラー開始用の
+コマンドの名前に書き換えてある必要があります)。
+このスクリプト自身はリモートでなんら作業を行いませんが、
+鍵の設定によって指定されたミラー開始用のコマンドだけが実行されます。</p>
 
-<p>�ºݤ˥ߥ顼�򳫻Ϥ�����ˤϡ�
-rsync �Ǽ�ʬ�Υ����Ȥ򹹿������������
+<p>実際にミラーを開始させるには、
+rsync で自分のサイトを更新し終えた後に
 <code>./signal &lt;site&gt; &lt;username&gt;</code>
-�Ȥ������ޥ�ɤ�¹Ԥ���ɬ�פ�����ޤ���
-��������ȡ����ʤ��Υ����Ȥ���ή����Υߥ顼�򽪤���ȡ�
-�������޲�ή�ؤ� push �򳫻Ϥ��뤳�Ȥˤʤ�ޤ���
+というコマンドを実行する必要があります。
+こうすると、あなたのサイトが上流からのミラーを終えると、
+すぐさま下流への push を開始することになります。
 </p>
 
-<p>�����Υ��ޥ�ɤϡ�<code>ftpsync.conf</code> �ޤ��ϼ��Τ褦���̤Υ�����ץȤ˽񤤤ơ����Υ�����ץȤ� <code>anonftpsync</code>
-����ƤӽФ��������������ʤ顢����Ǥ⤫�ޤ��ޤ���
+<p>これらのコマンドは、<code>ftpsync.conf</code> または次のような別のスクリプトに書いて、そのスクリプトを <code>anonftpsync</code>
+から呼び出す形の方が便利なら、それでもかまいません。
 </p>
 
 <protect>
@@ -144,6 +144,6 @@ rsync �Ǽ�ʬ�Υ����Ȥ򹹿������������
 </pre>
 </protect>
 
-<p>�⤷���꤬�����ä��顢
-<a href="mailto:mirrors@debian.org">Ϣ�����Ƥ�������</a>��
+<p>もし問題が起こったら、
+<a href="mailto:mirrors@debian.org">連絡してください</a>。
 </p>

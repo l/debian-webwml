@@ -1,17 +1,17 @@
-<define-tag moreinfo>Lez $B$5$s$+$i!"B>$N%M%C%H%o!<%/%G!<%b%s$KHFMQ$N(B SSL $B%H%s%M%k$r:n$k%D!<%k$G$"$k(B stunnel $B$K!"J8;z$N%U%)!<%^%C%H$K4X$9$kLdBj$,H/8+$5$l$?$HJs9p$,$"$j$^$7$?!#(B Brian Hatch $B$O$9$G$K!"J#?t$N%;%-%e%j%F%#LdBj$N=$@5$r9T$&?7$7$$%j%j!<%9$r=`HwCf$G$"$k$HJVEz$7$^$7$?!#(B
+<define-tag moreinfo>Lez さんから、他のネットワークデーモンに汎用の SSL トンネルを作るツールである stunnel に、文字のフォーマットに関する問題が発見されたと報告がありました。 Brian Hatch はすでに、複数のセキュリティ問題の修正を行う新しいリリースを準備中であると返答しました。
 
 <ol>
-<li>PRNG ($B5?;wMp?tH/@8(B) $B$O!"@5$7$/Mp?t$rH/@8$7$^$;$s!#$3$l$O!"(B Linux $B$N$h$&$J!"(B
-$B0BA4$JMp?t@8@.4X?t$r;}$C$F$$$J$$%*%Z%l!<%F%#%s%0%7%9%F%`$K1F6A$7$^$9!#(B
-<li>Pid (Process ID) $B%U%!%$%k$O0BA4$K@8@.$5$l$J$$$?$a$K!"(B stunnel $B$O%7%s%\%j(B
-$B%C%/%j%s%/967b$r<u$1$d$9$/$J$j$^$9!#(B
-<li>$B0BA4$G$J$$(B syslog() $B4X?t8F$S=P$7$,$"$j$^$9!#$3$l$O!"%f!<%6$,5-O?$5$l$?J8(B
-$B;zNs$KJ8;zNs$rA^F~$G$-$k$h$&$K$7$?$H$-$KMxMQ$5$l$&$k$b$N$G$9!#(BLez $B$K$h$C$F!"56B$$5$l$?(B identd $B$N%l%9%]%s%9$rMxMQ$7$F$3$N%P%0$rMxMQ$9$kJ}K!(B
-$B$,<($5$l$F$$$^$9!#(B
+<li>PRNG (疑似乱数発生) は、正しく乱数を発生しません。これは、 Linux のような、
+安全な乱数生成関数を持っていないオペレーティングシステムに影響します。
+<li>Pid (Process ID) ファイルは安全に生成されないために、 stunnel はシンボリ
+ックリンク攻撃を受けやすくなります。
+<li>安全でない syslog() 関数呼び出しがあります。これは、ユーザが記録された文
+字列に文字列を挿入できるようにしたときに利用されうるものです。Lez によって、偽造された identd のレスポンスを利用してこのバグを利用する方法
+が示されています。
 </ol>
 
-<p>$B$3$l$i$NLdBj$O%P!<%8%g%s(B 3.10-0potato1 $B$G$O2r7h$5$l$F$$$^$9!#(B</define-tag>
-<define-tag description>$B0BA4$G$J$$%U%!%$%kA`:n(B, $BJ8;z%U%)!<%^%C%H$K4X$9$k%P%0(B</define-tag>
+<p>これらの問題はバージョン 3.10-0potato1 では解決されています。</define-tag>
+<define-tag description>安全でないファイル操作, 文字フォーマットに関するバグ</define-tag>
 
 #use wml::debian::translation-check translation="1.3"
 
