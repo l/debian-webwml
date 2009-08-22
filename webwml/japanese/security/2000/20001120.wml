@@ -1,22 +1,22 @@
-<define-tag moreinfo>Sebastian Krahmer $B$5$s$K$h$C$F!"(Bmodprobe $B%f!<%F%#(B
-$B%j%F%#$KLdBj$,H/8+$5$l$^$7$?!#$3$NLdBj$rMxMQ$9$k$3$H$K$h$j!"(Bkmod $B$rM-(B
-$B8z$K$7$?%+!<%M%k$rF0$+$7$F$$$k%^%7%s$K$*$$$F!"%m!<%+%k$N%f!<%6$,(B root
-$B$H$7$FG$0U$N%3%^%s%I$r<B9T$9$k$3$H$,$G$-$F$7$^$$$^$9!#(B
+<define-tag moreinfo>Sebastian Krahmer さんによって、modprobe ユーティ
+リティに問題が発見されました。この問題を利用することにより、kmod を有
+効にしたカーネルを動かしているマシンにおいて、ローカルのユーザが root
+として任意のコマンドを実行することができてしまいます。
 
-<p>kmod $B$N%+!<%M%kFC@-$K$h$j!"F0:nCf$N%+!<%M%k$K$OB8:_$7$J$$5!G=$,MW5a(B
-$B$5$l$?>l9g$K!"%+!<%M%k$OF0E*$K%+!<%M%k%b%8%e!<%k$r%m!<%I$9$k$3$H$,$G$-(B
-$B$^$9!#$3$l$O!"MW5a$5$l$?%b%8%e!<%k$r%Q%i%a!<%?$H$7$F;HMQ$7$F(B modprobe
-$B%3%^%s%I$r5/F0$9$k$3$H$K$h$C$F9T$o$l$^$9!#$3$N%Q%i%a!<%?$O!"%f!<%6$+$i(B
-$B$N1F6A$r<u$1$^$9!#Nc$($P!"$=$N;~E@$G(B devfs $B%U%!%$%k%7%9%F%`>e$KB8:_$7(B
-$B$F$$$J$$%U%!%$%k$r3+$/!"B8:_$7$J$$%M%C%H%o!<%/%$%s%?!<%U%'%$%9$K%"%/%;(B
-$B%9$7$h$&$H$9$k!"$J$I$N>l9g$G$9!#30It%3%^%s%I$r8F$S=P$7$?$j!":G8e$N%Q%i(B
-$B%a!<%?$,%b%8%e!<%kL>$G$O$J$/%*%W%7%g%s$G$"$k$+$I$&$+$r3NG'$9$k:]$K!"(B
-modprobe $B$,E,@Z$K%7%'%k$N%a%?%-%c%i%/%?$r%(%9%1!<%W$7$F$$$J$$$?$a!"%f!<(B
-$B%6$,G$0U$N%3%^%s%I$r<B9T$5$;$k$3$H$,$G$-$F$7$^$$$^$9!#(B
-<p>$B$3$NLdBj$O!"%P!<%8%g%s(B 2.3.11-12 $B$G$O=$@5$5$l$F$$$^$9!#Aa5^$K(B
-modutils $B%Q%C%1!<%8$r%"%C%W%G!<%H$9$k$3$H$r$*4+$a$7$^$9!#(B
+<p>kmod のカーネル特性により、動作中のカーネルには存在しない機能が要求
+された場合に、カーネルは動的にカーネルモジュールをロードすることができ
+ます。これは、要求されたモジュールをパラメータとして使用して modprobe
+コマンドを起動することによって行われます。このパラメータは、ユーザから
+の影響を受けます。例えば、その時点で devfs ファイルシステム上に存在し
+ていないファイルを開く、存在しないネットワークインターフェイスにアクセ
+スしようとする、などの場合です。外部コマンドを呼び出したり、最後のパラ
+メータがモジュール名ではなくオプションであるかどうかを確認する際に、
+modprobe が適切にシェルのメタキャラクタをエスケープしていないため、ユー
+ザが任意のコマンドを実行させることができてしまいます。
+<p>この問題は、バージョン 2.3.11-12 では修正されています。早急に
+modutils パッケージをアップデートすることをお勧めします。
 </define-tag>
-<define-tag description>$B%m!<%+%k$+$i$N967b(B</define-tag>
+<define-tag description>ローカルからの攻撃</define-tag>
 
 #use wml::debian::translation-check translation="1.2"
 

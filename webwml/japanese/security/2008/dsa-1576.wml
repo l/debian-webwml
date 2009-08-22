@@ -1,32 +1,32 @@
 #use wml::debian::translation-check translation="1.5"
-<define-tag description>ͽ¬��ǽ�����������</define-tag>
+<define-tag description>予測可能な乱数生成器</define-tag>
 <define-tag moreinfo>
-<p>�����������줿 Debian �� openssl �ѥå������ι���
+<p>昨日公開された Debian の openssl パッケージの更新
 (<a href="/security/2008/dsa-1571">DSA-1571-1</a>, <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-0166">CVE-2008-0166</a>)
- �ϡ�OpenSSH �ˤ����Ū�˱ƶ����ޤ������η�̡����줿�С�������
-Openssl ���������줿���ƤΥ桼���ȥۥ��ȸ��ϡ�openssl �ι���Ŭ�Ѹ�⿮��
-�Ǥ��ʤ���ΤȤ��ư����ʤ���Фʤ�ޤ���</p>
+ は、OpenSSH にも間接的に影響します。この結果、壊れたバージョンの
+Openssl で生成された全てのユーザとホスト鍵は、openssl の更新適用後も信用
+できないものとして扱われなければなりません。</p>
 
-<p>1. �������ƥ������򥤥󥹥ȡ��뤹��</p>
+<p>1. セキュリティ更新をインストールする</p>
 
-   <p>���ι����� openssl �ι����ѤߤΥѥå������˰�¸�ط�����ꤷ�Ƥ��ޤ���
-   �ǡ���ưŪ�˽����Ѥ� libssl0.9.8 �ѥå������ȡ����ѥå�����
-   openssh-blacklist �����󥹥ȡ��뤵��ޤ���</p>
+   <p>この更新は openssl の更新済みのパッケージに依存関係を指定していますの
+   で、自動的に修正済の libssl0.9.8 パッケージと、新パッケージ
+   openssh-blacklist がインストールされます。</p>
 
-   <p>������Ŭ�Ѥ�����ä��ʤ�С���ǽ�ʾ��ˤ��ȼ�ʥ桼�����ϼ�ưŪ�˵�
-   �䤵��ޤ���â�������θ��ФϹԤ��ޤ��󡣥桼���θĿ�ǧ�ڤˤ��Τ褦��
-   ����ȤäƤ�����ϡ�����ľ���ư��ʤ��ʤꡢ���������ǹ������ʤ�
-   ��Фʤ�ʤ��ʤ�ޤ� (�軰�Ỳ��)��</p>
+   <p>更新の適用が終わったならば、可能な場合には脆弱なユーザ鍵は自動的に拒
+   絶されます。但し全部の検出は行えません。ユーザの個人認証にこのような
+   鍵を使っている場合は、鍵は直後に動作しなくなり、新しい鍵で更新しなけ
+   ればならなくなります (第三節参照)。</p>
 
-   <p>OpenSSH �ۥ��ȸ��ϡ�OpenSSH �������ƥ�������Ŭ�Ѹ弫ưŪ�˺ƺ�����
-   ��ޤ����������ˤϡ����ν��������˥桼���ؤγ�ǧ�䤤��碌���Ԥ���
-   ����</p>
+   <p>OpenSSH ホスト鍵は、OpenSSH セキュリティ更新を適用後自動的に再作成さ
+   れます。更新時には、この処理の前にユーザへの確認問い合わせが行われま
+   す。</p>
 
-<p>2. OpenSSH �� known_hosts �ե�����򹹿�����</p>
+<p>2. OpenSSH の known_hosts ファイルを更新する</p>
 
-   <p>�ۥ��ȸ��������������硢SSH ��ȤäƤ��륷���ƥ����³�κݡ�
-   known_hosts �Υۥ��ȸ��ι���������Ǥ��ʤ����ˤϰʲ��ηٹ���̤�ɽ
-   ������ޤ���</p>
+   <p>ホスト鍵を再生成した場合、SSH を使っているシステムに接続の際、
+   known_hosts のホスト鍵の更新がすんでいない場合には以下の警告画面が表
+   示されます。</p>
 
 <pre>
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -37,63 +37,63 @@ Someone could be eavesdropping on you right now (man-in-the-middle attack)!
 It is also possible that the RSA host key has just been changed.
 </pre>
 
-   <p>���ξ�硢ñ�˥ۥ��ȸ����ѹ�����Ƥ���Τǡ����顼��å������ˤ����
-   �����оݤ� known_hosts �򹹿�����ɬ�פ�����ޤ���</p>
+   <p>この場合、単にホスト鍵が変更されているので、エラーメッセージにあるよ
+   うに対象の known_hosts を更新する必要があります。</p>
 
-   <p>�����и��θ򴹤ˤϡ����ѤǤ����̿�ϩ����Ѥ��뤳�Ȥ򴫤�ޤ������ϥ�
-   ���о�� /etc/ssh/ssh_host_rsa_key.pub ���֤���ޤ������Υե��󥬡�
-   �ץ��Ȥϰʲ��Υ��ޥ�ɤǸ��뤳�Ȥ��Ǥ��ޤ���</p>
+   <p>サーバ鍵の交換には、信用できる通信路を使用することを勧めます。鍵はサ
+   ーバ上の /etc/ssh/ssh_host_rsa_key.pub に置かれます。鍵のフィンガー
+   プリントは以下のコマンドで見ることができます。</p>
 
       <p>ssh-keygen -l -f /etc/ssh/ssh_host_rsa_key.pub</p>
 
-   <p>�桼���̤� known_hosts �ե�����ʳ��ˡ������ƥ����Τ�ͭ���ʥۥ��ȥ�
-   ������  /etc/ssh/ssh_known_hosts ��¸�ߤ��Ƥ��뤫�⤷��ޤ��󡣤��Υե�
-   ����� ssh ���饤����Ȥ� sshd ��ξ���� hosts.equiv ��ǽ���󶡤��뤿
-   ��˻Ȥ��Ƥ��ޤ������Υե������Ʊ�ͤ˹�������ɬ�פ�����ޤ���</p>
+   <p>ユーザ別の known_hosts ファイル以外に、システム全体で有効なホストフ
+   ァイル  /etc/ssh/ssh_known_hosts が存在しているかもしれません。このファ
+   イルは ssh クライアントと sshd の両方で hosts.equiv 機能を提供するた
+   めに使われています。このファイルも同様に更新する必要があります。</p>
 
-<p>3. ���Ƥ� OpenSSH �桼����������å�����</p>
+<p>3. 全ての OpenSSH ユーザ鍵をチェックする</p>
 
-   <p>���ְ����ʼ��ϡ���٤Τʤ������ƥ�Ǻ������줿�����ȶ����ο��Ǥ���
-   ������������Ƥ� OpenSSH ����ƺ������뤳�ȤǤ���</p>
+   <p>一番安全な手順は、欠陥のないシステムで作成された鍵だと強く確信できる
+   場合を除いて全ての OpenSSH 鍵を再作成することです。</p>
 
-   <p>�����������ɤ����ϡ����ι����˴ޤޤ�Ƥ��� ssh-vulnkey �ġ���ǥ�
-   ���å��Ǥ��ޤ�������Ǥϡ�ssh-vulnkey �ϥ桼������ɸ��γ�Ǽ���
-   (~/.ssh/id_rsa, ~/.ssh/id_dsa �� ~/.ssh/identity) �ȡ�authorized_keys
-   �ե����� (~/.ssh/authorized_keys �� ~/.ssh/authorized_keys2)������
-   �ӥ����ƥ�Υۥ��ȸ� (/etc/ssh/ssh_host_dsa_key ��
-   /etc/ssh/ssh_host_rsa_key) ������å����ޤ���</p>
+   <p>鍵が安全かどうかは、この更新に含まれている ssh-vulnkey ツールでチ
+   ェックできます。既定では、ssh-vulnkey はユーザ鍵の標準の格納場所
+   (~/.ssh/id_rsa, ~/.ssh/id_dsa と ~/.ssh/identity) と、authorized_keys
+   ファイル (~/.ssh/authorized_keys と ~/.ssh/authorized_keys2)、およ
+   びシステムのホスト鍵 (/etc/ssh/ssh_host_dsa_key と
+   /etc/ssh/ssh_host_rsa_key) をチェックします。</p>
 
-   <p>��ʬ�����Ƥθ���ɸ��ξ�� (~/.ssh/id_rsa, ~/.ssh/id_dsa, �ޤ���
-   ~/.ssh/identity) �˳�Ǽ����Ƥ����硢����������å�����ˤϰʲ�
-   �Υ��ޥ�ɤ�Ȥ��ޤ���</p>
+   <p>自分の全ての鍵が標準の場所 (~/.ssh/id_rsa, ~/.ssh/id_dsa, または
+   ~/.ssh/identity) に格納されている場合、それらをチェックするには以下
+   のコマンドを使います。</p>
 
      <p>ssh-vulnkey</p>
 
-   <p>�����ƥ�����Ƥθ�������å�����ˤ�</p>
+   <p>システムの全ての鍵をチェックするには</p>
 
      <p>sudo ssh-vulnkey -a</p>
 
-   <p>��ɸ��ξ��Ǥθ�������å�����ˤ�</p>
+   <p>非標準の場所での鍵をチェックするには</p>
 
      <p>ssh-vulnkey /path/to/key</p>
 
-   <p>�⤷ ssh-vulnkey �� "Unknown (no blacklist information)" ����������
-   �硢�������ȼ夫�ɤ����ξ��󤬤ʤ��Ȥ������ȤǤ������ξ��ˤϡ��ե�
-   ����ν������� (mtime) �� ls -l ��Ȥä�Ĵ�٤���ɤ��Ǥ��礦��2006
-   9������˺������줿���ˤϷ�٤Ϥ���ޤ��󡣲�ǽ�����㤤�Ǥ������Х�
-   �����å׽����ǥե���������դ��ᤵ��Ƥ��뤫�⤷�Ƥʤ����ޤ��ϥ�����
-   ���������꤬�������ʤ��ä����⤷��ʤ����ʤɤ�Ƭ������Ƥ����Ƥ���
-   ������</p>
+   <p>もし ssh-vulnkey が "Unknown (no blacklist information)" と答えた場
+   合、キーが脆弱かどうかの情報がないということです。この場合には、ファ
+   イルの修正時刻 (mtime) を ls -l を使って調べると良いでしょう。2006
+   9月以前に作成された鍵には欠陥はありません。可能性は低いですが、バッ
+   クアップ処理でファイルの日付が戻されているかもしてない、またはシステ
+   ム時刻の設定が正しくなかったかもしれない、などは頭に入れておいてくだ
+   さい。</p>
    
-   <p>���路�����ϡ�����������������ơ������Υ����Ф���Ť�����������
-   ����������</p>
+   <p>疑わしい場合は、新しい鍵を作成して、全部のサーバから古い鍵を削除して
+   ください。</p>
 
-<p>4. �ƶ�����桼���������������</p>
+<p>4. 影響するユーザ鍵を再生成する</p>
 
-   <p>�桼���θĿ�ǧ�ڤ˻��Ѥ��� OpenSSH ���ϡ���ư�Ǻ���������ɬ�פ�����
-   �ޤ���������������¾�Υ����ƥ�˰�ư��������ޤߤޤ���</p>
+   <p>ユーザの個人認証に使用する OpenSSH 鍵は、手動で再生成する必要があり
+   ます。これは生成後に他のシステムに移動した鍵を含みます。</p>
 
-   <p>���������� ssh-keygen ��Ȥäƺ������ޤ���</p>
+   <p>新しい鍵は ssh-keygen を使って作成します。</p>
 
 <pre>
    $ ssh-keygen
@@ -107,41 +107,41 @@ It is also possible that the RSA host key has just been changed.
    00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00 user@host
 </pre>
 
-<p>5. authorized_keys �ե�����򹹿����� (ɬ�פ˱����Ƽ¹�)</p>
+<p>5. authorized_keys ファイルを更新する (必要に応じて実行)</p>
 
-   <p>�桼��������ƺ��������塢�б������������ɬ�פʥ�⡼�ȥ����ƥ��
-   authorized_keys (�ޤ��� authorized_keys2) �����ۤ���ɬ�פ�����ޤ���
-   �����ե����뤫��Ť����������뤳�Ȥ�˺��ʤ��褦�ˤ��Ƥ���������</p>
+   <p>ユーザキーを再作成した後、対応する公開鍵は必要なリモートシステムの
+   authorized_keys (または authorized_keys2) に配布する必要があります。
+   当該ファイルから古い鍵を削除することを忘れないようにしてください。</p>
 
 
-<p>����η�٤ؤ��н�Τۤ��ˡ����� OpenSSH �ι����Ǥϴ��Ĥ��Τ���ʳ��η�
-�٤⽤�����Ƥ��ޤ���</p>
+<p>乱数の欠陥への対処のほかに、この OpenSSH の更新では幾つかのそれ以外の欠
+陥も修正しています。</p>
 
 <p><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-1483">CVE-2008-1483</a>:
-   Timo Juhani Lindfors ����ˤ�ꡢX11 �ե���ǥ��󥰤�ԤäƤ����
-   �硢SSH ���饤����Ȥ� X11 �ե���ǥ��󥰥ݡ��Ȥ򡢤��Υݡ��Ȥ���
-   �ƤΥ��ɥ쥹�ե��ߥ���Ѥ����Ƥ��뤳�Ȥ��ǧ�������Ѥ��Ƥ��뤳�Ȥ�
-   ȯ������ޤ����������ƥब IPv6 ���Ѥ���褦�����ꤵ��Ƥ����� (ͭ
-   ���� IPv6 ��³����äƤ��ʤ����Ǥ�)����⡼�ȥ����о�ι���Ԥ�
-   X11 �ե���ǥ��󥰤�ϥ�����å���ǽ�Ǥ���</p>
+   Timo Juhani Lindfors さんにより、X11 フォワーディングを行っている場
+   合、SSH クライアントが X11 フォワーディングポートを、そのポートが全
+   てのアドレスファミリで用いられていることを確認せず利用していることが
+   発見されました。システムが IPv6 を用いるように設定されている場合 (有
+   効な IPv6 接続を持っていない場合でも)、リモートサーバ上の攻撃者が
+   X11 フォワーディングをハイジャック可能です。</p>
 
 <p><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-4752">CVE-2007-4752</a>:
-   Jan Pechanec ����ˤ�ꡢssh �����ѤǤ��ʤ� X11 ���å����κ����˼���
-   �������ˡ����Ѥ��줿 X11 ���å����κ����˥ե�����Хå�����褦�ˤʤäƤ��ꡢX11
-   �ե���ǥ��󥰤�ԤäƤ�����˰��դ���ä���⡼�ȥ����Ф˥�����
-   ���ɽ������ϳ�̤����ǽ�������뤳�Ȥ�ȯ������ޤ�����</p>
+   Jan Pechanec さんにより、ssh が信用できない X11 クッキーの作成に失敗
+   した場合に、信用された X11 クッキーの作成にフォールバックするようになっており、X11
+   フォワーディングを行っている場合に悪意を持ったリモートサーバにローカ
+   ルの表示情報が漏洩する可能性があることが発見されました。</p>
 
-<p>������ (stable) �ǥ����ȥ�ӥ塼����� (etch) �Ǥϡ�����������ϥС���
-��� 4.3p2-9etch1 �ǽ�������
-�Ƥ��ޤ����������Ǥϥ��ݡ��Ȥ���Ƥ��륢�����ƥ�����ΰ����Τߤ��ӥ�ɺ�
-�ߤǡ��Ĥ���ɤä��󶡤�ͽ��Ǥ���</p>
+<p>安定版 (stable) ディストリビューション (etch) では、これらの問題はバージ
+ョン 4.3p2-9etch1 で修正され
+ています。現時点ではサポートされているアーキテクチャの一部のみがビルド済
+みで、残りは追って提供の予定です。</p>
 
-<p>�԰����� (unstable) �ǥ����ȥ�ӥ塼����� (sid) �ȥƥ����� (testing) ��
-�����ȥ�ӥ塼����� (lenny) �Ǥϡ�����������ϥС������ 4.7p1-9 ��
-��������Ƥ��ޤ���</p>
+<p>不安定版 (unstable) ディストリビューション (sid) とテスト版 (testing) デ
+ィストリビューション (lenny) では、これらの問題はバージョン 4.7p1-9 で
+修正されています。</p>
 
-<p>ľ���� openssh �ѥå������򥢥åץ��졼�ɤ����嵭�μ���Ԥ����Ȥ򴫤�
-�ޤ���</p>
+<p>直ぐに openssh パッケージをアップグレードし、上記の手順を行うことを勧め
+ます。</p>
 </define-tag>
 
 # do not modify the following line

@@ -1,39 +1,39 @@
-<define-tag description>$B%/%m%9%5%$%H%9%/%j%W%F%#%s%0$H8"8B$N>:3J(B</define-tag>
+<define-tag description>クロスサイトスクリプティングと権限の昇格</define-tag>
 <define-tag moreinfo>
-<p>Joao Gouveia $B$5$s$K$h$j!"(Bmantis (php $B$r%Y!<%9$K$7$?%P%0%H%i%C%-%s%0(B
-$B%7%9%F%`(B) $B$G!"=i4|2=$5$l$J$$JQ?t$,!"%U%!%$%k$rJq4^$9$k:]$K0BA4$G$J$$J}K!$G(B
-$B;HMQ$5$l$F$$$k$H$$$&LdBj$,H/8+$5$l$^$7$?!#(B
-Debian $B%;%-%e%j%F%#%A!<%`$O!"$5$i$K;w$?$h$&$JLdBj$rH/8+$7$^$7$?!#(B
-$B$3$N<eE@$rFM$1$P!"%j%b!<%H$N%f!<%6$O!"(Bmantis $B%7%9%F%`$rF0$+$7$F$$$k(B
-$B%5!<%P>e$G!"%&%'%V%5!<%P$N%f!<%68"8B$GG$0U$N%3!<%I$r<B9T$9$k$3$H$,(B
-$B$G$-$F$7$^$$$^$9!#(B</p>
+<p>Joao Gouveia さんにより、mantis (php をベースにしたバグトラッキング
+システム) で、初期化されない変数が、ファイルを包含する際に安全でない方法で
+使用されているという問題が発見されました。
+Debian セキュリティチームは、さらに似たような問題を発見しました。
+この弱点を突けば、リモートのユーザは、mantis システムを動かしている
+サーバ上で、ウェブサーバのユーザ権限で任意のコードを実行することが
+できてしまいます。</p>
 
-<p>Jeroen Latour $B$5$s$K$h$j!"(BMantis $B$GA4$F$N%f!<%6F~NO$,%A%'%C%/$G$-$F$$$J$$(B
-($BFC$KF~NO$,D>@\(B form $B%U%#!<%k%I$+$iMh$J$$>l9g$K(B) $BLdBj$,H/8+$5$l$^$7$?!#(B
-$B$3$NLdBj$O!"(Bmagic_quotes_gpc $B$rM-8z$K$7$F$$$J$$%7%9%F%`$G$OMM!9$J(B SQL
-$B1x@wLdBj$X$N2DG=@-$r3+$/$b$N$G$9!#$3$N$&$AKX$I$N@H<e@-$O!"0l2s$N(B
-mysql_query() $B$N8F$S=P$7$GJ#?t$N%/%(%j$r<B9T$9$k$3$H$,$G$-$J$$$h$&$KJQ99$5$l$F$$$k$?$a!"8B$i$l$?$d$jJ}$G$N967b$r5v$9$@$1$G$9$,!"(B
-$B$&$A0l$D$N%/%(%j$,%"%+%&%s%H$N%"%/%;%9%l%Y%k$NJQ99$K0-MQ2DG=$G$9!#(B</p>
+<p>Jeroen Latour さんにより、Mantis で全てのユーザ入力がチェックできていない
+(特に入力が直接 form フィールドから来ない場合に) 問題が発見されました。
+この問題は、magic_quotes_gpc を有効にしていないシステムでは様々な SQL
+汚染問題への可能性を開くものです。このうち殆どの脆弱性は、一回の
+mysql_query() の呼び出しで複数のクエリを実行することができないように変更されているため、限られたやり方での攻撃を許すだけですが、
+うち一つのクエリがアカウントのアクセスレベルの変更に悪用可能です。</p>
 
-<p>Jeroen Latour $B$5$s$K$h$j!"(BMantis $B$K0J2<$NLdBj$bJs9p$5$l$F$$$^$9!#(BMantis $B$K!"(B
-$B$=$NJs9p<T$,Js9p$7$?%P%0$N$_$rI=<($5$;$k$h$&$K$9$k$3$H$,!"(Blimit_reporters
-$B%*%W%7%g%s$r(B ON $B$K$9$k;v$G2DG=$G$9$,!"=PNO$r0u:~MQ$K%U%)!<%^%C%H$9$k$H$-(B
-$B$K%W%m%0%i%`$,$3$N(B limit_reporters $B%*%W%7%g%s$r8+$F$*$i$:!"$=$N7k2LEv3:Js(B
-$B9p<T$,Js9p$7$?$b$N0J30$N%P%0$N0lMw$r8+$k$3$H$,$G$-$^$9!#(B</p>
+<p>Jeroen Latour さんにより、Mantis に以下の問題も報告されています。Mantis に、
+その報告者が報告したバグのみを表示させるようにすることが、limit_reporters
+オプションを ON にする事で可能ですが、出力を印刷用にフォーマットするとき
+にプログラムがこの limit_reporters オプションを見ておらず、その結果当該報
+告者が報告したもの以外のバグの一覧を見ることができます。</p>
 
-<p>$B$^$?!"(BJeroen Latour $B$5$s$K$h$j!"FCDj$N%W%m%8%'%/%H$N%P%0$N0lMw$rI=<($9$k$?$a$N%Z!<%8$G!"(B
-$B%f!<%6$,$=$N%W%m%8%'%/%H$KBP$9$k%"%/%;%98"8B$r;}$C$F$$$k$+$r%A%'%C%/$7$F$$$J$$$H$$$&LdBj$,;XE&$5$l$^$7$?!#(B
-$B$3$N8"8B$O!"Aw$i$l$?%/%C%-!<JQ?t$G4IM}$5$l$F$$$^$9!#$3$N$H$-!"(BMantis
-$B$G$O8m$C$F!"%f!<%6$N%"%/%;%92DG=$J%W%m%8%'%/%H$N$_$,%I%m%C%W%@%&%s%a%K%e!<$K8=$l$k!"$H$$$&2>Dj$rCV$$$F$$$^$9!#(B
-$B$3$l$K$h$j0-0U$r;}$C$?%f!<%6$,!"A*Br$7$?%W%i%$%Y!<%H$J%W%m%8%'%/%H$N%P%0$r8+$k$3$H$,2DG=$G$9!#(B
+<p>また、Jeroen Latour さんにより、特定のプロジェクトのバグの一覧を表示するためのページで、
+ユーザがそのプロジェクトに対するアクセス権限を持っているかをチェックしていないという問題が指摘されました。
+この権限は、送られたクッキー変数で管理されています。このとき、Mantis
+では誤って、ユーザのアクセス可能なプロジェクトのみがドロップダウンメニューに現れる、という仮定を置いています。
+これにより悪意を持ったユーザが、選択したプライベートなプロジェクトのバグを見ることが可能です。
 </p>
 
-<p>$B$3$NLdBj$O!"8=0BDjHG(B (stable) woody $B$N%P!<%8%g%s(B 0.17.1-2.2 $B$G!"IT0BDjHG(B
-(unstable) sid $B$N%P!<%8%g%s(B 0.17.4a-2 $B$G!"3F!9=$@5$5$l$F$$$^$9!#A00BDjHG(B
-(stable) potato $B$K$O(B mantis $B%Q%C%1!<%8$O<}O?$5$l$F$$$J$$$?$a!"$3$NLdBj$N(B
-$B1F6A$O<u$1$^$;$s!#(B</p>
+<p>この問題は、現安定版 (stable) woody のバージョン 0.17.1-2.2 で、不安定版
+(unstable) sid のバージョン 0.17.4a-2 で、各々修正されています。前安定版
+(stable) potato には mantis パッケージは収録されていないため、この問題の
+影響は受けません。</p>
 
-<p>$BDI2C>pJs(B:</p>
+<p>追加情報:</p>
 
 <ul>
 <li><a href="http://mantisbt.sourceforge.net/advisories/2002/2002-01.txt">Mantis Advisory/2002-01</a>
@@ -43,7 +43,7 @@ mysql_query() $B$N8F$S=P$7$GJ#?t$N%/%(%j$r<B9T$9$k$3$H$,$G$-$J$$$h$&$KJQ99$5$l$
 <li><a href="http://mantisbt.sourceforge.net/advisories/2002/2002-05.txt">Mantis Advisory/2002-05</a>
 </ul>
 
-<p>mantis $B%Q%C%1!<%8$rAa5^$K%"%C%W%0%l!<%I$9$k$3$H$r$*4+$a$7$^$9!#(B</p>
+<p>mantis パッケージを早急にアップグレードすることをお勧めします。</p>
 </define-tag>
 
 # do not modify the following line

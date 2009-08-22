@@ -1,76 +1,76 @@
 #use wml::debian::translation-check translation="1.3"
-<define-tag description>DNS ����å���ݥ����˥󥰹���</define-tag>
+<define-tag description>DNS キャッシュポイゾニング攻撃</define-tag>
 <define-tag moreinfo>
 
-<p>Dan Kaminsky ����ˤ�ꡢDNS �ץ��ȥ������ߤ��������˷�٤����ꡢDNS
-���ι���䥭��å���ݥ����˥󥰹��⤬���¤ζ��ҤȤʤ뤳�Ȥ�ȯ�������
-���������⤬����������硢ŵ��Ū�ˤϥ������̿����Żҥ᡼���¾�Υ�����
-������ž�����뤳�Ȥ���ǽ�ǡ�����ʳ��ι����ˡ�⤢�ꤨ�ޤ���</p>
+<p>Dan Kaminsky さんにより、DNS プロトコルに内在する特性に欠陥があり、DNS
+詐称攻撃やキャッシュポイゾニング攻撃が現実の脅威となることが発見されま
+した。攻撃が成功した場合、典型的にはウェブ通信や電子メールを他のサイト
+に不正転送することが可能で、それ以外の攻撃手法もありえます。</p>
 
-<p>���ι����Ǥ� Debian �� BIND 9 �ѥå������˿侩���줿�б��� (UDP ������
-�������ݡ��ȤΥ����ಽ) ��������ޤ����������ѹ��Ϲ���Ԥ����ꤷ�ʤ�
-��Фʤ�ʤ�õ�����֤Υ������򡢸����ߴ���������ǳ��礷�����������
-����ˤ��ޤ���</p>
+<p>この更新では Debian の BIND 9 パッケージに推奨された対応策 (UDP クエリ
+ソースポートのランダム化) を実装しました。この変更は攻撃者が推定しなけ
+ればならない探索空間のサイズを、後方互換性を守る形で拡大し、攻撃の成功
+を困難にします。</p>
 
-<p>���Υ������ƥ����åץǡ��Ȥϡ�BIND �ͥåȥ���ε�ư����Ū���ѹ�
-���ޤ������Τ��ᡢ���ࡼ���ʰܹԤΤ���ʲ��μ��򤪴��ᤷ�ޤ���</p>
+<p>このセキュリティアップデートは、BIND ネットワークの挙動を根本的に変更
+します。このため、スムーズな移行のため以下の手順をお勧めします。</p>
 
 
-<p>1. �ͥåȥ���ι��������������ݡ��ȥ����ಽ������Ƥ��뤫�ɤ�����
-��ǧ���Ƥ����������⤷�꥾��Ф򥹥ơ��ȥ쥹�ѥ��åȥե��륿���ݸ
-�Ƥ����硢DNS �ʳ��Υ����ӥ��� 1024--65535 UDP �ݡ����ϰϤ�ꥹ��
-�Ƥ��ʤ����Ȥ��ǧ���ơ������ϰϤ�ѥ��åȥե��륿���̤��褦�ˤ��Ƥ�
-���������㤨�С�Linux 2.6.18 �����ͥ��Ȥä� etch �Υѥ��åȥե��륿
-�ϡ�IPv6 �ѥ��åȤ��Ф��ƥ��ơ��ȥ쥹�ե��륿��ǽ�Τߤ��󶡤���Ƥ���
-�����顢�������꤬ȯ�����ޤ� (IPv4 �� iptable �� ESTABLISHED �롼���
-�ߤǻȤäƤ����硢�ͥåȥ�����ѹ���¿ʬ���פǤ�)��</p>
+<p>1. ネットワークの構成が、ソースポートランダム化を許しているかどうかを
+確認してください。もしリゾルバをステートレスパケットフィルタで保護し
+ている場合、DNS 以外のサービスが 1024--65535 UDP ポート範囲をリスンし
+ていないことを確認して、その範囲をパケットフィルタで通すようにしてく
+ださい。例えば、Linux 2.6.18 カーネルを使った etch のパケットフィルタ
+は、IPv6 パケットに対してステートレスフィルタ機能のみが提供されていま
+すから、この問題が発生します (IPv4 を iptable で ESTABLISHED ルールの
+みで使っている場合、ネットワークの変更は多分不要です)。</p>
 
-<p>2. BIND 9 �� "apt-get update" �μ¹Ը塢"apt-get install bind9" ���
-�Ԥ��ƹ������ޤ���named �ץ��������Ƶ�ư����ơ��Ƶ��������ȿ������
-���Ȥ��ǧ���Ƥ������� (�⤷���ƤΥ����꤬�����ॢ���Ȥˤʤ�ʤ顢��
-�åȥ�����ѹ���ɬ�פǤ����ǽ�ι�򸫤Ƥ�������)��</p>
+<p>2. BIND 9 を "apt-get update" の実行後、"apt-get install bind9" を実
+行して更新します。named プロセスが再起動されて、再帰クエリに反応する
+ことを確認してください (もし全てのクエリがタイムアウトになるなら、ネ
+ットワークの変更が必要です。最初の項を見てください)。</p>
 
-<p>3. �������ݡ��ȥ����फ��ͭ���ˤʤäƤ��뤳�Ȥ��ǧ���Ƥ���������
-/var/log/daemon.log �ǡ�BIND ��Ω���夲����
-"listening on IPv6 interface" �� "listening on IPv4 interface" �Υ��
-��������ľ��ˡ��ʲ��Τ褦�ʷ����Υ�å��������Ϥ���Ƥ��ʤ����Ȥ����
-�å����Ƥ���������</p>
+<p>3. ソースポートランダムかが有効になっていることを確認してください。
+/var/log/daemon.log で、BIND の立ち上げ時の
+"listening on IPv6 interface" や "listening on IPv4 interface" のメッ
+セージの直後に、以下のような形式のメッセージがはかれていないことをチェ
+ックしてください。</p>
 
   <pre>named[6106]: /etc/bind/named.conf.options:28: using specific query-source port suppresses port randomization and can be insecure.</pre>
 
-<p>���Τ褦�ʥ�å��������Ǥ���Ƥ����硢���꤫���оݤȤʤ�Ԥ�������
-�������ܤ���Ƥ���ݡ����ֹ�� "*" ���֤������Ƥ������� (�㤨�С�
-"port 53" �� "port *" �˽񤭴�����)��</p>
+<p>このようなメッセージが吐かれている場合、設定から対象となる行を削除する
+か、記載されているポート番号を "*" に置き換えてください (例えば、
+"port 53" を "port *" に書き換える)。</p>
 
-<p>�ɲäγ�ǧ�Τ���ˤϡ�UDP �������ݡ��Ȥ��Ѳ����Ƥ��뤳�Ȥ� tcpdump �ʤ�
-�Υͥåȥ����ˤ��ġ���ǳ�ǧ���Ƥ����������꥾��Ф����� NAT �ǥХ�
-���������硢NAT �ˤ�꥽�����ݡ��ȥ���������»�ʤ��Ƥ��ʤ������
-ǧ���Ƥ���������</p>
+<p>追加の確認のためには、UDP ソースポートが変化していることを tcpdump など
+のネットワークもにたツールで確認してください。リゾルバの前に NAT デバイ
+スがある場合、NAT によりソースポートランダム性が損なわれていないかを確
+認してください。</p>
 
-<p>4. �������ݡ��ȥ����ಽ��ͭ���ˤǤ��ʤ���硢BIND 9 �� OpenVPN �Τ褦
-�� VPN ��Ȥäƥ������¹ԤǤ���꥾��Ф˥ե���ɤ�Ԥ��褦���ꤷ��
-��������������ˤ�ꡢɬ�פʿ��ѤǤ���ͥåȥ�����¸��Ǥ��ޤ� (����
-�ˤĤ��Ƥ� BIND �� forward-only ��ȤäƤ�������)��</p>
+<p>4. ソースポートランダム化を有効にできない場合、BIND 9 を OpenVPN のよう
+な VPN を使ってクエリを実行できるリゾルバにフォワードを行うよう設定して
+ください。これにより、必要な信用できるネットワークが実現できます (これ
+については BIND の forward-only を使ってください)。</p>
 
 
-<p>Debian ���󶡤���Ƥ���¾�� DNS ����å���꥾��� (PowerDNS, MaraDNS,
-Unbound) �ϴ��˥������ݡ��ȥ����ಽ�򤪤��ʤäƤ��ꡢ�ѥå������ι���
-��ɬ�פ���ޤ�����BIND 9.5 �ޤǤȡ��С������ 1:9.5.0.dfsg-4 �ޤǤϥ���
-���ݡ��ȥ����ಽ��夤���Ǥ����������Ƥ��餺��������ɬ�פǤ���BIND 8
-�ˤĤ��Ƥ� <a href="dsa-1604">DSA-1604-1</a> ��libc �����֥꥾��ФˤĤ��Ƥ� <a href="dsa-1605">DSA-1605-1</a> ��
-�Ȥ���������</p>
+<p>Debian で提供されている他の DNS キャッシュリゾルバ (PowerDNS, MaraDNS,
+Unbound) は既にソースポートランダム化をおこなっており、パッケージの更新
+は必要ありませ塩。BIND 9.5 までと、バージョン 1:9.5.0.dfsg-4 まではソー
+スポートランダム化を弱い形でしか実装しておらず、更新が必要です。BIND 8
+については <a href="dsa-1604">DSA-1604-1</a> を、libc スタブリゾルバについては <a href="dsa-1605">DSA-1605-1</a> を参
+照ください。</p>
 
-<p>���� bind9 �ѥå������ι����ˤϡ�����ΰ����ǤΥݥ���ȥ�꡼���Ǵޤ��
-ͽ����ä��������ޤޤ�Ƥ��ޤ�������ˤϡ�L.ROOT-SERVERS.NET (Debian
-bug #<a href="http://bugs.debian.org/449148">449148</a>) �� IP ���ɥ쥹�ѹ��ʤɤ��ޤޤ�Ƥ��ޤ���</p>
+<p>この bind9 パッケージの更新には、次回の安定版のポイントリリースで含める
+予定だった修正が含まれています。それには、L.ROOT-SERVERS.NET (Debian
+bug #<a href="http://bugs.debian.org/449148">449148</a>) の IP アドレス変更などが含まれています。</p>
 
-<p>������ (stable) �ǥ����ȥ�ӥ塼����� (etch) �Ǥϡ���������ϥС������
-9.3.4-2etch3 �ǽ�������Ƥ��ޤ���</p>
+<p>安定版 (stable) ディストリビューション (etch) では、この問題はバージョン
+9.3.4-2etch3 で修正されています。</p>
 
-<p>�԰����� (unstable) �ǥ����ȥ�ӥ塼����� (sid) �Ǥϡ���������϶᤯��
-��ͽ��Ǥ���</p>
+<p>不安定版 (unstable) ディストリビューション (sid) では、この問題は近く修
+正予定です。</p>
 
-<p>ľ���� bind9 �ѥå������򥢥åץ��졼�ɤ��뤳�Ȥ򴫤�ޤ���</p>
+<p>直ぐに bind9 パッケージをアップグレードすることを勧めます。</p>
 </define-tag>
 
 # do not modify the following line

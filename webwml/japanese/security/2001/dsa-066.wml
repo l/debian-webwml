@@ -1,26 +1,26 @@
 #use wml::debian::translation-check translation="1.3"
-<define-tag description>��⡼�Ȥ���ι���</define-tag>
+<define-tag description>リモートからの攻撃</define-tag>
 <define-tag moreinfo>
-Steven van Acker ����ˤ�ꡢbugtraq �� Debian GNU/Linux 2.2 �����ۤ�
-�줿�С������� cfingerd (�����ǽ�� finger �ǡ����) ����Ĥ����꤬
-����Ȥ���𤬤���ޤ�����
+Steven van Acker さんにより、bugtraq に Debian GNU/Linux 2.2 で配布さ
+れたバージョンの cfingerd (設定可能な finger デーモン) に二つの問題が
+あるとの報告がありました。
 
 <ol>
-<li> ����ե����� (������ $ ���ޥ�ɤ�Ÿ�������褦�ʥե�����) 
-   ���ɤ���ʬ�Υ����ɤ������Ϥ�Хåե��˥Хåե������Хե����Υ����å��򤷤ʤ��ǥ��ԡ����Ƥ��ޤäƤ��ޤ���
-   ALLOW_LINE_PARSING ��ǽ��ͭ���ˤʤäƤ����硢���Υ����ɤǥ桼���ե�������ɤ�褦�ˤʤäƤ��뤿�ᡢ��������Υ桼�����������Ĥ����Ȥ��Ǥ��ޤ���
+<li> 設定ファイル (内部で $ コマンドが展開されるようなファイル) 
+   を読む部分のコードが、入力をバッファにバッファオーバフローのチェックをしないでコピーしてしまっています。
+   ALLOW_LINE_PARSING 機能が有効になっている場合、このコードでユーザファイルを読むようになっているため、ローカルのユーザから弱点をつくことができます。
 
-<li> Ʊ���롼����� printf �ե����ޥåȹ�����н褷�Ƥ��ʤ� printf 
-   �ƤӽФ�������ޤ���
+<li> 同じルーチンに printf フォーマット攻撃に対処していない printf 
+   呼び出しがあります。
 </ol>
 
 <p>
-ALLOW_LINE_PARSING ��ɸ������� /etc/cfingerd.conf ��ͭ���ˤ���Ƥ��뤿�ᡢ
-��������Υ桼������ root �ø������뤳�Ȥ��Ǥ��ޤ���
+ALLOW_LINE_PARSING は標準設定の /etc/cfingerd.conf で有効にされているため、
+ローカルのユーザから root 特権を得ることができます。
 
 <p>
-��������ϥС������ 1.4.1-1.2 ���н褵��Ƥ��ꡢ������ cfingerd 
-�ѥå������򥢥åץ��졼�ɤ��뤳�Ȥ�����ޤ���
+この問題はバージョン 1.4.1-1.2 で対処されており、すぐに cfingerd 
+パッケージをアップグレードすることを薦めます。
 
 </define-tag>
 

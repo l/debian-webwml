@@ -1,24 +1,24 @@
-#use wml::debian::template title="���Υ����륪���С�"
+#use wml::debian::template title="鍵のロールオーバー"
 #use wml::debian::translation-check translation="1.48" maxdelta="1"
 
 <p>
-<a href="$(HOME)/security/2008/dsa-1571">Debian �������ƥ����� 1571</a>
-�ǡ�Debian �������ƥ�������ϡ�Debian ����Ӥ��������ǥ����ȥ�ӥ塼������ OpenSSL
-�ǻ��Ѥ���Ƥ������������η�٤������ޤ��������η�٤ˤ�äơ������ΰŹ渰�ϡ�
-���褢��٤��Ѥ����ڤ��˰���Ū�ʤ�ΤȤʤäƤ��ޤäƤ��뤿�ᡢ����Ԥϡ�
-�����ƥ�˴ؤ��뤴���鷺�����μ�����äƤ���С�
-�������깶����̤��Ƹ����¬�Ǥ��Ƥ��ޤ���ǽ��������ޤ�����������ϡ�
-�ä� OpenSSH��OpenVPN��SSL ������λ��Ѥ˱ƶ����ޤ���
+<a href="$(HOME)/security/2008/dsa-1571">Debian セキュリティ勧告 1571</a>
+で、Debian セキュリティチームは、Debian およびその派生ディストリビューションの OpenSSL
+で使用されている乱数生成器の欠陥を修正しました。この欠陥によって、一部の暗号鍵は、
+本来あるべき姿よりも遥かに一般的なものとなってしまっているため、攻撃者は、
+システムに関するごくわずかな知識を持っていれば、
+総当たり攻撃を通じて鍵を推測できてしまう可能性があります。この問題は、
+特に OpenSSH、OpenVPN、SSL 証明書の使用に影響します。
 </p>
 
 <p>
-���Υڡ�����ʸ��ϡ��������� (�����륪���С�) �μ���OpenSSL
-�η�٤˱ƶ�����븰����ĳƥѥå������̤˼�������ΤǤ���
+このページの文書は、鍵の総交換 (ロールオーバー) の手順を、OpenSSL
+の欠陥に影響される鍵を持つ各パッケージ別に示したものです。
 </p>
 
 <ul>
 <li><b><a href="#openssh">OpenSSH</a></b></li>
-<li><b><a href="#openssl">OpenSSL: ����Ū�� PEM ��������������</a></b></li>
+<li><b><a href="#openssl">OpenSSL: 一般的な PEM 鍵生成手順の説明</a></b></li>
 
 <li><a href="#bincimap">bincimap</a></li>
 <li><a href="#boxbackup">boxbackup</a></li>
@@ -42,8 +42,8 @@
 </ul>
 
 <p>
-¾�Υ��եȥ�������Ź渰���Ѥ��ޤ�������������򴹤� OpenSSL ��ȤäƤ��ʤ�����
-<a href="notvuln">��٤Ϥ���ޤ���</a>��
+他のソフトウェアも暗号鍵を用いますが、鍵生成や交換に OpenSSL を使っていないため
+<a href="notvuln">欠陥はありません</a>。
 </p>
 
 <ul>
@@ -54,32 +54,32 @@
 </ul>
 
 <p>
-����ʳ��Υ��եȥ������ǤΥ��������륪���Фμ��ˤĤ��Ƥϡ��桼������ξ���
-<url http://wiki.debian.org/SSLkeys> �����ͤˤʤ�ޤ���
+これ以外のソフトウェアでのキーロールオーバの手順については、ユーザからの情報
+<url http://wiki.debian.org/SSLkeys> が参考になります。
 </p>
 
 <h1><a name="openssh">OpenSSH</a></h1>
 
 <p>
-�����ǤΥѥå������� <a href="$(HOME)/security/2008/dsa-1576">DSA-1576</a>
-���̤��ƥ�꡼������Ƥ��ꡢ�����Ѵ����ڤˤʤäƤ��ޤ���
+更新版のパッケージが <a href="$(HOME)/security/2008/dsa-1576">DSA-1576</a>
+を通じてリリースされており、鍵の変換が楽になっています。
 </p>
 
-<p>1. DSA-1576 �Υ������ƥ������򥤥󥹥ȡ��뤹��</p>
+<p>1. DSA-1576 のセキュリティ更新をインストールする</p>
 
-   <p>������Ŭ�Ѥ�����ä��ʤ�С���ǽ�ʾ��ˤ��ȼ�ʥ桼�����ϼ�ưŪ�˵��䤵��ޤ���
-   â�������θ��ФϹԤ��ޤ��󡣥桼���θĿ�ǧ�ڤˤ��Τ褦�ʸ���ȤäƤ�����ϡ�����
-ľ���ư��ʤ��ʤꡢ���������ǹ������ʤ���Фʤ�ʤ��ʤ�ޤ�
-   (��� 3 ����)��</p>
+   <p>更新の適用が終わったならば、可能な場合には脆弱なユーザ鍵は自動的に拒絶されます。
+   但し全部の検出は行えません。ユーザの個人認証にこのような鍵を使っている場合は、鍵は
+直後に動作しなくなり、新しい鍵で更新しなければならなくなります
+   (手順 3 参照)。</p>
 
-   <p>OpenSSH �ۥ��ȸ��ϡ�OpenSSH �������ƥ�������Ŭ�Ѹ弫ưŪ�˺ƺ�����
-   ��ޤ����������ˤϡ����ν��������˥桼���ؤγ�ǧ�䤤��碌���Ԥ���
-   ����</p>
+   <p>OpenSSH ホスト鍵は、OpenSSH セキュリティ更新を適用後自動的に再作成さ
+   れます。更新時には、この処理の前にユーザへの確認問い合わせが行われま
+   す。</p>
 
-<p>2. OpenSSH known_hosts �ե�����򹹿�����</p>
+<p>2. OpenSSH known_hosts ファイルを更新する</p>
 
-   <p>�ۥ��ȸ��������������硢SSH ��ȤäƤ��륷���ƥ����³�κݡ�
-   known_hosts �Υۥ��ȸ��ι���������Ǥ��ʤ����ˤϰʲ��ηٹ���̤�ɽ������ޤ�</p>
+   <p>ホスト鍵を再生成した場合、SSH を使っているシステムに接続の際、
+   known_hosts のホスト鍵の更新がすんでいない場合には以下の警告画面が表示されます</p>
 
 <pre>
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -90,58 +90,58 @@ Someone could be eavesdropping on you right now (man-in-the-middle attack)!
 It is also possible that the RSA host key has just been changed.
 </pre>
 
-   <p>���ξ�硢�ºݤ˥ۥ��ȸ����ѹ�����Ƥ���Τǡ��ٹ��å������ˤ����
-   �����оݤ� known_hosts �򹹿�����ɬ�פ�����ޤ���
+   <p>この場合、実際にホスト鍵が変更されているので、警告メッセージにあるよ
+   うに対象の known_hosts を更新する必要があります。
 
-   �����и��θ򴹤ˤϡ����ѤǤ����̿�ϩ����Ѥ��뤳�Ȥ򴫤�ޤ������ϥ�
-   ���о�� /etc/ssh/ssh_host_rsa_key.pub ���֤���ޤ������Υե��󥬡�
-   �ץ��Ȥϰʲ��Υ��ޥ�ɤǸ��뤳�Ȥ��Ǥ��ޤ���</p>
+   サーバ鍵の交換には、信用できる通信路を使用することを勧めます。鍵はサ
+   ーバ上の /etc/ssh/ssh_host_rsa_key.pub に置かれます。鍵のフィンガー
+   プリントは以下のコマンドで見ることができます。</p>
 
       <p>ssh-keygen -l -f /etc/ssh/ssh_host_rsa_key.pub</p>
 
-   <p>�桼���̤� known_hosts �ե�����ʳ��ˡ������ƥ����Τ�ͭ���ʥۥ��ȥ�
-   ������  /etc/ssh/ssh_known_hosts ��¸�ߤ��Ƥ��뤫�⤷��ޤ��󡣤��Υե�
-   ����� ssh ���饤����Ȥ� sshd ��ξ���� hosts.equiv ��ǽ���󶡤��뤿
-   ��˻Ȥ��Ƥ��ޤ������Υե������Ʊ�ͤ˹�������ɬ�פ�����ޤ���</p>
+   <p>ユーザ別の known_hosts ファイル以外に、システム全体で有効なホストフ
+   ァイル  /etc/ssh/ssh_known_hosts が存在しているかもしれません。このファ
+   イルは ssh クライアントと sshd の両方で hosts.equiv 機能を提供するた
+   めに使われています。このファイルも同様に更新する必要があります。</p>
 
-<p>3. ���٤Ƥ� OpenSSH �桼����������å�����</p>
+<p>3. すべての OpenSSH ユーザ鍵をチェックする</p>
 
-   <p>���ְ����ʼ��ϡ���٤Τʤ������ƥ�Ǻ������줿�����ȶ����ο��Ǥ���
-   ������������Ƥ� OpenSSH ����ƺ������뤳�ȤǤ���</p>
+   <p>一番安全な手順は、欠陥のないシステムで作成された鍵だと強く確信できる
+   場合を除いて全ての OpenSSH 鍵を再作成することです。</p>
 
-   <p>�����������ɤ����ϡ����ι����˴ޤޤ�Ƥ��� ssh-vulnkey �ġ���ǥ�
-   ���å��Ǥ��ޤ�������Ǥϡ�ssh-vulnkey �ϥ桼������ɸ��γ�Ǽ���
-   (~/.ssh/id_rsa, ~/.ssh/id_dsa �� ~/.ssh/identity) �ȡ�authorized_keys
-   �ե����� (~/.ssh/authorized_keys �� ~/.ssh/authorized_keys2)������
-   �ӥ����ƥ�Υۥ��ȸ� (/etc/ssh/ssh_host_dsa_key ��
-   /etc/ssh/ssh_host_rsa_key) ������å����ޤ���</p>
+   <p>鍵が安全かどうかは、この更新に含まれている ssh-vulnkey ツールでチ
+   ェックできます。既定では、ssh-vulnkey はユーザ鍵の標準の格納場所
+   (~/.ssh/id_rsa, ~/.ssh/id_dsa と ~/.ssh/identity) と、authorized_keys
+   ファイル (~/.ssh/authorized_keys と ~/.ssh/authorized_keys2)、およ
+   びシステムのホスト鍵 (/etc/ssh/ssh_host_dsa_key と
+   /etc/ssh/ssh_host_rsa_key) をチェックします。</p>
 
-   <p>��ʬ�����Ƥθ���ɸ��ξ�� (~/.ssh/id_rsa, ~/.ssh/id_dsa, �ޤ���
-   ~/.ssh/identity) �˳�Ǽ����Ƥ����硢����������å�����ˤϰʲ�
-   �Υ��ޥ�ɤ�Ȥ��ޤ���</p>
+   <p>自分の全ての鍵が標準の場所 (~/.ssh/id_rsa, ~/.ssh/id_dsa, または
+   ~/.ssh/identity) に格納されている場合、それらをチェックするには以下
+   のコマンドを使います。</p>
 
      <p>ssh-vulnkey</p>
 
-   <p>�����ƥ�����Ƥθ�������å�����ˤϰʲ��Τ褦�ˤ��ޤ�</p>
+   <p>システムの全ての鍵をチェックするには以下のようにします</p>
 
      <p>sudo ssh-vulnkey -a</p>
 
-   <p>��ɸ��ξ��Ǥθ�������å�����ˤϰʲ��Τ褦�ˤ��ޤ�</p>
+   <p>非標準の場所での鍵をチェックするには以下のようにします</p>
 
      <p>ssh-vulnkey /path/to/key</p>
 
-   <p>�⤷ ssh-vulnkey �� <q>Unknown (no blacklist information)</q>
-   ����������硢�������ȼ夫�ɤ����ξ��󤬤ʤ��Ȥ������ȤǤ���
-   ���路�����ϡ�����������������ơ������Υ����Ф���Ť�����������
-   ����������
+   <p>もし ssh-vulnkey が <q>Unknown (no blacklist information)</q>
+   と答えた場合、キーが脆弱かどうかの情報がないということです。
+   疑わしい場合は、新しい鍵を作成して、全部のサーバから古い鍵を削除して
+   ください。
    </p>
 
-<p>4. �ƶ��������桼������ƺ�������</p>
+<p>4. 影響を受けるユーザ鍵を再作成する</p>
 
-   <p>�桼���θĿ�ǧ�ڤ˻��Ѥ��� OpenSSH ���ϡ���ư�Ǻ���������ɬ�פ�����
-   �ޤ���������������¾�Υ����ƥ�˰�ư��������ޤߤޤ���</p>
+   <p>ユーザの個人認証に使用する OpenSSH 鍵は、手動で再生成する必要があり
+   ます。これは生成後に他のシステムに移動した鍵を含みます。</p>
 
-   <p>���������� ssh-keygen ��Ȥäƺ������ޤ���</p>
+   <p>新しい鍵は ssh-keygen を使って作成します。</p>
 
    <pre>
    $ ssh-keygen
@@ -155,20 +155,20 @@ It is also possible that the RSA host key has just been changed.
    00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00 user@host
    </pre>
 
-<p>5. authorized_keys �ե�����򹹿����� (ɬ�פ˱����Ƽ¹�)</p>
+<p>5. authorized_keys ファイルを更新する (必要に応じて実行)</p>
 
-   <p>�桼������ƺ��������塢�б������������ɬ�פʥ�⡼�ȥ����ƥ��
-   authorized_keys (�ޤ��� authorized_keys2) �����ۤ���ɬ�פ�����ޤ���
-   �����ե����뤫��Ť����������뤳�Ȥ�˺��ʤ��褦�ˤ��Ƥ���������</p>
+   <p>ユーザ鍵を再作成した後、対応する公開鍵は必要なリモートシステムの
+   authorized_keys (または authorized_keys2) に配布する必要があります。
+   当該ファイルから古い鍵を削除することを忘れないようにしてください。</p>
   
-<h1><a name="openssl">OpenSSL: ����Ū�� PEM ��������������</a></h1>
+<h1><a name="openssl">OpenSSL: 一般的な PEM 鍵生成手順の説明</a></h1>
 
 <p>
-�ʲ��ε��Ҥϡ�PEM ����沽���줿������� (��) ��������桼���Τ���Ρ�
-ñ�ʤ��ޥ�����Ǥ������μ���¾�ˤ⡢
-�����餯�����Ȥˤϸ��δ�����ˡ�˴ؤ������᤬����Τǡ�����ˤ⽾���٤��Ǥ��礦��
-����ˡ���������ˡ�Ǽ��ʽ�̾���Ѥ�����⡢
-�軰�Ԥξ������ؤ˺��ٽ�̾���Ƥ�餦ɬ�פ����뤫�⤷��ޤ���
+以下の記述は、PEM で符号化された証明書を (再) 生成するユーザのための、
+単なるリマインダです。この手順の他にも、
+おそらくサイトには鍵の管理方法に関する取り決めがあるので、それにも従うべきでしょう。
+さらに、下記の方法で自己署名を用いるよりも、
+第三者の証明機関に再度署名してもらう必要があるかもしれません。
 </p>
 
 <pre>
@@ -181,9 +181,9 @@ openssl req -new -key ../private/mysite.pem -x509 -days 9999 -out mysite.pem
 <h1><a name="bincimap">bincimap</a></h1>
 
 <p>
-bincimap �ѥå������Ǥϡ���ưŪ�� openssl �ץ��������Ѥ��� bincimap-ssl
-�����ӥ��Ѥμ��ʽ�̾������������������� /etc/ssl/certs/imapd.pem �����֤��ޤ���
-����������ˤϡ��ʲ��Υ��ޥ�ɤ�¹Ԥ��Ƥ���������
+bincimap パッケージでは、自動的に openssl プログラムを用いて bincimap-ssl
+サービス用の自己署名証明書を作成し、それを /etc/ssl/certs/imapd.pem に配置します。
+再生成するには、以下のコマンドを実行してください。
 </p>
 
 <pre>
@@ -194,61 +194,61 @@ dpkg-reconfigure bincimap
 <h1><a name="boxbackup">boxbackup</a></h1>
 
 <p>
-boxbackup �� Debian ������ (stable) �ˤ�¸�ߤ��ޤ��󡣥ƥ����� (testing)
-�Ǥ��� lenny �ˤΤ�¸�ߤ��ޤ���
+boxbackup は Debian 安定版 (stable) には存在しません。テスト版 (testing)
+である lenny にのみ存在します。
 </p>
 
 <p>
-��ȯ���ϡ������व���Խ�ʬ�ʵ������������ (PRNG)
-���Ѥ��ƺ������줿���κǽ�αƶ�ʬ�Ϥη�̤�������ޤ������ܺ٤�<a
-href="http://lists.warhead.org.uk/pipermail/boxbackup/2008-May/004476.html">������</a>���ɤ�ޤ���
+開発元は、ランダムさが不十分な疑似乱数生成器 (PRNG)
+を用いて作成された鍵の最初の影響分析の結果を公開しました。詳細は<a
+href="http://lists.warhead.org.uk/pipermail/boxbackup/2008-May/004476.html">こちら</a>で読めます。
 </p>
 
 <p>
-���Ȥ��� OpenSSL �� PRNG �Υ����व���Խ�ʬ�ʾ��ϡ��ʲ��Τ��Ȥ򤹤�ɬ�פ�����ޤ���
+お使いの OpenSSL の PRNG のランダムさが不十分な場合は、以下のことをする必要があります。
 </p>
 
 <ul>
-<li>����Υ����ƥ����������̾���줿���ƶ��Τ��������򤹤٤��������ʤ���</li>
-<li>�ǡ����� (*-FileEncKeys.raw) �򤹤٤��������ʤ���</li>
-<li>�����Ф���¸����Ƥ���ǡ�����Ŭ�ڤʥ������ƥ���٥���˲����� (����Ǥ⥼���񤭹��ߤ�Ԥ���Ű��Ū���˲����ʤ��ȵ����Ѥޤʤ����Ϥ���ʤ��Ȥ򤹤�)</li>
-<li>���٤ƤΤ�Τ򥢥åץ����ɤ��ʤ���</li>
-<li>����ޤǸ��������Ф�ǧ�ڤʤ��ǥץ졼��ƥ����ȤΥǡ�������¸���Ƥ����Ȥ�������Τ�Ȥǡ�
-Ŭ�ڤ����֤�Ȥ� (�Ĥޤꡢ�ǽ餫����ľ�����Хå����åפ��줿�ǡ����κ��פ򤹤٤ƾä���
-����ˡ����ʤ�����̩��˽Ϫ����Τ��¤餲�뤿��Τ���¾�����֤�Ȥ�)
+<li>問題のシステムで生成・署名された、影響のある証明書をすべて生成しなおす</li>
+<li>データ鍵 (*-FileEncKeys.raw) をすべて生成しなおす</li>
+<li>サーバに保存されているデータを適切なセキュリティレベルで破壊する (最低でもゼロ書き込みを行い、徹底的に破壊しないと気が済まない場合はさらなる作業をする)</li>
+<li>すべてのものをアップロードしなおす</li>
+<li>これまで公開サーバに認証なしでプレーンテキストのデータを保存していたという仮定のもとで、
+適切な措置をとる (つまり、最初からやり直し、バックアップされたデータの痕跡をすべて消し、
+さらに、あなたの秘密が暴露するのを和らげるためのその他の措置をとる)
 </li>
 </ul>
 
 <h1><a name="cryptsetup">cryptsetup</a></h1>
 
 <p>
-cryptsetup ���ΤϰŹ沽�� OpenSSL ����Ѥ��Ƥ��ޤ��� (����ϡ�LUKS �� dm-crypt
-��ξ���ΥǥХ����˸����뤳�ȤǤ�)��
+cryptsetup 自体は暗号化に OpenSSL を使用していません (これは、LUKS と dm-crypt
+の両方のデバイスに言えることです)。
 </p>
 
 <p>
-<em>�⤷</em>��cryptsetup �� SSL
-�ǰŹ沽���줿���ե��������Ѥ���褦�Ȥ������� (�������ǥե���ȤΥ��åȥ��åפǡ�
-�桼��������Ū�����ꤷ�ʤ���лȤ��뤳�ȤϤ���ޤ���) �ˤʤäƤ��ꡢ
-��٤Τ���С������� OpenSSL �����ե�����������˻��Ѥ��줿�ΤǤ���С�
-(�����������˥�����ǤϤʤ��褦��) ���ե�����ΰŹ沽�ϡ�
-���Ԥ�������夤��ǽ��������ޤ���
+<em>もし</em>、cryptsetup が SSL
+で暗号化された鍵ファイルを使用するようという設定 (これは非デフォルトのセットアップで、
+ユーザが明示的に設定しなければ使われることはありません) になっており、
+欠陥のあるバージョンの OpenSSL が鍵ファイルの生成に使用されたのであれば、
+(食塩が本当にランダムではないように) 鍵ファイルの暗号化は、
+期待されるよりも弱い可能性があります。
 </p>
 
 <p>
-�����ϡ�
-���ե������Ź沽���ʤ��� (�������Ź沽���줿�����軰�Ԥ�ϳ�̤��Ƥ��ʤ��Ȥ������ٳο��Ǥ�����)
-������٤αƶ��������ѡ��ƥ������򿷤��ʸ����Ѥ��ƾõ���ƥ��󥹥ȡ��뤹�뤫��
-�Τɤ��餫�Ǥ���
+解決策は、
+鍵ファイルを暗号化しなおす (ただし暗号化された鍵が第三者に漏洩していないとある程度確信できる場合)
+か、欠陥の影響を受けるパーティションを新たな鍵を用いて消去し、再インストールするか、
+のどちらかです。
 </p>
 
 <p>
-���ե������Ź沽���ʤ�����ˡ�������ϰʲ��ΤȤ���Ǥ���
+鍵ファイルを暗号化しなおす方法の説明は以下のとおりです。
 </p>
 
 <p>
-SSL �ǰŹ沽���줿�Ƹ��ե�����ˤĤ��ơ��ʲ��Υ��ޥ�ɤ�¹Ԥ��Ƥ���������
-��������&lt;ssl_encrypted_key_path&gt; �ϼºݤθ��ե�����Υѥ����֤������Ƥ���������
+SSL で暗号化された各鍵ファイルについて、以下のコマンドを実行してください。
+ただし、&lt;ssl_encrypted_key_path&gt; は実際の鍵ファイルのパスで置き換えてください。
 </p>
 
 <pre>
@@ -262,14 +262,14 @@ shred -uz "$tmpkey"
 <h1><a name="dropbear">dropbear</a></h1>
 
 <p>
-/etc/ssh/*host* �Ȥ�������������ϡ�Dropbear �θ��򹹿��������ˡ�
-�ޤ� /etc/ssh/*host* �������뤫���ޤ��� <a href="#openssh">OpenSSH
-�˴ؤ�������</a>�˽��äƤ���������
+/etc/ssh/*host* という鍵がある場合は、Dropbear の鍵を更新する前に、
+まず /etc/ssh/*host* を削除するか、または <a href="#openssh">OpenSSH
+に関する説明</a>に従ってください。
 </p>
 
 <p>
-Dropbear �� postinst �ϡ�dropbear �Υۥ��ȸ������Ĥ���ʤ���硢
-��¸�� OpenSSH �θ��� dropbear �������Ѵ����ޤ���
+Dropbear の postinst は、dropbear のホスト鍵が見つからない場合、
+既存の OpenSSH の鍵を dropbear 形式に変換します。
 </p>
 
 <pre>
@@ -278,28 +278,28 @@ dpkg-reconfigure dropbear
 </pre>
 
 <p>
-����: Dropbear ���Τ��������������ȼ�ǤϤ���ޤ��� (OpenSSL �ǤϤʤ� libtomcrypt
-����Ѥ��Ƥ��ޤ�)��
+注意: Dropbear 自体が生成した鍵は脆弱ではありません (OpenSSL ではなく libtomcrypt
+を使用しています)。
 </p>
 
 <h1><a name="ekg">ekg</a></h1>
 
 <p>
-ekg �ץ������� ekg2 �ץ������ (��Ԥ� experimental �Τߤ˴ޤޤ�Ƥ��ޤ�)
-�Υ桼���ǡ�<q>SIM</q>�Ź沽��ǽ����Ѥ����ͤ䡢
-<q>/key [-g|--generate]</q>���ޥ�� (���Ф������� libssl ����Ѥ��ޤ�)
-���Ѥ��Ƹ��Ф����������ͤϡ�
-libssl �򥢥åץ��졼�ɤ��ƥץ�������Ƶ�ư������Ǹ����������ʤ����Ƥ���������
+ekg プログラムや ekg2 プログラム (後者は experimental のみに含まれています)
+のユーザで、<q>SIM</q>暗号化機能を使用した人や、
+<q>/key [-g|--generate]</q>コマンド (鍵対の生成に libssl を使用します)
+を用いて鍵対を生成した人は、
+libssl をアップグレードしてプログラムを再起動した後で鍵を生成しなおしてください。
 </p>
 
 <p>
-��ȯ���Ǥϡ���ȯ�Ԥ����������֥����Ȥ����Τ�Ф��Ƥ��ޤ�:
+開発元では、開発者たちがウェブサイトに通知を出しています:
 <a href="http://ekg.chmurka.net/index.php">http://ekg.chmurka.net/index.php</a>
 </p>
 
 <p>
-����˼������ɬ�פʾ��ϡ�ekg-users@lists.ziew.org �� ekg2-users@lists.ziew.org
-�Ǽ��䤷�Ƥ������� (�Ѹ�ȥݡ����ɸ��ξ���Ǥ��Ȥ�Ǥ��ޤ�)��
+さらに手助けが必要な場合は、ekg-users@lists.ziew.org や ekg2-users@lists.ziew.org
+で質問してください (英語とポーランド語の両方でやりとりできます)。
 </p>
 
 <h1><a name="ftpd-ssl">ftpd-ssl</a></h1>
@@ -310,83 +310,83 @@ dpkg-reconfigure ftpd-ssl
 </pre>
 
 <p>
-���μ��ˤ�ꡢɸ��Υ��åȥ��åפϥ��С�����ޤ�����������δ����Ԥ�����ʾ�� SSL
-����ե饹�ȥ饯����˴ؤ��������ԤäƤ����硢�����˴ؤ��븰�κƺ�����Ʊ�ͤ�ɬ
-�פǤ���
+この手順により、標準のセットアップはカバーされます。ローカルの管理者がこれ以上の SSL
+インフラストラクチャに関する設定を行っている場合、それらに関する鍵の再作成も同様に必
+要です。
 </p>
 
 <h1><a name="gforge">gforge</a></h1>
 
 <p>
-lenny �� sid �˼�Ͽ���줿 gforge-web-apache2 �ѥå������ϡ�¾�˥����Ⱦ�����¸�ߤ��Ƥ�
-�ʤ��ä����ˤϥ��ߡ��Υ����Ⱦ�������Ѥ��ƥ����֥����Ȥ����ꤷ�ޤ���
-�桼���Ϥ�����ɤä�<q>������</q>������˸򴹤��뤳�Ȥ��侩����Ƥ���櫓�Ǥ���
-����Υ��ߡ��ξ������̾�Τ� Snake Oil �ˤʤäƤ��ꡢ���Ǥ��ȼ���� (SSL �ΥХ��ȴط�
-�ʤ���) ����ʤ�ΤȤߤʤ��٤���ΤǤ���
-�������ʤ��顢�����Υ桼���Ͽ����ͤ������ξ�������������Ƥ��ޤ����⤷��ޤ���
+lenny と sid に収録された gforge-web-apache2 パッケージは、他にサイト証明書が存在してい
+なかった場合にはダミーのサイト証明書を用いてウェブサイトを設定します。
+ユーザはそれを追って<q>正式な</q>証明書に交換することが推奨されているわけです。
+問題のダミーの証明書は名称が Snake Oil になっており、すでに脆弱だと (SSL のバグと関係
+なしに) 明白なものとみなすべきものです。
+しかしながら、一部のユーザは深く考えずこの証明書を受け入れてしまうかもしれません。
 </p>
 
 <h1><a name="kerberos">MIT Kerberos (krb5)</a></h1>
 
 <p>
-Debian 4.0 (<q>Etch</q>) �� MIT Kerberos �� OpenSSL �������ȤäƤ��ʤ�����
-Debian 4.0 �� Kerberos �ˤϱƶ�����������ޤ���
+Debian 4.0 (<q>Etch</q>) の MIT Kerberos は OpenSSL を全く使っていないため
+Debian 4.0 の Kerberos には影響は全くありません。
 </p>
 
 <p>
-lenny �Ǥϡ�OpenSSL ��Ȥ��̥ѥå����� krb5-pkinit ������ޤ���
-MIT Kerberos ���Τϡ�PKINIT �ץ饰�����ȤäƤ�����Ǥ⡢Ĺ���ˤ錄�äƻ��Ѥ��븰��
-���������ޤ��󡣽��ä�Ĺ�����Ѥθ��Ф˴ؤ����٤ϡ�MIT Kerberos ���եȥ������Ȥ��̤˺�
-�����줿��ΤǤ���PKINIT �ץ饰����ϡ�¸�ߤ��Ƥ��븰�Ф򻲾Ȥ�������ǡ����δ�����
-����Ǥ������ޤ���
+lenny では、OpenSSL を使う別パッケージ krb5-pkinit があります。
+MIT Kerberos 自体は、PKINIT プラグインを使っている場合でも、長期にわたって使用する鍵対
+を生成しません。従って長期利用の鍵対に関する欠陥は、MIT Kerberos ソフトウェアとは別に作
+成されたものです。PKINIT プラグインは、存在している鍵対を参照するだけで、鍵の管理に
+は責任を持ちません。
 </p>
 <p>
-PKINIT ���Ѥ��븰�Фϡ�
-��٤Τ��� Debian �����ƥ����������Ƥ����硢��٤���Ĥ��⤷��ޤ���
-â�������Τ褦�������� MIT Kerberos �����Ȥߤγ����äǤ���
+PKINIT が用いる鍵対は、
+欠陥のある Debian システムで生成されている場合、欠陥を持つかもしれません。
+但し、このような生成は MIT Kerberos の枠組みの外の話です。
 </p>
 <p>
-��������OpenSSL �����������ϡ�PKINIT ǧ�ڤ����Ѥ���Ƥ������ DH
-�򴹤˻��Ѥ���ޤ����Ĥޤꡢ����Ԥ��������깶����Ѥ��ơ�PKINIT ǧ�ڤ��Ф��� KDC
-�Υ쥹�ݥ󥹤˥�����������
-���θ�Ǥ���ǧ�ڤ���Υ����ӥ������åȤ��Ѥ��ƺ������줿�����륻�å����˥��������Ǥ����ǽ��������ޤ���
+しかし、OpenSSL の乱数生成器は、PKINIT 認証が使用されている場合は DH
+交換に使用されます。つまり、攻撃者が総当たり攻撃を用いて、PKINIT 認証に対する KDC
+のレスポンスにアクセスし、
+その後でその認証からのサービスチケットを用いて作成されたあらゆるセッションにアクセスできる可能性があります。
 </p>
 <p>
-���餫�� KDC �� lenny �� PKINIT �ץ饰�������Ѥ��Ƥ�����ϡ������� KDC
-�� libssl0.9.8 �ѥå������򥢥åץ��졼�ɤ����ʲ��Υ��ޥ�ɤ�¹Ԥ��� Kerberos KDC
-��Ƶ�ư���Ƥ���������
+何らかの KDC で lenny の PKINIT プラグインを使用している場合は、すぐに KDC
+の libssl0.9.8 パッケージをアップグレードし、以下のコマンドを実行して Kerberos KDC
+を再起動してください。
 </p>
 <pre>
 /etc/init.d/krb5-kdc restart
 </pre>
 <p>
-��٤Τ��� libssl ����Ѥ��Ƥ��� Kerberos KDC ���Ѥ��� PKINIT ǧ�ڤ�ͳ�褹�롢
-������ Kerberos �����å��ݾڥ����å� (TGT) ��Ź沽���줿���å����ϡ�
-���äƤ�����٤��Ǥ����ѥ��åȥ���ץ������Ѥ��빶��Ԥϡ�
-�����θ��䥻�å����򿯳��Ǥ����ǽ��������ޤ���
+欠陥のある libssl を使用している Kerberos KDC を用いた PKINIT 認証に由来する、
+あらゆる Kerberos チケット保証チケット (TGT) や暗号化されたセッションは、
+疑ってかかるべきです。パケットキャプチャを使用する攻撃者は、
+これらの鍵やセッションを侵害できる可能性があります。
 </p>
 
 <h1><a name="nessus">Nessus</a></h1>
 
-<p>Nessus �����Хѥå����� (nessusd) �Υ��󥹥ȡ���她����ץȤϡ�
-Nessus �����Фȥ��饤����Ȥδ֤ΰ�������³�Τ���ˤ����Ĥ��� SSL ����
-�������ޤ���
-������³����ͥ�ϡ����դ���ĥ桼����������/���饤����ȴ֤Ǹ򴹤����
-���� (��⡼�ȥۥ��Ȥ��ȼ����ξ����ޤ�) �򲣼��Ǥ����������󤷤��桼��
-�Ȥ��ƥ����Ф˥��ޥ�ɤ���������Ū��ǽ��������뤿�ᡢ�������������
-�ͤ����ޤ���
+<p>Nessus サーバパッケージ (nessusd) のインストール後スクリプトは、
+Nessus サーバとクライアントの間の安全な接続のためにいくつかの SSL 鍵を
+作成します。
+この接続チャネルは、悪意を持つユーザがサーバ/クライアント間で交換される
+情報 (リモートホストの脆弱性の情報も含む) を横取りでき、ログインしたユーザ
+としてサーバにコマンドを送る潜在的可能性があるるため、侵害され得ると
+考えられます。
 </p>
 
-<p>�ä��ơ������Ԥ���⡼��ǧ�ڤΤ���ˡ����Υ������ƥ�����αƶ��������
-OpenSSL �С������򥤥󥹥ȡ��뤷�������Ф� Nessus CA ���ޤ��ϥ桼��
-������� (nessus-mkcert-client��Ȥä�) �������Ƥ�����硢�����θ�
-�Ͽ����Ǥ����ǽ��������ȹͤ����ޤ���Nessus �����Ф˥����������¤����
-��⡼�ȥ桼���ϡ��������Ĥ���Ƥ��뤿��˥����Ф˹����¹Բ�ǽ�ǡ�
-�������������ǥ��åץ����ɥץ饰�����ͭ���ˤ��Ƥ����� (Debian �Ǥ�
-�ǥե���Ȥ� <q>no</q> �Ǥ�) �ϡ� root ���¤� Nessus ��������Ǽ¹Ԥ����
-�Ȥ������Ȥ����դ��Ƥ���������</p>
+<p>加えて、管理者がリモート認証のために、このセキュリティ問題の影響を受ける
+OpenSSL バージョンをインストールしたサーバで Nessus CA 鍵またはユーザ
+証明書を (nessus-mkcert-clientを使って) 作成していた場合、これらの鍵
+は侵害できる可能性があると考えられます。Nessus サーバにアクセス権限を持つ
+リモートユーザは、攻撃を許可されているためにサーバに攻撃を実行可能で、
+ローカルの設定でアップロードプラグインを有効にしている場合 (Debian での
+デフォルトは <q>no</q> です) は、 root 権限で Nessus サーバ内で実行される
+ということに注意してください。</p>
 
-<p>���ƥ����ꥹ����ץȤϡ�������ˡ�OpenSSL �����񤬸��Ĥ���ʤ���礽�����������ޤ�����äơ����Τ褦�˾�����������ơ���������Τ���������ɬ�פ�����ޤ�:</p>
+<p>メンテナ設定スクリプトは、設定時に、OpenSSL 証明書が見つからない場合それを再生成します。よって、次のように証明書を削除して、新しいものを生成する必要があります:</p>
 
 <pre>
 rm -f /var/lib/nessus/CA/cacert.pem
@@ -396,17 +396,17 @@ rm -f /var/lib/nessus/private/CA/serverkey.pem
 dpkg-reconfigure nessusd
 </pre>
 
-<p>�����Ԥä��顢/var/lib/nessus/users/USERNAME/auth �ˤ���Ť��桼������
-������ơ������� nessus-mkcert-client �Ǻ�����������ɬ�פ�����ޤ���
-�Ť����� CA ����������줿������̵���ˤʤ�ޤ���
+<p>これを行ったら、/var/lib/nessus/users/USERNAME/auth にある古いユーザ鍵を
+削除して、それらを nessus-mkcert-client で再度生成する必要があります。
+古い鍵は CA 鍵が削除された時点で無効になります。
 </p>
 
-<p>CA ����������塢������ CA �������桼�������ۤ���ɬ�פ⤢��ޤ���
-�桼���ϰ��ٺ���³���ơ�Nessus �����Ф���ο��������������Ĥ��ʤ����
-�ʤ�ޤ��󡣸Ť��������Ѥξ����������ϼ�ư�Ǻ�������Ϥ��Ǥ�����
-<code>.nessusrc.cert</code> (Nessus ���饤����Ȥ�ȤäƤ�����) �ޤ���
-<code>.openvasrc.cert</code> (OpenVAS ���饤����Ȥ�ȤäƤ�����) ��
-�Խ�����ư�Ǻ�����뤳�Ȥ�Ǥ��ޤ���</p>
+<p>CA 鍵を再生成後、新しい CA 証明書をユーザに配布する必要もあります。
+ユーザは一度再接続して、Nessus サーバからの新しい証明書を許可しなければ
+なりません。古いサーバ用の証明書の設定は自動で削除されるはずですが、
+<code>.nessusrc.cert</code> (Nessus クライアントを使っている場合) または
+<code>.openvasrc.cert</code> (OpenVAS クライアントを使っている場合) を
+編集し手動で削除することもできます。</p>
 
 
 <h1><a name="openswan">OpenSWAN / StrongSWAN</a></h1>
@@ -418,50 +418,50 @@ dpkg-reconfigure (open|strong)swan
 </pre>
 
 <p>
-����: ipsec �����ӥ���Ƶ�ư����ȡ����λ����ǥ����ץ󤵤�Ƥ������Ƥ�
-IPSec ���ͥ���������Ǥ���ޤ���
-��³��ȿ��¦�ǤϺƵ�ư��ɬ�פˤʤ뤫�⤷��ޤ���
+注意: ipsec サービスを再起動すると、その時点でオープンされている全ての
+IPSec コネクションが切断されます。
+接続の反対側では再起動が必要になるかもしれません。
 </p>
 
 <h1><a name="openvpn">OpenVPN</a></h1>
 
 <p>
-��̩���ե������Хå����åפ��Ƥ�������������̾���Ϲ����ˤĤ���졢
-�ʲ��Υ��ޥ�ɤ�¹Ԥ��뤳�ȤǸ��Ф���ޤ���
+秘密鍵ファイルをバックアップしてください。鍵の名前は好きにつけられ、
+以下のコマンドを実行することで検出されます。
 </p>
 <pre>grep secret /etc/openvpn/*.conf</pre>
 
 <p>
-�����θ���ʲ��Υ��ޥ�ɤǺƺ������Ƥ���������
+これらの鍵を以下のコマンドで再作成してください。
 </p>
 <pre>openvpn --genkey --secret SECRET_FILENAME</pre>
 
 <p>
-���θ塢��ͭ����̩�����⡼�ȥۥ��Ȥ˥��ԡ�����ξü�Υۥ��Ȥǰʲ��Υ��ޥ�ɤ�Ȥä�
-VPN ��Ƶ�ư���Ƥ���������
+この後、共有の秘密鍵をリモートホストにコピーし、両端のホストで以下のコマンドを使って
+VPN を再起動してください。
 </p>
 <pre>/etc/init.d/openvpn force-reload</pre>
 
 <h1><a name="proftpd">Proftpd</a></h1>
 
 <p>
-Debian �ѥå������Ǥϸ���������Ԥ��褦�ˤʤäƤ��ޤ���
-�������äơ��ʲ��μ��ϡ������� SSL ��������������ˤΤ�ɬ�פȤʤ�Ϥ��Ǥ���
+Debian パッケージでは鍵の生成を行うようになっていません。
+したがって、以下の手順は、外部で SSL 鍵を作成した場合にのみ必要となるはずです。
 </p>
 
 <p>
-���� proftpd ���԰����� (unstable) �˥��åץ����ɤ���ݤˤϡ�
-�����Υ����Ȥ� tls.conf �Υƥ�ץ졼�Ȥ˴ޤ��ͽ��Ǥ���
+次に proftpd を不安定版 (unstable) にアップロードする際には、
+下記のコメントを tls.conf のテンプレートに含める予定です。
 <p>
 
 <p>
-���ʽ�̾�������������ˡ�ϡ�OpenSSL
-�ˤ��������Ū�ʼ��Υ�����������Ƥ���Ƥ����ΤȤϡ������ۤʤ�ޤ���
-����ϡ��ǡ����ε�ư��������Ū�˥ѥ���ɤ���Ѥ���Τ��򤱤뤿��Ǥ���
+自己署名証明書の生成方法は、OpenSSL
+における一般的な手順のセクションで提案されているものとは、少し異なります。
+これは、デーモンの起動時に明示的にパスワードを使用するのを避けるためです。
 </p>
 
 <p>
-���ʽ�̾������� (��) �����ϡ����Τ褦�ʥ��ޥ�ɤǤǤ��ޤ���
+自己署名証明書の (再) 生成は、次のようなコマンドでできます。
 </p>
 <pre>
  openssl req -x509 -newkey rsa:1024 \
@@ -470,8 +470,8 @@ Debian �ѥå������Ǥϸ���������Ԥ��褦�ˤʤäƤ��ޤ���
 </pre>
 
 <p>
-�ɤ���Υե�����⡢�ɤ��Τ� root �ΤߤǤʤ��ƤϤʤ�ޤ���
-�ե�����Υѥ��γ�ǧ���ǧ�ϡ��ʲ�������ǥ��쥯�ƥ��֤ǤǤ��ޤ���
+どちらのファイルも、読めるのは root のみでなくてはなりません。
+ファイルのパスの確認や確認は、以下の設定ディレクティブでできます。
 </p>
 <pre>
 TLSRSACertificateFile                   /etc/ssl/certs/proftpd.crt
@@ -483,58 +483,58 @@ TLSOptions                              NoCertRequest
 <h1><a name="puppet">puppet</a></h1>
 
 <p>
-puppet �ξ�����򰷤��ˤ���Ĥ���ˡ������ޤ���capistrano
-��Ȥ���ˡ�ȡ���ư�ǹԤ���ˡ�Ǥ���
+puppet の証明書を扱うには二つの方法があります。capistrano
+を使う方法と、手動で行う方法です。
 </p>
 
 <p>
-capistrano ��Ȥä����� Puppet SSL �������ƺ���������ˡ�ϡ��ʲ��Υڡ����Ǿܤ�����
-������Ƥ��ޤ���
+capistrano を使った場合の Puppet SSL 証明書を再作成する方法は、以下のページで詳しく説
+明されています。
 <a
 href="http://reductivelabs.com/trac/puppet/wiki/RegenerateSSL">http://reductivelabs.com/trac/puppet/wiki/RegenerateSSL</a>
 </p>
 
 <p>
-��ư�ǹԤ��ˤϡ��ʲ��μ��򤪤��ʤ��ޤ���
+手動で行うには、以下の手順をおこないます。
 </p>
 
 <ol>
-<li>CA �����ä���äƺƺ������ʤ���Фʤ�ޤ���
+<li>CA 情報を消し去って再作成しなければなりません
 <pre>
 /etc/init.d/puppetmaster stop
 rm -rf $vardir/ssl/*
 /etc/init.d/puppetmaster start
 </pre>
 <p>
-â����init ������ץȤ��� puppetmaster ��ư��������� mongrel ��¹Ԥ��Ƥ�����
-�ϡ��ޤ��ե���ȥ���ɤΥ����֥ꥹ�� (apache, nginx, etc.) ��ߤ�Ƥ��顢�ʲ��ν�����
-�Ԥ�ɬ�פ�����Ǥ��礦��
+但し、init スクリプトから puppetmaster を起動する代わりに mongrel を実行している場合
+は、まずフロントエンドのウェブリスナ (apache, nginx, etc.) を止めてから、以下の処理を
+行う必要があるでしょう。
 </p>
 <pre>
 puppetmasterd --daemonize ; sleep 30 ; pkill -f 'ruby /usr/sbin/puppetmasterd'
 </pre>
 <p>
-���Τ褦�ʽ�����ɬ�פʤΤϡ����餫����ͳ�� mongrel ��¹Ԥ��Ƥ����硢
-puppetmaster �� CA �κƺ�����Ԥ�ʤ�����Ǥ���
+このような処理が必要なのは、何らかの理由で mongrel を実行している場合、
+puppetmaster が CA の再作成を行わないからです。
 </p>
 </li>
-<li>���ƤΥ��饤����Ⱦ������õ��
+<li>全てのクライアント証明書を消去する
 <pre>
 /etc/init.d/puppet stop
 rm $vardir/ssl/*
 </pre>
 </li>
-<li>�ƥ��饤����Ȥ��顢��������������׵᤹�롣
+<li>各クライアントから、新しい証明書を要求する。
 <pre>
 puppetd --onetime --debug --ignorecache --no-daemonize
 </pre>
 </li>
-<li>���Ƥ��׵���������顢�����ˤޤȤ�ƽ�̾�Ǥ��ޤ�
+<li>全ての要求を取り込んだら、全部にまとめて署名できます
 <pre>
 puppetca --sign --all
 </pre>
 </li>
-<li>puppet ���饤����Ȥ�ư����
+<li>puppet クライアントを起動する
 <pre>
 /etc/init.d/puppet start
 </pre>
@@ -542,33 +542,33 @@ puppetca --sign --all
 </ol>
 
 <p>
-�������������ʤ顢autosign ����Ū��ͭ���ˤ��Ƥ������Ȥ�Ǥ��ޤ���
+その方が好きなら、autosign を一時的に有効にしておくこともできます。
 </p>
 
 <h1><a name="sendmail">sendmail</a></h1>
 
 <p>
-sendmail �ϡ�(etch �ˤ����Ƥ� lenny �ˤ����Ƥ�) ���󥹥ȡ�����ˡ�
-�ǥե���Ȥ� OpenSSL �������������뤳�Ȥ�����Ǥ��ޤ���
+sendmail は、(etch においても lenny においても) インストール時に、
+デフォルトの OpenSSL 証明書を作成することを選択できます。
 </p>
 
 <p>
-���Υ����륪���С��μ��ϡ��ʲ��ΤȤ��ꤴ����ñ�Ǥ���
+鍵のロールオーバーの手順は、以下のとおりごく簡単です。
 </p>
 <pre>
 /usr/share/sendmail/update_tls new
 </pre>
 
 <p>
-/etc/mail/tls ��Υƥ�ץ졼�Ȥ򥫥����ޥ����������ϡ�
-���Υƥ�ץ졼�Ȥ��ͤ������ʾ�����κ����˺����Ѥ���ޤ���
+/etc/mail/tls 内のテンプレートをカスタマイズした場合は、
+そのテンプレートの値が新たな証明書の作成に再利用されます。
 </p>
 
 <h1><a name="ssl-cert">ssl-cert</a></h1>
 
 <p>
-snakeoil ������ /etc/ssl/certs/ssl-cert-snakeoil.pem
-�ϡ��ʲ��Τ褦�ˤ��ƺƺ����Ǥ��ޤ���
+snakeoil 証明書 /etc/ssl/certs/ssl-cert-snakeoil.pem
+は、以下のようにして再作成できます。
 </p>
 
 <pre>make-ssl-cert generate-default-snakeoil --force-overwrite</pre>
@@ -581,85 +581,85 @@ dpkg-reconfigure telnetd-ssl
 </pre>
 
 <p>
-���μ��ˤ�ꡢɸ��Υ��åȥ��åפϥ��С�����ޤ�����������δ����Ԥ�����ʾ�� ssl
-����ե饹�ȥ饯����˴ؤ��������ԤäƤ����硢�����˴ؤ��븰�κƺ�����Ʊ�ͤ�ɬ
-�פǤ���
+この手順により、標準のセットアップはカバーされます。ローカルの管理者がこれ以上の ssl
+インフラストラクチャに関する設定を行っている場合、それらに関する鍵の再作成も同様に必
+要です。
 </p>
 
 <h1><a name="tinc">tinc</a></h1>
 
 <p>
-������ˡ�ǡ����路������������̩���Ϥ��٤ƺ�����Ƥ���������
+次の方法で、疑わしい公開鍵・秘密鍵はすべて削除してください。
 </p>
 <ol>
-<li>rsa_key.priv �������롣</li>
-<li>hosts/ �ǥ��쥯�ȥ���Υե�����򤹤٤��Խ����ơ��������Υ֥��å��������롣</li>
+<li>rsa_key.priv を削除する。</li>
+<li>hosts/ ディレクトリ内のファイルをすべて編集して、公開鍵のブロックを削除する。</li>
 </ol>
 
 <p>
-������ˡ�ǡ������ʸ���������̩���θ��Ф��������Ƥ���������
+次の方法で、新たな公開鍵・秘密鍵の鍵対を生成してください。
 <pre>
 tincd -n &lt;netname&gt; -K
 </pre>
 </p>
 
 <p>
-VPN ��¾�Υ��С��ȡ������ʸ������ȤȤ�˥ۥ��Ȥ�����ե������򴹤��Ƥ���������
-tinc �ǡ�����Ƶ�ư����Τ�˺��ʤ���
+VPN の他のメンバーと、新たな公開鍵とともにホストの設定ファイルを交換してください。
+tinc デーモンを再起動するのをお忘れなく。
 </p>
 
 <h1><a name="tor">tor</a></h1>
 
 <p>
-Tor �ϰ����� (stable) �ˤϼ�Ͽ����Ƥ��ޤ��󤬡�lenny �ǤϷ�٤αƶ�������ޤ���
+Tor は安定版 (stable) には収録されていませんが、lenny では欠陥の影響を受けます。
 </p>
 
 <p>
-�С������ 0.1.2.x ��¹Ԥ��륯�饤����ȤϷ�٤αƶ�������ޤ���
-������С�������¹Ԥ��� Tor �Ρ��ɤ���ƿ�����ӥ��󶡼ԡ�����ӥС������ 0.2.0.x
-����Ѥ���桼���ϡ���٤αƶ�������ޤ���
+バージョン 0.1.2.x を実行するクライアントは欠陥の影響を受けません。
+あらゆるバージョンを実行する Tor ノードや秘匿サービス提供者、およびバージョン 0.2.0.x
+を使用するユーザは、欠陥の影響を受けます。
 </p>
 
 <p>
-Tor ���ʥ����ѥ᡼��󥰥ꥹ�Ⱦ��<a
-href="http://archives.seul.org/or/announce/May-2008/msg00000.html">�ȼ����Υ��ʥ���</a>�򻲾Ȥ��Ƥ���������
+Tor アナウンス用メーリングリスト上の<a
+href="http://archives.seul.org/or/announce/May-2008/msg00000.html">脆弱性のアナウンス</a>を参照してください。
 </p>
 
 <p>
-�С������ 0.1.2.19-3 (�ƥ����� (testing) ������԰����� (unstable)��
-backports.org���̾�� <a
+バージョン 0.1.2.19-3 (テスト版 (testing) および不安定版 (unstable)、
+backports.org、通常の <a
 href="https://wiki.torproject.org/noreply/TheOnionRouter/TorOnDebian">noreply.org
-�Υ�ݥ��ȥ�</a>���������ǽ) �ޤ��ϥС������ 0.2.0.26-rc-1 (experimental
-������̾�� <a
+のリポジトリ</a>から入手可能) またはバージョン 0.2.0.26-rc-1 (experimental
+および通常の <a
 href="https://wiki.torproject.org/noreply/TheOnionRouter/TorOnDebian">noreply.org
-�Υ�ݥ��ȥ�</a>) �ؤΥ��åץ��졼�ɤ򤪴��ᤷ�ޤ��������ΥС������ǥ�졼��¹Ԥ���ȡ�
-����Ū�˿����������и� (/var/lib/tor/keys/secret_*) ����������ޤ���
+のリポジトリ</a>) へのアップグレードをお勧めします。これらのバージョンでリレーを実行すると、
+強制的に新しいサーバ鍵 (/var/lib/tor/keys/secret_*) が生成されます。
 </p>
 
 <p>
-�ѥå������Υ���ե饹�ȥ饯���� (debian-tor �Ȥ����桼���䡢/var/lib/tor
-�Ȥ��� DataDirectory �ʤ�) �����Ѥ����� Tor �Ρ��ɤ�¹Ԥ�����ϡ�
-����Τ��븰���Ǻ������ɬ�פ�����ޤ������Ҥδ���Υ�󥯤򻲾Ȥ��Ƥ���������
+パッケージのインフラストラクチャ (debian-tor というユーザや、/var/lib/tor
+という DataDirectory など) を利用せずに Tor ノードを実行する場合は、
+問題のある鍵を手で削除する必要があります。前述の勧告のリンクを参照してください。
 </p>
 
 <p>
-��ƿ�����ӥ��󶡼ԤǤ��ꡢlibssl �����꤬���ä����֤˸��������������ϡ�
-��ƿ�����ӥ�����̩���������Ƥ�������������ˤ�ä���ƿ�����ӥ��Υۥ���̾���Ѥ�ꡢ
-�����Фκ����꤬ɬ�פˤʤ뤫�⤷��ޤ���
+秘匿サービス提供者であり、libssl に問題があった期間に鍵を生成した場合は、
+秘匿サービスの秘密鍵を削除してください。それによって秘匿サービスのホスト名が変わり、
+サーバの再設定が必要になるかもしれません。
 </p>
 
 <p>
-�С������ 0.2.0.x ��¹Ԥ��Ƥ�����ϡ����åץ��졼�ɤ򶯤������ᤷ�ޤ���
-6 �Ĥ� v3 ǧ�ڥ����ФΤ��� 3 �Ĥ���٤Τ��븰����Ѥ��Ƥ��뤫��Ǥ���
-�Ť��С������ 0.2.0.x �ϡ�1 �� 2 ���֤�ư�����ߤ���ͽ��Ǥ���
+バージョン 0.2.0.x を実行している場合は、アップグレードを強くお勧めします。
+6 つの v3 認証サーバのうち 3 つが欠陥のある鍵を使用しているからです。
+古いバージョン 0.2.0.x は、1 〜 2 週間で動作を停止する予定です。
 </p>
 
 <h1><a name="xrdp">xrdp</a></h1>
 
 <p>
-xrdp ���������줿������Ѥ��Ƥ��ޤ���
-�ؤɤΥ��饤����Ȥϥǥե���ȤǤϤ����θ�������å����ʤ����ᡢ
-����򴹤��Ƥ��礭������ϽФޤ���ñ�˰ʲ��Τ褦�ˤ��Ƥ���������
+xrdp は生成された鍵を使用しています。
+殆どのクライアントはデフォルトではこれらの鍵をチェックしないため、
+鍵を交換しても大きな問題は出ません。単に以下のようにしてください。
 </p>
 
 <pre>
@@ -668,5 +668,5 @@ rm /etc/xrdp/rsakeys.ini
 </pre>
 
 <p>
-xrdp �ϰ����� (stable) �ˤϼ�Ͽ����Ƥ��ޤ���
+xrdp は安定版 (stable) には収録されていません。
 </p>

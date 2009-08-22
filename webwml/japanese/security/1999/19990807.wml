@@ -1,24 +1,24 @@
-<define-tag description>xmonisdn $B$K$*$1$kIT@5$J5v2D(B</define-tag>
+<define-tag description>xmonisdn における不正な許可</define-tag>
 <define-tag moreinfo>
-Xmonisdn $B$O!"(BISDN $B@\B3$N>uBV$r<($9(B X $B%"%W%l%C%H$G$9!#(B
-$B$=$N%"%W%l%C%H>e$G%^%&%9$N:8$"$k$$$O1&%\%?%s$r%/%j%C%/$9$k$H!"(B
-$BFs$D$N%9%/%j%W%H$r<B9T$9$k$h$&$K@_Dj$9$k$3$H$,$G$-$^$9!#(B
-Xmonisdn $B$O(B root $B$K(B setuid $B$5$l$F%$%s%9%H!<%k$5$l$F$$$k$?$a$K!"(B
-$B$=$N%9%/%j%W%H$O%G%U%)%k%H%k!<%H$NDI2C$d:o=|$,2DG=$G$9!#(B
-$B$7$+$7!"$=$N%9%/%j%W%H$N=jM-<T$,(B root $B$G$"$k$3$H$H!"(B
-$BB>$N%0%k!<%W$dMxMQ<T$+$i=q$-9~$a$J$$$3$H$r%A%'%C%/$7$F$$$k4V$K!"(B
-$B$=$N%9%/%j%W%H$O(B system() $B%i%$%V%i%j4X?t7PM3$G<B9T$5$l$F$7$^$$$^$9!#(B
-$B$3$N4X?t$O!"$=$N%9%/%j%W%H$r<B9T$9$k%7%'%k$r5/F0$5$;$k$N$G$9!#(B
-$B$D$^$j!"$3$N%9%/%j%W%H$O(B IFS $B$d(B PATH $B$NA`:n$rDL$7$?967b$KBP$7$FL5KIHw$J$N$G$9!#(B
-<p>$B$?$@!"(BISDN $B%7%9%F%`$,%M%C%H%o!<%/7PO)$NA`:n$r$;$:$K(B
-$B%@%$%d%kH/?.$rKI$0J}K!$rDs6!$9$k$h$&$K$J$C$?$N$G!"(B
-root $B$X$N(B setuid $B$O$b$O$dI,MW$"$j$^$;$s!#(B
-$B$3$N$3$H$O!"(B/dev/isdnctrl0 $B$H(B /dev/isdninfo 
-$B$K%"%/%;%9$G$-$k%f!<%6$J$iC/$G$b$G$-$^$9!#(B
-Debian $B%7%9%F%`$G!"$3$l$i$O(B dialout 
-$B%0%k!<%W$,FI$_=q$-$G$-$k$h$&$K$J$C$F$$$^$9$N$G!"(B
-xmonisdn $B$,(B dialout $B%0%k!<%W$K=jB0$9$kC/$+$K$h$C$F<B9T$5$l$l$P!"(B
-$BI,MW$K$J$k(B isdnctrl $B%3%^%s%I$b<B9T$G$-$^$9!#(B</define-tag>
+Xmonisdn は、ISDN 接続の状態を示す X アプレットです。
+そのアプレット上でマウスの左あるいは右ボタンをクリックすると、
+二つのスクリプトを実行するように設定することができます。
+Xmonisdn は root に setuid されてインストールされているために、
+そのスクリプトはデフォルトルートの追加や削除が可能です。
+しかし、そのスクリプトの所有者が root であることと、
+他のグループや利用者から書き込めないことをチェックしている間に、
+そのスクリプトは system() ライブラリ関数経由で実行されてしまいます。
+この関数は、そのスクリプトを実行するシェルを起動させるのです。
+つまり、このスクリプトは IFS や PATH の操作を通した攻撃に対して無防備なのです。
+<p>ただ、ISDN システムがネットワーク経路の操作をせずに
+ダイヤル発信を防ぐ方法を提供するようになったので、
+root への setuid はもはや必要ありません。
+このことは、/dev/isdnctrl0 と /dev/isdninfo 
+にアクセスできるユーザなら誰でもできます。
+Debian システムで、これらは dialout 
+グループが読み書きできるようになっていますので、
+xmonisdn が dialout グループに所属する誰かによって実行されれば、
+必要になる isdnctrl コマンドも実行できます。</define-tag>
 
 #use wml::debian::translation-check translation="1.7"
 

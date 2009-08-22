@@ -1,41 +1,41 @@
-<define-tag description>�����󥿾���ͤ�̵��</define-tag>
+<define-tag description>カウンタ上限値の無視</define-tag>
 <define-tag moreinfo>
-<p>Florian Lohoff ����ˤ�ꡢdhcrelay �˥Х������ꡢ�Х��Τ��� Cisco 
-�롼��Ʊ�͡����դ���ä� BOOTP �ѥ��åȤ�������ݤˡ�
-Ϣ³����ѥ��åȥ��ȡ�������ꤵ�줿 DHCP
-�����Ф˸����Ƥ��ޤ����Ȥ�ȯ������ޤ�����</p>
+<p>Florian Lohoff さんにより、dhcrelay にバグがあり、バグのある Cisco 
+ルータ同様、悪意を持った BOOTP パケットを受けた際に、
+連続するパケットストームを設定された DHCP
+サーバに向けてしまうことが発見されました。</p>
 
-<p>dhcp-relay �� BOOTP �ѥ��åȥꥯ�����Ȥ������ä���硢
-���Υꥯ�����Ȥ�֥����ɥ��㥹�� MAC ���ɥ쥹�� ff:ff:ff:ff:ff:ff ���Ѥ���
-DHCP �����Ф�ž�����ޤ�����
-���Υѥ��åȤϥͥåȥ�����󥿡��ե������ǥ����åȤ��Ф����ꤲ�֤���ޤ���
-���줬�롼�פˤʤ�Τ��ɤ����ᡢdhcrelay 
-�Ǥϥ�졼���ɥ쥹����ʬ���ȤǤ��뤫������å����ơ�
-�����Ǥ����������Υѥ��åȤ���Ȥ��ޤ������λųݤ��ȡ�
-�ۥå׿��Υ����󥿤ξ�¥����å���ȴ�����Ȥ߹�碌�뤳�Ȥǡ�����Ԥ�
-dhcp-relay �����ꤵ��Ƥ��� dhcp �����Ф��Ф��ơ�
-Ϣ³����ѥ��åȥ��ȡ���򵯤������뤳�Ȥ��Ǥ��Ƥ��ޤ��ޤ���</p>
+<p>dhcp-relay が BOOTP パケットリクエストを受け取った場合、
+そのリクエストをブロードキャスト MAC アドレスの ff:ff:ff:ff:ff:ff を用いて
+DHCP サーバに転送しますが、
+このパケットはネットワークインターフェースでソケットに対して投げ返されます。
+これがループになるのを防ぐため、dhcrelay 
+ではリレーアドレスが自分自身であるかをチェックして、
+そうである場合は問題のパケットを落とします。この仕掛けと、
+ホップ数のカウンタの上限チェックの抜けと組み合わせることで、攻撃者は
+dhcp-relay が設定されている dhcp サーバに対して、
+連続するパケットストームを起こさせることができてしまいます。</p>
 
-<p>���Υѥå��Ǥϡ����������ޥ�ɥ饤�󥹥��å��Ρ�-c maxcount��
-���ä����Ƥ��ꡢ���ѤκݤϤޤ���dhcrelay -c 10�פ���
-�⤦������������ͤǻϤ�뤳�Ȥ��侩����Ƥ��ޤ�����������ˤ����硢
-����������Υѥ��åȤ����������ʤ��褦�ˤʤ�ޤ�</p>
+<p>このパッチでは、新しいコマンドラインスイッチの「-c maxcount」
+が加えられており、使用の際はまず「dhcrelay -c 10」か、
+もう少し小さめの値で始めることが推奨されています。この設定により最大、
+この設定数のパケットしか生成しないようになります</p>
 
-<p>dhcp �ѥå������� dhcrelay �ץ������Ǥϡ�DHCP
-�ѥ��åȤ����餫�˥�졼���줿��ΤǤ�����ˤ���Ȥ��褦�ˤʤäƤ��ꡢ
-��������Ϥʤ����ͤǤ���</p>
+<p>dhcp パッケージの dhcrelay プログラムでは、DHCP
+パケットが明らかにリレーされたものである場合には落とすようになっており、
+この問題はない模様です。</p>
 
-<p>�������� (stable) (woody) �Ǥϡ�����ϥС������ 3.0+3.0.1rc9-2.2
-�ǽ�������Ƥ��ޤ���</p>
+<p>現安定版 (stable) (woody) では、これはバージョン 3.0+3.0.1rc9-2.2
+で修正されています。</p>
 
-<p>������� (potato) �ˤ� dhcp3 ����Ͽ����Ƥ��ʤ����ᡢ
-��������αƶ�������ޤ���</p>
+<p>旧安定版 (potato) には dhcp3 が収録されていないため、
+この問題の影響を受けません。</p>
 
-<p>�԰����� (unstable) (sid) �Ǥϡ�����ϥС������ 1.1.2-1
-�ǽ�������Ƥ��ޤ���</p>
+<p>不安定版 (unstable) (sid) では、これはバージョン 1.1.2-1
+で修正されています。</p>
 
-<p>dhcrelay �����Ф�ȤäƤ���Τʤ餹���� dhcp3
-�ѥå������򥢥åץ��졼�ɤ��뤳�Ȥ򴫤�ޤ���</p>
+<p>dhcrelay サーバを使っているのならすぐに dhcp3
+パッケージをアップグレードすることを勧めます。</p>
 </define-tag>
 
 #use wml::debian::translation-check translation="1.3"

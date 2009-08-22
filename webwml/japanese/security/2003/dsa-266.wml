@@ -1,62 +1,62 @@
-<define-tag description>$B$$$/$D$+$N@H<e@-(B</define-tag>
+<define-tag description>いくつかの脆弱性</define-tag>
 <define-tag moreinfo>
-<p>$B$$$/$D$+$N@H<e@-$,!"(BMIT Kerberos $B$N<BAu$G$"$k(B krb5 $B$K(B
-$BH/8+$5$l$^$7$?!#(B
+<p>いくつかの脆弱性が、MIT Kerberos の実装である krb5 に
+発見されました。
 </p>
 
 <ul>
-<li>$B%P!<%8%g%s(B4$B$N(BKerberos $B%W%m%H%3%k$N@H<e@-$K$h$j!"(B
-$B967b<T$OA*BrJ?J8967b$r9T$$!"$=$l$K$h$C$F%l%k%`Fb$N(B
-$B%W%j%s%7%Q%k$K$J$j$9$^$9$3$H$,$G$-$^$9!#(B
-$B$^$?!"(BMIT krb5 $B%G%#%9%H%j%S%e!<%7%g%s$K4^$^$l$k(B krb4 $B<BAu$N(B
-$BJL$N0E9f$N@H<e@-$N$?$a!"(Btriple-DES $B80$,(B krb4 $B%5!<%S%9$N(B
-$B80@8@.$K;H$o$l$F$$$k>l9g$K!"%+%C%H%"%s%I%Z!<%9%H967b$K$h$C$F!"(B
-$BG'>Z$5$l$F$$$J$$%/%i%$%"%s%H%W%j%s%7%Q%k$N%A%1%C%H$r(B
-$B56B$$9$k$3$H$,$G$-$^$9!#(B
-$B$3$l$i$N967b$K$h$j!"%5%$%H$NA4$F$N(B Kerberos $BG'>Z%$%s%U%i%9%H%i%/%A%c(B
-$B$rGK2u$9$k$3$H$,$G$-$^$9!#(B
+<li>バージョン4のKerberos プロトコルの脆弱性により、
+攻撃者は選択平文攻撃を行い、それによってレルム内の
+プリンシパルになりすますことができます。
+また、MIT krb5 ディストリビューションに含まれる krb4 実装の
+別の暗号の脆弱性のため、triple-DES 鍵が krb4 サービスの
+鍵生成に使われている場合に、カットアンドペースト攻撃によって、
+認証されていないクライアントプリンシパルのチケットを
+偽造することができます。
+これらの攻撃により、サイトの全ての Kerberos 認証インフラストラクチャ
+を破壊することができます。
 
-<p> Kerberos $B%P!<%8%g%s(B5$B$K$O!"$3$N0E9f2=$N@H<e@-$O$"$j$^$;$s!#(B
-Kerberos v4 $B$r40A4$KL58z$K$7$F$$$k>l9g(B (krb5 $B$+$i(B krb4 $B$X$NJQ49%5!<%S%9(B
-$B$bDd;_$7$F$$$k>l9g(B)$B!"%5%$%H$O@H<e$G$O$"$j$^$;$s!#(B
+<p> Kerberos バージョン5には、この暗号化の脆弱性はありません。
+Kerberos v4 を完全に無効にしている場合 (krb5 から krb4 への変換サービス
+も停止している場合)、サイトは脆弱ではありません。
 </p>
 </li>
 
-<li> MIT Kerberos 5 $B<BAu$K$O!"(BSUNRPC $B$KM3Mh$9$k(B RPC $B%i%$%V%i%j$r(B
-$B4^$_$^$9!#$3$N%i%$%V%i%j$K$O!"@0?tCM%*!<%P!<%U%m!<$NLdBj$N$"$k(B
-$BD9$5%A%'%C%/$,4^$^$l$F$*$j!"%5!<%S%9Dd;_967b$d=EMW$J>pJs$X$NG'>Z$J$7$N(B
-$B%"%/%;%98"$NC%<h$K;H$o$l$k2DG=@-$,$"$j$^$9!#(B
+<li> MIT Kerberos 5 実装には、SUNRPC に由来する RPC ライブラリを
+含みます。このライブラリには、整数値オーバーフローの問題のある
+長さチェックが含まれており、サービス停止攻撃や重要な情報への認証なしの
+アクセス権の奪取に使われる可能性があります。
 </li>
 
-<li>Kerberos $B%W%j%s%7%Q%kL>$NDL>o$N07$$(B 
-($B$?$H$($P!"%3%s%]!<%M%s%H$,%<%m$NL>A0!"(B
-$B6u$N%3%s%]!<%M%s%H$r;}$DL>A0!"(B
-$B%[%9%HL>%3%s%]!<%M%s%H$N$J$$%[%9%H%Y!<%9$N%5!<%S%9%W%j%s%7%Q%k(B)
-$B$K%P%C%U%!%*!<%P!<%i%s!"%"%s%@!<%i%s$NLdBj$,$"$j$^$9!#(B
+<li>Kerberos プリンシパル名の通常の扱い 
+(たとえば、コンポーネントがゼロの名前、
+空のコンポーネントを持つ名前、
+ホスト名コンポーネントのないホストベースのサービスプリンシパル)
+にバッファオーバーラン、アンダーランの問題があります。
 </li>
 </ul>
 
 <p>
-$B$3$N%P!<%8%g%s$N(B krb5 $B%Q%C%1!<%8$O!"(BKerberos $B%P!<%8%g%s(B 4 $B$N%G%U%)%k%H$N(B
-$B5sF0$rJQ$($?$j!"%/%m%9%l%k%`G'>Z$rL58z$K$7$?$j$7$^$9!#(B
-$B$3$NLdBj$N$b$H$b$H$N@-<A$K$h$j!"(BKerberos $B%P!<%8%g%s(B 4 $B$N%/%m%9%l%k%`G'>Z(B
-$B$,0BA4$G$J$/$J$j!"%5%$%H$O<+BN$NMxMQ$rHr$1$k$3$H$K$J$j$^$9!#(B
-$B?7$7$$%*%W%7%g%s(B (-X) $B$,(B krb5kdc $B$H(B krb524d $B$KDs6!$5$l$F$*$j!"(B
-$B$3$N%*%W%7%g%s$K$h$C$F!"$3$N5!G=$r;HMQ$9$kI,MW$,$"$j$D$D$bB>$N%;%-%e%j(B
-$B%F%#=$@5$r;HMQ$7$?$$%5%$%H$N$?$a$N%P!<%8%g%s(B 4 $B$N%/%m%9%l%k%`G'>Z(B
-$B$r:FEYM-8z2=$9$k$3$H$,$G$-$^$9!#(B
+このバージョンの krb5 パッケージは、Kerberos バージョン 4 のデフォルトの
+挙動を変えたり、クロスレルム認証を無効にしたりします。
+この問題のもともとの性質により、Kerberos バージョン 4 のクロスレルム認証
+が安全でなくなり、サイトは自体の利用を避けることになります。
+新しいオプション (-X) が krb5kdc と krb524d に提供されており、
+このオプションによって、この機能を使用する必要がありつつも他のセキュリ
+ティ修正を使用したいサイトのためのバージョン 4 のクロスレルム認証
+を再度有効化することができます。
 </p>
 
-<p>$B8=0BDjHG(B (stable)(woody) $B$G$O!"$3$NLdBj$O%P!<%8%g%s(B 1.2.4-5woody4
-$B$G=$@5$5$l$F$$$^$9!#(B</p>
+<p>現安定版 (stable)(woody) では、この問題はバージョン 1.2.4-5woody4
+で修正されています。</p>
 
-<p>$B5l0BDjHG(B (potato)$B$K$O!"(Bkrb5 $B%Q%C%1!<%8$O<}O?$5$l$F$$$^$;$s!#(B
+<p>旧安定版 (potato)には、krb5 パッケージは収録されていません。
 </p>
 
-<p>$BIT0BDjHG(B (unstable)(sid) $B$K$D$$$F$O!"$3$NLdBj$O6aF|Cf$K(B
-$B=$@5$5$l$kM=Dj$G$9!#(B</p>
+<p>不安定版 (unstable)(sid) については、この問題は近日中に
+修正される予定です。</p>
 
-<p>krb5 $B%P%C%1!<%8$r%"%C%W%0%l!<%I$9$k$3$H$r$*4+$a$7$^$9!#(B</p>
+<p>krb5 バッケージをアップグレードすることをお勧めします。</p>
 </define-tag>
 
 #use wml::debian::translation-check translation="1.4"

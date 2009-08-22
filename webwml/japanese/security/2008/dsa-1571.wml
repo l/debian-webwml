@@ -1,77 +1,77 @@
 #use wml::debian::translation-check translation="1.5"
-<define-tag description>ͽ¬��ǽ�����������</define-tag>
+<define-tag description>予測可能な乱数の生成</define-tag>
 <define-tag moreinfo>
 <p>
-Luciano Bello ����ˤ�ꡢDebian �� openssl �ѥå���������������郎ͽ¬
-��ǽ��������������뤳�Ȥ�ȯ������ޤ���������� Debian ��ͭ�� openssl
-�ؤθ��ä����� (<a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-0166">CVE-2008-0166</a>) �������Ǥ������η�̤Ȥ��ơ��Ź�˻Ȥ���
-�κ�����ͽ¬��ǽ�Ǥ���
+Luciano Bello さんにより、Debian の openssl パッケージの乱数生成器が予測
+可能な乱数を生成することが発見されました。これは Debian 固有の openssl
+への誤った修正 (<a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-0166">CVE-2008-0166</a>) が原因です。この結果として、暗号に使う鍵
+の材料が予測可能です。
 </p>
 
 <p>
-����� Debian ��ͭ�η�٤Ǥ��ꡢDebian �����ǤϤʤ�¾�� OS �ˤϱƶ�����
-��ޤ���â����¾�� OS �ˤ�夤���� import ����뤳�Ȥˤ�ꡢ����Ū�ʱ�
-���Ϥ���ޤ���
+これは Debian 固有の欠陥であり、Debian 派生ではない他の OS には影響があ
+りません。但し、他の OS にも弱い鍵が import されることにより、間接的な影
+響はあります。
 </p>
 
 <p>
-Debian �����ƥ�ǡ��С������ 0.9.8c-1 �ʹߤ� OpenSSL �Ǻ������줿���Ź�
-���˴ؤ���ǡ����ϼΤƤƺ��ľ��ɬ�פ�����ޤ�������ˡ��ƶ��������
-Debian �����ƥ�ǡ���̾���ܿ�ǧ�ڤ���Ū�ǻȤ�줿���Ƥ� DSA �����ȼ�Ǥ�
-��ȹͤ��Ƥ����������ǥ������̾���르�ꥺ��ϡ���̾����������̩�������
-�ͤ˰�¸���Ƥ��뤫��Ǥ���
+Debian システムで、バージョン 0.9.8c-1 以降の OpenSSL で作成された、暗号
+鍵に関するデータは捨てて作り直す必要があります。さらに、影響を受ける
+Debian システムで、署名や本人認証の目的で使われた全ての DSA 鍵は脆弱であ
+ると考えてください。デジタル署名アルゴリズムは、署名生成時の秘密の乱数の
+値に依存しているからです。
 </p>
 
 <p>
-���η�٤���ĺǽ�ΥС������� 0.9.8c-1 �ǡ��԰����Ǥ� 2006-09-17 �˥�
-�åץ����ɤ���Ƥ��ꡢ���θ�ƥ����� (testing) ������� (etch) ��ή���
-���ޤ���������� (sarge) �ˤϱƶ��Ϥ���ޤ���
+この欠陥を持つ最初のバージョンは 0.9.8c-1 で、不安定版に 2006-09-17 にア
+ップロードされており、その後テスト版 (testing) や安定版 (etch) に流れて
+います。旧安定版 (sarge) には影響はありません。
 </p>
 
 <p>
-�ƶ�������븰�ϡ�SSH ����OpenVPN ����DNSSEC ����X.509 ���������������
-�Τ˻Ȥ��븰�ǡ���������� SSL/TLS ���ͥ������˻Ȥ����å���󸰤Ǥ���
-GnuPG �� GnuTLS �������������ϱƶ�������ޤ���
+影響を受ける鍵は、SSH 鍵、OpenVPN 鍵、DNSSEC 鍵、X.509 証明書を生成する
+のに使われる鍵データ、および SSL/TLS コネクションに使うセッション鍵です。
+GnuPG や GnuTLS で生成した鍵は影響を受けません。
 </p>
 
-<p>�ȼ�ʸ���ȯ�����뤿��λ����ϰʲ��Ǹ�������Ƥ��ޤ���</p>
+<p>脆弱な鍵を発見するための資料は以下で公開されています。</p>
 
   <p><url "http://security.debian.org/project/extra/dowkd/dowkd.pl.gz">
   <a href="http://security.debian.org/project/extra/dowkd/dowkd.pl.gz.asc">(OpenPGP signature)</a></p>
 
-<p>�͡��ʥѥå������ǤΥ��������륪���Фμ��ϡ��ʲ��Ǹ�������Ƥ��ޤ���</p>
+<p>様々なパッケージでのキーロールオーバの手順は、以下で公開されています。</p>
 
   <p><a href="$(HOME)/security/key-rollover/">http://www.debian.org/security/key-rollover/</a></p>
 
 <p>
-���Υ����֥����ȤϷ�³Ū�˹�������Ƥ��ꡢSSL ��������Ѥ����ѥå�������
-���������륪���ФˤĤ��ƤΡ������������Ѥߤμ�礬���ܤ���Ƥ��ޤ����ޤ���
-�ƶ�������ʤ���ɽŪ�ʥѥå������ˤĤ��Ƥ���󤵤�Ƥ��ޤ���
+このウェブサイトは継続的に更新されており、SSL 証明書を用いたパッケージの
+キーロールオーバについての、新しい更新済みの手順が記載されています。また、
+影響を受けない代表的なパッケージについても列挙されています。
 </p>
 
 <p>
-���ζ۵ޤ��ѹ��ʳ��ˡ�openssl ����Ĥη�٤���������Ƥ��ޤ��������η�
-�٤ϼ��� etch �Υݥ���ȥ�꡼���Ǥν�����ͽ�ꤷ�Ƥ�����ΤǤ�����Ĥ�
-Openssl �� DTLS (Datagram TLS: ����Ū�ˤ�<q>SSL ��� UDP</q>) �������� DTLS ��������Ƥ�
-�餺������Ū�ˤ��äȼ夤�ץ��ȥ���ȤʤäƤ�����ǽ�������ä����ꡢ�⤦��
-�Ĥϡ�Ǥ�դΥ����ɤ��¹Բ�ǽ�Ǥ��ä����� (<a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-4995">CVE-2007-4995</a>) �Ǥ�����������
-�軻�롼����Υ����ɥ���ͥ빶�� (<a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-3108">CVE-2007-3108</a>) ���н褵��Ƥ��ޤ���
+この緊急の変更以外に、openssl の二つの欠陥が修正されています。これらの欠
+陥は次の etch のポイントリリースでの修正を予定していたものです。一つは
+Openssl の DTLS (Datagram TLS: 根本的には<q>SSL 上の UDP</q>) が正しく DTLS を実装してお
+らず、潜在的にずっと弱いプロトコルとなっていた可能性があった問題、もう一
+つは、任意のコードが実行可能であった問題 (<a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-4995">CVE-2007-4995</a>) です。更に整数
+乗算ルーチンのサイドチャネル攻撃 (<a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-3108">CVE-2007-3108</a>) も対処されています。
 </p>
 
 <p>
-������ (stable) �ǥ����ȥ�ӥ塼����� (etch) �Ǥϡ�����������ϥС���
-��� 0.9.8c-4etch3 �ǽ�������Ƥ��ޤ���
+安定版 (stable) ディストリビューション (etch) では、これらの問題はバージ
+ョン 0.9.8c-4etch3 で修正されています。
 </p>
 
 <p>
-�԰����� (unstable) �ǥ����ȥ�ӥ塼����� (sid) �ȥƥ����� (testing) ��
-�����ȥ�ӥ塼����� (lenny) �Ǥϡ�����������ϥС������ 0.9.8g-9 ��
-��������Ƥ��ޤ���
+不安定版 (unstable) ディストリビューション (sid) とテスト版 (testing) デ
+ィストリビューション (lenny) では、これらの問題はバージョン 0.9.8g-9 で
+修正されています。
 </p>
 
 <p>
-ľ���� openssl �ѥå������򥢥åץ��졼�ɤ�����ε��ܤ˱�äưŹ渰���
-�������뤳�Ȥ򴫤�ޤ���
+直ぐに openssl パッケージをアップグレードし、上の記載に沿って暗号鍵を再
+生成することを勧めます。
 </p>
 </define-tag>
 

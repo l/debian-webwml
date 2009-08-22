@@ -1,48 +1,48 @@
-<define-tag description>$B%P%C%U%!%*!<%P!<%U%m!<$*$h$S%U%)!<%^%C%HJ8;zNs@H<e@-(B</define-tag>
+<define-tag description>バッファオーバーフローおよびフォーマット文字列脆弱性</define-tag>
 <define-tag moreinfo>
-<p>$B0lO"$NLdBj$,!"(BHylafax ($BB?$/$N(B GNU/Linux $B%G%#%9%H%j%S%e!<%7%g%s(B
-$B$H$H$b$KG[I[$5$l$F$$$k!"=@Fp$J%/%i%$%"%s%H(B/$B%5!<%P7?$N(B
-$B%U%!%C%/%9%=%U%H%&%'%"(B) $B$KH/8+$5$l$^$7$?!#(B
-SecurityFocus $B$+$i!"LdBj$N>\:Y$K$D$$$F$N5-;v$r0zMQ$7$^$9(B:
+<p>一連の問題が、Hylafax (多くの GNU/Linux ディストリビューション
+とともに配布されている、柔軟なクライアント/サーバ型の
+ファックスソフトウェア) に発見されました。
+SecurityFocus から、問題の詳細についての記事を引用します:
 </p>
 
 <ul>
-<li>$B%U%)!<%^%C%HJ8;zNs@H<e@-$O!"$"$k>u672<$G%f!<%6$,(B
-$BG$0U$N%3!<%I$r<B9T$9$k$3$H$r2DG=$K$9$k@x:_E*2DG=@-$,$"$j$^$9!#(B
-$BF~NO$N%A%'%C%/$,IT==J,$J$?$a!"%U%)!<%^%C%HJ8;zNs967b$,2DG=$G$9!#(B
-$B$3$l$O(B setuid $B$G(B faxrm $B$*$h$S(B faxalter $B$,%$%s%9%H!<%k$5$l$?(B
-$B%7%9%F%`$N$_$K1F6A$9$k$N$G!"(BDebian $B$K$O$3$NLdBj$K$D$$$F@H<e$G$O$"$j$^$;$s!#(B
+<li>フォーマット文字列脆弱性は、ある状況下でユーザが
+任意のコードを実行することを可能にする潜在的可能性があります。
+入力のチェックが不十分なため、フォーマット文字列攻撃が可能です。
+これは setuid で faxrm および faxalter がインストールされた
+システムのみに影響するので、Debian にはこの問題について脆弱ではありません。
 </li>
 
-<li>Hylafax $B$K$*$$$F!"%P%C%U%!%*!<%P!<%U%m!<$,Js9p$5$l$F$$$^$9!#(B
-$BD9$$%9%-%c%s%i%$%s$r4^$^$;$?0-0U$"$k%U%!%C%/%9%a%C%;!<%8$r<u?.$7$?(B
-$B>l9g!"%a%b%j%P%C%U%!$,%*!<%P!<%U%m!<$7!"NY@\$9$k%a%b%jNN0h$rGK2u$7$^$9!#(B
-$B$3$l$r0-MQ$7$?7k2L$H$7$F!"%5!<%S%9Dd;_>uBV$K4Y$C$?$j!">l9g$K$h$C$F$O(B
-root $B8"8B$r$b$C$FG$0U$N%3!<%I$r<B9T$9$k$3$H$,$G$-$k2DG=@-$,$"$j$^$9!#(B
+<li>Hylafax において、バッファオーバーフローが報告されています。
+長いスキャンラインを含ませた悪意あるファックスメッセージを受信した
+場合、メモリバッファがオーバーフローし、隣接するメモリ領域を破壊します。
+これを悪用した結果として、サービス停止状態に陥ったり、場合によっては
+root 権限をもって任意のコードを実行することができる可能性があります。
 </li>
 
-<li>$B%U%)!<%^%C%HJ8;zNs@H<e@-$,(B faxgetty $B$KH/8+$5$l$F$$$^$9!#(B
-$B<u?.$7$?%U%!%C%/%9%a%C%;!<%8$K!"Aw?.85$r<1JL$9$k$?$a$KMQ$$$k(B
-$BAw?.85<1JL;R(B (TSI) $B$,4^$^$l$F$$$^$9$,!"(BHylafax $B$OF~NO$5$l$?J8;zNs(B
-$B$r!"==J,$KITE,@Z$JJ8;z$rCV49$;$:$K!"%U%)!<%^%C%HJ8;zNs$H$7$F(B
-$B07$C$F$7$^$$$^$9!#0-0U$N$"$k%U%!%C%/%9%G!<%?$O!"%5!<%P$r%/%i%C%7%e$5$;!"(B
-$B$=$N7k2L%5!<%S%9Dd;_>uBV$K4Y$i$;$^$9!#(B
+<li>フォーマット文字列脆弱性が faxgetty に発見されています。
+受信したファックスメッセージに、送信元を識別するために用いる
+送信元識別子 (TSI) が含まれていますが、Hylafax は入力された文字列
+を、十分に不適切な文字を置換せずに、フォーマット文字列として
+扱ってしまいます。悪意のあるファックスデータは、サーバをクラッシュさせ、
+その結果サービス停止状態に陥らせます。
 </li>
 
-<li>Marcin Dawcewicz $B$5$s$K$h$j!"(Bhfaxd $B$K%U%)!<%^%C%HJ8;zNs@H<e@-(B
-$B$,H/8+$5$l$^$7$?!#$3$l$K$h$j!"FCDj$N>u672<$K$*$$$F(B hfaxd $B$,%/%i%C%7%e(B
-$B$5$l$F$7$^$$$^$9!#(BDebian $B$G$O!"(Bhfaxd $B$O(B setuid root $B$G$O%$%s%9%H!<%k(B
-$B$5$l$J$$$N$G!"$3$NLdBj$,D>@\LdBj$r0z$-5/$3$9$3$H$O$"$j$^$;$s!#(B
-$B$3$NLdBj$O(B Darren Nickerson $B$5$s$K$h$C$F=$@5$5$l!"?7HG$K$O4{$K4^$^$l$F(B
-$B$$$^$9$,!"(Bpotato $B<}O?$N%P!<%8%g%s$K$O4^$^$l$F$$$^$;$s!#(B</li>
+<li>Marcin Dawcewicz さんにより、hfaxd にフォーマット文字列脆弱性
+が発見されました。これにより、特定の状況下において hfaxd がクラッシュ
+されてしまいます。Debian では、hfaxd は setuid root ではインストール
+されないので、この問題が直接問題を引き起こすことはありません。
+この問題は Darren Nickerson さんによって修正され、新版には既に含まれて
+いますが、potato 収録のバージョンには含まれていません。</li>
 </ul>
 
-<p>$B$3$l$i$NLdBj$O!"5l0BDjHG(B (stable)(potato) $B$G$O%P!<%8%g%s(B 4.0.2-14.3 $B$G!"(B
-$B8=0BDjHG(B (woody) $B$G$O%P!<%8%g%s(B 4.1.1-1.1 $B$G!"IT0BDjHG(B (unstable)(sid)
-$B$G$O%P!<%8%g%s(B 4.1.2-2.1 $B$G3F!9=$@5$5$l$F$$$^$9!#(B
+<p>これらの問題は、旧安定版 (stable)(potato) ではバージョン 4.0.2-14.3 で、
+現安定版 (woody) ではバージョン 4.1.1-1.1 で、不安定版 (unstable)(sid)
+ではバージョン 4.1.2-2.1 で各々修正されています。
 </p>
 
-<p>hylafax $B%Q%C%1!<%8$r(B $B%"%C%W%0%l!<%I$9$k$3$H$r$*4+$a$7$^$9!#(B</p>
+<p>hylafax パッケージを アップグレードすることをお勧めします。</p>
 </define-tag>
 
 # do not modify the following line
