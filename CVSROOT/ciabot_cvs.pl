@@ -51,10 +51,10 @@ use vars qw ($project $from_email $dest_email $rpc_uri $sendmail $sync_delay
 #       interface, please use the "title" metadata key rather than
 #       putting that here.
 #
-$project = 'YOUR_PROJECT_HERE';
+$project = 'debian-www';
 
 # The from address in generated mails.
-$from_email = 'YOUR_EMAIL_HERE';
+$from_email = 'webmaster@debian.org';
 
 # Mail all reports to this address.
 $dest_email = 'cia@cia.navi.cx';
