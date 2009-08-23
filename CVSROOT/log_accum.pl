@@ -300,13 +300,6 @@ $state = $STATE_NONE;
 $login = $ENV{'CVS_USER'} || getlogin || (getpwuid($<))[0] || "nobody";
 #$login = $ENV{'LOGNAME'} || getlogin || (getpwuid($<))[0] || "nobody";
 
-chop($hostname = `hostname`);
-if ($hostname !~ /\./) {
-    chop($domainname = `domainname`);
-    $hostdomain = $hostname . "." . $domainname;
-} else {
-    $hostdomain = $hostname;
-}
 $cvsroot = $ENV{'CVSROOT'};
 $do_status = 1;
 $modulename = "";
