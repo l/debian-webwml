@@ -192,7 +192,7 @@ my $sum; # _VERY_ simple hash of the log message. It is really weak, but I'm
          # lazy and it's really sorta exceptional to even get more commits
          # running simultanously anyway.
 $sum = 0;
-map { if ( /./ ) { $sum += ord $1 } } split(//, $logmsg);
+map { if ( /(.)/ ) { $sum += ord $1 } } split(//, $logmsg);
 
 my $syncfile; # Name of the file used for syncing
 $syncfile = "/tmp/cvscia.$project.$module.$sum";
