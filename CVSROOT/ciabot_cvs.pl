@@ -153,7 +153,7 @@ $dirfiles[0] = "@files" or die "$0: no files specified\n";
 
 # Guess module name.
 
-if ( $dir[0] =~ m#^([a-z.]+)# ) {
+if ( $dir[0] =~ m#^([A-Za-z.]+)# ) {
     $module = $1;
 }
 
