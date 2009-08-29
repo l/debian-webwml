@@ -153,7 +153,9 @@ $dirfiles[0] = "@files" or die "$0: no files specified\n";
 
 # Guess module name.
 
-$module = $dir[0]; $module =~ s#/.*##;
+if ( $dir[0] =~ m#^([a-z.]+)# ) {
+    $module = $1;
+}
 
 
 # Parse stdin (what's interesting is the tag and log message)
@@ -190,7 +192,7 @@ my $sum; # _VERY_ simple hash of the log message. It is really weak, but I'm
          # lazy and it's really sorta exceptional to even get more commits
          # running simultanously anyway.
 $sum = 0;
-map { $sum += ord $_ } split(//, $logmsg);
+map { if ( /./ ) { $sum += ord $1 } } split(//, $logmsg);
 
 my $syncfile; # Name of the file used for syncing
 $syncfile = "/tmp/cvscia.$project.$module.$sum";
