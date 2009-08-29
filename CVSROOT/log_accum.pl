@@ -328,6 +328,8 @@ while (@ARGV) {
 }
 ($mailto) || die("No -m mail recipient specified\n");
 
+$ENV{PATH} = '/usr/bin:/bin';
+
 # for now, the first "file" is the repository directory being committed,
 # relative to the $CVSROOT location
 #
