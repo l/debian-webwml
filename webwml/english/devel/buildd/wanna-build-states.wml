@@ -14,9 +14,9 @@
 <h2>The wanna-build states</h2>
 <p>For every Debian-supported architecture, there's a wanna-build
 database installed on buildd.debian.org, with all packages and their current
-compilation state. There are 7 states: <em>needs-build</em>,
+compilation state. There are 8 states: <em>needs-build</em>,
 <em>building</em>, <em>uploaded</em>, <em>dep-wait</em>,
-<em>failed</em>, <em>not-for-us</em>, and
+<em>BD-Uninstallable</em>, <em>failed</em>, <em>not-for-us</em>, and
 <em>installed</em>.</p>
 
 <p>Their meaning is as follows:</p>
@@ -121,6 +121,30 @@ compilation state. There are 7 states: <em>needs-build</em>,
 	<tt>m68k</tt>, then the <em>dep-wait</em> state for <tt>m68k</tt> will
 	have to be manually lifted by the <tt>m68k</tt> porters.
       </dd>
+      <dt><a name="bd-uninstallable">BD-Uninstallable</a></dt>
+      <dd>During debconf9, <a
+	href='http://lists.debian.org/debian-wb-team/2009/07/msg00089.html'>Joachim
+	Breitner had the idea</a> of using edos-debcheck to verify
+	build-dependency installability of packages that would otherwise
+	go into state Needs-Build. At that point, wanna-build already
+	had the ability to check the immediate availability of
+	build-dependencies; but if a package couldn't be installed
+	because it build-depends on a which depends on b which depends
+	on c (&gt;=1.2.3) and c is still at version 1.2.2, this would
+	not be detected, and the build would fail early because of
+	unavailable build-dependencies. Figuring those out was a manual
+	process for the buildd admin, and, usually, a lengthy one at
+	that. With the BD-Uninstallable patch, this is no longer a
+	problem. When your package is in BD-Uninstallable, it means one
+	of the build-dependencies is not installable (either
+	immediately, or because part of its dependency tree is not
+	available). Unfortunately, the BD-Uninstallable patch does not
+	provide information about which package, exactly, is missing;
+	please use edos-debcheck to find out. This problem will,
+	however, solve itself once the missing dependencies are indeed
+	available, and at that point your package will automatically
+	move to Needs-Build again.
+      </dd>
       <dt><a name="wanna-build-state-failed">failed</a></dt>
       <dd>If a build attempt failed, and the autobuilder maintainer
 	decides it is really a failure that should not be retried, a
@@ -182,7 +206,7 @@ compilation state. There are 7 states: <em>needs-build</em>,
 	average.
       </dd>
     </dl>
-    <p>In addition to these seven states, <em>wanna-build</em> also
+    <p>In addition to these eight states, <em>wanna-build</em> also
     knows two -removed states, which are really corner cases. These
     two states are <em>dep-wait-removed</em> and
     <em>failed-removed</em>. They relate to their respective <q>plain</q>
