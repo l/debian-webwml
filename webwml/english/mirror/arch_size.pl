@@ -19,19 +19,26 @@ my $arch_space = $res->content;
 
 my $total ;
 
+my $space;
+
 for my $line (split("\n",$arch_space)) {
 	if ($line =~ /^([\w-]+)\s*\|(\d+)\s*$/) {
 		my $size = $2/1000000000;
 		$total += $2 ;
-		printf "<tr><td>$1</td>\t<td>%.0f</td></tr>\n", $size ;
+		$space->{$1}=$size;
 	}
 	if ($line =~ /^(\d+)$/) {
 		my $size = $1/1000000000;
 		$total += $1 ;
-		printf "<tr><td>source</td>\t<td>%.0f</td></tr>\n", $size ;
+		$space->{'source'}=$size;
 	}
 }
 
+printf "<tr><td>source</td>\t<td>%.0f</td></tr>\n", $space->{"source"};
+
+foreach my $key (sort keys %$space) {
+	printf "<tr><td>$key</td>\t<td>%.0f</td></tr>\n", $space->{$key} unless ($key eq "source");
+}
 
 $total /= 1000000000 ;
 printf "<tr><td>Total</td>\t<td>%.0f</td></tr>\n", $total ;
