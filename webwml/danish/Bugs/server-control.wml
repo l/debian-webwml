@@ -1,5 +1,5 @@
 #use wml::debian::template title="Debians fejlrapporteringssystem &mdash; kontrolserveren" NOHEADER=yes NOCOPYRIGHT=true
-#use wml::debian::translation-check translation="1.80"
+#use wml::debian::translation-check translation="1.82"
 
 <h1>Introduktion til e-mailserveren til fejlrapportskontrol og -behandling</h1>
 
@@ -107,7 +107,7 @@ e-mail med kommandoen <code>refcard</code>.</p>
       tilfældet, bør du <a href="#clone">klone</a> fejlen og gentildele klonen 
       til den anden pakke.</p>      
   </dd>
-      
+
   <dt><a name="reopen">
       <code>reopen</code> <var>fejlnummer</var>
       [ <var>oprindelsesadresse</var> | <code>=</code> | <code>!</code> ]</a></dt>
@@ -134,7 +134,7 @@ e-mail med kommandoen <code>refcard</code>.</p>
       en pakke, men dukker op igen i en senere version, det er bedre at 
       anvende kommandoen <code>found</code> i stedet.</p>
   </dd>
-      
+
   <dt><a name="found">
       <code>found</code> <var>fejlnummer</var> [ <var>version</var> ]</a></dt>
   <dd><p>Registrerer at #<var>fejlnummer</var> er opdaget i den angivne 
@@ -150,11 +150,12 @@ e-mail med kommandoen <code>refcard</code>.</p>
       rettede versioner.  Dette svarer til hvordan <code>reopen</code> 
       fungerer.</p>
 
-      <p>Denne kommando sørger kan for at markere en fejl som ikke-løst hvis
-      hvis ingen version blev angivet, eller hvis den <var>version</var>, der
-      blev markeret svarer til den <var>version</var>, der sidst blev markeret
-      som rettet.  (Hvis du er sikker på at du ønsker fejlen markeret som
-      ikke-løst, anvend da <code>reopen</code> sammen med <code>found</code>.)</p>
+      <p>Denne kommando sørger kun for at markere en fejl som ikke-løst hvis
+      ingen version blev angivet, eller hvis den <var>version</var>, der
+      markeres svarer til eller er større end den højeste <var>version</var>, 
+      der sidst blev markeret som rettet.  (Hvis du er sikker på, at du ønsker 
+      fejlen markeret som ikke-løst, anvend da <code>reopen</code> sammen med 
+      <code>found</code>.)</p>
 
       <p>Denne kommando blev indført til fordel for <code>reopen</code>, fordi
       det var svært at tilføje en <var>version</var> til den kommandos 
@@ -165,7 +166,7 @@ e-mail med kommandoen <code>refcard</code>.</p>
       <code>notfound</code> <var>fejlnummer</var> <var>version</var></a></dt>
   <dd><p>Fjern registreringen af at #<var>fejlnummer</var> blev fundet i den
       angivne <var>version</var> af pakken som det er tilknyttet.</p>
-	        
+
       <p>Dette er anderledes end at lukke fejlen for den version, da fejlen
       heller ikke anføres som rettet i den version; ingen oplysninger om 
       versionen vil være kendte.  Formålet er at rette fejltagelser i 
@@ -190,9 +191,13 @@ e-mail med kommandoen <code>refcard</code>.</p>
 
       <p>Denne kommando svarer til <code>found</code> efterfulgt af 
       <code>notfound</code> ('found' fjerner 'fixed' i en given version, og
-      'notfound' fjerner 'found'.)</p>
+      'notfound' fjerner 'found') med den undtagelse, at fejlen ikke genåbnes 
+      hvis den fundne ('found') version er større end nogen eksisterende rettet 
+      version.  Formålet er at rette fejltagelser i registreringen af hvornår en 
+      fejl blev rettet; i de fleste tilfælde vil du i virkeligheden skulle 
+      anvende <code>found</code>, og ikke <code>notfixed</code>.</p>
   </dd>
-      
+
   <dt><a name="submitter">
       <code>submitter</code> <var>fejlnummer</var>
       <var>oprindelsesadresse</var> | <code>!</code></a></dt>
@@ -380,26 +385,26 @@ e-mail med kommandoen <code>refcard</code>.</p>
 
       <p>Eksempler:</p>
 
-      <pre>	
-    	\# det samme som 'tags 123456 + patch'	
-	tags 123456 patch	
-			            
-	\# det samme som 'tags 123456 + help security'	
-	tags 123456 help security	
-						            
+      <pre>
+	\# det samme som 'tags 123456 + patch'
+	tags 123456 patch
+
+	\# det samme som 'tags 123456 + help security'
+	tags 123456 help security
+
 	\# tilføjer mærkerne 'fixed' og 'pending'
-	tags 123456 + fixed pending	
-									            
+	tags 123456 + fixed pending
+
 	\# fjerner mærket 'unreproducible'
-	tags 123456 - unreproducible	
-												            
-	\# sætter mærkerne til kun 'moreinfo' og 'unreproducible'	
-	tags 123456 = moreinfo unreproducible	
-	
+	tags 123456 - unreproducible
+
+	\# sætter mærkerne til kun 'moreinfo' og 'unreproducible'
+	tags 123456 = moreinfo unreproducible
+
 	\# fjerner mærket moreinfo og tilføjer et patch-mærke
-	tags 123456 - moreinfo + patch	
-      </pre>     
-     
+	tags 123456 - moreinfo + patch
+      </pre>
+
       <p>Tilgængelige markeringer er pt. <code>patch</code>, 
       <code>wontfix</code>, <code>moreinfo</code>, <code>unreproducible</code>,
       <code>help</code>, <code>pending</code>, <code>fixed</code>,
@@ -420,7 +425,7 @@ e-mail med kommandoen <code>refcard</code>.</p>
       <code>block</code> <var>fejlnummer</var> <code>by</code> <var>fejl</var> ...</a></dt>
   <dd><p>Bemærk at rettelsen til den første fejl blokeres af de andre anførte fejl.</p>
   </dd>
-    	 
+
   <dt><a name="unblock">
       <code>unblock</code> <var>fejlnumber</var> <code>by</code> <var>fejl</var> ...</a></dt>
   <dd><p>Bemærk at rettelsen til den første fejl ikke længere blokeres af de andre 
@@ -486,7 +491,7 @@ e-mail med kommandoen <code>refcard</code>.</p>
       øjeblikket, hvis fejlen opfylder arkiveringskravene, ignorerende 
       tidskrav.</p>
   </dd>
-		 
+
   <dt><a name="unarchive">
       <code>unarchive</code> <var>fejlnummer</var></a></dt>
   <dd><p>Ophæver arkiveringen af en fejl, der tidligere var arkiveret.  Ophævelse 
