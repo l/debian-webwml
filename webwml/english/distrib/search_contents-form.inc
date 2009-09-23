@@ -30,6 +30,7 @@
   <option value="unstable"><gettext domain="distrib">unstable</gettext></option>
 </select>
 <label for="architecture"><gettext domain="distrib">Architecture</gettext>:</label>
+# TODO: build from archlist available at releases/sid/release.data
 <select name="arch" id="architecture">
   <option value="any" selected="selected"><gettext domain="distrib">any</gettext></option>
   <option value="i386"><gettext domain="distrib">Intel x86</gettext></option>
@@ -44,8 +45,8 @@
   <option value="mips"><gettext domain="distrib">MIPS (big endian)</gettext></option>
   <option value="mipsel"><gettext domain="distrib">MIPS (little endian)</gettext></option>
   <option value="s390"><gettext domain="distrib">IBM S/390</gettext></option>
-  <option value="kfreebsd-amd64"<gettext domain="distrib">kFreeBSD (AMD64)</gettext></option>
-  <option value="kfreebsd-i386"<gettext domain="distrib">kFreeBSD (Intel x86)</gettext></option>
+  <option value="kfreebsd-amd64"><gettext domain="distrib">kFreeBSD (AMD64)</gettext></option>
+  <option value="kfreebsd-i386"><gettext domain="distrib">kFreeBSD (Intel x86)</gettext></option>
 # TODO: Hurd should be listed as a separate distribution
   <option value="hurd-i386"><gettext domain="distrib">Hurd (i386)</gettext></option>
 </select>
