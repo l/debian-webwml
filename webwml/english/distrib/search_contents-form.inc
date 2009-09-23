@@ -44,6 +44,8 @@
   <option value="mips"><gettext domain="distrib">MIPS (big endian)</gettext></option>
   <option value="mipsel"><gettext domain="distrib">MIPS (little endian)</gettext></option>
   <option value="s390"><gettext domain="distrib">IBM S/390</gettext></option>
+  <option value="kfreebsd-amd64"<gettext domain="distrib">kFreeBSD (AMD64)</gettext></option>
+  <option value="kfreebsd-i386"<gettext domain="distrib">kFreeBSD (Intel x86)</gettext></option>
 # TODO: Hurd should be listed as a separate distribution
   <option value="hurd-i386"><gettext domain="distrib">Hurd (i386)</gettext></option>
 </select>
