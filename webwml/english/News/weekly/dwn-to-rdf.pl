@@ -148,7 +148,7 @@ if (open (F, $current . '/index.wml')) {
 		&& $headline ne "Aggiornamenti per la sicurezza"	# Italian
 		&& $headline ne "Atualizaçoes de Segurança"		# Portuguese
 		&& $headline ne "Aktualisierungen zur Systemsicherheit"	# German
-		&& $headline ne "¥»¥­¥å¥ê¥Æ¥£¾å¤Î¹¹¿·¡£"		# Japanese
+		&& $headline ne "ã‚»ã‚­ãƒ¥ãƒªãƒ†ã‚£ä¸Šã®æ›´æ–°ã€‚"		# Japanese in UTF-8
 		) {
 
 		if (!$headline) {
