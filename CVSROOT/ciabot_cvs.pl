@@ -38,6 +38,8 @@ use strict;
 use vars qw ($project $from_email $dest_email $rpc_uri $sendmail $sync_delay
 		$xml_rpc $ignore_regexp $alt_local_message_target);
 
+# explicitly set PATH to fix "insecure PATH" problem
+$ENV{'PATH'} = '/usr/local/bin:/usr/bin:/bin';
 
 ### Configuration
 
