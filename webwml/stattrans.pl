@@ -325,13 +325,13 @@ foreach $lang (@search_in) {
 		    if ($msg eq "Wrong translation version" || $msg eq "The original no longer exists") {
 		        $o_body .= "<td></td><td></td>";
 		    } else {
-		        $o_body .= sprintf "<td><a href=\"http://cvs.debian.org/webwml/$orig/%s.diff\?r1=%s\&amp;r2=%s\&amp;cvsroot=webwml\&amp;diff_format=%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
+		        $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/$orig/%s?root=webwml\&amp;view=diff\&amp;r1=%s\&amp;r2=%s\&amp;diff_format=%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
                                            $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $firstdifftype, $transversion{"$lang/$file"}, $version{"$orig/$file"};
-		        $o_body .= sprintf "<td><a href=\"http://cvs.debian.org/webwml/$orig/%s.diff\?r1=%s\&amp;r2=%s\&amp;cvsroot=webwml\&amp;diff_format=%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
+		        $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/$orig/%s?root=webwml\&amp;view=diff\&amp;r1=%s\&amp;r2=%s\&amp;diff_format=%s\">%s\&nbsp;->\&nbsp;%s</a></td>",
                                            $file, $transversion{"$lang/$file"}, $version{"$orig/$file"}, $seconddifftype, $transversion{"$lang/$file"}, $version{"$orig/$file"};
-                        $o_body .= sprintf "<td><a href=\"http://cvs.debian.org/webwml/$orig/%s?cvsroot=webwml#rev%s\">[L]</a></td>", $file, $version{"$orig/$file"};
+                        $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/$orig/%s?root=webwml#rev%s\">[L]</a></td>", $file, $version{"$orig/$file"};
 		    }
-		    		$o_body .= sprintf "<td><a href=\"http://cvs.debian.org/*checkout*/webwml/%s/%s?content-type=text/plain\">[F]</a>&nbsp;<a href=\"http://cvs.debian.org/webwml/%s/%s?cvsroot=webwml\">[L]</a></td>", $lang, $file, $lang, $file;
+                    $o_body .= sprintf "<td><a href=\"http://alioth.debian.org/scm/viewvc.php/*checkout*/webwml/%s/%s?root=webwml\">[F]</a></td>", $lang, $file;
                     $o_body .= sprintf "<td align=center>%s</td>", $maintainer{"$lang/$file"} || "";
                     $o_body .= "</tr>\n";
                     $outdated{$lang}++;
@@ -705,7 +705,7 @@ print HTMLI "</table>\n";
 # print HTMLI $border_foot;
 
 print HTMLI "<p><hr>\n";
-print HTMLI "<p><address>Created with <a href=\"http://cvs.debian.org/webwml/stattrans.pl?cvsroot=webwml\">webwml-stattrans</a> on $date</address>\n";
+print HTMLI "<p><address>Created with <a href=\"http://alioth.debian.org/scm/viewvc.php/webwml/stattrans.pl?view=markup\&amp;root=webwml\">webwml-stattrans</a> on $date</address>\n";
 print HTMLI "</body></html>\n";
 close (HTMLI);
 
