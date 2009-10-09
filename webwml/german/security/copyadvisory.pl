@@ -5,7 +5,7 @@
 # destination directory if necessary, and copy the Makefile from the source.
 
 # Written in 2000-2006 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2000-2005 Software in the public interest, Inc.
+# Â© Copyright 2000-2005 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -77,7 +77,7 @@ while (<SRC>)
 {
 	#next if /\$Id/;
 
-	s/cross-site scripting/Site-übergreifendes Skripting/;
+	s/cross-site scripting/Site-Ã¼bergreifendes Skripting/;
 	s/[sS]everal security related problems have been discovered in/Mehrere sicherheitsbezogene Probleme wurden in/;
 	s/^(<p>)?A problem has been discovered in\b/$1Ein Problem wurde in entdeckt/;
 	s/^(<p>)?It was discovered that\b/$1Es wurde entdeckt, dass/;
@@ -85,12 +85,12 @@ while (<SRC>)
 	s/\bdiscovered a/entdeckte ein/;
 	s/\bdiscovered that\b/entdeckte, dass/;
 	s/discovered/entdeckte/;
-	s/traversal/überschreitung/;
+	s/traversal/Ã¼berschreitung/;
 	s/^(<p>)?A vulnerability was discovered in\b/$1Eine Verwundbarkeit wurde in entdeckt/;
 	s/^(<p>)?Two vulnerabilities were discovered in\b/$1Zwei Verwundbarkeiten wurden in entdeckt/;
 	s/Common Vulnerabilities and Exposures project/<q>Common Vulnerabilities and Exposures<\/q>-Projekt/;
-	s/which could lead to the execution of arbitrary code/Dies kann zur Ausführung beliebigen Codes führen/;
-	s/which may lead to the execution of arbitrary code/Dies kann zur Ausführung beliebigen Codes führen/;
+	s/which could lead to the execution of arbitrary code/Dies kann zur AusfÃ¼hrung beliebigen Codes fÃ¼hren/;
+	s/which may lead to the execution of arbitrary code/Dies kann zur AusfÃ¼hrung beliebigen Codes fÃ¼hren/;
 	s/We recommend that you upgrade your (.*) package immediately/Wir empfehlen Ihnen, Ihr $1-Paket zu aktualisieren/;
 	s/We recommend that you upgrade your (.*) packages immediately/Wir empfehlen Ihnen, Ihre $1-Pakete zu aktualisieren/;
 	s/We recommend that you upgrade your (.*) and (.*) packages/Wir empfehlen Ihnen, Ihre $1- und $2-Pakete zu aktualisieren/;
@@ -102,13 +102,13 @@ while (<SRC>)
 	s/We recommend that you update your (.*) package/Wir empfehlen Ihnen, Ihr $1-Paket zu aktualisieren/;
 	s/denial of service/Diensteverweigerung (<q>denial of service<\/q>)/;
 	s/Several remote vulnerabilities have been/Mehrere entfernt ausnutzbare Verwundbarkeiten wurden in/;
-	s/buffer overflows/Pufferüberläufe/;
-	s/buffer overflow/Pufferüberlauf/;
-	s/integer overflow/Integer-Überlauf/;
+	s/buffer overflows/PufferÃ¼berlÃ¤ufe/;
+	s/buffer overflow/PufferÃ¼berlauf/;
+	s/integer overflow/Integer-Ãœberlauf/;
 	s/format string vulnerability/Formatierungszeichenkettenverwundbarkeit/;
 	s/format string vulnerabilities/Formatierungszeichenkettenverwundbarkeiten/;
-	s/insecure temporary files/unsichere temporäre Dateien/;
-	s/>insecure temporary file creation</>Unsichere Erstellung temporärer Dateien</;
+	s/insecure temporary files/unsichere temporÃ¤re Dateien/;
+	s/>insecure temporary file creation</>Unsichere Erstellung temporÃ¤rer Dateien</;
 	s/>local root exploit</>Lokale root-Ausnutzung</;
 	s/>remote root exploit</>Entfernte root-Ausnutzung</;
 	s/>symlink attack</>Symlink-Angriff</;
@@ -123,7 +123,7 @@ while (<SRC>)
 	s/vulnerability/Verwundbarkeit/;
 	s/vulnerabilities/Verwundbarkeiten/;
 	s/>several</>mehrere</;
-	s/>unsanitise</>Fehlende Entschärfung</;
+	s/>unsanitise</>Fehlende EntschÃ¤rfung</;
 	s/ identifies the following problems:/ identifiziert die folgenden Probleme:/;
 	s/The following matrix explains which kernel version for which architecture/The following matrix explains which kernel version for which architecture/;
 	s/fix the problems mentioned above:/fix the problems mentioned above:/;
@@ -149,21 +149,21 @@ while (<SRC>)
 	s/\bin version\b/in Version/;
 	s/of the Debian package/des Debian-Pakets/;
 	s/upstream version/Originalversion/;
-	s/([Ff])or the oldstable distribution/$1ür die alte Stable-Distribution/;
-	s/([Ff])or the oldstable/$1ür die alte Stable/;
-	s/([Ff])or the old stable distribution/$1ür die alte Stable-Distribution/;
-	s/([Ff])or the old stable/$1ür die alte Stable/;
-	s/([Ff])or the current stable distribution/$1ür die aktuelle Stable-Distribution/;
-	s/([Ff])or the current stable/$1ür die aktuelle Stable/;
-	s/([Ff])or the upcoming stable distribution/$1ür die kommende Stable-Distribution/;
-	s/([Ff])or the upcoming stable/$1ür die kommende Stable/;
-	s/([Ff])or the Debian stable distribution/$1ür die Debian-Stable-Distribution/;
-	s/([Ff])or the stable distribution/$1ür die Stable-Distribution/;
-	s/([Ff])or the stable/$1ür die Stable/;
-	s/([Ff])or the testing distribution/$1ür die Testing-Distribution/;
-	s/([Ff])or the Debian unstable distribution/$1ür die Debian-Unstable-Distribution/;
-	s/([Ff])or the unstable distribution/$1ür die Unstable-Distribution/;
-	s/([Ff])or the unstable/$1ür die Unstable/;
+	s/([Ff])or the oldstable distribution/$1Ã¼r die alte Stable-Distribution/;
+	s/([Ff])or the oldstable/$1Ã¼r die alte Stable/;
+	s/([Ff])or the old stable distribution/$1Ã¼r die alte Stable-Distribution/;
+	s/([Ff])or the old stable/$1Ã¼r die alte Stable/;
+	s/([Ff])or the current stable distribution/$1Ã¼r die aktuelle Stable-Distribution/;
+	s/([Ff])or the current stable/$1Ã¼r die aktuelle Stable/;
+	s/([Ff])or the upcoming stable distribution/$1Ã¼r die kommende Stable-Distribution/;
+	s/([Ff])or the upcoming stable/$1Ã¼r die kommende Stable/;
+	s/([Ff])or the Debian stable distribution/$1Ã¼r die Debian-Stable-Distribution/;
+	s/([Ff])or the stable distribution/$1Ã¼r die Stable-Distribution/;
+	s/([Ff])or the stable/$1Ã¼r die Stable/;
+	s/([Ff])or the testing distribution/$1Ã¼r die Testing-Distribution/;
+	s/([Ff])or the Debian unstable distribution/$1Ã¼r die Debian-Unstable-Distribution/;
+	s/([Ff])or the unstable distribution/$1Ã¼r die Unstable-Distribution/;
+	s/([Ff])or the unstable/$1Ã¼r die Unstable/;
 	s/current stable distribution/aktuelle Stable-Distribution/;
 	s/unstable distribution/Unstable-Distribution/;
 	s/The old stable distribution/Die alte Stable-Distribution/;
@@ -171,14 +171,14 @@ while (<SRC>)
 	s/^oldstable distribution/alte Stable-Distribution/;
 	s/^stable distribution/Stable-Distribution/;
 	s/^unstable distribution/Unstable-Distribution/;
-	s/does(?: not|n't) contain a(?:ny)? ([^ ]) package/enthält kein $1-Paket/;
+	s/does(?: not|n't) contain a(?:ny)? ([^ ]) package/enthÃ¤lt kein $1-Paket/;
 	s/distribution (\(potato|woody|sarge\))/Distribution $1/;
 	s/privilege escalation/Privilegienerweiterung/;
-	s/cross site/Site-übergreifend/;
+	s/cross site/Site-Ã¼bergreifend/;
 	s/\bis not affected/ist nicht betroffen/;
-	s/does not contain ([[:word:]]*) packages?/enthält kein(e) $1-Paket(e)/;
-	s/does not contain a(?:ny)? ([[:word:]]*) packages/enthält keine $1-Pakete/;
-	s/does not contain a(?:ny)? ([[:word:]]*) package/enthält kein $1-Paket/;
+	s/does not contain ([[:word:]]*) packages?/enthÃ¤lt kein(e) $1-Paket(e)/;
+	s/does not contain a(?:ny)? ([[:word:]]*) packages/enthÃ¤lt keine $1-Pakete/;
+	s/does not contain a(?:ny)? ([[:word:]]*) package/enthÃ¤lt kein $1-Paket/;
 	s/this problem will be fixed soon/wird dieses Problem bald behoben sein/;
 	s/\(potato\)/(Potato)/;
 	s/\(woody\)/(Woody)/;
@@ -189,7 +189,7 @@ while (<SRC>)
 	s/(of|from) the Debian Security Audit (Project|Team)/vom Debian-Sicherheits-Audit-$2/;
 	s/(of|from) Debian Security Audit (project|team)/vom Debian-Sicherheits-Audit-$2/;
 	s/dissector/Sezierer (<q>dissector<\/q>)/;
-	s/disclosure/Enthüllung/;
+	s/disclosure/EnthÃ¼llung/;
 
 	print DST $_;
 }

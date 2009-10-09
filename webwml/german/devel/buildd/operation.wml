@@ -4,18 +4,18 @@
 # Translator: Helge Kreutzmann <debian@helgefjell.de> 2006-10-23
 
 <p>Im Herzen des Systems befindet sich die <tt>wanna-build</tt>-Datenbank, die
-   die Versionen und Zustände im Auge behält. <tt>quinn-diff</tt> vergleicht
-   nach jeder Archivaktualisierung die Paketliste für die Zielarchitektur gegen 
+   die Versionen und ZustÃ¤nde im Auge behÃ¤lt. <tt>quinn-diff</tt> vergleicht
+   nach jeder Archivaktualisierung die Paketliste fÃ¼r die Zielarchitektur gegen 
    die Liste der 
-   Quellpakete und füttert die Liste der Pakete, die einer Neuübersetzung
-   bedürfen, in die Datenbank, wo sie den Zustand <tt>Needs-Build</tt> annehmen.
+   Quellpakete und fÃ¼ttert die Liste der Pakete, die einer NeuÃ¼bersetzung
+   bedÃ¼rfen, in die Datenbank, wo sie den Zustand <tt>Needs-Build</tt> annehmen.
 </p>
 
-<p>Alle Bau-Deamons (es kann mehr als einen geben) befragen regelmäßig die 
-   Datenbank bezüglich solcher Pakete und nehmen einige von ihnen, so dass
-   diese in den Zustand <tt>Building</tt> kommen. Natürlich können auch Menschen
-   Pakete nehmen, z.B. in Spezialfällen wenn eine automatische Übersetzung
-   nicht möglich ist. Hier sehen wir auch den zweiten Zweck von 
+<p>Alle Bau-Deamons (es kann mehr als einen geben) befragen regelmÃ¤ÃŸig die 
+   Datenbank bezÃ¼glich solcher Pakete und nehmen einige von ihnen, so dass
+   diese in den Zustand <tt>Building</tt> kommen. NatÃ¼rlich kÃ¶nnen auch Menschen
+   Pakete nehmen, z.B. in SpezialfÃ¤llen wenn eine automatische Ãœbersetzung
+   nicht mÃ¶glich ist. Hier sehen wir auch den zweiten Zweck von 
    <tt>wanna-build</tt>: Es stellt sicher, dass die gleiche Version eines
    Pakets nicht zweimal gebaut wird.
 </p>
@@ -23,63 +23,63 @@
 <div class="center"><a name="autobuilder34"></a>
 <img SRC="scheme.png" alt="Autobuilder-Schema">
 <p><strong>Abbildung:</strong>
-Paketzustände und -Übergänge</p>
+PaketzustÃ¤nde und -ÃœbergÃ¤nge</p>
 </div>
 
-<p>Falls alles gut geht, kann später ein fertiges Paket hochgeladen werden,
-   was ein anderer Zustand (<tt>Uploaded</tt>) ist. Danach wird es schließlich
+<p>Falls alles gut geht, kann spÃ¤ter ein fertiges Paket hochgeladen werden,
+   was ein anderer Zustand (<tt>Uploaded</tt>) ist. Danach wird es schlieÃŸlich
    in das Debian-Archiv installiert, so dass es in der aktualisierten 
-   Paketliste für die Zielarchitektur auftaucht. Diese Liste wird mit der
+   Paketliste fÃ¼r die Zielarchitektur auftaucht. Diese Liste wird mit der
    Datenbank vereinigt, so dass das Paket in den Zustand <tt>Installed</tt>
-   übergeht und dort bleibt, bis zur nächsten Version des Quellpakets.
+   Ã¼bergeht und dort bleibt, bis zur nÃ¤chsten Version des Quellpakets.
 </p>
 
-<p>Es gibt eine Reihe von weiteren Zuständen, darunter: <tt>Failed</tt> ist
-   für Pakete, die auf Grund von Fehlern in den Quellen nicht gebaut werden
+<p>Es gibt eine Reihe von weiteren ZustÃ¤nden, darunter: <tt>Failed</tt> ist
+   fÃ¼r Pakete, die auf Grund von Fehlern in den Quellen nicht gebaut werden
    konnten und es wird erwartet, dass die Fehler in einer Folgeversion
-   behoben wurden (natürlich nachdem das Problem berichtet wurde). Daher wird
+   behoben wurden (natÃ¼rlich nachdem das Problem berichtet wurde). Daher wird
    eine neue Version direkt in <tt>Needs-Build</tt> eintreten, aber mit einer
    Warnung, dass etwas mit der vorhergehenden Version nicht gestimmt hat. 
    Zusammen mit dem Zustand wird eine Fehlerbeschreibung gespeichert. Der
    Zustand <tt>Dep-Wait</tt> wird verwendet, wenn ein Paket einige andere
-   Pakete zum Übersetzen benötigt aber diese noch nicht verfügbar sind und
-   vorher gebaut werden müssen. Dieser Zustand speichert eine Liste von
-   benötigten Paketen und eventuell Versionen, und wenn von allen bekannt ist,
-   dass sie installiert wurden, ändert sich der Zustand zurück in 
+   Pakete zum Ãœbersetzen benÃ¶tigt aber diese noch nicht verfÃ¼gbar sind und
+   vorher gebaut werden mÃ¼ssen. Dieser Zustand speichert eine Liste von
+   benÃ¶tigten Paketen und eventuell Versionen, und wenn von allen bekannt ist,
+   dass sie installiert wurden, Ã¤ndert sich der Zustand zurÃ¼ck in 
    <tt>Needs-Build</tt>.
 </p>
 
 <p>Wie wir bereits gesehen haben, nimmt der Bau-Daemon Pakete aus der Datenbank
-   zum übersetzen. Nun wollen wir etwas genauer hinschauen: Falls er einige
-   Pakete zum Bauen hat, verwendet er <tt>sbuild</tt> für den eigentliche
-   Compilierungsprozess, und für jeden Bau wird ein Protokoll an den Betreuer
+   zum Ã¼bersetzen. Nun wollen wir etwas genauer hinschauen: Falls er einige
+   Pakete zum Bauen hat, verwendet er <tt>sbuild</tt> fÃ¼r den eigentliche
+   Compilierungsprozess, und fÃ¼r jeden Bau wird ein Protokoll an den Betreuer
    des Deamons gesandt. Er schaut das Protokoll durch und entscheidet, was mit
    dem Paket geschehen soll: es hochzuladen, es auf <tt>Failed</tt> oder 
    <tt>Dep-Wait</tt> zu setzen und es erneut zu versuchen, usw. ... Falls eine
-   positive Bestätigung (eine signierte <tt>.changes</tt>-Datei)
+   positive BestÃ¤tigung (eine signierte <tt>.changes</tt>-Datei)
    erhalten wird, verschiebt der Deamon es in ein 
-   Hochlade-Verzeichnis, von wo aus alle Pakete über einen Cron-Job 
+   Hochlade-Verzeichnis, von wo aus alle Pakete Ã¼ber einen Cron-Job 
    hochgeladen werden.
 </p>
 
 <p>Ein Blick auf die Protokolldateien ist der einzige menschliche Eingriff
-   falls keine Fehler passieren. Es gibt zwei gute Gründe, dies nicht weiter
+   falls keine Fehler passieren. Es gibt zwei gute GrÃ¼nde, dies nicht weiter
    zu automatisieren: Erstens endet ein Bau manchmal mit einem Ergebnis 
-   <q>OK</q>, aber der Bau versagte nichtsdestotrotz aus Gründen, die für 
-   die Maschine unsichtbar sind. Und zweitens würde direktes Hochladen
+   <q>OK</q>, aber der Bau versagte nichtsdestotrotz aus GrÃ¼nden, die fÃ¼r 
+   die Maschine unsichtbar sind. Und zweitens wÃ¼rde direktes Hochladen
    ein automatisches PGP-signieren der erzeugten Dateien erzwingen, wobei der
-   Schlüssel auf der Bau-Maschine kein Mantra hätte. I hielt dies für ein
+   SchlÃ¼ssel auf der Bau-Maschine kein Mantra hÃ¤tte. I hielt dies fÃ¼r ein
    nicht-akzeptierbares Sicherheitsloch.
 </p>
 
 <p>Das Bau-Skript <tt>sbuild</tt> ruft mehr oder weniger nur einige Standard
-   Debian-Werkzeuge auf, um die Quellen zu übersetzen. Es hilft auch bei einigen
-   häufigen Arbeiten und der Buchführung und bei der automatischen Installation
-   der Bauabhängigkeiten, wie sie von dem zu bauenden Paketen angefordert
+   Debian-Werkzeuge auf, um die Quellen zu Ã¼bersetzen. Es hilft auch bei einigen
+   hÃ¤ufigen Arbeiten und der BuchfÃ¼hrung und bei der automatischen Installation
+   der BauabhÃ¤ngigkeiten, wie sie von dem zu bauenden Paketen angefordert
    werden.
 </p>
 
 <hrline />
-<p><small>Inhalt entwickelt von Roman Hodek für den 6. Internationalen 
+<p><small>Inhalt entwickelt von Roman Hodek fÃ¼r den 6. Internationalen 
    Linux-Kongress 1999, er wurde 2009 von Philipp Kern leicht aktualisiert, um
-   die derzeitige Realität ein bisschen besser wiederzugeben</small></p>
+   die derzeitige RealitÃ¤t ein bisschen besser wiederzugeben</small></p>

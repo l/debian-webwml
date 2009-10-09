@@ -4,11 +4,11 @@
 # $Id$
 
 <p>Einen Push-Spiegel aufzusetzen, besteht aus zwei Aufgaben:
-Einrichten des rsync-Zugangs (für normales, <q>Pull</q>-Spiegeln) und
-Einrichtung des Auslöse-Mechanismus (für den <q>pushing</q>-Teil des
+Einrichten des rsync-Zugangs (fÃ¼r normales, <q>Pull</q>-Spiegeln) und
+Einrichtung des AuslÃ¶se-Mechanismus (fÃ¼r den <q>pushing</q>-Teil des
 <q>Pull</q>-Spiegelns).</p>
 
-<p><small>(Wenn Sie genauere Informationen darüber erhalten möchten,
+<p><small>(Wenn Sie genauere Informationen darÃ¼ber erhalten mÃ¶chten,
 was ein Push-Spiegel ist, lesen Sie bitte <a href="push_mirroring">die
 Beschreibung des Push-Spiegelns</a>.)</small></p>
 
@@ -17,11 +17,11 @@ Beschreibung des Push-Spiegelns</a>.)</small></p>
 <toc-add-entry name="rsync">rsync einrichten</toc-add-entry>
 
 <p>Installieren Sie <code>rsync</code> 2.1.1 oder neuer. Wenn Ihr
-Rechner unter Debian läuft, installieren Sie einfach das neueste
+Rechner unter Debian lÃ¤uft, installieren Sie einfach das neueste
 <a href="http://packages.debian.org/stable/net/rsync">rsync</a>-Paket.</p>
 
 <p>Erzeugen Sie die Datei <code>rsyncd.conf</code> und schreiben Sie
-etwas Ähnliches wie das Folgende hinein:</p>
+etwas Ã„hnliches wie das Folgende hinein:</p>
 
 <pre>
 uid = nobody
@@ -37,7 +37,7 @@ socket options = SO_KEEPALIVE
   secrets file = /etc/rsyncd/debian.secrets
 </pre>
 
-<p>Fügen Sie einen Eintrag für jeden Rechner zur Datei
+<p>FÃ¼gen Sie einen Eintrag fÃ¼r jeden Rechner zur Datei
 <code>/etc/rsyncd/debian.secrets</code> hinzu, bei dem Sie das
 Spiegeln einleiten:</p>
 
@@ -47,18 +47,18 @@ autorisierter_ZugangN:ein_weiteres_Passwort
 </pre>
 
 <p>Sie haben jetzt den in der Hierarchie tiefergelegenen Spiegeln
-Zugriff zu Ihrem Rechner gewährt.</p>
+Zugriff zu Ihrem Rechner gewÃ¤hrt.</p>
 
-<p>Sie möchten wahrscheinlich den rsync-Daemon von inetd aufrufen
-lassen. Um dies zu erledigen, müssen Sie den rsync-Dienst in die
+<p>Sie mÃ¶chten wahrscheinlich den rsync-Daemon von inetd aufrufen
+lassen. Um dies zu erledigen, mÃ¼ssen Sie den rsync-Dienst in die
 Datei <code>/etc/services</code> eintragen (falls er dort noch nicht
-steht), ungefähr wie folgt:</p>
+steht), ungefÃ¤hr wie folgt:</p>
 
 <pre>
 rsync           873/tcp
 </pre>
 
-<p>Um den Daemon per inetd zu starten, fügen Sie das Folgende zu
+<p>Um den Daemon per inetd zu starten, fÃ¼gen Sie das Folgende zu
 Ihrer Datei <code>/etc/inetd.conf</code> hinzu:</p>
 
 <pre>
@@ -66,32 +66,32 @@ rsync      stream      tcp         nowait      root /usr/bin/rsync rsyncd --daem
 </pre>
 
 <p>
-(Sie müssen dem inetd anschließend ein HUP-Signal schicken, um
+(Sie mÃ¼ssen dem inetd anschlieÃŸend ein HUP-Signal schicken, um
 ihm mitzuteilen, dass die Konfiguration neu eingelesen werden soll.)
 </p>
 
-<toc-add-entry name="sshtrigger">Einrichten des SSH-Auslöser-Mechanismus</toc-add-entry>
+<toc-add-entry name="sshtrigger">Einrichten des SSH-AuslÃ¶ser-Mechanismus</toc-add-entry>
 
-<p>Erzeugen Sie einen neuen SSH-Schlüssel für den Zugang, den Sie
+<p>Erzeugen Sie einen neuen SSH-SchlÃ¼ssel fÃ¼r den Zugang, den Sie
 verwenden, um Debian zu spiegeln. Stellen Sie sicher, dass Sie den
-eigentlichen SSH-Schlüssel nicht überschreiben, indem Sie die Option
+eigentlichen SSH-SchlÃ¼ssel nicht Ã¼berschreiben, indem Sie die Option
 -f verwenden, beispielsweise:</p>
 
 <pre>
 ssh-keygen -f ~/.ssh/identity.meinRechner
 </pre>
 
-<p>Stellen Sie sicher, dass der neue öffentliche Schlüssel
-(~/.ssh/identity.meinRechner.pub) Folgendes am Dateianfang enthält, wobei 
+<p>Stellen Sie sicher, dass der neue Ã¶ffentliche SchlÃ¼ssel
+(~/.ssh/identity.meinRechner.pub) Folgendes am Dateianfang enthÃ¤lt, wobei 
    IPADDRESS die IP-Adresse Ihres Quellspiegels ist:</p>
 
 <pre>
 no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync,,from="IPADDRESS" &amp;"
 </pre>
 
-<p>Sie müssen ein Skript einrichten, das die tiefergelegenen Spiegel
+<p>Sie mÃ¼ssen ein Skript einrichten, das die tiefergelegenen Spiegel
 kontaktiert. Erzeugen Sie eine Datei mit dem Namen
-<code>signal</code>, die Folgendes enthält:</p>
+<code>signal</code>, die Folgendes enthÃ¤lt:</p>
 
 <protect>
 <pre>
@@ -105,27 +105,27 @@ ssh -o"BatchMode yes" -o"user $2" "$1" -i $HOME/.ssh/identity.meinRechner sleep 
 </pre>
 </protect>
 
-<p>Dieses Skript wird sich mit dem speziellen SSH-Schlüssel, den Sie
+<p>Dieses Skript wird sich mit dem speziellen SSH-SchlÃ¼ssel, den Sie
 oben erstellt haben, auf einem entfernten Rechner einloggen, vorausgesetzt,
-jeder Spiegel unterhalb von Ihnen fügt diesen Schlüssel zu seiner eigenen 
+jeder Spiegel unterhalb von Ihnen fÃ¼gt diesen SchlÃ¼ssel zu seiner eigenen 
 ~/.ssh/authorized_keys hinzu (ebenfalls mit der Ersetzung von <q>ftpsync</q> durch
 wie auch immer sein Befehl zum Starten des Spiegelns
 genannt ist). Das
 Skript selbst wird nichts sinnvolles auf dem entfernten Rechner
-machen, der einzelne Befehl wie er in der Schlüsseleinstellung angegeben ist
-wird ausgeführt.</p>
+machen, der einzelne Befehl wie er in der SchlÃ¼sseleinstellung angegeben ist
+wird ausgefÃ¼hrt.</p>
 
-<p>Um den Spiegeln tatsächlich ein Signal zu senden, müssen Sie <code>./signal
-   &lt;Site&gt; &lt;Benutzername&gt;</code> ausführen, sobald Ihr eigener 
+<p>Um den Spiegeln tatsÃ¤chlich ein Signal zu senden, mÃ¼ssen Sie <code>./signal
+   &lt;Site&gt; &lt;Benutzername&gt;</code> ausfÃ¼hren, sobald Ihr eigener 
    Rsync-Lauf beendet ist. Daher werden Sie an alle tieferliegenden von Ihnen 
    die Daten weiterschieben, sobald Sie mit dem Spiegeln von Ihrer 
    Ursprungs-Site fertig sind.
 </p>
 
-<p>Sie könen diese Befehle entweder an das Ende Ihrer 
-   <code>ftpsync.conf</code> anfügen, oder, falls dies bequemer für Sie ist,
-   in ein neues Skripte einfügen, und dann das Skript von 
-   <code>anonftpsync</code> ausführen lassen, beispielsweise:
+<p>Sie kÃ¶nen diese Befehle entweder an das Ende Ihrer 
+   <code>ftpsync.conf</code> anfÃ¼gen, oder, falls dies bequemer fÃ¼r Sie ist,
+   in ein neues Skripte einfÃ¼gen, und dann das Skript von 
+   <code>anonftpsync</code> ausfÃ¼hren lassen, beispielsweise:
 </p>
 
 <protect>
