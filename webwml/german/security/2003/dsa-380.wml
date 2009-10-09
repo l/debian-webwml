@@ -1,48 +1,48 @@
 #use wml::fmt::verbatim
-<define-tag description>Pufferüberläufe, Denial of Service</define-tag>
+<define-tag description>PufferÃ¼berlÃ¤ufe, Denial of Service</define-tag>
 <define-tag moreinfo>
 <p>In XFree86 wurden vier Verwundbarkeiten entdeckt.</p>
 
 <ul>
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0063">CAN-2003-0063</a>
-&ndash; Escapesequenz zum Ausgeben des xterm-Fenstertitel kann den Benutzer täuschen
+&ndash; Escapesequenz zum Ausgeben des xterm-Fenstertitel kann den Benutzer tÃ¤uschen
 
 <p>Das xterm-Paket stellt eine Terminal-Escapesequenz bereit, die den
 Fenstertitel ausgibt, indem sie ihn in den Eingabepuffer des
-Terminalfensters einfügt, genau so, als ob der Benutzer ihn eingetippt
-hätte. Ein Angreifer kann eine Escapesequenz erstellen, die den Titel
+Terminalfensters einfÃ¼gt, genau so, als ob der Benutzer ihn eingetippt
+hÃ¤tte. Ein Angreifer kann eine Escapesequenz erstellen, die den Titel
 des xterm-Fensters des Opfers auf einen beliebigen String setzt
 (z.B. ein Shell-Kommando) und ihn dann ausgibt. Wenn das Opfer sich
 in diesem Moment gerade am Shell-Prompt befindet, erscheint der String
-auf der Kommandozeile, bereit, ausgeführt zu werden. Da es nicht
-möglich ist, einen Zeilenumbruch in den Fenstertitel einzufügen, müsste
-der Angreifer das Opfer noch dazu bringen, Enter zu drücken (oder auf
+auf der Kommandozeile, bereit, ausgefÃ¼hrt zu werden. Da es nicht
+mÃ¶glich ist, einen Zeilenumbruch in den Fenstertitel einzufÃ¼gen, mÃ¼sste
+der Angreifer das Opfer noch dazu bringen, Enter zu drÃ¼cken (oder auf
 dessen Unachtsamkeit oder Verwirrung vertrauen), damit die Shell oder
 ein anderer interaktiver Prozess dies als Benutzereingabe interpretiert. Es
 ist jedoch denkbar, dass der Angreifer andere Escapesequenzen erzeugen
-könnte, die das Opfer davon überzeugen könnten, den eingefügten String
+kÃ¶nnte, die das Opfer davon Ã¼berzeugen kÃ¶nnten, den eingefÃ¼gten String
 zu akzeptieren. Das <q>Common Vulnerabilities and Exposures</q>-Projekt auf
 cve.mitre.org hat diesem Problem den Namen
 <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0063">\
 CAN-2003-0063</a> zugewiesen.</p>
 
 <p>Um festzustellen, ob Ihre xterm-Version durch einen Missbrauch der
-Fenstertitel-Ausgabe verwundbar ist, führen Sie das folgende Kommando
+Fenstertitel-Ausgabe verwundbar ist, fÃ¼hren Sie das folgende Kommando
 an einem Shellprompt in einem xterm-Fenster aus:</p>
 
 <verbatim>
    echo -e "\e[21t"
 </verbatim>
 
-<p>(Die Terminalklingel könnte ertönen und der Fenstertitel könnte
+<p>(Die Terminalklingel kÃ¶nnte ertÃ¶nen und der Fenstertitel kÃ¶nnte
 ein <q>l</q> vorangestellt haben.)</p>
 
 <p>Dieser Fehler kann durch alles ausgenutzt werden, das eine Ausgabe an ein
 Terminalfenster senden kann, wie ein Textdokument. Der xterm-Benutzer
-muss jedoch selbst dafür sorgen, dass die Escapesequenz gesendet wird
+muss jedoch selbst dafÃ¼r sorgen, dass die Escapesequenz gesendet wird
 (z.B. durch Betrachten des Textdokuments mit dem <q>cat</q>-Kommando).
-Ob Sie verwundbar sind, hängt davon ab, wie Sie xterm
-benutzen. Erwägen Sie folgenden Ablauf:</p>
+Ob Sie verwundbar sind, hÃ¤ngt davon ab, wie Sie xterm
+benutzen. ErwÃ¤gen Sie folgenden Ablauf:</p>
 
 <verbatim>
    echo -e '\e]2;s && echo rm -rf *\a' > /tmp/sploit
@@ -55,29 +55,29 @@ Ausgabe des Fenstertitels in xterm deaktiviert wurde; sie wird
 verstanden, aber ignoriert. Die Escapesequenz, um den Fenstertitel zu
 setzen, wurde nicht deaktiviert.</p>
 
-<p>Ein zukünftiges Release des xterm-Pakets wird eine
+<p>Ein zukÃ¼nftiges Release des xterm-Pakets wird eine
 Konfigurationsoption bereitstellen, um dem Benutzer zu erlauben, die
 Ausgabe des Fenstertitels wieder zu aktivieren, diese wird jedoch
 in der Standardeinstellung aus sein.</p>
 </li>
 
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0071">CAN-2003-0071</a>
-&ndash; xterm anfällig für Diensteverweigerung (<q>Denial of Service</q>)-Attacke durch DEC
+&ndash; xterm anfÃ¤llig fÃ¼r Diensteverweigerung (<q>Denial of Service</q>)-Attacke durch DEC
 UDK-Escapesequenzen
 
 <p>Das xterm-Paket emuliert, da es <q>DEC VT</q>-Textterminals emuliert,
 eine Eigenschaft der <q>DEC VT</q>-Terminals, die als <q>Benutzerdefinierte Tasten</q>
-(<q>User-Defined Keys</q>, Abkürzung UDK) bekannt ist. Es gibt jedoch einen Fehler
+(<q>User-Defined Keys</q>, AbkÃ¼rzung UDK) bekannt ist. Es gibt jedoch einen Fehler
 in der Behandlung von DEC UDK-Escapesequenzen durch xterm und durch eine
 fehlerhafte kann der xterm-Prozess in eine Endlosschleife geraten. Dies
 bringt den Prozess dazu <q>durchzudrehen</q>, sinnlos CPU-Zyklen zu verbrauchen
 und sich zu weigern, Signale zu verarbeiten (wie z.B. Versuche, den
-Prozess auszulöschen oder das Fenster zu schließen).</p>
+Prozess auszulÃ¶schen oder das Fenster zu schlieÃŸen).</p>
 
 <p>Um festzustellen, ob Ihre Version von xterm durch diesen Angriff
-verwundbar ist, führen Sie das folgende Kommando an einem Shell-Prompt
+verwundbar ist, fÃ¼hren Sie das folgende Kommando an einem Shell-Prompt
 in einem <q>opferbaren</q> Fenster aus (also einem, das nichts in seinem
-Scrollback-Puffer hat, das Sie später noch sehen müssen):</p>
+Scrollback-Puffer hat, das Sie spÃ¤ter noch sehen mÃ¼ssen):</p>
 
 <verbatim>
    echo -e "\eP0;0|0A/17\x9c"
@@ -85,87 +85,87 @@ Scrollback-Puffer hat, das Sie später noch sehen müssen):</p>
 
 <p>Dieser Fehler kann durch alles ausgenutzt werden, das eine Ausgabe
 an ein Terminal-Fenster senden kann, wie ein Textdokument. Der
-xterm-Benutzer muss jedoch selbst dafür sorgen, dass die Escapesequenz
+xterm-Benutzer muss jedoch selbst dafÃ¼r sorgen, dass die Escapesequenz
 gesendet wird (z.B. durch Betrachten des Textdokuments mit dem
-<q>cat</q>-Kommando). Ob Sie verwundbar sind, hängt davon ab, wie Sie
+<q>cat</q>-Kommando). Ob Sie verwundbar sind, hÃ¤ngt davon ab, wie Sie
 xterm benutzen.</p>
 
-<p>Debian hat dieses Problem gelöst, indem ein Patch für die
-Original-Quellen auf XFree86 4.1.0 zurück portiert wurde.</p>
+<p>Debian hat dieses Problem gelÃ¶st, indem ein Patch fÃ¼r die
+Original-Quellen auf XFree86 4.1.0 zurÃ¼ck portiert wurde.</p>
 </li>
 
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2002-0164">CAN-2002-0164</a>
 &ndash; Fehler in der MIT-SHM-Erweiterung des X-Servers erlaubt es dem
-Benutzer, dem die X-Session gehört, beliebige
+Benutzer, dem die X-Session gehÃ¶rt, beliebige
 <q>Shared-Memory</q>-Segmente zu lesen und zu schreiben
 
 <p>Die meisten X-Server, die von der Beispielimplementierung von
 MIT/X Consortium/X.org abstammen, wie auch die XFree86-X-Server,
-unterstützen eine Erweiterung des X-Protokolls, genannt MIT-SHM. Diese
-Erweiterung ermöglicht es X-Clients, die auf dem gleichen Rechner wie
+unterstÃ¼tzen eine Erweiterung des X-Protokolls, genannt MIT-SHM. Diese
+Erweiterung ermÃ¶glicht es X-Clients, die auf dem gleichen Rechner wie
 der X-Server laufen, schneller und effizienter zu arbeiten, indem sie,
-wenn möglich, von einer Eigenschaft des Betriebssystem profitieren,
-genannt <q>Shared Memory</q>. Der Linux-Kernel unterstützt z.B. Shared Memory.</p>
+wenn mÃ¶glich, von einer Eigenschaft des Betriebssystem profitieren,
+genannt <q>Shared Memory</q>. Der Linux-Kernel unterstÃ¼tzt z.B. Shared Memory.</p>
 
-<p>Da der X-Server mit vielen Rechten läuft, greifen die
-Zugriffskontrollmechanismen des Betriebssystems nicht und können die
+<p>Da der X-Server mit vielen Rechten lÃ¤uft, greifen die
+Zugriffskontrollmechanismen des Betriebssystems nicht und kÃ¶nnen die
 Benutzung der gemeinsam genutzten Speichersegmente durch den X-Server
-nicht überwachen. Der X-Server muss eigene Zugriffskontrollen
-implementieren. Dies wurde in früheren Versionen von XFree86 (und
+nicht Ã¼berwachen. Der X-Server muss eigene Zugriffskontrollen
+implementieren. Dies wurde in frÃ¼heren Versionen von XFree86 (und
 davor in der MIT/X Consortium/X.org Beispielimplementierung) nur
-ungenügend getan. Dies ermöglicht es böswilligen X-Clients, Segmente
-des gemeinsam genutzten Speichers zu lesen und zu verändern, auf die
+ungenÃ¼gend getan. Dies ermÃ¶glicht es bÃ¶swilligen X-Clients, Segmente
+des gemeinsam genutzten Speichers zu lesen und zu verÃ¤ndern, auf die
 sie eigentlich keinen Zugriff haben sollten. Das <q>Common
 Vulnerabilities and Exposures</q>-Projekt auf cve.mitre.org hat diesem
 Problem den Namen
 <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2002-0164">\
 CAN-2002-0164</a> zugewiesen.</p>
 
-<p>Debians XFree86 4.1.0-16 Pakete hatten nur eine unvollständige
-Lösung dieses Problems, die die richtigen Zugriffskontrollen nur bei
+<p>Debians XFree86 4.1.0-16 Pakete hatten nur eine unvollstÃ¤ndige
+LÃ¶sung dieses Problems, die die richtigen Zugriffskontrollen nur bei
 X-Servern bewirkte, die nicht aus einem Display-Manager (z.B. xdm)
 heraus gestartet wurden. Diese Aktualisierung behebt das Problem.</p>
 
-<p>Das Debian-Projekt weiß von keinen Exploits für diese
-Verwundbarkeit. Ein böswilliger X-Client, der die MIT-SHM-Erweiterung
-ausnutzt, könnte jedoch geschrieben werden und dann (absichtlich oder
+<p>Das Debian-Projekt weiÃŸ von keinen Exploits fÃ¼r diese
+Verwundbarkeit. Ein bÃ¶swilliger X-Client, der die MIT-SHM-Erweiterung
+ausnutzt, kÃ¶nnte jedoch geschrieben werden und dann (absichtlich oder
 unabsichtlich) von einem Benutzer, der einen X-Server starten kann,
-ausgeführt werden. Die möglichen Auswirkungen dieses Fehlers hängen
+ausgefÃ¼hrt werden. Die mÃ¶glichen Auswirkungen dieses Fehlers hÃ¤ngen
 davon ab, wie der gemeinsame Speicher auf Ihrem System genutzt
-wird. Siehe die ipcs(8)-Handbuchseite für weitere Informationen.</p>
+wird. Siehe die ipcs(8)-Handbuchseite fÃ¼r weitere Informationen.</p>
 
-<p>Debian hat dieses Problem gelöst, indem ein Patch für die
-Original-Quellen auf XFree86 4.1.0 zurück portiert wurde.</p>
+<p>Debian hat dieses Problem gelÃ¶st, indem ein Patch fÃ¼r die
+Original-Quellen auf XFree86 4.1.0 zurÃ¼ck portiert wurde.</p>
 </li>
 
 <li><a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0730">CAN-2003-0730</a>
-&ndash; mehrere Integer-Pufferüberläufe in den Schrift-Bibliotheken für
+&ndash; mehrere Integer-PufferÃ¼berlÃ¤ufe in den Schrift-Bibliotheken fÃ¼r
 XFree86 erlauben es lokalen oder entfernten Angreifern, einen
-Diensteverweigerung (<q>Denial of Service</q>) auszulösen oder beliebigen Code durch Heap- oder
-Stack-basierte Pufferüberlauf-Attacken auszuführen
+Diensteverweigerung (<q>Denial of Service</q>) auszulÃ¶sen oder beliebigen Code durch Heap- oder
+Stack-basierte PufferÃ¼berlauf-Attacken auszufÃ¼hren
 
 <p>Der Sicherheitsexperte <q>blexim</q> schrieb [umformuliert]:</p>
 
 <blockquote>
 <p>Ich habe einige Fehler in den Schrift-Bibliotheken der aktuellen
-Version des XFree86-Quellcodes gefunden. Diese Fehler können
-potenziell zur Ausführung von beliebigem Code durch einen entfernten
-Benutzer führen in jedem Prozess, der die betroffenen Funktionen
+Version des XFree86-Quellcodes gefunden. Diese Fehler kÃ¶nnen
+potenziell zur AusfÃ¼hrung von beliebigem Code durch einen entfernten
+Benutzer fÃ¼hren in jedem Prozess, der die betroffenen Funktionen
 aufruft. Die Funktionen stehen mit dem Transfer und der Auflistung von
 Schriften von Schrift-Server an Clients in Verbindung, was den Bereich
-der Gefährdung einschränkt.</p>
+der GefÃ¤hrdung einschrÃ¤nkt.</p>
 
-<p>Genauer gesagt werden einige Größenvariablen, die vom Schrift-Server
-an den Client übertragen werden, nicht ausreichend überprüft, was bei
+<p>Genauer gesagt werden einige GrÃ¶ÃŸenvariablen, die vom Schrift-Server
+an den Client Ã¼bertragen werden, nicht ausreichend Ã¼berprÃ¼ft, was bei
 der Verwendung dieser Variablen in Berechnungen zu falschen Werten
-führen kann. Diese falschen Werte können zu Pufferüberläufen bei
-Puffern auf dem Heap oder dem Stack führen. Dies erlaubt potenziell
-die Ausführung von beliebigem Code. Wie schon gesagt, wird das Risiko
+fÃ¼hren kann. Diese falschen Werte kÃ¶nnen zu PufferÃ¼berlÃ¤ufen bei
+Puffern auf dem Heap oder dem Stack fÃ¼hren. Dies erlaubt potenziell
+die AusfÃ¼hrung von beliebigem Code. Wie schon gesagt, wird das Risiko
 dadurch begrenzt, dass nur Clients davon betroffen sind. In einigen
-(nicht standardmäßigen) Konfigurationen können jedoch sowohl xfs als
+(nicht standardmÃ¤ÃŸigen) Konfigurationen kÃ¶nnen jedoch sowohl xfs als
 auch der X-Server als Clients von entfernten Schrift-Servern agieren. In
-diesen Konfigurationen können sowohl xfs als auch der X-Server
-potenziell gefährdet sein.</p>
+diesen Konfigurationen kÃ¶nnen sowohl xfs als auch der X-Server
+potenziell gefÃ¤hrdet sein.</p>
 </blockquote>
 
 <p>Das <q>Common Vulnerabilities and Exposures</q>-Projekt auf
@@ -173,26 +173,26 @@ cve.mitre.org hat diesem Problem den Namen
 <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0730">\
 CAN-2003-0730</a> zugewiesen.</p>
 
-<p>Das Debian-Projekt weiß von keinen Exploits für diese
-Verwundbarkeit. Standardmäßig sind X-Server in Debian so konfiguriert,
+<p>Das Debian-Projekt weiÃŸ von keinen Exploits fÃ¼r diese
+Verwundbarkeit. StandardmÃ¤ÃŸig sind X-Server in Debian so konfiguriert,
 dass sie nur auf einen lokal laufenden Schrift-Server zugreifen, und dies
 wird nur benutzt, wenn das xfs-Paket installiert ist. Die
 Debian-Standardkonfiguration von xfs nutzt nur Schriftverzeichnisse auf
 dem lokalen Rechner und versucht nicht, sich mit externen Schrift-Servern
 zu verbinden.</p>
 
-<p>Debian hat dieses Problem gelöst, indem ein Patch für die
-Original-Quellen auf XFree86 4.1.0 zurück portiert wurde.</p>
+<p>Debian hat dieses Problem gelÃ¶st, indem ein Patch fÃ¼r die
+Original-Quellen auf XFree86 4.1.0 zurÃ¼ck portiert wurde.</p>
 </li>
 </ul>
 
 <p>Alle oben genannten Probleme betreffen auch die xfree86v3-Pakete (im
-Fall der beiden ersten Fehler enthält der xterm-Quellcode diese
+Fall der beiden ersten Fehler enthÃ¤lt der xterm-Quellcode diese
 Fehler, ein xterm-Paket wird jedoch nicht erstellt). Aufgrund von
-eingeschränkten Ressourcen und dem Fehlen von <q>upstream</q>-Unterstützung
-für diesen alten Code kann Debian Version 3.3.6 von XFree86 nicht weiter
-unterstützen. Um den zwei letzteren Fehler in dieser
-Sicherheitsankündigung nicht ausgesetzt zu sein, empfehlen wir Ihnen, die
+eingeschrÃ¤nkten Ressourcen und dem Fehlen von <q>upstream</q>-UnterstÃ¼tzung
+fÃ¼r diesen alten Code kann Debian Version 3.3.6 von XFree86 nicht weiter
+unterstÃ¼tzen. Um den zwei letzteren Fehler in dieser
+SicherheitsankÃ¼ndigung nicht ausgesetzt zu sein, empfehlen wir Ihnen, die
 folgenden Pakete zu entfernen, wenn Sie sie installiert haben:</p>
 
 <ul>
@@ -215,15 +215,15 @@ folgenden Pakete zu entfernen, wenn Sie sie installiert haben:</p>
 <li>xserver-w32</li>
 </ul>
 
-<p>(Sie könnten auch die xext, xlib6 und xlib6-altdev Pakete entfernen
-wollen, für die die Unterstützung zusammen mit dem Rest der XFree86
+<p>(Sie kÃ¶nnten auch die xext, xlib6 und xlib6-altdev Pakete entfernen
+wollen, fÃ¼r die die UnterstÃ¼tzung zusammen mit dem Rest der XFree86
 3.3.6 Pakete eingestellt wird, auch wenn sie nicht von den Fehlern in
-dieser Sicherheitsankündigung betroffen sind.)</p>
+dieser SicherheitsankÃ¼ndigung betroffen sind.)</p>
 
-<p>Für die stable-Distribution (Woody) wurden diese Probleme in
+<p>FÃ¼r die stable-Distribution (Woody) wurden diese Probleme in
 Version 4.1.0-16woody1 behoben.</p>
 
-<p>Für die unstable-Distribution (Sid) wurden alle Probleme bis auf
+<p>FÃ¼r die unstable-Distribution (Sid) wurden alle Probleme bis auf
 <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0730">\
 CAN-2003-0730</a> in Version 4.2.1-11 behoben. <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0730">CAN-2003-0730</a>
 wird in Version 4.2.1-12 behoben werden, die zurzeit vorbereitet wird.</p>

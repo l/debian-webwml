@@ -7,7 +7,7 @@
 
 # Based on a script "copyadvisory.pl" by Peter Karlsson <peterk@debian.org>:
 # Written in 2000-2006 by Peter Karlsson <peterk@debian.org>
-# © Copyright 2000-2009 Software in the public interest, Inc.
+# Â© Copyright 2000-2009 Software in the public interest, Inc.
 # This program is released under the GNU General Public License, v2.
 
 # $Id$
@@ -150,55 +150,55 @@ while (<SRC>)
 	if ($vf eq "vote_".$number."_results.src")
 	{
 	    s/Graphical rendering of the results/Grafische Darstellung der Ergebnisse/;
-	    s/In the graph above, any pink colored nodes imply that/In der obigen Graphik implizieren die rosa gefärbte Knoten jene,/;
+	    s/In the graph above, any pink colored nodes imply that/In der obigen Graphik implizieren die rosa gefÃ¤rbte Knoten jene,/;
 	    s/the option did not pass majority, the Blue is the/die nicht die Mehrheit erlangten, der blaue ist der Gewinner. Das/;
-	    s/winner. The Octagon is used for the options that did/Achteck wird für die Optionen verwendet, die nicht den Standard/;
+	    s/winner. The Octagon is used for the options that did/Achteck wird fÃ¼r die Optionen verwendet, die nicht den Standard/;
 	    s/not beat the default./geschlagen haben./;
-	    s/In the following table, tally\[row x\]\[col y\] represents/In der folgenden Tabelle repräsentiert tally[Zeile x][Spalte y]/;
-	    s/the votes that option x received over option y. A/die Stimmen, die Option x über Option y erhalten hat. Eine <a/;
+	    s/In the following table, tally\[row x\]\[col y\] represents/In der folgenden Tabelle reprÃ¤sentiert tally[Zeile x][Spalte y]/;
+	    s/the votes that option x received over option y. A/die Stimmen, die Option x Ã¼ber Option y erhalten hat. Eine <a/;
 	    s#<a href="http://en.wikipedia.org/wiki/Schwartz_method">more#href="http://de.wikipedia.org/wiki/Schulze-Methode">detailliertere#;
-	    s#detailed explanation of the beat matrix</a> may help in#Erklärung der Sieg-Matrix</a> kann Ihnen beim Verständnis der#;
-	    s#understanding the table. For understanding the Condorcet method, the#Tabelle helfen. Zum Verständnis der Condorcet-Methode ist der <a#;
+	    s#detailed explanation of the beat matrix</a> may help in#ErklÃ¤rung der Sieg-Matrix</a> kann Ihnen beim VerstÃ¤ndnis der#;
+	    s#understanding the table. For understanding the Condorcet method, the#Tabelle helfen. Zum VerstÃ¤ndnis der Condorcet-Methode ist der <a#;
 	    s#<a href="http://en.wikipedia.org/wiki/Condorcet_method">Wikipedia#href="http://de.wikipedia.org/wiki/Condorcet-Methode">\\#;
 	    s#entry</a> is fairly informative.#Wikipedia-Eintrag</a> recht informativ.#;
 
-            s#Debian uses the Condorcet method voting.#Debian benutzt die Condorcet-Methode für Abstimmungen.#;
-            s#Debian uses the Condorcet method for votes.#Debian benutzt die Condorcet-Methode für Abstimmungen.#;
+            s#Debian uses the Condorcet method voting.#Debian benutzt die Condorcet-Methode fÃ¼r Abstimmungen.#;
+            s#Debian uses the Condorcet method for votes.#Debian benutzt die Condorcet-Methode fÃ¼r Abstimmungen.#;
             s#Simplistically, plain Condorcets method#Vereinfachend kann die grundlegende#;
-            s#can be stated like so : <br/>#Condorcet-Methode folgendermaßen beschrieben werden:<br />#;
-            s#can be stated like so : <br />#Condorcet-Methode folgendermaßen beschrieben werden:<br />#;
-            s#<q>Consider all possible two-way races between candidates.#<q>Ziehe alle möglichen Zweikämpfe zwischen den Kandidaten#;
+            s#can be stated like so : <br/>#Condorcet-Methode folgendermaÃŸen beschrieben werden:<br />#;
+            s#can be stated like so : <br />#Condorcet-Methode folgendermaÃŸen beschrieben werden:<br />#;
+            s#<q>Consider all possible two-way races between candidates.#<q>Ziehe alle mÃ¶glichen ZweikÃ¤mpfe zwischen den Kandidaten#;
             s#The Condorcet winner, if there is one, is the one#in Betracht. Der Condorcet-Gewinner, falls es einen gibt,#;
             s#candidate who can beat each other candidate in a two-way#ist derjenige Kandidat, der jeden anderen Kandidaten im#;
             s#race with that candidate.</q>#Zweikampf schlagen kann.</q>#;
 	    s#The problem is that in complex elections, there may well be a#Das Problem ist, dass es bei komplexen Wahlen durchaus zu#;
             s#The problem is that in complex elections, there may well#Das Problem ist, dass es bei komplexen Wahlen durchaus zu#;
 	    s#circular relations ship in which A beats B, B beats C, and C#einer
-	    kreisförmigen Beziehung kommen kann, in der A über#;
-            s#be a circular relations ship in which A beats B, B beats C,#einer kreisförmigen Beziehung kommen kann, in der A über#;
-	    s#beats A. Most of the variations on Condorcet use various means#B siegt, B über C siegt und C über A siegt. Die meisten#;
-            s#and C beats A. Most of the variations on Condorcet use#B siegt, B über C siegt und C über A siegt. Die meisten#;
+	    kreisfÃ¶rmigen Beziehung kommen kann, in der A Ã¼ber#;
+            s#be a circular relations ship in which A beats B, B beats C,#einer kreisfÃ¶rmigen Beziehung kommen kann, in der A Ã¼ber#;
+	    s#beats A. Most of the variations on Condorcet use various means#B siegt, B Ã¼ber C siegt und C Ã¼ber A siegt. Die meisten#;
+            s#and C beats A. Most of the variations on Condorcet use#B siegt, B Ã¼ber C siegt und C Ã¼ber A siegt. Die meisten#;
 	    s#of resolving the tie. See <a#Variationen von Condorcet
-	    verwenden verschiedene Mittel,\num diese Pattsituation aufzulösen. Siehe#;
-            s#various means of resolving the tie. See#Variationen von Condorcet verwenden verschiedene Mittel,\num diese Pattsituation aufzulösen. Siehe#;
+	    verwenden verschiedene Mittel,\num diese Pattsituation aufzulÃ¶sen. Siehe#;
+            s#various means of resolving the tie. See#Variationen von Condorcet verwenden verschiedene Mittel,\num diese Pattsituation aufzulÃ¶sen. Siehe#;
 #    s#href="http://en.wikipedia.org/wiki/Cloneproof_Schwartz_Sequential_Dropping">Cloneproof#<q><a href="http://de.wikipedia.org/wiki/Schulze-Methode">\\#;
             s#<a href="http://en.wikipedia.org/wiki/Cloneproof_Schwartz_Sequential_Dropping">Cloneproof Schwartz Sequential Dropping</a>#<q><a href="http://de.wikipedia.org/wiki/Schulze-Methode">\\#;
-	    s#Schwartz Sequential Dropping</a> for details. Debian's variation#Cloneproof Schwartz Sequential Dropping</a></q> für Details.\nDie Variation von Debian ist in#;
-            s#for details. Debian's variation is spelled out in the#Cloneproof Schwartz Sequential Dropping</a></q> für Details.\nDie Variation von Debian ist in#;
+	    s#Schwartz Sequential Dropping</a> for details. Debian's variation#Cloneproof Schwartz Sequential Dropping</a></q> fÃ¼r Details.\nDie Variation von Debian ist in#;
+            s#for details. Debian's variation is spelled out in the#Cloneproof Schwartz Sequential Dropping</a></q> fÃ¼r Details.\nDie Variation von Debian ist in#;
 	    s#is spelled out in the <a href="\$\(HOME\)/devel/constitution">the#<a href="\$(HOME)/devel/constitution">der Verfassung</a>#;
             s#<a href="\$\(HOME\)/devel/constitution">the constitution</a>,#<a href="\$(HOME)/devel/constitution">der Verfassung</a>#;
-	    s#constitution</a>, specifically, A.6.#schriftlich festgehalten, speziell § A.6.#;
-            s#specifically,  A.6.#schriftlich festgehalten, speziell § A.6.#;
+	    s#constitution</a>, specifically, A.6.#schriftlich festgehalten, speziell Â§ A.6.#;
+            s#specifically,  A.6.#schriftlich festgehalten, speziell Â§ A.6.#;
 	    s/Looking at row (.*), column (.*),/Wie in Zeile $1, Spalte $2 sichtbar, erhielt/;
 	    s/Option (.*) defeats Option (.*) by \( (.*) -  (.*)\) =\s*(.*) votes/Option $1 besiegt Option $2 mit \( $3 -   $4\) =  $5 Stimmen/;
 
 # Generic
-	    s/needs/benötigt/;
+	    s/needs/benÃ¶tigt/;
 	    s/The Beat Matrix/Die Sieg-Matrix/;
 	    s/Pair-wise defeats/Paarweise Niederlagen/;
-	    s/The Schwartz Set contains/Die Schwartz-Menge enthält/;
+	    s/The Schwartz Set contains/Die Schwartz-Menge enthÃ¤lt/;
 	    s/The winners/Die Gewinner/;
-	    s/received (.*) votes over/$1 Stimmen gegenüber/;
+	    s/received (.*) votes over/$1 Stimmen gegenÃ¼ber/;
 	    s#<br/>#<br />#;
 	    s#To Be determined#Muss noch bestimmt werden#;
 	    s#To be determined#Muss noch bestimmt werden#;
@@ -206,82 +206,82 @@ while (<SRC>)
 	if ($vf eq "vote_".$number.".wml")
 	{
 	    s#General Resolution#Allgemeiner Beschluss#;
-    	    s#Proposal and amendment#Vorschlag und Änderungsantrag#;
+    	    s#Proposal and amendment#Vorschlag und Ã„nderungsantrag#;
 	    s#Discussion Period#Diskussionsperiode#;
 	    s#Voting Period#Abstimmungsperiode#;
 	    s#With the current list of <a href="(.*)">voting#Mit der aktuellen Liste von <a href="$1">stimmberechtigten#;
             s#developers</a>, we have:#Entwicklern</a> haben wir:#;
-	    s#For this GR, as always#Für diese <acronym_GR /> werden wie immer während der Wahlperiode periodisch <a#;
+	    s#For this GR, as always#FÃ¼r diese <acronym_GR /> werden wie immer wÃ¤hrend der Wahlperiode periodisch <a#;
 	    s#<a href="(.*)"\s*>statistics</a>#href="$1">\\#;
 	    s#href="(.*)"\s*>statistics</a>#href="$1">\\#;
-	    s#shall be gathered about ballots received and acknowledgements#Statistiken</a> über die empfangenen Stimmen und die versandten#;
-	    s#will be gathered about ballots received and#Statistiken</a> über die empfangenen Stimmen#;
-	    s#acknowledgements sent periodically during the voting#und die versandten Bestätigungen gesammelt.#;
-            s#sent periodically during the voting period.  Additionally, the#Bestätigungen gesammelt. Zusätzlich würde die Liste der <a#;
-	    s#period.  Additionally, the  <a#Zusätzlich würde die Liste der <a#;
+	    s#shall be gathered about ballots received and acknowledgements#Statistiken</a> Ã¼ber die empfangenen Stimmen und die versandten#;
+	    s#will be gathered about ballots received and#Statistiken</a> Ã¼ber die empfangenen Stimmen#;
+	    s#acknowledgements sent periodically during the voting#und die versandten BestÃ¤tigungen gesammelt.#;
+            s#sent periodically during the voting period.  Additionally, the#BestÃ¤tigungen gesammelt. ZusÃ¤tzlich wÃ¼rde die Liste der <a#;
+	    s#period.  Additionally, the  <a#ZusÃ¤tzlich wÃ¼rde die Liste der <a#;
 	    # FIXME Does not work?
 	    s#list of##;
-	    s#<a (.*)="(.*)"\s*>voters</a>#$1="$2">Abstimmenden</a> veröffentlicht. Auch#;
-            s#(.*)="(.*)">voters</a> will be#$1="$2">Abstimmenden</a> veröffentlicht. Auch#;
+	    s#<a (.*)="(.*)"\s*>voters</a>#$1="$2">Abstimmenden</a> verÃ¶ffentlicht. Auch#;
+            s#(.*)="(.*)">voters</a> will be#$1="$2">Abstimmenden</a> verÃ¶ffentlicht. Auch#;
 	    s#would be made publicly available. Also, the##;
             s#<a (.*)="(.*)"\s*>tally sheet</a>#kann die <a $1="$2">Strichliste</a>#;
 	    s#may also be viewed after to voting is done \(Note that#angeschaut werden (beachten Sie, dass es sich#;
-            s#while the vote is in progress it is a dummy tally sheet\).#während des Urnengangs um eine Pseudo-Strichliste handelt).#;
-   	    s#This year, like always,#Dieses Jahr werden wie immer periodisch während der Wahlperiode <a#;
+            s#while the vote is in progress it is a dummy tally sheet\).#wÃ¤hrend des Urnengangs um eine Pseudo-Strichliste handelt).#;
+   	    s#This year, like always,#Dieses Jahr werden wie immer periodisch wÃ¤hrend der Wahlperiode <a#;
 	    s#<a (.*)="(.*)">statistics</a> shall be gathered#$1="$2">Statistiken</a>#;
-	    s#about ballots received and acknowledgements sent#über die empfangenen Stimmen und die versandten#;
-	    s#periodically during the voting period.  Additionally, the#Bestätigungen gesammelt. Zusätzlich wird die Liste der <a#;
+	    s#about ballots received and acknowledgements sent#Ã¼ber die empfangenen Stimmen und die versandten#;
+	    s#periodically during the voting period.  Additionally, the#BestÃ¤tigungen gesammelt. ZusÃ¤tzlich wird die Liste der <a#;
             s#list of <a (\w*)="(.*)">voters</a>#$1="$2">Abstimmenden</a> aufgezeichnet. Auch#;  # FIXME Is ignored (pattern order)
             s#recorded. Also, the <a (.*)="(.*)">tally#kann die <a $1="$2">Strichliste</a>#;
             s#sheet</a> will also be made available to be viewed.#angeschaut werden.#;
             s#Please remember that the project leader election has a#Bitte beachten Sie, dass die Wahl des Projektleiters einen#;
             s#secret ballot, so the tally sheet will be produced with#geheimen Stimmzettel hat, so dass die Strichliste mit dem Hash des#;
-            s#the hash of the alias of the voter rather than the name;#Aliases des Wählenden statt dessen Namen erstellt wird;#;
-            s#the alias shall be sent to the corresponding voter along#der Alias wird dem Wähler zusammen mit der Bestätigung des#;
-            s#with the acknowledgement of the ballot so that people may#Wahlzettels übersandt, so dass jeder überprüfen kann, ob#;
-            s#verify that their votes were correctly tabulated. While#seine Stimme korrekt eingetragen wurde. Während des#;
+            s#the hash of the alias of the voter rather than the name;#Aliases des WÃ¤hlenden statt dessen Namen erstellt wird;#;
+            s#the alias shall be sent to the corresponding voter along#der Alias wird dem WÃ¤hler zusammen mit der BestÃ¤tigung des#;
+            s#with the acknowledgement of the ballot so that people may#Wahlzettels Ã¼bersandt, so dass jeder Ã¼berprÃ¼fen kann, ob#;
+            s#verify that their votes were correctly tabulated. While#seine Stimme korrekt eingetragen wurde. WÃ¤hrend des#;
             s#the voting is open the tally will be a dummy one; after#Urnengangs handelt es sich um eine Pseudo-Strichliste; die#;
-            s#the vote, the final tally sheet will be put in#endgültige Strichliste wird nach Abschluss des Urnengangs#;
-            s#place. Please note that for secret ballots the md5sum on#veröffentlicht. Bitte beachten Sie, dass für geheime Abstimmungen#;
-            s#the dummy tally sheet is randomly generated, as otherwise#die MD5-Prüfsumme in der Pseudo-Strichliste zufällig generiert wird, da andernfalls#;
-            s#the dummy tally sheet would leak information relating the#die Pseudostrichliste Informationen über den MD5-Hash und den#;
-            s#md5 hash and the voter.#Wähler durchsickern lassen könnte.#;
-	    s#All the amendments need simple majority#Alle Änderungsanträge benötigen die einfache Mehrheit.#;
+            s#the vote, the final tally sheet will be put in#endgÃ¼ltige Strichliste wird nach Abschluss des Urnengangs#;
+            s#place. Please note that for secret ballots the md5sum on#verÃ¶ffentlicht. Bitte beachten Sie, dass fÃ¼r geheime Abstimmungen#;
+            s#the dummy tally sheet is randomly generated, as otherwise#die MD5-PrÃ¼fsumme in der Pseudo-Strichliste zufÃ¤llig generiert wird, da andernfalls#;
+            s#the dummy tally sheet would leak information relating the#die Pseudostrichliste Informationen Ã¼ber den MD5-Hash und den#;
+            s#md5 hash and the voter.#WÃ¤hler durchsickern lassen kÃ¶nnte.#;
+	    s#All the amendments need simple majority#Alle Ã„nderungsantrÃ¤ge benÃ¶tigen die einfache Mehrheit.#;
 	    s#The outcome#Das Ergebnis#;
 	    s#The actual text of the resolution is as follows.  Please note#Der eigentliche Text des Beschlusses lautet wie folgt. Bitte beachten#;
 	    s#The actual text of the resolution is as follows. Please note#Der eigentliche Text des Beschlusses lautet wie folgt. Bitte beachten#;
-            s#that this does not include preludes, prologues, any preambles to#Sie, dass dieser keinen Vorspann, Nachspann, Präamblen des Beschlusses,#;
+            s#that this does not include preludes, prologues, any preambles to#Sie, dass dieser keinen Vorspann, Nachspann, PrÃ¤amblen des Beschlusses,#;
 	    s#the resolution, post-ambles to the resolution, abstracts,#Postamblen des Beschlusses, Zusammenfassungen, Vorworte, Nachworte,#;
-	    s#fore-words, after-words, rationales, supporting documents,#Begründungen, Unterstützende Dokumente, Meinungsumfragen, Argumente für#;
+	    s#fore-words, after-words, rationales, supporting documents,#BegrÃ¼ndungen, UnterstÃ¼tzende Dokumente, Meinungsumfragen, Argumente fÃ¼r#;
 	    s#opinion polls, arguments for and against, and any of the other#und gegen, oder irgendwelches andere wichtige Material, das Sie in den#;
 	    s#important material you will find on the mailing list#Mailinglisten-Archiven finden, beinhaltet. Bitte lesen Sie die#;
 	    s#archives. Please read the mailing list archives for#Mailinglistenarchive#;
 	    s#archives. Please read the debian-vote mailing list archives for#debian-vote-Mailinglistenarchive#;
-	    s#details.#für Details.#;
-	    s#that this does not include supporting or opposing arguments#Sie, dass dies nicht die unterstützenden oder ablehnenden Argumente#;
-	    s#or rationales.  These may be found on the debian-vote mailing#oder Begründungen enthält. Diese können in den Archiven der#;
+	    s#details.#fÃ¼r Details.#;
+	    s#that this does not include supporting or opposing arguments#Sie, dass dies nicht die unterstÃ¼tzenden oder ablehnenden Argumente#;
+	    s#or rationales.  These may be found on the debian-vote mailing#oder BegrÃ¼ndungen enthÃ¤lt. Diese kÃ¶nnen in den Archiven der#;
 	    s#list archives\.#debian-vote-Mailingliste gefunden werden.#;
 	    s#Nomination period:#Nominierungsperiode#;
 	    s#Campaigning period:#Wahlkampfperiode:#;
 	    s#Voting period:#Abstimmungsperiode:#;
-	    s#Please note that the new term for the project leader shall start#Bitte beachten Sie, dass die neue Amtszeit für den#;
+	    s#Please note that the new term for the project leader shall start#Bitte beachten Sie, dass die neue Amtszeit fÃ¼r den#;
 	    s#on April 17<sup>th</sup>, (.*)\.#Projektleiter am 17. April $1 beginnt.#;
 	    s#The ballot, when ready, can be requested through email#Wenn es soweit ist, kann der Stimmzettel#;
 	    s#by emailing#per E-Mail an#;
 	    s#with the subject (.*)\.# mit dem Betreff <q>$1</q> angefordert werden.#;
-	    s#All candidates would need a simple majority to be eligible.#Alle Kandidaten benötigten eine einfache Mehrheit, um wählbar zu sein.#;
-	    s#The proposal needs simple majority.#Der Vorschlag benötigt eine einfache Mehrheit#;
-	    s#Since this proposal and amendment would require modification of#Da dieser Vorschlag und Änderung die Anpassung eines Gründungsdokuments#;
-	    s#a foundation document, namely, the#verlangen würde, genauer gesagt der <a#;
+	    s#All candidates would need a simple majority to be eligible.#Alle Kandidaten benÃ¶tigten eine einfache Mehrheit, um wÃ¤hlbar zu sein.#;
+	    s#The proposal needs simple majority.#Der Vorschlag benÃ¶tigt eine einfache Mehrheit#;
+	    s#Since this proposal and amendment would require modification of#Da dieser Vorschlag und Ã„nderung die Anpassung eines GrÃ¼ndungsdokuments#;
+	    s#a foundation document, namely, the#verlangen wÃ¼rde, genauer gesagt der <a#;
 	    s#<a href="http://www.debian.org/devel/constitution">constitution</a>#href="http://www.debian.org/devel/constitution">Verfassung</a>,#;
-	    s#it requires a 3:1 majority to pass.#benötigt er eine 3:1-Mehrheit, um angenommen zu werden.#;
+	    s#it requires a 3:1 majority to pass.#benÃ¶tigt er eine 3:1-Mehrheit, um angenommen zu werden.#;
 	    s#Not determinted yet#Noch nicht bestimmt#;
-	    s#Debian Project Secretary#Debian-Projekt-Schriftführer#;
+	    s#Debian Project Secretary#Debian-Projekt-SchriftfÃ¼hrer#;
 
 	    #Generic
 	    s#January#Januar#;
 	    s#February#Februar#;
-	    s#March#März#;
+	    s#March#MÃ¤rz#;
 	    s#May#Mai#;
 	    s#June#Juni#;
 	    s#July#Juli#;
@@ -322,27 +322,27 @@ while (<SRC>)
 	    s#To be decided.#Muss noch entschieden werden.#;
 
 	    s#Ballots Received#Empfangene Stimmzettel#;
-            s#MIME Decoded#MIME entschlüsselt#;
-            s#Passed Sig Check#Unterschrift überprüft#;
-	    s#Passed LDAP Check#LDAP überprüft#;
-	    s#Votes Tallied#Gezählte Stimmen#;
-	    s#Acks Created#Erstellte Bestätigungen#;
-            s#Acks Sent#Gesendete Bestätigungen#;
-	    s#Acks Unsent#Nicht gesendete Bestätigungen#;
+            s#MIME Decoded#MIME entschlÃ¼sselt#;
+            s#Passed Sig Check#Unterschrift Ã¼berprÃ¼ft#;
+	    s#Passed LDAP Check#LDAP Ã¼berprÃ¼ft#;
+	    s#Votes Tallied#GezÃ¤hlte Stimmen#;
+	    s#Acks Created#Erstellte BestÃ¤tigungen#;
+            s#Acks Sent#Gesendete BestÃ¤tigungen#;
+	    s#Acks Unsent#Nicht gesendete BestÃ¤tigungen#;
 	    s#Rejects Sent#Ablehnungen verschickt#;
-	    s#Bad Ballot#Ungültige Stimmzettel#;
-	    s#Unique Voters#Eindeutige Wähler#;
+	    s#Bad Ballot#UngÃ¼ltige Stimmzettel#;
+	    s#Unique Voters#Eindeutige WÃ¤hler#;
             s#Graph of the#Grafik#;
 	    s#rate at which the votes are received# der Rate, in der die Stimmen empfangen wurden#;
-            s#Click on the image above to get a Zoomed in version.<br> A#Klicken Sie auf das obige Bild, um eine vergrößerte Version zu\nbekommen.<br />#;
-            s#Click on the image above to get a Zoomed in version.<br /> A#Klicken Sie auf das obige Bild, um eine vergrößerte Version zu\nbekommen.<br />#;
-	    s#<a href="(.*)">tally sheet</a> is#Das <a href="$1">Zählblatt</a> ist verfügbar.#;
-	    s#available.  While the voting is still open the tally is a#Während die Wahlphase noch läuft, ist das#;
-            s#dummy one; after the vote, the final tally sheet shall be#Zählblatt mit Pseudowerten gefüllt; nach der Abstimmung#;
-            s#put in place. Please note that for secret ballots the#wird stattdessen das endgültige Zählblatt veröffentlicht.#;
-            s#md5sum on the dummy tally sheet is randomly generated, as#Bitte beachten Sie, dass die MD5-Summen im vorläufigen\nZählblatt für geheime Wahlen zufällig erzeugt werden.#;
-	    s#otherwise the dummy tally sheet would leak information#Andernfalls würden Informationen über die MD5-Summe und#;
-            s#relating the md5 hash and the voter.  Additionally, the#den zugehörigen Wähler durchsickern können. Außerdem werden#;
+            s#Click on the image above to get a Zoomed in version.<br> A#Klicken Sie auf das obige Bild, um eine vergrÃ¶ÃŸerte Version zu\nbekommen.<br />#;
+            s#Click on the image above to get a Zoomed in version.<br /> A#Klicken Sie auf das obige Bild, um eine vergrÃ¶ÃŸerte Version zu\nbekommen.<br />#;
+	    s#<a href="(.*)">tally sheet</a> is#Das <a href="$1">ZÃ¤hlblatt</a> ist verfÃ¼gbar.#;
+	    s#available.  While the voting is still open the tally is a#WÃ¤hrend die Wahlphase noch lÃ¤uft, ist das#;
+            s#dummy one; after the vote, the final tally sheet shall be#ZÃ¤hlblatt mit Pseudowerten gefÃ¼llt; nach der Abstimmung#;
+            s#put in place. Please note that for secret ballots the#wird stattdessen das endgÃ¼ltige ZÃ¤hlblatt verÃ¶ffentlicht.#;
+            s#md5sum on the dummy tally sheet is randomly generated, as#Bitte beachten Sie, dass die MD5-Summen im vorlÃ¤ufigen\nZÃ¤hlblatt fÃ¼r geheime Wahlen zufÃ¤llig erzeugt werden.#;
+	    s#otherwise the dummy tally sheet would leak information#Andernfalls wÃ¼rden Informationen Ã¼ber die MD5-Summe und#;
+            s#relating the md5 hash and the voter.  Additionally, the#den zugehÃ¶rigen WÃ¤hler durchsickern kÃ¶nnen. AuÃŸerdem werden#;
 	    s#<a href="(.*)">results</a> shall be#die <a href="$1">Ergebnisse</a>#;
 	    s#updated after the polls close.#aktualisiert, sobald die Wahlphase abgeschlossen ist.#;
 	    s#standings of the candidates#des Standes der Kandidaten#;
