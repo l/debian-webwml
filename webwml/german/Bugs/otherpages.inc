@@ -3,9 +3,9 @@
 
 <ul>
   <li><a href="./">Hauptseite der Fehlerdatenbank.</a>
-  <li><a href="Reporting">Instruktionen für das Melden von Fehlern.</a>
+  <li><a href="Reporting">Instruktionen fÃ¼r das Melden von Fehlern.</a>
   <li><a href="Access">Zugriff auf Protokolle.</a>
-  <li><a href="Developer">Informationen für Entwickler.</a>
+  <li><a href="Developer">Informationen fÃ¼r Entwickler.</a>
   <li><a href="server-control">Entwickler-Informationen zur Manipulation von Fehlern mit der E-Mail-Schnittstelle.</a>
   <li><a href="server-refcard">Referenzkarte des Mailservers.</a>
   <li><a href="server-request">Anfordern von Fehlern per E-Mail.</a>
