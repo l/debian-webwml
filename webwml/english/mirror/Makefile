@@ -7,6 +7,7 @@ SUBS=
 
 include $(WMLBASE)/Make.lang
 
+
 submit.$(LANGUAGE).html: submit.wml $(ENGLISHDIR)/mirror/submit.inc \
   $(ENGLISHSRCDIR)/releases/sid/archive.data  $(GETTEXTDEP)
 
